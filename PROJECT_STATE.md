@@ -32,5 +32,6 @@
 
 | Commit | Cosa |
 |---|---|
+| `7cf58e1` | Specifica approvata e planimetrie/schemi elettrici registrati nella visione futura |
 | `0bb4ef8` | Design concettuale completato, verificato end-to-end e formalizzato |
 | `fa7157c` | Bootstrap della struttura di project management e avvio del repository Git locale |

@@ -1,7 +1,9 @@
 # Specifica di design - Disegnatore MEP
 
-**Data:** 1 agosto 2026  
-**Stato:** approvata dal PM il 1 agosto 2026  
+**Data:** 1 agosto 2026
+
+**Stato:** approvata dal PM il 1 agosto 2026
+
 **Versione:** 0.1
 
 ## 1. Sintesi
