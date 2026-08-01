@@ -9,3 +9,11 @@ class ValidationIssue(StrictModel):
     severity: IssueSeverity
     message: str = Field(min_length=1)
     entity_ids: list[str] = Field(default_factory=list)
+
+
+class ValidationReport(StrictModel):
+    issues: list[ValidationIssue] = Field(default_factory=list)
+
+    @property
+    def ok(self) -> bool:
+        return not any(issue.severity == IssueSeverity.BLOCKING for issue in self.issues)
