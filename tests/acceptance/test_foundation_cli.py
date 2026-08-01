@@ -5,18 +5,33 @@ from _pytest.capture import CaptureFixture
 
 from disegnatore_mep.cli import main
 
+FIXTURES = Path(__file__).resolve().parents[2] / "examples" / "foundation"
+
 
 def test_valid_mixed_project_passes() -> None:
-    root = Path("examples/foundation")
-    assert main(["validate", str(root / "valid-mixed-project.json"), "--catalog", str(root / "catalog")]) == 0
+    assert (
+        main(
+            [
+                "validate",
+                str(FIXTURES / "valid-mixed-project.json"),
+                "--catalog",
+                str(FIXTURES / "catalog"),
+            ]
+        )
+        == 0
+    )
 
 
 def test_cross_medium_project_fails_with_code_two(
     capsys: CaptureFixture[str],
 ) -> None:
-    root = Path("examples/foundation")
     exit_code = main(
-        ["validate", str(root / "invalid-cross-medium.json"), "--catalog", str(root / "catalog")]
+        [
+            "validate",
+            str(FIXTURES / "invalid-cross-medium.json"),
+            "--catalog",
+            str(FIXTURES / "catalog"),
+        ]
     )
     captured = capsys.readouterr()
     report = json.loads(captured.out)
