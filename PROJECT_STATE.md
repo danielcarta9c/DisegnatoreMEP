@@ -32,4 +32,4 @@
 
 | Commit | Cosa |
 |---|---|
-| — | Bootstrap documentale in preparazione |
+| `fa7157c` | Bootstrap della struttura di project management e avvio del repository Git locale |
