@@ -25,7 +25,9 @@ def _resolve_port(
 ) -> tuple[PortDefinition | None, list[ValidationIssue]]:
     component = components.get(ref.component_id)
     if component is None:
-        return None, [_issue("UNKNOWN_COMPONENT", "unknown component", [ref.component_id])]
+        return None, [
+            _issue("UNKNOWN_COMPONENT", f"unknown component {ref.component_id}", [ref.component_id])
+        ]
     try:
         definition = catalog.get(component.definition_id)
     except CatalogError:
@@ -58,7 +60,7 @@ def validate_project(
     networks = {item.id: item for item in project.networks}
     subsystems = {item.id: item for item in project.subsystems}
     usage: Counter[tuple[str, str]] = Counter()
-    seen_edges: set[tuple[str, tuple[str, str], tuple[str, str]]] = set()
+    seen_edges: dict[tuple[str, tuple[str, str], tuple[str, str]], str] = {}
     issues: list[ValidationIssue] = []
 
     for component in project.components:
@@ -106,16 +108,34 @@ def validate_project(
         endpoint_a = (connection.endpoint_a.component_id, connection.endpoint_a.port_id)
         endpoint_b = (connection.endpoint_b.component_id, connection.endpoint_b.port_id)
         first_endpoint, second_endpoint = sorted((endpoint_a, endpoint_b))
+        # `network_id` stays inside the edge key: two connections between the same
+        # ports on different networks are legitimately distinct connections, not
+        # duplicates. Same-network multiplicity is caught separately below by
+        # PORT_CONNECTION_LIMIT.
         edge_key = (connection.network_id, first_endpoint, second_endpoint)
-        if edge_key in seen_edges:
+        first_id = seen_edges.get(edge_key)
+        if first_id is None:
+            seen_edges[edge_key] = connection.id
+        else:
+            pair = sorted([connection.id, first_id])
             issues.append(
                 _issue(
                     "DUPLICATE_CONNECTION",
-                    f"duplicate connection {connection.id}",
-                    [connection.id],
+                    f"connection {pair[1]} duplicates {pair[0]} on network {connection.network_id}",
+                    pair,
                 )
             )
-        seen_edges.add(edge_key)
+
+        port_a, errors_a = _resolve_port(connection.endpoint_a, components, catalog)
+        port_b, errors_b = _resolve_port(connection.endpoint_b, components, catalog)
+        issues.extend(errors_a)
+        issues.extend(errors_b)
+
+        if port_a is not None:
+            usage[endpoint_a] += 1
+        if port_b is not None:
+            usage[endpoint_b] += 1
+
         network = networks.get(connection.network_id)
         if network is None:
             issues.append(
@@ -126,15 +146,12 @@ def validate_project(
                 )
             )
             continue
-        port_a, errors_a = _resolve_port(connection.endpoint_a, components, catalog)
-        port_b, errors_b = _resolve_port(connection.endpoint_b, components, catalog)
-        issues.extend(errors_a)
-        issues.extend(errors_b)
         if port_a is None or port_b is None:
             continue
-        usage[(connection.endpoint_a.component_id, connection.endpoint_a.port_id)] += 1
-        usage[(connection.endpoint_b.component_id, connection.endpoint_b.port_id)] += 1
-        issues.extend(domain_registry.get(network.domain).validate_pair(port_a, port_b, network))
+        for issue in domain_registry.get(network.domain).validate_pair(port_a, port_b, network):
+            issues.append(
+                issue.model_copy(update={"entity_ids": [connection.id, *issue.entity_ids]})
+            )
 
     for component in project.components:
         if not catalog.contains(component.definition_id):
