@@ -31,6 +31,7 @@
 
 | Commit | Cosa |
 |---|---|
+| `290c8de` | Handoff di sessione e cancello di lettura creati |
 | `abfa683` | Milestone della pianificazione di implementazione registrata |
 | `66d5406` | Roadmap master e piano eseguibile P0 completati |
 | `7cf58e1` | Specifica approvata e planimetrie/schemi elettrici registrati nella visione futura |

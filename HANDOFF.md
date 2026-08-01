@@ -50,7 +50,7 @@ Risposte attese dai documenti: motore compositivo generale; modello tecnico cano
 ## 3. Stato attuale del progetto
 
 - **Versione installabile:** nessuna; `releases/latest/` non è ancora una release.
-- **Ultimo commit significativo prima della chiusura:** `abfa683` — milestone della pianificazione registrata.
+- **Ultimo commit significativo di passaggio:** `290c8de` — handoff, stato e regole di ripresa registrati.
 - **Stato prodotto:** design approvato; roadmap P0–P7 e piano dettagliato P0 pronti.
 - **Implementazione:** non iniziata; non esistono ancora pacchetto Python, test o artefatti generati.
 - **Repository:** Git locale, branch `main`, nessun remote.
@@ -126,5 +126,6 @@ Nessuna. Alla ripresa non chiedere al PM di ricostruire il contesto né di scegl
 
 ## Ultimo aggiornamento
 
-`2026-08-01` — Codex — creato il cancello di lettura per la chiusura pulita della sessione prima dell'implementazione P0.
+`2026-08-01` — Codex — registrato il commit `290c8de` del passaggio di consegne.
 
+`2026-08-01` — Codex — creato il cancello di lettura per la chiusura pulita della sessione prima dell'implementazione P0.
