@@ -8,29 +8,45 @@
 |---|---|---|
 | Repository | Git locale | Nessun remote configurato |
 | Sviluppo | Locale Windows | Cartella sincronizzata con OneDrive |
+| Interprete | Python 3.12.13 | `.venv` creata dal runtime Codex, condivisa fra sessioni Claude e Codex |
+| Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv`; comando `disegnatore-mep` funzionante |
+| Test | 59 verdi | `pytest`, `ruff` e `mypy --strict` tutti a exit `0` |
 | Release | Non disponibile | `releases/latest/` sarà popolata dopo la prima versione verificata |
 
 ## Now — in corso
 
-- [ ] Riprendere dal cancello di lettura di `HANDOFF.md` e avviare P0 con esecuzione inline a gate di revisione.
+- [ ] Decidere con il PM come rappresentare una proposta non ancora approvata nel modello canonico, prima che P1 scriva la prima regola. Dettagli in `docs/P0_REVIEW_FINDINGS.md` §3.1.
 
 ## Next — backlog ordinato
 
-1. Eseguire P0: fondazione canonica e validatore multi-dominio.
-2. Scrivere ed eseguire P1 e P2: regole/fonti e sistema grafico A3.
-3. Implementare i pacchetti di dominio P3A-P3D.
-4. Implementare layout, rendering SVG/PDF e controlli geometrici P4-P5.
-5. Integrare la skill conversazionale P6.
-6. Costruire la matrice di qualificazione e la prima release P7.
+1. Scrivere il piano P1 (ricerca tecnica e sistema delle regole), incorporando la decisione sopra e i punti W5, W6 e W2 di `docs/P0_REVIEW_FINDINGS.md`.
+2. Scrivere il piano P2 (sistema grafico A3 e compilatore dei simboli), risolvendo al primo giorno dove vive la geometria dei simboli (W8) e l'invariante di orientamento delle porte (W9).
+3. Allargare il contratto `DomainPack` prima che i quattro pacchetti P3 procedano in parallelo (W3).
+4. Implementare i pacchetti di dominio P3A-P3D.
+5. Implementare layout, rendering SVG/PDF e controlli geometrici P4-P5.
+6. Integrare la skill conversazionale P6.
+7. Costruire la matrice di qualificazione e la prima release P7.
 
 ## Domande aperte
 
-- Nessuna domanda di prodotto aperta. La modalità di esecuzione è un dettaglio tecnico reversibile e viene gestita dall'agente.
+1. **Dove vive una proposta non approvata.** Stato sulle entità con validatore ristretto alle approvate, oppure collezione separata di proposte che confluisce all'approvazione. Non è un dettaglio reversibile: determina come una revisione rientra nel progetto. Vedi `docs/P0_REVIEW_FINDINGS.md` §3.1.
+2. **Immutabilità del modello canonico.** Congelarlo, oppure far riasserire gli invarianti al validatore invece di fidarsi del costruttore. Vedi §3.2 dello stesso documento.
 
 ## Done log — ultimo in cima
 
 | Commit | Cosa |
 |---|---|
+| `2c78731` | Chiusi i difetti trovati dalla revisione avversariale: falso PASS su auto-anello, integrità della forma canonica, sotto-segnalazione, duplicato mal nominato |
+| `958e7eb` | Gate G0 reso indipendente dalla directory di lancio |
+| `78838c7` | **Gate G0 superato**: progetto misto a quattro domini validato senza codice specifico per schema |
+| `dffaf37` | CLI `validate` / `export-schema` / `fingerprint` con codici di uscita `0`/`2`/`1` |
+| `c9716ac` | Serializzazione canonica e fingerprint riproducibile |
+| `6a413f0` | Diagnostiche del validatore rese distinte e azionabili |
+| `f1b763f` | Validatore topologico multi-dominio |
+| `a70b6af` | Contratti di compatibilità dei domini |
+| `553cf0d` | Catalogo componenti versionato |
+| `584bf26` | Modello canonico di progetto |
+| `d0d85ba` | Bootstrap del pacchetto e della toolchain |
 | `290c8de` | Handoff di sessione e cancello di lettura creati |
 | `abfa683` | Milestone della pianificazione di implementazione registrata |
 | `66d5406` | Roadmap master e piano eseguibile P0 completati |
