@@ -1,0 +1,16 @@
+# File temporanei e output di lavoro
+outputs/
+tmp/
+*.tmp
+*.bak
+
+# Cache e sistema operativo
+__pycache__/
+*.py[cod]
+.pytest_cache/
+Thumbs.db
+.DS_Store
+
+# Ambienti locali
+.venv/
+node_modules/
