@@ -33,5 +33,5 @@
 
 | Commit | Cosa |
 |---|---|
-| da registrare | Design concettuale completato, verificato end-to-end e formalizzato |
+| `0bb4ef8` | Design concettuale completato, verificato end-to-end e formalizzato |
 | `fa7157c` | Bootstrap della struttura di project management e avvio del repository Git locale |
