@@ -57,6 +57,15 @@ Schema tecnico-esecutivo impiantistico comprendente componenti principali, valvo
 - annotazioni esecutive di posa;
 - controllo diretto di AutoCAD o altri CAD come requisito della prima versione.
 
+## Visione futura
+
+Quando il disegnatore di schemi termotecnici sarà maturo, il progetto generale potrà estendersi a:
+
+- tavole planimetriche degli impianti;
+- schemi elettrici e di regolazione esecutivi completi.
+
+Queste estensioni non devono condizionare o complicare l'architettura della skill attuale, ma restano registrate come direzioni strategiche di lungo periodo.
+
 ## Criteri di successo preliminari
 
 - nessun accessorio grafico flottante o scollegato;

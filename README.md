@@ -4,7 +4,7 @@ Progetto per una skill capace di trasformare la configurazione di un impianto te
 
 La skill analizzerà la configurazione, proporrà gli accessori necessari o raccomandati, raccoglierà l'approvazione dell'ingegnere e produrrà elaborati vettoriali SVG/PDF mediante regole tecniche e layout deterministici.
 
-**Stato:** design concettuale completato e verificato end-to-end. Specifica scritta in attesa della revisione finale del PM. Nessuna implementazione avviata.
+**Stato:** design concettuale completato, verificato end-to-end e approvato dal PM. Pianificazione dell'implementazione in avvio; nessuna implementazione ancora iniziata.
 
 ## Orientamento rapido
 

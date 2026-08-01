@@ -1,7 +1,7 @@
 # Specifica di design - Disegnatore MEP
 
 **Data:** 1 agosto 2026  
-**Stato:** design concettuale approvato; specifica scritta in attesa di revisione finale del PM  
+**Stato:** approvata dal PM il 1 agosto 2026  
 **Versione:** 0.1
 
 ## 1. Sintesi
@@ -39,6 +39,8 @@ La prima versione non deve:
 - dipendere da AutoCAD per generare l'elaborato iniziale.
 
 I collegamenti di regolazione strettamente necessari alla comprensione funzionale possono essere rappresentati come rete logica dedicata.
+
+Tavole planimetriche e schemi elettrici completi sono esclusi dalla skill attuale, ma registrati nella roadmap come possibili estensioni future del progetto generale. Non introducono requisiti anticipati nell'architettura corrente.
 
 ## 4. Perimetro dei sistemi
 
@@ -419,7 +421,7 @@ Non restano contraddizioni architetturali bloccanti. Il progetto è ampio ma dec
 
 ## 19. Criteri di accettazione del design
 
-Il design è considerato pronto quando il PM conferma che:
+Il design è stato approvato dal PM dopo avere confermato che:
 
 - il flusso conversazione -> approvazione -> disegno rispecchia il lavoro reale;
 - il prodotto non è limitato a schemi tipo;

@@ -8,7 +8,7 @@ La roadmap definisce l'ordine delle fasi. Le attività operative immediate vivon
 - [x] Definire la struttura di project management.
 - [x] Completare il brainstorming e approvare il design concettuale.
 - [x] Eseguire la revisione end-to-end CAD e software.
-- [ ] Far approvare al PM la specifica scritta.
+- [x] Far approvare al PM la specifica scritta.
 - [ ] Trasformare il design in un piano di implementazione verificabile.
 
 ## Fase 1 — Conoscenza tecnica e perimetro
@@ -59,3 +59,13 @@ La roadmap definisce l'ordine delle fasi. Le attività operative immediate vivon
 - ampliare progressivamente componenti e regole meno frequenti senza modificare il nucleo;
 - consolidare i pacchetti di dominio tramite casi reali misti;
 - valutare integrazione CAD desktop soltanto dopo la maturità del motore vettoriale.
+
+## Futuro remoto — progetto generale
+
+Questi filoni sono intenzionalmente esclusi dalla skill attuale, ma restano nella visione del progetto:
+
+- generazione di tavole planimetriche degli impianti;
+- generazione di schemi elettrici e di regolazione esecutivi completi;
+- eventuale modello coordinato capace di collegare schema funzionale, planimetria ed elaborati elettrici.
+
+Non devono introdurre requisiti prematuri nell'implementazione corrente. Saranno rivalutati soltanto dopo la maturità e l'uso reale del disegnatore di schemi termotecnici.

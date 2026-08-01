@@ -12,22 +12,21 @@
 
 ## Now — in corso
 
-- [ ] ❓ Revisione del PM sulla specifica `docs/specs/2026-08-01-disegnatore-mep-design.md`.
+- [ ] Preparare il piano di implementazione a partire dalla specifica approvata.
 
 ## Next — backlog ordinato
 
-1. Ottenere l'approvazione finale della specifica scritta.
-2. Preparare il piano di implementazione.
-3. Costruire e validare il registro delle fonti tecniche e normative.
-4. Implementare nucleo topologico, contratti dei domini e validatori di base.
-5. Costruire la libreria ampia dei simboli e il sistema grafico A3.
-6. Implementare layout, rendering SVG/PDF e controlli geometrici.
-7. Costruire la matrice di casi, regressioni e prove di stampa.
-8. Generare la prima release installabile.
+1. Preparare e far approvare il piano di implementazione.
+2. Costruire e validare il registro delle fonti tecniche e normative.
+3. Implementare nucleo topologico, contratti dei domini e validatori di base.
+4. Costruire la libreria ampia dei simboli e il sistema grafico A3.
+5. Implementare layout, rendering SVG/PDF e controlli geometrici.
+6. Costruire la matrice di casi, regressioni e prove di stampa.
+7. Generare la prima release installabile.
 
 ## Domande aperte
 
-- ❓ Il PM approva la specifica scritta dopo la revisione end-to-end?
+- Nessuna domanda di design aperta. Il piano di implementazione sarà il prossimo gate di approvazione.
 
 ## Done log — ultimo in cima
 
