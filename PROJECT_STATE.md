@@ -12,24 +12,26 @@
 
 ## Now — in corso
 
-- [ ] Completare il brainstorming guidato del design tecnico e grafico.
+- [ ] ❓ Revisione del PM sulla specifica `docs/specs/2026-08-01-disegnatore-mep-design.md`.
 
 ## Next — backlog ordinato
 
-1. Consolidare e far approvare la specifica di design.
+1. Ottenere l'approvazione finale della specifica scritta.
 2. Preparare il piano di implementazione.
-3. Costruire e validare la base delle fonti tecniche e normative.
-4. Definire modello dati, grammatica topologica e regole della prima famiglia.
-5. Definire simbologia, layout, rendering SVG e controllo PDF.
-6. Costruire casi di prova e schemi di riferimento.
-7. Generare la prima release installabile.
+3. Costruire e validare il registro delle fonti tecniche e normative.
+4. Implementare nucleo topologico, contratti dei domini e validatori di base.
+5. Costruire la libreria ampia dei simboli e il sistema grafico A3.
+6. Implementare layout, rendering SVG/PDF e controlli geometrici.
+7. Costruire la matrice di casi, regressioni e prove di stampa.
+8. Generare la prima release installabile.
 
 ## Domande aperte
 
-- Proseguire la definizione, una decisione alla volta, dal livello tecnico-esecutivo già approvato.
+- ❓ Il PM approva la specifica scritta dopo la revisione end-to-end?
 
 ## Done log — ultimo in cima
 
 | Commit | Cosa |
 |---|---|
+| da registrare | Design concettuale completato, verificato end-to-end e formalizzato |
 | `fa7157c` | Bootstrap della struttura di project management e avvio del repository Git locale |

@@ -6,7 +6,9 @@ La roadmap definisce l'ordine delle fasi. Le attività operative immediate vivon
 
 - [x] Consolidare il contesto iniziale.
 - [x] Definire la struttura di project management.
-- [ ] Completare il brainstorming e approvare il design.
+- [x] Completare il brainstorming e approvare il design concettuale.
+- [x] Eseguire la revisione end-to-end CAD e software.
+- [ ] Far approvare al PM la specifica scritta.
 - [ ] Trasformare il design in un piano di implementazione verificabile.
 
 ## Fase 1 — Conoscenza tecnica e perimetro
@@ -21,22 +23,27 @@ La roadmap definisce l'ordine delle fasi. Le attività operative immediate vivon
 
 - definire il modello strutturato interno;
 - definire componenti, porte, circuiti e relazioni;
+- introdurre identificativi stabili, provenienza e versioni;
 - implementare regole necessarie, raccomandate e condizionate;
 - produrre l'elenco delle integrazioni prima del disegno;
-- validare coerenza e completezza topologica.
+- validare coerenza e completezza topologica con controlli specifici per dominio;
+- generare la distinta quantitativa dal modello.
 
 ## Fase 3 — Linguaggio grafico
 
 - creare simboli SVG originali;
 - definire griglia, allineamenti, colori, spessori, testi e tag;
 - integrare il cartiglio Nove C;
+- partizionare semanticamente i sistemi complessi prima del layout;
 - implementare layout e instradamento deterministici;
-- esportare SVG e PDF vettoriali.
+- esportare SVG e PDF vettoriali con manifest di riproducibilità.
 
 ## Fase 4 — Collaudo
 
 - costruire casi validi, ambigui e non validi;
 - confrontare gli elaborati con schemi professionali di riferimento;
+- verificare invarianti generali e combinazioni miste fra domini;
+- eseguire controlli visivi e prove di stampa A3;
 - effettuare revisione tecnica dell'ingegnere;
 - correggere regole e regressioni grafiche.
 

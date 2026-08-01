@@ -40,13 +40,14 @@ Schema tecnico-esecutivo impiantistico comprendente componenti principali, valvo
 
 ## Flusso approvato
 
-1. L'ingegnere descrive l'impianto ad alto livello.
-2. La skill completa l'analisi secondo l'interpretazione tecnica più comune.
-3. La skill presenta, senza disegnare, integrazioni e domande.
-4. Le integrazioni sono classificate come necessarie, raccomandate o condizionate.
-5. Ogni voce riporta quantità, posizione funzionale, motivazione e regola applicata.
-6. L'ingegnere approva o corregge; una risposta come «sì, procedi» approva la proposta completa.
-7. Soltanto dopo l'approvazione viene generato lo schema.
+1. L'ingegnere definisce normalmente l'impianto nella conversazione, senza compilare un modulo dedicato.
+2. Quando viene richiamata, la skill legge il contesto disponibile e ricostruisce l'impianto deciso.
+3. La skill completa l'analisi secondo l'interpretazione tecnica più comune.
+4. La skill presenta, senza disegnare, impianto interpretato, integrazioni, assunzioni e domande.
+5. Le integrazioni sono classificate come necessarie, raccomandate o condizionate.
+6. Ogni voce riporta quantità, posizione funzionale, motivazione e regola applicata.
+7. L'ingegnere approva o corregge; una risposta come «sì, procedi» approva la proposta completa.
+8. Soltanto dopo l'approvazione viene generato lo schema.
 
 ## Fuori perimetro iniziale
 
@@ -61,7 +62,10 @@ Schema tecnico-esecutivo impiantistico comprendente componenti principali, valvo
 - nessun accessorio grafico flottante o scollegato;
 - topologia verificabile prima del rendering;
 - quantità e posizione degli accessori ricostruibili dalle regole applicate;
+- distinta quantitativa coerente con il modello approvato;
 - disegno leggibile, allineato e privo di sovrapposizioni;
 - supporto di più reti e terminali differenti nello stesso impianto;
+- dimensioni fisiche di stampa invarianti e impaginazione funzionale su più tavole quando necessaria;
+- cartiglio completo in ogni emissione finale;
 - SVG/PDF vettoriali riproducibili a parità di input;
 - approvazione esplicita dell'ingegnere prima del disegno.
