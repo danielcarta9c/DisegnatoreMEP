@@ -18,17 +18,21 @@ Creare una skill che operi come un tecnico CAD esperto di disegno termotecnico. 
 
 Ingegnere termotecnico che definisce architettura, potenze, volumi, circuiti e scelte progettuali principali, ma delega alla skill lo sviluppo coerente del dettaglio grafico e degli accessori standard.
 
-## Prima famiglia funzionale
+## Perimetro funzionale
 
-Impianti domestici idronici aria-acqua, inizialmente con:
+La skill non è un generatore di schemi tipo. Il nucleo deve rappresentare impianti termici componibili mediante componenti, porte tipizzate, reti e diramazioni.
 
-- pompa di calore;
-- circuito primario;
-- volano termico a quattro attacchi con disgiunzione idraulica;
-- circuito secondario con circolatore dedicato;
-- distribuzione verso radiatori, pavimento radiante o ventilconvettori;
-- eventuale produzione di ACS;
-- dispositivi di sicurezza, intercettazione, regolazione, misura, sfiato e scarico.
+La libreria iniziale deve essere ampia e comprendere i componenti comuni dei principali domini:
+
+- reti idroniche di riscaldamento, raffrescamento e ACS;
+- generatori a pompa di calore, gas e sistemi ibridi;
+- centrali termiche, scambiatori e accumuli;
+- distribuzioni miste con radiatori, pavimento radiante e ventilconvettori nello stesso impianto;
+- impianti aria-aria e aria-acqua canalizzati;
+- sistemi a espansione diretta e VRV;
+- reti gas, scarico condensa, regolazione e misura pertinenti allo schema termotecnico.
+
+Il primo caso con pompa di calore, ACS, volano a quattro attacchi e due zone è un test di accettazione, non il limite della skill.
 
 ## Livello dell'elaborato
 
@@ -49,7 +53,6 @@ Schema tecnico-esecutivo impiantistico comprendente componenti principali, valvo
 - dimensionamento automatico;
 - selezione autonoma delle apparecchiature principali;
 - modifica silenziosa delle scelte dell'ingegnere;
-- schemi aeraulici canalizzati;
 - annotazioni esecutive di posa;
 - controllo diretto di AutoCAD o altri CAD come requisito della prima versione.
 
@@ -59,5 +62,6 @@ Schema tecnico-esecutivo impiantistico comprendente componenti principali, valvo
 - topologia verificabile prima del rendering;
 - quantità e posizione degli accessori ricostruibili dalle regole applicate;
 - disegno leggibile, allineato e privo di sovrapposizioni;
+- supporto di più reti e terminali differenti nello stesso impianto;
 - SVG/PDF vettoriali riproducibili a parità di input;
 - approvazione esplicita dell'ingegnere prima del disegno.

@@ -13,7 +13,8 @@ La roadmap definisce l'ordine delle fasi. Le attività operative immediate vivon
 
 - selezionare fonti normative, manuali e schemi autorevoli;
 - codificare la gerarchia tra obblighi, buona pratica e convenzioni grafiche;
-- delimitare topologie e varianti della prima famiglia aria-acqua;
+- definire il nucleo universale e i pacchetti di dominio idronico, aeraulico, refrigerante e gas;
+- delimitare la libreria ampia dei componenti comuni senza introdurre schemi tipo rigidi;
 - definire dati obbligatori, assunzioni consentite e casi bloccanti.
 
 ## Fase 2 — Modello e validazione
@@ -48,6 +49,6 @@ La roadmap definisce l'ordine delle fasi. Le attività operative immediate vivon
 
 ## Fasi successive
 
-- ampliare le varianti idroniche;
-- introdurre la famiglia aeraulica canalizzata;
+- ampliare progressivamente componenti e regole meno frequenti senza modificare il nucleo;
+- consolidare i pacchetti di dominio tramite casi reali misti;
 - valutare integrazione CAD desktop soltanto dopo la maturità del motore vettoriale.

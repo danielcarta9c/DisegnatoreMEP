@@ -4,7 +4,7 @@ Registro sintetico delle decisioni funzionali e di processo. Le decisioni archit
 
 | ID | Data | Stato | Decisione | Motivazione |
 |---|---|---|---|---|
-| D-001 | 2026-08-01 | Approvata | La prima famiglia è costituita dagli impianti idronici domestici aria-acqua. | Consente di limitare la grammatica iniziale e validarla su casi ricorrenti. |
+| D-001 | 2026-08-01 | Superata da D-017 | La prima famiglia era stata inizialmente limitata agli impianti idronici domestici aria-acqua. | Il brainstorming ha chiarito che il prodotto deve essere un disegnatore generale di impianti termici. |
 | D-002 | 2026-08-01 | Approvata | La prima versione non effettua dimensionamenti né seleziona autonomamente le apparecchiature principali. | L'ingegnere conserva responsabilità e controllo progettuale. |
 | D-003 | 2026-08-01 | Approvata | Il risultato è uno schema tecnico-esecutivo impiantistico senza annotazioni dettagliate di posa. | Servono valvole, strumenti e accessori, non un semplice schema funzionale. |
 | D-004 | 2026-08-01 | Approvata | Prima del disegno, la skill presenta l'elenco delle integrazioni e attende l'approvazione. | Evita modifiche silenziose e mantiene rapido il controllo dell'ingegnere. |
@@ -20,3 +20,6 @@ Registro sintetico delle decisioni funzionali e di processo. Le decisioni archit
 | D-014 | 2026-08-01 | Approvata | Dati documentali mancanti ma non bloccanti possono comparire come `DA DEFINIRE` in bozza; la versione finale richiede il loro completamento e non inventa valori. | L'ingegnere può completare calcoli come diametri e isolamenti nella stessa conversazione prima dell'emissione finale. |
 | D-015 | 2026-08-01 | Approvata | I manuali di prodotto sono consultati solo quando una prescrizione specifica modifica topologia o accessori rappresentati; le prescrizioni di posa restano fuori scope. | Evita di sovraccaricare lo schema con dettagli non pertinenti al livello richiesto. |
 | D-016 | 2026-08-01 | Approvata | Un prodotto che integra più funzioni viene rappresentato con un simbolo composito unico e riconoscibile, non con simboli separati annidati. | Il disegno resta pulito e comunica che si tratta di un solo componente da acquistare. |
+| D-017 | 2026-08-01 | Approvata | Il prodotto usa un nucleo universale con pacchetti di dominio e una libreria iniziale ampia per idronica, aeraulica, espansione diretta/VRV, gas e reti ausiliarie. | La skill deve disegnare l'impianto deciso nella conversazione, anche quando combina più sistemi, non riprodurre pochi schemi tipo. |
+| D-018 | 2026-08-01 | Approvata | Simboli, testi e spessori hanno dimensioni fisiche di stampa invarianti definite in millimetri di carta. | La complessità dell'impianto non deve ridurre la leggibilità o deformare la grammatica grafica. |
+| D-019 | 2026-08-01 | Approvata | Quando l'impianto non entra nell'area utile, si producono più A3 coordinati; A1 e A0 restano alternative secondarie. | I progetti sono prevalentemente residenziali o del piccolo terziario e devono poter essere stampati facilmente in ufficio. |
