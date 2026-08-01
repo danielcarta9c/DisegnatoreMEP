@@ -2,6 +2,7 @@
 
 ## Ordine di lettura obbligatorio
 
+0. Se esiste `HANDOFF.md`, aprirlo per primo e applicare integralmente il suo cancello di lettura e le sentinel checks.
 1. `CONTESTO_PROGETTO.md`
 2. `PRD_DISEGNATORE_MEP.md`
 3. `PROJECT_STATE.md`
@@ -11,6 +12,7 @@
 7. specifiche e ADR pertinenti al lavoro richiesto
 
 Prima di fare domande, verificare chat, documenti e decisioni già registrate. Chiedere soltanto ciò che resta realmente ambiguo.
+`HANDOFF.md` è un cancello di lettura, non sostituisce i documenti canonici e non autorizza a saltarli.
 
 ## Principi non negoziabili
 

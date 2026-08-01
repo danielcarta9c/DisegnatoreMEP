@@ -12,7 +12,7 @@
 
 ## Now — in corso
 
-- [ ] ❓ Scegliere la modalità di esecuzione del piano P0: subagent-driven oppure inline.
+- [ ] Riprendere dal cancello di lettura di `HANDOFF.md` e avviare P0 con esecuzione inline a gate di revisione.
 
 ## Next — backlog ordinato
 
@@ -25,12 +25,13 @@
 
 ## Domande aperte
 
-- ❓ Modalità di esecuzione del piano P0.
+- Nessuna domanda di prodotto aperta. La modalità di esecuzione è un dettaglio tecnico reversibile e viene gestita dall'agente.
 
 ## Done log — ultimo in cima
 
 | Commit | Cosa |
 |---|---|
+| `abfa683` | Milestone della pianificazione di implementazione registrata |
 | `66d5406` | Roadmap master e piano eseguibile P0 completati |
 | `7cf58e1` | Specifica approvata e planimetrie/schemi elettrici registrati nella visione futura |
 | `0bb4ef8` | Design concettuale completato, verificato end-to-end e formalizzato |
