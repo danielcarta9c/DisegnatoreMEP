@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import Field, model_validator
 
 from disegnatore_mep.model.base import ID_PATTERN, StrictModel
@@ -28,12 +30,19 @@ class PortDefinition(StrictModel):
     flow: PortFlow
     x_mm: float
     y_mm: float
-    angle_deg: int
+    angle_deg: Literal[0, 90, 180, 270]
     required: bool = True
     max_connections: int = Field(default=1, ge=1)
 
 
 class ComponentDefinition(StrictModel):
+    """Versioned catalog entry describing a component and its ports.
+
+    Catalog identifiers are a separate namespace from the project-wide
+    identifiers carried by `IdentifiedModel`, so this model declares its
+    own `id` rather than inheriting that base.
+    """
+
     id: str = Field(pattern=ID_PATTERN)
     version: str = Field(pattern=r"^\d+\.\d+\.\d+$")
     name: str = Field(min_length=1)

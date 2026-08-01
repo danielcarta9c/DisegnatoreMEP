@@ -19,12 +19,16 @@ class ComponentRegistry:
 
     @classmethod
     def from_directory(cls, directory: Path) -> "ComponentRegistry":
+        if not directory.is_dir():
+            raise CatalogError(f"catalog directory not found: {directory}")
         definitions: list[ComponentDefinition] = []
         for path in sorted(directory.glob("*.json")):
             try:
                 definitions.append(ComponentDefinition.model_validate_json(path.read_text("utf-8")))
             except (OSError, ValidationError, ValueError) as exc:
                 raise CatalogError(f"invalid catalog file {path}: {exc}") from exc
+        # Duplicate detection stays outside the loop: CatalogError subclasses
+        # ValueError, so raising it inside would be re-wrapped by the except above.
         return cls(definitions)
 
     def get(self, definition_id: str) -> ComponentDefinition:
