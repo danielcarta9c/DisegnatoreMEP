@@ -29,7 +29,13 @@ def _normalize(value: Any, key: str | None = None) -> Any:
 def canonical_json(project: ProjectModel) -> str:
     payload = project.model_dump(mode="json")
     normalized = _normalize(payload)
-    return json.dumps(normalized, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
+    return json.dumps(
+        normalized,
+        ensure_ascii=False,
+        separators=(",", ":"),
+        sort_keys=True,
+        allow_nan=False,
+    )
 
 
 def project_fingerprint(project: ProjectModel) -> str:

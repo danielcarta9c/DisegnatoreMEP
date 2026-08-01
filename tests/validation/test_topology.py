@@ -243,6 +243,12 @@ def test_unknown_network_still_surfaces_endpoint_faults() -> None:
 
 
 def test_duplicate_connection_names_both_ids_and_is_order_invariant() -> None:
+    # D8 regression: the message must name the TRUE first-declared connection
+    # as the original, not the lexicographically-first id. `entity_ids` (and
+    # the issue code) must still be order-invariant so the pair can be located
+    # regardless of which connection was declared first; the message content
+    # legitimately differs between forward and backward declaration order,
+    # because which connection is genuinely first differs too.
     catalog = ComponentRegistry(
         [
             component_definition("source-def", PortFlow.OUT),
@@ -257,14 +263,20 @@ def test_duplicate_connection_names_both_ids_and_is_order_invariant() -> None:
     report_forward = validate_project(forward, catalog)
     report_backward = validate_project(backward, catalog)
 
-    assert report_forward == report_backward
+    forward_issues = [issue for issue in report_forward.issues if issue.code == "DUPLICATE_CONNECTION"]
+    backward_issues = [issue for issue in report_backward.issues if issue.code == "DUPLICATE_CONNECTION"]
+    assert len(forward_issues) == 1
+    assert len(backward_issues) == 1
 
-    duplicate_issues = [issue for issue in report_forward.issues if issue.code == "DUPLICATE_CONNECTION"]
-    assert len(duplicate_issues) == 1
-    message = duplicate_issues[0].message
-    assert "pipe-1" in message
-    assert "pipe-2" in message
-    assert duplicate_issues[0].entity_ids == sorted(["pipe-1", "pipe-2"])
+    # Order-invariant: same code, same sorted entity_ids pair either way.
+    assert forward_issues[0].code == "DUPLICATE_CONNECTION"
+    assert backward_issues[0].code == "DUPLICATE_CONNECTION"
+    assert forward_issues[0].entity_ids == sorted(["pipe-1", "pipe-2"])
+    assert backward_issues[0].entity_ids == sorted(["pipe-1", "pipe-2"])
+
+    # Order-dependent (correctly): the message names the true original.
+    assert forward_issues[0].message == "connection pipe-2 duplicates pipe-1 on network heating"
+    assert backward_issues[0].message == "connection pipe-1 duplicates pipe-2 on network heating"
 
 
 def test_port_connection_limit_is_blocking() -> None:
@@ -341,5 +353,126 @@ def test_unknown_component_message_includes_id() -> None:
     report = validate_project(broken, catalog)
     unknown_component_issues = [issue for issue in report.issues if issue.code == "UNKNOWN_COMPONENT"]
     assert len(unknown_component_issues) == 1
-    assert unknown_component_issues[0].message == "unknown component missing-component"
-    assert unknown_component_issues[0].entity_ids == ["missing-component"]
+    # D3 regression: the connection id is now prefixed onto both the message
+    # and entity_ids so that faults on distinct connections referencing the
+    # same missing entity no longer collapse into a single unlocatable issue.
+    assert unknown_component_issues[0].message == "connection pipe-1: unknown component missing-component"
+    assert unknown_component_issues[0].entity_ids == ["pipe-1", "missing-component"]
+
+
+def test_self_loop_connection_is_blocking() -> None:
+    # D1 regression: a connection joining a component to itself forms no
+    # circuit at all and previously validated clean end-to-end (domain,
+    # medium, flow, required-port and max-connections checks all passed).
+    definition = component_definition("boiler-def", PortFlow.BIDIRECTIONAL)
+    boiler_def = definition.model_copy(
+        update={
+            "ports": [
+                PortDefinition(
+                    id="supply",
+                    domain=Domain.HYDRONIC,
+                    medium="heating_water",
+                    flow=PortFlow.OUT,
+                    x_mm=0,
+                    y_mm=0,
+                    angle_deg=0,
+                ),
+                PortDefinition(
+                    id="return",
+                    domain=Domain.HYDRONIC,
+                    medium="heating_water",
+                    flow=PortFlow.IN,
+                    x_mm=10,
+                    y_mm=0,
+                    angle_deg=0,
+                ),
+            ]
+        }
+    )
+    catalog = ComponentRegistry(
+        [
+            component_definition("source-def", PortFlow.OUT),
+            component_definition("sink-def", PortFlow.IN),
+            boiler_def,
+        ]
+    )
+    self_looped = ProjectModel(
+        metadata=ProjectMetadata(
+            project_id="demo",
+            client="Nove C",
+            project_name="Demo",
+            commission_code="MI-001",
+            revision="00",
+            issue_date=date(2026, 8, 1),
+        ),
+        networks=[
+            NetworkModel(
+                id="heating",
+                name="Riscaldamento",
+                domain=Domain.HYDRONIC,
+                medium="heating_water",
+            )
+        ],
+        components=[
+            ComponentInstance(id="boiler", definition_id="boiler-def"),
+        ],
+        connections=[
+            ConnectionModel(
+                id="loop-1",
+                network_id="heating",
+                endpoint_a=PortRef(component_id="boiler", port_id="supply"),
+                endpoint_b=PortRef(component_id="boiler", port_id="return"),
+            )
+        ],
+    )
+    report = validate_project(self_looped, catalog)
+    self_loop_issues = [issue for issue in report.issues if issue.code == "SELF_LOOP_CONNECTION"]
+    assert len(self_loop_issues) == 1
+    assert self_loop_issues[0].message == "connection loop-1 joins component boiler to itself"
+    assert self_loop_issues[0].entity_ids == ["loop-1", "boiler"]
+    assert report.ok is False
+
+
+def test_normal_two_component_connection_has_no_self_loop_issue() -> None:
+    catalog = ComponentRegistry(
+        [
+            component_definition("source-def", PortFlow.OUT),
+            component_definition("sink-def", PortFlow.IN),
+        ]
+    )
+    report = validate_project(project(), catalog)
+    assert "SELF_LOOP_CONNECTION" not in {issue.code for issue in report.issues}
+
+
+def test_unknown_component_faults_on_distinct_connections_are_not_deduplicated() -> None:
+    # D3 regression: four distinct connections all referencing the same
+    # missing component must produce four separate UNKNOWN_COMPONENT issues,
+    # each naming its own connection, instead of collapsing into one.
+    catalog = ComponentRegistry(
+        [
+            component_definition("source-def", PortFlow.OUT),
+            component_definition("sink-def", PortFlow.IN),
+        ]
+    )
+    broken = project().model_copy(
+        update={
+            "connections": [
+                ConnectionModel(
+                    id=f"pipe-{index}",
+                    network_id="heating",
+                    endpoint_a=PortRef(component_id="missing-component", port_id="port"),
+                    endpoint_b=PortRef(component_id="sink", port_id="port"),
+                )
+                for index in range(1, 5)
+            ]
+        }
+    )
+    report = validate_project(broken, catalog)
+    unknown_component_issues = [issue for issue in report.issues if issue.code == "UNKNOWN_COMPONENT"]
+    assert len(unknown_component_issues) == 4
+    connection_ids = {issue.entity_ids[0] for issue in unknown_component_issues}
+    assert connection_ids == {"pipe-1", "pipe-2", "pipe-3", "pipe-4"}
+    for issue in unknown_component_issues:
+        connection_id = issue.entity_ids[0]
+        assert issue.message == f"connection {connection_id}: unknown component missing-component"
+        assert issue.entity_ids == [connection_id, "missing-component"]

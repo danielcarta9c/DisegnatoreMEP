@@ -1,5 +1,7 @@
 from enum import StrEnum
 
+from disegnatore_mep.model.base import FiniteFloat
+
 
 class Domain(StrEnum):
     HYDRONIC = "hydronic"
@@ -34,4 +36,4 @@ class IntegrationCategory(StrEnum):
     CONDITIONAL = "conditional"
 
 
-JsonPrimitive = str | int | float | bool | None
+JsonPrimitive = str | int | FiniteFloat | bool | None

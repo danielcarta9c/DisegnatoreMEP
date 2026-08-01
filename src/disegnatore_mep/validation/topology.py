@@ -22,11 +22,16 @@ def _resolve_port(
     ref: PortRef,
     components: dict[str, ComponentInstance],
     catalog: ComponentRegistry,
+    connection_id: str,
 ) -> tuple[PortDefinition | None, list[ValidationIssue]]:
     component = components.get(ref.component_id)
     if component is None:
         return None, [
-            _issue("UNKNOWN_COMPONENT", f"unknown component {ref.component_id}", [ref.component_id])
+            _issue(
+                "UNKNOWN_COMPONENT",
+                f"connection {connection_id}: unknown component {ref.component_id}",
+                [connection_id, ref.component_id],
+            )
         ]
     try:
         definition = catalog.get(component.definition_id)
@@ -34,8 +39,8 @@ def _resolve_port(
         return None, [
             _issue(
                 "UNKNOWN_COMPONENT_DEFINITION",
-                f"unknown definition {component.definition_id}",
-                [component.id, component.definition_id],
+                f"connection {connection_id}: unknown definition {component.definition_id}",
+                [connection_id, component.id, component.definition_id],
             )
         ]
     port = next((item for item in definition.ports if item.id == ref.port_id), None)
@@ -43,8 +48,8 @@ def _resolve_port(
         return None, [
             _issue(
                 "UNKNOWN_PORT",
-                f"unknown port {ref.port_id}",
-                [component.id, ref.port_id],
+                f"connection {connection_id}: unknown port {ref.port_id}",
+                [connection_id, component.id, ref.port_id],
             )
         ]
     return port, []
@@ -105,6 +110,16 @@ def validate_project(
                 )
 
     for connection in project.connections:
+        if connection.endpoint_a.component_id == connection.endpoint_b.component_id:
+            issues.append(
+                _issue(
+                    "SELF_LOOP_CONNECTION",
+                    f"connection {connection.id} joins component "
+                    f"{connection.endpoint_a.component_id} to itself",
+                    [connection.id, connection.endpoint_a.component_id],
+                )
+            )
+
         endpoint_a = (connection.endpoint_a.component_id, connection.endpoint_a.port_id)
         endpoint_b = (connection.endpoint_b.component_id, connection.endpoint_b.port_id)
         first_endpoint, second_endpoint = sorted((endpoint_a, endpoint_b))
@@ -117,17 +132,20 @@ def validate_project(
         if first_id is None:
             seen_edges[edge_key] = connection.id
         else:
+            # `entity_ids` stays sorted so the report is order-invariant, but the
+            # message names the true first-declared connection as the original
+            # and the current (later-declared) connection as the duplicate.
             pair = sorted([connection.id, first_id])
             issues.append(
                 _issue(
                     "DUPLICATE_CONNECTION",
-                    f"connection {pair[1]} duplicates {pair[0]} on network {connection.network_id}",
+                    f"connection {connection.id} duplicates {first_id} on network {connection.network_id}",
                     pair,
                 )
             )
 
-        port_a, errors_a = _resolve_port(connection.endpoint_a, components, catalog)
-        port_b, errors_b = _resolve_port(connection.endpoint_b, components, catalog)
+        port_a, errors_a = _resolve_port(connection.endpoint_a, components, catalog, connection.id)
+        port_b, errors_b = _resolve_port(connection.endpoint_b, components, catalog, connection.id)
         issues.extend(errors_a)
         issues.extend(errors_b)
 
