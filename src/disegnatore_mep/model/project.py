@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from datetime import date
 from typing import Literal
 
@@ -12,6 +13,12 @@ from .types import (
 )
 
 ID_PATTERN = r"^[a-z][a-z0-9_-]*$"
+
+
+class IdentifiedModel(StrictModel):
+    """Base for entities carrying a stable project-wide identifier."""
+
+    id: str = Field(pattern=ID_PATTERN)
 
 
 class ProjectMetadata(StrictModel):
@@ -29,16 +36,14 @@ class EvidenceRef(StrictModel):
     note: str | None = None
 
 
-class NetworkModel(StrictModel):
-    id: str = Field(pattern=ID_PATTERN)
+class NetworkModel(IdentifiedModel):
     name: str = Field(min_length=1)
     domain: Domain
     medium: str = Field(pattern=ID_PATTERN)
     evidence: list[EvidenceRef] = Field(default_factory=list)
 
 
-class ComponentInstance(StrictModel):
-    id: str = Field(pattern=ID_PATTERN)
+class ComponentInstance(IdentifiedModel):
     definition_id: str = Field(pattern=ID_PATTERN)
     tag: str | None = None
     properties: dict[str, JsonPrimitive] = Field(default_factory=dict)
@@ -50,8 +55,7 @@ class PortRef(StrictModel):
     port_id: str = Field(pattern=ID_PATTERN)
 
 
-class ConnectionModel(StrictModel):
-    id: str = Field(pattern=ID_PATTERN)
+class ConnectionModel(IdentifiedModel):
     network_id: str = Field(pattern=ID_PATTERN)
     endpoint_a: PortRef
     endpoint_b: PortRef
@@ -65,15 +69,13 @@ class ConnectionModel(StrictModel):
         return self
 
 
-class AssumptionModel(StrictModel):
-    id: str = Field(pattern=ID_PATTERN)
+class AssumptionModel(IdentifiedModel):
     text: str = Field(min_length=1)
     status: ApprovalStatus = ApprovalStatus.PROPOSED
     source_message_refs: list[str] = Field(default_factory=list)
 
 
-class RuleApplicationModel(StrictModel):
-    id: str = Field(pattern=ID_PATTERN)
+class RuleApplicationModel(IdentifiedModel):
     rule_id: str = Field(pattern=ID_PATTERN)
     rule_version: str = Field(pattern=r"^\d+\.\d+\.\d+$")
     category: IntegrationCategory
@@ -81,15 +83,13 @@ class RuleApplicationModel(StrictModel):
     entity_ids: list[str] = Field(default_factory=list)
 
 
-class SubsystemModel(StrictModel):
-    id: str = Field(pattern=ID_PATTERN)
+class SubsystemModel(IdentifiedModel):
     name: str = Field(min_length=1)
     component_ids: list[str] = Field(default_factory=list)
     network_ids: list[str] = Field(default_factory=list)
 
 
-class SheetIntentModel(StrictModel):
-    id: str = Field(pattern=ID_PATTERN)
+class SheetIntentModel(IdentifiedModel):
     title: str = Field(min_length=1)
     subsystem_ids: list[str] = Field(default_factory=list)
 
@@ -107,7 +107,7 @@ class ProjectModel(StrictModel):
 
     @model_validator(mode="after")
     def identifiers_must_be_unique(self) -> "ProjectModel":
-        collections = {
+        collections: dict[str, Sequence[IdentifiedModel]] = {
             "subsystem": self.subsystems,
             "network": self.networks,
             "component": self.components,
