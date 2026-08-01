@@ -1,0 +1,61 @@
+{
+  "id": "gas-boiler",
+  "version": "1.0.0",
+  "name": "Caldaia gas",
+  "functions": [
+    "heat_generation",
+    "gas_combustion"
+  ],
+  "symbol_id": "gas-boiler",
+  "composite": true,
+  "geometry": {
+    "width_mm": 12.0,
+    "height_mm": 10.0,
+    "clearance_mm": 2.0,
+    "allowed_rotations_deg": [
+      0,
+      90,
+      180,
+      270
+    ],
+    "inline_gap_mm": null
+  },
+  "ports": [
+    {
+      "id": "gas_in",
+      "domain": "gas",
+      "medium": "natural_gas",
+      "flow": "in",
+      "x_mm": 0,
+      "y_mm": 2,
+      "angle_deg": 0,
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "water_return",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "x_mm": 0,
+      "y_mm": 8,
+      "angle_deg": 0,
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "water_supply",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "x_mm": 12,
+      "y_mm": 8,
+      "angle_deg": 0,
+      "required": true,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

@@ -1,0 +1,501 @@
+{
+  "$defs": {
+    "ApprovalStatus": {
+      "enum": [
+        "proposed",
+        "approved",
+        "rejected"
+      ],
+      "title": "ApprovalStatus",
+      "type": "string"
+    },
+    "AssumptionModel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ApprovalStatus",
+          "default": "proposed"
+        },
+        "source_message_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Message Refs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "text"
+      ],
+      "title": "AssumptionModel",
+      "type": "object"
+    },
+    "ComponentInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "definition_id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Definition Id",
+          "type": "string"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tag"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Properties"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "definition_id"
+      ],
+      "title": "ComponentInstance",
+      "type": "object"
+    },
+    "ConnectionModel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "network_id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Network Id",
+          "type": "string"
+        },
+        "endpoint_a": {
+          "$ref": "#/$defs/PortRef"
+        },
+        "endpoint_b": {
+          "$ref": "#/$defs/PortRef"
+        },
+        "properties": {
+          "type": "object",
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Properties"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "network_id",
+        "endpoint_a",
+        "endpoint_b"
+      ],
+      "title": "ConnectionModel",
+      "type": "object"
+    },
+    "Domain": {
+      "enum": [
+        "hydronic",
+        "aeraulic",
+        "refrigerant",
+        "gas",
+        "condensate",
+        "control"
+      ],
+      "title": "Domain",
+      "type": "string"
+    },
+    "EvidenceRef": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "conversation",
+            "attachment",
+            "engineer",
+            "rule"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reference": {
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "kind",
+        "reference"
+      ],
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "IntegrationCategory": {
+      "enum": [
+        "necessary",
+        "recommended",
+        "conditional"
+      ],
+      "title": "IntegrationCategory",
+      "type": "string"
+    },
+    "NetworkModel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "domain": {
+          "$ref": "#/$defs/Domain"
+        },
+        "medium": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Medium",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "domain",
+        "medium"
+      ],
+      "title": "NetworkModel",
+      "type": "object"
+    },
+    "PortRef": {
+      "additionalProperties": false,
+      "properties": {
+        "component_id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Component Id",
+          "type": "string"
+        },
+        "port_id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Port Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "component_id",
+        "port_id"
+      ],
+      "title": "PortRef",
+      "type": "object"
+    },
+    "ProjectMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "project_id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Project Id",
+          "type": "string"
+        },
+        "client": {
+          "minLength": 1,
+          "title": "Client",
+          "type": "string"
+        },
+        "project_name": {
+          "minLength": 1,
+          "title": "Project Name",
+          "type": "string"
+        },
+        "commission_code": {
+          "minLength": 1,
+          "title": "Commission Code",
+          "type": "string"
+        },
+        "revision": {
+          "minLength": 1,
+          "title": "Revision",
+          "type": "string"
+        },
+        "issue_date": {
+          "format": "date",
+          "title": "Issue Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "client",
+        "project_name",
+        "commission_code",
+        "revision",
+        "issue_date"
+      ],
+      "title": "ProjectMetadata",
+      "type": "object"
+    },
+    "RuleApplicationModel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "rule_id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "rule_version": {
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "title": "Rule Version",
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/$defs/IntegrationCategory"
+        },
+        "status": {
+          "$ref": "#/$defs/ApprovalStatus",
+          "default": "proposed"
+        },
+        "entity_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Entity Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "rule_id",
+        "rule_version",
+        "category"
+      ],
+      "title": "RuleApplicationModel",
+      "type": "object"
+    },
+    "SheetIntentModel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "subsystem_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Subsystem Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "title"
+      ],
+      "title": "SheetIntentModel",
+      "type": "object"
+    },
+    "SubsystemModel": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "component_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Component Ids",
+          "type": "array"
+        },
+        "network_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Network Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "title": "SubsystemModel",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "metadata": {
+      "$ref": "#/$defs/ProjectMetadata"
+    },
+    "subsystems": {
+      "items": {
+        "$ref": "#/$defs/SubsystemModel"
+      },
+      "title": "Subsystems",
+      "type": "array"
+    },
+    "networks": {
+      "items": {
+        "$ref": "#/$defs/NetworkModel"
+      },
+      "title": "Networks",
+      "type": "array"
+    },
+    "components": {
+      "items": {
+        "$ref": "#/$defs/ComponentInstance"
+      },
+      "title": "Components",
+      "type": "array"
+    },
+    "connections": {
+      "items": {
+        "$ref": "#/$defs/ConnectionModel"
+      },
+      "title": "Connections",
+      "type": "array"
+    },
+    "assumptions": {
+      "items": {
+        "$ref": "#/$defs/AssumptionModel"
+      },
+      "title": "Assumptions",
+      "type": "array"
+    },
+    "rule_applications": {
+      "items": {
+        "$ref": "#/$defs/RuleApplicationModel"
+      },
+      "title": "Rule Applications",
+      "type": "array"
+    },
+    "sheets": {
+      "items": {
+        "$ref": "#/$defs/SheetIntentModel"
+      },
+      "title": "Sheets",
+      "type": "array"
+    }
+  },
+  "required": [
+    "metadata"
+  ],
+  "title": "ProjectModel",
+  "type": "object"
+}

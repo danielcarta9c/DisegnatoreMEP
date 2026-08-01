@@ -48,3 +48,10 @@ def test_fingerprint_ignores_collection_order() -> None:
     second = project(["b", "a"])
     assert canonical_json(first) == canonical_json(second)
     assert project_fingerprint(first) == project_fingerprint(second)
+
+
+def test_fingerprint_discriminates_different_content() -> None:
+    first = project(["a", "b"])
+    second = project(["a", "b", "c"])
+    assert canonical_json(first) != canonical_json(second)
+    assert project_fingerprint(first) != project_fingerprint(second)
