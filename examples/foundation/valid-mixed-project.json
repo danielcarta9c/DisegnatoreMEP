@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0.0",
+  "metadata": {
+    "project_id": "foundation-mixed",
+    "client": "Nove C",
+    "project_name": "Foundation mixed-domain fixture",
+    "commission_code": "DEV-001",
+    "revision": "00",
+    "issue_date": "2026-08-01"
+  },
+  "networks": [
+    {
+      "id": "gas",
+      "name": "Gas",
+      "domain": "gas",
+      "medium": "natural_gas"
+    },
+    {
+      "id": "heating",
+      "name": "Riscaldamento",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "supply-air",
+      "name": "Aria mandata",
+      "domain": "aeraulic",
+      "medium": "supply_air"
+    },
+    {
+      "id": "vrv-liquid",
+      "name": "VRV liquido",
+      "domain": "refrigerant",
+      "medium": "refrigerant_liquid"
+    },
+    {
+      "id": "vrv-gas",
+      "name": "VRV gas",
+      "domain": "refrigerant",
+      "medium": "refrigerant_gas"
+    }
+  ],
+  "components": [
+    {
+      "id": "gas-source",
+      "definition_id": "boundary-gas-source",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "boiler",
+      "definition_id": "gas-boiler",
+      "tag": "CAL-01",
+      "properties": {}
+    },
+    {
+      "id": "return-boundary",
+      "definition_id": "boundary-hydronic-return",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "supply-boundary",
+      "definition_id": "boundary-hydronic-supply",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "fan",
+      "definition_id": "supply-fan",
+      "tag": "VEN-01",
+      "properties": {}
+    },
+    {
+      "id": "terminal",
+      "definition_id": "air-terminal",
+      "tag": "TER-01",
+      "properties": {}
+    },
+    {
+      "id": "vrv-outdoor",
+      "definition_id": "vrv-outdoor",
+      "tag": "UE-01",
+      "properties": {}
+    },
+    {
+      "id": "vrv-indoor",
+      "definition_id": "vrv-indoor",
+      "tag": "UI-01",
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "gas-1",
+      "network_id": "gas",
+      "endpoint_a": {
+        "component_id": "gas-source",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "boiler",
+        "port_id": "gas_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "heat-return",
+      "network_id": "heating",
+      "endpoint_a": {
+        "component_id": "return-boundary",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "boiler",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "heat-supply",
+      "network_id": "heating",
+      "endpoint_a": {
+        "component_id": "boiler",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "supply-boundary",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "air-1",
+      "network_id": "supply-air",
+      "endpoint_a": {
+        "component_id": "fan",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "terminal",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "vrv-liquid-1",
+      "network_id": "vrv-liquid",
+      "endpoint_a": {
+        "component_id": "vrv-outdoor",
+        "port_id": "liquid_out"
+      },
+      "endpoint_b": {
+        "component_id": "vrv-indoor",
+        "port_id": "liquid_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "vrv-gas-1",
+      "network_id": "vrv-gas",
+      "endpoint_a": {
+        "component_id": "vrv-indoor",
+        "port_id": "gas_out"
+      },
+      "endpoint_b": {
+        "component_id": "vrv-outdoor",
+        "port_id": "gas_in"
+      },
+      "properties": {}
+    }
+  ],
+  "assumptions": [],
+  "rule_applications": [],
+  "sheets": []
+}

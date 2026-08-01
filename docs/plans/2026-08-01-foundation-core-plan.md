@@ -2109,3 +2109,55 @@ git commit -m "test: qualify multi-domain foundation"
 - [ ] Il fingerprint è stabile rispetto all'ordine delle collezioni.
 - [ ] `pytest`, Ruff e mypy hanno exit code `0`.
 - [ ] `git status --short` è vuoto dopo l'ultimo commit.
+
+---
+
+## Appendice — deviazioni approvate durante l'esecuzione
+
+**Stato:** piano eseguito e completato il 1 agosto 2026. Gate G0 superato.
+
+Questo piano è stato scritto senza eseguire il codice. In esecuzione sono emersi difetti reali nel codice letterale qui riportato: **il testo dei task sopra non è stato riscritto**, quindi chi lo rileggesse alla lettera reintrodurrebbe gli stessi difetti. Questa appendice è la fonte autorevole sulle differenze fra il piano e il codice consegnato.
+
+### Difetti del piano corretti in esecuzione
+
+| # | Task | Il piano diceva | Perché non funzionava | Cosa è stato fatto |
+|---|---|---|---|---|
+| 1 | 1 | `[tool.mypy] packages = ["disegnatore_mep"]` | `mypy` senza argomenti usciva `2` per marcatore PEP 561 mancante; invisibile perché ogni comando del piano passa path espliciti | Aggiunto `src/disegnatore_mep/py.typed` e `[tool.setuptools.package-data]` |
+| 2 | 1 | `addopts = "-ra --strict-markers"` | Con l'import mode predefinito i file di test sono importati per nome base, quindi una futura collisione fra sottocartelle romperebbe la suite | Aggiunto `--import-mode=importlib` |
+| 3 | 2 | Validatore `identifiers_must_be_unique` con dict non annotato di sette liste di tipi diversi | mypy allarga il tipo del valore a `object`, l'iterazione non passa `--strict` | Introdotta la base `IdentifiedModel` e annotato `dict[str, Sequence[IdentifiedModel]]` |
+| 4 | 2 | `ID_PATTERN` in `model/project.py` | Il catalogo avrebbe importato un modulo di entità di progetto solo per una regex | `ID_PATTERN` e `IdentifiedModel` spostati in `model/base.py` |
+| 5 | 2 | Test che passa `unsupported="value"` | Il plugin mypy di Pydantic rifiuta staticamente ciò che il test verifica a runtime; il piano esige `mypy src tests` dal Task 7 | Aggiunto un `# type: ignore[call-arg]` stretto sull'argomento |
+| 6 | 4 | `DomainPack.domain` come attributo mutabile | Il frozen dataclass `BasicDomainPack` non soddisfa il protocollo sotto `--strict` | `domain` dichiarato `@property` di sola lettura; `DomainRegistry` accetta `Sequence` |
+| 7 | 5 | `validation/__init__.py` riesporta `validate_project` | **Import circolare reale**: `topology` importa `domains`, che importa `validation.issues`, che riattiva l'`__init__` in inizializzazione. Si manifesta solo sulla suite completa, per ordine di collection | L'`__init__` esporta solo `ValidationIssue` e `ValidationReport`; i consumatori usano il path profondo |
+| 8 | 5 | `edge_key = (network_id, *sorted((a, b)))` | Lo splat di `sorted()` perde il tipo tuple preciso e rompe `--strict` | Unpacking esplicito in due variabili |
+| 9 | 8 | `Path("examples/foundation")` nei test di accettazione | Il gate dipendeva dalla directory di lancio: passava dalla radice, falliva altrove | Percorso ancorato a `__file__` |
+
+### Irrigidimenti decisi in esecuzione
+
+Non erano difetti del piano, ma lacune di robustezza emerse dalle revisioni.
+
+- `ComponentRegistry.from_directory` rifiuta una directory inesistente invece di restituire un catalogo vuoto, che avrebbe fatto apparire ogni componente come definizione ignota.
+- `PortDefinition.angle_deg` vincolato a `Literal[0, 90, 180, 270]`, coerente con l'instradamento ortogonale imposto dall'ADR 0003.
+- Le diagnostiche dei domain pack ricevono l'id della connessione in testa a `entity_ids`: gli id di porta si ripetono fra componenti, quindi guasti indipendenti venivano collassati dalla deduplica. Stesso trattamento poi esteso ai tre codici di risoluzione porta.
+- Uso delle porte contato per estremo risolto, ed estremi risolti **prima** della ricerca della rete, cosi' un riferimento sbagliato non segnala piu' come scollegati i vicini validi.
+- `DUPLICATE_CONNECTION` nomina entrambe le connessioni, con `entity_ids` ordinati per invarianza e messaggio costruito dalla connessione dichiarata per prima.
+- Rifiutati i valori numerici non finiti, e `json.dumps` chiamato con `allow_nan=False`: la forma canonica emetteva altrimenti testo non-JSON e il fingerprint cambiava attraverso il salva-ricarica della libreria stessa.
+- Aggiunto `SELF_LOOP_CONNECTION`: una connessione che unisce un componente a sé stesso non forma alcun circuito e prima validava pulita.
+
+### Vincoli da non violare
+
+Chi modificherà questo codice deve sapere che queste **non** sono sviste:
+
+1. **Le porte possono stare ovunque dentro il riquadro del simbolo, non solo sul perimetro.** Il Task 5 definisce una porta al centro di un simbolo 10×10. Irrigidire il vincolo romperebbe dati di prova approvati.
+2. **`validation/__init__.py` resta minimale.** Riaggiungere l'esportazione di `validate_project` ricrea l'import circolare.
+3. **`BasicDomainPack` resta `frozen`.** Il protocollo è stato reso di sola lettura proprio per permetterlo.
+4. **`network_id` resta dentro la chiave di duplicazione.** Due connessioni fra le stesse porte su reti diverse sono legittimamente distinte.
+5. **La precedenza dei rami in `validate_pair`** (dominio, poi fluido, poi verso) è garantita da test: riordinarla cambia quale anomalia emerge.
+
+### Metodo di verifica
+
+Eseguire sempre **la suite completa** e `mypy src tests`, mai il solo file di test del task in corso. L'import circolare del punto 7 passava indenne sul file del proprio task e falliva solo sulla suite intera.
+
+### Esito
+
+45 file, 3089 righe, 17 commit, 59 test. `pytest`, `ruff` e `mypy --strict` a `0`. Progetto misto idronico-aeraulico-refrigerante-gas validato senza codice specifico per schema. Ciò che le revisioni hanno trovato e **non** è stato risolto qui è in `docs/P0_REVIEW_FINDINGS.md`.
