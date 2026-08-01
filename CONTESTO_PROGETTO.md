@@ -1,6 +1,6 @@
 # Disegnatore MEP — contesto iniziale del progetto
 
-Data di avvio: 1 agosto 2026  
+Data di avvio: 1 agosto 2026
 Stato: fase di progettazione concettuale, nessuna implementazione ancora avviata.
 
 ## Obiettivo
@@ -218,4 +218,3 @@ Una prima distinzione utile sarà tra:
 ## Prompt suggerito per riprendere in un nuovo progetto
 
 > Stiamo progettando una skill denominata provvisoriamente “Disegnatore MEP”. Leggi integralmente `CONTESTO_PROGETTO.md` presente nella cartella del progetto e riprendi dal punto indicato, senza iniziare ancora l'implementazione. Conduci il brainstorming con una domanda alla volta. L'obiettivo iniziale è generare schemi unifilari termotecnici SVG/PDF professionali per impianti domestici aria-acqua già progettati e dimensionati dall'ingegnere, usando un motore di regole e un layout deterministico.
-
