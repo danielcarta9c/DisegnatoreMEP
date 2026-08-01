@@ -4,7 +4,7 @@ Progetto per una skill capace di trasformare la configurazione di un impianto te
 
 La skill analizzerà la configurazione, proporrà gli accessori necessari o raccomandati, raccoglierà l'approvazione dell'ingegnere e produrrà elaborati vettoriali SVG/PDF mediante regole tecniche e layout deterministici.
 
-**Stato:** design concettuale completato, verificato end-to-end e approvato dal PM. Pianificazione dell'implementazione in avvio; nessuna implementazione ancora iniziata.
+**Stato:** design approvato e piano di implementazione P0 pronto. Nessuna implementazione ancora iniziata.
 
 ## Orientamento rapido
 
@@ -14,6 +14,7 @@ La skill analizzerà la configurazione, proporrà gli accessori necessari o racc
 4. Consultare `docs/DECISION_LOG.md` per le decisioni approvate.
 5. Consultare `docs/ROADMAP.md` per le fasi previste.
 6. Leggere `docs/specs/2026-08-01-disegnatore-mep-design.md` per il design consolidato.
+7. Leggere `docs/plans/2026-08-01-master-implementation-roadmap.md` e il piano P0 prima di implementare.
 
 ## Cartelle principali
 

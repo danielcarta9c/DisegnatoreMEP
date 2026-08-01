@@ -7,7 +7,8 @@
 3. `PROJECT_STATE.md`
 4. `docs/DECISION_LOG.md`
 5. `docs/specs/2026-08-01-disegnatore-mep-design.md`
-6. specifiche e ADR pertinenti al lavoro richiesto
+6. piano di implementazione pertinente in `docs/plans/`
+7. specifiche e ADR pertinenti al lavoro richiesto
 
 Prima di fare domande, verificare chat, documenti e decisioni già registrate. Chiedere soltanto ciò che resta realmente ambiguo.
 

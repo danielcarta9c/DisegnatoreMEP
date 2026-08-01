@@ -9,7 +9,8 @@ La roadmap definisce l'ordine delle fasi. Le attività operative immediate vivon
 - [x] Completare il brainstorming e approvare il design concettuale.
 - [x] Eseguire la revisione end-to-end CAD e software.
 - [x] Far approvare al PM la specifica scritta.
-- [ ] Trasformare il design in un piano di implementazione verificabile.
+- [x] Trasformare il design in una roadmap master e nel piano eseguibile P0.
+- [ ] Eseguire il piano P0 della fondazione canonica.
 
 ## Fase 1 — Conoscenza tecnica e perimetro
 

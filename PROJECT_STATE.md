@@ -12,21 +12,20 @@
 
 ## Now — in corso
 
-- [ ] Preparare il piano di implementazione a partire dalla specifica approvata.
+- [ ] ❓ Scegliere la modalità di esecuzione del piano P0: subagent-driven oppure inline.
 
 ## Next — backlog ordinato
 
-1. Preparare e far approvare il piano di implementazione.
-2. Costruire e validare il registro delle fonti tecniche e normative.
-3. Implementare nucleo topologico, contratti dei domini e validatori di base.
-4. Costruire la libreria ampia dei simboli e il sistema grafico A3.
-5. Implementare layout, rendering SVG/PDF e controlli geometrici.
-6. Costruire la matrice di casi, regressioni e prove di stampa.
-7. Generare la prima release installabile.
+1. Eseguire P0: fondazione canonica e validatore multi-dominio.
+2. Scrivere ed eseguire P1 e P2: regole/fonti e sistema grafico A3.
+3. Implementare i pacchetti di dominio P3A-P3D.
+4. Implementare layout, rendering SVG/PDF e controlli geometrici P4-P5.
+5. Integrare la skill conversazionale P6.
+6. Costruire la matrice di qualificazione e la prima release P7.
 
 ## Domande aperte
 
-- Nessuna domanda di design aperta. Il piano di implementazione sarà il prossimo gate di approvazione.
+- ❓ Modalità di esecuzione del piano P0.
 
 ## Done log — ultimo in cima
 
