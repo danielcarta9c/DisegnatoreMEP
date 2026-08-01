@@ -57,7 +57,7 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 - **Codice:** 45 file, 3089 righe, 17 commit. `src/disegnatore_mep/` con `model`, `catalog`, `domains`, `validation`, `io` e `cli`.
 - **Verifica:** 59 test verdi; `pytest`, `ruff` e `mypy --strict` tutti a exit `0` su `src`, `tests` e `examples/foundation/build_fixtures.py`.
 - **Ambiente:** `.venv` con Python **3.12.13** preso dal runtime Codex (`C:\Users\DanielCarta\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe`). Scelta deliberata: Claude e Codex condividono la stessa `.venv` e la stessa toolchain, quindi le sessioni sono intercambiabili senza rifare setup. L'unico altro Python sulla macchina è 3.14.4 e **non** va usato.
-- **Ramo:** il lavoro P0 vive su `feat/p0-foundation-core`. Verificare con `git branch --show-current` su quale ramo si riparte.
+- **Ramo:** P0 è stata sviluppata su `feat/p0-foundation-core` e integrata in `main` con un merge esplicito. Si riparte da `main`. Il ramo di lavoro è conservato per poter rileggere la sequenza dei commit.
 - **In flight:** nessuna modifica applicativa a metà.
 - **Blocco:** nessun blocco tecnico. Il progetto è però in attesa di due decisioni di prodotto, elencate al §6.
 - **Check rapido alla ripresa:** `git status --short` vuoto; `& .\.venv\Scripts\python.exe -m pytest -q` deve dare 59 passed.
