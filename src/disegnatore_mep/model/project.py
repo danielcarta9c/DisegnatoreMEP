@@ -4,21 +4,13 @@ from typing import Literal
 
 from pydantic import Field, model_validator
 
-from .base import StrictModel
+from .base import ID_PATTERN, IdentifiedModel, StrictModel
 from .types import (
     ApprovalStatus,
     Domain,
     IntegrationCategory,
     JsonPrimitive,
 )
-
-ID_PATTERN = r"^[a-z][a-z0-9_-]*$"
-
-
-class IdentifiedModel(StrictModel):
-    """Base for entities carrying a stable project-wide identifier."""
-
-    id: str = Field(pattern=ID_PATTERN)
 
 
 class ProjectMetadata(StrictModel):
@@ -122,7 +114,11 @@ class ProjectModel(StrictModel):
                 if item.id in seen:
                     raise ValueError(f"duplicate {label} id: {item.id}")
                 seen.add(item.id)
-        tags = [item.tag for item in self.components if item.tag is not None]
-        if len(tags) != len(set(tags)):
-            raise ValueError("duplicate component tag")
+        seen_tags: set[str] = set()
+        for component in self.components:
+            if component.tag is None:
+                continue
+            if component.tag in seen_tags:
+                raise ValueError(f"duplicate component tag: {component.tag}")
+            seen_tags.add(component.tag)
         return self
