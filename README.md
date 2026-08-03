@@ -39,4 +39,4 @@ Codici di uscita: `0` progetto valido, `2` errori di validazione, `1` errori di 
 - `releases/latest/`: ultima versione approvata e installabile.
 - `releases/archive/`: pacchetti storici numerati.
 
-Il progetto usa Git esclusivamente in locale. L'eventuale pubblicazione in un repository privato sarà valutata in seguito.
+Il progetto è pubblicato su GitHub in [danielcarta9c/DisegnatoreMEP](https://github.com/danielcarta9c/DisegnatoreMEP), repository pubblico con licenza MIT.
