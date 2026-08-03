@@ -41,7 +41,9 @@ def _scale_bar(standard: GraphicStandard) -> str:
         f'x2="{x + SCALE_BAR_MM}" y2="{y + SCALE_BAR_TICK_HALF_MM}"/>'
         f'<text x="{x + SCALE_BAR_MM / 2}" y="{y - SCALE_BAR_LABEL_GAP_MM}" '
         f'font-size="{standard.text_small_mm}" text-anchor="middle" '
-        f'stroke="none" fill="black">100 mm</text>'
+        # La didascalia e' derivata dalla costante: scritta a mano, cambiare
+        # SCALE_BAR_MM avrebbe fatto misurare col righello contro un numero falso.
+        f'stroke="none" fill="black">{SCALE_BAR_MM:g} mm</text>'
         f"</g>"
     )
 

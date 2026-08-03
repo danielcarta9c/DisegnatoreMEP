@@ -2,6 +2,7 @@ import re
 
 import pytest
 
+from disegnatore_mep.graphics import svg
 from disegnatore_mep.graphics.registry import Symbol, SymbolRegistry
 from disegnatore_mep.graphics.standard import A3_LANDSCAPE, GraphicStandard
 from disegnatore_mep.graphics.svg import SYMBOL_LABEL_GAP_MM, render_symbol_sheet
@@ -81,6 +82,17 @@ def test_sheet_contains_a_hundred_millimetre_scale_bar() -> None:
     output = sheet()
     assert 'id="scale-bar"' in output
     assert "100 mm" in output
+
+
+def test_scale_bar_caption_follows_the_constant(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The caption used to be the literal `100 mm` next to SCALE_BAR_MM = 100.0.
+    Changing the constant would have left the printed ruler check measuring
+    against a caption that no longer matched the bar it labels.
+    """
+    monkeypatch.setattr(svg, "SCALE_BAR_MM", 50.0)
+    output = sheet()
+    assert "50 mm" in output
+    assert "100 mm" not in output
 
 
 def test_every_symbol_is_placed_once() -> None:

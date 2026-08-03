@@ -6,8 +6,8 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from disegnatore_mep.catalog.registry import CatalogError, ComponentRegistry
-from disegnatore_mep.graphics.registry import SymbolError, SymbolRegistry
+from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.svg import render_symbol_sheet
 from disegnatore_mep.io.canonical import project_fingerprint
 from disegnatore_mep.io.project_json import load_project
@@ -62,7 +62,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         report = validate_project(project, catalog)
         print(report.model_dump_json(indent=2))
         return 0 if report.ok else 2
-    except (OSError, ValidationError, CatalogError, ValueError, SymbolError) as exc:
+    # CatalogError e SymbolError sono entrambe sottoclassi di ValueError: nominarle
+    # qui era ridondante e insegnava una gerarchia sbagliata.
+    except (OSError, ValidationError, ValueError) as exc:
         print(str(exc), file=sys.stderr)
         return 1
 

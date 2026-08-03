@@ -13,6 +13,8 @@ from pydantic import ConfigDict, Field, model_validator
 
 from disegnatore_mep.model.base import ID_PATTERN, FiniteFloat, StrictModel
 
+from .errors import SymbolError
+
 TOLERANCE_MM = 1e-6
 
 
@@ -90,7 +92,7 @@ class SymbolManifest(StrictModel):
         for item in self.ports:
             if item.id == port_id:
                 return item
-        raise KeyError(f"unknown symbol port: {port_id}")
+        raise SymbolError(f"unknown symbol port: {port_id}")
 
     @property
     def port_ids(self) -> frozenset[str]:

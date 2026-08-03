@@ -9,6 +9,7 @@ from pydantic import Field, model_validator
 
 from disegnatore_mep.model.base import ID_PATTERN, FiniteFloat, StrictModel
 
+from .errors import SymbolError
 from .registry import Symbol, SymbolRegistry
 from .symbol import TOLERANCE_MM, KeepOut, LabelAnchor, SymbolManifest, SymbolPort
 
@@ -69,15 +70,19 @@ def compile_composite(spec: CompositeSpec, symbols: SymbolRegistry) -> Symbol:
             part.offset_x_mm + source.manifest.width_mm > spec.width_mm + TOLERANCE_MM
             or part.offset_y_mm + source.manifest.height_mm > spec.height_mm + TOLERANCE_MM
         ):
-            raise ValueError(f"part {index} falls outside the composite box")
+            raise SymbolError(f"part {index} falls outside the composite box")
 
     ports: list[SymbolPort] = []
     for exposed in spec.exposed_ports:
         part = spec.parts[exposed.part_index]
         try:
             origin = resolved[exposed.part_index].manifest.port(exposed.port_id)
-        except KeyError as exc:
-            raise ValueError(f"part {exposed.part_index} has no port {exposed.port_id}") from exc
+        except SymbolError as exc:
+            # Ri-sollevato per aggiungere quale parte: il manifesto conosce solo
+            # l'identificativo della porta, non l'assemblaggio che lo cerca.
+            raise SymbolError(
+                f"part {exposed.part_index} has no port {exposed.port_id}"
+            ) from exc
         ports.append(
             SymbolPort(
                 id=exposed.as_id,

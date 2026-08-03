@@ -1,6 +1,7 @@
 import pytest
 
 from disegnatore_mep.graphics.composite import CompositeSpec, compile_composite
+from disegnatore_mep.graphics.errors import SymbolError
 from disegnatore_mep.graphics.registry import Symbol, SymbolRegistry
 from disegnatore_mep.graphics.symbol import KeepOut, SymbolManifest
 
@@ -72,7 +73,10 @@ def test_body_nests_each_part_with_its_offset() -> None:
 
 
 def test_part_falling_outside_the_composite_box_is_rejected() -> None:
-    with pytest.raises(ValueError, match="part 1 falls outside the composite box"):
+    """SymbolError, not a bare ValueError: one error convention across
+    symbol.py, registry.py and composite.py.
+    """
+    with pytest.raises(SymbolError, match="part 1 falls outside the composite box"):
         compile_composite(spec(width_mm=8.0), registry())
 
 
@@ -90,7 +94,7 @@ def test_infinite_width_mm_is_rejected() -> None:
 
 def test_bad_port_id_is_rejected() -> None:
     invalid = spec(exposed_ports=[{"part_index": 0, "port_id": "c", "as_id": "invalid"}])
-    with pytest.raises(ValueError, match="part 0 has no port c"):
+    with pytest.raises(SymbolError, match="part 0 has no port c"):
         compile_composite(invalid, registry())
 
 

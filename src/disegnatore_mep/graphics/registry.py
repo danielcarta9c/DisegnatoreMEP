@@ -4,11 +4,12 @@ from xml.etree import ElementTree
 
 from pydantic import ValidationError
 
+from .errors import SymbolError
 from .symbol import SymbolManifest
 
-
-class SymbolError(ValueError):
-    pass
+# SymbolError vive in .errors, ma resta esportato da qui: e' il nome con cui il
+# resto del progetto lo importa da quando esisteva un solo modulo a sollevarlo.
+__all__ = ["Symbol", "SymbolError", "SymbolRegistry"]
 
 
 def _local_name(tag: str) -> str:

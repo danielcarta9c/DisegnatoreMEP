@@ -53,6 +53,42 @@ def test_text_heights_are_ordered() -> None:
     assert A3_LANDSCAPE.text_small_mm < A3_LANDSCAPE.text_normal_mm < A3_LANDSCAPE.text_title_mm
 
 
+def standard(**overrides: float) -> GraphicStandard:
+    """A3_LANDSCAPE's values with fields replaced, revalidated.
+
+    The two ordering assertions above only read A3_LANDSCAPE, which satisfies
+    both branches: nothing exercised the validator's failing path.
+    """
+    payload: dict[str, float] = {
+        "sheet_width_mm": 420.0,
+        "sheet_height_mm": 297.0,
+        "margin_left_mm": 20.0,
+        "margin_right_mm": 10.0,
+        "margin_top_mm": 10.0,
+        "margin_bottom_mm": 10.0,
+        "grid_mm": 2.5,
+        "line_thin_mm": 0.18,
+        "line_medium_mm": 0.35,
+        "line_thick_mm": 0.5,
+        "text_small_mm": 1.8,
+        "text_normal_mm": 2.5,
+        "text_title_mm": 3.5,
+        "min_clearance_mm": 2.0,
+    }
+    payload.update(overrides)
+    return GraphicStandard(**payload)
+
+
+def test_line_weights_out_of_order_are_rejected() -> None:
+    with pytest.raises(ValidationError, match="line weights must increase from thin to thick"):
+        standard(line_thin_mm=0.5, line_thick_mm=0.18)
+
+
+def test_text_heights_out_of_order_are_rejected() -> None:
+    with pytest.raises(ValidationError, match="text heights must increase from small to title"):
+        standard(text_small_mm=3.5, text_title_mm=1.8)
+
+
 def test_infinite_dimensions_are_rejected() -> None:
     with pytest.raises(ValidationError, match="value must be a finite number"):
         GraphicStandard(

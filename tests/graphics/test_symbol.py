@@ -1,6 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
+from disegnatore_mep.graphics.errors import SymbolError
 from disegnatore_mep.graphics.symbol import (
     KeepOut,
     LabelAnchor,
@@ -165,6 +166,25 @@ def test_duplicate_rotation_is_rejected() -> None:
         manifest(allowed_rotations_deg=[0, 0])
 
 
-def test_unknown_port_lookup_is_rejected() -> None:
-    with pytest.raises(KeyError, match="unknown symbol port: nope"):
+def test_unknown_port_lookup_raises_symbol_error() -> None:
+    """Replaces the test that pinned KeyError here.
+
+    That contract was deliberate but wrong for the package: KeyError is not a
+    ValueError, so it was outside the CLI's except tuple and composite.py had
+    to translate it. One error convention now: SymbolError, a ValueError, the
+    same class the registry and the composite compiler raise.
+    """
+    with pytest.raises(SymbolError, match="unknown symbol port: nope"):
         manifest().port("nope")
+
+
+def test_unknown_port_lookup_is_no_longer_a_key_error() -> None:
+    """Pinned as explicitly as the KeyError contract it replaces: the exception
+    must reach a caller that catches ValueError, and must not be a KeyError.
+    """
+    with pytest.raises(ValueError):
+        manifest().port("nope")
+    try:
+        manifest().port("nope")
+    except SymbolError as exc:
+        assert not isinstance(exc, KeyError)
