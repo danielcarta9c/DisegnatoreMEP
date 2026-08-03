@@ -1,0 +1,28 @@
+{
+  "id": "boundary-hydronic-supply",
+  "version": "1.0.0",
+  "name": "Confine mandata",
+  "width_mm": 6.0,
+  "height_mm": 6.0,
+  "allowed_rotations_deg": [
+    0,
+    90,
+    180,
+    270
+  ],
+  "ports": [
+    {
+      "id": "in",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 3.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 0.0,
+    "top_mm": 0.0,
+    "bottom_mm": 0.0
+  },
+  "source": "CONV-FOUNDATION"
+}

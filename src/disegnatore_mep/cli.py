@@ -7,6 +7,8 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from disegnatore_mep.catalog.registry import CatalogError, ComponentRegistry
+from disegnatore_mep.graphics.registry import SymbolError, SymbolRegistry
+from disegnatore_mep.graphics.svg import render_symbol_sheet
 from disegnatore_mep.io.canonical import project_fingerprint
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.project import ProjectModel
@@ -26,6 +28,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     fingerprint = commands.add_parser("fingerprint")
     fingerprint.add_argument("project", type=Path)
+
+    sheet = commands.add_parser("symbols-sheet")
+    sheet.add_argument("output", type=Path)
+    sheet.add_argument("--symbols", type=Path, required=True)
     return parser
 
 
@@ -38,6 +44,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 encoding="utf-8",
             )
             return 0
+        if args.command == "symbols-sheet":
+            registry = SymbolRegistry.from_directory(args.symbols)
+            args.output.write_text(render_symbol_sheet(registry), encoding="utf-8")
+            return 0
         project = load_project(args.project)
         if args.command == "fingerprint":
             print(project_fingerprint(project))
@@ -46,7 +56,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         report = validate_project(project, catalog)
         print(report.model_dump_json(indent=2))
         return 0 if report.ok else 2
-    except (OSError, ValidationError, CatalogError, ValueError) as exc:
+    except (OSError, ValidationError, CatalogError, ValueError, SymbolError) as exc:
         print(str(exc), file=sys.stderr)
         return 1
 
