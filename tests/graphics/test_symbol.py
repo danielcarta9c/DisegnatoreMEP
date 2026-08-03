@@ -124,3 +124,18 @@ def test_symbol_port_is_immutable() -> None:
 def test_infinite_width_is_rejected() -> None:
     with pytest.raises(ValidationError, match="value must be a finite number"):
         manifest(width_mm=float("inf"))
+
+
+def test_invalid_rotation_is_rejected() -> None:
+    with pytest.raises(ValidationError, match="allowed rotations must be 0, 90, 180 or 270"):
+        manifest(allowed_rotations_deg=[181])
+
+
+def test_duplicate_rotation_is_rejected() -> None:
+    with pytest.raises(ValidationError, match="duplicate allowed rotation"):
+        manifest(allowed_rotations_deg=[0, 0])
+
+
+def test_unknown_port_lookup_is_rejected() -> None:
+    with pytest.raises(KeyError, match="unknown symbol port: nope"):
+        manifest().port("nope")
