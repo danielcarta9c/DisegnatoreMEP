@@ -8,32 +8,17 @@ ROOT = Path(__file__).parent
 CATALOG = ROOT / "catalog"
 
 
-def geometry() -> dict[str, Any]:
-    return {
-        "width_mm": 12.0,
-        "height_mm": 10.0,
-        "clearance_mm": 2.0,
-        "allowed_rotations_deg": [0, 90, 180, 270],
-        "inline_gap_mm": None,
-    }
-
-
 def port(
     port_id: str,
     domain: str,
     medium: str,
     flow: str,
-    x_mm: float,
-    y_mm: float,
 ) -> dict[str, Any]:
     return {
         "id": port_id,
         "domain": domain,
         "medium": medium,
         "flow": flow,
-        "x_mm": x_mm,
-        "y_mm": y_mm,
-        "angle_deg": 0,
         "required": True,
         "max_connections": 1,
     }
@@ -52,35 +37,34 @@ def definition(
         "functions": functions,
         "symbol_id": component_id,
         "composite": len(functions) > 1,
-        "geometry": geometry(),
         "ports": ports,
         "sources": ["CONV-FOUNDATION"],
     }
 
 
 DEFINITIONS = [
-    definition("boundary-gas-source", "Confine gas", ["boundary"], [port("out", "gas", "natural_gas", "out", 12, 5)]),
+    definition("boundary-gas-source", "Confine gas", ["boundary"], [port("out", "gas", "natural_gas", "out")]),
     definition(
         "gas-boiler",
         "Caldaia gas",
         ["heat_generation", "gas_combustion"],
         [
-            port("gas_in", "gas", "natural_gas", "in", 0, 2),
-            port("water_return", "hydronic", "heating_water", "in", 0, 8),
-            port("water_supply", "hydronic", "heating_water", "out", 12, 8),
+            port("gas_in", "gas", "natural_gas", "in"),
+            port("water_return", "hydronic", "heating_water", "in"),
+            port("water_supply", "hydronic", "heating_water", "out"),
         ],
     ),
-    definition("boundary-hydronic-return", "Confine ritorno", ["boundary"], [port("out", "hydronic", "heating_water", "out", 12, 5)]),
-    definition("boundary-hydronic-supply", "Confine mandata", ["boundary"], [port("in", "hydronic", "heating_water", "in", 0, 5)]),
-    definition("supply-fan", "Ventilatore", ["air_movement"], [port("out", "aeraulic", "supply_air", "out", 12, 5)]),
-    definition("air-terminal", "Terminale aria", ["air_terminal"], [port("in", "aeraulic", "supply_air", "in", 0, 5)]),
+    definition("boundary-hydronic-return", "Confine ritorno", ["boundary"], [port("out", "hydronic", "heating_water", "out")]),
+    definition("boundary-hydronic-supply", "Confine mandata", ["boundary"], [port("in", "hydronic", "heating_water", "in")]),
+    definition("supply-fan", "Ventilatore", ["air_movement"], [port("out", "aeraulic", "supply_air", "out")]),
+    definition("air-terminal", "Terminale aria", ["air_terminal"], [port("in", "aeraulic", "supply_air", "in")]),
     definition(
         "vrv-outdoor",
         "Unità esterna VRV",
         ["refrigerant_generation"],
         [
-            port("liquid_out", "refrigerant", "refrigerant_liquid", "out", 12, 3),
-            port("gas_in", "refrigerant", "refrigerant_gas", "in", 12, 7),
+            port("liquid_out", "refrigerant", "refrigerant_liquid", "out"),
+            port("gas_in", "refrigerant", "refrigerant_gas", "in"),
         ],
     ),
     definition(
@@ -88,8 +72,8 @@ DEFINITIONS = [
         "Unità interna VRV",
         ["direct_expansion_terminal"],
         [
-            port("liquid_in", "refrigerant", "refrigerant_liquid", "in", 0, 3),
-            port("gas_out", "refrigerant", "refrigerant_gas", "out", 0, 7),
+            port("liquid_in", "refrigerant", "refrigerant_liquid", "in"),
+            port("gas_out", "refrigerant", "refrigerant_gas", "out"),
         ],
     ),
 ]

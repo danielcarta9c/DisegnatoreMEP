@@ -1,11 +1,7 @@
 from datetime import date
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import (
-    ComponentDefinition,
-    PortDefinition,
-    SymbolGeometry,
-)
+from disegnatore_mep.catalog.schema import ComponentDefinition, PortDefinition
 from disegnatore_mep.domains.builtin import BasicDomainPack
 from disegnatore_mep.domains.registry import DomainRegistry
 from disegnatore_mep.model.project import (
@@ -29,21 +25,12 @@ def component_definition(component_id: str, flow: PortFlow) -> ComponentDefiniti
         functions=["boundary"],
         symbol_id=component_id,
         composite=False,
-        geometry=SymbolGeometry(
-            width_mm=10,
-            height_mm=10,
-            clearance_mm=2,
-            allowed_rotations_deg=[0],
-        ),
         ports=[
             PortDefinition(
                 id="port",
                 domain=Domain.HYDRONIC,
                 medium="heating_water",
                 flow=flow,
-                x_mm=5,
-                y_mm=5,
-                angle_deg=0,
             )
         ],
         sources=["CONV-001"],
@@ -373,18 +360,12 @@ def test_self_loop_connection_is_blocking() -> None:
                     domain=Domain.HYDRONIC,
                     medium="heating_water",
                     flow=PortFlow.OUT,
-                    x_mm=0,
-                    y_mm=0,
-                    angle_deg=0,
                 ),
                 PortDefinition(
                     id="return",
                     domain=Domain.HYDRONIC,
                     medium="heating_water",
                     flow=PortFlow.IN,
-                    x_mm=10,
-                    y_mm=0,
-                    angle_deg=0,
                 ),
             ]
         }
