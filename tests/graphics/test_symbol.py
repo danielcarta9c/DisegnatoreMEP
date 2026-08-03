@@ -110,6 +110,35 @@ def test_keep_out_defaults_to_zero() -> None:
     assert KeepOut().left_mm == 0.0
 
 
+def test_keep_out_must_be_non_zero_on_a_face_that_carries_a_port() -> None:
+    """The rule was documented and enforced nowhere: KeepOut defaults every side
+    to zero and both generators built the dict by membership test over the four
+    side names, so a typo shipped a symbol with no clearance in silence.
+
+    The manifest cannot know the paper's min_clearance_mm - it has no
+    GraphicStandard - so the invariant that belongs here is "greater than zero".
+    """
+    with pytest.raises(
+        ValidationError,
+        match="keep_out.left_mm must be greater than zero: the left face carries a port",
+    ):
+        manifest(keep_out={"left_mm": 0.0, "right_mm": 2.0, "top_mm": 1.0, "bottom_mm": 1.0})
+
+
+def test_keep_out_stays_zero_on_a_face_without_a_port() -> None:
+    accepted = manifest(keep_out={"left_mm": 2.0, "right_mm": 2.0})
+    assert accepted.keep_out.top_mm == 0.0
+    assert accepted.keep_out.bottom_mm == 0.0
+
+
+def test_a_default_keep_out_no_longer_passes_with_ports() -> None:
+    """A manifest that simply omits keep_out is now rejected rather than
+    shipping a symbol a router would butt a pipe against.
+    """
+    with pytest.raises(ValidationError, match="must be greater than zero"):
+        manifest(keep_out={})
+
+
 def test_label_anchor_may_sit_outside_the_box() -> None:
     anchor = LabelAnchor(id="tag", role="tag", x_mm=3.0, y_mm=-1.0)
     assert anchor.y_mm == -1.0

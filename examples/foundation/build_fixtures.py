@@ -106,9 +106,16 @@ def symbol_port(port_id: str, face: str, x_mm: float, y_mm: float) -> dict[str, 
     return {"id": port_id, "face": face, "x_mm": x_mm, "y_mm": y_mm}
 
 
-def symbol_keep_out(*sides: str) -> dict[str, float]:
+def symbol_keep_out(ports: list[dict[str, Any]]) -> dict[str, float]:
+    """Area di rispetto sui lati che portano una porta, derivata dalle porte.
+
+    Non da un elenco parallelo di nomi di lato passato da chi chiama: quello
+    accettava in silenzio un refuso come "rigth" e spediva un simbolo con area
+    di rispetto nulla.
+    """
+    faces = {item["face"] for item in ports}
     return {
-        f"{side}_mm": SYMBOL_CLEARANCE_MM if side in sides else 0.0
+        f"{side}_mm": SYMBOL_CLEARANCE_MM if side in faces else 0.0
         for side in ("left", "right", "top", "bottom")
     }
 
@@ -118,7 +125,6 @@ def symbol(
     width_mm: float,
     height_mm: float,
     ports: list[dict[str, Any]],
-    keep_out_sides: tuple[str, ...],
     body: str,
 ) -> tuple[dict[str, Any], str]:
     manifest: dict[str, Any] = {
@@ -129,7 +135,7 @@ def symbol(
         "height_mm": height_mm,
         "allowed_rotations_deg": SYMBOL_ROTATIONS_DEG,
         "ports": ports,
-        "keep_out": symbol_keep_out(*keep_out_sides),
+        "keep_out": symbol_keep_out(ports),
         "source": SYMBOL_SOURCE,
     }
     return manifest, body
@@ -141,7 +147,6 @@ SYMBOLS: list[tuple[dict[str, Any], str]] = [
         6.0,
         6.0,
         [symbol_port("out", "right", 6.0, 3.0)],
-        ("right",),
         '<circle cx="3" cy="3" r="2"/><line x1="5" y1="3" x2="6" y2="3"/>',
     ),
     symbol(
@@ -149,7 +154,6 @@ SYMBOLS: list[tuple[dict[str, Any], str]] = [
         6.0,
         6.0,
         [symbol_port("out", "right", 6.0, 3.0)],
-        ("right",),
         '<rect x="1" y="1" width="4" height="4"/><line x1="5" y1="3" x2="6" y2="3"/>',
     ),
     symbol(
@@ -157,7 +161,6 @@ SYMBOLS: list[tuple[dict[str, Any], str]] = [
         6.0,
         6.0,
         [symbol_port("in", "left", 0.0, 3.0)],
-        ("left",),
         '<rect x="1" y="1" width="4" height="4"/><line x1="0" y1="3" x2="1" y2="3"/>',
     ),
     symbol(
@@ -169,7 +172,6 @@ SYMBOLS: list[tuple[dict[str, Any], str]] = [
             symbol_port("water_return", "bottom", 12.0, 12.0),
             symbol_port("water_supply", "top", 8.0, 0.0),
         ],
-        ("bottom", "top"),
         '<rect x="1" y="1" width="14" height="10"/>'
         '<line x1="4" y1="11" x2="4" y2="12"/>'
         '<line x1="12" y1="11" x2="12" y2="12"/>'
@@ -180,7 +182,6 @@ SYMBOLS: list[tuple[dict[str, Any], str]] = [
         8.0,
         8.0,
         [symbol_port("out", "right", 8.0, 4.0)],
-        ("right",),
         '<circle cx="4" cy="4" r="2.2"/><line x1="6.2" y1="4" x2="8" y2="4"/>',
     ),
     symbol(
@@ -188,7 +189,6 @@ SYMBOLS: list[tuple[dict[str, Any], str]] = [
         8.0,
         8.0,
         [symbol_port("in", "left", 0.0, 4.0)],
-        ("left",),
         '<rect x="2" y="1" width="5" height="6"/><line x1="0" y1="4" x2="2" y2="4"/>',
     ),
     symbol(
@@ -199,7 +199,6 @@ SYMBOLS: list[tuple[dict[str, Any], str]] = [
             symbol_port("liquid_out", "right", 10.0, 3.0),
             symbol_port("gas_in", "right", 10.0, 7.0),
         ],
-        ("right",),
         '<rect x="1" y="1" width="8" height="8"/>'
         '<line x1="9" y1="3" x2="10" y2="3"/>'
         '<line x1="9" y1="7" x2="10" y2="7"/>',
@@ -212,7 +211,6 @@ SYMBOLS: list[tuple[dict[str, Any], str]] = [
             symbol_port("liquid_in", "left", 0.0, 3.0),
             symbol_port("gas_out", "left", 0.0, 7.0),
         ],
-        ("left",),
         '<rect x="1" y="1" width="8" height="8"/>'
         '<line x1="0" y1="3" x2="1" y2="3"/>'
         '<line x1="0" y1="7" x2="1" y2="7"/>',

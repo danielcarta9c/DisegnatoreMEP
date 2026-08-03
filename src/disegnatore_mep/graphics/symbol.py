@@ -134,6 +134,25 @@ class SymbolManifest(StrictModel):
             ):
                 raise ValueError(f"port {port.id} is not on its {port.face.value} face")
 
+        # Una faccia che porta una porta deve avere un'area di rispetto: senza,
+        # l'instradamento accosterebbe una tubazione a un oggetto vicino. Il
+        # manifesto non conosce lo standard grafico e non puo' quindi imporre
+        # `min_clearance_mm`: l'invariante che gli appartiene e' "maggiore di
+        # zero". Il valore concreto lo fissa chi genera il simbolo (§5).
+        port_faces = {port.face for port in self.ports}
+        clearance = {
+            PortFace.LEFT: self.keep_out.left_mm,
+            PortFace.RIGHT: self.keep_out.right_mm,
+            PortFace.TOP: self.keep_out.top_mm,
+            PortFace.BOTTOM: self.keep_out.bottom_mm,
+        }
+        for face in PortFace:
+            if face in port_faces and clearance[face] <= 0:
+                raise ValueError(
+                    f"keep_out.{face.value}_mm must be greater than zero: "
+                    f"the {face.value} face carries a port"
+                )
+
         anchors: set[str] = set()
         for anchor in self.label_anchors:
             if anchor.id in anchors:

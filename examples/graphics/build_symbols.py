@@ -60,10 +60,16 @@ def port(port_id: str, face: str, width_mm: float, height_mm: float) -> dict[str
     return {"id": port_id, "face": face, "x_mm": x_mm, "y_mm": y_mm}
 
 
-def keep_out(*sides: str) -> dict[str, float]:
-    """keep_out pari a min_clearance_mm sui lati elencati, 0 sugli altri."""
+def keep_out(ports: list[dict[str, Any]]) -> dict[str, float]:
+    """keep_out pari a min_clearance_mm sui lati che portano una porta, 0 sugli altri.
+
+    Derivato dalle porte del simbolo, non da un elenco parallelo di nomi di lato
+    passato da chi chiama: un refuso come "rigth" non produceva alcun errore e
+    spediva in silenzio un simbolo senza area di rispetto.
+    """
+    faces = {item["face"] for item in ports}
     return {
-        f"{side}_mm": CLEARANCE_MM if side in sides else 0.0
+        f"{side}_mm": CLEARANCE_MM if side in faces else 0.0
         for side in ("left", "right", "top", "bottom")
     }
 
@@ -76,7 +82,6 @@ class SymbolSpec:
     height_mm: float
     inline: bool
     ports: list[dict[str, Any]]
-    keep_out: dict[str, float]
     body: str
 
 
@@ -93,7 +98,6 @@ def inline_symbol(symbol_id: str, name: str, body: str) -> SymbolSpec:
             port("a", "left", width_mm, height_mm),
             port("b", "right", width_mm, height_mm),
         ],
-        keep_out=keep_out("left", "right"),
         body=body,
     )
 
@@ -114,7 +118,6 @@ def single_port_symbol(
         height_mm=height_mm,
         inline=False,
         ports=[port("a", face, width_mm, height_mm)],
-        keep_out=keep_out(face),
         body=body,
     )
 
@@ -268,7 +271,6 @@ SYMBOLS: list[SymbolSpec] = [
             port("b", "right", 8.0, 8.0),
             port("c", "bottom", 8.0, 8.0),
         ],
-        keep_out=keep_out("left", "right", "bottom"),
         body=REFRIGERANT_BRANCH_BODY,
     ),
     # gas
@@ -289,7 +291,7 @@ def manifest_payload(spec: SymbolSpec) -> dict[str, Any]:
     if spec.inline:
         payload["inline_gap_mm"] = spec.width_mm
     payload["ports"] = spec.ports
-    payload["keep_out"] = spec.keep_out
+    payload["keep_out"] = keep_out(spec.ports)
     payload["source"] = SOURCE
     return payload
 

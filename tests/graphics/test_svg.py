@@ -34,6 +34,7 @@ def symbol(symbol_id: str) -> Symbol:
                 {"id": "a", "face": "left", "x_mm": 0.0, "y_mm": 3.0},
                 {"id": "b", "face": "right", "x_mm": 6.0, "y_mm": 3.0},
             ],
+            "keep_out": {"left_mm": 2.0, "right_mm": 2.0},
             "source": "CONV-GRAFICA-001",
         }
     )
@@ -55,6 +56,7 @@ def sized_symbol(symbol_id: str, width_mm: float, height_mm: float) -> Symbol:
             "height_mm": height_mm,
             "allowed_rotations_deg": [0],
             "ports": [{"id": "a", "face": "left", "x_mm": 0.0, "y_mm": height_mm / 2}],
+            "keep_out": {"left_mm": 2.0},
             "source": "CONV-GRAFICA-001",
         }
     )

@@ -19,6 +19,7 @@ def primitive(symbol_id: str) -> Symbol:
                 {"id": "a", "face": "left", "x_mm": 0.0, "y_mm": 3.0},
                 {"id": "b", "face": "right", "x_mm": 6.0, "y_mm": 3.0},
             ],
+            "keep_out": {"left_mm": 2.0, "right_mm": 2.0},
             "source": "CONV-GRAFICA-001",
         }
     )
@@ -113,6 +114,7 @@ def test_part_flush_with_box_passes_with_tolerance() -> None:
                 {"id": "a", "face": "left", "x_mm": 0.0, "y_mm": 3.0},
                 {"id": "b", "face": "right", "x_mm": 4.03, "y_mm": 3.0},
             ],
+            "keep_out": {"left_mm": 2.0, "right_mm": 2.0},
             "source": "CONV-GRAFICA-003",
         }),
         body='<g id="narrow-valve"/>'
@@ -125,6 +127,7 @@ def test_part_flush_with_box_passes_with_tolerance() -> None:
         "width_mm": 8.03,
         "height_mm": 6.0,
         "allowed_rotations_deg": [0],
+        "keep_out": {"right_mm": 2.0},
         "source": "TEST",
         "parts": [
             {"symbol_id": "narrow-valve", "offset_x_mm": 4.0, "offset_y_mm": 0.0},
@@ -166,8 +169,11 @@ def test_compiled_composite_carries_the_supplied_keep_out() -> None:
     sits at x=6 - deep inside the 16 mm composite - so its clearance says
     nothing about the composite's outer envelope. Only the spec knows.
     """
-    symbol = compile_composite(spec(keep_out={"left_mm": 3.0, "bottom_mm": 1.5}), registry())
+    supplied = {"left_mm": 3.0, "right_mm": 2.0, "bottom_mm": 1.5}
+    symbol = compile_composite(spec(keep_out=supplied), registry())
     assert symbol.manifest.keep_out.left_mm == 3.0
+    # No port on the bottom face, so nothing could have derived this: it is
+    # authored on the spec and carried through verbatim.
     assert symbol.manifest.keep_out.bottom_mm == 1.5
     assert symbol.manifest.keep_out.top_mm == 0.0
 
