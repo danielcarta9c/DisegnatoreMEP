@@ -22,6 +22,11 @@ def build_parser() -> argparse.ArgumentParser:
     validate = commands.add_parser("validate")
     validate.add_argument("project", type=Path)
     validate.add_argument("--catalog", type=Path, required=True)
+    # Optional and opt-in: without it the catalog is loaded on its own, exactly
+    # as before. With it, ComponentRegistry runs the symbol/catalog cross-check
+    # on the arbitrary --catalog directory the CLI advertises, not only on this
+    # project's own fixtures.
+    validate.add_argument("--symbols", type=Path)
 
     schema = commands.add_parser("export-schema")
     schema.add_argument("output", type=Path)
@@ -52,7 +57,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         if args.command == "fingerprint":
             print(project_fingerprint(project))
             return 0
-        catalog = ComponentRegistry.from_directory(args.catalog)
+        symbols = SymbolRegistry.from_directory(args.symbols) if args.symbols else None
+        catalog = ComponentRegistry.from_directory(args.catalog, symbols=symbols)
         report = validate_project(project, catalog)
         print(report.model_dump_json(indent=2))
         return 0 if report.ok else 2

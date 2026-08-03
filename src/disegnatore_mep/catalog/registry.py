@@ -18,7 +18,6 @@ class ComponentRegistry:
         symbols: SymbolRegistry | None = None,
     ) -> None:
         self._definitions: dict[str, ComponentDefinition] = {}
-        self._symbols = symbols
         for definition in definitions:
             if definition.id in self._definitions:
                 raise CatalogError(f"duplicate component definition: {definition.id}")
