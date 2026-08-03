@@ -12,6 +12,10 @@ from .standard import A3_LANDSCAPE, GraphicStandard
 SCALE_BAR_MM = 100.0
 COLUMN_GAP_MM = 10.0
 ROW_GAP_MM = 14.0
+SCALE_BAR_TICK_HALF_MM = 1.5
+SCALE_BAR_LABEL_GAP_MM = 2.0
+SYMBOL_LABEL_GAP_MM = 1.0
+PORT_MARKER_RADIUS_MM = 0.6
 
 
 def _escape(text: str) -> str:
@@ -29,10 +33,11 @@ def _scale_bar(standard: GraphicStandard) -> str:
     return (
         f'<g id="scale-bar" stroke="black" stroke-width="{standard.line_medium_mm}">'
         f'<line x1="{x}" y1="{y}" x2="{x + SCALE_BAR_MM}" y2="{y}"/>'
-        f'<line x1="{x}" y1="{y - 1.5}" x2="{x}" y2="{y + 1.5}"/>'
-        f'<line x1="{x + SCALE_BAR_MM}" y1="{y - 1.5}" '
-        f'x2="{x + SCALE_BAR_MM}" y2="{y + 1.5}"/>'
-        f'<text x="{x + SCALE_BAR_MM / 2}" y="{y - 2}" '
+        f'<line x1="{x}" y1="{y - SCALE_BAR_TICK_HALF_MM}" '
+        f'x2="{x}" y2="{y + SCALE_BAR_TICK_HALF_MM}"/>'
+        f'<line x1="{x + SCALE_BAR_MM}" y1="{y - SCALE_BAR_TICK_HALF_MM}" '
+        f'x2="{x + SCALE_BAR_MM}" y2="{y + SCALE_BAR_TICK_HALF_MM}"/>'
+        f'<text x="{x + SCALE_BAR_MM / 2}" y="{y - SCALE_BAR_LABEL_GAP_MM}" '
         f'font-size="{standard.text_small_mm}" text-anchor="middle" '
         f'stroke="none" fill="black">100 mm</text>'
         f"</g>"
@@ -64,8 +69,8 @@ def render_symbol_sheet(
         x = standard.margin_left_mm + column * column_width
         y = standard.margin_top_mm + row * row_height
         markers = "".join(
-            f'<circle class="port" cx="{port.x_mm}" cy="{port.y_mm}" r="0.6" '
-            f'fill="black"/>'
+            f'<circle class="port" cx="{port.x_mm}" cy="{port.y_mm}" '
+            f'r="{PORT_MARKER_RADIUS_MM}" fill="black"/>'
             for port in symbol.manifest.ports
         )
         parts.append(
@@ -73,7 +78,8 @@ def render_symbol_sheet(
             f'transform="translate({x} {y})" '
             f'stroke="black" stroke-width="{standard.line_medium_mm}" fill="none">'
             f"{symbol.body}{markers}"
-            f'<text x="0" y="{symbol.manifest.height_mm + standard.text_small_mm + 1}" '
+            f'<text x="0" '
+            f'y="{symbol.manifest.height_mm + standard.text_small_mm + SYMBOL_LABEL_GAP_MM}" '
             f'font-size="{standard.text_small_mm}" stroke="none" fill="black">'
             f"{_escape(symbol.manifest.id)}</text>"
             f"</g>"
