@@ -79,6 +79,20 @@ def test_registry_rejects_duplicate_ids(tmp_path: Path) -> None:
         ComponentRegistry.from_directory(tmp_path)
 
 
+def test_registry_rejects_unknown_symbol(tmp_path: Path) -> None:
+    catalog_dir = tmp_path / "catalog"
+    symbol_dir = tmp_path / "symbols"
+    catalog_dir.mkdir()
+    symbol_dir.mkdir()
+    write_definition(catalog_dir / "valve.json", "isolation-valve")
+    with pytest.raises(
+        CatalogError, match="unknown symbol valve-isolation for isolation-valve"
+    ):
+        ComponentRegistry.from_directory(
+            catalog_dir, symbols=SymbolRegistry.from_directory(symbol_dir)
+        )
+
+
 def test_registry_rejects_ports_the_symbol_does_not_have(tmp_path: Path) -> None:
     catalog_dir = tmp_path / "catalog"
     symbol_dir = tmp_path / "symbols"

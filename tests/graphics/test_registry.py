@@ -82,3 +82,14 @@ def test_all_is_ordered_by_id(tmp_path: Path) -> None:
     write_symbol(tmp_path, "aaa-valve")
     registry = SymbolRegistry.from_directory(tmp_path)
     assert [item.manifest.id for item in registry.all()] == ["aaa-valve", "zzz-valve"]
+
+
+def test_duplicate_symbol_is_rejected(tmp_path: Path) -> None:
+    # Direct construction, not from_directory: Task 4's composite compiler
+    # builds a SymbolRegistry straight from a list of Symbol objects, so
+    # __init__'s own duplicate check needs its own test independent of the
+    # filename/id coupling from_directory enforces.
+    write_symbol(tmp_path, "valve-isolation")
+    symbol = SymbolRegistry.from_directory(tmp_path).get("valve-isolation")
+    with pytest.raises(SymbolError, match="duplicate symbol: valve-isolation"):
+        SymbolRegistry([symbol, symbol])
