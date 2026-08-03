@@ -3,9 +3,21 @@ import re
 import pytest
 
 from disegnatore_mep.graphics.registry import Symbol, SymbolRegistry
-from disegnatore_mep.graphics.standard import A3_LANDSCAPE
+from disegnatore_mep.graphics.standard import A3_LANDSCAPE, GraphicStandard
 from disegnatore_mep.graphics.svg import SYMBOL_LABEL_GAP_MM, render_symbol_sheet
 from disegnatore_mep.graphics.symbol import SymbolManifest
+
+
+def standard_with(**overrides: float) -> GraphicStandard:
+    """A3_LANDSCAPE with fields replaced, revalidated rather than copied blind.
+
+    render_symbol_sheet accepts any GraphicStandard, so its layout assumptions
+    have to be exercised against a standard other than the one they happen to
+    hold for.
+    """
+    payload = A3_LANDSCAPE.model_dump()
+    payload.update(overrides)
+    return GraphicStandard(**payload)
 
 
 def symbol(symbol_id: str) -> Symbol:
@@ -181,3 +193,39 @@ def test_oversized_library_raises_naming_the_counts() -> None:
     registry = SymbolRegistry([sized_symbol(f"item-{index}", 6.0, 6.0) for index in range(313)])
     with pytest.raises(ValueError, match=r"313 symbols.*312"):
         render_symbol_sheet(registry)
+
+
+def test_symbol_wider_than_the_usable_area_raises_naming_both_measurements() -> None:
+    """D-045 on the other axis: a 500 mm symbol used to draw off the right edge
+    of a 420 mm sheet - x=20.0, right edge at 520 mm - and exit 0, because the
+    column count was clamped to 1 instead of failing.
+    """
+    registry = SymbolRegistry([sized_symbol("too-wide", 500.0, 6.0)])
+    with pytest.raises(ValueError, match=r"symbol too-wide does not fit.*510.*390"):
+        render_symbol_sheet(registry)
+
+
+def test_widest_symbol_that_still_fits_is_accepted() -> None:
+    """The guard is on the column, not on an arbitrary margin: a symbol whose
+    width plus the column gap is exactly the usable width still renders.
+    """
+    registry = SymbolRegistry([sized_symbol("just-fits", 380.0, 6.0)])
+    assert render_symbol_sheet(registry).count('class="symbol"') == 1
+
+
+def test_row_gap_too_small_for_the_label_is_rejected() -> None:
+    """ROW_GAP_MM must leave room for the id label below each symbol. That holds
+    for A3_LANDSCAPE by coincidence, and this function accepts any standard.
+    """
+    registry = SymbolRegistry([sized_symbol("valve", 6.0, 6.0)])
+    with pytest.raises(ValueError, match=r"row gap.*leaves no room for the .*label"):
+        render_symbol_sheet(
+            registry,
+            standard_with(text_small_mm=14.0, text_normal_mm=15.0, text_title_mm=16.0),
+        )
+
+
+def test_scale_bar_wider_than_the_usable_area_is_rejected() -> None:
+    registry = SymbolRegistry([sized_symbol("valve", 6.0, 6.0)])
+    with pytest.raises(ValueError, match=r"100mm scale bar does not fit.*90mm"):
+        render_symbol_sheet(registry, standard_with(sheet_width_mm=120.0))

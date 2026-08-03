@@ -49,6 +49,21 @@ def _scale_bar(standard: GraphicStandard) -> str:
 def render_symbol_sheet(
     symbols: SymbolRegistry, standard: GraphicStandard = A3_LANDSCAPE
 ) -> str:
+    # This function accepts any GraphicStandard, so the two assumptions its
+    # layout makes about the paper are checked instead of assumed. Both hold for
+    # A3_LANDSCAPE, but only by coincidence.
+    if standard.text_small_mm + SYMBOL_LABEL_GAP_MM > ROW_GAP_MM:
+        raise ValueError(
+            f"the {ROW_GAP_MM:g}mm row gap leaves no room for the "
+            f"{standard.text_small_mm:g}mm label plus the "
+            f"{SYMBOL_LABEL_GAP_MM:g}mm label gap"
+        )
+    if standard.usable_width_mm < SCALE_BAR_MM:
+        raise ValueError(
+            f"the {SCALE_BAR_MM:g}mm scale bar does not fit the "
+            f"{standard.usable_width_mm:g}mm usable width"
+        )
+
     all_symbols = symbols.all()
     column_width = max(
         (item.manifest.width_mm for item in all_symbols), default=COLUMN_GAP_MM
@@ -56,6 +71,18 @@ def render_symbol_sheet(
     row_height = max(
         (item.manifest.height_mm for item in all_symbols), default=ROW_GAP_MM
     ) + ROW_GAP_MM
+
+    # D-045 on the width axis: without this, `columns` is clamped to 1 and a
+    # symbol wider than the usable area is drawn off the right edge in silence.
+    for item in all_symbols:
+        if item.manifest.width_mm + COLUMN_GAP_MM > standard.usable_width_mm:
+            raise ValueError(
+                f"symbol {item.manifest.id} does not fit the sheet width: its "
+                f"{item.manifest.width_mm + COLUMN_GAP_MM:g}mm column "
+                f"({item.manifest.width_mm:g}mm wide plus the {COLUMN_GAP_MM:g}mm "
+                f"column gap) exceeds the {standard.usable_width_mm:g}mm usable width "
+                f"(symbols are never shrunk to fit; use a larger sheet)"
+            )
     columns = max(1, int(standard.usable_width_mm // column_width))
 
     total = len(all_symbols)
