@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
+from xml.etree import ElementTree
 
 from pydantic import ValidationError
 
@@ -8,6 +9,11 @@ from .symbol import SymbolManifest
 
 class SymbolError(ValueError):
     pass
+
+
+def _local_name(tag: str) -> str:
+    """Nome dell'elemento senza il prefisso di namespace `{uri}` di ElementTree."""
+    return tag.rpartition("}")[2]
 
 
 @dataclass(frozen=True)
@@ -44,11 +50,19 @@ class SymbolRegistry:
             body = body_path.read_text("utf-8").strip()
             if not body:
                 raise SymbolError(f"empty svg body for {manifest.id}")
-            if "<svg" in body:
-                raise SymbolError(
-                    f"svg body must not contain an <svg> root: {body_path}"
-                )
+            # The body is spliced verbatim into the sheet, so a body that is not
+            # well-formed makes the whole sheet unparseable. Parsed here, wrapped
+            # in a group exactly as the sheet nests it, so the failure lands on
+            # the file that caused it instead of on the rendered deliverable.
+            try:
+                root = ElementTree.fromstring(f"<g>{body}</g>")
+            except ElementTree.ParseError as exc:
+                raise SymbolError(f"svg body is not well-formed xml {body_path}: {exc}") from exc
+            if any(_local_name(element.tag) == "svg" for element in root.iter()):
+                raise SymbolError(f"svg body must not contain an <svg> root: {body_path}")
             symbols.append(Symbol(manifest=manifest, body=body))
+        if not symbols:
+            raise SymbolError(f"no symbol manifests found in: {directory}")
         return cls(symbols)
 
     def get(self, symbol_id: str) -> Symbol:

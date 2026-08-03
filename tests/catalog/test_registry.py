@@ -97,6 +97,11 @@ def test_registry_rejects_unknown_symbol(tmp_path: Path) -> None:
     symbol_dir = tmp_path / "symbols"
     catalog_dir.mkdir()
     symbol_dir.mkdir()
+    # A populated library that simply does not carry this symbol: an empty
+    # directory is no longer a way to build an empty registry (SymbolRegistry
+    # rejects a directory with no manifests), and the branch under test here is
+    # the catalog's cross-check, not the library's own emptiness.
+    write_symbol(symbol_dir, "valve-check")
     write_definition(catalog_dir / "valve.json", "isolation-valve")
     with pytest.raises(
         CatalogError, match="unknown symbol valve-isolation for isolation-valve"

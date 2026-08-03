@@ -30,3 +30,12 @@ def test_every_shipped_symbol_appears_on_the_sheet(tmp_path: Path) -> None:
 
 def test_missing_symbol_directory_returns_one(tmp_path: Path) -> None:
     assert main(["symbols-sheet", str(tmp_path / "out.svg"), "--symbols", str(tmp_path / "nope")]) == 1
+
+
+def test_existing_but_wrong_symbol_directory_returns_one(tmp_path: Path) -> None:
+    """`--symbols assets` - a real directory one level above assets/symbols -
+    used to exit 0 after writing an A3 containing no symbols at all.
+    """
+    output = tmp_path / "out.svg"
+    assert main(["symbols-sheet", str(output), "--symbols", str(SYMBOLS.parent)]) == 1
+    assert not output.exists()

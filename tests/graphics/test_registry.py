@@ -76,6 +76,31 @@ def test_body_carrying_its_own_svg_root_is_rejected(tmp_path: Path) -> None:
         SymbolRegistry.from_directory(tmp_path)
 
 
+def test_body_that_is_not_well_formed_xml_is_rejected(tmp_path: Path) -> None:
+    """An unclosed tag loaded fine and only surfaced as `mismatched tag` when
+    the rendered A3 was parsed - after the corrupt sheet was already on disk
+    and the CLI had exited 0.
+    """
+    write_symbol(tmp_path, "valve-isolation", body='<line x1="0" y1="3" x2="6" y2="3">')
+    with pytest.raises(SymbolError, match="svg body is not well-formed xml"):
+        SymbolRegistry.from_directory(tmp_path)
+
+
+def test_body_with_an_unescaped_ampersand_is_rejected(tmp_path: Path) -> None:
+    write_symbol(tmp_path, "valve-isolation", body='<text>a & b</text>')
+    with pytest.raises(SymbolError, match="svg body is not well-formed xml"):
+        SymbolRegistry.from_directory(tmp_path)
+
+
+def test_directory_without_manifests_is_rejected(tmp_path: Path) -> None:
+    """An existing but wrong --symbols directory used to load as an empty
+    registry and write a blank A3 with exit code 0.
+    """
+    (tmp_path / "symbols").mkdir()
+    with pytest.raises(SymbolError, match="no symbol manifests found in"):
+        SymbolRegistry.from_directory(tmp_path)
+
+
 def test_unknown_symbol_lookup_is_rejected(tmp_path: Path) -> None:
     write_symbol(tmp_path, "valve-isolation")
     registry = SymbolRegistry.from_directory(tmp_path)

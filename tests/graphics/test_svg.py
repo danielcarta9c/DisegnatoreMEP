@@ -162,6 +162,18 @@ def test_library_that_fits_still_renders() -> None:
     assert output.count('class="symbol"') == 12
 
 
+def test_empty_registry_still_renders_a_sheet() -> None:
+    """`SymbolRegistry.from_directory` now rejects a directory with no
+    manifests, but a registry built straight from a list - which is how the
+    composite compiler and these tests build one - can still legitimately be
+    empty. The `default=` fallbacks in the column/row arithmetic are therefore
+    still reachable, and this pins that.
+    """
+    output = render_symbol_sheet(SymbolRegistry([]))
+    assert 'viewBox="0 0 420 297"' in output
+    assert 'class="symbol"' not in output
+
+
 def test_oversized_library_raises_naming_the_counts() -> None:
     """313 uniform 6x6 mm symbols exceed the 312-symbol capacity of one A3
     sheet (24 columns x 13 rows at the fixed COLUMN_GAP_MM/ROW_GAP_MM gaps).
