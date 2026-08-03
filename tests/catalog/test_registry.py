@@ -79,6 +79,19 @@ def test_registry_rejects_duplicate_ids(tmp_path: Path) -> None:
         ComponentRegistry.from_directory(tmp_path)
 
 
+def test_registry_accepts_a_definition_matching_its_symbol(tmp_path: Path) -> None:
+    catalog_dir = tmp_path / "catalog"
+    symbol_dir = tmp_path / "symbols"
+    catalog_dir.mkdir()
+    symbol_dir.mkdir()
+    write_symbol(symbol_dir, "valve-isolation")
+    write_definition(catalog_dir / "valve.json", "isolation-valve")
+    registry = ComponentRegistry.from_directory(
+        catalog_dir, symbols=SymbolRegistry.from_directory(symbol_dir)
+    )
+    assert registry.get("isolation-valve").symbol_id == "valve-isolation"
+
+
 def test_registry_rejects_unknown_symbol(tmp_path: Path) -> None:
     catalog_dir = tmp_path / "catalog"
     symbol_dir = tmp_path / "symbols"

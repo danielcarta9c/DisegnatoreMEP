@@ -42,6 +42,8 @@ class SymbolRegistry:
             if not body_path.is_file():
                 raise SymbolError(f"missing svg body for {manifest.id}")
             body = body_path.read_text("utf-8").strip()
+            if not body:
+                raise SymbolError(f"empty svg body for {manifest.id}")
             if "<svg" in body:
                 raise SymbolError(
                     f"svg body must not contain an <svg> root: {body_path}"

@@ -64,6 +64,12 @@ def test_filename_must_match_the_manifest_id(tmp_path: Path) -> None:
         SymbolRegistry.from_directory(tmp_path)
 
 
+def test_empty_svg_body_is_rejected(tmp_path: Path) -> None:
+    write_symbol(tmp_path, "valve-isolation", body="")
+    with pytest.raises(SymbolError, match="empty svg body for valve-isolation"):
+        SymbolRegistry.from_directory(tmp_path)
+
+
 def test_body_carrying_its_own_svg_root_is_rejected(tmp_path: Path) -> None:
     write_symbol(tmp_path, "valve-isolation", body="<svg><g/></svg>")
     with pytest.raises(SymbolError, match="svg body must not contain an <svg> root"):
