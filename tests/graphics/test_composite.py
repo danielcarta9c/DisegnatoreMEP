@@ -2,7 +2,7 @@ import pytest
 
 from disegnatore_mep.graphics.composite import CompositeSpec, compile_composite
 from disegnatore_mep.graphics.registry import Symbol, SymbolRegistry
-from disegnatore_mep.graphics.symbol import SymbolManifest
+from disegnatore_mep.graphics.symbol import KeepOut, SymbolManifest
 
 
 def primitive(symbol_id: str) -> Symbol:
@@ -37,6 +37,7 @@ def spec(**overrides: object) -> CompositeSpec:
         "width_mm": 16.0,
         "height_mm": 6.0,
         "allowed_rotations_deg": [0, 180],
+        "keep_out": {"left_mm": 2.0, "right_mm": 2.0},
         "source": "CONV-GRAFICA-002",
         "parts": [
             {"symbol_id": "valve", "offset_x_mm": 0.0, "offset_y_mm": 0.0},
@@ -156,3 +157,80 @@ def test_interior_port_is_rejected_by_perimeter_check() -> None:
     )
     with pytest.raises(ValueError, match="is not on its left face"):
         compile_composite(interior_spec, registry())
+
+
+def test_compiled_composite_carries_the_supplied_keep_out() -> None:
+    """keep_out is authored on the spec, never inferred from the parts.
+
+    Both parts here declare their own 2 mm clearance, but part 0's right side
+    sits at x=6 - deep inside the 16 mm composite - so its clearance says
+    nothing about the composite's outer envelope. Only the spec knows.
+    """
+    symbol = compile_composite(spec(keep_out={"left_mm": 3.0, "bottom_mm": 1.5}), registry())
+    assert symbol.manifest.keep_out.left_mm == 3.0
+    assert symbol.manifest.keep_out.bottom_mm == 1.5
+    assert symbol.manifest.keep_out.top_mm == 0.0
+
+
+def test_composite_assembled_from_inline_parts_is_inline_when_declared() -> None:
+    """D-027: an in-line component breaks the connection into two segments.
+
+    A composite built from in-line primitives is itself in-line, and the router
+    can only know that from `inline_gap_mm` on the compiled manifest.
+    """
+    symbol = compile_composite(spec(inline_gap_mm=16.0), registry())
+    assert symbol.manifest.is_inline
+    assert symbol.manifest.inline_gap_mm == 16.0
+
+
+def test_composite_without_an_inline_gap_is_not_inline() -> None:
+    assert not compile_composite(spec(), registry()).manifest.is_inline
+
+
+def test_compiled_composite_carries_its_label_anchors() -> None:
+    anchors = [
+        {"id": "tag", "role": "tag", "x_mm": 8.0, "y_mm": -1.0},
+        {"id": "note", "role": "description", "x_mm": 8.0, "y_mm": 8.0},
+    ]
+    symbol = compile_composite(spec(label_anchors=anchors), registry())
+    assert [item.id for item in symbol.manifest.label_anchors] == ["tag", "note"]
+    assert symbol.manifest.label_anchors[0].role == "tag"
+
+
+def test_inline_composite_must_satisfy_the_two_opposed_ports_rule() -> None:
+    """The compiled manifest is validated like any other: an in-line symbol
+    exposing a single port is rejected, not quietly published.
+    """
+    single_port = spec(
+        inline_gap_mm=16.0,
+        exposed_ports=[{"part_index": 0, "port_id": "a", "as_id": "inlet"}],
+    )
+    with pytest.raises(ValueError, match="an inline symbol needs two opposed ports"):
+        compile_composite(single_port, registry())
+
+
+def test_inline_gap_wider_than_the_composite_box_is_rejected() -> None:
+    with pytest.raises(ValueError, match="inline gap cannot exceed the symbol width"):
+        compile_composite(spec(inline_gap_mm=99.0), registry())
+
+
+def test_spec_defaults_match_the_manifest_defaults() -> None:
+    """A composite is authored exactly like a hand-written symbol: same three
+    optional fields, same defaults.
+    """
+    bare = CompositeSpec.model_validate(
+        {
+            "id": "bare",
+            "version": "1.0.0",
+            "name": "Bare",
+            "width_mm": 16.0,
+            "height_mm": 6.0,
+            "allowed_rotations_deg": [0],
+            "source": "TEST",
+            "parts": [{"symbol_id": "valve", "offset_x_mm": 0.0, "offset_y_mm": 0.0}],
+            "exposed_ports": [{"part_index": 0, "port_id": "a", "as_id": "inlet"}],
+        }
+    )
+    assert bare.keep_out == KeepOut()
+    assert bare.inline_gap_mm is None
+    assert bare.label_anchors == []

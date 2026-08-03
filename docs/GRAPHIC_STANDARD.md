@@ -1,6 +1,6 @@
 # Standard grafico — Disegnatore MEP
 
-Questo documento descrive come vive, in codice, lo standard grafico costruito per trasformare un modello tecnico approvato in una tavola tecnica stampabile: dove sono definite le grandezze in millimetri, come è fatto il manifesto geometrico di un simbolo, come si separa dalla semantica del catalogo, come si aggiunge un simbolo alla libreria e come si verifica per stampa il foglio di riscontro. Copre l'esito dei Task 1-7 del piano `docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`. Non copre layout, instradamento, multi-tavola, cartiglio o distinta: sono oggetto del piano successivo (si veda D-033).
+Questo documento descrive come vive, in codice, lo standard grafico costruito per trasformare un modello tecnico approvato in una tavola tecnica stampabile: dove sono definite le grandezze in millimetri, come è fatto il manifesto geometrico di un simbolo, come si separa dalla semantica del catalogo, come si aggiunge un simbolo alla libreria, come si compone un simbolo composito da primitive e come si verifica per stampa il foglio di riscontro. Copre l'esito dei Task 1-7 del piano `docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`. Non copre layout, instradamento, multi-tavola, cartiglio o distinta: sono oggetto del piano successivo (si veda D-033).
 
 ## 1. Un'unica autorità dimensionale
 
@@ -81,9 +81,33 @@ Un simbolo pubblicato è una coppia di file nella stessa cartella: `<id>.json` (
 5. **Validare prima di scrivere.** Costruire il dizionario del manifesto e chiamare `SymbolManifest.model_validate(...)` prima di scrivere qualunque file: un manifesto non valido non deve mai arrivare su disco. `examples/graphics/build_symbols.py` (libreria pubblicata, dodici simboli in `assets/symbols/`) ed `examples/foundation/build_fixtures.py` (simboli di fixture, in `examples/foundation/symbols/`) sono i due generatori esistenti: hanno proprietà e cicli di vita separati — la libreria pubblicata non contiene artefatti di prova — ma seguono lo stesso schema (dizionario tipizzato, validazione, scrittura).
 6. **Rigenerare e verificare il determinismo.** Rieseguire lo script generatore e controllare che `git status --short <cartella>` non mostri differenze: la generazione deve essere riproducibile bit per bit, senza timestamp, ordine di dizionario o rappresentazione in virgola mobile che vari da un'esecuzione all'altra.
 7. **Verificare che il registro carichi la libreria** con il conteggio atteso, per esempio `SymbolRegistry.from_directory(percorso).all()`.
-8. **Guardare il simbolo, non solo misurarlo.** Renderizzare il foglio di riscontro (§6) e controllare a vista che il simbolo sia riconoscibile: un simbolo che valida ma non si legge ha comunque fallito. Il Task 6 ha scoperto così che una prima versione del simbolo del filtro a Y si leggeva come il segnale internazionale di divieto, non come un filtro, ed è stata ridisegnata.
+8. **Guardare il simbolo, non solo misurarlo.** Renderizzare il foglio di riscontro (§7) e controllare a vista che il simbolo sia riconoscibile: un simbolo che valida ma non si legge ha comunque fallito. Il Task 6 ha scoperto così che una prima versione del simbolo del filtro a Y si leggeva come il segnale internazionale di divieto, non come un filtro, ed è stata ridisegnata.
 
-## 6. Il foglio di riscontro: comando, stampa, cosa misurare
+## 6. Simboli compositi: un prodotto, un simbolo
+
+Un prodotto che integra più funzioni — un gruppo di riempimento che porta valvola, filtro e ritegno in un solo corpo — viene disegnato con **un solo simbolo riconoscibile**, non con più simboli annidati (D-016), e conta **una sola volta nella distinta** (D-031). Il fatto che internamente sia assemblato da primitive riusabili è un dettaglio di autoraggio: non è visibile né a chi legge la tavola, né a chi conta i componenti da acquistare.
+
+`src/disegnatore_mep/graphics/composite.py` fornisce questa via. `CompositeSpec` descrive l'assemblaggio, `compile_composite(spec, symbols)` lo compila in un `Symbol` — manifesto più corpo SVG — usando un `SymbolRegistry` come fonte delle primitive.
+
+### 6.1 Come si autora un composito
+
+1. **Riquadro e rotazioni** come per un simbolo scritto a mano: `id`, `version`, `name`, `width_mm`, `height_mm`, `allowed_rotations_deg`, `source`.
+2. **Le parti** (`parts`): per ciascuna, il `symbol_id` della primitiva nel registro e lo scostamento `offset_x_mm`/`offset_y_mm` rispetto all'angolo in alto a sinistra del riquadro del composito. Una parte che sporge dal riquadro è respinta.
+3. **Le porte esposte** (`exposed_ports`): quali porte delle parti diventano porte del composito, con l'indice della parte, l'identificativo della porta di origine e il nuovo identificativo (`as_id`). Le porte non esposte spariscono: sono interne al prodotto. Ogni porta esposta viene traslata dello scostamento della sua parte e deve cadere sul perimetro del composito (§3), altrimenti la compilazione fallisce.
+4. **`inline_gap_mm`, `keep_out`, `label_anchors`** si dichiarano **esplicitamente sulla specifica**, con gli stessi valori di default del manifesto (`keep_out` a zero, `inline_gap_mm` assente, nessun ancoraggio). Non sono dedotti dalle parti, e la ragione è di sostanza, non di comodità:
+   - l'area di rispetto di un composito non è l'unione di quelle delle sue parti: una parte interna al riquadro non contribuisce nulla all'involucro esterno, e la sua area di rispetto interna non deve gonfiare quella del composito;
+   - l'interruzione di linea appartiene al composito intero — un gruppo da 16 mm costruito con due primitive in linea da 6 mm interrompe la connessione per 16 mm, non per 6 né per 12: nessuna somma o massimo delle parti dà il numero giusto;
+   - gli ancoraggi di etichetta di un composito sono quelli dell'unico prodotto: unire quelli delle parti produrrebbe ancoraggi privi di senso e, con due primitive uguali, identificativi duplicati che il manifesto respinge.
+
+   La conseguenza pratica è che un composito in linea va dichiarato tale: un gruppo assemblato da primitive in linea che non dichiari il proprio `inline_gap_mm` risulta **non** in linea, e l'instradamento gli disegnerebbe attraverso una linea continua invece di spezzare la connessione — esattamente ciò che D-027 vieta.
+
+### 6.2 Il risultato è un simbolo come gli altri
+
+`compile_composite` non produce una categoria a parte: costruisce un `SymbolManifest` e lo fa validare dalle stesse regole di §3 e §5. Un composito in linea deve quindi soddisfare davvero la regola delle due porte opposte e avere un `inline_gap_mm` non superiore alla propria larghezza, come qualunque simbolo scritto a mano; se non ci riesce, la compilazione fallisce invece di pubblicare un manifesto incoerente. Il corpo SVG è la concatenazione dei corpi delle parti, ciascuno annidato in un gruppo traslato del proprio scostamento.
+
+Da lì in avanti, per il registro, per il foglio di riscontro e per chiunque consumi la libreria, un composito compilato è **indistinguibile** da un simbolo scritto a mano: stessa classe, stessi campi, stessi invarianti.
+
+## 7. Il foglio di riscontro: comando, stampa, cosa misurare
 
 Il comando CLI `symbols-sheet` carica una cartella di simboli e scrive un foglio SVG A3 a misura reale:
 

@@ -10,7 +10,7 @@ from pydantic import Field, model_validator
 from disegnatore_mep.model.base import ID_PATTERN, FiniteFloat, StrictModel
 
 from .registry import Symbol, SymbolRegistry
-from .symbol import TOLERANCE_MM, SymbolManifest, SymbolPort
+from .symbol import TOLERANCE_MM, KeepOut, LabelAnchor, SymbolManifest, SymbolPort
 
 
 class CompositePart(StrictModel):
@@ -26,12 +26,26 @@ class ExposedPort(StrictModel):
 
 
 class CompositeSpec(StrictModel):
+    """Come si autora un composito: gli stessi campi di un simbolo scritto a mano.
+
+    `inline_gap_mm`, `keep_out` e `label_anchors` sono dichiarati qui, non
+    dedotti dalle primitive. L'area di rispetto di un composito non e' l'unione
+    di quelle delle sue parti - una parte interna non contribuisce nulla
+    all'involucro esterno - l'interruzione di linea appartiene al composito
+    intero e non a una sua parte, e gli ancoraggi di etichetta di un composito
+    sono quelli del prodotto unico, non quelli delle primitive che lo compongono.
+    I valori di default sono quelli di `SymbolManifest`.
+    """
+
     id: str = Field(pattern=ID_PATTERN)
     version: str = Field(pattern=r"^\d+\.\d+\.\d+$")
     name: str = Field(min_length=1)
     width_mm: FiniteFloat = Field(gt=0)
     height_mm: FiniteFloat = Field(gt=0)
     allowed_rotations_deg: list[int] = Field(min_length=1)
+    inline_gap_mm: FiniteFloat | None = Field(default=None, gt=0)
+    keep_out: KeepOut = Field(default_factory=KeepOut)
+    label_anchors: list[LabelAnchor] = Field(default_factory=list)
     source: str = Field(min_length=1)
     parts: list[CompositePart] = Field(min_length=1)
     exposed_ports: list[ExposedPort] = Field(min_length=1)
@@ -80,7 +94,10 @@ def compile_composite(spec: CompositeSpec, symbols: SymbolRegistry) -> Symbol:
         width_mm=spec.width_mm,
         height_mm=spec.height_mm,
         allowed_rotations_deg=spec.allowed_rotations_deg,
+        inline_gap_mm=spec.inline_gap_mm,
         ports=ports,
+        keep_out=spec.keep_out,
+        label_anchors=spec.label_anchors,
         source=spec.source,
     )
 
