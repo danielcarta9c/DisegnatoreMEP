@@ -17,3 +17,8 @@ Thumbs.db
 # Ambienti locali
 .venv/
 node_modules/
+
+# Configurazione Claude specifica della macchina.
+# .claude/settings.json invece e' versionato: dichiara il plugin necessario
+# perche' una sessione cloud lo installi all'avvio.
+.claude/settings.local.json

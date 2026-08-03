@@ -1,0 +1,9 @@
+# Gli script shell devono conservare terminatori di riga LF anche quando il
+# repository viene clonato o modificato su Windows: con CRLF il kernel Linux
+# non riconosce lo shebang e lo script non parte in una sessione cloud.
+*.sh text eol=lf
+
+# I file di dati e configurazione letti dal codice restano LF per garantire che
+# le impronte di riproducibilita' non cambino a seconda del sistema operativo.
+*.json text eol=lf
+*.svg text eol=lf

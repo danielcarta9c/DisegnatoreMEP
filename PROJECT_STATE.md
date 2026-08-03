@@ -7,8 +7,8 @@
 | Componente | Stato | Note |
 |---|---|---|
 | Repository | Git locale + GitHub | Remote `origin` su [danielcarta9c/DisegnatoreMEP](https://github.com/danielcarta9c/DisegnatoreMEP), **pubblico**, licenza MIT (D-038) |
-| Sviluppo | Locale Windows | Cartella sincronizzata con OneDrive |
-| Interprete | Python 3.12.13 | `.venv` creata dal runtime Codex, condivisa fra sessioni Claude e Codex |
+| Sviluppo | Locale o cloud | Pronto per entrambi: comandi Bash, plugin dichiarato in `.claude/settings.json` |
+| Interprete | Python 3.12, minimo 3.11 | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv`; comando `disegnatore-mep` funzionante |
 | Test | 59 verdi | `pytest`, `ruff` e `mypy --strict` tutti a exit `0` |
 | Release | Non disponibile | `releases/latest/` sarà popolata dopo la prima versione verificata |

@@ -18,15 +18,25 @@ La skill analizzerà la configurazione, proporrà gli accessori necessari o racc
 8. Leggere `docs/P0_REVIEW_FINDINGS.md` prima di pianificare P1 o P2.
 9. Leggere `docs/plans/2026-08-01-master-implementation-roadmap.md` e, del piano P0, almeno l'appendice finale sulle deviazioni.
 
+## Preparazione dell'ambiente
+
+Dalla radice del progetto, su Linux, macOS o Git Bash su Windows:
+
+```bash
+bash scripts/setup-env.sh
+```
+
+Crea la `.venv`, installa il pacchetto con le versioni pinnate e verifica test, lint e type check. È il primo comando da eseguire in una sessione cloud, che riparte sempre da un clone pulito.
+
 ## Uso del nucleo
 
-Dalla radice del progetto, con la `.venv` già creata:
-
-```powershell
-& .\.venv\Scripts\python.exe -m disegnatore_mep validate examples/foundation/valid-mixed-project.json --catalog examples/foundation/catalog
+```bash
+.venv/bin/python -m disegnatore_mep validate examples/foundation/valid-mixed-project.json --catalog examples/foundation/catalog
 ```
 
 Codici di uscita: `0` progetto valido, `2` errori di validazione, `1` errori di caricamento.
+
+Su Windows in locale l'interprete è `.venv/Scripts/python.exe` anziché `.venv/bin/python`.
 
 ## Cartelle principali
 

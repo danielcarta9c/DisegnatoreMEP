@@ -57,7 +57,8 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 - **Versione installabile:** nessuna release; `releases/latest/` non è ancora popolata.
 - **Codice:** 45 file, 3089 righe, 17 commit. `src/disegnatore_mep/` con `model`, `catalog`, `domains`, `validation`, `io` e `cli`.
 - **Verifica:** 59 test verdi; `pytest`, `ruff` e `mypy --strict` tutti a exit `0` su `src`, `tests` e `examples/foundation/build_fixtures.py`.
-- **Ambiente:** `.venv` con Python **3.12.13** preso dal runtime Codex (`C:\Users\DanielCarta\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe`). Scelta deliberata: Claude e Codex condividono la stessa `.venv` e la stessa toolchain, quindi le sessioni sono intercambiabili senza rifare setup. L'unico altro Python sulla macchina è 3.14.4 e **non** va usato.
+- **Ambiente:** ricostruibile da zero con `bash scripts/setup-env.sh`, che crea la `.venv`, installa il pacchetto in editable con le versioni pinnate di `pyproject.toml` e verifica test, lint e type check. Lo script rileva da solo l'interprete e se la `.venv` usa `bin/` o `Scripts/`. **Da eseguire come prima cosa in una sessione cloud**, che riparte sempre da un clone pulito e non conserva nulla di installato.
+- **Il progetto è pronto per il cloud.** `.claude/settings.json` è versionato e dichiara il plugin `superpowers`, cosi' una sessione cloud lo installa all'avvio. Tutti i comandi dei piani sono Bash. `.claude/settings.local.json` resta invece fuori da Git perché contiene percorsi della singola macchina.
 - **Ramo:** P0 è stata sviluppata su `feat/p0-foundation-core` e integrata in `main` con un merge esplicito. Si riparte da `main`. Il ramo di lavoro è conservato per poter rileggere la sequenza dei commit.
 - **In flight:** nessuna modifica applicativa a metà.
 - **Blocco:** nessuno. Le due decisioni di prodotto che erano in sospeso sono state chiuse il 3 agosto 2026 (D-036 ritirata, D-037 ricondotta a decisione tecnica).

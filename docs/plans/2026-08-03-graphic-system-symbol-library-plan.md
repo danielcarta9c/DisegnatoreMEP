@@ -12,7 +12,7 @@
 
 ## Vincoli globali
 
-- Sistema operativo Windows; tutti i comandi sono PowerShell; interprete `.\.venv\Scripts\python.exe`.
+- I comandi sono Bash e l'interprete e' `.venv/bin/python`, la forma valida in una sessione cloud su Linux. Su Windows in locale il percorso e' invece `.venv/Scripts/python.exe`: `scripts/setup-env.sh` rileva automaticamente quale dei due esiste.
 - **Tutte** le grandezze grafiche sono in millimetri di carta e vivono in un unico modulo. Nessun numero magico sparso nel codice.
 - Nessun simbolo, nessun testo e nessuno spessore viene ridotto in funzione della complessità dell'impianto.
 - Il modello tecnico canonico resta la fonte di verità. Questo piano non produce PDF e non fa layout d'impianto: disegna simboli, non schemi.
@@ -151,8 +151,8 @@ def test_text_heights_are_ordered() -> None:
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -m pytest tests/graphics/test_standard.py -v
+```bash
+.venv/bin/python -m pytest tests/graphics/test_standard.py -v
 ```
 
 Expected: FAIL con `ModuleNotFoundError: No module named 'disegnatore_mep.graphics'`.
@@ -240,17 +240,17 @@ Nota sul margine sinistro maggiore: è lo spazio di rilegatura previsto da ISO 5
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -m pytest -q
-& .\.venv\Scripts\python.exe -m ruff check src tests
-& .\.venv\Scripts\python.exe -m mypy src tests
+```bash
+.venv/bin/python -m pytest -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src tests
 ```
 
 Expected: tutti exit `0`; il totale sale da 59 a 65.
 
 - [ ] **Step 5: commit**
 
-```powershell
+```bash
 git add src/disegnatore_mep/graphics tests/graphics/test_standard.py
 git commit -m "feat: add the millimetre graphic standard"
 ```
@@ -398,8 +398,8 @@ def test_symbol_port_is_immutable() -> None:
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -m pytest tests/graphics/test_symbol.py -v
+```bash
+.venv/bin/python -m pytest tests/graphics/test_symbol.py -v
 ```
 
 Expected: FAIL con `ModuleNotFoundError: No module named 'disegnatore_mep.graphics.symbol'`.
@@ -584,17 +584,17 @@ __all__ = [
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -m pytest -q
-& .\.venv\Scripts\python.exe -m ruff check src tests
-& .\.venv\Scripts\python.exe -m mypy src tests
+```bash
+.venv/bin/python -m pytest -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src tests
 ```
 
 Expected: tutti exit `0`.
 
 - [ ] **Step 5: commit**
 
-```powershell
+```bash
 git add src/disegnatore_mep/graphics tests/graphics/test_symbol.py
 git commit -m "feat: add the symbol geometry manifest"
 ```
@@ -753,8 +753,8 @@ Import `SymbolRegistry` and reuse `write_symbol` from `tests.graphics.test_regis
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -m pytest tests/graphics/test_registry.py -v
+```bash
+.venv/bin/python -m pytest tests/graphics/test_registry.py -v
 ```
 
 Expected: FAIL con `ModuleNotFoundError: No module named 'disegnatore_mep.graphics.registry'`.
@@ -990,17 +990,17 @@ Rimuovere l'import di `SymbolGeometry`. In `tests/catalog/test_schema.py` elimin
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -m pytest -q
-& .\.venv\Scripts\python.exe -m ruff check src tests
-& .\.venv\Scripts\python.exe -m mypy src tests
+```bash
+.venv/bin/python -m pytest -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src tests
 ```
 
 Expected: tutti exit `0`. Il conteggio cala per i test rimossi dal catalogo e sale per quelli nuovi: riportare il totale reale.
 
 - [ ] **Step 7: commit**
 
-```powershell
+```bash
 git add src/disegnatore_mep/graphics src/disegnatore_mep/catalog tests
 git commit -m "feat: own symbol geometry in the symbol manifest"
 ```
@@ -1107,8 +1107,8 @@ def test_unknown_primitive_is_rejected() -> None:
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -m pytest tests/graphics/test_composite.py -v
+```bash
+.venv/bin/python -m pytest tests/graphics/test_composite.py -v
 ```
 
 Expected: FAIL con `ModuleNotFoundError`.
@@ -1214,10 +1214,10 @@ Una porta esposta conserva la faccia della primitiva: la traslazione la sposta m
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -m pytest -q
-& .\.venv\Scripts\python.exe -m ruff check src tests
-& .\.venv\Scripts\python.exe -m mypy src tests
+```bash
+.venv/bin/python -m pytest -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src tests
 git add src/disegnatore_mep/graphics/composite.py tests/graphics/test_composite.py
 git commit -m "feat: compile composite symbols from primitives"
 ```
@@ -1322,8 +1322,8 @@ def test_nothing_is_drawn_outside_the_usable_area() -> None:
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -m pytest tests/graphics/test_svg.py -v
+```bash
+.venv/bin/python -m pytest tests/graphics/test_svg.py -v
 ```
 
 Expected: FAIL con `ModuleNotFoundError`.
@@ -1431,10 +1431,10 @@ and extend `__all__` with `"render_symbol_sheet"`.
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -m pytest -q
-& .\.venv\Scripts\python.exe -m ruff check src tests
-& .\.venv\Scripts\python.exe -m mypy src tests
+```bash
+.venv/bin/python -m pytest -q
+.venv/bin/python -m ruff check src tests
+.venv/bin/python -m mypy src tests
 git add src/disegnatore_mep/graphics tests/graphics/test_svg.py
 git commit -m "feat: render a true-scale symbol sheet"
 ```
@@ -1488,9 +1488,9 @@ Ogni simbolo dichiara `source` con il riferimento alla convenzione grafica adott
 
 Run:
 
-```powershell
-New-Item -ItemType Directory -Path assets/symbols -Force | Out-Null
-& .\.venv\Scripts\python.exe examples/graphics/build_symbols.py
+```bash
+mkdir -p assets/symbols
+.venv/bin/python examples/graphics/build_symbols.py
 ```
 
 Expected: ventiquattro file creati, dodici manifesti e dodici corpi.
@@ -1499,8 +1499,8 @@ Expected: ventiquattro file creati, dodici manifesti e dodici corpi.
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -c "from pathlib import Path; from disegnatore_mep.graphics.registry import SymbolRegistry; r = SymbolRegistry.from_directory(Path('assets/symbols')); print(len(r.all()), 'simboli caricati')"
+```bash
+.venv/bin/python -c "from pathlib import Path; from disegnatore_mep.graphics.registry import SymbolRegistry; r = SymbolRegistry.from_directory(Path('assets/symbols')); print(len(r.all()), 'simboli caricati')"
 ```
 
 Expected: `12 simboli caricati`.
@@ -1511,7 +1511,7 @@ Rieseguire il generatore e controllare che `git status --short assets/symbols` n
 
 - [ ] **Step 5: commit**
 
-```powershell
+```bash
 git add assets/symbols examples/graphics/build_symbols.py
 git commit -m "feat: add the first cross-domain symbol library"
 ```
@@ -1594,20 +1594,20 @@ Aggiungere gli import `from disegnatore_mep.graphics.registry import SymbolError
 
 Rigenerare e verificare che il gate G0 regga:
 
-```powershell
-& .\.venv\Scripts\python.exe examples/foundation/build_fixtures.py
-& .\.venv\Scripts\python.exe -m disegnatore_mep validate examples/foundation/valid-mixed-project.json --catalog examples/foundation/catalog
-if ($LASTEXITCODE -ne 0) { throw 'Il progetto misto non valida piu' }
-& .\.venv\Scripts\python.exe -m disegnatore_mep validate examples/foundation/invalid-cross-medium.json --catalog examples/foundation/catalog
-if ($LASTEXITCODE -ne 2) { throw 'Il progetto incoerente non restituisce piu 2' }
+```bash
+.venv/bin/python examples/foundation/build_fixtures.py
+.venv/bin/python -m disegnatore_mep validate examples/foundation/valid-mixed-project.json --catalog examples/foundation/catalog
+if [ $? -ne 0 ]; then echo 'Il progetto misto non valida piu' >&2; exit 1; fi
+.venv/bin/python -m disegnatore_mep validate examples/foundation/invalid-cross-medium.json --catalog examples/foundation/catalog
+if [ $? -ne 2 ]; then echo 'Il progetto incoerente non restituisce piu 2' >&2; exit 1; fi
 ```
 
 - [ ] **Step 4: rigenerare lo schema JSON**
 
 Run:
 
-```powershell
-& .\.venv\Scripts\python.exe -m disegnatore_mep export-schema schemas/project.schema.json
+```bash
+.venv/bin/python -m disegnatore_mep export-schema schemas/project.schema.json
 ```
 
 - [ ] **Step 5: documentare lo standard grafico**
@@ -1616,11 +1616,11 @@ Create `docs/GRAPHIC_STANDARD.md` con: la tabella delle grandezze di `A3_LANDSCA
 
 - [ ] **Step 6: eseguire il gate completo**
 
-```powershell
-& .\.venv\Scripts\python.exe -m pytest -q
-& .\.venv\Scripts\python.exe -m ruff check src tests examples
-& .\.venv\Scripts\python.exe -m mypy src tests examples
-& .\.venv\Scripts\python.exe -m disegnatore_mep symbols-sheet outputs/symbols.svg --symbols assets/symbols
+```bash
+.venv/bin/python -m pytest -q
+.venv/bin/python -m ruff check src tests examples
+.venv/bin/python -m mypy src tests examples
+.venv/bin/python -m disegnatore_mep symbols-sheet outputs/symbols.svg --symbols assets/symbols
 ```
 
 Expected: tutto a `0`; il foglio viene prodotto. `outputs/` è già in `.gitignore`.
@@ -1633,7 +1633,7 @@ Questo passaggio è il vero gate della fase: i controlli automatici dicono che n
 
 - [ ] **Step 8: commit finale**
 
-```powershell
+```bash
 git add src/disegnatore_mep/cli.py tests/acceptance/test_symbol_sheet.py examples schemas docs/GRAPHIC_STANDARD.md
 git commit -m "test: qualify the graphic standard and symbol library"
 ```
