@@ -93,27 +93,48 @@ def test_bad_port_id_is_rejected() -> None:
 
 
 def test_part_flush_with_box_passes_with_tolerance() -> None:
-    """Float rounding causes 5.95 + 6.0 = 11.950000000000002 > 11.95 without tolerance.
+    """Float rounding causes 4.0 + 4.03 = 8.030000000000001 > 8.03 without tolerance.
 
-    Using offset_x_mm = 0.05 * 119 produces 5.9500000000000017 due to float accumulation.
-    With a 6.0-width part, this exceeds the 11.95 box boundary by ~2e-15, which triggers
-    false rejection without tolerance but passes with it. The right port of the part
-    (at offset + 6.0) lands exactly on the composite's right edge.
+    This tests the critical case where a part placed at offset 4.0 with width 4.03
+    should fit exactly in a composite of width 8.03, but due to float arithmetic,
+    the sum is 8.030000000000001 which is > 8.03 without tolerance. Without the
+    TOLERANCE_MM adjustment, this valid composite would be falsely rejected.
     """
-    offset_value = 0.05 * 119
-    flush_spec = spec(
-        width_mm=11.95,
-        height_mm=6.0,
-        parts=[
-            {"symbol_id": "valve", "offset_x_mm": offset_value, "offset_y_mm": 0.0},
+    narrow_primitive = Symbol(
+        manifest=SymbolManifest.model_validate({
+            "id": "narrow-valve",
+            "version": "1.0.0",
+            "name": "narrow-valve",
+            "width_mm": 4.03,
+            "height_mm": 6.0,
+            "allowed_rotations_deg": [0],
+            "ports": [
+                {"id": "a", "face": "left", "x_mm": 0.0, "y_mm": 3.0},
+                {"id": "b", "face": "right", "x_mm": 4.03, "y_mm": 3.0},
+            ],
+            "source": "CONV-GRAFICA-003",
+        }),
+        body='<g id="narrow-valve"/>'
+    )
+    flush_registry = SymbolRegistry([narrow_primitive])
+    flush_spec = CompositeSpec.model_validate({
+        "id": "flush-composite",
+        "version": "1.0.0",
+        "name": "Flush Composite",
+        "width_mm": 8.03,
+        "height_mm": 6.0,
+        "allowed_rotations_deg": [0],
+        "source": "TEST",
+        "parts": [
+            {"symbol_id": "narrow-valve", "offset_x_mm": 4.0, "offset_y_mm": 0.0},
         ],
-        exposed_ports=[
+        "exposed_ports": [
             {"part_index": 0, "port_id": "b", "as_id": "outlet"},
         ],
-    )
+    })
     # Should not raise with tolerance
-    symbol = compile_composite(flush_spec, registry())
-    assert symbol.manifest.port("outlet").x_mm == 11.95
+    symbol = compile_composite(flush_spec, flush_registry)
+    assert symbol.manifest.port("outlet").x_mm == 8.030000000000001
 
 
 def test_interior_port_is_rejected_by_perimeter_check() -> None:
