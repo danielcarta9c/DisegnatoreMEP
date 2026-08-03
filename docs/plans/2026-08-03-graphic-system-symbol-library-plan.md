@@ -1670,3 +1670,77 @@ git commit -m "test: qualify the graphic standard and symbol library"
 - [ ] `pytest`, Ruff e mypy hanno exit code `0` su `src`, `tests` ed `examples`.
 - [ ] La prova di stampa è stata eseguita e il righello conferma i 100 mm.
 - [ ] `git status --short` è vuoto dopo l'ultimo commit.
+
+---
+
+## Appendice — deviazioni approvate durante l'esecuzione
+
+**Stato:** piano eseguito e completato il 3 agosto 2026, con
+`superpowers:subagent-driven-development`: un implementatore fresco per task, poi revisione
+di conformità alla specifica e di qualità, con loop di correzione fino all'approvazione.
+Sedici commit, 116 test verdi, `ruff` e `mypy --strict` a `0` su `src`, `tests` ed `examples`.
+
+Come il piano P0, questo piano è stato scritto senza eseguire il codice, e in esecuzione sono
+emersi difetti reali nel codice letterale riportato sopra. **Il testo dei task non è stato
+riscritto**, quindi chi lo rileggesse alla lettera reintrodurrebbe gli stessi difetti. Questa
+appendice è la fonte autorevole sulle differenze fra il piano e il codice consegnato.
+
+### Difetti del piano corretti in esecuzione
+
+| # | Task | Il piano diceva | Perché non funzionava | Cosa è stato fatto |
+|---|---|---|---|---|
+| 1 | 5, 7 | `width="{standard.sheet_width_mm}mm"` | I campi sono `float`, quindi il foglio dichiarava `width="420.0mm"` mentre i test dello stesso piano pretendono `width="420mm"`. Il modulo non poteva passare le proprie verifiche | `:g` anche su `width` e `height`, come il piano già faceva per il `viewBox` |
+| 2 | 3 | Rimuovere `SymbolGeometry` e i campi geometrici delle porte, rigenerando le fixture solo al Task 7 | Le otto definizioni già committate in `examples/foundation/catalog/` portano un blocco `geometry`; con `extra="forbid"` il catalogo viene rifiutato in blocco, la CLI esce `1` e i due test del gate G0 falliscono. Ma lo Step 6 del Task 3 pretende exit `0` sull'intera suite | La rigenerazione delle fixture è stata anticipata dentro il Task 3, dove serve |
+| 3 | 6, 7 | Aggiungere in `assets/symbols` i simboli mancanti per le fixture | Lo Step 1 del Task 7 asserisce che la libreria pubblicata contenga esattamente dodici simboli. Le due cose non possono valere insieme | `assets/symbols/` resta i dodici pubblicati; le fixture hanno `examples/foundation/symbols/`, accanto al loro catalogo |
+| 4 | 3 | «Interfaces: produce `SymbolRegistry`, `SymbolError`, `ResolvedComponent`» | Il codice del piano non definisce mai `ResolvedComponent` e nessun task successivo lo consuma. Costruirlo sarebbe stata un'astrazione senza consumatori | Non implementato. La vista che unisce semantica e geometria servirà davvero nel piano di layout: va progettata lì, con un consumatore reale |
+| 5 | 5 | Quattro misure in millimetri scritte inline (`1.5`, `2`, `1`, `0.6`) | Contro il vincolo globale «nessun numero magico sparso nel codice» dello stesso piano | Promosse a costanti nominate in `svg.py`, dove il piano già ammette tre costanti di foglio. Output byte-identico |
+| 6 | 1 | Il docstring di `standard.py`: «Nessun altro modulo deve contenere una costante metrica» | Falso già per il codice del piano, che dichiara tre costanti in `svg.py` | Docstring corretto: `standard.py` è l'autorità sulla **carta**; un modulo che disegna può nominare le proprie costanti di impaginazione, ma nessun valore dimensionale resta anonimo |
+
+### Difetti trovati dalle revisioni e corretti
+
+| # | Task | Difetto | Perché contava |
+|---|---|---|---|
+| R1 | 1 | I campi `float` accettavano `+inf`: `Field(gt=0)` rifiuta `NaN` ma non l'infinito | Uno standard con foglio di larghezza infinita validava. D-035 impone di rifiutare i non finiti al confine del modello: applicato `FiniteFloat` in tutto il livello grafico |
+| R2 | 1 | Il test dichiarava di verificare l'area utile ma controllava solo la larghezza | `usable_height_mm` non è un multiplo del passo di griglia e l'asimmetria era invisibile alla suite. Ora è fissata da un test come proprietà voluta |
+| R3 | 4 | Un `port_id` inesistente faceva uscire `KeyError`, che non è un `ValueError` | Sfuggiva al pattern di cattura usato da tutti i caricatori del progetto |
+| R4 | 4 | Il controllo di debordamento del composito non aveva tolleranza, mentre il gemello in `symbol.py` usa `TOLERANCE_MM` | Misurato ~11% di rifiuti falsi su dati in millimetri a due decimali: puro errore di somma in virgola mobile. Un composito valido veniva rifiutato |
+| R5 | 4 | La garanzia centrale del task — un composito mal assemblato è respinto dal validatore riusato — era vera ma senza test | Proprietà emergente non presidiata: una modifica a uno dei due moduli l'avrebbe rotta in silenzio |
+| R6 | 5 | **Il foglio disegnava fuori pagina in silenzio.** Nessun limite sulle righe: 500 simboli finivano 113 mm sotto il bordo, senza eccezione né avviso | Il codice giustamente non rimpicciolisce nulla, ma non falliva nemmeno. Per un foglio che esiste per essere stampato è inaccettabile. Ora rifiuta con una diagnostica che dice quanti simboli stanno, coerente con §10.2 della specifica |
+| R7 | 5 | `test_nothing_is_drawn_outside_the_usable_area` catturava solo la `x` dell'origine | Non verificava ciò che il nome promette, ed è esattamente il motivo per cui R6 era sfuggito |
+| R8 | 3 | La verifica incrociata simbolo/catalogo era testata solo sui rami di rifiuto | Mutando `!=` in `if True:` la suite restava verde: una regressione che rifiutava tutto sarebbe passata |
+| R9 | 3 | Un corpo `.svg` vuoto o di soli spazi passava come simbolo valido | Un simbolo che non disegna nulla superava ogni controllo e sarebbe apparso come cella bianca sul foglio |
+| R10 | 6 | I dodici simboli dichiaravano come fonte ANSI/ASHRAE Standard 134 | Il registro fonti la elenca come SRC-005 «Da acquisire e valutare»: non acquisita, non valutata, pertinenza italiana non verificata. E i simboli non erano stati derivati da lì ma dalla forma convenzionale nota. Era un'attribuzione falsa nel campo che esiste per la tracciabilità. Ora dichiarano `CONV-GRAFICA-001` |
+
+### Vincoli da non violare
+
+Chi modificherà questo codice deve sapere che queste **non** sono sviste:
+
+1. **Le porte del simbolo stanno sul perimetro**, con faccia coerente con il lato. Questo ritira
+   deliberatamente il vincolo P0 «le porte possono stare ovunque dentro il riquadro»: la
+   motivazione è nella sezione «Decisione strutturale» e in `docs/GRAPHIC_STANDARD.md` §3.1.
+2. **`assets/symbols/` contiene solo la libreria pubblicata.** Gli artefatti di prova vivono in
+   `examples/foundation/symbols/`. Serve al confezionamento della release.
+3. **`symbols` resta opzionale** in `ComponentRegistry.from_directory`, e la CLI `validate` non
+   lo passa. È scelta del piano. Il rischio reale — un `symbol_id` pendente spedito in silenzio —
+   è chiuso da un test che carica le fixture insieme al registro dei simboli.
+4. **I margini seguono ISO 5457** e non vengono ritoccati per far cadere anche l'altezza utile su
+   un numero intero di passi di griglia. L'asimmetria è fissata da un test.
+5. **Un composito conserva la faccia della primitiva**: la traslazione sposta la porta, non la ruota.
+
+### Cosa resta aperto
+
+- **La prova fisica di stampa** (Task 7 Step 7) non è eseguibile in una sessione cloud. Tutto il
+  resto è stato verificato: il foglio dichiara 420×297 mm con `viewBox` numericamente identico, e
+  rasterizzato a 10 px/mm la barra misura 100,000 mm esatti fra le tacche. Resta da appoggiare il
+  righello su una stampa A3 al 100%.
+- **Nessun test presidia che un corpo resti dentro il proprio riquadro e raggiunga le porte
+  dichiarate.** Oggi vale per tutti e venti i simboli, verificato dalle revisioni, ma un corpo
+  modificato a mano potrebbe romperlo e continuare a caricare.
+- **Manca l'analogo orizzontale della guardia di capacità**: un simbolo più largo dell'area utile
+  può ancora sbordare a destra. Nessun rischio con la libreria attuale, il simbolo più largo è 8 mm.
+
+### Esito
+
+Sedici commit, 72 file toccati, 116 test. `pytest`, `ruff` e `mypy --strict` a `0` su `src`,
+`tests` ed `examples`. Dodici simboli pubblicati più otto di fixture, tutti con porte sul
+perimetro. Il gate G0 di P0 continua a passare e il fingerprint del progetto misto non si è mosso.

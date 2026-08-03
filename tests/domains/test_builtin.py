@@ -13,9 +13,6 @@ def port(domain: Domain, medium: str, flow: PortFlow) -> PortDefinition:
         domain=domain,
         medium=medium,
         flow=flow,
-        x_mm=0,
-        y_mm=0,
-        angle_deg=0,
     )
 
 
