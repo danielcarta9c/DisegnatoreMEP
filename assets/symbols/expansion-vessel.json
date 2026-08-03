@@ -6,9 +6,7 @@
   "height_mm": 10.0,
   "allowed_rotations_deg": [
     0,
-    90,
-    180,
-    270
+    180
   ],
   "ports": [
     {

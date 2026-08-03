@@ -39,7 +39,7 @@ La regola vale per l'intero progetto: nessun valore dimensionale può comparire 
 
 `GraphicStandard` non è stato esteso per portare anche queste costanti di impaginazione del foglio di riscontro. Farlo avrebbe mescolato due cose diverse: le grandezze della carta, che ogni tavola del progetto deve rispettare per essere stampabile e misurabile, e le scelte di layout di un singolo foglio di anteprima della libreria simboli, che potrebbero cambiare (per esempio la spaziatura fra colonne) senza che nulla della carta stessa cambi. `standard.py` resta quindi il modello load-bearing su cui la stampa dipende; `svg.py` resta libero di evolvere la propria impaginazione senza toccarlo.
 
-## 3. Porte sul perimetro: la regola perimetro-faccia
+## 3. Il manifesto: porte sul perimetro e rotazioni ammesse
 
 `src/disegnatore_mep/graphics/symbol.py` definisce `SymbolManifest`: riquadro (`width_mm`, `height_mm`), porte (`SymbolPort`, con `face` e coordinate `x_mm`/`y_mm`), area di rispetto per lato (`KeepOut`), ancoraggi di etichetta (`LabelAnchor`), rotazioni ammesse e interruzione di linea per i componenti in linea (`inline_gap_mm`).
 
@@ -50,6 +50,19 @@ Ogni porta dichiara una `PortFace` (`left`, `right`, `top`, `bottom`) e una coor
 La fondazione (P0) dichiarava esplicitamente il contrario, e lo elencava fra i vincoli da **non** violare per sviste: *"Le porte possono stare ovunque dentro il riquadro del simbolo, non solo sul perimetro"* (`docs/plans/2026-08-01-foundation-core-plan.md`, sezione "Vincoli da non violare"), motivato dal fatto che un test P0 approvato definiva una porta al centro di un simbolo 10×10.
 
 Questo piano ritira quel vincolo, deliberatamente. Una porta al centro di un simbolo non è un punto a cui una tubazione disegnata possa realisticamente attaccarsi: geometricamente valida, ma priva di significato per un disegno che deve poi instradare connessioni ortogonali fino al bordo dei componenti. La regola perimetro-faccia non è quindi un irrigidimento imprevisto del codice P0, né una svista che rompe un vincolo dichiarato: è la ragione stessa per cui questo piano esiste, registrata come "Decisione strutturale" nel piano e qui riportata perché chi legge questo documento sappia che il cambiamento è intenzionale, non un incidente da segnalare.
+
+### 3.2 `allowed_rotations_deg`: un vincolo tecnico, non geometrico
+
+`allowed_rotations_deg` elenca gli orientamenti in cui il simbolo può essere disegnato **in un impianto reale**. Non dice quali rotazioni siano geometricamente possibili — tutte e quattro lo sono sempre, per qualunque riquadro — ma quali siano tecnicamente corrette su una tavola. È quindi un vincolo impiantistico, deciso da chi conosce il componente, non una proprietà derivabile dalla forma. Il validatore impone soltanto che i valori appartengano a `{0, 90, 180, 270}`, che ce ne sia almeno uno e che non si ripetano: quali siano, lo dichiara chi autora il simbolo.
+
+Dieci dei dodici simboli pubblicati dichiarano tutti e quattro gli orientamenti. Due no, e sono l'esempio di cosa significhi il campo:
+
+| Simbolo | Rotazioni | Perché |
+|---|---|---|
+| `air-vent` | `[0]` | Uno sfiato d'aria automatico scarica verso l'alto. Una tavola che lo mostra rivolto in basso o di lato è sbagliata. |
+| `expansion-vessel` | `[0, 180]` | Un vaso di espansione a membrana si disegna in piedi, non coricato. |
+
+**Cosa resta da risolvere a chi consumerà il campo.** Questo ramo dichiara le rotazioni ammesse; non le applica. Ruotare un simbolo di 90° o 270° scambia il suo riquadro — `expansion-vessel` è 6×10 mm e ruotato occuperebbe 10×6 mm — e nulla qui esegue quella trasformazione, né ruota una `PortFace` (una porta `left` ruotata di 90° non è più a sinistra) né un lato di `KeepOut`. Il piano di layout possiede quel lavoro; è annotato qui perché chi lo affronterà non dia per scontato che il manifesto lo faccia già.
 
 ## 4. Geometria del simbolo, semantica del catalogo
 
@@ -75,13 +88,19 @@ Il parametro `symbols` resta opzionale per scelta: il validatore topologico (`sr
 Un simbolo pubblicato è una coppia di file nella stessa cartella: `<id>.json` (il manifesto, validato da `SymbolManifest`) e `<id>.svg` (il corpo grafico). Per aggiungerne uno:
 
 1. **Scegliere `id`, `version`, `name`.** `id` segue `^[a-z][a-z0-9_-]*$` e deve coincidere con il nome dei due file; `version` segue SemVer (`\d+\.\d+\.\d+`).
-2. **Fissare il riquadro e le porte.** `width_mm`/`height_mm` in millimetri fisici; ogni porta dichiara la propria `face` e la coordinata coerente con quella faccia (si veda §3) — due porte possono condividere la stessa faccia a posizioni diverse. Un componente in linea (due porte su facce opposte) dichiara `inline_gap_mm` pari alla propria larghezza.
+2. **Fissare il riquadro e le porte.** `width_mm`/`height_mm` in millimetri fisici; ogni porta dichiara la propria `face` e la coordinata coerente con quella faccia (si veda §3) — due porte possono condividere la stessa faccia a posizioni diverse. Un componente in linea (due porte su facce opposte) dichiara `inline_gap_mm` pari alla propria larghezza. Dichiarare anche `allowed_rotations_deg` (§3.2): gli orientamenti tecnicamente corretti per quel componente, non tutti quelli geometricamente possibili.
 3. **Fissare `keep_out`** almeno pari a `A3_LANDSCAPE.min_clearance_mm` sui lati che portano una porta, `0` sugli altri: è lo spazio libero minimo perché una connessione possa raggiungere la porta senza toccare un altro oggetto. La regola è divisa in due, per competenza. Il manifesto **impone** che ogni faccia che porta una porta abbia `keep_out` maggiore di zero: è l'invariante che gli appartiene, perché `SymbolManifest` non conosce il `GraphicStandard` e non può quindi pretendere un valore specifico in millimetri. Il valore concreto — `min_clearance_mm` — lo fissa chi genera il simbolo. Entrambi i generatori lo **derivano dalle porte del simbolo** invece di riceverlo come elenco parallelo di nomi di lato: un refuso in quell'elenco (`"rigth"`) non produceva alcun errore e spediva in silenzio un simbolo con area di rispetto nulla, che l'instradamento avrebbe accostato a un oggetto vicino.
 4. **Disegnare il corpo SVG** come frammento senza radice `<svg>` propria (viene inserito dentro un gruppo del foglio che lo ospita), in coordinate locali in millimetri con l'origine nell'angolo in alto a sinistra del riquadro. Il corpo non dichiara mai il proprio `stroke`: spessore e colore sono decisi dal foglio ospitante. Il corpo deve restare dentro il riquadro dichiarato e i tratti di attacco devono raggiungere esattamente le porte dichiarate.
 5. **Validare prima di scrivere.** Costruire il dizionario del manifesto e chiamare `SymbolManifest.model_validate(...)` prima di scrivere qualunque file: un manifesto non valido non deve mai arrivare su disco. `examples/graphics/build_symbols.py` (libreria pubblicata, dodici simboli in `assets/symbols/`) ed `examples/foundation/build_fixtures.py` (simboli di fixture, in `examples/foundation/symbols/`) sono i due generatori esistenti: hanno proprietà e cicli di vita separati — la libreria pubblicata non contiene artefatti di prova — ma seguono lo stesso schema (dizionario tipizzato, validazione, scrittura).
 6. **Rigenerare e verificare il determinismo.** Rieseguire lo script generatore e controllare che `git status --short <cartella>` non mostri differenze: la generazione deve essere riproducibile bit per bit, senza timestamp, ordine di dizionario o rappresentazione in virgola mobile che vari da un'esecuzione all'altra.
 7. **Verificare che il registro carichi la libreria** con il conteggio atteso, per esempio `SymbolRegistry.from_directory(percorso).all()`.
 8. **Guardare il simbolo, non solo misurarlo.** Renderizzare il foglio di riscontro (§7) e controllare a vista che il simbolo sia riconoscibile: un simbolo che valida ma non si legge ha comunque fallito. Il Task 6 ha scoperto così che una prima versione del simbolo del filtro a Y si leggeva come il segnale internazionale di divieto, non come un filtro, ed è stata ridisegnata.
+
+### 5.1 I dodici simboli sono un insieme di prova, non la libreria definitiva
+
+I dodici simboli in `assets/symbols/` servono a dimostrare che il meccanismo funziona su quattro domini: non sono la libreria che verrà usata in produzione. In particolare **le loro dimensioni sono una convenzione di prova, non una regola da ereditare**: 6×6 mm per i componenti in linea, 8×8 mm e 6×10 mm per gli altri sono taglie scelte per avere una libreria uniforme e misurabile, non perché quelle misure significhino qualcosa.
+
+Nella libreria reale la dimensione porta significato. In una tavola tecnica la taglia di un simbolo comunica il peso del componente nell'impianto: una valvola si disegna piccola, un vaso di espansione più grande, un accumulo più grande ancora. La libreria definitiva dovrà quindi avere una gerarchia dimensionale coerente con l'importanza del componente. Quella gerarchia non è stata progettata qui: è un ingresso di progetto registrato per il piano successivo, e la taglia uniforme di questi dodici non va scambiata per lo standard.
 
 ## 6. Simboli compositi: un prodotto, un simbolo
 

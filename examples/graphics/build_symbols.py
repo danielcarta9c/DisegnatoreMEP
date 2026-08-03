@@ -19,7 +19,7 @@ mobile puo' variare da un'esecuzione all'altra.
 """
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -30,7 +30,21 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SYMBOLS_DIR = REPO_ROOT / "assets" / "symbols"
 
 VERSION = "1.0.0"
+
+# Orientamenti in cui un simbolo puo' essere disegnato in un impianto reale.
+# E' un vincolo tecnico, non geometrico: tutti e quattro sono sempre possibili
+# geometricamente, ma non tutti sono corretti su una tavola. Il default vale
+# per i componenti che ammettono qualunque orientamento; chi non lo ammette
+# dichiara il proprio elenco (vedi AIR_VENT e EXPANSION_VESSEL sotto e
+# docs/GRAPHIC_STANDARD.md §3.2).
 ALLOWED_ROTATIONS_DEG = [0, 90, 180, 270]
+
+# Uno sfiato d'aria automatico scarica verso l'alto: disegnarlo rivolto in
+# basso o di lato e' sbagliato.
+AIR_VENT_ROTATIONS_DEG = [0]
+
+# Un vaso di espansione a membrana si disegna in piedi, non coricato.
+EXPANSION_VESSEL_ROTATIONS_DEG = [0, 180]
 INLINE_MM = 6.0
 CLEARANCE_MM = A3_LANDSCAPE.min_clearance_mm
 
@@ -83,6 +97,9 @@ class SymbolSpec:
     inline: bool
     ports: list[dict[str, Any]]
     body: str
+    allowed_rotations_deg: list[int] = field(
+        default_factory=lambda: list(ALLOWED_ROTATIONS_DEG)
+    )
 
 
 def inline_symbol(symbol_id: str, name: str, body: str) -> SymbolSpec:
@@ -109,6 +126,7 @@ def single_port_symbol(
     height_mm: float,
     face: str,
     body: str,
+    allowed_rotations_deg: list[int] | None = None,
 ) -> SymbolSpec:
     """Componente non in linea con una sola porta, centrata su una faccia."""
     return SymbolSpec(
@@ -119,6 +137,7 @@ def single_port_symbol(
         inline=False,
         ports=[port("a", face, width_mm, height_mm)],
         body=body,
+        allowed_rotations_deg=list(allowed_rotations_deg or ALLOWED_ROTATIONS_DEG),
     )
 
 
@@ -252,9 +271,23 @@ SYMBOLS: list[SymbolSpec] = [
     inline_symbol("strainer", "Filtro a Y", STRAINER_BODY),
     inline_symbol("pump-circulator", "Pompa di circolazione", PUMP_CIRCULATOR_BODY),
     single_port_symbol(
-        "expansion-vessel", "Vaso di espansione", 6.0, 10.0, "top", EXPANSION_VESSEL_BODY
+        "expansion-vessel",
+        "Vaso di espansione",
+        6.0,
+        10.0,
+        "top",
+        EXPANSION_VESSEL_BODY,
+        EXPANSION_VESSEL_ROTATIONS_DEG,
     ),
-    single_port_symbol("air-vent", "Valvola di sfiato aria", 8.0, 8.0, "bottom", AIR_VENT_BODY),
+    single_port_symbol(
+        "air-vent",
+        "Valvola di sfiato aria",
+        8.0,
+        8.0,
+        "bottom",
+        AIR_VENT_BODY,
+        AIR_VENT_ROTATIONS_DEG,
+    ),
     # aeraulico
     inline_symbol("duct-damper", "Serranda", DUCT_DAMPER_BODY),
     single_port_symbol("air-diffuser", "Diffusore d'aria", 8.0, 8.0, "left", AIR_DIFFUSER_BODY),
@@ -286,7 +319,7 @@ def manifest_payload(spec: SymbolSpec) -> dict[str, Any]:
         "name": spec.name,
         "width_mm": spec.width_mm,
         "height_mm": spec.height_mm,
-        "allowed_rotations_deg": ALLOWED_ROTATIONS_DEG,
+        "allowed_rotations_deg": spec.allowed_rotations_deg,
     }
     if spec.inline:
         payload["inline_gap_mm"] = spec.width_mm
