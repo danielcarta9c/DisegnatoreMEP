@@ -10,7 +10,7 @@ from pydantic import Field, model_validator
 from disegnatore_mep.model.base import ID_PATTERN, FiniteFloat, StrictModel
 
 from .registry import Symbol, SymbolRegistry
-from .symbol import SymbolManifest, SymbolPort
+from .symbol import TOLERANCE_MM, SymbolManifest, SymbolPort
 
 
 class CompositePart(StrictModel):
@@ -52,15 +52,18 @@ def compile_composite(spec: CompositeSpec, symbols: SymbolRegistry) -> Symbol:
 
     for index, (part, source) in enumerate(zip(spec.parts, resolved, strict=True)):
         if (
-            part.offset_x_mm + source.manifest.width_mm > spec.width_mm
-            or part.offset_y_mm + source.manifest.height_mm > spec.height_mm
+            part.offset_x_mm + source.manifest.width_mm > spec.width_mm + TOLERANCE_MM
+            or part.offset_y_mm + source.manifest.height_mm > spec.height_mm + TOLERANCE_MM
         ):
             raise ValueError(f"part {index} falls outside the composite box")
 
     ports: list[SymbolPort] = []
     for exposed in spec.exposed_ports:
         part = spec.parts[exposed.part_index]
-        origin = resolved[exposed.part_index].manifest.port(exposed.port_id)
+        try:
+            origin = resolved[exposed.part_index].manifest.port(exposed.port_id)
+        except KeyError as exc:
+            raise ValueError(f"part {exposed.part_index} has no port {exposed.port_id}") from exc
         ports.append(
             SymbolPort(
                 id=exposed.as_id,

@@ -84,3 +84,54 @@ def test_unknown_primitive_is_rejected() -> None:
 def test_infinite_width_mm_is_rejected() -> None:
     with pytest.raises(ValueError, match="value must be a finite number"):
         spec(width_mm=float("inf"))
+
+
+def test_bad_port_id_is_rejected() -> None:
+    invalid = spec(exposed_ports=[{"part_index": 0, "port_id": "c", "as_id": "invalid"}])
+    with pytest.raises(ValueError, match="part 0 has no port c"):
+        compile_composite(invalid, registry())
+
+
+def test_part_flush_with_box_passes_with_tolerance() -> None:
+    """Float rounding causes 5.95 + 6.0 = 11.950000000000002 > 11.95 without tolerance.
+
+    Using offset_x_mm = 0.05 * 119 produces 5.9500000000000017 due to float accumulation.
+    With a 6.0-width part, this exceeds the 11.95 box boundary by ~2e-15, which triggers
+    false rejection without tolerance but passes with it. The right port of the part
+    (at offset + 6.0) lands exactly on the composite's right edge.
+    """
+    offset_value = 0.05 * 119
+    flush_spec = spec(
+        width_mm=11.95,
+        height_mm=6.0,
+        parts=[
+            {"symbol_id": "valve", "offset_x_mm": offset_value, "offset_y_mm": 0.0},
+        ],
+        exposed_ports=[
+            {"part_index": 0, "port_id": "b", "as_id": "outlet"},
+        ],
+    )
+    # Should not raise with tolerance
+    symbol = compile_composite(flush_spec, registry())
+    assert symbol.manifest.port("outlet").x_mm == 11.95
+
+
+def test_interior_port_is_rejected_by_perimeter_check() -> None:
+    """A port from an interior-placed part is rejected by SymbolManifest perimeter validation.
+
+    Even though the part fits within the box bounds, if its exposed port ends up at an
+    interior point rather than on the composite's perimeter, SymbolManifest.geometry_is_coherent
+    will reject the manifest construction.
+    """
+    interior_spec = spec(
+        width_mm=20.0,
+        height_mm=20.0,
+        parts=[
+            {"symbol_id": "valve", "offset_x_mm": 5.0, "offset_y_mm": 5.0},
+        ],
+        exposed_ports=[
+            {"part_index": 0, "port_id": "a", "as_id": "interior_port"},
+        ],
+    )
+    with pytest.raises(ValueError, match="is not on its left face"):
+        compile_composite(interior_spec, registry())
