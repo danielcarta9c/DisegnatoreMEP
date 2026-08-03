@@ -1,0 +1,35 @@
+{
+  "id": "duct-damper",
+  "version": "1.0.0",
+  "name": "Serranda",
+  "width_mm": 6.0,
+  "height_mm": 6.0,
+  "allowed_rotations_deg": [
+    0,
+    90,
+    180,
+    270
+  ],
+  "inline_gap_mm": 6.0,
+  "ports": [
+    {
+      "id": "a",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 3.0
+    },
+    {
+      "id": "b",
+      "face": "right",
+      "x_mm": 6.0,
+      "y_mm": 3.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 2.0,
+    "top_mm": 0.0,
+    "bottom_mm": 0.0
+  },
+  "source": "ANSI/ASHRAE Standard 134 - Graphic Symbols for Heating, Ventilating, Air-Conditioning, and Refrigerating Systems"
+}
