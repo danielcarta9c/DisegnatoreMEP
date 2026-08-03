@@ -6,6 +6,8 @@ di carta. Stampando senza adattamento, il righello deve confermare la barra di
 scala.
 """
 
+import math
+
 from .registry import SymbolRegistry
 from .standard import A3_LANDSCAPE, GraphicStandard
 
@@ -47,13 +49,25 @@ def _scale_bar(standard: GraphicStandard) -> str:
 def render_symbol_sheet(
     symbols: SymbolRegistry, standard: GraphicStandard = A3_LANDSCAPE
 ) -> str:
+    all_symbols = symbols.all()
     column_width = max(
-        (item.manifest.width_mm for item in symbols.all()), default=COLUMN_GAP_MM
+        (item.manifest.width_mm for item in all_symbols), default=COLUMN_GAP_MM
     ) + COLUMN_GAP_MM
     row_height = max(
-        (item.manifest.height_mm for item in symbols.all()), default=ROW_GAP_MM
+        (item.manifest.height_mm for item in all_symbols), default=ROW_GAP_MM
     ) + ROW_GAP_MM
     columns = max(1, int(standard.usable_width_mm // column_width))
+
+    total = len(all_symbols)
+    rows_needed = math.ceil(total / columns)
+    if rows_needed * row_height > standard.usable_height_mm:
+        capacity = columns * int(standard.usable_height_mm // row_height)
+        raise ValueError(
+            f"{total} symbols do not fit on one sheet: at most {capacity} fit at "
+            f"fixed scale on a {standard.sheet_width_mm:g}x{standard.sheet_height_mm:g}mm "
+            f"sheet (symbols are never shrunk to fit; split the library across "
+            f"additional sheets)"
+        )
 
     parts: list[str] = [
         f'<svg xmlns="http://www.w3.org/2000/svg" '
@@ -64,7 +78,7 @@ def render_symbol_sheet(
         f'fill="none" stroke="black" stroke-width="{standard.line_thin_mm}"/>',
     ]
 
-    for index, symbol in enumerate(symbols.all()):
+    for index, symbol in enumerate(all_symbols):
         column, row = index % columns, index // columns
         x = standard.margin_left_mm + column * column_width
         y = standard.margin_top_mm + row * row_height

@@ -1,7 +1,9 @@
 """Grandezze grafiche in millimetri di carta.
 
-Unico punto in cui vivono dimensioni, spessori, altezze di testo e distanze.
-Nessun altro modulo deve contenere una costante metrica.
+Unico punto in cui vivono le grandezze della carta: dimensioni del foglio,
+margini, griglia, spessori dei tratti, altezze di testo. Un modulo che
+disegna puo' nominare le proprie costanti di impaginazione, ma nessun valore
+dimensionale puo' restare un numero anonimo nel codice, qui o altrove.
 """
 
 from pydantic import Field, model_validator
