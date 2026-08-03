@@ -23,7 +23,7 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-033 |
 | 9 | `docs/ROADMAP.md` | Fasi del progetto e perimetro futuro |
 | 10 | `docs/ARCHITECTURE.md` | Struttura del codice effettivamente consegnato in P0 |
-| 11 | **`docs/P0_REVIEW_FINDINGS.md`** | Cosa le revisioni hanno trovato e non è stato risolto. **Contiene le due decisioni aperte per il PM** |
+| 11 | **`docs/P0_REVIEW_FINDINGS.md`** | Cosa le revisioni hanno trovato e non è stato risolto. **Il §3.1 fissa il flusso di lavoro reale della skill**: due revisori indipendenti erano partiti da una lettura sbagliata, leggerlo prima di ragionare sull'approvazione |
 | 12 | `docs/plans/README.md` e `docs/plans/2026-08-01-master-implementation-roadmap.md` | Sequenza P0–P7 |
 | 13 | `docs/plans/2026-08-01-foundation-core-plan.md` — **almeno l'appendice finale** | Il piano eseguito e le deviazioni approvate. Il corpo del piano contiene codice che non compila: leggere l'appendice prima di fidarsi del testo |
 | 14 | `docs/research/README.md` e `docs/research/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
@@ -41,12 +41,12 @@ Rispondere esplicitamente a queste domande prima di iniziare. Se una risposta no
 
 1. Perché il prodotto non è un catalogo di schemi tipo, e come è stato **dimostrato** che il nucleo è davvero universale?
 2. Qual è la fonte di verità e quali artefatti sono derivati rigenerabili?
-3. Cosa deve essere approvato prima di disegnare, e quale lacuna del modello impedisce oggi di rappresentare quel flusso?
-4. Come deve essere rappresentato un componente inserito in linea, e perché quel requisito è oggi rappresentabile ma non verificato?
-5. Perché rileggere alla lettera il corpo del piano P0 è pericoloso?
-6. Quali sono le due domande aperte che spettano al PM e non all'agente?
+3. Cosa deve essere approvato prima di disegnare, e perché quell'approvazione **non** richiede una macchina di stati dentro il modello?
+4. A cosa servono allora i campi di regola e approvazione presenti nel modello?
+5. Come deve essere rappresentato un componente inserito in linea, e perché quel requisito è oggi rappresentabile ma non verificato?
+6. Perché rileggere alla lettera il corpo del piano P0 è pericoloso?
 
-Risposte attese: motore compositivo, provato cercando ogni termine impiantistico nel sorgente e trovando solo i sei nomi di dominio, zero condizionali su tipo di componente; il modello tecnico canonico, con geometria, SVG e PDF derivati; l'intero dossier di integrazioni, assunzioni e domande, oggi non rappresentabile perché manca il luogo dove vive una proposta non approvata; la connessione si spezza in due segmenti sulle porte del componente, ma nessuna fixture contiene un componente in linea e `inline_gap_mm` non è letto da nessuna parte; il corpo del piano contiene nove difetti eseguibili corretti solo nell'appendice; le due domande sono la rappresentazione delle proposte non approvate e l'immutabilità del modello.
+Risposte attese: motore compositivo, provato cercando ogni termine impiantistico nel sorgente e trovando solo i sei nomi di dominio, zero condizionali su tipo di componente; il modello tecnico canonico, con geometria, SVG e PDF derivati; l'intero dossier di interpretazione, integrazioni, assunzioni e domande, confermato dentro la conversazione — se l'ingegnere rifiuta un'integrazione la skill semplicemente non la inserisce, quindi non esistono proposte pendenti da conservare; quei campi servono alla tracciabilità a valle, cioè risalire dall'accessorio comparso in distinta alla regola che lo ha inserito e al perché; la connessione si spezza in due segmenti sulle porte del componente, ma nessuna fixture contiene un componente in linea e `inline_gap_mm` non è letto da nessuna parte; il corpo del piano contiene nove difetti eseguibili corretti solo nell'appendice.
 
 ---
 
@@ -59,7 +59,7 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 - **Ambiente:** `.venv` con Python **3.12.13** preso dal runtime Codex (`C:\Users\DanielCarta\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe`). Scelta deliberata: Claude e Codex condividono la stessa `.venv` e la stessa toolchain, quindi le sessioni sono intercambiabili senza rifare setup. L'unico altro Python sulla macchina è 3.14.4 e **non** va usato.
 - **Ramo:** P0 è stata sviluppata su `feat/p0-foundation-core` e integrata in `main` con un merge esplicito. Si riparte da `main`. Il ramo di lavoro è conservato per poter rileggere la sequenza dei commit.
 - **In flight:** nessuna modifica applicativa a metà.
-- **Blocco:** nessun blocco tecnico. Il progetto è però in attesa di due decisioni di prodotto, elencate al §6.
+- **Blocco:** nessuno. Le due decisioni di prodotto che erano in sospeso sono state chiuse il 3 agosto 2026 (D-036 ritirata, D-037 ricondotta a decisione tecnica).
 - **Check rapido alla ripresa:** `git status --short` vuoto; `& .\.venv\Scripts\python.exe -m pytest -q` deve dare 59 passed.
 
 ---
@@ -77,10 +77,11 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 
 ## 5. Punto esatto da cui riprendere
 
-**Non iniziare a scrivere codice.** Il prossimo passo è di pianificazione, e dipende da una decisione del PM.
+**Non iniziare a scrivere codice.** Il prossimo passo è di pianificazione.
 
-- **Task:** portare al PM le due domande del §6, poi scrivere il piano P1.
-- **Ordine consigliato dopo la decisione:** piano P1 (regole), poi piano P2 (sistema grafico). Sono paralleli dopo P0 secondo la roadmap master, ma P2 puo' partire anche subito perché non dipende dalla decisione sulle proposte.
+- **Task:** scrivere il piano P1, ricerca tecnica e sistema delle regole. Nessuna decisione del PM è in sospeso.
+- **Nel piano P1 vanno incorporati:** il completamento di `RuleApplicationModel` per la tracciabilità a valle (D-039), la rappresentazione dei dati mancanti richiesta da D-014, e il percorso di migrazione dello schema, dato che entrambi introducono campi nuovi.
+- **Ordine consigliato:** piano P1 (regole) e piano P2 (sistema grafico) sono paralleli dopo P0 secondo la roadmap master; P2 puo' partire in qualsiasi momento perché non dipende da P1.
 - **Prima di P3:** allargare il contratto `DomainPack`. Oggi vede solo due porte e una rete, quindi nessuna regola idronica o aeraulica reale è esprimibile. Se i quattro pacchetti P3 partissero in parallelo su questo contratto, ognuno modificherebbe il nucleo per conto proprio.
 - **Loci di interesse:** `docs/P0_REVIEW_FINDINGS.md`; `PROJECT_STATE.md`; `docs/plans/2026-08-01-master-implementation-roadmap.md`.
 
@@ -88,10 +89,14 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 
 ## 6. Domande aperte per il PM
 
-Due, entrambe di prodotto, entrambe documentate in `docs/P0_REVIEW_FINDINGS.md` §3.
+**Nessuna.**
 
-1. **Dove vive una proposta non ancora approvata.** Oggi il modello ha il vocabolario dell'approvazione ma non il meccanismo: un accessorio proposto dal motore di regole andrebbe scritto nel modello reale, dove il validatore lo tratta già come esistente, e una proposta rifiutata non lascia traccia di cosa fosse. Le opzioni sono uno stato sulle entità con validatore ristretto alle approvate, oppure una collezione separata di proposte. Decide come una revisione rientra nel progetto, quindi non è un dettaglio reversibile. **Va risolta prima che P1 scriva la prima regola**, perché lo schema è fissato a `1.0.0` e oggi non esistono ancora file di progetto reali.
-2. **Immutabilità del modello canonico.** Un assegnamento rifiutato lascia comunque il valore scartato nell'istanza, e questo produce un verdetto sbagliato, non solo un oggetto sorprendente. Le opzioni sono congelare il modello oppure far riasserire gli invarianti al validatore.
+Le due che erano registrate qui sono state chiuse il 3 agosto 2026:
+
+- **D-036 ritirata.** Chiedeva dove conservare una proposta di integrazione non ancora approvata. Nasceva da un fraintendimento: la skill trasforma input in schema grafico, non archivia progetti. L'approvazione avviene dentro la conversazione e, se l'ingegnere rifiuta un'integrazione, la skill semplicemente non la inserisce. Non esistono proposte pendenti o rifiutate da conservare.
+- **D-037 chiusa come decisione tecnica.** Il validatore riasserisce gli invarianti invece di fidarsi del costruttore; l'immutabilità del modello resta implementativa.
+
+**Lezione da non ripetere:** due revisori indipendenti avevano letto i campi `ApprovalStatus` e `RuleApplicationModel` come un flusso di approvazione da persistere, e ne avevano fatto il rischio principale della fase. Servono invece alla tracciabilità a valle (D-039). Prima di ragionare sull'approvazione, leggere `docs/P0_REVIEW_FINDINGS.md` §3.1, che fissa il flusso reale.
 
 Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di scegliere fra modalità tecniche di esecuzione.
 
@@ -130,5 +135,9 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 ---
 
 ## Ultimo aggiornamento
+
+`2026-08-03` — Claude — chiarito con il PM il flusso di lavoro reale della skill; ritirata D-036, chiusa D-037, aggiunta D-039 sulla tracciabilità. Nessuna domanda di prodotto resta aperta.
+
+`2026-08-03` — Claude — pubblicazione su GitHub in `danielcarta9c/DisegnatoreMEP`, repository pubblico con licenza MIT (D-038).
 
 `2026-08-01` — Claude — chiusura di P0: gate G0 superato, 59 test verdi, difetti del piano e della revisione avversariale corretti, documentazione allineata al codice reale.

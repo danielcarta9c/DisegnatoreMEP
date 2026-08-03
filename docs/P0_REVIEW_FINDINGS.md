@@ -30,31 +30,39 @@ Trovati dalla revisione avversariale e risolti prima della chiusura della fase.
 
 Corretti nel commit `2c78731`. La forma canonica dei dati ordinari non è cambiata: il fingerprint della fixture di riferimento è rimasto `3347374e8b3f006c6f387c6228e0d9d2b885cbf57e65991937e985af32306573`.
 
-## 3. Da decidere prima di P1 — spetta al PM
+## 3. Il flusso di lavoro, e una lettura sbagliata da non ripetere
 
-### 3.1 Il modello ha il vocabolario dell'approvazione ma non il meccanismo
+### 3.1 Cosa fa davvero la skill
 
-**Individuato indipendentemente da due revisori.** È il rischio principale che P0 consegna alle fasi successive.
+**Chiarito dal PM il 3 agosto 2026, dopo che questa sezione conteneva una lettura errata.** Vale la pena fissarlo qui perché due revisori indipendenti erano partiti dallo stesso presupposto sbagliato, e chiunque legga la specifica senza questo inquadramento rischia di ripeterlo.
 
-Il modello contiene `ApprovalStatus`, `IntegrationCategory` e `RuleApplicationModel`, quindi *sembra* implementare l'ADR 0004 «si approva prima di disegnare». In realtà manca l'essenziale:
+La skill **trasforma un input in uno schema grafico**. Non è un sistema di archiviazione né di gestione del ciclo di vita di un progetto. Il flusso è:
 
-- **non esiste un luogo dove vive una proposta non ancora approvata.** `ComponentInstance` e `ConnectionModel` non hanno stato, quindi un accessorio proposto dal motore di regole dovrebbe essere inserito nel modello reale, dove il validatore lo tratta già come esistente e lo rende indistinguibile da uno approvato. La §9.2 della specifica dice l'opposto: «Il motore delle regole non trasforma automaticamente una proposta in progetto approvato»;
-- **una proposta rifiutata non lascia traccia di cosa fosse.** Resta solo `status="rejected"`, quindi alla riesecuzione il motore ripropone ciò che l'ingegnere ha già respinto, e la §7.1 «regole applicate e relativo esito» resta insoddisfacibile;
-- **`RuleApplicationModel` non porta né proposta, né posizione funzionale, né quantità, né motivazione, né fonte**, tutti richiesti dalla §9 e da D-022, ed è l'unica entità priva di `evidence`;
-- **manca lo stato di approvazione a livello di progetto.** D-013 stabilisce che «sì, procedi» approva l'intero dossier, ma nessun consumatore può chiedere al modello se il progetto è approvato;
-- **manca la rappresentazione dei dati mancanti**, richiesta da §7.1 e D-014 e presupposta dal controllo che vieta `DA DEFINIRE` in una tavola finale.
+1. l'ingegnere progetta e dimensiona parlando, senza compilare moduli;
+2. chiede «ora disegna l'impianto che abbiamo deciso»;
+3. la skill ricostruisce l'impianto dalla conversazione;
+4. applica le regole e determina cosa manca perché lo schema sia esecutivo: intercettazioni, filtro, vaso, sicurezza, sfiati, scarichi, ritegni, strumenti;
+5. prima di disegnare presenta un riepilogo unico di interpretazione, integrazioni, assunzioni e domande residue;
+6. l'ingegnere conferma o corregge;
+7. la pipeline deterministica costruisce il modello, valida, dispone, instrada, renderizza ed esporta.
 
-Non è un errore di esecuzione: il piano P0 non ha mai chiesto queste voci. È uno scarto fra la specifica approvata e il piano che ne è derivato.
+Il passaggio 6 **non è una macchina di stati persistente**: è una conferma dentro la conversazione. Se l'ingegnere rifiuta un'integrazione, la skill semplicemente non la inserisce. Non serve conservare proposte pendenti o rifiutate, perché una nuova esecuzione è una nuova conversazione. La memoria del passaggio è la conversazione stessa.
 
-**Perché decidere adesso:** `schema_version` è fissato a `Literal["1.0.0"]` e lo schema JSON è già versionato. Oggi non esistono file di progetto reali, quindi il costo del cambiamento è minimo; dopo P1 la forma scelta verrà ereditata da P5 e P6 senza essere riesaminata.
+### 3.2 La lettura sbagliata, e cosa invece resta valido
 
-**La scelta di prodotto:** dove vive una proposta non approvata. Le due opzioni sono uno stato sulle entità stesse, con il validatore che considera solo quelle approvate, oppure una collezione separata di proposte che confluisce nel modello al momento dell'approvazione. Non è un dettaglio informatico reversibile: determina come una revisione rientra nel progetto.
+Questa sezione affermava in precedenza che «il modello ha il vocabolario dell'approvazione ma non il meccanismo», e ne faceva il rischio principale della fase, con una decisione di prodotto da portare al PM su «dove vive una proposta non approvata». **Era sbagliato**: quel meccanismo non serve, perché il flusso non lo richiede. La domanda è stata ritirata (D-036).
 
-### 3.2 Immutabilità del modello canonico
+Restano invece valide, e vanno affrontate in P1, tre osservazioni che quei revisori avevano colto correttamente:
+
+- **`RuleApplicationModel` non porta né posizione funzionale, né quantità, né motivazione, né fonte**, richieste dalla §9 e da D-022, ed è l'unica entità priva di `evidence`. Servono per la **tracciabilità a valle** (D-039): quando l'ingegnere legge la distinta e trova accessori che non aveva nominato, deve poter risalire alla regola che li ha inseriti e al perché. Non servono per gestire un'approvazione pendente.
+- **Manca la rappresentazione dei dati mancanti**, richiesta da §7.1 e D-014 e presupposta dal controllo che vieta `DA DEFINIRE` in una tavola finale. Questa è indipendente dal flusso di approvazione e resta un requisito reale.
+- **`schema_version` è fissato a `Literal["1.0.0"]` senza percorso di migrazione.** Le due voci sopra comportano campi nuovi, quindi il tema va affrontato al primo cambiamento di modello, quando ancora non esistono file di progetto reali.
+
+### 3.3 Invarianti riasseriti dal validatore
 
 Con `validate_assignment`, un assegnamento rifiutato da un validatore di modello lascia comunque il valore scartato dentro l'istanza. La revisione avversariale ha mostrato che questo produce un verdetto **sbagliato**, non solo un oggetto sorprendente: un progetto con identificativi duplicati puo' essere portato in uno stato in cui `validate_project` lo dichiara pulito pur non riuscendo a ricaricare il proprio stesso dump.
 
-Le opzioni sono rendere il modello immutabile, oppure fare del validatore l'unico punto di verità riasserendo gli invarianti invece di fidarsi del costruttore. La seconda è probabilmente piu' corretta per un cancello: *un validatore che presume il proprio ingresso già ben formato non è un cancello.* La scelta incide su come le revisioni modificano il progetto, quindi è del PM.
+Deciso (D-037): **il validatore riasserisce gli invarianti invece di fidarsi del costruttore**. Un cancello che presume corretto il proprio ingresso non è un cancello. L'eventuale immutabilità del modello resta un dettaglio implementativo dell'agente.
 
 ## 4. Da fare prima di specifiche fasi — tecnico, non del PM
 

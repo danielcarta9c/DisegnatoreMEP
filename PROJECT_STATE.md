@@ -15,11 +15,11 @@
 
 ## Now — in corso
 
-- [ ] Decidere con il PM come rappresentare una proposta non ancora approvata nel modello canonico, prima che P1 scriva la prima regola. Dettagli in `docs/P0_REVIEW_FINDINGS.md` §3.1.
+- [ ] Scrivere il piano P1: ricerca tecnica e sistema delle regole.
 
 ## Next — backlog ordinato
 
-1. Scrivere il piano P1 (ricerca tecnica e sistema delle regole), incorporando la decisione sopra e i punti W5, W6 e W2 di `docs/P0_REVIEW_FINDINGS.md`.
+1. Nel piano P1, completare `RuleApplicationModel` per la tracciabilità a valle (D-039) e introdurre la rappresentazione dei dati mancanti; affrontare al primo cambiamento di modello il percorso di migrazione dello schema. Dettagli in `docs/P0_REVIEW_FINDINGS.md` §3.2.
 2. Scrivere il piano P2 (sistema grafico A3 e compilatore dei simboli), risolvendo al primo giorno dove vive la geometria dei simboli (W8) e l'invariante di orientamento delle porte (W9).
 3. Allargare il contratto `DomainPack` prima che i quattro pacchetti P3 procedano in parallelo (W3).
 4. Implementare i pacchetti di dominio P3A-P3D.
@@ -29,8 +29,7 @@
 
 ## Domande aperte
 
-1. **Dove vive una proposta non approvata.** Stato sulle entità con validatore ristretto alle approvate, oppure collezione separata di proposte che confluisce all'approvazione. Non è un dettaglio reversibile: determina come una revisione rientra nel progetto. Vedi `docs/P0_REVIEW_FINDINGS.md` §3.1.
-2. **Immutabilità del modello canonico.** Congelarlo, oppure far riasserire gli invarianti al validatore invece di fidarsi del costruttore. Vedi §3.2 dello stesso documento.
+Nessuna domanda di prodotto aperta. Le due precedenti sono state chiuse il 3 agosto 2026: la prima ritirata perché nasceva da un fraintendimento del flusso (D-036), la seconda ricondotta a decisione tecnica dell'agente (D-037). Il flusso di lavoro corretto è fissato in `docs/P0_REVIEW_FINDINGS.md` §3.1.
 
 ## Done log — ultimo in cima
 
