@@ -15,9 +15,14 @@ def test_usable_area_is_derived_from_margins() -> None:
     assert A3_LANDSCAPE.usable_height_mm == expected_height
 
 
-def test_usable_area_is_a_whole_number_of_grid_steps() -> None:
+def test_usable_width_is_a_whole_number_of_grid_steps() -> None:
     steps = A3_LANDSCAPE.usable_width_mm / A3_LANDSCAPE.grid_mm
     assert steps == int(steps)
+
+
+def test_usable_height_is_not_grid_aligned_because_margins_follow_iso_5457() -> None:
+    steps = A3_LANDSCAPE.usable_height_mm / A3_LANDSCAPE.grid_mm
+    assert steps != int(steps)
 
 
 def test_margins_cannot_exceed_the_sheet() -> None:
@@ -46,3 +51,23 @@ def test_line_weights_are_ordered() -> None:
 
 def test_text_heights_are_ordered() -> None:
     assert A3_LANDSCAPE.text_small_mm < A3_LANDSCAPE.text_normal_mm < A3_LANDSCAPE.text_title_mm
+
+
+def test_infinite_dimensions_are_rejected() -> None:
+    with pytest.raises(ValidationError, match="value must be a finite number"):
+        GraphicStandard(
+            sheet_width_mm=float("inf"),
+            sheet_height_mm=297.0,
+            margin_left_mm=20.0,
+            margin_right_mm=10.0,
+            margin_top_mm=10.0,
+            margin_bottom_mm=10.0,
+            grid_mm=2.5,
+            line_thin_mm=0.18,
+            line_medium_mm=0.35,
+            line_thick_mm=0.5,
+            text_small_mm=1.8,
+            text_normal_mm=2.5,
+            text_title_mm=3.5,
+            min_clearance_mm=2.0,
+        )

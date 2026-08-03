@@ -6,24 +6,24 @@ Nessun altro modulo deve contenere una costante metrica.
 
 from pydantic import Field, model_validator
 
-from disegnatore_mep.model.base import StrictModel
+from disegnatore_mep.model.base import FiniteFloat, StrictModel
 
 
 class GraphicStandard(StrictModel):
-    sheet_width_mm: float = Field(gt=0)
-    sheet_height_mm: float = Field(gt=0)
-    margin_left_mm: float = Field(ge=0)
-    margin_right_mm: float = Field(ge=0)
-    margin_top_mm: float = Field(ge=0)
-    margin_bottom_mm: float = Field(ge=0)
-    grid_mm: float = Field(gt=0)
-    line_thin_mm: float = Field(gt=0)
-    line_medium_mm: float = Field(gt=0)
-    line_thick_mm: float = Field(gt=0)
-    text_small_mm: float = Field(gt=0)
-    text_normal_mm: float = Field(gt=0)
-    text_title_mm: float = Field(gt=0)
-    min_clearance_mm: float = Field(gt=0)
+    sheet_width_mm: FiniteFloat = Field(gt=0)
+    sheet_height_mm: FiniteFloat = Field(gt=0)
+    margin_left_mm: FiniteFloat = Field(ge=0)
+    margin_right_mm: FiniteFloat = Field(ge=0)
+    margin_top_mm: FiniteFloat = Field(ge=0)
+    margin_bottom_mm: FiniteFloat = Field(ge=0)
+    grid_mm: FiniteFloat = Field(gt=0)
+    line_thin_mm: FiniteFloat = Field(gt=0)
+    line_medium_mm: FiniteFloat = Field(gt=0)
+    line_thick_mm: FiniteFloat = Field(gt=0)
+    text_small_mm: FiniteFloat = Field(gt=0)
+    text_normal_mm: FiniteFloat = Field(gt=0)
+    text_title_mm: FiniteFloat = Field(gt=0)
+    min_clearance_mm: FiniteFloat = Field(gt=0)
 
     @property
     def usable_width_mm(self) -> float:
@@ -44,6 +44,10 @@ class GraphicStandard(StrictModel):
         return self
 
 
+# Margins follow ISO 5457: 20 mm binding margin on the left, 10 mm on the other three sides.
+# This makes the two axes asymmetric by construction: the width (390 mm) is a whole number of
+# grid steps (156), but the height (277 mm) is not (110.8). The margins are intentionally not
+# adjusted to force both axes onto the grid; this is the documented standard.
 A3_LANDSCAPE = GraphicStandard(
     sheet_width_mm=420.0,
     sheet_height_mm=297.0,
