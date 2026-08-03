@@ -114,9 +114,10 @@ def test_validate_without_symbols_behaves_as_before(tmp_path: Path) -> None:
 
 
 def test_foundation_catalog_matches_its_symbols() -> None:
-    """Closes the gap Task 3's review flagged: `validate` never passes a
-    SymbolRegistry (symbols stay optional by design - D-024/P-3 in progress.md),
-    so nothing exercised ComponentRegistry's cross-check against shipped data.
+    """Closes the gap Task 3's review flagged: `--symbols` is optional on
+    `validate`, so a caller who omits it never exercises ComponentRegistry's
+    cross-check, and nothing would verify the shipped catalog against its own
+    symbols.
     This proves it once, directly: a future edit that repoints a symbol_id at
     something that does not exist, or renames a port on only one side of the
     join, fails here instead of shipping silently.

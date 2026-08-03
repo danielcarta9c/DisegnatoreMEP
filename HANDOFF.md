@@ -1,4 +1,4 @@
-# HANDOFF — Disegnatore MEP · 2026-08-01 (fine P0)
+# HANDOFF — Disegnatore MEP · 2026-08-03 (fine fase grafica)
 
 > ⛔ **STOP. Questo file NON è un riassunto del progetto.** È il cancello
 > di lettura per la sessione successiva. Leggere tutti i documenti indicati
@@ -20,17 +20,18 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 5 | `PROJECT_STATE.md` | Stato vivo e prossimo passo |
 | 6 | `docs/specs/2026-08-01-disegnatore-mep-design.md` | Design consolidato e approvato |
 | 7 | `docs/adr/README.md`, poi `docs/adr/0001-*.md` fino a `0004-*.md` | Decisioni architetturali in ordine cronologico |
-| 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-033 |
+| 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-050 |
 | 9 | `docs/ROADMAP.md` | Fasi del progetto e perimetro futuro |
-| 10 | `docs/ARCHITECTURE.md` | Struttura del codice effettivamente consegnato in P0 |
-| 11 | **`docs/P0_REVIEW_FINDINGS.md`** | Cosa le revisioni hanno trovato e non è stato risolto. **Il §3.1 fissa il flusso di lavoro reale della skill**: due revisori indipendenti erano partiti da una lettura sbagliata, leggerlo prima di ragionare sull'approvazione |
-| 12 | `docs/plans/README.md` e `docs/plans/2026-08-01-master-implementation-roadmap.md` | Sequenza P0–P7 |
-| 13 | `docs/plans/2026-08-01-foundation-core-plan.md` — **almeno l'appendice finale** | Il piano eseguito e le deviazioni approvate. Il corpo del piano contiene codice che non compila: leggere l'appendice prima di fidarsi del testo |
-| 13b | **`docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`** | **Il piano da eseguire.** Sette task, dal sistema grafico in millimetri al foglio A3 stampabile dei simboli |
-| 14 | `docs/research/README.md` e `docs/research/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
-| 15 | `assets/cartigli/README.md` e `releases/README.md` | Vincoli su cartiglio e rilascio |
-| 16 | [`nove-c-kit` PLAYBOOK](https://github.com/danielcarta9c/nove-c-kit/blob/main/PLAYBOOK.md) e [`EXAMPLES`](https://github.com/danielcarta9c/nove-c-kit/blob/main/EXAMPLES.md) | Metodo di project management Nove C |
-| 17 | Questo file dal §2 in poi | Verifica di comprensione e delta operativo |
+| 10 | `docs/ARCHITECTURE.md` | Struttura del codice effettivamente consegnato |
+| 11 | **`docs/GRAPHIC_STANDARD.md`** | **Lo standard grafico.** Grandezze in millimetri, regola perimetro-faccia, divisione fra geometria del simbolo e semantica del catalogo, compositi, rotazioni, come si aggiunge un simbolo, come si stampa il foglio |
+| 12 | `docs/P0_REVIEW_FINDINGS.md` | Cosa le revisioni di P0 hanno trovato e non è stato risolto. **Il §3.1 fissa il flusso di lavoro reale della skill**: due revisori indipendenti erano partiti da una lettura sbagliata |
+| 13 | `docs/plans/README.md` e `docs/plans/2026-08-01-master-implementation-roadmap.md` | Sequenza dei piani |
+| 14 | `docs/plans/2026-08-01-foundation-core-plan.md` — **solo l'appendice finale** | Il piano P0 eseguito e le sue deviazioni. Il corpo contiene codice difettoso |
+| 15 | **`docs/plans/2026-08-03-graphic-system-symbol-library-plan.md` — solo l'appendice finale** | Il piano grafico eseguito. **Sedici difetti corretti in esecuzione**, sei del piano e dieci trovati dalle revisioni. Anche qui il corpo non è stato riscritto |
+| 16 | `docs/research/README.md` e `docs/research/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
+| 17 | `assets/cartigli/README.md` e `releases/README.md` | Vincoli su cartiglio e rilascio |
+| 18 | [`nove-c-kit` PLAYBOOK](https://github.com/danielcarta9c/nove-c-kit/blob/main/PLAYBOOK.md) e [`EXAMPLES`](https://github.com/danielcarta9c/nove-c-kit/blob/main/EXAMPLES.md) | Metodo di project management Nove C |
+| 19 | Questo file dal §2 in poi | Verifica di comprensione e delta operativo |
 
 Non usare questo HANDOFF come scorciatoia. Il contenuto tecnico vive nei documenti canonici sopra.
 
@@ -38,54 +39,53 @@ Non usare questo HANDOFF come scorciatoia. Il contenuto tecnico vive nei documen
 
 ## 2. Sentinel checks — verifica che hai letto
 
-Rispondere esplicitamente a queste domande prima di iniziare. Se una risposta non è certa, tornare al §1.
+Rispondere esplicitamente prima di iniziare. Se una risposta non è certa, tornare al §1.
 
-1. Perché il prodotto non è un catalogo di schemi tipo, e come è stato **dimostrato** che il nucleo è davvero universale?
+1. Perché il prodotto non è un catalogo di schemi tipo, e come è stato **dimostrato**?
 2. Qual è la fonte di verità e quali artefatti sono derivati rigenerabili?
 3. Cosa deve essere approvato prima di disegnare, e perché quell'approvazione **non** richiede una macchina di stati dentro il modello?
-4. A cosa servono allora i campi di regola e approvazione presenti nel modello?
-5. Come deve essere rappresentato un componente inserito in linea, e perché quel requisito è oggi rappresentabile ma non verificato?
-6. Perché rileggere alla lettera il corpo del piano P0 è pericoloso?
+4. Dove vive oggi la geometria di un componente, dove la sua semantica, e cosa le tiene allineate?
+5. Perché una porta di simbolo non può stare al centro del riquadro, e quale vincolo P0 questo ha ritirato?
+6. Cosa succede se la libreria dei simboli non entra nel foglio, e perché non viene rimpicciolita?
+7. Perché rileggere alla lettera il corpo dei due piani è pericoloso?
 
-Risposte attese: motore compositivo, provato cercando ogni termine impiantistico nel sorgente e trovando solo i sei nomi di dominio, zero condizionali su tipo di componente; il modello tecnico canonico, con geometria, SVG e PDF derivati; l'intero dossier di interpretazione, integrazioni, assunzioni e domande, confermato dentro la conversazione — se l'ingegnere rifiuta un'integrazione la skill semplicemente non la inserisce, quindi non esistono proposte pendenti da conservare; quei campi servono alla tracciabilità a valle, cioè risalire dall'accessorio comparso in distinta alla regola che lo ha inserito e al perché; la connessione si spezza in due segmenti sulle porte del componente, ma nessuna fixture contiene un componente in linea e `inline_gap_mm` non è letto da nessuna parte; il corpo del piano contiene nove difetti eseguibili corretti solo nell'appendice.
+Risposte attese: motore compositivo, provato cercando ogni termine impiantistico nel sorgente e trovando solo i nomi di dominio, zero condizionali su tipo di componente, e gate G0 su un progetto a quattro domini; il modello tecnico canonico, con geometria, SVG e PDF derivati; l'intero dossier di interpretazione, integrazioni, assunzioni e domande, confermato dentro la conversazione — se l'ingegnere rifiuta un'integrazione la skill semplicemente non la inserisce; la geometria nel manifesto del simbolo e la semantica nella definizione di catalogo, tenute allineate dalla verifica incrociata sugli identificativi di porta al caricamento (D-043); perché non sarebbe un punto a cui attaccare una tubazione, e ritira deliberatamente «le porte possono stare ovunque dentro il riquadro» (D-044); la generazione fallisce con una diagnostica che dice quanti simboli stanno, su entrambi gli assi, perché la scala di stampa è invariante (D-045); entrambi contengono codice che non funziona, corretto solo nelle rispettive appendici.
 
 ---
 
 ## 3. Stato attuale del progetto
 
-- **Fase:** P0 completata, gate G0 superato. P1 non iniziata.
+- **Fase:** fondazione canonica e sistema grafico completati. Layout, instradamento e rendering non iniziati.
 - **Versione installabile:** nessuna release; `releases/latest/` non è ancora popolata.
-- **Codice:** 45 file, 3089 righe, 17 commit. `src/disegnatore_mep/` con `model`, `catalog`, `domains`, `validation`, `io` e `cli`.
-- **Verifica:** 59 test verdi; `pytest`, `ruff` e `mypy --strict` tutti a exit `0` su `src`, `tests` e `examples/foundation/build_fixtures.py`.
-- **Ambiente:** ricostruibile da zero con `bash scripts/setup-env.sh`, che crea la `.venv`, installa il pacchetto in editable con le versioni pinnate di `pyproject.toml` e verifica test, lint e type check. Lo script rileva da solo l'interprete e se la `.venv` usa `bin/` o `Scripts/`. **Da eseguire come prima cosa in una sessione cloud**, che riparte sempre da un clone pulito e non conserva nulla di installato.
-- **Il progetto è pronto per il cloud.** `.claude/settings.json` è versionato e dichiara il plugin `superpowers`, cosi' una sessione cloud lo installa all'avvio. Tutti i comandi dei piani sono Bash. `.claude/settings.local.json` resta invece fuori da Git perché contiene percorsi della singola macchina.
-- **Ramo:** P0 è stata sviluppata su `feat/p0-foundation-core` e integrata in `main` con un merge esplicito. Si riparte da `main`. Il ramo di lavoro è conservato per poter rileggere la sequenza dei commit.
+- **Verifica:** 144 test verdi; `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`.
+- **Libreria:** dodici simboli pubblicati in `assets/symbols/` più otto di fixture in `examples/foundation/symbols/`, entrambe rigenerabili identiche dai rispettivi generatori.
+- **Il gate G0 di P0 regge ancora** e il fingerprint del progetto misto non si è mosso: `3347374e8b3f006c6f387c6228e0d9d2b885cbf57e65991937e985af32306573`.
+- **Ambiente:** ricostruibile da zero con `bash scripts/setup-env.sh`. **Da eseguire come prima cosa in una sessione cloud**, che riparte sempre da un clone pulito.
+- **Ramo:** la fase grafica è stata sviluppata su `claude/graphic-symbol-library-setup-acgoka`.
 - **In flight:** nessuna modifica applicativa a metà.
-- **Blocco:** nessuno. Le due decisioni di prodotto che erano in sospeso sono state chiuse il 3 agosto 2026 (D-036 ritirata, D-037 ricondotta a decisione tecnica).
-- **Check rapido alla ripresa:** `git status --short` vuoto; `& .\.venv\Scripts\python.exe -m pytest -q` deve dare 59 passed.
+- **Check rapido alla ripresa:** `git status --short` vuoto; `.venv/bin/python -m pytest -q` deve dare 144 passed.
 
 ---
 
 ## 4. Cosa è cambiato dall'ultima sessione (delta)
 
-- Eseguiti tutti e otto i task del piano P0, ciascuno con implementatore e almeno due revisioni indipendenti.
-- Superato il gate G0: `examples/foundation/valid-mixed-project.json` combina quattro domini ed esce `0`; `invalid-cross-medium.json` esce `2` con `PORT_MEDIUM_MISMATCH`.
-- Corretti **nove difetti eseguibili del piano** — codice che funzionava a runtime ma non superava `mypy --strict`, piu' un import circolare reale. Elencati nell'appendice del piano.
-- Corretti **quattro difetti trovati dalla revisione avversariale**, fra cui un falso PASS e una falla nell'integrità del fingerprint.
-- Prodotti `docs/ARCHITECTURE.md` e `docs/P0_REVIEW_FINDINGS.md`.
+- Eseguiti tutti e sette i task del piano grafico con `superpowers:subagent-driven-development`: implementatore fresco per task, revisione di conformità e di qualità, loop di correzione.
+- **La geometria si è spostata dal catalogo al simbolo** e le porte stanno sul perimetro. Questo ritira un vincolo P0 esplicito: la motivazione è in `docs/GRAPHIC_STANDARD.md` §3.1.
+- Prodotto il primo artefatto guardabile del progetto: un **A3 stampabile** dei simboli a misura reale. Rasterizzato a 10 px/mm la barra di scala misura 100,000 mm esatti.
+- Corretti **sedici difetti**: sei nel codice letterale del piano, dieci trovati dalle revisioni. Elencati nell'appendice del piano grafico.
 - Tutte queste modifiche sono già promosse nei documenti canonici: non ricostruirle da questo elenco.
 
 ---
 
 ## 5. Punto esatto da cui riprendere
 
-- **Task:** eseguire `docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`, sette task, dal Task 1.
-- **Metodo scelto dal PM:** `superpowers:subagent-driven-development`. Un agente implementatore fresco per task, poi revisione di conformità alla specifica, poi revisione di qualità, con loop di correzione finché entrambe non approvano. Non chiedere di riscegliere il metodo.
-- **Ordine invertito rispetto alla roadmap master (D-040):** la catena grafica — simboli, layout, rendering — precede il motore delle regole. Il rischio vero non sono le regole ma se un motore deterministico produca una tavola che sembri disegnata da un tecnico, e lo si scopre soltanto guardandola. Nel frattempo la skill disegnerà esattamente ciò che l'ingegnere descrive, senza aggiungere nulla.
-- **Nessuna decisione del PM è in sospeso.**
-- **Attenzione:** il piano sposta la geometria dal catalogo al simbolo e impone alle porte di stare sul perimetro. Questo **ritira deliberatamente** il vincolo P0 «le porte possono stare ovunque dentro il riquadro»: la motivazione è nella sezione «Decisione strutturale» del piano. Non è una svista da correggere.
-- **Prima di P3:** allargare il contratto `DomainPack`. Oggi vede solo due porte e una rete, quindi nessuna regola idronica o aeraulica reale è esprimibile. Se i quattro pacchetti P3 partissero in parallelo su questo contratto, ognuno modificherebbe il nucleo per conto proprio.
-- **Loci di interesse:** `docs/P0_REVIEW_FINDINGS.md`; `PROJECT_STATE.md`; `docs/plans/2026-08-01-master-implementation-roadmap.md`.
+- **Prossimo passo:** scrivere il piano di layout, instradamento e multi-tavola. È il punto 1 di `Next` in `PROJECT_STATE.md`.
+- **Da progettare lì, al primo task:** la vista che unisce semantica e geometria. Il piano grafico la elencava fra i propri contratti come `ResolvedComponent` ma non l'ha costruita, perché non aveva consumatori. Oggi la verifica incrociata dimostra che i due insiemi di porte coincidono e poi **butta via l'accoppiamento**: non esiste modo supportato di passare da un componente alla sua geometria.
+- **Da progettare lì, subito dopo:** la **trasformazione di rotazione**. `allowed_rotations_deg` dichiara gli orientamenti tecnicamente ammessi (D-049), ma nulla ruota un simbolo, scambia il riquadro a 90°/270°, ruota una `PortFace` o un lato di `KeepOut`. Se ogni consumatore se la scrive da sé, l'invariante perimetro-faccia diverge subito. Va messa in `symbol.py`, accanto al validatore che la impone.
+- **`inline_gap_mm` non è ancora letto da nessuno.** D-027 e la regola non negoziabile di `AGENTS.md` sull'inserimento in linea non hanno ancora codice dietro. L'instradamento deve consumarlo, non riderivarlo.
+- **`render_symbol_sheet` è un banco di prova, non la tavola.** Costruisce una griglia uniforme da due costanti di modulo. Non generalizza a una tavola con cartiglio e instradamento: va tenuto come riscontro, non esteso.
+- **Attenzione al `keep_out`:** ora è imposto non nullo sulle facce con porta, quindi il layout può fidarsene. Prima non lo era.
+- **`usable_height_mm` non è un multiplo del passo di griglia** (277 / 2,5 = 110,8), mentre la larghezza sì. È voluto, i margini seguono ISO 5457. Un layout che assuma entrambi gli assi allineati sbaglia in verticale di 0,8 di passo.
 
 ---
 
@@ -93,25 +93,21 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 
 **Nessuna.**
 
-Le due che erano registrate qui sono state chiuse il 3 agosto 2026:
+Una è stata chiusa in questa sessione: le rotazioni ammesse dichiarano gli orientamenti **tecnicamente** sensati, non quelli geometricamente possibili. Sfiato aria bloccato a `[0]`, vaso di espansione a `[0, 180]` (D-049).
 
-- **D-036 ritirata.** Chiedeva dove conservare una proposta di integrazione non ancora approvata. Nasceva da un fraintendimento: la skill trasforma input in schema grafico, non archivia progetti. L'approvazione avviene dentro la conversazione e, se l'ingegnere rifiuta un'integrazione, la skill semplicemente non la inserisce. Non esistono proposte pendenti o rifiutate da conservare.
-- **D-037 chiusa come decisione tecnica.** Il validatore riasserisce gli invarianti invece di fidarsi del costruttore; l'immutabilità del modello resta implementativa.
+Il PM ha anche registrato un input per la libreria vera: **la dimensione del simbolo comunica il peso del componente** nella tavola — valvole piccole, vasi più grandi, accumuli ancora di più. Le misure attuali (6×6, 8×8, 6×10) sono una convenzione di prova, non uno standard da ereditare (D-050).
 
-**Lezione da non ripetere:** due revisori indipendenti avevano letto i campi `ApprovalStatus` e `RuleApplicationModel` come un flusso di approvazione da persistere, e ne avevano fatto il rischio principale della fase. Servono invece alla tracciabilità a valle (D-039). Prima di ragionare sull'approvazione, leggere `docs/P0_REVIEW_FINDINGS.md` §3.1, che fissa il flusso reale.
-
-Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di scegliere fra modalità tecniche di esecuzione.
+Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di scegliere fra modalità tecniche di esecuzione: il PM valida il prodotto, l'agente è il PM senior dello sviluppo.
 
 ---
 
 ## 7. Quirks e gotcha emersi
 
-- **Il corpo del piano P0 contiene codice difettoso.** Non è stato riscritto. L'appendice finale è la fonte autorevole sulle differenze.
-- **Eseguire sempre la suite completa**, mai il solo file di test del task in corso: l'import circolare corretto nel Task 5 passava indenne sul proprio file e falliva solo sull'intera suite, per ordine di collection.
-- **Eseguire `mypy src tests`, non solo `mypy src`.** Gli errori di tipo nei test restano altrimenti invisibili fino al gate finale.
-- **Cinque vincoli non vanno "migliorati"**: porte ammesse ovunque dentro il riquadro del simbolo e non solo sul perimetro; `validation/__init__.py` minimale; `BasicDomainPack` congelato; `network_id` dentro la chiave di duplicazione; precedenza dei rami in `validate_pair`. Motivazioni nell'appendice del piano.
-- **OneDrive:** il repository è in una cartella sincronizzata; evitare modifiche contemporanee da due computer e verificare lo stato Git prima di intervenire.
-- **Cartiglio PDF:** le anomalie di font osservate restano descritte nella specifica approvata; consultarla prima di costruire il rendering.
+- **Il corpo di entrambi i piani contiene codice difettoso.** Le appendici finali sono le fonti autorevoli sulle differenze.
+- **Eseguire sempre la suite completa** e `mypy src tests examples`, mai il solo file di test del task in corso: un import circolare di P0 passava sul proprio file e falliva solo sull'intera suite.
+- **Mai `git checkout --` o `git stash` su un file con lavoro non committato.** In questa sessione un implementatore ha cancellato così una correzione appena scritta. Copiare il file da parte e ripristinare da lì.
+- **Stampare e leggere i numeri che si riportano.** Un report ha citato valori in virgola mobile che Python non produce, e l'affermazione è caduta alla verifica. Un test costruito su quei numeri non dimostrava nulla.
+- **Firma dei commit:** in questo container `commit.gpgsign` è attivo ma la chiave è un file vuoto di un altro utente, quindi i commit escono non firmati. Autore e committer sono corretti. Non risolvibile da dentro la sessione.
 - **Quota dell'app:** non esiste un indicatore interrogabile del limite residuo; non inventare stime.
 
 ---
@@ -122,14 +118,10 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 |---|---|
 | Come collaborare con il PM | `AGENTS.md` |
 | Qual è il prodotto e cosa esclude | `PRD_DISEGNATORE_MEP.md` |
-| Perché il motore è generale | ADR 0001 e specifica approvata |
-| Qual è la fonte di verità | ADR 0002 |
-| Come gestire scala e tavole | ADR 0003 |
-| Perché si approva prima di disegnare | ADR 0004 |
+| Com'è fatto lo standard grafico | `docs/GRAPHIC_STANDARD.md` |
 | Com'è fatto il codice consegnato | `docs/ARCHITECTURE.md` |
-| Cosa manca e cosa è stato differito | `docs/P0_REVIEW_FINDINGS.md` |
-| Perché il codice diverge dal piano | Appendice di `docs/plans/2026-08-01-foundation-core-plan.md` |
-| Qual è il prossimo passo | `PROJECT_STATE.md` |
+| Perché il codice diverge dai piani | Le appendici dei due piani in `docs/plans/` |
+| Qual è il prossimo passo e il debito noto | `PROJECT_STATE.md` |
 | Dove trovare le decisioni | `docs/DECISION_LOG.md` e `docs/adr/` |
 | Come gestire fonti tecniche | `docs/research/SOURCE_REGISTER.md` |
 | Come produrre una release | `releases/README.md` |
@@ -138,10 +130,10 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 
 ## Ultimo aggiornamento
 
-`2026-08-03` — Claude — scritto il piano del sistema grafico e della libreria dei simboli, pronto per l'esecuzione con agenti dedicati. Sessione chiusa in modo prudenziale a metà budget di contesto, per lasciare all'esecuzione un margine intero: sono circa venti dispatch fra implementatori e revisori, e chi coordina deve ricordare le decisioni prese fra un task e l'altro.
+`2026-08-03` — Claude — eseguito il piano del sistema grafico e della libreria dei simboli. Sette task, sedici difetti corretti, 144 test verdi, primo A3 stampabile a misura reale. Resta al PM la sola prova fisica col righello.
 
-`2026-08-03` — Claude — chiarito con il PM il flusso di lavoro reale della skill; ritirata D-036, chiusa D-037, aggiunta D-039 sulla tracciabilità. Nessuna domanda di prodotto resta aperta.
+`2026-08-03` — Claude — chiarito con il PM il flusso di lavoro reale della skill; ritirata D-036, chiusa D-037, aggiunta D-039 sulla tracciabilità.
 
 `2026-08-03` — Claude — pubblicazione su GitHub in `danielcarta9c/DisegnatoreMEP`, repository pubblico con licenza MIT (D-038).
 
-`2026-08-01` — Claude — chiusura di P0: gate G0 superato, 59 test verdi, difetti del piano e della revisione avversariale corretti, documentazione allineata al codice reale.
+`2026-08-01` — Claude — chiusura di P0: gate G0 superato, 59 test verdi.
