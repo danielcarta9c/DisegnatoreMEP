@@ -34,14 +34,13 @@ ALLOWED_ROTATIONS_DEG = [0, 90, 180, 270]
 INLINE_MM = 6.0
 CLEARANCE_MM = A3_LANDSCAPE.min_clearance_mm
 
-# Riferimento unico per tutti e dodici: la libreria HVAC&R nominata dal
-# documento di design (docs/specs/2026-08-01-disegnatore-mep-design.md, §17)
-# per il linguaggio simbolico specifico di dominio, distinto dalle regole
-# generali di disegno di ISO 14617-1/-2 che quel documento cita a parte.
-SOURCE = (
-    "ANSI/ASHRAE Standard 134 - Graphic Symbols for Heating, Ventilating, "
-    "Air-Conditioning, and Refrigerating Systems"
-)
+# Convenzione grafica del progetto, non una fonte esterna: le forme sono
+# disegnate secondo la prassi schematica comune, ma nessuno standard esterno
+# e' stato acquisito o valutato per questa libreria (vedi
+# docs/research/SOURCE_REGISTER.md). source registra quella provenienza
+# reale - la convenzione adottata da questo progetto - non una citazione
+# non verificata.
+SOURCE = "CONV-GRAFICA-001"
 
 
 def face_center(face: str, width_mm: float, height_mm: float) -> tuple[float, float]:
