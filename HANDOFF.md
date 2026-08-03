@@ -61,8 +61,9 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 - **Libreria:** dodici simboli pubblicati in `assets/symbols/` più otto di fixture in `examples/foundation/symbols/`, entrambe rigenerabili identiche dai rispettivi generatori.
 - **Il gate G0 di P0 regge ancora** e il fingerprint del progetto misto non si è mosso: `3347374e8b3f006c6f387c6228e0d9d2b885cbf57e65991937e985af32306573`.
 - **Ambiente:** ricostruibile da zero con `bash scripts/setup-env.sh`. **Da eseguire come prima cosa in una sessione cloud**, che riparte sempre da un clone pulito.
-- **Ramo:** la fase grafica è stata sviluppata su `claude/graphic-symbol-library-setup-acgoka`.
+- **Ramo:** la fase grafica è stata sviluppata su `claude/graphic-symbol-library-setup-acgoka` e **integrata in `main` con un merge esplicito** (`8e2b664`), come era stata chiusa P0. Si riparte da `main`. Il ramo di lavoro è conservato per poter rileggere la sequenza dei commit.
 - **In flight:** nessuna modifica applicativa a metà.
+- **Blocco:** nessuno tecnico. È in attesa **una sola verifica del PM**: la prova fisica di stampa, vedi §5.
 - **Check rapido alla ripresa:** `git status --short` vuoto; `.venv/bin/python -m pytest -q` deve dare 144 passed.
 
 ---
@@ -79,7 +80,26 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 
 ## 5. Punto esatto da cui riprendere
 
-- **Prossimo passo:** scrivere il piano di layout, instradamento e multi-tavola. È il punto 1 di `Next` in `PROJECT_STATE.md`.
+**Prima di ogni altra cosa: chiedere al PM l'esito della prova di stampa.**
+
+La sessione precedente si è chiusa consegnando al PM il foglio A3 dei simboli perché lo
+stampasse al 100%, senza adattamento alla pagina, e misurasse col righello la barra di scala:
+deve dare 100 mm. È l'ultimo passo del gate grafico e non è eseguibile in una sessione cloud.
+Il foglio si rigenera con
+`.venv/bin/python -m disegnatore_mep symbols-sheet outputs/symbols.svg --symbols assets/symbols`.
+
+- **Se la misura torna:** l'invarianza di scala è dimostrata sulla carta e la fase grafica è
+  chiusa davvero. Procedere col punto sotto.
+- **Se non torna:** non è un difetto del modello ma della catena di esportazione o di stampa.
+  Prima di toccare il codice, distinguere fra impostazione di stampa (adattamento alla pagina
+  attivo, che è la causa piu' probabile) e reale perdita di scala nel file. Il file dichiara
+  `width="420mm"` con `viewBox="0 0 420 297"`, e rasterizzato a 10 px/mm la barra misura
+  100,000 mm: la geometria sorgente è verificata, quindi il sospetto va sul percorso di stampa.
+- **Chiedere anche l'impressione visiva:** i dodici simboli sono riconoscibili a occhio, alla
+  loro dimensione reale di 6-10 mm? È il giudizio che nessun test automatico può dare, ed è la
+  ragione per cui la catena grafica è stata anticipata al motore delle regole (D-040).
+
+- **Poi, il prossimo passo di sviluppo:** scrivere il piano di layout, instradamento e multi-tavola. È il punto 1 di `Next` in `PROJECT_STATE.md`.
 - **Da progettare lì, al primo task:** la vista che unisce semantica e geometria. Il piano grafico la elencava fra i propri contratti come `ResolvedComponent` ma non l'ha costruita, perché non aveva consumatori. Oggi la verifica incrociata dimostra che i due insiemi di porte coincidono e poi **butta via l'accoppiamento**: non esiste modo supportato di passare da un componente alla sua geometria.
 - **Da progettare lì, subito dopo:** la **trasformazione di rotazione**. `allowed_rotations_deg` dichiara gli orientamenti tecnicamente ammessi (D-049), ma nulla ruota un simbolo, scambia il riquadro a 90°/270°, ruota una `PortFace` o un lato di `KeepOut`. Se ogni consumatore se la scrive da sé, l'invariante perimetro-faccia diverge subito. Va messa in `symbol.py`, accanto al validatore che la impone.
 - **`inline_gap_mm` non è ancora letto da nessuno.** D-027 e la regola non negoziabile di `AGENTS.md` sull'inserimento in linea non hanno ancora codice dietro. L'instradamento deve consumarlo, non riderivarlo.
@@ -130,7 +150,7 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 
 ## Ultimo aggiornamento
 
-`2026-08-03` — Claude — eseguito il piano del sistema grafico e della libreria dei simboli. Sette task, sedici difetti corretti, 144 test verdi, primo A3 stampabile a misura reale. Resta al PM la sola prova fisica col righello.
+`2026-08-03` — Claude — eseguito il piano del sistema grafico e della libreria dei simboli. Sette task, sedici difetti corretti, 144 test verdi, primo A3 stampabile a misura reale. Integrato in `main` con merge esplicito. Registrate le convenzioni grafiche interne nel registro fonti, che venti simboli citavano senza che fossero definite da nessuna parte. Resta al PM la sola prova fisica col righello.
 
 `2026-08-03` — Claude — chiarito con il PM il flusso di lavoro reale della skill; ritirata D-036, chiusa D-037, aggiunta D-039 sulla tracciabilità.
 

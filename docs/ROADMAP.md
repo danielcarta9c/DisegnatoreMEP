@@ -32,12 +32,20 @@ La roadmap definisce l'ordine delle fasi. Le attività operative immediate vivon
 
 ## Fase 3 — Linguaggio grafico
 
-- creare simboli SVG originali;
-- definire griglia, allineamenti, colori, spessori, testi e tag;
-- integrare il cartiglio Nove C;
-- partizionare semanticamente i sistemi complessi prima del layout;
-- implementare layout e instradamento deterministici;
-- esportare SVG e PDF vettoriali con manifest di riproducibilità.
+Avviata prima del motore delle regole, invertendo l'ordine originario (D-040): il rischio vero
+non erano le regole ma se un motore deterministico producesse una tavola che sembri disegnata
+da un tecnico, e lo si scopre soltanto guardandola.
+
+- [x] creare simboli SVG originali — dodici pubblicati su quattro domini, insieme di prova dichiarato (D-050);
+- [x] definire griglia, allineamenti, spessori e testi in millimetri di carta invarianti;
+- [x] esportare SVG a misura reale con foglio di riscontro stampabile e barra di scala;
+- [ ] integrare il cartiglio Nove C;
+- [ ] partizionare semanticamente i sistemi complessi prima del layout;
+- [ ] implementare layout e instradamento deterministici;
+- [ ] esportare PDF vettoriale con manifest di riproducibilità.
+
+Colori e tag non sono ancora affrontati: appartengono al rendering della tavola vera, non al
+foglio dei simboli. Lo standard consegnato è in `docs/GRAPHIC_STANDARD.md`.
 
 ## Fase 4 — Collaudo
 
