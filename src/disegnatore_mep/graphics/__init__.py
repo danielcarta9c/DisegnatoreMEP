@@ -1,4 +1,5 @@
 from .standard import A3_LANDSCAPE, GraphicStandard
+from .svg import render_symbol_sheet
 from .symbol import KeepOut, LabelAnchor, PortFace, SymbolManifest, SymbolPort
 
 __all__ = [
@@ -9,4 +10,5 @@ __all__ = [
     "PortFace",
     "SymbolManifest",
     "SymbolPort",
+    "render_symbol_sheet",
 ]
