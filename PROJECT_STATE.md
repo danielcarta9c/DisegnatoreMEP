@@ -15,17 +15,17 @@
 
 ## Now — in corso
 
-- [ ] Scrivere il piano P1: ricerca tecnica e sistema delle regole.
+- [ ] Eseguire `docs/plans/2026-08-03-graphic-system-symbol-library-plan.md` con `superpowers:subagent-driven-development`, un agente per task e due revisioni indipendenti fra un task e l'altro. Metodo scelto dal PM il 3 agosto 2026.
 
 ## Next — backlog ordinato
 
-1. Nel piano P1, completare `RuleApplicationModel` per la tracciabilità a valle (D-039) e introdurre la rappresentazione dei dati mancanti; affrontare al primo cambiamento di modello il percorso di migrazione dello schema. Dettagli in `docs/P0_REVIEW_FINDINGS.md` §3.2.
-2. Scrivere il piano P2 (sistema grafico A3 e compilatore dei simboli), risolvendo al primo giorno dove vive la geometria dei simboli (W8) e l'invariante di orientamento delle porte (W9).
-3. Allargare il contratto `DomainPack` prima che i quattro pacchetti P3 procedano in parallelo (W3).
-4. Implementare i pacchetti di dominio P3A-P3D.
-5. Implementare layout, rendering SVG/PDF e controlli geometrici P4-P5.
-6. Integrare la skill conversazionale P6.
-7. Costruire la matrice di qualificazione e la prima release P7.
+1. Scrivere il piano di layout, instradamento e multi-tavola, incorporando le convenzioni di impaginazione e il rapporto di costo fra incrocio e percorso lungo (D-041) e il ruolo dell'AI limitato al piano di impaginazione (D-042).
+2. Scrivere il piano di rendering, cartiglio e PDF, con distinta derivata dal modello e preflight.
+3. Solo a questo punto il motore delle regole (ex P1), con `RuleApplicationModel` completato per la tracciabilità a valle (D-039), la rappresentazione dei dati mancanti e il percorso di migrazione dello schema. Dettagli in `docs/P0_REVIEW_FINDINGS.md` §3.2.
+4. Allargare il contratto `DomainPack` prima che i quattro pacchetti di dominio procedano in parallelo (W3).
+5. Implementare i pacchetti di dominio idronico, aeraulico, espansione diretta e gas.
+6. Integrare la skill conversazionale.
+7. Costruire la matrice di qualificazione e la prima release.
 
 ## Domande aperte
 

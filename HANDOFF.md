@@ -26,6 +26,7 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 11 | **`docs/P0_REVIEW_FINDINGS.md`** | Cosa le revisioni hanno trovato e non è stato risolto. **Il §3.1 fissa il flusso di lavoro reale della skill**: due revisori indipendenti erano partiti da una lettura sbagliata, leggerlo prima di ragionare sull'approvazione |
 | 12 | `docs/plans/README.md` e `docs/plans/2026-08-01-master-implementation-roadmap.md` | Sequenza P0–P7 |
 | 13 | `docs/plans/2026-08-01-foundation-core-plan.md` — **almeno l'appendice finale** | Il piano eseguito e le deviazioni approvate. Il corpo del piano contiene codice che non compila: leggere l'appendice prima di fidarsi del testo |
+| 13b | **`docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`** | **Il piano da eseguire.** Sette task, dal sistema grafico in millimetri al foglio A3 stampabile dei simboli |
 | 14 | `docs/research/README.md` e `docs/research/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
 | 15 | `assets/cartigli/README.md` e `releases/README.md` | Vincoli su cartiglio e rilascio |
 | 16 | [`nove-c-kit` PLAYBOOK](https://github.com/danielcarta9c/nove-c-kit/blob/main/PLAYBOOK.md) e [`EXAMPLES`](https://github.com/danielcarta9c/nove-c-kit/blob/main/EXAMPLES.md) | Metodo di project management Nove C |
@@ -77,11 +78,11 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 
 ## 5. Punto esatto da cui riprendere
 
-**Non iniziare a scrivere codice.** Il prossimo passo è di pianificazione.
-
-- **Task:** scrivere il piano P1, ricerca tecnica e sistema delle regole. Nessuna decisione del PM è in sospeso.
-- **Nel piano P1 vanno incorporati:** il completamento di `RuleApplicationModel` per la tracciabilità a valle (D-039), la rappresentazione dei dati mancanti richiesta da D-014, e il percorso di migrazione dello schema, dato che entrambi introducono campi nuovi.
-- **Ordine consigliato:** piano P1 (regole) e piano P2 (sistema grafico) sono paralleli dopo P0 secondo la roadmap master; P2 puo' partire in qualsiasi momento perché non dipende da P1.
+- **Task:** eseguire `docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`, sette task, dal Task 1.
+- **Metodo scelto dal PM:** `superpowers:subagent-driven-development`. Un agente implementatore fresco per task, poi revisione di conformità alla specifica, poi revisione di qualità, con loop di correzione finché entrambe non approvano. Non chiedere di riscegliere il metodo.
+- **Ordine invertito rispetto alla roadmap master (D-040):** la catena grafica — simboli, layout, rendering — precede il motore delle regole. Il rischio vero non sono le regole ma se un motore deterministico produca una tavola che sembri disegnata da un tecnico, e lo si scopre soltanto guardandola. Nel frattempo la skill disegnerà esattamente ciò che l'ingegnere descrive, senza aggiungere nulla.
+- **Nessuna decisione del PM è in sospeso.**
+- **Attenzione:** il piano sposta la geometria dal catalogo al simbolo e impone alle porte di stare sul perimetro. Questo **ritira deliberatamente** il vincolo P0 «le porte possono stare ovunque dentro il riquadro»: la motivazione è nella sezione «Decisione strutturale» del piano. Non è una svista da correggere.
 - **Prima di P3:** allargare il contratto `DomainPack`. Oggi vede solo due porte e una rete, quindi nessuna regola idronica o aeraulica reale è esprimibile. Se i quattro pacchetti P3 partissero in parallelo su questo contratto, ognuno modificherebbe il nucleo per conto proprio.
 - **Loci di interesse:** `docs/P0_REVIEW_FINDINGS.md`; `PROJECT_STATE.md`; `docs/plans/2026-08-01-master-implementation-roadmap.md`.
 
@@ -135,6 +136,8 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 ---
 
 ## Ultimo aggiornamento
+
+`2026-08-03` — Claude — scritto il piano del sistema grafico e della libreria dei simboli, pronto per l'esecuzione con agenti dedicati. Sessione chiusa in modo prudenziale a metà budget di contesto, per lasciare all'esecuzione un margine intero: sono circa venti dispatch fra implementatori e revisori, e chi coordina deve ricordare le decisioni prese fra un task e l'altro.
 
 `2026-08-03` — Claude — chiarito con il PM il flusso di lavoro reale della skill; ritirata D-036, chiusa D-037, aggiunta D-039 sulla tracciabilità. Nessuna domanda di prodotto resta aperta.
 
