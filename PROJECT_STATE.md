@@ -11,8 +11,8 @@
 | Interprete | Python 3.12, minimo 3.11 | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv`; comando `disegnatore-mep` funzionante |
 | Schema del progetto | `1.1.0` | I documenti `1.0.0` sono migrati al caricamento; fingerprint della fixture mista `31a6198e…` |
-| Test | 416 verdi | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
-| Libreria simboli | 20 pubblicati + 8 di fixture | `assets/symbols/` e `examples/foundation/symbols/`, entrambe rigenerabili identiche |
+| Test | 461 verdi | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
+| Libreria simboli | 31 pubblicati + 8 di fixture | `assets/symbols/` e `examples/foundation/symbols/`, entrambe rigenerabili identiche |
 | Release | Non disponibile | `releases/latest/` sarà popolata dopo la prima versione verificata |
 
 ## Now — in corso
@@ -41,9 +41,8 @@ valvola di sicurezza, nessun diametro. Finché il modello non li genera, ogni gi
 sulla tavola giudica un impianto che non esiste, e il foglio resta mezzo vuoto perché
 non c'è niente da disegnarci.
 
-1. **Motore delle regole (P1)** — piano scritto il 4 agosto 2026 in `docs/plans/2026-08-04-rules-engine-plan.md`, dodici task, **in attesa di approvazione**. Chiude `RuleApplicationModel` per la tracciabilità a valle (D-039).
-2. Allargare il contratto `DomainPack` prima che i quattro pacchetti di dominio procedano in parallelo (W3).
-3. **Pacchetto di dominio idronico (P3A)**, che è il dominio del caso di accettazione e dà alle regole di cosa parlare. Gli altri tre a seguire.
+1. ~~**Motore delle regole (P1)**~~ — **eseguito il 4 agosto 2026.** Quindici regole su sette famiglie; il caso di accettazione si completa da solo con quindici integrazioni motivate e si disegna su due tavole. Chiude `RuleApplicationModel` (D-039). Difetti trovati eseguendo nell'appendice del piano.
+2. **Pacchetto di dominio idronico (P3A)** e allargamento del contratto `DomainPack` prima che i quattro pacchetti di dominio procedano in parallelo (W3).
 4. **Rendering, cartiglio e PDF (P5)**, con distinta derivata dal modello e **preflight grafico** (D-063): le soglie di `tests/layout/test_objective.py` devono diventare un validatore di prodotto che gira su ogni tavola, non un test su una fixture.
 5. **Skill conversazionale (P6)**, col **cold eye review** e il ciclo di revisione (D-063, D-064): agente terzo, giudica ciò che non si misura, respinge cambiando il piano di impaginazione e mai la geometria.
 6. Costruire la matrice di qualificazione e la prima release (P7).

@@ -53,6 +53,21 @@ disegnata: la prima tavola li superava tutti ed era fatta male. Le misure di qua
 esistono, ma in `tests/layout/test_objective.py`, cioe' su una sola fixture e solo in
 fase di sviluppo. Vanno promosse a validatore di prodotto col piano di rendering.
 
+## Motore delle regole
+
+- `rules/schema.py`: cosa dichiara una regola (specifica §9), piu' i due campi che
+  mancavano — `cardinality` e `satisfied_by`.
+- `rules/registry.py`: il pacchetto caricato da una cartella, verificato contro il catalogo.
+- `rules/context.py`: la vista che una condizione puo' interrogare. Risponde **per funzione**
+  e non espone il modello: e' li' che «una regola non puo' nominare un componente» smette
+  di essere un'intenzione.
+- `rules/engine.py`: `evaluate`, funzione pura. Non tocca il modello (specifica §9.2).
+- `rules/proposal.py`: la proposta, con identificativi derivati dai dati.
+- `rules/apply.py`: applica le **sole** proposte approvate e scrive `RuleApplicationModel`
+  (D-039).
+- `rules/report.py`: il materiale del dossier di approvazione.
+- `rules/hydronic/`: quindici regole su sette famiglie, ciascuna con motivazione e fonte.
+
 ## Librerie di simboli
 
 - `assets/symbols/`: i dodici simboli pubblicati, generati da `examples/graphics/build_symbols.py`.

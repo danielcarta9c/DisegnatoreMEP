@@ -121,10 +121,29 @@ sbloccano nulla.
 
 ---
 
-## 6. Rimandato dal nucleo
+## 6. Rimandato da P1, il motore delle regole
 
-- **`RuleApplicationModel` è un campo senza produttore**: esiste nel modello, nessun codice
-  lo scrive. Lo chiude P1.
+- **Un accessorio con derivazione è disegnato come componente in linea**, con lo stacco nel
+  corpo del simbolo. Un vero ramo — raccordo a T come componente a sé, con la propria
+  tratta — costerebbe tre pezzi per accessorio e romperebbe la ricomposizione delle tratte,
+  che vuole esattamente due connessioni per accessorio in linea. Va rifatto il giorno in cui
+  serviranno rami con più di un componente sopra.
+- **Le valvole di intercettazione sono una per componente, non una per attacco.** Sezionare
+  ogni attacco è corretto e raddoppia gli accessori; con quattro valvole sul volano l'A3 non
+  regge più.
+- **Una tratta che attraversa un confine di tavola non può portare accessori**, e questo
+  decide dove si può tagliare: nel caso di accettazione l'unico taglio possibile è fra la
+  distribuzione e le zone. Va tolto insieme al disegno delle tratte che attraversano
+  (§4), perché sono lo stesso problema.
+- **Le regole non propongono su un attacco libero**, solo in linea su una tubazione
+  esistente: un componente senza tubazione non avrebbe dove posarsi, e il modello non
+  contiene coordinate con cui inventarne una.
+- **Il ricircolo ACS non è ancora una regola**: sarebbe la prima *condizionata* del
+  pacchetto, e serve un modo per dichiarare la condizione (distribuzione lunga) che il
+  modello oggi non porta.
+
+## 7. Rimandato dal nucleo
+
 - **Il contratto `DomainPack` è minimo** — un solo metodo, che verifica la compatibilità di
   due porte. Va allargato **prima** che i quattro pacchetti di dominio procedano in
   parallelo, altrimenti divergono (W3).

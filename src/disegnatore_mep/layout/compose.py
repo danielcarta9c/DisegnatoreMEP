@@ -53,7 +53,9 @@ def inline_component_ids(
 
 
 def _cross_references(
-    partition: SheetPartition, placed_by_component: dict[str, PlacedSymbol]
+    partition: SheetPartition,
+    placed_by_component: dict[str, PlacedSymbol],
+    network_names: dict[str, str],
 ) -> list[CrossReference]:
     references: list[CrossReference] = []
     for link in partition.links:
@@ -67,7 +69,8 @@ def _cross_references(
                 peer_sheet_id=link.peer_sheet_id,
                 # Cio' che si legge e' in italiano (D-051): la sigla della
                 # tavola di destinazione e il fluido che prosegue.
-                text=f"→ {link.peer_sheet_id.upper()} · {link.medium}",
+                text=f"→ {link.peer_sheet_id.upper()} · "
+                f"{network_names.get(link.network_id, link.network_id)}",
                 anchor=Point(
                     x_mm=symbol.right_mm + CROSS_REFERENCE_GAP_MM,
                     y_mm=symbol.origin.y_mm,
@@ -209,7 +212,9 @@ def compose_sheet(
         network_keys=keys,
         ground_line_y_mm=levels.ground_mm,
         cross_references=_cross_references(
-            partition, {item.component_id: item for item in placed}
+            partition,
+            {item.component_id: item for item in placed},
+            {item.id: item.name for item in project.networks},
         ),
     )
     return centre_vertically(
