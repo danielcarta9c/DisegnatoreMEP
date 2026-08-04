@@ -15,10 +15,10 @@ circuiti in modo arbitrario (D-028).
 """
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, SheetFrame
+from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 
-from .composition import levels_of
+from .composition import CALLOUT_GAP_MM, levels_of
 from .errors import LayoutError
 from .geometry import (
     CrossReference,
@@ -77,6 +77,91 @@ def _cross_references(
     return references
 
 
+def _shifted(point: Point, delta_mm: float) -> Point:
+    return Point(x_mm=point.x_mm, y_mm=point.y_mm + delta_mm)
+
+
+def centre_vertically(
+    sheet: SheetGeometry, drawing: Rect, step_mm: float, text_mm: float
+) -> SheetGeometry:
+    """Porta il blocco disegnato al centro verticale dell'area.
+
+    La composizione nasce appoggiata a una linea di terra a quota fissa, e un
+    impianto basso lasciava vuoti i due terzi alti del foglio. Non si puo'
+    rimediare ingrandendo i simboli — la scala di stampa e' invariante
+    (ADR 0003) — quindi si sposta: il blocco resta quello che e' e si mette in
+    mezzo, richiami e linea di terra compresi.
+
+    Lo spostamento e' un multiplo del passo, cosi' nulla esce dalla griglia.
+    """
+    tops = [item.origin.y_mm for item in sheet.symbols]
+    bottoms = [item.bottom_mm for item in sheet.symbols]
+    for route in sheet.routes:
+        for segment in route.segments:
+            tops.extend(point.y_mm for point in segment)
+            bottoms.extend(point.y_mm for point in segment)
+    # I richiami sono la riga piu' bassa: il testo scende sotto la propria base.
+    bottoms.extend(item.anchor.y_mm + text_mm for item in sheet.labels)
+    if sheet.ground_line_y_mm is not None:
+        bottoms.append(sheet.ground_line_y_mm)
+    if not tops:
+        return sheet
+
+    top, bottom = min(tops), max(bottoms)
+    wanted = drawing.y_mm + (drawing.height_mm - (bottom - top)) / 2
+    delta = round((wanted - top) / step_mm) * step_mm
+    delta = min(delta, drawing.bottom_mm - bottom)
+    delta = max(delta, drawing.y_mm - top)
+    delta = round(delta / step_mm) * step_mm
+    if delta == 0:
+        return sheet
+
+    return sheet.model_copy(
+        update={
+            "symbols": [
+                item.model_copy(update={"origin": _shifted(item.origin, delta)})
+                for item in sheet.symbols
+            ],
+            "routes": [
+                item.model_copy(
+                    update={
+                        "segments": [
+                            [_shifted(point, delta) for point in segment]
+                            for segment in item.segments
+                        ],
+                        "crossings": [
+                            _shifted(point, delta) for point in item.crossings
+                        ],
+                    }
+                )
+                for item in sheet.routes
+            ],
+            "labels": [
+                item.model_copy(
+                    update={
+                        "anchor": _shifted(item.anchor, delta),
+                        "leader_from": (
+                            None
+                            if item.leader_from is None
+                            else _shifted(item.leader_from, delta)
+                        ),
+                    }
+                )
+                for item in sheet.labels
+            ],
+            "cross_references": [
+                item.model_copy(update={"anchor": _shifted(item.anchor, delta)})
+                for item in sheet.cross_references
+            ],
+            "ground_line_y_mm": (
+                None
+                if sheet.ground_line_y_mm is None
+                else sheet.ground_line_y_mm + delta
+            ),
+        }
+    )
+
+
 def compose_sheet(
     project: ProjectModel,
     partition: SheetPartition,
@@ -109,7 +194,7 @@ def compose_sheet(
     entries, keys = build_legend(
         project, placed, partition.network_ids, catalog, frame
     )
-    return SheetGeometry(
+    composed = SheetGeometry(
         sheet_id=partition.sheet_id,
         title=partition.title,
         symbols=placed,
@@ -118,7 +203,7 @@ def compose_sheet(
             project,
             placed,
             frame.standard,
-            callout_y_mm=levels.callout_mm,
+            callout_y_mm=levels.ground_mm + CALLOUT_GAP_MM,
         ),
         legend=entries,
         network_keys=keys,
@@ -126,6 +211,9 @@ def compose_sheet(
         cross_references=_cross_references(
             partition, {item.component_id: item for item in placed}
         ),
+    )
+    return centre_vertically(
+        composed, frame.drawing_rect_mm, grid.step_mm, frame.standard.text_small_mm
     )
 
 
@@ -145,24 +233,60 @@ def compose_drawing(
     )
 
 
+SMALL_ENOUGH = 0.85
+"""Quanto di un foglio puo' occupare un disegno perche' quel foglio sia il suo.
+
+Il PM ha detto «A3, oppure A4 se il disegno e' proprio piccolo»: l'A3 e' il
+formato ordinario, l'A4 l'eccezione. Entrarci a filo non e' essere piccoli, e'
+starci a stento — e una tavola che tocca la squadratura su tutti e quattro i
+lati non si legge. Un disegno prende il foglio piu' piccolo solo se ne lascia
+libero un sesto per lato.
+"""
+
+
+def fits_comfortably(sheet: SheetGeometry, drawing: Rect) -> bool:
+    xs = [item.origin.x_mm for item in sheet.symbols]
+    xs += [item.right_mm for item in sheet.symbols]
+    ys = [item.origin.y_mm for item in sheet.symbols]
+    ys += [item.bottom_mm for item in sheet.symbols]
+    for route in sheet.routes:
+        for segment in route.segments:
+            xs.extend(point.x_mm for point in segment)
+            ys.extend(point.y_mm for point in segment)
+    ys.extend(item.anchor.y_mm for item in sheet.labels)
+    if not xs or not ys:
+        return True
+    return (
+        max(xs) - min(xs) <= drawing.width_mm * SMALL_ENOUGH
+        and max(ys) - min(ys) <= drawing.height_mm * SMALL_ENOUGH
+    )
+
+
 def compose_on_ordinary_frame(
     project: ProjectModel,
     catalog: ComponentRegistry,
     frames: tuple[SheetFrame, ...] = ORDINARY_FRAMES,
 ) -> tuple[SheetFrame, DrawingGeometry]:
-    """Il disegno sul piu' piccolo formato ordinario su cui entra (D-058).
+    """Il disegno sul formato ordinario che gli sta bene addosso (D-058).
 
-    Si prova l'A4 e si passa all'A3 se non ci sta. Non c'e' un criterio di
-    «disegno piccolo» da stimare a priori: la prova **e'** il criterio, perche'
-    il posizionamento fallisce esattamente quando il contenuto non entra alla
-    scala fissa, e ADR 0003 vieta di rimpicciolire i simboli per farceli stare.
+    Si prova l'A4 e si tiene solo se il disegno ci sta **comodo**; altrimenti
+    A3, che e' il formato ordinario. Il posizionamento fallisce da solo quando
+    il contenuto non entra affatto — ADR 0003 vieta di rimpicciolire i simboli
+    per farceli stare — ma entrare a filo non basta a dichiarare piccolo un
+    disegno.
     """
     last: LayoutError | None = None
-    for frame in frames:
+    for index, frame in enumerate(frames):
         try:
-            return frame, compose_drawing(project, catalog, frame)
+            drawing = compose_drawing(project, catalog, frame)
         except LayoutError as exc:
             last = exc
+            continue
+        roomy = all(
+            fits_comfortably(sheet, frame.drawing_rect_mm) for sheet in drawing.sheets
+        )
+        if roomy or index == len(frames) - 1:
+            return frame, drawing
     reason = str(last) if last is not None else "no format was offered to try"
     raise LayoutError(
         f"the plant does not fit on any ordinary sheet format: {reason}"
@@ -171,6 +295,8 @@ def compose_on_ordinary_frame(
 
 __all__ = [
     "SheetLink",
+    "centre_vertically",
+    "fits_comfortably",
     "compose_drawing",
     "compose_on_ordinary_frame",
     "compose_sheet",

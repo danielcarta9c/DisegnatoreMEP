@@ -1,12 +1,22 @@
-"""Instradamento ortogonale: l'incrocio costa poco, il giro lungo carissimo.
+"""Instradamento ortogonale, con la funzione di costo che il PM ha dettato.
 
-D-041 lo dice in una riga: «l'incrocio e' economico e il percorso lungo e'
-carissimo». Un instradatore che tratti l'incrocio come vietato invece che come
-costoso produce esattamente il difetto che quella decisione esiste per evitare:
-una tubazione che gira intorno a mezzo disegno per non attraversarne un'altra.
+«La regola e' minimizzare le curve disegnate, minimizzare gli attraversamenti
+fra linee e minimizzare la lunghezza delle linee, mantenendo pero' ordinamenti
+da sinistra a destra.» Le tre voci sono in ordine di peso, e la funzione di
+costo le riporta in quell'ordine: una piega costa dieci passi, un
+attraversamento tre, un passo uno. L'ordinamento da sinistra a destra non e'
+una voce di costo: e' un vincolo, e lo garantisce il posizionamento.
 
-La funzione di costo lo impone per costruzione: un incrocio costa meno del giro
-minimo per evitarlo, che vale due passi. La disuguaglianza e' sotto test.
+Prima queste tre voci stavano quasi alla pari — piega 15 contro passo 10 — e il
+risultato era un instradatore che serpeggiava per accorciare di due millimetri.
+Le tubazioni che ne uscivano salivano e scendevano intorno ai componenti senza
+motivo, ed e' il secondo difetto che il PM ha visto sulla tavola.
+
+D-041 resta valida e diventa piu' forte: l'incrocio e' economico e il giro
+lungo e' carissimo. Attraversare costa un `CROSS_COST`; il giro minimo per
+schivare una cella occupata su un rettilineo vale due passi **e quattro
+pieghe**, che e' quello che costa davvero e che la vecchia formulazione
+tralasciava.
 """
 
 import heapq
@@ -17,7 +27,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
-from .composition import AUXILIARY_FUNCTIONS, levels_of
+from .composition import levels_of
 from .errors import LayoutError
 from .flow import orient_trunks
 from .geometry import PlacedSymbol, Point, RoutedTrunk
@@ -25,18 +35,24 @@ from .grid import Cell, GridSpace
 from .trunks import Trunk
 
 STEP_COST = 10
-"""Costo di un passo di griglia. La lunghezza e' la voce dominante."""
+"""Costo di un passo di griglia: la lunghezza della linea, terza voce."""
 
-TURN_COST = 15
-"""Costo di una piega: una tubazione che serpeggia si legge male."""
+TURN_COST = 100
+"""Costo di una piega: dieci passi, cioe' 25 mm di tubazione.
 
-CROSS_COST = 5
+E' la voce dominante perche' e' la prima della regola. Con un valore vicino a
+quello del passo l'instradatore compra pieghe per risparmiare lunghezza, e la
+tavola si riempie di sali-scendi.
+"""
+
+CROSS_COST = 30
 """Costo di una cella gia' percorsa da un'altra rete.
 
-Attraversare ne tocca una sola, quindi costa meno del giro minimo per evitarla,
-che vale due passi: l'instradatore non deviera' mai per schivare un incrocio
-(D-041). Costeggiare la paga invece a ogni cella, e supera presto il costo di
-una corsia libera accanto.
+Sta fra la piega e il passo, come nella regola. Attraversare ne tocca una sola
+e costa 30; schivarla su un rettilineo costa due passi e quattro pieghe, cioe'
+420: l'instradatore non deviera' mai per evitare un incrocio (D-041).
+Costeggiare la paga invece a ogni cella e supera presto il costo di scostarsi
+di una corsia, che sono due passi e quattro pieghe una volta sola.
 """
 
 MAX_EXPANSIONS = 400_000
@@ -44,6 +60,19 @@ MAX_EXPANSIONS = 400_000
 
 DIRECTIONS: tuple[Cell, ...] = ((1, 0), (0, 1), (-1, 0), (0, -1))
 """Ordine fisso dei vicini: da esso dipende il determinismo a parita' di costo."""
+
+MERGE_REACH = 4
+"""Quanto lontano dall'attacco comune due tratte contano ancora come una sola.
+
+Quattro passi, dieci millimetri: lo spazio di una derivazione. Piu' in la' due
+tratte sovrapposte sono due tubazioni disegnate una sull'altra, e una delle due
+non si vede.
+"""
+
+
+def _near(cell: Cell, anchor: Cell) -> bool:
+    return abs(cell[0] - anchor[0]) + abs(cell[1] - anchor[1]) <= MERGE_REACH
+
 
 _FACE_DIRECTION: dict[PortFace, Cell] = {
     PortFace.RIGHT: (1, 0),
@@ -85,34 +114,58 @@ def route(
     rows: int,
     blocked: frozenset[Cell],
     occupied: frozenset[Cell],
+    prefer_high: bool | None = None,
     max_expansions: int = MAX_EXPANSIONS,
 ) -> Route:
     """A* su stato `(cella, direzione di arrivo)`.
 
     La direzione entra nello stato perche' il costo di piega dipende da come ci
-    si e' arrivati. L'euristica di Manhattan e' ammissibile: piega e incrocio
-    possono solo aggiungere.
+    si e' arrivati.
 
     `start_direction` e `goal_direction` sono le direzioni **uscenti** delle due
     porte, cioe' dove la porta guarda. Vanno derivate da `PortFace`, non passate
     a mano: al contrario l'instradatore non fallisce, costruisce un cappio che
     rientra dal lato sbagliato.
+
+    `prefer_high` non cambia il costo: sceglie **fra percorsi di pari costo**
+    quello che corre piu' in alto (`True`) o piu' in basso (`False`). E' cosi'
+    che la mandata finisce sopra il ritorno senza pagarlo in pieghe: su una
+    griglia i percorsi ottimi sono quasi sempre molti, e uno vale l'altro
+    finche' non lo si sceglie.
     """
     approach = (-goal_direction[0], -goal_direction[1])
 
-    def heuristic(cell: Cell) -> int:
-        return (abs(cell[0] - goal[0]) + abs(cell[1] - goal[1])) * STEP_COST
+    def heuristic(cell: Cell, direction: Cell) -> int:
+        dx, dy = goal[0] - cell[0], goal[1] - cell[1]
+        distance = (abs(dx) + abs(dy)) * STEP_COST
+        # Ammissibile e piu' stretta della sola Manhattan: se la meta' non e'
+        # allineata serve almeno una piega, e se si sta andando dalla parte
+        # opposta ne servono almeno due. Senza, con TURN_COST dominante, l'A*
+        # degenera in Dijkstra ed esplora l'intero foglio.
+        turns = 0
+        if dx != 0 and dy != 0:
+            turns = 1
+        if (dx != 0 and dx * direction[0] < 0) or (dy != 0 and dy * direction[1] < 0):
+            turns = 2
+        return distance + turns * TURN_COST
 
-    open_heap: list[tuple[int, int, Cell, Cell]] = [
-        (heuristic(start), 0, start, start_direction)
+    def lean(cell: Cell) -> int:
+        if prefer_high is None:
+            return 0
+        return cell[1] if prefer_high else rows - cell[1]
+
+    open_heap: list[tuple[int, int, int, Cell, Cell]] = [
+        (heuristic(start, start_direction), lean(start), 0, start, start_direction)
     ]
-    best: dict[tuple[Cell, Cell], int] = {(start, start_direction): 0}
+    best: dict[tuple[Cell, Cell], tuple[int, int]] = {
+        (start, start_direction): (0, lean(start))
+    }
     came: dict[tuple[Cell, Cell], tuple[Cell, Cell]] = {}
     expansions = 0
 
     while open_heap:
-        _, cost, cell, direction = heapq.heappop(open_heap)
-        if cost > best.get((cell, direction), cost):
+        _, bias, cost, cell, direction = heapq.heappop(open_heap)
+        if (cost, bias) > best.get((cell, direction), (cost, bias)):
             continue
         if cell == goal and direction == approach:
             cells = [cell]
@@ -150,61 +203,26 @@ def route(
                 # Un divieto secco invece chiudeva il passaggio dove due corsie
                 # corrono adiacenti, e la rotta non trovava piu' alcuna strada.
                 added += CROSS_COST
-            candidate = cost + added
+            candidate = (cost + added, bias + lean(nxt))
             state = (nxt, step)
-            if candidate < best.get(state, candidate + 1):
+            if candidate < best.get(state, (candidate[0] + 1, 0)):
                 best[state] = candidate
                 came[state] = (cell, direction)
-                heapq.heappush(open_heap, (candidate + heuristic(nxt), candidate, nxt, step))
+                heapq.heappush(
+                    open_heap,
+                    (
+                        candidate[0] + heuristic(nxt, step),
+                        candidate[1],
+                        candidate[0],
+                        nxt,
+                        step,
+                    ),
+                )
 
     raise LayoutError(
         f"no route from {start} to {goal}: every orthogonal path is blocked"
     )
 
-
-def _clear(path: list[Cell], blocked: frozenset[Cell], ends: tuple[Cell, Cell]) -> bool:
-    return all(cell not in blocked or cell in ends for cell in path)
-
-
-def _walk(a: Cell, b: Cell) -> list[Cell]:
-    """Le celle da a a b, che devono stare sulla stessa riga o colonna."""
-    if a[0] == b[0]:
-        step = 1 if b[1] > a[1] else -1
-        return [(a[0], y) for y in range(a[1], b[1] + step, step)]
-    step = 1 if b[0] > a[0] else -1
-    return [(x, a[1]) for x in range(a[0], b[0] + step, step)]
-
-
-def _rail_path(
-    start: Cell, start_direction: Cell, goal: Cell, goal_direction: Cell, rail_row: int
-) -> list[Cell] | None:
-    """Il percorso canonico di uno schema: esci, corri sulla corsia, entra.
-
-    E' come e' disegnata una tavola vera: le tubazioni non serpeggiano fra i
-    componenti, corrono su poche quote orizzontali e scendono dove serve. Un
-    A* libero trova percorsi piu' corti e piu' brutti, pieni di gomiti, e
-    lascia rettilinei troppo brevi per posarci sopra un accessorio.
-    """
-    if start_direction[1] != 0 or goal_direction[1] != 0:
-        return None  # per ora solo porte laterali: le altre restano all'A*
-    out_x = start[0] + start_direction[0]
-    in_x = goal[0] + goal_direction[0]
-    corners = [
-        start,
-        (out_x, start[1]),
-        (out_x, rail_row),
-        (in_x, rail_row),
-        (in_x, goal[1]),
-        goal,
-    ]
-    path: list[Cell] = [start]
-    for before, after in zip(corners, corners[1:], strict=False):
-        if before == after:
-            continue
-        if before[0] != after[0] and before[1] != after[1]:
-            return None
-        path.extend(_walk(before, after)[1:])
-    return path
 
 
 def _obstacle_cells(placed: list[PlacedSymbol], grid: GridSpace) -> frozenset[Cell]:
@@ -277,22 +295,18 @@ def route_sheet(
         for col in range(grid.cols + 1)
         for row in range(ground_row + 1, grid.rows + 1)
     )
-    occupied: set[Cell] = set()
+    # Per ciascuna cella percorsa, gli attacchi delle tratte che ci passano.
+    # Due tratte che finiscono sulla stessa porta — due ritorni di zona su un
+    # unico attacco del volano — condividono l'**imbocco** senza pagarlo come
+    # incrocio: li' e' una sola tubazione con una derivazione. Piu' in la' no:
+    # sovrapporle per tutta la lunghezza le farebbe leggere come un tubo solo,
+    # e un circuito sparirebbe dalla tavola.
+    occupied: dict[Cell, set[Cell]] = {}
     routed: list[RoutedTrunk] = []
     # Mandata o ritorno lo dice il modello, che e' orientato, e non la geometria:
     # un componente che finisce a sinistra del proprio alimentatore non per
     # questo lo alimenta di ritorno (D-059).
     orientation = orient_trunks(project, catalog, trunks)
-    # Le quote delle corsie, dall'alto: le prime sono preferite.
-    levels = levels_of(grid.origin.y_mm, grid.origin.height_mm, grid.step_mm)
-    supply_rails = [
-        grid.to_cell(grid.origin.x_mm, y)[1]
-        for y in (levels.upper_supply_mm, levels.lower_supply_mm)
-    ]
-    return_rails = [
-        grid.to_cell(grid.origin.x_mm, y)[1]
-        for y in (levels.upper_return_mm, levels.lower_return_mm)
-    ]
 
     def anchor(ref: PortRef) -> tuple[Cell, Cell]:
         symbol = by_component.get(ref.component_id)
@@ -313,47 +327,7 @@ def route_sheet(
         # caso di un anello in cui nessun utilizzatore separa andata e ritorno.
         declared = orientation.get(trunk.connection_ids)
         supply = declared if declared is not None else goal[0] >= start[0]
-        rails = supply_rails if supply else return_rails
-        # Una tratta che porta ausiliari — filtro, vaso, riempimento — corre
-        # bassa: su una tavola vera quei pezzi stanno vicino a terra, non a
-        # mezz'aria fra i componenti.
-        if any(
-            frozenset(catalog.resolve(definitions[item]).definition.functions)
-            & AUXILIARY_FUNCTIONS
-            for item in trunk.inline_component_ids
-        ):
-            rails = list(reversed(rails))
-        found_rail = None
-        for rail_row in rails:
-            candidate = _rail_path(start, start_direction, goal, goal_direction, rail_row)
-            if candidate is None:
-                continue
-            if _clear(candidate, blocked, (start, goal)) and not any(
-                cell in occupied for cell in candidate[1:-1]
-            ):
-                found_rail = candidate
-                break
-        if found_rail is not None:
-            found = Route(cells=tuple(found_rail), cost=0, crossings=())
-            occupied.update(found.cells)
-            current = RoutedTrunk(
-                network_id=trunk.network_id,
-                medium=media.get(trunk.network_id, ""),
-                supply=supply,
-                connection_ids=list(trunk.connection_ids),
-                segments=[
-                    [
-                        Point(x_mm=grid.to_mm(cell)[0], y_mm=grid.to_mm(cell)[1])
-                        for cell in found.vertices
-                    ]
-                ],
-                crossings=[],
-            )
-            routed.append(current)
-            if on_routed is not None:
-                blocked = blocked | _obstacle_cells(on_routed(trunk, current), grid)
-            continue
-
+        ends = {start, goal}
         try:
             found = route(
                 start,
@@ -362,15 +336,27 @@ def route_sheet(
                 goal_direction,
                 cols=grid.cols,
                 rows=grid.rows,
-                blocked=blocked - {start, goal},
-                occupied=frozenset(occupied),
+                blocked=blocked - ends,
+                # Le celle di una tratta che condivide un attacco con questa non
+                # sono un incrocio da pagare, ma solo nei pressi dell'attacco.
+                occupied=frozenset(
+                    cell
+                    for cell, anchors in occupied.items()
+                    if not any(
+                        _near(cell, anchor) for anchor in anchors & ends
+                    )
+                ),
+                # Mandata sopra, ritorno sotto: a parita' di costo, e senza
+                # comprare nemmeno una piega per ottenerlo.
+                prefer_high=supply,
             )
         except LayoutError as exc:
             raise LayoutError(
                 f"run {trunk.connection_ids[0]} on network {trunk.network_id} "
                 f"cannot be routed: {exc}"
             ) from exc
-        occupied.update(found.cells)
+        for cell in found.cells:
+            occupied.setdefault(cell, set()).update(ends)
         current = RoutedTrunk(
                 network_id=trunk.network_id,
                 medium=media.get(trunk.network_id, ""),

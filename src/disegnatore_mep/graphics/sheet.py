@@ -174,6 +174,10 @@ def render_sheet(
             f"{_escape(label.text)}</text>"
         )
 
+    # Simbolo e denominazione si centrano l'uno sull'altra dentro il riquadro
+    # campione. Prima il simbolo pendeva in alto a sinistra e il testo appoggiava
+    # sul fondo: un collettore, largo otto volte la propria altezza, finiva un
+    # riquadro sopra il proprio nome.
     for entry in sheet.legend:
         symbol = symbols.get(entry.symbol_id)
         scale = min(
@@ -181,15 +185,18 @@ def render_sheet(
             LEGEND_SWATCH_MM / symbol.manifest.width_mm,
             LEGEND_SWATCH_MM / symbol.manifest.height_mm,
         )
+        top = entry.anchor.y_mm - LEGEND_SWATCH_MM
+        left = entry.anchor.x_mm + (LEGEND_SWATCH_MM - symbol.manifest.width_mm * scale) / 2
+        middle = top + (LEGEND_SWATCH_MM - symbol.manifest.height_mm * scale) / 2
         parts.append(
             f'<g class="legend-symbol" data-symbol-id="{_escape(entry.symbol_id)}" '
-            f'transform="translate({entry.anchor.x_mm:g} '
-            f'{entry.anchor.y_mm - LEGEND_SWATCH_MM:g}) scale({scale:g})" '
+            f'transform="translate({left:g} {middle:g}) scale({scale:g})" '
             f'stroke="black" stroke-width="{standard.line_thin_mm / scale:g}" fill="none">'
             f"{symbol.body}</g>"
             f'<text class="legend-name" '
             f'x="{entry.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '
-            f'y="{entry.anchor.y_mm:g}" font-size="{standard.text_small_mm:g}" '
+            f'y="{top + LEGEND_SWATCH_MM / 2 + standard.text_small_mm / 2:g}" '
+            f'font-size="{standard.text_small_mm:g}" '
             f'fill="black">{_escape(entry.name)}</text>'
         )
 

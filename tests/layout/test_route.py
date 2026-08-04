@@ -16,6 +16,7 @@ from disegnatore_mep.layout.route import (
     CROSS_COST,
     MAX_EXPANSIONS,
     STEP_COST,
+    TURN_COST,
     Route,
     route,
     route_sheet,
@@ -68,8 +69,17 @@ def test_a_crossing_is_taken_instead_of_a_detour() -> None:
 
 
 def test_a_crossing_costs_less_than_the_shortest_way_around() -> None:
-    around = 2 * STEP_COST  # due passi in piu': uno fuori e uno dentro
+    """D-041, con il giro misurato per quello che costa davvero.
+
+    Schivare una cella occupata su un rettilineo non vale «due passi»: vale due
+    passi **e quattro pieghe**, perche' si esce, si va di fianco, si rientra e
+    si riprende la direzione. La vecchia formulazione contava solo i passi e
+    reggeva soltanto perche' la piega costava quasi quanto un passo.
+    """
+    around = 2 * STEP_COST + 4 * TURN_COST
     assert around > CROSS_COST
+    # E resta piu' cara di un solo attraversamento anche a piega gratis.
+    assert 2 * STEP_COST + TURN_COST > CROSS_COST
 
 
 def test_an_obstacle_is_gone_around_not_through() -> None:

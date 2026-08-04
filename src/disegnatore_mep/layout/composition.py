@@ -46,6 +46,15 @@ GROUND_LINE = 0.83
 CALLOUT_BAND = 0.95
 """Le denominazioni sotto la linea di terra, con linea di richiamo."""
 
+CALLOUT_GAP_MM = 10.0
+"""Quanto sotto la linea di terra corre la riga dei richiami.
+
+E' una distanza, non una frazione del foglio: quattro passi di griglia bastano
+a scavalcare il tratteggio del terreno e a staccare il testo. Misurata come
+frazione, su una A3 apriva ventotto millimetri di vuoto fra il disegno e i
+propri richiami, e il blocco da centrare risultava alto il doppio di quello
+che disegna davvero."""
+
 SUPPLY_RETURN_GAP = UPPER_RETURN - UPPER_SUPPLY
 """Distacco fra mandata e ritorno: 9% dell'altezza sul riferimento."""
 

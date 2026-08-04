@@ -20,7 +20,7 @@ from disegnatore_mep.layout.composition import (
     Standing,
     standing_of,
 )
-from disegnatore_mep.layout.geometry import RoutedTrunk, SheetGeometry
+from disegnatore_mep.layout.geometry import SheetGeometry
 
 ROOT = Path(__file__).resolve().parents[2]
 PROJECT = ROOT / "examples" / "layout" / "heat-pump-dhw-buffer-two-zones.json"
@@ -42,32 +42,65 @@ def area_y(fraction: float) -> float:
 
 
 def test_the_ground_line_is_recorded_on_the_sheet() -> None:
-    assert sheet().ground_line_y_mm == area_y(GROUND_LINE)
+    """La quota e' relativa al blocco, non al foglio: il blocco viene centrato."""
+    drawn = sheet()
+    area = NOVE_C_A3.drawing_rect_mm
+    assert drawn.ground_line_y_mm is not None
+    assert area.y_mm <= drawn.ground_line_y_mm <= area.bottom_mm
+
+
+def test_the_drawn_block_is_centred_in_the_drawing_area() -> None:
+    """Un impianto basso non lascia vuoti i due terzi alti del foglio.
+
+    Non si rimedia ingrandendo — la scala di stampa e' invariante (ADR 0003) —
+    quindi il blocco resta quello che e' e si mette in mezzo.
+    """
+    drawn = sheet()
+    area = NOVE_C_A3.drawing_rect_mm
+    tops = [item.origin.y_mm for item in drawn.symbols]
+    bottoms = [item.anchor.y_mm for item in drawn.labels]
+    for route in drawn.routes:
+        for segment in route.segments:
+            tops.extend(point.y_mm for point in segment)
+    above = min(tops) - area.y_mm
+    below = area.bottom_mm - max(bottoms)
+    assert abs(above - below) <= 10.0, (above, below)
 
 
 def test_machines_and_storage_stand_on_the_ground() -> None:
     """Appoggiati, non appesi: e' la prima cosa che si vede in una tavola vera."""
-    ground = area_y(GROUND_LINE)
-    placed = {item.component_id: item for item in sheet().symbols}
-    for component_id in ("hp", "cylinder", "buffer"):
-        assert placed[component_id].bottom_mm == ground, component_id
-
-
-def test_an_inline_auxiliary_rides_the_lowest_rail() -> None:
-    """Un filtro sta **su** una tratta e non puo' lasciarla: quello che si puo'
-    chiedere e' che la sua tratta corra bassa, come sul riferimento, dove
-    filtro e riempimento stanno vicino a terra."""
     drawn = sheet()
     placed = {item.component_id: item for item in drawn.symbols}
-    strainer = placed["strainer"]
-    others = [
-        item
-        for item in drawn.symbols
-        if item.component_id not in {"strainer", "shutoff", "pump-secondary"}
-        and item.height_mm < 20.0
+    for component_id in ("hp", "cylinder", "buffer"):
+        assert placed[component_id].bottom_mm == drawn.ground_line_y_mm, component_id
+
+
+def test_an_inline_accessory_rides_its_own_run() -> None:
+    """Un filtro sta **su** una tratta e non puo' lasciarla.
+
+    Prima si pretendeva anche che la sua tratta corresse bassa, come sul
+    riferimento dove filtro e riempimento stanno vicino a terra, e per ottenerlo
+    l'instradamento provava le corsie basse per prime. Quella preferenza e'
+    stata tolta: comprava pieghe per soddisfare una convenzione, e il PM ha
+    messo le pieghe al primo posto. Cio' che resta garantito e' che
+    l'accessorio stia sopra la linea di terra e sul proprio percorso.
+    """
+    drawn = sheet()
+    strainer = next(item for item in drawn.symbols if item.component_id == "strainer")
+    assert drawn.ground_line_y_mm is not None
+    assert strainer.bottom_mm <= drawn.ground_line_y_mm + 1e-9
+    centre_x = (strainer.origin.x_mm + strainer.right_mm) / 2
+    centre_y = (strainer.origin.y_mm + strainer.bottom_mm) / 2
+    # Il simbolo sta **dentro l'interruzione** che ha aperto, quindi non tocca
+    # nessun tratto disegnato: quello che deve valere e' che i due monconi lo
+    # prendano in mezzo, allineati con lui.
+    run = next(item for item in drawn.routes if "p2" in item.connection_ids)
+    ends = [segment[-1] for segment in run.segments] + [
+        segment[0] for segment in run.segments
     ]
-    assert strainer.origin.y_mm >= min(item.origin.y_mm for item in others) - 1e-9
-    assert strainer.bottom_mm <= area_y(GROUND_LINE) + 1e-9
+    aligned = [item for item in ends if abs(item.y_mm - centre_y) <= 1e-9]
+    assert any(item.x_mm < centre_x for item in aligned), aligned
+    assert any(item.x_mm > centre_x for item in aligned), aligned
 
 
 def test_the_size_hierarchy_reads_like_the_reference() -> None:
@@ -81,18 +114,40 @@ def test_the_size_hierarchy_reads_like_the_reference() -> None:
     assert storage.height_mm > machine.height_mm
 
 
-def test_supply_runs_sit_above_return_runs() -> None:
-    """Mandata sopra, ritorno sotto: la convenzione del riferimento."""
-    supply = [item for item in sheet().routes if item.supply]
-    returns = [item for item in sheet().routes if not item.supply]
-    assert supply and returns
+def test_supply_attachments_sit_above_return_attachments() -> None:
+    """Mandata sopra, ritorno sotto: la convenzione sta **nei simboli**.
 
-    def rail_of(route: RoutedTrunk) -> float:
-        return min(
-            point.y_mm for segment in route.segments for point in segment
-        )
+    E' li' che decide davvero, perche' la tubazione arriva dove l'attacco la
+    chiama. Sulla corsia la convenzione non si puo' pretendere: dove due tratte
+    devono scavalcare lo stesso ostacolo, la prima prende la quota piu' vicina e
+    la seconda quella sopra, e chi sia la prima lo decide l'ordine del modello.
+    Imporlo costerebbe pieghe, che il PM ha messo al primo posto; la mandata e
+    il ritorno restano distinti da colore e tratto (D-057).
+    """
+    from disegnatore_mep.graphics.registry import SymbolRegistry
 
-    assert min(rail_of(item) for item in supply) <= min(rail_of(item) for item in returns)
+    registry = SymbolRegistry.from_directory(SYMBOLS)
+
+    def port_y(symbol_id: str, port_id: str) -> float:
+        manifest = registry.get(symbol_id).manifest
+        return next(item.y_mm for item in manifest.ports if item.id == port_id)
+
+    assert port_y("heat-pump-air-water", "water_supply") < port_y(
+        "heat-pump-air-water", "water_return"
+    )
+    assert port_y("buffer-four-port", "primary_in") < port_y(
+        "buffer-four-port", "primary_out"
+    )
+    assert port_y("buffer-four-port", "secondary_out") < port_y(
+        "buffer-four-port", "secondary_in"
+    )
+    assert port_y("dhw-cylinder", "coil_in") < port_y("dhw-cylinder", "coil_out")
+
+
+def test_supply_and_return_runs_are_both_drawn() -> None:
+    routes = sheet().routes
+    assert any(item.supply for item in routes)
+    assert any(not item.supply for item in routes)
 
 
 def test_supply_and_return_are_different_lines() -> None:
@@ -107,9 +162,9 @@ def test_labels_are_callouts_below_the_ground_line() -> None:
     """I testi escono dal corpo e una linea sottile li riporta al pezzo: sopra
     il simbolo non ci sta nulla appena il disegno si infittisce."""
     drawn = sheet()
-    assert drawn.labels
+    assert drawn.labels and drawn.ground_line_y_mm is not None
     for label in drawn.labels:
-        assert label.anchor.y_mm >= area_y(CALLOUT_BAND) - 1e-9
+        assert label.anchor.y_mm > drawn.ground_line_y_mm
     assert any(label.leader_from is not None for label in drawn.labels)
 
 
