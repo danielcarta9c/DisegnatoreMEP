@@ -17,8 +17,15 @@ ROW_GAP_MM = 14.0
 SCALE_BAR_TICK_HALF_MM = 1.5
 SCALE_BAR_LABEL_GAP_MM = 2.0
 SYMBOL_LABEL_GAP_MM = 1.0
-LABEL_LINES = 2
-"""Righe di etichetta sotto ogni simbolo: nome italiano, poi identificativo."""
+LABEL_LINES = 1
+"""Righe di etichetta sotto ogni simbolo: la sola denominazione italiana (D-051)."""
+LABEL_CHAR_WIDTH_RATIO = 0.6
+"""Larghezza media di un carattere rispetto al corpo, per un sans-serif.
+
+Stima: il foglio non incorpora metriche di font. Serve a dimensionare la colonna
+perche' un nome lungo non si sovrapponga al simbolo accanto, quindi una stima
+prudente e' sufficiente e un errore in eccesso e' innocuo.
+"""
 PORT_MARKER_RADIUS_MM = 0.6
 
 
@@ -56,8 +63,8 @@ def render_symbol_sheet(
     # This function accepts any GraphicStandard, so the two assumptions its
     # layout makes about the paper are checked instead of assumed. Both hold for
     # A3_LANDSCAPE, but only by coincidence.
-    # Two label lines per symbol: the Italian name a technician reads, then the
-    # machine identifier a catalog definition points at.
+    # Una riga di etichetta per simbolo: la denominazione italiana che un
+    # tecnico legge (D-051). L'identificativo di macchina non si stampa.
     label_block_mm = LABEL_LINES * (standard.text_small_mm + SYMBOL_LABEL_GAP_MM)
     if label_block_mm > ROW_GAP_MM:
         raise ValueError(
@@ -72,9 +79,20 @@ def render_symbol_sheet(
         )
 
     all_symbols = symbols.all()
-    column_width = max(
+    # La colonna deve contenere il piu' largo fra il simbolo e la sua etichetta:
+    # le denominazioni italiane sono piu' lunghe degli identificativi che
+    # stavano qui prima, e dimensionare sul solo simbolo le faceva collidere.
+    widest_symbol = max(
         (item.manifest.width_mm for item in all_symbols), default=COLUMN_GAP_MM
-    ) + COLUMN_GAP_MM
+    )
+    widest_label = max(
+        (
+            len(item.manifest.name) * standard.text_small_mm * LABEL_CHAR_WIDTH_RATIO
+            for item in all_symbols
+        ),
+        default=0.0,
+    )
+    column_width = max(widest_symbol, widest_label) + COLUMN_GAP_MM
     row_height = max(
         (item.manifest.height_mm for item in all_symbols), default=ROW_GAP_MM
     ) + ROW_GAP_MM
@@ -130,10 +148,6 @@ def render_symbol_sheet(
             f'y="{symbol.manifest.height_mm + standard.text_small_mm + SYMBOL_LABEL_GAP_MM}" '
             f'font-size="{standard.text_small_mm}" stroke="none" fill="black">'
             f"{_escape(symbol.manifest.name)}</text>"
-            f'<text class="symbol-id" x="0" '
-            f"y=\"{symbol.manifest.height_mm + 2 * standard.text_small_mm + 2 * SYMBOL_LABEL_GAP_MM}\" "
-            f'font-size="{standard.text_small_mm}" stroke="none" fill="grey">'
-            f"{_escape(symbol.manifest.id)}</text>"
             f"</g>"
         )
 

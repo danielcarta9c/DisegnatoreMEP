@@ -120,14 +120,10 @@ def test_sheet_labels_each_symbol_with_its_readable_name() -> None:
     assert "Simbolo valve" in output
     assert "Simbolo pump" in output
     assert 'class="symbol-name"' in output
-    assert 'class="symbol-id"' in output
-
-
-def test_the_two_label_lines_do_not_collide() -> None:
-    output = sheet()
-    ys = [float(v) for v in re.findall(r'class="symbol-(?:name|id)" x="0" y="([\d.]+)"', output)]
-    name_y, id_y = ys[0], ys[1]
-    assert id_y - name_y >= A3_LANDSCAPE.text_small_mm
+    # L'identificativo di macchina non compare come testo stampato: vive solo
+    # nell'attributo data- per l'ispezione automatica.
+    assert ">valve<" not in output
+    assert ">pump<" not in output
 
 
 def test_sheet_is_deterministic() -> None:
@@ -220,13 +216,61 @@ def test_empty_registry_still_renders_a_sheet() -> None:
     assert 'class="symbol"' not in output
 
 
-def test_oversized_library_raises_naming_the_counts() -> None:
-    """313 uniform 6x6 mm symbols exceed the 312-symbol capacity of one A3
-    sheet (24 columns x 13 rows at the fixed COLUMN_GAP_MM/ROW_GAP_MM gaps).
+def uniform_symbol(index: int) -> Symbol:
+    """Simbolo 6x6 mm con etichetta di lunghezza costante.
+
+    La larghezza di colonna dipende dall'etichetta piu' lunga della libreria,
+    quindi con nomi di lunghezza variabile la capienza del foglio cambierebbe
+    col numero di simboli e il confine non sarebbe definito.
     """
-    registry = SymbolRegistry([sized_symbol(f"item-{index}", 6.0, 6.0) for index in range(313)])
-    with pytest.raises(ValueError, match=r"313 symbols.*312"):
+    manifest = SymbolManifest.model_validate(
+        {
+            "id": f"item-{index}",
+            "version": "1.0.0",
+            "name": "Simbolo",
+            "width_mm": 6.0,
+            "height_mm": 6.0,
+            "allowed_rotations_deg": [0],
+            "ports": [{"id": "a", "face": "left", "x_mm": 0.0, "y_mm": 3.0}],
+            "keep_out": {"left_mm": 2.0},
+            "source": "CONV-GRAFICA-001",
+        }
+    )
+    return Symbol(manifest=manifest, body='<line x1="0" y1="3" x2="6" y2="3"/>')
+
+
+def _sheet_capacity() -> int:
+    """Capienza dichiarata dal messaggio d'errore, per una libreria volutamente eccessiva."""
+    registry = SymbolRegistry([uniform_symbol(i) for i in range(5000)])
+    with pytest.raises(ValueError) as excinfo:
         render_symbol_sheet(registry)
+    match = re.search(r"at most (\d+) fit", str(excinfo.value))
+    assert match is not None
+    return int(match.group(1))
+
+
+def test_oversized_library_raises_naming_the_counts() -> None:
+    """Il messaggio nomina quanti simboli sono stati dati e quanti ne stanno."""
+    capacity = _sheet_capacity()
+    too_many = capacity + 1
+    registry = SymbolRegistry([uniform_symbol(i) for i in range(too_many)])
+    with pytest.raises(ValueError, match=rf"{too_many} symbols.*{capacity}"):
+        render_symbol_sheet(registry)
+
+
+def test_the_capacity_boundary_is_exact() -> None:
+    """Esattamente alla capienza rende, uno in piu' rifiuta.
+
+    La capienza non e' fissata a un numero: dipende dalla larghezza di colonna,
+    che considera anche l'etichetta piu' lunga. Fissarla renderebbe il test una
+    fotografia dell'implementazione invece dell'invariante che deve proteggere.
+    """
+    capacity = _sheet_capacity()
+    exact = SymbolRegistry([uniform_symbol(i) for i in range(capacity)])
+    assert render_symbol_sheet(exact).count('class="symbol"') == capacity
+    one_more = SymbolRegistry([uniform_symbol(i) for i in range(capacity + 1)])
+    with pytest.raises(ValueError):
+        render_symbol_sheet(one_more)
 
 
 def test_symbol_wider_than_the_usable_area_raises_naming_both_measurements() -> None:
