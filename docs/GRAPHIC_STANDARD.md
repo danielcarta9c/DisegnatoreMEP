@@ -12,10 +12,10 @@ Questo documento descrive come vive, in codice, lo standard grafico costruito pe
 |---|---|---|
 | `sheet_width_mm` | 420.0 | Larghezza del formato A3 orizzontale, ISO 216 |
 | `sheet_height_mm` | 297.0 | Altezza del formato A3 orizzontale, ISO 216 |
-| `margin_left_mm` | 20.0 | Margine di rilegatura ISO 5457, maggiorato sul lato sinistro |
-| `margin_right_mm` | 10.0 | Margine ISO 5457 sugli altri tre lati |
-| `margin_top_mm` | 10.0 | Margine ISO 5457 sugli altri tre lati |
-| `margin_bottom_mm` | 10.0 | Margine ISO 5457 sugli altri tre lati |
+| `margin_left_mm` | 10.0 | Squadratura del cartiglio Nove C, misurata sul PDF fornito (D-053) |
+| `margin_right_mm` | 10.0 | Idem, sui quattro lati |
+| `margin_top_mm` | 10.0 | Idem, sui quattro lati |
+| `margin_bottom_mm` | 10.0 | Idem, sui quattro lati |
 | `grid_mm` | 2.5 | Passo della griglia di allineamento per la disposizione dei simboli |
 | `line_thin_mm` | 0.18 | Spessore del tratto sottile: contorni secondari, riquadro dell'area utile |
 | `line_medium_mm` | 0.35 | Spessore del tratto medio: corpo dei simboli, barra di scala |
@@ -25,11 +25,28 @@ Questo documento descrive come vive, in codice, lo standard grafico costruito pe
 | `text_title_mm` | 3.5 | Altezza di testo dei titoli |
 | `min_clearance_mm` | 2.0 | Distanza minima libera intorno a una porta (area di rispetto, `keep_out`) |
 
-`usable_width_mm` e `usable_height_mm` sono proprietà derivate (foglio meno margini), non campi propri: `390.0` e `277.0` con i valori sopra. `GraphicStandard.geometry_is_coherent` verifica ad ogni costruzione che l'area utile sia positiva su entrambi gli assi e che le soglie di spessore e di testo crescano in ordine (sottile < medio < spesso, piccolo < normale < titolo).
+`usable_width_mm` e `usable_height_mm` sono proprietà derivate (foglio meno margini), non campi propri: `400.0` e `277.0` con i valori sopra. `GraphicStandard.geometry_is_coherent` verifica ad ogni costruzione che l'area utile sia positiva su entrambi gli assi e che le soglie di spessore e di testo crescano in ordine (sottile < medio < spesso, piccolo < normale < titolo).
 
-### 1.2 Un'asimmetria voluta fra i due assi
+### 1.2 Un'asimmetria che resta, e dove non conta
 
-`usable_width_mm` (390.0 mm) è un numero intero di passi di griglia da 2.5 mm (156 passi esatti). `usable_height_mm` (277.0 mm) non lo è (110.8 passi). Non è un difetto da correggere: i margini seguono ISO 5457 (rilegatura maggiorata a sinistra, gli altri tre lati uguali) e non sono stati alterati per far tornare anche l'asse verticale sulla griglia. Allineare entrambi gli assi richiederebbe cambiare i margini, che è una decisione di prodotto — non un dettaglio tecnico reversibile — e non è stata presa. `tests/graphics/test_standard.py` fissa esplicitamente entrambi i fatti: l'asse orizzontale è allineato, quello verticale no, per lo stesso motivo.
+`usable_width_mm` (400.0 mm) è un numero intero di passi di griglia da 2.5 mm (160 passi esatti). `usable_height_mm` (277.0 mm) non lo è (110.8 passi), e **non lo è diventato** con D-053: l'altezza utile non dipende dal margine sinistro. `tests/graphics/test_standard.py` continua a fissare entrambi i fatti.
+
+Dove l'allineamento conta davvero è l'**area di disegno** definita dal telaio (§1bis), non l'area utile del foglio: 350 × 235 mm, cioè 140 × 94 passi esatti su entrambi gli assi. È su quella che l'instradamento lavora, e i 42 mm mangiati da intestazione e cartiglio sono esattamente ciò che riporta anche l'asse verticale su un multiplo del passo.
+
+### 1bis. Il telaio della tavola
+
+Le misure del telaio vengono dal **cartiglio aziendale** — `assets/cartigli/Cartiglio_NoveC_A3.pdf`, fornito come input del progetto nel primo commit — non da una norma. Estratte dalla geometria vettoriale del PDF e implementate in `src/disegnatore_mep/graphics/frame.py`:
+
+| Area | Geometria | Chi la usa |
+|---|---|---|
+| Squadratura | 400 × 277 mm, margini 10 mm sui quattro lati | Il riquadro stampato |
+| Intestazione | fascia alta 6 mm sul bordo superiore | Riservata |
+| Cartiglio | fascia alta 36 mm a tutta larghezza sul bordo inferiore (34 di banda più 2 di filetto) | Riservata; il template compilabile è del piano di rendering |
+| Corpo | 400 × 235 mm, fra intestazione e cartiglio | Disegno più legenda |
+| Legenda | 50 mm a destra, alta quanto il corpo | I soli simboli usati (D-052) |
+| **Area di disegno** | **350 × 235 mm = 140 × 94 passi** | Dove il layout dispone e instrada |
+
+**Perché non ISO 5457.** `A3_LANDSCAPE` dichiarava fino a D-053 un margine sinistro di 20 mm, motivato dalla rilegatura ISO 5457 — che `docs/research/SOURCE_REGISTER.md` elenca come SRC-001 «da acquisire e valutare»: non ottenuta, non valutata. Il cartiglio Nove C ne usa 10 e occupa i 400 mm pieni. Tenere i 20 mm avrebbe significato o ridisegnare il cartiglio aziendale, o stampare due squadrature diverse sullo stesso foglio. Il codice si allinea quindi all'input, e la provenienza è registrata come CONV-GRAFICA-003. È lo stesso errore che D-047 ha corretto per il campo `source` dei simboli.
 
 ## 2. Dove vivono le grandezze dimensionali
 

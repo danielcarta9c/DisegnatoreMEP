@@ -53,7 +53,7 @@ class GraphicStandard(StrictModel):
 A3_LANDSCAPE = GraphicStandard(
     sheet_width_mm=420.0,
     sheet_height_mm=297.0,
-    margin_left_mm=20.0,
+    margin_left_mm=10.0,
     margin_right_mm=10.0,
     margin_top_mm=10.0,
     margin_bottom_mm=10.0,

@@ -279,7 +279,7 @@ def test_symbol_wider_than_the_usable_area_raises_naming_both_measurements() -> 
     column count was clamped to 1 instead of failing.
     """
     registry = SymbolRegistry([sized_symbol("too-wide", 500.0, 6.0)])
-    with pytest.raises(ValueError, match=r"symbol too-wide does not fit.*510.*390"):
+    with pytest.raises(ValueError, match=r"symbol too-wide does not fit.*510.*400"):
         render_symbol_sheet(registry)
 
 
@@ -305,5 +305,6 @@ def test_row_gap_too_small_for_the_label_is_rejected() -> None:
 
 def test_scale_bar_wider_than_the_usable_area_is_rejected() -> None:
     registry = SymbolRegistry([sized_symbol("valve", 6.0, 6.0)])
-    with pytest.raises(ValueError, match=r"100mm scale bar does not fit.*90mm"):
-        render_symbol_sheet(registry, standard_with(sheet_width_mm=120.0))
+    with pytest.raises(ValueError, match=r"100mm scale bar does not fit.*80mm"):
+        # 100 mm di foglio meno i due margini da 10 mm: la barra da 100 non ci sta.
+        render_symbol_sheet(registry, standard_with(sheet_width_mm=100.0))
