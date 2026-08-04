@@ -18,11 +18,13 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 
+from .composition import levels_of
 from .geometry import (
     CrossReference,
     DrawingGeometry,
     PlacedSymbol,
     Point,
+    RoutedTrunk,
     SheetGeometry,
 )
 from .grid import GridSpace
@@ -32,7 +34,7 @@ from .legend import build_legend
 from .partition import SheetLink, SheetPartition, partition_project
 from .place import place_sheet
 from .route import route_sheet
-from .trunks import build_trunks
+from .trunks import Trunk, build_trunks
 
 CROSS_REFERENCE_GAP_MM = 2.5
 """Stacco fra la porta e il marcatore di rimando."""
@@ -82,16 +84,26 @@ def compose_sheet(
     inline_ids: frozenset[str],
 ) -> SheetGeometry:
     grid = GridSpace(origin=frame.drawing_rect_mm, standard=frame.standard)
+    levels = levels_of(
+        frame.drawing_rect_mm.y_mm, frame.drawing_rect_mm.height_mm, grid.step_mm
+    )
     placed = place_sheet(project, partition, catalog, frame, inline_ids)
-    routed = route_sheet(project, list(partition.trunks), placed, catalog, grid)
+    broken: list[RoutedTrunk] = []
 
-    broken = []
-    for trunk, route in zip(partition.trunks, routed, strict=True):
+    def settle(trunk: Trunk, route: RoutedTrunk) -> list[PlacedSymbol]:
+        """Posa gli accessori appena la loro tratta e' instradata.
+
+        Restituirli qui li rende ostacoli per le tratte successive: posati tutti
+        alla fine erano invisibili all'instradamento, che ci passava sopra.
+        """
         accessories, pieces = place_inline_accessories(
             project, trunk, route, catalog, grid
         )
         placed.extend(accessories)
         broken.append(pieces)
+        return accessories
+
+    route_sheet(project, list(partition.trunks), placed, catalog, grid, settle)
 
     entries, keys = build_legend(
         project, placed, partition.network_ids, catalog, frame
@@ -101,9 +113,15 @@ def compose_sheet(
         title=partition.title,
         symbols=placed,
         routes=broken,
-        labels=place_labels(project, placed, frame.standard),
+        labels=place_labels(
+            project,
+            placed,
+            frame.standard,
+            callout_y_mm=levels.callout_mm,
+        ),
         legend=entries,
         network_keys=keys,
+        ground_line_y_mm=levels.ground_mm,
         cross_references=_cross_references(
             partition, {item.component_id: item for item in placed}
         ),

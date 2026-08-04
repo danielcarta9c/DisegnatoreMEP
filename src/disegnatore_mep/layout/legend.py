@@ -67,8 +67,25 @@ MEDIUM_NAMES: dict[str, str] = {
 """Denominazione italiana del fluido, per la legenda (D-051)."""
 
 
-def style_for(medium: str) -> tuple[str, str]:
-    return MEDIUM_STYLES.get(medium, DEFAULT_STYLE)
+SUPPLY_SHIFT = {
+    "#c0392b": "#2471a3",
+    "#d68910": "#5dade2",
+    "#148f77": "#117a65",
+    "#6c3483": "#5b2c6f",
+}
+"""Il colore del ritorno, dato quello della mandata.
+
+Su una tavola vera mandata e ritorno sono **due linee diverse**: la legenda
+tubazioni le elenca separate, «riscaldamento andata» e «riscaldamento ritorno».
+Associare lo stile al solo fluido le rendeva indistinguibili.
+"""
+
+
+def style_for(medium: str, supply: bool = True) -> tuple[str, str]:
+    colour, dash = MEDIUM_STYLES.get(medium, DEFAULT_STYLE)
+    if supply:
+        return colour, dash
+    return SUPPLY_SHIFT.get(colour, "#5d6d7e"), dash
 
 
 def build_legend(
@@ -100,7 +117,12 @@ def build_legend(
         by_medium.setdefault(
             network.medium, MEDIUM_NAMES.get(network.medium, network.name)
         )
-    keys = sorted(by_medium.items())
+    # Una riga per fluido e per servizio: andata e ritorno sono due linee.
+    keys = [
+        (medium, f"{name} — {'andata' if supply else 'ritorno'}", supply)
+        for medium, name in sorted(by_medium.items())
+        for supply in (True, False)
+    ]
 
     rows = len(names) + (1 if keys else 0) + len(keys)
     needed = rows * ROW_HEIGHT_MM + (SECTION_GAP_MM if keys else 0.0)
@@ -126,8 +148,8 @@ def build_legend(
     network_keys: list[NetworkKey] = []
     if keys:
         y_mm += SECTION_GAP_MM
-        for medium, name in keys:
-            colour, dash = style_for(medium)
+        for medium, name, supply in keys:
+            colour, dash = style_for(medium, supply)
             network_keys.append(
                 NetworkKey(
                     medium=medium,

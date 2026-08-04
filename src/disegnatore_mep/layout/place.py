@@ -16,6 +16,7 @@ from disegnatore_mep.graphics.frame import Rect, SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import BandRole
 
+from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
 from .geometry import PlacedSymbol, Point
 from .grid import GridSpace
@@ -202,10 +203,20 @@ def place_sheet(
     used_roles = [role for role in BandRole if columns.get(role)]
     widths: dict[BandRole, float] = {}
     for role in used_roles:
-        widest = max(
-            resolved[item].symbol.manifest.rotated(rotation_for(item)).width_mm
-            for item in columns[role]
-        )
+        # I componenti di una fascia si affiancano per livello, quindi la fascia
+        # e' larga quanto il livello piu' affollato, non quanto il suo pezzo
+        # piu' largo.
+        by_level: dict[Standing, float] = {}
+        for item in columns[role]:
+            component = resolved[item]
+            manifest = component.symbol.manifest.rotated(rotation_for(item))
+            level = standing_of(
+                manifest.height_mm,
+                frozenset(component.definition.functions),
+                component.is_inline,
+            )
+            by_level[level] = by_level.get(level, 0.0) + manifest.width_mm + ROW_GAP_MM
+        widest = max(by_level.values()) - ROW_GAP_MM
         widths[role] = snap_up(area.x_mm + widest, area.x_mm) - area.x_mm
 
     total = sum(widths.values()) + BAND_GUTTER_MM * (len(used_roles) - 1)
@@ -218,34 +229,63 @@ def place_sheet(
 
     placed: list[PlacedSymbol] = []
     x_mm = area.x_mm
+    # Le quote si misurano sull'**area di disegno**, non sul rettangolo ridotto
+    # in cui si impaccano le fasce: il corridoio di instradamento restringe
+    # dove si posa, non dove passa la linea di terra. Misurarle sul rettangolo
+    # ridotto le spostava di 7,5 mm rispetto a quelle usate dal renderer.
+    levels = levels_of(drawing.y_mm, drawing.height_mm, step)
+    ground_y = levels.ground_mm
+    rail_y = levels.lower_supply_mm
+    auxiliary_y = levels.auxiliary_mm
+
+    def on_grid(value_mm: float, origin_mm: float) -> float:
+        return origin_mm + round((value_mm - origin_mm) / step) * step
+
     for role in used_roles:
-        y_mm = area.y_mm
-        for component_id in columns[role]:
-            manifest = resolved[component_id].symbol.manifest.rotated(
+        column = columns[role]
+        # Dentro una fascia i componenti si distribuiscono per livello, non si
+        # impilano: chi sta a terra ci appoggia, chi sta su una tubazione va
+        # alla quota della corsia, gli ausiliari pendono sotto il ritorno.
+        cursors = {
+            Standing.GROUND: x_mm,
+            Standing.RAIL: x_mm,
+            Standing.AUXILIARY: x_mm,
+        }
+        for component_id in column:
+            resolved_component = resolved[component_id]
+            manifest = resolved_component.symbol.manifest.rotated(
                 rotation_for(component_id)
             )
-            if y_mm + manifest.height_mm > area.bottom_mm + 1e-9:
-                fitting = len(
-                    [item for item in placed if item.origin.x_mm == x_mm]
-                )
+            standing = standing_of(
+                manifest.height_mm,
+                frozenset(resolved_component.definition.functions),
+                resolved_component.is_inline,
+            )
+            if standing is Standing.GROUND:
+                top = ground_y - manifest.height_mm
+            elif standing is Standing.AUXILIARY:
+                top = auxiliary_y
+            else:
+                top = rail_y - manifest.height_mm / 2
+            top = on_grid(top, area.y_mm)
+            left = on_grid(cursors[standing], area.x_mm)
+            if top < area.y_mm - 1e-9 or top + manifest.height_mm > area.bottom_mm + 1e-9:
                 raise LayoutError(
-                    f"band {role.value} does not fit the {area.height_mm:g}mm drawing "
-                    f"height: {fitting} of its {len(columns[role])} components fit at "
-                    f"fixed scale (symbols are never shrunk; split the plant across "
-                    f"more sheets)"
+                    f"component {component_id} does not fit between the drawing area "
+                    f"and the ground line: symbols are never shrunk to fit"
                 )
             placed.append(
                 PlacedSymbol(
                     component_id=component_id,
                     symbol_id=manifest.id,
                     rotation_deg=rotation_for(component_id),
-                    origin=Point(x_mm=x_mm, y_mm=y_mm),
+                    origin=Point(x_mm=left, y_mm=top),
                     width_mm=manifest.width_mm,
                     height_mm=manifest.height_mm,
                     tag=tags.get(component_id),
                 )
             )
-            y_mm = snap_up(y_mm + manifest.height_mm + ROW_GAP_MM, area.y_mm)
+            cursors[standing] = left + manifest.width_mm + ROW_GAP_MM
         x_mm += widths[role] + BAND_GUTTER_MM
 
     return placed

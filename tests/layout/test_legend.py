@@ -113,8 +113,15 @@ def test_two_hydronic_media_are_told_apart() -> None:
     assert style_for("heating_water") != style_for("chilled_water")
 
 
+def test_supply_and_return_of_one_fluid_are_told_apart() -> None:
+    assert style_for("heating_water", supply=True) != style_for(
+        "heating_water", supply=False
+    )
+
+
 def test_an_unknown_medium_falls_back_to_black() -> None:
     assert style_for("something_new") == ("#111111", "none")
+    assert style_for("something_new", supply=False)[0] == "#5d6d7e"
 
 
 def test_the_order_is_stable() -> None:
@@ -131,12 +138,17 @@ def test_a_legend_taller_than_its_band_fails_with_a_diagnostic() -> None:
         build_legend(project, placed, networks, catalog(), narrow)
 
 
-def test_two_networks_carrying_the_same_fluid_share_one_legend_row() -> None:
-    """Primario e secondario portano la stessa acqua di riscaldamento e si
-    disegnano uguali: due righe identiche non distinguerebbero nulla."""
+def test_a_fluid_gets_one_row_for_supply_and_one_for_return() -> None:
+    """Su una tavola vera mandata e ritorno sono due linee: la legenda tubazioni
+    le elenca separate. Primario e secondario, che portano lo stesso fluido,
+    condividono invece la stessa coppia di righe."""
     _, keys = legend()
-    assert [item.medium for item in keys] == ["heating_water"]
-    assert keys[0].name == "Acqua di riscaldamento"
+    assert [item.medium for item in keys] == ["heating_water", "heating_water"]
+    assert [item.name for item in keys] == [
+        "Acqua di riscaldamento — andata",
+        "Acqua di riscaldamento — ritorno",
+    ]
+    assert keys[0].colour != keys[1].colour
 
 
 def test_the_fluid_row_speaks_italian_or_falls_back_to_the_network_name() -> None:

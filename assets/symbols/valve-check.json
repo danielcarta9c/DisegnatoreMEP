@@ -2,7 +2,7 @@
   "id": "valve-check",
   "version": "1.0.0",
   "name": "Valvola di ritegno",
-  "width_mm": 7.5,
+  "width_mm": 5.0,
   "height_mm": 5.0,
   "allowed_rotations_deg": [
     0,
@@ -10,7 +10,7 @@
     180,
     270
   ],
-  "inline_gap_mm": 7.5,
+  "inline_gap_mm": 5.0,
   "ports": [
     {
       "id": "a",
@@ -21,7 +21,7 @@
     {
       "id": "b",
       "face": "right",
-      "x_mm": 7.5,
+      "x_mm": 5.0,
       "y_mm": 2.5
     }
   ],

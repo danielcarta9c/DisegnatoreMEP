@@ -2,8 +2,8 @@
   "id": "buffer-four-port",
   "version": "1.0.0",
   "name": "Volano termico a quattro attacchi",
-  "width_mm": 15.0,
-  "height_mm": 25.0,
+  "width_mm": 25.0,
+  "height_mm": 45.0,
   "allowed_rotations_deg": [
     0
   ],
@@ -23,13 +23,13 @@
     {
       "id": "secondary_out",
       "face": "right",
-      "x_mm": 15.0,
+      "x_mm": 25.0,
       "y_mm": 5.0
     },
     {
       "id": "secondary_in",
       "face": "right",
-      "x_mm": 15.0,
+      "x_mm": 25.0,
       "y_mm": 20.0
     }
   ],

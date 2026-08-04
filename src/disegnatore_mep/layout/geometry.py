@@ -51,6 +51,8 @@ class RoutedTrunk(StrictModel):
     network_id: str
     medium: str = ""
     """Il fluido, che decide colore e tratto: la rete da sola non basta."""
+    supply: bool = True
+    """Andata o ritorno. Su una tavola sono due linee distinte, non una."""
     connection_ids: list[str] = Field(default_factory=list)
     segments: list[list[Point]] = Field(default_factory=list)
     crossings: list[Point] = Field(default_factory=list)
@@ -63,6 +65,8 @@ class PlacedLabel(StrictModel):
     text: str
     role: str
     anchor: Point
+    leader_from: Point | None = None
+    """Da dove parte la linea di richiamo, quando il testo sta fuori dal corpo."""
 
 
 class LegendEntry(StrictModel):
@@ -102,6 +106,8 @@ class SheetGeometry(StrictModel):
     legend: list[LegendEntry] = Field(default_factory=list)
     network_keys: list[NetworkKey] = Field(default_factory=list)
     cross_references: list[CrossReference] = Field(default_factory=list)
+    ground_line_y_mm: FiniteFloat | None = None
+    """Quota della linea di terra: le macchine ci appoggiano sopra."""
 
 
 class DrawingGeometry(StrictModel):

@@ -21,6 +21,9 @@ TAG_GAP_MM = 1.5
 VALUE_GAP_MM = 1.5
 """Stacco fra il riquadro e il valore scritto sotto."""
 
+CALLOUT_LINE_GAP_MM = 0.5
+"""Interlinea fra due testi dello stesso richiamo."""
+
 CHAR_WIDTH_RATIO = 0.6
 """Larghezza media di un carattere rispetto al corpo, per un sans-serif.
 
@@ -58,11 +61,17 @@ def place_labels(
     project: ProjectModel,
     placed: list[PlacedSymbol],
     standard: GraphicStandard,
+    callout_y_mm: float | None = None,
 ) -> list[PlacedLabel]:
-    """Sigle sopra il simbolo, valori sotto, senza sovrapposizioni.
+    """Sigle e valori, fuori dal corpo, con linea di richiamo.
+
+    E' il meccanismo di una tavola vera: i testi non si infilano fra i
+    componenti sperando che ci stiano, escono sotto il disegno e una linea
+    sottile li riporta al pezzo. Sopra il simbolo non ci sta nulla quando il
+    disegno si infittisce, e infatti prima collidevano.
 
     Deterministico: l'ordine segue quello dei simboli posati, e a parita' di
-    posizione i testi scendono di una riga per volta finche' non sono liberi.
+    ascissa i testi scendono di una riga per volta.
     """
     properties = {item.id: item.properties for item in project.components}
     height = standard.text_small_mm
@@ -99,35 +108,51 @@ def place_labels(
         return Point(x_mm=x_mm, y_mm=candidate_y)
 
     for item in placed:
+        texts: list[tuple[str, str, str]] = []
         if item.tag:
-            labels.append(
-                PlacedLabel(
-                    id=f"{item.component_id}-tag",
-                    text=item.tag,
-                    role="tag",
-                    anchor=free_slot(
-                        item.origin.x_mm,
-                        item.origin.y_mm - TAG_GAP_MM,
-                        item.tag,
-                        upward=True,
-                    ),
-                )
-            )
+            texts.append((f"{item.component_id}-tag", item.tag, "tag"))
         for key in sorted(properties.get(item.component_id, {})):
-            text = format_value(key, properties[item.component_id][key])
-            if text is None:
-                continue
+            value = format_value(key, properties[item.component_id][key])
+            if value is not None:
+                texts.append((f"{item.component_id}-{key}", value, "data"))
+        if not texts:
+            continue
+
+        if callout_y_mm is None:
+            for label_id, text, role in texts:
+                labels.append(
+                    PlacedLabel(
+                        id=label_id,
+                        text=text,
+                        role=role,
+                        anchor=free_slot(
+                            item.origin.x_mm,
+                            item.bottom_mm + VALUE_GAP_MM + height,
+                            text,
+                            upward=False,
+                        ),
+                    )
+                )
+            continue
+
+        # Fuori dal corpo, con la linea di richiamo che riporta al pezzo.
+        attach = Point(
+            x_mm=item.origin.x_mm + item.width_mm / 2, y_mm=item.bottom_mm
+        )
+        for offset, (label_id, text, role) in enumerate(texts):
+            anchor = free_slot(
+                item.origin.x_mm,
+                callout_y_mm + offset * (height + CALLOUT_LINE_GAP_MM),
+                text,
+                upward=False,
+            )
             labels.append(
                 PlacedLabel(
-                    id=f"{item.component_id}-{key}",
+                    id=label_id,
                     text=text,
-                    role="data",
-                    anchor=free_slot(
-                        item.origin.x_mm,
-                        item.bottom_mm + VALUE_GAP_MM + height,
-                        text,
-                        upward=False,
-                    ),
+                    role=role,
+                    anchor=anchor,
+                    leader_from=attach if offset == 0 else None,
                 )
             )
     return labels

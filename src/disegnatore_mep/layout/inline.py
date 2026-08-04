@@ -54,6 +54,18 @@ def _station_at(points: list[Point], distance_mm: float) -> _Station:
     return _Station(point=last, horizontal=previous.y_mm == last.y_mm)
 
 
+def _straight_stretches(points: list[Point]) -> list[tuple[float, float]]:
+    """Gli intervalli di lunghezza d'arco in cui la spezzata va dritta."""
+    stretches: list[tuple[float, float]] = []
+    travelled = 0.0
+    for before, after in zip(points, points[1:], strict=False):
+        length = abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
+        if length > 0:
+            stretches.append((travelled, travelled + length))
+        travelled += length
+    return stretches
+
+
 def _point_at(points: list[Point], distance_mm: float) -> Point:
     return _station_at(points, distance_mm).point
 
@@ -123,17 +135,43 @@ def place_inline_accessories(
             f"never shrunk to fit, give the run more room"
         )
 
+    # Un accessorio va posato al **centro di un tratto rettilineo** abbastanza
+    # lungo da contenerlo, non a una frazione arbitraria della lunghezza: se la
+    # rotta piega accanto a lui, il moncone che resta gli passa dentro il
+    # riquadro, e la linea risulta disegnata sotto il simbolo.
+    straights = _straight_stretches(points)
+    if not straights:
+        raise LayoutError(
+            f"run {trunk.connection_ids[0]} has no straight stretch to sit an "
+            f"accessory on"
+        )
+
     placed: list[PlacedSymbol] = []
     cuts: list[tuple[float, float]] = []
     step = grid.step_mm
-    count = len(resolved)
+    free = list(straights)
 
     for index, component in enumerate(resolved):
-        # La distanza si arrotonda al passo: i vertici della rotta stanno su
-        # nodi e i tratti sono multipli del passo, quindi il punto cade su un
-        # nodo per costruzione, e con esso le porte dell'accessorio. Snappare
-        # invece le coordinate del punto lo staccherebbe dal proprio taglio.
-        distance = round(total * (index + 1) / (count + 1) / step) * step
+        gap = component.symbol.manifest.inline_gap_mm or 0.0
+        needed = gap + 2 * MIN_SPACING_MM
+        candidates = [item for item in free if item[1] - item[0] >= needed]
+        if not candidates:
+            raise LayoutError(
+                f"run {trunk.connection_ids[0]} has no straight stretch of "
+                f"{needed:g}mm for {component.symbol.manifest.id}: symbols are never "
+                f"shrunk to fit, give the run a longer straight length"
+            )
+        chosen = max(candidates, key=lambda item: item[1] - item[0])
+        free.remove(chosen)
+        low, high = chosen
+        distance = round((low + high) / 2 / step) * step
+        distance = min(max(distance, low + needed / 2), high - needed / 2)
+        # I due spezzoni del rettilineo restano disponibili per altri accessori.
+        free.extend(
+            piece
+            for piece in ((low, distance - gap / 2), (distance + gap / 2, high))
+            if piece[1] - piece[0] > 0
+        )
         station = _station_at(points, distance)
         centre = station.point
         rotation = 0 if station.horizontal else 90

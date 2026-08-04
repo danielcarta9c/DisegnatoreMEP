@@ -12,21 +12,26 @@ nell'impianto: una valvola si disegna piccola, un accumulo grande. D-050
 registrava le taglie uniformi della prima libreria come convenzione di prova;
 questa e' la gerarchia che le sostituisce (D-055).
 
-    accessorio in linea    7,5 x 5     3 x 2 passi
-    accessorio terminale   5 x 10      2 x 4
-    apparecchio            10 x 10     4 x 4
-    terminale              15 x 10     6 x 4
-    collettore             30 x 5      12 x 2
-    vaso                   10 x 15     4 x 6
-    macchina               20 x 15     8 x 6
-    accumulo               15 x 25     6 x 10
+    accessorio in linea     5 x 5       2 x 2 passi
+    accessorio terminale    5 x 10      2 x 4
+    apparecchio            10 x 10      4 x 4
+    terminale              20 x 15      8 x 6
+    collettore             40 x 5      16 x 2
+    vaso                   10 x 15      4 x 6
+    compensatore         12,5 x 25      5 x 10
+    macchina               40 x 30     16 x 12
+    accumulo               25 x 45     10 x 18
 
-L'area di una valvola sta dieci volte in quella di un accumulo.
+Le proporzioni sono misurate su una tavola di riferimento fornita dal PM: una
+macchina sta a una valvola come **6 a 1** in misura lineare, trentasei a uno in
+area. La gerarchia precedente le teneva a 3 a 1, e il risultato non si leggeva
+come uno schema: sembravano tutti componenti dello stesso peso.
 
 Ogni lato e' un multiplo del passo. Il lato su cui una porta e' **centrata** e'
-un numero **pari** di passi, cosi' il centro cade su un nodo: 7,5 x 5 e'
-legittimo perche' le sue porte stanno a sinistra e a destra, centrate
-sull'altezza, che e' di due passi.
+un numero **pari** di passi, cosi' il centro cade su un nodo. E' il vincolo che
+decide le taglie: 7,5 x 7,5 sarebbe stata una misura ragionevole per un
+apparecchio, ma tre passi sono dispari e la porta centrata sarebbe caduta fra
+due nodi.
 
 ## I corpi
 
@@ -71,14 +76,15 @@ CLEARANCE_MM = A3_LANDSCAPE.min_clearance_mm
 GRID_MM = A3_LANDSCAPE.grid_mm
 
 # La gerarchia dimensionale (D-055). Ogni misura e' un multiplo del passo.
-INLINE_ACCESSORY = (7.5, 5.0)
+INLINE_ACCESSORY = (5.0, 5.0)
 TERMINAL_ACCESSORY = (5.0, 10.0)
 DEVICE = (10.0, 10.0)
-TERMINAL = (15.0, 10.0)
-MANIFOLD = (30.0, 5.0)
+TERMINAL = (20.0, 15.0)
+MANIFOLD = (40.0, 5.0)
 VESSEL = (10.0, 15.0)
-MACHINE = (20.0, 15.0)
-STORAGE = (15.0, 25.0)
+SEPARATOR = (12.5, 25.0)
+MACHINE = (40.0, 30.0)
+STORAGE = (25.0, 45.0)
 
 SOURCE = "CONV-GRAFICA-001"
 """Convenzione grafica interna del progetto, non una norma esterna (D-047)."""
@@ -520,7 +526,7 @@ def two_port_terminal(symbol_id: str, name: str, body_of: Any) -> SymbolSpec:
 HEAT_PUMP_W, HEAT_PUMP_H = MACHINE
 STORAGE_W, STORAGE_H = STORAGE
 MANIFOLD_W, MANIFOLD_H = MANIFOLD
-MANIFOLD_OUTLETS = (10.0, 20.0)
+MANIFOLD_OUTLETS = (12.5, 27.5)
 
 HEAT_PUMP_PORTS = [
     port_at("water_supply", "right", 5.0, HEAT_PUMP_W, HEAT_PUMP_H),
