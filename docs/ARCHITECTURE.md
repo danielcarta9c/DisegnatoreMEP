@@ -34,8 +34,10 @@ Dettagli in `docs/GRAPHIC_STANDARD.md`.
 - `layout/grid.py`: nodi di griglia e il controllo che ogni porta di simbolo vi cada sopra (D-054).
 - `layout/trunks.py`: ricompone le tratte che gli accessori in linea hanno spezzato nel modello.
 - `layout/partition.py`: divisione in tavole e rimandi accoppiati (D-020, D-028).
-- `layout/place.py`: posizionamento a fasce funzionali (D-041), dal piano di impaginazione (D-042).
-- `layout/route.py`: instradamento ortogonale; l'incrocio costa meno del giro (D-041).
+- `layout/flow.py`: chi e' mandata e chi e' ritorno, dalla topologia e mai dalla geometria (D-059).
+- `layout/place.py`: posizionamento a fasce funzionali (D-041), dal piano di impaginazione (D-042), con l'ordine del processo da sinistra a destra e l'allineamento degli attacchi (D-060).
+- `layout/composition.py`: linea di terra, livelli e quote della tavola.
+- `layout/route.py`: instradamento ortogonale con la funzione obiettivo del disegno (D-060): meno pieghe, meno attraversamenti, meno lunghezza. Attraversare un **nodo** costa (D-041); ripercorrere un **tratto** e' vietato (D-062).
 - `layout/inline.py`: gli accessori posati sulla tratta, che interrompono la linea (D-027).
 - `layout/labels.py` e `layout/legend.py`: tag di valore e legenda dai soli simboli usati (D-052).
 - `layout/geometry.py`: il modello geometrico derivato, con `drawing_fingerprint`.
@@ -44,6 +46,12 @@ Dettagli in `docs/GRAPHIC_STANDARD.md`.
 
 Il modello tecnico canonico **non contiene coordinate**: la geometria e' derivata e
 rigenerabile (D-026).
+
+**Manca il preflight grafico** della specifica §12.4 (D-063). I controlli di
+`validation/geometry.py` dimostrano che nulla e' rotto, non che la tavola sia ben
+disegnata: la prima tavola li superava tutti ed era fatta male. Le misure di qualita'
+esistono, ma in `tests/layout/test_objective.py`, cioe' su una sola fixture e solo in
+fase di sviluppo. Vanno promosse a validatore di prodotto col piano di rendering.
 
 ## Librerie di simboli
 

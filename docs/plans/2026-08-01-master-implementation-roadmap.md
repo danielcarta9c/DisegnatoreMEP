@@ -63,15 +63,19 @@ Il piano P3 viene separato in quattro piani coordinati che condividono i contrat
 
 ### P5 - Renderer, cartiglio e PDF
 
-**Consegna:** SVG metrico, cartiglio Nove C compilabile, PDF vettoriale, distinta quantitativa, preflight e manifest di riproducibilità.
+**Consegna:** SVG metrico, cartiglio Nove C compilabile, PDF vettoriale, distinta quantitativa, **preflight grafico** (D-063) e manifest di riproducibilità.
 
-**Gate:** un A3 stampato mantiene le dimensioni previste; una finale incompleta viene bloccata; il PDF supera controllo visivo rasterizzato.
+Il preflight grafico misura la qualità del disegno, non la sua validità: pieghe per tratta, attraversamenti, sovrapposizioni longitudinali, distanze di rispetto, area occupata. Le soglie oggi vivono in `tests/layout/test_objective.py` su una sola fixture e vanno promosse a validatore di prodotto.
+
+**Gate:** un A3 stampato mantiene le dimensioni previste; una finale incompleta viene bloccata; il preflight grafico non ha esiti bloccanti; il PDF supera controllo visivo rasterizzato.
 
 ### P6 - Orchestrazione della skill
 
-**Consegna:** skill installabile che legge il contesto disponibile, costruisce la proposta, presenta il dossier unico, registra l'approvazione e invoca la pipeline.
+**Consegna:** skill installabile che legge il contesto disponibile, costruisce la proposta, presenta il dossier unico, registra l'approvazione, invoca la pipeline e **verifica prima di consegnare** — cold eye review con agente terzo e ciclo di revisione (D-063, D-064).
 
-**Gate:** il flusso conversazione -> dossier -> approvazione -> elaborato funziona senza richiedere una nuova compilazione manuale dell'impianto.
+Il ciclo cambia il piano di impaginazione e rigenera; non tocca mai la geometria prodotta. È limitato nel numero di passate e monotono sulle misure del preflight.
+
+**Gate:** il flusso conversazione -> dossier -> approvazione -> elaborato -> verifica funziona senza richiedere una nuova compilazione manuale dell'impianto; un elaborato respinto dal cold eye review viene rigenerato con un piano diverso e la rigenerazione resta deterministica.
 
 ### P7 - Qualificazione trasversale e release
 

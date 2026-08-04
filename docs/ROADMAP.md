@@ -52,7 +52,8 @@ foglio dei simboli. Lo standard consegnato è in `docs/GRAPHIC_STANDARD.md`.
 - costruire casi validi, ambigui e non validi;
 - confrontare gli elaborati con schemi professionali di riferimento;
 - verificare invarianti generali e combinazioni miste fra domini;
-- eseguire controlli visivi e prove di stampa A3;
+- eseguire il preflight grafico su tutti i casi, e i controlli visivi e le prove di stampa A3;
+- provare il ciclo di revisione: cold eye review che respinge, nuovo piano di impaginazione, rigenerazione;
 - effettuare revisione tecnica dell'ingegnere;
 - correggere regole e regressioni grafiche.
 

@@ -27,20 +27,29 @@
 
 - [x] ~~Scrivere il piano di layout, instradamento e multi-tavola~~ — **scritto il 4 agosto 2026** in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`. Dodici task, non ancora eseguito.
 - [x] ~~Piano di layout, instradamento e multi-tavola~~ — **eseguito il 4 agosto 2026**: dodici task, dodici commit, 383 test verdi. Il caso D-011 si disegna su una A3 e passa tutti i controlli geometrici.
-- [x] ~~**La regola del PM su linee e posizioni**~~ — **implementata il 4 agosto 2026 (D-060).** «Minimizzare le curve disegnate, minimizzare gli attraversamenti tra linee e minimizzare la lunghezza delle linee, mantenendo però ordinamenti da sinistra a destra.» Tre voci di costo nell'instradamento e un vincolo nel posizionamento. Sul caso D-011: pieghe da 31 a 23, celle condivise da 24 a 12. Misurate da `tests/layout/test_objective.py`.
+- [x] ~~**La regola del PM su linee e posizioni**~~ — **implementata il 4 agosto 2026 (D-060, D-062).** «Minimizzare le curve disegnate, minimizzare gli attraversamenti tra linee e minimizzare la lunghezza delle linee, mantenendo però ordinamenti da sinistra a destra», e «vietato sovrapporre longitudinalmente: sempre separate e ben distinte». Tre voci di costo nell'instradamento, un divieto sui tratti già percorsi, un vincolo nel posizionamento. Sul caso D-011: pieghe da 31 a 25, nodi condivisi da 24 a 9, sovrapposizione longitudinale da 12,5 mm a 5 — i due imbocchi da un passo dove due ritorni entrano nello stesso attacco. Misurate da `tests/layout/test_objective.py`.
 - [x] ~~**Il ritorno blu che entrava nella valvola a tre vie**~~ — **risolto (D-059)**: il verso di una tratta veniva letto dalla geometria del disegno già fatto, non dalla topologia del modello, che è orientata per costruzione.
 - [ ] **Rifare il linguaggio grafico sulle fonti, non sulla convenzione inventata.** Il PM ha giudicato la prima tavola mal disegnata e ha chiesto la ricerca che il progetto non aveva mai fatto. Esito in `docs/research/2026-08-04-come-si-disegna-uno-schema-funzionale.md`: manca **UNI 9511**, mandata e ritorno devono essere linee distinte, la tavola porta i diametri, le sigle sono mnemoniche funzionali, la composizione è a corsie orizzontali e non a pile verticali, e la libreria copre meno di un ottavo dei simboli di una tavola reale.
 - [ ] ~~Giudizio del PM sulla prima tavola~~ — **dato: la tavola è fatta male.** I controlli automatici dimostrano che nulla si sovrappone, non che la tavola si legga come l'avrebbe disegnata un tecnico. Si rigenera con `.venv/bin/python -m disegnatore_mep draw examples/layout/heat-pump-dhw-buffer-two-zones.json --catalog examples/layout/catalog --symbols assets/symbols --out outputs/`.
 
 ## Next — backlog ordinato
 
-1. Eseguire il piano di layout, instradamento e multi-tavola, una volta approvato. Nessun task è in attesa di decisioni: sono chiuse tutte.
-2. Scrivere il piano di rendering, cartiglio e PDF, con distinta derivata dal modello e preflight.
-3. Solo a questo punto il motore delle regole (ex P1), con `RuleApplicationModel` completato per la tracciabilità a valle (D-039), la rappresentazione dei dati mancanti e il percorso di migrazione dello schema. Dettagli in `docs/P0_REVIEW_FINDINGS.md` §3.2.
-4. Allargare il contratto `DomainPack` prima che i quattro pacchetti di dominio procedano in parallelo (W3).
-5. Implementare i pacchetti di dominio idronico, aeraulico, espansione diretta e gas.
-6. Integrare la skill conversazionale.
-7. Costruire la matrice di qualificazione e la prima release.
+Ordine concordato col PM il 4 agosto 2026, dopo il punto fatto sullo stato reale del
+progetto: **P1 prima di P5**. Il motivo è che oggi il caso di prova è scritto a mano e
+ha dieci componenti — nessun vaso di espansione, nessun gruppo di riempimento, nessuna
+valvola di sicurezza, nessun diametro. Finché il modello non li genera, ogni giudizio
+sulla tavola giudica un impianto che non esiste, e il foglio resta mezzo vuoto perché
+non c'è niente da disegnarci.
+
+1. **Motore delle regole (P1)**, con `RuleApplicationModel` completato per la tracciabilità a valle (D-039), la rappresentazione dei dati mancanti e il percorso di migrazione dello schema. Dettagli in `docs/P0_REVIEW_FINDINGS.md` §3.2.
+2. Allargare il contratto `DomainPack` prima che i quattro pacchetti di dominio procedano in parallelo (W3).
+3. **Pacchetto di dominio idronico (P3A)**, che è il dominio del caso di accettazione e dà alle regole di cosa parlare. Gli altri tre a seguire.
+4. **Rendering, cartiglio e PDF (P5)**, con distinta derivata dal modello e **preflight grafico** (D-063): le soglie di `tests/layout/test_objective.py` devono diventare un validatore di prodotto che gira su ogni tavola, non un test su una fixture.
+5. **Skill conversazionale (P6)**, col **cold eye review** e il ciclo di revisione (D-063, D-064): agente terzo, giudica ciò che non si misura, respinge cambiando il piano di impaginazione e mai la geometria.
+6. Costruire la matrice di qualificazione e la prima release (P7).
+
+Sull'instradamento si torna solo se, con un impianto **completo**, resta qualcosa che
+non va: a quel punto è un difetto vero e non un'ipotesi su un caso povero.
 
 ## Debito noto della fase grafica
 
@@ -65,7 +74,8 @@ regge cosa viene disegnato e come è composto. Analisi e fonti in
 
 ## Debito noto del layout
 
-- **Su una A3 un impianto piccolo lascia il foglio a meta' vuoto.** Il blocco viene centrato (D-061) ma non ingrandito, perche' la scala di stampa e' invariante (ADR 0003). L'A4 si prende solo se il disegno ci sta comodo — meno dell'85% dell'area in entrambe le direzioni — e il caso D-011 ci starebbe a filo, quindi resta su A3. Quello che riempirebbe davvero l'altezza e' contenuto che oggi non c'e': la fascia di regolazione tratteggiata (`Domain.CONTROL` è inutilizzato) e i diametri sulle tubazioni.
+- **La qualità grafica è misurata da un test, non da un validatore.** `tests/layout/test_objective.py` misura pieghe, attraversamenti, sovrapposizioni longitudinali e lunghezza — ma su **una** fixture, e solo in fase di sviluppo. Deve diventare il preflight grafico di D-063, che gira su ogni tavola e classifica gli esiti come bloccante, da approvare o avviso. È il pezzo che manca perché la skill possa verificare prima di consegnare.
+- **Su una A3 un impianto piccolo lascia il foglio a metà vuoto.** Il blocco viene centrato (D-061) ma non ingrandito, perché la scala di stampa è invariante (ADR 0003). Quello che riempirebbe davvero l'altezza è contenuto che oggi non c'è: gli ausiliari che P1 deve generare, la fascia di regolazione tratteggiata (`Domain.CONTROL` è inutilizzato) e i diametri sulle tubazioni. Il formato si sceglie provando: si prende il più piccolo su cui il contenuto **rispetta le distanze minime**, e il caso D-011 non entra su una A4.
 - **La corsia di mandata non è garantita sopra quella di ritorno.** Dove due tratte devono scavalcare lo stesso ostacolo, la prima prende la quota più vicina e la seconda quella sopra; chi sia la prima lo decide l'ordine del modello. Imporre la convenzione costerebbe pieghe, che D-060 mette al primo posto. La convenzione resta garantita **sui simboli** — l'attacco di mandata sta sopra quello di ritorno — e le due linee restano distinte per colore e tratto (D-057).
 - **Una tratta che attraversa un confine di tavola non viene disegnata** su nessuna delle due: compaiono i rimandi accoppiati, non il tratto che li raggiunge. Per la stessa ragione, un confine che tagliasse una tratta con accessori in linea viene **rifiutato**, perché quegli accessori resterebbero senza una linea su cui posarsi. Spetta al piano di rendering, che possiede i rimandi.
 - **Il cartiglio non è compilato**: la tavola esce marcata come bozza (D-025).

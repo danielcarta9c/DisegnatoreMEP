@@ -99,7 +99,12 @@ Una bozza può contenere campi `DA DEFINIRE` ed è marcata chiaramente come bozz
 - dati tecnici obbligatori completi;
 - cartiglio completo;
 - dossier approvato;
-- controlli tecnici e grafici superati.
+- controlli tecnici, geometrici e documentali superati;
+- preflight grafico senza esiti bloccanti (§12.4);
+- cold eye review non più in stato di rifiuto (§12.5).
+
+La verifica avviene **prima della consegna**, dentro la skill. Chi la usa riceve un
+elaborato già controllato: non è il collaudatore del prodotto.
 
 ## 6. Architettura logica
 
@@ -114,7 +119,14 @@ Il sistema è diviso in livelli indipendenti:
 5. **libreria dei simboli:** fornisce geometria vettoriale e metadati;
 6. **motore di layout:** partiziona, dispone e instrada;
 7. **renderer:** produce SVG e PDF;
-8. **validatori:** bloccano errori tecnici, geometrici e documentali.
+8. **validatori:** bloccano errori tecnici, geometrici e documentali, e misurano la
+   qualità grafica col preflight di §12.4;
+9. **cold eye review:** un agente terzo giudica ciò che non si misura e può
+   respingere l'elaborato, rimandandolo in ciclo (§12.5, §12.6).
+
+I livelli 1 e 2 e il 9 sono non deterministici; dal 3 all'8 il comportamento è
+deterministico. Il confine è netto per costruzione: la parte non deterministica
+sceglie **gli ingressi**, la parte deterministica produce **l'elaborato**.
 
 ### 6.2 Nucleo universale e pacchetti di dominio
 
@@ -313,9 +325,68 @@ Il PDF sorgente viene conservato come riferimento. Prima dell'uso in produzione 
 - nessun `DA DEFINIRE` in una versione finale;
 - versione di skill, libreria e regole registrata nel manifest di progetto.
 
-### 12.4 Controllo visivo
+### 12.4 Preflight grafico
 
-I controlli geometrici non giudicano da soli la qualità percettiva. Ogni release deve renderizzare i PDF in immagini e sottoporli a controllo visivo, oltre a prove di stampa A3 su casi rappresentativi.
+I controlli geometrici di §12.2 dimostrano che nulla è rotto, non che la tavola sia
+ben disegnata: una tavola può superarli tutti ed essere fatta male. Il preflight
+grafico misura la qualità del disegno, non la sua validità (D-063):
+
+- pieghe per tratta;
+- attraversamenti fra tratte;
+- **sovrapposizioni longitudinali**, che sono un errore e non un costo (D-062);
+- distanze di rispetto fra una linea e un simbolo, e fra due linee parallele;
+- lunghezza complessiva delle tubazioni rispetto al minimo teorico;
+- area di foglio occupata, e vuoti anomali.
+
+Ogni misura produce un esito con la stessa classificazione di §13: bloccante, da
+approvare o avviso. Le soglie sono parte del prodotto e vivono con esso: non sono
+un test su un caso di esempio.
+
+### 12.5 Cold eye review
+
+Ciò che resta — composizione, ordine di lettura, se la tavola «sembra una tavola» —
+non si misura, e lo giudica un **agente terzo** (D-063): contesto proprio, diverso da
+quello che ha costruito il modello, perché un agente che rilegge il proprio lavoro lo
+approva. Giudica contro lo standard grafico scritto, non contro il gusto, altrimenti
+due esecuzioni danno due giudizi diversi.
+
+L'agente può **respingere**. Quando lo fa, il lavoro torna in ciclo (§12.6). Non
+approva nulla in senso tecnico: l'approvazione resta dell'ingegnere.
+
+Preflight e cold eye review non sono ridondanti. Una sovrapposizione di due
+millimetri e mezzo si trova misurandola, non guardandola; «questa non sembra una
+tavola» non si misura. Ciò che il cold eye review respinge due volte per lo stesso
+motivo diventa una soglia del preflight (D-065): il giudizio non deterministico è il
+modo in cui si scoprono le regole, non il modo in cui si applicano per sempre.
+
+### 12.6 Il ciclo di revisione
+
+    input di progetto
+       -> interpretazione AI                        (non deterministica)
+    modello tecnico + piano di impaginazione        <- il ciclo cambia QUESTO
+       -> regole, layout, instradamento, rendering  (deterministico)
+    tavola
+       -> controlli tecnici, geometrici, documentali, preflight grafico
+       -> cold eye review
+            approvata  -> consegna
+            respinta   -> nuovo piano di impaginazione, e si ricomincia
+
+Il ciclo cambia gli **ingressi**, mai il disegno prodotto (D-064). Ciò che può
+cambiare è il piano di impaginazione — quale sottosistema su quale fascia, in che
+ordine, se dividere in più tavole, quale formato — che è fatto di scelte discrete
+registrate nel modello proprio perché l'AI potesse sceglierle diversamente (D-042).
+Nessun agente tocca la geometria: stesso modello e stesso piano danno lo stesso
+identico file, e questa proprietà non è negoziabile.
+
+Il ciclo ha un numero massimo di passate ed è **monotono**: una passata si accetta
+solo se le misure del preflight non peggiorano. Senza, un ciclo può oscillare fra due
+impaginazioni o «migliorare» all'infinito.
+
+### 12.7 Controllo visivo di release
+
+Ogni release deve renderizzare i PDF in immagini e sottoporli a controllo visivo
+umano, oltre a prove di stampa A3 su casi rappresentativi. Non è sostituito né dal
+preflight né dal cold eye review.
 
 ## 13. Errori e diagnostica
 
