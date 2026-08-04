@@ -28,6 +28,7 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 13 | `docs/plans/README.md` e `docs/plans/2026-08-01-master-implementation-roadmap.md` | Sequenza dei piani |
 | 14 | `docs/plans/2026-08-01-foundation-core-plan.md` — **solo l'appendice finale** | Il piano P0 eseguito e le sue deviazioni. Il corpo contiene codice difettoso |
 | 15 | **`docs/plans/2026-08-03-graphic-system-symbol-library-plan.md` — solo l'appendice finale** | Il piano grafico eseguito. **Sedici difetti corretti in esecuzione**, sei del piano e dieci trovati dalle revisioni. Anche qui il corpo non è stato riscritto |
+| 15bis | **`docs/plans/2026-08-04-layout-routing-multitavola-plan.md` — per intero** | Il piano successivo, **scritto e non eseguito**. Qui il corpo si legge davvero: è il lavoro da fare. Il §0 raccoglie le quattro decisioni di prodotto ancora aperte, il §2 le tre scoperte fatte prototipando |
 | 16 | `docs/research/README.md` e `docs/research/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
 | 17 | `assets/cartigli/README.md` e `releases/README.md` | Vincoli su cartiglio e rilascio |
 | 18 | [`nove-c-kit` PLAYBOOK](https://github.com/danielcarta9c/nove-c-kit/blob/main/PLAYBOOK.md) e [`EXAMPLES`](https://github.com/danielcarta9c/nove-c-kit/blob/main/EXAMPLES.md) | Metodo di project management Nove C |
@@ -55,7 +56,7 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 
 ## 3. Stato attuale del progetto
 
-- **Fase:** fondazione canonica e sistema grafico completati. Layout, instradamento e rendering non iniziati.
+- **Fase:** fondazione canonica e sistema grafico completati. Il piano di layout, instradamento e multi-tavola è **scritto e in attesa di approvazione**; nessun suo task è partito. Rendering, cartiglio e PDF non ancora pianificati.
 - **Versione installabile:** nessuna release; `releases/latest/` non è ancora popolata.
 - **Verifica:** 147 test verdi; `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`.
 - **Libreria:** dodici simboli pubblicati in `assets/symbols/` più otto di fixture in `examples/foundation/symbols/`, entrambe rigenerabili identiche dai rispettivi generatori.
@@ -101,23 +102,31 @@ la cosa piu' importante da portarsi dietro:
   costruire la legenda dai simboli effettivamente usati nel modello e non dall'intera libreria,
   e riservare gli `label_anchors` ai tag di valore.
 
-- **Prossimo passo di sviluppo:** scrivere il piano di layout, instradamento e multi-tavola. È il punto 1 di `Next` in `PROJECT_STATE.md`.
-- **Da progettare lì, al primo task:** la vista che unisce semantica e geometria. Il piano grafico la elencava fra i propri contratti come `ResolvedComponent` ma non l'ha costruita, perché non aveva consumatori. Oggi la verifica incrociata dimostra che i due insiemi di porte coincidono e poi **butta via l'accoppiamento**: non esiste modo supportato di passare da un componente alla sua geometria.
-- **Da progettare lì, subito dopo:** la **trasformazione di rotazione**. `allowed_rotations_deg` dichiara gli orientamenti tecnicamente ammessi (D-049), ma nulla ruota un simbolo, scambia il riquadro a 90°/270°, ruota una `PortFace` o un lato di `KeepOut`. Se ogni consumatore se la scrive da sé, l'invariante perimetro-faccia diverge subito. Va messa in `symbol.py`, accanto al validatore che la impone.
-- **`inline_gap_mm` non è ancora letto da nessuno.** D-027 e la regola non negoziabile di `AGENTS.md` sull'inserimento in linea non hanno ancora codice dietro. L'instradamento deve consumarlo, non riderivarlo.
+**Il piano di layout è scritto.** Vive in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`: dodici task in TDD, dal `ResolvedComponent` mancante fino alla prima tavola A3 del caso D-011 disegnata e verificata geometricamente. **Non è stato eseguito**: il codice è quello di prima, 147 test verdi, fingerprint invariato.
+
+- **Prossimo passo di sviluppo:** ottenere l'approvazione del PM sul piano e sulle quattro decisioni di prodotto del suo §0, poi eseguirlo. I Task 1, 2, 3 e 5 non dipendono da nessuna delle quattro e possono partire per primi.
+- **Leggere il corpo di questo piano, non solo l'appendice.** È la differenza rispetto agli altri due: qui il corpo è il lavoro da fare, e le parti a rischio sono state prototipate ed eseguite prima della stesura — rotazione, tratte e instradamento hanno già le loro prove verdi.
+- **Tre difetti trovati scrivendolo**, nessuno registrato altrove prima, tutti nel §2 del piano: nessuno dei venti simboli ha riquadro o porte su un nodo di griglia, quindi un instradatore su griglia non raggiunge nessun attacco; il cartiglio Nove C usa una squadratura a 10 mm sui quattro lati mentre `A3_LANDSCAPE` ne dichiara 20 a sinistra; `inline_gap_mm` è confrontato con la larghezza invece che con l'asse che unisce le due porte opposte.
 - **`render_symbol_sheet` è un banco di prova, non la tavola.** Costruisce una griglia uniforme da due costanti di modulo. Non generalizza a una tavola con cartiglio e instradamento: va tenuto come riscontro, non esteso.
 - **Attenzione al `keep_out`:** ora è imposto non nullo sulle facce con porta, quindi il layout può fidarsene. Prima non lo era.
-- **`usable_height_mm` non è un multiplo del passo di griglia** (277 / 2,5 = 110,8), mentre la larghezza sì. È voluto, i margini seguono ISO 5457. Un layout che assuma entrambi gli assi allineati sbaglia in verticale di 0,8 di passo.
+- **`usable_height_mm` non è un multiplo del passo di griglia** (277 / 2,5 = 110,8), mentre la larghezza sì. È voluto, i margini seguono ISO 5457. Un layout che assuma entrambi gli assi allineati sbaglia in verticale di 0,8 di passo. Il piano gira intorno al problema lavorando sull'area di disegno — 350 × 235 mm, che è allineata su entrambi gli assi — non sull'area utile del foglio.
 
 ---
 
 ## 6. Domande aperte per il PM
 
-**Nessuna.**
+**Quattro decisioni di prodotto**, tutte nel §0 di `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`, ciascuna con una proposta motivata e le conseguenze delle alternative. Il piano è scritto assumendo le proposte, e ognuna è isolata in un solo task.
 
-Una è stata chiusa in questa sessione: le rotazioni ammesse dichiarano gli orientamenti **tecnicamente** sensati, non quelli geometricamente possibili. Sfiato aria bloccato a `[0]`, vaso di espansione a `[0, 180]` (D-049).
+| # | Domanda | Proposta | Serve prima di |
+|---|---|---|---|
+| P1 | Si disegna il caso D-011 completo, aggiungendo i simboli mancanti e la gerarchia dimensionale, o si resta ai dodici attuali? | Caso completo | Task 7 |
+| P2 | Il disegno usa la squadratura del cartiglio (10 mm sui quattro lati) o conserva la rilegatura ISO 5457 (20 mm a sinistra)? | Squadratura del cartiglio | Task 4 |
+| P3 | Si spezza in più tavole solo quando non entra, o anche per leggibilità? | Solo quando non entra | Task 6 |
+| P4 | Le reti si distinguono per colore e tratto, per solo colore, o in monocromatico? | Colore più tratto | Task 11 |
 
-Il PM ha anche registrato un input per la libreria vera: **la dimensione del simbolo comunica il peso del componente** nella tavola — valvole piccole, vasi più grandi, accumuli ancora di più. Le misure attuali (6×6, 8×8, 6×10) sono una convenzione di prova, non uno standard da ereditare (D-050).
+Chiusa nella sessione del 3 agosto: le rotazioni ammesse dichiarano gli orientamenti **tecnicamente** sensati, non quelli geometricamente possibili. Sfiato aria bloccato a `[0]`, vaso di espansione a `[0, 180]` (D-049).
+
+Il PM aveva registrato un input per la libreria vera: **la dimensione del simbolo comunica il peso del componente** nella tavola — valvole piccole, vasi più grandi, accumuli ancora di più. Le misure attuali (6×6, 8×8, 6×10) sono una convenzione di prova, non uno standard da ereditare (D-050). P1 è la domanda che chiude quell'input: il Task 7 del piano propone una gerarchia in otto classi.
 
 Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di scegliere fra modalità tecniche di esecuzione: il PM valida il prodotto, l'agente è il PM senior dello sviluppo.
 
@@ -125,7 +134,7 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 
 ## 7. Quirks e gotcha emersi
 
-- **Il corpo di entrambi i piani contiene codice difettoso.** Le appendici finali sono le fonti autorevoli sulle differenze.
+- **Il corpo dei due piani *eseguiti* contiene codice difettoso.** Le loro appendici finali sono le fonti autorevoli sulle differenze. Non vale per il piano del 4 agosto, che non è stato eseguito e il cui corpo va letto per intero: le sue parti a rischio sono state prototipate ed eseguite prima della stesura, e ogni affermazione misurata è marcata **Verificato**.
 - **Eseguire sempre la suite completa** e `mypy src tests examples`, mai il solo file di test del task in corso: un import circolare di P0 passava sul proprio file e falliva solo sull'intera suite.
 - **Mai `git checkout --` o `git stash` su un file con lavoro non committato.** In questa sessione un implementatore ha cancellato così una correzione appena scritta. Copiare il file da parte e ripristinare da lì.
 - **Stampare e leggere i numeri che si riportano.** Un report ha citato valori in virgola mobile che Python non produce, e l'affermazione è caduta alla verifica. Un test costruito su quei numeri non dimostrava nulla.
@@ -151,6 +160,8 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 ---
 
 ## Ultimo aggiornamento
+
+`2026-08-04` — Claude — scritto il piano di layout, instradamento e multi-tavola, non eseguito. Rotazione, tratte e instradamento prototipati e messi sotto test prima della stesura; tre difetti trovati e registrati nel §2 del piano, fra cui il fatto che nessuno dei venti simboli sta sulla griglia. Quattro decisioni di prodotto aperte per il PM.
 
 `2026-08-04` — Claude — prova di stampa superata dal PM. Registrate D-051 (nomenclatura visibile in italiano) e D-052 (legenda a destra invece di didascalie ripetute nel disegno); il foglio di riscontro ora mostra il nome italiano del componente e l'identificativo solo come riferimento secondario.
 
