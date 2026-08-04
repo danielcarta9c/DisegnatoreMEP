@@ -115,3 +115,40 @@ def test_a_rect_knows_its_own_edges() -> None:
     # Due rettangoli che si toccano sul bordo non si sovrappongono: e' il caso
     # del corpo e del cartiglio, contigui per costruzione.
     assert not rect.overlaps(Rect(x_mm=40.0, y_mm=20.0, width_mm=5.0, height_mm=5.0))
+
+
+def test_the_ordinary_formats_are_a4_then_a3_and_stop_there() -> None:
+    """D-058: A3, o A4 se il disegno e' proprio piccolo. Niente A0, niente strisce."""
+    from disegnatore_mep.graphics.frame import NOVE_C_A4, ORDINARY_FRAMES
+
+    assert ORDINARY_FRAMES == (NOVE_C_A4, NOVE_C_A3)
+    sizes = [
+        (item.standard.sheet_width_mm, item.standard.sheet_height_mm)
+        for item in ORDINARY_FRAMES
+    ]
+    assert sizes == [(297.0, 210.0), (420.0, 297.0)]
+    # In ordine crescente: la scelta prende il primo su cui il disegno entra.
+    assert sizes == sorted(sizes)
+
+
+def test_the_a4_frame_keeps_the_bands_measured_on_the_a3_title_block() -> None:
+    """Un cartiglio non si rimpicciolisce col foglio: porta le stesse righe."""
+    from disegnatore_mep.graphics.frame import NOVE_C_A4
+
+    assert NOVE_C_A4.title_block_height_mm == NOVE_C_A3.title_block_height_mm
+    assert NOVE_C_A4.header_height_mm == NOVE_C_A3.header_height_mm
+    assert NOVE_C_A4.legend_width_mm == NOVE_C_A3.legend_width_mm
+    border = NOVE_C_A4.border_rect_mm
+    assert (border.x_mm, border.y_mm) == (10.0, 10.0)
+    assert (border.width_mm, border.height_mm) == (277.0, 190.0)
+    drawing = NOVE_C_A4.drawing_rect_mm
+    assert (drawing.width_mm, drawing.height_mm) == (227.0, 148.0)
+
+
+def test_both_formats_draw_at_the_same_scale() -> None:
+    """ADR 0003: la scala di stampa e' invariante, cambia solo quanto ci sta."""
+    from disegnatore_mep.graphics.frame import NOVE_C_A4
+
+    a3, a4 = NOVE_C_A3.standard, NOVE_C_A4.standard
+    for field in ("grid_mm", "line_thin_mm", "text_normal_mm", "min_clearance_mm"):
+        assert getattr(a3, field) == getattr(a4, field), field

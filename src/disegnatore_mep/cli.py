@@ -7,13 +7,12 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import render_sheet
 from disegnatore_mep.graphics.svg import render_symbol_sheet
 from disegnatore_mep.io.canonical import project_fingerprint
 from disegnatore_mep.io.project_json import load_project
-from disegnatore_mep.layout.compose import compose_drawing
+from disegnatore_mep.layout.compose import compose_on_ordinary_frame
 from disegnatore_mep.layout.geometry import drawing_fingerprint
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.validation.geometry import validate_drawing_geometry
@@ -68,8 +67,8 @@ def _draw(args: argparse.Namespace) -> int:
         print(report.model_dump_json(indent=2))
         return 2
 
-    drawing = compose_drawing(project, catalog, NOVE_C_A3)
-    geometry_report = validate_drawing_geometry(drawing, NOVE_C_A3)
+    frame, drawing = compose_on_ordinary_frame(project, catalog)
+    geometry_report = validate_drawing_geometry(drawing, frame)
     if not geometry_report.ok:
         print(geometry_report.model_dump_json(indent=2))
         return 2
@@ -77,7 +76,7 @@ def _draw(args: argparse.Namespace) -> int:
     args.out.mkdir(parents=True, exist_ok=True)
     for sheet in drawing.sheets:
         target = args.out / f"{project.metadata.project_id}-{sheet.sheet_id}.svg"
-        target.write_text(render_sheet(sheet, NOVE_C_A3, symbols), encoding="utf-8")
+        target.write_text(render_sheet(sheet, frame, symbols), encoding="utf-8")
     if args.geometry:
         args.geometry.write_text(
             drawing.model_dump_json(indent=2) + "\n", encoding="utf-8"

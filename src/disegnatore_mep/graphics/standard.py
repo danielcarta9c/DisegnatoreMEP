@@ -46,10 +46,12 @@ class GraphicStandard(StrictModel):
         return self
 
 
-# Margins follow ISO 5457: 20 mm binding margin on the left, 10 mm on the other three sides.
-# This makes the two axes asymmetric by construction: the width (390 mm) is a whole number of
-# grid steps (156), but the height (277 mm) is not (110.8). The margins are intentionally not
-# adjusted to force both axes onto the grid; this is the documented standard.
+# I margini sono quelli del cartiglio Nove C fornito come input del progetto: 10 mm sui
+# quattro lati (D-053). Non vengono da ISO 5457, che il registro fonti elenca ancora «da
+# acquisire e valutare», e che avrebbe imposto 20 mm di rilegatura a sinistra.
+# I due assi restano asimmetrici rispetto alla griglia: la larghezza utile (400 mm) e' un
+# numero intero di passi (160), l'altezza (277) no (110,8). I margini non vengono corretti
+# per forzare entrambi gli assi sulla griglia: la squadratura e' quella del cartiglio.
 A3_LANDSCAPE = GraphicStandard(
     sheet_width_mm=420.0,
     sheet_height_mm=297.0,
@@ -65,4 +67,11 @@ A3_LANDSCAPE = GraphicStandard(
     text_normal_mm=2.5,
     text_title_mm=3.5,
     min_clearance_mm=2.0,
+)
+
+# L'A4 orizzontale e' il formato per i disegni piccoli (D-058). Stessa squadratura a 10 mm
+# e stessa taratura di tratti e testi dell'A3: la scala di stampa e' invariante (ADR 0003),
+# quindi un simbolo misura lo stesso su entrambi i fogli e cambia solo quanto ce ne sta.
+A4_LANDSCAPE = A3_LANDSCAPE.model_copy(
+    update={"sheet_width_mm": 297.0, "sheet_height_mm": 210.0}
 )

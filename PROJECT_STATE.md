@@ -80,7 +80,7 @@ Dettagli e misure nel §2 del piano; le correzioni nella sua appendice.
 | # | Domanda | Perché serve |
 |---|---|---|
 | P5 | Si acquista **UNI 9511** (quattro parti) e la libreria si rifà su quella? | È la simbologia che un termotecnico italiano si aspetta, ed è a pagamento: la spesa è una decisione del PM |
-| P6 | L'A3 resta il formato ordinario? | Le due tavole reali misurate sono A0 e una striscia 610 × 2500. Per una centrale termica l'A3 forza il multi-tavola quasi sempre, e ADR 0003 andrebbe rivisto |
+| ~~P6~~ | ~~L'A3 resta il formato ordinario?~~ | **Chiusa dal PM il 4 agosto 2026 (D-058): A3, o A4 se il disegno è proprio piccolo. Niente A0, niente strisce.** La domanda non andava posta: il formato era già deciso da D-019 |
 
 Le tre del piano di layout sono state chiuse dal PM il 4 agosto 2026 e registrate come D-055, D-056 e D-057.
 

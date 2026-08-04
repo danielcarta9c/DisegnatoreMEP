@@ -37,8 +37,18 @@ materiale formativo Caleffi su pompe di calore aria-acqua e sistemi ibridi.
 | Centrale termica condominiale | 1189 × 841 mm (A0) |
 | Centrale termica scolastica | 610 × 2500 mm (striscia) |
 
-Nessuna delle due è A3. ADR 0003 fissa l'A3 come formato ordinario: per una centrale
-termica reale questo forza la divisione in più tavole quasi sempre.
+Nessuna delle due è A3, e da questa misura era stata dedotta una proposta: riaprire
+ADR 0003 verso i formati grandi.
+
+**La proposta è ritirata.** Il PM l'ha respinta il 4 agosto 2026: «Formato A3 oppure A4
+se il disegno è proprio piccolo. Non voglio A0 o strisce.» Registrata come D-058.
+
+La deduzione era sbagliata nel metodo, non solo nell'esito: due tavole trovate in rete
+dicono cosa fa chi le ha disegnate, non cosa deve fare uno studio che stampa in ufficio e
+consegna elaborati che il cliente possa maneggiare. Il vincolo di formato è una scelta di
+prodotto già presa (D-019) e non si riapre misurando esempi altrui. Quello che le due
+tavole insegnano davvero sta nei paragrafi seguenti — corsie, codifica delle linee,
+composizione — e vale identico su una A3.
 
 ### 2.2 La composizione è a corsie, non a colonne
 

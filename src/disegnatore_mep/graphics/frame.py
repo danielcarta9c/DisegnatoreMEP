@@ -20,7 +20,7 @@ from pydantic import Field, model_validator
 
 from disegnatore_mep.model.base import FiniteFloat, StrictModel
 
-from .standard import A3_LANDSCAPE, GraphicStandard
+from .standard import A3_LANDSCAPE, A4_LANDSCAPE, GraphicStandard
 
 TITLE_BLOCK_HEIGHT_MM = 36.0
 """Banda del cartiglio Nove C: 34 mm di banda piu' 2 mm di filetto."""
@@ -163,3 +163,22 @@ class SheetFrame(StrictModel):
 
 
 NOVE_C_A3 = SheetFrame(standard=A3_LANDSCAPE)
+
+NOVE_C_A4 = SheetFrame(standard=A4_LANDSCAPE)
+"""L'A4 orizzontale, per i disegni piccoli (D-058).
+
+Il cartiglio A4 **non e' fra gli input del progetto**: c'e' solo
+`Cartiglio_NoveC_A3.pdf`. Le bande sono quelle misurate sull'A3 — 36 mm di
+cartiglio, 6 di intestazione, 50 di legenda — riportate tali e quali, perche'
+un cartiglio non si rimpicciolisce col foglio: contiene le stesse righe di
+testo alla stessa altezza. Quando il cartiglio A4 arrivera', queste tre quote
+vanno rimisurate su quello, non ricalcolate da qui.
+"""
+
+ORDINARY_FRAMES: tuple[SheetFrame, ...] = (NOVE_C_A4, NOVE_C_A3)
+"""I formati ordinari, dal piu' piccolo al piu' grande (D-058).
+
+L'ordine **e'** la regola di scelta: si prende il primo su cui il disegno entra.
+Oltre l'A3 non si va — ne' A2, ne' A0, ne' strisce: un elaborato che non entra
+su una A3 si divide in piu' A3 coordinate (D-019, D-056).
+"""

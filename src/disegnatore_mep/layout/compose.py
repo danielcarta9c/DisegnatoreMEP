@@ -15,10 +15,11 @@ circuiti in modo arbitrario (D-028).
 """
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graphics.frame import SheetFrame
+from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 
 from .composition import levels_of
+from .errors import LayoutError
 from .geometry import (
     CrossReference,
     DrawingGeometry,
@@ -144,9 +145,34 @@ def compose_drawing(
     )
 
 
+def compose_on_ordinary_frame(
+    project: ProjectModel,
+    catalog: ComponentRegistry,
+    frames: tuple[SheetFrame, ...] = ORDINARY_FRAMES,
+) -> tuple[SheetFrame, DrawingGeometry]:
+    """Il disegno sul piu' piccolo formato ordinario su cui entra (D-058).
+
+    Si prova l'A4 e si passa all'A3 se non ci sta. Non c'e' un criterio di
+    «disegno piccolo» da stimare a priori: la prova **e'** il criterio, perche'
+    il posizionamento fallisce esattamente quando il contenuto non entra alla
+    scala fissa, e ADR 0003 vieta di rimpicciolire i simboli per farceli stare.
+    """
+    last: LayoutError | None = None
+    for frame in frames:
+        try:
+            return frame, compose_drawing(project, catalog, frame)
+        except LayoutError as exc:
+            last = exc
+    reason = str(last) if last is not None else "no format was offered to try"
+    raise LayoutError(
+        f"the plant does not fit on any ordinary sheet format: {reason}"
+    ) from last
+
+
 __all__ = [
     "SheetLink",
     "compose_drawing",
+    "compose_on_ordinary_frame",
     "compose_sheet",
     "inline_component_ids",
 ]
