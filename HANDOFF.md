@@ -20,7 +20,7 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 5 | `PROJECT_STATE.md` | Stato vivo e prossimo passo |
 | 6 | `docs/specs/2026-08-01-disegnatore-mep-design.md` | Design consolidato e approvato |
 | 7 | `docs/adr/README.md`, poi `docs/adr/0001-*.md` fino a `0004-*.md` | Decisioni architetturali in ordine cronologico |
-| 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-065 |
+| 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-071 |
 | 9 | `docs/ROADMAP.md` | Fasi del progetto e perimetro futuro |
 | 9bis | **`docs/DEFERRED.md`** | **Decisioni rimandate e note di sviluppo futuro.** Ogni «per ora no» del progetto sta qui col suo perché e con cosa lo sbloccherebbe. Leggerlo prima di proporre al PM qualcosa che è già stato rimandato |
 | 10 | `docs/ARCHITECTURE.md` | Struttura del codice effettivamente consegnato |
@@ -30,6 +30,7 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 14 | `docs/plans/2026-08-01-foundation-core-plan.md` — **solo l'appendice finale** | Il piano P0 eseguito e le sue deviazioni. Il corpo contiene codice difettoso |
 | 15 | **`docs/plans/2026-08-03-graphic-system-symbol-library-plan.md` — solo l'appendice finale** | Il piano grafico eseguito. **Sedici difetti corretti in esecuzione**, sei del piano e dieci trovati dalle revisioni. Anche qui il corpo non è stato riscritto |
 | 15bis | **`docs/plans/2026-08-04-layout-routing-multitavola-plan.md` — §0, §2 e l'appendice** | Il piano di layout, **eseguito**. Il §0 porta le decisioni di prodotto e perché una quarta domanda era mal posta; il §2 le tre scoperte fatte prototipando; l'appendice i nove difetti trovati eseguendo. Il corpo dei task è stato scritto prima e non riscritto |
+| 15ter | **`docs/plans/2026-08-04-rules-engine-plan.md` — §2, §3 e l'appendice** | Il motore delle regole, **eseguito**. Il §2 porta i due difetti di progetto trovati prototipando, il §3 i vincoli — a partire da «una regola non può nominare un componente» — e l'appendice i sette difetti trovati eseguendo |
 | 16 | `docs/research/README.md` e `docs/research/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
 | 17 | `assets/cartigli/README.md` e `releases/README.md` | Vincoli su cartiglio e rilascio |
 | 18 | [`nove-c-kit` PLAYBOOK](https://github.com/danielcarta9c/nove-c-kit/blob/main/PLAYBOOK.md) e [`EXAMPLES`](https://github.com/danielcarta9c/nove-c-kit/blob/main/EXAMPLES.md) | Metodo di project management Nove C |
@@ -59,21 +60,22 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 
 ## 3. Stato attuale del progetto
 
-- **Fase:** fondazione canonica, sistema grafico e **motore di layout** completati. Il nucleo disegna una tavola A3 del caso D-011. Rendering del cartiglio, PDF e distinta non ancora pianificati.
+- **Fase:** fondazione canonica, sistema grafico, motore di layout e **motore delle regole** completati. Il nucleo disegna una tavola A3 del caso D-011. Rendering del cartiglio, PDF e distinta non ancora pianificati.
 - **Versione installabile:** nessuna release; `releases/latest/` non è ancora popolata.
-- **Verifica:** 416 test verdi; `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`.
-- **Libreria:** venti simboli pubblicati in `assets/symbols/` più otto di fixture, tutti con riquadro e porte su nodi di griglia (D-054) e taglie che seguono la gerarchia dimensionale (D-055). Entrambe rigenerabili identiche.
+- **Verifica:** 461 test verdi; `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`.
+- **Libreria:** trentuno simboli pubblicati in `assets/symbols/` più otto di fixture, tutti con riquadro e porte su nodi di griglia (D-054) e taglie che seguono la gerarchia dimensionale (D-055). Entrambe rigenerabili identiche.
 - **Il gate G0 di P0 regge ancora.** Il fingerprint del progetto misto è `31a6198ee9697f07e2c10199e27781d10e70c058201fb59b95a9f5a94a4d96ac`: si è mosso una volta, al Task 3 del piano di layout, perché il documento dichiara ora `schema_version` `1.1.0`. Il valore precedente era `3347374e8b3f006c6f387c6228e0d9d2b885cbf57e65991937e985af32306573`.
 - **Ambiente:** ricostruibile da zero con `bash scripts/setup-env.sh`. **Da eseguire come prima cosa in una sessione cloud**, che riparte sempre da un clone pulito.
-- **Ramo:** la fase di layout è su `claude/layout-routing-multitable-plan-cbezrw`, **non ancora integrata in `main`**: le due fasi precedenti erano state chiuse con un merge esplicito, e questa attende il giudizio del PM sulla prima tavola.
+- **Ramo:** layout e regole sono su `claude/layout-routing-multitable-plan-cbezrw`, **non ancora integrato in `main`**: le due fasi precedenti erano state chiuse con un merge esplicito, e questa attende il giudizio del PM.
 - **In flight:** nessuna modifica applicativa a metà.
 - **Blocco:** nessuno. La prova fisica di stampa è stata superata il 4 agosto 2026.
-- **Check rapido alla ripresa:** `git status --short` vuoto; `.venv/bin/python -m pytest -q` deve dare 416 passed.
+- **Check rapido alla ripresa:** `git status --short` vuoto; `.venv/bin/python -m pytest -q` deve dare 461 passed.
 
 ---
 
 ## 4. Cosa è cambiato dall'ultima sessione (delta)
 
+- **P1 è fatto: il progetto ha il suo primo impianto che nessuno ha scritto a mano.** Da una topologia essenziale escono quindici integrazioni motivate — vaso di espansione, valvola di sicurezza, filtro, defangatore, separatore d'aria, riempimento, scarico, strumenti, e il gruppo sanitario del bollitore — ciascuna con categoria e fonte, e nessuna entra nel modello finché non viene applicata. Sette difetti trovati eseguendo, nell'appendice del piano.
 - **Il PM ha giudicato la tavola, tre volte, e ogni giudizio è diventato una regola.** Il ritorno blu che entrava nella valvola a tre vie (D-059), i sali-scendi intorno al circolatore (D-060), le linee sovrapposte per il lungo (D-062). Tutte e tre erano difetti in codice consegnato, e tutte e tre erano misurabili: nessuna ha avuto bisogno di un giudizio soggettivo, una volta capita. È l'osservazione da cui nasce D-065.
 - **Fatto il punto sullo stato reale del progetto**, perché ci si stava perdendo a tarare il disegno di un caso solo. Risultato: P0, P2 e P4 fatte; P1 (regole) e P3 (pacchetti di dominio) mai iniziate; P5 a metà, con l'SVG ma senza cartiglio, PDF, distinta né preflight; P6 e P7 mai iniziate. Il file di prova è scritto a mano e non è un impianto vero: è **questo** che tiene il foglio mezzo vuoto, non il layout.
 - **Deciso come la skill verifica prima di consegnare** (D-063, D-064, D-065), e riscritta la §12 della specifica di conseguenza.
@@ -96,7 +98,8 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 - **La regola su linee e posizioni è quella del PM, ed è implementata (D-060, D-062).** «Minimizzare le curve disegnate, minimizzare gli attraversamenti tra linee e minimizzare la lunghezza delle linee, mantenendo però ordinamenti da sinistra a destra», e «vietato sovrapporre longitudinalmente: sempre separate e ben distinte». Le prime tre sono pesi dell'instradamento; la quarta è un vincolo del posizionamento; la quinta è un **divieto**, non un costo — un costo si può sempre pagare, ed era quello che il motore faceva. Non trattarle come estetica: sono la specifica del disegno, e `tests/layout/test_objective.py` le misura.
 - **Come la skill verifica prima di consegnare è deciso (D-063, D-064, D-065)**, ed è la risposta a una domanda che la specifica aveva lasciato a metà: §12.4 chiedeva un controllo visivo **di release, umano**, e nessuno aveva progettato la verifica dentro la skill. Ora c'è, a tre livelli, con il vincolo che il ciclo cambia gli ingressi e mai il disegno.
 - **Il formato è deciso e non si riapre (D-058):** A3 orizzontale, A4 se il disegno è proprio piccolo. Niente A0, niente strisce. La proposta contraria, dedotta da due tavole pubbliche misurate in rete, è stata respinta dal PM ed è ritirata dal documento di ricerca. Non dedurre un vincolo di prodotto misurando esempi altrui.
-- **Prossimo passo, concordato col PM il 4 agosto 2026: P1, il motore delle regole.** Non P5. Il motivo sta nel backlog di `PROJECT_STATE.md`: il caso di prova è scritto a mano e ha dieci componenti, senza vaso di espansione, gruppo di riempimento, valvole di sicurezza né diametri. Finché il modello non li genera, ogni giudizio sulla tavola giudica un impianto che non esiste. Poi P3A idronico, poi P5 col preflight grafico, poi P6 con il cold eye review.
+- **Prossimo passo: P3A, il pacchetto di dominio idronico**, insieme all'allargamento del contratto `DomainPack` che va fatto **prima** che i quattro domini procedano in parallelo. Poi P5 col preflight grafico, poi P6 col cold eye review.
+- **Una regola non può nominare un componente** (D-069), e una prova automatica lo presidia sull'intero pacchetto pubblicato. È il differenziale del prodotto: il motore delle regole è il posto da cui un catalogo di schemi tipo rientrerebbe dalla porta di servizio.
 - **Sull'instradamento non si torna** finché non c'è un impianto completo da disegnare. Con un caso povero qualunque intervento è un'ipotesi, non una correzione.
 - Resta aperta la domanda P5 del PM: acquistare UNI 9511.
 - **Poi:** scrivere il piano di rendering, cartiglio e PDF. Deve chiudere anche i due limiti che il layout lascia aperti, elencati nel debito noto di `PROJECT_STATE.md`.

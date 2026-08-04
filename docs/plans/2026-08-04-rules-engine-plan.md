@@ -1,7 +1,7 @@
 # Piano P1 — Motore delle regole e prima libreria idronica
 
 **Data:** 4 agosto 2026
-**Stato:** scritto, non eseguito. In attesa di approvazione del PM.
+**Stato:** **eseguito** il 4 agosto 2026. Il corpo dei task è stato scritto prima e non riscritto: in caso di divergenza fa fede l'appendice.
 **Fase:** P1 della roadmap master. Segue P0 (fondazione), P2 (grafica) e P4 (layout).
 
 ---
@@ -492,6 +492,57 @@ l'appendice di questo piano con i difetti trovati eseguendo.
 
 ## Appendice — Difetti trovati eseguendo
 
-*Da compilare durante l'esecuzione. Il corpo dei task sopra è stato scritto prima e non
-verrà riscritto: come per i piani precedenti, in caso di divergenza **fa fede
-l'appendice**.*
+Sette, oltre ai due già trovati prototipando (§2.2 e §2.3). Tutti in codice scritto
+durante questa esecuzione, tutti trovati da un test o dal disegno che si rifiutava di
+uscire.
+
+**1. Una regola per componente si accontenta di un accessorio sul pezzo.** Il criterio di
+soddisfazione guardava il singolo attacco, quindi l'intercettazione del volano veniva
+riproposta a ogni passata: la valvola era finita sull'attacco primario, e quello
+secondario risultava scoperto. Per una regola *per componente* basta che il pezzo sia
+servito da qualche parte.
+
+**2. Un componente servito su una rete è servito e basta.** Il volano sta sul primario e
+sul secondario. La seconda passata non registrava chi era già a posto, perché non aveva
+proposto nulla per lui, e sulla rete successiva ricominciava.
+
+**3. Il criterio di soddisfazione guardava solo il vicino.** Dopo tre applicazioni una
+tubazione porta parecchi accessori in fila: lo scarico già posato due pezzi più in là non
+veniva visto. Ora si cammina lungo la fila.
+
+**4. Il verso di una connessione non si sceglie.** Va sempre da una porta che esce a una
+che entra. Orientare l'accessorio rispetto all'ancoraggio produceva connessioni fra due
+uscite, e il validatore topologico le respingeva — correttamente.
+
+**5. Un accessorio senza sottosistema non sta su nessuna tavola.** Il layout lo rifiuta
+invece di farlo sparire in silenzio, con una diagnostica che li elencava tutti e diciotto.
+Ora un accessorio entra nel gruppo funzionale del pezzo che serve.
+
+**6. Un accessorio attaccato al fianco di un componente chiude un corridoio.** La valvola
+di sicurezza della pompa di calore si è posata a due millimetri e mezzo dal suo bordo, e
+fra i due non è rimasta una sola colonna libera: il ritorno del primario non aveva più da
+dove scendere, e l'instradamento è fallito con una diagnostica che parlava di tutt'altro.
+Da qui `END_CLEARANCE_MM`, distinto dalla distanza fra due accessori: fra due accessori
+basta che si distinguano, contro un componente serve una colonna libera.
+
+**7. L'ingresso freddo sul fondo di un accumulo è irraggiungibile.** Un attacco sulla
+faccia inferiore di un bollitore appoggiato a terra vorrebbe una tubazione che passa sotto
+la linea di terra. Spostato sul fianco, in basso, che è anche come lo disegna un tecnico.
+
+### Cosa è cambiato rispetto al piano
+
+- **Il posizionamento ha dovuto imparare a fare spazio.** Il piano non lo prevedeva: gli
+  stacchi fra colonne e fra fasce sono ora dimensionati sugli accessori che quelle tratte
+  porteranno, e chi prosegue nella fascia successiva si posa per ultimo. Senza, la tratta
+  che collega due fasce si ritrovava senza rettilineo e il foglio falliva dopo
+  l'instradamento, quando spostare qualcosa non è più possibile.
+- **Il corridoio di bordo è sceso da quattro colonne a tre.** Quattro era un numero tondo,
+  non una misura.
+- **Le valvole di intercettazione sono una per componente, non una per attacco.**
+  Sezionare ogni attacco è corretto e raddoppia gli accessori: registrato in
+  `docs/DEFERRED.md` §6.
+- **Il caso completo non entra su una A3 sola** e si divide in due tavole, che è quello che
+  D-056 prevede. L'unico taglio possibile è fra la distribuzione e le zone, perché una
+  tratta che attraversa un confine non può portare accessori: anche questo è in `DEFERRED`.
+- **Il caso essenziale di P1 è un file nuovo**, non quello del piano di layout. Mutare la
+  fixture di un'altra fase avrebbe fatto cadere tredici prove che non c'entravano nulla.
