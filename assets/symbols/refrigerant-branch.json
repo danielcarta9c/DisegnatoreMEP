@@ -2,8 +2,8 @@
   "id": "refrigerant-branch",
   "version": "1.0.0",
   "name": "Derivazione refrigerante",
-  "width_mm": 8.0,
-  "height_mm": 8.0,
+  "width_mm": 10.0,
+  "height_mm": 10.0,
   "allowed_rotations_deg": [
     0,
     90,
@@ -15,19 +15,19 @@
       "id": "a",
       "face": "left",
       "x_mm": 0.0,
-      "y_mm": 4.0
+      "y_mm": 5.0
     },
     {
       "id": "b",
       "face": "right",
-      "x_mm": 8.0,
-      "y_mm": 4.0
+      "x_mm": 10.0,
+      "y_mm": 5.0
     },
     {
       "id": "c",
       "face": "bottom",
-      "x_mm": 4.0,
-      "y_mm": 8.0
+      "x_mm": 5.0,
+      "y_mm": 10.0
     }
   ],
   "keep_out": {

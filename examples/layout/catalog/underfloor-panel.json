@@ -1,0 +1,31 @@
+{
+  "id": "underfloor-panel",
+  "version": "1.0.0",
+  "name": "Pannello radiante",
+  "functions": [
+    "emission"
+  ],
+  "symbol_id": "underfloor-panel",
+  "composite": false,
+  "ports": [
+    {
+      "id": "in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "out",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

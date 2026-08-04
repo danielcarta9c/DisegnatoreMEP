@@ -145,76 +145,76 @@ def symbol(
 SYMBOLS: list[tuple[dict[str, Any], str]] = [
     symbol(
         "boundary-gas-source",
-        6.0,
-        6.0,
-        [symbol_port("out", "right", 6.0, 3.0)],
-        '<circle cx="3" cy="3" r="2"/><line x1="5" y1="3" x2="6" y2="3"/>',
+        5.0,
+        5.0,
+        [symbol_port("out", "right", 5.0, 2.5)],
+        '<circle cx="2.5" cy="2.5" r="1.6"/><line x1="4.1" y1="2.5" x2="5" y2="2.5"/>',
     ),
     symbol(
         "boundary-hydronic-return",
-        6.0,
-        6.0,
-        [symbol_port("out", "right", 6.0, 3.0)],
-        '<rect x="1" y="1" width="4" height="4"/><line x1="5" y1="3" x2="6" y2="3"/>',
+        5.0,
+        5.0,
+        [symbol_port("out", "right", 5.0, 2.5)],
+        '<rect x="0.8" y="0.8" width="3.4" height="3.4"/><line x1="4.2" y1="2.5" x2="5" y2="2.5"/>',
     ),
     symbol(
         "boundary-hydronic-supply",
-        6.0,
-        6.0,
-        [symbol_port("in", "left", 0.0, 3.0)],
-        '<rect x="1" y="1" width="4" height="4"/><line x1="0" y1="3" x2="1" y2="3"/>',
+        5.0,
+        5.0,
+        [symbol_port("in", "left", 0.0, 2.5)],
+        '<rect x="0.8" y="0.8" width="3.4" height="3.4"/><line x1="0" y1="2.5" x2="0.8" y2="2.5"/>',
     ),
     symbol(
         "gas-boiler",
-        16.0,
-        12.0,
+        15.0,
+        10.0,
         [
-            symbol_port("gas_in", "bottom", 4.0, 12.0),
-            symbol_port("water_return", "bottom", 12.0, 12.0),
-            symbol_port("water_supply", "top", 8.0, 0.0),
+            symbol_port("gas_in", "bottom", 5.0, 10.0),
+            symbol_port("water_return", "bottom", 10.0, 10.0),
+            symbol_port("water_supply", "top", 7.5, 0.0),
         ],
-        '<rect x="1" y="1" width="14" height="10"/>'
-        '<line x1="4" y1="11" x2="4" y2="12"/>'
-        '<line x1="12" y1="11" x2="12" y2="12"/>'
-        '<line x1="8" y1="1" x2="8" y2="0"/>',
+        '<rect x="1" y="1" width="13" height="8"/>'
+        '<line x1="5" y1="9" x2="5" y2="10"/>'
+        '<line x1="10" y1="9" x2="10" y2="10"/>'
+        '<line x1="7.5" y1="1" x2="7.5" y2="0"/>',
     ),
     symbol(
         "supply-fan",
-        8.0,
-        8.0,
-        [symbol_port("out", "right", 8.0, 4.0)],
-        '<circle cx="4" cy="4" r="2.2"/><line x1="6.2" y1="4" x2="8" y2="4"/>',
+        10.0,
+        10.0,
+        [symbol_port("out", "right", 10.0, 5.0)],
+        '<circle cx="5" cy="5" r="3"/><line x1="8" y1="5" x2="10" y2="5"/>',
     ),
     symbol(
         "air-terminal",
-        8.0,
-        8.0,
-        [symbol_port("in", "left", 0.0, 4.0)],
-        '<rect x="2" y="1" width="5" height="6"/><line x1="0" y1="4" x2="2" y2="4"/>',
+        10.0,
+        10.0,
+        [symbol_port("in", "left", 0.0, 5.0)],
+        '<rect x="2" y="1.5" width="7" height="7"/><line x1="0" y1="5" x2="2" y2="5"/>',
     ),
     symbol(
         "vrv-outdoor",
         10.0,
         10.0,
         [
-            symbol_port("liquid_out", "right", 10.0, 3.0),
-            symbol_port("gas_in", "right", 10.0, 7.0),
+            symbol_port("liquid_out", "right", 10.0, 2.5),
+            symbol_port("gas_in", "right", 10.0, 7.5),
         ],
         '<rect x="1" y="1" width="8" height="8"/>'
-        '<line x1="9" y1="3" x2="10" y2="3"/>'
-        '<line x1="9" y1="7" x2="10" y2="7"/>',
+        '<line x1="9" y1="2.5" x2="10" y2="2.5"/>'
+        '<line x1="9" y1="7.5" x2="10" y2="7.5"/>',
     ),
     symbol(
         "vrv-indoor",
         10.0,
         10.0,
         [
-            symbol_port("liquid_in", "left", 0.0, 3.0),
-            symbol_port("gas_out", "left", 0.0, 7.0),
+            symbol_port("liquid_in", "left", 0.0, 2.5),
+            symbol_port("gas_out", "left", 0.0, 7.5),
         ],
         '<rect x="1" y="1" width="8" height="8"/>'
-        '<line x1="0" y1="3" x2="1" y2="3"/>'
-        '<line x1="0" y1="7" x2="1" y2="7"/>',
+        '<line x1="0" y1="2.5" x2="1" y2="2.5"/>'
+        '<line x1="0" y1="7.5" x2="1" y2="7.5"/>',
     ),
 ]
 

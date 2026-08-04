@@ -1,0 +1,40 @@
+{
+  "id": "diverting-valve-3way",
+  "version": "1.0.0",
+  "name": "Valvola deviatrice a tre vie",
+  "width_mm": 10.0,
+  "height_mm": 10.0,
+  "allowed_rotations_deg": [
+    0,
+    90,
+    180,
+    270
+  ],
+  "ports": [
+    {
+      "id": "in",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 5.0
+    },
+    {
+      "id": "out_a",
+      "face": "right",
+      "x_mm": 10.0,
+      "y_mm": 5.0
+    },
+    {
+      "id": "out_b",
+      "face": "bottom",
+      "x_mm": 5.0,
+      "y_mm": 10.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 2.0,
+    "top_mm": 0.0,
+    "bottom_mm": 2.0
+  },
+  "source": "CONV-GRAFICA-001"
+}

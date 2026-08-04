@@ -2,8 +2,8 @@
   "id": "boundary-gas-source",
   "version": "1.0.0",
   "name": "Confine gas",
-  "width_mm": 6.0,
-  "height_mm": 6.0,
+  "width_mm": 5.0,
+  "height_mm": 5.0,
   "allowed_rotations_deg": [
     0,
     90,
@@ -14,8 +14,8 @@
     {
       "id": "out",
       "face": "right",
-      "x_mm": 6.0,
-      "y_mm": 3.0
+      "x_mm": 5.0,
+      "y_mm": 2.5
     }
   ],
   "keep_out": {

@@ -1,21 +1,47 @@
-"""Genera la prima libreria trasversale di simboli grafici.
+"""Genera la libreria dei simboli pubblicati.
 
-Dodici simboli, quattro per dominio (idronico, aeraulico, refrigerante, gas),
-tutti in linea o meno secondo la tabella del Task 6, con porte sul perimetro
-e faccia coerente con il lato. Vedi
-`.superpowers/sdd/2026-08-03-graphic-system-symbol-library-plan/task-6-brief.md`.
+Venti simboli su quattro domini (idronico, aeraulico, refrigerante, gas), con
+porte sul perimetro, faccia coerente con il lato e **ogni coordinata su un
+nodo della griglia** da 2,5 mm: senza quest'ultima proprieta' l'instradamento
+ortogonale non raggiunge nessun attacco (D-054).
+
+## La gerarchia dimensionale
+
+In una tavola tecnica la taglia di un simbolo comunica il peso del componente
+nell'impianto: una valvola si disegna piccola, un accumulo grande. D-050
+registrava le taglie uniformi della prima libreria come convenzione di prova;
+questa e' la gerarchia che le sostituisce (D-055).
+
+    accessorio in linea    7,5 x 5     3 x 2 passi
+    accessorio terminale   5 x 10      2 x 4
+    apparecchio            10 x 10     4 x 4
+    terminale              15 x 10     6 x 4
+    collettore             30 x 5      12 x 2
+    vaso                   10 x 15     4 x 6
+    macchina               20 x 15     8 x 6
+    accumulo               15 x 25     6 x 10
+
+L'area di una valvola sta dieci volte in quella di un accumulo.
+
+Ogni lato e' un multiplo del passo. Il lato su cui una porta e' **centrata** e'
+un numero **pari** di passi, cosi' il centro cade su un nodo: 7,5 x 5 e'
+legittimo perche' le sue porte stanno a sinistra e a destra, centrate
+sull'altezza, che e' di due passi.
+
+## I corpi
 
 Ogni corpo SVG e' un frammento senza radice `<svg>`, disegnato in coordinate
-locali in millimetri con l'origine nell'angolo in alto a sinistra del
-riquadro. Lo spessore e il colore del tratto sono decisi dal foglio che
-ospita il simbolo (vedi `graphics/svg.py`): un corpo non dichiara mai il
-proprio `stroke`. Un `fill` compare solo dove rappresenta davvero una parte
-piena del simbolo (il disco di una valvola di ritegno, il rotore di una
-pompa, il punto di giunzione di una derivazione, il perno di un contatore).
+locali in millimetri con l'origine nell'angolo in alto a sinistra del riquadro.
+Lo spessore e il colore del tratto sono decisi dal foglio che ospita il simbolo:
+un corpo non dichiara mai il proprio `stroke`. Un `fill` compare solo dove
+rappresenta una parte davvero piena (il disco di un ritegno, la freccia di una
+pompa, il punto di giunzione di una derivazione).
 
-Rieseguire questo script deve produrre file bit per bit identici: nessuna
-data, nessun ordine di dizionario e nessuna rappresentazione in virgola
-mobile puo' variare da un'esecuzione all'altra.
+I corpi sono **disegnati in funzione del riquadro**, non scritti come
+coordinate fisse: cambiare una taglia della gerarchia non puo' cosi' lasciare
+un disegno fuori dal proprio box.
+
+Rieseguire questo script deve produrre file bit per bit identici.
 """
 
 import json
@@ -32,35 +58,38 @@ SYMBOLS_DIR = REPO_ROOT / "assets" / "symbols"
 VERSION = "1.0.0"
 
 # Orientamenti in cui un simbolo puo' essere disegnato in un impianto reale.
-# E' un vincolo tecnico, non geometrico: tutti e quattro sono sempre possibili
-# geometricamente, ma non tutti sono corretti su una tavola. Il default vale
-# per i componenti che ammettono qualunque orientamento; chi non lo ammette
-# dichiara il proprio elenco (vedi AIR_VENT e EXPANSION_VESSEL sotto e
-# docs/GRAPHIC_STANDARD.md §3.2).
+# E' un vincolo tecnico, non geometrico (D-049).
 ALLOWED_ROTATIONS_DEG = [0, 90, 180, 270]
-
-# Uno sfiato d'aria automatico scarica verso l'alto: disegnarlo rivolto in
-# basso o di lato e' sbagliato.
 AIR_VENT_ROTATIONS_DEG = [0]
-
-# Un vaso di espansione a membrana si disegna in piedi, non coricato.
+"""Uno sfiato d'aria automatico scarica verso l'alto."""
 EXPANSION_VESSEL_ROTATIONS_DEG = [0, 180]
-INLINE_MM = 6.0
-CLEARANCE_MM = A3_LANDSCAPE.min_clearance_mm
+"""Un vaso di espansione a membrana si disegna in piedi."""
+UPRIGHT_ROTATIONS_DEG = [0]
+"""Accumuli e macchine si disegnano nel proprio verso: coricarli non aiuta a leggere."""
 
-# Convenzione grafica del progetto, non una fonte esterna: le forme sono
-# disegnate secondo la prassi schematica comune, ma nessuno standard esterno
-# e' stato acquisito o valutato per questa libreria (vedi
-# docs/research/SOURCE_REGISTER.md). source registra quella provenienza
-# reale - la convenzione adottata da questo progetto - non una citazione
-# non verificata.
+CLEARANCE_MM = A3_LANDSCAPE.min_clearance_mm
+GRID_MM = A3_LANDSCAPE.grid_mm
+
+# La gerarchia dimensionale (D-055). Ogni misura e' un multiplo del passo.
+INLINE_ACCESSORY = (7.5, 5.0)
+TERMINAL_ACCESSORY = (5.0, 10.0)
+DEVICE = (10.0, 10.0)
+TERMINAL = (15.0, 10.0)
+MANIFOLD = (30.0, 5.0)
+VESSEL = (10.0, 15.0)
+MACHINE = (20.0, 15.0)
+STORAGE = (15.0, 25.0)
+
 SOURCE = "CONV-GRAFICA-001"
+"""Convenzione grafica interna del progetto, non una norma esterna (D-047)."""
+
+
+def n(value: float) -> str:
+    """Numero stabile nel testo SVG: nessuna coda in virgola mobile."""
+    return f"{round(value, 4):g}"
 
 
 def face_center(face: str, width_mm: float, height_mm: float) -> tuple[float, float]:
-    """Coordinata centrata sulla faccia indicata, secondo la regola del Task 6:
-    verticale -> meta' altezza, orizzontale -> meta' larghezza.
-    """
     return {
         "left": (0.0, height_mm / 2),
         "right": (width_mm, height_mm / 2),
@@ -74,18 +103,346 @@ def port(port_id: str, face: str, width_mm: float, height_mm: float) -> dict[str
     return {"id": port_id, "face": face, "x_mm": x_mm, "y_mm": y_mm}
 
 
-def keep_out(ports: list[dict[str, Any]]) -> dict[str, float]:
-    """keep_out pari a min_clearance_mm sui lati che portano una porta, 0 sugli altri.
+def port_at(port_id: str, face: str, along_mm: float, width_mm: float, height_mm: float) -> dict[str, Any]:
+    """Porta su una faccia, a una posizione scelta invece che al centro."""
+    coordinate = {
+        "left": (0.0, along_mm),
+        "right": (width_mm, along_mm),
+        "top": (along_mm, 0.0),
+        "bottom": (along_mm, height_mm),
+    }[face]
+    return {"id": port_id, "face": face, "x_mm": coordinate[0], "y_mm": coordinate[1]}
 
-    Derivato dalle porte del simbolo, non da un elenco parallelo di nomi di lato
-    passato da chi chiama: un refuso come "rigth" non produceva alcun errore e
-    spediva in silenzio un simbolo senza area di rispetto.
-    """
+
+def keep_out(ports: list[dict[str, Any]]) -> dict[str, float]:
+    """Area di rispetto sui lati che portano una porta, derivata dalle porte."""
     faces = {item["face"] for item in ports}
     return {
         f"{side}_mm": CLEARANCE_MM if side in faces else 0.0
         for side in ("left", "right", "top", "bottom")
     }
+
+
+# ---------------------------------------------------------------------------
+# Corpi, disegnati in funzione del riquadro.
+# ---------------------------------------------------------------------------
+
+
+def stubs_horizontal(w: float, h: float, inset: float) -> str:
+    """I due monconi d'attacco, da bordo a bordo verso il corpo centrale."""
+    y = h / 2
+    return (
+        f'<line x1="0" y1="{n(y)}" x2="{n(inset)}" y2="{n(y)}"/>'
+        f'<line x1="{n(w - inset)}" y1="{n(y)}" x2="{n(w)}" y2="{n(y)}"/>'
+    )
+
+
+def valve_isolation_body(w: float, h: float) -> str:
+    """La clessidra delle valvole: due triangoli opposti al vertice."""
+    inset = w / 6
+    left, right = inset, w - inset
+    top, bottom = h * 0.1, h * 0.9
+    return (
+        stubs_horizontal(w, h, inset)
+        + f'<path d="M{n(left)} {n(top)} L{n(right)} {n(bottom)} '
+        f'L{n(right)} {n(top)} L{n(left)} {n(bottom)} Z"/>'
+    )
+
+
+def valve_check_body(w: float, h: float) -> str:
+    """Ritegno: disco pieno a triangolo che appoggia su una battuta."""
+    inset = w / 6
+    left, right = inset, w - inset
+    top, bottom = h * 0.2, h * 0.8
+    return (
+        stubs_horizontal(w, h, inset)
+        + f'<path d="M{n(left)} {n(top)} L{n(left)} {n(bottom)} '
+        f'L{n(right - 0.2)} {n(h / 2)} Z" fill="black"/>'
+        f'<line x1="{n(right - 0.2)}" y1="{n(top)}" '
+        f'x2="{n(right - 0.2)}" y2="{n(bottom)}"/>'
+    )
+
+
+def strainer_body(w: float, h: float) -> str:
+    """Filtro a Y: la linea passa dritta, il cestello scende sotto."""
+    y = h / 2
+    return (
+        f'<line x1="0" y1="{n(y)}" x2="{n(w)}" y2="{n(y)}"/>'
+        f'<path d="M{n(w * 0.3)} {n(y)} L{n(w * 0.7)} {n(y)} '
+        f'L{n(w / 2)} {n(h * 0.95)} Z"/>'
+    )
+
+
+def pump_body(w: float, h: float) -> str:
+    """Macchina rotante con la freccia piena del girante."""
+    inset = w / 5
+    cx, cy = w / 2, h / 2
+    r = min(w, h) * 0.3
+    return (
+        stubs_horizontal(w, h, inset)
+        + f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>'
+        f'<path d="M{n(cx - r * 0.5)} {n(cy - r * 0.7)} '
+        f'L{n(cx - r * 0.5)} {n(cy + r * 0.7)} L{n(cx + r * 0.7)} {n(cy)} Z" fill="black"/>'
+    )
+
+
+def fan_body(w: float, h: float) -> str:
+    """Stessa macchina rotante, ma con l'elica a tre pale: aria, non liquido."""
+    inset = w / 5
+    cx, cy = w / 2, h / 2
+    r = min(w, h) * 0.3
+    return (
+        stubs_horizontal(w, h, inset)
+        + f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx)}" y2="{n(cy - r * 0.75)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx - r * 0.65)}" y2="{n(cy + r * 0.38)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx + r * 0.65)}" y2="{n(cy + r * 0.38)}"/>'
+    )
+
+
+def gas_meter_body(w: float, h: float) -> str:
+    """Quadrante di misura: cerchio, indice e perno pieno."""
+    inset = w / 5
+    cx, cy = w / 2, h / 2
+    r = min(w, h) * 0.29
+    return (
+        stubs_horizontal(w, h, inset)
+        + f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx + r * 0.7)}" y2="{n(cy - r * 0.55)}"/>'
+        f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r * 0.15)}" fill="black"/>'
+    )
+
+
+def gas_valve_body(w: float, h: float) -> str:
+    """La clessidra dentro un corpo circolare: valvola a sfera per il gas."""
+    inset = w / 6
+    cx, cy = w / 2, h / 2
+    r = min(w, h) * 0.42
+    d = r * 0.72
+    return (
+        stubs_horizontal(w, h, inset)
+        + f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>'
+        f'<path d="M{n(cx - d)} {n(cy - d * 0.75)} L{n(cx + d)} {n(cy + d * 0.75)} '
+        f'L{n(cx + d)} {n(cy - d * 0.75)} L{n(cx - d)} {n(cy + d * 0.75)} Z"/>'
+    )
+
+
+def duct_damper_body(w: float, h: float) -> str:
+    """Tronchetto di canale con la lama vista semi-aperta."""
+    inset = w / 6
+    box_x, box_y = inset, h * 0.1
+    box_w, box_h = w - 2 * inset, h * 0.8
+    return (
+        stubs_horizontal(w, h, inset)
+        + f'<rect x="{n(box_x)}" y="{n(box_y)}" width="{n(box_w)}" height="{n(box_h)}"/>'
+        f'<line x1="{n(box_x + box_w * 0.15)}" y1="{n(box_y + box_h * 0.15)}" '
+        f'x2="{n(box_x + box_w * 0.85)}" y2="{n(box_y + box_h * 0.85)}"/>'
+    )
+
+
+def air_diffuser_body(w: float, h: float) -> str:
+    """Collarino con le diagonali incrociate: bocchetta vista in pianta."""
+    stub = w * 0.2
+    x, y = stub, h * 0.12
+    bw, bh = w - stub - w * 0.08, h * 0.76
+    return (
+        f'<line x1="0" y1="{n(h / 2)}" x2="{n(stub)}" y2="{n(h / 2)}"/>'
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
+        f'<line x1="{n(x)}" y1="{n(y)}" x2="{n(x + bw)}" y2="{n(y + bh)}"/>'
+        f'<line x1="{n(x)}" y1="{n(y + bh)}" x2="{n(x + bw)}" y2="{n(y)}"/>'
+    )
+
+
+def air_vent_body(w: float, h: float) -> str:
+    """Bulbo su stelo con il tappo di sfiato sopra. La porta e' in basso."""
+    cx = w / 2
+    return (
+        f'<line x1="{n(cx)}" y1="{n(h)}" x2="{n(cx)}" y2="{n(h * 0.62)}"/>'
+        f'<circle cx="{n(cx)}" cy="{n(h * 0.42)}" r="{n(w * 0.34)}"/>'
+        f'<line x1="{n(cx - w * 0.3)}" y1="{n(h * 0.14)}" '
+        f'x2="{n(cx + w * 0.3)}" y2="{n(h * 0.14)}"/>'
+    )
+
+
+def expansion_vessel_body(w: float, h: float) -> str:
+    """Serbatoio con la membrana orizzontale. La porta e' in alto."""
+    cx = w / 2
+    x, y = w * 0.15, h * 0.18
+    bw, bh = w * 0.7, h * 0.75
+    return (
+        f'<line x1="{n(cx)}" y1="0" x2="{n(cx)}" y2="{n(y)}"/>'
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
+        f'<line x1="{n(x)}" y1="{n(y + bh * 0.45)}" '
+        f'x2="{n(x + bw)}" y2="{n(y + bh * 0.45)}"/>'
+    )
+
+
+def refrigerant_branch_body(w: float, h: float) -> str:
+    """Derivazione a T con il punto di giunzione pieno."""
+    cx, cy = w / 2, h / 2
+    return (
+        f'<line x1="0" y1="{n(cy)}" x2="{n(w)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx)}" y2="{n(h)}"/>'
+        f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(min(w, h) * 0.075)}" fill="black"/>'
+    )
+
+
+def stubs_to_ports(ports: list[dict[str, Any]], w: float, h: float, inset: float) -> str:
+    """Un moncone da ogni porta verso l'interno del riquadro.
+
+    Disegnato **dalle porte**, non da quote ripetute a mano: e' l'unico modo
+    perche' il corpo raggiunga davvero gli attacchi che il manifesto dichiara,
+    qualunque sia la taglia del riquadro.
+    """
+    segments = []
+    for item in ports:
+        x, y = item["x_mm"], item["y_mm"]
+        target = {
+            "left": (inset, y),
+            "right": (w - inset, y),
+            "top": (x, inset),
+            "bottom": (x, h - inset),
+        }[item["face"]]
+        segments.append(
+            f'<line x1="{n(x)}" y1="{n(y)}" x2="{n(target[0])}" y2="{n(target[1])}"/>'
+        )
+    return "".join(segments)
+
+
+def heat_pump_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Macchina esterna: involucro, ventilatore e batteria alettata."""
+    x, y = w * 0.06, h * 0.1
+    bw, bh = w * 0.88, h * 0.8
+    cx, cy = x + bw * 0.34, y + bh / 2
+    r = bh * 0.3
+    fins = "".join(
+        f'<line x1="{n(x + bw * (0.62 + i * 0.09))}" y1="{n(y + bh * 0.15)}" '
+        f'x2="{n(x + bw * (0.62 + i * 0.09))}" y2="{n(y + bh * 0.85)}"/>'
+        for i in range(4)
+    )
+    return (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
+        f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx)}" y2="{n(cy - r * 0.75)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx - r * 0.65)}" y2="{n(cy + r * 0.38)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx + r * 0.65)}" y2="{n(cy + r * 0.38)}"/>'
+        + fins
+        + stubs_to_ports(ports, w, h, w * 0.06)
+    )
+
+
+def cylinder_body(w: float, h: float, coil: bool, ports: list[dict[str, Any]]) -> str:
+    """Serbatoio verticale a fondi bombati. Con serpentino se scaldato da uno."""
+    x, y = w * 0.14, h * 0.06
+    bw, bh = w * 0.72, h * 0.88
+    shell = (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}" '
+        f'rx="{n(bw * 0.18)}"/>'
+    )
+    stubs = stubs_to_ports(ports, w, h, min(w, h) * 0.1)
+    if not coil:
+        return shell + stubs
+    turns = "".join(
+        f'<path d="M{n(x + bw * 0.2)} {n(y + bh * (0.28 + i * 0.14))} '
+        f'Q{n(x + bw * 0.5)} {n(y + bh * (0.35 + i * 0.14))} '
+        f'{n(x + bw * 0.8)} {n(y + bh * (0.28 + i * 0.14))}"/>'
+        for i in range(4)
+    )
+    return shell + turns + stubs
+
+
+def buffer_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Volano a quattro attacchi: serbatoio con gli stacchi sulle proprie porte."""
+    x, y = w * 0.14, h * 0.06
+    bw, bh = w * 0.72, h * 0.88
+    return (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}" '
+        f'rx="{n(bw * 0.18)}"/>' + stubs_to_ports(ports, w, h, x)
+    )
+
+
+def diverting_valve_body(w: float, h: float) -> str:
+    """Deviatrice a tre vie: la clessidra con la terza via verso il basso."""
+    cx, cy = w / 2, h / 2
+    d = min(w, h) * 0.28
+    return (
+        f'<line x1="0" y1="{n(cy)}" x2="{n(cx - d)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(cx + d)}" y1="{n(cy)}" x2="{n(w)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy + d)}" x2="{n(cx)}" y2="{n(h)}"/>'
+        f'<path d="M{n(cx - d)} {n(cy - d * 0.8)} L{n(cx + d)} {n(cy + d * 0.8)} '
+        f'L{n(cx + d)} {n(cy - d * 0.8)} L{n(cx - d)} {n(cy + d * 0.8)} Z"/>'
+        f'<path d="M{n(cx - d * 0.8)} {n(cy + d)} L{n(cx + d * 0.8)} {n(cy + d)} '
+        f'L{n(cx)} {n(cy)} Z"/>'
+    )
+
+
+def manifold_body(w: float, h: float, outlets: tuple[float, ...]) -> str:
+    """Collettore: un corpo orizzontale con gli stacchi verso il basso."""
+    y = h / 2
+    drops = "".join(
+        f'<line x1="{n(x)}" y1="{n(y)}" x2="{n(x)}" y2="{n(h)}"/>' for x in outlets
+    )
+    return (
+        f'<rect x="0" y="{n(h * 0.2)}" width="{n(w)}" height="{n(h * 0.6)}" '
+        f'rx="{n(h * 0.3)}"/>' + drops
+    )
+
+
+def radiator_body(w: float, h: float) -> str:
+    """Radiatore: gli elementi in vista frontale."""
+    x, y = w * 0.1, h * 0.15
+    bw, bh = w * 0.8, h * 0.7
+    elements = "".join(
+        f'<line x1="{n(x + bw * frac)}" y1="{n(y)}" x2="{n(x + bw * frac)}" y2="{n(y + bh)}"/>'
+        for frac in (0.2, 0.4, 0.6, 0.8)
+    )
+    return (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
+        + elements
+        + f'<line x1="0" y1="{n(h / 2)}" x2="{n(x)}" y2="{n(h / 2)}"/>'
+        f'<line x1="{n(x + bw)}" y1="{n(h / 2)}" x2="{n(w)}" y2="{n(h / 2)}"/>'
+    )
+
+
+def underfloor_body(w: float, h: float) -> str:
+    """Pannello radiante: la serpentina dentro il proprio riquadro."""
+    x, y = w * 0.1, h * 0.15
+    bw, bh = w * 0.8, h * 0.7
+    path = [f"M{n(x + bw * 0.08)} {n(y + bh * 0.9)}"]
+    for i in range(4):
+        top = y + bh * 0.1
+        bottom = y + bh * 0.9
+        left = x + bw * (0.08 + i * 0.28)
+        path.append(f"L{n(left)} {n(top)} L{n(left + bw * 0.14)} {n(top)} "
+                    f"L{n(left + bw * 0.14)} {n(bottom)}")
+    return (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
+        f'<path d="{" ".join(path)}"/>'
+        f'<line x1="0" y1="{n(h / 2)}" x2="{n(x)}" y2="{n(h / 2)}"/>'
+        f'<line x1="{n(x + bw)}" y1="{n(h / 2)}" x2="{n(w)}" y2="{n(h / 2)}"/>'
+    )
+
+
+def fan_coil_body(w: float, h: float) -> str:
+    """Ventilconvettore: batteria alettata piu' ventilatore."""
+    x, y = w * 0.1, h * 0.15
+    bw, bh = w * 0.8, h * 0.7
+    fins = "".join(
+        f'<line x1="{n(x + bw * frac)}" y1="{n(y)}" x2="{n(x + bw * frac)}" y2="{n(y + bh)}"/>'
+        for frac in (0.15, 0.3, 0.45)
+    )
+    cx, cy = x + bw * 0.75, y + bh / 2
+    r = bh * 0.3
+    return (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
+        + fins
+        + f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx)}" y2="{n(cy - r * 0.75)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx - r * 0.65)}" y2="{n(cy + r * 0.38)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx + r * 0.65)}" y2="{n(cy + r * 0.38)}"/>'
+        + f'<line x1="0" y1="{n(h / 2)}" x2="{n(x)}" y2="{n(h / 2)}"/>'
+        f'<line x1="{n(x + bw)}" y1="{n(h / 2)}" x2="{n(w)}" y2="{n(h / 2)}"/>'
+    )
 
 
 @dataclass(frozen=True)
@@ -102,213 +459,183 @@ class SymbolSpec:
     )
 
 
-def inline_symbol(symbol_id: str, name: str, body: str) -> SymbolSpec:
-    """Componente in linea 6x6 mm: due porte opposte, sinistra e destra."""
-    width_mm = height_mm = INLINE_MM
+def inline_symbol(
+    symbol_id: str,
+    name: str,
+    size: tuple[float, float],
+    body_of: Any,
+) -> SymbolSpec:
+    """Componente in linea: due porte opposte, a sinistra e a destra."""
+    w, h = size
     return SymbolSpec(
         id=symbol_id,
         name=name,
-        width_mm=width_mm,
-        height_mm=height_mm,
+        width_mm=w,
+        height_mm=h,
         inline=True,
-        ports=[
-            port("a", "left", width_mm, height_mm),
-            port("b", "right", width_mm, height_mm),
-        ],
-        body=body,
+        ports=[port("a", "left", w, h), port("b", "right", w, h)],
+        body=body_of(w, h),
     )
 
 
 def single_port_symbol(
     symbol_id: str,
     name: str,
-    width_mm: float,
-    height_mm: float,
+    size: tuple[float, float],
     face: str,
-    body: str,
+    body_of: Any,
     allowed_rotations_deg: list[int] | None = None,
 ) -> SymbolSpec:
-    """Componente non in linea con una sola porta, centrata su una faccia."""
+    w, h = size
     return SymbolSpec(
         id=symbol_id,
         name=name,
-        width_mm=width_mm,
-        height_mm=height_mm,
+        width_mm=w,
+        height_mm=h,
         inline=False,
-        ports=[port("a", face, width_mm, height_mm)],
-        body=body,
+        ports=[port("a", face, w, h)],
+        body=body_of(w, h),
         allowed_rotations_deg=list(allowed_rotations_deg or ALLOWED_ROTATIONS_DEG),
     )
 
 
-# ---------------------------------------------------------------------------
-# Corpi SVG. Ogni costante e' il frammento locale in millimetri di un solo
-# simbolo: nessuna funzione qui sceglie una forma in base al tipo di impianto,
-# ogni corpo e' semplicemente un dato di disegno.
-# ---------------------------------------------------------------------------
+def two_port_terminal(symbol_id: str, name: str, body_of: Any) -> SymbolSpec:
+    """Terminale d'impianto: ingresso a sinistra, uscita a destra.
 
-# valve-isolation: valvola a farfalla generica, riquadro 6x6 mm. Corpo dato
-# testualmente dal brief del Task 6 - due monconi di attacco e una singola
-# path che, senza riempimento, traccia i due lati verticali e le due
-# diagonali del riquadro interno: la classica "clessidra" delle valvole.
-VALVE_ISOLATION_BODY = (
-    '<line x1="0" y1="3" x2="1" y2="3"/>'
-    '<line x1="5" y1="3" x2="6" y2="3"/>'
-    '<path d="M1 1 L5 5 L5 1 L1 5 Z"/>'
-)
+    Non e' un componente in linea: la tubazione ci finisce dentro, non ci passa
+    attraverso, quindi non dichiara alcuna interruzione di linea.
+    """
+    w, h = TERMINAL
+    return SymbolSpec(
+        id=symbol_id,
+        name=name,
+        width_mm=w,
+        height_mm=h,
+        inline=False,
+        ports=[port("in", "left", w, h), port("out", "right", w, h)],
+        body=body_of(w, h),
+    )
 
-# valve-check: stessa famiglia della valvola di intercettazione, ma
-# direzionale - un disco pieno a forma di triangolo che appoggia su una
-# battuta perpendicolare, la convenzione grafica standard per il ritegno.
-VALVE_CHECK_BODY = (
-    '<line x1="0" y1="3" x2="1" y2="3"/>'
-    '<line x1="5" y1="3" x2="6" y2="3"/>'
-    '<path d="M1 1.3 L1 4.7 L4.6 3 Z" fill="black"/>'
-    '<line x1="4.6" y1="1.3" x2="4.6" y2="4.7"/>'
-)
 
-# strainer: la linea principale passa dritta da a verso b - il filtro non
-# interrompe il flusso - con il cestello del filtro a Y appeso sotto,
-# base sulla linea e apice in basso. Un cerchio con una sola diagonale
-# e' stato scartato: a questa scala si legge come il segnale di divieto,
-# non come un filtro.
-STRAINER_BODY = (
-    '<line x1="0" y1="3" x2="6" y2="3"/>'
-    '<path d="M2 3 L4 3 L3 5.5 Z"/>'
-)
+HEAT_PUMP_W, HEAT_PUMP_H = MACHINE
+STORAGE_W, STORAGE_H = STORAGE
+MANIFOLD_W, MANIFOLD_H = MANIFOLD
+MANIFOLD_OUTLETS = (10.0, 20.0)
 
-# pump-circulator: macchina rotante generica (cerchio) con la freccia piena
-# del girante che indica il verso di spinta del flusso, da a verso b.
-PUMP_CIRCULATOR_BODY = (
-    '<line x1="0" y1="3" x2="1.2" y2="3"/>'
-    '<line x1="4.8" y1="3" x2="6" y2="3"/>'
-    '<circle cx="3" cy="3" r="1.8"/>'
-    '<path d="M2.1 1.8 L2.1 4.2 L4.1 3 Z" fill="black"/>'
-)
-
-# expansion-vessel: riquadro 6x10 mm, unica porta in alto. Un serbatoio con
-# la linea orizzontale della membrana che separa la parte a gas da quella
-# collegata all'impianto.
-EXPANSION_VESSEL_BODY = (
-    '<line x1="3" y1="0" x2="3" y2="2"/>'
-    '<rect x="1" y="2" width="4" height="7"/>'
-    '<line x1="1" y1="5.5" x2="5" y2="5.5"/>'
-)
-
-# air-vent: riquadro 8x8 mm, unica porta in basso. Un piccolo bulbo su uno
-# stelo, con una battuta orizzontale sopra a rappresentare il tappo di
-# sfiato - lo sfiato d'aria automatico da tubazione.
-AIR_VENT_BODY = (
-    '<line x1="4" y1="8" x2="4" y2="5"/>'
-    '<circle cx="4" cy="3.2" r="1.8"/>'
-    '<line x1="3.2" y1="1.4" x2="4.8" y2="1.4"/>'
-)
-
-# duct-damper: un tronchetto di canale d'aria (rettangolo) con la lama della
-# serranda vista semi-aperta in diagonale.
-DUCT_DAMPER_BODY = (
-    '<line x1="0" y1="3" x2="1" y2="3"/>'
-    '<line x1="5" y1="3" x2="6" y2="3"/>'
-    '<rect x="1" y="1" width="4" height="4"/>'
-    '<line x1="1.6" y1="1.6" x2="4.4" y2="4.4"/>'
-)
-
-# air-diffuser: riquadro 8x8 mm, unica porta a sinistra. Il collarino
-# rettangolare del diffusore con le due diagonali incrociate: la lettura a
-# pianta di una bocchetta a effetto radiale, distribuita in piu' direzioni.
-AIR_DIFFUSER_BODY = (
-    '<line x1="0" y1="4" x2="2" y2="4"/>'
-    '<rect x="2" y="1" width="5" height="6"/>'
-    '<line x1="2" y1="1" x2="7" y2="7"/>'
-    '<line x1="2" y1="7" x2="7" y2="1"/>'
-)
-
-# fan-inline: stessa macchina rotante della pompa (cerchio), ma con tre pale
-# a stella dal centro al posto della freccia piena - l'elica in vista
-# frontale, aria e non liquido.
-FAN_INLINE_BODY = (
-    '<line x1="0" y1="3" x2="1.2" y2="3"/>'
-    '<line x1="4.8" y1="3" x2="6" y2="3"/>'
-    '<circle cx="3" cy="3" r="1.8"/>'
-    '<line x1="3" y1="3" x2="3" y2="1.7"/>'
-    '<line x1="3" y1="3" x2="1.87" y2="3.65"/>'
-    '<line x1="3" y1="3" x2="4.13" y2="3.65"/>'
-)
-
-# refrigerant-branch: riquadro 8x8 mm, tre porte (a sinistra, b destra, c in
-# basso). Una semplice derivazione a T con il punto di giunzione pieno.
-REFRIGERANT_BRANCH_BODY = (
-    '<line x1="0" y1="4" x2="8" y2="4"/>'
-    '<line x1="4" y1="4" x2="4" y2="8"/>'
-    '<circle cx="4" cy="4" r="0.6" fill="black"/>'
-)
-
-# gas-valve: la stessa clessidra della valvola di intercettazione, ma
-# racchiusa in un corpo circolare - la convenzione della valvola a
-# maschio/sfera usata per le intercettazioni gas.
-GAS_VALVE_BODY = (
-    '<line x1="0" y1="3" x2="1" y2="3"/>'
-    '<line x1="5" y1="3" x2="6" y2="3"/>'
-    '<circle cx="3" cy="3" r="2"/>'
-    '<path d="M1.7 1.9 L4.3 4.1 L4.3 1.9 L1.7 4.1 Z"/>'
-)
-
-# gas-meter: corpo circolare con un indice e il relativo perno pieno al
-# centro - il quadrante di misura del contatore.
-GAS_METER_BODY = (
-    '<line x1="0" y1="3" x2="1.3" y2="3"/>'
-    '<line x1="4.7" y1="3" x2="6" y2="3"/>'
-    '<circle cx="3" cy="3" r="1.7"/>'
-    '<line x1="3" y1="3" x2="4.2" y2="2.1"/>'
-    '<circle cx="3" cy="3" r="0.25" fill="black"/>'
-)
-
+HEAT_PUMP_PORTS = [
+    port_at("water_supply", "right", 5.0, HEAT_PUMP_W, HEAT_PUMP_H),
+    port_at("water_return", "right", 10.0, HEAT_PUMP_W, HEAT_PUMP_H),
+]
+CYLINDER_PORTS = [
+    port_at("coil_in", "left", 7.5, STORAGE_W, STORAGE_H),
+    port_at("coil_out", "left", 17.5, STORAGE_W, STORAGE_H),
+    port_at("dhw_out", "top", 7.5, STORAGE_W, STORAGE_H),
+    port_at("cold_in", "bottom", 7.5, STORAGE_W, STORAGE_H),
+]
+BUFFER_PORTS = [
+    port_at("primary_in", "left", 5.0, STORAGE_W, STORAGE_H),
+    port_at("primary_out", "left", 20.0, STORAGE_W, STORAGE_H),
+    port_at("secondary_out", "right", 5.0, STORAGE_W, STORAGE_H),
+    port_at("secondary_in", "right", 20.0, STORAGE_W, STORAGE_H),
+]
 
 SYMBOLS: list[SymbolSpec] = [
-    # idronico
-    inline_symbol("valve-isolation", "Valvola di intercettazione", VALVE_ISOLATION_BODY),
-    inline_symbol("valve-check", "Valvola di ritegno", VALVE_CHECK_BODY),
-    inline_symbol("strainer", "Filtro a Y", STRAINER_BODY),
-    inline_symbol("pump-circulator", "Pompa di circolazione", PUMP_CIRCULATOR_BODY),
+    # --- idronico -----------------------------------------------------------
+    inline_symbol("valve-isolation", "Valvola di intercettazione", INLINE_ACCESSORY, valve_isolation_body),
+    inline_symbol("valve-check", "Valvola di ritegno", INLINE_ACCESSORY, valve_check_body),
+    inline_symbol("strainer", "Filtro a Y", INLINE_ACCESSORY, strainer_body),
+    inline_symbol("pump-circulator", "Pompa di circolazione", DEVICE, pump_body),
     single_port_symbol(
-        "expansion-vessel",
-        "Vaso di espansione",
-        6.0,
-        10.0,
-        "top",
-        EXPANSION_VESSEL_BODY,
-        EXPANSION_VESSEL_ROTATIONS_DEG,
+        "expansion-vessel", "Vaso di espansione", VESSEL, "top",
+        expansion_vessel_body, EXPANSION_VESSEL_ROTATIONS_DEG,
     ),
     single_port_symbol(
-        "air-vent",
-        "Valvola di sfiato aria",
-        8.0,
-        8.0,
-        "bottom",
-        AIR_VENT_BODY,
-        AIR_VENT_ROTATIONS_DEG,
+        "air-vent", "Valvola di sfiato aria", TERMINAL_ACCESSORY, "bottom",
+        air_vent_body, AIR_VENT_ROTATIONS_DEG,
     ),
-    # aeraulico
-    inline_symbol("duct-damper", "Serranda", DUCT_DAMPER_BODY),
-    single_port_symbol("air-diffuser", "Diffusore d'aria", 8.0, 8.0, "left", AIR_DIFFUSER_BODY),
-    inline_symbol("fan-inline", "Ventilatore in linea", FAN_INLINE_BODY),
-    # refrigerante
+    SymbolSpec(
+        id="heat-pump-air-water",
+        name="Pompa di calore aria-acqua",
+        width_mm=HEAT_PUMP_W,
+        height_mm=HEAT_PUMP_H,
+        inline=False,
+        ports=HEAT_PUMP_PORTS,
+        body=heat_pump_body(HEAT_PUMP_W, HEAT_PUMP_H, HEAT_PUMP_PORTS),
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="dhw-cylinder",
+        name="Bollitore ACS",
+        width_mm=STORAGE_W,
+        height_mm=STORAGE_H,
+        inline=False,
+        ports=CYLINDER_PORTS,
+        body=cylinder_body(STORAGE_W, STORAGE_H, True, CYLINDER_PORTS),
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="buffer-four-port",
+        name="Volano termico a quattro attacchi",
+        width_mm=STORAGE_W,
+        height_mm=STORAGE_H,
+        inline=False,
+        ports=BUFFER_PORTS,
+        body=buffer_body(STORAGE_W, STORAGE_H, BUFFER_PORTS),
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="diverting-valve-3way",
+        name="Valvola deviatrice a tre vie",
+        width_mm=DEVICE[0],
+        height_mm=DEVICE[1],
+        inline=False,
+        ports=[
+            port("in", "left", *DEVICE),
+            port("out_a", "right", *DEVICE),
+            port("out_b", "bottom", *DEVICE),
+        ],
+        body=diverting_valve_body(*DEVICE),
+    ),
+    SymbolSpec(
+        id="zone-manifold",
+        name="Collettore di zona",
+        width_mm=MANIFOLD_W,
+        height_mm=MANIFOLD_H,
+        inline=False,
+        ports=[
+            port("in", "left", MANIFOLD_W, MANIFOLD_H),
+            *(
+                port_at(f"out_{index + 1}", "bottom", x, MANIFOLD_W, MANIFOLD_H)
+                for index, x in enumerate(MANIFOLD_OUTLETS)
+            ),
+        ],
+        body=manifold_body(MANIFOLD_W, MANIFOLD_H, MANIFOLD_OUTLETS),
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    two_port_terminal("radiator", "Radiatore", radiator_body),
+    two_port_terminal("underfloor-panel", "Pannello radiante", underfloor_body),
+    two_port_terminal("fan-coil", "Ventilconvettore", fan_coil_body),
+    # --- aeraulico ----------------------------------------------------------
+    inline_symbol("duct-damper", "Serranda", INLINE_ACCESSORY, duct_damper_body),
+    single_port_symbol("air-diffuser", "Diffusore d'aria", DEVICE, "left", air_diffuser_body),
+    inline_symbol("fan-inline", "Ventilatore in linea", DEVICE, fan_body),
+    # --- refrigerante -------------------------------------------------------
     SymbolSpec(
         id="refrigerant-branch",
         name="Derivazione refrigerante",
-        width_mm=8.0,
-        height_mm=8.0,
+        width_mm=DEVICE[0],
+        height_mm=DEVICE[1],
         inline=False,
         ports=[
-            port("a", "left", 8.0, 8.0),
-            port("b", "right", 8.0, 8.0),
-            port("c", "bottom", 8.0, 8.0),
+            port("a", "left", *DEVICE),
+            port("b", "right", *DEVICE),
+            port("c", "bottom", *DEVICE),
         ],
-        body=REFRIGERANT_BRANCH_BODY,
+        body=refrigerant_branch_body(*DEVICE),
     ),
-    # gas
-    inline_symbol("gas-valve", "Valvola gas", GAS_VALVE_BODY),
-    inline_symbol("gas-meter", "Contatore gas", GAS_METER_BODY),
+    # --- gas ----------------------------------------------------------------
+    inline_symbol("gas-valve", "Valvola gas", INLINE_ACCESSORY, gas_valve_body),
+    inline_symbol("gas-meter", "Contatore gas", DEVICE, gas_meter_body),
 ]
 
 
@@ -322,6 +649,8 @@ def manifest_payload(spec: SymbolSpec) -> dict[str, Any]:
         "allowed_rotations_deg": spec.allowed_rotations_deg,
     }
     if spec.inline:
+        # L'interruzione vale l'intera larghezza: le porte sono a sinistra e a
+        # destra, quindi l'asse che le unisce e' orizzontale.
         payload["inline_gap_mm"] = spec.width_mm
     payload["ports"] = spec.ports
     payload["keep_out"] = keep_out(spec.ports)

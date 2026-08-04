@@ -1,0 +1,39 @@
+{
+  "id": "zone-manifold",
+  "version": "1.0.0",
+  "name": "Collettore di zona",
+  "functions": [
+    "distribution"
+  ],
+  "symbol_id": "zone-manifold",
+  "composite": false,
+  "ports": [
+    {
+      "id": "in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "out_1",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "out_2",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

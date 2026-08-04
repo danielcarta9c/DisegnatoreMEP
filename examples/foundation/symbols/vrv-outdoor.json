@@ -15,13 +15,13 @@
       "id": "liquid_out",
       "face": "right",
       "x_mm": 10.0,
-      "y_mm": 3.0
+      "y_mm": 2.5
     },
     {
       "id": "gas_in",
       "face": "right",
       "x_mm": 10.0,
-      "y_mm": 7.0
+      "y_mm": 7.5
     }
   ],
   "keep_out": {

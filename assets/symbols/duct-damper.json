@@ -2,27 +2,27 @@
   "id": "duct-damper",
   "version": "1.0.0",
   "name": "Serranda",
-  "width_mm": 6.0,
-  "height_mm": 6.0,
+  "width_mm": 7.5,
+  "height_mm": 5.0,
   "allowed_rotations_deg": [
     0,
     90,
     180,
     270
   ],
-  "inline_gap_mm": 6.0,
+  "inline_gap_mm": 7.5,
   "ports": [
     {
       "id": "a",
       "face": "left",
       "x_mm": 0.0,
-      "y_mm": 3.0
+      "y_mm": 2.5
     },
     {
       "id": "b",
       "face": "right",
-      "x_mm": 6.0,
-      "y_mm": 3.0
+      "x_mm": 7.5,
+      "y_mm": 2.5
     }
   ],
   "keep_out": {

@@ -2,8 +2,8 @@
   "id": "air-vent",
   "version": "1.0.0",
   "name": "Valvola di sfiato aria",
-  "width_mm": 8.0,
-  "height_mm": 8.0,
+  "width_mm": 5.0,
+  "height_mm": 10.0,
   "allowed_rotations_deg": [
     0
   ],
@@ -11,8 +11,8 @@
     {
       "id": "a",
       "face": "bottom",
-      "x_mm": 4.0,
-      "y_mm": 8.0
+      "x_mm": 2.5,
+      "y_mm": 10.0
     }
   ],
   "keep_out": {

@@ -8,7 +8,7 @@ SYMBOLS = Path(__file__).resolve().parents[2] / "assets" / "symbols"
 
 
 def test_the_shipped_library_loads() -> None:
-    assert len(SymbolRegistry.from_directory(SYMBOLS).all()) == 12
+    assert len(SymbolRegistry.from_directory(SYMBOLS).all()) == 20
 
 
 def test_symbols_sheet_command_writes_a_true_scale_sheet(tmp_path: Path) -> None:
@@ -50,8 +50,24 @@ def test_restricted_symbols_declare_only_their_technical_orientations() -> None:
     assert registry.get("expansion-vessel").manifest.allowed_rotations_deg == [0, 180]
 
 
+def test_upright_symbols_declare_only_their_own_orientation() -> None:
+    """Accumuli, macchine e collettori si disegnano nel proprio verso: una
+    pompa di calore coricata o un bollitore di traverso non aiutano a leggere
+    la tavola, e D-049 riguarda proprio il senso impiantistico."""
+    registry = SymbolRegistry.from_directory(SYMBOLS)
+    for symbol_id in ("heat-pump-air-water", "dhw-cylinder", "buffer-four-port", "zone-manifold"):
+        assert registry.get(symbol_id).manifest.allowed_rotations_deg == [0]
+
+
 def test_every_other_shipped_symbol_admits_all_four_rotations() -> None:
-    restricted = {"air-vent", "expansion-vessel"}
+    restricted = {
+        "air-vent",
+        "expansion-vessel",
+        "heat-pump-air-water",
+        "dhw-cylinder",
+        "buffer-four-port",
+        "zone-manifold",
+    }
     for symbol in SymbolRegistry.from_directory(SYMBOLS).all():
         if symbol.manifest.id not in restricted:
             assert symbol.manifest.allowed_rotations_deg == [0, 90, 180, 270]

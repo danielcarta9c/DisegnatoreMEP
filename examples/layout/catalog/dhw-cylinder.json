@@ -1,0 +1,47 @@
+{
+  "id": "dhw-cylinder",
+  "version": "1.0.0",
+  "name": "Bollitore ACS",
+  "functions": [
+    "dhw_storage"
+  ],
+  "symbol_id": "dhw-cylinder",
+  "composite": false,
+  "ports": [
+    {
+      "id": "coil_in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "coil_out",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "dhw_out",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "out",
+      "required": false,
+      "max_connections": 1
+    },
+    {
+      "id": "cold_in",
+      "domain": "hydronic",
+      "medium": "domestic_cold_water",
+      "flow": "in",
+      "required": false,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

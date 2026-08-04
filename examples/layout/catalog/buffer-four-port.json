@@ -1,0 +1,48 @@
+{
+  "id": "buffer-four-port",
+  "version": "1.0.0",
+  "name": "Volano termico a quattro attacchi",
+  "functions": [
+    "hydraulic_separation",
+    "thermal_storage"
+  ],
+  "symbol_id": "buffer-four-port",
+  "composite": false,
+  "ports": [
+    {
+      "id": "primary_in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "primary_out",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "secondary_out",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "secondary_in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true,
+      "max_connections": 2
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

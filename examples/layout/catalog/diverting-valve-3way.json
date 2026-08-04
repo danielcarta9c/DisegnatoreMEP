@@ -1,0 +1,39 @@
+{
+  "id": "diverting-valve-3way",
+  "version": "1.0.0",
+  "name": "Valvola deviatrice a tre vie",
+  "functions": [
+    "diversion"
+  ],
+  "symbol_id": "diverting-valve-3way",
+  "composite": false,
+  "ports": [
+    {
+      "id": "in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "out_a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "out_b",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}
