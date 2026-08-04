@@ -4,11 +4,13 @@ from pydantic import ValidationError
 
 from disegnatore_mep.graphics.registry import SymbolRegistry
 
+from .errors import CatalogError
+from .resolved import ResolvedComponent
 from .schema import ComponentDefinition
 
-
-class CatalogError(ValueError):
-    pass
+# CatalogError vive in .errors, ma resta esportato da qui: e' il nome con cui
+# il resto del progetto lo importa da quando esisteva un solo modulo a sollevarlo.
+__all__ = ["CatalogError", "ComponentRegistry", "ResolvedComponent"]
 
 
 class ComponentRegistry:
@@ -17,6 +19,7 @@ class ComponentRegistry:
         definitions: list[ComponentDefinition],
         symbols: SymbolRegistry | None = None,
     ) -> None:
+        self._symbols = symbols
         self._definitions: dict[str, ComponentDefinition] = {}
         for definition in definitions:
             if definition.id in self._definitions:
@@ -68,3 +71,21 @@ class ComponentRegistry:
 
     def all(self) -> tuple[ComponentDefinition, ...]:
         return tuple(self._definitions[key] for key in sorted(self._definitions))
+
+    def resolve(self, definition_id: str) -> ResolvedComponent:
+        """La definizione insieme alla propria geometria.
+
+        Richiede la libreria dei simboli. Resta separato da `get` perche'
+        `symbols` e' opzionale per scelta: il validatore topologico lavora sulla
+        sola semantica e non deve pretendere la libreria sotto mano.
+        """
+        if self._symbols is None:
+            raise CatalogError(
+                f"cannot resolve {definition_id}: the catalog was loaded without a "
+                f"symbol library; pass symbols=SymbolRegistry.from_directory(...) "
+                f"to ComponentRegistry.from_directory"
+            )
+        definition = self.get(definition_id)
+        return ResolvedComponent(
+            definition=definition, symbol=self._symbols.get(definition.symbol_id)
+        )
