@@ -14,20 +14,27 @@
 
 ---
 
-## 0. Prima di iniziare: quattro decisioni di prodotto
+## 0. Prima di iniziare: tre decisioni di prodotto, e una che non lo era
 
-Il piano è scritto assumendo le risposte qui sotto. **Sono proposte, non decisioni prese**: ognuna è isolata in un solo task, quindi cambiarla non ridisegna il piano. Vanno confermate prima del task che le consuma — P2 prima del Task 4, P3 prima del Task 6, P1 prima del Task 7, P4 prima del Task 11 — e i Task 1, 2, 3 e 5 non dipendono da nessuna delle quattro, quindi si possono eseguire nel frattempo.
+Il piano è scritto assumendo le risposte qui sotto. **Sono proposte, non decisioni prese**: ognuna è isolata in un solo task, quindi cambiarla non ridisegna il piano. Vanno confermate prima del task che le consuma — P3 prima del Task 6, P1 prima del Task 7, P4 prima del Task 11 — e i Task 1, 2, 3, 4 e 5 non dipendono da nessuna delle tre, quindi si possono eseguire nel frattempo.
 
 | # | Domanda | Proposta | Cosa cambia se il PM decide diversamente |
 |---|---|---|---|
 | P1 | Su quale impianto si giudica il layout? | **Il caso D-011 completo.** Il piano aggiunge i circa dieci simboli mancanti (pompa di calore, bollitore ACS, volano a quattro attacchi, valvola deviatrice, collettore di zona, terminali) e fissa la gerarchia dimensionale rimasta aperta con D-050 | Restando ai dodici simboli attuali il Task 7 sparisce, ma il gate visivo — la ragione per cui D-040 ha anticipato la grafica — resta rimandato: valvole e filtri disposti a fasce non somigliano a un impianto |
-| P2 | Che area della carta usa il disegno? | **La squadratura del cartiglio Nove C**: margini 10 mm sui quattro lati, corpo del disegno 400 × 235 mm fra intestazione e cartiglio. Ritira il margine di rilegatura ISO 5457 da 20 mm oggi in `A3_LANDSCAPE`, che il cartiglio aziendale già non rispetta | Tenendo i 20 mm di rilegatura, o si ridisegna il cartiglio perché stia in 390 mm, o si accettano due squadrature diverse sullo stesso foglio. Il corpo resta 235 mm di altezza, 94 passi esatti, in tutti e tre i casi: §2.1 spiega perché la griglia non decide questa domanda |
 | P3 | Quando l'impianto si spezza in più tavole? | **Solo quando non entra** alla scala fissa, seguendo i confini dei sottosistemi (lettura letterale di D-020) | Con «una tavola per sottosistema» il Task 6 diventa più semplice ma anche impianti piccoli producono più fogli; con una soglia di riempimento serve un parametro in più e la soglia diventa una costante di prodotto |
 | P4 | Come si distinguono le reti sulla tavola? | **Colore più tratto distinto**: ogni rete ha un colore e anche un tratto proprio, così la tavola resta leggibile fotocopiata in bianco e nero. La legenda porta una sezione fluidi oltre a quella dei simboli | Con il solo colore la sezione fluidi della legenda resta ma il tratto sparisce; in monocromatico il Task 11 perde la palette e il Task 12 acquista un controllo di distinguibilità dei soli tratti |
 
+### P2 era una domanda mal posta, ed è chiusa
+
+Una prima stesura di questo piano chiedeva al PM se il disegno dovesse usare la squadratura del cartiglio o conservare il margine di rilegatura ISO 5457. **Non è una decisione di prodotto: è un input che il progetto aveva già.** Il cartiglio Nove C è stato fornito nel **primo commit del progetto**, `fa7157c` del 1 agosto 2026. I margini ISO sono stati scritti in `A3_LANDSCAPE` il 3 agosto, due giorni dopo, e il piano grafico non nomina il cartiglio **nemmeno una volta**.
+
+La squadratura del foglio, quindi, non si sceglie: si legge dal cartiglio che il PM ha consegnato. Il Task 4 la applica senza chiedere nulla.
+
+Vale la pena vedere che errore è, perché il progetto lo ha già commesso una volta e se n'era accorto. Il campo `source` dei dodici simboli dichiarava ANSI/ASHRAE 134, che il registro fonti elenca «da acquisire e valutare»: attribuzione falsa, corretta da D-047. I margini fanno la stessa cosa con ISO 5457, che il registro elenca **tuttora** «da acquisire e valutare» (SRC-001): una geometria di carta motivata da una norma mai ottenuta, mentre lo standard aziendale reale era sul disco. Stesso schema, stessa fase, questa volta non intercettato dalle revisioni.
+
 **Decisioni da registrare nel `DECISION_LOG` all'approvazione**, con i numeri liberi successivi:
 
-- **D-053** — area utile della tavola e ritiro del margine di rilegatura ISO 5457 (P2, Task 4).
+- **D-053** — la squadratura della tavola è quella del cartiglio Nove C fornito, e ritira il margine di rilegatura ISO 5457 (Task 4). Non deriva da P2: deriva dall'input.
 - **D-054** — le porte dei simboli cadono su nodi di griglia; è un requisito dell'instradamento, non un'estetica (Task 7, §2.2).
 - **D-055** — la gerarchia dimensionale dei simboli, che chiude D-050 (P1, Task 7).
 - **D-056** — regola di divisione multi-tavola (P3, Task 6).
@@ -57,9 +64,9 @@ Il piano è scritto assumendo le risposte qui sotto. **Sono proposte, non decisi
 
 Il piano P0 e il piano grafico sono stati scritti senza eseguire il codice, e le loro appendici registrano rispettivamente nove e sei difetti del codice letterale. Questo piano ha invertito il metodo: le tre parti a rischio sono state prototipate e messe sotto test **prima** di essere scritte qui. Tutto ciò che segue è misurato, non supposto.
 
-### 2.1 Il cartiglio Nove C usa una squadratura diversa da quella del codice
+### 2.1 Il codice usa una squadratura diversa da quella del cartiglio fornito
 
-`assets/cartigli/Cartiglio_NoveC_A3.pdf` è stato misurato estraendone la geometria vettoriale. Il risultato:
+`assets/cartigli/Cartiglio_NoveC_A3.pdf` è nel repository dal **primo commit** e nessuno lo aveva mai aperto. È stato misurato estraendone la geometria vettoriale. Il risultato:
 
 | Elemento | Geometria misurata |
 |---|---|
@@ -76,11 +83,11 @@ Il corpo del disegno è quindi **400 × 235 mm**, e la sua altezza è un numero 
 altezza corpo  235 mm / 2,5 = 94,000 passi  -> esatto
 ```
 
-**Attenzione a non usare questo numero come argomento a favore di P2.** Il conto è stato rifatto con entrambi i margini, e l'altezza del corpo è 235 mm in ogni caso, perché non dipende dal margine sinistro: 94 passi esatti sia con 20 mm sia con 10 mm. Anche la larghezza cade esatta in entrambi i casi, 156 passi contro 160. **L'allineamento alla griglia non decide P2**, e lo stesso vale per l'asimmetria registrata in `docs/GRAPHIC_STANDARD.md` §1.2, che riguarda `usable_height_mm` — 277 mm, 110,8 passi — e **resta tale e quale**: quel documento non va corretto su questo punto, va soltanto affiancato dalle misure del telaio.
+**Attenzione a non usare questo numero come argomento.** Il conto è stato rifatto con entrambi i margini, e l'altezza del corpo è 235 mm in ogni caso, perché non dipende dal margine sinistro: 94 passi esatti sia con 20 mm sia con 10 mm. Anche la larghezza cade esatta in entrambi i casi, 156 passi contro 160. **L'allineamento alla griglia non c'entra nulla**, e lo stesso vale per l'asimmetria registrata in `docs/GRAPHIC_STANDARD.md` §1.2, che riguarda `usable_height_mm` — 277 mm, 110,8 passi — e **resta tale e quale**: quel documento non va corretto su questo punto, va soltanto affiancato dalle misure del telaio.
 
-La scelta vera è un'altra, e non ha nulla di aritmetico. Il cartiglio Nove C **è già disegnato** con la propria squadratura a 10 mm e occupa i 400 mm pieni. Tenendo i 20 mm di rilegatura di `A3_LANDSCAPE` restano solo due strade: ridisegnare il cartiglio aziendale perché stia in 390 mm — e `assets/cartigli/README.md` prescrive che una versione derivata abbia nome distinto e provenienza documentata — oppure lasciare che il cartiglio sporga di 10 mm a sinistra rispetto all'area in cui si disegna, con due squadrature diverse sullo stesso foglio.
+Il punto è un altro, e non è una scelta. Il cartiglio Nove C **è già disegnato** con la propria squadratura a 10 mm e occupa i 400 mm pieni; è lo standard aziendale, consegnato dal PM come input del progetto. `A3_LANDSCAPE` ne dichiara invece 20 a sinistra, motivandoli con ISO 5457. Tenere i 20 mm significherebbe o ridisegnare il cartiglio aziendale perché stia in 390 mm — e `assets/cartigli/README.md` prescrive che una versione derivata abbia nome distinto e provenienza documentata — oppure stampare due squadrature diverse sullo stesso foglio. Nessuna delle due è una posizione difendibile davanti a un input già fornito.
 
-Adottare la squadratura del cartiglio ritira quindi il vincolo ISO 5457 elencato al punto 4 dell'appendice del piano grafico. È un ritiro deliberato, dello stesso tipo di D-044, non una svista: va registrato come D-053 e scritto in `GRAPHIC_STANDARD.md`. Il prezzo è la rilegatura: una foratura entrerebbe nel disegno. Per elaborati consegnati in PDF e stampati in ufficio è un prezzo basso, ma è una decisione di prodotto (P2), non tecnica.
+Il codice si allinea quindi al cartiglio, e questo ritira il vincolo ISO 5457 elencato al punto 4 dell'appendice del piano grafico. È un ritiro deliberato, dello stesso tipo di D-044: va registrato come D-053 e scritto in `GRAPHIC_STANDARD.md`. Il prezzo è la rilegatura — una foratura entrerebbe nel disegno — e lo paga il cartiglio aziendale, non questo piano: gli elaborati Nove C sono già impaginati così.
 
 **Verificato:** portando `margin_left_mm` a 10.0 la suite passa 145 test su 147. I due che falliscono sono `tests/graphics/test_svg.py::test_symbol_wider_than_the_usable_area_raises_naming_both_measurements` e `tests/graphics/test_svg.py::test_scale_bar_wider_than_the_usable_area_is_rejected`: entrambi asseriscono numeri derivati dal margine da 20 mm (`390` e `90`) e vanno portati a `400` e `100`. Nessun altro test è accoppiato al margine.
 
@@ -564,7 +571,7 @@ git commit -m "feat: record the pagination plan in the model, with a migration p
 
 **Interfaces:** produce `SheetFrame`, `NOVE_C_A3`.
 
-> Richiede la conferma di **P2**.
+> Non richiede conferme: le misure sono lette dal cartiglio fornito dal PM (§0 e §2.1).
 
 - [ ] **Step 1: scrivere il test che fallisce**
 

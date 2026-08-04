@@ -28,7 +28,7 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 13 | `docs/plans/README.md` e `docs/plans/2026-08-01-master-implementation-roadmap.md` | Sequenza dei piani |
 | 14 | `docs/plans/2026-08-01-foundation-core-plan.md` — **solo l'appendice finale** | Il piano P0 eseguito e le sue deviazioni. Il corpo contiene codice difettoso |
 | 15 | **`docs/plans/2026-08-03-graphic-system-symbol-library-plan.md` — solo l'appendice finale** | Il piano grafico eseguito. **Sedici difetti corretti in esecuzione**, sei del piano e dieci trovati dalle revisioni. Anche qui il corpo non è stato riscritto |
-| 15bis | **`docs/plans/2026-08-04-layout-routing-multitavola-plan.md` — per intero** | Il piano successivo, **scritto e non eseguito**. Qui il corpo si legge davvero: è il lavoro da fare. Il §0 raccoglie le quattro decisioni di prodotto ancora aperte, il §2 le tre scoperte fatte prototipando |
+| 15bis | **`docs/plans/2026-08-04-layout-routing-multitavola-plan.md` — per intero** | Il piano successivo, **scritto e non eseguito**. Qui il corpo si legge davvero: è il lavoro da fare. Il §0 raccoglie le tre decisioni di prodotto ancora aperte e spiega perché una quarta è stata ritirata, il §2 le tre scoperte fatte prototipando |
 | 16 | `docs/research/README.md` e `docs/research/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
 | 17 | `assets/cartigli/README.md` e `releases/README.md` | Vincoli su cartiglio e rilascio |
 | 18 | [`nove-c-kit` PLAYBOOK](https://github.com/danielcarta9c/nove-c-kit/blob/main/PLAYBOOK.md) e [`EXAMPLES`](https://github.com/danielcarta9c/nove-c-kit/blob/main/EXAMPLES.md) | Metodo di project management Nove C |
@@ -104,9 +104,10 @@ la cosa piu' importante da portarsi dietro:
 
 **Il piano di layout è scritto.** Vive in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`: dodici task in TDD, dal `ResolvedComponent` mancante fino alla prima tavola A3 del caso D-011 disegnata e verificata geometricamente. **Non è stato eseguito**: il codice è quello di prima, 147 test verdi, fingerprint invariato.
 
-- **Prossimo passo di sviluppo:** ottenere l'approvazione del PM sul piano e sulle quattro decisioni di prodotto del suo §0, poi eseguirlo. I Task 1, 2, 3 e 5 non dipendono da nessuna delle quattro e possono partire per primi.
+- **Prossimo passo di sviluppo:** ottenere l'approvazione del PM sul piano e sulle tre decisioni di prodotto del suo §0, poi eseguirlo. I Task 1, 2, 3, 4 e 5 non dipendono da nessuna delle tre e possono partire per primi.
 - **Leggere il corpo di questo piano, non solo l'appendice.** È la differenza rispetto agli altri due: qui il corpo è il lavoro da fare, e le parti a rischio sono state prototipate ed eseguite prima della stesura — rotazione, tratte e instradamento hanno già le loro prove verdi.
-- **Tre difetti trovati scrivendolo**, nessuno registrato altrove prima, tutti nel §2 del piano: nessuno dei venti simboli ha riquadro o porte su un nodo di griglia, quindi un instradatore su griglia non raggiunge nessun attacco; il cartiglio Nove C usa una squadratura a 10 mm sui quattro lati mentre `A3_LANDSCAPE` ne dichiara 20 a sinistra; `inline_gap_mm` è confrontato con la larghezza invece che con l'asse che unisce le due porte opposte.
+- **Tre difetti trovati scrivendolo**, nessuno registrato altrove prima, tutti nel §2 del piano: nessuno dei venti simboli ha riquadro o porte su un nodo di griglia, quindi un instradatore su griglia non raggiunge nessun attacco; il telaio del foglio non segue il cartiglio che il PM aveva fornito nel primo commit, e i suoi margini sono attribuiti a ISO 5457, che il registro fonti dichiara non acquisita — lo stesso errore che D-047 ha corretto per i simboli; `inline_gap_mm` è confrontato con la larghezza invece che con l'asse che unisce le due porte opposte.
+- **Gli input forniti dal PM vanno cercati e aperti prima di decidere.** Il cartiglio era sul disco dal 1 agosto e la fase grafica ha fissato la geometria della carta senza guardarlo, citando una norma mai ottenuta. Prima di dedurre una convenzione grafica, controllare `assets/`.
 - **`render_symbol_sheet` è un banco di prova, non la tavola.** Costruisce una griglia uniforme da due costanti di modulo. Non generalizza a una tavola con cartiglio e instradamento: va tenuto come riscontro, non esteso.
 - **Attenzione al `keep_out`:** ora è imposto non nullo sulle facce con porta, quindi il layout può fidarsene. Prima non lo era.
 - **`usable_height_mm` non è un multiplo del passo di griglia** (277 / 2,5 = 110,8), mentre la larghezza sì. È voluto, i margini seguono ISO 5457. Un layout che assuma entrambi gli assi allineati sbaglia in verticale di 0,8 di passo. Il piano gira intorno al problema lavorando sull'area di disegno — 350 × 235 mm, che è allineata su entrambi gli assi — non sull'area utile del foglio.
@@ -115,14 +116,15 @@ la cosa piu' importante da portarsi dietro:
 
 ## 6. Domande aperte per il PM
 
-**Quattro decisioni di prodotto**, tutte nel §0 di `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`, ciascuna con una proposta motivata e le conseguenze delle alternative. Il piano è scritto assumendo le proposte, e ognuna è isolata in un solo task.
+**Tre decisioni di prodotto**, tutte nel §0 di `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`, ciascuna con una proposta motivata e le conseguenze delle alternative. Il piano è scritto assumendo le proposte, e ognuna è isolata in un solo task.
 
 | # | Domanda | Proposta | Serve prima di |
 |---|---|---|---|
 | P1 | Si disegna il caso D-011 completo, aggiungendo i simboli mancanti e la gerarchia dimensionale, o si resta ai dodici attuali? | Caso completo | Task 7 |
-| P2 | Il disegno usa la squadratura del cartiglio (10 mm sui quattro lati) o conserva la rilegatura ISO 5457 (20 mm a sinistra)? | Squadratura del cartiglio | Task 4 |
 | P3 | Si spezza in più tavole solo quando non entra, o anche per leggibilità? | Solo quando non entra | Task 6 |
 | P4 | Le reti si distinguono per colore e tratto, per solo colore, o in monocromatico? | Colore più tratto | Task 11 |
+
+**Una quarta era stata posta e ritirata**, e vale la pena sapere perché: chiedeva se il foglio dovesse usare la squadratura del cartiglio o la rilegatura ISO 5457. Il PM ha fatto notare che il cartiglio glielo aveva **già fornito** — è nel primo commit del progetto — quindi non c'era nulla da decidere. Non chiedere al PM ciò che il progetto ha già ricevuto: cercare fra gli input prima di aprire una domanda.
 
 Chiusa nella sessione del 3 agosto: le rotazioni ammesse dichiarano gli orientamenti **tecnicamente** sensati, non quelli geometricamente possibili. Sfiato aria bloccato a `[0]`, vaso di espansione a `[0, 180]` (D-049).
 
@@ -161,7 +163,7 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 
 ## Ultimo aggiornamento
 
-`2026-08-04` — Claude — scritto il piano di layout, instradamento e multi-tavola, non eseguito. Rotazione, tratte e instradamento prototipati e messi sotto test prima della stesura; tre difetti trovati e registrati nel §2 del piano, fra cui il fatto che nessuno dei venti simboli sta sulla griglia. Quattro decisioni di prodotto aperte per il PM.
+`2026-08-04` — Claude — scritto il piano di layout, instradamento e multi-tavola, non eseguito. Rotazione, tratte e instradamento prototipati e messi sotto test prima della stesura; tre difetti trovati e registrati nel §2 del piano, fra cui il fatto che nessuno dei venti simboli sta sulla griglia. Chiuse tre decisioni su quattro proponendo una risposta motivata; la quarta, sulla squadratura del foglio, e' stata ritirata perche' il cartiglio era gia' fra gli input del progetto.
 
 `2026-08-04` — Claude — prova di stampa superata dal PM. Registrate D-051 (nomenclatura visibile in italiano) e D-052 (legenda a destra invece di didascalie ripetute nel disegno); il foglio di riscontro ora mostra il nome italiano del componente e l'identificativo solo come riferimento secondario.
 

@@ -25,11 +25,11 @@
 </details>
 
 - [x] ~~Scrivere il piano di layout, instradamento e multi-tavola~~ — **scritto il 4 agosto 2026** in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`. Dodici task, non ancora eseguito.
-- [ ] **Approvazione del PM sul piano**, e sulle quattro decisioni di prodotto del suo §0. Fino ad allora nessun task parte.
+- [ ] **Approvazione del PM sul piano**, e sulle tre decisioni di prodotto del suo §0. Fino ad allora nessun task parte.
 
 ## Next — backlog ordinato
 
-1. Eseguire il piano di layout, instradamento e multi-tavola, una volta approvato. I Task 1, 2, 3 e 5 non dipendono da nessuna delle quattro decisioni aperte e possono partire per primi.
+1. Eseguire il piano di layout, instradamento e multi-tavola, una volta approvato. I Task 1, 2, 3, 4 e 5 non dipendono da nessuna delle tre decisioni aperte e possono partire per primi.
 2. Scrivere il piano di rendering, cartiglio e PDF, con distinta derivata dal modello e preflight.
 3. Solo a questo punto il motore delle regole (ex P1), con `RuleApplicationModel` completato per la tracciabilità a valle (D-039), la rappresentazione dei dati mancanti e il percorso di migrazione dello schema. Dettagli in `docs/P0_REVIEW_FINDINGS.md` §3.2.
 4. Allargare il contratto `DomainPack` prima che i quattro pacchetti di dominio procedano in parallelo (W3).
@@ -54,19 +54,20 @@ Elenco completo nell'appendice di `docs/plans/2026-08-03-graphic-system-symbol-l
 Registrato qui perché non venga perso se il piano resta fermo. Dettagli e misure nel §2 del piano.
 
 - **Nessuno dei venti simboli sta sulla griglia.** Non un riquadro, non una porta: 3 mm sono 1,2 passi da 2,5. Un instradamento ortogonale su griglia non può raggiungere nessuna porta della libreria attuale. Il piano lo risolve ridimensionando la libreria (Task 7), il che è anche il modo naturale di chiudere D-050.
-- **Il cartiglio Nove C usa una squadratura a 10 mm sui quattro lati**, mentre `A3_LANDSCAPE` dichiara 20 mm a sinistra per la rilegatura ISO 5457. Le due squadrature non coincidono, e finora nulla le aveva confrontate. Misurato dal PDF: banda del cartiglio alta 36 mm a tutta larghezza, intestazione 6 mm, corpo del disegno 400 × 235 mm.
+- **Il telaio del foglio non segue il cartiglio che il PM aveva fornito.** `assets/cartigli/Cartiglio_NoveC_A3.pdf` è nel repository dal primo commit (`fa7157c`, 1 agosto) e usa una squadratura a 10 mm sui quattro lati; `A3_LANDSCAPE` ne dichiara 20 a sinistra, scritti il 3 agosto citando ISO 5457 — che `SOURCE_REGISTER` elenca tuttora «da acquisire e valutare». Il piano grafico non nomina il cartiglio nemmeno una volta. È lo stesso errore che D-047 ha corretto per i simboli, ripetuto sulla carta e non intercettato dalle revisioni. Misurato dal PDF: banda del cartiglio 36 mm a tutta larghezza, intestazione 6 mm, area di disegno 350 × 235 mm. Registrato come CONV-GRAFICA-003.
 - **`inline_gap_mm` è confrontato con la larghezza invece che con l'asse delle porte.** Innocuo finché tutti i simboli in linea sono quadrati; sbagliato appena uno viene ruotato di 90°.
 
 ## Domande aperte
 
-Quattro decisioni di prodotto, tutte nel §0 di `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`, ciascuna con una proposta e le conseguenze delle alternative. Il piano è scritto assumendo le proposte.
+Tre decisioni di prodotto, tutte nel §0 di `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`, ciascuna con una proposta e le conseguenze delle alternative. Il piano è scritto assumendo le proposte.
 
 | # | Domanda | Serve prima di |
 |---|---|---|
 | P1 | Si disegna il caso D-011 completo, aggiungendo i simboli mancanti e la gerarchia dimensionale, o si resta ai dodici attuali? | Task 7 |
-| P2 | Il disegno usa la squadratura del cartiglio (10 mm) o conserva la rilegatura ISO 5457 (20 mm)? | Task 4 |
 | P3 | Si spezza in più tavole solo quando non entra, o anche per leggibilità? | Task 6 |
 | P4 | Le reti si distinguono per colore e tratto, per solo colore, o in monocromatico? | Task 11 |
+
+**P2 è stata ritirata.** Chiedeva se il disegno dovesse usare la squadratura del cartiglio o la rilegatura ISO 5457. Non era una decisione di prodotto: il cartiglio era già stato fornito dal PM come input del progetto, e la squadratura si legge da lì. Il Task 4 la applica senza chiedere.
 
 ## Done log — ultimo in cima
 

@@ -21,6 +21,15 @@ interna del progetto e citate nel campo `source` di ogni manifesto.
 |---|---|---|---|
 | CONV-GRAFICA-001 | Forma e geometria di un simbolo singolo: dimensioni in millimetri di carta, porte sul perimetro con faccia coerente, area di rispetto sulle facce con porta, orientamenti tecnicamente ammessi | `docs/GRAPHIC_STANDARD.md` | In uso: la citano i dodici simboli pubblicati e gli otto di fixture |
 | CONV-GRAFICA-002 | Composizione di un simbolo composito da primitive, pubblicato e contato come prodotto unico | `docs/GRAPHIC_STANDARD.md` §6 | Definita, nessun composito ancora pubblicato |
+| CONV-GRAFICA-003 | Squadratura e impaginazione del foglio: margini, banda del cartiglio, fascia d'intestazione, area di disegno | `assets/cartigli/Cartiglio_NoveC_A3.pdf`, misurato | Da applicare al Task 4 del piano di layout |
+
+**Il telaio del foglio deriva dal cartiglio aziendale, non da ISO 5457.** `A3_LANDSCAPE`
+motiva oggi il proprio margine sinistro da 20 mm con la rilegatura ISO 5457, che questo
+registro elenca come SRC-001 «da acquisire e valutare»: non ottenuta, non valutata. Il
+cartiglio Nove C — fornito dal PM nel primo commit del progetto, `fa7157c` del 1 agosto 2026 —
+usa invece 10 mm sui quattro lati. È lo stesso errore che D-047 ha corretto per i simboli:
+una geometria attribuita a una norma che il progetto non possiede, mentre lo standard
+aziendale reale era già sul disco. CONV-GRAFICA-003 registra la provenienza vera.
 
 **Perché una convenzione interna e non una norma.** ANSI/ASHRAE 134 (SRC-005) sarebbe il
 riferimento naturale per la simbologia HVAC, ma il registro la classifica «da acquisire e
