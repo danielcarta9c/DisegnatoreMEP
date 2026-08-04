@@ -1,0 +1,31 @@
+{
+  "id": "filling-unit",
+  "version": "1.0.0",
+  "name": "Gruppo di riempimento",
+  "functions": [
+    "filling"
+  ],
+  "symbol_id": "filling-unit",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

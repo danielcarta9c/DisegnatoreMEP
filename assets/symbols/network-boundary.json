@@ -1,25 +1,27 @@
 {
-  "id": "expansion-vessel",
+  "id": "network-boundary",
   "version": "1.0.0",
-  "name": "Vaso di espansione ad attacco singolo",
-  "width_mm": 10.0,
-  "height_mm": 15.0,
+  "name": "Confine di rete",
+  "width_mm": 5.0,
+  "height_mm": 5.0,
   "allowed_rotations_deg": [
     0,
-    180
+    90,
+    180,
+    270
   ],
   "ports": [
     {
       "id": "a",
-      "face": "top",
+      "face": "right",
       "x_mm": 5.0,
-      "y_mm": 0.0
+      "y_mm": 2.5
     }
   ],
   "keep_out": {
     "left_mm": 0.0,
-    "right_mm": 0.0,
-    "top_mm": 2.0,
+    "right_mm": 2.0,
+    "top_mm": 0.0,
     "bottom_mm": 0.0
   },
   "source": "CONV-GRAFICA-001"

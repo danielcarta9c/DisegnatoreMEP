@@ -78,6 +78,17 @@ GRID_MM = A3_LANDSCAPE.grid_mm
 # La gerarchia dimensionale (D-055). Ogni misura e' un multiplo del passo.
 INLINE_ACCESSORY = (5.0, 5.0)
 TERMINAL_ACCESSORY = (5.0, 10.0)
+BRANCHED_ACCESSORY = (5.0, 10.0)
+"""Accessorio che sta **sulla** tubazione ma pende da una derivazione.
+
+Un vaso di espansione, una valvola di sicurezza, uno scarico: il fluido non ci
+passa attraverso, ci arriva da uno stacco. Sul modello restano componenti in
+linea a due porte — la derivazione fa parte del corpo del simbolo, come la
+convenzione dei compositi permette (CONV-GRAFICA-002) — perche' un vero ramo
+richiederebbe un raccordo a T come componente a se', e a quel punto ogni
+accessorio pesa tre pezzi invece di uno. Il riquadro e' alto il doppio del
+proprio passo di attacco, cosi' la derivazione ha dove stare.
+"""
 DEVICE = (10.0, 10.0)
 TERMINAL = (20.0, 15.0)
 MANIFOLD = (40.0, 5.0)
@@ -451,6 +462,170 @@ def fan_coil_body(w: float, h: float) -> str:
     )
 
 
+# --- accessori con derivazione disegnata nel corpo ------------------------
+# La linea passa a meta' altezza; lo stacco esce sopra o sotto e porta
+# l'accessorio. Tutto in funzione del riquadro, come gli altri corpi.
+
+
+def _through_line(w: float, h: float) -> str:
+    y = h / 2
+    return f'<line x1="0" y1="{n(y)}" x2="{n(w)}" y2="{n(y)}"/>'
+
+
+def _branch_down(w: float, h: float, to: float) -> str:
+    return f'<line x1="{n(w / 2)}" y1="{n(h / 2)}" x2="{n(w / 2)}" y2="{n(to)}"/>'
+
+
+def _branch_up(w: float, h: float, to: float) -> str:
+    return f'<line x1="{n(w / 2)}" y1="{n(h / 2)}" x2="{n(w / 2)}" y2="{n(to)}"/>'
+
+
+def expansion_connection_body(w: float, h: float) -> str:
+    """Stacco verso il basso e vaso a membrana appeso."""
+    top = h * 0.62
+    x, bw, bh = w * 0.15, w * 0.7, h * 0.32
+    return (
+        _through_line(w, h)
+        + _branch_down(w, h, top)
+        + f'<rect x="{n(x)}" y="{n(top)}" width="{n(bw)}" height="{n(bh)}"/>'
+        f'<line x1="{n(x)}" y1="{n(top + bh * 0.45)}" '
+        f'x2="{n(x + bw)}" y2="{n(top + bh * 0.45)}"/>'
+    )
+
+
+def safety_valve_body(w: float, h: float) -> str:
+    """Stacco verso l'alto, valvola a molla con lo scarico libero."""
+    top = h * 0.3
+    return (
+        _through_line(w, h)
+        + _branch_up(w, h, top)
+        + f'<path d="M{n(w * 0.2)} {n(top)} L{n(w * 0.8)} {n(top)} '
+        f'L{n(w / 2)} {n(top + h * 0.16)} Z"/>'
+        f'<line x1="{n(w * 0.5)}" y1="{n(top)}" x2="{n(w * 0.9)}" y2="{n(h * 0.08)}"/>'
+    )
+
+
+def air_separator_body(w: float, h: float) -> str:
+    """Corpo sulla linea e sfiato automatico in cima."""
+    y = h / 2
+    top = h * 0.24
+    return (
+        _through_line(w, h)
+        + f'<rect x="{n(w * 0.2)}" y="{n(y - h * 0.09)}" '
+        f'width="{n(w * 0.6)}" height="{n(h * 0.18)}"/>'
+        + _branch_up(w, h, top)
+        + f'<circle cx="{n(w / 2)}" cy="{n(top - h * 0.06)}" r="{n(h * 0.06)}"/>'
+    )
+
+
+def dirt_separator_body(w: float, h: float) -> str:
+    """Corpo sulla linea e vaso di raccolta sotto, con il rubinetto."""
+    y = h / 2
+    bottom = h * 0.76
+    return (
+        _through_line(w, h)
+        + f'<rect x="{n(w * 0.2)}" y="{n(y - h * 0.09)}" '
+        f'width="{n(w * 0.6)}" height="{n(h * 0.18)}"/>'
+        + _branch_down(w, h, bottom)
+        + f'<path d="M{n(w * 0.25)} {n(bottom - h * 0.1)} L{n(w * 0.75)} '
+        f'{n(bottom - h * 0.1)} L{n(w / 2)} {n(bottom)} Z" fill="black"/>'
+    )
+
+
+def filling_unit_body(w: float, h: float) -> str:
+    """Stacco verso il basso con riduttore e ritegno: il gruppo di riempimento."""
+    top = h * 0.62
+    return (
+        _through_line(w, h)
+        + _branch_down(w, h, h * 0.95)
+        + f'<rect x="{n(w * 0.15)}" y="{n(top)}" '
+        f'width="{n(w * 0.7)}" height="{n(h * 0.2)}"/>'
+        f'<line x1="{n(w * 0.15)}" y1="{n(top + h * 0.2)}" '
+        f'x2="{n(w * 0.85)}" y2="{n(top)}"/>'
+    )
+
+
+def drain_connection_body(w: float, h: float) -> str:
+    """Stacco verso il basso con rubinetto a maschio."""
+    top = h * 0.68
+    return (
+        _through_line(w, h)
+        + _branch_down(w, h, top)
+        + f'<path d="M{n(w * 0.22)} {n(top)} L{n(w * 0.78)} {n(top + h * 0.22)} '
+        f'L{n(w * 0.78)} {n(top)} L{n(w * 0.22)} {n(top + h * 0.22)} Z"/>'
+    )
+
+
+def _dial(w: float, h: float, mark: str) -> str:
+    top = h * 0.28
+    r = h * 0.14
+    return (
+        _through_line(w, h)
+        + _branch_up(w, h, top + r)
+        + f'<circle cx="{n(w / 2)}" cy="{n(top)}" r="{n(r)}"/>' + mark
+    )
+
+
+def thermometer_body(w: float, h: float) -> str:
+    """Quadrante con la colonna: la temperatura si legge, non si regola."""
+    top = h * 0.28
+    return _dial(
+        w, h,
+        f'<line x1="{n(w / 2)}" y1="{n(top - h * 0.09)}" '
+        f'x2="{n(w / 2)}" y2="{n(top + h * 0.05)}"/>',
+    )
+
+
+def pressure_gauge_body(w: float, h: float) -> str:
+    """Quadrante con la lancetta obliqua: si distingue dal termometro a colpo d'occhio."""
+    top = h * 0.28
+    return _dial(
+        w, h,
+        f'<line x1="{n(w / 2)}" y1="{n(top)}" '
+        f'x2="{n(w * 0.72)}" y2="{n(top - h * 0.09)}"/>',
+    )
+
+
+def mixing_valve_body(w: float, h: float) -> str:
+    """Clessidra sulla linea, con l'ingresso freddo dal basso."""
+    inset = w / 6
+    left, right = inset, w - inset
+    y = h / 2
+    top, bottom = y - h * 0.16, y + h * 0.16
+    return (
+        stubs_horizontal(w, h, inset)
+        + f'<path d="M{n(left)} {n(top)} L{n(right)} {n(bottom)} '
+        f'L{n(right)} {n(top)} L{n(left)} {n(bottom)} Z"/>'
+        + _branch_down(w, h, h * 0.92)
+        + f'<path d="M{n(w * 0.32)} {n(h * 0.8)} L{n(w * 0.68)} {n(h * 0.8)} '
+        f'L{n(w / 2)} {n(h * 0.92)} Z"/>'
+    )
+
+
+def pressure_reducer_body(w: float, h: float) -> str:
+    """Corpo sulla linea con la molla di taratura sopra."""
+    y = h / 2
+    return (
+        _through_line(w, h)
+        + f'<rect x="{n(w * 0.2)}" y="{n(y - h * 0.1)}" '
+        f'width="{n(w * 0.6)}" height="{n(h * 0.2)}"/>'
+        + _branch_up(w, h, h * 0.3)
+        + f'<line x1="{n(w * 0.25)}" y1="{n(h * 0.3)}" '
+        f'x2="{n(w * 0.75)}" y2="{n(h * 0.3)}"/>'
+    )
+
+
+def network_boundary_body(w: float, h: float) -> str:
+    """Confine di rete: da dove il fluido arriva, o dove se ne va."""
+    cy = h / 2
+    return (
+        f'<line x1="0" y1="{n(cy)}" x2="{n(w * 0.45)}" y2="{n(cy)}"/>'
+        f'<path d="M{n(w * 0.45)} {n(cy - h * 0.2)} L{n(w)} {n(cy)} '
+        f'L{n(w * 0.45)} {n(cy + h * 0.2)} Z"/>'
+    )
+
+
+
 @dataclass(frozen=True)
 class SymbolSpec:
     id: str
@@ -546,13 +721,28 @@ BUFFER_PORTS = [
 ]
 
 SYMBOLS: list[SymbolSpec] = [
+    # --- accessori proposti dalle regole (P1) -------------------------------
+    # Tutti in linea: la derivazione, dove serve, sta nel corpo del simbolo.
+    inline_symbol("expansion-connection", "Vaso di espansione", BRANCHED_ACCESSORY, expansion_connection_body),
+    inline_symbol("valve-safety", "Valvola di sicurezza", BRANCHED_ACCESSORY, safety_valve_body),
+    inline_symbol("air-separator", "Separatore d'aria", BRANCHED_ACCESSORY, air_separator_body),
+    inline_symbol("dirt-separator", "Defangatore", BRANCHED_ACCESSORY, dirt_separator_body),
+    inline_symbol("filling-unit", "Gruppo di riempimento", BRANCHED_ACCESSORY, filling_unit_body),
+    inline_symbol("drain-connection", "Attacco di scarico", BRANCHED_ACCESSORY, drain_connection_body),
+    inline_symbol("thermometer", "Termometro", BRANCHED_ACCESSORY, thermometer_body),
+    inline_symbol("pressure-gauge", "Manometro", BRANCHED_ACCESSORY, pressure_gauge_body),
+    inline_symbol("mixing-valve-thermostatic", "Valvola miscelatrice termostatica", BRANCHED_ACCESSORY, mixing_valve_body),
+    inline_symbol("pressure-reducer", "Riduttore di pressione", BRANCHED_ACCESSORY, pressure_reducer_body),
+    single_port_symbol(
+        "network-boundary", "Confine di rete", INLINE_ACCESSORY, "right", network_boundary_body,
+    ),
     # --- idronico -----------------------------------------------------------
     inline_symbol("valve-isolation", "Valvola di intercettazione", INLINE_ACCESSORY, valve_isolation_body),
     inline_symbol("valve-check", "Valvola di ritegno", INLINE_ACCESSORY, valve_check_body),
     inline_symbol("strainer", "Filtro a Y", INLINE_ACCESSORY, strainer_body),
     inline_symbol("pump-circulator", "Pompa di circolazione", DEVICE, pump_body),
     single_port_symbol(
-        "expansion-vessel", "Vaso di espansione", VESSEL, "top",
+        "expansion-vessel", "Vaso di espansione ad attacco singolo", VESSEL, "top",
         expansion_vessel_body, EXPANSION_VESSEL_ROTATIONS_DEG,
     ),
     single_port_symbol(

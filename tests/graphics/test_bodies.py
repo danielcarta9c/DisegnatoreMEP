@@ -77,7 +77,7 @@ def published() -> list[Symbol]:
 
 
 def test_the_libraries_are_not_empty() -> None:
-    assert len(published()) == 28
+    assert len(published()) == 39
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)

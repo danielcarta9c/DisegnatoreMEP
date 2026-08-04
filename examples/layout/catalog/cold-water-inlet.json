@@ -1,0 +1,23 @@
+{
+  "id": "cold-water-inlet",
+  "version": "1.0.0",
+  "name": "Alimentazione acqua fredda",
+  "functions": [
+    "boundary"
+  ],
+  "symbol_id": "network-boundary",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

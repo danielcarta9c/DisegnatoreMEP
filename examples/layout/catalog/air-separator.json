@@ -1,0 +1,31 @@
+{
+  "id": "air-separator",
+  "version": "1.0.0",
+  "name": "Separatore d'aria",
+  "functions": [
+    "air_release"
+  ],
+  "symbol_id": "air-separator",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

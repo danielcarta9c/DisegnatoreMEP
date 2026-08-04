@@ -8,7 +8,7 @@ SYMBOLS = Path(__file__).resolve().parents[2] / "assets" / "symbols"
 
 
 def test_the_shipped_library_loads() -> None:
-    assert len(SymbolRegistry.from_directory(SYMBOLS).all()) == 20
+    assert len(SymbolRegistry.from_directory(SYMBOLS).all()) == 31
 
 
 def test_symbols_sheet_command_writes_a_true_scale_sheet(tmp_path: Path) -> None:

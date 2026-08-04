@@ -1,0 +1,31 @@
+{
+  "id": "valve-check-dhw",
+  "version": "1.0.0",
+  "name": "Valvola di ritegno sanitaria",
+  "functions": [
+    "non_return"
+  ],
+  "symbol_id": "valve-check",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "in",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

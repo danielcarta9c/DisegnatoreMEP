@@ -1,0 +1,23 @@
+{
+  "id": "dhw-draw-off",
+  "version": "1.0.0",
+  "name": "Utenze sanitarie",
+  "functions": [
+    "boundary"
+  ],
+  "symbol_id": "network-boundary",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "in",
+      "required": true,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}
