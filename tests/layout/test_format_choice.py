@@ -14,11 +14,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import NOVE_C_A3, NOVE_C_A4
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
-from disegnatore_mep.layout.compose import (
-    compose_drawing,
-    compose_on_ordinary_frame,
-    fits_comfortably,
-)
+from disegnatore_mep.layout.compose import compose_on_ordinary_frame
 from disegnatore_mep.layout.errors import LayoutError
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -34,26 +30,24 @@ def catalog() -> ComponentRegistry:
 
 
 def test_a_central_plant_lands_on_the_a3() -> None:
-    """Il caso D-011 non e' un disegno piccolo: sull'A4 ci starebbe a filo."""
+    """Il caso D-011 non e' un disegno piccolo: sull'A4 non ci sta."""
     frame, drawing = compose_on_ordinary_frame(load_project(PROJECT), catalog())
     assert frame == NOVE_C_A3
     assert drawing.sheets
 
 
-def test_fitting_edge_to_edge_is_not_being_small() -> None:
-    """Sull'A4 il caso entra, e occupa piu' del limite: quindi non lo prende."""
-    on_a4 = compose_drawing(load_project(PROJECT), catalog(), NOVE_C_A4).sheets[0]
-    assert not fits_comfortably(on_a4, NOVE_C_A4.drawing_rect_mm)
-    assert fits_comfortably(
-        compose_drawing(load_project(PROJECT), catalog(), NOVE_C_A3).sheets[0],
-        NOVE_C_A3.drawing_rect_mm,
-    )
+def test_entering_means_respecting_the_minimum_distances() -> None:
+    """«Entrare» non e' starci a stento.
 
-
-def test_the_last_format_is_taken_even_if_the_drawing_fills_it() -> None:
-    """L'A3 e' il formato ordinario: sopra non si sale, si divide (D-056)."""
-    frame, _ = compose_on_ordinary_frame(load_project(PROJECT), catalog(), (NOVE_C_A4,))
-    assert frame == NOVE_C_A4
+    Corridoio di instradamento, stacco fra due componenti e gola larga almeno
+    quanto gli accessori che la attraversano sono vincoli, non desideri: e' il
+    posizionamento a dire che una A4 non basta, e lo dice nominando la misura.
+    """
+    with pytest.raises(LayoutError) as raised:
+        compose_on_ordinary_frame(load_project(PROJECT), catalog(), (NOVE_C_A4,))
+    # Non si rimpicciolisce per farcelo stare (ADR 0003): si dice quanto manca.
+    assert "does not fit on any ordinary sheet format" in str(raised.value)
+    assert "functional bands need" in str(raised.value)
 
 
 def test_nothing_larger_than_the_a3_is_offered() -> None:

@@ -60,8 +60,16 @@ destra e guadagnavi lo spazio che serviva» — resa sistematica. Il tetto evita
 che un impianto di tre pezzi si stiri per mezza tavola.
 """
 
-ROW_GAP_MM = 5.0
-"""Distanza minima fra due componenti affiancati o sovrapposti."""
+ROW_GAP_MM = 10.0
+"""Distanza minima fra due componenti affiancati o sovrapposti.
+
+Quattro passi di griglia, cioe' **tre corsie libere** fra un pezzo e il
+successivo. Con cinque millimetri ne restava una sola, e bastavano due tratte
+che dovessero passare nello stesso varco — la mandata che scende in un
+accumulo e il ritorno che ne risale — perche' una delle due dovesse
+sovrapporsi all'altra. Sovrapporsi per il lungo e' vietato, quindi il varco
+deve essere largo abbastanza da non costringerci.
+"""
 
 ROUTING_MARGIN_MM = 10.0
 """Corridoio libero fra il bordo dell'area di disegno e la prima fascia.
@@ -73,6 +81,14 @@ un multiplo esatto del passo.
 """
 
 _HORIZONTAL_FACES = (PortFace.LEFT, PortFace.RIGHT)
+
+CLEARANCE_STEPS = 2
+"""Passi di stacco fra una linea e il bordo del simbolo da cui esce.
+
+Un attacco rivolto in basso scarica su una corsia che deve **staccarsi** dal
+riquadro: a un passo solo la linea corre a due millimetri e mezzo dal bordo e
+sulla carta sembra disegnata sul simbolo.
+"""
 
 
 def _band_by_subsystem(project: ProjectModel, sheet_id: str) -> dict[str, BandRole]:
@@ -433,9 +449,9 @@ def place_sheet(
             return None
         exit_y = feeder.origin.y_mm + source_y
         if source_face is PortFace.BOTTOM:
-            exit_y += step
+            exit_y += CLEARANCE_STEPS * step
         elif source_face is PortFace.TOP:
-            exit_y -= step
+            exit_y -= CLEARANCE_STEPS * step
         exit_x = feeder.origin.x_mm + source_x
         wanted = on_grid(max(exit_y - target_y, floor), area.y_mm)
         manifest = manifests[component_id]

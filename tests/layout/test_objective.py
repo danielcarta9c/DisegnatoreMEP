@@ -53,6 +53,33 @@ def length_mm(drawn: SheetGeometry) -> float:
     )
 
 
+def edges(line: list[tuple[float, float]]) -> set[tuple[tuple[float, float], ...]]:
+    """I singoli tratti di griglia percorsi, non i nodi toccati."""
+    walked: set[tuple[tuple[float, float], ...]] = set()
+    for before, after in zip(line, line[1:], strict=False):
+        steps = int(
+            round((abs(after[0] - before[0]) + abs(after[1] - before[1])) / STEP_MM)
+        )
+        for index in range(steps):
+            walked.add(
+                tuple(
+                    sorted(
+                        (
+                            (
+                                round(before[0] + (after[0] - before[0]) * index / steps, 3),
+                                round(before[1] + (after[1] - before[1]) * index / steps, 3),
+                            ),
+                            (
+                                round(before[0] + (after[0] - before[0]) * (index + 1) / steps, 3),
+                                round(before[1] + (after[1] - before[1]) * (index + 1) / steps, 3),
+                            ),
+                        )
+                    )
+                )
+            )
+    return walked
+
+
 def cells(line: list[tuple[float, float]]) -> set[tuple[float, float]]:
     walked: set[tuple[float, float]] = set()
     for before, after in zip(line, line[1:], strict=False):
@@ -79,18 +106,37 @@ def shared_cells(drawn: SheetGeometry) -> int:
     )
 
 
+def test_no_two_runs_are_drawn_on_top_of_each_other() -> None:
+    """Vietato sovrapporre longitudinalmente: sempre separate e ben distinte.
+
+    L'unica sovrapposizione ammessa e' l'ultimo tratto contro una porta che due
+    tratte condividono — due ritorni di zona su un solo attacco del volano — che
+    sulla tavola e' una derivazione ed e' lungo un passo di griglia.
+    """
+    drawn = sheet()
+    walked = [(line, edges(line)) for line in polylines(drawn)]
+    for first in range(len(walked)):
+        for second in range(first + 1, len(walked)):
+            shared = walked[first][1] & walked[second][1]
+            assert len(shared) <= 1, (
+                len(shared) * STEP_MM,
+                walked[first][0],
+                walked[second][0],
+            )
+
+
 def test_the_drawing_stays_within_its_bend_budget() -> None:
     """Prima erano 31 su tredici tratte, con sali-scendi intorno a ogni pezzo."""
-    assert bends(sheet()) <= 23
+    assert bends(sheet()) <= 25
 
 
 def test_the_drawing_stays_within_its_crossing_budget() -> None:
-    """Prima erano ventiquattro celle condivise fra tratte diverse."""
-    assert shared_cells(sheet()) <= 12
+    """Prima erano ventiquattro nodi condivisi fra tratte diverse."""
+    assert shared_cells(sheet()) <= 9
 
 
 def test_the_drawing_stays_within_its_length_budget() -> None:
-    assert length_mm(sheet()) <= 900.0
+    assert length_mm(sheet()) <= 950.0
 
 
 def test_a_component_stands_to_the_right_of_what_feeds_it() -> None:

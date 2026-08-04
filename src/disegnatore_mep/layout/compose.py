@@ -233,60 +233,28 @@ def compose_drawing(
     )
 
 
-SMALL_ENOUGH = 0.85
-"""Quanto di un foglio puo' occupare un disegno perche' quel foglio sia il suo.
-
-Il PM ha detto «A3, oppure A4 se il disegno e' proprio piccolo»: l'A3 e' il
-formato ordinario, l'A4 l'eccezione. Entrarci a filo non e' essere piccoli, e'
-starci a stento — e una tavola che tocca la squadratura su tutti e quattro i
-lati non si legge. Un disegno prende il foglio piu' piccolo solo se ne lascia
-libero un sesto per lato.
-"""
-
-
-def fits_comfortably(sheet: SheetGeometry, drawing: Rect) -> bool:
-    xs = [item.origin.x_mm for item in sheet.symbols]
-    xs += [item.right_mm for item in sheet.symbols]
-    ys = [item.origin.y_mm for item in sheet.symbols]
-    ys += [item.bottom_mm for item in sheet.symbols]
-    for route in sheet.routes:
-        for segment in route.segments:
-            xs.extend(point.x_mm for point in segment)
-            ys.extend(point.y_mm for point in segment)
-    ys.extend(item.anchor.y_mm for item in sheet.labels)
-    if not xs or not ys:
-        return True
-    return (
-        max(xs) - min(xs) <= drawing.width_mm * SMALL_ENOUGH
-        and max(ys) - min(ys) <= drawing.height_mm * SMALL_ENOUGH
-    )
-
-
 def compose_on_ordinary_frame(
     project: ProjectModel,
     catalog: ComponentRegistry,
     frames: tuple[SheetFrame, ...] = ORDINARY_FRAMES,
 ) -> tuple[SheetFrame, DrawingGeometry]:
-    """Il disegno sul formato ordinario che gli sta bene addosso (D-058).
+    """Il disegno sul piu' piccolo formato ordinario su cui entra (D-058).
 
-    Si prova l'A4 e si tiene solo se il disegno ci sta **comodo**; altrimenti
-    A3, che e' il formato ordinario. Il posizionamento fallisce da solo quando
-    il contenuto non entra affatto — ADR 0003 vieta di rimpicciolire i simboli
-    per farceli stare — ma entrare a filo non basta a dichiarare piccolo un
-    disegno.
+    «Entrarci» non vuol dire starci a stento: le distanze minime — corridoio di
+    instradamento, stacco fra due componenti, gola fra due fasce larga almeno
+    quanto gli accessori che la attraversano — sono vincoli del posizionamento,
+    non desideri. Se il contenuto le rispetta su una A4, allora quel disegno e'
+    davvero piccolo; altrimenti il posizionamento fallisce e si passa all'A3.
+    Non serve un secondo criterio a percentuale: sarebbe anche fuorviante,
+    perche' lo spazio libero viene distribuito fra le fasce e un disegno riempie
+    per costruzione il foglio su cui e' stato composto.
     """
     last: LayoutError | None = None
-    for index, frame in enumerate(frames):
+    for frame in frames:
         try:
-            drawing = compose_drawing(project, catalog, frame)
+            return frame, compose_drawing(project, catalog, frame)
         except LayoutError as exc:
             last = exc
-            continue
-        roomy = all(
-            fits_comfortably(sheet, frame.drawing_rect_mm) for sheet in drawing.sheets
-        )
-        if roomy or index == len(frames) - 1:
-            return frame, drawing
     reason = str(last) if last is not None else "no format was offered to try"
     raise LayoutError(
         f"the plant does not fit on any ordinary sheet format: {reason}"
@@ -296,7 +264,6 @@ def compose_on_ordinary_frame(
 __all__ = [
     "SheetLink",
     "centre_vertically",
-    "fits_comfortably",
     "compose_drawing",
     "compose_on_ordinary_frame",
     "compose_sheet",

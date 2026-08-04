@@ -55,23 +55,31 @@ Costeggiare la paga invece a ogni cella e supera presto il costo di scostarsi
 di una corsia, che sono due passi e quattro pieghe una volta sola.
 """
 
+HUG_COST = 4
+"""Costo di una cella a un passo da un ostacolo o da un'altra tubazione.
+
+Una linea che corre a due millimetri e mezzo dal bordo di un simbolo, o
+affiancata a un'altra linea, sulla carta si legge come se ci passasse sopra.
+Costa poco — meno di mezzo passo — perche' non deve mai far girare una rotta:
+deve solo farle scegliere la corsia libera quando ce n'e' una.
+"""
+
 MAX_EXPANSIONS = 400_000
 """Limite di iterazioni: oltre, si restituisce una diagnostica, non si continua."""
 
 DIRECTIONS: tuple[Cell, ...] = ((1, 0), (0, 1), (-1, 0), (0, -1))
 """Ordine fisso dei vicini: da esso dipende il determinismo a parita' di costo."""
 
-MERGE_REACH = 4
-"""Quanto lontano dall'attacco comune due tratte contano ancora come una sola.
 
-Quattro passi, dieci millimetri: lo spazio di una derivazione. Piu' in la' due
-tratte sovrapposte sono due tubazioni disegnate una sull'altra, e una delle due
-non si vede.
-"""
-
-
-def _near(cell: Cell, anchor: Cell) -> bool:
-    return abs(cell[0] - anchor[0]) + abs(cell[1] - anchor[1]) <= MERGE_REACH
+def _crowded(cells: set[Cell] | frozenset[Cell], grid: GridSpace) -> frozenset[Cell]:
+    """I nodi a un passo da un ostacolo o da una linea gia' tracciata."""
+    near: set[Cell] = set()
+    for col, row in cells:
+        for step in DIRECTIONS:
+            neighbour = (col + step[0], row + step[1])
+            if grid.contains(neighbour) and neighbour not in cells:
+                near.add(neighbour)
+    return frozenset(near)
 
 
 _FACE_DIRECTION: dict[PortFace, Cell] = {
@@ -114,6 +122,8 @@ def route(
     rows: int,
     blocked: frozenset[Cell],
     occupied: frozenset[Cell],
+    taken: frozenset[tuple[Cell, Cell]] = frozenset(),
+    crowded: frozenset[Cell] = frozenset(),
     prefer_high: bool | None = None,
     max_expansions: int = MAX_EXPANSIONS,
 ) -> Route:
@@ -126,6 +136,12 @@ def route(
     porte, cioe' dove la porta guarda. Vanno derivate da `PortFace`, non passate
     a mano: al contrario l'instradatore non fallisce, costruisce un cappio che
     rientra dal lato sbagliato.
+
+    `taken` sono i **tratti** gia' percorsi da altre tubazioni, e sono vietati:
+    due linee sovrapposte per il lungo si leggono come una sola. `occupied` sono
+    invece i **nodi**, che si possono attraversare pagando: attraversare e'
+    trasversale, sovrapporsi e' longitudinale, e le due cose non vanno confuse.
+    `crowded` sono i nodi a un passo da un ostacolo o da un'altra linea.
 
     `prefer_high` non cambia il costo: sceglie **fra percorsi di pari costo**
     quello che corre piu' in alto (`True`) o piu' in basso (`False`). E' cosi'
@@ -193,16 +209,25 @@ def route(
                 continue
             if nxt in blocked and nxt != goal:
                 continue
+            # Percorrere un tratto gia' percorso da un'altra tubazione e'
+            # **vietato**, non caro: due linee sovrapposte per il lungo sono una
+            # linea sola, e un circuito sparisce dalla tavola.
+            if (cell, nxt) in taken or (nxt, cell) in taken:
+                continue
             added = STEP_COST
             if step != direction:
                 added += TURN_COST
             if nxt in occupied:
-                # Penalita' per cella, non divieto. Attraversare costa un solo
-                # CROSS_COST, meno del giro minimo; costeggiare lo paga a ogni
-                # passo e diventa presto piu' caro di una corsia libera accanto.
-                # Un divieto secco invece chiudeva il passaggio dove due corsie
-                # corrono adiacenti, e la rotta non trovava piu' alcuna strada.
+                # Qui invece si tratta di un **incrocio**: si tocca un nodo e si
+                # prosegue trasversalmente. E' una penalita' per cella, non un
+                # divieto, perche' l'incrocio deve restare piu' economico del
+                # giro per evitarlo (D-041).
                 added += CROSS_COST
+            if nxt in crowded:
+                # Costeggiare un simbolo o un'altra tubazione a un passo di
+                # distanza si legge come toccarli. Costa poco, ma basta a far
+                # scegliere la corsia libera quando c'e'.
+                added += HUG_COST
             candidate = (cost + added, bias + lean(nxt))
             state = (nxt, step)
             if candidate < best.get(state, (candidate[0] + 1, 0)):
@@ -295,13 +320,12 @@ def route_sheet(
         for col in range(grid.cols + 1)
         for row in range(ground_row + 1, grid.rows + 1)
     )
-    # Per ciascuna cella percorsa, gli attacchi delle tratte che ci passano.
-    # Due tratte che finiscono sulla stessa porta — due ritorni di zona su un
-    # unico attacco del volano — condividono l'**imbocco** senza pagarlo come
-    # incrocio: li' e' una sola tubazione con una derivazione. Piu' in la' no:
-    # sovrapporle per tutta la lunghezza le farebbe leggere come un tubo solo,
-    # e un circuito sparirebbe dalla tavola.
-    occupied: dict[Cell, set[Cell]] = {}
+    occupied: set[Cell] = set()
+    # I **tratti** gia' percorsi, non i nodi: ripercorrerne uno e' sovrapporsi
+    # per il lungo, ed e' vietato. L'unica eccezione e' l'ultimo tratto contro
+    # una porta condivisa da due tratte — due ritorni di zona su un solo attacco
+    # del volano — che sulla tavola e' una derivazione, non due linee.
+    taken: dict[tuple[Cell, Cell], set[Cell]] = {}
     routed: list[RoutedTrunk] = []
     # Mandata o ritorno lo dice il modello, che e' orientato, e non la geometria:
     # un componente che finisce a sinistra del proprio alimentatore non per
@@ -337,15 +361,16 @@ def route_sheet(
                 cols=grid.cols,
                 rows=grid.rows,
                 blocked=blocked - ends,
-                # Le celle di una tratta che condivide un attacco con questa non
-                # sono un incrocio da pagare, ma solo nei pressi dell'attacco.
-                occupied=frozenset(
-                    cell
-                    for cell, anchors in occupied.items()
-                    if not any(
-                        _near(cell, anchor) for anchor in anchors & ends
-                    )
+                occupied=frozenset(occupied),
+                # Vietati tutti i tratti gia' percorsi, tranne quelli che
+                # toccano un attacco condiviso con questa tratta: li' due linee
+                # sono una derivazione, e sono lunghi un passo.
+                taken=frozenset(
+                    edge
+                    for edge, anchors in taken.items()
+                    if not (anchors & ends & set(edge))
                 ),
+                crowded=_crowded(blocked | occupied, grid) - ends,
                 # Mandata sopra, ritorno sotto: a parita' di costo, e senza
                 # comprare nemmeno una piega per ottenerlo.
                 prefer_high=supply,
@@ -355,8 +380,9 @@ def route_sheet(
                 f"run {trunk.connection_ids[0]} on network {trunk.network_id} "
                 f"cannot be routed: {exc}"
             ) from exc
-        for cell in found.cells:
-            occupied.setdefault(cell, set()).update(ends)
+        occupied.update(found.cells)
+        for before, after in zip(found.cells, found.cells[1:], strict=False):
+            taken.setdefault((before, after), set()).update(ends)
         current = RoutedTrunk(
                 network_id=trunk.network_id,
                 medium=media.get(trunk.network_id, ""),
