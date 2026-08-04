@@ -136,8 +136,8 @@ def test_a_plan_that_forgets_a_component_is_refused() -> None:
 
 
 def test_a_project_without_a_plan_still_reads_left_to_right() -> None:
-    """Senza piano di impaginazione la fascia si ricava dalla profondita'
-    topologica: un verso di lettura sensato invece di una colonna sola."""
+    """Senza piano di impaginazione la fascia si ricava dall'ordine dei
+    sottosistemi, che e' gia' un ordine di lettura dichiarato."""
     project = load_project(PROJECT)
     registry = catalog()
     inline = inline_ids(project, registry)

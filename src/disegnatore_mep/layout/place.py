@@ -12,7 +12,7 @@ cui stanno, e li posa `inline.py` dopo l'instradamento (D-027).
 from collections import defaultdict
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graphics.frame import SheetFrame
+from disegnatore_mep.graphics.frame import Rect, SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import BandRole
 
@@ -26,6 +26,15 @@ BAND_GUTTER_MM = 10.0
 
 ROW_GAP_MM = 5.0
 """Distanza verticale minima fra due componenti della stessa fascia."""
+
+ROUTING_MARGIN_MM = 10.0
+"""Corridoio libero fra il bordo dell'area di disegno e la prima fascia.
+
+Senza, un simbolo appoggiato al bordo sinistro ha le proprie porte rivolte a
+sinistra irraggiungibili: la rotta dovrebbe arrivare da fuori pagina. Quattro
+passi di griglia su ciascun lato, cosi' l'area utile al posizionamento resta
+un multiplo esatto del passo.
+"""
 
 
 def _band_by_subsystem(project: ProjectModel, sheet_id: str) -> dict[str, BandRole]:
@@ -121,7 +130,16 @@ def place_sheet(
     Deterministico: stessa partizione e stesso piano danno la stessa geometria,
     e l'ordine di uscita segue le fasce da sinistra a destra.
     """
-    area = frame.drawing_rect_mm
+    drawing = frame.drawing_rect_mm
+    # Il posizionamento lavora dentro un rettangolo piu' piccolo dell'area di
+    # disegno: il bordo resta libero perche' l'instradamento possa raggiungere
+    # le porte rivolte verso l'esterno.
+    area = Rect(
+        x_mm=drawing.x_mm + ROUTING_MARGIN_MM,
+        y_mm=drawing.y_mm + ROUTING_MARGIN_MM,
+        width_mm=drawing.width_mm - 2 * ROUTING_MARGIN_MM,
+        height_mm=drawing.height_mm - 2 * ROUTING_MARGIN_MM,
+    )
     grid = GridSpace(origin=area, standard=frame.standard)
     step = grid.step_mm
 
