@@ -19,13 +19,15 @@ Non bastano a un impianto reale appena si esce da quel perimetro.
 
 - valvole di bilanciamento, statiche e dinamiche;
 - valvole di zona ed elettrotermiche;
-- valvola miscelatrice termostatica per l'ACS, con il suo gruppo di sicurezza — valvola di
-  sicurezza sanitaria, vaso ACS, riduttore di pressione, valvola di ritegno;
-- ricircolo ACS: pompa, ritegno, temporizzazione;
 - contabilizzazione del calore, che su una tavola condominiale c'è sempre;
 - disconnettore sul gruppo di riempimento;
 - addolcitore e dosatore di condizionante (le soglie di UNI 8065 sono in SRC-014);
 - neutralizzatore di condensa per i generatori a condensazione.
+
+**L'acqua calda sanitaria è rientrata nell'MVP** il 4 agosto 2026, per decisione del PM:
+il caso di accettazione ha un bollitore, e lasciarne fuori gli accessori avrebbe prodotto
+un impianto completo su metà tavola. Gruppo di sicurezza sull'ingresso acqua fredda, vaso
+sanitario, miscelatrice termostatica e ricircolo sono nel Task 8 del piano P1.
 
 **Aeraulico — l'esempio del PM.** Bastano ventilconvettori canalizzati perché servano
 serranda di taratura, serranda tagliafuoco, silenziatore, batteria di post-riscaldamento,

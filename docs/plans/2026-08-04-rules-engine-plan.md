@@ -19,10 +19,16 @@ Tutte già chiuse. Il piano non ne apre di nuove.
 | **D-066** | La skill non diventa un manuale di progettazione. Il contenuto viene dalla buona pratica; la fonte dichiarata deve dire il vero; non si acquistano norme che non sbloccano nulla |
 | ADR 0002, D-026 | Il modello tecnico è la fonte di verità. Le regole lo completano prima del disegno, non dopo |
 
-Il perimetro del primo pacchetto è stato concordato col PM il 4 agosto 2026: **sei
-famiglie** — sicurezza, intercettazione, protezione, aria, riempimento e scarico, misura.
-Bastano a completare il caso di accettazione D-011 e non fanno un manuale. Tutto il resto —
-aeraulico, regolazione, bilanciamento, ACS, contabilizzazione — è in `docs/DEFERRED.md` §1.
+Il perimetro del primo pacchetto è stato concordato col PM il 4 agosto 2026: **sette
+famiglie** — sicurezza, intercettazione, protezione, aria, riempimento e scarico, misura, e
+**acqua calda sanitaria**. Bastano a completare il caso di accettazione D-011 e non fanno un
+manuale. Tutto il resto — aeraulico, regolazione, bilanciamento, contabilizzazione — è in
+`docs/DEFERRED.md` §1.
+
+L'ACS è stata riportata dentro dal PM subito dopo la prima stesura, ed è la scelta giusta:
+il caso di accettazione **ha un bollitore**. Lasciare fuori i suoi accessori avrebbe
+significato generare un impianto completo su metà tavola e lasciare l'altra metà nuda, che
+è precisamente il difetto che P1 esiste per chiudere.
 
 ---
 
@@ -347,6 +353,7 @@ Le sei famiglie concordate. Indicativamente:
 | Aria | sfiato nei punti alti; disaeratore sulla mandata del generatore |
 | Riempimento e scarico | gruppo di riempimento sul ritorno; scarico ai punti bassi |
 | Misura | termometro e manometro sugli attacchi del generatore |
+| Acqua calda sanitaria | gruppo di sicurezza sull'ingresso acqua fredda — ritegno, valvola di sicurezza sanitaria, riduttore di pressione; vaso di espansione sanitario; miscelatrice termostatica sull'uscita ACS; ricircolo con pompa e ritegno, **condizionato** |
 
 Ogni regola porta `rationale` e `source` veri. La maggior parte sarà «buona pratica
 tecnica documentata» con riferimento Caleffi (SRC-008); dove si applica la Raccolta R
@@ -354,8 +361,19 @@ tecnica documentata» con riferimento Caleffi (SRC-008); dove si applica la Racc
 obbligatori di un impianto a vaso chiuso. **Nessuna attribuzione gonfiata** (D-047, D-066).
 
 Il catalogo va completato con le definizioni che oggi mancano: `expansion-vessel`,
-`air-vent`, `valve-check` hanno già il simbolo in `assets/symbols/`; servono le voci di
-catalogo con funzioni e porte.
+`air-vent`, `valve-check` hanno già il simbolo in `assets/symbols/` e servono solo le voci
+di catalogo con funzioni e porte.
+
+Per l'ACS mancano invece **anche i simboli**, e vanno disegnati con
+`examples/graphics/build_symbols.py` seguendo la gerarchia dimensionale di D-055 e le
+tavole UNI 9511 di SRC-015: miscelatrice termostatica, valvola di sicurezza, riduttore di
+pressione. È lavoro di libreria dentro un piano di regole, quindi va tenuto separato in un
+proprio commit e non mescolato alle regole.
+
+Il ricircolo ACS è l'unica regola **condizionata** del pacchetto: su un
+monofamiliare non serve, su un edificio con lunghe distribuzioni sì. È anche il caso di
+prova naturale per la terza categoria di `IntegrationCategory`, che altrimenti resterebbe
+senza un esempio reale.
 
 **Test prima:** ogni regola del pacchetto carica e supera la guardia del Task 3; ogni
 `source` è non vuota e, se cita una norma, quella norma è nel registro fonti con stato
