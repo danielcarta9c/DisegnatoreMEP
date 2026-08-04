@@ -11,7 +11,7 @@
 | Interprete | Python 3.12, minimo 3.11 | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv`; comando `disegnatore-mep` funzionante |
 | Schema del progetto | `1.1.0` | I documenti `1.0.0` sono migrati al caricamento; fingerprint della fixture mista `31a6198e…` |
-| Test | 381 verdi | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
+| Test | 383 verdi | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
 | Libreria simboli | 20 pubblicati + 8 di fixture | `assets/symbols/` e `examples/foundation/symbols/`, entrambe rigenerabili identiche |
 | Release | Non disponibile | `releases/latest/` sarà popolata dopo la prima versione verificata |
 
@@ -26,7 +26,7 @@
 </details>
 
 - [x] ~~Scrivere il piano di layout, instradamento e multi-tavola~~ — **scritto il 4 agosto 2026** in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`. Dodici task, non ancora eseguito.
-- [x] ~~Piano di layout, instradamento e multi-tavola~~ — **eseguito il 4 agosto 2026**: dodici task, dodici commit, 381 test verdi. Il caso D-011 si disegna su una A3 e passa tutti i controlli geometrici.
+- [x] ~~Piano di layout, instradamento e multi-tavola~~ — **eseguito il 4 agosto 2026**: dodici task, dodici commit, 383 test verdi. Il caso D-011 si disegna su una A3 e passa tutti i controlli geometrici.
 - [ ] **Giudizio del PM sulla prima tavola.** I controlli automatici dimostrano che nulla si sovrappone, non che la tavola si legga come l'avrebbe disegnata un tecnico. Si rigenera con `.venv/bin/python -m disegnatore_mep draw examples/layout/heat-pump-dhw-buffer-two-zones.json --catalog examples/layout/catalog --symbols assets/symbols --out outputs/`.
 
 ## Next — backlog ordinato

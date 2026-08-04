@@ -52,6 +52,21 @@ al colore per scelta: una tavola di cantiere viene fotocopiata in bianco e nero.
 """
 
 
+MEDIUM_NAMES: dict[str, str] = {
+    "heating_water": "Acqua di riscaldamento",
+    "chilled_water": "Acqua refrigerata",
+    "domestic_hot_water": "Acqua calda sanitaria",
+    "domestic_cold_water": "Acqua fredda sanitaria",
+    "natural_gas": "Gas naturale",
+    "supply_air": "Aria di mandata",
+    "return_air": "Aria di ripresa",
+    "refrigerant_liquid": "Refrigerante liquido",
+    "refrigerant_gas": "Refrigerante gas",
+    "condensate": "Condensa",
+}
+"""Denominazione italiana del fluido, per la legenda (D-051)."""
+
+
 def style_for(medium: str) -> tuple[str, str]:
     return MEDIUM_STYLES.get(medium, DEFAULT_STYLE)
 
@@ -76,7 +91,16 @@ def build_legend(
         names[manifest.id] = manifest.name
 
     networks = {item.id: item for item in project.networks}
-    keys = [networks[item] for item in network_ids if item in networks]
+    used = [networks[item] for item in network_ids if item in networks]
+    # Una riga per **fluido**, non per rete: primario e secondario portano la
+    # stessa acqua di riscaldamento e si disegnano uguali. Due righe identiche
+    # in legenda non distinguono nulla e fanno solo cercare la differenza.
+    by_medium: dict[str, str] = {}
+    for network in used:
+        by_medium.setdefault(
+            network.medium, MEDIUM_NAMES.get(network.medium, network.name)
+        )
+    keys = sorted(by_medium.items())
 
     rows = len(names) + (1 if keys else 0) + len(keys)
     needed = rows * ROW_HEIGHT_MM + (SECTION_GAP_MM if keys else 0.0)
@@ -102,12 +126,12 @@ def build_legend(
     network_keys: list[NetworkKey] = []
     if keys:
         y_mm += SECTION_GAP_MM
-        for network in keys:
-            colour, dash = style_for(network.medium)
+        for medium, name in keys:
+            colour, dash = style_for(medium)
             network_keys.append(
                 NetworkKey(
-                    network_id=network.id,
-                    name=network.name,
+                    medium=medium,
+                    name=name,
                     colour=colour,
                     dash=dash,
                     anchor=Point(x_mm=band.x_mm + INSET_MM, y_mm=y_mm),

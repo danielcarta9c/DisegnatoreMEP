@@ -129,3 +129,18 @@ def test_a_legend_taller_than_its_band_fails_with_a_diagnostic() -> None:
     narrow = NOVE_C_A3.model_copy(update={"title_block_height_mm": 200.0})
     with pytest.raises(LayoutError, match="never shrunk|legend needs"):
         build_legend(project, placed, networks, catalog(), narrow)
+
+
+def test_two_networks_carrying_the_same_fluid_share_one_legend_row() -> None:
+    """Primario e secondario portano la stessa acqua di riscaldamento e si
+    disegnano uguali: due righe identiche non distinguerebbero nulla."""
+    _, keys = legend()
+    assert [item.medium for item in keys] == ["heating_water"]
+    assert keys[0].name == "Acqua di riscaldamento"
+
+
+def test_the_fluid_row_speaks_italian_or_falls_back_to_the_network_name() -> None:
+    from disegnatore_mep.layout.legend import MEDIUM_NAMES
+
+    assert MEDIUM_NAMES["chilled_water"] == "Acqua refrigerata"
+    assert "something_new" not in MEDIUM_NAMES

@@ -72,9 +72,13 @@ class LegendEntry(StrictModel):
 
 
 class NetworkKey(StrictModel):
-    """Voce della sezione fluidi della legenda: colore e tratto di una rete."""
+    """Voce della sezione fluidi della legenda: colore e tratto di un fluido.
 
-    network_id: str
+    Una per **fluido**, non per rete: primario e secondario portano la stessa
+    acqua di riscaldamento e si disegnano uguali.
+    """
+
+    medium: str
     name: str
     colour: str
     dash: str

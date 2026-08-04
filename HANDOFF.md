@@ -60,14 +60,14 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 
 - **Fase:** fondazione canonica, sistema grafico e **motore di layout** completati. Il nucleo disegna una tavola A3 del caso D-011. Rendering del cartiglio, PDF e distinta non ancora pianificati.
 - **Versione installabile:** nessuna release; `releases/latest/` non è ancora popolata.
-- **Verifica:** 381 test verdi; `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`.
+- **Verifica:** 383 test verdi; `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`.
 - **Libreria:** venti simboli pubblicati in `assets/symbols/` più otto di fixture, tutti con riquadro e porte su nodi di griglia (D-054) e taglie che seguono la gerarchia dimensionale (D-055). Entrambe rigenerabili identiche.
 - **Il gate G0 di P0 regge ancora.** Il fingerprint del progetto misto è `31a6198ee9697f07e2c10199e27781d10e70c058201fb59b95a9f5a94a4d96ac`: si è mosso una volta, al Task 3 del piano di layout, perché il documento dichiara ora `schema_version` `1.1.0`. Il valore precedente era `3347374e8b3f006c6f387c6228e0d9d2b885cbf57e65991937e985af32306573`.
 - **Ambiente:** ricostruibile da zero con `bash scripts/setup-env.sh`. **Da eseguire come prima cosa in una sessione cloud**, che riparte sempre da un clone pulito.
 - **Ramo:** la fase di layout è su `claude/layout-routing-multitable-plan-cbezrw`, **non ancora integrata in `main`**: le due fasi precedenti erano state chiuse con un merge esplicito, e questa attende il giudizio del PM sulla prima tavola.
 - **In flight:** nessuna modifica applicativa a metà.
 - **Blocco:** nessuno. La prova fisica di stampa è stata superata il 4 agosto 2026.
-- **Check rapido alla ripresa:** `git status --short` vuoto; `.venv/bin/python -m pytest -q` deve dare 381 passed.
+- **Check rapido alla ripresa:** `git status --short` vuoto; `.venv/bin/python -m pytest -q` deve dare 383 passed.
 
 ---
 
