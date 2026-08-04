@@ -19,6 +19,7 @@ from disegnatore_mep.model.project import PortRef, ProjectModel
 
 from .composition import AUXILIARY_FUNCTIONS, levels_of
 from .errors import LayoutError
+from .flow import orient_trunks
 from .geometry import PlacedSymbol, Point, RoutedTrunk
 from .grid import Cell, GridSpace
 from .trunks import Trunk
@@ -278,6 +279,10 @@ def route_sheet(
     )
     occupied: set[Cell] = set()
     routed: list[RoutedTrunk] = []
+    # Mandata o ritorno lo dice il modello, che e' orientato, e non la geometria:
+    # un componente che finisce a sinistra del proprio alimentatore non per
+    # questo lo alimenta di ritorno (D-059).
+    orientation = orient_trunks(project, catalog, trunks)
     # Le quote delle corsie, dall'alto: le prime sono preferite.
     levels = levels_of(grid.origin.y_mm, grid.origin.height_mm, grid.step_mm)
     supply_rails = [
@@ -304,10 +309,10 @@ def route_sheet(
         start, start_direction = anchor(trunk.start)
         goal, goal_direction = anchor(trunk.end)
 
-        # Prima le corsie: la mandata corre in alto, il ritorno in basso, e il
-        # verso si legge dal disegno stesso — chi va verso destra e' mandata,
-        # chi torna indietro e' ritorno.
-        supply = goal[0] >= start[0]
+        # Il ripiego geometrico vale solo quando la topologia non decide: e' il
+        # caso di un anello in cui nessun utilizzatore separa andata e ritorno.
+        declared = orientation.get(trunk.connection_ids)
+        supply = declared if declared is not None else goal[0] >= start[0]
         rails = supply_rails if supply else return_rails
         # Una tratta che porta ausiliari — filtro, vaso, riempimento — corre
         # bassa: su una tavola vera quei pezzi stanno vicino a terra, non a
@@ -369,7 +374,7 @@ def route_sheet(
         current = RoutedTrunk(
                 network_id=trunk.network_id,
                 medium=media.get(trunk.network_id, ""),
-                supply=goal[0] >= start[0],
+                supply=supply,
                 connection_ids=list(trunk.connection_ids),
                 segments=[
                     [
