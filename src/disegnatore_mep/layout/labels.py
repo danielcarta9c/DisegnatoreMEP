@@ -72,8 +72,15 @@ def place_labels(
     ]
     labels: list[PlacedLabel] = []
 
-    def free_slot(x_mm: float, y_mm: float, text: str) -> Point:
+    def free_slot(x_mm: float, y_mm: float, text: str, upward: bool) -> Point:
+        """Il primo posto libero, cercato **allontanandosi** dal simbolo.
+
+        Una sigla scritta sopra il simbolo che cercasse spazio scendendo
+        entrerebbe nel simbolo stesso e non ne uscirebbe piu': il verso della
+        ricerca segue quello dell'ancoraggio.
+        """
         width = len(text) * height * CHAR_WIDTH_RATIO
+        stride = -height if upward else height
         candidate_y = y_mm
         for _ in range(24):
             box = (x_mm, candidate_y - height, x_mm + width, candidate_y)
@@ -87,7 +94,7 @@ def place_labels(
             if not clash:
                 taken.append(box)
                 return Point(x_mm=x_mm, y_mm=candidate_y)
-            candidate_y += height
+            candidate_y += stride
         taken.append((x_mm, candidate_y - height, x_mm + width, candidate_y))
         return Point(x_mm=x_mm, y_mm=candidate_y)
 
@@ -99,7 +106,10 @@ def place_labels(
                     text=item.tag,
                     role="tag",
                     anchor=free_slot(
-                        item.origin.x_mm, item.origin.y_mm - TAG_GAP_MM, item.tag
+                        item.origin.x_mm,
+                        item.origin.y_mm - TAG_GAP_MM,
+                        item.tag,
+                        upward=True,
                     ),
                 )
             )
@@ -116,6 +126,7 @@ def place_labels(
                         item.origin.x_mm,
                         item.bottom_mm + VALUE_GAP_MM + height,
                         text,
+                        upward=False,
                     ),
                 )
             )

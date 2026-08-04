@@ -54,25 +54,39 @@ def _station_at(points: list[Point], distance_mm: float) -> _Station:
     return _Station(point=last, horizontal=previous.y_mm == last.y_mm)
 
 
-def _cut(points: list[Point], centre: Point, horizontal: bool, gap_mm: float) -> list[list[Point]]:
-    """Spezza la polilinea attorno al centro, per `gap_mm` lungo la sua giacitura."""
-    half = gap_mm / 2
-    if horizontal:
-        low = Point(x_mm=centre.x_mm - half, y_mm=centre.y_mm)
-        high = Point(x_mm=centre.x_mm + half, y_mm=centre.y_mm)
-    else:
-        low = Point(x_mm=centre.x_mm, y_mm=centre.y_mm - half)
-        high = Point(x_mm=centre.x_mm, y_mm=centre.y_mm + half)
+def _point_at(points: list[Point], distance_mm: float) -> Point:
+    return _station_at(points, distance_mm).point
 
-    def before_cut(point: Point) -> bool:
-        return (point.x_mm < low.x_mm) if horizontal else (point.y_mm < low.y_mm)
 
-    def after_cut(point: Point) -> bool:
-        return (point.x_mm > high.x_mm) if horizontal else (point.y_mm > high.y_mm)
+def _split(points: list[Point], low_mm: float, high_mm: float) -> list[list[Point]]:
+    """Spezza la polilinea fra due distanze misurate lungo il proprio percorso.
 
-    head = [item for item in points if before_cut(item)] + [low]
-    tail = [high] + [item for item in points if after_cut(item)]
-    return [part for part in (head, tail) if len(part) >= 2]
+    Il taglio si fa per **lunghezza d'arco**, non filtrando i vertici per
+    coordinata: una spezzata a elle non e' monotona su nessuno dei due assi, e
+    un filtro per coordinata la ricuciva in diagonale.
+    """
+    head: list[Point] = []
+    tail: list[Point] = []
+    travelled = 0.0
+    for before, after in zip(points, points[1:], strict=False):
+        length = abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
+        if travelled <= low_mm:
+            head.append(before)
+        if travelled >= high_mm:
+            tail.append(before)
+        travelled += length
+    head.append(_point_at(points, low_mm))
+    tail.insert(0, _point_at(points, high_mm))
+    tail.append(points[-1])
+
+    def tidy(part: list[Point]) -> list[Point]:
+        out: list[Point] = []
+        for item in part:
+            if not out or (out[-1].x_mm, out[-1].y_mm) != (item.x_mm, item.y_mm):
+                out.append(item)
+        return out
+
+    return [part for part in (tidy(head), tidy(tail)) if len(part) >= 2]
 
 
 def place_inline_accessories(
@@ -110,19 +124,18 @@ def place_inline_accessories(
         )
 
     placed: list[PlacedSymbol] = []
-    segments = [points]
+    cuts: list[tuple[float, float]] = []
     step = grid.step_mm
     count = len(resolved)
 
     for index, component in enumerate(resolved):
-        distance = total * (index + 1) / (count + 1)
+        # La distanza si arrotonda al passo: i vertici della rotta stanno su
+        # nodi e i tratti sono multipli del passo, quindi il punto cade su un
+        # nodo per costruzione, e con esso le porte dell'accessorio. Snappare
+        # invece le coordinate del punto lo staccherebbe dal proprio taglio.
+        distance = round(total * (index + 1) / (count + 1) / step) * step
         station = _station_at(points, distance)
-        # Il centro cade su un nodo, cosi' le porte dell'accessorio ci cadono
-        # anche loro e l'instradamento le raggiunge.
-        centre = Point(
-            x_mm=grid.origin.x_mm + round((station.point.x_mm - grid.origin.x_mm) / step) * step,
-            y_mm=grid.origin.y_mm + round((station.point.y_mm - grid.origin.y_mm) / step) * step,
-        )
+        centre = station.point
         rotation = 0 if station.horizontal else 90
         manifest = component.symbol.manifest
         if rotation not in manifest.allowed_rotations_deg:
@@ -148,10 +161,37 @@ def place_inline_accessories(
             )
         )
         gap = manifest.inline_gap_mm or 0.0
-        segments = [
-            piece
-            for part in segments
-            for piece in _cut(part, centre, station.horizontal, gap)
-        ]
+        cuts.append((distance - gap / 2, distance + gap / 2))
+
+    segments = [points]
+    for low, high in cuts:
+        rebuilt: list[list[Point]] = []
+        for part in segments:
+            if _polyline_length(part) <= 0:
+                continue
+            offset = _offset_of(points, part[0])
+            local_low, local_high = low - offset, high - offset
+            if local_low < 0 or local_high > _polyline_length(part):
+                rebuilt.append(part)
+                continue
+            rebuilt.extend(_split(part, local_low, local_high))
+        segments = rebuilt
 
     return placed, routed.model_copy(update={"segments": segments})
+
+
+def _offset_of(points: list[Point], start: Point) -> float:
+    """Distanza dall'inizio della polilinea originale al punto dato."""
+    travelled = 0.0
+    for before, after in zip(points, points[1:], strict=False):
+        length = abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
+        if abs(before.x_mm - start.x_mm) + abs(before.y_mm - start.y_mm) <= 1e-9:
+            return travelled
+        on_segment = (
+            min(before.x_mm, after.x_mm) - 1e-9 <= start.x_mm <= max(before.x_mm, after.x_mm) + 1e-9
+            and min(before.y_mm, after.y_mm) - 1e-9 <= start.y_mm <= max(before.y_mm, after.y_mm) + 1e-9
+        )
+        if on_segment:
+            return travelled + abs(start.x_mm - before.x_mm) + abs(start.y_mm - before.y_mm)
+        travelled += length
+    return travelled

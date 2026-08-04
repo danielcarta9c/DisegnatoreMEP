@@ -211,6 +211,7 @@ def route_sheet(
     """
     by_component = {item.component_id: item for item in placed}
     definitions = {item.id: item.definition_id for item in project.components}
+    media = {item.id: item.medium for item in project.networks}
     blocked = _obstacle_cells(placed, grid)
     occupied: set[Cell] = set()
     routed: list[RoutedTrunk] = []
@@ -249,6 +250,7 @@ def route_sheet(
         routed.append(
             RoutedTrunk(
                 network_id=trunk.network_id,
+                medium=media.get(trunk.network_id, ""),
                 connection_ids=list(trunk.connection_ids),
                 segments=[
                     [

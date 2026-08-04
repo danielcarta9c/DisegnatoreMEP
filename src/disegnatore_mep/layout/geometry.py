@@ -49,6 +49,8 @@ class RoutedTrunk(StrictModel):
     """
 
     network_id: str
+    medium: str = ""
+    """Il fluido, che decide colore e tratto: la rete da sola non basta."""
     connection_ids: list[str] = Field(default_factory=list)
     segments: list[list[Point]] = Field(default_factory=list)
     crossings: list[Point] = Field(default_factory=list)

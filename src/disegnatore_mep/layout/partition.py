@@ -148,6 +148,19 @@ def partition_project(
         sheet_id = placement[trunk.start.component_id]
         if placement[trunk.end.component_id] == sheet_id:
             trunk_of_sheet[sheet_id].append(trunk)
+            continue
+        # Una tratta a cavallo di due tavole non viene instradata su nessuna
+        # delle due: al suo posto compaiono i due rimandi. Ma un accessorio in
+        # linea sta **su** una tratta, quindi resterebbe senza una linea su cui
+        # posarsi, e sparirebbe dal disegno pur essendo nel modello.
+        if trunk.inline_component_ids:
+            raise LayoutError(
+                f"the sheet boundary cuts run {trunk.connection_ids[0]}, which "
+                f"carries the inline accessories {sorted(trunk.inline_component_ids)}: "
+                f"an accessory sits on a run, so a run that crosses sheets must not "
+                f"carry any. Move the accessory's subsystem onto the same sheet as "
+                f"the rest of its run, or cut elsewhere"
+            )
 
     return [
         SheetPartition(
