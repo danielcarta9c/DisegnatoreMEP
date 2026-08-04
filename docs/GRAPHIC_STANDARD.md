@@ -83,6 +83,42 @@ Le due parti si uniscono per identificativo di porta: `ComponentDefinition.port_
 
 Il parametro `symbols` resta opzionale per scelta: il validatore topologico (`src/disegnatore_mep/validation/topology.py`) funziona sulla sola semantica quindi un progetto puo' essere validato senza avere la libreria dei simboli sotto mano. La CLI `validate` accetta pero' un `--symbols` opzionale: quando lo si passa, la verifica incrociata viene eseguita; quando manca, il comportamento e' quello di sempre. Perché l'opzionalità non lasci comunque una libreria di fatto mai verificata, `tests/acceptance/test_foundation_cli.py::test_foundation_catalog_matches_its_symbols` carica il catalogo di fondazione **insieme** a `SymbolRegistry.from_directory(examples/foundation/symbols)` e pretende che la verifica incrociata passi per tutte le otto definizioni: un futuro `symbol_id` che punti a un simbolo inesistente, o una porta rinominata su un solo lato del confronto, fanno fallire questo test invece di essere spediti senza che nulla lo dica.
 
+## 4bis. Nomenclatura e didascalie sulla tavola
+
+### Tutto cio' che si legge e' in italiano
+
+Il campo `name` di un manifesto e' la denominazione italiana del componente — «Valvola di
+intercettazione», non «isolation valve». L'`id` (`valve-isolation`) e' un identificativo di
+codice: serve a una definizione di catalogo per puntare al simbolo, e **non compare mai su un
+elaborato destinato al cliente o al cantiere** (D-051).
+
+Il foglio di riscontro fa eccezione consapevole: mostra il nome italiano come etichetta
+principale e l'identificativo sotto, in grigio, perche' e' uno strumento interno di verifica
+della libreria e chi lo consulta ha bisogno di sapere quale identificativo scrivere nel catalogo.
+
+### Legenda, non didascalie ripetute
+
+Una tavola Nove C porta sul **lato destro una legenda** con i simboli usati e il loro
+significato, elencati una sola volta. Nel corpo del disegno il componente **non viene
+ri-spiegato**: compaiono soltanto i tag che aggiungono informazione non deducibile dalla
+legenda (D-052).
+
+La divisione dei ruoli e' questa:
+
+| Elemento | Cosa dice |
+|---|---|
+| Legenda | **Cosa** e' un simbolo — una volta sola, per tutta la tavola |
+| Tag nel disegno | **Quanto** o **quale**: i litri di un vaso di espansione, la portata di un circolatore, la sigla di zona |
+| Disegno | **Dove** sta il componente e **come** e' collegato |
+
+Un tag che ripete la denominazione gia' presente in legenda satura la tavola senza aggiungere
+nulla, e va evitato.
+
+**Conseguenze per il motore di layout**, che deve ancora essere scritto: l'area utile va
+ripartita fra corpo del disegno e fascia della legenda, la legenda si costruisce dai simboli
+effettivamente usati nel modello e non dall'intera libreria, e gli ancoraggi di etichetta del
+manifesto (`label_anchors`) servono ai tag di valore, non a denominazioni.
+
 ## 5. Come aggiungere un simbolo alla libreria
 
 Un simbolo pubblicato è una coppia di file nella stessa cartella: `<id>.json` (il manifesto, validato da `SymbolManifest`) e `<id>.svg` (il corpo grafico). Per aggiungerne uno:

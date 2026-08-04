@@ -16,12 +16,19 @@
 
 ## Now — in corso
 
-- [ ] **Prova fisica di stampa, spetta al PM.** Stampare il foglio A3 al 100%, senza adattamento alla pagina, e misurare col righello la barra di scala: deve dare 100 mm. È l'unico passo del gate grafico non eseguibile in una sessione cloud, e con esso va raccolta l'impressione visiva sulla riconoscibilità dei dodici simboli alla loro dimensione reale. Il foglio si rigenera con `.venv/bin/python -m disegnatore_mep symbols-sheet outputs/symbols.svg --symbols assets/symbols`.
-- [ ] Alla prossima sessione: partire dall'esito della prova, poi scrivere il piano di layout.
+- [x] ~~Prova fisica di stampa~~ — **superata il 4 agosto 2026**: il PM ha stampato l'A3 e la barra di scala misura 100 mm col righello. L'invarianza di scala e' dimostrata sulla carta e il gate grafico e' chiuso.
+
+<details><summary>Testo originale della prova</summary>
+
+- **Prova fisica di stampa, spetta al PM.** Stampare il foglio A3 al 100%, senza adattamento alla pagina, e misurare col righello la barra di scala: deve dare 100 mm. È l'unico passo del gate grafico non eseguibile in una sessione cloud, e con esso va raccolta l'impressione visiva sulla riconoscibilità dei dodici simboli alla loro dimensione reale. Il foglio si rigenera con `.venv/bin/python -m disegnatore_mep symbols-sheet outputs/symbols.svg --symbols assets/symbols`.
+
+</details>
+
+- [ ] Prossimo passo: scrivere il piano di layout, instradamento e multi-tavola.
 
 ## Next — backlog ordinato
 
-1. Scrivere il piano di layout, instradamento e multi-tavola, incorporando le convenzioni di impaginazione e il rapporto di costo fra incrocio e percorso lungo (D-041) e il ruolo dell'AI limitato al piano di impaginazione (D-042). Progettare lì la vista che unisce semantica e geometria: il piano grafico la elencava come `ResolvedComponent` ma non l'ha costruita, perché non aveva consumatori.
+1. Scrivere il piano di layout, instradamento e multi-tavola, incorporando le convenzioni di impaginazione e il rapporto di costo fra incrocio e percorso lungo (D-041), il ruolo dell'AI limitato al piano di impaginazione (D-042) e **la fascia della legenda sul lato destro con i soli simboli usati, senza didascalie ripetute nel disegno (D-052)**. Progettare lì la vista che unisce semantica e geometria: il piano grafico la elencava come `ResolvedComponent` ma non l'ha costruita, perché non aveva consumatori.
 2. Scrivere il piano di rendering, cartiglio e PDF, con distinta derivata dal modello e preflight.
 3. Solo a questo punto il motore delle regole (ex P1), con `RuleApplicationModel` completato per la tracciabilità a valle (D-039), la rappresentazione dei dati mancanti e il percorso di migrazione dello schema. Dettagli in `docs/P0_REVIEW_FINDINGS.md` §3.2.
 4. Allargare il contratto `DomainPack` prima che i quattro pacchetti di dominio procedano in parallelo (W3).

@@ -17,6 +17,8 @@ ROW_GAP_MM = 14.0
 SCALE_BAR_TICK_HALF_MM = 1.5
 SCALE_BAR_LABEL_GAP_MM = 2.0
 SYMBOL_LABEL_GAP_MM = 1.0
+LABEL_LINES = 2
+"""Righe di etichetta sotto ogni simbolo: nome italiano, poi identificativo."""
 PORT_MARKER_RADIUS_MM = 0.6
 
 
@@ -54,11 +56,14 @@ def render_symbol_sheet(
     # This function accepts any GraphicStandard, so the two assumptions its
     # layout makes about the paper are checked instead of assumed. Both hold for
     # A3_LANDSCAPE, but only by coincidence.
-    if standard.text_small_mm + SYMBOL_LABEL_GAP_MM > ROW_GAP_MM:
+    # Two label lines per symbol: the Italian name a technician reads, then the
+    # machine identifier a catalog definition points at.
+    label_block_mm = LABEL_LINES * (standard.text_small_mm + SYMBOL_LABEL_GAP_MM)
+    if label_block_mm > ROW_GAP_MM:
         raise ValueError(
             f"the {ROW_GAP_MM:g}mm row gap leaves no room for the "
-            f"{standard.text_small_mm:g}mm label plus the "
-            f"{SYMBOL_LABEL_GAP_MM:g}mm label gap"
+            f"{LABEL_LINES} label lines of {standard.text_small_mm:g}mm each "
+            f"plus their {SYMBOL_LABEL_GAP_MM:g}mm gaps"
         )
     if standard.usable_width_mm < SCALE_BAR_MM:
         raise ValueError(
@@ -121,9 +126,13 @@ def render_symbol_sheet(
             f'transform="translate({x} {y})" '
             f'stroke="black" stroke-width="{standard.line_medium_mm}" fill="none">'
             f"{symbol.body}{markers}"
-            f'<text x="0" '
+            f'<text class="symbol-name" x="0" '
             f'y="{symbol.manifest.height_mm + standard.text_small_mm + SYMBOL_LABEL_GAP_MM}" '
             f'font-size="{standard.text_small_mm}" stroke="none" fill="black">'
+            f"{_escape(symbol.manifest.name)}</text>"
+            f'<text class="symbol-id" x="0" '
+            f"y=\"{symbol.manifest.height_mm + 2 * standard.text_small_mm + 2 * SYMBOL_LABEL_GAP_MM}\" "
+            f'font-size="{standard.text_small_mm}" stroke="none" fill="grey">'
             f"{_escape(symbol.manifest.id)}</text>"
             f"</g>"
         )

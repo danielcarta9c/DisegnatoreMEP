@@ -110,6 +110,26 @@ def test_port_markers_are_emitted_at_their_millimetre_position() -> None:
     assert 'class="port"' in sheet()
 
 
+def test_sheet_labels_each_symbol_with_its_readable_name() -> None:
+    """Cio' che un tecnico legge e' il nome, non l'identificativo di macchina.
+
+    D-051: la nomenclatura visibile e' in italiano; `id` resta un identificativo
+    di codice e sul foglio compare solo come riferimento secondario.
+    """
+    output = sheet()
+    assert "Simbolo valve" in output
+    assert "Simbolo pump" in output
+    assert 'class="symbol-name"' in output
+    assert 'class="symbol-id"' in output
+
+
+def test_the_two_label_lines_do_not_collide() -> None:
+    output = sheet()
+    ys = [float(v) for v in re.findall(r'class="symbol-(?:name|id)" x="0" y="([\d.]+)"', output)]
+    name_y, id_y = ys[0], ys[1]
+    assert id_y - name_y >= A3_LANDSCAPE.text_small_mm
+
+
 def test_sheet_is_deterministic() -> None:
     assert sheet() == sheet()
 

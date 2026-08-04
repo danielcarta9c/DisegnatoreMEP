@@ -28,6 +28,16 @@ def test_every_shipped_symbol_appears_on_the_sheet(tmp_path: Path) -> None:
         assert f'data-symbol-id="{symbol.manifest.id}"' in content
 
 
+def test_every_shipped_symbol_shows_its_italian_name(tmp_path: Path) -> None:
+    """D-051: la tavola e' in italiano. Il foglio mostra il nome del componente,
+    non l'identificativo interno, che resta un riferimento di codice."""
+    output = tmp_path / "symbols.svg"
+    main(["symbols-sheet", str(output), "--symbols", str(SYMBOLS)])
+    content = output.read_text(encoding="utf-8")
+    for symbol in SymbolRegistry.from_directory(SYMBOLS).all():
+        assert symbol.manifest.name in content
+
+
 def test_restricted_symbols_declare_only_their_technical_orientations() -> None:
     """allowed_rotations_deg is a technical constraint, not a geometric one:
     all four rotations are always geometrically possible, but an automatic air
