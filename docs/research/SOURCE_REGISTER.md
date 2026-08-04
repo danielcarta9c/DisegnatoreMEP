@@ -10,13 +10,14 @@
 | SRC-004 | [ISO 14617-2:2025](https://www.iso.org/standard/83364.html) | Libreria generale di simboli per componenti e processi | Da acquisire e mappare |
 | SRC-005 | [ANSI/ASHRAE Standard 134-2005 (RA 2014)](https://www.ashrae.org/File%20Library/Technical%20Resources/ASHRAE%20Handbook/Standards-and-Guidelines-List.pdf) | Linguaggio simbolico HVAC&R; riferimento complementare da verificare rispetto alla pratica italiana | Da acquisire e valutare |
 | SRC-006 | [SVG 2 - Coordinate Systems, Transformations and Units](https://www.w3.org/TR/SVG/coords.html) | Unità, coordinate, trasformazioni e spessori vettoriali | Consultata per il design |
-| SRC-007 | UNI 9511 (5 parti, 1989), «Disegni tecnici. Rappresentazione delle installazioni» | **La** simbologia italiana degli impianti civili: riscaldamento, condizionamento, idrosanitario, gas. È la norma che un termotecnico italiano si aspetta, ed è quella che mancava | **Da acquistare.** Decisione di prodotto: la norma è a pagamento |
+| SRC-007 | UNI 9511 (5 parti, 1989), «Disegni tecnici. Rappresentazione delle installazioni» | **La** simbologia italiana degli impianti civili: riscaldamento, condizionamento, idrosanitario, gas. È la norma che un termotecnico italiano si aspetta, ed è quella che mancava | **Non si acquista.** I suoi segni grafici sono riprodotti per esteso in materiale didattico e di settore liberamente accessibile: si usano quelli, citati come fonte secondaria (SRC-015) |
+| SRC-015 | Tabelle dei segni grafici UNI 9511 riprodotte in materiale didattico: [«Norma UNI 9511 — Segni grafici», tabelle utili, prof. Guerra](https://professoreguerra.altervista.org/alterpages/files/UniIdraulica1.pdf); [dispensa di simbologia, Università di Ferrara](https://docente.unife.it/graziano.trippa/materiale-didattico-e-avvisi-lca1-2009-2010-corso-a/SIMBOLOGIA%20def.pdf/at_download/file) | I segni grafici della norma, con le denominazioni italiane, tavola per tavola: giunzioni e accessori per tubazioni, apparecchiature per la distribuzione di acqua, gas e vapore, filtri, vasi di espansione (aperto, a membrana, autopressurizzato), scambiatori, pompe, terminali | **Acquisita il 4 agosto 2026**, dieci tavole verificate a schermo. **Fonte secondaria**: il campo `source` dei simboli dirà «UNI 9511, tramite SRC-015», mai «UNI 9511» |
 | SRC-008 | [Caleffi — Quaderni e Tabelle](https://www.caleffi.com/it-it/formazione/quaderni-e-tabelle); [Componenti e schemi per impianti a pompa di calore aria-acqua](https://www.caleffi.com/sites/default/files/media/external-file/25%20-%20Componenti%20e%20schemi%20per%20impianti%20a%20pompa%20di%20calore%20aria-acqua.pdf) | Casi di studio e prescrizioni di prodotto (D-015). Distinguono separatore idraulico, compensatore e accumulo inerziale, che il nostro `buffer-four-port` confonde | Consultata il 4 agosto 2026 |
 | SRC-009 | [Schema funzionale centrale termica — Condominio Tower House, Treviso, Divisione Energia srl](https://www.divisionenergia.it/wp-content/uploads/2025/02/Cond.TH_schema-ct-as-built.pdf) | Caso di studio di tavola reale: legenda tubazioni, composizione a corsie, diametri sulle linee, sigle funzionali, tabelle. Documento pubblico | Letta e misurata il 4 agosto 2026, **non riprodotta** |
 | SRC-010 | [Schema funzionale centrale termica — Liceo «G. Ballardini», Provincia di Ravenna](https://presadmin.provincia.ra.it/content/download/88849/1115730/file/SM04%20-%20BALLARDINI%20Stato%20Modificato%20Schema%20funzionale%20Centrale%20Termica.pdf) | Caso di studio: legenda colori tubazioni con mandata e ritorno distinti, sigle, tabella caratteristiche pompe. Documento pubblico di gara | Letta il 4 agosto 2026, **non riprodotta** |
 | SRC-011 | [Segni grafici nella rappresentazione dei componenti — CT Energia](https://www.ctenergia.it/wp-content/uploads/downloads/2014/04/00-Lez.-cap.-1-segni-grafici-nella-rappr.-componenti.pdf) | Materiale didattico sulla rappresentazione degli impianti fluidotermici | Acquisita il 4 agosto 2026 |
 | SRC-012 | **Raccolta R, edizione 2009** — specificazioni tecniche applicative del Titolo II del D.M. 1.12.1975, ai sensi dell'art. 26. [Testo integrale commentato Caleffi](https://raccoltar.caleffi.it/pdf/raccolta_r_commentata_caleffi.pdf), [testo Raccolta R](https://raccoltar.caleffi.it/pdf/raccolta_r.pdf) | **Prescrizione normativa applicabile**, livello 1 della gerarchia §9.1: attua un decreto ministeriale. In vigore dal 1° marzo 2011 (circolare INAIL 1-IN/2010). Il cap. R.3.B.1 elenca i dispositivi obbligatori di un impianto a vaso chiuso; R.2.A i dispositivi di sicurezza e i loro dimensionamenti; R.3 le configurazioni di impianto | **Acquisita e letta il 4 agosto 2026**, 55 pagine. Liberamente accessibile |
-| SRC-013 | **UNI 10412-1:2006** «Impianti di riscaldamento ad acqua calda — Requisiti di sicurezza — Parte 1: generatori alimentati da combustibili liquidi, gassosi, solidi polverizzati o **generatori di calore elettrici**» | È la norma che copre il caso di accettazione D-011, che è a **pompa di calore** e che la Raccolta R esclude | **Da acquistare.** Decisione di prodotto: la norma è a pagamento e non ne esistono copie lecite in rete |
+| SRC-013 | **UNI 10412-1:2006** «Impianti di riscaldamento ad acqua calda — Requisiti di sicurezza — Parte 1: generatori alimentati da combustibili liquidi, gassosi, solidi polverizzati o **generatori di calore elettrici**» | Coprirebbe il caso di accettazione D-011, che è a **pompa di calore** e che la Raccolta R esclude | **Non acquistata, e non blocca.** Le regole di sicurezza per la pompa di calore restano su buona pratica documentata e manuali di prodotto, dichiarati come livello 2-3. Resta registrata qui come acquisto possibile, non come prerequisito |
 | SRC-014 | **UNI 8065:2019** «Trattamento dell'acqua negli impianti termici ad uso civile», tramite guide di settore: [Guida Aqua Italia](https://www.atlasfiltriengineering.com/sites/default/files/news/files/Giuda%20Aqua%20Italia_UNI.8065.19_0.pdf) | Filtro di sicurezza, filtro dissabbiatore, condizionamento chimico, soglie di addolcimento. La norma è a pagamento; le guide ne riportano le prescrizioni con soglie puntuali | Guide **consultate il 4 agosto 2026**. Fonte **secondaria**: le regole che ne derivano citano la guida, non la norma |
 
 ## Convenzioni grafiche interne
@@ -80,6 +81,23 @@ esplicitamente](https://www.caleffi.com/it-it/blog/le-pompe-di-calore-e-la-racco
 
 Quindi la fonte normativa gratuita copre **integralmente** una centrale a combustione e
 **non copre** il caso D-011, che è a pompa di calore. Per quello serve SRC-013.
+
+## Il perimetro della ricerca normativa
+
+Deciso dal PM il 4 agosto 2026, dopo che questa sessione stava aprendo un programma di
+acquisizione normativa: **la skill non deve diventare un manuale di progettazione.** La
+ricerca aiuta, non è il cuore. La maggior parte di ciò che serve — quale accessorio ci
+vuole e dove — è buona pratica consolidata, e non richiede di comprare norme.
+
+Ne segue una regola pratica per chi scrive le regole di P1:
+
+- il **contenuto** di una regola viene dalla buona pratica e dai manuali dei produttori;
+- la **fonte dichiarata** deve dire il vero: «buona pratica tecnica documentata» con un
+  riferimento puntuale è una risposta corretta e sufficiente, e vale più di una citazione
+  normativa gonfiata;
+- si sale di livello nella gerarchia §9.1 solo quando la fonte c'è davvero, come per la
+  Raccolta R (SRC-012);
+- non si apre una ricerca normativa per una regola che nessuno contesta.
 
 ## Regole di utilizzo
 
