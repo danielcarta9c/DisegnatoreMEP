@@ -1,0 +1,23 @@
+{
+  "id": "dhw-mixing-on-draw-off",
+  "version": "1.0.0",
+  "name": "Valvola miscelatrice termostatica",
+  "category": "necessary",
+  "cardinality": "per_network",
+  "when": {
+    "network_domain": "hydronic",
+    "anchor_has_function": "dhw_storage",
+    "network_medium": "domestic_hot_water"
+  },
+  "then": {
+    "definition_id": "mixing-valve-thermostatic",
+    "placement": "on_outlet",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "network_has_function": "dhw_mixing"
+  },
+  "rationale": "L'accumulo si tiene caldo contro la legionella, ma alle utenze l'acqua deve arrivare a temperatura di utilizzo: la miscelatrice separa le due cose.",
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)"
+}

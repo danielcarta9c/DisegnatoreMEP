@@ -35,7 +35,7 @@
     {
       "id": "cold_in",
       "domain": "hydronic",
-      "medium": "domestic_cold_water",
+      "medium": "cold_water",
       "flow": "in",
       "required": false,
       "max_connections": 1

@@ -10,11 +10,16 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import render_sheet
 from disegnatore_mep.graphics.svg import render_symbol_sheet
-from disegnatore_mep.io.canonical import project_fingerprint
+from disegnatore_mep.io.canonical import canonical_json, project_fingerprint
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import compose_on_ordinary_frame
 from disegnatore_mep.layout.geometry import drawing_fingerprint
 from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.rules.apply import apply_proposals
+from disegnatore_mep.rules.engine import evaluate
+from disegnatore_mep.rules.errors import RuleError
+from disegnatore_mep.rules.registry import RuleRegistry
+from disegnatore_mep.rules.report import CATEGORY_LABELS, build_report
 from disegnatore_mep.validation.geometry import validate_drawing_geometry
 from disegnatore_mep.validation.topology import validate_project
 
@@ -42,6 +47,22 @@ def build_parser() -> argparse.ArgumentParser:
     sheet.add_argument("output", type=Path)
     sheet.add_argument("--symbols", type=Path, required=True)
 
+    rules = commands.add_parser("rules")
+    rules.add_argument("project", type=Path)
+    rules.add_argument("--catalog", type=Path, required=True)
+    rules.add_argument("--symbols", type=Path, required=True)
+    rules.add_argument("--rules", type=Path, required=True)
+    rules.add_argument(
+        "--apply-all",
+        action="store_true",
+        help=(
+            "applica tutte le proposte senza chiederlo. Non e' l'approvazione "
+            "dell'ingegnere, che vive nella conversazione: e' la scorciatoia per lo "
+            "sviluppo e per i casi di prova"
+        ),
+    )
+    rules.add_argument("--out", type=Path)
+
     draw = commands.add_parser("draw")
     draw.add_argument("project", type=Path)
     draw.add_argument("--catalog", type=Path, required=True)
@@ -49,6 +70,44 @@ def build_parser() -> argparse.ArgumentParser:
     draw.add_argument("--out", type=Path, required=True)
     draw.add_argument("--geometry", type=Path)
     return parser
+
+
+def _rules(args: argparse.Namespace) -> int:
+    """Propone le integrazioni. Senza `--apply-all` non tocca niente."""
+    project = load_project(args.project)
+    symbols = SymbolRegistry.from_directory(args.symbols)
+    catalog = ComponentRegistry.from_directory(args.catalog, symbols=symbols)
+    registry = RuleRegistry.from_directory(args.rules)
+    registry.cross_check(catalog)
+
+    proposals = evaluate(project, catalog, registry)
+    report = build_report(proposals)
+    for category, label in CATEGORY_LABELS.items():
+        entries = report.of(category)
+        if not entries:
+            continue
+        print(f"\n{label}")
+        for entry in entries:
+            print(f"  - {entry.name} — {entry.where}")
+            print(f"    {entry.rationale}")
+            print(f"    fonte: {entry.source} · regola: {entry.rule}")
+    if report.is_empty:
+        print("Nessuna integrazione da proporre: il modello e' gia' completo.")
+
+    if not args.apply_all:
+        return 0
+    if args.out is None:
+        print("--apply-all richiede --out: il modello completato va scritto da qualche parte")
+        return 1
+    completed = apply_proposals(project, proposals)
+    verdict = validate_project(completed, catalog)
+    if not verdict.ok:
+        print(verdict.model_dump_json(indent=2))
+        return 2
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(canonical_json(completed), encoding="utf-8")
+    print(f"\nScritte {len(proposals)} integrazioni in {args.out}")
+    return 0
 
 
 def _draw(args: argparse.Namespace) -> int:
@@ -98,6 +157,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             registry = SymbolRegistry.from_directory(args.symbols)
             args.output.write_text(render_symbol_sheet(registry), encoding="utf-8")
             return 0
+        if args.command == "rules":
+            return _rules(args)
         if args.command == "draw":
             return _draw(args)
         project = load_project(args.project)
@@ -110,8 +171,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(report.model_dump_json(indent=2))
         return 0 if report.ok else 2
     # CatalogError e SymbolError sono entrambe sottoclassi di ValueError: nominarle
-    # qui era ridondante e insegnava una gerarchia sbagliata.
-    except (OSError, ValidationError, ValueError) as exc:
+    # qui era ridondante e insegnava una gerarchia sbagliata. `RuleError` invece
+    # discende da Exception e va nominata.
+    except (OSError, ValidationError, ValueError, RuleError) as exc:
         print(str(exc), file=sys.stderr)
         return 1
 

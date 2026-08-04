@@ -19,6 +19,18 @@ from .trunks import Trunk
 MIN_SPACING_MM = 2.5
 """Distanza minima fra due accessori sulla stessa tratta: un passo di griglia."""
 
+END_CLEARANCE_MM = 5.0
+"""Stacco fra un accessorio e il componente all'estremo della propria tratta.
+
+Due passi, il doppio della distanza fra due accessori, e per un motivo diverso.
+Fra due accessori basta che si distinguano; contro un componente serve invece
+che resti **una colonna libera**, perche' e' da li' che passano le tubazioni che
+raggiungono i suoi altri attacchi. Con un passo solo la valvola di sicurezza
+della pompa di calore le si e' appoggiata al fianco e ha chiuso il corridoio del
+ritorno del primario: l'instradamento e' fallito con una diagnostica che parlava
+di tutt'altro.
+"""
+
 
 @dataclass(frozen=True)
 class _Station:
@@ -139,7 +151,11 @@ def place_inline_accessories(
     # lungo da contenerlo, non a una frazione arbitraria della lunghezza: se la
     # rotta piega accanto a lui, il moncone che resta gli passa dentro il
     # riquadro, e la linea risulta disegnata sotto il simbolo.
-    straights = _straight_stretches(points)
+    straights = [
+        (max(low, END_CLEARANCE_MM), min(high, total - END_CLEARANCE_MM))
+        for low, high in _straight_stretches(points)
+    ]
+    straights = [item for item in straights if item[1] > item[0]]
     if not straights:
         raise LayoutError(
             f"run {trunk.connection_ids[0]} has no straight stretch to sit an "

@@ -711,7 +711,10 @@ CYLINDER_PORTS = [
     port_at("coil_in", "left", 7.5, STORAGE_W, STORAGE_H),
     port_at("coil_out", "left", 17.5, STORAGE_W, STORAGE_H),
     port_at("dhw_out", "top", 7.5, STORAGE_W, STORAGE_H),
-    port_at("cold_in", "bottom", 7.5, STORAGE_W, STORAGE_H),
+    # L'ingresso freddo sta in basso **a lato**, non sul fondo: un attacco sulla
+    # faccia inferiore di un accumulo appoggiato a terra e' irraggiungibile,
+    # perche' la tubazione dovrebbe passare sotto la linea di terra.
+    port_at("cold_in", "left", 37.5, STORAGE_W, STORAGE_H),
 ]
 BUFFER_PORTS = [
     port_at("primary_in", "left", 5.0, STORAGE_W, STORAGE_H),

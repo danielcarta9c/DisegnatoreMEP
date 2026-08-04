@@ -44,7 +44,7 @@ from .errors import LayoutError
 from .flow import orient_trunks
 from .geometry import PlacedSymbol, Point
 from .grid import GridSpace
-from .inline import MIN_SPACING_MM
+from .inline import END_CLEARANCE_MM, MIN_SPACING_MM
 from .partition import SheetPartition
 
 BAND_GUTTER_MM = 10.0
@@ -71,13 +71,18 @@ sovrapporsi all'altra. Sovrapporsi per il lungo e' vietato, quindi il varco
 deve essere largo abbastanza da non costringerci.
 """
 
-ROUTING_MARGIN_MM = 10.0
+ROUTING_MARGIN_MM = 7.5
 """Corridoio libero fra il bordo dell'area di disegno e la prima fascia.
 
 Senza, un simbolo appoggiato al bordo sinistro ha le proprie porte rivolte a
-sinistra irraggiungibili: la rotta dovrebbe arrivare da fuori pagina. Quattro
-passi di griglia su ciascun lato, cosi' l'area utile al posizionamento resta
-un multiplo esatto del passo.
+sinistra irraggiungibili: la rotta dovrebbe arrivare da fuori pagina.
+
+**Tre** passi di griglia per lato, non quattro. Quattro era un numero tondo, non
+una misura: il corridoio serve a far girare una rotta intorno a un simbolo di
+bordo, e tre colonne bastano — una per scendere, una per passare, una di
+rispetto. I cinque millimetri recuperati sui due lati sono quelli che fanno
+entrare l'impianto completo su una A3 invece di dividerlo in due tavole, e
+dividere e' un costo di lettura che si paga quando serve (D-056).
 """
 
 _HORIZONTAL_FACES = (PortFace.LEFT, PortFace.RIGHT)
@@ -319,6 +324,27 @@ def place_sheet(
         for item in placeable
     }
 
+    reading = {role: index for index, role in enumerate(BandRole)}
+
+    def continues_rightwards(component_id: str) -> int:
+        """Vero se questo pezzo e' legato a qualcosa di una fascia successiva.
+
+        Chi prosegue va posato **per ultimo** nella propria fascia, qualunque sia
+        la sua profondita': altrimenti fra lui e la fascia che alimenta si
+        infilano i rami morti, e la tratta che li collega — con i suoi accessori
+        — si ritrova senza rettilineo. E' capitato al volano, separato dal
+        collettore dalle utenze sanitarie.
+        """
+        here = reading.get(bands.get(component_id, BandRole.GENERATION), 0)
+        for trunk in partition.trunks:
+            ends = {trunk.start.component_id, trunk.end.component_id}
+            if component_id not in ends:
+                continue
+            for other in ends - {component_id}:
+                if reading.get(bands.get(other, BandRole.GENERATION), 0) > here:
+                    return 1
+        return 0
+
     columns: dict[BandRole, list[str]] = defaultdict(list)
     for component_id in placeable:
         columns[bands[component_id]].append(component_id)
@@ -326,6 +352,7 @@ def place_sheet(
         columns[role].sort(
             key=lambda item: (
                 order_hint.get(subsystem_of.get(item, ""), 0),
+                continues_rightwards(item),
                 *process.order_of(item),
             )
         )
@@ -344,6 +371,47 @@ def place_sheet(
     def on_grid(value_mm: float, origin_mm: float) -> float:
         return origin_mm + round((value_mm - origin_mm) / step) * step
 
+    def _room_for(trunk_component_ids: tuple[str, ...]) -> float:
+        """Il rettilineo che gli accessori di una tratta pretenderanno.
+
+        E' lo stesso conto che `inline.py` fara' dopo l'instradamento: ogni
+        accessorio vuole la propria interruzione piu' uno stacco dal vicino, e
+        la fila intera vuole due stacchi dai componenti agli estremi.
+        """
+        accessories = [
+            item for item in project.components if item.id in trunk_component_ids
+        ]
+        if not accessories:
+            return 0.0
+        return sum(
+            (catalog.resolve(item.definition_id).symbol.manifest.inline_gap_mm or 0.0)
+            + 2 * MIN_SPACING_MM
+            for item in accessories
+        ) + 2 * END_CLEARANCE_MM
+
+    def inline_room(here: set[str], there: set[str]) -> float:
+        """Quanto rettilineo vogliono gli accessori delle tratte fra due colonne.
+
+        Da quando le regole completano l'impianto, una tratta fra due componenti
+        affiancati puo' ritrovarsi a portare tre accessori: fra la pompa di
+        calore e la sua valvola deviatrice ci stanno termometro, separatore
+        d'aria e valvola di sicurezza. Dieci millimetri non bastano, e a
+        scoprirlo sarebbe `inline.py` dopo l'instradamento, quando spostare
+        qualcosa non e' piu' possibile.
+
+        Solo le tratte **fra queste due colonne**: quelle che vengono da lontano
+        hanno gia' il proprio rettilineo lungo la strada.
+        """
+        return max(
+            (
+                _room_for(trunk.inline_component_ids)
+                for trunk in partition.trunks
+                if {trunk.start.component_id, trunk.end.component_id} & here
+                and {trunk.start.component_id, trunk.end.component_id} & there
+            ),
+            default=0.0,
+        )
+
     used_roles = [role for role in BandRole if columns.get(role)]
     feeder_of = {
         component_id: feed[0].component_id
@@ -352,13 +420,28 @@ def place_sheet(
     stackable = {item: standings[item] is Standing.RAIL for item in placeable}
     slots = {role: _slots(columns[role], feeder_of, stackable) for role in used_roles}
     # Un solo cursore per fascia: la fascia e' larga quanto le sue colonne in
-    # fila, qualunque quota occupino, e una colonna e' larga quanto il suo
-    # pezzo piu' largo.
+    # fila, qualunque quota occupino, e una colonna e' larga quanto il suo pezzo
+    # piu' largo. Gli stacchi si calcolano **una volta sola** e si riusano nel
+    # posizionamento: calcolarli due volte con formule diverse faceva sbordare
+    # una fascia dentro la successiva.
+    gaps = {
+        role: [
+            max(
+                ROW_GAP_MM,
+                snap_up(
+                    inline_room(set(slots[role][index]), set(slots[role][index + 1])),
+                    0.0,
+                ),
+            )
+            for index in range(len(slots[role]) - 1)
+        ]
+        for role in used_roles
+    }
     widths = {
         role: snap_up(
             area.x_mm
             + sum(max(manifests[item].width_mm for item in slot) for slot in slots[role])
-            + ROW_GAP_MM * (len(slots[role]) - 1),
+            + sum(gaps[role]),
             area.x_mm,
         )
         - area.x_mm
@@ -366,29 +449,25 @@ def place_sheet(
     }
 
     # Una gola non e' larga soltanto per estetica: e' li' che corrono le tratte
-    # fra una fascia e l'altra, e su quelle tratte stanno gli accessori in
-    # linea. Se un circolatore vuole quindici millimetri di rettilineo, la gola
-    # che la sua tratta attraversa deve poterglieli dare, altrimenti il foglio
-    # fallisce dopo l'instradamento con l'accessorio senza posto.
-    gutters = [BAND_GUTTER_MM] * max(len(used_roles) - 1, 0)
+    # fra una fascia e l'altra. Vale lo stesso criterio degli stacchi interni —
+    # si guarda alle **colonne che si toccano**, l'ultima di una fascia e la
+    # prima della successiva. Provare a provvedere per ogni tratta che
+    # attraversa il confine sovrastimava di ottanta millimetri: una tratta fra
+    # componenti lontani viaggia a lungo e il proprio rettilineo ce l'ha gia'.
     position_of = {role: index for index, role in enumerate(used_roles)}
-    for trunk in partition.trunks:
-        if not trunk.inline_component_ids:
-            continue
-        edges = [
-            position_of.get(bands.get(item.component_id, BandRole.GENERATION), -1)
-            for item in (trunk.start, trunk.end)
-        ]
-        if -1 in edges or edges[0] == edges[1]:
-            continue
-        needed = sum(
-            (catalog.resolve(item.definition_id).symbol.manifest.inline_gap_mm or 0.0)
-            + 2 * MIN_SPACING_MM
-            for item in project.components
-            if item.id in trunk.inline_component_ids
+    gutters = [
+        max(
+            BAND_GUTTER_MM,
+            snap_up(
+                inline_room(
+                    set(slots[used_roles[index]][-1]),
+                    set(slots[used_roles[index + 1]][0]),
+                ),
+                0.0,
+            ),
         )
-        for index in range(min(edges), max(edges)):
-            gutters[index] = max(gutters[index], snap_up(needed, 0.0))
+        for index in range(len(used_roles) - 1)
+    ]
 
     total = sum(widths.values()) + sum(gutters)
     if total > area.width_mm + 1e-9:
@@ -475,7 +554,7 @@ def place_sheet(
     x_mm = area.x_mm
     for role in used_roles:
         cursor = x_mm
-        for slot in slots[role]:
+        for position, slot in enumerate(slots[role]):
             left = on_grid(cursor, area.x_mm)
             floor = area.y_mm
             for component_id in slot:
@@ -523,7 +602,9 @@ def place_sheet(
                 )
                 # Il prossimo della colonna sta sotto questo, non accanto.
                 floor = top + manifest.height_mm + ROW_GAP_MM
-            cursor = left + max(manifests[item].width_mm for item in slot) + ROW_GAP_MM
+            widest = max(manifests[item].width_mm for item in slot)
+            gap = gaps[role][position] if position < len(gaps[role]) else 0.0
+            cursor = left + widest + gap
         x_mm += widths[role]
         if position_of[role] < len(gutters):
             x_mm += gutters[position_of[role]]

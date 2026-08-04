@@ -1,0 +1,22 @@
+{
+  "id": "filling-unit-on-return",
+  "version": "1.0.0",
+  "name": "Gruppo di riempimento",
+  "category": "necessary",
+  "cardinality": "per_network",
+  "when": {
+    "network_domain": "hydronic",
+    "anchor_has_function": "heat_generation"
+  },
+  "then": {
+    "definition_id": "filling-unit",
+    "placement": "on_inlet",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "network_has_function": "filling"
+  },
+  "rationale": "L'impianto va riempito e reintegrato a pressione controllata, e il ritorno e' il punto piu' freddo in cui farlo.",
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)"
+}

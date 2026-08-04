@@ -136,7 +136,10 @@ def test_the_drawing_stays_within_its_crossing_budget() -> None:
 
 
 def test_the_drawing_stays_within_its_length_budget() -> None:
-    assert length_mm(sheet()) <= 950.0
+    """Cresciuta di venticinque millimetri quando l'ingresso freddo del bollitore
+    e' passato dalla faccia inferiore al fianco: un attacco sul fondo di un
+    accumulo appoggiato a terra era irraggiungibile."""
+    assert length_mm(sheet()) <= 980.0
 
 
 def test_a_component_stands_to_the_right_of_what_feeds_it() -> None:

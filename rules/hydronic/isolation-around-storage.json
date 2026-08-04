@@ -1,0 +1,22 @@
+{
+  "id": "isolation-around-storage",
+  "version": "1.0.0",
+  "name": "Valvola di intercettazione",
+  "category": "recommended",
+  "cardinality": "per_component",
+  "when": {
+    "network_domain": "hydronic",
+    "anchor_has_function": "thermal_storage"
+  },
+  "then": {
+    "definition_id": "valve-isolation",
+    "placement": "on_any_port",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "port_carries_function": "isolation"
+  },
+  "rationale": "Un accumulo si sostituisce e si manutiene: sezionarlo evita di svuotare l'impianto per lavorarci. Una sola valvola nel primo pacchetto: sezionare ogni attacco e' corretto ma raddoppia gli accessori, e resta fra gli sviluppi futuri.",
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)"
+}

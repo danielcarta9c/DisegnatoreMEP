@@ -1,0 +1,22 @@
+{
+  "id": "expansion-on-closed-circuit",
+  "version": "1.0.0",
+  "name": "Vaso di espansione",
+  "category": "necessary",
+  "cardinality": "per_network",
+  "when": {
+    "network_domain": "hydronic",
+    "anchor_has_function": "heat_generation"
+  },
+  "then": {
+    "definition_id": "expansion-connection",
+    "placement": "on_inlet",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "network_has_function": "expansion"
+  },
+  "rationale": "Un circuito chiuso deve poter dilatare senza salire in pressione: il vaso assorbe l'aumento di volume dell'acqua scaldata.",
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)"
+}
