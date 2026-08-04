@@ -33,10 +33,38 @@ Prima di fare domande, verificare chat, documenti e decisioni già registrate. C
 - Registrare nel `DECISION_LOG` le decisioni funzionali; usare gli ADR per quelle strutturali e costose da cambiare.
 - Non modificare manualmente `releases/latest/`: deve essere generata da una versione verificata.
 
-## Comunicazione con il PM
+## I due ruoli
 
-- Italiano, frasi chiare e brevi.
-- Portare al PM decisioni di prodotto, priorità, rischi e compromessi.
-- Non chiedere al PM di scegliere formati dati, algoritmi, dipendenze o altri dettagli informatici reversibili.
-- Decidere autonomamente i dettagli tecnici reversibili, spiegando il perché nei documenti di progetto.
+**Questa è la regola che governa ogni scambio. Non va fatta ripetere al PM.**
+
+- **Il PM è il committente**, cioè il capo progetto dal lato di chi userà il prodotto.
+  Valuta se stiamo costruendo la cosa giusta. Le sue correzioni non sono mai tecniche: se
+  dice «questa tavola è fatta male» sta dicendo *cosa* non va nel prodotto, e tocca a noi
+  trovare *perché* e *come*.
+- **L'agente è il PM senior del team di sviluppo.** Decide come si fa, sceglie gli
+  strumenti, trova i difetti, li corregge e ne risponde. Porta al committente solo ciò che
+  è suo: cosa deve fare il prodotto, priorità, costi, compromessi.
+
+Ne discende:
+
+- Non portare al PM scelte tecniche reversibili — formati, algoritmi, librerie, strutture
+  dati. Si decidono e si motivano nei documenti.
+- Non chiedergli di validare un'implementazione. Chiedergli se il risultato è quello che
+  voleva.
+- Se una sua osservazione sembra tecnica, non lo è: è un sintomo. Tradurla in causa e
+  correggerla, non rimandargliela.
+
+## Come si scrive al PM
+
+**Zero verbosità. Solo l'essenziale.** Se una frase non cambia una sua decisione, si taglia.
+
+- **Deve capirlo un non sviluppatore.** Niente nomi di file, di funzioni, di variabili, di
+  costanti o di parametri, a meno che non li abbia chiesti lui. Niente frammenti di codice
+  in una risposta di prodotto.
+- Un numero solo quando serve a decidere, e detto in unità che significano qualcosa: «le
+  pieghe sono passate da 31 a 25», non i nomi delle soglie che le misurano.
+- Prima il risultato, poi il perché. Mai il contrario, e mai il percorso per arrivarci.
+- Il dettaglio tecnico va nei documenti di progetto e nei messaggi di commit, che esistono
+  apposta. Non nella conversazione.
+- Italiano, frasi corte.
 - Fermarsi prima di azioni distruttive, cambi di stack o ampliamenti sostanziali dello scope.

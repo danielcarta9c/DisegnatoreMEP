@@ -108,6 +108,21 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 - **Le corsie a quota fissa non esistono più.** Erano la causa dei sali-scendi: una tratta di dieci millimetri saliva a metà foglio e ne riscendeva subito. La corsia buona la trova la funzione di costo; non va dichiarata.
 - **Le porte stanno sul perimetro (D-044) e sui nodi di griglia (D-054).** La seconda regola vive nel layout, non nel manifesto, perché `SymbolManifest` non conosce il `GraphicStandard`.
 
+## 5bis. Come si parla col PM
+
+Sta in `AGENTS.md`, ed è la cosa che il PM ha dovuto ripetere più volte. Non fargliela
+ripetere ancora.
+
+**Lui è il committente, l'agente è il PM senior dello sviluppo.** Il PM valuta se stiamo
+costruendo il prodotto giusto; le sue correzioni non sono mai tecniche. «La tavola è fatta
+male», «il ritorno blu entra nella valvola», «vietato sovrapporre le linee»: sono sintomi
+di prodotto, e trovarne la causa tecnica è lavoro nostro, non suo.
+
+**Zero verbosità, e deve capirlo un non sviluppatore.** Niente nomi di file, funzioni o
+costanti in una risposta; niente codice; niente racconto di come ci si è arrivati. Il
+dettaglio tecnico ha già due posti dove vivere — i documenti di progetto e i messaggi di
+commit — e la conversazione non è uno di quelli.
+
 ## 6. Domande aperte per il PM
 
 **Nessuna.**
