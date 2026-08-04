@@ -92,8 +92,13 @@ def test_non_inline_symbol_may_have_any_arrangement() -> None:
     )
 
 
-def test_inline_gap_cannot_exceed_the_symbol_width() -> None:
-    with pytest.raises(ValidationError, match="inline gap cannot exceed the symbol width"):
+def test_inline_gap_cannot_exceed_the_port_axis() -> None:
+    """L'interruzione si misura sull'asse che unisce le due porte opposte, non
+    sulla larghezza: per un simbolo con porte a sinistra e a destra i due
+    numeri coincidono, per uno ruotato di 90 gradi no."""
+    with pytest.raises(
+        ValidationError, match="exceeds the 6mm span between the two opposed ports"
+    ):
         manifest(inline_gap_mm=99.0)
 
 

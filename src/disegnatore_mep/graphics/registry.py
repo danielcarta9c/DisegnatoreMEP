@@ -23,6 +23,31 @@ class Symbol:
 
     manifest: SymbolManifest
     body: str
+    body_transform: str = ""
+    """Trasformazione SVG che porta il corpo nel riquadro ruotato, vuota a 0 gradi."""
+
+    def rotated(self, degrees: int) -> "Symbol":
+        """Il simbolo ruotato: manifesto trasformato e corpo avvolto nella
+        matrice equivalente.
+
+        Le due trasformazioni devono coincidere, o il disegno si stacca dai
+        propri attacchi; `tests/graphics/test_rotation.py` lo verifica angolo
+        per angolo su tutta la libreria pubblicata.
+        """
+        manifest = self.manifest.rotated(degrees)
+        if degrees == 0:
+            return self
+        width, height = self.manifest.width_mm, self.manifest.height_mm
+        transform = {
+            90: f"translate({height:g} 0) rotate(90)",
+            180: f"translate({width:g} {height:g}) rotate(180)",
+            270: f"translate(0 {width:g}) rotate(270)",
+        }[degrees]
+        return Symbol(
+            manifest=manifest,
+            body=f'<g transform="{transform}">{self.body}</g>',
+            body_transform=transform,
+        )
 
 
 class SymbolRegistry:

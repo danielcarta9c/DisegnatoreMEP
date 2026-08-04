@@ -220,7 +220,9 @@ def test_inline_composite_must_satisfy_the_two_opposed_ports_rule() -> None:
 
 
 def test_inline_gap_wider_than_the_composite_box_is_rejected() -> None:
-    with pytest.raises(ValueError, match="inline gap cannot exceed the symbol width"):
+    with pytest.raises(
+        ValueError, match="exceeds the 16mm span between the two opposed ports"
+    ):
         compile_composite(spec(inline_gap_mm=99.0), registry())
 
 
