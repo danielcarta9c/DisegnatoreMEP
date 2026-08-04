@@ -11,8 +11,8 @@
 | Interprete | Python 3.12, minimo 3.11 | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv`; comando `disegnatore-mep` funzionante |
 | Schema del progetto | `1.1.0` | I documenti `1.0.0` sono migrati al caricamento; fingerprint della fixture mista `31a6198e…` |
-| Test | 190 verdi | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
-| Libreria simboli | 12 pubblicati + 8 di fixture | `assets/symbols/` e `examples/foundation/symbols/`, entrambe rigenerabili identiche |
+| Test | 381 verdi | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
+| Libreria simboli | 20 pubblicati + 8 di fixture | `assets/symbols/` e `examples/foundation/symbols/`, entrambe rigenerabili identiche |
 | Release | Non disponibile | `releases/latest/` sarà popolata dopo la prima versione verificata |
 
 ## Now — in corso
@@ -26,8 +26,8 @@
 </details>
 
 - [x] ~~Scrivere il piano di layout, instradamento e multi-tavola~~ — **scritto il 4 agosto 2026** in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`. Dodici task, non ancora eseguito.
-- [x] ~~Decisioni di prodotto del piano~~ — **chiuse dal PM il 4 agosto 2026**: caso D-011 completo, divisione in tavole solo quando non entra, reti distinte per colore e tratto.
-- [ ] **Approvazione del PM sul piano nel suo insieme.** Le tre decisioni sono chiuse; manca il via libera a eseguirlo.
+- [x] ~~Piano di layout, instradamento e multi-tavola~~ — **eseguito il 4 agosto 2026**: dodici task, dodici commit, 381 test verdi. Il caso D-011 si disegna su una A3 e passa tutti i controlli geometrici.
+- [ ] **Giudizio del PM sulla prima tavola.** I controlli automatici dimostrano che nulla si sovrappone, non che la tavola si legga come l'avrebbe disegnata un tecnico. Si rigenera con `.venv/bin/python -m disegnatore_mep draw examples/layout/heat-pump-dhw-buffer-two-zones.json --catalog examples/layout/catalog --symbols assets/symbols --out outputs/`.
 
 ## Next — backlog ordinato
 
@@ -51,19 +51,23 @@ Chiusi dalla revisione finale del ramo: la guardia di capacità ora difende anch
 
 Elenco completo nell'appendice di `docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`.
 
-## Trovato scrivendo il piano di layout
+## Debito noto del layout
 
-Registrato qui perché non venga perso se il piano resta fermo. Dettagli e misure nel §2 del piano.
+- **Una tratta che attraversa un confine di tavola non viene disegnata** su nessuna delle due: compaiono i rimandi accoppiati, non il tratto che li raggiunge. Per la stessa ragione, un confine che tagliasse una tratta con accessori in linea viene **rifiutato**, perché quegli accessori resterebbero senza una linea su cui posarsi. Spetta al piano di rendering, che possiede i rimandi.
+- **Il cartiglio non è compilato**: la tavola esce marcata come bozza (D-025).
+- **La rotazione scelta dal posizionamento è sempre 0** quando il simbolo la ammette. Orientare un simbolo verso la fascia adiacente è un miglioramento possibile, non un difetto: nessuna prova lo pretende oggi.
 
-- **Nessuno dei venti simboli sta sulla griglia.** Non un riquadro, non una porta: 3 mm sono 1,2 passi da 2,5. Un instradamento ortogonale su griglia non può raggiungere nessuna porta della libreria attuale. Il piano lo risolve ridimensionando la libreria (Task 7), il che è anche il modo naturale di chiudere D-050.
-- **Il telaio del foglio non segue il cartiglio che il PM aveva fornito.** `assets/cartigli/Cartiglio_NoveC_A3.pdf` è nel repository dal primo commit (`fa7157c`, 1 agosto) e usa una squadratura a 10 mm sui quattro lati; `A3_LANDSCAPE` ne dichiara 20 a sinistra, scritti il 3 agosto citando ISO 5457 — che `SOURCE_REGISTER` elenca tuttora «da acquisire e valutare». Il piano grafico non nomina il cartiglio nemmeno una volta. È lo stesso errore che D-047 ha corretto per i simboli, ripetuto sulla carta e non intercettato dalle revisioni. Misurato dal PDF: banda del cartiglio 36 mm a tutta larghezza, intestazione 6 mm, area di disegno 350 × 235 mm. Registrato come CONV-GRAFICA-003.
-- **`inline_gap_mm` è confrontato con la larghezza invece che con l'asse delle porte.** Innocuo finché tutti i simboli in linea sono quadrati; sbagliato appena uno viene ruotato di 90°.
+## Trovato scrivendo il piano di layout, e poi risolto
+
+Dettagli e misure nel §2 del piano; le correzioni nella sua appendice.
+
+- ~~**Nessuno dei venti simboli sta sulla griglia.**~~ **Risolto (D-054, D-055):** venti simboli pubblicati e otto di fixture, tutti con riquadro e porte su nodi. Senza, l'instradamento non avrebbe raggiunto un solo attacco.
+- **Il telaio del foglio non seguiva il cartiglio che il PM aveva fornito.** `assets/cartigli/Cartiglio_NoveC_A3.pdf` è nel repository dal primo commit (`fa7157c`, 1 agosto) e usa una squadratura a 10 mm sui quattro lati; `A3_LANDSCAPE` ne dichiara 20 a sinistra, scritti il 3 agosto citando ISO 5457 — che `SOURCE_REGISTER` elenca tuttora «da acquisire e valutare». Il piano grafico non nomina il cartiglio nemmeno una volta. È lo stesso errore che D-047 ha corretto per i simboli, ripetuto sulla carta e non intercettato dalle revisioni. Misurato dal PDF: banda del cartiglio 36 mm a tutta larghezza, intestazione 6 mm, area di disegno 350 × 235 mm. Registrato come CONV-GRAFICA-003 e risolto da D-053.
+- ~~**`inline_gap_mm` è confrontato con la larghezza invece che con l'asse delle porte.**~~ **Risolto al Task 2.**
 
 ## Domande aperte
 
-Nessuna domanda di prodotto aperta.
-
-Le tre del piano di layout sono state chiuse dal PM il 4 agosto 2026, tutte confermando la proposta: **caso D-011 completo** con la gerarchia dimensionale che chiude D-050 (Task 7), **divisione in tavole solo quando il contenuto non entra** (Task 6), **reti distinte da colore e tratto** perché la tavola resti leggibile anche fotocopiata (Task 11). Vanno registrate come D-055, D-056 e D-057 nei task che le applicano.
+Nessuna domanda di prodotto aperta. Le tre del piano di layout sono state chiuse dal PM il 4 agosto 2026 e registrate come D-055, D-056 e D-057.
 
 Una quarta era stata posta e ritirata: chiedeva la squadratura del foglio, che non era da decidere perché il cartiglio era già fra gli input del progetto.
 
@@ -71,6 +75,7 @@ Una quarta era stata posta e ritirata: chiedeva la squadratura del foglio, che n
 
 | Commit | Cosa |
 |---|---|
+| `da67b9d`…`c3f0a97` | **Piano di layout eseguito**: dodici task. `ResolvedComponent`, rotazione del manifesto, piano di impaginazione nel modello con migrazione dello schema (W2), telaio Nove C (D-053), tratte (W4), partizione e rimandi, libreria sulla griglia con gerarchia dimensionale (D-054, D-055), posizionamento a fasce, instradamento, accessori in linea, tag e legenda, validazione geometrica e comando `draw`. Nove difetti trovati eseguendo, elencati nell'appendice del piano |
 | `f781d5c` | **Piano di layout, instradamento e multi-tavola scritto** (non eseguito): dodici task, con rotazione, tratte e instradamento prototipati e sotto test prima della stesura. Trovati tre difetti non registrati altrove: nessun simbolo sulla griglia, squadratura del cartiglio in disaccordo con `A3_LANDSCAPE`, interruzione di linea misurata sull'asse sbagliato |
 | `8e2b664` | **Fase grafica integrata in `main`** con merge esplicito; convenzioni grafiche interne registrate in `SOURCE_REGISTER`; W8 e W9 di P0 marcati risolti |
 | `fc97ad3`, `650f534`, `f90ede6`, `d193f6b`, `6516d77`, `0bb60ba`, `25fc9bc` | **Revisione finale del ramo grafico**: compositi che portano area di rispetto, interruzione di linea e ancoraggi (D-027); corpo SVG validato come XML; guardia di capacità sull'asse orizzontale (D-045); verifica incrociata cablata su `validate --symbols`; area di rispetto imposta sulle facce con porta; significato di `allowed_rotations_deg` (D-049, D-050) |

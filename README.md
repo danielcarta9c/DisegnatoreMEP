@@ -4,7 +4,7 @@ Progetto per una skill capace di trasformare la configurazione di un impianto te
 
 La skill analizzerà la configurazione, proporrà gli accessori necessari o raccomandati, raccoglierà l'approvazione dell'ingegnere e produrrà elaborati vettoriali SVG/PDF mediante regole tecniche e layout deterministici.
 
-**Stato:** fondazione canonica e sistema grafico completati. Il motore generale valida un impianto che mescola idronica, aeraulica, refrigerante e gas senza codice specifico per quello schema, e produce un foglio A3 stampabile dei simboli a misura reale. Non disegna ancora impianti: layout, instradamento e cartiglio arrivano nelle fasi successive.
+**Stato:** fondazione canonica, sistema grafico e motore di layout completati. Il nucleo valida un impianto che mescola idronica, aeraulica, refrigerante e gas senza codice specifico per quello schema, e **disegna** una tavola A3: componenti a fasce funzionali, tubazioni ortogonali che non passano sotto i simboli, accessori in linea che spezzano la linea, legenda a destra coi soli simboli usati. Restano il cartiglio compilato, il PDF e la distinta.
 
 ## Orientamento rapido
 
@@ -36,6 +36,16 @@ Crea la `.venv`, installa il pacchetto con le versioni pinnate e verifica test, 
 
 Codici di uscita: `0` progetto valido, `2` errori di validazione, `1` errori di caricamento.
 
+## Disegno di un impianto
+
+```bash
+.venv/bin/python -m disegnatore_mep draw examples/layout/heat-pump-dhw-buffer-two-zones.json \
+  --catalog examples/layout/catalog --symbols assets/symbols --out outputs/
+```
+
+Scrive una tavola SVG per foglio e stampa l'impronta della geometria. La tavola esce marcata
+come bozza finche' il cartiglio non e' compilato.
+
 ## Foglio dei simboli
 
 ```bash
@@ -53,7 +63,8 @@ Su Windows in locale l'interprete è `.venv/Scripts/python.exe` anziché `.venv/
 - `tests/`: suite di verifica, inclusi i test di accettazione del gate G0.
 - `examples/foundation/`: catalogo e progetti di riferimento multi-dominio.
 - `schemas/`: schema JSON versionato del modello di progetto.
-- `assets/symbols/`: la libreria dei simboli pubblicati.
+- `assets/symbols/`: la libreria dei simboli pubblicati, venti su quattro domini.
+- `examples/layout/`: il caso di accettazione D-011, con il proprio catalogo.
 - `assets/`: materiali grafici e cartigli originali.
 - `docs/`: roadmap, decisioni, ricerca, specifiche e ADR.
 - `releases/latest/`: ultima versione approvata e installabile.

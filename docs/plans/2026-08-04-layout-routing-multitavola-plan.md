@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Data:** 4 agosto 2026 · **Stato:** in attesa di approvazione del PM
+**Data:** 4 agosto 2026 · **Stato:** approvato ed **eseguito** il 4 agosto 2026
 
 **Goal:** trasformare un modello tecnico approvato in una o più tavole A3 disposte, instradate e impaginate: componenti a fasce funzionali sulla griglia, tubazioni ortogonali che non passano sotto i simboli, accessori in linea che spezzano davvero la connessione, legenda a destra costruita dai soli simboli usati, rimandi accoppiati fra tavole. Il gate è visivo: un termotecnico deve riconoscere lo schema del caso D-011 come una tavola disegnata da un tecnico.
 

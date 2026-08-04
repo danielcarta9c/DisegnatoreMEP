@@ -40,8 +40,8 @@ da un tecnico, e lo si scopre soltanto guardandola.
 - [x] definire griglia, allineamenti, spessori e testi in millimetri di carta invarianti;
 - [x] esportare SVG a misura reale con foglio di riscontro stampabile e barra di scala;
 - [ ] integrare il cartiglio Nove C;
-- [ ] partizionare semanticamente i sistemi complessi prima del layout;
-- [ ] implementare layout e instradamento deterministici;
+- [x] partizionare semanticamente i sistemi complessi prima del layout;
+- [x] implementare layout e instradamento deterministici;
 - [ ] esportare PDF vettoriale con manifest di riproducibilità.
 
 Colori e tag non sono ancora affrontati: appartengono al rendering della tavola vera, non al

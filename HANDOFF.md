@@ -1,4 +1,4 @@
-# HANDOFF — Disegnatore MEP · 2026-08-03 (fine fase grafica)
+# HANDOFF — Disegnatore MEP · 2026-08-04 (fine fase di layout)
 
 > ⛔ **STOP. Questo file NON è un riassunto del progetto.** È il cancello
 > di lettura per la sessione successiva. Leggere tutti i documenti indicati
@@ -28,7 +28,7 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 13 | `docs/plans/README.md` e `docs/plans/2026-08-01-master-implementation-roadmap.md` | Sequenza dei piani |
 | 14 | `docs/plans/2026-08-01-foundation-core-plan.md` — **solo l'appendice finale** | Il piano P0 eseguito e le sue deviazioni. Il corpo contiene codice difettoso |
 | 15 | **`docs/plans/2026-08-03-graphic-system-symbol-library-plan.md` — solo l'appendice finale** | Il piano grafico eseguito. **Sedici difetti corretti in esecuzione**, sei del piano e dieci trovati dalle revisioni. Anche qui il corpo non è stato riscritto |
-| 15bis | **`docs/plans/2026-08-04-layout-routing-multitavola-plan.md` — per intero** | Il piano successivo, **scritto e non eseguito**. Qui il corpo si legge davvero: è il lavoro da fare. Il §0 raccoglie le tre decisioni di prodotto, tutte chiuse dal PM, e spiega perché una quarta è stata ritirata, il §2 le tre scoperte fatte prototipando |
+| 15bis | **`docs/plans/2026-08-04-layout-routing-multitavola-plan.md` — §0, §2 e l'appendice** | Il piano di layout, **eseguito**. Il §0 porta le decisioni di prodotto e perché una quarta domanda era mal posta; il §2 le tre scoperte fatte prototipando; l'appendice i nove difetti trovati eseguendo. Il corpo dei task è stato scritto prima e non riscritto |
 | 16 | `docs/research/README.md` e `docs/research/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
 | 17 | `assets/cartigli/README.md` e `releases/README.md` | Vincoli su cartiglio e rilascio |
 | 18 | [`nove-c-kit` PLAYBOOK](https://github.com/danielcarta9c/nove-c-kit/blob/main/PLAYBOOK.md) e [`EXAMPLES`](https://github.com/danielcarta9c/nove-c-kit/blob/main/EXAMPLES.md) | Metodo di project management Nove C |
@@ -48,71 +48,48 @@ Rispondere esplicitamente prima di iniziare. Se una risposta non è certa, torna
 4. Dove vive oggi la geometria di un componente, dove la sua semantica, e cosa le tiene allineate?
 5. Perché una porta di simbolo non può stare al centro del riquadro, e quale vincolo P0 questo ha ritirato?
 6. Cosa succede se la libreria dei simboli non entra nel foglio, e perché non viene rimpicciolita?
-7. Perché rileggere alla lettera il corpo dei due piani è pericoloso?
+7. Perché rileggere alla lettera il corpo dei piani P0 e grafico è pericoloso, e perché il piano di layout è diverso?
+8. Perché una porta di simbolo deve cadere su un nodo di griglia?
+9. Dove vivono le coordinate della tavola, e perché non nel modello tecnico?
 
-Risposte attese: motore compositivo, provato cercando ogni termine impiantistico nel sorgente e trovando solo i nomi di dominio, zero condizionali su tipo di componente, e gate G0 su un progetto a quattro domini; il modello tecnico canonico, con geometria, SVG e PDF derivati; l'intero dossier di interpretazione, integrazioni, assunzioni e domande, confermato dentro la conversazione — se l'ingegnere rifiuta un'integrazione la skill semplicemente non la inserisce; la geometria nel manifesto del simbolo e la semantica nella definizione di catalogo, tenute allineate dalla verifica incrociata sugli identificativi di porta al caricamento (D-043); perché non sarebbe un punto a cui attaccare una tubazione, e ritira deliberatamente «le porte possono stare ovunque dentro il riquadro» (D-044); la generazione fallisce con una diagnostica che dice quanti simboli stanno, su entrambi gli assi, perché la scala di stampa è invariante (D-045); entrambi contengono codice che non funziona, corretto solo nelle rispettive appendici.
+Risposte attese: motore compositivo, provato cercando ogni termine impiantistico nel sorgente e trovando solo i nomi di dominio, zero condizionali su tipo di componente, e gate G0 su un progetto a quattro domini; il modello tecnico canonico, con geometria, SVG e PDF derivati; l'intero dossier di interpretazione, integrazioni, assunzioni e domande, confermato dentro la conversazione — se l'ingegnere rifiuta un'integrazione la skill semplicemente non la inserisce; la geometria nel manifesto del simbolo e la semantica nella definizione di catalogo, tenute allineate dalla verifica incrociata sugli identificativi di porta al caricamento (D-043); perché non sarebbe un punto a cui attaccare una tubazione, e ritira deliberatamente «le porte possono stare ovunque dentro il riquadro» (D-044); la generazione fallisce con una diagnostica che dice quanti simboli stanno, su entrambi gli assi, perché la scala di stampa è invariante (D-045); i primi due contengono codice che non funziona, corretto solo nelle rispettive appendici, mentre il piano di layout ha prototipato ed eseguito le proprie parti a rischio prima della stesura e marca **Verificato** ogni affermazione misurata; perché l'instradamento ortogonale cammina su nodi e una rotta può terminare solo su un nodo, quindi una porta fuori griglia è irraggiungibile (D-054); nel modello geometrico derivato, rigenerabile, perché il modello tecnico è la fonte di verità e non deve contenere coordinate (D-026, D-042).
 
 ---
 
 ## 3. Stato attuale del progetto
 
-- **Fase:** fondazione canonica e sistema grafico completati. Il piano di layout, instradamento e multi-tavola è **scritto e in attesa di approvazione**; nessun suo task è partito. Rendering, cartiglio e PDF non ancora pianificati.
+- **Fase:** fondazione canonica, sistema grafico e **motore di layout** completati. Il nucleo disegna una tavola A3 del caso D-011. Rendering del cartiglio, PDF e distinta non ancora pianificati.
 - **Versione installabile:** nessuna release; `releases/latest/` non è ancora popolata.
-- **Verifica:** 147 test verdi; `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`.
-- **Libreria:** dodici simboli pubblicati in `assets/symbols/` più otto di fixture in `examples/foundation/symbols/`, entrambe rigenerabili identiche dai rispettivi generatori.
+- **Verifica:** 381 test verdi; `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`.
+- **Libreria:** venti simboli pubblicati in `assets/symbols/` più otto di fixture, tutti con riquadro e porte su nodi di griglia (D-054) e taglie che seguono la gerarchia dimensionale (D-055). Entrambe rigenerabili identiche.
 - **Il gate G0 di P0 regge ancora.** Il fingerprint del progetto misto è `31a6198ee9697f07e2c10199e27781d10e70c058201fb59b95a9f5a94a4d96ac`: si è mosso una volta, al Task 3 del piano di layout, perché il documento dichiara ora `schema_version` `1.1.0`. Il valore precedente era `3347374e8b3f006c6f387c6228e0d9d2b885cbf57e65991937e985af32306573`.
 - **Ambiente:** ricostruibile da zero con `bash scripts/setup-env.sh`. **Da eseguire come prima cosa in una sessione cloud**, che riparte sempre da un clone pulito.
-- **Ramo:** la fase grafica è stata sviluppata su `claude/graphic-symbol-library-setup-acgoka` e **integrata in `main` con un merge esplicito** (`8e2b664`), come era stata chiusa P0. Si riparte da `main`. Il ramo di lavoro è conservato per poter rileggere la sequenza dei commit.
+- **Ramo:** la fase di layout è su `claude/layout-routing-multitable-plan-cbezrw`, **non ancora integrata in `main`**: le due fasi precedenti erano state chiuse con un merge esplicito, e questa attende il giudizio del PM sulla prima tavola.
 - **In flight:** nessuna modifica applicativa a metà.
 - **Blocco:** nessuno. La prova fisica di stampa è stata superata il 4 agosto 2026.
-- **Check rapido alla ripresa:** `git status --short` vuoto; `.venv/bin/python -m pytest -q` deve dare 147 passed.
+- **Check rapido alla ripresa:** `git status --short` vuoto; `.venv/bin/python -m pytest -q` deve dare 381 passed.
 
 ---
 
 ## 4. Cosa è cambiato dall'ultima sessione (delta)
 
-- Eseguiti tutti e sette i task del piano grafico con `superpowers:subagent-driven-development`: implementatore fresco per task, revisione di conformità e di qualità, loop di correzione.
-- **La geometria si è spostata dal catalogo al simbolo** e le porte stanno sul perimetro. Questo ritira un vincolo P0 esplicito: la motivazione è in `docs/GRAPHIC_STANDARD.md` §3.1.
-- Prodotto il primo artefatto guardabile del progetto: un **A3 stampabile** dei simboli a misura reale. Rasterizzato a 10 px/mm la barra di scala misura 100,000 mm esatti.
-- Corretti **sedici difetti**: sei nel codice letterale del piano, dieci trovati dalle revisioni. Elencati nell'appendice del piano grafico.
+- **Scritto ed eseguito il piano di layout, instradamento e multi-tavola**: dodici task, dodici commit. Il progetto disegna la sua prima tavola.
+- **Il metodo è cambiato**: le tre parti a rischio — rotazione, tratte, instradamento — sono state prototipate e messe sotto test **prima** di scrivere il piano. Nessuna delle tre ha prodotto difetti nel proprio nucleo; i nove difetti trovati stavano nel porting, nell'integrazione e nei task non prototipati.
+- **Il cartiglio che il PM aveva fornito nel primo commit non era mai stato aperto.** La sua squadratura è a 10 mm sui quattro lati, mentre `A3_LANDSCAPE` ne dichiarava 20 citando ISO 5457, che il registro fonti elenca «da acquisire e valutare». Corretto con D-053, provenienza registrata come CONV-GRAFICA-003.
+- **Nessuno dei venti simboli stava su un nodo di griglia**, quindi l'instradamento non avrebbe raggiunto un solo attacco. Risolto ridimensionando l'intera libreria sulla gerarchia di D-055, che chiude anche D-050.
+- **Il fingerprint del progetto misto si è mosso una volta**, col primo cambiamento di modello dopo P0 (W2, `schema_version` a `1.1.0`).
 - Tutte queste modifiche sono già promosse nei documenti canonici: non ricostruirle da questo elenco.
-
----
 
 ## 5. Punto esatto da cui riprendere
 
-**La prova di stampa e' superata.** Il PM ha stampato l'A3 il 4 agosto 2026 e la barra di
-scala misura 100 mm col righello: l'invarianza di scala e' dimostrata sulla carta, i dodici
-simboli sono riconoscibili alla loro dimensione reale, e il gate grafico e' chiuso. Non
-riproporre quella verifica.
+**Il progetto disegna.** Il caso D-011 — pompa di calore aria-acqua, ACS con valvola deviatrice, bollitore, volano a quattro attacchi, circolatore secondario, collettore a due zone con terminali misti — si dispone a fasce funzionali su una A3, si instrada in ortogonale, spezza la linea dove sta un accessorio, e porta a destra una legenda coi soli simboli usati. Passa tutti i controlli geometrici della §12.2 e ha un'impronta stabile fra processi.
 
-Dalla stampa sono nate due convenzioni di prodotto che vincolano il piano di layout, e sono
-la cosa piu' importante da portarsi dietro:
-
-- **D-051, la nomenclatura visibile e' in italiano.** Il `name` di un manifesto e' la
-  denominazione italiana; l'`id` e' codice e non compare su un elaborato. Il difetto trovato
-  stava nel rendering, non nei dati: il foglio stampava l'identificativo interno mentre i
-  nomi italiani erano gia' nei manifesti.
-- **D-052, legenda invece di didascalie ripetute.** La tavola porta a destra una legenda con i
-  soli simboli usati e il loro significato, una volta sola. Nel disegno il componente non si
-  ri-spiega: solo i tag che aggiungono informazione che la legenda non da', per esempio i litri
-  di un vaso di espansione. La legenda dice **cosa**, il tag dice **quanto** o **quale**, il
-  disegno dice **dove** e **come e' collegato**. Conseguenze operative in
-  `docs/GRAPHIC_STANDARD.md` §4bis: ripartire l'area utile fra corpo e fascia della legenda,
-  costruire la legenda dai simboli effettivamente usati nel modello e non dall'intera libreria,
-  e riservare gli `label_anchors` ai tag di valore.
-
-**Il piano di layout è scritto.** Vive in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`: dodici task in TDD, dal `ResolvedComponent` mancante fino alla prima tavola A3 del caso D-011 disegnata e verificata geometricamente. **Non è stato eseguito**: il codice è quello di prima, 147 test verdi, fingerprint invariato.
-
-- **Prossimo passo di sviluppo:** ottenere il via libera del PM a eseguire il piano. Le tre decisioni di prodotto sono già chiuse, quindi nessun task è in attesa: si parte dal Task 1.
-- **Leggere il corpo di questo piano, non solo l'appendice.** È la differenza rispetto agli altri due: qui il corpo è il lavoro da fare, e le parti a rischio sono state prototipate ed eseguite prima della stesura — rotazione, tratte e instradamento hanno già le loro prove verdi.
-- **Tre difetti trovati scrivendolo**, nessuno registrato altrove prima, tutti nel §2 del piano: nessuno dei venti simboli ha riquadro o porte su un nodo di griglia, quindi un instradatore su griglia non raggiunge nessun attacco; il telaio del foglio non segue il cartiglio che il PM aveva fornito nel primo commit, e i suoi margini sono attribuiti a ISO 5457, che il registro fonti dichiara non acquisita — lo stesso errore che D-047 ha corretto per i simboli; `inline_gap_mm` è confrontato con la larghezza invece che con l'asse che unisce le due porte opposte.
-- **Gli input forniti dal PM vanno cercati e aperti prima di decidere.** Il cartiglio era sul disco dal 1 agosto e la fase grafica ha fissato la geometria della carta senza guardarlo, citando una norma mai ottenuta. Prima di dedurre una convenzione grafica, controllare `assets/`.
-- **`render_symbol_sheet` è un banco di prova, non la tavola.** Costruisce una griglia uniforme da due costanti di modulo. Non generalizza a una tavola con cartiglio e instradamento: va tenuto come riscontro, non esteso.
-- **Attenzione al `keep_out`:** ora è imposto non nullo sulle facce con porta, quindi il layout può fidarsene. Prima non lo era.
-- **`usable_height_mm` non è un multiplo del passo di griglia** (277 / 2,5 = 110,8), mentre la larghezza sì. È voluto, i margini seguono ISO 5457. Un layout che assuma entrambi gli assi allineati sbaglia in verticale di 0,8 di passo. Il piano gira intorno al problema lavorando sull'area di disegno — 350 × 235 mm, che è allineata su entrambi gli assi — non sull'area utile del foglio.
-
----
+- **Prossimo passo, e l'unico che conta prima di scrivere altro codice:** il **giudizio visivo del PM** sulla prima tavola. I controlli automatici dimostrano che nulla si sovrappone, non che la tavola si legga come l'avrebbe disegnata un tecnico. È la domanda per cui D-040 ha anticipato la grafica alle regole, ed è ancora senza risposta.
+- **Poi:** scrivere il piano di rendering, cartiglio e PDF. Deve chiudere anche i due limiti che il layout lascia aperti, elencati nel debito noto di `PROJECT_STATE.md`.
+- **Da sapere prima di toccare il layout:** il modello tecnico **non contiene coordinate** e non deve acquistarne. Acquista il piano di impaginazione, che è fatto di scelte discrete (D-042). Se un task si trova a voler scrivere millimetri nel `ProjectModel`, ha sbagliato strada.
+- **`render_symbol_sheet` resta il banco di prova della libreria**, non la tavola: la tavola è `graphics/sheet.py`.
+- **L'incrocio resta più economico del giro.** La disuguaglianza `CROSS_COST < 2 * STEP_COST` è sotto test proprio perché una futura taratura non la rompa senza accorgersene (D-041).
+- **Le porte stanno sul perimetro (D-044) e sui nodi di griglia (D-054).** La seconda regola vive nel layout, non nel manifesto, perché `SymbolManifest` non conosce il `GraphicStandard`.
 
 ## 6. Domande aperte per il PM
 
