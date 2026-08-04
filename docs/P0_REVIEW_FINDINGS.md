@@ -28,7 +28,7 @@ Trovati dalla revisione avversariale e risolti prima della chiusura della fase.
 | D3 | Tre codici diagnostici collassavano fra connessioni diverse | Quaranta connessioni rotte producevano una sola riga, non azionabile |
 | D8 | Il messaggio di duplicato nominava come originale la connessione sbagliata | Indicava all'ingegnere l'entità sbagliata |
 
-Corretti nel commit `2c78731`. La forma canonica dei dati ordinari non è cambiata: il fingerprint della fixture di riferimento è rimasto `3347374e8b3f006c6f387c6228e0d9d2b885cbf57e65991937e985af32306573`.
+Corretti nel commit `2c78731`. La forma canonica dei dati ordinari non è cambiata: il fingerprint della fixture di riferimento è rimasto `3347374e8b3f006c6f387c6228e0d9d2b885cbf57e65991937e985af32306573` per tutta P0 e per la fase grafica. È cambiato in `31a6198ee9697f07e2c10199e27781d10e70c058201fb59b95a9f5a94a4d96ac` con il primo cambiamento di modello, quando `schema_version` è passata a `1.1.0` (W2, Task 3 del piano di layout).
 
 ## 3. Il flusso di lavoro, e una lettura sbagliata da non ripetere
 

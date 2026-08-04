@@ -6,6 +6,7 @@ from typing import Any
 
 from disegnatore_mep.graphics.standard import A3_LANDSCAPE
 from disegnatore_mep.graphics.symbol import SymbolManifest
+from disegnatore_mep.model.project import SCHEMA_VERSION
 
 ROOT = Path(__file__).parent
 CATALOG = ROOT / "catalog"
@@ -255,7 +256,9 @@ CONNECTIONS = [
 
 def project(connections: list[dict[str, Any]]) -> dict[str, Any]:
     return {
-        "schema_version": "1.0.0",
+        # Scritta nativamente alla versione corrente: un file che dichiarasse
+        # ancora 1.0.0 verrebbe migrato al caricamento e mentirebbe sul disco.
+        "schema_version": SCHEMA_VERSION,
         "metadata": {
             "project_id": "foundation-mixed",
             "client": "Nove C",

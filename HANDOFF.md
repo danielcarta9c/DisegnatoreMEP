@@ -60,7 +60,7 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 - **Versione installabile:** nessuna release; `releases/latest/` non è ancora popolata.
 - **Verifica:** 147 test verdi; `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`.
 - **Libreria:** dodici simboli pubblicati in `assets/symbols/` più otto di fixture in `examples/foundation/symbols/`, entrambe rigenerabili identiche dai rispettivi generatori.
-- **Il gate G0 di P0 regge ancora** e il fingerprint del progetto misto non si è mosso: `3347374e8b3f006c6f387c6228e0d9d2b885cbf57e65991937e985af32306573`.
+- **Il gate G0 di P0 regge ancora.** Il fingerprint del progetto misto è `31a6198ee9697f07e2c10199e27781d10e70c058201fb59b95a9f5a94a4d96ac`: si è mosso una volta, al Task 3 del piano di layout, perché il documento dichiara ora `schema_version` `1.1.0`. Il valore precedente era `3347374e8b3f006c6f387c6228e0d9d2b885cbf57e65991937e985af32306573`.
 - **Ambiente:** ricostruibile da zero con `bash scripts/setup-env.sh`. **Da eseguire come prima cosa in una sessione cloud**, che riparte sempre da un clone pulito.
 - **Ramo:** la fase grafica è stata sviluppata su `claude/graphic-symbol-library-setup-acgoka` e **integrata in `main` con un merge esplicito** (`8e2b664`), come era stata chiusa P0. Si riparte da `main`. Il ramo di lavoro è conservato per poter rileggere la sequenza dei commit.
 - **In flight:** nessuna modifica applicativa a metà.

@@ -108,6 +108,30 @@ def validate_project(
                         [sheet.id, subsystem_id],
                     )
                 )
+        assigned = {item.subsystem_id for item in sheet.band_assignments}
+        for assignment in sheet.band_assignments:
+            if assignment.subsystem_id not in subsystems:
+                issues.append(
+                    _issue(
+                        "UNKNOWN_BAND_SUBSYSTEM",
+                        f"sheet {sheet.id} assigns unknown subsystem "
+                        f"{assignment.subsystem_id} to band {assignment.band.value}",
+                        [sheet.id, assignment.subsystem_id],
+                    )
+                )
+        # Un sottosistema dichiarato sulla tavola ma raccolto da nessuna fascia
+        # non verrebbe disegnato: sparirebbe in silenzio dall'elaborato, che e'
+        # peggio di un errore visibile.
+        for subsystem_id in sheet.subsystem_ids:
+            if sheet.band_assignments and subsystem_id not in assigned:
+                issues.append(
+                    _issue(
+                        "UNASSIGNED_SUBSYSTEM",
+                        f"sheet {sheet.id} carries subsystem {subsystem_id} but no "
+                        f"band collects it, so it would not be drawn",
+                        [sheet.id, subsystem_id],
+                    )
+                )
 
     for connection in project.connections:
         if connection.endpoint_a.component_id == connection.endpoint_b.component_id:

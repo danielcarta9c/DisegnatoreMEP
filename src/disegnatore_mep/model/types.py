@@ -18,6 +18,23 @@ class PortFlow(StrEnum):
     BIDIRECTIONAL = "bidirectional"
 
 
+class BandRole(StrEnum):
+    """Le fasce funzionali della tavola, dichiarate da sinistra a destra (D-041).
+
+    L'ordine di dichiarazione **e'** l'ordine di lettura: i generatori a
+    sinistra, la distribuzione a destra. Riordinare i membri riordina la tavola.
+    """
+
+    GENERATION = "generation"
+    PRIMARY = "primary"
+    DISTRIBUTION = "distribution"
+    TERMINAL = "terminal"
+
+    @property
+    def reading_order(self) -> int:
+        return list(BandRole).index(self)
+
+
 class IssueSeverity(StrEnum):
     BLOCKING = "blocking"
     APPROVAL = "approval"
