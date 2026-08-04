@@ -22,6 +22,7 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 7 | `docs/adr/README.md`, poi `docs/adr/0001-*.md` fino a `0004-*.md` | Decisioni architetturali in ordine cronologico |
 | 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-065 |
 | 9 | `docs/ROADMAP.md` | Fasi del progetto e perimetro futuro |
+| 9bis | **`docs/DEFERRED.md`** | **Decisioni rimandate e note di sviluppo futuro.** Ogni «per ora no» del progetto sta qui col suo perché e con cosa lo sbloccherebbe. Leggerlo prima di proporre al PM qualcosa che è già stato rimandato |
 | 10 | `docs/ARCHITECTURE.md` | Struttura del codice effettivamente consegnato |
 | 11 | **`docs/GRAPHIC_STANDARD.md`** | **Lo standard grafico.** Grandezze in millimetri, regola perimetro-faccia, divisione fra geometria del simbolo e semantica del catalogo, compositi, rotazioni, come si aggiunge un simbolo, come si stampa il foglio |
 | 12 | `docs/P0_REVIEW_FINDINGS.md` | Cosa le revisioni di P0 hanno trovato e non è stato risolto. **Il §3.1 fissa il flusso di lavoro reale della skill**: due revisori indipendenti erano partiti da una lettura sbagliata |
@@ -150,6 +151,7 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 | Com'è fatto il codice consegnato | `docs/ARCHITECTURE.md` |
 | Perché il codice diverge dai piani | Le appendici dei due piani in `docs/plans/` |
 | Qual è il prossimo passo e il debito noto | `PROJECT_STATE.md` |
+| Cosa è stato rimandato, e perché | `docs/DEFERRED.md` |
 | Dove trovare le decisioni | `docs/DECISION_LOG.md` e `docs/adr/` |
 | Come gestire fonti tecniche | `docs/research/SOURCE_REGISTER.md` |
 | Come produrre una release | `releases/README.md` |

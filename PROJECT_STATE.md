@@ -51,6 +51,10 @@ non c'è niente da disegnarci.
 Sull'instradamento si torna solo se, con un impianto **completo**, resta qualcosa che
 non va: a quel punto è un difetto vero e non un'ipotesi su un caso povero.
 
+Tutto ciò che è stato **rimandato** — famiglie di accessori oltre l'MVP, aeraulico,
+regolazione, diametri, fonti acquistabili, debito della libreria — sta in
+`docs/DEFERRED.md`, non qui. Una decisione rimandata che non viene scritta è persa.
+
 ## Debito noto della fase grafica
 
 Registrato per non riscoprirlo. Nessuno di questi è bloccante.
