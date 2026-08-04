@@ -11,7 +11,7 @@
 | Interprete | Python 3.12, minimo 3.11 | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv`; comando `disegnatore-mep` funzionante |
 | Schema del progetto | `1.1.0` | I documenti `1.0.0` sono migrati al caricamento; fingerprint della fixture mista `31a6198e…` |
-| Test | 383 verdi | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
+| Test | 416 verdi | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
 | Libreria simboli | 20 pubblicati + 8 di fixture | `assets/symbols/` e `examples/foundation/symbols/`, entrambe rigenerabili identiche |
 | Release | Non disponibile | `releases/latest/` sarà popolata dopo la prima versione verificata |
 
@@ -27,6 +27,8 @@
 
 - [x] ~~Scrivere il piano di layout, instradamento e multi-tavola~~ — **scritto il 4 agosto 2026** in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`. Dodici task, non ancora eseguito.
 - [x] ~~Piano di layout, instradamento e multi-tavola~~ — **eseguito il 4 agosto 2026**: dodici task, dodici commit, 383 test verdi. Il caso D-011 si disegna su una A3 e passa tutti i controlli geometrici.
+- [x] ~~**La regola del PM su linee e posizioni**~~ — **implementata il 4 agosto 2026 (D-060).** «Minimizzare le curve disegnate, minimizzare gli attraversamenti tra linee e minimizzare la lunghezza delle linee, mantenendo però ordinamenti da sinistra a destra.» Tre voci di costo nell'instradamento e un vincolo nel posizionamento. Sul caso D-011: pieghe da 31 a 23, celle condivise da 24 a 12. Misurate da `tests/layout/test_objective.py`.
+- [x] ~~**Il ritorno blu che entrava nella valvola a tre vie**~~ — **risolto (D-059)**: il verso di una tratta veniva letto dalla geometria del disegno già fatto, non dalla topologia del modello, che è orientata per costruzione.
 - [ ] **Rifare il linguaggio grafico sulle fonti, non sulla convenzione inventata.** Il PM ha giudicato la prima tavola mal disegnata e ha chiesto la ricerca che il progetto non aveva mai fatto. Esito in `docs/research/2026-08-04-come-si-disegna-uno-schema-funzionale.md`: manca **UNI 9511**, mandata e ritorno devono essere linee distinte, la tavola porta i diametri, le sigle sono mnemoniche funzionali, la composizione è a corsie orizzontali e non a pile verticali, e la libreria copre meno di un ottavo dei simboli di una tavola reale.
 - [ ] ~~Giudizio del PM sulla prima tavola~~ — **dato: la tavola è fatta male.** I controlli automatici dimostrano che nulla si sovrappone, non che la tavola si legga come l'avrebbe disegnata un tecnico. Si rigenera con `.venv/bin/python -m disegnatore_mep draw examples/layout/heat-pump-dhw-buffer-two-zones.json --catalog examples/layout/catalog --symbols assets/symbols --out outputs/`.
 
@@ -63,9 +65,11 @@ regge cosa viene disegnato e come è composto. Analisi e fonti in
 
 ## Debito noto del layout
 
+- **Su una A3 un impianto piccolo lascia il foglio a meta' vuoto.** Il blocco viene centrato (D-061) ma non ingrandito, perche' la scala di stampa e' invariante (ADR 0003). L'A4 si prende solo se il disegno ci sta comodo — meno dell'85% dell'area in entrambe le direzioni — e il caso D-011 ci starebbe a filo, quindi resta su A3. Quello che riempirebbe davvero l'altezza e' contenuto che oggi non c'e': la fascia di regolazione tratteggiata (`Domain.CONTROL` è inutilizzato) e i diametri sulle tubazioni.
+- **La corsia di mandata non è garantita sopra quella di ritorno.** Dove due tratte devono scavalcare lo stesso ostacolo, la prima prende la quota più vicina e la seconda quella sopra; chi sia la prima lo decide l'ordine del modello. Imporre la convenzione costerebbe pieghe, che D-060 mette al primo posto. La convenzione resta garantita **sui simboli** — l'attacco di mandata sta sopra quello di ritorno — e le due linee restano distinte per colore e tratto (D-057).
 - **Una tratta che attraversa un confine di tavola non viene disegnata** su nessuna delle due: compaiono i rimandi accoppiati, non il tratto che li raggiunge. Per la stessa ragione, un confine che tagliasse una tratta con accessori in linea viene **rifiutato**, perché quegli accessori resterebbero senza una linea su cui posarsi. Spetta al piano di rendering, che possiede i rimandi.
 - **Il cartiglio non è compilato**: la tavola esce marcata come bozza (D-025).
-- **La rotazione scelta dal posizionamento è sempre 0** quando il simbolo la ammette. Orientare un simbolo verso la fascia adiacente è un miglioramento possibile, non un difetto: nessuna prova lo pretende oggi.
+- **La rotazione scelta dal posizionamento è sempre 0** quando il simbolo la ammette. Gli accessori **in linea** ruotano già, seguendo la giacitura della tratta su cui stanno — è così che il circolatore si mette in verticale quando la sua tratta è verticale — ma un componente posato non viene mai orientato verso la fascia adiacente. È un grado di libertà in più per D-060, non ancora sfruttato.
 
 ## Trovato scrivendo il piano di layout, e poi risolto
 

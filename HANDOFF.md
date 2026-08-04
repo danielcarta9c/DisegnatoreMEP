@@ -20,7 +20,7 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 5 | `PROJECT_STATE.md` | Stato vivo e prossimo passo |
 | 6 | `docs/specs/2026-08-01-disegnatore-mep-design.md` | Design consolidato e approvato |
 | 7 | `docs/adr/README.md`, poi `docs/adr/0001-*.md` fino a `0004-*.md` | Decisioni architetturali in ordine cronologico |
-| 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-052 |
+| 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-061 |
 | 9 | `docs/ROADMAP.md` | Fasi del progetto e perimetro futuro |
 | 10 | `docs/ARCHITECTURE.md` | Struttura del codice effettivamente consegnato |
 | 11 | **`docs/GRAPHIC_STANDARD.md`** | **Lo standard grafico.** Grandezze in millimetri, regola perimetro-faccia, divisione fra geometria del simbolo e semantica del catalogo, compositi, rotazioni, come si aggiunge un simbolo, come si stampa il foglio |
@@ -60,14 +60,14 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 
 - **Fase:** fondazione canonica, sistema grafico e **motore di layout** completati. Il nucleo disegna una tavola A3 del caso D-011. Rendering del cartiglio, PDF e distinta non ancora pianificati.
 - **Versione installabile:** nessuna release; `releases/latest/` non è ancora popolata.
-- **Verifica:** 383 test verdi; `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`.
+- **Verifica:** 416 test verdi; `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`.
 - **Libreria:** venti simboli pubblicati in `assets/symbols/` più otto di fixture, tutti con riquadro e porte su nodi di griglia (D-054) e taglie che seguono la gerarchia dimensionale (D-055). Entrambe rigenerabili identiche.
 - **Il gate G0 di P0 regge ancora.** Il fingerprint del progetto misto è `31a6198ee9697f07e2c10199e27781d10e70c058201fb59b95a9f5a94a4d96ac`: si è mosso una volta, al Task 3 del piano di layout, perché il documento dichiara ora `schema_version` `1.1.0`. Il valore precedente era `3347374e8b3f006c6f387c6228e0d9d2b885cbf57e65991937e985af32306573`.
 - **Ambiente:** ricostruibile da zero con `bash scripts/setup-env.sh`. **Da eseguire come prima cosa in una sessione cloud**, che riparte sempre da un clone pulito.
 - **Ramo:** la fase di layout è su `claude/layout-routing-multitable-plan-cbezrw`, **non ancora integrata in `main`**: le due fasi precedenti erano state chiuse con un merge esplicito, e questa attende il giudizio del PM sulla prima tavola.
 - **In flight:** nessuna modifica applicativa a metà.
 - **Blocco:** nessuno. La prova fisica di stampa è stata superata il 4 agosto 2026.
-- **Check rapido alla ripresa:** `git status --short` vuoto; `.venv/bin/python -m pytest -q` deve dare 383 passed.
+- **Check rapido alla ripresa:** `git status --short` vuoto; `.venv/bin/python -m pytest -q` deve dare 416 passed.
 
 ---
 
@@ -86,12 +86,16 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 
 - **Il PM ha giudicato la prima tavola: è fatta male.** E ha ricordato che la ricerca su come si disegna uno schema — rete, manuali dei produttori, Caleffi — era stata chiesta dall'inizio del progetto e non era mai stata fatta. È vero: il registro fonti porta quattro norme «da acquisire e valutare» dal primo commit, la fase grafica ha inventato `CONV-GRAFICA-001` proprio perché mancavano, e il layout ci è stato costruito sopra.
 - **Prima acquisizione fatta**, in `docs/research/2026-08-04-come-si-disegna-uno-schema-funzionale.md`. La norma che mancava è **UNI 9511**. Leggerlo prima di toccare qualunque cosa di grafico: dice cosa regge (la meccanica) e cosa no (il linguaggio e la composizione).
+- **La regola su linee e posizioni è quella del PM, ed è implementata (D-060).** «Minimizzare le curve disegnate, minimizzare gli attraversamenti tra linee e minimizzare la lunghezza delle linee, mantenendo però ordinamenti da sinistra a destra.» Le prime tre sono pesi dell'instradamento; la quarta è un vincolo del posizionamento. Non trattarla come un'estetica: è la specifica del disegno, e `tests/layout/test_objective.py` la misura.
 - **Il formato è deciso e non si riapre (D-058):** A3 orizzontale, A4 se il disegno è proprio piccolo. Niente A0, niente strisce. La proposta contraria, dedotta da due tavole pubbliche misurate in rete, è stata respinta dal PM ed è ritirata dal documento di ricerca. Non dedurre un vincolo di prodotto misurando esempi altrui.
 - **Prossimo passo:** decidere se acquistare UNI 9511 (P5), poi rifare libreria, codifica delle linee e regola di composizione.
 - **Poi:** scrivere il piano di rendering, cartiglio e PDF. Deve chiudere anche i due limiti che il layout lascia aperti, elencati nel debito noto di `PROJECT_STATE.md`.
 - **Da sapere prima di toccare il layout:** il modello tecnico **non contiene coordinate** e non deve acquistarne. Acquista il piano di impaginazione, che è fatto di scelte discrete (D-042). Se un task si trova a voler scrivere millimetri nel `ProjectModel`, ha sbagliato strada.
 - **`render_symbol_sheet` resta il banco di prova della libreria**, non la tavola: la tavola è `graphics/sheet.py`.
-- **L'incrocio resta più economico del giro.** La disuguaglianza `CROSS_COST < 2 * STEP_COST` è sotto test proprio perché una futura taratura non la rompa senza accorgersene (D-041).
+- **La funzione obiettivo del disegno è quella che il PM ha dettato (D-060):** meno pieghe, meno attraversamenti, meno lunghezza, in quest'ordine, mantenendo l'ordinamento da sinistra a destra. I pesi stanno in `layout/route.py`; il vincolo lo garantisce `layout/place.py`. `tests/layout/test_objective.py` misura tutte e quattro le cose sul caso D-011: se un intervento le peggiora, quella suite lo dice.
+- **L'incrocio resta più economico del giro**, e ora la disuguaglianza è scritta per quello che il giro costa davvero: due passi **e quattro pieghe**. La vecchia forma contava solo i passi e reggeva soltanto perché la piega costava quasi quanto un passo (D-041).
+- **Mandata e ritorno non si leggono mai dalla geometria** ma dalla topologia del modello, che è orientata per costruzione (D-059). Il difetto che questo chiude era visibile a occhio: la mandata che alimenta la valvola deviatrice usciva blu.
+- **Le corsie a quota fissa non esistono più.** Erano la causa dei sali-scendi: una tratta di dieci millimetri saliva a metà foglio e ne riscendeva subito. La corsia buona la trova la funzione di costo; non va dichiarata.
 - **Le porte stanno sul perimetro (D-044) e sui nodi di griglia (D-054).** La seconda regola vive nel layout, non nel manifesto, perché `SymbolManifest` non conosce il `GraphicStandard`.
 
 ## 6. Domande aperte per il PM
