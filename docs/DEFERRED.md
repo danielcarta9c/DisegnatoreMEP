@@ -11,9 +11,9 @@
 
 ## 1. Famiglie di accessori oltre il primo pacchetto di regole
 
-Il primo pacchetto copre sei famiglie — sicurezza, intercettazione, protezione, aria,
-riempimento e scarico, misura — che bastano a completare il caso di accettazione D-011.
-Non bastano a un impianto reale appena si esce da quel perimetro.
+Il primo pacchetto copre sette famiglie — sicurezza, intercettazione, protezione, aria,
+riempimento e scarico, misura e acqua calda sanitaria — che bastano a completare il caso di
+accettazione D-011. Non bastano a un impianto reale appena si esce da quel perimetro.
 
 **Idronico, oltre l'MVP**
 
