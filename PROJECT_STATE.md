@@ -41,7 +41,7 @@ valvola di sicurezza, nessun diametro. Finché il modello non li genera, ogni gi
 sulla tavola giudica un impianto che non esiste, e il foglio resta mezzo vuoto perché
 non c'è niente da disegnarci.
 
-1. **Motore delle regole (P1)**, con `RuleApplicationModel` completato per la tracciabilità a valle (D-039), la rappresentazione dei dati mancanti e il percorso di migrazione dello schema. Dettagli in `docs/P0_REVIEW_FINDINGS.md` §3.2.
+1. **Motore delle regole (P1)** — piano scritto il 4 agosto 2026 in `docs/plans/2026-08-04-rules-engine-plan.md`, dodici task, **in attesa di approvazione**. Chiude `RuleApplicationModel` per la tracciabilità a valle (D-039).
 2. Allargare il contratto `DomainPack` prima che i quattro pacchetti di dominio procedano in parallelo (W3).
 3. **Pacchetto di dominio idronico (P3A)**, che è il dominio del caso di accettazione e dà alle regole di cosa parlare. Gli altri tre a seguire.
 4. **Rendering, cartiglio e PDF (P5)**, con distinta derivata dal modello e **preflight grafico** (D-063): le soglie di `tests/layout/test_objective.py` devono diventare un validatore di prodotto che gira su ogni tavola, non un test su una fixture.
