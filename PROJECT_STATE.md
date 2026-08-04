@@ -27,7 +27,8 @@
 
 - [x] ~~Scrivere il piano di layout, instradamento e multi-tavola~~ — **scritto il 4 agosto 2026** in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`. Dodici task, non ancora eseguito.
 - [x] ~~Piano di layout, instradamento e multi-tavola~~ — **eseguito il 4 agosto 2026**: dodici task, dodici commit, 383 test verdi. Il caso D-011 si disegna su una A3 e passa tutti i controlli geometrici.
-- [ ] **Giudizio del PM sulla prima tavola.** I controlli automatici dimostrano che nulla si sovrappone, non che la tavola si legga come l'avrebbe disegnata un tecnico. Si rigenera con `.venv/bin/python -m disegnatore_mep draw examples/layout/heat-pump-dhw-buffer-two-zones.json --catalog examples/layout/catalog --symbols assets/symbols --out outputs/`.
+- [ ] **Rifare il linguaggio grafico sulle fonti, non sulla convenzione inventata.** Il PM ha giudicato la prima tavola mal disegnata e ha chiesto la ricerca che il progetto non aveva mai fatto. Esito in `docs/research/2026-08-04-come-si-disegna-uno-schema-funzionale.md`: manca **UNI 9511**, mandata e ritorno devono essere linee distinte, la tavola porta i diametri, le sigle sono mnemoniche funzionali, la composizione è a corsie orizzontali e non a pile verticali, e la libreria copre meno di un ottavo dei simboli di una tavola reale.
+- [ ] ~~Giudizio del PM sulla prima tavola~~ — **dato: la tavola è fatta male.** I controlli automatici dimostrano che nulla si sovrappone, non che la tavola si legga come l'avrebbe disegnata un tecnico. Si rigenera con `.venv/bin/python -m disegnatore_mep draw examples/layout/heat-pump-dhw-buffer-two-zones.json --catalog examples/layout/catalog --symbols assets/symbols --out outputs/`.
 
 ## Next — backlog ordinato
 
@@ -51,6 +52,15 @@ Chiusi dalla revisione finale del ramo: la guardia di capacità ora difende anch
 
 Elenco completo nell'appendice di `docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`.
 
+## Il difetto principale, oggi
+
+Il linguaggio grafico è inventato. La fase grafica ha creato `CONV-GRAFICA-001` perché le
+fonti non erano state acquisite (D-047), e il motore di layout ci è stato costruito sopra
+senza mai confrontarsi con una tavola reale. Regge la meccanica — griglia, scala invariante,
+tratte, interruzione della linea, multi-tavola, validazione geometrica, riproducibilità — non
+regge cosa viene disegnato e come è composto. Analisi e fonti in
+`docs/research/2026-08-04-come-si-disegna-uno-schema-funzionale.md`.
+
 ## Debito noto del layout
 
 - **Una tratta che attraversa un confine di tavola non viene disegnata** su nessuna delle due: compaiono i rimandi accoppiati, non il tratto che li raggiunge. Per la stessa ragione, un confine che tagliasse una tratta con accessori in linea viene **rifiutato**, perché quegli accessori resterebbero senza una linea su cui posarsi. Spetta al piano di rendering, che possiede i rimandi.
@@ -67,7 +77,12 @@ Dettagli e misure nel §2 del piano; le correzioni nella sua appendice.
 
 ## Domande aperte
 
-Nessuna domanda di prodotto aperta. Le tre del piano di layout sono state chiuse dal PM il 4 agosto 2026 e registrate come D-055, D-056 e D-057.
+| # | Domanda | Perché serve |
+|---|---|---|
+| P5 | Si acquista **UNI 9511** (quattro parti) e la libreria si rifà su quella? | È la simbologia che un termotecnico italiano si aspetta, ed è a pagamento: la spesa è una decisione del PM |
+| P6 | L'A3 resta il formato ordinario? | Le due tavole reali misurate sono A0 e una striscia 610 × 2500. Per una centrale termica l'A3 forza il multi-tavola quasi sempre, e ADR 0003 andrebbe rivisto |
+
+Le tre del piano di layout sono state chiuse dal PM il 4 agosto 2026 e registrate come D-055, D-056 e D-057.
 
 Una quarta era stata posta e ritirata: chiedeva la squadratura del foglio, che non era da decidere perché il cartiglio era già fra gli input del progetto.
 
