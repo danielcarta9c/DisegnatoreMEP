@@ -25,11 +25,12 @@
 </details>
 
 - [x] ~~Scrivere il piano di layout, instradamento e multi-tavola~~ — **scritto il 4 agosto 2026** in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`. Dodici task, non ancora eseguito.
-- [ ] **Approvazione del PM sul piano**, e sulle tre decisioni di prodotto del suo §0. Fino ad allora nessun task parte.
+- [x] ~~Decisioni di prodotto del piano~~ — **chiuse dal PM il 4 agosto 2026**: caso D-011 completo, divisione in tavole solo quando non entra, reti distinte per colore e tratto.
+- [ ] **Approvazione del PM sul piano nel suo insieme.** Le tre decisioni sono chiuse; manca il via libera a eseguirlo.
 
 ## Next — backlog ordinato
 
-1. Eseguire il piano di layout, instradamento e multi-tavola, una volta approvato. I Task 1, 2, 3, 4 e 5 non dipendono da nessuna delle tre decisioni aperte e possono partire per primi.
+1. Eseguire il piano di layout, instradamento e multi-tavola, una volta approvato. Nessun task è in attesa di decisioni: sono chiuse tutte.
 2. Scrivere il piano di rendering, cartiglio e PDF, con distinta derivata dal modello e preflight.
 3. Solo a questo punto il motore delle regole (ex P1), con `RuleApplicationModel` completato per la tracciabilità a valle (D-039), la rappresentazione dei dati mancanti e il percorso di migrazione dello schema. Dettagli in `docs/P0_REVIEW_FINDINGS.md` §3.2.
 4. Allargare il contratto `DomainPack` prima che i quattro pacchetti di dominio procedano in parallelo (W3).
@@ -59,15 +60,11 @@ Registrato qui perché non venga perso se il piano resta fermo. Dettagli e misur
 
 ## Domande aperte
 
-Tre decisioni di prodotto, tutte nel §0 di `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`, ciascuna con una proposta e le conseguenze delle alternative. Il piano è scritto assumendo le proposte.
+Nessuna domanda di prodotto aperta.
 
-| # | Domanda | Serve prima di |
-|---|---|---|
-| P1 | Si disegna il caso D-011 completo, aggiungendo i simboli mancanti e la gerarchia dimensionale, o si resta ai dodici attuali? | Task 7 |
-| P3 | Si spezza in più tavole solo quando non entra, o anche per leggibilità? | Task 6 |
-| P4 | Le reti si distinguono per colore e tratto, per solo colore, o in monocromatico? | Task 11 |
+Le tre del piano di layout sono state chiuse dal PM il 4 agosto 2026, tutte confermando la proposta: **caso D-011 completo** con la gerarchia dimensionale che chiude D-050 (Task 7), **divisione in tavole solo quando il contenuto non entra** (Task 6), **reti distinte da colore e tratto** perché la tavola resti leggibile anche fotocopiata (Task 11). Vanno registrate come D-055, D-056 e D-057 nei task che le applicano.
 
-**P2 è stata ritirata.** Chiedeva se il disegno dovesse usare la squadratura del cartiglio o la rilegatura ISO 5457. Non era una decisione di prodotto: il cartiglio era già stato fornito dal PM come input del progetto, e la squadratura si legge da lì. Il Task 4 la applica senza chiedere.
+Una quarta era stata posta e ritirata: chiedeva la squadratura del foglio, che non era da decidere perché il cartiglio era già fra gli input del progetto.
 
 ## Done log — ultimo in cima
 

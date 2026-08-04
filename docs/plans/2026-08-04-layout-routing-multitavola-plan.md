@@ -14,15 +14,15 @@
 
 ---
 
-## 0. Prima di iniziare: tre decisioni di prodotto, e una che non lo era
+## 0. Le decisioni di prodotto, tutte chiuse
 
-Il piano è scritto assumendo le risposte qui sotto. **Sono proposte, non decisioni prese**: ognuna è isolata in un solo task, quindi cambiarla non ridisegna il piano. Vanno confermate prima del task che le consuma — P3 prima del Task 6, P1 prima del Task 7, P4 prima del Task 11 — e i Task 1, 2, 3, 4 e 5 non dipendono da nessuna delle tre, quindi si possono eseguire nel frattempo.
+**Il PM ha risposto il 4 agosto 2026 e ha confermato tutte e tre le proposte.** Nessun task è in attesa: il piano è eseguibile dal Task 1 al Task 12. Le risposte restano registrate qui perché ognuna è isolata in un solo task, quindi resta chiaro cosa toccare se una cambiasse.
 
-| # | Domanda | Proposta | Cosa cambia se il PM decide diversamente |
+| # | Domanda | Decisione del PM | Cosa cambierebbe l'alternativa |
 |---|---|---|---|
-| P1 | Su quale impianto si giudica il layout? | **Il caso D-011 completo.** Il piano aggiunge i circa dieci simboli mancanti (pompa di calore, bollitore ACS, volano a quattro attacchi, valvola deviatrice, collettore di zona, terminali) e fissa la gerarchia dimensionale rimasta aperta con D-050 | Restando ai dodici simboli attuali il Task 7 sparisce, ma il gate visivo — la ragione per cui D-040 ha anticipato la grafica — resta rimandato: valvole e filtri disposti a fasce non somigliano a un impianto |
-| P3 | Quando l'impianto si spezza in più tavole? | **Solo quando non entra** alla scala fissa, seguendo i confini dei sottosistemi (lettura letterale di D-020) | Con «una tavola per sottosistema» il Task 6 diventa più semplice ma anche impianti piccoli producono più fogli; con una soglia di riempimento serve un parametro in più e la soglia diventa una costante di prodotto |
-| P4 | Come si distinguono le reti sulla tavola? | **Colore più tratto distinto**: ogni rete ha un colore e anche un tratto proprio, così la tavola resta leggibile fotocopiata in bianco e nero. La legenda porta una sezione fluidi oltre a quella dei simboli | Con il solo colore la sezione fluidi della legenda resta ma il tratto sparisce; in monocromatico il Task 11 perde la palette e il Task 12 acquista un controllo di distinguibilità dei soli tratti |
+| P1 | Su quale impianto si giudica il layout? | **Il caso D-011 completo.** Confermato. Il piano aggiunge i circa dieci simboli mancanti (pompa di calore, bollitore ACS, volano a quattro attacchi, valvola deviatrice, collettore di zona, terminali) e fissa la gerarchia dimensionale rimasta aperta con D-050 | Restando ai dodici simboli attuali il Task 7 sparisce, ma il gate visivo — la ragione per cui D-040 ha anticipato la grafica — resta rimandato: valvole e filtri disposti a fasce non somigliano a un impianto |
+| P3 | Quando l'impianto si spezza in più tavole? | Confermato: **solo quando non entra** alla scala fissa, seguendo i confini dei sottosistemi (lettura letterale di D-020) | Con «una tavola per sottosistema» il Task 6 diventa più semplice ma anche impianti piccoli producono più fogli; con una soglia di riempimento serve un parametro in più e la soglia diventa una costante di prodotto |
+| P4 | Come si distinguono le reti sulla tavola? | Confermato: **colore più tratto distinto**. ogni rete ha un colore e anche un tratto proprio, così la tavola resta leggibile fotocopiata in bianco e nero. La legenda porta una sezione fluidi oltre a quella dei simboli | Con il solo colore la sezione fluidi della legenda resta ma il tratto sparisce; in monocromatico il Task 11 perde la palette e il Task 12 acquista un controllo di distinguibilità dei soli tratti |
 
 ### P2 era una domanda mal posta, ed è chiusa
 
@@ -32,7 +32,7 @@ La squadratura del foglio, quindi, non si sceglie: si legge dal cartiglio che il
 
 Vale la pena vedere che errore è, perché il progetto lo ha già commesso una volta e se n'era accorto. Il campo `source` dei dodici simboli dichiarava ANSI/ASHRAE 134, che il registro fonti elenca «da acquisire e valutare»: attribuzione falsa, corretta da D-047. I margini fanno la stessa cosa con ISO 5457, che il registro elenca **tuttora** «da acquisire e valutare» (SRC-001): una geometria di carta motivata da una norma mai ottenuta, mentre lo standard aziendale reale era sul disco. Stesso schema, stessa fase, questa volta non intercettato dalle revisioni.
 
-**Decisioni da registrare nel `DECISION_LOG` all'approvazione**, con i numeri liberi successivi:
+**Decisioni da registrare nel `DECISION_LOG`**, con i numeri liberi successivi, nel task che le applica:
 
 - **D-053** — la squadratura della tavola è quella del cartiglio Nove C fornito, e ritira il margine di rilegatura ISO 5457 (Task 4). Non deriva da P2: deriva dall'input.
 - **D-054** — le porte dei simboli cadono su nodi di griglia; è un requisito dell'instradamento, non un'estetica (Task 7, §2.2).
@@ -702,7 +702,7 @@ La partizione precede il layout (D-028, specifica §10.1): tagliare un disegno g
 
 **Interfaces:** produce `SheetPartition`, `SheetLink`, `partition_project`.
 
-> Richiede la conferma di **P3**.
+> P3 decisa: si spezza solo quando non entra.
 
 - [ ] **Step 1: scrivere il test che fallisce**
 
@@ -747,7 +747,7 @@ Expected: exit `0`; il totale sale a circa 209.
 
 ### Task 7: La libreria del caso D-011, sulla griglia
 
-> Richiede la conferma di **P1** e chiude **D-050**.
+> P1 decisa: caso D-011 completo. Questo task chiude **D-050**.
 
 **Files:**
 - Create: `src/disegnatore_mep/layout/grid.py`, `tests/layout/test_grid.py`
@@ -794,7 +794,7 @@ La gerarchia proposta, tutte misure multiple del passo da 2,5 mm e con lati pari
 | Generatore e macchina | 20 × 15 | 8 × 6 | pompa di calore aria-acqua, caldaia, unità esterna VRV |
 | Accumulo | 15 × 25 | 6 × 10 | bollitore ACS, volano termico a quattro attacchi |
 
-La scala è quella che D-050 chiede: **verificato**, l'area di una valvola sta dieci volte in quella di un accumulo. Le taglie in millimetri sono la parte da confermare col PM; la **regola** non è negoziabile, perché senza di essa l'instradamento non arriva agli attacchi:
+La scala è quella che D-050 chiede: **verificato**, l'area di una valvola sta dieci volte in quella di un accumulo. P1 ha deciso che la gerarchia si fissa qui; i millimetri esatti si giudicano a vista sul foglio di riscontro (Step 4), come per ogni simbolo di questa libreria. La **regola** invece non è negoziabile, perché senza di essa l'instradamento non arriva agli attacchi:
 
 > Ogni lato è un multiplo del passo. Il lato su cui una porta è **centrata** è un numero **pari** di passi, così il centro cade su un nodo. Un lato dispari è legittimo se nessuna porta vi è centrata: l'accessorio in linea 7,5 × 5 è largo tre passi, ma le sue due porte stanno sulle facce sinistra e destra, alle ascisse 0 e 7,5, e sono centrate sull'altezza, che è di due passi.
 
@@ -999,7 +999,7 @@ Expected: exit `0`; il totale sale a circa 255.
 
 **Interfaces:** produce `PlacedLabel`, `LegendEntry`, `place_labels`, `build_legend`.
 
-> Richiede la conferma di **P4**.
+> P4 decisa: colore più tratto distinto per ogni rete.
 
 - [ ] **Step 1: scrivere il test che fallisce**
 

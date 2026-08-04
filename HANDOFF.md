@@ -28,7 +28,7 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 13 | `docs/plans/README.md` e `docs/plans/2026-08-01-master-implementation-roadmap.md` | Sequenza dei piani |
 | 14 | `docs/plans/2026-08-01-foundation-core-plan.md` — **solo l'appendice finale** | Il piano P0 eseguito e le sue deviazioni. Il corpo contiene codice difettoso |
 | 15 | **`docs/plans/2026-08-03-graphic-system-symbol-library-plan.md` — solo l'appendice finale** | Il piano grafico eseguito. **Sedici difetti corretti in esecuzione**, sei del piano e dieci trovati dalle revisioni. Anche qui il corpo non è stato riscritto |
-| 15bis | **`docs/plans/2026-08-04-layout-routing-multitavola-plan.md` — per intero** | Il piano successivo, **scritto e non eseguito**. Qui il corpo si legge davvero: è il lavoro da fare. Il §0 raccoglie le tre decisioni di prodotto ancora aperte e spiega perché una quarta è stata ritirata, il §2 le tre scoperte fatte prototipando |
+| 15bis | **`docs/plans/2026-08-04-layout-routing-multitavola-plan.md` — per intero** | Il piano successivo, **scritto e non eseguito**. Qui il corpo si legge davvero: è il lavoro da fare. Il §0 raccoglie le tre decisioni di prodotto, tutte chiuse dal PM, e spiega perché una quarta è stata ritirata, il §2 le tre scoperte fatte prototipando |
 | 16 | `docs/research/README.md` e `docs/research/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
 | 17 | `assets/cartigli/README.md` e `releases/README.md` | Vincoli su cartiglio e rilascio |
 | 18 | [`nove-c-kit` PLAYBOOK](https://github.com/danielcarta9c/nove-c-kit/blob/main/PLAYBOOK.md) e [`EXAMPLES`](https://github.com/danielcarta9c/nove-c-kit/blob/main/EXAMPLES.md) | Metodo di project management Nove C |
@@ -104,7 +104,7 @@ la cosa piu' importante da portarsi dietro:
 
 **Il piano di layout è scritto.** Vive in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`: dodici task in TDD, dal `ResolvedComponent` mancante fino alla prima tavola A3 del caso D-011 disegnata e verificata geometricamente. **Non è stato eseguito**: il codice è quello di prima, 147 test verdi, fingerprint invariato.
 
-- **Prossimo passo di sviluppo:** ottenere l'approvazione del PM sul piano e sulle tre decisioni di prodotto del suo §0, poi eseguirlo. I Task 1, 2, 3, 4 e 5 non dipendono da nessuna delle tre e possono partire per primi.
+- **Prossimo passo di sviluppo:** ottenere il via libera del PM a eseguire il piano. Le tre decisioni di prodotto sono già chiuse, quindi nessun task è in attesa: si parte dal Task 1.
 - **Leggere il corpo di questo piano, non solo l'appendice.** È la differenza rispetto agli altri due: qui il corpo è il lavoro da fare, e le parti a rischio sono state prototipate ed eseguite prima della stesura — rotazione, tratte e instradamento hanno già le loro prove verdi.
 - **Tre difetti trovati scrivendolo**, nessuno registrato altrove prima, tutti nel §2 del piano: nessuno dei venti simboli ha riquadro o porte su un nodo di griglia, quindi un instradatore su griglia non raggiunge nessun attacco; il telaio del foglio non segue il cartiglio che il PM aveva fornito nel primo commit, e i suoi margini sono attribuiti a ISO 5457, che il registro fonti dichiara non acquisita — lo stesso errore che D-047 ha corretto per i simboli; `inline_gap_mm` è confrontato con la larghezza invece che con l'asse che unisce le due porte opposte.
 - **Gli input forniti dal PM vanno cercati e aperti prima di decidere.** Il cartiglio era sul disco dal 1 agosto e la fase grafica ha fissato la geometria della carta senza guardarlo, citando una norma mai ottenuta. Prima di dedurre una convenzione grafica, controllare `assets/`.
@@ -116,19 +116,21 @@ la cosa piu' importante da portarsi dietro:
 
 ## 6. Domande aperte per il PM
 
-**Tre decisioni di prodotto**, tutte nel §0 di `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`, ciascuna con una proposta motivata e le conseguenze delle alternative. Il piano è scritto assumendo le proposte, e ognuna è isolata in un solo task.
+**Nessuna.**
 
-| # | Domanda | Proposta | Serve prima di |
+Le tre decisioni di prodotto del piano di layout sono state chiuse dal PM il 4 agosto 2026, tutte confermando la proposta.
+
+| # | Domanda | Decisione | Applicata da |
 |---|---|---|---|
-| P1 | Si disegna il caso D-011 completo, aggiungendo i simboli mancanti e la gerarchia dimensionale, o si resta ai dodici attuali? | Caso completo | Task 7 |
-| P3 | Si spezza in più tavole solo quando non entra, o anche per leggibilità? | Solo quando non entra | Task 6 |
-| P4 | Le reti si distinguono per colore e tratto, per solo colore, o in monocromatico? | Colore più tratto | Task 11 |
+| P1 | Caso D-011 completo o dodici simboli attuali? | Caso completo, con la gerarchia dimensionale che chiude D-050 | Task 7 |
+| P3 | Quando si spezza in più tavole? | Solo quando il contenuto non entra | Task 6 |
+| P4 | Come si distinguono le reti? | Colore più tratto distinto, leggibile anche in bianco e nero | Task 11 |
 
 **Una quarta era stata posta e ritirata**, e vale la pena sapere perché: chiedeva se il foglio dovesse usare la squadratura del cartiglio o la rilegatura ISO 5457. Il PM ha fatto notare che il cartiglio glielo aveva **già fornito** — è nel primo commit del progetto — quindi non c'era nulla da decidere. Non chiedere al PM ciò che il progetto ha già ricevuto: cercare fra gli input prima di aprire una domanda.
 
 Chiusa nella sessione del 3 agosto: le rotazioni ammesse dichiarano gli orientamenti **tecnicamente** sensati, non quelli geometricamente possibili. Sfiato aria bloccato a `[0]`, vaso di espansione a `[0, 180]` (D-049).
 
-Il PM aveva registrato un input per la libreria vera: **la dimensione del simbolo comunica il peso del componente** nella tavola — valvole piccole, vasi più grandi, accumuli ancora di più. Le misure attuali (6×6, 8×8, 6×10) sono una convenzione di prova, non uno standard da ereditare (D-050). P1 è la domanda che chiude quell'input: il Task 7 del piano propone una gerarchia in otto classi.
+Il PM aveva registrato un input per la libreria vera: **la dimensione del simbolo comunica il peso del componente** nella tavola — valvole piccole, vasi più grandi, accumuli ancora di più. Le misure attuali (6×6, 8×8, 6×10) sono una convenzione di prova, non uno standard da ereditare (D-050). È P1 a chiudere quell'input: il Task 7 del piano fissa una gerarchia in otto classi, tutte multiple del passo di griglia.
 
 Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di scegliere fra modalità tecniche di esecuzione: il PM valida il prodotto, l'agente è il PM senior dello sviluppo.
 
@@ -163,7 +165,7 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 
 ## Ultimo aggiornamento
 
-`2026-08-04` — Claude — scritto il piano di layout, instradamento e multi-tavola, non eseguito. Rotazione, tratte e instradamento prototipati e messi sotto test prima della stesura; tre difetti trovati e registrati nel §2 del piano, fra cui il fatto che nessuno dei venti simboli sta sulla griglia. Chiuse tre decisioni su quattro proponendo una risposta motivata; la quarta, sulla squadratura del foglio, e' stata ritirata perche' il cartiglio era gia' fra gli input del progetto.
+`2026-08-04` — Claude — scritto il piano di layout, instradamento e multi-tavola, non eseguito. Rotazione, tratte e instradamento prototipati e messi sotto test prima della stesura; tre difetti trovati e registrati nel §2 del piano, fra cui il fatto che nessuno dei venti simboli sta sulla griglia. Il PM ha chiuso le tre decisioni di prodotto confermando le proposte; una quarta, sulla squadratura del foglio, e' stata ritirata perche' il cartiglio era gia' fra gli input del progetto.
 
 `2026-08-04` — Claude — prova di stampa superata dal PM. Registrate D-051 (nomenclatura visibile in italiano) e D-052 (legenda a destra invece di didascalie ripetute nel disegno); il foglio di riscontro ora mostra il nome italiano del componente e l'identificativo solo come riferimento secondario.
 
