@@ -37,6 +37,10 @@ tavola; se non glieli dà, sulla tavola non compaiono (D-087).
         └─────┬──────────────┘
               │  l'ingegnere approva il dossier delle integrazioni
         ┌─────┴──────────────┐
+        │ 2bis. ASSEMBLARE   │  la sequenza dei pezzi lungo ogni tubo
+        └─────┬──────────────┘
+              │  «PdC → valvola → filtro → defangatore → tratto → valvola → volano»
+        ┌─────┴──────────────┐
         │ 3. DISPORRE        │  posizionamento, instradamento, distribuzione
         └─────┬──────────────┘
               │  usa: 4. LIBRERIA DEI SIMBOLI   e   5. CARTIGLIO
@@ -62,6 +66,7 @@ si correggono allo stesso modo.
 |---|---|---|---|
 | 1 | **Capire** | **Agente AI**, istruito con file di testo `.md` che gli spiegano cosa deve tirare fuori dalla conversazione e cosa non deve inventare | istruzioni della skill |
 | 2 | **Completare** | **Programma deterministico** che legge **regole scritte come dato** (un file per regola) e le applica al modello | motore in codice, regole in file di dati |
+| 2bis | **Assemblare** | **Programma deterministico**: mette in fila i pezzi lungo ogni tubo secondo la posizione che ogni regola dichiara | codice + la posizione dichiarata in ogni regola |
 | 3 | **Disporre** | **Programma deterministico**: posiziona, instrada, distribuisce. Nessuna AI tocca le coordinate | codice |
 | 4 | **Libreria simboli** | **Dati**: per ogni simbolo un disegno vettoriale e una scheda che dichiara taglia, attacchi, imbocchi ammessi, rotazioni e fonte | file, uno per simbolo |
 | 5 | **Cartiglio** | **Dati**: un modello di riquadro fornito dall'azienda, riempito coi dati del progetto | file fornito dal PM |
@@ -156,6 +161,36 @@ Ogni accessorio ha la propria ragione di posizionamento, ed è buona pratica con
 
 **È finito quando** le regole coprono le famiglie dichiarate, ognuna è generale, ognuna ha
 una scheda leggibile da un non tecnico, e l'ingegnere ha approvato il dossier.
+
+---
+
+### Pezzo 2bis — Assemblare: la sequenza dei pezzi
+
+**Cosa fa.** Prima che esista qualunque disegno, scrive **per ogni tubo la fila ordinata
+dei pezzi** che ci stanno sopra:
+
+    pompa di calore → valvola → filtro a Y → defangatore → tratto di tubo → valvola → volano
+
+**Perché serve, e perché la sua mancanza si vede in tavola.** Oggi ogni regola infila il
+proprio accessorio per conto suo e l'ordine che ne esce non l'ha deciso nessuno: sul
+volano due valvole finiscono affiancate dalla stessa parte e tre attacchi restano nudi.
+Peggio: l'ordine dipende dall'ordine alfabetico dei nomi dei file delle regole. Un ordine
+impiantistico deciso dal nome di un file non è un ordine (D-093).
+
+**Come lo fa.** Ogni regola, oltre a dire *cosa* propone, dichiara **dove sta nella
+catena**: attaccato alla macchina, prima dell'intercettazione, subito dopo, lato impianto.
+L'assemblatore mette in fila secondo quelle dichiarazioni. Sono le stesse ragioni
+impiantistiche del pezzo 2: la sicurezza sta attaccata alla macchina perché fra lei e la
+macchina non ci va nulla di chiudibile; il defangatore sta lato impianto perché deve
+poter essere pulito a macchina isolata.
+
+**Il vantaggio più grande.** La sequenza **si legge e si approva a parole**, senza
+disegnare niente. Separa *cos'è l'impianto* da *come viene disegnato*: se la fila è
+sbagliata lo si vede subito, e non serve una tavola per accorgersene.
+
+**È finito quando** per ogni tubo di un impianto qualunque esiste una fila scritta, ogni
+pezzo ci sta per una ragione dichiarata, e la fila è la stessa che scriverebbe a mano un
+termotecnico.
 
 ---
 
