@@ -188,9 +188,35 @@ poter essere pulito a macchina isolata.
 disegnare niente. Separa *cos'è l'impianto* da *come viene disegnato*: se la fila è
 sbagliata lo si vede subito, e non serve una tavola per accorgersene.
 
+### Il modo intelligente di farlo: vincoli, non numeri di priorità
+
+La tentazione è dare a ogni accessorio un numero d'ordine. Sarebbe di nuovo un ordine
+arbitrario, come oggi lo è l'ordine alfabetico dei file. Invece **ogni pezzo dichiara il
+perché della propria posizione**, e la fila la calcola il programma:
+
+1. **Come si attacca.** *In linea* sul tubo (valvola, filtro, defangatore, contatore,
+   pompa) oppure **su uno stacco**, con una propria piccola catena che pende dal tubo —
+   ed è il caso di vaso di espansione, valvola di sicurezza, scarico, riempimento, sfiato
+   e strumenti. **La catena è quindi un albero, non una lista.**
+2. **I vincoli di vicinanza**, detti come ragioni e riferiti alle *funzioni* degli altri
+   pezzi, mai ai loro nomi: «fra me e la macchina non ci va nulla di chiudibile» (valvola
+   di sicurezza), «io sto lato impianto rispetto all'intercettazione» (defangatore, così
+   si pulisce a macchina isolata), «io vengo prima di ciò che proteggo» (filtro).
+3. **Il regime di intercettazione**: mi si isola normalmente; **non mi si isola mai** (la
+   sicurezza); mi si isola **solo con valvola bloccabile** (il vaso di espansione).
+
+Il programma fa un ordinamento su questi vincoli ed espande gli stacchi uno dentro
+l'altro. **Se due vincoli si contraddicono, si ferma e dice quali due regole non possono
+stare insieme** — invece di produrre in silenzio una fila sbagliata, che è esattamente
+quello che succede oggi.
+
+Il guadagno: la regola dell'intercettazione resta **una sola** e vale anche **sugli
+accessori** che si dichiarano manutenibili; e i casi speciali che il PM ha segnalato non
+sono eccezioni scritte dentro il programma, ma **proprietà dichiarate** dal pezzo.
+
 **È finito quando** per ogni tubo di un impianto qualunque esiste una fila scritta, ogni
-pezzo ci sta per una ragione dichiarata, e la fila è la stessa che scriverebbe a mano un
-termotecnico.
+pezzo ci sta per una ragione dichiarata, gli stacchi hanno la propria catena, e la fila è
+la stessa che scriverebbe a mano un termotecnico.
 
 ---
 
