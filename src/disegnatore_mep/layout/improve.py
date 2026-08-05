@@ -471,60 +471,80 @@ def improve_sheet(
                 return False
         return True
 
-    outcome = evaluate(best)
-    if outcome is None:
+    current_best = evaluate(best)
+    if current_best is None:
         return list(placed)
-    best_unfit, best_objective, best_crossings, best_routes = outcome
 
     for _ in range(MAX_PASSES):
         moved = False
         offending: set[str] = set()
-        for index, (trunk, route) in enumerate(zip(trunks, best_routes, strict=True)):
+        for index, (trunk, route) in enumerate(
+            zip(trunks, current_best.routes, strict=True)
+        ):
             has_bends = any(len(segment) > 2 for segment in route.segments)
-            if has_bends or route.crossings or index in best_unfit:
+            if (
+                has_bends
+                or route.crossings
+                or index in current_best.unfit
+                or index in current_best.turnbacks
+            ):
                 offending.add(trunk.start.component_id)
                 offending.add(trunk.end.component_id)
         for component_id in (item for item in order if item in offending):
             current = best[component_id]
-            seen: set[tuple[float, float]] = set()
-            for target in candidates_of(component_id):
-                key = (target.x_mm, target.y_mm)
-                if key in seen or key == (current.origin.x_mm, current.origin.y_mm):
+            seen: set[tuple[float, float, int]] = set()
+            for move in candidates_of(component_id):
+                key = (move.origin.x_mm, move.origin.y_mm, move.rotation_deg)
+                if key in seen or key == (
+                    current.origin.x_mm,
+                    current.origin.y_mm,
+                    current.rotation_deg,
+                ):
                     continue
                 seen.add(key)
-                if not is_valid(component_id, target):
+                if not is_valid(component_id, move):
                     continue
                 if trials >= MAX_TRIAL_ROUTINGS:
                     return [best[item] for item in order]
+                box = manifest_at(component_id, move.rotation_deg)
                 trial = dict(best)
-                trial[component_id] = current.model_copy(update={"origin": target})
+                trial[component_id] = current.model_copy(
+                    update={
+                        "origin": move.origin,
+                        "rotation_deg": move.rotation_deg,
+                        "width_mm": box.width_mm,
+                        "height_mm": box.height_mm,
+                    }
+                )
                 found = evaluate(trial)
                 if found is None:
                     continue
-                unfit, objective, crossings, routes = found
+                # Il confronto lessicografico del modulo, nell'ordine.
                 # Prima di tutto viene la tavola intera: una mossa che fa
                 # entrare gli accessori di una tratta che non li ospitava vale
-                # qualunque obiettivo. A parita', la mossa si tiene solo se
-                # l'obiettivo **totale** scende, mai una voce a spese del
-                # totale (D-080); e gli attraversamenti in piu' non si
-                # comprano nemmeno pagando in pieghe e lunghezza — il ciclo
-                # non puo' chiudersi con piu' incroci di quanti ne ha
-                # ricevuti, perche' sono la voce che l'occhio paga per prima
-                # dopo le pieghe (D-060).
-                repaired = len(unfit) < len(best_unfit)
-                better = (
-                    len(unfit) == len(best_unfit)
-                    and objective < best_objective
-                    and crossings <= best_crossings
+                # qualunque obiettivo. Poi l'andata e ritorno, che non e' un
+                # costo ma un errore: toglierne una si accetta anche a
+                # obiettivo fermo, aggiungerne una non si accetta mai. Solo a
+                # parita' di entrambe si guarda al disegno: gli
+                # attraversamenti non devono crescere — non si comprano
+                # nemmeno pagando in pieghe e lunghezza, perche' sono la voce
+                # che l'occhio paga per prima dopo le pieghe (D-060) — e
+                # l'obiettivo **totale** deve scendere, mai una voce a spese
+                # del totale (D-080).
+                same_fit = len(found.unfit) == len(current_best.unfit)
+                repaired = len(found.unfit) < len(current_best.unfit)
+                straightened = same_fit and len(found.turnbacks) < len(
+                    current_best.turnbacks
                 )
-                if repaired or better:
+                better = (
+                    same_fit
+                    and len(found.turnbacks) == len(current_best.turnbacks)
+                    and found.crossings <= current_best.crossings
+                    and found.objective < current_best.objective
+                )
+                if repaired or straightened or better:
                     best = trial
-                    best_unfit, best_objective, best_crossings, best_routes = (
-                        unfit,
-                        objective,
-                        crossings,
-                        routes,
-                    )
+                    current_best = found
                     moved = True
                     break
         if not moved:
