@@ -1,9 +1,9 @@
 {
   "id": "isolation-around-pump",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Valvola di intercettazione",
   "category": "recommended",
-  "cardinality": "per_component",
+  "cardinality": "per_port",
   "when": {
     "network_domain": "hydronic",
     "anchor_has_function": "circulation"
@@ -17,6 +17,6 @@
   "satisfied_by": {
     "port_carries_function": "isolation"
   },
-  "rationale": "Un circolatore e' il pezzo che si sostituisce piu' spesso: va sezionato sui due lati. Una sola valvola nel primo pacchetto: sezionare ogni attacco e' corretto ma raddoppia gli accessori, e resta fra gli sviluppi futuri.",
-  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)"
+  "rationale": "Un circolatore e' il pezzo che si sostituisce piu' spesso: intercettato su aspirazione e mandata, si smonta senza svuotare il circuito.",
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008); una valvola per ogni attacco di macchina e' la regola fissata dal PM (D-074)"
 }

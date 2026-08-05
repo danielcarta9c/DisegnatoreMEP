@@ -1,6 +1,6 @@
 {
   "id": "drain-on-storage",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Attacco di scarico",
   "category": "recommended",
   "cardinality": "per_component",
@@ -10,13 +10,13 @@
   },
   "then": {
     "definition_id": "drain-connection",
-    "placement": "on_inlet",
+    "placement": "on_outlet",
     "inlet_port": "a",
     "outlet_port": "b"
   },
   "satisfied_by": {
     "port_carries_function": "drain"
   },
-  "rationale": "Un accumulo va potuto svuotare per la manutenzione senza scaricare l'intero impianto.",
+  "rationale": "Un accumulo va potuto svuotare per la manutenzione senza scaricare l'intero impianto: lo scarico sta sull'attacco basso, dal lato del serbatoio rispetto alla valvola d'attacco, cosi' a valvole chiuse svuota il solo serbatoio.",
   "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)"
 }

@@ -1,0 +1,31 @@
+{
+  "id": "valve-isolation-dhw-hot",
+  "version": "1.0.0",
+  "name": "Valvola di intercettazione",
+  "functions": [
+    "isolation"
+  ],
+  "symbol_id": "valve-isolation",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "bidirectional",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "bidirectional",
+      "required": true,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

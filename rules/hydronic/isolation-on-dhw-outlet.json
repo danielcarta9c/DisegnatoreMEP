@@ -1,15 +1,16 @@
 {
-  "id": "isolation-around-storage",
-  "version": "2.0.0",
+  "id": "isolation-on-dhw-outlet",
+  "version": "1.0.0",
   "name": "Valvola di intercettazione",
   "category": "recommended",
   "cardinality": "per_port",
   "when": {
     "network_domain": "hydronic",
-    "anchor_has_function": "thermal_storage"
+    "network_medium": "domestic_hot_water",
+    "anchor_has_function": "dhw_storage"
   },
   "then": {
-    "definition_id": "valve-isolation",
+    "definition_id": "valve-isolation-dhw-hot",
     "placement": "on_any_port",
     "inlet_port": "a",
     "outlet_port": "b"
@@ -17,6 +18,6 @@
   "satisfied_by": {
     "port_carries_function": "isolation"
   },
-  "rationale": "Un accumulo si sostituisce e si manutiene: con una valvola su ogni attacco si isola il solo serbatoio, senza svuotare i circuiti che vi fanno capo.",
+  "rationale": "L'uscita dell'acqua calda va potuta chiudere: insieme alla valvola sull'ingresso freddo isola il bollitore dalla rete sanitaria, e la miscelatrice a valle si smonta senza svuotare la distribuzione.",
   "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008); una valvola per ogni attacco di macchina e' la regola fissata dal PM (D-074)"
 }

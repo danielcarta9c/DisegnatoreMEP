@@ -1,0 +1,22 @@
+{
+  "id": "isolation-around-generator",
+  "version": "1.0.0",
+  "name": "Valvola di intercettazione",
+  "category": "recommended",
+  "cardinality": "per_port",
+  "when": {
+    "network_domain": "hydronic",
+    "anchor_has_function": "heat_generation"
+  },
+  "then": {
+    "definition_id": "valve-isolation",
+    "placement": "on_any_port",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "port_carries_function": "isolation"
+  },
+  "rationale": "Il generatore si scollega per manutenzione o sostituzione: una valvola su ogni tubo che vi entra o ne esce permette di isolarlo senza svuotare l'impianto. Gli organi di sicurezza restano sul tronchetto di macchina, dal lato del generatore, mai oltre la valvola.",
+  "source": "Buona pratica tecnica documentata — Caleffi, Componenti e schemi per impianti a pompa di calore aria-acqua (SRC-008); una valvola per ogni attacco di macchina e' la regola fissata dal PM (D-074)"
+}

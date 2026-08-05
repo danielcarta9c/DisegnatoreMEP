@@ -32,7 +32,9 @@ def catalog() -> ComponentRegistry:
 
 def test_the_package_loads_and_agrees_with_the_catalogue() -> None:
     registry = RuleRegistry.from_directory(RULES)
-    assert len(registry.all()) >= 15
+    # 15 regole del primo pacchetto, piu' le 4 di intercettazione per attacco
+    # di macchina nate da D-074 (WP2).
+    assert len(registry.all()) >= 19
     registry.cross_check(catalog())
 
 
@@ -68,7 +70,8 @@ def test_every_rule_declares_a_true_source() -> None:
 def test_the_seven_families_are_all_represented() -> None:
     proposed = {rule.then.definition_id for rule in RuleRegistry.from_directory(RULES).all()}
     assert {"expansion-connection", "valve-safety"} <= proposed  # sicurezza
-    assert "valve-isolation" in proposed  # intercettazione
+    # intercettazione: per ogni attacco di macchina, su ogni fluido (D-074)
+    assert {"valve-isolation", "valve-isolation-dhw", "valve-isolation-dhw-hot"} <= proposed
     assert {"strainer", "dirt-separator"} <= proposed  # protezione
     assert "air-separator" in proposed  # aria
     assert {"filling-unit", "drain-connection"} <= proposed  # riempimento e scarico

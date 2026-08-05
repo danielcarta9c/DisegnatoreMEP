@@ -106,6 +106,7 @@ def test_applying_leaves_the_traceability_behind() -> None:
     found = evaluate(project, catalog(), rules())
     completed = apply_proposals(project, found)
     assert len(completed.rule_applications) == len(found)
+    versions = {rule.id: rule.version for rule in rules().all()}
     for applied in completed.rule_applications:
-        assert applied.rule_version == "1.0.0"
+        assert applied.rule_version == versions[applied.rule_id]
         assert applied.entity_ids
