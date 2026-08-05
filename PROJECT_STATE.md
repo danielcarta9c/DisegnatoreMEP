@@ -81,6 +81,19 @@ sovrapposizione e creando un'ambiguità peggiore, perché quella linea è ortogo
 come una tubazione. Ogni segno aggiunto alla tavola va verificato contro i segni che ci
 sono già.
 
+### La risposta strutturale: le regole del colpo d'occhio
+
+I quattro difetti hanno una cosa in comune: un disegnatore senior li vede in due secondi.
+Il PM lo ha nominato come il lavoro dell'agente terzo e ha chiesto di tradurre in regole
+quello che l'occhio umano fa da solo. Il risultato è `docs/QUALITA_GRAFICA.md` (D-076):
+quarantadue regole in sei famiglie, ciascuna con **come si vede a occhio** e uno stato —
+garantita dal motore, misurabile ma non ancora misurata, da giudicare, oppure violata oggi.
+
+Non erano regole da scoprire: erano già note, e i quattro difetti sono tutti nell'elenco.
+Mancava l'artefatto, e il momento in cui la tavola ci viene confrontata. Da qui discende
+anche che l'agente terzo giudichi **l'immagine** e non il sorgente (D-077): nel sorgente il
+richiamo delle etichette è una linea di richiamo corretta, sull'immagine è un tubo in più.
+
 ## Next — backlog ordinato
 
 Ordine concordato col PM il 4 agosto 2026, dopo il punto fatto sullo stato reale del

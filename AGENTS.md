@@ -8,8 +8,9 @@
 3. `PROJECT_STATE.md`
 4. `docs/DECISION_LOG.md`
 5. `docs/specs/2026-08-01-disegnatore-mep-design.md`
-6. piano di implementazione pertinente in `docs/plans/`
-7. specifiche e ADR pertinenti al lavoro richiesto
+6. `docs/QUALITA_GRAFICA.md` — le regole del colpo d'occhio, per chiunque tocchi il disegno
+7. piano di implementazione pertinente in `docs/plans/`
+8. specifiche e ADR pertinenti al lavoro richiesto
 
 Prima di fare domande, verificare chat, documenti e decisioni già registrate. Chiedere soltanto ciò che resta realmente ambiguo.
 `HANDOFF.md` è un cancello di lettura, non sostituisce i documenti canonici e non autorizza a saltarli.
@@ -28,6 +29,7 @@ Prima di fare domande, verificare chat, documenti e decisioni già registrate. C
 - Mantenere dimensioni di stampa, testi e spessori invarianti in millimetri di carta.
 - Eseguire la partizione funzionale in tavole prima del layout finale.
 - Non emettere una tavola finale con cartiglio incompleto o campi `DA DEFINIRE`.
+- Non consegnare una tavola senza averla confrontata, riga per riga, con `docs/QUALITA_GRAFICA.md`: sapere come si disegna non sostituisce il controllo (D-076).
 - Mantenere SVG come formato vettoriale intermedio e PDF come elaborato finale iniziale.
 - Aggiornare `PROJECT_STATE.md` al termine di ogni attività significativa.
 - Registrare nel `DECISION_LOG` le decisioni funzionali; usare gli ADR per quelle strutturali e costose da cambiare.
