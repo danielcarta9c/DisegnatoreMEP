@@ -217,6 +217,26 @@ già instradate, non solo i simboli.
 **Come si produce l'immagine per l'occhio terzo:**
 `scripts/rasterize.sh tavola.svg tavola.png`.
 
+### I passi che restano, corti e salvabili uno per uno
+
+Regola imposta dal PM il 5 agosto: **passi piccoli, ognuno chiuso da un commit.** Se la
+sessione finisce, si riprende dal primo passo non spuntato senza perdere nulla.
+
+- [ ] **S1** — chiudere le mosse di rotazione (WP3b) e salvare.
+- [ ] **S2** — chiudere etichette, richiami a 45°, scavalli e pallini (WP4) e salvare.
+- [ ] **S3** — allineare le tre prove di accettazione al comportamento voluto: una tavola
+      con un difetto bloccante **non esce**, e la prova deve pretendere quello. Salvare.
+- [ ] **S4** — chiudere il difetto nuovo del preflight: accessori posati a distanza zero
+      da tratte già instradate. Salvare.
+- [ ] **S5** — rigenerare la tavola dalla catena corrente, produrre l'immagine, guardarla
+      con i propri occhi e registrare cosa non va. Salvare.
+- [ ] **S6** — prima passata di cold eye review (agente terzo, solo l'immagine).
+      Registrare il verdetto nel registro di `docs/COLD_EYE_REVIEW.md`. Salvare.
+- [ ] **S7** — correggere ciò che l'agente terzo rileva, una cosa per volta, ogni
+      correzione col suo commit; poi nuova passata. Massimo tre passate (D-064).
+- [ ] **S8** — collaudo indipendente finale, rapporto al PM con gli otto difetti chiusi
+      uno per uno e la mappa difetto→prova.
+
 ## Ultimo aggiornamento
 
 `2026-08-05` — Claude — **rilancio.** Otto difetti del PM registrati sulla tavola completa

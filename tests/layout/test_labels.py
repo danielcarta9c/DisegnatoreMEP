@@ -230,7 +230,7 @@ def test_a_label_that_fits_beside_its_component_carries_no_leader() -> None:
 def test_every_label_of_the_case_stays_beside_its_own_component() -> None:
     placed = {item.component_id: item for item in fixture_sheet().symbols}
     for item in fixture_labels():
-        owner = placed[item.id.rsplit("-", 1)[0] if item.role != "tag" else item.id[:-4]]
+        owner = placed[item.id.rsplit("-", 1)[0]]
         box, own = label_box(item), symbol_box(owner)
         gap_x = max(own[0] - box[2], box[0] - own[2], 0.0)
         gap_y = max(own[1] - box[3], box[1] - own[3], 0.0)
