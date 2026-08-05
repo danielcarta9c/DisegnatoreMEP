@@ -71,17 +71,6 @@ DIRECTIONS: tuple[Cell, ...] = ((1, 0), (0, 1), (-1, 0), (0, -1))
 """Ordine fisso dei vicini: da esso dipende il determinismo a parita' di costo."""
 
 
-def _crowded(cells: set[Cell] | frozenset[Cell], grid: GridSpace) -> frozenset[Cell]:
-    """I nodi a un passo da un ostacolo o da una linea gia' tracciata."""
-    near: set[Cell] = set()
-    for col, row in cells:
-        for step in DIRECTIONS:
-            neighbour = (col + step[0], row + step[1])
-            if grid.contains(neighbour) and neighbour not in cells:
-                near.add(neighbour)
-    return frozenset(near)
-
-
 _FACE_DIRECTION: dict[PortFace, Cell] = {
     PortFace.RIGHT: (1, 0),
     PortFace.BOTTOM: (0, 1),
@@ -327,6 +316,30 @@ def route_sheet(
     # del volano — che sulla tavola e' una derivazione, non due linee.
     taken: dict[tuple[Cell, Cell], set[Cell]] = {}
     routed: list[RoutedTrunk] = []
+    # L'insieme dei nodi affollati si mantiene **incrementalmente**: e' identico
+    # a `_crowded(blocked | occupied)`, ma ricalcolarlo da zero a ogni tratta
+    # dominava il costo dell'intero instradamento — e da quando la disposizione
+    # si rivede reinstradando (D-078), l'instradamento si paga molte volte.
+    cols, rows = grid.cols, grid.rows
+    union: set[Cell] = set()
+    crowded: set[Cell] = set()
+
+    def absorb(cells: frozenset[Cell] | tuple[Cell, ...]) -> None:
+        """Registra nuove celle occupate e aggiorna i loro dintorni."""
+        for cell in cells:
+            union.add(cell)
+            crowded.discard(cell)
+        for col, row in cells:
+            for step in DIRECTIONS:
+                neighbour = (col + step[0], row + step[1])
+                if (
+                    0 <= neighbour[0] <= cols
+                    and 0 <= neighbour[1] <= rows
+                    and neighbour not in union
+                ):
+                    crowded.add(neighbour)
+
+    absorb(blocked)
     # Mandata o ritorno lo dice il modello, che e' orientato, e non la geometria:
     # un componente che finisce a sinistra del proprio alimentatore non per
     # questo lo alimenta di ritorno (D-059).
@@ -370,7 +383,7 @@ def route_sheet(
                     for edge, anchors in taken.items()
                     if not (anchors & ends & set(edge))
                 ),
-                crowded=_crowded(blocked | occupied, grid) - ends,
+                crowded=frozenset(crowded - ends),
                 # Mandata sopra, ritorno sotto: a parita' di costo, e senza
                 # comprare nemmeno una piega per ottenerlo.
                 prefer_high=supply,
@@ -381,6 +394,7 @@ def route_sheet(
                 f"cannot be routed: {exc}"
             ) from exc
         occupied.update(found.cells)
+        absorb(found.cells)
         for before, after in zip(found.cells, found.cells[1:], strict=False):
             taken.setdefault((before, after), set()).update(ends)
         current = RoutedTrunk(
@@ -401,5 +415,7 @@ def route_sheet(
         )
         routed.append(current)
         if on_routed is not None:
-            blocked = blocked | _obstacle_cells(on_routed(trunk, current), grid)
+            settled = _obstacle_cells(on_routed(trunk, current), grid)
+            blocked = blocked | settled
+            absorb(settled)
     return routed

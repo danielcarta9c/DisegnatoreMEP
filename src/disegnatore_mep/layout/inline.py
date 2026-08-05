@@ -7,6 +7,7 @@ a quel campo mancava (W4).
 """
 
 from dataclasses import dataclass
+from math import ceil
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.model.project import ProjectModel
@@ -165,29 +166,37 @@ def place_inline_accessories(
     placed: list[PlacedSymbol] = []
     cuts: list[tuple[float, float]] = []
     step = grid.step_mm
-    free = list(straights)
+    # Gli accessori si posano **nell'ordine della catena**, avanzando lungo la
+    # tratta: sulla tavola compaiono nell'ordine topologico in cui il fluido
+    # li attraversa, che e' l'unico ordine vero. Prima ciascuno prendeva il
+    # centro del rettilineo piu' lungo: l'ordine ne usciva rimescolato, e ogni
+    # taglio dimezzava la capacita' del rettilineo — su una tratta da quattro
+    # accessori di dieci millimetri il quarto non entrava piu' (D-074 ne mette
+    # quattro in fila davvero, e li vuole in fila davvero).
+    cursor = 0.0
 
     for index, component in enumerate(resolved):
         gap = component.symbol.manifest.inline_gap_mm or 0.0
         needed = gap + 2 * MIN_SPACING_MM
-        candidates = [item for item in free if item[1] - item[0] >= needed]
-        if not candidates:
+        found: float | None = None
+        for low, high in straights:
+            # Il primo nodo di griglia da cui l'accessorio sta nel rettilineo,
+            # oltre l'accessorio precedente: avanzare invece di spezzare tiene
+            # l'ordine e non spreca nemmeno un passo.
+            wanted = max(low, cursor) + needed / 2
+            snapped = ceil((wanted - 1e-9) / step) * step
+            if snapped + needed / 2 > high + 1e-9:
+                continue
+            found = snapped
+            break
+        if found is None:
             raise LayoutError(
                 f"run {trunk.connection_ids[0]} has no straight stretch of "
                 f"{needed:g}mm for {component.symbol.manifest.id}: symbols are never "
                 f"shrunk to fit, give the run a longer straight length"
             )
-        chosen = max(candidates, key=lambda item: item[1] - item[0])
-        free.remove(chosen)
-        low, high = chosen
-        distance = round((low + high) / 2 / step) * step
-        distance = min(max(distance, low + needed / 2), high - needed / 2)
-        # I due spezzoni del rettilineo restano disponibili per altri accessori.
-        free.extend(
-            piece
-            for piece in ((low, distance - gap / 2), (distance + gap / 2, high))
-            if piece[1] - piece[0] > 0
-        )
+        distance = found
+        cursor = distance + needed / 2
         station = _station_at(points, distance)
         centre = station.point
         rotation = 0 if station.horizontal else 90

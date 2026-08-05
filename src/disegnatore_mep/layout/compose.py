@@ -29,6 +29,7 @@ from .geometry import (
     SheetGeometry,
 )
 from .grid import GridSpace
+from .improve import improve_sheet
 from .inline import place_inline_accessories
 from .labels import place_labels
 from .legend import build_legend
@@ -176,23 +177,41 @@ def compose_sheet(
     levels = levels_of(
         frame.drawing_rect_mm.y_mm, frame.drawing_rect_mm.height_mm, grid.step_mm
     )
-    placed = place_sheet(project, partition, catalog, frame, inline_ids)
-    broken: list[RoutedTrunk] = []
+    first = place_sheet(project, partition, catalog, frame, inline_ids)
+    # La disposizione serve le linee, non il contrario (D-078): dopo la prima
+    # ipotesi di posa, i componenti si spostano dove l'instradamento di prova
+    # dice che l'obiettivo intero — pieghe, incroci, lunghezza — migliora.
+    improved = improve_sheet(project, partition, catalog, frame, first, inline_ids)
 
-    def settle(trunk: Trunk, route: RoutedTrunk) -> list[PlacedSymbol]:
-        """Posa gli accessori appena la loro tratta e' instradata.
+    def settled(base: list[PlacedSymbol]) -> tuple[list[PlacedSymbol], list[RoutedTrunk]]:
+        """Instrada le tratte posando gli accessori appena instradata la loro.
 
-        Restituirli qui li rende ostacoli per le tratte successive: posati tutti
-        alla fine erano invisibili all'instradamento, che ci passava sopra.
+        Restituirli dentro la callback li rende ostacoli per le tratte
+        successive: posati tutti alla fine erano invisibili all'instradamento,
+        che ci passava sopra.
         """
-        accessories, pieces = place_inline_accessories(
-            project, trunk, route, catalog, grid
-        )
-        placed.extend(accessories)
-        broken.append(pieces)
-        return accessories
+        placed = list(base)
+        broken: list[RoutedTrunk] = []
 
-    route_sheet(project, list(partition.trunks), placed, catalog, grid, settle)
+        def settle(trunk: Trunk, route: RoutedTrunk) -> list[PlacedSymbol]:
+            accessories, pieces = place_inline_accessories(
+                project, trunk, route, catalog, grid
+            )
+            placed.extend(accessories)
+            broken.append(pieces)
+            return accessories
+
+        route_sheet(project, list(partition.trunks), placed, catalog, grid, settle)
+        return placed, broken
+
+    try:
+        placed, broken = settled(improved)
+    except LayoutError:
+        # Il miglioramento non compra mai il fallimento della tavola: il ciclo
+        # valuta le mosse sull'instradamento di prova, senza accessori, e in
+        # rari casi la posa vera puo' smentirlo. Allora vale la disposizione
+        # di partenza, che e' quella provvista dei propri rettilinei.
+        placed, broken = settled(first)
 
     entries, keys = build_legend(
         project, placed, partition.network_ids, catalog, frame

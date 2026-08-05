@@ -1,0 +1,414 @@
+"""La disposizione al servizio delle linee (D-078, D-080).
+
+Il PM, cerchiando il giro attorno al prelievo ACS sulla tavola completa:
+«potevi spostarlo, metterlo in linea, e non fare quel giretto li'. Abbiamo
+detto che le curve costano, invece spostare gli oggetti sulla tavola e'
+gratis. Non devi mettere gli oggetti in tavola e poi fare le linee — o meglio
+lo fai, ma poi gli oggetti si spostano per ottimizzare il routing, non
+viceversa.» E subito dopo, la correzione preventiva (D-080): «ricordati che
+anche la lunghezza delle tratte costa, non facciamo che spargiamo le macchine
+in giro, dobbiamo bilanciare tutto.»
+
+Qui la disposizione di `place.py` smette di essere l'ultima parola. Dopo un
+instradamento di prova si generano spostamenti discreti dei componenti; per
+ciascuno si reinstrada l'**intero foglio** e lo spostamento si tiene solo se
+l'obiettivo totale — pieghe, attraversamenti e lunghezza, con i pesi di
+D-060 — scende davvero. Mai una voce sola a spese delle altre.
+
+Vincoli mai violabili, qualunque sia il guadagno:
+
+- l'ordine di processo da sinistra a destra (D-060): nessuno spostamento
+  altera l'ordine orizzontale dei centri di due estremi collegati;
+- le distanze minime fra simboli, con lo stesso predicato del posizionamento;
+- chi sta a terra resta alla propria quota: si scorre lungo la fascia, non si
+  vola. La quota di un componente a terra la decide il posizionamento —
+  compreso l'impilamento di D-073 — non questo ciclo;
+- tutto sulla griglia e dentro l'area di disegno; i simboli non si toccano;
+- determinismo: candidati in ordine fisso, accettazione greedy della prima
+  mossa che migliora, tetto fisso di instradamenti di prova.
+
+L'instradamento di prova e' quello **senza accessori in linea**: gli
+accessori si posano sulla tratta gia' instradata (D-027), quindi non possono
+cambiare il segno di un confronto fra disposizioni; farli entrare nel ciclo
+moltiplicherebbe il costo di ogni prova senza aggiungere informazione.
+"""
+
+from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.graphics.frame import Rect, SheetFrame
+from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
+from disegnatore_mep.model.project import ProjectModel
+
+from .composition import Standing, levels_of, standing_of
+from .errors import LayoutError
+from .geometry import PlacedSymbol, Point, RoutedTrunk
+from .grid import GridSpace, is_on_grid
+from .inline import place_inline_accessories
+from .partition import SheetPartition
+from .place import ROUTING_MARGIN_MM, ROW_GAP_MM
+from .route import CROSS_COST, STEP_COST, TURN_COST, route_sheet
+
+MAX_PASSES = 3
+"""Passate del ciclo di miglioramento: limitato e monotono (D-078)."""
+
+MAX_TRIAL_ROUTINGS = 200
+"""Tetto di instradamenti di prova per foglio.
+
+Raggiunto il tetto si restituisce la migliore disposizione trovata fin li'.
+Il tetto scatta in modo deterministico — stessi ingressi, stesse prove, stesso
+punto di arresto — quindi non costa la riproducibilita' bit-a-bit.
+"""
+
+NUDGE_STEPS = (1, 2, 4)
+"""Le traslazioni provate, in passi di griglia: le vicine prima delle lontane."""
+
+_SNUG_STEPS = 2
+"""Stacco fra la porta di chi si avvicina e quella del suo pari.
+
+Due passi, come `place.CLEARANCE_STEPS`: e' la distanza a cui una linea si
+stacca dal bordo del simbolo, quindi la minima a cui due porte affacciate si
+collegano senza che la tratta sembri disegnata sul simbolo.
+"""
+
+_TOLERANCE_MM = 1e-6
+
+_HORIZONTAL_FACES = (PortFace.LEFT, PortFace.RIGHT)
+"""Le facce per cui l'allineamento in quota ha senso.
+
+Due porte affacciate su fianchi si collegano con una linea orizzontale quando
+stanno sulla stessa riga: e' la mossa che toglie pieghe. Una porta sul fondo o
+sul cielo scarica in verticale, e portarla «sulla riga» dell'altra non produce
+nessuna linea diritta: produce l'uncino che poi l'instradamento paga.
+"""
+
+
+def objective_of(routes: list[RoutedTrunk], step_mm: float) -> int:
+    """L'obiettivo del PM, intero: pieghe, attraversamenti, lunghezza (D-060).
+
+    Stessi pesi dell'instradatore — `TURN_COST`, `CROSS_COST`, `STEP_COST` —
+    perche' e' la stessa regola: qui si sommano sulle tratte gia' instradate
+    invece che sui passi di un percorso da scegliere.
+    """
+    total = 0
+    for route in routes:
+        for segment in route.segments:
+            total += TURN_COST * max(len(segment) - 2, 0)
+            length = sum(
+                abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
+                for before, after in zip(segment, segment[1:], strict=False)
+            )
+            total += STEP_COST * round(length / step_mm)
+        total += CROSS_COST * len(route.crossings)
+    return total
+
+
+def overshoots_the_goal(route: RoutedTrunk, goal: Point) -> bool:
+    """Vero se la tratta supera la porta di destinazione per poi tornarci (B12).
+
+    Il corollario di D-078: «un componente non si raggiunge mai con un'andata
+    e ritorno; se la linea lo supera e torna indietro, e' l'oggetto a essere
+    nel posto sbagliato». Il confine e' la perpendicolare per la porta di
+    arrivo: per un approccio orizzontale e' la verticale per la porta, per uno
+    verticale l'orizzontale. Ogni punto della spezzata oltre quel confine, nel
+    verso di arrivo, e' un'andata oltre la meta che la tratta deve disfare.
+    """
+    if not route.segments:
+        return False
+    last = route.segments[-1]
+    if len(last) < 2:
+        return False
+    end, before = last[-1], last[-2]
+    horizontal = abs(end.x_mm - before.x_mm) > abs(end.y_mm - before.y_mm)
+    points = [point for segment in route.segments for point in segment]
+    if horizontal:
+        sign = 1.0 if end.x_mm > before.x_mm else -1.0
+        overshoot = max((point.x_mm - goal.x_mm) * sign for point in points)
+    else:
+        sign = 1.0 if end.y_mm > before.y_mm else -1.0
+        overshoot = max((point.y_mm - goal.y_mm) * sign for point in points)
+    return overshoot > _TOLERANCE_MM
+
+
+def _relation(left: float, right: float) -> int:
+    return (left > right) - (left < right)
+
+
+def improve_sheet(
+    project: ProjectModel,
+    partition: SheetPartition,
+    catalog: ComponentRegistry,
+    frame: SheetFrame,
+    placed: list[PlacedSymbol],
+    inline_ids: frozenset[str],
+) -> list[PlacedSymbol]:
+    """Rivede la disposizione reinstradando: si tiene solo cio' che migliora.
+
+    Greedy e deterministico: i componenti colpevoli — estremi di tratte con
+    pieghe o attraversamenti — si esaminano nell'ordine di posa; per ciascuno
+    si prova una lista fissa di posizioni alternative e si accetta la prima
+    che abbassa **strettamente** l'obiettivo totale. Una passata senza
+    spostamenti chiude il ciclo; tre passate lo chiudono comunque.
+
+    `inline_ids` non entra nel ciclo: gli accessori in linea non sono ancora
+    posati, e l'instradamento di prova gira apposta senza di loro.
+    """
+    trunks = list(partition.trunks)
+    if not placed or not trunks:
+        return list(placed)
+
+    drawing = frame.drawing_rect_mm
+    # Lo stesso rettangolo ridotto dentro cui `place_sheet` posa: il corridoio
+    # di instradamento lungo il bordo resta libero anche quando ci si sposta.
+    area = Rect(
+        x_mm=drawing.x_mm + ROUTING_MARGIN_MM,
+        y_mm=drawing.y_mm + ROUTING_MARGIN_MM,
+        width_mm=drawing.width_mm - 2 * ROUTING_MARGIN_MM,
+        height_mm=drawing.height_mm - 2 * ROUTING_MARGIN_MM,
+    )
+    grid = GridSpace(origin=drawing, standard=frame.standard)
+    step = grid.step_mm
+    levels = levels_of(drawing.y_mm, drawing.height_mm, step)
+
+    definitions = {item.id: item.definition_id for item in project.components}
+    manifests: dict[str, SymbolManifest] = {}
+    standings: dict[str, Standing] = {}
+    for item in placed:
+        resolved = catalog.resolve(definitions[item.component_id])
+        manifest = resolved.symbol.manifest.rotated(item.rotation_deg)
+        manifests[item.component_id] = manifest
+        standings[item.component_id] = standing_of(
+            manifest.height_mm,
+            frozenset(resolved.definition.functions),
+            resolved.is_inline,
+        )
+
+    order = [item.component_id for item in placed]
+    best = {item.component_id: item for item in placed}
+    trials = 0
+
+    def evaluate(
+        layout: dict[str, PlacedSymbol],
+    ) -> tuple[list[int], int, int, list[RoutedTrunk]] | None:
+        """Un instradamento di prova completo, contato contro il tetto.
+
+        Oltre all'obiettivo restituisce quali tratte non riescono a ospitare i
+        propri accessori in linea (D-027): avvicinare e' gratis solo finche'
+        gli accessori trovano il proprio rettilineo, e una disposizione che
+        glielo toglie costerebbe l'intera tavola, non una piega.
+        """
+        nonlocal trials
+        trials += 1
+        try:
+            routes = route_sheet(
+                project, trunks, [layout[item] for item in order], catalog, grid, None
+            )
+        except LayoutError:
+            # Una disposizione che non si lascia instradare non e' una
+            # candidata: si scarta e si resta su quella che funziona.
+            return None
+        unfit: list[int] = []
+        for index, (trunk, route) in enumerate(zip(trunks, routes, strict=True)):
+            if not trunk.inline_component_ids:
+                continue
+            try:
+                place_inline_accessories(project, trunk, route, catalog, grid)
+            except LayoutError:
+                unfit.append(index)
+        crossings = sum(len(route.crossings) for route in routes)
+        return unfit, objective_of(routes, step), crossings, routes
+
+    def candidates_of(component_id: str) -> list[Point]:
+        """Le posizioni alternative, in ordine fisso: prima gli allineamenti
+        di porta, poi le traslazioni verticali, poi le orizzontali."""
+        me = best[component_id]
+        manifest = manifests[component_id]
+        out: list[Point] = []
+        # (a) La quota che porta la propria porta sulla riga della porta del
+        # pari, per ogni tratta che li collega: e' la mossa che rende
+        # possibile la linea diritta. E la stessa quota con l'ascissa appena
+        # oltre la porta del pari, per chi puo' avvicinarsi.
+        for trunk in trunks:
+            for mine, other in (
+                (trunk.start, trunk.end),
+                (trunk.end, trunk.start),
+            ):
+                if mine.component_id != component_id:
+                    continue
+                peer = best.get(other.component_id)
+                if peer is None:
+                    continue
+                own_port = manifest.port(mine.port_id)
+                peer_port = manifests[other.component_id].port(other.port_id)
+                if (
+                    own_port.face not in _HORIZONTAL_FACES
+                    or peer_port.face not in _HORIZONTAL_FACES
+                ):
+                    continue
+                aligned_y = peer.origin.y_mm + peer_port.y_mm - own_port.y_mm
+                out.append(Point(x_mm=me.origin.x_mm, y_mm=aligned_y))
+                snug_x = (
+                    peer.origin.x_mm
+                    + peer_port.x_mm
+                    + _SNUG_STEPS * step
+                    - own_port.x_mm
+                )
+                out.append(Point(x_mm=snug_x, y_mm=aligned_y))
+        # (b) Traslazioni verticali: in alto prima che in basso, vicino prima
+        # che lontano.
+        for count in NUDGE_STEPS:
+            out.append(Point(x_mm=me.origin.x_mm, y_mm=me.origin.y_mm - count * step))
+            out.append(Point(x_mm=me.origin.x_mm, y_mm=me.origin.y_mm + count * step))
+        # (c) Traslazioni orizzontali: l'ordine di processo le limita, e a
+        # controllarlo e' il predicato di validita'.
+        for count in NUDGE_STEPS:
+            out.append(Point(x_mm=me.origin.x_mm - count * step, y_mm=me.origin.y_mm))
+            out.append(Point(x_mm=me.origin.x_mm + count * step, y_mm=me.origin.y_mm))
+        return out
+
+    def in_a_ground_column(component_id: str) -> bool:
+        """Vero se il componente a terra divide la colonna con un altro.
+
+        E' la coppia impilata di D-073: si muove insieme o non si muove, e
+        questo ciclo non ha mosse di coppia. Sfilare orizzontalmente uno dei
+        due trasformerebbe la pila in una scala.
+        """
+        me = best[component_id]
+        for other_id in order:
+            if other_id == component_id or standings[other_id] is not Standing.GROUND:
+                continue
+            other = best[other_id]
+            if me.origin.x_mm < other.right_mm and other.origin.x_mm < me.right_mm:
+                return True
+        return False
+
+    def is_valid(component_id: str, target: Point) -> bool:
+        me = best[component_id]
+        manifest = manifests[component_id]
+        # Chi sta a terra scorre lungo la fascia: la quota non si tocca. Vale
+        # anche per chi la terra l'ha lasciata impilandosi (D-073): quella
+        # quota l'ha decisa il posizionamento, non questo ciclo.
+        if standings[component_id] is Standing.GROUND:
+            if target.y_mm != me.origin.y_mm:
+                return False
+            if target.x_mm != me.origin.x_mm and in_a_ground_column(component_id):
+                return False
+        # Sulla griglia, misurata dall'origine dell'area come nel posizionamento.
+        if not is_on_grid(target.x_mm - area.x_mm, step):
+            return False
+        if not is_on_grid(target.y_mm - area.y_mm, step):
+            return False
+        # Dentro l'area di posa, e mai sotto la linea di terra.
+        if target.x_mm < area.x_mm - _TOLERANCE_MM:
+            return False
+        if target.y_mm < area.y_mm - _TOLERANCE_MM:
+            return False
+        if target.x_mm + manifest.width_mm > area.right_mm + _TOLERANCE_MM:
+            return False
+        if target.y_mm + manifest.height_mm > levels.ground_mm + _TOLERANCE_MM:
+            return False
+        # Lo stesso stacco del posizionamento fra due simboli (D-062).
+        for other_id in order:
+            if other_id == component_id:
+                continue
+            other = best[other_id]
+            if (
+                target.x_mm < other.right_mm + ROW_GAP_MM
+                and other.origin.x_mm - ROW_GAP_MM < target.x_mm + manifest.width_mm
+                and target.y_mm < other.bottom_mm + ROW_GAP_MM
+                and other.origin.y_mm - ROW_GAP_MM < target.y_mm + manifest.height_mm
+            ):
+                return False
+        # L'ordine di processo e' un vincolo, non un costo (D-060): l'ordine
+        # orizzontale dei centri dei due estremi di **ogni** tratta resta
+        # quello della disposizione corrente. Per le tratte orientate e' il
+        # verso del fluido; per quelle che la topologia non decide vale
+        # l'ordine gia' disegnato, che da quel verso discende.
+        old_centre = me.origin.x_mm + manifest.width_mm / 2
+        new_centre = target.x_mm + manifest.width_mm / 2
+        for trunk in trunks:
+            start_id = trunk.start.component_id
+            end_id = trunk.end.component_id
+            if component_id not in (start_id, end_id) or start_id == end_id:
+                continue
+            other_id = end_id if start_id == component_id else start_id
+            peer = best.get(other_id)
+            if peer is None:
+                continue
+            other_centre = peer.origin.x_mm + manifests[other_id].width_mm / 2
+            if start_id == component_id:
+                before = _relation(old_centre, other_centre)
+                after = _relation(new_centre, other_centre)
+            else:
+                before = _relation(other_centre, old_centre)
+                after = _relation(other_centre, new_centre)
+            if after != before:
+                return False
+        return True
+
+    outcome = evaluate(best)
+    if outcome is None:
+        return list(placed)
+    best_unfit, best_objective, best_crossings, best_routes = outcome
+
+    for _ in range(MAX_PASSES):
+        moved = False
+        offending: set[str] = set()
+        for index, (trunk, route) in enumerate(zip(trunks, best_routes, strict=True)):
+            has_bends = any(len(segment) > 2 for segment in route.segments)
+            if has_bends or route.crossings or index in best_unfit:
+                offending.add(trunk.start.component_id)
+                offending.add(trunk.end.component_id)
+        for component_id in (item for item in order if item in offending):
+            current = best[component_id]
+            seen: set[tuple[float, float]] = set()
+            for target in candidates_of(component_id):
+                key = (target.x_mm, target.y_mm)
+                if key in seen or key == (current.origin.x_mm, current.origin.y_mm):
+                    continue
+                seen.add(key)
+                if not is_valid(component_id, target):
+                    continue
+                if trials >= MAX_TRIAL_ROUTINGS:
+                    return [best[item] for item in order]
+                trial = dict(best)
+                trial[component_id] = current.model_copy(update={"origin": target})
+                found = evaluate(trial)
+                if found is None:
+                    continue
+                unfit, objective, crossings, routes = found
+                # Prima di tutto viene la tavola intera: una mossa che fa
+                # entrare gli accessori di una tratta che non li ospitava vale
+                # qualunque obiettivo. A parita', la mossa si tiene solo se
+                # l'obiettivo **totale** scende, mai una voce a spese del
+                # totale (D-080); e gli attraversamenti in piu' non si
+                # comprano nemmeno pagando in pieghe e lunghezza — il ciclo
+                # non puo' chiudersi con piu' incroci di quanti ne ha
+                # ricevuti, perche' sono la voce che l'occhio paga per prima
+                # dopo le pieghe (D-060).
+                repaired = len(unfit) < len(best_unfit)
+                better = (
+                    len(unfit) == len(best_unfit)
+                    and objective < best_objective
+                    and crossings <= best_crossings
+                )
+                if repaired or better:
+                    best = trial
+                    best_unfit, best_objective, best_crossings, best_routes = (
+                        unfit,
+                        objective,
+                        crossings,
+                        routes,
+                    )
+                    moved = True
+                    break
+        if not moved:
+            break
+    return [best[item] for item in order]
+
+
+__all__ = [
+    "MAX_PASSES",
+    "MAX_TRIAL_ROUTINGS",
+    "improve_sheet",
+    "objective_of",
+    "overshoots_the_goal",
+]

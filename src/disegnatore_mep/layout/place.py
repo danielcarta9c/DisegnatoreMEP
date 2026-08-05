@@ -34,7 +34,7 @@ cui stanno, e li posa `inline.py` dopo l'instradamento (D-027).
 from collections import defaultdict
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graphics.frame import Rect, SheetFrame
+from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.model.project import PortRef, ProjectModel
 from disegnatore_mep.model.types import BandRole
@@ -225,6 +225,11 @@ def _slots(
     order: list[str],
     feeder_of: dict[str, str],
     stackable: dict[str, bool],
+    *,
+    ground: frozenset[str] = frozenset(),
+    heights: dict[str, float] | None = None,
+    linked: frozenset[tuple[str, str]] = frozenset(),
+    headroom_mm: float = float("inf"),
 ) -> list[list[str]]:
     """Raggruppa in colonne: i rami paralleli si impilano invece di affiancarsi.
 
@@ -233,6 +238,15 @@ def _slots(
     chiunque, accorcia la tavola e ne usa l'altezza, che altrimenti resta
     bianca. Vale solo per chi sta su una tubazione: due accumuli appoggiati a
     terra non si possono impilare, e restano affiancati.
+
+    `ground` e' il tentativo di recupero di D-072/D-073, e arriva popolato
+    solo quando le fasce non entrano in larghezza: anche chi sta a terra puo'
+    allora salire sopra un compagno di fascia — «il serbatoio ACS e il volano
+    termico non in fila uno dopo l'altro ma uno sopra l'altro» — in coppie,
+    il piu' basso sopra il piu' alto. Non si impila su chi e' collegato da una
+    tratta (`linked`): l'ordine del processo resta leggibile in orizzontale.
+    Chi sale scavalca le colonne fra la propria e quella ospite, quindi anche
+    verso gli scavalcati non deve correre nessuna tratta.
     """
     slots: list[list[str]] = []
     for component_id in order:
@@ -248,7 +262,44 @@ def _slots(
             slots[-1].append(component_id)
         else:
             slots.append([component_id])
-    return slots
+    if not ground:
+        return slots
+
+    tall = heights or {}
+    merged: list[list[str]] = []
+    open_indices: list[int] = []
+    for slot in slots:
+        if len(slot) != 1 or slot[0] not in ground:
+            merged.append(slot)
+            continue
+        here = slot[0]
+
+        def may_host(index: int, here: str = here) -> bool:
+            mate = merged[index][0]
+            if (
+                tall.get(mate, 0.0) + ROW_GAP_MM + tall.get(here, 0.0)
+                > headroom_mm + 1e-9
+            ):
+                return False
+            jumped = [mate] + [
+                item for others in merged[index + 1 :] for item in others
+            ]
+            return not any(
+                tuple(sorted((item, here))) in linked for item in jumped
+            )
+
+        host = next((index for index in open_indices if may_host(index)), None)
+        if host is None:
+            merged.append(slot)
+            open_indices.append(len(merged) - 1)
+            continue
+        mate = merged[host][0]
+        # Il piu' alto resta a terra, il piu' basso gli sale sopra; a pari
+        # altezza l'ordine di processo decide, e chi viene prima resta giu'.
+        pair = [here, mate] if tall.get(here, 0.0) > tall.get(mate, 0.0) else [mate, here]
+        merged[host] = pair
+        open_indices.remove(host)
+    return merged
 
 
 def place_sheet(
@@ -418,73 +469,125 @@ def place_sheet(
         for component_id, feed in process.feed.items()
     }
     stackable = {item: standings[item] is Standing.RAIL for item in placeable}
-    slots = {role: _slots(columns[role], feeder_of, stackable) for role in used_roles}
-    # Un solo cursore per fascia: la fascia e' larga quanto le sue colonne in
-    # fila, qualunque quota occupino, e una colonna e' larga quanto il suo pezzo
-    # piu' largo. Gli stacchi si calcolano **una volta sola** e si riusano nel
-    # posizionamento: calcolarli due volte con formule diverse faceva sbordare
-    # una fascia dentro la successiva.
-    gaps = {
-        role: [
-            max(
-                ROW_GAP_MM,
-                snap_up(
-                    inline_room(set(slots[role][index]), set(slots[role][index + 1])),
-                    0.0,
-                ),
-            )
-            for index in range(len(slots[role]) - 1)
-        ]
-        for role in used_roles
-    }
-    widths = {
-        role: snap_up(
-            area.x_mm
-            + sum(max(manifests[item].width_mm for item in slot) for slot in slots[role])
-            + sum(gaps[role]),
-            area.x_mm,
-        )
-        - area.x_mm
-        for role in used_roles
-    }
-
-    # Una gola non e' larga soltanto per estetica: e' li' che corrono le tratte
-    # fra una fascia e l'altra. Vale lo stesso criterio degli stacchi interni —
-    # si guarda alle **colonne che si toccano**, l'ultima di una fascia e la
-    # prima della successiva. Provare a provvedere per ogni tratta che
-    # attraversa il confine sovrastimava di ottanta millimetri: una tratta fra
-    # componenti lontani viaggia a lungo e il proprio rettilineo ce l'ha gia'.
-    position_of = {role: index for index, role in enumerate(used_roles)}
-    gutters = [
-        max(
-            BAND_GUTTER_MM,
-            snap_up(
-                inline_room(
-                    set(slots[used_roles[index]][-1]),
-                    set(slots[used_roles[index + 1]][0]),
-                ),
-                0.0,
-            ),
-        )
-        for index in range(len(used_roles) - 1)
-    ]
-
-    total = sum(widths.values()) + sum(gutters)
-    if total > area.width_mm + 1e-9:
-        raise LayoutError(
-            f"the {len(used_roles)} functional bands need {total:g}mm but the drawing "
-            f"area is {area.width_mm:g}mm wide: symbols are never shrunk to fit, "
-            f"split the plant across more sheets"
-        )
-    if gutters:
-        spare = (area.width_mm - total) / len(gutters)
-        extra = min(int(spare / step) * step, MAX_EXTRA_GUTTER_MM)
-        gutters = [item + extra for item in gutters]
-
     # Le quote si misurano sull'**area di disegno**, non sul rettangolo ridotto
     # in cui si impaccano le fasce: il corridoio di instradamento restringe
     # dove si posa, non dove passa la linea di terra.
     levels = levels_of(drawing.y_mm, drawing.height_mm, step)
+    linked = frozenset(
+        (trunk.start.component_id, trunk.end.component_id)
+        if trunk.start.component_id <= trunk.end.component_id
+        else (trunk.end.component_id, trunk.start.component_id)
+        for trunk in partition.trunks
+    )
+    heights = {item: manifests[item].height_mm for item in placeable}
+
+    def pack(
+        stacked_ground: frozenset[str],
+    ) -> tuple[
+        dict[BandRole, list[list[str]]],
+        dict[BandRole, list[float]],
+        dict[BandRole, float],
+        list[float],
+        float,
+    ]:
+        """Colonne, stacchi, larghezze e gole per un dato insieme impilabile.
+
+        Un solo cursore per fascia: la fascia e' larga quanto le sue colonne in
+        fila, qualunque quota occupino, e una colonna e' larga quanto il suo
+        pezzo piu' largo. Gli stacchi si calcolano **una volta sola** e si
+        riusano nel posizionamento: calcolarli due volte con formule diverse
+        faceva sbordare una fascia dentro la successiva.
+        """
+        slots = {
+            role: _slots(
+                columns[role],
+                feeder_of,
+                stackable,
+                ground=stacked_ground,
+                heights=heights,
+                linked=linked,
+                headroom_mm=levels.ground_mm - area.y_mm,
+            )
+            for role in used_roles
+        }
+        gaps = {
+            role: [
+                max(
+                    ROW_GAP_MM,
+                    snap_up(
+                        inline_room(
+                            set(slots[role][index]), set(slots[role][index + 1])
+                        ),
+                        0.0,
+                    ),
+                )
+                for index in range(len(slots[role]) - 1)
+            ]
+            for role in used_roles
+        }
+        widths = {
+            role: snap_up(
+                area.x_mm
+                + sum(
+                    max(manifests[item].width_mm for item in slot)
+                    for slot in slots[role]
+                )
+                + sum(gaps[role]),
+                area.x_mm,
+            )
+            - area.x_mm
+            for role in used_roles
+        }
+        # Una gola non e' larga soltanto per estetica: e' li' che corrono le
+        # tratte fra una fascia e l'altra. Vale lo stesso criterio degli
+        # stacchi interni — si guarda alle **colonne che si toccano**, l'ultima
+        # di una fascia e la prima della successiva. Provare a provvedere per
+        # ogni tratta che attraversa il confine sovrastimava di ottanta
+        # millimetri: una tratta fra componenti lontani viaggia a lungo e il
+        # proprio rettilineo ce l'ha gia'.
+        gutters = [
+            max(
+                BAND_GUTTER_MM,
+                snap_up(
+                    inline_room(
+                        set(slots[used_roles[index]][-1]),
+                        set(slots[used_roles[index + 1]][0]),
+                    ),
+                    0.0,
+                ),
+            )
+            for index in range(len(used_roles) - 1)
+        ]
+        return slots, gaps, widths, gutters, sum(widths.values()) + sum(gutters)
+
+    slots, gaps, widths, gutters, total = pack(frozenset())
+    if total > area.width_mm + 1e-9:
+        # Prima di dividere si impila (D-072): il criterio di divisione non e'
+        # «il contenuto non ci sta come l'ho disposto», ma «anche disponendolo
+        # meglio non ci sta». Si riprova una volta lasciando salire anche chi
+        # sta a terra (D-073); solo se nemmeno cosi' entra, l'errore e' quello
+        # originale, con la larghezza misurata della disposizione in fila.
+        # Il tentativo vale sul **formato piu' grande**, dove fallire vuol dire
+        # dividere: sui formati minori fallire vuol dire salire di formato, e
+        # impilare li' comprimerebbe su una A4 un disegno che D-058 manda in A3.
+        overflow = LayoutError(
+            f"the {len(used_roles)} functional bands need {total:g}mm but the drawing "
+            f"area is {area.width_mm:g}mm wide: symbols are never shrunk to fit, "
+            f"split the plant across more sheets"
+        )
+        largest = max(item.standard.usable_width_mm for item in ORDINARY_FRAMES)
+        if frame.standard.usable_width_mm < largest - 1e-9:
+            raise overflow
+        ground_ids = frozenset(
+            item for item in placeable if standings[item] is Standing.GROUND
+        )
+        slots, gaps, widths, gutters, total = pack(ground_ids)
+        if total > area.width_mm + 1e-9:
+            raise overflow
+    if gutters:
+        spare = (area.width_mm - total) / len(gutters)
+        extra = min(int(spare / step) * step, MAX_EXTRA_GUTTER_MM)
+        gutters = [item + extra for item in gutters]
     placed: list[PlacedSymbol] = []
     boxes: list[tuple[float, float, float, float]] = []
 
@@ -551,16 +654,27 @@ def place_sheet(
                 return top
         return None
 
+    position_of = {role: index for index, role in enumerate(used_roles)}
     x_mm = area.x_mm
     for role in used_roles:
         cursor = x_mm
         for position, slot in enumerate(slots[role]):
             left = on_grid(cursor, area.x_mm)
             floor = area.y_mm
+            ground_top: float | None = None
             for component_id in slot:
                 manifest = manifests[component_id]
                 if standings[component_id] is Standing.GROUND:
-                    top = on_grid(levels.ground_mm - manifest.height_mm, area.y_mm)
+                    if ground_top is None:
+                        top = on_grid(levels.ground_mm - manifest.height_mm, area.y_mm)
+                        ground_top = top
+                    else:
+                        # La coppia impilata del tentativo di recupero (D-073):
+                        # il secondo lascia la terra e sale sopra il primo,
+                        # allineato a sinistra, con lo stacco di fascia.
+                        top = on_grid(
+                            ground_top - ROW_GAP_MM - manifest.height_mm, area.y_mm
+                        )
                 else:
                     found = aligned_top(component_id, left, floor)
                     if found is None:

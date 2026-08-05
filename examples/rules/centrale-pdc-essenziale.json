@@ -364,11 +364,12 @@
   "sheets": [
     {
       "id": "t1",
-      "title": "Centrale termica — generazione, accumuli e distribuzione",
+      "title": "Centrale termica — generazione, accumuli, distribuzione e zone",
       "subsystem_ids": [
         "generation",
         "storage",
-        "distribution"
+        "distribution",
+        "zones"
       ],
       "band_assignments": [
         {
@@ -385,19 +386,10 @@
           "subsystem_id": "distribution",
           "band": "distribution",
           "order": 0
-        }
-      ]
-    },
-    {
-      "id": "t2",
-      "title": "Zone e terminali",
-      "subsystem_ids": [
-        "zones"
-      ],
-      "band_assignments": [
+        },
         {
           "subsystem_id": "zones",
-          "band": "generation",
+          "band": "terminal",
           "order": 0
         }
       ]
