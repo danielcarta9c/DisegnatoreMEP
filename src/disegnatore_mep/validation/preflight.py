@@ -673,25 +673,22 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
             angle = math.degrees(math.atan2(span_y, span_x))
             if span_x <= TOLERANCE_MM or span_y <= TOLERANCE_MM:
                 code = "ORTHOGONAL_LABEL_LEADER"
-                reason = (
-                    f"e' ortogonale ({angle:.0f} gradi): ha la stessa giacitura di una "
-                    f"tubazione e si legge come un altro tubo"
+                message = (
+                    f"il richiamo dell'etichetta {label.id} e' ortogonale "
+                    f"({angle:.0f} gradi): ha la giacitura di una tubazione e si legge "
+                    f"come un altro tubo, mentre un richiamo si disegna obliquo a "
+                    f"{LEADER_ANGLE_DEG} gradi (D2, D3, D-075)"
                 )
             else:
                 code = "LEADER_NOT_AT_45_DEGREES"
-                reason = (
-                    f"unisce due capi a {angle:.0f} gradi invece che a "
-                    f"{LEADER_ANGLE_DEG}: fra quei due punti una sola diagonale non ci "
-                    f"sta, e chi disegna deve piegare ad angolo retto"
+                message = (
+                    f"il richiamo dell'etichetta {label.id} unisce due capi a "
+                    f"{angle:.0f} gradi invece che a {LEADER_ANGLE_DEG}: fra quei due "
+                    f"punti una sola diagonale non ci sta e chi disegna deve piegare ad "
+                    f"angolo retto, cioe' disegnare un altro tubo (D2, D3, D-075)"
                 )
             findings.append(
-                _finding(
-                    code,
-                    IssueSeverity.BLOCKING,
-                    f"il richiamo dell'etichetta {label.id} {reason}: un richiamo si "
-                    f"disegna obliquo a {LEADER_ANGLE_DEG} gradi (D2, D3, D-075)",
-                    [sheet.sheet_id, label.id],
-                )
+                _finding(code, IssueSeverity.BLOCKING, message, [sheet.sheet_id, label.id])
             )
     return findings
 
@@ -804,14 +801,15 @@ def symbol_sources(
     for symbol_id in sorted(used):
         components = sorted(used[symbol_id])
         entities = [symbol_id, *components]
+        subject = f"il simbolo {symbol_id}, {_how_many_components(len(components))},"
         definition = by_symbol.get(symbol_id)
         if definition is None:
             findings.append(
                 _finding(
                     "SYMBOL_SOURCE_NOT_VERIFIABLE",
                     IssueSeverity.BLOCKING,
-                    f"il simbolo {symbol_id}, usato da {len(components)} componenti, non "
-                    f"si trova nel catalogo: la sua fonte non e' verificabile (D-083)",
+                    f"{subject} non si trova nel catalogo: la sua fonte non e' "
+                    f"verificabile (D-083)",
                     entities,
                 )
             )
@@ -823,8 +821,7 @@ def symbol_sources(
                 _finding(
                     "SYMBOL_SOURCE_NOT_VERIFIABLE",
                     IssueSeverity.BLOCKING,
-                    f"il simbolo {symbol_id}, usato da {len(components)} componenti, non "
-                    f"si risolve sulla libreria dei simboli: {exc} (D-083)",
+                    f"{subject} non si risolve sulla libreria dei simboli: {exc} (D-083)",
                     entities,
                 )
             )
@@ -834,9 +831,8 @@ def symbol_sources(
                 _finding(
                     "SYMBOL_WITHOUT_A_DECLARED_SOURCE",
                     IssueSeverity.BLOCKING,
-                    f"il simbolo {symbol_id}, usato da {len(components)} componenti, non "
-                    f"dichiara nessuna fonte: la mancanza di fonte e' una domanda al "
-                    f"PM, non una licenza (D-083)",
+                    f"{subject} non dichiara nessuna fonte: la mancanza di fonte e' una "
+                    f"domanda al PM, non una licenza (D-083)",
                     entities,
                 )
             )
@@ -845,13 +841,16 @@ def symbol_sources(
                 _finding(
                     "SYMBOL_FROM_AN_INVENTED_CONVENTION",
                     IssueSeverity.BLOCKING,
-                    f"il simbolo {symbol_id}, usato da {len(components)} componenti, cita "
-                    f"{INVENTED_SOURCE}: la convenzione interna non e' una fonte, e' il "
-                    f"nome di un simbolo inventato (C8, D-081, D-083)",
+                    f"{subject} cita {INVENTED_SOURCE}: la convenzione interna non e' "
+                    f"una fonte, e' il nome di un simbolo inventato (C8, D-081, D-083)",
                     entities,
                 )
             )
     return findings
+
+
+def _how_many_components(count: int) -> str:
+    return f"usato da {count} componente" if count == 1 else f"usato da {count} componenti"
 
 
 def preflight_drawing(

@@ -382,7 +382,7 @@ def test_a_symbol_absent_from_the_catalog_cannot_be_vouched_for() -> None:
     findings = preflight.symbol_sources(drawing(sheet(symbols=[stranger])), registry)
     assert codes(findings) == ["SYMBOL_SOURCE_NOT_VERIFIABLE"]
     assert findings[0].severity is IssueSeverity.BLOCKING
-    assert "usato da 1 componenti" in findings[0].message
+    assert "usato da 1 componente" in findings[0].message
 
 
 def test_a_symbol_with_a_real_source_says_nothing() -> None:
