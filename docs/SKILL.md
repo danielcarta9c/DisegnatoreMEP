@@ -52,6 +52,59 @@ prova serve a **scoprire** i difetti, mai a **definire** cosa è giusto (D-092).
 
 ---
 
+## 2bis. Di che pasta è fatto ogni pezzo
+
+**È la domanda che decide tutto, e va risposta prima di costruire.** Un pezzo fatto di
+istruzioni per un'AI e un pezzo fatto di programma non si scrivono, non si provano e non
+si correggono allo stesso modo.
+
+| # | Pezzo | Di cosa è fatto | Dove vive |
+|---|---|---|---|
+| 1 | **Capire** | **Agente AI**, istruito con file di testo `.md` che gli spiegano cosa deve tirare fuori dalla conversazione e cosa non deve inventare | istruzioni della skill |
+| 2 | **Completare** | **Programma deterministico** che legge **regole scritte come dato** (un file per regola) e le applica al modello | motore in codice, regole in file di dati |
+| 3 | **Disporre** | **Programma deterministico**: posiziona, instrada, distribuisce. Nessuna AI tocca le coordinate | codice |
+| 4 | **Libreria simboli** | **Dati**: per ogni simbolo un disegno vettoriale e una scheda che dichiara taglia, attacchi, imbocchi ammessi, rotazioni e fonte | file, uno per simbolo |
+| 5 | **Cartiglio** | **Dati**: un modello di riquadro fornito dall'azienda, riempito coi dati del progetto | file fornito dal PM |
+| 6 | **Verificare** | **Due cose diverse**: (a) controlli e misure = **programma deterministico**; (b) occhio terzo = **agente AI** con contesto proprio | codice + istruzioni della skill |
+
+### La linea di confine, e perché sta lì
+
+```
+   AI          →   scegli GLI INGRESSI     (pezzo 1: capire)
+   PROGRAMMA   →   produci L'ELABORATO     (pezzi 2, 3, 4, 5)
+   AI          →   giudica IL RISULTATO    (pezzo 6b: occhio terzo)
+```
+
+**Nessuna AI disegna e nessuna AI corregge il disegno.** Il motivo è una proprietà che il
+prodotto non può perdere: *stesso impianto, stessa tavola, sempre*. Se un'AI potesse
+spostare una linea, due esecuzioni identiche darebbero due tavole diverse e non si
+saprebbe più quale è quella buona. Quando l'occhio terzo respinge, non tocca il disegno:
+cambia **gli ingressi** — l'impaginazione, l'ordine, il formato — e il programma
+ridisegna tutto da capo.
+
+### Come sono fatte le regole del pezzo 2 — la risposta esatta
+
+**Non sono programma e non sono un database. Sono file di dati, uno per regola.** Ogni
+file dice, in forma leggibile anche da un non programmatore:
+
+- **quando** si applica — espresso solo con le **funzioni** dei componenti («qualsiasi cosa
+  si manutenga», «qualsiasi generatore»), mai col nome di un componente;
+- **quante volte** può proporre — una per rete, una per componente, **una per attacco**;
+- **cosa** propone e **in che punto** funzionale;
+- **come si riconosce che c'è già**, così rieseguirla non duplica niente;
+- **perché**, in una frase leggibile dal PM, e da **quale fonte** viene.
+
+Questo è il motivo per cui sono dati e non codice: **si aggiunge una regola aggiungendo un
+file, senza toccare il programma.** Se per aggiungere una famiglia di accessori servisse
+modificare il motore, il motore sarebbe sbagliato. Ed è anche il motivo per cui una regola
+deve essere generale (D-090): una regola scritta su misura di un componente è codice
+travestito da dato.
+
+Stessa logica per il pezzo 4: un simbolo si aggiunge aggiungendo due file, non toccando il
+programma.
+
+---
+
 ### Pezzo 1 — Capire
 
 **Cosa fa.** Legge la conversazione e costruisce il **modello dell'impianto**: quali
