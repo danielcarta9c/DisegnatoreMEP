@@ -351,7 +351,7 @@ approva. Giudica contro lo standard grafico scritto, non contro il gusto, altrim
 due esecuzioni danno due giudizi diversi.
 
 Lo standard grafico scritto è `docs/QUALITA_GRAFICA.md`, «le regole del colpo
-d'occhio» (D-076): quarantadue regole di buona pratica in sei famiglie, ciascuna con
+d'occhio» (D-076): una quarantina di regole di buona pratica in sei famiglie, ciascuna con
 cosa vuole, come si vede a occhio e uno stato. Non è una norma e non dice cosa mettere
 in un impianto: dice come si disegna quello che l'ingegnere ha deciso.
 

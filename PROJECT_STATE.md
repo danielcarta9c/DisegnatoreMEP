@@ -55,6 +55,11 @@ riprodurre lo stesso errore di metodo che li ha generati.
   stessa giacitura di una tubazione. Devono tornare a essere una scritta piccola accanto al
   proprio componente; quando non ci sta, un richiamo obliquo a 45°, che nessuna tubazione
   può essere.
+- [ ] **La linea fa il giro per raggiungere un pezzo invece di spostare il pezzo** (D-078).
+  Il prelievo ACS è raggiunto da una tratta che lo supera, scende e torna indietro. Oggi la
+  disposizione decide per prima e in modo definitivo, e l'instradamento paga in pieghe
+  qualunque cosa essa abbia deciso. Va invertito: la posizione dei componenti è una
+  variabile del problema, e spostare un oggetto è gratis mentre una piega costa.
 
 ### L'errore di metodo che li ha generati
 
@@ -81,15 +86,22 @@ sovrapposizione e creando un'ambiguità peggiore, perché quella linea è ortogo
 come una tubazione. Ogni segno aggiunto alla tavola va verificato contro i segni che ci
 sono già.
 
+Il difetto del giro attorno al prelievo ACS ne mostra un quarto, ed è il più profondo:
+**l'ordine della catena è stato scambiato per un ordine di autorità.** Disporre prima e
+instradare dopo è una sequenza ragionevole di calcolo; è diventata la regola che la
+disposizione non si tocca più, e da lì ogni difetto di posizione si è scaricato sulle
+linee. Il PM lo dice in una riga: le curve costano, spostare un oggetto è gratis. Chi paga
+di meno deve cedere.
+
 ### La risposta strutturale: le regole del colpo d'occhio
 
-I quattro difetti hanno una cosa in comune: un disegnatore senior li vede in due secondi.
+I difetti hanno una cosa in comune: un disegnatore senior li vede in due secondi.
 Il PM lo ha nominato come il lavoro dell'agente terzo e ha chiesto di tradurre in regole
 quello che l'occhio umano fa da solo. Il risultato è `docs/QUALITA_GRAFICA.md` (D-076):
-quarantadue regole in sei famiglie, ciascuna con **come si vede a occhio** e uno stato —
+una quarantina di regole in sei famiglie, ciascuna con **come si vede a occhio** e uno stato —
 garantita dal motore, misurabile ma non ancora misurata, da giudicare, oppure violata oggi.
 
-Non erano regole da scoprire: erano già note, e i quattro difetti sono tutti nell'elenco.
+Non erano regole da scoprire: erano già note, e i difetti segnalati sono tutti nell'elenco.
 Mancava l'artefatto, e il momento in cui la tavola ci viene confrontata. Da qui discende
 anche che l'agente terzo giudichi **l'immagine** e non il sorgente (D-077): nel sorgente il
 richiamo delle etichette è una linea di richiamo corretta, sull'immagine è un tubo in più.

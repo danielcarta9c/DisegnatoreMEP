@@ -14,10 +14,10 @@ Dobbiamo riuscire a tradurre quello che un occhio umano fa in automatico in dell
 
 Ha ragione, e la cosa scomoda va detta chiara: **queste regole erano già note.** Non è
 mancata la conoscenza di come si fa una tavola tecnica — è mancato il momento in cui
-qualcuno la confronta con quella conoscenza. Sapere non è controllare. I quattro difetti che
-il PM ha trovato a occhio in trenta secondi sono tutti nell'elenco qui sotto, e nessuno di
-loro richiedeva una ricerca: richiedeva che questo elenco esistesse e che qualcuno lo
-scorresse prima di consegnare.
+qualcuno la confronta con quella conoscenza. Sapere non è controllare. I difetti che il PM
+ha trovato a occhio in trenta secondi sono tutti nell'elenco qui sotto, e nessuno di loro
+richiedeva una ricerca: richiedeva che questo elenco esistesse e che qualcuno lo scorresse
+prima di consegnare.
 
 Da qui discendono due cose:
 
@@ -58,6 +58,8 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 | A5 | Ciò che sta insieme è vicino. | I pezzi dello stesso sottosistema formano un gruppo, non sono sparsi ai due capi del foglio. | `giudizio` |
 | A6 | Disporre in fila non è una legge: si può impilare (D-073). | Due macchine alte e strette una sopra l'altra riempiono meglio di due in fila. | `difetto aperto` |
 | A7 | Il peso grafico è distribuito. | Nessuna macchia nera di segni addensati accanto a una zona vuota. | `giudizio` |
+| A8 | Se una piega si elimina spostando un oggetto, si sposta l'oggetto (D-078). | Muovere un pezzo sul foglio non costa niente; una piega in più si vede per sempre. | `difetto aperto` |
+| A9 | La posizione dei componenti è una variabile, non un dato. | La disposizione è la prima ipotesi, non la risposta: le linee hanno diritto di farla cambiare. | `difetto aperto` |
 
 ## B. Linee — dove si perde o si vince una tavola
 
@@ -74,6 +76,7 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 | B9 | Mandata e ritorno si distinguono sempre, e il verso segue il processo (D-057, D-059). | Il ritorno non entra mai dove deve entrare la mandata. | `per costruzione` |
 | B10 | Il percorso è quello breve. | Un tubo che gira intorno al foglio per raggiungere la macchina accanto. | `da misurare` |
 | B11 | L'ultimo tratto prima di un attacco è dritto e perpendicolare all'attacco. | Una linea che arriva di sbieco e piega proprio sul bocchello. | `da misurare` |
+| B12 | Nessuna andata e ritorno per raggiungere un pezzo (D-078). | La linea supera l'oggetto, scende e torna indietro a prenderlo. Va spostato l'oggetto, non allungata la linea. | `difetto aperto` |
 
 ## C. Simboli e allineamenti — quello che fa sembrare una tavola «fatta da un professionista»
 
