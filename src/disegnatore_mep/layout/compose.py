@@ -18,7 +18,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 
-from .composition import CALLOUT_GAP_MM, levels_of
+from .composition import levels_of
 from .errors import LayoutError
 from .geometry import (
     CrossReference,
@@ -225,7 +225,10 @@ def compose_sheet(
             project,
             placed,
             frame.standard,
-            callout_y_mm=levels.ground_mm + CALLOUT_GAP_MM,
+            # Le sigle stanno accanto al proprio pezzo (D-075): la riga di
+            # richiami a fondo tavola e' ritirata. Le tratte servono a far
+            # scansare un testo che finirebbe su una linea.
+            routes=broken,
         ),
         legend=entries,
         network_keys=keys,

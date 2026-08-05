@@ -9,6 +9,12 @@ pagando 27 pieghe), e': nessuna voce peggiore del pre-miglioramento, almeno
 una strettamente migliore, obiettivo totale strettamente migliore, lunghezza
 entro il +10%. I vincoli rigidi — ordine di processo, distanze, griglia,
 terra — non si negoziano per nessun guadagno.
+
+WP3b aggiunge le due cose che chiudono il residuo dichiarato — l'andata e
+ritorno sul prelievo ACS del caso di accettazione: le **rotazioni** fra le
+mosse candidate, perche' nessuna traslazione cambia da che parte guarda una
+porta, e l'**andata e ritorno** come prima voce del confronto, perche' non e'
+un disegno caro ma un disegno sbagliato e va pagata prima dell'obiettivo.
 """
 
 from functools import cache
@@ -200,14 +206,14 @@ def composed() -> SheetGeometry:
     return composed_of(PROJECT)
 
 
-def andata_e_ritorno(path: Path) -> list[list[str]]:
+def andata_e_ritorno(path: Path) -> list[tuple[str, ...]]:
     """Le tratte della tavola composta che superano la meta e ci tornano."""
     project, partition, _ = case_of(path)
     drawn = composed_of(path)
     placed = {item.component_id: item for item in drawn.symbols}
     definitions = {item.id: item.definition_id for item in project.components}
     by_key = {tuple(route.connection_ids): route for route in drawn.routes}
-    overshooting = []
+    overshooting: list[tuple[str, ...]] = []
     for trunk in partition.trunks:
         route = by_key[tuple(trunk.connection_ids)]
         symbol = placed[trunk.end.component_id]
@@ -222,7 +228,7 @@ def andata_e_ritorno(path: Path) -> list[list[str]]:
             y_mm=symbol.origin.y_mm + port.y_mm,
         )
         if overshoots_the_goal(route, goal):
-            overshooting.append(trunk.connection_ids)
+            overshooting.append(tuple(trunk.connection_ids))
     return overshooting
 
 
@@ -248,17 +254,16 @@ def test_the_improvement_turns_a_single_port_terminal_towards_its_feed() -> None
     """La mossa di rotazione esiste, e' ammessa e viene accettata.
 
     Il posizionamento posa il confine di rete diritto, perche' non sa da che
-    parte gli arrivera' la linea; il ciclo lo gira di 180 gradi **senza
-    spostarlo di un millimetro** — stessa origine, stesso riquadro — perche'
-    e' l'unica mossa che toglie l'andata e ritorno.
+    parte gli arrivera' la linea; il ciclo lo gira di 180 gradi, ed e' la sola
+    mossa che toglie l'andata e ritorno — una traslazione non cambia da che
+    parte guarda una porta. Le passate successive possono poi anche
+    spostarlo, ma il verso resta quello scelto qui.
     """
     first, improved = before_and_after_of(COMPLETE)
     was = next(item for item in first if item.component_id == "draw-off")
     now = next(item for item in improved if item.component_id == "draw-off")
     assert was.rotation_deg == 0
     assert now.rotation_deg == 180
-    assert now.origin == was.origin
-    assert (now.width_mm, now.height_mm) == (was.width_mm, was.height_mm)
     # La rotazione e' fra quelle che il manifesto ammette (D-049), e il
     # riquadro dichiarato resta quello del manifesto ruotato (ADR 0003).
     upright = registry().resolve("dhw-draw-off").symbol.manifest
@@ -268,6 +273,49 @@ def test_the_improvement_turns_a_single_port_terminal_towards_its_feed() -> None
     # E la porta ora guarda dalla parte da cui arriva l'alimentazione.
     assert upright.port("a").face is PortFace.RIGHT
     assert turned.port("a").face is PortFace.LEFT
+
+
+def turnbacks(placed: list[PlacedSymbol], path: Path) -> list[tuple[str, ...]]:
+    """Le andate e ritorno della prova di rotta, come le conta il ciclo."""
+    project, partition, _ = case_of(path)
+    grid = GridSpace(origin=NOVE_C_A3.drawing_rect_mm, standard=NOVE_C_A3.standard)
+    routes = route_sheet(
+        project, list(partition.trunks), list(placed), registry(), grid, None
+    )
+    definitions = {item.id: item.definition_id for item in project.components}
+    by_component = {item.component_id: item for item in placed}
+    found: list[tuple[str, ...]] = []
+    for trunk, route in zip(partition.trunks, routes, strict=True):
+        symbol = by_component[trunk.end.component_id]
+        manifest = (
+            registry()
+            .resolve(definitions[trunk.end.component_id])
+            .symbol.manifest.rotated(symbol.rotation_deg)
+        )
+        port = manifest.port(trunk.end.port_id)
+        goal = Point(
+            x_mm=symbol.origin.x_mm + port.x_mm, y_mm=symbol.origin.y_mm + port.y_mm
+        )
+        if overshoots_the_goal(route, goal):
+            found.append(tuple(trunk.connection_ids))
+    return found
+
+
+def test_the_improvement_removes_a_turnback_and_never_adds_one() -> None:
+    """La voce che comanda il confronto lessicografico (WP3b).
+
+    Sul caso completo l'andata e ritorno del prelievo ACS c'e' prima e non
+    c'e' dopo. Sul caso di layout non ce n'erano e non ce ne sono: il ciclo
+    non ne compra una nemmeno quando l'obiettivo scenderebbe — senza questa
+    voce, con le sole rotazioni fra i candidati, il caso di layout chiudeva a
+    obiettivo 6190 **con** un'andata e ritorno invece che a 6200 senza.
+    """
+    before, after = before_and_after_of(COMPLETE)
+    assert turnbacks(before, COMPLETE) == [("w2-a-a", "w2-a-b", "w2-b")]
+    assert turnbacks(after, COMPLETE) == []
+    before, after = before_and_after_of(PROJECT)
+    assert turnbacks(before, PROJECT) == []
+    assert turnbacks(after, PROJECT) == []
 
 
 def test_the_complete_case_improvement_is_deterministic() -> None:

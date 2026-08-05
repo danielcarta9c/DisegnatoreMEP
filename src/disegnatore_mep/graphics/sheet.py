@@ -424,10 +424,10 @@ def render_sheet(
 
     for label in sheet.labels:
         if label.leader_from is not None:
-            # La spezzata e' quella che il layout ha deciso, e il layout la
-            # decide obliqua a 45 gradi (D-075): ricavarne qui l'angolo retto
-            # di prima rimetterebbe sulla tavola il tubo finto che D-075
-            # vieta, qualunque cosa avesse deciso il layout.
+            # Il richiamo e' **quello che il layout ha deciso**: i due capi si
+            # uniscono come stanno. Prima il renderer ci ricavava una spezzata
+            # verticale-poi-orizzontale, cioe' rimetteva sulla tavola l'angolo
+            # retto che D-075 vieta, qualunque cosa il layout avesse deciso.
             parts.append(
                 f'<polyline class="leader" points="'
                 f"{label.leader_from.x_mm:g},{label.leader_from.y_mm:g} "

@@ -276,6 +276,11 @@ def place_labels(
         `ring` di quanti passi di griglia ci si e' allontanati. Sopra e sotto il
         testo si centra sul riquadro, restando su un nodo della griglia; di
         fianco si centra in quota.
+
+        Sulla griglia stanno l'ascissa e **gli scostamenti** della ricerca, non
+        lo stacco dal riquadro: quello vale un millimetro e mezzo perche' e'
+        quanto deve valere, e portarlo sul passo lo raddoppierebbe allontanando
+        ogni scritta dal proprio pezzo, che e' il difetto che D-075 corregge.
         """
         centred = item.origin.x_mm + round((item.width_mm - width_mm) / 2 / step) * step
         stack = slot * (height + CALLOUT_LINE_GAP_MM)
@@ -308,10 +313,18 @@ def place_labels(
     ) -> tuple[Point, Point]:
         """Il primo posto raggiungibile con una diagonale a 45 gradi.
 
-        La diagonale parte da uno spigolo del simbolo e finisce sulla base del
-        testo: un solo segmento obliquo, nessuna piega ad angolo retto. Si
-        allunga di un passo per volta, quindi il posto scelto e' il piu' vicino
-        fra quelli liberi.
+        La diagonale parte da uno spigolo del simbolo e finisce **sulla base
+        del testo**: un solo segmento obliquo, nessuna piega. La codina
+        orizzontale sotto la scritta — la «scaletta» del disegno a mano — si
+        potrebbe aggiungere, e deliberatamente non c'e': porterebbe i due capi
+        del richiamo a un angolo diverso da 45 gradi, e i due capi sono cio' che
+        la geometria dichiara e che il preflight misura. Un richiamo che *si
+        disegna* a 45 gradi ma *si misura* a 60 non e' verificabile.
+
+        Il posto si cerca allungando la diagonale di un passo per volta, quindi
+        e' il piu' vicino fra i liberi. Il richiamo non deve attraversare un
+        simbolo ne' un'altra etichetta; puo' attraversare una tubazione, ed e'
+        giusto cosi': obliquo com'e' non lo si scambia per un tubo (B1).
         """
         reach = ceil(LEADER_MIN_LENGTH_MM / sqrt(2) / step) * step
 
