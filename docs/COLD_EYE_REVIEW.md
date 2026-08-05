@@ -93,4 +93,53 @@ nuove regole.
 
 | # | Data | Verdetto | Rilievi principali | Cosa è stato cambiato |
 |---|---|---|---|---|
-| — | — | — | — | — |
+| 1 | 2026-08-05 | **RESPINTA** | 14 rilievi, di cui 3 bloccanti di composizione e 6 **errori funzionali veri**. Elenco integrale sotto | da fare |
+
+---
+
+## Passata 1 — 5 agosto 2026, RESPINTA
+
+L'agente ha ricevuto solo l'immagine. Ha misurato la tavola sui pixel e l'ha confrontata
+con **tre riferimenti**, due dei quali tavole vere di progetto pubblico: schema ACS
+dell'Agenzia del Demanio (PE-IM-13, Reggio Calabria 2018), centrale termica del Comune di
+Carrara (PD.IM.03.00), e gli schemi Caleffi per pompa di calore aria-acqua.
+
+Prima impressione, sua: *«una striscia di disegno che galleggia nel terzo centrale di un
+A3, con metà foglio bianco sotto. La scritta più grande di tutta la tavola è "BOZZA —
+cartiglio non compilato". Il foglio non è composto: è un disegno appoggiato su una
+cornice, e per giunta la cornice non chiude.»*
+
+### Bloccanti di composizione
+
+| # | Rilievo | Misura sua | Nostro stato |
+|---|---|---|---|
+| 1 | **Metà foglio vuoto.** Due fasce a inchiostro 0,00 %; il contenuto usa il 48 % dell'altezza e il 99,7 % della larghezza | fasce y 231÷533 e y 1439÷1890 vuote | il preflight lo dice già (`SHEET_BARELY_FILLED`, 39 %). **Nessuno lo corregge**: manca lo sviluppo verticale della composizione |
+| 2 | **Cartiglio inesistente e cornice aperta in basso**; margini 10 mm sui quattro lati, manca la rilegatura da 20 mm | 177 px di montanti senza bordo inferiore | il cartiglio è P5, non ancora fatto. **La cornice aperta è un difetto nostro, nuovo** |
+| 3 | **Testi a metà dell'altezza minima di norma**: 1,19 mm contro i 2,5 mm di UNI EN ISO 3098. Gerarchia invertita: la legenda pesa quanto il titolo, le sigle sono il testo più piccolo | misurato a 7,56 px/mm | **difetto nostro, nuovo.** `text_small_mm` vale 1,8 e va portato a 2,5 |
+
+### Errori funzionali — nessuno di questi era noto
+
+| # | Rilievo | Perché è grave |
+|---|---|---|
+| 4 | **Gli incroci si leggono come giunzioni.** La linea scavalcata passa dentro l'arco e lo taglia; su un nodo c'è pure una freccia di flusso piena | Un incrocio ambiguo fra **mandata e ritorno del generatore** letto alla lettera è un bypass che cortocircuita l'impianto. Il nostro scavallo interrompe la linea che scavalca ma **non** quella scavalcata |
+| 5 | **La miscelatrice ACS non ha l'acqua fredda**: due sole vie, nessuna derivazione da AF | Una miscelatrice a due vie non miscela niente: la protezione antiscottatura non c'è |
+| 6 | **Gruppo di riempimento in serie sul ritorno**, attraversato da tutta la portata e collegato a nessuna sorgente | Il riempimento è una derivazione dalla rete, non un organo di passaggio |
+| 7 | **Zone senza regolazione**: radiatori e pavimento sulla stessa mandata, senza miscelazione, valvole di zona, circolatori né collettore di ritorno | Radiatori e pannello alla stessa temperatura non è un'opzione, è un errore |
+| 8 | **Stesso simbolo per due componenti**: `FIL-01` etichetta il triangolo che la legenda chiama «confine di rete»; il filtro a Y vero è altrove senza sigla. E due valvole identiche in serie senza niente in mezzo, due volte | La legenda è un contratto: se un segno vale due cose la legenda non serve più |
+| 9 | **Serpentino staccato dai bocchelli, volano vuoto** e diverso dal simbolo che la legenda gli assegna | Dal disegno non si deduce né che il bollitore sia a serpentino né che il volano abbia quattro attacchi: sono le due informazioni per cui quella parte esiste |
+
+### Coerenza e dati
+
+| # | Rilievo |
+|---|---|
+| 10 | **`200 l` galleggia sopra il bollitore siglato `300 l`.** Il volano non ha volume. Il circolatore è `CIR-02` e `CIR-01` non esiste. Siglate 2 valvole su 11 |
+| 11 | **La legenda non corrisponde al disegno**: dichiara due ricircoli che non esistono; la linea AF è tracciata col colore che la legenda assegna al ritorno; ~40 % di ogni tubazione è disegnata nera perché i monconi dei simboli non prendono il colore del servizio |
+| 12 | **Legenda composta male**: volano e bollitore **si sovrappongono fisicamente**, passi irregolari, scale incoerenti, nessuna intestazione, box mezzo disegnato |
+| 13 | **Gerarchia dei tratti invertita**: la linea di terra (4 px) pesa più della cornice (3 px) e tocca il bordo. Frecce di flusso grandi come i simboli di valvola, tre triangoli diversi a pochi millimetri |
+| 14 | **Nessun dato tecnico**: niente potenze, temperature di progetto (diverse per radiatori e pavimento!), diametri, prevalenza, tarature, note, regolazione, scarichi delle sicurezze, separazione esterno/interno |
+
+### La differenza che riassume tutto, parole sue
+
+> «Il punto non è che i riferimenti siano più ricchi: è che sono **documenti**, mentre
+> questo è un disegno. Nelle tavole vere ogni segno grafico è agganciato a un dato numerico
+> e a una responsabilità firmata; qui il segno grafico è tutto quello che c'è.»

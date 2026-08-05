@@ -233,8 +233,10 @@ sessione finisce, si riprende dal primo passo non spuntato senza perdere nulla.
 - [x] **S5** — tavola rigenerata e guardata. Difetto che si vede a occhio: il foglio e'
       pieno al 39%, il disegno e' una fascia orizzontale in mezzo al foglio. Gli avvisi del
       preflight lo dicono: `SHEET_BARELY_FILLED` e `DRAWING_ALL_ON_ONE_SIDE`.
-- [ ] **S6** — in corso: prima passata di cold eye review (agente terzo, solo l'immagine).
-      Registrare il verdetto nel registro di `docs/COLD_EYE_REVIEW.md`. Salvare.
+- [x] **S6** — prima passata fatta: **RESPINTA**, 14 rilievi, di cui 6 errori funzionali
+      veri che nessuno aveva visto. Verdetto integrale in `docs/COLD_EYE_REVIEW.md`.
+      Ha confrontato con tre tavole reali: Agenzia del Demanio, Comune di Carrara, Caleffi.
+
 - [ ] **S7** — correggere ciò che l'agente terzo rileva, una cosa per volta, ogni
       correzione col suo commit; poi nuova passata. Massimo tre passate (D-064).
 - [ ] **S8** — collaudo indipendente finale, rapporto al PM con gli otto difetti chiusi
