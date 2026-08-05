@@ -34,9 +34,10 @@
 
 ## Difetti segnalati dal PM sulla tavola completa — 5 agosto 2026
 
-**Registrati, non ancora corretti.** Il PM ne sta elencando altri: si aspetta l'elenco
-completo prima di toccare il codice, perché correggerne uno alla volta rischia di
-riprodurre lo stesso errore di metodo che li ha generati.
+**Registrati, non ancora corretti.** L'elenco si è chiuso il 5 agosto («non mi viene in
+mente altro») e la correzione è organizzata dal piano di rilancio (D-084): ogni difetto ha
+il suo pacchetto, e la chiusura di ciascuno andrà provata nel rapporto finale, non
+dichiarata.
 
 - [ ] **Divisione in due tavole con la seconda quasi vuota** (D-072). Il criterio deve
   diventare «la tavola successiva è abbastanza piena», e prima si ottimizza quella che
@@ -124,20 +125,30 @@ Mancava l'artefatto, e il momento in cui la tavola ci viene confrontata. Da qui 
 anche che l'agente terzo giudichi **l'immagine** e non il sorgente (D-077): nel sorgente il
 richiamo delle etichette è una linea di richiamo corretta, sull'immagine è un tubo in più.
 
-## Next — backlog ordinato
+## Next — il piano di rilancio (D-084)
 
-Ordine concordato col PM il 4 agosto 2026, dopo il punto fatto sullo stato reale del
-progetto: **P1 prima di P5**. Il motivo è che oggi il caso di prova è scritto a mano e
-ha dieci componenti — nessun vaso di espansione, nessun gruppo di riempimento, nessuna
-valvola di sicurezza, nessun diametro. Finché il modello non li genera, ogni giudizio
-sulla tavola giudica un impianto che non esiste, e il foglio resta mezzo vuoto perché
-non c'è niente da disegnarci.
+Il 5 agosto 2026, dopo otto difetti registrati sulla tavola completa, il PM ha ordinato di
+ripartire da zero con la riverifica e con un metodo a tre ruoli — uno decide, uno o più
+fanno, uno controlla (D-083). Il piano è scritto, la riverifica input per input è stata
+controverificata da un collaudatore indipendente, e **si attende il via del PM**:
+`docs/plans/2026-08-05-rilancio-qualita-tavola-plan.md`.
 
-1. ~~**Motore delle regole (P1)**~~ — **eseguito il 4 agosto 2026.** Quindici regole su sette famiglie; il caso di accettazione si completa da solo con quindici integrazioni motivate e si disegna su due tavole. Chiude `RuleApplicationModel` (D-039). Difetti trovati eseguendo nell'appendice del piano.
-2. **Pacchetto di dominio idronico (P3A)** e allargamento del contratto `DomainPack` prima che i quattro pacchetti di dominio procedano in parallelo (W3).
-4. **Rendering, cartiglio e PDF (P5)**, con distinta derivata dal modello e **preflight grafico** (D-063): le soglie di `tests/layout/test_objective.py` devono diventare un validatore di prodotto che gira su ogni tavola, non un test su una fixture.
-5. **Skill conversazionale (P6)**, col **cold eye review** e il ciclo di revisione (D-063, D-064): agente terzo, giudica ciò che non si misura, respinge cambiando il piano di impaginazione e mai la geometria.
-6. Costruire la matrice di qualificazione e la prima release (P7).
+1. **WP1 — Simboli dalle fonti** (D-067, D-081, D-082): UNI 9511 via Oppo per il
+   valvolame e gli accessori, pratica e produttori per le macchine. Consegna intermedia:
+   foglio di riscontro al PM.
+2. **WP2 — Contenuto per attacco** (D-074): pompa di calore 2, circolatore 2, volano 4.
+3. **WP3 — Disposizione al servizio delle linee** (D-078, D-080): ciclo deterministico
+   posizioni→linee, impilamento (D-073), criterio di riempimento per dividere (D-072).
+4. **WP4 — Scrittura e segni** (D-075, D-079): etichette accanto al pezzo con richiami a
+   45°, scavallo e pallino.
+5. **WP5 — Preflight di qualità bloccante** (D-063 livello 1).
+6. **WP6 — Occhio terzo** (D-063 livello 2, D-076, D-077): ciclo dimostrato.
+7. **WP7 — Rigenerazione e consegna col timbro**: cancello completo, otto difetti chiusi
+   con prova.
+
+**Dopo il rilancio, in coda e invariati:** pacchetto di dominio idronico (P3A) con
+l'allargamento del contratto `DomainPack` (W3); rendering, cartiglio, PDF e distinta
+(P5); skill conversazionale (P6); matrice di qualificazione e prima release (P7).
 
 Sull'instradamento si torna solo se, con un impianto **completo**, resta qualcosa che
 non va: a quel punto è un difetto vero e non un'ipotesi su un caso povero.

@@ -70,3 +70,29 @@ Ne discende:
   apposta. Non nella conversazione.
 - Italiano, frasi corte.
 - Fermarsi prima di azioni distruttive, cambi di stack o ampliamenti sostanziali dello scope.
+
+## Il metodo dei tre ruoli (D-083 — vincolante, imposto dal PM il 5 agosto 2026)
+
+Lo sviluppo lavora come un team: **uno decide, uno o più fanno, uno controlla.**
+
+- **L'orchestratore** scrive ogni pacchetto di lavoro con criteri di accettazione
+  **prima** che il lavoro cominci, assegna, giudica i rapporti di collaudo e risponde al
+  PM. Non approva mai il proprio lavoro.
+- **Gli sviluppatori** — agenti separati — eseguono. Non dichiarano mai «fatto» da soli.
+- **Il collaudo** — un agente con contesto separato, che non ha visto nascere il lavoro —
+  verifica criteri di accettazione, `docs/QUALITA_GRAFICA.md` e la regressione completa.
+  Può respingere: il lavoro torna in sviluppo. Ogni verdetto si registra nell'appendice
+  del piano in corso.
+
+Regole ferree, senza eccezioni:
+
+1. Niente è «fatto» senza verdetto positivo del collaudo, registrato.
+2. **Nessuna tavola arriva al PM senza il cancello completo** — rigenerata dalla catena
+   corrente il giorno stesso, controlli di correttezza, preflight e occhio terzo passati.
+   Mai mostrare un artefatto vecchio come risultato attuale.
+3. **Vietato inventare.** Nessun contenuto grafico senza fonte dichiarata (norma tramite
+   fonte secondaria verificata, schema di produttore, o decisione esplicita del PM). Se
+   la fonte manca, si apre una domanda al PM: la mancanza di fonte è una domanda, non una
+   licenza.
+4. **Il piano approvato si rispetta.** Una deviazione si registra nell'appendice del
+   piano, con il perché, prima di eseguirla.

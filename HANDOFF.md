@@ -1,4 +1,12 @@
-# HANDOFF — Disegnatore MEP · 2026-08-04 (fine fase di layout)
+# HANDOFF — Disegnatore MEP · 2026-08-05 (rilancio ordinato dal PM)
+
+> ⚠️ **Prima di tutto:** il 5 agosto il PM ha registrato **otto difetti** sulla tavola
+> completa, ha ordinato la riverifica da zero e ha imposto **il metodo dei tre ruoli**
+> (D-083): uno decide, uno o più fanno, uno controlla — con collaudo indipendente e
+> cancelli vincolanti. Il piano operativo è
+> `docs/plans/2026-08-05-rilancio-qualita-tavola-plan.md`, **in attesa del suo via**.
+> Le sezioni §3–§5 di questo file descrivono lo stato di fine layout (4 agosto) e vanno
+> lette con questa correzione: il «prossimo passo P3A» è superato da D-084.
 
 > ⛔ **STOP. Questo file NON è un riassunto del progetto.** È il cancello
 > di lettura per la sessione successiva. Leggere tutti i documenti indicati
@@ -20,7 +28,9 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | 5 | `PROJECT_STATE.md` | Stato vivo e prossimo passo |
 | 6 | `docs/specs/2026-08-01-disegnatore-mep-design.md` | Design consolidato e approvato |
 | 7 | `docs/adr/README.md`, poi `docs/adr/0001-*.md` fino a `0004-*.md` | Decisioni architetturali in ordine cronologico |
-| 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-071 |
+| 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-084. **Le D-072–D-084 sono gli otto difetti del PM e il metodo dei tre ruoli: leggerle per prime** |
+| 8bis | **`docs/QUALITA_GRAFICA.md`** | **Le regole del colpo d'occhio** (D-076): lo standard contro cui si giudica ogni tavola, e il metro del collaudo |
+| 8ter | **`docs/plans/2026-08-05-rilancio-qualita-tavola-plan.md`** | **Il piano operativo corrente**: riverifica input per input, metodo, sette pacchetti con criteri di accettazione |
 | 9 | `docs/ROADMAP.md` | Fasi del progetto e perimetro futuro |
 | 9bis | **`docs/DEFERRED.md`** | **Decisioni rimandate e note di sviluppo futuro.** Ogni «per ora no» del progetto sta qui col suo perché e con cosa lo sbloccherebbe. Leggerlo prima di proporre al PM qualcosa che è già stato rimandato |
 | 10 | `docs/ARCHITECTURE.md` | Struttura del codice effettivamente consegnato |
@@ -178,6 +188,15 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 ---
 
 ## Ultimo aggiornamento
+
+`2026-08-05` — Claude — **rilancio.** Otto difetti del PM registrati sulla tavola completa
+(D-072–D-082: divisione col foglio vuoto, fila come legge, valvole per attacco, etichette
+come tubi, disposizione che non serve le linee, scavallo mancante, lunghezza nel
+bilancio, simboli senza fonte). Scritte le regole del colpo d'occhio
+(`docs/QUALITA_GRAFICA.md`). Il PM ha ordinato riverifica da zero e metodo dei tre ruoli
+(D-083); scritto il piano di rilancio con audit controverificato da collaudatore
+indipendente (D-084), **in attesa del via del PM**. Nessun codice toccato: solo
+registrazioni e piano, come da suo ordine.
 
 `2026-08-04` — Claude — scritto il piano di layout, instradamento e multi-tavola, non eseguito. Rotazione, tratte e instradamento prototipati e messi sotto test prima della stesura; tre difetti trovati e registrati nel §2 del piano, fra cui il fatto che nessuno dei venti simboli sta sulla griglia. Il PM ha chiuso le tre decisioni di prodotto confermando le proposte; una quarta, sulla squadratura del foglio, e' stata ritirata perche' il cartiglio era gia' fra gli input del progetto.
 
