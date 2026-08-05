@@ -51,7 +51,7 @@ tipizzazione a zero errori).
 | Simboli = ciò che usa davvero un termotecnico italiano | D-081, già D-067 | Tutti i 31 simboli pubblicati citano la convenzione interna; **nessuno cita una fonte**. D-067 era deciso dal 4 agosto e non eseguito | **Violato** |
 | La disposizione serve le linee: spostare è gratis, ma anche la lunghezza costa | D-078, D-080 | La disposizione, una volta fatta, non viene mai rivista; nessun ciclo posizioni→linee esiste | **Mai costruito** |
 | Verifica a tre livelli prima della consegna; occhio terzo che può respingere | D-063–065, D-076, D-077 | Precisazione del collaudo: il controllo **di correttezza** c'è e blocca (sovrapposizioni di simboli, collisioni di testi, oggetti fuori area, segmenti non ortogonali). Il preflight **di qualità** (pieghe, incroci, riempimento) e l'occhio terzo non esistono | **Mai costruito** |
-| Regole come dato versionato, con fonte, migliorabile dandogli documenti | D-039, D-069, D-070 | 15 regole in file di dati, versionate, ciascuna con fonte e motivazione; nessuna nomina un componente | **Rispettato** |
+| Regole come dato versionato, con fonte, migliorabile dandogli documenti | D-039, D-069, D-070 | 15 regole in file di dati, versionate, ciascuna con fonte e motivazione; nessuna nomina un componente | **Rispettato il meccanismo.** Il **contenuto** è un'altra cosa: non è mai stato approvato dal PM, che sul disegno illeggibile non poteva verificarlo (D-085) — passa da WP2 e dall'approvazione sua |
 | ACS dentro l'MVP | 4 agosto | Gruppo sanitario proposto dalle regole e presente | **Rispettato** |
 | Ruoli fissi e zero verbosità | D-068 | Nei documenti operativi | **Rispettato** |
 | Le decisioni rimandate si registrano | 4 agosto | Il registro esiste e viene usato | **Rispettato** |
@@ -69,8 +69,10 @@ affezione al codice scritto.
 **Si tiene:**
 
 - il modello tecnico canonico senza coordinate e la sua validazione (ADR 0002, D-026);
-- il motore delle regole: è il differenziale del prodotto, rispetta D-039/D-069/D-070 e
-  il suo contenuto si corregge cambiando dati, non codice — WP2 lo dimostra;
+- il **motore** delle regole: è il differenziale del prodotto, rispetta D-039/D-069/D-070
+  e permette di correggere il contenuto cambiando dati, non codice. **Si tiene il motore,
+  non il contenuto**: il contenuto delle quindici regole non è mai stato approvato dal PM
+  (D-085) e passa per intero dalla verifica di WP2 e dalla sua approvazione;
 - l'orientamento topologico di mandata e ritorno (D-059);
 - i formati A3/A4 con scelta automatica (D-058) e la scala invariante provata col
   righello (ADR 0003);
@@ -105,7 +107,7 @@ non ne cambia i confini.
 | 3. Modello tecnico canonico | Sano, conforme agli input | Si tiene; nessun WP lo tocca |
 | 4. Pacchetti di dominio | Idronico dentro le regole; il contratto va allargato (P3A) | In coda dopo il rilancio, invariato |
 | 5. Libreria dei simboli | **Difettosa**: nessuna fonte | **WP1**, al suo posto |
-| — Regole di inserimento (vivono fra 3 e 4) | Motore sano; **un contenuto errato** (intercettazioni) | **WP2**: correzione dei dati dentro il pacchetto esistente |
+| — Regole di inserimento (vivono fra 3 e 4) | Motore sano; **contenuto mai approvato dal PM** (D-085), con un errore già noto (intercettazioni) | **WP2**: correzione, verifica regola per regola contro le fonti, dossier per l'approvazione del PM |
 | 6. Motore di layout | **Difettoso**: disposizione che non serve le linee | **WP3** e **WP4**, al loro posto |
 | 7. Renderer | SVG c'è; segni di incrocio e richiami da correggere (WP4); cartiglio, PDF e distinta sono P5 | **WP4** per i segni; P5 in coda |
 | 8. Validatori | Correttezza presente e funzionante; **qualità mai costruita** | **WP5**, al suo posto |
@@ -180,44 +182,60 @@ delle tavole fonte; audit dei campi fonte; regressione.
 **Consegna intermedia al PM:** il nuovo foglio di riscontro — è lui l'autorità su «questo
 è quello che usiamo davvero».
 
-### WP2 — Le regole di inserimento tornano a dire il contenuto vero
+### WP2 — Le regole di inserimento: correzione, verifica e approvazione mai avvenuta
 
-**Obiettivo:** chiudere D-074 **dentro il pacchetto di regole esistente**, e verificare
-che nessun'altra regola porti contenuto deciso dal foglio.
+**Obiettivo:** chiudere D-074 **dentro il pacchetto di regole esistente**, e — più
+importante — sottoporre finalmente il contenuto del pacchetto all'approvazione del PM,
+che **non c'è mai stata** (D-085).
 
-Il PM lo ha precisato il 5 agosto: la correzione delle valvole di intercettazione **non è
-un pacchetto a sé** — è una correzione **al pacchetto di regole di inserimento dei
-componenti**, che esiste, funziona ed è il pezzo di architettura che i suoi input
-prescrivono (regole come dato versionato, condizioni su funzioni e mai su componenti,
-cardinalità e criterio di soddisfazione dichiarati). Questo WP è piccolo proprio perché
-quell'architettura è sana: si correggono **dati**, non si costruisce un motore.
+Il PM lo ha precisato due volte il 5 agosto. Primo: la correzione delle valvole di
+intercettazione **non è un pacchetto a sé** — è una correzione al pacchetto di regole di
+inserimento dei componenti. Secondo: lui **non ha mai approvato quel pacchetto** — si è
+fermato agli errori evidenti, e il resto non era verificabile perché sulla tavola
+illeggibile non si capiva se il gruppo di riempimento, il ritegno o il defangatore
+fossero nel punto giusto. Su un elaborato illeggibile il silenzio non è assenso. Il
+motore (caricamento, applicazione, tracciabilità) è collaudato dai controlli automatici;
+il **contenuto** — cosa viene inserito e dove — non lo ha verificato nessuno che non sia
+chi lo ha scritto. Questo WP chiude entrambe le cose.
 
 **Contenuto:**
 1. La regola di intercettazione passa a cardinalità **per attacco di macchina**
    (generatori, pompe, accumuli); il criterio di soddisfazione riconosce una valvola già
    presente su quello specifico attacco. Sparisce dalla motivazione la frase «una sola
    valvola nel primo pacchetto».
-2. **Revisione di tutte le quindici regole pubblicate**, una per una: nessun'altra deve
-   portare contenuto ridotto o alterato per un vincolo di foglio, e ogni motivazione deve
-   essere impiantistica. L'esito della revisione si registra nell'appendice.
-3. Il perimetro delle **famiglie** resta quello dell'MVP — sicurezza, intercettazione,
-   protezione, aria, riempimento e scarico, misura, ACS — con le famiglie future già
-   registrate in `docs/DEFERRED.md` §1: quel perimetro lo ha accettato il PM il 4 agosto
-   e questo piano non lo tocca.
+2. **Scheda di verifica per ciascuna delle quindici regole**: cosa propone, in quale
+   punto funzionale, perché proprio lì, con quale fonte (Raccolta R, guide UNI 8065,
+   schemi dei produttori, buona pratica documentata). Ogni scheda è scritta perché la
+   legga un non sviluppatore. Una posizione motivata solo da «così faceva l'esempio» è
+   una scheda respinta.
+3. **Revisione trasversale**: nessuna regola porta contenuto ridotto o alterato per un
+   vincolo di foglio; ogni motivazione è impiantistica.
+4. **Il dossier di approvazione del caso di accettazione, per il PM, in linguaggio
+   piano**: l'elenco delle integrazioni con posizione e motivo. È il flusso che il
+   prodotto stesso prescrive ai suoi utenti — dossier prima del disegno (D-004, D-013) —
+   applicato allo sviluppo. Ciò che il PM contesta si corregge qui, prima che si disegni;
+   la sua approvazione del contenuto si completa poi sulla tavola leggibile (WP7).
+5. Il perimetro delle **famiglie** resta quello dell'MVP, con le famiglie future già
+   registrate in `docs/DEFERRED.md` §1. Il perimetro è accettato; il contenuto, da
+   questo WP in poi, sarà approvato.
 
 **Criteri di accettazione:**
 1. Sul caso di accettazione: pompa di calore 2 valvole, circolatore 2 (una per lato),
    volano 4, bollitore 4 — «ogni macchina, ogni tubo che entra o esce».
-2. La revisione delle quindici regole è registrata, con esito per ciascuna.
-3. Rieseguire le regole su un modello già completato non propone nulla (idempotenza).
-4. Nessuna regola nomina un componente (D-069, prova esistente); motore non modificato —
-   se questo WP dovesse toccare il motore, il motore è sbagliato e ci si ferma
-   (`docs/DEFERRED.md` §1, criterio già fissato).
-5. Suite verde.
+2. Le quindici schede di verifica esistono, ciascuna con fonte; l'esito della revisione
+   trasversale è registrato nell'appendice.
+3. Il dossier è stato consegnato al PM e le sue correzioni sono applicate.
+4. Rieseguire le regole su un modello già completato non propone nulla (idempotenza).
+5. Nessuna regola nomina un componente (D-069, prova esistente); motore non modificato —
+   se questo WP dovesse toccare il motore, il motore è sbagliato e ci si ferma.
+6. Suite verde.
 
 **Collaudo:** conteggio automatico delle valvole adiacenti per ogni attacco di macchina
-sul modello generato; verifica che il motore sia invariato; lettura indipendente della
-revisione delle quindici regole; regressione.
+sul modello generato; lettura indipendente delle schede **contro le fonti citate**;
+verifica che il motore sia invariato; regressione.
+
+**Consegna intermedia al PM:** il dossier delle integrazioni — la prima occasione reale
+di approvare o bocciare il contenuto delle regole.
 
 ### WP3 — La disposizione al servizio delle linee
 
@@ -336,9 +354,13 @@ chiusura** per tutti gli otto difetti del 5 agosto.
 
 1. **Subito:** questo piano, per il via.
 2. **Dopo WP1:** il foglio dei simboli nuovi, da approvare a colpo d'occhio.
-3. **Durante:** nulla, salvo domande di prodotto vere — poche e raccolte insieme.
-4. **Alla fine (WP7):** la tavola rigenerata con il rapporto di collaudo e la chiusura
-   difetto per difetto.
+3. **Dopo WP2:** il dossier delle integrazioni in linguaggio piano — cosa viene inserito,
+   dove e perché, con la fonte — per l'approvazione del contenuto delle regole, mai
+   avvenuta prima (D-085).
+4. **Durante:** nulla d'altro, salvo domande di prodotto vere — poche e raccolte insieme.
+5. **Alla fine (WP7):** la tavola rigenerata con il rapporto di collaudo, la chiusura
+   difetto per difetto, e la conferma finale del contenuto sulla tavola finalmente
+   leggibile.
 
 ## 6. Il backlog precedente
 

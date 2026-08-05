@@ -136,7 +136,12 @@ controverificata da un collaudatore indipendente, e **si attende il via del PM**
 1. **WP1 — Simboli dalle fonti** (D-067, D-081, D-082): UNI 9511 via Oppo per il
    valvolame e gli accessori, pratica e produttori per le macchine. Consegna intermedia:
    foglio di riscontro al PM.
-2. **WP2 — Contenuto per attacco** (D-074): pompa di calore 2, circolatore 2, volano 4.
+2. **WP2 — Regole di inserimento: correzione, verifica, dossier** (D-074, D-085): valvole
+   per attacco; scheda di verifica con fonte per ognuna delle quindici regole; dossier
+   delle integrazioni in linguaggio piano al PM — il contenuto del pacchetto **non è mai
+   stato approvato**: sul disegno illeggibile non poteva verificare se riempimento,
+   ritegno o defangatore fossero al posto giusto, e il silenzio su un elaborato
+   illeggibile non è assenso.
 3. **WP3 — Disposizione al servizio delle linee** (D-078, D-080): ciclo deterministico
    posizioni→linee, impilamento (D-073), criterio di riempimento per dividere (D-072).
 4. **WP4 — Scrittura e segni** (D-075, D-079): etichette accanto al pezzo con richiami a
