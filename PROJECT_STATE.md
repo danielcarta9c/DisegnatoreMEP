@@ -157,7 +157,32 @@ terzo filtrati contro il perimetro (D-087). Non ancora corretti.
 prevalenze, tarature, volumi e diametri non forniti dal progettista; tabella apparecchiature
 con marca e modello; logica di regolazione. Non li inventa la skill.
 
-## Next — il piano di rilancio (D-084)
+## Next — il piano di costruzione della skill (D-095)
+
+**Architettura blindata in ADR 0005**, dettaglio in `docs/SKILL.md`. Piano operativo:
+`docs/plans/2026-08-06-piano-costruzione-skill.md`. Sette pezzi, **uno alla volta**,
+ognuno con criteri espressi come proprieta' e un artefatto leggibile dal PM.
+
+1. **P1 — vocabolario delle proprieta'** nel catalogo (senza, una regola generale non e'
+   dicibile). Artefatto: l'elenco delle proprieta' con la definizione di ciascuna.
+2. **P2 — regole degli accessori, generali.** Le sei di intercettazione diventano una.
+   Artefatto: le schede, una per regola, da approvare o bocciare una per una.
+3. **P3 — assemblatore.** La fila dei pezzi lungo ogni tubo, con gli stacchi.
+   Artefatto: la fila scritta a parole, prima di qualunque disegno.
+4. **P4 — libreria dei simboli**: in linea contro su stacco, altezza testi a norma.
+5. **P5 — cartiglio**, quello aziendale gia' fornito, e cornice chiusa.
+6. **P6 — composizione**: il foglio si riempie, non si fa una striscia.
+7. **P7 — validatore e cancello**: misure sulle proprieta' nuove, via le soglie tarate
+   sulla fixture, occhio terzo come cancello di routine.
+
+<details><summary>Piano di rilancio del 5 agosto (D-084) — storia</summary>
+
+I suoi pacchetti WP1-WP5 sono eseguiti e collaudati; cio' che hanno prodotto viene
+riusato o rifatto secondo la tabella §2 del piano nuovo.
+
+</details>
+
+## Storico — il piano di rilancio (D-084)
 
 Il 5 agosto 2026, dopo otto difetti registrati sulla tavola completa, il PM ha ordinato di
 ripartire da zero con la riverifica e con un metodo a tre ruoli — uno decide, uno o più

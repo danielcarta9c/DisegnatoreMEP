@@ -4,6 +4,9 @@
 > ciascuno, con cosa lavora e **quando è finito**. Se una domanda comincia con «come
 > funziona…» o «di chi è questo pezzo…», la risposta è qui e in nessun altro posto.
 >
+> **Blindato in ADR 0005.** L'architettura qui descritta non si ridiscute pezzo per pezzo:
+> si cambia con una nuova ADR.
+>
 > Non contiene stato («a che punto siamo» sta in `PROJECT_STATE.md`), non contiene storia
 > («perché abbiamo deciso così» sta in `docs/DECISION_LOG.md`), non contiene numeri di
 > stampa (stanno in `docs/GRAPHIC_STANDARD.md`).
