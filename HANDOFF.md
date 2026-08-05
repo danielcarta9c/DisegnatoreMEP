@@ -226,13 +226,14 @@ sessione finisce, si riprende dal primo passo non spuntato senza perdere nulla.
 - [x] **S2** — etichette accanto al pezzo, scavalli e pallini: fatto. 13 etichette adiacenti, zero richiami necessari, 5 scavalli, 2 pallini. Chiusi anche due difetti trovati strada facendo: una scritta finiva sotto il pavimento, e il blocco non risultava piu' centrato.
 - [ ] **S3** — allineare le tre prove di accettazione al comportamento voluto: una tavola
       con un difetto bloccante **non esce**, e la prova deve pretendere quello. Salvare.
-- [ ] **S4** — in corso. Il preflight blocca su quattro esiti: tre tratte a distanza zero
+- [x] **S4** — chiuso: zero esiti bloccanti su entrambe le tavole, il disegno esce. Erano due difetti. Il preflight blocca su quattro esiti: tre tratte a distanza zero
       da accessori di **altre** tratte, e un'andata-e-ritorno su `s6`. Causa unica: il ciclo
       di miglioramento ottimizza un instradamento **senza accessori**, che non e' quello che
       viene poi disegnato. Il ciclo deve valutare cio' che si stampa davvero.
-- [ ] **S5** — rigenerare la tavola dalla catena corrente, produrre l'immagine, guardarla
-      con i propri occhi e registrare cosa non va. Salvare.
-- [ ] **S6** — prima passata di cold eye review (agente terzo, solo l'immagine).
+- [x] **S5** — tavola rigenerata e guardata. Difetto che si vede a occhio: il foglio e'
+      pieno al 39%, il disegno e' una fascia orizzontale in mezzo al foglio. Gli avvisi del
+      preflight lo dicono: `SHEET_BARELY_FILLED` e `DRAWING_ALL_ON_ONE_SIDE`.
+- [ ] **S6** — in corso: prima passata di cold eye review (agente terzo, solo l'immagine).
       Registrare il verdetto nel registro di `docs/COLD_EYE_REVIEW.md`. Salvare.
 - [ ] **S7** — correggere ciò che l'agente terzo rileva, una cosa per volta, ogni
       correzione col suo commit; poi nuova passata. Massimo tre passate (D-064).
