@@ -222,12 +222,14 @@ già instradate, non solo i simboli.
 Regola imposta dal PM il 5 agosto: **passi piccoli, ognuno chiuso da un commit.** Se la
 sessione finisce, si riprende dal primo passo non spuntato senza perdere nulla.
 
-- [ ] **S1** — chiudere le mosse di rotazione (WP3b) e salvare.
-- [ ] **S2** — chiudere etichette, richiami a 45°, scavalli e pallini (WP4) e salvare.
+- [x] **S1** — mosse di rotazione: fatto. Il prelievo ACS e' girato di 180 gradi e la linea ci arriva dritta; pieghe 24→22, nessun peggioramento altrove.
+- [x] **S2** — etichette accanto al pezzo, scavalli e pallini: fatto. 13 etichette adiacenti, zero richiami necessari, 5 scavalli, 2 pallini. Chiusi anche due difetti trovati strada facendo: una scritta finiva sotto il pavimento, e il blocco non risultava piu' centrato.
 - [ ] **S3** — allineare le tre prove di accettazione al comportamento voluto: una tavola
       con un difetto bloccante **non esce**, e la prova deve pretendere quello. Salvare.
-- [ ] **S4** — chiudere il difetto nuovo del preflight: accessori posati a distanza zero
-      da tratte già instradate. Salvare.
+- [ ] **S4** — in corso. Il preflight blocca su quattro esiti: tre tratte a distanza zero
+      da accessori di **altre** tratte, e un'andata-e-ritorno su `s6`. Causa unica: il ciclo
+      di miglioramento ottimizza un instradamento **senza accessori**, che non e' quello che
+      viene poi disegnato. Il ciclo deve valutare cio' che si stampa davvero.
 - [ ] **S5** — rigenerare la tavola dalla catena corrente, produrre l'immagine, guardarla
       con i propri occhi e registrare cosa non va. Salvare.
 - [ ] **S6** — prima passata di cold eye review (agente terzo, solo l'immagine).
