@@ -131,24 +131,23 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 
 ---
 
-## Come giudica l'agente terzo
+## Chi usa questa carta — e chi non deve usarla
 
-1. **Guarda l'immagine, non il file.** Un disegnatore senior giudica con l'occhio: l'agente
-   riceve la tavola renderizzata a misura di stampa, non il codice che l'ha prodotta.
-   Metà di queste regole — l'affollamento, l'ambiguità di un segno, il «sembra una tavola» —
-   sono invisibili nel sorgente e ovvie nell'immagine.
-2. **Prima da lontano, poi da vicino.** Primo passaggio sulla sola famiglia A, senza leggere
-   niente. Se la composizione non regge, il resto non conta e la tavola torna indietro subito.
-3. **Poi scorre le famiglie B–F**, una per una, contro questo elenco.
-4. **Confronta con tavole di riferimento.** È il metodo del PM: *«basta confrontarlo con altri
-   disegni per capire che non va bene»*. Le tavole di riferimento approvate dal PM sono la
-   taratura dello stile di casa e valgono più di mille disegni presi a caso.
-5. **Restituisce difetti puntuali, non un voto.** «Non mi piace» non è un rilievo: un rilievo
-   nomina la regola violata e dove. Un giudizio senza regola nominata non è utilizzabile e
-   non fa crescere questa carta.
+**La usano** il preflight deterministico (le righe `da misurare` sono il suo programma di
+lavoro) e il collaudo interno dei pacchetti di sviluppo.
 
-Quando respinge, cambia il **piano di impaginazione** e la pipeline rigenera da capo: nessun
-agente tocca la geometria prodotta (D-064).
+**Non la usa l'occhio terzo** (D-086, per ordine diretto del PM). L'occhio terzo riceve
+la tavola renderizzata a misura di stampa e la giudica **per confronto con l'esterno**:
+le tavole professionali che conosce e quelle che può cercare in rete, sui siti dei
+produttori. Non riceve questa carta né altri documenti interni, perché un giudice che usa
+le nostre regole conferma i nostri errori sistematici: se una regola qui è sbagliata o
+manca, solo un confronto esterno può accorgersene. Guarda prima da lontano — la
+composizione — poi da vicino, e restituisce difetti puntuali e circostanziati, non un
+voto. Quando respinge, cambia il **piano di impaginazione** e la pipeline rigenera da
+capo: nessun agente tocca la geometria prodotta (D-064).
+
+Ciò che l'occhio terzo rileva e questa carta non prevedeva **diventa una riga nuova**
+(D-065): è così che la carta cresce senza diventare il proprio soffitto.
 
 ---
 
