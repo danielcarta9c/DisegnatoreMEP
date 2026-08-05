@@ -125,6 +125,34 @@ Mancava l'artefatto, e il momento in cui la tavola ci viene confrontata. Da qui 
 anche che l'agente terzo giudichi **l'immagine** e non il sorgente (D-077): nel sorgente il
 richiamo delle etichette è una linea di richiamo corretta, sull'immagine è un tubo in più.
 
+## Difetti della seconda tornata — 5 agosto 2026, sera
+
+Segnalati dal PM sulle immagini della tavola rigenerata, **piu** i rilievi dell'occhio
+terzo filtrati contro il perimetro (D-087). Non ancora corretti.
+
+- [ ] **Le valvole del volano stanno tutte da un lato.** Tre attacchi su quattro non ne
+  hanno nessuna, e le due che ci sono, affiancate sulla stessa uscita, non si capisce se
+  siano del volano o del circolatore. D-074 non e' soddisfatta: la prova contava un totale
+  invece di guardare attacco per attacco (D-088).
+- [ ] **Il circolatore deve avere le proprie due**, riconoscibili come sue.
+- [ ] **Curvette senza senso**: dove basta un angolo, l'instradamento fa una scaletta di
+  due pieghe. Anche le curve costano (D-060) e queste non le paga nessuno.
+- [ ] **Incrocio evitabile sul collettore**: invertendo le due uscite l'incrocio sparisce.
+  L'ordine delle uscite di un collettore e' una variabile libera che nessuno usa.
+- [ ] **Ci sono ancora simboli non autorizzati** (segnalato dal PM, da identificare uno per
+  uno confrontando ogni simbolo usato con la propria fonte dichiarata).
+- [ ] **Lo scavallo taglia in due la linea scavalcata** invece di lasciarla intera: un
+  incrocio fra mandata e ritorno si legge come un bypass.
+- [ ] **La miscelatrice sanitaria non ha l'alimentazione fredda.**
+- [ ] **Il gruppo di riempimento e' in serie sul ritorno** invece che in derivazione.
+- [ ] **Il serpentino del bollitore non tocca i bocchelli**; il volano e' un rettangolo
+  vuoto che non mostra i quattro attacchi.
+- [ ] **Cornice aperta in basso** e **testi a 1,19 mm** contro i 2,5 mm minimi di norma.
+
+**Fuori perimetro per D-087**, e registrati come tali: potenze, temperature di progetto,
+prevalenze, tarature, volumi e diametri non forniti dal progettista; tabella apparecchiature
+con marca e modello; logica di regolazione. Non li inventa la skill.
+
 ## Next — il piano di rilancio (D-084)
 
 Il 5 agosto 2026, dopo otto difetti registrati sulla tavola completa, il PM ha ordinato di
