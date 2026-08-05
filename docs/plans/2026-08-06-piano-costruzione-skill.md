@@ -179,4 +179,4 @@ Sempre gli stessi cinque passi, e il quarto non si salta mai:
 
 | Pezzo | Sviluppo | Collaudo | Data | Note |
 |---|---|---|---|---|
-| — | — | — | — | — |
+| **P1 — vocabolario delle proprietà** | Sviluppatore P1 | **RESPINTO** al primo giro, **APPROVATO** al secondo | 2026-08-06 | Undici proprietà chiuse e validate al caricamento. Respinto su correttezza impiantistica (ventilatore e VRV dichiarati manutenibili avrebbero fatto mettere valvole d'acqua su canali d'aria e linee frigorifere) e sul documento per il PM (consuntivo falso delle proprietà aggiunte). Corretto e approvato. Il collaudo ha poi dimostrato, aggiungendo un componente del prossimo pacchetto, che la guardia anti-travestimento avrebbe costretto a rinominare il vocabolario: dipendenza sciolta prima di P2. Artefatto per il PM: `docs/prodotto/PROPRIETA_COMPONENTI.md` |

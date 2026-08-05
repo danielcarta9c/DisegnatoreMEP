@@ -163,8 +163,9 @@ con marca e modello; logica di regolazione. Non li inventa la skill.
 `docs/plans/2026-08-06-piano-costruzione-skill.md`. Sette pezzi, **uno alla volta**,
 ognuno con criteri espressi come proprieta' e un artefatto leggibile dal PM.
 
-1. **P1 — vocabolario delle proprieta'** nel catalogo (senza, una regola generale non e'
-   dicibile). Artefatto: l'elenco delle proprieta' con la definizione di ciascuna.
+1. ~~**P1 — vocabolario delle proprietà**~~ — **fatto e approvato il 6 agosto 2026**, dopo
+   un respingimento. Undici proprietà chiuse, compilate su tutti i componenti, validate al
+   caricamento. **Da approvare dal PM:** `docs/prodotto/PROPRIETA_COMPONENTI.md`.
 2. **P2 — regole degli accessori, generali.** Le sei di intercettazione diventano una.
    Artefatto: le schede, una per regola, da approvare o bocciare una per una.
 3. **P3 — assemblatore.** La fila dei pezzi lungo ogni tubo, con gli stacchi.
