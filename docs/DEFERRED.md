@@ -117,6 +117,13 @@ sbloccano nulla.
 - **`buffer-four-port` confonde tre componenti diversi** — separatore idraulico,
   compensatore e accumulo inerziale — che Caleffi distingue e che su una tavola si
   disegnano diversamente (SRC-008).
+- **Cinque simboli fuori MVP hanno una fonte dichiarata «da acquisire»**: serranda,
+  diffusore, ventilatore in linea, derivazione refrigerante e contatore gas portano
+  `pratica di settore — fonte puntuale da acquisire col dominio (DEFERRED §5)`. Sono i
+  domini aeraulico, gas e refrigerante, fuori dal caso di accettazione: quando un dominio
+  entra in perimetro, la sua fonte si acquisisce e i suoi simboli si riautorano come fatto
+  per l'idronico (D-081). La stringa dice il vero invece di puntare un documento non
+  verificato: vietato inventare vale anche per le citazioni (D-083).
 - **Nessun test presidia che il corpo di un simbolo resti dentro il proprio riquadro** e
   raggiunga le porte dichiarate.
 - **Nessun test protegge i due generatori di simboli dalla deriva** rispetto ai file che

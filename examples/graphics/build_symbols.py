@@ -119,8 +119,13 @@ SOURCE_UNI_VESSELS = "UNI 9511, tramite SRC-015"
 """Vasi di espansione: segni della norma riprodotti nel materiale di SRC-015."""
 SOURCE_PRACTICE_HYDRONIC = "pratica di settore, cfr. SRC-008"
 """Macchine e accessori idronici fuori norma: schemi dei produttori (Caleffi)."""
-SOURCE_PRACTICE = "pratica di settore"
-"""Forme di pratica comune nei domini aeraulico, gas e refrigerante."""
+SOURCE_PRACTICE_PENDING = (
+    "pratica di settore — fonte puntuale da acquisire col dominio (DEFERRED §5)"
+)
+"""Domini fuori MVP (aeraulico, gas, refrigerante): la forma e' di pratica
+comune ma nessuna fonte acquisita la documenta ancora. La stringa lo dice,
+il rinvio e' registrato: vietato inventare vale anche per le citazioni
+(D-083), e un puntatore a un documento non verificato sarebbe inventato."""
 
 
 def n(value: float) -> str:
@@ -819,7 +824,7 @@ SYMBOLS: list[SymbolSpec] = [
     inline_symbol("pressure-reducer", "Riduttore di pressione", BRANCHED_ACCESSORY, pressure_reducer_body, SOURCE_PRACTICE_HYDRONIC),
     single_port_symbol(
         "network-boundary", "Confine di rete", INLINE_ACCESSORY, "right", network_boundary_body,
-        SOURCE_PRACTICE,
+        SOURCE_PRACTICE_HYDRONIC,
     ),
     # --- idronico -----------------------------------------------------------
     inline_symbol("valve-isolation", "Valvola di intercettazione", INLINE_ACCESSORY, valve_isolation_body, SOURCE_UNI_TAB3),
@@ -902,9 +907,9 @@ SYMBOLS: list[SymbolSpec] = [
     two_port_terminal("underfloor-panel", "Pannello radiante", underfloor_body, SOURCE_PRACTICE_HYDRONIC),
     two_port_terminal("fan-coil", "Ventilconvettore", fan_coil_body, SOURCE_PRACTICE_HYDRONIC),
     # --- aeraulico ----------------------------------------------------------
-    inline_symbol("duct-damper", "Serranda", INLINE_ACCESSORY, duct_damper_body, SOURCE_PRACTICE),
-    single_port_symbol("air-diffuser", "Diffusore d'aria", DEVICE, "left", air_diffuser_body, SOURCE_PRACTICE),
-    inline_symbol("fan-inline", "Ventilatore in linea", DEVICE, fan_body, SOURCE_PRACTICE),
+    inline_symbol("duct-damper", "Serranda", INLINE_ACCESSORY, duct_damper_body, SOURCE_PRACTICE_PENDING),
+    single_port_symbol("air-diffuser", "Diffusore d'aria", DEVICE, "left", air_diffuser_body, SOURCE_PRACTICE_PENDING),
+    inline_symbol("fan-inline", "Ventilatore in linea", DEVICE, fan_body, SOURCE_PRACTICE_PENDING),
     # --- refrigerante -------------------------------------------------------
     SymbolSpec(
         id="refrigerant-branch",
@@ -918,13 +923,13 @@ SYMBOLS: list[SymbolSpec] = [
             port("c", "bottom", *DEVICE),
         ],
         body=refrigerant_branch_body(*DEVICE),
-        source=SOURCE_PRACTICE,
+        source=SOURCE_PRACTICE_PENDING,
     ),
     # --- gas ----------------------------------------------------------------
     # La pratica del gas usa il segno generale del valvolame con una sigla di
     # fluido, non una forma diversa: stesso corpo della intercettazione.
     inline_symbol("gas-valve", "Valvola gas", INLINE_ACCESSORY, valve_isolation_body, SOURCE_UNI_TAB3),
-    inline_symbol("gas-meter", "Contatore gas", DEVICE, gas_meter_body, SOURCE_PRACTICE),
+    inline_symbol("gas-meter", "Contatore gas", DEVICE, gas_meter_body, SOURCE_PRACTICE_PENDING),
 ]
 
 
