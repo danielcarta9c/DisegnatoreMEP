@@ -130,6 +130,10 @@ richiamo delle etichette è una linea di richiamo corretta, sull'immagine è un 
 Segnalati dal PM sulle immagini della tavola rigenerata, **piu** i rilievi dell'occhio
 terzo filtrati contro il perimetro (D-087). Non ancora corretti.
 
+> **Questi sono esempi, non l'elenco** (D-089). Il PM non sta approvando il resto. Per ogni
+> riga qui sotto vanno cercati **tutti i casi simili** su tutta la tavola e chiusi insieme:
+> correggere solo dove lui ha cerchiato non chiude il difetto.
+
 - [ ] **Le valvole del volano stanno tutte da un lato.** Tre attacchi su quattro non ne
   hanno nessuna, e le due che ci sono, affiancate sulla stessa uscita, non si capisce se
   siano del volano o del circolatore. D-074 non e' soddisfatta: la prova contava un totale
