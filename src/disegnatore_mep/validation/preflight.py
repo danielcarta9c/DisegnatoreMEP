@@ -524,55 +524,68 @@ def clearances(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
     findings: list[ValidationIssue] = []
     minimum = frame.standard.min_clearance_mm
     for sheet in drawing.sheets:
-        for _, route, segment in _run_polylines(sheet):
-            for symbol in sheet.symbols:
-                box = _box(symbol)
-                if _attaches_to(segment, box):
-                    continue
-                moves = _moves(segment)
-                if not moves:
-                    continue
-                distance = min(_distance_to_box(before, after, box) for before, after in moves)
-                severity = _clearance_severity(distance, minimum)
-                if severity is None:
-                    continue
-                findings.append(
-                    _finding(
-                        "RUN_TOO_CLOSE_TO_A_SYMBOL",
-                        severity,
-                        f"la tratta {_run_name(route)} passa a {distance:g} mm dal "
-                        f"simbolo {symbol.component_id}, cui non si attacca: la "
-                        f"distanza di rispetto e' {minimum:g} mm (B5)",
-                        sorted({*_run_ids(sheet, route), symbol.component_id}),
-                    )
-                )
+        findings.extend(_symbol_clearances(sheet, minimum))
+        findings.extend(_parallel_clearances(sheet, minimum))
+    return findings
 
-        moves = [
-            (index, route, move)
-            for index, route, segment in _run_polylines(sheet)
-            for move in _moves(segment)
-        ]
-        for first in range(len(moves)):
-            for second in range(first + 1, len(moves)):
-                one, other = moves[first], moves[second]
-                if one[0] == other[0]:
-                    continue
-                distance = _parallel_distance(one[2], other[2])
-                if distance is None or distance <= TOLERANCE_MM:
-                    continue
-                severity = _clearance_severity(distance, minimum)
-                if severity is None:
-                    continue
-                findings.append(
-                    _finding(
-                        "PARALLEL_RUNS_TOO_CLOSE",
-                        severity,
-                        f"le tratte {_run_name(one[1])} e {_run_name(other[1])} corrono "
-                        f"affiancate a {distance:g} mm: la distanza di rispetto e' "
-                        f"{minimum:g} mm (B6)",
-                        sorted({*_run_ids(sheet, one[1]), *_run_ids(sheet, other[1])}),
-                    )
+
+def _symbol_clearances(sheet: SheetGeometry, minimum: float) -> list[ValidationIssue]:
+    """B5 — le linee non sfiorano i simboli cui non si attaccano."""
+    findings: list[ValidationIssue] = []
+    for _, route, segment in _run_polylines(sheet):
+        moves = _moves(segment)
+        if not moves:
+            continue
+        for symbol in sheet.symbols:
+            box = _box(symbol)
+            if _attaches_to(segment, box):
+                continue
+            gap = min(_distance_to_box(before, after, box) for before, after in moves)
+            severity = _clearance_severity(gap, minimum)
+            if severity is None:
+                continue
+            findings.append(
+                _finding(
+                    "RUN_TOO_CLOSE_TO_A_SYMBOL",
+                    severity,
+                    f"la tratta {_run_name(route)} passa a {gap:g} mm dal simbolo "
+                    f"{symbol.component_id}, cui non si attacca: la distanza di "
+                    f"rispetto e' {minimum:g} mm (B5)",
+                    sorted({*_run_ids(sheet, route), symbol.component_id}),
                 )
+            )
+    return findings
+
+
+def _parallel_clearances(sheet: SheetGeometry, minimum: float) -> list[ValidationIssue]:
+    """B6 — due linee affiancate corrono a distanza dichiarata, non a filo."""
+    findings: list[ValidationIssue] = []
+    alongside = [
+        (index, route, move)
+        for index, route, segment in _run_polylines(sheet)
+        for move in _moves(segment)
+    ]
+    for first in range(len(alongside)):
+        for second in range(first + 1, len(alongside)):
+            one, other = alongside[first], alongside[second]
+            if one[0] == other[0]:
+                continue
+            gap = _parallel_distance(one[2], other[2])
+            if gap is None or gap <= TOLERANCE_MM:
+                continue
+            severity = _clearance_severity(gap, minimum)
+            if severity is None:
+                continue
+            findings.append(
+                _finding(
+                    "PARALLEL_RUNS_TOO_CLOSE",
+                    severity,
+                    f"le tratte {_run_name(one[1])} e {_run_name(other[1])} corrono "
+                    f"affiancate a {gap:g} mm: la distanza di rispetto e' "
+                    f"{minimum:g} mm (B6)",
+                    sorted({*_run_ids(sheet, one[1]), *_run_ids(sheet, other[1])}),
+                )
+            )
     return findings
 
 
@@ -608,19 +621,24 @@ def u_turns(drawing: DrawingGeometry) -> list[ValidationIssue]:
 
 
 def _overshoot_mm(polyline: list[Point]) -> float:
-    """Di quanto la spezzata ha superato il proprio ultimo punto, lungo l'asse di arrivo."""
+    """Di quanto la spezzata ha superato la propria porta di arrivo.
+
+    L'ultimo tratto dice su quale asse le si arriva — orizzontale o verticale —
+    e i due capi dicono da che parte: la tratta viaggia dal capo di partenza a
+    quello di arrivo, e su quell'asse non deve mai andare oltre l'arrivo. Se i
+    due capi hanno la stessa coordinata sull'asse di arrivo non c'e' un verso di
+    viaggio da superare, e la misura e' zero: quello e' un aggiramento, non
+    un'andata e ritorno.
+    """
     moves = _moves(polyline)
     if not moves:
         return 0.0
-    goal = polyline[-1]
+    source, goal = polyline[0], polyline[-1]
     before, after = moves[-1]
-    horizontal = abs(after.y_mm - before.y_mm) <= TOLERANCE_MM
-    if horizontal:
-        direction = _sign(after.x_mm - before.x_mm)
-        return max(
-            (point.x_mm - goal.x_mm) * direction for point in polyline
-        )
-    direction = _sign(after.y_mm - before.y_mm)
+    if abs(after.y_mm - before.y_mm) <= TOLERANCE_MM:
+        direction = _sign(goal.x_mm - source.x_mm)
+        return max((point.x_mm - goal.x_mm) * direction for point in polyline)
+    direction = _sign(goal.y_mm - source.y_mm)
     return max((point.y_mm - goal.y_mm) * direction for point in polyline)
 
 

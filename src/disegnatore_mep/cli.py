@@ -15,13 +15,23 @@ from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import compose_on_ordinary_frame
 from disegnatore_mep.layout.geometry import drawing_fingerprint
 from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.model.types import IssueSeverity
 from disegnatore_mep.rules.apply import apply_proposals
 from disegnatore_mep.rules.engine import evaluate
 from disegnatore_mep.rules.errors import RuleError
 from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.rules.report import CATEGORY_LABELS, build_report
 from disegnatore_mep.validation.geometry import validate_drawing_geometry
+from disegnatore_mep.validation.issues import ValidationIssue, ValidationReport
+from disegnatore_mep.validation.preflight import preflight_drawing
 from disegnatore_mep.validation.topology import validate_project
+
+SEVERITY_LABELS: dict[IssueSeverity, str] = {
+    IssueSeverity.BLOCKING: "Bloccanti",
+    IssueSeverity.APPROVAL: "Da approvare",
+    IssueSeverity.WARNING: "Avvisi",
+}
+"""Le tre classi di esito della §13, in ordine di gravita' e in italiano (D-068)."""
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -110,12 +120,38 @@ def _rules(args: argparse.Namespace) -> int:
     return 0
 
 
+def _print_preflight(findings: list[ValidationIssue]) -> None:
+    """Le misure di qualita' raggruppate per severita', in italiano (D-068).
+
+    Si stampano anche quando nessuna blocca: un avviso che nessuno legge non
+    misura niente, ed e' il modo in cui la tavola del 5 agosto e' uscita.
+    """
+    if not findings:
+        print("\nPreflight di qualita': nessun rilievo.")
+        return
+    print("\nPreflight di qualita'")
+    for severity, title in SEVERITY_LABELS.items():
+        group = [item for item in findings if item.severity == severity]
+        if not group:
+            continue
+        print(f"\n{title}")
+        for item in group:
+            print(f"  - {item.message}")
+            print(f"    codice: {item.code} · {', '.join(item.entity_ids)}")
+
+
 def _draw(args: argparse.Namespace) -> int:
     """Compone e scrive una tavola SVG per foglio.
 
+    Due verifiche, in quest'ordine: quella di **correttezza**, che dice se la
+    tavola sta in piedi, e il **preflight di qualita'** (D-063, livello 1), che
+    dice se e' disegnata bene. Nessuna delle due vive nei test: girano qui,
+    dentro il comando, ed e' la ragione per cui esistono.
+
     Codici di uscita coerenti col resto della CLI: `0` disegno prodotto, `2`
-    errori bloccanti, `1` errori di caricamento. La tavola esce marcata come
-    bozza finche' il cartiglio non e' compilato (D-025).
+    errori bloccanti — di correttezza o di qualita' —, `1` errori di
+    caricamento. La tavola esce marcata come bozza finche' il cartiglio non e'
+    compilato (D-025).
     """
     project = load_project(args.project)
     symbols = SymbolRegistry.from_directory(args.symbols)
@@ -130,6 +166,15 @@ def _draw(args: argparse.Namespace) -> int:
     geometry_report = validate_drawing_geometry(drawing, frame)
     if not geometry_report.ok:
         print(geometry_report.model_dump_json(indent=2))
+        return 2
+
+    quality = preflight_drawing(drawing, frame, catalog)
+    _print_preflight(quality)
+    if not ValidationReport(issues=quality).ok:
+        print(
+            "\nLa tavola non viene scritta: una tavola finale non esce con un "
+            "rilievo bloccante (D-063)."
+        )
         return 2
 
     args.out.mkdir(parents=True, exist_ok=True)
