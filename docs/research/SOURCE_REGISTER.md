@@ -31,6 +31,7 @@ interna del progetto e citate nel campo `source` di ogni manifesto.
 | CONV-GRAFICA-001 | Forma e geometria di un simbolo singolo: dimensioni in millimetri di carta, porte sul perimetro con faccia coerente, area di rispetto sulle facce con porta, orientamenti tecnicamente ammessi | `docs/GRAPHIC_STANDARD.md` | In uso: la citano i dodici simboli pubblicati e gli otto di fixture |
 | CONV-GRAFICA-002 | Composizione di un simbolo composito da primitive, pubblicato e contato come prodotto unico | `docs/GRAPHIC_STANDARD.md` §6 | Definita, nessun composito ancora pubblicato |
 | CONV-GRAFICA-003 | Squadratura e impaginazione del foglio: margini, banda del cartiglio, fascia d'intestazione, area di disegno | `assets/cartigli/Cartiglio_NoveC_A3.pdf`, misurato | Da applicare al Task 4 del piano di layout |
+| CONV-GRAFICA-004 | Scavallo su un incrocio fra linee che non si collegano: archetto sulla linea **verticale**, la orizzontale prosegue intera; nessuno scavallo su una piega | Schizzo a mano del PM, 5 agosto 2026 (D-079) | Da implementare nel rendering; la scelta di quale linea scavalca va confermata sulle tavole di riferimento |
 
 **Il telaio del foglio deriva dal cartiglio aziendale, non da ISO 5457.** `A3_LANDSCAPE`
 motiva oggi il proprio margine sinistro da 20 mm con la rilegatura ISO 5457, che questo

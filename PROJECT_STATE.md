@@ -60,6 +60,14 @@ riprodurre lo stesso errore di metodo che li ha generati.
   disposizione decide per prima e in modo definitivo, e l'instradamento paga in pieghe
   qualunque cosa essa abbia deciso. Va invertito: la posizione dei componenti è una
   variabile del problema, e spostare un oggetto è gratis mentre una piega costa.
+  Il secondo esempio del PM — l'ingresso dell'acqua fredda posato in alto, che scende
+  tagliando tutte le linee di riscaldamento per arrivare al bollitore — mostra che la
+  disposizione non si paga solo in pieghe ma anche in **attraversamenti**: posato in basso,
+  quel tratto sarebbe stato dritto e non avrebbe incrociato niente.
+- [ ] **Gli attraversamenti non hanno il loro simbolo** (D-079). Due linee che si incrociano
+  e due linee che si collegano oggi hanno lo stesso segno: chi legge non può distinguere un
+  incrocio da un raccordo. Serve lo scavallo, l'archetto che scavalca. Gli attraversamenti
+  sono già calcolati e portati nella geometria — semplicemente nessuno li disegna.
 
 ### L'errore di metodo che li ha generati
 

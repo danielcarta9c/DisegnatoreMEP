@@ -77,6 +77,8 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 | B10 | Il percorso è quello breve. | Un tubo che gira intorno al foglio per raggiungere la macchina accanto. | `da misurare` |
 | B11 | L'ultimo tratto prima di un attacco è dritto e perpendicolare all'attacco. | Una linea che arriva di sbieco e piega proprio sul bocchello. | `da misurare` |
 | B12 | Nessuna andata e ritorno per raggiungere un pezzo (D-078). | La linea supera l'oggetto, scende e torna indietro a prenderlo. Va spostato l'oggetto, non allungata la linea. | `difetto aperto` |
+| B13 | Un incrocio fra linee che non si collegano porta il proprio scavallo (D-079). | Senza archetto, un incrocio e un raccordo a T hanno lo stesso segno e non si distinguono. | `difetto aperto` |
+| B14 | Un attraversamento non si paga per una scelta di posizione. | Una linea che scende tagliando tutte le altre perché il suo pezzo è stato messo in alto. | `difetto aperto` |
 
 ## C. Simboli e allineamenti — quello che fa sembrare una tavola «fatta da un professionista»
 
