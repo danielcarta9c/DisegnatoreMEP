@@ -5,6 +5,12 @@
   "functions": [
     "emission"
   ],
+  "traits": [
+    "maintainable",
+    "fouls_circuit",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "underfloor-panel",
   "composite": false,
   "ports": [

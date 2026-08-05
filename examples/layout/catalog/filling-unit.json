@@ -5,6 +5,11 @@
   "functions": [
     "filling"
   ],
+  "traits": [
+    "maintainable",
+    "isolation_normal",
+    "attachment_branch"
+  ],
   "symbol_id": "filling-unit",
   "composite": false,
   "ports": [

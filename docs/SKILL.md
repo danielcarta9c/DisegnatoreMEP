@@ -305,6 +305,7 @@ Tre livelli, e servono tutti e tre:
 | Domanda | Documento, e uno solo |
 |---|---|
 | Cosa fa il prodotto e cosa non fa | `docs/prodotto/PRD_DISEGNATORE_MEP.md` |
+| Cosa dichiara di sé un componente, e perché | `docs/prodotto/PROPRIETA_COMPONENTI.md` |
 | **Com'è fatta la skill** | **questo file** |
 | Come si collabora, chi decide cosa | `AGENTS.md` |
 | Come si disegna bene, regola per regola | `docs/standard/QUALITA_GRAFICA.md` |

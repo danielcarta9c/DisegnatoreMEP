@@ -1,7 +1,11 @@
 from datetime import date
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import ComponentDefinition, PortDefinition
+from disegnatore_mep.catalog.schema import (
+    ComponentDefinition,
+    ComponentTrait,
+    PortDefinition,
+)
 from disegnatore_mep.domains.builtin import BasicDomainPack
 from disegnatore_mep.domains.registry import DomainRegistry
 from disegnatore_mep.model.project import (
@@ -23,6 +27,7 @@ def component_definition(component_id: str, flow: PortFlow) -> ComponentDefiniti
         version="1.0.0",
         name=component_id,
         functions=["boundary"],
+        traits=[ComponentTrait.ISOLATION_NORMAL, ComponentTrait.ATTACHMENT_INLINE],
         symbol_id=component_id,
         composite=False,
         ports=[

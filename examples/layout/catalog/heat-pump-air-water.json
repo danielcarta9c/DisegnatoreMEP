@@ -5,6 +5,14 @@
   "functions": [
     "heat_generation"
   ],
+  "traits": [
+    "maintainable",
+    "needs_debris_protection",
+    "produces_air",
+    "needs_overpressure_protection",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "heat-pump-air-water",
   "composite": false,
   "ports": [

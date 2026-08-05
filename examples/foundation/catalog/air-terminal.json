@@ -5,6 +5,10 @@
   "functions": [
     "air_terminal"
   ],
+  "traits": [
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "air-terminal",
   "composite": false,
   "ports": [

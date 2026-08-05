@@ -5,6 +5,11 @@
   "functions": [
     "distribution"
   ],
+  "traits": [
+    "maintainable",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "zone-manifold",
   "composite": false,
   "ports": [

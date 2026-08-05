@@ -5,6 +5,11 @@
   "functions": [
     "dhw_mixing"
   ],
+  "traits": [
+    "maintainable",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "mixing-valve-thermostatic",
   "composite": false,
   "ports": [

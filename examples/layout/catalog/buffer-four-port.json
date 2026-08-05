@@ -6,6 +6,12 @@
     "hydraulic_separation",
     "thermal_storage"
   ],
+  "traits": [
+    "maintainable",
+    "holds_drainable_volume",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "buffer-four-port",
   "composite": false,
   "ports": [

@@ -5,6 +5,11 @@
   "functions": [
     "diversion"
   ],
+  "traits": [
+    "maintainable",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "diverting-valve-3way",
   "composite": false,
   "ports": [

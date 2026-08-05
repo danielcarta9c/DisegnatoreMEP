@@ -5,6 +5,11 @@
   "functions": [
     "air_release"
   ],
+  "traits": [
+    "maintainable",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "air-separator",
   "composite": false,
   "ports": [

@@ -5,6 +5,12 @@
   "functions": [
     "circulation"
   ],
+  "traits": [
+    "maintainable",
+    "needs_debris_protection",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "pump-circulator",
   "composite": false,
   "ports": [

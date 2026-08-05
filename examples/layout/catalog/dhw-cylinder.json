@@ -5,6 +5,13 @@
   "functions": [
     "dhw_storage"
   ],
+  "traits": [
+    "maintainable",
+    "needs_overpressure_protection",
+    "holds_drainable_volume",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "dhw-cylinder",
   "composite": false,
   "ports": [

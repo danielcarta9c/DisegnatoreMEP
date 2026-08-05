@@ -23,6 +23,7 @@ def definition(**overrides: object) -> dict[str, object]:
         "version": "1.0.0",
         "name": "Valvola di intercettazione",
         "functions": ["isolation"],
+        "traits": ["isolation_normal", "attachment_inline"],
         "symbol_id": "valve-isolation",
         "composite": False,
         "ports": [port(id="a"), port(id="b")],

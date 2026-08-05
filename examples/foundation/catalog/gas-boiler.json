@@ -6,6 +6,14 @@
     "heat_generation",
     "gas_combustion"
   ],
+  "traits": [
+    "maintainable",
+    "needs_debris_protection",
+    "produces_air",
+    "needs_overpressure_protection",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "gas-boiler",
   "composite": true,
   "ports": [

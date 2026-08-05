@@ -5,6 +5,11 @@
   "functions": [
     "measurement"
   ],
+  "traits": [
+    "maintainable",
+    "isolation_normal",
+    "attachment_branch"
+  ],
   "symbol_id": "pressure-gauge",
   "composite": false,
   "ports": [

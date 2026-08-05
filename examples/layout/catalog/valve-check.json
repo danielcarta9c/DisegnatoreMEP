@@ -5,6 +5,11 @@
   "functions": [
     "non_return"
   ],
+  "traits": [
+    "maintainable",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "valve-check",
   "composite": false,
   "ports": [

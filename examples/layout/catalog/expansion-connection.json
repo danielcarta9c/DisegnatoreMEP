@@ -5,6 +5,11 @@
   "functions": [
     "expansion"
   ],
+  "traits": [
+    "maintainable",
+    "isolation_lockable_only",
+    "attachment_branch"
+  ],
   "symbol_id": "expansion-connection",
   "composite": false,
   "ports": [

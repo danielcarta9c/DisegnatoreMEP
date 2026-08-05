@@ -28,9 +28,23 @@ CATALOG = ROOT / "catalog"
 VERSION = "1.0.0"
 SOURCE = "CONV-FOUNDATION"
 
+MAINTAINABLE = "maintainable"
+FOULS_CIRCUIT = "fouls_circuit"
+NEEDS_DEBRIS_PROTECTION = "needs_debris_protection"
+PRODUCES_AIR = "produces_air"
+NEEDS_OVERPRESSURE_PROTECTION = "needs_overpressure_protection"
+HOLDS_DRAINABLE_VOLUME = "holds_drainable_volume"
+ISOLATION_NORMAL = "isolation_normal"
+INLINE = "attachment_inline"
+
 HEATING = "heating_water"
 DHW = "domestic_hot_water"
-COLD = "domestic_cold_water"
+# Il fluido dell'acqua fredda sanitaria si chiama "cold_water" ovunque: nelle
+# altre voci del catalogo, nelle condizioni delle regole e nelle reti dei
+# progetti d'esempio. Qui era rimasto un nome diverso da quando il generatore
+# non veniva piu' rieseguito, e rigenerare il catalogo cambiava in silenzio il
+# fluido del bollitore.
+COLD = "cold_water"
 
 
 def hydronic_port(
@@ -54,14 +68,19 @@ def definition(
     definition_id: str,
     name: str,
     functions: list[str],
+    traits: list[str],
     ports: list[dict[str, Any]],
     symbol_id: str | None = None,
 ) -> dict[str, Any]:
+    """Una voce di catalogo. `traits` non ha default **per scelta**: un
+    componente che non dichiara come si isola non deve poter nascere da qui piu'
+    di quanto possa nascere da un file scritto a mano (P1)."""
     return {
         "id": definition_id,
         "version": VERSION,
         "name": name,
         "functions": functions,
+        "traits": traits,
         "symbol_id": symbol_id or definition_id,
         "composite": False,
         "ports": ports,
@@ -75,6 +94,14 @@ DEFINITIONS: list[dict[str, Any]] = [
         "Pompa di calore aria-acqua",
         ["heat_generation"],
         [
+            MAINTAINABLE,
+            NEEDS_DEBRIS_PROTECTION,
+            PRODUCES_AIR,
+            NEEDS_OVERPRESSURE_PROTECTION,
+            ISOLATION_NORMAL,
+            INLINE,
+        ],
+        [
             hydronic_port("water_supply", "out"),
             # Il ritorno raccoglie sia il circuito del volano sia quello del
             # serpentino ACS: la deviatrice li rende alternativi in esercizio.
@@ -85,6 +112,7 @@ DEFINITIONS: list[dict[str, Any]] = [
         "diverting-valve-3way",
         "Valvola deviatrice a tre vie",
         ["diversion"],
+        [MAINTAINABLE, ISOLATION_NORMAL, INLINE],
         [
             hydronic_port("in", "in"),
             hydronic_port("out_a", "out"),
@@ -95,6 +123,7 @@ DEFINITIONS: list[dict[str, Any]] = [
         "buffer-four-port",
         "Volano termico a quattro attacchi",
         ["hydraulic_separation", "thermal_storage"],
+        [MAINTAINABLE, HOLDS_DRAINABLE_VOLUME, ISOLATION_NORMAL, INLINE],
         [
             hydronic_port("primary_in", "in"),
             hydronic_port("primary_out", "out"),
@@ -106,6 +135,13 @@ DEFINITIONS: list[dict[str, Any]] = [
         "dhw-cylinder",
         "Bollitore ACS",
         ["dhw_storage"],
+        [
+            MAINTAINABLE,
+            NEEDS_OVERPRESSURE_PROTECTION,
+            HOLDS_DRAINABLE_VOLUME,
+            ISOLATION_NORMAL,
+            INLINE,
+        ],
         [
             hydronic_port("coil_in", "in"),
             hydronic_port("coil_out", "out"),
@@ -119,12 +155,14 @@ DEFINITIONS: list[dict[str, Any]] = [
         "pump-circulator",
         "Pompa di circolazione",
         ["circulation"],
+        [MAINTAINABLE, NEEDS_DEBRIS_PROTECTION, ISOLATION_NORMAL, INLINE],
         [hydronic_port("a", "in"), hydronic_port("b", "out")],
     ),
     definition(
         "zone-manifold",
         "Collettore di zona",
         ["distribution"],
+        [MAINTAINABLE, ISOLATION_NORMAL, INLINE],
         [
             hydronic_port("in", "in"),
             hydronic_port("out_1", "out"),
@@ -135,18 +173,21 @@ DEFINITIONS: list[dict[str, Any]] = [
         "radiator",
         "Radiatore",
         ["emission"],
+        [MAINTAINABLE, FOULS_CIRCUIT, ISOLATION_NORMAL, INLINE],
         [hydronic_port("in", "in"), hydronic_port("out", "out")],
     ),
     definition(
         "underfloor-panel",
         "Pannello radiante",
         ["emission"],
+        [MAINTAINABLE, FOULS_CIRCUIT, ISOLATION_NORMAL, INLINE],
         [hydronic_port("in", "in"), hydronic_port("out", "out")],
     ),
     definition(
         "strainer",
         "Filtro a Y",
         ["filtration"],
+        [MAINTAINABLE, ISOLATION_NORMAL, INLINE],
         [
             hydronic_port("a", "bidirectional"),
             hydronic_port("b", "bidirectional"),
@@ -156,6 +197,7 @@ DEFINITIONS: list[dict[str, Any]] = [
         "valve-isolation",
         "Valvola di intercettazione",
         ["isolation"],
+        [ISOLATION_NORMAL, INLINE],
         [
             hydronic_port("a", "bidirectional"),
             hydronic_port("b", "bidirectional"),

@@ -7,7 +7,11 @@ giorno in cui quel caso cambia, ed e' esattamente il giorno in cui serve.
 """
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import ComponentDefinition, PortDefinition
+from disegnatore_mep.catalog.schema import (
+    ComponentDefinition,
+    ComponentTrait,
+    PortDefinition,
+)
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import Symbol, SymbolRegistry
 from disegnatore_mep.graphics.symbol import KeepOut, PortFace, SymbolManifest, SymbolPort
@@ -106,6 +110,7 @@ def _definition(symbol_id: str) -> ComponentDefinition:
         version="1.0.0",
         name="Componente di prova",
         functions=["prova"],
+        traits=[ComponentTrait.ISOLATION_NORMAL, ComponentTrait.ATTACHMENT_INLINE],
         symbol_id=symbol_id,
         ports=[
             PortDefinition(

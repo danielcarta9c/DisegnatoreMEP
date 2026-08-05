@@ -5,6 +5,10 @@
   "functions": [
     "measurement"
   ],
+  "traits": [
+    "isolation_normal",
+    "attachment_branch"
+  ],
   "symbol_id": "thermometer",
   "composite": false,
   "ports": [

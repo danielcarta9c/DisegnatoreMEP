@@ -5,6 +5,11 @@
   "functions": [
     "direct_expansion_terminal"
   ],
+  "traits": [
+    "maintainable",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "vrv-indoor",
   "composite": false,
   "ports": [

@@ -5,6 +5,11 @@
   "functions": [
     "refrigerant_generation"
   ],
+  "traits": [
+    "maintainable",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "vrv-outdoor",
   "composite": false,
   "ports": [

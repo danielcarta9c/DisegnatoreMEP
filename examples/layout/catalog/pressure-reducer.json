@@ -5,6 +5,11 @@
   "functions": [
     "pressure_control"
   ],
+  "traits": [
+    "maintainable",
+    "isolation_normal",
+    "attachment_inline"
+  ],
   "symbol_id": "pressure-reducer",
   "composite": false,
   "ports": [

@@ -5,6 +5,10 @@
   "functions": [
     "drain"
   ],
+  "traits": [
+    "isolation_never",
+    "attachment_branch"
+  ],
   "symbol_id": "drain-connection",
   "composite": false,
   "ports": [
