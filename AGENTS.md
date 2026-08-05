@@ -2,6 +2,9 @@
 
 ## Ordine di lettura obbligatorio
 
+**Chi arriva ora legge due file e comincia: `docs/SKILL.md` (com'e' fatta la skill) e
+`PROJECT_STATE.md` (a che punto siamo). Il resto si apre quando serve.**
+
 0. Se esiste `HANDOFF.md`, aprirlo per primo e applicare integralmente il suo cancello di lettura e le sentinel checks.
 1. `CONTESTO_PROGETTO.md`
 2. `PRD_DISEGNATORE_MEP.md`

@@ -4,14 +4,17 @@ Progetto per una skill capace di trasformare la configurazione di un impianto te
 
 La skill analizzerà la configurazione, proporrà gli accessori necessari o raccomandati, raccoglierà l'approvazione dell'ingegnere e produrrà elaborati vettoriali SVG/PDF mediante regole tecniche e layout deterministici.
 
-**Stato:** fondazione canonica, sistema grafico e motore di layout completati. Il nucleo valida un impianto che mescola idronica, aeraulica, refrigerante e gas senza codice specifico per quello schema, e **disegna** una tavola A3: componenti a fasce funzionali, tubazioni ortogonali che non passano sotto i simboli, accessori in linea che spezzano la linea, legenda a destra coi soli simboli usati. Restano il cartiglio compilato, il PDF e la distinta.
+**Stato:** vive in `PROJECT_STATE.md` — unico posto in cui e' scritto.
 
 ## Orientamento rapido
 
-1. Leggere `CONTESTO_PROGETTO.md`.
-2. Leggere `PRD_DISEGNATORE_MEP.md`.
-3. Consultare `PROJECT_STATE.md` per lo stato corrente.
-4. Consultare `docs/DECISION_LOG.md` per le decisioni approvate.
+1. **`docs/SKILL.md`** — com'e' fatta la skill, i suoi sei pezzi e quando ciascuno e' finito.
+2. `PROJECT_STATE.md` — a che punto siamo.
+3. `PRD_DISEGNATORE_MEP.md` — cosa fa il prodotto e cosa non fa.
+4. `docs/DECISION_LOG.md` — perche' abbiamo deciso cosi'.
+
+`CONTESTO_PROGETTO.md` e' la trascrizione della conversazione iniziale: e' **storia**, non
+va letta per capire il prodotto.
 5. Consultare `docs/ROADMAP.md` per le fasi previste.
 6. Leggere `docs/specs/2026-08-01-disegnatore-mep-design.md` per il design consolidato.
 7. Leggere `docs/ARCHITECTURE.md` per la struttura del codice consegnato e `docs/GRAPHIC_STANDARD.md` per lo standard grafico.
