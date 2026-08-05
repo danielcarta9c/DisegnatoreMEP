@@ -7,6 +7,7 @@ si legga: quella risposta la danno solo l'occhio e la stampa (§12.4).
 import os
 import subprocess
 import sys
+from functools import cache
 from pathlib import Path
 from xml.etree import ElementTree
 
@@ -35,7 +36,10 @@ def catalog() -> ComponentRegistry:
     )
 
 
+@cache
 def drawing() -> DrawingGeometry:
+    """Composto una volta per modulo: il ciclo di miglioramento reinstrada
+    decine di volte, e ogni prova lo leggerebbe identico."""
     return compose_drawing(load_project(PROJECT), catalog(), NOVE_C_A3)
 
 

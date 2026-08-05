@@ -195,7 +195,7 @@ def compose_sheet(
 
         def settle(trunk: Trunk, route: RoutedTrunk) -> list[PlacedSymbol]:
             accessories, pieces = place_inline_accessories(
-                project, trunk, route, catalog, grid
+                project, trunk, route, catalog, grid, placed
             )
             placed.extend(accessories)
             broken.append(pieces)

@@ -120,11 +120,18 @@ def place_inline_accessories(
     routed: RoutedTrunk,
     catalog: ComponentRegistry,
     grid: GridSpace,
+    obstacles: list[PlacedSymbol] | None = None,
 ) -> tuple[list[PlacedSymbol], RoutedTrunk]:
     """Posa gli accessori della tratta e restituisce la spezzata interrotta.
 
     Gli accessori si distribuiscono lungo la tratta nell'ordine in cui la
     percorrono; ciascuno prende il verso del tratto su cui cade.
+
+    `obstacles` sono i simboli gia' posati sul foglio: una rotta puo'
+    costeggiare un serbatoio a un passo di distanza, e li' la linea si legge,
+    ma il riquadro di un accessorio alto sporge oltre la linea e finirebbe
+    dentro il serbatoio. Le posizioni il cui riquadro tocca un simbolo posato
+    si saltano, avanzando lungo la tratta.
     """
     if not trunk.inline_component_ids:
         return [], routed
@@ -175,39 +182,62 @@ def place_inline_accessories(
     # quattro in fila davvero, e li vuole in fila davvero).
     cursor = 0.0
 
+    def clear_of_symbols(origin: Point, width: float, height: float) -> bool:
+        """Il riquadro non si sovrappone a nessun simbolo posato.
+
+        Lo stesso predicato — stretto, con tolleranza — del controllo di
+        correttezza: toccarsi sul filo e' ammesso, condividere superficie no.
+        """
+        return not any(
+            origin.x_mm < item.right_mm - 1e-6
+            and item.origin.x_mm < origin.x_mm + width - 1e-6
+            and origin.y_mm < item.bottom_mm - 1e-6
+            and item.origin.y_mm < origin.y_mm + height - 1e-6
+            for item in (obstacles or [])
+        )
+
     for index, component in enumerate(resolved):
-        gap = component.symbol.manifest.inline_gap_mm or 0.0
+        manifest = component.symbol.manifest
+        gap = manifest.inline_gap_mm or 0.0
         needed = gap + 2 * MIN_SPACING_MM
-        found: float | None = None
+        found: _Station | None = None
+        turned = manifest
+        rotation = 0
+        distance = 0.0
         for low, high in straights:
             # Il primo nodo di griglia da cui l'accessorio sta nel rettilineo,
             # oltre l'accessorio precedente: avanzare invece di spezzare tiene
-            # l'ordine e non spreca nemmeno un passo.
+            # l'ordine e non spreca nemmeno un passo. Se il riquadro casca su
+            # un simbolo posato, si avanza di un passo e si riprova.
             wanted = max(low, cursor) + needed / 2
             snapped = ceil((wanted - 1e-9) / step) * step
-            if snapped + needed / 2 > high + 1e-9:
-                continue
-            found = snapped
-            break
+            while snapped + needed / 2 <= high + 1e-9:
+                station = _station_at(points, snapped)
+                rotation = 0 if station.horizontal else 90
+                if rotation not in manifest.allowed_rotations_deg:
+                    raise LayoutError(
+                        f"inline accessory {manifest.id} cannot be drawn rotated by "
+                        f"{rotation} degrees, which the run it sits on requires: "
+                        f"allowed {sorted(manifest.allowed_rotations_deg)}"
+                    )
+                turned = manifest.rotated(rotation)
+                origin = Point(
+                    x_mm=station.point.x_mm - turned.width_mm / 2,
+                    y_mm=station.point.y_mm - turned.height_mm / 2,
+                )
+                if clear_of_symbols(origin, turned.width_mm, turned.height_mm):
+                    found, distance = station, snapped
+                    break
+                snapped += step
+            if found is not None:
+                break
         if found is None:
             raise LayoutError(
                 f"run {trunk.connection_ids[0]} has no straight stretch of "
                 f"{needed:g}mm for {component.symbol.manifest.id}: symbols are never "
                 f"shrunk to fit, give the run a longer straight length"
             )
-        distance = found
         cursor = distance + needed / 2
-        station = _station_at(points, distance)
-        centre = station.point
-        rotation = 0 if station.horizontal else 90
-        manifest = component.symbol.manifest
-        if rotation not in manifest.allowed_rotations_deg:
-            raise LayoutError(
-                f"inline accessory {manifest.id} cannot be drawn rotated by "
-                f"{rotation} degrees, which the run it sits on requires: "
-                f"allowed {sorted(manifest.allowed_rotations_deg)}"
-            )
-        turned = manifest.rotated(rotation)
         component_id = trunk.inline_component_ids[index]
         placed.append(
             PlacedSymbol(
@@ -215,15 +245,14 @@ def place_inline_accessories(
                 symbol_id=turned.id,
                 rotation_deg=rotation,
                 origin=Point(
-                    x_mm=centre.x_mm - turned.width_mm / 2,
-                    y_mm=centre.y_mm - turned.height_mm / 2,
+                    x_mm=found.point.x_mm - turned.width_mm / 2,
+                    y_mm=found.point.y_mm - turned.height_mm / 2,
                 ),
                 width_mm=turned.width_mm,
                 height_mm=turned.height_mm,
                 tag=tags.get(component_id),
             )
         )
-        gap = manifest.inline_gap_mm or 0.0
         cuts.append((distance - gap / 2, distance + gap / 2))
 
     segments = [points]

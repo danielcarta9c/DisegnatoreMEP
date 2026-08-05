@@ -197,10 +197,9 @@ def improve_sheet(
         """
         nonlocal trials
         trials += 1
+        symbols = [layout[item] for item in order]
         try:
-            routes = route_sheet(
-                project, trunks, [layout[item] for item in order], catalog, grid, None
-            )
+            routes = route_sheet(project, trunks, list(symbols), catalog, grid, None)
         except LayoutError:
             # Una disposizione che non si lascia instradare non e' una
             # candidata: si scarta e si resta su quella che funziona.
@@ -210,7 +209,7 @@ def improve_sheet(
             if not trunk.inline_component_ids:
                 continue
             try:
-                place_inline_accessories(project, trunk, route, catalog, grid)
+                place_inline_accessories(project, trunk, route, catalog, grid, symbols)
             except LayoutError:
                 unfit.append(index)
         crossings = sum(len(route.crossings) for route in routes)

@@ -7,8 +7,18 @@ da sinistra a destra.»
 Sono tre numeri e un vincolo, quindi si misurano. Le soglie sono quelle
 raggiunte: servono a impedire che una modifica futura peggiori la tavola senza
 che nessuno se ne accorga, non a descrivere un ottimo teorico.
+
+Da quando la disposizione serve le linee (D-078, `improve.py`), le soglie sono
+quelle **dopo** il ciclo di miglioramento: pieghe scese da 25 a 23 e lunghezza
+da 975 a 887,5 mm, nodi condivisi fermi a 9. Il criterio rivisto del
+pacchetto WP3 e' «nessuna voce peggiore, almeno una strettamente migliore»:
+una ricerca esaustiva su seicento disposizioni per traslazione ha mostrato
+che sotto i 9 nodi condivisi si scende solo pagando 27 pieghe — 4 dei 9 sono
+le derivazioni obbligate sulle due porte condivise, gli altri 5 incroci
+topologicamente forzati da quest'ordine di fasce.
 """
 
+from functools import cache
 from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -26,7 +36,10 @@ SYMBOLS = ROOT / "assets" / "symbols"
 STEP_MM = 2.5
 
 
+@cache
 def sheet() -> SheetGeometry:
+    """Composta una volta per modulo: il ciclo di miglioramento reinstrada
+    decine di volte, e ogni prova la leggerebbe identica."""
     registry = ComponentRegistry.from_directory(
         CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
     )
@@ -126,20 +139,26 @@ def test_no_two_runs_are_drawn_on_top_of_each_other() -> None:
 
 
 def test_the_drawing_stays_within_its_bend_budget() -> None:
-    """Prima erano 31 su tredici tratte, con sali-scendi intorno a ogni pezzo."""
-    assert bends(sheet()) <= 25
+    """Prima erano 31 su tredici tratte, con sali-scendi intorno a ogni pezzo;
+    25 col posizionamento a fasce; 23 da quando i componenti si spostano per
+    servire le linee (D-078). Strettamente sotto il valore pre-miglioramento."""
+    assert bends(sheet()) <= 23
 
 
 def test_the_drawing_stays_within_its_crossing_budget() -> None:
-    """Prima erano ventiquattro nodi condivisi fra tratte diverse."""
+    """Prima erano ventiquattro nodi condivisi fra tratte diverse; 9 col
+    posizionamento a fasce, e 9 restano dopo il miglioramento: 4 sono le
+    derivazioni obbligate sulle due porte condivise, 5 gli incroci forzati
+    dalla topologia con quest'ordine di fasce. Il ciclo di miglioramento non
+    puo' accettare mosse che li aumentino (regola di accettazione di WP3)."""
     assert shared_cells(sheet()) <= 9
 
 
 def test_the_drawing_stays_within_its_length_budget() -> None:
-    """Cresciuta di venticinque millimetri quando l'ingresso freddo del bollitore
-    e' passato dalla faccia inferiore al fianco: un attacco sul fondo di un
-    accumulo appoggiato a terra era irraggiungibile."""
-    assert length_mm(sheet()) <= 980.0
+    """Il criterio di WP3 ammetteva fino al +10% sul valore pre-miglioramento
+    (975 mm, quindi 1072,5); il ciclo l'ha invece **accorciata** a 887,5 mm,
+    e la soglia si fissa sul raggiunto."""
+    assert length_mm(sheet()) <= 887.5
 
 
 def test_a_component_stands_to_the_right_of_what_feeds_it() -> None:

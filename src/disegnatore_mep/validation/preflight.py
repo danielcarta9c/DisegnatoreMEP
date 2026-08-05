@@ -1,0 +1,841 @@
+"""Il preflight di qualita': non «questa tavola sta in piedi?» ma «e' disegnata bene?».
+
+`geometry.py` misura la **correttezza** — simboli sovrapposti, testi addosso ai
+pezzi, segmenti obliqui, oggetti fuori area, rimandi spaiati — e blocca. Questo
+modulo misura la **qualita'**: le righe che `docs/QUALITA_GRAFICA.md` marca «da
+misurare», cioe' il livello 1 della verifica a tre livelli di D-063, il
+preflight deterministico che gira dentro la pipeline e non nei test.
+
+Ogni misura e' una funzione pura che riceve la geometria e restituisce
+`ValidationIssue`, lo stesso tipo e la stessa scala di severita' del validatore
+di correttezza: un difetto e' un difetto, e chi legge il rapporto non deve
+imparare due lessici. `preflight_drawing` le esegue nell'ordine dichiarato da
+`MEASURE_ORDER`, e l'ordine dell'esito e' quello.
+
+Le soglie sono costanti nominate con la propria fonte accanto. Dove la fonte e'
+una regola scritta — la carta del colpo d'occhio, una decisione del registro —
+il commento la cita; dove il numero e' una **taratura**, il commento lo dichiara
+tale, perche' un valore tarato si rivede sulle tavole reali e un valore normato
+no (D-083: vietato inventare, e vietato far passare una taratura per una norma).
+"""
+
+import math
+
+from disegnatore_mep.catalog.errors import CatalogError
+from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.graphics.frame import Rect, SheetFrame
+from disegnatore_mep.layout.geometry import (
+    DrawingGeometry,
+    PlacedSymbol,
+    Point,
+    RoutedTrunk,
+    SheetGeometry,
+)
+from disegnatore_mep.model.types import IssueSeverity
+
+from .geometry import TOLERANCE_MM
+from .issues import ValidationIssue
+
+BENDS_PER_RUN_MAX = 3
+"""Cambi di direzione ammessi su una tratta prima dell'avviso (B4, D-060).
+
+Il numero viene dalla geometria, non da una taratura: per unire due porte su
+una griglia ortogonale servono zero pieghe se sono allineate, una per una elle,
+due per uno scarto, tre per la graffa fra due porte sulla stessa faccia. Oltre
+la terza la piega non la chiede il collegamento: la chiede un ostacolo, cioe'
+una posizione da correggere (D-078).
+"""
+
+CROSSINGS_MAX = 5
+"""Nodi condivisi fra tratte diverse ammessi su una tavola (B3).
+
+«Su una centrale semplice devono stare sulle dita di una mano»: cinque. La
+misura e' quella della prova permanente `tests/layout/test_objective.py` — i
+nodi di griglia toccati da due tratte diverse.
+"""
+
+SHARED_EDGES_MAX = 0
+"""Spigoli di griglia percorsi da due tratte diverse: divieto, non costo (D-062).
+
+«Vietato sovrapporre longitudinalmente le linee, sempre separate e ben
+distinte.» Due linee sullo stesso tratto sono una linea sola: non e' una
+penalita' da pagare, e' un esito bloccante.
+"""
+
+SHARED_EDGES_AT_A_SHARED_PORT = 1
+"""L'unica eccezione che D-062 dichiara, trascritta alla lettera.
+
+«Unica eccezione: l'ultimo tratto contro una porta condivisa da due tratte, che
+sulla tavola e' una derivazione ed e' lungo un passo di griglia.» Vale solo se
+lo spigolo condiviso e' uno e tocca una porta che e' capo di **entrambe** le
+tratte: fuori da questa condizione la sovrapposizione resta bloccante.
+"""
+
+U_TURN_OVERSHOOT_MAX_MM = 0.0
+"""Quanto una tratta puo' superare la propria porta di arrivo: niente (B12, D-078).
+
+«La linea supera l'oggetto, scende e torna indietro a prenderlo. Va spostato
+l'oggetto, non allungata la linea.» Tolleranza zero per costruzione.
+"""
+
+SHEET_FILL_MIN_RATIO = 0.60
+"""Quota dell'area di disegno che l'ingombro dell'inchiostro deve coprire (A1).
+
+**Taratura**, non norma: la carta dice «il foglio e' pieno in modo uniforme» e
+non da' un numero. Sotto tre quinti dell'area il disegno e' una fascia o un
+angolo, non una tavola. Il valore si rivede sulle tavole reali (carta, §«Come
+cresce questa carta», terza sorgente); l'esito e' un avviso proprio per questo.
+"""
+
+QUADRANT_IMBALANCE_MAX = 3.0
+"""Rapporto massimo fra il quadrante piu' pieno e il piu' vuoto (A1, A3).
+
+**Taratura.** «Si copre meta' foglio con una mano: se una meta' e' quasi bianca
+e l'altra e' fitta, non va», e «i quattro margini bianchi si somigliano». Tre
+volte e' lo squilibrio oltre il quale la differenza si vede da due metri.
+"""
+
+NEXT_SHEET_FILL_MIN_RATIO = 0.40
+"""Riempimento minimo di una tavola successiva alla prima (D-072, A2).
+
+**Taratura**, ed e' il «riempimento minimo dichiarato» che D-072 chiede senza
+fissarlo: «non ha senso separare in due fogli con il secondo completamente
+vuoto». Sotto questa quota la seconda tavola sembra un ritaglio e doveva stare
+sulla prima: esito bloccante, perche' D-072 e' un divieto di divisione, non un
+consiglio.
+"""
+
+INVENTED_SOURCE = "CONV-GRAFICA-001"
+"""La convenzione grafica interna: una fonte inventata, non una fonte (D-081, D-083).
+
+Un simbolo che la cita non ha una fonte vera: nessuna tavola normata, nessuno
+schema di produttore, nessuna decisione del PM. E' esattamente il difetto che
+WP1 ha chiuso, e questa misura impedisce che rientri.
+"""
+
+GRID_ROUNDING_DIGITS = 3
+"""Cifre decimali con cui si arrotondano i nodi di griglia prima di confrontarli.
+
+Serve a far coincidere due percorsi calcolati per strade diverse: senza, due
+tratte sullo stesso spigolo non risultano sullo stesso spigolo per un errore in
+fondo alla mantissa.
+"""
+
+QUADRANT_NAMES: tuple[str, ...] = (
+    "in alto a sinistra",
+    "in alto a destra",
+    "in basso a sinistra",
+    "in basso a destra",
+)
+"""I quattro quadranti dell'area di disegno, in ordine di lettura."""
+
+MEASURE_ORDER: tuple[str, ...] = (
+    "bends_per_run",
+    "crossings",
+    "longitudinal_overlap",
+    "clearances",
+    "u_turns",
+    "orthogonality_of_leaders",
+    "sheet_fill",
+    "next_sheet_fill",
+    "symbol_sources",
+)
+"""L'ordine in cui `preflight_drawing` esegue le misure, e quindi l'ordine
+dell'esito: prima le linee, poi i testi, poi il foglio, infine le fonti.
+Dichiararlo qui rende l'ordine una scelta leggibile invece di un effetto della
+sequenza delle chiamate.
+"""
+
+
+def _finding(
+    code: str, severity: IssueSeverity, message: str, entity_ids: list[str]
+) -> ValidationIssue:
+    return ValidationIssue(
+        code=code, severity=severity, message=message, entity_ids=entity_ids
+    )
+
+
+def _box(symbol: PlacedSymbol) -> tuple[float, float, float, float]:
+    return (symbol.origin.x_mm, symbol.origin.y_mm, symbol.right_mm, symbol.bottom_mm)
+
+
+def _stretches(polyline: list[Point]) -> list[tuple[Point, Point]]:
+    """Le coppie di punti consecutivi, degeneri comprese."""
+    return list(zip(polyline, polyline[1:], strict=False))
+
+
+def _moves(polyline: list[Point]) -> list[tuple[Point, Point]]:
+    """I soli tratti che percorrono una distanza: un punto ripetuto non e' un tratto."""
+    return [
+        (before, after)
+        for before, after in _stretches(polyline)
+        if abs(after.x_mm - before.x_mm) > TOLERANCE_MM
+        or abs(after.y_mm - before.y_mm) > TOLERANCE_MM
+    ]
+
+
+def _sign(value: float) -> int:
+    if value > TOLERANCE_MM:
+        return 1
+    if value < -TOLERANCE_MM:
+        return -1
+    return 0
+
+
+def _bends(polyline: list[Point]) -> int:
+    """Quante volte la spezzata cambia direzione."""
+    steps = [
+        (_sign(after.x_mm - before.x_mm), _sign(after.y_mm - before.y_mm))
+        for before, after in _moves(polyline)
+    ]
+    return sum(1 for before, after in zip(steps, steps[1:], strict=False) if before != after)
+
+
+def _walk(before: Point, after: Point, ratio: float) -> tuple[float, float]:
+    return (
+        round(before.x_mm + (after.x_mm - before.x_mm) * ratio, GRID_ROUNDING_DIGITS),
+        round(before.y_mm + (after.y_mm - before.y_mm) * ratio, GRID_ROUNDING_DIGITS),
+    )
+
+
+def _steps(before: Point, after: Point, grid_mm: float) -> int:
+    span = abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
+    return int(round(span / grid_mm))
+
+
+def _cells(polyline: list[Point], grid_mm: float) -> set[tuple[float, float]]:
+    """I nodi di griglia toccati dalla spezzata."""
+    walked: set[tuple[float, float]] = set()
+    for before, after in _stretches(polyline):
+        steps = _steps(before, after, grid_mm)
+        for index in range(steps + 1):
+            walked.add(_walk(before, after, index / steps if steps else 0.0))
+    return walked
+
+
+def _edges(
+    polyline: list[Point], grid_mm: float
+) -> set[tuple[tuple[float, float], tuple[float, float]]]:
+    """Gli spigoli di griglia **percorsi**, non i nodi toccati.
+
+    E' la distinzione fra un incrocio e una sovrapposizione: due tratte che si
+    tagliano condividono un nodo, due tratte che corrono insieme condividono
+    degli spigoli.
+    """
+    walked: set[tuple[tuple[float, float], tuple[float, float]]] = set()
+    for before, after in _stretches(polyline):
+        steps = _steps(before, after, grid_mm)
+        for index in range(steps):
+            first = _walk(before, after, index / steps)
+            second = _walk(before, after, (index + 1) / steps)
+            walked.add((first, second) if first <= second else (second, first))
+    return walked
+
+
+def _run_polylines(sheet: SheetGeometry) -> list[tuple[int, RoutedTrunk, list[Point]]]:
+    """Ogni spezzata con la tratta cui appartiene, in ordine di dichiarazione."""
+    return [
+        (index, route, segment)
+        for index, route in enumerate(sheet.routes)
+        for segment in route.segments
+    ]
+
+
+def _run_name(route: RoutedTrunk) -> str:
+    return ", ".join(route.connection_ids) if route.connection_ids else route.network_id
+
+
+def _run_ids(sheet: SheetGeometry, route: RoutedTrunk) -> list[str]:
+    return [sheet.sheet_id, *route.connection_ids]
+
+
+def _distance_to_box(
+    before: Point, after: Point, box: tuple[float, float, float, float]
+) -> float:
+    """Distanza fra un tratto ortogonale e un riquadro, zero se lo tocca."""
+    left, top, right, bottom = box
+    x_low, x_high = min(before.x_mm, after.x_mm), max(before.x_mm, after.x_mm)
+    y_low, y_high = min(before.y_mm, after.y_mm), max(before.y_mm, after.y_mm)
+    gap_x = max(left - x_high, x_low - right, 0.0)
+    gap_y = max(top - y_high, y_low - bottom, 0.0)
+    return math.hypot(gap_x, gap_y)
+
+
+def _attaches_to(polyline: list[Point], box: tuple[float, float, float, float]) -> bool:
+    """Vero se un capo della spezzata cade sul riquadro: la tratta ci si attacca.
+
+    La geometria non porta il legame fra tratta e componente — porta gli
+    identificativi delle connessioni, che sono un altro spazio di nomi — quindi
+    l'attacco si riconosce dove si vede: un capo di spezzata sul bordo o dentro
+    il riquadro e' una porta.
+    """
+    left, top, right, bottom = box
+    for point in (polyline[0], polyline[-1]):
+        if (
+            left - TOLERANCE_MM <= point.x_mm <= right + TOLERANCE_MM
+            and top - TOLERANCE_MM <= point.y_mm <= bottom + TOLERANCE_MM
+        ):
+            return True
+    return False
+
+
+def _clearance_severity(distance_mm: float, minimum_mm: float) -> IssueSeverity | None:
+    """Sotto la distanza minima si blocca, esattamente sulla soglia si avvisa."""
+    if distance_mm < minimum_mm - TOLERANCE_MM:
+        return IssueSeverity.BLOCKING
+    if distance_mm <= minimum_mm + TOLERANCE_MM:
+        return IssueSeverity.WARNING
+    return None
+
+
+def _parallel_distance(
+    first: tuple[Point, Point], second: tuple[Point, Point]
+) -> float | None:
+    """Distanza fra due tratti paralleli che corrono affiancati, altrimenti niente.
+
+    Due tratti sono affiancati se hanno la stessa giacitura e le loro proiezioni
+    sull'asse comune si sovrappongono per un tratto vero: due tubi allineati che
+    si toccano in un punto non corrono affiancati, si incontrano.
+    """
+    horizontal = (
+        abs(first[0].y_mm - first[1].y_mm) <= TOLERANCE_MM
+        and abs(second[0].y_mm - second[1].y_mm) <= TOLERANCE_MM
+    )
+    vertical = (
+        abs(first[0].x_mm - first[1].x_mm) <= TOLERANCE_MM
+        and abs(second[0].x_mm - second[1].x_mm) <= TOLERANCE_MM
+    )
+    if horizontal:
+        along = (first[0].x_mm, first[1].x_mm, second[0].x_mm, second[1].x_mm)
+        across = abs(first[0].y_mm - second[0].y_mm)
+    elif vertical:
+        along = (first[0].y_mm, first[1].y_mm, second[0].y_mm, second[1].y_mm)
+        across = abs(first[0].x_mm - second[0].x_mm)
+    else:
+        return None
+    shared = min(max(along[0], along[1]), max(along[2], along[3])) - max(
+        min(along[0], along[1]), min(along[2], along[3])
+    )
+    if shared <= TOLERANCE_MM:
+        return None
+    return across
+
+
+def _ink_box(sheet: SheetGeometry) -> Rect | None:
+    """L'ingombro di cio' che e' disegnato: simboli e tubazioni.
+
+    Legenda e fluidi vivono nella propria fascia, fuori dall'area di disegno per
+    costruzione, e non entrano nel conto: il riempimento che la carta chiede e'
+    quello del disegno, non quello del foglio.
+    """
+    xs: list[float] = []
+    ys: list[float] = []
+    for symbol in sheet.symbols:
+        xs += [symbol.origin.x_mm, symbol.right_mm]
+        ys += [symbol.origin.y_mm, symbol.bottom_mm]
+    for route in sheet.routes:
+        for segment in route.segments:
+            xs += [point.x_mm for point in segment]
+            ys += [point.y_mm for point in segment]
+    if not xs or not ys:
+        return None
+    width = max(max(xs) - min(xs), TOLERANCE_MM)
+    height = max(max(ys) - min(ys), TOLERANCE_MM)
+    return Rect(x_mm=min(xs), y_mm=min(ys), width_mm=width, height_mm=height)
+
+
+def _fill_ratio(sheet: SheetGeometry, area: Rect) -> float:
+    box = _ink_box(sheet)
+    if box is None:
+        return 0.0
+    return (box.width_mm * box.height_mm) / (area.width_mm * area.height_mm)
+
+
+def _quadrants(area: Rect) -> list[Rect]:
+    half_width = area.width_mm / 2.0
+    half_height = area.height_mm / 2.0
+    return [
+        Rect(x_mm=x_mm, y_mm=y_mm, width_mm=half_width, height_mm=half_height)
+        for y_mm in (area.y_mm, area.y_mm + half_height)
+        for x_mm in (area.x_mm, area.x_mm + half_width)
+    ]
+
+
+def _clipped_length_mm(before: Point, after: Point, area: Rect) -> float:
+    """Quanto di un tratto ortogonale cade dentro un rettangolo."""
+    if abs(before.y_mm - after.y_mm) <= TOLERANCE_MM:
+        if not area.y_mm - TOLERANCE_MM <= before.y_mm <= area.bottom_mm + TOLERANCE_MM:
+            return 0.0
+        low, high = min(before.x_mm, after.x_mm), max(before.x_mm, after.x_mm)
+        return max(min(high, area.right_mm) - max(low, area.x_mm), 0.0)
+    if abs(before.x_mm - after.x_mm) <= TOLERANCE_MM:
+        if not area.x_mm - TOLERANCE_MM <= before.x_mm <= area.right_mm + TOLERANCE_MM:
+            return 0.0
+        low, high = min(before.y_mm, after.y_mm), max(before.y_mm, after.y_mm)
+        return max(min(high, area.bottom_mm) - max(low, area.y_mm), 0.0)
+    return 0.0
+
+
+def _ink_area_mm2(sheet: SheetGeometry, area: Rect, line_mm: float) -> float:
+    """L'inchiostro dentro un rettangolo: riquadri dei simboli piu' tratto delle linee."""
+    total = 0.0
+    for symbol in sheet.symbols:
+        left, top, right, bottom = _box(symbol)
+        width = max(min(right, area.right_mm) - max(left, area.x_mm), 0.0)
+        height = max(min(bottom, area.bottom_mm) - max(top, area.y_mm), 0.0)
+        total += width * height
+    for route in sheet.routes:
+        for segment in route.segments:
+            for before, after in _moves(segment):
+                total += _clipped_length_mm(before, after, area) * line_mm
+    return total
+
+
+def bends_per_run(drawing: DrawingGeometry) -> list[ValidationIssue]:
+    """B4 — una linea cambia direzione solo per una ragione.
+
+    Si conta per **tratta**, non per spezzata: una tratta interrotta dai propri
+    accessori in linea resta una tratta sola, e le sue pieghe si sommano.
+    """
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        for route in sheet.routes:
+            total = sum(_bends(segment) for segment in route.segments)
+            if total <= BENDS_PER_RUN_MAX:
+                continue
+            findings.append(
+                _finding(
+                    "RUN_WITH_TOO_MANY_BENDS",
+                    IssueSeverity.WARNING,
+                    f"la tratta {_run_name(route)} cambia direzione {total} volte, "
+                    f"oltre le {BENDS_PER_RUN_MAX} pieghe che bastano a unire due "
+                    f"porte: la piega in piu' la chiede un ostacolo, e l'ostacolo si "
+                    f"sposta (B4, D-078)",
+                    _run_ids(sheet, route),
+                )
+            )
+    return findings
+
+
+def crossings(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
+    """B3 — gli incroci sono pochi: si contano i nodi condivisi da tratte diverse."""
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        walked = [
+            (index, _cells(segment, frame.standard.grid_mm))
+            for index, _, segment in _run_polylines(sheet)
+        ]
+        total = sum(
+            len(walked[first][1] & walked[second][1])
+            for first in range(len(walked))
+            for second in range(first + 1, len(walked))
+            if walked[first][0] != walked[second][0]
+        )
+        if total <= CROSSINGS_MAX:
+            continue
+        findings.append(
+            _finding(
+                "TOO_MANY_CROSSINGS",
+                IssueSeverity.WARNING,
+                f"la tavola {sheet.sheet_id} porta {total} nodi condivisi fra tratte "
+                f"diverse: su una centrale semplice gli incroci stanno sulle dita di "
+                f"una mano, cioe' {CROSSINGS_MAX} (B3, D-060)",
+                [sheet.sheet_id],
+            )
+        )
+    return findings
+
+
+def longitudinal_overlap(
+    drawing: DrawingGeometry, frame: SheetFrame
+) -> list[ValidationIssue]:
+    """B2, D-062 — vietato sovrapporre longitudinalmente: divieto, non costo.
+
+    Si misurano gli **spigoli** percorsi in comune, non i nodi toccati: due
+    tratte che si tagliano condividono un nodo e non si sovrappongono. L'unica
+    eccezione ammessa e' quella che D-062 dichiara — un solo passo di griglia
+    contro una porta condivisa dalle due tratte, che sulla tavola e' una
+    derivazione.
+    """
+    findings: list[ValidationIssue] = []
+    grid_mm = frame.standard.grid_mm
+    for sheet in drawing.sheets:
+        walked = [
+            (index, route, segment, _edges(segment, grid_mm))
+            for index, route, segment in _run_polylines(sheet)
+        ]
+        for first in range(len(walked)):
+            for second in range(first + 1, len(walked)):
+                one, other = walked[first], walked[second]
+                if one[0] == other[0]:
+                    continue
+                shared = one[3] & other[3]
+                if len(shared) <= SHARED_EDGES_MAX:
+                    continue
+                if len(shared) <= SHARED_EDGES_AT_A_SHARED_PORT and _at_a_shared_port(
+                    one[2], other[2], shared
+                ):
+                    continue
+                findings.append(
+                    _finding(
+                        "RUNS_OVERLAP_LENGTHWISE",
+                        IssueSeverity.BLOCKING,
+                        f"le tratte {_run_name(one[1])} e {_run_name(other[1])} corrono "
+                        f"sovrapposte per {len(shared) * grid_mm:g} mm: due linee sullo "
+                        f"stesso tratto sono una linea sola (B2, D-062)",
+                        sorted({*_run_ids(sheet, one[1]), *_run_ids(sheet, other[1])}),
+                    )
+                )
+    return findings
+
+
+def _at_a_shared_port(
+    first: list[Point],
+    second: list[Point],
+    shared: set[tuple[tuple[float, float], tuple[float, float]]],
+) -> bool:
+    """L'eccezione di D-062: lo spigolo comune tocca una porta capo di entrambe."""
+    ends = {
+        (round(point.x_mm, GRID_ROUNDING_DIGITS), round(point.y_mm, GRID_ROUNDING_DIGITS))
+        for point in (first[0], first[-1])
+    } & {
+        (round(point.x_mm, GRID_ROUNDING_DIGITS), round(point.y_mm, GRID_ROUNDING_DIGITS))
+        for point in (second[0], second[-1])
+    }
+    return any(edge[0] in ends or edge[1] in ends for edge in shared)
+
+
+def clearances(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
+    """B5, B6 — le linee non sfiorano i simboli e non si affiancano troppo.
+
+    Sotto la distanza minima dello standard grafico si blocca; esattamente sulla
+    soglia si avvisa, perche' un valore che tocca il limite lo supera al primo
+    ritocco. La distanza zero fra due paralleli non si conta qui: quella e' una
+    sovrapposizione, e la misura sua e' `longitudinal_overlap`.
+    """
+    findings: list[ValidationIssue] = []
+    minimum = frame.standard.min_clearance_mm
+    for sheet in drawing.sheets:
+        for _, route, segment in _run_polylines(sheet):
+            for symbol in sheet.symbols:
+                box = _box(symbol)
+                if _attaches_to(segment, box):
+                    continue
+                moves = _moves(segment)
+                if not moves:
+                    continue
+                distance = min(_distance_to_box(before, after, box) for before, after in moves)
+                severity = _clearance_severity(distance, minimum)
+                if severity is None:
+                    continue
+                findings.append(
+                    _finding(
+                        "RUN_TOO_CLOSE_TO_A_SYMBOL",
+                        severity,
+                        f"la tratta {_run_name(route)} passa a {distance:g} mm dal "
+                        f"simbolo {symbol.component_id}, cui non si attacca: la "
+                        f"distanza di rispetto e' {minimum:g} mm (B5)",
+                        sorted({*_run_ids(sheet, route), symbol.component_id}),
+                    )
+                )
+
+        moves = [
+            (index, route, move)
+            for index, route, segment in _run_polylines(sheet)
+            for move in _moves(segment)
+        ]
+        for first in range(len(moves)):
+            for second in range(first + 1, len(moves)):
+                one, other = moves[first], moves[second]
+                if one[0] == other[0]:
+                    continue
+                distance = _parallel_distance(one[2], other[2])
+                if distance is None or distance <= TOLERANCE_MM:
+                    continue
+                severity = _clearance_severity(distance, minimum)
+                if severity is None:
+                    continue
+                findings.append(
+                    _finding(
+                        "PARALLEL_RUNS_TOO_CLOSE",
+                        severity,
+                        f"le tratte {_run_name(one[1])} e {_run_name(other[1])} corrono "
+                        f"affiancate a {distance:g} mm: la distanza di rispetto e' "
+                        f"{minimum:g} mm (B6)",
+                        sorted({*_run_ids(sheet, one[1]), *_run_ids(sheet, other[1])}),
+                    )
+                )
+    return findings
+
+
+def u_turns(drawing: DrawingGeometry) -> list[ValidationIssue]:
+    """B12, D-078 — nessuna andata e ritorno per raggiungere un pezzo.
+
+    Il capo di una spezzata e' una porta, e l'ultimo tratto dice da che parte le
+    si arriva. Se la spezzata era gia' stata **oltre** quella porta lungo l'asse
+    di arrivo, l'ha superata e ci e' tornata indietro: si sposta l'oggetto, non
+    si allunga la linea. La misura vale su entrambi i capi, perche' il verso in
+    cui una spezzata e' scritta e' una convenzione dell'instradatore e il
+    difetto non lo e'.
+    """
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        for _, route, segment in _run_polylines(sheet):
+            overshoot = max(
+                _overshoot_mm(segment), _overshoot_mm(list(reversed(segment)))
+            )
+            if overshoot <= U_TURN_OVERSHOOT_MAX_MM + TOLERANCE_MM:
+                continue
+            findings.append(
+                _finding(
+                    "RUN_OVERSHOOTS_ITS_PORT",
+                    IssueSeverity.BLOCKING,
+                    f"la tratta {_run_name(route)} supera di {overshoot:g} mm la "
+                    f"propria porta di arrivo e ci torna indietro: si sposta "
+                    f"l'oggetto, non si allunga la linea (B12, D-078)",
+                    _run_ids(sheet, route),
+                )
+            )
+    return findings
+
+
+def _overshoot_mm(polyline: list[Point]) -> float:
+    """Di quanto la spezzata ha superato il proprio ultimo punto, lungo l'asse di arrivo."""
+    moves = _moves(polyline)
+    if not moves:
+        return 0.0
+    goal = polyline[-1]
+    before, after = moves[-1]
+    horizontal = abs(after.y_mm - before.y_mm) <= TOLERANCE_MM
+    if horizontal:
+        direction = _sign(after.x_mm - before.x_mm)
+        return max(
+            (point.x_mm - goal.x_mm) * direction for point in polyline
+        )
+    direction = _sign(after.y_mm - before.y_mm)
+    return max((point.y_mm - goal.y_mm) * direction for point in polyline)
+
+
+def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
+    """D2, D3, D-075 — un richiamo e' obliquo a 45 gradi, mai ortogonale.
+
+    Le tubazioni sono sempre ortogonali (D-041, B1): un richiamo ortogonale ha
+    la stessa forma e la stessa giacitura di un tubo e si legge come un tubo. La
+    diagonale risolve alla radice, perche' nessuna tubazione e' mai obliqua.
+    Un'etichetta senza richiamo non e' misurata: e' il caso giusto, la scritta
+    piccola accanto al proprio pezzo (D1).
+    """
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        for label in sheet.labels:
+            if label.leader_from is None:
+                continue
+            moves = _moves([label.leader_from, label.anchor])
+            if not moves:
+                continue
+            angles = sorted(
+                {
+                    round(
+                        math.degrees(
+                            math.atan2(
+                                abs(after.y_mm - before.y_mm), abs(after.x_mm - before.x_mm)
+                            )
+                        )
+                    )
+                    for before, after in moves
+                }
+            )
+            if not all(angle in (0, 90) for angle in angles):
+                continue
+            drawn = ", ".join(f"{angle}" for angle in angles)
+            findings.append(
+                _finding(
+                    "ORTHOGONAL_LABEL_LEADER",
+                    IssueSeverity.BLOCKING,
+                    f"il richiamo dell'etichetta {label.id} e' tutto ortogonale "
+                    f"(segmenti a {drawn} gradi): un richiamo si disegna obliquo a 45 "
+                    f"gradi, o si legge come un altro tubo (D2, D3, D-075)",
+                    [sheet.sheet_id, label.id],
+                )
+            )
+    return findings
+
+
+def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
+    """A1, A3 — il foglio e' pieno in modo uniforme, il disegno non sta su un lato.
+
+    Due numeri: quanto l'ingombro dell'inchiostro copre dell'area di disegno, e
+    quanto il quadrante piu' pieno pesa piu' del piu' vuoto. Il primo dice se la
+    tavola e' una fascia; il secondo se e' appoggiata a un bordo.
+    """
+    findings: list[ValidationIssue] = []
+    area = frame.drawing_rect_mm
+    line_mm = frame.standard.line_medium_mm
+    for sheet in drawing.sheets:
+        ratio = _fill_ratio(sheet, area)
+        if ratio < SHEET_FILL_MIN_RATIO:
+            findings.append(
+                _finding(
+                    "SHEET_BARELY_FILLED",
+                    IssueSeverity.WARNING,
+                    f"la tavola {sheet.sheet_id}: il foglio e' pieno solo al "
+                    f"{ratio * 100:.0f}%, sotto il {SHEET_FILL_MIN_RATIO * 100:.0f}% "
+                    f"dichiarato: il disegno e' una fascia, non una tavola (A1)",
+                    [sheet.sheet_id],
+                )
+            )
+        areas = [
+            _ink_area_mm2(sheet, quadrant, line_mm) for quadrant in _quadrants(area)
+        ]
+        if max(areas) <= TOLERANCE_MM:
+            continue
+        empty = [
+            name for name, value in zip(QUADRANT_NAMES, areas, strict=True)
+            if value <= TOLERANCE_MM
+        ]
+        if empty:
+            findings.append(
+                _finding(
+                    "DRAWING_ALL_ON_ONE_SIDE",
+                    IssueSeverity.WARNING,
+                    f"la tavola {sheet.sheet_id}: il disegno e' tutto su un lato, "
+                    f"{len(empty)} quadranti su 4 non portano inchiostro "
+                    f"({', '.join(empty)}) (A1, A3)",
+                    [sheet.sheet_id],
+                )
+            )
+            continue
+        imbalance = max(areas) / min(areas)
+        if imbalance > QUADRANT_IMBALANCE_MAX:
+            findings.append(
+                _finding(
+                    "DRAWING_ALL_ON_ONE_SIDE",
+                    IssueSeverity.WARNING,
+                    f"la tavola {sheet.sheet_id}: il disegno e' tutto su un lato, il "
+                    f"quadrante piu' pieno porta {imbalance:.1f} volte l'inchiostro "
+                    f"del piu' vuoto, oltre il limite di {QUADRANT_IMBALANCE_MAX:g} "
+                    f"(A1, A3)",
+                    [sheet.sheet_id],
+                )
+            )
+    return findings
+
+
+def next_sheet_fill(
+    drawing: DrawingGeometry, frame: SheetFrame
+) -> list[ValidationIssue]:
+    """A2, D-072 — una tavola successiva esiste solo se porta contenuto vero.
+
+    «Non ha senso separare in due fogli con il secondo completamente vuoto.» La
+    prima tavola non e' misurata qui: una tavola sola non e' una divisione, e il
+    suo riempimento lo dice `sheet_fill` come avviso.
+    """
+    findings: list[ValidationIssue] = []
+    area = frame.drawing_rect_mm
+    for sheet in drawing.sheets[1:]:
+        ratio = _fill_ratio(sheet, area)
+        if ratio >= NEXT_SHEET_FILL_MIN_RATIO:
+            continue
+        findings.append(
+            _finding(
+                "CONTINUATION_SHEET_TOO_EMPTY",
+                IssueSeverity.BLOCKING,
+                f"la tavola {sheet.sheet_id} e' piena solo al {ratio * 100:.0f}%, sotto "
+                f"il {NEXT_SHEET_FILL_MIN_RATIO * 100:.0f}% dichiarato: si divide solo "
+                f"se la tavola successiva e' abbastanza piena, altrimenti si ottimizza "
+                f"quella che c'e' (A2, D-072)",
+                [sheet.sheet_id],
+            )
+        )
+    return findings
+
+
+def symbol_sources(
+    drawing: DrawingGeometry, catalog: ComponentRegistry
+) -> list[ValidationIssue]:
+    """C8, D-081, D-083 — nessun simbolo senza una fonte vera.
+
+    La convenzione grafica interna non e' una fonte: e' il nome che si da' a un
+    simbolo inventato. Un simbolo che la cita torna a essere una domanda aperta
+    al PM, non un elaborato da consegnare.
+    """
+    used: dict[str, set[str]] = {}
+    for sheet in drawing.sheets:
+        for symbol in sheet.symbols:
+            used.setdefault(symbol.symbol_id, set()).add(symbol.component_id)
+    by_symbol = {item.symbol_id: item for item in catalog.all()}
+
+    findings: list[ValidationIssue] = []
+    for symbol_id in sorted(used):
+        components = sorted(used[symbol_id])
+        entities = [symbol_id, *components]
+        definition = by_symbol.get(symbol_id)
+        if definition is None:
+            findings.append(
+                _finding(
+                    "SYMBOL_SOURCE_NOT_VERIFIABLE",
+                    IssueSeverity.BLOCKING,
+                    f"il simbolo {symbol_id}, usato da {len(components)} componenti, non "
+                    f"si trova nel catalogo: la sua fonte non e' verificabile (D-083)",
+                    entities,
+                )
+            )
+            continue
+        try:
+            source = catalog.resolve(definition.id).symbol.manifest.source
+        except CatalogError as exc:
+            findings.append(
+                _finding(
+                    "SYMBOL_SOURCE_NOT_VERIFIABLE",
+                    IssueSeverity.BLOCKING,
+                    f"il simbolo {symbol_id}, usato da {len(components)} componenti, non "
+                    f"si risolve sulla libreria dei simboli: {exc} (D-083)",
+                    entities,
+                )
+            )
+            continue
+        if not source.strip():
+            findings.append(
+                _finding(
+                    "SYMBOL_WITHOUT_A_DECLARED_SOURCE",
+                    IssueSeverity.BLOCKING,
+                    f"il simbolo {symbol_id}, usato da {len(components)} componenti, non "
+                    f"dichiara nessuna fonte: la mancanza di fonte e' una domanda al "
+                    f"PM, non una licenza (D-083)",
+                    entities,
+                )
+            )
+        elif source.strip() == INVENTED_SOURCE:
+            findings.append(
+                _finding(
+                    "SYMBOL_FROM_AN_INVENTED_CONVENTION",
+                    IssueSeverity.BLOCKING,
+                    f"il simbolo {symbol_id}, usato da {len(components)} componenti, cita "
+                    f"{INVENTED_SOURCE}: la convenzione interna non e' una fonte, e' il "
+                    f"nome di un simbolo inventato (C8, D-081, D-083)",
+                    entities,
+                )
+            )
+    return findings
+
+
+def preflight_drawing(
+    drawing: DrawingGeometry, frame: SheetFrame, catalog: ComponentRegistry
+) -> list[ValidationIssue]:
+    """Tutte le misure di qualita', nell'ordine dichiarato da `MEASURE_ORDER`.
+
+    L'ordine e' parte dell'esito: chi legge il rapporto trova prima le linee,
+    poi i testi, poi il foglio, infine le fonti — e lo trova sempre nello stesso
+    posto, quale che sia la tavola.
+    """
+    return [
+        *bends_per_run(drawing),
+        *crossings(drawing, frame),
+        *longitudinal_overlap(drawing, frame),
+        *clearances(drawing, frame),
+        *u_turns(drawing),
+        *orthogonality_of_leaders(drawing),
+        *sheet_fill(drawing, frame),
+        *next_sheet_fill(drawing, frame),
+        *symbol_sources(drawing, catalog),
+    ]

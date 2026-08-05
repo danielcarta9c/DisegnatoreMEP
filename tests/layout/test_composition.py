@@ -6,6 +6,7 @@ disposizione atteso. Queste prove fissano cio' che ne e' stato ricavato, cosi'
 che il motore non possa tornare a impilare i componenti in colonne.
 """
 
+from functools import cache
 from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -28,7 +29,10 @@ CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
 
 
+@cache
 def sheet() -> SheetGeometry:
+    """Composta una volta per modulo: il ciclo di miglioramento reinstrada
+    decine di volte, e ogni prova la leggerebbe identica."""
     registry = ComponentRegistry.from_directory(
         CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
     )
@@ -83,7 +87,10 @@ def test_an_inline_accessory_rides_its_own_run() -> None:
     l'instradamento provava le corsie basse per prime. Quella preferenza e'
     stata tolta: comprava pieghe per soddisfare una convenzione, e il PM ha
     messo le pieghe al primo posto. Cio' che resta garantito e' che
-    l'accessorio stia sopra la linea di terra e sul proprio percorso.
+    l'accessorio stia sopra la linea di terra e sul proprio percorso — nella
+    giacitura del tratto su cui cade (D-027): da quando gli accessori seguono
+    l'ordine della catena, un filtro puo' legittimamente stare sul tratto
+    verticale subito a valle della propria valvola.
     """
     drawn = sheet()
     strainer = next(item for item in drawn.symbols if item.component_id == "strainer")
@@ -93,14 +100,20 @@ def test_an_inline_accessory_rides_its_own_run() -> None:
     centre_y = (strainer.origin.y_mm + strainer.bottom_mm) / 2
     # Il simbolo sta **dentro l'interruzione** che ha aperto, quindi non tocca
     # nessun tratto disegnato: quello che deve valere e' che i due monconi lo
-    # prendano in mezzo, allineati con lui.
+    # prendano in mezzo, allineati con lui, qualunque sia la giacitura.
     run = next(item for item in drawn.routes if "p2" in item.connection_ids)
     ends = [segment[-1] for segment in run.segments] + [
         segment[0] for segment in run.segments
     ]
-    aligned = [item for item in ends if abs(item.y_mm - centre_y) <= 1e-9]
-    assert any(item.x_mm < centre_x for item in aligned), aligned
-    assert any(item.x_mm > centre_x for item in aligned), aligned
+    on_row = [item for item in ends if abs(item.y_mm - centre_y) <= 1e-9]
+    on_column = [item for item in ends if abs(item.x_mm - centre_x) <= 1e-9]
+    rides_horizontally = any(item.x_mm < centre_x for item in on_row) and any(
+        item.x_mm > centre_x for item in on_row
+    )
+    rides_vertically = any(item.y_mm < centre_y for item in on_column) and any(
+        item.y_mm > centre_y for item in on_column
+    )
+    assert rides_horizontally or rides_vertically, ends
 
 
 def test_the_size_hierarchy_reads_like_the_reference() -> None:
