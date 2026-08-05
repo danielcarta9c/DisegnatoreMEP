@@ -31,8 +31,8 @@ SOURCE = "CONV-FOUNDATION"
 MAINTAINABLE = "maintainable"
 FOULS_CIRCUIT = "fouls_circuit"
 NEEDS_DEBRIS_PROTECTION = "needs_debris_protection"
-OUTGASSES = "outgasses"
-NEEDS_RELIEF = "needs_relief"
+PRODUCES_AIR = "produces_air"
+NEEDS_OVERPRESSURE_PROTECTION = "needs_overpressure_protection"
 HOLDS_ITS_OWN_VOLUME = "holds_its_own_volume"
 SHUTOFF_ORDINARY = "shutoff_ordinary"
 INLINE = "attachment_inline"
@@ -96,8 +96,8 @@ DEFINITIONS: list[dict[str, Any]] = [
         [
             MAINTAINABLE,
             NEEDS_DEBRIS_PROTECTION,
-            OUTGASSES,
-            NEEDS_RELIEF,
+            PRODUCES_AIR,
+            NEEDS_OVERPRESSURE_PROTECTION,
             SHUTOFF_ORDINARY,
             INLINE,
         ],
@@ -137,7 +137,7 @@ DEFINITIONS: list[dict[str, Any]] = [
         ["dhw_storage"],
         [
             MAINTAINABLE,
-            NEEDS_RELIEF,
+            NEEDS_OVERPRESSURE_PROTECTION,
             HOLDS_ITS_OWN_VOLUME,
             SHUTOFF_ORDINARY,
             INLINE,

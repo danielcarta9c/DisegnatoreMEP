@@ -31,8 +31,8 @@ def port(
 
 MAINTAINABLE = "maintainable"
 NEEDS_DEBRIS_PROTECTION = "needs_debris_protection"
-OUTGASSES = "outgasses"
-NEEDS_RELIEF = "needs_relief"
+PRODUCES_AIR = "produces_air"
+NEEDS_OVERPRESSURE_PROTECTION = "needs_overpressure_protection"
 SHUTOFF_ORDINARY = "shutoff_ordinary"
 INLINE = "attachment_inline"
 
@@ -71,8 +71,8 @@ DEFINITIONS = [
         [
             MAINTAINABLE,
             NEEDS_DEBRIS_PROTECTION,
-            OUTGASSES,
-            NEEDS_RELIEF,
+            PRODUCES_AIR,
+            NEEDS_OVERPRESSURE_PROTECTION,
             *ORDINARY_INLINE,
         ],
         [

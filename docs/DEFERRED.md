@@ -96,13 +96,23 @@ sbloccano nulla.
 - **La rotazione di un componente posato è sempre 0.** Gli accessori in linea ruotano già
   seguendo la giacitura della propria tratta; un componente posato non viene mai orientato
   verso la fascia adiacente. È un grado di libertà in più per la regola di D-060.
-- **Due voci di legenda condividono lo stesso azzurro.** Dal 6 agosto 2026 l'acqua fredda
-  sanitaria ha finalmente il proprio stile — prima cadeva sul nero continuo delle reti senza
-  codifica — ma il colore che le tocca in andata è lo stesso con cui la tavola disegna il
-  *ritorno* dell'acqua calda sanitaria, perché il colore del ritorno si ricava schiarendo
-  quello della mandata. Sulla stessa tavola le due righe di legenda si distinguono solo per
-  la scritta. Si chiude scegliendo la coppia di colori del sanitario: è una decisione
-  grafica (D-057), non un difetto di calcolo.
+- **La legenda promette due colori che sulla tavola non ci sono.** Dal 6 agosto 2026
+  l'acqua fredda sanitaria ha finalmente il proprio stile — prima cadeva sul nero continuo
+  delle reti senza codifica — ma **la correzione è a metà**. Il colore del ritorno si ricava
+  schiarendo quello della mandata, tramite una tabella le cui chiavi sono i colori di
+  mandata: l'azzurro nuovo non è una di quelle chiavi, quindi ogni tratta di acqua fredda
+  classificata come ritorno cade sul grigio di ripiego. Sull'impianto di prova l'unica
+  tratta di acqua fredda è classificata così, e il risultato è che **l'azzurro che la
+  legenda mostra per l'andata non compare su nessuna linea**. Lo stesso vale per il ritorno
+  dell'acqua calda sanitaria, che nessuna tratta percorre: **due righe di legenda su sei
+  descrivono qualcosa che sul foglio non esiste**. Si chiude in due mosse, entrambe di P6 o
+  P7: dare al sanitario una coppia di colori propria (decisione grafica, D-057) e costruire
+  la legenda dai soli servizi che la tavola percorre davvero.
+- **Lo stesso azzurro tocca a due voci diverse.** L'acqua fredda in andata e l'acqua calda
+  sanitaria in ritorno ricevono lo stesso colore. Non è vero, come questa riga diceva prima,
+  che le due si distinguano *solo* per la scritta: hanno anche un tratto diverso, una
+  tratteggiata e una continua. Resta però una coincidenza di colore da togliere, e si toglie
+  con la stessa decisione grafica della riga precedente.
 - **La corsia di mandata non è garantita sopra quella di ritorno** dove due tratte devono
   scavalcare lo stesso ostacolo. Imporlo costerebbe pieghe. La convenzione resta garantita
   sui simboli e dai colori (D-057).
@@ -172,6 +182,19 @@ sbloccano nulla.
   decide dove si può tagliare: nel caso di accettazione l'unico taglio possibile è fra la
   distribuzione e le zone. Va tolto insieme al disegno delle tratte che attraversano
   (§4), perché sono lo stesso problema.
+- **La miscelatrice termostatica ha due porte, e portano lo stesso fluido.** Con due
+  attacchi di acqua calda non miscela niente: una miscelatrice vuole il caldo, il freddo e
+  l'uscita miscelata, cioè tre porte su due fluidi diversi. Finché il catalogo la descrive
+  così, la regola che `docs/SKILL.md` enuncia — «miscela caldo e freddo, quindi vuole
+  **entrambe** le alimentazioni» — non è esprimibile, e la miscelatrice resta un accessorio
+  in linea sul solo circuito caldo. Lavoro di P2 sul catalogo, non del motore.
+- **Il gruppo di riempimento ha entrambe le porte sull'acqua di riscaldamento**, quindi la
+  cosa che lo definisce — è una **derivazione dall'acqua di rete**, non un organo di
+  passaggio — non è scrivibile. Il catalogo dichiara già che sta su uno stacco, ma le sue
+  porte dicono un'altra cosa. Si chiude insieme al debito degli stacchi (§6, prima riga).
+- **Il riduttore di pressione non dichiara «va protetto dai residui»**, mentre il filtro a
+  monte del riduttore è pratica corrente e lo protegge dalle impurità della rete. È una
+  dichiarazione additiva: si aggiunge in P2 senza toccare nulla di quanto già scritto.
 - **Le regole non propongono su un attacco libero**, solo in linea su una tubazione
   esistente: un componente senza tubazione non avrebbe dove posarsi, e il modello non
   contiene coordinate con cui inventarne una.

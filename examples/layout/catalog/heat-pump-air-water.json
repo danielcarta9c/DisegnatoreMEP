@@ -8,8 +8,8 @@
   "traits": [
     "maintainable",
     "needs_debris_protection",
-    "outgasses",
-    "needs_relief",
+    "produces_air",
+    "needs_overpressure_protection",
     "shutoff_ordinary",
     "attachment_inline"
   ],

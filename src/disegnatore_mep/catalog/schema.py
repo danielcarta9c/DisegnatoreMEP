@@ -57,10 +57,10 @@ class ComponentTrait(StrEnum):
     NEEDS_DEBRIS_PROTECTION = "needs_debris_protection"
     """Ha organi che i residui rovinano: va protetto su cio' che gli entra."""
 
-    OUTGASSES = "outgasses"
+    PRODUCES_AIR = "produces_air"
     """Scalda il fluido e quindi ne libera l'aria che teneva disciolta."""
 
-    NEEDS_RELIEF = "needs_relief"
+    NEEDS_OVERPRESSURE_PROTECTION = "needs_overpressure_protection"
     """Chiude dentro di se' un volume di fluido che, scaldandosi, spinge oltre
     il limite ammesso: gli serve una via che si apra da sola."""
 

@@ -66,10 +66,11 @@ la regola del defangatore dovrebbe dire *«davanti alla pompa di calore»* — c
 pezzo, che è la cosa che stiamo togliendo di mezzo. Con entrambe: *dove qualcosa sporca
 l'acqua, ciò che i residui rovinano va protetto su ciò che gli entra.*
 
-**«Ha un volume proprio».** L'avevi chiesta tu — *«contiene un fluido che va potuto
-svuotare»* — ma non era nel contratto scritto, quindi è un'aggiunta e la contiamo come tale.
-Serve alla regola dello scarico: senza, quella regola dovrebbe nominare il volano e il
-bollitore uno per uno.
+**«Ha un volume proprio».** È una proposta nostra: nel contratto scritto non c'era, e non
+risulta che tu l'abbia chiesta. La aggiungiamo perché senza di lei la regola dello scarico
+dovrebbe nominare il volano e il bollitore uno per uno, e perché è il fatto che distingue un
+serbatoio da un tratto di tubo — cioè quello che serve a decidere che cosa va potuto
+svuotare per conto proprio. Se non la vuoi, la regola dello scarico resta particolare.
 
 In tutto sono undici caselle, quelle della tabella, e nient'altro. Una proprietà che nessun
 componente dichiara viene rifiutata da un controllo automatico, così l'elenco non può
@@ -80,7 +81,10 @@ gonfiarsi di voci inutili.
 **La valvola di intercettazione non dichiara di smontarsi in esercizio.** Si sostituisce,
 certo, ma a tratta già chiusa: non chiede altre due valvole per essere tolta — e se lo
 chiedesse, quelle due ne vorrebbero altre quattro, senza fine. Stesso ragionamento per la
-valvola di ritegno.
+valvola di ritegno. **La deviatrice e la miscelatrice invece sì**, e la differenza non è il
+fatto di essere valvole: quelle due hanno un motore o una taratura che si guasta e si regge
+a impianto in funzione, e per metterci le mani bisogna chiudere l'acqua attorno — esattamente
+come per un filtro. Un rubinetto e un ritegno, no: si toccano quando la tratta è già chiusa.
 
 **Un ventilatore su canale e un'unità VRV non si smontano in esercizio.** Si sostituiscono a
 macchina ferma, non chiudendo un rubinetto: l'aria e il gas frigorifero non si intercettano

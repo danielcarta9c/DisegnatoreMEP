@@ -6,7 +6,12 @@ Quattro cose vanno presidiate qui, e nessuna e' un numero:
    che regge D-069 e D-090 dal lato del catalogo. Non basta rifiutare la
    coincidenza letterale con un identificativo — `expansion_vessel` non e'
    `expansion-connection` e passerebbe: il confronto e' **parola per parola**,
-   nelle due direzioni, contro gli identificativi **e** i nomi italiani.
+   contro gli identificativi **e** i nomi italiani, e prende anche la parola
+   derivata (`drainable` da `drain`). Confronta pero' le sole parole che
+   **identificano una categoria** di componente: non i fluidi, non i domini, non
+   le grandezze, non gli aggettivi e non le parole con cui il vocabolario stesso
+   dice come un pezzo si attacca. Le due prove che seguono la guardia tengono i
+   due versi: i travestimenti restano bloccati, i predicati legittimi passano.
 2. **Ogni componente dichiara come si chiude.** Nessun valore sottinteso: un
    regime non scritto sarebbe una scelta presa dal programma al posto di chi
    compila il catalogo (D-094).
@@ -64,6 +69,14 @@ def probe(**changes: object) -> dict[str, object]:
 
 
 # --- 1. nessuna proprieta' e' un componente travestito -------------------------
+#
+# Quello che la guardia deve catturare e' **il nome di una categoria di
+# componente**: `expansion_vessel`, `safety_device`, `is_a_buffer_tank`. Tutto il
+# resto del confronto e' rumore, e il rumore qui costa caro: una guardia troppo
+# severa rovescia la dipendenza fra catalogo e vocabolario — basterebbe che
+# domani entrasse in catalogo una derivazione refrigerante perche' `branch`
+# diventasse illecito e undici proprieta' andassero rinominate insieme a tutti i
+# file che le usano. **Il catalogo dipende dal vocabolario, mai il contrario.**
 
 # Particelle e sigle: non identificano un componente, e pretendere che una
 # proprieta' non le usi vieterebbe l'inglese e l'italiano correnti.
@@ -72,10 +85,91 @@ ITALIAN_PARTICLES = frozenset({"di", "da", "del", "della", "dei", "delle", "con"
 ARTICLES = frozenset({"e", "il", "la", "lo", "le", "i", "gli", "un", "uno", "una", "y"})
 ABBREVIATIONS = frozenset({"acs", "dhw", "vrv", "off", "up"})
 PARTICLES = ENGLISH_PARTICLES | ITALIAN_PARTICLES | ARTICLES | ABBREVIATIONS
-"""Le parole che il confronto ignora, ed e' l'unica indulgenza che si concede."""
 
-ROOT_LENGTH = 4
-"""Sotto le quattro lettere una radice condivisa non significa niente."""
+FLUIDS_AND_QUANTITIES = frozenset(
+    {
+        # Cio' che scorre e cio' che si misura non e' un componente: e' la
+        # materia di cui parlano tutte le proprieta'. Vietarle qui vorrebbe dire
+        # vietare a una proprieta' di parlare di acqua, di aria o di pressione.
+        "air",
+        "aria",
+        "water",
+        "acqua",
+        "gas",
+        "heat",
+        "calore",
+        "termico",
+        "pressure",
+        "pressione",
+        "hydronic",
+        "idronico",
+        "refrigerant",
+        "refrigerante",
+        "condensate",
+        "condensa",
+        "aeraulic",
+        "aeraulico",
+    }
+)
+
+STRUCTURAL_WORDS = frozenset(
+    {
+        # Le parole con cui il vocabolario stesso descrive come un pezzo si
+        # attacca e come si chiude. Se un componente le usa nel proprio nome,
+        # le sta usando nello stesso senso, non per identificare una categoria.
+        "branch",
+        "port",
+        "ports",
+        "inline",
+        "shutoff",
+        "attachment",
+        "attacco",
+        "attacchi",
+        "derivazione",
+    }
+)
+
+QUALIFIERS = frozenset(
+    {
+        # Aggettivi di servizio, verso, taglia e posizione: qualificano un
+        # componente, non lo identificano. «Sanitario» non e' un pezzo.
+        "hot",
+        "cold",
+        "calda",
+        "fredda",
+        "supply",
+        "return",
+        "mandata",
+        "ritorno",
+        "sanitaria",
+        "sanitario",
+        "sanitarie",
+        "indoor",
+        "outdoor",
+        "interna",
+        "esterna",
+        "four",
+        "quattro",
+        "three",
+        "tre",
+        "vie",
+    }
+)
+
+IGNORED = PARTICLES | FLUIDS_AND_QUANTITIES | STRUCTURAL_WORDS | QUALIFIERS
+"""Cio' che il confronto lascia passare, con la ragione scritta accanto a ognuno.
+
+Non e' indulgenza: e' la definizione di cosa stiamo cercando. Restano le parole
+**specifiche** — separatore, volano, bollitore, valvola, defangatore, collettore
+— che sono le sole con cui il nome di un componente puo' rientrare travestito."""
+
+GRAMMATICAL_ENDINGS = frozenset(
+    {"s", "es", "ed", "d", "ing", "able", "ible", "al", "ion", "ive", "er", "y", "i", "e", "o"}
+)
+"""Le desinenze che fanno di `drain` un `drainable` senza cambiarne il senso."""
+
+MINIMUM_ROOT = 4
+"""Sotto le quattro lettere una radice condivisa e' un incontro di lettere."""
 
 
 def words(text: str) -> frozenset[str]:
@@ -84,56 +178,154 @@ def words(text: str) -> frozenset[str]:
     return frozenset(item for item in found if item and item not in PARTICLES)
 
 
+def naming_words(text: str) -> frozenset[str]:
+    """Le sole parole che **identificano una categoria** di componente."""
+    return frozenset(item for item in words(text) if item not in IGNORED)
+
+
 def catalogue_words() -> frozenset[str]:
     found: set[str] = set()
     for definition in every_definition():
-        found |= words(definition.id)
-        found |= words(definition.name)
-        found |= words(definition.symbol_id)
+        found |= naming_words(definition.id)
+        found |= naming_words(definition.name)
+        found |= naming_words(definition.symbol_id)
     return frozenset(found)
 
 
-def shares_a_root(first: str, second: str) -> bool:
-    """Una parola comincia o finisce con l'altra: `drainable` e `drain`.
+def is_a_derivation_of(long: str, short: str) -> bool:
+    return (
+        len(short) >= MINIMUM_ROOT
+        and len(long) > len(short)
+        and long.startswith(short)
+        and long[len(short) :] in GRAMMATICAL_ENDINGS
+    )
 
-    Non e' la stessa parola, ma e' la stessa cosa detta al participio, ed e'
-    esattamente il modo in cui il nome di un componente rientrerebbe."""
+
+def shares_a_root(first: str, second: str) -> bool:
+    """Una parola e' l'altra piu' una desinenza: `drainable` e `drain`.
+
+    Solo cosi'. Non basta che una cominci o finisca con l'altra, altrimenti
+    `support` sarebbe un `port` e `under_pressure` un `underfloor`: sono
+    incontri di lettere, non lo stesso nome detto in un altro modo."""
     long, short = (first, second) if len(first) >= len(second) else (second, first)
-    if len(short) < ROOT_LENGTH or long == short:
-        return False
-    return long.startswith(short) or long.endswith(short)
+    return is_a_derivation_of(long, short)
 
 
 def collides(word: str, catalogued: frozenset[str]) -> bool:
     return any(word == other or shares_a_root(word, other) for other in catalogued)
 
 
-def test_no_trait_shares_a_word_with_a_component() -> None:
-    """La guardia, nelle due direzioni.
-
-    Fallisce sia se una proprieta' usa una parola con cui si chiama un
-    componente (`safety_device`, `is_a_buffer_tank`), sia se quella parola
-    compare nella proprieta' come radice (`expansion_vessel`)."""
-    catalogued = catalogue_words()
-    assert catalogued, "senza voci di catalogo la prova non dimostrerebbe nulla"
-    guilty = sorted(
-        (trait.value, mine, theirs)
-        for trait in ComponentTrait
-        for mine in words(trait.value)
+def offenders(names: object, catalogued: frozenset[str]) -> list[tuple[str, str, str]]:
+    """Quali parole di quali nomi urtano contro il catalogo, e contro cosa."""
+    assert isinstance(names, (list, tuple, frozenset, set))
+    return sorted(
+        (str(name), mine, theirs)
+        for name in names
+        for mine in words(str(name))
         for theirs in catalogued
         if mine == theirs or shares_a_root(mine, theirs)
     )
-    assert not guilty, guilty
 
 
-def test_the_guard_catches_a_property_that_is_a_component_in_disguise() -> None:
-    """La prova della prova, sui travestimenti che il collaudo ha citato.
+DISGUISES = (
+    # Ognuno e' il nome di una categoria di componente vestito da proprieta'.
+    "expansion_vessel",
+    "is_a_buffer_tank",
+    "safety_device",
+    "drainable",
+    "acts_like_a_strainer",
+    "is_a_radiator",
+    "needs_a_manifold",
+    "is_a_cylinder",
+    "is_a_separator",
+    "replaces_the_thermometer",
+    "carries_a_gauge",
+    "is_a_reducer",
+    "is_a_circulator",
+    "is_a_boiler",
+    "valve_like",
+    "e_un_defangatore",
+    "vaso_di_espansione",
+    "filling_role",
+    "mixing_role",
+    "radiators_only",
+    "buffered_volume",
+)
+
+LEGITIMATE = (
+    # Predicati che parlano del componente senza nominarne nessuno. Devono
+    # passare tutti: se la guardia ne blocca uno, e' lei a essere sbagliata.
+    "produces_air",
+    "needs_support",
+    "under_pressure",
+    "emits_heat",
+    "holds_water",
+    "maintainable",
+    "fouls_circuit",
+    "needs_debris_protection",
+    "needs_overpressure_protection",
+    "holds_its_own_volume",
+    "shutoff_ordinary",
+    "shutoff_never",
+    "shutoff_lockable_only",
+    "attachment_inline",
+    "attachment_branch",
+    "must_stay_reachable",
+    "freezes_when_idle",
+    "carries_the_whole_flow",
+    "warms_up_slowly",
+    "runs_dry_if_starved",
+)
+
+
+def test_no_trait_shares_a_word_with_a_component() -> None:
+    """La guardia sul vocabolario vero."""
+    catalogued = catalogue_words()
+    assert catalogued, "senza voci di catalogo la prova non dimostrerebbe nulla"
+    assert not offenders([trait.value for trait in ComponentTrait], catalogued)
+
+
+def test_the_guard_catches_every_component_in_disguise() -> None:
+    """La prova della prova, sul verso che conta.
 
     Senza, la guardia potrebbe non catturare piu' niente e nessuno se ne
     accorgerebbe: passerebbe perche' non trova nulla, non perche' non c'e'."""
     catalogued = catalogue_words()
-    for disguised in ("expansion_vessel", "is_a_buffer_tank", "safety_device", "drainable"):
-        assert any(collides(word, catalogued) for word in words(disguised)), disguised
+    escaped = [name for name in DISGUISES if not offenders([name], catalogued)]
+    assert not escaped, escaped
+
+
+def test_the_guard_lets_a_legitimate_predicate_through() -> None:
+    """L'altro verso, ed e' quello che il collaudo ha visto rotto.
+
+    Una guardia che blocca `needs_support` perche' finisce come `port`, o
+    `under_pressure` perche' comincia come `underfloor`, non difende niente:
+    costringe solo a scrivere peggio."""
+    catalogued = catalogue_words()
+    assert not offenders(LEGITIMATE, catalogued)
+
+
+def test_a_component_added_tomorrow_cannot_outlaw_the_vocabulary() -> None:
+    """Il verso della dipendenza: il catalogo dipende dal vocabolario.
+
+    Il caso e' reale — la derivazione refrigerante ha gia' il suo simbolo e
+    aspetta la propria voce di catalogo. Il giorno in cui entra, insieme a
+    qualunque altro pezzo che si chiami per come si attacca, il vocabolario deve
+    restare valido: altrimenti aggiungere un componente costringerebbe a
+    rinominare le proprieta' e a migrare ogni file che le usa."""
+    tomorrow = frozenset(
+        word
+        for name in (
+            "refrigerant-branch",
+            "Derivazione refrigerante",
+            "manifold-port",
+            "inline-pump",
+            "shutoff-valve",
+            "branch-tee",
+        )
+        for word in naming_words(name)
+    )
+    assert not offenders([trait.value for trait in ComponentTrait], catalogue_words() | tomorrow)
 
 
 def test_every_trait_is_a_lowercase_word_and_not_a_sentence() -> None:
