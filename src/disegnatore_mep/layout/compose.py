@@ -30,13 +30,12 @@ from .geometry import (
 )
 from .grid import GridSpace
 from .improve import improve_sheet
-from .inline import place_inline_accessories
+from .inline import settle_sheet
 from .labels import place_labels
 from .legend import build_legend
 from .partition import SheetLink, SheetPartition, partition_project
 from .place import place_sheet
-from .route import route_sheet
-from .trunks import Trunk, build_trunks
+from .trunks import build_trunks
 
 CROSS_REFERENCE_GAP_MM = 2.5
 """Stacco fra la porta e il marcatore di rimando."""
@@ -184,33 +183,19 @@ def compose_sheet(
     improved = improve_sheet(project, partition, catalog, frame, first, inline_ids)
 
     def settled(base: list[PlacedSymbol]) -> tuple[list[PlacedSymbol], list[RoutedTrunk]]:
-        """Instrada le tratte posando gli accessori appena instradata la loro.
-
-        Restituirli dentro la callback li rende ostacoli per le tratte
-        successive: posati tutti alla fine erano invisibili all'instradamento,
-        che ci passava sopra.
-        """
-        placed = list(base)
-        broken: list[RoutedTrunk] = []
-
-        def settle(trunk: Trunk, route: RoutedTrunk) -> list[PlacedSymbol]:
-            accessories, pieces = place_inline_accessories(
-                project, trunk, route, catalog, grid, placed
-            )
-            placed.extend(accessories)
-            broken.append(pieces)
-            return accessories
-
-        route_sheet(project, list(partition.trunks), placed, catalog, grid, settle)
-        return placed, broken
+        """La tavola instradata con gli accessori posati: la stessa che valuta
+        il ciclo di miglioramento, perche' e' la stessa funzione (D-078)."""
+        sheet = settle_sheet(project, list(partition.trunks), base, catalog, grid)
+        return sheet.symbols, sheet.routes
 
     try:
         placed, broken = settled(improved)
     except LayoutError:
         # Il miglioramento non compra mai il fallimento della tavola: il ciclo
-        # valuta le mosse sull'instradamento di prova, senza accessori, e in
-        # rari casi la posa vera puo' smentirlo. Allora vale la disposizione
-        # di partenza, che e' quella provvista dei propri rettilinei.
+        # scarta le pose che non si instradano, ma il suo tetto di prove puo'
+        # fermarlo su una posa che non ha ancora finito di sistemare. Allora
+        # vale la disposizione di partenza, che e' quella provvista dei propri
+        # rettilinei.
         placed, broken = settled(first)
 
     entries, keys = build_legend(

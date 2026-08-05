@@ -26,10 +26,14 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
 from disegnatore_mep.layout.geometry import (
     DrawingGeometry,
-    PlacedSymbol,
     Point,
     RoutedTrunk,
     SheetGeometry,
+    attaches_to,
+    box_of,
+    distance_to_box,
+    moves_of,
+    overshoot_mm,
 )
 from disegnatore_mep.model.types import IssueSeverity
 
@@ -163,23 +167,9 @@ def _finding(
     )
 
 
-def _box(symbol: PlacedSymbol) -> tuple[float, float, float, float]:
-    return (symbol.origin.x_mm, symbol.origin.y_mm, symbol.right_mm, symbol.bottom_mm)
-
-
 def _stretches(polyline: list[Point]) -> list[tuple[Point, Point]]:
     """Le coppie di punti consecutivi, degeneri comprese."""
     return list(zip(polyline, polyline[1:], strict=False))
-
-
-def _moves(polyline: list[Point]) -> list[tuple[Point, Point]]:
-    """I soli tratti che percorrono una distanza: un punto ripetuto non e' un tratto."""
-    return [
-        (before, after)
-        for before, after in _stretches(polyline)
-        if abs(after.x_mm - before.x_mm) > TOLERANCE_MM
-        or abs(after.y_mm - before.y_mm) > TOLERANCE_MM
-    ]
 
 
 def _sign(value: float) -> int:
@@ -194,7 +184,7 @@ def _bends(polyline: list[Point]) -> int:
     """Quante volte la spezzata cambia direzione."""
     steps = [
         (_sign(after.x_mm - before.x_mm), _sign(after.y_mm - before.y_mm))
-        for before, after in _moves(polyline)
+        for before, after in moves_of(polyline)
     ]
     return sum(1 for before, after in zip(steps, steps[1:], strict=False) if before != after)
 
@@ -255,36 +245,6 @@ def _run_name(route: RoutedTrunk) -> str:
 
 def _run_ids(sheet: SheetGeometry, route: RoutedTrunk) -> list[str]:
     return [sheet.sheet_id, *route.connection_ids]
-
-
-def _distance_to_box(
-    before: Point, after: Point, box: tuple[float, float, float, float]
-) -> float:
-    """Distanza fra un tratto ortogonale e un riquadro, zero se lo tocca."""
-    left, top, right, bottom = box
-    x_low, x_high = min(before.x_mm, after.x_mm), max(before.x_mm, after.x_mm)
-    y_low, y_high = min(before.y_mm, after.y_mm), max(before.y_mm, after.y_mm)
-    gap_x = max(left - x_high, x_low - right, 0.0)
-    gap_y = max(top - y_high, y_low - bottom, 0.0)
-    return math.hypot(gap_x, gap_y)
-
-
-def _attaches_to(polyline: list[Point], box: tuple[float, float, float, float]) -> bool:
-    """Vero se un capo della spezzata cade sul riquadro: la tratta ci si attacca.
-
-    La geometria non porta il legame fra tratta e componente — porta gli
-    identificativi delle connessioni, che sono un altro spazio di nomi — quindi
-    l'attacco si riconosce dove si vede: un capo di spezzata sul bordo o dentro
-    il riquadro e' una porta.
-    """
-    left, top, right, bottom = box
-    for point in (polyline[0], polyline[-1]):
-        if (
-            left - TOLERANCE_MM <= point.x_mm <= right + TOLERANCE_MM
-            and top - TOLERANCE_MM <= point.y_mm <= bottom + TOLERANCE_MM
-        ):
-            return True
-    return False
 
 
 def _clearance_severity(distance_mm: float, minimum_mm: float) -> IssueSeverity | None:
@@ -388,13 +348,13 @@ def _ink_area_mm2(sheet: SheetGeometry, area: Rect, line_mm: float) -> float:
     """L'inchiostro dentro un rettangolo: riquadri dei simboli piu' tratto delle linee."""
     total = 0.0
     for symbol in sheet.symbols:
-        left, top, right, bottom = _box(symbol)
+        left, top, right, bottom = box_of(symbol)
         width = max(min(right, area.right_mm) - max(left, area.x_mm), 0.0)
         height = max(min(bottom, area.bottom_mm) - max(top, area.y_mm), 0.0)
         total += width * height
     for route in sheet.routes:
         for segment in route.segments:
-            for before, after in _moves(segment):
+            for before, after in moves_of(segment):
                 total += _clipped_length_mm(before, after, area) * line_mm
     return total
 
@@ -533,14 +493,14 @@ def _symbol_clearances(sheet: SheetGeometry, minimum: float) -> list[ValidationI
     """B5 — le linee non sfiorano i simboli cui non si attaccano."""
     findings: list[ValidationIssue] = []
     for _, route, segment in _run_polylines(sheet):
-        moves = _moves(segment)
+        moves = moves_of(segment)
         if not moves:
             continue
         for symbol in sheet.symbols:
-            box = _box(symbol)
-            if _attaches_to(segment, box):
+            box = box_of(symbol)
+            if attaches_to(segment, box):
                 continue
-            gap = min(_distance_to_box(before, after, box) for before, after in moves)
+            gap = min(distance_to_box(before, after, box) for before, after in moves)
             severity = _clearance_severity(gap, minimum)
             if severity is None:
                 continue
@@ -563,7 +523,7 @@ def _parallel_clearances(sheet: SheetGeometry, minimum: float) -> list[Validatio
     alongside = [
         (index, route, move)
         for index, route, segment in _run_polylines(sheet)
-        for move in _moves(segment)
+        for move in moves_of(segment)
     ]
     for first in range(len(alongside)):
         for second in range(first + 1, len(alongside)):
@@ -589,7 +549,7 @@ def _parallel_clearances(sheet: SheetGeometry, minimum: float) -> list[Validatio
     return findings
 
 
-def u_turns(drawing: DrawingGeometry) -> list[ValidationIssue]:
+def u_turns(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
     """B12, D-078 — nessuna andata e ritorno per raggiungere un pezzo.
 
     Il capo di una spezzata e' una porta, e l'ultimo tratto dice da che parte le
@@ -598,13 +558,15 @@ def u_turns(drawing: DrawingGeometry) -> list[ValidationIssue]:
     si allunga la linea. La misura vale su entrambi i capi, perche' il verso in
     cui una spezzata e' scritta e' una convenzione dell'instradatore e il
     difetto non lo e'.
+
+    Il passo di griglia entra nella misura perche' l'imbocco di una porta rivolta
+    all'indietro cade per forza un passo oltre la porta: quello e' l'attacco, non
+    un giro, e `geometry.overshoot_mm` lo distingue.
     """
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
         for _, route, segment in _run_polylines(sheet):
-            overshoot = max(
-                _overshoot_mm(segment), _overshoot_mm(list(reversed(segment)))
-            )
+            overshoot = overshoot_mm(segment, frame.standard.grid_mm)
             if overshoot <= U_TURN_OVERSHOOT_MAX_MM + TOLERANCE_MM:
                 continue
             findings.append(
@@ -618,28 +580,6 @@ def u_turns(drawing: DrawingGeometry) -> list[ValidationIssue]:
                 )
             )
     return findings
-
-
-def _overshoot_mm(polyline: list[Point]) -> float:
-    """Di quanto la spezzata ha superato la propria porta di arrivo.
-
-    L'ultimo tratto dice su quale asse le si arriva — orizzontale o verticale —
-    e i due capi dicono da che parte: la tratta viaggia dal capo di partenza a
-    quello di arrivo, e su quell'asse non deve mai andare oltre l'arrivo. Se i
-    due capi hanno la stessa coordinata sull'asse di arrivo non c'e' un verso di
-    viaggio da superare, e la misura e' zero: quello e' un aggiramento, non
-    un'andata e ritorno.
-    """
-    moves = _moves(polyline)
-    if not moves:
-        return 0.0
-    source, goal = polyline[0], polyline[-1]
-    before, after = moves[-1]
-    if abs(after.y_mm - before.y_mm) <= TOLERANCE_MM:
-        direction = _sign(goal.x_mm - source.x_mm)
-        return max((point.x_mm - goal.x_mm) * direction for point in polyline)
-    direction = _sign(goal.y_mm - source.y_mm)
-    return max((point.y_mm - goal.y_mm) * direction for point in polyline)
 
 
 def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
@@ -867,7 +807,7 @@ def preflight_drawing(
         *crossings(drawing, frame),
         *longitudinal_overlap(drawing, frame),
         *clearances(drawing, frame),
-        *u_turns(drawing),
+        *u_turns(drawing, frame),
         *orthogonality_of_leaders(drawing),
         *sheet_fill(drawing, frame),
         *next_sheet_fill(drawing, frame),

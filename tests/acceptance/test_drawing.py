@@ -21,7 +21,9 @@ from disegnatore_mep.graphics.sheet import DRAFT_MARK, render_sheet
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import compose_drawing
 from disegnatore_mep.layout.geometry import DrawingGeometry
+from disegnatore_mep.model.types import IssueSeverity
 from disegnatore_mep.validation.geometry import validate_drawing_geometry
+from disegnatore_mep.validation.preflight import preflight_drawing
 
 ROOT = Path(__file__).resolve().parents[2]
 PROJECT = ROOT / "examples" / "layout" / "heat-pump-dhw-buffer-two-zones.json"
@@ -61,6 +63,25 @@ def test_no_line_passes_under_an_inline_component() -> None:
     """Il gate dichiarato per P4 nella roadmap master."""
     report = validate_drawing_geometry(drawing(), NOVE_C_A3)
     assert "LINE_UNDER_SYMBOL" not in {item.code for item in report.issues}
+
+
+def test_the_composed_drawing_carries_no_blocking_quality_finding() -> None:
+    """Il livello 1 di D-063 misurato sulla geometria composta, non sull'uscita.
+
+    L'invariante che mancava. Il comando `draw` misura la qualita' e rifiuta di
+    scrivere una tavola con un rilievo bloccante (D-063), ma il ciclo di
+    miglioramento sceglieva le mosse su un instradamento **senza accessori in
+    linea**: approvava una geometria e ne consegnava un'altra, e la consegnata
+    portava accessori a filo di tratte altrui e andate e ritorno che il ciclo
+    non aveva mai visto. Ora il ciclo valuta con `settle_sheet`, la stessa
+    funzione con cui la tavola si compone, e questa prova lo fissa dove il
+    difetto viveva: il preflight chiamato sulla geometria composta.
+    """
+    findings = preflight_drawing(drawing(), NOVE_C_A3, catalog())
+    blocking = [
+        item for item in findings if item.severity is IssueSeverity.BLOCKING
+    ]
+    assert blocking == [], [item.model_dump() for item in blocking]
 
 
 def test_the_sheet_is_true_scale() -> None:
@@ -247,18 +268,47 @@ def two_sheet_project(tmp_path: Path, cut_inside_a_run: bool = False) -> Path:
 
 
 def test_a_two_sheet_plan_produces_two_sheets(tmp_path: Path) -> None:
-    source = two_sheet_project(tmp_path)
-    out = tmp_path / "out"
-    assert (
-        main(
-            [
-                "draw", str(source), "--catalog", str(CATALOG),
-                "--symbols", str(SYMBOLS), "--out", str(out),
-            ]
-        )
-        == 0
+    """Il piano a due tavole si compone, e ne escono due con dentro qualcosa."""
+    drawn = compose_drawing(
+        load_project(two_sheet_project(tmp_path)), catalog(), NOVE_C_A3
     )
-    assert len(list(out.glob("*.svg"))) == 2
+    assert [sheet.sheet_id for sheet in drawn.sheets] == ["t1", "t2"]
+    for sheet in drawn.sheets:
+        assert sheet.symbols, sheet.sheet_id
+        assert sheet.routes or sheet.cross_references, sheet.sheet_id
+    assert validate_drawing_geometry(drawn, NOVE_C_A3).ok
+
+
+def test_splitting_this_plant_in_two_is_refused_for_the_empty_second_sheet(
+    tmp_path: Path,
+) -> None:
+    """D-072, A2: si divide solo se la seconda tavola e' abbastanza piena.
+
+    Questo impianto sta su una tavola sola, e il piano a due tavole della prova
+    qui sopra e' costruito a mano per esercitare partizione e rimandi: la
+    seconda tavola porta le sole zone e si riempie all'1%. Il preflight lo
+    dichiara bloccante (WP5), quindi `draw` non scrive niente ed esce 2 — che e'
+    il comportamento voluto, non un difetto della tavola.
+
+    E' l'unico taglio possibile: gli altri due spezzano una tratta che porta
+    accessori in linea, e quello il motore lo rifiuta gia' in composizione.
+    """
+    out = tmp_path / "out"
+    exit_code = main(
+        [
+            "draw", str(two_sheet_project(tmp_path)), "--catalog", str(CATALOG),
+            "--symbols", str(SYMBOLS), "--out", str(out),
+        ]
+    )
+    assert exit_code == 2
+    assert not list(out.glob("*.svg")) if out.exists() else True
+    findings = preflight_drawing(
+        compose_drawing(load_project(two_sheet_project(tmp_path)), catalog(), NOVE_C_A3),
+        NOVE_C_A3,
+        catalog(),
+    )
+    blocking = [item for item in findings if item.severity is IssueSeverity.BLOCKING]
+    assert [item.code for item in blocking] == ["CONTINUATION_SHEET_TOO_EMPTY"]
 
 
 def test_the_cross_references_of_a_two_sheet_plan_are_paired(tmp_path: Path) -> None:

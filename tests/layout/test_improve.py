@@ -34,6 +34,7 @@ from disegnatore_mep.layout.composition import Standing, levels_of, standing_of
 from disegnatore_mep.layout.geometry import (
     PlacedSymbol,
     Point,
+    RoutedTrunk,
     SheetGeometry,
     drawing_fingerprint,
 )
@@ -43,12 +44,15 @@ from disegnatore_mep.layout.improve import (
     objective_of,
     overshoots_the_goal,
 )
+from disegnatore_mep.layout.inline import settle_sheet
 from disegnatore_mep.layout.partition import SheetPartition, partition_project
 from disegnatore_mep.layout.place import ROW_GAP_MM, place_sheet
 from disegnatore_mep.layout.route import route_sheet
 from disegnatore_mep.layout.trunks import build_trunks
 from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.model.types import IssueSeverity
 from disegnatore_mep.validation.geometry import validate_drawing_geometry
+from disegnatore_mep.validation.preflight import preflight_drawing
 
 ROOT = Path(__file__).resolve().parents[2]
 PROJECT = ROOT / "examples" / "layout" / "heat-pump-dhw-buffer-two-zones.json"
@@ -90,15 +94,9 @@ def before_and_after() -> tuple[list[PlacedSymbol], list[PlacedSymbol]]:
     return before_and_after_of(PROJECT)
 
 
-def measured(
-    placed: list[PlacedSymbol], path: Path = PROJECT
-) -> tuple[int, int, int, float]:
-    """(obiettivo, pieghe, attraversamenti, lunghezza) della prova di rotta."""
-    project, partition, _ = case_of(path)
+def totals(routes: list[RoutedTrunk]) -> tuple[int, int, int, float]:
+    """(obiettivo, pieghe, attraversamenti, lunghezza) di un instradamento."""
     grid = GridSpace(origin=NOVE_C_A3.drawing_rect_mm, standard=NOVE_C_A3.standard)
-    routes = route_sheet(
-        project, list(partition.trunks), list(placed), registry(), grid, None
-    )
     bends = sum(
         max(len(segment) - 2, 0) for route in routes for segment in route.segments
     )
@@ -110,6 +108,39 @@ def measured(
         for before, after in zip(segment, segment[1:], strict=False)
     )
     return objective_of(routes, grid.step_mm), bends, crossings, length
+
+
+def measured(
+    placed: list[PlacedSymbol], path: Path = PROJECT
+) -> tuple[int, int, int, float]:
+    """Le stesse quattro voci sulla prova di rotta **senza accessori in linea**.
+
+    E' la geometria della posa nuda, e serve solo come termine di paragone di
+    partenza: una posa appena uscita dal posizionamento puo' non riuscire a
+    ospitare i propri accessori, e allora la tavola vera non esiste ancora.
+    """
+    project, partition, _ = case_of(path)
+    grid = GridSpace(origin=NOVE_C_A3.drawing_rect_mm, standard=NOVE_C_A3.standard)
+    return totals(
+        route_sheet(project, list(partition.trunks), list(placed), registry(), grid, None)
+    )
+
+
+def drawn(placed: list[PlacedSymbol], path: Path = PROJECT) -> tuple[int, int, int, float]:
+    """Le stesse quattro voci sulla tavola **come si disegna**.
+
+    Con gli accessori posati mentre si instrada, cioe' con `settle_sheet`: e' la
+    geometria che il ciclo di miglioramento valuta e quella che esce in SVG. La
+    prova di rotta nuda non lo e' — gli accessori sono ostacoli, e le tratte
+    instradate dopo di loro passano altrove.
+    """
+    project, partition, _ = case_of(path)
+    grid = GridSpace(origin=NOVE_C_A3.drawing_rect_mm, standard=NOVE_C_A3.standard)
+    return totals(
+        settle_sheet(
+            project, list(partition.trunks), list(placed), registry(), grid
+        ).routes
+    )
 
 
 def test_the_improvement_is_deterministic() -> None:
@@ -238,6 +269,23 @@ def test_no_route_makes_an_andata_e_ritorno() -> None:
     assert andata_e_ritorno(PROJECT) == []
 
 
+def test_the_complete_case_carries_no_blocking_quality_finding() -> None:
+    """Lo stesso invariante del caso di accettazione, sulla tavola completa.
+
+    E' la tavola che ha mostrato il difetto: tre accessori in linea posati a
+    0 mm da una tratta instradata prima di loro, perche' chi li posava non
+    vedeva le tratte gia' disegnate, e il ciclo che li avrebbe potuti scartare
+    valutava una geometria senza accessori. Qui si misura cio' che esce.
+    """
+    findings = preflight_drawing(
+        compose_drawing(load_project(COMPLETE), registry(), NOVE_C_A3),
+        NOVE_C_A3,
+        registry(),
+    )
+    blocking = [item for item in findings if item.severity is IssueSeverity.BLOCKING]
+    assert blocking == [], [item.model_dump() for item in blocking]
+
+
 def test_no_route_makes_an_andata_e_ritorno_on_the_complete_case() -> None:
     """Lo stesso, sul caso di accettazione: e' il giro che il PM ha cerchiato.
 
@@ -338,19 +386,25 @@ def test_the_complete_case_improvement_is_deterministic() -> None:
 def test_the_complete_case_pays_nothing_for_the_straightened_run() -> None:
     """La rotazione non compra l'andata e ritorno con un disegno peggiore.
 
-    Sulla prova di rotta del caso completo: pieghe da 28 a 22, attraversamenti
-    da 11 a 9, lunghezza da 1332,5 a 1195 mm, obiettivo da 8460 a 7250. Prima
-    di WP3b il ciclo si fermava a 24 pieghe, 9 attraversamenti, 1207,5 mm e
-    obiettivo 7500 — con il giro ancora li'.
+    La posa di partenza vale 8460 di obiettivo, 28 pieghe, 11 attraversamenti e
+    1332,5 mm sulla prova di rotta nuda, ed e' quanto si puo' misurare di lei:
+    con gli accessori in linea non si lascia nemmeno instradare, perche' la
+    tratta del circolatore secondario non trova un rettilineo per il quinto.
+
+    Il traguardo si misura invece **sulla tavola che esce** — accessori posati,
+    che e' cio' che il ciclo valuta da quando `settle_sheet' e' una funzione
+    sola (D-078). Li' il ciclo chiude a 5850 di obiettivo, 17 pieghe, 9
+    attraversamenti e 970 mm. Prima che il ciclo valutasse la geometria vera la
+    stessa tavola usciva a 6710, 22 pieghe, 9 attraversamenti e 1060 mm — e con
+    quattro rilievi bloccanti, quindi non usciva affatto.
     """
     before, after = before_and_after_of(COMPLETE)
-    objective0, bends0, crossings0, length0 = measured(before, COMPLETE)
-    objective1, bends1, crossings1, length1 = measured(after, COMPLETE)
-    assert (objective0, bends0, crossings0, length0) == (8460, 28, 11, 1332.5)
-    assert objective1 <= 7250
-    assert bends1 <= 22
+    assert measured(before, COMPLETE) == (8460, 28, 11, 1332.5)
+    objective1, bends1, crossings1, length1 = drawn(after, COMPLETE)
+    assert objective1 <= 5850
+    assert bends1 <= 17
     assert crossings1 <= 9
-    assert length1 <= 1195.0
+    assert length1 <= 970.0
 
 
 def test_the_complete_case_fits_one_a3_with_a_stacked_pair() -> None:

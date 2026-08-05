@@ -42,13 +42,23 @@ Vincoli mai violabili, qualunque sia il guadagno:
   vola. La quota di un componente a terra la decide il posizionamento —
   compreso l'impilamento di D-073 — non questo ciclo;
 - tutto sulla griglia e dentro l'area di disegno; i simboli non si toccano;
+- nessun accessorio in linea a meno della distanza di rispetto da una tratta
+  che non e' la sua, e nessuno sovrapposto a un simbolo: il preflight lo tratta
+  come bloccante, quindi qui non e' un costo da pagare ma una posa da scartare;
 - determinismo: candidati in ordine fisso, accettazione greedy della prima
   mossa che migliora, tetto fisso di instradamenti di prova.
 
-L'instradamento di prova e' quello **senza accessori in linea**: gli
-accessori si posano sulla tratta gia' instradata (D-027), quindi non possono
-cambiare il segno di un confronto fra disposizioni; farli entrare nel ciclo
-moltiplicherebbe il costo di ogni prova senza aggiungere informazione.
+L'instradamento di prova e' quello **completo**, accessori in linea compresi:
+`settle_sheet`, la stessa funzione con cui `compose_sheet` disegna. Prima era
+quello senza, e il ragionamento sembrava solido — gli accessori si posano sulla
+tratta gia' instradata (D-027), quindi non possono cambiare il segno di un
+confronto. Non e' vero, e la tavola del caso completo lo ha dimostrato in due
+modi: un accessorio posato dopo che una **altra** tratta era gia' passata di li'
+le finiva addosso a 0 mm — tre rilievi bloccanti — e un'andata e ritorno che il
+ciclo credeva di aver tolto restava nel disegno consegnato, perche' la
+geometria misurata non era quella disegnata. Il ciclo deve ottimizzare cio' che
+esce, non un'approssimazione piu' comoda: costa di piu' per prova, e si paga
+abbassando il tetto delle prove, non guardando la tavola sbagliata.
 """
 
 from typing import NamedTuple
@@ -60,22 +70,41 @@ from disegnatore_mep.model.project import ProjectModel
 
 from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
-from .geometry import PlacedSymbol, Point, RoutedTrunk
+from .geometry import (
+    PlacedSymbol,
+    Point,
+    RoutedTrunk,
+    box_of,
+    overshoot_mm,
+    run_intrudes_on,
+)
 from .grid import GridSpace, is_on_grid
-from .inline import place_inline_accessories
+from .inline import SettledSheet, settle_sheet
 from .partition import SheetPartition
 from .place import ROUTING_MARGIN_MM, ROW_GAP_MM
-from .route import CROSS_COST, STEP_COST, TURN_COST, route_sheet
+from .route import CROSS_COST, STEP_COST, TURN_COST
 
-MAX_PASSES = 3
-"""Passate del ciclo di miglioramento: limitato e monotono (D-078)."""
+MAX_PASSES = 8
+"""Passate del ciclo di miglioramento: limitato e monotono (D-078).
 
-MAX_TRIAL_ROUTINGS = 200
+Erano tre, e tre bastavano finche' il ciclo valutava un instradamento senza
+accessori. Da quando valuta quello vero le prime passate le spende a togliere
+le tratte che non ospitano i propri accessori — la voce che comanda il
+confronto — e chiudevano il ciclo con un giro attorno a un oggetto ancora li'.
+Alla quarta passata quel giro se ne va; dall'ottava il guadagno per passata e'
+ormai qualche millimetro di lunghezza, e il tempo lo si paga tutto.
+"""
+
+MAX_TRIAL_ROUTINGS = 400
 """Tetto di instradamenti di prova per foglio.
 
 Raggiunto il tetto si restituisce la migliore disposizione trovata fin li'.
 Il tetto scatta in modo deterministico — stessi ingressi, stesse prove, stesso
 punto di arresto — quindi non costa la riproducibilita' bit-a-bit.
+
+Il numero segue le passate e il costo di una prova, che ora comprende la posa
+degli accessori: la tavola completa ne spende poco piu' di 260 e disegna in una
+ventina di secondi. E' il tetto che tiene il costo limitato, non le passate.
 """
 
 NUDGE_STEPS = (1, 2, 4)
@@ -159,6 +188,13 @@ def overshoots_the_goal(route: RoutedTrunk, goal: Point) -> bool:
     arrivo: per un approccio orizzontale e' la verticale per la porta, per uno
     verticale l'orizzontale. Ogni punto della spezzata oltre quel confine, nel
     verso di arrivo, e' un'andata oltre la meta che la tratta deve disfare.
+
+    E' il **giro attorno all'oggetto**, quello che il PM ha cerchiato: la porta
+    guarda da una parte e la linea arriva dall'altra, quindi la tratta scavalca
+    il pezzo per rientrargli dal lato giusto. Non e' la stessa cosa che misura
+    `geometry.overshoot_mm`, che guarda la spezzata disegnata e vede se torna
+    su se stessa; il ciclo le conta **tutte e due**, perche' sono due difetti e
+    non due nomi dello stesso.
     """
     if not route.segments:
         return False
@@ -216,6 +252,7 @@ def improve_sheet(
     )
     grid = GridSpace(origin=drawing, standard=frame.standard)
     step = grid.step_mm
+    clearance = frame.standard.min_clearance_mm
     levels = levels_of(drawing.y_mm, drawing.height_mm, step)
 
     definitions = {item.id: item.definition_id for item in project.components}
@@ -262,50 +299,98 @@ def improve_sheet(
     best = {item.component_id: item for item in placed}
     trials = 0
 
+    owning_run = {
+        component_id: index
+        for index, trunk in enumerate(trunks)
+        for component_id in trunk.inline_component_ids
+    }
+
+    def accessories_are_clear(settled: SettledSheet) -> bool:
+        """Nessun accessorio addosso a una tratta altrui o a un simbolo (B5).
+
+        E' la misura del preflight, letta qui prima che la tavola esista: un
+        accessorio e' un simbolo, e una tratta che non e' la sua gli deve stare
+        alla distanza di rispetto. Quale sia la sua non si indovina dalla
+        geometria come fa il preflight: lo dice la tratta che lo porta.
+        """
+        for accessory in settled.accessories:
+            box = box_of(accessory)
+            mine = owning_run.get(accessory.component_id)
+            others = [
+                route
+                for index, route in enumerate(settled.routes)
+                if index != mine
+            ]
+            if run_intrudes_on(box, others, clearance):
+                return False
+            for other in settled.symbols:
+                if other is accessory:
+                    continue
+                if (
+                    box[0] < other.right_mm - _TOLERANCE_MM
+                    and other.origin.x_mm < box[2] - _TOLERANCE_MM
+                    and box[1] < other.bottom_mm - _TOLERANCE_MM
+                    and other.origin.y_mm < box[3] - _TOLERANCE_MM
+                ):
+                    return False
+        return True
+
     def evaluate(layout: dict[str, PlacedSymbol]) -> _Outcome | None:
         """Un instradamento di prova completo, contato contro il tetto.
 
-        Oltre all'obiettivo restituisce quali tratte non riescono a ospitare i
-        propri accessori in linea (D-027) — avvicinare e' gratis solo finche'
-        gli accessori trovano il proprio rettilineo, e una disposizione che
-        glielo toglie costerebbe l'intera tavola, non una piega — e quali
-        fanno un'andata e ritorno (B12), che e' la voce che comanda il
-        confronto.
+        Completo vuol dire **con gli accessori posati**: `settle_sheet` e' la
+        stessa funzione con cui la tavola si disegna, quindi cio' che si misura
+        qui e' cio' che uscira'. Oltre all'obiettivo restituisce quali tratte
+        non riescono a ospitare i propri accessori in linea (D-027) —
+        avvicinare e' gratis solo finche' gli accessori trovano il proprio
+        rettilineo, e una disposizione che glielo toglie costerebbe l'intera
+        tavola, non una piega — e quali fanno un'andata e ritorno (B12), che e'
+        la voce che comanda il confronto.
+
+        Due esiti non sono candidature e valgono `None`: una posa che non si
+        lascia instradare, e una che ci riesce mettendo un accessorio addosso a
+        una tratta che non e' la sua. La seconda e' un rilievo bloccante del
+        preflight: pagarla con qualche piega in meno sarebbe comprare una
+        tavola che non si consegna.
         """
         nonlocal trials
         trials += 1
         symbols = [layout[item] for item in order]
         try:
-            routes = route_sheet(project, trunks, list(symbols), catalog, grid, None)
+            settled = settle_sheet(
+                project, trunks, list(symbols), catalog, grid, tolerant=True
+            )
         except LayoutError:
-            # Una disposizione che non si lascia instradare non e' una
-            # candidata: si scarta e si resta su quella che funziona.
             return None
-        unfit: list[int] = []
+        if not accessories_are_clear(settled):
+            return None
+        # Le due andate e ritorno, contate insieme e sulle spezzate
+        # **disegnate**: il giro attorno all'oggetto, che guarda la porta di
+        # arrivo, e il ritorno su se stessa, che e' la misura del preflight e
+        # legge entrambi i capi. Prima il ciclo contava solo la prima, e sulla
+        # geometria senza accessori: cosi' non vedeva ne' il giro sulla porta di
+        # **partenza** ne' l'effetto delle interruzioni sulle spezzate.
         turnbacks: list[int] = []
-        for index, (trunk, route) in enumerate(zip(trunks, routes, strict=True)):
+        for index, (trunk, route) in enumerate(
+            zip(trunks, settled.routes, strict=True)
+        ):
             arrival = layout[trunk.end.component_id]
             port = manifest_of(arrival).port(trunk.end.port_id)
-            if overshoots_the_goal(
-                route,
-                Point(
-                    x_mm=arrival.origin.x_mm + port.x_mm,
-                    y_mm=arrival.origin.y_mm + port.y_mm,
-                ),
+            goal = Point(
+                x_mm=arrival.origin.x_mm + port.x_mm,
+                y_mm=arrival.origin.y_mm + port.y_mm,
+            )
+            if overshoots_the_goal(route, goal) or any(
+                overshoot_mm(segment, step) > _TOLERANCE_MM
+                for segment in route.segments
             ):
                 turnbacks.append(index)
-            if not trunk.inline_component_ids:
-                continue
-            try:
-                place_inline_accessories(project, trunk, route, catalog, grid, symbols)
-            except LayoutError:
-                unfit.append(index)
         return _Outcome(
-            unfit=tuple(unfit),
+            unfit=settled.unfit,
             turnbacks=tuple(turnbacks),
-            objective=objective_of(routes, step),
-            crossings=sum(len(route.crossings) for route in routes),
-            routes=routes,
+            objective=objective_of(settled.routes, step),
+            crossings=sum(len(route.crossings) for route in settled.routes),
+            routes=settled.routes,
         )
 
     def candidates_of(component_id: str) -> list[_Move]:
@@ -398,6 +483,32 @@ def improve_sheet(
                 return True
         return False
 
+    def heads_a_column_with_another(component_id: str) -> bool:
+        """Vero se un altro componente ha lo stesso bordo sinistro, sopra o sotto.
+
+        E' la stessa ragione di `in_a_ground_column`, estesa a chi a terra non
+        sta: i rami paralleli che il posizionamento incolonna — le due zone
+        servite dallo stesso collettore — stanno una sopra l'altra e allineate a
+        sinistra, e quell'allineamento e' cio' che le fa leggere come due rami
+        della stessa derivazione invece che come due pezzi sparsi (A3, D-073).
+        Il ciclo non ha mosse di coppia: sfilarne uno in orizzontale non sposta
+        una colonna, la trasforma in una scala. Le mosse verticali restano
+        libere, perche' non toccano l'allineamento.
+        """
+        me = best[component_id]
+        for other_id in order:
+            if other_id == component_id:
+                continue
+            other = best[other_id]
+            if abs(other.origin.x_mm - me.origin.x_mm) > _TOLERANCE_MM:
+                continue
+            if (
+                other.bottom_mm <= me.origin.y_mm + _TOLERANCE_MM
+                or me.bottom_mm <= other.origin.y_mm + _TOLERANCE_MM
+            ):
+                return True
+        return False
+
     def is_valid(component_id: str, move: _Move) -> bool:
         me = best[component_id]
         target = move.origin
@@ -419,6 +530,10 @@ def improve_sheet(
                 return False
             if target.x_mm != me.origin.x_mm and in_a_ground_column(component_id):
                 return False
+        # E chi divide la colonna con un altro non ci si sfila da solo, a terra
+        # o no: la colonna e' una figura, e questo ciclo muove un pezzo per volta.
+        if target.x_mm != me.origin.x_mm and heads_a_column_with_another(component_id):
+            return False
         # Sulla griglia, misurata dall'origine dell'area come nel posizionamento.
         if not is_on_grid(target.x_mm - area.x_mm, step):
             return False

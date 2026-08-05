@@ -7,7 +7,13 @@ from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.errors import LayoutError
-from disegnatore_mep.layout.geometry import PlacedSymbol, Point, RoutedTrunk
+from disegnatore_mep.layout.geometry import (
+    PlacedSymbol,
+    Point,
+    RoutedTrunk,
+    box_of,
+    run_intrudes_on,
+)
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.inline import place_inline_accessories
 from disegnatore_mep.layout.partition import partition_project
@@ -163,6 +169,71 @@ def test_a_run_without_accessories_is_returned_untouched() -> None:
         )
         assert accessories == []
         assert unchanged is routed
+
+
+def hugging_run(accessory: PlacedSymbol) -> RoutedTrunk:
+    """Una tratta altrui che taglia in verticale il riquadro dell'accessorio."""
+    centre_x = accessory.origin.x_mm + accessory.width_mm / 2
+    return RoutedTrunk(
+        network_id="other",
+        connection_ids=["altrui"],
+        segments=[
+            [
+                Point(x_mm=centre_x, y_mm=accessory.origin.y_mm - 20.0),
+                Point(x_mm=centre_x, y_mm=accessory.bottom_mm + 20.0),
+            ]
+        ],
+    )
+
+
+def test_an_accessory_steps_aside_from_a_run_that_is_not_its_own() -> None:
+    """B5 — un accessorio e' un simbolo, e una tratta altrui gli sta lontano.
+
+    Senza questo vincolo l'accessorio si posava dove la tratta gia' disegnata di
+    un'altra rete gli passava addosso — 0 mm — e sulla tavola completa erano tre
+    rilievi bloccanti: chi posava non vedeva le tratte, e chi instradava dopo
+    non vedeva l'accessorio.
+    """
+    project, trunks, routes, _ = routed_case()
+    registry, space = catalog(), grid()
+    trunk, routed = next(
+        (item, line)
+        for item, line in zip(trunks, routes, strict=True)
+        if len(item.inline_component_ids) == 1
+    )
+    alone, _ = place_inline_accessories(project, trunk, routed, registry, space)
+    intruder = hugging_run(alone[0])
+    minimum = NOVE_C_A3.standard.min_clearance_mm
+    assert run_intrudes_on(box_of(alone[0]), [intruder], minimum)
+
+    aside, _ = place_inline_accessories(
+        project, trunk, routed, registry, space, None, [intruder]
+    )
+    assert aside[0].origin != alone[0].origin
+    assert not run_intrudes_on(box_of(aside[0]), [intruder], minimum)
+
+
+def test_a_run_with_nowhere_clear_to_sit_its_accessory_says_so(
+) -> None:
+    """Se nessuna stazione rispetta lo stacco si solleva, non si posa male."""
+    project, trunks, routes, _ = routed_case()
+    registry, space = catalog(), grid()
+    trunk, routed = next(
+        (item, line)
+        for item, line in zip(trunks, routes, strict=True)
+        if len(item.inline_component_ids) == 1
+    )
+    # Una tratta altrui appoggiata per il lungo su tutta la spezzata: nessuna
+    # stazione puo' starne lontana.
+    along = RoutedTrunk(
+        network_id="other",
+        connection_ids=["altrui"],
+        segments=[list(routed.segments[0])],
+    )
+    with pytest.raises(LayoutError, match="clear of the other symbols and runs"):
+        place_inline_accessories(
+            project, trunk, routed, registry, space, None, [along]
+        )
 
 
 def test_the_accessory_keeps_its_tag() -> None:

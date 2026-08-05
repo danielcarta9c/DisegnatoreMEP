@@ -267,17 +267,34 @@ def test_a_run_attached_to_a_symbol_is_not_measured_against_it() -> None:
 
 
 def test_a_run_that_overshoots_its_port_and_returns_is_blocking() -> None:
+    """Venti millimetri oltre la porta: il passo obbligato dell'imbocco e' uno,
+    e la misura riporta il resto, cioe' i 17,5 mm di giro vero."""
     around = run("u", [at(20, 150), at(80, 150), at(80, 170), at(60, 170)])
-    findings = preflight.u_turns(drawing(sheet(routes=[around])))
+    findings = preflight.u_turns(drawing(sheet(routes=[around])), FRAME)
     assert codes(findings) == ["RUN_OVERSHOOTS_ITS_PORT"]
     assert findings[0].severity is IssueSeverity.BLOCKING
-    assert "20 mm" in findings[0].message
+    assert "17.5 mm" in findings[0].message
     assert findings[0].entity_ids == ["t1", "u"]
 
 
 def test_a_run_that_never_passes_its_port_says_nothing() -> None:
     straight = run("u", [at(20, 150), at(60, 150), at(60, 170)])
-    assert preflight.u_turns(drawing(sheet(routes=[straight]))) == []
+    assert preflight.u_turns(drawing(sheet(routes=[straight])), FRAME) == []
+
+
+def test_the_forced_step_into_a_backward_port_is_not_a_u_turn() -> None:
+    """B12 misura i giri, non gli imbocchi.
+
+    Una porta si imbocca solo dal lato verso cui guarda: quando guarda
+    all'indietro rispetto al verso di marcia della tratta, l'ultimo tratto cade
+    per forza oltre la porta, e il minimo che l'instradatore possa lasciare e'
+    un passo di griglia. Contare quel passo faceva segnalare come bloccante una
+    figura che nessuna disposizione puo' evitare — i due terminali di zona del
+    caso completo non hanno una posa raggiungibile che la eviti.
+    """
+    step = FRAME.standard.grid_mm
+    hooked = run("u", [at(20, 150), at(60 + step, 150), at(60 + step, 170), at(60, 170)])
+    assert preflight.u_turns(drawing(sheet(routes=[hooked])), FRAME) == []
 
 
 # --- 6. richiami di etichetta (D2, D3, D-075) ----------------------------------
@@ -429,7 +446,7 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
         preflight.crossings(broken, FRAME),
         preflight.longitudinal_overlap(broken, FRAME),
         preflight.clearances(broken, FRAME),
-        preflight.u_turns(broken),
+        preflight.u_turns(broken, FRAME),
         preflight.orthogonality_of_leaders(broken),
         preflight.sheet_fill(broken, FRAME),
         preflight.next_sheet_fill(broken, FRAME),

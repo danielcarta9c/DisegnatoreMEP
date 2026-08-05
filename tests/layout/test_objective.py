@@ -10,7 +10,7 @@ che nessuno se ne accorga, non a descrivere un ottimo teorico.
 
 Da quando la disposizione serve le linee (D-078, `improve.py`), le soglie sono
 quelle **dopo** il ciclo di miglioramento: pieghe scese da 25 a 23 e lunghezza
-da 975 a 887,5 mm, nodi condivisi fermi a 9. Il criterio rivisto del
+da 975 a 825 mm, nodi condivisi fermi a 9. Il criterio rivisto del
 pacchetto WP3 e' «nessuna voce peggiore, almeno una strettamente migliore»:
 una ricerca esaustiva su seicento disposizioni per traslazione ha mostrato
 che sotto i 9 nodi condivisi si scende solo pagando 27 pieghe — 4 dei 9 sono
@@ -156,9 +156,10 @@ def test_the_drawing_stays_within_its_crossing_budget() -> None:
 
 def test_the_drawing_stays_within_its_length_budget() -> None:
     """Il criterio di WP3 ammetteva fino al +10% sul valore pre-miglioramento
-    (975 mm, quindi 1072,5); il ciclo l'ha invece **accorciata** a 887,5 mm,
-    e la soglia si fissa sul raggiunto."""
-    assert length_mm(sheet()) <= 887.5
+    (975 mm, quindi 1072,5); il ciclo l'ha invece **accorciata** a 887,5 mm, e
+    poi a 825 mm da quando valuta la tavola vera invece della prova di rotta
+    senza accessori (D-078). La soglia si fissa sul raggiunto."""
+    assert length_mm(sheet()) <= 825.0
 
 
 def test_a_component_stands_to_the_right_of_what_feeds_it() -> None:

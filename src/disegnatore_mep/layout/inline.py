@@ -4,17 +4,27 @@ D-027: un componente in linea non viene sovrapposto a una linea continua. Nel
 modello topologico spezza la connessione in due; qui spezza anche il disegno,
 interrompendo la spezzata per la propria `inline_gap_mm`. E' il consumatore che
 a quel campo mancava (W4).
+
+Qui vive anche `settle_sheet`, l'instradamento **come esce sulla tavola**:
+tratte instradate una dopo l'altra e accessori posati appena la propria tratta
+e' pronta. E' una funzione sola perche' i suoi due chiamanti devono vedere la
+stessa geometria — `compose_sheet`, che la disegna, e il ciclo di
+miglioramento, che sceglie le mosse. Finche' il ciclo valutava un
+instradamento **senza** accessori sceglieva su una tavola che non esisteva:
+approvava una posa e ne consegnava un'altra.
 """
 
 from dataclasses import dataclass
 from math import ceil
+from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.model.project import ProjectModel
 
 from .errors import LayoutError
-from .geometry import PlacedSymbol, Point, RoutedTrunk
+from .geometry import PlacedSymbol, Point, RoutedTrunk, run_intrudes_on
 from .grid import GridSpace
+from .route import route_sheet
 from .trunks import Trunk
 
 MIN_SPACING_MM = 2.5
@@ -121,6 +131,7 @@ def place_inline_accessories(
     catalog: ComponentRegistry,
     grid: GridSpace,
     obstacles: list[PlacedSymbol] | None = None,
+    runs: list[RoutedTrunk] | None = None,
 ) -> tuple[list[PlacedSymbol], RoutedTrunk]:
     """Posa gli accessori della tratta e restituisce la spezzata interrotta.
 
@@ -132,6 +143,15 @@ def place_inline_accessories(
     ma il riquadro di un accessorio alto sporge oltre la linea e finirebbe
     dentro il serbatoio. Le posizioni il cui riquadro tocca un simbolo posato
     si saltano, avanzando lungo la tratta.
+
+    `runs` sono le tratte **gia' disegnate**, e vanno tenute a distanza di
+    rispetto come qualunque altro simbolo (B5): un accessorio e' un simbolo, e
+    posarlo a filo della tubazione di un'altra tratta si legge come disegnarcelo
+    sopra. Senza questo vincolo la valvola di intercettazione del ritorno
+    pompa di calore e i due accessori del freddo sanitario finivano a 0 mm da
+    una tratta instradata prima di loro, ed erano tre rilievi bloccanti sulla
+    tavola consegnata. Le stazioni che non rispettano lo stacco si saltano,
+    esattamente come quelle che cascano su un simbolo.
     """
     if not trunk.inline_component_ids:
         return [], routed
@@ -182,6 +202,9 @@ def place_inline_accessories(
     # quattro in fila davvero, e li vuole in fila davvero).
     cursor = 0.0
 
+    clearance = grid.standard.min_clearance_mm
+    others = list(runs or [])
+
     def clear_of_symbols(origin: Point, width: float, height: float) -> bool:
         """Il riquadro non si sovrappone a nessun simbolo posato.
 
@@ -195,6 +218,13 @@ def place_inline_accessories(
             and item.origin.y_mm < origin.y_mm + height - 1e-6
             for item in (obstacles or [])
         )
+
+    def clear_of_other_runs(origin: Point, width: float, height: float) -> bool:
+        """Nessuna tratta gia' disegnata gli passa addosso o a filo (B5, D-027)."""
+        if not others:
+            return True
+        box = (origin.x_mm, origin.y_mm, origin.x_mm + width, origin.y_mm + height)
+        return not run_intrudes_on(box, others, clearance)
 
     for index, component in enumerate(resolved):
         manifest = component.symbol.manifest
@@ -225,7 +255,9 @@ def place_inline_accessories(
                     x_mm=station.point.x_mm - turned.width_mm / 2,
                     y_mm=station.point.y_mm - turned.height_mm / 2,
                 )
-                if clear_of_symbols(origin, turned.width_mm, turned.height_mm):
+                if clear_of_symbols(
+                    origin, turned.width_mm, turned.height_mm
+                ) and clear_of_other_runs(origin, turned.width_mm, turned.height_mm):
                     found, distance = station, snapped
                     break
                 snapped += step
@@ -234,8 +266,9 @@ def place_inline_accessories(
         if found is None:
             raise LayoutError(
                 f"run {trunk.connection_ids[0]} has no straight stretch of "
-                f"{needed:g}mm for {component.symbol.manifest.id}: symbols are never "
-                f"shrunk to fit, give the run a longer straight length"
+                f"{needed:g}mm for {component.symbol.manifest.id} that keeps "
+                f"{clearance:g}mm clear of the other symbols and runs: symbols are "
+                f"never shrunk to fit, give the run a longer straight length"
             )
         cursor = distance + needed / 2
         component_id = trunk.inline_component_ids[index]
@@ -287,3 +320,72 @@ def _offset_of(points: list[Point], start: Point) -> float:
             return travelled + abs(start.x_mm - before.x_mm) + abs(start.y_mm - before.y_mm)
         travelled += length
     return travelled
+
+
+class SettledSheet(NamedTuple):
+    """La tavola instradata **come si disegna**: linee interrotte e accessori."""
+
+    symbols: list[PlacedSymbol]
+    """I simboli posati piu' gli accessori, nell'ordine in cui sono comparsi."""
+
+    accessories: list[PlacedSymbol]
+    """I soli accessori in linea, quelli che questa posa ha aggiunto."""
+
+    routes: list[RoutedTrunk]
+    """Le tratte con la spezzata gia' interrotta, una per tratta e nel suo ordine."""
+
+    unfit: tuple[int, ...]
+    """Indici delle tratte che non hanno ospitato i propri accessori.
+
+    Sempre vuoto quando si instrada per disegnare: li' una tratta che non
+    ospita i propri accessori e' un errore e solleva. Si riempie solo in
+    lettura tollerante, dove serve **contare** i difetti di una posa invece che
+    rifiutarla, perche' quel conto e' la prima voce del confronto fra pose.
+    """
+
+
+def settle_sheet(
+    project: ProjectModel,
+    trunks: list[Trunk],
+    placed: list[PlacedSymbol],
+    catalog: ComponentRegistry,
+    grid: GridSpace,
+    tolerant: bool = False,
+) -> SettledSheet:
+    """Instrada il foglio posando gli accessori appena instradata la loro tratta.
+
+    Restituire gli accessori dentro la callback li rende ostacoli per le tratte
+    successive: posati tutti alla fine erano invisibili all'instradamento, che
+    ci passava sopra. E passarli come `runs` a chi li posa li tiene lontani
+    dalle tratte gia' disegnate, che a loro volta erano invisibili a lui.
+
+    Con `tolerant` una tratta che non riesce a ospitare i propri accessori non
+    fa fallire il foglio: si annota fra le `unfit` e resta con la spezzata
+    intera. Serve al ciclo di miglioramento, che deve poter **misurare** una
+    posa cattiva per preferirle una buona; chi disegna la lascia sollevare.
+    """
+    symbols = list(placed)
+    accessories: list[PlacedSymbol] = []
+    drawn: list[RoutedTrunk] = []
+    unfit: list[int] = []
+
+    def settle(trunk: Trunk, route: RoutedTrunk) -> list[PlacedSymbol]:
+        try:
+            found, pieces = place_inline_accessories(
+                project, trunk, route, catalog, grid, symbols, drawn
+            )
+        except LayoutError:
+            if not tolerant:
+                raise
+            unfit.append(len(drawn))
+            drawn.append(route)
+            return []
+        symbols.extend(found)
+        accessories.extend(found)
+        drawn.append(pieces)
+        return found
+
+    route_sheet(project, list(trunks), symbols, catalog, grid, settle)
+    return SettledSheet(
+        symbols=symbols, accessories=accessories, routes=drawn, unfit=tuple(unfit)
+    )
