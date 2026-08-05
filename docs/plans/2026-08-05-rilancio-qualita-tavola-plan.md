@@ -89,6 +89,36 @@ affezione al codice scritto.
 
 ---
 
+## 2bis. La mappa sull'architettura — niente si perde
+
+Domanda esplicita del PM il 5 agosto: «Stiamo perdendo la struttura iniziale
+dell'architettura?» No, e questa tabella lo dimostra. L'architettura della skill è quella
+approvata nella specifica §6.1 — nove livelli, con il confine netto: **la parte non
+deterministica sceglie gli ingressi, la parte deterministica produce l'elaborato**. Il
+rilancio corregge i livelli difettosi **al loro posto**; non ne aggiunge, non ne toglie,
+non ne cambia i confini.
+
+| Livello dell'architettura (§6.1) | Stato verificato | Chi lo copre |
+|---|---|---|
+| 1. Orchestrazione della skill | Mai costruito (è P6) | In coda dopo il rilancio, invariato |
+| 2. Interpretazione AI del contesto | Mai costruito (è P6) | In coda dopo il rilancio, invariato |
+| 3. Modello tecnico canonico | Sano, conforme agli input | Si tiene; nessun WP lo tocca |
+| 4. Pacchetti di dominio | Idronico dentro le regole; il contratto va allargato (P3A) | In coda dopo il rilancio, invariato |
+| 5. Libreria dei simboli | **Difettosa**: nessuna fonte | **WP1**, al suo posto |
+| — Regole di inserimento (vivono fra 3 e 4) | Motore sano; **un contenuto errato** (intercettazioni) | **WP2**: correzione dei dati dentro il pacchetto esistente |
+| 6. Motore di layout | **Difettoso**: disposizione che non serve le linee | **WP3** e **WP4**, al loro posto |
+| 7. Renderer | SVG c'è; segni di incrocio e richiami da correggere (WP4); cartiglio, PDF e distinta sono P5 | **WP4** per i segni; P5 in coda |
+| 8. Validatori | Correttezza presente e funzionante; **qualità mai costruita** | **WP5**, al suo posto |
+| 9. Cold eye review | Mai costruito | **WP6**, al suo posto |
+
+Il flusso utente resta quello approvato e non è in discussione: conversazione →
+ricostruzione dell'impianto → **dossier di approvazione** con integrazioni necessarie,
+raccomandate e condizionate → «sì, procedi» → disegno → controlli → consegna. Il dossier
+prima del disegno (D-004, D-013) è un pezzo del livello 1-2 e arriva con P6, sopra un
+motore che a quel punto produce tavole approvabili.
+
+---
+
 ## 3. Il metodo dei tre ruoli (vincolante — D-083)
 
 - **L'orchestratore** — una sola mente responsabile — scrive ogni pacchetto con i criteri
@@ -150,25 +180,44 @@ delle tavole fonte; audit dei campi fonte; regressione.
 **Consegna intermedia al PM:** il nuovo foglio di riscontro — è lui l'autorità su «questo
 è quello che usiamo davvero».
 
-### WP2 — Il contenuto lo decide l'impianto
+### WP2 — Le regole di inserimento tornano a dire il contenuto vero
 
-**Obiettivo:** chiudere D-074 e l'errore di metodo che l'ha causato.
+**Obiettivo:** chiudere D-074 **dentro il pacchetto di regole esistente**, e verificare
+che nessun'altra regola porti contenuto deciso dal foglio.
 
-**Contenuto:** la regola di intercettazione passa a cardinalità **per attacco di
-macchina** (generatori, pompe, accumuli); il criterio di soddisfazione riconosce una
-valvola già presente su quello specifico attacco. Sparisce dalla motivazione la frase
-«una sola valvola nel primo pacchetto». Nessun altro contenuto del disegno resta deciso
-da un vincolo di foglio.
+Il PM lo ha precisato il 5 agosto: la correzione delle valvole di intercettazione **non è
+un pacchetto a sé** — è una correzione **al pacchetto di regole di inserimento dei
+componenti**, che esiste, funziona ed è il pezzo di architettura che i suoi input
+prescrivono (regole come dato versionato, condizioni su funzioni e mai su componenti,
+cardinalità e criterio di soddisfazione dichiarati). Questo WP è piccolo proprio perché
+quell'architettura è sana: si correggono **dati**, non si costruisce un motore.
+
+**Contenuto:**
+1. La regola di intercettazione passa a cardinalità **per attacco di macchina**
+   (generatori, pompe, accumuli); il criterio di soddisfazione riconosce una valvola già
+   presente su quello specifico attacco. Sparisce dalla motivazione la frase «una sola
+   valvola nel primo pacchetto».
+2. **Revisione di tutte le quindici regole pubblicate**, una per una: nessun'altra deve
+   portare contenuto ridotto o alterato per un vincolo di foglio, e ogni motivazione deve
+   essere impiantistica. L'esito della revisione si registra nell'appendice.
+3. Il perimetro delle **famiglie** resta quello dell'MVP — sicurezza, intercettazione,
+   protezione, aria, riempimento e scarico, misura, ACS — con le famiglie future già
+   registrate in `docs/DEFERRED.md` §1: quel perimetro lo ha accettato il PM il 4 agosto
+   e questo piano non lo tocca.
 
 **Criteri di accettazione:**
 1. Sul caso di accettazione: pompa di calore 2 valvole, circolatore 2 (una per lato),
    volano 4, bollitore 4 — «ogni macchina, ogni tubo che entra o esce».
-2. Rieseguire le regole su un modello già completato non propone nulla (idempotenza).
-3. Nessuna regola nomina un componente (D-069, prova esistente).
-4. Suite verde.
+2. La revisione delle quindici regole è registrata, con esito per ciascuna.
+3. Rieseguire le regole su un modello già completato non propone nulla (idempotenza).
+4. Nessuna regola nomina un componente (D-069, prova esistente); motore non modificato —
+   se questo WP dovesse toccare il motore, il motore è sbagliato e ci si ferma
+   (`docs/DEFERRED.md` §1, criterio già fissato).
+5. Suite verde.
 
 **Collaudo:** conteggio automatico delle valvole adiacenti per ogni attacco di macchina
-sul modello generato; regressione.
+sul modello generato; verifica che il motore sia invariato; lettura indipendente della
+revisione delle quindici regole; regressione.
 
 ### WP3 — La disposizione al servizio delle linee
 
