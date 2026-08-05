@@ -7,7 +7,7 @@
   ],
   "traits": [
     "maintainable",
-    "isolation_lockable_only",
+    "shutoff_lockable_only",
     "attachment_branch"
   ],
   "symbol_id": "expansion-connection",

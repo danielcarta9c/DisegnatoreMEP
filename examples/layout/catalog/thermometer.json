@@ -6,7 +6,7 @@
     "measurement"
   ],
   "traits": [
-    "isolation_normal",
+    "shutoff_ordinary",
     "attachment_branch"
   ],
   "symbol_id": "thermometer",

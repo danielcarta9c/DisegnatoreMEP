@@ -8,7 +8,7 @@
   "traits": [
     "maintainable",
     "needs_debris_protection",
-    "isolation_normal",
+    "shutoff_ordinary",
     "attachment_inline"
   ],
   "symbol_id": "pump-circulator",

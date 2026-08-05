@@ -7,9 +7,9 @@
   ],
   "traits": [
     "maintainable",
-    "needs_overpressure_protection",
-    "holds_drainable_volume",
-    "isolation_normal",
+    "needs_relief",
+    "holds_its_own_volume",
+    "shutoff_ordinary",
     "attachment_inline"
   ],
   "symbol_id": "dhw-cylinder",

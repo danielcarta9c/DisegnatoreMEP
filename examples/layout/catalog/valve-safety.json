@@ -6,7 +6,7 @@
     "safety"
   ],
   "traits": [
-    "isolation_never",
+    "shutoff_never",
     "attachment_branch"
   ],
   "symbol_id": "valve-safety",

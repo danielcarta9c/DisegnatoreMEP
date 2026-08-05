@@ -36,7 +36,11 @@ MEDIUM_STYLES: dict[str, tuple[str, str]] = {
     "heating_water": ("#c0392b", "none"),
     "chilled_water": ("#2471a3", "6 2"),
     "domestic_hot_water": ("#d68910", "none"),
-    "domestic_cold_water": ("#5dade2", "3 2"),
+    # Il fluido si chiama "cold_water" in tutto il resto del progetto — nel
+    # catalogo, nelle condizioni delle regole, nelle reti degli esempi. Finche'
+    # qui stava scritto in un altro modo, ogni rete di acqua fredda cadeva sullo
+    # stile di default e si disegnava nera continua come una rete senza codifica.
+    "cold_water": ("#5dade2", "3 2"),
     "natural_gas": ("#b7950b", "8 2"),
     "supply_air": ("#148f77", "none"),
     "return_air": ("#148f77", "4 2"),
@@ -56,7 +60,7 @@ MEDIUM_NAMES: dict[str, str] = {
     "heating_water": "Acqua di riscaldamento",
     "chilled_water": "Acqua refrigerata",
     "domestic_hot_water": "Acqua calda sanitaria",
-    "domestic_cold_water": "Acqua fredda sanitaria",
+    "cold_water": "Acqua fredda sanitaria",
     "natural_gas": "Gas naturale",
     "supply_air": "Aria di mandata",
     "return_air": "Aria di ripresa",

@@ -6,8 +6,7 @@
     "non_return"
   ],
   "traits": [
-    "maintainable",
-    "isolation_normal",
+    "shutoff_ordinary",
     "attachment_inline"
   ],
   "symbol_id": "valve-check",

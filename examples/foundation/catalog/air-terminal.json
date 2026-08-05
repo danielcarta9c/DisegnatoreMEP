@@ -6,7 +6,7 @@
     "air_terminal"
   ],
   "traits": [
-    "isolation_normal",
+    "shutoff_ordinary",
     "attachment_inline"
   ],
   "symbol_id": "air-terminal",

@@ -31,12 +31,12 @@ def port(
 
 MAINTAINABLE = "maintainable"
 NEEDS_DEBRIS_PROTECTION = "needs_debris_protection"
-PRODUCES_AIR = "produces_air"
-NEEDS_OVERPRESSURE_PROTECTION = "needs_overpressure_protection"
-ISOLATION_NORMAL = "isolation_normal"
+OUTGASSES = "outgasses"
+NEEDS_RELIEF = "needs_relief"
+SHUTOFF_ORDINARY = "shutoff_ordinary"
 INLINE = "attachment_inline"
 
-ORDINARY = [ISOLATION_NORMAL, INLINE]
+ORDINARY_INLINE = [SHUTOFF_ORDINARY, INLINE]
 """Le due dichiarazioni che nessun componente puo' tacere, nel caso ordinario:
 lo isola una valvola comune e sta sul percorso del tubo. Non sono un default —
 un componente che non le scrive non si carica affatto (P1)."""
@@ -63,7 +63,7 @@ def definition(
 
 
 DEFINITIONS = [
-    definition("boundary-gas-source", "Confine gas", ["boundary"], ORDINARY, [port("out", "gas", "natural_gas", "out")]),
+    definition("boundary-gas-source", "Confine gas", ["boundary"], ORDINARY_INLINE, [port("out", "gas", "natural_gas", "out")]),
     definition(
         "gas-boiler",
         "Caldaia gas",
@@ -71,9 +71,9 @@ DEFINITIONS = [
         [
             MAINTAINABLE,
             NEEDS_DEBRIS_PROTECTION,
-            PRODUCES_AIR,
-            NEEDS_OVERPRESSURE_PROTECTION,
-            *ORDINARY,
+            OUTGASSES,
+            NEEDS_RELIEF,
+            *ORDINARY_INLINE,
         ],
         [
             port("gas_in", "gas", "natural_gas", "in"),
@@ -81,15 +81,15 @@ DEFINITIONS = [
             port("water_supply", "hydronic", "heating_water", "out"),
         ],
     ),
-    definition("boundary-hydronic-return", "Confine ritorno", ["boundary"], ORDINARY, [port("out", "hydronic", "heating_water", "out")]),
-    definition("boundary-hydronic-supply", "Confine mandata", ["boundary"], ORDINARY, [port("in", "hydronic", "heating_water", "in")]),
-    definition("supply-fan", "Ventilatore", ["air_movement"], [MAINTAINABLE, *ORDINARY], [port("out", "aeraulic", "supply_air", "out")]),
-    definition("air-terminal", "Terminale aria", ["air_terminal"], ORDINARY, [port("in", "aeraulic", "supply_air", "in")]),
+    definition("boundary-hydronic-return", "Confine ritorno", ["boundary"], ORDINARY_INLINE, [port("out", "hydronic", "heating_water", "out")]),
+    definition("boundary-hydronic-supply", "Confine mandata", ["boundary"], ORDINARY_INLINE, [port("in", "hydronic", "heating_water", "in")]),
+    definition("supply-fan", "Ventilatore", ["air_movement"], ORDINARY_INLINE, [port("out", "aeraulic", "supply_air", "out")]),
+    definition("air-terminal", "Terminale aria", ["air_terminal"], ORDINARY_INLINE, [port("in", "aeraulic", "supply_air", "in")]),
     definition(
         "vrv-outdoor",
         "Unità esterna VRV",
         ["refrigerant_generation"],
-        [MAINTAINABLE, *ORDINARY],
+        ORDINARY_INLINE,
         [
             port("liquid_out", "refrigerant", "refrigerant_liquid", "out"),
             port("gas_in", "refrigerant", "refrigerant_gas", "in"),
@@ -99,7 +99,7 @@ DEFINITIONS = [
         "vrv-indoor",
         "Unità interna VRV",
         ["direct_expansion_terminal"],
-        [MAINTAINABLE, *ORDINARY],
+        ORDINARY_INLINE,
         [
             port("liquid_in", "refrigerant", "refrigerant_liquid", "in"),
             port("gas_out", "refrigerant", "refrigerant_gas", "out"),

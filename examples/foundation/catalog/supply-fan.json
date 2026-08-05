@@ -6,8 +6,7 @@
     "air_movement"
   ],
   "traits": [
-    "maintainable",
-    "isolation_normal",
+    "shutoff_ordinary",
     "attachment_inline"
   ],
   "symbol_id": "supply-fan",

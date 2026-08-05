@@ -31,10 +31,10 @@ SOURCE = "CONV-FOUNDATION"
 MAINTAINABLE = "maintainable"
 FOULS_CIRCUIT = "fouls_circuit"
 NEEDS_DEBRIS_PROTECTION = "needs_debris_protection"
-PRODUCES_AIR = "produces_air"
-NEEDS_OVERPRESSURE_PROTECTION = "needs_overpressure_protection"
-HOLDS_DRAINABLE_VOLUME = "holds_drainable_volume"
-ISOLATION_NORMAL = "isolation_normal"
+OUTGASSES = "outgasses"
+NEEDS_RELIEF = "needs_relief"
+HOLDS_ITS_OWN_VOLUME = "holds_its_own_volume"
+SHUTOFF_ORDINARY = "shutoff_ordinary"
 INLINE = "attachment_inline"
 
 HEATING = "heating_water"
@@ -96,9 +96,9 @@ DEFINITIONS: list[dict[str, Any]] = [
         [
             MAINTAINABLE,
             NEEDS_DEBRIS_PROTECTION,
-            PRODUCES_AIR,
-            NEEDS_OVERPRESSURE_PROTECTION,
-            ISOLATION_NORMAL,
+            OUTGASSES,
+            NEEDS_RELIEF,
+            SHUTOFF_ORDINARY,
             INLINE,
         ],
         [
@@ -112,7 +112,7 @@ DEFINITIONS: list[dict[str, Any]] = [
         "diverting-valve-3way",
         "Valvola deviatrice a tre vie",
         ["diversion"],
-        [MAINTAINABLE, ISOLATION_NORMAL, INLINE],
+        [MAINTAINABLE, SHUTOFF_ORDINARY, INLINE],
         [
             hydronic_port("in", "in"),
             hydronic_port("out_a", "out"),
@@ -123,7 +123,7 @@ DEFINITIONS: list[dict[str, Any]] = [
         "buffer-four-port",
         "Volano termico a quattro attacchi",
         ["hydraulic_separation", "thermal_storage"],
-        [MAINTAINABLE, HOLDS_DRAINABLE_VOLUME, ISOLATION_NORMAL, INLINE],
+        [MAINTAINABLE, HOLDS_ITS_OWN_VOLUME, SHUTOFF_ORDINARY, INLINE],
         [
             hydronic_port("primary_in", "in"),
             hydronic_port("primary_out", "out"),
@@ -137,9 +137,9 @@ DEFINITIONS: list[dict[str, Any]] = [
         ["dhw_storage"],
         [
             MAINTAINABLE,
-            NEEDS_OVERPRESSURE_PROTECTION,
-            HOLDS_DRAINABLE_VOLUME,
-            ISOLATION_NORMAL,
+            NEEDS_RELIEF,
+            HOLDS_ITS_OWN_VOLUME,
+            SHUTOFF_ORDINARY,
             INLINE,
         ],
         [
@@ -155,14 +155,14 @@ DEFINITIONS: list[dict[str, Any]] = [
         "pump-circulator",
         "Pompa di circolazione",
         ["circulation"],
-        [MAINTAINABLE, NEEDS_DEBRIS_PROTECTION, ISOLATION_NORMAL, INLINE],
+        [MAINTAINABLE, NEEDS_DEBRIS_PROTECTION, SHUTOFF_ORDINARY, INLINE],
         [hydronic_port("a", "in"), hydronic_port("b", "out")],
     ),
     definition(
         "zone-manifold",
         "Collettore di zona",
         ["distribution"],
-        [MAINTAINABLE, ISOLATION_NORMAL, INLINE],
+        [MAINTAINABLE, SHUTOFF_ORDINARY, INLINE],
         [
             hydronic_port("in", "in"),
             hydronic_port("out_1", "out"),
@@ -173,21 +173,21 @@ DEFINITIONS: list[dict[str, Any]] = [
         "radiator",
         "Radiatore",
         ["emission"],
-        [MAINTAINABLE, FOULS_CIRCUIT, ISOLATION_NORMAL, INLINE],
+        [MAINTAINABLE, FOULS_CIRCUIT, SHUTOFF_ORDINARY, INLINE],
         [hydronic_port("in", "in"), hydronic_port("out", "out")],
     ),
     definition(
         "underfloor-panel",
         "Pannello radiante",
         ["emission"],
-        [MAINTAINABLE, FOULS_CIRCUIT, ISOLATION_NORMAL, INLINE],
+        [MAINTAINABLE, FOULS_CIRCUIT, SHUTOFF_ORDINARY, INLINE],
         [hydronic_port("in", "in"), hydronic_port("out", "out")],
     ),
     definition(
         "strainer",
         "Filtro a Y",
         ["filtration"],
-        [MAINTAINABLE, ISOLATION_NORMAL, INLINE],
+        [MAINTAINABLE, SHUTOFF_ORDINARY, INLINE],
         [
             hydronic_port("a", "bidirectional"),
             hydronic_port("b", "bidirectional"),
@@ -197,7 +197,7 @@ DEFINITIONS: list[dict[str, Any]] = [
         "valve-isolation",
         "Valvola di intercettazione",
         ["isolation"],
-        [ISOLATION_NORMAL, INLINE],
+        [SHUTOFF_ORDINARY, INLINE],
         [
             hydronic_port("a", "bidirectional"),
             hydronic_port("b", "bidirectional"),

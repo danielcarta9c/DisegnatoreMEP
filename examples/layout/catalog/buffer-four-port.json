@@ -8,8 +8,8 @@
   ],
   "traits": [
     "maintainable",
-    "holds_drainable_volume",
-    "isolation_normal",
+    "holds_its_own_volume",
+    "shutoff_ordinary",
     "attachment_inline"
   ],
   "symbol_id": "buffer-four-port",

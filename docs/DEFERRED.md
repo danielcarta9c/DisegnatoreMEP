@@ -96,6 +96,13 @@ sbloccano nulla.
 - **La rotazione di un componente posato è sempre 0.** Gli accessori in linea ruotano già
   seguendo la giacitura della propria tratta; un componente posato non viene mai orientato
   verso la fascia adiacente. È un grado di libertà in più per la regola di D-060.
+- **Due voci di legenda condividono lo stesso azzurro.** Dal 6 agosto 2026 l'acqua fredda
+  sanitaria ha finalmente il proprio stile — prima cadeva sul nero continuo delle reti senza
+  codifica — ma il colore che le tocca in andata è lo stesso con cui la tavola disegna il
+  *ritorno* dell'acqua calda sanitaria, perché il colore del ritorno si ricava schiarendo
+  quello della mandata. Sulla stessa tavola le due righe di legenda si distinguono solo per
+  la scritta. Si chiude scegliendo la coppia di colori del sanitario: è una decisione
+  grafica (D-057), non un difetto di calcolo.
 - **La corsia di mandata non è garantita sopra quella di ritorno** dove due tratte devono
   scavalcare lo stesso ostacolo. Imporlo costerebbe pieghe. La convenzione resta garantita
   sui simboli e dai colori (D-057).
@@ -124,6 +131,18 @@ sbloccano nulla.
   entra in perimetro, la sua fonte si acquisisce e i suoi simboli si riautorano come fatto
   per l'idronico (D-081). La stringa dice il vero invece di puntare un documento non
   verificato: vietato inventare vale anche per le citazioni (D-083).
+- **Nove simboli pubblicati non hanno una voce di catalogo**, quindi nessuna regola può
+  proporli e nessun impianto può contenerli: valvola di sfiato aria, vaso di espansione ad
+  attacco singolo, ventilconvettore, diffusore d'aria, serranda, ventilatore in linea,
+  contatore gas, valvola gas, derivazione refrigerante. Due contano subito, e sono lavoro di
+  P2 e P4:
+  - **lo sfiato**: D-094 lo nomina fra gli accessori su stacco, e finché non ha una voce di
+    catalogo **la regola dell'aria non ha un componente da proporre** — può mettere il
+    separatore sulla mandata, non lo sfiato nel punto alto;
+  - **il vaso a un solo attacco**: è il simbolo che serve a chiudere il debito degli
+    accessori su stacco (§6).
+  Gli altri sette appartengono a domini fuori dal caso di accettazione e seguono le rispettive
+  fonti da acquisire.
 - **Nessun test presidia che il corpo di un simbolo resti dentro il proprio riquadro** e
   raggiunga le porte dichiarate.
 - **Nessun test protegge i due generatori di simboli dalla deriva** rispetto ai file che
@@ -138,6 +157,17 @@ sbloccano nulla.
   tratta — costerebbe tre pezzi per accessorio e romperebbe la ricomposizione delle tratte,
   che vuole esattamente due connessioni per accessorio in linea. Va rifatto il giorno in cui
   serviranno rami con più di un componente sopra.
+
+  **Aggiornamento del 6 agosto 2026 (P1).** D-094 ritira quella scorciatoia: lo stacco è un
+  ramo vero con la propria catena, e la fila dei pezzi è un albero. Il catalogo ora dichiara
+  chi pende dal tubo, ma **otto voci dichiarano lo stacco e hanno ancora due porte
+  passanti** — vaso di espansione (riscaldamento e sanitario), valvola di sicurezza
+  (riscaldamento e sanitaria), gruppo di riempimento, attacco di scarico, manometro e
+  termometro. È il debito di P4, non di P1: chiuderlo vuol dire dare a questi accessori una
+  sola porta e far nascere il raccordo di derivazione come pezzo a sé. Il simbolo del vaso a
+  un solo attacco **esiste già** in libreria e non ha voce di catalogo (§5). L'elenco è
+  congelato in `tests/catalog/test_traits.py`: quella prova fallisce se il debito cambia, e
+  chi lo chiude deve cancellare da qui le voci che ha chiuso.
 - **Una tratta che attraversa un confine di tavola non può portare accessori**, e questo
   decide dove si può tagliare: nel caso di accettazione l'unico taglio possibile è fra la
   distribuzione e le zone. Va tolto insieme al disegno delle tratte che attraversano

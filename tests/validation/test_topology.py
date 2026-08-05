@@ -27,7 +27,7 @@ def component_definition(component_id: str, flow: PortFlow) -> ComponentDefiniti
         version="1.0.0",
         name=component_id,
         functions=["boundary"],
-        traits=[ComponentTrait.ISOLATION_NORMAL, ComponentTrait.ATTACHMENT_INLINE],
+        traits=[ComponentTrait.SHUTOFF_ORDINARY, ComponentTrait.ATTACHMENT_INLINE],
         symbol_id=component_id,
         composite=False,
         ports=[

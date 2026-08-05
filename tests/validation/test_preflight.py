@@ -110,7 +110,7 @@ def _definition(symbol_id: str) -> ComponentDefinition:
         version="1.0.0",
         name="Componente di prova",
         functions=["prova"],
-        traits=[ComponentTrait.ISOLATION_NORMAL, ComponentTrait.ATTACHMENT_INLINE],
+        traits=[ComponentTrait.SHUTOFF_ORDINARY, ComponentTrait.ATTACHMENT_INLINE],
         symbol_id=symbol_id,
         ports=[
             PortDefinition(

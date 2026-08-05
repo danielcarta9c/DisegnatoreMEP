@@ -27,7 +27,7 @@ def definition_payload(ports: list[str] | None = None) -> dict[str, object]:
         "version": "1.0.0",
         "name": "Valvola di intercettazione",
         "functions": ["isolation"],
-        "traits": ["isolation_normal", "attachment_inline"],
+        "traits": ["shutoff_ordinary", "attachment_inline"],
         "symbol_id": "valve-isolation",
         "composite": False,
         "ports": [

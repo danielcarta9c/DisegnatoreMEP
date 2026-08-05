@@ -6,7 +6,7 @@
     "drain"
   ],
   "traits": [
-    "isolation_never",
+    "shutoff_ordinary",
     "attachment_branch"
   ],
   "symbol_id": "drain-connection",

@@ -7,12 +7,16 @@ Due vocabolari, e non sono la stessa cosa:
   etichetta.
 - **`traits`**, i **fatti** che una regola deve conoscere per ragionare sul
   componente **senza nominarlo** (D-069, D-090): si manutiene, sporca il
-  circuito, produce aria, non si isola mai. E' **chiuso**: un fatto scritto male
-  non sparisce in silenzio, fa fallire il caricamento del catalogo.
+  circuito, non si chiude mai. E' **chiuso**: un fatto scritto male non sparisce
+  in silenzio, fa fallire il caricamento del catalogo.
 
 La differenza sta tutta in una frase: una funzione dice *chi sei*, una proprieta'
 dice *cosa e' vero di te*. «Tutto cio' che si manutiene vuole le proprie valvole»
 e' una regola generale solo se esiste qualcuno che dichiara di manutenersi.
+
+I nomi delle proprieta' evitano di proposito le parole con cui si chiamano i
+componenti: la prova in `tests/catalog/test_traits.py` li confronta parola per
+parola con gli identificativi e i nomi di catalogo, nelle due direzioni.
 """
 
 from enum import StrEnum
@@ -35,13 +39,16 @@ class ComponentTrait(StrEnum):
     """
 
     MAINTAINABLE = "maintainable"
-    """Si smonta o si sostituisce, **e per farlo va isolato dal fluido**.
+    """Si smonta **in esercizio**, e per farlo va chiuso il fluido attorno.
 
-    Il seguito della frase non e' un dettaglio: e' cio' che distingue un filtro,
-    che si pulisce a impianto pieno e quindi vuole le proprie valvole, da una
-    valvola di intercettazione, che si sostituisce ma non chiede a sua volta due
-    valvole per essere sostituita. Senza quel taglio, la regola generale
-    dell'intercettazione entrerebbe in regresso infinito.
+    I due pezzi della frase contano entrambi. *In esercizio*: un'unita' su una
+    linea frigorifera o un ventilatore su un canale si sostituiscono a impianto
+    fermo, non chiudendo un rubinetto, e quindi non hanno questa proprieta'.
+    *Va chiuso il fluido attorno*: distingue un filtro, che si pulisce a
+    impianto pieno e percio' vuole le proprie valvole, da una valvola di
+    intercettazione o da un ritegno, che si sostituiscono a tratta gia' chiusa e
+    non chiedono a loro volta due valvole — se lo facessero, quelle due ne
+    vorrebbero altre quattro, senza fine.
     """
 
     FOULS_CIRCUIT = "fouls_circuit"
@@ -50,24 +57,32 @@ class ComponentTrait(StrEnum):
     NEEDS_DEBRIS_PROTECTION = "needs_debris_protection"
     """Ha organi che i residui rovinano: va protetto su cio' che gli entra."""
 
-    PRODUCES_AIR = "produces_air"
-    """Scalda l'acqua e quindi ne libera l'aria disciolta."""
+    OUTGASSES = "outgasses"
+    """Scalda il fluido e quindi ne libera l'aria che teneva disciolta."""
 
-    NEEDS_OVERPRESSURE_PROTECTION = "needs_overpressure_protection"
-    """Chiude dentro di se' un volume d'acqua che, scaldandosi, va in pressione."""
+    NEEDS_RELIEF = "needs_relief"
+    """Chiude dentro di se' un volume di fluido che, scaldandosi, spinge oltre
+    il limite ammesso: gli serve una via che si apra da sola."""
 
-    HOLDS_DRAINABLE_VOLUME = "holds_drainable_volume"
-    """Contiene un volume di fluido che deve poter essere svuotato."""
+    HOLDS_ITS_OWN_VOLUME = "holds_its_own_volume"
+    """Ha un volume di fluido **proprio**, distinto da quello del circuito.
 
-    ISOLATION_NORMAL = "isolation_normal"
-    """Regime di intercettazione ordinario: lo isola una valvola comune."""
+    E' il criterio che separa un serbatoio da un tratto di tubo: il tubo
+    contiene fluido solo perche' ce lo si fa passare, il serbatoio ne tiene una
+    riserva anche quando nulla circola — e percio' lo si deve poter svuotare da
+    solo, senza svuotare l'impianto.
+    """
 
-    ISOLATION_NEVER = "isolation_never"
-    """Non si isola mai: fra lui e cio' che serve non ci va nulla di chiudibile."""
+    SHUTOFF_ORDINARY = "shutoff_ordinary"
+    """Regime ordinario: se lo si deve chiudere, basta un organo comune."""
 
-    ISOLATION_LOCKABLE_ONLY = "isolation_lockable_only"
-    """Si isola solo con valvola bloccabile o piombabile, che non si chiude per
-    distrazione."""
+    SHUTOFF_NEVER = "shutoff_never"
+    """Non lo si chiude mai: fra lui e cio' che protegge non ci va nulla di
+    chiudibile. E' un vincolo di sicurezza, non una comodita' di esercizio."""
+
+    SHUTOFF_LOCKABLE_ONLY = "shutoff_lockable_only"
+    """Lo si chiude solo con un organo bloccabile o piombabile, che non si
+    chiude per distrazione."""
 
     ATTACHMENT_INLINE = "attachment_inline"
     """Sta sul percorso del tubo: il fluido ci passa dentro o ci arriva."""
@@ -77,22 +92,22 @@ class ComponentTrait(StrEnum):
     passaggio."""
 
 
-ISOLATION_REGIMES: frozenset[ComponentTrait] = frozenset(
+SHUTOFF_REGIMES: frozenset[ComponentTrait] = frozenset(
     {
-        ComponentTrait.ISOLATION_NORMAL,
-        ComponentTrait.ISOLATION_NEVER,
-        ComponentTrait.ISOLATION_LOCKABLE_ONLY,
+        ComponentTrait.SHUTOFF_ORDINARY,
+        ComponentTrait.SHUTOFF_NEVER,
+        ComponentTrait.SHUTOFF_LOCKABLE_ONLY,
     }
 )
-"""I tre modi in cui un componente si lascia isolare. Uno e' obbligatorio: senza,
-un default implicito deciderebbe al posto di chi compila il catalogo (D-094)."""
+"""I tre modi in cui un componente si lascia chiudere. Uno e' obbligatorio:
+senza, un valore sottinteso deciderebbe al posto di chi compila il catalogo
+(D-094)."""
 
 ATTACHMENT_STYLES: frozenset[ComponentTrait] = frozenset(
     {ComponentTrait.ATTACHMENT_INLINE, ComponentTrait.ATTACHMENT_BRANCH}
 )
 """In linea oppure su stacco. Uno e' obbligatorio: e' il primo vincolo con cui
-l'assemblatore costruisce la catena, e la catena e' un albero solo perche' esiste
-lo stacco (D-094)."""
+si costruisce la sequenza dei pezzi lungo un tubo (D-094)."""
 
 
 class PortDefinition(StrictModel):
@@ -119,8 +134,8 @@ class ComponentDefinition(StrictModel):
     name: str = Field(min_length=1)
     functions: list[str] = Field(min_length=1)
     traits: list[ComponentTrait] = Field(min_length=1)
-    """Cio' che e' vero del componente. Obbligatorio, e senza default: un
-    componente che non dice come si isola non si carica affatto."""
+    """Cio' che e' vero del componente. Obbligatorio, e senza valore
+    sottinteso: un componente che non dice come si chiude non si carica."""
 
     symbol_id: str = Field(pattern=ID_PATTERN)
     composite: bool = False
@@ -136,9 +151,9 @@ class ComponentDefinition(StrictModel):
         return frozenset(self.traits)
 
     @property
-    def isolation_regime(self) -> ComponentTrait:
-        """Come lo si isola. Esiste sempre: lo garantisce la validazione."""
-        return next(iter(self.trait_set & ISOLATION_REGIMES))
+    def shutoff_regime(self) -> ComponentTrait:
+        """Come lo si chiude. Esiste sempre: lo garantisce la validazione."""
+        return next(iter(self.trait_set & SHUTOFF_REGIMES))
 
     @property
     def attachment(self) -> ComponentTrait:
@@ -159,23 +174,23 @@ class ComponentDefinition(StrictModel):
     def traits_are_declared_once(self) -> "ComponentDefinition":
         seen = sorted({item for item in self.traits if self.traits.count(item) > 1})
         if seen:
-            raise ValueError(f"{self.id} declares the same trait twice: {', '.join(seen)}")
+            raise ValueError(f"{self.id} dichiara due volte la stessa proprietà: {', '.join(seen)}")
         return self
 
     @model_validator(mode="after")
-    def exactly_one_isolation_regime(self) -> "ComponentDefinition":
+    def exactly_one_shutoff_regime(self) -> "ComponentDefinition":
         return self._exactly_one(
-            ISOLATION_REGIMES,
-            "isolation regime",
-            "how it is isolated, and there is no implicit default",
+            SHUTOFF_REGIMES,
+            "il regime di intercettazione",
+            "come lo si chiude, e non esiste un valore sottinteso",
         )
 
     @model_validator(mode="after")
     def exactly_one_attachment_style(self) -> "ComponentDefinition":
         return self._exactly_one(
             ATTACHMENT_STYLES,
-            "attachment style",
-            "whether the pipe runs through it or it hangs off a branch",
+            "come si attacca",
+            "se il tubo ci passa dentro o se pende da uno stacco",
         )
 
     def _exactly_one(
@@ -184,37 +199,39 @@ class ComponentDefinition(StrictModel):
         declared = sorted(self.trait_set & group)
         if not declared:
             raise ValueError(
-                f"{self.id} declares no {label}: every component must say "
-                f"{because}. Declare one of: {', '.join(sorted(group))}"
+                f"{self.id} non dichiara {label}: ogni componente deve dire "
+                f"{because}. Dichiararne una fra: {', '.join(sorted(group))}"
             )
         if len(declared) > 1:
-            raise ValueError(f"{self.id} declares more than one {label}: {', '.join(declared)}")
+            raise ValueError(
+                f"{self.id} dichiara più di una scelta per {label}: {', '.join(declared)}"
+            )
         return self
 
     @model_validator(mode="after")
-    def never_isolated_is_not_maintainable(self) -> "ComponentDefinition":
+    def what_is_serviced_is_not_what_never_closes(self) -> "ComponentDefinition":
         """Le due proprieta' si contraddicono, e la contraddizione e' silenziosa.
 
-        `maintainable` significa «per smontarlo va isolato»; `isolation_never`
-        significa «non lo si isola mai». Un componente che dichiarasse entrambe
-        chiederebbe alla regola dell'intercettazione una valvola che un'altra
-        proprieta' vieta, e la fila uscirebbe sbagliata senza che nessuno se ne
-        accorga.
+        `maintainable` significa «per smontarlo va chiuso il fluido attorno»;
+        `shutoff_never` significa «non lo si chiude mai». Un componente che
+        dichiarasse entrambe chiederebbe alla regola dell'intercettazione una
+        valvola che un'altra proprieta' vieta, e la fila uscirebbe sbagliata
+        senza che nessuno se ne accorga.
         """
         if self.has_trait(ComponentTrait.MAINTAINABLE) and self.has_trait(
-            ComponentTrait.ISOLATION_NEVER
+            ComponentTrait.SHUTOFF_NEVER
         ):
             raise ValueError(
-                f"{self.id} declares both {ComponentTrait.MAINTAINABLE} and "
-                f"{ComponentTrait.ISOLATION_NEVER}: the first asks for the "
-                f"valves that the second forbids"
+                f"{self.id} dichiara insieme {ComponentTrait.MAINTAINABLE} e "
+                f"{ComponentTrait.SHUTOFF_NEVER}: la prima chiede le valvole che "
+                f"la seconda vieta"
             )
         return self
 
 
 __all__ = [
     "ATTACHMENT_STYLES",
-    "ISOLATION_REGIMES",
+    "SHUTOFF_REGIMES",
     "ComponentDefinition",
     "ComponentTrait",
     "PortDefinition",

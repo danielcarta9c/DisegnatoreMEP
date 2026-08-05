@@ -8,9 +8,9 @@
   "traits": [
     "maintainable",
     "needs_debris_protection",
-    "produces_air",
-    "needs_overpressure_protection",
-    "isolation_normal",
+    "outgasses",
+    "needs_relief",
+    "shutoff_ordinary",
     "attachment_inline"
   ],
   "symbol_id": "heat-pump-air-water",
