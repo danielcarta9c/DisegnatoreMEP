@@ -187,6 +187,36 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 
 ---
 
+## Stato del rilancio al 5 agosto 2026, sera
+
+Ordine del PM: procedere fino a una tavola che **un agente terzo approverebbe**.
+Piano: `docs/plans/2026-08-05-rilancio-qualita-tavola-plan.md`, appendice = registro
+di esecuzione con i verdetti.
+
+| Pacchetto | Stato |
+|---|---|
+| WP1 simboli dalle fonti | **APPROVATO** al ri-collaudo (respinto una volta, corretto) |
+| WP2 regole per attacco + dossier PM | **APPROVATO** |
+| WP3 disposizione al servizio delle linee | eseguito, in attesa di collaudo. Caso completo su **una sola A3**, pieghe 28→24, incroci 11→9 |
+| WP3b mosse di rotazione | in sviluppo — chiude l'andata-e-ritorno sul prelievo ACS che il PM aveva cerchiato |
+| WP4 etichette accanto al pezzo, richiami a 45°, scavalli e pallini | in sviluppo |
+| WP5 preflight di qualità bloccante | eseguito, in attesa di collaudo. **Blocca la tavola oggi**, correttamente |
+| WP6 cold eye review | protocollo e prompt scritti (`docs/COLD_EYE_REVIEW.md`, `docs/prompts/cold-eye-review.md`); ciclo non ancora eseguito |
+| WP7 rigenerazione e consegna | non iniziato |
+
+**Tre prove di accettazione sono rosse per progetto**: pretendono che il disegno esca
+mentre il preflight lo blocca sui richiami non ancora corretti. Si chiudono con WP4.
+Non ammorbidirle.
+
+**Difetto nuovo trovato dal preflight, da chiudere (WP3c):** tre tratte passano a
+distanza zero da accessori appartenenti ad altre tratte. Causa probabile: un accessorio
+viene posato dopo che una tratta precedente è già stata instradata, quindi quella tratta
+non poteva evitarlo. Il posizionamento degli accessori deve considerare anche le tratte
+già instradate, non solo i simboli.
+
+**Come si produce l'immagine per l'occhio terzo:**
+`scripts/rasterize.sh tavola.svg tavola.png`.
+
 ## Ultimo aggiornamento
 
 `2026-08-05` — Claude — **rilancio.** Otto difetti del PM registrati sulla tavola completa

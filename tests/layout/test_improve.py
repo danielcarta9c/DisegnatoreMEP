@@ -53,16 +53,20 @@ def registry() -> ComponentRegistry:
 
 
 @cache
-def case() -> tuple[ProjectModel, SheetPartition, frozenset[str]]:
-    project = load_project(PROJECT)
+def case_of(path: Path) -> tuple[ProjectModel, SheetPartition, frozenset[str]]:
+    project = load_project(path)
     inline = inline_component_ids(project, registry())
     partition = partition_project(project, build_trunks(project, inline))[0]
     return project, partition, inline
 
 
+def case() -> tuple[ProjectModel, SheetPartition, frozenset[str]]:
+    return case_of(PROJECT)
+
+
 @cache
-def before_and_after() -> tuple[list[PlacedSymbol], list[PlacedSymbol]]:
-    project, partition, inline = case()
+def before_and_after_of(path: Path) -> tuple[list[PlacedSymbol], list[PlacedSymbol]]:
+    project, partition, inline = case_of(path)
     first = place_sheet(project, partition, registry(), NOVE_C_A3, inline)
     improved = improve_sheet(
         project, partition, registry(), NOVE_C_A3, list(first), inline
@@ -70,9 +74,15 @@ def before_and_after() -> tuple[list[PlacedSymbol], list[PlacedSymbol]]:
     return first, improved
 
 
-def measured(placed: list[PlacedSymbol]) -> tuple[int, int, int, float]:
+def before_and_after() -> tuple[list[PlacedSymbol], list[PlacedSymbol]]:
+    return before_and_after_of(PROJECT)
+
+
+def measured(
+    placed: list[PlacedSymbol], path: Path = PROJECT
+) -> tuple[int, int, int, float]:
     """(obiettivo, pieghe, attraversamenti, lunghezza) della prova di rotta."""
-    project, partition, _ = case()
+    project, partition, _ = case_of(path)
     grid = GridSpace(origin=NOVE_C_A3.drawing_rect_mm, standard=NOVE_C_A3.standard)
     routes = route_sheet(
         project, list(partition.trunks), list(placed), registry(), grid, None
@@ -176,15 +186,18 @@ def test_the_hard_constraints_hold_after_improvement() -> None:
 
 
 @cache
+def composed_of(path: Path) -> SheetGeometry:
+    return compose_drawing(load_project(path), registry(), NOVE_C_A3).sheets[0]
+
+
 def composed() -> SheetGeometry:
-    return compose_drawing(load_project(PROJECT), registry(), NOVE_C_A3).sheets[0]
+    return composed_of(PROJECT)
 
 
-def test_no_route_makes_an_andata_e_ritorno() -> None:
-    """B12, corollario di D-078: nessuna tratta supera la perpendicolare per
-    la porta di destinazione per poi tornarci. Se serve, si sposta l'oggetto."""
-    project, partition, _ = case()
-    drawn = composed()
+def andata_e_ritorno(path: Path) -> list[list[str]]:
+    """Le tratte della tavola composta che superano la meta e ci tornano."""
+    project, partition, _ = case_of(path)
+    drawn = composed_of(path)
     placed = {item.component_id: item for item in drawn.symbols}
     definitions = {item.id: item.definition_id for item in project.components}
     by_key = {tuple(route.connection_ids): route for route in drawn.routes}
@@ -204,7 +217,86 @@ def test_no_route_makes_an_andata_e_ritorno() -> None:
         )
         if overshoots_the_goal(route, goal):
             overshooting.append(trunk.connection_ids)
-    assert overshooting == []
+    return overshooting
+
+
+def test_no_route_makes_an_andata_e_ritorno() -> None:
+    """B12, corollario di D-078: nessuna tratta supera la perpendicolare per
+    la porta di destinazione per poi tornarci. Se serve, si sposta l'oggetto."""
+    assert andata_e_ritorno(PROJECT) == []
+
+
+def test_no_route_makes_an_andata_e_ritorno_on_the_complete_case() -> None:
+    """Lo stesso, sul caso di accettazione: e' il giro che il PM ha cerchiato.
+
+    Il prelievo ACS e' un confine di rete, un simbolo con una porta sola
+    rivolta a destra, e la sua alimentazione gli arriva da sinistra: la linea
+    lo superava e tornava indietro. Nessuna traslazione lo chiude — spostarlo
+    non cambia da che parte guarda — e infatti WP3 lo lasciava aperto. Lo
+    chiude la rotazione (WP3b).
+    """
+    assert andata_e_ritorno(COMPLETE) == []
+
+
+def test_the_improvement_turns_a_single_port_terminal_towards_its_feed() -> None:
+    """La mossa di rotazione esiste, e' ammessa e viene accettata.
+
+    Il posizionamento posa il confine di rete diritto, perche' non sa da che
+    parte gli arrivera' la linea; il ciclo lo gira di 180 gradi **senza
+    spostarlo di un millimetro** — stessa origine, stesso riquadro — perche'
+    e' l'unica mossa che toglie l'andata e ritorno.
+    """
+    first, improved = before_and_after_of(COMPLETE)
+    was = next(item for item in first if item.component_id == "draw-off")
+    now = next(item for item in improved if item.component_id == "draw-off")
+    assert was.rotation_deg == 0
+    assert now.rotation_deg == 180
+    assert now.origin == was.origin
+    assert (now.width_mm, now.height_mm) == (was.width_mm, was.height_mm)
+    # La rotazione e' fra quelle che il manifesto ammette (D-049), e il
+    # riquadro dichiarato resta quello del manifesto ruotato (ADR 0003).
+    upright = registry().resolve("dhw-draw-off").symbol.manifest
+    assert 180 in upright.allowed_rotations_deg
+    turned = upright.rotated(180)
+    assert (now.width_mm, now.height_mm) == (turned.width_mm, turned.height_mm)
+    # E la porta ora guarda dalla parte da cui arriva l'alimentazione.
+    assert upright.port("a").face is PortFace.RIGHT
+    assert turned.port("a").face is PortFace.LEFT
+
+
+def test_the_complete_case_improvement_is_deterministic() -> None:
+    """Due esecuzioni, geometria bit-identica: la rotazione non introduce
+    nessun ordine di dizionario ne' dipendenza dal seme di hash."""
+    project, partition, inline = case_of(COMPLETE)
+    first = place_sheet(project, partition, registry(), NOVE_C_A3, inline)
+    again = improve_sheet(
+        project, partition, registry(), NOVE_C_A3, list(first), inline
+    )
+    assert [item.model_dump() for item in again] == [
+        item.model_dump() for item in before_and_after_of(COMPLETE)[1]
+    ]
+    twice = compose_drawing(load_project(COMPLETE), registry(), NOVE_C_A3)
+    assert drawing_fingerprint(twice) == drawing_fingerprint(
+        compose_drawing(load_project(COMPLETE), registry(), NOVE_C_A3)
+    )
+
+
+def test_the_complete_case_pays_nothing_for_the_straightened_run() -> None:
+    """La rotazione non compra l'andata e ritorno con un disegno peggiore.
+
+    Sulla prova di rotta del caso completo: pieghe da 28 a 22, attraversamenti
+    da 11 a 9, lunghezza da 1332,5 a 1195 mm, obiettivo da 8460 a 7250. Prima
+    di WP3b il ciclo si fermava a 24 pieghe, 9 attraversamenti, 1207,5 mm e
+    obiettivo 7500 — con il giro ancora li'.
+    """
+    before, after = before_and_after_of(COMPLETE)
+    objective0, bends0, crossings0, length0 = measured(before, COMPLETE)
+    objective1, bends1, crossings1, length1 = measured(after, COMPLETE)
+    assert (objective0, bends0, crossings0, length0) == (8460, 28, 11, 1332.5)
+    assert objective1 <= 7250
+    assert bends1 <= 22
+    assert crossings1 <= 9
+    assert length1 <= 1195.0
 
 
 def test_the_complete_case_fits_one_a3_with_a_stacked_pair() -> None:
