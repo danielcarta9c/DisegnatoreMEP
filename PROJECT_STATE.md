@@ -32,6 +32,32 @@
 - [ ] **Rifare il linguaggio grafico sulle fonti, non sulla convenzione inventata.** Il PM ha giudicato la prima tavola mal disegnata e ha chiesto la ricerca che il progetto non aveva mai fatto. Esito in `docs/research/2026-08-04-come-si-disegna-uno-schema-funzionale.md`: manca **UNI 9511**, mandata e ritorno devono essere linee distinte, la tavola porta i diametri, le sigle sono mnemoniche funzionali, la composizione è a corsie orizzontali e non a pile verticali, e la libreria copre meno di un ottavo dei simboli di una tavola reale.
 - [ ] ~~Giudizio del PM sulla prima tavola~~ — **dato: la tavola è fatta male.** I controlli automatici dimostrano che nulla si sovrappone, non che la tavola si legga come l'avrebbe disegnata un tecnico. Si rigenera con `.venv/bin/python -m disegnatore_mep draw examples/layout/heat-pump-dhw-buffer-two-zones.json --catalog examples/layout/catalog --symbols assets/symbols --out outputs/`.
 
+## Difetti segnalati dal PM sulla tavola completa — 5 agosto 2026
+
+**Registrati, non ancora corretti.** Il PM ne sta elencando altri: si aspetta l'elenco
+completo prima di toccare il codice, perché correggerne uno alla volta rischia di
+riprodurre lo stesso errore di metodo che li ha generati.
+
+- [ ] **Divisione in due tavole con la seconda quasi vuota** (D-072). Il criterio deve
+  diventare «la tavola successiva è abbastanza piena», e prima si ottimizza quella che
+  c'è. Oggi si divide appena il contenuto non entra **come è stato disposto**, che è una
+  cosa diversa.
+- [ ] **La disposizione in fila trattata come legge** (D-073). Bollitore e volano potevano
+  stare uno sopra l'altro invece che uno dopo l'altro. Impilare è una disposizione
+  legittima quanto affiancare, e va scelta quando riempie meglio il foglio.
+
+### L'errore di metodo che li ha generati
+
+Vale più dei due difetti presi singolarmente, ed è il PM a nominarlo: **una singola tavola
+di riferimento è stata generalizzata in una regola.** Dal primo schema fornito è stata
+ricavata la disposizione in fila, e da lì applicata a ogni impianto come se fosse una
+legge del disegno tecnico. Non lo è.
+
+La stessa cosa era già successa con le corsie a quota fissa, ricavate dalla stessa tavola
+e poi rimosse perché producevano sali-scendi. Un esempio mostra **una** soluzione
+ammissibile, non l'unica: da un esempio si ricava un vincolo solo quando lo si riconosce
+anche altrove, o quando il PM lo dichiara tale.
+
 ## Next — backlog ordinato
 
 Ordine concordato col PM il 4 agosto 2026, dopo il punto fatto sullo stato reale del
