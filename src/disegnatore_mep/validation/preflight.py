@@ -105,6 +105,14 @@ sulla prima: esito bloccante, perche' D-072 e' un divieto di divisione, non un
 consiglio.
 """
 
+LEADER_ANGLE_DEG = 45
+"""L'unica giacitura ammessa per un richiamo di etichetta (D-075, D2).
+
+«Quando il testo non ci sta o interferisce, e solo allora, si allontana con un
+richiamo **in diagonale a 45 gradi**.» Non e' una taratura: e' l'angolo che
+nessuna tubazione puo' avere, ed e' per questo che e' stato scelto.
+"""
+
 INVENTED_SOURCE = "CONV-GRAFICA-001"
 """La convenzione grafica interna: una fonte inventata, non una fonte (D-081, D-083).
 
@@ -620,8 +628,16 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
     """D2, D3, D-075 — un richiamo e' obliquo a 45 gradi, mai ortogonale.
 
     Le tubazioni sono sempre ortogonali (D-041, B1): un richiamo ortogonale ha
-    la stessa forma e la stessa giacitura di un tubo e si legge come un tubo. La
-    diagonale risolve alla radice, perche' nessuna tubazione e' mai obliqua.
+    la stessa forma e la stessa giacitura di un tubo, e si legge come un tubo.
+    La diagonale risolve alla radice, perche' nessuna tubazione e' mai obliqua.
+
+    La geometria dichiara del richiamo i **due capi**, non la spezzata: la
+    misura sta quindi sui due capi, ed e' la sola che valga qualunque cosa
+    faccia il renderer. Un richiamo si puo' disegnare come D-075 lo vuole — una
+    sola diagonale a 45 gradi — se e solo se i due capi stanno a 45 gradi l'uno
+    dall'altro. Se non ci stanno, chi disegna deve piegare, e una piega ad
+    angolo retto e' esattamente il tubo finto che D-075 vieta.
+
     Un'etichetta senza richiamo non e' misurata: e' il caso giusto, la scritta
     piccola accanto al proprio pezzo (D1).
     """
@@ -630,31 +646,32 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
         for label in sheet.labels:
             if label.leader_from is None:
                 continue
-            moves = _moves([label.leader_from, label.anchor])
-            if not moves:
+            span_x = abs(label.anchor.x_mm - label.leader_from.x_mm)
+            span_y = abs(label.anchor.y_mm - label.leader_from.y_mm)
+            if span_x <= TOLERANCE_MM and span_y <= TOLERANCE_MM:
                 continue
-            angles = sorted(
-                {
-                    round(
-                        math.degrees(
-                            math.atan2(
-                                abs(after.y_mm - before.y_mm), abs(after.x_mm - before.x_mm)
-                            )
-                        )
-                    )
-                    for before, after in moves
-                }
-            )
-            if not all(angle in (0, 90) for angle in angles):
+            if abs(span_x - span_y) <= TOLERANCE_MM:
                 continue
-            drawn = ", ".join(f"{angle}" for angle in angles)
+            angle = math.degrees(math.atan2(span_y, span_x))
+            if span_x <= TOLERANCE_MM or span_y <= TOLERANCE_MM:
+                code = "ORTHOGONAL_LABEL_LEADER"
+                reason = (
+                    f"e' ortogonale ({angle:.0f} gradi): ha la stessa giacitura di una "
+                    f"tubazione e si legge come un altro tubo"
+                )
+            else:
+                code = "LEADER_NOT_AT_45_DEGREES"
+                reason = (
+                    f"unisce due capi a {angle:.0f} gradi invece che a "
+                    f"{LEADER_ANGLE_DEG}: fra quei due punti una sola diagonale non ci "
+                    f"sta, e chi disegna deve piegare ad angolo retto"
+                )
             findings.append(
                 _finding(
-                    "ORTHOGONAL_LABEL_LEADER",
+                    code,
                     IssueSeverity.BLOCKING,
-                    f"il richiamo dell'etichetta {label.id} e' tutto ortogonale "
-                    f"(segmenti a {drawn} gradi): un richiamo si disegna obliquo a 45 "
-                    f"gradi, o si legge come un altro tubo (D2, D3, D-075)",
+                    f"il richiamo dell'etichetta {label.id} {reason}: un richiamo si "
+                    f"disegna obliquo a {LEADER_ANGLE_DEG} gradi (D2, D3, D-075)",
                     [sheet.sheet_id, label.id],
                 )
             )

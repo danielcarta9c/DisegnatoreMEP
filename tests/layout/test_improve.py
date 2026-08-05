@@ -23,7 +23,7 @@ from disegnatore_mep.layout.compose import (
     compose_on_ordinary_frame,
     inline_component_ids,
 )
-from disegnatore_mep.layout.composition import levels_of
+from disegnatore_mep.layout.composition import Standing, levels_of, standing_of
 from disegnatore_mep.layout.geometry import PlacedSymbol, Point, SheetGeometry
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.improve import (
@@ -147,18 +147,31 @@ def test_the_hard_constraints_hold_after_improvement() -> None:
         is_left = centre_x(after, start_id) < centre_x(after, end_id)
         assert was_left == is_left, trunk.connection_ids
 
-    # Chi stava a terra ci sta ancora, esattamente sulla linea.
+    # Chi sta a terra per costruzione ci sta ancora, esattamente sulla linea.
+    # (Non chi la sfiorava per caso: un terminale su tubazione puo' alzarsi.)
     drawing = NOVE_C_A3.drawing_rect_mm
     grid = GridSpace(origin=drawing, standard=NOVE_C_A3.standard)
     ground = levels_of(drawing.y_mm, drawing.height_mm, grid.step_mm).ground_mm
-    grounded_before = {
-        item.component_id for item in before if item.bottom_mm == ground
-    }
-    assert grounded_before, "il caso ha macchine a terra"
+    definitions = {item.id: item.definition_id for item in project.components}
+
+    def stands_on_the_ground(item: PlacedSymbol) -> bool:
+        resolved = registry().resolve(definitions[item.component_id])
+        manifest = resolved.symbol.manifest.rotated(item.rotation_deg)
+        return (
+            standing_of(
+                manifest.height_mm,
+                frozenset(resolved.definition.functions),
+                resolved.is_inline,
+            )
+            is Standing.GROUND
+        )
+
+    grounded = [item for item in after if stands_on_the_ground(item)]
+    assert grounded, "il caso ha macchine a terra"
+    for item in grounded:
+        assert item.bottom_mm == ground, item.component_id
+    # E tutto resta sulla griglia: una coordinata fuori passo solleva.
     for item in after:
-        if item.component_id in grounded_before:
-            assert item.bottom_mm == ground, item.component_id
-        # E tutto resta sulla griglia: una coordinata fuori passo solleva.
         grid.to_cell(item.origin.x_mm, item.origin.y_mm)
 
 
