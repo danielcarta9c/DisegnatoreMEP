@@ -10,10 +10,28 @@ anche la lunghezza delle tratte costa, non facciamo che spargiamo le macchine
 in giro, dobbiamo bilanciare tutto.»
 
 Qui la disposizione di `place.py` smette di essere l'ultima parola. Dopo un
-instradamento di prova si generano spostamenti discreti dei componenti; per
-ciascuno si reinstrada l'**intero foglio** e lo spostamento si tiene solo se
-l'obiettivo totale — pieghe, attraversamenti e lunghezza, con i pesi di
-D-060 — scende davvero. Mai una voce sola a spese delle altre.
+instradamento di prova si generano mosse discrete dei componenti — traslazioni
+**e rotazioni** fra quelle che il manifesto ammette; per ciascuna si reinstrada
+l'**intero foglio** e la mossa si tiene solo se l'obiettivo totale — pieghe,
+attraversamenti e lunghezza, con i pesi di D-060 — scende davvero. Mai una voce
+sola a spese delle altre.
+
+La rotazione serve un difetto che nessuna traslazione chiude: un terminale con
+una porta sola — il confine di rete dell'ACS — la tiene rivolta a destra mentre
+l'alimentazione gli arriva da sinistra, e la linea deve superarlo e tornare
+indietro. Spostarlo non cambia da che parte guarda: girarlo si'.
+
+**Il confronto e' lessicografico**, e la prima voce non e' l'obiettivo ma
+l'andata e ritorno. Nell'ordine:
+
+1. le tratte che non ospitano i propri accessori in linea (D-027): una mossa
+   che ne recupera una vale qualunque obiettivo;
+2. le **andate e ritorno** (B12): una tratta che supera la propria meta e torna
+   indietro non e' un disegno caro, e' un disegno sbagliato. Una mossa che ne
+   toglie una si accetta anche a obiettivo invariato; una che ne aggiunge una
+   non si accetta mai, per nessun guadagno;
+3. gli attraversamenti, che non devono crescere;
+4. l'obiettivo totale, che deve scendere strettamente.
 
 Vincoli mai violabili, qualunque sia il guadagno:
 
@@ -32,6 +50,8 @@ accessori si posano sulla tratta gia' instradata (D-027), quindi non possono
 cambiare il segno di un confronto fra disposizioni; farli entrare nel ciclo
 moltiplicherebbe il costo di ogni prova senza aggiungere informazione.
 """
+
+from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
@@ -70,6 +90,34 @@ collegano senza che la tratta sembri disegnata sul simbolo.
 """
 
 _TOLERANCE_MM = 1e-6
+
+class _Move(NamedTuple):
+    """Una candidata: dove va l'origine del riquadro e come e' girato.
+
+    Traslazione e rotazione sono la stessa cosa per il ciclo — una posa
+    alternativa da provare instradando — e viaggiano insieme perche' la
+    validita' di un riquadro dipende da entrambe: a 90 e 270 gradi il
+    manifesto scambia larghezza e altezza, e il riquadro da verificare contro
+    l'area, la terra e i vicini non e' piu' quello di prima.
+    """
+
+    origin: Point
+    rotation_deg: int
+
+
+class _Outcome(NamedTuple):
+    """Cio' che una prova di instradamento dice della disposizione provata."""
+
+    unfit: tuple[int, ...]
+    """Indici delle tratte che non ospitano i propri accessori in linea."""
+
+    turnbacks: tuple[int, ...]
+    """Indici delle tratte che fanno un'andata e ritorno (B12)."""
+
+    objective: int
+    crossings: int
+    routes: list[RoutedTrunk]
+
 
 _HORIZONTAL_FACES = (PortFace.LEFT, PortFace.RIGHT)
 """Le facce per cui l'allineamento in quota ha senso.
@@ -143,10 +191,11 @@ def improve_sheet(
     """Rivede la disposizione reinstradando: si tiene solo cio' che migliora.
 
     Greedy e deterministico: i componenti colpevoli — estremi di tratte con
-    pieghe o attraversamenti — si esaminano nell'ordine di posa; per ciascuno
-    si prova una lista fissa di posizioni alternative e si accetta la prima
-    che abbassa **strettamente** l'obiettivo totale. Una passata senza
-    spostamenti chiude il ciclo; tre passate lo chiudono comunque.
+    pieghe, attraversamenti o andate e ritorno — si esaminano nell'ordine di
+    posa; per ciascuno si prova una lista fissa di mosse alternative —
+    traslazioni e rotazioni ammesse dal manifesto — e si accetta la prima che
+    migliora nell'ordine lessicografico del modulo. Una passata senza mosse
+    chiude il ciclo; tre passate lo chiudono comunque.
 
     `inline_ids` non entra nel ciclo: gli accessori in linea non sono ancora
     posati, e l'instradamento di prova gira apposta senza di loro.
@@ -169,31 +218,58 @@ def improve_sheet(
     levels = levels_of(drawing.y_mm, drawing.height_mm, step)
 
     definitions = {item.id: item.definition_id for item in project.components}
-    manifests: dict[str, SymbolManifest] = {}
-    standings: dict[str, Standing] = {}
+    upright: dict[str, SymbolManifest] = {}
+    features: dict[str, tuple[frozenset[str], bool]] = {}
     for item in placed:
         resolved = catalog.resolve(definitions[item.component_id])
-        manifest = resolved.symbol.manifest.rotated(item.rotation_deg)
-        manifests[item.component_id] = manifest
-        standings[item.component_id] = standing_of(
-            manifest.height_mm,
+        upright[item.component_id] = resolved.symbol.manifest
+        features[item.component_id] = (
             frozenset(resolved.definition.functions),
             resolved.is_inline,
         )
+
+    turned: dict[tuple[str, int], SymbolManifest] = {}
+
+    def manifest_at(component_id: str, rotation_deg: int) -> SymbolManifest:
+        """Il manifesto del componente girato di tanto, calcolato una volta.
+
+        Si parte sempre dal manifesto **diritto** del catalogo: ruotare un
+        manifesto gia' ruotato rimappa le rotazioni ammesse, e chiedergli
+        quelle originali darebbe la risposta sbagliata.
+        """
+        found = turned.get((component_id, rotation_deg))
+        if found is None:
+            found = upright[component_id].rotated(rotation_deg)
+            turned[component_id, rotation_deg] = found
+        return found
+
+    def manifest_of(item: PlacedSymbol) -> SymbolManifest:
+        return manifest_at(item.component_id, item.rotation_deg)
+
+    def standing_at(component_id: str, rotation_deg: int) -> Standing:
+        functions, is_inline = features[component_id]
+        return standing_of(
+            manifest_at(component_id, rotation_deg).height_mm, functions, is_inline
+        )
+
+    standings = {
+        item.component_id: standing_at(item.component_id, item.rotation_deg)
+        for item in placed
+    }
 
     order = [item.component_id for item in placed]
     best = {item.component_id: item for item in placed}
     trials = 0
 
-    def evaluate(
-        layout: dict[str, PlacedSymbol],
-    ) -> tuple[list[int], int, int, list[RoutedTrunk]] | None:
+    def evaluate(layout: dict[str, PlacedSymbol]) -> _Outcome | None:
         """Un instradamento di prova completo, contato contro il tetto.
 
         Oltre all'obiettivo restituisce quali tratte non riescono a ospitare i
-        propri accessori in linea (D-027): avvicinare e' gratis solo finche'
+        propri accessori in linea (D-027) — avvicinare e' gratis solo finche'
         gli accessori trovano il proprio rettilineo, e una disposizione che
-        glielo toglie costerebbe l'intera tavola, non una piega.
+        glielo toglie costerebbe l'intera tavola, non una piega — e quali
+        fanno un'andata e ritorno (B12), che e' la voce che comanda il
+        confronto.
         """
         nonlocal trials
         trials += 1
@@ -205,22 +281,49 @@ def improve_sheet(
             # candidata: si scarta e si resta su quella che funziona.
             return None
         unfit: list[int] = []
+        turnbacks: list[int] = []
         for index, (trunk, route) in enumerate(zip(trunks, routes, strict=True)):
+            arrival = layout[trunk.end.component_id]
+            port = manifest_of(arrival).port(trunk.end.port_id)
+            if overshoots_the_goal(
+                route,
+                Point(
+                    x_mm=arrival.origin.x_mm + port.x_mm,
+                    y_mm=arrival.origin.y_mm + port.y_mm,
+                ),
+            ):
+                turnbacks.append(index)
             if not trunk.inline_component_ids:
                 continue
             try:
                 place_inline_accessories(project, trunk, route, catalog, grid, symbols)
             except LayoutError:
                 unfit.append(index)
-        crossings = sum(len(route.crossings) for route in routes)
-        return unfit, objective_of(routes, step), crossings, routes
+        return _Outcome(
+            unfit=tuple(unfit),
+            turnbacks=tuple(turnbacks),
+            objective=objective_of(routes, step),
+            crossings=sum(len(route.crossings) for route in routes),
+            routes=routes,
+        )
 
-    def candidates_of(component_id: str) -> list[Point]:
-        """Le posizioni alternative, in ordine fisso: prima gli allineamenti
-        di porta, poi le traslazioni verticali, poi le orizzontali."""
+    def candidates_of(component_id: str) -> list[_Move]:
+        """Le mosse alternative, in ordine fisso: prima gli allineamenti di
+        porta, poi le rotazioni, poi le traslazioni verticali, poi le
+        orizzontali.
+
+        Le rotazioni stanno **dopo gli allineamenti e prima delle
+        traslazioni** perche' costano meno di tutte: girare un simbolo non lo
+        muove di un millimetro, quindi non tocca ne' l'ordine di processo ne'
+        lo spazio dei vicini, e nella catena greedy conviene provarla prima di
+        mettersi a far scorrere l'oggetto per la tavola. E' anche l'unica
+        mossa che possa pagare un'andata e ritorno dovuta al verso di una
+        porta, che nessuna traslazione toglie.
+        """
         me = best[component_id]
-        manifest = manifests[component_id]
-        out: list[Point] = []
+        manifest = manifest_of(me)
+        here = me.rotation_deg
+        out: list[_Move] = []
         # (a) La quota che porta la propria porta sulla riga della porta del
         # pari, per ogni tratta che li collega: e' la mossa che rende
         # possibile la linea diritta. E la stessa quota con l'ascissa appena
@@ -236,31 +339,46 @@ def improve_sheet(
                 if peer is None:
                     continue
                 own_port = manifest.port(mine.port_id)
-                peer_port = manifests[other.component_id].port(other.port_id)
+                peer_port = manifest_of(peer).port(other.port_id)
                 if (
                     own_port.face not in _HORIZONTAL_FACES
                     or peer_port.face not in _HORIZONTAL_FACES
                 ):
                     continue
                 aligned_y = peer.origin.y_mm + peer_port.y_mm - own_port.y_mm
-                out.append(Point(x_mm=me.origin.x_mm, y_mm=aligned_y))
+                out.append(_Move(Point(x_mm=me.origin.x_mm, y_mm=aligned_y), here))
                 snug_x = (
                     peer.origin.x_mm
                     + peer_port.x_mm
                     + _SNUG_STEPS * step
                     - own_port.x_mm
                 )
-                out.append(Point(x_mm=snug_x, y_mm=aligned_y))
-        # (b) Traslazioni verticali: in alto prima che in basso, vicino prima
+                out.append(_Move(Point(x_mm=snug_x, y_mm=aligned_y), here))
+        # (b) Rotazioni: quelle che il manifesto ammette, in gradi crescenti,
+        # con l'origine ferma. Il riquadro pero' cambia — a 90 e 270 gradi
+        # larghezza e altezza si scambiano — e lo rivaluta il predicato di
+        # validita' come per qualunque altra mossa.
+        for degrees in sorted(upright[component_id].allowed_rotations_deg):
+            if degrees != here:
+                out.append(_Move(me.origin, degrees))
+        # (c) Traslazioni verticali: in alto prima che in basso, vicino prima
         # che lontano.
         for count in NUDGE_STEPS:
-            out.append(Point(x_mm=me.origin.x_mm, y_mm=me.origin.y_mm - count * step))
-            out.append(Point(x_mm=me.origin.x_mm, y_mm=me.origin.y_mm + count * step))
-        # (c) Traslazioni orizzontali: l'ordine di processo le limita, e a
+            out.append(
+                _Move(Point(x_mm=me.origin.x_mm, y_mm=me.origin.y_mm - count * step), here)
+            )
+            out.append(
+                _Move(Point(x_mm=me.origin.x_mm, y_mm=me.origin.y_mm + count * step), here)
+            )
+        # (d) Traslazioni orizzontali: l'ordine di processo le limita, e a
         # controllarlo e' il predicato di validita'.
         for count in NUDGE_STEPS:
-            out.append(Point(x_mm=me.origin.x_mm - count * step, y_mm=me.origin.y_mm))
-            out.append(Point(x_mm=me.origin.x_mm + count * step, y_mm=me.origin.y_mm))
+            out.append(
+                _Move(Point(x_mm=me.origin.x_mm - count * step, y_mm=me.origin.y_mm), here)
+            )
+            out.append(
+                _Move(Point(x_mm=me.origin.x_mm + count * step, y_mm=me.origin.y_mm), here)
+            )
         return out
 
     def in_a_ground_column(component_id: str) -> bool:
@@ -279,14 +397,24 @@ def improve_sheet(
                 return True
         return False
 
-    def is_valid(component_id: str, target: Point) -> bool:
+    def is_valid(component_id: str, move: _Move) -> bool:
         me = best[component_id]
-        manifest = manifests[component_id]
+        target = move.origin
+        manifest = manifest_at(component_id, move.rotation_deg)
+        # Girare un simbolo non puo' cambiare che cosa e' sulla tavola: se la
+        # rotazione lo fa scendere sotto la soglia delle macchine, o salirci,
+        # non e' piu' lo stesso pezzo e la sua quota la deve decidere il
+        # posizionamento, non questo ciclo.
+        if standing_at(component_id, move.rotation_deg) is not standings[component_id]:
+            return False
         # Chi sta a terra scorre lungo la fascia: la quota non si tocca. Vale
         # anche per chi la terra l'ha lasciata impilandosi (D-073): quella
-        # quota l'ha decisa il posizionamento, non questo ciclo.
+        # quota l'ha decisa il posizionamento, non questo ciclo. E non si gira
+        # in modo da cambiare altezza, che e' lo stesso che sollevarlo.
         if standings[component_id] is Standing.GROUND:
             if target.y_mm != me.origin.y_mm:
+                return False
+            if manifest.height_mm != me.height_mm:
                 return False
             if target.x_mm != me.origin.x_mm and in_a_ground_column(component_id):
                 return False
@@ -321,7 +449,7 @@ def improve_sheet(
         # quello della disposizione corrente. Per le tratte orientate e' il
         # verso del fluido; per quelle che la topologia non decide vale
         # l'ordine gia' disegnato, che da quel verso discende.
-        old_centre = me.origin.x_mm + manifest.width_mm / 2
+        old_centre = me.origin.x_mm + me.width_mm / 2
         new_centre = target.x_mm + manifest.width_mm / 2
         for trunk in trunks:
             start_id = trunk.start.component_id
@@ -332,7 +460,7 @@ def improve_sheet(
             peer = best.get(other_id)
             if peer is None:
                 continue
-            other_centre = peer.origin.x_mm + manifests[other_id].width_mm / 2
+            other_centre = peer.origin.x_mm + peer.width_mm / 2
             if start_id == component_id:
                 before = _relation(old_centre, other_centre)
                 after = _relation(new_centre, other_centre)

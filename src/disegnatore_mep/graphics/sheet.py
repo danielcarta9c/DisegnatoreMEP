@@ -12,7 +12,9 @@ template vettoriale e il blocco della tavola finale incompleta sono del piano
 di rendering; finche' non esistono, il foglio esce marcato come bozza (D-025).
 """
 
-from disegnatore_mep.layout.geometry import Point, SheetGeometry
+from dataclasses import dataclass
+
+from disegnatore_mep.layout.geometry import Point, RoutedTrunk, SheetGeometry
 from disegnatore_mep.layout.legend import style_for
 
 from .frame import Rect, SheetFrame
@@ -37,6 +39,31 @@ LEGEND_SWATCH_MM = 8.0
 
 LEGEND_TEXT_GAP_MM = 2.0
 CROSS_REFERENCE_RADIUS_MM = 2.0
+
+CROSSING_ARC_RADIUS_MM = 1.25
+"""Raggio dello scavallo: mezzo passo di griglia (D-079, CONV-GRAFICA-004).
+
+Grande abbastanza da leggersi come un archetto e non come un ispessimento,
+piccolo abbastanza da non toccare la corsia accanto, che dista un passo.
+"""
+
+JUNCTION_DOT_WIDTHS = 4.0
+"""Diametro del pallino di collegamento, in spessori di tratto.
+
+UNI 9511 Tab. 1, tramite SRC-016: un incrocio **con** connessione e una
+derivazione portano un cerchio pieno di diametro quattro volte lo spessore
+della linea; l'incrocio senza connessione porta invece lo scavallo (D-079).
+Insieme, i due segni non lasciano ambiguita'.
+"""
+
+MARK_ROUNDING_DIGITS = 3
+"""Cifre con cui si confrontano due punti prima di dirli lo stesso punto.
+
+Due tratte arrivano allo stesso nodo per strade diverse: senza arrotondamento
+un errore in fondo alla mantissa le farebbe risultare in due punti distinti.
+"""
+
+TOLERANCE_MM = 1e-6
 
 
 def _escape(text: str) -> str:

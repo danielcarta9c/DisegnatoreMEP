@@ -41,9 +41,17 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 | Stato | Significato |
 |---|---|
 | `per costruzione` | Il motore non può fare diversamente: la regola è dentro il modo in cui il disegno viene generato. |
+| `misurata` | Il preflight la misura su ogni tavola e la classifica bloccante o avviso. Non è più un desiderio. |
 | `da misurare` | È misurabile, ma il controllo non esiste ancora. Sono queste che riempiono il preflight grafico. |
 | `giudizio` | Non si misura. La deve vedere l'agente terzo. |
 | `difetto aperto` | Oggi la tavola la viola, il difetto è registrato e non ancora corretto. |
+
+**Aggiornato il 5 agosto 2026, col primo preflight di qualità.** Nove misure girano dentro il
+comando di disegno e una tavola con un esito bloccante **non esce**. Due sorprese, entrambe
+degne di nota: la regola B5 — le linee non sfiorano i simboli — era marcata «per costruzione»
+ed era **falso**, il preflight ha trovato tre violazioni vere sul caso di accettazione;
+e D4/D6 erano marcate «da misurare» mentre in realtà sono garantite dal modo in cui il
+disegno è costruito. Una carta che non viene messa alla prova invecchia male.
 
 ---
 
@@ -51,8 +59,8 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 
 | # | La regola | Come si vede | Stato |
 |---|---|---|---|
-| A1 | Il foglio è pieno in modo uniforme. | Si copre metà foglio con una mano: se una metà è quasi bianca e l'altra è fitta, non va. | `da misurare` |
-| A2 | Una seconda tavola esiste solo se porta contenuto vero (D-072). | La seconda tavola si guarda da sola: se sembra un ritaglio, doveva stare sulla prima. | `difetto aperto` |
+| A1 | Il foglio è pieno in modo uniforme. | Si copre metà foglio con una mano: se una metà è quasi bianca e l'altra è fitta, non va. | `misurata` |
+| A2 | Una seconda tavola esiste solo se porta contenuto vero (D-072). | La seconda tavola si guarda da sola: se sembra un ritaglio, doveva stare sulla prima. | `misurata` |
 | A3 | Il blocco disegnato è centrato e i quattro margini bianchi si somigliano. | Il disegno non è appoggiato a un bordo con il vuoto dall'altra parte. | `da misurare` |
 | A4 | Si legge da sinistra a destra seguendo il processo: generazione, distribuzione, accumulo, utenze (D-060). | Si segue il flusso con il dito senza mai tornare indietro. | `per costruzione` |
 | A5 | Ciò che sta insieme è vicino. | I pezzi dello stesso sottosistema formano un gruppo, non sono sparsi ai due capi del foglio. | `giudizio` |
@@ -67,17 +75,17 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 | # | La regola | Come si vede | Stato |
 |---|---|---|---|
 | B1 | Le tubazioni sono sempre ortogonali. Un segno obliquo non è mai un tubo. | Nessuna diagonale fra le linee di impianto. | `per costruzione` |
-| B2 | Due linee non corrono mai sovrapposte per un tratto (D-062). | Una linea che «sparisce» dentro un'altra e riappare dopo. | `per costruzione` |
-| B3 | Gli incroci sono pochi. | Si contano: su una centrale semplice devono stare sulle dita di una mano. | `da misurare` |
-| B4 | Una linea cambia direzione solo per una ragione. | Sali-scendi, gomiti doppi, deviazioni che tornano da dove venivano. | `da misurare` |
-| B5 | Le linee non sfiorano i simboli. | Un tratto che passa a filo di un riquadro sembra disegnato sopra il pezzo. | `per costruzione` |
+| B2 | Due linee non corrono mai sovrapposte per un tratto (D-062). | Una linea che «sparisce» dentro un'altra e riappare dopo. | `per costruzione` + `misurata` |
+| B3 | Gli incroci sono pochi. | Si contano: su una centrale semplice devono stare sulle dita di una mano. | `misurata` |
+| B4 | Una linea cambia direzione solo per una ragione. | Sali-scendi, gomiti doppi, deviazioni che tornano da dove venivano. | `misurata` |
+| B5 | Le linee non sfiorano i simboli. | Un tratto che passa a filo di un riquadro sembra disegnato sopra il pezzo. | `misurata` |
 | B6 | Le linee parallele corrono a distanza uguale e costante. | Due tubi affiancati a 4 mm qui e 9 mm là si notano subito. | `da misurare` |
 | B7 | Nessuna linea finisce nel vuoto. | Ogni capo finisce su un componente o su un rimando dichiarato. | `per costruzione` |
 | B8 | Gli spessori sono gerarchici: squadratura, tubazioni principali, ausiliari, richiami. | Se tutto ha lo stesso spessore la tavola è piatta e si legge male. | `da misurare` |
 | B9 | Mandata e ritorno si distinguono sempre, e il verso segue il processo (D-057, D-059). | Il ritorno non entra mai dove deve entrare la mandata. | `per costruzione` |
 | B10 | Il percorso è quello breve. | Un tubo che gira intorno al foglio per raggiungere la macchina accanto. | `da misurare` |
 | B11 | L'ultimo tratto prima di un attacco è dritto e perpendicolare all'attacco. | Una linea che arriva di sbieco e piega proprio sul bocchello. | `da misurare` |
-| B12 | Nessuna andata e ritorno per raggiungere un pezzo (D-078). | La linea supera l'oggetto, scende e torna indietro a prenderlo. Va spostato l'oggetto, non allungata la linea. | `difetto aperto` |
+| B12 | Nessuna andata e ritorno per raggiungere un pezzo (D-078). | La linea supera l'oggetto, scende e torna indietro a prenderlo. Va spostato l'oggetto, non allungata la linea. | `misurata` |
 | B13 | Un incrocio fra linee che non si collegano porta il proprio scavallo (D-079). | Senza archetto, un incrocio e un raccordo a T hanno lo stesso segno e non si distinguono. | `difetto aperto` |
 | B14 | Un attraversamento non si paga per una scelta di posizione. | Una linea che scende tagliando tutte le altre perché il suo pezzo è stato messo in alto. | `difetto aperto` |
 | B15 | Un collegamento fra due linee porta il proprio pallino (UNI 9511, SRC-016). | Cerchio pieno di diametro quattro volte lo spessore del tratto, su derivazioni e incroci connessi. | `difetto aperto` |
@@ -88,12 +96,12 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 |---|---|---|---|
 | C1 | I componenti sulla stessa tratta hanno gli attacchi alla stessa quota (D-061). | Un disallineamento di due millimetri si vede a occhio nudo. | `per costruzione` |
 | C2 | Componenti simili sono allineati fra loro. | Le macchine formano colonne e righe implicite, non una nuvola. | `da misurare` |
-| C3 | Stesso componente, stesso simbolo, sempre. | Due valvole uguali disegnate in due modi diversi sulla stessa tavola. | `da misurare` |
+| C3 | Stesso componente, stesso simbolo, sempre. | Due valvole uguali disegnate in due modi diversi sulla stessa tavola. | `per costruzione` |
 | C4 | I simboli sono dritti; se ruotano, ruotano di 90°, e il testo dentro resta orizzontale. | Nessun simbolo storto, nessuna scritta da leggere girando la testa. | `per costruzione` |
 | C5 | Le distanze fra i componenti sono regolari. | Spazi tutti diversi fanno sembrare la tavola improvvisata. | `da misurare` |
 | C6 | Nessun simbolo tocca o copre un altro. | | `per costruzione` |
 | C7 | La taglia del simbolo comunica il peso del componente. | Una valvola piccola, un accumulo grande. Tutti uguali non dicono niente. | `da misurare` |
-| C8 | Ogni simbolo è quello che un termotecnico italiano si aspetta di vedere (D-081, D-082). | Se chi guarda deve chiedersi «e questo cos'è?», il simbolo è sbagliato anche se è bello. | `difetto aperto` |
+| C8 | Ogni simbolo è quello che un termotecnico italiano si aspetta di vedere (D-081, D-082). | Se chi guarda deve chiedersi «e questo cos'è?», il simbolo è sbagliato anche se è bello. | `misurata` |
 | C9 | Un simbolo che porta un verso lo dichiara. | La valvola di ritegno ha la freccia del senso del flusso; senza, non si sa da che parte tiene. | `difetto aperto` |
 
 ## D. Testi — la famiglia dove si sbaglia più spesso
@@ -101,11 +109,11 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 | # | La regola | Come si vede | Stato |
 |---|---|---|---|
 | D1 | L'etichetta è una scritta piccola accanto al proprio pezzo, e basta (D-075). | Il testo sta vicino a ciò che nomina: non serve seguire niente per capire a chi si riferisce. | `difetto aperto` |
-| D2 | Se il testo non ci sta o dà fastidio, e solo allora, si allontana con un richiamo obliquo a 45°. | La diagonale si distingue al primo sguardo da una tubazione, che obliqua non è mai. | `difetto aperto` |
-| D3 | Nessun richiamo ortogonale, nessuna riga di richiami a fondo tavola. | Quelle linee sottili ad angolo retto si leggono come altri tubi. | `difetto aperto` |
-| D4 | Tutti i testi sono orizzontali e si leggono dal basso. | Niente scritte capovolte o verticali. | `da misurare` |
+| D2 | Se il testo non ci sta o dà fastidio, e solo allora, si allontana con un richiamo obliquo a 45°. | La diagonale si distingue al primo sguardo da una tubazione, che obliqua non è mai. | `misurata` |
+| D3 | Nessun richiamo ortogonale, nessuna riga di richiami a fondo tavola. | Quelle linee sottili ad angolo retto si leggono come altri tubi. | `misurata` |
+| D4 | Tutti i testi sono orizzontali e si leggono dal basso. | Niente scritte capovolte o verticali. | `per costruzione` |
 | D5 | Un testo non copre mai una linea né un simbolo. | | `per costruzione` |
-| D6 | Stessa informazione, stesso corpo di testo. | Sigle tutte uguali fra loro, valori tutti uguali fra loro. | `da misurare` |
+| D6 | Stessa informazione, stesso corpo di testo. | Sigle tutte uguali fra loro, valori tutti uguali fra loro. | `per costruzione` |
 | D7 | Il testo non ripete la legenda (D-052). | Il nome del componente si scrive una volta sola, in legenda. | `per costruzione` |
 | D8 | I testi sono pochi. | Ciò che può stare in legenda o in distinta non satura il disegno. | `giudizio` |
 
