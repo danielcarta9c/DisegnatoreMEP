@@ -229,6 +229,7 @@ def compose_sheet(
             # richiami a fondo tavola e' ritirata. Le tratte servono a far
             # scansare un testo che finirebbe su una linea.
             routes=broken,
+            floor_y_mm=levels.ground_mm,
         ),
         legend=entries,
         network_keys=keys,

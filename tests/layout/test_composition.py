@@ -61,11 +61,18 @@ def test_the_drawn_block_is_centred_in_the_drawing_area() -> None:
     """
     drawn = sheet()
     area = NOVE_C_A3.drawing_rect_mm
+    # Il blocco e' tutto cio' che si vede: simboli, tratte, testi e linea di
+    # terra. Misurare il fondo sui soli testi valeva finche' i richiami stavano
+    # in una riga sotto il disegno, e D-075 quella riga l'ha ritirata.
     tops = [item.origin.y_mm for item in drawn.symbols]
-    bottoms = [item.anchor.y_mm for item in drawn.labels]
+    bottoms = [item.bottom_mm for item in drawn.symbols]
+    bottoms.extend(item.anchor.y_mm for item in drawn.labels)
+    if drawn.ground_line_y_mm is not None:
+        bottoms.append(drawn.ground_line_y_mm)
     for route in drawn.routes:
         for segment in route.segments:
             tops.extend(point.y_mm for point in segment)
+            bottoms.extend(point.y_mm for point in segment)
     above = min(tops) - area.y_mm
     below = area.bottom_mm - max(bottoms)
     assert abs(above - below) <= 10.0, (above, below)

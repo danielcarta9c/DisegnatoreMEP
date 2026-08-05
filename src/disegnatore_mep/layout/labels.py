@@ -214,6 +214,7 @@ def place_labels(
     standard: GraphicStandard,
     callout_y_mm: float | None = None,
     routes: list[RoutedTrunk] | None = None,
+    floor_y_mm: float | None = None,
 ) -> list[PlacedLabel]:
     """Sigle e valori, scritti piccoli accanto al proprio componente (D-075).
 
@@ -248,6 +249,10 @@ def place_labels(
     labels: list[PlacedLabel] = []
 
     def free(box: Box) -> bool:
+        # Sotto la linea di terra c'e' il pavimento tratteggiato: una scritta
+        # li' sotto sembra interrata e non appartiene piu' al proprio pezzo.
+        if floor_y_mm is not None and box[3] > floor_y_mm + 1e-9:
+            return False
         return not any(_overlap(box, other) for other in (*taken, *lines))
 
     def free_slot(x_mm: float, y_mm: float, text: str, upward: bool) -> Point:

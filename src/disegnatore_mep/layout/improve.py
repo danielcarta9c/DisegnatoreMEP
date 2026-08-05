@@ -91,6 +91,7 @@ collegano senza che la tratta sembri disegnata sul simbolo.
 
 _TOLERANCE_MM = 1e-6
 
+
 class _Move(NamedTuple):
     """Una candidata: dove va l'origine del riquadro e come e' girato.
 
