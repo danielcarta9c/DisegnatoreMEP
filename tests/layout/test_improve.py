@@ -17,6 +17,7 @@ from pathlib import Path
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
+from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import (
     compose_drawing,
@@ -24,7 +25,12 @@ from disegnatore_mep.layout.compose import (
     inline_component_ids,
 )
 from disegnatore_mep.layout.composition import Standing, levels_of, standing_of
-from disegnatore_mep.layout.geometry import PlacedSymbol, Point, SheetGeometry
+from disegnatore_mep.layout.geometry import (
+    PlacedSymbol,
+    Point,
+    SheetGeometry,
+    drawing_fingerprint,
+)
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.improve import (
     improve_sheet,
