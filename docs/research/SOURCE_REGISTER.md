@@ -12,6 +12,7 @@
 | SRC-006 | [SVG 2 - Coordinate Systems, Transformations and Units](https://www.w3.org/TR/SVG/coords.html) | Unità, coordinate, trasformazioni e spessori vettoriali | Consultata per il design |
 | SRC-007 | UNI 9511 (5 parti, 1989), «Disegni tecnici. Rappresentazione delle installazioni» | **La** simbologia italiana degli impianti civili: riscaldamento, condizionamento, idrosanitario, gas. È la norma che un termotecnico italiano si aspetta, ed è quella che mancava | **Non si acquista.** I suoi segni grafici sono riprodotti per esteso in materiale didattico e di settore liberamente accessibile: si usano quelli, citati come fonte secondaria (SRC-015) |
 | SRC-015 | Tabelle dei segni grafici UNI 9511 riprodotte in materiale didattico: [«Norma UNI 9511 — Segni grafici», tabelle utili, prof. Guerra](https://professoreguerra.altervista.org/alterpages/files/UniIdraulica1.pdf); [dispensa di simbologia, Università di Ferrara](https://docente.unife.it/graziano.trippa/materiale-didattico-e-avvisi-lca1-2009-2010-corso-a/SIMBOLOGIA%20def.pdf/at_download/file) | I segni grafici della norma, con le denominazioni italiane, tavola per tavola: giunzioni e accessori per tubazioni, apparecchiature per la distribuzione di acqua, gas e vapore, filtri, vasi di espansione (aperto, a membrana, autopressurizzato), scambiatori, pompe, terminali | **Acquisita il 4 agosto 2026**, dieci tavole verificate a schermo. **Fonte secondaria**: il campo `source` dei simboli dirà «UNI 9511, tramite SRC-015», mai «UNI 9511» |
+| SRC-016 | **Tavole UNI 9511 pubblicate da Oppo**, dieci tabelle scaricabili anche in DWG e PDF: [Tab. 1 Tubazioni e canalizzazioni](https://www.oppo.it/disegni/simboli_idra_1.htm), [Tab. 2 Giunzioni e accessori](https://www.oppo.it/disegni/simboli_idra_2.htm), [Tab. 3 Valvolame](https://www.oppo.it/disegni/simboli_idra_3.htm), [Tab. 4 Pozzetti e scarichi](https://www.oppo.it/disegni/simboli_idra_4.htm), Tab. 5-10 sonde, grandezze, fluidi, sigle di componente, apparecchi indicatori — indice in [a_disegni-elenco.html](https://www.oppo.it/disegni/a_disegni-elenco.html) | **Indicata dal PM il 5 agosto 2026** come la simbologia giusta. È la stessa norma di SRC-015, ma pubblicata da un operatore del settore e **con la geometria scaricabile in DWG**: è la fonte di lavoro per rifare la libreria. Copre tubazioni, giunzioni, valvolame, scarichi, strumenti — **non** le macchine (pompa di calore, bollitore, volano, circolatore, collettore), che vengono dalla pratica e dai manuali dei produttori | **Acquisita e letta il 5 agosto 2026**, tabelle 1-4 verificate a schermo. Fonte secondaria come SRC-015: il campo `source` dirà «UNI 9511, tramite SRC-016» |
 | SRC-008 | [Caleffi — Quaderni e Tabelle](https://www.caleffi.com/it-it/formazione/quaderni-e-tabelle); [Componenti e schemi per impianti a pompa di calore aria-acqua](https://www.caleffi.com/sites/default/files/media/external-file/25%20-%20Componenti%20e%20schemi%20per%20impianti%20a%20pompa%20di%20calore%20aria-acqua.pdf) | Casi di studio e prescrizioni di prodotto (D-015). Distinguono separatore idraulico, compensatore e accumulo inerziale, che il nostro `buffer-four-port` confonde | Consultata il 4 agosto 2026 |
 | SRC-009 | [Schema funzionale centrale termica — Condominio Tower House, Treviso, Divisione Energia srl](https://www.divisionenergia.it/wp-content/uploads/2025/02/Cond.TH_schema-ct-as-built.pdf) | Caso di studio di tavola reale: legenda tubazioni, composizione a corsie, diametri sulle linee, sigle funzionali, tabelle. Documento pubblico | Letta e misurata il 4 agosto 2026, **non riprodotta** |
 | SRC-010 | [Schema funzionale centrale termica — Liceo «G. Ballardini», Provincia di Ravenna](https://presadmin.provincia.ra.it/content/download/88849/1115730/file/SM04%20-%20BALLARDINI%20Stato%20Modificato%20Schema%20funzionale%20Centrale%20Termica.pdf) | Caso di studio: legenda colori tubazioni con mandata e ritorno distinti, sigle, tabella caratteristiche pompe. Documento pubblico di gara | Letta il 4 agosto 2026, **non riprodotta** |
@@ -20,11 +21,32 @@
 | SRC-013 | **UNI 10412-1:2006** «Impianti di riscaldamento ad acqua calda — Requisiti di sicurezza — Parte 1: generatori alimentati da combustibili liquidi, gassosi, solidi polverizzati o **generatori di calore elettrici**» | Coprirebbe il caso di accettazione D-011, che è a **pompa di calore** e che la Raccolta R esclude | **Non acquistata, e non blocca.** Le regole di sicurezza per la pompa di calore restano su buona pratica documentata e manuali di prodotto, dichiarati come livello 2-3. Resta registrata qui come acquisto possibile, non come prerequisito |
 | SRC-014 | **UNI 8065:2019** «Trattamento dell'acqua negli impianti termici ad uso civile», tramite guide di settore: [Guida Aqua Italia](https://www.atlasfiltriengineering.com/sites/default/files/news/files/Giuda%20Aqua%20Italia_UNI.8065.19_0.pdf) | Filtro di sicurezza, filtro dissabbiatore, condizionamento chimico, soglie di addolcimento. La norma è a pagamento; le guide ne riportano le prescrizioni con soglie puntuali | Guide **consultate il 4 agosto 2026**. Fonte **secondaria**: le regole che ne derivano citano la guida, non la norma |
 
+## Cosa dicono le tavole di SRC-016, letto il 5 agosto 2026
+
+Quattro cose utili subito, che nessun'altra fonte del registro dava con questa precisione.
+
+- **Incrocio e derivazione si distinguono per il pallino, non per lo scavallo.** Tab. 1:
+  «incrocio di tubazioni o canalizzazioni **senza** connessione» è una croce semplice;
+  «incrocio **con** connessione» e «derivazione» portano un **cerchio pieno di diametro pari
+  a quattro volte lo spessore del tratto». La norma disambigua marcando il collegamento; la
+  pratica CAD, e lo schizzo del PM, disambiguano marcando l'incrocio con lo scavallo. Le due
+  cose non si escludono: farle entrambe toglie ogni ambiguità e non costa nulla (D-079).
+- **Gli spessori hanno valori normati.** Tab. 1: tubazione **di progetto 0,50 mm**, tubazione
+  **esistente 0,25 mm**; tutti i segni grafici sono tracciati a 0,50 mm salvo dove la
+  descrizione dice altro. Oggi `A3_LANDSCAPE` usa 0,18 / 0,35 / 0,50 scelti internamente.
+- **La valvola di ritegno ha la freccia.** Tab. 3, «valvola di non ritorno»: triangolo vuoto
+  contro la battuta, **con una freccia sopra che indica il senso del flusso**. La nostra ha
+  il triangolo pieno e nessuna freccia.
+- **Le tavole non coprono le macchine.** Tubazioni, giunzioni, valvolame, scarichi, sonde e
+  strumenti sì; pompa di calore, bollitore, volano, circolatore e collettore no. Quelli
+  vengono dalla pratica e dagli schemi dei produttori (SRC-008), ed è esattamente il «mix»
+  che il PM descrive: un po' norma italiana, un po' forme ereditate dall'area ASHRAE.
+
 ## Convenzioni grafiche interne
 
-Le fonti esterne sopra non sono ancora state acquisite, quindi **nessun simbolo della libreria
-ne deriva**. I simboli seguono forme schematiche di pratica comune, codificate come convenzione
-interna del progetto e citate nel campo `source` di ogni manifesto.
+Le fonti esterne sopra non sono ancora state tradotte in simboli, quindi **nessun simbolo della
+libreria ne deriva**. I simboli seguono forme schematiche di pratica comune, codificate come
+convenzione interna del progetto e citate nel campo `source` di ogni manifesto.
 
 | ID | Ambito | Definita in | Stato |
 |---|---|---|---|

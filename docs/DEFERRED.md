@@ -108,9 +108,12 @@ sbloccano nulla.
 
 ## 5. Rimandato dalla libreria dei simboli
 
-- **La libreria va rifatta su SRC-015**, le tavole dei segni grafici UNI 9511. I venti
-  simboli attuali seguono la convenzione interna `CONV-GRAFICA-001` e coprono meno di un
-  ottavo di quelli che una tavola reale usa.
+- **La libreria va rifatta su SRC-016**, le tavole UNI 9511 pubblicate da Oppo e indicate dal
+  PM, per tubazioni, giunzioni, valvolame e strumenti; sulla pratica e sugli schemi dei
+  produttori (SRC-008) per le macchine, che la norma non copre (D-081). I venti simboli
+  attuali seguono la convenzione interna `CONV-GRAFICA-001` — cioè nessuna fonte — e coprono
+  meno di un ottavo di quelli che una tavola reale usa. Non è più una nota di sviluppo
+  futuro: è un difetto aperto, registrato in `PROJECT_STATE.md`.
 - **`buffer-four-port` confonde tre componenti diversi** — separatore idraulico,
   compensatore e accumulo inerziale — che Caleffi distingue e che su una tavola si
   disegnano diversamente (SRC-008).

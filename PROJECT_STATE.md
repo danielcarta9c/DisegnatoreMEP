@@ -66,8 +66,18 @@ riprodurre lo stesso errore di metodo che li ha generati.
   quel tratto sarebbe stato dritto e non avrebbe incrociato niente.
 - [ ] **Gli attraversamenti non hanno il loro simbolo** (D-079). Due linee che si incrociano
   e due linee che si collegano oggi hanno lo stesso segno: chi legge non può distinguere un
-  incrocio da un raccordo. Serve lo scavallo, l'archetto che scavalca. Gli attraversamenti
-  sono già calcolati e portati nella geometria — semplicemente nessuno li disegna.
+  incrocio da un raccordo. Serve lo scavallo, l'archetto che scavalca, e il pallino sul
+  collegamento che la norma prescrive. Gli attraversamenti sono già calcolati e portati nella
+  geometria — semplicemente nessuno li disegna.
+- [ ] **I simboli non vengono da nessuna fonte** (D-081, D-082). Il PM ha riconosciuto a
+  occhio la valvola di ritegno sbagliata. La causa è più larga del singolo simbolo: la
+  libreria è inventata, e il rifacimento deciso il 4 agosto (D-067) non è stato eseguito. La
+  fonte di lavoro è ora SRC-016, le tavole UNI 9511 pubblicate da Oppo e indicate dal PM,
+  scaricabili anche in DWG; per le macchine, che la norma non copre, la pratica e gli schemi
+  dei produttori.
+- [ ] **Spostare è gratis, spargere no** (D-080). Vincolo che accompagna il difetto
+  precedente: lo spostamento dei componenti serve l'obiettivo intero — pieghe,
+  attraversamenti e lunghezza — non una sola delle tre voci.
 
 ### L'errore di metodo che li ha generati
 

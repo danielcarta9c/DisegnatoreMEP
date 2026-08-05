@@ -60,6 +60,7 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 | A7 | Il peso grafico è distribuito. | Nessuna macchia nera di segni addensati accanto a una zona vuota. | `giudizio` |
 | A8 | Se una piega si elimina spostando un oggetto, si sposta l'oggetto (D-078). | Muovere un pezzo sul foglio non costa niente; una piega in più si vede per sempre. | `difetto aperto` |
 | A9 | La posizione dei componenti è una variabile, non un dato. | La disposizione è la prima ipotesi, non la risposta: le linee hanno diritto di farla cambiare. | `difetto aperto` |
+| A10 | Spostare è gratis, spargere no (D-080). | Macchine allontanate per raddrizzare una linea, con dieci centimetri di tubo in più: si è pagato di più di quanto si è risparmiato. | `difetto aperto` |
 
 ## B. Linee — dove si perde o si vince una tavola
 
@@ -79,6 +80,7 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 | B12 | Nessuna andata e ritorno per raggiungere un pezzo (D-078). | La linea supera l'oggetto, scende e torna indietro a prenderlo. Va spostato l'oggetto, non allungata la linea. | `difetto aperto` |
 | B13 | Un incrocio fra linee che non si collegano porta il proprio scavallo (D-079). | Senza archetto, un incrocio e un raccordo a T hanno lo stesso segno e non si distinguono. | `difetto aperto` |
 | B14 | Un attraversamento non si paga per una scelta di posizione. | Una linea che scende tagliando tutte le altre perché il suo pezzo è stato messo in alto. | `difetto aperto` |
+| B15 | Un collegamento fra due linee porta il proprio pallino (UNI 9511, SRC-016). | Cerchio pieno di diametro quattro volte lo spessore del tratto, su derivazioni e incroci connessi. | `difetto aperto` |
 
 ## C. Simboli e allineamenti — quello che fa sembrare una tavola «fatta da un professionista»
 
@@ -91,6 +93,8 @@ Ogni regola dice tre cose: **cosa vuole**, **come si vede a occhio**, e **a che 
 | C5 | Le distanze fra i componenti sono regolari. | Spazi tutti diversi fanno sembrare la tavola improvvisata. | `da misurare` |
 | C6 | Nessun simbolo tocca o copre un altro. | | `per costruzione` |
 | C7 | La taglia del simbolo comunica il peso del componente. | Una valvola piccola, un accumulo grande. Tutti uguali non dicono niente. | `da misurare` |
+| C8 | Ogni simbolo è quello che un termotecnico italiano si aspetta di vedere (D-081, D-082). | Se chi guarda deve chiedersi «e questo cos'è?», il simbolo è sbagliato anche se è bello. | `difetto aperto` |
+| C9 | Un simbolo che porta un verso lo dichiara. | La valvola di ritegno ha la freccia del senso del flusso; senza, non si sa da che parte tiene. | `difetto aperto` |
 
 ## D. Testi — la famiglia dove si sbaglia più spesso
 
