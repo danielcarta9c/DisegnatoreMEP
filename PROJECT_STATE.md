@@ -42,13 +42,18 @@ riprodurre lo stesso errore di metodo che li ha generati.
   diventare «la tavola successiva è abbastanza piena», e prima si ottimizza quella che
   c'è. Oggi si divide appena il contenuto non entra **come è stato disposto**, che è una
   cosa diversa.
+- [ ] **Mancano quasi tutte le valvole di intercettazione** (D-074). Ogni macchina ne vuole
+  una **per ogni attacco**: due sulla pompa di calore, due sul circolatore, quattro sul
+  volano. Oggi ne mette una per componente, e quella semplificazione era stata fatta per
+  far entrare il disegno su una A3 — cioè decidendo il contenuto in base al foglio, che è
+  esattamente al contrario.
 - [ ] **La disposizione in fila trattata come legge** (D-073). Bollitore e volano potevano
   stare uno sopra l'altro invece che uno dopo l'altro. Impilare è una disposizione
   legittima quanto affiancare, e va scelta quando riempie meglio il foglio.
 
 ### L'errore di metodo che li ha generati
 
-Vale più dei due difetti presi singolarmente, ed è il PM a nominarlo: **una singola tavola
+Vale più dei difetti presi singolarmente, ed è il PM a nominarlo: **una singola tavola
 di riferimento è stata generalizzata in una regola.** Dal primo schema fornito è stata
 ricavata la disposizione in fila, e da lì applicata a ogni impianto come se fosse una
 legge del disegno tecnico. Non lo è.
@@ -57,6 +62,12 @@ La stessa cosa era già successa con le corsie a quota fissa, ricavate dalla ste
 e poi rimosse perché producevano sali-scendi. Un esempio mostra **una** soluzione
 ammissibile, non l'unica: da un esempio si ricava un vincolo solo quando lo si riconosce
 anche altrove, o quando il PM lo dichiara tale.
+
+Il difetto delle valvole ha invece una causa diversa e altrettanto seria: **il contenuto
+del disegno è stato deciso in base a quanto ci stava sul foglio.** Le valvole di
+intercettazione sono passate da una per attacco a una per componente perché con quattro
+valvole sul volano l'A3 non reggeva. È al contrario: cosa va disegnato lo decide
+l'impianto, e se non ci sta si cambia disposizione o si divide.
 
 ## Next — backlog ordinato
 
