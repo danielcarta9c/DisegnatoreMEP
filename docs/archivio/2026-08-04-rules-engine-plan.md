@@ -456,7 +456,7 @@ esecuzioni e fra `PYTHONHASHSEED` diversi.
 
 ### Task 12 — Il gate G1 e i documenti
 
-**File:** `tests/rules/test_gate.py`, `PROJECT_STATE.md`, `docs/ARCHITECTURE.md`,
+**File:** `tests/rules/test_gate.py`, `PROJECT_STATE.md`, `docs/archivio/ARCHITECTURE.md`,
 `docs/DECISION_LOG.md`, `docs/DEFERRED.md`, appendice di questo piano
 
 Il gate che la roadmap master dichiara per P1: **le stesse regole producono risultati

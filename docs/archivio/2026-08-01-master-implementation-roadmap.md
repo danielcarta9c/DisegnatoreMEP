@@ -24,7 +24,7 @@
 
 ### P0 - Fondazione canonica
 
-**Piano:** `docs/plans/2026-08-01-foundation-core-plan.md`
+**Piano:** `docs/archivio/2026-08-01-foundation-core-plan.md`
 
 **Consegna:** pacchetto Python installabile con modello canonico, catalogo dei componenti, contratti dei domini, validatore topologico, serializzazione riproducibile e CLI di validazione.
 

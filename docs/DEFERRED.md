@@ -155,4 +155,4 @@ sbloccano nulla.
   due porte. Va allargato **prima** che i quattro pacchetti di dominio procedano in
   parallelo, altrimenti divergono (W3).
 - **La rappresentazione dei dati mancanti** e il percorso di migrazione dello schema sono
-  descritti in `docs/P0_REVIEW_FINDINGS.md` §3.2 e non ancora implementati.
+  descritti in `docs/archivio/P0_REVIEW_FINDINGS.md` §3.2 e non ancora implementati.

@@ -1524,7 +1524,7 @@ git commit -m "feat: add the first cross-domain symbol library"
 - Modify: `src/disegnatore_mep/cli.py`
 - Create: `tests/acceptance/test_symbol_sheet.py`
 - Modify: `examples/foundation/build_fixtures.py`
-- Create: `docs/GRAPHIC_STANDARD.md`
+- Create: `docs/standard/GRAPHIC_STANDARD.md`
 
 **Interfaces:** produce il comando `symbols-sheet`.
 
@@ -1612,7 +1612,7 @@ Run:
 
 - [ ] **Step 5: documentare lo standard grafico**
 
-Create `docs/GRAPHIC_STANDARD.md` con: la tabella delle grandezze di `A3_LANDSCAPE` e la loro motivazione; la regola perimetro-faccia e perché sostituisce il vincolo P0 sulle porte interne; la divisione fra geometria del simbolo e semantica del catalogo, con la tabella della sezione «Decisione strutturale» di questo piano; come si aggiunge un simbolo alla libreria; come si stampa il foglio di riscontro e cosa misurare.
+Create `docs/standard/GRAPHIC_STANDARD.md` con: la tabella delle grandezze di `A3_LANDSCAPE` e la loro motivazione; la regola perimetro-faccia e perché sostituisce il vincolo P0 sulle porte interne; la divisione fra geometria del simbolo e semantica del catalogo, con la tabella della sezione «Decisione strutturale» di questo piano; come si aggiunge un simbolo alla libreria; come si stampa il foglio di riscontro e cosa misurare.
 
 - [ ] **Step 6: eseguire il gate completo**
 
@@ -1634,7 +1634,7 @@ Questo passaggio è il vero gate della fase: i controlli automatici dicono che n
 - [ ] **Step 8: commit finale**
 
 ```bash
-git add src/disegnatore_mep/cli.py tests/acceptance/test_symbol_sheet.py examples schemas docs/GRAPHIC_STANDARD.md
+git add src/disegnatore_mep/cli.py tests/acceptance/test_symbol_sheet.py examples schemas docs/standard/GRAPHIC_STANDARD.md
 git commit -m "test: qualify the graphic standard and symbol library"
 ```
 
@@ -1717,7 +1717,7 @@ Chi modificherà questo codice deve sapere che queste **non** sono sviste:
 
 1. **Le porte del simbolo stanno sul perimetro**, con faccia coerente con il lato. Questo ritira
    deliberatamente il vincolo P0 «le porte possono stare ovunque dentro il riquadro»: la
-   motivazione è nella sezione «Decisione strutturale» e in `docs/GRAPHIC_STANDARD.md` §3.1.
+   motivazione è nella sezione «Decisione strutturale» e in `docs/standard/GRAPHIC_STANDARD.md` §3.1.
 2. **`assets/symbols/` contiene solo la libreria pubblicata.** Gli artefatti di prova vivono in
    `examples/foundation/symbols/`. Serve al confezionamento della release.
 3. **`symbols` resta opzionale** in `ComponentRegistry.from_directory`, e la CLI `validate` non

@@ -9,7 +9,7 @@
 >
 > Non contiene stato («a che punto siamo» sta in `PROJECT_STATE.md`), non contiene storia
 > («perché abbiamo deciso così» sta in `docs/DECISION_LOG.md`), non contiene numeri di
-> stampa (stanno in `docs/GRAPHIC_STANDARD.md`).
+> stampa (stanno in `docs/standard/GRAPHIC_STANDARD.md`).
 
 ---
 
@@ -304,16 +304,16 @@ Tre livelli, e servono tutti e tre:
 
 | Domanda | Documento, e uno solo |
 |---|---|
-| Cosa fa il prodotto e cosa non fa | `PRD_DISEGNATORE_MEP.md` |
+| Cosa fa il prodotto e cosa non fa | `docs/prodotto/PRD_DISEGNATORE_MEP.md` |
 | **Com'è fatta la skill** | **questo file** |
 | Come si collabora, chi decide cosa | `AGENTS.md` |
-| Come si disegna bene, regola per regola | `docs/QUALITA_GRAFICA.md` |
-| I numeri della carta: millimetri, spessori, testi | `docs/GRAPHIC_STANDARD.md` |
+| Come si disegna bene, regola per regola | `docs/standard/QUALITA_GRAFICA.md` |
+| I numeri della carta: millimetri, spessori, testi | `docs/standard/GRAPHIC_STANDARD.md` |
 | Perché abbiamo deciso una certa cosa | `docs/DECISION_LOG.md` |
 | A che punto siamo e cosa manca | `PROJECT_STATE.md` |
 | Cosa è stato rimandato, e perché | `docs/DEFERRED.md` |
-| Da dove vengono simboli e prescrizioni | `docs/research/SOURCE_REGISTER.md` |
-| Come giudica l'occhio terzo | `docs/COLD_EYE_REVIEW.md` |
+| Da dove vengono simboli e prescrizioni | `docs/fonti/SOURCE_REGISTER.md` |
+| Come giudica l'occhio terzo | `docs/standard/COLD_EYE_REVIEW.md` |
 
 Tutto ciò che sta in `docs/plans/` è **storia**: racconta come è andata un'esecuzione, non
 cosa è vero adesso. Non va letto per sapere come funziona la skill.

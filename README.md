@@ -1,76 +1,53 @@
 # Disegnatore MEP
 
-Progetto per una skill capace di trasformare la configurazione di un impianto termotecnico già definito e dimensionato dall'ingegnere in uno schema unifilare tecnico-esecutivo professionale.
+Skill che trasforma un impianto termotecnico **già deciso e dimensionato dall'ingegnere**
+in una tavola tecnica professionale, pronta da stampare e da portare in cantiere.
 
-La skill analizzerà la configurazione, proporrà gli accessori necessari o raccomandati, raccoglierà l'approvazione dell'ingegnere e produrrà elaborati vettoriali SVG/PDF mediante regole tecniche e layout deterministici.
+La skill non progetta: non inventa potenze, temperature, prevalenze, tarature, volumi né
+diametri. Interpreta l'impianto, propone gli accessori mancanti motivandoli, li fa
+approvare, e poi disegna.
 
-**Stato:** vive in `PROJECT_STATE.md` — unico posto in cui e' scritto.
+## Da dove si comincia
 
-## Orientamento rapido
+1. **`docs/SKILL.md`** — com'è fatta la skill: i sette pezzi, cosa fa ciascuno e quando è
+   finito. È il documento autorevole sull'architettura.
+2. **`PROJECT_STATE.md`** — a che punto siamo e cosa manca. È l'unico posto in cui è
+   scritto lo stato.
+3. **`AGENTS.md`** — come si lavora: i due ruoli, il metodo, come si scrive al PM.
 
-1. **`docs/SKILL.md`** — com'e' fatta la skill, i suoi sei pezzi e quando ciascuno e' finito.
-2. `PROJECT_STATE.md` — a che punto siamo.
-3. `PRD_DISEGNATORE_MEP.md` — cosa fa il prodotto e cosa non fa.
-4. `docs/DECISION_LOG.md` — perche' abbiamo deciso cosi'.
+Il resto si apre quando serve.
 
-`CONTESTO_PROGETTO.md` e' la trascrizione della conversazione iniziale: e' **storia**, non
-va letta per capire il prodotto.
-5. Consultare `docs/ROADMAP.md` per le fasi previste.
-6. Leggere `docs/specs/2026-08-01-disegnatore-mep-design.md` per il design consolidato.
-7. Leggere `docs/ARCHITECTURE.md` per la struttura del codice consegnato e `docs/GRAPHIC_STANDARD.md` per lo standard grafico.
-8. Leggere `docs/P0_REVIEW_FINDINGS.md` prima di pianificare P1 o P2.
-9. Leggere `docs/plans/2026-08-01-master-implementation-roadmap.md` e, del piano P0, almeno l'appendice finale sulle deviazioni.
+## Com'è organizzata la repository
 
-## Preparazione dell'ambiente
+| Area | Dove | Cosa contiene |
+|---|---|---|
+| **Prodotto — dati** | `rules/`, `assets/`, `schemas/` | Le regole degli accessori (un file per regola), la libreria dei simboli, il cartiglio aziendale, gli schemi dei dati. **Si modificano senza toccare il programma.** |
+| **Sviluppo** | `src/`, `tests/`, `scripts/`, `pyproject.toml` | Il programma e le sue prove. |
+| **Esempi** | `examples/` | Impianti di prova e cataloghi di esempio. Servono a **scoprire** i difetti, mai a definire cosa è giusto. |
+| **Documentazione** | `docs/` | Vedi sotto. |
+| **Release** | `releases/` | Le versioni installabili: `latest/` e l'archivio numerato. |
+| **Lavoro** | `outputs/` | Uscite di prova, non versionate. |
 
-Dalla radice del progetto, su Linux, macOS o Git Bash su Windows:
+### Dentro `docs/`
+
+| Cartella | Cosa c'è |
+|---|---|
+| `docs/SKILL.md` | **Com'è fatta la skill.** Una sola fonte. |
+| `docs/DECISION_LOG.md` | Perché abbiamo deciso così, in ordine di tempo. |
+| `docs/DEFERRED.md` | Cosa è stato rimandato, e cosa lo sbloccherebbe. |
+| `docs/adr/` | Le decisioni strutturali, costose da cambiare. |
+| `docs/prodotto/` | Cosa fa il prodotto e cosa non fa. |
+| `docs/standard/` | Come si disegna: lo standard grafico, le regole del colpo d'occhio, il protocollo dell'occhio terzo. |
+| `docs/plans/` | Il piano di costruzione **corrente**. |
+| `docs/fonti/` | Da dove vengono simboli e prescrizioni. |
+| `docs/prompts/` | Le istruzioni degli agenti AI della skill. |
+| `docs/archivio/` | **Storia.** Piani eseguiti, specifiche superate, revisioni passate, contesto iniziale. Non va letto per sapere come funziona la skill. |
+
+## Ambiente
 
 ```bash
 bash scripts/setup-env.sh
+.venv/bin/python -m pytest -q
 ```
 
-Crea la `.venv`, installa il pacchetto con le versioni pinnate e verifica test, lint e type check. È il primo comando da eseguire in una sessione cloud, che riparte sempre da un clone pulito.
-
-## Uso del nucleo
-
-```bash
-.venv/bin/python -m disegnatore_mep validate examples/foundation/valid-mixed-project.json --catalog examples/foundation/catalog
-```
-
-Codici di uscita: `0` progetto valido, `2` errori di validazione, `1` errori di caricamento.
-
-## Disegno di un impianto
-
-```bash
-.venv/bin/python -m disegnatore_mep draw examples/layout/heat-pump-dhw-buffer-two-zones.json \
-  --catalog examples/layout/catalog --symbols assets/symbols --out outputs/
-```
-
-Scrive una tavola SVG per foglio e stampa l'impronta della geometria. La tavola esce marcata
-come bozza finche' il cartiglio non e' compilato.
-
-## Foglio dei simboli
-
-```bash
-.venv/bin/python -m disegnatore_mep symbols-sheet outputs/symbols.svg --symbols assets/symbols
-```
-
-Produce un A3 orizzontale a misura reale. Stampato al 100%, senza adattamento alla pagina, la
-barra di scala deve misurare 100 mm col righello: è la prova che la scala è invariante.
-
-Su Windows in locale l'interprete è `.venv/Scripts/python.exe` anziché `.venv/bin/python`.
-
-## Cartelle principali
-
-- `src/disegnatore_mep/`: il nucleo deterministico.
-- `tests/`: suite di verifica, inclusi i test di accettazione del gate G0.
-- `examples/foundation/`: catalogo e progetti di riferimento multi-dominio.
-- `schemas/`: schema JSON versionato del modello di progetto.
-- `assets/symbols/`: la libreria dei simboli pubblicati, venti su quattro domini.
-- `examples/layout/`: il caso di accettazione D-011, con il proprio catalogo.
-- `assets/`: materiali grafici e cartigli originali.
-- `docs/`: roadmap, decisioni, ricerca, specifiche e ADR.
-- `releases/latest/`: ultima versione approvata e installabile.
-- `releases/archive/`: pacchetti storici numerati.
-
-Il progetto è pubblicato su GitHub in [danielcarta9c/DisegnatoreMEP](https://github.com/danielcarta9c/DisegnatoreMEP), repository pubblico con licenza MIT.
+Licenza MIT.

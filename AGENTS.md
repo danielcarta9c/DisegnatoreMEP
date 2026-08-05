@@ -5,18 +5,18 @@
 **Chi arriva ora legge due file e comincia: `docs/SKILL.md` (com'e' fatta la skill) e
 `PROJECT_STATE.md` (a che punto siamo). Il resto si apre quando serve.**
 
-0. Se esiste `HANDOFF.md`, aprirlo per primo e applicare integralmente il suo cancello di lettura e le sentinel checks.
-1. `CONTESTO_PROGETTO.md`
-2. `PRD_DISEGNATORE_MEP.md`
+0. Se esiste `docs/archivio/HANDOFF.md`, aprirlo per primo e applicare integralmente il suo cancello di lettura e le sentinel checks.
+1. `docs/archivio/CONTESTO_PROGETTO.md`
+2. `docs/prodotto/PRD_DISEGNATORE_MEP.md`
 3. `PROJECT_STATE.md`
 4. `docs/DECISION_LOG.md`
-5. `docs/specs/2026-08-01-disegnatore-mep-design.md`
-6. `docs/QUALITA_GRAFICA.md` — le regole del colpo d'occhio, per chiunque tocchi il disegno
+5. `docs/archivio/specs/2026-08-01-disegnatore-mep-design.md`
+6. `docs/standard/QUALITA_GRAFICA.md` — le regole del colpo d'occhio, per chiunque tocchi il disegno
 7. piano di implementazione pertinente in `docs/plans/`
 8. specifiche e ADR pertinenti al lavoro richiesto
 
 Prima di fare domande, verificare chat, documenti e decisioni già registrate. Chiedere soltanto ciò che resta realmente ambiguo.
-`HANDOFF.md` è un cancello di lettura, non sostituisce i documenti canonici e non autorizza a saltarli.
+`docs/archivio/HANDOFF.md` è un cancello di lettura, non sostituisce i documenti canonici e non autorizza a saltarli.
 
 ## Principi non negoziabili
 
@@ -32,7 +32,7 @@ Prima di fare domande, verificare chat, documenti e decisioni già registrate. C
 - Mantenere dimensioni di stampa, testi e spessori invarianti in millimetri di carta.
 - Eseguire la partizione funzionale in tavole prima del layout finale.
 - Non emettere una tavola finale con cartiglio incompleto o campi `DA DEFINIRE`.
-- Non consegnare una tavola senza averla confrontata, riga per riga, con `docs/QUALITA_GRAFICA.md`: sapere come si disegna non sostituisce il controllo (D-076).
+- Non consegnare una tavola senza averla confrontata, riga per riga, con `docs/standard/QUALITA_GRAFICA.md`: sapere come si disegna non sostituisce il controllo (D-076).
 - Mantenere SVG come formato vettoriale intermedio e PDF come elaborato finale iniziale.
 - Aggiornare `PROJECT_STATE.md` al termine di ogni attività significativa.
 - Registrare nel `DECISION_LOG` le decisioni funzionali; usare gli ADR per quelle strutturali e costose da cambiare.
@@ -83,7 +83,7 @@ Lo sviluppo lavora come un team: **uno decide, uno o più fanno, uno controlla.*
   PM. Non approva mai il proprio lavoro.
 - **Gli sviluppatori** — agenti separati — eseguono. Non dichiarano mai «fatto» da soli.
 - **Il collaudo** — un agente con contesto separato, che non ha visto nascere il lavoro —
-  verifica criteri di accettazione, `docs/QUALITA_GRAFICA.md` e la regressione completa.
+  verifica criteri di accettazione, `docs/standard/QUALITA_GRAFICA.md` e la regressione completa.
   Può respingere: il lavoro torna in sviluppo. Ogni verdetto si registra nell'appendice
   del piano in corso.
 

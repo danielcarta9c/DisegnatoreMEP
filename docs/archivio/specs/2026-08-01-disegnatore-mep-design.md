@@ -350,7 +350,7 @@ quello che ha costruito il modello, perché un agente che rilegge il proprio lav
 approva. Giudica contro lo standard grafico scritto, non contro il gusto, altrimenti
 due esecuzioni danno due giudizi diversi.
 
-Lo standard grafico scritto è `docs/QUALITA_GRAFICA.md`, «le regole del colpo
+Lo standard grafico scritto è `docs/standard/QUALITA_GRAFICA.md`, «le regole del colpo
 d'occhio» (D-076): una quarantina di regole di buona pratica in sei famiglie, ciascuna con
 cosa vuole, come si vede a occhio e uno stato. Non è una norma e non dice cosa mettere
 in un impianto: dice come si disegna quello che l'ingegnere ha deciso.

@@ -4,7 +4,7 @@
 > completa, ha ordinato la riverifica da zero e ha imposto **il metodo dei tre ruoli**
 > (D-083): uno decide, uno o più fanno, uno controlla — con collaudo indipendente e
 > cancelli vincolanti. Il piano operativo è
-> `docs/plans/2026-08-05-rilancio-qualita-tavola-plan.md`, **in attesa del suo via**.
+> `docs/archivio/2026-08-05-rilancio-qualita-tavola-plan.md`, **in attesa del suo via**.
 > Le sezioni §3–§5 di questo file descrivono lo stato di fine layout (4 agosto) e vanno
 > lette con questa correzione: il «prossimo passo P3A» è superato da D-084.
 
@@ -22,26 +22,26 @@ Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
 | # | File | Funzione |
 |---|---|---|
 | 1 | `AGENTS.md` | Regole operative e profilo di collaborazione con il PM |
-| 2 | `CONTESTO_PROGETTO.md` | Storia completa e punto di partenza del progetto |
+| 2 | `docs/archivio/CONTESTO_PROGETTO.md` | Storia completa e punto di partenza del progetto |
 | 3 | `README.md` | Scopo e orientamento del repository |
-| 4 | `PRD_DISEGNATORE_MEP.md` | Requisiti di prodotto approvati |
+| 4 | `docs/prodotto/PRD_DISEGNATORE_MEP.md` | Requisiti di prodotto approvati |
 | 5 | `PROJECT_STATE.md` | Stato vivo e prossimo passo |
-| 6 | `docs/specs/2026-08-01-disegnatore-mep-design.md` | Design consolidato e approvato |
+| 6 | `docs/archivio/specs/2026-08-01-disegnatore-mep-design.md` | Design consolidato e approvato |
 | 7 | `docs/adr/README.md`, poi `docs/adr/0001-*.md` fino a `0004-*.md` | Decisioni architetturali in ordine cronologico |
 | 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-084. **Le D-072–D-084 sono gli otto difetti del PM e il metodo dei tre ruoli: leggerle per prime** |
-| 8bis | **`docs/QUALITA_GRAFICA.md`** | **Le regole del colpo d'occhio** (D-076): lo standard contro cui si giudica ogni tavola, e il metro del collaudo |
-| 8ter | **`docs/plans/2026-08-05-rilancio-qualita-tavola-plan.md`** | **Il piano operativo corrente**: riverifica input per input, metodo, sette pacchetti con criteri di accettazione |
-| 9 | `docs/ROADMAP.md` | Fasi del progetto e perimetro futuro |
+| 8bis | **`docs/standard/QUALITA_GRAFICA.md`** | **Le regole del colpo d'occhio** (D-076): lo standard contro cui si giudica ogni tavola, e il metro del collaudo |
+| 8ter | **`docs/archivio/2026-08-05-rilancio-qualita-tavola-plan.md`** | **Il piano operativo corrente**: riverifica input per input, metodo, sette pacchetti con criteri di accettazione |
+| 9 | `docs/archivio/ROADMAP.md` | Fasi del progetto e perimetro futuro |
 | 9bis | **`docs/DEFERRED.md`** | **Decisioni rimandate e note di sviluppo futuro.** Ogni «per ora no» del progetto sta qui col suo perché e con cosa lo sbloccherebbe. Leggerlo prima di proporre al PM qualcosa che è già stato rimandato |
-| 10 | `docs/ARCHITECTURE.md` | Struttura del codice effettivamente consegnato |
-| 11 | **`docs/GRAPHIC_STANDARD.md`** | **Lo standard grafico.** Grandezze in millimetri, regola perimetro-faccia, divisione fra geometria del simbolo e semantica del catalogo, compositi, rotazioni, come si aggiunge un simbolo, come si stampa il foglio |
-| 12 | `docs/P0_REVIEW_FINDINGS.md` | Cosa le revisioni di P0 hanno trovato e non è stato risolto. **Il §3.1 fissa il flusso di lavoro reale della skill**: due revisori indipendenti erano partiti da una lettura sbagliata |
-| 13 | `docs/plans/README.md` e `docs/plans/2026-08-01-master-implementation-roadmap.md` | Sequenza dei piani |
-| 14 | `docs/plans/2026-08-01-foundation-core-plan.md` — **solo l'appendice finale** | Il piano P0 eseguito e le sue deviazioni. Il corpo contiene codice difettoso |
-| 15 | **`docs/plans/2026-08-03-graphic-system-symbol-library-plan.md` — solo l'appendice finale** | Il piano grafico eseguito. **Sedici difetti corretti in esecuzione**, sei del piano e dieci trovati dalle revisioni. Anche qui il corpo non è stato riscritto |
-| 15bis | **`docs/plans/2026-08-04-layout-routing-multitavola-plan.md` — §0, §2 e l'appendice** | Il piano di layout, **eseguito**. Il §0 porta le decisioni di prodotto e perché una quarta domanda era mal posta; il §2 le tre scoperte fatte prototipando; l'appendice i nove difetti trovati eseguendo. Il corpo dei task è stato scritto prima e non riscritto |
-| 15ter | **`docs/plans/2026-08-04-rules-engine-plan.md` — §2, §3 e l'appendice** | Il motore delle regole, **eseguito**. Il §2 porta i due difetti di progetto trovati prototipando, il §3 i vincoli — a partire da «una regola non può nominare un componente» — e l'appendice i sette difetti trovati eseguendo |
-| 16 | `docs/research/README.md` e `docs/research/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
+| 10 | `docs/archivio/ARCHITECTURE.md` | Struttura del codice effettivamente consegnato |
+| 11 | **`docs/standard/GRAPHIC_STANDARD.md`** | **Lo standard grafico.** Grandezze in millimetri, regola perimetro-faccia, divisione fra geometria del simbolo e semantica del catalogo, compositi, rotazioni, come si aggiunge un simbolo, come si stampa il foglio |
+| 12 | `docs/archivio/P0_REVIEW_FINDINGS.md` | Cosa le revisioni di P0 hanno trovato e non è stato risolto. **Il §3.1 fissa il flusso di lavoro reale della skill**: due revisori indipendenti erano partiti da una lettura sbagliata |
+| 13 | `docs/plans/README.md` e `docs/archivio/2026-08-01-master-implementation-roadmap.md` | Sequenza dei piani |
+| 14 | `docs/archivio/2026-08-01-foundation-core-plan.md` — **solo l'appendice finale** | Il piano P0 eseguito e le sue deviazioni. Il corpo contiene codice difettoso |
+| 15 | **`docs/archivio/2026-08-03-graphic-system-symbol-library-plan.md` — solo l'appendice finale** | Il piano grafico eseguito. **Sedici difetti corretti in esecuzione**, sei del piano e dieci trovati dalle revisioni. Anche qui il corpo non è stato riscritto |
+| 15bis | **`docs/archivio/2026-08-04-layout-routing-multitavola-plan.md` — §0, §2 e l'appendice** | Il piano di layout, **eseguito**. Il §0 porta le decisioni di prodotto e perché una quarta domanda era mal posta; il §2 le tre scoperte fatte prototipando; l'appendice i nove difetti trovati eseguendo. Il corpo dei task è stato scritto prima e non riscritto |
+| 15ter | **`docs/archivio/2026-08-04-rules-engine-plan.md` — §2, §3 e l'appendice** | Il motore delle regole, **eseguito**. Il §2 porta i due difetti di progetto trovati prototipando, il §3 i vincoli — a partire da «una regola non può nominare un componente» — e l'appendice i sette difetti trovati eseguendo |
+| 16 | `docs/fonti/README.md` e `docs/fonti/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
 | 17 | `assets/cartigli/README.md` e `releases/README.md` | Vincoli su cartiglio e rilascio |
 | 18 | [`nove-c-kit` PLAYBOOK](https://github.com/danielcarta9c/nove-c-kit/blob/main/PLAYBOOK.md) e [`EXAMPLES`](https://github.com/danielcarta9c/nove-c-kit/blob/main/EXAMPLES.md) | Metodo di project management Nove C |
 | 19 | Questo file dal §2 in poi | Verifica di comprensione e delta operativo |
@@ -101,7 +101,7 @@ Risposte attese: motore compositivo, provato cercando ogni termine impiantistico
 **Il progetto disegna.** Il caso D-011 — pompa di calore aria-acqua, ACS con valvola deviatrice, bollitore, volano a quattro attacchi, circolatore secondario, collettore a due zone con terminali misti — si dispone a fasce funzionali su una A3, si instrada in ortogonale, spezza la linea dove sta un accessorio, e porta a destra una legenda coi soli simboli usati. Passa tutti i controlli geometrici della §12.2 e ha un'impronta stabile fra processi.
 
 - **Il PM ha giudicato la prima tavola: è fatta male.** E ha ricordato che la ricerca su come si disegna uno schema — rete, manuali dei produttori, Caleffi — era stata chiesta dall'inizio del progetto e non era mai stata fatta. È vero: il registro fonti porta quattro norme «da acquisire e valutare» dal primo commit, la fase grafica ha inventato `CONV-GRAFICA-001` proprio perché mancavano, e il layout ci è stato costruito sopra.
-- **Prima acquisizione fatta**, in `docs/research/2026-08-04-come-si-disegna-uno-schema-funzionale.md`. La norma che mancava è **UNI 9511**. Leggerlo prima di toccare qualunque cosa di grafico: dice cosa regge (la meccanica) e cosa no (il linguaggio e la composizione).
+- **Prima acquisizione fatta**, in `docs/fonti/2026-08-04-come-si-disegna-uno-schema-funzionale.md`. La norma che mancava è **UNI 9511**. Leggerlo prima di toccare qualunque cosa di grafico: dice cosa regge (la meccanica) e cosa no (il linguaggio e la composizione).
 - **Non trasformare un esempio in una legge.** È l'errore di metodo che il PM ha dovuto correggere due volte: dalla tavola di riferimento del 4 agosto erano state ricavate le corsie a quota fissa (rimosse, producevano sali-scendi) e la disposizione in fila dei componenti (D-073, sbagliata allo stesso modo). Un esempio mostra **una** soluzione ammissibile, non l'unica. Da un esempio si ricava un vincolo solo quando lo si riconosce anche altrove, o quando il PM lo dichiara tale.
 - **La verifica della qualità grafica sta dentro la skill, prima della consegna, e ha tre livelli (D-063).** Il **preflight grafico deterministico** misura ciò che è misurabile — pieghe, attraversamenti, sovrapposizioni longitudinali, distanze — e classifica bloccante/da approvare/avviso; il **cold eye review**, agente terzo con contesto proprio, giudica ciò che non si misura e può respingere; il **controllo visivo umano** resta a ogni release. Non sono ridondanti: una sovrapposizione di 2,5 mm si trova misurandola, non guardandola, e «questa non sembra una tavola» non si misura. Oggi **non esiste nessuno dei tre**: le misure del preflight vivono in `tests/layout/test_objective.py`, cioè su una sola fixture e solo in fase di sviluppo. È il primo debito del layout.
 - **Il ciclo di revisione cambia gli ingressi, mai il disegno (D-064).** Quando il cold eye review respinge, produce un **nuovo piano di impaginazione** e la pipeline rigenera da capo. Nessun agente tocca la geometria prodotta: se lo facesse, morirebbe la proprietà su cui è costruito il progetto — stesso modello e stesso piano, stesso identico file. Il piano è fatto di scelte discrete registrate nel modello proprio perché l'AI potesse sceglierle diversamente (D-042). Il ciclo è limitato nel numero di passate e monotono: si accetta una passata solo se le misure del preflight non peggiorano.
@@ -175,14 +175,14 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 | Quando serve sapere… | File del progetto |
 |---|---|
 | Come collaborare con il PM | `AGENTS.md` |
-| Qual è il prodotto e cosa esclude | `PRD_DISEGNATORE_MEP.md` |
-| Com'è fatto lo standard grafico | `docs/GRAPHIC_STANDARD.md` |
-| Com'è fatto il codice consegnato | `docs/ARCHITECTURE.md` |
+| Qual è il prodotto e cosa esclude | `docs/prodotto/PRD_DISEGNATORE_MEP.md` |
+| Com'è fatto lo standard grafico | `docs/standard/GRAPHIC_STANDARD.md` |
+| Com'è fatto il codice consegnato | `docs/archivio/ARCHITECTURE.md` |
 | Perché il codice diverge dai piani | Le appendici dei due piani in `docs/plans/` |
 | Qual è il prossimo passo e il debito noto | `PROJECT_STATE.md` |
 | Cosa è stato rimandato, e perché | `docs/DEFERRED.md` |
 | Dove trovare le decisioni | `docs/DECISION_LOG.md` e `docs/adr/` |
-| Come gestire fonti tecniche | `docs/research/SOURCE_REGISTER.md` |
+| Come gestire fonti tecniche | `docs/fonti/SOURCE_REGISTER.md` |
 | Come produrre una release | `releases/README.md` |
 
 ---
@@ -190,7 +190,7 @@ Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di 
 ## Stato del rilancio al 5 agosto 2026, sera
 
 Ordine del PM: procedere fino a una tavola che **un agente terzo approverebbe**.
-Piano: `docs/plans/2026-08-05-rilancio-qualita-tavola-plan.md`, appendice = registro
+Piano: `docs/archivio/2026-08-05-rilancio-qualita-tavola-plan.md`, appendice = registro
 di esecuzione con i verdetti.
 
 | Pacchetto | Stato |
@@ -201,7 +201,7 @@ di esecuzione con i verdetti.
 | WP3b mosse di rotazione | in sviluppo — chiude l'andata-e-ritorno sul prelievo ACS che il PM aveva cerchiato |
 | WP4 etichette accanto al pezzo, richiami a 45°, scavalli e pallini | in sviluppo |
 | WP5 preflight di qualità bloccante | eseguito, in attesa di collaudo. **Blocca la tavola oggi**, correttamente |
-| WP6 cold eye review | protocollo e prompt scritti (`docs/COLD_EYE_REVIEW.md`, `docs/prompts/cold-eye-review.md`); ciclo non ancora eseguito |
+| WP6 cold eye review | protocollo e prompt scritti (`docs/standard/COLD_EYE_REVIEW.md`, `docs/prompts/cold-eye-review.md`); ciclo non ancora eseguito |
 | WP7 rigenerazione e consegna | non iniziato |
 
 **Tre prove di accettazione sono rosse per progetto**: pretendono che il disegno esca
@@ -234,7 +234,7 @@ sessione finisce, si riprende dal primo passo non spuntato senza perdere nulla.
       pieno al 39%, il disegno e' una fascia orizzontale in mezzo al foglio. Gli avvisi del
       preflight lo dicono: `SHEET_BARELY_FILLED` e `DRAWING_ALL_ON_ONE_SIDE`.
 - [x] **S6** — prima passata fatta: **RESPINTA**, 14 rilievi, di cui 6 errori funzionali
-      veri che nessuno aveva visto. Verdetto integrale in `docs/COLD_EYE_REVIEW.md`.
+      veri che nessuno aveva visto. Verdetto integrale in `docs/standard/COLD_EYE_REVIEW.md`.
       Ha confrontato con tre tavole reali: Agenzia del Demanio, Comune di Carrara, Caleffi.
 
 - [ ] **S7** — correggere ciò che l'agente terzo rileva, una cosa per volta, ogni
@@ -248,7 +248,7 @@ sessione finisce, si riprende dal primo passo non spuntato senza perdere nulla.
 (D-072–D-082: divisione col foglio vuoto, fila come legge, valvole per attacco, etichette
 come tubi, disposizione che non serve le linee, scavallo mancante, lunghezza nel
 bilancio, simboli senza fonte). Scritte le regole del colpo d'occhio
-(`docs/QUALITA_GRAFICA.md`). Il PM ha ordinato riverifica da zero e metodo dei tre ruoli
+(`docs/standard/QUALITA_GRAFICA.md`). Il PM ha ordinato riverifica da zero e metodo dei tre ruoli
 (D-083); scritto il piano di rilancio con audit controverificato da collaudatore
 indipendente (D-084), **in attesa del via del PM**. Nessun codice toccato: solo
 registrazioni e piano, come da suo ordine.

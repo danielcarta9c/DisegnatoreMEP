@@ -83,7 +83,7 @@ Il corpo del disegno è quindi **400 × 235 mm**, e la sua altezza è un numero 
 altezza corpo  235 mm / 2,5 = 94,000 passi  -> esatto
 ```
 
-**Attenzione a non usare questo numero come argomento.** Il conto è stato rifatto con entrambi i margini, e l'altezza del corpo è 235 mm in ogni caso, perché non dipende dal margine sinistro: 94 passi esatti sia con 20 mm sia con 10 mm. Anche la larghezza cade esatta in entrambi i casi, 156 passi contro 160. **L'allineamento alla griglia non c'entra nulla**, e lo stesso vale per l'asimmetria registrata in `docs/GRAPHIC_STANDARD.md` §1.2, che riguarda `usable_height_mm` — 277 mm, 110,8 passi — e **resta tale e quale**: quel documento non va corretto su questo punto, va soltanto affiancato dalle misure del telaio.
+**Attenzione a non usare questo numero come argomento.** Il conto è stato rifatto con entrambi i margini, e l'altezza del corpo è 235 mm in ogni caso, perché non dipende dal margine sinistro: 94 passi esatti sia con 20 mm sia con 10 mm. Anche la larghezza cade esatta in entrambi i casi, 156 passi contro 160. **L'allineamento alla griglia non c'entra nulla**, e lo stesso vale per l'asimmetria registrata in `docs/standard/GRAPHIC_STANDARD.md` §1.2, che riguarda `usable_height_mm` — 277 mm, 110,8 passi — e **resta tale e quale**: quel documento non va corretto su questo punto, va soltanto affiancato dalle misure del telaio.
 
 Il punto è un altro, e non è una scelta. Il cartiglio Nove C **è già disegnato** con la propria squadratura a 10 mm e occupa i 400 mm pieni; è lo standard aziendale, consegnato dal PM come input del progetto. `A3_LANDSCAPE` ne dichiara invece 20 a sinistra, motivandoli con ISO 5457. Tenere i 20 mm significherebbe o ridisegnare il cartiglio aziendale perché stia in 390 mm — e `assets/cartigli/README.md` prescrive che una versione derivata abbia nome distinto e provenienza documentata — oppure stampare due squadrature diverse sullo stesso foglio. Nessuna delle due è una posizione difendibile davanti a un input già fornito.
 
@@ -131,7 +131,7 @@ D-042 dice che l'AI può scegliere quale sottosistema va su quale fascia, in che
 
 Questo piano completa quella struttura invece di costruirne una parallela. `SheetIntentModel` acquista le assegnazioni di fascia; nasce `BandRole`; il validatore topologico impara a verificare che il piano sia eseguibile — ogni sottosistema assegnato una volta sola, nessun riferimento pendente, nessuna tavola vuota.
 
-**Conseguenza: è il primo cambiamento del modello dopo P0, quindi apre W2.** `schema_version` è oggi `Literal["1.0.0"]` senza percorso di migrazione, e `docs/P0_REVIEW_FINDINGS.md` §4 dice che il tema va affrontato «prima del primo cambiamento di modello, quando ancora non esistono file di progetto reali». È adesso.
+**Conseguenza: è il primo cambiamento del modello dopo P0, quindi apre W2.** `schema_version` è oggi `Literal["1.0.0"]` senza percorso di migrazione, e `docs/archivio/P0_REVIEW_FINDINGS.md` §4 dice che il tema va affrontato «prima del primo cambiamento di modello, quando ancora non esistono file di progetto reali». È adesso.
 
 **Seconda conseguenza, da mettere in conto: il fingerprint del progetto misto si muove.** `3347374e…` è l'impronta di un documento che dichiara `schema_version: "1.0.0"`. Portato a `1.1.0` cambia, ed è corretto che cambi: è un documento diverso. Il Task 3 lo ricalcola, lo registra in `PROJECT_STATE.md` e aggiunge la prova che conta davvero — un file `1.0.0` migrato in memoria e un file scritto nativamente `1.1.0` producono la **stessa** impronta.
 
@@ -183,7 +183,7 @@ examples/layout/
   build_layout_fixtures.py
 ```
 
-Modificati: `src/disegnatore_mep/model/project.py`, `src/disegnatore_mep/model/types.py`, `src/disegnatore_mep/io/project_json.py`, `src/disegnatore_mep/io/canonical.py`, `src/disegnatore_mep/catalog/registry.py`, `src/disegnatore_mep/cli.py`, `examples/graphics/build_symbols.py`, `examples/foundation/build_fixtures.py`, `schemas/project.schema.json`, `docs/GRAPHIC_STANDARD.md`, `docs/ARCHITECTURE.md`, `docs/DECISION_LOG.md`, `PROJECT_STATE.md`, e i test elencati nei singoli task.
+Modificati: `src/disegnatore_mep/model/project.py`, `src/disegnatore_mep/model/types.py`, `src/disegnatore_mep/io/project_json.py`, `src/disegnatore_mep/io/canonical.py`, `src/disegnatore_mep/catalog/registry.py`, `src/disegnatore_mep/cli.py`, `examples/graphics/build_symbols.py`, `examples/foundation/build_fixtures.py`, `schemas/project.schema.json`, `docs/standard/GRAPHIC_STANDARD.md`, `docs/archivio/ARCHITECTURE.md`, `docs/DECISION_LOG.md`, `PROJECT_STATE.md`, e i test elencati nei singoli task.
 
 ## 5. Contratti pubblici prodotti dal piano
 
@@ -567,7 +567,7 @@ git commit -m "feat: record the pagination plan in the model, with a migration p
 **Files:**
 - Modify: `src/disegnatore_mep/graphics/standard.py`
 - Create: `src/disegnatore_mep/graphics/frame.py`, `tests/graphics/test_frame.py`
-- Modify: `tests/graphics/test_standard.py`, `tests/graphics/test_svg.py`, `docs/GRAPHIC_STANDARD.md`, `docs/DECISION_LOG.md`
+- Modify: `tests/graphics/test_standard.py`, `tests/graphics/test_svg.py`, `docs/standard/GRAPHIC_STANDARD.md`, `docs/DECISION_LOG.md`
 
 **Interfaces:** produce `SheetFrame`, `NOVE_C_A3`.
 
@@ -630,7 +630,7 @@ Il cartiglio **non viene disegnato** da questo piano: qui se ne riserva soltanto
 
 - [ ] **Step 5: aggiornare i documenti**
 
-`docs/GRAPHIC_STANDARD.md` §1.1: la tabella dei valori, dove `margin_left_mm` passa a 10,0 e la motivazione non è più la rilegatura ISO 5457 ma la squadratura del cartiglio (D-053). §1.2 **resta vera e non va toccata nel merito**: l'asimmetria di `usable_height_mm` non è cambiata; va solo aggiornato il numero della larghezza e aggiunta una riga che rimanda alla sezione nuova. Aggiungere una sezione sul telaio con le misure di §2.1 di questo piano, e dire esplicitamente che l'area di disegno — 350 × 235 mm, il corpo meno la fascia della legenda — è la superficie su cui il layout lavora, distinta dall'area utile del foglio. Registrare D-053 nel `DECISION_LOG`.
+`docs/standard/GRAPHIC_STANDARD.md` §1.1: la tabella dei valori, dove `margin_left_mm` passa a 10,0 e la motivazione non è più la rilegatura ISO 5457 ma la squadratura del cartiglio (D-053). §1.2 **resta vera e non va toccata nel merito**: l'asimmetria di `usable_height_mm` non è cambiata; va solo aggiornato il numero della larghezza e aggiunta una riga che rimanda alla sezione nuova. Aggiungere una sezione sul telaio con le misure di §2.1 di questo piano, e dire esplicitamente che l'area di disegno — 350 × 235 mm, il corpo meno la fascia della legenda — è la superficie su cui il layout lavora, distinta dall'area utile del foglio. Registrare D-053 nel `DECISION_LOG`.
 
 - [ ] **Step 6: verificare e committare**
 
@@ -754,7 +754,7 @@ Expected: exit `0`; il totale sale a circa 209.
 - Modify: `examples/graphics/build_symbols.py`, `examples/foundation/build_fixtures.py`
 - Create/Modify: i manifesti e i corpi in `assets/symbols/`
 - Create: `examples/layout/catalog/`, `examples/layout/build_layout_fixtures.py`
-- Modify: `tests/acceptance/test_symbol_sheet.py`, `docs/GRAPHIC_STANDARD.md`, `docs/DECISION_LOG.md`
+- Modify: `tests/acceptance/test_symbol_sheet.py`, `docs/standard/GRAPHIC_STANDARD.md`, `docs/DECISION_LOG.md`
 
 **Interfaces:** produce `GridSpace`, `assert_symbol_is_aligned`.
 
@@ -1048,7 +1048,7 @@ Expected: exit `0`; il totale sale a circa 265.
 - Create: `src/disegnatore_mep/validation/geometry.py`, `src/disegnatore_mep/graphics/sheet.py`
 - Create: `tests/validation/test_geometry.py`, `tests/graphics/test_sheet.py`, `tests/acceptance/test_drawing.py`
 - Create: `examples/layout/heat-pump-dhw-buffer-two-zones.json`
-- Modify: `src/disegnatore_mep/cli.py`, `src/disegnatore_mep/io/canonical.py`, `docs/ARCHITECTURE.md`, `docs/GRAPHIC_STANDARD.md`, `README.md`, `PROJECT_STATE.md`
+- Modify: `src/disegnatore_mep/cli.py`, `src/disegnatore_mep/io/canonical.py`, `docs/archivio/ARCHITECTURE.md`, `docs/standard/GRAPHIC_STANDARD.md`, `README.md`, `PROJECT_STATE.md`
 
 **Interfaces:** produce `validate_drawing_geometry`, `render_sheet`, `drawing_fingerprint`, comando CLI `draw`.
 
@@ -1099,7 +1099,7 @@ Ciò che non si può fare in una sessione cloud, e che va lasciato al PM, è la 
 
 - [ ] **Step 5: aggiornare i documenti**
 
-`docs/ARCHITECTURE.md` acquista il pacchetto `layout/` e i comandi nuovi. `docs/GRAPHIC_STANDARD.md` acquista la sezione sul telaio e sulla legenda. `README.md` mostra il comando `draw`. `PROJECT_STATE.md` registra stato, impronta nuova e debito residuo. `docs/ROADMAP.md` marca «partizionare semanticamente» e «implementare layout e instradamento deterministici» come fatti.
+`docs/archivio/ARCHITECTURE.md` acquista il pacchetto `layout/` e i comandi nuovi. `docs/standard/GRAPHIC_STANDARD.md` acquista la sezione sul telaio e sulla legenda. `README.md` mostra il comando `draw`. `PROJECT_STATE.md` registra stato, impronta nuova e debito residuo. `docs/archivio/ROADMAP.md` marca «partizionare semanticamente» e «implementare layout e instradamento deterministici» come fatti.
 
 - [ ] **Step 6: verificare e committare**
 

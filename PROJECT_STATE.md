@@ -25,11 +25,11 @@
 
 </details>
 
-- [x] ~~Scrivere il piano di layout, instradamento e multi-tavola~~ — **scritto il 4 agosto 2026** in `docs/plans/2026-08-04-layout-routing-multitavola-plan.md`. Dodici task, non ancora eseguito.
+- [x] ~~Scrivere il piano di layout, instradamento e multi-tavola~~ — **scritto il 4 agosto 2026** in `docs/archivio/2026-08-04-layout-routing-multitavola-plan.md`. Dodici task, non ancora eseguito.
 - [x] ~~Piano di layout, instradamento e multi-tavola~~ — **eseguito il 4 agosto 2026**: dodici task, dodici commit, 383 test verdi. Il caso D-011 si disegna su una A3 e passa tutti i controlli geometrici.
 - [x] ~~**La regola del PM su linee e posizioni**~~ — **implementata il 4 agosto 2026 (D-060, D-062).** «Minimizzare le curve disegnate, minimizzare gli attraversamenti tra linee e minimizzare la lunghezza delle linee, mantenendo però ordinamenti da sinistra a destra», e «vietato sovrapporre longitudinalmente: sempre separate e ben distinte». Tre voci di costo nell'instradamento, un divieto sui tratti già percorsi, un vincolo nel posizionamento. Sul caso D-011: pieghe da 31 a 25, nodi condivisi da 24 a 9, sovrapposizione longitudinale da 12,5 mm a 5 — i due imbocchi da un passo dove due ritorni entrano nello stesso attacco. Misurate da `tests/layout/test_objective.py`.
 - [x] ~~**Il ritorno blu che entrava nella valvola a tre vie**~~ — **risolto (D-059)**: il verso di una tratta veniva letto dalla geometria del disegno già fatto, non dalla topologia del modello, che è orientata per costruzione.
-- [ ] **Rifare il linguaggio grafico sulle fonti, non sulla convenzione inventata.** Il PM ha giudicato la prima tavola mal disegnata e ha chiesto la ricerca che il progetto non aveva mai fatto. Esito in `docs/research/2026-08-04-come-si-disegna-uno-schema-funzionale.md`: manca **UNI 9511**, mandata e ritorno devono essere linee distinte, la tavola porta i diametri, le sigle sono mnemoniche funzionali, la composizione è a corsie orizzontali e non a pile verticali, e la libreria copre meno di un ottavo dei simboli di una tavola reale.
+- [ ] **Rifare il linguaggio grafico sulle fonti, non sulla convenzione inventata.** Il PM ha giudicato la prima tavola mal disegnata e ha chiesto la ricerca che il progetto non aveva mai fatto. Esito in `docs/fonti/2026-08-04-come-si-disegna-uno-schema-funzionale.md`: manca **UNI 9511**, mandata e ritorno devono essere linee distinte, la tavola porta i diametri, le sigle sono mnemoniche funzionali, la composizione è a corsie orizzontali e non a pile verticali, e la libreria copre meno di un ottavo dei simboli di una tavola reale.
 - [ ] ~~Giudizio del PM sulla prima tavola~~ — **dato: la tavola è fatta male.** I controlli automatici dimostrano che nulla si sovrappone, non che la tavola si legga come l'avrebbe disegnata un tecnico. Si rigenera con `.venv/bin/python -m disegnatore_mep draw examples/layout/heat-pump-dhw-buffer-two-zones.json --catalog examples/layout/catalog --symbols assets/symbols --out outputs/`.
 
 ## Difetti segnalati dal PM sulla tavola completa — 5 agosto 2026
@@ -116,7 +116,7 @@ di meno deve cedere.
 
 I difetti hanno una cosa in comune: un disegnatore senior li vede in due secondi.
 Il PM lo ha nominato come il lavoro dell'agente terzo e ha chiesto di tradurre in regole
-quello che l'occhio umano fa da solo. Il risultato è `docs/QUALITA_GRAFICA.md` (D-076):
+quello che l'occhio umano fa da solo. Il risultato è `docs/standard/QUALITA_GRAFICA.md` (D-076):
 una quarantina di regole in sei famiglie, ciascuna con **come si vede a occhio** e uno stato —
 garantita dal motore, misurabile ma non ancora misurata, da giudicare, oppure violata oggi.
 
@@ -188,7 +188,7 @@ Il 5 agosto 2026, dopo otto difetti registrati sulla tavola completa, il PM ha o
 ripartire da zero con la riverifica e con un metodo a tre ruoli — uno decide, uno o più
 fanno, uno controlla (D-083). Il piano è scritto, la riverifica input per input è stata
 controverificata da un collaudatore indipendente, e **si attende il via del PM**:
-`docs/plans/2026-08-05-rilancio-qualita-tavola-plan.md`.
+`docs/archivio/2026-08-05-rilancio-qualita-tavola-plan.md`.
 
 1. **WP1 — Simboli dalle fonti** (D-067, D-081, D-082): UNI 9511 via Oppo per il
    valvolame e gli accessori, pratica e produttori per le macchine. Consegna intermedia:
@@ -229,7 +229,7 @@ Registrato per non riscoprirlo. Nessuno di questi è bloccante.
 
 Chiusi dalla revisione finale del ramo: la guardia di capacità ora difende anche l'asse orizzontale (D-045 su entrambi gli assi) e la verifica incrociata simbolo/catalogo è cablata sulla CLI `validate` tramite `--symbols`, opzionale.
 
-Elenco completo nell'appendice di `docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`.
+Elenco completo nell'appendice di `docs/archivio/2026-08-03-graphic-system-symbol-library-plan.md`.
 
 ## Il difetto principale, oggi
 
@@ -238,7 +238,7 @@ fonti non erano state acquisite (D-047), e il motore di layout ci è stato costr
 senza mai confrontarsi con una tavola reale. Regge la meccanica — griglia, scala invariante,
 tratte, interruzione della linea, multi-tavola, validazione geometrica, riproducibilità — non
 regge cosa viene disegnato e come è composto. Analisi e fonti in
-`docs/research/2026-08-04-come-si-disegna-uno-schema-funzionale.md`.
+`docs/fonti/2026-08-04-come-si-disegna-uno-schema-funzionale.md`.
 
 ## Debito noto del layout
 
@@ -276,7 +276,7 @@ Una quarta era stata posta e ritirata: chiedeva la squadratura del foglio, che n
 | `f781d5c` | **Piano di layout, instradamento e multi-tavola scritto** (non eseguito): dodici task, con rotazione, tratte e instradamento prototipati e sotto test prima della stesura. Trovati tre difetti non registrati altrove: nessun simbolo sulla griglia, squadratura del cartiglio in disaccordo con `A3_LANDSCAPE`, interruzione di linea misurata sull'asse sbagliato |
 | `8e2b664` | **Fase grafica integrata in `main`** con merge esplicito; convenzioni grafiche interne registrate in `SOURCE_REGISTER`; W8 e W9 di P0 marcati risolti |
 | `fc97ad3`, `650f534`, `f90ede6`, `d193f6b`, `6516d77`, `0bb60ba`, `25fc9bc` | **Revisione finale del ramo grafico**: compositi che portano area di rispetto, interruzione di linea e ancoraggi (D-027); corpo SVG validato come XML; guardia di capacità sull'asse orizzontale (D-045); verifica incrociata cablata su `validate --symbols`; area di rispetto imposta sulle facce con porta; significato di `allowed_rotations_deg` (D-049, D-050) |
-| `c1ab602` | Comando `symbols-sheet`, gate di accettazione, migrazione delle fixture ai simboli reali, `docs/GRAPHIC_STANDARD.md` |
+| `c1ab602` | Comando `symbols-sheet`, gate di accettazione, migrazione delle fixture ai simboli reali, `docs/standard/GRAPHIC_STANDARD.md` |
 | `59851b0` | Fonte dei simboli ricondotta alla convenzione interna del progetto (D-047) |
 | `987aeec` | **Prima libreria trasversale**: dodici simboli, quattro domini, rigenerazione deterministica |
 | `473ea13` | Rifiutata la libreria che non entra nel foglio, invece di disegnare fuori pagina (D-045) |

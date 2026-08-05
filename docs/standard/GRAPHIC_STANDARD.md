@@ -1,6 +1,6 @@
 # Standard grafico — Disegnatore MEP
 
-Questo documento descrive come vive, in codice, lo standard grafico costruito per trasformare un modello tecnico approvato in una tavola tecnica stampabile: dove sono definite le grandezze in millimetri, come è fatto il manifesto geometrico di un simbolo, come si separa dalla semantica del catalogo, come si aggiunge un simbolo alla libreria, come si compone un simbolo composito da primitive e come si verifica per stampa il foglio di riscontro. Copre l'esito dei Task 1-7 del piano `docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`. Non copre layout, instradamento, multi-tavola, cartiglio o distinta: sono oggetto del piano successivo (si veda D-033).
+Questo documento descrive come vive, in codice, lo standard grafico costruito per trasformare un modello tecnico approvato in una tavola tecnica stampabile: dove sono definite le grandezze in millimetri, come è fatto il manifesto geometrico di un simbolo, come si separa dalla semantica del catalogo, come si aggiunge un simbolo alla libreria, come si compone un simbolo composito da primitive e come si verifica per stampa il foglio di riscontro. Copre l'esito dei Task 1-7 del piano `docs/archivio/2026-08-03-graphic-system-symbol-library-plan.md`. Non copre layout, instradamento, multi-tavola, cartiglio o distinta: sono oggetto del piano successivo (si veda D-033).
 
 ## 1. Un'unica autorità dimensionale
 
@@ -46,7 +46,7 @@ Le misure del telaio vengono dal **cartiglio aziendale** — `assets/cartigli/Ca
 | Legenda | 50 mm a destra, alta quanto il corpo | I soli simboli usati (D-052) |
 | **Area di disegno** | **350 × 235 mm = 140 × 94 passi** | Dove il layout dispone e instrada |
 
-**Perché non ISO 5457.** `A3_LANDSCAPE` dichiarava fino a D-053 un margine sinistro di 20 mm, motivato dalla rilegatura ISO 5457 — che `docs/research/SOURCE_REGISTER.md` elenca come SRC-001 «da acquisire e valutare»: non ottenuta, non valutata. Il cartiglio Nove C ne usa 10 e occupa i 400 mm pieni. Tenere i 20 mm avrebbe significato o ridisegnare il cartiglio aziendale, o stampare due squadrature diverse sullo stesso foglio. Il codice si allinea quindi all'input, e la provenienza è registrata come CONV-GRAFICA-003. È lo stesso errore che D-047 ha corretto per il campo `source` dei simboli.
+**Perché non ISO 5457.** `A3_LANDSCAPE` dichiarava fino a D-053 un margine sinistro di 20 mm, motivato dalla rilegatura ISO 5457 — che `docs/fonti/SOURCE_REGISTER.md` elenca come SRC-001 «da acquisire e valutare»: non ottenuta, non valutata. Il cartiglio Nove C ne usa 10 e occupa i 400 mm pieni. Tenere i 20 mm avrebbe significato o ridisegnare il cartiglio aziendale, o stampare due squadrature diverse sullo stesso foglio. Il codice si allinea quindi all'input, e la provenienza è registrata come CONV-GRAFICA-003. È lo stesso errore che D-047 ha corretto per il campo `source` dei simboli.
 
 ## 2. Dove vivono le grandezze dimensionali
 
@@ -64,7 +64,7 @@ Ogni porta dichiara una `PortFace` (`left`, `right`, `top`, `bottom`) e una coor
 
 ### 3.1 Perché sostituisce il vincolo P0
 
-La fondazione (P0) dichiarava esplicitamente il contrario, e lo elencava fra i vincoli da **non** violare per sviste: *"Le porte possono stare ovunque dentro il riquadro del simbolo, non solo sul perimetro"* (`docs/plans/2026-08-01-foundation-core-plan.md`, sezione "Vincoli da non violare"), motivato dal fatto che un test P0 approvato definiva una porta al centro di un simbolo 10×10.
+La fondazione (P0) dichiarava esplicitamente il contrario, e lo elencava fra i vincoli da **non** violare per sviste: *"Le porte possono stare ovunque dentro il riquadro del simbolo, non solo sul perimetro"* (`docs/archivio/2026-08-01-foundation-core-plan.md`, sezione "Vincoli da non violare"), motivato dal fatto che un test P0 approvato definiva una porta al centro di un simbolo 10×10.
 
 Questo piano ritira quel vincolo, deliberatamente. Una porta al centro di un simbolo non è un punto a cui una tubazione disegnata possa realisticamente attaccarsi: geometricamente valida, ma priva di significato per un disegno che deve poi instradare connessioni ortogonali fino al bordo dei componenti. La regola perimetro-faccia non è quindi un irrigidimento imprevisto del codice P0, né una svista che rompe un vincolo dichiarato: è la ragione stessa per cui questo piano esiste, registrata come "Decisione strutturale" nel piano e qui riportata perché chi legge questo documento sappia che il cambiamento è intenzionale, non un incidente da segnalare.
 

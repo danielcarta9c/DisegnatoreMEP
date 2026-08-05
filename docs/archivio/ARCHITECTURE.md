@@ -27,7 +27,7 @@ Il `ProjectModel` JSON è la fonte tecnica canonica. Elaborati grafici e distint
 
 La geometria vive nel simbolo, la semantica nella definizione di componente: si uniscono per
 identificativo di porta (D-043), e `catalog/resolved.py` e' la vista che le tiene insieme.
-Dettagli in `docs/GRAPHIC_STANDARD.md`.
+Dettagli in `docs/standard/GRAPHIC_STANDARD.md`.
 
 ## Modulo di layout
 

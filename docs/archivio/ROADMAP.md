@@ -45,7 +45,7 @@ da un tecnico, e lo si scopre soltanto guardandola.
 - [ ] esportare PDF vettoriale con manifest di riproducibilità.
 
 Colori e tag non sono ancora affrontati: appartengono al rendering della tavola vera, non al
-foglio dei simboli. Lo standard consegnato è in `docs/GRAPHIC_STANDARD.md`.
+foglio dei simboli. Lo standard consegnato è in `docs/standard/GRAPHIC_STANDARD.md`.
 
 ## Fase 4 — Collaudo
 

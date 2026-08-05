@@ -69,7 +69,7 @@ tests/
   io/test_canonical.py
   test_cli.py
   acceptance/test_foundation_cli.py
-docs/ARCHITECTURE.md
+docs/archivio/ARCHITECTURE.md
 ```
 
 ## Contratti pubblici prodotti dal piano
@@ -1759,7 +1759,7 @@ git commit -m "feat: add project validation CLI"
 - Create: `examples/foundation/build_fixtures.py`
 - Create: `tests/acceptance/test_foundation_cli.py`
 - Create: `schemas/project.schema.json`
-- Create: `docs/ARCHITECTURE.md`
+- Create: `docs/archivio/ARCHITECTURE.md`
 - Modify: `PROJECT_STATE.md`
 
 **Interfaces:**
@@ -2016,7 +2016,7 @@ Expected: `schemas/project.schema.json` contiene `"title": "ProjectModel"`.
 
 - [ ] **Step 6: creare l'architettura operativa**
 
-Create `docs/ARCHITECTURE.md` con queste sezioni e contenuti:
+Create `docs/archivio/ARCHITECTURE.md` con queste sezioni e contenuti:
 
 ````markdown
 # Architettura - Disegnatore MEP
@@ -2074,7 +2074,7 @@ In `PROJECT_STATE.md`:
 - [ ] **Step 9: commit finale P0**
 
 ```powershell
-git add examples/foundation schemas/project.schema.json tests/acceptance docs/ARCHITECTURE.md PROJECT_STATE.md
+git add examples/foundation schemas/project.schema.json tests/acceptance docs/archivio/ARCHITECTURE.md PROJECT_STATE.md
 git commit -m "test: qualify multi-domain foundation"
 ```
 
@@ -2160,4 +2160,4 @@ Eseguire sempre **la suite completa** e `mypy src tests`, mai il solo file di te
 
 ### Esito
 
-45 file, 3089 righe, 17 commit, 59 test. `pytest`, `ruff` e `mypy --strict` a `0`. Progetto misto idronico-aeraulico-refrigerante-gas validato senza codice specifico per schema. Ciò che le revisioni hanno trovato e **non** è stato risolto qui è in `docs/P0_REVIEW_FINDINGS.md`.
+45 file, 3089 righe, 17 commit, 59 test. `pytest`, `ruff` e `mypy --strict` a `0`. Progetto misto idronico-aeraulico-refrigerante-gas validato senza codice specifico per schema. Ciò che le revisioni hanno trovato e **non** è stato risolto qui è in `docs/archivio/P0_REVIEW_FINDINGS.md`.
