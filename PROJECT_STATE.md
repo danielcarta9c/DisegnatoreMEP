@@ -50,6 +50,11 @@ riprodurre lo stesso errore di metodo che li ha generati.
 - [ ] **La disposizione in fila trattata come legge** (D-073). Bollitore e volano potevano
   stare uno sopra l'altro invece che uno dopo l'altro. Impilare è una disposizione
   legittima quanto affiancare, e va scelta quando riempie meglio il foglio.
+- [ ] **Le etichette sembrano tubazioni** (D-075). Oggi sigle e valori scendono in una riga
+  di richiami sotto il disegno, collegati al pezzo da una linea ortogonale: stessa forma e
+  stessa giacitura di una tubazione. Devono tornare a essere una scritta piccola accanto al
+  proprio componente; quando non ci sta, un richiamo obliquo a 45°, che nessuna tubazione
+  può essere.
 
 ### L'errore di metodo che li ha generati
 
@@ -68,6 +73,13 @@ del disegno è stato deciso in base a quanto ci stava sul foglio.** Le valvole d
 intercettazione sono passate da una per attacco a una per componente perché con quattro
 valvole sul volano l'A3 non reggeva. È al contrario: cosa va disegnato lo decide
 l'impianto, e se non ci sta si cambia disposizione o si divide.
+
+Il difetto delle etichette ne mostra un terzo: **un problema risolto introducendo un segno
+nuovo, senza chiedersi come quel segno si legge.** I testi si sovrapponevano ai simboli, e
+la risposta è stata portarli sotto il disegno con una linea di collegamento — risolvendo la
+sovrapposizione e creando un'ambiguità peggiore, perché quella linea è ortogonale e sottile
+come una tubazione. Ogni segno aggiunto alla tavola va verificato contro i segni che ci
+sono già.
 
 ## Next — backlog ordinato
 
