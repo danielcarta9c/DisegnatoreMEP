@@ -36,7 +36,7 @@ def rules() -> RuleRegistry:
 
 
 def proposals() -> list[RuleProposal]:
-    return evaluate(load_project(ESSENTIAL), catalog(), rules())
+    return evaluate(load_project(ESSENTIAL), catalog(), rules()).proposals
 
 
 def test_the_engine_proposes_the_missing_accessories() -> None:
@@ -68,8 +68,8 @@ def test_a_rule_proposes_once_per_declared_cardinality() -> None:
 def test_the_engine_is_idempotent() -> None:
     """Rieseguire su un modello gia' completato non ripropone nulla."""
     project = load_project(ESSENTIAL)
-    completed, _ = saturate(project, catalog(), rules())
-    assert evaluate(completed, catalog(), rules()) == []
+    completed, _, _ = saturate(project, catalog(), rules())
+    assert evaluate(completed, catalog(), rules()).proposals == []
 
 
 def test_completing_takes_more_than_one_pass_and_then_stops() -> None:
@@ -84,14 +84,14 @@ def test_completing_takes_more_than_one_pass_and_then_stops() -> None:
     current = project
     while True:
         found = evaluate(current, catalog(), rules())
-        if not found:
+        if found.is_empty:
             break
-        current = apply_proposals(current, found)
+        current = apply_proposals(current, found.proposals)
         passes += 1
     assert passes > 1
-    completed, applied = saturate(project, catalog(), rules())
+    completed, applied, _ = saturate(project, catalog(), rules())
     assert canonical_json(completed) == canonical_json(current)
-    assert len(applied) > len(evaluate(project, catalog(), rules()))
+    assert len(applied) > len(evaluate(project, catalog(), rules()).proposals)
 
 
 def test_the_engine_does_not_touch_the_model() -> None:
@@ -117,7 +117,7 @@ def test_every_proposal_carries_its_reason_and_source() -> None:
 
 def test_the_completed_model_is_valid() -> None:
     project = load_project(ESSENTIAL)
-    completed = apply_proposals(project, evaluate(project, catalog(), rules()))
+    completed, _, _ = saturate(project, catalog(), rules())
     assert validate_project(completed, catalog()).ok
 
 
@@ -129,8 +129,7 @@ def test_applying_nothing_changes_nothing() -> None:
 def test_applying_leaves_the_traceability_behind() -> None:
     """D-039: `RuleApplicationModel` esisteva senza che nessuno lo scrivesse."""
     project = load_project(ESSENTIAL)
-    found = evaluate(project, catalog(), rules())
-    completed = apply_proposals(project, found)
+    completed, found, _ = saturate(project, catalog(), rules())
     assert len(completed.rule_applications) == len(found)
     versions = {rule.id: rule.version for rule in rules().all()}
     for applied in completed.rule_applications:

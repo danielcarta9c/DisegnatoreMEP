@@ -303,7 +303,7 @@ def test_a_safety_device_is_never_given_a_valve_of_its_own() -> None:
     organo di chiusura ancorandolo a cio' che non si chiude mai."""
     registry = catalog()
     project = load_project(ESSENTIAL)
-    _, proposals = saturate(project, registry, rules())
+    _, proposals, _ = saturate(project, registry, rules())
     definitions = {item.id: item.definition_id for item in project.components}
     for proposal in proposals:
         definitions[proposal.component_id] = proposal.definition_id
@@ -347,7 +347,7 @@ def test_the_rule_proposes_the_lockable_organ_wherever_the_regime_asks_it() -> N
     chiudersi solo con organo bloccabile, l'organo proposto deve esserlo."""
     registry = catalog()
     project = load_project(ESSENTIAL)
-    _, proposals = saturate(project, registry, rules())
+    _, proposals, _ = saturate(project, registry, rules())
     definitions = {item.id: item.definition_id for item in project.components}
     for proposal in proposals:
         definitions[proposal.component_id] = proposal.definition_id
@@ -422,11 +422,11 @@ def test_the_document_does_not_overstate_how_much_the_plant_grew() -> None:
 
 def test_rerunning_the_rules_on_the_complete_case_proposes_nothing() -> None:
     """Idempotenza sul file pubblicato, non solo sul modello in memoria."""
-    assert evaluate(complete(), catalog(), rules()) == []
+    assert evaluate(complete(), catalog(), rules()).proposals == []
 
 
 def test_the_stored_complete_case_is_the_current_regeneration() -> None:
     """Mai piu' un artefatto vecchio mostrato come attuale: il file pubblicato
     e' esattamente cio' che il pacchetto corrente rigenera dall'essenziale."""
-    regenerated, _ = saturate(load_project(ESSENTIAL), catalog(), rules())
+    regenerated, _, _ = saturate(load_project(ESSENTIAL), catalog(), rules())
     assert canonical_json(regenerated) == COMPLETE.read_text(encoding="utf-8")

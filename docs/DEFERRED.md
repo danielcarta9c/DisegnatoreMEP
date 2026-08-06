@@ -170,10 +170,10 @@ sbloccano nulla.
 
   **Aggiornamento del 6 agosto 2026 (P1).** D-094 ritira quella scorciatoia: lo stacco è un
   ramo vero con la propria catena, e la fila dei pezzi è un albero. Il catalogo ora dichiara
-  chi pende dal tubo, ma **otto voci dichiarano lo stacco e hanno ancora due porte
+  chi pende dal tubo, ma **nove voci dichiarano lo stacco e hanno ancora due porte
   passanti** — vaso di espansione (riscaldamento e sanitario), valvola di sicurezza
-  (riscaldamento e sanitaria), gruppo di riempimento, attacco di scarico, manometro e
-  termometro. È il debito di P4, non di P1: chiuderlo vuol dire dare a questi accessori una
+  (riscaldamento e sanitaria), gruppo di riempimento, attacco di scarico (riscaldamento e
+  sanitario, il secondo nato in P2), manometro e termometro. È il debito di P4, non di P1: chiuderlo vuol dire dare a questi accessori una
   sola porta e far nascere il raccordo di derivazione come pezzo a sé. Il simbolo del vaso a
   un solo attacco **esiste già** in libreria e non ha voce di catalogo (§5). L'elenco è
   congelato in `tests/catalog/test_traits.py`: quella prova fallisce se il debito cambia, e
