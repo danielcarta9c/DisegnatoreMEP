@@ -1,0 +1,79 @@
+# Esempi di input per la generazione automatica di schemi unifilari
+
+## Esempio 1 – Due pompe di calore in parallelo con accumulo combinato
+
+L’impianto è composto da due pompe di calore aria-acqua da 12 kW ciascuna, installate in parallelo e gestite una come master e una come slave.
+
+Le due macchine alimentano un accumulo ECOcombi da 200 litri, utilizzato sia come volume tecnico a quattro tubi per il riscaldamento sia per la produzione istantanea di acqua calda sanitaria tramite serpentino interno.
+
+Sul lato riscaldamento, dal volume tecnico parte un circuito secondario con circolatore dedicato che alimenta direttamente l’impianto esistente a radiatori.
+
+Sul lato sanitario, l’acqua fredda di acquedotto entra nel serpentino interno e l’ACS viene prelevata in uscita. Non è previsto ricircolo sanitario.
+
+Sul volume tecnico sono previsti anche il collegamento per il carico automatico dell’impianto da acquedotto e lo scarico.
+
+## Esempio 2 – Pompa di calore con deviazione tra climatizzazione e ACS
+
+L’impianto è servito da una pompa di calore aria-acqua reversibile da 15 kW.
+
+Sulla mandata è prevista una valvola a tre vie che devia il flusso alternativamente verso il circuito di climatizzazione oppure verso il bollitore per la produzione di ACS, con priorità alla produzione sanitaria.
+
+Il circuito di climatizzazione comprende un volume tecnico da 100 litri configurato a quattro tubi. Sul volume tecnico sono previsti anche il collegamento per il carico automatico dell’impianto da acquedotto e lo scarico.
+
+Dal volume parte un circuito secondario con circolatore dedicato che alimenta fan-coil idronici utilizzati sia in riscaldamento sia in raffrescamento.
+
+La produzione di ACS avviene tramite un bollitore con serpentino collegato alla pompa di calore. L’acqua fredda sanitaria entra nella parte bassa del bollitore e l’ACS viene prelevata dalla parte alta.
+
+Sull’uscita sanitaria è prevista una valvola miscelatrice. Non è previsto il circuito di ricircolo ACS.
+
+## Esempio 3 – Pompa di calore diretta su pavimento radiante
+
+L’impianto è composto da una pompa di calore aria-acqua da 8 kW che alimenta direttamente un sistema radiante a pavimento a bassa temperatura.
+
+Non è previsto un separatore idraulico e la circolazione è affidata al circolatore integrato nella pompa di calore.
+
+Sul ritorno dell’impianto radiante è installato un volume tecnico da 50 litri a due tubi, montato in serie, con funzione di aumento del contenuto d’acqua e stabilizzazione del funzionamento della pompa di calore.
+
+Sul volume tecnico sono previsti il collegamento per il carico automatico dell’impianto da acquedotto e lo scarico.
+
+Il collettore del pavimento radiante alimenta più circuiti ambiente con regolazione di zona.
+
+La produzione di ACS è completamente separata ed è realizzata con un boiler in pompa di calore dedicato da 200 litri, non collegato idraulicamente all’impianto di riscaldamento.
+
+## Esempio 4 – Sistema ibrido con pompa di calore e caldaia combinata
+
+L’impianto è costituito da una pompa di calore aria-acqua da 10 kW e da una caldaia a condensazione combinata da 24 kW, collegate in parallelo.
+
+La pompa di calore lavora come generatore principale, mentre la caldaia interviene quando la temperatura esterna è bassa, quando serve maggiore potenza oppure quando l’impianto richiede temperature di mandata più alte.
+
+I due generatori alimentano un volume tecnico da 150 litri configurato a quattro tubi. Sul volume tecnico sono previsti il collegamento per il carico automatico dell’impianto da acquedotto e lo scarico.
+
+Dal volume parte un circuito secondario con circolatore dedicato che alimenta direttamente l’impianto esistente a radiatori.
+
+La produzione di acqua calda sanitaria è affidata alla caldaia in modo istantaneo, senza bollitore di accumulo.
+
+Quando viene richiesta ACS, una valvola a tre vie devia il circuito della caldaia verso uno scambiatore di calore a piastre. L’acqua fredda sanitaria proveniente dall’acquedotto attraversa lo scambiatore e viene riscaldata istantaneamente prima di essere inviata alle utenze.
+
+Durante la produzione di ACS la caldaia dà priorità al sanitario, mentre la pompa di calore può continuare ad alimentare il volume tecnico e il circuito di riscaldamento.
+
+## Esempio 5 – Tre pompe di calore con più circuiti secondari
+
+La centrale termica è composta da tre pompe di calore aria-acqua reversibili da 35 kW ciascuna, installate in parallelo e gestite in cascata.
+
+Le pompe di calore alimentano un volume tecnico da 500 litri a quattro tubi, utilizzato come accumulo inerziale e punto di separazione tra il circuito dei generatori e i circuiti dell’edificio.
+
+Dal volume tecnico partono tre circuiti secondari indipendenti:
+
+- un circuito per le batterie calde e fredde delle unità di trattamento aria;
+- un circuito per i fan-coil;
+- un circuito miscelato dedicato al pavimento radiante, utilizzato solo in riscaldamento.
+
+Ogni circuito è dotato del proprio circolatore.
+
+La produzione di ACS è centralizzata mediante un bollitore da 500 litri alimentato dalle pompe di calore.
+
+Una valvola a tre vie devia il flusso delle pompe di calore verso il serpentino del bollitore quando è richiesta la produzione sanitaria, dando priorità all’ACS.
+
+L’acqua fredda sanitaria entra nella parte bassa del bollitore e l’ACS viene prelevata dalla parte alta. Sull’uscita è prevista una valvola miscelatrice termostatica.
+
+È presente anche un circuito di ricircolo ACS collegato al bollitore e dotato di proprio circolatore.

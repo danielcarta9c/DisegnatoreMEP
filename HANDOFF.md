@@ -137,6 +137,7 @@ invece di finire il pezzo.** Quando succede, fermarsi e tornare al pezzo.
 | 6 | `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` | Dove va ciascun pezzo, con la fonte. **Leggere prima il confine in testa** |
 | 7 | `docs/adr/0005-*.md` | L'architettura, blindata |
 | 8 | `docs/prodotto/GRAFO_IMPIANTO.md` e `docs/prodotto/grafi-di-prova/` | Gli artefatti che il PM legge e approva |
+| 8b | `examples/prova/input/` | **Il testo originale del committente**, non toccato: è il metro con cui si giudica se il primo pezzo ha letto bene |
 | 9 | `AGENTS.md` | Regole operative e i due ruoli |
 
 ---
