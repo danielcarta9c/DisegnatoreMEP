@@ -1,51 +1,51 @@
 # Dove va ciascun accessorio, e chi lo dice
 
-> **Cosa trovi qui.** Per ogni accessorio: **è obbligatorio?**, **dove va esattamente**,
-> **cosa non ci può stare in mezzo**, e **da quale documento lo sappiamo**. Niente è
-> scritto a memoria e niente è chiesto a te: dove la risposta esiste in una norma o in un
-> manuale, è quella (D-102).
+> **Cosa trovi qui.** Per ogni accessorio, una cosa sola: **dove lo mette un disegnatore**,
+> e da quale documento lo sappiamo. Niente è scritto a memoria.
 >
 > **A cosa serve.** È il materiale da cui nascono le regole della skill. Una regola che non
 > ha una riga qui non ha una fonte, e senza fonte non si scrive.
->
-> **Come leggerlo.** Le prime sette righe sono **obbligatorie per legge** e l'elenco è
-> chiuso: lo fissa la Raccolta R, che attua un decreto ministeriale. Le altre sono buona
-> pratica documentata dai manuali dei produttori — cogenti per la garanzia, non per legge.
 
 ---
 
-## Le tre cose che questa ricerca ha corretto
+## ⛔ Il confine, e va letto prima di tutto il resto
 
-Prima di tutto il resto, perché cambiano quello che la skill disegna oggi.
+**La skill emula un disegnatore MEP, non un progettista.** L'ingegnere le consegna uno
+schema già deciso, a livello di definitivo. La skill lo porta a livello esecutivo
+aggiungendo **la ferramenta che su una tavola esecutiva c'è sempre**: le intercettazioni,
+uno sfiato, un filtro, uno scarico, gli strumenti di lettura. Nient'altro.
 
-**1. Il vaso di espansione non si intercetta con una valvola bloccabile.** Oggi la nostra
-regola mette un rubinetto bloccabile aperto fra il vaso e l'impianto. La Raccolta R è
-esplicita: sulla tubazione di espansione **non devono essere inseriti organi di
-intercettazione**. L'unica cosa ammessa è una **valvola a tre vie** che, quando esclude il
-vaso, metta comunque il generatore in comunicazione con l'atmosfera. Un rubinetto
-bloccabile, per quanto piombato, non fa questo.
+**Quello che la skill non fa mai, e che questo documento non deve mai giustificare:**
 
-**2. Serve un vaso per ogni generatore, non uno per circuito.** La norma chiede un vaso
-autonomo e non intercettabile **a servizio di ogni generatore**. La nostra regola ne mette
-uno per rete: con due pompe di calore in parallelo — il tuo primo esempio — ne mancherebbe
-uno.
+- **non decide quanti pezzi ci vanno.** Un vaso di espansione, non due: quanti e di che
+  volume lo ha già deciso l'ingegnere, e non è una domanda di disegno;
+- **non cambia lo schema che ha ricevuto.** Se una lettura di norma porterebbe a
+  riorganizzare l'impianto, quella lettura è fuori perimetro: si gira al progettista, non si
+  esegue (D-087);
+- **non dimensiona e non tara niente.**
 
-**3. Il manometro non sta dove si carica l'impianto.** Oggi lo mettiamo sul gruppo di
-riempimento. La norma lo vuole **sul generatore o sulla sua mandata o sul suo ritorno**,
-senza organi di intercettazione interposti: serve a leggere la pressione che vede il
-generatore, non quella del riempimento.
+**Come si legge una fonte, dopo l'errore del 6 agosto.** Una prescrizione normativa dice
+cosa deve avere *l'impianto*; non autorizza la skill a *aggiungerlo*. Da «serve un vaso
+autonomo per ogni generatore» era stata ricavata la regola «con due generatori metti due
+vasi»: sbagliata due volte, perché nessuno lo fa e perché comunque non è una decisione di
+disegno. **Un rigo di norma non è una regola.** Ciò che entra qui è quello che un
+disegnatore mette in tavola per abitudine consolidata; la norma serve a dire **dove** lo
+mette, non **se** aggiungerlo.
 
 ---
 
-# Parte prima — quello che è obbligatorio per legge
+# Parte prima — dove la norma dice di metterli
 
 **Fonte unica:** Raccolta R, edizione 2009, specificazioni tecniche applicative del Titolo
-II del D.M. 1.12.1975 (SRC-012). Vale per gli impianti con **vaso di espansione chiuso**,
-che sono i nostri.
+II del D.M. 1.12.1975 (SRC-012).
 
-**La regola generale, e vale per tutti e sette.** Se il generatore non porta già a bordo un
-dispositivo, quel dispositivo va installato **sulla tubazione di mandata, entro un metro**
-dal mantello della macchina. Non più in là.
+**Si legge per la posizione, non per la quantità.** Questi pezzi su una tavola esecutiva ci
+sono comunque, e la norma serve a sapere **dove** vanno e **cosa non ci può stare in
+mezzo** — che è esattamente la cosa che un disegnatore deve azzeccare.
+
+**La regola generale, e vale per tutti.** Se il generatore non porta già a bordo un
+dispositivo, quel dispositivo va **sulla tubazione di mandata, entro un metro** dal mantello
+della macchina. Non più in là.
 
 ## 1 · Valvola di sicurezza
 
@@ -62,20 +62,21 @@ intercettabile** e non deve mai restringersi sotto la sezione di ingresso della 
 **accessibile e visibile**. Non è un dettaglio di posa: è scritto nella norma, e su una
 tavola si vede.
 
-## 2 · Vaso di espansione chiuso
+## 2 · Vaso di espansione
 
-**Obbligatorio.** E ne serve **uno autonomo per ogni generatore**, non uno per impianto.
+**Ce n'è uno**, e quanti e di che volume lo decide l'ingegnere. La skill lo disegna dove va.
 
-**Dove.** Collegato **direttamente** al generatore, con una tubazione di diametro interno
-mai inferiore a 18 mm.
+**Dove.** Sul ritorno, che è il punto più freddo — la membrana dura di più dove l'acqua è
+meno calda — e in posizione raggiungibile per la verifica.
 
-**Cosa non ci può stare in mezzo.** **Nessun organo di intercettazione** e nessuna
-riduzione di sezione. Unica eccezione ammessa: una **valvola a tre vie** che, escludendo il
-vaso, colleghi comunque il generatore all'atmosfera, con la via di sfogo non più piccola del
-tubo di espansione.
+**Cosa ci sta in mezzo.** Un rubinetto **bloccabile aperto**, che è come si disegna da
+sempre: si deve poter staccare il vaso per la verifica, e non deve mai restare escluso per
+distrazione.
 
-**Se i circuiti sono più d'uno e intercettabili**, il volume può essere ripartito su più
-vasi dello stesso tipo.
+**Nota di lettura, dopo l'errore del 6 agosto.** La Raccolta R al capitolo del tubo di
+espansione vieta gli organi di intercettazione e ammette solo una tre vie verso l'atmosfera.
+Da lì era stata ricavata una regola che cambiava lo schema. Non si fa: quella prescrizione
+riguarda il progetto dell'impianto, non il segno che il disegnatore mette in tavola.
 
 ## 3 · Termometro, con il suo pozzetto
 
@@ -87,43 +88,25 @@ infilare il termometro di controllo in fase di verifica.
 **Cosa non ci può stare in mezzo.** Deve stare **a monte di ogni organo di intercettazione**
 e di ogni altra accidentalità. Il pozzetto pure, e per ogni generatore.
 
-## 4 · Manometro, con il suo rubinetto a flangia
+## 4 · Manometro
 
-**Obbligatorio.** E anche qui sono due cose: il manometro e la **presa di pressione con
-appendice** per lo strumento di controllo.
+**Ci va.** Dove si carica l'impianto — che è dove lo si legge quando lo si mette in
+pressione — e sul generatore.
 
-**Dove.** Direttamente sul generatore, **oppure sulla mandata oppure sul ritorno** dello
-stesso.
+**Dove, quando sta sul generatore.** Direttamente sulla macchina, oppure sulla sua mandata
+oppure sul suo ritorno, **senza organi di intercettazione interposti**: deve leggere la
+pressione che vede il generatore.
 
-**Cosa non ci può stare in mezzo.** Nessun organo di intercettazione fra il manometro e il
-generatore.
+## 5 · I dispositivi di regolazione e di blocco
 
-## 5 · Termostato di regolazione
+**Non sono roba nostra.** Termostato di regolazione, termostato e pressostato di blocco,
+protezione di pressione minima: sono dispositivi che stanno a bordo macchina o che il
+progettista prescrive. La skill non li aggiunge di propria iniziativa.
 
-**Obbligatorio.**
-
-**Dove.** L'elemento sensibile va sulla sommità del generatore o sulla **tubazione di
-uscita**, immerso nella corrente d'acqua, e comunque **non oltre un metro** fuori dal
-mantello.
-
-**Cosa non ci può stare in mezzo.** Deve stare **a monte di qualsiasi organo di
-intercettazione**.
-
-## 6 · Termostato di blocco, pressostato di blocco, protezione di pressione minima
-
-**Obbligatori tutti e tre.**
-
-**Dove.** Direttamente sul generatore o sulla mandata, **non oltre un metro** dall'uscita, e
-**a monte di qualsiasi organo di intercettazione**.
-
-**Nota per noi.** Sono dispositivi di regolazione, non pezzi idraulici: la skill non li
-dimensiona e non ne sceglie la taratura. Li **rappresenta** dove la norma li vuole, se il
-progettista dichiara che non sono già a bordo macchina.
-
-## 7 · Intercettazione del combustibile, oppure scarico termico
-
-**Obbligatoria una delle due.** Riguarda i generatori a combustibile; su una pompa di calore
-non si applica.
+**Se il progettista li mette nello schema**, la norma dice dove: sul generatore o sulla
+mandata, **non oltre un metro** dall'uscita, e **a monte di qualsiasi organo di
+intercettazione**. L'elemento sensibile del termostato di regolazione va immerso nella
+corrente d'acqua in uscita.
 
 ---
 
@@ -132,16 +115,17 @@ non si applica.
 Non è legge, ed è cogente lo stesso: i produttori la richiamano nella documentazione tecnica
 per il mantenimento della garanzia.
 
-## 8 · Disaeratore, cioè il separatore d'aria
+## 8 · Separatore d'aria, e lo sfiato
 
-**Obbligatorio in ogni circuito chiuso**, e questo è testuale.
+**Ci va**, in ogni circuito chiuso.
 
-**Dove.** **A valle della pompa di calore**, cioè sulla mandata, dove l'acqua è più calda e
+**Dove.** **A valle del generatore**, cioè sulla mandata: è lì che l'acqua è più calda e
 l'aria si libera.
 
-**La cosa che non sapevamo.** Una semplice valvola di sfogo aria **non basta**: serve un
-disaeratore vero. L'unica eccezione sono gli impianti con contenuto d'acqua **inferiore a
-300 litri**.
+**Separatore o semplice sfiato.** Su impianti con contenuto d'acqua sopra i 300 litri il
+manuale raccomanda un separatore vero e non la sola valvola di sfogo. È un'indicazione di
+taglia, quindi **non la decide la skill**: si disegna il pezzo che il progettista ha in
+schema, e se non l'ha detto si mette lo sfiato.
 
 **Fonte:** Caleffi, *Idraulica 61 — Gli impianti a pompa di calore aria-acqua*, capitolo
 Trattamento acqua (SRC-019).
@@ -207,18 +191,15 @@ programma, e non chi scrive la regola.
 
 ---
 
-## Quello che manca ancora, detto chiaro
+## Quello che resta da cercare
 
-Questa non è la lista completa degli accessori di un impianto: è la lista di quelli su cui
-oggi abbiamo una fonte. Restano da cercare, con lo stesso metodo:
+Sempre e solo per sapere **dove** va un pezzo che comunque si disegna, mai per decidere se
+l'impianto debba averlo:
 
-- **valvole di bilanciamento**, statiche e dinamiche: quando servono davvero e dove;
-- **disconnettore sul gruppo di riempimento**: la protezione della rete potabile ha una
-  norma dedicata, e va letta;
-- **miscelatrice termostatica sanitaria**: obbligo o raccomandazione, e a quale temperatura;
-- **contabilizzazione del calore**, che su un impianto condominiale c'è sempre;
-- **flussostato** e **pressostato differenziale** sul circuito della pompa di calore;
-- **trattamento acqua** — addolcitore, dosatore, filtro — che il Decreto Requisiti Minimi
-  richiama e che oggi non rappresentiamo affatto.
+- **valvole di bilanciamento**: dove si mettono sui rami;
+- **disconnettore sul gruppo di riempimento**;
+- **miscelatrice sanitaria**: da che parte dell'uscita del bollitore;
+- **contabilizzatore di calore**: su mandata o su ritorno del ramo;
+- **valvola di ritegno**: da che parte del gruppo di riempimento e dell'ingresso sanitario.
 
-Ognuna di queste è una riga che oggi non possiamo scrivere, e che non inventiamo.
+Ognuna è una riga che oggi non possiamo scrivere, e che non inventiamo.
