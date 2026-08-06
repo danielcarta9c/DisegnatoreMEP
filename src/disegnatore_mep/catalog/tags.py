@@ -70,6 +70,31 @@ FAMILIES: tuple[tuple[str, str, str], ...] = (
 PREFIX_OF: dict[str, str] = {function: prefix for function, prefix, _ in FAMILIES}
 FAMILY_NAME: dict[str, str] = {prefix: name for _, prefix, name in FAMILIES}
 
+FLUID_NAMES: dict[str, str] = {
+    "heating_water": "acqua di riscaldamento",
+    "cold_water": "acqua fredda sanitaria",
+    "domestic_hot_water": "acqua calda sanitaria",
+}
+"""Come si chiama in parole cio' che scorre.
+
+Sta qui accanto alle famiglie perche' e' la stessa cosa: la traduzione fra
+l'etichetta con cui il modello indica una cosa e il nome con cui la si dice a un
+committente. Chi mostra qualcosa a qualcuno la chiede qui invece di stampare
+l'etichetta."""
+
+
+def fluid_in_words(medium: str) -> str:
+    """Il nome del fluido per chi legge. Un fluido senza nome si mostra com'e':
+    meglio un'etichetta grezza di un comando che si ferma."""
+    return FLUID_NAMES.get(medium, medium)
+
+
+def family_in_words(function: str) -> str:
+    """Come si chiama in italiano un pezzo che fa quel mestiere."""
+    prefix = PREFIX_OF.get(function)
+    return FAMILY_NAME[prefix] if prefix is not None else function
+
+
 HEAT_SOURCE = "heat_generation"
 """Dove il calore entra nell'acqua: la prima sorgente da cui si conta."""
 
@@ -209,10 +234,13 @@ def assign_tags(project: ProjectModel, catalog: ComponentRegistry) -> dict[str, 
 __all__ = [
     "FAMILIES",
     "FAMILY_NAME",
+    "FLUID_NAMES",
     "PREFIX_OF",
     "TagError",
     "assign_tags",
+    "family_in_words",
     "family_of",
+    "fluid_in_words",
     "sources_of",
     "visit_order",
 ]

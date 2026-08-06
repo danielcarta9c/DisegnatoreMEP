@@ -7,6 +7,7 @@ consigliato, poi cosa dipende dal caso.
 
 from pydantic import Field
 
+from disegnatore_mep.catalog.tags import family_in_words, fluid_in_words
 from disegnatore_mep.model.base import StrictModel
 from disegnatore_mep.model.types import IntegrationCategory
 
@@ -98,10 +99,11 @@ def build_report(
                 where=f"su {item.anchor.component_id}.{item.anchor.port_id}, "
                 f"rete {item.network_id}",
                 what_is_missing=(
-                    f"il catalogo non ha nessun componente che faccia "
-                    f"«{item.missing_function}» sul fluido «{item.medium}», quindi "
-                    f"questo accessorio {CATEGORY_ADJECTIVES[item.category]} non "
-                    f"viene proposto: va deciso dal progettista"
+                    f"in catalogo non c'e' nessun pezzo che faccia da "
+                    f"{family_in_words(item.missing_function).lower()} su "
+                    f"{fluid_in_words(item.medium)}, quindi questo accessorio "
+                    f"{CATEGORY_ADJECTIVES[item.category]} non viene proposto: "
+                    f"va deciso dal progettista"
                 ),
                 rationale=item.rationale,
                 source=item.source,

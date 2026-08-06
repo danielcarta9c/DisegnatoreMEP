@@ -29,12 +29,12 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import ComponentDefinition, ComponentTrait
 from disegnatore_mep.catalog.tags import (
     FAMILIES,
-    FAMILY_NAME,
-    PREFIX_OF,
+    FLUID_NAMES,
     assign_tags,
     sources_of,
     visit_order,
 )
+from disegnatore_mep.catalog.tags import family_in_words as family_label
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.project import ConnectionModel, ProjectModel
@@ -51,14 +51,9 @@ SYMBOLS = REPO_ROOT / "assets" / "symbols"
 RULES = REPO_ROOT / "rules" / "hydronic"
 DOCUMENT = REPO_ROOT / "docs" / "prodotto" / "ALBERO_IMPIANTO.md"
 
-FLUIDS: dict[str, str] = {
-    "heating_water": "acqua di riscaldamento",
-    "cold_water": "acqua fredda sanitaria",
-    "domestic_hot_water": "acqua calda sanitaria",
-}
-"""Come si chiama in parole cio' che scorre. Un fluido che non e' qui dentro fa
-fermare la generazione: meglio un documento che non esce di uno che presenta al
-committente un nome tecnico che lui non usa."""
+"""Il documento e' severo dove la riga di comando e' indulgente: un fluido o una
+famiglia senza nome italiano fanno fermare la generazione, invece di far
+comparire un'etichetta interna davanti al committente."""
 
 DIRECTIONS: dict[PortFlow, str] = {
     PortFlow.OUT: "uscita",
@@ -72,22 +67,21 @@ class TreeError(ValueError):
 
 
 def fluid(medium: str) -> str:
-    try:
-        return FLUIDS[medium]
-    except KeyError as exc:
+    if medium not in FLUID_NAMES:
         raise TreeError(
             f"non so come chiamare in parole il fluido {medium!r}: aggiungerlo "
             f"invece di lasciarlo comparire cosi' com'e' davanti al committente"
-        ) from exc
+        )
+    return FLUID_NAMES[medium]
 
 
 def family_in_words(function: str) -> str:
-    try:
-        return FAMILY_NAME[PREFIX_OF[function]]
-    except KeyError as exc:
+    said = family_label(function)
+    if said == function:
         raise TreeError(
             f"non so come chiamare in parole un pezzo che fa {function!r}"
-        ) from exc
+        )
+    return said
 
 
 class Plant:

@@ -223,7 +223,8 @@ def test_a_rule_with_nothing_to_offer_says_so_instead_of_going_quiet() -> None:
     report = build_report(found.proposals, found.gaps)
     assert not report.is_empty
     spoken = " ".join(point.what_is_missing for point in report.open_points)
-    assert "sludge_separation" in spoken and "cold_water" in spoken
+    # In parole, non con le etichette interne: quel testo finisce nel dossier.
+    assert "defangatore" in spoken and "acqua fredda sanitaria" in spoken
 
 
 def test_a_lone_cylinder_is_told_that_its_drain_cannot_be_proposed() -> None:
