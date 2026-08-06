@@ -103,7 +103,12 @@ class RuleContext:
             connection_of_port=connection_of_port,
             network_of_connection=network_of_connection,
             inline=frozenset(inline),
-            members={key: tuple(value) for key, value in members.items()},
+            # In ordine di nome, mai nell'ordine in cui il file elenca le
+            # tubazioni: una regola che serve «il primo» della rete deve
+            # servire lo stesso pezzo comunque l'impianto sia stato scritto.
+            # Il collaudo ha visto il gruppo di riempimento migrare da una
+            # pompa di calore all'altra permutando il file: si chiude qui.
+            members={key: tuple(sorted(value)) for key, value in members.items()},
         )
 
     # --- cio' che una condizione puo' chiedere ------------------------------

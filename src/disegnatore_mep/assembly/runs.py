@@ -339,6 +339,18 @@ def _sorted(pieces: list[Piece]) -> list[Piece]:
     # Chi sta attaccato alla macchina viene prima di tutto il resto: e' un
     # vincolo di sicurezza, non una preferenza, e non si contratta con gli altri.
     against = [item for item in pieces if item.against_the_anchor]
+    if len(against) > 1:
+        # Due pezzi non possono stare entrambi attaccati alla stessa macchina:
+        # qualunque fila ne tradirebbe uno in silenzio. Ci si ferma e si
+        # nominano le regole, come per ogni altra coppia di vincoli che non
+        # possono stare insieme (D-094).
+        rules = sorted({item.rule or item.component_id for item in against})
+        raise AssemblyError(
+            f"the declared constraints contradict each other on "
+            f"{', '.join(sorted(item.component_id for item in against))}: "
+            f"{' and '.join(rules)} both claim the place against the anchor, "
+            f"so the file would be wrong whichever order came out"
+        )
     if against and len(against) != len(pieces):
         return [*_sorted(against), *_sorted([item for item in pieces if item not in against])]
     needs: dict[str, set[str]] = {item.component_id: set() for item in pieces}

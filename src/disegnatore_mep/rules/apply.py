@@ -29,12 +29,11 @@ from disegnatore_mep.model.project import (
 )
 from disegnatore_mep.model.types import ApprovalStatus
 
-from .engine import evaluate
+from .engine import BRANCH_OFF, evaluate
 from .errors import RuleError
 from .proposal import RuleGap, RuleProposal
 from .registry import RuleRegistry
 
-BRANCH_OFF = "branch_off"
 """Il mestiere di cio' che apre una derivazione su una tubazione esistente.
 
 E' una **funzione**, non un pezzo: quale voce di catalogo la porti su un dato

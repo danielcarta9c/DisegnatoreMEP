@@ -33,6 +33,9 @@ from .proposal import RuleGap, RuleProposal, proposed_component_id
 from .registry import RuleRegistry
 from .schema import RuleCardinality, RuleDefinition, SatisfactionScope
 
+BRANCH_OFF = "branch_off"
+"""Il mestiere del raccordo che apre una derivazione sulla tubazione."""
+
 
 @dataclass(frozen=True)
 class Evaluation:
@@ -174,7 +177,11 @@ def evaluate(
 
     for rule in rules.all():
         served: set[str] = set()
-        for network in project.networks:
+        # Le reti in ordine di nome, non nell'ordine del file: quale rete si
+        # serve per prima decide, per le regole a cardinalita' limitata, su
+        # quale attacco l'accessorio si posa — e non puo' dipendere da come
+        # l'impianto e' stato scritto.
+        for network in sorted(project.networks, key=lambda item: item.id):
             if not _matches(context, rule, network):
                 continue
 
@@ -218,6 +225,27 @@ def evaluate(
                 component_id = proposed_component_id(definition.id, anchor)
                 if component_id in taken:
                     continue
+                # Solo per chi pende da uno stacco, e solo se la macchina
+                # dichiara l'attacco per quella funzione: altrimenti resta
+                # vuoto e lo stacco si apre sulla tubazione (D-101).
+                service_port = (
+                    context.service_port_for(anchor.component_id, function)
+                    if definition.attaches_on_a_branch
+                    else None
+                )
+                # Lo stacco sulla tubazione vuole un raccordo di derivazione
+                # per quel fluido. Se il catalogo non ce l'ha, proporre
+                # farebbe crollare l'applicazione a meta' catena: e' lo
+                # stesso silenzio del pezzo mancante, e si dichiara allo
+                # stesso modo — un punto aperto, non un'eccezione.
+                if (
+                    definition.attaches_on_a_branch
+                    and service_port is None
+                    and not catalog.serving(BRANCH_OFF, network.medium)
+                ):
+                    missing = _gap(context, rule, network, anchor)
+                    gaps.setdefault(missing.key, missing)
+                    continue
                 taken.add(component_id)
                 proposals.append(
                     RuleProposal(
@@ -231,14 +259,7 @@ def evaluate(
                         anchor=anchor,
                         inlet_port=rule.then.inlet_port,
                         outlet_port=rule.then.outlet_port,
-                        # Solo per chi pende da uno stacco, e solo se la macchina
-                        # dichiara l'attacco per quella funzione: altrimenti resta
-                        # vuoto e lo stacco si apre sulla tubazione (D-101).
-                        service_port=(
-                            context.service_port_for(anchor.component_id, function)
-                            if definition.attaches_on_a_branch
-                            else None
-                        ),
+                        service_port=service_port,
                         rationale=rule.rationale,
                         source=rule.source,
                     )
@@ -246,4 +267,4 @@ def evaluate(
     return Evaluation(proposals=proposals, gaps=list(gaps.values()))
 
 
-__all__ = ["Evaluation", "evaluate"]
+__all__ = ["BRANCH_OFF", "Evaluation", "evaluate"]

@@ -10,8 +10,8 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **659 verdi, 22 parcheggiate** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
-| Libreria simboli | 39 pubblicati | Le 22 prove parcheggiate riguardano il **disegno**, non il contenuto, e portano scritto il motivo |
+| Test | **714 verdi, 23 parcheggiate** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
+| Libreria simboli | 39 pubblicati | 22 prove parcheggiate riguardano il **disegno**; la ventitreesima e' il difetto C2 (scarico del bollitore), aperto con correzione progettata |
 | Catalogo | 51 voci, 14 regole | |
 | Release | Non disponibile | |
 
@@ -30,17 +30,25 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
       sonda come i cataloghi dei costruttori li dichiarano. Un accessorio a stacco va lì, o
       su una derivazione saldata sul tubo quando la macchina non ce l'ha. Chiuso il debito
       che D-094 aveva congelato.
-- [x] **L'assemblatore** — costruito. La fila dei pezzi la decidono i **vincoli dichiarati**
-      da ogni regola rispetto ai mestieri degli altri pezzi, mai numeri di priorità. Se due
-      vincoli si contraddicono si ferma e nomina le due regole. **Da collaudare in modo
-      indipendente.**
+- [x] **L'assemblatore** — costruito e **collaudato in modo indipendente** (6 agosto, sera):
+      respinto su due difetti veri, entrambi corretti lo stesso giorno (il doppio «attaccato
+      alla macchina» ora ferma nominando le regole; la saturazione non dipende più
+      dall'ordine del file). Le prove del collaudo sono regressione in `tests/collaudo/`.
 - [x] **I cinque impianti di prova del committente** passano per la prima parte della
       catena. I grafi sono in `docs/prodotto/grafi-di-prova/`.
+- [x] **L'indirizzo dei nodi (D-105)** — costruito: ogni linea idraulica ha nome e numero
+      (`CP.01`, `RP.01a`), ogni pezzo un indirizzo (`CP.01.N.02`), gli stacchi i civici
+      (`CP.01.N.02.1`). I cinque grafi sono rigenerati con la convenzione nuova.
+      **Da collaudare da contesto separato.**
+- [x] **Il pezzo 1, «Capire»** — costruito come istruzioni (`skill/capire/`) e provato in
+      camera pulita sui cinque testi originali: quattro letture su cinque identiche a
+      quelle manuali, arco per arco; le divergenze del quinto tutte dichiarate. Verbale in
+      `skill/capire/PROVA-2026-08-06.md`. **Da collaudare da contesto separato.**
 
-**Il prossimo lavoro:** l'**indirizzo dei nodi** (D-105), che il PM ha già dato dopo aver
-letto i cinque grafi — ogni linea idraulica con la propria sigla, ogni pezzo un nodo
-numerato lungo di lei, e dove due linee si incontrano la principale tira dritto. Poi i pezzi
-da 1 a 3 fino al grafo definitivo. Dettagli in `HANDOFF.md` §7.
+**Il prossimo lavoro:** i collaudi indipendenti dei due pacchetti nuovi (indirizzo dei
+nodi; pezzo 1), la correzione C2 progettata nell'appendice del piano (lo scarico del
+bollitore sull'ingresso freddo), e il giro di correzioni alle istruzioni del pezzo 1
+raccolto dai rapporti di camera pulita. Dettagli in `HANDOFF.md` §7.
 
 ## Il confine del prodotto, che vale su tutto (D-104)
 
@@ -52,16 +60,20 @@ autorizza la skill ad aggiungerlo.
 
 ## Next — i pezzi che restano
 
-1. **Il pezzo «Capire»** — le istruzioni dell'agente che dal testo dell'ingegnere costruisce
-   il grafo di prima stesura. Non esiste: oggi quella lettura è fatta a mano.
-2. **Il contenuto delle regole**, esteso con il metodo delle fonti (D-103): bilanciamento,
-   disconnettore, miscelatrice sanitaria, contabilizzazione, ritegno.
-3. **Il collaudo indipendente dell'assemblatore.**
-4. **La libreria dei simboli** — contenuto da completare.
-5. **Il cartiglio.**
-6. **La composizione** — da rifare: con gli accessori al posto giusto l'impianto completo
+1. **I collaudi indipendenti** dell'indirizzo dei nodi (D-105) e del pezzo 1: costruiti e
+   provati, ma per D-083 senza verdetto separato non sono «fatti».
+2. **La correzione C2** (scarico del bollitore sull'ingresso freddo): progettata
+   nell'appendice del piano, con la prova parcheggiata che la aspetta.
+3. **Le correzioni alle istruzioni del pezzo 1** raccolte dalla prova in camera pulita,
+   con una prova nuova ad agente nuovo dopo ogni correzione.
+4. **La traduzione in regole** delle cinque posizioni chiuse con le fonti (bilanciamento,
+   disconnettore, miscelatrice, contabilizzatore, ritegno): il materiale è in
+   `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` §14-18, dentro il confine di D-104.
+5. **La libreria dei simboli** — contenuto da completare.
+6. **Il cartiglio.**
+7. **La composizione** — da rifare: con gli accessori al posto giusto l'impianto completo
    non entra in larghezza su un foglio ordinario.
-7. **I validatori e il cancello dell'occhio terzo.**
+8. **I validatori e il cancello dell'occhio terzo.**
 
 ## Done log — ultimo in cima
 
