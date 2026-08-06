@@ -17,145 +17,40 @@
 
 ## Now — in corso
 
-- [x] ~~Prova fisica di stampa~~ — **superata il 4 agosto 2026**: il PM ha stampato l'A3 e la barra di scala misura 100 mm col righello. L'invarianza di scala e' dimostrata sulla carta e il gate grafico e' chiuso.
+Il progetto costruisce la skill **un pezzo alla volta**, sulla logica del grafo (D-099).
+Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`. Il metodo dei tre ruoli
+(D-083) è vincolante: nessun pezzo è «fatto» senza il verdetto di un collaudo indipendente,
+registrato nell'appendice del piano.
 
-<details><summary>Testo originale della prova</summary>
+- [x] **G1 — il grafo e le sue sigle** — costruito. Nodi, archi, incroci, sigle assegnate
+      camminando dalle sorgenti dichiarate, e la passeggiata che segue l'acqua e dice dove
+      il circuito si richiude. Le famiglie delle sigle sono **dato**, non codice.
+      Artefatto per il PM: `docs/prodotto/GRAFO_IMPIANTO.md`.
+- [x] **G2 — il vocabolario delle proprietà** — approvato il 6 agosto, respinto al primo
+      giro e corretto. Artefatto: `docs/prodotto/PROPRIETA_COMPONENTI.md`.
+- [x] **G3 — le regole degli accessori** — diciannove regole diventano quattordici, le sei
+      dell'intercettazione una sola. Respinto dal collaudo su due difetti — lo scarico del
+      bollitore sul circuito sbagliato, e il motore che taceva quando il catalogo non aveva
+      il pezzo — corretto su entrambi. Artefatto: `docs/prodotto/REGOLE_ACCESSORI.md`.
+- [x] **Riconciliazione**: due implementazioni parallele delle sigle e due documenti del
+      grafo ridotti a uno solo, senza che nessuna sigla cambiasse.
 
-- **Prova fisica di stampa, spetta al PM.** Stampare il foglio A3 al 100%, senza adattamento alla pagina, e misurare col righello la barra di scala: deve dare 100 mm. È l'unico passo del gate grafico non eseguibile in una sessione cloud, e con esso va raccolta l'impressione visiva sulla riconoscibilità dei dodici simboli alla loro dimensione reale. Il foglio si rigenera con `.venv/bin/python -m disegnatore_mep symbols-sheet outputs/symbols.svg --symbols assets/symbols`.
+**Il prossimo lavoro**, già diagnosticato e dimensionato: chiudere il difetto per cui lo
+stesso impianto, con le tubazioni elencate in ordine diverso, produce tre impianti diversi.
+La radice è il presupposto «un attacco, una tubazione», che il catalogo smentisce. Dettagli
+in `HANDOFF.md` §5.
 
-</details>
+## I difetti segnalati dal PM — dove sono finiti
 
-- [x] ~~Scrivere il piano di layout, instradamento e multi-tavola~~ — **scritto il 4 agosto 2026** in `docs/archivio/2026-08-04-layout-routing-multitavola-plan.md`. Dodici task, non ancora eseguito.
-- [x] ~~Piano di layout, instradamento e multi-tavola~~ — **eseguito il 4 agosto 2026**: dodici task, dodici commit, 383 test verdi. Il caso D-011 si disegna su una A3 e passa tutti i controlli geometrici.
-- [x] ~~**La regola del PM su linee e posizioni**~~ — **implementata il 4 agosto 2026 (D-060, D-062).** «Minimizzare le curve disegnate, minimizzare gli attraversamenti tra linee e minimizzare la lunghezza delle linee, mantenendo però ordinamenti da sinistra a destra», e «vietato sovrapporre longitudinalmente: sempre separate e ben distinte». Tre voci di costo nell'instradamento, un divieto sui tratti già percorsi, un vincolo nel posizionamento. Sul caso D-011: pieghe da 31 a 25, nodi condivisi da 24 a 9, sovrapposizione longitudinale da 12,5 mm a 5 — i due imbocchi da un passo dove due ritorni entrano nello stesso attacco. Misurate da `tests/layout/test_objective.py`.
-- [x] ~~**Il ritorno blu che entrava nella valvola a tre vie**~~ — **risolto (D-059)**: il verso di una tratta veniva letto dalla geometria del disegno già fatto, non dalla topologia del modello, che è orientata per costruzione.
-- [ ] **Rifare il linguaggio grafico sulle fonti, non sulla convenzione inventata.** Il PM ha giudicato la prima tavola mal disegnata e ha chiesto la ricerca che il progetto non aveva mai fatto. Esito in `docs/fonti/2026-08-04-come-si-disegna-uno-schema-funzionale.md`: manca **UNI 9511**, mandata e ritorno devono essere linee distinte, la tavola porta i diametri, le sigle sono mnemoniche funzionali, la composizione è a corsie orizzontali e non a pile verticali, e la libreria copre meno di un ottavo dei simboli di una tavola reale.
-- [ ] ~~Giudizio del PM sulla prima tavola~~ — **dato: la tavola è fatta male.** I controlli automatici dimostrano che nulla si sovrappone, non che la tavola si legga come l'avrebbe disegnata un tecnico. Si rigenera con `.venv/bin/python -m disegnatore_mep draw examples/layout/heat-pump-dhw-buffer-two-zones.json --catalog examples/layout/catalog --symbols assets/symbols --out outputs/`.
+Le due tornate di difetti del 5 agosto, e i quattordici rilievi della prima passata
+dell'occhio terzo, sono la ragione per cui il progetto ha smesso di correggere una tavola e
+ha cominciato a costruire la skill pezzo per pezzo. **Il loro elenco integrale e il loro
+stato vivono ora nel piano** (`docs/plans/2026-08-06-piano-costruzione-skill.md`), dove
+ciascuno è assegnato al pezzo che lo chiude, e nel verdetto dell'occhio terzo
+(`docs/standard/COLD_EYE_REVIEW.md`). La storia — chi li ha segnalati, con che parole, e
+l'errore di metodo che li aveva generati — è in `docs/archivio/`.
 
-## Difetti segnalati dal PM sulla tavola completa — 5 agosto 2026
-
-**Registrati, non ancora corretti.** L'elenco si è chiuso il 5 agosto («non mi viene in
-mente altro») e la correzione è organizzata dal piano di rilancio (D-084): ogni difetto ha
-il suo pacchetto, e la chiusura di ciascuno andrà provata nel rapporto finale, non
-dichiarata.
-
-- [ ] **Divisione in due tavole con la seconda quasi vuota** (D-072). Il criterio deve
-  diventare «la tavola successiva è abbastanza piena», e prima si ottimizza quella che
-  c'è. Oggi si divide appena il contenuto non entra **come è stato disposto**, che è una
-  cosa diversa.
-- [ ] **Mancano quasi tutte le valvole di intercettazione** (D-074). Ogni macchina ne vuole
-  una **per ogni attacco**: due sulla pompa di calore, due sul circolatore, quattro sul
-  volano. Oggi ne mette una per componente, e quella semplificazione era stata fatta per
-  far entrare il disegno su una A3 — cioè decidendo il contenuto in base al foglio, che è
-  esattamente al contrario.
-- [ ] **La disposizione in fila trattata come legge** (D-073). Bollitore e volano potevano
-  stare uno sopra l'altro invece che uno dopo l'altro. Impilare è una disposizione
-  legittima quanto affiancare, e va scelta quando riempie meglio il foglio.
-- [ ] **Le etichette sembrano tubazioni** (D-075). Oggi sigle e valori scendono in una riga
-  di richiami sotto il disegno, collegati al pezzo da una linea ortogonale: stessa forma e
-  stessa giacitura di una tubazione. Devono tornare a essere una scritta piccola accanto al
-  proprio componente; quando non ci sta, un richiamo obliquo a 45°, che nessuna tubazione
-  può essere.
-- [ ] **La linea fa il giro per raggiungere un pezzo invece di spostare il pezzo** (D-078).
-  Il prelievo ACS è raggiunto da una tratta che lo supera, scende e torna indietro. Oggi la
-  disposizione decide per prima e in modo definitivo, e l'instradamento paga in pieghe
-  qualunque cosa essa abbia deciso. Va invertito: la posizione dei componenti è una
-  variabile del problema, e spostare un oggetto è gratis mentre una piega costa.
-  Il secondo esempio del PM — l'ingresso dell'acqua fredda posato in alto, che scende
-  tagliando tutte le linee di riscaldamento per arrivare al bollitore — mostra che la
-  disposizione non si paga solo in pieghe ma anche in **attraversamenti**: posato in basso,
-  quel tratto sarebbe stato dritto e non avrebbe incrociato niente.
-- [ ] **Gli attraversamenti non hanno il loro simbolo** (D-079). Due linee che si incrociano
-  e due linee che si collegano oggi hanno lo stesso segno: chi legge non può distinguere un
-  incrocio da un raccordo. Serve lo scavallo, l'archetto che scavalca, e il pallino sul
-  collegamento che la norma prescrive. Gli attraversamenti sono già calcolati e portati nella
-  geometria — semplicemente nessuno li disegna.
-- [ ] **I simboli non vengono da nessuna fonte** (D-081, D-082). Il PM ha riconosciuto a
-  occhio la valvola di ritegno sbagliata. La causa è più larga del singolo simbolo: la
-  libreria è inventata, e il rifacimento deciso il 4 agosto (D-067) non è stato eseguito. La
-  fonte di lavoro è ora SRC-016, le tavole UNI 9511 pubblicate da Oppo e indicate dal PM,
-  scaricabili anche in DWG; per le macchine, che la norma non copre, la pratica e gli schemi
-  dei produttori.
-- [ ] **Spostare è gratis, spargere no** (D-080). Vincolo che accompagna il difetto
-  precedente: lo spostamento dei componenti serve l'obiettivo intero — pieghe,
-  attraversamenti e lunghezza — non una sola delle tre voci.
-
-### L'errore di metodo che li ha generati
-
-Vale più dei difetti presi singolarmente, ed è il PM a nominarlo: **una singola tavola
-di riferimento è stata generalizzata in una regola.** Dal primo schema fornito è stata
-ricavata la disposizione in fila, e da lì applicata a ogni impianto come se fosse una
-legge del disegno tecnico. Non lo è.
-
-La stessa cosa era già successa con le corsie a quota fissa, ricavate dalla stessa tavola
-e poi rimosse perché producevano sali-scendi. Un esempio mostra **una** soluzione
-ammissibile, non l'unica: da un esempio si ricava un vincolo solo quando lo si riconosce
-anche altrove, o quando il PM lo dichiara tale.
-
-Il difetto delle valvole ha invece una causa diversa e altrettanto seria: **il contenuto
-del disegno è stato deciso in base a quanto ci stava sul foglio.** Le valvole di
-intercettazione sono passate da una per attacco a una per componente perché con quattro
-valvole sul volano l'A3 non reggeva. È al contrario: cosa va disegnato lo decide
-l'impianto, e se non ci sta si cambia disposizione o si divide.
-
-Il difetto delle etichette ne mostra un terzo: **un problema risolto introducendo un segno
-nuovo, senza chiedersi come quel segno si legge.** I testi si sovrapponevano ai simboli, e
-la risposta è stata portarli sotto il disegno con una linea di collegamento — risolvendo la
-sovrapposizione e creando un'ambiguità peggiore, perché quella linea è ortogonale e sottile
-come una tubazione. Ogni segno aggiunto alla tavola va verificato contro i segni che ci
-sono già.
-
-Il difetto del giro attorno al prelievo ACS ne mostra un quarto, ed è il più profondo:
-**l'ordine della catena è stato scambiato per un ordine di autorità.** Disporre prima e
-instradare dopo è una sequenza ragionevole di calcolo; è diventata la regola che la
-disposizione non si tocca più, e da lì ogni difetto di posizione si è scaricato sulle
-linee. Il PM lo dice in una riga: le curve costano, spostare un oggetto è gratis. Chi paga
-di meno deve cedere.
-
-### La risposta strutturale: le regole del colpo d'occhio
-
-I difetti hanno una cosa in comune: un disegnatore senior li vede in due secondi.
-Il PM lo ha nominato come il lavoro dell'agente terzo e ha chiesto di tradurre in regole
-quello che l'occhio umano fa da solo. Il risultato è `docs/standard/QUALITA_GRAFICA.md` (D-076):
-una quarantina di regole in sei famiglie, ciascuna con **come si vede a occhio** e uno stato —
-garantita dal motore, misurabile ma non ancora misurata, da giudicare, oppure violata oggi.
-
-Non erano regole da scoprire: erano già note, e i difetti segnalati sono tutti nell'elenco.
-Mancava l'artefatto, e il momento in cui la tavola ci viene confrontata. Da qui discende
-anche che l'agente terzo giudichi **l'immagine** e non il sorgente (D-077): nel sorgente il
-richiamo delle etichette è una linea di richiamo corretta, sull'immagine è un tubo in più.
-
-## Difetti della seconda tornata — 5 agosto 2026, sera
-
-Segnalati dal PM sulle immagini della tavola rigenerata, **piu** i rilievi dell'occhio
-terzo filtrati contro il perimetro (D-087). Non ancora corretti.
-
-> **Questi sono esempi, non l'elenco** (D-089). Il PM non sta approvando il resto. Per ogni
-> riga qui sotto vanno cercati **tutti i casi simili** su tutta la tavola e chiusi insieme:
-> correggere solo dove lui ha cerchiato non chiude il difetto.
-
-- [ ] **Le valvole del volano stanno tutte da un lato.** Tre attacchi su quattro non ne
-  hanno nessuna, e le due che ci sono, affiancate sulla stessa uscita, non si capisce se
-  siano del volano o del circolatore. D-074 non e' soddisfatta: la prova contava un totale
-  invece di guardare attacco per attacco (D-088).
-- [ ] **Il circolatore deve avere le proprie due**, riconoscibili come sue.
-- [ ] **Curvette senza senso**: dove basta un angolo, l'instradamento fa una scaletta di
-  due pieghe. Anche le curve costano (D-060) e queste non le paga nessuno.
-- [ ] **Incrocio evitabile sul collettore**: invertendo le due uscite l'incrocio sparisce.
-  L'ordine delle uscite di un collettore e' una variabile libera che nessuno usa.
-- [ ] **Ci sono ancora simboli non autorizzati** (segnalato dal PM, da identificare uno per
-  uno confrontando ogni simbolo usato con la propria fonte dichiarata).
-- [ ] **Lo scavallo taglia in due la linea scavalcata** invece di lasciarla intera: un
-  incrocio fra mandata e ritorno si legge come un bypass.
-- [ ] **La miscelatrice sanitaria non ha l'alimentazione fredda.**
-- [ ] **Il gruppo di riempimento e' in serie sul ritorno** invece che in derivazione.
-- [ ] **Il serpentino del bollitore non tocca i bocchelli**; il volano e' un rettangolo
-  vuoto che non mostra i quattro attacchi.
-- [ ] **Cornice aperta in basso** e **testi a 1,19 mm** contro i 2,5 mm minimi di norma.
-
-**Fuori perimetro per D-087**, e registrati come tali: potenze, temperature di progetto,
-prevalenze, tarature, volumi e diametri non forniti dal progettista; tabella apparecchiature
-con marca e modello; logica di regolazione. Non li inventa la skill.
+Tenerli anche qui significherebbe due elenchi che divergono. Ne resta uno.
 
 ## Next — il piano di costruzione, sulla logica del grafo
 

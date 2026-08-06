@@ -2,21 +2,13 @@
 
 ## Ordine di lettura obbligatorio
 
-**Chi arriva ora legge due file e comincia: `docs/SKILL.md` (com'e' fatta la skill) e
-`PROJECT_STATE.md` (a che punto siamo). Il resto si apre quando serve.**
+**`HANDOFF.md` per primo: è il cancello di lettura e contiene le sentinel checks a cui
+rispondere prima di toccare qualunque cosa.** Poi `docs/SKILL.md` (com'è fatta la skill) e
+`PROJECT_STATE.md` (a che punto siamo). Il resto si apre quando serve, nell'ordine che
+l'handoff indica.
 
-0. Se esiste `docs/archivio/HANDOFF.md`, aprirlo per primo e applicare integralmente il suo cancello di lettura e le sentinel checks.
-1. `docs/archivio/CONTESTO_PROGETTO.md`
-2. `docs/prodotto/PRD_DISEGNATORE_MEP.md`
-3. `PROJECT_STATE.md`
-4. `docs/DECISION_LOG.md`
-5. `docs/archivio/specs/2026-08-01-disegnatore-mep-design.md`
-6. `docs/standard/QUALITA_GRAFICA.md` — le regole del colpo d'occhio, per chiunque tocchi il disegno
-7. piano di implementazione pertinente in `docs/plans/`
-8. specifiche e ADR pertinenti al lavoro richiesto
-
-Prima di fare domande, verificare chat, documenti e decisioni già registrate. Chiedere soltanto ciò che resta realmente ambiguo.
-`docs/archivio/HANDOFF.md` è un cancello di lettura, non sostituisce i documenti canonici e non autorizza a saltarli.
+Prima di fare domande, verificare chat, documenti e decisioni già registrate. Chiedere
+soltanto ciò che resta realmente ambiguo.
 
 ## Principi non negoziabili
 
