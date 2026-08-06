@@ -75,9 +75,23 @@ class Plant:
             for ref in (connection.endpoint_a, connection.endpoint_b):
                 self.touching[(ref.component_id, ref.port_id)].append(connection)
 
+        self.medium_of = {
+            item.id: item.medium for item in project.networks
+        }
+        self.network_of = {
+            connection.id: connection.network_id for connection in project.connections
+        }
+
     def attachments_of(self, component_id: str) -> list[str]:
         """Gli attacchi che una tubazione tocca davvero, in ordine."""
         return sorted(port for owner, port in self.touching if owner == component_id)
+
+    def fluids_at(self, component_id: str, port_id: str) -> set[str]:
+        """I fluidi delle tubazioni che toccano quell'attacco."""
+        return {
+            self.medium_of[self.network_of[connection.id]]
+            for connection in self.touching[(component_id, port_id)]
+        }
 
     def declaring(self, trait: ComponentTrait) -> list[str]:
         return sorted(
@@ -270,6 +284,38 @@ def test_what_never_closes_is_laid_after_everything_that_closes() -> None:
     assert max(closes) < min(never), [
         (index, ordered[index].id) for index in sorted(set(closes) | set(never))
     ]
+
+
+def test_every_tank_can_empty_the_water_it_actually_holds() -> None:
+    """Il difetto che ha fatto respingere P2, reso impossibile.
+
+    Uno scarico su un serpentino svuota il circuito che attraversa il serbatoio,
+    non il serbatoio: il serpentino e' uno scambiatore che ci passa dentro,
+    l'acqua della riserva resta al suo posto. La prova pretende quindi che ogni
+    serbatoio abbia uno scarico su una tubazione che porta **il fluido che tiene
+    in serbo**, e lo verifica per serbatoio invece che contare gli scarichi —
+    contarli darebbe due e sarebbe verde anche adesso."""
+    plant = acceptance()
+    tanks = plant.declaring(ComponentTrait.HOLDS_ITS_OWN_VOLUME)
+    assert tanks, "nessun serbatoio: la prova non direbbe nulla"
+    stuck: list[str] = []
+    for tank in tanks:
+        stored = plant.definitions[tank].stored_medium
+        assert stored is not None, tank
+        drained = False
+        for port_id in plant.attachments_of(tank):
+            if stored not in plant.fluids_at(tank, port_id):
+                continue
+            for chain in plant.chains_of(tank, port_id):
+                for item in chain:
+                    if plant.functions_of(item) & CLOSES:
+                        break
+                    if "drain" in plant.functions_of(item):
+                        drained = True
+                        break
+        if not drained:
+            stuck.append(f"{tank} tiene in serbo {stored} e non lo puo' svuotare")
+    assert not stuck, stuck
 
 
 def test_a_drain_stands_on_the_tank_side_of_the_organ_that_closes_it() -> None:
