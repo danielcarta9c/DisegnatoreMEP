@@ -1,0 +1,40 @@
+{
+  "id": "tee-split-cold",
+  "version": "1.0.0",
+  "name": "Ripartizione a T sull'acqua fredda",
+  "functions": [
+    "junction"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "tee-junction",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "c",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "plate-heat-exchanger",
+  "version": "1.0.0",
+  "name": "Scambiatore a piastre",
+  "functions": [
+    "heat_exchange"
+  ],
+  "traits": [
+    "maintainable",
+    "needs_debris_protection",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "plate-heat-exchanger",
+  "composite": false,
+  "ports": [
+    {
+      "id": "primary_in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "primary_out",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "secondary_in",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "secondary_out",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

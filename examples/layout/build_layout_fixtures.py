@@ -201,6 +201,54 @@ DEFINITIONS: list[dict[str, Any]] = [
         symbol_id="tee-junction",
     ),
     definition(
+        # **Ripartizione.** Una tubazione si sdoppia verso due strade: il ritorno
+        # comune che rientra su due macchine in parallelo, la mandata sanitaria
+        # che alimenta le utenze e il ricircolo. E' il gemello della confluenza,
+        # e come lei ha tutti e tre gli attacchi sul percorso.
+        "tee-split",
+        "Ripartizione a T",
+        ["junction"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in", HEATING),
+            hydronic_port("b", "out", HEATING),
+            hydronic_port("c", "out", HEATING),
+        ],
+        symbol_id="tee-junction",
+    ),
+    definition(
+        # **Ripartizione.** Una tubazione si sdoppia verso due strade: il ritorno
+        # comune che rientra su due macchine in parallelo, la mandata sanitaria
+        # che alimenta le utenze e il ricircolo. E' il gemello della confluenza,
+        # e come lei ha tutti e tre gli attacchi sul percorso.
+        "tee-split-dhw",
+        "Ripartizione a T sanitario",
+        ["junction"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in", DHW),
+            hydronic_port("b", "out", DHW),
+            hydronic_port("c", "out", DHW),
+        ],
+        symbol_id="tee-junction",
+    ),
+    definition(
+        # **Ripartizione.** Una tubazione si sdoppia verso due strade: il ritorno
+        # comune che rientra su due macchine in parallelo, la mandata sanitaria
+        # che alimenta le utenze e il ricircolo. E' il gemello della confluenza,
+        # e come lei ha tutti e tre gli attacchi sul percorso.
+        "tee-split-cold",
+        "Ripartizione a T sull'acqua fredda",
+        ["junction"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in", COLD),
+            hydronic_port("b", "out", COLD),
+            hydronic_port("c", "out", COLD),
+        ],
+        symbol_id="tee-junction",
+    ),
+    definition(
         # **Derivazione.** Un accessorio pende da uno stacco e la macchina non ha
         # l'attacco dedicato: si salda un T sul tubo e l'accessorio pende dal
         # braccio (D-101). Il braccio **non e' sul percorso**, e lo dichiara.
@@ -238,6 +286,136 @@ DEFINITIONS: list[dict[str, Any]] = [
             branch_port(COLD),
         ],
         symbol_id="tee-branch",
+    ),
+    # --- le famiglie dei cinque impianti di prova del committente -----------
+    # Dato puro: nessuna riga di motore le conosce.
+    definition(
+        "gas-boiler",
+        "Caldaia a condensazione",
+        ["heat_generation"],
+        [
+            MAINTAINABLE,
+            NEEDS_DEBRIS_PROTECTION,
+            PRODUCES_AIR,
+            NEEDS_OVERPRESSURE_PROTECTION,
+            SHUTOFF_ORDINARY,
+            INLINE,
+        ],
+        [
+            hydronic_port("water_supply", "out"),
+            hydronic_port("water_return", "in"),
+        ],
+    ),
+    definition(
+        "plate-heat-exchanger",
+        "Scambiatore a piastre",
+        ["heat_exchange"],
+        [MAINTAINABLE, NEEDS_DEBRIS_PROTECTION, SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("primary_in", "in"),
+            hydronic_port("primary_out", "out"),
+            hydronic_port("secondary_in", "in", COLD),
+            hydronic_port("secondary_out", "out", DHW),
+        ],
+    ),
+    definition(
+        "fan-coil",
+        "Ventilconvettore",
+        ["emission"],
+        [MAINTAINABLE, FOULS_CIRCUIT, SHUTOFF_ORDINARY, INLINE],
+        [hydronic_port("in", "in"), hydronic_port("out", "out")],
+    ),
+    definition(
+        "ahu-coil",
+        "Batteria di trattamento aria",
+        ["emission"],
+        [MAINTAINABLE, FOULS_CIRCUIT, SHUTOFF_ORDINARY, INLINE],
+        [hydronic_port("in", "in"), hydronic_port("out", "out")],
+    ),
+    definition(
+        "buffer-two-port",
+        "Volano termico a due attacchi",
+        ["thermal_storage"],
+        [MAINTAINABLE, HOLDS_ITS_OWN_VOLUME, SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in"),
+            hydronic_port("b", "out"),
+            service_port("vent", "air_release"),
+            service_port("drain", "drain"),
+            service_port("probe", "temperature_measurement"),
+        ],
+        stored_medium=HEATING,
+    ),
+    definition(
+        # L'accumulo combinato: volume tecnico a quattro tubi e serpentino
+        # sanitario dentro lo stesso serbatoio. Cio' che tiene **in serbo** e'
+        # l'acqua di riscaldamento; il sanitario ci passa dentro scambiando.
+        "buffer-combined",
+        "Accumulo combinato",
+        ["hydraulic_separation", "thermal_storage"],
+        [MAINTAINABLE, HOLDS_ITS_OWN_VOLUME, SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("primary_in", "in"),
+            hydronic_port("primary_out", "out"),
+            hydronic_port("secondary_out", "out"),
+            hydronic_port("secondary_in", "in"),
+            hydronic_port("cold_in", "in", COLD),
+            hydronic_port("dhw_out", "out", DHW),
+            service_port("vent", "air_release"),
+            service_port("drain", "drain"),
+            service_port("probe", "temperature_measurement"),
+        ],
+        stored_medium=HEATING,
+    ),
+    definition(
+        # Boiler in pompa di calore: produce e accumula acqua calda sanitaria
+        # per conto proprio, senza toccare il circuito di riscaldamento.
+        "dhw-heat-pump",
+        "Boiler in pompa di calore",
+        ["heat_generation", "dhw_storage"],
+        [
+            MAINTAINABLE,
+            NEEDS_OVERPRESSURE_PROTECTION,
+            HOLDS_ITS_OWN_VOLUME,
+            SHUTOFF_ORDINARY,
+            INLINE,
+        ],
+        [
+            hydronic_port("cold_in", "in", COLD),
+            hydronic_port("dhw_out", "out", DHW),
+            service_port("probe", "temperature_measurement", DHW),
+        ],
+        stored_medium=DHW,
+    ),
+    definition(
+        "mixing-valve-3way",
+        "Valvola miscelatrice a tre vie",
+        ["circuit_mixing"],
+        [MAINTAINABLE, SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("hot_in", "in"),
+            hydronic_port("cold_in", "in"),
+            hydronic_port("out", "out"),
+        ],
+    ),
+    definition(
+        "pump-circulator-dhw",
+        "Pompa di ricircolo sanitario",
+        ["circulation"],
+        [MAINTAINABLE, NEEDS_DEBRIS_PROTECTION, SHUTOFF_ORDINARY, INLINE],
+        [hydronic_port("a", "in", DHW), hydronic_port("b", "out", DHW)],
+        symbol_id="pump-circulator",
+    ),
+    definition(
+        "valve-check-dhw-hot",
+        "Valvola di ritegno sull'acqua calda",
+        ["non_return"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "bidirectional", DHW),
+            hydronic_port("b", "bidirectional", DHW),
+        ],
+        symbol_id="valve-check",
     ),
     definition(
         "diverting-valve-3way",

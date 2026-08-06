@@ -64,6 +64,16 @@
       "name": "Unita' interna ad espansione diretta"
     },
     {
+      "function": "heat_exchange",
+      "prefix": "SCA",
+      "name": "Scambiatore di calore"
+    },
+    {
+      "function": "circuit_mixing",
+      "prefix": "VMR",
+      "name": "Valvola miscelatrice di circuito"
+    },
+    {
       "function": "diversion",
       "prefix": "VD",
       "name": "Valvola deviatrice"

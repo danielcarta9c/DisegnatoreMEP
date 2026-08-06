@@ -1,0 +1,292 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "prova-1-due-pdc-accumulo-combinato",
+    "client": "Nove C",
+    "project_name": "Due pompe di calore in parallelo con accumulo combinato",
+    "commission_code": "PROVA",
+    "revision": "00",
+    "issue_date": "2026-08-06"
+  },
+  "networks": [
+    {
+      "id": "primario",
+      "name": "Circuito primario",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "secondario",
+      "name": "Circuito secondario",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "fredda",
+      "name": "Acqua fredda sanitaria",
+      "domain": "hydronic",
+      "medium": "cold_water"
+    },
+    {
+      "id": "sanitaria",
+      "name": "Acqua calda sanitaria",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "pdc-master",
+      "definition_id": "heat-pump-air-water",
+      "tag": "PDC-01",
+      "properties": {}
+    },
+    {
+      "id": "pdc-slave",
+      "definition_id": "heat-pump-air-water",
+      "tag": "PDC-02",
+      "properties": {}
+    },
+    {
+      "id": "collettore-mandata",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "collettore-ritorno",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "accumulo",
+      "definition_id": "buffer-combined",
+      "tag": "ACC-01",
+      "properties": {}
+    },
+    {
+      "id": "circolatore",
+      "definition_id": "pump-circulator",
+      "tag": "CIR-01",
+      "properties": {}
+    },
+    {
+      "id": "radiatori",
+      "definition_id": "radiator",
+      "tag": "RAD-01",
+      "properties": {}
+    },
+    {
+      "id": "acquedotto",
+      "definition_id": "cold-water-inlet",
+      "tag": "AF-01",
+      "properties": {}
+    },
+    {
+      "id": "utenze",
+      "definition_id": "dhw-draw-off",
+      "tag": "ACS-01",
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "p1",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "pdc-master",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-mandata",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p2",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "pdc-slave",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-mandata",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p3",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "collettore-mandata",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "accumulo",
+        "port_id": "primary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p4",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "accumulo",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-ritorno",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p5",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "collettore-ritorno",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-master",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p6",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "collettore-ritorno",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-slave",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s1",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "accumulo",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "circolatore",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s2",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "circolatore",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "radiatori",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s3",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "radiatori",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "accumulo",
+        "port_id": "secondary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "w1",
+      "network_id": "fredda",
+      "endpoint_a": {
+        "component_id": "acquedotto",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "accumulo",
+        "port_id": "cold_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "w2",
+      "network_id": "sanitaria",
+      "endpoint_a": {
+        "component_id": "accumulo",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "utenze",
+        "port_id": "a"
+      },
+      "properties": {}
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a1",
+      "text": "Il testo dice che le due macchine sono in parallelo e non dice come si uniscono: si e' assunto un collettore di mandata e uno di ritorno.",
+      "status": "proposed"
+    },
+    {
+      "id": "a2",
+      "text": "Il carico automatico da acquedotto e lo scarico sono nominati sul volume tecnico: li aggiungono le regole, non sono scritti qui.",
+      "status": "proposed"
+    }
+  ],
+  "rule_applications": [],
+  "subsystems": [
+    {
+      "id": "generazione",
+      "name": "Generazione",
+      "component_ids": [
+        "pdc-master",
+        "pdc-slave",
+        "collettore-mandata",
+        "collettore-ritorno"
+      ],
+      "network_ids": [
+        "primario"
+      ]
+    },
+    {
+      "id": "accumulo",
+      "name": "Accumulo",
+      "component_ids": [
+        "accumulo",
+        "acquedotto",
+        "utenze"
+      ],
+      "network_ids": [
+        "primario",
+        "fredda",
+        "sanitaria"
+      ]
+    },
+    {
+      "id": "distribuzione",
+      "name": "Distribuzione",
+      "component_ids": [
+        "circolatore",
+        "radiatori"
+      ],
+      "network_ids": [
+        "secondario"
+      ]
+    }
+  ],
+  "sheets": []
+}

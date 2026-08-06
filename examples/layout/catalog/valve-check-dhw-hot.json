@@ -1,0 +1,33 @@
+{
+  "id": "valve-check-dhw-hot",
+  "version": "1.0.0",
+  "name": "Valvola di ritegno sull'acqua calda",
+  "functions": [
+    "non_return"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "valve-check",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

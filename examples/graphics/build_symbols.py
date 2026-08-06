@@ -120,6 +120,8 @@ SOURCE_UNI_TAB10 = "UNI 9511 Tab. 10, tramite SRC-016"
 """Apparecchi indicatori: lettera in un cerchio, tavola 10 (SRC-016)."""
 SOURCE_UNI_VESSELS = "UNI 9511, tramite SRC-015"
 """Vasi di espansione: segni della norma riprodotti nel materiale di SRC-015."""
+SOURCE_UNI_EXCHANGERS = "UNI 9511, tramite SRC-015"
+"""Scambiatori: segni della norma riprodotti nel materiale di SRC-015."""
 SOURCE_PRACTICE_HYDRONIC = "pratica di settore, cfr. SRC-008"
 """Macchine e accessori idronici fuori norma: schemi dei produttori (Caleffi)."""
 SOURCE_PRACTICE_PENDING = (
@@ -331,6 +333,64 @@ def refrigerant_branch_body(w: float, h: float) -> str:
         f'<line x1="0" y1="{n(cy)}" x2="{n(w)}" y2="{n(cy)}"/>'
         f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx)}" y2="{n(h)}"/>'
         f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(min(w, h) * 0.075)}" fill="black"/>'
+    )
+
+
+
+# --- famiglie richieste dagli impianti di prova del committente --------------
+# Ognuna e' **dato**: un corpo, una scheda, e nessuna riga di programma. Se per
+# aggiungere una famiglia servisse toccare il motore, il motore sarebbe
+# sbagliato (ADR 0005).
+
+
+def gas_boiler_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Caldaia murale: involucro, camera di combustione e la fiamma."""
+    x, y = w * 0.06, h * 0.1
+    bw, bh = w * 0.88, h * 0.8
+    fx, fy = w * 0.5, h * 0.66
+    r = h * 0.13
+    return (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}" rx="{n(h * 0.05)}"/>'
+        f'<rect x="{n(x + bw * 0.18)}" y="{n(y + bh * 0.12)}" '
+        f'width="{n(bw * 0.64)}" height="{n(bh * 0.3)}"/>'
+        f'<path d="M{n(fx)} {n(fy - r)} Q{n(fx + r * 0.8)} {n(fy)} {n(fx)} {n(fy + r)} '
+        f'Q{n(fx - r * 0.8)} {n(fy)} {n(fx)} {n(fy - r)} Z"/>'
+        + stubs_to_ports(ports, w, h, w * 0.06)
+    )
+
+
+def plate_exchanger_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Scambiatore a piastre: il riquadro con le piastre a zig-zag in mezzo."""
+    x, y = w * 0.16, h * 0.1
+    bw, bh = w * 0.68, h * 0.8
+    steps = 6
+    plates = "".join(
+        f'<line x1="{n(x + bw * (index + 0.5) / steps)}" y1="{n(y + bh * 0.12)}" '
+        f'x2="{n(x + bw * (index + 0.5) / steps)}" y2="{n(y + bh * 0.88)}"/>'
+        for index in range(steps)
+    )
+    return (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
+        + plates
+        + stubs_to_ports(ports, w, h, x)
+    )
+
+
+def coil_body(w: float, h: float) -> str:
+    """Batteria alettata idronica: il riquadro con la serpentina che lo attraversa."""
+    x, y = w * 0.12, h * 0.18
+    bw, bh = w * 0.76, h * 0.64
+    turns = 4
+    step = bw / turns
+    path = f"M{n(x)} {n(y + bh / 2)} "
+    for index in range(turns):
+        top = y + bh * (0.2 if index % 2 == 0 else 0.8)
+        path += f"L{n(x + step * (index + 0.5))} {n(top)} "
+    path += f"L{n(x + bw)} {n(y + bh / 2)}"
+    return (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
+        f'<path d="{path}"/>'
+        + stubs_horizontal(w, h, x)
     )
 
 
@@ -847,6 +907,40 @@ BUFFER_PORTS = [
     port_at("probe", "left", 32.5, STORAGE_W, STORAGE_H),
 ]
 
+GAS_BOILER_PORTS = [
+    port_at("water_supply", "right", 10.0, *MACHINE),
+    port_at("water_return", "right", 20.0, *MACHINE),
+]
+EXCHANGER_PORTS = [
+    port_at("primary_in", "left", 5.0, *SEPARATOR),
+    port_at("primary_out", "left", 20.0, *SEPARATOR),
+    port_at("secondary_out", "right", 5.0, *SEPARATOR),
+    port_at("secondary_in", "right", 20.0, *SEPARATOR),
+]
+BUFFER_TWO_PORTS = [
+    port_at("a", "left", 5.0, STORAGE_W, STORAGE_H),
+    port_at("b", "right", 5.0, STORAGE_W, STORAGE_H),
+    port_at("vent", "top", 12.5, STORAGE_W, STORAGE_H),
+    port_at("drain", "bottom", 12.5, STORAGE_W, STORAGE_H),
+    port_at("probe", "left", 32.5, STORAGE_W, STORAGE_H),
+]
+BUFFER_COMBINED_PORTS = [
+    port_at("primary_in", "left", 5.0, STORAGE_W, STORAGE_H),
+    port_at("primary_out", "left", 20.0, STORAGE_W, STORAGE_H),
+    port_at("secondary_out", "right", 5.0, STORAGE_W, STORAGE_H),
+    port_at("secondary_in", "right", 20.0, STORAGE_W, STORAGE_H),
+    port_at("dhw_out", "top", 7.5, STORAGE_W, STORAGE_H),
+    port_at("cold_in", "left", 37.5, STORAGE_W, STORAGE_H),
+    port_at("vent", "top", 17.5, STORAGE_W, STORAGE_H),
+    port_at("drain", "bottom", 12.5, STORAGE_W, STORAGE_H),
+    port_at("probe", "right", 32.5, STORAGE_W, STORAGE_H),
+]
+DHW_HEAT_PUMP_PORTS = [
+    port_at("cold_in", "left", 37.5, STORAGE_W, STORAGE_H),
+    port_at("dhw_out", "top", 12.5, STORAGE_W, STORAGE_H),
+    port_at("probe", "right", 20.0, STORAGE_W, STORAGE_H),
+]
+
 SYMBOLS: list[SymbolSpec] = [
     # --- accessori proposti dalle regole (P1) -------------------------------
     # Tutti in linea: la derivazione, dove serve, sta nel corpo del simbolo.
@@ -884,6 +978,86 @@ SYMBOLS: list[SymbolSpec] = [
     single_port_symbol(
         "network-boundary", "Confine di rete", INLINE_ACCESSORY, "right", network_boundary_body,
         SOURCE_PRACTICE_HYDRONIC,
+    ),
+    # --- le famiglie dei cinque impianti di prova del committente -----------
+    SymbolSpec(
+        id="gas-boiler",
+        name="Caldaia a condensazione",
+        width_mm=MACHINE[0],
+        height_mm=MACHINE[1],
+        inline=False,
+        ports=GAS_BOILER_PORTS,
+        body=gas_boiler_body(MACHINE[0], MACHINE[1], GAS_BOILER_PORTS),
+        source=SOURCE_PRACTICE_HYDRONIC,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="plate-heat-exchanger",
+        name="Scambiatore a piastre",
+        width_mm=SEPARATOR[0],
+        height_mm=SEPARATOR[1],
+        inline=False,
+        ports=EXCHANGER_PORTS,
+        body=plate_exchanger_body(SEPARATOR[0], SEPARATOR[1], EXCHANGER_PORTS),
+        source=SOURCE_UNI_EXCHANGERS,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="ahu-coil",
+        name="Batteria di trattamento aria",
+        width_mm=TERMINAL[0],
+        height_mm=TERMINAL[1],
+        inline=False,
+        ports=[port("in", "left", *TERMINAL), port("out", "right", *TERMINAL)],
+        body=coil_body(*TERMINAL),
+        source=SOURCE_PRACTICE_HYDRONIC,
+    ),
+    SymbolSpec(
+        id="buffer-two-port",
+        name="Volano termico a due attacchi",
+        width_mm=STORAGE[0],
+        height_mm=STORAGE[1],
+        inline=False,
+        ports=BUFFER_TWO_PORTS,
+        body=buffer_body(STORAGE_W, STORAGE_H, BUFFER_TWO_PORTS),
+        source=SOURCE_PRACTICE_HYDRONIC,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="buffer-combined",
+        name="Accumulo combinato",
+        width_mm=STORAGE[0],
+        height_mm=STORAGE[1],
+        inline=False,
+        ports=BUFFER_COMBINED_PORTS,
+        body=cylinder_body(STORAGE_W, STORAGE_H, True, BUFFER_COMBINED_PORTS),
+        source=SOURCE_PRACTICE_HYDRONIC,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="dhw-heat-pump",
+        name="Boiler in pompa di calore",
+        width_mm=STORAGE[0],
+        height_mm=STORAGE[1],
+        inline=False,
+        ports=DHW_HEAT_PUMP_PORTS,
+        body=cylinder_body(STORAGE_W, STORAGE_H, False, DHW_HEAT_PUMP_PORTS),
+        source=SOURCE_PRACTICE_HYDRONIC,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="mixing-valve-3way",
+        name="Valvola miscelatrice a tre vie",
+        width_mm=DEVICE[0],
+        height_mm=DEVICE[1],
+        inline=False,
+        ports=[
+            port("hot_in", "left", *DEVICE),
+            port("cold_in", "bottom", *DEVICE),
+            port("out", "right", *DEVICE),
+        ],
+        body=diverting_valve_body(*DEVICE),
+        source=SOURCE_UNI_TAB3,
     ),
     # --- idronico -----------------------------------------------------------
     # Il T di UNI 9511 serve a due cose che sul disegno hanno lo stesso segno e

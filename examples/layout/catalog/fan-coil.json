@@ -1,0 +1,35 @@
+{
+  "id": "fan-coil",
+  "version": "1.0.0",
+  "name": "Ventilconvettore",
+  "functions": [
+    "emission"
+  ],
+  "traits": [
+    "maintainable",
+    "fouls_circuit",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "fan-coil",
+  "composite": false,
+  "ports": [
+    {
+      "id": "in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "out",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

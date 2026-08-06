@@ -1,0 +1,43 @@
+{
+  "id": "plate-heat-exchanger",
+  "version": "1.0.0",
+  "name": "Scambiatore a piastre",
+  "width_mm": 12.5,
+  "height_mm": 25.0,
+  "allowed_rotations_deg": [
+    0
+  ],
+  "ports": [
+    {
+      "id": "primary_in",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 5.0
+    },
+    {
+      "id": "primary_out",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 20.0
+    },
+    {
+      "id": "secondary_out",
+      "face": "right",
+      "x_mm": 12.5,
+      "y_mm": 5.0
+    },
+    {
+      "id": "secondary_in",
+      "face": "right",
+      "x_mm": 12.5,
+      "y_mm": 20.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 2.0,
+    "top_mm": 0.0,
+    "bottom_mm": 0.0
+  },
+  "source": "UNI 9511, tramite SRC-015"
+}
