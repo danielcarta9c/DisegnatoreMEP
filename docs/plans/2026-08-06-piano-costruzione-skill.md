@@ -190,6 +190,75 @@ occhio terzo come cancello di routine prima di ogni consegna.
 
 ---
 
+## 3bis. La ripresa del 6 agosto, sera — i pacchetti di questa sessione
+
+Tre pacchetti, nell'ordine chiesto dal PM. I criteri sono scritti **prima** che lo
+sviluppo cominci (D-083).
+
+### A — L'indirizzo dei nodi (D-105)
+
+**Contratto.** Ogni linea idraulica ha sigla di famiglia e numero; ogni pezzo e' un nodo
+numerato lungo la sua linea; le diramazioni prendono la lettera, gli stacchi il civico.
+E' una **lettura** del grafo, come le sigle: si ricalcola sempre, non si scrive nel modello.
+
+**Accettazione (proprieta').**
+
+1. La famiglia di una linea si legge da una **tabella di dati** in `naming/`, su proprieta'
+   dichiarate — il fluido della rete, il mestiere della sorgente da cui la rete parte, il
+   verso (mandata o ritorno) — mai dal nome di una rete o di un componente. Una linea che
+   la tabella non sa nominare ferma la generazione nominando il colpevole.
+2. Ogni pezzo ha **un solo indirizzo** (`CP.01.N.02`), assegnato camminando dalle sorgenti
+   nell'ordine di D-098. Stesso impianto → stessi indirizzi, qualunque sia l'ordine del
+   file di ingresso (da provare con permutazioni).
+3. **Innesto** (confluenza): la principale tira dritto e il raccordo e' un nodo suo; la
+   secondaria e' una linea numerata a se' che **muore su quel nodo**. La principale e'
+   quella il cui giro viene prima nell'ordine di D-098 — la prima sorgente vince.
+4. **Diramazione** (ripartizione, deviatrice): la principale tiene il nome nudo, i rami
+   prendono la lettera (`RP.01a`) nell'ordine della passeggiata. La principale e' quella
+   che va verso la prima sorgente; dove nessun ramo va verso una sorgente, e' la prima via
+   nell'ordine dei bracci dichiarati dal pezzo.
+5. **Stacchi**: cio' che pende e' un **civico del nodo** (`CP.01.N.02.1`), numerato lungo
+   la catena appesa; l'accessorio sull'attacco di servizio di una macchina e' un civico
+   della macchina.
+6. Le **sigle dei pezzi restano identiche** a prima del pacchetto: l'indirizzo convive con
+   la sigla, non la sostituisce.
+7. Il documento del grafo mostra: la **tabella delle linee** con la descrizione da→a
+   («CP.01 — mandata primaria, da PDC-01 a ACC-01»); la **lettura per linea** — la fila
+   dei nodi con indirizzo e sigla, i civici sotto il proprio nodo, innesti e diramazioni
+   detti sul nodo dove accadono; gli anelli dichiarati come prima. Italiano, nessun
+   identificativo interno.
+8. I cinque grafi di prova e il grafo dell'impianto di accettazione **rigenerati dai
+   generatori**; le prove che inchiodano i documenti alla rigenerazione restano verdi.
+9. Suite completa, `ruff` e `mypy --strict` puliti. Nessun tocco a disegno, assemblatore,
+   regole, modello.
+
+### B — Il pezzo 1, «Capire»
+
+**Contratto.** Le istruzioni dell'agente che legge il testo dell'ingegnere e costruisce il
+grafo di prima stesura. File di testo, non programma (ADR 0005).
+
+**Accettazione (proprieta').**
+
+1. Le istruzioni dicono **cosa tirare fuori** (macchine, attacchi, tubazioni, reti,
+   fluidi), **cosa non inventare mai** (quantita', taglie, accessori non detti, collegamenti
+   non descritti), e **come dichiarare ogni ambiguita' come domanda** invece che risolverla.
+2. Provate sui cinque testi originali del committente (`examples/prova/input/`): il grafo
+   di prima stesura che ne esce si confronta con la lettura manuale, e ogni differenza si
+   classifica — detto dal testo e perso; inventato; assunzione tacita della lettura manuale
+   che le istruzioni trasformano in domanda.
+3. Ogni pezzo del grafo di prima stesura risale a una frase del testo. Cio' che il testo
+   non dice e' una domanda dichiarata, mai un'invenzione.
+4. **Le letture manuali non si aggiustano** per far combaciare il confronto.
+
+### C — Il collaudo indipendente dei tre pacchetti «da collaudare»
+
+Un attacco una tubazione (D-100), gli attacchi di servizio (D-101), l'assemblatore (G4):
+costruiti e verificati da chi li ha scritti, e per D-083 non basta. Il collaudo rifa' le
+prove **con criteri propri**, da contesto separato, sui contratti gia' scritti in questo
+piano (§3, G4) e nelle decisioni D-100 e D-101. Verdetti in appendice.
+
+---
+
 ## 4. Come si chiude un pezzo
 
 1. L'orchestratore scrive i criteri di accettazione **prima**.
