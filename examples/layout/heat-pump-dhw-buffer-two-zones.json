@@ -27,7 +27,9 @@
         "strainer",
         "buffer",
         "cylinder",
-        "shutoff"
+        "shutoff",
+        "tee-return-generator",
+        "tee-return-buffer"
       ],
       "network_ids": [
         "primary"
@@ -136,6 +138,18 @@
       "definition_id": "underfloor-panel",
       "tag": "PAV-01",
       "properties": {}
+    },
+    {
+      "id": "tee-return-generator",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tee-return-buffer",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
     }
   ],
   "connections": [
@@ -199,8 +213,8 @@
         "port_id": "b"
       },
       "endpoint_b": {
-        "component_id": "hp",
-        "port_id": "water_return"
+        "component_id": "tee-return-generator",
+        "port_id": "in_1"
       },
       "properties": {}
     },
@@ -223,6 +237,19 @@
       "endpoint_a": {
         "component_id": "cylinder",
         "port_id": "coil_out"
+      },
+      "endpoint_b": {
+        "component_id": "tee-return-generator",
+        "port_id": "in_2"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p8",
+      "network_id": "primary",
+      "endpoint_a": {
+        "component_id": "tee-return-generator",
+        "port_id": "out"
       },
       "endpoint_b": {
         "component_id": "hp",
@@ -290,8 +317,8 @@
         "port_id": "out"
       },
       "endpoint_b": {
-        "component_id": "buffer",
-        "port_id": "secondary_in"
+        "component_id": "tee-return-buffer",
+        "port_id": "in_1"
       },
       "properties": {}
     },
@@ -300,6 +327,19 @@
       "network_id": "secondary",
       "endpoint_a": {
         "component_id": "underfloor",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "tee-return-buffer",
+        "port_id": "in_2"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s7",
+      "network_id": "secondary",
+      "endpoint_a": {
+        "component_id": "tee-return-buffer",
         "port_id": "out"
       },
       "endpoint_b": {

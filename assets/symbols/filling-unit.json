@@ -5,30 +5,20 @@
   "width_mm": 5.0,
   "height_mm": 10.0,
   "allowed_rotations_deg": [
-    0,
-    90,
-    180,
-    270
+    0
   ],
-  "inline_gap_mm": 5.0,
   "ports": [
     {
       "id": "a",
-      "face": "left",
-      "x_mm": 0.0,
-      "y_mm": 5.0
-    },
-    {
-      "id": "b",
-      "face": "right",
-      "x_mm": 5.0,
-      "y_mm": 5.0
+      "face": "top",
+      "x_mm": 2.5,
+      "y_mm": 0.0
     }
   ],
   "keep_out": {
-    "left_mm": 2.0,
-    "right_mm": 2.0,
-    "top_mm": 0.0,
+    "left_mm": 0.0,
+    "right_mm": 0.0,
+    "top_mm": 2.0,
     "bottom_mm": 0.0
   },
   "source": "pratica di settore, cfr. SRC-008"

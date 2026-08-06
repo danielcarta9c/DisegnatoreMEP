@@ -209,11 +209,17 @@ def validate_project(
                         [component.id, port.id],
                     )
                 )
-            if count > port.max_connections:
+            # Una tubazione per attacco, sempre (D-100). Dove due si incontrano
+            # ci vuole un pezzo che le unisca, con la propria sigla: due tubi
+            # sullo stesso bocchello non esistono, e lasciarli passare faceva
+            # scegliere a chi guardava per ultimo quale delle due contasse.
+            if count > 1:
                 issues.append(
                     _issue(
                         "PORT_CONNECTION_LIMIT",
-                        f"port {port.id} has {count} connections; maximum is {port.max_connections}",
+                        f"port {port.id} has {count} pipes; an attachment carries "
+                        f"exactly one. Where two pipes meet there is a piece that "
+                        f"joins them, and it has its own tag",
                         [component.id, port.id],
                     )
                 )

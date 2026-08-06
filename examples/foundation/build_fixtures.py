@@ -25,7 +25,6 @@ def port(
         "medium": medium,
         "flow": flow,
         "required": True,
-        "max_connections": 1,
     }
 
 

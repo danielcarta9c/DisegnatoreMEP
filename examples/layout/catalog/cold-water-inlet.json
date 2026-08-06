@@ -17,8 +17,7 @@
       "domain": "hydronic",
       "medium": "cold_water",
       "flow": "out",
-      "required": true,
-      "max_connections": 1
+      "required": true
     }
   ],
   "sources": [

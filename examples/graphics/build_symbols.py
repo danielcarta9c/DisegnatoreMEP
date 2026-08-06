@@ -111,6 +111,9 @@ STORAGE = (25.0, 45.0)
 
 # Le fonti dichiarate nel campo `source` di ogni manifesto (D-067, D-081).
 # La UNI 9511 si cita sempre tramite la fonte secondaria verificata, mai da sola.
+SOURCE_UNI_TAB1 = "UNI 9511 Tab. 1, tramite SRC-016"
+"""Tubazioni e loro giunzioni: tavola 1. E' li' che derivazione e incrocio si
+distinguono, la prima col cerchio pieno e il secondo con la croce nuda."""
 SOURCE_UNI_TAB3 = "UNI 9511 Tab. 3, tramite SRC-016"
 """Valvolame: tavola 3 della norma, pubblicata da Oppo (SRC-016)."""
 SOURCE_UNI_TAB10 = "UNI 9511 Tab. 10, tramite SRC-016"
@@ -500,6 +503,24 @@ def _through_line(w: float, h: float) -> str:
     return f'<line x1="0" y1="{n(y)}" x2="{n(w)}" y2="{n(y)}"/>'
 
 
+def tee_junction_body(w: float, h: float) -> str:
+    """Raccordo a T: la linea passante, il ramo che sale, e il pallino.
+
+    UNI 9511 Tab. 1 distingue con questo segno una **derivazione** — due
+    tubazioni che si uniscono davvero — da un incrocio senza connessione, che e'
+    una croce nuda. Il pallino ha diametro pari a quattro volte lo spessore del
+    tratto, ed e' quello che rende il raccordo leggibile come raccordo invece che
+    come due linee che si toccano.
+    """
+    radius = 2 * A3_LANDSCAPE.line_medium_mm
+    return (
+        _through_line(w, h)
+        + f'<line x1="{n(w / 2)}" y1="0" x2="{n(w / 2)}" y2="{n(h / 2)}"/>'
+        + f'<circle cx="{n(w / 2)}" cy="{n(h / 2)}" r="{n(radius)}" '
+        f'fill="currentColor"/>'
+    )
+
+
 def _branch_down(w: float, h: float, to: float) -> str:
     return f'<line x1="{n(w / 2)}" y1="{n(h / 2)}" x2="{n(w / 2)}" y2="{n(to)}"/>'
 
@@ -508,16 +529,30 @@ def _branch_up(w: float, h: float, to: float) -> str:
     return f'<line x1="{n(w / 2)}" y1="{n(h / 2)}" x2="{n(w / 2)}" y2="{n(to)}"/>'
 
 
+# --- accessori che pendono da uno stacco -----------------------------------
+#
+# Hanno **un attacco solo** (D-101). Prima ne avevano due e portavano dentro il
+# corpo del simbolo sia la linea passante sia la derivazione: era la scorciatoia
+# di D-071, e faceva sembrare che l'acqua passasse dentro uno scarico. Adesso il
+# simbolo disegna l'accessorio e basta; il tratto che lo collega e' una tubazione
+# del modello, e sta dove il grafo dice.
+
+
+def _stem(w: float, h: float, face: str, to: float) -> str:
+    """Il tratto corto dall'attacco al corpo dell'accessorio."""
+    start = 0.0 if face == "top" else h
+    return f'<line x1="{n(w / 2)}" y1="{n(start)}" x2="{n(w / 2)}" y2="{n(to)}"/>'
+
+
 def expansion_connection_body(w: float, h: float) -> str:
-    """Stacco verso il basso e vaso a membrana appeso: capsula con il
-    diaframma orizzontale a meta' (UNI 9511, vaso chiuso a membrana)."""
-    top = h * 0.62
-    x, bw, bh = w * 0.15, w * 0.7, h * 0.32
+    """Vaso a membrana appeso al proprio attacco: capsula con il diaframma
+    orizzontale a meta' (UNI 9511, vaso chiuso a membrana)."""
+    top = h * 0.3
+    x, bw, bh = w * 0.1, w * 0.8, h * 0.6
     return (
-        _through_line(w, h)
-        + _branch_down(w, h, top)
+        _stem(w, h, "top", top)
         + f'<rect x="{n(x)}" y="{n(top)}" width="{n(bw)}" height="{n(bh)}" '
-        f'rx="{n(bh * 0.3)}"/>'
+        f'rx="{n(bh * 0.2)}"/>'
         f'<line x1="{n(x)}" y1="{n(top + bh / 2)}" '
         f'x2="{n(x + bw)}" y2="{n(top + bh / 2)}"/>'
     )
@@ -525,19 +560,18 @@ def expansion_connection_body(w: float, h: float) -> str:
 
 def safety_valve_body(w: float, h: float) -> str:
     """Valvola di sicurezza (UNI 9511 Tab. 3): corpo a triangolo con la molla
-    a zig-zag sopra, appesa allo stacco che sale dalla linea."""
-    apex_y = h * 0.34
-    base_y = h * 0.22
-    half = w * 0.24
-    zig_left, zig_right = w * 0.3, w * 0.7
-    steps = (h * 0.175, h * 0.13, h * 0.085, h * 0.04)
+    a zig-zag sopra, appesa al proprio attacco."""
+    apex_y = h * 0.62
+    base_y = h * 0.42
+    half = w * 0.32
+    zig_left, zig_right = w * 0.22, w * 0.78
+    steps = (h * 0.34, h * 0.26, h * 0.18, h * 0.1)
     spring = f"M{n(w / 2)} {n(base_y)} " + " ".join(
         f"L{n(zig_left if index % 2 == 0 else zig_right)} {n(y)}"
         for index, y in enumerate(steps)
     )
     return (
-        _through_line(w, h)
-        + _branch_up(w, h, apex_y)
+        _stem(w, h, "bottom", apex_y)
         + f'<path d="M{n(w / 2 - half)} {n(base_y)} L{n(w / 2 + half)} {n(base_y)} '
         f'L{n(w / 2)} {n(apex_y)} Z"/>'
         f'<path d="{spring}"/>'
@@ -572,40 +606,33 @@ def dirt_separator_body(w: float, h: float) -> str:
 
 
 def filling_unit_body(w: float, h: float) -> str:
-    """Gruppo di riempimento sulla linea: valvola a farfalla e riduttore a
-    triangolo in serie, raccolti sotto una staffa leggera."""
-    y = h / 2
-    half = h * 0.08
-    v_left, v_mid, v_right = w * 0.14, w * 0.3, w * 0.46
-    r_base, r_apex = w * 0.6, w * 0.86
-    bracket_y, bracket_drop = h * 0.32, h * 0.38
-    bx0, bx1 = w * 0.1, w * 0.9
+    """Gruppo di riempimento appeso al proprio attacco: valvola a farfalla e
+    riduttore a triangolo in serie, uno sopra l'altro lungo lo stacco."""
+    cx = w / 2
+    half = w * 0.24
+    v_top, v_mid, v_bottom = h * 0.24, h * 0.4, h * 0.56
+    r_base, r_apex = h * 0.68, h * 0.92
     return (
-        f'<line x1="0" y1="{n(y)}" x2="{n(v_left)}" y2="{n(y)}"/>'
-        f'<line x1="{n(v_right)}" y1="{n(y)}" x2="{n(r_base)}" y2="{n(y)}"/>'
-        f'<line x1="{n(r_apex)}" y1="{n(y)}" x2="{n(w)}" y2="{n(y)}"/>'
-        f'<path d="M{n(v_left)} {n(y - half)} L{n(v_left)} {n(y + half)} '
-        f'L{n(v_mid)} {n(y)} Z"/>'
-        f'<path d="M{n(v_right)} {n(y - half)} L{n(v_right)} {n(y + half)} '
-        f'L{n(v_mid)} {n(y)} Z"/>'
-        f'<path d="M{n(r_base)} {n(y - half)} L{n(r_base)} {n(y + half)} '
-        f'L{n(r_apex)} {n(y)} Z"/>'
-        f'<line x1="{n(bx0)}" y1="{n(bracket_y)}" x2="{n(bx1)}" y2="{n(bracket_y)}"/>'
-        f'<line x1="{n(bx0)}" y1="{n(bracket_y)}" x2="{n(bx0)}" y2="{n(bracket_drop)}"/>'
-        f'<line x1="{n(bx1)}" y1="{n(bracket_y)}" x2="{n(bx1)}" y2="{n(bracket_drop)}"/>'
+        _stem(w, h, "top", v_top)
+        + f'<path d="M{n(cx - half)} {n(v_top)} L{n(cx + half)} {n(v_top)} '
+        f'L{n(cx)} {n(v_mid)} Z"/>'
+        f'<path d="M{n(cx - half)} {n(v_bottom)} L{n(cx + half)} {n(v_bottom)} '
+        f'L{n(cx)} {n(v_mid)} Z"/>'
+        f'<line x1="{n(cx)}" y1="{n(v_bottom)}" x2="{n(cx)}" y2="{n(r_base)}"/>'
+        f'<path d="M{n(cx - half)} {n(r_base)} L{n(cx + half)} {n(r_base)} '
+        f'L{n(cx)} {n(r_apex)} Z"/>'
     )
 
 
 def drain_connection_body(w: float, h: float) -> str:
-    """Stacco verso il basso con la valvola di scarico e il tratto finale
-    all'estremita' aperta."""
+    """Attacco di scarico appeso al proprio attacco: la valvola e il tratto
+    finale all'estremita' aperta."""
     cx = w / 2
-    base_top, mid, base_bottom = h * 0.66, h * 0.75, h * 0.84
-    end = h * 0.92
-    half = w * 0.16
+    base_top, mid, base_bottom = h * 0.3, h * 0.48, h * 0.66
+    end = h * 0.88
+    half = w * 0.24
     return (
-        _through_line(w, h)
-        + _branch_down(w, h, base_top)
+        _stem(w, h, "top", base_top)
         + f'<path d="M{n(cx - half)} {n(base_top)} L{n(cx + half)} {n(base_top)} '
         f'L{n(cx)} {n(mid)} Z"/>'
         f'<path d="M{n(cx - half)} {n(base_bottom)} L{n(cx + half)} {n(base_bottom)} '
@@ -615,45 +642,48 @@ def drain_connection_body(w: float, h: float) -> str:
     )
 
 
-def _dial(w: float, h: float, mark: str) -> str:
-    top = h * 0.28
-    r = h * 0.14
+def _dial(w: float, h: float, mark_of: Any) -> str:
+    """Strumento indicatore appeso al proprio attacco: il quadrante e la lettera."""
+    r = w * 0.4
+    cy = h * 0.3
     return (
-        _through_line(w, h)
-        + _branch_up(w, h, top + r)
-        + f'<circle cx="{n(w / 2)}" cy="{n(top)}" r="{n(r)}"/>' + mark
+        _stem(w, h, "bottom", cy + r)
+        + f'<circle cx="{n(w / 2)}" cy="{n(cy)}" r="{n(r)}"/>'
+        + mark_of(w / 2, cy, r)
     )
 
 
 def thermometer_body(w: float, h: float) -> str:
     """Termometro (UNI 9511 Tab. 10): cerchio con la lettera T, tracciata a
     tratti — due segmenti — per non dipendere da alcun font."""
-    cy = h * 0.28
-    r = h * 0.14
-    bar_y = cy - r * 0.45
-    half = r * 0.45
-    return _dial(
-        w, h,
-        f'<line x1="{n(w / 2 - half)}" y1="{n(bar_y)}" '
-        f'x2="{n(w / 2 + half)}" y2="{n(bar_y)}"/>'
-        f'<line x1="{n(w / 2)}" y1="{n(bar_y)}" '
-        f'x2="{n(w / 2)}" y2="{n(cy + r * 0.5)}"/>',
-    )
+
+    def mark(cx: float, cy: float, r: float) -> str:
+        bar_y = cy - r * 0.45
+        half = r * 0.45
+        return (
+            f'<line x1="{n(cx - half)}" y1="{n(bar_y)}" '
+            f'x2="{n(cx + half)}" y2="{n(bar_y)}"/>'
+            f'<line x1="{n(cx)}" y1="{n(bar_y)}" '
+            f'x2="{n(cx)}" y2="{n(cy + r * 0.5)}"/>'
+        )
+
+    return _dial(w, h, mark)
 
 
 def pressure_gauge_body(w: float, h: float) -> str:
     """Manometro (UNI 9511 Tab. 10): cerchio con la lettera P a tratti —
     asta verticale e pancia a semicerchio, nessun font."""
-    cy = h * 0.28
-    r = h * 0.14
-    x0 = w / 2 - r * 0.25
-    top_y, mid_y, bottom_y = cy - r * 0.5, cy, cy + r * 0.55
-    return _dial(
-        w, h,
-        f'<line x1="{n(x0)}" y1="{n(top_y)}" x2="{n(x0)}" y2="{n(bottom_y)}"/>'
-        f'<path d="M{n(x0)} {n(top_y)} Q{n(x0 + r * 0.85)} {n((top_y + mid_y) / 2)} '
-        f'{n(x0)} {n(mid_y)}"/>',
-    )
+
+    def mark(cx: float, cy: float, r: float) -> str:
+        x0 = cx - r * 0.25
+        top_y, mid_y, bottom_y = cy - r * 0.5, cy, cy + r * 0.55
+        return (
+            f'<line x1="{n(x0)}" y1="{n(top_y)}" x2="{n(x0)}" y2="{n(bottom_y)}"/>'
+            f'<path d="M{n(x0)} {n(top_y)} Q{n(x0 + r * 0.85)} '
+            f'{n((top_y + mid_y) / 2)} {n(x0)} {n(mid_y)}"/>'
+        )
+
+    return _dial(w, h, mark)
 
 
 def mixing_valve_body(w: float, h: float) -> str:
@@ -812,14 +842,35 @@ BUFFER_PORTS = [
 SYMBOLS: list[SymbolSpec] = [
     # --- accessori proposti dalle regole (P1) -------------------------------
     # Tutti in linea: la derivazione, dove serve, sta nel corpo del simbolo.
-    inline_symbol("expansion-connection", "Vaso di espansione", BRANCHED_ACCESSORY, expansion_connection_body, SOURCE_UNI_VESSELS),
-    inline_symbol("valve-safety", "Valvola di sicurezza", BRANCHED_ACCESSORY, safety_valve_body, SOURCE_UNI_TAB3),
+    # Gli accessori che pendono da uno stacco hanno un attacco solo (D-101): il
+    # tratto che li collega e' una tubazione del modello, non un tratto disegnato
+    # dentro il simbolo.
+    single_port_symbol(
+        "expansion-connection", "Vaso di espansione", BRANCHED_ACCESSORY, "top",
+        expansion_connection_body, SOURCE_UNI_VESSELS, EXPANSION_VESSEL_ROTATIONS_DEG,
+    ),
+    single_port_symbol(
+        "valve-safety", "Valvola di sicurezza", BRANCHED_ACCESSORY, "bottom",
+        safety_valve_body, SOURCE_UNI_TAB3, UPRIGHT_ROTATIONS_DEG,
+    ),
     inline_symbol("air-separator", "Separatore d'aria", BRANCHED_ACCESSORY, air_separator_body, SOURCE_PRACTICE_HYDRONIC),
     inline_symbol("dirt-separator", "Defangatore", BRANCHED_ACCESSORY, dirt_separator_body, SOURCE_PRACTICE_HYDRONIC),
-    inline_symbol("filling-unit", "Gruppo di riempimento", BRANCHED_ACCESSORY, filling_unit_body, SOURCE_PRACTICE_HYDRONIC),
-    inline_symbol("drain-connection", "Attacco di scarico", BRANCHED_ACCESSORY, drain_connection_body, SOURCE_PRACTICE_HYDRONIC),
-    inline_symbol("thermometer", "Termometro", BRANCHED_ACCESSORY, thermometer_body, SOURCE_UNI_TAB10),
-    inline_symbol("pressure-gauge", "Manometro", BRANCHED_ACCESSORY, pressure_gauge_body, SOURCE_UNI_TAB10),
+    single_port_symbol(
+        "filling-unit", "Gruppo di riempimento", BRANCHED_ACCESSORY, "top",
+        filling_unit_body, SOURCE_PRACTICE_HYDRONIC, UPRIGHT_ROTATIONS_DEG,
+    ),
+    single_port_symbol(
+        "drain-connection", "Attacco di scarico", BRANCHED_ACCESSORY, "top",
+        drain_connection_body, SOURCE_PRACTICE_HYDRONIC, UPRIGHT_ROTATIONS_DEG,
+    ),
+    single_port_symbol(
+        "thermometer", "Termometro", BRANCHED_ACCESSORY, "bottom",
+        thermometer_body, SOURCE_UNI_TAB10, UPRIGHT_ROTATIONS_DEG,
+    ),
+    single_port_symbol(
+        "pressure-gauge", "Manometro", BRANCHED_ACCESSORY, "bottom",
+        pressure_gauge_body, SOURCE_UNI_TAB10, UPRIGHT_ROTATIONS_DEG,
+    ),
     inline_symbol("mixing-valve-thermostatic", "Valvola miscelatrice termostatica", BRANCHED_ACCESSORY, mixing_valve_body, SOURCE_UNI_TAB3),
     inline_symbol("pressure-reducer", "Riduttore di pressione", BRANCHED_ACCESSORY, pressure_reducer_body, SOURCE_PRACTICE_HYDRONIC),
     single_port_symbol(
@@ -827,6 +878,24 @@ SYMBOLS: list[SymbolSpec] = [
         SOURCE_PRACTICE_HYDRONIC,
     ),
     # --- idronico -----------------------------------------------------------
+    SymbolSpec(
+        # Dove due tubazioni si uniscono c'e' un pezzo, e ha la propria sigla
+        # (D-100). Tre attacchi: le due che arrivano e quella che riparte.
+        id="tee-junction",
+        name="Raccordo a T",
+        width_mm=INLINE_ACCESSORY[0],
+        height_mm=INLINE_ACCESSORY[1],
+        # Non interrompe la linea come fa una valvola: e' il punto in cui due
+        # linee diventano una, e i tre attacchi lo dicono da soli.
+        inline=False,
+        ports=[
+            port("in_1", "left", *INLINE_ACCESSORY),
+            port("in_2", "top", *INLINE_ACCESSORY),
+            port("out", "right", *INLINE_ACCESSORY),
+        ],
+        body=tee_junction_body(*INLINE_ACCESSORY),
+        source=SOURCE_UNI_TAB1,
+    ),
     inline_symbol("valve-isolation", "Valvola di intercettazione", INLINE_ACCESSORY, valve_isolation_body, SOURCE_UNI_TAB3),
     inline_symbol("valve-check", "Valvola di ritegno", INLINE_ACCESSORY, valve_check_body, SOURCE_UNI_TAB3),
     inline_symbol("strainer", "Filtro a Y", INLINE_ACCESSORY, strainer_body, SOURCE_PRACTICE_HYDRONIC),

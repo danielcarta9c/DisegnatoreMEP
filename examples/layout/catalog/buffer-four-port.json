@@ -21,32 +21,28 @@
       "domain": "hydronic",
       "medium": "heating_water",
       "flow": "in",
-      "required": true,
-      "max_connections": 1
+      "required": true
     },
     {
       "id": "primary_out",
       "domain": "hydronic",
       "medium": "heating_water",
       "flow": "out",
-      "required": true,
-      "max_connections": 1
+      "required": true
     },
     {
       "id": "secondary_out",
       "domain": "hydronic",
       "medium": "heating_water",
       "flow": "out",
-      "required": true,
-      "max_connections": 1
+      "required": true
     },
     {
       "id": "secondary_in",
       "domain": "hydronic",
       "medium": "heating_water",
       "flow": "in",
-      "required": true,
-      "max_connections": 2
+      "required": true
     }
   ],
   "sources": [

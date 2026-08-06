@@ -17,16 +17,14 @@
       "domain": "hydronic",
       "medium": "domestic_hot_water",
       "flow": "in",
-      "required": true,
-      "max_connections": 1
+      "required": true
     },
     {
       "id": "b",
       "domain": "hydronic",
       "medium": "domestic_hot_water",
       "flow": "out",
-      "required": true,
-      "max_connections": 1
+      "required": true
     }
   ],
   "sources": [

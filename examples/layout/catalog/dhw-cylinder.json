@@ -21,32 +21,28 @@
       "domain": "hydronic",
       "medium": "heating_water",
       "flow": "in",
-      "required": true,
-      "max_connections": 1
+      "required": true
     },
     {
       "id": "coil_out",
       "domain": "hydronic",
       "medium": "heating_water",
       "flow": "out",
-      "required": true,
-      "max_connections": 1
+      "required": true
     },
     {
       "id": "dhw_out",
       "domain": "hydronic",
       "medium": "domestic_hot_water",
       "flow": "out",
-      "required": false,
-      "max_connections": 1
+      "required": false
     },
     {
       "id": "cold_in",
       "domain": "hydronic",
       "medium": "cold_water",
       "flow": "in",
-      "required": false,
-      "max_connections": 1
+      "required": false
     }
   ],
   "sources": [

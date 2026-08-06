@@ -116,14 +116,40 @@ si costruisce la sequenza dei pezzi lungo un tubo (D-094)."""
 
 
 class PortDefinition(StrictModel):
-    """Semantica di una porta. La geometria vive nel manifesto del simbolo."""
+    """Semantica di una porta. La geometria vive nel manifesto del simbolo.
+
+    **Una porta porta una tubazione sola** (D-100), e non e' configurabile: due
+    tubazioni sullo stesso attacco vorrebbero dire due tubi sullo stesso
+    bocchello. Dove due tubazioni si incontrano c'e' un pezzo che le unisce, con
+    la propria sigla. Il catalogo poteva dichiarare un massimo per porta, e i due
+    posti in cui dichiarava due erano esattamente i due punti in cui il modello
+    stava rappresentando un raccordo che non aveva.
+    """
 
     id: str = Field(pattern=ID_PATTERN)
     domain: Domain
     medium: str = Field(pattern=ID_PATTERN)
     flow: PortFlow
     required: bool = True
-    max_connections: int = Field(default=1, ge=1)
+
+    serves: str | None = None
+    """La funzione per cui questo attacco esiste, se e' un attacco **di servizio**.
+
+    Un volano a quattro tubi non ha quattro attacchi (D-101): ha i quattro del
+    flusso principale, che qui non dichiarano niente, e poi quelli di servizio —
+    lo scarico, lo sfiato, la sede della sonda, la ricarica, il vaso — che
+    esistono ciascuno per una funzione precisa e la dichiarano qui.
+
+    E' cosi' che un accessorio di servizio si posa **sul proprio attacco** invece
+    di essere infilato nella tubazione principale: la regola dice quale funzione
+    deve comparire, la macchina dice su quale suo attacco quella funzione si
+    attacca. La regola continua a non nominare nessun componente.
+    """
+
+    @property
+    def is_service(self) -> bool:
+        """Attacco di servizio, non del flusso principale."""
+        return self.serves is not None
 
 
 class ComponentDefinition(StrictModel):

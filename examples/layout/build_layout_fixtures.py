@@ -52,15 +52,19 @@ def hydronic_port(
     flow: str,
     medium: str = HEATING,
     required: bool = True,
-    max_connections: int = 1,
 ) -> dict[str, Any]:
+    """Un attacco, e porta una tubazione sola (D-100).
+
+    Il massimo per attacco non si dichiara piu': non era configurabile per
+    davvero, e i due soli posti in cui diceva «due» erano i due punti in cui il
+    modello stava rappresentando un raccordo che non aveva.
+    """
     return {
         "id": port_id,
         "domain": "hydronic",
         "medium": medium,
         "flow": flow,
         "required": required,
-        "max_connections": max_connections,
     }
 
 
@@ -118,9 +122,22 @@ DEFINITIONS: list[dict[str, Any]] = [
         ],
         [
             hydronic_port("water_supply", "out"),
-            # Il ritorno raccoglie sia il circuito del volano sia quello del
-            # serpentino ACS: la deviatrice li rende alternativi in esercizio.
-            hydronic_port("water_return", "in", max_connections=2),
+            hydronic_port("water_return", "in"),
+        ],
+    ),
+    definition(
+        # Il ritorno della macchina raccoglie sia il circuito del volano sia
+        # quello del serpentino ACS. Non sullo stesso bocchello: le due
+        # tubazioni si uniscono prima, e cio' che le unisce e' questo pezzo
+        # (D-100). Non si smonta in esercizio, quindi non chiede valvole.
+        "tee-junction",
+        "Raccordo a T",
+        ["junction"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("in_1", "in"),
+            hydronic_port("in_2", "in"),
+            hydronic_port("out", "out"),
         ],
     ),
     definition(
@@ -143,7 +160,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("primary_in", "in"),
             hydronic_port("primary_out", "out"),
             hydronic_port("secondary_out", "out"),
-            hydronic_port("secondary_in", "in", max_connections=2),
+            hydronic_port("secondary_in", "in"),
         ],
         stored_medium=HEATING,
     ),
@@ -248,6 +265,11 @@ COMPONENTS = [
     ("manifold", "zone-manifold", "COL-01"),
     ("radiators", "radiator", "RAD-01"),
     ("underfloor", "underfloor-panel", "PAV-01"),
+    # I due punti in cui due tubazioni diventano una: il ritorno al generatore,
+    # dove rientrano il volano e il serpentino, e il ritorno al volano, dove
+    # rientrano le due zone. Erano due attacchi con due tubazioni ciascuno.
+    ("tee-return-generator", "tee-junction", None),
+    ("tee-return-buffer", "tee-junction", None),
 ]
 
 PROPERTIES: dict[str, dict[str, Any]] = {
@@ -274,16 +296,20 @@ CONNECTIONS = [
     connection("p2", "primary", ("dv", "out_a"), ("strainer", "a")),
     connection("p3", "primary", ("strainer", "b"), ("buffer", "primary_in")),
     connection("p4", "primary", ("buffer", "primary_out"), ("shutoff", "a")),
-    connection("p5", "primary", ("shutoff", "b"), ("hp", "water_return")),
+    # I due ritorni — volano e serpentino — si uniscono nel raccordo, e dal
+    # raccordo riparte una tubazione sola verso il generatore.
+    connection("p5", "primary", ("shutoff", "b"), ("tee-return-generator", "in_1")),
     connection("p6", "primary", ("dv", "out_b"), ("cylinder", "coil_in")),
-    connection("p7", "primary", ("cylinder", "coil_out"), ("hp", "water_return")),
+    connection("p7", "primary", ("cylinder", "coil_out"), ("tee-return-generator", "in_2")),
+    connection("p8", "primary", ("tee-return-generator", "out"), ("hp", "water_return")),
     # Secondario: circolatore dedicato, collettore a due zone, terminali misti.
     connection("s1", "secondary", ("buffer", "secondary_out"), ("pump-secondary", "a")),
     connection("s2", "secondary", ("pump-secondary", "b"), ("manifold", "in")),
     connection("s3", "secondary", ("manifold", "out_1"), ("radiators", "in")),
     connection("s4", "secondary", ("manifold", "out_2"), ("underfloor", "in")),
-    connection("s5", "secondary", ("radiators", "out"), ("buffer", "secondary_in")),
-    connection("s6", "secondary", ("underfloor", "out"), ("buffer", "secondary_in")),
+    connection("s5", "secondary", ("radiators", "out"), ("tee-return-buffer", "in_1")),
+    connection("s6", "secondary", ("underfloor", "out"), ("tee-return-buffer", "in_2")),
+    connection("s7", "secondary", ("tee-return-buffer", "out"), ("buffer", "secondary_in")),
 ]
 
 SUBSYSTEMS = [
@@ -296,7 +322,14 @@ SUBSYSTEMS = [
     {
         "id": "storage",
         "name": "Accumuli e primario",
-        "component_ids": ["strainer", "buffer", "cylinder", "shutoff"],
+        "component_ids": [
+            "strainer",
+            "buffer",
+            "cylinder",
+            "shutoff",
+            "tee-return-generator",
+            "tee-return-buffer",
+        ],
         "network_ids": ["primary"],
     },
     {

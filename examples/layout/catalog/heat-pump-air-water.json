@@ -21,16 +21,14 @@
       "domain": "hydronic",
       "medium": "heating_water",
       "flow": "out",
-      "required": true,
-      "max_connections": 1
+      "required": true
     },
     {
       "id": "water_return",
       "domain": "hydronic",
       "medium": "heating_water",
       "flow": "in",
-      "required": true,
-      "max_connections": 2
+      "required": true
     }
   ],
   "sources": [

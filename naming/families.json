@@ -139,6 +139,11 @@
       "name": "Termometro"
     },
     {
+      "function": "junction",
+      "prefix": "RC",
+      "name": "Raccordo"
+    },
+    {
       "function": "boundary",
       "prefix": "AL",
       "name": "Allacciamento",

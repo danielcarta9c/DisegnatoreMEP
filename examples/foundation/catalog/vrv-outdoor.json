@@ -17,16 +17,14 @@
       "domain": "refrigerant",
       "medium": "refrigerant_liquid",
       "flow": "out",
-      "required": true,
-      "max_connections": 1
+      "required": true
     },
     {
       "id": "gas_in",
       "domain": "refrigerant",
       "medium": "refrigerant_gas",
       "flow": "in",
-      "required": true,
-      "max_connections": 1
+      "required": true
     }
   ],
   "sources": [

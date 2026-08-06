@@ -29,7 +29,9 @@
         "cylinder",
         "shutoff",
         "mains",
-        "draw-off"
+        "draw-off",
+        "tee-return-generator",
+        "tee-return-buffer"
       ],
       "network_ids": [
         "primary",
@@ -162,6 +164,16 @@
       "id": "draw-off",
       "definition_id": "dhw-draw-off",
       "tag": "ACS-01"
+    },
+    {
+      "id": "tee-return-generator",
+      "definition_id": "tee-junction",
+      "properties": {}
+    },
+    {
+      "id": "tee-return-buffer",
+      "definition_id": "tee-junction",
+      "properties": {}
     }
   ],
   "connections": [
@@ -225,8 +237,8 @@
         "port_id": "b"
       },
       "endpoint_b": {
-        "component_id": "hp",
-        "port_id": "water_return"
+        "component_id": "tee-return-generator",
+        "port_id": "in_1"
       },
       "properties": {}
     },
@@ -251,8 +263,8 @@
         "port_id": "coil_out"
       },
       "endpoint_b": {
-        "component_id": "hp",
-        "port_id": "water_return"
+        "component_id": "tee-return-generator",
+        "port_id": "in_2"
       },
       "properties": {}
     },
@@ -316,8 +328,8 @@
         "port_id": "out"
       },
       "endpoint_b": {
-        "component_id": "buffer",
-        "port_id": "secondary_in"
+        "component_id": "tee-return-buffer",
+        "port_id": "in_1"
       },
       "properties": {}
     },
@@ -329,8 +341,8 @@
         "port_id": "out"
       },
       "endpoint_b": {
-        "component_id": "buffer",
-        "port_id": "secondary_in"
+        "component_id": "tee-return-buffer",
+        "port_id": "in_2"
       },
       "properties": {}
     },
@@ -357,6 +369,32 @@
         "component_id": "draw-off",
         "port_id": "a"
       }
+    },
+    {
+      "id": "p8",
+      "network_id": "primary",
+      "endpoint_a": {
+        "component_id": "tee-return-generator",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "hp",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s7",
+      "network_id": "secondary",
+      "endpoint_a": {
+        "component_id": "tee-return-buffer",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "buffer",
+        "port_id": "secondary_in"
+      },
+      "properties": {}
     }
   ],
   "assumptions": [],

@@ -1,29 +1,36 @@
 {
-  "id": "valve-isolation",
+  "id": "tee-junction",
   "version": "1.0.0",
-  "name": "Valvola di intercettazione",
+  "name": "Raccordo a T",
   "functions": [
-    "isolation"
+    "junction"
   ],
   "traits": [
     "shutoff_ordinary",
     "attachment_inline"
   ],
-  "symbol_id": "valve-isolation",
+  "symbol_id": "tee-junction",
   "composite": false,
   "ports": [
     {
-      "id": "a",
+      "id": "in_1",
       "domain": "hydronic",
       "medium": "heating_water",
-      "flow": "bidirectional",
+      "flow": "in",
       "required": true
     },
     {
-      "id": "b",
+      "id": "in_2",
       "domain": "hydronic",
       "medium": "heating_water",
-      "flow": "bidirectional",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "out",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
       "required": true
     }
   ],
