@@ -21,6 +21,37 @@
 | SRC-013 | **UNI 10412-1:2006** «Impianti di riscaldamento ad acqua calda — Requisiti di sicurezza — Parte 1: generatori alimentati da combustibili liquidi, gassosi, solidi polverizzati o **generatori di calore elettrici**» | Coprirebbe il caso di accettazione D-011, che è a **pompa di calore** e che la Raccolta R esclude | **Non acquistata, e non blocca.** Le regole di sicurezza per la pompa di calore restano su buona pratica documentata e manuali di prodotto, dichiarati come livello 2-3. Resta registrata qui come acquisto possibile, non come prerequisito |
 | SRC-014 | **UNI 8065:2019** «Trattamento dell'acqua negli impianti termici ad uso civile», tramite guide di settore: [Guida Aqua Italia](https://www.atlasfiltriengineering.com/sites/default/files/news/files/Giuda%20Aqua%20Italia_UNI.8065.19_0.pdf) | Filtro di sicurezza, filtro dissabbiatore, condizionamento chimico, soglie di addolcimento. La norma è a pagamento; le guide ne riportano le prescrizioni con soglie puntuali | Guide **consultate il 4 agosto 2026**. Fonte **secondaria**: le regole che ne derivano citano la guida, non la norma |
 
+## Cosa dicono i cataloghi dei produttori sugli attacchi, letto il 6 agosto 2026
+
+Acquisite per rispondere a una domanda che era stata girata al PM e che invece aveva
+risposta nei cataloghi: **quali attacchi ha davvero un accumulo, oltre a quelli del flusso
+principale.** Il PM: «sono tutte domande che se cerchi nella tua memoria o cerchi in
+cataloghi di produttori trovi tutto; io potrei sbagliare».
+
+| ID | Fonte | Cosa dice | Stato |
+|---|---|---|---|
+| SRC-017 | [Cordivari — scheda tecnica PUFFER, termoaccumulatore per acqua di riscaldamento, 200÷5000 l](https://www.cordivari.it/wp-content/uploads/2023/10/IT-Cordivari_TEC-Scheda-PUFFER_06.2024.pdf) | Legenda degli attacchi: **A** mandata riscaldamento/dal generatore, **B** connessione per strumentazione G½" F, **C** ritorno riscaldamento/al generatore, **I** connessione per integrazione elettrica, **O** scarico *solo* per i modelli 3000 e 5000. Le A e le C sono **piu' di quattro** e stanno a quote diverse: si sceglie quali usare | Acquisita e letta il 6 agosto 2026 |
+| SRC-018 | [Rehau — manuale accumuli e bollitori](https://www.rehau.com/downloads/495810/manuale-accumuli-bollitori.pdf), 44 pagine | Tre legende complete. **T-Puffer** (acqua tecnica): 1 sfiato · 2 mandata caldaia · 3 mandata riscaldamento · 4 ritorno caldaia-riscaldamento · 5 resistenza elettrica · 6 termometro · 7 sonda · 8 scarico. **ACS Puffer** (bollitore a serpentino): 1 e 11 mandata acqua calda · 2 anodo · 3 termometro-sonda · 4 resistenza elettrica · 5 attacco bancale cieco · 6 entrata acqua fredda · 7 ritorno serpentino · 8 sonda · 9 **ricircolo** · 10 mandata serpentino. **Taddy** (accumulo con serpentino sanitario): sfiato, mandate e ritorni di caldaia, riscaldamento, solare e ausiliaria, termometro, sonda, resistenza. Le istruzioni d'installazione di **ogni** bollitore prescrivono che l'installazione preveda valvola di sicurezza e vaso di espansione: non sono attacchi del serbatoio | Acquisita e letta il 6 agosto 2026 |
+
+**Le tre cose che ne discendono, e che nessuno di noi due aveva esatte.**
+
+- **Il volano ha sfiato, scarico e attacchi per la strumentazione**, e li dichiara in
+  legenda: il PM aveva ragione su sonde, sfiato e scarico. Cordivari il drenaggio lo mette
+  solo sui modelli grandissimi, Rehau su tutti — quindi e' un fatto del modello, non della
+  famiglia, ed e' giusto che lo dichiari la voce di catalogo.
+- **Nessuno dei due dichiara un attacco per il vaso di espansione o per la ricarica.** La
+  domanda che avevo girato al PM — «ci metto anche l'attacco del vaso?» — ha risposta no:
+  vaso e riempimento stanno **sulla tubazione**, con una derivazione.
+- **Il bollitore non ha lo scarico**, e non ha ne' l'attacco della sicurezza ne' quello del
+  vaso: il manuale dice a chiare lettere che li deve prevedere l'installazione. Ha invece
+  il **ricircolo**, che il nostro catalogo non contempla. Svuotare un bollitore si fa
+  dall'ingresso dell'acqua fredda, con una derivazione — non da un bocchello dedicato.
+
+Ne discende la regola generale, che vale per qualunque macchina: **l'accessorio va
+sull'attacco dedicato quando la macchina ce l'ha, e su una derivazione della tubazione
+quando non ce l'ha.** Tutti e due i casi sono reali e documentati, e quale dei due si
+applichi lo dice il catalogo, non il programma.
+
 ## Cosa dicono le tavole di SRC-016, letto il 5 agosto 2026
 
 Quattro cose utili subito, che nessun'altra fonte del registro dava con questa precisione.
