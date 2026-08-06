@@ -1,6 +1,6 @@
 {
   "id": "let-what-holds-its-own-volume-empty",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Attacco di scarico",
   "category": "recommended",
   "cardinality": "per_component",
@@ -19,5 +19,11 @@
     "scope": "on_the_attachment"
   },
   "rationale": "Chi tiene una riserva d'acqua propria la deve poter svuotare da solo, senza scaricare l'impianto intero: un tratto di tubo si svuota con la tratta a cui appartiene, un serbatoio no. Lo scarico va sulla tubazione che porta **il fluido tenuto in serbo**, non su un circuito che attraversa il serbatoio scambiando calore: uno scarico su quello svuoterebbe l'altro circuito e lascerebbe la riserva piena. E sta dal lato del serbatoio rispetto all'organo che lo chiude, altrimenti a organo chiuso svuoterebbe la tratta di la'.",
-  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)"
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)",
+  "ordering": {
+    "before": [
+      "isolation",
+      "isolation_locked_open"
+    ]
+  }
 }

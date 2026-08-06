@@ -1,6 +1,6 @@
 {
   "id": "gauge-where-the-plant-is-charged",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Manometro",
   "category": "necessary",
   "cardinality": "per_network",
@@ -19,5 +19,12 @@
     "scope": "on_the_network"
   },
   "rationale": "La pressione di un circuito chiuso e' la spia della sua salute: se cala, perde; se sale, il vaso non lavora. Va letta sul posto, e ne basta un punto per circuito perche' la pressione e' la stessa dappertutto. Sta sulla tubazione che rientra nella macchina, accanto al punto in cui il circuito si riempie, cosi' chi reintegra legge mentre carica.",
-  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)"
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)",
+  "ordering": {
+    "after": [
+      "isolation",
+      "isolation_locked_open",
+      "filling"
+    ]
+  }
 }

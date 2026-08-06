@@ -16,6 +16,7 @@ modello completo, ed e' anche il motivo per cui rieseguire le regole su di essa
 non proponeva zero.
 """
 
+from disegnatore_mep.assembly import assemble
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.model.project import (
     ComponentInstance,
@@ -305,6 +306,15 @@ def saturate(
     non si risolvono applicando niente, e un accessorio che il catalogo non ha
     resta mancante anche alla passata dopo.
     """
+    def assembled(model: ProjectModel) -> ProjectModel:
+        """La fila ordinata, prima di consegnare il modello a chiunque.
+
+        Completare dice **cosa** manca; assemblare dice **in che ordine** sta
+        sul tubo (D-093). Senza questo passo l'ordine e' quello in cui le regole
+        sono state valutate, cioe' l'ordine alfabetico dei loro file.
+        """
+        return assemble(model, catalog, {item.id: item for item in rules.all()})
+
     current = project
     applied: list[RuleProposal] = []
     gaps: dict[tuple[str, str, str, str], RuleGap] = {}
@@ -313,14 +323,16 @@ def saturate(
         for gap in found.gaps:
             gaps.setdefault(gap.key, gap)
         if found.is_empty:
-            return current, applied, list(gaps.values())
-        current = apply_proposals(current, found.proposals, catalog)
+            return assembled(current), applied, list(gaps.values())
+        # Si assembla **dentro** il ciclo: rimettere in fila puo' scoprire un
+        # attacco che era coperto solo perche' un pezzo stava dove non doveva.
+        current = assembled(apply_proposals(current, found.proposals, catalog))
         applied.extend(found.proposals)
         found = evaluate(current, catalog, rules)
     for gap in found.gaps:
         gaps.setdefault(gap.key, gap)
     if found.is_empty:
-        return current, applied, list(gaps.values())
+        return assembled(current), applied, list(gaps.values())
     # `found` e' la valutazione che ha ancora qualcosa da proporre: il messaggio
     # nomina quelle regole, e non puo' uscire vuoto.
     asking = sorted({item.rule_id for item in found.proposals})

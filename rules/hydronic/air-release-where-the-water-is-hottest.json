@@ -1,6 +1,6 @@
 {
   "id": "air-release-where-the-water-is-hottest",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Separatore d'aria",
   "category": "recommended",
   "cardinality": "per_component",
@@ -18,5 +18,6 @@
     "scope": "on_the_attachment"
   },
   "rationale": "L'acqua libera l'aria che tiene disciolta quando si scalda, e la libera dove e' piu' calda. Il separatore va quindi sulla tubazione che esce da chi la scalda: li' le bollicine ci sono gia' e si lasciano raccogliere, mentre piu' a valle sono gia' andate a fermarsi nei punti alti dei circuiti, dove nessuno le toglie.",
-  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)"
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)",
+  "ordering": {}
 }

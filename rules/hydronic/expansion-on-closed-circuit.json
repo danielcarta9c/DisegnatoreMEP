@@ -1,6 +1,6 @@
 {
   "id": "expansion-on-closed-circuit",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "name": "Vaso di espansione",
   "category": "necessary",
   "cardinality": "per_network",
@@ -18,5 +18,10 @@
     "scope": "on_the_network"
   },
   "rationale": "L'acqua scaldata aumenta di volume, e in un volume chiuso quell'aumento diventa pressione. Il vaso e' lo spazio che quel volume in piu' trova invece della rottura, e ne basta uno per circuito perche' la pressione e' la stessa dappertutto. Sta sulla tubazione che entra, che e' il punto piu' freddo: la membrana dura di piu' dove l'acqua e' meno calda.",
-  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)"
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)",
+  "ordering": {
+    "after": [
+      "isolation_locked_open"
+    ]
+  }
 }

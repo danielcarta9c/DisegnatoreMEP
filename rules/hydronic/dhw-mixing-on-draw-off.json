@@ -1,6 +1,6 @@
 {
   "id": "dhw-mixing-on-draw-off",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "name": "Valvola miscelatrice termostatica",
   "category": "necessary",
   "cardinality": "per_network",
@@ -19,5 +19,11 @@
     "scope": "on_the_network"
   },
   "rationale": "Una riserva d'acqua calda si tiene a temperatura alta per non far proliferare la legionella, ma a quella temperatura scotta. La miscelatrice sta sulla tubazione che esce verso le utenze, subito dopo la riserva: cosi' l'accumulo resta caldo e cio' che arriva ai rubinetti e' a temperatura di utilizzo.",
-  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)"
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)",
+  "ordering": {
+    "after": [
+      "isolation",
+      "isolation_locked_open"
+    ]
+  }
 }

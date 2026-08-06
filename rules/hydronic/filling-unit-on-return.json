@@ -1,6 +1,6 @@
 {
   "id": "filling-unit-on-return",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "name": "Gruppo di riempimento",
   "category": "necessary",
   "cardinality": "per_network",
@@ -19,5 +19,11 @@
     "scope": "on_the_network"
   },
   "rationale": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo sta sulla tubazione che rientra nella macchina, cioe' nel punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo.",
-  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)"
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)",
+  "ordering": {
+    "after": [
+      "isolation",
+      "isolation_locked_open"
+    ]
+  }
 }

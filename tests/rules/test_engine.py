@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from disegnatore_mep.assembly import assemble
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.canonical import canonical_json
@@ -90,7 +91,13 @@ def test_completing_takes_more_than_one_pass_and_then_stops() -> None:
         found = evaluate(current, catalog(), rules())
         if found.is_empty:
             break
-        current = apply_proposals(current, found.proposals, catalog())
+        # Come fa la catena: applicare e **rimettere in fila**, perche'
+        # riordinare puo' scoprire un attacco che era coperto per caso.
+        current = assemble(
+            apply_proposals(current, found.proposals, catalog()),
+            catalog(),
+            {item.id: item for item in rules().all()},
+        )
         passes += 1
     assert passes > 1
     completed, applied, _ = saturate(project, catalog(), rules())
@@ -158,7 +165,13 @@ def test_the_limit_counts_productive_passes_and_not_the_one_that_finds_nothing(
         found = evaluate(current, catalog(), rules())
         if found.is_empty:
             break
-        current = apply_proposals(current, found.proposals, catalog())
+        # Come fa la catena: applicare e **rimettere in fila**, perche'
+        # riordinare puo' scoprire un attacco che era coperto per caso.
+        current = assemble(
+            apply_proposals(current, found.proposals, catalog()),
+            catalog(),
+            {item.id: item for item in rules().all()},
+        )
         productive += 1
 
     monkeypatch.setattr(apply_module, "ROUNDS", productive)

@@ -185,6 +185,47 @@ class RuleProposalTemplate(StrictModel):
         return self
 
 
+class Ordering(StrictModel):
+    """Dove sta il pezzo nella fila, detto come **ragione** e mai come numero.
+
+    E' cio' che l'assemblatore risolve (D-093, D-094). La tentazione era dare a
+    ogni accessorio un numero d'ordine: sarebbe stato di nuovo un ordine
+    arbitrario, come lo era l'ordine alfabetico dei nomi delle regole. Invece
+    ogni regola dichiara **rispetto a quali mestieri** il proprio pezzo viene
+    prima o dopo, e la fila la calcola il programma.
+
+    «Prima» e «dopo» si contano **camminando dalla macchina verso l'impianto**:
+    e' il verso in cui un termotecnico legge una centrale, e l'unico rispetto a
+    cui frasi come «io sto lato impianto» significano qualcosa.
+
+    Si nominano **mestieri**, mai pezzi (D-069): «prima di tutto cio' che
+    chiude» vale su qualunque valvola, anche su una che entrera' in catalogo
+    domani.
+    """
+
+    against_the_anchor: bool = False
+    """Sto **attaccato alla macchina**: fra me e lei non ci va nessun altro pezzo.
+
+    E' il vincolo piu' forte, e ce l'ha chi lo pretende per sicurezza. Una
+    valvola di sicurezza si collega alla parte alta del generatore o alla
+    tubazione di uscita nelle immediate vicinanze, e la tubazione che la collega
+    non deve essere intercettabile: non basta dire «prima di cio' che chiude»,
+    perche' anche un separatore d'aria fra lei e la macchina e' un pezzo di
+    troppo. Fonte: Raccolta R, cap. R.3.B.2 (SRC-012)."""
+
+    before: list[str] = Field(default_factory=list)
+    """I mestieri che devono venire **dopo** di me, andando verso l'impianto.
+
+    La valvola di sicurezza dichiara qui gli organi di chiusura: fra lei e la
+    macchina non ci va nulla che si possa chiudere."""
+
+    after: list[str] = Field(default_factory=list)
+    """I mestieri che devono venire **prima** di me, andando verso l'impianto.
+
+    Il defangatore dichiara qui l'intercettazione: sta lato impianto rispetto
+    alla valvola, cosi' lo si pulisce a macchina isolata."""
+
+
 class SatisfactionScope(StrEnum):
     """Dove si guarda per sapere che cio' che la regola propone c'e' gia'.
 
@@ -221,6 +262,10 @@ class RuleDefinition(StrictModel):
     when: RuleCondition
     then: RuleProposalTemplate
     satisfied_by: SatisfactionCriterion
+    ordering: Ordering = Field(default_factory=Ordering)
+    """Dove sta il pezzo nella fila. Vuoto vuol dire «dove capita»: legittimo per
+    chi non ha vincoli, e l'assemblatore lo mette dove non disturba."""
+
     rationale: str = Field(min_length=1)
     """Il perche' impiantistico, e **in che punto della catena** l'accessorio va
     e perche' proprio li'. Non «l'esempio faceva cosi'», e niente che riguardi
@@ -233,6 +278,7 @@ class RuleDefinition(StrictModel):
 
 __all__ = [
     "Placement",
+    "Ordering",
     "RuleCardinality",
     "RuleCondition",
     "RuleDefinition",

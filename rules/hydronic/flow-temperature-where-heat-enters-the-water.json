@@ -1,6 +1,6 @@
 {
   "id": "flow-temperature-where-heat-enters-the-water",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Termometro",
   "category": "necessary",
   "cardinality": "per_component",
@@ -18,5 +18,11 @@
     "scope": "on_the_attachment"
   },
   "rationale": "La temperatura con cui l'acqua parte e' il primo dato che si guarda per sapere se l'impianto sta lavorando come deve, e va letto sul posto senza smontare niente. Il termometro sta sulla tubazione che esce da dove il calore entra nell'acqua: piu' a valle si legge una temperatura gia' mescolata con i ritorni, che e' un altro numero.",
-  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)"
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)",
+  "ordering": {
+    "before": [
+      "isolation",
+      "isolation_locked_open"
+    ]
+  }
 }
