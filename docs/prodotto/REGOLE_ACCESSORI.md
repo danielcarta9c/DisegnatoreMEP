@@ -390,7 +390,12 @@ manca una, ce la dici e la scriviamo con lo stesso stampo: perché esiste, dove 
 volte, come si riconosce che c'è già.
 
 **Queste schede dicono il perché. Che cosa sia effettivamente uscito lo mostra l'altro
-documento, *L'albero dell'impianto*:** l'impianto completo scritto pezzo per pezzo, con una
-sigla per ciascuno, il fluido di ogni tubazione e la fila di ciò che ci sta sopra. Le due
-letture servono insieme — qui si giudica la regola, lì si controlla il risultato. Se una
-regola è giusta e il pezzo è finito nel posto sbagliato, si vede solo di là.
+documento, *Il grafo dell'impianto*:** l'impianto completo letto come una rete di punti, con
+una sigla per ciascuno, il fluido di ogni tubazione, gli incroci, e la passeggiata che parte
+dalle sorgenti e segue l'acqua fino a dove il circuito si richiude. Le due letture servono
+insieme — qui si giudica la regola, lì si controlla il risultato. Se una regola è giusta e
+il pezzo è finito nel posto sbagliato, si vede solo di là.
+
+Una cosa che il grafo non dà ancora: **l'ordine esatto dei pezzi lungo un tubo**. Oggi
+mostra che ci sono e a che cosa sono attaccati; metterli in fila nel giusto ordine è il
+prossimo pezzo che costruiamo.

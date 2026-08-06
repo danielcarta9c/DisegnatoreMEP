@@ -71,21 +71,36 @@ def definition(
     traits: list[str],
     ports: list[dict[str, Any]],
     symbol_id: str | None = None,
+    stored_medium: str | None = None,
 ) -> dict[str, Any]:
     """Una voce di catalogo. `traits` non ha default **per scelta**: un
     componente che non dichiara come si isola non deve poter nascere da qui piu'
-    di quanto possa nascere da un file scritto a mano (P1)."""
-    return {
+    di quanto possa nascere da un file scritto a mano (P1).
+
+    `stored_medium` e' obbligatorio per chi dichiara di tenere un volume
+    proprio: dire quale acqua tiene in serbo e' cio' che distingue lo scarico
+    del serbatoio dallo scarico del circuito che lo attraversa. Il generatore lo
+    deve scrivere, altrimenti rigenerare il catalogo lo cancella e la catena non
+    carica piu' — ed e' successo davvero.
+    """
+    entry: dict[str, Any] = {
         "id": definition_id,
         "version": VERSION,
         "name": name,
         "functions": functions,
         "traits": traits,
-        "symbol_id": symbol_id or definition_id,
-        "composite": False,
-        "ports": ports,
-        "sources": [SOURCE],
     }
+    if stored_medium is not None:
+        entry["stored_medium"] = stored_medium
+    entry.update(
+        {
+            "symbol_id": symbol_id or definition_id,
+            "composite": False,
+            "ports": ports,
+            "sources": [SOURCE],
+        }
+    )
+    return entry
 
 
 DEFINITIONS: list[dict[str, Any]] = [
@@ -130,6 +145,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("secondary_out", "out"),
             hydronic_port("secondary_in", "in", max_connections=2),
         ],
+        stored_medium=HEATING,
     ),
     definition(
         "dhw-cylinder",
@@ -150,6 +166,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("dhw_out", "out", DHW, required=False),
             hydronic_port("cold_in", "in", COLD, required=False),
         ],
+        stored_medium=DHW,
     ),
     definition(
         "pump-circulator",
