@@ -22,3 +22,6 @@ node_modules/
 # .claude/settings.json invece e' versionato: dichiara il plugin necessario
 # perche' una sessione cloud lo installi all'avvio.
 .claude/settings.local.json
+
+# Worktree temporanei degli agenti
+.claude/worktrees/
