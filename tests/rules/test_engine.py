@@ -12,7 +12,7 @@ from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.types import IntegrationCategory
-from disegnatore_mep.rules.apply import apply_proposals
+from disegnatore_mep.rules.apply import apply_proposals, saturate
 from disegnatore_mep.rules.engine import evaluate
 from disegnatore_mep.rules.proposal import RuleProposal
 from disegnatore_mep.rules.registry import RuleRegistry
@@ -52,20 +52,46 @@ def test_the_engine_proposes_the_missing_accessories() -> None:
 
 def test_a_rule_proposes_once_per_declared_cardinality() -> None:
     """Il difetto trovato prototipando: la pompa di calore ha due ritorni, e il
-    vaso di espansione usciva due volte."""
+    vaso di espansione usciva due volte.
+
+    «Una per rete» vuol dire una per rete, non una in tutto: un impianto con un
+    circuito di riscaldamento e uno sanitario vuole due vasi, uno per circuito,
+    e ciascuno esce una volta sola."""
     vessels = [
         item
         for item in proposals()
         if item.rule_id == "expansion-on-closed-circuit"
     ]
-    assert len(vessels) == 1, vessels
+    assert len(vessels) == len({item.network_id for item in vessels}), vessels
 
 
 def test_the_engine_is_idempotent() -> None:
     """Rieseguire su un modello gia' completato non ripropone nulla."""
     project = load_project(ESSENTIAL)
-    completed = apply_proposals(project, evaluate(project, catalog(), rules()))
+    completed, _ = saturate(project, catalog(), rules())
     assert evaluate(completed, catalog(), rules()) == []
+
+
+def test_completing_takes_more_than_one_pass_and_then_stops() -> None:
+    """Le regole valgono anche su cio' che le regole aggiungono (D-090).
+
+    Un accessorio proposto e' a sua volta un pezzo che si smonta in esercizio, e
+    vuole i propri organi di chiusura: una passata sola lascerebbe scoperto
+    proprio cio' che ha appena aggiunto. Il ciclo si spegne perche' un organo di
+    chiusura non chiede a sua volta di essere intercettato."""
+    project = load_project(ESSENTIAL)
+    passes = 0
+    current = project
+    while True:
+        found = evaluate(current, catalog(), rules())
+        if not found:
+            break
+        current = apply_proposals(current, found)
+        passes += 1
+    assert passes > 1
+    completed, applied = saturate(project, catalog(), rules())
+    assert canonical_json(completed) == canonical_json(current)
+    assert len(applied) > len(evaluate(project, catalog(), rules()))
 
 
 def test_the_engine_does_not_touch_the_model() -> None:

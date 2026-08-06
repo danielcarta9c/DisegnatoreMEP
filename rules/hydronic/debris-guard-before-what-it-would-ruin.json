@@ -1,0 +1,22 @@
+{
+  "id": "debris-guard-before-what-it-would-ruin",
+  "version": "1.0.0",
+  "name": "Filtro a Y",
+  "category": "recommended",
+  "cardinality": "per_component",
+  "when": {
+    "network_domain": "hydronic",
+    "anchor_has_trait": "needs_debris_protection"
+  },
+  "then": {
+    "provides_function": "filtration",
+    "placement": "on_inlet",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "scope": "on_the_attachment"
+  },
+  "rationale": "Trucioli, sabbia e residui di montaggio restano in circolo per tutta la vita dell'impianto e rovinano gli organi in movimento e gli scambiatori stretti. Il filtro sta sulla tubazione che **entra** in cio' che quei residui rovinerebbero: a valle non protegge piu' niente, perche' il danno e' gia' avvenuto.",
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)"
+}

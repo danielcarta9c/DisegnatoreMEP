@@ -2,16 +2,25 @@
 
 E' qui che il vincolo «una regola non puo' nominare un componente» smette di
 essere un'intenzione e diventa una proprieta': chi valuta una condizione riceve
-questo oggetto, che risponde per **funzione**, per dominio e per fluido, e non
-espone il modello. Gli identificativi escono solo dalla parte che costruisce la
-proposta, che deve pur dire su cosa si ancora.
+questo oggetto, che risponde per **proprieta' dichiarata** (P1), per funzione,
+per dominio e per fluido, e non espone il modello. Gli identificativi escono
+solo dalla parte che costruisce la proposta, che deve pur dire su cosa si
+ancora.
+
+Le proprieta' sono la novita' di P2, e sono il motivo per cui P1 veniva prima:
+«tutto cio' che si smonta in esercizio» non e' una domanda che si possa fare a
+un indice di funzioni.
 """
 
 from collections import defaultdict
 from dataclasses import dataclass, field
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import PortDefinition
+from disegnatore_mep.catalog.schema import (
+    SHUTOFF_REGIMES,
+    ComponentTrait,
+    PortDefinition,
+)
 from disegnatore_mep.model.project import ConnectionModel, PortRef, ProjectModel
 
 
@@ -21,6 +30,9 @@ class RuleContext:
 
     functions: dict[str, frozenset[str]]
     """Funzioni di catalogo di ciascun componente."""
+
+    traits: dict[str, frozenset[ComponentTrait]]
+    """Le proprieta' che ciascun componente dichiara di se' (P1)."""
 
     ports: dict[str, tuple[PortDefinition, ...]]
     networks_of: dict[str, frozenset[str]]
@@ -39,11 +51,13 @@ class RuleContext:
     @classmethod
     def build(cls, project: ProjectModel, catalog: ComponentRegistry) -> "RuleContext":
         functions: dict[str, frozenset[str]] = {}
+        traits: dict[str, frozenset[ComponentTrait]] = {}
         ports: dict[str, tuple[PortDefinition, ...]] = {}
         inline: set[str] = set()
         for component in project.components:
             resolved = catalog.resolve(component.definition_id)
             functions[component.id] = frozenset(resolved.definition.functions)
+            traits[component.id] = resolved.definition.trait_set
             ports[component.id] = tuple(resolved.definition.ports)
             if resolved.is_inline:
                 inline.add(component.id)
@@ -62,6 +76,7 @@ class RuleContext:
 
         return cls(
             functions=functions,
+            traits=traits,
             ports=ports,
             networks_of={key: frozenset(value) for key, value in touched.items()},
             connection_of_port=connection_of_port,
@@ -84,6 +99,33 @@ class RuleContext:
             for component_id in self.members.get(network_id, ())
             if function in self.functions.get(component_id, frozenset())
         )
+
+    def anchors_of(
+        self, network_id: str, function: str | None, trait: ComponentTrait | None
+    ) -> tuple[str, ...]:
+        """I componenti della rete che l'ancoraggio di una regola descrive.
+
+        Proprieta' e funzione si sommano quando ci sono entrambe: la regola le
+        ha dichiarate tutte e due perche' le vuole tutte e due.
+        """
+        return tuple(
+            component_id
+            for component_id in self.members.get(network_id, ())
+            if (function is None or function in self.functions.get(component_id, frozenset()))
+            and (trait is None or trait in self.traits.get(component_id, frozenset()))
+        )
+
+    def shutoff_regime_of(self, component_id: str) -> ComponentTrait:
+        """Come quel componente si lascia chiudere.
+
+        Esiste sempre per chi sta in catalogo: lo garantisce la validazione di
+        P1. Un componente che il catalogo non conosce non arriva fin qui,
+        perche' costruire questa vista lo avrebbe gia' fatto fallire.
+        """
+        return next(iter(self.traits[component_id] & SHUTOFF_REGIMES))
+
+    def has_trait(self, component_id: str, trait: ComponentTrait) -> bool:
+        return trait in self.traits.get(component_id, frozenset())
 
     def port_carries(self, ref: PortRef, function: str) -> bool:
         """Un accessorio con quella funzione e' gia' sulla tubazione di questo attacco.

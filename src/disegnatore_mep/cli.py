@@ -16,8 +16,7 @@ from disegnatore_mep.layout.compose import compose_on_ordinary_frame
 from disegnatore_mep.layout.geometry import drawing_fingerprint
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import IssueSeverity
-from disegnatore_mep.rules.apply import apply_proposals
-from disegnatore_mep.rules.engine import evaluate
+from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.errors import RuleError
 from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.rules.report import CATEGORY_LABELS, build_report
@@ -90,7 +89,10 @@ def _rules(args: argparse.Namespace) -> int:
     registry = RuleRegistry.from_directory(args.rules)
     registry.cross_check(catalog)
 
-    proposals = evaluate(project, catalog, registry)
+    # Si valuta a saturazione anche solo per elencare: cio' che si vede e' cio'
+    # che si otterrebbe applicando. Una passata sola mostrerebbe gli accessori e
+    # non i loro organi di chiusura, che pure servono.
+    completed, proposals = saturate(project, catalog, registry)
     report = build_report(proposals)
     for category, label in CATEGORY_LABELS.items():
         entries = report.of(category)
@@ -109,7 +111,6 @@ def _rules(args: argparse.Namespace) -> int:
     if args.out is None:
         print("--apply-all richiede --out: il modello completato va scritto da qualche parte")
         return 1
-    completed = apply_proposals(project, proposals)
     verdict = validate_project(completed, catalog)
     if not verdict.ok:
         print(verdict.model_dump_json(indent=2))

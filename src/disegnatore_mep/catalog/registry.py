@@ -72,6 +72,45 @@ class ComponentRegistry:
     def all(self) -> tuple[ComponentDefinition, ...]:
         return tuple(self._definitions[key] for key in sorted(self._definitions))
 
+    def serving(self, function: str, medium: str) -> tuple[ComponentDefinition, ...]:
+        """Le voci che portano quella funzione su quel fluido, in ordine.
+
+        «Su quel fluido» vuol dire **tutte** le porte su quel fluido: un
+        accessorio si cala dentro una tubazione, e una voce con una porta su
+        un altro fluido non ci sta dentro — e' una macchina che li mette in
+        comunicazione, non un pezzo da infilare in una tratta.
+        """
+        return tuple(
+            definition
+            for definition in self.all()
+            if function in definition.functions
+            and all(port.medium == medium for port in definition.ports)
+        )
+
+    def providing(self, function: str, medium: str) -> ComponentDefinition:
+        """L'unica voce che porta quella funzione su quel fluido.
+
+        E' cio' che tiene **una** regola dove prima ce n'erano tre, una per
+        fluido: la regola dice quale funzione deve comparire, il catalogo dice
+        con quale pezzo si ottiene sull'acqua di riscaldamento, sulla fredda o
+        sulla sanitaria. Se le voci sono zero o piu' d'una la scelta sarebbe
+        del programma, e allora si ferma invece di sceglierne una.
+        """
+        found = self.serving(function, medium)
+        if not found:
+            raise CatalogError(
+                f"no catalogue definition provides {function!r} on {medium!r}: a "
+                f"rule that asks for it would have nothing to propose"
+            )
+        if len(found) > 1:
+            raise CatalogError(
+                f"{len(found)} catalogue definitions provide {function!r} on "
+                f"{medium!r} ({', '.join(item.id for item in found)}): which one "
+                f"a rule means would be the programme's choice, not the "
+                f"catalogue's"
+            )
+        return found[0]
+
     def resolve(self, definition_id: str) -> ResolvedComponent:
         """La definizione insieme alla propria geometria.
 

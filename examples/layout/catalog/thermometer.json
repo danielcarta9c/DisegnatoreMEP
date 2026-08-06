@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Termometro",
   "functions": [
-    "measurement"
+    "temperature_measurement"
   ],
   "traits": [
     "shutoff_ordinary",

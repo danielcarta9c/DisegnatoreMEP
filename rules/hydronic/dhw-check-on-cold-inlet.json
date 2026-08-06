@@ -1,23 +1,23 @@
 {
   "id": "dhw-check-on-cold-inlet",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Valvola di ritegno sanitaria",
   "category": "necessary",
   "cardinality": "per_network",
   "when": {
     "network_domain": "hydronic",
-    "anchor_has_function": "dhw_storage",
-    "network_medium": "cold_water"
+    "network_medium": "cold_water",
+    "anchor_has_trait": "needs_overpressure_protection"
   },
   "then": {
-    "definition_id": "valve-check-dhw",
+    "provides_function": "non_return",
     "placement": "on_inlet",
     "inlet_port": "a",
     "outlet_port": "b"
   },
   "satisfied_by": {
-    "network_has_function": "non_return"
+    "scope": "on_the_network"
   },
-  "rationale": "L'acqua calda non deve poter risalire nella rete di alimentazione fredda.",
+  "rationale": "Un volume d'acqua che si scalda spinge indietro verso la rete che lo alimenta, e l'acqua gia' scaldata non deve tornare nella rete dell'acqua potabile fredda. Il ritegno sta sull'alimentazione, cioe' sulla sola via da cui quel ritorno potrebbe avvenire; uno solo basta, perche' la via e' una.",
   "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)"
 }

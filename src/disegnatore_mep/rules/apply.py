@@ -7,8 +7,16 @@ rifiutare un'integrazione costa quanto non applicarla.
 Ogni applicazione lascia dietro un `RuleApplicationModel`, che e' il campo che
 D-039 aveva previsto in P0 e che finora nessun codice scriveva: da li' si risale
 a quale regola, in quale versione, ha aggiunto quale pezzo.
+
+**Le regole valgono anche su cio' che le regole aggiungono** (D-090). Un filtro
+proposto dalle regole e' a sua volta un pezzo che si smonta in esercizio, e vuole
+le proprie valvole come il pezzo che protegge: `saturate` ripete valutazione e
+applicazione finche' non resta niente da proporre. Una passata sola non e' un
+modello completo, ed e' anche il motivo per cui rieseguire le regole su di essa
+non proponeva zero.
 """
 
+from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.model.project import (
     ComponentInstance,
     ConnectionModel,
@@ -20,8 +28,17 @@ from disegnatore_mep.model.project import (
 )
 from disegnatore_mep.model.types import ApprovalStatus
 
+from .engine import evaluate
 from .errors import RuleError
 from .proposal import RuleProposal
+from .registry import RuleRegistry
+
+ROUNDS = 8
+"""Quante volte al massimo si ripete. Le passate vere sono due o tre — accessori,
+poi i loro organi di chiusura, poi niente — e un organo di chiusura non si
+smonta in esercizio, quindi la catena si spegne da sola. Il limite esiste per
+trasformare un ciclo infinito, se un giorno due regole si rincorressero, in un
+errore che le nomina."""
 
 
 def _connection_touching(project: ProjectModel, anchor: PortRef) -> ConnectionModel:
@@ -133,4 +150,31 @@ def apply_proposals(
     return current
 
 
-__all__ = ["apply_proposals"]
+def saturate(
+    project: ProjectModel, catalog: ComponentRegistry, rules: RuleRegistry
+) -> tuple[ProjectModel, list[RuleProposal]]:
+    """Il modello completo, e tutte le integrazioni che ci sono volute.
+
+    «Completo» ha un significato preciso: **rieseguire le regole non propone
+    piu' niente**. Ci vuole piu' di una passata perche' un accessorio proposto
+    e' a sua volta un pezzo dell'impianto, con le proprie esigenze — e' la forma
+    generale di D-090, ed e' cio' che permette alla regola dell'intercettazione
+    di valere anche sugli accessori invece che sulle sole macchine.
+    """
+    current = project
+    applied: list[RuleProposal] = []
+    for _ in range(ROUNDS):
+        found = evaluate(current, catalog, rules)
+        if not found:
+            return current, applied
+        current = apply_proposals(current, found)
+        applied.extend(found)
+    raise RuleError(
+        f"the rules kept proposing after {ROUNDS} rounds: the last round asked "
+        f"for {', '.join(sorted({item.rule_id for item in evaluate(current, catalog, rules)}))}. "
+        f"Two rules that undo each other would loop here instead of producing a "
+        f"model nobody can explain"
+    )
+
+
+__all__ = ["ROUNDS", "apply_proposals", "saturate"]

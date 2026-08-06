@@ -1,0 +1,22 @@
+{
+  "id": "boundary-shutoff-at-the-edge-of-the-plant",
+  "version": "1.0.0",
+  "name": "Valvola di intercettazione generale",
+  "category": "recommended",
+  "cardinality": "per_component",
+  "when": {
+    "network_domain": "hydronic",
+    "anchor_has_function": "boundary"
+  },
+  "then": {
+    "provides_function": "isolation",
+    "placement": "on_any_port",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "scope": "on_the_attachment"
+  },
+  "rationale": "Dove l'impianto si attacca a qualcosa che non e' suo — la rete idrica, la distribuzione dell'edificio — si deve poter chiudere dal proprio lato, senza dipendere da un rubinetto che sta altrove e che qualcun altro governa. L'organo sta sul confine stesso, cosi' che tutto cio' che viene dopo resti lavorabile.",
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)"
+}

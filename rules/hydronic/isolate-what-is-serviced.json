@@ -1,0 +1,25 @@
+{
+  "id": "isolate-what-is-serviced",
+  "version": "1.0.0",
+  "name": "Valvola di intercettazione",
+  "category": "recommended",
+  "cardinality": "per_port",
+  "when": {
+    "network_domain": "hydronic",
+    "anchor_has_trait": "maintainable"
+  },
+  "then": {
+    "provides_function": "isolation",
+    "provides_function_by_shutoff_regime": {
+      "shutoff_lockable_only": "isolation_locked_open"
+    },
+    "placement": "on_any_port",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "scope": "on_the_attachment"
+  },
+  "rationale": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. L'acqua arriva da ogni tubo che lo tocca, quindi ogni tubo che lo tocca vuole il proprio organo di chiusura: con uno solo si svuota il circuito per cambiare un pezzo. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte, bloccabile aperto per cio' che non deve mai restare escluso per distrazione.",
+  "source": "Buona pratica tecnica documentata — Caleffi, Componenti e schemi per impianti a pompa di calore aria-acqua (SRC-008)"
+}

@@ -192,9 +192,6 @@ sbloccano nulla.
   cosa che lo definisce — è una **derivazione dall'acqua di rete**, non un organo di
   passaggio — non è scrivibile. Il catalogo dichiara già che sta su uno stacco, ma le sue
   porte dicono un'altra cosa. Si chiude insieme al debito degli stacchi (§6, prima riga).
-- **Il riduttore di pressione non dichiara «va protetto dai residui»**, mentre il filtro a
-  monte del riduttore è pratica corrente e lo protegge dalle impurità della rete. È una
-  dichiarazione additiva: si aggiunge in P2 senza toccare nulla di quanto già scritto.
 - **Le regole non propongono su un attacco libero**, solo in linea su una tubazione
   esistente: un componente senza tubazione non avrebbe dove posarsi, e il modello non
   contiene coordinate con cui inventarne una.
@@ -209,3 +206,43 @@ sbloccano nulla.
   parallelo, altrimenti divergono (W3).
 - **La rappresentazione dei dati mancanti** e il percorso di migrazione dello schema sono
   descritti in `docs/archivio/P0_REVIEW_FINDINGS.md` §3.2 e non ancora implementati.
+
+## 8. Rimandato da P2, il contenuto delle regole
+
+- **L'ordine in cui le regole si applicano è l'ordine alfabetico del pacchetto**, e da
+  quell'ordine dipende chi resta attaccato alla macchina: l'ultimo accessorio posato è il
+  più vicino. È il motivo per cui la sicurezza sta attaccata a ciò che protegge e lo scarico
+  sta dal lato del serbatoio. Oggi è una convenzione di nome di file presidiata da due prove
+  in `tests/rules/test_acceptance_properties.py`; **D-094 la vuole strutturale**, cioè
+  derivata dai vincoli che ogni accessorio dichiara. È lavoro di P3, e finché non c'è,
+  rinominare un file del pacchetto può spostare un accessorio senza che nessuno lo chieda.
+- **Due pezzi manutenibili attaccati alla stessa tubazione ricevono due organi di chiusura**,
+  uno per attacco. È D-074 preso alla lettera e non è sbagliato — un organo solo separa i
+  due pezzi fra loro ma non permette di togliere l'uno lasciando l'altro in servizio — ma
+  raddoppia il valvolame fra due macchine adiacenti. Se il PM decide che in quel caso ne
+  basta uno, la decisione va registrata e la regola diventa «un organo per ogni **tratta**
+  che tocca un pezzo manutenibile», non per ogni attacco.
+- **Un attacco raggiunto da due tubazioni riceve l'organo su una sola delle due.** Il motore
+  indicizza una connessione per attacco, e quando due ritorni arrivano allo stesso bocchello
+  la seconda non riceve niente. Si vede sul caso di accettazione: il ritorno del volano alla
+  pompa di calore resta senza organo proprio, e la proprietà «ogni attacco ha il suo» regge
+  perché è verificata **per attacco** e non per tubazione. Chiuderlo vuol dire rendere
+  l'indice uno-a-molti nel motore.
+- **L'organo bloccabile aperto si disegna come quello comune.** Le due voci di catalogo sono
+  distinte e la regola sceglie quella giusta, ma condividono il simbolo della valvola di
+  intercettazione: sulla tavola la distinzione non si vede. È lavoro di P4, e va chiuso
+  prima che una tavola con un vaso di espansione arrivi a un cantiere.
+- **Il vaso di espansione riceve due organi bloccabili invece di uno**, perché è ancora
+  descritto come pezzo di passaggio con due porte. Si chiude insieme al debito degli stacchi
+  (§6, prima riga) senza toccare la regola.
+- **L'impianto che le regole producono non entra su un formato ordinario.** Con
+  l'intercettazione su ogni attacco di ogni cosa manutenibile, le quattro fasce del caso di
+  accettazione chiedono più larghezza di quanta ne offra una A3, e la composizione si ferma
+  invece di rimpicciolire i simboli. È esattamente il limite che il piano assegna a **P6**.
+  Nel frattempo il caso di posa del layout è congelato in
+  `examples/layout/centrale-pdc-quattro-fasce.json`, che è l'impianto a quattro fasce con
+  cui il ciclo di miglioramento è stato misurato: le prove di layout misurano geometria, non
+  contenuto del pacchetto delle regole.
+- **La miscelatrice e il gruppo di riempimento hanno ancora porte che dicono il falso** (§6):
+  chiuderlo richiede di cambiare le porte, e le porte devono coincidere con quelle del
+  simbolo. È quindi lavoro di P4, non di P2 come §6 supponeva.

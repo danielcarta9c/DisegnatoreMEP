@@ -1,0 +1,22 @@
+{
+  "id": "let-what-holds-its-own-volume-empty",
+  "version": "1.0.0",
+  "name": "Attacco di scarico",
+  "category": "recommended",
+  "cardinality": "per_component",
+  "when": {
+    "network_domain": "hydronic",
+    "anchor_has_trait": "holds_its_own_volume"
+  },
+  "then": {
+    "provides_function": "drain",
+    "placement": "on_outlet",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "scope": "on_the_attachment"
+  },
+  "rationale": "Chi tiene una riserva d'acqua propria la deve poter svuotare da solo, senza scaricare l'impianto intero: un tratto di tubo si svuota con la tratta a cui appartiene, un serbatoio no. Lo scarico sta sull'attacco basso e **dal lato del serbatoio** rispetto all'organo che lo chiude, altrimenti a organo chiuso non svuoterebbe il serbatoio ma la tratta di la'.",
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)"
+}

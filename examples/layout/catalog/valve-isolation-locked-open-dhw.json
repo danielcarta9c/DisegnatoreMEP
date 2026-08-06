@@ -1,31 +1,30 @@
 {
-  "id": "pressure-gauge",
+  "id": "valve-isolation-locked-open-dhw",
   "version": "1.0.0",
-  "name": "Manometro",
+  "name": "Valvola di intercettazione bloccabile aperta",
   "functions": [
-    "pressure_measurement"
+    "isolation_locked_open"
   ],
   "traits": [
-    "maintainable",
     "shutoff_ordinary",
-    "attachment_branch"
+    "attachment_inline"
   ],
-  "symbol_id": "pressure-gauge",
+  "symbol_id": "valve-isolation",
   "composite": false,
   "ports": [
     {
       "id": "a",
       "domain": "hydronic",
-      "medium": "heating_water",
-      "flow": "in",
+      "medium": "cold_water",
+      "flow": "bidirectional",
       "required": true,
       "max_connections": 1
     },
     {
       "id": "b",
       "domain": "hydronic",
-      "medium": "heating_water",
-      "flow": "out",
+      "medium": "cold_water",
+      "flow": "bidirectional",
       "required": true,
       "max_connections": 1
     }

@@ -1,0 +1,925 @@
+{
+  "assumptions": [],
+  "components": [
+    {
+      "definition_id": "air-separator",
+      "id": "air-separator-hp-water-supply",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "buffer-four-port",
+      "id": "buffer",
+      "properties": {
+        "volume_l": 200
+      },
+      "tag": "VOL-01"
+    },
+    {
+      "definition_id": "dhw-cylinder",
+      "id": "cylinder",
+      "properties": {
+        "volume_l": 300
+      },
+      "tag": "BOL-01"
+    },
+    {
+      "definition_id": "dirt-separator",
+      "id": "dirt-separator-hp-water-return",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "drain-connection",
+      "id": "drain-connection-buffer-primary-out",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "dhw-draw-off",
+      "id": "draw-off",
+      "properties": {},
+      "tag": "ACS-01"
+    },
+    {
+      "definition_id": "diverting-valve-3way",
+      "id": "dv",
+      "properties": {},
+      "tag": "VD-01"
+    },
+    {
+      "definition_id": "expansion-connection-dhw",
+      "id": "expansion-connection-dhw-cylinder-cold-in",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "expansion-connection",
+      "id": "expansion-connection-hp-water-return",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "filling-unit",
+      "id": "filling-unit-hp-water-return",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "heat-pump-air-water",
+      "id": "hp",
+      "properties": {},
+      "tag": "PDC-01"
+    },
+    {
+      "definition_id": "cold-water-inlet",
+      "id": "mains",
+      "properties": {},
+      "tag": "AF-01"
+    },
+    {
+      "definition_id": "zone-manifold",
+      "id": "manifold",
+      "properties": {},
+      "tag": "COL-01"
+    },
+    {
+      "definition_id": "mixing-valve-thermostatic",
+      "id": "mixing-valve-thermostatic-cylinder-dhw-out",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "pressure-gauge",
+      "id": "pressure-gauge-hp-water-return",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "pump-circulator",
+      "id": "pump-secondary",
+      "properties": {
+        "flow_rate_m3h": 1.2
+      },
+      "tag": "CIR-02"
+    },
+    {
+      "definition_id": "radiator",
+      "id": "radiators",
+      "properties": {},
+      "tag": "RAD-01"
+    },
+    {
+      "definition_id": "valve-isolation",
+      "id": "shutoff",
+      "properties": {},
+      "tag": "VI-01"
+    },
+    {
+      "definition_id": "strainer",
+      "id": "strainer",
+      "properties": {},
+      "tag": "FIL-01"
+    },
+    {
+      "definition_id": "strainer",
+      "id": "strainer-pump-secondary-a",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "thermometer",
+      "id": "thermometer-hp-water-supply",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "underfloor-panel",
+      "id": "underfloor",
+      "properties": {},
+      "tag": "PAV-01"
+    },
+    {
+      "definition_id": "valve-check-dhw",
+      "id": "valve-check-dhw-cylinder-cold-in",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-isolation",
+      "id": "valve-isolation-buffer-primary-in",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-isolation",
+      "id": "valve-isolation-buffer-secondary-in",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-isolation",
+      "id": "valve-isolation-buffer-secondary-out",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-isolation",
+      "id": "valve-isolation-cylinder-coil-in",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-isolation",
+      "id": "valve-isolation-cylinder-coil-out",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-isolation-dhw",
+      "id": "valve-isolation-dhw-cylinder-cold-in",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-isolation-dhw-hot",
+      "id": "valve-isolation-dhw-hot-cylinder-dhw-out",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-isolation",
+      "id": "valve-isolation-hp-water-return",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-isolation",
+      "id": "valve-isolation-hp-water-supply",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-isolation",
+      "id": "valve-isolation-pump-secondary-a",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-isolation",
+      "id": "valve-isolation-pump-secondary-b",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-safety-dhw",
+      "id": "valve-safety-dhw-cylinder-cold-in",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "valve-safety",
+      "id": "valve-safety-hp-water-supply",
+      "properties": {},
+      "tag": null
+    }
+  ],
+  "connections": [
+    {
+      "endpoint_a": {
+        "component_id": "hp",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "thermometer-hp-water-supply",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p1-a-a-a-a",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "thermometer-hp-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-safety-hp-water-supply",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p1-a-a-a-b",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-safety-hp-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-hp-water-supply",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p1-a-a-b",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-isolation-hp-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "air-separator-hp-water-supply",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p1-a-b",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "air-separator-hp-water-supply",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "dv",
+        "port_id": "in"
+      },
+      "evidence": [],
+      "id": "p1-b",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "dv",
+        "port_id": "out_a"
+      },
+      "endpoint_b": {
+        "component_id": "strainer",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p2",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "strainer",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-buffer-primary-in",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p3-a",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-isolation-buffer-primary-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "buffer",
+        "port_id": "primary_in"
+      },
+      "evidence": [],
+      "id": "p3-b",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "buffer",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "drain-connection-buffer-primary-out",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p4-a",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "drain-connection-buffer-primary-out",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "shutoff",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p4-b",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "shutoff",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "dirt-separator-hp-water-return",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p5-a",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "dirt-separator-hp-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "expansion-connection-hp-water-return",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p5-b-a",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "expansion-connection-hp-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "filling-unit-hp-water-return",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p5-b-b-a",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "filling-unit-hp-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-hp-water-return",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p5-b-b-b-a",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-isolation-hp-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pressure-gauge-hp-water-return",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p5-b-b-b-b-a",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "pressure-gauge-hp-water-return",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "hp",
+        "port_id": "water_return"
+      },
+      "evidence": [],
+      "id": "p5-b-b-b-b-b",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "dv",
+        "port_id": "out_b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-cylinder-coil-in",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p6-a",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-isolation-cylinder-coil-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "cylinder",
+        "port_id": "coil_in"
+      },
+      "evidence": [],
+      "id": "p6-b",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "cylinder",
+        "port_id": "coil_out"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-cylinder-coil-out",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "p7-a",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-isolation-cylinder-coil-out",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "hp",
+        "port_id": "water_return"
+      },
+      "evidence": [],
+      "id": "p7-b",
+      "network_id": "primary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "buffer",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-buffer-secondary-out",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "s1-a-a",
+      "network_id": "secondary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-isolation-buffer-secondary-out",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-pump-secondary-a",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "s1-a-b",
+      "network_id": "secondary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-isolation-pump-secondary-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "strainer-pump-secondary-a",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "s1-b-a",
+      "network_id": "secondary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "strainer-pump-secondary-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pump-secondary",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "s1-b-b",
+      "network_id": "secondary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "pump-secondary",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-pump-secondary-b",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "s2-a",
+      "network_id": "secondary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-isolation-pump-secondary-b",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "manifold",
+        "port_id": "in"
+      },
+      "evidence": [],
+      "id": "s2-b",
+      "network_id": "secondary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "manifold",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "radiators",
+        "port_id": "in"
+      },
+      "evidence": [],
+      "id": "s3",
+      "network_id": "secondary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "manifold",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "underfloor",
+        "port_id": "in"
+      },
+      "evidence": [],
+      "id": "s4",
+      "network_id": "secondary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "radiators",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-buffer-secondary-in",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "s5-a",
+      "network_id": "secondary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-isolation-buffer-secondary-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "buffer",
+        "port_id": "secondary_in"
+      },
+      "evidence": [],
+      "id": "s5-b",
+      "network_id": "secondary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "underfloor",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "buffer",
+        "port_id": "secondary_in"
+      },
+      "evidence": [],
+      "id": "s6",
+      "network_id": "secondary",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "mains",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-dhw-cylinder-cold-in",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "w1-a",
+      "network_id": "cold",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-isolation-dhw-cylinder-cold-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-check-dhw-cylinder-cold-in",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "w1-b-a",
+      "network_id": "cold",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-check-dhw-cylinder-cold-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "expansion-connection-dhw-cylinder-cold-in",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "w1-b-b-a",
+      "network_id": "cold",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "expansion-connection-dhw-cylinder-cold-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "valve-safety-dhw-cylinder-cold-in",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "w1-b-b-b-a",
+      "network_id": "cold",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-safety-dhw-cylinder-cold-in",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "cylinder",
+        "port_id": "cold_in"
+      },
+      "evidence": [],
+      "id": "w1-b-b-b-b",
+      "network_id": "cold",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "cylinder",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "valve-isolation-dhw-hot-cylinder-dhw-out",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "w2-a-a",
+      "network_id": "dhw",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "valve-isolation-dhw-hot-cylinder-dhw-out",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "mixing-valve-thermostatic-cylinder-dhw-out",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "w2-a-b",
+      "network_id": "dhw",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "mixing-valve-thermostatic-cylinder-dhw-out",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "draw-off",
+        "port_id": "a"
+      },
+      "evidence": [],
+      "id": "w2-b",
+      "network_id": "dhw",
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "client": "Nove C",
+    "commission_code": "DEV-011",
+    "issue_date": "2026-08-04",
+    "project_id": "centrale-pdc-quattro-fasce",
+    "project_name": "Centrale a pompa di calore — caso di posa a quattro fasce",
+    "revision": "00"
+  },
+  "networks": [
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "cold",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "dhw",
+      "medium": "domestic_hot_water",
+      "name": "Acqua calda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "primary",
+      "medium": "heating_water",
+      "name": "Circuito primario"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "secondary",
+      "medium": "heating_water",
+      "name": "Circuito secondario"
+    }
+  ],
+  "rule_applications": [],
+  "schema_version": "1.1.0",
+  "sheets": [
+    {
+      "band_assignments": [
+        {
+          "band": "generation",
+          "order": 0,
+          "subsystem_id": "generation"
+        },
+        {
+          "band": "primary",
+          "order": 0,
+          "subsystem_id": "storage"
+        },
+        {
+          "band": "distribution",
+          "order": 0,
+          "subsystem_id": "distribution"
+        },
+        {
+          "band": "terminal",
+          "order": 0,
+          "subsystem_id": "zones"
+        }
+      ],
+      "id": "t1",
+      "subsystem_ids": [
+        "generation",
+        "storage",
+        "distribution",
+        "zones"
+      ],
+      "title": "Centrale termica — generazione, accumuli, distribuzione e zone"
+    }
+  ],
+  "subsystems": [
+    {
+      "component_ids": [
+        "pump-secondary",
+        "manifold",
+        "valve-isolation-pump-secondary-a",
+        "valve-isolation-pump-secondary-b",
+        "strainer-pump-secondary-a"
+      ],
+      "id": "distribution",
+      "name": "Distribuzione",
+      "network_ids": [
+        "secondary"
+      ]
+    },
+    {
+      "component_ids": [
+        "hp",
+        "dv",
+        "air-separator-hp-water-supply",
+        "dirt-separator-hp-water-return",
+        "expansion-connection-hp-water-return",
+        "filling-unit-hp-water-return",
+        "valve-isolation-hp-water-supply",
+        "valve-isolation-hp-water-return",
+        "pressure-gauge-hp-water-return",
+        "valve-safety-hp-water-supply",
+        "thermometer-hp-water-supply"
+      ],
+      "id": "generation",
+      "name": "Generazione",
+      "network_ids": [
+        "primary"
+      ]
+    },
+    {
+      "component_ids": [
+        "strainer",
+        "buffer",
+        "cylinder",
+        "shutoff",
+        "mains",
+        "draw-off",
+        "valve-isolation-dhw-cylinder-cold-in",
+        "valve-check-dhw-cylinder-cold-in",
+        "expansion-connection-dhw-cylinder-cold-in",
+        "mixing-valve-thermostatic-cylinder-dhw-out",
+        "valve-safety-dhw-cylinder-cold-in",
+        "drain-connection-buffer-primary-out",
+        "valve-isolation-cylinder-coil-in",
+        "valve-isolation-cylinder-coil-out",
+        "valve-isolation-buffer-primary-in",
+        "valve-isolation-buffer-secondary-out",
+        "valve-isolation-buffer-secondary-in",
+        "valve-isolation-dhw-hot-cylinder-dhw-out"
+      ],
+      "id": "storage",
+      "name": "Accumuli e primario",
+      "network_ids": [
+        "primary",
+        "cold",
+        "dhw"
+      ]
+    },
+    {
+      "component_ids": [
+        "radiators",
+        "underfloor"
+      ],
+      "id": "zones",
+      "name": "Zone",
+      "network_ids": [
+        "secondary"
+      ]
+    }
+  ]
+}

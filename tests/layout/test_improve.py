@@ -15,6 +15,16 @@ ritorno sul prelievo ACS del caso di accettazione: le **rotazioni** fra le
 mosse candidate, perche' nessuna traslazione cambia da che parte guarda una
 porta, e l'**andata e ritorno** come prima voce del confronto, perche' non e'
 un disegno caro ma un disegno sbagliato e va pagata prima dell'obiettivo.
+
+**Il secondo caso e' una fixture di posa, non l'uscita delle regole.** Fino a
+P2 era il modello che le regole rigeneravano dal caso essenziale, e ogni
+misura di questo file era percio' appesa al contenuto del pacchetto delle
+regole: cambiarne una spostava numeri che parlano di geometria. Da P2 il
+pacchetto propone l'intercettazione su **ogni** attacco di **ogni** cosa che si
+smonta in esercizio — accessori compresi — e l'impianto che ne esce non entra
+piu' su un formato ordinario: e' il limite di composizione che il piano assegna
+a P6, non un difetto delle regole. Qui resta congelato l'impianto a quattro
+fasce con cui questo ciclo e' stato misurato, come dato d'ingresso del layout.
 """
 
 from functools import cache
@@ -56,7 +66,7 @@ from disegnatore_mep.validation.preflight import preflight_drawing
 
 ROOT = Path(__file__).resolve().parents[2]
 PROJECT = ROOT / "examples" / "layout" / "heat-pump-dhw-buffer-two-zones.json"
-COMPLETE = ROOT / "examples" / "rules" / "centrale-pdc-completa.json"
+COMPLETE = ROOT / "examples" / "layout" / "centrale-pdc-quattro-fasce.json"
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
 
