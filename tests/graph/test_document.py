@@ -28,7 +28,7 @@ from types import ModuleType
 import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graph import Naming, read_plant
+from disegnatore_mep.graph import LineNaming, Naming, read_lines, read_plant
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.rules.apply import saturate
@@ -92,6 +92,10 @@ def generator() -> ModuleType:
 
 def catalog(directory: Path) -> ComponentRegistry:
     return ComponentRegistry.from_directory(directory)
+
+
+def line_naming() -> LineNaming:
+    return LineNaming.from_directory(NAMING)
 
 
 def naming() -> Naming:
@@ -213,8 +217,10 @@ def test_the_document_says_which_water_each_tank_holds() -> None:
     assert tanks, "nessun serbatoio: prova inutile"
     for node in tanks:
         assert node.stored_medium is not None
+        # La riga della tabella dei nodi comincia con l'indirizzo (D-105): la
+        # sigla si cerca dentro la riga, non in testa.
         row = next(
-            line for line in document.splitlines() if line.startswith(f"| **{node.sigla}**")
+            line for line in document.splitlines() if f"| **{node.sigla}** |" in line
         )
         assert "tiene in serbo" in row, row
         assert table.name_of_medium(node.stored_medium) in row, row
@@ -236,13 +242,28 @@ def test_the_document_says_where_every_ring_closes() -> None:
 
 
 def test_the_document_names_the_piece_the_ring_closes_on() -> None:
-    graph = read_plant(load_project(PLANT), catalog(HYDRONIC_CATALOG), naming())
+    """Con l'indirizzo dei nodi (D-105) un anello si chiude dove una linea
+    finisce su un nodo gia' numerato della propria acqua: e' quel pezzo che il
+    documento deve nominare. Il **numero** degli anelli resta controllato dalla
+    prova precedente contro la passeggiata, che e' una lettura indipendente."""
+    project = load_project(PLANT)
+    registry = catalog(HYDRONIC_CATALOG)
+    graph = read_plant(project, registry, naming())
+    lines = read_lines(project, registry, graph, line_naming())
     document = text()
-    for reading in graph.readings:
-        for step in reading.steps:
-            if step.closes_the_ring:
-                sigla = graph.node(step.arrives_at).sigla
-                assert f"qui il giro si richiude su {sigla}" in document
+    closed = 0
+    for line in lines.lines:
+        tail = line.node_ids[-1]
+        if lines.owner.get(tail) == line.name:
+            continue
+        if any(
+            graph.pipe(item).leaves.component_id == tail
+            for item in lines.run_pipes.get(line.network_id, ())
+        ):
+            closed += 1
+            sigla = graph.node(tail).sigla
+            assert f"qui il giro si richiude su {sigla}" in document
+    assert closed, "nessun anello sulle linee: prova inutile"
 
 
 def test_the_document_says_out_loud_that_there_are_no_crossings() -> None:
@@ -280,7 +301,7 @@ def test_the_document_names_the_pieces_no_source_reaches() -> None:
     assert graph.unreached
     for component_id in graph.unreached:
         assert graph.node(component_id).sigla in written
-    assert "Nessuna sorgente arriva fin qui" in written
+    assert "Pezzi che nessuna sorgente raggiunge." in written
 
 
 def test_when_nothing_is_missing_the_document_says_so_out_loud() -> None:

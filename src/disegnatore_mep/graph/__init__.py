@@ -7,7 +7,15 @@ documento per il committente — ne prende la sigla da qui, cosi' che sia una
 sola per tutto il prodotto (D-097).
 """
 
-from .naming import FamilyEntry, MediumEntry, Naming, NamingError
+from .lines import Direction, HydraulicLine, PlantLines, read_lines
+from .naming import (
+    FamilyEntry,
+    LineFamilyEntry,
+    LineNaming,
+    MediumEntry,
+    Naming,
+    NamingError,
+)
 from .plant import (
     Arm,
     GraphError,
@@ -21,15 +29,21 @@ from .plant import (
 
 __all__ = [
     "Arm",
+    "Direction",
     "FamilyEntry",
     "GraphError",
+    "HydraulicLine",
+    "LineFamilyEntry",
+    "LineNaming",
     "MediumEntry",
     "Naming",
     "NamingError",
     "Node",
     "Pipe",
     "PlantGraph",
+    "PlantLines",
     "Reading",
     "Step",
+    "read_lines",
     "read_plant",
 ]

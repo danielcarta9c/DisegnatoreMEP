@@ -1,0 +1,43 @@
+{
+  "note": "Le famiglie delle linee idrauliche (D-105): che acqua porta una linea e da che parte va. La riga si legge dal fluido della rete, dal mestiere della sorgente da cui la rete parte (un generatore fa un circuito primario, una riserva un secondario) e dal verso; i campi assenti valgono qualunque. L'ordine conta: vince la prima riga che combacia. Le sigle sono quelle che il PM ha dato il 6 agosto 2026: CP/RP il primario, CS/RS il secondario, AF/ACS il sanitario.",
+  "families": [
+    {
+      "medium": "heating_water",
+      "fed_by": "generator",
+      "direction": "supply",
+      "prefix": "CP",
+      "name": "mandata primaria"
+    },
+    {
+      "medium": "heating_water",
+      "fed_by": "generator",
+      "direction": "return",
+      "prefix": "RP",
+      "name": "ritorno primario"
+    },
+    {
+      "medium": "heating_water",
+      "fed_by": "store",
+      "direction": "supply",
+      "prefix": "CS",
+      "name": "mandata secondaria"
+    },
+    {
+      "medium": "heating_water",
+      "fed_by": "store",
+      "direction": "return",
+      "prefix": "RS",
+      "name": "ritorno secondario"
+    },
+    {
+      "medium": "cold_water",
+      "prefix": "AF",
+      "name": "acqua fredda sanitaria"
+    },
+    {
+      "medium": "domestic_hot_water",
+      "prefix": "ACS",
+      "name": "acqua calda sanitaria"
+    }
+  ]
+}

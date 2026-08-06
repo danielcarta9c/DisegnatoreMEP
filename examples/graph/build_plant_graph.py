@@ -34,10 +34,19 @@ from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import ComponentTrait
-from disegnatore_mep.graph import Naming, PlantGraph, Reading, Step, read_plant
+from disegnatore_mep.graph import (
+    HydraulicLine,
+    LineNaming,
+    Naming,
+    PlantGraph,
+    PlantLines,
+    read_lines,
+    read_plant,
+)
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.model.types import Domain
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.proposal import RuleGap
 from disegnatore_mep.rules.registry import RuleRegistry
@@ -66,6 +75,7 @@ class Pen:
         graph: PlantGraph,
         naming: Naming,
         hangs: dict[str, bool],
+        lines: PlantLines,
         gaps: Sequence[RuleGap] = (),
     ) -> None:
         self.project = project
@@ -74,6 +84,9 @@ class Pen:
         self.circuits = {item.id: item.name for item in project.networks}
         self.hangs = hangs
         """Chi pende dal tubo con una propria derivazione invece di starci sopra."""
+
+        self.lines = lines
+        """Le linee idrauliche e l'indirizzo di ogni pezzo (D-105)."""
 
         self.gaps = tuple(gaps)
         """Dove una regola si e' applicata e il catalogo non aveva il pezzo."""
@@ -111,12 +124,56 @@ class Pen:
         held = self.graph.node(component_id).stored_medium
         return "" if held is None else f" · tiene in serbo {self.fluid(held)}"
 
+    # --- le linee e gli indirizzi (D-105) --------------------------------------
 
-def arms_in_words(numbers: tuple[int, ...]) -> str:
-    said = [f"braccio {item}" for item in numbers]
-    if len(said) == 1:
-        return said[0]
-    return ", ".join(said[:-1]) + " e " + said[-1]
+    def address(self, component_id: str) -> str | None:
+        return self.lines.addresses.get(component_id)
+
+    def addressed(self, component_id: str) -> str:
+        """Indirizzo e sigla insieme: e' cosi' che si cita un punto."""
+        found = self.address(component_id)
+        node = self.graph.node(component_id)
+        if found is None:
+            return f"**{node.sigla}** {node.name}"
+        return f"**{found} · {node.sigla}** {node.name}"
+
+    def closes_its_ring(self, line: HydraulicLine) -> bool:
+        """La linea finisce dove la sua stessa acqua riparte: il giro si richiude.
+
+        Se dal nodo finale esce una tubazione della stessa rete, quel nodo e'
+        il punto in cui il circuito torna su se' stesso. Se non ne esce nessuna
+        — l'acqua fredda che entra in un accumulo — e' un innesto, non un anello.
+        """
+        tail = line.node_ids[-1]
+        return any(
+            self.graph.pipe(connection_id).leaves.component_id == tail
+            for connection_id in self.lines.run_pipes.get(line.network_id, ())
+        )
+
+    def foreign(self, line: HydraulicLine, component_id: str) -> bool:
+        """Il pezzo sta sulla linea ma l'indirizzo glielo ha dato un'altra."""
+        return self.lines.owner.get(component_id) != line.name
+
+    def arriving_lines(self, line: HydraulicLine, component_id: str) -> list[HydraulicLine]:
+        """Le altre linee che finiscono su questo nodo."""
+        return [
+            other
+            for other in self.lines.lines
+            if other.name != line.name
+            and other.node_ids[-1] == component_id
+            and self.foreign(other, component_id)
+        ]
+
+    def departing_branches(self, line: HydraulicLine, component_id: str) -> list[HydraulicLine]:
+        """Le diramazioni che si staccano da questo nodo della linea."""
+        return [
+            other
+            for other in self.lines.lines
+            if other.branch_of is not None
+            and other.name != line.name
+            and other.node_ids[0] == component_id
+            and self.lines.owner.get(component_id) == line.name
+        ]
 
 
 VOWELS = "aeiouAEIOU"
@@ -154,8 +211,17 @@ def head(pen: Pen) -> list[str]:
         "",
         "## Come si legge",
         "",
-        "- **Ogni pezzo e' un nodo** con la propria sigla, macchine e accessori allo stesso",
-        "  modo. Le sigle che hai gia' scritto tu restano come le hai scritte.",
+        "- **Ogni linea idraulica ha un nome**, come una strada: la famiglia dice che acqua",
+        "  porta e da che parte va — `CP.01` e' la prima mandata primaria — e la tabella",
+        "  accanto dice da dove a dove va. Dove una linea si sdoppia, la principale tiene il",
+        "  nome nudo e i rami prendono una lettera (`RP.01a`); dove due linee si incontrano,",
+        "  la principale tira dritto e la secondaria muore su quel nodo.",
+        "- **Ogni pezzo e' un nodo numerato lungo la sua linea**, e quello e' il suo",
+        "  indirizzo: `CP.01.N.02` e' il secondo nodo della prima mandata primaria. Cio' che",
+        "  pende da uno stacco e' un **civico** del nodo: `CP.01.N.02.1`.",
+        "- **La sigla resta** (`VI-02`): dice che cosa e' il pezzo, e serve alla distinta.",
+        "  L'indirizzo dice dove sta. Sulla tavola convivono, e per citare un punto basta",
+        "  uno dei due. Le sigle che hai gia' scritto tu restano come le hai scritte.",
         "- **Ogni tubazione fra due pezzi e' un arco**, e porta il proprio fluido.",
         "- **Ogni attacco e' un braccio numerato**, come in un incrocio stradale: un volano",
         "  a quattro attacchi e' un nodo solo con quattro bracci, contati nell'ordine in cui",
@@ -237,22 +303,129 @@ def families(pen: Pen) -> list[str]:
     ]
 
 
+def lines_table(pen: Pen) -> list[str]:
+    rows: list[str] = []
+    for line in pen.lines.lines:
+        head = pen.sigla(line.node_ids[0])
+        tail = pen.sigla(line.node_ids[-1])
+        stem = f" · si stacca da {line.branch_of}" if line.branch_of else ""
+        rows.append(
+            f"| **{line.name}** | {line.family_name}{stem} | {head} | {tail} |"
+        )
+    lines = [
+        "## Le linee",
+        "",
+        "Le tubazioni dell'impianto, lette come strade: ogni linea parte da una macchina,",
+        "arriva alla prossima, e i pezzi in mezzo sono i suoi nodi numerati. La famiglia",
+        "dice che acqua porta e da che parte va.",
+        "",
+        "| Linea | Che acqua porta | Da | A |",
+        "|---|---|---|---|",
+        *rows,
+        "",
+    ]
+    outside = sorted(
+        {
+            pen.circuit(item.id)
+            for item in pen.project.networks
+            if item.domain is not Domain.HYDRONIC
+        }
+    )
+    if outside:
+        lines += [
+            "Le reti che non portano acqua — " + ", ".join(outside) + " — non hanno",
+            "linee idrauliche: i loro pezzi si citano con la sola sigla.",
+            "",
+        ]
+    return lines
+
+
+def one_line_heading(pen: Pen, line: HydraulicLine) -> list[str]:
+    head_id, tail_id = line.node_ids[0], line.node_ids[-1]
+    where = f"Da **{pen.sigla(head_id)}** a **{pen.sigla(tail_id)}**, {pen.circuit(line.network_id).lower()}."
+    opening = [f"### {line.name} — {line.family_name}", "", where]
+    if line.branch_of is not None:
+        opening.append(f"Si stacca da **{line.branch_of}**.")
+    return [*opening, ""]
+
+
+def one_line_nodes(pen: Pen, line: HydraulicLine) -> list[str]:
+    lines: list[str] = []
+    last = len(line.node_ids) - 1
+    for index, component_id in enumerate(line.node_ids):
+        if not pen.foreign(line, component_id):
+            entry = f"{index + 1}. {pen.addressed(component_id)}{pen.held_by(component_id)}"
+        elif index == last:
+            node = pen.graph.node(component_id)
+            said = pen.address(component_id)
+            spot = f" ({said})" if said else ""
+            if pen.closes_its_ring(line):
+                entry = (
+                    f"{index + 1}. **{node.sigla}** {node.name} · "
+                    f"**qui il giro si richiude su {node.sigla}**{spot}"
+                )
+            else:
+                entry = (
+                    f"{index + 1}. **{node.sigla}** {node.name} · "
+                    f"**qui ci si innesta su {node.sigla}**, che si e' gia' letto{spot}"
+                )
+        else:
+            node = pen.graph.node(component_id)
+            said = pen.address(component_id)
+            spot = f", indirizzo {said}" if said else ""
+            entry = f"{index + 1}. **{node.sigla}** {node.name} · gia' numerato{spot}"
+        lines.append(entry)
+        if not pen.foreign(line, component_id):
+            for hung in pen.lines.hanging.get(component_id, ()):
+                lines.append(f"    - {pen.addressed(hung)} · pende dallo stacco")
+            for branch in pen.departing_branches(line, component_id):
+                lines.append(
+                    f"    - qui si stacca **{branch.name}**, verso "
+                    f"**{pen.sigla(branch.node_ids[-1])}**"
+                )
+            for arriving in pen.arriving_lines(line, component_id):
+                lines.append(
+                    f"    - qui arriva **{arriving.name}**, da "
+                    f"**{pen.sigla(arriving.node_ids[0])}**"
+                )
+    return [*lines, ""]
+
+
+def the_lines(pen: Pen) -> list[str]:
+    lines = [
+        "## Le linee, una per una",
+        "",
+        "Ogni linea si legge dal suo capo, un nodo alla volta; i civici stanno sotto il",
+        "proprio nodo. Dove la linea finisce su un nodo che ha gia' un indirizzo, la",
+        "lettura dice quale delle due cose e' successa — **il giro si richiude**, perche'",
+        "un circuito e' un anello, oppure **ci si innesta** su un giro gia' letto — e in",
+        "nessuno dei due casi il nome della principale cambia. Ogni tubazione",
+        "dell'impianto sta su una linea sola.",
+        "",
+    ]
+    for line in pen.lines.lines:
+        lines += one_line_heading(pen, line)
+        lines += one_line_nodes(pen, line)
+    return lines
+
+
 def nodes_table(pen: Pen) -> list[str]:
     rows: list[str] = []
     for node in pen.graph.nodes:
         hanging = " · pende dal tubo con una propria derivazione" if pen.hangs[node.component_id] else ""
+        said = pen.address(node.component_id) or "—"
         rows.append(
-            f"| **{node.sigla}** | {node.name}{hanging}"
+            f"| {said} | **{node.sigla}** | {node.name}{hanging}"
             f"{pen.held_by(node.component_id)} | {pen.fluids_of(node.component_id)} |"
         )
     return [
         "## I nodi",
         "",
         "Nell'ordine in cui la passeggiata li incontra, che e' l'ordine in cui sono stati",
-        "numerati.",
+        "numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.",
         "",
-        "| Sigla | Che cos'e' | Su quale fluido |",
-        "|---|---|---|",
+        "| Indirizzo | Sigla | Che cos'e' | Su quale fluido |",
+        "|---|---|---|---|",
         *rows,
         "",
     ]
@@ -288,118 +461,6 @@ def crossings(pen: Pen) -> list[str]:
         *rows,
         "",
     ]
-
-
-def opening(pen: Pen, reading: Reading) -> list[str]:
-    node = pen.graph.node(reading.start)
-    fluid = pen.fluid(reading.medium) if reading.medium else "nessun fluido"
-    if reading.kind == "source":
-        title = f"### Si parte da {node.sigla}, {on_the(fluid)}"
-        why = (
-            f"{pen.named(reading.start)} e' una sorgente: {node.family.lower()}. "
-            f"Da qui {the(fluid)} entra nell'impianto."
-        )
-    elif reading.kind == "store":
-        title = f"### Si riparte da {node.sigla}, dove nasce {the(fluid)}"
-        why = (
-            f"Nessuna sorgente porta {fluid} da fuori: e' {pen.named(reading.start)} a "
-            f"tenerne una riserva, e quindi e' li' che il giro comincia."
-        )
-    elif reading.kind == "onward":
-        title = f"### Si riparte da {node.sigla}, {on_the(fluid)}"
-        why = (
-            f"Attraversando {pen.named(reading.start)} il fluido cambia nome: quello che "
-            f"esce di qui e' {fluid}, e il suo giro si legge a parte."
-        )
-    else:
-        title = f"### Staccato dal resto: {node.sigla}"
-        why = (
-            "**Nessuna sorgente arriva fin qui.** Questi pezzi non sono raggiunti ne' da "
-            "chi produce il fluido ne' dal punto in cui entra nell'edificio: o manca una "
-            "tubazione, o manca il pezzo da cui il loro fluido dovrebbe partire. Va deciso "
-            "dal progettista."
-        )
-    lines = [title, "", why, ""]
-    if len(reading.departing_arms) > 1:
-        lines += [
-            f"Da {pen.named(reading.start)} la lettura prosegue su "
-            f"{len(reading.departing_arms)} bracci: "
-            f"{arms_in_words(reading.departing_arms)}.",
-            "",
-        ]
-    if not reading.steps:
-        lines += [
-            "Da qui non riparte niente che non sia gia' stato letto: il suo giro compare "
-            "piu' su.",
-            "",
-        ]
-    return lines
-
-
-def step_lines(pen: Pen, reading: Reading) -> list[str]:
-    lines: list[str] = []
-    circuit = ""
-    for step in reading.steps:
-        if pen.circuit(step.network_id) != circuit:
-            circuit = pen.circuit(step.network_id)
-            lines += [f"*{circuit}*", ""] if not lines else ["", f"*{circuit}*", ""]
-        lines.append(one_step(pen, step))
-        lines += notes_under(pen, step)
-    return lines
-
-
-def one_step(pen: Pen, step: Step) -> str:
-    if step.closes_the_ring:
-        ending = f" · **qui il giro si richiude su {pen.sigla(step.arrives_at)}**"
-    elif step.rejoins:
-        ending = (
-            f" · **qui ci si innesta su {pen.sigla(step.arrives_at)}**, che si e' gia' letto"
-        )
-    else:
-        ending = ""
-    return (
-        f"{step.number}. {pen.named(step.departs_from)} · braccio {step.departs_arm} "
-        f"→ {pen.named(step.arrives_at)} · braccio {step.arrives_arm}{ending}"
-    )
-
-
-def notes_under(pen: Pen, step: Step) -> list[str]:
-    notes: list[str] = []
-    arm = next(
-        item
-        for item in pen.graph.node(step.arrives_at).arms
-        if item.number == step.arrives_arm
-    )
-    if arm.is_a_crossing:
-        notes.append(
-            f"    - sul braccio {arm.number} di {pen.named(step.arrives_at)} convergono "
-            f"{len(arm.pipes)} tubazioni: e' un incrocio"
-        )
-    if len(step.onward_arms) > 1:
-        notes.append(
-            f"    - da {pen.named(step.arrives_at)} la lettura prosegue su altri "
-            f"{len(step.onward_arms)} bracci: {arms_in_words(step.onward_arms)}"
-        )
-    return notes
-
-
-def the_walk(pen: Pen) -> list[str]:
-    lines = [
-        "## La passeggiata",
-        "",
-        "Si parte da ogni sorgente e si segue il fluido, un pezzo alla volta. Dove",
-        "l'impianto si dirama, la lettura dice su quali bracci prosegue. Dove torna su un",
-        "pezzo gia' incontrato dice quale delle due cose e' successa — **il giro si",
-        "richiude**, perche' un circuito e' un anello, oppure **ci si innesta** un giro che",
-        "si era gia' letto — e in nessuno dei due casi si interrompe. Ogni tubazione",
-        "dell'impianto compare esattamente una volta.",
-        "",
-    ]
-    for reading in pen.graph.readings:
-        lines += opening(pen, reading)
-        lines += step_lines(pen, reading)
-        lines.append("")
-    return lines
 
 
 def silences(pen: Pen) -> list[str]:
@@ -501,13 +562,16 @@ def render(pen: Pen) -> str:
         *families(pen),
         "---",
         "",
+        *lines_table(pen),
+        "---",
+        "",
         *nodes_table(pen),
         "---",
         "",
         *crossings(pen),
         "---",
         "",
-        *the_walk(pen),
+        *the_lines(pen),
         "---",
         "",
         *silences(pen),
@@ -515,9 +579,10 @@ def render(pen: Pen) -> str:
         "",
         "## Cosa ti stiamo chiedendo",
         "",
-        "Di scorrere la passeggiata e dirci, per ogni pezzo: **e' quello giusto, ed e' nel",
+        "Di scorrere le linee e dirci, per ogni pezzo: **e' quello giusto, ed e' nel",
         "punto giusto, sul tubo giusto?** Se un accessorio e' finito sul circuito sbagliato",
-        "si vede da qui, senza aprire nient'altro — e per segnalarcelo basta la sigla.",
+        "si vede da qui, senza aprire nient'altro — e per segnalarcelo bastano",
+        "l'indirizzo o la sigla.",
         "",
     ]
     return "\n".join(lines).rstrip() + "\n"
@@ -528,14 +593,21 @@ def build(
     catalog: ComponentRegistry,
     naming: Naming,
     gaps: Sequence[RuleGap] = (),
+    line_naming: LineNaming | None = None,
 ) -> str:
     graph = read_plant(project, catalog, naming)
+    lines = read_lines(
+        project,
+        catalog,
+        graph,
+        line_naming if line_naming is not None else LineNaming.from_directory(NAMING),
+    )
     hangs = {
         item.id: catalog.get(item.definition_id).attachment
         is ComponentTrait.ATTACHMENT_BRANCH
         for item in project.components
     }
-    return render(Pen(project, graph, naming, hangs, gaps))
+    return render(Pen(project, graph, naming, hangs, lines, gaps))
 
 
 def main(argv: list[str] | None = None) -> int:

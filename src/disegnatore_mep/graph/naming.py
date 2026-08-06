@@ -29,7 +29,7 @@ ne' contare.
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypeVar
+from typing import Literal, TypeVar
 
 from pydantic import Field, ValidationError, model_validator
 
@@ -37,6 +37,7 @@ from disegnatore_mep.model.base import ID_PATTERN, StrictModel
 
 FAMILIES_FILE = "families.json"
 MEDIA_FILE = "media.json"
+LINES_FILE = "lines.json"
 
 Table = TypeVar("Table", bound=StrictModel)
 
@@ -104,6 +105,78 @@ class MediumTable(StrictModel):
         return self
 
 
+class LineFamilyEntry(StrictModel):
+    """Una famiglia di linee idrauliche: che acqua porta e da che parte va (D-105).
+
+    La riga si legge dal **fluido della rete**, dal **mestiere della sorgente**
+    da cui la rete parte e dal **verso**. I campi facoltativi valgono «qualunque»:
+    l'acqua fredda sanitaria e' `AF` comunque la si percorra.
+    """
+
+    medium: str = Field(pattern=ID_PATTERN)
+    fed_by: Literal["generator", "store", "boundary", "other"] | None = None
+    """Chi da' origine alla rete: un generatore fa un circuito primario, una
+    riserva un secondario. Vuoto = qualunque origine."""
+
+    direction: Literal["supply", "return"] | None = None
+    """Mandata o ritorno. Vuoto = la famiglia non distingue il verso."""
+
+    prefix: str = Field(pattern=r"^[A-Z]{2,4}$")
+    name: str = Field(min_length=1)
+    """Come si chiama in italiano: «mandata primaria», «acqua fredda sanitaria»."""
+
+
+class LineFamilyTable(StrictModel):
+    note: str = Field(min_length=1)
+    families: list[LineFamilyEntry] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def each_case_appears_once(self) -> "LineFamilyTable":
+        keys = [(item.medium, item.fed_by, item.direction) for item in self.families]
+        twice = sorted({str(item) for item in keys if keys.count(item) > 1})
+        if twice:
+            raise ValueError(
+                f"lo stesso caso compare due volte: {', '.join(twice)}. "
+                f"Due righe per lo stesso caso vorrebbero dire che la sigla della "
+                f"linea dipende da quale delle due si legge per prima"
+            )
+        prefixes = [item.prefix for item in self.families]
+        repeated = sorted({item for item in prefixes if prefixes.count(item) > 1})
+        if repeated:
+            raise ValueError(
+                f"la stessa sigla di linea compare due volte: {', '.join(repeated)}"
+            )
+        return self
+
+
+@dataclass(frozen=True)
+class LineNaming:
+    """La tabella delle famiglie di linea, pronta da interrogare (D-105)."""
+
+    families: tuple[LineFamilyEntry, ...]
+
+    @classmethod
+    def from_directory(cls, directory: Path) -> "LineNaming":
+        table = Naming._read(directory / LINES_FILE, LineFamilyTable)
+        return cls(families=tuple(table.families))
+
+    def family_for(self, medium: str, fed_by: str, direction: str) -> LineFamilyEntry:
+        """La famiglia di una linea, dalla prima riga che combacia."""
+        for entry in self.families:
+            if entry.medium != medium:
+                continue
+            if entry.fed_by is not None and entry.fed_by != fed_by:
+                continue
+            if entry.direction is not None and entry.direction != direction:
+                continue
+            return entry
+        raise NamingError(
+            f"nessuna famiglia di linea per il fluido {medium!r} che parte da "
+            f"{fed_by!r} in verso {direction!r}: aggiungerne una all'elenco delle "
+            f"famiglie di linea invece di lasciare la linea senza sigla"
+        )
+
+
 @dataclass(frozen=True)
 class Naming:
     """Le due tabelle caricate, pronte da interrogare."""
@@ -166,9 +239,13 @@ class Naming:
 
 __all__ = [
     "FAMILIES_FILE",
+    "LINES_FILE",
     "MEDIA_FILE",
     "FamilyEntry",
     "FamilyTable",
+    "LineFamilyEntry",
+    "LineFamilyTable",
+    "LineNaming",
     "MediumEntry",
     "MediumTable",
     "Naming",
