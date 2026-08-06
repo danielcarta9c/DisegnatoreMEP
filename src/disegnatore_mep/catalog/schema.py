@@ -108,6 +108,13 @@ SHUTOFF_REGIMES: frozenset[ComponentTrait] = frozenset(
 senza, un valore sottinteso deciderebbe al posto di chi compila il catalogo
 (D-094)."""
 
+FITTING_FUNCTIONS: frozenset[str] = frozenset({"junction", "branch_off"})
+"""I due mestieri di un raccordo: unire due tubazioni, o aprire una derivazione.
+
+Non e' un elenco di pezzi, e non lo diventera': sono **funzioni**, e quale voce
+di catalogo le porti su un dato fluido lo dice il catalogo (D-069). Un raccordo
+non e' un apparecchio, e chi cammina lungo un tubo ci passa attraverso."""
+
 ATTACHMENT_STYLES: frozenset[ComponentTrait] = frozenset(
     {ComponentTrait.ATTACHMENT_INLINE, ComponentTrait.ATTACHMENT_BRANCH}
 )
@@ -132,6 +139,19 @@ class PortDefinition(StrictModel):
     flow: PortFlow
     required: bool = True
 
+    stub: bool = False
+    """Questo attacco e' uno **stacco**: non fa parte del percorso del fluido.
+
+    Chi cammina lungo una tubazione — per sapere se un pezzo si puo' chiudere, o
+    cosa c'e' fra una sicurezza e la macchina — deve saperlo, altrimenti a ogni
+    raccordo perde la strada e infila la derivazione al posto della corsa.
+
+    Un attacco che dichiara `serves` e' uno stacco per definizione. Questo campo
+    serve agli stacchi **senza** una funzione dichiarata: il braccio di un
+    raccordo e' uno stacco, ma cosa ci pendera' lo decide l'impianto, non il
+    pezzo.
+    """
+
     serves: str | None = None
     """La funzione per cui questo attacco esiste, se e' un attacco **di servizio**.
 
@@ -148,8 +168,13 @@ class PortDefinition(StrictModel):
 
     @property
     def is_service(self) -> bool:
-        """Attacco di servizio, non del flusso principale."""
+        """Attacco di servizio: esiste per una funzione dichiarata."""
         return self.serves is not None
+
+    @property
+    def off_the_run(self) -> bool:
+        """Non e' sul percorso del fluido: e' uno stacco, di qualunque specie."""
+        return self.stub or self.is_service
 
 
 class ComponentDefinition(StrictModel):
@@ -204,6 +229,29 @@ class ComponentDefinition(StrictModel):
     def attachment(self) -> ComponentTrait:
         """In linea o su stacco. Esiste sempre: lo garantisce la validazione."""
         return next(iter(self.trait_set & ATTACHMENT_STYLES))
+
+    @property
+    def is_a_fitting(self) -> bool:
+        """Non e' un apparecchio: e' un raccordo, e il fluido ci passa e basta.
+
+        Serve a chi **cammina** lungo una tubazione. Un raccordo non interrompe
+        la linea sul disegno — il suo segno e' un pallino, non un corpo — quindi
+        il simbolo non lo dichiara in linea; ma la corsa ci passa attraverso, e
+        una camminata che si fermasse li' direbbe che una macchina non si puo'
+        chiudere solo perche' fra lei e la sua valvola c'e' un T.
+
+        Si riconosce dal **mestiere**, mai dal nome: unire due tubazioni, o
+        aprire una derivazione. Sono le uniche due cose che un raccordo fa.
+        """
+        return bool(FITTING_FUNCTIONS & set(self.functions))
+
+    @property
+    def attaches_on_a_branch(self) -> bool:
+        """Pende da uno stacco invece di stare sul percorso del tubo.
+
+        Chi lo fa non spezza la tubazione: si appende all'attacco di servizio
+        della macchina, o a una derivazione della tubazione (D-101)."""
+        return self.attachment is ComponentTrait.ATTACHMENT_BRANCH
 
     def has_trait(self, trait: ComponentTrait) -> bool:
         return trait in self.trait_set
@@ -310,6 +358,7 @@ class ComponentDefinition(StrictModel):
 
 __all__ = [
     "ATTACHMENT_STYLES",
+    "FITTING_FUNCTIONS",
     "SHUTOFF_REGIMES",
     "ComponentDefinition",
     "ComponentTrait",

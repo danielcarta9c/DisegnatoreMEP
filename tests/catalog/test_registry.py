@@ -23,7 +23,7 @@ def definition(component_id: str, ports: list[str] | None = None) -> dict[str, o
                 "medium": "heating_water",
                 "flow": "bidirectional",
                 "required": True,
-                "max_connections": 1,
+                
             }
             for port_id in (ports or ["a", "b"])
         ],

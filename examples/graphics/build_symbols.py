@@ -649,7 +649,7 @@ def _dial(w: float, h: float, mark_of: Any) -> str:
     return (
         _stem(w, h, "bottom", cy + r)
         + f'<circle cx="{n(w / 2)}" cy="{n(cy)}" r="{n(r)}"/>'
-        + mark_of(w / 2, cy, r)
+        + str(mark_of(w / 2, cy, r))
     )
 
 
@@ -831,12 +831,20 @@ CYLINDER_PORTS = [
     # faccia inferiore di un accumulo appoggiato a terra e' irraggiungibile,
     # perche' la tubazione dovrebbe passare sotto la linea di terra.
     port_at("cold_in", "left", 37.5, STORAGE_W, STORAGE_H),
+    # La sede della sonda: attacco di servizio dichiarato in legenda dal
+    # costruttore (SRC-018), a meta' altezza sul fianco libero.
+    port_at("probe", "right", 20.0, STORAGE_W, STORAGE_H),
 ]
 BUFFER_PORTS = [
     port_at("primary_in", "left", 5.0, STORAGE_W, STORAGE_H),
     port_at("primary_out", "left", 20.0, STORAGE_W, STORAGE_H),
     port_at("secondary_out", "right", 5.0, STORAGE_W, STORAGE_H),
     port_at("secondary_in", "right", 20.0, STORAGE_W, STORAGE_H),
+    # Gli attacchi di servizio, dove il costruttore li mette davvero: lo sfiato
+    # in cima, lo scarico in fondo, la sonda sul fianco (SRC-017, SRC-018).
+    port_at("vent", "top", 12.5, STORAGE_W, STORAGE_H),
+    port_at("drain", "bottom", 12.5, STORAGE_W, STORAGE_H),
+    port_at("probe", "left", 32.5, STORAGE_W, STORAGE_H),
 ]
 
 SYMBOLS: list[SymbolSpec] = [
@@ -851,25 +859,25 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     single_port_symbol(
         "valve-safety", "Valvola di sicurezza", BRANCHED_ACCESSORY, "bottom",
-        safety_valve_body, SOURCE_UNI_TAB3, UPRIGHT_ROTATIONS_DEG,
+        safety_valve_body, SOURCE_UNI_TAB3,
     ),
     inline_symbol("air-separator", "Separatore d'aria", BRANCHED_ACCESSORY, air_separator_body, SOURCE_PRACTICE_HYDRONIC),
     inline_symbol("dirt-separator", "Defangatore", BRANCHED_ACCESSORY, dirt_separator_body, SOURCE_PRACTICE_HYDRONIC),
     single_port_symbol(
         "filling-unit", "Gruppo di riempimento", BRANCHED_ACCESSORY, "top",
-        filling_unit_body, SOURCE_PRACTICE_HYDRONIC, UPRIGHT_ROTATIONS_DEG,
+        filling_unit_body, SOURCE_PRACTICE_HYDRONIC,
     ),
     single_port_symbol(
         "drain-connection", "Attacco di scarico", BRANCHED_ACCESSORY, "top",
-        drain_connection_body, SOURCE_PRACTICE_HYDRONIC, UPRIGHT_ROTATIONS_DEG,
+        drain_connection_body, SOURCE_PRACTICE_HYDRONIC,
     ),
     single_port_symbol(
         "thermometer", "Termometro", BRANCHED_ACCESSORY, "bottom",
-        thermometer_body, SOURCE_UNI_TAB10, UPRIGHT_ROTATIONS_DEG,
+        thermometer_body, SOURCE_UNI_TAB10,
     ),
     single_port_symbol(
         "pressure-gauge", "Manometro", BRANCHED_ACCESSORY, "bottom",
-        pressure_gauge_body, SOURCE_UNI_TAB10, UPRIGHT_ROTATIONS_DEG,
+        pressure_gauge_body, SOURCE_UNI_TAB10,
     ),
     inline_symbol("mixing-valve-thermostatic", "Valvola miscelatrice termostatica", BRANCHED_ACCESSORY, mixing_valve_body, SOURCE_UNI_TAB3),
     inline_symbol("pressure-reducer", "Riduttore di pressione", BRANCHED_ACCESSORY, pressure_reducer_body, SOURCE_PRACTICE_HYDRONIC),
@@ -878,9 +886,11 @@ SYMBOLS: list[SymbolSpec] = [
         SOURCE_PRACTICE_HYDRONIC,
     ),
     # --- idronico -----------------------------------------------------------
+    # Il T di UNI 9511 serve a due cose che sul disegno hanno lo stesso segno e
+    # nel modello sono pezzi diversi: la **confluenza**, dove due tubazioni
+    # diventano una (D-100), e la **derivazione**, da cui pende un accessorio
+    # (D-101). Il segno e' uno, e i due lo condividono.
     SymbolSpec(
-        # Dove due tubazioni si uniscono c'e' un pezzo, e ha la propria sigla
-        # (D-100). Tre attacchi: le due che arrivano e quella che riparte.
         id="tee-junction",
         name="Raccordo a T",
         width_mm=INLINE_ACCESSORY[0],
@@ -889,9 +899,23 @@ SYMBOLS: list[SymbolSpec] = [
         # linee diventano una, e i tre attacchi lo dicono da soli.
         inline=False,
         ports=[
-            port("in_1", "left", *INLINE_ACCESSORY),
-            port("in_2", "top", *INLINE_ACCESSORY),
-            port("out", "right", *INLINE_ACCESSORY),
+            port("a", "left", *INLINE_ACCESSORY),
+            port("c", "top", *INLINE_ACCESSORY),
+            port("b", "right", *INLINE_ACCESSORY),
+        ],
+        body=tee_junction_body(*INLINE_ACCESSORY),
+        source=SOURCE_UNI_TAB1,
+    ),
+    SymbolSpec(
+        id="tee-branch",
+        name="Derivazione a T",
+        width_mm=INLINE_ACCESSORY[0],
+        height_mm=INLINE_ACCESSORY[1],
+        inline=False,
+        ports=[
+            port("a", "left", *INLINE_ACCESSORY),
+            port("branch", "top", *INLINE_ACCESSORY),
+            port("b", "right", *INLINE_ACCESSORY),
         ],
         body=tee_junction_body(*INLINE_ACCESSORY),
         source=SOURCE_UNI_TAB1,
@@ -900,10 +924,6 @@ SYMBOLS: list[SymbolSpec] = [
     inline_symbol("valve-check", "Valvola di ritegno", INLINE_ACCESSORY, valve_check_body, SOURCE_UNI_TAB3),
     inline_symbol("strainer", "Filtro a Y", INLINE_ACCESSORY, strainer_body, SOURCE_PRACTICE_HYDRONIC),
     inline_symbol("pump-circulator", "Pompa di circolazione", DEVICE, pump_body, SOURCE_PRACTICE_HYDRONIC),
-    single_port_symbol(
-        "expansion-vessel", "Vaso di espansione ad attacco singolo", VESSEL, "top",
-        expansion_vessel_body, SOURCE_UNI_VESSELS, EXPANSION_VESSEL_ROTATIONS_DEG,
-    ),
     single_port_symbol(
         "air-vent", "Valvola di sfiato aria", TERMINAL_ACCESSORY, "bottom",
         air_vent_body, SOURCE_PRACTICE_HYDRONIC, AIR_VENT_ROTATIONS_DEG,

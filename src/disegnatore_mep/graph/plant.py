@@ -103,6 +103,9 @@ class Arm:
     pipes: tuple[str, ...]
     """Le tubazioni che convergono qui, in ordine di lettura."""
 
+    serves: str | None = None
+    """La funzione per cui questo attacco esiste, se e' di servizio (D-101)."""
+
     @property
     def is_a_crossing(self) -> bool:
         """Piu' di una tubazione su un attacco solo: e' un incrocio."""
@@ -110,8 +113,14 @@ class Arm:
 
     @property
     def carries_nothing(self) -> bool:
-        """Un attacco su cui non arriva nessuna tubazione."""
-        return not self.pipes
+        """Un attacco del **flusso** su cui non arriva nessuna tubazione.
+
+        Gli attacchi di servizio non contano. Un volano ha lo sfiato e la sede
+        della sonda anche in un impianto in cui nessuno li collega, ed elencarli
+        come attacchi liberi vorrebbe dire riempire di rumore proprio la sezione
+        che esiste per far notare quello che non va.
+        """
+        return not self.pipes and self.serves is None
 
 
 @dataclass(frozen=True)
@@ -353,6 +362,7 @@ class _Reader:
                     medium=port.medium,
                     flow=port.flow,
                     pipes=tuple(self._at_arm.get((component.id, port.id), ())),
+                    serves=port.serves,
                 )
                 for index, port in enumerate(definition.ports)
             )

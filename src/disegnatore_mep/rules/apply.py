@@ -33,6 +33,23 @@ from .errors import RuleError
 from .proposal import RuleGap, RuleProposal
 from .registry import RuleRegistry
 
+BRANCH_OFF = "branch_off"
+"""Il mestiere di cio' che apre una derivazione su una tubazione esistente.
+
+E' una **funzione**, non un pezzo: quale voce di catalogo la porti su un dato
+fluido lo risolve il catalogo, come per ogni altra cosa che le regole chiedono
+(D-069). Serve nominata qui perche' la derivazione non la chiede una regola: la
+chiede la forma dell'impianto, quando un accessorio pende da uno stacco e la
+macchina non ha l'attacco dedicato.
+
+Da non confondere con la **confluenza**, che e' un pezzo diverso: li' due
+tubazioni si uniscono e tutti e tre gli attacchi sono sul percorso, qui il
+braccio esce dal percorso.
+"""
+
+BRANCH_PORT = "branch"
+"""Il braccio del raccordo a cui si appende cio' che pende dallo stacco."""
+
 ROUNDS = 8
 """Quante passate **produttive** si ammettono al massimo.
 
@@ -103,42 +120,152 @@ def _with_member(
     ]
 
 
+def _instance(
+    component_id: str, definition_id: str, proposal: RuleProposal
+) -> ComponentInstance:
+    """Il pezzo nuovo, con dietro la regola che lo ha voluto e il suo perche'.
+
+    E' la tracciabilita' a valle di D-039: dalla distinta si risale alla regola,
+    e la nota e' la **motivazione** — cio' che l'ingegnere legge — non
+    l'identificativo della regola, che sta gia' nel riferimento.
+    """
+    return ComponentInstance(
+        id=component_id,
+        definition_id=definition_id,
+        evidence=[
+            EvidenceRef(
+                kind="rule",
+                reference=f"{proposal.rule_id}@{proposal.rule_version}",
+                note=proposal.rationale,
+            )
+        ],
+    )
+
+
+def _stub(
+    proposal: RuleProposal, network_id: str, holder: PortRef
+) -> ConnectionModel:
+    """La tubazione corta che regge cio' che pende dallo stacco.
+
+    Non spezza niente: collega l'attacco che regge — quello di servizio della
+    macchina, o il braccio del raccordo — all'unico attacco dell'accessorio.
+    """
+    return ConnectionModel(
+        id=f"stub-{proposal.component_id}",
+        network_id=network_id,
+        endpoint_a=holder,
+        endpoint_b=PortRef(
+            component_id=proposal.component_id, port_id=proposal.inlet_port
+        ),
+    )
+
+
+def _derivation(
+    connection: ConnectionModel, proposal: RuleProposal, junction_id: str
+) -> list[ConnectionModel]:
+    """Il raccordo che apre una derivazione dentro una tubazione esistente.
+
+    La tubazione si spezza in due tronconi che entrano e escono dal raccordo, e
+    dal braccio del raccordo pende l'accessorio. E' cio' che si fa in cantiere
+    quando la macchina non ha il bocchello: si salda un T sul tubo.
+    """
+    return [
+        connection.model_copy(
+            update={
+                "id": f"{connection.id}-a",
+                "endpoint_b": PortRef(component_id=junction_id, port_id="a"),
+            }
+        ),
+        connection.model_copy(
+            update={
+                "id": f"{connection.id}-b",
+                "endpoint_a": PortRef(component_id=junction_id, port_id="b"),
+            }
+        ),
+    ]
+
+
 def apply_proposals(
-    project: ProjectModel, proposals: list[RuleProposal]
+    project: ProjectModel, proposals: list[RuleProposal], catalog: ComponentRegistry
 ) -> ProjectModel:
-    """Il modello completato. L'originale resta com'era."""
+    """Il modello completato. L'originale resta com'era.
+
+    Tre modi, e li decide **come l'accessorio si attacca**, che e' una proprieta'
+    dichiarata dal catalogo:
+
+    - **in linea**: la tubazione si spezza e il pezzo ci finisce in mezzo;
+    - **su stacco, e la macchina ha l'attacco dedicato**: il pezzo ci si collega
+      e la tubazione principale non si tocca;
+    - **su stacco, e la macchina non ce l'ha**: si apre una derivazione sulla
+      tubazione con un raccordo, e il pezzo pende da li'.
+
+    Prima erano uno solo — spezzare — e per questo scarico, vaso, riempimento e
+    strumenti finivano in fila dentro il tubo, come se l'acqua ci passasse
+    dentro.
+    """
     current = project
     for proposal in proposals:
-        connection = _connection_touching(current, proposal.anchor)
-        pieces = _split(connection, proposal)
-        connections: list[ConnectionModel] = []
-        for item in current.connections:
-            if item.id == connection.id:
-                connections.extend(pieces)
+        added = [_instance(proposal.component_id, proposal.definition_id, proposal)]
+        network_id = proposal.network_id
+        # I pezzi nuovi entrano nel sottosistema dell'ancoraggio; le tubazioni
+        # nate o spezzate restano fuori di li' e finiscono nella tracciabilita'.
+        pipes: list[str] = []
+
+        if proposal.service_port is not None:
+            # La macchina l'attacco ce l'ha: nessuna tubazione viene spezzata.
+            stub = _stub(
+                proposal,
+                network_id,
+                PortRef(
+                    component_id=proposal.anchor.component_id,
+                    port_id=proposal.service_port,
+                ),
+            )
+            connections = [*current.connections, stub]
+            pipes.append(stub.id)
+        else:
+            connection = _connection_touching(current, proposal.anchor)
+            if catalog.get(proposal.definition_id).attaches_on_a_branch:
+                junction_id = f"tee-{proposal.component_id}"
+                added.append(
+                    _instance(
+                        junction_id,
+                        catalog.providing(
+                            BRANCH_OFF, _medium_of(current, network_id)
+                        ).id,
+                        proposal,
+                    )
+                )
+                pieces = _derivation(connection, proposal, junction_id)
+                extra = [
+                    _stub(
+                        proposal,
+                        network_id,
+                        PortRef(component_id=junction_id, port_id=BRANCH_PORT),
+                    )
+                ]
             else:
-                connections.append(item)
+                pieces = _split(connection, proposal)
+                extra = []
+            connections = []
+            for item in current.connections:
+                if item.id == connection.id:
+                    connections.extend(pieces)
+                else:
+                    connections.append(item)
+            connections.extend(extra)
+            pipes.extend(item.id for item in (*pieces, *extra))
+
+        subsystems = list(current.subsystems)
+        for component in added:
+            subsystems = _with_member(
+                subsystems, proposal.anchor.component_id, component.id
+            )
         current = current.model_copy(
             update={
-                "components": [
-                    *current.components,
-                    ComponentInstance(
-                        id=proposal.component_id,
-                        definition_id=proposal.definition_id,
-                        evidence=[
-                            EvidenceRef(
-                                kind="rule",
-                                reference=f"{proposal.rule_id}@{proposal.rule_version}",
-                                note=proposal.rationale,
-                            )
-                        ],
-                    ),
-                ],
+                "components": [*current.components, *added],
                 "connections": connections,
-                "subsystems": _with_member(
-                    list(current.subsystems),
-                    proposal.anchor.component_id,
-                    proposal.component_id,
-                ),
+                "subsystems": subsystems,
                 "rule_applications": [
                     *current.rule_applications,
                     RuleApplicationModel(
@@ -147,12 +274,20 @@ def apply_proposals(
                         rule_version=proposal.rule_version,
                         category=proposal.category,
                         status=ApprovalStatus.APPROVED,
-                        entity_ids=[proposal.component_id, *[item.id for item in pieces]],
+                        entity_ids=[*(item.id for item in added), *pipes],
                     ),
                 ],
             }
         )
     return current
+
+
+def _medium_of(project: ProjectModel, network_id: str) -> str:
+    """Il fluido di una rete. Il raccordo si sceglie su quello, come ogni pezzo."""
+    for network in project.networks:
+        if network.id == network_id:
+            return network.medium
+    raise RuleError(f"unknown network {network_id}")
 
 
 def saturate(
@@ -179,7 +314,7 @@ def saturate(
             gaps.setdefault(gap.key, gap)
         if found.is_empty:
             return current, applied, list(gaps.values())
-        current = apply_proposals(current, found.proposals)
+        current = apply_proposals(current, found.proposals, catalog)
         applied.extend(found.proposals)
         found = evaluate(current, catalog, rules)
     for gap in found.gaps:

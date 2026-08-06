@@ -17,14 +17,7 @@
       "id": "a",
       "domain": "hydronic",
       "medium": "heating_water",
-      "flow": "in",
-      "required": true
-    },
-    {
-      "id": "b",
-      "domain": "hydronic",
-      "medium": "heating_water",
-      "flow": "out",
+      "flow": "bidirectional",
       "required": true
     }
   ],

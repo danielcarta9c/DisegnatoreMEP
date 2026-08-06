@@ -90,7 +90,7 @@ def test_completing_takes_more_than_one_pass_and_then_stops() -> None:
         found = evaluate(current, catalog(), rules())
         if found.is_empty:
             break
-        current = apply_proposals(current, found.proposals)
+        current = apply_proposals(current, found.proposals, catalog())
         passes += 1
     assert passes > 1
     completed, applied, _ = saturate(project, catalog(), rules())
@@ -127,7 +127,7 @@ def test_the_completed_model_is_valid() -> None:
 
 def test_applying_nothing_changes_nothing() -> None:
     project = load_project(ESSENTIAL)
-    assert canonical_json(apply_proposals(project, [])) == canonical_json(project)
+    assert canonical_json(apply_proposals(project, [], catalog())) == canonical_json(project)
 
 
 def test_applying_leaves_the_traceability_behind() -> None:
@@ -158,7 +158,7 @@ def test_the_limit_counts_productive_passes_and_not_the_one_that_finds_nothing(
         found = evaluate(current, catalog(), rules())
         if found.is_empty:
             break
-        current = apply_proposals(current, found.proposals)
+        current = apply_proposals(current, found.proposals, catalog())
         productive += 1
 
     monkeypatch.setattr(apply_module, "ROUNDS", productive)

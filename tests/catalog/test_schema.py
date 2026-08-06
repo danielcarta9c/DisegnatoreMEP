@@ -11,7 +11,7 @@ def port(**overrides: object) -> dict[str, object]:
         "medium": "heating_water",
         "flow": "bidirectional",
         "required": True,
-        "max_connections": 1,
+        
     }
     base.update(overrides)
     return base

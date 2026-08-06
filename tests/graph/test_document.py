@@ -245,16 +245,14 @@ def test_the_document_names_the_piece_the_ring_closes_on() -> None:
                 assert f"qui il giro si richiude su {sigla}" in document
 
 
-def test_the_document_shows_the_crossings_with_their_arms() -> None:
-    """Un attacco su cui convergono piu' tubazioni e' un incrocio, e i suoi rami
-    si contano (D-097)."""
+def test_the_document_says_out_loud_that_there_are_no_crossings() -> None:
+    """Un attacco porta una tubazione sola (D-100), quindi su un impianto ben
+    modellato di incroci non ce ne sono — e il documento lo **dice**, invece di
+    tacere una sezione vuota. Dove due tubazioni si incontrano c'e' un pezzo che
+    le unisce, e quello si legge fra i nodi come tutti gli altri."""
     graph = read_plant(load_project(PLANT), catalog(HYDRONIC_CATALOG), naming())
-    document = text()
-    assert graph.crossings
-    for node, arm in graph.crossings:
-        assert (
-            f"sul braccio {arm.number} di **{node.sigla}**" in document
-        ), (node.sigla, arm.number)
+    assert graph.crossings == ()
+    assert "ogni attacco porta una sola tubazione" in text()
 
 
 # --- 4. cio' che manca si legge, su impianti che ce l'hanno --------------------

@@ -69,8 +69,19 @@ class Plant:
             item.id
             for item in project.components
             if registry.resolve(item.definition_id).is_inline
+            or registry.get(item.definition_id).is_a_fitting
         )
         self.touching: dict[tuple[str, str], list[ConnectionModel]] = defaultdict(list)
+        # Gli attacchi che **non** sono sul percorso: gli stacchi di servizio di
+        # una macchina e il braccio di una derivazione. Chi cammina lungo un tubo
+        # deve saperlo, altrimenti a ogni derivazione infila il ramo al posto
+        # della corsa e riporta difetti che non ci sono.
+        self.off_the_run: set[tuple[str, str]] = {
+            (item.id, port.id)
+            for item in project.components
+            for port in registry.get(item.definition_id).ports
+            if port.off_the_run
+        }
         for connection in project.connections:
             for ref in (connection.endpoint_a, connection.endpoint_b):
                 self.touching[(ref.component_id, ref.port_id)].append(connection)
@@ -82,9 +93,24 @@ class Plant:
             connection.id: connection.network_id for connection in project.connections
         }
 
+    def leaves_the_run(self, connection: ConnectionModel) -> bool:
+        """Quella tubazione esce dal percorso: e' uno stacco."""
+        return any(
+            (ref.component_id, ref.port_id) in self.off_the_run
+            for ref in (connection.endpoint_a, connection.endpoint_b)
+        )
+
     def attachments_of(self, component_id: str) -> list[str]:
-        """Gli attacchi che una tubazione tocca davvero, in ordine."""
-        return sorted(port for owner, port in self.touching if owner == component_id)
+        """Gli attacchi **del percorso** che una tubazione tocca davvero.
+
+        Gli stacchi di servizio restano fuori: lo scarico di un volano e' gia'
+        un rubinetto, e pretendere una valvola sul suo stacco vorrebbe dire
+        chiudere il rubinetto con un altro rubinetto."""
+        return sorted(
+            port
+            for owner, port in self.touching
+            if owner == component_id and (owner, port) not in self.off_the_run
+        )
 
     def fluids_at(self, component_id: str, port_id: str) -> set[str]:
         """I fluidi delle tubazioni che toccano quell'attacco."""
@@ -110,45 +136,73 @@ class Plant:
     def functions_of(self, component_id: str) -> frozenset[str]:
         return frozenset(self.definitions[component_id].functions)
 
-    def chain_from(self, component_id: str, connection: ConnectionModel) -> list[str]:
-        """La fila dei pezzi partendo da un attacco, fino al primo nodo compreso."""
-        chain: list[str] = []
-        cursor = component_id
-        seen = {cursor}
-        current: ConnectionModel | None = connection
-        while current is not None:
-            peers = [
-                ref.component_id
-                for ref in (current.endpoint_a, current.endpoint_b)
-                if ref.component_id != cursor
-            ]
-            if not peers or peers[0] in seen:
-                break
-            peer = peers[0]
-            chain.append(peer)
-            if peer not in self.inline:
-                break
-            seen.add(peer)
-            current = next(
-                (
-                    candidate
-                    for candidate in self.project.connections
-                    if candidate.id != current.id
-                    and peer
-                    in (
-                        candidate.endpoint_a.component_id,
-                        candidate.endpoint_b.component_id,
-                    )
-                ),
-                None,
+    def chain_from(
+        self,
+        component_id: str,
+        connection: ConnectionModel,
+        seen: frozenset[str] | None = None,
+    ) -> list[list[str]]:
+        """Le file dei pezzi partendo da un attacco, fino al primo nodo compreso.
+
+        Sono **piu' d'una** dove la strada si biforca. Un raccordo di derivazione
+        ha tre bracci: la corsa prosegue di la', ma da qui — camminando a
+        ritroso da cio' che pende dallo stacco — si esce in due direzioni, e la
+        proprieta' da verificare vale su una di esse. Una camminata che ne
+        scegliesse una sola riporterebbe difetti che non ci sono.
+        """
+        walked = (seen or frozenset()) | {component_id}
+        peers = [
+            ref.component_id
+            for ref in (connection.endpoint_a, connection.endpoint_b)
+            if ref.component_id != component_id
+        ]
+        if not peers or peers[0] in walked:
+            return [[]]
+        peer = peers[0]
+        if peer not in self.inline:
+            return [[peer]]
+        onward = [
+            candidate
+            for candidate in self.project.connections
+            if candidate.id != connection.id
+            and peer
+            in (
+                candidate.endpoint_a.component_id,
+                candidate.endpoint_b.component_id,
             )
-            cursor = peer
-        return chain
+            # Dallo stacco non si prosegue: quello e' il ramo, non la corsa.
+            and not self.leaves_the_run(candidate)
+        ]
+        if not onward:
+            return [[peer]]
+        return [
+            [peer, *rest]
+            for candidate in onward
+            for rest in self.chain_from(peer, candidate, walked)
+        ]
+
+    def hanging_from(self, component_id: str) -> list[str]:
+        """Cio' che pende dagli stacchi di quel pezzo.
+
+        Uno stacco e' l'attacco di servizio di una macchina — lo scarico di un
+        volano — oppure il braccio di una derivazione saldata sul tubo. In tutti
+        e due i casi cio' che ci pende non sta sulla corsa, e chi cammina il tubo
+        non lo incontrerebbe mai.
+        """
+        return [
+            ref.component_id
+            for owner, port_id in self.off_the_run
+            if owner == component_id
+            for connection in self.touching[(owner, port_id)]
+            for ref in (connection.endpoint_a, connection.endpoint_b)
+            if ref.component_id != component_id
+        ]
 
     def chains_of(self, component_id: str, port_id: str) -> list[list[str]]:
         return [
-            self.chain_from(component_id, connection)
+            chain
             for connection in self.touching[(component_id, port_id)]
+            for chain in self.chain_from(component_id, connection)
         ]
 
     def closers_of(self, component_id: str, port_id: str) -> list[str]:
@@ -302,7 +356,13 @@ def test_every_tank_can_empty_the_water_it_actually_holds() -> None:
     for tank in tanks:
         stored = plant.definitions[tank].stored_medium
         assert stored is not None, tank
-        drained = False
+        # Lo scarico sta sull'attacco che il serbatoio dedica allo scarico, se
+        # il costruttore ce l'ha messo — un volano si' — oppure su una
+        # derivazione saldata sulla tubazione della riserva, che e' come si
+        # svuota un bollitore, perche' il bocchello non ce l'ha (SRC-018).
+        drained = any(
+            "drain" in plant.functions_of(item) for item in plant.hanging_from(tank)
+        )
         for port_id in plant.attachments_of(tank):
             if stored not in plant.fluids_at(tank, port_id):
                 continue
@@ -310,7 +370,10 @@ def test_every_tank_can_empty_the_water_it_actually_holds() -> None:
                 for item in chain:
                     if plant.functions_of(item) & CLOSES:
                         break
-                    if "drain" in plant.functions_of(item):
+                    if "drain" in plant.functions_of(item) or any(
+                        "drain" in plant.functions_of(hung)
+                        for hung in plant.hanging_from(item)
+                    ):
                         drained = True
                         break
         if not drained:
@@ -413,7 +476,13 @@ def test_the_rule_proposes_the_lockable_organ_wherever_the_regime_asks_it() -> N
 # --- l'artefatto che il committente approva ----------------------------------
 
 PM_DOCUMENT = ROOT / "docs" / "prodotto" / "REGOLE_ACCESSORI.md"
-BEFORE_P2 = ROOT / "examples" / "layout" / "centrale-pdc-quattro-fasce.json"
+BEFORE_P2 = ESSENTIAL
+"""L'impianto **prima** delle integrazioni: quello che l'ingegnere ha descritto.
+
+Era il caso a quattro fasce, che era un modello gia' saturato da una passata
+vecchia delle regole: un artefatto, non uno stato. Confrontarsi con lui misurava
+la differenza fra due versioni del motore invece della crescita che il documento
+dichiara."""
 
 
 def cards() -> list[str]:

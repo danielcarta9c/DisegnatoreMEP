@@ -8,7 +8,7 @@ SYMBOLS = Path(__file__).resolve().parents[2] / "assets" / "symbols"
 
 
 def test_the_shipped_library_loads() -> None:
-    assert len(SymbolRegistry.from_directory(SYMBOLS).all()) == 31
+    assert len(SymbolRegistry.from_directory(SYMBOLS).all()) == 32
 
 
 def test_symbols_sheet_command_writes_a_true_scale_sheet(tmp_path: Path) -> None:
@@ -47,7 +47,7 @@ def test_restricted_symbols_declare_only_their_technical_orientations() -> None:
     """
     registry = SymbolRegistry.from_directory(SYMBOLS)
     assert registry.get("air-vent").manifest.allowed_rotations_deg == [0]
-    assert registry.get("expansion-vessel").manifest.allowed_rotations_deg == [0, 180]
+    assert registry.get("expansion-connection").manifest.allowed_rotations_deg == [0, 180]
 
 
 def test_upright_symbols_declare_only_their_own_orientation() -> None:
@@ -62,7 +62,7 @@ def test_upright_symbols_declare_only_their_own_orientation() -> None:
 def test_every_other_shipped_symbol_admits_all_four_rotations() -> None:
     restricted = {
         "air-vent",
-        "expansion-vessel",
+        "expansion-connection",
         "heat-pump-air-water",
         "dhw-cylinder",
         "buffer-four-port",

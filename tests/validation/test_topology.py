@@ -319,8 +319,10 @@ def test_port_connection_limit_is_blocking() -> None:
     limit_issues = [issue for issue in report.issues if issue.code == "PORT_CONNECTION_LIMIT"]
     assert len(limit_issues) == 1
     assert limit_issues[0].entity_ids == ["hub", "port"]
-    assert "2 connections" in limit_issues[0].message
-    assert "maximum is 1" in limit_issues[0].message
+    assert "2 pipes" in limit_issues[0].message
+    # Il messaggio dice anche cosa fare: dove due tubazioni si incontrano ci
+    # vuole un pezzo che le unisca, con la propria sigla (D-100).
+    assert "joins them" in limit_issues[0].message
 
 
 def test_unknown_component_message_includes_id() -> None:

@@ -120,7 +120,7 @@ def test_ports_land_where_the_point_transform_says() -> None:
 
 
 def test_keep_out_follows_the_face_it_protects() -> None:
-    manifest = library().get("expansion-vessel").manifest
+    manifest = library().get("expansion-connection").manifest
     assert manifest.keep_out.top_mm > 0
     rotated = manifest.rotated(180)
     assert rotated.keep_out.bottom_mm == manifest.keep_out.top_mm
@@ -128,7 +128,7 @@ def test_keep_out_follows_the_face_it_protects() -> None:
 
 
 def test_keep_out_rotation_is_a_quarter_turn_cycle() -> None:
-    original = library().get("expansion-vessel").manifest.keep_out
+    original = library().get("expansion-connection").manifest.keep_out
     turned = original
     for _ in range(4):
         turned = turned.rotated(90)

@@ -118,6 +118,11 @@ def _already_there(
     function = _function_at(context, rule, anchor)
     if rule.satisfied_by.scope is SatisfactionScope.ON_THE_NETWORK:
         return context.network_has(network_id, function)
+    # Un accessorio posato sull'attacco di servizio non sta sulla tubazione
+    # principale: camminando lungo quella non lo si troverebbe, e lo si
+    # riproporrebbe a ogni passata.
+    if context.service_port_is_taken(anchor.component_id, function):
+        return True
     return context.port_carries(anchor, function)
 
 
@@ -208,9 +213,8 @@ def evaluate(
                     if not _already_there(context, rule, network.id, anchor)
                 ]
             for anchor in _limited(free, rule.cardinality, served):
-                definition = catalog.providing(
-                    _function_at(context, rule, anchor), network.medium
-                )
+                function = _function_at(context, rule, anchor)
+                definition = catalog.providing(function, network.medium)
                 component_id = proposed_component_id(definition.id, anchor)
                 if component_id in taken:
                     continue
@@ -227,6 +231,14 @@ def evaluate(
                         anchor=anchor,
                         inlet_port=rule.then.inlet_port,
                         outlet_port=rule.then.outlet_port,
+                        # Solo per chi pende da uno stacco, e solo se la macchina
+                        # dichiara l'attacco per quella funzione: altrimenti resta
+                        # vuoto e lo stacco si apre sulla tubazione (D-101).
+                        service_port=(
+                            context.service_port_for(anchor.component_id, function)
+                            if definition.attaches_on_a_branch
+                            else None
+                        ),
                         rationale=rule.rationale,
                         source=rule.source,
                     )

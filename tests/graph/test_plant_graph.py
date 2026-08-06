@@ -445,16 +445,22 @@ def test_a_piece_no_source_reaches_is_a_fact_of_the_graph() -> None:
 
 
 @EVERY_PLANT
-def test_an_attachment_keeps_all_its_pipes_and_never_one(plant: str) -> None:
-    """La radice del difetto che rendeva diverso lo stesso impianto scritto in
-    un altro ordine: tenere **una** tubazione per attacco. Qui l'attacco le
-    tiene tutte, e la somma torna."""
+def test_an_attachment_carries_exactly_one_pipe(plant: str) -> None:
+    """Un attacco porta una tubazione sola (D-100).
+
+    E' la radice del difetto che rendeva diverso lo stesso impianto scritto in
+    un altro ordine: finche' su un attacco potevano arrivarne due, quale delle
+    due contasse lo decideva chi guardava per ultimo. Con una sola non c'e' piu'
+    niente da scegliere. Dove due tubazioni si incontrano c'e' un pezzo che le
+    unisce, e quello ha tre attacchi da uno.
+    """
     graph = graph_of(plant)
     counted = sum(len(arm.pipes) for node in graph.nodes for arm in node.arms)
     assert counted == 2 * len(graph.pipes)
-    for node, arm in graph.crossings:
-        assert len(arm.pipes) > 1
-        assert len(set(arm.pipes)) == len(arm.pipes), (node.sigla, arm.number)
+    for node in graph.nodes:
+        for arm in node.arms:
+            assert len(arm.pipes) <= 1, (node.sigla, arm.number, arm.pipes)
+    assert graph.crossings == ()
 
 
 def test_a_pipe_written_the_wrong_way_round_is_refused() -> None:

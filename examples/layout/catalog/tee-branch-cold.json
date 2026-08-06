@@ -1,37 +1,38 @@
 {
-  "id": "tee-junction",
+  "id": "tee-branch-cold",
   "version": "1.0.0",
-  "name": "Raccordo a T",
+  "name": "Derivazione a T sull'acqua fredda",
   "functions": [
-    "junction"
+    "branch_off"
   ],
   "traits": [
     "shutoff_ordinary",
     "attachment_inline"
   ],
-  "symbol_id": "tee-junction",
+  "symbol_id": "tee-branch",
   "composite": false,
   "ports": [
     {
       "id": "a",
       "domain": "hydronic",
-      "medium": "heating_water",
-      "flow": "in",
-      "required": true
-    },
-    {
-      "id": "c",
-      "domain": "hydronic",
-      "medium": "heating_water",
+      "medium": "cold_water",
       "flow": "in",
       "required": true
     },
     {
       "id": "b",
       "domain": "hydronic",
-      "medium": "heating_water",
+      "medium": "cold_water",
       "flow": "out",
       "required": true
+    },
+    {
+      "id": "branch",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "bidirectional",
+      "required": false,
+      "stub": true
     }
   ],
   "sources": [

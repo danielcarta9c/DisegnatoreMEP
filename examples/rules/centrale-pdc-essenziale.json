@@ -238,7 +238,7 @@
       },
       "endpoint_b": {
         "component_id": "tee-return-generator",
-        "port_id": "in_1"
+        "port_id": "a"
       },
       "properties": {}
     },
@@ -264,7 +264,7 @@
       },
       "endpoint_b": {
         "component_id": "tee-return-generator",
-        "port_id": "in_2"
+        "port_id": "c"
       },
       "properties": {}
     },
@@ -329,7 +329,7 @@
       },
       "endpoint_b": {
         "component_id": "tee-return-buffer",
-        "port_id": "in_1"
+        "port_id": "a"
       },
       "properties": {}
     },
@@ -342,7 +342,7 @@
       },
       "endpoint_b": {
         "component_id": "tee-return-buffer",
-        "port_id": "in_2"
+        "port_id": "c"
       },
       "properties": {}
     },
@@ -375,7 +375,7 @@
       "network_id": "primary",
       "endpoint_a": {
         "component_id": "tee-return-generator",
-        "port_id": "out"
+        "port_id": "b"
       },
       "endpoint_b": {
         "component_id": "hp",
@@ -388,7 +388,7 @@
       "network_id": "secondary",
       "endpoint_a": {
         "component_id": "tee-return-buffer",
-        "port_id": "out"
+        "port_id": "b"
       },
       "endpoint_b": {
         "component_id": "buffer",

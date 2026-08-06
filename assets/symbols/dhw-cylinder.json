@@ -31,11 +31,17 @@
       "face": "left",
       "x_mm": 0.0,
       "y_mm": 37.5
+    },
+    {
+      "id": "probe",
+      "face": "right",
+      "x_mm": 25.0,
+      "y_mm": 20.0
     }
   ],
   "keep_out": {
     "left_mm": 2.0,
-    "right_mm": 0.0,
+    "right_mm": 2.0,
     "top_mm": 2.0,
     "bottom_mm": 0.0
   },

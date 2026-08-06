@@ -16,14 +16,7 @@
       "id": "a",
       "domain": "hydronic",
       "medium": "domestic_hot_water",
-      "flow": "in",
-      "required": true
-    },
-    {
-      "id": "b",
-      "domain": "hydronic",
-      "medium": "domestic_hot_water",
-      "flow": "out",
+      "flow": "bidirectional",
       "required": true
     }
   ],

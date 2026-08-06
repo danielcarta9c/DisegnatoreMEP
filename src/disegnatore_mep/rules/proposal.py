@@ -65,6 +65,17 @@ class RuleProposal(StrictModel):
 
     inlet_port: str = Field(pattern=ID_PATTERN)
     outlet_port: str = Field(pattern=ID_PATTERN)
+
+    service_port: str | None = Field(default=None, pattern=ID_PATTERN)
+    """L'attacco di servizio dell'ancoraggio su cui questo accessorio si appende.
+
+    Vale solo per gli accessori che pendono da uno stacco (D-101). Se e'
+    valorizzato, la macchina quell'attacco ce l'ha e l'accessorio ci si collega;
+    se e' vuoto, la macchina non ce l'ha e lo stacco si apre sulla tubazione, con
+    un raccordo. Chi applica non lo ridecide: lo ha gia' stabilito chi ha
+    valutato la regola, guardando cosa la macchina dichiara.
+    """
+
     rationale: str = Field(min_length=1)
     source: str = Field(min_length=1)
 

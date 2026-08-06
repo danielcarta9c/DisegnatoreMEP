@@ -41,6 +41,13 @@ class RuleContext:
     networks_of: dict[str, frozenset[str]]
     """Reti che ciascun componente tocca."""
 
+    service_ports: dict[tuple[str, str], str]
+    """L'attacco di servizio di un componente per una data funzione (D-101).
+
+    Un volano dichiara lo scarico, lo sfiato e la sede della sonda; un bollitore
+    la sola sonda. Chi ce l'ha riceve l'accessorio **li'**, invece che dentro la
+    tubazione principale."""
+
     connection_of_port: dict[tuple[str, str], str]
     """Quale connessione tocca un dato attacco."""
 
@@ -58,6 +65,7 @@ class RuleContext:
         stored_media: dict[str, str] = {}
         ports: dict[str, tuple[PortDefinition, ...]] = {}
         inline: set[str] = set()
+        service_ports: dict[tuple[str, str], str] = {}
         for component in project.components:
             resolved = catalog.resolve(component.definition_id)
             functions[component.id] = frozenset(resolved.definition.functions)
@@ -65,7 +73,12 @@ class RuleContext:
             if resolved.definition.stored_medium is not None:
                 stored_media[component.id] = resolved.definition.stored_medium
             ports[component.id] = tuple(resolved.definition.ports)
-            if resolved.is_inline:
+            for port in resolved.definition.ports:
+                if port.serves is not None:
+                    service_ports[(component.id, port.serves)] = port.id
+            # In linea per il disegno, oppure raccordo: in tutti e due i casi
+            # la corsa ci passa attraverso e la camminata non si ferma.
+            if resolved.is_inline or resolved.definition.is_a_fitting:
                 inline.add(component.id)
 
         touched: dict[str, set[str]] = defaultdict(set)
@@ -86,6 +99,7 @@ class RuleContext:
             stored_media=stored_media,
             ports=ports,
             networks_of={key: frozenset(value) for key, value in touched.items()},
+            service_ports=service_ports,
             connection_of_port=connection_of_port,
             network_of_connection=network_of_connection,
             inline=frozenset(inline),
@@ -141,6 +155,20 @@ class RuleContext:
         della riserva non si applica a chi non ne ha una."""
         return self.stored_media.get(component_id) == medium
 
+    def service_port_for(self, component_id: str, function: str) -> str | None:
+        """L'attacco che quel componente dedica a quella funzione, se ce l'ha."""
+        return self.service_ports.get((component_id, function))
+
+    def service_port_is_taken(self, component_id: str, function: str) -> bool:
+        """Quell'attacco di servizio ha gia' qualcosa attaccato.
+
+        Va guardato a parte: l'accessorio posato su uno stacco non sta sulla
+        tubazione principale, quindi camminando lungo quella non lo si trova e
+        lo si riproporrebbe a ogni passata.
+        """
+        port_id = self.service_ports.get((component_id, function))
+        return port_id is not None and (component_id, port_id) in self.connection_of_port
+
     def port_carries(self, ref: PortRef, function: str) -> bool:
         """Un accessorio con quella funzione e' gia' sulla tubazione di questo attacco.
 
@@ -182,15 +210,22 @@ class RuleContext:
         )
 
     def connected_ports(self, component_id: str) -> tuple[PortDefinition, ...]:
-        """Solo gli attacchi che una connessione tocca davvero.
+        """Gli attacchi **del flusso** che una connessione tocca davvero.
 
         Un accessorio non si posa su un attacco libero: non c'e' tubazione su cui
         stare, e il modello non contiene coordinate con cui inventarne una.
+
+        Gli attacchi di servizio restano fuori. Sono lo stacco di **un altro**
+        accessorio, non un pezzo del percorso: senza questa esclusione la regola
+        dell'intercettazione, appena lo scarico di un volano veniva collegato,
+        pretendeva una valvola anche sul suo stacco — e uno scarico e' gia' un
+        rubinetto.
         """
         return tuple(
             port
             for port in self.ports.get(component_id, ())
-            if (component_id, port.id) in self.connection_of_port
+            if not port.is_service
+            and (component_id, port.id) in self.connection_of_port
         )
 
 

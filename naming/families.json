@@ -144,6 +144,11 @@
       "name": "Raccordo"
     },
     {
+      "function": "branch_off",
+      "prefix": "DER",
+      "name": "Derivazione"
+    },
+    {
       "function": "boundary",
       "prefix": "AL",
       "name": "Allacciamento",

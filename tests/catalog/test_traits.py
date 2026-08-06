@@ -445,30 +445,20 @@ def test_being_serviced_and_never_closing_do_not_load_together(tmp_path: Path) -
 
 # --- 4. il debito aperto da D-094, tenuto in vista ----------------------------
 
-DRAWN_IN_LINE_THOUGH_DECLARED_ON_A_BRANCH = frozenset(
-    {
-        "drain-connection",
-        # Il gemello sanitario dello scarico, nato in P2 perche' un bollitore
-        # deve poter svuotare la propria riserva e la riserva non e' acqua di
-        # riscaldamento. E' nato con due porte passanti perche' condivide il
-        # simbolo dello scarico: stesso debito, una voce in piu', e si chiude
-        # con le altre quando lo stacco diventa un ramo vero.
-        "drain-connection-dhw",
-        "expansion-connection",
-        "expansion-connection-dhw",
-        "filling-unit",
-        "pressure-gauge",
-        "thermometer",
-        "valve-safety",
-        "valve-safety-dhw",
-    }
-)
-"""Chi dichiara di pendere dal tubo ma ha ancora due porte passanti.
+DRAWN_IN_LINE_THOUGH_DECLARED_ON_A_BRANCH: frozenset[str] = frozenset()
+"""Chi dichiara di pendere dal tubo e ha ancora due porte passanti: **nessuno**.
 
-E' il debito che **D-094** apre e che P4 deve chiudere: finche' un accessorio su
-stacco ha una porta di ingresso e una di uscita, il disegno lo spezza sulla
-tratta come se il fluido ci passasse attraverso, e la derivazione resta nascosta
-nel corpo del simbolo — la scorciatoia che D-094 ritira."""
+Era il debito che D-094 aveva aperto e congelato: nove accessori — scarico,
+vaso, riempimento, sicurezza, manometro, termometro e i loro gemelli sanitari —
+che dicevano di pendere da uno stacco e avevano un ingresso e un'uscita, cosi'
+il disegno li spezzava sulla tratta come se il fluido ci passasse attraverso, e
+la derivazione restava nascosta nel corpo del simbolo.
+
+Chiuso il 6 agosto 2026 con D-101: hanno un attacco solo, e lo stacco che li
+regge e' una tubazione vera del modello — appesa all'attacco di servizio della
+macchina se ce l'ha, o a una derivazione sulla tubazione se non ce l'ha.
+L'elenco resta vuoto come **guardia**: se un accessorio su stacco tornasse ad
+avere due porte passanti, questa prova lo direbbe."""
 
 
 def looks_like_a_run_through(definition: ComponentDefinition) -> bool:

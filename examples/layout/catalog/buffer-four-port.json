@@ -43,6 +43,33 @@
       "medium": "heating_water",
       "flow": "in",
       "required": true
+    },
+    {
+      "id": "vent",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": false,
+      "stub": true,
+      "serves": "air_release"
+    },
+    {
+      "id": "drain",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": false,
+      "stub": true,
+      "serves": "drain"
+    },
+    {
+      "id": "probe",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": false,
+      "stub": true,
+      "serves": "temperature_measurement"
     }
   ],
   "sources": [

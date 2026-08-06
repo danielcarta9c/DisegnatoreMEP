@@ -17,14 +17,7 @@
       "id": "a",
       "domain": "hydronic",
       "medium": "cold_water",
-      "flow": "in",
-      "required": true
-    },
-    {
-      "id": "b",
-      "domain": "hydronic",
-      "medium": "cold_water",
-      "flow": "out",
+      "flow": "bidirectional",
       "required": true
     }
   ],

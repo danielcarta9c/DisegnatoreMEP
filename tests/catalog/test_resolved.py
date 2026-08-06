@@ -37,7 +37,7 @@ def definition_payload(ports: list[str] | None = None) -> dict[str, object]:
                 "medium": "heating_water",
                 "flow": "bidirectional",
                 "required": True,
-                "max_connections": 1,
+                
             }
             for port_id in (ports or ["a", "b"])
         ],

@@ -47,6 +47,42 @@ DHW = "domestic_hot_water"
 COLD = "cold_water"
 
 
+def service_port(port_id: str, serves: str, medium: str = HEATING) -> dict[str, Any]:
+    """Un attacco di servizio: esiste per una funzione precisa (D-101).
+
+    Non e' del flusso principale e non e' obbligatorio che qualcuno lo usi: un
+    volano ha lo scarico anche in un impianto in cui nessuno lo collega. Il
+    verso e' neutro, perche' uno stacco non e' un percorso.
+
+    Cosa dichiara ciascuna macchina viene dai cataloghi dei costruttori
+    (SRC-017, SRC-018), non dalla nostra memoria.
+    """
+    return {
+        "id": port_id,
+        "domain": "hydronic",
+        "medium": medium,
+        "flow": "bidirectional",
+        "required": False,
+        "stub": True,
+        "serves": serves,
+    }
+
+
+def branch_port(medium: str = HEATING) -> dict[str, Any]:
+    """Il braccio di un raccordo: uno stacco senza una funzione dichiarata.
+
+    Cosa ci pendera' lo decide l'impianto, non il pezzo — ma chi cammina lungo
+    la tubazione deve sapere che di li' la corsa non prosegue."""
+    return {
+        "id": "branch",
+        "domain": "hydronic",
+        "medium": medium,
+        "flow": "bidirectional",
+        "required": False,
+        "stub": True,
+    }
+
+
 def hydronic_port(
     port_id: str,
     flow: str,
@@ -126,19 +162,82 @@ DEFINITIONS: list[dict[str, Any]] = [
         ],
     ),
     definition(
-        # Il ritorno della macchina raccoglie sia il circuito del volano sia
-        # quello del serpentino ACS. Non sullo stesso bocchello: le due
-        # tubazioni si uniscono prima, e cio' che le unisce e' questo pezzo
-        # (D-100). Non si smonta in esercizio, quindi non chiede valvole.
+        # **Confluenza.** Il ritorno della macchina raccoglie sia il circuito del
+        # volano sia quello del serpentino: le due tubazioni si uniscono qui
+        # invece che sullo stesso bocchello (D-100). Tutti e tre gli attacchi
+        # sono sul percorso. Non si smonta in esercizio: non chiede valvole.
         "tee-junction",
         "Raccordo a T",
         ["junction"],
         [SHUTOFF_ORDINARY, INLINE],
         [
-            hydronic_port("in_1", "in"),
-            hydronic_port("in_2", "in"),
-            hydronic_port("out", "out"),
+            hydronic_port("a", "in"),
+            hydronic_port("c", "in"),
+            hydronic_port("b", "out"),
         ],
+    ),
+    definition(
+        "tee-junction-dhw",
+        "Raccordo a T sanitario",
+        ["junction"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in", DHW),
+            hydronic_port("c", "in", DHW),
+            hydronic_port("b", "out", DHW),
+        ],
+        symbol_id="tee-junction",
+    ),
+    definition(
+        "tee-junction-cold",
+        "Raccordo a T sull'acqua fredda",
+        ["junction"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in", COLD),
+            hydronic_port("c", "in", COLD),
+            hydronic_port("b", "out", COLD),
+        ],
+        symbol_id="tee-junction",
+    ),
+    definition(
+        # **Derivazione.** Un accessorio pende da uno stacco e la macchina non ha
+        # l'attacco dedicato: si salda un T sul tubo e l'accessorio pende dal
+        # braccio (D-101). Il braccio **non e' sul percorso**, e lo dichiara.
+        "tee-branch",
+        "Derivazione a T",
+        ["branch_off"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in"),
+            hydronic_port("b", "out"),
+            branch_port(),
+        ],
+        symbol_id="tee-branch",
+    ),
+    definition(
+        "tee-branch-dhw",
+        "Derivazione a T sanitaria",
+        ["branch_off"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in", DHW),
+            hydronic_port("b", "out", DHW),
+            branch_port(DHW),
+        ],
+        symbol_id="tee-branch",
+    ),
+    definition(
+        "tee-branch-cold",
+        "Derivazione a T sull'acqua fredda",
+        ["branch_off"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in", COLD),
+            hydronic_port("b", "out", COLD),
+            branch_port(COLD),
+        ],
+        symbol_id="tee-branch",
     ),
     definition(
         "diverting-valve-3way",
@@ -161,6 +260,14 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("primary_out", "out"),
             hydronic_port("secondary_out", "out"),
             hydronic_port("secondary_in", "in"),
+            # Gli attacchi di servizio che i costruttori dichiarano in legenda:
+            # Rehau T-Puffer elenca sfiato, scarico, termometro e sonda;
+            # Cordivari li chiama connessioni per strumentazione (SRC-017,
+            # SRC-018). Nessuno dei due dichiara un attacco per il vaso o per
+            # la ricarica: quelli stanno sulla tubazione.
+            service_port("vent", "air_release"),
+            service_port("drain", "drain"),
+            service_port("probe", "temperature_measurement"),
         ],
         stored_medium=HEATING,
     ),
@@ -182,6 +289,11 @@ DEFINITIONS: list[dict[str, Any]] = [
             # schema: le due porte esistono ma non sono obbligatorie.
             hydronic_port("dhw_out", "out", DHW, required=False),
             hydronic_port("cold_in", "in", COLD, required=False),
+            # Il bollitore dichiara la sede della sonda, e **non** lo scarico:
+            # nessuno dei cataloghi letti lo prevede, e il manuale prescrive che
+            # sicurezza e vaso li preveda l'installazione, sulla tubazione
+            # (SRC-018). Lo si svuota con una derivazione.
+            service_port("probe", "temperature_measurement", DHW),
         ],
         stored_medium=DHW,
     ),
@@ -298,18 +410,18 @@ CONNECTIONS = [
     connection("p4", "primary", ("buffer", "primary_out"), ("shutoff", "a")),
     # I due ritorni — volano e serpentino — si uniscono nel raccordo, e dal
     # raccordo riparte una tubazione sola verso il generatore.
-    connection("p5", "primary", ("shutoff", "b"), ("tee-return-generator", "in_1")),
+    connection("p5", "primary", ("shutoff", "b"), ("tee-return-generator", "a")),
     connection("p6", "primary", ("dv", "out_b"), ("cylinder", "coil_in")),
-    connection("p7", "primary", ("cylinder", "coil_out"), ("tee-return-generator", "in_2")),
-    connection("p8", "primary", ("tee-return-generator", "out"), ("hp", "water_return")),
+    connection("p7", "primary", ("cylinder", "coil_out"), ("tee-return-generator", "c")),
+    connection("p8", "primary", ("tee-return-generator", "b"), ("hp", "water_return")),
     # Secondario: circolatore dedicato, collettore a due zone, terminali misti.
     connection("s1", "secondary", ("buffer", "secondary_out"), ("pump-secondary", "a")),
     connection("s2", "secondary", ("pump-secondary", "b"), ("manifold", "in")),
     connection("s3", "secondary", ("manifold", "out_1"), ("radiators", "in")),
     connection("s4", "secondary", ("manifold", "out_2"), ("underfloor", "in")),
-    connection("s5", "secondary", ("radiators", "out"), ("tee-return-buffer", "in_1")),
-    connection("s6", "secondary", ("underfloor", "out"), ("tee-return-buffer", "in_2")),
-    connection("s7", "secondary", ("tee-return-buffer", "out"), ("buffer", "secondary_in")),
+    connection("s5", "secondary", ("radiators", "out"), ("tee-return-buffer", "a")),
+    connection("s6", "secondary", ("underfloor", "out"), ("tee-return-buffer", "c")),
+    connection("s7", "secondary", ("tee-return-buffer", "b"), ("buffer", "secondary_in")),
 ]
 
 SUBSYSTEMS = [

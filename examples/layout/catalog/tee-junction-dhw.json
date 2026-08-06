@@ -1,7 +1,7 @@
 {
-  "id": "tee-junction",
+  "id": "tee-junction-dhw",
   "version": "1.0.0",
-  "name": "Raccordo a T",
+  "name": "Raccordo a T sanitario",
   "functions": [
     "junction"
   ],
@@ -15,21 +15,21 @@
     {
       "id": "a",
       "domain": "hydronic",
-      "medium": "heating_water",
+      "medium": "domestic_hot_water",
       "flow": "in",
       "required": true
     },
     {
       "id": "c",
       "domain": "hydronic",
-      "medium": "heating_water",
+      "medium": "domestic_hot_water",
       "flow": "in",
       "required": true
     },
     {
       "id": "b",
       "domain": "hydronic",
-      "medium": "heating_water",
+      "medium": "domestic_hot_water",
       "flow": "out",
       "required": true
     }
