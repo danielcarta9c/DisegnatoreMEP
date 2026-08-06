@@ -259,3 +259,28 @@ def test_the_generator_refuses_a_fluid_it_cannot_name(tmp_path: Path) -> None:
 
 def test_the_tree_is_built_on_a_model_the_rules_have_nothing_left_to_say_about() -> None:
     assert evaluate(complete(), catalog(), RuleRegistry.from_directory(RULES)).proposals == []
+
+
+def test_the_tree_says_which_water_each_tank_holds() -> None:
+    """E' cio' che rende visibile a occhio uno scarico sul circuito sbagliato.
+
+    Un bollitore che tiene acqua calda sanitaria e ha lo scarico sull'acqua di
+    riscaldamento si vede leggendo due righe, senza sapere niente di
+    impiantistica: e' il difetto per cui P2 e' stato respinto."""
+    text = DOCUMENT.read_text("utf-8")
+    project = complete()
+    registry = catalog()
+    tags = assign_tags(project, registry)
+    tanks = [
+        item
+        for item in project.components
+        if registry.get(item.definition_id).stored_medium is not None
+    ]
+    assert tanks
+    for tank in tanks:
+        row = next(
+            line
+            for line in text.splitlines()
+            if line.startswith(f"| **{tags[tank.id]}**")
+        )
+        assert "tiene in serbo" in row, row

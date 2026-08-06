@@ -77,7 +77,7 @@ e' che lo stesso impianto dia sempre le stesse sigle.
 | **FIL-01** | Filtro a Y | acqua di riscaldamento | braccio 1 (passaggio) · braccio 2 (passaggio) |
 | **VI-06** | Valvola di intercettazione | acqua di riscaldamento | braccio 1 (passaggio) · braccio 2 (passaggio) |
 | **VI-07** | Valvola di intercettazione | acqua di riscaldamento | braccio 1 (passaggio) · braccio 2 (passaggio) |
-| **VOL-01** | Volano termico a quattro attacchi | acqua di riscaldamento | braccio 1 (ingresso) · braccio 2 (uscita) · braccio 3 (uscita) · braccio 4 (ingresso, vi convergono 2 tubazioni) |
+| **VOL-01** | Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento | acqua di riscaldamento | braccio 1 (ingresso) · braccio 2 (uscita) · braccio 3 (uscita) · braccio 4 (ingresso, vi convergono 2 tubazioni) |
 | **SC-01** | Attacco di scarico · pende dal tubo | acqua di riscaldamento | braccio 1 (ingresso) · braccio 2 (uscita) |
 | **VI-01** | Valvola di intercettazione | acqua di riscaldamento | braccio 1 (passaggio) · braccio 2 (passaggio) |
 | **FIL-02** | Filtro a Y | acqua di riscaldamento | braccio 1 (passaggio) · braccio 2 (passaggio) |
@@ -107,7 +107,7 @@ e' che lo stesso impianto dia sempre le stesse sigle.
 | **VI-19** | Valvola di intercettazione | acqua di riscaldamento | braccio 1 (passaggio) · braccio 2 (passaggio) |
 | **VI-20** | Valvola di intercettazione | acqua di riscaldamento | braccio 1 (passaggio) · braccio 2 (passaggio) |
 | **VI-21** | Valvola di intercettazione | acqua di riscaldamento | braccio 1 (passaggio) · braccio 2 (passaggio) |
-| **BOL-01** | Bollitore ACS | acqua di riscaldamento, acqua fredda sanitaria, acqua calda sanitaria | braccio 1 (ingresso) · braccio 2 (uscita) · braccio 3 (uscita) · braccio 4 (ingresso) |
+| **BOL-01** | Bollitore ACS · tiene in serbo acqua calda sanitaria | acqua di riscaldamento, acqua fredda sanitaria, acqua calda sanitaria | braccio 1 (ingresso) · braccio 2 (uscita) · braccio 3 (uscita) · braccio 4 (ingresso) |
 | **VI-22** | Valvola di intercettazione | acqua di riscaldamento | braccio 1 (passaggio) · braccio 2 (passaggio) |
 | **SC-02** | Attacco di scarico sanitario · pende dal tubo | acqua calda sanitaria | braccio 1 (ingresso) · braccio 2 (uscita) |
 | **VI-23** | Valvola di intercettazione | acqua calda sanitaria | braccio 1 (passaggio) · braccio 2 (passaggio) |

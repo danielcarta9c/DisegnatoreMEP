@@ -7,13 +7,17 @@ fatto che il motore non tocchi il modello.
 
 from pathlib import Path
 
+import pytest
+
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.types import IntegrationCategory
+from disegnatore_mep.rules import apply as apply_module
 from disegnatore_mep.rules.apply import apply_proposals, saturate
 from disegnatore_mep.rules.engine import evaluate
+from disegnatore_mep.rules.errors import RuleError
 from disegnatore_mep.rules.proposal import RuleProposal
 from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.validation.topology import validate_project
@@ -135,3 +139,47 @@ def test_applying_leaves_the_traceability_behind() -> None:
     for applied in completed.rule_applications:
         assert applied.rule_version == versions[applied.rule_id]
         assert applied.entity_ids
+
+
+def test_the_limit_counts_productive_passes_and_not_the_one_that_finds_nothing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """L'errore che il collaudo ha trovato: un modello **arrivato** che falliva.
+
+    Le passate produttive del caso di accettazione sono due. Col limite fissato
+    a due deve concludere, non fermarsi: la valutazione che scopre che non c'e'
+    piu' niente da fare non e' un giro in piu' del ciclo, e contarla nel limite
+    faceva respingere un modello gia' completo.
+    """
+    project = load_project(ESSENTIAL)
+    productive = 0
+    current = project
+    while True:
+        found = evaluate(current, catalog(), rules())
+        if found.is_empty:
+            break
+        current = apply_proposals(current, found.proposals)
+        productive += 1
+
+    monkeypatch.setattr(apply_module, "ROUNDS", productive)
+    completed, applied, _ = saturate(project, catalog(), rules())
+    assert canonical_json(completed) == canonical_json(current)
+    assert applied
+
+
+def test_a_ceiling_too_low_stops_and_names_the_rules_still_asking(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """E quando si ferma davvero, deve dire chi stava ancora chiedendo.
+
+    Il messaggio precedente costruiva l'elenco da una valutazione nuova, che a
+    quel punto poteva essere vuota, e usciva la frase «the last round asked
+    for .» — un errore che non dice niente a nessuno."""
+    monkeypatch.setattr(apply_module, "ROUNDS", 1)
+    with pytest.raises(RuleError) as raised:
+        saturate(load_project(ESSENTIAL), catalog(), rules())
+    message = str(raised.value)
+    assert "asked for " in message
+    named = message.split("asked for ", 1)[1]
+    assert named.strip(" .")
+    assert any(rule.id in message for rule in rules().all())

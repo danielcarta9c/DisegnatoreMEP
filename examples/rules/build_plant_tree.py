@@ -290,9 +290,15 @@ def nodes_table(plant: Plant) -> list[str]:
             for port_id in plant.arms[component_id]
         )
         hanging = " · pende dal tubo" if plant.hangs_off_the_pipe(component_id) else ""
+        # Che acqua tiene in serbo un serbatoio va detto qui: e' cio' che rende
+        # visibile a occhio uno scarico finito sul circuito sbagliato — un
+        # bollitore che tiene acqua calda sanitaria e ha lo scarico sul
+        # riscaldamento si vede leggendo due righe.
+        stored = plant.definitions[component_id].stored_medium
+        reserve = f" · tiene in serbo {fluid(stored)}" if stored is not None else ""
         rows.append(
-            f"| **{plant.sigla(component_id)}** | {plant.what(component_id)}{hanging} "
-            f"| {', '.join(media)} | {arms} |"
+            f"| **{plant.sigla(component_id)}** | {plant.what(component_id)}{hanging}"
+            f"{reserve} | {', '.join(media)} | {arms} |"
         )
     return [
         "## I nodi",
