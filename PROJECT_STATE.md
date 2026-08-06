@@ -37,8 +37,10 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 - [x] **I cinque impianti di prova del committente** passano per la prima parte della
       catena. I grafi sono in `docs/prodotto/grafi-di-prova/`.
 
-**Il prossimo lavoro:** le integrazioni che il PM darà dopo aver letto i cinque grafi, e poi
-i pezzi da 1 a 3 fino al grafo definitivo. Dettagli in `HANDOFF.md` §7.
+**Il prossimo lavoro:** l'**indirizzo dei nodi** (D-105), che il PM ha già dato dopo aver
+letto i cinque grafi — ogni linea idraulica con la propria sigla, ogni pezzo un nodo
+numerato lungo di lei, e dove due linee si incontrano la principale tira dritto. Poi i pezzi
+da 1 a 3 fino al grafo definitivo. Dettagli in `HANDOFF.md` §7.
 
 ## Il confine del prodotto, che vale su tutto (D-104)
 

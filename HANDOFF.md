@@ -175,10 +175,33 @@ invece di finire il pezzo.** Quando succede, fermarsi e tornare al pezzo.
 
 ## 7. Il primo lavoro della prossima sessione
 
-**Si parte dalle integrazioni che il PM darà**, dopo aver letto i cinque grafi. Quelle
-vengono prima di tutto il resto.
+### 7.1 — L'indirizzo dei nodi, che il PM ha già dato (D-105)
 
-Poi si finiscono i pezzi **da 1 a 3**, fino al grafo definitivo:
+**È la prima cosa, e viene prima dei pezzi.** Il PM ha letto i grafi dei suoi cinque
+impianti e ha detto: «non capisco i grafici che hai fatto». Aveva ragione. Le sigle dicono
+**che cosa** è un pezzo e mai **dove** sta, e la linea idraulica non ha nome — così una
+passeggiata che è una sola mandata sembra una sequenza di salti.
+
+Da fare, come lui lo ha descritto:
+
+- ogni **linea idraulica** ha una sigla di famiglia e un numero: `CP.01` mandata primaria,
+  poi `RP` ritorno primario, `CS`/`RS` secondario, `AF`/`ACS` sanitario. La famiglia dice
+  **che acqua porta e da che parte va**;
+- ogni pezzo sulla linea è un **nodo numerato**: `CP.01.N.02`;
+- accanto alla linea, in tabella, la sua descrizione: «da PDC-01 a ACC-01»;
+- **dove due linee si incontrano la principale tira dritto e la secondaria muore** su quel
+  nodo. La principale è quella che parte dalla prima sorgente, nell'ordine di D-098;
+- le sigle di famiglia dei pezzi (`VI-02`) **restano**: servono alla distinta, e sulla
+  tavola convivono con l'indirizzo.
+
+**Non è da rifare, è da battezzare.** L'assemblatore calcola già l'oggetto che serve: lavora
+per **tratte**, e una tratta è una linea. Manca darle il nome e numerare i nodi.
+
+**Due cose restano da chiedere al PM**, e sono piccole: chi tira dritto quando una linea si
+**sdoppia** invece di confluire — il ritorno comune che rientra su due macchine — e come si
+indirizza un pezzo che pende da uno stacco.
+
+### 7.2 — Poi i pezzi da 1 a 3, fino al grafo definitivo
 
 1. **Il pezzo 1, «Capire»** — le istruzioni dell'agente che legge il testo dell'ingegnere e
    costruisce il grafo di prima stesura. Oggi quella lettura la fa una persona a mano, e
