@@ -1,0 +1,436 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "centrale-pdc-completa",
+    "client": "Nove C",
+    "project_name": "Centrale a pompa di calore, con ACS",
+    "commission_code": "DEV-011",
+    "revision": "00",
+    "issue_date": "2026-08-04"
+  },
+  "subsystems": [
+    {
+      "id": "generation",
+      "name": "Generazione",
+      "component_ids": [
+        "hp",
+        "dv"
+      ],
+      "network_ids": [
+        "primary"
+      ]
+    },
+    {
+      "id": "storage",
+      "name": "Accumuli e primario",
+      "component_ids": [
+        "strainer",
+        "buffer",
+        "cylinder",
+        "shutoff",
+        "mains",
+        "draw-off",
+        "tee-return-generator",
+        "tee-return-buffer"
+      ],
+      "network_ids": [
+        "primary",
+        "cold",
+        "dhw"
+      ]
+    },
+    {
+      "id": "distribution",
+      "name": "Distribuzione",
+      "component_ids": [
+        "pump-secondary",
+        "manifold"
+      ],
+      "network_ids": [
+        "secondary"
+      ]
+    },
+    {
+      "id": "zones",
+      "name": "Zone",
+      "component_ids": [
+        "radiators",
+        "underfloor"
+      ],
+      "network_ids": [
+        "secondary"
+      ]
+    }
+  ],
+  "networks": [
+    {
+      "id": "primary",
+      "name": "Circuito primario",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "secondary",
+      "name": "Circuito secondario",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "cold",
+      "name": "Acqua fredda sanitaria",
+      "domain": "hydronic",
+      "medium": "cold_water"
+    },
+    {
+      "id": "dhw",
+      "name": "Acqua calda sanitaria",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "hp",
+      "definition_id": "heat-pump-air-water",
+      "tag": "PDC-01",
+      "properties": {}
+    },
+    {
+      "id": "dv",
+      "definition_id": "diverting-valve-3way",
+      "tag": "VD-01",
+      "properties": {}
+    },
+    {
+      "id": "strainer",
+      "definition_id": "strainer",
+      "tag": "FIL-01",
+      "properties": {}
+    },
+    {
+      "id": "buffer",
+      "definition_id": "buffer-four-port",
+      "tag": "VOL-01",
+      "properties": {
+        "volume_l": 200
+      }
+    },
+    {
+      "id": "cylinder",
+      "definition_id": "dhw-cylinder",
+      "tag": "BOL-01",
+      "properties": {
+        "volume_l": 300
+      }
+    },
+    {
+      "id": "shutoff",
+      "definition_id": "valve-isolation",
+      "tag": "VI-01",
+      "properties": {}
+    },
+    {
+      "id": "pump-secondary",
+      "definition_id": "pump-circulator",
+      "tag": "CIR-02",
+      "properties": {
+        "flow_rate_m3h": 1.2
+      }
+    },
+    {
+      "id": "manifold",
+      "definition_id": "zone-manifold",
+      "tag": "COL-01",
+      "properties": {}
+    },
+    {
+      "id": "radiators",
+      "definition_id": "radiator",
+      "tag": "RAD-01",
+      "properties": {}
+    },
+    {
+      "id": "underfloor",
+      "definition_id": "underfloor-panel",
+      "tag": "PAV-01",
+      "properties": {}
+    },
+    {
+      "id": "mains",
+      "definition_id": "cold-water-inlet",
+      "tag": "AF-01"
+    },
+    {
+      "id": "draw-off",
+      "definition_id": "dhw-draw-off",
+      "tag": "ACS-01"
+    },
+    {
+      "id": "tee-return-generator",
+      "definition_id": "tee-junction",
+      "properties": {}
+    },
+    {
+      "id": "tee-return-buffer",
+      "definition_id": "tee-junction",
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "p1",
+      "network_id": "primary",
+      "endpoint_a": {
+        "component_id": "hp",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "dv",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p2",
+      "network_id": "primary",
+      "endpoint_a": {
+        "component_id": "dv",
+        "port_id": "out_a"
+      },
+      "endpoint_b": {
+        "component_id": "strainer",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p3",
+      "network_id": "primary",
+      "endpoint_a": {
+        "component_id": "strainer",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "buffer",
+        "port_id": "primary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p4",
+      "network_id": "primary",
+      "endpoint_a": {
+        "component_id": "buffer",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "shutoff",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p5",
+      "network_id": "primary",
+      "endpoint_a": {
+        "component_id": "shutoff",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-return-generator",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p6",
+      "network_id": "primary",
+      "endpoint_a": {
+        "component_id": "dv",
+        "port_id": "out_b"
+      },
+      "endpoint_b": {
+        "component_id": "cylinder",
+        "port_id": "coil_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p7",
+      "network_id": "primary",
+      "endpoint_a": {
+        "component_id": "cylinder",
+        "port_id": "coil_out"
+      },
+      "endpoint_b": {
+        "component_id": "tee-return-generator",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s1",
+      "network_id": "secondary",
+      "endpoint_a": {
+        "component_id": "buffer",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "pump-secondary",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s2",
+      "network_id": "secondary",
+      "endpoint_a": {
+        "component_id": "pump-secondary",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "manifold",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s3",
+      "network_id": "secondary",
+      "endpoint_a": {
+        "component_id": "manifold",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "radiators",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s4",
+      "network_id": "secondary",
+      "endpoint_a": {
+        "component_id": "manifold",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "underfloor",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s5",
+      "network_id": "secondary",
+      "endpoint_a": {
+        "component_id": "radiators",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "tee-return-buffer",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s6",
+      "network_id": "secondary",
+      "endpoint_a": {
+        "component_id": "underfloor",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "tee-return-buffer",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "w1",
+      "network_id": "cold",
+      "endpoint_a": {
+        "component_id": "mains",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "cylinder",
+        "port_id": "cold_in"
+      }
+    },
+    {
+      "id": "w2",
+      "network_id": "dhw",
+      "endpoint_a": {
+        "component_id": "cylinder",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "draw-off",
+        "port_id": "a"
+      }
+    },
+    {
+      "id": "p8",
+      "network_id": "primary",
+      "endpoint_a": {
+        "component_id": "tee-return-generator",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "hp",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s7",
+      "network_id": "secondary",
+      "endpoint_a": {
+        "component_id": "tee-return-buffer",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "buffer",
+        "port_id": "secondary_in"
+      },
+      "properties": {}
+    }
+  ],
+  "assumptions": [],
+  "rule_applications": [],
+  "sheets": [
+    {
+      "id": "t1",
+      "title": "Centrale termica — generazione, accumuli, distribuzione e zone",
+      "subsystem_ids": [
+        "generation",
+        "storage",
+        "distribution",
+        "zones"
+      ],
+      "band_assignments": [
+        {
+          "subsystem_id": "generation",
+          "band": "generation",
+          "order": 0
+        },
+        {
+          "subsystem_id": "storage",
+          "band": "primary",
+          "order": 0
+        },
+        {
+          "subsystem_id": "distribution",
+          "band": "distribution",
+          "order": 0
+        },
+        {
+          "subsystem_id": "zones",
+          "band": "terminal",
+          "order": 0
+        }
+      ]
+    }
+  ]
+}

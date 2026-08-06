@@ -1,0 +1,259 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "prova-3-pdc-diretta-pavimento",
+    "client": "Nove C",
+    "project_name": "Pompa di calore diretta su pavimento radiante, ACS separata",
+    "commission_code": "PROVA",
+    "revision": "00",
+    "issue_date": "2026-08-06"
+  },
+  "networks": [
+    {
+      "id": "riscaldamento",
+      "name": "Circuito di riscaldamento",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "fredda",
+      "name": "Acqua fredda sanitaria",
+      "domain": "hydronic",
+      "medium": "cold_water"
+    },
+    {
+      "id": "sanitaria",
+      "name": "Acqua calda sanitaria",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "pdc",
+      "definition_id": "heat-pump-air-water",
+      "tag": "PDC-01",
+      "properties": {}
+    },
+    {
+      "id": "collettore",
+      "definition_id": "zone-manifold",
+      "tag": "COL-01",
+      "properties": {}
+    },
+    {
+      "id": "zona-giorno",
+      "definition_id": "underfloor-panel",
+      "tag": "PAV-01",
+      "properties": {}
+    },
+    {
+      "id": "zona-notte",
+      "definition_id": "underfloor-panel",
+      "tag": "PAV-02",
+      "properties": {}
+    },
+    {
+      "id": "ritorno-zone",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "volano",
+      "definition_id": "buffer-two-port",
+      "tag": "VOL-01",
+      "properties": {}
+    },
+    {
+      "id": "boiler",
+      "definition_id": "dhw-heat-pump",
+      "tag": "BPC-01",
+      "properties": {}
+    },
+    {
+      "id": "acquedotto",
+      "definition_id": "cold-water-inlet",
+      "tag": "AF-01",
+      "properties": {}
+    },
+    {
+      "id": "utenze",
+      "definition_id": "dhw-draw-off",
+      "tag": "ACS-01",
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "p1",
+      "network_id": "riscaldamento",
+      "endpoint_a": {
+        "component_id": "pdc",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "collettore",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p2",
+      "network_id": "riscaldamento",
+      "endpoint_a": {
+        "component_id": "collettore",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "zona-giorno",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p3",
+      "network_id": "riscaldamento",
+      "endpoint_a": {
+        "component_id": "collettore",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "zona-notte",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p4",
+      "network_id": "riscaldamento",
+      "endpoint_a": {
+        "component_id": "zona-giorno",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno-zone",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p5",
+      "network_id": "riscaldamento",
+      "endpoint_a": {
+        "component_id": "zona-notte",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno-zone",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p6",
+      "network_id": "riscaldamento",
+      "endpoint_a": {
+        "component_id": "ritorno-zone",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p7",
+      "network_id": "riscaldamento",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "w1",
+      "network_id": "fredda",
+      "endpoint_a": {
+        "component_id": "acquedotto",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "boiler",
+        "port_id": "cold_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "w2",
+      "network_id": "sanitaria",
+      "endpoint_a": {
+        "component_id": "boiler",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "utenze",
+        "port_id": "a"
+      },
+      "properties": {}
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a1",
+      "text": "Il testo dice «piu' circuiti ambiente con regolazione di zona» senza dirne il numero: se ne sono disegnati due.",
+      "status": "proposed"
+    },
+    {
+      "id": "a2",
+      "text": "Il circolatore e' integrato nella macchina, come il testo dichiara: non compare come pezzo a se'.",
+      "status": "proposed"
+    }
+  ],
+  "rule_applications": [],
+  "subsystems": [
+    {
+      "id": "generazione",
+      "name": "Generazione",
+      "component_ids": [
+        "pdc",
+        "volano",
+        "ritorno-zone"
+      ],
+      "network_ids": [
+        "riscaldamento"
+      ]
+    },
+    {
+      "id": "zone",
+      "name": "Zone radianti",
+      "component_ids": [
+        "collettore",
+        "zona-giorno",
+        "zona-notte"
+      ],
+      "network_ids": [
+        "riscaldamento"
+      ]
+    },
+    {
+      "id": "sanitario",
+      "name": "Acqua calda sanitaria",
+      "component_ids": [
+        "boiler",
+        "acquedotto",
+        "utenze"
+      ],
+      "network_ids": [
+        "fredda",
+        "sanitaria"
+      ]
+    }
+  ],
+  "sheets": []
+}

@@ -1,0 +1,26 @@
+{
+  "id": "drain-connection",
+  "version": "1.0.0",
+  "name": "Attacco di scarico",
+  "functions": [
+    "drain"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_branch"
+  ],
+  "symbol_id": "drain-connection",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

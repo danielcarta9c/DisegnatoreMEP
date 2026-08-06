@@ -1,0 +1,41 @@
+{
+  "id": "tee-branch",
+  "version": "1.0.0",
+  "name": "Derivazione a T",
+  "functions": [
+    "branch_off"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "tee-branch",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "branch",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": false,
+      "stub": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

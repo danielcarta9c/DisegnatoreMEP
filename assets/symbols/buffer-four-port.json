@@ -1,0 +1,61 @@
+{
+  "id": "buffer-four-port",
+  "version": "1.0.0",
+  "name": "Volano termico a quattro attacchi",
+  "width_mm": 25.0,
+  "height_mm": 45.0,
+  "allowed_rotations_deg": [
+    0
+  ],
+  "ports": [
+    {
+      "id": "primary_in",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 5.0
+    },
+    {
+      "id": "primary_out",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 20.0
+    },
+    {
+      "id": "secondary_out",
+      "face": "right",
+      "x_mm": 25.0,
+      "y_mm": 5.0
+    },
+    {
+      "id": "secondary_in",
+      "face": "right",
+      "x_mm": 25.0,
+      "y_mm": 20.0
+    },
+    {
+      "id": "vent",
+      "face": "top",
+      "x_mm": 12.5,
+      "y_mm": 0.0
+    },
+    {
+      "id": "drain",
+      "face": "bottom",
+      "x_mm": 12.5,
+      "y_mm": 45.0
+    },
+    {
+      "id": "probe",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 32.5
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 2.0,
+    "top_mm": 2.0,
+    "bottom_mm": 2.0
+  },
+  "source": "pratica di settore, cfr. SRC-008"
+}

@@ -1,0 +1,26 @@
+{
+  "id": "thermometer",
+  "version": "1.0.0",
+  "name": "Termometro",
+  "functions": [
+    "temperature_measurement"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_branch"
+  ],
+  "symbol_id": "thermometer",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

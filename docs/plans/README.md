@@ -1,11 +1,9 @@
-# Piani di implementazione
+# Piani — archivio storico
 
-Questa cartella contiene i piani eseguibili derivati dalla specifica approvata.
+> **Questi documenti sono storia, non verita' corrente.** Raccontano come e' andata
+> un'esecuzione: cosa era stato pianificato, cosa e' stato trovato eseguendo, quali
+> deviazioni sono state registrate. **Non vanno letti per sapere come funziona la
+> skill**: per quello c'e' `docs/SKILL.md`, e per lo stato `PROJECT_STATE.md`.
 
-## Ordine
-
-1. `2026-08-01-master-implementation-roadmap.md` - decomposizione dell'intero programma.
-2. `2026-08-01-foundation-core-plan.md` - fondazione canonica. **Eseguito e completato**: leggerne l'appendice finale, non il corpo.
-3. `2026-08-03-graphic-system-symbol-library-plan.md` - sistema grafico A3 e libreria dei simboli. Pronto per l'esecuzione.
-
-Ogni piano successivo viene scritto quando i contratti prodotti dal piano precedente sono stabili. Questo evita di specificare in anticipo dettagli che i test iniziali potrebbero rendere obsoleti.
+Il corpo dei piani piu' vecchi contiene codice che non funziona, corretto solo nelle
+rispettive appendici. Se serve consultarli, leggere **solo l'appendice finale**.

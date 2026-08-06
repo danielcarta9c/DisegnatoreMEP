@@ -1,0 +1,258 @@
+# Decisioni rimandate e note di sviluppo futuro
+
+> Questo file esiste perché una decisione rimandata che non viene scritta è una decisione
+> persa. Non è un backlog di priorità — quello è in `PROJECT_STATE.md` — ed è
+> deliberatamente più lungo: qui ci sta anche ciò che nessuno farà presto.
+>
+> **Regola:** ogni volta che si dice «per ora no» o «lo vediamo dopo», la riga finisce qui,
+> con il perché e con cosa la sbloccherebbe. Chi la esegue la cancella da qui.
+
+---
+
+## 1. Famiglie di accessori oltre il primo pacchetto di regole
+
+Il primo pacchetto copre sette famiglie — sicurezza, intercettazione, protezione, aria,
+riempimento e scarico, misura e acqua calda sanitaria — che bastano a completare il caso di
+accettazione D-011. Non bastano a un impianto reale appena si esce da quel perimetro.
+
+**Idronico, oltre l'MVP**
+
+- valvole di bilanciamento, statiche e dinamiche;
+- valvole di zona ed elettrotermiche;
+- contabilizzazione del calore, che su una tavola condominiale c'è sempre;
+- disconnettore sul gruppo di riempimento;
+- addolcitore e dosatore di condizionante (le soglie di UNI 8065 sono in SRC-014);
+- neutralizzatore di condensa per i generatori a condensazione.
+
+**L'acqua calda sanitaria è rientrata nell'MVP** il 4 agosto 2026, per decisione del PM:
+il caso di accettazione ha un bollitore, e lasciarne fuori gli accessori avrebbe prodotto
+un impianto completo su metà tavola. Gruppo di sicurezza sull'ingresso acqua fredda, vaso
+sanitario, miscelatrice termostatica e ricircolo sono nel Task 8 del piano P1.
+
+**Aeraulico — l'esempio del PM.** Bastano ventilconvettori canalizzati perché servano
+serranda di taratura, serranda tagliafuoco, silenziatore, batteria di post-riscaldamento,
+filtro aria con la sua classe, plenum, griglie e diffusori, giunto antivibrante sul canale.
+Una UTA ne aggiunge altrettanti: recuperatore, umidificatore, sezioni ventilanti.
+
+**Espansione diretta e VRV.** Giunti di derivazione refrigerante, valvole di espansione,
+distinzione fra linea liquido e linea gas.
+
+**Gas.** Filtro gas, giunto antivibrante, elettrovalvola di intercettazione, pressostato di
+minima e di massima, rilevatore di fughe.
+
+**Regolazione.** Sonde di temperatura e pressione, valvola miscelatrice motorizzata a tre
+vie, centralina climatica, termostati ambiente. Oggi `Domain.CONTROL` esiste nel modello e
+non è usato da nessuna parte.
+
+**Cosa lo sblocca:** ciascuna famiglia è indipendente dalle altre e si aggiunge senza
+toccare il motore, purché il motore resti quello che P1 costruisce — regole come dato, non
+come codice. Se aggiungere una famiglia richiede di modificare il motore, il motore è
+sbagliato.
+
+---
+
+## 2. Come si migliorano le regole dopo P1
+
+Il PM lo ha posto come requisito: le regole devono restare **migliorabili dandogli in pasto
+documenti, normativa nuova o un manuale specifico**. Ne discendono tre vincoli per P1, che
+il piano deve rispettare e non rimandare:
+
+- una regola è **dato versionato**, non codice: si cambia senza toccare il motore;
+- ogni regola porta la propria **fonte** e la propria **motivazione**, così che confrontarla
+  con un documento nuovo sia possibile;
+- cambiare una regola **incrementa la sua versione** e resta tracciabile a valle nel
+  `RuleApplicationModel` di ogni progetto già disegnato (D-039).
+
+Quello che resta rimandato è il **flusso**: come si dà in pasto un documento e come se ne
+ricavano regole candidate da approvare. È lavoro della skill (P6), non del motore.
+
+---
+
+## 3. Fonti che si potrebbero acquisire, e non bloccano nulla
+
+- **UNI 10412-1:2006** (SRC-013) — copre i dispositivi di sicurezza degli impianti con
+  generatori elettrici, quindi il caso a pompa di calore che la Raccolta R esclude. Finché
+  non c'è, quelle regole restano su buona pratica documentata, dichiarata come tale.
+- **UNI 8065:2019** (SRC-014) — le sue prescrizioni sono già disponibili con soglie puntuali
+  in guide di settore. Acquistarla servirebbe solo a salire di livello nella gerarchia.
+- **ISO 14617** (SRC-003, SRC-004) — simbologia internazionale, utile il giorno in cui il
+  prodotto uscisse dall'Italia.
+
+Nessuna di queste è un prerequisito: D-066 fissa che non si acquistano norme che non
+sbloccano nulla.
+
+---
+
+## 4. Rimandato dalla fase di layout
+
+- **I diametri DN non stanno sulla tavola** perché il modello non li porta. Su una tavola
+  reale ci sono sempre. Richiede un campo nel modello tecnico e un testo lungo la linea.
+- **La fascia di regolazione tratteggiata sopra il disegno** non esiste: `Domain.CONTROL` è
+  dichiarato e inutilizzato. È anche una delle due cose che riempirebbero l'altezza del
+  foglio, oggi mezzo vuoto.
+- **Una tratta che attraversa un confine di tavola non viene disegnata** su nessuna delle
+  due: compaiono i rimandi accoppiati, non il tratto che li raggiunge. Spetta al rendering,
+  che possiede i rimandi.
+- **La rotazione di un componente posato è sempre 0.** Gli accessori in linea ruotano già
+  seguendo la giacitura della propria tratta; un componente posato non viene mai orientato
+  verso la fascia adiacente. È un grado di libertà in più per la regola di D-060.
+- **La legenda promette due colori che sulla tavola non ci sono.** Dal 6 agosto 2026
+  l'acqua fredda sanitaria ha finalmente il proprio stile — prima cadeva sul nero continuo
+  delle reti senza codifica — ma **la correzione è a metà**. Il colore del ritorno si ricava
+  schiarendo quello della mandata, tramite una tabella le cui chiavi sono i colori di
+  mandata: l'azzurro nuovo non è una di quelle chiavi, quindi ogni tratta di acqua fredda
+  classificata come ritorno cade sul grigio di ripiego. Sull'impianto di prova l'unica
+  tratta di acqua fredda è classificata così, e il risultato è che **l'azzurro che la
+  legenda mostra per l'andata non compare su nessuna linea**. Lo stesso vale per il ritorno
+  dell'acqua calda sanitaria, che nessuna tratta percorre: **due righe di legenda su sei
+  descrivono qualcosa che sul foglio non esiste**. Si chiude in due mosse, entrambe di P6 o
+  P7: dare al sanitario una coppia di colori propria (decisione grafica, D-057) e costruire
+  la legenda dai soli servizi che la tavola percorre davvero.
+- **Lo stesso azzurro tocca a due voci diverse.** L'acqua fredda in andata e l'acqua calda
+  sanitaria in ritorno ricevono lo stesso colore. Non è vero, come questa riga diceva prima,
+  che le due si distinguano *solo* per la scritta: hanno anche un tratto diverso, una
+  tratteggiata e una continua. Resta però una coincidenza di colore da togliere, e si toglie
+  con la stessa decisione grafica della riga precedente.
+- **La corsia di mandata non è garantita sopra quella di ritorno** dove due tratte devono
+  scavalcare lo stesso ostacolo. Imporlo costerebbe pieghe. La convenzione resta garantita
+  sui simboli e dai colori (D-057).
+- **Il preflight grafico non esiste come validatore** (D-063): le misure vivono in
+  `tests/layout/test_objective.py`, su una sola fixture e solo in sviluppo.
+- **Il cold eye review e il ciclo di revisione non esistono** (D-063, D-064): sono lavoro
+  della skill.
+
+---
+
+## 5. Rimandato dalla libreria dei simboli
+
+- **La libreria va rifatta su SRC-016**, le tavole UNI 9511 pubblicate da Oppo e indicate dal
+  PM, per tubazioni, giunzioni, valvolame e strumenti; sulla pratica e sugli schemi dei
+  produttori (SRC-008) per le macchine, che la norma non copre (D-081). I venti simboli
+  attuali seguono la convenzione interna `CONV-GRAFICA-001` — cioè nessuna fonte — e coprono
+  meno di un ottavo di quelli che una tavola reale usa. Non è più una nota di sviluppo
+  futuro: è un difetto aperto, registrato in `PROJECT_STATE.md`.
+- **`buffer-four-port` confonde tre componenti diversi** — separatore idraulico,
+  compensatore e accumulo inerziale — che Caleffi distingue e che su una tavola si
+  disegnano diversamente (SRC-008).
+- **Cinque simboli fuori MVP hanno una fonte dichiarata «da acquisire»**: serranda,
+  diffusore, ventilatore in linea, derivazione refrigerante e contatore gas portano
+  `pratica di settore — fonte puntuale da acquisire col dominio (DEFERRED §5)`. Sono i
+  domini aeraulico, gas e refrigerante, fuori dal caso di accettazione: quando un dominio
+  entra in perimetro, la sua fonte si acquisisce e i suoi simboli si riautorano come fatto
+  per l'idronico (D-081). La stringa dice il vero invece di puntare un documento non
+  verificato: vietato inventare vale anche per le citazioni (D-083).
+- **Nove simboli pubblicati non hanno una voce di catalogo**, quindi nessuna regola può
+  proporli e nessun impianto può contenerli: valvola di sfiato aria, vaso di espansione ad
+  attacco singolo, ventilconvettore, diffusore d'aria, serranda, ventilatore in linea,
+  contatore gas, valvola gas, derivazione refrigerante. Due contano subito, e sono lavoro di
+  P2 e P4:
+  - **lo sfiato**: D-094 lo nomina fra gli accessori su stacco, e finché non ha una voce di
+    catalogo **la regola dell'aria non ha un componente da proporre** — può mettere il
+    separatore sulla mandata, non lo sfiato nel punto alto;
+  - **il vaso a un solo attacco**: è il simbolo che serve a chiudere il debito degli
+    accessori su stacco (§6).
+  Gli altri sette appartengono a domini fuori dal caso di accettazione e seguono le rispettive
+  fonti da acquisire.
+- **Nessun test presidia che il corpo di un simbolo resti dentro il proprio riquadro** e
+  raggiunga le porte dichiarate.
+- **Nessun test protegge i due generatori di simboli dalla deriva** rispetto ai file che
+  hanno prodotto.
+
+---
+
+## 6. Rimandato da P1, il motore delle regole
+
+- **Un accessorio con derivazione è disegnato come componente in linea**, con lo stacco nel
+  corpo del simbolo. Un vero ramo — raccordo a T come componente a sé, con la propria
+  tratta — costerebbe tre pezzi per accessorio e romperebbe la ricomposizione delle tratte,
+  che vuole esattamente due connessioni per accessorio in linea. Va rifatto il giorno in cui
+  serviranno rami con più di un componente sopra.
+
+  **Aggiornamento del 6 agosto 2026 (P1).** D-094 ritira quella scorciatoia: lo stacco è un
+  ramo vero con la propria catena, e la fila dei pezzi è un albero. Il catalogo ora dichiara
+  chi pende dal tubo, ma **nove voci dichiarano lo stacco e hanno ancora due porte
+  passanti** — vaso di espansione (riscaldamento e sanitario), valvola di sicurezza
+  (riscaldamento e sanitaria), gruppo di riempimento, attacco di scarico (riscaldamento e
+  sanitario, il secondo nato in P2), manometro e termometro. È il debito di P4, non di P1: chiuderlo vuol dire dare a questi accessori una
+  sola porta e far nascere il raccordo di derivazione come pezzo a sé. Il simbolo del vaso a
+  un solo attacco **esiste già** in libreria e non ha voce di catalogo (§5). L'elenco è
+  congelato in `tests/catalog/test_traits.py`: quella prova fallisce se il debito cambia, e
+  chi lo chiude deve cancellare da qui le voci che ha chiuso.
+- **Una tratta che attraversa un confine di tavola non può portare accessori**, e questo
+  decide dove si può tagliare: nel caso di accettazione l'unico taglio possibile è fra la
+  distribuzione e le zone. Va tolto insieme al disegno delle tratte che attraversano
+  (§4), perché sono lo stesso problema.
+- **La miscelatrice termostatica ha due porte, e portano lo stesso fluido.** Con due
+  attacchi di acqua calda non miscela niente: una miscelatrice vuole il caldo, il freddo e
+  l'uscita miscelata, cioè tre porte su due fluidi diversi. Finché il catalogo la descrive
+  così, la regola che `docs/SKILL.md` enuncia — «miscela caldo e freddo, quindi vuole
+  **entrambe** le alimentazioni» — non è esprimibile, e la miscelatrice resta un accessorio
+  in linea sul solo circuito caldo. Lavoro di P2 sul catalogo, non del motore.
+- **Il gruppo di riempimento ha entrambe le porte sull'acqua di riscaldamento**, quindi la
+  cosa che lo definisce — è una **derivazione dall'acqua di rete**, non un organo di
+  passaggio — non è scrivibile. Il catalogo dichiara già che sta su uno stacco, ma le sue
+  porte dicono un'altra cosa. Si chiude insieme al debito degli stacchi (§6, prima riga).
+- **Le regole non propongono su un attacco libero**, solo in linea su una tubazione
+  esistente: un componente senza tubazione non avrebbe dove posarsi, e il modello non
+  contiene coordinate con cui inventarne una.
+- **Il ricircolo ACS non è ancora una regola**: sarebbe la prima *condizionata* del
+  pacchetto, e serve un modo per dichiarare la condizione (distribuzione lunga) che il
+  modello oggi non porta.
+
+## 7. Rimandato dal nucleo
+
+- **Il contratto `DomainPack` è minimo** — un solo metodo, che verifica la compatibilità di
+  due porte. Va allargato **prima** che i quattro pacchetti di dominio procedano in
+  parallelo, altrimenti divergono (W3).
+- **La rappresentazione dei dati mancanti** e il percorso di migrazione dello schema sono
+  descritti in `docs/archivio/P0_REVIEW_FINDINGS.md` §3.2 e non ancora implementati.
+
+## 8. Rimandato da P2, il contenuto delle regole
+
+- **L'ordine in cui le regole si applicano è l'ordine alfabetico del pacchetto**, e da
+  quell'ordine dipende chi resta attaccato alla macchina: l'ultimo accessorio posato è il
+  più vicino. È il motivo per cui la sicurezza sta attaccata a ciò che protegge e lo scarico
+  sta dal lato del serbatoio. Oggi è una convenzione di nome di file presidiata da due prove
+  in `tests/rules/test_acceptance_properties.py`; **D-094 la vuole strutturale**, cioè
+  derivata dai vincoli che ogni accessorio dichiara. È lavoro di P3, e finché non c'è,
+  rinominare un file del pacchetto può spostare un accessorio senza che nessuno lo chieda.
+- **Due pezzi manutenibili attaccati alla stessa tubazione ricevono due organi di chiusura**,
+  uno per attacco. È D-074 preso alla lettera e non è sbagliato — un organo solo separa i
+  due pezzi fra loro ma non permette di togliere l'uno lasciando l'altro in servizio — ma
+  raddoppia il valvolame fra due macchine adiacenti. Se il PM decide che in quel caso ne
+  basta uno, la decisione va registrata e la regola diventa «un organo per ogni **tratta**
+  che tocca un pezzo manutenibile», non per ogni attacco.
+- **Un attacco raggiunto da due tubazioni riceve l'organo su una sola delle due.** Il motore
+  indicizza una connessione per attacco, e quando due ritorni arrivano allo stesso bocchello
+  il secondo non riceve niente. Si vede sul caso di accettazione: sul ritorno della pompa di
+  calore convergono due tubazioni — quella del volano e quella del serpentino del bollitore
+  — e l'organo della pompa di calore finisce su quella del volano; **la tubazione del
+  serpentino non riceve nessun organo proprio della pompa di calore**, ed è coperta solo
+  dall'organo del bollitore all'altro capo. La proprietà «ogni attacco ha il suo» regge
+  perché è verificata **per attacco** e non per tubazione. Chiuderlo vuol dire rendere
+  l'indice uno-a-molti nel motore.
+- **Il modello che esce dipende ancora dall'ordine in cui il file elenca le tubazioni.** Il
+  motore indicizza l'**ultima** connessione di un attacco, chi applica le proposte prende la
+  **prima**: le due metà non sono d'accordo, e riordinando le connessioni dello stesso
+  impianto il treno degli accessori migra da una tubazione all'altra. Entrambe le metà sono
+  precedenti a P2. La correzione minima è farle scegliere la stessa connessione con lo stesso
+  criterio, e vive tutta dentro il motore delle regole. **Le sigle dei pezzi non ne
+  soffrono**: partono dalle sorgenti e sono già indipendenti dall'ordine del file (D-098).
+- **L'organo bloccabile aperto si disegna come quello comune.** Le due voci di catalogo sono
+  distinte e la regola sceglie quella giusta, ma condividono il simbolo della valvola di
+  intercettazione: sulla tavola la distinzione non si vede. È lavoro di P4, e va chiuso
+  prima che una tavola con un vaso di espansione arrivi a un cantiere.
+- **Il vaso di espansione riceve due organi bloccabili invece di uno**, perché è ancora
+  descritto come pezzo di passaggio con due porte. Si chiude insieme al debito degli stacchi
+  (§6, prima riga) senza toccare la regola.
+- **L'impianto che le regole producono non entra su un formato ordinario.** Con
+  l'intercettazione su ogni attacco di ogni cosa manutenibile, le quattro fasce del caso di
+  accettazione chiedono più larghezza di quanta ne offra una A3, e la composizione si ferma
+  invece di rimpicciolire i simboli. È esattamente il limite che il piano assegna a **P6**.
+  Nel frattempo il caso di posa del layout è congelato in
+  `examples/layout/centrale-pdc-quattro-fasce.json`, che è l'impianto a quattro fasce con
+  cui il ciclo di miglioramento è stato misurato: le prove di layout misurano geometria, non
+  contenuto del pacchetto delle regole.
+- **La miscelatrice e il gruppo di riempimento hanno ancora porte che dicono il falso** (§6):
+  chiuderlo richiede di cambiare le porte, e le porte devono coincidere con quelle del
+  simbolo. È quindi lavoro di P4, non di P2 come §6 supponeva.

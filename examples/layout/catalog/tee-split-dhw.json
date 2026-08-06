@@ -1,0 +1,40 @@
+{
+  "id": "tee-split-dhw",
+  "version": "1.0.0",
+  "name": "Ripartizione a T sanitario",
+  "functions": [
+    "junction"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "tee-junction",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "c",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

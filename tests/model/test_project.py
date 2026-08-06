@@ -4,6 +4,7 @@ import pytest
 from pydantic import ValidationError
 
 from disegnatore_mep.model.project import (
+    SCHEMA_VERSION,
     ComponentInstance,
     ConnectionModel,
     PortRef,
@@ -46,9 +47,11 @@ def test_project_rejects_unknown_fields() -> None:
         )
 
 
-def test_project_schema_version_is_fixed() -> None:
+def test_project_schema_version_is_the_one_this_build_writes() -> None:
+    """Il modello in memoria parla una sola versione; i documenti piu' vecchi
+    sono migrati al confine da io.project_json."""
     project = ProjectModel(metadata=metadata())
-    assert project.schema_version == "1.0.0"
+    assert project.schema_version == SCHEMA_VERSION
 
 
 @pytest.mark.parametrize(

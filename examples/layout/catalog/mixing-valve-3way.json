@@ -1,0 +1,41 @@
+{
+  "id": "mixing-valve-3way",
+  "version": "1.0.0",
+  "name": "Valvola miscelatrice a tre vie",
+  "functions": [
+    "circuit_mixing"
+  ],
+  "traits": [
+    "maintainable",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "mixing-valve-3way",
+  "composite": false,
+  "ports": [
+    {
+      "id": "hot_in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "cold_in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "out",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

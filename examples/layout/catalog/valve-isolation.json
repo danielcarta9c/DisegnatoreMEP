@@ -1,0 +1,33 @@
+{
+  "id": "valve-isolation",
+  "version": "1.0.0",
+  "name": "Valvola di intercettazione",
+  "functions": [
+    "isolation"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "valve-isolation",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

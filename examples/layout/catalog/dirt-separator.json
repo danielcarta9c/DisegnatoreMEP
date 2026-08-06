@@ -1,0 +1,34 @@
+{
+  "id": "dirt-separator",
+  "version": "1.0.0",
+  "name": "Defangatore",
+  "functions": [
+    "sludge_separation"
+  ],
+  "traits": [
+    "maintainable",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "dirt-separator",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

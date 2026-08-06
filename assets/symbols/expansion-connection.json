@@ -1,0 +1,26 @@
+{
+  "id": "expansion-connection",
+  "version": "1.0.0",
+  "name": "Vaso di espansione",
+  "width_mm": 5.0,
+  "height_mm": 10.0,
+  "allowed_rotations_deg": [
+    0,
+    180
+  ],
+  "ports": [
+    {
+      "id": "a",
+      "face": "top",
+      "x_mm": 2.5,
+      "y_mm": 0.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 0.0,
+    "right_mm": 0.0,
+    "top_mm": 2.0,
+    "bottom_mm": 0.0
+  },
+  "source": "UNI 9511, tramite SRC-015"
+}

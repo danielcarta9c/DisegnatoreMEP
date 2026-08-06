@@ -1,0 +1,28 @@
+{
+  "id": "dirt-separation-before-what-it-would-ruin",
+  "version": "2.0.0",
+  "name": "Defangatore",
+  "category": "recommended",
+  "cardinality": "per_component",
+  "when": {
+    "network_domain": "hydronic",
+    "anchor_has_trait": "needs_debris_protection"
+  },
+  "then": {
+    "provides_function": "sludge_separation",
+    "placement": "on_inlet",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "scope": "on_the_attachment"
+  },
+  "rationale": "L'acqua di un circuito chiuso continua a produrre fanghi e ossidi anche dopo il lavaggio, e sono cosi' fini che un filtro a rete non li trattiene: si separano rallentando l'acqua. Il defangatore sta sulla tubazione che entra in cio' che quei fanghi rovinerebbero, perche' e' l'ultimo punto utile prima del danno.",
+  "source": "UNI 8065:2019 tramite guida Aqua Italia (SRC-014)",
+  "ordering": {
+    "after": [
+      "isolation",
+      "isolation_locked_open"
+    ]
+  }
+}

@@ -1,147 +1,231 @@
-# HANDOFF — Disegnatore MEP · 2026-08-01 (fine P0)
+# HANDOFF — Disegnatore MEP · 6 agosto 2026 (sera)
 
-> ⛔ **STOP. Questo file NON è un riassunto del progetto.** È il cancello
-> di lettura per la sessione successiva. Leggere tutti i documenti indicati
-> nell'ordine sotto prima di modificare file, scrivere codice o porre domande
-> al PM. Solo dopo completare le sentinel checks del §2.
+> ⛔ **Non è un riassunto del progetto.** È il cancello di lettura per la sessione
+> successiva. Si legge tutto, poi si risponde alle domande del §2, poi si comincia.
+>
+> **Chi ha fretta legge questo file e `docs/SKILL.md`. Sono sufficienti per capire cosa
+> stiamo costruendo e da dove si riparte.** Tutto il resto si apre quando serve.
 
 ---
 
-## 1. Reading order obbligatorio
+## 1. Cosa stiamo costruendo, in una pagina
 
-Leggere integralmente nell'ordine. I gruppi di file vanno letti al completo.
+Una **skill** che trasforma un impianto termotecnico **già deciso e dimensionato
+dall'ingegnere** in una tavola tecnica. Non progetta, non dimensiona, non sceglie le
+macchine: aggiunge gli accessori che un impianto deve avere, li fa approvare, e disegna.
 
-| # | File | Funzione |
+**La frase del PM che definisce il prodotto, e che va tenuta a mente sempre** (D-104):
+
+> «Io sono un buon ingegnere ma non sono un disegnatore MEP super senior. Per questo nasce
+> la skill: per far disegnare quello che so fare benissimo — lo schema a livello di
+> definitivo — e portarlo a livello più esecutivo.»
+
+Ne discende il confine, che in questa sessione è stato violato due volte e costa caro
+ogni volta: **la skill mette le valvole, uno sfiato e quattro accessori standard. Non
+decide quanti pezzi ci vanno, non cambia lo schema ricevuto, non dimensiona.**
+
+### La catena (D-099)
+
+```
+l'ingegnere spiega l'impianto a parole
+   → l'AI interpreta                        GRAFO DI PRIMA STESURA
+   → le regole dicono cosa manca e perché
+   → l'assemblatore dice dove va ciascuno   GRAFO DEFINITIVO
+   → ★ L'INGEGNERE APPROVA                  cancello: niente si disegna prima
+   → l'instradatore dispone e disegna        con i criteri di costo del PM
+   → i validatori verificano
+   → ★ L'OCCHIO TERZO GIUDICA               cancello: può respingere
+   → la tavola
+```
+
+**Una cosa sola attraversa tutto: il grafo.** Nasce abbozzato, si arricchisce di nodi,
+diventa definitivo. La tavola ne è la **rappresentazione**.
+
+### Il grafo, come è fatto (D-097, D-098, D-100, D-101)
+
+Come una **rete stradale**. Ogni pezzo è un **nodo con la propria sigla**; ogni tubo fra
+due pezzi è un **arco** col proprio fluido. Le sigle si assegnano camminando dalle
+**sorgenti dichiarate**, seguendo l'acqua. Una sigla sola per tutto il prodotto.
+
+**Ogni attacco porta una tubazione sola, sempre** (D-100). Dove due tubazioni si
+incontrano c'è un pezzo che le unisce, con la propria sigla: una **confluenza** se due
+diventano una, una **ripartizione** se una si sdoppia.
+
+**Una macchina ha più attacchi di quelli del flusso** (D-101): un volano dichiara anche
+sfiato, scarico e sede della sonda. Un accessorio che pende da uno stacco va **su
+quell'attacco** se la macchina ce l'ha, e su una **derivazione** saldata sul tubo se non
+ce l'ha. Non spezza mai la tubazione principale.
+
+### Dove si guarda cosa (D-096) — la regola che ha cambiato il progetto
+
+**Il contenuto si giudica sul grafo scritto, non sul disegno.** Se il grafo è giusto e la
+tavola è brutta, il difetto è nel disporre. Se il grafo è sbagliato, la tavola non c'entra.
+
+---
+
+## 2. Sentinel checks — rispondere prima di toccare qualunque cosa
+
+1. Qual è l'unico oggetto che attraversa tutta la skill, e perché la tavola non è un
+   oggetto a sé?
+2. Su cosa si giudica il **contenuto** e su cosa il **disegno**?
+3. Quante tubazioni porta un attacco, e cosa c'è dove due tubazioni si incontrano?
+4. Dove va un accessorio che pende da uno stacco, e chi decide quale dei due casi vale?
+5. Una norma dice che un impianto deve avere un certo dispositivo: la skill può
+   aggiungerlo di propria iniziativa?
+6. Chi decide l'ordine dei pezzi lungo un tubo, e su cosa lo decide?
+7. Cosa deve succedere quando una regola si applica ma il catalogo non ha il pezzo adatto
+   a quel fluido?
+
+*Risposte attese:* il grafo, e la tavola ne è la rappresentazione; il contenuto sul grafo
+scritto, il disegno sulla tavola (D-096); **una sola**, e dove se ne incontrano due c'è un
+raccordo con la propria sigla (D-100); sull'attacco di servizio della macchina se ce l'ha,
+altrimenti su una derivazione, e lo dice **il catalogo** (D-101); **no** — una prescrizione
+dice cosa deve avere l'impianto, non autorizza la skill ad aggiungerlo, e quantità e
+volumi restano dell'ingegnere (D-104); l'**assemblatore**, risolvendo i vincoli che ogni
+regola dichiara rispetto ai **mestieri** degli altri pezzi, mai numeri di priorità (D-094);
+lo deve **dire**, come punto aperto per il progettista, mai tacere.
+
+---
+
+## 3. Il metodo, che è vincolante (D-083)
+
+**Tre ruoli: uno decide, uno o più fanno, uno controlla.** L'orchestratore scrive i criteri
+di accettazione **prima**; sviluppatori separati eseguono; un collaudo **a contesto
+separato** verifica e può respingere. I verdetti si registrano nell'appendice del piano.
+
+Quattro regole ferree:
+
+1. Niente è «fatto» senza verdetto positivo del collaudo, registrato.
+2. Nessuna tavola arriva al PM senza il cancello completo, rigenerata il giorno stesso.
+3. **Vietato inventare.** Se la fonte manca è una domanda per il PM, non una licenza. E se
+   la fonte **esiste** — un catalogo, una norma — si va a cercarla invece di chiedere
+   (D-102).
+4. Il piano approvato si rispetta; una deviazione si registra **prima** di eseguirla.
+
+**Come si scrive al PM:** zero verbosità, italiano, frasi corte, nessun nome di file o di
+funzione, deve capirlo un non sviluppatore.
+
+---
+
+## 4. ⛔ L'errore di metodo di questa sessione, che non va ripetuto
+
+È lo stesso, tre volte, e il PM ha dovuto fermare il lavoro ogni volta:
+
+1. **Un rigo di norma trasformato in regola.** Dalla Raccolta R era stato dedotto «con due
+   generatori due vasi di espansione». Nessuno lo fa, e comunque non è una decisione di
+   disegno. Ritirato in D-104.
+2. **Il disegno inseguito dentro una sessione sul contenuto.** Le prove del disegno erano
+   diventate rosse perché l'impianto era cresciuto; invece di lasciarle stare sono state
+   inseguite. Il disegno è un altro pezzo e lo fa un altro agente.
+3. **Domande girate al PM che avevano risposta nei cataloghi.** Lui stesso ha avvertito:
+   «io potrei sbagliare».
+
+**La radice è una sola: prendere un segnale laterale e trattarlo come lavoro da fare,
+invece di finire il pezzo.** Quando succede, fermarsi e tornare al pezzo.
+
+---
+
+## 5. Ordine di lettura
+
+| # | File | Perché |
 |---|---|---|
-| 1 | `AGENTS.md` | Regole operative e profilo di collaborazione con il PM |
-| 2 | `CONTESTO_PROGETTO.md` | Storia completa e punto di partenza del progetto |
-| 3 | `README.md` | Scopo e orientamento del repository |
-| 4 | `PRD_DISEGNATORE_MEP.md` | Requisiti di prodotto approvati |
-| 5 | `PROJECT_STATE.md` | Stato vivo e prossimo passo |
-| 6 | `docs/specs/2026-08-01-disegnatore-mep-design.md` | Design consolidato e approvato |
-| 7 | `docs/adr/README.md`, poi `docs/adr/0001-*.md` fino a `0004-*.md` | Decisioni architetturali in ordine cronologico |
-| 8 | `docs/DECISION_LOG.md` | Decisioni funzionali D-001–D-033 |
-| 9 | `docs/ROADMAP.md` | Fasi del progetto e perimetro futuro |
-| 10 | `docs/ARCHITECTURE.md` | Struttura del codice effettivamente consegnato in P0 |
-| 11 | **`docs/P0_REVIEW_FINDINGS.md`** | Cosa le revisioni hanno trovato e non è stato risolto. **Il §3.1 fissa il flusso di lavoro reale della skill**: due revisori indipendenti erano partiti da una lettura sbagliata, leggerlo prima di ragionare sull'approvazione |
-| 12 | `docs/plans/README.md` e `docs/plans/2026-08-01-master-implementation-roadmap.md` | Sequenza P0–P7 |
-| 13 | `docs/plans/2026-08-01-foundation-core-plan.md` — **almeno l'appendice finale** | Il piano eseguito e le deviazioni approvate. Il corpo del piano contiene codice che non compila: leggere l'appendice prima di fidarsi del testo |
-| 13b | **`docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`** | **Il piano da eseguire.** Sette task, dal sistema grafico in millimetri al foglio A3 stampabile dei simboli |
-| 14 | `docs/research/README.md` e `docs/research/SOURCE_REGISTER.md` | Regole per fonti e stato della ricerca |
-| 15 | `assets/cartigli/README.md` e `releases/README.md` | Vincoli su cartiglio e rilascio |
-| 16 | [`nove-c-kit` PLAYBOOK](https://github.com/danielcarta9c/nove-c-kit/blob/main/PLAYBOOK.md) e [`EXAMPLES`](https://github.com/danielcarta9c/nove-c-kit/blob/main/EXAMPLES.md) | Metodo di project management Nove C |
-| 17 | Questo file dal §2 in poi | Verifica di comprensione e delta operativo |
-
-Non usare questo HANDOFF come scorciatoia. Il contenuto tecnico vive nei documenti canonici sopra.
+| 1 | Questo file | Cancello |
+| 2 | `docs/SKILL.md` | Com'è fatta la skill, la catena, i pezzi |
+| 3 | `PROJECT_STATE.md` | A che punto siamo |
+| 4 | `docs/plans/2026-08-06-piano-costruzione-skill.md` | Il piano corrente e i verdetti |
+| 5 | `docs/DECISION_LOG.md` — **partire da D-096** | D-096÷D-104 sono la logica del grafo e il confine del prodotto |
+| 6 | `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` | Dove va ciascun pezzo, con la fonte. **Leggere prima il confine in testa** |
+| 7 | `docs/adr/0005-*.md` | L'architettura, blindata |
+| 8 | `docs/prodotto/GRAFO_IMPIANTO.md` e `docs/prodotto/grafi-di-prova/` | Gli artefatti che il PM legge e approva |
+| 9 | `AGENTS.md` | Regole operative e i due ruoli |
 
 ---
 
-## 2. Sentinel checks — verifica che hai letto
+## 6. Stato al 6 agosto 2026, sera
 
-Rispondere esplicitamente a queste domande prima di iniziare. Se una risposta non è certa, tornare al §1.
+**Ramo:** il lavoro è su `main`.
+**Prove:** 659 verdi, 22 parcheggiate con il motivo scritto; `ruff` e `mypy --strict` puliti.
+**Ambiente:** `bash scripts/setup-env.sh` — **da eseguire per primo** in una sessione cloud.
+**Numeri:** 39 simboli pubblicati, 51 voci di catalogo, 14 regole.
 
-1. Perché il prodotto non è un catalogo di schemi tipo, e come è stato **dimostrato** che il nucleo è davvero universale?
-2. Qual è la fonte di verità e quali artefatti sono derivati rigenerabili?
-3. Cosa deve essere approvato prima di disegnare, e perché quell'approvazione **non** richiede una macchina di stati dentro il modello?
-4. A cosa servono allora i campi di regola e approvazione presenti nel modello?
-5. Come deve essere rappresentato un componente inserito in linea, e perché quel requisito è oggi rappresentabile ma non verificato?
-6. Perché rileggere alla lettera il corpo del piano P0 è pericoloso?
+### I pezzi
 
-Risposte attese: motore compositivo, provato cercando ogni termine impiantistico nel sorgente e trovando solo i sei nomi di dominio, zero condizionali su tipo di componente; il modello tecnico canonico, con geometria, SVG e PDF derivati; l'intero dossier di interpretazione, integrazioni, assunzioni e domande, confermato dentro la conversazione — se l'ingegnere rifiuta un'integrazione la skill semplicemente non la inserisce, quindi non esistono proposte pendenti da conservare; quei campi servono alla tracciabilità a valle, cioè risalire dall'accessorio comparso in distinta alla regola che lo ha inserito e al perché; la connessione si spezza in due segmenti sulle porte del componente, ma nessuna fixture contiene un componente in linea e `inline_gap_mm` non è letto da nessuna parte; il corpo del piano contiene nove difetti eseguibili corretti solo nell'appendice.
-
----
-
-## 3. Stato attuale del progetto
-
-- **Fase:** P0 completata, gate G0 superato. P1 non iniziata.
-- **Versione installabile:** nessuna release; `releases/latest/` non è ancora popolata.
-- **Codice:** 45 file, 3089 righe, 17 commit. `src/disegnatore_mep/` con `model`, `catalog`, `domains`, `validation`, `io` e `cli`.
-- **Verifica:** 59 test verdi; `pytest`, `ruff` e `mypy --strict` tutti a exit `0` su `src`, `tests` e `examples/foundation/build_fixtures.py`.
-- **Ambiente:** ricostruibile da zero con `bash scripts/setup-env.sh`, che crea la `.venv`, installa il pacchetto in editable con le versioni pinnate di `pyproject.toml` e verifica test, lint e type check. Lo script rileva da solo l'interprete e se la `.venv` usa `bin/` o `Scripts/`. **Da eseguire come prima cosa in una sessione cloud**, che riparte sempre da un clone pulito e non conserva nulla di installato.
-- **Il progetto è pronto per il cloud.** `.claude/settings.json` è versionato e dichiara il plugin `superpowers`, cosi' una sessione cloud lo installa all'avvio. Tutti i comandi dei piani sono Bash. `.claude/settings.local.json` resta invece fuori da Git perché contiene percorsi della singola macchina.
-- **Ramo:** P0 è stata sviluppata su `feat/p0-foundation-core` e integrata in `main` con un merge esplicito. Si riparte da `main`. Il ramo di lavoro è conservato per poter rileggere la sequenza dei commit.
-- **In flight:** nessuna modifica applicativa a metà.
-- **Blocco:** nessuno. Le due decisioni di prodotto che erano in sospeso sono state chiuse il 3 agosto 2026 (D-036 ritirata, D-037 ricondotta a decisione tecnica).
-- **Check rapido alla ripresa:** `git status --short` vuoto; `& .\.venv\Scripts\python.exe -m pytest -q` deve dare 59 passed.
-
----
-
-## 4. Cosa è cambiato dall'ultima sessione (delta)
-
-- Eseguiti tutti e otto i task del piano P0, ciascuno con implementatore e almeno due revisioni indipendenti.
-- Superato il gate G0: `examples/foundation/valid-mixed-project.json` combina quattro domini ed esce `0`; `invalid-cross-medium.json` esce `2` con `PORT_MEDIUM_MISMATCH`.
-- Corretti **nove difetti eseguibili del piano** — codice che funzionava a runtime ma non superava `mypy --strict`, piu' un import circolare reale. Elencati nell'appendice del piano.
-- Corretti **quattro difetti trovati dalla revisione avversariale**, fra cui un falso PASS e una falla nell'integrità del fingerprint.
-- Prodotti `docs/ARCHITECTURE.md` e `docs/P0_REVIEW_FINDINGS.md`.
-- Tutte queste modifiche sono già promosse nei documenti canonici: non ricostruirle da questo elenco.
-
----
-
-## 5. Punto esatto da cui riprendere
-
-- **Task:** eseguire `docs/plans/2026-08-03-graphic-system-symbol-library-plan.md`, sette task, dal Task 1.
-- **Metodo scelto dal PM:** `superpowers:subagent-driven-development`. Un agente implementatore fresco per task, poi revisione di conformità alla specifica, poi revisione di qualità, con loop di correzione finché entrambe non approvano. Non chiedere di riscegliere il metodo.
-- **Ordine invertito rispetto alla roadmap master (D-040):** la catena grafica — simboli, layout, rendering — precede il motore delle regole. Il rischio vero non sono le regole ma se un motore deterministico produca una tavola che sembri disegnata da un tecnico, e lo si scopre soltanto guardandola. Nel frattempo la skill disegnerà esattamente ciò che l'ingegnere descrive, senza aggiungere nulla.
-- **Nessuna decisione del PM è in sospeso.**
-- **Attenzione:** il piano sposta la geometria dal catalogo al simbolo e impone alle porte di stare sul perimetro. Questo **ritira deliberatamente** il vincolo P0 «le porte possono stare ovunque dentro il riquadro»: la motivazione è nella sezione «Decisione strutturale» del piano. Non è una svista da correggere.
-- **Prima di P3:** allargare il contratto `DomainPack`. Oggi vede solo due porte e una rete, quindi nessuna regola idronica o aeraulica reale è esprimibile. Se i quattro pacchetti P3 partissero in parallelo su questo contratto, ognuno modificherebbe il nucleo per conto proprio.
-- **Loci di interesse:** `docs/P0_REVIEW_FINDINGS.md`; `PROJECT_STATE.md`; `docs/plans/2026-08-01-master-implementation-roadmap.md`.
-
----
-
-## 6. Domande aperte per il PM
-
-**Nessuna.**
-
-Le due che erano registrate qui sono state chiuse il 3 agosto 2026:
-
-- **D-036 ritirata.** Chiedeva dove conservare una proposta di integrazione non ancora approvata. Nasceva da un fraintendimento: la skill trasforma input in schema grafico, non archivia progetti. L'approvazione avviene dentro la conversazione e, se l'ingegnere rifiuta un'integrazione, la skill semplicemente non la inserisce. Non esistono proposte pendenti o rifiutate da conservare.
-- **D-037 chiusa come decisione tecnica.** Il validatore riasserisce gli invarianti invece di fidarsi del costruttore; l'immutabilità del modello resta implementativa.
-
-**Lezione da non ripetere:** due revisori indipendenti avevano letto i campi `ApprovalStatus` e `RuleApplicationModel` come un flusso di approvazione da persistere, e ne avevano fatto il rischio principale della fase. Servono invece alla tracciabilità a valle (D-039). Prima di ragionare sull'approvazione, leggere `docs/P0_REVIEW_FINDINGS.md` §3.1, che fissa il flusso reale.
-
-Alla ripresa non chiedere al PM di ricostruire il contesto, e non chiedergli di scegliere fra modalità tecniche di esecuzione.
-
----
-
-## 7. Quirks e gotcha emersi
-
-- **Il corpo del piano P0 contiene codice difettoso.** Non è stato riscritto. L'appendice finale è la fonte autorevole sulle differenze.
-- **Eseguire sempre la suite completa**, mai il solo file di test del task in corso: l'import circolare corretto nel Task 5 passava indenne sul proprio file e falliva solo sull'intera suite, per ordine di collection.
-- **Eseguire `mypy src tests`, non solo `mypy src`.** Gli errori di tipo nei test restano altrimenti invisibili fino al gate finale.
-- **Cinque vincoli non vanno "migliorati"**: porte ammesse ovunque dentro il riquadro del simbolo e non solo sul perimetro; `validation/__init__.py` minimale; `BasicDomainPack` congelato; `network_id` dentro la chiave di duplicazione; precedenza dei rami in `validate_pair`. Motivazioni nell'appendice del piano.
-- **OneDrive:** il repository è in una cartella sincronizzata; evitare modifiche contemporanee da due computer e verificare lo stato Git prima di intervenire.
-- **Cartiglio PDF:** le anomalie di font osservate restano descritte nella specifica approvata; consultarla prima di costruire il rendering.
-- **Quota dell'app:** non esiste un indicatore interrogabile del limite residuo; non inventare stime.
-
----
-
-## 8. Cross-refs — dove vivono le cose
-
-| Quando serve sapere… | File del progetto |
+| Pezzo | Stato |
 |---|---|
-| Come collaborare con il PM | `AGENTS.md` |
-| Qual è il prodotto e cosa esclude | `PRD_DISEGNATORE_MEP.md` |
-| Perché il motore è generale | ADR 0001 e specifica approvata |
-| Qual è la fonte di verità | ADR 0002 |
-| Come gestire scala e tavole | ADR 0003 |
-| Perché si approva prima di disegnare | ADR 0004 |
-| Com'è fatto il codice consegnato | `docs/ARCHITECTURE.md` |
-| Cosa manca e cosa è stato differito | `docs/P0_REVIEW_FINDINGS.md` |
-| Perché il codice diverge dal piano | Appendice di `docs/plans/2026-08-01-foundation-core-plan.md` |
-| Qual è il prossimo passo | `PROJECT_STATE.md` |
-| Dove trovare le decisioni | `docs/DECISION_LOG.md` e `docs/adr/` |
-| Come gestire fonti tecniche | `docs/research/SOURCE_REGISTER.md` |
-| Come produrre una release | `releases/README.md` |
+| **1 — Capire** (dal testo al grafo di prima stesura) | **Non esiste.** Le letture sono fatte a mano in `examples/prova/` |
+| **2 — Completare** (le regole) | Costruito e collaudato. Contenuto da estendere con le fonti |
+| **3 — Assemblare** | **Costruito** in questa sessione. Da collaudare in modo indipendente |
+| Il grafo e le sue sigle | Costruito e collaudato |
+| Il vocabolario delle proprietà | Approvato |
+| 4 — Disporre / libreria / cartiglio / composizione | Come prima: la composizione è da rifare |
+| 5 — Validatori e cancello dell'occhio terzo | Correttezza e preflight esistono, il cancello no |
+
+### Cosa è cambiato in questa sessione
+
+- **Un attacco, una tubazione** (D-100), e i due raccordi — confluenza e ripartizione.
+- **Gli attacchi di servizio** (D-101): l'accessorio a stacco va dove va davvero. Chiuso il
+  debito che D-094 aveva congelato: nove accessori avevano due attacchi e ne hanno uno.
+- **L'assemblatore** (D-093, D-094): la fila la decidono i vincoli dichiarati, non l'ordine
+  alfabetico dei nomi dei file delle regole.
+- **Nove famiglie di pezzi nuove** aggiunte come dato, senza toccare il motore.
+- **I cinque impianti del committente** passano per la catena: i grafi sono in
+  `docs/prodotto/grafi-di-prova/`.
+
+---
+
+## 7. Il primo lavoro della prossima sessione
+
+**Si parte dalle integrazioni che il PM darà**, dopo aver letto i cinque grafi. Quelle
+vengono prima di tutto il resto.
+
+Poi si finiscono i pezzi **da 1 a 3**, fino al grafo definitivo:
+
+1. **Il pezzo 1, «Capire»** — le istruzioni dell'agente che legge il testo dell'ingegnere e
+   costruisce il grafo di prima stesura. Oggi quella lettura la fa una persona a mano, e
+   finché è così il primo pezzo della skill non esiste. È fatto di file di testo, non di
+   programma (ADR 0005).
+2. **Il contenuto delle regole**, esteso con il metodo delle fonti (D-103) e dentro il
+   confine di D-104: bilanciamento, disconnettore sul riempimento, miscelatrice sanitaria,
+   contabilizzazione, ritegno. Sono elencati in coda a
+   `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md`.
+3. **Il collaudo indipendente dell'assemblatore**, che non c'è ancora: è stato costruito e
+   verificato da chi lo ha scritto, e questo non basta (D-083).
+
+**Non toccare il disegno.** La composizione, l'instradamento e il foglio dei simboli sono
+pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
+
+---
+
+## 8. Quirks e gotcha
+
+- **Eseguire sempre la suite completa** e `mypy src tests examples`, mai il solo file del
+  task.
+- **Mai `git checkout --` o `git stash` su lavoro non committato** senza averne prima
+  salvato una copia.
+- **Il comando delle regole vuole anche `--naming`** oltre a `--catalog`, `--symbols` e
+  `--rules`.
+- **I generatori di fixture vanno rieseguiti**, non modificati a mano: c'è una prova che
+  inchioda i file generati al proprio generatore, ed è nata da un incidente vero.
+- **Firma dei commit:** in questo container `commit.gpgsign` è attivo con una chiave vuota.
+  Si committa con `git -c commit.gpgsign=false`.
+- **Gli agenti di sviluppo non committano.** Committa l'orchestratore, e i lavori a metà
+  vanno come `wip:` con scritto che non sono collaudati.
+
+---
+
+## 9. Domande aperte per il PM
+
+**Una sola, e sta dentro i grafi di prova.** Nel quinto impianto il testo chiede tre
+circuiti secondari — batterie di trattamento aria, ventilconvettori e un circuito miscelato
+per il pavimento radiante — e il collettore disponibile ne serve due. Il circuito miscelato
+**non è disegnato**, ed è scritto come punto aperto invece di essere inventato.
 
 ---
 
 ## Ultimo aggiornamento
 
-`2026-08-03` — Claude — scritto il piano del sistema grafico e della libreria dei simboli, pronto per l'esecuzione con agenti dedicati. Sessione chiusa in modo prudenziale a metà budget di contesto, per lasciare all'esecuzione un margine intero: sono circa venti dispatch fra implementatori e revisori, e chi coordina deve ricordare le decisioni prese fra un task e l'altro.
-
-`2026-08-03` — Claude — chiarito con il PM il flusso di lavoro reale della skill; ritirata D-036, chiusa D-037, aggiunta D-039 sulla tracciabilità. Nessuna domanda di prodotto resta aperta.
-
-`2026-08-03` — Claude — pubblicazione su GitHub in `danielcarta9c/DisegnatoreMEP`, repository pubblico con licenza MIT (D-038).
-
-`2026-08-01` — Claude — chiusura di P0: gate G0 superato, 59 test verdi, difetti del piano e della revisione avversariale corretti, documentazione allineata al codice reale.
+`2026-08-06`, sera — Claude — chiusi i due difetti di modellazione che il PM ha diagnosticato
+(un attacco una tubazione, e gli attacchi di servizio delle macchine), costruito
+l'assemblatore, aggiunte nove famiglie di pezzi come dato, e fatti passare i cinque impianti
+di prova per la prima parte della catena. Registrato in §4 l'errore di metodo che si è
+ripetuto tre volte, perché non si ripeta una quarta.

@@ -1,0 +1,35 @@
+{
+  "id": "pump-circulator",
+  "version": "1.0.0",
+  "name": "Pompa di circolazione",
+  "functions": [
+    "circulation"
+  ],
+  "traits": [
+    "maintainable",
+    "needs_debris_protection",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "pump-circulator",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

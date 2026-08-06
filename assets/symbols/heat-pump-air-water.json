@@ -1,0 +1,31 @@
+{
+  "id": "heat-pump-air-water",
+  "version": "1.0.0",
+  "name": "Pompa di calore aria-acqua",
+  "width_mm": 40.0,
+  "height_mm": 30.0,
+  "allowed_rotations_deg": [
+    0
+  ],
+  "ports": [
+    {
+      "id": "water_supply",
+      "face": "right",
+      "x_mm": 40.0,
+      "y_mm": 5.0
+    },
+    {
+      "id": "water_return",
+      "face": "right",
+      "x_mm": 40.0,
+      "y_mm": 10.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 0.0,
+    "right_mm": 2.0,
+    "top_mm": 0.0,
+    "bottom_mm": 0.0
+  },
+  "source": "pratica di settore, cfr. SRC-008"
+}

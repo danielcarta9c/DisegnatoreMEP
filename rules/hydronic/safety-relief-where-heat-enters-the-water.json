@@ -1,0 +1,29 @@
+{
+  "id": "safety-relief-where-heat-enters-the-water",
+  "version": "2.0.0",
+  "name": "Valvola di sicurezza",
+  "category": "necessary",
+  "cardinality": "per_component",
+  "when": {
+    "network_domain": "hydronic",
+    "anchor_has_function": "heat_generation"
+  },
+  "then": {
+    "provides_function": "safety",
+    "placement": "on_outlet",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "scope": "on_the_attachment"
+  },
+  "rationale": "Dove il calore entra nell'acqua la pressione puo' salire piu' in fretta di quanto il circuito riesca ad assorbire, e serve una via che si apra da sola prima del limite ammesso. Sta sulla tubazione che esce dalla macchina e attaccata alla macchina: fra lei e cio' che protegge non ci va nulla che si possa chiudere, perche' una valvola chiusa davanti a una sicurezza e' una sicurezza che non c'e'.",
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)",
+  "ordering": {
+    "before": [
+      "isolation",
+      "isolation_locked_open"
+    ],
+    "against_the_anchor": true
+  }
+}

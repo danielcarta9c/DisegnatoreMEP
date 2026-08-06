@@ -1,0 +1,26 @@
+{
+  "id": "valve-safety-dhw",
+  "version": "1.0.0",
+  "name": "Valvola di sicurezza sanitaria",
+  "functions": [
+    "safety"
+  ],
+  "traits": [
+    "shutoff_never",
+    "attachment_branch"
+  ],
+  "symbol_id": "valve-safety",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

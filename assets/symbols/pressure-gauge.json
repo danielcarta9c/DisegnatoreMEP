@@ -1,0 +1,28 @@
+{
+  "id": "pressure-gauge",
+  "version": "1.0.0",
+  "name": "Manometro",
+  "width_mm": 5.0,
+  "height_mm": 10.0,
+  "allowed_rotations_deg": [
+    0,
+    90,
+    180,
+    270
+  ],
+  "ports": [
+    {
+      "id": "a",
+      "face": "bottom",
+      "x_mm": 2.5,
+      "y_mm": 10.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 0.0,
+    "right_mm": 0.0,
+    "top_mm": 0.0,
+    "bottom_mm": 2.0
+  },
+  "source": "UNI 9511 Tab. 10, tramite SRC-016"
+}

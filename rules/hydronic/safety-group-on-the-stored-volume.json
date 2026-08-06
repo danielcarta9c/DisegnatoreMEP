@@ -1,0 +1,30 @@
+{
+  "id": "safety-group-on-the-stored-volume",
+  "version": "2.0.0",
+  "name": "Gruppo di sicurezza sanitario",
+  "category": "necessary",
+  "cardinality": "per_network",
+  "when": {
+    "network_domain": "hydronic",
+    "network_medium": "cold_water",
+    "anchor_has_trait": "needs_overpressure_protection"
+  },
+  "then": {
+    "provides_function": "safety",
+    "placement": "on_inlet",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "scope": "on_the_network"
+  },
+  "rationale": "Una riserva d'acqua che si scalda dilata, e il ritegno le ha appena tolto la via di ritorno verso la rete: senza uno scarico che si apra da solo la pressione sale fino alla rottura del serbatoio. Il gruppo sta sull'alimentazione fredda e dal lato del serbatoio rispetto a qualunque organo che si chiuda, perche' una via di scarico dietro un rubinetto chiuso non e' una via di scarico.",
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)",
+  "ordering": {
+    "before": [
+      "isolation",
+      "isolation_locked_open"
+    ],
+    "against_the_anchor": true
+  }
+}

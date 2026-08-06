@@ -5,42 +5,26 @@
   "functions": [
     "refrigerant_generation"
   ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
   "symbol_id": "vrv-outdoor",
   "composite": false,
-  "geometry": {
-    "width_mm": 12.0,
-    "height_mm": 10.0,
-    "clearance_mm": 2.0,
-    "allowed_rotations_deg": [
-      0,
-      90,
-      180,
-      270
-    ],
-    "inline_gap_mm": null
-  },
   "ports": [
     {
       "id": "liquid_out",
       "domain": "refrigerant",
       "medium": "refrigerant_liquid",
       "flow": "out",
-      "x_mm": 12,
-      "y_mm": 3,
-      "angle_deg": 0,
-      "required": true,
-      "max_connections": 1
+      "required": true
     },
     {
       "id": "gas_in",
       "domain": "refrigerant",
       "medium": "refrigerant_gas",
       "flow": "in",
-      "x_mm": 12,
-      "y_mm": 7,
-      "angle_deg": 0,
-      "required": true,
-      "max_connections": 1
+      "required": true
     }
   ],
   "sources": [

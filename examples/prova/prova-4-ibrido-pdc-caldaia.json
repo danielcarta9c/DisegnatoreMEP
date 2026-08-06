@@ -1,0 +1,374 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "prova-4-ibrido-pdc-caldaia",
+    "client": "Nove C",
+    "project_name": "Sistema ibrido con pompa di calore e caldaia a condensazione",
+    "commission_code": "PROVA",
+    "revision": "00",
+    "issue_date": "2026-08-06"
+  },
+  "networks": [
+    {
+      "id": "primario",
+      "name": "Circuito primario",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "secondario",
+      "name": "Circuito secondario",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "fredda",
+      "name": "Acqua fredda sanitaria",
+      "domain": "hydronic",
+      "medium": "cold_water"
+    },
+    {
+      "id": "sanitaria",
+      "name": "Acqua calda sanitaria",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "pdc",
+      "definition_id": "heat-pump-air-water",
+      "tag": "PDC-01",
+      "properties": {}
+    },
+    {
+      "id": "caldaia",
+      "definition_id": "gas-boiler",
+      "tag": "CAL-01",
+      "properties": {}
+    },
+    {
+      "id": "collettore-mandata",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "collettore-ritorno",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "volano",
+      "definition_id": "buffer-four-port",
+      "tag": "VOL-01",
+      "properties": {}
+    },
+    {
+      "id": "circolatore",
+      "definition_id": "pump-circulator",
+      "tag": "CIR-01",
+      "properties": {}
+    },
+    {
+      "id": "radiatori",
+      "definition_id": "radiator",
+      "tag": "RAD-01",
+      "properties": {}
+    },
+    {
+      "id": "deviatrice",
+      "definition_id": "diverting-valve-3way",
+      "tag": "VD-01",
+      "properties": {}
+    },
+    {
+      "id": "scambiatore",
+      "definition_id": "plate-heat-exchanger",
+      "tag": "SCA-01",
+      "properties": {}
+    },
+    {
+      "id": "ritorno-caldaia",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "acquedotto",
+      "definition_id": "cold-water-inlet",
+      "tag": "AF-01",
+      "properties": {}
+    },
+    {
+      "id": "utenze",
+      "definition_id": "dhw-draw-off",
+      "tag": "ACS-01",
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "p1",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "pdc",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-mandata",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p2",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "caldaia",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "deviatrice",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p3",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_a"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-mandata",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p4",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "collettore-mandata",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "primary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p5",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-ritorno",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p6",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "collettore-ritorno",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p7",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_b"
+      },
+      "endpoint_b": {
+        "component_id": "scambiatore",
+        "port_id": "primary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p8",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "scambiatore",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno-caldaia",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p9",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "collettore-ritorno",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno-caldaia",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p10",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "ritorno-caldaia",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "caldaia",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s1",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "circolatore",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s2",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "circolatore",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "radiatori",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s3",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "radiatori",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "secondary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "w1",
+      "network_id": "fredda",
+      "endpoint_a": {
+        "component_id": "acquedotto",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "scambiatore",
+        "port_id": "secondary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "w2",
+      "network_id": "sanitaria",
+      "endpoint_a": {
+        "component_id": "scambiatore",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "utenze",
+        "port_id": "a"
+      },
+      "properties": {}
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a1",
+      "text": "Il ritorno comune ai due generatori e' un'assunzione: il testo dice che sono in parallelo e non descrive come rientrano.",
+      "status": "proposed"
+    },
+    {
+      "id": "a2",
+      "text": "«La caldaia da' priorita' al sanitario» e' logica di regolazione, non topologia: sul grafo si vede la deviatrice.",
+      "status": "proposed"
+    }
+  ],
+  "rule_applications": [],
+  "subsystems": [
+    {
+      "id": "generazione",
+      "name": "Generazione",
+      "component_ids": [
+        "pdc",
+        "caldaia",
+        "deviatrice",
+        "collettore-mandata",
+        "collettore-ritorno",
+        "ritorno-caldaia"
+      ],
+      "network_ids": [
+        "primario"
+      ]
+    },
+    {
+      "id": "accumulo",
+      "name": "Accumulo",
+      "component_ids": [
+        "volano"
+      ],
+      "network_ids": [
+        "primario"
+      ]
+    },
+    {
+      "id": "distribuzione",
+      "name": "Distribuzione",
+      "component_ids": [
+        "circolatore",
+        "radiatori"
+      ],
+      "network_ids": [
+        "secondario"
+      ]
+    },
+    {
+      "id": "sanitario",
+      "name": "Acqua calda sanitaria istantanea",
+      "component_ids": [
+        "scambiatore",
+        "acquedotto",
+        "utenze"
+      ],
+      "network_ids": [
+        "primario",
+        "fredda",
+        "sanitaria"
+      ]
+    }
+  ],
+  "sheets": []
+}

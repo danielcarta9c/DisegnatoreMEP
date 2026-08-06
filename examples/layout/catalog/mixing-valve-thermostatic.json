@@ -1,0 +1,34 @@
+{
+  "id": "mixing-valve-thermostatic",
+  "version": "1.0.0",
+  "name": "Valvola miscelatrice termostatica",
+  "functions": [
+    "dhw_mixing"
+  ],
+  "traits": [
+    "maintainable",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "mixing-valve-thermostatic",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

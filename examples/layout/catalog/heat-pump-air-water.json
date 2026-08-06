@@ -1,0 +1,37 @@
+{
+  "id": "heat-pump-air-water",
+  "version": "1.0.0",
+  "name": "Pompa di calore aria-acqua",
+  "functions": [
+    "heat_generation"
+  ],
+  "traits": [
+    "maintainable",
+    "needs_debris_protection",
+    "produces_air",
+    "needs_overpressure_protection",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "heat-pump-air-water",
+  "composite": false,
+  "ports": [
+    {
+      "id": "water_supply",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "water_return",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

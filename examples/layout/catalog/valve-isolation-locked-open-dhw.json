@@ -1,0 +1,33 @@
+{
+  "id": "valve-isolation-locked-open-dhw",
+  "version": "1.0.0",
+  "name": "Valvola di intercettazione bloccabile aperta",
+  "functions": [
+    "isolation_locked_open"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "valve-isolation",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

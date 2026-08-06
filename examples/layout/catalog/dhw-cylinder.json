@@ -1,0 +1,60 @@
+{
+  "id": "dhw-cylinder",
+  "version": "1.0.0",
+  "name": "Bollitore ACS",
+  "functions": [
+    "dhw_storage"
+  ],
+  "traits": [
+    "maintainable",
+    "needs_overpressure_protection",
+    "holds_its_own_volume",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "stored_medium": "domestic_hot_water",
+  "symbol_id": "dhw-cylinder",
+  "composite": false,
+  "ports": [
+    {
+      "id": "coil_in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "coil_out",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "dhw_out",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "out",
+      "required": false
+    },
+    {
+      "id": "cold_in",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "in",
+      "required": false
+    },
+    {
+      "id": "probe",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "bidirectional",
+      "required": false,
+      "stub": true,
+      "serves": "temperature_measurement"
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

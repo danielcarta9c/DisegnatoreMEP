@@ -1,0 +1,34 @@
+{
+  "id": "strainer",
+  "version": "1.0.0",
+  "name": "Filtro a Y",
+  "functions": [
+    "filtration"
+  ],
+  "traits": [
+    "maintainable",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "strainer",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

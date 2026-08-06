@@ -3,8 +3,8 @@ from datetime import date
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import (
     ComponentDefinition,
+    ComponentTrait,
     PortDefinition,
-    SymbolGeometry,
 )
 from disegnatore_mep.domains.builtin import BasicDomainPack
 from disegnatore_mep.domains.registry import DomainRegistry
@@ -27,23 +27,15 @@ def component_definition(component_id: str, flow: PortFlow) -> ComponentDefiniti
         version="1.0.0",
         name=component_id,
         functions=["boundary"],
+        traits=[ComponentTrait.SHUTOFF_ORDINARY, ComponentTrait.ATTACHMENT_INLINE],
         symbol_id=component_id,
         composite=False,
-        geometry=SymbolGeometry(
-            width_mm=10,
-            height_mm=10,
-            clearance_mm=2,
-            allowed_rotations_deg=[0],
-        ),
         ports=[
             PortDefinition(
                 id="port",
                 domain=Domain.HYDRONIC,
                 medium="heating_water",
                 flow=flow,
-                x_mm=5,
-                y_mm=5,
-                angle_deg=0,
             )
         ],
         sources=["CONV-001"],
@@ -327,8 +319,10 @@ def test_port_connection_limit_is_blocking() -> None:
     limit_issues = [issue for issue in report.issues if issue.code == "PORT_CONNECTION_LIMIT"]
     assert len(limit_issues) == 1
     assert limit_issues[0].entity_ids == ["hub", "port"]
-    assert "2 connections" in limit_issues[0].message
-    assert "maximum is 1" in limit_issues[0].message
+    assert "2 pipes" in limit_issues[0].message
+    # Il messaggio dice anche cosa fare: dove due tubazioni si incontrano ci
+    # vuole un pezzo che le unisca, con la propria sigla (D-100).
+    assert "joins them" in limit_issues[0].message
 
 
 def test_unknown_component_message_includes_id() -> None:
@@ -373,18 +367,12 @@ def test_self_loop_connection_is_blocking() -> None:
                     domain=Domain.HYDRONIC,
                     medium="heating_water",
                     flow=PortFlow.OUT,
-                    x_mm=0,
-                    y_mm=0,
-                    angle_deg=0,
                 ),
                 PortDefinition(
                     id="return",
                     domain=Domain.HYDRONIC,
                     medium="heating_water",
                     flow=PortFlow.IN,
-                    x_mm=10,
-                    y_mm=0,
-                    angle_deg=0,
                 ),
             ]
         }

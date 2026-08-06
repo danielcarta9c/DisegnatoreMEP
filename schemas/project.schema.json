@@ -41,6 +41,43 @@
       "title": "AssumptionModel",
       "type": "object"
     },
+    "BandAssignment": {
+      "additionalProperties": false,
+      "description": "Un sottosistema su una fascia della tavola, con la propria posizione.\n\nE' il piano di impaginazione che l'AI puo' scegliere (D-042): non coordinate,\nma un insieme ristretto di scelte discrete che il motore esegue e verifica.",
+      "properties": {
+        "subsystem_id": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Subsystem Id",
+          "type": "string"
+        },
+        "band": {
+          "$ref": "#/$defs/BandRole"
+        },
+        "order": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Order",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "subsystem_id",
+        "band"
+      ],
+      "title": "BandAssignment",
+      "type": "object"
+    },
+    "BandRole": {
+      "description": "Le fasce funzionali della tavola, dichiarate da sinistra a destra (D-041).\n\nL'ordine di dichiarazione **e'** l'ordine di lettura: i generatori a\nsinistra, la distribuzione a destra. Riordinare i membri riordina la tavola.",
+      "enum": [
+        "generation",
+        "primary",
+        "distribution",
+        "terminal"
+      ],
+      "title": "BandRole",
+      "type": "string"
+    },
     "ComponentInstance": {
       "additionalProperties": false,
       "properties": {
@@ -387,6 +424,13 @@
           },
           "title": "Subsystem Ids",
           "type": "array"
+        },
+        "band_assignments": {
+          "items": {
+            "$ref": "#/$defs/BandAssignment"
+          },
+          "title": "Band Assignments",
+          "type": "array"
         }
       },
       "required": [
@@ -435,8 +479,8 @@
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": "1.0.0",
-      "default": "1.0.0",
+      "default": "1.1.0",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
       "title": "Schema Version",
       "type": "string"
     },
