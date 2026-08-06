@@ -1,0 +1,33 @@
+{
+  "note": "Come si chiama, in parole, cio' che scorre nei tubi. Serve perche' un documento che si mostra al committente non puo' stampare l'etichetta con cui il modello indica un fluido: la si traduce qui, una volta sola, e chi mostra qualcosa la chiede a questo elenco. Un fluido che qui non c'e' ferma la generazione del documento invece di comparire com'e'.",
+  "media": [
+    {
+      "medium": "heating_water",
+      "name": "acqua di riscaldamento"
+    },
+    {
+      "medium": "cold_water",
+      "name": "acqua fredda sanitaria"
+    },
+    {
+      "medium": "domestic_hot_water",
+      "name": "acqua calda sanitaria"
+    },
+    {
+      "medium": "natural_gas",
+      "name": "gas metano"
+    },
+    {
+      "medium": "supply_air",
+      "name": "aria di mandata"
+    },
+    {
+      "medium": "refrigerant_liquid",
+      "name": "fluido frigorigeno in fase liquida"
+    },
+    {
+      "medium": "refrigerant_gas",
+      "name": "fluido frigorigeno in fase gassosa"
+    }
+  ]
+}

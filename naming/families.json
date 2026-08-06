@@ -1,0 +1,148 @@
+{
+  "note": "La sigla di un pezzo si legge dalla famiglia a cui appartiene, e la famiglia si legge dal mestiere che il pezzo dichiara di fare — mai dal suo nome e mai dalla voce di catalogo con cui e' stato scelto. L'ordine di questo elenco conta due volte. Primo: un pezzo che fa piu' mestieri prende la prima famiglia che combacia, cosi' un volano che separa e accumula e' sempre un volano. Secondo: la lettura dell'impianto comincia dalle famiglie che dichiarano di essere un punto di partenza, nell'ordine in cui compaiono qui — prima chi il calore lo produce, poi il confine da cui il fluido entra. Aggiungere una famiglia vuol dire aggiungere una riga a questo file, non toccare il programma.",
+  "families": [
+    {
+      "function": "heat_generation",
+      "prefix": "GT",
+      "name": "Generatore di calore",
+      "starts_the_reading": true
+    },
+    {
+      "function": "refrigerant_generation",
+      "prefix": "UE",
+      "name": "Unita' esterna ad espansione diretta",
+      "starts_the_reading": true
+    },
+    {
+      "function": "gas_combustion",
+      "prefix": "BR",
+      "name": "Bruciatore"
+    },
+    {
+      "function": "thermal_storage",
+      "prefix": "VOL",
+      "name": "Accumulo inerziale"
+    },
+    {
+      "function": "dhw_storage",
+      "prefix": "BOL",
+      "name": "Accumulo di acqua calda sanitaria"
+    },
+    {
+      "function": "hydraulic_separation",
+      "prefix": "SEP",
+      "name": "Separatore idraulico"
+    },
+    {
+      "function": "circulation",
+      "prefix": "CIR",
+      "name": "Circolatore"
+    },
+    {
+      "function": "air_movement",
+      "prefix": "VEN",
+      "name": "Ventilatore"
+    },
+    {
+      "function": "distribution",
+      "prefix": "COL",
+      "name": "Collettore"
+    },
+    {
+      "function": "emission",
+      "prefix": "TE",
+      "name": "Terminale di emissione"
+    },
+    {
+      "function": "air_terminal",
+      "prefix": "TA",
+      "name": "Terminale aeraulico"
+    },
+    {
+      "function": "direct_expansion_terminal",
+      "prefix": "UI",
+      "name": "Unita' interna ad espansione diretta"
+    },
+    {
+      "function": "diversion",
+      "prefix": "VD",
+      "name": "Valvola deviatrice"
+    },
+    {
+      "function": "dhw_mixing",
+      "prefix": "VM",
+      "name": "Valvola miscelatrice"
+    },
+    {
+      "function": "isolation_locked_open",
+      "prefix": "VIB",
+      "name": "Valvola di intercettazione bloccabile aperta"
+    },
+    {
+      "function": "isolation",
+      "prefix": "VI",
+      "name": "Valvola di intercettazione"
+    },
+    {
+      "function": "non_return",
+      "prefix": "VR",
+      "name": "Valvola di ritegno"
+    },
+    {
+      "function": "safety",
+      "prefix": "VS",
+      "name": "Valvola di sicurezza"
+    },
+    {
+      "function": "expansion",
+      "prefix": "VE",
+      "name": "Vaso di espansione"
+    },
+    {
+      "function": "filtration",
+      "prefix": "FIL",
+      "name": "Filtro"
+    },
+    {
+      "function": "sludge_separation",
+      "prefix": "DEF",
+      "name": "Defangatore"
+    },
+    {
+      "function": "air_release",
+      "prefix": "SA",
+      "name": "Separatore d'aria"
+    },
+    {
+      "function": "filling",
+      "prefix": "GR",
+      "name": "Gruppo di riempimento"
+    },
+    {
+      "function": "drain",
+      "prefix": "SC",
+      "name": "Attacco di scarico"
+    },
+    {
+      "function": "pressure_control",
+      "prefix": "RP",
+      "name": "Riduttore di pressione"
+    },
+    {
+      "function": "pressure_measurement",
+      "prefix": "MN",
+      "name": "Manometro"
+    },
+    {
+      "function": "temperature_measurement",
+      "prefix": "TM",
+      "name": "Termometro"
+    },
+    {
+      "function": "boundary",
+      "prefix": "AL",
+      "name": "Allacciamento",
+      "starts_the_reading": true
+    }
+  ]
+}
