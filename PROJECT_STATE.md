@@ -157,117 +157,34 @@ terzo filtrati contro il perimetro (D-087). Non ancora corretti.
 prevalenze, tarature, volumi e diametri non forniti dal progettista; tabella apparecchiature
 con marca e modello; logica di regolazione. Non li inventa la skill.
 
-## Next — il piano di costruzione della skill (D-095)
+## Next — il piano di costruzione, sulla logica del grafo
 
-**Architettura blindata in ADR 0005**, dettaglio in `docs/SKILL.md`. Piano operativo:
-`docs/plans/2026-08-06-piano-costruzione-skill.md`. Sette pezzi, **uno alla volta**,
-ognuno con criteri espressi come proprieta' e un artefatto leggibile dal PM.
+Il 6 agosto 2026 il PM ha corretto due cose insieme: **il contenuto si verifica su un grafo
+scritto, non su un disegno** (D-096), e **il grafo si legge come una rete stradale, con una
+sigla per nodo e la codifica che parte dalle sorgenti** — generatori di calore e acquedotto
+(D-097, D-098). Da lì ha riformulato l'intera catena della skill, e la sua formulazione è
+diventata quella ufficiale (D-099): **lo stesso grafo attraversa tutto**, nasce abbozzato
+dall'interpretazione, si arricchisce di nodi con le regole e l'assemblatore, e la tavola ne
+è la rappresentazione. I due cancelli restano: l'ingegnere approva prima che si disegni,
+l'occhio terzo giudica prima che si consegni.
 
-1. ~~**P1 — vocabolario delle proprietà**~~ — **fatto e approvato il 6 agosto 2026**, dopo
-   un respingimento. Undici proprietà chiuse, compilate su tutti i componenti, validate al
-   caricamento. **Da approvare dal PM:** `docs/prodotto/PROPRIETA_COMPONENTI.md`.
-2. **P2 — regole degli accessori, generali.** Le sei di intercettazione diventano una.
-   Artefatto: le schede, una per regola, da approvare o bocciare una per una.
-3. **P3 — assemblatore.** La fila dei pezzi lungo ogni tubo, con gli stacchi.
-   Artefatto: la fila scritta a parole, prima di qualunque disegno.
-4. **P4 — libreria dei simboli**: in linea contro su stacco, altezza testi a norma.
-5. **P5 — cartiglio**, quello aziendale gia' fornito, e cornice chiusa.
-6. **P6 — composizione**: il foglio si riempie, non si fa una striscia.
-7. **P7 — validatore e cancello**: misure sulle proprieta' nuove, via le soglie tarate
-   sulla fixture, occhio terzo come cancello di routine.
+Il piano è stato rifatto su questa logica e **si riparte dal primo pezzo**:
+`docs/plans/2026-08-06-piano-costruzione-skill.md`.
 
-<details><summary>Piano di rilancio del 5 agosto (D-084) — storia</summary>
-
-I suoi pacchetti WP1-WP5 sono eseguiti e collaudati; cio' che hanno prodotto viene
-riusato o rifatto secondo la tabella §2 del piano nuovo.
-
-</details>
-
-## Storico — il piano di rilancio (D-084)
-
-Il 5 agosto 2026, dopo otto difetti registrati sulla tavola completa, il PM ha ordinato di
-ripartire da zero con la riverifica e con un metodo a tre ruoli — uno decide, uno o più
-fanno, uno controlla (D-083). Il piano è scritto, la riverifica input per input è stata
-controverificata da un collaudatore indipendente, e **si attende il via del PM**:
-`docs/archivio/2026-08-05-rilancio-qualita-tavola-plan.md`.
-
-1. **WP1 — Simboli dalle fonti** (D-067, D-081, D-082): UNI 9511 via Oppo per il
-   valvolame e gli accessori, pratica e produttori per le macchine. Consegna intermedia:
-   foglio di riscontro al PM.
-2. **WP2 — Regole di inserimento: correzione, verifica, dossier** (D-074, D-085): valvole
-   per attacco; scheda di verifica con fonte per ognuna delle quindici regole; dossier
-   delle integrazioni in linguaggio piano al PM — il contenuto del pacchetto **non è mai
-   stato approvato**: sul disegno illeggibile non poteva verificare se riempimento,
-   ritegno o defangatore fossero al posto giusto, e il silenzio su un elaborato
-   illeggibile non è assenso.
-3. **WP3 — Disposizione al servizio delle linee** (D-078, D-080): ciclo deterministico
-   posizioni→linee, impilamento (D-073), criterio di riempimento per dividere (D-072).
-4. **WP4 — Scrittura e segni** (D-075, D-079): etichette accanto al pezzo con richiami a
-   45°, scavallo e pallino.
-5. **WP5 — Preflight di qualità bloccante** (D-063 livello 1).
-6. **WP6 — Occhio terzo** (D-063 livello 2, D-076, D-077): ciclo dimostrato.
-7. **WP7 — Rigenerazione e consegna col timbro**: cancello completo, otto difetti chiusi
-   con prova.
-
-**Dopo il rilancio, in coda e invariati:** pacchetto di dominio idronico (P3A) con
-l'allargamento del contratto `DomainPack` (W3); rendering, cartiglio, PDF e distinta
-(P5); skill conversazionale (P6); matrice di qualificazione e prima release (P7).
-
-Sull'instradamento si torna solo se, con un impianto **completo**, resta qualcosa che
-non va: a quel punto è un difetto vero e non un'ipotesi su un caso povero.
-
-Tutto ciò che è stato **rimandato** — famiglie di accessori oltre l'MVP, aeraulico,
-regolazione, diametri, fonti acquistabili, debito della libreria — sta in
-`docs/DEFERRED.md`, non qui. Una decisione rimandata che non viene scritta è persa.
-
-## Debito noto della fase grafica
-
-Registrato per non riscoprirlo. Nessuno di questi è bloccante.
-
-- Nessun test presidia che il corpo di un simbolo resti dentro il proprio riquadro e raggiunga le porte dichiarate. Oggi vale per tutti e venti, verificato dalle revisioni, ma un corpo modificato a mano potrebbe romperlo e continuare a caricare. Il corpo è comunque validato come XML ben formato al caricamento, quindi non può più corrompere la tavola generata.
-- Nessun test protegge i due generatori dalla deriva rispetto ai file che hanno prodotto.
-- `allowed_rotations_deg` è dichiarato ma non applicato: nulla ruota un simbolo, né scambia il riquadro a 90°/270°, né ruota una `PortFace` o un lato di `KeepOut` (D-049). Spetta al piano di layout.
-
-Chiusi dalla revisione finale del ramo: la guardia di capacità ora difende anche l'asse orizzontale (D-045 su entrambi gli assi) e la verifica incrociata simbolo/catalogo è cablata sulla CLI `validate` tramite `--symbols`, opzionale.
-
-Elenco completo nell'appendice di `docs/archivio/2026-08-03-graphic-system-symbol-library-plan.md`.
-
-## Il difetto principale, oggi
-
-Il linguaggio grafico è inventato. La fase grafica ha creato `CONV-GRAFICA-001` perché le
-fonti non erano state acquisite (D-047), e il motore di layout ci è stato costruito sopra
-senza mai confrontarsi con una tavola reale. Regge la meccanica — griglia, scala invariante,
-tratte, interruzione della linea, multi-tavola, validazione geometrica, riproducibilità — non
-regge cosa viene disegnato e come è composto. Analisi e fonti in
-`docs/fonti/2026-08-04-come-si-disegna-uno-schema-funzionale.md`.
-
-## Debito noto del layout
-
-- **La qualità grafica è misurata da un test, non da un validatore.** `tests/layout/test_objective.py` misura pieghe, attraversamenti, sovrapposizioni longitudinali e lunghezza — ma su **una** fixture, e solo in fase di sviluppo. Deve diventare il preflight grafico di D-063, che gira su ogni tavola e classifica gli esiti come bloccante, da approvare o avviso. È il pezzo che manca perché la skill possa verificare prima di consegnare.
-- **Su una A3 un impianto piccolo lascia il foglio a metà vuoto.** Il blocco viene centrato (D-061) ma non ingrandito, perché la scala di stampa è invariante (ADR 0003). Quello che riempirebbe davvero l'altezza è contenuto che oggi non c'è: gli ausiliari che P1 deve generare, la fascia di regolazione tratteggiata (`Domain.CONTROL` è inutilizzato) e i diametri sulle tubazioni. Il formato si sceglie provando: si prende il più piccolo su cui il contenuto **rispetta le distanze minime**, e il caso D-011 non entra su una A4.
-- **La corsia di mandata non è garantita sopra quella di ritorno.** Dove due tratte devono scavalcare lo stesso ostacolo, la prima prende la quota più vicina e la seconda quella sopra; chi sia la prima lo decide l'ordine del modello. Imporre la convenzione costerebbe pieghe, che D-060 mette al primo posto. La convenzione resta garantita **sui simboli** — l'attacco di mandata sta sopra quello di ritorno — e le due linee restano distinte per colore e tratto (D-057).
-- **Una tratta che attraversa un confine di tavola non viene disegnata** su nessuna delle due: compaiono i rimandi accoppiati, non il tratto che li raggiunge. Per la stessa ragione, un confine che tagliasse una tratta con accessori in linea viene **rifiutato**, perché quegli accessori resterebbero senza una linea su cui posarsi. Spetta al piano di rendering, che possiede i rimandi.
-- **Il cartiglio non è compilato**: la tavola esce marcata come bozza (D-025).
-- **La rotazione scelta dal posizionamento è sempre 0** quando il simbolo la ammette. Gli accessori **in linea** ruotano già, seguendo la giacitura della tratta su cui stanno — è così che il circolatore si mette in verticale quando la sua tratta è verticale — ma un componente posato non viene mai orientato verso la fascia adiacente. È un grado di libertà in più per D-060, non ancora sfruttato.
-
-## Trovato scrivendo il piano di layout, e poi risolto
-
-Dettagli e misure nel §2 del piano; le correzioni nella sua appendice.
-
-- ~~**Nessuno dei venti simboli sta sulla griglia.**~~ **Risolto (D-054, D-055):** venti simboli pubblicati e otto di fixture, tutti con riquadro e porte su nodi. Senza, l'instradamento non avrebbe raggiunto un solo attacco.
-- **Il telaio del foglio non seguiva il cartiglio che il PM aveva fornito.** `assets/cartigli/Cartiglio_NoveC_A3.pdf` è nel repository dal primo commit (`fa7157c`, 1 agosto) e usa una squadratura a 10 mm sui quattro lati; `A3_LANDSCAPE` ne dichiara 20 a sinistra, scritti il 3 agosto citando ISO 5457 — che `SOURCE_REGISTER` elenca tuttora «da acquisire e valutare». Il piano grafico non nomina il cartiglio nemmeno una volta. È lo stesso errore che D-047 ha corretto per i simboli, ripetuto sulla carta e non intercettato dalle revisioni. Misurato dal PDF: banda del cartiglio 36 mm a tutta larghezza, intestazione 6 mm, area di disegno 350 × 235 mm. Registrato come CONV-GRAFICA-003 e risolto da D-053.
-- ~~**`inline_gap_mm` è confrontato con la larghezza invece che con l'asse delle porte.**~~ **Risolto al Task 2.**
-
-## Domande aperte
-
-| # | Domanda | Perché serve |
-|---|---|---|
-| ~~P5~~ | ~~Si acquista **UNI 9511** e la libreria si rifà su quella?~~ | **Chiusa dal PM il 4 agosto 2026: non si compra.** I segni grafici della norma sono riprodotti per esteso in materiale didattico e di settore liberamente accessibile (SRC-015), verificati. La libreria si rifà su quelli, citati come fonte secondaria |
-| ~~P6~~ | ~~L'A3 resta il formato ordinario?~~ | **Chiusa dal PM il 4 agosto 2026 (D-058): A3, o A4 se il disegno è proprio piccolo. Niente A0, niente strisce.** La domanda non andava posta: il formato era già deciso da D-019 |
-
-Le tre del piano di layout sono state chiuse dal PM il 4 agosto 2026 e registrate come D-055, D-056 e D-057.
-
-Una quarta era stata posta e ritirata: chiedeva la squadratura del foglio, che non era da decidere perché il cartiglio era già fra gli input del progetto.
+1. **G1 — Il grafo e le sue sigle** ← si riparte da qui. Nodi, archi, incroci, codifica
+   camminando dalle sorgenti, e la lettura scritta che il PM approva. Chiude anche il
+   rilievo del collaudo per cui lo stesso impianto, con le connessioni in ordine diverso,
+   dava un impianto diverso.
+2. **G2 — Il vocabolario delle proprietà** — approvato il 6 agosto, resta com'è.
+3. **G3 — Le regole degli accessori** — respinto dal collaudo, in correzione.
+4. **G4 — L'assemblatore** — dove va ciascun pezzo lungo la fila, risolvendo vincoli
+   dichiarati e non numeri di priorità.
+5. **G5 — La libreria dei simboli** — in linea contro su stacco, e il rubinetto bloccabile
+   distinto da quello comune.
+6. **G6 — Il cartiglio.**
+7. **G7 — La composizione** — oggi il foglio è pieno al 39 % e l'impianto completo non ci
+   entra più.
+8. **G8 — I validatori e il cancello dell'occhio terzo.**
 
 ## Done log — ultimo in cima
 

@@ -224,10 +224,20 @@ sbloccano nulla.
   che tocca un pezzo manutenibile», non per ogni attacco.
 - **Un attacco raggiunto da due tubazioni riceve l'organo su una sola delle due.** Il motore
   indicizza una connessione per attacco, e quando due ritorni arrivano allo stesso bocchello
-  la seconda non riceve niente. Si vede sul caso di accettazione: il ritorno del volano alla
-  pompa di calore resta senza organo proprio, e la proprietà «ogni attacco ha il suo» regge
+  il secondo non riceve niente. Si vede sul caso di accettazione: sul ritorno della pompa di
+  calore convergono due tubazioni — quella del volano e quella del serpentino del bollitore
+  — e l'organo della pompa di calore finisce su quella del volano; **la tubazione del
+  serpentino non riceve nessun organo proprio della pompa di calore**, ed è coperta solo
+  dall'organo del bollitore all'altro capo. La proprietà «ogni attacco ha il suo» regge
   perché è verificata **per attacco** e non per tubazione. Chiuderlo vuol dire rendere
   l'indice uno-a-molti nel motore.
+- **Il modello che esce dipende ancora dall'ordine in cui il file elenca le tubazioni.** Il
+  motore indicizza l'**ultima** connessione di un attacco, chi applica le proposte prende la
+  **prima**: le due metà non sono d'accordo, e riordinando le connessioni dello stesso
+  impianto il treno degli accessori migra da una tubazione all'altra. Entrambe le metà sono
+  precedenti a P2. La correzione minima è farle scegliere la stessa connessione con lo stesso
+  criterio, e vive tutta dentro il motore delle regole. **Le sigle dei pezzi non ne
+  soffrono**: partono dalle sorgenti e sono già indipendenti dall'ordine del file (D-098).
 - **L'organo bloccabile aperto si disegna come quello comune.** Le due voci di catalogo sono
   distinte e la regola sceglie quella giusta, ma condividono il simbolo della valvola di
   intercettazione: sulla tavola la distinzione non si vede. È lavoro di P4, e va chiuso

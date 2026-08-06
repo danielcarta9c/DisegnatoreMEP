@@ -516,6 +516,15 @@ def first_table_rows(text: str) -> list[str]:
     return rows[2:]
 
 
+DECLARED_BESIDE_THE_VOCABULARY = 1
+"""Quante righe della tabella non sono caselle del vocabolario chiuso.
+
+Ce n'e' una: **quale fluido un serbatoio tiene in serbo**. Non e' un fatto che un
+pezzo ha o non ha, e' un valore — percio' non e' una proprieta' dell'elenco
+chiuso — ma il committente la legge nella stessa tabella perche' e' la stessa
+cosa: cio' che un componente dichiara di se'."""
+
+
 def test_the_document_for_the_pm_defines_every_property() -> None:
     """Una riga per proprieta', in italiano: e' cio' che il committente approva.
 
@@ -523,6 +532,8 @@ def test_the_document_for_the_pm_defines_every_property() -> None:
     documento non deve contenerne nessuno."""
     assert PM_DOCUMENT.is_file()
     rows = first_table_rows(PM_DOCUMENT.read_text("utf-8"))
-    assert len(rows) == len(ComponentTrait), [row.split("|")[1] for row in rows]
+    assert len(rows) == len(ComponentTrait) + DECLARED_BESIDE_THE_VOCABULARY, [
+        row.split("|")[1] for row in rows
+    ]
     for row in rows:
         assert row.count("|") >= 4, row

@@ -26,7 +26,19 @@ tavola; se non glieli dà, sulla tavola non compaiono (D-087).
 
 ---
 
-## 2. I sei pezzi
+## 2. La catena, e il grafo che l'attraversa
+
+**Una cosa sola attraversa tutta la skill: il grafo dell'impianto** (D-099). Non un
+modello, poi delle catene di pezzi, poi una geometria: lo **stesso** grafo, che nasce
+abbozzato dalla conversazione, si arricchisce di nodi e diventa definitivo. La tavola è la
+sua **rappresentazione**, non un oggetto separato.
+
+Il grafo è fatto come una rete stradale (D-097): ogni pezzo — macchina o accessorio — è un
+**nodo con la propria sigla**; ogni tubo fra due pezzi è un **arco** con il proprio fluido;
+un attacco su cui convergono più tubi è un **incrocio** e i suoi rami si numerano. Le sigle
+si assegnano camminando dalle **sorgenti dichiarate** — i generatori di calore per i
+circuiti termici, l'acquedotto per il sanitario — nell'ordine in cui i pezzi si incontrano
+seguendo il fluido (D-098).
 
 ```
    la conversazione con l'ingegnere
@@ -34,25 +46,39 @@ tavola; se non glieli dà, sulla tavola non compaiono (D-087).
         ┌─────┴──────┐
         │  1. CAPIRE │  interpretazione       ← non deterministico
         └─────┬──────┘
-              │  il modello dell'impianto: componenti, attacchi, tubi, reti
+              │  GRAFO DI PRIMA STESURA — solo ciò che l'ingegnere ha detto
         ┌─────┴──────────────┐
-        │ 2. COMPLETARE      │  regole degli accessori
+        │ 2. COMPLETARE      │  regole degli accessori: cosa manca e perché
         └─────┬──────────────┘
-              │  l'ingegnere approva il dossier delle integrazioni
         ┌─────┴──────────────┐
-        │ 2bis. ASSEMBLARE   │  la sequenza dei pezzi lungo ogni tubo
+        │ 3. ASSEMBLARE      │  dove va ciascuno: la fila lungo ogni tubo
         └─────┬──────────────┘
-              │  «PdC → valvola → filtro → defangatore → tratto → valvola → volano»
+              │  GRAFO DEFINITIVO — leggibile come testo, senza disegnare niente
         ┌─────┴──────────────┐
-        │ 3. DISPORRE        │  posizionamento, instradamento, distribuzione
+        │    L'INGEGNERE APPROVA         ← cancello: niente si disegna prima
         └─────┬──────────────┘
-              │  usa: 4. LIBRERIA DEI SIMBOLI   e   5. CARTIGLIO
         ┌─────┴──────────────┐
-        │ 6. VERIFICARE      │  validatore + occhio terzo
+        │ 4. DISPORRE        │  posizionamento e instradamento, a costi (D-060)
+        └─────┬──────────────┘
+              │  usa: 5. LIBRERIA DEI SIMBOLI   e   6. CARTIGLIO
+        ┌─────┴──────────────┐
+        │ 7. VERIFICARE      │  validatori + preflight di qualità
+        └─────┬──────────────┘
+        ┌─────┴──────────────┐
+        │    L'OCCHIO TERZO GIUDICA      ← cancello: può respingere (D-086)
         └─────┬──────────────┘
               │
           la tavola
 ```
+
+**I due cancelli non sono opzionali.** Senza l'approvazione dell'ingegnere la skill
+modificherebbe il suo impianto in silenzio (D-004, D-013); senza l'occhio terzo
+consegnerebbe ciò che i propri controlli non sanno vedere (D-063, D-086).
+
+**Dove si guarda cosa.** Il contenuto — quali pezzi, in che punto, su che fluido — si
+giudica sul **grafo scritto**, non su un disegno (D-096). Il disegno è il banco di prova
+dell'instradatore, dei validatori e della skill finita. Se il grafo è giusto e la tavola è
+brutta, il difetto è nel disporre; se il grafo è sbagliato, la tavola non c'entra.
 
 Ogni pezzo si costruisce e si collauda **da solo**, con un contratto suo. Il disegno di
 prova serve a **scoprire** i difetti, mai a **definire** cosa è giusto (D-092).

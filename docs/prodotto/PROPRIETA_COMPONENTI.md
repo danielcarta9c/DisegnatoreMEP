@@ -21,6 +21,7 @@
 | **Produce aria** | Scalda l'acqua, e l'acqua scaldata libera l'aria che tiene disciolta. | L'aria si libera dove l'acqua è più calda: chi la produce è il punto da cui partire per toglierla. | Pompa di calore, caldaia |
 | **Va protetto dalla sovrapressione** | Chiude dentro di sé un volume d'acqua che, scaldandosi, spinge oltre il limite ammesso. | A chi ha questa proprietà serve una via che si apra da sola prima che il limite sia raggiunto. | Pompa di calore, caldaia, bollitore |
 | **Ha un volume proprio** | Tiene una riserva d'acqua anche quando nulla circola: è un serbatoio, non un tratto di tubo che contiene acqua solo perché ce la si fa passare. | Un volume proprio si deve poter svuotare **da solo**, senza svuotare l'impianto. Un tratto di tubo no: si svuota con la tratta a cui appartiene. | Volano, bollitore |
+| **Che acqua tiene in serbo** | Quale delle acque che tocca è quella della riserva. Un bollitore tocca anche l'acqua di riscaldamento, ma solo perché il serpentino ci passa dentro: quella non è la sua riserva. | Distingue la riserva dai circuiti che l'attraversano scambiando calore. Senza, «svuotare il serbatoio» e «svuotare il circuito che ci passa dentro» sono la stessa frase — ed è esattamente l'errore che avevamo fatto. | Il volano tiene acqua di riscaldamento, il bollitore acqua calda sanitaria |
 | **Si chiude come tutti** | Se lo si deve chiudere, lo fa un organo comune: non chiede niente di speciale. | È il caso ordinario, e va detto lo stesso. Ma leggi qui sotto: questa casella raccoglie anche chi in pratica non si chiude mai. | La grande maggioranza dei pezzi |
 | **Non si chiude mai** | Fra lui e ciò che protegge non ci va **nulla** che si possa chiudere. | Impedisce che un rubinetto finisca davanti a un organo di sicurezza: una valvola chiusa lì è un impianto che scoppia. È un vincolo di sicurezza, non una comodità di esercizio. | Valvola di sicurezza, di riscaldamento e sanitaria |
 | **Si chiude solo con organo bloccabile** | Lo si isola soltanto con una valvola che si blocca aperta e non si chiude per distrazione. | Il vaso di espansione va potuto staccare per la verifica, ma non deve mai restare escluso per sbaglio. | Vaso di espansione, di riscaldamento e sanitario |
@@ -28,6 +29,17 @@
 | **Sta su uno stacco** | Pende dal tubo con una propria derivazione: non è un organo di passaggio. | Quel pezzo ha una sua piccola fila laterale, con i propri accessori, che si legge a parte dalla fila del tubo principale. | Vaso di espansione, valvola di sicurezza, gruppo di riempimento, scarico, manometro |
 
 ---
+
+## La casella aggiunta dopo, e l'errore che l'ha resa necessaria
+
+**«Che acqua tiene in serbo».** Non c'era, ed è stata aggiunta scrivendo le regole degli
+accessori, perché senza di lei ne è uscita una sbagliata: lo scarico del bollitore era
+finito sul ritorno del serpentino, cioè svuotava il circuito di riscaldamento mentre
+l'acqua sanitaria — quella che il bollitore tiene davvero — restava dentro. Il serpentino
+attraversa il serbatoio, non è il serbatoio, e finché il vocabolario non sapeva dirlo la
+differenza non era scrivibile. **La dichiara solo chi ha un volume proprio**, e deve essere
+una delle acque che quel pezzo tocca: un serbatoio che dicesse di tenere in serbo un'acqua
+che non tocca non si carica.
 
 ## Le due cose che nessun componente può tacere
 
@@ -72,7 +84,7 @@ dovrebbe nominare il volano e il bollitore uno per uno, e perché è il fatto ch
 serbatoio da un tratto di tubo — cioè quello che serve a decidere che cosa va potuto
 svuotare per conto proprio. Se non la vuoi, la regola dello scarico resta particolare.
 
-In tutto sono undici caselle, quelle della tabella, e nient'altro. Una proprietà che nessun
+In tutto sono dodici righe: undici caselle che un pezzo ha o non ha, più una che non è una casella ma un valore — quale acqua tiene in serbo — e che infatti la dichiara solo chi una riserva ce l'ha. Una proprietà che nessun
 componente dichiara viene rifiutata da un controllo automatico, così l'elenco non può
 gonfiarsi di voci inutili.
 

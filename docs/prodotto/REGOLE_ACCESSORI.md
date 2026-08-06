@@ -194,8 +194,10 @@ vita dell'impianto e rovinano gli organi in movimento e gli scambiatori stretti.
 rovinerebbero. A valle non protegge più niente: il danno è già avvenuto.
 
 **Quante volte.** Uno per ogni pezzo che dichiara di temere i residui — la pompa di calore,
-il circolatore. Prima la regola diceva *«davanti al circolatore»*, cioè nominava una
-macchina; adesso parte dal fatto che quella macchina dichiara di sé.
+il circolatore, e il riduttore di pressione se c'è, perché anche i suoi organi si rovinano
+con le impurità della rete. Prima la regola diceva *«davanti al circolatore»*, cioè nominava
+una macchina; adesso parte dal fatto che quella macchina dichiara di sé, e ne segue che sui
+tre pezzi dell'impianto di prova i filtri passano da due a tre.
 
 **Come sappiamo che c'è già.** Se su quella tubazione c'è già un filtro.
 
@@ -214,7 +216,11 @@ sostituisce lui.**
 **Dove va, e perché proprio lì.** Sulla tubazione che entra in ciò che quei fanghi
 rovinerebbero: è l'ultimo punto utile prima del danno.
 
-**Quante volte.** Uno per ogni pezzo che dichiara di temere i residui.
+**Quante volte.** Uno per ogni pezzo che dichiara di temere i residui. Sull'impianto di
+prova sono **due invece di uno**: prima ne riceveva solo la pompa di calore, adesso anche il
+circolatore del secondario — che è il circuito dove stanno i corpi scaldanti, cioè dove i
+fanghi si formano. Se ritieni che ne basti uno per impianto, è una decisione tua e la
+scriviamo nella regola.
 
 **Come sappiamo che c'è già.** Se su quella tubazione c'è già un separatore di fanghi.
 
@@ -304,12 +310,19 @@ circuito sanitario è già alimentato dalla rete e non ha niente da riempire.
 senza scaricare l'impianto intero. Un tratto di tubo no: si svuota con la tratta a cui
 appartiene.
 
-**Dove va, e perché proprio lì.** Sull'attacco basso, e **dal lato del serbatoio** rispetto
-al rubinetto che lo chiude. Se stesse dall'altra parte, a rubinetto chiuso svuoterebbe la
-tratta di là e non il serbatoio: sarebbe uno scarico che non scarica quello per cui esiste.
+**Dove va, e perché proprio lì.** Due condizioni, e la seconda ci è costata un errore.
 
-**Quante volte.** Uno per ogni serbatoio — il volano, il bollitore. Prima la regola nominava
-l'accumulo termico e il bollitore restava scoperto.
+La prima: **sulla tubazione che porta l'acqua che il serbatoio tiene davvero in serbo**. Un
+bollitore è attraversato anche dall'acqua di riscaldamento, perché il serpentino ci passa
+dentro a scaldare — ma quella non è la sua riserva. Uno scarico messo lì svuota il circuito
+di riscaldamento e lascia il bollitore pieno: è la cosa che avevamo fatto, ed è il motivo per
+cui adesso ogni serbatoio dichiara *quale* acqua tiene.
+
+La seconda: **dal lato del serbatoio** rispetto al rubinetto che lo chiude. Se stesse
+dall'altra parte, a rubinetto chiuso svuoterebbe la tratta di là e non il serbatoio.
+
+**Quante volte.** Uno per ogni serbatoio — il volano, il bollitore. Sono **due invece di
+uno**: prima la regola nominava l'accumulo di riscaldamento, e il bollitore restava senza.
 
 **Come sappiamo che c'è già.** Se su quella tubazione c'è già uno scarico.
 
@@ -375,3 +388,9 @@ Di leggere le quattordici schede e dirci, per ciascuna: **è vera, è al posto g
 manca una?** Se una regola è sbagliata, si corregge da sola senza toccare le altre. Se ne
 manca una, ce la dici e la scriviamo con lo stesso stampo: perché esiste, dove va, quante
 volte, come si riconosce che c'è già.
+
+**Queste schede dicono il perché. Che cosa sia effettivamente uscito lo mostra l'altro
+documento, *L'albero dell'impianto*:** l'impianto completo scritto pezzo per pezzo, con una
+sigla per ciascuno, il fluido di ogni tubazione e la fila di ciò che ci sta sopra. Le due
+letture servono insieme — qui si giudica la regola, lì si controlla il risultato. Se una
+regola è giusta e il pezzo è finito nel posto sbagliato, si vede solo di là.
