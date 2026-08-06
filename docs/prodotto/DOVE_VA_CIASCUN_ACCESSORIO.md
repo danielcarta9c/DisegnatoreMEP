@@ -180,6 +180,106 @@ bollitore.
 
 **Fonte:** Rehau, istruzioni d'installazione, ripetute per ogni modello (SRC-018).
 
+## 14 · Valvola di bilanciamento
+
+**Se il progettista l'ha messa in schema**, alla skill resta una cosa sola da azzeccare: il lato.
+
+**Dove.** Sul **ritorno del ramo che bilancia** — la colonna, la derivazione di zona o il
+terminale. Per gli stabilizzatori dinamici il documento lo dice testuale e lo ripete per ogni
+configurazione: «I dispositivi Autoflow **vanno installati sulla tubazione di ritorno del
+circuito**» — a piede di colonna, su ogni terminale, sulle derivazioni di zona, sulle
+batterie, sulle sottocentrali. Negli schemi dello stesso documento anche la **valvola di
+bilanciamento manuale** sta sul ritorno di ogni derivato, mentre la **valvola di regolazione
+sta sulla mandata**: sono due pezzi diversi e stanno su due lati diversi.
+
+**Cosa ci sta intorno.** Niente di prescritto in mezzo. Il pezzo lavora in coppia con la
+regolazione sulla mandata dello stesso ramo.
+
+**Fonte:** Caleffi, dispensa tecnica *Il bilanciamento dinamico dei circuiti idronici —
+AUTOFLOW* (SRC-020).
+
+## 15 · Disconnettore sul gruppo di riempimento
+
+**Se c'è in schema**, sta fra l'acqua potabile e il gruppo, mai dopo.
+
+**Dove.** Sulla tubazione di adduzione, **a monte del riduttore** del gruppo di riempimento
+e **dopo il contatore dell'acqua**. Testuale: «Per la protezione della rete pubblica il
+disconnettore va installato **dopo il contatore dell'acqua**, mentre per la protezione delle
+erogazioni ad uso sanitario nella rete interna si installa **al limite delle zone nelle quali
+si può verificare un inquinamento** ad esempio: riscaldamenti centralizzati» (SRC-023). Nel
+gruppo di caricamento preassemblato l'ordine dei pezzi è: intercettazione — filtro a Y —
+disconnettore — riduttore con manometro — intercettazione (SRC-022).
+
+**Cosa (non) ci può stare in mezzo/intorno.** «Il disconnettore va installato **dopo una
+valvola di intercettazione a monte ed un filtro ispezionabile** con scarico; **a valle va
+montata un'altra valvola di intercettazione**» (SRC-023). Zona accessibile, non allagabile,
+non a rischio gelo; corpo orizzontale. E ha uno scarico proprio, che si disegna: «l'imbuto
+di scarico a norma EN 1717 deve essere orientato verso il basso e **collegato alla tubazione
+di convogliamento alla fognatura**» (SRC-024).
+
+**Fonti:** Caleffi, scheda 01022 disconnettori BA serie 574-575-570 (SRC-023); Caleffi,
+istruzioni serie 580 (SRC-024); Caleffi, scheda 01125 gruppi di riempimento e caricamento
+(SRC-022).
+
+## 16 · Miscelatrice sanitaria
+
+**Sta sull'uscita del bollitore**, e le sue tre vie hanno il nome stampato sul corpo:
+HOT, COLD, MIX.
+
+**Dove.** Sull'**uscita dell'acqua calda del bollitore**, dopo la valvola di intercettazione
+dell'uscita. La via **calda** arriva dall'uscita superiore del bollitore; la via **fredda**
+da una **derivazione della stessa tubazione di acqua fredda che alimenta il bollitore**; la
+via **miscelata** prosegue verso la distribuzione sanitaria. È lo schema applicativo del
+costruttore, in tutte e tre le varianti (senza ricircolo, con ricircolo, con bollitore con
+attacco ricircolo).
+
+**Cosa ci sta intorno.** **Una valvola di ritegno su ciascun ingresso**, caldo e freddo:
+«Negli impianti con miscelatori termostatici **occorre inserire le valvole di ritegno** per
+evitare indesiderati ritorni di fluido». Filtri consigliati sugli ingressi. Se il progettista
+prevede il ricircolo, negli schemi rientra sull'**attacco dedicato del bollitore** — coerente
+con la legenda Rehau già acquisita (SRC-018, §12).
+
+**Fonte:** Caleffi, scheda 01050 miscelatori termostatici serie 521 (SRC-025).
+
+## 17 · Contabilizzatore di calore
+
+**Due pezzi in due posti**: il corpo su un lato del ramo, la sonda sull'altro.
+
+**Dove.** Il corpo del contatore **sul ritorno del ramo**; la **sonda di andata in un
+pozzetto sulla mandata** dello stesso ramo. Testuale: «Il corretto posizionamento del
+contatore è **sulla tubazione di ritorno**, mentre la valvola sfera con pozzetto della sonda
+deve essere **sulla mandata** dell'impianto». La seconda sonda è integrata nel corpo. Il lato
+lo dichiara il costruttore del contatore — lo strumento è omologato per quel montaggio — e
+quello letto prescrive il ritorno.
+
+**Cosa (non) ci può stare in mezzo/intorno.** «Prima e dopo il contatore devono essere
+previste **valvole a sfera di intercettazione**» per la sostituzione; «verificare la
+presenza di un **filtro a monte**» per prevenire intasamenti. La sonda di andata è lunga
+1,5 m e «non è allungabile o accorciabile»: mandata e ritorno vanno contabilizzati **vicini**.
+
+**Fonte:** Caleffi, scheda contatore di calore compatto CAL1913 (SRC-021).
+
+## 18 · Valvola di ritegno
+
+**Due posti documentati, e un solo verso**: l'acqua dell'impianto non deve tornare verso la
+rete potabile.
+
+**Sul gruppo di riempimento.** Sta **a monte del riduttore, lato rete**, incorporata nella
+valvola di intercettazione d'ingresso: il gruppo è «composto da un riduttore di pressione a
+sede compensata, un filtro in entrata, una **valvola di intercettazione a monte con ritegno
+incorporato** ed una valvola di intercettazione a valle» (SRC-022).
+
+**Sull'ingresso sanitario.** Sulla **tubazione dell'acqua fredda in ingresso al bollitore**,
+dentro il gruppo di sicurezza EN 1487, in quest'ordine: entrata acqua fredda → rubinetto di
+intercettazione → **valvola di ritegno** → valvola di sicurezza con scarico sifonato →
+ingresso scaldacqua. Il ritegno sta **a monte della valvola di sicurezza**: fra la sicurezza
+e il bollitore non resta niente di chiudibile, che è la stessa regola della sicurezza sul
+generatore (§1). Coerente con Rehau (SRC-018, §13), che mette sicurezza e vaso sulla stessa
+tubazione.
+
+**Fonti:** Caleffi, scheda 01125 (SRC-022); Caleffi, scheda 01019 gruppi di sicurezza per
+scaldacqua serie 5261 (SRC-026).
+
 ---
 
 ## La regola generale che ne esce
@@ -194,12 +294,14 @@ programma, e non chi scrive la regola.
 ## Quello che resta da cercare
 
 Sempre e solo per sapere **dove** va un pezzo che comunque si disegna, mai per decidere se
-l'impianto debba averlo:
+l'impianto debba averlo.
 
-- **valvole di bilanciamento**: dove si mettono sui rami;
-- **disconnettore sul gruppo di riempimento**;
-- **miscelatrice sanitaria**: da che parte dell'uscita del bollitore;
-- **contabilizzatore di calore**: su mandata o su ritorno del ramo;
-- **valvola di ritegno**: da che parte del gruppo di riempimento e dell'ingresso sanitario.
+**Oggi la coda è vuota.** Le cinque righe aperte il 6 agosto — bilanciamento, disconnettore,
+miscelatrice, contabilizzatore, ritegno — sono chiuse nelle sezioni 14-18, ciascuna con la
+sua fonte (SRC-020…SRC-026). Due tentativi andati a vuoto restano annotati nel registro,
+perché nessuno li ricominci: la scheda del contatore CONTECA, che dal sito Caleffi non si
+apre, e un quaderno «Idraulica» dedicato alla sola contabilizzazione, che liberamente
+accessibile non si è trovato. Nessuno dei due era necessario: la scheda del contatore
+compatto (SRC-021) dice tutto quello che serviva.
 
-Ognuna è una riga che oggi non possiamo scrivere, e che non inventiamo.
+La prossima riga che non si può scrivere si aggiunge qui, e non si inventa.

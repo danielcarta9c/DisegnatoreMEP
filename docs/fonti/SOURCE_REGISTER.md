@@ -53,6 +53,32 @@ sull'attacco dedicato quando la macchina ce l'ha, e su una derivazione della tub
 quando non ce l'ha.** Tutti e due i casi sono reali e documentati, e quale dei due si
 applichi lo dice il catalogo, non il programma.
 
+## Le fonti degli accessori di linea, lette il 6 agosto 2026
+
+Acquisite per chiudere le cinque righe della coda di `DOVE_VA_CIASCUN_ACCESSORIO.md`
+(bilanciamento, disconnettore, miscelatrice, contabilizzatore, ritegno). Tutte
+documentazione tecnica Caleffi liberamente accessibile, aperta e letta per intero: fonti di
+**posizione**, mai di quantità (D-104). Ora vivono nelle sezioni 14-18 di quel documento.
+
+| ID | Fonte | Cosa dice | Stato |
+|---|---|---|---|
+| SRC-020 | [Caleffi — dispensa tecnica *Il bilanciamento dinamico dei circuiti idronici — lo stabilizzatore automatico di portata AUTOFLOW*](https://www.caleffi.com/sites/default/files/media/external-file/04011_IL%20BILANCIAMENTO%20DEI%20CIRCUITI%20IDRONICI_IT.pdf), 3ª ed. aprile 2003, 62 pp. | Testuale, ripetuto per ogni configurazione applicativa (piede di colonna, ogni terminale, derivazioni di zona, batterie, sottocentrali di teleriscaldamento): «I dispositivi Autoflow **vanno installati sulla tubazione di ritorno del circuito**». Negli schemi degli impianti bilanciati con valvole manuali, la **valvola di bilanciamento sta sul ritorno di ogni derivato** e la valvola di regolazione sulla mandata | Acquisita e letta il 6 agosto 2026 |
+| SRC-021 | [Caleffi — scheda H0009761.01, contatore di calore diretto compatto serie CAL1913.](https://www.caleffi.com/sites/default/files/media/external-file/H0009761_IT.pdf), 12 pp. | Testuale: «Il corretto posizionamento del contatore è **sulla tubazione di ritorno**, mentre la valvola sfera con pozzetto della sonda deve essere **sulla mandata** dell'impianto». «Prima e dopo il contatore devono essere previste **valvole a sfera di intercettazione**»; «verificare la presenza di un **filtro a monte**». Sonda di andata lunga 1,5 m, «non allungabile o accorciabile». L'inosservanza «può pregiudicare la validazione della garanzia» | Acquisita e letta il 6 agosto 2026 |
+| SRC-022 | [Caleffi — dp 01125/11, gruppi di riempimento e caricamento serie 554-574](https://www.caleffi.com/sites/default/files/media/external-file/01125_IT.pdf), 4 pp. | Il gruppo di riempimento è «composto da un riduttore di pressione a sede compensata, un filtro in entrata, una **valvola di intercettazione a monte con ritegno incorporato** ed una valvola di intercettazione a valle» e «va installato **sulla tubazione di adduzione dell'acqua**». Il gruppo di caricamento 574001 aggiunge **disconnettore BA e filtro a Y fra la rete e il riduttore**, manometro a valle, imbuto di scarico collegato alla tubazione di scarico; solo orizzontale | Acquisita e letta il 6 agosto 2026 |
+| SRC-023 | [Caleffi — dp 01022/25, disconnettore a zona di pressione ridotta tipo BA, serie 574-575-570](https://www.caleffi.com/sites/default/files/media/external-file/01022_IT.pdf) | Testuale: «Il disconnettore va installato **dopo una valvola di intercettazione a monte ed un filtro ispezionabile** con scarico; **a valle va montata un'altra valvola di intercettazione**»; «in una zona accessibile», non allagabile; «orizzontalmente»; imbuto EN 1717 «collegato alla tubazione di collegamento alla **fognatura**». E la posizione nella rete: «Per la protezione della rete pubblica il disconnettore va installato **dopo il contatore dell'acqua**, mentre per la protezione delle erogazioni ad uso sanitario nella rete interna si installa **al limite delle zone nelle quali si può verificare un inquinamento** ad esempio: riscaldamenti centralizzati» | Acquisita e letta il 6 agosto 2026 |
+| SRC-024 | [Caleffi — istruzioni 28286, disconnettore tipo BA con geometria multifunzione serie 580](https://www.caleffi.com/sites/default/files/media/external-file/28286.pdf), 24 pp. | Conferma la sequenza di montaggio numerata: intercettazione a monte — filtro — disconnettore — intercettazione a valle, con filtro a Y obbligatorio secondo EN 1717. Imbuto di scarico «orientato verso il basso e collegato alla tubazione di convogliamento alla fognatura»; zona accessibile, non allagabile, non a rischio gelo; ammessa anche l'installazione su tubo verticale **solo con flusso discendente** | Acquisita e letta il 6 agosto 2026 |
+| SRC-025 | [Caleffi — dp 01050/21, miscelatori termostatici anticalcare regolabili serie 521](https://www.caleffi.com/sites/default/files/media/external-file/01050_IT.pdf) | Vie marcate sul corpo: ingressi caldo e freddo, «uscita acqua miscelata con scritta “MIX”». Testuale: «Negli impianti con miscelatori termostatici **occorre inserire le valvole di ritegno** per evitare indesiderati ritorni di fluido»; filtri consigliati all'ingresso. Schemi applicativi con bollitore: miscelatore **sull'uscita calda del bollitore** dopo l'intercettazione, fredda da una **derivazione della stessa adduzione** che alimenta il bollitore, miscelata alla distribuzione, ricircolo sull'**attacco dedicato del bollitore** | Acquisita e letta il 6 agosto 2026 |
+| SRC-026 | [Caleffi — dp 01019/15, gruppi di sicurezza per scaldacqua ad accumulo serie 5261, EN 1487](https://www.caleffi.com/sites/default/files/media/external-file/01019_IT.pdf), 2 pp. | Componenti e ordine, dal disegno quotato: **entrata acqua fredda → rubinetto di intercettazione → valvola di ritegno tipo EA controllabile → ingresso scaldacqua**, con la valvola di sicurezza e il sifone di scarico **a valle del ritegno**, lato scaldacqua. Funzione dichiarata del ritegno: «antinquinamento, per evitare il ritorno dell'acqua calda nella rete di alimentazione dell'acqua fredda» | Acquisita e letta il 6 agosto 2026 |
+
+**Due tentativi a vuoto, registrati perché nessuno li ripeta.** La scheda del contatore
+CONTECA (dp 01111) sul sito Caleffi risponde 403 e non è stata letta: **non si cita**; la
+posizione del contabilizzatore è comunque coperta da SRC-021. Un quaderno «Idraulica»
+dedicato alla sola contabilizzazione non è stato trovato liberamente accessibile: non si
+cita. Le frasi di obbligo presenti in queste schede («la cui installazione è resa
+obbligatoria», «rende obbligatorio l'impiego del miscelatore») **non sono entrate** nel
+documento degli accessori: dicono che cosa deve avere l'impianto, e quello non è materiale
+nostro (D-104).
+
 ## Cosa dicono le tavole di SRC-016, letto il 5 agosto 2026
 
 Quattro cose utili subito, che nessun'altra fonte del registro dava con questa precisione.
