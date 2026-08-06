@@ -44,5 +44,5 @@ python_version = "3.11"
 strict = true
 plugins = ["pydantic.mypy"]
 packages = ["disegnatore_mep"]
-mypy_path = "src"
+mypy_path = ["src", "tests/collaudo"]
 explicit_package_bases = true

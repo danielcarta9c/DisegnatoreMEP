@@ -21,6 +21,7 @@ from disegnatore_mep.model.project import (
     ProjectModel,
 )
 from disegnatore_mep.rules.registry import RuleRegistry
+from disegnatore_mep.rules.schema import RuleDefinition
 
 ROOT = Path(__file__).resolve().parents[2]
 CATALOG_DIR = ROOT / "examples" / "layout" / "catalog"
@@ -46,7 +47,7 @@ def naming() -> Naming:
     return Naming.from_directory(NAMING_DIR)
 
 
-def rules_map(registry: RuleRegistry) -> dict:
+def rules_map(registry: RuleRegistry) -> dict[str, RuleDefinition]:
     return {item.id: item for item in registry.all()}
 
 
@@ -95,7 +96,7 @@ def pipe(pid: str, nid: str, a: tuple[str, str], b: tuple[str, str]) -> Connecti
     )
 
 
-def graph_dump(graph: PlantGraph) -> dict:
+def graph_dump(graph: PlantGraph) -> dict[str, object]:
     """Il dump completo del grafo, non le sole sigle: nodi coi bracci e le
     tubazioni di ciascun braccio, archi col verso, letture passo per passo."""
     return {

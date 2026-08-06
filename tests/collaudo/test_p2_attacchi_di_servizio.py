@@ -12,16 +12,10 @@ Contratto:
   lo DICE (punto aperto), non tace.
 """
 
-import json
 import shutil
+from pathlib import Path
 
 import pytest
-
-from disegnatore_mep.catalog.schema import ComponentTrait
-from disegnatore_mep.rules.apply import saturate
-from disegnatore_mep.rules.engine import evaluate
-from disegnatore_mep.validation.topology import validate_project
-
 from helpers import (
     CATALOG_DIR,
     catalog,
@@ -32,6 +26,12 @@ from helpers import (
     project,
     rules,
 )
+
+from disegnatore_mep.catalog.schema import ComponentTrait
+from disegnatore_mep.model.project import ConnectionModel, ProjectModel
+from disegnatore_mep.rules.apply import saturate
+from disegnatore_mep.rules.engine import evaluate
+from disegnatore_mep.validation.topology import validate_project
 
 CAT = catalog()
 REG = rules()
@@ -45,7 +45,7 @@ PROVE = [
 ]
 
 
-def _volano_plant():
+def _volano_plant() -> ProjectModel:
     """PdC, volano a quattro attacchi, un'utenza: il volano ha lo scarico."""
     return project(
         networks=[net("primario", "heating_water"), net("secondario", "heating_water")],
@@ -63,9 +63,9 @@ def _volano_plant():
     )
 
 
-def _holders(model):
+def _holders(model: ProjectModel) -> dict[str, set[str]]:
     """Per ogni componente: gli attacchi toccati da una tubazione."""
-    found = {}
+    found: dict[str, set[str]] = {}
     for c in model.connections:
         for ref in (c.endpoint_a, c.endpoint_b):
             found.setdefault(ref.component_id, set()).add(ref.port_id)
@@ -77,7 +77,7 @@ def _holders(model):
 # ---------------------------------------------------------------------------
 
 
-def test_gli_attacchi_di_servizio_sono_dichiarati_dal_catalogo():
+def test_gli_attacchi_di_servizio_sono_dichiarati_dal_catalogo() -> None:
     volano = CAT.get("buffer-four-port")
     serves = {p.serves for p in volano.ports if p.serves}
     assert serves == {"air_release", "drain", "temperature_measurement"}
@@ -97,9 +97,8 @@ def test_gli_attacchi_di_servizio_sono_dichiarati_dal_catalogo():
 # ---------------------------------------------------------------------------
 
 
-def test_lo_scarico_del_volano_va_sul_suo_attacco_senza_spezzare_il_tubo():
+def test_lo_scarico_del_volano_va_sul_suo_attacco_senza_spezzare_il_tubo() -> None:
     done, _, gaps = saturate(_volano_plant(), CAT, REG)
-    holders = _holders(done)
     # C'e' uno scarico, e pende dall'attacco di servizio del volano.
     drains = [
         c for c in done.components if c.definition_id == "drain-connection"
@@ -130,7 +129,7 @@ def test_lo_scarico_del_volano_va_sul_suo_attacco_senza_spezzare_il_tubo():
         "torna verde con quella correzione, e non va ammorbidita."
     )
 )
-def test_il_bollitore_si_svuota_dall_ingresso_freddo_con_una_derivazione():
+def test_il_bollitore_si_svuota_dall_ingresso_freddo_con_una_derivazione() -> None:
     """Contratto (D-101 e DOVE_VA_CIASCUN_ACCESSORIO §10): «su un bollitore
     sanitario lo scarico non c'e', e lo si svuota con una derivazione sulla
     tubazione dell'acqua fredda in ingresso»."""
@@ -159,7 +158,7 @@ def test_il_bollitore_si_svuota_dall_ingresso_freddo_con_una_derivazione():
     )
 
 
-def test_senza_attacco_dedicato_nasce_una_derivazione_e_il_percorso_resta_intero():
+def test_senza_attacco_dedicato_nasce_una_derivazione_e_il_percorso_resta_intero() -> None:
     """La PdC non ha attacchi di servizio: vaso, riempimento e manometro
     pendono da derivazioni saldate sul tubo, ciascuno dalla propria."""
     done, _, _ = saturate(_volano_plant(), CAT, REG)
@@ -177,7 +176,7 @@ def test_senza_attacco_dedicato_nasce_una_derivazione_e_il_percorso_resta_intero
 # ---------------------------------------------------------------------------
 
 
-def test_chi_pende_da_uno_stacco_non_e_mai_in_fila_sul_percorso():
+def test_chi_pende_da_uno_stacco_non_e_mai_in_fila_sul_percorso() -> None:
     """Su tutti e cinque gli impianti del committente piu' il sintetico: ogni
     accessorio a stacco ha una sola tubazione, e risalendo la sua piccola
     catena (ammessa: e' la fila dello stacco) si arriva a un attacco di
@@ -186,7 +185,7 @@ def test_chi_pende_da_uno_stacco_non_e_mai_in_fila_sul_percorso():
     for model in plants:
         done, _, _ = saturate(model, CAT, REG)
         defs = {c.id: CAT.get(c.definition_id) for c in done.components}
-        touching = {}
+        touching: dict[str, list[ConnectionModel]] = {}
         for c in done.connections:
             for ref in (c.endpoint_a, c.endpoint_b):
                 touching.setdefault(ref.component_id, []).append(c)
@@ -227,7 +226,7 @@ def test_chi_pende_da_uno_stacco_non_e_mai_in_fila_sul_percorso():
                 raise AssertionError(f"catena troppo lunga da {component.id}")
 
 
-def test_gli_accessori_che_pendono_hanno_un_attacco_solo():
+def test_gli_accessori_che_pendono_hanno_un_attacco_solo() -> None:
     """Le famiglie che pendono: vaso, sicurezza, scarico, riempimento,
     strumenti. Ognuna con UN attacco, in tutto il catalogo pubblicato."""
     hanging = [
@@ -255,7 +254,7 @@ def test_gli_accessori_che_pendono_hanno_un_attacco_solo():
 # ---------------------------------------------------------------------------
 
 
-def test_attacco_di_servizio_gia_occupato_dal_progettista_niente_doppioni():
+def test_attacco_di_servizio_gia_occupato_dal_progettista_niente_doppioni() -> None:
     base = _volano_plant()
     occupied = base.model_copy(
         update={
@@ -272,7 +271,7 @@ def test_attacco_di_servizio_gia_occupato_dal_progettista_niente_doppioni():
     assert validate_project(done, CAT).ok
 
 
-def test_quando_il_catalogo_non_ha_il_pezzo_la_regola_lo_dice(tmp_path):
+def test_quando_il_catalogo_non_ha_il_pezzo_la_regola_lo_dice(tmp_path: Path) -> None:
     """Tolto lo scarico sanitario dal catalogo: la regola dello svuotamento si
     applica al bollitore e non ha nulla da offrire. Deve uscire un punto
     aperto che nomina la regola, non un silenzio."""
@@ -292,7 +291,7 @@ def test_quando_il_catalogo_non_ha_il_pezzo_la_regola_lo_dice(tmp_path):
     )
 
 
-def test_derivazione_impossibile_e_un_punto_aperto_non_un_crollo(tmp_path):
+def test_derivazione_impossibile_e_un_punto_aperto_non_un_crollo(tmp_path: Path) -> None:
     """Il pezzo c'e' (lo scarico sanitario) ma il raccordo di derivazione su
     quel fluido no: la macchina non ha l'attacco, la derivazione non si puo'
     aprire. Contratto: la regola lo DICE (punto aperto), non tace — e non

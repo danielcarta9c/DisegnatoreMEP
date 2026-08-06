@@ -14,15 +14,9 @@ Contratto (piano §3-G4):
 """
 
 import json
+from pathlib import Path
 
 import pytest
-
-from disegnatore_mep.assembly import AssemblyError, runs_of
-from disegnatore_mep.io.canonical import canonical_json
-from disegnatore_mep.rules.apply import saturate
-from disegnatore_mep.rules.registry import RuleRegistry
-from disegnatore_mep.validation.topology import validate_project
-
 from helpers import (
     RULES_DIR,
     catalog,
@@ -37,6 +31,15 @@ from helpers import (
     rules_map,
 )
 
+from disegnatore_mep.assembly import AssemblyError, runs_of
+from disegnatore_mep.assembly.runs import Piece
+from disegnatore_mep.io.canonical import canonical_json
+from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.rules.apply import saturate
+from disegnatore_mep.rules.registry import RuleRegistry
+from disegnatore_mep.rules.schema import RuleDefinition
+from disegnatore_mep.validation.topology import validate_project
+
 CAT = catalog()
 REG = rules()
 RMAP = rules_map(REG)
@@ -44,7 +47,7 @@ RMAP = rules_map(REG)
 CLOSABLE = {"isolation", "isolation_locked_open"}
 
 
-def _pdc_loop():
+def _pdc_loop() -> ProjectModel:
     return project(
         networks=[net("primario", "heating_water")],
         components=[
@@ -58,7 +61,9 @@ def _pdc_loop():
     )
 
 
-def _fila(model, rmap=RMAP):
+def _fila(
+    model: ProjectModel, rmap: dict[str, RuleDefinition] = RMAP
+) -> dict[tuple[str, str, str], tuple[str, ...]]:
     return {
         (r.head.component_id, r.tail.component_id, r.network_id): tuple(
             r.component_ids
@@ -67,7 +72,9 @@ def _fila(model, rmap=RMAP):
     }
 
 
-def _run_from(model, machine, port, rmap=RMAP):
+def _run_from(
+    model: ProjectModel, machine: str, port: str, rmap: dict[str, RuleDefinition] = RMAP
+) -> list[Piece]:
     """La fila di una tratta letta a partire dalla macchina indicata."""
     for run in runs_of(model, CAT, rmap):
         if (run.head.component_id, run.head.port_id) == (machine, port):
@@ -77,7 +84,13 @@ def _run_from(model, machine, port, rmap=RMAP):
     raise AssertionError(f"nessuna tratta tocca {machine}.{port}")
 
 
-def _rule_json(rule_id, function, placement, ordering, when_extra=None):
+def _rule_json(
+    rule_id: str,
+    function: str,
+    placement: str,
+    ordering: dict[str, object],
+    when_extra: dict[str, object] | None = None,
+) -> dict[str, object]:
     return {
         "id": rule_id,
         "version": "1.0.0",
@@ -102,7 +115,7 @@ def _rule_json(rule_id, function, placement, ordering, when_extra=None):
     }
 
 
-def _write_rules(directory, payloads):
+def _write_rules(directory: Path, payloads: list[dict[str, object]]) -> RuleRegistry:
     directory.mkdir(parents=True, exist_ok=True)
     for payload in payloads:
         (directory / f"{payload['id']}.json").write_text(
@@ -116,7 +129,7 @@ def _write_rules(directory, payloads):
 # ---------------------------------------------------------------------------
 
 
-def test_la_fila_si_legge_nodo_per_nodo_sul_grafo_scritto():
+def test_la_fila_si_legge_nodo_per_nodo_sul_grafo_scritto() -> None:
     done, _, _ = saturate(_pdc_loop(), CAT, REG)
     assert validate_project(done, CAT).ok
     graph = read(done, CAT)
@@ -130,7 +143,7 @@ def test_la_fila_si_legge_nodo_per_nodo_sul_grafo_scritto():
     assert len(seen) == len(set(seen))
 
 
-def test_lo_stacco_del_vaso_ha_la_propria_fila_con_la_valvola_bloccabile():
+def test_lo_stacco_del_vaso_ha_la_propria_fila_con_la_valvola_bloccabile() -> None:
     """La piccola catena dello stacco: braccio del raccordo → valvola
     bloccabile aperta → vaso. Sul percorso principale la valvola bloccabile
     non c'e'."""
@@ -192,7 +205,7 @@ def test_lo_stacco_del_vaso_ha_la_propria_fila_con_la_valvola_bloccabile():
 # ---------------------------------------------------------------------------
 
 
-def test_la_sicurezza_sta_attaccata_alla_macchina_senza_nulla_di_chiudibile():
+def test_la_sicurezza_sta_attaccata_alla_macchina_senza_nulla_di_chiudibile() -> None:
     for model in (_pdc_loop(), load("prova-2-pdc-deviatrice-acs.json")):
         done, _, _ = saturate(model, CAT, REG)
         machines = [
@@ -222,7 +235,7 @@ def test_la_sicurezza_sta_attaccata_alla_macchina_senza_nulla_di_chiudibile():
             )
 
 
-def test_il_defangatore_sta_lato_impianto_rispetto_all_intercettazione():
+def test_il_defangatore_sta_lato_impianto_rispetto_all_intercettazione() -> None:
     for model in (_pdc_loop(), load("prova-2-pdc-deviatrice-acs.json")):
         done, _, _ = saturate(model, CAT, REG)
         machines = [
@@ -253,7 +266,7 @@ def test_il_defangatore_sta_lato_impianto_rispetto_all_intercettazione():
             )
 
 
-def test_il_termometro_di_mandata_non_finisce_dopo_un_organo_di_chiusura():
+def test_il_termometro_di_mandata_non_finisce_dopo_un_organo_di_chiusura() -> None:
     for model in (_pdc_loop(), load("prova-2-pdc-deviatrice-acs.json")):
         done, _, _ = saturate(model, CAT, REG)
         machines = [
@@ -285,7 +298,7 @@ def test_il_termometro_di_mandata_non_finisce_dopo_un_organo_di_chiusura():
                 )
 
 
-def test_ogni_accessorio_viaggia_col_proprio_blocco_di_valvole():
+def test_ogni_accessorio_viaggia_col_proprio_blocco_di_valvole() -> None:
     """Le valvole ancorate a un accessorio gli restano adiacenti dopo il
     riordino: spostarlo lasciandole indietro le renderebbe due valvole che non
     chiudono niente. Il contratto e' l'adiacenza del blocco, non il numero di
@@ -310,7 +323,7 @@ def test_ogni_accessorio_viaggia_col_proprio_blocco_di_valvole():
 # ---------------------------------------------------------------------------
 
 
-def test_rinominare_i_file_delle_regole_non_cambia_la_fila(tmp_path):
+def test_rinominare_i_file_delle_regole_non_cambia_la_fila(tmp_path: Path) -> None:
     """Stesse quattordici regole, nomi di file che invertono l'ordine
     alfabetico: fila per tratta, pezzi e sigle non devono cambiare."""
     renamed = tmp_path / "rules"
@@ -339,7 +352,7 @@ def test_rinominare_i_file_delle_regole_non_cambia_la_fila(tmp_path):
 # ---------------------------------------------------------------------------
 
 
-def test_due_regole_incompatibili_fermano_e_vengono_nominate(tmp_path):
+def test_due_regole_incompatibili_fermano_e_vengono_nominate(tmp_path: Path) -> None:
     reg = _write_rules(
         tmp_path / "rules",
         [
@@ -364,7 +377,7 @@ def test_due_regole_incompatibili_fermano_e_vengono_nominate(tmp_path):
     assert "litigio-secondo" in message
 
 
-def test_tre_regole_in_cerchio_fermano_e_vengono_nominate_tutte(tmp_path):
+def test_tre_regole_in_cerchio_fermano_e_vengono_nominate_tutte(tmp_path: Path) -> None:
     reg = _write_rules(
         tmp_path / "rules",
         [
@@ -386,7 +399,7 @@ def test_tre_regole_in_cerchio_fermano_e_vengono_nominate_tutte(tmp_path):
         assert rule_id in message, message
 
 
-def test_due_regole_che_pretendono_entrambe_il_posto_attaccato_alla_macchina(tmp_path):
+def test_due_regole_che_pretendono_entrambe_il_posto_attaccato_alla_macchina(tmp_path: Path) -> None:
     """Due pezzi che dichiarano «fra me e la macchina non ci va nessun altro
     pezzo» sullo stesso attacco non possono stare insieme: qualunque fila ne
     violerebbe uno. Il contratto D-094 impone di fermarsi e nominarle, non di
@@ -420,7 +433,7 @@ def test_due_regole_che_pretendono_entrambe_il_posto_attaccato_alla_macchina(tmp
 # ---------------------------------------------------------------------------
 
 
-def test_stesso_grafo_stessa_fila_a_ripetizione_e_su_permutazioni():
+def test_stesso_grafo_stessa_fila_a_ripetizione_e_su_permutazioni() -> None:
     base = load("prova-1-due-pdc-accumulo-combinato.json")
     first = canonical_json(saturate(base, CAT, REG)[0])
     for _ in range(4):
@@ -431,7 +444,7 @@ def test_stesso_grafo_stessa_fila_a_ripetizione_e_su_permutazioni():
         assert _fila(done_p) == expected, seed
 
 
-def test_cio_che_il_progettista_ha_scritto_resta_dove_lo_ha_messo():
+def test_cio_che_il_progettista_ha_scritto_resta_dove_lo_ha_messo() -> None:
     """Un ritegno scritto a mano in mezzo al ritorno: le regole aggiungono i
     loro pezzi, ma nessun pezzo scavalca il ritegno e il ritegno non entra in
     nessuna fila riordinabile."""

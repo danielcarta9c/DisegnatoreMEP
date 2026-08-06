@@ -12,13 +12,6 @@ Contratto:
 import itertools
 
 import pytest
-from pydantic import ValidationError
-
-from disegnatore_mep.catalog.schema import PortDefinition
-from disegnatore_mep.rules.apply import saturate
-from disegnatore_mep.io.canonical import canonical_json
-from disegnatore_mep.validation.topology import validate_project
-
 from helpers import (
     catalog,
     comp,
@@ -31,11 +24,17 @@ from helpers import (
     read,
     rules,
 )
+from pydantic import ValidationError
+
+from disegnatore_mep.catalog.schema import PortDefinition
+from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.rules.apply import saturate
+from disegnatore_mep.validation.topology import validate_project
 
 CAT = catalog()
 
 
-def _two_pdc_junction_plant():
+def _two_pdc_junction_plant() -> ProjectModel:
     """Due pompe di calore in parallelo: le mandate si uniscono in una
     confluenza, il ritorno comune si sdoppia in una ripartizione."""
     return project(
@@ -63,7 +62,7 @@ def _two_pdc_junction_plant():
 # ---------------------------------------------------------------------------
 
 
-def test_la_seconda_tubazione_sullo_stesso_attacco_e_un_errore_bloccante():
+def test_la_seconda_tubazione_sullo_stesso_attacco_e_un_errore_bloccante() -> None:
     """Due mandate saldate sullo stesso bocchello del volano: il validatore
     deve respingere con un errore bloccante, non lasciar passare."""
     model = project(
@@ -92,7 +91,7 @@ def test_la_seconda_tubazione_sullo_stesso_attacco_e_un_errore_bloccante():
         assert issue.severity.value == "blocking"
 
 
-def test_anche_su_un_attacco_di_servizio_la_seconda_tubazione_e_rifiutata():
+def test_anche_su_un_attacco_di_servizio_la_seconda_tubazione_e_rifiutata() -> None:
     """Caso limite: lo stacco di servizio (lo scarico del volano) con due
     tubazioni. Anche uno stacco e' un attacco: una sola, sempre."""
     model = project(
@@ -119,7 +118,7 @@ def test_anche_su_un_attacco_di_servizio_la_seconda_tubazione_e_rifiutata():
     assert any(tuple(i.entity_ids) == ("volano", "drain") for i in offended)
 
 
-def test_il_catalogo_non_puo_dichiarare_un_attacco_che_accetti_due_tubazioni():
+def test_il_catalogo_non_puo_dichiarare_un_attacco_che_accetti_due_tubazioni() -> None:
     """D-100: «il catalogo non puo' piu' dichiarare attacchi che ne accettino
     due: la cosa non e' configurabile». Un campo di capienza deve essere
     rifiutato al caricamento della voce."""
@@ -141,7 +140,7 @@ def test_il_catalogo_non_puo_dichiarare_un_attacco_che_accetti_due_tubazioni():
 # ---------------------------------------------------------------------------
 
 
-def test_confluenza_e_ripartizione_hanno_sigla_propria_e_tre_attacchi_sul_percorso():
+def test_confluenza_e_ripartizione_hanno_sigla_propria_e_tre_attacchi_sul_percorso() -> None:
     model = _two_pdc_junction_plant()
     assert validate_project(model, CAT).ok
 
@@ -163,7 +162,7 @@ def test_confluenza_e_ripartizione_hanno_sigla_propria_e_tre_attacchi_sul_percor
     assert sigle["conflu"] != sigle["riparto"]
 
 
-def test_nel_grafo_nessun_attacco_del_flusso_porta_due_tubazioni():
+def test_nel_grafo_nessun_attacco_del_flusso_porta_due_tubazioni() -> None:
     """Sul grafo letto, nessun braccio e' un incrocio: dove due tubazioni si
     incontrano c'e' un pezzo, non un attacco doppio."""
     for name in (
@@ -184,7 +183,7 @@ def test_nel_grafo_nessun_attacco_del_flusso_porta_due_tubazioni():
 # ---------------------------------------------------------------------------
 
 
-def test_tutte_le_permutazioni_delle_tubazioni_danno_lo_stesso_grafo():
+def test_tutte_le_permutazioni_delle_tubazioni_danno_lo_stesso_grafo() -> None:
     """Confronto sul dump completo, non sulle sole sigle: 720 riordinamenti
     delle sei tubazioni dell'impianto con confluenza e ripartizione."""
     base = _two_pdc_junction_plant()
@@ -196,7 +195,7 @@ def test_tutte_le_permutazioni_delle_tubazioni_danno_lo_stesso_grafo():
         assert graph_dump(read(shuffled, CAT)) == expected, order
 
 
-def test_permutazioni_combinate_di_pezzi_reti_e_tubazioni():
+def test_permutazioni_combinate_di_pezzi_reti_e_tubazioni() -> None:
     """Permutazioni casuali ma riproducibili di tutti e tre gli elenchi,
     sull'impianto sintetico e su due impianti del committente."""
     for maker in (
@@ -211,7 +210,7 @@ def test_permutazioni_combinate_di_pezzi_reti_e_tubazioni():
             assert graph_dump(read(shuffled, CAT)) == expected, seed
 
 
-def test_anche_il_modello_completato_e_lo_stesso_in_ordini_diversi():
+def test_anche_il_modello_completato_e_lo_stesso_in_ordini_diversi() -> None:
     """Tutta la catena — regole, assemblatore — su input permutato: la fila
     per tratta e le sigle non devono cambiare."""
     from disegnatore_mep.assembly import runs_of
@@ -221,7 +220,7 @@ def test_anche_il_modello_completato_e_lo_stesso_in_ordini_diversi():
     base = load("prova-2-pdc-deviatrice-acs.json")
     done, _, _ = saturate(base, CAT, reg)
 
-    def fila(model):
+    def fila(model: ProjectModel) -> dict[tuple[str, str, str], tuple[str, ...]]:
         return {
             (r.head.component_id, r.tail.component_id, r.network_id): tuple(
                 r.component_ids

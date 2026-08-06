@@ -79,6 +79,10 @@ autorizza la skill ad aggiungerlo.
 
 | Commit | Cosa |
 |---|---|
+| `2d48411`+ | **Tre dei quattro difetti del collaudo corretti** (C1 determinismo della saturazione, C3 punto aperto invece del crollo, C4 doppio attaccato-alla-macchina) e le 29 prove del collaudo adottate come regressione in `tests/collaudo/`; C2 progettato e parcheggiato col motivo |
+| `feee446` | **L'indirizzo dei nodi (D-105)**: linee idrauliche battezzate, nodi numerati, diramazioni con lettera, civici degli stacchi; documento del grafo per linea e cinque grafi rigenerati; 27 prove nuove |
+| `a503ee4`, `f8fc476` | **Il pezzo 1 «Capire»** come istruzioni (`skill/capire/`), provato in camera pulita su cinque agenti freschi: 4/5 letture identiche alle manuali, verbale in `PROVA-2026-08-06.md` |
+| `3aa31de` | **Le cinque righe mancanti degli accessori** chiuse con le fonti (SRC-020..026): bilanciamento, disconnettore, miscelatrice, contabilizzatore, ritegno — solo posizioni (D-104) |
 | `05d302b` | **I cinque impianti del committente**, letti e assemblati. Nove famiglie di pezzi aggiunte come dato senza toccare il motore; due raccordi nuovi — confluenza e ripartizione — che la modellazione chiedeva |
 | `8d7796b` | **L'assemblatore**: la fila dei pezzi la decidono i vincoli dichiarati, non l'ordine alfabetico dei nomi dei file. Sul primario il termometro non finisce più dopo un organo di chiusura |
 | `8e70438` | **Gli accessori su stacco vanno dove vanno davvero**: attacco di servizio della macchina, o derivazione sul tubo. Chiuso il debito di D-094 |
