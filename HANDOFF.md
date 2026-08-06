@@ -190,16 +190,23 @@ Da fare, come lui lo ha descritto:
 - ogni pezzo sulla linea è un **nodo numerato**: `CP.01.N.02`;
 - accanto alla linea, in tabella, la sua descrizione: «da PDC-01 a ACC-01»;
 - **dove due linee si incontrano la principale tira dritto e la secondaria muore** su quel
-  nodo. La principale è quella che parte dalla prima sorgente, nell'ordine di D-098;
+  nodo;
+- **dove una linea si sdoppia la principale tiene il nome nudo e i rami prendono una
+  lettera**: `CP.01` prosegue, `CP.01a` e `CP.01b` sono le diramazioni. La lettera non va
+  mai sulla principale, così il suo nome non cambia per qualcosa successo altrove;
+- in tutti e due i casi **la principale è quella che va verso la prima sorgente**,
+  nell'ordine di D-098: sul ritorno comune di due macchine, `RP.01` arriva alla prima e
+  `RP.01a` alla seconda;
+- **ciò che pende da uno stacco non è un ramo ma un civico del nodo**: `CP.01.N.02.1` è il
+  primo pezzo appeso al nodo 2;
 - le sigle di famiglia dei pezzi (`VI-02`) **restano**: servono alla distinta, e sulla
   tavola convivono con l'indirizzo.
 
 **Non è da rifare, è da battezzare.** L'assemblatore calcola già l'oggetto che serve: lavora
 per **tratte**, e una tratta è una linea. Manca darle il nome e numerare i nodi.
 
-**Due cose restano da chiedere al PM**, e sono piccole: chi tira dritto quando una linea si
-**sdoppia** invece di confluire — il ritorno comune che rientra su due macchine — e come si
-indirizza un pezzo che pende da uno stacco.
+**Nessuna domanda aperta su questo.** Il PM ha chiuso innesti, diramazioni e stacchi il
+6 agosto; si esegue.
 
 ### 7.2 — Poi i pezzi da 1 a 3, fino al grafo definitivo
 
