@@ -24,6 +24,15 @@ tecnica** — pronta da stampare e da portare in cantiere.
 prevalenze, tarature, volumi né diametri. Se il progettista glieli dà, li scrive sulla
 tavola; se non glieli dà, sulla tavola non compaiono (D-087).
 
+**Il confine, detto come lo ha detto il PM** (D-104). Lui porta lo schema a livello di
+**definitivo**; la skill lo porta a livello **esecutivo** aggiungendo la ferramenta che su
+una tavola esecutiva c'è sempre — le intercettazioni, uno sfiato, un filtro, uno scarico,
+gli strumenti di lettura. Nient'altro. In particolare: **non decide quanti pezzi ci
+vanno** — un vaso di espansione, non due — e **non cambia lo schema che ha ricevuto**. Una
+prescrizione normativa dice cosa deve avere *l'impianto*; non autorizza la skill ad
+aggiungerlo. La fonte serve a sapere **dove** va un pezzo che comunque si disegna, non
+**se** l'impianto debba averlo.
+
 ---
 
 ## 2. La catena, e il grafo che l'attraversa
@@ -34,11 +43,23 @@ abbozzato dalla conversazione, si arricchisce di nodi e diventa definitivo. La t
 sua **rappresentazione**, non un oggetto separato.
 
 Il grafo è fatto come una rete stradale (D-097): ogni pezzo — macchina o accessorio — è un
-**nodo con la propria sigla**; ogni tubo fra due pezzi è un **arco** con il proprio fluido;
-un attacco su cui convergono più tubi è un **incrocio** e i suoi rami si numerano. Le sigle
-si assegnano camminando dalle **sorgenti dichiarate** — i generatori di calore per i
-circuiti termici, l'acquedotto per il sanitario — nell'ordine in cui i pezzi si incontrano
+**nodo con la propria sigla**; ogni tubo fra due pezzi è un **arco** con il proprio fluido.
+Le sigle si assegnano camminando dalle **sorgenti dichiarate** — i generatori di calore per
+i circuiti termici, l'acquedotto per il sanitario — nell'ordine in cui i pezzi si incontrano
 seguendo il fluido (D-098).
+
+**Ogni attacco porta una tubazione sola, sempre** (D-100). Due tubi sullo stesso bocchello
+non esistono: dove due tubazioni si incontrano c'è un **pezzo** che le unisce, con la
+propria sigla. Sono due pezzi distinti, e la differenza conta: la **confluenza** fa
+diventare due tubazioni una sola, e ha tutti e tre gli attacchi sul percorso; la
+**ripartizione** ne sdoppia una — il ritorno comune che rientra su due macchine in
+parallelo — e vale lo stesso. La **derivazione** è un terzo pezzo: il suo braccio esce dal
+percorso, e ci pende un accessorio.
+
+**Una macchina ha più attacchi di quelli del flusso** (D-101). Un volano a quattro tubi non
+ha quattro attacchi: i cataloghi dei costruttori dichiarano anche lo sfiato, lo scarico e la
+sede della sonda. Sono **attacchi di servizio**, ciascuno esiste per una funzione precisa, e
+il catalogo li dichiara macchina per macchina.
 
 ```
    la conversazione con l'ingegnere
@@ -217,6 +238,13 @@ poter essere pulito a macchina isolata.
 disegnare niente. Separa *cos'è l'impianto* da *come viene disegnato*: se la fila è
 sbagliata lo si vede subito, e non serve una tavola per accorgersene.
 
+**Come è fatto oggi.** Costruito il 6 agosto 2026. Riordina **solo ciò che le regole hanno
+aggiunto**: quello che il progettista ha scritto resta dove lo ha messo. Ogni accessorio
+viaggia col proprio blocco — le valvole che lo isolano sono ancorate a lui e stanno una per
+lato, e spostarlo lasciandole indietro le renderebbe due valvole che non chiudono niente.
+Lavora **dentro** il ciclo di completamento e non in coda: rimettere in fila può scoprire un
+attacco che era coperto solo perché un pezzo stava dove non doveva.
+
 ### Il modo intelligente di farlo: vincoli, non numeri di priorità
 
 La tentazione è dare a ogni accessorio un numero d'ordine. Sarebbe di nuovo un ordine
@@ -332,6 +360,7 @@ Tre livelli, e servono tutti e tre:
 |---|---|
 | Cosa fa il prodotto e cosa non fa | `docs/prodotto/PRD_DISEGNATORE_MEP.md` |
 | Cosa dichiara di sé un componente, e perché | `docs/prodotto/PROPRIETA_COMPONENTI.md` |
+| **Dove va ciascun accessorio, e chi lo dice** | `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` |
 | **Com'è fatta la skill** | **questo file** |
 | Come si collabora, chi decide cosa | `AGENTS.md` |
 | Come si disegna bene, regola per regola | `docs/standard/QUALITA_GRAFICA.md` |
