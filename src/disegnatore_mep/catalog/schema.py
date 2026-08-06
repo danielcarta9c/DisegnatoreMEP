@@ -71,6 +71,11 @@ class ComponentTrait(StrEnum):
     contiene fluido solo perche' ce lo si fa passare, il serbatoio ne tiene una
     riserva anche quando nulla circola — e percio' lo si deve poter svuotare da
     solo, senza svuotare l'impianto.
+
+    Chi la dichiara deve anche dire **quale** fluido tiene in serbo, in
+    `stored_medium`: senza, «svuotare il serbatoio» e «svuotare un circuito che
+    lo attraversa» sono la stessa frase, e lo scarico finisce sul serpentino
+    invece che sulla riserva.
     """
 
     SHUTOFF_ORDINARY = "shutoff_ordinary"
@@ -136,6 +141,20 @@ class ComponentDefinition(StrictModel):
     traits: list[ComponentTrait] = Field(min_length=1)
     """Cio' che e' vero del componente. Obbligatorio, e senza valore
     sottinteso: un componente che non dice come si chiude non si carica."""
+
+    stored_medium: str | None = Field(default=None, pattern=ID_PATTERN)
+    """Il fluido che il componente tiene **in serbo**, quando ne tiene uno.
+
+    Non e' una proprieta' del vocabolario chiuso ma il suo complemento: la
+    proprieta' dice *che* c'e' una riserva, questo dice *di che cosa*. Serve
+    perche' un serbatoio e' spesso attraversato anche da un altro fluido — un
+    serpentino e' uno scambiatore che passa dentro la riserva, non la riserva —
+    e senza distinguerli lo scarico va a finire sul circuito sbagliato.
+
+    Si dichiara se e solo se il componente dichiara di tenere un volume proprio,
+    e dev'essere uno dei fluidi delle sue porte: un serbatoio che tenesse in
+    serbo un fluido che non tocca sarebbe una dichiarazione senza appigli.
+    """
 
     symbol_id: str = Field(pattern=ID_PATTERN)
     composite: bool = False
@@ -205,6 +224,40 @@ class ComponentDefinition(StrictModel):
         if len(declared) > 1:
             raise ValueError(
                 f"{self.id} dichiara più di una scelta per {label}: {', '.join(declared)}"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def a_reserve_says_what_it_holds(self) -> "ComponentDefinition":
+        """Chi tiene una riserva dice di che cosa, e chi non ne tiene tace.
+
+        Il difetto che questa regola rende impossibile: un bollitore dichiarava
+        di tenere un volume proprio senza dire quale, e lo scarico gli e' finito
+        sul ritorno del serpentino — cioe' svuotava il circuito di
+        riscaldamento, mentre l'acqua sanitaria restava dentro.
+        """
+        holds = self.has_trait(ComponentTrait.HOLDS_ITS_OWN_VOLUME)
+        if holds and self.stored_medium is None:
+            raise ValueError(
+                f"{self.id} dichiara {ComponentTrait.HOLDS_ITS_OWN_VOLUME} senza "
+                f"dire quale fluido tiene in serbo: senza, svuotare la riserva e "
+                f"svuotare un circuito che la attraversa sono la stessa cosa. "
+                f"Dichiarare stored_medium fra: "
+                f"{', '.join(sorted({port.medium for port in self.ports}))}"
+            )
+        if not holds and self.stored_medium is not None:
+            raise ValueError(
+                f"{self.id} dichiara di tenere in serbo {self.stored_medium} ma non "
+                f"dichiara {ComponentTrait.HOLDS_ITS_OWN_VOLUME}: un fluido tenuto "
+                f"in serbo da chi non ha una riserva non vuol dire niente"
+            )
+        media = {port.medium for port in self.ports}
+        if self.stored_medium is not None and self.stored_medium not in media:
+            raise ValueError(
+                f"{self.id} dichiara di tenere in serbo {self.stored_medium}, che "
+                f"non e' il fluido di nessuna delle sue porte "
+                f"({', '.join(sorted(media))}): la riserva non avrebbe da dove "
+                f"riempirsi ne' dove svuotarsi"
             )
         return self
 

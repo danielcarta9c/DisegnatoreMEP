@@ -10,26 +10,60 @@ stessa lista, e la lista si legge dall'alto come la si e' scritta.
 
 **Cosa il motore non decide.** Una regola dichiara la funzione che deve
 comparire; quale voce di catalogo la porti su quel fluido lo risolve il
-catalogo, e se le voci sono zero o due si ferma invece di sceglierne una. Il
-motore non conosce nessun nome di componente, e non ne conosce nemmeno uno
-scritto in una regola: da P2 non ce ne sono piu' (D-069).
+catalogo, e se le voci sono due si ferma invece di sceglierne una. Il motore non
+conosce nessun nome di componente, e non ne conosce nemmeno uno scritto in una
+regola: da P2 non ce ne sono piu' (D-069).
+
+**E se le voci sono zero, lo dice.** Una regola le cui condizioni sono vere ma
+per cui il catalogo non ha nessun pezzo su quel fluido non «non si applica»: si
+applica e non ha niente da offrire. La differenza e' tutta, perche' il primo
+caso e' silenzio legittimo e il secondo e' un accessorio che sparisce senza che
+nessuno lo sappia — un bollitore a se' stante che resta senza scarico. Esce
+percio' un **punto aperto** accanto alle proposte, con la categoria della regola
+che lo ha generato.
 """
+
+from dataclasses import dataclass, field
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.model.project import NetworkModel, PortRef, ProjectModel
 
 from .context import RuleContext
-from .proposal import RuleProposal, proposed_component_id
+from .proposal import RuleGap, RuleProposal, proposed_component_id
 from .registry import RuleRegistry
 from .schema import RuleCardinality, RuleDefinition, SatisfactionScope
 
 
-def _anchors(context: RuleContext, rule: RuleDefinition, network_id: str) -> list[PortRef]:
+@dataclass(frozen=True)
+class Evaluation:
+    """Cosa il motore ha trovato: cio' che propone e cio' che gli manca."""
+
+    proposals: list[RuleProposal] = field(default_factory=list)
+    gaps: list[RuleGap] = field(default_factory=list)
+
+    @property
+    def is_empty(self) -> bool:
+        """Nessuna proposta. I punti aperti non contano: non si risolvono
+        applicando qualcosa, e aspettarli farebbe girare a vuoto la
+        saturazione."""
+        return not self.proposals
+
+
+def _anchors(context: RuleContext, rule: RuleDefinition, network: NetworkModel) -> list[PortRef]:
     """Gli attacchi su cui questa regola potrebbe posare qualcosa, in ordine."""
+    network_id = network.id
     found: list[PortRef] = []
     for component_id in context.anchors_of(
         network_id, rule.when.anchor_has_function, rule.when.anchor_has_trait
     ):
+        # Una regola che si occupa della riserva non guarda i circuiti che la
+        # attraversano: il serpentino di un bollitore porta acqua di
+        # riscaldamento, e uno scarico li' svuota il primario lasciando pieno
+        # il serbatoio.
+        if rule.when.network_carries_what_the_anchor_stores and not context.stores(
+            component_id, network.medium
+        ):
+            continue
         for port in context.connected_ports(component_id):
             if port.flow not in rule.then.placement.flows:
                 continue
@@ -103,13 +137,35 @@ def _matches(context: RuleContext, rule: RuleDefinition, network: NetworkModel) 
     )
 
 
+def _gap(
+    context: RuleContext,
+    rule: RuleDefinition,
+    network: NetworkModel,
+    anchor: PortRef,
+) -> RuleGap:
+    return RuleGap(
+        rule_id=rule.id,
+        rule_version=rule.version,
+        category=rule.category,
+        name=rule.name,
+        network_id=network.id,
+        medium=network.medium,
+        anchor=anchor,
+        missing_function=_function_at(context, rule, anchor),
+        rationale=rule.rationale,
+        source=rule.source,
+    )
+
+
 def evaluate(
     project: ProjectModel, catalog: ComponentRegistry, rules: RuleRegistry
-) -> list[RuleProposal]:
-    """Le integrazioni che il modello non ha ancora, con il perche' di ciascuna."""
+) -> Evaluation:
+    """Le integrazioni che il modello non ha ancora, con il perche' di ciascuna,
+    e i punti in cui una regola si applica ma il catalogo non ha il pezzo."""
     context = RuleContext.build(project, catalog)
     taken = {item.id for item in project.components}
     proposals: list[RuleProposal] = []
+    gaps: dict[tuple[str, str, str, str], RuleGap] = {}
 
     for rule in rules.all():
         served: set[str] = set()
@@ -117,16 +173,18 @@ def evaluate(
             if not _matches(context, rule, network):
                 continue
 
-            # Un ancoraggio su un fluido per cui il catalogo non ha nessun
-            # pezzo con quella funzione non e' un ancoraggio di questa regola:
-            # non c'e' niente da proporre. Averne **due** e' un'altra cosa e
-            # non passa in silenzio — la sceglierebbe il programma, e
-            # `providing` si ferma.
-            anchors = [
-                anchor
-                for anchor in _anchors(context, rule, network.id)
-                if catalog.serving(_function_at(context, rule, anchor), network.medium)
-            ]
+            # Un ancoraggio su un fluido per cui il catalogo non ha nessun pezzo
+            # con quella funzione non si puo' servire — ma non si tace: diventa
+            # un punto aperto, uno per rete e per funzione, perche' il pezzo che
+            # manca in catalogo e' uno solo. Averne **due** e' un'altra cosa e
+            # si ferma: la sceglierebbe il programma.
+            anchors: list[PortRef] = []
+            for anchor in _anchors(context, rule, network.id):
+                if catalog.serving(_function_at(context, rule, anchor), network.medium):
+                    anchors.append(anchor)
+                    continue
+                missing = _gap(context, rule, network, anchor)
+                gaps.setdefault(missing.key, missing)
             satisfied = {
                 anchor.component_id
                 for anchor in anchors
@@ -173,7 +231,7 @@ def evaluate(
                         source=rule.source,
                     )
                 )
-    return proposals
+    return Evaluation(proposals=proposals, gaps=list(gaps.values()))
 
 
-__all__ = ["evaluate"]
+__all__ = ["Evaluation", "evaluate"]

@@ -96,6 +96,15 @@ class RuleCondition(StrictModel):
     ma **cio' che il pezzo fa**: la temperatura di mandata si legge dove il
     calore entra nell'acqua, e nessuna proprieta' dice «genera calore»."""
 
+    network_carries_what_the_anchor_stores: bool = False
+    """La rete deve portare il fluido che l'ancoraggio tiene **in serbo**.
+
+    Serve dove l'accessorio ha a che fare con la riserva e non con i circuiti
+    che la attraversano: uno scarico su un serpentino svuota il circuito di
+    riscaldamento e lascia il serbatoio pieno. E' una condizione fra proprieta'
+    dichiarate — quello che il pezzo tiene, quello che la rete porta — e non
+    nomina ne' un componente ne' un attacco."""
+
     @model_validator(mode="after")
     def the_anchor_is_identified(self) -> "RuleCondition":
         if self.anchor_has_trait is None and self.anchor_has_function is None:

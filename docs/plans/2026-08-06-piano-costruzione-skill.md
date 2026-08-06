@@ -96,8 +96,21 @@ punto della catena e perché**, come si riconosce che c'è già, la fonte.
 - Nessuna regola nomina un componente. Prova automatica esistente.
 - Rieseguire le regole su un modello completo non propone nulla.
 
-**Artefatto per il PM:** le schede delle regole, una pagina per regola, in italiano
-semplice — da approvare o bocciare **una per una**.
+**Artefatto per il PM: due, e il secondo e' quello che conta (D-096).**
+
+1. Le schede delle regole, una pagina per regola, in italiano semplice — da approvare o
+   bocciare **una per una**.
+2. **L'albero dell'impianto completato, scritto in testo**: una riga per tubo con la fila
+   ordinata dei pezzi, e per ogni stacco la propria fila. È su questo che il contenuto
+   delle regole si giudica, non su un disegno. Il PM: «le regole degli accessori non le
+   avrei testate facendo un disegno ma costruendo un albero anche di testo; il disegno è
+   soprattutto il test per l'instradatore e il validatore, o per la skill finita».
+
+Il secondo artefatto scioglie anche un nodo pratico: con l'intercettazione su ogni attacco
+l'impianto di prova non entra piu' su un foglio ordinario, e la composizione e' P6. Senza
+l'albero non ci sarebbe modo di guardare cio' che le regole producono fino ad allora — e
+un errore di posizione, come lo scarico finito sul ramo sbagliato, sull'albero si vede
+subito, meglio che sul disegno.
 
 ### P3 — L'assemblatore
 

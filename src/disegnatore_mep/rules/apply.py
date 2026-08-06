@@ -30,15 +30,20 @@ from disegnatore_mep.model.types import ApprovalStatus
 
 from .engine import evaluate
 from .errors import RuleError
-from .proposal import RuleProposal
+from .proposal import RuleGap, RuleProposal
 from .registry import RuleRegistry
 
 ROUNDS = 8
-"""Quante volte al massimo si ripete. Le passate vere sono due o tre — accessori,
-poi i loro organi di chiusura, poi niente — e un organo di chiusura non si
-smonta in esercizio, quindi la catena si spegne da sola. Il limite esiste per
-trasformare un ciclo infinito, se un giorno due regole si rincorressero, in un
-errore che le nomina."""
+"""Quante passate **produttive** si ammettono al massimo.
+
+Le passate vere sono due — gli accessori, poi i loro organi di chiusura — e un
+organo di chiusura non si smonta in esercizio, quindi la catena si spegne da
+sola. Il limite esiste per trasformare un ciclo infinito, se un giorno due
+regole si rincorressero, in un errore che le nomina.
+
+E' il numero di passate che **aggiungono** qualcosa, non il numero di
+valutazioni: dopo l'ultima ce ne vuole una in piu' per accorgersi che non c'e'
+altro da fare, e contarla nel limite faceva fallire un modello gia' arrivato."""
 
 
 def _connection_touching(project: ProjectModel, anchor: PortRef) -> ConnectionModel:
@@ -152,28 +157,42 @@ def apply_proposals(
 
 def saturate(
     project: ProjectModel, catalog: ComponentRegistry, rules: RuleRegistry
-) -> tuple[ProjectModel, list[RuleProposal]]:
-    """Il modello completo, e tutte le integrazioni che ci sono volute.
+) -> tuple[ProjectModel, list[RuleProposal], list[RuleGap]]:
+    """Il modello completo, le integrazioni che ci sono volute, i punti aperti.
 
     «Completo» ha un significato preciso: **rieseguire le regole non propone
     piu' niente**. Ci vuole piu' di una passata perche' un accessorio proposto
     e' a sua volta un pezzo dell'impianto, con le proprie esigenze — e' la forma
     generale di D-090, ed e' cio' che permette alla regola dell'intercettazione
     di valere anche sugli accessori invece che sulle sole macchine.
+
+    I punti aperti si accumulano lungo le passate e si contano una volta sola:
+    non si risolvono applicando niente, e un accessorio che il catalogo non ha
+    resta mancante anche alla passata dopo.
     """
     current = project
     applied: list[RuleProposal] = []
+    gaps: dict[tuple[str, str, str, str], RuleGap] = {}
+    found = evaluate(current, catalog, rules)
     for _ in range(ROUNDS):
+        for gap in found.gaps:
+            gaps.setdefault(gap.key, gap)
+        if found.is_empty:
+            return current, applied, list(gaps.values())
+        current = apply_proposals(current, found.proposals)
+        applied.extend(found.proposals)
         found = evaluate(current, catalog, rules)
-        if not found:
-            return current, applied
-        current = apply_proposals(current, found)
-        applied.extend(found)
+    for gap in found.gaps:
+        gaps.setdefault(gap.key, gap)
+    if found.is_empty:
+        return current, applied, list(gaps.values())
+    # `found` e' la valutazione che ha ancora qualcosa da proporre: il messaggio
+    # nomina quelle regole, e non puo' uscire vuoto.
+    asking = sorted({item.rule_id for item in found.proposals})
     raise RuleError(
-        f"the rules kept proposing after {ROUNDS} rounds: the last round asked "
-        f"for {', '.join(sorted({item.rule_id for item in evaluate(current, catalog, rules)}))}. "
-        f"Two rules that undo each other would loop here instead of producing a "
-        f"model nobody can explain"
+        f"the rules were still proposing after {ROUNDS} productive rounds, and "
+        f"the next one asked for {', '.join(asking)}. Two rules that undo each "
+        f"other would loop here instead of producing a model nobody can explain"
     )
 
 

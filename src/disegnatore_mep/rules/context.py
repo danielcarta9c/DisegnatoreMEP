@@ -34,6 +34,9 @@ class RuleContext:
     traits: dict[str, frozenset[ComponentTrait]]
     """Le proprieta' che ciascun componente dichiara di se' (P1)."""
 
+    stored_media: dict[str, str]
+    """Il fluido che ciascun componente tiene in serbo, per chi ne tiene uno."""
+
     ports: dict[str, tuple[PortDefinition, ...]]
     networks_of: dict[str, frozenset[str]]
     """Reti che ciascun componente tocca."""
@@ -52,12 +55,15 @@ class RuleContext:
     def build(cls, project: ProjectModel, catalog: ComponentRegistry) -> "RuleContext":
         functions: dict[str, frozenset[str]] = {}
         traits: dict[str, frozenset[ComponentTrait]] = {}
+        stored_media: dict[str, str] = {}
         ports: dict[str, tuple[PortDefinition, ...]] = {}
         inline: set[str] = set()
         for component in project.components:
             resolved = catalog.resolve(component.definition_id)
             functions[component.id] = frozenset(resolved.definition.functions)
             traits[component.id] = resolved.definition.trait_set
+            if resolved.definition.stored_medium is not None:
+                stored_media[component.id] = resolved.definition.stored_medium
             ports[component.id] = tuple(resolved.definition.ports)
             if resolved.is_inline:
                 inline.add(component.id)
@@ -77,6 +83,7 @@ class RuleContext:
         return cls(
             functions=functions,
             traits=traits,
+            stored_media=stored_media,
             ports=ports,
             networks_of={key: frozenset(value) for key, value in touched.items()},
             connection_of_port=connection_of_port,
@@ -126,6 +133,13 @@ class RuleContext:
 
     def has_trait(self, component_id: str, trait: ComponentTrait) -> bool:
         return trait in self.traits.get(component_id, frozenset())
+
+    def stores(self, component_id: str, medium: str) -> bool:
+        """Quel componente tiene **in serbo** proprio quel fluido.
+
+        Falso per chi non tiene niente in serbo: cosi' una regola che si occupa
+        della riserva non si applica a chi non ne ha una."""
+        return self.stored_media.get(component_id) == medium
 
     def port_carries(self, ref: PortRef, function: str) -> bool:
         """Un accessorio con quella funzione e' gia' sulla tubazione di questo attacco.

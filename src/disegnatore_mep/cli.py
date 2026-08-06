@@ -92,8 +92,8 @@ def _rules(args: argparse.Namespace) -> int:
     # Si valuta a saturazione anche solo per elencare: cio' che si vede e' cio'
     # che si otterrebbe applicando. Una passata sola mostrerebbe gli accessori e
     # non i loro organi di chiusura, che pure servono.
-    completed, proposals = saturate(project, catalog, registry)
-    report = build_report(proposals)
+    completed, proposals, gaps = saturate(project, catalog, registry)
+    report = build_report(proposals, gaps)
     for category, label in CATEGORY_LABELS.items():
         entries = report.of(category)
         if not entries:
@@ -103,6 +103,16 @@ def _rules(args: argparse.Namespace) -> int:
             print(f"  - {entry.name} — {entry.where}")
             print(f"    {entry.rationale}")
             print(f"    fonte: {entry.source} · regola: {entry.rule}")
+    if report.open_points:
+        # Stampati sempre, anche quando tutto il resto e' a posto: un accessorio
+        # che non si puo' proporre e' una domanda al progettista, e una domanda
+        # che nessuno legge non e' stata fatta.
+        print("\nPunti aperti — accessori che servirebbero e che non possiamo proporre")
+        for point in report.open_points:
+            print(f"  - {point.name} — {point.where}")
+            print(f"    {point.what_is_missing}")
+            print(f"    perche' servirebbe: {point.rationale}")
+            print(f"    fonte: {point.source} · regola: {point.rule}")
     if report.is_empty:
         print("Nessuna integrazione da proporre: il modello e' gia' completo.")
 
