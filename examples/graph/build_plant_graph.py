@@ -12,6 +12,12 @@ propria sigla, ogni tubazione fra due pezzi e' un **arco**, ogni attacco e' un
 (D-098), che e' anche l'ordine con cui le sigle vengono contate: leggere e
 numerare sono la stessa passeggiata.
 
+**I punti aperti sono parte del grafo, non un secondo documento.** Dove una
+regola degli accessori si applica davvero e il catalogo non ha niente da offrire
+su quel fluido, il pezzo manca — e la cosa si dice **sul nodo in cui manca**,
+nella sezione di cio' che il grafo non tace. Un documento a parte per la stessa
+domanda si sarebbe messo a dire cose diverse.
+
 **Il documento non si scrive a mano.** Si esegue questo file, senza argomenti,
 e si ottiene la versione pubblicata:
 
@@ -23,6 +29,7 @@ un'etichetta interna davanti a chi legge.
 """
 
 import sys
+from collections.abc import Sequence
 from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -31,12 +38,17 @@ from disegnatore_mep.graph import Naming, PlantGraph, Reading, Step, read_plant
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.rules.apply import saturate
+from disegnatore_mep.rules.proposal import RuleGap
+from disegnatore_mep.rules.registry import RuleRegistry
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PLANT = REPO_ROOT / "examples" / "rules" / "centrale-pdc-completa.json"
+ESSENTIAL = REPO_ROOT / "examples" / "rules" / "centrale-pdc-essenziale.json"
 CATALOG = REPO_ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = REPO_ROOT / "assets" / "symbols"
 NAMING = REPO_ROOT / "naming"
+RULES = REPO_ROOT / "rules" / "hydronic"
 DOCUMENT = REPO_ROOT / "docs" / "prodotto" / "GRAFO_IMPIANTO.md"
 
 
@@ -54,6 +66,7 @@ class Pen:
         graph: PlantGraph,
         naming: Naming,
         hangs: dict[str, bool],
+        gaps: Sequence[RuleGap] = (),
     ) -> None:
         self.project = project
         self.graph = graph
@@ -61,6 +74,9 @@ class Pen:
         self.circuits = {item.id: item.name for item in project.networks}
         self.hangs = hangs
         """Chi pende dal tubo con una propria derivazione invece di starci sopra."""
+
+        self.gaps = tuple(gaps)
+        """Dove una regola si e' applicata e il catalogo non aveva il pezzo."""
 
     # --- i nomi ---------------------------------------------------------------
 
@@ -74,12 +90,26 @@ class Pen:
     def fluid(self, medium: str) -> str:
         return self.naming.name_of_medium(medium)
 
+    def family(self, function: str) -> str:
+        """Come si chiama in italiano un pezzo che fa quel mestiere."""
+        return self.naming.family_of((function,), function).name
+
     def circuit(self, network_id: str) -> str:
         return self.circuits[network_id]
 
     def fluids_of(self, component_id: str) -> str:
         node = self.graph.node(component_id)
         return ", ".join(self.fluid(item) for item in node.media) or "nessuno"
+
+    def held_by(self, component_id: str) -> str:
+        """Che acqua tiene in serbo un serbatoio, se ne tiene una.
+
+        Va detto sul nodo: e' cio' che rende visibile a occhio uno scarico finito
+        sul circuito sbagliato — un bollitore che tiene acqua calda sanitaria e
+        ha lo scarico sul riscaldamento si vede leggendo due righe.
+        """
+        held = self.graph.node(component_id).stored_medium
+        return "" if held is None else f" · tiene in serbo {self.fluid(held)}"
 
 
 def arms_in_words(numbers: tuple[int, ...]) -> str:
@@ -212,7 +242,8 @@ def nodes_table(pen: Pen) -> list[str]:
     for node in pen.graph.nodes:
         hanging = " · pende dal tubo con una propria derivazione" if pen.hangs[node.component_id] else ""
         rows.append(
-            f"| **{node.sigla}** | {node.name}{hanging} | {pen.fluids_of(node.component_id)} |"
+            f"| **{node.sigla}** | {node.name}{hanging}"
+            f"{pen.held_by(node.component_id)} | {pen.fluids_of(node.component_id)} |"
         )
     return [
         "## I nodi",
@@ -426,7 +457,37 @@ def silences(pen: Pen) -> list[str]:
             "**Tubazioni non lette:** nessuna. Ogni tubazione compare nella passeggiata.",
             "",
         ]
-    return lines
+    return lines + open_points(pen)
+
+
+def open_points(pen: Pen) -> list[str]:
+    """Cio' che serviva e che non si e' potuto proporre, detto sul nodo.
+
+    Una regola si applicava — il pezzo la chiedeva davvero — e il catalogo non
+    aveva niente da offrire su quel fluido. Sta qui, e non in un documento a
+    parte, per la ragione per cui sta qui anche un attacco senza tubazione:
+    e' un silenzio, e si legge sul pezzo a cui manca qualcosa.
+    """
+    if not pen.gaps:
+        return [
+            "**Punti aperti:** nessuno. Per ogni accessorio che le regole hanno chiesto, il",
+            "catalogo aveva il pezzo adatto al fluido di quella tubazione.",
+            "",
+        ]
+    return [
+        "**Punti aperti: qui una regola si applicava e il catalogo non aveva niente da",
+        "offrire.** Non e' una dimenticanza del disegno: e' una scelta che torna al",
+        "progettista.",
+        "",
+        *[
+            f"- **manca {pen.family(gap.missing_function).lower()}** su "
+            f"{pen.named(gap.anchor.component_id)}: servirebbe, e in catalogo non c'e' "
+            f"nessun pezzo che lo faccia {on_the(pen.fluid(gap.medium))}. Va deciso dal "
+            f"progettista."
+            for gap in pen.gaps
+        ],
+        "",
+    ]
 
 
 def render(pen: Pen) -> str:
@@ -462,14 +523,19 @@ def render(pen: Pen) -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
-def build(project: ProjectModel, catalog: ComponentRegistry, naming: Naming) -> str:
+def build(
+    project: ProjectModel,
+    catalog: ComponentRegistry,
+    naming: Naming,
+    gaps: Sequence[RuleGap] = (),
+) -> str:
     graph = read_plant(project, catalog, naming)
     hangs = {
         item.id: catalog.get(item.definition_id).attachment
         is ComponentTrait.ATTACHMENT_BRANCH
         for item in project.components
     }
-    return render(Pen(project, graph, naming, hangs))
+    return render(Pen(project, graph, naming, hangs, gaps))
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -479,8 +545,16 @@ def main(argv: list[str] | None = None) -> int:
         CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
     )
     naming = Naming.from_directory(NAMING)
+    # I punti aperti si leggono facendo lavorare le regole sull'impianto
+    # essenziale: sono le richieste che il catalogo non ha saputo servire, e
+    # restano tali anche sul modello gia' completato.
+    rules = RuleRegistry.from_directory(RULES)
+    rules.cross_check(catalog)
+    _, _, gaps = saturate(load_project(ESSENTIAL), catalog, rules)
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(build(load_project(PLANT), catalog, naming), encoding="utf-8")
+    target.write_text(
+        build(load_project(PLANT), catalog, naming, gaps), encoding="utf-8"
+    )
     return 0
 
 

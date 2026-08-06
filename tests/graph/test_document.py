@@ -1,17 +1,21 @@
 """Il documento per il committente: e' generato, ed e' scritto nella sua lingua.
 
-L'artefatto di G1 e' `docs/prodotto/GRAFO_IMPIANTO.md`. Le prove qui presidiano
-le quattro cose che lo rendono affidabile:
+L'artefatto di G1 e' `docs/prodotto/GRAFO_IMPIANTO.md`, ed e' **l'unico**: il
+grafo dopo le integrazioni e i punti aperti delle regole si leggono qui, non in
+un secondo documento che direbbe le stesse cose con parole diverse. Le prove qui
+presidiano le cinque cose che lo rendono affidabile:
 
 1. il file pubblicato **e'** cio' che lo script rigenera oggi — mai un elaborato
    vecchio mostrato come attuale;
-2. non contiene un solo identificativo di codice, nome di file, o parola del
-   vocabolario tecnico interno, e nemmeno una parola d'inglese: chi lo legge
-   giudica l'impianto, non il programma;
+2. non contiene un solo identificativo di codice, nome di file, nome di regola, o
+   parola del vocabolario tecnico interno, e nemmeno una parola d'inglese: chi lo
+   legge giudica l'impianto, non il programma;
 3. dice dove ogni anello si richiude, tante volte quante il grafo ne conta;
 4. dice cio' che manca — un attacco senza tubazione, un pezzo che nessuna
    sorgente raggiunge — invece di tacerlo, e lo si prova su impianti che quei
-   difetti ce li hanno davvero.
+   difetti ce li hanno davvero;
+5. quando una regola si applica e il catalogo non ha il pezzo, il documento lo
+   dice **sul nodo in cui il pezzo manca** (D-096).
 """
 
 import importlib.util
@@ -25,15 +29,21 @@ import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graph import Naming, read_plant
+from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
+from disegnatore_mep.rules.apply import saturate
+from disegnatore_mep.rules.registry import RuleRegistry
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "examples" / "graph" / "build_plant_graph.py"
 DOCUMENT = ROOT / "docs" / "prodotto" / "GRAFO_IMPIANTO.md"
 NAMING = ROOT / "naming"
 PLANT = ROOT / "examples" / "rules" / "centrale-pdc-completa.json"
+ESSENTIAL = ROOT / "examples" / "rules" / "centrale-pdc-essenziale.json"
 HYDRONIC_CATALOG = ROOT / "examples" / "layout" / "catalog"
 FOUNDATION_CATALOG = ROOT / "examples" / "foundation" / "catalog"
+SYMBOLS = ROOT / "assets" / "symbols"
+RULES = ROOT / "rules" / "hydronic"
 TWO_ZONES = ROOT / "examples" / "layout" / "heat-pump-dhw-buffer-two-zones.json"
 MIXED = ROOT / "examples" / "foundation" / "valid-mixed-project.json"
 
@@ -129,6 +139,8 @@ def test_two_regenerations_are_identical() -> None:
 
 
 def test_the_document_names_no_identifier_of_the_programme() -> None:
+    """Anche i nomi delle regole: da quando i punti aperti si leggono qui, una
+    regola potrebbe far passare il proprio identificativo davanti a chi legge."""
     project = load_project(PLANT)
     forbidden = {item.id for item in project.components}
     forbidden |= {item.definition_id for item in project.components}
@@ -137,6 +149,7 @@ def test_the_document_names_no_identifier_of_the_programme() -> None:
     forbidden |= {item.id for item in project.connections}
     forbidden |= {item.id for item in catalog(HYDRONIC_CATALOG).all()}
     forbidden |= {project.metadata.project_id}
+    forbidden |= {rule.id for rule in RuleRegistry.from_directory(RULES).all()}
     leaked = sorted(item for item in forbidden if as_a_word(item, text()))
     assert not leaked, leaked
 
@@ -145,6 +158,8 @@ def test_the_document_names_no_file() -> None:
     document = text()
     for mark in (".json", ".py", ".md", ".svg", "examples/", "docs/", "src/"):
         assert mark not in document, mark
+    for path in sorted(RULES.glob("*.json")):
+        assert path.name not in document, path.name
 
 
 def test_the_document_speaks_no_internal_vocabulary() -> None:
@@ -183,6 +198,26 @@ def test_the_document_says_on_which_fluid_each_piece_runs() -> None:
     assert media
     for medium in media:
         assert table.name_of_medium(medium) in document
+
+
+def test_the_document_says_which_water_each_tank_holds() -> None:
+    """E' cio' che rende visibile a occhio uno scarico sul circuito sbagliato.
+
+    Un bollitore che tiene acqua calda sanitaria e ha lo scarico sull'acqua di
+    riscaldamento si vede leggendo due righe, senza sapere niente di
+    impiantistica: e' il difetto per cui G3 e' stato respinto."""
+    graph = read_plant(load_project(PLANT), catalog(HYDRONIC_CATALOG), naming())
+    table = naming()
+    document = text()
+    tanks = [node for node in graph.nodes if node.stored_medium is not None]
+    assert tanks, "nessun serbatoio: prova inutile"
+    for node in tanks:
+        assert node.stored_medium is not None
+        row = next(
+            line for line in document.splitlines() if line.startswith(f"| **{node.sigla}**")
+        )
+        assert "tiene in serbo" in row, row
+        assert table.name_of_medium(node.stored_medium) in row, row
 
 
 # --- 3. l'anello si legge come anello -----------------------------------------
@@ -272,6 +307,49 @@ def test_the_document_reads_a_plant_it_was_not_written_for() -> None:
         if word in ("supply", "return"):
             continue
         assert not as_a_word(word, written.lower()), word
+
+
+# --- 5. i punti aperti si leggono sul nodo a cui manca il pezzo ---------------
+
+
+def test_a_missing_piece_is_named_at_the_node_where_it_is_missing() -> None:
+    """Il difetto che ha fatto respingere G3, dal lato del documento.
+
+    Si toglie dal catalogo lo scarico sanitario: il bollitore non puo' piu'
+    svuotare la propria riserva, e il grafo deve dirlo **sul bollitore** — non
+    tacere, e non dirlo in fondo dove nessuno collega la cosa al pezzo."""
+    module = generator()
+    registry = ComponentRegistry.from_directory(
+        HYDRONIC_CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
+    )
+    without = ComponentRegistry(
+        [item for item in registry.all() if item.id != "drain-connection-dhw"],
+        symbols=SymbolRegistry.from_directory(SYMBOLS),
+    )
+    project, _, gaps = saturate(
+        load_project(ESSENTIAL), without, RuleRegistry.from_directory(RULES)
+    )
+    assert gaps
+
+    written = str(module.build(project, without, naming(), gaps))
+    tank = read_plant(project, without, naming()).node(gaps[0].anchor.component_id).sigla
+    said = [line for line in written.splitlines() if "manca" in line and tank in line]
+    assert said, written
+    assert "attacco di scarico" in said[0].lower()
+    assert "acqua calda sanitaria" in said[0]
+    assert "Punti aperti" in written
+
+
+def test_the_published_document_has_no_open_point_because_the_plant_has_none() -> None:
+    """L'altro verso: la sezione c'e' sempre, e dice il vero."""
+    registry = ComponentRegistry.from_directory(
+        HYDRONIC_CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
+    )
+    _, _, gaps = saturate(
+        load_project(ESSENTIAL), registry, RuleRegistry.from_directory(RULES)
+    )
+    assert gaps == []
+    assert "**Punti aperti:** nessuno" in text()
 
 
 @pytest.mark.parametrize("plant,directory", [(TWO_ZONES, HYDRONIC_CATALOG), (MIXED, FOUNDATION_CATALOG)])

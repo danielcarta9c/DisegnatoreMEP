@@ -9,6 +9,7 @@ stesse quindici regole devono capirli tutti e tre.
 from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.graph import Naming
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.project import ProjectModel
@@ -21,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
 RULES = ROOT / "rules" / "hydronic"
+NAMING = ROOT / "naming"
 
 METADATA = {
     "project_id": "gate-g1",
@@ -220,7 +222,7 @@ def test_a_rule_with_nothing_to_offer_says_so_instead_of_going_quiet() -> None:
     assert gap.anchor.component_id == "acqua-riduttore"
     assert gap.rationale.strip() and gap.source.strip()
 
-    report = build_report(found.proposals, found.gaps)
+    report = build_report(found.proposals, found.gaps, Naming.from_directory(NAMING))
     assert not report.is_empty
     spoken = " ".join(point.what_is_missing for point in report.open_points)
     # In parole, non con le etichette interne: quel testo finisce nel dossier.

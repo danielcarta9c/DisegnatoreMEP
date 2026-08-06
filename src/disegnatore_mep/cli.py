@@ -7,6 +7,7 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.graph.naming import Naming
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import render_sheet
 from disegnatore_mep.graphics.svg import render_symbol_sheet
@@ -61,6 +62,10 @@ def build_parser() -> argparse.ArgumentParser:
     rules.add_argument("--catalog", type=Path, required=True)
     rules.add_argument("--symbols", type=Path, required=True)
     rules.add_argument("--rules", type=Path, required=True)
+    # Le tabelle delle famiglie e dei fluidi. Sono un dato come il catalogo e le
+    # regole, e come loro si passano: un punto aperto si dice in italiano, e le
+    # parole per dirlo si leggono da li'.
+    rules.add_argument("--naming", type=Path, required=True)
     rules.add_argument(
         "--apply-all",
         action="store_true",
@@ -88,12 +93,13 @@ def _rules(args: argparse.Namespace) -> int:
     catalog = ComponentRegistry.from_directory(args.catalog, symbols=symbols)
     registry = RuleRegistry.from_directory(args.rules)
     registry.cross_check(catalog)
+    naming = Naming.from_directory(args.naming)
 
     # Si valuta a saturazione anche solo per elencare: cio' che si vede e' cio'
     # che si otterrebbe applicando. Una passata sola mostrerebbe gli accessori e
     # non i loro organi di chiusura, che pure servono.
     completed, proposals, gaps = saturate(project, catalog, registry)
-    report = build_report(proposals, gaps)
+    report = build_report(proposals, gaps, naming)
     for category, label in CATEGORY_LABELS.items():
         entries = report.of(category)
         if not entries:

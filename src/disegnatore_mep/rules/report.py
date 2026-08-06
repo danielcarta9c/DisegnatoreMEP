@@ -3,11 +3,16 @@
 La skill lo presentera' (§5.3), il nucleo lo produce. Raggruppato per categoria
 perche' e' cosi' che si legge: prima cosa serve per forza, poi cosa e'
 consigliato, poi cosa dipende dal caso.
+
+**Le parole con cui si dice un punto aperto** — il mestiere che manca e il fluido
+su cui manca — non stanno qui: si chiedono alle tabelle delle sigle (`naming/`),
+le stesse da cui il grafo prende famiglie e fluidi. Erano scritte due volte, e
+due elenchi della stessa cosa divergono: qui si legge quello che e' un dato.
 """
 
 from pydantic import Field
 
-from disegnatore_mep.catalog.tags import family_in_words, fluid_in_words
+from disegnatore_mep.graph.naming import Naming
 from disegnatore_mep.model.base import StrictModel
 from disegnatore_mep.model.types import IntegrationCategory
 
@@ -74,8 +79,17 @@ class IntegrationReport(StrictModel):
 
 
 def build_report(
-    proposals: list[RuleProposal], gaps: list[RuleGap] | None = None
+    proposals: list[RuleProposal],
+    gaps: list[RuleGap] | None,
+    naming: Naming,
 ) -> IntegrationReport:
+    """Le integrazioni e i punti aperti, detti in italiano.
+
+    `naming` e' la tabella delle famiglie e dei fluidi: e' da li' che si prende
+    come si chiama, in parole, il mestiere che manca e il fluido su cui manca.
+    Un mestiere o un fluido che la tabella non sappia nominare ferma il report
+    invece di far comparire un'etichetta interna nel dossier.
+    """
     order = list(IntegrationCategory)
     ranked = sorted(proposals, key=lambda item: order.index(item.category))
     pending = sorted(gaps or [], key=lambda item: order.index(item.category))
@@ -100,8 +114,8 @@ def build_report(
                 f"rete {item.network_id}",
                 what_is_missing=(
                     f"in catalogo non c'e' nessun pezzo che faccia da "
-                    f"{family_in_words(item.missing_function).lower()} su "
-                    f"{fluid_in_words(item.medium)}, quindi questo accessorio "
+                    f"{naming.family_of((item.missing_function,), item.rule_id).name.lower()} su "
+                    f"{naming.name_of_medium(item.medium)}, quindi questo accessorio "
                     f"{CATEGORY_ADJECTIVES[item.category]} non viene proposto: "
                     f"va deciso dal progettista"
                 ),

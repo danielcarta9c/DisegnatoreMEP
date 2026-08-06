@@ -48,6 +48,7 @@ ESSENTIAL = ROOT / "examples" / "rules" / "centrale-pdc-essenziale.json"
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
 RULES = ROOT / "rules" / "hydronic"
+NAMING = ROOT / "naming"
 
 
 def test_rules_prints_what_the_catalogue_cannot_offer(
@@ -77,6 +78,8 @@ def test_rules_prints_what_the_catalogue_cannot_offer(
             str(SYMBOLS),
             "--rules",
             str(RULES),
+            "--naming",
+            str(NAMING),
         ]
     )
     printed = capsys.readouterr().out
@@ -100,6 +103,8 @@ def test_rules_on_a_complete_model_says_so_and_opens_no_point(
             str(SYMBOLS),
             "--rules",
             str(RULES),
+            "--naming",
+            str(NAMING),
         ]
     )
     printed = capsys.readouterr().out

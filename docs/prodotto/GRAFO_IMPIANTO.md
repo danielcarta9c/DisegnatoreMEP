@@ -105,7 +105,7 @@ numerati.
 | **FIL-01** | Filtro a Y | acqua di riscaldamento |
 | **VI-06** | Valvola di intercettazione | acqua di riscaldamento |
 | **VI-07** | Valvola di intercettazione | acqua di riscaldamento |
-| **VOL-01** | Volano termico a quattro attacchi | acqua di riscaldamento |
+| **VOL-01** | Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento | acqua di riscaldamento |
 | **SC-01** | Attacco di scarico · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | **VI-01** | Valvola di intercettazione | acqua di riscaldamento |
 | **FIL-02** | Filtro a Y | acqua di riscaldamento |
@@ -135,7 +135,7 @@ numerati.
 | **VI-19** | Valvola di intercettazione | acqua di riscaldamento |
 | **VI-20** | Valvola di intercettazione | acqua di riscaldamento |
 | **VI-21** | Valvola di intercettazione | acqua di riscaldamento |
-| **BOL-01** | Bollitore ACS | acqua di riscaldamento, acqua fredda sanitaria, acqua calda sanitaria |
+| **BOL-01** | Bollitore ACS · tiene in serbo acqua calda sanitaria | acqua di riscaldamento, acqua fredda sanitaria, acqua calda sanitaria |
 | **VI-22** | Valvola di intercettazione | acqua di riscaldamento |
 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | **VI-23** | Valvola di intercettazione | acqua fredda sanitaria |
@@ -284,6 +284,9 @@ tubazione.
 arriva a ogni pezzo dell'impianto.
 
 **Tubazioni non lette:** nessuna. Ogni tubazione compare nella passeggiata.
+
+**Punti aperti:** nessuno. Per ogni accessorio che le regole hanno chiesto, il
+catalogo aveva il pezzo adatto al fluido di quella tubazione.
 
 ---
 
