@@ -12,6 +12,7 @@
     "shutoff_ordinary",
     "attachment_inline"
   ],
+  "stored_medium": "heating_water",
   "symbol_id": "buffer-four-port",
   "composite": false,
   "ports": [

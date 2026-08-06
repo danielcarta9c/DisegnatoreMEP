@@ -448,6 +448,12 @@ def test_being_serviced_and_never_closing_do_not_load_together(tmp_path: Path) -
 DRAWN_IN_LINE_THOUGH_DECLARED_ON_A_BRANCH = frozenset(
     {
         "drain-connection",
+        # Il gemello sanitario dello scarico, nato in P2 perche' un bollitore
+        # deve poter svuotare la propria riserva e la riserva non e' acqua di
+        # riscaldamento. E' nato con due porte passanti perche' condivide il
+        # simbolo dello scarico: stesso debito, una voce in piu', e si chiude
+        # con le altre quando lo stacco diventa un ramo vero.
+        "drain-connection-dhw",
         "expansion-connection",
         "expansion-connection-dhw",
         "filling-unit",

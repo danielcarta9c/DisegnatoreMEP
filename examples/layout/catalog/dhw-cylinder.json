@@ -12,6 +12,7 @@
     "shutoff_ordinary",
     "attachment_inline"
   ],
+  "stored_medium": "domestic_hot_water",
   "symbol_id": "dhw-cylinder",
   "composite": false,
   "ports": [

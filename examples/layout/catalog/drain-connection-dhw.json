@@ -1,0 +1,35 @@
+{
+  "id": "drain-connection-dhw",
+  "version": "1.0.0",
+  "name": "Attacco di scarico sanitario",
+  "functions": [
+    "drain"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_branch"
+  ],
+  "symbol_id": "drain-connection",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "in",
+      "required": true,
+      "max_connections": 1
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "out",
+      "required": true,
+      "max_connections": 1
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

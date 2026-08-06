@@ -179,7 +179,7 @@ def evaluate(
             # manca in catalogo e' uno solo. Averne **due** e' un'altra cosa e
             # si ferma: la sceglierebbe il programma.
             anchors: list[PortRef] = []
-            for anchor in _anchors(context, rule, network.id):
+            for anchor in _anchors(context, rule, network):
                 if catalog.serving(_function_at(context, rule, anchor), network.medium):
                     anchors.append(anchor)
                     continue
