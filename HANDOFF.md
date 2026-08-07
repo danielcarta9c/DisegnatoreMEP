@@ -200,6 +200,13 @@ costruiti non può approvarli:
 
 ### 7.2 — Poi, in quest'ordine
 
+0. **Il pacchetto E — il regime della centrale (D-106), che per il PM viene prima di
+   tutto il resto del contenuto**: sotto i 35 kW niente separatore d'aria ne'
+   termometro aggiunto, sicurezza e sfiato sul serbatoio, un solo defangatore e il vaso
+   sul ritorno generale, filtro a Y per generatore, filtrazione solo sul primario.
+   Criteri in §3bis-E del piano. **Primo passo obbligato: il riscontro sugli schemi
+   Caleffi** (il quaderno Idraulica 61 e' gia' scaricato) — la lezione di D-102 e'
+   stata ripetuta anche stasera, non ripeterla una terza volta.
 1. **La correzione C2** (lo scarico del bollitore sull'ingresso freddo): il progetto è
    scritto nell'appendice del piano — una dichiarazione di catalogo nuova, «da quale
    attacco la riserva si riempie» — e una prova parcheggiata in `tests/collaudo/` la
