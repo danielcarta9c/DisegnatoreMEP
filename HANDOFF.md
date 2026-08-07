@@ -343,13 +343,17 @@ pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
 porta ora tutti e tre i circuiti secondari — batterie UTA, ventilconvettori, pannello
 radiante — e il collettore non c'è più: il testo non lo nominava.
 
-**Una sola osservazione, che non è una domanda.** La soglia dei 35 kW ha radice nella
-Raccolta R, che si applica agli impianti con potenza **dei focolari** superiore a 35 kW —
-e una pompa di calore focolare non ne ha. Il registro delle fonti lo dice esplicitamente,
-e il quinto impianto sono tre pompe di calore. Il PM ha però **già deciso** in D-108 che
-la cascata sta sopra la soglia, quindi la pratica è stabilita e non gli si richiede: lo si
-segnala perché tre agenti indipendenti ci sono inciampati leggendo lo schema, non perché
-serva una sua risposta.
+**Nessuna, e una è stata appena chiusa: non riproporla.** Era stato osservato che la
+soglia dei 35 kW ha radice nella Raccolta R, che parla di potenza **dei focolari**, e che
+una pompa di calore focolare non ne ha. **Il PM ha chiuso l'osservazione (D-109):** le
+centrali domestiche in cui si sostituisce una caldaia a gas con una pompa di calore
+stanno **sempre sotto i 35 kW**, e la skill **non è limitata alle rinnovabili** —
+disegnare centrali a caldaia a gas è nel suo perimetro, e lì il focolare c'è davvero.
+Niente eccezione da scrivere, niente da chiedere.
+
+**E una precisazione di perimetro che ne discende:** le fonti rinnovabili sono l'**MVP,
+non il confine del prodotto**. Nessuna regola va scritta assumendo che il generatore sia
+una pompa di calore; il catalogo la caldaia a gas ce l'ha già.
 
 Restano domande per il PM solo quando valgono i criteri di `skill/capire/COSA_DECIDE.md`:
 il testo tace, le alternative sono entrambe corrette e la scelta cambia il disegno.

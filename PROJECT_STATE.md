@@ -75,7 +75,7 @@ scritto per esteso, e torna verde quando il difetto si chiude.
 | 3 | Le **potenze da cui il regime è stato letto non stanno nel modello**: i cinque grafi dichiarano il regime e nessun componente porta la potenza. D-108 promette che l'ingegnere veda la lettura e la corregga | le letture manuali di `examples/prova/` |
 | 4 | La regola del regime **non ha il caso di mezzo**: potenza dichiarata solo per alcune macchine. L'impianto 3 ne ha due che il catalogo dice generatrici e il testo ne dà una sola; l'impianto 4 sta a 34 kW su 35 | `ISTRUZIONI.md` §4.6 |
 | 5 | Una voce dichiarata del primo grafo cita **identificativi interni** del JSON in una frase destinata all'ingegnere | il grafo dell'agente: si chiude alle istruzioni, non correggendo l'allegato |
-| 6 | La radice normativa della soglia (Raccolta R, «potenza dei focolari») **non copre le pompe di calore**, e il registro delle fonti lo dice. Il quinto impianto sono tre pompe di calore | osservazione per il PM, non un difetto di codice |
+| ~~6~~ | ~~La radice normativa della soglia non copre le pompe di calore~~ | **CHIUSA dal PM (D-109)**: le centrali domestiche stanno sempre sotto i 35 kW, e la skill disegna anche centrali a **caldaia a gas**, dove il focolare c'è. Niente da correggere, niente da chiedere |
 
 ## Il confine del prodotto, che vale su tutto (D-104)
 
