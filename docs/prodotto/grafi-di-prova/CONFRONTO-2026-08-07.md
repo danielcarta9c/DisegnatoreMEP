@@ -14,8 +14,9 @@ scrivere le regole:
 
 1. **Il regime della centrale.** Sotto i 35 kW niente separatore d'aria, niente
    termometro aggiunto, niente sicurezza per ogni macchina: sfogo aria e sicurezza
-   stanno sul serbatoio, e stop. Nessuno dei cinque testi dichiara il regime, e senza
-   dichiarazione vale il corredo minimo — quello della piccola centrale.
+   stanno sul serbatoio, e stop. Il regime lo **leggiamo dalle potenze che hai scritto
+   tu**, testo per testo — il conto è in fondo a questa pagina. Quattro impianti stanno
+   sotto la soglia, la cascata di tre macchine sopra.
 2. **Il ritorno generale.** Vaso, riempimento, manometro e defangatore stanno sul
    tratto comune del ritorno, prima che si divida verso le macchine — non più sul ramo
    della prima macchina. Il defangatore è **uno per circuito**: con due o tre macchine
@@ -53,12 +54,24 @@ defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul vola
 escono i due separatori, i due termometri e una sicurezza. **Sul circuito sanitario non
 c'è filtro**, come è giusto in un impianto domestico.
 
-**5 — Cascata di tre pompe di calore: da 105 a 98 pezzi.**
+**5 — Cascata di tre pompe di calore: da 105 a 108 pezzi.**
 È l'unico dei cinque **sopra i 35 kW** — tre macchine da 35, e non è una centrale
 domestica — quindi tiene il corredo da grande centrale: sicurezza e termometro per ogni
-macchina, e il separatore d'aria sulla mandata generale. Quello che cambia è il resto: i
-cinque defangatori diventano uno solo sul ritorno generale della cascata, un filtro a Y
-per macchina, e lo scarico del bollitore passa sull'ingresso freddo.
+macchina, e il separatore d'aria sulla mandata generale. I cinque defangatori diventano
+uno solo sul ritorno generale della cascata, un filtro a Y per macchina, e lo scarico del
+bollitore passa sull'ingresso freddo.
+
+**Ma la correzione grossa di questo impianto è un'altra, ed è una nostra lettura
+sbagliata rimessa a posto.** Il tuo testo dice che dal volume tecnico partono **tre**
+circuiti secondari — batterie delle UTA, fan-coil, e un circuito miscelato per il
+pavimento radiante — e non nomina nessun collettore. Noi ne avevamo disegnati **due**,
+perché avevamo supposto un collettore, e quel collettore aveva due sole uscite: il
+circuito del pavimento radiante era rimasto fuori, e ti era stata portata come domanda
+una cosa che il tuo testo non aveva mai detto. **Il circuito del pavimento adesso c'è**,
+con la sua valvola miscelatrice e il suo circolatore, e il collettore non c'è più: dove
+tre tubi si incontrano mettiamo due raccordi, che è la regola generale e non richiede di
+supporre un pezzo che non hai nominato. Di qui i pezzi in più rispetto a ieri, non da un
+irrigidimento delle regole.
 
 **Nessuno dei cinque ha punti aperti.** Ogni accessorio che le regole hanno chiesto ha
 trovato il pezzo e il posto.

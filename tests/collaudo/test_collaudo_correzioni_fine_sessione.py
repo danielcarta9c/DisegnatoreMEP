@@ -672,20 +672,19 @@ def test_ogni_macchina_che_genera_calore_porta_una_potenza_nel_conto(nome: str) 
     )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "DIFETTO 5 del collaudo. Il documento che il committente legge si contraddice "
-        "dentro se stesso: al punto 1 dice ancora «Nessuno dei cinque testi dichiara il "
-        "regime, e senza dichiarazione vale il corredo minimo — quello della piccola "
-        "centrale», che era vero prima della correzione; piu' sotto, la sezione «Il "
-        "regime: letto dai testi, non chiesto a te» porta la tabella delle potenze e "
-        "dichiara il quinto impianto SOPRA i 35 kW, con il corredo da grande centrale. "
-        "La correzione ha riscritto la sezione nuova e ha lasciato in piedi la frase "
-        "vecchia, nella stessa pagina."
-    ),
-)
 def test_il_confronto_per_il_committente_non_si_contraddice_sul_regime() -> None:
+    """DIFETTO 5 del collaudo, ora chiuso e presidiato.
+
+    Il documento che il committente legge si contraddiceva dentro se stesso: al
+    punto 1 diceva ancora «Nessuno dei cinque testi dichiara il regime, e senza
+    dichiarazione vale il corredo minimo», che era vero prima della correzione;
+    piu' sotto, la sezione «Il regime: letto dai testi, non chiesto a te» portava
+    la tabella delle potenze e dichiarava il quinto impianto sopra i 35 kW. La
+    correzione aveva riscritto la sezione nuova e lasciato in piedi la frase
+    vecchia, nella stessa pagina.
+
+    Riscritto il punto 1 sul regime letto dalle potenze, la prova gira senza
+    marcatore."""
     testo = CONFRONTO.read_text(encoding="utf-8")
     dice_letto = "letto dai testi" in testo or "letto dal testo" in testo
     dice_non_dichiarato = "Nessuno dei cinque testi dichiara il regime" in testo
