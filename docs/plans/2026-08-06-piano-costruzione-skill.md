@@ -278,6 +278,32 @@ mai calcolato dalla skill: la taglia non la decide lei (D-104).
    proprieta' dichiarata. Cinque grafi rigenerati; suite, ruff e mypy puliti; collaudo a
    contesto separato.
 
+**L'audit dei livelli (6 agosto, notte) — il verdetto regola per regola, approvato dal
+PM come base del pacchetto.** Ogni accessorio appartiene a uno di quattro livelli:
+componente, attacco, ramo, rete. Il motore ne conosce tre; **manca il «tratto comune del
+ramo idraulico»**, e le regole «per rete» ripiegano sul primo attacco di macchina — per
+questo vaso, riempimento e manometro pendono oggi dal ramo della prima macchina invece
+che dal ritorno generale. Da costruire: un ancoraggio dichiarabile «sul ritorno generale,
+a monte della prima ripartizione», deterministico.
+
+- **Corrette** (livello e molteplicita'): intercettazioni (per attacco); rubinetto al
+  confine; ritegno sanitario; miscelatrice sanitaria; manometro (una per rete); gruppo
+  di sicurezza sanitario; scarico del serbatoio (livello attacco giusto; resta C2
+  sull'attacco sbagliato del bollitore).
+- **Molteplicita' sbagliata**: separatore d'aria (per macchina → rete, e sotto i 35 kW
+  e' lo sfiato sul serbatoio); defangatore (per macchina e perfino sui circolatori →
+  uno, sul ritorno generale); termometro e sicurezza del generatore (per macchina →
+  dipendono dal regime: sotto i 35 kW niente termometro e sicurezza sul serbatoio).
+- **Livello giusto, platea o posizione da correggere**: filtro a Y (resta per
+  generatore, esce dai circolatori, solo primario); vaso, riempimento, manometro
+  (molteplicita' gia' giusta, posizione dal ramo della prima macchina al tratto comune).
+- **Livello «ramo» oggi senza regole**: il ritegno sui rami di generatori in parallelo
+  e' il caso d'uso; si scrive quando l'ancoraggio esiste, con la sua fonte.
+
+Percorso concordato col PM: riscontro sugli schemi Caleffi gia' scaricati → regole
+aggiornate come dato → collaudo separato → i cinque grafi rigenerati accanto agli
+attuali, per il confronto.
+
 ### C — Il collaudo indipendente dei tre pacchetti «da collaudare»
 
 Un attacco una tubazione (D-100), gli attacchi di servizio (D-101), l'assemblatore (G4):
