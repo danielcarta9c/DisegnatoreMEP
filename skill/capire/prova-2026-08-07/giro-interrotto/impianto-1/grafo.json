@@ -1,0 +1,249 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "due-pompe-di-calore-accumulo-combinato",
+    "client": "Nove C",
+    "project_name": "Due pompe di calore in parallelo con accumulo combinato",
+    "commission_code": "PROVA",
+    "revision": "00",
+    "issue_date": "2026-08-07"
+  },
+  "plant_regime": "up_to_35_kw",
+  "networks": [
+    {
+      "id": "primario",
+      "name": "Circuito primario dei generatori",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "secondario",
+      "name": "Circuito secondario di riscaldamento",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "acqua-fredda",
+      "name": "Acqua fredda di acquedotto",
+      "domain": "hydronic",
+      "medium": "cold_water"
+    },
+    {
+      "id": "acs",
+      "name": "Acqua calda sanitaria",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "pdc-1",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "potenza": "12 kW",
+        "tipo": "aria-acqua"
+      }
+    },
+    {
+      "id": "pdc-2",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "potenza": "12 kW",
+        "tipo": "aria-acqua"
+      }
+    },
+    {
+      "id": "volume-tecnico",
+      "definition_id": "buffer-combined",
+      "tag": null,
+      "properties": {
+        "modello": "ECOcombi",
+        "volume": "200 litri",
+        "configurazione": "a quattro tubi",
+        "produzione_sanitaria": "istantanea tramite serpentino interno"
+      }
+    },
+    {
+      "id": "rc-mandata-generatori",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "rip-ritorno-generatori",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "circolatore-secondario",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "radiatori",
+      "definition_id": "radiator",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "acquedotto",
+      "definition_id": "cold-water-inlet",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "utenze-sanitarie",
+      "definition_id": "dhw-draw-off",
+      "tag": null,
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "p1",
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "pdc-1", "port_id": "water_supply" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "p2",
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "pdc-2", "port_id": "water_supply" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori", "port_id": "c" },
+      "properties": {}
+    },
+    {
+      "id": "p3",
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "rc-mandata-generatori", "port_id": "b" },
+      "endpoint_b": { "component_id": "volume-tecnico", "port_id": "primary_in" },
+      "properties": {}
+    },
+    {
+      "id": "p4",
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "volume-tecnico", "port_id": "primary_out" },
+      "endpoint_b": { "component_id": "rip-ritorno-generatori", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "p5",
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "rip-ritorno-generatori", "port_id": "b" },
+      "endpoint_b": { "component_id": "pdc-1", "port_id": "water_return" },
+      "properties": {}
+    },
+    {
+      "id": "p6",
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "rip-ritorno-generatori", "port_id": "c" },
+      "endpoint_b": { "component_id": "pdc-2", "port_id": "water_return" },
+      "properties": {}
+    },
+    {
+      "id": "p7",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "volume-tecnico", "port_id": "secondary_out" },
+      "endpoint_b": { "component_id": "circolatore-secondario", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "p8",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "circolatore-secondario", "port_id": "b" },
+      "endpoint_b": { "component_id": "radiatori", "port_id": "in" },
+      "properties": {}
+    },
+    {
+      "id": "p9",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "radiatori", "port_id": "out" },
+      "endpoint_b": { "component_id": "volume-tecnico", "port_id": "secondary_in" },
+      "properties": {}
+    },
+    {
+      "id": "p10",
+      "network_id": "acqua-fredda",
+      "endpoint_a": { "component_id": "acquedotto", "port_id": "a" },
+      "endpoint_b": { "component_id": "volume-tecnico", "port_id": "cold_in" },
+      "properties": {}
+    },
+    {
+      "id": "p11",
+      "network_id": "acs",
+      "endpoint_a": { "component_id": "volume-tecnico", "port_id": "dhw_out" },
+      "endpoint_b": { "component_id": "utenze-sanitarie", "port_id": "a" },
+      "properties": {}
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a1",
+      "text": "Il testo dice che le due pompe di calore sono «installate in parallelo» ma non dice con che pezzo i due flussi si uniscono e si dividono (un collettore? un separatore?): si sono usati un raccordo a T sulla mandata e una ripartizione a T sul ritorno, che e' il modo minimo di scrivere il parallelo. Va bene, o c'e' un collettore/distributore da rappresentare?",
+      "status": "proposed",
+      "source_message_refs": ["testo del committente, frase 1: «due pompe di calore aria-acqua da 12 kW ciascuna, installate in parallelo»"]
+    },
+    {
+      "id": "a2",
+      "text": "«Gestite una come master e una come slave» e' logica di regolazione, non topologia: sul grafo si vedono le due macchine in parallelo, non chi comanda chi. Il testo inoltre non dice quale delle due sia la master, percio' il ruolo non e' stato attribuito ne' a pdc-1 ne' a pdc-2.",
+      "status": "proposed",
+      "source_message_refs": ["testo del committente, frase 1: «gestite una come master e una come slave»"]
+    },
+    {
+      "id": "a3",
+      "text": "Il testo non nomina un circolatore sul circuito primario fra le pompe di calore e il volume: si e' seguita la macchina di catalogo, che porta la circolazione a bordo, quindi sul primario non e' disegnata alcuna pompa a se'. E' cosi', o il primario ha circolatori esterni?",
+      "status": "proposed",
+      "source_message_refs": ["testo del committente, frase 2: «le due macchine alimentano un accumulo ECOcombi da 200 litri»"]
+    },
+    {
+      "id": "a4",
+      "text": "L'accumulo ECOcombi e' stato letto come un accumulo combinato: tiene in serbo acqua di riscaldamento (volume tecnico con quattro attacchi, primario mandata/ritorno e secondario mandata/ritorno) e produce l'acqua calda sanitaria in modo istantaneo con il serpentino interno, rappresentato dai due attacchi acqua fredda in ingresso e ACS in uscita. Il serpentino non e' disegnato come scambiatore separato perche' e' dentro la macchina. La lettura di «a quattro tubi» e' quella dei quattro attacchi idraulici del volume, non quella di una distribuzione caldo+freddo a quattro tubi: il testo descrive solo il riscaldamento.",
+      "status": "proposed",
+      "source_message_refs": ["testo del committente, frase 2: «volume tecnico a quattro tubi per il riscaldamento sia per la produzione istantanea di acqua calda sanitaria tramite serpentino interno»"]
+    },
+    {
+      "id": "a5",
+      "text": "Il testo dice «circuito secondario con circolatore dedicato» ma non dice su quale ramo sta il circolatore: si e' messo sulla mandata del secondario, che e' la posizione convenzionale di disegno. Se va sul ritorno, si sposta.",
+      "status": "proposed",
+      "source_message_refs": ["testo del committente, frase 3: «un circuito secondario con circolatore dedicato»"]
+    },
+    {
+      "id": "a6",
+      "text": "«L'impianto esistente a radiatori» e' plurale e non dice quanti sono: se ne e' disegnato uno solo, rappresentativo dell'insieme. Quanti radiatori sono davvero, e vanno rappresentati per zone o per collettori?",
+      "status": "proposed",
+      "source_message_refs": ["testo del committente, frase 3: «alimenta direttamente l'impianto esistente a radiatori»"]
+    },
+    {
+      "id": "a7",
+      "text": "Il circuito secondario e' stato chiuso: il testo dice che il circolatore alimenta i radiatori, e un circuito di riscaldamento che va ai radiatori torna al volume. Mandata e ritorno sono la stessa affermazione, il ritorno rientra sull'attacco secondario di ritorno del volume.",
+      "status": "proposed",
+      "source_message_refs": ["testo del committente, frase 3: «dal volume tecnico parte un circuito secondario»"]
+    },
+    {
+      "id": "a8",
+      "text": "Il testo esclude il ricircolo sanitario: non e' disegnato perche' non c'e', non perche' sia stato perso. Il circuito sanitario e' aperto, dall'acquedotto alle utenze.",
+      "status": "proposed",
+      "source_message_refs": ["testo del committente, frase 4: «Non e' previsto ricircolo sanitario»"]
+    },
+    {
+      "id": "a9",
+      "text": "Il testo prevede sul volume tecnico il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico: sono ferramenta di servizio (gruppo di riempimento e attacco di scarico) e non entrano in questo grafo di prima stesura. La nomina non e' persa: li aggiunge il pezzo che completa, che sa dove vanno; la voce di catalogo del volume ha gia' gli attacchi di servizio (sfiato, scarico, sede sonda) su cui appenderli.",
+      "status": "proposed",
+      "source_message_refs": ["testo del committente, frase 5: «Sul volume tecnico sono previsti anche il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico»"]
+    },
+    {
+      "id": "a10",
+      "text": "Il regime della centrale e' stato ricavato dalle potenze dette dal testo: 12 kW + 12 kW = 24 kW di generazione, sotto i 35 kW, quindi piccola centrale. Il testo non dice se i 12 kW sono resi o assorbiti: si sono sommati come stanno.",
+      "status": "proposed",
+      "source_message_refs": ["testo del committente, frase 1: «due pompe di calore aria-acqua da 12 kW ciascuna»"]
+    }
+  ],
+  "rule_applications": [],
+  "subsystems": [],
+  "sheets": []
+}
