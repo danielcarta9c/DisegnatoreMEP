@@ -103,9 +103,15 @@
       "properties": {}
     },
     {
-      "id": "collettore",
-      "definition_id": "zone-manifold",
-      "tag": "COL-01",
+      "id": "secondario-mandata-a",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "secondario-mandata-b",
+      "definition_id": "tee-split",
+      "tag": null,
       "properties": {}
     },
     {
@@ -133,7 +139,37 @@
       "properties": {}
     },
     {
-      "id": "ritorno-secondario",
+      "id": "miscelatrice-radiante",
+      "definition_id": "mixing-valve-3way",
+      "tag": "VM-01",
+      "properties": {}
+    },
+    {
+      "id": "circolatore-radiante",
+      "definition_id": "pump-circulator",
+      "tag": "CIR-03",
+      "properties": {}
+    },
+    {
+      "id": "pavimento-radiante",
+      "definition_id": "underfloor-panel",
+      "tag": "PAV-01",
+      "properties": {}
+    },
+    {
+      "id": "ritorno-radiante",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "secondario-ritorno-a",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "secondario-ritorno-b",
       "definition_id": "tee-junction",
       "tag": null,
       "properties": {}
@@ -366,8 +402,8 @@
         "port_id": "secondary_out"
       },
       "endpoint_b": {
-        "component_id": "collettore",
-        "port_id": "in"
+        "component_id": "secondario-mandata-a",
+        "port_id": "a"
       },
       "properties": {}
     },
@@ -375,8 +411,8 @@
       "id": "s2",
       "network_id": "secondario",
       "endpoint_a": {
-        "component_id": "collettore",
-        "port_id": "out_1"
+        "component_id": "secondario-mandata-a",
+        "port_id": "b"
       },
       "endpoint_b": {
         "component_id": "circolatore-uta",
@@ -405,7 +441,7 @@
         "port_id": "out"
       },
       "endpoint_b": {
-        "component_id": "ritorno-secondario",
+        "component_id": "secondario-ritorno-a",
         "port_id": "a"
       },
       "properties": {}
@@ -414,8 +450,21 @@
       "id": "s5",
       "network_id": "secondario",
       "endpoint_a": {
-        "component_id": "collettore",
-        "port_id": "out_2"
+        "component_id": "secondario-mandata-a",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "secondario-mandata-b",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s6",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "secondario-mandata-b",
+        "port_id": "b"
       },
       "endpoint_b": {
         "component_id": "circolatore-fancoil",
@@ -424,7 +473,7 @@
       "properties": {}
     },
     {
-      "id": "s6",
+      "id": "s7",
       "network_id": "secondario",
       "endpoint_a": {
         "component_id": "circolatore-fancoil",
@@ -437,23 +486,114 @@
       "properties": {}
     },
     {
-      "id": "s7",
+      "id": "s8",
       "network_id": "secondario",
       "endpoint_a": {
         "component_id": "ventilconvettori",
         "port_id": "out"
       },
       "endpoint_b": {
-        "component_id": "ritorno-secondario",
+        "component_id": "secondario-ritorno-a",
         "port_id": "c"
       },
       "properties": {}
     },
     {
-      "id": "s8",
+      "id": "s9",
       "network_id": "secondario",
       "endpoint_a": {
-        "component_id": "ritorno-secondario",
+        "component_id": "secondario-ritorno-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "secondario-ritorno-b",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s10",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "secondario-mandata-b",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "miscelatrice-radiante",
+        "port_id": "hot_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s11",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "miscelatrice-radiante",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "circolatore-radiante",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s12",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "circolatore-radiante",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pavimento-radiante",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s13",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "pavimento-radiante",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno-radiante",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s14",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "ritorno-radiante",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "miscelatrice-radiante",
+        "port_id": "cold_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s15",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "ritorno-radiante",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "secondario-ritorno-b",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "s16",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "secondario-ritorno-b",
         "port_id": "b"
       },
       "endpoint_b": {
@@ -557,16 +697,21 @@
   "assumptions": [
     {
       "id": "a1",
-      "text": "Il testo elenca **tre** circuiti secondari — batterie UTA, ventilconvettori e un circuito miscelato per il pavimento radiante. Il collettore disponibile ne serve due: il circuito miscelato non e' disegnato, ed e' una domanda per il progettista.",
+      "text": "Il testo dice che dal volume partono tre circuiti secondari e non nomina un collettore: si sono usate due ripartizioni in catena sulla mandata e due confluenze sul ritorno, come richiede la topologia a tre rami.",
       "status": "proposed"
     },
     {
       "id": "a2",
-      "text": "Il ritorno del ricircolo e' innestato sulla mandata sanitaria: il testo dice solo che il ricircolo e' collegato al bollitore.",
+      "text": "Il circuito radiante e' dichiarato miscelato: la miscelatrice a tre vie ricircola una parte del ritorno radiante sul proprio ingresso freddo. Il testo non specifica il dettaglio del gruppo di miscelazione, quindi questa chiusura e' dichiarata come assunzione.",
       "status": "proposed"
     },
     {
       "id": "a3",
+      "text": "Il ritorno del ricircolo e' innestato sulla mandata sanitaria: il testo dice solo che il ricircolo e' collegato al bollitore.",
+      "status": "proposed"
+    },
+    {
+      "id": "a4",
       "text": "La cascata rientra su tre ritorni distinti con due confluenze: il testo non descrive come le macchine rientrano.",
       "status": "proposed"
     }
@@ -610,12 +755,18 @@
       "id": "distribuzione",
       "name": "Circuiti secondari",
       "component_ids": [
-        "collettore",
+        "secondario-mandata-a",
+        "secondario-mandata-b",
         "circolatore-uta",
         "batteria-uta",
         "circolatore-fancoil",
         "ventilconvettori",
-        "ritorno-secondario"
+        "miscelatrice-radiante",
+        "circolatore-radiante",
+        "pavimento-radiante",
+        "ritorno-radiante",
+        "secondario-ritorno-a",
+        "secondario-ritorno-b"
       ],
       "network_ids": [
         "secondario"
