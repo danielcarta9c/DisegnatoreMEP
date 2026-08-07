@@ -97,6 +97,30 @@ KIT_COMUNE = {
 Saturo = tuple[ProjectModel, tuple[RuleProposal, ...], tuple[RuleGap, ...]]
 
 
+def _two_separate_rings() -> ProjectModel:
+    """Due generatori, ciascuno col proprio anello, sulla stessa rete.
+
+    E' il caso in cui il tratto comune non esiste **davvero**: nessuna
+    tubazione porta l'acqua di ritorno di tutti e due, e nessuna serve
+    entrambi. Da non confondere con l'ibrido, dove il ritorno generale c'e'
+    e la camminata lo raggiunge aprendosi sui rami."""
+    return project(
+        networks=[net("rete", "heating_water")],
+        components=[
+            comp("gen-a", "heat-pump-air-water"),
+            comp("term-a", "radiator"),
+            comp("gen-b", "heat-pump-air-water"),
+            comp("term-b", "radiator"),
+        ],
+        connections=[
+            pipe("ma", "rete", ("gen-a", "water_supply"), ("term-a", "in")),
+            pipe("ra", "rete", ("term-a", "out"), ("gen-a", "water_return")),
+            pipe("mb", "rete", ("gen-b", "water_supply"), ("term-b", "in")),
+            pipe("rb", "rete", ("term-b", "out"), ("gen-b", "water_return")),
+        ],
+    )
+
+
 @cache
 def saturo(name: str, regime: PlantRegime | None = None) -> Saturo:
     """Una saturazione per impianto e regime, calcolata una volta sola."""
@@ -375,29 +399,46 @@ def test_con_una_macchina_sola_la_posa_coincide_con_quella_di_sempre() -> None:
     assert validate_project(done, CAT).ok
 
 
-def test_dove_il_tratto_comune_non_esiste_esce_un_punto_aperto_che_lo_dice() -> None:
-    """Impianto 4, l'ibrido: il ritorno della caldaia raccoglie anche lo
-    scambiatore dopo la ripartizione, quindi nessuna tubazione porta tutta
-    l'acqua che torna. Le quattro regole del corredo devono dirlo — punto
-    aperto con la ragione giusta — e NON scegliere un ramo in silenzio."""
+def test_l_ibrido_ha_il_suo_ritorno_generale_e_il_corredo_ci_finisce() -> None:
+    """Impianto 4, l'ibrido — la correzione chiesta dal PM il 7 agosto.
+
+    Il ritorno della caldaia raccoglie anche il ramo del sanitario, ma il
+    ritorno generale c'e' lo stesso: e' il tratto fra il volume tecnico e la
+    ripartizione verso le due macchine, e ci passa tutta l'acqua che torna
+    dall'impianto. Prima la camminata si fermava sulla confluenza del ramo
+    sanitario e dichiarava quattro punti aperti su un impianto che il punto
+    lo aveva. Adesso la camminata **si apre sui rami**, e il corredo ci
+    finisce: una volta sola, sullo stesso attacco per tutte e quattro le
+    regole, e nessun punto aperto."""
     done, applied, gaps = saturo(PROVE[3])
+    assert not gaps, [(g.rule_id, g.reason.value) for g in gaps]
+    posed = {p.rule_id: p.anchor for p in applied if p.rule_id in KIT_COMUNE}
+    assert set(posed) == KIT_COMUNE
+    anchors = {(a.component_id, a.port_id) for a in posed.values()}
+    assert len(anchors) == 1, posed
+    # E' un attacco di una ripartizione, non di una macchina: il tratto che le
+    # serve tutte, a monte di dove il ritorno si divide.
+    (component_id, _), = anchors
+    assert "junction" in functions_of(done, component_id), component_id
+
+
+def test_dove_il_tratto_comune_non_esiste_davvero_esce_un_punto_aperto() -> None:
+    """Due generatori, due anelli separati sulla stessa rete: nessuna
+    tubazione porta tutta l'acqua che torna, e non c'e' nessun tratto che le
+    serva entrambe. Qui il corredo non si posa su un anello scelto in
+    silenzio — le quattro regole aprono un punto aperto con la ragione
+    giusta."""
+    done, applied, gaps = saturate(_two_separate_rings(), CAT, REG)
     open_points = {g.rule_id: g for g in gaps}
     assert set(open_points) == KIT_COMUNE
     for gap in open_points.values():
         assert gap.reason is GapReason.NO_COMMON_RUN, gap.rule_id
-        assert gap.network_id == "primario"
     assert not any(p.rule_id in KIT_COMUNE for p in applied)
     banned = {"expansion", "filling", "pressure_measurement", "sludge_separation"}
     for component in done.components:
-        touched = {
-            c.network_id
-            for c in done.connections
-            if component.id in (c.endpoint_a.component_id, c.endpoint_b.component_id)
-        }
-        if "primario" in touched:
-            assert not functions_of(done, component.id) & banned, (
-                f"{component.id}: il corredo e' stato posato su un ramo scelto in silenzio"
-            )
+        assert not functions_of(done, component.id) & banned, (
+            f"{component.id}: il corredo e' stato posato su un anello scelto in silenzio"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -731,9 +772,12 @@ def test_il_confronto_per_il_pm_dice_il_vero_sui_documenti() -> None:
             line for line in doc.splitlines() if re.match(r"^\| [A-Z]+\.[0-9]", line)
         ]
         assert len(rows) == expected, f"{name}: il documento non ha {expected} nodi"
-    assert "quattro punti aperti" in confronto
-    _, _, hybrid_gaps = saturo(PROVE[3])
-    assert len(hybrid_gaps) == 4
+    # La frase sui punti aperti dev'essere vera su tutti e cinque: dopo la
+    # correzione della camminata (7 agosto) nessuno ne ha piu'.
+    assert "Nessuno dei cinque ha punti aperti" in confronto
+    for name in PROVE:
+        _, _, found = saturo(name)
+        assert not found, (name, [(g.rule_id, g.reason.value) for g in found])
     assert "Nessuno dei cinque testi dichiara il regime" in confronto
     for name in PROVE:
         assert load(name).plant_regime is None, name

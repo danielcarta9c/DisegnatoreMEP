@@ -3,14 +3,14 @@
 > **Cosa c'è qui.** I tuoi cinque impianti, rigenerati con le regole nuove del regime
 > della centrale, messi a confronto con i grafi di ieri. Le versioni di ieri restano
 > archiviate nella storia del progetto: qui vedi che cosa è cambiato, impianto per
-> impianto, e le due cose che restano da decidere a te.
+> impianto.
 
 ---
 
 ## Perché sono cambiati
 
-Tre correzioni, tutte tue, tutte riscontrate sugli schemi Caleffi prima di scrivere le
-regole:
+Tre correzioni, tutte tue, tutte riscontrate sugli schemi dei costruttori prima di
+scrivere le regole:
 
 1. **Il regime della centrale.** Sotto i 35 kW niente separatore d'aria, niente
    termometro aggiunto, niente sicurezza per ogni macchina: sfogo aria e sicurezza
@@ -22,8 +22,8 @@ regole:
    in parallelo niente più doppioni. Il filtro a Y resta uno per generatore, sul suo
    ritorno, ed esce dai circolatori.
 3. **Lo scarico del bollitore.** Va da dove la riserva si riempie: l'ingresso
-   dell'acqua fredda. Prima finiva sull'uscita calda, ed era il difetto che il collaudo
-   aveva trovato.
+   dell'acqua fredda. Prima finiva sull'uscita calda, ed era un difetto trovato dal
+   controllo indipendente.
 
 ---
 
@@ -46,33 +46,29 @@ all'ingresso dell'acqua fredda.
 Stesse uscite del regime piccolo (separatore, termometro), sfogo e sicurezza sul volano
 in linea, e lo scarico del boiler sull'ingresso freddo.
 
-**4 — Ibrido pompa di calore e caldaia: da 68 a 41 pezzi, con quattro punti aperti.**
-È l'impianto che merita la tua attenzione: **il suo ritorno generale non esiste**. Il
-ritorno della caldaia raccoglie per conto suo anche lo scambiatore sanitario, dopo la
-ripartizione: nessuna tubazione porta tutta l'acqua che torna. Le regole non hanno
-scelto un ramo a caso — vaso, riempimento, manometro e defangatore sono **punti aperti
-scritti nel grafo**, e la posizione la decidi tu. Ogni macchina tiene il suo filtro a Y;
-sfogo e sicurezza stanno sul volano.
+**4 — Ibrido pompa di calore e caldaia: da 68 a 52 pezzi.**
+Il ritorno generale è il tratto fra il volume tecnico e il punto in cui il ritorno si
+divide verso le due macchine: lì stanno vaso, riempimento, manometro e l'unico
+defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul volano;
+escono i due separatori, i due termometri e una sicurezza. **Sul circuito sanitario non
+c'è filtro**, come è giusto in un impianto domestico.
 
 **5 — Cascata di tre pompe di calore: da 105 a 87 pezzi.**
 Il caso per cui la correzione esiste: prima c'erano cinque defangatori, tre separatori,
 tre termometri e tre sicurezze di riscaldamento (la quarta, quella sanitaria sul
 bollitore, resta); adesso un defangatore solo sul ritorno generale della cascata, un
-filtro a Y per macchina, sfogo e sicurezza sul volano. Lo scarico del
-bollitore sull'ingresso freddo.
+filtro a Y per macchina, sfogo e sicurezza sul volano. Lo scarico del bollitore
+sull'ingresso freddo.
+
+**Nessuno dei cinque ha punti aperti.** Ogni accessorio che le regole hanno chiesto ha
+trovato il pezzo e il posto.
 
 ---
 
-## Le due cose da decidere
+## L'unica cosa che decidi tu
 
 **Il regime, impianto per impianto.** I testi nominano le potenze ma nessuno dichiara
 il regime, e noi non lo calcoliamo: la taglia non la decide la skill. Senza
 dichiarazione vale il corredo minimo. Per la cascata da tre macchine — che di targa fa
 più di 35 kW — la dichiarazione spetta a te: se la dichiari da grande centrale, tornano
 sicurezze e termometri per macchina e il separatore d'aria sulla mandata generale.
-
-**Il filtro dello scambiatore nell'ibrido.** Con la platea «un filtro per generatore»
-lo scambiatore sanitario dell'impianto 4 ha perso il filtro che aveva. La tua prassi
-dice che dove c'è separazione netta la filtrazione del secondario è un'altra acqua e
-va fatta: se la vuoi, la scriviamo come regola con la sua fonte — è l'unica riga del
-riscontro rimasta senza uno schema che la mostri.

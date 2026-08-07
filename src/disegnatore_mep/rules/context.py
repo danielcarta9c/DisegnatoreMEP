@@ -252,39 +252,47 @@ class RuleContext:
     def run_from(
         self, connection_id: str, *, upstream: bool, network_id: str
     ) -> tuple[str, ...]:
-        """La strada che una tubazione percorre finche' resta una sola.
+        """Tutte le tubazioni da cui questa puo' essere alimentata, in ordine.
 
         Risalendo il fluido (`upstream`) si va verso chi lo manda; seguendolo
-        si va verso chi lo riceve. La strada attraversa raccordi e accessori
-        in linea, e si ferma dove il percorso non e' piu' uno: su una macchina,
-        dove piu' tubazioni convergono (risalendo) o dove una si sdoppia
-        (seguendo), o dove non c'e' piu' niente. E' la camminata con cui si
-        trova il tratto comune di una rete (D-106): cio' che tutte le
-        camminate condividono e' strada di tutti.
+        si va verso chi lo riceve. La camminata attraversa raccordi e accessori
+        in linea e **si apre sui rami**: dove due tubazioni confluiscono, si
+        risalgono tutte e due, perche' l'acqua di questo ritorno puo' venire
+        da entrambe. Si ferma su cio' che non e' in linea — una macchina, un
+        serbatoio — e dove non c'e' piu' niente.
+
+        L'ordine e' quello della scoperta, dal piu' vicino al piu' lontano: e'
+        cosi' che il tratto comune si sceglie a monte della **prima**
+        ripartizione e non piu' su. Fra rami pari si guarda l'identificativo
+        della tubazione, mai l'ordine del file.
+
+        **Perche' si apre sui rami.** Fermarsi alla prima confluenza faceva
+        sparire il ritorno generale di un impianto ibrido: risalendo dalla
+        caldaia si incontrava subito il punto in cui rientra il ramo del
+        sanitario, la camminata si fermava li', e il tratto che porta tutta
+        l'acqua di ritorno — quello fra il volume tecnico e la ripartizione
+        verso le macchine — non veniva mai raggiunto. Il corredo del circuito
+        diventava un punto aperto su un impianto che il punto lo aveva.
         """
         if connection_id not in self.pipe_ends:
             return ()
         chain = [connection_id]
         seen = {connection_id}
-        current = connection_id
-        while True:
+        frontier = [connection_id]
+        while frontier:
+            current = frontier.pop(0)
             leaves, enters = self.pipe_ends[current]
             component_id = (leaves if upstream else enters).component_id
             if component_id not in self.inline:
-                break
-            candidates = tuple(
-                item
-                for item in (self.incoming if upstream else self.outgoing).get(
-                    component_id, ()
-                )
-                if self.network_of_connection.get(item) == network_id
-                and item not in seen
-            )
-            if len(candidates) != 1:
-                break
-            current = candidates[0]
-            chain.append(current)
-            seen.add(current)
+                continue
+            for item in sorted(
+                (self.incoming if upstream else self.outgoing).get(component_id, ())
+            ):
+                if item in seen or self.network_of_connection.get(item) != network_id:
+                    continue
+                seen.add(item)
+                chain.append(item)
+                frontier.append(item)
         return tuple(chain)
 
     def service_port_for(self, component_id: str, function: str) -> str | None:
