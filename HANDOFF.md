@@ -207,27 +207,26 @@ nell'altro:
 
 - **Il riscontro di D-106 sugli schemi Caleffi** (Idraulica 61 + i cinque schemi
   applicativi), riga per riga con le citazioni, prima di scrivere qualunque regola.
-- **Il pacchetto E**: regime dichiarato (mai calcolato), tratto comune deterministico,
-  17 regole aggiornate come dato, bordo macchina e punto di riempimento nel catalogo.
-  Collaudato a contesto separato: respinto su quattro difetti veri, corretti lo stesso
-  giorno.
+- **Il pacchetto E**: regime ricavato dalle potenze dichiarate dal progettista (D-108),
+  tratto comune deterministico, 17 regole aggiornate come dato, bordo macchina e punto di
+  riempimento nel catalogo. Collaudato a contesto separato: respinto su quattro difetti
+  veri, corretti lo stesso giorno.
 - **C2 corretta**: il bollitore si svuota dall'ingresso freddo; la prova parcheggiata è
   tornata verde senza essere ammorbidita.
 - **I cinque grafi rigenerati e messi a confronto** per il PM
-  (`docs/prodotto/grafi-di-prova/CONFRONTO-2026-08-07.md`): da 59/58/55/68/105 pezzi a
-  45/54/48/41/87, con l'ibrido spiegato (nessun ritorno generale → quattro punti aperti).
+  (`docs/prodotto/grafi-di-prova/CONFRONTO-2026-08-07.md`); i successivi rilievi del PM
+  hanno poi corretto il ritorno generale dell'ibrido e il regime.
 - **Tre collaudi indipendenti**: indirizzo dei nodi APPROVATO (91 prove adottate);
-  pacchetto E+C2 RESPINTO e corretto (25 prove adottate); pezzo 1 RESPINTO (correzioni
-  in coda).
-- **Poi i rilievi del PM sul confronto**, e tre correzioni: la camminata del ritorno
-  generale **si apre sui rami** (l'ibrido il suo tratto comune ce l'aveva, e non lo
-  trovavamo: quattro punti aperti erano un difetto mio); il **regime si legge dalle
-  potenze** che lui ha dichiarato nei testi, e i cinque impianti lo portano scritto —
-  quattro sotto i 35 kW, la cascata sopra. Più il censimento delle **quattro cose che
-  l'interprete deve capire**, contate sulle condizioni delle diciassette regole, e le
-  **tredici correzioni alle sue istruzioni** — con tre prove nuove che inchiodano quel
-  che è verificabile (l'esempio carica, dichiara il regime coerente con la potenza che
-  scrive, e nessun esempio ricalca più una soluzione dei testi di prova).
+  pacchetto E+C2 RESPINTO e corretto (25 prove adottate); pezzo 1 RESPINTO.
+- **Poi i rilievi del PM sul confronto**, e le correzioni: la camminata del ritorno
+  generale **si apre sui rami**; il **regime si legge dalle potenze** che lui ha
+  dichiarato nei testi; le quattro cose che l'interprete deve capire sono state censite;
+  le **tredici correzioni alle istruzioni** sono state applicate.
+- **Il quinto impianto è stato riallineato al testo originale**: il testo dice tre
+  circuiti secondari e non nomina un collettore. La lettura manuale conserva quindi tutti
+  e tre i circuiti e usa due ripartizioni sulla mandata e due confluenze sul ritorno,
+  secondo la regola generale dei raccordi a N vie. La vecchia domanda «il collettore ne
+  serve due» era un difetto della fixture, non una decisione del progettista.
 
 ---
 
@@ -243,7 +242,6 @@ nell'altro:
    ricollaudata.
 2. **La traduzione in regole** delle posizioni §14-18 rimaste (bilanciamento,
    disconnettore, contabilizzatore), dentro il confine di D-104.
-3. **Le tre domande al PM** (§9): portargliele e registrare le risposte.
 
 **Non toccare il disegno.** La composizione, l'instradamento e il foglio dei simboli sono
 pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
@@ -271,10 +269,10 @@ pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
   devono crearsi la propria `.venv` con `setup-env.sh`.
 - **`air_release` è lo sfogo, `air_separation` il separatore**: due mestieri, due pezzi.
   Il braccio `vent` dei serbatoi serve `air_release`.
-- **La prova in camera pulita del pezzo 1 non si fa da contaminati**, e da oggi **le
-  consegne degli agenti si conservano agli atti**: kit e divieti in
-  `skill/capire/CONSEGNA.md`. Gli esempi delle istruzioni contengono ancora le soluzioni
-  dei testi di prova: finché non si correggono, nessuna prova su quei testi vale.
+- **La prova in camera pulita del pezzo 1 non si fa da contaminati**, e le **consegne degli
+  agenti si conservano agli atti**: kit e divieti in `skill/capire/CONSEGNA.md`. Gli
+  esempi delle istruzioni sono stati sostituiti con casi estranei ai cinque testi di
+  prova; dopo ogni modifica alle istruzioni la prova va rifatta da capo.
 - **Due osservazioni non bloccanti dei collaudi da chiudere al prossimo passaggio sui
   file**: l'ordine interno di `run_pipes` nella lettura delle linee segue il file (nessun
   consumatore lo usa: ordinare o documentare); il ramo silenzioso della camminata del
@@ -284,26 +282,19 @@ pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
 
 ## 9. Domande aperte per il PM
 
-**Una sola, e non è nuova.** Il quinto impianto: il testo chiede tre circuiti secondari
-e il collettore ne serve due. Le due letture — collettore assunto, o ripartizioni a T
-con la domanda dichiarata — sono ancora sul suo tavolo.
+**Nessuna sul quinto impianto.** Il testo dichiara tre circuiti secondari; il fatto che la
+vecchia voce `zone-manifold` avesse due sole uscite era un limite della fixture, non una
+scelta progettuale. Poiché il testo non nomina un collettore, la lettura usa i raccordi a
+N vie e conserva tutti e tre i circuiti.
 
-Le altre due che gli erano state portate il 7 agosto non erano sue: il corredo
-dell'ibrido era un difetto mio (corretto), e la filtrazione del sanitario era una
-domanda retorica letta come un ordine, che stava per diventare una regola sbagliata
-(ritirata prima di scriverla, D-107).
+Restano domande per il PM solo quando valgono i criteri di `skill/capire/COSA_DECIDE.md`:
+il testo tace, le alternative sono entrambe corrette e la scelta cambia il disegno.
 
 ---
 
 ## Ultimo aggiornamento
 
-`2026-08-07` — Claude — eseguito il pacchetto E (D-106) col riscontro sulle fonti prima
-delle regole; corretta C2; tre collaudi indipendenti registrati (D-105 approvato;
-pacchetto E respinto e corretto lo stesso giorno; pezzo 1 respinto, correzioni in coda);
-i cinque grafi rigenerati e messi a confronto per il PM. Poi, sui rilievi del PM: la
-camminata del ritorno generale si apre sui rami (l'ibrido aveva il suo tratto comune e
-non lo trovavamo), il regime si legge dalle potenze dichiarate (D-108) e i cinque
-impianti lo portano scritto, e le quattro cose che l'interprete deve capire sono state
-contate sulle condizioni delle diciassette regole. Due regole di metodo registrate,
-D-107 e D-108, che sono le due facce dello stesso errore. Suite 844 verdi, ruff e mypy
-puliti.
+`2026-08-07` — corretto il quinto impianto: tutti e tre i circuiti secondari restano nella
+lettura, senza assumere un collettore a due uscite; riallineati `PROJECT_STATE` e questo
+handoff a D-108 e rimossa la falsa domanda al PM. Le tredici correzioni di «Capire» restano
+da verificare con una nuova prova in camera pulita e successivo collaudo indipendente.
