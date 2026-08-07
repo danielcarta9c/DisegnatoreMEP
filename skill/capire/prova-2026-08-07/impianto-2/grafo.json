@@ -18,19 +18,19 @@
     },
     {
       "id": "secondario",
-      "name": "Circuito secondario di climatizzazione",
+      "name": "Circuito secondario dal volume tecnico ai fan-coil",
       "domain": "hydronic",
       "medium": "heating_water"
     },
     {
       "id": "acqua-fredda",
-      "name": "Acqua fredda sanitaria",
+      "name": "Acqua fredda sanitaria di alimentazione al bollitore",
       "domain": "hydronic",
       "medium": "cold_water"
     },
     {
       "id": "acs",
-      "name": "Acqua calda sanitaria",
+      "name": "Acqua calda sanitaria alle utenze",
       "domain": "hydronic",
       "medium": "domestic_hot_water"
     }
@@ -54,7 +54,7 @@
       }
     },
     {
-      "id": "volano",
+      "id": "volume-tecnico",
       "definition_id": "buffer-four-port",
       "tag": null,
       "properties": {
@@ -74,7 +74,7 @@
       "tag": null,
       "properties": {
         "tipo": "idronico",
-        "impiego": "riscaldamento e raffrescamento"
+        "impiego": "sia in riscaldamento sia in raffrescamento"
       }
     },
     {
@@ -86,7 +86,7 @@
       }
     },
     {
-      "id": "rc-ritorni-primario",
+      "id": "raccordo-ritorni",
       "definition_id": "tee-junction",
       "tag": null,
       "properties": {}
@@ -106,77 +106,77 @@
   ],
   "connections": [
     {
-      "id": "p1",
+      "id": "t-pdc-valvola",
       "network_id": "primario",
       "endpoint_a": { "component_id": "pdc", "port_id": "water_supply" },
       "endpoint_b": { "component_id": "valvola-deviatrice", "port_id": "in" },
       "properties": {}
     },
     {
-      "id": "p2",
+      "id": "t-valvola-volume",
       "network_id": "primario",
       "endpoint_a": { "component_id": "valvola-deviatrice", "port_id": "out_a" },
-      "endpoint_b": { "component_id": "volano", "port_id": "primary_in" },
+      "endpoint_b": { "component_id": "volume-tecnico", "port_id": "primary_in" },
       "properties": {}
     },
     {
-      "id": "p3",
+      "id": "t-valvola-bollitore",
       "network_id": "primario",
       "endpoint_a": { "component_id": "valvola-deviatrice", "port_id": "out_b" },
       "endpoint_b": { "component_id": "bollitore", "port_id": "coil_in" },
       "properties": {}
     },
     {
-      "id": "p4",
+      "id": "t-volume-raccordo",
       "network_id": "primario",
-      "endpoint_a": { "component_id": "volano", "port_id": "primary_out" },
-      "endpoint_b": { "component_id": "rc-ritorni-primario", "port_id": "a" },
+      "endpoint_a": { "component_id": "volume-tecnico", "port_id": "primary_out" },
+      "endpoint_b": { "component_id": "raccordo-ritorni", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "p5",
+      "id": "t-bollitore-raccordo",
       "network_id": "primario",
       "endpoint_a": { "component_id": "bollitore", "port_id": "coil_out" },
-      "endpoint_b": { "component_id": "rc-ritorni-primario", "port_id": "c" },
+      "endpoint_b": { "component_id": "raccordo-ritorni", "port_id": "c" },
       "properties": {}
     },
     {
-      "id": "p6",
+      "id": "t-raccordo-pdc",
       "network_id": "primario",
-      "endpoint_a": { "component_id": "rc-ritorni-primario", "port_id": "b" },
+      "endpoint_a": { "component_id": "raccordo-ritorni", "port_id": "b" },
       "endpoint_b": { "component_id": "pdc", "port_id": "water_return" },
       "properties": {}
     },
     {
-      "id": "s1",
+      "id": "t-volume-circolatore",
       "network_id": "secondario",
-      "endpoint_a": { "component_id": "volano", "port_id": "secondary_out" },
+      "endpoint_a": { "component_id": "volume-tecnico", "port_id": "secondary_out" },
       "endpoint_b": { "component_id": "circolatore-secondario", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "s2",
+      "id": "t-circolatore-fancoil",
       "network_id": "secondario",
       "endpoint_a": { "component_id": "circolatore-secondario", "port_id": "b" },
       "endpoint_b": { "component_id": "fan-coil", "port_id": "in" },
       "properties": {}
     },
     {
-      "id": "s3",
+      "id": "t-fancoil-volume",
       "network_id": "secondario",
       "endpoint_a": { "component_id": "fan-coil", "port_id": "out" },
-      "endpoint_b": { "component_id": "volano", "port_id": "secondary_in" },
+      "endpoint_b": { "component_id": "volume-tecnico", "port_id": "secondary_in" },
       "properties": {}
     },
     {
-      "id": "f1",
+      "id": "t-acquedotto-bollitore",
       "network_id": "acqua-fredda",
       "endpoint_a": { "component_id": "acquedotto", "port_id": "a" },
       "endpoint_b": { "component_id": "bollitore", "port_id": "cold_in" },
       "properties": {}
     },
     {
-      "id": "c1",
+      "id": "t-bollitore-utenze",
       "network_id": "acs",
       "endpoint_a": { "component_id": "bollitore", "port_id": "dhw_out" },
       "endpoint_b": { "component_id": "utenze-sanitarie", "port_id": "a" },
@@ -186,56 +186,56 @@
   "assumptions": [
     {
       "id": "a1",
-      "text": "Il testo non nomina un circolatore sul circuito primario: si e' seguita la macchina di catalogo, che porta la circolazione a bordo della pompa di calore. E' cosi', oppure il primario ha un circolatore esterno da disegnare?",
+      "text": "La pompa di calore e' reversibile e i fan-coil sono usati anche in raffrescamento. La tabella dei fluidi non ha un fluido per il raffrescamento: il circuito primario e il circuito secondario sono percio' dichiarati con acqua di riscaldamento, ed e' negli stessi tubi che d'estate scorre l'acqua refrigerata. Va bene rappresentarlo cosi'?",
+      "status": "proposed",
+      "source_message_refs": [
+        "pompa di calore aria-acqua reversibile da 15 kW",
+        "fan-coil idronici utilizzati sia in riscaldamento sia in raffrescamento"
+      ]
+    },
+    {
+      "id": "a2",
+      "text": "Il testo non dice se sul circuito primario ci sia un circolatore: si e' seguita la voce di catalogo scelta per la pompa di calore, che dichiara il circolatore a bordo macchina. Nessun circolatore primario e' quindi disegnato come pezzo a se'. E' cosi'?",
       "status": "proposed",
       "source_message_refs": [
         "L'impianto e' servito da una pompa di calore aria-acqua reversibile da 15 kW."
       ]
     },
     {
-      "id": "a2",
-      "text": "Il testo dice che il circuito secondario ha un circolatore dedicato, ma non dice su quale ramo sta: si e' messo sulla mandata del secondario, subito a valle del volume tecnico, che e' la posizione convenzionale di disegno. Va bene li'?",
-      "status": "proposed",
-      "source_message_refs": [
-        "Dal volume parte un circuito secondario con circolatore dedicato che alimenta fan-coil idronici."
-      ]
-    },
-    {
       "id": "a3",
-      "text": "Il testo dice «fan-coil» al plurale senza dirne il numero: se n'e' disegnato uno solo, rappresentativo dell'insieme. Quanti sono davvero, e vanno disegnati singolarmente?",
+      "text": "Il testo dice «circuito secondario con circolatore dedicato» ma non su quale ramo si trovi: il circolatore e' stato messo sulla mandata del secondario, fra l'uscita secondaria del volume tecnico e i fan-coil. E' la posizione convenzionale, non un dato del testo: confermare o spostare sul ritorno.",
       "status": "proposed",
       "source_message_refs": [
-        "... che alimenta fan-coil idronici utilizzati sia in riscaldamento sia in raffrescamento."
+        "Dal volume parte un circuito secondario con circolatore dedicato"
       ]
     },
     {
       "id": "a4",
-      "text": "Il ritorno dal volume tecnico e il ritorno dal serpentino del bollitore rientrano tutti e due sull'unico attacco di ritorno della pompa di calore. Il testo non dice con che pezzo si uniscono: si e' messo un raccordo a T di confluenza subito prima dell'attacco. Se in centrale la confluenza avviene su un collettore o su un altro pezzo, va detto.",
+      "text": "Il testo dice «fan-coil idronici» al plurale senza dirne il numero: se ne e' disegnato uno solo, rappresentativo dell'insieme. Quanti sono davvero, e come si attestano sul circuito secondario (in parallelo su un collettore, su derivazioni consecutive)?",
       "status": "proposed",
       "source_message_refs": [
-        "Sulla mandata e' prevista una valvola a tre vie che devia il flusso alternativamente verso il circuito di climatizzazione oppure verso il bollitore per la produzione di ACS."
+        "alimenta fan-coil idronici utilizzati sia in riscaldamento sia in raffrescamento"
       ]
     },
     {
       "id": "a5",
-      "text": "La pompa di calore e' reversibile e i fan-coil lavorano sia in riscaldamento sia in raffrescamento: d'estate negli stessi tubi corre acqua refrigerata. La tabella dei fluidi non ha un fluido per il raffrescamento, quindi il circuito primario e il circuito secondario sono dichiarati «acqua di riscaldamento» e portano anche il raffrescamento: e' un solo circuito, non due.",
+      "text": "Il testo non dice con che pezzo il ritorno del circuito di climatizzazione e il ritorno del serpentino del bollitore si riuniscono prima di rientrare nella pompa di calore: si e' assunto un raccordo a T di confluenza, perche' un attacco porta una tubazione sola. Se in centrale c'e' un collettore o un altro pezzo, va indicato.",
       "status": "proposed",
       "source_message_refs": [
-        "... una pompa di calore aria-acqua reversibile da 15 kW.",
-        "... fan-coil idronici utilizzati sia in riscaldamento sia in raffrescamento."
+        "una valvola a tre vie che devia il flusso alternativamente verso il circuito di climatizzazione oppure verso il bollitore"
       ]
     },
     {
       "id": "a6",
-      "text": "La priorita' alla produzione sanitaria e' una logica di regolazione, non topologia: sul grafo si vede la valvola deviatrice a tre vie che manda il flusso o alla climatizzazione o al bollitore, non la priorita' che decide quando.",
+      "text": "La priorita' alla produzione sanitaria e' una logica di regolazione, non topologia: sul grafo si vede la valvola deviatrice a tre vie sulla mandata, non la priorita'. Il testo la prevede ed e' annotata qui perche' non vada persa.",
       "status": "proposed",
       "source_message_refs": [
-        "... con priorita' alla produzione sanitaria."
+        "con priorita' alla produzione sanitaria"
       ]
     },
     {
       "id": "a7",
-      "text": "Il testo prevede sul volume tecnico il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico: sono ferramenta di servizio (gruppo di riempimento e attacco di scarico) e li aggiunge il pezzo della catena che completa il grafo, non questa prima stesura. Annotati qui perche' la nomina non vada persa.",
+      "text": "Il testo prevede sul volume tecnico il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico: sono accessori di servizio (gruppo di riempimento e attacco di scarico) e li aggiunge il pezzo successivo della catena, non questo grafo. La nomina e' registrata qui perche' non vada persa. Il volume tecnico scelto a catalogo ha gli attacchi di servizio per riceverli.",
       "status": "proposed",
       "source_message_refs": [
         "Sul volume tecnico sono previsti anche il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico."
@@ -243,7 +243,7 @@
     },
     {
       "id": "a8",
-      "text": "Il testo prevede una valvola miscelatrice sull'uscita sanitaria: la miscelatrice sanitaria e' ferramenta di servizio e non entra nel grafo di prima stesura, la aggiunge il pezzo che completa. L'acqua calda sanitaria e' quindi disegnata dal bollitore direttamente alle utenze. Annotata qui perche' la nomina non vada persa.",
+      "text": "Il testo prevede una valvola miscelatrice sull'uscita sanitaria: la miscelatrice sanitaria e' ferramenta di servizio e la aggiunge il pezzo delle regole, non questo grafo. La nomina e' registrata qui perche' non vada persa. Se invece si intendeva una miscelatrice di circuito a tre vie su un circuito di riscaldamento, va detto: quella sarebbe topologia e andrebbe disegnata.",
       "status": "proposed",
       "source_message_refs": [
         "Sull'uscita sanitaria e' prevista una valvola miscelatrice."
@@ -259,7 +259,7 @@
     },
     {
       "id": "a10",
-      "text": "Il testo dice che l'acqua fredda sanitaria entra nella parte bassa del bollitore e che l'ACS viene prelevata dalla parte alta, ma non nomina ne' l'allacciamento di acquedotto ne' le utenze: il circuito sanitario e' aperto e deve avere un inizio e una fine, quindi si sono disegnate le due voci di confine del catalogo. Se l'acqua fredda arriva da un punto gia' rappresentato altrove, va detto.",
+      "text": "Il testo dice che l'acqua fredda sanitaria entra nel bollitore e che l'ACS viene prelevata, senza nominare l'acquedotto e le utenze: il circuito sanitario e' aperto, e per chiuderlo si sono messe le due voci di confine del catalogo, l'alimentazione di acqua fredda a monte e le utenze sanitarie a valle.",
       "status": "proposed",
       "source_message_refs": [
         "L'acqua fredda sanitaria entra nella parte bassa del bollitore e l'ACS viene prelevata dalla parte alta."
@@ -267,11 +267,19 @@
     },
     {
       "id": "a11",
-      "text": "Il testo distingue «il circuito di climatizzazione» dal ramo che va al bollitore, ma i due rami condividono la mandata e il ritorno della pompa di calore: sono stati tenuti in una rete sola, il primario. Il circuito che parte dal volume tecnico verso i fan-coil e' invece una rete a se', il secondario, come il testo lo distingue. E' una scelta di raggruppamento, non cambia ne' i pezzi ne' i tubi.",
+      "text": "Il testo colloca l'ingresso freddo in basso e il prelievo dell'ACS in alto: il bollitore di catalogo ha un attacco di ingresso freddo e uno di uscita sanitaria e i due collegamenti li rappresentano, ma il grafo non porta la quota degli attacchi. E' un dato di montaggio che qui non si vede.",
       "status": "proposed",
       "source_message_refs": [
-        "Il circuito di climatizzazione comprende un volume tecnico da 100 litri configurato a quattro tubi.",
-        "Dal volume parte un circuito secondario con circolatore dedicato."
+        "L'acqua fredda sanitaria entra nella parte bassa del bollitore e l'ACS viene prelevata dalla parte alta."
+      ]
+    },
+    {
+      "id": "a12",
+      "text": "Il testo distingue «il circuito di climatizzazione» dal ramo che va al bollitore, ma i due rami nascono entrambi dalla mandata della pompa di calore e rientrano sullo stesso ritorno: sono percio' rappresentati come due rami di una sola rete primaria, secondo il criterio che una rete parte dalla macchina che la alimenta. Il circuito secondario che parte dal volume tecnico e' invece una rete a se', perche' il volume separa idraulicamente.",
+      "status": "proposed",
+      "source_message_refs": [
+        "devia il flusso alternativamente verso il circuito di climatizzazione oppure verso il bollitore",
+        "Dal volume parte un circuito secondario"
       ]
     }
   ],

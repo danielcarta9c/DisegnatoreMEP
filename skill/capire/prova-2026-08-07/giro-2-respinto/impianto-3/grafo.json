@@ -1,0 +1,228 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "pompa-di-calore-diretta-su-pavimento-radiante",
+    "client": "Nove C",
+    "project_name": "Pompa di calore diretta su pavimento radiante",
+    "commission_code": "PROVA",
+    "revision": "00",
+    "issue_date": "2026-08-07"
+  },
+  "plant_regime": "up_to_35_kw",
+  "networks": [
+    {
+      "id": "riscaldamento",
+      "name": "Circuito di riscaldamento a pavimento radiante",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "acqua-fredda",
+      "name": "Alimentazione di acqua fredda al boiler",
+      "domain": "hydronic",
+      "medium": "cold_water"
+    },
+    {
+      "id": "acqua-calda-sanitaria",
+      "name": "Acqua calda sanitaria alle utenze",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "pdc",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "potenza": "8 kW",
+        "tipo": "aria-acqua"
+      }
+    },
+    {
+      "id": "collettore-radiante",
+      "definition_id": "zone-manifold",
+      "tag": null,
+      "properties": {
+        "regolazione": "di zona"
+      }
+    },
+    {
+      "id": "circuito-radiante-1",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "tipo": "pavimento radiante a bassa temperatura"
+      }
+    },
+    {
+      "id": "circuito-radiante-2",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "tipo": "pavimento radiante a bassa temperatura"
+      }
+    },
+    {
+      "id": "rc-ritorno-radiante",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "volano",
+      "definition_id": "buffer-two-port",
+      "tag": null,
+      "properties": {
+        "volume": "50 litri",
+        "configurazione": "a due tubi, montato in serie",
+        "funzione": "aumento del contenuto d'acqua e stabilizzazione del funzionamento della pompa di calore"
+      }
+    },
+    {
+      "id": "boiler-acs",
+      "definition_id": "dhw-heat-pump",
+      "tag": null,
+      "properties": {
+        "volume": "200 litri",
+        "tipo": "boiler in pompa di calore dedicato"
+      }
+    },
+    {
+      "id": "acquedotto",
+      "definition_id": "cold-water-inlet",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "utenze-acs",
+      "definition_id": "dhw-draw-off",
+      "tag": null,
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "t1",
+      "network_id": "riscaldamento",
+      "endpoint_a": { "component_id": "pdc", "port_id": "water_supply" },
+      "endpoint_b": { "component_id": "collettore-radiante", "port_id": "in" },
+      "properties": {}
+    },
+    {
+      "id": "t2",
+      "network_id": "riscaldamento",
+      "endpoint_a": { "component_id": "collettore-radiante", "port_id": "out_1" },
+      "endpoint_b": { "component_id": "circuito-radiante-1", "port_id": "in" },
+      "properties": {}
+    },
+    {
+      "id": "t3",
+      "network_id": "riscaldamento",
+      "endpoint_a": { "component_id": "collettore-radiante", "port_id": "out_2" },
+      "endpoint_b": { "component_id": "circuito-radiante-2", "port_id": "in" },
+      "properties": {}
+    },
+    {
+      "id": "t4",
+      "network_id": "riscaldamento",
+      "endpoint_a": { "component_id": "circuito-radiante-1", "port_id": "out" },
+      "endpoint_b": { "component_id": "rc-ritorno-radiante", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "t5",
+      "network_id": "riscaldamento",
+      "endpoint_a": { "component_id": "circuito-radiante-2", "port_id": "out" },
+      "endpoint_b": { "component_id": "rc-ritorno-radiante", "port_id": "c" },
+      "properties": {}
+    },
+    {
+      "id": "t6",
+      "network_id": "riscaldamento",
+      "endpoint_a": { "component_id": "rc-ritorno-radiante", "port_id": "b" },
+      "endpoint_b": { "component_id": "volano", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "t7",
+      "network_id": "riscaldamento",
+      "endpoint_a": { "component_id": "volano", "port_id": "b" },
+      "endpoint_b": { "component_id": "pdc", "port_id": "water_return" },
+      "properties": {}
+    },
+    {
+      "id": "t8",
+      "network_id": "acqua-fredda",
+      "endpoint_a": { "component_id": "acquedotto", "port_id": "a" },
+      "endpoint_b": { "component_id": "boiler-acs", "port_id": "cold_in" },
+      "properties": {}
+    },
+    {
+      "id": "t9",
+      "network_id": "acqua-calda-sanitaria",
+      "endpoint_a": { "component_id": "boiler-acs", "port_id": "dhw_out" },
+      "endpoint_b": { "component_id": "utenze-acs", "port_id": "a" },
+      "properties": {}
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a1",
+      "text": "Quanti sono i circuiti ambiente? Il testo dice che il collettore «alimenta piu' circuiti ambiente» senza darne il numero. La voce di catalogo del collettore ha due uscite, entrambe obbligatorie: si sono disegnati due circuiti radianti rappresentativi, uno per uscita. Se i circuiti sono tre o piu', il collettore va rappresentato diversamente e il numero va detto.",
+      "status": "proposed",
+      "source_message_refs": ["Il collettore del pavimento radiante alimenta piu' circuiti ambiente con regolazione di zona."]
+    },
+    {
+      "id": "a2",
+      "text": "Come si raccolgono i ritorni dei circuiti ambiente? Il collettore di catalogo dichiara solo le uscite di mandata e non ha attacchi per i ritorni; il testo non dice con che pezzo i ritorni si riuniscono prima del volume tecnico. Si e' assunta una confluenza a T. Se in centrale c'e' un collettore di ritorno, va detto: a catalogo non c'e' una voce che lo rappresenti.",
+      "status": "proposed",
+      "source_message_refs": ["Sul ritorno dell'impianto radiante e' installato un volume tecnico da 50 litri a due tubi, montato in serie"]
+    },
+    {
+      "id": "a3",
+      "text": "Il circolatore non e' disegnato come pezzo a se': il testo dice che la circolazione e' affidata al circolatore integrato nella pompa di calore, e la macchina di catalogo scelta lo porta a bordo. Nel grafo non compare nessun circolatore, ed e' voluto.",
+      "status": "proposed",
+      "source_message_refs": ["la circolazione e' affidata al circolatore integrato nella pompa di calore"]
+    },
+    {
+      "id": "a4",
+      "text": "Il separatore idraulico e' escluso dal testo: non e' disegnato perche' non c'e', non perche' sia stato perso. La mandata della pompa di calore arriva direttamente al collettore del pavimento radiante, come dice il testo («alimenta direttamente»).",
+      "status": "proposed",
+      "source_message_refs": ["Non e' previsto un separatore idraulico"]
+    },
+    {
+      "id": "a5",
+      "text": "Sul volume tecnico il testo prevede il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico: sono ferramenta di servizio (gruppo di riempimento e attacco di scarico) e li aggiunge il pezzo della catena che completa il grafo, non questa prima stesura. La nomina e' scritta qui perche' non vada persa: il volume tecnico ha gia' a catalogo gli attacchi di servizio a cui appenderli.",
+      "status": "proposed",
+      "source_message_refs": ["Sul volume tecnico sono previsti il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico."]
+    },
+    {
+      "id": "a6",
+      "text": "La «regolazione di zona» dei circuiti ambiente e' una logica di regolazione, non topologia: nel grafo non produce ne' nodi ne' tubi. Il testo non nomina valvole di zona: non ne e' stata disegnata nessuna. Se sulle partenze del collettore ci sono organi di regolazione da rappresentare, vanno detti.",
+      "status": "proposed",
+      "source_message_refs": ["Il collettore del pavimento radiante alimenta piu' circuiti ambiente con regolazione di zona."]
+    },
+    {
+      "id": "a7",
+      "text": "Il boiler in pompa di calore produce l'ACS ed e' dichiarato non collegato idraulicamente all'impianto di riscaldamento: nel grafo e' un circuito aperto a se', senza nessun tubo verso il circuito radiante. Il testo pero' non nomina ne' l'allacciamento dell'acqua fredda ne' le utenze sanitarie: si sono aggiunti i due confini per chiudere gli attacchi obbligatori del boiler (acqua fredda in ingresso, acqua calda sanitaria in uscita). E' cosi'?",
+      "status": "proposed",
+      "source_message_refs": ["La produzione di ACS e' completamente separata ed e' realizzata con un boiler in pompa di calore dedicato da 200 litri, non collegato idraulicamente all'impianto di riscaldamento."]
+    },
+    {
+      "id": "a8",
+      "text": "Il regime della centrale e' ricavato dall'unica potenza che il testo da': gli 8 kW della pompa di calore aria-acqua. 8 kW <= 35 kW, quindi «up_to_35_kw». Del boiler in pompa di calore il testo da' solo il volume, 200 litri, e non la potenza: per lui non e' stato sommato niente. Anche volendo sommarla, un boiler in pompa di calore domestico non porta la somma vicino ai 35 kW, ma il dato resta dell'ingegnere: se la potenza c'e', va detta.",
+      "status": "proposed",
+      "source_message_refs": ["una pompa di calore aria-acqua da 8 kW", "un boiler in pompa di calore dedicato da 200 litri"]
+    },
+    {
+      "id": "a9",
+      "text": "Il testo non dice niente del ricircolo sanitario ne' di come le utenze sono servite a valle del boiler: nel grafo l'acqua calda sanitaria esce dal boiler e arriva al confine delle utenze, e basta. Se c'e' un anello di ricircolo, va detto: il boiler in pompa di calore, a catalogo, l'attacco per riceverlo non ce l'ha.",
+      "status": "proposed",
+      "source_message_refs": ["La produzione di ACS e' completamente separata"]
+    }
+  ],
+  "rule_applications": [],
+  "subsystems": [],
+  "sheets": []
+}

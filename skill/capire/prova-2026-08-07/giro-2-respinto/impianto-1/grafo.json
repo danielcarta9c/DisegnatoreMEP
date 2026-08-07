@@ -1,0 +1,271 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "due-pompe-di-calore-in-parallelo-con-accumulo-combinato",
+    "client": "Nove C",
+    "project_name": "Due pompe di calore in parallelo con accumulo combinato",
+    "commission_code": "PROVA",
+    "revision": "00",
+    "issue_date": "2026-08-07"
+  },
+  "plant_regime": "up_to_35_kw",
+  "networks": [
+    {
+      "id": "primario-generatori",
+      "name": "Circuito primario dei generatori",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "secondario-radiatori",
+      "name": "Circuito secondario dei radiatori",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "acqua-fredda",
+      "name": "Acqua fredda di acquedotto",
+      "domain": "hydronic",
+      "medium": "cold_water"
+    },
+    {
+      "id": "acs",
+      "name": "Acqua calda sanitaria",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "pdc-1",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "potenza": "12 kW",
+        "tipo": "aria-acqua"
+      }
+    },
+    {
+      "id": "pdc-2",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "potenza": "12 kW",
+        "tipo": "aria-acqua"
+      }
+    },
+    {
+      "id": "rc-mandata-generatori",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "rc-ritorno-generatori",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "volano",
+      "definition_id": "buffer-combined",
+      "tag": null,
+      "properties": {
+        "modello": "ECOcombi",
+        "volume": "200 litri",
+        "configurazione": "a quattro tubi",
+        "produzione_sanitaria": "istantanea tramite serpentino interno"
+      }
+    },
+    {
+      "id": "circolatore-secondario",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "radiatori",
+      "definition_id": "radiator",
+      "tag": null,
+      "properties": {
+        "stato": "esistente"
+      }
+    },
+    {
+      "id": "acquedotto",
+      "definition_id": "cold-water-inlet",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "utenze-sanitarie",
+      "definition_id": "dhw-draw-off",
+      "tag": null,
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "t1",
+      "network_id": "primario-generatori",
+      "endpoint_a": { "component_id": "pdc-1", "port_id": "water_supply" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "t2",
+      "network_id": "primario-generatori",
+      "endpoint_a": { "component_id": "pdc-2", "port_id": "water_supply" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori", "port_id": "c" },
+      "properties": {}
+    },
+    {
+      "id": "t3",
+      "network_id": "primario-generatori",
+      "endpoint_a": { "component_id": "rc-mandata-generatori", "port_id": "b" },
+      "endpoint_b": { "component_id": "volano", "port_id": "primary_in" },
+      "properties": {}
+    },
+    {
+      "id": "t4",
+      "network_id": "primario-generatori",
+      "endpoint_a": { "component_id": "volano", "port_id": "primary_out" },
+      "endpoint_b": { "component_id": "rc-ritorno-generatori", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "t5",
+      "network_id": "primario-generatori",
+      "endpoint_a": { "component_id": "rc-ritorno-generatori", "port_id": "b" },
+      "endpoint_b": { "component_id": "pdc-1", "port_id": "water_return" },
+      "properties": {}
+    },
+    {
+      "id": "t6",
+      "network_id": "primario-generatori",
+      "endpoint_a": { "component_id": "rc-ritorno-generatori", "port_id": "c" },
+      "endpoint_b": { "component_id": "pdc-2", "port_id": "water_return" },
+      "properties": {}
+    },
+    {
+      "id": "t7",
+      "network_id": "secondario-radiatori",
+      "endpoint_a": { "component_id": "volano", "port_id": "secondary_out" },
+      "endpoint_b": { "component_id": "circolatore-secondario", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "t8",
+      "network_id": "secondario-radiatori",
+      "endpoint_a": { "component_id": "circolatore-secondario", "port_id": "b" },
+      "endpoint_b": { "component_id": "radiatori", "port_id": "in" },
+      "properties": {}
+    },
+    {
+      "id": "t9",
+      "network_id": "secondario-radiatori",
+      "endpoint_a": { "component_id": "radiatori", "port_id": "out" },
+      "endpoint_b": { "component_id": "volano", "port_id": "secondary_in" },
+      "properties": {}
+    },
+    {
+      "id": "t10",
+      "network_id": "acqua-fredda",
+      "endpoint_a": { "component_id": "acquedotto", "port_id": "a" },
+      "endpoint_b": { "component_id": "volano", "port_id": "cold_in" },
+      "properties": {}
+    },
+    {
+      "id": "t11",
+      "network_id": "acs",
+      "endpoint_a": { "component_id": "volano", "port_id": "dhw_out" },
+      "endpoint_b": { "component_id": "utenze-sanitarie", "port_id": "a" },
+      "properties": {}
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a1",
+      "text": "Il testo dice che le due pompe di calore sono «installate in parallelo» ma non dice con che pezzo i due flussi si uniscono e si dividono (un collettore? un separatore? semplici raccordi?). Si sono usati i raccordi a T: una confluenza sulla mandata verso il volume e una ripartizione sul ritorno verso le macchine. Va bene cosi', o in centrale c'e' un pezzo di distribuzione da rappresentare?",
+      "status": "proposed",
+      "source_message_refs": [
+        "due pompe di calore aria-acqua da 12 kW ciascuna, installate in parallelo"
+      ]
+    },
+    {
+      "id": "a2",
+      "text": "Le due macchine sono gestite «una come master e una come slave»: e' logica di regolazione, non topologia, e sul grafo non si vede - i due generatori sono disegnati identici e collegati allo stesso modo. Il testo non dice nemmeno quale delle due sia la master, quindi il ruolo non e' stato attribuito a nessuna delle due.",
+      "status": "proposed",
+      "source_message_refs": [
+        "gestite una come master e una come slave"
+      ]
+    },
+    {
+      "id": "a3",
+      "text": "Il testo non dice se il circuito primario ha circolatori dedicati o se la circolazione e' a bordo delle pompe di calore. Si e' seguita la voce di catalogo scelta, che dichiara la circolazione a bordo macchina: percio' sul primario non e' disegnato alcun circolatore. E' cosi'?",
+      "status": "proposed",
+      "source_message_refs": [
+        "due pompe di calore aria-acqua da 12 kW ciascuna, installate in parallelo"
+      ]
+    },
+    {
+      "id": "a4",
+      "text": "Il testo dice che il circuito secondario ha un «circolatore dedicato» ma non dice su quale ramo sta. Si e' messo sulla mandata che esce dal volume tecnico verso i radiatori: e' la posizione convenzionale di disegno, non una prescrizione ricavata dal testo. Se va sul ritorno, si sposta.",
+      "status": "proposed",
+      "source_message_refs": [
+        "dal volume tecnico parte un circuito secondario con circolatore dedicato"
+      ]
+    },
+    {
+      "id": "a5",
+      "text": "Il testo dice «l'impianto esistente a radiatori» senza dirne il numero: e' disegnato un solo radiatore, rappresentativo dell'insieme. Quanti corpi scaldanti sono davvero, e vanno rappresentati singolarmente o come unico terminale?",
+      "status": "proposed",
+      "source_message_refs": [
+        "alimenta direttamente l'impianto esistente a radiatori"
+      ]
+    },
+    {
+      "id": "a6",
+      "text": "Il circuito secondario alimenta i radiatori «direttamente»: non e' stata inserita alcuna valvola miscelatrice di circuito, perche' il testo non ne nomina e la parola «direttamente» dice che non c'e' miscelazione.",
+      "status": "proposed",
+      "source_message_refs": [
+        "alimenta direttamente l'impianto esistente a radiatori"
+      ]
+    },
+    {
+      "id": "a7",
+      "text": "Il serpentino sanitario e' interno all'accumulo, come dice il testo: non e' disegnato come scambiatore a se'. E' rappresentato dagli attacchi sanitari della voce di catalogo scelta - l'acqua fredda entra nel serpentino e l'acqua calda sanitaria ne esce - percio' il sanitario e' prodotto in modo istantaneo e non c'e' accumulo di acqua calda sanitaria.",
+      "status": "proposed",
+      "source_message_refs": [
+        "per la produzione istantanea di acqua calda sanitaria tramite serpentino interno"
+      ]
+    },
+    {
+      "id": "a8",
+      "text": "Il testo esclude esplicitamente il ricircolo sanitario: non e' disegnato perche' non c'e', non perche' sia stato perso. Chi completa il grafo non lo aggiunga.",
+      "status": "proposed",
+      "source_message_refs": [
+        "Non e' previsto ricircolo sanitario."
+      ]
+    },
+    {
+      "id": "a9",
+      "text": "Il testo prevede sul volume tecnico il carico automatico dell'impianto da acquedotto e lo scarico: sono ferramenta di servizio (gruppo di riempimento e attacco di scarico) e non entrano nel grafo di prima stesura - li aggiunge il pezzo che completa, che sa dove vanno. La nomina e' registrata qui perche' non vada persa. Sull'accumulo scelto gli attacchi di servizio (sfiato, scarico, sede sonda) esistono a catalogo e sono lasciati liberi apposta.",
+      "status": "proposed",
+      "source_message_refs": [
+        "Sul volume tecnico sono previsti anche il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico."
+      ]
+    },
+    {
+      "id": "a10",
+      "text": "Regime della centrale ricavato dalle potenze scritte dall'ingegnere: 12 kW + 12 kW = 24 kW di generazione, sotto la soglia dei 35 kW, quindi «up_to_35_kw». Sommate le potenze delle sole pompe di calore, nella forma in cui il testo le da'; accumulo, circolatore e radiatori non generano calore e non entrano nella somma.",
+      "status": "proposed",
+      "source_message_refs": [
+        "due pompe di calore aria-acqua da 12 kW ciascuna"
+      ]
+    }
+  ],
+  "rule_applications": [],
+  "subsystems": [],
+  "sheets": []
+}

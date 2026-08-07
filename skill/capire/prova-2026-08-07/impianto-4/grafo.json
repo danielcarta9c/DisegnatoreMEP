@@ -1,7 +1,7 @@
 {
   "schema_version": "1.1.0",
   "metadata": {
-    "project_id": "sistema-ibrido-pompa-di-calore-caldaia-combinata",
+    "project_id": "sistema-ibrido-pdc-caldaia-combinata",
     "client": "Nove C",
     "project_name": "Sistema ibrido con pompa di calore e caldaia combinata",
     "commission_code": "PROVA",
@@ -17,8 +17,8 @@
       "medium": "heating_water"
     },
     {
-      "id": "secondario-riscaldamento",
-      "name": "Circuito secondario di riscaldamento ai radiatori",
+      "id": "secondario",
+      "name": "Circuito secondario di riscaldamento",
       "domain": "hydronic",
       "medium": "heating_water"
     },
@@ -42,8 +42,7 @@
       "tag": null,
       "properties": {
         "potenza": "10 kW",
-        "tipo": "aria-acqua",
-        "ruolo": "generatore principale"
+        "tipo": "aria-acqua"
       }
     },
     {
@@ -52,31 +51,8 @@
       "tag": null,
       "properties": {
         "potenza": "24 kW",
-        "tipo": "a condensazione",
-        "qualifica": "combinata"
+        "tipo": "a condensazione combinata"
       }
-    },
-    {
-      "id": "volano",
-      "definition_id": "buffer-four-port",
-      "tag": null,
-      "properties": {
-        "volume": "150 litri",
-        "configurazione": "a quattro tubi",
-        "denominazione": "volume tecnico"
-      }
-    },
-    {
-      "id": "rc-mandata-generatori",
-      "definition_id": "tee-junction",
-      "tag": null,
-      "properties": {}
-    },
-    {
-      "id": "rc-ritorno-generatori",
-      "definition_id": "tee-split",
-      "tag": null,
-      "properties": {}
     },
     {
       "id": "valvola-deviatrice-acs",
@@ -91,10 +67,31 @@
       "properties": {}
     },
     {
+      "id": "rc-mandata-generatori",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "rip-ritorno-generatori",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
       "id": "rc-ritorno-caldaia",
       "definition_id": "tee-junction",
       "tag": null,
       "properties": {}
+    },
+    {
+      "id": "volano",
+      "definition_id": "buffer-four-port",
+      "tag": null,
+      "properties": {
+        "volume": "150 litri",
+        "configurazione": "a quattro tubi"
+      }
     },
     {
       "id": "circolatore-secondario",
@@ -106,9 +103,7 @@
       "id": "radiatori",
       "definition_id": "radiator",
       "tag": null,
-      "properties": {
-        "stato": "esistente"
-      }
+      "properties": {}
     },
     {
       "id": "acquedotto",
@@ -117,7 +112,7 @@
       "properties": {}
     },
     {
-      "id": "utenze-acs",
+      "id": "utenze-sanitarie",
       "definition_id": "dhw-draw-off",
       "tag": null,
       "properties": {}
@@ -125,209 +120,177 @@
   ],
   "connections": [
     {
-      "id": "t1",
+      "id": "t-pdc-mandata",
       "network_id": "primario",
       "endpoint_a": { "component_id": "pdc", "port_id": "water_supply" },
       "endpoint_b": { "component_id": "rc-mandata-generatori", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "t2",
+      "id": "t-caldaia-mandata",
       "network_id": "primario",
       "endpoint_a": { "component_id": "caldaia", "port_id": "water_supply" },
       "endpoint_b": { "component_id": "valvola-deviatrice-acs", "port_id": "in" },
       "properties": {}
     },
     {
-      "id": "t3",
+      "id": "t-deviatrice-riscaldamento",
       "network_id": "primario",
       "endpoint_a": { "component_id": "valvola-deviatrice-acs", "port_id": "out_a" },
       "endpoint_b": { "component_id": "rc-mandata-generatori", "port_id": "c" },
       "properties": {}
     },
     {
-      "id": "t4",
+      "id": "t-mandata-volano",
       "network_id": "primario",
       "endpoint_a": { "component_id": "rc-mandata-generatori", "port_id": "b" },
       "endpoint_b": { "component_id": "volano", "port_id": "primary_in" },
       "properties": {}
     },
     {
-      "id": "t5",
+      "id": "t-volano-ritorno",
       "network_id": "primario",
       "endpoint_a": { "component_id": "volano", "port_id": "primary_out" },
-      "endpoint_b": { "component_id": "rc-ritorno-generatori", "port_id": "a" },
+      "endpoint_b": { "component_id": "rip-ritorno-generatori", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "t6",
+      "id": "t-ritorno-pdc",
       "network_id": "primario",
-      "endpoint_a": { "component_id": "rc-ritorno-generatori", "port_id": "b" },
+      "endpoint_a": { "component_id": "rip-ritorno-generatori", "port_id": "b" },
       "endpoint_b": { "component_id": "pdc", "port_id": "water_return" },
       "properties": {}
     },
     {
-      "id": "t7",
+      "id": "t-ritorno-verso-caldaia",
       "network_id": "primario",
-      "endpoint_a": { "component_id": "rc-ritorno-generatori", "port_id": "c" },
+      "endpoint_a": { "component_id": "rip-ritorno-generatori", "port_id": "c" },
       "endpoint_b": { "component_id": "rc-ritorno-caldaia", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "t8",
+      "id": "t-deviatrice-scambiatore",
       "network_id": "primario",
       "endpoint_a": { "component_id": "valvola-deviatrice-acs", "port_id": "out_b" },
       "endpoint_b": { "component_id": "scambiatore-acs", "port_id": "primary_in" },
       "properties": {}
     },
     {
-      "id": "t9",
+      "id": "t-scambiatore-ritorno",
       "network_id": "primario",
       "endpoint_a": { "component_id": "scambiatore-acs", "port_id": "primary_out" },
       "endpoint_b": { "component_id": "rc-ritorno-caldaia", "port_id": "c" },
       "properties": {}
     },
     {
-      "id": "t10",
+      "id": "t-ritorno-caldaia",
       "network_id": "primario",
       "endpoint_a": { "component_id": "rc-ritorno-caldaia", "port_id": "b" },
       "endpoint_b": { "component_id": "caldaia", "port_id": "water_return" },
       "properties": {}
     },
     {
-      "id": "t11",
-      "network_id": "secondario-riscaldamento",
+      "id": "t-volano-circolatore",
+      "network_id": "secondario",
       "endpoint_a": { "component_id": "volano", "port_id": "secondary_out" },
       "endpoint_b": { "component_id": "circolatore-secondario", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "t12",
-      "network_id": "secondario-riscaldamento",
+      "id": "t-circolatore-radiatori",
+      "network_id": "secondario",
       "endpoint_a": { "component_id": "circolatore-secondario", "port_id": "b" },
       "endpoint_b": { "component_id": "radiatori", "port_id": "in" },
       "properties": {}
     },
     {
-      "id": "t13",
-      "network_id": "secondario-riscaldamento",
+      "id": "t-radiatori-volano",
+      "network_id": "secondario",
       "endpoint_a": { "component_id": "radiatori", "port_id": "out" },
       "endpoint_b": { "component_id": "volano", "port_id": "secondary_in" },
       "properties": {}
     },
     {
-      "id": "t14",
+      "id": "t-acquedotto-scambiatore",
       "network_id": "acqua-fredda",
       "endpoint_a": { "component_id": "acquedotto", "port_id": "a" },
       "endpoint_b": { "component_id": "scambiatore-acs", "port_id": "secondary_in" },
       "properties": {}
     },
     {
-      "id": "t15",
+      "id": "t-scambiatore-utenze",
       "network_id": "acs",
       "endpoint_a": { "component_id": "scambiatore-acs", "port_id": "secondary_out" },
-      "endpoint_b": { "component_id": "utenze-acs", "port_id": "a" },
+      "endpoint_b": { "component_id": "utenze-sanitarie", "port_id": "a" },
       "properties": {}
     }
   ],
   "assumptions": [
     {
       "id": "a1",
-      "text": "La caldaia e' detta «combinata», ma il testo descrive come produce l'acqua calda sanitaria: una valvola a tre vie devia il circuito della caldaia verso uno scambiatore a piastre. Comanda la descrizione, non l'aggettivo: la caldaia e' stata rappresentata con la voce di catalogo base (solo generazione di calore) e la produzione sanitaria e' disegnata con la valvola deviatrice e lo scambiatore. E' corretto?",
+      "text": "Il testo dice che i due generatori sono «collegati in parallelo» e che insieme alimentano il volume tecnico, ma non dice con quale pezzo i due flussi si uniscono e si dividono (un collettore? un separatore? un distributore?). Si sono usati un raccordo a T sulla mandata, dove i flussi si uniscono, e una ripartizione a T sul ritorno, dove il flusso si divide: e' il modo minimo e convenzionale di scrivere il parallelo. Va bene cosi', o i due generatori si attestano su un pezzo che il testo non ha nominato?",
       "status": "proposed",
-      "source_message_refs": [
-        "una caldaia a condensazione combinata da 24 kW",
-        "Quando viene richiesta ACS, una valvola a tre vie devia il circuito della caldaia verso uno scambiatore di calore a piastre."
-      ]
+      "source_message_refs": ["«una pompa di calore aria-acqua da 10 kW e ... una caldaia a condensazione combinata da 24 kW, collegate in parallelo»", "«I due generatori alimentano un volume tecnico da 150 litri»"]
     },
     {
       "id": "a2",
-      "text": "Il testo dice che i due generatori sono «collegati in parallelo» ma non dice con che pezzo i due flussi si uniscono e si dividono. Si sono usati i raccordi di catalogo: un raccordo a T sulla mandata (confluenza pompa di calore + caldaia verso il volume tecnico) e una ripartizione a T sul ritorno del volume verso i due generatori. Se in centrale e' previsto un collettore o un altro pezzo, va sostituito.",
+      "text": "Il testo dice che la valvola a tre vie devia il circuito della caldaia verso lo scambiatore a piastre, ma non dice dove il primario dello scambiatore rientra. Si e' assunto che la valvola stia sulla mandata della caldaia, a valle del generatore e prima del raccordo con la pompa di calore (cosi' la pompa di calore puo' continuare ad alimentare il volume tecnico, come dice il testo), e che il ritorno dello scambiatore rientri sul ritorno della caldaia attraverso una confluenza a T, perche' un attacco porta una tubazione sola. E' questo il punto in cui rientra?",
       "status": "proposed",
-      "source_message_refs": [
-        "una pompa di calore aria-acqua da 10 kW e da una caldaia a condensazione combinata da 24 kW, collegate in parallelo"
-      ]
+      "source_message_refs": ["«una valvola a tre vie devia il circuito della caldaia verso uno scambiatore di calore a piastre»", "«la pompa di calore puo' continuare ad alimentare il volume tecnico e il circuito di riscaldamento»"]
     },
     {
       "id": "a3",
-      "text": "Il volume tecnico «configurato a quattro tubi» e' stato letto come accumulo con quattro attacchi di flusso — due sul primario dei generatori e due sul secondario di riscaldamento — e rappresentato con la voce di catalogo del volano termico a quattro attacchi, che separa idraulicamente i due circuiti. E' questa la configurazione intesa?",
+      "text": "Il testo nomina il circolatore dedicato del circuito secondario ma non dice su quale ramo sta: si e' messo sulla mandata che parte dal volume tecnico verso i radiatori, che e' la posizione convenzionale di disegno. E' cosi', o sta sul ritorno?",
       "status": "proposed",
-      "source_message_refs": [
-        "un volume tecnico da 150 litri configurato a quattro tubi"
-      ]
+      "source_message_refs": ["«Dal volume parte un circuito secondario con circolatore dedicato»"]
     },
     {
       "id": "a4",
-      "text": "Il testo non dice come e' messa in circolazione l'acqua del circuito primario. La pompa di calore scelta a catalogo porta il circolatore a bordo, quindi non e' disegnato come pezzo a se'; sul ramo della caldaia non e' stato disegnato alcun circolatore perche' il testo non ne nomina. Il ramo della caldaia ha un circolatore a bordo macchina, oppure ne serve uno esterno da rappresentare?",
+      "text": "Sul circuito primario dei generatori il testo non nomina nessun circolatore. La voce di catalogo della pompa di calore dichiara di portarlo a bordo; per la caldaia il catalogo non dichiara niente e il testo non lo dice. Percio' sul primario non e' stato disegnato nessun circolatore come pezzo a se'. La caldaia ha il circolatore a bordo, o ne va previsto uno esterno sul suo ramo?",
       "status": "proposed",
-      "source_message_refs": [
-        "una pompa di calore aria-acqua da 10 kW e da una caldaia a condensazione combinata da 24 kW, collegate in parallelo"
-      ]
+      "source_message_refs": ["«collegate in parallelo»", "«I due generatori alimentano un volume tecnico»"]
     },
     {
       "id": "a5",
-      "text": "Il circolatore del circuito secondario e' nominato dal testo ma non e' detto su quale ramo stia: e' stato messo sulla mandata che esce dal volume tecnico verso i radiatori. E' una convenzione di disegno, non un dato del testo: se va sul ritorno, si sposta.",
+      "text": "Il testo dice «l'impianto esistente a radiatori» senza dirne il numero ne' come e' ramificato: si e' disegnato un solo terminale, rappresentativo dell'insieme. Quanti sono davvero i corpi scaldanti, e su quanti rami vanno rappresentati?",
       "status": "proposed",
-      "source_message_refs": [
-        "Dal volume parte un circuito secondario con circolatore dedicato"
-      ]
+      "source_message_refs": ["«alimenta direttamente l'impianto esistente a radiatori»"]
     },
     {
       "id": "a6",
-      "text": "«L'impianto esistente a radiatori» e' rappresentato da un solo terminale della famiglia dei radiatori, che sta per l'insieme: il testo non dice quanti sono ne' come sono distribuiti in zone. Quanti circuiti terminali partono davvero dal volume tecnico?",
+      "text": "Il testo prevede sul volume tecnico il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico: sono ferramenta di servizio (gruppo di riempimento e attacco di scarico) e li aggiunge il pezzo della catena che completa il grafo, non questa prima stesura. La nomina e' registrata qui perche' non vada persa: il volume tecnico scelto a catalogo ha gia' gli attacchi di servizio per lo sfiato, lo scarico e la sonda, lasciati liberi apposta.",
       "status": "proposed",
-      "source_message_refs": [
-        "alimenta direttamente l'impianto esistente a radiatori"
-      ]
+      "source_message_refs": ["«Sul volume tecnico sono previsti il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico»"]
     },
     {
       "id": "a7",
-      "text": "Il testo prevede sul volume tecnico il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico: sono ferramenta di servizio (gruppo di riempimento e attacco di scarico) e li aggiunge il pezzo della catena che completa il grafo con gli accessori, non questa prima stesura. Per lo stesso motivo non e' disegnato un secondo allacciamento di acquedotto verso il volume: l'unico allacciamento rappresentato e' quello che alimenta lo scambiatore sanitario. La nomina non e' andata persa.",
+      "text": "La logica di regolazione non e' topologia e sul grafo non si vede: la pompa di calore e' il generatore principale e la caldaia interviene quando la temperatura esterna e' bassa, quando serve maggiore potenza o quando serve una mandata piu' calda; durante la produzione di acqua calda sanitaria la caldaia da' priorita' al sanitario mentre la pompa di calore continua ad alimentare il volume tecnico e il circuito di riscaldamento. Sul grafo si vedono la valvola deviatrice a tre vie e i due generatori in parallelo, non la priorita' e non la logica di intervento.",
       "status": "proposed",
-      "source_message_refs": [
-        "Sul volume tecnico sono previsti il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico."
-      ]
+      "source_message_refs": ["«La pompa di calore lavora come generatore principale, mentre la caldaia interviene quando...»", "«Durante la produzione di ACS la caldaia da' priorita' al sanitario»"]
     },
     {
       "id": "a8",
-      "text": "Il testo esclude esplicitamente il bollitore di accumulo: la produzione sanitaria e' istantanea sullo scambiatore a piastre. Nel grafo non c'e' nessun accumulo sanitario perche' non e' previsto, non perche' sia stato perso.",
+      "text": "Il testo esclude esplicitamente il bollitore di accumulo: la produzione di acqua calda sanitaria e' istantanea attraverso lo scambiatore a piastre. Nessun accumulo sanitario e' disegnato perche' il testo lo esclude, non perche' sia stato perso. Il testo non nomina nemmeno un ricircolo sanitario: non e' disegnato.",
       "status": "proposed",
-      "source_message_refs": [
-        "La produzione di acqua calda sanitaria e' affidata alla caldaia in modo istantaneo, senza bollitore di accumulo."
-      ]
+      "source_message_refs": ["«La produzione di acqua calda sanitaria e' affidata alla caldaia in modo istantaneo, senza bollitore di accumulo»"]
     },
     {
       "id": "a9",
-      "text": "La logica di integrazione fra i due generatori (pompa di calore come generatore principale, caldaia che interviene con temperatura esterna bassa, richiesta di maggiore potenza o mandata piu' alta) e la priorita' sanitaria della caldaia durante la produzione di ACS sono regolazione, non topologia: non producono ne' pezzi ne' tubazioni. Sul grafo si vede la valvola deviatrice che manda il circuito della caldaia allo scambiatore, non la priorita' ne' la sequenza di intervento.",
+      "text": "Il testo chiama la caldaia «combinata», ma poi descrive come produce il sanitario: una valvola a tre vie che devia il circuito della caldaia verso uno scambiatore a piastre esterno, attraversato dall'acqua fredda di acquedotto. Comanda la descrizione: si e' scelta la voce di catalogo della caldaia a condensazione base, e la valvola e lo scambiatore sono disegnati come pezzi a se'. Se invece l'acqua calda sanitaria e' prodotta dentro la caldaia, quei due pezzi non vanno e il disegno cambia.",
       "status": "proposed",
-      "source_message_refs": [
-        "La pompa di calore lavora come generatore principale, mentre la caldaia interviene quando la temperatura esterna e' bassa",
-        "Durante la produzione di ACS la caldaia da' priorita' al sanitario, mentre la pompa di calore puo' continuare ad alimentare il volume tecnico e il circuito di riscaldamento."
-      ]
+      "source_message_refs": ["«caldaia a condensazione combinata da 24 kW»", "«una valvola a tre vie devia il circuito della caldaia verso uno scambiatore di calore a piastre»"]
     },
     {
       "id": "a10",
-      "text": "La valvola a tre vie e' stata messa sulla mandata della caldaia, perche' devia il flusso in uscita fra il volume tecnico e lo scambiatore: la voce di catalogo ha un'entrata e due uscite, quindi solo li' puo' stare. Il testo non dice dove rientra il ritorno del primario dello scambiatore: si e' assunto che rientri sul ritorno della caldaia, unito con una confluenza al ritorno che arriva dal volume tecnico, perche' un attacco porta una tubazione sola. Se il ritorno sanitario va riportato altrove, va corretto.",
+      "text": "Il regime della centrale e' stato ricavato sommando le potenze scritte nel testo: 10 kW della pompa di calore piu' 24 kW della caldaia fanno 34 kW, sotto la soglia dei 35 kW, quindi piccola centrale (up_to_35_kw). La somma sta a un solo kW dalla soglia: se una delle due potenze scritte fosse resa o assorbita invece che al focolare, il regime potrebbe cambiare.",
       "status": "proposed",
-      "source_message_refs": [
-        "una valvola a tre vie devia il circuito della caldaia verso uno scambiatore di calore a piastre"
-      ]
+      "source_message_refs": ["«pompa di calore aria-acqua da 10 kW»", "«caldaia a condensazione combinata da 24 kW»"]
     },
     {
       "id": "a11",
-      "text": "Il ramo che va dalla valvola deviatrice allo scambiatore e ne torna e' stato tenuto dentro la rete del circuito primario, perche' e' la stessa acqua di riscaldamento della caldaia deviata verso un altro utilizzo. Il testo lo chiama «il circuito della caldaia»: se lo si vuole leggere come rete a se' stante, va separato.",
+      "text": "Il ramo che dalla valvola deviatrice va allo scambiatore porta la stessa acqua di riscaldamento del circuito dei generatori e nasce dalla stessa macchina che lo alimenta, la caldaia: percio' e' stato tenuto dentro la rete del primario e non come rete a se'. Il sanitario comincia dopo lo scambiatore: prima c'e' l'acqua fredda di acquedotto, dopo l'acqua calda sanitaria, e sono due reti distinte.",
       "status": "proposed",
-      "source_message_refs": [
-        "una valvola a tre vie devia il circuito della caldaia verso uno scambiatore di calore a piastre"
-      ]
-    },
-    {
-      "id": "a12",
-      "text": "Il regime della centrale e' stato ricavato sommando le potenze dei due generatori scritte dal testo: 10 kW della pompa di calore + 24 kW della caldaia = 34 kW, quindi entro i 35 kW. Si segnala che la somma sta un solo kW sotto la soglia e che, essendo un impianto ibrido, i due generatori potrebbero non lavorare mai insieme a pieno carico: se le potenze da considerare sono altre (rese, assorbite, al focolare), il regime va riverificato.",
-      "status": "proposed",
-      "source_message_refs": [
-        "una pompa di calore aria-acqua da 10 kW e da una caldaia a condensazione combinata da 24 kW"
-      ]
+      "source_message_refs": ["«devia il circuito della caldaia verso uno scambiatore di calore a piastre»", "«L'acqua fredda sanitaria proveniente dall'acquedotto attraversa lo scambiatore»"]
     }
   ],
   "rule_applications": [],

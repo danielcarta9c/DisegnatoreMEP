@@ -1,293 +1,216 @@
 # Rapporto — Esempio 2, pompa di calore con deviazione tra climatizzazione e ACS
 
-Consegna: `consegna/grafo.json` (valida, carica senza output), `consegna/rilettura.md`,
-questo rapporto. Committente «Nove C», codice di commessa «PROVA», revisione 00,
-data di emissione 2026-08-07.
+Committente: Nove C · Codice di commessa: PROVA · Revisione 00 · Data 2026-08-07
+Consegna: `consegna/grafo.json` (validato), `consegna/rilettura.md`, questo rapporto.
 
 ---
 
-## 1. Cosa ho capito dell'impianto
+## 1. Che impianto ho capito
 
-Una centrale piccola, a un solo generatore, che con una sola macchina serve due cose
-diverse a turno.
+Una **pompa di calore aria-acqua reversibile da 15 kW** serve, da sola, sia la
+climatizzazione sia l'acqua calda sanitaria, e le serve **una alla volta**: sulla sua
+mandata c'è una **valvola deviatrice a tre vie** che manda tutto il flusso o al circuito di
+climatizzazione o al serpentino del bollitore, con precedenza al sanitario. Sono quindi
+due rami che partono dallo stesso punto e rientrano sullo stesso ritorno della macchina.
 
-**La generazione.** Una pompa di calore aria-acqua reversibile da 15 kW. È l'unica
-macchina che genera calore, quindi la somma delle potenze di generazione è 15 kW: sotto i
-35 kW, e il regime della centrale è `up_to_35_kw`. Il conto è aritmetica su un dato che
-l'ingegnere ha già scritto, non un dimensionamento. La macchina è reversibile: d'estate
-manda acqua refrigerata negli stessi tubi.
+Sul ramo di climatizzazione c'è un **volume tecnico da 100 litri «a quattro tubi»**: due
+attacchi verso la pompa di calore e due verso il circuito che ne esce. Quattro tubi vuol
+dire che il volume **separa idraulicamente** il primario dal secondario — è la ragione per
+cui il circuito che ne parte è una rete a sé e non il prolungamento del primario. Dal
+volume esce il **circuito secondario**, con **circolatore dedicato**, che alimenta i
+**fan-coil**, usati d'inverno e d'estate.
 
-**La deviazione, che è il cuore dell'impianto.** Sulla mandata della pompa di calore c'è
-una valvola a tre vie deviatrice — *devia*, non miscela: il testo dice «alternativamente
-verso … oppure verso …», ed è il verbo a scegliere la voce di catalogo, non il numero
-delle vie. Da lì il flusso va **o** al circuito di climatizzazione **o** al serpentino del
-bollitore. Non contemporaneamente: è la stessa acqua di generazione che fa due lavori in
-tempi diversi. La priorità al sanitario dice *quando*, e il *quando* non si disegna.
+Sul ramo sanitario c'è un **bollitore con serpentino**: il serpentino è un pezzo del
+circuito della pompa di calore (ci passa acqua di riscaldamento, entra e torna alla
+macchina), mentre l'acqua che il bollitore tiene in serbo è un'altra: entra fredda
+dall'acquedotto in basso ed esce calda in alto verso le utenze. Sono due cose diverse che
+toccano lo stesso serbatoio, ed è per questo che il bollitore è l'unico pezzo del grafo
+attraversato da tre fluidi.
 
-**Il lato climatizzazione.** Il ramo di climatizzazione entra in un volume tecnico da 100
-litri «configurato a quattro tubi»: quattro attacchi di flusso, primario e secondario
-separati. È il pezzo che disaccoppia la pompa di calore dai terminali — a catalogo la voce
-dichiara insieme `thermal_storage` e `hydraulic_separation`, ed è per questo che quattro
-attacchi contano: due li usa il primario, due il secondario. Dal secondario parte un
-circuito con circolatore dedicato che alimenta i fan-coil e torna al volume. Quel circuito
-lavora in riscaldamento e in raffrescamento, ma è **un** circuito, non due.
+Quindi, nelle quattro domande che contano:
 
-**Il lato sanitario.** Un bollitore con serpentino: il serpentino è attraversato
-dall'acqua della pompa di calore e cede calore all'acqua del bollitore, che è tutt'altra
-acqua — entra fredda dall'acquedotto in basso ed esce calda in alto. Sono due circuiti che
-si toccano dentro lo stesso serbatoio senza mescolarsi, e il catalogo lo rende esplicito
-con quattro attacchi di tre fluidi diversi (`coil_in`/`coil_out` acqua di riscaldamento,
-`cold_in` acqua fredda, `dhw_out` acqua calda sanitaria). Il sanitario è un circuito
-**aperto**: comincia all'acquedotto e finisce alle utenze. Il ricircolo è escluso per
-iscritto.
+- **Che macchina è ciascun pezzo.** La pompa di calore genera calore e basta: il sanitario
+  non lo produce da sola, lo produce **tramite** un bollitore separato, quindi resta la voce
+  base (`heat-pump-air-water`) e non una macchina che dichiari anche `dhw_storage`. Il
+  volume tecnico accumula **e** separa (`buffer-four-port`); il bollitore accumula acqua
+  **sanitaria** e ha gli attacchi del serpentino (`dhw-cylinder`).
+- **Che acqua porta ogni circuito.** Il sanitario c'è, ed è netto: primario e secondario
+  portano acqua di riscaldamento; dall'acquedotto al bollitore c'è acqua fredda sanitaria;
+  dal bollitore alle utenze acqua calda sanitaria. Quattro reti.
+- **Il regime della centrale.** Un solo generatore, 15 kW, sotto la soglia: `up_to_35_kw`.
+  Ricavato, non chiesto.
+- **Come i circuiti toccano i serbatoi.** Il serpentino **attraversa** il bollitore
+  scambiando calore (`coil_in` → `coil_out`, acqua di riscaldamento); la riserva del
+  bollitore la riempie l'alimentazione fredda (`cold_in`) e la preleva `dhw_out`. Sul volume
+  tecnico invece l'acqua è la stessa sui quattro attacchi: primario da una parte,
+  secondario dall'altra.
 
-**Il punto di topologia che il testo non nomina ma impone.** Il ritorno dal volume tecnico
-e il ritorno dal serpentino del bollitore rientrano tutti e due sull'unico attacco di
-ritorno della pompa di calore. Un attacco porta una tubazione sola: due tubazioni che si
-incontrano in un punto vogliono un raccordo (§4.4, N=2 → N−1 = 1). Da qui il raccordo a T
-di confluenza `rc-ritorni-primario`, che è l'unico componente del grafo che nessuna frase
-del testo nomina, ed è dichiarato in a4.
-
-**Quattro reti**, perché il fluido cambia dove una macchina lo cambia: `primario` e
-`secondario` (acqua di riscaldamento), `acqua-fredda` (acqua fredda sanitaria) e `acs`
-(acqua calda sanitaria).
-
-**Cosa il testo nomina e il grafo non mostra**, perché è ferramenta del pezzo successivo
-della catena: il carico automatico da acquedotto e lo scarico sul volume tecnico, e la
-valvola miscelatrice sull'uscita sanitaria (mestiere `dhw_mixing`, esplicitamente nella
-lista che non entra mai). Nessuna delle tre è andata persa: sono annotate in `assumptions`
-proprio perché chi completa il grafo le rimetta al loro posto e l'ingegnere possa
-verificarlo.
-
-**In numeri:** 9 componenti, 11 tubazioni, 4 reti, 11 voci in `assumptions`, nessuna voce
-di catalogo mancante (nessun tipo B), nessuna domanda di tipo C.
+Il grafo risultante: **9 componenti, 11 tubazioni, 4 reti, 12 voci dichiarate**. Nessun
+accessorio, nessuna sigla inventata (tutti i `tag` sono `null`: il testo non ne scrive).
 
 ---
 
-## 2. Le domande e le assunzioni, in chiaro
+## 2. Domande e assunzioni, in chiaro
 
-Sono le undici voci di `assumptions` nel JSON, tutte con `status: "proposed"`. Le divido
-per quello che chiedono a chi legge, perché lo schema non ha un campo per distinguerle
-(vedi §3, punto 3).
+Tutte e dodici sono nel JSON in `assumptions`, con `status: "proposed"`. Qui sono
+raggruppate per tipo, secondo il §6.
 
-### 2a. Domande che aspettano una risposta dall'ingegnere (tipo A: il testo impone il collegamento, non dice con che pezzo)
+### Tipo A — il testo impone qualcosa ma non dice con che pezzo: chiuso e dichiarato
 
-| id | Domanda | Come ho chiuso il grafo nel frattempo |
-|---|---|---|
-| **a1** | Il testo non nomina un circolatore sul circuito primario. La circolazione è a bordo della pompa di calore, o c'è un circolatore esterno da disegnare? | Ho seguito la macchina di catalogo, che dichiara la circolazione a bordo. Nessun circolatore primario nel grafo. |
-| **a2** | Il circuito secondario ha un «circolatore dedicato», ma il testo non dice su quale ramo sta. Mandata o ritorno? | Sulla **mandata** del secondario, subito a valle del volume tecnico: è la posizione convenzionale di disegno (§7), e per questo va dichiarata. |
-| **a3** | «Fan-coil» è plurale e il numero non è detto. Quanti sono davvero, e vanno disegnati singolarmente? | Uno solo, rappresentativo dell'insieme (§7). |
-| **a4** | Il ritorno dal volume tecnico e quello dal serpentino del bollitore rientrano sullo stesso attacco della pompa di calore: con che pezzo si uniscono? | Un raccordo a T di confluenza subito prima dell'attacco (§4.4). Se in centrale c'è invece un collettore o un separatore, va corretto. |
-| **a10** | Il testo dice che l'acqua fredda entra in basso e l'ACS esce in alto, ma non nomina né l'allacciamento di acquedotto né le utenze. L'acqua fredda arriva da un punto già rappresentato altrove? | Ho disegnato le due voci di confine del catalogo: un circuito aperto deve avere un inizio e una fine (§4.3). |
+- **a2 — Circolatore del primario.** Il testo non dice se sul circuito primario ci sia un
+  circolatore. Ho seguito la voce di catalogo scelta per la pompa di calore, che dichiara
+  il circolatore **a bordo macchina**: nessun circolatore primario è disegnato come pezzo a
+  sé. *È così?*
+- **a3 — Dove sta il circolatore del secondario.** Il testo dice «circuito secondario con
+  circolatore dedicato» ma non su quale ramo. L'ho messo sulla **mandata** del secondario,
+  fra l'uscita secondaria del volume e i fan-coil: è la posizione convenzionale, non un
+  dato del testo. *Confermare, o spostarlo sul ritorno.*
+- **a4 — Quanti fan-coil.** Il testo dice «fan-coil» al plurale senza dirne il numero: ne ho
+  disegnato **uno solo, rappresentativo**. *Quanti sono davvero, e come si attestano sul
+  circuito secondario — in parallelo su un collettore, su derivazioni consecutive?*
+- **a5 — Come si riuniscono i due ritorni.** Il testo non dice con che pezzo il ritorno
+  della climatizzazione e il ritorno del serpentino si riuniscono prima di rientrare nella
+  pompa di calore. Ho assunto un **raccordo a T di confluenza**, perché un attacco porta una
+  tubazione sola. *Se in centrale c'è un collettore o un altro pezzo, va indicato.*
+- **a10 — I confini del circuito sanitario.** Il testo dice che l'acqua fredda entra e che
+  l'ACS viene prelevata, senza nominare l'acquedotto e le utenze: ho chiuso il circuito
+  aperto con le due voci di confine del catalogo.
+- **a12 — Come si raggruppano le reti.** Il testo distingue «il circuito di climatizzazione»
+  dal ramo verso il bollitore, ma i due nascono entrambi dalla mandata della pompa di calore
+  e rientrano sullo stesso ritorno: li ho rappresentati come **due rami di una sola rete
+  primaria**, perché una rete parte dalla macchina che la alimenta. Il secondario che parte
+  dal volume è invece rete a sé. *Vedi anche §3, punto 1: qui le istruzioni non danno un
+  criterio pulito.*
 
-### 2b. Annotazioni che non aspettano una risposta, ma servono a non perdere niente
+### Tipo B — il catalogo non ha con cosa rappresentarlo
 
-| id | Cosa dice | Perché è lì |
-|---|---|---|
-| **a5** | La macchina è reversibile e i fan-coil lavorano anche in raffrescamento: negli stessi tubi d'estate corre acqua refrigerata. Le reti restano dichiarate `heating_water`. | La tabella dei fluidi non ha un fluido per il raffrescamento, e non se ne inventa uno (§4.2). |
-| **a6** | La priorità sanitaria è regolazione, non topologia: sul grafo si vede la valvola deviatrice, non la priorità. | §4.5: la logica di regolazione non produce nodi né tubi, ma non deve sparire. |
-| **a7** | Il carico automatico da acquedotto e lo scarico sul volume tecnico sono ferramenta di servizio: li aggiunge il pezzo che completa. | §5 e §7: l'accessorio nominato per dire *dove* sta un attacco resta fuori, ma la nomina si annota. |
-| **a8** | La valvola miscelatrice sull'uscita sanitaria è ferramenta (`dhw_mixing`): l'ACS è disegnata dal bollitore direttamente alle utenze. | §5, dove la miscelatrice sanitaria è nominata per esteso nella lista che non entra mai. |
-| **a9** | Il ricircolo ACS è escluso **per iscritto**: non è disegnato perché non c'è, non perché sia stato perso. | §4.5: le esclusioni esplicite sono informazione, e servono a chi legge dopo per non riaggiungerlo. |
-| **a11** | Il ramo verso la climatizzazione e il ramo verso il bollitore condividono mandata e ritorno della pompa di calore, e sono tenuti in una rete sola (`primario`); il circuito dei fan-coil è una rete a sé. | Scelta di raggruppamento: non cambia né i pezzi né i tubi. Vedi §3, punto 2. |
+Nessuna. Ogni macchina nominata dal testo ha una voce di catalogo con il mestiere giusto e
+gli attacchi che servono a scrivere i collegamenti descritti.
 
-### 2c. Domande di tipo C (la scelta è dell'ingegnere, e cambia il disegno)
+### Tipo C — la scelta è dell'ingegnere, va chiesta prima
 
-**Nessuna.** Non ho trovato nel testo un punto in cui due letture ragionevoli producano
-due grafi diversi ed entrambe siano corrette. Il testo è insolitamente esplicito sulla
-topologia: dice dove sta la valvola («sulla mandata»), dove va ciascun ramo, cosa comprende
-il circuito di climatizzazione, da dove parte il secondario, come il bollitore è collegato
-alla pompa di calore, da dove entra l'acqua fredda e da dove esce l'ACS. Quello che tace
-sono i **pezzi minimi** di chiusura, e quelli sono tipo A: ogni lettura ragionevole
-produce lo stesso grafo a meno di un dettaglio.
+Nessuna in senso proprio: non ho trovato un punto in cui due letture ugualmente corrette
+producano **due impianti diversi**. L'unica che ci si avvicina è **a12** (raggruppamento
+delle reti): due letture ragionevoli producono lo stesso disegno — stessi pezzi, stessi
+tubi — ma due modelli diversi, perché cinque tubazioni cambierebbero rete. È una domanda per
+chi ha scritto le istruzioni più che per l'ingegnere, e la ritrovi al §3.
 
-### 2d. Voci di catalogo mancanti (tipo B)
+### Cose che il testo dice e che il grafo non mostra (registrate perché non vadano perse)
 
-**Nessuna.** Ogni mestiere che il testo nomina ha una voce in catalogo con gli attacchi
-che servono a scrivere esattamente i collegamenti descritti: `heat_generation` →
-`heat-pump-air-water`; `diversion` → `diverting-valve-3way`; `thermal_storage` +
-`hydraulic_separation` a quattro attacchi → `buffer-four-port`; `circulation` →
-`pump-circulator`; `emission` → `fan-coil`; `dhw_storage` con serpentino → `dhw-cylinder`;
-`junction` → `tee-junction`; `boundary` → `cold-water-inlet` e `dhw-draw-off`.
+- **a1 — Reversibilità e raffrescamento.** La macchina è reversibile e i fan-coil lavorano
+  anche in raffrescamento, ma la tabella dei fluidi non ha un fluido per il freddo:
+  primario e secondario sono dichiarati `heating_water`, ed è negli stessi tubi che d'estate
+  scorre l'acqua refrigerata. Non ho inventato un fluido che la tabella non ha.
+- **a6 — Priorità sanitaria.** È regolazione, non topologia: sul grafo si vede la valvola
+  deviatrice, non la priorità.
+- **a7 — Carico automatico da acquedotto e scarico sul volume tecnico.** Ferramenta di
+  servizio (`filling`, `drain`): li aggiunge il pezzo successivo della catena. Il volume
+  scelto ha gli attacchi di servizio (sfiato, scarico, sede sonda) rimasti liberi apposta.
+- **a8 — Valvola miscelatrice sull'uscita sanitaria.** La miscelatrice **sanitaria**
+  (`dhw_mixing`) è nell'elenco di ciò che non entra mai: la aggiunge il pezzo delle regole.
+  *Se invece si intendeva una miscelatrice di circuito a tre vie, va detto: quella sarebbe
+  topologia e andrebbe disegnata.*
+- **a9 — Ricircolo ACS escluso.** Esclusione esplicita: non è disegnato perché non c'è, non
+  perché sia stato perso. Registrato perché nessuno lo riaggiunga.
+- **a11 — Alto e basso del bollitore.** Il testo colloca l'ingresso freddo in basso e il
+  prelievo in alto: i due attacchi di catalogo lo rappresentano, ma il grafo non porta la
+  quota degli attacchi.
 
 ---
 
 ## 3. Dove le istruzioni non mi hanno detto cosa fare
 
-Questa è la parte che la prova misura. Ordino per quanto pesa.
+Sono i punti in cui ho dovuto decidere senza che il §-di-turno mi desse una regola, o in cui
+due regole si pestano i piedi. In ordine di peso.
 
-### 1. `assumptions` fa due mestieri diversi, e non ha modo di distinguerli
+**1. Una valvola deviatrice apre reti nuove, oppure no? (§4.2)**
+Il §4.2 dice che «i rami che si staccano da una **ripartizione** restano nella rete da cui
+nascono» e che una rete «parte sempre da una macchina che la alimenta … **mai da un
+raccordo**». Ma qui il flusso si divide su una **valvola deviatrice**, che il §5 elenca fra
+i pezzi di **topologia** (non è un raccordo, ed è una macchina in senso lato: «decide dove
+va il flusso»). Le istruzioni non dicono se una deviatrice sia una ripartizione ai fini
+delle reti. Due letture, entrambe difendibili: una rete primaria con due rami (la mia,
+perché entrambi i rami nascono dalla pompa di calore), oppure due reti perché il testo
+nomina «il circuito di climatizzazione» come circuito e lo contrappone alla produzione ACS.
+Cambia la rete di 5 tubazioni su 11. Ho scelto e dichiarato (a12), ma il criterio manca.
 
-§6 definisce `assumptions` come «ogni cosa che il testo **non** dice e che serve per
-disegnare». Ma §4.5 e §5 mi ordinano di scriverci dentro anche l'esatto opposto: le cose
-che il testo **dice** e che il grafo non mostra — la priorità sanitaria, la ferramenta
-nominata, l'esclusione del ricircolo. Sono note di non-perdita, non domande.
+**2. La derivazione a T è inutilizzabile: due regole che si annullano (§4.3 vs §4.4).**
+Il §4.4 prescrive di usare le derivazioni «solo dove il testo descrive qualcosa che si
+stacca da un tubo». Ma nel catalogo tutte e tre le derivazioni (`tee-branch`,
+`tee-branch-cold`, `tee-branch-dhw`) hanno l'attacco `branch` marcato `stub: true`, e il
+§4.3 vieta di collegare qualunque cosa a uno `stub`. Una derivazione, così, non può mai
+ricevere il suo ramo: la regola che la prescrive e la regola che la vieta si annullano.
+Non mi ha bloccato — qui serviva una confluenza, non una derivazione — ma è una
+contraddizione che il prossimo impianto incontrerà (per esempio un ricircolo ACS che
+rientra sul tubo, caso citato proprio dal §4.4).
 
-Il risultato è che chi apre il JSON trova undici voci tutte `proposed` e tutte uguali, e
-non ha modo di sapere che cinque aspettano una risposta (a1, a2, a3, a4, a10) e sei no
-(a5–a9, a11). Lo schema non ha un campo per la distinzione. L'ho resa solo nel modo in cui
-è scritto il testo di ogni voce — le domande finiscono con un punto interrogativo — e in
-questo rapporto, alle sezioni 2a e 2b. È una convenzione mia, non delle istruzioni.
+**3. «Valvola miscelatrice» senza aggettivo: dentro o fuori? (§5)**
+Il §5 mette dentro le «miscelatrici **di circuito** a tre vie» e fuori la miscelatrice
+**sanitaria**. Il testo scrive solo «una valvola miscelatrice». L'ho risolta sulla
+posizione — «sull'uscita sanitaria» — e sul catalogo, dove `mixing-valve-thermostatic`
+dichiara `dhw_mixing`. Ma le istruzioni non danno il criterio di disambiguazione, e le due
+strade non producono un dettaglio diverso: producono un componente in più o in meno.
+Dichiarata in a8.
 
-### 2. Nemmeno il tipo A/B/C ha un posto nel modello
+**4. La potenza di una macchina reversibile: 15 kW di che cosa? (§4.6 vs §6)**
+Il §4.6 dice cosa fare se il testo dà la potenza «in una forma diversa (potenza resa,
+potenza assorbita)», ma non dice niente per un numero nudo — «da 15 kW» — su una macchina
+che d'estate non genera affatto calore. Il §6 per contro vieta di chiedere le potenze già
+scritte. Ho sommato i 15 kW come potenza del generatore. Qui l'esito non cambia (qualunque
+lettura resta sotto i 35 kW), ma su un impianto vicino alla soglia la regola mancherebbe
+proprio dove serve.
 
-§6 costruisce tutta la distinzione fra tipo A, tipo B e tipo C, dà il criterio per
-separare A da C, e chiede di ripetere in chiaro nella risposta le sole domande di tipo C.
-Ma il modello non ha un campo `tipo`, e `status` ammette solo `proposed`/`approved`/
-`rejected`. La distinzione su cui il §6 costruisce tutto sopravvive solo in prosa. Chi
-legge il JSON a valle non la vede.
+**5. Il `project_id` e il «titolo dell'impianto» (§3).**
+Il §3 dice di costruire il `project_id` «dal titolo dell'impianto» ma non dice da dove si
+prende il titolo, né cosa farne quando l'intestazione porta un numero di serie: qui è
+«Esempio 2 – Pompa di calore con deviazione tra climatizzazione e ACS». Ho tolto «Esempio
+2 –» e tenuto il resto. Scelta mia, senza criterio.
 
-### 3. Il perimetro delle reti non ha un criterio operativo
+**6. Le chiavi delle `properties` (§3).**
+Il §3 chiede di trascrivere «le qualifiche che il testo usa» e mostra tre esempi
+(`modello`, `tipo`, `configurazione`), ma non dà un elenco di chiavi né una regola per
+inventarne. `tipo`, `impiego`, `configurazione`, `volume`, `potenza` sono nomi che ho scelto
+io: due agenti diversi produrrebbero due grafi che dicono la stessa cosa con chiavi diverse,
+e chi legge dopo non può contarci.
 
-§4.2 dice: «Una rete è un circuito che il testo nomina o distingue». Preso alla lettera,
-qui produce un risultato strano: il testo nomina «il circuito di climatizzazione», che è
-un **ramo** del primario a valle della deviatrice, e lo distingue dal ramo che va al
-bollitore. Sarebbero due reti — ma condividono la mandata della pompa di calore, il
-raccordo di confluenza e il ritorno, e sono la stessa acqua nello stesso circuito.
+**7. Il formato della tabella di rilettura (§8, passo 6).**
+Le istruzioni chiedono «una riga per frase» e nient'altro: non dicono dove scriverla, in che
+formato, né se la verifica al contrario (ogni elemento del grafo risale a una frase) sia una
+seconda tabella o la stessa. Ho fatto due tabelle più la lista dei controlli del §9.
 
-Le istruzioni non danno un criterio per decidere se un ramo che si stacca da un pezzo di
-deviazione sia una rete a sé o parte della rete da cui nasce. Ho tenuto un solo
-`primario`, perché il fluido non cambia e il circuito si chiude su sé stesso, e l'ho
-dichiarato in a11. La scelta non cambia né i componenti né le tubazioni, solo l'etichetta
-`network_id` di tre tubi: per questo non l'ho trattata come tipo C. Ma è una scelta senza
-appoggio nel testo delle istruzioni.
+**8. Quale uscita della deviatrice va a quale ramo.**
+`out_a` e `out_b` sono indistinguibili nel catalogo e le istruzioni non ne parlano. Ho messo
+la climatizzazione su `out_a` e il bollitore su `out_b`, seguendo l'ordine in cui il testo
+li nomina. Arbitrario, senza conseguenze sul disegno — ma arbitrario.
 
-### 4. Quale uscita della valvola deviatrice va a quale ramo
+**9. Dove si incontrano i due ritorni: prima della macchina o dentro il volume.**
+Il §4.4 dà il conto dei raccordi («N ritorni sullo stesso attacco → N−1 confluenze») ma non
+dà un criterio per il **punto** in cui metterli. Il ritorno del serpentino potrebbe anche
+rientrare nel primario del volume tecnico invece che direttamente sulla macchina. Ho scelto
+la confluenza subito prima della pompa di calore, perché «devia … **alternativamente**» dice
+che i due rami sono paralleli sulla stessa sorgente. Dichiarata in a5.
 
-`diverting-valve-3way` ha due uscite, `out_a` e `out_b`, identiche per fluido e per verso,
-e il catalogo non dà loro alcuna semantica. Le istruzioni non dicono come assegnarle. Ho
-messo la climatizzazione su `out_a` e il bollitore su `out_b`, seguendo l'ordine in cui il
-testo li nomina. È un criterio inventato da me sul momento: qualunque agente potrebbe
-scegliere l'opposto e il grafo sarebbe altrettanto valido, ma il disegno che ne esce
-potrebbe non essere lo stesso.
-
-### 5. `carries_on_board` è nel catalogo e non è mai nominato dalle istruzioni
-
-La voce `heat-pump-air-water` dichiara `"carries_on_board": ["circulation"]`. Le istruzioni
-parlano del circolatore integrato in due punti, e nessuno dei due è questo caso:
-
-- §7 tratta il componente che **il testo** descrive come integrato («il circolatore
-  integrato nella pompa di calore»). Qui il testo non lo descrive affatto.
-- §6-tipo-A tratta il caso in cui il testo **nomina** un circolatore ma non dice se è a
-  bordo o esterno. Qui il testo non nomina nessun circolatore primario.
-
-Manca la regola per il terzo caso, che è il mio: il testo tace del tutto, e il catalogo
-dichiara qualcosa. Non è scritto se `carries_on_board` vada letto come «la circolazione
-c'è, è a bordo, non si disegna» oppure se il silenzio del testo debba diventare un buco
-dichiarato. Ho fatto tutte e due: ho seguito il catalogo **e** ho dichiarato (a1), per
-analogia con l'esempio del §6-tipo-A. Ma è un'analogia che ho tirato io, non una regola.
-
-### 6. Lo stub `drain` del volano contro «lo scarico» del testo
-
-Il `buffer-four-port` di catalogo porta già gli stub `vent`, `drain` e `probe`. Il testo
-nomina «lo scarico» sul volume tecnico. §4.3 dice di non collegare niente agli stub; §5
-dice di annotare la nomina degli accessori. Le due istruzioni non si contraddicono, ma
-nessuna dice se lo stub già presente in catalogo «copra» la nomina del testo o se la
-nomina resti comunque un dato da riportare. Ho fatto entrambe le cose: stub lasciato
-libero e nota in a7. Se la risposta giusta fosse «lo stub basta, non annotare», a7 sarebbe
-rumore.
-
-### 7. «15 kW» di che potenza?
-
-§4.6 dice: «Se il testo dà una potenza in una forma diversa (potenza resa, potenza
-assorbita) trascrivila come sta e dichiara nell'assunzione quale hai sommato». Il mio testo
-dice «una pompa di calore aria-acqua reversibile **da 15 kW**», senza qualificare: non è
-«una forma diversa», è la forma nuda. Per una pompa di calore la potenza nuda è di per sé
-ambigua (resa a che temperature? in che condizioni?).
-
-Le istruzioni non dicono se la potenza nuda vada trattata come già chiara o come ambigua.
-Ho trascritto «15 kW» così com'è e ricavato il regime senza aggiungere una dichiarazione,
-perché §6 vieta esplicitamente di chiedere «qualunque cosa il testo abbia già scritto — a
-partire dalle potenze». Fra i due, ho lasciato vincere il divieto.
-
-### 8. Quali qualifiche finiscono in `properties`, e quante
-
-§3 dice di trascrivere «le qualifiche che il testo usa», e non dà un limite. Nel mio testo
-sono qualifiche anche «dedicato» (del circolatore), «tecnico» (del volume), «idronici» (dei
-fan-coil), «alternativamente» (della deviazione). Ho trascritto solo quelle che qualificano
-**la macchina** e non il circuito o l'azione: `potenza`, `tipo`, `volume`, `configurazione`,
-`impiego`. È un criterio mio. Un altro agente potrebbe trascriverne il doppio o la metà, e
-nessuna delle due letture violerebbe le istruzioni.
-
-Nella stessa riga: **i nomi delle proprietà non hanno un vocabolario**. §3 dà cinque
-esempi (`potenza`, `volume`, `modello`, `tipo`, `configurazione`) ma nessuna tabella
-chiusa, e a differenza dei mestieri e dei fluidi non c'è un file di naming che li governi.
-Ho inventato `impiego` per rendere «utilizzati sia in riscaldamento sia in raffrescamento».
-
-### 9. Il `project_id` «dal titolo dell'impianto», quando l'impianto non ha un titolo
-
-§3 dice di costruire il `project_id` dal titolo dell'impianto. Il testo che ho ricevuto ha
-per intestazione «Esempio 2 – Pompa di calore con deviazione tra climatizzazione e ACS»:
-metà è la numerazione di un esempio, non un titolo d'impianto. Ho scartato «Esempio 2» e
-usato la sola parte descrittiva, ottenendo
-`pompa-di-calore-deviazione-climatizzazione-acs`. Le istruzioni non dicono cosa fare
-quando il testo non ha un titolo proprio, né se il titolo vada usato per intero.
-
-### 10. Dove finisce la «trascrizione» e comincia l'«invenzione»
-
-Non è un contrasto formale — le istruzioni lo risolvono da sole — ma vale segnarlo perché
-è il punto in cui ho dovuto usare più giudizio. §1 dice: «nel grafo entra solo ciò che il
-testo dice». §4.3 dice che il ritorno di un circuito chiuso «è trascrizione, non
-invenzione». §4.4 impone i raccordi dove la topologia descritta fa incontrare due
-tubazioni.
-
-Il risultato è che il grafo contiene un componente (`rc-ritorni-primario`) e tre tubazioni
-di ritorno (`p4`, `p5`, `p6`) che nessuna frase del testo nomina. Le istruzioni dicono che
-è giusto così, e sono d'accordo. Ma il criterio per sapere **fino a dove** arriva questa
-licenza — perché il raccordo di confluenza sì e un separatore idraulico no, perché il
-ritorno sì e la valvola di intercettazione no — sta tutto nella lista dei mestieri del §5,
-e funziona solo finché quella lista basta. È il perno su cui regge l'intero metodo, e
-riposa su un elenco.
-
-### 11. Minori, per completezza
-
-- **Il grafo da solo non porta la sua tracciabilità.** §3 consente di lasciare `evidence`
-  vuoto e di dare la traccia con la tabella di rilettura. L'ho fatto: `evidence` è vuoto
-  ovunque. Ma vuol dire che il JSON, staccato da `rilettura.md`, non dice più da quale
-  frase venga ciascun pezzo. `source_message_refs` copre solo le assunzioni, e l'ho usato.
-- **Nessun criterio per gli `id` delle assunzioni.** Ho usato `a1`…`a11` in ordine di
-  lettura del testo, come nell'esempio del §3.
-- **Il §2 dice che il testo dell'ingegnere «te lo consegna chi lancia il lavoro»**, mentre
-  qui è arrivato come file nella cartella di lavoro. Il §2 lo prevede («se i file ti
-  arrivano copiati in un'altra cartella, valgono lo stesso»), quindi non è un problema:
-  lo segno solo perché è un punto in cui le istruzioni e la realtà della prova non
-  combaciavano alla lettera.
+**Una nota, non una contraddizione.** Il §5 dice che gli accessori nominati dal testo li
+aggiungerà il pezzo delle regole, e il §4.3 dice che gli attacchi `stub` esistono apposta.
+Il volume tecnico ha gli stub per sfiato, scarico e sonda — ma **non** per il carico
+automatico da acquedotto, che il testo nomina (a7). Non è un problema mio, è
+un'informazione per chi completerà il grafo: quel gruppo di riempimento dovrà attestarsi sul
+tubo, non sul serbatoio.
 
 ---
 
 ## 4. Isolamento
 
-Ho lavorato solo dentro `camera-pulita/impianto-2/`. Non ho aperto, letto, cercato,
-elencato né ispezionato alcun file fuori dalla cartella di lavoro: niente dentro
-`/home/user/DisegnatoreMEP` — non i suoi esempi, non le sue prove, non la sua
-documentazione, non il suo codice.
+Ho lavorato solo dentro la mia cartella. Non ho aperto, elencato, cercato né ispezionato
+alcun file fuori da
+`…/camera-pulita/impianto-2/`: non gli esempi, non le prove, non la documentazione, non il
+codice di `/home/user/DisegnatoreMEP`.
 
-L'unica cosa eseguita fuori è il comando di validazione del §8, passo 7, che le istruzioni
-del lavoro e il vincolo di isolamento permettono espressamente:
+L'unica cosa eseguita fuori è **il comando di validazione del §8, passo 7**, lanciato dalla
+radice del repository come le istruzioni prescrivono, sul file
+`consegna/grafo.json` indicato per percorso esteso. Nessun output: il file carica.
+Oltre a quello ho eseguito un controllo scritto da me, che legge soltanto il catalogo della
+mia cartella e il mio grafo, per verificare attacchi, versi, fluidi, stub e attacchi
+obbligatori liberi (nessun errore).
 
-```
-.venv/bin/python -c "from pathlib import Path; from disegnatore_mep.io.project_json import load_project; load_project(Path('.../consegna/grafo.json'))"
-```
-
-Nessun output: il file carica.
-
-**Un episodio da dichiarare, per trasparenza.** Un mio comando che stampava l'intero
-catalogo ha prodotto un output troppo grande, e l'ambiente l'ha salvato da sé in un file
-di appoggio fuori dalla cartella di lavoro (`/root/.claude/projects/.../tool-results/`).
-Era il risultato del mio stesso comando, non un file del repository — ma **non l'ho
-letto**: ho rifatto il dump del catalogo a pezzi più piccoli, sempre e solo dai file
-dentro `examples/layout/catalog/`. Nessuna infrazione, e la segno perché il confine
-meritava di essere dichiarato invece che risolto in silenzio.
-
----
-
-## 5. Verifiche fatte prima di consegnare
-
-Il controllo finale del §9 è passato punto per punto; il dettaglio sta in
-`rilettura.md`, sezione C. In sintesi: il JSON carica; i 9 `definition_id` esistono tutti
-in catalogo e nessuno ha un mestiere della lista «ferramenta»; i 22 estremi delle 11
-tubazioni usano solo attacchi dichiarati dal catalogo, nessun attacco porta due tubazioni,
-nessuna tubazione tocca uno `stub`; ogni tubazione va da una porta `out` a una porta `in`
-sullo stesso fluido, uguale a quello della sua rete; nessun attacco `required: true` è
-rimasto libero; tutti i `tag` sono `null` perché l'ingegnere non ne ha scritto nessuno;
-`subsystems`, `rule_applications` e `sheets` sono liste vuote.
+Nessuna infrazione da dichiarare.

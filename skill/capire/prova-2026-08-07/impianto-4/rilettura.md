@@ -1,61 +1,60 @@
-# Tabella di rilettura — Esempio 4, sistema ibrido con pompa di calore e caldaia combinata
+# Tabella di rilettura — Esempio 4, sistema ibrido pompa di calore + caldaia combinata
 
-Rilettura del testo dell'ingegnere frase per frase. Ogni riga porta gli elementi del
-grafo che rappresentano quella frase, oppure la voce di `assumptions` che la copre.
-La seconda tabella fa il percorso inverso: ogni componente e ogni tubazione del grafo
-risale alla frase da cui nasce.
+Una riga per frase del testo dell'ingegnere. Per ogni frase: che cosa afferma sulla
+topologia, quali elementi del grafo la rappresentano, quale voce di `assumptions` la
+copre dove il grafo non la mostra.
 
-## 1. Dal testo al grafo
+## A — Dal testo al grafo
 
-| # | Frase del testo | Cosa nel grafo | Voci dichiarate |
-|---|---|---|---|
-| T | «Esempio 4 – Sistema ibrido con pompa di calore e caldaia combinata» (titolo) | `metadata.project_name`, `metadata.project_id`. Nessuna affermazione topologica. | — |
-| S1 | «L'impianto è costituito da una pompa di calore aria-acqua da 10 kW e da una caldaia a condensazione combinata da 24 kW, collegate in parallelo.» | Componenti `pdc` (`heat-pump-air-water`, `potenza: 10 kW`, `tipo: aria-acqua`) e `caldaia` (`gas-boiler`, `potenza: 24 kW`, `tipo: a condensazione`, `qualifica: combinata`). «In parallelo»: confluenza sulla mandata `rc-mandata-generatori` (`tee-junction`) con `t1` e `t3` in ingresso, e ripartizione sul ritorno `rc-ritorno-generatori` (`tee-split`) con `t5` in ingresso, `t6` e `t7` in uscita. Le due potenze danno `plant_regime: up_to_35_kw` (10 + 24 = 34 kW). | `a1` (la caldaia «combinata» resta la voce base), `a2` (con che pezzo si uniscono i flussi), `a4` (circolazione del primario), `a12` (somma delle potenze e regime) |
-| S2 | «La pompa di calore lavora come generatore principale, mentre la caldaia interviene quando la temperatura esterna è bassa, quando serve maggiore potenza oppure quando l'impianto richiede temperature di mandata più alte.» | Nessun nodo e nessuna tubazione: è logica di regolazione. L'unica traccia è la parola dell'ingegnere trascritta in `pdc.properties.ruolo` = «generatore principale». | `a9` (la sequenza di intervento è regolazione, il grafo non la mostra) |
-| S3 | «I due generatori alimentano un volume tecnico da 150 litri configurato a quattro tubi.» | Componente `volano` (`buffer-four-port`, `volume: 150 litri`, `configurazione: a quattro tubi`, `denominazione: volume tecnico`). Alimentazione: `t4` (`rc-mandata-generatori.b` → `volano.primary_in`) e ritorno `t5` (`volano.primary_out` → `rc-ritorno-generatori.a`). | `a3` (lettura di «a quattro tubi») |
-| S4 | «Sul volume tecnico sono previsti il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico.» | Niente nel grafo: gruppo di riempimento (`filling`) e attacco di scarico (`drain`) sono ferramenta di servizio, li aggiunge il pezzo successivo della catena. Gli attacchi `vent`, `drain` e `probe` del volano sono `stub` e restano liberi. | `a7` (la nomina è registrata, e non è disegnato un secondo allacciamento di acquedotto verso il volume) |
-| S5 | «Dal volume parte un circuito secondario con circolatore dedicato che alimenta direttamente l'impianto esistente a radiatori.» | Rete `secondario-riscaldamento`. Componenti `circolatore-secondario` (`pump-circulator`) e `radiatori` (`radiator`, `stato: esistente`). Tubazioni `t11` (`volano.secondary_out` → circolatore), `t12` (circolatore → radiatori), `t13` (radiatori → `volano.secondary_in`): il circuito si chiude sul volume. «Direttamente» = nessun pezzo interposto fra circolatore e terminali. | `a5` (circolatore messo sulla mandata, convenzione), `a6` (un terminale rappresentativo: quanti sono davvero?) |
-| S6 | «La produzione di acqua calda sanitaria è affidata alla caldaia in modo istantaneo, senza bollitore di accumulo.» | Nessun accumulo sanitario nel grafo. La produzione è la catena `caldaia` → `valvola-deviatrice-acs` → `scambiatore-acs` descritta in S7. | `a8` (esclusione esplicita: non c'è perché il testo lo esclude), `a1` |
-| S7 | «Quando viene richiesta ACS, una valvola a tre vie devia il circuito della caldaia verso uno scambiatore di calore a piastre.» | Componenti `valvola-deviatrice-acs` (`diverting-valve-3way`) e `scambiatore-acs` (`plate-heat-exchanger`). Tubazioni `t2` (`caldaia.water_supply` → `valvola.in`), `t3` (`valvola.out_a` → confluenza verso il volume tecnico), `t8` (`valvola.out_b` → `scambiatore.primary_in`). Il ritorno del primario si chiude con `t9` (`scambiatore.primary_out` → `rc-ritorno-caldaia.c`), `t7` (ritorno dal volume → `rc-ritorno-caldaia.a`) e `t10` (`rc-ritorno-caldaia.b` → `caldaia.water_return`): due ritorni su un solo attacco, quindi una confluenza (`rc-ritorno-caldaia`, `tee-junction`). | `a10` (valvola sulla mandata; dove rientra il ritorno dello scambiatore), `a11` (il ramo resta dentro la rete del primario) |
-| S8 | «L'acqua fredda sanitaria proveniente dall'acquedotto attraversa lo scambiatore e viene riscaldata istantaneamente prima di essere inviata alle utenze.» | Reti `acqua-fredda` (`cold_water`) e `acs` (`domestic_hot_water`): il fluido cambia dentro lo scambiatore, quindi sono due reti. Componenti di confine `acquedotto` (`cold-water-inlet`) e `utenze-acs` (`dhw-draw-off`). Tubazioni `t14` (acquedotto → `scambiatore.secondary_in`) e `t15` (`scambiatore.secondary_out` → utenze). Circuito aperto: entra dall'acquedotto, esce alle utenze. | — |
-| S9 | «Durante la produzione di ACS la caldaia dà priorità al sanitario, mentre la pompa di calore può continuare ad alimentare il volume tecnico e il circuito di riscaldamento.» | Nessun elemento nuovo. La frase conferma la topologia già scritta: la pompa di calore raggiunge il volume tecnico per una via propria (`t1` → `rc-mandata-generatori` → `t4`) che non passa dalla valvola deviatrice, quindi resta percorribile quando la caldaia è deviata sul sanitario. La priorità in sé è regolazione. | `a9` |
+| # | Frase del testo | Che cosa afferma | Elementi del grafo | Assunzioni |
+|---|---|---|---|---|
+| 1 | «Sistema ibrido con pompa di calore e caldaia combinata» (titolo) | nomina l'impianto; nessuna affermazione topologica | `metadata.project_name`, `metadata.project_id` | — |
+| 2 | «L'impianto è costituito da una pompa di calore aria-acqua da 10 kW e da una caldaia a condensazione combinata da 24 kW, collegate in parallelo.» | due generatori; potenze dette; sono in parallelo, quindi le mandate si uniscono e i ritorni si dividono | `pdc` (heat-pump-air-water, potenza 10 kW, tipo aria-acqua), `caldaia` (gas-boiler, potenza 24 kW, tipo a condensazione combinata), `rc-mandata-generatori` (raccordo a T), `rip-ritorno-generatori` (ripartizione a T), tubazioni `t-pdc-mandata`, `t-deviatrice-riscaldamento`, `t-ritorno-pdc`, `t-ritorno-verso-caldaia`; rete `primario`; `plant_regime: up_to_35_kw` (10 + 24 = 34 kW) | a1 (con che pezzo si fa il parallelo), a4 (nessun circolatore sul primario), a9 (perché «combinata» non ha cambiato la voce di catalogo), a10 (come è stato ricavato il regime) |
+| 3 | «La pompa di calore lavora come generatore principale, mentre la caldaia interviene quando la temperatura esterna è bassa, quando serve maggiore potenza oppure quando l'impianto richiede temperature di mandata più alte.» | logica di regolazione: nessun nodo, nessun tubo | — (nulla nel grafo: è regolazione) | a7 |
+| 4 | «I due generatori alimentano un volume tecnico da 150 litri configurato a quattro tubi.» | i due generatori confluiscono nel primario dell'accumulo; volume detto; quattro attacchi di flusso | `volano` (buffer-four-port, volume 150 litri, configurazione a quattro tubi), `t-mandata-volano` (verso `primary_in`), `t-volano-ritorno` (da `primary_out`), `rc-mandata-generatori`, `rip-ritorno-generatori`; rete `primario` | a1 |
+| 5 | «Sul volume tecnico sono previsti il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico.» | dice dove stanno due accessori di servizio (riempimento, scarico) | — (ferramenta: non entra in questa stesura; gli attacchi di servizio del volano restano liberi) | a6 |
+| 6 | «Dal volume parte un circuito secondario con circolatore dedicato che alimenta direttamente l'impianto esistente a radiatori.» | seconda rete alimentata dall'accumulo; circolatore come pezzo a sé; terminali a radiatori; circuito chiuso, quindi anche il ritorno | rete `secondario`; `circolatore-secondario` (pump-circulator), `radiatori` (radiator); tubazioni `t-volano-circolatore` (da `secondary_out`), `t-circolatore-radiatori`, `t-radiatori-volano` (verso `secondary_in`) | a3 (circolatore sulla mandata), a5 (un solo terminale rappresentativo) |
+| 7 | «La produzione di acqua calda sanitaria è affidata alla caldaia in modo istantaneo, senza bollitore di accumulo.» | il sanitario c'è, ed è istantaneo; esclusione esplicita dell'accumulo | — (nessun accumulo sanitario disegnato; il come è descritto nella frase 8) | a8, a9 |
+| 8 | «Quando viene richiesta ACS, una valvola a tre vie devia il circuito della caldaia verso uno scambiatore di calore a piastre.» | sul ramo della caldaia c'è una deviazione a due strade: verso il volano o verso lo scambiatore; il primario dello scambiatore è acqua di riscaldamento della caldaia e il circuito si chiude | `valvola-deviatrice-acs` (diverting-valve-3way), `scambiatore-acs` (plate-heat-exchanger, lato primario), `rc-ritorno-caldaia` (raccordo a T); tubazioni `t-caldaia-mandata`, `t-deviatrice-riscaldamento` (`out_a` verso il volano), `t-deviatrice-scambiatore` (`out_b` verso lo scambiatore), `t-scambiatore-ritorno`, `t-ritorno-caldaia` | a2 (dove sta la valvola e dove rientra il ritorno dello scambiatore), a9, a11 (il ramo resta nella rete del primario) |
+| 9 | «L'acqua fredda sanitaria proveniente dall'acquedotto attraversa lo scambiatore e viene riscaldata istantaneamente prima di essere inviata alle utenze.» | circuito sanitario aperto: confine acquedotto → secondario dello scambiatore → confine utenze; il fluido cambia dentro lo scambiatore, quindi due reti | `acquedotto` (cold-water-inlet), `utenze-sanitarie` (dhw-draw-off), lato secondario di `scambiatore-acs`; reti `acqua-fredda` e `acs`; tubazioni `t-acquedotto-scambiatore`, `t-scambiatore-utenze` | a8 (nessun ricircolo: il testo non lo nomina), a11 |
+| 10 | «Durante la produzione di ACS la caldaia dà priorità al sanitario, mentre la pompa di calore può continuare ad alimentare il volume tecnico e il circuito di riscaldamento.» | logica di regolazione; conferma però una lettura topologica: la deviazione è sul solo ramo della caldaia, non sulla mandata comune, altrimenti la pompa di calore non potrebbe continuare | conferma la posizione di `valvola-deviatrice-acs` fra `caldaia` e `rc-mandata-generatori` | a7, a2 |
 
-## 2. Dal grafo al testo
+## B — Dal grafo al testo (nessun elemento senza una frase dietro)
 
-| Elemento | Voce di catalogo | Frase da cui nasce |
-|---|---|---|
-| `pdc` | `heat-pump-air-water` | S1 |
-| `caldaia` | `gas-boiler` | S1 (qualifica «combinata»), S6–S7 per il modo di produrre l'ACS |
-| `volano` | `buffer-four-port` | S3 |
-| `rc-mandata-generatori` | `tee-junction` | S1 («in parallelo») |
-| `rc-ritorno-generatori` | `tee-split` | S1 («in parallelo») |
-| `valvola-deviatrice-acs` | `diverting-valve-3way` | S7 |
-| `scambiatore-acs` | `plate-heat-exchanger` | S7, S8 |
-| `rc-ritorno-caldaia` | `tee-junction` | S7 (due ritorni su un attacco solo) |
-| `circolatore-secondario` | `pump-circulator` | S5 |
-| `radiatori` | `radiator` | S5 |
-| `acquedotto` | `cold-water-inlet` | S8 |
-| `utenze-acs` | `dhw-draw-off` | S8 |
-| `t1` `pdc.water_supply` → `rc-mandata-generatori.a` | — | S1, S3 |
-| `t2` `caldaia.water_supply` → `valvola-deviatrice-acs.in` | — | S7 |
-| `t3` `valvola-deviatrice-acs.out_a` → `rc-mandata-generatori.c` | — | S1, S3, S7 |
-| `t4` `rc-mandata-generatori.b` → `volano.primary_in` | — | S3 |
-| `t5` `volano.primary_out` → `rc-ritorno-generatori.a` | — | S1, S3 |
-| `t6` `rc-ritorno-generatori.b` → `pdc.water_return` | — | S1, S3 |
-| `t7` `rc-ritorno-generatori.c` → `rc-ritorno-caldaia.a` | — | S1, S3, S7 |
-| `t8` `valvola-deviatrice-acs.out_b` → `scambiatore-acs.primary_in` | — | S7 |
-| `t9` `scambiatore-acs.primary_out` → `rc-ritorno-caldaia.c` | — | S7 |
-| `t10` `rc-ritorno-caldaia.b` → `caldaia.water_return` | — | S7 |
-| `t11` `volano.secondary_out` → `circolatore-secondario.a` | — | S5 |
-| `t12` `circolatore-secondario.b` → `radiatori.in` | — | S5 |
-| `t13` `radiatori.out` → `volano.secondary_in` | — | S5 |
-| `t14` `acquedotto.a` → `scambiatore-acs.secondary_in` | — | S8 |
-| `t15` `scambiatore-acs.secondary_out` → `utenze-acs.a` | — | S8 |
-| rete `primario` | — | S1, S3, S7 |
-| rete `secondario-riscaldamento` | — | S5 |
-| rete `acqua-fredda` | — | S8 |
-| rete `acs` | — | S8 |
-| `plant_regime: up_to_35_kw` | — | S1 (10 kW + 24 kW = 34 kW) |
+| Elemento | Frase che lo genera |
+|---|---|
+| rete `primario` | 2, 4 |
+| rete `secondario` | 6 |
+| rete `acqua-fredda` | 9 |
+| rete `acs` | 9 |
+| `pdc` | 2 |
+| `caldaia` | 2 |
+| `valvola-deviatrice-acs` | 8 |
+| `scambiatore-acs` | 8, 9 |
+| `rc-mandata-generatori` | 2 («in parallelo») + 4 (un solo attacco sul volano) |
+| `rip-ritorno-generatori` | 2 («in parallelo») + 4 |
+| `rc-ritorno-caldaia` | 8 (il ritorno dello scambiatore e quello dal volano arrivano sullo stesso attacco della caldaia) |
+| `volano` | 4 |
+| `circolatore-secondario` | 6 |
+| `radiatori` | 6 |
+| `acquedotto` | 9 |
+| `utenze-sanitarie` | 9 |
+| `t-pdc-mandata` | 2, 4 |
+| `t-caldaia-mandata` | 2, 8 |
+| `t-deviatrice-riscaldamento` | 2, 4, 8 |
+| `t-mandata-volano` | 4 |
+| `t-volano-ritorno` | 4 (circuito chiuso) |
+| `t-ritorno-pdc` | 2, 4 |
+| `t-ritorno-verso-caldaia` | 2, 4 |
+| `t-deviatrice-scambiatore` | 8 |
+| `t-scambiatore-ritorno` | 8 (circuito chiuso) |
+| `t-ritorno-caldaia` | 8 |
+| `t-volano-circolatore` | 6 |
+| `t-circolatore-radiatori` | 6 |
+| `t-radiatori-volano` | 6 (circuito chiuso) |
+| `t-acquedotto-scambiatore` | 9 |
+| `t-scambiatore-utenze` | 9 |
+| `plant_regime` | 2 (potenze dette: 10 + 24 = 34 kW) |
 
-Nessun elemento del grafo resta senza riga. Nessuna affermazione topologica del testo
-resta senza rappresentazione o senza una voce dichiarata.
+Nessun componente e nessuna tubazione del grafo resta fuori da questa seconda tabella;
+nessuna frase del testo resta senza una riga nella prima.

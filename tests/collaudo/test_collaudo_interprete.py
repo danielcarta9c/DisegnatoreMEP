@@ -23,7 +23,6 @@ Cosa misurano queste prove, in ordine:
 L'unico difetto trovato e' inchiodato in fondo con `xfail(strict=True)`.
 """
 
-import copy
 import importlib.util
 import json
 import re
@@ -613,43 +612,22 @@ def test_il_documento_finale_e_deterministico(n: int) -> None:
         )
 
 
-# ------------------------------------------------------------------ il difetto
+# ------------------------------------------- il difetto 1, chiuso e tenuto chiuso
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "DIFETTO 1 — il quinto grafo della camera pulita fa esplodere il seguito della "
-        "catena.\n"
-        "\n"
-        "Cosa succede. Il grafo carica, il completatore lo digerisce e l'assemblatore "
-        "pure; poi il passo che battezza le linee idrauliche si ferma con "
-        "NamingError: «nessuna famiglia di linea per il fluido heating_water che parte "
-        "da other in verso return». Sugli altri quattro impianti il documento esce, e "
-        "sul quinto esce anche partendo dalla lettura manuale: e' il solo grafo dei "
-        "cinque che rompe la catena.\n"
-        "\n"
-        "Perche' succede. Il testo dice «dal volume tecnico partono tre circuiti "
-        "secondari indipendenti» e ISTRUZIONI.md §4.2 dice che «una rete e' un "
-        "circuito che il testo nomina o distingue». Preso alla lettera, questo fa tre "
-        "reti, una per circuito, piu' una per il tratto comune. Ma ciascuno dei tre "
-        "circuiti comincia su un raccordo, non su una macchina, e la tabella "
-        "naming/lines.json conosce le linee di riscaldamento solo quando la rete parte "
-        "da un generatore o da una riserva. Fondendo le quattro reti secondarie in una "
-        "sola — stessi pezzi, stessi tubi, stessi fluidi — il documento esce senza "
-        "toccare nient'altro.\n"
-        "\n"
-        "Di chi e' il difetto. Non dell'agente: il suo grafo e' fedele al testo, "
-        "coincide arco per arco con la lettura manuale e dichiara apertamente la "
-        "scelta di raggruppamento (voce a16). E' delle istruzioni, che sul taglio "
-        "delle reti non danno alcun criterio e permettono un grafo che il resto della "
-        "catena non sa nominare. §4.2 va completato dicendo dove una rete puo' "
-        "cominciare — oppure la tabella delle famiglie di linea va estesa.\n"
-        "\n"
-        "Come si riproduce: questa stessa prova, senza il marcatore."
-    ),
-)
 def test_il_documento_esce_per_tutti_e_cinque_gli_impianti() -> None:
+    """Il difetto 1 del collaudo del giro 2, ora chiuso e presidiato.
+
+    Al giro 2 il quinto grafo rompeva la catena: `NamingError`, «nessuna famiglia
+    di linea per il fluido heating_water che parte da other in verso return».
+    L'agente aveva tagliato il lato secondario in quattro reti, e tre cominciavano
+    su un **raccordo** — mentre le famiglie di linea sanno nominare solo cio' che
+    parte da un generatore o da una riserva. Il grafo era fedele e la scelta
+    dichiarata: il buco era delle istruzioni, che dicevano cos'e' una rete e mai
+    dove una rete puo' cominciare.
+
+    Corretto il §4.2, la prova gira senza marcatore — che e' esattamente come il
+    collaudo del giro 2 aveva detto di riprodurla."""
     cat, rl, nm, costruttore = _catena()
     for n in IMPIANTI:
         modello = load_project(PROVA / f"impianto-{n}" / "grafo.json")
@@ -657,38 +635,31 @@ def test_il_documento_esce_per_tutti_e_cinque_gli_impianti() -> None:
         costruttore.build(completo, cat, nm, buchi)
 
 
-def test_il_difetto_si_chiude_fondendo_le_reti_secondarie() -> None:
-    """La prova che inchioda la causa del difetto 1: lo stesso grafo, con le quattro
-    reti del lato secondario fuse in una, attraversa tutta la catena. Non cambia
-    nessun pezzo e nessuna tubazione — cambia solo l'etichetta della rete."""
-    cat, rl, nm, costruttore = _catena()
-    d = copy.deepcopy(grafo(5))
-    fuse = {"distribuzione-secondaria", "circuito-uta", "circuito-fan-coil", "circuito-pavimento"}
-    d["networks"] = [x for x in d["networks"] if x["id"] not in fuse] + [
-        {
-            "id": "secondario",
-            "name": "Circuito secondario",
-            "domain": "hydronic",
-            "medium": "heating_water",
-        }
-    ]
+#: I mestieri che possono far **cominciare** una rete: una macchina che la
+#: alimenta, oppure un confine. Sono quelli da cui le famiglie di linea sanno
+#: dire che acqua porta la linea e da che parte va.
+SORGENTI = {"heat_generation", "thermal_storage", "dhw_storage", "boundary", "heat_exchange"}
+
+
+@pytest.mark.parametrize("n", IMPIANTI)
+def test_nessuna_rete_comincia_su_un_raccordo(n: int) -> None:
+    """La causa del difetto 1, presidiata nella sua forma generale.
+
+    Non basta che oggi il documento esca: la regola del §4.2 dice che una rete
+    parte da una macchina che la alimenta o da un confine, **mai da un
+    raccordo**. Una rete fatta di soli raccordi, circolatori e terminali e' una
+    rete che il resto della catena non sa nominare — ed e' esattamente il grafo
+    che al giro 2 rompeva la catena. Qui si controlla la proprieta', non il
+    sintomo: cosi' il difetto non puo' rientrare da un'altra porta."""
+    d = grafo(n)
+    di_rete: dict[str, set[str]] = defaultdict(set)
+    per_id = {c["id"]: c["definition_id"] for c in d["components"]}
     for c in d["connections"]:
-        if c["network_id"] in fuse:
-            c["network_id"] = "secondario"
+        for lato in ("endpoint_a", "endpoint_b"):
+            di_rete[c["network_id"]] |= mestieri(per_id[c[lato]["component_id"]])
 
-    fuori = ROOT / "tests" / "collaudo" / "_impianto-5-reti-fuse.json"
-    try:
-        fuori.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
-        modello = load_project(fuori)
-    finally:
-        fuori.unlink(missing_ok=True)
-
-    completo, _, buchi = saturate(modello, cat, rl)
-    documento = costruttore.build(completo, cat, nm, buchi)
-    assert documento
-
-    # e i pezzi restano gli stessi di prima della fusione
-    originale, _, _ = saturate(load_project(PROVA / "impianto-5" / "grafo.json"), cat, rl)
-    assert Counter(c.definition_id for c in completo.components) == Counter(
-        c.definition_id for c in originale.components
+    orfane = sorted(r for r, m in di_rete.items() if not (m & SORGENTI))
+    assert orfane == [], (
+        f"grafo {n}: queste reti non hanno una macchina che le alimenti ne' un "
+        f"confine, quindi cominciano su un raccordo: {orfane}"
     )

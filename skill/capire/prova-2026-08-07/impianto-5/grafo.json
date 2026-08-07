@@ -1,9 +1,9 @@
 {
   "schema_version": "1.1.0",
   "metadata": {
-    "project_id": "tre-pompe-di-calore-circuiti-secondari",
+    "project_id": "tre-pdc-circuiti-secondari",
     "client": "Nove C",
-    "project_name": "Tre pompe di calore con più circuiti secondari",
+    "project_name": "Tre pompe di calore con piu' circuiti secondari",
     "commission_code": "PROVA",
     "revision": "00",
     "issue_date": "2026-08-07"
@@ -11,32 +11,14 @@
   "plant_regime": "over_35_kw",
   "networks": [
     {
-      "id": "circuito-generatori",
+      "id": "primario",
       "name": "Circuito dei generatori",
       "domain": "hydronic",
       "medium": "heating_water"
     },
     {
-      "id": "distribuzione-secondaria",
-      "name": "Distribuzione secondaria dal volume tecnico",
-      "domain": "hydronic",
-      "medium": "heating_water"
-    },
-    {
-      "id": "circuito-uta",
-      "name": "Circuito delle batterie delle unità di trattamento aria",
-      "domain": "hydronic",
-      "medium": "heating_water"
-    },
-    {
-      "id": "circuito-fan-coil",
-      "name": "Circuito dei fan-coil",
-      "domain": "hydronic",
-      "medium": "heating_water"
-    },
-    {
-      "id": "circuito-pavimento",
-      "name": "Circuito miscelato del pavimento radiante",
+      "id": "secondario",
+      "name": "Circuiti secondari dell'edificio",
       "domain": "hydronic",
       "medium": "heating_water"
     },
@@ -47,14 +29,8 @@
       "medium": "cold_water"
     },
     {
-      "id": "acqua-calda-sanitaria",
+      "id": "acs",
       "name": "Acqua calda sanitaria",
-      "domain": "hydronic",
-      "medium": "domestic_hot_water"
-    },
-    {
-      "id": "ricircolo-acs",
-      "name": "Ricircolo dell'acqua calda sanitaria",
       "domain": "hydronic",
       "medium": "domestic_hot_water"
     }
@@ -66,7 +42,8 @@
       "tag": null,
       "properties": {
         "potenza": "35 kW",
-        "tipo": "aria-acqua reversibile"
+        "tipo": "aria-acqua reversibile",
+        "gestione": "in cascata"
       }
     },
     {
@@ -75,7 +52,8 @@
       "tag": null,
       "properties": {
         "potenza": "35 kW",
-        "tipo": "aria-acqua reversibile"
+        "tipo": "aria-acqua reversibile",
+        "gestione": "in cascata"
       }
     },
     {
@@ -84,17 +62,18 @@
       "tag": null,
       "properties": {
         "potenza": "35 kW",
-        "tipo": "aria-acqua reversibile"
+        "tipo": "aria-acqua reversibile",
+        "gestione": "in cascata"
       }
     },
     {
-      "id": "rc-mandata-pdc-1",
+      "id": "rc-mandata-generatori-1",
       "definition_id": "tee-junction",
       "tag": null,
       "properties": {}
     },
     {
-      "id": "rc-mandata-pdc-2",
+      "id": "rc-mandata-generatori-2",
       "definition_id": "tee-junction",
       "tag": null,
       "properties": {}
@@ -104,7 +83,7 @@
       "definition_id": "diverting-valve-3way",
       "tag": null,
       "properties": {
-        "tipo": "valvola a tre vie"
+        "funzione": "devia il flusso delle pompe di calore verso il serpentino del bollitore"
       }
     },
     {
@@ -114,7 +93,7 @@
       "properties": {
         "volume": "500 litri",
         "configurazione": "a quattro tubi",
-        "impiego": "accumulo inerziale e punto di separazione tra il circuito dei generatori e i circuiti dell'edificio"
+        "funzione": "accumulo inerziale e punto di separazione tra il circuito dei generatori e i circuiti dell'edificio"
       }
     },
     {
@@ -123,7 +102,7 @@
       "tag": null,
       "properties": {
         "volume": "500 litri",
-        "impiego": "produzione ACS centralizzata"
+        "produzione": "centralizzata"
       }
     },
     {
@@ -133,13 +112,13 @@
       "properties": {}
     },
     {
-      "id": "rip-ritorno-pdc-1",
+      "id": "rip-ritorno-generatori-1",
       "definition_id": "tee-split",
       "tag": null,
       "properties": {}
     },
     {
-      "id": "rip-ritorno-pdc-2",
+      "id": "rip-ritorno-generatori-2",
       "definition_id": "tee-split",
       "tag": null,
       "properties": {}
@@ -157,6 +136,58 @@
       "properties": {}
     },
     {
+      "id": "cir-uta",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "bat-uta",
+      "definition_id": "ahu-coil",
+      "tag": null,
+      "properties": {
+        "tipo": "batterie calde e fredde delle unita' di trattamento aria"
+      }
+    },
+    {
+      "id": "cir-fancoil",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "fancoil",
+      "definition_id": "fan-coil",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "vmr-radiante",
+      "definition_id": "mixing-valve-3way",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "cir-radiante",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "pav-radiante",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "funzionamento": "solo in riscaldamento"
+      }
+    },
+    {
+      "id": "rip-bypass-radiante",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
       "id": "rc-ritorno-secondari-1",
       "definition_id": "tee-junction",
       "tag": null,
@@ -169,66 +200,8 @@
       "properties": {}
     },
     {
-      "id": "cir-uta",
-      "definition_id": "pump-circulator",
-      "tag": null,
-      "properties": {}
-    },
-    {
-      "id": "batteria-uta",
-      "definition_id": "ahu-coil",
-      "tag": null,
-      "properties": {
-        "impiego": "batterie calde e fredde delle unità di trattamento aria"
-      }
-    },
-    {
-      "id": "cir-fan-coil",
-      "definition_id": "pump-circulator",
-      "tag": null,
-      "properties": {}
-    },
-    {
-      "id": "fan-coil",
-      "definition_id": "fan-coil",
-      "tag": null,
-      "properties": {}
-    },
-    {
-      "id": "vmr-pavimento",
-      "definition_id": "mixing-valve-3way",
-      "tag": null,
-      "properties": {}
-    },
-    {
-      "id": "cir-pavimento",
-      "definition_id": "pump-circulator",
-      "tag": null,
-      "properties": {}
-    },
-    {
-      "id": "pavimento-radiante",
-      "definition_id": "underfloor-panel",
-      "tag": null,
-      "properties": {
-        "impiego": "utilizzato solo in riscaldamento"
-      }
-    },
-    {
-      "id": "rip-ritorno-pavimento",
-      "definition_id": "tee-split",
-      "tag": null,
-      "properties": {}
-    },
-    {
       "id": "acquedotto",
       "definition_id": "cold-water-inlet",
-      "tag": null,
-      "properties": {}
-    },
-    {
-      "id": "utenze-acs",
-      "definition_id": "dhw-draw-off",
       "tag": null,
       "properties": {}
     },
@@ -249,257 +222,263 @@
       "definition_id": "pump-circulator-dhw",
       "tag": null,
       "properties": {}
+    },
+    {
+      "id": "utenze",
+      "definition_id": "dhw-draw-off",
+      "tag": null,
+      "properties": {}
     }
   ],
   "connections": [
     {
       "id": "p01",
-      "network_id": "circuito-generatori",
+      "network_id": "primario",
       "endpoint_a": { "component_id": "pdc-1", "port_id": "water_supply" },
-      "endpoint_b": { "component_id": "rc-mandata-pdc-1", "port_id": "a" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori-1", "port_id": "a" },
       "properties": {}
     },
     {
       "id": "p02",
-      "network_id": "circuito-generatori",
+      "network_id": "primario",
       "endpoint_a": { "component_id": "pdc-2", "port_id": "water_supply" },
-      "endpoint_b": { "component_id": "rc-mandata-pdc-1", "port_id": "c" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori-1", "port_id": "c" },
       "properties": {}
     },
     {
       "id": "p03",
-      "network_id": "circuito-generatori",
-      "endpoint_a": { "component_id": "rc-mandata-pdc-1", "port_id": "b" },
-      "endpoint_b": { "component_id": "rc-mandata-pdc-2", "port_id": "a" },
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "rc-mandata-generatori-1", "port_id": "b" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori-2", "port_id": "a" },
       "properties": {}
     },
     {
       "id": "p04",
-      "network_id": "circuito-generatori",
+      "network_id": "primario",
       "endpoint_a": { "component_id": "pdc-3", "port_id": "water_supply" },
-      "endpoint_b": { "component_id": "rc-mandata-pdc-2", "port_id": "c" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori-2", "port_id": "c" },
       "properties": {}
     },
     {
       "id": "p05",
-      "network_id": "circuito-generatori",
-      "endpoint_a": { "component_id": "rc-mandata-pdc-2", "port_id": "b" },
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "rc-mandata-generatori-2", "port_id": "b" },
       "endpoint_b": { "component_id": "vd-acs", "port_id": "in" },
       "properties": {}
     },
     {
       "id": "p06",
-      "network_id": "circuito-generatori",
+      "network_id": "primario",
       "endpoint_a": { "component_id": "vd-acs", "port_id": "out_a" },
       "endpoint_b": { "component_id": "volano", "port_id": "primary_in" },
       "properties": {}
     },
     {
       "id": "p07",
-      "network_id": "circuito-generatori",
+      "network_id": "primario",
       "endpoint_a": { "component_id": "vd-acs", "port_id": "out_b" },
       "endpoint_b": { "component_id": "bollitore", "port_id": "coil_in" },
       "properties": {}
     },
     {
       "id": "p08",
-      "network_id": "circuito-generatori",
+      "network_id": "primario",
       "endpoint_a": { "component_id": "volano", "port_id": "primary_out" },
       "endpoint_b": { "component_id": "rc-ritorno-primario", "port_id": "a" },
       "properties": {}
     },
     {
       "id": "p09",
-      "network_id": "circuito-generatori",
+      "network_id": "primario",
       "endpoint_a": { "component_id": "bollitore", "port_id": "coil_out" },
       "endpoint_b": { "component_id": "rc-ritorno-primario", "port_id": "c" },
       "properties": {}
     },
     {
       "id": "p10",
-      "network_id": "circuito-generatori",
+      "network_id": "primario",
       "endpoint_a": { "component_id": "rc-ritorno-primario", "port_id": "b" },
-      "endpoint_b": { "component_id": "rip-ritorno-pdc-1", "port_id": "a" },
+      "endpoint_b": { "component_id": "rip-ritorno-generatori-1", "port_id": "a" },
       "properties": {}
     },
     {
       "id": "p11",
-      "network_id": "circuito-generatori",
-      "endpoint_a": { "component_id": "rip-ritorno-pdc-1", "port_id": "b" },
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "rip-ritorno-generatori-1", "port_id": "b" },
       "endpoint_b": { "component_id": "pdc-1", "port_id": "water_return" },
       "properties": {}
     },
     {
       "id": "p12",
-      "network_id": "circuito-generatori",
-      "endpoint_a": { "component_id": "rip-ritorno-pdc-1", "port_id": "c" },
-      "endpoint_b": { "component_id": "rip-ritorno-pdc-2", "port_id": "a" },
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "rip-ritorno-generatori-1", "port_id": "c" },
+      "endpoint_b": { "component_id": "rip-ritorno-generatori-2", "port_id": "a" },
       "properties": {}
     },
     {
       "id": "p13",
-      "network_id": "circuito-generatori",
-      "endpoint_a": { "component_id": "rip-ritorno-pdc-2", "port_id": "b" },
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "rip-ritorno-generatori-2", "port_id": "b" },
       "endpoint_b": { "component_id": "pdc-2", "port_id": "water_return" },
       "properties": {}
     },
     {
       "id": "p14",
-      "network_id": "circuito-generatori",
-      "endpoint_a": { "component_id": "rip-ritorno-pdc-2", "port_id": "c" },
+      "network_id": "primario",
+      "endpoint_a": { "component_id": "rip-ritorno-generatori-2", "port_id": "c" },
       "endpoint_b": { "component_id": "pdc-3", "port_id": "water_return" },
       "properties": {}
     },
     {
-      "id": "p15",
-      "network_id": "distribuzione-secondaria",
+      "id": "s01",
+      "network_id": "secondario",
       "endpoint_a": { "component_id": "volano", "port_id": "secondary_out" },
       "endpoint_b": { "component_id": "rip-mandata-secondari-1", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "p16",
-      "network_id": "distribuzione-secondaria",
-      "endpoint_a": { "component_id": "rip-mandata-secondari-1", "port_id": "c" },
-      "endpoint_b": { "component_id": "rip-mandata-secondari-2", "port_id": "a" },
-      "properties": {}
-    },
-    {
-      "id": "p17",
-      "network_id": "distribuzione-secondaria",
-      "endpoint_a": { "component_id": "rc-ritorno-secondari-1", "port_id": "b" },
-      "endpoint_b": { "component_id": "rc-ritorno-secondari-2", "port_id": "a" },
-      "properties": {}
-    },
-    {
-      "id": "p18",
-      "network_id": "distribuzione-secondaria",
-      "endpoint_a": { "component_id": "rc-ritorno-secondari-2", "port_id": "b" },
-      "endpoint_b": { "component_id": "volano", "port_id": "secondary_in" },
-      "properties": {}
-    },
-    {
-      "id": "p19",
-      "network_id": "circuito-uta",
+      "id": "s02",
+      "network_id": "secondario",
       "endpoint_a": { "component_id": "rip-mandata-secondari-1", "port_id": "b" },
       "endpoint_b": { "component_id": "cir-uta", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "p20",
-      "network_id": "circuito-uta",
-      "endpoint_a": { "component_id": "cir-uta", "port_id": "b" },
-      "endpoint_b": { "component_id": "batteria-uta", "port_id": "in" },
+      "id": "s03",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "rip-mandata-secondari-1", "port_id": "c" },
+      "endpoint_b": { "component_id": "rip-mandata-secondari-2", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "p21",
-      "network_id": "circuito-uta",
-      "endpoint_a": { "component_id": "batteria-uta", "port_id": "out" },
+      "id": "s04",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "rip-mandata-secondari-2", "port_id": "b" },
+      "endpoint_b": { "component_id": "cir-fancoil", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "s05",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "rip-mandata-secondari-2", "port_id": "c" },
+      "endpoint_b": { "component_id": "vmr-radiante", "port_id": "hot_in" },
+      "properties": {}
+    },
+    {
+      "id": "s06",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "cir-uta", "port_id": "b" },
+      "endpoint_b": { "component_id": "bat-uta", "port_id": "in" },
+      "properties": {}
+    },
+    {
+      "id": "s07",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "bat-uta", "port_id": "out" },
       "endpoint_b": { "component_id": "rc-ritorno-secondari-1", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "p22",
-      "network_id": "circuito-fan-coil",
-      "endpoint_a": { "component_id": "rip-mandata-secondari-2", "port_id": "b" },
-      "endpoint_b": { "component_id": "cir-fan-coil", "port_id": "a" },
+      "id": "s08",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "cir-fancoil", "port_id": "b" },
+      "endpoint_b": { "component_id": "fancoil", "port_id": "in" },
       "properties": {}
     },
     {
-      "id": "p23",
-      "network_id": "circuito-fan-coil",
-      "endpoint_a": { "component_id": "cir-fan-coil", "port_id": "b" },
-      "endpoint_b": { "component_id": "fan-coil", "port_id": "in" },
-      "properties": {}
-    },
-    {
-      "id": "p24",
-      "network_id": "circuito-fan-coil",
-      "endpoint_a": { "component_id": "fan-coil", "port_id": "out" },
+      "id": "s09",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "fancoil", "port_id": "out" },
       "endpoint_b": { "component_id": "rc-ritorno-secondari-1", "port_id": "c" },
       "properties": {}
     },
     {
-      "id": "p25",
-      "network_id": "circuito-pavimento",
-      "endpoint_a": { "component_id": "rip-mandata-secondari-2", "port_id": "c" },
-      "endpoint_b": { "component_id": "vmr-pavimento", "port_id": "hot_in" },
+      "id": "s10",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "vmr-radiante", "port_id": "out" },
+      "endpoint_b": { "component_id": "cir-radiante", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "p26",
-      "network_id": "circuito-pavimento",
-      "endpoint_a": { "component_id": "vmr-pavimento", "port_id": "out" },
-      "endpoint_b": { "component_id": "cir-pavimento", "port_id": "a" },
+      "id": "s11",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "cir-radiante", "port_id": "b" },
+      "endpoint_b": { "component_id": "pav-radiante", "port_id": "in" },
       "properties": {}
     },
     {
-      "id": "p27",
-      "network_id": "circuito-pavimento",
-      "endpoint_a": { "component_id": "cir-pavimento", "port_id": "b" },
-      "endpoint_b": { "component_id": "pavimento-radiante", "port_id": "in" },
+      "id": "s12",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "pav-radiante", "port_id": "out" },
+      "endpoint_b": { "component_id": "rip-bypass-radiante", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "p28",
-      "network_id": "circuito-pavimento",
-      "endpoint_a": { "component_id": "pavimento-radiante", "port_id": "out" },
-      "endpoint_b": { "component_id": "rip-ritorno-pavimento", "port_id": "a" },
+      "id": "s13",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "rip-bypass-radiante", "port_id": "c" },
+      "endpoint_b": { "component_id": "vmr-radiante", "port_id": "cold_in" },
       "properties": {}
     },
     {
-      "id": "p29",
-      "network_id": "circuito-pavimento",
-      "endpoint_a": { "component_id": "rip-ritorno-pavimento", "port_id": "c" },
-      "endpoint_b": { "component_id": "vmr-pavimento", "port_id": "cold_in" },
-      "properties": {}
-    },
-    {
-      "id": "p30",
-      "network_id": "circuito-pavimento",
-      "endpoint_a": { "component_id": "rip-ritorno-pavimento", "port_id": "b" },
+      "id": "s14",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "rip-bypass-radiante", "port_id": "b" },
       "endpoint_b": { "component_id": "rc-ritorno-secondari-2", "port_id": "c" },
       "properties": {}
     },
     {
-      "id": "p31",
+      "id": "s15",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "rc-ritorno-secondari-1", "port_id": "b" },
+      "endpoint_b": { "component_id": "rc-ritorno-secondari-2", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "s16",
+      "network_id": "secondario",
+      "endpoint_a": { "component_id": "rc-ritorno-secondari-2", "port_id": "b" },
+      "endpoint_b": { "component_id": "volano", "port_id": "secondary_in" },
+      "properties": {}
+    },
+    {
+      "id": "f01",
       "network_id": "acqua-fredda",
       "endpoint_a": { "component_id": "acquedotto", "port_id": "a" },
       "endpoint_b": { "component_id": "bollitore", "port_id": "cold_in" },
       "properties": {}
     },
     {
-      "id": "p32",
-      "network_id": "acqua-calda-sanitaria",
+      "id": "c01",
+      "network_id": "acs",
       "endpoint_a": { "component_id": "bollitore", "port_id": "dhw_out" },
       "endpoint_b": { "component_id": "rc-ricircolo", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "p33",
-      "network_id": "acqua-calda-sanitaria",
+      "id": "c02",
+      "network_id": "acs",
       "endpoint_a": { "component_id": "rc-ricircolo", "port_id": "b" },
       "endpoint_b": { "component_id": "rip-ricircolo", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "p34",
-      "network_id": "acqua-calda-sanitaria",
+      "id": "c03",
+      "network_id": "acs",
       "endpoint_a": { "component_id": "rip-ricircolo", "port_id": "b" },
-      "endpoint_b": { "component_id": "utenze-acs", "port_id": "a" },
+      "endpoint_b": { "component_id": "utenze", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "p35",
-      "network_id": "ricircolo-acs",
+      "id": "c04",
+      "network_id": "acs",
       "endpoint_a": { "component_id": "rip-ricircolo", "port_id": "c" },
       "endpoint_b": { "component_id": "cir-ricircolo", "port_id": "a" },
       "properties": {}
     },
     {
-      "id": "p36",
-      "network_id": "ricircolo-acs",
+      "id": "c05",
+      "network_id": "acs",
       "endpoint_a": { "component_id": "cir-ricircolo", "port_id": "b" },
       "endpoint_b": { "component_id": "rc-ricircolo", "port_id": "c" },
       "properties": {}
@@ -507,8 +486,8 @@
   ],
   "assumptions": [
     {
-      "id": "a01",
-      "text": "Le pompe di calore sono dichiarate reversibili: d'estate mandano acqua refrigerata negli stessi tubi. La tabella dei fluidi non ha un fluido per il raffrescamento, quindi tutti i circuiti idronici lato impianto sono dichiarati con acqua di riscaldamento; il circuito dei generatori, quello delle batterie delle UTA e quello dei fan-coil portano anche il raffrescamento. Il pavimento radiante, dice il testo, e' usato solo in riscaldamento.",
+      "id": "a1",
+      "text": "Le pompe di calore sono reversibili: d'estate mandano acqua refrigerata negli stessi tubi. La tabella dei fluidi non ha un fluido per il raffrescamento, quindi tutti i circuiti termici sono dichiarati «acqua di riscaldamento»: il circuito dei generatori e i circuiti secondari delle batterie UTA e dei fan-coil portano anche il raffrescamento. Il circuito del pavimento radiante e' invece dichiarato dal testo «utilizzato solo in riscaldamento».",
       "status": "proposed",
       "source_message_refs": [
         "tre pompe di calore aria-acqua reversibili da 35 kW ciascuna",
@@ -516,124 +495,91 @@
       ]
     },
     {
-      "id": "a02",
-      "text": "La gestione in cascata delle tre pompe di calore e' una logica di regolazione: sul grafo si vedono le tre macchine in parallelo, non la cascata. Non produce ne' nodi ne' tubazioni.",
+      "id": "a2",
+      "text": "«Gestite in cascata» e «dando priorita' all'ACS» sono logiche di regolazione, non topologia: non producono nodi ne' tubi. Sul grafo si vedono le tre macchine in parallelo e la valvola deviatrice a tre vie, non la cascata e non la priorita' sanitaria.",
       "status": "proposed",
       "source_message_refs": [
-        "installate in parallelo e gestite in cascata"
-      ]
-    },
-    {
-      "id": "a03",
-      "text": "Il testo dice che le tre pompe di calore sono installate in parallelo, ma non dice con che pezzo i tre flussi si uniscono sulla mandata e si dividono sul ritorno: si sono usati due raccordi a T in catena sulla mandata e due ripartizioni a T in catena sul ritorno. Se in centrale e' previsto un collettore di centrale, va detto: il collettore di catalogo ha due sole uscite e non potrebbe servire tre macchine.",
-      "status": "proposed",
-      "source_message_refs": [
-        "installate in parallelo"
-      ]
-    },
-    {
-      "id": "a04",
-      "text": "Il testo non dice se il circuito dei generatori ha circolatori propri: si e' seguita la voce di catalogo della pompa di calore, che dichiara di portare il circolatore a bordo, e quindi sul primario non e' disegnato nessun circolatore separato. E' cosi'?",
-      "status": "proposed",
-      "source_message_refs": [
-        "Ogni circuito e' dotato del proprio circolatore"
-      ]
-    },
-    {
-      "id": "a05",
-      "text": "Dal volume tecnico partono tre circuiti secondari, ma il testo non dice come si staccano: si sono usate due ripartizioni a T in catena sulla mandata secondaria e due raccordi a T in catena sul ritorno. Se e' previsto un collettore di distribuzione, va detto.",
-      "status": "proposed",
-      "source_message_refs": [
-        "Dal volume tecnico partono tre circuiti secondari indipendenti"
-      ]
-    },
-    {
-      "id": "a06",
-      "text": "Ogni circuito secondario ha il proprio circolatore, ma il testo non dice su quale ramo: i tre circolatori sono stati messi sulla mandata del circuito che servono, e quello del pavimento radiante a valle della valvola miscelatrice. E' la posizione convenzionale di disegno, non una prescrizione del testo.",
-      "status": "proposed",
-      "source_message_refs": [
-        "Ogni circuito e' dotato del proprio circolatore"
-      ]
-    },
-    {
-      "id": "a07",
-      "text": "Il testo dice «le batterie calde e fredde delle unita' di trattamento aria», al plurale e senza numero: si e' disegnata una sola batteria, rappresentativa dell'insieme, su un solo circuito. Quante sono le UTA e quante le batterie? E le batterie calde e quelle fredde stanno davvero sullo stesso circuito, o su due rami distinti che si staccano dal volume tecnico?",
-      "status": "proposed",
-      "source_message_refs": [
-        "un circuito per le batterie calde e fredde delle unita' di trattamento aria"
-      ]
-    },
-    {
-      "id": "a08",
-      "text": "Il testo dice «i fan-coil» senza dirne il numero: se n'e' disegnato uno solo, rappresentativo dell'insieme. Quanti sono?",
-      "status": "proposed",
-      "source_message_refs": [
-        "un circuito per i fan-coil"
-      ]
-    },
-    {
-      "id": "a09",
-      "text": "Il pavimento radiante e' disegnato come un solo pannello rappresentativo: il testo non dice in quante zone o quanti collettori di piano si divide.",
-      "status": "proposed",
-      "source_message_refs": [
-        "un circuito miscelato dedicato al pavimento radiante"
-      ]
-    },
-    {
-      "id": "a10",
-      "text": "Il testo dice che il circuito del pavimento e' miscelato, ma non dice da dove la valvola a tre vie prende l'acqua fredda di miscelazione. La voce di catalogo ha quell'attacco fra gli obbligatori, e si e' chiuso nel modo convenzionale: una ripartizione a T sul ritorno del pavimento riporta parte dell'acqua di ritorno alla valvola miscelatrice, e il resto rientra nel volume tecnico. Se la miscelazione e' fatta in altro modo (per esempio con iniezione dal primario), il disegno cambia: va detto.",
-      "status": "proposed",
-      "source_message_refs": [
-        "un circuito miscelato dedicato al pavimento radiante"
-      ]
-    },
-    {
-      "id": "a11",
-      "text": "La priorita' all'ACS e' una logica di regolazione: sul grafo si vede la valvola deviatrice a tre vie sulla mandata comune delle pompe di calore, non la priorita'.",
-      "status": "proposed",
-      "source_message_refs": [
+        "installate in parallelo e gestite in cascata",
         "quando e' richiesta la produzione sanitaria, dando priorita' all'ACS"
       ]
     },
     {
-      "id": "a12",
-      "text": "La valvola deviatrice e' una sola e sta sulla mandata comune, a valle del punto in cui i flussi delle tre pompe si uniscono: il testo parla di una valvola al singolare che devia «il flusso delle pompe di calore» al plurale. Se invece ogni pompa ha la sua deviatrice, il disegno cambia.",
+      "id": "a3",
+      "text": "Il testo dice «installate in parallelo» ma non dice con che pezzo i tre flussi si uniscono e si dividono: si sono usati due raccordi a T in catena sulla mandata dei generatori e due ripartizioni a T in catena sul ritorno. Se in centrale e' previsto un collettore di centrale, va messo al posto dei raccordi.",
+      "status": "proposed",
+      "source_message_refs": ["tre pompe di calore ... installate in parallelo"]
+    },
+    {
+      "id": "a4",
+      "text": "«Dal volume tecnico partono tre circuiti secondari indipendenti» non dice con che pezzo i tre circuiti si staccano: si sono usate due ripartizioni a T in catena sulla mandata secondaria e due raccordi a T sul ritorno. E' cosi', o dal volano parte un collettore di distribuzione? I tre circuiti restano tre rami di una rete sola, perche' nascono tutti dal volano.",
+      "status": "proposed",
+      "source_message_refs": ["Dal volume tecnico partono tre circuiti secondari indipendenti"]
+    },
+    {
+      "id": "a5",
+      "text": "Il ritorno del volano e il ritorno del serpentino del bollitore rientrano sulle stesse pompe di calore, e un attacco porta una tubazione sola: i due ritorni sono stati uniti con un raccordo a T prima della ripartizione verso le tre macchine. Il testo non dice dove avviene questa confluenza.",
       "status": "proposed",
       "source_message_refs": [
+        "un bollitore da 500 litri alimentato dalle pompe di calore",
         "Una valvola a tre vie devia il flusso delle pompe di calore verso il serpentino del bollitore"
       ]
     },
     {
-      "id": "a13",
-      "text": "Il testo prevede una valvola miscelatrice termostatica sull'uscita dell'ACS: e' ferramenta sanitaria (miscelazione sanitaria) e la aggiunge il pezzo della catena che completa il grafo, non questo. La nomina e' registrata qui perche' non vada persa.",
+      "id": "a6",
+      "text": "«Ogni circuito e' dotato del proprio circolatore» e' stato letto come riferito ai tre circuiti secondari appena elencati. Per il circuito dei generatori il testo non nomina un circolatore: si e' seguita la macchina di catalogo, che porta la circolazione a bordo, e nessun circolatore primario e' stato disegnato. E' cosi', o il circuito dei generatori ha circolatori esterni da rappresentare?",
+      "status": "proposed",
+      "source_message_refs": ["Ogni circuito e' dotato del proprio circolatore"]
+    },
+    {
+      "id": "a7",
+      "text": "Il testo dice che ogni circuito secondario ha il proprio circolatore, ma non dice su quale ramo: i tre circolatori sono stati messi sulla mandata del circuito che servono, che e' la posizione convenzionale di disegno. Sul circuito del pavimento il circolatore e' stato messo a valle della valvola miscelatrice.",
+      "status": "proposed",
+      "source_message_refs": ["Ogni circuito e' dotato del proprio circolatore"]
+    },
+    {
+      "id": "a8",
+      "text": "Il circuito del pavimento radiante e' «miscelato»: la valvola miscelatrice di circuito ha un secondo ingresso che deve essere alimentato perche' ci sia miscelazione, e il testo non dice da dove. Si e' assunta la soluzione convenzionale: una ripartizione sul ritorno del pavimento che rimanda parte dell'acqua all'ingresso freddo della miscelatrice. Il testo non descrive questo by-pass: confermate il punto di prelievo?",
+      "status": "proposed",
+      "source_message_refs": ["un circuito miscelato dedicato al pavimento radiante"]
+    },
+    {
+      "id": "a9",
+      "text": "«Le batterie calde e fredde delle unita' di trattamento aria», «i fan-coil» e «il pavimento radiante» sono insiemi di cui il testo non da' il numero: ogni circuito e' rappresentato da un solo terminale. Quante UTA, quante batterie e quanti fan-coil ci sono davvero? In particolare, «batterie calde e fredde» potrebbe indicare due batterie distinte sullo stesso circuito, e allora i terminali di quel ramo diventerebbero due.",
       "status": "proposed",
       "source_message_refs": [
-        "Sull'uscita e' prevista una valvola miscelatrice termostatica"
+        "un circuito per le batterie calde e fredde delle unita' di trattamento aria",
+        "un circuito per i fan-coil"
       ]
+    },
+    {
+      "id": "a10",
+      "text": "Il testo prevede una valvola miscelatrice termostatica sull'uscita dell'ACS: e' ferramenta sanitaria e la aggiunge il pezzo della catena che completa il grafo, non questa prima stesura. La nomina non e' andata persa: e' scritta qui perche' chi viene dopo la ritrovi.",
+      "status": "proposed",
+      "source_message_refs": ["Sull'uscita e' prevista una valvola miscelatrice termostatica"]
+    },
+    {
+      "id": "a11",
+      "text": "Il bollitore di catalogo non ha l'attacco del ricircolo, e un attacco non si inventa: l'anello del ricircolo ACS e' stato chiuso sulla tubazione e non sulla macchina, con una ripartizione a valle da cui il ricircolo si stacca e un raccordo, subito all'uscita del bollitore, dove rientra; il circolatore di ricircolo sta sul ramo di rientro. Il punto di stacco e quello di rientro non sono detti dal testo. Nota che le utenze sanitarie sono una voce di confine con un attacco solo, quindi il ricircolo non puo' essere rappresentato come stacco a valle dell'ultimo prelievo.",
+      "status": "proposed",
+      "source_message_refs": ["E' presente anche un circuito di ricircolo ACS collegato al bollitore e dotato di proprio circolatore"]
+    },
+    {
+      "id": "a12",
+      "text": "Il testo dice che l'acqua fredda sanitaria entra nella parte bassa del bollitore e l'ACS si preleva dalla parte alta, ma non nomina ne' l'acquedotto ne' le utenze: si sono usate le due voci di confine del catalogo per chiudere il circuito sanitario, che e' aperto. Il bollitore di catalogo ha un solo attacco freddo e un solo attacco caldo, quindi «parte bassa» e «parte alta» sono rappresentate da quegli attacchi e non da una quota.",
+      "status": "proposed",
+      "source_message_refs": ["L'acqua fredda sanitaria entra nella parte bassa del bollitore e l'ACS viene prelevata dalla parte alta"]
+    },
+    {
+      "id": "a13",
+      "text": "Il regime della centrale e' stato ricavato dalle potenze scritte dal testo: 3 x 35 kW = 105 kW, sopra la soglia dei 35 kW, quindi «over_35_kw». Il testo non specifica se i 35 kW sono resi o assorbiti, ne' se sono la potenza in riscaldamento o in raffrescamento: e' stata sommata la potenza come il testo la scrive.",
+      "status": "proposed",
+      "source_message_refs": ["tre pompe di calore aria-acqua reversibili da 35 kW ciascuna"]
     },
     {
       "id": "a14",
-      "text": "Il ricircolo ACS e' detto «collegato al bollitore», ma la voce di catalogo del bollitore non ha un attacco per il ricircolo e l'attacco non si inventa: l'anello e' stato chiuso sulla tubazione dell'acqua calda, con una ripartizione a T a valle (verso le utenze) e un raccordo a T subito all'uscita del bollitore. I due punti sono una scelta di disegno: il testo non li dice.",
+      "text": "«Un volume tecnico da 500 litri a quattro tubi» e' stato letto come un volano con quattro attacchi — primario in mandata e ritorno, secondario in mandata e ritorno — coerente con l'uso che il testo gli da': accumulo inerziale e punto di separazione fra generatori ed edificio. Non e' stato letto come una distribuzione a quattro tubi con circuiti caldo e freddo separati, che con tre macchine reversibili identiche su un solo volano non sarebbe rappresentabile. Confermate la lettura?",
       "status": "proposed",
-      "source_message_refs": [
-        "un circuito di ricircolo ACS collegato al bollitore e dotato di proprio circolatore"
-      ]
-    },
-    {
-      "id": "a15",
-      "text": "Il testo non nomina l'acquedotto ne' le utenze sanitarie: sono stati messi i due confini di catalogo perche' il circuito sanitario e' aperto, entra acqua fredda in basso al bollitore ed esce acqua calda dall'alto verso le utenze.",
-      "status": "proposed",
-      "source_message_refs": [
-        "L'acqua fredda sanitaria entra nella parte bassa del bollitore e l'ACS viene prelevata dalla parte alta"
-      ]
-    },
-    {
-      "id": "a16",
-      "text": "Divisione in reti: il testo nomina il circuito dei generatori e tre circuiti secondari indipendenti, e ognuno di questi e' una rete. Il tratto comune fra il volume tecnico e le tre partenze non ha un nome nel testo ed e' stato messo in una rete a se' («distribuzione secondaria»); il ramo che carica il serpentino del bollitore e' stato tenuto dentro il circuito dei generatori, perche' porta la stessa acqua ed e' lo stesso flusso deviato. E' una scelta di modello, non una frase del testo.",
-      "status": "proposed",
-      "source_message_refs": [
-        "punto di separazione tra il circuito dei generatori e i circuiti dell'edificio"
-      ]
+      "source_message_refs": ["un volume tecnico da 500 litri a quattro tubi, utilizzato come accumulo inerziale e punto di separazione"]
     }
   ],
   "rule_applications": [],
