@@ -26,11 +26,11 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 - [x] **Il regime della centrale e il tratto comune (D-106, pacchetto E)** — costruito,
       **collaudato a contesto separato**: respinto su quattro difetti veri, tutti corretti
       lo stesso giorno e verdi sulle prove del collaudo, adottate come regressione. Il
-      regime (sotto/sopra i 35 kW) è un dato dichiarato dal progettista, mai calcolato;
-      senza dichiarazione vale il corredo minimo. Il corredo di rete sta sul **ritorno
-      generale, a monte della prima ripartizione**; dove il tratto comune non esiste esce
-      un punto aperto. Il catalogo dichiara **cosa la macchina porta a bordo** e **da quale
-      attacco la riserva si riempie**.
+      regime (sotto/sopra i 35 kW) si **legge dalle potenze dichiarate dal progettista**
+      (D-108); se le potenze non sono disponibili, vale il corredo minimo e la mancanza
+      viene dichiarata. Il corredo di rete sta sul **ritorno generale, a monte della prima
+      ripartizione**; dove il tratto comune non esiste esce un punto aperto. Il catalogo
+      dichiara **cosa la macchina porta a bordo** e **da quale attacco la riserva si riempie**.
 - [x] **La correzione C2** — lo scarico del bollitore sta sull'ingresso freddo, con la
       derivazione sulla rete fredda; la prova del collaudo è tornata verde senza essere
       ammorbidita.
@@ -40,6 +40,11 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
       aperti; e il **regime si legge dalle potenze** che il progettista ha dichiarato
       (D-108), scritto nel modello dove lui lo vede: quattro impianti sotto i 35 kW, la
       cascata di tre macchine sopra.
+- [x] **Il quinto impianto conserva tutti e tre i circuiti secondari** — il testo non
+      nomina un collettore, quindi la lettura manuale usa la regola generale dei raccordi
+      a N vie già introdotta nelle istruzioni di «Capire»: per tre rami, due ripartizioni
+      sulla mandata e due confluenze sul ritorno. Rimossa la falsa domanda «il collettore
+      ne serve due».
 - [ ] **Il pezzo 1, «Capire»** — il collaudo indipendente lo ha **RESPINTO** il 7 agosto;
       le **tredici correzioni sono applicate** lo stesso giorno: sciolta la contraddizione
       sui tre circuiti con la regola generale dei raccordi a N vie, sostituiti gli esempi
@@ -72,19 +77,18 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
 2. **La traduzione in regole** delle posizioni chiuse con le fonti (bilanciamento,
    disconnettore, contabilizzatore — `DOVE_VA_CIASCUN_ACCESSORIO.md` §14-18), dentro il
    confine di D-104. Miscelatrice e ritegno sanitario hanno già le regole.
-3. **La domanda aperta del quinto impianto** (`HANDOFF.md` §9): i tre circuiti
-   secondari e il collettore che ne serve due.
-4. **La libreria dei simboli** — contenuto da completare (segno del rubinetto bloccabile).
-5. **Il cartiglio.**
-6. **La composizione** — da rifare: l'impianto completo non entra in larghezza su un
+3. **La libreria dei simboli** — contenuto da completare (segno del rubinetto bloccabile).
+4. **Il cartiglio.**
+5. **La composizione** — da rifare: l'impianto completo non entra in larghezza su un
    foglio ordinario.
-7. **I validatori e il cancello dell'occhio terzo.**
+6. **I validatori e il cancello dell'occhio terzo.**
 
 ## Done log — ultimo in cima
 
 | Commit | Cosa |
 |---|---|
-| (questo) | **Le tredici correzioni alle istruzioni dell'interprete**: regola generale dei raccordi a N vie, esempi che non contengono più le soluzioni, il regime dalle potenze, il criterio per chiedere. Tre prove nuove le inchiodano |
+| `a136862` | **Quinto impianto corretto**: tutti e tre i circuiti secondari restano nel grafo di prima stesura; il collettore a due uscite non limita più la lettura del testo |
+| `8d5ec99` | **Le tredici correzioni alle istruzioni dell'interprete**: regola generale dei raccordi a N vie, esempi che non contengono più le soluzioni, il regime dalle potenze, il criterio per chiedere. Tre prove nuove le inchiodano |
 | `50cb842` | **Le quattro cose che l'interprete deve capire**, contate sulle condizioni delle diciassette regole: materiale per il giro di correzioni del pezzo 1 |
 | `a75197b` | **Il regime si legge dalle potenze dichiarate** (D-108): i cinque impianti lo portano scritto, la cascata è l'unico sopra i 35 kW |
 | `4433665` | **Il ritorno generale dell'ibrido c'era**: la camminata si apre sui rami e nessuno dei cinque ha più punti aperti; ritirata prima di scriverla la regola del filtro sul sanitario (D-107) |
