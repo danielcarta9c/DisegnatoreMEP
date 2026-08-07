@@ -164,6 +164,17 @@ nell'altro:
    progettare. «Sei serio?». Delle tre domande che gli erano state portate, due erano
    mie da risolvere.
 
+**Della sera del 7 agosto — uno solo, e costa un giro di prova ogni volta:**
+
+5. **Una prova non misura niente se il materiale che le dai si contraddice.** La prova in
+   camera pulita è stata lanciata con un kit in cui le istruzioni ordinavano di ricavare
+   il regime dalle potenze e lo schema del modello lo vietava per esteso: due agenti
+   l'hanno trovato, il giro è stato buttato. Era una frase pre-D-108 rimasta in piedi in
+   tre posti. La lezione non è «leggi meglio»: è che **quando una decisione cambia una
+   regola, la stessa frase va cercata ovunque sia stata scritta** — regola del gioco n. 6,
+   cercare tutti i simili, applicata ai documenti e non solo ai difetti. Prima di lanciare
+   una prova che costa cinque agenti, vale la spesa di un `grep` sul kit.
+
 ---
 
 ## 5. Ordine di lettura
@@ -186,8 +197,9 @@ nell'altro:
 
 ## 6. Stato al 7 agosto 2026
 
-**Ramo:** il lavoro è su `main` (e sul ramo `claude/mep-pacchetto-e-collaudi-42itzv`).
-**Prove:** 844 verdi, 22 parcheggiate col motivo scritto; `ruff` e `mypy --strict` puliti.
+**Ramo:** il lavoro è su `main` (e sul ramo `claude/disegnatoremep-interpreter-validation-6j9vk8`).
+**Prove:** 1035 verdi, 22 parcheggiate col motivo scritto, **11 marcate rosse apposta sui
+difetti aperti**; `ruff` e `mypy --strict` puliti.
 **Ambiente:** `bash scripts/setup-env.sh` — **da eseguire per primo** in una sessione cloud.
 **Numeri:** 39 simboli pubblicati, 53 voci di catalogo, 17 regole.
 
@@ -195,7 +207,7 @@ nell'altro:
 
 | Pezzo | Stato |
 |---|---|
-| **1 — Capire** | **RESPINTO dal collaudo** (7 agosto), **tredici correzioni applicate lo stesso giorno**: resta la prova nuova in camera pulita, con consegne agli atti, e il collaudo che la giudica |
+| **1 — Capire** | **APPROVATO dal collaudo** (7 agosto, al terzo giro). Zero perso e zero inventato su cinque impianti, 67 componenti, 82 tubazioni. Consegne dei tre giri agli atti in `skill/capire/prova-2026-08-07/` |
 | **2 — Completare** (le regole) | Costruito e collaudato. **Il pacchetto E (regime + tratto comune) e C2 sono collaudati**: respinti al primo giro, corretti lo stesso giorno, verdi sulle prove dei collaudi adottate come regressione |
 | **3 — Assemblare** | Costruito e collaudato; il 7 agosto ha guadagnato la classificazione dei blocchi sul capofila e l'ordinamento dei blocchi di mezzo |
 | Il grafo, le sigle e **l'indirizzo dei nodi (D-105)** | **Collaudato e APPROVATO** (7 agosto), 91 prove del collaudo adottate |
@@ -203,7 +215,27 @@ nell'altro:
 | 4 — Disporre / libreria / cartiglio / composizione | Come prima: la composizione è da rifare |
 | 5 — Validatori e cancello dell'occhio terzo | Correttezza e preflight esistono, il cancello no |
 
-### Cosa è successo il 7 agosto
+### Cosa è successo il 7 agosto, sera — la chiusura di «Capire»
+
+- **La prova in camera pulita è costata tre giri**, ed è la lezione da portarsi dietro.
+  Il **primo** si è fermato dopo due impianti: due agenti, in due camere separate e senza
+  vedersi, hanno trovato che **il kit si contraddiceva** — le istruzioni ordinavano di
+  ricavare il regime dalle potenze, lo schema del modello lo vietava per esteso. Era testo
+  pre-D-108 sopravvissuto in tre posti. Un kit che si contraddice su una delle quattro
+  cose che l'interprete deve capire non misura le istruzioni: misura **quale documento
+  l'agente ha letto per ultimo**. Il **secondo** giro è stato respinto su un difetto solo,
+  e non sulla fedeltà: §4.2 diceva cos'è una rete e mai **dove una rete può cominciare**,
+  e il quinto grafo — fedele, dichiarato, identico al metro — rompeva la catena perché tre
+  reti partivano da un raccordo. Il **terzo** è stato approvato.
+- **Il difetto non lo ha trovato il confronto, lo ha trovato il determinismo a valle.**
+  Sulla fedeltà il pezzo era pulito fin dal secondo giro. Vale la pena ricordarlo: un
+  grafo può essere fedele parola per parola e comunque impresentabile al resto della catena.
+- **Le due correzioni di fine sessione sono state respinte** da un collaudo indipendente.
+  Il nocciolo di entrambe regge, verificato con prove più dure di quelle di casa; i cinque
+  difetti stanno ai bordi e riguardano **cose che le correzioni affermano** — che è la
+  classe di difetto più respinta della storia del progetto.
+
+### Cosa era successo prima, il 7 agosto
 
 - **Il riscontro di D-106 sugli schemi Caleffi** (Idraulica 61 + i cinque schemi
   applicativi), riga per riga con le citazioni, prima di scrivere qualunque regola.
@@ -232,16 +264,33 @@ nell'altro:
 
 ## 7. Il primo lavoro della prossima sessione
 
-1. **La prova nuova del pezzo 1 in camera pulita.** Le tredici correzioni alle
-   istruzioni sono applicate (appendice del piano, 7 agosto): la contraddizione sui tre
-   circuiti è sciolta con la regola generale dei raccordi a N vie, gli esempi non
-   contengono più le soluzioni dei testi di prova, il regime si ricava dalle potenze, e
-   c'è il criterio per cui una cosa non decisa si chiede invece di dichiararla. Le
-   istruzioni sono cambiate: **la prova va rifatta da capo**, con agenti nuovi e le
-   **consegne conservate agli atti** (protocollo in `skill/capire/CONSEGNA.md`), e poi
-   ricollaudata.
-2. **La traduzione in regole** delle posizioni §14-18 rimaste (bilanciamento,
-   disconnettore, contabilizzatore), dentro il confine di D-104.
+**I sei difetti aperti**, che i collaudi hanno inchiodato con prove rosse apposta. Nessuno
+è nascosto: ognuno ha il motivo scritto per esteso nella prova, e si chiude quando quella
+prova torna verde **senza essere ammorbidita**. L'elenco completo è in `PROJECT_STATE.md`.
+
+1. **I due della camminata del tratto comune**, che sono difetti veri del completatore.
+   Sull'**ibrido** il tratto scelto non porta l'acqua che la caldaia rimanda dallo
+   scambiatore sanitario, e il corredo ci va lo stesso **in silenzio**; su un **anello**
+   il punto scelto cambia col nome delle macchine a topologia identica. La radice è una
+   sola: la camminata considera «comune» un tratto **da cui si arriva a tutti i
+   generatori risalendo**, mentre le regole dicono che lì deve **passare tutta l'acqua che
+   torna**. Non è la stessa cosa, e su due grafi su sette danno risposte diverse.
+2. **Il caso di mezzo del regime** (§4.6): potenza dichiarata solo per alcune macchine. Si
+   somma il sottoinsieme e si scrive il regime in silenzio. Tre fonti indipendenti l'hanno
+   segnalato — un collaudo e due camere pulite che non si vedevano.
+3. **Le potenze nel modello.** D-108 promette che l'ingegnere veda la lettura e la
+   corregga; nei cinque grafi c'è la conclusione e non il dato. Attenzione: le letture
+   manuali sono **il metro** e non si toccano per far combaciare un confronto (`CONSEGNA.md`
+   §2, criterio 4) — ma questo non è un aggiustamento del confronto, è un'informazione che
+   il testo dà e il modello perde. Da fare **rigenerando il generatore**, mai a mano.
+4. **La voce con gli identificativi interni**: si chiude alle **istruzioni**, non
+   correggendo l'allegato del verbale.
+
+Poi: **la traduzione in regole** delle posizioni §14-18 rimaste (bilanciamento,
+disconnettore, contabilizzatore), dentro il confine di D-104.
+
+**Se si toccano le istruzioni dell'interprete, la prova in camera pulita va rifatta da
+capo con agenti nuovi.** Vale sempre, ed è già costato due giri in una sessione sola.
 
 **Non toccare il disegno.** La composizione, l'instradamento e il foglio dei simboli sono
 pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
@@ -273,6 +322,14 @@ pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
   agenti si conservano agli atti**: kit e divieti in `skill/capire/CONSEGNA.md`. Gli
   esempi delle istruzioni sono stati sostituiti con casi estranei ai cinque testi di
   prova; dopo ogni modifica alle istruzioni la prova va rifatta da capo.
+- **Prima di lanciare la prova, controllare che il kit non si contraddica.** Il kit sono
+  cinque documenti — istruzioni, testo, catalogo, tabelle dei nomi, schema — e lo schema
+  porta prosa che può invecchiare. È già costato un giro intero. Il modo pratico:
+  allestire le cartelle con lo script e fargli fare il riscontro sulle frasi che una
+  decisione recente ha cambiato.
+- **Le consegne degli agenti sono allegati del verbale e non si correggono a mano**,
+  nemmeno per un difetto piccolo: se il grafo di un agente viola una regola, la regola si
+  chiude nelle **istruzioni** e la prova si rifà.
 - **Due osservazioni non bloccanti dei collaudi da chiudere al prossimo passaggio sui
   file**: l'ordine interno di `run_pipes` nella lettura delle linee segue il file (nessun
   consumatore lo usa: ordinare o documentare); il ramo silenzioso della camminata del
@@ -282,10 +339,17 @@ pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
 
 ## 9. Domande aperte per il PM
 
-**Nessuna sul quinto impianto.** Il testo dichiara tre circuiti secondari; il fatto che la
-vecchia voce `zone-manifold` avesse due sole uscite era un limite della fixture, non una
-scelta progettuale. Poiché il testo non nomina un collettore, la lettura usa i raccordi a
-N vie e conserva tutti e tre i circuiti.
+**Nessuna sul quinto impianto, e la questione è chiusa nei fatti.** Il grafo pubblicato
+porta ora tutti e tre i circuiti secondari — batterie UTA, ventilconvettori, pannello
+radiante — e il collettore non c'è più: il testo non lo nominava.
+
+**Una sola osservazione, che non è una domanda.** La soglia dei 35 kW ha radice nella
+Raccolta R, che si applica agli impianti con potenza **dei focolari** superiore a 35 kW —
+e una pompa di calore focolare non ne ha. Il registro delle fonti lo dice esplicitamente,
+e il quinto impianto sono tre pompe di calore. Il PM ha però **già deciso** in D-108 che
+la cascata sta sopra la soglia, quindi la pratica è stabilita e non gli si richiede: lo si
+segnala perché tre agenti indipendenti ci sono inciampati leggendo lo schema, non perché
+serva una sua risposta.
 
 Restano domande per il PM solo quando valgono i criteri di `skill/capire/COSA_DECIDE.md`:
 il testo tace, le alternative sono entrambe corrette e la scelta cambia il disegno.
@@ -294,7 +358,12 @@ il testo tace, le alternative sono entrambe corrette e la scelta cambia il diseg
 
 ## Ultimo aggiornamento
 
-`2026-08-07` — corretto il quinto impianto: tutti e tre i circuiti secondari restano nella
-lettura, senza assumere un collettore a due uscite; riallineati `PROJECT_STATE` e questo
-handoff a D-108 e rimossa la falsa domanda al PM. Le tredici correzioni di «Capire» restano
-da verificare con una nuova prova in camera pulita e successivo collaudo indipendente.
+`2026-08-07`, sera — **il pezzo «Capire» è approvato** e i cinque grafi sono rigenerati
+dalla pipeline, col quinto finalmente completo dei suoi tre circuiti. La prova in camera
+pulita è costata **tre giri**: il primo fermato perché il kit si contraddiceva sul regime
+(trovato da due agenti che non si vedevano), il secondo respinto perché §4.2 non diceva
+dove una rete può cominciare, il terzo approvato. Consegne di tutti e tre agli atti.
+
+Il collaudo delle due correzioni di fine sessione precedente le ha **respinte entrambe**:
+il nocciolo regge, i difetti stanno ai bordi e riguardano cose che quelle correzioni
+affermavano. Sono i primi due della lista del §7.

@@ -10,7 +10,7 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **844 verdi, 22 parcheggiate** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
+| Test | **1035 verdi, 22 parcheggiate, 11 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
 | Libreria simboli | 39 pubblicati | Le 22 prove parcheggiate riguardano il **disegno** (composizione da rifare) |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
@@ -40,26 +40,42 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
       aperti; e il **regime si legge dalle potenze** che il progettista ha dichiarato
       (D-108), scritto nel modello dove lui lo vede: quattro impianti sotto i 35 kW, la
       cascata di tre macchine sopra.
-- [x] **La lettura del quinto impianto conserva tutti e tre i circuiti secondari** — il
-      testo non nomina un collettore, quindi la fixture di prima stesura usa la regola
-      generale dei raccordi a N vie già introdotta nelle istruzioni di «Capire»: per tre
-      rami, due ripartizioni sulla mandata e due confluenze sul ritorno. Rimossa la falsa
-      domanda «il collettore ne serve due». **Il grafo definitivo pubblicato va ancora
-      rigenerato** facendo passare questa fixture attraverso completatore e assemblatore;
-      non si corregge a mano.
-- [ ] **Il pezzo 1, «Capire»** — il collaudo indipendente lo ha **RESPINTO** il 7 agosto;
-      le **tredici correzioni sono applicate** lo stesso giorno: sciolta la contraddizione
-      sui tre circuiti con la regola generale dei raccordi a N vie, sostituiti gli esempi
-      che ricalcavano le soluzioni dei testi di prova, aggiunto il regime ricavato dalle
-      potenze e il criterio per cui una cosa non decisa si **chiede** invece di
-      dichiararla. **Resta dovuta la prova nuova in camera pulita** — agenti nuovi,
-      consegne conservate agli atti — e il collaudo che la giudica: le istruzioni sono
-      cambiate, quindi la prova va rifatta da capo. È il primo lavoro della prossima
-      sessione.
+- [x] **Il quinto grafo pubblicato è stato rigenerato dalla pipeline** — completatore e
+      assemblatore, nessuna correzione a mano. Da 98 a 108 pezzi: **il collettore
+      sparisce** (il testo non lo nominava, e le sue due sole uscite erano il motivo per
+      cui il terzo circuito restava fuori), **compare il circuito miscelato del pavimento
+      radiante** con la sua miscelatrice e il suo circolatore, e i raccordi passano da
+      otto a dodici — la regola generale a N vie al posto di un pezzo mai scritto dal
+      progettista. Il documento porta ora tutti e tre i circuiti secondari.
+- [x] **Il pezzo 1, «Capire», è APPROVATO** dal collaudo indipendente (7 agosto, giro 3).
+      Su cinque impianti, 67 componenti e 82 tubazioni: **zero perso, zero inventato**;
+      regime ricavato 5 su 5 e mai chiesto; raccordi N−1 col conto esatto; tutti e cinque
+      i grafi attraversano il resto della catena con esito invariante al rimescolamento.
+      Il quinto coincide col metro **arco per arco e sulle reti con la loro molteplicità**
+      — il confronto più stretto che il contratto ammette — a meno di una valvola di
+      ritegno che la lettura manuale porta e che il testo non nomina: ferramenta vietata
+      all'interprete, classificata come assunzione tacita del metro. **Le letture manuali
+      non sono state toccate.** Consegne agli atti in `skill/capire/prova-2026-08-07/`,
+      verbali in `docs/collaudi/`.
 
-**Il prossimo lavoro:** la prova nuova del pezzo 1 in camera pulita — le istruzioni sono
-già corrette — e il collaudo che la giudica; poi la rigenerazione del quinto grafo con la
-pipeline e la traduzione in regole delle posizioni §14-18. Dettagli in `HANDOFF.md` §7.
+**Il prossimo lavoro:** chiudere i sei difetti aperti che i collaudi hanno inchiodato con
+prove rosse apposta (cinque sul completatore e sugli artefatti, uno minore
+sull'interprete), e la traduzione in regole delle posizioni §14-18. Dettagli in
+`HANDOFF.md` §7.
+
+## I difetti aperti, inchiodati da prove
+
+Nessuno è stato nascosto: ognuno ha una prova marcata che fallisce apposta, col motivo
+scritto per esteso, e torna verde quando il difetto si chiude.
+
+| # | Difetto | Dove |
+|---|---|---|
+| 1 | Sull'**ibrido**, il tratto scelto per il corredo **non porta** l'acqua che la caldaia rimanda dallo scambiatore sanitario: quel ramo rientra a valle. Per il defangatore, la cui ragione scritta è «lì passa tutta l'acqua che torna», la posa non regge — ed è una posa silenziosa, senza punto aperto | la camminata del tratto comune |
+| 2 | Con un **anello** sul ritorno, il punto scelto cambia **col nome delle macchine** a topologia identica: la camminata parte dal primo generatore in ordine alfabetico | la camminata del tratto comune |
+| 3 | Le **potenze da cui il regime è stato letto non stanno nel modello**: i cinque grafi dichiarano il regime e nessun componente porta la potenza. D-108 promette che l'ingegnere veda la lettura e la corregga | le letture manuali di `examples/prova/` |
+| 4 | La regola del regime **non ha il caso di mezzo**: potenza dichiarata solo per alcune macchine. L'impianto 3 ne ha due che il catalogo dice generatrici e il testo ne dà una sola; l'impianto 4 sta a 34 kW su 35 | `ISTRUZIONI.md` §4.6 |
+| 5 | Una voce dichiarata del primo grafo cita **identificativi interni** del JSON in una frase destinata all'ingegnere | il grafo dell'agente: si chiude alle istruzioni, non correggendo l'allegato |
+| 6 | La radice normativa della soglia (Raccolta R, «potenza dei focolari») **non copre le pompe di calore**, e il registro delle fonti lo dice. Il quinto impianto sono tre pompe di calore | osservazione per il PM, non un difetto di codice |
 
 ## Il confine del prodotto, che vale su tutto (D-104)
 
@@ -73,25 +89,28 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
 
 ## Next — i pezzi che restano
 
-1. **La prova nuova del pezzo 1 in camera pulita**, con agenti nuovi e **consegne agli
-   atti** (il contratto aggiornato lo impone), e il collaudo che la giudica. Le tredici
-   correzioni alle istruzioni sono già applicate.
-2. **Rigenerare il quinto grafo definitivo** dalla fixture aggiornata, passando per
-   completatore e assemblatore; il documento attuale è ancora l'artefatto precedente e
-   non va corretto manualmente.
-3. **La traduzione in regole** delle posizioni chiuse con le fonti (bilanciamento,
+1. **I sei difetti aperti** della tabella qui sopra, in ordine: i due della camminata del
+   tratto comune (che sono difetti veri del completatore), il caso di mezzo del regime, le
+   potenze nel modello, e la voce con gli identificativi interni. Ognuno ha già la prova
+   che lo inchioda: si chiude quando quella prova torna verde senza essere ammorbidita.
+2. **La traduzione in regole** delle posizioni chiuse con le fonti (bilanciamento,
    disconnettore, contabilizzatore — `DOVE_VA_CIASCUN_ACCESSORIO.md` §14-18), dentro il
    confine di D-104. Miscelatrice e ritegno sanitario hanno già le regole.
-4. **La libreria dei simboli** — contenuto da completare (segno del rubinetto bloccabile).
-5. **Il cartiglio.**
-6. **La composizione** — da rifare: l'impianto completo non entra in larghezza su un
+3. **La libreria dei simboli** — contenuto da completare (segno del rubinetto bloccabile).
+4. **Il cartiglio.**
+5. **La composizione** — da rifare: l'impianto completo non entra in larghezza su un
    foglio ordinario.
-7. **I validatori e il cancello dell'occhio terzo.**
+6. **I validatori e il cancello dell'occhio terzo.**
 
 ## Done log — ultimo in cima
 
 | Commit | Cosa |
 |---|---|
+| — | **I cinque grafi rigenerati dalla pipeline**: solo il quinto cambia, da 98 a 108 pezzi — via il collettore mai nominato, dentro il circuito miscelato del pavimento radiante. Le sei prove che presidiavano l'artefatto vecchio sono verdi |
+| — | **Il pezzo 1 «Capire» è APPROVATO** al terzo giro: zero perso e zero inventato su 67 componenti e 82 tubazioni, e il quinto grafo coincide col metro arco per arco. Consegne dei tre giri agli atti |
+| — | **Corretto §4.2**: una rete parte da una macchina che la alimenta o da un confine, **mai da un raccordo**. Era il buco che al giro 2 faceva rompere la catena al quinto grafo |
+| — | **Collaudo delle due correzioni di fine sessione: RESPINTE** entrambe, cinque difetti veri ai bordi mentre il nocciolo regge. Prove che li inchiodano, verbale agli atti |
+| — | **La contraddizione sul regime dentro il kit**, trovata da due camere pulite indipendenti: lo schema vietava per esteso la somma che le istruzioni prescrivono. Testo pre-D-108 in tre posti, corretto rigenerando lo schema |
 | `1eefd56` | **Fixture JSON del quinto impianto rigenerata** dalla lettura corretta: UTA, fan-coil e pavimento radiante sono tutti presenti |
 | `a136862` | **Quinto impianto corretto nel generatore**: tutti e tre i circuiti secondari restano nel grafo di prima stesura; il collettore a due uscite non limita più la lettura del testo |
 | `8d5ec99` | **Le tredici correzioni alle istruzioni dell'interprete**: regola generale dei raccordi a N vie, esempi che non contengono più le soluzioni, il regime dalle potenze, il criterio per chiedere. Tre prove nuove le inchiodano |

@@ -37,15 +37,30 @@ Nessuno dei cinque ha dichiarato infrazioni all'isolamento.
 
 I file non sono stati toccati dopo la consegna.
 
-## Il giro interrotto
+## I tre giri, e perché sono tre
 
-In `giro-interrotto/` ci sono le consegne di un primo tentativo, fermato dopo due
-impianti perché il kit si contraddiceva sul regime della centrale. Il suo `LEGGIMI.md`
-racconta cosa è successo. **Non è la prova**: è il motivo per cui la prova è stata
-rifatta da capo con agenti nuovi.
+| Cartella | Cos'è | Esito |
+|---|---|---|
+| `giro-interrotto/` | due impianti soli | fermato: **il kit si contraddiceva** sul regime, e due agenti che non si vedevano l'hanno trovato |
+| `giro-2-respinto/` | cinque impianti | **RESPINTO** su un difetto solo, e non sulla fedeltà: §4.2 non diceva **dove una rete può cominciare**, e il quinto grafo rompeva la catena |
+| `impianto-1..5/` | cinque impianti | **APPROVATO** |
+
+Ogni volta che le istruzioni sono cambiate, la prova è stata rifatta **da capo con agenti
+nuovi**: un agente che ha già visto il confronto non è più in camera pulita
+(`../CONSEGNA.md` §3). I giri precedenti restano perché i verbali dei loro collaudi si
+leggono su di essi.
 
 ## Il verdetto
 
-Non sta qui. Lo dà un collaudo a contesto separato, che non ha scritto le istruzioni
-né prodotto questi grafi, e si registra nell'appendice del piano di costruzione
-(`../../../docs/plans/2026-08-06-piano-costruzione-skill.md`).
+**APPROVATO**, dal collaudo a contesto separato che non ha scritto le istruzioni né
+prodotto questi grafi. Su cinque impianti, 67 componenti e 82 tubazioni: **zero detto dal
+testo e perso, zero inventato**. Il quinto coincide con la lettura manuale arco per arco.
+
+Verbali in `../../../docs/collaudi/`, verdetti registrati nell'appendice del piano di
+costruzione (`../../../docs/plans/2026-08-06-piano-costruzione-skill.md`). Le prove che
+lo sostengono sono in `tests/collaudo/test_collaudo_interprete.py`.
+
+**Resta un difetto aperto minore**, inchiodato da una prova marcata: una voce dichiarata
+del primo grafo cita due identificativi interni del JSON in una frase destinata
+all'ingegnere. Non si corregge a mano il grafo di un agente — è un allegato del verbale:
+si chiude alle istruzioni, al prossimo giro.
