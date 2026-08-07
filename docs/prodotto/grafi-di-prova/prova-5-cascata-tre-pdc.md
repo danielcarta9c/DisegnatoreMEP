@@ -456,8 +456,8 @@ arriva a ogni pezzo dell'impianto.
 
 **Tubazioni non lette:** nessuna. Ogni tubazione compare nella passeggiata.
 
-**Punti aperti:** nessuno. Per ogni accessorio che le regole hanno chiesto, il
-catalogo aveva il pezzo adatto al fluido di quella tubazione.
+**Punti aperti:** nessuno. Per ogni accessorio che le regole hanno chiesto,
+c'era il pezzo adatto al fluido e il posto dove metterlo.
 
 ---
 

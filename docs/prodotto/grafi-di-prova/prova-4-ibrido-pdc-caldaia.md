@@ -302,14 +302,14 @@ arriva a ogni pezzo dell'impianto.
 
 **Tubazioni non lette:** nessuna. Ogni tubazione compare nella passeggiata.
 
-**Punti aperti: qui una regola si applicava e il catalogo non aveva niente da
-offrire.** Non e' una dimenticanza del disegno: e' una scelta che torna al
+**Punti aperti: qui una regola si applicava e non c'era dove o con cosa
+servirla.** Non e' una dimenticanza del disegno: e' una scelta che torna al
 progettista.
 
-- **manca defangatore** su **CAL-01** Caldaia a condensazione: servirebbe, e in catalogo non c'e' nessun pezzo che lo faccia sull'acqua di riscaldamento. Va deciso dal progettista.
-- **manca vaso di espansione** su **CAL-01** Caldaia a condensazione: servirebbe, e in catalogo non c'e' nessun pezzo che lo faccia sull'acqua di riscaldamento. Va deciso dal progettista.
-- **manca gruppo di riempimento** su **CAL-01** Caldaia a condensazione: servirebbe, e in catalogo non c'e' nessun pezzo che lo faccia sull'acqua di riscaldamento. Va deciso dal progettista.
-- **manca manometro** su **CAL-01** Caldaia a condensazione: servirebbe, e in catalogo non c'e' nessun pezzo che lo faccia sull'acqua di riscaldamento. Va deciso dal progettista.
+- **manca defangatore** vicino a **CAL-01** Caldaia a condensazione: servirebbe sul ritorno generale, ma questa rete non ha un tratto comune — nessuna tubazione porta tutta l'acqua che torna — e sceglierne un ramo sarebbe una decisione di progetto. Va deciso dal progettista.
+- **manca vaso di espansione** vicino a **CAL-01** Caldaia a condensazione: servirebbe sul ritorno generale, ma questa rete non ha un tratto comune — nessuna tubazione porta tutta l'acqua che torna — e sceglierne un ramo sarebbe una decisione di progetto. Va deciso dal progettista.
+- **manca gruppo di riempimento** vicino a **CAL-01** Caldaia a condensazione: servirebbe sul ritorno generale, ma questa rete non ha un tratto comune — nessuna tubazione porta tutta l'acqua che torna — e sceglierne un ramo sarebbe una decisione di progetto. Va deciso dal progettista.
+- **manca manometro** vicino a **CAL-01** Caldaia a condensazione: servirebbe sul ritorno generale, ma questa rete non ha un tratto comune — nessuna tubazione porta tutta l'acqua che torna — e sceglierne un ramo sarebbe una decisione di progetto. Va deciso dal progettista.
 
 ---
 

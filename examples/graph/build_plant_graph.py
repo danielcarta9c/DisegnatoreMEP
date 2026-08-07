@@ -48,7 +48,7 @@ from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import Domain
 from disegnatore_mep.rules.apply import saturate
-from disegnatore_mep.rules.proposal import RuleGap
+from disegnatore_mep.rules.proposal import GapReason, RuleGap
 from disegnatore_mep.rules.registry import RuleRegistry
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -568,29 +568,44 @@ def silences(pen: Pen) -> list[str]:
 def open_points(pen: Pen) -> list[str]:
     """Cio' che serviva e che non si e' potuto proporre, detto sul nodo.
 
-    Una regola si applicava — il pezzo la chiedeva davvero — e il catalogo non
-    aveva niente da offrire su quel fluido. Sta qui, e non in un documento a
-    parte, per la ragione per cui sta qui anche un attacco senza tubazione:
-    e' un silenzio, e si legge sul pezzo a cui manca qualcosa.
+    Una regola si applicava — il pezzo la chiedeva davvero — e non c'era dove
+    o con cosa servirla: il catalogo senza il pezzo su quel fluido, oppure la
+    rete senza il tratto comune su cui la regola si posa. Il motivo si dice
+    per quello che e' (D-096: niente affermazioni che il committente non possa
+    verificare). Sta qui, e non in un documento a parte, per la ragione per
+    cui sta qui anche un attacco senza tubazione: e' un silenzio, e si legge
+    sul pezzo a cui manca qualcosa.
     """
     if not pen.gaps:
         return [
-            "**Punti aperti:** nessuno. Per ogni accessorio che le regole hanno chiesto, il",
-            "catalogo aveva il pezzo adatto al fluido di quella tubazione.",
+            "**Punti aperti:** nessuno. Per ogni accessorio che le regole hanno chiesto,",
+            "c'era il pezzo adatto al fluido e il posto dove metterlo.",
             "",
         ]
-    return [
-        "**Punti aperti: qui una regola si applicava e il catalogo non aveva niente da",
-        "offrire.** Non e' una dimenticanza del disegno: e' una scelta che torna al",
-        "progettista.",
-        "",
-        *[
-            f"- **manca {pen.family(gap.missing_function).lower()}** su "
+
+    def spoken(gap: RuleGap) -> str:
+        name = pen.family(gap.missing_function).lower()
+        if gap.reason is GapReason.NO_COMMON_RUN:
+            return (
+                f"- **manca {name}** vicino a "
+                f"{pen.named(gap.anchor.component_id)}: servirebbe sul ritorno "
+                f"generale, ma questa rete non ha un tratto comune — nessuna "
+                f"tubazione porta tutta l'acqua che torna — e sceglierne un ramo "
+                f"sarebbe una decisione di progetto. Va deciso dal progettista."
+            )
+        return (
+            f"- **manca {name}** su "
             f"{pen.named(gap.anchor.component_id)}: servirebbe, e in catalogo non c'e' "
             f"nessun pezzo che lo faccia {on_the(pen.fluid(gap.medium))}. Va deciso dal "
             f"progettista."
-            for gap in pen.gaps
-        ],
+        )
+
+    return [
+        "**Punti aperti: qui una regola si applicava e non c'era dove o con cosa",
+        "servirla.** Non e' una dimenticanza del disegno: e' una scelta che torna al",
+        "progettista.",
+        "",
+        *[spoken(gap) for gap in pen.gaps],
         "",
     ]
 
