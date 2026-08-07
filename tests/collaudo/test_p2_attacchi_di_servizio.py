@@ -15,7 +15,6 @@ Contratto:
 import shutil
 from pathlib import Path
 
-import pytest
 from helpers import (
     CATALOG_DIR,
     catalog,
@@ -118,17 +117,6 @@ def test_lo_scarico_del_volano_va_sul_suo_attacco_senza_spezzare_il_tubo() -> No
     assert validate_project(done, CAT).ok
 
 
-@pytest.mark.skip(
-    reason=(
-        "Difetto C2, confermato dal collaudo e ancora aperto: lo scarico del "
-        "bollitore e' saldato sull'uscita dell'acqua calda sanitaria, mentre le "
-        "fonti (SRC-017, SRC-018, D-101) dicono che si svuota dall'ingresso "
-        "freddo. La correzione e' progettata nell'appendice del piano: il "
-        "catalogo deve dichiarare da quale attacco la riserva si riempie, e la "
-        "regola dello scarico deve posare la derivazione li'. Questa prova "
-        "torna verde con quella correzione, e non va ammorbidita."
-    )
-)
 def test_il_bollitore_si_svuota_dall_ingresso_freddo_con_una_derivazione() -> None:
     """Contratto (D-101 e DOVE_VA_CIASCUN_ACCESSORIO §10): «su un bollitore
     sanitario lo scarico non c'e', e lo si svuota con una derivazione sulla
@@ -292,13 +280,16 @@ def test_quando_il_catalogo_non_ha_il_pezzo_la_regola_lo_dice(tmp_path: Path) ->
 
 
 def test_derivazione_impossibile_e_un_punto_aperto_non_un_crollo(tmp_path: Path) -> None:
-    """Il pezzo c'e' (lo scarico sanitario) ma il raccordo di derivazione su
-    quel fluido no: la macchina non ha l'attacco, la derivazione non si puo'
-    aprire. Contratto: la regola lo DICE (punto aperto), non tace — e non
-    deve nemmeno far crollare l'intera catena senza dossier."""
+    """Il pezzo c'e' (lo scarico) ma il raccordo di derivazione su quel fluido
+    no: la macchina non ha l'attacco, la derivazione non si puo' aprire.
+    Contratto: la regola lo DICE (punto aperto), non tace — e non deve nemmeno
+    far crollare l'intera catena senza dossier.
+
+    Con la correzione C2 il bollitore si svuota dall'ingresso freddo, quindi
+    il raccordo che manca e' quello dell'acqua fredda."""
     ridotto = tmp_path / "catalog"
     shutil.copytree(CATALOG_DIR, ridotto)
-    (ridotto / "tee-branch-dhw.json").unlink()
+    (ridotto / "tee-branch-cold.json").unlink()
     cat = catalog(ridotto)
     done, proposals, gaps = saturate(load(PROVE[1]), cat, REG)
     assert any(

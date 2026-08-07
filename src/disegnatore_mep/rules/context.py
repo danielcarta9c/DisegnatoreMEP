@@ -45,6 +45,12 @@ class RuleContext:
     stored_media: dict[str, str]
     """Il fluido che ciascun componente tiene in serbo, per chi ne tiene uno."""
 
+    fill_ports: dict[str, str]
+    """L'attacco da cui la riserva di ciascun componente si riempie (C2).
+
+    Solo per chi lo dichiara: un bollitore si riempie dall'ingresso freddo, un
+    volano tecnico dal circuito e non dichiara niente."""
+
     ports: dict[str, tuple[PortDefinition, ...]]
     networks_of: dict[str, frozenset[str]]
     """Reti che ciascun componente tocca."""
@@ -85,6 +91,7 @@ class RuleContext:
         traits: dict[str, frozenset[ComponentTrait]] = {}
         carried: dict[str, frozenset[str]] = {}
         stored_media: dict[str, str] = {}
+        fill_ports: dict[str, str] = {}
         ports: dict[str, tuple[PortDefinition, ...]] = {}
         inline: set[str] = set()
         service_ports: dict[tuple[str, str], str] = {}
@@ -93,6 +100,8 @@ class RuleContext:
             functions[component.id] = frozenset(resolved.definition.functions)
             traits[component.id] = resolved.definition.trait_set
             carried[component.id] = frozenset(resolved.definition.carries_on_board)
+            if resolved.definition.fills_from is not None:
+                fill_ports[component.id] = resolved.definition.fills_from
             if resolved.definition.stored_medium is not None:
                 stored_media[component.id] = resolved.definition.stored_medium
             ports[component.id] = tuple(resolved.definition.ports)
@@ -141,6 +150,7 @@ class RuleContext:
             traits=traits,
             carried=carried,
             stored_media=stored_media,
+            fill_ports=fill_ports,
             ports=ports,
             networks_of={key: frozenset(value) for key, value in touched.items()},
             service_ports=service_ports,
@@ -212,6 +222,24 @@ class RuleContext:
         Falso per chi non tiene niente in serbo: cosi' una regola che si occupa
         della riserva non si applica a chi non ne ha una."""
         return self.stored_media.get(component_id) == medium
+
+    def fills_on(self, component_id: str, network_id: str) -> bool:
+        """La riserva di quel componente si riempie da questa rete (C2).
+
+        Vero solo per chi dichiara il proprio punto di riempimento e ce l'ha
+        collegato: un attacco dichiarato ma libero non riempie niente."""
+        port_id = self.fill_ports.get(component_id)
+        if port_id is None:
+            return False
+        connection_id = self.connection_of_port.get((component_id, port_id))
+        return (
+            connection_id is not None
+            and self.network_of_connection.get(connection_id) == network_id
+        )
+
+    def fill_port_of(self, component_id: str) -> str | None:
+        """L'attacco da cui la riserva si riempie, se dichiarato."""
+        return self.fill_ports.get(component_id)
 
     def run_from(
         self, connection_id: str, *, upstream: bool, network_id: str

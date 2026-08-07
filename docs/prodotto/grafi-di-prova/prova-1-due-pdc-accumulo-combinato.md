@@ -87,7 +87,6 @@ famiglia vuol dire aggiungere una riga a una tabella, non toccare il programma.
 | **VI** | Valvola di intercettazione |
 | **VIB** | Valvola di intercettazione bloccabile aperta |
 | **VM** | Valvola miscelatrice |
-| **VR** | Valvola di ritegno |
 | **VS** | Valvola di sicurezza |
 
 ---
@@ -158,13 +157,7 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | CP.01.N.05.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-18** | Valvola di intercettazione | acqua fredda sanitaria |
-| AF.01.N.03 | **DER-05** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.04 | **VI-19** | Valvola di intercettazione | acqua fredda sanitaria |
-| AF.01.N.05 | **VR-01** | Valvola di ritegno sanitaria | acqua fredda sanitaria |
-| AF.01.N.06 | **DER-06** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.06.1 | **VS-02** | Valvola di sicurezza sanitaria · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
-| AF.01.N.03.1 | **VIB-02** | Valvola di intercettazione bloccabile aperta | acqua fredda sanitaria |
-| AF.01.N.03.2 | **VE-02** | Vaso di espansione sanitario · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
+| AF.01.N.03 | **VI-19** | Valvola di intercettazione | acqua fredda sanitaria |
 | ACS.01.N.01 | **VI-20** | Valvola di intercettazione | acqua calda sanitaria |
 | ACS.01.N.02 | **VM-01** | Valvola miscelatrice termostatica | acqua calda sanitaria |
 | ACS.01.N.03 | **VI-21** | Valvola di intercettazione | acqua calda sanitaria |
@@ -285,14 +278,8 @@ Da **AF-01** a **ACC-01**, acqua fredda sanitaria.
 
 1. **AF.01.N.01 · AF-01** Alimentazione acqua fredda · la linea parte dal suo braccio 1
 2. **AF.01.N.02 · VI-18** Valvola di intercettazione
-3. **AF.01.N.03 · DER-05** Derivazione a T sull'acqua fredda
-    - **AF.01.N.03.1 · VIB-02** Valvola di intercettazione bloccabile aperta · pende dallo stacco
-    - **AF.01.N.03.2 · VE-02** Vaso di espansione sanitario · pende dallo stacco
-4. **AF.01.N.04 · VI-19** Valvola di intercettazione
-5. **AF.01.N.05 · VR-01** Valvola di ritegno sanitaria
-6. **AF.01.N.06 · DER-06** Derivazione a T sull'acqua fredda
-    - **AF.01.N.06.1 · VS-02** Valvola di sicurezza sanitaria · pende dallo stacco
-7. **ACC-01** Accumulo combinato · **qui ci si innesta su ACC-01**, che si e' gia' letto, entrando dal suo braccio 5 (CP.01.N.06)
+3. **AF.01.N.03 · VI-19** Valvola di intercettazione
+4. **ACC-01** Accumulo combinato · **qui ci si innesta su ACC-01**, che si e' gia' letto, entrando dal suo braccio 5 (CP.01.N.06)
 
 ---
 

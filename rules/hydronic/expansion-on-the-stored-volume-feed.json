@@ -7,7 +7,8 @@
   "when": {
     "network_domain": "hydronic",
     "network_medium": "cold_water",
-    "anchor_has_trait": "needs_overpressure_protection"
+    "anchor_has_trait": "needs_overpressure_protection",
+    "network_fills_the_anchor": true
   },
   "then": {
     "provides_function": "expansion",

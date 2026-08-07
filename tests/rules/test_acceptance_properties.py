@@ -346,9 +346,10 @@ def test_every_tank_can_empty_the_water_it_actually_holds() -> None:
     Uno scarico su un serpentino svuota il circuito che attraversa il serbatoio,
     non il serbatoio: il serpentino e' uno scambiatore che ci passa dentro,
     l'acqua della riserva resta al suo posto. La prova pretende quindi che ogni
-    serbatoio abbia uno scarico su una tubazione che porta **il fluido che tiene
-    in serbo**, e lo verifica per serbatoio invece che contare gli scarichi —
-    contarli darebbe due e sarebbe verde anche adesso."""
+    serbatoio abbia uno scarico su una tubazione che serve **la riserva** — o
+    porta il fluido tenuto in serbo, o e' il punto da cui la riserva dichiara
+    di riempirsi (C2) — e lo verifica per serbatoio invece che contare gli
+    scarichi: contarli darebbe due e sarebbe verde anche adesso."""
     plant = acceptance()
     tanks = plant.declaring(ComponentTrait.HOLDS_ITS_OWN_VOLUME)
     assert tanks, "nessun serbatoio: la prova non direbbe nulla"
@@ -358,13 +359,14 @@ def test_every_tank_can_empty_the_water_it_actually_holds() -> None:
         assert stored is not None, tank
         # Lo scarico sta sull'attacco che il serbatoio dedica allo scarico, se
         # il costruttore ce l'ha messo — un volano si' — oppure su una
-        # derivazione saldata sulla tubazione della riserva, che e' come si
-        # svuota un bollitore, perche' il bocchello non ce l'ha (SRC-018).
+        # derivazione saldata dove la riserva si riempie, che e' come si svuota
+        # un bollitore, perche' il bocchello non ce l'ha (SRC-018, C2).
         drained = any(
             "drain" in plant.functions_of(item) for item in plant.hanging_from(tank)
         )
+        fill = plant.definitions[tank].fills_from
         for port_id in plant.attachments_of(tank):
-            if stored not in plant.fluids_at(tank, port_id):
+            if stored not in plant.fluids_at(tank, port_id) and port_id != fill:
                 continue
             for chain in plant.chains_of(tank, port_id):
                 for item in chain:

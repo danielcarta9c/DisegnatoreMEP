@@ -63,9 +63,16 @@ def _anchors(context: RuleContext, rule: RuleDefinition, network: NetworkModel) 
         # Una regola che si occupa della riserva non guarda i circuiti che la
         # attraversano: il serpentino di un bollitore porta acqua di
         # riscaldamento, e uno scarico li' svuota il primario lasciando pieno
-        # il serbatoio.
-        if rule.when.network_carries_what_the_anchor_stores and not context.stores(
-            component_id, network.medium
+        # il serbatoio. La rete che serve la riserva e' quella che porta il
+        # fluido tenuto in serbo, oppure quella da cui la riserva dichiara di
+        # riempirsi (C2).
+        if rule.when.network_carries_what_the_anchor_stores and not (
+            context.stores(component_id, network.medium)
+            or context.fills_on(component_id, network_id)
+        ):
+            continue
+        if rule.when.network_fills_the_anchor and not context.fills_on(
+            component_id, network_id
         ):
             continue
         for port in context.connected_ports(component_id):
@@ -117,8 +124,13 @@ def _common_run_anchor(
     for component_id in context.anchors_of(
         network.id, rule.when.anchor_has_function, rule.when.anchor_has_trait
     ):
-        if rule.when.network_carries_what_the_anchor_stores and not context.stores(
-            component_id, network.medium
+        if rule.when.network_carries_what_the_anchor_stores and not (
+            context.stores(component_id, network.medium)
+            or context.fills_on(component_id, network.id)
+        ):
+            continue
+        if rule.when.network_fills_the_anchor and not context.fills_on(
+            component_id, network.id
         ):
             continue
         for port in context.connected_ports(component_id):
@@ -281,11 +293,31 @@ def evaluate(
             # si ferma: la sceglierebbe il programma.
             anchors: list[PortRef] = []
             for anchor in candidates:
-                if catalog.serving(_function_at(context, rule, anchor), network.medium):
-                    anchors.append(anchor)
+                if not catalog.serving(
+                    _function_at(context, rule, anchor), network.medium
+                ):
+                    missing = _gap(context, rule, network, anchor)
+                    gaps.setdefault(missing.key, missing)
                     continue
-                missing = _gap(context, rule, network, anchor)
-                gaps.setdefault(missing.key, missing)
+                # C2: una riserva che dichiara da dove si riempie riceve le
+                # derivazioni **solo li'**. Uno stacco senza attacco dedicato,
+                # saldato su un altro attacco della riserva, finirebbe sul
+                # circuito sbagliato — lo scarico sull'uscita calda del
+                # bollitore era esattamente questo. L'attacco di riempimento
+                # verra' servito quando si valuta la sua rete.
+                fill = context.fill_port_of(anchor.component_id)
+                if fill is not None and anchor.port_id != fill:
+                    definition = catalog.providing(
+                        _function_at(context, rule, anchor), network.medium
+                    )
+                    if definition.attaches_on_a_branch and (
+                        context.service_port_for(
+                            anchor.component_id, _function_at(context, rule, anchor)
+                        )
+                        is None
+                    ):
+                        continue
+                anchors.append(anchor)
             satisfied = {
                 anchor.component_id
                 for anchor in anchors

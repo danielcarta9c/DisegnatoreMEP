@@ -223,6 +223,20 @@ class ComponentDefinition(StrictModel):
     serbo un fluido che non tocca sarebbe una dichiarazione senza appigli.
     """
 
+    fills_from: str | None = Field(default=None, pattern=ID_PATTERN)
+    """L'attacco da cui la riserva si riempie, quando il catalogo lo dichiara.
+
+    E' la dichiarazione della correzione C2: un bollitore sanitario non ha lo
+    scarico — i cataloghi dei costruttori non lo elencano (SRC-017, SRC-018) —
+    e lo si svuota con una derivazione **sulla tubazione da cui si riempie**,
+    l'ingresso dell'acqua fredda. Dove la riserva si riempie, da li' si
+    svuota: e' un fatto della macchina, come gli attacchi di servizio (D-101).
+
+    La dichiarano solo le riserve con un punto di riempimento **proprio**: un
+    volano tecnico si riempie dal circuito, attraverso il gruppo di
+    riempimento dell'impianto, e non dichiara niente.
+    """
+
     symbol_id: str = Field(pattern=ID_PATTERN)
     composite: bool = False
     ports: list[PortDefinition] = Field(min_length=1)
@@ -376,6 +390,42 @@ class ComponentDefinition(StrictModel):
                 f"non e' il fluido di nessuna delle sue porte "
                 f"({', '.join(sorted(media))}): la riserva non avrebbe da dove "
                 f"riempirsi ne' dove svuotarsi"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def the_fill_point_belongs_to_a_reserve(self) -> "ComponentDefinition":
+        """Il punto di riempimento e' un fatto della riserva, e deve reggersi.
+
+        Deve esserci una riserva da riempire, l'attacco deve esistere, essere
+        del flusso — non uno stacco — e ricevere: da un'uscita non si riempie
+        niente. Un catalogo che dichiarasse un punto di riempimento sbagliato
+        manderebbe lo scarico sulla tubazione sbagliata, che e' esattamente il
+        difetto C2.
+        """
+        if self.fills_from is None:
+            return self
+        if not self.has_trait(ComponentTrait.HOLDS_ITS_OWN_VOLUME):
+            raise ValueError(
+                f"{self.id} dichiara da dove si riempie ma non dichiara "
+                f"{ComponentTrait.HOLDS_ITS_OWN_VOLUME}: senza una riserva non "
+                f"c'e' niente da riempire"
+            )
+        port = next((item for item in self.ports if item.id == self.fills_from), None)
+        if port is None:
+            raise ValueError(
+                f"{self.id} dichiara di riempirsi da {self.fills_from}, che non "
+                f"e' un suo attacco"
+            )
+        if port.off_the_run:
+            raise ValueError(
+                f"{self.id} dichiara di riempirsi da {self.fills_from}, che e' "
+                f"uno stacco: la riserva si riempie da un attacco del flusso"
+            )
+        if port.flow is PortFlow.OUT:
+            raise ValueError(
+                f"{self.id} dichiara di riempirsi da {self.fills_from}, che e' "
+                f"un'uscita: da un'uscita non si riempie niente"
             )
         return self
 

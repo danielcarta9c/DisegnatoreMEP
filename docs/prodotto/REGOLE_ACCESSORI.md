@@ -386,26 +386,27 @@ dello schema tipico e degli schemi applicativi Caleffi.
 senza scaricare l'impianto intero. Un tratto di tubo no: si svuota con la tratta a cui
 appartiene.
 
-**Dove va, e perché proprio lì.** Due condizioni, e la seconda ci è costata un errore.
+**Dove va, e perché proprio lì.** Tre condizioni, e due ci sono costate un errore ciascuna.
 
-La prima: **sulla tubazione che porta l'acqua che il serbatoio tiene davvero in serbo**. Un
-bollitore è attraversato anche dall'acqua di riscaldamento, perché il serpentino ci passa
-dentro a scaldare — ma quella non è la sua riserva. Uno scarico messo lì svuota il circuito
-di riscaldamento e lascia il bollitore pieno: è la cosa che avevamo fatto, ed è il motivo per
-cui adesso ogni serbatoio dichiara *quale* acqua tiene.
+La prima: **sull'attacco che il serbatoio gli dedica**, quando ce l'ha. Il volano lo
+dichiara in legenda, e lo scarico si attacca lì senza toccare le tubazioni.
 
-La seconda: **dal lato del serbatoio** rispetto al rubinetto che lo chiude. Se stesse
+La seconda, per chi l'attacco non ce l'ha: **da dove la riserva si riempie, da lì si
+svuota.** Il bollitore sanitario non ha lo scarico in legenda, e si svuota con una
+derivazione sull'ingresso dell'acqua fredda. Prima finiva sull'uscita calda: era il
+difetto trovato dal collaudo, e adesso ogni serbatoio che ha un punto di riempimento
+proprio lo dichiara — mai su un circuito che attraversa il serbatoio scambiando calore,
+perché quello svuoterebbe l'impianto e lascerebbe la riserva piena.
+
+La terza: **dal lato del serbatoio** rispetto al rubinetto che lo chiude. Se stesse
 dall'altra parte, a rubinetto chiuso svuoterebbe la tratta di là e non il serbatoio.
 
 **Quante volte.** Uno per ogni serbatoio — il volano, il bollitore.
 
 **Come sappiamo che c'è già.** Se su quella tubazione c'è già uno scarico.
 
-**Da dove viene.** Dalla pratica corrente documentata negli schemi Caleffi.
-
-**Un difetto che conosciamo e stiamo correggendo:** sul bollitore lo scarico va
-sull'ingresso dell'acqua fredda — è da lì che la riserva si riempie e si svuota — e oggi
-finisce sull'uscita calda. La correzione è progettata e ha la sua prova che aspetta.
+**Da dove viene.** Dalle legende dei costruttori — il volano dichiara lo scarico, il
+bollitore no — e dalla pratica corrente documentata negli schemi Caleffi.
 
 ---
 

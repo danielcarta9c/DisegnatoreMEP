@@ -1,6 +1,6 @@
 {
   "id": "let-what-holds-its-own-volume-empty",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "name": "Attacco di scarico",
   "category": "recommended",
   "cardinality": "per_component",
@@ -11,15 +11,15 @@
   },
   "then": {
     "provides_function": "drain",
-    "placement": "on_outlet",
+    "placement": "on_any_port",
     "inlet_port": "a",
     "outlet_port": "b"
   },
   "satisfied_by": {
     "scope": "on_the_attachment"
   },
-  "rationale": "Chi tiene una riserva d'acqua propria la deve poter svuotare da solo, senza scaricare l'impianto intero: un tratto di tubo si svuota con la tratta a cui appartiene, un serbatoio no. Lo scarico va sulla tubazione che porta **il fluido tenuto in serbo**, non su un circuito che attraversa il serbatoio scambiando calore: uno scarico su quello svuoterebbe l'altro circuito e lascerebbe la riserva piena. E sta dal lato del serbatoio rispetto all'organo che lo chiude, altrimenti a organo chiuso svuoterebbe la tratta di la'.",
-  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)",
+  "rationale": "Chi tiene una riserva d'acqua propria la deve poter svuotare da solo, senza scaricare l'impianto intero: un tratto di tubo si svuota con la tratta a cui appartiene, un serbatoio no. Lo scarico va sull'attacco che il serbatoio gli dedica; dove il serbatoio non lo dichiara — il bollitore sanitario non ce l'ha — la riserva si svuota da dove si riempie, con una derivazione sulla tubazione dell'acqua fredda in ingresso, mai su un circuito che attraversa il serbatoio scambiando calore. E sta dal lato del serbatoio rispetto all'organo che lo chiude, altrimenti a organo chiuso svuoterebbe la tratta di la'.",
+  "source": "Legende dei costruttori: il volano dichiara lo scarico, il bollitore no e si svuota dall'ingresso freddo (SRC-017, SRC-018, D-101); buona pratica documentata negli schemi Caleffi (SRC-008)",
   "ordering": {
     "before": [
       "isolation",

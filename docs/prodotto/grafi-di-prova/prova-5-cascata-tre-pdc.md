@@ -203,22 +203,22 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | AF.01.N.04 | **VI-35** | Valvola di intercettazione | acqua fredda sanitaria |
 | AF.01.N.05 | **VR-03** | Valvola di ritegno sanitaria | acqua fredda sanitaria |
 | AF.01.N.06 | **DER-06** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.06.1 | **VS-02** | Valvola di sicurezza sanitaria · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
+| AF.01.N.07 | **DER-07** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
+| AF.01.N.07.1 | **VS-02** | Valvola di sicurezza sanitaria · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
+| AF.01.N.06.1 | **SC-02** | Attacco di scarico sull'acqua fredda · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
 | AF.01.N.03.1 | **VIB-02** | Valvola di intercettazione bloccabile aperta | acqua fredda sanitaria |
 | AF.01.N.03.2 | **VE-02** | Vaso di espansione sanitario · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
-| ACS.01.N.01 | **DER-07** | Derivazione a T sanitaria | acqua calda sanitaria |
-| ACS.01.N.02 | **VI-36** | Valvola di intercettazione | acqua calda sanitaria |
-| ACS.01.N.03 | **VM-01** | Valvola miscelatrice termostatica | acqua calda sanitaria |
-| ACS.01.N.04 | **VI-37** | Valvola di intercettazione | acqua calda sanitaria |
-| ACS.01.N.05 | **RC-07** | Raccordo a T sanitario | acqua calda sanitaria |
-| ACS.01.N.06 | **RC-08** | Ripartizione a T sanitario | acqua calda sanitaria |
-| ACS.01.N.07 | **VI-38** | Valvola di intercettazione | acqua calda sanitaria |
-| ACS.01.N.08 | **ACS-01** | Utenze sanitarie | acqua calda sanitaria |
+| ACS.01.N.01 | **VI-36** | Valvola di intercettazione | acqua calda sanitaria |
+| ACS.01.N.02 | **VM-01** | Valvola miscelatrice termostatica | acqua calda sanitaria |
+| ACS.01.N.03 | **VI-37** | Valvola di intercettazione | acqua calda sanitaria |
+| ACS.01.N.04 | **RC-07** | Raccordo a T sanitario | acqua calda sanitaria |
+| ACS.01.N.05 | **RC-08** | Ripartizione a T sanitario | acqua calda sanitaria |
+| ACS.01.N.06 | **VI-38** | Valvola di intercettazione | acqua calda sanitaria |
+| ACS.01.N.07 | **ACS-01** | Utenze sanitarie | acqua calda sanitaria |
 | ACS.01a.N.01 | **VI-39** | Valvola di intercettazione | acqua calda sanitaria |
 | ACS.01a.N.02 | **CIR-04** | Pompa di ricircolo sanitario | acqua calda sanitaria |
 | ACS.01a.N.03 | **VI-40** | Valvola di intercettazione | acqua calda sanitaria |
 | ACS.01a.N.04 | **VR-02** | Valvola di ritegno sull'acqua calda | acqua calda sanitaria |
-| ACS.01.N.01.1 | **SC-02** | Attacco di scarico sanitario · pende dal tubo con una propria derivazione | acqua calda sanitaria |
 
 ---
 
@@ -403,29 +403,27 @@ Da **VC-01** a **RC-06**, circuito secondario.
 Da **BOL-01** a **ACS-01**, acqua calda sanitaria.
 
 1. **BOL-01** Bollitore ACS · gia' numerato, indirizzo CP.01a.N.03 · la linea parte dal suo braccio 3
-2. **ACS.01.N.01 · DER-07** Derivazione a T sanitaria
-    - **ACS.01.N.01.1 · SC-02** Attacco di scarico sanitario · pende dallo stacco
-3. **ACS.01.N.02 · VI-36** Valvola di intercettazione
-4. **ACS.01.N.03 · VM-01** Valvola miscelatrice termostatica
-5. **ACS.01.N.04 · VI-37** Valvola di intercettazione
-6. **ACS.01.N.05 · RC-07** Raccordo a T sanitario
+2. **ACS.01.N.01 · VI-36** Valvola di intercettazione
+3. **ACS.01.N.02 · VM-01** Valvola miscelatrice termostatica
+4. **ACS.01.N.03 · VI-37** Valvola di intercettazione
+5. **ACS.01.N.04 · RC-07** Raccordo a T sanitario
     - qui arriva **ACS.01a**, da **RC-08**, entrando dal braccio 2
-7. **ACS.01.N.06 · RC-08** Ripartizione a T sanitario
+6. **ACS.01.N.05 · RC-08** Ripartizione a T sanitario
     - qui si stacca **ACS.01a**, verso **RC-07**, dal braccio 3
-8. **ACS.01.N.07 · VI-38** Valvola di intercettazione
-9. **ACS.01.N.08 · ACS-01** Utenze sanitarie
+7. **ACS.01.N.06 · VI-38** Valvola di intercettazione
+8. **ACS.01.N.07 · ACS-01** Utenze sanitarie
 
 ### ACS.01a — acqua calda sanitaria
 
 Da **RC-08** a **RC-07**, acqua calda sanitaria.
 Si stacca da **ACS.01**.
 
-1. **RC-08** Ripartizione a T sanitario · gia' numerato, indirizzo ACS.01.N.06 · la linea parte dal suo braccio 3
+1. **RC-08** Ripartizione a T sanitario · gia' numerato, indirizzo ACS.01.N.05 · la linea parte dal suo braccio 3
 2. **ACS.01a.N.01 · VI-39** Valvola di intercettazione
 3. **ACS.01a.N.02 · CIR-04** Pompa di ricircolo sanitario
 4. **ACS.01a.N.03 · VI-40** Valvola di intercettazione
 5. **ACS.01a.N.04 · VR-02** Valvola di ritegno sull'acqua calda
-6. **RC-07** Raccordo a T sanitario · **qui il giro si richiude su RC-07**, entrando dal suo braccio 2 (ACS.01.N.05)
+6. **RC-07** Raccordo a T sanitario · **qui il giro si richiude su RC-07**, entrando dal suo braccio 2 (ACS.01.N.04)
 
 ### AF.01 — acqua fredda sanitaria
 
@@ -439,8 +437,10 @@ Da **AF-01** a **BOL-01**, acqua fredda sanitaria.
 4. **AF.01.N.04 · VI-35** Valvola di intercettazione
 5. **AF.01.N.05 · VR-03** Valvola di ritegno sanitaria
 6. **AF.01.N.06 · DER-06** Derivazione a T sull'acqua fredda
-    - **AF.01.N.06.1 · VS-02** Valvola di sicurezza sanitaria · pende dallo stacco
-7. **BOL-01** Bollitore ACS · **qui ci si innesta su BOL-01**, che si e' gia' letto, entrando dal suo braccio 4 (CP.01a.N.03)
+    - **AF.01.N.06.1 · SC-02** Attacco di scarico sull'acqua fredda · pende dallo stacco
+7. **AF.01.N.07 · DER-07** Derivazione a T sull'acqua fredda
+    - **AF.01.N.07.1 · VS-02** Valvola di sicurezza sanitaria · pende dallo stacco
+8. **BOL-01** Bollitore ACS · **qui ci si innesta su BOL-01**, che si e' gia' letto, entrando dal suo braccio 4 (CP.01a.N.03)
 
 ---
 

@@ -1,13 +1,14 @@
 {
   "id": "dhw-check-on-cold-inlet",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "name": "Valvola di ritegno sanitaria",
   "category": "necessary",
   "cardinality": "per_network",
   "when": {
     "network_domain": "hydronic",
     "network_medium": "cold_water",
-    "anchor_has_trait": "needs_overpressure_protection"
+    "anchor_has_trait": "needs_overpressure_protection",
+    "network_fills_the_anchor": true
   },
   "then": {
     "provides_function": "non_return",

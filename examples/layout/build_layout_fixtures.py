@@ -113,6 +113,7 @@ def definition(
     symbol_id: str | None = None,
     stored_medium: str | None = None,
     carries_on_board: list[str] | None = None,
+    fills_from: str | None = None,
 ) -> dict[str, Any]:
     """Una voce di catalogo. `traits` non ha default **per scelta**: un
     componente che non dichiara come si isola non deve poter nascere da qui piu'
@@ -138,6 +139,10 @@ def definition(
         entry["carries_on_board"] = carries_on_board
     if stored_medium is not None:
         entry["stored_medium"] = stored_medium
+    # Da quale attacco la riserva si riempie (C2): un fatto della macchina,
+    # dai cataloghi dei costruttori. Dove si riempie, da li' si svuota.
+    if fills_from is not None:
+        entry["fills_from"] = fills_from
     entry.update(
         {
             "symbol_id": symbol_id or definition_id,
@@ -399,6 +404,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             service_port("probe", "temperature_measurement", DHW),
         ],
         stored_medium=DHW,
+        fills_from="cold_in",
     ),
     definition(
         "mixing-valve-3way",
@@ -487,6 +493,9 @@ DEFINITIONS: list[dict[str, Any]] = [
             service_port("probe", "temperature_measurement", DHW),
         ],
         stored_medium=DHW,
+        # La riserva si riempie dall'ingresso dell'acqua fredda (SRC-018,
+        # SRC-026): e' da li' che la si svuota, con la derivazione (C2).
+        fills_from="cold_in",
     ),
     definition(
         "pump-circulator",

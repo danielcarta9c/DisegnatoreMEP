@@ -14,6 +14,7 @@
     "attachment_inline"
   ],
   "stored_medium": "domestic_hot_water",
+  "fills_from": "cold_in",
   "symbol_id": "dhw-heat-pump",
   "composite": false,
   "ports": [

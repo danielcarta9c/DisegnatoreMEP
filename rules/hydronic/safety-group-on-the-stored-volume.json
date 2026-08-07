@@ -1,13 +1,14 @@
 {
   "id": "safety-group-on-the-stored-volume",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "name": "Gruppo di sicurezza sanitario",
   "category": "necessary",
   "cardinality": "per_network",
   "when": {
     "network_domain": "hydronic",
     "network_medium": "cold_water",
-    "anchor_has_trait": "needs_overpressure_protection"
+    "anchor_has_trait": "needs_overpressure_protection",
+    "network_fills_the_anchor": true
   },
   "then": {
     "provides_function": "safety",

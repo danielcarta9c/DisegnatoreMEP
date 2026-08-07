@@ -124,13 +124,29 @@ class RuleCondition(StrictModel):
     calore entra nell'acqua, e nessuna proprieta' dice «genera calore»."""
 
     network_carries_what_the_anchor_stores: bool = False
-    """La rete deve portare il fluido che l'ancoraggio tiene **in serbo**.
+    """La rete deve **servire la riserva** dell'ancoraggio: portare il fluido
+    che tiene in serbo, oppure essere la rete da cui la riserva dichiara di
+    riempirsi (C2).
 
     Serve dove l'accessorio ha a che fare con la riserva e non con i circuiti
     che la attraversano: uno scarico su un serpentino svuota il circuito di
-    riscaldamento e lascia il serbatoio pieno. E' una condizione fra proprieta'
-    dichiarate — quello che il pezzo tiene, quello che la rete porta — e non
-    nomina ne' un componente ne' un attacco."""
+    riscaldamento e lascia il serbatoio pieno. La seconda meta' della frase e'
+    la correzione C2: un bollitore si svuota dall'ingresso freddo — la rete
+    dell'acqua fredda non porta il fluido tenuto in serbo, ma e' quella da cui
+    la riserva si riempie, e la riserva si svuota da dove si riempie. E' una
+    condizione fra proprieta' dichiarate e non nomina ne' un componente ne'
+    un attacco."""
+
+    network_fills_the_anchor: bool = False
+    """La rete deve essere quella da cui la riserva dell'ancoraggio si riempie.
+
+    Piu' stretta della precedente: vera solo se l'ancoraggio **dichiara** il
+    proprio punto di riempimento e quel punto sta su questa rete. E' la
+    condizione del corredo sanitario di alimentazione — gruppo di sicurezza,
+    ritegno, vaso della riserva — che esiste per chi si riempie dalla rete
+    fredda, non per chiunque tema la sovrapressione: un accumulo tecnico con
+    un serpentino sanitario istantaneo tocca l'acqua fredda senza riempirsene
+    la riserva, e quel corredo non gli spetta."""
 
     plant_regime: PlantRegime | None = None
     """Il regime della centrale in cui questa regola vale (D-106).
