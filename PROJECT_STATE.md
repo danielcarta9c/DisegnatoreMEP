@@ -40,11 +40,13 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
       aperti; e il **regime si legge dalle potenze** che il progettista ha dichiarato
       (D-108), scritto nel modello dove lui lo vede: quattro impianti sotto i 35 kW, la
       cascata di tre macchine sopra.
-- [x] **Il quinto impianto conserva tutti e tre i circuiti secondari** — il testo non
-      nomina un collettore, quindi la lettura manuale usa la regola generale dei raccordi
-      a N vie già introdotta nelle istruzioni di «Capire»: per tre rami, due ripartizioni
-      sulla mandata e due confluenze sul ritorno. Rimossa la falsa domanda «il collettore
-      ne serve due».
+- [x] **La lettura del quinto impianto conserva tutti e tre i circuiti secondari** — il
+      testo non nomina un collettore, quindi la fixture di prima stesura usa la regola
+      generale dei raccordi a N vie già introdotta nelle istruzioni di «Capire»: per tre
+      rami, due ripartizioni sulla mandata e due confluenze sul ritorno. Rimossa la falsa
+      domanda «il collettore ne serve due». **Il grafo definitivo pubblicato va ancora
+      rigenerato** facendo passare questa fixture attraverso completatore e assemblatore;
+      non si corregge a mano.
 - [ ] **Il pezzo 1, «Capire»** — il collaudo indipendente lo ha **RESPINTO** il 7 agosto;
       le **tredici correzioni sono applicate** lo stesso giorno: sciolta la contraddizione
       sui tre circuiti con la regola generale dei raccordi a N vie, sostituiti gli esempi
@@ -56,8 +58,8 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
       sessione.
 
 **Il prossimo lavoro:** la prova nuova del pezzo 1 in camera pulita — le istruzioni sono
-già corrette — e il collaudo che la giudica; poi la traduzione in regole delle posizioni
-§14-18. Dettagli in `HANDOFF.md` §7.
+già corrette — e il collaudo che la giudica; poi la rigenerazione del quinto grafo con la
+pipeline e la traduzione in regole delle posizioni §14-18. Dettagli in `HANDOFF.md` §7.
 
 ## Il confine del prodotto, che vale su tutto (D-104)
 
@@ -74,20 +76,24 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
 1. **La prova nuova del pezzo 1 in camera pulita**, con agenti nuovi e **consegne agli
    atti** (il contratto aggiornato lo impone), e il collaudo che la giudica. Le tredici
    correzioni alle istruzioni sono già applicate.
-2. **La traduzione in regole** delle posizioni chiuse con le fonti (bilanciamento,
+2. **Rigenerare il quinto grafo definitivo** dalla fixture aggiornata, passando per
+   completatore e assemblatore; il documento attuale è ancora l'artefatto precedente e
+   non va corretto manualmente.
+3. **La traduzione in regole** delle posizioni chiuse con le fonti (bilanciamento,
    disconnettore, contabilizzatore — `DOVE_VA_CIASCUN_ACCESSORIO.md` §14-18), dentro il
    confine di D-104. Miscelatrice e ritegno sanitario hanno già le regole.
-3. **La libreria dei simboli** — contenuto da completare (segno del rubinetto bloccabile).
-4. **Il cartiglio.**
-5. **La composizione** — da rifare: l'impianto completo non entra in larghezza su un
+4. **La libreria dei simboli** — contenuto da completare (segno del rubinetto bloccabile).
+5. **Il cartiglio.**
+6. **La composizione** — da rifare: l'impianto completo non entra in larghezza su un
    foglio ordinario.
-6. **I validatori e il cancello dell'occhio terzo.**
+7. **I validatori e il cancello dell'occhio terzo.**
 
 ## Done log — ultimo in cima
 
 | Commit | Cosa |
 |---|---|
-| `a136862` | **Quinto impianto corretto**: tutti e tre i circuiti secondari restano nel grafo di prima stesura; il collettore a due uscite non limita più la lettura del testo |
+| `1eefd56` | **Fixture JSON del quinto impianto rigenerata** dalla lettura corretta: UTA, fan-coil e pavimento radiante sono tutti presenti |
+| `a136862` | **Quinto impianto corretto nel generatore**: tutti e tre i circuiti secondari restano nel grafo di prima stesura; il collettore a due uscite non limita più la lettura del testo |
 | `8d5ec99` | **Le tredici correzioni alle istruzioni dell'interprete**: regola generale dei raccordi a N vie, esempi che non contengono più le soluzioni, il regime dalle potenze, il criterio per chiedere. Tre prove nuove le inchiodano |
 | `50cb842` | **Le quattro cose che l'interprete deve capire**, contate sulle condizioni delle diciassette regole: materiale per il giro di correzioni del pezzo 1 |
 | `a75197b` | **Il regime si legge dalle potenze dichiarate** (D-108): i cinque impianti lo portano scritto, la cascata è l'unico sopra i 35 kW |
