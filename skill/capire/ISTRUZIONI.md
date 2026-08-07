@@ -18,6 +18,12 @@ pezzo successivo della catena, non tu.
 testo non dice e che servirebbe per disegnare diventa una **domanda dichiarata**, mai
 un'invenzione e mai una scelta silenziosa.
 
+**E il rovescio, che conta quanto la prima:** ciò che il testo **dà** si legge fino in
+fondo. Se scrive le potenze delle macchine, quelle si trascrivono e se ne ricava il
+regime della centrale (§4.6); se descrive un collegamento, si rappresenta. Chiedere
+all'ingegnere una cosa che ha già scritto è un difetto quanto inventarne una che non ha
+scritto.
+
 ---
 
 ## 2. Cosa ricevi
@@ -32,7 +38,9 @@ un'invenzione e mai una scelta silenziosa.
 | Lo strumento di validazione | comando al §8, passo 7 | dice se il file carica |
 
 Se i file ti arrivano copiati in un'altra cartella, valgono lo stesso: contano i
-contenuti, non i percorsi.
+contenuti, non i percorsi. Il comando di validazione è l'unica cosa che puoi eseguire
+fuori dalla tua cartella di lavoro: **eseguirlo non è leggere il repository**, e non
+viola l'isolamento.
 
 ---
 
@@ -43,7 +51,9 @@ Un JSON per impianto, versione `1.1.0`, con questa forma. I campi `subsystems`,
 della catena.
 
 Ecco un esempio **completo e caricabile** — un impianto inventato, minimo apposta:
-una caldaia a condensazione con circolatore che alimenta radiatori esistenti.
+una caldaia a condensazione da 24 kW con circolatore che alimenta radiatori esistenti.
+Guarda come la potenza detta dal testo compare in due posti: trascritta in
+`properties`, e usata per ricavare `plant_regime` (24 kW ≤ 35, quindi piccola centrale).
 
 ```json
 {
@@ -56,6 +66,7 @@ una caldaia a condensazione con circolatore che alimenta radiatori esistenti.
     "revision": "00",
     "issue_date": "2026-08-06"
   },
+  "plant_regime": "up_to_35_kw",
   "networks": [
     {
       "id": "riscaldamento",
@@ -131,10 +142,18 @@ Regole di forma:
   testo**. Se non l'ha scritta, `tag` è `null`: le sigle le assegna dopo, in automatico,
   chi battezza il grafo. Non inventare numerazioni.
 - **`properties`** dei componenti: solo i dati che il testo dà, trascritti come stanno
-  (`"potenza": "12 kW"`, `"volume": "200 litri"`). Nessun dato dedotto.
+  (`"potenza": "12 kW"`, `"volume": "200 litri"`). Nessun dato dedotto. Ci vanno anche
+  il **nome commerciale** (`"modello": "ECOcombi"`) e le **qualifiche** che il testo usa
+  (`"tipo": "aria-acqua reversibile"`, `"configurazione": "a quattro tubi"`): sono
+  parole dell'ingegnere, e trascriverle non costa nulla — dedurne qualcosa sì.
+- **`plant_regime`**: il regime della centrale, `up_to_35_kw` oppure `over_35_kw`. Si
+  ricava dalle potenze che il testo dà (§4.6). Se il testo non le dà, **ometti il
+  campo** e scrivi la domanda in `assumptions`.
 - **`metadata`**: identifica il documento, non l'impianto. Committente e codice di
   commessa te li dice chi lancia il lavoro; se mancano, scrivi `ND` e dillo nella
-  risposta. `issue_date` è la data di oggi, `revision` è `00`.
+  risposta. `issue_date` è la data di oggi, `revision` è `00`. Il `project_id` lo
+  costruisci dal titolo dell'impianto, minuscolo e con i trattini
+  (`caldaia-radiatori-esistenti`): identifica il documento, non è una sigla di commessa.
 - Il campo `evidence` che lo schema prevede puoi lasciarlo vuoto: la tracciabilità la
   dai con la tabella di rilettura (§8, passo 6). Nelle assunzioni puoi usare
   `source_message_refs` per citare la frase del testo da cui nasce la voce.
@@ -161,6 +180,15 @@ così:
 4. Mai scegliere per somiglianza di nome. Il nome può ingannare; i mestieri e gli
    attacchi no.
 
+**Un aggettivo che dice cosa la macchina fa, cambia la voce.** «Caldaia **combinata**»,
+«boiler **in pompa di calore**», «pompa di calore **reversibile**»: prima di sceglierne
+una, chiediti se quell'aggettivo aggiunge un mestiere. Una macchina che produce anche
+l'acqua calda sanitaria **da sola** è una voce diversa da una che fa solo
+riscaldamento — cerca nel catalogo una voce che dichiari entrambi i mestieri. Se il
+testo descrive **come** produce il sanitario (uno scambiatore esterno, un bollitore
+separato), quei pezzi sono nel grafo e la macchina resta quella base: comanda la
+descrizione, non l'aggettivo.
+
 **Se nessuna voce combacia** — il mestiere non c'è, o gli attacchi non bastano per i
 collegamenti descritti — **non ripiegare su una voce sbagliata**: quel pezzo (o quel
 circuito) non si disegna, e la mancanza diventa una voce dichiarata (§6, tipo B).
@@ -174,6 +202,12 @@ tabella `naming/media.json`. Il fluido cambia dove una macchina lo cambia: prima
 bollitore c'è acqua fredda (`cold_water`), dopo c'è acqua calda sanitaria
 (`domestic_hot_water`); sono due reti. Il dominio è `hydronic` per tutto ciò che è
 acqua.
+
+**Il raffrescamento non ha un fluido suo** nella tabella: una macchina reversibile
+d'estate manda acqua fredda negli stessi tubi, e il circuito resta uno. Dichiaralo
+`heating_water` come il resto del circuito, e metti in `assumptions` che la macchina è
+reversibile e che quel circuito porta anche il raffrescamento. Non inventare un fluido
+che la tabella non ha.
 
 ### 4.3 Le tubazioni
 
@@ -207,19 +241,29 @@ davvero non lo dà, e allora è una domanda (§6).
 Dove la topologia **descritta** fa incontrare due tubazioni, ci va un pezzo che le
 unisce. Non è progettazione: è l'unico modo di scrivere quello che il testo dice.
 
-- **Due macchine in parallelo** esigono una **confluenza** sulla mandata (due tubi
-  diventano uno) e una **ripartizione** sul ritorno (uno si sdoppia su due). «In
-  parallelo» *dice* che i flussi si uniscono; il raccordo è la trascrizione di quella
-  parola.
-- **Tre macchine in parallelo** esigono due confluenze in catena sulla mandata e due
-  ripartizioni sul ritorno: i raccordi di catalogo hanno tre attacchi, e con N macchine
-  ne servono N−1 per lato.
-- Nel catalogo: la confluenza è il **raccordo a T** (due entrate, un'uscita), la
-  ripartizione è la **ripartizione a T** (un'entrata, due uscite). Esistono in variante
-  per fluido: scegli quella del fluido della rete.
-- Se il testo **descrive come** le macchine si uniscono (un collettore, un separatore),
-  usa quello. Se dice solo «in parallelo», usa i raccordi **e dichiara l'assunzione**
-  (§6, tipo A): il testo non ha detto come si uniscono.
+**La regola generale, che vale in tutti i casi.** Nel catalogo la confluenza è il
+**raccordo a T** (due entrate, un'uscita) e la ripartizione è la **ripartizione a T**
+(un'entrata, due uscite); esistono in variante per fluido, e scegli quella del fluido
+della rete. Ogni raccordo ha **tre** attacchi, quindi:
+
+> dove il testo fa incontrare **N** tubazioni in un punto, servono **N−1** raccordi in
+> catena.
+
+Vale in tutte le direzioni, e questi sono i casi che ricorrono:
+
+- **N macchine in parallelo**: N−1 confluenze sulla mandata (i flussi si uniscono) e
+  N−1 ripartizioni sul ritorno (il flusso si divide). «In parallelo» *dice* che i flussi
+  si uniscono; il raccordo è la trascrizione di quella parola.
+- **N circuiti che partono da un accumulo o da un punto solo**: N−1 ripartizioni sulla
+  mandata e N−1 confluenze sul ritorno. È lo stesso conto, letto dall'altra parte.
+- **N ritorni che rientrano sullo stesso attacco di una macchina**: N−1 confluenze prima
+  dell'attacco. Un attacco porta una tubazione sola (§4.3), sempre.
+
+**Se il testo descrive come** i flussi si uniscono o si dividono — nomina un collettore,
+un separatore idraulico, un distributore — usa **quello** e cerca la voce di catalogo
+corrispondente. Se dice solo «in parallelo», «dal volume partono tre circuiti», o non
+dice niente, usa i raccordi **e dichiara l'assunzione** (§6, tipo A): il testo non ha
+detto con che pezzo.
 
 **Le derivazioni** (il pezzo con un braccio che esce dal percorso) si usano **solo dove
 il testo descrive qualcosa che si stacca da un tubo**. Mai metterne una per comodità o
@@ -241,6 +285,27 @@ dichiara come assunzione**, perché il testo non l'ha detto.
   scrivi una voce in `assumptions` che dice cosa il grafo mostra e cosa no («la
   priorità è una logica di regolazione: sul grafo si vede la valvola deviatrice, non la
   priorità»).
+- Le **esclusioni esplicite** — «non è previsto il ricircolo», «senza bollitore di
+  accumulo» — sono informazione, non silenzio: il grafo non le mostra, quindi vanno in
+  `assumptions` («il testo esclude il ricircolo: non è disegnato perché non c'è, non
+  perché sia stato perso»). Servono a chi legge dopo, per non riaggiungerlo.
+
+### 4.6 Il regime della centrale, che si ricava dalle potenze
+
+Sotto e sopra i **35 kW** le regole del pezzo successivo cambiano, quindi il regime è un
+dato del modello. **Si ricava, non si chiede:** somma le potenze delle macchine che
+**generano calore** e confronta con la soglia. Il dato è dell'ingegnere, la soglia è
+fissa: il conto è aritmetica, non dimensionamento.
+
+- somma ≤ 35 kW → `"plant_regime": "up_to_35_kw"`;
+- somma > 35 kW → `"plant_regime": "over_35_kw"`;
+- **il testo non dà le potenze** → ometti il campo e scrivi la domanda in `assumptions`:
+  *«Il testo non dà le potenze: il regime della centrale non è stato ricavato. Sotto o
+  sopra i 35 kW?»*
+
+Contano solo i generatori: accumuli, circolatori e terminali non hanno potenza di
+generazione. Se il testo dà una potenza in una forma diversa (potenza resa, potenza
+assorbita) trascrivila come sta e dichiara nell'assunzione quale hai sommato.
 
 ---
 
@@ -299,38 +364,48 @@ massimo lo annoti in `assumptions`.
 Ogni cosa che il testo non dice e che serve per disegnare diventa una **voce
 nell'elenco `assumptions`** del JSON, con `status: "proposed"`, scritta in italiano
 piano, come domanda o come assunzione esplicita che l'ingegnere possa leggere e
-approvare o respingere. Mai risolvere in silenzio. Due tipi:
+approvare o respingere. Mai risolvere in silenzio. Tre tipi.
 
-**Tipo A — il testo impone un collegamento ma non dice come.** Il grafo deve chiudersi,
-e c'è un solo modo minimo e convenzionale di chiuderlo: chiudi così **e dichiara**.
-Esempi:
+**Tipo A — il testo impone un collegamento ma non dice con che pezzo.** Il grafo deve
+chiudersi, e c'è un modo minimo e convenzionale di chiuderlo: chiudi così **e
+dichiara**. Il grafo esce completo, e l'ingegnere corregge il dettaglio se vuole.
+Esempi (inventati apposta, non presi da nessun impianto reale):
 
-- «due macchine in parallelo», senza dire come si uniscono → raccordi (§4.4) +
-  assunzione: *«Il testo dice che le due macchine sono in parallelo e non dice come si
-  uniscono: si è assunto un raccordo di mandata e uno di ritorno.»*;
-- «un ricircolo collegato al bollitore», senza dire dove rientra il ritorno → chiusura
-  sul tubo (§4.4) + assunzione: *«Il ritorno del ricircolo è innestato sulla mandata
-  sanitaria: il testo dice solo che il ricircolo è collegato al bollitore. Va bene
-  lì?»*;
-- «più circuiti ambiente», senza numero → il minimo che rappresenta la pluralità (uno
-  per uscita del collettore scelto, o un terminale rappresentativo per circuito) +
-  assunzione con la domanda: quanti sono davvero?
+- «una caldaia murale alimenta l'impianto esistente a termosifoni», e non dice se il
+  circolatore è a bordo o esterno → si segue quello che il catalogo dichiara per la
+  voce scelta + assunzione: *«Il testo non dice se il circolatore è integrato nella
+  caldaia: si è seguita la macchina di catalogo, che lo porta a bordo. È così?»*;
+- «due sottocentrali derivate dal collettore di piano», senza dire da quali uscite →
+  ripartizioni in catena (§4.4) + assunzione: *«Il testo non dice come le due
+  sottocentrali si staccano: si sono assunte due derivazioni consecutive.»*
 
-**Tipo B — rappresentare richiederebbe progettare, o il catalogo non ha la voce.**
-Non disegnare niente: la parte manca dal grafo, e una voce in `assumptions` lo dice a
-chiare lettere. Esempi:
+**Tipo B — il catalogo non ha con cosa rappresentarlo.** Non disegnare niente: la parte
+manca dal grafo, e una voce in `assumptions` lo dice a chiare lettere. Esempi:
 
-- il testo chiede tre circuiti secondari e il collettore disponibile a catalogo ne
-  serve due → il terzo circuito **non si disegna**, e la voce dice: *«Il testo elenca
-  tre circuiti secondari; il collettore disponibile ne serve due: il terzo non è
-  disegnato, ed è una domanda per il progettista.»*;
-- il testo nomina una macchina che il catalogo non ha → la macchina non si disegna, e
-  la voce nomina il mestiere che manca.
+- il testo nomina una macchina il cui mestiere non esiste in catalogo → la macchina non
+  si disegna, e la voce nomina il mestiere che manca;
+- il testo descrive un collegamento che richiederebbe un attacco che la voce scelta non
+  ha, e nessun'altra voce ce l'ha → quel collegamento non si disegna, e la voce lo dice.
 
-Il criterio per distinguere: nel tipo A **ogni** lettura ragionevole del testo produce
-lo stesso grafo a meno di un dettaglio da confermare; nel tipo B servirebbe una
-decisione che spetta all'ingegnere. Nel dubbio, tipo B: meglio una domanda in più che
-un'invenzione.
+**Tipo C — la scelta è dell'ingegnere, e va chiesta prima.** Si chiede solo quando
+valgono **tutte e tre**:
+
+1. il testo davvero non lo dice;
+2. le due strade sono **entrambe corrette** — nessuna è l'errore;
+3. la scelta **cambia il disegno**, non un dettaglio.
+
+Allora scrivi la domanda in `assumptions` e **ripetila in chiaro nella risposta**, così
+chi ti ha lanciato la porta all'ingegnere. Nel frattempo chiudi il grafo con la strada
+che ti pare più convenzionale, dichiarandola: un grafo incompleto è meno utile di un
+grafo con una domanda sopra.
+
+**Il criterio per distinguere A da C:** nel tipo A ogni lettura ragionevole produce lo
+stesso grafo a meno di un dettaglio; nel tipo C due letture ragionevoli producono
+**due grafi diversi**, e nessuna delle due è sbagliata.
+
+**Quello che non si chiede mai:** dove va un accessorio (lo sa il pezzo delle regole),
+quante taglie o diametri (sono dell'ingegnere, e se non li ha detti non compaiono), e
+qualunque cosa il testo abbia già scritto — a partire dalle potenze.
 
 ---
 
@@ -342,6 +417,11 @@ un'invenzione.
 - **Un componente descritto come integrato** in una macchina («il circolatore integrato
   nella pompa di calore») non si disegna come pezzo a sé: dichiara in `assumptions` che
   è integrato, come dice il testo.
+- **Dove sta il circolatore, quando il testo non lo dice.** Se il testo lo nomina come
+  pezzo a sé («un circuito con circolatore dedicato») ma non dice su quale ramo, mettilo
+  sulla **mandata** del circuito che serve: è la posizione convenzionale, e va
+  dichiarata come assunzione. Non è una regola dell'impianto, è una convenzione di
+  disegno: perciò si dichiara.
 - **Master, slave, cascata, priorità** sono regolazione (§4.5), non pezzi.
 - Il testo può nominare un accessorio per dire **dove** sta un attacco («sul volume
   tecnico sono previsti il carico e lo scarico»): resta ferramenta, resta fuori, la
@@ -369,10 +449,13 @@ un'invenzione.
    **tabella di rilettura**: una riga per frase, con gli elementi del grafo che la
    rappresentano, oppure la voce di `assumptions` che la copre. Un elemento che non
    compare in nessuna riga non doveva esserci.
-7. **Valida il file** con lo strumento del repository, dalla radice del repository:
+7. **Valida il file.** Il comando va lanciato **dalla radice del repository**, dove vive
+   l'interprete Python, ma il file che gli passi può stare dove vuoi — indica il suo
+   percorso per esteso. Eseguire questo comando non è leggere il repository: se lavori
+   isolato, l'isolamento resta.
 
    ```
-   .venv/bin/python -c "from pathlib import Path; from disegnatore_mep.io.project_json import load_project; load_project(Path('percorso/del/tuo/file.json'))"
+   .venv/bin/python -c "from pathlib import Path; from disegnatore_mep.io.project_json import load_project; load_project(Path('/percorso/completo/del/tuo/file.json'))"
    ```
 
    Nessun output = il file carica. Un errore nomina il campo sbagliato: correggi e
@@ -396,3 +479,15 @@ Rispondi a queste domande. Se una risposta è «no», il lavoro non è finito.
 - Ogni cosa che il testo non dice — e che hai dovuto chiudere o lasciare fuori — è una
   voce di `assumptions`, leggibile dall'ingegnere?
 - `subsystems`, `rule_applications` e `sheets` sono liste vuote?
+
+**E le quattro cose da cui dipende tutto il resto della catena** — se una ti è rimasta
+oscura, quella è la domanda da fare (tipo C):
+
+- **Che macchina è ciascun pezzo:** produce calore? produce **anche** l'acqua calda
+  sanitaria da sola? tiene una riserva, e di quale acqua? La voce di catalogo scelta
+  risponde a tutte e tre, ed è per questo che si sceglie sui mestieri e sugli attacchi.
+- **Che acqua porta ogni circuito**, e soprattutto: c'è o non c'è il sanitario?
+- **Il regime della centrale**, ricavato dalle potenze (§4.6) o dichiarato mancante.
+- **Come i circuiti toccano un serbatoio:** quale lo attraversa scambiando calore e
+  quale ne riempie la riserva. Il serpentino passa dentro il bollitore, ma l'acqua del
+  bollitore è quella che entra dall'alimentazione fredda.

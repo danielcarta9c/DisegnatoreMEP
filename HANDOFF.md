@@ -187,7 +187,7 @@ nell'altro:
 ## 6. Stato al 7 agosto 2026
 
 **Ramo:** il lavoro è su `main` (e sul ramo `claude/mep-pacchetto-e-collaudi-42itzv`).
-**Prove:** 841 verdi, 22 parcheggiate col motivo scritto; `ruff` e `mypy --strict` puliti.
+**Prove:** 844 verdi, 22 parcheggiate col motivo scritto; `ruff` e `mypy --strict` puliti.
 **Ambiente:** `bash scripts/setup-env.sh` — **da eseguire per primo** in una sessione cloud.
 **Numeri:** 39 simboli pubblicati, 53 voci di catalogo, 17 regole.
 
@@ -195,7 +195,7 @@ nell'altro:
 
 | Pezzo | Stato |
 |---|---|
-| **1 — Capire** | Costruito e provato, ma **RESPINTO dal collaudo** (7 agosto): correzioni alle istruzioni e prova nuova in camera pulita da fare. Il contratto di consegna è già corretto |
+| **1 — Capire** | **RESPINTO dal collaudo** (7 agosto), **tredici correzioni applicate lo stesso giorno**: resta la prova nuova in camera pulita, con consegne agli atti, e il collaudo che la giudica |
 | **2 — Completare** (le regole) | Costruito e collaudato. **Il pacchetto E (regime + tratto comune) e C2 sono collaudati**: respinti al primo giro, corretti lo stesso giorno, verdi sulle prove dei collaudi adottate come regressione |
 | **3 — Assemblare** | Costruito e collaudato; il 7 agosto ha guadagnato la classificazione dei blocchi sul capofila e l'ordinamento dei blocchi di mezzo |
 | Il grafo, le sigle e **l'indirizzo dei nodi (D-105)** | **Collaudato e APPROVATO** (7 agosto), 91 prove del collaudo adottate |
@@ -219,24 +219,28 @@ nell'altro:
 - **Tre collaudi indipendenti**: indirizzo dei nodi APPROVATO (91 prove adottate);
   pacchetto E+C2 RESPINTO e corretto (25 prove adottate); pezzo 1 RESPINTO (correzioni
   in coda).
-- **Poi i rilievi del PM sul confronto**, e due correzioni: la camminata del ritorno
+- **Poi i rilievi del PM sul confronto**, e tre correzioni: la camminata del ritorno
   generale **si apre sui rami** (l'ibrido il suo tratto comune ce l'aveva, e non lo
   trovavamo: quattro punti aperti erano un difetto mio); il **regime si legge dalle
   potenze** che lui ha dichiarato nei testi, e i cinque impianti lo portano scritto —
   quattro sotto i 35 kW, la cascata sopra. Più il censimento delle **quattro cose che
-  l'interprete deve capire**, contate sulle condizioni delle diciassette regole.
+  l'interprete deve capire**, contate sulle condizioni delle diciassette regole, e le
+  **tredici correzioni alle sue istruzioni** — con tre prove nuove che inchiodano quel
+  che è verificabile (l'esempio carica, dichiara il regime coerente con la potenza che
+  scrive, e nessun esempio ricalca più una soluzione dei testi di prova).
 
 ---
 
 ## 7. Il primo lavoro della prossima sessione
 
-1. **Il giro di correzioni del pezzo 1** (verdetto del 7 agosto, nell'appendice del
-   piano): sciogliere la contraddizione fra gli esempi e la regola dei raccordi sul caso
-   dei tre circuiti; sostituire gli esempi che ricalcano le soluzioni dei testi di prova
-   (o procurare testi nuovi); generalizzare la regola dei raccordi a N vie; le sette
-   correzioni del verbale della prova. Poi **prova nuova in camera pulita** con agenti
-   nuovi, protocollo in `skill/capire/CONSEGNA.md` — che ora impone di **conservare le
-   consegne degli agenti agli atti**.
+1. **La prova nuova del pezzo 1 in camera pulita.** Le tredici correzioni alle
+   istruzioni sono applicate (appendice del piano, 7 agosto): la contraddizione sui tre
+   circuiti è sciolta con la regola generale dei raccordi a N vie, gli esempi non
+   contengono più le soluzioni dei testi di prova, il regime si ricava dalle potenze, e
+   c'è il criterio per cui una cosa non decisa si chiede invece di dichiararla. Le
+   istruzioni sono cambiate: **la prova va rifatta da capo**, con agenti nuovi e le
+   **consegne conservate agli atti** (protocollo in `skill/capire/CONSEGNA.md`), e poi
+   ricollaudata.
 2. **La traduzione in regole** delle posizioni §14-18 rimaste (bilanciamento,
    disconnettore, contabilizzatore), dentro il confine di D-104.
 3. **Le tre domande al PM** (§9): portargliele e registrare le risposte.
@@ -301,5 +305,5 @@ camminata del ritorno generale si apre sui rami (l'ibrido aveva il suo tratto co
 non lo trovavamo), il regime si legge dalle potenze dichiarate (D-108) e i cinque
 impianti lo portano scritto, e le quattro cose che l'interprete deve capire sono state
 contate sulle condizioni delle diciassette regole. Due regole di metodo registrate,
-D-107 e D-108, che sono le due facce dello stesso errore. Suite 841 verdi, ruff e mypy
+D-107 e D-108, che sono le due facce dello stesso errore. Suite 844 verdi, ruff e mypy
 puliti.

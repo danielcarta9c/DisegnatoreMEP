@@ -10,7 +10,7 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **841 verdi, 22 parcheggiate** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
+| Test | **844 verdi, 22 parcheggiate** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
 | Libreria simboli | 39 pubblicati | Le 22 prove parcheggiate riguardano il **disegno** (composizione da rifare) |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
@@ -34,23 +34,25 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 - [x] **La correzione C2** — lo scarico del bollitore sta sull'ingresso freddo, con la
       derivazione sulla rete fredda; la prova del collaudo è tornata verde senza essere
       ammorbidita.
-- [x] **Le due correzioni chieste dal PM sul confronto dei grafi** (7 agosto, sera):
+- [x] **Le correzioni chieste dal PM a fine sessione** (7 agosto, sera):
       la camminata del ritorno generale **si apre sui rami**, e l'ibrido riceve il
       corredo sul tratto che ha davvero — nessuno dei cinque impianti ha più punti
       aperti; e il **regime si legge dalle potenze** che il progettista ha dichiarato
       (D-108), scritto nel modello dove lui lo vede: quattro impianti sotto i 35 kW, la
       cascata di tre macchine sopra.
-- [ ] **Il pezzo 1, «Capire»** — costruito e provato, ma il collaudo indipendente lo ha
-      **RESPINTO** il 7 agosto: contraddizione interna sul quinto impianto, esempi che
-      ricalcano le soluzioni dei testi di prova, verbale non verificabile (le consegne
-      degli agenti non sono agli atti). Le correzioni al contratto di consegna sono
-      applicate; le correzioni alle **istruzioni** e la prova nuova in camera pulita — con
-      consegne conservate e esempi estranei ai testi — sono il primo lavoro della
-      prossima sessione.
+- [ ] **Il pezzo 1, «Capire»** — il collaudo indipendente lo ha **RESPINTO** il 7 agosto;
+      le **tredici correzioni sono applicate** lo stesso giorno: sciolta la contraddizione
+      sui tre circuiti con la regola generale dei raccordi a N vie, sostituiti gli esempi
+      che ricalcavano le soluzioni dei testi di prova, aggiunto il regime ricavato dalle
+      potenze e il criterio per cui una cosa non decisa si **chiede** invece di
+      dichiararla. **Resta dovuta la prova nuova in camera pulita** — agenti nuovi,
+      consegne conservate agli atti — e il collaudo che la giudica: le istruzioni sono
+      cambiate, quindi la prova va rifatta da capo. È il primo lavoro della prossima
+      sessione.
 
-**Il prossimo lavoro:** il giro di correzioni del pezzo 1 (verdetto e elenco nel piano,
-appendice del 7 agosto); poi la traduzione in regole delle posizioni §14-18. Dettagli in
-`HANDOFF.md` §7.
+**Il prossimo lavoro:** la prova nuova del pezzo 1 in camera pulita — le istruzioni sono
+già corrette — e il collaudo che la giudica; poi la traduzione in regole delle posizioni
+§14-18. Dettagli in `HANDOFF.md` §7.
 
 ## Il confine del prodotto, che vale su tutto (D-104)
 
@@ -64,10 +66,9 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
 
 ## Next — i pezzi che restano
 
-1. **Le correzioni alle istruzioni del pezzo 1** dal verdetto del collaudo (7 agosto):
-   sciogliere la contraddizione sul caso dei tre circuiti, esempi estranei ai testi di
-   prova (o testi nuovi), regola generale dei raccordi a N vie; poi prova nuova in camera
-   pulita con agenti nuovi e **consegne agli atti** (il contratto aggiornato lo impone).
+1. **La prova nuova del pezzo 1 in camera pulita**, con agenti nuovi e **consegne agli
+   atti** (il contratto aggiornato lo impone), e il collaudo che la giudica. Le tredici
+   correzioni alle istruzioni sono già applicate.
 2. **La traduzione in regole** delle posizioni chiuse con le fonti (bilanciamento,
    disconnettore, contabilizzatore — `DOVE_VA_CIASCUN_ACCESSORIO.md` §14-18), dentro il
    confine di D-104. Miscelatrice e ritegno sanitario hanno già le regole.
@@ -83,6 +84,7 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
 
 | Commit | Cosa |
 |---|---|
+| (questo) | **Le tredici correzioni alle istruzioni dell'interprete**: regola generale dei raccordi a N vie, esempi che non contengono più le soluzioni, il regime dalle potenze, il criterio per chiedere. Tre prove nuove le inchiodano |
 | `50cb842` | **Le quattro cose che l'interprete deve capire**, contate sulle condizioni delle diciassette regole: materiale per il giro di correzioni del pezzo 1 |
 | `a75197b` | **Il regime si legge dalle potenze dichiarate** (D-108): i cinque impianti lo portano scritto, la cascata è l'unico sopra i 35 kW |
 | `4433665` | **Il ritorno generale dell'ibrido c'era**: la camminata si apre sui rami e nessuno dei cinque ha più punti aperti; ritirata prima di scriverla la regola del filtro sul sanitario (D-107) |
