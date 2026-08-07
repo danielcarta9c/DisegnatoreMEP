@@ -26,10 +26,13 @@ riscontrata riga per riga sugli schemi Caleffi delle centrali domestiche.
 **Sopra i 35 kW** vale la Raccolta R, che da lì in su si applica: sicurezza e termometro
 per ogni generatore, separatore d'aria vero.
 
-**Chi decide il regime: tu, sempre.** È un dato del progetto, dichiarato da chi lo firma.
-Noi non lo calcoliamo mai — nemmeno sommando le potenze che il testo nomina, perché la
-taglia non la decide la skill. Un progetto che non dichiara niente riceve il **corredo
-minimo**, cioè le regole della piccola centrale.
+**Chi decide il regime: tu, sempre.** È un dato del progetto, di chi lo firma. Noi lo
+**leggiamo dalle potenze che hai scritto tu** e te lo riportiamo dove lo vedi: sommare
+numeri che hai già dato e confrontarli con una soglia fissa è aritmetica, non
+dimensionamento — la taglia non la decide la skill. Le regole, dal canto loro, quel dato
+lo leggono e basta: non lo ricavano mai dalle proprietà dei pezzi. E se in un testo le
+potenze non ci fossero, il regime resterebbe non dichiarato, l'impianto prenderebbe il
+**corredo minimo** — le regole della piccola centrale — e la mancanza te la diremmo.
 
 ## Il ritorno generale: il corredo del circuito sta sul tratto comune
 

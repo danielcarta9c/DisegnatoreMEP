@@ -54,18 +54,25 @@ class IntegrationCategory(StrEnum):
 
 
 class PlantRegime(StrEnum):
-    """Il regime della centrale: sotto o sopra i 35 kW (D-106).
+    """Il regime della centrale: sotto o sopra i 35 kW (D-106, D-108).
 
-    E' un **dato d'ingresso dichiarato dal progettista**, mai calcolato: la
-    taglia non la decide la skill (D-104), nemmeno sommando le potenze che il
-    testo nomina. La radice e' normativa: la Raccolta R si applica agli
-    impianti con potenza dei focolari superiore a 35 kW (cap. R.1.A.1,
-    SRC-012); sotto quella soglia vale la buona pratica delle piccole
-    centrali, che e' un'altra (riscontro del 7 agosto su SRC-019 e SRC-008).
+    E' un **dato del progettista**, non una scelta della skill: la taglia non
+    la decide lei (D-104). Chi legge il testo del progettista lo **ricava
+    dalle potenze che lui ha dichiarato** e lo scrive qui (D-108): sommare
+    potenze gia' scritte e confrontarle con una soglia fissa e' aritmetica,
+    non dimensionamento. Le regole, invece, questo campo lo **leggono e
+    basta**: nessuna somma, nessuna deduzione dalle proprieta' dei
+    componenti.
 
-    Un progetto che non dichiara niente riceve il **corredo minimo**: le
-    regole del regime piccolo si applicano, quelle del grande no. E' la
-    scelta di D-106, non un valore inventato.
+    La radice e' normativa: la Raccolta R si applica agli impianti con
+    potenza dei focolari superiore a 35 kW (cap. R.1.A.1, SRC-012); sotto
+    quella soglia vale la buona pratica delle piccole centrali, che e'
+    un'altra (riscontro del 7 agosto su SRC-019 e SRC-008).
+
+    Un progetto che non dichiara niente — perche' il testo le potenze non le
+    da' — riceve il **corredo minimo**: le regole del regime piccolo si
+    applicano, quelle del grande no, e la mancanza si dice. E' la scelta di
+    D-106, non un valore inventato.
     """
 
     UP_TO_35_KW = "up_to_35_kw"
