@@ -56,8 +56,9 @@ sfogo e sicurezza stanno sul volano.
 
 **5 — Cascata di tre pompe di calore: da 105 a 87 pezzi.**
 Il caso per cui la correzione esiste: prima c'erano cinque defangatori, tre separatori,
-tre termometri e tre sicurezze; adesso un defangatore solo sul ritorno generale della
-cascata, un filtro a Y per macchina, sfogo e sicurezza sul volano. Lo scarico del
+tre termometri e tre sicurezze di riscaldamento (la quarta, quella sanitaria sul
+bollitore, resta); adesso un defangatore solo sul ritorno generale della cascata, un
+filtro a Y per macchina, sfogo e sicurezza sul volano. Lo scarico del
 bollitore sull'ingresso freddo.
 
 ---

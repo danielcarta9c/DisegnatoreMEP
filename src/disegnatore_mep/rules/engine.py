@@ -192,13 +192,39 @@ def _function_at(context: RuleContext, rule: RuleDefinition, anchor: PortRef) ->
     return rule.then.function_for(context.shutoff_regime_of(anchor.component_id))
 
 
+def _carried_by_every_anchor(
+    context: RuleContext, rule: RuleDefinition, network_id: str, function: str
+) -> bool:
+    """Ogni componente che la regola ancora su questa rete la porta a bordo.
+
+    E' il solo modo in cui il bordo macchina soddisfa una regola **di rete**:
+    se tutti i generatori integrano il vaso, un vaso esterno non si aggiunge;
+    se uno solo lo integra, il circuito lo vuole comunque. Il bordo di un
+    membro che la regola non ancora — la sicurezza integrata della pompa di
+    calore, per la regola del serbatoio — non conta mai.
+    """
+    members = context.anchors_of(
+        network_id, rule.when.anchor_has_function, rule.when.anchor_has_trait
+    )
+    return bool(members) and all(
+        context.carries(item, function) for item in members
+    )
+
+
 def _already_there(
     context: RuleContext, rule: RuleDefinition, network_id: str, anchor: PortRef
 ) -> bool:
     """La funzione che la regola porterebbe qui c'e' gia', nell'ambito dichiarato."""
     function = _function_at(context, rule, anchor)
+    # Cio' che l'ancoraggio porta a bordo non si aggiunge (D-106, criterio 4):
+    # il filtro integrato della macchina E' il filtro di quella macchina, e
+    # vale in ogni ambito — per attacco come per rete.
+    if context.carries(anchor.component_id, function):
+        return True
     if rule.satisfied_by.scope is SatisfactionScope.ON_THE_NETWORK:
-        return context.network_has(network_id, function)
+        return context.network_has(network_id, function) or _carried_by_every_anchor(
+            context, rule, network_id, function
+        )
     # Un accessorio posato sull'attacco di servizio non sta sulla tubazione
     # principale: camminando lungo quella non lo si troverebbe, e lo si
     # riproporrebbe a ogni passata.

@@ -1,6 +1,6 @@
 {
   "id": "expansion-on-the-stored-volume-feed",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "Vaso di espansione sanitario",
   "category": "necessary",
   "cardinality": "per_network",
@@ -20,7 +20,7 @@
     "scope": "on_the_network"
   },
   "rationale": "Anche la riserva sanitaria si scalda e dilata, e il ritegno sull'alimentazione le ha tolto la via di ritorno verso la rete: senza un vaso suo la dilatazione apre la sicurezza a ogni ciclo. Il vaso sta sulla tubazione dell'acqua fredda in ingresso alla riserva, dal lato del serbatoio, dove il costruttore prescrive di prevederlo insieme alla sicurezza.",
-  "source": "Rehau, istruzioni d'installazione degli accumuli: l'installazione preveda valvola di sicurezza tarata e vaso di espansione commisurato sull'alimentazione fredda (SRC-018); schemi applicativi Caleffi, il vaso sanitario sull'ingresso freddo (SRC-008)",
+  "source": "Rehau, istruzioni d'installazione degli accumuli: l'installazione preveda valvola di sicurezza tarata e vaso di espansione commisurato sull'alimentazione fredda (SRC-018, documento delle posizioni, parte seconda)",
   "ordering": {
     "after": [
       "isolation_locked_open"

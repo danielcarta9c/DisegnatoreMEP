@@ -37,10 +37,13 @@ class RuleContext:
     carried: dict[str, frozenset[str]]
     """Le funzioni che ciascun componente porta a bordo di fabbrica (D-106).
 
-    Una regola non aggiunge cio' che la macchina dichiara di avere: per la
-    soddisfazione **di rete** queste funzioni contano come presenti. Non
-    contano per la soddisfazione su un attacco: cio' che sta dentro il
-    mantello non occupa nessuna tubazione."""
+    Una regola non aggiunge cio' che **la macchina** dichiara di avere: il
+    bordo soddisfa i bisogni ancorati a chi lo porta — il filtro integrato E'
+    il filtro di quella macchina — e, per una regola di rete, vale solo se
+    **ogni** ancoraggio della regola lo porta. Il bordo di un altro membro
+    non conta mai: la sicurezza integrata della pompa di calore non e' la
+    sicurezza del serbatoio, e un pezzo di sicurezza che sparisse per il
+    bordo altrui sparirebbe in silenzio."""
 
     stored_media: dict[str, str]
     """Il fluido che ciascun componente tiene in serbo, per chi ne tiene uno."""
@@ -171,16 +174,21 @@ class RuleContext:
     # --- cio' che una condizione puo' chiedere ------------------------------
 
     def network_has(self, network_id: str, function: str) -> bool:
-        """La funzione c'e' su quella rete: come pezzo, o a bordo di un pezzo.
+        """La funzione c'e' su quella rete, come **pezzo** dell'impianto.
 
-        Cio' che una macchina porta a bordo conta (D-106): una regola non
-        aggiunge cio' che la macchina dichiara di avere.
+        Il bordo macchina non entra qui: cio' che una macchina integra
+        soddisfa i bisogni ancorati a lei (`carries`), non quelli della rete
+        intera — contarlo qui faceva sparire in silenzio la sicurezza del
+        serbatoio quando la pompa di calore dichiarava la propria.
         """
         return any(
             function in self.functions.get(component_id, frozenset())
-            or function in self.carried.get(component_id, frozenset())
             for component_id in self.members.get(network_id, ())
         )
+
+    def carries(self, component_id: str, function: str) -> bool:
+        """Quel componente porta quella funzione a bordo, di fabbrica."""
+        return function in self.carried.get(component_id, frozenset())
 
     def components_with(self, network_id: str, function: str) -> tuple[str, ...]:
         return tuple(
