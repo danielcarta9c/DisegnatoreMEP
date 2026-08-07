@@ -408,12 +408,18 @@ CINQUE = plant(
         ("volano", "buffer-four-port", "VOL-01"),
         ("bollitore", "dhw-cylinder", "BOL-01"),
         ("ritorno-primario", "tee-junction", None),
-        ("collettore", "zone-manifold", "COL-01"),
+        ("secondario-mandata-a", "tee-split", None),
+        ("secondario-mandata-b", "tee-split", None),
         ("circolatore-uta", "pump-circulator", "CIR-01"),
         ("batteria-uta", "ahu-coil", "BAT-01"),
         ("circolatore-fancoil", "pump-circulator", "CIR-02"),
         ("ventilconvettori", "fan-coil", "VC-01"),
-        ("ritorno-secondario", "tee-junction", None),
+        ("miscelatrice-radiante", "mixing-valve-3way", "VM-01"),
+        ("circolatore-radiante", "pump-circulator", "CIR-03"),
+        ("pavimento-radiante", "underfloor-panel", "PAV-01"),
+        ("ritorno-radiante", "tee-split", None),
+        ("secondario-ritorno-a", "tee-junction", None),
+        ("secondario-ritorno-b", "tee-junction", None),
         ("acquedotto", "cold-water-inlet", "AF-01"),
         ("utenze", "dhw-draw-off", "ACS-01"),
         ("ricircolo", "pump-circulator-dhw", "CIR-04"),
@@ -443,15 +449,24 @@ CINQUE = plant(
         pipe("p12", "primario", ("cascata-ritorno-a", "c"), ("cascata-ritorno-b", "a")),
         pipe("p13", "primario", ("cascata-ritorno-b", "b"), ("pdc-2", "water_return")),
         pipe("p14", "primario", ("cascata-ritorno-b", "c"), ("pdc-3", "water_return")),
-        # Due circuiti secondari dal volano, ciascuno col proprio circolatore.
-        pipe("s1", "secondario", ("volano", "secondary_out"), ("collettore", "in")),
-        pipe("s2", "secondario", ("collettore", "out_1"), ("circolatore-uta", "a")),
+        # Tre circuiti secondari: N=3, quindi due ripartizioni in mandata e due
+        # confluenze sul ritorno. Il testo non nomina un collettore.
+        pipe("s1", "secondario", ("volano", "secondary_out"), ("secondario-mandata-a", "a")),
+        pipe("s2", "secondario", ("secondario-mandata-a", "b"), ("circolatore-uta", "a")),
         pipe("s3", "secondario", ("circolatore-uta", "b"), ("batteria-uta", "in")),
-        pipe("s4", "secondario", ("batteria-uta", "out"), ("ritorno-secondario", "a")),
-        pipe("s5", "secondario", ("collettore", "out_2"), ("circolatore-fancoil", "a")),
-        pipe("s6", "secondario", ("circolatore-fancoil", "b"), ("ventilconvettori", "in")),
-        pipe("s7", "secondario", ("ventilconvettori", "out"), ("ritorno-secondario", "c")),
-        pipe("s8", "secondario", ("ritorno-secondario", "b"), ("volano", "secondary_in")),
+        pipe("s4", "secondario", ("batteria-uta", "out"), ("secondario-ritorno-a", "a")),
+        pipe("s5", "secondario", ("secondario-mandata-a", "c"), ("secondario-mandata-b", "a")),
+        pipe("s6", "secondario", ("secondario-mandata-b", "b"), ("circolatore-fancoil", "a")),
+        pipe("s7", "secondario", ("circolatore-fancoil", "b"), ("ventilconvettori", "in")),
+        pipe("s8", "secondario", ("ventilconvettori", "out"), ("secondario-ritorno-a", "c")),
+        pipe("s9", "secondario", ("secondario-ritorno-a", "b"), ("secondario-ritorno-b", "a")),
+        pipe("s10", "secondario", ("secondario-mandata-b", "c"), ("miscelatrice-radiante", "hot_in")),
+        pipe("s11", "secondario", ("miscelatrice-radiante", "out"), ("circolatore-radiante", "a")),
+        pipe("s12", "secondario", ("circolatore-radiante", "b"), ("pavimento-radiante", "in")),
+        pipe("s13", "secondario", ("pavimento-radiante", "out"), ("ritorno-radiante", "a")),
+        pipe("s14", "secondario", ("ritorno-radiante", "c"), ("miscelatrice-radiante", "cold_in")),
+        pipe("s15", "secondario", ("ritorno-radiante", "b"), ("secondario-ritorno-b", "c")),
+        pipe("s16", "secondario", ("secondario-ritorno-b", "b"), ("volano", "secondary_in")),
         pipe("w1", "fredda", ("acquedotto", "a"), ("bollitore", "cold_in")),
         # Ricircolo sanitario: dalle utenze torna al bollitore con la propria pompa.
         pipe("w2", "sanitaria", ("bollitore", "dhw_out"), ("innesto-ricircolo", "a")),
@@ -488,12 +503,18 @@ CINQUE = plant(
             "id": "distribuzione",
             "name": "Circuiti secondari",
             "component_ids": [
-                "collettore",
+                "secondario-mandata-a",
+                "secondario-mandata-b",
                 "circolatore-uta",
                 "batteria-uta",
                 "circolatore-fancoil",
                 "ventilconvettori",
-                "ritorno-secondario",
+                "miscelatrice-radiante",
+                "circolatore-radiante",
+                "pavimento-radiante",
+                "ritorno-radiante",
+                "secondario-ritorno-a",
+                "secondario-ritorno-b",
             ],
             "network_ids": ["secondario"],
         },
@@ -505,10 +526,13 @@ CINQUE = plant(
         },
     ],
     [
-        "Il testo elenca **tre** circuiti secondari — batterie UTA, "
-        "ventilconvettori e un circuito miscelato per il pavimento radiante. Il "
-        "collettore disponibile ne serve due: il circuito miscelato non e' "
-        "disegnato, ed e' una domanda per il progettista.",
+        "Il testo dice che dal volume partono tre circuiti secondari e non nomina "
+        "un collettore: si sono usate due ripartizioni in catena sulla mandata e "
+        "due confluenze sul ritorno, come richiede la topologia a tre rami.",
+        "Il circuito radiante e' dichiarato miscelato: la miscelatrice a tre vie "
+        "ricircola una parte del ritorno radiante sul proprio ingresso freddo. Il "
+        "testo non specifica il dettaglio del gruppo di miscelazione, quindi questa "
+        "chiusura e' dichiarata come assunzione.",
         "Il ritorno del ricircolo e' innestato sulla mandata sanitaria: il testo "
         "dice solo che il ricircolo e' collegato al bollitore.",
         "La cascata rientra su tre ritorni distinti con due confluenze: il testo "
