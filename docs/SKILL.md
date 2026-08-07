@@ -170,12 +170,26 @@ calda sanitaria…).
 **Con cosa lavora.** Solo con quello che l'ingegnere ha detto. Ciò che è ambiguo diventa
 una domanda, non un'invenzione.
 
+**Cosa deve capire, e cosa chiede.** Le regole cambiano esito su **quattro** dati, e
+sono quelli che l'interprete deve ricavare dal testo: che macchina è ciascun pezzo (e
+quindi se produce calore, se produce anche il sanitario da sola, se tiene una riserva e
+di quale acqua, da dove la riempie, cosa porta già a bordo); che acqua porta ogni
+circuito; il regime della centrale; come i circuiti toccano una riserva. L'elenco, con
+il conto di quante regole dipendono da ciascuno, è in `skill/capire/COSA_DECIDE.md`.
+
+Ciò che il testo dà, si **legge** — comprese le potenze, da cui si ricava il regime.
+Ciò che il testo non dà si **chiede**, ma solo quando valgono tutte e tre: il testo
+davvero tace, le due strade sono entrambe corrette, e la scelta cambia il disegno.
+Altrimenti si sceglie la strada convenzionale e si **dichiara**, così l'ingegnere
+corregge tutto in un colpo solo (D-006, D-013).
+
 **Cosa produce.** Il modello — **l'unica fonte di verità del progetto**. Non contiene
 coordinate: dove sta un pezzo sul foglio lo decide il pezzo 3, e si può ricalcolare
 sempre.
 
 **È finito quando** da una descrizione a parole esce un modello che l'ingegnere riconosce
-come il proprio impianto, e ogni cosa non detta è una domanda posta.
+come il proprio impianto, e ogni cosa non detta è o una domanda posta o un'assunzione
+dichiarata.
 
 ---
 
@@ -202,12 +216,30 @@ Ogni accessorio ha la propria ragione di posizionamento, ed è buona pratica con
 | Accessorio | Perché sta lì |
 |---|---|
 | Valvola di intercettazione | per isolare un pezzo senza svuotare l'impianto → su ogni attacco di ciò che si manutiene |
-| Filtro / defangatore | i residui viaggiano col ritorno verso lo scambiatore → sul ritorno, prima della macchina da proteggere |
-| Separatore d'aria | l'aria si libera dove l'acqua è più calda → sulla mandata, appena fuori dal generatore |
-| Vaso di espansione | l'acqua scaldata dilata → sul ritorno, dove lavora più freddo, sempre raggiungibile |
-| Valvola di sicurezza | deve poter scaricare **sempre** → fra lei e la macchina non ci va nulla che si possa chiudere |
-| Gruppo di riempimento | è una **derivazione dall'acqua di rete**, non un organo di passaggio |
+| Filtro a Y | protegge lo scambiatore stretto → sul ritorno di **ogni generatore**, e solo sul primario |
+| Defangatore | i fanghi viaggiano col ritorno → **uno solo**, sul ritorno generale, a monte della prima ripartizione |
+| Separatore d'aria | l'aria si libera dove l'acqua è più calda → sulla mandata generale, **sopra i 35 kW**; sotto basta lo sfogo sul serbatoio |
+| Vaso di espansione | l'acqua scaldata dilata → sul ritorno generale, dove lavora più freddo, sempre raggiungibile |
+| Valvola di sicurezza | deve poter scaricare **sempre** → fra lei e ciò che protegge non ci va nulla di chiudibile: per generatore sopra i 35 kW, sul serbatoio sotto |
+| Gruppo di riempimento | è una **derivazione dall'acqua di rete** sul ritorno generale, non un organo di passaggio |
+| Scarico | da dove la riserva si riempie, da lì si svuota → sull'attacco dedicato, o sull'alimentazione della riserva |
 | Miscelatrice sanitaria | miscela caldo e freddo → vuole **entrambe** le alimentazioni |
+
+### I due livelli che il posizionamento usa, oltre al componente e all'attacco
+
+**Il tratto comune** (D-106). Il corredo di un circuito — vaso, riempimento, manometro,
+defangatore — non appartiene a una macchina: appartiene al **ritorno generale**, il
+tratto attraversato da tutta l'acqua che torna, a monte di dove si divide verso le
+macchine. Si trova camminando sulla struttura dai generatori e aprendosi sui rami, mai
+scegliendo dall'ordine del file. Dove quel tratto non esiste — succede — la regola non
+sceglie un ramo: apre un **punto aperto** e la scelta torna al progettista.
+
+**Il regime della centrale** (D-106, D-108). Sotto e sopra i 35 kW le regole sono
+diverse, e i due regimi non si mescolano mai sullo stesso impianto. Il regime **si legge
+dalle potenze che il progettista ha dichiarato**: sommarle e confrontarle con la soglia
+non è dimensionare — il dato è suo, la soglia ha radice normativa, il conto è aritmetica.
+Se le potenze non ci sono, il regime resta non dichiarato, vale il corredo minimo, e
+quella è una domanda per l'ingegnere.
 
 **È finito quando** le regole coprono le famiglie dichiarate, ognuna è generale, ognuna ha
 una scheda leggibile da un non tecnico, e l'ingegnere ha approvato il dossier.
@@ -361,6 +393,8 @@ Tre livelli, e servono tutti e tre:
 | Cosa fa il prodotto e cosa non fa | `docs/prodotto/PRD_DISEGNATORE_MEP.md` |
 | Cosa dichiara di sé un componente, e perché | `docs/prodotto/PROPRIETA_COMPONENTI.md` |
 | **Dove va ciascun accessorio, e chi lo dice** | `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` |
+| **Cosa l'interprete deve capire, e cosa chiede** | `skill/capire/COSA_DECIDE.md` |
+| Come si prova l'interprete, e come si giudica | `skill/capire/CONSEGNA.md` |
 | **Com'è fatta la skill** | **questo file** |
 | Come si collabora, chi decide cosa | `AGENTS.md` |
 | Come si disegna bene, regola per regola | `docs/standard/QUALITA_GRAFICA.md` |

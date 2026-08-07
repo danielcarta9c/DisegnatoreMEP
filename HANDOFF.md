@@ -22,9 +22,10 @@ macchine: aggiunge gli accessori che un impianto deve avere, li fa approvare, e 
 
 Ne discende il confine: **la skill mette le valvole, uno sfiato e quattro accessori
 standard. Non decide quanti pezzi ci vanno, non cambia lo schema ricevuto, non
-dimensiona.** E da D-106: **il regime della centrale — sotto o sopra i 35 kW — lo dichiara
-il progettista**; la skill non lo calcola, nemmeno sommando le potenze scritte nel testo.
-Senza dichiarazione vale il corredo minimo.
+dimensiona.** E da D-106 e D-108: **il regime della centrale — sotto o sopra i 35 kW — è
+un dato del progettista**, e la skill lo **legge** dalle potenze che lui ha scritto:
+sommarle e confrontarle con la soglia non è dimensionare. Se le potenze non ci sono, il
+regime resta non dichiarato, vale il corredo minimo, e quella è una domanda.
 
 ### La catena (D-099)
 
@@ -84,7 +85,9 @@ tavola è brutta, il difetto è nel disporre. Se il grafo è sbagliato, la tavol
 6. Chi decide l'ordine dei pezzi lungo un tubo, e su cosa lo decide?
 7. Cosa deve succedere quando una regola si applica ma il catalogo non ha il pezzo adatto
    a quel fluido — o la rete non ha il tratto comune su cui la regola si posa?
-8. Chi decide il regime della centrale, e cosa vale se nessuno lo dichiara?
+8. Chi decide il regime della centrale, come si ricava, e cosa vale se non si ricava?
+9. Quali sono le **quattro cose** che l'interprete deve capire dal testo, e qual è il
+   criterio per cui una cosa non decisa si **chiede** invece di dichiararla?
 
 *Risposte attese:* il grafo, e la tavola ne è la rappresentazione; il contenuto sul grafo
 scritto, il disegno sulla tavola (D-096); **una sola**, e dove se ne incontrano due c'è un
@@ -95,8 +98,12 @@ deve avere l'impianto, non autorizza la skill ad aggiungerlo (D-104); l'**assemb
 risolvendo i vincoli che ogni regola dichiara rispetto ai **mestieri** degli altri pezzi,
 mai numeri di priorità (D-094); lo deve **dire** — punto aperto per il progettista, con il
 motivo vero (pezzo mancante in catalogo, o tratto comune che non esiste), mai tacere;
-il **progettista**, e senza dichiarazione vale il **corredo minimo** (D-106) — la skill
-non somma potenze.
+il **progettista**, e la skill lo **legge dalle potenze che lui ha dichiarato**
+(D-108); se il testo non le dà, vale il **corredo minimo** e si chiede; le quattro cose
+sono che macchina è ciascun pezzo, che acqua porta ogni circuito, il regime, e come i
+circuiti toccano una riserva — si chiede solo quando il testo tace **e** le due strade
+sono entrambe corrette **e** la scelta cambia il disegno
+(`skill/capire/COSA_DECIDE.md`).
 
 ---
 
@@ -128,7 +135,7 @@ regola, ritirato in D-104; il disegno inseguito in una sessione sul contenuto; d
 PM che avevano risposta nei cataloghi — «io potrei sbagliare»). Quando succede, fermarsi
 e tornare al pezzo.
 
-**Della sessione del 7 agosto — due, colti dai collaudi:**
+**Della sessione del 7 agosto — quattro. Due colti dai collaudi:**
 
 1. **Un criterio implementato a metà è un criterio violato.** «Una regola non aggiunge
    ciò che la macchina dichiara di avere» era stato cablato per il solo ambito di rete:
@@ -142,6 +149,21 @@ e tornare al pezzo.
    tratto comune; una fonte affermava più di quanto il riscontro documentasse. Tre facce
    della stessa classe (D-085, D-039, D-103), la più respinta della storia del progetto.
 
+**E due colti dal PM, che sono le due facce dello stesso errore — non fare il proprio
+lavoro** (D-107 e D-108). Vanno letti insieme, perché correggerne uno solo fa cadere
+nell'altro:
+
+3. **Una mezza frase del PM non è una fonte.** A una sua domanda retorica — «io voglio
+   il filtro?» — stavo per rispondere con una regola che mette il filtro a Y sull'acqua
+   calda sanitaria di un impianto domestico, dove non ci va. Le sue parole si
+   **verificano** sulle fonti e sulla buona pratica prima di diventare regole, e una sua
+   domanda non è un ordine. È la terza volta: prima le domande girate a lui che avevano
+   risposta nei cataloghi, poi il rigo della Raccolta R diventato tre regole.
+4. **Ciò che si può ricavare non si chiede.** Gli avevo portato come domanda il regime
+   dei cinque impianti: ma le potenze le aveva scritte lui nei testi, e sommarle non è
+   progettare. «Sei serio?». Delle tre domande che gli erano state portate, due erano
+   mie da risolvere.
+
 ---
 
 ## 5. Ordine di lettura
@@ -152,11 +174,12 @@ e tornare al pezzo.
 | 2 | `docs/SKILL.md` | Com'è fatta la skill, la catena, i pezzi |
 | 3 | `PROJECT_STATE.md` | A che punto siamo |
 | 4 | `docs/plans/2026-08-06-piano-costruzione-skill.md` | Il piano corrente e i verdetti — **l'appendice del 7 agosto ha i tre verdetti nuovi** |
-| 5 | `docs/DECISION_LOG.md` — **partire da D-096** | D-096÷D-106 sono la logica del grafo, il confine del prodotto e il regime |
+| 5 | `docs/DECISION_LOG.md` — **partire da D-096** | D-096÷D-108 sono la logica del grafo, il confine del prodotto, il regime e le due regole di metodo del 7 agosto |
 | 6 | `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` | Dove va ciascun pezzo, con la fonte. **La parte terza è il riscontro di D-106, riga per riga** |
 | 7 | `docs/adr/0005-*.md` | L'architettura, blindata |
 | 8 | `docs/prodotto/GRAFO_IMPIANTO.md` e `docs/prodotto/grafi-di-prova/` | Gli artefatti che il PM legge e approva — **col confronto del 7 agosto** |
 | 8b | `examples/prova/input/` | **Il testo originale del committente**, non toccato: è il metro del pezzo 1 |
+| 8c | `skill/capire/COSA_DECIDE.md` | **Le quattro cose che l'interprete deve capire**, e quando invece chiede |
 | 9 | `AGENTS.md` | Regole operative e i due ruoli |
 
 ---
@@ -164,7 +187,7 @@ e tornare al pezzo.
 ## 6. Stato al 7 agosto 2026
 
 **Ramo:** il lavoro è su `main` (e sul ramo `claude/mep-pacchetto-e-collaudi-42itzv`).
-**Prove:** 840 verdi, 22 parcheggiate col motivo scritto; `ruff` e `mypy --strict` puliti.
+**Prove:** 841 verdi, 22 parcheggiate col motivo scritto; `ruff` e `mypy --strict` puliti.
 **Ambiente:** `bash scripts/setup-env.sh` — **da eseguire per primo** in una sessione cloud.
 **Numeri:** 39 simboli pubblicati, 53 voci di catalogo, 17 regole.
 
@@ -196,6 +219,12 @@ e tornare al pezzo.
 - **Tre collaudi indipendenti**: indirizzo dei nodi APPROVATO (91 prove adottate);
   pacchetto E+C2 RESPINTO e corretto (25 prove adottate); pezzo 1 RESPINTO (correzioni
   in coda).
+- **Poi i rilievi del PM sul confronto**, e due correzioni: la camminata del ritorno
+  generale **si apre sui rami** (l'ibrido il suo tratto comune ce l'aveva, e non lo
+  trovavamo: quattro punti aperti erano un difetto mio); il **regime si legge dalle
+  potenze** che lui ha dichiarato nei testi, e i cinque impianti lo portano scritto —
+  quattro sotto i 35 kW, la cascata sopra. Più il censimento delle **quattro cose che
+  l'interprete deve capire**, contate sulle condizioni delle diciassette regole.
 
 ---
 
@@ -251,23 +280,14 @@ pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
 
 ## 9. Domande aperte per il PM
 
-**Tre, e stanno nei documenti che già legge.**
+**Una sola, e non è nuova.** Il quinto impianto: il testo chiede tre circuiti secondari
+e il collettore ne serve due. Le due letture — collettore assunto, o ripartizioni a T
+con la domanda dichiarata — sono ancora sul suo tavolo.
 
-1. **Il regime dei cinque impianti.** Nessun testo lo dichiara, e la skill non lo
-   calcola: oggi tutti e cinque hanno il corredo minimo. Per la cascata di tre macchine
-   da 35 kW la dichiarazione spetta a lui — dichiarata da grande centrale, tornano
-   sicurezze e termometri per macchina e il separatore sulla mandata generale.
-2. **L'ibrido senza ritorno generale.** Nell'impianto 4 nessuna tubazione porta tutta
-   l'acqua che torna: vaso, riempimento, manometro e defangatore sono punti aperti
-   scritti nel grafo, e la posizione la decide lui.
-3. **La filtrazione del secondario con scambiatore.** La platea «un filtro per
-   generatore» ha tolto il filtro allo scambiatore sanitario dell'ibrido; la sua prassi
-   («dove c'è separazione netta l'acqua è un'altra») la coprirebbe, ma nessuno schema
-   la mostra: se la vuole, si scrive la regola con la sua decisione come fonte.
-
-Resta inoltre la domanda del quinto impianto (i tre circuiti secondari e il collettore
-da due): le due letture — collettore assunto, o ripartizioni a T con domanda dichiarata —
-sono ancora sul suo tavolo.
+Le altre due che gli erano state portate il 7 agosto non erano sue: il corredo
+dell'ibrido era un difetto mio (corretto), e la filtrazione del sanitario era una
+domanda retorica letta come un ordine, che stava per diventare una regola sbagliata
+(ritirata prima di scriverla, D-107).
 
 ---
 
@@ -276,5 +296,10 @@ sono ancora sul suo tavolo.
 `2026-08-07` — Claude — eseguito il pacchetto E (D-106) col riscontro sulle fonti prima
 delle regole; corretta C2; tre collaudi indipendenti registrati (D-105 approvato;
 pacchetto E respinto e corretto lo stesso giorno; pezzo 1 respinto, correzioni in coda);
-i cinque grafi rigenerati e messi a confronto per il PM. Suite 840 verdi, ruff e mypy
+i cinque grafi rigenerati e messi a confronto per il PM. Poi, sui rilievi del PM: la
+camminata del ritorno generale si apre sui rami (l'ibrido aveva il suo tratto comune e
+non lo trovavamo), il regime si legge dalle potenze dichiarate (D-108) e i cinque
+impianti lo portano scritto, e le quattro cose che l'interprete deve capire sono state
+contate sulle condizioni delle diciassette regole. Due regole di metodo registrate,
+D-107 e D-108, che sono le due facce dello stesso errore. Suite 841 verdi, ruff e mypy
 puliti.
