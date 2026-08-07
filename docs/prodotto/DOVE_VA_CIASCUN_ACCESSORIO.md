@@ -282,25 +282,96 @@ scaldacqua serie 5261 (SRC-026).
 
 ---
 
-# Parte terza — il regime della centrale (D-106, da riscontrare sugli schemi)
+# Parte terza — il regime della centrale (D-106, riscontrata sugli schemi il 7 agosto)
 
-**Sotto i 35 kW la centrale e' un'altra cosa.** La prassi, data dal PM il 6 agosto 2026
-come decisione esplicita (fonte ammessa) e **da riscontrare** sugli schemi Caleffi per
-centrali domestiche prima di scrivere le regole (D-102: la fonte esiste, si cerca):
+**Sotto i 35 kW la centrale e' un'altra cosa.** La prassi e' del PM (6 agosto 2026,
+decisione esplicita: fonte ammessa). Il 7 agosto ogni riga e' stata **riscontrata sugli
+schemi Caleffi** per centrali domestiche: il quaderno *Idraulica 61* (SRC-019, schema
+tipico di impianto in Fig. 41 piu' i capitoli Trattamento acqua e Vaso di espansione) e i
+**cinque schemi applicativi** della dispensa *Componenti e schemi per impianti a pompa di
+calore aria-acqua* (SRC-008, riletta per intero) — monoblocco, monoblocco con gruppi
+miscelati, split, split con solare, hydrosplit. Dove le fonti tacciono, la riga resta
+sulla sola autorita' del PM, ed e' scritto.
 
-- **filtro a Y**: uno sul ritorno di **ogni** pompa di calore;
-- **defangatore magnetico**: **uno solo**, sul ritorno generale del primario, prima di
-  derivare sulle macchine;
-- filtrazione **solo sul primario**; sul secondario soltanto con separazione idraulica
-  netta (per esempio uno scambiatore a piastre), perche' li' l'acqua e' un'altra;
-- **niente termometro aggiunto**: si usa quello integrato della macchina;
-- le monoblocco comuni hanno **il circolatore primario integrato**, ma **non** il vaso
-  di espansione: il vaso va **sul ritorno generale del primario**;
-- **sicurezza e sfogo aria stanno sul serbatoio, e stop** — non una sicurezza per
-  generatore, e niente separatore d'aria.
+**La radice del regime e' normativa, ed era gia' nel registro fonti**: la Raccolta R si
+applica agli impianti con potenza dei focolari **superiore a 35 kW** (cap. R.1.A.1,
+SRC-012). Sotto quella soglia la parte prima di questo documento non e' prescritta da
+nessuna norma: vale la buona pratica delle piccole centrali, che e' un'altra.
 
-**Sopra i 35 kW e' un'altra storia**: vale la parte prima (Raccolta R). Il regime lo
-dichiara il progettista; la skill non lo calcola (D-104).
+## Il riscontro, riga per riga
+
+**Filtro a Y — uno sul ritorno di ogni pompa di calore.** Riscontro parziale. *Idraulica
+61* documenta che «molte pompe di calore presenti sul mercato sono equipaggiate con un
+filtro, immediatamente a monte dell'attacco di ingresso dell'acqua nello scambiatore a
+piastre» (cap. Eliminazione delle impurita', p. 45): stessa funzione e stessa posizione
+della riga — un filtro che protegge l'ingresso di **ciascuna** macchina sul suo ritorno.
+Il filtro a Y esterno per generatore non compare negli schemi, che sono tutti a un solo
+generatore: per piu' generatori in parallelo la riga resta sull'autorita' del PM.
+
+**Defangatore magnetico — uno solo, sul ritorno generale del primario.** Confermata.
+«E' opportuno installare **un** filtro defangatore **sulla linea di ritorno verso il
+generatore**» (SRC-019, p. 45, singolare). La Fig. 41 e tutti e cinque gli schemi
+applicativi (SRC-008) ne disegnano **uno solo**, in linea sul ritorno generale, ultimo
+pezzo prima della macchina. «Prima di derivare sulle macchine» con piu' generatori resta
+sull'autorita' del PM: gli schemi non mostrano cascate.
+
+**Filtrazione solo sul primario.** Confermata dagli schemi: in nessuno dei sei schemi
+letti c'e' un filtro sui circuiti secondari a valle del separatore o dell'accumulo. Il
+caso della separazione netta con scambiatore a piastre (acqua diversa, filtrazione
+propria) negli schemi non compare e resta sull'autorita' del PM.
+
+**Niente termometro aggiunto.** Confermata. La parola «termometro» nel quaderno non
+compare; negli schemi non c'e' nessun termometro aggiunto sulle tubazioni del primario.
+Le temperature si leggono dalla macchina e dai termometri **integrati nei gruppi di
+rilancio** preassemblati del secondario, che sono pezzi che il progettista mette in
+schema, non aggiunte della skill. L'obbligo di termometro con pozzetto della parte prima
+e' della Raccolta R, che sotto i 35 kW non si applica (R.1.A.1).
+
+**Cio' che la macchina porta a bordo lo dichiara il suo catalogo.** E' la forma giusta
+della riga sulle monoblocco, e la fonte la impone: «**possono** essere integrati nella
+macchina alcuni elementi del circuito idraulico come il circolatore, il flussostato, il
+vaso di espansione, la valvola sfogo aria e la valvola di sicurezza» (monoblocco, SRC-019
+p. 15 — possono: varia macchina per macchina); la split li ha di serie nell'unita'
+interna (p. 16). Sul vaso in particolare: «solitamente le pompe di calore contengono un
+vaso di espansione» da 6–8 litri, e «quando il volume di tale vaso non e' sufficiente per
+l'impianto occorre installarne uno aggiuntivo» (pp. 50–51) — quanti e di che volume resta
+dell'ingegnere (D-104).
+
+**Il vaso aggiuntivo sta sul tratto comune del primario, e negli schemi applicativi sta
+sul ritorno generale.** In tutti e cinque gli schemi di SRC-008 il vaso dell'impianto
+pende dal **ritorno generale**, accanto al defangatore e al gruppo di caricamento. Nello
+schema tipico di *Idraulica 61* (Fig. 41) il corredo sta invece sulla **mandata** in
+uscita macchina, raccolto su un collettore portastrumenti (sicurezza, sfogo, manometro,
+vaso appeso sotto). Le due fonti concordano sul **livello** — il tratto comune, una volta
+sola per rete, mai un corredo per macchina — e divergono sul lato; il ritorno e' la
+prassi del PM, coerente con la ragione della Raccolta R (il punto piu' freddo, parte
+prima §2), ed e' la posizione delle regole.
+
+**Riempimento sul ritorno generale.** Confermata: il gruppo di caricamento automatico si
+innesta sul ritorno generale in Fig. 41 e in tutti e cinque gli schemi applicativi.
+
+**Sfogo aria sul serbatoio; niente separatore d'aria aggiunto sotto i 35 kW.**
+Confermata per lo sfogo: ogni serbatoio disegnato — accumulo inerziale e bollitore —
+porta la valvola di sfogo aria sul proprio attacco superiore (Fig. 41 e schemi SRC-008).
+Sul separatore la fonte lega l'esenzione al **contenuto d'acqua**, non alla potenza:
+«occorre installare a valle della pompa di calore un disaeratore e non e' sufficiente una
+valvola sfogo aria, **ad eccezione di impianti con contenuto d'acqua inferiore ai 300
+litri**» (SRC-019, p. 45) — e negli schemi tipici il disaeratore sulla mandata c'e'. La
+soglia dei 35 kW come discrimine e' la prassi del PM: nelle piccole centrali domestiche i
+due criteri quasi sempre coincidono, ma non sono la stessa cosa, e la riga resta sulla
+sua autorita'. Il regime comunque **lo dichiara il progettista** (D-106): la skill non
+misura ne' litri ne' chilowatt.
+
+**Sicurezza: mai una per generatore.** Confermata nella sostanza: nessuno schema aggiunge
+una valvola di sicurezza per generatore — le macchine la portano integrata (dichiarata
+dal catalogo, sopra), e la sicurezza esterna compare **una volta sola**: sul collettore
+portastrumenti del tratto comune in Fig. 41, e nel gruppo EN 1487 sull'ingresso freddo
+del bollitore sanitario (SRC-026, parte seconda §18). La collocazione «sul serbatoio»
+del lato riscaldamento resta prassi del PM.
+
+**Sopra i 35 kW e' un'altra storia**: vale la parte prima (Raccolta R, che da li' in su
+si applica). I due regimi non si mescolano sullo stesso impianto. Il regime lo dichiara
+il progettista; la skill non lo calcola (D-104).
 
 ---
 
