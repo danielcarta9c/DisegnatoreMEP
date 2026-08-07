@@ -203,6 +203,23 @@ bollitore c'è acqua fredda (`cold_water`), dopo c'è acqua calda sanitaria
 (`domestic_hot_water`); sono due reti. Il dominio è `hydronic` per tutto ciò che è
 acqua.
 
+**Dove una rete comincia — e dove no.** Una rete parte sempre da una **macchina che la
+alimenta** (un generatore, un accumulo, un bollitore) oppure da un **confine**
+(l'acquedotto, le utenze). **Mai da un raccordo.** I rami che si staccano da una
+ripartizione **restano nella rete da cui nascono**, anche quando il testo li elenca uno
+per uno: «dal volume tecnico partono tre circuiti» distingue tre **rami**, non tre reti
+— nascono tutti dal volume, e il volume è la macchina che li alimenta. Sono una rete
+sola, insieme al tratto che li porta.
+
+Questo non toglie niente al testo: i tre rami restano tre, con i loro raccordi (§4.4) e
+i loro pezzi. Cambia solo come si raggruppano. E serve a chi viene dopo: chi battezza le
+linee legge che acqua porta una linea e da che parte va **dalla macchina che la
+alimenta**, e una rete che cominciasse su un raccordo non saprebbe dire né l'una né
+l'altra cosa.
+
+Il fluido resta il secondo criterio, e vale sempre: dove il fluido cambia, la rete
+cambia, anche a valle della stessa macchina.
+
 **Il raffrescamento non ha un fluido suo** nella tabella: una macchina reversibile
 d'estate manda acqua fredda negli stessi tubi, e il circuito resta uno. Dichiaralo
 `heating_water` come il resto del circuito, e metti in `assumptions` che la macchina è
