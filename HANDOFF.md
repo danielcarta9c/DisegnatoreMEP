@@ -1,4 +1,4 @@
-# HANDOFF — Disegnatore MEP · 6 agosto 2026 (notte)
+# HANDOFF — Disegnatore MEP · 7 agosto 2026
 
 > ⛔ **Non è un riassunto del progetto.** È il cancello di lettura per la sessione
 > successiva. Si legge tutto, poi si risponde alle domande del §2, poi si comincia.
@@ -20,9 +20,11 @@ macchine: aggiunge gli accessori che un impianto deve avere, li fa approvare, e 
 > la skill: per far disegnare quello che so fare benissimo — lo schema a livello di
 > definitivo — e portarlo a livello più esecutivo.»
 
-Ne discende il confine, che in questa sessione è stato violato due volte e costa caro
-ogni volta: **la skill mette le valvole, uno sfiato e quattro accessori standard. Non
-decide quanti pezzi ci vanno, non cambia lo schema ricevuto, non dimensiona.**
+Ne discende il confine: **la skill mette le valvole, uno sfiato e quattro accessori
+standard. Non decide quanti pezzi ci vanno, non cambia lo schema ricevuto, non
+dimensiona.** E da D-106: **il regime della centrale — sotto o sopra i 35 kW — lo dichiara
+il progettista**; la skill non lo calcola, nemmeno sommando le potenze scritte nel testo.
+Senza dichiarazione vale il corredo minimo.
 
 ### La catena (D-099)
 
@@ -41,20 +43,27 @@ l'ingegnere spiega l'impianto a parole
 **Una cosa sola attraversa tutto: il grafo.** Nasce abbozzato, si arricchisce di nodi,
 diventa definitivo. La tavola ne è la **rappresentazione**.
 
-### Il grafo, come è fatto (D-097, D-098, D-100, D-101)
+### Il grafo, come è fatto (D-097, D-098, D-100, D-101, D-105)
 
 Come una **rete stradale**. Ogni pezzo è un **nodo con la propria sigla**; ogni tubo fra
 due pezzi è un **arco** col proprio fluido. Le sigle si assegnano camminando dalle
-**sorgenti dichiarate**, seguendo l'acqua. Una sigla sola per tutto il prodotto.
+**sorgenti dichiarate**, seguendo l'acqua. Ogni linea idraulica ha nome e numero
+(`CP.01`), ogni pezzo un indirizzo (`CP.01.N.02`), gli stacchi i civici (`CP.01.N.02.1`).
 
 **Ogni attacco porta una tubazione sola, sempre** (D-100). Dove due tubazioni si
 incontrano c'è un pezzo che le unisce, con la propria sigla: una **confluenza** se due
 diventano una, una **ripartizione** se una si sdoppia.
 
-**Una macchina ha più attacchi di quelli del flusso** (D-101): un volano dichiara anche
-sfiato, scarico e sede della sonda. Un accessorio che pende da uno stacco va **su
-quell'attacco** se la macchina ce l'ha, e su una **derivazione** saldata sul tubo se non
-ce l'ha. Non spezza mai la tubazione principale.
+**Una macchina ha più attacchi di quelli del flusso** (D-101), e il catalogo dichiara
+anche **cosa porta a bordo di fabbrica** e **da quale attacco la riserva si riempie**
+(D-106, C2). Un accessorio che pende da uno stacco va sull'attacco di servizio se la
+macchina ce l'ha, su una derivazione se non ce l'ha — e una riserva che dichiara il punto
+di riempimento riceve le derivazioni **solo lì**: da dove si riempie, da lì si svuota.
+
+**Il corredo di rete sta sul tratto comune** (D-106): vaso, riempimento, manometro e
+defangatore sul **ritorno generale, a monte della prima ripartizione** verso le macchine
+— trovato camminando sulla struttura, mai scelto dall'ordine del file. Dove il tratto
+comune non esiste, il punto aperto lo dice e la scelta torna al progettista.
 
 ### Dove si guarda cosa (D-096) — la regola che ha cambiato il progetto
 
@@ -74,16 +83,20 @@ tavola è brutta, il difetto è nel disporre. Se il grafo è sbagliato, la tavol
    aggiungerlo di propria iniziativa?
 6. Chi decide l'ordine dei pezzi lungo un tubo, e su cosa lo decide?
 7. Cosa deve succedere quando una regola si applica ma il catalogo non ha il pezzo adatto
-   a quel fluido?
+   a quel fluido — o la rete non ha il tratto comune su cui la regola si posa?
+8. Chi decide il regime della centrale, e cosa vale se nessuno lo dichiara?
 
 *Risposte attese:* il grafo, e la tavola ne è la rappresentazione; il contenuto sul grafo
 scritto, il disegno sulla tavola (D-096); **una sola**, e dove se ne incontrano due c'è un
 raccordo con la propria sigla (D-100); sull'attacco di servizio della macchina se ce l'ha,
-altrimenti su una derivazione, e lo dice **il catalogo** (D-101); **no** — una prescrizione
-dice cosa deve avere l'impianto, non autorizza la skill ad aggiungerlo, e quantità e
-volumi restano dell'ingegnere (D-104); l'**assemblatore**, risolvendo i vincoli che ogni
-regola dichiara rispetto ai **mestieri** degli altri pezzi, mai numeri di priorità (D-094);
-lo deve **dire**, come punto aperto per il progettista, mai tacere.
+altrimenti su una derivazione, e lo dice **il catalogo** (D-101) — e se la riserva dichiara
+da dove si riempie, la derivazione va solo lì (C2); **no** — una prescrizione dice cosa
+deve avere l'impianto, non autorizza la skill ad aggiungerlo (D-104); l'**assemblatore**,
+risolvendo i vincoli che ogni regola dichiara rispetto ai **mestieri** degli altri pezzi,
+mai numeri di priorità (D-094); lo deve **dire** — punto aperto per il progettista, con il
+motivo vero (pezzo mancante in catalogo, o tratto comune che non esiste), mai tacere;
+il **progettista**, e senza dichiarazione vale il **corredo minimo** (D-106) — la skill
+non somma potenze.
 
 ---
 
@@ -107,21 +120,27 @@ funzione, deve capirlo un non sviluppatore.
 
 ---
 
-## 4. ⛔ L'errore di metodo di questa sessione, che non va ripetuto
+## 4. ⛔ Gli errori di metodo da non ripetere
 
-È lo stesso, tre volte, e il PM ha dovuto fermare il lavoro ogni volta:
+**Della sessione del 6 agosto — lo stesso errore tre volte:** un segnale laterale
+trattato come lavoro da fare invece di finire il pezzo (un rigo di norma trasformato in
+regola, ritirato in D-104; il disegno inseguito in una sessione sul contenuto; domande al
+PM che avevano risposta nei cataloghi — «io potrei sbagliare»). Quando succede, fermarsi
+e tornare al pezzo.
 
-1. **Un rigo di norma trasformato in regola.** Dalla Raccolta R era stato dedotto «con due
-   generatori due vasi di espansione». Nessuno lo fa, e comunque non è una decisione di
-   disegno. Ritirato in D-104.
-2. **Il disegno inseguito dentro una sessione sul contenuto.** Le prove del disegno erano
-   diventate rosse perché l'impianto era cresciuto; invece di lasciarle stare sono state
-   inseguite. Il disegno è un altro pezzo e lo fa un altro agente.
-3. **Domande girate al PM che avevano risposta nei cataloghi.** Lui stesso ha avvertito:
-   «io potrei sbagliare».
+**Della sessione del 7 agosto — due, colti dai collaudi:**
 
-**La radice è una sola: prendere un segnale laterale e trattarlo come lavoro da fare,
-invece di finire il pezzo.** Quando succede, fermarsi e tornare al pezzo.
+1. **Un criterio implementato a metà è un criterio violato.** «Una regola non aggiunge
+   ciò che la macchina dichiara di avere» era stato cablato per il solo ambito di rete:
+   le regole per attacco aggiungevano lo stesso, e — il rovescio, più grave — il bordo di
+   una macchina spegneva **in silenzio** la sicurezza del serbatoio. Il collaudo lo ha
+   respinto; la correzione è dello stesso giorno. La lezione: quando un criterio dice
+   «una regola», va provato su **ogni specie** di regola, non sulla prima che capita.
+2. **Un'affermazione che il PM non può verificare è un difetto anche quando il pezzo è
+   giusto.** Il vaso sanitario era al posto giusto ma firmato dalla regola sbagliata nel
+   dossier; un punto aperto diceva «manca il pezzo in catalogo» quando a mancare era il
+   tratto comune; una fonte affermava più di quanto il riscontro documentasse. Tre facce
+   della stessa classe (D-085, D-039, D-103), la più respinta della storia del progetto.
 
 ---
 
@@ -132,91 +151,66 @@ invece di finire il pezzo.** Quando succede, fermarsi e tornare al pezzo.
 | 1 | Questo file | Cancello |
 | 2 | `docs/SKILL.md` | Com'è fatta la skill, la catena, i pezzi |
 | 3 | `PROJECT_STATE.md` | A che punto siamo |
-| 4 | `docs/plans/2026-08-06-piano-costruzione-skill.md` | Il piano corrente e i verdetti |
-| 5 | `docs/DECISION_LOG.md` — **partire da D-096** | D-096÷D-104 sono la logica del grafo e il confine del prodotto |
-| 6 | `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` | Dove va ciascun pezzo, con la fonte. **Leggere prima il confine in testa** |
+| 4 | `docs/plans/2026-08-06-piano-costruzione-skill.md` | Il piano corrente e i verdetti — **l'appendice del 7 agosto ha i tre verdetti nuovi** |
+| 5 | `docs/DECISION_LOG.md` — **partire da D-096** | D-096÷D-106 sono la logica del grafo, il confine del prodotto e il regime |
+| 6 | `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` | Dove va ciascun pezzo, con la fonte. **La parte terza è il riscontro di D-106, riga per riga** |
 | 7 | `docs/adr/0005-*.md` | L'architettura, blindata |
-| 8 | `docs/prodotto/GRAFO_IMPIANTO.md` e `docs/prodotto/grafi-di-prova/` | Gli artefatti che il PM legge e approva |
-| 8b | `examples/prova/input/` | **Il testo originale del committente**, non toccato: è il metro con cui si giudica se il primo pezzo ha letto bene |
+| 8 | `docs/prodotto/GRAFO_IMPIANTO.md` e `docs/prodotto/grafi-di-prova/` | Gli artefatti che il PM legge e approva — **col confronto del 7 agosto** |
+| 8b | `examples/prova/input/` | **Il testo originale del committente**, non toccato: è il metro del pezzo 1 |
 | 9 | `AGENTS.md` | Regole operative e i due ruoli |
 
 ---
 
-## 6. Stato al 6 agosto 2026, notte
+## 6. Stato al 7 agosto 2026
 
-**Ramo:** il lavoro è su `main`.
-**Prove:** 714 verdi, 23 parcheggiate con il motivo scritto; `ruff` e `mypy --strict` puliti.
+**Ramo:** il lavoro è su `main` (e sul ramo `claude/mep-pacchetto-e-collaudi-42itzv`).
+**Prove:** 840 verdi, 22 parcheggiate col motivo scritto; `ruff` e `mypy --strict` puliti.
 **Ambiente:** `bash scripts/setup-env.sh` — **da eseguire per primo** in una sessione cloud.
-**Numeri:** 39 simboli pubblicati, 51 voci di catalogo, 14 regole.
+**Numeri:** 39 simboli pubblicati, 53 voci di catalogo, 17 regole.
 
 ### I pezzi
 
 | Pezzo | Stato |
 |---|---|
-| **1 — Capire** | **Costruito** (istruzioni in `skill/capire/`) e **provato in camera pulita**: 4 impianti su 5 letti identici alla lettura manuale, arco per arco. Da collaudare da contesto separato |
-| **2 — Completare** (le regole) | Costruito e collaudato. Cinque posizioni nuove chiuse con le fonti, da tradurre in regole |
-| **3 — Assemblare** | Costruito, **collaudato in modo indipendente**: respinto su due difetti veri, entrambi corretti lo stesso giorno |
-| Il grafo, le sigle e **l'indirizzo dei nodi (D-105)** | Sigle collaudate; l'indirizzo è costruito e provato, da collaudare da contesto separato |
-| Il vocabolario delle proprietà | Approvato |
+| **1 — Capire** | Costruito e provato, ma **RESPINTO dal collaudo** (7 agosto): correzioni alle istruzioni e prova nuova in camera pulita da fare. Il contratto di consegna è già corretto |
+| **2 — Completare** (le regole) | Costruito e collaudato. **Il pacchetto E (regime + tratto comune) e C2 sono collaudati**: respinti al primo giro, corretti lo stesso giorno, verdi sulle prove dei collaudi adottate come regressione |
+| **3 — Assemblare** | Costruito e collaudato; il 7 agosto ha guadagnato la classificazione dei blocchi sul capofila e l'ordinamento dei blocchi di mezzo |
+| Il grafo, le sigle e **l'indirizzo dei nodi (D-105)** | **Collaudato e APPROVATO** (7 agosto), 91 prove del collaudo adottate |
+| Il vocabolario delle proprietà | Approvato; si aggiungono il bordo macchina e il punto di riempimento come dichiarazioni di catalogo |
 | 4 — Disporre / libreria / cartiglio / composizione | Come prima: la composizione è da rifare |
 | 5 — Validatori e cancello dell'occhio terzo | Correttezza e preflight esistono, il cancello no |
 
-### Cosa è cambiato in questa sessione (la ripresa serale)
+### Cosa è successo il 7 agosto
 
-- **L'indirizzo dei nodi (D-105)**: ogni linea idraulica ha nome e numero (`CP.01`,
-  `RP.01a`), ogni pezzo un indirizzo (`CP.01.N.02`), gli stacchi i civici
-  (`CP.01.N.02.1`). Il documento del grafo si legge per linea, come il PM lo ha chiesto,
-  e i cinque grafi sono rigenerati così.
-- **Il pezzo 1 esiste**: istruzioni in file di testo (ADR 0005), provate su cinque agenti
-  freschi in camera pulita contro i testi originali del committente. Verbale e
-  classificazione delle divergenze in `skill/capire/PROVA-2026-08-06.md`.
-- **Il collaudo indipendente** di D-100, D-101 e dell'assemblatore: quattro difetti veri
-  trovati, tre corretti subito (C1 il corredo che migrava permutando il file; C3 il
-  catalogo senza raccordo che faceva crollare la catena; C4 il doppio «attaccato alla
-  macchina» che non fermava). Le prove del collaudo sono regressione in `tests/collaudo/`.
-- **Il quarto difetto (C2) è aperto e progettato**: lo scarico del bollitore va
-  sull'ingresso freddo e oggi sta sull'uscita calda. Il progetto della correzione è
-  nell'appendice del piano; una prova parcheggiata lo aspetta.
-- **Le cinque righe mancanti degli accessori** (bilanciamento, disconnettore,
-  miscelatrice, contabilizzatore, ritegno) chiuse con fonti aperte e lette
-  (SRC-020..SRC-026), solo posizioni, dentro il confine di D-104.
+- **Il riscontro di D-106 sugli schemi Caleffi** (Idraulica 61 + i cinque schemi
+  applicativi), riga per riga con le citazioni, prima di scrivere qualunque regola.
+- **Il pacchetto E**: regime dichiarato (mai calcolato), tratto comune deterministico,
+  17 regole aggiornate come dato, bordo macchina e punto di riempimento nel catalogo.
+  Collaudato a contesto separato: respinto su quattro difetti veri, corretti lo stesso
+  giorno.
+- **C2 corretta**: il bollitore si svuota dall'ingresso freddo; la prova parcheggiata è
+  tornata verde senza essere ammorbidita.
+- **I cinque grafi rigenerati e messi a confronto** per il PM
+  (`docs/prodotto/grafi-di-prova/CONFRONTO-2026-08-07.md`): da 59/58/55/68/105 pezzi a
+  45/54/48/41/87, con l'ibrido spiegato (nessun ritorno generale → quattro punti aperti).
+- **Tre collaudi indipendenti**: indirizzo dei nodi APPROVATO (91 prove adottate);
+  pacchetto E+C2 RESPINTO e corretto (25 prove adottate); pezzo 1 RESPINTO (correzioni
+  in coda).
 
 ---
 
 ## 7. Il primo lavoro della prossima sessione
 
-### 7.1 — I due collaudi che mancano (D-083)
-
-Due pacchetti sono costruiti, provati e **non ancora «fatti»**, perché chi li ha
-costruiti non può approvarli:
-
-1. **L'indirizzo dei nodi (D-105)** — sviluppato dall'orchestratore (deviazione
-   registrata nell'appendice del piano: gli agenti separati sono morti per limite di
-   spesa). I criteri di accettazione sono in §3bis-A del piano; le prove esistenti sono
-   in `tests/graph/test_lines.py`, ma il collaudo deve rifarle con criteri propri.
-2. **Il pezzo 1, «Capire»** — le istruzioni e la prova in camera pulita ci sono
-   (`skill/capire/`, verbale in `PROVA-2026-08-06.md`); il collaudo deve giudicare
-   istruzioni e classificazione delle divergenze da contesto separato.
-
-### 7.2 — Poi, in quest'ordine
-
-0. **Il pacchetto E — il regime della centrale (D-106), che per il PM viene prima di
-   tutto il resto del contenuto**: sotto i 35 kW niente separatore d'aria ne'
-   termometro aggiunto, sicurezza e sfiato sul serbatoio, un solo defangatore e il vaso
-   sul ritorno generale, filtro a Y per generatore, filtrazione solo sul primario.
-   Criteri in §3bis-E del piano. **Primo passo obbligato: il riscontro sugli schemi
-   Caleffi** (il quaderno Idraulica 61 e' gia' scaricato) — la lezione di D-102 e'
-   stata ripetuta anche stasera, non ripeterla una terza volta.
-1. **La correzione C2** (lo scarico del bollitore sull'ingresso freddo): il progetto è
-   scritto nell'appendice del piano — una dichiarazione di catalogo nuova, «da quale
-   attacco la riserva si riempie» — e una prova parcheggiata in `tests/collaudo/` la
-   aspetta. Ricordarsi che il catalogo di prova ha un **generatore**: si riesegue, non
-   si modifica a mano.
-2. **Le correzioni alle istruzioni del pezzo 1** elencate nel verbale della prova: ogni
-   correzione impone una prova nuova, con un agente nuovo, in camera pulita.
-3. **La traduzione in regole** delle cinque posizioni chiuse con le fonti
-   (`DOVE_VA_CIASCUN_ACCESSORIO.md` §14-18), dentro il confine di D-104: la fonte dice
-   **dove** va un pezzo che il progettista ha messo in schema, mai **se** aggiungerlo.
+1. **Il giro di correzioni del pezzo 1** (verdetto del 7 agosto, nell'appendice del
+   piano): sciogliere la contraddizione fra gli esempi e la regola dei raccordi sul caso
+   dei tre circuiti; sostituire gli esempi che ricalcano le soluzioni dei testi di prova
+   (o procurare testi nuovi); generalizzare la regola dei raccordi a N vie; le sette
+   correzioni del verbale della prova. Poi **prova nuova in camera pulita** con agenti
+   nuovi, protocollo in `skill/capire/CONSEGNA.md` — che ora impone di **conservare le
+   consegne degli agenti agli atti**.
+2. **La traduzione in regole** delle posizioni §14-18 rimaste (bilanciamento,
+   disconnettore, contabilizzatore), dentro il confine di D-104.
+3. **Le tre domande al PM** (§9): portargliele e registrare le risposte.
 
 **Non toccare il disegno.** La composizione, l'instradamento e il foglio dei simboli sono
 pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
@@ -231,43 +225,56 @@ pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
   salvato una copia.
 - **Il comando delle regole vuole anche `--naming`** oltre a `--catalog`, `--symbols` e
   `--rules`.
-- **I generatori di fixture vanno rieseguiti**, non modificati a mano: c'è una prova che
-  inchioda i file generati al proprio generatore, ed è nata da un incidente vero.
+- **I generatori di fixture vanno rieseguiti**, non modificati a mano. La `completa` si
+  rigenera con `saturate` sull'essenziale (la prova che la inchioda dice come);
+  il catalogo di prova esce da `examples/layout/build_layout_fixtures.py`, ma **22 voci
+  sono file di dato autonomi** (accessori) che si modificano direttamente.
 - **Firma dei commit:** in questo container `commit.gpgsign` è attivo con una chiave vuota.
   Si committa con `git -c commit.gpgsign=false`.
-- **Gli agenti di sviluppo non committano.** Committa l'orchestratore, e i lavori a metà
-  vanno come `wip:` con scritto che non sono collaudati.
-- **Gli agenti in parallelo possono morire per limite di spesa dell'account**, a metà
-  lavoro e senza preavviso: è successo in questa sessione. I loro worktree e file
-  sopravvivono — prima di rifare, guardare cosa hanno lasciato. E il gancio di fine turno
-  può committare da solo il lavoro non committato: controllare la storia con `git log`
-  prima di ricommettere.
-- **La prova in camera pulita del pezzo 1 non si fa da contaminati:** chi ha letto le
-  letture manuali o i grafi non può fare l'interprete. Kit e divieti sono in
-  `skill/capire/CONSEGNA.md`.
+- **Gli agenti di sviluppo non committano.** Committa l'orchestratore.
+- **Gli agenti in parallelo muoiono per il limite di spesa mensile dell'account**, a metà
+  lavoro e senza preavviso: è successo due volte (uno è morto senza lasciare **nulla**).
+  Prima di rifare, guardare il worktree che lasciano. I collaudi su worktree isolato
+  devono crearsi la propria `.venv` con `setup-env.sh`.
+- **`air_release` è lo sfogo, `air_separation` il separatore**: due mestieri, due pezzi.
+  Il braccio `vent` dei serbatoi serve `air_release`.
+- **La prova in camera pulita del pezzo 1 non si fa da contaminati**, e da oggi **le
+  consegne degli agenti si conservano agli atti**: kit e divieti in
+  `skill/capire/CONSEGNA.md`. Gli esempi delle istruzioni contengono ancora le soluzioni
+  dei testi di prova: finché non si correggono, nessuna prova su quei testi vale.
+- **Due osservazioni non bloccanti dei collaudi da chiudere al prossimo passaggio sui
+  file**: l'ordine interno di `run_pipes` nella lettura delle linee segue il file (nessun
+  consumatore lo usa: ordinare o documentare); il ramo silenzioso della camminata del
+  tratto comune quando non c'è né camminata né ripiego.
 
 ---
 
 ## 9. Domande aperte per il PM
 
-**Una sola, e sta dentro i grafi di prova.** Nel quinto impianto il testo chiede tre
-circuiti secondari — batterie di trattamento aria, ventilconvettori e un circuito miscelato
-per il pavimento radiante — e il collettore disponibile ne serve due. Il circuito miscelato
-**non è disegnato**, ed è scritto come punto aperto invece di essere inventato.
+**Tre, e stanno nei documenti che già legge.**
 
-La prova in camera pulita del pezzo 1 ha aggiunto un elemento utile alla stessa domanda:
-il testo non nomina nessun collettore, e un lettore indipendente ha chiuso i tre circuiti
-con semplici raccordi a T, disegnando anche il miscelato e dichiarando l'assunzione sul
-punto di ripresa della miscela. Le due letture sono due risposte diverse alla stessa
-ambiguità, e la scelta resta del PM.
+1. **Il regime dei cinque impianti.** Nessun testo lo dichiara, e la skill non lo
+   calcola: oggi tutti e cinque hanno il corredo minimo. Per la cascata di tre macchine
+   da 35 kW la dichiarazione spetta a lui — dichiarata da grande centrale, tornano
+   sicurezze e termometri per macchina e il separatore sulla mandata generale.
+2. **L'ibrido senza ritorno generale.** Nell'impianto 4 nessuna tubazione porta tutta
+   l'acqua che torna: vaso, riempimento, manometro e defangatore sono punti aperti
+   scritti nel grafo, e la posizione la decide lui.
+3. **La filtrazione del secondario con scambiatore.** La platea «un filtro per
+   generatore» ha tolto il filtro allo scambiatore sanitario dell'ibrido; la sua prassi
+   («dove c'è separazione netta l'acqua è un'altra») la coprirebbe, ma nessuno schema
+   la mostra: se la vuole, si scrive la regola con la sua decisione come fonte.
+
+Resta inoltre la domanda del quinto impianto (i tre circuiti secondari e il collettore
+da due): le due letture — collettore assunto, o ripartizioni a T con domanda dichiarata —
+sono ancora sul suo tavolo.
 
 ---
 
 ## Ultimo aggiornamento
 
-`2026-08-06`, notte — Claude — eseguito D-105 (l'indirizzo dei nodi) e rigenerati i cinque
-grafi con la convenzione nuova; costruito e provato in camera pulita il pezzo 1, con
-quattro letture su cinque identiche a quelle manuali; collaudo indipendente di D-100,
-D-101 e assemblatore con quattro difetti veri, tre corretti e uno progettato (C2);
-chiuse con le fonti le cinque righe mancanti degli accessori. Restano i due collaudi
-separati dei pacchetti nuovi: senza quelli, per D-083, niente è «fatto».
+`2026-08-07` — Claude — eseguito il pacchetto E (D-106) col riscontro sulle fonti prima
+delle regole; corretta C2; tre collaudi indipendenti registrati (D-105 approvato;
+pacchetto E respinto e corretto lo stesso giorno; pezzo 1 respinto, correzioni in coda);
+i cinque grafi rigenerati e messi a confronto per il PM. Suite 840 verdi, ruff e mypy
+puliti.
