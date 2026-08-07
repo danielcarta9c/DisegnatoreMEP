@@ -1,0 +1,26 @@
+{
+  "id": "air-vent-on-the-stored-volume",
+  "version": "1.0.0",
+  "name": "Valvola di sfogo aria",
+  "category": "recommended",
+  "cardinality": "per_component",
+  "when": {
+    "network_domain": "hydronic",
+    "network_medium": "heating_water",
+    "anchor_has_trait": "holds_its_own_volume",
+    "network_carries_what_the_anchor_stores": true,
+    "plant_regime": "up_to_35_kw"
+  },
+  "then": {
+    "provides_function": "air_release",
+    "placement": "on_outlet",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "scope": "on_the_attachment"
+  },
+  "rationale": "In una piccola centrale l'aria non vuole un separatore: si raccoglie da sola nel punto piu' alto, che e' il serbatoio, e li' basta una valvola di sfogo. Sta sull'attacco che il serbatoio dedica allo sfiato, come i costruttori lo dichiarano in legenda. Le macchine il proprio sfogo lo portano gia' a bordo, e non serve aggiungerne uno per generatore.",
+  "source": "Caleffi, Idraulica 61: sotto i 300 litri di contenuto basta la valvola di sfogo aria (SRC-019, p. 45), e la valvola sta sull'attacco superiore di ogni serbatoio in Fig. 41 e negli schemi applicativi (SRC-008); legende dei costruttori, sfiato come attacco del serbatoio (SRC-017, SRC-018); prassi del PM, D-106",
+  "ordering": {}
+}

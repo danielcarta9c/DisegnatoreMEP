@@ -6,11 +6,24 @@ una proposta senza motivazione non e' rappresentabile, perche' non ci sarebbe
 niente da approvare.
 """
 
+from enum import StrEnum
+
 from pydantic import Field
 
 from disegnatore_mep.model.base import ID_PATTERN, StrictModel
 from disegnatore_mep.model.project import PortRef
 from disegnatore_mep.model.types import IntegrationCategory
+
+
+class GapReason(StrEnum):
+    """Perche' una regola che si applica non ha niente da proporre."""
+
+    MISSING_PIECE = "missing_piece"
+    """Il catalogo non ha nessun pezzo con quella funzione su quel fluido."""
+
+    NO_COMMON_RUN = "no_common_run"
+    """La regola si posa sul tratto comune della rete, e la rete non ne ha
+    uno: le camminate dagli ancoraggi non condividono nessuna tubazione."""
 
 
 class RuleGap(StrictModel):
@@ -39,6 +52,9 @@ class RuleGap(StrictModel):
     catalogo e' uno solo."""
 
     missing_function: str = Field(min_length=1)
+    reason: GapReason = GapReason.MISSING_PIECE
+    """Cosa manca davvero: il pezzo in catalogo, o il posto sulla rete."""
+
     rationale: str = Field(min_length=1)
     source: str = Field(min_length=1)
 
@@ -90,4 +106,4 @@ def proposed_component_id(definition_id: str, anchor: PortRef) -> str:
     return f"{definition_id}-{anchor.component_id}-{anchor.port_id}".replace("_", "-")
 
 
-__all__ = ["RuleGap", "RuleProposal", "proposed_component_id"]
+__all__ = ["GapReason", "RuleGap", "RuleProposal", "proposed_component_id"]

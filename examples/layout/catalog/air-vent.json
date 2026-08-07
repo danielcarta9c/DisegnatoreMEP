@@ -1,0 +1,26 @@
+{
+  "id": "air-vent",
+  "version": "1.0.0",
+  "name": "Valvola di sfogo aria",
+  "functions": [
+    "air_release"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_branch"
+  ],
+  "symbol_id": "air-vent",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

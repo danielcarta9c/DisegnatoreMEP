@@ -11,6 +11,7 @@ from .types import (
     Domain,
     IntegrationCategory,
     JsonPrimitive,
+    PlantRegime,
 )
 
 SCHEMA_VERSION = "1.1.0"
@@ -127,6 +128,13 @@ class SheetIntentModel(IdentifiedModel):
 class ProjectModel(StrictModel):
     schema_version: str = Field(pattern=r"^\d+\.\d+\.\d+$", default=SCHEMA_VERSION)
     metadata: ProjectMetadata
+    plant_regime: PlantRegime | None = None
+    """Il regime della centrale, se il progettista lo ha dichiarato (D-106).
+
+    Assente vuol dire **non dichiarato**, e le regole applicano il corredo
+    minimo. Campo facoltativo e additivo: un documento 1.1.0 senza questo
+    campo resta valido cosi' com'e', e la versione dello schema non cambia.
+    """
     subsystems: list[SubsystemModel] = Field(default_factory=list)
     networks: list[NetworkModel] = Field(default_factory=list)
     components: list[ComponentInstance] = Field(default_factory=list)

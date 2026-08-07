@@ -1,24 +1,25 @@
 {
   "id": "dirt-separation-before-what-it-would-ruin",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "name": "Defangatore",
   "category": "recommended",
-  "cardinality": "per_component",
+  "cardinality": "per_network",
   "when": {
     "network_domain": "hydronic",
+    "anchor_has_function": "heat_generation",
     "anchor_has_trait": "needs_debris_protection"
   },
   "then": {
     "provides_function": "sludge_separation",
-    "placement": "on_inlet",
+    "placement": "on_the_common_return",
     "inlet_port": "a",
     "outlet_port": "b"
   },
   "satisfied_by": {
-    "scope": "on_the_attachment"
+    "scope": "on_the_network"
   },
-  "rationale": "L'acqua di un circuito chiuso continua a produrre fanghi e ossidi anche dopo il lavaggio, e sono cosi' fini che un filtro a rete non li trattiene: si separano rallentando l'acqua. Il defangatore sta sulla tubazione che entra in cio' che quei fanghi rovinerebbero, perche' e' l'ultimo punto utile prima del danno.",
-  "source": "UNI 8065:2019 tramite guida Aqua Italia (SRC-014)",
+  "rationale": "L'acqua di un circuito chiuso continua a produrre fanghi e ossidi anche dopo il lavaggio, e sono cosi' fini che un filtro a rete non li trattiene: si separano rallentando l'acqua. Il defangatore e' uno solo per circuito e sta sul ritorno generale, a monte della prima ripartizione verso le macchine: li' passa tutta l'acqua che torna, quindi un pezzo solo protegge ogni generatore — uno per macchina e' un doppione, e uno su un circolatore non protegge niente che il ritorno generale non protegga gia'.",
+  "source": "Caleffi, Idraulica 61, cap. Eliminazione delle impurita': un filtro defangatore sulla linea di ritorno verso il generatore (SRC-019, p. 45); un solo defangatore sul ritorno generale in Fig. 41 e nei cinque schemi applicativi (SRC-008); D-106",
   "ordering": {
     "after": [
       "isolation",

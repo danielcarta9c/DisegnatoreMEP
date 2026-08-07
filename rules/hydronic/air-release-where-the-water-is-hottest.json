@@ -1,23 +1,24 @@
 {
   "id": "air-release-where-the-water-is-hottest",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "name": "Separatore d'aria",
   "category": "recommended",
-  "cardinality": "per_component",
+  "cardinality": "per_network",
   "when": {
     "network_domain": "hydronic",
-    "anchor_has_trait": "produces_air"
+    "anchor_has_trait": "produces_air",
+    "plant_regime": "over_35_kw"
   },
   "then": {
-    "provides_function": "air_release",
-    "placement": "on_outlet",
+    "provides_function": "air_separation",
+    "placement": "on_the_common_supply",
     "inlet_port": "a",
     "outlet_port": "b"
   },
   "satisfied_by": {
-    "scope": "on_the_attachment"
+    "scope": "on_the_network"
   },
-  "rationale": "L'acqua libera l'aria che tiene disciolta quando si scalda, e la libera dove e' piu' calda. Il separatore va quindi sulla tubazione che esce da chi la scalda: li' le bollicine ci sono gia' e si lasciano raccogliere, mentre piu' a valle sono gia' andate a fermarsi nei punti alti dei circuiti, dove nessuno le toglie.",
-  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)",
+  "rationale": "L'acqua libera l'aria che tiene disciolta quando si scalda, e la libera dove e' piu' calda. Il separatore va sulla mandata generale, a valle di chi la scalda e dove le mandate sono gia' diventate una: li' le bollicine ci sono gia' e si lasciano raccogliere, e un pezzo solo serve tutti i generatori — uno per macchina e' un doppione. Vale sopra i 35 kW: sotto, il separatore non si mette, e lo sfogo dell'aria sta sul serbatoio.",
+  "source": "Caleffi, Idraulica 61: un disaeratore a valle della pompa di calore, obbligatorio in ciascun circuito chiuso, salvo impianti sotto i 300 litri dove basta la valvola di sfogo (SRC-019, p. 45); sotto i 35 kW la prassi del PM, D-106",
   "ordering": {}
 }

@@ -13,6 +13,9 @@
     "shutoff_ordinary",
     "attachment_inline"
   ],
+  "carries_on_board": [
+    "circulation"
+  ],
   "symbol_id": "heat-pump-air-water",
   "composite": false,
   "ports": [

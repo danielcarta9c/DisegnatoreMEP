@@ -35,6 +35,7 @@ from disegnatore_mep.assembly import AssemblyError, runs_of
 from disegnatore_mep.assembly.runs import Piece
 from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.model.types import PlantRegime
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.rules.schema import RuleDefinition
@@ -205,8 +206,19 @@ def test_lo_stacco_del_vaso_ha_la_propria_fila_con_la_valvola_bloccabile() -> No
 # ---------------------------------------------------------------------------
 
 
+def _over_35(model: ProjectModel) -> ProjectModel:
+    """Il regime grande, dichiarato: le regole per generatore parlano solo li'.
+
+    Da D-106 sicurezza e termometro per generatore valgono sopra i 35 kW; senza
+    dichiarazione vale il corredo minimo e queste regole tacciono. La meccanica
+    che questo collaudo verifica — attaccato alla macchina, prima degli organi
+    di chiusura — resta quella, e si prova dichiarando il regime che la usa.
+    """
+    return model.model_copy(update={"plant_regime": PlantRegime.OVER_35_KW})
+
+
 def test_la_sicurezza_sta_attaccata_alla_macchina_senza_nulla_di_chiudibile() -> None:
-    for model in (_pdc_loop(), load("prova-2-pdc-deviatrice-acs.json")):
+    for model in (_over_35(_pdc_loop()), _over_35(load("prova-2-pdc-deviatrice-acs.json"))):
         done, _, _ = saturate(model, CAT, REG)
         machines = [
             c.id
@@ -267,7 +279,7 @@ def test_il_defangatore_sta_lato_impianto_rispetto_all_intercettazione() -> None
 
 
 def test_il_termometro_di_mandata_non_finisce_dopo_un_organo_di_chiusura() -> None:
-    for model in (_pdc_loop(), load("prova-2-pdc-deviatrice-acs.json")):
+    for model in (_over_35(_pdc_loop()), _over_35(load("prova-2-pdc-deviatrice-acs.json"))):
         done, _, _ = saturate(model, CAT, REG)
         machines = [
             c.id

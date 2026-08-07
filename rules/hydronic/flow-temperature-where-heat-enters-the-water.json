@@ -1,12 +1,13 @@
 {
   "id": "flow-temperature-where-heat-enters-the-water",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "name": "Termometro",
   "category": "necessary",
   "cardinality": "per_component",
   "when": {
     "network_domain": "hydronic",
-    "anchor_has_function": "heat_generation"
+    "anchor_has_function": "heat_generation",
+    "plant_regime": "over_35_kw"
   },
   "then": {
     "provides_function": "temperature_measurement",
@@ -17,8 +18,8 @@
   "satisfied_by": {
     "scope": "on_the_attachment"
   },
-  "rationale": "La temperatura con cui l'acqua parte e' il primo dato che si guarda per sapere se l'impianto sta lavorando come deve, e va letto sul posto senza smontare niente. Il termometro sta sulla tubazione che esce da dove il calore entra nell'acqua: piu' a valle si legge una temperatura gia' mescolata con i ritorni, che e' un altro numero.",
-  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)",
+  "rationale": "La temperatura con cui l'acqua parte e' il primo dato che si guarda per sapere se l'impianto sta lavorando come deve, e va letto sul posto senza smontare niente. Il termometro sta sulla tubazione che esce da dove il calore entra nell'acqua, e vale sopra i 35 kW, dove la Raccolta R lo prescrive per ogni generatore. Sotto i 35 kW non si aggiunge: si usa quello integrato della macchina, e negli schemi delle piccole centrali un termometro sul primario non compare.",
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1 (SRC-012), che si applica sopra i 35 kW (R.1.A.1); sotto i 35 kW la prassi del PM, D-106, riscontrata sugli schemi Caleffi (SRC-019, SRC-008)",
   "ordering": {
     "before": [
       "isolation",

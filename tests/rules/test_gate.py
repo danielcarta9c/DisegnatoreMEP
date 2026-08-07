@@ -3,7 +3,7 @@
 La roadmap master lo dichiara cosi': «le stesse regole producono risultati
 motivati su varianti topologiche e non modificano il modello senza
 approvazione». Tre impianti che non condividono un solo identificativo, e le
-stesse quindici regole devono capirli tutti e tre.
+stesse regole devono capirli tutti e tre.
 """
 
 from pathlib import Path
@@ -49,6 +49,9 @@ def plant(prefix: str, generator: str, terminal: str) -> ProjectModel:
     return ProjectModel.model_validate(
         {
             "metadata": {**METADATA, "project_id": f"gate-{prefix}"},
+            # Regime grande dichiarato (D-106): fra i testimoni del gate c'e'
+            # la sicurezza per generatore, che parla solo sopra i 35 kW.
+            "plant_regime": "over_35_kw",
             "subsystems": [
                 {
                     "id": f"{prefix}-impianto",
@@ -183,32 +186,100 @@ def water_service() -> ProjectModel:
 def test_the_same_rules_serve_a_medium_they_were_not_written_for() -> None:
     """Una regola dichiara la funzione, il catalogo sceglie il pezzo sul fluido.
 
-    Il filtro che esce e' quello dell'acqua fredda, e nessuna regola lo nomina."""
+    La valvola che esce e' quella dell'acqua fredda, e nessuna regola la nomina."""
     registry = ComponentRegistry.from_directory(
         CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
     )
     found = evaluate(water_service(), registry, RuleRegistry.from_directory(RULES))
     by_rule = {item.rule_id: item for item in found.proposals}
-    guard = by_rule["debris-guard-before-what-it-would-ruin"]
-    assert "cold_water" in {
+    guard = by_rule["isolate-what-is-serviced"]
+    assert {
         port.medium for port in registry.get(guard.definition_id).ports
-    }
-    assert "isolate-what-is-serviced" in by_rule
+    } == {"cold_water"}
+    assert "boundary-shutoff-at-the-edge-of-the-plant" in by_rule
+
+
+def _two_separate_rings() -> ProjectModel:
+    """Due generatori, ciascuno col proprio anello, sulla stessa rete.
+
+    Nessuna tubazione porta tutta l'acqua che torna: il tratto comune del
+    ritorno non esiste, e le regole che si posano li' devono dirlo invece di
+    scegliere un anello a caso."""
+    return ProjectModel.model_validate(
+        {
+            "metadata": {**METADATA, "project_id": "gate-anelli"},
+            "subsystems": [
+                {
+                    "id": "anelli-impianto",
+                    "name": "Impianto",
+                    "component_ids": [
+                        "anelli-gen-a",
+                        "anelli-term-a",
+                        "anelli-gen-b",
+                        "anelli-term-b",
+                    ],
+                    "network_ids": ["anelli-rete"],
+                }
+            ],
+            "networks": [
+                {
+                    "id": "anelli-rete",
+                    "name": "Riscaldamento",
+                    "domain": "hydronic",
+                    "medium": "heating_water",
+                }
+            ],
+            "components": [
+                {"id": "anelli-gen-a", "definition_id": "heat-pump-air-water"},
+                {"id": "anelli-term-a", "definition_id": "radiator"},
+                {"id": "anelli-gen-b", "definition_id": "heat-pump-air-water"},
+                {"id": "anelli-term-b", "definition_id": "radiator"},
+            ],
+            "connections": [
+                {
+                    "id": "anelli-mandata-a",
+                    "network_id": "anelli-rete",
+                    "endpoint_a": {"component_id": "anelli-gen-a", "port_id": "water_supply"},
+                    "endpoint_b": {"component_id": "anelli-term-a", "port_id": "in"},
+                },
+                {
+                    "id": "anelli-ritorno-a",
+                    "network_id": "anelli-rete",
+                    "endpoint_a": {"component_id": "anelli-term-a", "port_id": "out"},
+                    "endpoint_b": {"component_id": "anelli-gen-a", "port_id": "water_return"},
+                },
+                {
+                    "id": "anelli-mandata-b",
+                    "network_id": "anelli-rete",
+                    "endpoint_a": {"component_id": "anelli-gen-b", "port_id": "water_supply"},
+                    "endpoint_b": {"component_id": "anelli-term-b", "port_id": "in"},
+                },
+                {
+                    "id": "anelli-ritorno-b",
+                    "network_id": "anelli-rete",
+                    "endpoint_a": {"component_id": "anelli-term-b", "port_id": "out"},
+                    "endpoint_b": {"component_id": "anelli-gen-b", "port_id": "water_return"},
+                },
+            ],
+        }
+    )
 
 
 def test_a_rule_with_nothing_to_offer_says_so_instead_of_going_quiet() -> None:
     """Il difetto che ha fatto respingere P2: il silenzio scambiato per «non si
     applica».
 
-    Sul riduttore il defangatore **si applica** — il pezzo dichiara di temere i
-    residui — ma il catalogo non ha nessun separatore di fanghi sull'acqua
-    fredda. Prima l'ancoraggio veniva scartato senza dire niente, e chi leggeva
-    l'elenco delle integrazioni credeva che non mancasse nulla. Adesso esce un
-    punto aperto, con la sua categoria e il suo perche'."""
+    Su due anelli separati il defangatore **si applica** — i generatori ci
+    sono — ma il ritorno generale su cui dovrebbe posarsi non esiste: nessuna
+    tubazione porta tutta l'acqua. Sceglierne un anello sarebbe decidere al
+    posto del progettista; tacere sarebbe il difetto di P2. Esce un punto
+    aperto, con la sua categoria e il suo perche'."""
     registry = ComponentRegistry.from_directory(
         CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
     )
-    found = evaluate(water_service(), registry, RuleRegistry.from_directory(RULES))
+    found = evaluate(
+        _two_separate_rings(), registry, RuleRegistry.from_directory(RULES)
+    )
     assert "dirt-separation-before-what-it-would-ruin" not in {
         item.rule_id for item in found.proposals
     }
@@ -217,16 +288,16 @@ def test_a_rule_with_nothing_to_offer_says_so_instead_of_going_quiet() -> None:
         for item in found.gaps
         if item.rule_id == "dirt-separation-before-what-it-would-ruin"
     )
-    assert gap.medium == "cold_water"
+    assert gap.medium == "heating_water"
     assert gap.missing_function == "sludge_separation"
-    assert gap.anchor.component_id == "acqua-riduttore"
+    assert gap.reason.value == "no_common_run"
     assert gap.rationale.strip() and gap.source.strip()
 
     report = build_report(found.proposals, found.gaps, Naming.from_directory(NAMING))
     assert not report.is_empty
     spoken = " ".join(point.what_is_missing for point in report.open_points)
     # In parole, non con le etichette interne: quel testo finisce nel dossier.
-    assert "defangatore" in spoken and "acqua fredda sanitaria" in spoken
+    assert "defangatore" in spoken and "tratto comune" in spoken
 
 
 def test_a_lone_cylinder_is_told_that_its_drain_cannot_be_proposed() -> None:

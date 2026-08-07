@@ -1,0 +1,32 @@
+{
+  "id": "safety-relief-on-the-stored-volume",
+  "version": "1.0.0",
+  "name": "Valvola di sicurezza",
+  "category": "necessary",
+  "cardinality": "per_component",
+  "when": {
+    "network_domain": "hydronic",
+    "network_medium": "heating_water",
+    "anchor_has_trait": "holds_its_own_volume",
+    "network_carries_what_the_anchor_stores": true,
+    "plant_regime": "up_to_35_kw"
+  },
+  "then": {
+    "provides_function": "safety",
+    "placement": "on_inlet",
+    "inlet_port": "a",
+    "outlet_port": "b"
+  },
+  "satisfied_by": {
+    "scope": "on_the_network"
+  },
+  "rationale": "Anche in una piccola centrale il circuito chiuso vuole una via che si apra da sola prima del limite ammesso. Sta sul serbatoio, e stop: una sola per serbatoio — anche quando il serbatoio sta su due reti, l'acqua dentro e' una — sulla tubazione che gli entra e nelle sue immediate vicinanze, senza niente di chiudibile in mezzo. Non se ne mette una per generatore: le macchine la portano gia' a bordo, e la sicurezza esterna della centrale e' quella del serbatoio.",
+  "source": "Prassi del PM, D-106 — la valvola di sicurezza-sfiato sta sul serbatoio, e stop; coerente con lo schema tipico Caleffi, che disegna una sola sicurezza esterna sul tratto comune (SRC-019, Fig. 41), e con le macchine che la integrano (SRC-019, pp. 15-16)",
+  "ordering": {
+    "before": [
+      "isolation",
+      "isolation_locked_open"
+    ],
+    "against_the_anchor": true
+  }
+}

@@ -27,11 +27,12 @@ from dataclasses import dataclass, field
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.model.project import NetworkModel, PortRef, ProjectModel
+from disegnatore_mep.model.types import PlantRegime
 
 from .context import RuleContext
-from .proposal import RuleGap, RuleProposal, proposed_component_id
+from .proposal import GapReason, RuleGap, RuleProposal, proposed_component_id
 from .registry import RuleRegistry
-from .schema import RuleCardinality, RuleDefinition, SatisfactionScope
+from .schema import Placement, RuleCardinality, RuleDefinition, SatisfactionScope
 
 BRANCH_OFF = "branch_off"
 """Il mestiere del raccordo che apre una derivazione sulla tubazione."""
@@ -76,6 +77,71 @@ def _anchors(context: RuleContext, rule: RuleDefinition, network: NetworkModel) 
                 continue
             found.append(PortRef(component_id=component_id, port_id=port.id))
     return found
+
+
+def _regime_allows(rule: RuleDefinition, declared: PlantRegime | None) -> bool:
+    """La regola vale nel regime che il progetto dichiara (D-106).
+
+    Il regime non si calcola mai: lo dichiara il progettista, e un progetto
+    che non dichiara niente riceve il **corredo minimo** — le regole del
+    regime piccolo si applicano, quelle del grande no.
+    """
+    if rule.when.plant_regime is None:
+        return True
+    if rule.when.plant_regime is PlantRegime.OVER_35_KW:
+        return declared is PlantRegime.OVER_35_KW
+    return declared is not PlantRegime.OVER_35_KW
+
+
+def _common_run_anchor(
+    context: RuleContext, rule: RuleDefinition, network: NetworkModel
+) -> tuple[PortRef | None, PortRef | None]:
+    """La testa del tratto comune della rete, per gli ancoraggi della regola.
+
+    Dal ritorno (o dalla mandata) di ciascun ancoraggio si cammina lungo il
+    percorso — contro il fluido per il ritorno, seguendolo per la mandata —
+    finche' la strada resta una sola. Le tubazioni che **tutte** le camminate
+    condividono sono il tratto comune; il pezzo si posa sulla prima di esse,
+    cioe' la piu' vicina agli ancoraggi: a monte della prima ripartizione sul
+    ritorno, a valle dell'ultima confluenza sulla mandata. Con un ancoraggio
+    solo il tratto comune comincia sul suo stesso attacco, e la posa coincide
+    con quella di sempre.
+
+    Restituisce `(ancoraggio, ripiego)`: il primo e' la testa del tratto
+    comune, o niente se non esiste; il secondo e' l'attacco del primo
+    ancoraggio, che serve a dire **dove** la rete non ha un tratto comune.
+    """
+    upstream = rule.then.placement is Placement.ON_THE_COMMON_RETURN
+    chains: list[tuple[str, ...]] = []
+    fallback: PortRef | None = None
+    for component_id in context.anchors_of(
+        network.id, rule.when.anchor_has_function, rule.when.anchor_has_trait
+    ):
+        if rule.when.network_carries_what_the_anchor_stores and not context.stores(
+            component_id, network.medium
+        ):
+            continue
+        for port in context.connected_ports(component_id):
+            if port.flow not in rule.then.placement.flows:
+                continue
+            connection_id = context.connection_of_port[(component_id, port.id)]
+            if context.network_of_connection.get(connection_id) != network.id:
+                continue
+            if fallback is None:
+                fallback = PortRef(component_id=component_id, port_id=port.id)
+            chain = context.run_from(
+                connection_id, upstream=upstream, network_id=network.id
+            )
+            if chain:
+                chains.append(chain)
+    if not chains or fallback is None:
+        return None, None
+    shared = set(chains[0]).intersection(*(set(item) for item in chains[1:]))
+    if not shared:
+        return None, fallback
+    head = next(item for item in chains[0] if item in shared)
+    leaves, enters = context.pipe_ends[head]
+    return (enters if upstream else leaves), fallback
 
 
 def _limited(
@@ -150,6 +216,7 @@ def _gap(
     rule: RuleDefinition,
     network: NetworkModel,
     anchor: PortRef,
+    reason: GapReason = GapReason.MISSING_PIECE,
 ) -> RuleGap:
     return RuleGap(
         rule_id=rule.id,
@@ -160,6 +227,7 @@ def _gap(
         medium=network.medium,
         anchor=anchor,
         missing_function=_function_at(context, rule, anchor),
+        reason=reason,
         rationale=rule.rationale,
         source=rule.source,
     )
@@ -176,6 +244,10 @@ def evaluate(
     gaps: dict[tuple[str, str, str, str], RuleGap] = {}
 
     for rule in rules.all():
+        # Il regime della centrale si legge come ogni altra proprieta'
+        # dichiarata (D-106): una regola dell'altro regime non parla affatto.
+        if not _regime_allows(rule, project.plant_regime):
+            continue
         served: set[str] = set()
         # Le reti in ordine di nome, non nell'ordine del file: quale rete si
         # serve per prima decide, per le regole a cardinalita' limitata, su
@@ -185,13 +257,30 @@ def evaluate(
             if not _matches(context, rule, network):
                 continue
 
+            if rule.then.placement.on_a_common_run:
+                # Il pezzo non si posa su un attacco dell'ancoraggio ma sul
+                # tratto comune della rete. Una rete che non ne ha uno non si
+                # serve in silenzio: e' un punto aperto per il progettista.
+                found_anchor, fallback = _common_run_anchor(context, rule, network)
+                if found_anchor is None and fallback is None:
+                    continue
+                if found_anchor is None and fallback is not None:
+                    missing = _gap(
+                        context, rule, network, fallback, GapReason.NO_COMMON_RUN
+                    )
+                    gaps.setdefault(missing.key, missing)
+                    continue
+                candidates = [item for item in (found_anchor,) if item is not None]
+            else:
+                candidates = _anchors(context, rule, network)
+
             # Un ancoraggio su un fluido per cui il catalogo non ha nessun pezzo
             # con quella funzione non si puo' servire — ma non si tace: diventa
             # un punto aperto, uno per rete e per funzione, perche' il pezzo che
             # manca in catalogo e' uno solo. Averne **due** e' un'altra cosa e
             # si ferma: la sceglierebbe il programma.
             anchors: list[PortRef] = []
-            for anchor in _anchors(context, rule, network):
+            for anchor in candidates:
                 if catalog.serving(_function_at(context, rule, anchor), network.medium):
                     anchors.append(anchor)
                     continue

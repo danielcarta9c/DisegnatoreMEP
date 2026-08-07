@@ -19,7 +19,7 @@
 | **Sporca il circuito** | Produce fanghi e ossidi che l'acqua si porta dietro tornando indietro. | Se in un circuito c'è qualcosa che lo sporca, la macchina delicata va protetta su ciò che le entra. | Radiatori, pannelli radianti |
 | **Va protetto dai residui** | Ha organi che i fanghi e i residui di montaggio rovinano. | Filtro e defangatore vanno **prima** del pezzo da proteggere, sul tubo che ci entra. | Pompa di calore, caldaia, circolatore |
 | **Produce aria** | Scalda l'acqua, e l'acqua scaldata libera l'aria che tiene disciolta. | L'aria si libera dove l'acqua è più calda: chi la produce è il punto da cui partire per toglierla. | Pompa di calore, caldaia |
-| **Va protetto dalla sovrapressione** | Chiude dentro di sé un volume d'acqua che, scaldandosi, spinge oltre il limite ammesso. | A chi ha questa proprietà serve una via che si apra da sola prima che il limite sia raggiunto. | Pompa di calore, caldaia, bollitore |
+| **Va protetto dalla sovrapressione** | Chiude dentro di sé un volume d'acqua che, scaldandosi, spinge oltre il limite ammesso. | A chi ha questa proprietà serve una via che si apra da sola prima che il limite sia raggiunto. | Pompa di calore, caldaia, bollitore, volano — la riserva chiusa si scalda anche lei, ed è il motivo per cui nella piccola centrale la sicurezza sta sul serbatoio |
 | **Ha un volume proprio** | Tiene una riserva d'acqua anche quando nulla circola: è un serbatoio, non un tratto di tubo che contiene acqua solo perché ce la si fa passare. | Un volume proprio si deve poter svuotare **da solo**, senza svuotare l'impianto. Un tratto di tubo no: si svuota con la tratta a cui appartiene. | Volano, bollitore |
 | **Che acqua tiene in serbo** | Quale delle acque che tocca è quella della riserva. Un bollitore tocca anche l'acqua di riscaldamento, ma solo perché il serpentino ci passa dentro: quella non è la sua riserva. | Distingue la riserva dai circuiti che l'attraversano scambiando calore. Senza, «svuotare il serbatoio» e «svuotare il circuito che ci passa dentro» sono la stessa frase — ed è esattamente l'errore che avevamo fatto. | Il volano tiene acqua di riscaldamento, il bollitore acqua calda sanitaria |
 | **Si chiude come tutti** | Se lo si deve chiudere, lo fa un organo comune: non chiede niente di speciale. | È il caso ordinario, e va detto lo stesso. Ma leggi qui sotto: questa casella raccoglie anche chi in pratica non si chiude mai. | La grande maggioranza dei pezzi |
@@ -40,6 +40,17 @@ attraversa il serbatoio, non è il serbatoio, e finché il vocabolario non sapev
 differenza non era scrivibile. **La dichiara solo chi ha un volume proprio**, e deve essere
 una delle acque che quel pezzo tocca: un serbatoio che dicesse di tenere in serbo un'acqua
 che non tocca non si carica.
+
+## La casella del bordo macchina, aggiunta col regime della centrale
+
+**«Che cosa porta a bordo».** Le monoblocco comuni hanno il circolatore primario dentro il
+mantello; alcune macchine integrano anche un piccolo vaso, lo sfogo o la sicurezza. La
+fonte dice esplicitamente che **varia da macchina a macchina** — «possono essere
+integrati» — quindi non è una regola: è un fatto della singola macchina, e lo dichiara la
+sua voce di catalogo. La conseguenza per le regole è una sola: **nessuna regola aggiunge
+ciò che la macchina dichiara di avere già dentro**. E la casella non può contraddire i
+mestieri: una funzione o la fai nell'impianto o la porti integrata, non tutte e due — se
+un catalogo le dichiara entrambe, non si carica.
 
 ## Le due cose che nessun componente può tacere
 

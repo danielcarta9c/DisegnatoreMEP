@@ -1,10 +1,10 @@
 # Le regole degli accessori
 
-> **Cosa approvi qui.** Quattordici regole, una per accessorio. Ognuna dice **perché**
+> **Cosa approvi qui.** Diciassette regole, una per accessorio. Ognuna dice **perché**
 > quell'accessorio esiste, **dove** va e perché proprio lì, **quante volte** compare, e
 > **come facciamo a sapere** che in un impianto c'è già.
 >
-> **Come si legge.** Una per volta, e ognuna si può bocciare da sola: sono quattordici
+> **Come si legge.** Una per volta, e ognuna si può bocciare da sola: sono diciassette
 > schede indipendenti, non un blocco unico. Se una non ti torna, dillo per quella — le
 > altre restano in piedi.
 >
@@ -13,29 +13,41 @@
 
 ---
 
-## Come sono cambiate rispetto a prima
+## Il regime della centrale: sotto i 35 kW le regole cambiano
 
-Prima c'erano diciannove regole, e sei di esse dicevano la stessa identica cosa — *«metti
-una valvola su ogni attacco»* — ripetuta una volta per ogni tipo di macchina e una volta
-per ogni tipo di acqua. Bastava aggiungere una macchina nuova in catalogo perché servisse
-la settima.
+È la novità più grossa di questo giro, e viene dalla tua correzione: stavamo applicando
+regole da grande centrale alle piccole. Adesso le regole conoscono **due regimi**.
 
-Adesso quella frase è scritta **una volta sola**, e parte dal fatto che la rende vera: un
-pezzo che si smonta a impianto acceso va potuto chiudere. Chi lo dichiara la riceve, che sia
-una macchina o un accessorio; e quale rubinetto ci voglia — comune o bloccabile — lo decide
-il pezzo stesso, non la regola.
+**Sotto i 35 kW** la centrale è quella di casa: niente separatore d'aria — basta lo sfogo
+sul serbatoio; niente termometro aggiunto — si usa quello della macchina; niente sicurezza
+per ogni generatore — sta sul serbatoio, e stop. È la prassi che ci hai dato, e l'abbiamo
+riscontrata riga per riga sugli schemi Caleffi delle centrali domestiche.
 
-**La conseguenza che devi sapere prima di approvare:** le valvole aumentano parecchio.
-Prima le mettevamo alle sole macchine; adesso le riceve anche il filtro, anche il
-defangatore, anche il circolatore — cioè tutto ciò che davvero si smonta tenendo l'impianto
-acceso. È la regola che ci hai dato, applicata fino in fondo. In coda al documento trovi
-cosa questo comporta.
+**Sopra i 35 kW** vale la Raccolta R, che da lì in su si applica: sicurezza e termometro
+per ogni generatore, separatore d'aria vero.
+
+**Chi decide il regime: tu, sempre.** È un dato del progetto, dichiarato da chi lo firma.
+Noi non lo calcoliamo mai — nemmeno sommando le potenze che il testo nomina, perché la
+taglia non la decide la skill. Un progetto che non dichiara niente riceve il **corredo
+minimo**, cioè le regole della piccola centrale.
+
+## Il ritorno generale: il corredo del circuito sta sul tratto comune
+
+L'altra correzione che ci hai dato: vaso, riempimento, manometro e defangatore finivano
+sul ramo della prima macchina, e con due macchine in parallelo era il ramo sbagliato.
+Adesso le regole sanno trovare **il ritorno generale**: il tratto in cui passa tutta
+l'acqua che torna, prima che si divida verso le macchine. Il corredo del circuito sta lì,
+una volta sola — niente doppioni quando le macchine sono due o tre in parallelo.
+
+E quando quel tratto **non esiste** — succede: un impianto dove il ritorno della caldaia
+raccoglie anche lo scambiatore per conto suo — le regole non scelgono un ramo a caso: te
+lo scrivono come punto aperto, e la posizione la decidi tu.
 
 ---
 
 # Le sicurezze
 
-Sono le quattro che non si tolgono. Se ne boccia una, l'impianto che disegniamo può
+Sono quelle che non si tolgono. Se se ne boccia una, l'impianto che disegniamo può
 scoppiare.
 
 ## 1 · Valvola di sicurezza
@@ -46,7 +58,10 @@ scoppiare.
 quanto il circuito riesca ad assorbire. Serve una via che si apra da sé, senza che nessuno
 la comandi e senza che nessuno possa impedirlo.
 
-**Dove va, e perché proprio lì.** Sulla tubazione che esce dalla macchina che scalda, e
+**Quando vale.** Sopra i 35 kW: è la Raccolta R, che prescrive i dispositivi per ogni
+generatore.
+
+**Dove va, e perché proprio lì.** Sulla tubazione che esce da ogni macchina che scalda, e
 **attaccata alla macchina**. Fra lei e ciò che protegge non ci va niente che si possa
 chiudere: una valvola chiusa davanti a una sicurezza è una sicurezza che non c'è.
 
@@ -58,7 +73,27 @@ la sovrapressione, non ne aggiungiamo un secondo.
 **Da dove viene.** Dalla Raccolta R, che elenca i dispositivi obbligatori di un impianto a
 vaso chiuso. È una prescrizione, non una buona abitudine.
 
-## 2 · Gruppo di sicurezza sanitario
+## 2 · Valvola di sicurezza della piccola centrale
+
+**Cos'è.** La stessa valvola della scheda 1, ma nella centrale di casa.
+
+**Perché esiste.** Anche il circuito piccolo è chiuso e si scalda: la via che si apre da
+sola serve comunque.
+
+**Quando vale.** Sotto i 35 kW, ed è la tua prassi: non una sicurezza per generatore — le
+macchine la portano già dentro il mantello — ma **una sola, sul serbatoio, e stop**.
+
+**Dove va, e perché proprio lì.** Sulla tubazione che entra nel serbatoio, nelle sue
+immediate vicinanze, senza niente di chiudibile in mezzo. Una per serbatoio: anche quando
+il serbatoio sta su due circuiti, l'acqua che ha dentro è una.
+
+**Come sappiamo che c'è già.** Se su quel circuito c'è già qualcosa che scarica la
+sovrapressione.
+
+**Da dove viene.** Dalla tua prassi, registrata come decisione; lo schema tipico Caleffi
+disegna anche lui una sola sicurezza esterna sul tratto comune.
+
+## 3 · Gruppo di sicurezza sanitario
 
 **Cos'è.** Il gruppo che sta sull'ingresso dell'acqua fredda di un bollitore e che scarica
 se la pressione sale.
@@ -79,7 +114,7 @@ sovrapressione.
 **Da dove viene.** Dalla pratica corrente documentata negli schemi Caleffi: è il gruppo di
 sicurezza sanitario che si monta su ogni bollitore.
 
-## 3 · Vaso di espansione
+## 4 · Vaso di espansione
 
 **Cos'è.** Un recipiente con una membrana, che assorbe l'aumento di volume dell'acqua
 quando si scalda.
@@ -88,20 +123,41 @@ quando si scalda.
 in più diventa pressione. Il vaso è il posto dove quel volume va, invece che contro le
 pareti.
 
-**Dove va, e perché proprio lì.** Sulla tubazione che **entra** nella macchina, cioè nel
-punto più freddo del circuito: la membrana dura di più dove l'acqua è meno calda.
+**Dove va, e perché proprio lì.** Sul **ritorno generale** del circuito, prima che il
+ritorno si divida verso le macchine: è il punto più freddo — la membrana dura di più dove
+l'acqua è meno calda — ed è il tratto che serve tutti i generatori insieme. Con due
+macchine in parallelo il vaso non finisce più sul ramo di una sola: è la correzione che ci
+hai chiesto.
 
 **Quante volte.** Uno per circuito, perché la pressione è la stessa in tutto il circuito e
-un secondo vaso non aggiungerebbe niente. Vale sia per il circuito di riscaldamento sia per
-quello sanitario: **è la stessa regola**, applicata due volte perché i circuiti chiusi che
-si scaldano sono due. Prima erano due regole diverse che dicevano la stessa frase.
+un secondo vaso non aggiungerebbe niente. Se la macchina ne porta già uno dentro il
+mantello e tu lo dichiari sufficiente, non ne aggiungiamo un altro.
+
+**Come sappiamo che c'è già.** Se su quel circuito c'è già qualcosa che assorbe la
+dilatazione — anche a bordo macchina, se il suo catalogo lo dichiara.
+
+**Da dove viene.** Dalla Raccolta R per il punto freddo; dagli schemi applicativi Caleffi,
+che mettono il vaso dell'impianto sul ritorno generale in tutti e cinque gli schemi.
+
+## 5 · Vaso di espansione sanitario
+
+**Cos'è.** Lo stesso recipiente, per la riserva sanitaria.
+
+**Perché esiste.** Anche l'acqua del bollitore si scalda e si dilata, e il ritegno le ha
+tolto la via di ritorno: senza un vaso suo, la dilatazione apre la sicurezza a ogni ciclo.
+
+**Dove va, e perché proprio lì.** Sull'alimentazione fredda della riserva, dal lato del
+serbatoio: è dove il costruttore prescrive di prevederlo, insieme alla sicurezza.
+
+**Quante volte.** Uno per circuito di acqua fredda sanitaria.
 
 **Come sappiamo che c'è già.** Se su quel circuito c'è già qualcosa che assorbe la
 dilatazione.
 
-**Da dove viene.** Dalla Raccolta R, stesso elenco della valvola di sicurezza.
+**Da dove viene.** Dalle istruzioni d'installazione dei costruttori di bollitori, e dagli
+schemi Caleffi che lo disegnano sull'ingresso freddo.
 
-## 4 · Valvola di ritegno sanitaria
+## 6 · Valvola di ritegno sanitaria
 
 **Cos'è.** Una valvola che lascia passare l'acqua in un verso solo.
 
@@ -122,7 +178,7 @@ ritorno.
 
 # Le intercettazioni
 
-## 5 · Valvola di intercettazione — **la regola che era sei**
+## 7 · Valvola di intercettazione — **la regola che era sei**
 
 **Cos'è.** Il rubinetto che ferma l'acqua per poter togliere un pezzo.
 
@@ -137,9 +193,7 @@ pezzo con due attacchi ne riceve due, uno con quattro ne riceve quattro: non è 
 
 **A chi si applica.** A tutto ciò che dichiara di smontarsi a impianto acceso — **macchine
 e accessori insieme**. Il filtro, il defangatore, il circolatore la ricevono come la pompa
-di calore. Prima no: prima esistevano sei regole separate, una per la pompa di calore, una
-per il circolatore, una per il volano, una per il serpentino del bollitore, una per
-l'ingresso freddo e una per l'uscita calda. Dicevano tutte la stessa cosa.
+di calore. Prima no: prima esistevano sei regole separate che dicevano tutte la stessa cosa.
 
 **Il caso speciale, e non è un'eccezione.** Alcuni pezzi non devono mai restare esclusi per
 distrazione — il vaso di espansione è il caso — e quelli si chiudono soltanto con una
@@ -159,13 +213,13 @@ che il progettista ha già messo a mano vengono riconosciuti e rispettati.
 **Da dove viene.** Dagli schemi Caleffi per impianti a pompa di calore, e dalla tua
 indicazione: una valvola per ogni attacco.
 
-## 6 · Valvola di intercettazione generale
+## 8 · Valvola di intercettazione generale
 
 **Cos'è.** Il rubinetto sul punto in cui il nostro impianto si attacca a qualcosa che non è
 nostro: la rete idrica, la distribuzione dell'edificio.
 
 **Perché esiste.** Per poter lavorare sull'impianto senza dipendere da un rubinetto che sta
-altrove e che governa qualcun altro. È una ragione diversa da quella della scheda 5: lì si
+altrove e che governa qualcun altro. È una ragione diversa da quella della scheda 7: lì si
 chiude *un pezzo*, qui si chiude *il confine*.
 
 **Dove va, e perché proprio lì.** Sul confine stesso, così che tutto ciò che viene dopo
@@ -183,27 +237,27 @@ resti lavorabile.
 
 Sono due accessori diversi che sembrano lo stesso, e vale la pena guardare la differenza.
 
-## 7 · Filtro a Y
+## 9 · Filtro a Y
 
 **Cos'è.** Un filtro a rete, che si smonta e si pulisce.
 
 **Perché esiste.** Trucioli, sabbia e residui di montaggio restano in circolo per tutta la
-vita dell'impianto e rovinano gli organi in movimento e gli scambiatori stretti.
+vita dell'impianto e intasano gli scambiatori stretti delle macchine.
 
-**Dove va, e perché proprio lì.** Sulla tubazione che **entra** in ciò che quei residui
-rovinerebbero. A valle non protegge più niente: il danno è già avvenuto.
+**Dove va, e perché proprio lì.** Sulla tubazione che **entra** in ogni generatore, sul suo
+ritorno: è l'ultimo punto utile prima dello scambiatore. A valle non protegge più niente.
 
-**Quante volte.** Uno per ogni pezzo che dichiara di temere i residui — la pompa di calore,
-il circolatore, e il riduttore di pressione se c'è, perché anche i suoi organi si rovinano
-con le impurità della rete. Prima la regola diceva *«davanti al circolatore»*, cioè nominava
-una macchina; adesso parte dal fatto che quella macchina dichiara di sé, e ne segue che sui
-tre pezzi dell'impianto di prova i filtri passano da due a tre.
+**Quante volte.** Uno per generatore, e **solo per i generatori**: è la tua correzione. Ai
+circolatori il filtro dedicato non serve — il ritorno generale ha già il defangatore — e la
+filtrazione sta solo sul primario.
 
 **Come sappiamo che c'è già.** Se su quella tubazione c'è già un filtro.
 
-**Da dove viene.** Dalla pratica corrente documentata negli schemi Caleffi.
+**Da dove viene.** Dal quaderno Caleffi sulle pompe di calore — molte macchine hanno già un
+filtro sull'ingresso dello scambiatore, e sporcandosi strozza la portata: quello esterno si
+pulisce meglio — e dalla tua prassi: un filtro sul ritorno di ogni pompa di calore.
 
-## 8 · Defangatore
+## 10 · Defangatore
 
 **Cos'è.** Un corpo largo, spesso con una calamita, dove l'acqua rallenta e i fanghi si
 depositano.
@@ -213,68 +267,88 @@ lavaggio, e sono così fini che un filtro a rete non li trattiene: si separano r
 l'acqua, non setacciandola. **È per questo che non sostituisce il filtro e il filtro non
 sostituisce lui.**
 
-**Dove va, e perché proprio lì.** Sulla tubazione che entra in ciò che quei fanghi
-rovinerebbero: è l'ultimo punto utile prima del danno.
+**Dove va, e perché proprio lì.** **Uno solo per circuito, sul ritorno generale**, prima
+che il ritorno si divida verso le macchine: lì passa tutta l'acqua che torna, quindi un
+pezzo solo protegge ogni generatore. Prima ne mettevamo uno per macchina e perfino sui
+circolatori: erano doppioni, e li abbiamo tolti — è la tua correzione.
 
-**Quante volte.** Uno per ogni pezzo che dichiara di temere i residui. Sull'impianto di
-prova sono **due invece di uno**: prima ne riceveva solo la pompa di calore, adesso anche il
-circolatore del secondario — che è il circuito dove stanno i corpi scaldanti, cioè dove i
-fanghi si formano. Se ritieni che ne basti uno per impianto, è una decisione tua e la
-scriviamo nella regola.
+**Come sappiamo che c'è già.** Se su quel circuito c'è già un separatore di fanghi.
 
-**Come sappiamo che c'è già.** Se su quella tubazione c'è già un separatore di fanghi.
-
-**Da dove viene.** Dalla UNI 8065 sul trattamento dell'acqua, letta tramite la guida di
-settore: la norma è a pagamento e lo diciamo, la citazione è alla guida.
+**Da dove viene.** Dal quaderno Caleffi — un filtro defangatore sulla linea di ritorno
+verso il generatore — e dagli schemi delle centrali domestiche, che ne disegnano uno solo.
 
 ---
 
 # Aria, misure, riempimento, svuotamento
 
-## 9 · Separatore d'aria
+## 11 · Separatore d'aria
 
 **Cos'è.** Un corpo dove l'acqua rallenta e le bollicine risalgono e vengono espulse.
 
 **Perché esiste.** L'acqua libera l'aria che tiene disciolta quando si scalda, e l'aria in
 circolo fa rumore, blocca i terminali e corrode.
 
-**Dove va, e perché proprio lì.** Sulla tubazione che esce da chi la scalda, perché l'aria
-si libera dove l'acqua è più calda: lì le bollicine ci sono ancora e si lasciano
-raccogliere. Più a valle si sono già fermate nei punti alti dei circuiti, dove nessuno le
-toglie più.
+**Quando vale.** Sopra i 35 kW. Sotto, non si mette: nelle piccole centrali basta lo sfogo
+sul serbatoio — è la scheda dopo.
 
-**Quante volte.** Uno per ogni macchina che scalda l'acqua.
+**Dove va, e perché proprio lì.** Sulla **mandata generale**, a valle di chi scalda e dove
+le mandate sono già diventate una: lì le bollicine ci sono ancora e si lasciano
+raccogliere. Uno per circuito: uno per macchina era un doppione.
 
-**Come sappiamo che c'è già.** Se su quella tubazione c'è già qualcosa che toglie l'aria.
+**Come sappiamo che c'è già.** Se su quel circuito c'è già qualcosa che separa l'aria.
 
-**Da dove viene.** Dalla pratica corrente documentata negli schemi Caleffi.
+**Da dove viene.** Dal quaderno Caleffi: un disaeratore a valle della pompa di calore,
+obbligatorio nei circuiti chiusi, salvo i piccoli contenuti d'acqua dove basta la valvola
+di sfogo.
 
-## 10 · Termometro
+## 12 · Valvola di sfogo aria
+
+**Cos'è.** La valvolina automatica che espelle l'aria dal punto alto.
+
+**Perché esiste.** Nella piccola centrale l'aria non vuole un separatore: si raccoglie da
+sola nel punto più alto, che è il serbatoio, e lì basta sfogarla.
+
+**Quando vale.** Sotto i 35 kW, ed è la tua prassi: sfogo sul serbatoio, e stop.
+
+**Dove va, e perché proprio lì.** Sull'attacco che il serbatoio dedica allo sfiato, come i
+costruttori lo dichiarano in legenda. Una per serbatoio. Le macchine il proprio sfogo lo
+portano già a bordo.
+
+**Come sappiamo che c'è già.** Se quell'attacco ha già la sua valvola.
+
+**Da dove viene.** Dal quaderno Caleffi — sotto i 300 litri di contenuto basta la valvola
+di sfogo — e dalle legende dei costruttori di serbatoi, che dedicano allo sfiato un attacco.
+
+## 13 · Termometro
 
 **Cos'è.** Un termometro in un pozzetto, che si legge senza toccare l'acqua.
 
 **Perché esiste.** La temperatura con cui l'acqua parte è il primo dato che si guarda per
 sapere se l'impianto sta lavorando come deve.
 
+**Quando vale.** Sopra i 35 kW, dove la Raccolta R lo prescrive per ogni generatore. Sotto,
+non si aggiunge: si usa quello integrato della macchina — negli schemi delle piccole
+centrali un termometro sul primario non compare.
+
 **Dove va, e perché proprio lì.** Sulla tubazione che esce da dove il calore entra
 nell'acqua. Più a valle si legge una temperatura già mescolata con i ritorni, che è un
-altro numero e non dice più quello che serve.
-
-**Quante volte.** Uno per ogni macchina che scalda.
+altro numero.
 
 **Come sappiamo che c'è già.** Se su quella tubazione c'è già un termometro.
 
-**Da dove viene.** Dalla Raccolta R.
+**Da dove viene.** Dalla Raccolta R; sotto i 35 kW dalla tua prassi, riscontrata sugli
+schemi.
 
-## 11 · Manometro
+## 14 · Manometro
 
 **Cos'è.** Un manometro con il suo rubinetto, che si sfila chiudendo l'acqua.
 
 **Perché esiste.** La pressione di un circuito chiuso è la spia della sua salute: se cala,
 l'impianto perde; se sale, il vaso non sta lavorando.
 
-**Dove va, e perché proprio lì.** Sulla tubazione che rientra nella macchina, accanto al
-punto in cui il circuito si riempie, così chi reintegra legge mentre carica.
+**Dove va, e perché proprio lì.** Sul **ritorno generale**, accanto al punto in cui il
+circuito si riempie, così chi reintegra legge mentre carica. Sul tratto comune, non sul
+ramo di una macchina: stessa correzione del vaso.
 
 **Quante volte.** Uno per circuito di riscaldamento: la pressione è la stessa dappertutto,
 un secondo punto di lettura non aggiunge niente.
@@ -283,7 +357,7 @@ un secondo punto di lettura non aggiunge niente.
 
 **Da dove viene.** Dalla Raccolta R.
 
-## 12 · Gruppo di riempimento
+## 15 · Gruppo di riempimento
 
 **Cos'è.** Il gruppo che collega la rete idrica al circuito chiuso e ne controlla la
 pressione di carico.
@@ -292,17 +366,19 @@ pressione di carico.
 reintegrato quando cala. A pressione controllata, altrimenti la rete idrica lo porterebbe
 alla propria.
 
-**Dove va, e perché proprio lì.** Sulla tubazione che rientra nella macchina, cioè nel
-punto più freddo del circuito: l'acqua di rete entra senza scaldarsi di colpo.
+**Dove va, e perché proprio lì.** Sul **ritorno generale**, nel punto più freddo del
+circuito: l'acqua di rete entra senza scaldarsi di colpo, e il reintegro serve tutte le
+macchine invece del ramo di una sola.
 
 **Quante volte.** Uno per circuito di riscaldamento. **Solo sul riscaldamento:** il
 circuito sanitario è già alimentato dalla rete e non ha niente da riempire.
 
 **Come sappiamo che c'è già.** Se su quel circuito c'è già un punto di riempimento.
 
-**Da dove viene.** Dalla Raccolta R.
+**Da dove viene.** Dalla Raccolta R; il punto d'innesto sul ritorno generale è quello
+dello schema tipico e degli schemi applicativi Caleffi.
 
-## 13 · Attacco di scarico
+## 16 · Attacco di scarico
 
 **Cos'è.** Il rubinetto in basso da cui si svuota un serbatoio.
 
@@ -321,18 +397,21 @@ cui adesso ogni serbatoio dichiara *quale* acqua tiene.
 La seconda: **dal lato del serbatoio** rispetto al rubinetto che lo chiude. Se stesse
 dall'altra parte, a rubinetto chiuso svuoterebbe la tratta di là e non il serbatoio.
 
-**Quante volte.** Uno per ogni serbatoio — il volano, il bollitore. Sono **due invece di
-uno**: prima la regola nominava l'accumulo di riscaldamento, e il bollitore restava senza.
+**Quante volte.** Uno per ogni serbatoio — il volano, il bollitore.
 
 **Come sappiamo che c'è già.** Se su quella tubazione c'è già uno scarico.
 
 **Da dove viene.** Dalla pratica corrente documentata negli schemi Caleffi.
 
+**Un difetto che conosciamo e stiamo correggendo:** sul bollitore lo scarico va
+sull'ingresso dell'acqua fredda — è da lì che la riserva si riempie e si svuota — e oggi
+finisce sull'uscita calda. La correzione è progettata e ha la sua prova che aspetta.
+
 ---
 
 # L'acqua calda sanitaria
 
-## 14 · Valvola miscelatrice termostatica
+## 17 · Valvola miscelatrice termostatica
 
 **Cos'è.** Una valvola che mescola acqua calda e fredda e tiene costante la temperatura in
 uscita.
@@ -352,28 +431,26 @@ utilizzo. Le due cose devono restare separate, ed è la miscelatrice a separarle
 
 ---
 
-# Cinque cose che vale la pena guardare prima di approvare
+# Cose che vale la pena guardare prima di approvare
 
-**I rubinetti sono molti di più di prima, ed è voluto.** Sull'impianto di prova sono più
-del doppio. Non è un'inflazione: prima li ricevevano solo le macchine, e il filtro — che è
-il pezzo che si smonta più spesso di tutti — non ne aveva nessuno. Se la crescita ti sembra
-eccessiva, il punto da discutere non è la regola: è **quali pezzi dichiarano di smontarsi a
-impianto acceso**, cioè l'elenco che hai già approvato.
+**I rubinetti sono molti di più di com'era all'inizio, ed è voluto.** Sull'impianto di
+prova sono più del doppio. Non è un'inflazione: prima li ricevevano solo le macchine, e il
+filtro — che è il pezzo che si smonta più spesso di tutti — non ne aveva nessuno. Se la
+crescita ti sembra eccessiva, il punto da discutere non è la regola: è **quali pezzi
+dichiarano di smontarsi a impianto acceso**, cioè l'elenco che hai già approvato.
 
 **Due macchine attaccate allo stesso tubo prendono due rubinetti, uno per una.** È la
 regola presa alla lettera: ogni attacco vuole il proprio. Un solo rubinetto in mezzo
 basterebbe a separarle fra loro, ma non a togliere l'una lasciando in servizio l'altra. Se
 preferisci che in quel caso ne compaia uno solo, è una decisione tua e la registriamo.
 
-**Un attacco raggiunto da due tubi riceve il rubinetto su uno solo dei due.** Succede
-quando due ritorni arrivano allo stesso bocchello di una macchina. È un limite che
-conosciamo e che non abbiamo chiuso in questo passo; lo segnaliamo perché non lo scopra tu.
+**Ciò che la macchina porta a bordo non si disegna.** Le monoblocco comuni hanno il
+circolatore primario dentro il mantello, e il loro catalogo adesso lo dichiara: nessuna
+regola aggiunge un pezzo che sta già dentro la macchina. Vale anche per il vaso, quando
+una macchina lo integra e il suo catalogo lo dice.
 
-**Il vaso di espansione riceve due rubinetti bloccabili invece di uno.** Perché oggi il
-disegno lo tratta come un pezzo di passaggio invece che come uno stacco appeso al tubo.
-Quando gli stacchi avranno la loro forma — è il passo dei simboli — ne resterà uno solo,
-senza toccare questa regola. Nel frattempo il rubinetto bloccabile **si disegna uguale a
-quello comune**: la distinzione c'è nel modello, non ancora nel segno.
+**Il rubinetto bloccabile si disegna ancora uguale a quello comune.** La distinzione c'è
+nel modello, non ancora nel segno: è il passo dei simboli, già in coda.
 
 **L'impianto che ne esce non sta più su un foglio ordinario.** Con tutti questi accessori,
 le quattro fasce chiedono più spazio di quanto una A3 ne offra. Non è un difetto delle
@@ -384,18 +461,14 @@ questo compito. Le regole si approvano su cosa mettono e dove, non su come ci st
 
 ## Cosa ti stiamo chiedendo
 
-Di leggere le quattordici schede e dirci, per ciascuna: **è vera, è al posto giusto, e ne
+Di leggere le diciassette schede e dirci, per ciascuna: **è vera, è al posto giusto, e ne
 manca una?** Se una regola è sbagliata, si corregge da sola senza toccare le altre. Se ne
 manca una, ce la dici e la scriviamo con lo stesso stampo: perché esiste, dove va, quante
 volte, come si riconosce che c'è già.
 
 **Queste schede dicono il perché. Che cosa sia effettivamente uscito lo mostra l'altro
-documento, *Il grafo dell'impianto*:** l'impianto completo letto come una rete di punti, con
-una sigla per ciascuno, il fluido di ogni tubazione, gli incroci, e la passeggiata che parte
-dalle sorgenti e segue l'acqua fino a dove il circuito si richiude. Le due letture servono
-insieme — qui si giudica la regola, lì si controlla il risultato. Se una regola è giusta e
-il pezzo è finito nel posto sbagliato, si vede solo di là.
-
-Una cosa che il grafo non dà ancora: **l'ordine esatto dei pezzi lungo un tubo**. Oggi
-mostra che ci sono e a che cosa sono attaccati; metterli in fila nel giusto ordine è il
-prossimo pezzo che costruiamo.
+documento, *Il grafo dell'impianto*:** l'impianto completo letto linea per linea, con
+l'indirizzo di ogni pezzo, il fluido di ogni tubazione, e la fila ordinata dei pezzi lungo
+ogni tratta — l'ordine lo decide l'assemblatore sui vincoli che ogni regola dichiara. Le
+due letture servono insieme: qui si giudica la regola, lì si controlla il risultato. Se una
+regola è giusta e il pezzo è finito nel posto sbagliato, si vede solo di là.

@@ -112,6 +112,7 @@ def definition(
     ports: list[dict[str, Any]],
     symbol_id: str | None = None,
     stored_medium: str | None = None,
+    carries_on_board: list[str] | None = None,
 ) -> dict[str, Any]:
     """Una voce di catalogo. `traits` non ha default **per scelta**: un
     componente che non dichiara come si isola non deve poter nascere da qui piu'
@@ -130,6 +131,11 @@ def definition(
         "functions": functions,
         "traits": traits,
     }
+    # Cio' che la macchina porta a bordo di fabbrica (D-106): un fatto della
+    # macchina, dichiarato dal suo catalogo, che le regole leggono per non
+    # aggiungere cio' che sta gia' dentro il mantello.
+    if carries_on_board is not None:
+        entry["carries_on_board"] = carries_on_board
     if stored_medium is not None:
         entry["stored_medium"] = stored_medium
     entry.update(
@@ -160,6 +166,10 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("water_supply", "out"),
             hydronic_port("water_return", "in"),
         ],
+        # Le monoblocco comuni portano a bordo il circolatore primario, non il
+        # vaso di espansione (D-106; SRC-019, p. 15): nessuna regola deve
+        # aggiungere un circolatore che sta gia' dentro il mantello.
+        carries_on_board=["circulation"],
     ),
     definition(
         # **Confluenza.** Il ritorno della macchina raccoglie sia il circuito del
@@ -336,7 +346,10 @@ DEFINITIONS: list[dict[str, Any]] = [
         "buffer-two-port",
         "Volano termico a due attacchi",
         ["thermal_storage"],
-        [MAINTAINABLE, HOLDS_ITS_OWN_VOLUME, SHUTOFF_ORDINARY, INLINE],
+        # La riserva chiusa si scalda e dilata: e' il fatto per cui la
+        # sicurezza della piccola centrale sta sul serbatoio (D-106), e il
+        # bollitore sanitario lo dichiarava gia'.
+        [MAINTAINABLE, HOLDS_ITS_OWN_VOLUME, NEEDS_OVERPRESSURE_PROTECTION, SHUTOFF_ORDINARY, INLINE],
         [
             hydronic_port("a", "in"),
             hydronic_port("b", "out"),
@@ -353,7 +366,7 @@ DEFINITIONS: list[dict[str, Any]] = [
         "buffer-combined",
         "Accumulo combinato",
         ["hydraulic_separation", "thermal_storage"],
-        [MAINTAINABLE, HOLDS_ITS_OWN_VOLUME, SHUTOFF_ORDINARY, INLINE],
+        [MAINTAINABLE, HOLDS_ITS_OWN_VOLUME, NEEDS_OVERPRESSURE_PROTECTION, SHUTOFF_ORDINARY, INLINE],
         [
             hydronic_port("primary_in", "in"),
             hydronic_port("primary_out", "out"),
@@ -432,7 +445,7 @@ DEFINITIONS: list[dict[str, Any]] = [
         "buffer-four-port",
         "Volano termico a quattro attacchi",
         ["hydraulic_separation", "thermal_storage"],
-        [MAINTAINABLE, HOLDS_ITS_OWN_VOLUME, SHUTOFF_ORDINARY, INLINE],
+        [MAINTAINABLE, HOLDS_ITS_OWN_VOLUME, NEEDS_OVERPRESSURE_PROTECTION, SHUTOFF_ORDINARY, INLINE],
         [
             hydronic_port("primary_in", "in"),
             hydronic_port("primary_out", "out"),

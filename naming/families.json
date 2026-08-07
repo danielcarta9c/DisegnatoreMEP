@@ -119,9 +119,14 @@
       "name": "Defangatore"
     },
     {
-      "function": "air_release",
+      "function": "air_separation",
       "prefix": "SA",
       "name": "Separatore d'aria"
+    },
+    {
+      "function": "air_release",
+      "prefix": "SF",
+      "name": "Valvola di sfogo aria"
     },
     {
       "function": "filling",

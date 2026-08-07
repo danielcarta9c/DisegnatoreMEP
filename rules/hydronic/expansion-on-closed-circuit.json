@@ -1,24 +1,25 @@
 {
   "id": "expansion-on-closed-circuit",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "name": "Vaso di espansione",
   "category": "necessary",
   "cardinality": "per_network",
   "when": {
     "network_domain": "hydronic",
+    "anchor_has_function": "heat_generation",
     "anchor_has_trait": "needs_overpressure_protection"
   },
   "then": {
     "provides_function": "expansion",
-    "placement": "on_inlet",
+    "placement": "on_the_common_return",
     "inlet_port": "a",
     "outlet_port": "b"
   },
   "satisfied_by": {
     "scope": "on_the_network"
   },
-  "rationale": "L'acqua scaldata aumenta di volume, e in un volume chiuso quell'aumento diventa pressione. Il vaso e' lo spazio che quel volume in piu' trova invece della rottura, e ne basta uno per circuito perche' la pressione e' la stessa dappertutto. Sta sulla tubazione che entra, che e' il punto piu' freddo: la membrana dura di piu' dove l'acqua e' meno calda.",
-  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)",
+  "rationale": "L'acqua scaldata aumenta di volume, e in un volume chiuso quell'aumento diventa pressione. Il vaso e' lo spazio che quel volume in piu' trova invece della rottura, e ne basta uno per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, a monte della prima ripartizione verso chi scalda: e' il punto piu' freddo — la membrana dura di piu' dove l'acqua e' meno calda — ed e' il tratto che serve tutti i generatori insieme, cosi' con due in parallelo il vaso non finisce sul ramo di uno solo. La riserva sanitaria ha il proprio vaso sulla propria alimentazione: e' un'altra regola.",
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1 (SRC-012); schemi applicativi Caleffi, il vaso dell'impianto sul ritorno generale in tutti e cinque gli schemi (SRC-008); D-106",
   "ordering": {
     "after": [
       "isolation_locked_open"

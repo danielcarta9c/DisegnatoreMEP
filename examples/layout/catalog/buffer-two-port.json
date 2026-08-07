@@ -8,6 +8,7 @@
   "traits": [
     "maintainable",
     "holds_its_own_volume",
+    "needs_overpressure_protection",
     "shutoff_ordinary",
     "attachment_inline"
   ],

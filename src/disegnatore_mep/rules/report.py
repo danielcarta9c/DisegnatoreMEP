@@ -16,7 +16,7 @@ from disegnatore_mep.graph.naming import Naming
 from disegnatore_mep.model.base import StrictModel
 from disegnatore_mep.model.types import IntegrationCategory
 
-from .proposal import RuleGap, RuleProposal
+from .proposal import GapReason, RuleGap, RuleProposal
 
 CATEGORY_LABELS: dict[IntegrationCategory, str] = {
     IntegrationCategory.NECESSARY: "Necessarie",
@@ -113,11 +113,22 @@ def build_report(
                 where=f"su {item.anchor.component_id}.{item.anchor.port_id}, "
                 f"rete {item.network_id}",
                 what_is_missing=(
-                    f"in catalogo non c'e' nessun pezzo che faccia da "
-                    f"{naming.family_of((item.missing_function,), item.rule_id).name.lower()} su "
-                    f"{naming.name_of_medium(item.medium)}, quindi questo accessorio "
-                    f"{CATEGORY_ADJECTIVES[item.category]} non viene proposto: "
-                    f"va deciso dal progettista"
+                    (
+                        f"la rete non ha un tratto comune su cui posare "
+                        f"{naming.family_of((item.missing_function,), item.rule_id).name.lower()}: "
+                        f"i percorsi degli ancoraggi non condividono nessuna "
+                        f"tubazione, quindi questo accessorio "
+                        f"{CATEGORY_ADJECTIVES[item.category]} non viene proposto: "
+                        f"va deciso dal progettista"
+                    )
+                    if item.reason is GapReason.NO_COMMON_RUN
+                    else (
+                        f"in catalogo non c'e' nessun pezzo che faccia da "
+                        f"{naming.family_of((item.missing_function,), item.rule_id).name.lower()} su "
+                        f"{naming.name_of_medium(item.medium)}, quindi questo accessorio "
+                        f"{CATEGORY_ADJECTIVES[item.category]} non viene proposto: "
+                        f"va deciso dal progettista"
+                    )
                 ),
                 rationale=item.rationale,
                 source=item.source,

@@ -14,6 +14,7 @@ in mezzo.
 """
 
 from collections import defaultdict
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -275,6 +276,13 @@ def ordered(run: Run) -> tuple[Piece, ...]:
     partenza si conta da li', cio' che e' ancorato al capo di arrivo si conta
     dall'altra parte, e cio' che non e' ancorato a nessuno dei due sta in mezzo.
     Dentro ogni gruppo decide l'ordinamento sui vincoli.
+
+    La classificazione guarda **il capofila** del blocco, mai il pezzo che
+    capita primo nell'ordine di inserimento: una valvola ancorata al proprio
+    accessorio puo' trovarsi davanti a lui nel modello, e giudicare il blocco
+    da lei lo spedirebbe «in mezzo». E anche il gruppo di mezzo si ordina sui
+    vincoli: lasciarlo com'e' vorrebbe dire lasciare all'ordine dei file delle
+    regole una fila che i file non devono decidere (D-093).
     """
     head, tail = run.head.component_id, run.tail.component_id
     blocks = _blocks(run)
@@ -284,12 +292,16 @@ def ordered(run: Run) -> tuple[Piece, ...]:
     between = [block for block in blocks if id(block) not in taken]
     return (
         *_flatten(_sorted_blocks(at_head)),
-        *_flatten(between),
+        *_flatten(_sorted_blocks(between)),
         *_flatten(reversed(_sorted_blocks(at_tail))),
     )
 
 
-def _blocks(run: Run) -> list[list[Piece]]:
+Block = tuple[Piece, tuple[Piece, ...]]
+"""Un capofila e i pezzi che viaggiano con lui, nell'ordine in cui stanno."""
+
+
+def _blocks(run: Run) -> list[Block]:
     """I pezzi raggruppati con cio' che li serve.
 
     Un accessorio non viaggia da solo: le valvole che lo isolano sono ancorate a
@@ -309,20 +321,25 @@ def _blocks(run: Run) -> list[list[Piece]]:
     grouped: dict[str, list[Piece]] = {}
     for item in run.pieces:
         grouped.setdefault(leader[item.component_id], []).append(item)
-    return [grouped[key] for key in dict.fromkeys(leader.values())]
+    return [
+        (run.pieces[order[key]], tuple(grouped[key]))
+        for key in dict.fromkeys(leader.values())
+    ]
 
 
-def _flatten(blocks: object) -> list[Piece]:
-    return [item for block in blocks for item in block]  # type: ignore[attr-defined]
+def _flatten(blocks: "Iterable[Block]") -> list[Piece]:
+    return [item for _, members in blocks for item in members]
 
 
-def _sorted_blocks(blocks: list[list[Piece]]) -> list[list[Piece]]:
+def _sorted_blocks(blocks: list[Block]) -> list[Block]:
     """Mette in fila i blocchi guardando i vincoli del pezzo che li guida."""
     if len(blocks) < 2:
         return list(blocks)
-    leaders = [block[0] for block in blocks]
-    by_leader = {block[0].component_id: block for block in blocks}
-    return [by_leader[item.component_id] for item in _sorted(leaders)]
+    by_leader = {leader.component_id: (leader, members) for leader, members in blocks}
+    return [
+        by_leader[item.component_id]
+        for item in _sorted([leader for leader, _ in blocks])
+    ]
 
 
 def _sorted(pieces: list[Piece]) -> list[Piece]:

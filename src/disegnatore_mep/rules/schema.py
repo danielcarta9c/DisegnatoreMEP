@@ -33,7 +33,7 @@ from pydantic import Field, model_validator
 
 from disegnatore_mep.catalog.schema import SHUTOFF_REGIMES, ComponentTrait
 from disegnatore_mep.model.base import ID_PATTERN, StrictModel
-from disegnatore_mep.model.types import Domain, IntegrationCategory, PortFlow
+from disegnatore_mep.model.types import Domain, IntegrationCategory, PlantRegime, PortFlow
 
 
 class RuleCardinality(StrEnum):
@@ -66,13 +66,40 @@ class Placement(StrEnum):
     ON_ANY_PORT = "on_any_port"
     """Su ogni attacco, qualunque verso: il sezionamento."""
 
+    ON_THE_COMMON_RETURN = "on_the_common_return"
+    """Sul **ritorno generale**: il tratto comune da cui i ritorni di tutti
+    gli ancoraggi discendono, a monte della prima ripartizione (D-106).
+
+    E' il livello che mancava al motore: una regola «per rete» ripiegava sul
+    primo attacco di macchina, e con due macchine in parallelo il corredo di
+    rete finiva sul ramo della prima invece che sul tratto che serve tutte.
+    La tubazione si trova camminando all'indietro, contro il fluido, dai
+    ritorni degli ancoraggi: dove le camminate condividono la strada, quella
+    e' il ritorno generale, e il pezzo si posa sul primo tratto condiviso —
+    quello attaccato alla ripartizione, o alla macchina se e' una sola."""
+
+    ON_THE_COMMON_SUPPLY = "on_the_common_supply"
+    """Sulla **mandata generale**: il tratto comune in cui le mandate di tutti
+    gli ancoraggi confluiscono, a valle dell'ultima confluenza.
+
+    Speculare al ritorno generale, seguendo il fluido invece di risalirlo:
+    il disaeratore sta a valle del generatore (SRC-019), e con due generatori
+    in parallelo sta dove le due mandate sono gia' diventate una."""
+
     @property
     def flows(self) -> tuple[PortFlow, ...]:
         return {
             Placement.ON_INLET: (PortFlow.IN,),
             Placement.ON_OUTLET: (PortFlow.OUT,),
             Placement.ON_ANY_PORT: (PortFlow.IN, PortFlow.OUT, PortFlow.BIDIRECTIONAL),
+            Placement.ON_THE_COMMON_RETURN: (PortFlow.IN,),
+            Placement.ON_THE_COMMON_SUPPLY: (PortFlow.OUT,),
         }[self]
+
+    @property
+    def on_a_common_run(self) -> bool:
+        """La posizione e' un tratto di rete, non un attacco dell'ancoraggio."""
+        return self in (Placement.ON_THE_COMMON_RETURN, Placement.ON_THE_COMMON_SUPPLY)
 
 
 class RuleCondition(StrictModel):
@@ -104,6 +131,14 @@ class RuleCondition(StrictModel):
     riscaldamento e lascia il serbatoio pieno. E' una condizione fra proprieta'
     dichiarate — quello che il pezzo tiene, quello che la rete porta — e non
     nomina ne' un componente ne' un attacco."""
+
+    plant_regime: PlantRegime | None = None
+    """Il regime della centrale in cui questa regola vale (D-106).
+
+    Vuoto vuol dire in tutti e due. Il regime lo **dichiara il progettista**
+    nel modello, mai la skill: un progetto che non dichiara niente riceve il
+    corredo minimo — le regole del regime piccolo si applicano, quelle del
+    grande no. I due regimi non si mescolano sullo stesso impianto."""
 
     @model_validator(mode="after")
     def the_anchor_is_identified(self) -> "RuleCondition":
@@ -274,6 +309,23 @@ class RuleDefinition(StrictModel):
     source: str = Field(min_length=1)
     """La fonte, e deve dire il vero: «buona pratica tecnica documentata» con un
     riferimento puntuale vale piu' di una citazione normativa gonfiata (D-066)."""
+
+    @model_validator(mode="after")
+    def a_common_run_is_one_per_network(self) -> "RuleDefinition":
+        """Il tratto comune e' uno per rete, e la cardinalita' deve dirlo.
+
+        Una regola che si posasse sul ritorno generale «una volta per
+        componente» direbbe due cose che non stanno insieme: il tratto e' lo
+        stesso per tutti i componenti della rete, e la seconda posa
+        ricadrebbe sul punto della prima.
+        """
+        if self.then.placement.on_a_common_run and self.cardinality is not RuleCardinality.PER_NETWORK:
+            raise ValueError(
+                f"{self.id} si posa su un tratto comune della rete e dichiara "
+                f"cardinalita' {self.cardinality}: il tratto comune e' uno per "
+                f"rete, la cardinalita' puo' essere solo {RuleCardinality.PER_NETWORK}"
+            )
+        return self
 
 
 __all__ = [

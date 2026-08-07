@@ -53,4 +53,26 @@ class IntegrationCategory(StrEnum):
     CONDITIONAL = "conditional"
 
 
+class PlantRegime(StrEnum):
+    """Il regime della centrale: sotto o sopra i 35 kW (D-106).
+
+    E' un **dato d'ingresso dichiarato dal progettista**, mai calcolato: la
+    taglia non la decide la skill (D-104), nemmeno sommando le potenze che il
+    testo nomina. La radice e' normativa: la Raccolta R si applica agli
+    impianti con potenza dei focolari superiore a 35 kW (cap. R.1.A.1,
+    SRC-012); sotto quella soglia vale la buona pratica delle piccole
+    centrali, che e' un'altra (riscontro del 7 agosto su SRC-019 e SRC-008).
+
+    Un progetto che non dichiara niente riceve il **corredo minimo**: le
+    regole del regime piccolo si applicano, quelle del grande no. E' la
+    scelta di D-106, non un valore inventato.
+    """
+
+    UP_TO_35_KW = "up_to_35_kw"
+    """Piccola centrale, fino a 35 kW: il corredo minimo delle regole."""
+
+    OVER_35_KW = "over_35_kw"
+    """Sopra i 35 kW: il corredo della parte prima (Raccolta R)."""
+
+
 JsonPrimitive = str | int | FiniteFloat | bool | None

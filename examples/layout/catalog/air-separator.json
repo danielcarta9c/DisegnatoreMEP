@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "name": "Separatore d'aria",
   "functions": [
-    "air_release"
+    "air_separation"
   ],
   "traits": [
     "maintainable",

@@ -1,25 +1,25 @@
 {
   "id": "gauge-where-the-plant-is-charged",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "name": "Manometro",
   "category": "necessary",
   "cardinality": "per_network",
   "when": {
     "network_domain": "hydronic",
     "network_medium": "heating_water",
-    "anchor_has_trait": "needs_overpressure_protection"
+    "anchor_has_function": "heat_generation"
   },
   "then": {
     "provides_function": "pressure_measurement",
-    "placement": "on_inlet",
+    "placement": "on_the_common_return",
     "inlet_port": "a",
     "outlet_port": "b"
   },
   "satisfied_by": {
     "scope": "on_the_network"
   },
-  "rationale": "La pressione di un circuito chiuso e' la spia della sua salute: se cala, perde; se sale, il vaso non lavora. Va letta sul posto, e ne basta un punto per circuito perche' la pressione e' la stessa dappertutto. Sta sulla tubazione che rientra nella macchina, accanto al punto in cui il circuito si riempie, cosi' chi reintegra legge mentre carica.",
-  "source": "Raccolta R ed. 2009, cap. R.3.B.1, elenco dei dispositivi di un impianto a vaso chiuso (SRC-012)",
+  "rationale": "La pressione di un circuito chiuso e' la spia della sua salute: se cala, perde; se sale, il vaso non lavora. Va letta sul posto, e ne basta un punto per circuito perche' la pressione e' la stessa dappertutto. Sta sul ritorno generale, accanto al punto in cui il circuito si riempie, cosi' chi reintegra legge mentre carica — e sul tratto comune, non sul ramo di una macchina.",
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1 (SRC-012); D-106, l'audit dei livelli: dal ramo della prima macchina al tratto comune",
   "ordering": {
     "after": [
       "isolation",

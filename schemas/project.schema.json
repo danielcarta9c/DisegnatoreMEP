@@ -297,6 +297,15 @@
       "title": "NetworkModel",
       "type": "object"
     },
+    "PlantRegime": {
+      "description": "Il regime della centrale: sotto o sopra i 35 kW (D-106).\n\nE' un **dato d'ingresso dichiarato dal progettista**, mai calcolato: la\ntaglia non la decide la skill (D-104), nemmeno sommando le potenze che il\ntesto nomina. La radice e' normativa: la Raccolta R si applica agli\nimpianti con potenza dei focolari superiore a 35 kW (cap. R.1.A.1,\nSRC-012); sotto quella soglia vale la buona pratica delle piccole\ncentrali, che e' un'altra (riscontro del 7 agosto su SRC-019 e SRC-008).\n\nUn progetto che non dichiara niente riceve il **corredo minimo**: le\nregole del regime piccolo si applicano, quelle del grande no. E' la\nscelta di D-106, non un valore inventato.",
+      "enum": [
+        "up_to_35_kw",
+        "over_35_kw"
+      ],
+      "title": "PlantRegime",
+      "type": "string"
+    },
     "PortRef": {
       "additionalProperties": false,
       "properties": {
@@ -486,6 +495,17 @@
     },
     "metadata": {
       "$ref": "#/$defs/ProjectMetadata"
+    },
+    "plant_regime": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PlantRegime"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "subsystems": {
       "items": {

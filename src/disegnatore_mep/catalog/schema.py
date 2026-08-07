@@ -193,6 +193,22 @@ class ComponentDefinition(StrictModel):
     """Cio' che e' vero del componente. Obbligatorio, e senza valore
     sottinteso: un componente che non dice come si chiude non si carica."""
 
+    carries_on_board: list[str] = Field(default_factory=list)
+    """Le funzioni che la macchina **integra di fabbrica**, quando ne integra.
+
+    E' un fatto della macchina e lo dichiara il suo catalogo, macchina per
+    macchina: le monoblocco comuni portano a bordo il circolatore primario
+    (D-106), e la fonte dice esplicitamente che l'integrazione **varia** —
+    «possono essere integrati nella macchina alcuni elementi del circuito
+    idraulico» (SRC-019, p. 15). Una regola non aggiunge cio' che la macchina
+    dichiara di avere: per la soddisfazione di rete, una funzione portata a
+    bordo da un membro conta come presente.
+
+    Non e' l'elenco dei mestieri (`functions`): un mestiere dice cosa il
+    componente fa nell'impianto, questo dice quali pezzi **non vanno
+    disegnati** perche' stanno gia' dentro il mantello.
+    """
+
     stored_medium: str | None = Field(default=None, pattern=ID_PATTERN)
     """Il fluido che il componente tiene **in serbo**, quando ne tiene uno.
 
@@ -299,6 +315,34 @@ class ComponentDefinition(StrictModel):
             raise ValueError(
                 f"{self.id} dichiara più di una scelta per {label}: {', '.join(declared)}"
             )
+        return self
+
+    @model_validator(mode="after")
+    def on_board_is_not_the_job(self) -> "ComponentDefinition":
+        """Cio' che sta a bordo non e' un mestiere del componente.
+
+        Dichiarare la stessa funzione nei due elenchi vorrebbe dire che il
+        pezzo la fa **e** la porta integrata: una delle due e' falsa, e la
+        contraddizione va fermata al caricamento invece che scoperta quando
+        una regola conta due volte la stessa cosa.
+        """
+        repeated = sorted(
+            {item for item in self.carries_on_board if self.carries_on_board.count(item) > 1}
+        )
+        if repeated:
+            raise ValueError(
+                f"{self.id} dichiara due volte a bordo: {', '.join(repeated)}"
+            )
+        both = sorted(set(self.carries_on_board) & set(self.functions))
+        if both:
+            raise ValueError(
+                f"{self.id} dichiara {', '.join(both)} sia come mestiere sia come "
+                f"integrazione di bordo: un mestiere lo si fa nell'impianto, "
+                f"un'integrazione sta dentro il mantello — una delle due"
+            )
+        empty = [item for item in self.carries_on_board if not item.strip()]
+        if empty:
+            raise ValueError(f"{self.id} dichiara a bordo una funzione senza nome")
         return self
 
     @model_validator(mode="after")
