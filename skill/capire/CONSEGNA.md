@@ -42,15 +42,24 @@ fatta in silenzio — un punto di innesto deciso e non dichiarato, un numero di 
 scelto e non dichiarato — respinge, anche se la scelta era ragionevole.
 
 **Criterio 3 — il confronto con la lettura manuale.** Il grafo prodotto si confronta
-con la lettura manuale congelata dello stesso testo (`examples/prova/*.json`). Le
-differenze **non sono automaticamente errori**: ognuna si classifica, una per una, in
-uno di tre esiti —
+con la lettura manuale congelata dello stesso testo (`examples/prova/*.json`).
+
+**Su quali campi si giudica l'identità** (correzione imposta dal collaudo del 7 agosto):
+sulle **reti** (dominio e fluido), sui **componenti** (voce di catalogo di ciascuno) e
+sulle **tubazioni** (quale attacco con quale attacco, su quale rete) — cioè sulla
+topologia, arco per arco. Le **sigle** (`tag`) e i **sottosistemi** restano fuori dal
+confronto **per costruzione**: le letture manuali li portano, le istruzioni vietano di
+inventarli, e due file corretti divergono lì senza che nessuno abbia sbagliato.
+
+Le differenze **non sono automaticamente errori**: ognuna si classifica, una per una,
+in uno di quattro esiti —
 
 | Esito | Cosa significa | A carico di chi |
 |---|---|---|
 | **Detto dal testo e perso** | il testo lo dice, l'agente non l'ha rappresentato né dichiarato | difetto dell'agente (o delle istruzioni) |
 | **Inventato** | l'agente ha scritto qualcosa che il testo non dice e non ha dichiarato | difetto dell'agente (o delle istruzioni) |
 | **Assunzione tacita della lettura manuale** | la lettura manuale aveva risolto in silenzio ciò che le istruzioni trasformano in domanda o lasciano fuori | non è un difetto: è il pezzo 1 che lavora meglio della lettura a mano |
+| **Ambiguità dichiarata da entrambe, risolta diversamente** | il testo non decide; tutte e due le letture lo dicono apertamente e chiudono in due modi diversi | non è un difetto di nessuno: è una domanda per il progettista, e si registra come tale |
 
 **Criterio 4 — le letture manuali non si toccano.** Sono il metro, congelate come
 sono: se si correggono per far combaciare il confronto, non misurano più niente. Vale
@@ -101,10 +110,20 @@ producile per questi impianti», più committente e codice di commessa per i met
 Niente suggerimenti sul contenuto, niente esempi risolti, niente correzioni in corsa:
 se l'agente si blocca, il blocco è un risultato della prova e si registra.
 
+**Le consegne restano agli atti** (correzione imposta dal collaudo del 7 agosto): i
+grafi prodotti dagli agenti, le loro tabelle di rilettura e i loro rapporti si
+conservano nel repository come allegati del verbale, così che il confronto sia
+riproducibile da chiunque, dopo. La prova del 6 agosto non li ha conservati, e il suo
+verbale è stato respinto proprio per questo: un confronto di cui restano solo le
+conclusioni non è un confronto.
+
 **Dopo la consegna**, il collaudo confronta e classifica (§2). Se una differenza rivela
 un buco delle **istruzioni** — un caso che non sanno dire — la correzione si fa alle
 istruzioni, si registra, e la prova **si ripete da capo con un agente nuovo**: un
-agente che ha già visto il confronto non è più in camera pulita.
+agente che ha già visto il confronto non è più in camera pulita. E un agente nuovo
+serve anche quando gli **esempi** delle istruzioni contengono le soluzioni dei testi di
+prova: finché è così, la prova su quei testi non misura le istruzioni da sole — o gli
+esempi diventano estranei ai testi, o i testi di prova diventano nuovi.
 
 ---
 
