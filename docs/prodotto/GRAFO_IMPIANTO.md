@@ -217,8 +217,8 @@ dell'impianto sta su una linea sola.
 
 Da **PDC-01** a **VOL-01**, circuito primario.
 
-1. **CP.01.N.01 · PDC-01** Pompa di calore aria-acqua
-    - qui arriva **RP.01**, da **VOL-01**
+1. **CP.01.N.01 · PDC-01** Pompa di calore aria-acqua · la linea parte dal suo braccio 1
+    - qui arriva **RP.01**, da **VOL-01**, entrando dal braccio 2
 2. **CP.01.N.02 · DER-01** Derivazione a T
     - **CP.01.N.02.1 · VS-01** Valvola di sicurezza · pende dallo stacco
 3. **CP.01.N.03 · DER-02** Derivazione a T
@@ -229,7 +229,7 @@ Da **PDC-01** a **VOL-01**, circuito primario.
 7. **CP.01.N.07 · VI-04** Valvola di intercettazione
 8. **CP.01.N.08 · VI-05** Valvola di intercettazione
 9. **CP.01.N.09 · VD-01** Valvola deviatrice a tre vie
-    - qui si stacca **CP.01a**, verso **BOL-01**
+    - qui si stacca **CP.01a**, verso **BOL-01**, dal braccio 3
 10. **CP.01.N.10 · VI-06** Valvola di intercettazione
 11. **CP.01.N.11 · VI-07** Valvola di intercettazione
 12. **CP.01.N.12 · FIL-01** Filtro a Y
@@ -237,14 +237,14 @@ Da **PDC-01** a **VOL-01**, circuito primario.
 14. **CP.01.N.14 · VI-09** Valvola di intercettazione
 15. **CP.01.N.15 · VOL-01** Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento
     - **CP.01.N.15.1 · SC-01** Attacco di scarico · pende dallo stacco
-    - qui arriva **RS.01**, da **RAD-01**
+    - qui arriva **RS.01**, da **RAD-01**, entrando dal braccio 4
 
 ### CP.01a — mandata primaria
 
 Da **VD-01** a **BOL-01**, circuito primario.
 Si stacca da **CP.01**.
 
-1. **VD-01** Valvola deviatrice a tre vie · gia' numerato, indirizzo CP.01.N.09
+1. **VD-01** Valvola deviatrice a tre vie · gia' numerato, indirizzo CP.01.N.09 · la linea parte dal suo braccio 3
 2. **CP.01a.N.01 · VI-15** Valvola di intercettazione
 3. **CP.01a.N.02 · DER-05** Derivazione a T
     - **CP.01a.N.02.1 · VI-14** Valvola di intercettazione · pende dallo stacco
@@ -257,34 +257,34 @@ Si stacca da **CP.01**.
     - **CP.01a.N.04.2 · MN-01** Manometro · pende dallo stacco
 6. **CP.01a.N.05 · VI-12** Valvola di intercettazione
 7. **CP.01a.N.06 · BOL-01** Bollitore ACS · tiene in serbo acqua calda sanitaria
-    - qui arriva **AF.01**, da **AF-01**
+    - qui arriva **AF.01**, da **AF-01**, entrando dal braccio 4
 
 ### RP.01 — ritorno primario
 
 Da **VOL-01** a **PDC-01**, circuito primario.
 
-1. **VOL-01** Volano termico a quattro attacchi · gia' numerato, indirizzo CP.01.N.15
+1. **VOL-01** Volano termico a quattro attacchi · gia' numerato, indirizzo CP.01.N.15 · la linea parte dal suo braccio 2
 2. **RP.01.N.01 · VI-01** Valvola di intercettazione
 3. **RP.01.N.02 · RC-01** Raccordo a T
-    - qui arriva **RP.02**, da **BOL-01**
+    - qui arriva **RP.02**, da **BOL-01**, entrando dal braccio 2
 4. **RP.01.N.03 · FIL-02** Filtro a Y
 5. **RP.01.N.04 · VI-10** Valvola di intercettazione
 6. **RP.01.N.05 · DEF-01** Defangatore
 7. **RP.01.N.06 · VI-11** Valvola di intercettazione
-8. **PDC-01** Pompa di calore aria-acqua · **qui il giro si richiude su PDC-01** (CP.01.N.01)
+8. **PDC-01** Pompa di calore aria-acqua · **qui il giro si richiude su PDC-01**, entrando dal suo braccio 2 (CP.01.N.01)
 
 ### RP.02 — ritorno primario
 
 Da **BOL-01** a **RC-01**, circuito primario.
 
-1. **BOL-01** Bollitore ACS · gia' numerato, indirizzo CP.01a.N.06
-2. **RC-01** Raccordo a T · **qui il giro si richiude su RC-01** (RP.01.N.02)
+1. **BOL-01** Bollitore ACS · gia' numerato, indirizzo CP.01a.N.06 · la linea parte dal suo braccio 2
+2. **RC-01** Raccordo a T · **qui il giro si richiude su RC-01**, entrando dal suo braccio 2 (RP.01.N.02)
 
 ### CS.01 — mandata secondaria
 
 Da **VOL-01** a **COL-01**, circuito secondario.
 
-1. **VOL-01** Volano termico a quattro attacchi · gia' numerato, indirizzo CP.01.N.15
+1. **VOL-01** Volano termico a quattro attacchi · gia' numerato, indirizzo CP.01.N.15 · la linea parte dal suo braccio 3
 2. **CS.01.N.01 · VI-16** Valvola di intercettazione
 3. **CS.01.N.02 · FIL-03** Filtro a Y
 4. **CS.01.N.03 · DEF-02** Defangatore
@@ -298,7 +298,7 @@ Da **VOL-01** a **COL-01**, circuito secondario.
 
 Da **COL-01** a **RAD-01**, circuito secondario.
 
-1. **COL-01** Collettore di zona · gia' numerato, indirizzo CS.01.N.08
+1. **COL-01** Collettore di zona · gia' numerato, indirizzo CS.01.N.08 · la linea parte dal suo braccio 2
 2. **CS.02.N.01 · VI-20** Valvola di intercettazione
 3. **CS.02.N.02 · VI-21** Valvola di intercettazione
 4. **CS.02.N.03 · RAD-01** Radiatore
@@ -307,7 +307,7 @@ Da **COL-01** a **RAD-01**, circuito secondario.
 
 Da **COL-01** a **PAV-01**, circuito secondario.
 
-1. **COL-01** Collettore di zona · gia' numerato, indirizzo CS.01.N.08
+1. **COL-01** Collettore di zona · gia' numerato, indirizzo CS.01.N.08 · la linea parte dal suo braccio 3
 2. **CS.03.N.01 · VI-26** Valvola di intercettazione
 3. **CS.03.N.02 · VI-25** Valvola di intercettazione
 4. **CS.03.N.03 · PAV-01** Pannello radiante
@@ -316,26 +316,26 @@ Da **COL-01** a **PAV-01**, circuito secondario.
 
 Da **RAD-01** a **VOL-01**, circuito secondario.
 
-1. **RAD-01** Radiatore · gia' numerato, indirizzo CS.02.N.03
+1. **RAD-01** Radiatore · gia' numerato, indirizzo CS.02.N.03 · la linea parte dal suo braccio 2
 2. **RS.01.N.01 · VI-22** Valvola di intercettazione
 3. **RS.01.N.02 · RC-02** Raccordo a T
-    - qui arriva **RS.02**, da **PAV-01**
+    - qui arriva **RS.02**, da **PAV-01**, entrando dal braccio 2
 4. **RS.01.N.03 · VI-23** Valvola di intercettazione
-5. **VOL-01** Volano termico a quattro attacchi · **qui il giro si richiude su VOL-01** (CP.01.N.15)
+5. **VOL-01** Volano termico a quattro attacchi · **qui il giro si richiude su VOL-01**, entrando dal suo braccio 4 (CP.01.N.15)
 
 ### RS.02 — ritorno secondario
 
 Da **PAV-01** a **RC-02**, circuito secondario.
 
-1. **PAV-01** Pannello radiante · gia' numerato, indirizzo CS.03.N.03
+1. **PAV-01** Pannello radiante · gia' numerato, indirizzo CS.03.N.03 · la linea parte dal suo braccio 2
 2. **RS.02.N.01 · VI-24** Valvola di intercettazione
-3. **RC-02** Raccordo a T · **qui il giro si richiude su RC-02** (RS.01.N.02)
+3. **RC-02** Raccordo a T · **qui il giro si richiude su RC-02**, entrando dal suo braccio 2 (RS.01.N.02)
 
 ### ACS.01 — acqua calda sanitaria
 
 Da **BOL-01** a **ACS-01**, acqua calda sanitaria.
 
-1. **BOL-01** Bollitore ACS · gia' numerato, indirizzo CP.01a.N.06
+1. **BOL-01** Bollitore ACS · gia' numerato, indirizzo CP.01a.N.06 · la linea parte dal suo braccio 3
 2. **ACS.01.N.01 · DER-08** Derivazione a T sanitaria
     - **ACS.01.N.01.1 · SC-02** Attacco di scarico sanitario · pende dallo stacco
 3. **ACS.01.N.02 · VI-29** Valvola di intercettazione
@@ -347,7 +347,7 @@ Da **BOL-01** a **ACS-01**, acqua calda sanitaria.
 
 Da **AF-01** a **BOL-01**, acqua fredda sanitaria.
 
-1. **AF.01.N.01 · AF-01** Alimentazione acqua fredda
+1. **AF.01.N.01 · AF-01** Alimentazione acqua fredda · la linea parte dal suo braccio 1
 2. **AF.01.N.02 · VI-27** Valvola di intercettazione
 3. **AF.01.N.03 · DER-06** Derivazione a T sull'acqua fredda
     - **AF.01.N.03.1 · VIB-02** Valvola di intercettazione bloccabile aperta · pende dallo stacco
@@ -356,7 +356,7 @@ Da **AF-01** a **BOL-01**, acqua fredda sanitaria.
 5. **AF.01.N.05 · VR-01** Valvola di ritegno sanitaria
 6. **AF.01.N.06 · DER-07** Derivazione a T sull'acqua fredda
     - **AF.01.N.06.1 · VS-02** Valvola di sicurezza sanitaria · pende dallo stacco
-7. **BOL-01** Bollitore ACS · **qui ci si innesta su BOL-01**, che si e' gia' letto (CP.01a.N.06)
+7. **BOL-01** Bollitore ACS · **qui ci si innesta su BOL-01**, che si e' gia' letto, entrando dal suo braccio 4 (CP.01a.N.06)
 
 ---
 

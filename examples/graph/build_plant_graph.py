@@ -164,6 +164,41 @@ class Pen:
             and self.foreign(other, component_id)
         ]
 
+    def _arm_number(self, component_id: str, port_id: str) -> int:
+        for arm in self.graph.node(component_id).arms:
+            if arm.port_id == port_id:
+                return arm.number
+        raise ValueError(f"{component_id} non ha l'attacco {port_id}")
+
+    def arm_where_it_arrives(self, line: HydraulicLine) -> int:
+        """Il braccio su cui l'ultima tubazione della linea entra nel nodo finale.
+
+        Un nodo e' il pezzo intero, e su una macchina «qui arriva il ritorno»
+        senza dire l'attacco si legge come un ritorno sull'uscita: il braccio
+        toglie l'ambiguita'.
+        """
+        before, tail = line.node_ids[-2], line.node_ids[-1]
+        for pipe in self.graph.pipes:
+            if (
+                pipe.network_id == line.network_id
+                and pipe.enters.component_id == tail
+                and pipe.leaves.component_id == before
+            ):
+                return self._arm_number(tail, pipe.enters.port_id)
+        raise ValueError(f"nessuna tubazione entra in {tail} da {before}")
+
+    def arm_where_it_leaves(self, line: HydraulicLine) -> int:
+        """Il braccio da cui la prima tubazione della linea esce dal capo."""
+        head, second = line.node_ids[0], line.node_ids[1]
+        for pipe in self.graph.pipes:
+            if (
+                pipe.network_id == line.network_id
+                and pipe.leaves.component_id == head
+                and pipe.enters.component_id == second
+            ):
+                return self._arm_number(head, pipe.leaves.port_id)
+        raise ValueError(f"nessuna tubazione esce da {head} verso {second}")
+
     def departing_branches(self, line: HydraulicLine, component_id: str) -> list[HydraulicLine]:
         """Le diramazioni che si staccano da questo nodo della linea."""
         return [
@@ -355,25 +390,32 @@ def one_line_nodes(pen: Pen, line: HydraulicLine) -> list[str]:
     for index, component_id in enumerate(line.node_ids):
         if not pen.foreign(line, component_id):
             entry = f"{index + 1}. {pen.addressed(component_id)}{pen.held_by(component_id)}"
+            if index == 0:
+                entry += f" · la linea parte dal suo braccio {pen.arm_where_it_leaves(line)}"
         elif index == last:
             node = pen.graph.node(component_id)
             said = pen.address(component_id)
             spot = f" ({said})" if said else ""
+            arm = pen.arm_where_it_arrives(line)
             if pen.closes_its_ring(line):
                 entry = (
                     f"{index + 1}. **{node.sigla}** {node.name} · "
-                    f"**qui il giro si richiude su {node.sigla}**{spot}"
+                    f"**qui il giro si richiude su {node.sigla}**, entrando dal "
+                    f"suo braccio {arm}{spot}"
                 )
             else:
                 entry = (
                     f"{index + 1}. **{node.sigla}** {node.name} · "
-                    f"**qui ci si innesta su {node.sigla}**, che si e' gia' letto{spot}"
+                    f"**qui ci si innesta su {node.sigla}**, che si e' gia' "
+                    f"letto, entrando dal suo braccio {arm}{spot}"
                 )
         else:
             node = pen.graph.node(component_id)
             said = pen.address(component_id)
             spot = f", indirizzo {said}" if said else ""
             entry = f"{index + 1}. **{node.sigla}** {node.name} · gia' numerato{spot}"
+            if index == 0:
+                entry += f" · la linea parte dal suo braccio {pen.arm_where_it_leaves(line)}"
         lines.append(entry)
         if not pen.foreign(line, component_id):
             for hung in pen.lines.hanging.get(component_id, ()):
@@ -381,12 +423,14 @@ def one_line_nodes(pen: Pen, line: HydraulicLine) -> list[str]:
             for branch in pen.departing_branches(line, component_id):
                 lines.append(
                     f"    - qui si stacca **{branch.name}**, verso "
-                    f"**{pen.sigla(branch.node_ids[-1])}**"
+                    f"**{pen.sigla(branch.node_ids[-1])}**, dal braccio "
+                    f"{pen.arm_where_it_leaves(branch)}"
                 )
             for arriving in pen.arriving_lines(line, component_id):
                 lines.append(
                     f"    - qui arriva **{arriving.name}**, da "
-                    f"**{pen.sigla(arriving.node_ids[0])}**"
+                    f"**{pen.sigla(arriving.node_ids[0])}**, entrando dal "
+                    f"braccio {pen.arm_where_it_arrives(arriving)}"
                 )
     return [*lines, ""]
 

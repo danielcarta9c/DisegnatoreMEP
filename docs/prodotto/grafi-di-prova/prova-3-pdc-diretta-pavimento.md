@@ -197,8 +197,8 @@ dell'impianto sta su una linea sola.
 
 Da **BPC-01** a **ACS-01**, acqua calda sanitaria.
 
-1. **ACS.01.N.01 · BPC-01** Boiler in pompa di calore · tiene in serbo acqua calda sanitaria
-    - qui arriva **AF.01**, da **AF-01**
+1. **ACS.01.N.01 · BPC-01** Boiler in pompa di calore · tiene in serbo acqua calda sanitaria · la linea parte dal suo braccio 2
+    - qui arriva **AF.01**, da **AF-01**, entrando dal braccio 1
 2. **ACS.01.N.02 · DER-01** Derivazione a T sanitaria
     - **ACS.01.N.02.1 · SC-01** Attacco di scarico sanitario · pende dallo stacco
 3. **ACS.01.N.03 · VI-01** Valvola di intercettazione
@@ -210,8 +210,8 @@ Da **BPC-01** a **ACS-01**, acqua calda sanitaria.
 
 Da **PDC-01** a **COL-01**, circuito di riscaldamento.
 
-1. **CP.01.N.01 · PDC-01** Pompa di calore aria-acqua
-    - qui arriva **RP.02**, da **VOL-01**
+1. **CP.01.N.01 · PDC-01** Pompa di calore aria-acqua · la linea parte dal suo braccio 1
+    - qui arriva **RP.02**, da **VOL-01**, entrando dal braccio 2
 2. **CP.01.N.02 · DER-02** Derivazione a T
     - **CP.01.N.02.1 · VS-01** Valvola di sicurezza · pende dallo stacco
 3. **CP.01.N.03 · DER-03** Derivazione a T
@@ -227,7 +227,7 @@ Da **PDC-01** a **COL-01**, circuito di riscaldamento.
 
 Da **COL-01** a **PAV-01**, circuito di riscaldamento.
 
-1. **COL-01** Collettore di zona · gia' numerato, indirizzo CP.01.N.09
+1. **COL-01** Collettore di zona · gia' numerato, indirizzo CP.01.N.09 · la linea parte dal suo braccio 2
 2. **CP.02.N.01 · VI-07** Valvola di intercettazione
 3. **CP.02.N.02 · VI-08** Valvola di intercettazione
 4. **CP.02.N.03 · PAV-01** Pannello radiante
@@ -236,7 +236,7 @@ Da **COL-01** a **PAV-01**, circuito di riscaldamento.
 
 Da **COL-01** a **PAV-02**, circuito di riscaldamento.
 
-1. **COL-01** Collettore di zona · gia' numerato, indirizzo CP.01.N.09
+1. **COL-01** Collettore di zona · gia' numerato, indirizzo CP.01.N.09 · la linea parte dal suo braccio 3
 2. **CP.03.N.01 · VI-20** Valvola di intercettazione
 3. **CP.03.N.02 · VI-19** Valvola di intercettazione
 4. **CP.03.N.03 · PAV-02** Pannello radiante
@@ -245,10 +245,10 @@ Da **COL-01** a **PAV-02**, circuito di riscaldamento.
 
 Da **PAV-01** a **VOL-01**, circuito di riscaldamento.
 
-1. **PAV-01** Pannello radiante · gia' numerato, indirizzo CP.02.N.03
+1. **PAV-01** Pannello radiante · gia' numerato, indirizzo CP.02.N.03 · la linea parte dal suo braccio 2
 2. **RP.01.N.01 · VI-09** Valvola di intercettazione
 3. **RP.01.N.02 · RC-01** Raccordo a T
-    - qui arriva **RP.03**, da **PAV-02**
+    - qui arriva **RP.03**, da **PAV-02**, entrando dal braccio 2
 4. **RP.01.N.03 · VI-10** Valvola di intercettazione
 5. **RP.01.N.04 · VOL-01** Volano termico a due attacchi · tiene in serbo acqua di riscaldamento
     - **RP.01.N.04.1 · SC-02** Attacco di scarico · pende dallo stacco
@@ -257,7 +257,7 @@ Da **PAV-01** a **VOL-01**, circuito di riscaldamento.
 
 Da **VOL-01** a **PDC-01**, circuito di riscaldamento.
 
-1. **VOL-01** Volano termico a due attacchi · gia' numerato, indirizzo RP.01.N.04
+1. **VOL-01** Volano termico a due attacchi · gia' numerato, indirizzo RP.01.N.04 · la linea parte dal suo braccio 2
 2. **RP.02.N.01 · VI-11** Valvola di intercettazione
 3. **RP.02.N.02 · DER-04** Derivazione a T
     - **RP.02.N.02.1 · VI-17** Valvola di intercettazione · pende dallo stacco
@@ -274,21 +274,21 @@ Da **VOL-01** a **PDC-01**, circuito di riscaldamento.
     - **RP.02.N.09.1 · VI-16** Valvola di intercettazione · pende dallo stacco
     - **RP.02.N.09.2 · MN-01** Manometro · pende dallo stacco
 11. **RP.02.N.10 · VI-15** Valvola di intercettazione
-12. **PDC-01** Pompa di calore aria-acqua · **qui il giro si richiude su PDC-01** (CP.01.N.01)
+12. **PDC-01** Pompa di calore aria-acqua · **qui il giro si richiude su PDC-01**, entrando dal suo braccio 2 (CP.01.N.01)
 
 ### RP.03 — ritorno primario
 
 Da **PAV-02** a **RC-01**, circuito di riscaldamento.
 
-1. **PAV-02** Pannello radiante · gia' numerato, indirizzo CP.03.N.03
+1. **PAV-02** Pannello radiante · gia' numerato, indirizzo CP.03.N.03 · la linea parte dal suo braccio 2
 2. **RP.03.N.01 · VI-18** Valvola di intercettazione
-3. **RC-01** Raccordo a T · **qui il giro si richiude su RC-01** (RP.01.N.02)
+3. **RC-01** Raccordo a T · **qui il giro si richiude su RC-01**, entrando dal suo braccio 2 (RP.01.N.02)
 
 ### AF.01 — acqua fredda sanitaria
 
 Da **AF-01** a **BPC-01**, acqua fredda sanitaria.
 
-1. **AF.01.N.01 · AF-01** Alimentazione acqua fredda
+1. **AF.01.N.01 · AF-01** Alimentazione acqua fredda · la linea parte dal suo braccio 1
 2. **AF.01.N.02 · VI-21** Valvola di intercettazione
 3. **AF.01.N.03 · DER-07** Derivazione a T sull'acqua fredda
     - **AF.01.N.03.1 · VIB-02** Valvola di intercettazione bloccabile aperta · pende dallo stacco
@@ -297,7 +297,7 @@ Da **AF-01** a **BPC-01**, acqua fredda sanitaria.
 5. **AF.01.N.05 · VR-01** Valvola di ritegno sanitaria
 6. **AF.01.N.06 · DER-08** Derivazione a T sull'acqua fredda
     - **AF.01.N.06.1 · VS-02** Valvola di sicurezza sanitaria · pende dallo stacco
-7. **BPC-01** Boiler in pompa di calore · **qui ci si innesta su BPC-01**, che si e' gia' letto (ACS.01.N.01)
+7. **BPC-01** Boiler in pompa di calore · **qui ci si innesta su BPC-01**, che si e' gia' letto, entrando dal suo braccio 1 (ACS.01.N.01)
 
 ---
 
