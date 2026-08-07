@@ -248,8 +248,7 @@ def test_le_potenze_scritte_nel_modello_non_spostano_il_regime() -> None:
     Prova dai dati: si scrivono 500 kW su OGNI pezzo dell'impianto 1 e il
     corredo resta quello minimo — se da qualche parte una somma decidesse il
     regime, qui scatterebbe il corredo grande."""
-    base = load(PROVE[0])
-    assert base.plant_regime is None
+    base = load(PROVE[0]).model_copy(update={"plant_regime": None})
     heavy = base.model_copy(
         update={
             "components": [
@@ -262,19 +261,29 @@ def test_le_potenze_scritte_nel_modello_non_spostano_il_regime() -> None:
     fired = {p.rule_id for p in applied}
     assert not fired & LARGE_ONLY
     assert fired & SMALL_ONLY
-    _, base_applied, _ = saturo(PROVE[0])
+    _, base_applied, _ = saturate(base, CAT, REG)
     assert fired == {p.rule_id for p in base_applied}
 
 
 def test_senza_dichiarazione_vale_il_corredo_minimo_su_tutti_e_cinque() -> None:
     """Il default di D-106 e' il corredo minimo, e non e' un terzo regime: un
-    impianto senza dichiarazione esce IDENTICO a uno dichiarato piccolo."""
+    impianto **senza** dichiarazione esce IDENTICO a uno dichiarato piccolo.
+
+    Dal 7 agosto i cinque impianti il regime lo dichiarano — si legge dalle
+    potenze che il testo da' — quindi il caso «non dichiarato» si costruisce
+    qui, togliendo la dichiarazione: e' la proprieta' a contare, non quale
+    file oggi la porti."""
     for name in PROVE:
-        undeclared, applied, gaps = saturo(name)
-        assert not {p.rule_id for p in applied} & LARGE_ONLY, name
-        declared, applied_small, gaps_small = saturo(name, PlantRegime.UP_TO_35_KW)
-        assert shape(undeclared) == shape(declared), name
-        assert {g.key for g in gaps} == {g.key for g in gaps_small}, name
+        stripped = load(name).model_copy(update={"plant_regime": None})
+        undeclared = saturate(stripped, CAT, REG)
+        declared = saturate(
+            stripped.model_copy(update={"plant_regime": PlantRegime.UP_TO_35_KW}),
+            CAT,
+            REG,
+        )
+        assert not {p.rule_id for p in undeclared[1]} & LARGE_ONLY, name
+        assert shape(undeclared[0]) == shape(declared[0]), name
+        assert {g.key for g in undeclared[2]} == {g.key for g in declared[2]}, name
 
 
 def test_i_due_regimi_non_parlano_mai_insieme() -> None:
@@ -627,8 +636,12 @@ def test_sfogo_e_sicurezza_stanno_sul_serbatoio_e_stop() -> None:
     assert "safety" in hanging_functions(done, first), (
         f"fra la sicurezza e il serbatoio c'e' {first}"
     )
+    # Su tutti e cinque, **nel regime piccolo**: separatore e termometro non
+    # compaiono. L'impianto 5 il regime grande lo dichiara — tre macchine da
+    # 35 kW — e li' quei due pezzi ci vanno, quindi lo si guarda nel regime
+    # di cui parla questa regola, non in quello che il file dichiara.
     for name in PROVE:
-        completed, _, _ = saturo(name)
+        completed, _, _ = saturo(name, PlantRegime.UP_TO_35_KW)
         for component in completed.components:
             assert "air_separation" not in functions_of(completed, component.id), name
             assert "temperature_measurement" not in functions_of(completed, component.id), name
@@ -778,6 +791,14 @@ def test_il_confronto_per_il_pm_dice_il_vero_sui_documenti() -> None:
     for name in PROVE:
         _, _, found = saturo(name)
         assert not found, (name, [(g.rule_id, g.reason.value) for g in found])
-    assert "Nessuno dei cinque testi dichiara il regime" in confronto
-    for name in PROVE:
-        assert load(name).plant_regime is None, name
+    # Il regime che il confronto dichiara per ciascun impianto dev'essere
+    # quello scritto nel modello: la tabella del documento e i cinque file
+    # non possono divergere.
+    rows = re.findall(r"^\| ([1-5]) \|[^|]+\| ([^|]+)\|", confronto, flags=re.M)
+    assert len(rows) == 5, rows
+    for row, name in zip(rows, PROVE, strict=True):
+        index, spoken = row[0], row[1]
+        declared = load(name).plant_regime
+        assert declared is not None, name
+        wants_large = "sopra" in spoken.lower()
+        assert (declared is PlantRegime.OVER_35_KW) is wants_large, (index, spoken)

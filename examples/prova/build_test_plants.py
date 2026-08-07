@@ -54,7 +54,17 @@ def plant(
     pipes: list[dict[str, Any]],
     subsystems: list[dict[str, Any]],
     assumptions: list[str],
+    regime: str,
 ) -> dict[str, Any]:
+    """Un impianto letto dal testo, col suo regime.
+
+    **Il regime si legge, non si inventa e non si chiede.** Il testo dichiara
+    la potenza di ogni macchina: sommarla e confrontarla con la soglia dei
+    35 kW non e' dimensionare — il dato e' dell'ingegnere, la soglia e' sua e
+    ha radice normativa (SRC-012, R.1.A.1), e il conto e' aritmetica. Se il
+    testo le potenze non le desse, allora si', il regime resterebbe non
+    dichiarato e sarebbe una domanda.
+    """
     return {
         "schema_version": SCHEMA_VERSION,
         "metadata": {
@@ -65,6 +75,7 @@ def plant(
             "revision": "00",
             "issue_date": "2026-08-06",
         },
+        "plant_regime": regime,
         "networks": networks,
         "components": [
             {"id": cid, "definition_id": did, "tag": tag, "properties": {}}
@@ -146,6 +157,8 @@ UNO = plant(
         "Il carico automatico da acquedotto e lo scarico sono nominati sul volume "
         "tecnico: li aggiungono le regole, non sono scritti qui.",
     ],
+    # Due macchine da 12 kW: 24 kW, sotto la soglia.
+    regime="up_to_35_kw",
 )
 
 
@@ -212,6 +225,8 @@ DUE = plant(
         "La miscelatrice sull'uscita sanitaria e' nominata dal testo e la "
         "aggiungono le regole, che gia' la prevedono.",
     ],
+    # Una macchina da 15 kW: sotto la soglia.
+    regime="up_to_35_kw",
 )
 
 
@@ -277,6 +292,8 @@ TRE = plant(
         "Il circolatore e' integrato nella macchina, come il testo dichiara: "
         "non compare come pezzo a se'.",
     ],
+    # Una macchina da 8 kW: sotto la soglia.
+    regime="up_to_35_kw",
 )
 
 
@@ -367,6 +384,8 @@ QUATTRO = plant(
         "«La caldaia da' priorita' al sanitario» e' logica di regolazione, non "
         "topologia: sul grafo si vede la deviatrice.",
     ],
+    # 10 kW di pompa di calore e 24 kW di caldaia: 34 kW, sotto la soglia.
+    regime="up_to_35_kw",
 )
 
 
@@ -495,6 +514,9 @@ CINQUE = plant(
         "La cascata rientra su tre ritorni distinti con due confluenze: il testo "
         "non descrive come le macchine rientrano.",
     ],
+    # Tre macchine da 35 kW: 105 kW, sopra la soglia — e non e' una centrale
+    # domestica, per cui la prassi delle piccole non le si applica.
+    regime="over_35_kw",
 )
 
 

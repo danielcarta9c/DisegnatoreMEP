@@ -53,22 +53,31 @@ defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul vola
 escono i due separatori, i due termometri e una sicurezza. **Sul circuito sanitario non
 c'è filtro**, come è giusto in un impianto domestico.
 
-**5 — Cascata di tre pompe di calore: da 105 a 87 pezzi.**
-Il caso per cui la correzione esiste: prima c'erano cinque defangatori, tre separatori,
-tre termometri e tre sicurezze di riscaldamento (la quarta, quella sanitaria sul
-bollitore, resta); adesso un defangatore solo sul ritorno generale della cascata, un
-filtro a Y per macchina, sfogo e sicurezza sul volano. Lo scarico del bollitore
-sull'ingresso freddo.
+**5 — Cascata di tre pompe di calore: da 105 a 98 pezzi.**
+È l'unico dei cinque **sopra i 35 kW** — tre macchine da 35, e non è una centrale
+domestica — quindi tiene il corredo da grande centrale: sicurezza e termometro per ogni
+macchina, e il separatore d'aria sulla mandata generale. Quello che cambia è il resto: i
+cinque defangatori diventano uno solo sul ritorno generale della cascata, un filtro a Y
+per macchina, e lo scarico del bollitore passa sull'ingresso freddo.
 
 **Nessuno dei cinque ha punti aperti.** Ogni accessorio che le regole hanno chiesto ha
 trovato il pezzo e il posto.
 
 ---
 
-## L'unica cosa che decidi tu
+## Il regime: letto dai testi, non chiesto a te
 
-**Il regime, impianto per impianto.** I testi nominano le potenze ma nessuno dichiara
-il regime, e noi non lo calcoliamo: la taglia non la decide la skill. Senza
-dichiarazione vale il corredo minimo. Per la cascata da tre macchine — che di targa fa
-più di 35 kW — la dichiarazione spetta a te: se la dichiari da grande centrale, tornano
-sicurezze e termometri per macchina e il separatore d'aria sulla mandata generale.
+I tuoi testi dichiarano le potenze, e la soglia è quella che hai dato: 35 kW. Sommare e
+confrontare non è dimensionare — il dato è tuo, la soglia è tua, il conto è aritmetica.
+Quindi il regime lo leggiamo, e lo scriviamo dove tu lo possa vedere e correggere:
+
+| | Cosa dice il testo | Regime |
+|---|---|---|
+| 1 | due pompe di calore da 12 kW | 24 kW — sotto |
+| 2 | una pompa di calore da 15 kW | sotto |
+| 3 | una pompa di calore da 8 kW | sotto |
+| 4 | pompa di calore 10 kW + caldaia 24 kW | 34 kW — sotto |
+| 5 | tre pompe di calore da 35 kW | 105 kW — **sopra** |
+
+Se un testo le potenze non le desse, allora sì che sarebbe una domanda per te: il regime
+resterebbe non dichiarato e l'impianto prenderebbe il corredo minimo.

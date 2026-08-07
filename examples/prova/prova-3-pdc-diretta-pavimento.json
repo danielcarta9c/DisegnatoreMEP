@@ -8,6 +8,7 @@
     "revision": "00",
     "issue_date": "2026-08-06"
   },
+  "plant_regime": "up_to_35_kw",
   "networks": [
     {
       "id": "riscaldamento",

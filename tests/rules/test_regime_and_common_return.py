@@ -69,7 +69,9 @@ def test_without_a_declaration_the_minimal_kit_applies() -> None:
     L'impianto 1 nomina due macchine da 12 kW, ma la somma non la fa la
     skill: senza dichiarazione parlano le regole del regime piccolo e
     tacciono quelle del grande."""
-    model = load_project(PROVA / "prova-1-due-pdc-accumulo-combinato.json")
+    model = with_regime(
+        load_project(PROVA / "prova-1-due-pdc-accumulo-combinato.json"), None
+    )
     assert model.plant_regime is None
     _, applied, _ = saturate(model, catalog(), rules())
     fired = {item.rule_id for item in applied}
