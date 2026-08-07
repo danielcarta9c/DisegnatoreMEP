@@ -58,10 +58,25 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
       non sono state toccate.** Consegne agli atti in `skill/capire/prova-2026-08-07/`,
       verbali in `docs/collaudi/`.
 
-**Il prossimo lavoro:** chiudere i sei difetti aperti che i collaudi hanno inchiodato con
-prove rosse apposta (cinque sul completatore e sugli artefatti, uno minore
-sull'interprete), e la traduzione in regole delle posizioni §14-18. Dettagli in
-`HANDOFF.md` §7.
+**Il prossimo lavoro è cambiato: si va sul disegnatore** (decisione del PM, 7 agosto
+sera). Il contenuto si chiude «alla buona» e si porta a casa la tavola, perché il grafo
+scritto è 300÷500 righe di tabelle e nessuno ci trova un accessorio fuori posto
+leggendolo — mentre sulla tavola si vede in due secondi. Da lì il PM segna gli errori e le
+regole si correggono su casi veri, invece di scriverle al buio: **è la stessa paura di
+D-107, presa dal lato giusto.**
+
+Tre cose, in ordine, e ci si ferma:
+
+1. **Il criterio della camminata** (difetti aperti 1 e 2, che hanno una radice sola). Non
+   per pulizia: oggi lo stesso impianto dà due risposte diverse a seconda di **come si
+   chiamano le macchine**, e un ciclo di verifica ha bisogno che rigenerare due volte dia
+   due volte la stessa tavola. È un prerequisito, non una rifinitura.
+2. **La modalità verifica** (D-110): l'indirizzo del nodo stampato accanto al pezzo.
+3. **La composizione**: far entrare l'impianto su più fogli invece che su uno.
+
+**Gli altri difetti aperti si rimandano**: le due correzioni alle istruzioni costano un
+giro intero di camera pulita ciascuna e non cambiano niente di ciò che si vede sulla
+tavola. Restano scritti qui sotto e si chiudono quando capita.
 
 ## I difetti aperti, inchiodati da prove
 

@@ -262,11 +262,53 @@ difetti aperti**; `ruff` e `mypy --strict` puliti.
 
 ---
 
-## 7. Il primo lavoro della prossima sessione
+## 7. Il primo lavoro della prossima sessione — **si va sul disegno**
 
-**I sei difetti aperti**, che i collaudi hanno inchiodato con prove rosse apposta. Nessuno
-è nascosto: ognuno ha il motivo scritto per esteso nella prova, e si chiude quando quella
-prova torna verde **senza essere ammorbidita**. L'elenco completo è in `PROJECT_STATE.md`.
+> **Cambio di rotta deciso dal PM la sera del 7 agosto, e va letto prima di tutto il
+> resto di questo paragrafo.** Il contenuto si chiude «alla buona» e si porta a casa il
+> disegnatore. Motivo suo: *«ho paura che in questa fase di perfezionismo creiamo anche
+> regole sbagliate»* — ed è fondato, perché è già successo tre volte (D-102, D-104,
+> D-107), sempre scrivendo regole senza poterne vedere l'effetto. Il grafo scritto è
+> 300÷500 righe di tabelle: nessuno ci trova un accessorio fuori posto leggendolo. Sulla
+> tavola si vede in due secondi.
+>
+> **Non rompe D-096.** D-096 dice dove si *attribuisce* un difetto, non su cosa lo si
+> *scopre*. Il PM guarda la tavola, punta un pezzo, ne legge l'indirizzo; il difetto si
+> trova e si corregge **sul grafo**. Le sigle e gli indirizzi sono stati costruiti
+> apposta per questo (D-105).
+
+**Le tre cose da fare, in ordine, e poi ci si ferma.** Niente regole nuove in quella
+sessione: solo far uscire il disegno.
+
+1. **Il criterio della camminata del tratto comune** — i difetti aperti 1 e 2, che hanno
+   una radice sola. **Non è perfezionismo, è un prerequisito:** oggi lo stesso impianto dà
+   due risposte diverse a seconda di come si chiamano le macchine, e un ciclo in cui il PM
+   corregge e la tavola si rigenera ha bisogno che due rigenerazioni diano due volte la
+   stessa tavola. La radice è spiegata sotto.
+2. **La modalità verifica** (D-110): l'indirizzo del nodo stampato accanto al pezzo, con
+   la sua regola lasca — vicino al nodo, sovrapponibile, mai nel calcolo del
+   posizionamento. La sigla è **già** stampata; l'indirizzo no.
+3. **La composizione**: l'impianto completo non entra in larghezza su un foglio. È il
+   motivo scritto delle 22 prove parcheggiate, ed è impaginazione, non contenuto.
+
+Poi si consegnano le cinque tavole al PM e comincia il giro delle sue correzioni.
+
+**Come si trattano le sue correzioni** (è la sua stessa cautela, D-107 dall'altro lato):
+una correzione del PM dice sempre **cosa** è sbagliato, non sempre **perché**. Non diventa
+regola finché non si è trovata la fonte o la buona pratica che la conferma. Se non si
+trova, si torna da lui a dirlo — non si scrive la regola.
+
+### Il resto, che si rimanda
+
+Gli altri difetti aperti restano scritti in `PROJECT_STATE.md` e **non si toccano ora**:
+le due correzioni alle istruzioni dell'interprete costano **un giro intero di camera
+pulita ciascuna** e non cambiano niente di ciò che si vede sulla tavola.
+
+### I difetti aperti, e la radice dei due della camminata
+
+Ognuno è inchiodato da una prova marcata rossa apposta, col motivo scritto per esteso, e
+si chiude quando quella prova torna verde **senza essere ammorbidita**. Nessuno è
+nascosto. **Solo il primo si fa adesso**; gli altri aspettano il disegno.
 
 1. **I due della camminata del tratto comune**, che sono difetti veri del completatore.
    Sull'**ibrido** il tratto scelto non porta l'acqua che la caldaia rimanda dallo
