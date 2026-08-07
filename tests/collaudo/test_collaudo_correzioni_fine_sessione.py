@@ -591,17 +591,19 @@ def test_nessun_documento_dice_piu_che_il_regime_non_si_ricava_dalle_potenze() -
 @pytest.mark.xfail(
     strict=True,
     reason=(
-        "DIFETTO 3 del collaudo. D-108 dice che «la lettura e' scritta nel generatore "
-        "accanto al conto che la giustifica» e le istruzioni dell'interprete ordinano "
-        "di trascrivere la potenza in `properties` — l'esempio §2 lo dice a parole: "
-        "«la potenza detta dal testo compare in due posti». Nei cinque grafi di prova, "
-        "che sono il METRO con cui si giudichera' l'interprete, compare in uno solo: "
-        "`plant_regime` c'e', le potenze no, e i componenti hanno `properties` vuote. "
-        "Il conto che giustifica il regime vive in un commento Python del generatore "
-        "delle fixture. L'ingegnere apre il modello, vede la conclusione e non vede il "
-        "dato: non puo' correggere la lettura, che e' proprio cio' che D-108 promette. "
-        "E un interprete che seguisse le istruzioni produrrebbe un grafo diverso dal "
-        "metro con cui viene misurato."
+        "DIFETTO 3 del collaudo. Le istruzioni dell'interprete ordinano di trascrivere "
+        "la potenza in `properties` (§4.5) e il loro esempio lo dice a parole: «la "
+        "potenza detta dal testo compare in DUE posti: trascritta in `properties`, e "
+        "usata per ricavare `plant_regime`». Nei cinque grafi di prova compare in un "
+        "posto solo: `plant_regime` c'e', le potenze no, e ogni componente ha "
+        "`properties` vuote. Il conto che giustifica il regime vive in un commento "
+        "Python del generatore delle fixture. Non e' un dettaglio: quei cinque grafi "
+        "sono il METRO congelato con cui si giudichera' l'interprete quando esistera' "
+        "(`examples/prova/input/README.md`), e un interprete che seguisse le istruzioni "
+        "produrrebbe un grafo diverso dal metro che lo misura. E' la stessa specie di "
+        "contraddizione dentro il kit che ha fatto fermare la prova in camera pulita "
+        "del 7 agosto. Chi apre il modello vede la conclusione e non vede il dato da "
+        "cui e' stata tratta."
     ),
 )
 @pytest.mark.parametrize("nome", PROVE)
