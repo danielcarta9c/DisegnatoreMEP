@@ -250,6 +250,34 @@ grafo di prima stesura. File di testo, non programma (ADR 0005).
    non dice e' una domanda dichiarata, mai un'invenzione.
 4. **Le letture manuali non si aggiustano** per far combaciare il confronto.
 
+### E — Il regime della centrale: sotto i 35 kW le regole cambiano (D-106)
+
+**Contratto.** Le buone pratiche delle piccole centrali, date dal PM e registrate in
+D-106, diventano contenuto delle regole. Il **regime** — sotto o sopra i 35 kW — e' un
+dato d'ingresso dichiarato dal progettista (il pezzo 1 lo chiede quando non e' detto),
+mai calcolato dalla skill: la taglia non la decide lei (D-104).
+
+**Accettazione (proprieta').**
+
+1. Prima di scrivere qualunque regola, **il riscontro sulle fonti** (D-102, D-103): gli
+   schemi Caleffi per centrali domestiche sotto i 35 kW — il quaderno *Idraulica 61* e'
+   gia' acquisito — confermano o correggono ogni riga di D-106, e l'esito entra in
+   `DOVE_VA_CIASCUN_ACCESSORIO.md` con la citazione. Una riga senza riscontro resta
+   sulla sola autorita' del PM, e lo dice.
+2. Sotto i 35 kW: sfogo aria e sicurezza **sul serbatoio, e stop**; niente separatore
+   d'aria e niente termometro aggiunti (si usa quello integrato); filtro a Y **uno sul
+   ritorno di ogni generatore**; defangatore **uno solo sul ritorno generale del
+   primario**, prima della ripartizione; vaso di espansione **sul ritorno generale del
+   primario**; filtrazione solo sul primario, salvo separazione netta con scambiatore.
+3. Sopra i 35 kW: il contenuto attuale resta (Raccolta R), e i due regimi non si
+   mescolano sullo stesso impianto.
+4. Il catalogo impara a dichiarare **cio' che una macchina porta a bordo** (circolatore
+   primario delle monoblocco); una regola non aggiunge cio' che la macchina dichiara di
+   avere. Stessa dichiarazione che serve alla correzione C2.
+5. Regole come dato, mai nomi di componenti; il regime si legge come ogni altra
+   proprieta' dichiarata. Cinque grafi rigenerati; suite, ruff e mypy puliti; collaudo a
+   contesto separato.
+
 ### C — Il collaudo indipendente dei tre pacchetti «da collaudare»
 
 Un attacco una tubazione (D-100), gli attacchi di servizio (D-101), l'assemblatore (G4):

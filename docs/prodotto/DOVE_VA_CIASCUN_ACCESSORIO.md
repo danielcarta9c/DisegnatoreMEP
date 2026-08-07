@@ -282,6 +282,28 @@ scaldacqua serie 5261 (SRC-026).
 
 ---
 
+# Parte terza — il regime della centrale (D-106, da riscontrare sugli schemi)
+
+**Sotto i 35 kW la centrale e' un'altra cosa.** La prassi, data dal PM il 6 agosto 2026
+come decisione esplicita (fonte ammessa) e **da riscontrare** sugli schemi Caleffi per
+centrali domestiche prima di scrivere le regole (D-102: la fonte esiste, si cerca):
+
+- **filtro a Y**: uno sul ritorno di **ogni** pompa di calore;
+- **defangatore magnetico**: **uno solo**, sul ritorno generale del primario, prima di
+  derivare sulle macchine;
+- filtrazione **solo sul primario**; sul secondario soltanto con separazione idraulica
+  netta (per esempio uno scambiatore a piastre), perche' li' l'acqua e' un'altra;
+- **niente termometro aggiunto**: si usa quello integrato della macchina;
+- le monoblocco comuni hanno **il circolatore primario integrato**, ma **non** il vaso
+  di espansione: il vaso va **sul ritorno generale del primario**;
+- **sicurezza e sfogo aria stanno sul serbatoio, e stop** — non una sicurezza per
+  generatore, e niente separatore d'aria.
+
+**Sopra i 35 kW e' un'altra storia**: vale la parte prima (Raccolta R). Il regime lo
+dichiara il progettista; la skill non lo calcola (D-104).
+
+---
+
 ## La regola generale che ne esce
 
 **Un accessorio che pende da uno stacco va sull'attacco dedicato quando la macchina ce
