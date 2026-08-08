@@ -290,9 +290,12 @@ sessione: solo far uscire il disegno.
    (difetto 2) si manifesta su un caso **costruito apposta con un anello sul ritorno**.
    Sui cinque impianti reali il collaudo ha provato otto rimescolamenti ciascuno e il
    punto non si è mai spostato: **le cinque tavole di oggi sono già riproducibili.**
-2. **La modalità verifica** (D-110): l'indirizzo del nodo stampato accanto al pezzo, con
-   la sua regola lasca — vicino al nodo, sovrapponibile, mai nel calcolo del
-   posizionamento. La sigla è **già** stampata; l'indirizzo no.
+2. **La modalità verifica** (D-110, **come emendata da D-111 — leggerle insieme**):
+   l'indirizzo del nodo stampato accanto al pezzo. La sigla (`PDC-01`) è **già** stampata
+   oggi; l'indirizzo (`CP.01.N.02`) no. L'etichetta sta vicino al nodo **quando c'è
+   posto**, altrimenti prende una **linea di richiamo**; un tubo che le passa sopra non è
+   un problema e non va evitato. Resta fermo che si posa **dopo** e **non sposta nessun
+   pezzo**: le due modalità devono dare la stessa identica tavola, una con un velo in più.
 3. **La composizione (D-111).** ⛔ **La motivazione scritta nelle 22 prove parcheggiate
    dice una cosa fuorviante** — «l'impianto chiede più larghezza di quanta ne abbia un
    foglio ordinario» — e ha già ingannato una sessione. Il foglio non è piccolo: **il
@@ -310,11 +313,33 @@ sessione: solo far uscire il disegno.
    Le etichette **alla fine**, con richiamo dove non c'è posto, e i richiami disposti **a
    raggera senza incrociarsi**.
 
-   Delle cinque cose, **due ci sono già**: le regole di costo del PM, e il richiamo
-   obliquo che sa non passare sopra i simboli. **Tre mancano**: il riempimento bilanciato
-   come obiettivo, la prenotazione dello spazio in avanti, e l'anti-incrocio fra richiami.
+   Delle cinque cose, **due ci sono già**: le regole di costo del PM, in
+   `layout/place.py` e `layout/improve.py`; e il **richiamo obliquo**, che esiste
+   (`layout/geometry.py` porta `leader_from`) e sa già non passare sopra i simboli
+   (`layout/labels.py`). **Tre mancano, ed è il lavoro:**
 
-Poi si consegnano le cinque tavole al PM e comincia il giro delle sue correzioni.
+   - **il riempimento bilanciato e simmetrico**, che oggi non è obiettivo di nessuno: il
+     collocatore non sa nemmeno che il foglio ha un bordo mentre dispone — lo scopre alla
+     fine, con un errore;
+   - **la prenotazione dello spazio in avanti**: oggi ogni fascia ha un cursore solo che
+     avanza a destra e non sa quanto servirà dopo;
+   - **l'anti-incrocio fra richiami** (la raggera).
+
+   Il nodo tecnico è il primo: serve che il collocatore possa mettere le cose anche **una
+   sotto l'altra** e non solo una a fianco all'altra, e che sappia scegliere fra le
+   disposizioni possibili. Gli altri due vengono dietro.
+
+   > ⚠ **Chiedere al PM presto, non dopo tre giri di ottimizzazione.** «Poche curve»,
+   > «linee corte», «niente incroci» sono numeri. **«Bilanciato e simmetrico» è un
+   > giudizio d'occhio e non si sa come si misura.** Partire da qualcosa di ragionevole —
+   > ingombro distribuito sui quadranti, baricentro vicino al centro del foglio — ma
+   > appena ci sono due tavole plausibili, mostrargliele e farsi dire quale è bilanciata e
+   > quale no. È il punto dove si può bruciare più tempo ottimizzando la metrica sbagliata.
+
+Poi si consegnano le cinque tavole **in modalità verifica** e ci si ferma: comincia il
+giro delle correzioni del PM. **Se la composizione si prende tutta la sessione va bene:**
+i punti 1 e 2 sono utili da soli, perché danno tavole corrette e con gli indirizzi sopra
+almeno per gli impianti che già entrano nel foglio.
 
 **Come si trattano le sue correzioni** (è la sua stessa cautela, D-107 dall'altro lato):
 una correzione del PM dice sempre **cosa** è sbagliato, non sempre **perché**. Non diventa
@@ -356,9 +381,6 @@ disconnettore, contabilizzatore), dentro il confine di D-104.
 
 **Se si toccano le istruzioni dell'interprete, la prova in camera pulita va rifatta da
 capo con agenti nuovi.** Vale sempre, ed è già costato due giri in una sessione sola.
-
-**Non toccare il disegno.** La composizione, l'instradamento e il foglio dei simboli sono
-pezzi successivi, e le loro prove sono parcheggiate con il motivo scritto.
 
 ---
 
