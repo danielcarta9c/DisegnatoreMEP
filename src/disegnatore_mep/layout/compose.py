@@ -18,7 +18,6 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 
-from .composition import levels_of
 from .errors import LayoutError
 from .geometry import (
     CrossReference,
@@ -117,11 +116,8 @@ def centre_vertically(
         for item in sheet.labels
         if item.role != "address"
     )
-    # La quota di terra non entra piu' nell'ingombro da centrare (D-116): non
-    # si disegna, quindi non e' inchiostro, e contarla spingerebbe in alto un
-    # blocco per fare posto a una riga che non c'e'. Resta nel modello perche'
-    # il collocatore ci appoggia ancora i pezzi alti — e quello e' il pezzo
-    # che la disposizione «logica» dovra' rifare.
+    # La quota di terra non c'e' piu' (D-116): non si disegna, non e'
+    # inchiostro, e non entra nell'ingombro da centrare.
     if not tops:
         return sheet
 
@@ -189,9 +185,6 @@ def compose_sheet(
     addresses: dict[str, str] | None = None,
 ) -> SheetGeometry:
     grid = GridSpace(origin=frame.drawing_rect_mm, standard=frame.standard)
-    levels = levels_of(
-        frame.drawing_rect_mm.y_mm, frame.drawing_rect_mm.height_mm, grid.step_mm
-    )
     first = place_sheet(project, partition, catalog, frame, inline_ids)
     # La disposizione serve le linee, non il contrario (D-078): dopo la prima
     # ipotesi di posa, i componenti si spostano dove l'instradamento di prova
@@ -230,6 +223,13 @@ def compose_sheet(
             # richiami a fondo tavola e' ritirata. Le tratte servono a far
             # scansare un testo che finirebbe su una linea.
             routes=broken,
+            # Nessuna scritta esce dall'area di disegno.
+            bounds=(
+                frame.drawing_rect_mm.x_mm,
+                frame.drawing_rect_mm.y_mm,
+                frame.drawing_rect_mm.right_mm,
+                frame.drawing_rect_mm.bottom_mm,
+            ),
             # Il velo della modalita' verifica (D-110): si posa dopo tutto il
             # resto e non muove niente, quindi la tavola sotto e' identica a
             # quella di consegna.
@@ -237,7 +237,6 @@ def compose_sheet(
         ),
         legend=entries,
         network_keys=keys,
-        ground_line_y_mm=levels.ground_mm,
         cross_references=_cross_references(
             partition,
             {item.component_id: item for item in placed},

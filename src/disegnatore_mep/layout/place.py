@@ -39,7 +39,7 @@ from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.model.project import PortRef, ProjectModel
 from disegnatore_mep.model.types import BandRole
 
-from .composition import Standing, levels_of, standing_of
+from .composition import Standing, standing_of
 from .errors import LayoutError
 from .flow import orient_trunks
 from .geometry import PlacedSymbol, Point
@@ -60,15 +60,21 @@ destra e guadagnavi lo spazio che serviva» — resa sistematica. Il tetto evita
 che un impianto di tre pezzi si stiri per mezza tavola.
 """
 
-ROW_GAP_MM = 10.0
+ROW_GAP_MM = 15.0
 """Distanza minima fra due componenti affiancati o sovrapposti.
 
-Quattro passi di griglia, cioe' **tre corsie libere** fra un pezzo e il
+Sei passi di griglia, cioe' **cinque corsie libere** fra un pezzo e il
 successivo. Con cinque millimetri ne restava una sola, e bastavano due tratte
 che dovessero passare nello stesso varco — la mandata che scende in un
 accumulo e il ritorno che ne risale — perche' una delle due dovesse
 sovrapporsi all'altra. Sovrapporsi per il lungo e' vietato, quindi il varco
 deve essere largo abbastanza da non costringerci.
+
+**Da dieci a quindici l'8 agosto, e misurato.** Da quando la fascia si piega in
+colonne, un pezzo ha vicini **anche sopra e sotto**, e nel varco fra due pezzi
+impilati devono passare le tratte di entrambi. Con dieci millimetri nessuno dei
+cinque impianti si instradava su una A3; con quindici l'ibrido esce. Non e' un
+numero tondo: e' il primo che fa uscire una tavola, e si rivedra' sulle altre.
 """
 
 ROUTING_MARGIN_MM = 7.5
@@ -469,10 +475,6 @@ def place_sheet(
         for component_id, feed in process.feed.items()
     }
     stackable = {item: standings[item] is Standing.RAIL for item in placeable}
-    # Le quote si misurano sull'**area di disegno**, non sul rettangolo ridotto
-    # in cui si impaccano le fasce: il corridoio di instradamento restringe
-    # dove si posa, non dove passa la linea di terra.
-    levels = levels_of(drawing.y_mm, drawing.height_mm, step)
     linked = frozenset(
         (trunk.start.component_id, trunk.end.component_id)
         if trunk.start.component_id <= trunk.end.component_id
@@ -481,8 +483,45 @@ def place_sheet(
     )
     heights = {item: manifests[item].height_mm for item in placeable}
 
+    def fold(slot_list: list[list[str]], headroom_mm: float) -> list[list[str]]:
+        """Piega una fascia in **colonne**: uno sotto l'altro finche' l'altezza
+        basta, poi si va a destra.
+
+        E' la regola del PM, detta con le sue parole: «le macchine si dispongono
+        in maniera logica, non con un principio geometrico reale — esempio tutti
+        i generatori a sinistra **in colonna**».
+
+        Prima ogni fascia era **una riga sola**: un cursore che avanzava a
+        destra e non sapeva che il foglio avesse un'altezza. Su un impianto
+        ibrido faceva 538 mm di larghezza contro i 335 di una A3 — mentre i
+        simboli coprivano il **sei per cento** del foglio — e costringeva le
+        tubazioni a lunghezze senza senso, perche' due pezzi collegati
+        finivano a quattrocento millimetri l'uno dall'altro. Lo stesso impianto
+        in colonne sta in un terzo della larghezza.
+
+        L'ordine del processo non si perde: le colonne si riempiono **in
+        ordine**, quindi da sinistra a destra si continua a leggere il processo,
+        e dentro una colonna si scende.
+        """
+        folded: list[list[str]] = []
+        current: list[str] = []
+        used = 0.0
+        for slot in slot_list:
+            tall = sum(heights[item] for item in slot) + ROW_GAP_MM * (len(slot) - 1)
+            needed = tall if not current else used + ROW_GAP_MM + tall
+            if current and needed > headroom_mm + 1e-9:
+                folded.append(current)
+                current, used = list(slot), tall
+                continue
+            current.extend(slot)
+            used = needed
+        if current:
+            folded.append(current)
+        return folded
+
     def pack(
         stacked_ground: frozenset[str],
+        headroom_mm: float | None = None,
     ) -> tuple[
         dict[BandRole, list[list[str]]],
         dict[BandRole, list[float]],
@@ -497,6 +536,8 @@ def place_sheet(
         pezzo piu' largo. Gli stacchi si calcolano **una volta sola** e si
         riusano nel posizionamento: calcolarli due volte con formule diverse
         faceva sbordare una fascia dentro la successiva.
+
+        Con `headroom_mm` le colonne si **piegano** su quell'altezza.
         """
         slots = {
             role: _slots(
@@ -506,10 +547,14 @@ def place_sheet(
                 ground=stacked_ground,
                 heights=heights,
                 linked=linked,
-                headroom_mm=levels.ground_mm - area.y_mm,
+                headroom_mm=area.height_mm,
             )
             for role in used_roles
         }
+        if headroom_mm is not None:
+            slots = {
+                role: fold(slots[role], headroom_mm) for role in used_roles
+            }
         gaps = {
             role: [
                 max(
@@ -561,6 +606,16 @@ def place_sheet(
         return slots, gaps, widths, gutters, sum(widths.values()) + sum(gutters)
 
     slots, gaps, widths, gutters, total = pack(frozenset())
+    if total > area.width_mm + 1e-9:
+        # Non ci sta in fila: si piega in colonne, che e' come si dispone
+        # davvero (D-116). Si prova con altezze crescenti e ci si ferma alla
+        # prima che entra, cosi' si usa il minimo di altezza necessario invece
+        # di schiacciare tutto in basso.
+        for quota in (0.34, 0.5, 0.67, 1.0):
+            piegate = pack(frozenset(), area.height_mm * quota)
+            if piegate[4] <= area.width_mm + 1e-9:
+                slots, gaps, widths, gutters, total = piegate
+                break
     if total > area.width_mm + 1e-9:
         # Prima di dividere si impila (D-072): il criterio di divisione non e'
         # «il contenuto non ci sta come l'ho disposto», ma «anche disponendolo
@@ -645,7 +700,7 @@ def place_sheet(
                 top = wanted + offset * step
                 if top < area.y_mm - 1e-9 or top < floor - 1e-9:
                     continue
-                if top + manifest.height_mm > levels.ground_mm + 1e-9:
+                if top + manifest.height_mm > area.bottom_mm + 1e-9:
                     continue
                 if not free_of_symbols(left, top, manifest.width_mm, manifest.height_mm):
                     continue
@@ -661,37 +716,25 @@ def place_sheet(
         for position, slot in enumerate(slots[role]):
             left = on_grid(cursor, area.x_mm)
             floor = area.y_mm
-            ground_top: float | None = None
             for component_id in slot:
                 manifest = manifests[component_id]
-                if standings[component_id] is Standing.GROUND:
-                    if ground_top is None:
-                        top = on_grid(levels.ground_mm - manifest.height_mm, area.y_mm)
-                        ground_top = top
-                    else:
-                        # La coppia impilata del tentativo di recupero (D-073):
-                        # il secondo lascia la terra e sale sopra il primo,
-                        # allineato a sinistra, con lo stacco di fascia.
-                        top = on_grid(
-                            ground_top - ROW_GAP_MM - manifest.height_mm, area.y_mm
+                # Nessun pezzo e' piu' inchiodato a una quota del foglio: la
+                # linea di terra e' ritirata (D-116) e con lei il motivo per cui
+                # un accumulo doveva stare **li'** e non altrove. Ogni pezzo
+                # cerca la quota che gli toglie due pieghe — quella del proprio
+                # alimentatore — e se non la trova scende sotto il precedente
+                # della colonna.
+                found = aligned_top(component_id, left, floor)
+                if found is None:
+                    found = on_grid(max(floor, area.y_mm), area.y_mm)
+                    while (
+                        not free_of_symbols(
+                            left, found, manifest.width_mm, manifest.height_mm
                         )
-                else:
-                    found = aligned_top(component_id, left, floor)
-                    if found is None:
-                        fallback = (
-                            levels.auxiliary_mm
-                            if standings[component_id] is Standing.AUXILIARY
-                            else levels.lower_supply_mm - manifest.height_mm / 2
-                        )
-                        found = on_grid(max(fallback, floor), area.y_mm)
-                        while (
-                            not free_of_symbols(
-                                left, found, manifest.width_mm, manifest.height_mm
-                            )
-                            and found + manifest.height_mm < levels.ground_mm
-                        ):
-                            found += ROW_GAP_MM
-                    top = found
+                        and found + manifest.height_mm < area.bottom_mm
+                    ):
+                        found += ROW_GAP_MM
+                top = found
                 if (
                     top < area.y_mm - 1e-9
                     or top + manifest.height_mm > area.bottom_mm + 1e-9

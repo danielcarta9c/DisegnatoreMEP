@@ -215,6 +215,7 @@ def place_labels(
     callout_y_mm: float | None = None,
     routes: list[RoutedTrunk] | None = None,
     addresses: dict[str, str] | None = None,
+    bounds: Box | None = None,
 ) -> list[PlacedLabel]:
     """Sigle e valori, scritti piccoli accanto al proprio componente (D-075).
 
@@ -260,10 +261,20 @@ def place_labels(
     labels: list[PlacedLabel] = []
 
     def free(box: Box) -> bool:
-        # Qui stava il divieto di scrivere sotto la linea di terra, **ritirato**
+        # Qui stava il divieto di scrivere **sotto la linea di terra**, ritirato
         # con D-116: quella linea non e' una regola del PM e non delimita
-        # niente. Un testo sta bene dove sta vicino al proprio pezzo, e sotto
-        # un pezzo posato in basso c'e' foglio come dappertutto.
+        # niente. Al suo posto il limite vero, che e' il bordo dell'area di
+        # disegno: una scritta fuori dal foglio non e' una scritta.
+        #
+        # Toglierlo senza rimetterlo e' costato subito: una sigla e' finita
+        # venti millimetri sotto l'area, e il blocco da centrare con lei.
+        if bounds is not None and not (
+            bounds[0] - TOLERANCE_MM <= box[0]
+            and box[2] <= bounds[2] + TOLERANCE_MM
+            and bounds[1] - TOLERANCE_MM <= box[1]
+            and box[3] <= bounds[3] + TOLERANCE_MM
+        ):
+            return False
         return not any(_overlap(box, other) for other in (*taken, *lines))
 
     def free_slot(x_mm: float, y_mm: float, text: str, upward: bool) -> Point:

@@ -42,7 +42,7 @@ from disegnatore_mep.layout.compose import (
     compose_on_ordinary_frame,
     inline_component_ids,
 )
-from disegnatore_mep.layout.composition import Standing, levels_of, standing_of
+from disegnatore_mep.layout.composition import Standing, standing_of
 from disegnatore_mep.layout.geometry import (
     PlacedSymbol,
     Point,
@@ -212,11 +212,9 @@ def test_the_hard_constraints_hold_after_improvement() -> None:
         is_left = centre_x(after, start_id) < centre_x(after, end_id)
         assert was_left == is_left, trunk.connection_ids
 
-    # Chi sta a terra per costruzione ci sta ancora, esattamente sulla linea.
-    # (Non chi la sfiorava per caso: un terminale su tubazione puo' alzarsi.)
-    drawing = NOVE_C_A3.drawing_rect_mm
-    grid = GridSpace(origin=drawing, standard=NOVE_C_A3.standard)
-    ground = levels_of(drawing.y_mm, drawing.height_mm, grid.step_mm).ground_mm
+    # Le macchine alte restano dentro il foglio.
+    area = NOVE_C_A3.drawing_rect_mm
+    grid = GridSpace(origin=area, standard=NOVE_C_A3.standard)
     definitions = {item.id: item.definition_id for item in project.components}
 
     def stands_on_the_ground(item: PlacedSymbol) -> bool:
@@ -231,10 +229,16 @@ def test_the_hard_constraints_hold_after_improvement() -> None:
             is Standing.GROUND
         )
 
-    grounded = [item for item in after if stands_on_the_ground(item)]
-    assert grounded, "il caso ha macchine a terra"
-    for item in grounded:
-        assert item.bottom_mm == ground, item.component_id
+    # Qui si pretendeva che ogni macchina alta avesse il fondo **esatto** sulla
+    # linea di terra. La linea e' ritirata (D-116) e con lei il vincolo: «le
+    # macchine si dispongono in maniera logica, non con un principio geometrico
+    # reale». Cio' che resta vero e' che nessuna esca dall'area di disegno.
+    assert [item for item in after if stands_on_the_ground(item)], (
+        "il caso ha macchine alte"
+    )
+    for item in after:
+        assert area.y_mm - 1e-9 <= item.origin.y_mm, item.component_id
+        assert item.bottom_mm <= area.bottom_mm + 1e-9, item.component_id
     # E tutto resta sulla griglia: una coordinata fuori passo solleva.
     for item in after:
         grid.to_cell(item.origin.x_mm, item.origin.y_mm)
@@ -534,7 +538,5 @@ def test_the_complete_case_fits_one_a3_with_a_stacked_pair() -> None:
     # con lo stacco di fascia; chi resta a terra ci appoggia esattamente.
     assert tank.origin.x_mm == buffer.origin.x_mm
     assert buffer.bottom_mm + ROW_GAP_MM == tank.origin.y_mm
-    ground = drawn.sheets[0].ground_line_y_mm
-    assert ground is not None
-    assert tank.bottom_mm == ground
+    assert tank.bottom_mm <= NOVE_C_A3.drawing_rect_mm.bottom_mm + 1e-9
     assert buffer.bottom_mm < tank.origin.y_mm

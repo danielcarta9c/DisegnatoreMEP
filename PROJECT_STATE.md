@@ -10,7 +10,7 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **1054 verdi, 22 parcheggiate, 14 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
+| Test | **1054 verdi, 22 parcheggiate, 12 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
 | Libreria simboli | 39 pubblicati | 18 delle 22 prove parcheggiate riguardano il **disegno** (composizione da rifare, D-113); le altre 4 il foglio di riscontro della libreria, che a scala fissa non tiene 39 simboli |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
@@ -81,12 +81,13 @@ Tre cose, in ordine, e ci si ferma:
    provato **sulla carta**: la tavola di consegna è una **sottosequenza esatta** di
    quella di verifica — 376 elementi su 376 ritrovati in ordine, 12 indirizzi in più,
    zero elementi persi.
-3. **La composizione**, e l'8 agosto ha cambiato nome: **la disposizione logica**
-   (D-111, D-113, **D-116**). Il PM: «le macchine si dispongono in maniera logica, non
-   con un principio geometrico reale — esempio tutti i generatori a sinistra **in
-   colonna**». Oggi c'è un cursore che avanza a destra e mette tutto su una riga: sulla
-   tavola dell'ibrido, che ora esce, si vede a occhio nudo. Non «su più fogli»: il
-   multi-foglio è l'ultima risorsa e la centrale non si spezza mai in automatico.
+3. **La disposizione logica** — **PRIMO GIRO FATTO l'8 agosto (D-117).** La fascia si
+   piega in colonne: uno sotto l'altro finché l'altezza basta, poi si va a destra. È la
+   regola del PM, «tutti i generatori a sinistra in colonna». **Risultato: l'impianto 4
+   esce su A3**, in modalità verifica, con tutti e 41 gli indirizzi e la geometria
+   corretta — è la prima tavola consegnabile del progetto. Gli altri quattro non escono
+   ancora: li fermano i difetti 9, 10 e 11. Non «su più fogli»: il multi-foglio resta
+   l'ultima risorsa e la centrale non si spezza mai in automatico.
 
 **Gli altri difetti aperti si rimandano**: le due correzioni alle istruzioni costano un
 giro intero di camera pulita ciascuna e non cambiano niente di ciò che si vede sulla
@@ -107,7 +108,8 @@ scritto per esteso, e torna verde quando il difetto si chiude.
 | ~~6~~ | ~~La radice normativa della soglia non copre le pompe di calore~~ | **CHIUSA dal PM (D-109)**: le centrali domestiche stanno sempre sotto i 35 kW, e la skill disegna anche centrali a **caldaia a gas**, dove il focolare c'è. Niente da correggere, niente da chiedere |
 | ~~7~~ | ~~**L'attacco di scarico dei serbatoi è murato dal pavimento**: 54 posizioni provate, zero instradamenti riusciti~~ | **CHIUSO l'8 agosto (D-115).** Le fonti tacevano — dicono su quale attacco va lo scarico, non dove si disegna rispetto alla linea di terra — quindi la domanda è andata al PM, che ha scelto: **esce di fianco, in basso**. I tre volani hanno il `drain` sul fianco destro a 40 mm. La regressione guarda la **classe**: nessun attacco rivolto in basso di un pezzo posato a terra può cadere sul pavimento, per qualunque simbolo entri in libreria domani |
 | 10 | **L'instradatore esaurisce il proprio budget di ricerca** — 400 000 espansioni — su una tratta sola, e si arrende dicendo «prova una partizione diversa». Non è congestione: il disegno occupa un quinto della carta. Si vede **solo dopo il ciclo di miglioramento**; sulla prima posa le stesse tratte si instradano. Ferma gli impianti 1 e 4 | `layout/route.py`, il budget di ricerca (D-115). **Era coperto dal difetto 7**: finché la catena si fermava prima, non si vedeva |
-| 8 | **Il ripiego del collocatore può posare un pezzo sotto la linea di terra**, dove nessuna linea può raggiungerlo: il ciclo che lo spinge in giù cercando posto si ferma quando sfonderebbe il pavimento e usa lo stesso l'ultima quota. Sull'impianto 3 `zona-notte` finisce interamente sotto; sul 5 `miscelatrice-radiante` resta a cavallo | `layout/place.py`, il ramo di ripiego (D-113) |
+| ~~8~~ | ~~**Il ripiego del collocatore può posare un pezzo sotto la linea di terra**~~ | **DISSOLTO l'8 agosto (D-116)** — non corretto: quella linea è stata ritirata e non c'è più un pavimento da sfondare. Resta il vincolo vero, il bordo del foglio, presidiato su tutti e cinque gli impianti |
+| 11 | **La tavola d'esempio non passa il cancello per un rilievo solo**: una tratta supera di **2,5 mm** la propria porta di arrivo e ci torna indietro (tolleranza zero, B12). Nella stessa giornata è sparito ritirando la linea di terra ed è rientrato allargando lo stacco fra i pezzi da 10 a 15 mm — l'allargamento che fa uscire la prima tavola | `layout/improve.py`. Si chiude spostando il pezzo, che è quel che la regola stessa dice |
 | 9 | **Il rettilineo per gli accessori in linea si prenota solo fra colonne contigue**: una tratta fra colonne non contigue non ne riceve, e gli accessori non trovano i 10 mm dritti. Ferma gli impianti 2 e 5 | `layout/place.py`, la prenotazione dello spazio (D-113) |
 
 ## Il confine del prodotto, che vale su tutto (D-104)

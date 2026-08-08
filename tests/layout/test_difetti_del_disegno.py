@@ -14,10 +14,13 @@ regressione. E' quel che e' successo al difetto 7 lo stesso giorno.
 pavimento; il PM ha deciso che esce di fianco, in basso (D-115). Le due prove
 restano come regressione e guardano la classe, non il caso.
 
-**Difetti 8, 9, 10 — aperti.** Un pezzo posato sotto la linea di terra; il
-rettilineo per gli accessori prenotato solo fra colonne contigue; la ricerca
-dell'instradatore che esaurisce il proprio budget. Il 10 era **coperto** dal 7:
-finche' la catena si fermava prima, non si vedeva.
+**Difetto 8 — DISSOLTO, non corretto.** Diceva «un pezzo finisce sotto la linea
+di terra»: quella linea e' stata ritirata (D-116) e non c'e' piu' un pavimento
+da sfondare. Resta il vincolo vero, che e' il bordo del foglio.
+
+**Difetti 9 e 10 — aperti.** Il rettilineo per gli accessori prenotato solo fra
+colonne contigue; la ricerca dell'instradatore che esaurisce il proprio budget.
+Il 10 era **coperto** dal 7: finche' la catena si fermava prima, non si vedeva.
 
 Ogni prova che afferma un difetto ne ha accanto **una che ne dice il confine**
 — dove il difetto non e' — cosi' chi lo chiude non lo cerca dove non sta.
@@ -31,7 +34,6 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import SheetFrame
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.standard import A3_LANDSCAPE
-from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import inline_component_ids
 from disegnatore_mep.layout.composition import levels_of
@@ -110,53 +112,30 @@ def quota_del_pavimento(griglia: GridSpace) -> float:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize(
-    "nome",
-    [
-        *PROVE[:4],
-        pytest.param(
-            PROVE[4],
-            marks=pytest.mark.xfail(
-                strict=True,
-                reason=(
-                    "Non e' un residuo del difetto 7 — e' il DIFETTO 8 visto da qui. "
-                    "`miscelatrice-radiante` e' alta 10 mm e non appoggia a terra: il "
-                    "suo attacco rivolto in basso finisce sul pavimento solo perche' "
-                    "il ripiego del collocatore la posa a cavallo della linea di "
-                    "terra. Si chiude quando si chiude il difetto 8, e allora questo "
-                    "segno va tolto."
-                ),
-            ),
-        ),
-    ],
-)
-def test_nessun_attacco_di_un_pezzo_a_terra_scarica_dentro_il_pavimento(
-    nome: str,
-) -> None:
-    """La regressione generale del difetto 7.
+@pytest.mark.parametrize("nome", PROVE)
+def test_nessun_pezzo_esce_dall_area_di_disegno(nome: str) -> None:
+    """Cio' che resta dei difetti 7 e 8, dopo che la linea di terra e' caduta.
 
-    L'errore nasceva da tre cose ciascuna giusta per conto propria — il `drain`
-    sul fondo del simbolo, il serbatoio appoggiato alla linea di terra, il
-    divieto di disegnare sotto quella linea — e nessuna delle tre, da sola,
-    sembrava sbagliata. E' il motivo per cui la prova guarda **l'esito** e non
-    una delle tre cause: un attacco rivolto in basso che cade sul pavimento e'
-    irraggiungibile, comunque ci si sia arrivati, e vale per qualunque simbolo
-    entri in libreria domani.
+    **Il difetto 8 si e' dissolto con D-116**, non e' stato corretto: diceva
+    «un pezzo finisce sotto la linea di terra, dove nessuna linea puo'
+    raggiungerlo», e quella linea non esiste piu'. Non c'e' nessun pavimento da
+    sfondare. Il vincolo vero — e l'unico che il PM ha mai dato — e' che un
+    pezzo stia dentro il foglio.
+
+    Del difetto 7 resta la lezione: tre cose ciascuna giusta per conto propria
+    possono chiudere un attacco. La prova guarda **l'esito** e non le cause.
     """
-    progetto, posati, griglia, _ = disposto(nome)
-    registro = catalogo()
-    definizioni = {c.id: c.definition_id for c in progetto.components}
-    pavimento = quota_del_pavimento(griglia)
-    murati = [
-        f"{p.component_id}.{porta.id}"
+    _, posati, _, _ = disposto(nome)
+    area = FOGLIO_ABBONDANTE.drawing_rect_mm
+    fuori = [
+        p.component_id
         for p in posati
-        for porta in registro.resolve(
-            definizioni[p.component_id]
-        ).symbol.manifest.rotated(p.rotation_deg).ports
-        if porta.face is PortFace.BOTTOM
-        and p.origin.y_mm + porta.y_mm >= pavimento - 1e-9
+        if p.origin.y_mm < area.y_mm - 1e-9
+        or p.bottom_mm > area.bottom_mm + 1e-9
+        or p.origin.x_mm < area.x_mm - 1e-9
+        or p.right_mm > area.right_mm + 1e-9
     ]
-    assert murati == [], f"{nome}: attacchi murati dal pavimento: {murati}"
+    assert fuori == [], f"{nome}: pezzi fuori dall'area {fuori}"
 
 
 def test_lo_scarico_di_un_serbatoio_si_riesce_a_instradare() -> None:
@@ -174,32 +153,6 @@ def test_lo_scarico_di_un_serbatoio_si_riesce_a_instradare() -> None:
         if t.connection_ids and "stub-drain-connection" in t.connection_ids[0]
     )
     route_sheet(progetto, [scarico], posati, registro, griglia)
-
-
-# ---------------------------------------------------------------------------
-# Difetto 8 — un pezzo puo' finire sotto la linea di terra
-# ---------------------------------------------------------------------------
-
-
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "DIFETTO 8 (D-113). Il ripiego del collocatore puo' posare un pezzo sotto la "
-        "linea di terra, dove nessuna linea puo' raggiungerlo: il ciclo che lo spinge "
-        "in giu' cercando posto si ferma quando sfonderebbe il pavimento e usa lo "
-        "stesso l'ultima quota. Sull'impianto 3 `zona-notte` finisce interamente "
-        "sotto — ed e' li' che quella catena si ferma; sul 5 `miscelatrice-radiante` "
-        "resta a cavallo. Su un foglio abbondante, quindi non e' mancanza di spazio."
-    ),
-)
-@pytest.mark.parametrize("nome", [PROVE[2], PROVE[4]])
-def test_nessun_pezzo_finisce_sotto_il_pavimento(nome: str) -> None:
-    _, posati, griglia, _ = disposto(nome)
-    pavimento = quota_del_pavimento(griglia)
-    sotto = [
-        item.component_id for item in posati if item.bottom_mm > pavimento + 1e-9
-    ]
-    assert sotto == [], sotto
 
 
 # ---------------------------------------------------------------------------

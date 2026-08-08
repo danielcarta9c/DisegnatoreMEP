@@ -45,12 +45,21 @@ def area_y(fraction: float) -> float:
     return rect.y_mm + round(rect.height_mm * fraction / step) * step
 
 
-def test_the_ground_line_is_recorded_on_the_sheet() -> None:
-    """La quota e' relativa al blocco, non al foglio: il blocco viene centrato."""
-    drawn = sheet()
-    area = NOVE_C_A3.drawing_rect_mm
-    assert drawn.ground_line_y_mm is not None
-    assert area.y_mm <= drawn.ground_line_y_mm <= area.bottom_mm
+def test_no_ground_line_is_drawn() -> None:
+    """La linea di terra e' **ritirata** (D-116).
+
+    Il PM: «il disegno di centrale non ha una linea di terra. Ne ho mai chiesto
+    di disegnarla». Non era una sua regola: nasceva da una proporzione misurata
+    su una sua tavola e promossa a divieto. Qui si presidia che non torni: nel
+    foglio reso non c'e' il gruppo che la disegnava.
+    """
+    from disegnatore_mep.graphics.registry import SymbolRegistry
+    from disegnatore_mep.graphics.sheet import render_sheet
+
+    disegnato = render_sheet(
+        sheet(), NOVE_C_A3, SymbolRegistry.from_directory(SYMBOLS)
+    )
+    assert 'class="ground"' not in disegnato
 
 
 def test_the_drawn_block_is_centred_in_the_drawing_area() -> None:
@@ -67,8 +76,6 @@ def test_the_drawn_block_is_centred_in_the_drawing_area() -> None:
     tops = [item.origin.y_mm for item in drawn.symbols]
     bottoms = [item.bottom_mm for item in drawn.symbols]
     bottoms.extend(item.anchor.y_mm for item in drawn.labels)
-    if drawn.ground_line_y_mm is not None:
-        bottoms.append(drawn.ground_line_y_mm)
     for route in drawn.routes:
         for segment in route.segments:
             tops.extend(point.y_mm for point in segment)
@@ -78,12 +85,22 @@ def test_the_drawn_block_is_centred_in_the_drawing_area() -> None:
     assert abs(above - below) <= 10.0, (above, below)
 
 
-def test_machines_and_storage_stand_on_the_ground() -> None:
-    """Appoggiati, non appesi: e' la prima cosa che si vede in una tavola vera."""
+def test_every_symbol_stays_inside_the_drawing_area() -> None:
+    """Cio' che resta della vecchia «appoggiati, non appesi».
+
+    Quella prova pretendeva che macchine e accumuli avessero il fondo esatto
+    sulla linea di terra. La linea e' ritirata (D-116) — «le macchine si
+    dispongono in maniera logica, non con un principio geometrico reale» — e
+    con lei il vincolo. Cio' che resta vero, e va presidiato, e' che nessun
+    pezzo esca dall'area di disegno.
+    """
     drawn = sheet()
-    placed = {item.component_id: item for item in drawn.symbols}
-    for component_id in ("hp", "cylinder", "buffer"):
-        assert placed[component_id].bottom_mm == drawn.ground_line_y_mm, component_id
+    area = NOVE_C_A3.drawing_rect_mm
+    for item in drawn.symbols:
+        assert area.y_mm - 1e-9 <= item.origin.y_mm, item.component_id
+        assert item.bottom_mm <= area.bottom_mm + 1e-9, item.component_id
+        assert area.x_mm - 1e-9 <= item.origin.x_mm, item.component_id
+        assert item.right_mm <= area.right_mm + 1e-9, item.component_id
 
 
 def test_an_inline_accessory_rides_its_own_run() -> None:
@@ -101,8 +118,7 @@ def test_an_inline_accessory_rides_its_own_run() -> None:
     """
     drawn = sheet()
     strainer = next(item for item in drawn.symbols if item.component_id == "strainer")
-    assert drawn.ground_line_y_mm is not None
-    assert strainer.bottom_mm <= drawn.ground_line_y_mm + 1e-9
+    assert strainer.bottom_mm <= NOVE_C_A3.drawing_rect_mm.bottom_mm + 1e-9
     centre_x = (strainer.origin.x_mm + strainer.right_mm) / 2
     centre_y = (strainer.origin.y_mm + strainer.bottom_mm) / 2
     # Il simbolo sta **dentro l'interruzione** che ha aperto, quindi non tocca
