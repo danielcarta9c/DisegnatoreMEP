@@ -27,7 +27,6 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
-from .composition import levels_of
 from .errors import LayoutError
 from .flow import orient_trunks
 from .geometry import PlacedSymbol, Point, RoutedTrunk
@@ -299,16 +298,15 @@ def route_sheet(
     definitions = {item.id: item.definition_id for item in project.components}
     media = {item.id: item.medium for item in project.networks}
     blocked = _obstacle_cells(placed, grid)
-    # Niente tubazioni sotto la linea di terra: sotto c'e' il pavimento, e la
-    # fascia dei richiami. Una rotta che ci finiva sembrava interrata.
-    ground_row = grid.to_cell(grid.origin.x_mm, levels_of(
-        grid.origin.y_mm, grid.origin.height_mm, grid.step_mm
-    ).ground_mm)[1]
-    blocked = blocked | frozenset(
-        (col, row)
-        for col in range(grid.cols + 1)
-        for row in range(ground_row + 1, grid.rows + 1)
-    )
+    # Qui stava il divieto di instradare sotto la linea di terra, ed e' stato
+    # **ritirato** (D-116). Il PM: «il disegno di centrale non ha una linea di
+    # terra… non e' che non si possa disegnare nulla sotto quella linea, anzi».
+    #
+    # Non era una regola sua: nasceva da una proporzione **misurata** su una
+    # sua tavola di riferimento e promossa a divieto. Ed e' costata due volte
+    # lo stesso aggiramento — l'ingresso freddo di un bollitore il 4 agosto, lo
+    # scarico dei volani l'8 — perche' un attacco rivolto in basso di un pezzo
+    # posato in basso puntava sempre dentro la zona vietata.
     occupied: set[Cell] = set()
     # I **tratti** gia' percorsi, non i nodi: ripercorrerne uno e' sovrapporsi
     # per il lungo, ed e' vietato. L'unica eccezione e' l'ultimo tratto contro

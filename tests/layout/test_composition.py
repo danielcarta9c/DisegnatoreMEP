@@ -184,12 +184,18 @@ def test_labels_sit_beside_their_component_without_a_leader() -> None:
     La riga di richiami a fondo tavola e' ritirata: era ortogonale e sottile
     come una tubazione, quindi indistinguibile da una. Il richiamo esiste solo
     quando il testo non ci sta, ed e' obliquo a 45 gradi.
+
+    Qui c'era anche `label.anchor.y_mm <= ground_line_y_mm`, cioe' «nessuna
+    scritta sotto la linea di terra»: **ritirata con D-116**, perche' quella
+    linea non e' una regola del PM e non delimita niente. Cio' che conta —
+    che la scritta stia **accanto al proprio pezzo** — si misura qui sotto, ed
+    e' una misura piu' stretta: un testo lontano dal proprio simbolo fallisce
+    che stia sopra o sotto qualunque quota.
     """
     drawn = sheet()
-    assert drawn.labels and drawn.ground_line_y_mm is not None
+    assert drawn.labels
     placed = {item.component_id: item for item in drawn.symbols}
     for label in drawn.labels:
-        assert label.anchor.y_mm <= drawn.ground_line_y_mm
         if label.leader_from is not None:
             continue
         symbol = placed.get(label.id.rsplit("-", 1)[0])

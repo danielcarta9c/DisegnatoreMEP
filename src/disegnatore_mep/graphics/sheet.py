@@ -23,12 +23,6 @@ from .registry import SymbolRegistry
 DRAFT_MARK = "BOZZA — cartiglio non compilato"
 """Marcatura della bozza: una tavola finale richiede il cartiglio completo."""
 
-GROUND_HATCH_PITCH_MM = 4.0
-"""Passo del tratteggio della linea di terra."""
-
-GROUND_HATCH_DEPTH_MM = 2.5
-"""Profondita' dei trattini sotto la linea di terra."""
-
 ARROW_LENGTH_MM = 2.0
 """Lunghezza della freccia di verso sulle tubazioni."""
 
@@ -73,15 +67,6 @@ def _escape(text: str) -> str:
         .replace(">", "&gt;")
         .replace('"', "&quot;")
     )
-
-
-def _frange(start: float, stop: float, step: float) -> list[float]:
-    values: list[float] = []
-    current = start
-    while current < stop:
-        values.append(current)
-        current += step
-    return values
 
 
 def _flow_arrow(segment: list[Point], colour: str) -> str:
@@ -360,22 +345,16 @@ def render_sheet(
         f"{_escape(DRAFT_MARK)}</text>"
     )
 
-    # La linea di terra: le macchine ci appoggiano sopra, e senza di essa il
-    # disegno sembra sospeso nel vuoto.
-    ground = sheet.ground_line_y_mm
-    if ground is not None:
-        body = frame.drawing_rect_mm
-        hatches = "".join(
-            f'<line x1="{x:g}" y1="{ground:g}" x2="{x - GROUND_HATCH_DEPTH_MM:g}" '
-            f'y2="{ground + GROUND_HATCH_DEPTH_MM:g}"/>'
-            for x in _frange(body.x_mm + GROUND_HATCH_PITCH_MM, body.right_mm, GROUND_HATCH_PITCH_MM)
-        )
-        parts.append(
-            f'<g class="ground" stroke="black" stroke-width="{standard.line_thin_mm:g}">'
-            f'<line x1="{body.x_mm:g}" y1="{ground:g}" x2="{body.right_mm:g}" '
-            f'y2="{ground:g}" stroke-width="{standard.line_medium_mm:g}"/>'
-            f"{hatches}</g>"
-        )
+    # Qui si stendeva la **linea di terra**, tratteggiata da un bordo all'altro
+    # del foglio. Non si disegna piu' (D-116). Il PM: «il disegno di centrale
+    # non ha una linea di terra».
+    #
+    # Cio' che al suo posto puo' esserci — «una linea sotto il serbatoio,
+    # **circoscritta al serbatoio**, per indicare che e' appoggiato e non
+    # appeso» — e' un segno del **simbolo**, non una quota del foglio, e non si
+    # scrive qui finche' non e' definito: quali macchine lo portano, quanto
+    # sporge, se e' tratteggiato. Inventarlo adesso rifarebbe l'errore che
+    # D-116 corregge — dedurre una regola grafica invece di riceverla.
 
     # Incroci e collegamenti hanno segni opposti e vanno decisi insieme, prima
     # di disegnare: lo scavallo interrompe la linea che lo porta (D-079).

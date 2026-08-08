@@ -104,9 +104,24 @@ def centre_vertically(
             tops.extend(point.y_mm for point in segment)
             bottoms.extend(point.y_mm for point in segment)
     # I richiami sono la riga piu' bassa: il testo scende sotto la propria base.
-    bottoms.extend(item.anchor.y_mm + text_mm for item in sheet.labels)
-    if sheet.ground_line_y_mm is not None:
-        bottoms.append(sheet.ground_line_y_mm)
+    #
+    # **Gli indirizzi no** (D-110): sono il velo della modalita' verifica, e se
+    # entrassero in questo conto allungherebbero il blocco da centrare, il
+    # blocco si sposterebbe, e con lui ogni pezzo della tavola. Le due modalita'
+    # darebbero due disegni diversi — che e' esattamente cio' che D-110 vieta.
+    # Finche' c'era il divieto di scrivere sotto la linea di terra il difetto
+    # restava coperto, perche' nessuna etichetta poteva sporgere in basso;
+    # ritirato quello (D-116), si e' visto subito.
+    bottoms.extend(
+        item.anchor.y_mm + text_mm
+        for item in sheet.labels
+        if item.role != "address"
+    )
+    # La quota di terra non entra piu' nell'ingombro da centrare (D-116): non
+    # si disegna, quindi non e' inchiostro, e contarla spingerebbe in alto un
+    # blocco per fare posto a una riga che non c'e'. Resta nel modello perche'
+    # il collocatore ci appoggia ancora i pezzi alti — e quello e' il pezzo
+    # che la disposizione «logica» dovra' rifare.
     if not tops:
         return sheet
 
@@ -215,7 +230,6 @@ def compose_sheet(
             # richiami a fondo tavola e' ritirata. Le tratte servono a far
             # scansare un testo che finirebbe su una linea.
             routes=broken,
-            floor_y_mm=levels.ground_mm,
             # Il velo della modalita' verifica (D-110): si posa dopo tutto il
             # resto e non muove niente, quindi la tavola sotto e' identica a
             # quella di consegna.

@@ -253,11 +253,27 @@ def test_ogni_tratta_ha_il_rettilineo_che_i_suoi_accessori_pretendono(
         "a monte e lo teneva coperto. Ferma gli impianti 1 e 4."
     ),
 )
-@pytest.mark.parametrize("nome", [PROVE[0], PROVE[3]])
+@pytest.mark.parametrize("nome", [PROVE[0]])
 def test_la_tavola_arriva_in_fondo_senza_esaurire_la_ricerca(nome: str) -> None:
     from disegnatore_mep.layout.compose import compose_drawing
 
     compose_drawing(completato(nome), catalogo(), FOGLIO_ABBONDANTE)
+
+
+def test_l_ibrido_si_compone(  ) -> None:
+    """**La prima delle cinque tavole che esce.**
+
+    L'impianto 4 era fermo sul budget di ricerca dell'instradatore. Ritirato il
+    divieto di disegnare sotto la linea di terra (D-116), la stessa tratta
+    trova strada e la tavola si compone. Non e' stato aggiunto niente: e' stata
+    tolta una regola che nessuno aveva chiesto.
+    """
+    from disegnatore_mep.layout.compose import compose_drawing
+
+    disegno = compose_drawing(completato(PROVE[3]), catalogo(), FOGLIO_ABBONDANTE)
+    assert len(disegno.sheets) == 1
+    assert disegno.sheets[0].symbols
+    assert disegno.sheets[0].routes
 
 
 def test_sulla_prima_posa_le_tratte_dei_due_impianti_si_instradano() -> None:

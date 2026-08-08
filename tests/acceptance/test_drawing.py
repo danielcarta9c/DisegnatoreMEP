@@ -427,8 +427,35 @@ def test_verification_mode_needs_the_naming_tables(tmp_path: Path) -> None:
     )
 
 
+def test_the_acceptance_sheet_passes_the_quality_gate(tmp_path: Path) -> None:
+    """**La tavola d'esempio esce dal comando normale**, senza scorciatoie.
+
+    Fino all'8 agosto non usciva: la fermava un rilievo bloccante — una tratta
+    che superava la propria porta di arrivo e ci tornava indietro. E' caduto
+    ritirando il divieto di disegnare sotto la linea di terra (D-116), che
+    costringeva quella linea a girare. Non e' stato aggiunto niente: e' stata
+    tolta una regola che nessuno aveva chiesto.
+    """
+    assert (
+        main(
+            [
+                "draw",
+                str(PROJECT),
+                "--catalog",
+                str(CATALOG),
+                "--symbols",
+                str(SYMBOLS),
+                "--out",
+                str(tmp_path / "tavole"),
+            ]
+        )
+        == 0
+    )
+    assert sorted((tmp_path / "tavole").glob("*.svg"))
+
+
 def test_a_rejected_sheet_is_written_only_when_asked_and_says_so(
-    tmp_path: Path, capsys: CaptureFixture[str]
+    tmp_path: Path, capsys: CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """D-063 resta: una tavola con un rilievo bloccante non e' una consegna.
 
@@ -436,7 +463,23 @@ def test_a_rejected_sheet_is_written_only_when_asked_and_says_so(
     difetto di disposizione si vede in due secondi sulla carta e non si vede
     affatto sul modello scritto. Quindi si scrive **solo se richiesto**, e
     dicendo a voce alta che cos'e'.
+
+    Il rilievo bloccante e' **iniettato**: da quando la tavola d'esempio passa
+    il cancello (prova qui sopra) nessun caso di prova ne produce piu' uno, e
+    un ramo che nessuno percorre e' un ramo che si rompe in silenzio. Cio' che
+    si misura e' la decisione del comando, non quale rilievo l'abbia provocata.
     """
+    from disegnatore_mep import cli
+    from disegnatore_mep.validation.issues import ValidationIssue
+
+    respinta = ValidationIssue(
+        code="PROVA_BLOCCANTE",
+        severity=IssueSeverity.BLOCKING,
+        message="rilievo bloccante iniettato dalla prova",
+        entity_ids=["t1"],
+    )
+    monkeypatch.setattr(cli, "preflight_drawing", lambda *_: [respinta])
+
     argomenti = [
         "draw",
         str(PROJECT),

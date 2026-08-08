@@ -10,7 +10,7 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **1052 verdi, 22 parcheggiate, 15 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
+| Test | **1054 verdi, 22 parcheggiate, 14 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
 | Libreria simboli | 39 pubblicati | 18 delle 22 prove parcheggiate riguardano il **disegno** (composizione da rifare, D-113); le altre 4 il foglio di riscontro della libreria, che a scala fissa non tiene 39 simboli |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
@@ -81,9 +81,12 @@ Tre cose, in ordine, e ci si ferma:
    provato **sulla carta**: la tavola di consegna è una **sottosequenza esatta** di
    quella di verifica — 376 elementi su 376 ritrovati in ordine, 12 indirizzi in più,
    zero elementi persi.
-3. **La composizione**: disporre in **due dimensioni** invece che in una striscia
-   (D-111, D-113). Non «su più fogli»: il multi-foglio è l'ultima risorsa e la
-   centrale non si spezza mai in automatico (input PM dell'8 agosto).
+3. **La composizione**, e l'8 agosto ha cambiato nome: **la disposizione logica**
+   (D-111, D-113, **D-116**). Il PM: «le macchine si dispongono in maniera logica, non
+   con un principio geometrico reale — esempio tutti i generatori a sinistra **in
+   colonna**». Oggi c'è un cursore che avanza a destra e mette tutto su una riga: sulla
+   tavola dell'ibrido, che ora esce, si vede a occhio nudo. Non «su più fogli»: il
+   multi-foglio è l'ultima risorsa e la centrale non si spezza mai in automatico.
 
 **Gli altri difetti aperti si rimandano**: le due correzioni alle istruzioni costano un
 giro intero di camera pulita ciascuna e non cambiano niente di ciò che si vede sulla
