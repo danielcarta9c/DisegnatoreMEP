@@ -1,4 +1,4 @@
-# HANDOFF — Disegnatore MEP · 7 agosto 2026
+# HANDOFF — Disegnatore MEP · 8 agosto 2026
 
 > ⛔ **Non è un riassunto del progetto.** È il cancello di lettura per la sessione
 > successiva. Si legge tutto, poi si risponde alle domande del §2, poi si comincia.
@@ -88,6 +88,8 @@ tavola è brutta, il difetto è nel disporre. Se il grafo è sbagliato, la tavol
 8. Chi decide il regime della centrale, come si ricava, e cosa vale se non si ricava?
 9. Quali sono le **quattro cose** che l'interprete deve capire dal testo, e qual è il
    criterio per cui una cosa non decisa si **chiede** invece di dichiararla?
+10. Sulla tavola c'è una linea di terra su cui le macchine appoggiano? E **spostare un
+    componente o un'intera colonna quanto costa?**
 
 *Risposte attese:* il grafo, e la tavola ne è la rappresentazione; il contenuto sul grafo
 scritto, il disegno sulla tavola (D-096); **una sola**, e dove se ne incontrano due c'è un
@@ -103,7 +105,11 @@ il **progettista**, e la skill lo **legge dalle potenze che lui ha dichiarato**
 sono che macchina è ciascun pezzo, che acqua porta ogni circuito, il regime, e come i
 circuiti toccano una riserva — si chiede solo quando il testo tace **e** le due strade
 sono entrambe corrette **e** la scelta cambia il disegno
-(`skill/capire/COSA_DECIDE.md`).
+(`skill/capire/COSA_DECIDE.md`); **no, la linea di terra non esiste** — non è mai stata
+decisa, nasceva da una proporzione misurata su una tavola del PM e promossa a divieto, ed
+è stata ritirata (D-116) — e **spostare non costa niente**: si penalizzano le conseguenze
+— lunghezza, curve, incroci, ritorni a sinistra, congestione, squilibrio — mai il
+movimento (D-119).
 
 ---
 
@@ -175,6 +181,24 @@ nell'altro:
    cercare tutti i simili, applicata ai documenti e non solo ai difetti. Prima di lanciare
    una prova che costa cinque agenti, vale la spesa di un `grep` sul kit.
 
+**Dell'8 agosto — uno solo, ed è nuovo di specie:**
+
+6. **Una regola che nessuno ha mai chiesto va ritirata, non aggirata.** La «linea di
+   terra» non compare in nessuna decisione: nasceva da una proporzione **misurata** su una
+   tavola di riferimento del PM e promossa a **divieto** in due punti del motore. È stata
+   aggirata **due volte** — il 4 agosto spostando l'ingresso freddo di un bollitore, l'8
+   spostando lo scarico dei volani — e la seconda volta la domanda è pure stata portata al
+   PM formulata su quel presupposto. Nessuno ha chiesto **da dove venisse** finché non
+   l'ha fatto lui. Quando un vincolo costa due aggiramenti identici, il vincolo è
+   l'imputato: si va a cercare la riga che lo istituisce, e se non c'è, non è una regola.
+
+**E due errori di consegna, della stessa giornata:** una tavola mostrata al PM su un
+foglio **A0 costruito come banco di misura**, cioè su un formato che nel prodotto non
+esiste, con scritto «l'impianto si compone» quando si componeva solo lì; e una diagnosi
+scritta nel registro — «è la disposizione» — che era dedotta dai sintomi invece che
+misurata, e ha dovuto essere corretta nella riga stessa. Sono la classe di difetto più
+respinta della storia del progetto: **un'affermazione che il PM non può verificare.**
+
 ---
 
 ## 5. Ordine di lettura
@@ -197,11 +221,11 @@ nell'altro:
 
 ---
 
-## 6. Stato al 7 agosto 2026
+## 6. Stato all'8 agosto 2026
 
-**Ramo:** il lavoro è su `main` (e sul ramo `claude/disegnatoremep-interpreter-validation-6j9vk8`).
-**Prove:** 1035 verdi, 22 parcheggiate col motivo scritto, **11 marcate rosse apposta sui
-difetti aperti**; `ruff` e `mypy --strict` puliti.
+**Ramo:** `claude/disegnatoremep-main-resume-890881`, allineato a `origin`.
+**Prove:** 1054 verdi, 22 parcheggiate col motivo scritto, **12 marcate rosse apposta
+sui difetti aperti**; `ruff` e `mypy --strict` puliti su `src`, `tests` ed `examples`.
 **Ambiente:** `bash scripts/setup-env.sh` — **da eseguire per primo** in una sessione cloud.
 **Numeri:** 39 simboli pubblicati, 53 voci di catalogo, 17 regole.
 
@@ -209,211 +233,89 @@ difetti aperti**; `ruff` e `mypy --strict` puliti.
 
 | Pezzo | Stato |
 |---|---|
-| **1 — Capire** | **APPROVATO dal collaudo** (7 agosto, al terzo giro). Zero perso e zero inventato su cinque impianti, 67 componenti, 82 tubazioni. Consegne dei tre giri agli atti in `skill/capire/prova-2026-08-07/` |
-| **2 — Completare** (le regole) | Costruito e collaudato, **ma con quattro difetti aperti**. Il pacchetto E e C2 furono respinti al primo giro e corretti lo stesso giorno; poi il collaudo delle **due correzioni di fine sessione** (7 agosto, sera) le ha **respinte entrambe**: il nocciolo regge, ma restano i due della camminata del tratto comune, il caso di mezzo del regime e le potenze fuori dal modello. Elenco in `PROJECT_STATE.md`, prove marcate rosse apposta |
-| **3 — Assemblare** | Costruito e collaudato; il 7 agosto ha guadagnato la classificazione dei blocchi sul capofila e l'ordinamento dei blocchi di mezzo |
-| Il grafo, le sigle e **l'indirizzo dei nodi (D-105)** | **Collaudato e APPROVATO** (7 agosto), 91 prove del collaudo adottate |
-| Il vocabolario delle proprietà | Approvato; si aggiungono il bordo macchina e il punto di riempimento come dichiarazioni di catalogo |
-| 4 — Disporre / libreria / cartiglio / **composizione** | **È il lavoro della prossima sessione** (§7). Instradamento e regole di costo del PM esistono; il richiamo obliquo esiste. Mancano il riempimento bilanciato come obiettivo, la prenotazione dello spazio in avanti e l'anti-incrocio fra richiami. Specifica in **D-111**; la modalità verifica in **D-110** |
+| **1 — Capire** | **APPROVATO** dal collaudo (7 agosto) e **riprovato l'8 agosto end-to-end**: un agente in camera pulita ha letto l'impianto 1 dal testo del committente e ha consegnato al primo colpo — grafo valido, 8 domande dichiarate, regime ricavato dalle potenze senza chiederlo. Consegne agli atti in `skill/capire/prova-2026-08-07/` e `prova-2026-08-08-impianto-1/` |
+| **2 — Completare** (le regole) | Costruito e collaudato. **I due difetti della camminata sono chiusi** (D-112): il tratto comune si riconosce togliendolo, e il nome delle macchine non decide più niente. Restano il caso di mezzo del regime e le potenze fuori dal modello |
+| **3 — Assemblare** | Costruito e collaudato |
+| Il grafo, le sigle e l'indirizzo dei nodi | **APPROVATO**, 91 prove del collaudo adottate |
+| **4 — Disporre** | **È il lavoro.** La modalità verifica è **fatta** (D-114); la grammatica delle fasce è **fatta** (D-119, primo dei tre pezzi). **Una tavola esce**: l'impianto 4, su A3, con tutti i 41 indirizzi. Le altre quattro no |
 | 5 — Validatori e cancello dell'occhio terzo | Correttezza e preflight esistono, il cancello no |
 
-### Cosa è successo il 7 agosto, sera — la chiusura di «Capire»
+### Cosa è successo l'8 agosto — otto decisioni, e tre erano regole mai chieste
 
-- **La prova in camera pulita è costata tre giri**, ed è la lezione da portarsi dietro.
-  Il **primo** si è fermato dopo due impianti: due agenti, in due camere separate e senza
-  vedersi, hanno trovato che **il kit si contraddiceva** — le istruzioni ordinavano di
-  ricavare il regime dalle potenze, lo schema del modello lo vietava per esteso. Era testo
-  pre-D-108 sopravvissuto in tre posti. Un kit che si contraddice su una delle quattro
-  cose che l'interprete deve capire non misura le istruzioni: misura **quale documento
-  l'agente ha letto per ultimo**. Il **secondo** giro è stato respinto su un difetto solo,
-  e non sulla fedeltà: §4.2 diceva cos'è una rete e mai **dove una rete può cominciare**,
-  e il quinto grafo — fedele, dichiarato, identico al metro — rompeva la catena perché tre
-  reti partivano da un raccordo. Il **terzo** è stato approvato.
-- **Il difetto non lo ha trovato il confronto, lo ha trovato il determinismo a valle.**
-  Sulla fedeltà il pezzo era pulito fin dal secondo giro. Vale la pena ricordarlo: un
-  grafo può essere fedele parola per parola e comunque impresentabile al resto della catena.
-- **Le due correzioni di fine sessione sono state respinte** da un collaudo indipendente.
-  Il nocciolo di entrambe regge, verificato con prove più dure di quelle di casa; i cinque
-  difetti stanno ai bordi e riguardano **cose che le correzioni affermano** — che è la
-  classe di difetto più respinta della storia del progetto.
+- **D-112, il tratto comune si riconosce togliendolo.** Se il circuito di una macchina si
+  chiude lo stesso, quel tratto la sua acqua non la porta. **Conseguenza sostanziale:
+  l'ibrido non ha un ritorno generale** — il ramo del sanitario rientra a valle — quindi
+  vaso, riempimento, manometro e defangatore escono come **quattro punti aperti**. La
+  frase «nessuno dei cinque ha punti aperti» era falsa ed è stata corretta.
+- **D-114, la modalità verifica.** `draw --verifica --naming` stampa l'indirizzo accanto a
+  ogni pezzo; `draw --anche-se-respinta` scrive la tavola anche coi rilievi bloccanti,
+  dicendo che non è una consegna. L'invariante di D-110 è provato **sulla carta**: la
+  tavola di consegna è una sottosequenza esatta di quella di verifica.
+- **D-113, perché la composizione falliva** — e la prima risposta scritta lì era
+  sbagliata, corretta lo stesso giorno misurando.
+- **D-115 e D-116, due regole che nessuno aveva mai chiesto.** Lo scarico dei serbatoi era
+  murato dal pavimento; e **la linea di terra non era mai stata decisa** — nasceva da una
+  proporzione *misurata* su una tavola del PM e promossa a divieto in due punti del
+  motore. Ritirata. Costava due aggiramenti identici, il 4 e l'8 agosto.
+- **D-117, la fascia si piega in colonne**, e la piega si sceglie provandola.
+- **D-118, un buco della catena: nessuno crea i sottosistemi.** Le istruzioni ordinano
+  all'interprete di lasciarli vuoti; nessun pezzo successivo li crea. Le cinque letture
+  manuali li hanno scritti a mano, quindi **le fixture stavano coprendo il buco**.
+- **D-119, la grammatica MEP di partenza**, dettata dal PM. È la specifica del lavoro che
+  resta: leggerla per intera prima di toccare il collocatore.
 
-### Cosa era successo prima, il 7 agosto
+## 7. Il primo lavoro della prossima sessione
 
-- **Il riscontro di D-106 sugli schemi Caleffi** (Idraulica 61 + i cinque schemi
-  applicativi), riga per riga con le citazioni, prima di scrivere qualunque regola.
-- **Il pacchetto E**: regime ricavato dalle potenze dichiarate dal progettista (D-108),
-  tratto comune deterministico, 17 regole aggiornate come dato, bordo macchina e punto di
-  riempimento nel catalogo. Collaudato a contesto separato: respinto su quattro difetti
-  veri, corretti lo stesso giorno.
-- **C2 corretta**: il bollitore si svuota dall'ingresso freddo; la prova parcheggiata è
-  tornata verde senza essere ammorbidita.
-- **I cinque grafi rigenerati e messi a confronto** per il PM
-  (`docs/prodotto/grafi-di-prova/CONFRONTO-2026-08-07.md`); i successivi rilievi del PM
-  hanno poi corretto il ritorno generale dell'ibrido e il regime.
-- **Tre collaudi indipendenti**: indirizzo dei nodi APPROVATO (91 prove adottate);
-  pacchetto E+C2 RESPINTO e corretto (25 prove adottate); pezzo 1 RESPINTO.
-- **Poi i rilievi del PM sul confronto**, e le correzioni: la camminata del ritorno
-  generale **si apre sui rami**; il **regime si legge dalle potenze** che lui ha
-  dichiarato nei testi; le quattro cose che l'interprete deve capire sono state censite;
-  le **tredici correzioni alle istruzioni** sono state applicate.
-- **Il quinto impianto è stato riallineato al testo originale**: il testo dice tre
-  circuiti secondari e non nomina un collettore. La lettura manuale conserva quindi tutti
-  e tre i circuiti e usa due ripartizioni sulla mandata e due confluenze sul ritorno,
-  secondo la regola generale dei raccordi a N vie. La vecchia domanda «il collettore ne
-  serve due» era un difetto della fixture, non una decisione del progettista.
+**La specifica è D-119, e va letta per intera.** Il PM l'ha dettata l'8 agosto: una
+grammatica di partenza, il movimento gratis, il costo sulle conseguenze. Dei tre pezzi
+**uno è fatto**:
 
----
+1. ~~**La grammatica di partenza**~~ — **FATTA** (D-119). Le fasce si leggono dal
+   **mestiere dichiarato in catalogo** quando i sottosistemi mancano: generatori a
+   sinistra, volumi subito a destra, distribuzione dopo, terminali per ultimi. Misurato
+   sull'impianto 1: le fasce tornano quattro invece di una, e **le due pompe di calore si
+   impilano**.
 
-## 7. Il primo lavoro della prossima sessione — **si va sul disegno**
+2. **⛔ MUOVERE È GRATIS — è il pezzo che blocca il disegno.** Oggi lo stacco fra due
+   colonne è una **costante** (`ROW_GAP_MM`, 15 mm). Quando fra due colonne devono entrare
+   degli accessori e non ci stanno, il motore **fallisce** invece di allontanare la
+   colonna dopo. Il PM, alla lettera: *«non comprimere i pezzi e non creare tubazioni
+   contorte: sposta la colonna successiva e, se necessario, tutto ciò che viene dopo. Le
+   colonne possono allontanarsi, avvicinarsi o traslare verticalmente liberamente.»*
+   È qui che si fermano quattro delle cinque tavole.
 
-> **Cambio di rotta deciso dal PM la sera del 7 agosto, e va letto prima di tutto il
-> resto di questo paragrafo.** Il contenuto si chiude «alla buona» e si porta a casa il
-> disegnatore. Motivo suo: *«ho paura che in questa fase di perfezionismo creiamo anche
-> regole sbagliate»* — ed è fondato, perché è già successo tre volte (D-102, D-104,
-> D-107), sempre scrivendo regole senza poterne vedere l'effetto. Il grafo scritto è
-> 300÷500 righe di tabelle: nessuno ci trova un accessorio fuori posto leggendolo. Sulla
-> tavola si vede in due secondi.
->
-> **Non rompe D-096.** D-096 dice dove si *attribuisce* un difetto, non su cosa lo si
-> *scopre*. Il PM guarda la tavola, punta un pezzo, ne legge l'indirizzo; il difetto si
-> trova e si corregge **sul grafo**. Le sigle e gli indirizzi sono stati costruiti
-> apposta per questo (D-105).
+3. **Il costo sulle conseguenze.** Curve, incroci e lunghezza ci sono già
+   (`layout/improve.py`). Mancano il **ritorno innaturale verso sinistra**, la
+   **congestione** e lo **squilibrio del riempimento** — quest'ultimo è già *misurato* dal
+   preflight (60 % e rapporto fra quadranti) ma non è obiettivo di nessuno.
+   E resta D-041: **un incrocio leggibile costa meno di una tubazione lunga fatta solo per
+   evitarlo.**
 
-**Le tre cose da fare, in ordine, e poi ci si ferma.** Niente regole nuove in quella
-sessione: solo far uscire il disegno.
+**Poi si rigenerano le cinque tavole in modalità verifica e si portano al PM.** È il ciclo
+che aspetta da due sessioni: lui guarda, punta un pezzo, ne legge l'indirizzo, e da lì si
+correggono le regole su casi veri.
 
-1. **Il criterio della camminata del tratto comune** — i difetti aperti 1 e 2, che hanno
-   una radice sola, spiegata sotto. **Il motivo per farlo prima è concreto: senza, la
-   tavola dell'ibrido porta il defangatore su un tratto che già sappiamo essere
-   sbagliato**, e non ha senso far scoprire al PM una cosa già scoperta. È lavoro
-   contenuto e le prove che lo inchiodano ci sono già.
+### Il buco dei sottosistemi (D-118), che è una domanda aperta
 
-   *Precisazione, perché non sia sopravvalutato:* la dipendenza dal nome delle macchine
-   (difetto 2) si manifesta su un caso **costruito apposta con un anello sul ritorno**.
-   Sui cinque impianti reali il collaudo ha provato otto rimescolamenti ciascuno e il
-   punto non si è mai spostato: **le cinque tavole di oggi sono già riproducibili.**
-2. **La modalità verifica** (D-110, **come emendata da D-111 — leggerle insieme**):
-   l'indirizzo del nodo stampato accanto al pezzo. La sigla (`PDC-01`) è **già** stampata
-   oggi; l'indirizzo (`CP.01.N.02`) no. L'etichetta sta vicino al nodo **quando c'è
-   posto**, altrimenti prende una **linea di richiamo**; un tubo che le passa sopra non è
-   un problema e non va evitato. Resta fermo che si posa **dopo** e **non sposta nessun
-   pezzo**: le due modalità devono dare la stessa identica tavola, una con un velo in più.
-3. **La composizione (D-111).** ⛔⛔ **Prima di tutto: la motivazione scritta nelle 22
-   prove parcheggiate è FALSA, e ha già ingannato due volte.** Dice «l'impianto chiede più
-   larghezza di quanta ne abbia un foglio ordinario». **Non è vero, ed è stato misurato:**
-   i cinque impianti sono stati composti su **A0** (1189 × 841 mm) e falliscono **tutti e
-   cinque lo stesso**. Più carta non risolve niente.
+Nessun pezzo della catena crea i sottosistemi. La grammatica di D-119 ci gira intorno —
+legge le fasce dal mestiere — ma il piano di impaginazione di D-042 resta senza un
+ingresso. Va deciso **dove** si chiude: se li scrive l'interprete (e cambiano le
+istruzioni), se serve un pezzo nuovo fra assemblatore e disegnatore, o se il collocatore
+lavora sempre senza. **Non deciderlo da soli.**
 
-   **Quello che li ferma davvero, verificato impianto per impianto:**
+### I difetti aperti
 
-   | impianto | dove si ferma |
-   |---|---|
-   | 1 e 4 | uno **stacco di scarico che non si riesce a instradare** — «ogni percorso ortogonale è bloccato» |
-   | 2 e 5 | una tratta **senza 10 mm dritti** dove far sedere un accessorio (valvola di intercettazione, separatore d'aria) |
-   | 3 | un altro instradamento che non passa |
+Stanno in `PROJECT_STATE.md`, ognuno inchiodato da una prova marcata rossa col motivo
+scritto per esteso, e si chiude quando quella prova torna verde **senza essere
+ammorbidita**. Nessuno è nascosto.
 
-   Nessuno di questi è «non ci sta nel foglio».
+### Come si trattano le correzioni del PM
 
-   > ⛔ **La riga che stava qui — «i pezzi stanno così stretti che i tubi non ci passano»
-   > — era anch'essa sbagliata, ed è stata misurata l'8 agosto (D-113).** Di stretto non
-   > c'è niente: su un foglio abbondante l'ingombro dei simboli occupa un quinto della
-   > larghezza e un quinto dell'altezza, e i fallimenti sono **gli stessi, alle stesse
-   > coordinate**. Erano due diagnosi sbagliate di fila sullo stesso punto, tutte e due
-   > dedotte dai sintomi invece che misurate.
-   >
-   > **La domanda della «prima ora» ha risposta: sono difetti del tracciatore**, non
-   > disposizione stretta — quindi la strada breve per far vedere al PM le sue cinque
-   > tavole è chiudere quelli, e la composizione resta lavoro vero ma **non è ciò che
-   > blocca il disegno**. I tre invarianti rotti sono i difetti 7, 8 e 9 di
-   > `PROJECT_STATE.md`, ognuno inchiodato da una prova marcata rossa in
-   > `tests/layout/test_difetti_del_disegno.py`. Il primo — l'attacco di scarico dei
-   > serbatoi murato dal pavimento — porta dentro **una domanda grafica vera**, e prima
-   > di deciderla si cerca la fonte.
-
-   **Il resto del quadro, misurato:** area utile A3 350 × 235 mm; le fasce chiedono
-   450 / 570 / 565 / 517 / 1080 mm perché **il collocatore dispone su una riga sola per
-   fascia e le fasce stanno affiancate**, quindi la larghezza è la somma. In altezza il
-   foglio è quasi vuoto.
-
-   **E la soluzione non è «andare a capo»** — l'orchestratore l'aveva proposto e il PM
-   l'ha respinto: farebbe ripartire il flusso da sinistra a metà tavola, rompendo
-   l'ordinamento da sinistra a destra che è una regola sua. Si dispone in **due
-   dimensioni**: macchine principali a sinistra, volumi collocati **lasciandosi lo spazio
-   a destra** per il secondario, e i pezzi mossi per soddisfare **più obiettivi insieme**
-   — riempimento bilanciato e simmetrico, poche curve, linee corte, nessun accavallamento.
-   Le etichette **alla fine**, con richiamo dove non c'è posto, e i richiami disposti **a
-   raggera senza incrociarsi**.
-
-   Delle cinque cose, **due ci sono già**: le regole di costo del PM, in
-   `src/disegnatore_mep/layout/place.py` e `src/disegnatore_mep/layout/improve.py`; e il **richiamo obliquo**, che esiste
-   (`src/disegnatore_mep/layout/geometry.py` porta `leader_from`) e sa già non passare sopra i simboli
-   (`src/disegnatore_mep/layout/labels.py`). **Tre mancano, ed è il lavoro:**
-
-   - **il riempimento bilanciato e simmetrico**, che oggi non è obiettivo di nessuno: il
-     collocatore non sa nemmeno che il foglio ha un bordo mentre dispone — lo scopre alla
-     fine, con un errore;
-   - **la prenotazione dello spazio in avanti**: oggi ogni fascia ha un cursore solo che
-     avanza a destra e non sa quanto servirà dopo;
-   - **l'anti-incrocio fra richiami** (la raggera).
-
-   Il nodo tecnico è il primo: serve che il collocatore possa mettere le cose anche **una
-   sotto l'altra** e non solo una a fianco all'altra, e che sappia scegliere fra le
-   disposizioni possibili. Gli altri due vengono dietro.
-
-   > ⚠ **Chiedere al PM presto, non dopo tre giri di ottimizzazione.** «Poche curve»,
-   > «linee corte», «niente incroci» sono numeri. **«Bilanciato e simmetrico» è un
-   > giudizio d'occhio e non si sa come si misura.** Partire da qualcosa di ragionevole —
-   > ingombro distribuito sui quadranti, baricentro vicino al centro del foglio — ma
-   > appena ci sono due tavole plausibili, mostrargliele e farsi dire quale è bilanciata e
-   > quale no. È il punto dove si può bruciare più tempo ottimizzando la metrica sbagliata.
-
-Poi si consegnano le cinque tavole **in modalità verifica** e ci si ferma: comincia il
-giro delle correzioni del PM. **Se la composizione si prende tutta la sessione va bene:**
-i punti 1 e 2 sono utili da soli, perché danno tavole corrette e con gli indirizzi sopra
-almeno per gli impianti che già entrano nel foglio.
-
-**Come si trattano le sue correzioni** (è la sua stessa cautela, D-107 dall'altro lato):
-una correzione del PM dice sempre **cosa** è sbagliato, non sempre **perché**. Non diventa
-regola finché non si è trovata la fonte o la buona pratica che la conferma. Se non si
-trova, si torna da lui a dirlo — non si scrive la regola.
-
-### Il resto, che si rimanda
-
-Gli altri difetti aperti restano scritti in `PROJECT_STATE.md` e **non si toccano ora**:
-le due correzioni alle istruzioni dell'interprete costano **un giro intero di camera
-pulita ciascuna** e non cambiano niente di ciò che si vede sulla tavola.
-
-### I difetti aperti, e la radice dei due della camminata
-
-Ognuno è inchiodato da una prova marcata rossa apposta, col motivo scritto per esteso, e
-si chiude quando quella prova torna verde **senza essere ammorbidita**. Nessuno è
-nascosto. **Solo il primo si fa adesso**; gli altri aspettano il disegno.
-
-1. **I due della camminata del tratto comune**, che sono difetti veri del completatore.
-   Sull'**ibrido** il tratto scelto non porta l'acqua che la caldaia rimanda dallo
-   scambiatore sanitario, e il corredo ci va lo stesso **in silenzio**; su un **anello**
-   il punto scelto cambia col nome delle macchine a topologia identica. La radice è una
-   sola: la camminata considera «comune» un tratto **da cui si arriva a tutti i
-   generatori risalendo**, mentre le regole dicono che lì deve **passare tutta l'acqua che
-   torna**. Non è la stessa cosa, e su due grafi su sette danno risposte diverse.
-2. **Il caso di mezzo del regime** (§4.6): potenza dichiarata solo per alcune macchine. Si
-   somma il sottoinsieme e si scrive il regime in silenzio. Tre fonti indipendenti l'hanno
-   segnalato — un collaudo e due camere pulite che non si vedevano.
-3. **Le potenze nel modello.** D-108 promette che l'ingegnere veda la lettura e la
-   corregga; nei cinque grafi c'è la conclusione e non il dato. Attenzione: le letture
-   manuali sono **il metro** e non si toccano per far combaciare un confronto (`CONSEGNA.md`
-   §2, criterio 4) — ma questo non è un aggiustamento del confronto, è un'informazione che
-   il testo dà e il modello perde. Da fare **rigenerando il generatore**, mai a mano.
-4. **La voce con gli identificativi interni**: si chiude alle **istruzioni**, non
-   correggendo l'allegato del verbale.
-
-Poi: **la traduzione in regole** delle posizioni §14-18 rimaste (bilanciamento,
-disconnettore, contabilizzatore), dentro il confine di D-104.
-
-**Se si toccano le istruzioni dell'interprete, la prova in camera pulita va rifatta da
-capo con agenti nuovi.** Vale sempre, ed è già costato due giri in una sessione sola.
-
----
+Una correzione dice sempre **cosa** è sbagliato, non sempre **perché**. Non diventa regola
+finché non si è trovata la fonte o la buona pratica che la conferma; se non si trova, si
+torna da lui a dirlo. **Ma attenzione al rovescio, che l'8 agosto è costato caro:** una
+regola che *nessuno* ha mai chiesto va ritirata, non aggirata. La linea di terra è stata
+aggirata due volte prima che qualcuno chiedesse da dove venisse.
 
 ## 8. Quirks e gotcha
 
@@ -497,12 +399,11 @@ il testo tace, le alternative sono entrambe corrette e la scelta cambia il diseg
 
 ## Ultimo aggiornamento
 
-`2026-08-07`, sera — **il pezzo «Capire» è approvato** e i cinque grafi sono rigenerati
-dalla pipeline, col quinto finalmente completo dei suoi tre circuiti. La prova in camera
-pulita è costata **tre giri**: il primo fermato perché il kit si contraddiceva sul regime
-(trovato da due agenti che non si vedevano), il secondo respinto perché §4.2 non diceva
-dove una rete può cominciare, il terzo approvato. Consegne di tutti e tre agli atti.
+`2026-08-08` — **la prima tavola del progetto esce**: l'impianto 4, su A3, in modalità
+verifica, con tutti i 41 indirizzi. Otto decisioni (D-112÷D-119), di cui **due ritirano
+regole che nessuno aveva mai chiesto** — la linea di terra e lo scarico murato. E la prima
+prova end-to-end vera, dal testo del committente alla tavola con un agente in camera
+pulita, che ha trovato un buco che le fixture coprivano: nessuno crea i sottosistemi.
 
-Il collaudo delle due correzioni di fine sessione precedente le ha **respinte entrambe**:
-il nocciolo regge, i difetti stanno ai bordi e riguardano cose che quelle correzioni
-affermavano. Sono i primi due della lista del §7.
+Il lavoro che resta è **D-119, punto 2: muovere è gratis.** È lì che si fermano quattro
+tavole su cinque.
