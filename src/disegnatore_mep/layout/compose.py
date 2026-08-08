@@ -33,7 +33,7 @@ from .inline import settle_sheet
 from .labels import place_labels
 from .legend import build_legend
 from .partition import SheetLink, SheetPartition, partition_project
-from .place import place_sheet
+from .place import FOLD_QUOTAS, place_sheet
 from .trunks import build_trunks
 
 CROSS_REFERENCE_GAP_MM = 2.5
@@ -185,11 +185,6 @@ def compose_sheet(
     addresses: dict[str, str] | None = None,
 ) -> SheetGeometry:
     grid = GridSpace(origin=frame.drawing_rect_mm, standard=frame.standard)
-    first = place_sheet(project, partition, catalog, frame, inline_ids)
-    # La disposizione serve le linee, non il contrario (D-078): dopo la prima
-    # ipotesi di posa, i componenti si spostano dove l'instradamento di prova
-    # dice che l'obiettivo intero — pieghe, incroci, lunghezza — migliora.
-    improved = improve_sheet(project, partition, catalog, frame, first, inline_ids)
 
     def settled(base: list[PlacedSymbol]) -> tuple[list[PlacedSymbol], list[RoutedTrunk]]:
         """La tavola instradata con gli accessori posati: la stessa che valuta
@@ -197,15 +192,41 @@ def compose_sheet(
         sheet = settle_sheet(project, list(partition.trunks), base, catalog, grid)
         return sheet.symbols, sheet.routes
 
-    try:
-        placed, broken = settled(improved)
-    except LayoutError:
-        # Il miglioramento non compra mai il fallimento della tavola: il ciclo
-        # scarta le pose che non si instradano, ma il suo tetto di prove puo'
-        # fermarlo su una posa che non ha ancora finito di sistemare. Allora
-        # vale la disposizione di partenza, che e' quella provvista dei propri
-        # rettilinei.
-        placed, broken = settled(first)
+    def tentativo(quota: float | None) -> tuple[list[PlacedSymbol], list[RoutedTrunk]]:
+        first = place_sheet(project, partition, catalog, frame, inline_ids, quota)
+        # La disposizione serve le linee, non il contrario (D-078): dopo la
+        # prima ipotesi di posa, i componenti si spostano dove l'instradamento
+        # di prova dice che l'obiettivo intero — pieghe, incroci, lunghezza —
+        # migliora.
+        improved = improve_sheet(
+            project, partition, catalog, frame, first, inline_ids
+        )
+        try:
+            return settled(improved)
+        except LayoutError:
+            # Il miglioramento non compra mai il fallimento della tavola: il
+            # ciclo scarta le pose che non si instradano, ma il suo tetto di
+            # prove puo' fermarlo su una posa che non ha ancora finito di
+            # sistemare. Allora vale la disposizione di partenza, che e' quella
+            # provvista dei propri rettilinei.
+            return settled(first)
+
+    # **Si provano piu' pieghe e si tiene la prima che arriva in fondo.**
+    # Nessuna quota va bene per tutti gli impianti, ed e' misurato: con la
+    # piega bassa e larga il quarto impianto esce e il primo non entra in
+    # larghezza; con quella alta e stretta il primo entra e non si instrada.
+    # Sceglierne una sola vuol dire far uscire un impianto e fermarne un altro.
+    # E' l'alternativa deterministica che l'input del PM dell'8 agosto chiede
+    # al §6: poche opzioni, confrontate, e si tiene quella che regge.
+    ultimo: LayoutError | None = None
+    for quota in FOLD_QUOTAS:
+        try:
+            placed, broken = tentativo(quota)
+            break
+        except LayoutError as exc:
+            ultimo = exc
+    else:
+        raise ultimo if ultimo is not None else LayoutError("nessuna piega tentata")
 
     entries, keys = build_legend(
         project, placed, partition.network_ids, catalog, frame

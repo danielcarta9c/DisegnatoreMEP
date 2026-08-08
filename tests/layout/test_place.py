@@ -149,14 +149,22 @@ def test_a_project_without_a_plan_still_reads_left_to_right() -> None:
 
 
 def test_a_plant_that_does_not_fit_fails_with_a_diagnostic() -> None:
-    """Mai un rimpicciolimento, mai un disegno fuori pagina (D-045)."""
+    """Mai un rimpicciolimento, mai un disegno fuori pagina (D-045).
+
+    **Il caso e' stato reso piu' grosso l'8 agosto**, e per una ragione buona:
+    da quando la fascia si piega in colonne (D-117) il vecchio caso — dieci
+    serbatoi in piu' — **ci sta**, e la prova non misurava piu' niente. Cio' che
+    deve restare vero e' che davanti a un impianto che davvero non entra la
+    risposta sia un errore parlante, mai un simbolo rimpicciolito. Cinquanta
+    serbatoi in piu' non entrano su una A3 in nessuna piega.
+    """
     project = load_project(PROJECT)
     registry = catalog()
     inline = inline_ids(project, registry)
     crowded = project.model_copy(deep=True)
     extra = [
         item.model_copy(update={"id": f"{item.id}-{index}", "tag": f"X{index}-{item.id[:3]}"})
-        for index in range(1, 6)
+        for index in range(1, 26)
         for item in project.components
         if item.id in {"buffer", "cylinder"}
     ]

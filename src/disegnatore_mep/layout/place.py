@@ -308,12 +308,25 @@ def _slots(
     return merged
 
 
+FOLD_QUOTAS: tuple[float, ...] = (0.22, 0.28, 0.34, 0.4, 0.45, 0.52, 0.6, 0.7, 0.8)
+"""Le pieghe che si provano, dalla piu' bassa e larga alla piu' alta e stretta.
+
+Non c'e' una quota giusta per tutti gli impianti, ed e' stato misurato: a 0,34
+il quarto impianto esce e il primo non entra in larghezza; a 0,45 il primo
+entra e non si instrada. Sceglierne una sola vuol dire far uscire un impianto e
+fermarne un altro — per questo la sceglie **chi compone**, provandole e
+tenendo la prima che arriva in fondo (input PM dell'8 agosto §6: «confrontare
+poche alternative deterministiche e scegliere quella a costo minore»).
+"""
+
+
 def place_sheet(
     project: ProjectModel,
     partition: SheetPartition,
     catalog: ComponentRegistry,
     frame: SheetFrame,
     inline_component_ids: frozenset[str],
+    fold_quota: float | None = None,
 ) -> list[PlacedSymbol]:
     """Dispone i componenti non in linea, a fasce, sulla griglia.
 
@@ -608,10 +621,16 @@ def place_sheet(
     slots, gaps, widths, gutters, total = pack(frozenset())
     if total > area.width_mm + 1e-9:
         # Non ci sta in fila: si piega in colonne, che e' come si dispone
-        # davvero (D-116). Si prova con altezze crescenti e ci si ferma alla
-        # prima che entra, cosi' si usa il minimo di altezza necessario invece
-        # di schiacciare tutto in basso.
-        for quota in (0.34, 0.5, 0.67, 1.0):
+        # davvero (D-116).
+        #
+        # **Si prende la piega piu' STRETTA che entra, non la prima.** Colonne
+        # piu' alte fanno una fascia piu' stretta, e cio' che avanza in
+        # larghezza sono le corsie in cui passano le tubazioni. Prendendo la
+        # prima che entrava — la piu' bassa e larga — l'impianto 1 riempiva
+        # tutti e 335 i millimetri utili di una A3 e all'instradatore non
+        # restava un varco: «ogni percorso ortogonale e' bloccato».
+        quote = (fold_quota,) if fold_quota is not None else FOLD_QUOTAS
+        for quota in quote:
             piegate = pack(frozenset(), area.height_mm * quota)
             if piegate[4] <= area.width_mm + 1e-9:
                 slots, gaps, widths, gutters, total = piegate
@@ -734,6 +753,29 @@ def place_sheet(
                         and found + manifest.height_mm < area.bottom_mm
                     ):
                         found += ROW_GAP_MM
+                if found + manifest.height_mm > area.bottom_mm + 1e-9:
+                    # **La colonna e' piena: si apre quella dopo.** Prima il
+                    # ripiego spingeva il pezzo in giu' finche' usciva dal
+                    # foglio, e la tavola falliva su un foglio quasi vuoto —
+                    # e' lo stesso ciclo che prima sfondava la linea di terra.
+                    # Una colonna che finisce non e' un errore: e' il momento
+                    # di andare a destra, che e' come si riempie un foglio.
+                    left = on_grid(
+                        left + max(manifests[item].width_mm for item in slot)
+                        + ROW_GAP_MM,
+                        area.x_mm,
+                    )
+                    floor = area.y_mm
+                    found = aligned_top(component_id, left, floor)
+                    if found is None:
+                        found = on_grid(area.y_mm, area.y_mm)
+                        while (
+                            not free_of_symbols(
+                                left, found, manifest.width_mm, manifest.height_mm
+                            )
+                            and found + manifest.height_mm < area.bottom_mm
+                        ):
+                            found += ROW_GAP_MM
                 top = found
                 if (
                     top < area.y_mm - 1e-9

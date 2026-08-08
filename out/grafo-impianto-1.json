@@ -1,0 +1,257 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "due-pdc-parallelo-accumulo-combinato",
+    "client": "Nove C",
+    "project_name": "Due pompe di calore in parallelo con accumulo combinato per riscaldamento e acqua calda sanitaria",
+    "commission_code": "PROVA-01",
+    "revision": "00",
+    "issue_date": "2026-08-08"
+  },
+  "plant_regime": "up_to_35_kw",
+  "networks": [
+    {
+      "id": "circuito-generatori",
+      "name": "Circuito dei generatori",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "circuito-secondario",
+      "name": "Circuito secondario di riscaldamento ai radiatori",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "acqua-fredda",
+      "name": "Acqua fredda di acquedotto",
+      "domain": "hydronic",
+      "medium": "cold_water"
+    },
+    {
+      "id": "acqua-calda-sanitaria",
+      "name": "Acqua calda sanitaria",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "pdc-1",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "tipo": "aria-acqua",
+        "potenza": "12 kW",
+        "gestione": "master"
+      }
+    },
+    {
+      "id": "pdc-2",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "tipo": "aria-acqua",
+        "potenza": "12 kW",
+        "gestione": "slave"
+      }
+    },
+    {
+      "id": "rc-mandata-generatori",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "rip-ritorno-generatori",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "accumulo-combinato",
+      "definition_id": "buffer-combined",
+      "tag": null,
+      "properties": {
+        "modello": "ECOcombi",
+        "volume": "200 litri",
+        "configurazione": "a quattro tubi",
+        "produzione_sanitaria": "istantanea tramite serpentino interno"
+      }
+    },
+    {
+      "id": "circolatore-secondario",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "radiatori",
+      "definition_id": "radiator",
+      "tag": null,
+      "properties": {
+        "stato": "esistente"
+      }
+    },
+    {
+      "id": "acquedotto",
+      "definition_id": "cold-water-inlet",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "utenze-sanitarie",
+      "definition_id": "dhw-draw-off",
+      "tag": null,
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "mand-pdc1-raccordo",
+      "network_id": "circuito-generatori",
+      "endpoint_a": { "component_id": "pdc-1", "port_id": "water_supply" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "mand-pdc2-raccordo",
+      "network_id": "circuito-generatori",
+      "endpoint_a": { "component_id": "pdc-2", "port_id": "water_supply" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori", "port_id": "c" },
+      "properties": {}
+    },
+    {
+      "id": "mand-raccordo-accumulo",
+      "network_id": "circuito-generatori",
+      "endpoint_a": { "component_id": "rc-mandata-generatori", "port_id": "b" },
+      "endpoint_b": { "component_id": "accumulo-combinato", "port_id": "primary_in" },
+      "properties": {}
+    },
+    {
+      "id": "rit-accumulo-ripartizione",
+      "network_id": "circuito-generatori",
+      "endpoint_a": { "component_id": "accumulo-combinato", "port_id": "primary_out" },
+      "endpoint_b": { "component_id": "rip-ritorno-generatori", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "rit-ripartizione-pdc1",
+      "network_id": "circuito-generatori",
+      "endpoint_a": { "component_id": "rip-ritorno-generatori", "port_id": "b" },
+      "endpoint_b": { "component_id": "pdc-1", "port_id": "water_return" },
+      "properties": {}
+    },
+    {
+      "id": "rit-ripartizione-pdc2",
+      "network_id": "circuito-generatori",
+      "endpoint_a": { "component_id": "rip-ritorno-generatori", "port_id": "c" },
+      "endpoint_b": { "component_id": "pdc-2", "port_id": "water_return" },
+      "properties": {}
+    },
+    {
+      "id": "sec-accumulo-circolatore",
+      "network_id": "circuito-secondario",
+      "endpoint_a": { "component_id": "accumulo-combinato", "port_id": "secondary_out" },
+      "endpoint_b": { "component_id": "circolatore-secondario", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "sec-circolatore-radiatori",
+      "network_id": "circuito-secondario",
+      "endpoint_a": { "component_id": "circolatore-secondario", "port_id": "b" },
+      "endpoint_b": { "component_id": "radiatori", "port_id": "in" },
+      "properties": {}
+    },
+    {
+      "id": "sec-radiatori-accumulo",
+      "network_id": "circuito-secondario",
+      "endpoint_a": { "component_id": "radiatori", "port_id": "out" },
+      "endpoint_b": { "component_id": "accumulo-combinato", "port_id": "secondary_in" },
+      "properties": {}
+    },
+    {
+      "id": "san-acquedotto-accumulo",
+      "network_id": "acqua-fredda",
+      "endpoint_a": { "component_id": "acquedotto", "port_id": "a" },
+      "endpoint_b": { "component_id": "accumulo-combinato", "port_id": "cold_in" },
+      "properties": {}
+    },
+    {
+      "id": "san-accumulo-utenze",
+      "network_id": "acqua-calda-sanitaria",
+      "endpoint_a": { "component_id": "accumulo-combinato", "port_id": "dhw_out" },
+      "endpoint_b": { "component_id": "utenze-sanitarie", "port_id": "a" },
+      "properties": {}
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a1",
+      "text": "Il testo dice che le due pompe di calore sono «installate in parallelo», ma non dice con quale pezzo le due mandate si uniscono e i due ritorni si dividono (non nomina un collettore ne' un separatore idraulico). Si sono usati due raccordi a T: una confluenza sulla mandata verso l'accumulo e una ripartizione sul ritorno verso le due macchine. Va bene cosi', oppure il collegamento in parallelo e' realizzato con un collettore o un altro pezzo da indicare?",
+      "status": "proposed",
+      "source_message_refs": [
+        "due pompe di calore aria-acqua da 12 kW ciascuna, installate in parallelo"
+      ]
+    },
+    {
+      "id": "a2",
+      "text": "Il testo dice che le due pompe di calore sono gestite «una come master e una come slave». La gestione master/slave e' una logica di regolazione, non una tubazione: sul grafo non si vede. Le due macchine sono disegnate identiche e in parallelo, e il ruolo di ciascuna e' stato solo trascritto fra i dati della macchina.",
+      "status": "proposed",
+      "source_message_refs": [
+        "gestite una come master e una come slave"
+      ]
+    },
+    {
+      "id": "a3",
+      "text": "Il testo non dice se il circuito fra le due pompe di calore e l'accumulo abbia un circolatore a se'. La macchina di catalogo scelta per la pompa di calore aria-acqua porta il circolatore a bordo, quindi non e' stato disegnato nessun circolatore in piu' su quel circuito. E' cosi', oppure sul circuito dei generatori e' previsto un circolatore separato?",
+      "status": "proposed",
+      "source_message_refs": [
+        "due pompe di calore aria-acqua da 12 kW ciascuna"
+      ]
+    },
+    {
+      "id": "a4",
+      "text": "Il serpentino interno per l'acqua calda sanitaria non e' disegnato come pezzo a se': sta dentro l'accumulo, come dice il testo, e la macchina di catalogo scelta lo comprende gia' con il proprio ingresso di acqua fredda e la propria uscita di acqua calda sanitaria.",
+      "status": "proposed",
+      "source_message_refs": [
+        "produzione istantanea di acqua calda sanitaria tramite serpentino interno"
+      ]
+    },
+    {
+      "id": "a5",
+      "text": "Il testo dice che il circuito secondario ha un «circolatore dedicato», ma non dice se stia sulla mandata o sul ritorno. E' stato messo sulla mandata che esce dall'accumulo e va ai radiatori, che e' la posizione convenzionale di disegno. Se va sul ritorno, va corretto.",
+      "status": "proposed",
+      "source_message_refs": [
+        "un circuito secondario con circolatore dedicato"
+      ]
+    },
+    {
+      "id": "a6",
+      "text": "Il testo parla dell'«impianto esistente a radiatori» senza dire quanti radiatori siano. Ne e' stato disegnato uno solo, che rappresenta tutto l'impianto esistente. Quanti sono davvero, e serve rappresentarli distinti?",
+      "status": "proposed",
+      "source_message_refs": [
+        "alimenta direttamente l'impianto esistente a radiatori"
+      ]
+    },
+    {
+      "id": "a7",
+      "text": "Il testo esclude espressamente il ricircolo sanitario: non e' disegnato perche' non c'e', non perche' sia stato dimenticato. Chi completa il grafo non deve riaggiungerlo.",
+      "status": "proposed",
+      "source_message_refs": [
+        "Non e' previsto ricircolo sanitario."
+      ]
+    },
+    {
+      "id": "a8",
+      "text": "Il testo prevede sull'accumulo il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico. Sono accessori di servizio: non entrano in questo grafo di prima stesura, li aggiunge il passo successivo della lavorazione, che sa dove vanno. La richiesta e' registrata qui perche' non vada persa: l'accumulo scelto ha gia' gli attacchi di servizio pronti per riceverli.",
+      "status": "proposed",
+      "source_message_refs": [
+        "Sul volume tecnico sono previsti anche il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico."
+      ]
+    }
+  ],
+  "rule_applications": [],
+  "subsystems": [],
+  "sheets": []
+}
