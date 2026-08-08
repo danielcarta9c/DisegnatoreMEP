@@ -122,9 +122,20 @@ GRAMMATICA: tuple[tuple[BandRole, frozenset[str]], ...] = (
     ),
     (
         BandRole.DISTRIBUTION,
-        frozenset({"circulation", "distribution", "diversion", "circuit_mixing"}),
+        frozenset(
+            {
+                "circulation",
+                "distribution",
+                "diversion",
+                "circuit_mixing",
+                # La miscelatrice sanitaria sta coi circolatori, non coi
+                # terminali: e' un organo di regolazione della centrale, non
+                # un apparecchio dell'utenza. Detto dal PM l'8 agosto.
+                "dhw_mixing",
+            }
+        ),
     ),
-    (BandRole.TERMINAL, frozenset({"emission", "boundary", "dhw_mixing"})),
+    (BandRole.TERMINAL, frozenset({"emission", "boundary"})),
 )
 """Quale fascia chiede ciascun mestiere, da sinistra a destra.
 
@@ -891,19 +902,32 @@ def place_sheet(
                         f"component {component_id} does not fit between the drawing "
                         f"area and the ground line: symbols are never shrunk to fit"
                     )
+                # **Non una colonna da riempire: un asse di allineamento.**
+                # Il PM: «piu' che colonne, immaginiamola come una linea di
+                # allineamento dei centri dei simboli». I pezzi di una colonna
+                # hanno larghezze diverse — una pompa di calore 40 mm, la sua
+                # valvola 5 — e allinearli a sinistra li faceva sembrare
+                # appoggiati a un muro invece che infilati sullo stesso asse.
+                asse = left + max(manifests[item].width_mm for item in slot) / 2
+                centrato = on_grid(asse - manifest.width_mm / 2, area.x_mm)
                 placed.append(
                     PlacedSymbol(
                         component_id=component_id,
                         symbol_id=manifest.id,
                         rotation_deg=rotation_for(component_id),
-                        origin=Point(x_mm=left, y_mm=top),
+                        origin=Point(x_mm=centrato, y_mm=top),
                         width_mm=manifest.width_mm,
                         height_mm=manifest.height_mm,
                         tag=tags.get(component_id),
                     )
                 )
                 boxes.append(
-                    (left, top, left + manifest.width_mm, top + manifest.height_mm)
+                    (
+                        centrato,
+                        top,
+                        centrato + manifest.width_mm,
+                        top + manifest.height_mm,
+                    )
                 )
                 # Il prossimo della colonna sta sotto questo, non accanto.
                 floor = top + manifest.height_mm + ROW_GAP_MM
