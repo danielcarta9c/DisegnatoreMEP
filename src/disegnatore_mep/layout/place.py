@@ -191,6 +191,15 @@ class _Process:
             if not changed:
                 break
 
+        # Chi sbocca dove: serve a riconoscere il **parallelo**. Due macchine
+        # che alimentano la stessa cosa sono due rami dello stesso passo del
+        # processo, non due passi in fila — e vanno in colonna.
+        self.feeds_into: dict[str, str] = {
+            source: targets[0]
+            for source, targets in successors.items()
+            if len(set(targets)) == 1
+        }
+
         self.downstream: dict[str, int] = {}
         for component_id in members:
             seen: set[str] = set()
@@ -231,6 +240,7 @@ def _slots(
     order: list[str],
     feeder_of: dict[str, str],
     stackable: dict[str, bool],
+    target_of: dict[str, str] | None = None,
     *,
     ground: frozenset[str] = frozenset(),
     heights: dict[str, float] | None = None,
@@ -242,8 +252,21 @@ def _slots(
     Due zone servite dallo stesso collettore sono lo stesso passo del processo,
     non due passi in fila: metterle una sopra l'altra e' come le disegna
     chiunque, accorcia la tavola e ne usa l'altezza, che altrimenti resta
-    bianca. Vale solo per chi sta su una tubazione: due accumuli appoggiati a
-    terra non si possono impilare, e restano affiancati.
+    bianca.
+
+    **Due pezzi sono paralleli in due modi, e contano tutti e due:** quando li
+    alimenta la stessa cosa (`feeder_of`) e quando **sboccano nella stessa
+    cosa** (`target_of`). Il secondo mancava, ed e' il caso piu' comune che
+    esista: due generatori in parallelo non hanno nessuno che li alimenti — sono
+    loro la sorgente — e si riconoscono solo dal fatto che mandano allo stesso
+    raccordo. Senza, due pompe di calore in parallelo finivano affiancate
+    qualunque cosa si facesse.
+
+    **E si impila chiunque.** Prima valeva solo per chi sta su una tubazione,
+    perche' «due accumuli appoggiati a terra non si possono impilare»: era una
+    conseguenza della linea di terra, che e' stata ritirata (D-116). Il PM:
+    «basta mettere le due pompe di calore una sopra e una sotto, e stessa cosa
+    sui volumi».
 
     `ground` e' il tentativo di recupero di D-072/D-073, e arriva popolato
     solo quando le fasce non entrano in larghezza: anche chi sta a terra puo'
@@ -257,12 +280,16 @@ def _slots(
     slots: list[list[str]] = []
     for component_id in order:
         feeder = feeder_of.get(component_id)
-        same_branch = (
-            slots
+        vicino = slots[-1][-1] if slots else None
+        target = (target_of or {}).get(component_id)
+        same_branch = bool(
+            vicino
             and stackable.get(component_id, False)
-            and stackable.get(slots[-1][-1], False)
-            and feeder is not None
-            and feeder_of.get(slots[-1][-1]) == feeder
+            and stackable.get(vicino, False)
+            and (
+                (feeder is not None and feeder_of.get(vicino) == feeder)
+                or (target is not None and (target_of or {}).get(vicino) == target)
+            )
         )
         if same_branch:
             slots[-1].append(component_id)
@@ -487,7 +514,10 @@ def place_sheet(
         component_id: feed[0].component_id
         for component_id, feed in process.feed.items()
     }
-    stackable = {item: standings[item] is Standing.RAIL for item in placeable}
+    # Tutto si impila. Il vecchio «solo chi sta su una tubazione» discendeva
+    # dalla linea di terra — chi ci appoggiava non poteva staccarsene — ed e'
+    # caduto con lei (D-116).
+    stackable = dict.fromkeys(placeable, True)
     linked = frozenset(
         (trunk.start.component_id, trunk.end.component_id)
         if trunk.start.component_id <= trunk.end.component_id
@@ -557,6 +587,7 @@ def place_sheet(
                 columns[role],
                 feeder_of,
                 stackable,
+                process.feeds_into,
                 ground=stacked_ground,
                 heights=heights,
                 linked=linked,
