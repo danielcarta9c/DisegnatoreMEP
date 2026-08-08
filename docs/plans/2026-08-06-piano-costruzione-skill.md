@@ -257,6 +257,14 @@ D-106, diventano contenuto delle regole. Il **regime** — sotto o sopra i 35 kW
 dato d'ingresso dichiarato dal progettista (il pezzo 1 lo chiede quando non e' detto),
 mai calcolato dalla skill: la taglia non la decide lei (D-104).
 
+> ⛔ **Questa riga del contratto e' stata superata da D-108**, lo stesso 7 agosto, ed e'
+> lasciata com'era perche' il piano e' un registro e non si riscrive. Quello che vale
+> oggi: il regime **si ricava dalle potenze che il progettista ha gia' scritto** e non
+> gli si chiede — sommarle e confrontarle con la soglia e' aritmetica, non
+> dimensionamento. Resta vero che **le regole** non lo calcolano mai: lo leggono e basta.
+> Chi lo ricava e' l'interprete. La frase «il pezzo 1 lo chiede quando non e' detto» vale
+> **solo** quando il testo le potenze non le da' affatto.
+
 **Accettazione (proprieta').**
 
 1. Prima di scrivere qualunque regola, **il riscontro sulle fonti** (D-102, D-103): gli

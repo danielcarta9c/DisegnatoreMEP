@@ -184,13 +184,15 @@ nell'altro:
 | 1 | Questo file | Cancello |
 | 2 | `docs/SKILL.md` | Com'è fatta la skill, la catena, i pezzi |
 | 3 | `PROJECT_STATE.md` | A che punto siamo |
-| 4 | `docs/plans/2026-08-06-piano-costruzione-skill.md` | Il piano corrente e i verdetti — **l'appendice del 7 agosto ha i tre verdetti nuovi** |
-| 5 | `docs/DECISION_LOG.md` — **partire da D-096** | D-096÷D-108 sono la logica del grafo, il confine del prodotto, il regime e le due regole di metodo del 7 agosto |
+| 4 | `docs/plans/2026-08-06-piano-costruzione-skill.md` | Il piano corrente e i verdetti. **L'appendice è un registro storico: le sue righe raccontano com'era allora, non com'è oggi.** Dove una riga è stata superata, ha il rimando scritto sopra |
+| 5 | `docs/DECISION_LOG.md` — **partire da D-096** | D-096÷D-111 sono la logica del grafo, il confine del prodotto, il regime, le due regole di metodo del 7 agosto e — **le ultime due, che sono la specifica del lavoro in corso** — la modalità verifica (D-110) e come si compone una tavola (D-111, che emenda D-110) |
+| 5b | `docs/collaudi/` | I verbali per esteso dei collaudi indipendenti: i criteri che si sono scritti e l'esito di ciascuno |
 | 6 | `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` | Dove va ciascun pezzo, con la fonte. **La parte terza è il riscontro di D-106, riga per riga** |
 | 7 | `docs/adr/0005-*.md` | L'architettura, blindata |
 | 8 | `docs/prodotto/GRAFO_IMPIANTO.md` e `docs/prodotto/grafi-di-prova/` | Gli artefatti che il PM legge e approva — **col confronto del 7 agosto** |
-| 8b | `examples/prova/input/` | **Il testo originale del committente**, non toccato: è il metro del pezzo 1 |
+| 8b | `examples/prova/input/` | **Il testo originale del committente**, non toccato. Le letture manuali qui accanto sono **il metro** del pezzo 1 e non si toccano, nemmeno dove hanno torto |
 | 8c | `skill/capire/COSA_DECIDE.md` | **Le quattro cose che l'interprete deve capire**, e quando invece chiede |
+| 8d | `skill/capire/prova-2026-08-07/` | Le consegne dei tre giri della prova in camera pulita: **allegati dei verbali, congelati.** Non si correggono, nemmeno dove sbagliano |
 | 9 | `AGENTS.md` | Regole operative e i due ruoli |
 
 ---
@@ -208,11 +210,11 @@ difetti aperti**; `ruff` e `mypy --strict` puliti.
 | Pezzo | Stato |
 |---|---|
 | **1 — Capire** | **APPROVATO dal collaudo** (7 agosto, al terzo giro). Zero perso e zero inventato su cinque impianti, 67 componenti, 82 tubazioni. Consegne dei tre giri agli atti in `skill/capire/prova-2026-08-07/` |
-| **2 — Completare** (le regole) | Costruito e collaudato. **Il pacchetto E (regime + tratto comune) e C2 sono collaudati**: respinti al primo giro, corretti lo stesso giorno, verdi sulle prove dei collaudi adottate come regressione |
+| **2 — Completare** (le regole) | Costruito e collaudato, **ma con quattro difetti aperti**. Il pacchetto E e C2 furono respinti al primo giro e corretti lo stesso giorno; poi il collaudo delle **due correzioni di fine sessione** (7 agosto, sera) le ha **respinte entrambe**: il nocciolo regge, ma restano i due della camminata del tratto comune, il caso di mezzo del regime e le potenze fuori dal modello. Elenco in `PROJECT_STATE.md`, prove marcate rosse apposta |
 | **3 — Assemblare** | Costruito e collaudato; il 7 agosto ha guadagnato la classificazione dei blocchi sul capofila e l'ordinamento dei blocchi di mezzo |
 | Il grafo, le sigle e **l'indirizzo dei nodi (D-105)** | **Collaudato e APPROVATO** (7 agosto), 91 prove del collaudo adottate |
 | Il vocabolario delle proprietà | Approvato; si aggiungono il bordo macchina e il punto di riempimento come dichiarazioni di catalogo |
-| 4 — Disporre / libreria / cartiglio / composizione | Come prima: la composizione è da rifare |
+| 4 — Disporre / libreria / cartiglio / **composizione** | **È il lavoro della prossima sessione** (§7). Instradamento e regole di costo del PM esistono; il richiamo obliquo esiste. Mancano il riempimento bilanciato come obiettivo, la prenotazione dello spazio in avanti e l'anti-incrocio fra richiami. Specifica in **D-111**; la modalità verifica in **D-110** |
 | 5 — Validatori e cancello dell'occhio terzo | Correttezza e preflight esistono, il cancello no |
 
 ### Cosa è successo il 7 agosto, sera — la chiusura di «Capire»
@@ -314,9 +316,9 @@ sessione: solo far uscire il disegno.
    raggera senza incrociarsi**.
 
    Delle cinque cose, **due ci sono già**: le regole di costo del PM, in
-   `layout/place.py` e `layout/improve.py`; e il **richiamo obliquo**, che esiste
-   (`layout/geometry.py` porta `leader_from`) e sa già non passare sopra i simboli
-   (`layout/labels.py`). **Tre mancano, ed è il lavoro:**
+   `src/disegnatore_mep/layout/place.py` e `src/disegnatore_mep/layout/improve.py`; e il **richiamo obliquo**, che esiste
+   (`src/disegnatore_mep/layout/geometry.py` porta `leader_from`) e sa già non passare sopra i simboli
+   (`src/disegnatore_mep/layout/labels.py`). **Tre mancano, ed è il lavoro:**
 
    - **il riempimento bilanciato e simmetrico**, che oggi non è obiettivo di nessuno: il
      collocatore non sa nemmeno che il foglio ha un bordo mentre dispone — lo scopre alla
