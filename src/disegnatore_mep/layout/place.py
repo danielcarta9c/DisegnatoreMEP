@@ -102,6 +102,40 @@ sulla carta sembra disegnata sul simbolo.
 """
 
 
+
+# La grammatica di partenza di una centrale idronica (D-119). Il PM:
+# «generatori a sinistra, impilati verticalmente se sono piu' di uno; volumi,
+# separatori e scambiatori principali subito a destra, anch'essi organizzati
+# verticalmente; distribuzione secondaria a destra dei volumi; circuiti
+# secondari organizzati verticalmente».
+#
+# Si legge dal **mestiere che il catalogo dichiara**, mai dal nome di un
+# componente (D-069, D-090): sono **posizioni iniziali preferite**, non
+# coordinate, e cio' che viene dopo puo' deformarle liberamente.
+GRAMMATICA: tuple[tuple[BandRole, frozenset[str]], ...] = (
+    (BandRole.GENERATION, frozenset({"heat_generation"})),
+    (
+        BandRole.PRIMARY,
+        frozenset(
+            {"thermal_storage", "dhw_storage", "hydraulic_separation", "heat_exchange"}
+        ),
+    ),
+    (
+        BandRole.DISTRIBUTION,
+        frozenset({"circulation", "distribution", "diversion", "circuit_mixing"}),
+    ),
+    (BandRole.TERMINAL, frozenset({"emission", "boundary", "dhw_mixing"})),
+)
+"""Quale fascia chiede ciascun mestiere, da sinistra a destra.
+
+Un componente che porta piu' mestieri prende la fascia **piu' a sinistra** fra
+quelle che chiede: un bollitore che scambia e accumula e' un volume, non uno
+scambiatore di distribuzione. Chi non porta nessuno di questi mestieri e' un
+accessorio, e **segue il pezzo da cui pende**: la sua valvola sta dove sta la
+sua macchina, sempre.
+"""
+
+
 def _band_by_subsystem(project: ProjectModel, sheet_id: str) -> dict[str, BandRole]:
     for sheet in project.sheets:
         if sheet.id == sheet_id:
@@ -110,9 +144,16 @@ def _band_by_subsystem(project: ProjectModel, sheet_id: str) -> dict[str, BandRo
 
 
 def _assign_bands(
-    project: ProjectModel, partition: SheetPartition, placeable: list[str]
+    project: ProjectModel,
+    partition: SheetPartition,
+    placeable: list[str],
+    catalog: ComponentRegistry,
+    definitions: dict[str, str] | None = None,
+    anchors_of: dict[str, tuple[str, ...]] | None = None,
 ) -> dict[str, BandRole]:
     band_of_subsystem = _band_by_subsystem(project, partition.sheet_id)
+    definitions = definitions or {item.id: item.definition_id for item in project.components}
+    anchors_of = anchors_of or {}
     bands: dict[str, BandRole] = {}
     if band_of_subsystem:
         for subsystem in project.subsystems:
@@ -131,9 +172,7 @@ def _assign_bands(
 
     roles = list(BandRole)
     # Senza piano dichiarato, i sottosistemi sono gia' un ordine di lettura:
-    # l'i-esimo finisce sull'i-esima fascia. E' il ripiego migliore perche' un
-    # impianto idronico e' un circuito chiuso e non ha sorgenti topologiche da
-    # cui misurare una profondita' assoluta.
+    # l'i-esimo finisce sull'i-esima fascia.
     if project.subsystems:
         for index, subsystem in enumerate(project.subsystems):
             role = roles[min(index, len(roles) - 1)]
@@ -143,8 +182,31 @@ def _assign_bands(
             bands.setdefault(component_id, roles[-1])
         return bands
 
+    # Senza nemmeno i sottosistemi vale la **grammatica** (D-119): la fascia si
+    # legge dal mestiere dichiarato in catalogo. Prima, in questo caso, tutti i
+    # pezzi finivano nella prima fascia — e un impianto letto davvero
+    # dall'interprete i sottosistemi non ce li ha, perche' le sue istruzioni gli
+    # ordinano di lasciarli vuoti e nessun pezzo successivo li crea. Quarantacinque
+    # pezzi in una fascia sola non sono una disposizione.
     for component_id in placeable:
-        bands[component_id] = roles[0]
+        mestieri = frozenset(catalog.resolve(definitions[component_id]).definition.functions)
+        scelta = next(
+            (role for role, chiede in GRAMMATICA if mestieri & chiede), None
+        )
+        if scelta is not None:
+            bands[component_id] = scelta
+    # Gli accessori seguono il pezzo da cui pendono: la valvola sta dove sta la
+    # sua macchina. Chi resta senza — non ha mestiere di grammatica e non tocca
+    # nessuno che ce l'abbia — va con la distribuzione, che e' il mezzo.
+    for component_id in placeable:
+        if component_id in bands:
+            continue
+        vicini = [
+            bands[other]
+            for other in anchors_of.get(component_id, ())
+            if other in bands
+        ]
+        bands[component_id] = min(vicini, key=lambda r: r.reading_order) if vicini else roles[2]
     return bands
 
 
@@ -382,7 +444,20 @@ def place_sheet(
             f"accessory sits on a run, so there is nothing to draw it against"
         )
 
-    bands = _assign_bands(project, partition, placeable)
+    # Chi tocca chi: serve alla grammatica per far seguire un accessorio al
+    # pezzo da cui pende.
+    tocca: dict[str, list[str]] = defaultdict(list)
+    for trunk in partition.trunks:
+        tocca[trunk.start.component_id].append(trunk.end.component_id)
+        tocca[trunk.end.component_id].append(trunk.start.component_id)
+    bands = _assign_bands(
+        project,
+        partition,
+        placeable,
+        catalog,
+        {item.id: item.definition_id for item in project.components},
+        {key: tuple(value) for key, value in tocca.items()},
+    )
     tags = {item.id: item.tag for item in project.components}
     process = _Process(project, partition, catalog)
     order_hint = {
