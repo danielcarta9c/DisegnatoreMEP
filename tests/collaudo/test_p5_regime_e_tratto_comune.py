@@ -408,27 +408,34 @@ def test_con_una_macchina_sola_la_posa_coincide_con_quella_di_sempre() -> None:
     assert validate_project(done, CAT).ok
 
 
-def test_l_ibrido_ha_il_suo_ritorno_generale_e_il_corredo_ci_finisce() -> None:
-    """Impianto 4, l'ibrido — la correzione chiesta dal PM il 7 agosto.
+def test_l_ibrido_non_ha_un_ritorno_generale_e_apre_il_punto() -> None:
+    """Impianto 4, l'ibrido — e qui il contratto di questo collaudo vince su
+    una correzione successiva che gli andava contro.
 
-    Il ritorno della caldaia raccoglie anche il ramo del sanitario, ma il
-    ritorno generale c'e' lo stesso: e' il tratto fra il volume tecnico e la
-    ripartizione verso le due macchine, e ci passa tutta l'acqua che torna
-    dall'impianto. Prima la camminata si fermava sulla confluenza del ramo
-    sanitario e dichiarava quattro punti aperti su un impianto che il punto
-    lo aveva. Adesso la camminata **si apre sui rami**, e il corredo ci
-    finisce: una volta sola, sullo stesso attacco per tutte e quattro le
-    regole, e nessun punto aperto."""
+    La correzione del 7 agosto sera affermava che l'ibrido un ritorno generale
+    ce l'ha, e che il corredo va sul tratto fra il volume tecnico e la
+    ripartizione. **Non e' vero, ed e' misurabile:** la caldaia manda alla
+    deviatrice, che sdoppia; il ramo del sanitario passa per lo scambiatore e
+    rientra in `ritorno-caldaia`, **a valle** del collettore di ritorno. Tolto
+    quel tratto, il circuito della caldaia si chiude lo stesso — quindi quel
+    tratto la sua acqua non la porta, e il defangatore che ci si posava sopra
+    non proteggeva la caldaia, che e' la ragione per cui esiste.
+
+    Il collaudo indipendente delle correzioni lo ha inchiodato (DIFETTO 1) e
+    aveva gia' osservato che «prima della correzione erano quattro punti
+    aperti». La risposta giusta e' quella: nessuna scelta silenziosa, quattro
+    punti aperti con la ragione vera, e la decisione torna al progettista."""
     done, applied, gaps = saturo(PROVE[3])
-    assert not gaps, [(g.rule_id, g.reason.value) for g in gaps]
-    posed = {p.rule_id: p.anchor for p in applied if p.rule_id in KIT_COMUNE}
-    assert set(posed) == KIT_COMUNE
-    anchors = {(a.component_id, a.port_id) for a in posed.values()}
-    assert len(anchors) == 1, posed
-    # E' un attacco di una ripartizione, non di una macchina: il tratto che le
-    # serve tutte, a monte di dove il ritorno si divide.
-    (component_id, _), = anchors
-    assert "junction" in functions_of(done, component_id), component_id
+    open_points = {g.rule_id: g for g in gaps if g.rule_id in KIT_COMUNE}
+    assert set(open_points) == KIT_COMUNE
+    for gap in open_points.values():
+        assert gap.reason is GapReason.NO_COMMON_RUN, gap.rule_id
+    assert not any(p.rule_id in KIT_COMUNE for p in applied)
+    banned = {"expansion", "filling", "pressure_measurement", "sludge_separation"}
+    for component in done.components:
+        assert not functions_of(done, component.id) & banned, (
+            f"{component.id}: il corredo e' stato posato su un ramo scelto in silenzio"
+        )
 
 
 def test_dove_il_tratto_comune_non_esiste_davvero_esce_un_punto_aperto() -> None:
@@ -785,11 +792,17 @@ def test_il_confronto_per_il_pm_dice_il_vero_sui_documenti() -> None:
             line for line in doc.splitlines() if re.match(r"^\| [A-Z]+\.[0-9]", line)
         ]
         assert len(rows) == expected, f"{name}: il documento non ha {expected} nodi"
-    # La frase sui punti aperti dev'essere vera su tutti e cinque: dopo la
-    # correzione della camminata (7 agosto) nessuno ne ha piu'.
-    assert "Nessuno dei cinque ha punti aperti" in confronto
+    # La frase sui punti aperti dev'essere vera impianto per impianto. Il
+    # 7 agosto diceva «nessuno dei cinque»: il collaudo ha misurato che
+    # sull'ibrido era falsa, e il documento e' stato corretto invece che
+    # lasciato a raccontare una cosa che il PM non poteva verificare.
+    assert "Quattro dei cinque non hanno punti aperti" in confronto
+    assert "L'ibrido ne ha quattro" in confronto
     for name in PROVE:
         _, _, found = saturo(name)
+        if name == PROVE[3]:
+            assert {g.rule_id for g in found} == KIT_COMUNE, name
+            continue
         assert not found, (name, [(g.rule_id, g.reason.value) for g in found])
     # Il regime che il confronto dichiara per ciascun impianto dev'essere
     # quello scritto nel modello: la tabella del documento e i cinque file

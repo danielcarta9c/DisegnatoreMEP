@@ -250,7 +250,12 @@ class RuleContext:
         return self.fill_ports.get(component_id)
 
     def run_from(
-        self, connection_id: str, *, upstream: bool, network_id: str
+        self,
+        connection_id: str,
+        *,
+        upstream: bool,
+        network_id: str,
+        without: frozenset[str] = frozenset(),
     ) -> tuple[str, ...]:
         """Tutte le tubazioni da cui questa puo' essere alimentata, in ordine.
 
@@ -261,20 +266,20 @@ class RuleContext:
         da entrambe. Si ferma su cio' che non e' in linea — una macchina, un
         serbatoio — e dove non c'e' piu' niente.
 
-        L'ordine e' quello della scoperta, dal piu' vicino al piu' lontano: e'
-        cosi' che il tratto comune si sceglie a monte della **prima**
-        ripartizione e non piu' su. Fra rami pari si guarda l'identificativo
-        della tubazione, mai l'ordine del file.
+        L'ordine e' quello della scoperta, dal piu' vicino al piu' lontano.
+        **Serve a dire quali tubazioni stanno dal lato giusto** — sul ritorno
+        per una regola del ritorno, sulla mandata per una della mandata — non
+        a scegliere il tratto comune: quale sia il tratto comune lo decide
+        `carries_all_the_water_of`, che guarda la struttura e non l'ordine di
+        scoperta. Prima lo decideva questa camminata, prendendo la prima
+        tubazione condivisa da tutte le risalite, e su un anello «la prima che
+        incontro» dipendeva da quale macchina partiva per prima.
 
-        **Perche' si apre sui rami.** Fermarsi alla prima confluenza faceva
-        sparire il ritorno generale di un impianto ibrido: risalendo dalla
-        caldaia si incontrava subito il punto in cui rientra il ramo del
-        sanitario, la camminata si fermava li', e il tratto che porta tutta
-        l'acqua di ritorno — quello fra il volume tecnico e la ripartizione
-        verso le macchine — non veniva mai raggiunto. Il corredo del circuito
-        diventava un punto aperto su un impianto che il punto lo aveva.
+        `without` toglie tubazioni dal percorso: serve a misurare quanta rete
+        resta fra le macchine e un tratto candidato, cioe' a scegliere quello
+        piu' vicino.
         """
-        if connection_id not in self.pipe_ends:
+        if connection_id not in self.pipe_ends or connection_id in without:
             return ()
         chain = [connection_id]
         seen = {connection_id}
@@ -288,12 +293,82 @@ class RuleContext:
             for item in sorted(
                 (self.incoming if upstream else self.outgoing).get(component_id, ())
             ):
-                if item in seen or self.network_of_connection.get(item) != network_id:
+                if (
+                    item in seen
+                    or item in without
+                    or self.network_of_connection.get(item) != network_id
+                ):
                     continue
                 seen.add(item)
                 chain.append(item)
                 frontier.append(item)
         return tuple(chain)
+
+    def carries_all_the_water_of(
+        self, connection_id: str, *, network_id: str, component_ids: tuple[str, ...]
+    ) -> bool:
+        """Se per quella tubazione passa **tutta** l'acqua di quelle macchine.
+
+        E' la proprieta' che la regola del defangatore dichiara per iscritto —
+        «li' passa tutta l'acqua che torna, quindi un pezzo solo protegge ogni
+        generatore» — presa alla lettera e resa misurabile: si toglie la
+        tubazione e si guarda se il circuito di ciascuna macchina **si chiude
+        ancora**. Se si chiude, quell'acqua per di li' non passava.
+
+        Il giro si fa **attraversando anche le macchine**, perche' l'acqua ci
+        passa dentro: fermarsi sulle macchine e' comodo per camminare, non e'
+        vero per l'acqua.
+
+        Sostituisce il vecchio criterio — «da questo tratto si risale a tutti i
+        generatori» — che non e' la stessa cosa e su due grafi su sette dava
+        una risposta diversa: un ramo che rientra **a valle** e' risalibile da
+        entrambe le macchine e non porta l'acqua di nessuna delle due.
+        """
+        pipes = {
+            pipe
+            for pipe, network in self.network_of_connection.items()
+            if network == network_id and pipe in self.pipe_ends
+        }
+        if connection_id not in pipes:
+            return False
+        onward = {
+            pipe: [
+                item
+                for item in self.outgoing.get(self.pipe_ends[pipe][1].component_id, ())
+                if item in pipes
+            ]
+            for pipe in pipes
+        }
+        for component_id in component_ids:
+            leaving = [
+                pipe
+                for pipe in pipes
+                if self.pipe_ends[pipe][0].component_id == component_id
+            ]
+            arriving = {
+                pipe
+                for pipe in pipes
+                if self.pipe_ends[pipe][1].component_id == component_id
+            }
+            if not leaving or not arriving:
+                # Una macchina che su questa rete non ha sia una partenza sia
+                # un arrivo non ha un circuito da tagliare, e non ha voce.
+                continue
+            seen: set[str] = set()
+            stack = [pipe for pipe in leaving if pipe != connection_id]
+            while stack:
+                current = stack.pop()
+                if current in seen:
+                    continue
+                seen.add(current)
+                stack.extend(
+                    item
+                    for item in onward[current]
+                    if item != connection_id and item not in seen
+                )
+            if seen & arriving:
+                return False
+        return True
 
     def service_port_for(self, component_id: str, function: str) -> str | None:
         """L'attacco che quel componente dedica a quella funzione, se ce l'ha."""

@@ -105,21 +105,37 @@ def _common_run_anchor(
 ) -> tuple[PortRef | None, PortRef | None]:
     """La testa del tratto comune della rete, per gli ancoraggi della regola.
 
-    Dal ritorno (o dalla mandata) di ciascun ancoraggio si cammina lungo il
-    percorso — contro il fluido per il ritorno, seguendolo per la mandata —
-    finche' la strada resta una sola. Le tubazioni che **tutte** le camminate
-    condividono sono il tratto comune; il pezzo si posa sulla prima di esse,
-    cioe' la piu' vicina agli ancoraggi: a monte della prima ripartizione sul
-    ritorno, a valle dell'ultima confluenza sulla mandata. Con un ancoraggio
-    solo il tratto comune comincia sul suo stesso attacco, e la posa coincide
-    con quella di sempre.
+    Il tratto comune e' quello per cui passa **tutta** l'acqua degli ancoraggi:
+    lo dice la regola stessa, per iscritto, nella motivazione del defangatore.
+    Si prende alla lettera — si toglie una tubazione e si guarda se il circuito
+    di ogni ancoraggio si chiude ancora — e chi non regge alla prova non e' il
+    tratto comune, per quanto ci si arrivi risalendo.
+
+    Fra le tubazioni che reggono la prova si sceglie la **piu' vicina agli
+    ancoraggi**: a monte della prima ripartizione sul ritorno, a valle
+    dell'ultima confluenza sulla mandata. «Piu' vicina» si misura, non si
+    scopre camminando: e' quella che lascia **meno rete** fra se' e le
+    macchine. Il lato — ritorno o mandata — lo da' la camminata, che parte
+    dagli attacchi del verso che la regola dichiara.
+
+    Con un ancoraggio solo il tratto comune comincia sul suo stesso attacco, e
+    la posa coincide con quella di sempre.
+
+    **Perche' non basta risalire.** Il criterio di prima era «le tubazioni che
+    tutte le risalite condividono», e non e' la stessa cosa: su un impianto
+    ibrido il ramo che rientra a valle e' risalibile da tutte e due le
+    macchine, e non porta l'acqua di nessuna delle due. Su un anello, poi,
+    «la prima condivisa che incontro» dipendeva da quale macchina partiva per
+    prima, cioe' dal **nome** delle macchine. Ora non si guarda piu' l'ordine
+    di scoperta, quindi la topologia decide da sola.
 
     Restituisce `(ancoraggio, ripiego)`: il primo e' la testa del tratto
     comune, o niente se non esiste; il secondo e' l'attacco del primo
     ancoraggio, che serve a dire **dove** la rete non ha un tratto comune.
     """
     upstream = rule.then.placement is Placement.ON_THE_COMMON_RETURN
-    chains: list[tuple[str, ...]] = []
+    starts: list[str] = []
+    anchored: list[str] = []
     fallback: PortRef | None = None
     for component_id in context.anchors_of(
         network.id, rule.when.anchor_has_function, rule.when.anchor_has_trait
@@ -133,6 +149,7 @@ def _common_run_anchor(
             component_id, network.id
         ):
             continue
+        anchored.append(component_id)
         for port in context.connected_ports(component_id):
             if port.flow not in rule.then.placement.flows:
                 continue
@@ -141,17 +158,34 @@ def _common_run_anchor(
                 continue
             if fallback is None:
                 fallback = PortRef(component_id=component_id, port_id=port.id)
-            chain = context.run_from(
-                connection_id, upstream=upstream, network_id=network.id
-            )
-            if chain:
-                chains.append(chain)
-    if not chains or fallback is None:
+            starts.append(connection_id)
+    if not starts or fallback is None:
         return None, None
-    shared = set(chains[0]).intersection(*(set(item) for item in chains[1:]))
-    if not shared:
+
+    def reached(without: frozenset[str] = frozenset()) -> set[str]:
+        """Le tubazioni dal lato della regola, saltando quelle escluse."""
+        return {
+            pipe
+            for start in starts
+            for pipe in context.run_from(
+                start, upstream=upstream, network_id=network.id, without=without
+            )
+        }
+
+    candidates = sorted(
+        pipe
+        for pipe in reached()
+        if context.carries_all_the_water_of(
+            pipe, network_id=network.id, component_ids=tuple(anchored)
+        )
+    )
+    if not candidates:
         return None, fallback
-    head = next(item for item in chains[0] if item in shared)
+    # La piu' vicina alle macchine lascia meno rete alle proprie spalle. Fra
+    # candidati veri quelle porzioni sono annidate, quindi la misura non pareggia
+    # mai e l'identificativo non decide nulla: sta li' solo perche' la funzione
+    # sia totale.
+    head = min(candidates, key=lambda pipe: (len(reached(frozenset({pipe}))), pipe))
     leaves, enters = context.pipe_ends[head]
     return (enters if upstream else leaves), fallback
 

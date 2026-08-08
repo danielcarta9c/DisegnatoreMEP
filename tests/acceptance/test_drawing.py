@@ -47,12 +47,16 @@ def drawing() -> DrawingGeometry:
 
 
 @pytest.mark.skip(
-    reason="La composizione e' il pezzo da rifare del piano: con gli accessori "
-    "sugli stacchi al posto giusto l'impianto completo chiede piu' larghezza di "
-    "quanta ne abbia un foglio ordinario, e il posizionamento a fasce non ci "
-    "arriva. Non e' un difetto del contenuto — quello si giudica sul grafo "
-    "scritto (D-096) — ed e' esattamente il limite che il pezzo della "
-    "composizione deve chiudere. Queste prove tornano quando quel pezzo si fa."
+    reason="La composizione e' il pezzo da rifare del piano, e il motivo NON e' "
+    "la larghezza del foglio (D-113): misurato l'8 agosto, i cinque impianti "
+    "falliscono su A0 e su un foglio 3000x2000 negli stessi punti e alle stesse "
+    "coordinate che su A3. Il collocatore dispone una riga per fascia e usa il "
+    "21-23% dell'altezza: un accessorio che pende da una macchina finisce nella "
+    "fila di lettura invece che accanto alla propria macchina, e il rettilineo "
+    "per gli accessori in linea si prenota solo fra colonne contigue. Non e' un "
+    "difetto del contenuto — quello si giudica sul grafo scritto (D-096) — ed e' "
+    "esattamente il limite che il pezzo della composizione deve chiudere. Queste "
+    "prove tornano quando quel pezzo si fa."
 )
 def test_the_case_composes_end_to_end() -> None:
     result = drawing()
@@ -75,12 +79,16 @@ def test_no_line_passes_under_an_inline_component() -> None:
 
 
 @pytest.mark.skip(
-    reason="La composizione e' il pezzo da rifare del piano: con gli accessori "
-    "sugli stacchi al posto giusto l'impianto completo chiede piu' larghezza di "
-    "quanta ne abbia un foglio ordinario, e il posizionamento a fasce non ci "
-    "arriva. Non e' un difetto del contenuto — quello si giudica sul grafo "
-    "scritto (D-096) — ed e' esattamente il limite che il pezzo della "
-    "composizione deve chiudere. Queste prove tornano quando quel pezzo si fa."
+    reason="La composizione e' il pezzo da rifare del piano, e il motivo NON e' "
+    "la larghezza del foglio (D-113): misurato l'8 agosto, i cinque impianti "
+    "falliscono su A0 e su un foglio 3000x2000 negli stessi punti e alle stesse "
+    "coordinate che su A3. Il collocatore dispone una riga per fascia e usa il "
+    "21-23% dell'altezza: un accessorio che pende da una macchina finisce nella "
+    "fila di lettura invece che accanto alla propria macchina, e il rettilineo "
+    "per gli accessori in linea si prenota solo fra colonne contigue. Non e' un "
+    "difetto del contenuto — quello si giudica sul grafo scritto (D-096) — ed e' "
+    "esattamente il limite che il pezzo della composizione deve chiudere. Queste "
+    "prove tornano quando quel pezzo si fa."
 )
 def test_the_composed_drawing_carries_no_blocking_quality_finding() -> None:
     """Il livello 1 di D-063 misurato sulla geometria composta, non sull'uscita.
@@ -132,12 +140,16 @@ def test_the_sheet_is_marked_as_a_draft() -> None:
 
 
 @pytest.mark.skip(
-    reason="La composizione e' il pezzo da rifare del piano: con gli accessori "
-    "sugli stacchi al posto giusto l'impianto completo chiede piu' larghezza di "
-    "quanta ne abbia un foglio ordinario, e il posizionamento a fasce non ci "
-    "arriva. Non e' un difetto del contenuto — quello si giudica sul grafo "
-    "scritto (D-096) — ed e' esattamente il limite che il pezzo della "
-    "composizione deve chiudere. Queste prove tornano quando quel pezzo si fa."
+    reason="La composizione e' il pezzo da rifare del piano, e il motivo NON e' "
+    "la larghezza del foglio (D-113): misurato l'8 agosto, i cinque impianti "
+    "falliscono su A0 e su un foglio 3000x2000 negli stessi punti e alle stesse "
+    "coordinate che su A3. Il collocatore dispone una riga per fascia e usa il "
+    "21-23% dell'altezza: un accessorio che pende da una macchina finisce nella "
+    "fila di lettura invece che accanto alla propria macchina, e il rettilineo "
+    "per gli accessori in linea si prenota solo fra colonne contigue. Non e' un "
+    "difetto del contenuto — quello si giudica sul grafo scritto (D-096) — ed e' "
+    "esattamente il limite che il pezzo della composizione deve chiudere. Queste "
+    "prove tornano quando quel pezzo si fa."
 )
 def test_the_draw_command_writes_one_sheet(tmp_path: Path) -> None:
     exit_code = main(
@@ -160,12 +172,16 @@ def test_the_draw_command_writes_one_sheet(tmp_path: Path) -> None:
 
 
 @pytest.mark.skip(
-    reason="La composizione e' il pezzo da rifare del piano: con gli accessori "
-    "sugli stacchi al posto giusto l'impianto completo chiede piu' larghezza di "
-    "quanta ne abbia un foglio ordinario, e il posizionamento a fasce non ci "
-    "arriva. Non e' un difetto del contenuto — quello si giudica sul grafo "
-    "scritto (D-096) — ed e' esattamente il limite che il pezzo della "
-    "composizione deve chiudere. Queste prove tornano quando quel pezzo si fa."
+    reason="La composizione e' il pezzo da rifare del piano, e il motivo NON e' "
+    "la larghezza del foglio (D-113): misurato l'8 agosto, i cinque impianti "
+    "falliscono su A0 e su un foglio 3000x2000 negli stessi punti e alle stesse "
+    "coordinate che su A3. Il collocatore dispone una riga per fascia e usa il "
+    "21-23% dell'altezza: un accessorio che pende da una macchina finisce nella "
+    "fila di lettura invece che accanto alla propria macchina, e il rettilineo "
+    "per gli accessori in linea si prenota solo fra colonne contigue. Non e' un "
+    "difetto del contenuto — quello si giudica sul grafo scritto (D-096) — ed e' "
+    "esattamente il limite che il pezzo della composizione deve chiudere. Queste "
+    "prove tornano quando quel pezzo si fa."
 )
 def test_the_draw_command_can_write_the_geometry(tmp_path: Path) -> None:
     geometry = tmp_path / "geometry.json"
@@ -313,12 +329,16 @@ def test_a_two_sheet_plan_produces_two_sheets(tmp_path: Path) -> None:
 
 
 @pytest.mark.skip(
-    reason="La composizione e' il pezzo da rifare del piano: con gli accessori "
-    "sugli stacchi al posto giusto l'impianto completo chiede piu' larghezza di "
-    "quanta ne abbia un foglio ordinario, e il posizionamento a fasce non ci "
-    "arriva. Non e' un difetto del contenuto — quello si giudica sul grafo "
-    "scritto (D-096) — ed e' esattamente il limite che il pezzo della "
-    "composizione deve chiudere. Queste prove tornano quando quel pezzo si fa."
+    reason="La composizione e' il pezzo da rifare del piano, e il motivo NON e' "
+    "la larghezza del foglio (D-113): misurato l'8 agosto, i cinque impianti "
+    "falliscono su A0 e su un foglio 3000x2000 negli stessi punti e alle stesse "
+    "coordinate che su A3. Il collocatore dispone una riga per fascia e usa il "
+    "21-23% dell'altezza: un accessorio che pende da una macchina finisce nella "
+    "fila di lettura invece che accanto alla propria macchina, e il rettilineo "
+    "per gli accessori in linea si prenota solo fra colonne contigue. Non e' un "
+    "difetto del contenuto — quello si giudica sul grafo scritto (D-096) — ed e' "
+    "esattamente il limite che il pezzo della composizione deve chiudere. Queste "
+    "prove tornano quando quel pezzo si fa."
 )
 def test_splitting_this_plant_in_two_is_refused_for_the_empty_second_sheet(
     tmp_path: Path,

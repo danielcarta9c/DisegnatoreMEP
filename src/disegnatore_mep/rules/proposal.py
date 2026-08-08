@@ -23,7 +23,9 @@ class GapReason(StrEnum):
 
     NO_COMMON_RUN = "no_common_run"
     """La regola si posa sul tratto comune della rete, e la rete non ne ha
-    uno: le camminate dagli ancoraggi non condividono nessuna tubazione."""
+    uno: **nessuna tubazione porta tutta l'acqua degli ancoraggi**. Tolta una
+    qualunque, il circuito di almeno una macchina si chiude ancora, e un pezzo
+    posato li' non la servirebbe."""
 
 
 class RuleGap(StrictModel):

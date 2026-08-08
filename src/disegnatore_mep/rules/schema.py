@@ -67,24 +67,34 @@ class Placement(StrEnum):
     """Su ogni attacco, qualunque verso: il sezionamento."""
 
     ON_THE_COMMON_RETURN = "on_the_common_return"
-    """Sul **ritorno generale**: il tratto comune da cui i ritorni di tutti
-    gli ancoraggi discendono, a monte della prima ripartizione (D-106).
+    """Sul **ritorno generale**: il tratto per cui passa tutta l'acqua che
+    torna dagli ancoraggi, a monte della prima ripartizione (D-106).
 
     E' il livello che mancava al motore: una regola «per rete» ripiegava sul
     primo attacco di macchina, e con due macchine in parallelo il corredo di
     rete finiva sul ramo della prima invece che sul tratto che serve tutte.
-    La tubazione si trova camminando all'indietro, contro il fluido, dai
-    ritorni degli ancoraggi: dove le camminate condividono la strada, quella
-    e' il ritorno generale, e il pezzo si posa sul primo tratto condiviso —
-    quello attaccato alla ripartizione, o alla macchina se e' una sola."""
+
+    **La prova che una tubazione e' il ritorno generale e' che, togliendola,
+    il circuito di ogni ancoraggio si spezza.** Fra quelle che la reggono si
+    prende la piu' vicina alle macchine — quella attaccata alla ripartizione,
+    o alla macchina se e' una sola. Non basta invece che dalla tubazione si
+    risalga a tutti gli ancoraggi: un ramo che rientra **a valle** e'
+    risalibile da tutti e non porta l'acqua di nessuno, e su un anello «il
+    primo tratto condiviso» dipendeva dal nome delle macchine.
+
+    Una rete puo' non averlo. Succede quando due macchine hanno ritorni
+    davvero separati: allora la regola non sceglie un ramo, apre un punto
+    aperto e la scelta torna al progettista."""
 
     ON_THE_COMMON_SUPPLY = "on_the_common_supply"
-    """Sulla **mandata generale**: il tratto comune in cui le mandate di tutti
-    gli ancoraggi confluiscono, a valle dell'ultima confluenza.
+    """Sulla **mandata generale**: il tratto per cui passa tutta l'acqua che
+    parte dagli ancoraggi, a valle dell'ultima confluenza.
 
     Speculare al ritorno generale, seguendo il fluido invece di risalirlo:
     il disaeratore sta a valle del generatore (SRC-019), e con due generatori
-    in parallelo sta dove le due mandate sono gia' diventate una."""
+    in parallelo sta dove le due mandate sono gia' diventate una. Stessa
+    prova — tolta la tubazione, ogni circuito si spezza — e stessa scelta
+    della piu' vicina alle macchine."""
 
     @property
     def flows(self) -> tuple[PortFlow, ...]:

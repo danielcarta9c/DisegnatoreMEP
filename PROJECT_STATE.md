@@ -10,8 +10,8 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **1035 verdi, 22 parcheggiate, 11 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
-| Libreria simboli | 39 pubblicati | Le 22 prove parcheggiate riguardano il **disegno** (composizione da rifare) |
+| Test | **1039 verdi, 22 parcheggiate, 8 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
+| Libreria simboli | 39 pubblicati | 18 delle 22 prove parcheggiate riguardano il **disegno** (composizione da rifare, D-113); le altre 4 il foglio di riscontro della libreria, che a scala fissa non tiene 39 simboli |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
 
@@ -67,12 +67,15 @@ D-107, presa dal lato giusto.**
 
 Tre cose, in ordine, e ci si ferma:
 
-1. **Il criterio della camminata** (difetti aperti 1 e 2, che hanno una radice sola). Non
-   per pulizia: oggi lo stesso impianto dà due risposte diverse a seconda di **come si
-   chiamano le macchine**, e un ciclo di verifica ha bisogno che rigenerare due volte dia
-   due volte la stessa tavola. È un prerequisito, non una rifinitura.
+1. ~~**Il criterio della camminata**~~ — **FATTO l'8 agosto (D-112).** Il tratto comune si
+   riconosce togliendolo: se il circuito di una macchina si chiude lo stesso, quel tratto
+   la sua acqua non la porta. Il nome delle macchine non decide più niente. **E l'ibrido
+   un ritorno generale non ce l'ha**: quattro punti aperti al posto di quattro pezzi
+   posati in silenzio.
 2. **La modalità verifica** (D-110): l'indirizzo del nodo stampato accanto al pezzo.
-3. **La composizione**: far entrare l'impianto su più fogli invece che su uno.
+3. **La composizione**: disporre in **due dimensioni** invece che in una striscia
+   (D-111, D-113). Non «su più fogli»: il multi-foglio è l'ultima risorsa e la
+   centrale non si spezza mai in automatico (input PM dell'8 agosto).
 
 **Gli altri difetti aperti si rimandano**: le due correzioni alle istruzioni costano un
 giro intero di camera pulita ciascuna e non cambiano niente di ciò che si vede sulla
@@ -85,8 +88,8 @@ scritto per esteso, e torna verde quando il difetto si chiude.
 
 | # | Difetto | Dove |
 |---|---|---|
-| 1 | Sull'**ibrido**, il tratto scelto per il corredo **non porta** l'acqua che la caldaia rimanda dallo scambiatore sanitario: quel ramo rientra a valle. Per il defangatore, la cui ragione scritta è «lì passa tutta l'acqua che torna», la posa non regge — ed è una posa silenziosa, senza punto aperto | la camminata del tratto comune |
-| 2 | Con un **anello** sul ritorno, il punto scelto cambia **col nome delle macchine** a topologia identica: la camminata parte dal primo generatore in ordine alfabetico | la camminata del tratto comune |
+| ~~1~~ | ~~Sull'**ibrido**, il tratto scelto per il corredo **non porta** l'acqua che la caldaia rimanda dallo scambiatore sanitario~~ | **CHIUSO l'8 agosto (D-112).** Il tratto comune ora si riconosce togliendolo: se il circuito di una macchina si chiude lo stesso, quel tratto la sua acqua non la porta. **Sull'ibrido un ritorno generale non esiste**, e vaso, riempimento, manometro e defangatore escono come **quattro punti aperti** invece che posati in silenzio. Le prove del collaudo sono verdi senza essere ammorbidite |
+| ~~2~~ | ~~Con un **anello** sul ritorno, il punto scelto cambia **col nome delle macchine** a topologia identica~~ | **CHIUSO l'8 agosto (D-112).** Il criterio non guarda più l'ordine di scoperta: fra i tratti che reggono la prova si prende quello che si lascia dietro meno rete. Sull'anello la risposta è `s1.a` con qualunque nome, ed è quella che il collaudo aveva indicato come giusta |
 | 3 | Le **potenze da cui il regime è stato letto non stanno nel modello**: i cinque grafi dichiarano il regime e nessun componente porta la potenza. D-108 promette che l'ingegnere veda la lettura e la corregga | le letture manuali di `examples/prova/` |
 | 4 | La regola del regime **non ha il caso di mezzo**: potenza dichiarata solo per alcune macchine. L'impianto 3 ne ha due che il catalogo dice generatrici e il testo ne dà una sola; l'impianto 4 sta a 34 kW su 35 | `ISTRUZIONI.md` §4.6 |
 | 5 | Una voce dichiarata del primo grafo cita **identificativi interni** del JSON in una frase destinata all'ingegnere | il grafo dell'agente: si chiude alle istruzioni, non correggendo l'allegato |
@@ -113,8 +116,13 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
    confine di D-104. Miscelatrice e ritegno sanitario hanno già le regole.
 3. **La libreria dei simboli** — contenuto da completare (segno del rubinetto bloccabile).
 4. **Il cartiglio.**
-5. **La composizione** — da rifare: l'impianto completo non entra in larghezza su un
-   foglio ordinario.
+5. **La composizione** — da rifare, e **il motivo non è la larghezza del foglio**
+   (D-113). Misurato l'8 agosto: i cinque impianti su A0, e perfino su un foglio
+   3000 × 2000, falliscono **negli stessi punti e alle stesse coordinate** che su A3.
+   Il collocatore dispone una riga per fascia e usa il **21÷23 % dell'altezza**: due
+   stacchi di scarico finiscono decine di millimetri **dietro** la macchina da cui
+   pendono, e due tratte fra colonne vicine non hanno i 10 mm dritti che gli accessori
+   pretendono. Più carta non sposta un pezzo.
 6. **I validatori e il cancello dell'occhio terzo.**
 
 ## Done log — ultimo in cima

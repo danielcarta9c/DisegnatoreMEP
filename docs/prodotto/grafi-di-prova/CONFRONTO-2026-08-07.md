@@ -47,12 +47,29 @@ all'ingresso dell'acqua fredda.
 Stesse uscite del regime piccolo (separatore, termometro), sfogo e sicurezza sul volano
 in linea, e lo scarico del boiler sull'ingresso freddo.
 
-**4 — Ibrido pompa di calore e caldaia: da 68 a 52 pezzi.**
-Il ritorno generale è il tratto fra il volume tecnico e il punto in cui il ritorno si
-divide verso le due macchine: lì stanno vaso, riempimento, manometro e l'unico
-defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul volano;
-escono i due separatori, i due termometri e una sicurezza. **Sul circuito sanitario non
-c'è filtro**, come è giusto in un impianto domestico.
+**4 — Ibrido pompa di calore e caldaia: da 68 a 41 pezzi.**
+Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul volano; escono i due
+separatori, i due termometri e una sicurezza. **Sul circuito sanitario non c'è filtro**,
+come è giusto in un impianto domestico.
+
+⚠ **Questo impianto ha un ritorno generale? No — e l'8 agosto abbiamo scoperto che ce
+lo eravamo detti sbagliato.** Il 7 agosto qui c'era scritto che il ritorno generale è
+il tratto fra il volume tecnico e il punto in cui il ritorno si divide verso le due
+macchine, e che lì stavano vaso, riempimento, manometro e defangatore. Non regge, e si
+verifica in un modo solo: **togli quel tratto e guarda se la caldaia continua a girare.
+Continua.** La caldaia manda a una deviatrice che sdoppia; un ramo va al volano, l'altro
+va allo scambiatore del sanitario e rientra più a valle, dopo il punto in cui il ritorno
+si divide. Quel ramo per il tratto scelto non ci passa mai.
+
+Il defangatore sta sul ritorno generale per una ragione precisa — **lì passa tutta
+l'acqua che torna, quindi un pezzo solo protegge ogni generatore.** Su questo impianto
+quella ragione non era soddisfatta: il defangatore non proteggeva la caldaia.
+
+Su questo impianto **non c'è nessun tubo per cui passi tutta l'acqua di ritorno delle
+due macchine.** Quindi ora vaso, riempimento, manometro e defangatore **non li mettiamo
+noi**: escono come quattro domande per te, con scritto il motivo. Sono i 11 pezzi in
+meno rispetto al conto di ieri. Dove vanno lo decidi tu — è una scelta di progetto, e
+metterli al posto sbagliato in silenzio era peggio che chiedere.
 
 **5 — Cascata di tre pompe di calore: da 105 a 108 pezzi.**
 È l'unico dei cinque **sopra i 35 kW** — tre macchine da 35, e non è una centrale
@@ -73,8 +90,14 @@ tre tubi si incontrano mettiamo due raccordi, che è la regola generale e non ri
 supporre un pezzo che non hai nominato. Di qui i pezzi in più rispetto a ieri, non da un
 irrigidimento delle regole.
 
-**Nessuno dei cinque ha punti aperti.** Ogni accessorio che le regole hanno chiesto ha
-trovato il pezzo e il posto.
+**Quattro dei cinque non hanno punti aperti.** Ogni accessorio che le regole hanno
+chiesto ha trovato il pezzo e il posto. **L'ibrido ne ha quattro**, ed è il caso
+spiegato qui sopra: quell'impianto un ritorno generale non ce l'ha, e le quattro cose
+che ci andrebbero sopra tornano a te.
+
+> Il 7 agosto qui c'era scritto che non ne aveva nessuno. Era sbagliato, e lo abbiamo
+> corretto l'8 agosto — non perché una regola sia diventata più severa, ma perché il
+> controllo ha misurato che quel tratto l'acqua della caldaia non la portava.
 
 ---
 

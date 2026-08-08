@@ -116,8 +116,9 @@ def build_report(
                     (
                         f"la rete non ha un tratto comune su cui posare "
                         f"{naming.family_of((item.missing_function,), item.rule_id).name.lower()}: "
-                        f"i percorsi degli ancoraggi non condividono nessuna "
-                        f"tubazione, quindi questo accessorio "
+                        f"nessuna tubazione porta tutta l'acqua delle macchine "
+                        f"— tolta una qualunque, il circuito di almeno una si "
+                        f"chiude lo stesso — quindi questo accessorio "
                         f"{CATEGORY_ADJECTIVES[item.category]} non viene proposto: "
                         f"va deciso dal progettista"
                     )

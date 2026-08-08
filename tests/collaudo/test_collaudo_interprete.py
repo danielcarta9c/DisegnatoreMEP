@@ -612,16 +612,37 @@ def _contenuto(modello: Any) -> Json:
     }
 
 
+CORREDO_DI_RETE = {
+    "dirt-separation-before-what-it-would-ruin",
+    "expansion-on-closed-circuit",
+    "filling-unit-on-return",
+    "gauge-where-the-plant-is-charged",
+}
+
+
 @pytest.mark.parametrize("n", IMPIANTI)
 def test_il_completatore_digerisce_il_grafo(n: int) -> None:
-    """Le regole e l'assemblatore girano sui cinque grafi senza rompersi, e non
-    lasciano punti aperti."""
+    """Le regole e l'assemblatore girano sui cinque grafi senza rompersi.
+
+    Cio' che si misura qui e' il pezzo 1: che i grafi dell'agente attraversino
+    il resto della catena. I punti aperti non sono un difetto dell'interprete
+    — sono la risposta del completatore quando l'impianto non offre dove
+    posare — e il **quarto impianto e' proprio quel caso**: l'ibrido non ha un
+    ritorno generale, perche' il ramo del sanitario rientra a valle del
+    collettore, e le quattro regole del corredo di rete lo dicono invece di
+    scegliere un ramo. Che sia una proprieta' dell'impianto e non della
+    fixture lo prova questo file: qui il grafo lo ha scritto un agente in
+    camera pulita, e l'esito e' lo stesso.
+    """
     cat, rl, _, _ = _catena()
     modello = load_project(PROVA / f"impianto-{n}" / "grafo.json")
     completo, proposte, buchi = saturate(modello, cat, rl)
     assert len(completo.components) > len(modello.components)
     assert proposte
-    assert buchi == [], f"impianto {n}: il completatore lascia punti aperti {[b.key for b in buchi]}"
+    attesi = CORREDO_DI_RETE if n == 4 else set()
+    assert {b.rule_id for b in buchi} == attesi, (
+        f"impianto {n}: punti aperti inattesi {[b.key for b in buchi]}"
+    )
 
 
 @pytest.mark.parametrize("n", IMPIANTI)

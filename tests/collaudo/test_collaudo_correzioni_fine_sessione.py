@@ -325,13 +325,50 @@ def due_anelli_separati() -> ProjectModel:
 # ===========================================================================
 
 
-@pytest.mark.parametrize("nome", PROVE)
-def test_nessuno_dei_cinque_ha_punti_aperti_sul_corredo_di_rete(nome: str) -> None:
-    """L'affermazione della correzione, presa alla lettera e verificata."""
+IBRIDO = PROVE[3]
+"""L'impianto che un ritorno generale non ce l'ha, ed e' un fatto della sua
+topologia, non un difetto del motore.
+
+La caldaia manda alla deviatrice, che sdoppia: un ramo va al volano e rientra
+dal collettore di ritorno, l'altro va allo scambiatore sanitario e rientra in
+`ritorno-caldaia`, **a valle** del collettore. La pompa di calore rientra dal
+collettore e il ramo sanitario non lo vede mai. Nessuna tubazione della rete
+primaria porta insieme l'acqua delle due macchine: `p5` porta tutta quella
+della pompa di calore e solo una parte di quella della caldaia, `p10` tutta
+quella della caldaia e niente dell'altra.
+
+**Qui l'affermazione della correzione del 7 agosto sera — «nessuno dei cinque
+ha piu' punti aperti» — era sbagliata**, ed e' il DIFETTO 1 di questo stesso
+collaudo: il corredo veniva posato su `p5` in silenzio. La risposta giusta e'
+il punto aperto, che e' anche quella che il motore dava **prima** di quella
+correzione. Il collaudo lo aveva scritto: «Prima della correzione erano
+quattro punti aperti.»
+"""
+
+CON_TRATTO_COMUNE = [nome for nome in PROVE if nome != IBRIDO]
+
+
+@pytest.mark.parametrize("nome", CON_TRATTO_COMUNE)
+def test_gli_impianti_che_hanno_un_ritorno_generale_non_lasciano_punti_aperti(
+    nome: str,
+) -> None:
+    """Quattro dei cinque il tratto comune ce l'hanno, e il corredo ci va."""
     assert kit_aperto(load(nome)) == {}
 
 
-@pytest.mark.parametrize("nome", PROVE)
+def test_l_ibrido_non_ha_un_ritorno_generale_e_lo_dice() -> None:
+    """DIFETTO 1, chiuso dal lato giusto: non si posa niente, e si dice perche'.
+
+    Il silenzio era il difetto. Ora le quattro regole del corredo aprono tutte
+    e quattro il proprio punto aperto, con la ragione vera — non «manca il
+    pezzo in catalogo», che sarebbe un'altra cosa.
+    """
+    model = load(IBRIDO)
+    assert kit_posato(model) == {}
+    assert kit_aperto(model) == dict.fromkeys(KIT, GapReason.NO_COMMON_RUN.value)
+
+
+@pytest.mark.parametrize("nome", CON_TRATTO_COMUNE)
 def test_il_corredo_esce_una_volta_sola_e_tutto_sullo_stesso_attacco(nome: str) -> None:
     """Quattro regole, un attacco solo: se si sparpagliassero, il «tratto
     comune» sarebbe una parola e non un punto."""
@@ -405,40 +442,27 @@ def test_dove_il_tratto_comune_non_esiste_resta_un_punto_aperto() -> None:
         assert not set(CAT.get(c.definition_id).functions) & vietate, c.id
 
 
-@pytest.mark.parametrize(
-    "nome",
-    [
-        PROVE[0],
-        PROVE[1],
-        PROVE[2],
-        pytest.param(
-            PROVE[3],
-            marks=pytest.mark.xfail(
-                strict=True,
-                reason=(
-                    "DIFETTO 1 del collaudo. Impianto 4, l'ibrido — l'impianto per cui "
-                    "la correzione esiste. Il tratto scelto (p5, fra il volume tecnico "
-                    "e la ripartizione) NON porta l'acqua che la caldaia rimanda dallo "
-                    "scambiatore sanitario: quel ramo rientra a valle, in "
-                    "`ritorno-caldaia`, e non passa mai per p5. Togliendo p5 il "
-                    "circuito della caldaia si chiude lo stesso. Il corredo — "
-                    "defangatore compreso, la cui motivazione scritta e' «li' passa "
-                    "tutta l'acqua che torna, quindi un pezzo solo protegge ogni "
-                    "generatore» — viene posato lo stesso, senza punto aperto e senza "
-                    "una parola. Prima della correzione erano quattro punti aperti."
-                ),
-            ),
-        ),
-        PROVE[4],
-    ],
-)
+@pytest.mark.parametrize("nome", PROVE)
 def test_il_tratto_scelto_porta_davvero_l_acqua_di_tutti_i_generatori(nome: str) -> None:
     """Il criterio duro del collaudo, e non e' inventato: e' la motivazione
     scritta del defangatore. Se togliendo il tratto scelto il circuito di un
-    generatore si chiude lo stesso, quel tratto non porta la sua acqua."""
+    generatore si chiude lo stesso, quel tratto non porta la sua acqua.
+
+    **Chiude il DIFETTO 1**, ed e' passato da criterio di verifica a criterio
+    di scelta: ora e' il motore stesso a cercare le tubazioni che reggono
+    questa prova, invece di prendere la prima condivisa dalle risalite e farsi
+    poi bocciare qui. L'ibrido, che nessuna ne ha, non posa niente — e quel
+    caso lo presidia la prova qui sopra, che pretende il punto aperto.
+    """
     model = load(nome)
     posato = kit_posato(model)
-    assert posato, nome
+    if not posato:
+        # Non e' una scappatoia: che questo capiti al solo ibrido, e che li'
+        # sia la risposta giusta, lo inchioda `test_l_ibrido_non_ha_un_
+        # ritorno_generale_e_lo_dice`. Qui si evita solo di leggere un
+        # attacco che non c'e'.
+        assert nome == IBRIDO, f"{nome}: il corredo non si posa e non e' l'ibrido"
+        return
     rete, componente, attacco = next(iter(posato.values()))
     tratto = tratto_di(model, componente, attacco)
     assert not generatori_che_si_chiudono_senza(model, rete, tratto), (
@@ -446,21 +470,9 @@ def test_il_tratto_scelto_porta_davvero_l_acqua_di_tutti_i_generatori(nome: str)
     )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "DIFETTO 2 del collaudo. Con un anello sul ritorno, il tratto scelto cambia "
-        "col NOME delle macchine, a topologia identica: chiamandole gen-a/gen-b il "
-        "corredo va su `s1.a` (giusto: `t1` porta tutta l'acqua), chiamandole "
-        "zeta/alfa va su `s2.a` — che sta a VALLE della prima ripartizione e porta "
-        "solo la parte di acqua che la prima macchina non ha preso. La camminata "
-        "parte dal primo generatore in ordine alfabetico e prende il primo tratto "
-        "condiviso che incontra: con un anello, «il primo che incontro» dipende da "
-        "chi parte. E' esattamente il difetto che la regola dice di non avere — il "
-        "corredo sul ramo di una macchina sola."
-    ),
-)
 def test_su_un_anello_il_corredo_non_dipende_dal_nome_delle_macchine() -> None:
+    """DIFETTO 2, chiuso. La topologia non cambia di un tubo, e la risposta
+    nemmeno: il criterio non guarda piu' in che ordine si e' partiti."""
     primo = kit_posato(anello_di_ritorno("gen-a", "gen-b"))
     secondo = kit_posato(anello_di_ritorno("zeta", "alfa"))
     assert {(n, c, p) for n, c, p in primo.values()} == {
@@ -468,18 +480,27 @@ def test_su_un_anello_il_corredo_non_dipende_dal_nome_delle_macchine() -> None:
     }
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "DIFETTO 2 del collaudo, l'altra faccia: sull'anello con le macchine chiamate "
-        "zeta/alfa il tratto scelto (`t2`) non porta l'acqua di `zeta`."
-    ),
-)
 def test_su_un_anello_il_tratto_scelto_porta_l_acqua_di_tutti() -> None:
+    """DIFETTO 2, l'altra faccia: sull'anello il tratto scelto e' `t1`, che
+    porta tutta l'acqua, e non `t2`, che porta solo quel che la prima
+    macchina non ha preso."""
     model = anello_di_ritorno("zeta", "alfa")
     rete, componente, attacco = next(iter(kit_posato(model).values()))
     tratto = tratto_di(model, componente, attacco)
     assert not generatori_che_si_chiudono_senza(model, rete, tratto)
+
+
+@pytest.mark.parametrize("prima,seconda", [("gen-a", "gen-b"), ("zeta", "alfa")])
+def test_su_un_anello_il_tratto_e_quello_a_monte_della_ripartizione(
+    prima: str, seconda: str
+) -> None:
+    """Non basta che i due nomi diano la stessa risposta: deve essere quella
+    giusta. Il collaudo aveva gia' scritto qual e' — `t1`, cioe' l'attacco
+    `s1.a` — e la si pretende per esteso, cosi' un domani non si puo' chiudere
+    il difetto facendo sbagliare tutti e due allo stesso modo."""
+    posato = kit_posato(anello_di_ritorno(prima, seconda))
+    assert set(posato) == KIT
+    assert set(posato.values()) == {("primario", "s1", "a")}
 
 
 # ===========================================================================
