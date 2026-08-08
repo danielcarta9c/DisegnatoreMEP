@@ -281,10 +281,15 @@ difetti aperti**; `ruff` e `mypy --strict` puliti.
 sessione: solo far uscire il disegno.
 
 1. **Il criterio della camminata del tratto comune** — i difetti aperti 1 e 2, che hanno
-   una radice sola. **Non è perfezionismo, è un prerequisito:** oggi lo stesso impianto dà
-   due risposte diverse a seconda di come si chiamano le macchine, e un ciclo in cui il PM
-   corregge e la tavola si rigenera ha bisogno che due rigenerazioni diano due volte la
-   stessa tavola. La radice è spiegata sotto.
+   una radice sola, spiegata sotto. **Il motivo per farlo prima è concreto: senza, la
+   tavola dell'ibrido porta il defangatore su un tratto che già sappiamo essere
+   sbagliato**, e non ha senso far scoprire al PM una cosa già scoperta. È lavoro
+   contenuto e le prove che lo inchiodano ci sono già.
+
+   *Precisazione, perché non sia sopravvalutato:* la dipendenza dal nome delle macchine
+   (difetto 2) si manifesta su un caso **costruito apposta con un anello sul ritorno**.
+   Sui cinque impianti reali il collaudo ha provato otto rimescolamenti ciascuno e il
+   punto non si è mai spostato: **le cinque tavole di oggi sono già riproducibili.**
 2. **La modalità verifica** (D-110): l'indirizzo del nodo stampato accanto al pezzo, con
    la sua regola lasca — vicino al nodo, sovrapponibile, mai nel calcolo del
    posizionamento. La sigla è **già** stampata; l'indirizzo no.
