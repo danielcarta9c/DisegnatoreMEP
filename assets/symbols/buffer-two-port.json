@@ -28,9 +28,9 @@
     },
     {
       "id": "drain",
-      "face": "bottom",
-      "x_mm": 12.5,
-      "y_mm": 45.0
+      "face": "right",
+      "x_mm": 25.0,
+      "y_mm": 40.0
     },
     {
       "id": "probe",
