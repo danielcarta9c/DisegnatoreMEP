@@ -215,6 +215,7 @@ def place_labels(
     callout_y_mm: float | None = None,
     routes: list[RoutedTrunk] | None = None,
     floor_y_mm: float | None = None,
+    addresses: dict[str, str] | None = None,
 ) -> list[PlacedLabel]:
     """Sigle e valori, scritti piccoli accanto al proprio componente (D-075).
 
@@ -237,6 +238,17 @@ def place_labels(
     tavola, che D-075 **ritira**: resta soltanto perche' la catena lo passa
     ancora, e passandolo si ottiene il comportamento vecchio. Il comportamento
     di D-075 e' quello predefinito.
+
+    `addresses` accende la **modalita' verifica** (D-110, D-111): l'indirizzo
+    del nodo — `CP.01.N.02` — scritto accanto al proprio pezzo, cosi' il
+    progettista guarda la tavola, punta un pezzo e ne legge il codice da
+    cercare sul grafo. E' la terza specie di scritta: la legenda dice **cosa**
+    e' un simbolo, la sigla **quale**, l'indirizzo **dove**. Si posa in una
+    passata a parte, dopo tutte le altre, per una ragione che non e' di stile:
+    cosi' la modalita' verifica e la modalita' consegna danno **la stessa
+    identica tavola**, una con un velo in piu'. Un tubo che passa sopra
+    un'etichetta di indirizzo non e' un problema — e infatti non si scansa
+    nulla per lui, e nessun pezzo si sposta.
 
     Deterministico: l'ordine segue quello dei simboli posati, e a parita' di
     ingombro la ricerca percorre sempre le stesse posizioni nello stesso ordine.
@@ -413,4 +425,52 @@ def place_labels(
                     leader_from=start,
                 )
             )
+
+    if not addresses:
+        return labels
+
+    # ---------------------------------------------------------------------
+    # Il velo della modalita' verifica (D-110, come emendata da D-111).
+    #
+    # Sta **in fondo**, e non e' un dettaglio di stile: le sigle e i valori si
+    # posano prima e senza sapere che gli indirizzi esistono, quindi la tavola
+    # di verifica e la tavola di consegna sono la stessa tavola con una
+    # scritta in piu' su ogni nodo. Se gli indirizzi entrassero nella stessa
+    # passata, un testo in piu' sposterebbe quelli dopo di lui e le due
+    # modalita' darebbero due disegni diversi: il progettista verificherebbe
+    # una tavola e ne riceverebbe un'altra.
+    #
+    # Nessun pezzo si muove: qui si posano solo scritte, e il posizionamento
+    # e' gia' finito da un pezzo.
+    for item in placed:
+        address = addresses.get(item.component_id)
+        if not address:
+            continue
+        width = text_width_mm(address, height)
+        slots = dict.fromkeys(SIDES, 0)
+        # Sotto per prima, che e' il lato dei valori: la sigla sta sopra, e
+        # l'indirizzo le va a fianco invece che addosso.
+        order = ("below", *(side for side in SIDES if side != "below"))
+        spot = None
+        start = None
+        for ring in range(ADJACENT_MAX_STEPS + 1):
+            for side in order:
+                candidate = anchor_at(item, side, slots[side], ring, width)
+                if free(_text_box(candidate, width, height)):
+                    spot = candidate
+                    break
+            if spot is not None:
+                break
+        if spot is None:
+            start, spot = ladder(item, width)
+        taken.append(_text_box(spot, width, height))
+        labels.append(
+            PlacedLabel(
+                id=f"{item.component_id}-address",
+                text=address,
+                role="address",
+                anchor=spot,
+                leader_from=start,
+            )
+        )
     return labels

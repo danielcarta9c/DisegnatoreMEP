@@ -312,17 +312,23 @@ sessione: solo far uscire il disegno.
    | 2 e 5 | una tratta **senza 10 mm dritti** dove far sedere un accessorio (valvola di intercettazione, separatore d'aria) |
    | 3 | un altro instradamento che non passa |
 
-   Nessuno di questi è «non ci sta nel foglio». Sono tutti conseguenze dello stesso fatto:
-   **i pezzi stanno così stretti che i tubi non ci passano e gli accessori non trovano
-   dove sedersi.** La disposizione resta quindi il lavoro giusto, ma per questo motivo,
-   non per la larghezza.
+   Nessuno di questi è «non ci sta nel foglio».
 
-   > **Prima ora della prossima sessione, prima di impegnarsi sul pezzo grosso:** capire
-   > se quei tre fallimenti sono **piccoli difetti del tracciatore** (e allora i cinque
-   > disegni escono subito, anche brutti, e il PM può cominciare a segnare) **oppure**
-   > conseguenze della disposizione stretta (e allora si fa la composizione). È la
-   > differenza fra «il PM vede le sue tavole oggi» e «le vede fra due sessioni», e non si
-   > sa ancora quale sia.
+   > ⛔ **La riga che stava qui — «i pezzi stanno così stretti che i tubi non ci passano»
+   > — era anch'essa sbagliata, ed è stata misurata l'8 agosto (D-113).** Di stretto non
+   > c'è niente: su un foglio abbondante l'ingombro dei simboli occupa un quinto della
+   > larghezza e un quinto dell'altezza, e i fallimenti sono **gli stessi, alle stesse
+   > coordinate**. Erano due diagnosi sbagliate di fila sullo stesso punto, tutte e due
+   > dedotte dai sintomi invece che misurate.
+   >
+   > **La domanda della «prima ora» ha risposta: sono difetti del tracciatore**, non
+   > disposizione stretta — quindi la strada breve per far vedere al PM le sue cinque
+   > tavole è chiudere quelli, e la composizione resta lavoro vero ma **non è ciò che
+   > blocca il disegno**. I tre invarianti rotti sono i difetti 7, 8 e 9 di
+   > `PROJECT_STATE.md`, ognuno inchiodato da una prova marcata rossa in
+   > `tests/layout/test_difetti_del_disegno.py`. Il primo — l'attacco di scarico dei
+   > serbatoi murato dal pavimento — porta dentro **una domanda grafica vera**, e prima
+   > di deciderla si cerca la fonte.
 
    **Il resto del quadro, misurato:** area utile A3 350 × 235 mm; le fasce chiedono
    450 / 570 / 565 / 517 / 1080 mm perché **il collocatore dispone su una riga sola per
@@ -437,13 +443,20 @@ capo con agenti nuovi.** Vale sempre, ed è già costato due giri in una session
 - **Il disegno esce, e il controllo di qualità lo blocca — è un fatto, non un guasto.** La
   catena arriva fino in fondo e produce la geometria; poi il preflight rifiuta di scrivere
   la tavola se c'è un rilievo bloccante (D-063). Per **vedere** una tavola durante il
-  lavoro si compone e si scrive il foglio saltando il cancello: è quello che serve alla
-  modalità verifica del PM, e va tenuto separato dalla consegna.
-- **Il «riempimento bilanciato» è già misurato**, contro quanto qualcuno ha creduto: il
-  preflight controlla il **riempimento minimo del foglio (60 %)** e il **rapporto
-  d'inchiostro fra il quadrante più pieno e il più vuoto (max 3)**. Non serve inventare
-  una metrica nuova né chiederla al PM: esiste, e oggi su una tavola d'esempio dà 24 % e
-  3,1. Sono esattamente le due cose che il PM ha descritto a parole.
+  lavoro c'è ora `draw --anche-se-respinta`, che la scrive e dice a voce alta che non è
+  una consegna. *Fino all'8 agosto questa riga descriveva la scorciatoia come esistente e
+  **non esisteva**: `draw` tornava `2` prima di scrivere qualunque cosa.*
+- **Il «riempimento bilanciato» è misurato a valle, e non è obiettivo di nessuno a monte.**
+  Il preflight controlla il **riempimento minimo del foglio (60 %)** e il **rapporto
+  d'inchiostro fra il quadrante più pieno e il più vuoto (max 3)**: su una tavola
+  d'esempio dà 24 % e 3,1, verificato. **Tre avvertenze, perché questa riga ha già
+  ingannato:** (a) sono **avvisi, non bloccanti** — quei numeri non impediscono niente;
+  (b) le due misure **non sono omogenee** — il 60 % è il rapporto di un rettangolo di
+  ingombro, il «max 3» è area d'inchiostro vera; (c) **la simmetria non è misurata da
+  nessuno**, ed è metà di ciò che il PM ha chiesto. Quindi la metrica c'è e non va
+  reinventata, ma non è vero che al PM non si debba chiedere nulla: le due soglie si
+  dichiarano da sole «taratura, non norma, da rivedere sulle tavole reali». Sopra ogni
+  cosa: **il collocatore non ottimizza nessuna delle due** — le scopre alla fine.
 - **Prima di lanciare la prova, controllare che il kit non si contraddica.** Il kit sono
   cinque documenti — istruzioni, testo, catalogo, tabelle dei nomi, schema — e lo schema
   porta prosa che può invecchiare. È già costato un giro intero. Il modo pratico:

@@ -171,6 +171,7 @@ def compose_sheet(
     catalog: ComponentRegistry,
     frame: SheetFrame,
     inline_ids: frozenset[str],
+    addresses: dict[str, str] | None = None,
 ) -> SheetGeometry:
     grid = GridSpace(origin=frame.drawing_rect_mm, standard=frame.standard)
     levels = levels_of(
@@ -215,6 +216,10 @@ def compose_sheet(
             # scansare un testo che finirebbe su una linea.
             routes=broken,
             floor_y_mm=levels.ground_mm,
+            # Il velo della modalita' verifica (D-110): si posa dopo tutto il
+            # resto e non muove niente, quindi la tavola sotto e' identica a
+            # quella di consegna.
+            addresses=addresses,
         ),
         legend=entries,
         network_keys=keys,
@@ -231,16 +236,25 @@ def compose_sheet(
 
 
 def compose_drawing(
-    project: ProjectModel, catalog: ComponentRegistry, frame: SheetFrame
+    project: ProjectModel,
+    catalog: ComponentRegistry,
+    frame: SheetFrame,
+    addresses: dict[str, str] | None = None,
 ) -> DrawingGeometry:
-    """Dal modello tecnico approvato alla geometria di tutte le tavole."""
+    """Dal modello tecnico approvato alla geometria di tutte le tavole.
+
+    `addresses` accende la modalita' verifica (D-110): arriva **gia' calcolato**
+    da chi conosce le tabelle dei nomi, perche' la composizione e' geometria e
+    non deve mettersi in casa un dato del grafo. Con o senza, i pezzi vanno
+    dove andrebbero comunque.
+    """
     inline_ids = inline_component_ids(project, catalog)
     trunks = build_trunks(project, inline_ids)
     partitions = partition_project(project, trunks)
     return DrawingGeometry(
         project_id=project.metadata.project_id,
         sheets=[
-            compose_sheet(project, partition, catalog, frame, inline_ids)
+            compose_sheet(project, partition, catalog, frame, inline_ids, addresses)
             for partition in partitions
         ],
     )
@@ -250,6 +264,7 @@ def compose_on_ordinary_frame(
     project: ProjectModel,
     catalog: ComponentRegistry,
     frames: tuple[SheetFrame, ...] = ORDINARY_FRAMES,
+    addresses: dict[str, str] | None = None,
 ) -> tuple[SheetFrame, DrawingGeometry]:
     """Il disegno sul piu' piccolo formato ordinario su cui entra (D-058).
 
@@ -265,7 +280,7 @@ def compose_on_ordinary_frame(
     last: LayoutError | None = None
     for frame in frames:
         try:
-            return frame, compose_drawing(project, catalog, frame)
+            return frame, compose_drawing(project, catalog, frame, addresses)
         except LayoutError as exc:
             last = exc
     reason = str(last) if last is not None else "no format was offered to try"

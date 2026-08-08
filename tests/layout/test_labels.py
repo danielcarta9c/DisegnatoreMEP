@@ -3,6 +3,7 @@ from math import hypot
 from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.graph import LineNaming, Naming, read_lines, read_plant
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
@@ -33,6 +34,7 @@ ROOT = Path(__file__).resolve().parents[2]
 PROJECT = ROOT / "examples" / "layout" / "heat-pump-dhw-buffer-two-zones.json"
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
+NAMING = ROOT / "naming"
 
 HEIGHT_MM = NOVE_C_A3.standard.text_small_mm
 Box = tuple[float, float, float, float]
@@ -346,3 +348,97 @@ def test_the_retired_callout_row_still_answers_when_asked_for() -> None:
     assert written
     assert all(item.anchor.y_mm >= 250.0 for item in written)
     assert any(item.leader_from is not None for item in written)
+
+
+# ---------------------------------------------------------------------------
+# La modalita' verifica (D-110, come emendata da D-111): l'indirizzo del nodo
+# accanto al proprio pezzo. Il vincolo che conta non e' estetico — e' che le
+# due modalita' diano LA STESSA TAVOLA, una con un velo in piu': cio' che il
+# progettista verifica dev'essere esattamente cio' che riceve.
+# ---------------------------------------------------------------------------
+
+
+def _addresses_of_the_case() -> dict[str, str]:
+    project = load_project(PROJECT)
+    registry = catalog()
+    naming = Naming.from_directory(NAMING)
+    graph = read_plant(project, registry, naming)
+    lines = read_lines(project, registry, graph, LineNaming.from_directory(NAMING))
+    return dict(lines.addresses)
+
+
+def _verified_sheet() -> SheetGeometry:
+    return compose_drawing(
+        load_project(PROJECT), catalog(), NOVE_C_A3, _addresses_of_the_case()
+    ).sheets[0]
+
+
+def test_in_verification_mode_every_node_carries_its_address() -> None:
+    """Il progettista punta un pezzo e ne legge il codice: se un pezzo non ha
+    il proprio, quel pezzo non e' segnalabile."""
+    sheet = _verified_sheet()
+    addresses = _addresses_of_the_case()
+    written = {
+        label.id.removesuffix("-address"): label.text
+        for label in sheet.labels
+        if label.role == "address"
+    }
+    drawn = {item.component_id for item in sheet.symbols}
+    assert drawn <= set(written), sorted(drawn - set(written))
+    for component_id, text in written.items():
+        assert text == addresses[component_id], component_id
+
+
+def test_the_two_modes_draw_the_same_sheet_with_one_veil_more() -> None:
+    """Il vincolo centrale di D-110, preso alla lettera.
+
+    Nessun pezzo si sposta, nessuna linea cambia, e **nemmeno una sigla**: se
+    gli indirizzi entrassero nella stessa passata delle altre scritte, un
+    testo in piu' sposterebbe quelli dopo di lui, e il progettista
+    verificherebbe una tavola per riceverne un'altra.
+    """
+    delivered = compose_drawing(load_project(PROJECT), catalog(), NOVE_C_A3).sheets[0]
+    verified = _verified_sheet()
+
+    assert [item.model_dump() for item in verified.symbols] == [
+        item.model_dump() for item in delivered.symbols
+    ]
+    assert [item.model_dump() for item in verified.routes] == [
+        item.model_dump() for item in delivered.routes
+    ]
+    assert [item.model_dump() for item in verified.legend] == [
+        item.model_dump() for item in delivered.legend
+    ]
+    assert verified.ground_line_y_mm == delivered.ground_line_y_mm
+
+    was = {item.id: item.model_dump() for item in delivered.labels}
+    now = {item.id: item.model_dump() for item in verified.labels}
+    assert was == {key: value for key, value in now.items() if key in was}
+    assert {key for key in now if key not in was} == {
+        f"{item.component_id}-address" for item in verified.symbols
+    }
+
+
+def test_an_address_label_never_lands_on_a_symbol_or_another_text() -> None:
+    """«Vicino al nodo quando c'e' posto, altrimenti un richiamo» (D-111).
+
+    Un tubo che passa sopra un indirizzo non e' un problema e non si evita
+    (D-110); un indirizzo scritto **sopra un simbolo o sopra un'altra scritta**
+    lo e', perche' non si legge piu' ne' lui ne' quello che copre.
+    """
+    sheet = _verified_sheet()
+    boxes = [symbol_box(item) for item in sheet.symbols]
+    boxes += [label_box(item) for item in sheet.labels if item.role != "address"]
+    for label in sheet.labels:
+        if label.role != "address":
+            continue
+        box = label_box(label)
+        for other in boxes:
+            assert apart(box, other), (label.id, label.text, box, other)
+        boxes.append(box)
+
+
+def test_without_addresses_no_address_label_is_written() -> None:
+    """La consegna definitiva non porta gli indirizzi (D-110)."""
+    sheet = compose_drawing(load_project(PROJECT), catalog(), NOVE_C_A3).sheets[0]
+    assert [item for item in sheet.labels if item.role == "address"] == []

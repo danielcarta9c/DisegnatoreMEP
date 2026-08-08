@@ -10,7 +10,7 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **1039 verdi, 22 parcheggiate, 8 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
+| Test | **1048 verdi, 22 parcheggiate, 13 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
 | Libreria simboli | 39 pubblicati | 18 delle 22 prove parcheggiate riguardano il **disegno** (composizione da rifare, D-113); le altre 4 il foglio di riscontro della libreria, che a scala fissa non tiene 39 simboli |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
@@ -34,12 +34,15 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 - [x] **La correzione C2** — lo scarico del bollitore sta sull'ingresso freddo, con la
       derivazione sulla rete fredda; la prova del collaudo è tornata verde senza essere
       ammorbidita.
-- [x] **Le correzioni chieste dal PM a fine sessione** (7 agosto, sera):
-      la camminata del ritorno generale **si apre sui rami**, e l'ibrido riceve il
-      corredo sul tratto che ha davvero — nessuno dei cinque impianti ha più punti
-      aperti; e il **regime si legge dalle potenze** che il progettista ha dichiarato
-      (D-108), scritto nel modello dove lui lo vede: quattro impianti sotto i 35 kW, la
-      cascata di tre macchine sopra.
+- [x] **Le correzioni chieste dal PM a fine sessione** (7 agosto, sera): la camminata
+      del ritorno generale **si apre sui rami**, e il **regime si legge dalle potenze**
+      che il progettista ha dichiarato (D-108), scritto nel modello dove lui lo vede:
+      quattro impianti sotto i 35 kW, la cascata di tre macchine sopra.
+      ⚠ *Di quella riga, il pezzo che diceva «l'ibrido riceve il corredo sul tratto che
+      ha davvero — nessuno dei cinque ha più punti aperti» era **falso**, e il collaudo
+      indipendente l'ha respinto: l'ibrido un ritorno generale non ce l'ha. Corretto
+      l'8 agosto (D-112). Aprirsi sui rami resta giusto — serve a trovare le tubazioni
+      candidate — ma non era mai stato il criterio per sceglierne una.*
 - [x] **Il quinto grafo pubblicato è stato rigenerato dalla pipeline** — completatore e
       assemblatore, nessuna correzione a mano. Da 98 a 108 pezzi: **il collettore
       sparisce** (il testo non lo nominava, e le sue due sole uscite erano il motivo per
@@ -72,7 +75,12 @@ Tre cose, in ordine, e ci si ferma:
    la sua acqua non la porta. Il nome delle macchine non decide più niente. **E l'ibrido
    un ritorno generale non ce l'ha**: quattro punti aperti al posto di quattro pezzi
    posati in silenzio.
-2. **La modalità verifica** (D-110): l'indirizzo del nodo stampato accanto al pezzo.
+2. ~~**La modalità verifica**~~ — **FATTA l'8 agosto (D-114).** `draw --verifica --naming`
+   stampa l'indirizzo accanto a ogni pezzo; `draw --anche-se-respinta` scrive la tavola
+   anche coi rilievi bloccanti, dicendo che non è una consegna. L'invariante di D-110 è
+   provato **sulla carta**: la tavola di consegna è una **sottosequenza esatta** di
+   quella di verifica — 376 elementi su 376 ritrovati in ordine, 12 indirizzi in più,
+   zero elementi persi.
 3. **La composizione**: disporre in **due dimensioni** invece che in una striscia
    (D-111, D-113). Non «su più fogli»: il multi-foglio è l'ultima risorsa e la
    centrale non si spezza mai in automatico (input PM dell'8 agosto).
@@ -94,6 +102,9 @@ scritto per esteso, e torna verde quando il difetto si chiude.
 | 4 | La regola del regime **non ha il caso di mezzo**: potenza dichiarata solo per alcune macchine. L'impianto 3 ne ha due che il catalogo dice generatrici e il testo ne dà una sola; l'impianto 4 sta a 34 kW su 35 | `ISTRUZIONI.md` §4.6 |
 | 5 | Una voce dichiarata del primo grafo cita **identificativi interni** del JSON in una frase destinata all'ingegnere | il grafo dell'agente: si chiude alle istruzioni, non correggendo l'allegato |
 | ~~6~~ | ~~La radice normativa della soglia non copre le pompe di calore~~ | **CHIUSA dal PM (D-109)**: le centrali domestiche stanno sempre sotto i 35 kW, e la skill disegna anche centrali a **caldaia a gas**, dove il focolare c'è. Niente da correggere, niente da chiedere |
+| 7 | **L'attacco di scarico dei serbatoi è murato dal pavimento.** La libreria lo mette sul bordo inferiore rivolto in basso, il collocatore appoggia i serbatoi sulla linea di terra, l'instradatore vieta ogni cella sotto quella linea: tre cose giuste che insieme rendono l'attacco irraggiungibile. **Misurato: 54 posizioni provate per l'accessorio di scarico, zero instradamenti riusciti.** Tutti e cinque gli impianti hanno un serbatoio così; sull'1 e sul 4 è la tratta su cui la catena si ferma | l'instradatore, la libreria e il collocatore insieme (D-113). **Ha una domanda dentro**: dove va disegnato lo scarico di un serbatoio che poggia a terra. Prima si cerca la fonte, poi si chiede |
+| 8 | **Il ripiego del collocatore può posare un pezzo sotto la linea di terra**, dove nessuna linea può raggiungerlo: il ciclo che lo spinge in giù cercando posto si ferma quando sfonderebbe il pavimento e usa lo stesso l'ultima quota. Sull'impianto 3 `zona-notte` finisce interamente sotto; sul 5 `miscelatrice-radiante` resta a cavallo | `layout/place.py`, il ramo di ripiego (D-113) |
+| 9 | **Il rettilineo per gli accessori in linea si prenota solo fra colonne contigue**: una tratta fra colonne non contigue non ne riceve, e gli accessori non trovano i 10 mm dritti. Ferma gli impianti 2 e 5 | `layout/place.py`, la prenotazione dello spazio (D-113) |
 
 ## Il confine del prodotto, che vale su tutto (D-104)
 
@@ -116,13 +127,11 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
    confine di D-104. Miscelatrice e ritegno sanitario hanno già le regole.
 3. **La libreria dei simboli** — contenuto da completare (segno del rubinetto bloccabile).
 4. **Il cartiglio.**
-5. **La composizione** — da rifare, e **il motivo non è la larghezza del foglio**
-   (D-113). Misurato l'8 agosto: i cinque impianti su A0, e perfino su un foglio
-   3000 × 2000, falliscono **negli stessi punti e alle stesse coordinate** che su A3.
-   Il collocatore dispone una riga per fascia e usa il **21÷23 % dell'altezza**: due
-   stacchi di scarico finiscono decine di millimetri **dietro** la macchina da cui
-   pendono, e due tratte fra colonne vicine non hanno i 10 mm dritti che gli accessori
-   pretendono. Più carta non sposta un pezzo.
+5. **La composizione** — da rifare, ma **non è ciò che blocca il disegno** (D-113).
+   Misurato l'8 agosto: i cinque impianti su A0, e perfino su un foglio 3000 × 2000,
+   falliscono **negli stessi punti e alle stesse coordinate** che su A3, usando il
+   21÷23 % dell'altezza. Più carta non sposta un pezzo, e di stretto non c'è niente.
+   Ciò che li ferma sono **tre invarianti rotti**, elencati qui sotto.
 6. **I validatori e il cancello dell'occhio terzo.**
 
 ## Done log — ultimo in cima

@@ -7,6 +7,7 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.graph import LineNaming, read_lines, read_plant
 from disegnatore_mep.graph.naming import Naming
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import render_sheet
@@ -83,6 +84,29 @@ def build_parser() -> argparse.ArgumentParser:
     draw.add_argument("--symbols", type=Path, required=True)
     draw.add_argument("--out", type=Path, required=True)
     draw.add_argument("--geometry", type=Path)
+    # Le tabelle dei nomi: servono solo in modalita' verifica, perche' e' li'
+    # che si battezzano le linee da cui viene l'indirizzo di ogni nodo.
+    draw.add_argument("--naming", type=Path)
+    draw.add_argument(
+        "--verifica",
+        action="store_true",
+        help=(
+            "modalita' verifica (D-110): accanto a ogni pezzo si stampa il suo "
+            "indirizzo — CP.01.N.02 — cosi' il progettista punta un pezzo sulla "
+            "tavola e lo ritrova sul grafo. La tavola sotto e' identica a quella "
+            "di consegna: gli indirizzi si posano dopo e non spostano niente. "
+            "Richiede --naming"
+        ),
+    )
+    draw.add_argument(
+        "--anche-se-respinta",
+        action="store_true",
+        help=(
+            "scrive la tavola anche con rilievi bloccanti, marcata come "
+            "respinta. NON e' una consegna — D-063 resta — ma serve a guardare "
+            "il disegno mentre lo si corregge, che e' l'unico modo di correggerlo"
+        ),
+    )
     return parser
 
 
@@ -157,6 +181,29 @@ def _print_preflight(findings: list[ValidationIssue]) -> None:
             print(f"    codice: {item.code} · {', '.join(item.entity_ids)}")
 
 
+def _addresses_for_verification(
+    args: argparse.Namespace, project: ProjectModel, catalog: ComponentRegistry
+) -> dict[str, str] | None:
+    """L'indirizzo di ogni nodo, se la tavola si vuole in modalita' verifica.
+
+    Si calcola **qui** e non dentro la composizione: l'indirizzo e' una lettura
+    del grafo, con le sue tabelle dei nomi, e la composizione fa geometria. Le
+    arriva gia' pronto, come una mappa da pezzo a codice.
+    """
+    if not args.verifica:
+        return None
+    if args.naming is None:
+        raise ValueError(
+            "--verifica richiede --naming: l'indirizzo di un nodo nasce dal nome "
+            "della linea su cui sta, e i nomi delle linee sono un dato"
+        )
+    graph = read_plant(project, catalog, Naming.from_directory(args.naming))
+    lines = read_lines(
+        project, catalog, graph, LineNaming.from_directory(args.naming)
+    )
+    return dict(lines.addresses)
+
+
 def _draw(args: argparse.Namespace) -> int:
     """Compone e scrive una tavola SVG per foglio.
 
@@ -179,7 +226,8 @@ def _draw(args: argparse.Namespace) -> int:
         print(report.model_dump_json(indent=2))
         return 2
 
-    frame, drawing = compose_on_ordinary_frame(project, catalog)
+    addresses = _addresses_for_verification(args, project, catalog)
+    frame, drawing = compose_on_ordinary_frame(project, catalog, addresses=addresses)
     geometry_report = validate_drawing_geometry(drawing, frame)
     if not geometry_report.ok:
         print(geometry_report.model_dump_json(indent=2))
@@ -187,12 +235,23 @@ def _draw(args: argparse.Namespace) -> int:
 
     quality = preflight_drawing(drawing, frame, catalog)
     _print_preflight(quality)
-    if not ValidationReport(issues=quality).ok:
+    rejected = not ValidationReport(issues=quality).ok
+    if rejected and not args.anche_se_respinta:
         print(
             "\nLa tavola non viene scritta: una tavola finale non esce con un "
             "rilievo bloccante (D-063)."
         )
         return 2
+    if rejected:
+        # Si scrive, e si dice a voce alta che cos'e'. Il valore di guardare il
+        # disegno mentre lo si corregge e' reale — un difetto di disposizione
+        # sulla carta si vede in due secondi e sul modello scritto no — ma una
+        # tavola respinta che esce senza dirlo diventa una tavola consegnata.
+        print(
+            "\n⚠ Tavola scritta CON rilievi bloccanti perche' e' stato chiesto "
+            "--anche-se-respinta. Non e' una consegna: serve a guardarla mentre "
+            "la si corregge (D-063 resta)."
+        )
 
     args.out.mkdir(parents=True, exist_ok=True)
     for sheet in drawing.sheets:

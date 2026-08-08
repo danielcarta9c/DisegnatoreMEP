@@ -401,3 +401,110 @@ def test_a_boundary_that_cuts_a_run_with_accessories_is_refused(
     )
     assert exit_code == 1
     assert "must not carry any" in capsys.readouterr().err
+
+
+# --- modalita' verifica e modalita' consegna (D-110, D-111) ------------------
+
+
+def test_verification_mode_needs_the_naming_tables(tmp_path: Path) -> None:
+    """L'indirizzo nasce dal nome della linea, e i nomi sono un dato: chiederlo
+    senza le tabelle e' un errore detto, non un indirizzo inventato."""
+    assert (
+        main(
+            [
+                "draw",
+                str(PROJECT),
+                "--catalog",
+                str(CATALOG),
+                "--symbols",
+                str(SYMBOLS),
+                "--out",
+                str(tmp_path / "fuori"),
+                "--verifica",
+            ]
+        )
+        == 1
+    )
+
+
+def test_a_rejected_sheet_is_written_only_when_asked_and_says_so(
+    tmp_path: Path, capsys: CaptureFixture[str]
+) -> None:
+    """D-063 resta: una tavola con un rilievo bloccante non e' una consegna.
+
+    Ma guardarla mentre la si corregge e' l'unico modo di correggerla — un
+    difetto di disposizione si vede in due secondi sulla carta e non si vede
+    affatto sul modello scritto. Quindi si scrive **solo se richiesto**, e
+    dicendo a voce alta che cos'e'.
+    """
+    argomenti = [
+        "draw",
+        str(PROJECT),
+        "--catalog",
+        str(CATALOG),
+        "--symbols",
+        str(SYMBOLS),
+        "--out",
+        str(tmp_path / "tavole"),
+    ]
+    assert main(argomenti) == 2
+    assert not (tmp_path / "tavole").exists()
+    capsys.readouterr()
+
+    assert main([*argomenti, "--anche-se-respinta"]) == 0
+    written = sorted((tmp_path / "tavole").glob("*.svg"))
+    assert written, "la tavola non e' stata scritta nemmeno quando richiesto"
+    assert "CON rilievi bloccanti" in capsys.readouterr().out
+
+
+def test_the_two_modes_write_the_same_sheet_plus_the_addresses(
+    tmp_path: Path,
+) -> None:
+    """Il vincolo di D-110 misurato **sulla carta**, non sulla geometria: la
+    tavola di consegna dev'essere una sottosequenza esatta di quella di
+    verifica, e le sole aggiunte devono essere gli indirizzi."""
+    comune = [
+        "draw",
+        str(PROJECT),
+        "--catalog",
+        str(CATALOG),
+        "--symbols",
+        str(SYMBOLS),
+        "--anche-se-respinta",
+    ]
+    assert main([*comune, "--out", str(tmp_path / "consegna")]) == 0
+    assert (
+        main(
+            [
+                *comune,
+                "--out",
+                str(tmp_path / "verifica"),
+                "--naming",
+                str(ROOT / "naming"),
+                "--verifica",
+            ]
+        )
+        == 0
+    )
+    import re
+
+    def elementi(directory: Path) -> list[str]:
+        svg = next(iter(sorted(directory.glob("*.svg")))).read_text("utf-8")
+        return re.findall(r"<[^>]+>[^<]*", svg)
+
+    consegna, verifica = elementi(tmp_path / "consegna"), elementi(tmp_path / "verifica")
+    cursore, aggiunte = 0, []
+    for pezzo in verifica:
+        if cursore < len(consegna) and pezzo == consegna[cursore]:
+            cursore += 1
+        else:
+            aggiunte.append(pezzo)
+    assert cursore == len(consegna), (
+        "la tavola di consegna non e' una sottosequenza di quella di verifica: "
+        "gli indirizzi hanno spostato qualcosa"
+    )
+    assert aggiunte, "nessun indirizzo scritto in modalita' verifica"
+    assert all(
+        'data-role="address"' in pezzo or pezzo.startswith("</text>")
+        for pezzo in aggiunte
+    ), [pezzo[:80] for pezzo in aggiunte if 'data-role="address"' not in pezzo][:3]
