@@ -288,8 +288,26 @@ sessione: solo far uscire il disegno.
 2. **La modalità verifica** (D-110): l'indirizzo del nodo stampato accanto al pezzo, con
    la sua regola lasca — vicino al nodo, sovrapponibile, mai nel calcolo del
    posizionamento. La sigla è **già** stampata; l'indirizzo no.
-3. **La composizione**: l'impianto completo non entra in larghezza su un foglio. È il
-   motivo scritto delle 22 prove parcheggiate, ed è impaginazione, non contenuto.
+3. **La composizione (D-111).** ⛔ **La motivazione scritta nelle 22 prove parcheggiate
+   dice una cosa fuorviante** — «l'impianto chiede più larghezza di quanta ne abbia un
+   foglio ordinario» — e ha già ingannato una sessione. Il foglio non è piccolo: **il
+   collocatore dispone su una riga sola per fascia, e le fasce stanno una accanto
+   all'altra**, quindi la larghezza è la somma e cresce con ogni pezzo. Misurato: area
+   utile A3 350 × 235 mm, e le fasce chiedono 450 / 570 / 565 / 517 / 1080 mm. In altezza
+   il foglio è quasi vuoto: la tavola è una striscia sottile.
+
+   **E la soluzione non è «andare a capo»** — l'orchestratore l'aveva proposto e il PM
+   l'ha respinto: farebbe ripartire il flusso da sinistra a metà tavola, rompendo
+   l'ordinamento da sinistra a destra che è una regola sua. Si dispone in **due
+   dimensioni**: macchine principali a sinistra, volumi collocati **lasciandosi lo spazio
+   a destra** per il secondario, e i pezzi mossi per soddisfare **più obiettivi insieme**
+   — riempimento bilanciato e simmetrico, poche curve, linee corte, nessun accavallamento.
+   Le etichette **alla fine**, con richiamo dove non c'è posto, e i richiami disposti **a
+   raggera senza incrociarsi**.
+
+   Delle cinque cose, **due ci sono già**: le regole di costo del PM, e il richiamo
+   obliquo che sa non passare sopra i simboli. **Tre mancano**: il riempimento bilanciato
+   come obiettivo, la prenotazione dello spazio in avanti, e l'anti-incrocio fra richiami.
 
 Poi si consegnano le cinque tavole al PM e comincia il giro delle sue correzioni.
 
