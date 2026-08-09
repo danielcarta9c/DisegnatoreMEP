@@ -1,4 +1,4 @@
-# HANDOFF — Disegnatore MEP · 7 agosto 2026
+# HANDOFF — Disegnatore MEP · 9 agosto 2026
 
 > ⛔ **Non è un riassunto del progetto.** È il cancello di lettura per la sessione
 > successiva. Si legge tutto, poi si risponde alle domande del §2, poi si comincia.
@@ -198,11 +198,37 @@ nell'altro:
 
 ---
 
-## 6. Stato al 7 agosto 2026
+## 6. Stato al 9 agosto 2026
+
+> ### ⚑ La tavola esce, e il PM ce l'ha in mano
+>
+> **Tre impianti su cinque escono su una A3, in modalità verifica, in PDF.** È il primo
+> risultato che il PM può guardare, ed è quello che aveva chiesto. Si rigenerano con
+> `bash scripts/tavole-di-verifica.sh`.
+>
+> **Il motivo per cui non uscivano non era la carta, e questo va ricordato** perché il
+> progetto ci ha creduto per settimane: fallivano identiche anche su A0. Erano due guasti
+> della stessa specie, e nessuno dei due si vede contando i millimetri del foglio.
+>
+> 1. **Gli accessori appesi a uno stacco stavano in una colonna propria**, ordinati per
+>    profondità come fossero un passo del processo: lo scarico dell'accumulo si è
+>    ritrovato sessanta millimetri a sinistra dell'accumulo, con due macchine in mezzo.
+>    Ora stanno accanto al pezzo da cui pendono, dalla parte in cui il loro unico attacco
+>    guarda. Ne discende che una macchina con lo stacco sul fondo **si alza da terra**
+>    quanto basta a disegnarci sotto, e che un raccordo **si gira** perché il suo stacco
+>    guardi dove l'accessorio deve stare.
+> 2. **La soglia di un attacco** (D-113): davanti a ogni attacco c'è una cella sola, la
+>    sua unica uscita. La valvola di un'altra tratta ci si era seduta sopra, e l'attacco
+>    era murato. Ora è riservata.
+>
+> **Il criterio che distingue le due specie di fallimento, e che vale sempre:** se un
+> fallimento di instradamento **non cambia passando a un foglio più grande**, non è una
+> questione di spazio. Provarlo costa un minuto e chiude discussioni lunghe.
 
 **Ramo:** `claude/project-docs-first-pdf-obh471`, che parte da `main`.
-**Prove:** 1035 verdi, 22 parcheggiate col motivo scritto, **11 marcate rosse apposta sui
-difetti aperti**; `ruff` e `mypy --strict` puliti.
+**Prove:** 1050 verdi, 22 parcheggiate col motivo scritto — **riscritto, perché il
+vecchio era falso** — e **11 marcate rosse apposta sui difetti aperti**; `ruff` e
+`mypy --strict` puliti.
 **Ambiente:** `bash scripts/setup-env.sh` — **da eseguire per primo** in una sessione cloud.
 **Numeri:** 39 simboli pubblicati, 53 voci di catalogo, 17 regole.
 
@@ -219,7 +245,7 @@ difetti aperti**; `ruff` e `mypy --strict` puliti.
 | **Assemblare** | Costruito e collaudato; il 7 agosto ha guadagnato la classificazione dei blocchi sul capofila e l'ordinamento dei blocchi di mezzo |
 | Il grafo, le sigle e **l'indirizzo dei nodi (D-105)** | **Collaudato e APPROVATO** (7 agosto), 91 prove del collaudo adottate |
 | Il vocabolario delle proprietà | Approvato; si aggiungono il bordo macchina e il punto di riempimento come dichiarazioni di catalogo |
-| **Disporre** / libreria / cartiglio / **composizione** | **È il lavoro in corso** (§7). Instradamento e regole di costo del PM esistono; il richiamo obliquo esiste. Mancano il riempimento bilanciato come obiettivo, la prenotazione dello spazio in avanti e l'anti-incrocio fra richiami. Specifica in **D-111** e **D-112**; la modalità verifica in **D-110** |
+| **Disporre** / libreria / cartiglio / **composizione** | **Compone, e tre impianti su cinque escono.** La **modalità verifica** (D-110/D-111) è fatta: indirizzi stampati, foglio scritto anche coi rilievi aperti, PDF a misura reale. Il collocatore ora usa anche l'altezza e sceglie fra poche disposizioni. **Restano:** il quarto e il quinto impianto (larghezza vera, 507 e 945 mm), il riempimento bilanciato come **obiettivo** del collocatore — la misura esiste già nel preflight —, la prenotazione dello spazio in avanti, l'anti-incrocio fra richiami, e il **cartiglio**, che è ancora vuoto |
 | **Verificare** — validatori e cancello dell'occhio terzo | Correttezza e preflight esistono, il cancello no |
 
 ### Cosa è successo il 7 agosto, sera — la chiusura di «Capire»
@@ -269,7 +295,24 @@ difetti aperti**; `ruff` e `mypy --strict` puliti.
 
 ---
 
-## 7. Il primo lavoro della prossima sessione — **si va sul disegno**
+## 6bis. Il primo lavoro della prossima sessione, in una riga ciascuno
+
+1. **Aspettare i rilievi del PM sulle tre tavole** e lavorare su quelli: è il motivo per
+   cui esistono. Una sua correzione dice *cosa* è sbagliato, non *perché*: non diventa
+   regola finché non si è trovata la fonte (§7, in fondo).
+2. **Il criterio della camminata del tratto comune** — i difetti aperti 1 e 2, non fatti
+   il 9 agosto perché si è preferito portargli una tavola. Restano il prerequisito del
+   ciclo di verifica: oggi lo stesso impianto dà due risposte a seconda di come si
+   chiamano le macchine.
+3. **Il quarto e il quinto impianto**, che è larghezza vera (507 e 945 mm contro 335).
+   L'ordine dei rimedi lo fissa **D-112** e non si salta: stringere davvero, poi la
+   seconda tavola **solo se la distribuzione la merita**, poi il formato — e la centrale
+   non si spezza mai in automatico.
+4. **Il cartiglio**, che è l'ultima cosa che separa una bozza da una tavola.
+
+---
+
+## 7. Il lavoro impostato il 7 agosto sera — **si va sul disegno**
 
 > **Cambio di rotta deciso dal PM la sera del 7 agosto, e va letto prima di tutto il
 > resto di questo paragrafo.** Il contenuto si chiude «alla buona» e si porta a casa il
@@ -303,36 +346,30 @@ sessione: solo far uscire il disegno.
    posto**, altrimenti prende una **linea di richiamo**; un tubo che le passa sopra non è
    un problema e non va evitato. Resta fermo che si posa **dopo** e **non sposta nessun
    pezzo**: le due modalità devono dare la stessa identica tavola, una con un velo in più.
-3. **La composizione (D-111).** ⛔⛔ **Prima di tutto: la motivazione scritta nelle 22
-   prove parcheggiate è FALSA, e ha già ingannato due volte.** Dice «l'impianto chiede più
-   larghezza di quanta ne abbia un foglio ordinario». **Non è vero, ed è stato misurato:**
-   i cinque impianti sono stati composti su **A0** (1189 × 841 mm) e falliscono **tutti e
-   cinque lo stesso**. Più carta non risolve niente.
+3. **La composizione (D-111 e D-112).** ✅ **Fatta il 9 agosto, e la domanda che questo
+   paragrafo poneva ha avuto risposta.** Chiedeva se i fallimenti fossero «piccoli difetti
+   del tracciatore» o conseguenze della disposizione stretta. **Erano difetti del
+   tracciatore e della posa**, e le tavole sono uscite lo stesso giorno.
 
-   **Quello che li ferma davvero, verificato impianto per impianto:**
+   ⛔⛔ **La motivazione scritta nelle 22 prove parcheggiate era FALSA e ha ingannato due
+   volte.** Diceva «l'impianto chiede più larghezza di quanta ne abbia un foglio
+   ordinario». Non era vero per i primi tre impianti: fallivano identici su **A0**. La
+   causa vera è nel §6 qui sopra. La motivazione delle prove è stata riscritta.
 
-   | impianto | dove si ferma |
+   **Dove sta il confine, adesso, misurato impianto per impianto:**
+
+   | impianto | esito |
    |---|---|
-   | 1 e 4 | uno **stacco di scarico che non si riesce a instradare** — «ogni percorso ortogonale è bloccato» |
-   | 2 e 5 | una tratta **senza 10 mm dritti** dove far sedere un accessorio (valvola di intercettazione, separatore d'aria) |
-   | 3 | un altro instradamento che non passa |
+   | 1, 2, 3 | **escono su A3** |
+   | 4 | fasce per 507 mm contro 335: **larghezza vera**, entra su A2 |
+   | 5 | fasce per 945 mm: non entra nemmeno su A1 — è il caso di D-112 |
 
-   Nessuno di questi è «non ci sta nel foglio». Sono tutti conseguenze dello stesso fatto:
-   **i pezzi stanno così stretti che i tubi non ci passano e gli accessori non trovano
-   dove sedersi.** La disposizione resta quindi il lavoro giusto, ma per questo motivo,
-   non per la larghezza.
-
-   > **Prima ora della prossima sessione, prima di impegnarsi sul pezzo grosso:** capire
-   > se quei tre fallimenti sono **piccoli difetti del tracciatore** (e allora i cinque
-   > disegni escono subito, anche brutti, e il PM può cominciare a segnare) **oppure**
-   > conseguenze della disposizione stretta (e allora si fa la composizione). È la
-   > differenza fra «il PM vede le sue tavole oggi» e «le vede fra due sessioni», e non si
-   > sa ancora quale sia.
-
-   **Il resto del quadro, misurato:** area utile A3 350 × 235 mm; le fasce chiedono
-   450 / 570 / 565 / 517 / 1080 mm perché **il collocatore dispone su una riga sola per
-   fascia e le fasce stanno affiancate**, quindi la larghezza è la somma. In altezza il
-   foglio è quasi vuoto.
+   **Il resto del quadro:** area utile A3 350 × 235 mm. Il collocatore non dispone più su
+   una riga sola: quando la fila non entra confronta poche disposizioni deterministiche e
+   prende la meno cara, **impilando ciò che sta in parallelo** — due macchine sono in
+   parallelo quando pendono dalle stesse cose, mai due raccordi in fila sulla stessa
+   linea — e **scambiando due colonne che nessuna tratta collega**. In altezza il foglio
+   resta comunque poco usato: il riempimento misurato è del 35 %.
 
    **E la soluzione non è «andare a capo»** — l'orchestratore l'aveva proposto e il PM
    l'ha respinto: farebbe ripartire il flusso da sinistra a metà tavola, rompendo
@@ -343,21 +380,18 @@ sessione: solo far uscire il disegno.
    Le etichette **alla fine**, con richiamo dove non c'è posto, e i richiami disposti **a
    raggera senza incrociarsi**.
 
-   Delle cinque cose, **due ci sono già**: le regole di costo del PM, in
-   `src/disegnatore_mep/layout/place.py` e `src/disegnatore_mep/layout/improve.py`; e il **richiamo obliquo**, che esiste
-   (`src/disegnatore_mep/layout/geometry.py` porta `leader_from`) e sa già non passare sopra i simboli
-   (`src/disegnatore_mep/layout/labels.py`). **Tre mancano, ed è il lavoro:**
+   Delle cinque cose, **tre ci sono**: le regole di costo del PM, il **richiamo obliquo**
+   che sa già non passare sopra i simboli, e — dal 9 agosto — la capacità di mettere le
+   cose **una sotto l'altra** e di scegliere fra le disposizioni possibili, che era il
+   nodo tecnico. **Due mancano, ed è il lavoro:**
 
-   - **il riempimento bilanciato e simmetrico**, che oggi non è obiettivo di nessuno: il
-     collocatore non sa nemmeno che il foglio ha un bordo mentre dispone — lo scopre alla
-     fine, con un errore;
-   - **la prenotazione dello spazio in avanti**: oggi ogni fascia ha un cursore solo che
-     avanza a destra e non sa quanto servirà dopo;
+   - **il riempimento bilanciato e simmetrico come obiettivo**: la misura c'è già nel
+     preflight, ma il collocatore non la guarda mentre dispone — la scopre alla fine, con
+     un errore. Oggi il foglio è pieno al 35 % contro il 60 % dichiarato;
    - **l'anti-incrocio fra richiami** (la raggera).
 
-   Il nodo tecnico è il primo: serve che il collocatore possa mettere le cose anche **una
-   sotto l'altra** e non solo una a fianco all'altra, e che sappia scegliere fra le
-   disposizioni possibili. Gli altri due vengono dietro.
+   La **prenotazione dello spazio in avanti** è in parte risolta: il collocatore misura
+   ora anche ciò che pende da un pezzo, sopra e sotto, e ne riserva il corridoio.
 
    > ⚠ **«Bilanciato e simmetrico» non va chiesto al PM: è già misurato.** Il preflight
    > controlla il **riempimento minimo del foglio (60 %)** e il **rapporto d'inchiostro fra
@@ -368,10 +402,9 @@ sessione: solo far uscire il disegno.
    > risultato: appena ci sono due tavole plausibili, si mostrano e si fa dire quale
    > preferisce.
 
-Poi si consegnano le cinque tavole **in modalità verifica** e ci si ferma: comincia il
-giro delle correzioni del PM. **Se la composizione si prende tutta la sessione va bene:**
-i punti 1 e 2 sono utili da soli, perché danno tavole corrette e con gli indirizzi sopra
-almeno per gli impianti che già entrano nel foglio.
+Poi si consegnano le tavole **in modalità verifica** e ci si ferma: comincia il giro delle
+correzioni del PM. **Fatto il 9 agosto per tre impianti su cinque**, e il giro delle sue
+correzioni è aperto.
 
 **Come si trattano le sue correzioni** (è la sua stessa cautela, D-107 dall'altro lato):
 una correzione del PM dice sempre **cosa** è sbagliato, non sempre **perché**. Non diventa
@@ -443,9 +476,13 @@ capo con agenti nuovi.** Vale sempre, ed è già costato due giri in una session
   prova; dopo ogni modifica alle istruzioni la prova va rifatta da capo.
 - **Il disegno esce, e il controllo di qualità lo blocca — è un fatto, non un guasto.** La
   catena arriva fino in fondo e produce la geometria; poi il preflight rifiuta di scrivere
-  la tavola se c'è un rilievo bloccante (D-063). Per **vedere** una tavola durante il
-  lavoro si compone e si scrive il foglio saltando il cancello: è quello che serve alla
-  modalità verifica del PM, e va tenuto separato dalla consegna.
+  la tavola se c'è un rilievo bloccante (D-063). **Ora c'è il modo di vederla lo stesso:**
+  il comando di disegno ha la **modalità verifica**, che stampa gli indirizzi e scrive il
+  foglio anche coi rilievi aperti, marcandolo. Non è un'eccezione a D-063 — quella vale
+  per la **consegna** — ed è quello che il PM guarda.
+- **Le tavole si rigenerano con un comando solo:** `bash scripts/tavole-di-verifica.sh`.
+  Escono in `outputs/`, che non è versionata: quello che il PM vede va **mandato**, non
+  committato.
 - **Il «riempimento bilanciato» è già misurato**, contro quanto qualcuno ha creduto: il
   preflight controlla il **riempimento minimo del foglio (60 %)** e il **rapporto
   d'inchiostro fra il quadrante più pieno e il più vuoto (max 3)**. Non serve inventare
@@ -492,12 +529,18 @@ il testo tace, le alternative sono entrambe corrette e la scelta cambia il diseg
 
 ## Ultimo aggiornamento
 
-`2026-08-07`, sera — **il pezzo «Capire» è approvato** e i cinque grafi sono rigenerati
-dalla pipeline, col quinto finalmente completo dei suoi tre circuiti. La prova in camera
-pulita è costata **tre giri**: il primo fermato perché il kit si contraddiceva sul regime
-(trovato da due agenti che non si vedevano), il secondo respinto perché §4.2 non diceva
-dove una rete può cominciare, il terzo approvato. Consegne di tutti e tre agli atti.
+`2026-08-09` — **la tavola esce.** Tre impianti su cinque escono su una A3 in modalità
+verifica, con l'indirizzo di ogni nodo stampato accanto, e in PDF a misura reale. Il PM
+li ha in mano: comincia il giro delle sue correzioni.
 
-Il collaudo delle due correzioni di fine sessione precedente le ha **respinte entrambe**:
-il nocciolo regge, i difetti stanno ai bordi e riguardano cose che quelle correzioni
-affermavano. Sono i primi due della lista del §7.
+Il motivo per cui non uscivano **non era la carta**, e il progetto ci ha creduto per
+settimane: fallivano identiche anche su A0. Erano due guasti della stessa specie — gli
+accessori appesi a uno stacco messi lontano dal proprio pezzo, e la soglia di un attacco
+occupata da un accessorio altrui (D-113) — più un ordine di lettura rovesciato, che
+veniva dal nome dei sottosistemi invece che dal processo.
+
+Prima del disegno, un giro sulla documentazione: **sei incoerenze chiuse**, fra cui la
+motivazione falsa che aveva già ingannato due volte, e l'indirizzo del PM dell'8 agosto
+registrato come **D-112**.
+
+**Non fatto**, e resta il primo lavoro: il criterio della camminata del tratto comune.

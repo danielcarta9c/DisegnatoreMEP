@@ -10,7 +10,7 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **1035 verdi, 22 parcheggiate, 11 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** e 4 il foglio di riscontro dei simboli, che non entra piu' in una pagina sola |
+| Test | **1050 verdi, 22 parcheggiate, 11 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** — che ora compone, ma resta fuori dai budget di qualità — e 4 il foglio di riscontro dei simboli, che non entra più in una pagina sola |
 | Libreria simboli | 39 pubblicati | A scala fissa ne entrano 32 per foglio: il foglio di riscontro va impaginato su piu' pagine |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
@@ -58,6 +58,28 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
       non sono state toccate.** Consegne agli atti in `skill/capire/prova-2026-08-07/`,
       verbali in `docs/collaudi/`.
 
+- [x] **La tavola esce, e il PM l'ha in mano** (9 agosto). Tre impianti su cinque escono
+      su una A3, in **modalità verifica**: ogni pezzo porta stampato accanto il proprio
+      indirizzo, così il progettista punta un pezzo sul disegno e lo cerca sul grafo.
+      Escono anche con i rilievi di qualità aperti, marcate come tali — una tavola che
+      serve a trovare gli errori deve poter uscire proprio quando ne ha. Da SVG a **PDF**
+      a misura reale.
+      - **Perché non uscivano.** Non era la carta, ed è stato misurato: fallivano identiche
+        anche su A0. Gli accessori appesi a uno stacco — sfiato, scarico, vaso,
+        riempimento, manometro — finivano in una colonna propria, ordinati per profondità
+        come fossero un passo del processo. Lo scarico dell'accumulo stava sessanta
+        millimetri a sinistra dell'accumulo, con due macchine in mezzo.
+      - **E un secondo guasto della stessa specie** (D-113): davanti a ogni attacco c'è
+        una cella sola, la sua unica uscita, e la valvola di un'altra tratta ci si era
+        seduta sopra murandolo. L'impianto del pavimento radiante falliva identico su A3,
+        A2 e A1.
+      - **L'ordine di lettura era rovesciato**: le fasce venivano dall'ordine in cui il
+        file elenca i sottosistemi, cioè dal loro nome. Ora vengono dal processo — chi
+        genera a sinistra, chi accumula, chi utilizza — come D-111 chiede.
+      - **Il collocatore usa anche l'altezza** (D-111, D-112): quando la fila non entra
+        confronta poche disposizioni deterministiche e prende la meno cara, impilando ciò
+        che sta in parallelo e scambiando colonne che nessuna tratta collega.
+
 **Il prossimo lavoro è cambiato: si va sul disegnatore** (decisione del PM, 7 agosto
 sera). Il contenuto si chiude «alla buona» e si porta a casa la tavola, perché il grafo
 scritto è 300÷500 righe di tabelle e nessuno ci trova un accessorio fuori posto
@@ -70,7 +92,9 @@ Tre cose, in ordine, e ci si ferma:
 1. **Il criterio della camminata** (difetti aperti 1 e 2, che hanno una radice sola). Non
    per pulizia: oggi lo stesso impianto dà due risposte diverse a seconda di **come si
    chiamano le macchine**, e un ciclo di verifica ha bisogno che rigenerare due volte dia
-   due volte la stessa tavola. È un prerequisito, non una rifinitura.
+   due volte la stessa tavola. È un prerequisito, non una rifinitura. **Non fatto:** il
+   9 agosto si è saltato al punto 2 e 3 per portare al PM una tavola da guardare, che era
+   lo scopo dichiarato. Resta il primo lavoro della prossima sessione.
 2. **La modalità verifica** (D-110, come emendata da D-111): l'indirizzo del nodo stampato
    accanto al pezzo.
 3. **La composizione** (D-111 e D-112): disporre meglio sul foglio che c'è, non spezzare.
@@ -117,18 +141,24 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
    confine di D-104. Miscelatrice e ritegno sanitario hanno già le regole.
 3. **La libreria dei simboli** — contenuto da completare (segno del rubinetto bloccabile).
 4. **Il cartiglio.**
-5. **La composizione** — da rifare, ed è il lavoro in corso. ⛔ **La vecchia motivazione
-   scritta qui era falsa**: diceva «l'impianto completo non entra in larghezza su un foglio
-   ordinario», e non è vero. Misurato: i cinque impianti falliscono **anche su A0**, e non
-   per la larghezza. Falliscono perché gli accessori che pendono da uno stacco vengono
-   posati in una colonna propria, lontano dal pezzo da cui pendono, e la loro tratta non si
-   instrada più. Più carta non risolve niente.
+5. **La composizione** — **tre impianti su cinque escono** (9 agosto). Restano fuori il
+   quarto e il quinto, e questa volta **è davvero larghezza**: le loro fasce chiedono
+   507 e 945 millimetri contro i 335 di una A3. Il quarto entra su A2; il quinto non
+   entra nemmeno su A1. Sono i due casi per cui D-112 esiste — prima si stringe
+   davvero, poi si valuta se la distribuzione merita una seconda tavola, e il formato
+   maggiore per ultimo con la motivazione scritta.
+   ⛔ **La vecchia motivazione scritta qui era falsa** e va ricordata: diceva «l'impianto
+   completo non entra in larghezza», e per i primi tre non era vero — fallivano anche su
+   A0, per l'instradamento. Le due cose si distinguono con una prova sola: **se il
+   fallimento non cambia passando a un foglio più grande, non è spazio.**
 6. **I validatori e il cancello dell'occhio terzo.**
 
 ## Done log — ultimo in cima
 
 | Commit | Cosa |
 |---|---|
+| — | **La tavola esce**: tre impianti su cinque su A3, in modalità verifica, da SVG a PDF a misura reale. Chi pende da uno stacco sta accanto al proprio pezzo; la soglia di ogni attacco è riservata (D-113); le fasce si leggono per processo e non per nome di sottosistema; il collocatore usa anche l'altezza. 15 prove nuove, 1050 verdi |
+| — | **Sei incoerenze chiuse nella documentazione** e l'indirizzo del PM dell'8 agosto registrato come **D-112**: la centrale non si spezza, prima si ottimizza il foglio che c'è, il formato maggiore per ultimo con motivazione verificabile |
 | — | **I cinque grafi rigenerati dalla pipeline**: solo il quinto cambia, da 98 a 108 pezzi — via il collettore mai nominato, dentro il circuito miscelato del pavimento radiante. Le sei prove che presidiavano l'artefatto vecchio sono verdi |
 | — | **Il pezzo 1 «Capire» è APPROVATO** al terzo giro: zero perso e zero inventato su 67 componenti e 82 tubazioni, e il quinto grafo coincide col metro arco per arco. Consegne dei tre giri agli atti |
 | — | **Corretto §4.2**: una rete parte da una macchina che la alimenta o da un confine, **mai da un raccordo**. Era il buco che al giro 2 faceva rompere la catena al quinto grafo |

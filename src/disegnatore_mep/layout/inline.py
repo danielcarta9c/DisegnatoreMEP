@@ -23,8 +23,8 @@ from disegnatore_mep.model.project import ProjectModel
 
 from .errors import LayoutError
 from .geometry import PlacedSymbol, Point, RoutedTrunk, run_intrudes_on
-from .grid import GridSpace
-from .route import route_sheet
+from .grid import Cell, GridSpace
+from .route import port_aprons, route_sheet
 from .trunks import Trunk
 
 MIN_SPACING_MM = 2.5
@@ -132,6 +132,7 @@ def place_inline_accessories(
     grid: GridSpace,
     obstacles: list[PlacedSymbol] | None = None,
     runs: list[RoutedTrunk] | None = None,
+    reserved: frozenset[Cell] = frozenset(),
 ) -> tuple[list[PlacedSymbol], RoutedTrunk]:
     """Posa gli accessori della tratta e restituisce la spezzata interrotta.
 
@@ -219,6 +220,25 @@ def place_inline_accessories(
             for item in (obstacles or [])
         )
 
+    def clear_of_port_thresholds(origin: Point, width: float, height: float) -> bool:
+        """Non si siede sulla soglia di un attacco (D-113).
+
+        Davanti a ogni attacco c'e' una cella sola, la sua unica uscita.
+        Occuparla lo mura, e la tratta che ci arriva non si instrada piu' — ne'
+        su questo foglio ne' su uno piu' grande, perche' non e' una questione di
+        spazio. E' successo sul collettore del pavimento radiante: la valvola
+        della prima zona si e' seduta sotto l'attacco della seconda.
+        """
+        if not reserved:
+            return True
+        low = grid.to_cell(origin.x_mm, origin.y_mm)
+        high = grid.to_cell(origin.x_mm + width, origin.y_mm + height)
+        return not any(
+            (col, row) in reserved
+            for col in range(low[0], high[0] + 1)
+            for row in range(low[1], high[1] + 1)
+        )
+
     def clear_of_other_runs(origin: Point, width: float, height: float) -> bool:
         """Nessuna tratta gia' disegnata gli passa addosso o a filo (B5, D-027)."""
         if not others:
@@ -255,9 +275,13 @@ def place_inline_accessories(
                     x_mm=station.point.x_mm - turned.width_mm / 2,
                     y_mm=station.point.y_mm - turned.height_mm / 2,
                 )
-                if clear_of_symbols(
-                    origin, turned.width_mm, turned.height_mm
-                ) and clear_of_other_runs(origin, turned.width_mm, turned.height_mm):
+                if (
+                    clear_of_symbols(origin, turned.width_mm, turned.height_mm)
+                    and clear_of_other_runs(origin, turned.width_mm, turned.height_mm)
+                    and clear_of_port_thresholds(
+                        origin, turned.width_mm, turned.height_mm
+                    )
+                ):
                     found, distance = station, snapped
                     break
                 snapped += step
@@ -369,10 +393,14 @@ def settle_sheet(
     drawn: list[RoutedTrunk] = []
     unfit: list[int] = []
 
+    reserved = frozenset(
+        port_aprons(project, list(trunks), placed, catalog, grid).values()
+    )
+
     def settle(trunk: Trunk, route: RoutedTrunk) -> list[PlacedSymbol]:
         try:
             found, pieces = place_inline_accessories(
-                project, trunk, route, catalog, grid, symbols, drawn
+                project, trunk, route, catalog, grid, symbols, drawn, reserved
             )
         except LayoutError:
             if not tolerant:

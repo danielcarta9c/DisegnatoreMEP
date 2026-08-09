@@ -275,6 +275,39 @@ def _port_anchor(
     return cell, _FACE_DIRECTION[port.face]
 
 
+
+def port_aprons(
+    project: ProjectModel,
+    trunks: list[Trunk],
+    placed: list[PlacedSymbol],
+    catalog: ComponentRegistry,
+    grid: GridSpace,
+) -> dict[tuple[str, str], Cell]:
+    """La cella davanti a ogni attacco in uso: la sua soglia.
+
+    Un attacco ha **una sola uscita**, quella verso cui guarda: le altre tre
+    celle intorno stanno dentro il proprio simbolo. Chi occupa quella cella —
+    un'altra tratta, o peggio un accessorio, che e' un ostacolo pieno — mura
+    l'attacco, e la sua tratta non si instrada piu' su nessun formato.
+    """
+    by_component = {item.component_id: item for item in placed}
+    definitions = {item.id: item.definition_id for item in project.components}
+    aprons: dict[tuple[str, str], Cell] = {}
+    for trunk in trunks:
+        for ref in (trunk.start, trunk.end):
+            symbol = by_component.get(ref.component_id)
+            if symbol is None:
+                continue
+            cell, direction = _port_anchor(
+                symbol, ref.port_id, catalog, definitions[ref.component_id], grid
+            )
+            aprons[(ref.component_id, ref.port_id)] = (
+                cell[0] + direction[0],
+                cell[1] + direction[1],
+            )
+    return aprons
+
+
 def route_sheet(
     project: ProjectModel,
     trunks: list[Trunk],
@@ -356,6 +389,22 @@ def route_sheet(
             symbol, ref.port_id, catalog, definitions[ref.component_id], grid
         )
 
+    # La cella davanti a ogni attacco in uso e' **riservata al suo attacco**.
+    #
+    # Un attacco ha una sola uscita, quella verso cui guarda: le altre tre
+    # celle intorno stanno dentro il proprio simbolo. Se un'altra tratta ci
+    # passa sopra — o peggio, se ci si siede un accessorio, che e' un ostacolo
+    # pieno — quell'attacco resta murato e la sua tratta non si instrada piu',
+    # su nessun formato. E' successo sul collettore del pavimento radiante: la
+    # valvola della prima zona si e' seduta esattamente sotto l'attacco della
+    # seconda, a sei celle di distanza, e la seconda zona e' diventata
+    # irraggiungibile su A3, su A2 e su A1.
+    #
+    # Riservare una cella per attacco costa pochissimo e toglie una specie
+    # intera di fallimento.
+    aprons = port_aprons(project, trunks, placed, catalog, grid)
+    reserved = frozenset(aprons.values())
+
     for trunk in trunks:
         start, start_direction = anchor(trunk.start)
         goal, goal_direction = anchor(trunk.end)
@@ -365,6 +414,13 @@ def route_sheet(
         declared = orientation.get(trunk.connection_ids)
         supply = declared if declared is not None else goal[0] >= start[0]
         ends = {start, goal}
+        # Le proprie soglie servono a questa tratta, e le altre le deve lasciare
+        # stare: e' l'unico modo perche' la riserva protegga senza impedire.
+        own = {
+            aprons[(ref.component_id, ref.port_id)]
+            for ref in (trunk.start, trunk.end)
+            if (ref.component_id, ref.port_id) in aprons
+        }
         try:
             found = route(
                 start,
@@ -373,7 +429,7 @@ def route_sheet(
                 goal_direction,
                 cols=grid.cols,
                 rows=grid.rows,
-                blocked=blocked - ends,
+                blocked=(blocked | reserved) - ends - own,
                 occupied=frozenset(occupied),
                 # Vietati tutti i tratti gia' percorsi, tranne quelli che
                 # toccano un attacco condiviso con questa tratta: li' due linee

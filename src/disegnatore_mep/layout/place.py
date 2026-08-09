@@ -1183,14 +1183,17 @@ def place_sheet(
                             - lift_above_ground(component_id),
                             area.y_mm,
                         )
-                        ground_top = top
                     else:
                         # La coppia impilata del tentativo di recupero (D-073):
                         # il secondo lascia la terra e sale sopra il primo,
-                        # allineato a sinistra, con lo stacco di fascia.
+                        # allineato a sinistra, con lo stacco di fascia. Sopra
+                        # il primo c'e' anche **cio' che gli pende sopra**: lo
+                        # sfogo di un volano sta fuori dal suo riquadro, e chi
+                        # gli saliva addosso ci finiva sopra.
                         top = on_grid(
                             ground_top - ROW_GAP_MM - manifest.height_mm, area.y_mm
                         )
+                    ground_top = top - overhang(component_id, PortFace.TOP)
                 else:
                     found = aligned_top(component_id, left, floor)
                     if found is None:
