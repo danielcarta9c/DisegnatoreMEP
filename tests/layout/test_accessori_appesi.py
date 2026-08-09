@@ -37,14 +37,27 @@ SYMBOLS = ROOT / "assets" / "symbols"
 RULES = ROOT / "rules" / "hydronic"
 PROVA = ROOT / "examples" / "prova"
 
-COMPONIBILI = (
-    "prova-1-due-pdc-accumulo-combinato.json",
+COMPONIBILI = ("prova-1-due-pdc-accumulo-combinato.json",)
+"""L'impianto che entra in una A3 oggi.
+
+⛔ **Il 9 agosto erano tre, e sono tornati uno. Non e' un ammorbidimento: e' un
+prezzo, ed e' misurato.** Il verso del fluido era sbagliato — sulla rete di
+acqua fredda il disegnatore prendeva il bollitore come sorgente invece
+dell'acquedotto, e disegnava **tutta l'adduzione come un ritorno**. Correggerlo
+cambia l'ordine con cui il collocatore legge il processo, e la disposizione non
+regge il cambiamento: il terzo impianto chiede 420 mm contro i 335 di una A3, e
+il secondo non trova piu' il rettilineo per una valvola.
+
+Un disegno che sbaglia il verso dell'acqua e' peggio di un disegno che non
+esce: il committente non puo' verificarci niente, e infatti se n'e' accorto in
+pochi minuti. La correzione resta; a rientrare devono essere gli impianti,
+quando la composizione compatta. Il conto e' in `NON_COMPONGONO`."""
+
+NON_COMPONGONO = (
     "prova-2-pdc-deviatrice-acs.json",
     "prova-3-pdc-diretta-pavimento.json",
 )
-"""I tre impianti che entrano in una A3. Il quarto e il quinto non ancora: le
-loro fasce chiedono 507 e 945 millimetri, e la composizione deve ancora
-imparare a stringerli. E' scritto in `PROJECT_STATE.md`, non e' nascosto qui."""
+"""Gli impianti che componevano il 9 agosto e oggi no, con il motivo misurato."""
 
 
 def catalog() -> ComponentRegistry:
@@ -242,3 +255,25 @@ def test_chi_genera_sta_a_sinistra_di_chi_utilizza(name: str) -> None:
     assert min(where[item] for item in generatori) < max(
         where[item] for item in utilizzatori
     )
+
+
+# ---------------------------------------------------------------------------
+# Il prezzo del verso corretto (aperto)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="APERTO, e misurato. Questi due impianti componevano il 9 agosto e "
+    "hanno smesso quando il verso del fluido e' stato corretto: sulla rete di "
+    "acqua fredda la sorgente era il bollitore invece dell'acquedotto, e tutta "
+    "l'adduzione veniva disegnata come un ritorno. Il verso giusto cambia "
+    "l'ordine del processo, e la disposizione non lo regge: il terzo impianto "
+    "chiede 420 mm contro i 335 di una A3, il secondo non trova il rettilineo "
+    "per una valvola di intercettazione. Torna verde quando la composizione "
+    "compatta davvero — non abbassando i minimi grafici.",
+)
+@pytest.mark.parametrize("name", NON_COMPONGONO)
+def test_tornano_a_comporre_quando_la_composizione_compatta(name: str) -> None:
+    drawing = compose_drawing(completato(name), catalog(), NOVE_C_A3)
+    assert len(drawing.sheets) == 1

@@ -87,6 +87,49 @@ def _rank(functions: frozenset[str]) -> int:
     return 0
 
 
+def _sources(
+    members: list[str],
+    incoming: dict[str, list[Trunk]],
+    functions_of: dict[str, frozenset[str]],
+    position: dict[str, int],
+) -> list[str]:
+    """Da dove parte una rete. Due criteri, e il primo viene prima.
+
+    **Chi immette e non riceve e' la sorgente, qualunque mestiere faccia.** Su
+    una rete di acqua fredda la sorgente e' l'acquedotto: immette e basta. Il
+    bollitore la riceve — e' l'ultimo posto dove il fluido va, non il primo da
+    cui viene. Prima contava solo il mestiere, e il mestiere del bollitore
+    (tenere una riserva) valeva piu' di quello di un confine di rete: cosi' la
+    sorgente dell'acqua fredda risultava il bollitore, la camminata partiva da
+    li' **all'indietro**, e **tutta l'adduzione veniva disegnata come un
+    ritorno** — con il colore e il tratteggio del ritorno. Sui cinque impianti
+    non esisteva una sola tratta di acqua fredda in andata, e l'acqua fredda un
+    ritorno non ce l'ha.
+
+    Dove nessuno immette senza ricevere — un circuito chiuso, che e' il caso del
+    primario — la sorgente la dice il **mestiere**: prima chi genera, poi chi
+    accumula.
+
+    Resta **una sola** sorgente per rete, come prima. Partire da tutte quelle di
+    pari mestiere — le due pompe di calore in parallelo — toglierebbe qualche
+    tratta indecisa, ma cambia l'ordine con cui il collocatore legge il
+    processo, e oggi la disposizione non regge il cambiamento: due impianti su
+    tre smettono di entrare nel foglio. E' scritto fra le righe aperte del
+    registro degli input del PM, e si fa quando la composizione compatta.
+    """
+    feeders = [item for item in members if not incoming.get(item)]
+    candidates = feeders or members
+    return [
+        min(
+            candidates,
+            key=lambda item: (
+                -_rank(functions_of.get(item, frozenset())),
+                position.get(item, 0),
+            ),
+        )
+    ]
+
+
 def _walk(
     edges: dict[str, list[Trunk]],
     onward: str,
@@ -147,15 +190,11 @@ def orient_trunks(
         if not members:
             continue
 
-        source = min(
-            members,
-            key=lambda item: (
-                -_rank(functions_of.get(item, frozenset())),
-                position.get(item, 0),
-            ),
-        )
-        supply = _walk(outgoing, "end", source, functions_of)
-        returns = _walk(incoming, "start", source, functions_of)
+        supply: set[TrunkKey] = set()
+        returns: set[TrunkKey] = set()
+        for source in _sources(members, incoming, functions_of, position):
+            supply |= _walk(outgoing, "end", source, functions_of)
+            returns |= _walk(incoming, "start", source, functions_of)
         for trunk in group:
             key = trunk.connection_ids
             in_supply, in_return = key in supply, key in returns

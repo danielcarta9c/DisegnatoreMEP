@@ -1101,6 +1101,36 @@ def place_sheet(
                 return top
         return None
 
+    def clear_of_symbols(
+        left: float,
+        top: float,
+        width: float,
+        height: float,
+        parent_left: float,
+        parent_top: float,
+        parent: SymbolManifest,
+    ) -> bool:
+        """Il riquadro non tocca nessun simbolo, tranne il proprio pezzo.
+
+        Il proprio pezzo si esclude perche' e' quello a cui si appende: gli sta
+        vicino per costruzione, e chiedergli lo stesso stacco degli estranei lo
+        manderebbe a spasso.
+        """
+        own = (
+            parent_left,
+            parent_top,
+            parent_left + parent.width_mm,
+            parent_top + parent.height_mm,
+        )
+        return not any(
+            box != own
+            and left < box[2] + step
+            and box[0] - step < left + width
+            and top < box[3] + step
+            and box[1] - step < top + height
+            for box in boxes
+        )
+
     def hang(parent_id: str, parent_left: float, parent_top: float) -> None:
         """Posa cio' che pende dal pezzo appena posato, accanto a lui.
 
@@ -1145,6 +1175,42 @@ def place_sheet(
             child_top = min(
                 max(child_top, area.y_mm), levels.ground_mm - child.height_mm
             )
+            # Il posto giusto e' quello, ma il foglio e' condiviso: se ci sta
+            # gia' qualcun altro ci si allontana lungo lo stacco, un passo per
+            # volta. Un accessorio appeso non ha diritto di posarsi addosso a
+            # una macchina solo perche' il suo raccordo guarda da quella parte.
+            reach = (
+                area.bottom_mm - area.y_mm
+                if side in (PortFace.TOP, PortFace.BOTTOM)
+                else area.width_mm
+            )
+            away = {
+                PortFace.TOP: (0.0, -step),
+                PortFace.BOTTOM: (0.0, step),
+                PortFace.RIGHT: (step, 0.0),
+                PortFace.LEFT: (-step, 0.0),
+            }[side]
+            for _ in range(int(reach / step)):
+                if clear_of_symbols(
+                    child_left,
+                    child_top,
+                    child.width_mm,
+                    child.height_mm,
+                    parent_left,
+                    parent_top,
+                    parent,
+                ):
+                    break
+                moved_left = child_left + away[0]
+                moved_top = child_top + away[1]
+                if (
+                    moved_left < area.x_mm - 1e-9
+                    or moved_left + child.width_mm > area.right_mm + 1e-9
+                    or moved_top < area.y_mm - 1e-9
+                    or moved_top + child.height_mm > levels.ground_mm + 1e-9
+                ):
+                    break
+                child_left, child_top = moved_left, moved_top
             placed.append(
                 PlacedSymbol(
                     component_id=item.component_id,
