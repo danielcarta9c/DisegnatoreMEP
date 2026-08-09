@@ -184,8 +184,9 @@ nell'altro:
 | 1 | Questo file | Cancello |
 | 2 | `docs/SKILL.md` | Com'è fatta la skill, la catena, i pezzi |
 | 3 | `PROJECT_STATE.md` | A che punto siamo |
+| 3b | `INPUT_PROSSIMI_STEP_2026-08-08.md` | **Indirizzo diretto del PM sulla composizione**, consegnato l'8 agosto: la centrale non si spezza, prima si ottimizza il foglio che c'è, quando la distribuzione merita una tavola propria, il formato maggiore per ultimo. Registrato in **D-112** |
 | 4 | `docs/plans/2026-08-06-piano-costruzione-skill.md` | Il piano corrente e i verdetti. **L'appendice è un registro storico: le sue righe raccontano com'era allora, non com'è oggi.** Dove una riga è stata superata, ha il rimando scritto sopra |
-| 5 | `docs/DECISION_LOG.md` — **partire da D-096** | D-096÷D-111 sono la logica del grafo, il confine del prodotto, il regime, le due regole di metodo del 7 agosto e — **le ultime due, che sono la specifica del lavoro in corso** — la modalità verifica (D-110) e come si compone una tavola (D-111, che emenda D-110) |
+| 5 | `docs/DECISION_LOG.md` — **partire da D-096** | D-096÷D-112 sono la logica del grafo, il confine del prodotto, il regime, le due regole di metodo del 7 agosto e — **le ultime tre, che sono la specifica del lavoro in corso** — la modalità verifica (D-110), come si compone una tavola (D-111, che emenda D-110) e i vincoli della composizione (D-112: la centrale non si spezza, l'ordine dei rimedi, quando si apre una seconda tavola) |
 | 5b | `docs/collaudi/` | I verbali per esteso dei collaudi indipendenti: i criteri che si sono scritti e l'esito di ciascuno |
 | 6 | `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` | Dove va ciascun pezzo, con la fonte. **La parte terza è il riscontro di D-106, riga per riga** |
 | 7 | `docs/adr/0005-*.md` | L'architettura, blindata |
@@ -199,7 +200,7 @@ nell'altro:
 
 ## 6. Stato al 7 agosto 2026
 
-**Ramo:** il lavoro è su `main` (e sul ramo `claude/disegnatoremep-interpreter-validation-6j9vk8`).
+**Ramo:** `claude/project-docs-first-pdf-obh471`, che parte da `main`.
 **Prove:** 1035 verdi, 22 parcheggiate col motivo scritto, **11 marcate rosse apposta sui
 difetti aperti**; `ruff` e `mypy --strict` puliti.
 **Ambiente:** `bash scripts/setup-env.sh` — **da eseguire per primo** in una sessione cloud.
@@ -207,15 +208,19 @@ difetti aperti**; `ruff` e `mypy --strict` puliti.
 
 ### I pezzi
 
+> **I nomi dei pezzi sono quelli di `docs/SKILL.md`, e si citano per nome.** Numerarli qui
+> in un altro modo è già costato una confusione: «pezzo 3» voleva dire *assemblare* in un
+> documento e *disporre* nell'altro.
+
 | Pezzo | Stato |
 |---|---|
-| **1 — Capire** | **APPROVATO dal collaudo** (7 agosto, al terzo giro). Zero perso e zero inventato su cinque impianti, 67 componenti, 82 tubazioni. Consegne dei tre giri agli atti in `skill/capire/prova-2026-08-07/` |
-| **2 — Completare** (le regole) | Costruito e collaudato, **ma con quattro difetti aperti**. Il pacchetto E e C2 furono respinti al primo giro e corretti lo stesso giorno; poi il collaudo delle **due correzioni di fine sessione** (7 agosto, sera) le ha **respinte entrambe**: il nocciolo regge, ma restano i due della camminata del tratto comune, il caso di mezzo del regime e le potenze fuori dal modello. Elenco in `PROJECT_STATE.md`, prove marcate rosse apposta |
-| **3 — Assemblare** | Costruito e collaudato; il 7 agosto ha guadagnato la classificazione dei blocchi sul capofila e l'ordinamento dei blocchi di mezzo |
+| **Capire** | **APPROVATO dal collaudo** (7 agosto, al terzo giro). Zero perso e zero inventato su cinque impianti, 67 componenti, 82 tubazioni. Consegne dei tre giri agli atti in `skill/capire/prova-2026-08-07/` |
+| **Completare** (le regole) | Costruito e collaudato, **ma con quattro difetti aperti**. Il pacchetto E e C2 furono respinti al primo giro e corretti lo stesso giorno; poi il collaudo delle **due correzioni di fine sessione** (7 agosto, sera) le ha **respinte entrambe**: il nocciolo regge, ma restano i due della camminata del tratto comune, il caso di mezzo del regime e le potenze fuori dal modello. Elenco in `PROJECT_STATE.md`, prove marcate rosse apposta |
+| **Assemblare** | Costruito e collaudato; il 7 agosto ha guadagnato la classificazione dei blocchi sul capofila e l'ordinamento dei blocchi di mezzo |
 | Il grafo, le sigle e **l'indirizzo dei nodi (D-105)** | **Collaudato e APPROVATO** (7 agosto), 91 prove del collaudo adottate |
 | Il vocabolario delle proprietà | Approvato; si aggiungono il bordo macchina e il punto di riempimento come dichiarazioni di catalogo |
-| 4 — Disporre / libreria / cartiglio / **composizione** | **È il lavoro della prossima sessione** (§7). Instradamento e regole di costo del PM esistono; il richiamo obliquo esiste. Mancano il riempimento bilanciato come obiettivo, la prenotazione dello spazio in avanti e l'anti-incrocio fra richiami. Specifica in **D-111**; la modalità verifica in **D-110** |
-| 5 — Validatori e cancello dell'occhio terzo | Correttezza e preflight esistono, il cancello no |
+| **Disporre** / libreria / cartiglio / **composizione** | **È il lavoro in corso** (§7). Instradamento e regole di costo del PM esistono; il richiamo obliquo esiste. Mancano il riempimento bilanciato come obiettivo, la prenotazione dello spazio in avanti e l'anti-incrocio fra richiami. Specifica in **D-111** e **D-112**; la modalità verifica in **D-110** |
+| **Verificare** — validatori e cancello dell'occhio terzo | Correttezza e preflight esistono, il cancello no |
 
 ### Cosa è successo il 7 agosto, sera — la chiusura di «Capire»
 
@@ -354,12 +359,14 @@ sessione: solo far uscire il disegno.
    sotto l'altra** e non solo una a fianco all'altra, e che sappia scegliere fra le
    disposizioni possibili. Gli altri due vengono dietro.
 
-   > ⚠ **Chiedere al PM presto, non dopo tre giri di ottimizzazione.** «Poche curve»,
-   > «linee corte», «niente incroci» sono numeri. **«Bilanciato e simmetrico» è un
-   > giudizio d'occhio e non si sa come si misura.** Partire da qualcosa di ragionevole —
-   > ingombro distribuito sui quadranti, baricentro vicino al centro del foglio — ma
-   > appena ci sono due tavole plausibili, mostrargliele e farsi dire quale è bilanciata e
-   > quale no. È il punto dove si può bruciare più tempo ottimizzando la metrica sbagliata.
+   > ⚠ **«Bilanciato e simmetrico» non va chiesto al PM: è già misurato.** Il preflight
+   > controlla il **riempimento minimo del foglio (60 %)** e il **rapporto d'inchiostro fra
+   > il quadrante più pieno e il più vuoto (massimo 3)**. Sono esattamente le due cose che
+   > il PM ha descritto a parole, e chiedergliele di nuovo sarebbe l'errore di D-102.
+   > **Quello che manca non è la misura: è che nessuno la usa come obiettivo mentre
+   > dispone** — il collocatore la scopre alla fine, con un errore. Al PM si porta il
+   > risultato: appena ci sono due tavole plausibili, si mostrano e si fa dire quale
+   > preferisce.
 
 Poi si consegnano le cinque tavole **in modalità verifica** e ci si ferma: comincia il
 giro delle correzioni del PM. **Se la composizione si prende tutta la sessione va bene:**
@@ -443,7 +450,8 @@ capo con agenti nuovi.** Vale sempre, ed è già costato due giri in una session
   preflight controlla il **riempimento minimo del foglio (60 %)** e il **rapporto
   d'inchiostro fra il quadrante più pieno e il più vuoto (max 3)**. Non serve inventare
   una metrica nuova né chiederla al PM: esiste, e oggi su una tavola d'esempio dà 24 % e
-  3,1. Sono esattamente le due cose che il PM ha descritto a parole.
+  3,1. Sono esattamente le due cose che il PM ha descritto a parole. **Manca solo che
+  qualcuno le usi come obiettivo mentre dispone**, invece di scoprirle alla fine (§7.3).
 - **Prima di lanciare la prova, controllare che il kit non si contraddica.** Il kit sono
   cinque documenti — istruzioni, testo, catalogo, tabelle dei nomi, schema — e lo schema
   porta prosa che può invecchiare. È già costato un giro intero. Il modo pratico:

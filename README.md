@@ -9,11 +9,13 @@ approvare, e poi disegna.
 
 ## Da dove si comincia
 
-1. **`docs/SKILL.md`** — com'è fatta la skill: i sette pezzi, cosa fa ciascuno e quando è
+1. **`HANDOFF.md`** — il cancello di lettura: cosa stiamo costruendo, da dove si riparte,
+   e le domande a cui rispondere prima di toccare qualunque cosa.
+2. **`docs/SKILL.md`** — com'è fatta la skill: i pezzi, cosa fa ciascuno e quando è
    finito. È il documento autorevole sull'architettura.
-2. **`PROJECT_STATE.md`** — a che punto siamo e cosa manca. È l'unico posto in cui è
+3. **`PROJECT_STATE.md`** — a che punto siamo e cosa manca. È l'unico posto in cui è
    scritto lo stato.
-3. **`AGENTS.md`** — come si lavora: i due ruoli, il metodo, come si scrive al PM.
+4. **`AGENTS.md`** — come si lavora: i due ruoli, il metodo, come si scrive al PM.
 
 Il resto si apre quando serve.
 
@@ -38,7 +40,8 @@ Il resto si apre quando serve.
 | `docs/adr/` | Le decisioni strutturali, costose da cambiare. |
 | `docs/prodotto/` | Cosa fa il prodotto e cosa non fa. |
 | `docs/standard/` | Come si disegna: lo standard grafico, le regole del colpo d'occhio, il protocollo dell'occhio terzo. |
-| `docs/plans/` | Il piano di costruzione **corrente**. |
+| `docs/plans/` | Il piano di costruzione **corrente** e i suoi verdetti. Racconta **come è andata un'esecuzione**, non come funziona la skill: per quello c'è `docs/SKILL.md`. |
+| `docs/collaudi/` | I verbali per esteso dei collaudi indipendenti: i criteri scritti prima e l'esito di ciascuno. |
 | `docs/fonti/` | Da dove vengono simboli e prescrizioni. |
 | `docs/prompts/` | Le istruzioni degli agenti AI della skill. |
 | `docs/archivio/` | **Storia.** Piani eseguiti, specifiche superate, revisioni passate, contesto iniziale. Non va letto per sapere come funziona la skill. |

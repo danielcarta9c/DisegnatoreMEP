@@ -10,8 +10,8 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **1035 verdi, 22 parcheggiate, 11 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples` |
-| Libreria simboli | 39 pubblicati | Le 22 prove parcheggiate riguardano il **disegno** (composizione da rifare) |
+| Test | **1035 verdi, 22 parcheggiate, 11 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** e 4 il foglio di riscontro dei simboli, che non entra piu' in una pagina sola |
+| Libreria simboli | 39 pubblicati | A scala fissa ne entrano 32 per foglio: il foglio di riscontro va impaginato su piu' pagine |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
 
@@ -71,8 +71,12 @@ Tre cose, in ordine, e ci si ferma:
    per pulizia: oggi lo stesso impianto dà due risposte diverse a seconda di **come si
    chiamano le macchine**, e un ciclo di verifica ha bisogno che rigenerare due volte dia
    due volte la stessa tavola. È un prerequisito, non una rifinitura.
-2. **La modalità verifica** (D-110): l'indirizzo del nodo stampato accanto al pezzo.
-3. **La composizione**: far entrare l'impianto su più fogli invece che su uno.
+2. **La modalità verifica** (D-110, come emendata da D-111): l'indirizzo del nodo stampato
+   accanto al pezzo.
+3. **La composizione** (D-111 e D-112): disporre meglio sul foglio che c'è, non spezzare.
+   **La centrale è un'unità grafica indivisibile** e non si divide mai in automatico; una
+   seconda tavola si apre solo se la distribuzione, presa da sola, merita un foglio; il
+   formato maggiore è l'ultima risorsa e vuole una motivazione verificabile.
 
 **Gli altri difetti aperti si rimandano**: le due correzioni alle istruzioni costano un
 giro intero di camera pulita ciascuna e non cambiano niente di ciò che si vede sulla
@@ -104,7 +108,7 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
 
 ## Next — i pezzi che restano
 
-1. **I sei difetti aperti** della tabella qui sopra, in ordine: i due della camminata del
+1. **I cinque difetti aperti** della tabella qui sopra (il sesto è chiuso), in ordine: i due della camminata del
    tratto comune (che sono difetti veri del completatore), il caso di mezzo del regime, le
    potenze nel modello, e la voce con gli identificativi interni. Ognuno ha già la prova
    che lo inchioda: si chiude quando quella prova torna verde senza essere ammorbidita.
@@ -113,8 +117,12 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
    confine di D-104. Miscelatrice e ritegno sanitario hanno già le regole.
 3. **La libreria dei simboli** — contenuto da completare (segno del rubinetto bloccabile).
 4. **Il cartiglio.**
-5. **La composizione** — da rifare: l'impianto completo non entra in larghezza su un
-   foglio ordinario.
+5. **La composizione** — da rifare, ed è il lavoro in corso. ⛔ **La vecchia motivazione
+   scritta qui era falsa**: diceva «l'impianto completo non entra in larghezza su un foglio
+   ordinario», e non è vero. Misurato: i cinque impianti falliscono **anche su A0**, e non
+   per la larghezza. Falliscono perché gli accessori che pendono da uno stacco vengono
+   posati in una colonna propria, lontano dal pezzo da cui pendono, e la loro tratta non si
+   instrada più. Più carta non risolve niente.
 6. **I validatori e il cancello dell'occhio terzo.**
 
 ## Done log — ultimo in cima

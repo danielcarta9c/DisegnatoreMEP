@@ -72,18 +72,18 @@ il catalogo li dichiara macchina per macchina.
         │ 2. COMPLETARE      │  regole degli accessori: cosa manca e perché
         └─────┬──────────────┘
         ┌─────┴──────────────┐
-        │ 3. ASSEMBLARE      │  dove va ciascuno: la fila lungo ogni tubo
+        │ 2bis. ASSEMBLARE   │  dove va ciascuno: la fila lungo ogni tubo
         └─────┬──────────────┘
               │  GRAFO DEFINITIVO — leggibile come testo, senza disegnare niente
         ┌─────┴──────────────┐
         │    L'INGEGNERE APPROVA         ← cancello: niente si disegna prima
         └─────┬──────────────┘
         ┌─────┴──────────────┐
-        │ 4. DISPORRE        │  posizionamento e instradamento, a costi (D-060)
+        │ 3. DISPORRE        │  posizionamento e instradamento, a costi (D-060)
         └─────┬──────────────┘
-              │  usa: 5. LIBRERIA DEI SIMBOLI   e   6. CARTIGLIO
+              │  usa: 4. LIBRERIA DEI SIMBOLI   e   5. CARTIGLIO
         ┌─────┴──────────────┐
-        │ 7. VERIFICARE      │  validatori + preflight di qualità
+        │ 6. VERIFICARE      │  validatori + preflight di qualità
         └─────┬──────────────┘
         ┌─────┴──────────────┐
         │    L'OCCHIO TERZO GIUDICA      ← cancello: può respingere (D-086)
@@ -405,5 +405,6 @@ Tre livelli, e servono tutti e tre:
 | Da dove vengono simboli e prescrizioni | `docs/fonti/SOURCE_REGISTER.md` |
 | Come giudica l'occhio terzo | `docs/standard/COLD_EYE_REVIEW.md` |
 
-Tutto ciò che sta in `docs/plans/` è **storia**: racconta come è andata un'esecuzione, non
-cosa è vero adesso. Non va letto per sapere come funziona la skill.
+`docs/plans/` contiene il **piano corrente** e i verdetti dei collaudi, ma è un registro di
+**esecuzione**: racconta come è andata, non cosa è vero adesso. Serve a sapere a che punto è
+un pacchetto di lavoro, non a sapere come funziona la skill — per quello c'è questo file.
