@@ -92,9 +92,14 @@ Quattro cose utili subito, che nessun'altra fonte del registro dava con questa p
 - **Gli spessori hanno valori normati.** Tab. 1: tubazione **di progetto 0,50 mm**, tubazione
   **esistente 0,25 mm**; tutti i segni grafici sono tracciati a 0,50 mm salvo dove la
   descrizione dice altro. Oggi `A3_LANDSCAPE` usa 0,18 / 0,35 / 0,50 scelti internamente.
-- **La valvola di ritegno ha la freccia.** Tab. 3, «valvola di non ritorno»: triangolo vuoto
-  contro la battuta, **con una freccia sopra che indica il senso del flusso**. La nostra ha
-  il triangolo pieno e nessuna freccia.
+- **La valvola di ritegno è una «z coricata», non un triangolo.** Tab. 3, «valvola di non
+  ritorno»: **due barrette verticali unite da una diagonale** che scende dall'alto della
+  prima al basso della seconda, **con una freccia sopra**; la descrizione della norma dice
+  testualmente «la freccia indica il senso del flusso». ⛔ **Questa riga il 5 agosto diceva
+  «triangolo vuoto contro la battuta»: era sbagliata**, e il simbolo è rimasto sbagliato
+  per quattro giorni, fino alla prima tavola vista dal PM. La tavola è un'immagine
+  pubblicata: è stata riletta **guardandola**, il 9 agosto. **Chiusa**: il simbolo ora è
+  quello della norma (`I-004` nel registro degli input del PM).
 - **Le tavole non coprono le macchine.** Tubazioni, giunzioni, valvolame, scarichi, sonde e
   strumenti sì; pompa di calore, bollitore, volano, circolatore e collettore no. Quelli
   vengono dalla pratica e dagli schemi dei produttori (SRC-008), ed è esattamente il «mix»

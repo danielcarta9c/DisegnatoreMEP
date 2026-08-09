@@ -1,6 +1,6 @@
 {
   "id": "valve-check",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Valvola di ritegno",
   "width_mm": 5.0,
   "height_mm": 5.0,
@@ -31,5 +31,5 @@
     "top_mm": 0.0,
     "bottom_mm": 0.0
   },
-  "source": "UNI 9511 Tab. 3, tramite SRC-016"
+  "source": "UNI 9511 Tab. 3 «valvola di non ritorno», tramite SRC-016 — segno letto sulla tavola pubblicata, non descritto a memoria: due barrette verticali unite da una diagonale dall'alto della prima al basso della seconda, con la freccia del senso del flusso sopra. La descrizione della norma dice testualmente «la freccia indica il senso del flusso»"
 }

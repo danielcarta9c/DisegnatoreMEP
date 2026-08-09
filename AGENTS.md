@@ -10,6 +10,26 @@ l'handoff indica.
 Prima di fare domande, verificare chat, documenti e decisioni già registrate. Chiedere
 soltanto ciò che resta realmente ambiguo.
 
+**Poi `docs/input-pm/REGISTRO.md`: le righe aperte lì dentro sono lavoro, non archivio.**
+
+## Ogni input del PM prende una riga, il giorno stesso
+
+**Non negoziabile, e nasce da un errore vero:** una fonte che il PM aveva indicato è stata
+letta male, la correzione è stata riconosciuta e mai fatta, e il difetto è arrivato fino
+alla prima tavola che lui ha visto. La sua frase: «si continuano a perdere i miei input».
+
+- Ogni cosa che porta — un documento, un link, una correzione su una tavola, una frase in
+  chat — prende una riga in `docs/input-pm/REGISTRO.md`, **anche se sembra piccola**.
+- Un input che contiene **più cose da fare si spezza in più righe**: chiuderne una e
+  credere di averle chiuse tutte è esattamente com'è andata.
+- Una riga esce solo **chiusa** — dicendo cosa l'ha chiusa, in modo che lui possa
+  verificarlo — o **ritirata da lui**. Mai «superata dai fatti» in silenzio.
+- I documenti che consegna si **copiano in `docs/input-pm/`**, con la data nel nome: un
+  allegato di conversazione non è un documento di progetto.
+- **Una fonte si guarda, non si descrive a memoria.** Se è un'immagine o una tavola, si
+  scarica e si apre. La descrizione sbagliata di un segno grafico è costata quattro
+  giorni e una tavola sbagliata sotto gli occhi del committente.
+
 ## Principi non negoziabili
 
 - Non iniziare l'implementazione prima dell'approvazione del design.
