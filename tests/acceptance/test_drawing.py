@@ -47,12 +47,16 @@ def drawing() -> DrawingGeometry:
 
 
 @pytest.mark.skip(
-    reason="La composizione e' il pezzo da rifare del piano: con gli accessori "
-    "sugli stacchi al posto giusto l'impianto completo chiede piu' larghezza di "
-    "quanta ne abbia un foglio ordinario, e il posizionamento a fasce non ci "
-    "arriva. Non e' un difetto del contenuto — quello si giudica sul grafo "
-    "scritto (D-096) — ed e' esattamente il limite che il pezzo della "
-    "composizione deve chiudere. Queste prove tornano quando quel pezzo si fa."
+    reason="La composizione compone: da quando cio' che pende da uno stacco sta "
+    "accanto al proprio pezzo, il caso completo entra in una A3 e ogni tratta si "
+    "instrada. Resta fuori la QUALITA', ed e' misurata: 27 pieghe contro le 23 "
+    "di budget, 1055 mm di linea contro 825, la tratta fra pompa di calore e "
+    "valvola deviatrice non e' un rettilineo, e due attese contano dieci pezzi "
+    "dove il caso ne ha dodici. ATTENZIONE: la vecchia motivazione di queste "
+    "prove — «l'impianto chiede piu' larghezza di quanta ne abbia un foglio "
+    "ordinario» — era FALSA e ha ingannato due volte; i cinque impianti "
+    "fallivano anche su A0, e per l'instradamento. Queste prove tornano quando "
+    "il disegno rientra nei budget, non ammorbidendo i budget."
 )
 def test_the_case_composes_end_to_end() -> None:
     result = drawing()
@@ -75,12 +79,16 @@ def test_no_line_passes_under_an_inline_component() -> None:
 
 
 @pytest.mark.skip(
-    reason="La composizione e' il pezzo da rifare del piano: con gli accessori "
-    "sugli stacchi al posto giusto l'impianto completo chiede piu' larghezza di "
-    "quanta ne abbia un foglio ordinario, e il posizionamento a fasce non ci "
-    "arriva. Non e' un difetto del contenuto — quello si giudica sul grafo "
-    "scritto (D-096) — ed e' esattamente il limite che il pezzo della "
-    "composizione deve chiudere. Queste prove tornano quando quel pezzo si fa."
+    reason="La composizione compone: da quando cio' che pende da uno stacco sta "
+    "accanto al proprio pezzo, il caso completo entra in una A3 e ogni tratta si "
+    "instrada. Resta fuori la QUALITA', ed e' misurata: 27 pieghe contro le 23 "
+    "di budget, 1055 mm di linea contro 825, la tratta fra pompa di calore e "
+    "valvola deviatrice non e' un rettilineo, e due attese contano dieci pezzi "
+    "dove il caso ne ha dodici. ATTENZIONE: la vecchia motivazione di queste "
+    "prove — «l'impianto chiede piu' larghezza di quanta ne abbia un foglio "
+    "ordinario» — era FALSA e ha ingannato due volte; i cinque impianti "
+    "fallivano anche su A0, e per l'instradamento. Queste prove tornano quando "
+    "il disegno rientra nei budget, non ammorbidendo i budget."
 )
 def test_the_composed_drawing_carries_no_blocking_quality_finding() -> None:
     """Il livello 1 di D-063 misurato sulla geometria composta, non sull'uscita.
@@ -132,12 +140,16 @@ def test_the_sheet_is_marked_as_a_draft() -> None:
 
 
 @pytest.mark.skip(
-    reason="La composizione e' il pezzo da rifare del piano: con gli accessori "
-    "sugli stacchi al posto giusto l'impianto completo chiede piu' larghezza di "
-    "quanta ne abbia un foglio ordinario, e il posizionamento a fasce non ci "
-    "arriva. Non e' un difetto del contenuto — quello si giudica sul grafo "
-    "scritto (D-096) — ed e' esattamente il limite che il pezzo della "
-    "composizione deve chiudere. Queste prove tornano quando quel pezzo si fa."
+    reason="La composizione compone: da quando cio' che pende da uno stacco sta "
+    "accanto al proprio pezzo, il caso completo entra in una A3 e ogni tratta si "
+    "instrada. Resta fuori la QUALITA', ed e' misurata: 27 pieghe contro le 23 "
+    "di budget, 1055 mm di linea contro 825, la tratta fra pompa di calore e "
+    "valvola deviatrice non e' un rettilineo, e due attese contano dieci pezzi "
+    "dove il caso ne ha dodici. ATTENZIONE: la vecchia motivazione di queste "
+    "prove — «l'impianto chiede piu' larghezza di quanta ne abbia un foglio "
+    "ordinario» — era FALSA e ha ingannato due volte; i cinque impianti "
+    "fallivano anche su A0, e per l'instradamento. Queste prove tornano quando "
+    "il disegno rientra nei budget, non ammorbidendo i budget."
 )
 def test_the_draw_command_writes_one_sheet(tmp_path: Path) -> None:
     exit_code = main(
@@ -160,12 +172,16 @@ def test_the_draw_command_writes_one_sheet(tmp_path: Path) -> None:
 
 
 @pytest.mark.skip(
-    reason="La composizione e' il pezzo da rifare del piano: con gli accessori "
-    "sugli stacchi al posto giusto l'impianto completo chiede piu' larghezza di "
-    "quanta ne abbia un foglio ordinario, e il posizionamento a fasce non ci "
-    "arriva. Non e' un difetto del contenuto — quello si giudica sul grafo "
-    "scritto (D-096) — ed e' esattamente il limite che il pezzo della "
-    "composizione deve chiudere. Queste prove tornano quando quel pezzo si fa."
+    reason="La composizione compone: da quando cio' che pende da uno stacco sta "
+    "accanto al proprio pezzo, il caso completo entra in una A3 e ogni tratta si "
+    "instrada. Resta fuori la QUALITA', ed e' misurata: 27 pieghe contro le 23 "
+    "di budget, 1055 mm di linea contro 825, la tratta fra pompa di calore e "
+    "valvola deviatrice non e' un rettilineo, e due attese contano dieci pezzi "
+    "dove il caso ne ha dodici. ATTENZIONE: la vecchia motivazione di queste "
+    "prove — «l'impianto chiede piu' larghezza di quanta ne abbia un foglio "
+    "ordinario» — era FALSA e ha ingannato due volte; i cinque impianti "
+    "fallivano anche su A0, e per l'instradamento. Queste prove tornano quando "
+    "il disegno rientra nei budget, non ammorbidendo i budget."
 )
 def test_the_draw_command_can_write_the_geometry(tmp_path: Path) -> None:
     geometry = tmp_path / "geometry.json"
@@ -313,12 +329,16 @@ def test_a_two_sheet_plan_produces_two_sheets(tmp_path: Path) -> None:
 
 
 @pytest.mark.skip(
-    reason="La composizione e' il pezzo da rifare del piano: con gli accessori "
-    "sugli stacchi al posto giusto l'impianto completo chiede piu' larghezza di "
-    "quanta ne abbia un foglio ordinario, e il posizionamento a fasce non ci "
-    "arriva. Non e' un difetto del contenuto — quello si giudica sul grafo "
-    "scritto (D-096) — ed e' esattamente il limite che il pezzo della "
-    "composizione deve chiudere. Queste prove tornano quando quel pezzo si fa."
+    reason="La composizione compone: da quando cio' che pende da uno stacco sta "
+    "accanto al proprio pezzo, il caso completo entra in una A3 e ogni tratta si "
+    "instrada. Resta fuori la QUALITA', ed e' misurata: 27 pieghe contro le 23 "
+    "di budget, 1055 mm di linea contro 825, la tratta fra pompa di calore e "
+    "valvola deviatrice non e' un rettilineo, e due attese contano dieci pezzi "
+    "dove il caso ne ha dodici. ATTENZIONE: la vecchia motivazione di queste "
+    "prove — «l'impianto chiede piu' larghezza di quanta ne abbia un foglio "
+    "ordinario» — era FALSA e ha ingannato due volte; i cinque impianti "
+    "fallivano anche su A0, e per l'instradamento. Queste prove tornano quando "
+    "il disegno rientra nei budget, non ammorbidendo i budget."
 )
 def test_splitting_this_plant_in_two_is_refused_for_the_empty_second_sheet(
     tmp_path: Path,

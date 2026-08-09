@@ -17,6 +17,7 @@ Tutto cio' che si legge e' in italiano (D-051): le sigle vengono dal modello,
 le unita' da questa tabella.
 """
 
+from collections.abc import Callable
 from math import ceil, sqrt
 
 from disegnatore_mep.graphics.standard import GraphicStandard
@@ -80,11 +81,21 @@ sovrappongono, quindi un errore in eccesso e' innocuo.
 TOLERANCE_MM = 1e-6
 
 SIDES: tuple[str, ...] = ("above", "below", "right", "left")
+
 """L'ordine in cui si cerca un posto adiacente: sopra, sotto, destra, sinistra.
 
 Fisso, quindi deterministico. Il lato **proprio** del testo — sopra per la
 sigla, sotto per i valori — viene provato per primo, e questo e' l'ordine dei
 rimanenti.
+"""
+
+ADDRESS_SIDES: tuple[str, ...] = ("right", "left", "above", "below")
+"""Dove si cerca posto per un indirizzo, e perche' non e' l'ordine delle sigle.
+
+La sigla vuole stare sopra il proprio pezzo e i valori sotto: quei due lati sono
+gia' occupati quando l'indirizzo arriva, ed e' l'ultimo ad arrivare per
+costruzione. Cercare prima di fianco gli evita di girare due lati pieni a ogni
+pezzo e lo tiene piu' vicino di quanto lo terrebbe un richiamo.
 """
 
 DIAGONALS: tuple[tuple[int, int], ...] = ((1, -1), (1, 1), (-1, -1), (-1, 1))
@@ -208,6 +219,187 @@ def _texts_of(
     return texts
 
 
+def _anchor_at(
+    item: PlacedSymbol,
+    side: str,
+    slot: int,
+    ring: int,
+    width_mm: float,
+    *,
+    height_mm: float,
+    step_mm: float,
+) -> Point:
+    """L'ancoraggio di un testo su un lato del simbolo.
+
+    `slot` conta i testi gia' posati su quel lato — e' l'interlinea — e `ring`
+    di quanti passi di griglia ci si e' allontanati. Sopra e sotto il testo si
+    centra sul riquadro, restando su un nodo della griglia; di fianco si centra
+    in quota.
+
+    Sulla griglia stanno l'ascissa e **gli scostamenti** della ricerca, non lo
+    stacco dal riquadro: quello vale un millimetro e mezzo perche' e' quanto
+    deve valere, e portarlo sul passo lo raddoppierebbe allontanando ogni
+    scritta dal proprio pezzo, che e' il difetto che D-075 corregge.
+    """
+    centred = (
+        item.origin.x_mm + round((item.width_mm - width_mm) / 2 / step_mm) * step_mm
+    )
+    stack = slot * (height_mm + CALLOUT_LINE_GAP_MM)
+    away = ring * step_mm
+    if side == "above":
+        return Point(x_mm=centred, y_mm=item.origin.y_mm - TAG_GAP_MM - stack - away)
+    if side == "below":
+        return Point(
+            x_mm=centred,
+            y_mm=item.bottom_mm + VALUE_GAP_MM + height_mm + stack + away,
+        )
+    middle = item.origin.y_mm + item.height_mm / 2 + height_mm / 2 + stack
+    if side == "right":
+        return Point(x_mm=item.right_mm + SIDE_GAP_MM + away, y_mm=middle)
+    return Point(x_mm=item.origin.x_mm - SIDE_GAP_MM - width_mm - away, y_mm=middle)
+
+
+def _leader_corner(item: PlacedSymbol, way: tuple[int, int]) -> Point:
+    """Lo spigolo da cui parte la diagonale: quello verso cui essa punta."""
+    return Point(
+        x_mm=item.right_mm if way[0] > 0 else item.origin.x_mm,
+        y_mm=item.origin.y_mm if way[1] < 0 else item.bottom_mm,
+    )
+
+
+def _ladder(
+    item: PlacedSymbol,
+    width_mm: float,
+    *,
+    height_mm: float,
+    step_mm: float,
+    free: Callable[[Box], bool],
+    obstacles: list[Box],
+) -> tuple[Point, Point]:
+    """Il primo posto raggiungibile con una diagonale a 45 gradi.
+
+    La diagonale parte da uno spigolo del simbolo e finisce **sulla base del
+    testo**: un solo segmento obliquo, nessuna piega. La codina orizzontale
+    sotto la scritta — la «scaletta» del disegno a mano — si potrebbe
+    aggiungere, e deliberatamente non c'e': porterebbe i due capi del richiamo a
+    un angolo diverso da 45 gradi, e i due capi sono cio' che la geometria
+    dichiara e che il preflight misura. Un richiamo che *si disegna* a 45 gradi
+    ma *si misura* a 60 non e' verificabile.
+
+    Il posto si cerca allungando la diagonale di un passo per volta, quindi e'
+    il piu' vicino fra i liberi. Il richiamo non deve attraversare un simbolo
+    ne' un'altra etichetta; puo' attraversare una tubazione, ed e' giusto cosi':
+    obliquo com'e' non lo si scambia per un tubo (B1).
+    """
+    reach = ceil(LEADER_MIN_LENGTH_MM / sqrt(2) / step_mm) * step_mm
+
+    def reached(way: tuple[int, int], span: float) -> tuple[Point, Point]:
+        start = _leader_corner(item, way)
+        return start, Point(
+            x_mm=start.x_mm + way[0] * span, y_mm=start.y_mm + way[1] * span
+        )
+
+    for ring in range(LEADER_MAX_STEPS):
+        span = reach + ring * step_mm
+        for way in DIAGONALS:
+            start, anchor = reached(way, span)
+            box = _text_box(anchor, width_mm, height_mm)
+            if not free(box):
+                continue
+            if any(_crosses(start, anchor, other) for other in obstacles):
+                continue
+            if _crosses(start, anchor, box):
+                continue
+            return start, anchor
+    # Nemmeno una diagonale libera: si scrive comunque, sulla prima. Un testo
+    # mancante e' un difetto peggiore di un testo affollato, e il preflight lo
+    # misura (D5).
+    return reached(DIAGONALS[0], reach)
+
+
+def place_addresses(
+    placed: list[PlacedSymbol],
+    addresses: dict[str, str],
+    standard: GraphicStandard,
+    *,
+    routes: list[RoutedTrunk] | None = None,
+    already: list[PlacedLabel] | None = None,
+    floor_y_mm: float | None = None,
+) -> list[PlacedLabel]:
+    """L'indirizzo del nodo scritto accanto al proprio pezzo (D-110, D-111).
+
+    E' la **terza specie di scritta** sulla tavola: la legenda dice *cosa* e' un
+    simbolo, la sigla dice *quale*, l'indirizzo dice **dove** — cosi' il
+    progettista guarda il disegno, punta un pezzo, ne legge il codice e va a
+    cercarlo sul grafo.
+
+    Si posa **dopo tutto il resto e non sposta niente**: e' un velo sopra una
+    tavola gia' finita, e le due modalita' — verifica e consegna — danno percio'
+    la stessa identica tavola, una con le etichette in piu'. Se gli indirizzi
+    entrassero nel posizionamento allargherebbero il disegno, e cio' che il
+    progettista verifica non sarebbe piu' cio' che gli viene consegnato.
+
+    Sta vicino al nodo **quando c'e' posto**; altrimenti prende una linea di
+    richiamo obliqua, come ogni altra scritta senza posto (D-111, che emenda
+    D-110 su questo punto).
+    """
+    height = standard.text_small_mm
+    step = standard.grid_mm
+    symbols = [_symbol_box(item) for item in placed]
+    taken: list[Box] = [
+        *symbols,
+        *(
+            _text_box(item.anchor, text_width_mm(item.text, height), height)
+            for item in already or ()
+        ),
+    ]
+    lines = _line_boxes(routes)
+
+    def free(box: Box) -> bool:
+        if floor_y_mm is not None and box[3] > floor_y_mm + 1e-9:
+            return False
+        return not any(_overlap(box, other) for other in (*taken, *lines))
+
+    labels: list[PlacedLabel] = []
+    for item in placed:
+        text = addresses.get(item.component_id)
+        if text is None:
+            continue
+        width = text_width_mm(text, height)
+        spot: Point | None = None
+        start: Point | None = None
+        for ring in range(ADJACENT_MAX_STEPS + 1):
+            for side in ADDRESS_SIDES:
+                candidate = _anchor_at(
+                    item, side, 0, ring, width, height_mm=height, step_mm=step
+                )
+                if free(_text_box(candidate, width, height)):
+                    spot = candidate
+                    break
+            if spot is not None:
+                break
+        if spot is None:
+            start, spot = _ladder(
+                item,
+                width,
+                height_mm=height,
+                step_mm=step,
+                free=free,
+                obstacles=symbols,
+            )
+        taken.append(_text_box(spot, width, height))
+        labels.append(
+            PlacedLabel(
+                id=f"address-{item.component_id}",
+                text=text,
+                role="address",
+                anchor=spot,
+                leader_from=start,
+            )
+        )
+    return labels
+
+
 def place_labels(
     project: ProjectModel,
     placed: list[PlacedSymbol],
@@ -275,86 +467,19 @@ def place_labels(
     def anchor_at(
         item: PlacedSymbol, side: str, slot: int, ring: int, width_mm: float
     ) -> Point:
-        """L'ancoraggio di un testo su un lato del simbolo.
-
-        `slot` conta i testi gia' posati su quel lato — e' l'interlinea — e
-        `ring` di quanti passi di griglia ci si e' allontanati. Sopra e sotto il
-        testo si centra sul riquadro, restando su un nodo della griglia; di
-        fianco si centra in quota.
-
-        Sulla griglia stanno l'ascissa e **gli scostamenti** della ricerca, non
-        lo stacco dal riquadro: quello vale un millimetro e mezzo perche' e'
-        quanto deve valere, e portarlo sul passo lo raddoppierebbe allontanando
-        ogni scritta dal proprio pezzo, che e' il difetto che D-075 corregge.
-        """
-        centred = item.origin.x_mm + round((item.width_mm - width_mm) / 2 / step) * step
-        stack = slot * (height + CALLOUT_LINE_GAP_MM)
-        away = ring * step
-        if side == "above":
-            return Point(
-                x_mm=centred, y_mm=item.origin.y_mm - TAG_GAP_MM - stack - away
-            )
-        if side == "below":
-            return Point(
-                x_mm=centred,
-                y_mm=item.bottom_mm + VALUE_GAP_MM + height + stack + away,
-            )
-        middle = item.origin.y_mm + item.height_mm / 2 + height / 2 + stack
-        if side == "right":
-            return Point(x_mm=item.right_mm + SIDE_GAP_MM + away, y_mm=middle)
-        return Point(
-            x_mm=item.origin.x_mm - SIDE_GAP_MM - width_mm - away, y_mm=middle
+        return _anchor_at(
+            item, side, slot, ring, width_mm, height_mm=height, step_mm=step
         )
 
-    def leader_corner(item: PlacedSymbol, way: tuple[int, int]) -> Point:
-        """Lo spigolo da cui parte la diagonale: quello verso cui essa punta."""
-        return Point(
-            x_mm=item.right_mm if way[0] > 0 else item.origin.x_mm,
-            y_mm=item.origin.y_mm if way[1] < 0 else item.bottom_mm,
+    def ladder(item: PlacedSymbol, width_mm: float) -> tuple[Point, Point]:
+        return _ladder(
+            item,
+            width_mm,
+            height_mm=height,
+            step_mm=step,
+            free=free,
+            obstacles=taken,
         )
-
-    def ladder(
-        item: PlacedSymbol, width_mm: float
-    ) -> tuple[Point, Point]:
-        """Il primo posto raggiungibile con una diagonale a 45 gradi.
-
-        La diagonale parte da uno spigolo del simbolo e finisce **sulla base
-        del testo**: un solo segmento obliquo, nessuna piega. La codina
-        orizzontale sotto la scritta — la «scaletta» del disegno a mano — si
-        potrebbe aggiungere, e deliberatamente non c'e': porterebbe i due capi
-        del richiamo a un angolo diverso da 45 gradi, e i due capi sono cio' che
-        la geometria dichiara e che il preflight misura. Un richiamo che *si
-        disegna* a 45 gradi ma *si misura* a 60 non e' verificabile.
-
-        Il posto si cerca allungando la diagonale di un passo per volta, quindi
-        e' il piu' vicino fra i liberi. Il richiamo non deve attraversare un
-        simbolo ne' un'altra etichetta; puo' attraversare una tubazione, ed e'
-        giusto cosi': obliquo com'e' non lo si scambia per un tubo (B1).
-        """
-        reach = ceil(LEADER_MIN_LENGTH_MM / sqrt(2) / step) * step
-
-        def reached(way: tuple[int, int], span: float) -> tuple[Point, Point]:
-            start = leader_corner(item, way)
-            return start, Point(
-                x_mm=start.x_mm + way[0] * span, y_mm=start.y_mm + way[1] * span
-            )
-
-        for ring in range(LEADER_MAX_STEPS):
-            span = reach + ring * step
-            for way in DIAGONALS:
-                start, anchor = reached(way, span)
-                box = _text_box(anchor, width_mm, height)
-                if not free(box):
-                    continue
-                if any(_crosses(start, anchor, other) for other in taken):
-                    continue
-                if _crosses(start, anchor, box):
-                    continue
-                return start, anchor
-        # Nemmeno una diagonale libera: si scrive comunque, sulla prima. Un
-        # testo mancante e' un difetto peggiore di un testo affollato, e il
-        # preflight lo misura (D5).
-        return reached(DIAGONALS[0], reach)
 
     for item in placed:
         texts = _texts_of(item, properties)

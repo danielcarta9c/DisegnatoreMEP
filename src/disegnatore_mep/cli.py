@@ -7,14 +7,18 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graph.naming import Naming
+from disegnatore_mep.graph.lines import read_lines
+from disegnatore_mep.graph.naming import LineNaming, Naming
+from disegnatore_mep.graph.plant import read_plant
+from disegnatore_mep.graphics.frame import SheetFrame
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import render_sheet
 from disegnatore_mep.graphics.svg import render_symbol_sheet
 from disegnatore_mep.io.canonical import canonical_json, project_fingerprint
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import compose_on_ordinary_frame
-from disegnatore_mep.layout.geometry import drawing_fingerprint
+from disegnatore_mep.layout.geometry import DrawingGeometry, drawing_fingerprint
+from disegnatore_mep.layout.labels import place_addresses
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import IssueSeverity
 from disegnatore_mep.rules.apply import saturate
@@ -32,6 +36,13 @@ SEVERITY_LABELS: dict[IssueSeverity, str] = {
     IssueSeverity.WARNING: "Avvisi",
 }
 """Le tre classi di esito della §13, in ordine di gravita' e in italiano (D-068)."""
+
+VERIFY_MARK = "MODALITÀ VERIFICA"
+"""Come si riconosce a colpo d'occhio una tavola che non e' una consegna.
+
+Sta nell'intestazione, dove il progettista la vede prima del disegno: una tavola
+con gli indirizzi addosso non e' quella che va in cantiere, e confonderle
+costerebbe piu' di quanto la verifica faccia risparmiare (D-110)."""
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -83,6 +94,20 @@ def build_parser() -> argparse.ArgumentParser:
     draw.add_argument("--symbols", type=Path, required=True)
     draw.add_argument("--out", type=Path, required=True)
     draw.add_argument("--geometry", type=Path)
+    # Le tabelle dei nomi servono solo alla modalita' verifica, che stampa gli
+    # indirizzi dei nodi: senza indirizzi la tavola e' quella di consegna e le
+    # tabelle non le legge nessuno.
+    draw.add_argument("--naming", type=Path)
+    draw.add_argument(
+        "--verifica",
+        action="store_true",
+        help=(
+            "modalita' verifica (D-110): stampa accanto a ogni pezzo il suo "
+            "indirizzo, cosi' il progettista punta un pezzo sul disegno e lo "
+            "cerca sul grafo. La tavola esce **anche con rilievi bloccanti**, "
+            "marcata come tale: serve a guardare, non a consegnare"
+        ),
+    )
     return parser
 
 
@@ -157,6 +182,49 @@ def _print_preflight(findings: list[ValidationIssue]) -> None:
             print(f"    codice: {item.code} · {', '.join(item.entity_ids)}")
 
 
+def _with_addresses(
+    drawing: DrawingGeometry,
+    project: ProjectModel,
+    catalog: ComponentRegistry,
+    frame: SheetFrame,
+    naming_dir: Path,
+) -> DrawingGeometry:
+    """La stessa tavola, con l'indirizzo di ogni nodo scritto accanto (D-110).
+
+    Le etichette si posano **sopra una tavola gia' finita** e non spostano
+    niente: le due modalita' danno percio' la stessa identica tavola, una con un
+    velo in piu'. E' il punto della decisione, e va tenuto vero: cio' che il
+    progettista verifica dev'essere esattamente cio' che gli viene consegnato.
+    """
+    lines = read_lines(
+        project,
+        catalog,
+        read_plant(project, catalog, Naming.from_directory(naming_dir)),
+        LineNaming.from_directory(naming_dir),
+    )
+    sheets = []
+    for sheet in drawing.sheets:
+        sheets.append(
+            sheet.model_copy(
+                update={
+                    "title": f"{sheet.title} · {VERIFY_MARK}",
+                    "labels": [
+                        *sheet.labels,
+                        *place_addresses(
+                            sheet.symbols,
+                            lines.addresses,
+                            frame.standard,
+                            routes=sheet.routes,
+                            already=sheet.labels,
+                            floor_y_mm=sheet.ground_line_y_mm,
+                        ),
+                    ],
+                }
+            )
+        )
+    return drawing.model_copy(update={"sheets": sheets})
+
+
 def _draw(args: argparse.Namespace) -> int:
     """Compone e scrive una tavola SVG per foglio.
 
@@ -169,10 +237,22 @@ def _draw(args: argparse.Namespace) -> int:
     errori bloccanti — di correttezza o di qualita' —, `1` errori di
     caricamento. La tavola esce marcata come bozza finche' il cartiglio non e'
     compilato (D-025).
+
+    **In modalita' verifica il cancello di qualita' non blocca la scrittura.**
+    Non e' un'eccezione a D-063, che vale per la **consegna**: una tavola che il
+    progettista guarda per trovarci gli errori deve poter uscire proprio quando
+    ne ha, altrimenti gli errori nessuno li vede. Il foglio esce marcato, e i
+    rilievi restano stampati per intero.
     """
     project = load_project(args.project)
     symbols = SymbolRegistry.from_directory(args.symbols)
     catalog = ComponentRegistry.from_directory(args.catalog, symbols=symbols)
+    if args.verifica and args.naming is None:
+        print(
+            "--verifica richiede --naming: l'indirizzo di un nodo si scrive con "
+            "le tabelle delle famiglie di linea, che sono un dato come il catalogo"
+        )
+        return 1
 
     report = validate_project(project, catalog)
     if not report.ok:
@@ -187,12 +267,16 @@ def _draw(args: argparse.Namespace) -> int:
 
     quality = preflight_drawing(drawing, frame, catalog)
     _print_preflight(quality)
-    if not ValidationReport(issues=quality).ok:
+    blocked = not ValidationReport(issues=quality).ok
+    if blocked and not args.verifica:
         print(
             "\nLa tavola non viene scritta: una tavola finale non esce con un "
             "rilievo bloccante (D-063)."
         )
         return 2
+
+    if args.verifica:
+        drawing = _with_addresses(drawing, project, catalog, frame, args.naming)
 
     args.out.mkdir(parents=True, exist_ok=True)
     for sheet in drawing.sheets:
@@ -203,6 +287,11 @@ def _draw(args: argparse.Namespace) -> int:
             drawing.model_dump_json(indent=2) + "\n", encoding="utf-8"
         )
     print(drawing_fingerprint(drawing))
+    if blocked:
+        print(
+            f"\nFoglio scritto in {VERIFY_MARK.lower()}, con i rilievi qui sopra "
+            f"ancora aperti: si guarda, non si consegna (D-063)."
+        )
     return 0
 
 

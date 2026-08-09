@@ -32,6 +32,8 @@ cui stanno, e li posa `inline.py` dopo l'instradamento (D-027).
 """
 
 from collections import defaultdict
+from collections.abc import Callable
+from dataclasses import dataclass
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
@@ -41,7 +43,12 @@ from disegnatore_mep.model.types import BandRole
 
 from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
-from .flow import orient_trunks
+from .flow import (
+    GENERATOR_FUNCTIONS,
+    LOAD_FUNCTIONS,
+    STORE_FUNCTIONS,
+    orient_trunks,
+)
 from .geometry import PlacedSymbol, Point
 from .grid import GridSpace
 from .inline import END_CLEARANCE_MM, MIN_SPACING_MM
@@ -87,6 +94,24 @@ dividere e' un costo di lettura che si paga quando serve (D-056).
 
 _HORIZONTAL_FACES = (PortFace.LEFT, PortFace.RIGHT)
 
+_OPPOSITE: dict[PortFace, PortFace] = {
+    PortFace.BOTTOM: PortFace.TOP,
+    PortFace.TOP: PortFace.BOTTOM,
+    PortFace.LEFT: PortFace.RIGHT,
+    PortFace.RIGHT: PortFace.LEFT,
+}
+"""Dove sta un pezzo rispetto al proprio attacco: dalla parte opposta a dove
+l'attacco guarda. Uno sfogo che si imbocca da sotto sta **sopra** il punto in
+cui si innesta."""
+
+HANGING_CLEARANCE_MM = 5.0
+"""Franco che si aggiunge alla lunghezza di uno stacco, oltre al conto dei pezzi.
+
+Due passi di griglia. Il conto degli accessori dice quanto serve perche' ci
+stiano in fila; questo dice quanto serve perche' ci stiano staccati da cio' che
+corre di fianco, che e' l'altra meta' di cio' che `inline.py` pretende.
+"""
+
 CLEARANCE_STEPS = 2
 """Passi di stacco fra una linea e il bordo del simbolo da cui esce.
 
@@ -94,6 +119,91 @@ Un attacco rivolto in basso scarica su una corsia che deve **staccarsi** dal
 riquadro: a un passo solo la linea corre a due millimetri e mezzo dal bordo e
 sulla carta sembra disegnata sul simbolo.
 """
+
+
+@dataclass(frozen=True)
+class _Hanging:
+    """Un accessorio che pende da uno stacco, e il pezzo da cui pende.
+
+    Non e' un passo del processo e non merita una colonna sua: sta **accanto al
+    proprio pezzo**, dalla parte in cui il suo unico attacco guarda. Prima
+    veniva ordinato per profondita' come tutti gli altri, e finiva dove
+    capitava: lo scarico del volano si e' ritrovato sessanta millimetri a
+    sinistra del volano, con due macchine in mezzo, e la sua tratta non si e'
+    piu' instradata su nessun formato, A0 compresa.
+    """
+
+    component_id: str
+    parent_id: str
+    parent_port_id: str
+    room_mm: float
+    """Il rettilineo che gli organi di chiusura dello stacco pretendono.
+
+    Lo stacco e' corto per costruzione, ma non e' vuoto: la valvola che isola
+    il vaso di espansione ci sta sopra, e se il pezzo si posa attaccato al
+    proprio raccordo quella valvola non ha dove sedersi.
+    """
+
+
+def _hanging_accessories(
+    project: ProjectModel,
+    partition: SheetPartition,
+    catalog: ComponentRegistry,
+    placeable: frozenset[str],
+    room_of: Callable[[tuple[str, ...]], float],
+) -> dict[str, list[_Hanging]]:
+    """Chi pende da uno stacco, raccolto sotto il pezzo che lo regge.
+
+    Il criterio non nomina nessun componente e non guarda le funzioni: legge il
+    **catalogo**, che gia' dichiara quali attacchi stanno fuori dal percorso del
+    fluido (`stub` o `serves`, D-101). Chi sta all'altro capo di uno di quegli
+    attacchi, e ha un attacco solo, e' un accessorio appeso.
+    """
+    ports_of = {
+        item.id: catalog.resolve(item.definition_id).definition.ports
+        for item in project.components
+        if item.id in placeable
+    }
+
+    def off_the_run(component_id: str, port_id: str) -> bool:
+        return any(
+            port.id == port_id and port.off_the_run
+            for port in ports_of.get(component_id, [])
+        )
+
+    hanging: dict[str, list[_Hanging]] = defaultdict(list)
+    claimed: set[str] = set()
+    for trunk in partition.trunks:
+        for parent, child in ((trunk.start, trunk.end), (trunk.end, trunk.start)):
+            if parent.component_id == child.component_id:
+                continue
+            if child.component_id in claimed:
+                continue
+            if child.component_id not in placeable or parent.component_id not in placeable:
+                continue
+            if len(ports_of.get(child.component_id, [])) != 1:
+                continue
+            if not off_the_run(parent.component_id, parent.port_id):
+                continue
+            hanging[parent.component_id].append(
+                _Hanging(
+                    component_id=child.component_id,
+                    parent_id=parent.component_id,
+                    parent_port_id=parent.port_id,
+                    room_mm=room_of(trunk.inline_component_ids),
+                )
+            )
+            claimed.add(child.component_id)
+            break
+
+    # Un appeso che regge a sua volta un appeso tornerebbe a essere una colonna
+    # senza che nessuno lo posi: la catena si ferma al primo livello, e chi
+    # resta fuori riprende il proprio posto in fila.
+    for parent_id in list(hanging):
+        if parent_id in claimed:
+            for item in hanging.pop(parent_id):
+                claimed.discard(item.component_id)
+    return {key: sorted(value, key=lambda item: item.component_id) for key, value in hanging.items()}
 
 
 def _band_by_subsystem(project: ProjectModel, sheet_id: str) -> dict[str, BandRole]:
@@ -104,7 +214,11 @@ def _band_by_subsystem(project: ProjectModel, sheet_id: str) -> dict[str, BandRo
 
 
 def _assign_bands(
-    project: ProjectModel, partition: SheetPartition, placeable: list[str]
+    project: ProjectModel,
+    partition: SheetPartition,
+    placeable: list[str],
+    depth_of: Callable[[str], int],
+    _process_rank: Callable[[str], int],
 ) -> dict[str, BandRole]:
     band_of_subsystem = _band_by_subsystem(project, partition.sheet_id)
     bands: dict[str, BandRole] = {}
@@ -124,12 +238,33 @@ def _assign_bands(
         return bands
 
     roles = list(BandRole)
-    # Senza piano dichiarato, i sottosistemi sono gia' un ordine di lettura:
-    # l'i-esimo finisce sull'i-esima fascia. E' il ripiego migliore perche' un
-    # impianto idronico e' un circuito chiuso e non ha sorgenti topologiche da
-    # cui misurare una profondita' assoluta.
+    # Senza piano dichiarato, l'ordine delle fasce e' quello del **processo**:
+    # chi genera sta a sinistra, poi chi accumula, poi chi utilizza. Lo dicono
+    # le **funzioni dichiarate dal catalogo**, mai il nome di un sottosistema o
+    # di un componente (D-090).
+    #
+    # Prima contava l'ordine in cui i sottosistemi comparivano nel file, che e'
+    # quanto dire l'ordine alfabetico dei loro nomi: con `accumulo`,
+    # `distribuzione`, `generazione` le due pompe di calore finivano
+    # all'estrema destra e l'impianto si leggeva al contrario. Un ordine di
+    # lettura deciso dal nome di un sottosistema non e' un ordine (D-093), e il
+    # PM chiede l'opposto: le macchine principali a sinistra (D-111).
     if project.subsystems:
-        for index, subsystem in enumerate(project.subsystems):
+        ranked = sorted(
+            project.subsystems,
+            key=lambda item: (
+                min(
+                    (_process_rank(component_id) for component_id in item.component_ids),
+                    default=len(roles),
+                ),
+                min(
+                    (depth_of(component_id) for component_id in item.component_ids),
+                    default=len(project.components),
+                ),
+                item.id,
+            ),
+        )
+        for index, subsystem in enumerate(ranked):
             role = roles[min(index, len(roles) - 1)]
             for component_id in subsystem.component_ids:
                 bands[component_id] = role
@@ -336,9 +471,36 @@ def place_sheet(
             f"accessory sits on a run, so there is nothing to draw it against"
         )
 
-    bands = _assign_bands(project, partition, placeable)
     tags = {item.id: item.tag for item in project.components}
     process = _Process(project, partition, catalog)
+    functions_of = {
+        item.id: frozenset(catalog.resolve(item.definition_id).definition.functions)
+        for item in project.components
+    }
+
+    def process_rank(component_id: str) -> int:
+        """Che passo del processo e' un pezzo: genera, accumula, utilizza.
+
+        Sono le stesse tre classi che gia' orientano le tratte (`flow.py`) e che
+        danno il nome alle linee: qui decidono su quale fascia si posa un
+        sottosistema, cioe' quanto a sinistra si legge.
+        """
+        functions = functions_of.get(component_id, frozenset())
+        if functions & GENERATOR_FUNCTIONS:
+            return 0
+        if functions & STORE_FUNCTIONS:
+            return 1
+        if functions & LOAD_FUNCTIONS:
+            return 2
+        return 3
+
+    bands = _assign_bands(
+        project,
+        partition,
+        placeable,
+        lambda item: process.depth.get(item, 0),
+        process_rank,
+    )
     order_hint = {
         item.subsystem_id: item.order
         for sheet in project.sheets
@@ -358,9 +520,86 @@ def place_sheet(
         for item in placeable
     }
 
-    def rotation_for(component_id: str) -> int:
+    def _room_for(trunk_component_ids: tuple[str, ...]) -> float:
+        """Il rettilineo che gli accessori di una tratta pretenderanno.
+
+        E' lo stesso conto che `inline.py` fara' dopo l'instradamento: ogni
+        accessorio vuole la propria interruzione piu' uno stacco dal vicino, e
+        la fila intera vuole due stacchi dai componenti agli estremi.
+        """
+        accessories = [
+            item for item in project.components if item.id in trunk_component_ids
+        ]
+        if not accessories:
+            return 0.0
+        return sum(
+            (catalog.resolve(item.definition_id).symbol.manifest.inline_gap_mm or 0.0)
+            + 2 * MIN_SPACING_MM
+            for item in accessories
+        ) + 2 * END_CLEARANCE_MM
+
+    hanging = _hanging_accessories(
+        project, partition, catalog, frozenset(placeable), _room_for
+    )
+    hung = {item.component_id for group in hanging.values() for item in group}
+    standing_columns = [item for item in placeable if item not in hung]
+
+    def default_rotation(component_id: str) -> int:
         allowed = resolved[component_id].symbol.manifest.allowed_rotations_deg
         return 0 if 0 in allowed else min(allowed)
+
+    def _sits_toward(component_id: str) -> PortFace:
+        """Da che parte del proprio punto di attacco sta un accessorio appeso.
+
+        Lo decide il **suo unico attacco**: chi ce l'ha in basso si posa sopra il
+        punto in cui si innesta, chi ce l'ha in alto si posa sotto, e cosi' di
+        fianco.
+        """
+        manifest = resolved[component_id].symbol.manifest.rotated(
+            default_rotation(component_id)
+        )
+        return _OPPOSITE[manifest.ports[0].face]
+
+    def rotation_for(component_id: str) -> int:
+        """Come va girato un pezzo, e perche' non e' sempre come sta in libreria.
+
+        Un raccordo con lo stacco rivolto in su e un vaso di espansione che si
+        imbocca dall'alto non si possono unire con una linea diritta: il tubo
+        dovrebbe uscire in su, scavalcare il raccordo e ridiscendere. Quattro
+        pieghe per un pezzo che sta a cinque millimetri, e il primo corridoio
+        stretto le rende impossibili — e' cosi' che il vaso e il gruppo di
+        riempimento facevano fallire l'instradamento.
+
+        La libreria dichiara le rotazioni ammesse: si prende quella che porta lo
+        stacco **dalla parte in cui l'accessorio deve stare**, purche' i due capi
+        del percorso restino orizzontali — un raccordo che tira su la strada
+        invece che di lato non e' piu' un raccordo in linea.
+        """
+        manifest = resolved[component_id].symbol.manifest
+        preferred = default_rotation(component_id)
+        wanted = {
+            item.parent_port_id: _sits_toward(item.component_id)
+            for item in hanging.get(component_id, ())
+        }
+        if not wanted:
+            return preferred
+        for angle in sorted(
+            manifest.allowed_rotations_deg, key=lambda item: (item != preferred, item)
+        ):
+            turned = manifest.rotated(angle)
+            if any(
+                turned.port(port_id).face is not face
+                for port_id, face in wanted.items()
+            ):
+                continue
+            if any(
+                port.face not in _HORIZONTAL_FACES
+                for port in turned.ports
+                if port.id not in wanted
+            ):
+                continue
+            return angle
+        return preferred
 
     manifests = {
         item: resolved[item].symbol.manifest.rotated(rotation_for(item))
@@ -397,7 +636,7 @@ def place_sheet(
         return 0
 
     columns: dict[BandRole, list[str]] = defaultdict(list)
-    for component_id in placeable:
+    for component_id in standing_columns:
         columns[bands[component_id]].append(component_id)
     for role in columns:
         columns[role].sort(
@@ -421,24 +660,6 @@ def place_sheet(
 
     def on_grid(value_mm: float, origin_mm: float) -> float:
         return origin_mm + round((value_mm - origin_mm) / step) * step
-
-    def _room_for(trunk_component_ids: tuple[str, ...]) -> float:
-        """Il rettilineo che gli accessori di una tratta pretenderanno.
-
-        E' lo stesso conto che `inline.py` fara' dopo l'instradamento: ogni
-        accessorio vuole la propria interruzione piu' uno stacco dal vicino, e
-        la fila intera vuole due stacchi dai componenti agli estremi.
-        """
-        accessories = [
-            item for item in project.components if item.id in trunk_component_ids
-        ]
-        if not accessories:
-            return 0.0
-        return sum(
-            (catalog.resolve(item.definition_id).symbol.manifest.inline_gap_mm or 0.0)
-            + 2 * MIN_SPACING_MM
-            for item in accessories
-        ) + 2 * END_CLEARANCE_MM
 
     def inline_room(here: set[str], there: set[str]) -> float:
         """Quanto rettilineo vogliono gli accessori delle tratte fra due colonne.
@@ -481,6 +702,275 @@ def place_sheet(
     )
     heights = {item: manifests[item].height_mm for item in placeable}
 
+    def hangs_toward(component_id: str) -> PortFace:
+        return _OPPOSITE[manifests[component_id].ports[0].face]
+
+    def hanging_gap(item: _Hanging) -> float:
+        """Quanto lo stacco deve essere lungo: almeno quanto cio' che ci sta sopra.
+
+        Il conto degli accessori dice il **minimo** perche' ci stiano in fila; il
+        franco in piu' serve perche' ci stiano **staccati** da cio' che passa
+        accanto, che e' l'altra meta' della richiesta di `inline.py`. Senza, la
+        valvola del gruppo di riempimento trovava i suoi dieci millimetri esatti
+        e nessun respiro intorno.
+        """
+        return max(ROW_GAP_MM, snap_up(item.room_mm + HANGING_CLEARANCE_MM, 0.0))
+
+    def sideways(component_id: str) -> tuple[float, float]:
+        """Quanto un pezzo sporge a sinistra e a destra per cio' che gli pende."""
+        left = right = 0.0
+        for item in hanging.get(component_id, ()):
+            side = hangs_toward(item.component_id)
+            width = manifests[item.component_id].width_mm + hanging_gap(item)
+            if side is PortFace.LEFT:
+                left += width
+            elif side is PortFace.RIGHT:
+                right += width
+        return left, right
+
+    def overhang(component_id: str, side: PortFace) -> float:
+        """Quanto un pezzo sporge, sopra o sotto, per cio' che gli pende.
+
+        Non e' decorazione: fra il pezzo e cio' che gli pende passa il tubo che
+        li unisce, e quel corridoio va **riservato**. Senza, impilare due colonne
+        mette il pezzo di sotto proprio nel varco dello stacco di quello di
+        sopra, e la tratta piu' corta della tavola non si instrada piu'.
+        """
+        return max(
+            (
+                hanging_gap(item) + manifests[item.component_id].height_mm
+                for item in hanging.get(component_id, ())
+                if hangs_toward(item.component_id) is side
+            ),
+            default=0.0,
+        )
+
+    def lift_above_ground(component_id: str) -> float:
+        """Di quanto una macchina si stacca da terra per cio' che le pende sotto.
+
+        Un serbatoio con lo scarico sul fondo appoggiato **esattamente** sulla
+        linea di terra non ha dove metterlo: sotto la terra non si instrada, e
+        l'unica cella libera sotto l'attacco e' gia' pavimento. Su una tavola
+        vera il serbatoio sta su un basamento e lo scarico si disegna sotto di
+        lui, sopra il pavimento. Qui e' la stessa cosa, misurata.
+        """
+        return overhang(component_id, PortFace.BOTTOM)
+
+    def footprint_width(component_id: str) -> float:
+        """La larghezza che un pezzo occupa **con cio' che gli pende accanto**.
+
+        Chi pende sopra o sotto non allarga niente; chi pende di fianco si',
+        e dimenticarlo farebbe sbordare la colonna dentro la successiva.
+        """
+        left, right = sideways(component_id)
+        own = manifests[component_id].width_mm
+        stacked = max(
+            (
+                manifests[item.component_id].width_mm
+                for item in hanging.get(component_id, ())
+                if hangs_toward(item.component_id) in (PortFace.TOP, PortFace.BOTTOM)
+            ),
+            default=0.0,
+        )
+        return left + max(own, stacked) + right
+
+    def neighbours_of(component_id: str) -> frozenset[str]:
+        """A cosa un pezzo e' attaccato, senza contare cio' che gli pende.
+
+        Cio' che pende da uno stacco viaggia col proprio pezzo e non lo
+        distingue da nessuno: contarlo direbbe che due pompe di calore identiche
+        non sono in parallelo perche' una ha lo sfiato e l'altra no.
+        """
+        return frozenset(
+            other
+            for trunk in partition.trunks
+            for ends in ({trunk.start.component_id, trunk.end.component_id},)
+            if component_id in ends
+            for other in ends - {component_id}
+            if other not in hung
+        )
+
+    def column_height(slot: list[str]) -> float:
+        """Quanto e' alta una colonna con i suoi pezzi uno sopra l'altro.
+
+        Ogni pezzo porta con se' cio' che gli pende sopra e sotto, corridoio
+        dello stacco compreso: dimenticarlo faceva entrare la colonna nei conti
+        e non nel foglio.
+        """
+        return sum(
+            overhang(item, PortFace.TOP) + heights[item] + overhang(item, PortFace.BOTTOM)
+            for item in slot
+        ) + ROW_GAP_MM * (len(slot) - 1)
+
+    def may_stack(over: list[str], under: list[str]) -> bool:
+        """Se due colonne contigue possono diventare una sola, impilate.
+
+        Si impila **cio' che sta in parallelo, mai cio' che sta in fila.** Due
+        zone servite dallo stesso collettore sono lo **stesso passo** del
+        processo e una sopra l'altra si leggono come sono; due raccordi che si
+        susseguono sulla stessa linea sono **due passi in fila**, e impilarli
+        spezza la lettura da sinistra a destra che il PM ha chiesto — oltre a
+        costringere la linea a scendere e risalire proprio nel varco dove passa
+        lo stacco del primo.
+
+        Il parallelo si riconosce da un fatto solo: **due cose sono in parallelo
+        quando pendono dalle stesse cose.** Due pompe di calore attaccate allo
+        stesso collettore di mandata e allo stesso collettore di ritorno hanno gli
+        stessi vicini; due raccordi in fila sulla stessa linea no — il primo
+        guarda il volume, il secondo guarda il collettore. La profondita' lungo
+        la mandata non basta a dirlo: il ritorno non e' orientato, e tutto cio'
+        che ci sta sopra risulterebbe alla stessa profondita'.
+
+        E vale anche qui che chi appoggia a terra e chi pende da una tubazione
+        stanno a due quote diverse e non si impilano l'uno sull'altro.
+        """
+        if any(
+            tuple(sorted((first, second))) in linked
+            for first in over
+            for second in under
+        ):
+            return False
+        if len({neighbours_of(item) for item in (*over, *under)}) != 1:
+            return False
+        if len({standings[item] for item in (*over, *under)}) != 1:
+            return False
+        return (
+            column_height(over) + ROW_GAP_MM + column_height(under)
+            <= levels.ground_mm - area.y_mm + 1e-9
+        )
+
+    def compress(
+        slots: dict[BandRole, list[list[str]]], budget_mm: float
+    ) -> dict[BandRole, list[list[str]]]:
+        """Impila una colonna sulla precedente finche' la fila entra nel foglio.
+
+        E' la mossa che D-111 chiede e che mancava: «serve che il collocatore
+        possa mettere le cose anche **una sotto l'altra** e non solo una a fianco
+        all'altra, e che sappia scegliere fra le disposizioni possibili». Il
+        foglio e' un'area da ripartire, non una striscia.
+
+        Si sceglie a ogni giro l'accoppiamento che **restringe di piu'**, e ci si
+        ferma appena la fila entra: fra le disposizioni possibili si prende la
+        prima che basta, non la piu' compressa, perche' comprimere oltre il
+        bisogno accorcia la tavola e la impoverisce. A parita' di guadagno decide
+        l'ordine delle fasce e poi quello delle colonne, quindi il risultato non
+        dipende da come il file elenca i pezzi.
+        """
+        current = {role: [list(slot) for slot in slots[role]] for role in used_roles}
+
+        def copy(
+            plan: dict[BandRole, list[list[str]]],
+        ) -> dict[BandRole, list[list[str]]]:
+            return {role: [list(slot) for slot in plan[role]] for role in used_roles}
+
+        def moves(
+            plan: dict[BandRole, list[list[str]]],
+        ) -> list[tuple[int, int, int, dict[BandRole, list[list[str]]]]]:
+            """Le mosse possibili: impilare, oppure scambiare due colonne.
+
+            Lo scambio e' la seconda mossa che D-112 chiede — «cambiare il loro
+            ordine relativo quando la topologia lo consente» — e paga piu' di
+            quanto sembri: due colonne che si toccano si portano dietro il
+            rettilineo degli accessori della tratta che le unisce, e allontanarle
+            lo fa pagare alla strada, che quel rettilineo ce l'ha gia'.
+            Si scambiano solo colonne che **nessuna tratta collega**, o si
+            invertirebbe il verso di lettura del processo.
+            """
+            found: list[tuple[int, int, int, dict[BandRole, list[list[str]]]]] = []
+            for position, role in enumerate(used_roles):
+                for index in range(1, len(plan[role])):
+                    before, after = plan[role][index - 1], plan[role][index]
+                    if may_stack(before, after):
+                        trial = copy(plan)
+                        trial[role][index - 1] = [*before, *after]
+                        del trial[role][index]
+                        found.append((0, position, index, trial))
+                    joined = any(
+                        tuple(sorted((first, second))) in linked
+                        for first in before
+                        for second in after
+                    )
+                    if not joined:
+                        trial = copy(plan)
+                        trial[role][index - 1], trial[role][index] = after, before
+                        found.append((1, position, index, trial))
+            return found
+
+        while measure(current)[-1] > budget_mm + 1e-9:
+            before_mm = measure(current)[-1]
+            best: tuple[float, int, int, int] | None = None
+            chosen: dict[BandRole, list[list[str]]] | None = None
+            for kind, position, index, trial in moves(current):
+                saved = before_mm - measure(trial)[-1]
+                if saved <= 0:
+                    continue
+                key = (-saved, kind, position, index)
+                if best is None or key < best:
+                    best, chosen = key, trial
+            if chosen is None:
+                return current
+            current = chosen
+        return current
+
+    def measure(
+        slots: dict[BandRole, list[list[str]]],
+    ) -> tuple[
+        dict[BandRole, list[float]],
+        dict[BandRole, float],
+        list[float],
+        float,
+    ]:
+        """Stacchi, larghezze, gole e larghezza totale di una disposizione."""
+        gaps = {
+            role: [
+                max(
+                    ROW_GAP_MM,
+                    snap_up(
+                        inline_room(
+                            set(slots[role][index]), set(slots[role][index + 1])
+                        ),
+                        0.0,
+                    ),
+                )
+                for index in range(len(slots[role]) - 1)
+            ]
+            for role in used_roles
+        }
+        widths = {
+            role: snap_up(
+                area.x_mm
+                + sum(
+                    max(footprint_width(item) for item in slot)
+                    for slot in slots[role]
+                )
+                + sum(gaps[role]),
+                area.x_mm,
+            )
+            - area.x_mm
+            for role in used_roles
+        }
+        # Una gola non e' larga soltanto per estetica: e' li' che corrono le
+        # tratte fra una fascia e l'altra. Vale lo stesso criterio degli
+        # stacchi interni — si guarda alle **colonne che si toccano**, l'ultima
+        # di una fascia e la prima della successiva. Provare a provvedere per
+        # ogni tratta che attraversa il confine sovrastimava di ottanta
+        # millimetri: una tratta fra componenti lontani viaggia a lungo e il
+        # proprio rettilineo ce l'ha gia'.
+        gutters = [
+            max(
+                BAND_GUTTER_MM,
+                snap_up(
+                    inline_room(
+                        set(slots[used_roles[index]][-1]),
+                        set(slots[used_roles[index + 1]][0]),
+                    ),
+                    0.0,
+                ),
+            )
+            for index in range(len(used_roles) - 1)
+        ]
+        return gaps, widths, gutters, sum(widths.values()) + sum(gutters)
+
     def pack(
         stacked_ground: frozenset[str],
     ) -> tuple[
@@ -510,55 +1000,7 @@ def place_sheet(
             )
             for role in used_roles
         }
-        gaps = {
-            role: [
-                max(
-                    ROW_GAP_MM,
-                    snap_up(
-                        inline_room(
-                            set(slots[role][index]), set(slots[role][index + 1])
-                        ),
-                        0.0,
-                    ),
-                )
-                for index in range(len(slots[role]) - 1)
-            ]
-            for role in used_roles
-        }
-        widths = {
-            role: snap_up(
-                area.x_mm
-                + sum(
-                    max(manifests[item].width_mm for item in slot)
-                    for slot in slots[role]
-                )
-                + sum(gaps[role]),
-                area.x_mm,
-            )
-            - area.x_mm
-            for role in used_roles
-        }
-        # Una gola non e' larga soltanto per estetica: e' li' che corrono le
-        # tratte fra una fascia e l'altra. Vale lo stesso criterio degli
-        # stacchi interni — si guarda alle **colonne che si toccano**, l'ultima
-        # di una fascia e la prima della successiva. Provare a provvedere per
-        # ogni tratta che attraversa il confine sovrastimava di ottanta
-        # millimetri: una tratta fra componenti lontani viaggia a lungo e il
-        # proprio rettilineo ce l'ha gia'.
-        gutters = [
-            max(
-                BAND_GUTTER_MM,
-                snap_up(
-                    inline_room(
-                        set(slots[used_roles[index]][-1]),
-                        set(slots[used_roles[index + 1]][0]),
-                    ),
-                    0.0,
-                ),
-            )
-            for index in range(len(used_roles) - 1)
-        ]
-        return slots, gaps, widths, gutters, sum(widths.values()) + sum(gutters)
+        return slots, *measure(slots)
 
     slots, gaps, widths, gutters, total = pack(frozenset())
     if total > area.width_mm + 1e-9:
@@ -582,6 +1024,11 @@ def place_sheet(
             item for item in placeable if standings[item] is Standing.GROUND
         )
         slots, gaps, widths, gutters, total = pack(ground_ids)
+        if total > area.width_mm + 1e-9:
+            # Ultimo tentativo prima di arrendersi: il foglio ha anche
+            # un'altezza, e finora nessuno la usava (D-111).
+            slots = compress(slots, area.width_mm)
+            gaps, widths, gutters, total = measure(slots)
         if total > area.width_mm + 1e-9:
             raise overflow
     if gutters:
@@ -654,19 +1101,88 @@ def place_sheet(
                 return top
         return None
 
+    def hang(parent_id: str, parent_left: float, parent_top: float) -> None:
+        """Posa cio' che pende dal pezzo appena posato, accanto a lui.
+
+        L'ancoraggio e' l'**attacco** da cui pende, non il centro del pezzo:
+        uno scarico sul fondo di un accumulo scende dal punto in cui il fondo lo
+        dichiara, e non dalla mezzeria del serbatoio.
+
+        **Nulla scende sotto la linea di terra**: sotto c'e' il pavimento e la
+        fascia dei richiami, e l'instradamento non ci passa. Chi dovrebbe finirci
+        risale fin dove ci sta, e chi lo regge si e' gia' alzato quanto basta.
+        """
+        parent = manifests[parent_id]
+        for item in hanging.get(parent_id, ()):
+            child = manifests[item.component_id]
+            stub_x, stub_y, _ = _port_of(parent, item.parent_port_id)
+            port_x, port_y, _ = _port_of(child, child.ports[0].id)
+            gap = hanging_gap(item)
+            side = hangs_toward(item.component_id)
+            if side is PortFace.TOP:
+                child_left = parent_left + stub_x - port_x
+                child_top = parent_top - gap - child.height_mm
+            elif side is PortFace.BOTTOM:
+                child_left = parent_left + stub_x - port_x
+                child_top = min(
+                    parent_top + parent.height_mm + gap,
+                    levels.ground_mm - child.height_mm,
+                )
+            elif side is PortFace.RIGHT:
+                child_left = parent_left + parent.width_mm + gap
+                child_top = parent_top + stub_y - port_y
+            else:
+                child_left = parent_left - gap - child.width_mm
+                child_top = parent_top + stub_y - port_y
+            child_left = on_grid(child_left, area.x_mm)
+            child_top = on_grid(child_top, area.y_mm)
+            # Il foglio ha un bordo, e un accessorio appeso non lo scavalca: se
+            # dalla parte del proprio attacco non c'e' spazio, si rientra. La
+            # tratta ci arriva lo stesso, con una piega in piu'.
+            child_left = min(
+                max(child_left, area.x_mm), area.right_mm - child.width_mm
+            )
+            child_top = min(
+                max(child_top, area.y_mm), levels.ground_mm - child.height_mm
+            )
+            placed.append(
+                PlacedSymbol(
+                    component_id=item.component_id,
+                    symbol_id=child.id,
+                    rotation_deg=rotation_for(item.component_id),
+                    origin=Point(x_mm=child_left, y_mm=child_top),
+                    width_mm=child.width_mm,
+                    height_mm=child.height_mm,
+                    tag=tags.get(item.component_id),
+                )
+            )
+            boxes.append(
+                (
+                    child_left,
+                    child_top,
+                    child_left + child.width_mm,
+                    child_top + child.height_mm,
+                )
+            )
+
     position_of = {role: index for index, role in enumerate(used_roles)}
     x_mm = area.x_mm
     for role in used_roles:
         cursor = x_mm
         for position, slot in enumerate(slots[role]):
-            left = on_grid(cursor, area.x_mm)
+            left = on_grid(cursor + max(sideways(item)[0] for item in slot), area.x_mm)
             floor = area.y_mm
             ground_top: float | None = None
             for component_id in slot:
                 manifest = manifests[component_id]
                 if standings[component_id] is Standing.GROUND:
                     if ground_top is None:
-                        top = on_grid(levels.ground_mm - manifest.height_mm, area.y_mm)
+                        top = on_grid(
+                            levels.ground_mm
+                            - manifest.height_mm
+                            - lift_above_ground(component_id),
+                            area.y_mm,
+                        )
                         ground_top = top
                     else:
                         # La coppia impilata del tentativo di recupero (D-073):
@@ -714,11 +1230,18 @@ def place_sheet(
                 boxes.append(
                     (left, top, left + manifest.width_mm, top + manifest.height_mm)
                 )
-                # Il prossimo della colonna sta sotto questo, non accanto.
-                floor = top + manifest.height_mm + ROW_GAP_MM
-            widest = max(manifests[item].width_mm for item in slot)
+                hang(component_id, left, top)
+                # Il prossimo della colonna sta sotto questo, non accanto — e
+                # sotto anche a cio' che gli pende, corridoio compreso.
+                floor = (
+                    top
+                    + manifest.height_mm
+                    + overhang(component_id, PortFace.BOTTOM)
+                    + ROW_GAP_MM
+                )
+            widest = max(footprint_width(item) for item in slot)
             gap = gaps[role][position] if position < len(gaps[role]) else 0.0
-            cursor = left + widest + gap
+            cursor = on_grid(cursor, area.x_mm) + widest + gap
         x_mm += widths[role]
         if position_of[role] < len(gutters):
             x_mm += gutters[position_of[role]]
