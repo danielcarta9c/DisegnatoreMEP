@@ -164,6 +164,19 @@ nell'altro:
    progettare. «Sei serio?». Delle tre domande che gli erano state portate, due erano
    mie da risolvere.
 
+**Del 9 agosto — uno, ed è il più caro di tutti perché è durato settimane:**
+
+0. **Una spiegazione che nessuno ha misurato ha diretto il lavoro per settimane.** Il
+   progetto ha creduto che le tavole non uscissero perché «l'impianto non entra in
+   larghezza su un foglio ordinario». Era scritto in ventidue prove parcheggiate, in
+   `PROJECT_STATE.md` e nei piani. **Nessuno l'aveva verificata**, e bastava un minuto:
+   ricomporre su un foglio più grande. Gli impianti falliscono identici su A0 — il
+   problema era un accessorio posato lontano dal proprio pezzo e un attacco murato da una
+   valvola altrui. La lezione non è «misura di più»: è che **una spiegazione ripetuta in
+   tre documenti sembra verificata anche quando nessuno l'ha mai provata**, e che il modo
+   di smascherarla è chiedersi *quale singolo esperimento la falsificherebbe*. Qui era:
+   più carta cambia qualcosa? No → non è spazio.
+
 **Della sera del 7 agosto — uno solo, e costa un giro di prova ogni volta:**
 
 5. **Una prova non misura niente se il materiale che le dai si contraddice.** La prova in
