@@ -40,6 +40,16 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 > **E il criterio con cui si sceglie cosa fare** (I-013): le tavole prodotte finora il PM
 > le considera **da buttare**, quindi non si rifiniscono. Si chiudono le sue righe aperte
 > nel registro degli input, che è il primo file da leggere dopo l'handoff.
+>
+> **3. Ogni sessione finisce su `main`** (D-117), e i conflitti si risolvono invece di
+> aprire un ramo nuovo. Questo è il censimento dei rami, che va tenuto aggiornato perché è
+> l'unico posto dove si vede se qualcosa è rimasto fuori:
+>
+> | Ramo | Cosa c'è sopra che `main` non ha |
+> |---|---|
+> | `claude/disegnatoremep-main-resume-890881` | **10 commit veri, ed è il debito aperto**: le quattro zone per i soli pezzi grossi (I-011), il tratto comune, lo scarico dei serbatoi, la linea di terra, la fascia in colonne, i sottosistemi, la grammatica di centrale. Si riporta un pezzo per volta (D-115) |
+> | `archivio/fase-grafica-2026-08-03` | **Niente da riportare, e non si fonde mai:** è una **storia separata**, senza nessun antenato in comune con `main`. È l'archivio della fase precedente al riavvio del 3 agosto. Sta scritto qui perché un ramo con 72 commit fuori da `main` e nessuna spiegazione fa perdere tempo a chiunque applichi D-117 |
+> | tutti gli altri | Nulla: sono dentro `main` |
 
 - [x] **Il grafo, le sigle e l'indirizzo dei nodi (D-105)** — sigle collaudate; l'indirizzo
       per linea (`CP.01`, `CP.01.N.02`, civici degli stacchi) **collaudato e APPROVATO**
