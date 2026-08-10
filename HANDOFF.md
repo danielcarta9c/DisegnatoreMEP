@@ -508,6 +508,11 @@ capo con agenti nuovi.** Vale sempre, ed è già costato due giri in una session
   task.
 - **Mai `git checkout --` o `git stash` su lavoro non committato** senza averne prima
   salvato una copia.
+- **La sessione finisce su `main`, sempre** (D-117): si spinge e si fa merge, e i
+  conflitti si risolvono invece di aprire un ramo nuovo. **E all'apertura si guarda se
+  esistono altri rami con lavoro non riportato**, perché il ramo su cui la sessione si
+  apre non è per forza l'ultimo scritto: il 10 agosto è successo, e non si vedeva da
+  nessun documento. Il testo completo della regola sta in `AGENTS.md`.
 - **Il comando delle regole vuole anche `--naming`** oltre a `--catalog`, `--symbols` e
   `--rules`.
 - **I generatori di fixture vanno rieseguiti**, non modificati a mano. La `completa` si
@@ -614,3 +619,10 @@ indietro». Non si rifiniscono: si chiudono le sue righe aperte (I-013).
 
 **E si guarda una tavola sola, l'impianto 1** (D-116), finché non la approva. Le altre
 quattro poi, come prova, per trovare errori nuovi.
+
+**Perché la biforcazione non si ripeta, il PM ha dato una regola** (D-117): **ogni sessione
+finisce su `main`** — si spinge e si fa merge, sempre, risolvendo i conflitti invece di
+aprire un ramo nuovo — e **all'apertura si controlla se esistono rami con lavoro non
+riportato**. Il testo operativo sta in `AGENTS.md`. **L'unico debito ammesso fuori da
+`main` è la linea dell'8 agosto**, ed è nominata qui sopra apposta: finché non è riportata,
+è lavoro da fare, non archivio.

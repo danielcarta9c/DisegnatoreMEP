@@ -30,6 +30,26 @@ alla prima tavola che lui ha visto. La sua frase: «si continuano a perdere i mi
   scarica e si apre. La descrizione sbagliata di un segno grafico è costata quattro
   giorni e una tavola sbagliata sotto gli occhi del committente.
 
+## Una sessione finisce su `main`, sempre (D-117)
+
+**Non negoziabile, e nasce da un errore vero:** l'8 agosto lo sviluppo si è biforcato in
+due rami che non si sono mai visti, ognuno ha rifatto pezzi dell'altro, e la correzione
+che il PM aveva dato sulle colonne è rimasta invisibile per due giorni. La sua regola:
+«non deve più accadere che ci siano più rami con pezzi di sviluppo».
+
+- **Al termine di ogni sessione si spinge su GitHub e si fa merge su `main`.** Non è
+  facoltativo e non dipende dal fatto che il lavoro sia «finito»: un pezzo di sviluppo che
+  resta su un ramo è un pezzo che la sessione dopo non vedrà.
+- **I conflitti si risolvono, non si aggirano** aprendo un ramo nuovo. Se un conflitto è
+  troppo grosso per essere risolto bene, la risoluzione stessa è lavoro da fare in quella
+  sessione, e ciò che resta fuori si scrive in `PROJECT_STATE.md` con il nome del ramo.
+- **Prima di cominciare si guarda se esistono altri rami** con lavoro non riportato. Il
+  ramo su cui una sessione si apre non è necessariamente l'ultimo che è stato scritto: il
+  10 agosto una sessione è partita da un punto più vecchio di due linee di lavoro, e il
+  disallineamento non si vedeva da nessun documento.
+- **Si spinge dopo ogni unità di lavoro compiuta**, non solo alla fine: una sessione può
+  interrompersi senza preavviso, ed è già successo.
+
 ## Principi non negoziabili
 
 - Non iniziare l'implementazione prima dell'approvazione del design.
