@@ -1,4 +1,4 @@
-# HANDOFF — Disegnatore MEP · 9 agosto 2026
+# HANDOFF — Disegnatore MEP · 10 agosto 2026
 
 > ⛔ **Non è un riassunto del progetto.** È il cancello di lettura per la sessione
 > successiva. Si legge tutto, poi si risponde alle domande del §2, poi si comincia.
@@ -199,7 +199,7 @@ nell'altro:
 | 3 | `PROJECT_STATE.md` | A che punto siamo |
 | 3b | **`docs/input-pm/REGISTRO.md`** | **Tutto ciò che il PM ha chiesto, e cosa ne è stato.** Le righe aperte sono lavoro. Esiste perché un suo input si è perso — una fonte letta a memoria invece che guardandola, una correzione riconosciuta e mai fatta, un simbolo sbagliato arrivato fino alla sua prima tavola. Accanto, i documenti che ha consegnato: la composizione della tavola (**D-112**) e il Drawing Director (**D-114**) |
 | 4 | `docs/plans/2026-08-06-piano-costruzione-skill.md` | Il piano corrente e i verdetti. **L'appendice è un registro storico: le sue righe raccontano com'era allora, non com'è oggi.** Dove una riga è stata superata, ha il rimando scritto sopra |
-| 5 | `docs/DECISION_LOG.md` — **partire da D-096** | D-096÷D-114 sono la logica del grafo, il confine del prodotto, il regime, le due regole di metodo del 7 agosto e — **le ultime tre, che sono la specifica del lavoro in corso** — la modalità verifica (D-110), come si compone una tavola (D-111, che emenda D-110) i vincoli della composizione (D-112: la centrale non si spezza, l'ordine dei rimedi, quando si apre una seconda tavola), la soglia di un attacco (D-113) e il **direttore del disegno** con l'ordine di lavoro deciso dal PM — prima le metriche, poi il direttore (D-114) |
+| 5 | `docs/DECISION_LOG.md` — **partire da D-096** | D-096÷D-116 sono la logica del grafo, il confine del prodotto, il regime, le due regole di metodo del 7 agosto e — **le ultime, che sono la specifica del lavoro in corso** — la modalità verifica (D-110), come si compone una tavola (D-111, che emenda D-110), i vincoli della composizione (D-112: la centrale non si spezza, l'ordine dei rimedi, quando si apre una seconda tavola), la soglia di un attacco (D-113), il **direttore del disegno** con l'ordine deciso dal PM — prima le metriche, poi il direttore (D-114) — e le due del 10 agosto: **il tronco unico e cosa resta da riportare dall'altra linea** (D-115) e **si guarda una tavola sola** (D-116). ⚠ **D-112, D-113 e D-114 valgono qualcos'altro sull'altra linea dell'8 agosto**: valgono questi |
 | 5b | `docs/collaudi/` | I verbali per esteso dei collaudi indipendenti: i criteri che si sono scritti e l'esito di ciascuno |
 | 6 | `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` | Dove va ciascun pezzo, con la fonte. **La parte terza è il riscontro di D-106, riga per riga** |
 | 7 | `docs/adr/0005-*.md` | L'architettura, blindata |
@@ -211,13 +211,43 @@ nell'altro:
 
 ---
 
-## 6. Stato al 9 agosto 2026
+## 6. Stato al 10 agosto 2026
 
-> ### ⚑ La tavola esce, e il PM ce l'ha in mano
+> ### ⛔⛔ Prima di tutto: lo sviluppo si era biforcato, e il 10 agosto ha ripreso un tronco solo
+>
+> **L'8 agosto sono partite due linee di lavoro dallo stesso punto, e non si sono mai
+> viste.** Ognuna ha rifatto pezzi dell'altra — la **modalità verifica è stata costruita
+> due volte** — e i numeri delle decisioni si sono scontrati: **D-112, D-113 e D-114
+> valgono cose diverse sulle due linee.** Valgono quelli di **questo** ramo.
+>
+> **Il tronco è questa linea** (D-115), scelto non per la qualità delle tavole — il PM le
+> considera da buttare — ma perché qui vivono **le tavole che ha avuto in mano** e il
+> **registro dei suoi input**. **Dall'altra linea non è ancora stato riportato niente**, e
+> va riportato **un pezzo per volta, con le prove che lo inchiodano**:
+>
+> | Cosa manca qui | Perché conta |
+> |---|---|
+> | Le **quattro zone valgono solo per i pezzi grossi**, e sono assi di allineamento, non colonne da riempire | È **la correzione del PM sulle colonne** (I-011), che da questo ramo non si vedeva |
+> | Il **tratto comune si riconosce togliendolo**, non risalendolo | Chiude i **difetti 1 e 2**, che qui sono ancora aperti |
+> | Lo **scarico dei serbatoi esce di fianco**; la **linea di terra** si ritira; la **fascia si piega in colonne**; il **buco dei sottosistemi** che nessuno crea; la **grammatica di centrale** | Sono gli stessi muri che questa linea ha aggirato in un altro modo: vanno confrontati, non incollati |
+>
+> **Niente unione automatica:** il collocatore è stato riscritto da entrambe in modo
+> diverso, e la prova di unione dà 41 punti di conflitto, il grosso proprio lì.
+>
+> ### ⚑ E si guarda una tavola sola: l'impianto 1 (D-116)
+>
+> Le altre quattro non si compongono, non si guardano e non si consegnano finché il PM non
+> ha approvato la prima. Poi si fanno **come prova**, per trovare errori che la prima non
+> poteva mostrare. Motivo suo: cinque tavole con lo stesso difetto non danno cinque
+> informazioni.
+>
+> ### ⚑ La tavola esce, e il PM ce l'ha in mano — ma la giudica da buttare
 >
 > **Tre impianti su cinque escono su una A3, in modalità verifica, in PDF.** È il primo
-> risultato che il PM può guardare, ed è quello che aveva chiesto. Si rigenerano con
-> `bash scripts/tavole-di-verifica.sh`.
+> risultato che il PM ha potuto guardare. **Il suo verdetto è netto:** «facevano schifo,
+> erano quelle con i tubi che tornano indietro, sono tavole da buttare». Quindi **non si
+> rifiniscono**: si chiudono le sue righe aperte nel registro degli input (I-013). Si
+> rigenerano con `bash scripts/tavole-di-verifica.sh`.
 >
 > **Il motivo per cui non uscivano non era la carta, e questo va ricordato** perché il
 > progetto ci ha creduto per settimane: fallivano identiche anche su A0. Erano due guasti
@@ -238,9 +268,11 @@ nell'altro:
 > fallimento di instradamento **non cambia passando a un foglio più grande**, non è una
 > questione di spazio. Provarlo costa un minuto e chiude discussioni lunghe.
 
-**Ramo:** `claude/project-docs-first-pdf-obh471`, che parte da `main`.
-**Prove:** 1050 verdi, 22 parcheggiate col motivo scritto — **riscritto, perché il
-vecchio era falso** — e **11 marcate rosse apposta sui difetti aperti**; `ruff` e
+**Ramo:** `claude/ripresa-progetto-tavole-353zsb`, che continua
+`claude/project-docs-first-pdf-obh471`. L'altra linea dell'8 agosto è
+`claude/disegnatoremep-main-resume-890881`: **non è abbandonata, è da riportare** (D-115).
+**Prove:** 1040 verdi, 22 parcheggiate col motivo scritto — **riscritto, perché il
+vecchio era falso** — e **13 marcate rosse apposta sui difetti aperti**; `ruff` e
 `mypy --strict` puliti.
 **Ambiente:** `bash scripts/setup-env.sh` — **da eseguire per primo** in una sessione cloud.
 **Numeri:** 39 simboli pubblicati, 53 voci di catalogo, 17 regole.
@@ -258,7 +290,7 @@ vecchio era falso** — e **11 marcate rosse apposta sui difetti aperti**; `ruff
 | **Assemblare** | Costruito e collaudato; il 7 agosto ha guadagnato la classificazione dei blocchi sul capofila e l'ordinamento dei blocchi di mezzo |
 | Il grafo, le sigle e **l'indirizzo dei nodi (D-105)** | **Collaudato e APPROVATO** (7 agosto), 91 prove del collaudo adottate |
 | Il vocabolario delle proprietà | Approvato; si aggiungono il bordo macchina e il punto di riempimento come dichiarazioni di catalogo |
-| **Disporre** / libreria / cartiglio / **composizione** | **Compone, e tre impianti su cinque escono.** La **modalità verifica** (D-110/D-111) è fatta: indirizzi stampati, foglio scritto anche coi rilievi aperti, PDF a misura reale. Il collocatore ora usa anche l'altezza e sceglie fra poche disposizioni. **Restano:** il quarto e il quinto impianto (larghezza vera, 507 e 945 mm), il riempimento bilanciato come **obiettivo** del collocatore — la misura esiste già nel preflight —, la prenotazione dello spazio in avanti, l'anti-incrocio fra richiami, e il **cartiglio**, che è ancora vuoto |
+| **Disporre** / libreria / cartiglio / **composizione** | **Compone, e tre impianti su cinque escono.** La **modalità verifica** (D-110/D-111) è fatta: indirizzi stampati, foglio scritto anche coi rilievi aperti, PDF a misura reale. Il collocatore ora usa anche l'altezza e sceglie fra poche disposizioni. **Ma il PM giudica le tavole da buttare** (I-013): tubi che tornano indietro, distanze senza senso fra i gruppi, verso indeciso su un terzo delle tratte. **Restano:** le tre cause appena dette, le **quattro zone per i soli pezzi grossi** da riportare dall'altra linea (I-011), il riempimento bilanciato come **obiettivo** del collocatore — la misura esiste già nel preflight —, la prenotazione dello spazio in avanti, l'anti-incrocio fra richiami, e il **cartiglio**, che è ancora vuoto. Il quarto e il quinto impianto (larghezza vera, 507 e 945 mm) **aspettano l'approvazione del primo** (D-116) |
 | **Verificare** — validatori e cancello dell'occhio terzo | Correttezza e preflight esistono, il cancello no |
 
 ### Cosa è successo il 7 agosto, sera — la chiusura di «Capire»
@@ -310,18 +342,26 @@ vecchio era falso** — e **11 marcate rosse apposta sui difetti aperti**; `ruff
 
 ## 6bis. Il primo lavoro della prossima sessione, in una riga ciascuno
 
-1. **Aspettare i rilievi del PM sulle tre tavole** e lavorare su quelli: è il motivo per
-   cui esistono. Una sua correzione dice *cosa* è sbagliato, non *perché*: non diventa
-   regola finché non si è trovata la fonte (§7, in fondo).
-2. **Il criterio della camminata del tratto comune** — i difetti aperti 1 e 2, non fatti
-   il 9 agosto perché si è preferito portargli una tavola. Restano il prerequisito del
-   ciclo di verifica: oggi lo stesso impianto dà due risposte a seconda di come si
-   chiamano le macchine.
-3. **Il quarto e il quinto impianto**, che è larghezza vera (507 e 945 mm contro 335).
-   L'ordine dei rimedi lo fissa **D-112** e non si salta: stringere davvero, poi la
-   seconda tavola **solo se la distribuzione la merita**, poi il formato — e la centrale
-   non si spezza mai in automatico.
-4. **Il cartiglio**, che è l'ultima cosa che separa una bozza da una tavola.
+**Riscritto il 10 agosto.** Il campo è **il solo impianto 1** (D-116), e il criterio di
+scelta è: **si chiudono le righe aperte del registro degli input**, non si rifiniscono le
+tavole già uscite (I-013).
+
+1. **Le quattro zone per i soli pezzi grossi** — la correzione del PM sulle colonne
+   (I-011). È il primo pezzo da riportare dall'altra linea, ed è suo.
+2. **I tubi che tornano indietro e i giri** (I-007), la **distanza senza senso fra i
+   gruppi** (I-008) e il **verso indeciso su un terzo delle tratte** (I-010): sono i tre
+   difetti che rendono la prima tavola «da buttare», e le cause sono già trovate.
+3. **Il criterio della camminata del tratto comune** — i difetti aperti 1 e 2. Sull'altra
+   linea è già chiuso e si riporta: oggi qui lo stesso impianto dà ancora due risposte a
+   seconda di come si chiamano le macchine.
+4. **Le metriche del direttore** (I-006), nell'ordine che il PM ha dato: prima dentro il
+   motore deterministico come obiettivi del collocatore, **poi** l'anello del direttore.
+5. **Gli spessori di tratto normati** (I-002), che è la riga aperta da più giorni.
+6. **Il cartiglio**, che è l'ultima cosa che separa una bozza da una tavola.
+
+Il quarto e il quinto impianto — larghezza vera, 507 e 945 mm contro 335 — **non si
+toccano** finché l'impianto 1 non è approvato. L'ordine dei rimedi resta quello di
+**D-112** e non si salta.
 
 ---
 
@@ -557,3 +597,20 @@ motivazione falsa che aveva già ingannato due volte, e l'indirizzo del PM dell'
 registrato come **D-112**.
 
 **Non fatto**, e resta il primo lavoro: il criterio della camminata del tratto comune.
+
+---
+
+## Aggiornamento del 10 agosto
+
+**Lo sviluppo si era biforcato l'8 agosto e adesso ha di nuovo un tronco solo** (D-115).
+Due linee partite dallo stesso punto senza vedersi; una terza sessione aperta su un punto
+più vecchio di entrambe. Il tronco è questa linea, per via delle tavole e del registro
+degli input; dall'altra **non è stato ancora riportato niente**, a partire dalla
+correzione del PM sulle colonne — le zone valgono solo per i pezzi grossi (I-011) — e dal
+tratto comune, che lì è già chiuso e qui no.
+
+**Il PM ha giudicato le prime tavole:** da buttare, «erano quelle con i tubi che tornano
+indietro». Non si rifiniscono: si chiudono le sue righe aperte (I-013).
+
+**E si guarda una tavola sola, l'impianto 1** (D-116), finché non la approva. Le altre
+quattro poi, come prova, per trovare errori nuovi.

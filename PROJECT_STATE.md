@@ -20,6 +20,27 @@
 Il progetto costruisce la skill **un pezzo alla volta**, sulla logica del grafo (D-099).
 Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 
+> ### ⛔ Due cose decise il 10 agosto, che cambiano dove si lavora e su cosa
+>
+> **1. Lo sviluppo si era biforcato l'8 agosto, e ora ha di nuovo un tronco solo (D-115).**
+> Due linee erano partite dallo stesso punto senza vedersi, e una terza sessione è stata
+> aperta su un punto più vecchio di entrambe. Il tronco è **la linea del 9 agosto** —
+> questa — perché porta le tavole che il PM ha avuto in mano e il **registro dei suoi
+> input**. Dell'altra linea manca ancora tutto, e va riportato **un pezzo per volta con le
+> sue prove**: le quattro zone per i soli pezzi grossi (la correzione del PM sulle
+> colonne, I-011), il tratto comune riconosciuto togliendolo — che chiude i **difetti 1 e
+> 2** qui sotto — lo scarico dei serbatoi di fianco, la linea di terra ritirata, la fascia
+> che si piega in colonne, il buco dei sottosistemi, la grammatica di centrale. Nessuna
+> unione automatica: il collocatore è stato riscritto da entrambe in modo diverso.
+>
+> **2. Si guarda una tavola sola: l'impianto 1 (D-116).** Le altre quattro non si
+> compongono e non si consegnano finché il PM non ha approvato la prima. Poi si fanno
+> come prova, per trovare errori che la prima non poteva mostrare.
+>
+> **E il criterio con cui si sceglie cosa fare** (I-013): le tavole prodotte finora il PM
+> le considera **da buttare**, quindi non si rifiniscono. Si chiudono le sue righe aperte
+> nel registro degli input, che è il primo file da leggere dopo l'handoff.
+
 - [x] **Il grafo, le sigle e l'indirizzo dei nodi (D-105)** — sigle collaudate; l'indirizzo
       per linea (`CP.01`, `CP.01.N.02`, civici degli stacchi) **collaudato e APPROVATO**
       il 7 agosto, con le 91 prove del collaudo adottate come regressione.
@@ -132,6 +153,11 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
 
 ## Next — i pezzi che restano
 
+> **L'ordine vero del lavoro non è questo elenco: sono le righe aperte del registro degli
+> input** (`docs/input-pm/REGISTRO.md`), perché è quello che il PM ha chiesto e perché le
+> tavole già uscite lui le considera da buttare (I-013). Questo elenco resta la mappa dei
+> pezzi che mancano al prodotto.
+
 1. **I cinque difetti aperti** della tabella qui sopra (il sesto è chiuso), in ordine: i due della camminata del
    tratto comune (che sono difetti veri del completatore), il caso di mezzo del regime, le
    potenze nel modello, e la voce con gli identificativi interni. Ognuno ha già la prova
@@ -141,12 +167,13 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
    confine di D-104. Miscelatrice e ritegno sanitario hanno già le regole.
 3. **La libreria dei simboli** — contenuto da completare (segno del rubinetto bloccabile).
 4. **Il cartiglio.**
-5. **La composizione** — **tre impianti su cinque escono** (9 agosto). Restano fuori il
-   quarto e il quinto, e questa volta **è davvero larghezza**: le loro fasce chiedono
-   507 e 945 millimetri contro i 335 di una A3. Il quarto entra su A2; il quinto non
-   entra nemmeno su A1. Sono i due casi per cui D-112 esiste — prima si stringe
-   davvero, poi si valuta se la distribuzione merita una seconda tavola, e il formato
-   maggiore per ultimo con la motivazione scritta.
+5. **La composizione** — **tre impianti su cinque escono** (9 agosto), ma il PM le giudica
+   tavole da buttare, e **il campo si è ristretto al solo impianto 1** (D-116).
+   Il quarto e il quinto **aspettano che il primo sia approvato**; quando toccherà a loro
+   sarà **davvero larghezza**: le loro fasce chiedono 507 e 945 millimetri contro i 335 di
+   una A3. Il quarto entra su A2; il quinto non entra nemmeno su A1. Sono i due casi per
+   cui D-112 esiste — prima si stringe davvero, poi si valuta se la distribuzione merita
+   una seconda tavola, e il formato maggiore per ultimo con la motivazione scritta.
    ⛔ **La vecchia motivazione scritta qui era falsa** e va ricordata: diceva «l'impianto
    completo non entra in larghezza», e per i primi tre non era vero — fallivano anche su
    A0, per l'instradamento. Le due cose si distinguono con una prova sola: **se il
