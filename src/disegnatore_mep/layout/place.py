@@ -120,6 +120,30 @@ riquadro: a un passo solo la linea corre a due millimetri e mezzo dal bordo e
 sulla carta sembra disegnata sul simbolo.
 """
 
+ZONED_FUNCTIONS = (
+    GENERATOR_FUNCTIONS
+    | STORE_FUNCTIONS
+    | LOAD_FUNCTIONS
+    | frozenset({"circulation", "distribution"})
+)
+"""Chi merita una zona, cioe' una colonna della fascia (D-120).
+
+Il PM: «le zone servono solo per distribuire i **macro componenti**» —
+generatori, accumuli, circolatori-collettori — e «le valvole che stanno in mezzo
+possono finire dove vogliono, a cavallo fra le due zone o in una delle due».
+
+Sono le **funzioni dichiarate dal catalogo**, mai un elenco di componenti
+(D-090): chi genera, chi accumula o separa, chi utilizza, chi confina la rete,
+chi spinge, chi ripartisce. Tutto il resto — raccordi, organi, strumenti — sta
+sulla tratta a cui appartiene e non occupa un passo del processo.
+
+**Il modo sbagliato di attuarlo e' gia' stato provato e buttato**, e vale la
+pena non riprovarlo: far entrare la ferramenta *dentro* la colonna del proprio
+pezzo grosso restringeva la tavola di centosessanta millimetri e faceva smettere
+di uscire l'unica che usciva. La ferramenta non si comprime addosso a nessuno:
+si toglie dalla fila e si posa dove la sua tratta passa.
+"""
+
 
 @dataclass(frozen=True)
 class _Hanging:
@@ -204,6 +228,165 @@ def _hanging_accessories(
             for item in hanging.pop(parent_id):
                 claimed.discard(item.component_id)
     return {key: sorted(value, key=lambda item: item.component_id) for key, value in hanging.items()}
+
+
+@dataclass(frozen=True)
+class _RunChain:
+    """Una catena di pezzi che stanno su una tratta, e i pezzi grossi che tocca."""
+
+    members: tuple[str, ...]
+    """In ordine di percorrenza, dal capo che tocca il primo estremo."""
+
+    anchors: tuple[str, ...]
+    """I pezzi grossi ai capi: possono essere piu' di due — una confluenza di
+    due macchine su un accumulo ne tocca tre."""
+
+    head_anchors: tuple[str, ...]
+    """Quelli attaccati al primo della catena: dicono da che parte si comincia."""
+
+
+def _ordered(chain: set[str], neighbours: dict[str, set[str]]) -> tuple[str, ...]:
+    """La catena in ordine di percorrenza, se e' un cammino semplice.
+
+    Dove non lo e' — una catena che si biforca — non esiste un «lungo la
+    tubazione», e l'ordine alfabetico basta a tenere il risultato ripetibile.
+    """
+    ends = sorted(item for item in chain if len(neighbours[item] & chain) <= 1)
+    if not ends:
+        return tuple(sorted(chain))
+    order = [ends[0]]
+    walked = {ends[0]}
+    while True:
+        forward = sorted((neighbours[order[-1]] & chain) - walked)
+        if len(forward) != 1:
+            break
+        order.append(forward[0])
+        walked.add(forward[0])
+    if len(order) != len(chain):
+        return tuple(sorted(chain))
+    return tuple(order)
+
+
+def _facing_edges(
+    head: list[PlacedSymbol],
+    tail: list[PlacedSymbol],
+    *,
+    horizontal: bool,
+) -> tuple[tuple[float, float], tuple[float, float]]:
+    """I due bordi che si guardano fra due gruppi di pezzi gia' posati.
+
+    Non i centri: fra due macchine affiancate il centro della piu' lontana sta
+    **dietro** l'altra, e una catena che partisse da li' nascerebbe addosso alla
+    macchina di mezzo. Si parte dal bordo piu' avanzato del gruppo che sta
+    prima, e si arriva al bordo piu' arretrato del gruppo che sta dopo.
+    """
+
+    def centre(items: list[PlacedSymbol]) -> tuple[float, float]:
+        return (
+            sum((item.origin.x_mm + item.right_mm) / 2.0 for item in items) / len(items),
+            sum((item.origin.y_mm + item.bottom_mm) / 2.0 for item in items) / len(items),
+        )
+
+    head_centre, tail_centre = centre(head), centre(tail)
+    if horizontal:
+        forward = tail_centre[0] >= head_centre[0]
+        start = (
+            max(item.right_mm for item in head)
+            if forward
+            else min(item.origin.x_mm for item in head)
+        )
+        finish = (
+            min(item.origin.x_mm for item in tail)
+            if forward
+            else max(item.right_mm for item in tail)
+        )
+        return (start, head_centre[1]), (finish, tail_centre[1])
+    forward = tail_centre[1] >= head_centre[1]
+    start = (
+        max(item.bottom_mm for item in head)
+        if forward
+        else min(item.origin.y_mm for item in head)
+    )
+    finish = (
+        min(item.origin.y_mm for item in tail)
+        if forward
+        else max(item.bottom_mm for item in tail)
+    )
+    return (head_centre[0], start), (tail_centre[0], finish)
+
+
+def _pieces_on_the_run(
+    partition: SheetPartition,
+    placeable: frozenset[str],
+    hung: frozenset[str],
+    is_zoned: Callable[[str], bool],
+) -> list[_RunChain]:
+    """Chi esce dalla fila delle colonne, e a quali pezzi e' legato (D-120).
+
+    Un raccordo non e' un passo del processo: e' un punto della tubazione, e sta
+    **fra i pezzi che unisce**. Finche' prendeva una colonna della fascia veniva
+    letto come se fosse una macchina, e finiva dove lo mandava l'ordine del
+    processo: sull'impianto 1 la confluenza dei due ritorni stava all'estrema
+    sinistra del foglio, **prima delle due pompe di calore da cui quei ritorni
+    arrivano**, e il ritorno attraversava la tavola due volte.
+
+    Non si prova a metterlo «in mezzo a due estremi»: una confluenza di due
+    macchine su un accumulo di estremi ne ha **tre**, e il posto giusto e' il
+    baricentro di ciò a cui e' legato, qualunque sia il loro numero.
+
+    Due condizioni, conservative apposta: il pezzo dev'essere legato ad
+    **almeno due** altri — chi ne ha uno solo pende, e lo posa gia' `hang` — e
+    la sua catena deve toccare **almeno un pezzo grosso**, o non ci sarebbe
+    niente a cui appoggiarsi. Chi non le soddisfa tiene la propria colonna.
+    """
+    neighbours: dict[str, set[str]] = defaultdict(set)
+    for trunk in partition.trunks:
+        first, second = trunk.start.component_id, trunk.end.component_id
+        if first == second or first not in placeable or second not in placeable:
+            continue
+        neighbours[first].add(second)
+        neighbours[second].add(first)
+
+    free = {
+        item
+        for item in placeable
+        if item not in hung and not is_zoned(item) and len(neighbours[item]) > 1
+    }
+    seen: set[str] = set()
+    result: list[_RunChain] = []
+    for start in sorted(free):
+        if start in seen:
+            continue
+        chain: set[str] = set()
+        stack = [start]
+        while stack:
+            current = stack.pop()
+            if current in chain:
+                continue
+            chain.add(current)
+            stack.extend((neighbours[current] & free) - chain)
+        seen |= chain
+        anchors = sorted(
+            {
+                other
+                for item in chain
+                for other in neighbours[item]
+                if other not in chain and is_zoned(other) and other not in hung
+            }
+        )
+        if len(anchors) < 2:
+            # Con un estremo solo non c'e' un «in mezzo»: la catena tiene le
+            # proprie colonne, che e' il comportamento di prima.
+            continue
+        members = _ordered(chain, neighbours)
+        result.append(
+            _RunChain(
+                members=members,
+                anchors=tuple(anchors),
+                head_anchors=tuple(sorted(neighbours[members[0]] & set(anchors))),
+            )
+        )
+    return result
 
 
 def _band_by_subsystem(project: ProjectModel, sheet_id: str) -> dict[str, BandRole]:
@@ -542,7 +725,22 @@ def place_sheet(
         project, partition, catalog, frozenset(placeable), _room_for
     )
     hung = {item.component_id for group in hanging.values() for item in group}
-    standing_columns = [item for item in placeable if item not in hung]
+
+    def is_zoned(component_id: str) -> bool:
+        return bool(functions_of.get(component_id, frozenset()) & ZONED_FUNCTIONS)
+
+    chains = _pieces_on_the_run(
+        partition, frozenset(placeable), frozenset(hung), is_zoned
+    )
+    on_the_run = {item for chain in chains for item in chain.members}
+    standing_columns = [
+        item for item in placeable if item not in hung and item not in on_the_run
+    ]
+    if not standing_columns:
+        # Un foglio di soli raccordi non esiste, ma se esistesse non avrebbe
+        # nessun pezzo grosso a cui appoggiarli: si torna alla fila.
+        chains, on_the_run = [], set()
+        standing_columns = [item for item in placeable if item not in hung]
 
     def default_rotation(component_id: str) -> int:
         allowed = resolved[component_id].symbol.manifest.allowed_rotations_deg
@@ -1000,6 +1198,24 @@ def place_sheet(
             )
             for role in used_roles
         }
+        # **Cio' che sta in parallelo si impila, sempre — non solo quando manca
+        # la larghezza** (D-119): «generatori a sinistra, impilati in verticale
+        # se sono piu' di uno». Non e' una compressione, e' come si disegna una
+        # centrale: due macchine in parallelo hanno gli stessi vicini, e messe
+        # in fila costringono il collettore che le serve a stare da una parte
+        # sola — di qua o di la' — con il ritorno della seconda che attraversa
+        # la tavola per raggiungerlo. Prima capitava per caso: le due pompe si
+        # impilavano solo perche' la fila non entrava nel foglio, e appena la
+        # tavola si e' allargata si sono affiancate e il ritorno si e' rotto.
+        for role in used_roles:
+            index = 1
+            while index < len(slots[role]):
+                before, after = slots[role][index - 1], slots[role][index]
+                if may_stack(before, after):
+                    slots[role][index - 1] = [*before, *after]
+                    del slots[role][index]
+                    continue
+                index += 1
         return slots, *measure(slots)
 
     slots, gaps, widths, gutters, total = pack(frozenset())
@@ -1314,5 +1530,196 @@ def place_sheet(
         x_mm += widths[role]
         if position_of[role] < len(gutters):
             x_mm += gutters[position_of[role]]
+
+    # Chi sta sulla tratta si posa **alla fine**, fra i due pezzi grossi che
+    # quella tratta unisce (D-120): non ha una colonna, quindi non allarga la
+    # fascia, e non ha un posto nel processo, quindi non sposta nessuno. Puo'
+    # benissimo trovarsi a cavallo di due zone — e' proprio cio' che il PM
+    # chiede.
+    settled = {item.component_id: item for item in placed}
+
+    def room_between(first_id: str, second_id: str) -> float:
+        """Il rettilineo che vuole la tratta fra due pezzi, se ne esiste una."""
+        return max(
+            (
+                _room_for(trunk.inline_component_ids)
+                for trunk in partition.trunks
+                if {trunk.start.component_id, trunk.end.component_id}
+                == {first_id, second_id}
+            ),
+            default=0.0,
+        )
+
+    def centre_of(component_id: str) -> tuple[float, float] | None:
+        item = settled.get(component_id)
+        if item is None:
+            return None
+        return (
+            (item.origin.x_mm + item.right_mm) / 2.0,
+            (item.origin.y_mm + item.bottom_mm) / 2.0,
+        )
+
+    def settle_on_the_run(
+        component_id: str,
+        centre_x: float,
+        centre_y: float,
+        along: tuple[float, float],
+        forward: int,
+    ) -> PlacedSymbol:
+        manifest = manifests[component_id]
+        left = on_grid(centre_x - manifest.width_mm / 2.0, area.x_mm)
+        top = on_grid(centre_y - manifest.height_mm / 2.0, area.y_mm)
+        left = min(max(left, area.x_mm), area.right_mm - manifest.width_mm)
+        top = min(max(top, area.y_mm), levels.ground_mm - manifest.height_mm)
+        # Il posto giusto e' quello; se ci sta gia' qualcuno ci si allontana
+        # **in avanti lungo la tubazione**, mai all'indietro: tornare indietro
+        # scavalcherebbe il pezzo precedente della catena, e la fila si
+        # leggerebbe al contrario. E' successo: cercando il primo posto libero,
+        # un raccordo e' finito trenta millimetri **prima** della confluenza che
+        # lo precede.
+        # Chi sta su una tubazione si allinea **all'attacco che lo alimenta**:
+        # e' la regola che toglie due pieghe per pezzo, e vale per un raccordo
+        # quanto per una macchina. Solo se quella quota non esiste si tiene
+        # quella interpolata lungo la campata.
+        aligned = aligned_top(component_id, left, area.y_mm)
+        if aligned is not None:
+            top = aligned
+        base_left, base_top = left, top
+        # Avanti lungo la tubazione, che tiene l'ordine della fila; e se avanti
+        # non c'e' posto, indietro — **due simboli non si sovrappongono mai**,
+        # e un ordine invertito e' un difetto minore di due pezzi disegnati uno
+        # sull'altro.
+        seated = False
+        for direction in (forward, -forward):
+            if seated:
+                break
+            for distance in range(int(max(area.width_mm, area.height_mm) / step)):
+                moved_left = base_left + along[0] * distance * direction
+                moved_top = base_top + along[1] * distance * direction
+                if (
+                    moved_left < area.x_mm - 1e-9
+                    or moved_left + manifest.width_mm > area.right_mm + 1e-9
+                    or moved_top < area.y_mm - 1e-9
+                    or moved_top + manifest.height_mm > levels.ground_mm + 1e-9
+                ):
+                    break
+                if free_of_symbols(
+                    moved_left, moved_top, manifest.width_mm, manifest.height_mm
+                ):
+                    left, top, seated = moved_left, moved_top, True
+                    break
+        if not seated:
+            raise LayoutError(
+                f"component {component_id} sits on a run and finds no free spot "
+                f"along it: symbols are never shrunk to fit, give the run room"
+            )
+        placed.append(
+            PlacedSymbol(
+                component_id=component_id,
+                symbol_id=manifest.id,
+                rotation_deg=rotation_for(component_id),
+                origin=Point(x_mm=left, y_mm=top),
+                width_mm=manifest.width_mm,
+                height_mm=manifest.height_mm,
+                tag=tags.get(component_id),
+            )
+        )
+        boxes.append((left, top, left + manifest.width_mm, top + manifest.height_mm))
+        settled[component_id] = placed[-1]
+        hang(component_id, left, top)
+        return placed[-1]
+
+    for chain in chains:
+        ends = [
+            place for place in (centre_of(item) for item in chain.anchors)
+            if place is not None
+        ]
+        if len(ends) < 2:
+            raise LayoutError(
+                f"the run pieces {chain.members} sit between {chain.anchors}, "
+                f"which were never placed: a junction needs the pieces it joins"
+            )
+        # I capi della campata sono i due estremi **piu' lontani**: se una
+        # confluenza unisce due macchine affiancate a un accumulo, la campata e'
+        # quella che va dalle macchine all'accumulo, non quella fra le due
+        # macchine.
+        first = min(ends, key=lambda place: (place[0], place[1]))
+        last = max(ends, key=lambda place: (place[0], place[1]))
+        horizontal = abs(last[0] - first[0]) >= abs(last[1] - first[1])
+        along = (step, 0.0) if horizontal else (0.0, step)
+        # La catena si percorre dal capo attaccato all'estremo da cui parte la
+        # campata, o la fila si legge al contrario.
+        members = chain.members
+        head_ids = set(chain.head_anchors)
+        head = [
+            place for place in (centre_of(item) for item in sorted(head_ids))
+            if place is not None
+        ]
+        if head and min(
+            abs(place[0] - first[0]) + abs(place[1] - first[1]) for place in head
+        ) > (abs(last[0] - first[0]) + abs(last[1] - first[1])) / 2.0:
+            members = tuple(reversed(members))
+            head_ids = {
+                item for item in chain.anchors if item not in chain.head_anchors
+            } or head_ids
+        # **La campata si misura sui bordi, non sui centri.** Fra due pompe di
+        # calore affiancate il centro della piu' lontana sta dietro l'altra, e
+        # la catena partiva da li': il primo raccordo si ritrovava a dieci
+        # millimetri dalla macchina, e la valvola di intercettazione della sua
+        # tratta non aveva dove sedersi.
+        tail_ids = {item for item in chain.anchors if item not in head_ids} or head_ids
+        head_placed = [settled[item] for item in sorted(head_ids) if item in settled]
+        tail_placed = [settled[item] for item in sorted(tail_ids) if item in settled]
+        if head_placed and tail_placed:
+            first, last = _facing_edges(
+                head_placed, tail_placed, horizontal=horizontal
+            )
+        span_x, span_y = last[0] - first[0], last[1] - first[1]
+        # Lo spazio non si divide in parti uguali: si divide **secondo il
+        # bisogno**. Ogni tratta della catena porta i propri accessori in linea
+        # e vuole il proprio rettilineo; una tratta vuota non vuole niente.
+        # Dividere a passi uguali dava dieci millimetri a chi ne chiedeva
+        # quindici e quindici a chi non ne chiedeva nessuno, e l'accessorio non
+        # trovava dove sedersi.
+        sizes = [
+            manifests[item].width_mm if horizontal else manifests[item].height_mm
+            for item in members
+        ]
+        stops = (chain.head_anchors, *((item,) for item in members))
+        needs = [
+            max(
+                (room_between(item, other) for item in stops[index] for other in group),
+                default=0.0,
+            )
+            for index, group in enumerate(
+                (*((item,) for item in members), tuple(chain.anchors))
+            )
+        ]
+        span_mm = abs(span_x) if horizontal else abs(span_y)
+        wanted = sum(sizes) + sum(needs)
+        scale = min(1.0, span_mm / wanted) if wanted > 0 else 1.0
+        spare = max(0.0, span_mm - wanted) / (len(needs) or 1)
+        forward = 1 if (span_x if horizontal else span_y) >= 0 else -1
+        cursor = 0.0
+        for index, component_id in enumerate(members):
+            cursor += needs[index] * scale + spare
+            share = (cursor + sizes[index] / 2.0) / span_mm if span_mm else 0.5
+            item = settle_on_the_run(
+                component_id,
+                first[0] + span_x * share,
+                first[1] + span_y * share,
+                along,
+                forward,
+            )
+            # Il cursore riparte da **dove il pezzo e' finito davvero**, non da
+            # dove lo si voleva: se ha dovuto scansare qualcuno, chi viene dopo
+            # ne tiene conto invece di ripetere lo scarto.
+            reached = (
+                (item.right_mm if forward > 0 else -item.origin.x_mm) - first[0] * forward
+                if horizontal
+                else (item.bottom_mm if forward > 0 else -item.origin.y_mm)
+                - first[1] * forward
+            )
+            cursor = max(cursor + sizes[index] * scale, reached)
 
     return placed

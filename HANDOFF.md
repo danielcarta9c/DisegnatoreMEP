@@ -271,8 +271,8 @@ nell'altro:
 **Ramo:** `claude/ripresa-progetto-tavole-353zsb`, che continua
 `claude/project-docs-first-pdf-obh471`. L'altra linea dell'8 agosto è
 `claude/disegnatoremep-main-resume-890881`: **non è abbandonata, è da riportare** (D-115).
-**Prove:** 1040 verdi, 22 parcheggiate col motivo scritto — **riscritto, perché il
-vecchio era falso** — e **13 marcate rosse apposta sui difetti aperti**; `ruff` e
+**Prove:** 1047 verdi, 22 parcheggiate col motivo scritto — **riscritto, perché il
+vecchio era falso** — e **14 marcate rosse apposta sui difetti aperti**; `ruff` e
 `mypy --strict` puliti.
 **Ambiente:** `bash scripts/setup-env.sh` — **da eseguire per primo** in una sessione cloud.
 **Numeri:** 39 simboli pubblicati, 53 voci di catalogo, 17 regole.
@@ -346,18 +346,23 @@ vecchio era falso** — e **13 marcate rosse apposta sui difetti aperti**; `ruff
 scelta è: **si chiudono le righe aperte del registro degli input**, non si rifiniscono le
 tavole già uscite (I-013).
 
-1. **Le quattro zone per i soli pezzi grossi** — la correzione del PM sulle colonne
-   (I-011). È il primo pezzo da riportare dall'altra linea, ed è suo.
-2. **I tubi che tornano indietro e i giri** (I-007), la **distanza senza senso fra i
-   gruppi** (I-008) e il **verso indeciso su un terzo delle tratte** (I-010): sono i tre
-   difetti che rendono la prima tavola «da buttare», e le cause sono già trovate.
-3. **Il criterio della camminata del tratto comune** — i difetti aperti 1 e 2. Sull'altra
+1. ~~**Le quattro zone per i soli pezzi grossi**~~ — **fatto il 10 agosto (D-118)**, ed è
+   il primo pezzo riportato dall'altra linea. Manca il verdetto di un collaudo a contesto
+   separato: è misurato, non approvato.
+2. **Il foglio riempito in due dimensioni**, che è il conto lasciato aperto da D-118: la
+   tavola si è stretta da 330 a 253 mm ma non si è alzata, quindi riempie il 27 % e sta
+   tutta in un angolo. È anche la **distanza senza senso fra i gruppi** (I-008) presa
+   dall'altro lato, e il **riempimento bilanciato** che D-111 chiede.
+3. **Gli incroci**, saliti da 11 a 13 con D-118, e le due tratte che fanno ancora quattro
+   pieghe: è quel che resta di I-007.
+4. **Il verso indeciso su un terzo delle tratte** (I-010).
+5. **Il criterio della camminata del tratto comune** — i difetti aperti 1 e 2. Sull'altra
    linea è già chiuso e si riporta: oggi qui lo stesso impianto dà ancora due risposte a
    seconda di come si chiamano le macchine.
-4. **Le metriche del direttore** (I-006), nell'ordine che il PM ha dato: prima dentro il
+6. **Le metriche del direttore** (I-006), nell'ordine che il PM ha dato: prima dentro il
    motore deterministico come obiettivi del collocatore, **poi** l'anello del direttore.
-5. **Gli spessori di tratto normati** (I-002), che è la riga aperta da più giorni.
-6. **Il cartiglio**, che è l'ultima cosa che separa una bozza da una tavola.
+7. **Gli spessori di tratto normati** (I-002), che è la riga aperta da più giorni.
+8. **Il cartiglio**, che è l'ultima cosa che separa una bozza da una tavola.
 
 Il quarto e il quinto impianto — larghezza vera, 507 e 945 mm contro 335 — **non si
 toccano** finché l'impianto 1 non è approvato. L'ordine dei rimedi resta quello di

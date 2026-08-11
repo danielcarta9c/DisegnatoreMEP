@@ -154,9 +154,13 @@ def test_a_plant_that_does_not_fit_fails_with_a_diagnostic() -> None:
     registry = catalog()
     inline = inline_ids(project, registry)
     crowded = project.model_copy(deep=True)
+    # Venti copie, non cinque. Con cinque questo impianto **entrava**, da quando
+    # i raccordi hanno smesso di prendersi una colonna a testa (D-120): la
+    # fixture aveva smesso di essere affollata, non la garanzia di smettere di
+    # valere. Il numero si alza perche' la prova torni a provare cio' che dice.
     extra = [
         item.model_copy(update={"id": f"{item.id}-{index}", "tag": f"X{index}-{item.id[:3]}"})
-        for index in range(1, 6)
+        for index in range(1, 21)
         for item in project.components
         if item.id in {"buffer", "cylinder"}
     ]

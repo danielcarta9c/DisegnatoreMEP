@@ -10,7 +10,7 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **1040 verdi, 22 parcheggiate, 13 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** — che ora compone, ma resta fuori dai budget di qualità — e 4 il foglio di riscontro dei simboli, che non entra più in una pagina sola |
+| Test | **1047 verdi, 22 parcheggiate, 14 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** — che ora compone, ma resta fuori dai budget di qualità — e 4 il foglio di riscontro dei simboli, che non entra più in una pagina sola |
 | Libreria simboli | 39 pubblicati | A scala fissa ne entrano 32 per foglio: il foglio di riscontro va impaginato su piu' pagine |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
@@ -37,6 +37,15 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 > compongono e non si consegnano finché il PM non ha approvato la prima. Poi si fanno
 > come prova, per trovare errori che la prima non poteva mostrare.
 >
+> **✔ Il primo pezzo riportato è fatto (D-118):** le zone valgono solo per i pezzi grossi
+> e ciò che sta in parallelo si impila sempre. Sull'impianto 1 la posa passa da 330 a
+> 253 mm, i rilievi da dodici a sei, le tratte con troppe pieghe da otto a due, e **la
+> confluenza dei ritorni non sta più a sinistra delle pompe di calore da cui quei ritorni
+> arrivano**. Prezzo misurato e non nascosto: gli incroci salgono da 11 a 13 e il disegno,
+> essendosi stretto senza svilupparsi in altezza, riempie il 27 % invece del 35 % ed è
+> tutto in un angolo. **Sono i due numeri del pezzo successivo.** Manca ancora il verdetto
+> di un collaudo a contesto separato: qui è misurato, non approvato.
+>
 > **E il criterio con cui si sceglie cosa fare** (I-013): le tavole prodotte finora il PM
 > le considera **da buttare**, quindi non si rifiniscono. Si chiudono le sue righe aperte
 > nel registro degli input, che è il primo file da leggere dopo l'handoff.
@@ -47,7 +56,7 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 >
 > | Ramo | Cosa c'è sopra che `main` non ha |
 > |---|---|
-> | `claude/disegnatoremep-main-resume-890881` | **10 commit veri, ed è il debito aperto**: le quattro zone per i soli pezzi grossi (I-011), il tratto comune, lo scarico dei serbatoi, la linea di terra, la fascia in colonne, i sottosistemi, la grammatica di centrale. Si riporta un pezzo per volta (D-115) |
+> | `claude/disegnatoremep-main-resume-890881` | **10 commit veri, ed è il debito aperto.** ✔ Riportate le zone per i soli pezzi grossi (I-011, D-118). **Restano:** il tratto comune riconosciuto togliendolo, lo scarico dei serbatoi di fianco, la linea di terra ritirata, la fascia che si piega in colonne, il buco dei sottosistemi, il resto della grammatica di centrale. Si riporta un pezzo per volta (D-115) |
 > | `archivio/fase-grafica-2026-08-03` | **Niente da riportare, e non si fonde mai:** è una **storia separata**, senza nessun antenato in comune con `main`. È l'archivio della fase precedente al riavvio del 3 agosto. Sta scritto qui perché un ramo con 72 commit fuori da `main` e nessuna spiegazione fa perdere tempo a chiunque applichi D-117 |
 > | tutti gli altri | Nulla: sono dentro `main` |
 
