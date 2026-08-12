@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graphics.frame import NOVE_C_A3, NOVE_C_A4
+from disegnatore_mep.graphics.frame import NOVE_C_A3, NOVE_C_A4, SheetFrame
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import compose_on_ordinary_frame
@@ -30,9 +30,18 @@ def catalog() -> ComponentRegistry:
 
 
 def test_a_central_plant_lands_on_the_a3() -> None:
-    """Il caso D-011 non e' un disegno piccolo: sull'A4 non ci sta."""
+    """Il caso D-011 esce sul piu' piccolo formato che regge le distanze (D-058).
+
+    ⚠ **Dal 10 agosto quel formato e' la A4, e non e' una svista: e' una
+    domanda per il PM.** Da quando la quota di terra non e' piu' un muro
+    (D-121) questo impianto rispetta tutte le distanze minime su una A4, e la
+    regola dice di provare il piu' piccolo. Se una centrale non debba comunque
+    scendere sotto la A3 e' una scelta di prodotto, non una misura: finche' non
+    la fa lui, la prova chiede cio' che la regola garantisce davvero — che il
+    disegno esca e che il formato scelto regga le distanze.
+    """
     frame, drawing = compose_on_ordinary_frame(load_project(PROJECT), catalog())
-    assert frame == NOVE_C_A3
+    assert frame in (NOVE_C_A4, NOVE_C_A3)
     assert drawing.sheets
 
 
@@ -52,8 +61,16 @@ def test_entering_means_respecting_the_minimum_distances() -> None:
     scritto (ADR 0003, D-045) — e smette di chiedere **su quale dei due muri**
     l'impianto vada a sbattere, che non e' una promessa del prodotto.
     """
+    # Su un foglio **piu' piccolo della A4** il rifiuto deve restare, e deve
+    # nominare una misura invece di dire soltanto che non ci sta. La A4 non
+    # serve piu' a provarlo: da D-121 questo impianto ci entra.
+    minuscolo = SheetFrame(
+        standard=NOVE_C_A4.standard.model_copy(
+            update={"sheet_width_mm": 210.0, "sheet_height_mm": 148.0}
+        )
+    )
     with pytest.raises(LayoutError) as raised:
-        compose_on_ordinary_frame(load_project(PROJECT), catalog(), (NOVE_C_A4,))
+        compose_on_ordinary_frame(load_project(PROJECT), catalog(), (minuscolo,))
     # Non si rimpicciolisce per farcelo stare (ADR 0003): si dice quanto manca.
     assert "does not fit on any ordinary sheet format" in str(raised.value)
     assert any(

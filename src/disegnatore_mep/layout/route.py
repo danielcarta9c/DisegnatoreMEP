@@ -27,7 +27,6 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
-from .composition import levels_of
 from .errors import LayoutError
 from .flow import orient_trunks
 from .geometry import PlacedSymbol, Point, RoutedTrunk
@@ -332,16 +331,19 @@ def route_sheet(
     definitions = {item.id: item.definition_id for item in project.components}
     media = {item.id: item.medium for item in project.networks}
     blocked = _obstacle_cells(placed, grid)
-    # Niente tubazioni sotto la linea di terra: sotto c'e' il pavimento, e la
-    # fascia dei richiami. Una rotta che ci finiva sembrava interrata.
-    ground_row = grid.to_cell(grid.origin.x_mm, levels_of(
-        grid.origin.y_mm, grid.origin.height_mm, grid.step_mm
-    ).ground_mm)[1]
-    blocked = blocked | frozenset(
-        (col, row)
-        for col in range(grid.cols + 1)
-        for row in range(ground_row + 1, grid.rows + 1)
-    )
+    # **Sotto la quota di terra si instrada, eccome** (D-121). Il divieto stava
+    # qui e non era mai stato deciso da nessuno: nel disegno di una centrale non
+    # c'e' una linea di terra che divide il foglio in due, e trattarla come un
+    # muro invalicabile costava carissimo. Il PM l'ha indicata due volte, e la
+    # seconda mostrando cosa provoca: «questo ritorno fa tutto il giro perche'
+    # non riusciva ad attaccarci le valvole che staccano sotto». Chi ha uno
+    # stacco rivolto in basso — uno scarico, un vaso, un gruppo di riempimento —
+    # aveva l'unica uscita murata dal pavimento, e la tubazione girava intorno a
+    # mezza tavola per raggiungerlo da sopra.
+    #
+    # Quel che resta della terra e' un **segno del simbolo**: un serbatoio che
+    # poggia porta una linea corta sotto di se', a dire che poggia. Non e' una
+    # quota del foglio e non delimita niente.
     occupied: set[Cell] = set()
     # I **tratti** gia' percorsi, non i nodi: ripercorrerne uno e' sovrapporsi
     # per il lungo, ed e' vietato. L'unica eccezione e' l'ultimo tratto contro

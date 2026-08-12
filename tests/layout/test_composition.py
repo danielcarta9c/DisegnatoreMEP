@@ -189,7 +189,10 @@ def test_labels_sit_beside_their_component_without_a_leader() -> None:
     assert drawn.labels and drawn.ground_line_y_mm is not None
     placed = {item.component_id: item for item in drawn.symbols}
     for label in drawn.labels:
-        assert label.anchor.y_mm <= drawn.ground_line_y_mm
+        # La scritta puo' scendere anche sotto la quota di terra (D-121): li'
+        # non c'e' nessun pavimento, e il divieto non era mai stato deciso da
+        # nessuno. Cio' che si chiede resta che stia **accanto al proprio
+        # pezzo**, ed e' la riga qui sotto.
         if label.leader_from is not None:
             continue
         symbol = placed.get(label.id.rsplit("-", 1)[0])

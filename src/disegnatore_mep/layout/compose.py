@@ -214,7 +214,9 @@ def compose_sheet(
             # richiami a fondo tavola e' ritirata. Le tratte servono a far
             # scansare un testo che finirebbe su una linea.
             routes=broken,
-            floor_y_mm=levels.ground_mm,
+            # Nessun pavimento sotto cui una scritta non possa scendere
+            # (D-121): la quota di terra non divide il foglio in due.
+            floor_y_mm=None,
         ),
         legend=entries,
         network_keys=keys,
