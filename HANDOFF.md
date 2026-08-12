@@ -349,7 +349,11 @@ tavole già uscite (I-013).
 1. ~~**Le quattro zone per i soli pezzi grossi**~~ — **fatto il 10 agosto (D-118)**, ed è
    il primo pezzo riportato dall'altra linea. Manca il verdetto di un collaudo a contesto
    separato: è misurato, non approvato.
-2. **Il foglio riempito in due dimensioni**, che è il conto lasciato aperto da D-118: la
+2. ⛔ **Una tubazione finisce sotto un simbolo quando la valvola si avvicina alla macchina.**
+   È il difetto che la regola del PM sulla vicinanza (D-120) ha fatto affiorare, e va
+   chiuso per primo perché **blocca la consegna di quella regola**, che per il resto è
+   costruita, misurata e migliorativa. La regola entra appena il difetto è chiuso.
+3. **Il foglio riempito in due dimensioni**, che è il conto lasciato aperto da D-118: la
    tavola si è stretta da 330 a 253 mm ma non si è alzata, quindi riempie il 27 % e sta
    tutta in un angolo. È anche la **distanza senza senso fra i gruppi** (I-008) presa
    dall'altro lato, e il **riempimento bilanciato** che D-111 chiede.
