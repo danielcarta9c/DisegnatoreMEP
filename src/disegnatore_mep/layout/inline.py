@@ -40,6 +40,19 @@ raggiungono i suoi altri attacchi. Con un passo solo la valvola di sicurezza
 della pompa di calore le si e' appoggiata al fianco e ha chiuso il corridoio del
 ritorno del primario: l'instradamento e' fallito con una diagnostica che parlava
 di tutt'altro.
+
+⚠ **Il PM ha chiesto di abbassarlo** (I-018): «le valvole di intercettazione che
+vengono montate per manutenere le macchine devono essere disegnate molto piu'
+vicine agli attacchi, una regola di vicinanza fissa e piuttosto piccola, esempio
+2 mm». Ha ragione su come si monta, e **il tentativo e' stato fatto e misurato,
+non lasciato a metà**: portandolo a un passo, sull'impianto 1 la valvola si
+avvicina all'attacco da 7,5 a 5 millimetri, ma i rilievi di qualita' salgono da
+sei a nove, gli incroci da 13 a 15 e due tratte passano da quattro pieghe a sei.
+Il guadagno non paga il prezzo, e la causa e' che questa costante non distingue
+**la valvola che isola una macchina** — quella che lui sta guardando — da un
+accessorio qualunque in mezzo a una tratta. La regola giusta e' piu' stretta di
+cosi', e vale solo per il primo accessorio contro il proprio componente: e' la
+riga I-018, che resta aperta con la misura scritta.
 """
 
 

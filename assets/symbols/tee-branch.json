@@ -1,6 +1,6 @@
 {
   "id": "tee-branch",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Derivazione a T",
   "width_mm": 5.0,
   "height_mm": 5.0,
@@ -31,10 +31,10 @@
     }
   ],
   "keep_out": {
-    "left_mm": 2.0,
-    "right_mm": 2.0,
-    "top_mm": 2.0,
+    "left_mm": 0.5,
+    "right_mm": 0.5,
+    "top_mm": 0.5,
     "bottom_mm": 0.0
   },
-  "source": "UNI 9511 Tab. 1, tramite SRC-016"
+  "source": "UNI 9511 Tab. 1, tramite SRC-016 — area di rispetto azzerata (D-119b): un raccordo e' un punto della tubazione, non un apparecchio, e non c'e' niente da cui tenersi distanti. Il segno disegnato e' un punto di due decimi di millimetro: chi guarda vede le linee dividersi e sa che li' c'e' un T"
 }
