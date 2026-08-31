@@ -11,16 +11,18 @@
 
 ## 1. I cinque stati
 
-Una decisione attraversa cinque stati, in quest'ordine. **Ogni stato ha un proprietario
-diverso**, e nessuno può assegnare uno stato che non è suo.
+Una decisione attraversa cinque stati, in quest'ordine. **Ogni transizione ha un'autorità
+esplicitamente assegnata**, e nessuno può eseguire una transizione che non è sua. Non vale
+il contrario — PM e DEV sono autorità di più di una transizione — ma **nessuna transizione
+ha due autorità**.
 
-| # | Stato | Chi lo assegna | Che cosa afferma | Che cosa **non** afferma |
+| # | Stato | Transizione, e chi ha l'autorità di eseguirla | Che cosa afferma | Che cosa **non** afferma |
 |---|---|---|---|---|
-| 1 | **Proposta** | DEV o PM | Esiste un'opzione, con motivazione e alternative scartate | Che si farà |
-| 2 | **Approvata dal PO** | **PO** | Il PO vuole questa cosa | Che sia pianificata o fattibile ora |
-| 3 | **Pianificata dal PM** | **PM** | È in un pacchetto di lavoro, con criteri di accettazione | Che sia implementata |
-| 4 | **Implementata dal DEV** | DEV | Il codice o i documenti la realizzano, su un ramo, con la PR aperta | Che sia verificata o accettata |
-| 5 | **Verificata dal PM** | **PM** | I criteri di accettazione sono soddisfatti; la PR può essere fusa | — |
+| 1 | **Proposta** | *(nasce)* — **DEV o PM** | Esiste un'opzione, con motivazione e alternative scartate | Che si farà, né che si possa cominciare |
+| 2 | **Approvata dal PO** | 1 → 2, **solo il PO** | Il PO vuole questa cosa | Che sia pianificata o fattibile ora |
+| 3 | **Pianificata dal PM** | 2 → 3, **solo il PM** | È in un pacchetto di lavoro, con criteri di accettazione | Che sia implementata |
+| 4 | **Implementata dal DEV** | 3 → 4, **solo il DEV** | Il codice o i documenti la realizzano, su un ramo, con la PR aperta | Che sia verificata o accettata |
+| 5 | **Verificata dal PM** | 4 → 5, **solo il PM** | I criteri di accettazione sono soddisfatti; la PR può essere fusa | — |
 
 Stati terminali alternativi:
 
@@ -39,11 +41,38 @@ Stati terminali alternativi:
   assegna il PO, in modo tracciabile (una sua frase, citata).
 - **Il DEV non può passare una decisione a *Verificata*.** L'autovalutazione non esiste:
   il verdetto è del PM.
-- **Il PM non decide il merito di dominio MEP.** Può respingere per pianificazione, costo o
-  perimetro; non può approvare al posto del PO una scelta impiantistica.
-- **Nessuno salta lo stato 2.** Una decisione non può essere *Pianificata* se non è
-  *Approvata dal PO*. Se il PM ha bisogno di procedere prima, il pacchetto lo dice
-  esplicitamente e la decisione resta *Proposta*.
+- **Il PM non decide il merito degli ambiti del PO** — dominio MEP, requisiti di prodotto,
+  convenzioni e qualità della rappresentazione grafica, risultato funzionale atteso. Può
+  respingere per pianificazione, costo o perimetro; non può approvare al posto del PO.
+- **Il DEV non sostituisce una soluzione prescritta dal PO** con una che ritiene migliore.
+  La propone come decisione nuova, in stato *Proposta*, e aspetta il PO.
+
+### 2.1 Niente implementazione prima dell'approvazione del PO
+
+**Regola univoca, senza eccezioni.** Una decisione che riguarda **prodotto, dominio MEP o
+rappresentazione grafica**:
+
+1. **non può essere pianificata per l'implementazione** finché non è `Approvata dal PO`;
+2. **non può essere implementata** finché non è `Approvata dal PO`;
+3. finché è `Proposta` **può essere soltanto analizzata o sottoposta al PO**. Nient'altro.
+
+Il PM **non ha** la facoltà di far procedere l'implementazione di una decisione ancora
+*Proposta*: la transizione 2 → 3 richiede che lo stato 2 esista, e non esiste scorciatoia
+che lo aggiri. Se serve procedere, si chiede l'approvazione al PO — non si procede
+lasciando la decisione *Proposta*.
+
+**Attività esplorativa.** Il PM può autorizzare uno studio, uno spike o un prototipo su una
+decisione ancora *Proposta*. Vale a tre condizioni, tutte necessarie:
+
+- **non costituisce implementazione** e non fa avanzare la decisione di stato;
+- **non entra nel prodotto**: né in `main`, né in una PR di prodotto, né negli artefatti
+  consegnati al PO;
+- **non rende vigente la decisione**, qualunque risultato produca.
+
+**Il DEV non può usare uno spike, un prototipo o un test come autorizzazione implicita a
+cambiare il prodotto.** «Funzionava nel prototipo» non è un'approvazione del PO. Se
+l'esplorazione mostra che la decisione va presa, il risultato si porta al PO come materiale
+per decidere, e si aspetta lo stato 2.
 
 ---
 
@@ -86,6 +115,11 @@ Regole:
                                                                     │  Verificata dal PM     │
                                                                     └────────────────────────┘
 ```
+
+**Non esiste una freccia da *Proposta* a *Pianificata* né da *Proposta* a *Implementata*.**
+Ogni percorso verso l'implementazione passa per *Approvata dal PO* (§2.1). Un'attività
+esplorativa autorizzata dal PM non è un ramo di questo diagramma: gira a vuoto accanto a
+*Proposta* e non muove la decisione di uno stato.
 
 Il ritorno indietro è sempre ammesso e si registra: una decisione *Implementata* che il PM
 respinge in verifica torna a *Pianificata*, e il pacchetto torna in lavorazione.

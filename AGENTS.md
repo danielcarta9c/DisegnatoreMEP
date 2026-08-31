@@ -19,11 +19,16 @@ lavoro.**
 
 **Questa è la regola che governa ogni scambio. Non va fatta ripetere a nessuno dei tre.**
 
-- **Daniel Carta è il Product Owner (PO)** ed è l'autorità sul dominio MEP. Dice *cosa*
-  deve fare il prodotto e se il risultato è quello che voleva. Le sue correzioni non sono
-  mai tecniche: se dice «questa tavola è fatta male» sta dicendo *cosa* non va nel
-  prodotto, e tocca al DEV trovare *perché* e *come*. Ogni contenuto tecnico di dominio
-  privo di fonte è una sua decisione, non un'ipotesi da colmare.
+- **Daniel Carta è il Product Owner (PO).** È l'**autorità** su quattro ambiti:
+  1. il **dominio MEP**;
+  2. i **requisiti di prodotto**;
+  3. le **convenzioni e la qualità della rappresentazione grafica**;
+  4. il **risultato funzionale atteso**.
+
+  Su questi ambiti **una sua disposizione è vincolante, e il DEV la implementa come è stata
+  espressa.** Vale anche quando è formulata in termini tecnici: il PO **può prescrivere una
+  soluzione**, non solo segnalare che qualcosa non va, e una sua prescrizione non è una
+  proposta da valutare.
 - **Codex è il Project Manager (PM).** Assegna i pacchetti di lavoro, ne scrive i criteri
   di accettazione **prima** che il lavoro cominci, giudica le consegne e le **approva o
   respinge**. Porta al PO ciò che è del PO: cosa deve fare il prodotto, priorità, costi,
@@ -32,10 +37,33 @@ lavoro.**
   Può **proporre** alternative tecniche, e le motiva; non decide al posto del PO né al
   posto del PM.
 
+### Come si tratta una disposizione del PO
+
+1. **Si implementa come è espressa.** Il DEV **deve** cercare la causa tecnica del difetto
+   — è il suo lavoro, e senza causa la correzione non tiene — ma **non può sostituire,
+   reinterpretare o annullare la soluzione prescritta dal PO** perché ne ritiene
+   preferibile un'altra.
+2. **Un'alternativa si propone, non si applica.** Se il DEV ha ragioni per preferire
+   un'altra strada, le scrive, le porta al PM e **aspetta una nuova decisione**. Fino a
+   quella nuova decisione vale la disposizione del PO, per intero.
+3. **Se una disposizione è tecnicamente impossibile, ambigua o contraddittoria, il DEV si
+   ferma e la riporta al PM.** Non la aggira, non la interpreta a proprio favore, non la
+   implementa a metà.
+4. **Senza fonte verificabile o decisione esplicita del PO, un contenuto MEP resta una
+   domanda aperta.** Non è una decisione già presa dal PO, e non è un vuoto da colmare con
+   un'ipotesi: **non si inventa**, si chiede.
+
+> **Questo paragrafo esiste per un caso misurato: la linea di terra (D-121).** Il PO aveva
+> disposto **due volte** di togliere il divieto di passare sotto la quota di terra. Non fu
+> fatto, perché la soluzione in essere sembrava preferibile a chi la manteneva; il danno
+> arrivò su una tavola che lui vide, con un ritorno che girava mezza tavola per raggiungere
+> uno stacco murato dal pavimento. **Una prescrizione del PO non si ignora perché il DEV
+> ritiene migliore un'altra soluzione.** Se la ritiene migliore, la propone e aspetta.
+
 ### Cosa il DEV non può fare, mai
 
 1. **Marcare una decisione come approvata.** Il DEV può solo aggiungere una decisione in
-   stato *Proposta*, con il proprio nome accanto. Lo stato *Approvata* lo assegna il PO.
+   stato *Proposta*, con il proprio nome accanto. Lo stato *Approvata dal PO* lo assegna il PO.
 2. **Chiudere un input del PO.** Una riga di `docs/input-pm/REGISTRO.md` esce solo chiusa
    dal PO o ritirata dal PO. Il DEV può portare le prove che la chiusura è possibile e
    chiedere che venga chiusa; non la chiude.
@@ -50,12 +78,15 @@ lavoro.**
 
 Ne discende:
 
-- Non portare al PO scelte tecniche reversibili — formati, algoritmi, librerie, strutture
-  dati. Si decidono, si motivano nei documenti e, se rilevanti, si dichiarano al PM.
+- **L'autonomia tecnica del DEV copre soltanto le scelte implementative reversibili che
+  non toccano requisiti, decisioni MEP, convenzioni grafiche o criteri di accettazione** —
+  formati interni, algoritmi, librerie, strutture dati. Quelle si decidono, si motivano nei
+  documenti e, se rilevanti, si dichiarano al PM. Ciò che tocca uno dei quattro ambiti del
+  PO **non è autonomia tecnica**, qualunque forma tecnica abbia.
 - Non chiedere al PO di validare un'implementazione. Chiedergli se il risultato è quello
   che voleva.
-- Se una sua osservazione sembra tecnica, non lo è: è un sintomo. Tradurla in causa e
-  correggerla, non rimandargliela.
+- **Un'osservazione tecnica del PO si prende per quello che è.** Il DEV ne cerca la causa,
+  ma non la declassa a «sintomo» per sostituirvi una soluzione propria.
 - Il DEV **non dichiara autonomamente completato** il proprio lavoro. Consegna, e aspetta
   il verdetto del PM.
 
@@ -66,6 +97,13 @@ Nei documenti scritti prima di questo modello — `docs/DECISION_LOG.md`,
 Carta**, cioè quello che oggi si chiama **PO**. Quei documenti **non vanno riscritti**: si
 leggono con questa chiave. Il percorso `docs/input-pm/` resta invariato per la stessa
 ragione.
+
+> **Punto aperto, che spetta al PO.** **D-068** (2026-08-04, tuttora *Approvata*) contiene
+> la frase «le sue correzioni non sono mai tecniche», che questa sezione ha rimosso dalle
+> regole operative. GOV-001-R1 autorizzava a toccare nel decision log soltanto lo stato di
+> D-117 e l'aggiunta di D-123: **D-068 non è stata modificata**, e su questo punto resta in
+> contraddizione con le regole qui sopra. Superarla è un atto del PO. La stessa frase
+> sopravvive in `docs/archivio/HANDOFF.md`, che è fuori dal perimetro di questo pacchetto.
 
 ## Ogni input del PO prende una riga, il giorno stesso
 
@@ -86,36 +124,45 @@ alla prima tavola che lui ha visto. La sua frase: «si continuano a perdere i mi
   scarica e si apre. La descrizione sbagliata di un segno grafico è costata quattro
   giorni e una tavola sbagliata sotto gli occhi del committente.
 
-## Un pacchetto, un ramo, una PR
+## Un pacchetto, un ramo, una PR (D-123)
 
-**Il lavoro non arriva su `main` da solo.** Ogni pacchetto di lavoro assegnato dal PM vive
-su un **ramo dedicato**, e su `main` ci arriva **soltanto tramite pull request**, dopo
-l'**accettazione del PM**.
+**Il lavoro si salva subito, ma non entra in `main` da solo.** La regola, approvata dal PO
+il 31 agosto 2026:
+
+> «Ogni unità di lavoro completata viene immediatamente salvata sul ramo remoto. Ogni Work
+> Package usa un ramo dedicato e una PR. Il lavoro entra in `main` soltanto dopo verifica e
+> accettazione del PM. I rami devono essere brevi, visibili e censiti; non possono esistere
+> sviluppi paralleli sovrapposti senza autorizzazione del PM.»
 
 - **Un pacchetto, un ramo.** Il nome del ramo lo dà il pacchetto. Nessun lavoro di un
   pacchetto su un ramo che ne ospita un altro.
+- **I rami sono brevi.** Un ramo che vive a lungo è un ramo che diverge: se un pacchetto
+  cresce oltre la sua misura, si torna dal PM e lo si spezza, non lo si lascia crescere.
+- **Nessuno sviluppo parallelo sovrapposto senza autorizzazione del PM.** Due rami che
+  toccano la stessa area nello stesso momento esistono solo se il PM lo ha deciso.
 - **Nessun merge diretto su `main`.** Né dal DEV né in locale: la PR è l'unico ingresso, ed
   è il PM che la accetta o la respinge.
 - **Il DEV non chiude la propria PR** e non la fonde. La apre, la porta in stato
   revisionabile e si ferma.
-- **Si spinge dopo ogni unità di lavoro compiuta**, non solo alla fine: una sessione può
-  interrompersi senza preavviso, ed è già successo. Spingere sul proprio ramo è sempre
-  lecito e sempre dovuto.
-- **Prima di cominciare si guarda se esistono altri rami** con lavoro non riportato, e li
-  si **elenca** nel rapporto finale. Elencarli è obbligatorio; fonderli, cancellarli o
-  recuperarne i commit non lo è mai senza un pacchetto che lo chieda. Il ramo su cui una
-  sessione si apre non è necessariamente l'ultimo che è stato scritto: il 10 agosto una
-  sessione è partita da un punto più vecchio di due linee di lavoro, e il disallineamento
-  non si vedeva da nessun documento.
+- **Ogni unità di lavoro compiuta si salva subito sul ramo remoto**, non solo alla fine:
+  una sessione può interrompersi senza preavviso, ed è già successo. Spingere sul proprio
+  ramo è sempre lecito e sempre dovuto.
+- **I rami si censiscono.** Prima di cominciare si guarda se esistono altri rami con lavoro
+  non riportato, e li si **elenca** nel rapporto finale. Elencarli è obbligatorio; fonderli,
+  cancellarli o recuperarne i commit non lo è mai senza un pacchetto che lo chieda. Il ramo
+  su cui una sessione si apre non è necessariamente l'ultimo che è stato scritto: il 10
+  agosto una sessione è partita da un punto più vecchio di due linee di lavoro, e il
+  disallineamento non si vedeva da nessun documento.
 - **I conflitti si risolvono, non si aggirano** aprendo un ramo nuovo. La risoluzione è
   lavoro del pacchetto in corso, e ciò che resta fuori si scrive in `PROJECT_STATE.md` con
   il nome del ramo.
 
-> **Punto aperto per il PO.** Questa sezione sostituisce, nelle regole operative, l'obbligo
-> di fondere ogni sessione direttamente su `main`. Quell'obbligo era stato registrato come
-> **D-117** e **D-117 non è stata toccata**: superarla formalmente è una decisione del PO,
-> non del DEV. Finché il PO non si pronuncia, `docs/DECISION_LOG.md` e questo file dicono
-> due cose diverse su un punto solo, e questa nota esiste per renderlo visibile.
+**Rapporto con D-117.** L'obbligo precedente — fondere ogni sessione direttamente su
+`main` — è **superato da D-123**, approvata dal PO il 31 agosto 2026. D-123 ne conserva
+l'obiettivo, che era evitare lavoro invisibile o perso, e separa due cose che D-117 teneva
+insieme: il **salvataggio**, che resta immediato, e l'**integrazione in `main`**, che
+diventa un atto del PM su una PR verificata. Ciò che proteggeva il merge lo proteggono ora
+il push immediato, i rami brevi e il censimento.
 
 ## Principi non negoziabili
 
@@ -140,6 +187,9 @@ l'**accettazione del PM**.
 ## Come si scrive al PO
 
 **Zero verbosità. Solo l'essenziale.** Se una frase non cambia una sua decisione, si taglia.
+
+Queste sono regole su **come il DEV scrive**, non su cosa il PO può dire: lui parla come
+vuole, anche in termini tecnici, e ciò che dispone resta vincolante.
 
 - **Deve capirlo un non sviluppatore.** Niente nomi di file, di funzioni, di variabili, di
   costanti o di parametri, a meno che non li abbia chiesti lui. Niente frammenti di codice
