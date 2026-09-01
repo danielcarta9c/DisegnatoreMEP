@@ -1,5 +1,22 @@
 # HANDOFF — Disegnatore MEP · 10 agosto 2026
 
+
+> ## AGGIORNAMENTO OPERATIVO — 1 settembre 2026
+>
+> La governance PO/PM/DEV è vigente su `main`. **Prima di usare qualunque sezione storica
+> di questo handoff, aprire e leggere integralmente `ACTIVE_WORK_PACKAGE.md`: è l'unico
+> incarico operativo corrente assegnato dal PM.**
+>
+> Le sezioni `Now`, `Next`, “primo lavoro” e i riferimenti ai vecchi rami restano qui
+> come storia tecnica e contesto delle cause, ma **non autorizzano lavoro aggiuntivo**.
+> In caso di contrasto sulla priorità o sul perimetro, prevale `ACTIVE_WORK_PACKAGE.md`.
+> Il DEV non lo modifica e non sceglie autonomamente il lavoro successivo.
+>
+> Dopo la consegna, il PM verifica la PR; se la approva, esegue direttamente il merge e
+> sostituisce il Work Package attivo con il successivo. Il PO viene coinvolto soltanto
+> quando serve una decisione di prodotto, MEP o rappresentazione grafica.
+
+
 > ⛔ **Non è un riassunto del progetto.** È il cancello di lettura per la sessione
 > successiva. Si legge tutto, poi si risponde alle domande del §2, poi si comincia.
 >
