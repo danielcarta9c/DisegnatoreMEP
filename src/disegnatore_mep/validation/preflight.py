@@ -25,6 +25,8 @@ from disegnatore_mep.catalog.errors import CatalogError
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
 from disegnatore_mep.layout.geometry import (
+    QUADRANT_IMBALANCE_MAX,
+    SHEET_FILL_MIN_RATIO,
     DrawingGeometry,
     Point,
     RoutedTrunk,
@@ -32,8 +34,11 @@ from disegnatore_mep.layout.geometry import (
     attaches_to,
     box_of,
     distance_to_box,
+    fill_ratio,
+    ink_area_mm2,
     moves_of,
     overshoot_mm,
+    quadrants_of,
 )
 from disegnatore_mep.model.types import IssueSeverity
 
@@ -82,22 +87,12 @@ U_TURN_OVERSHOOT_MAX_MM = 0.0
 l'oggetto, non allungata la linea.» Tolleranza zero per costruzione.
 """
 
-SHEET_FILL_MIN_RATIO = 0.60
-"""Quota dell'area di disegno che l'ingombro dell'inchiostro deve coprire (A1).
-
-**Taratura**, non norma: la carta dice «il foglio e' pieno in modo uniforme» e
-non da' un numero. Sotto tre quinti dell'area il disegno e' una fascia o un
-angolo, non una tavola. Il valore si rivede sulle tavole reali (carta, §«Come
-cresce questa carta», terza sorgente); l'esito e' un avviso proprio per questo.
-"""
-
-QUADRANT_IMBALANCE_MAX = 3.0
-"""Rapporto massimo fra il quadrante piu' pieno e il piu' vuoto (A1, A3).
-
-**Taratura.** «Si copre meta' foglio con una mano: se una meta' e' quasi bianca
-e l'altra e' fitta, non va», e «i quattro margini bianchi si somigliano». Tre
-volte e' lo squilibrio oltre il quale la differenza si vede da due metri.
-"""
+# Le due tarature del riempimento vivono accanto alla misura, in
+# `layout.geometry`, perche' da D-111 le legge anche il collocatore: qui si
+# guarda la tavola finita, li' si dispone per ottenerla, e il numero deve
+# essere lo stesso. Il valore si rivede sulle tavole reali (carta, §«Come
+# cresce questa carta», terza sorgente); l'esito resta un avviso proprio per
+# questo.
 
 NEXT_SHEET_FILL_MIN_RATIO = 0.40
 """Riempimento minimo di una tavola successiva alla prima (D-072, A2).
@@ -289,74 +284,31 @@ def _parallel_distance(
     return across
 
 
-def _ink_box(sheet: SheetGeometry) -> Rect | None:
-    """L'ingombro di cio' che e' disegnato: simboli e tubazioni.
-
-    Legenda e fluidi vivono nella propria fascia, fuori dall'area di disegno per
-    costruzione, e non entrano nel conto: il riempimento che la carta chiede e'
-    quello del disegno, non quello del foglio.
-    """
-    xs: list[float] = []
-    ys: list[float] = []
-    for symbol in sheet.symbols:
-        xs += [symbol.origin.x_mm, symbol.right_mm]
-        ys += [symbol.origin.y_mm, symbol.bottom_mm]
-    for route in sheet.routes:
-        for segment in route.segments:
-            xs += [point.x_mm for point in segment]
-            ys += [point.y_mm for point in segment]
-    if not xs or not ys:
-        return None
-    width = max(max(xs) - min(xs), TOLERANCE_MM)
-    height = max(max(ys) - min(ys), TOLERANCE_MM)
-    return Rect(x_mm=min(xs), y_mm=min(ys), width_mm=width, height_mm=height)
+def _rect(area: Rect) -> tuple[float, float, float, float]:
+    """Il rettangolo come quaterna, che e' la forma che le misure condivise usano."""
+    return (area.x_mm, area.y_mm, area.right_mm, area.bottom_mm)
 
 
 def _fill_ratio(sheet: SheetGeometry, area: Rect) -> float:
-    box = _ink_box(sheet)
-    if box is None:
-        return 0.0
-    return (box.width_mm * box.height_mm) / (area.width_mm * area.height_mm)
+    """Il riempimento della tavola, con la formula condivisa col collocatore.
+
+    La misura vive in `layout.geometry` perche' da D-111 il collocatore la usa
+    come **obiettivo** mentre dispone, e non basta che le due somiglino: devono
+    essere la stessa (e' la lezione dell'andata e ritorno, misurata due volte
+    con due formule diverse).
+    """
+    return fill_ratio(sheet.symbols, sheet.routes, _rect(area))
 
 
 def _quadrants(area: Rect) -> list[Rect]:
-    half_width = area.width_mm / 2.0
-    half_height = area.height_mm / 2.0
     return [
-        Rect(x_mm=x_mm, y_mm=y_mm, width_mm=half_width, height_mm=half_height)
-        for y_mm in (area.y_mm, area.y_mm + half_height)
-        for x_mm in (area.x_mm, area.x_mm + half_width)
+        Rect(x_mm=item[0], y_mm=item[1], width_mm=item[2] - item[0], height_mm=item[3] - item[1])
+        for item in quadrants_of(_rect(area))
     ]
 
 
-def _clipped_length_mm(before: Point, after: Point, area: Rect) -> float:
-    """Quanto di un tratto ortogonale cade dentro un rettangolo."""
-    if abs(before.y_mm - after.y_mm) <= TOLERANCE_MM:
-        if not area.y_mm - TOLERANCE_MM <= before.y_mm <= area.bottom_mm + TOLERANCE_MM:
-            return 0.0
-        low, high = min(before.x_mm, after.x_mm), max(before.x_mm, after.x_mm)
-        return max(min(high, area.right_mm) - max(low, area.x_mm), 0.0)
-    if abs(before.x_mm - after.x_mm) <= TOLERANCE_MM:
-        if not area.x_mm - TOLERANCE_MM <= before.x_mm <= area.right_mm + TOLERANCE_MM:
-            return 0.0
-        low, high = min(before.y_mm, after.y_mm), max(before.y_mm, after.y_mm)
-        return max(min(high, area.bottom_mm) - max(low, area.y_mm), 0.0)
-    return 0.0
-
-
 def _ink_area_mm2(sheet: SheetGeometry, area: Rect, line_mm: float) -> float:
-    """L'inchiostro dentro un rettangolo: riquadri dei simboli piu' tratto delle linee."""
-    total = 0.0
-    for symbol in sheet.symbols:
-        left, top, right, bottom = box_of(symbol)
-        width = max(min(right, area.right_mm) - max(left, area.x_mm), 0.0)
-        height = max(min(bottom, area.bottom_mm) - max(top, area.y_mm), 0.0)
-        total += width * height
-    for route in sheet.routes:
-        for segment in route.segments:
-            for before, after in moves_of(segment):
-                total += _clipped_length_mm(before, after, area) * line_mm
-    return total
+    return ink_area_mm2(sheet.symbols, sheet.routes, _rect(area), line_mm)
 
 
 def bends_per_run(drawing: DrawingGeometry) -> list[ValidationIssue]:
