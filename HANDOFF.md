@@ -207,7 +207,7 @@ nell'altro:
 | 8b | `examples/prova/input/` | **Il testo originale del committente**, non toccato. Le letture manuali qui accanto sono **il metro** del pezzo 1 e non si toccano, nemmeno dove hanno torto |
 | 8c | `skill/capire/COSA_DECIDE.md` | **Le quattro cose che l'interprete deve capire**, e quando invece chiede |
 | 8d | `skill/capire/prova-2026-08-07/` | Le consegne dei tre giri della prova in camera pulita: **allegati dei verbali, congelati.** Non si correggono, nemmeno dove sbagliano |
-| 9 | `AGENTS.md` | Regole operative e i due ruoli |
+| 9 | `AGENTS.md` | Regole operative e i tre ruoli PO/PM/DEV |
 
 ---
 

@@ -132,6 +132,14 @@ costruendo il prodotto giusto; le sue correzioni non sono mai tecniche. «La tav
 male», «il ritorno blu entra nella valvola», «vietato sovrapporre le linee»: sono sintomi
 di prodotto, e trovarne la causa tecnica è lavoro nostro, non suo.
 
+> ⚠️ **AGGIORNAMENTO STORICO — questa regola è superata da D-124 (PO, 1 settembre 2026).**
+> Il testo qui sopra è conservato com'era e **non è più operativo**. Il modello vigente è
+> **PO/PM/DEV**: quello che questo documento chiama «il PM» è oggi il **PO** (Daniel Carta).
+> **Una disposizione del PO può essere tecnica ed è vincolante**: il PO può prescrivere una
+> soluzione, non soltanto segnalare un sintomo, e il DEV non può declassarla a sintomo né
+> sostituirla con una propria. Le regole in vigore stanno in `AGENTS.md` e in
+> `docs/governance/OPERATING_MODEL.md`; questo file resta un documento d'archivio.
+
 **Zero verbosità, e deve capirlo un non sviluppatore.** Niente nomi di file, funzioni o
 costanti in una risposta; niente codice; niente racconto di come ci si è arrivati. Il
 dettaglio tecnico ha già due posti dove vivere — i documenti di progetto e i messaggi di
