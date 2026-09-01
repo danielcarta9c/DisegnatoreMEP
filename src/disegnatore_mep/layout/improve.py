@@ -115,14 +115,16 @@ ventina di secondi. E' il tetto che tiene il costo limitato, non le passate.
 NUDGE_STEPS = (1, 2, 4)
 """Le traslazioni provate, in passi di griglia: le vicine prima delle lontane."""
 
-SPREAD_STEPS = (2, 4, 8, 16, 24)
+SPREAD_STEPS = (2, 4, 8, 16)
 """Gli allontanamenti dal centro provati dalla distensione, in passi di griglia.
 
 Piu' lunghi delle traslazioni del ciclo che li precede, e per un motivo
 diverso: quelle cercano di **togliere una piega**, e una piega si toglie
 allineandosi a un vicino; questa cerca di **occupare il foglio**, e il foglio e'
 grande. Sedici passi sono quaranta millimetri, un ottavo della larghezza utile
-di una A3.
+di una A3, e piu' in la' non si guadagna piu' niente: provare anche
+ventiquattro passi non ha cambiato una misura, e ogni passo in piu' e' un
+instradamento di prova speso.
 """
 
 FILL_TARGET_RATIO = 0.60
@@ -872,18 +874,20 @@ def _spread_out(
                 break
             centre_x = (box[0] + box[2]) / 2.0
             centre_y = (box[1] + box[3]) / 2.0
+            # ⚠ **Le due fasi guardano gli stessi pezzi e provano le stesse
+            # mosse**, e conviene lasciarle cosi'. Restringere la fase che
+            # distribuisce ai soli pezzi del quadrante piu' pieno, o mandarli
+            # verso il piu' vuoto invece che via dal centro, sembra piu' mirato
+            # e costa meno prove: misurato, porta il riempimento dal 42 al 37 %
+            # e peggiora anche incroci e pieghe. Il motivo e' che questa fase
+            # non serve solo a se stessa — rimescola la posa, e da quel
+            # rimescolamento la fase che riempie riparte.
             for component_id in order:
                 current = best[component_id]
-                away_x = (
-                    1.0
-                    if current.origin.x_mm + current.width_mm / 2 >= centre_x
-                    else -1.0
-                )
-                away_y = (
-                    1.0
-                    if current.origin.y_mm + current.height_mm / 2 >= centre_y
-                    else -1.0
-                )
+                here_x = current.origin.x_mm + current.width_mm / 2
+                here_y = current.origin.y_mm + current.height_mm / 2
+                away_x = 1.0 if here_x >= centre_x else -1.0
+                away_y = 1.0 if here_y >= centre_y else -1.0
                 # **Il foglio lo allarga solo chi sta sul bordo dell'ingombro.**
                 # Spostare un pezzo interno non sposta di un millimetro il
                 # rettangolo che il riempimento misura, quindi in questa fase

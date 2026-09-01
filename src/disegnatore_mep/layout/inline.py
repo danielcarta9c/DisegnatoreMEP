@@ -248,11 +248,8 @@ def place_inline_accessories(
     leads = [MIN_SPACING_MM] * len(resolved)
     trails = [MIN_SPACING_MM] * len(resolved)
     for index in range(1, len(resolved)):
-        pair = (
-            isolates[index]
-            and serviced[index - 1]
-            or serviced[index]
-            and isolates[index - 1]
+        pair = (isolates[index] and serviced[index - 1]) or (
+            serviced[index] and isolates[index - 1]
         )
         if pair:
             leads[index] = 0.0
@@ -271,7 +268,9 @@ def place_inline_accessories(
         ]
         return [item for item in found if item[1] > item[0]]
 
-    if not stretches(END_CLEARANCE_MM, END_CLEARANCE_MM) and not stretches(
+    # Il capolinea si misura con i clamp piu' larghi che questa tratta potra'
+    # usare: se nemmeno cosi' esiste un rettilineo, non ne esiste nessuno.
+    if not stretches(
         SNUG_CLEARANCE_MM if snug_head else END_CLEARANCE_MM,
         SNUG_CLEARANCE_MM if snug_tail else END_CLEARANCE_MM,
     ):

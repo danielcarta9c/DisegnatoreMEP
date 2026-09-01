@@ -46,6 +46,15 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 > tutto in un angolo. **Sono i due numeri del pezzo successivo.** Manca ancora il verdetto
 > di un collaudo a contesto separato: qui è misurato, non approvato.
 >
+> **✔ E il pezzo successivo è fatto (DRAW-001, 1 settembre):** i due numeri che D-118
+> aveva lasciato indietro sono rientrati e la regola di vicinanza del PO è consegnata.
+> Sull'impianto 1 il riempimento passa dal 29 al 42 %, lo squilibrio fra quadranti da 12,6
+> a 2,7 — dentro il limite dichiarato di 3 — gli incroci da 13 a 11, le pieghe da 33 a 25
+> e le tratte con troppe pieghe da 3 a 1. Il prezzo è la lunghezza delle tubazioni, da
+> 1030 a 1150 mm. La causa che teneva ferma la regola era una **misura**: «linea sotto il
+> simbolo» guardava se il riquadro contenesse il tratto per intero, e non vedeva chi lo
+> attraversava da parte a parte. Rapporto e artefatti in `docs/collaudi/DRAW-001/`.
+>
 > **E il criterio con cui si sceglie cosa fare** (I-013): le tavole prodotte finora il PM
 > le considera **da buttare**, quindi non si rifiniscono. Si chiudono le sue righe aperte
 > nel registro degli input, che è il primo file da leggere dopo l'handoff.
@@ -203,6 +212,7 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
 
 | Commit | Cosa |
 |---|---|
+| `de5194c` `75bd720` | **DRAW-001 — la tavola dell'impianto 1 migliora, e la regola di vicinanza entra.** La linea non passa più sotto un simbolo: la misura contava il contenimento e lasciava passare chi attraversava da parte a parte, e chi si attaccava al simbolo era per di più esente dalla distanza. Chi isola si posa sull'attacco di ciò che si manutiene, a un passo oltre la cella riservata (D-113, D-120). Riempimento e bilanciamento diventano obiettivi del collocatore invece che avvisi a tavola finita (D-111): riempimento dal 29 al 42 %, squilibrio da 12,6 a 2,7, incroci da 13 a 11, pieghe da 33 a 25, tratte con troppe pieghe da 3 a 1 |
 | — | **La tavola esce**: tre impianti su cinque su A3, in modalità verifica, da SVG a PDF a misura reale. Chi pende da uno stacco sta accanto al proprio pezzo; la soglia di ogni attacco è riservata (D-113); le fasce si leggono per processo e non per nome di sottosistema; il collocatore usa anche l'altezza. 15 prove nuove, 1050 verdi |
 | — | **Sei incoerenze chiuse nella documentazione** e l'indirizzo del PM dell'8 agosto registrato come **D-112**: la centrale non si spezza, prima si ottimizza il foglio che c'è, il formato maggiore per ultimo con motivazione verificabile |
 | — | **I cinque grafi rigenerati dalla pipeline**: solo il quinto cambia, da 98 a 108 pezzi — via il collettore mai nominato, dentro il circuito miscelato del pavimento radiante. Le sei prove che presidiavano l'artefatto vecchio sono verdi |
