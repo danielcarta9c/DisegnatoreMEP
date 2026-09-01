@@ -72,6 +72,7 @@ from disegnatore_mep.model.project import ProjectModel
 from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
 from .geometry import (
+    INK_COVERAGE_MIN,
     QUADRANT_IMBALANCE_MAX,
     PlacedSymbol,
     Point,
@@ -79,6 +80,7 @@ from .geometry import (
     box_of,
     fill_ratio,
     ink_box,
+    ink_coverage,
     ink_imbalance,
     overshoot_mm,
     run_intrudes_on,
@@ -222,21 +224,24 @@ class _Outcome(NamedTuple):
     fill: float = 0.0
     """Quanta area di disegno copre l'ingombro dell'inchiostro (A1, D-111)."""
 
-    stretch: float = 1.0
-    """Squilibrio dell'inchiostro fra i quattro quadranti del **proprio ingombro**.
+    coverage: float = 1.0
+    """Quante celle dell'ingombro portano inchiostro, sul totale.
 
     Serve a una cosa sola, e ce ne vuole una apposta: impedire che il
     riempimento si compri con una **propaggine**. Il riempimento misura il
     rettangolo che circonda il disegno, quindi basta spingere un pezzo leggero
-    lontano da tutti — una valvola di sicurezza da cinque millimetri, con il suo
-    stelo — per allungare quel rettangolo di due centimetri e mezzo di carta
-    bianca. Misurato: su una prima versione di questo ciclo, dei tredici punti
-    di riempimento guadagnati **nove venivano da un pezzo solo**, e la tavola
-    non era migliore di quanto il numero diceva.
+    lontano da tutti — una valvola di sicurezza, uno sfiato, con il loro stelo —
+    per allungare quel rettangolo di due centimetri di carta bianca. Misurato:
+    su una prima versione di questo ciclo, dei tredici punti di riempimento
+    guadagnati **nove venivano da un pezzo solo**.
 
-    Lo squilibrio sull'area di disegno non lo vede — quel pezzo pesa troppo poco
-    per spostarlo — mentre sui quadranti dell'**ingombro** una propaggine si
-    vede subito: il quadrante che si allunga resta quasi vuoto.
+    ⛔ **Il primo rimedio non rimediava niente**, e vale la pena scriverlo:
+    misurare lo squilibrio fra i quattro quadranti dell'**ingombro** da'
+    esattamente lo stesso numero che misurarlo sui quadranti dell'area centrata
+    su di esso — stesse rette di divisione, stesso inchiostro — quindi la
+    condizione in piu' era logicamente identica a quella che c'era gia'. Una
+    propaggine sta **dentro** un quadrante e non lo svuota: la si vede solo
+    guardando piu' fitto, ed e' quello che fa questa misura.
     """
 
     spread: float = 1.0
@@ -539,11 +544,10 @@ def improve_sheet(
                 _centred_on(ink_box(settled.symbols, settled.routes), sheet_rect),
                 frame.standard.line_medium_mm,
             ),
-            stretch=ink_imbalance(
+            coverage=ink_coverage(
                 settled.symbols,
                 settled.routes,
-                ink_box(settled.symbols, settled.routes) or sheet_rect,
-                frame.standard.line_medium_mm,
+                ink_box(settled.symbols, settled.routes),
             ),
         )
 
@@ -1028,18 +1032,21 @@ def _spread_out(
                     if filling:
                         # Riempire e' ammesso finche' l'inchiostro resta
                         # distribuito, e le due misure guardano due cose
-                        # diverse: `spread` che la tavola non stia da un lato,
-                        # `stretch` che il rettangolo non si allunghi su una
-                        # propaggine. La seconda e' quella che impedisce di
-                        # comprare punti con un pezzo leggero spinto lontano.
+                        # diverse: `spread` che la tavola non stia tutta da un
+                        # lato, `coverage` che il rettangolo non si allunghi su
+                        # una **propaggine** — un pezzo leggero spinto lontano
+                        # da tutti, che allunga l'ingombro riempiendo una cella
+                        # sola. La seconda e' l'unica che impedisce di comprare
+                        # punti di riempimento con carta bianca.
                         gained = found.fill > current_best.fill + _TOLERANCE_MM and (
                             (
                                 found.spread <= QUADRANT_IMBALANCE_MAX
                                 or found.spread <= current_best.spread + _TOLERANCE_MM
                             )
                             and (
-                                found.stretch <= QUADRANT_IMBALANCE_MAX
-                                or found.stretch <= current_best.stretch + _TOLERANCE_MM
+                                found.coverage >= INK_COVERAGE_MIN
+                                or found.coverage
+                                >= current_best.coverage - _TOLERANCE_MM
                             )
                         )
                     else:

@@ -9,10 +9,19 @@ giorno stesso. Gli artefatti stanno in `baseline/` e `finale/`; lo strumento che
 li misura è `metriche.py`, che non fa parte del nucleo deterministico ed è uno
 strumento di sessione come lo script che rasterizza.
 
-> **Questa è la seconda stesura.** La prima è stata **respinta** dal collaudo
-> indipendente (`COLLAUDO.md`) su sei punti, e i sei sono corretti qui: quattro
-> nel codice, due nel modo di dichiarare i numeri. Dove il collaudo ha misurato
-> qualcosa che questo rapporto affermava senza prova, vince la sua misura.
+> **Questa è la terza stesura, e le due precedenti sono state respinte** dal
+> collaudo indipendente (`COLLAUDO.md`, due verbali). Del primo giro erano sei
+> punti, del secondo altri due, e tutti e otto sono corretti qui. Dove il
+> collaudo ha misurato qualcosa che questo rapporto affermava senza prova,
+> vince la sua misura — ed è successo tre volte, sempre sulla stessa classe di
+> difetto: **un numero dichiarato che la tavola consegnata non porta**.
+>
+> ⚠ **Le misure di questo rapporto sono calcolate sulla geometria consegnata**,
+> quella con gli indirizzi stampati, e non su una ricomposizione: le impronte di
+> `metriche.json` e di `preflight.txt` coincidono, in entrambe le colonne. Nella
+> seconda stesura non era così, e la riga «rilievi di correttezza» descriveva
+> una tavola diversa da quella agli atti — che aveva una collisione fra due
+> indirizzi.
 
 ## 1. Le tre cause chiuse
 
@@ -99,15 +108,25 @@ le tre pieghe, nessuna andata e ritorno in più, nessuna tratta che perde i prop
 accessori. Cresce solo la **lunghezza**, che è il prezzo dichiarato del
 riempimento.
 
-⚠ **Riempire senza guardare la distribuzione non fa una tavola, e la prima
-stesura c'è cascata.** Basta portare un pezzo leggero lontano da tutti per
-allungare il rettangolo che il riempimento misura: nella tavola respinta, dei
+⚠ **Riempire senza guardare la distribuzione non fa una tavola, e ci siamo
+cascati due volte.** Basta portare un pezzo leggero lontano da tutti per
+allungare il rettangolo che il riempimento misura: nella prima consegna, dei
 tredici punti guadagnati **nove venivano da una sola valvola di sicurezza**
-spinta ventisette millimetri sopra il resto dell'inchiostro. Ora una seconda
-misura lo impedisce: oltre allo squilibrio fra i quadranti dell'**area**, che
-dice se la tavola sta da un lato, si guarda quello fra i quadranti del **proprio
-ingombro**, che è dove una propaggine si vede subito — il quadrante che si
-allunga resta vuoto.
+spinta ventisette millimetri sopra il resto dell'inchiostro.
+
+Il primo rimedio — guardare lo squilibrio fra i quadranti dell'ingombro invece
+che dell'area — **non rimediava niente, e il collaudo l'ha dimostrato**: le due
+partizioni hanno le stesse rette di divisione, quindi danno lo stesso numero, su
+tremila disposizioni casuali su tremila. Una propaggine sta **dentro** un
+quadrante e non lo svuota.
+
+Il rimedio vero guarda più fitto: l'ingombro si divide in otto per otto celle e
+si conta **quante portano inchiostro**. Un pezzo isolato riempie una cella della
+propria fascia e le altre restano bianche, quindi la copertura crolla; il ciclo
+rifiuta la mossa che la porti sotto tre quarti. Sulla tavola respinta la
+copertura era 0,69; su questa è 0,77, contro lo 0,86 della baseline compatta. E
+il numero che lo dice davvero è l'ultima riga della tabella qui sotto: il
+riempimento **tolto il pezzo più isolato**, che era 32,6 % e ora è 36,8 %.
 
 ## 2. Le misure, prima e dopo
 
@@ -117,19 +136,22 @@ la stessa definizione di ogni voce.
 
 | Misura | Prima | Dopo | |
 |---|---:|---:|---|
-| Riempimento del foglio | 28,7 % | **41,8 %** | +13,1 punti |
-| Rapporto fra quadrante più pieno e più vuoto | 12,6 | **2,87** | rientra nel limite di 3 |
+| Riempimento del foglio | 28,7 % | **41,0 %** | +12,3 punti |
+| Riempimento tolto il pezzo più isolato | 27,9 % | **36,8 %** | +8,9 punti: il guadagno non è di una propaggine |
+| Copertura dell'ingombro | 0,86 | **0,77** | sopra il limite di 0,75: nessuna fascia vuota |
+| Rapporto fra quadrante più pieno e più vuoto | 12,6 | **2,59** | rientra nel limite di 3 |
 | Incroci | 13 | **12** | |
-| Pieghe totali | 33 | **29** | |
-| Tratte con più di tre pieghe | 3 | **2** | |
-| Lunghezza totale delle tubazioni | 1030 mm | 1182,5 mm | è il prezzo del riempimento |
+| Pieghe totali | 33 | **27** | |
+| Tratte con più di tre pieghe | 3 | **1** | |
+| Lunghezza totale delle tubazioni | 1030 mm | 1177,5 mm | è il prezzo del riempimento |
 | Tubazioni dentro il corpo di un simbolo | 0 | **0** | misura completa: attraversamento **e** filo del bordo, nessuna esenzione |
-| Valvole di isolamento a 2,5÷5 mm dal proprio attacco | 6 su 20 | **16 su 20** | i quattro casi residui al §4.2 |
+| Rilievi di correttezza (il cancello che blocca) | nessuno | **nessuno** | misurati sulla geometria consegnata, indirizzi compresi |
+| Valvole di isolamento a 2,5÷5 mm dal proprio attacco | 6 su 20 | **17 su 20** | i tre casi residui al §4.2 |
 
 Rilievi del controllo di qualità sulla tavola: da **1 bloccante + 6 avvisi** a
-**1 bloccante + 4 avvisi**. Sparito l'avviso «il disegno è tutto su un lato»;
-spariti uno dei tre «tratta con troppe pieghe» e la metà degli incroci di troppo.
-Il bloccante è lo stesso di prima, **con lo stesso numero** (§4.1).
+**1 bloccante + 3 avvisi**. Sparito l'avviso «il disegno è tutto su un lato»;
+spariti due dei tre «tratta con troppe pieghe». Il bloccante è lo stesso di
+prima, **con lo stesso numero** (§4.1).
 
 Formato: A3, come prima. Area di disegno 350 × 235 mm.
 
@@ -156,22 +178,29 @@ disposizione e sta fuori dalle due cause di questo pacchetto.
 seconda stesura del ciclo la riporta a 37,5 mm, e il numero è verificabile nel
 preflight agli atti.*
 
-### 4.2 Quattro valvole su venti non arrivano al minimo
+### 4.2 Tre valvole su venti non arrivano al minimo
 
 | Valvola | Distanza | Perché |
-|---|---:|---:|
-| prelievo ACS | 13,5 mm | la coppia con la miscelatrice non si stringe: fra le due la posa non trova un nodo libero più vicino |
-| valvola del manometro | 12,5 mm | idem, sul collettore di ritorno |
-| defangatore, ingresso freddo del bollitore | 7,5 mm | il nodo a 5 mm era occupato — dalla soglia di un altro attacco, da un simbolo o da una tratta già disegnata — e la posa è arretrata di un passo |
+|---|---:|---|
+| prelievo ACS | 13,5 mm | la coppia con la miscelatrice non si stringe |
+| valvola del manometro | 7,5 mm | il nodo a 5 mm era occupato: la posa è arretrata di un passo |
+| ingresso freddo del bollitore | 7,5 mm | idem, sul ramo sanitario |
 
 È il «minimo **raggiungibile**» che la regola prevede: la cella davanti a un
 attacco resta libera perché è la sua unica uscita (D-113), e chi non trova posto
-al primo nodo si sposta di un passo. Sulla baseline le valvole entro forbice
-erano **6 su 20**.
+al primo nodo si sposta di un passo.
+
+⚠ **Il collaudo ha chiesto la prova di quel «non trova posto», e ha ragione a
+chiederla: non è agli atti.** Quello che è agli atti è il conto — **17 su 20**
+contro le **6 su 20** della baseline — e il fatto che i tre residui stiano tutti
+su coppie di accessori consecutivi, dove lo spazio è conteso da due simboli e non
+da uno. Dimostrare nodo per nodo che cosa occupava le posizioni più vicine
+chiederebbe uno strumento che oggi non c'è; è lavoro di un pacchetto, non di una
+riga di rapporto.
 
 ### 4.3 Il riempimento resta sotto il 60 % dichiarato
 
-41,8 % contro 60 %. Il limite è strutturale e va detto: le macchine appoggiano a
+41,0 % contro 60 %. Il limite è strutturale e va detto: le macchine appoggiano a
 una linea di terra posta all'83 % dell'altezza dell'area, e sotto di essa nessun
 simbolo può stare; sopra la corsia alta non c'è nulla da mettere. La distensione
 riempie quello che può senza sfondare i due limiti di distribuzione, e si ferma
@@ -186,6 +215,17 @@ solo per il proprio tratto terminale. Questo pacchetto ha chiuso la metà D-027
 del buco — l'attraversamento — e lascia aperta la metà B5. Non è una regressione
 (è lo stesso comportamento della baseline: 94 casi prima, 95 dopo), ma è la
 seconda metà della stessa causa, e va scritta perché non si perda.
+
+### 4.5 Il cancello di correttezza non vede gli indirizzi, e questo resta
+
+Trovato dal collaudo, e vale la pena scriverlo perché non si perda: nella catena
+del comando di disegno il controllo di correttezza gira **prima** che gli
+indirizzi della modalità verifica siano posati, quindi una collisione fra due di
+essi non può mai essere vista da lì. La collisione che c'era è stata tolta alla
+radice — gli indirizzi non evitano più le tubazioni, che D-111 dice espressamente
+di non evitare, e con quello spazio in più trovano posto senza accavallarsi — e
+la tavola consegnata non ne ha; ma **l'ordine dei due passi resta come era**,
+perché sta in un file fuori dal perimetro di questo pacchetto.
 
 ## 5. Verifiche eseguite
 
@@ -204,9 +244,12 @@ seconda metà della stessa causa, e va scritta perché non si perda.
   (`ebe165a`) fallisce su due prove, e sul ramo passa.
 - **Due generazioni consecutive** dello stesso ingresso danno la stessa impronta
   della geometria e lo stesso SVG, byte per byte; il collaudo ne ha fatte tre.
-- **Collaudo indipendente a contesto separato** (D-083): verbale in
-  `COLLAUDO.md`. Il primo giro è stato **RESPINTO**; questa consegna risponde a
-  tutti e sei i punti.
+- **Collaudo indipendente a contesto separato** (D-083): due verbali in
+  `COLLAUDO.md`, entrambi **RESPINTI**. Il primo giro su sei punti, il secondo su
+  due — una collisione fra due indirizzi che la consegna dichiarava assente
+  perché misurava una tavola senza indirizzi, e una misura contro le propaggini
+  che era matematicamente identica a quella che c'era già, quindi inutile.
+  Questa consegna risponde a tutti e otto.
 
 ## 6. Artefatti
 

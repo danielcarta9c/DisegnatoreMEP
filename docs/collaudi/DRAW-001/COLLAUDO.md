@@ -389,3 +389,243 @@ più.
 - **Cancelli**: `ruff check src tests`, `mypy src tests examples`, e le tre prove mirate. La
   suite completa era in esecuzione dall'orchestratore e non è stata duplicata; è stata
   eseguita a parte, su un worktree a `df48457`, la sola prova di guardia di D-6.
+
+---
+---
+
+# DRAW-001 — collaudo indipendente, **secondo giro**
+
+**Revisione collaudata:** `e57ecd7` (`df48457` era la consegna respinta al primo giro).
+**Base:** `ebe165a`. **Copia di lavoro pulita** al momento del collaudo.
+Il verbale del primo giro resta sopra, integralmente, e non è stato toccato.
+
+---
+
+## Verdetto del secondo giro
+
+# RESPINTO
+
+Quattro dei sei punti del primo giro sono **chiusi davvero** — li ho rimisurati uno per uno,
+non li ho creduti. La consegna è nettamente migliore: il nodo dove la freccia finiva sopra la
+valvola è pulito, la coppia valvola-circolatore sta a 2,5 mm, la baseline è rimisurata con lo
+strumento di oggi, la proposta di chiusura di I-007 è ritirata, la suite è verde.
+
+Restano due cose, e sono della stessa specie di quelle che hanno fatto respingere il primo
+giro:
+
+1. **La tavola consegnata porta un rilievo bloccante che la consegna dichiara assente.**
+   Il cancello di correttezza, eseguito da me su `finale/geometria.json`, restituisce
+   `LABEL_COLLISION` — due indirizzi stampati uno sull'altro, e si vedono. Il file
+   `finale/metriche.json` dichiara `rilievi_correttezza: []`, e lo dichiara perché **misura
+   una tavola diversa da quella consegnata**: le due portano due impronte diverse.
+   Vedi **R-1**.
+2. **Il rimedio di D-2 non fa niente.** La misura nuova `stretch` è, dimostrabilmente, **la
+   stessa quantità** di `spread`: stesso valore su 3000 layout casuali e sulla tavola
+   consegnata. La condizione aggiunta al criterio di accettazione è quindi ridondante, la
+   propaggine c'è ancora — ora è lo sfiato, 17,5 mm sopra tutto il resto — e vale 5,9 dei
+   13,1 punti di riempimento dichiarati. Il rapporto scrive «Ora una seconda misura lo
+   impedisce»: non lo impedisce. Vedi **R-2**.
+
+---
+
+## I sei punti del primo giro, uno per uno
+
+| # | Punto | Esito | Prova mia |
+|---|---|---|---|
+| D-1 | Controllo «linea sotto il simbolo» ristretto | **CHIUSO** | `lies_inside` è il predicato di `ebe165a` **parola per parola** (confrontato riga per riga con `git show ebe165a:…`), e `intrudes_into` è l'unione con `enters_body`. Riapplicando il predicato storico alla nuova geometria: **0** `LINE_UNDER_SYMBOL` (era 2). Tratti a filo del bordo di un simbolo: **2** (erano 6), entrambi da 2,5 mm e **sporgenti** oltre il riquadro, cioè fuori anche dalla convenzione storica. Attraversamenti del corpo con la mia misura indipendente: **0** su 76 tratti × 45 simboli. Il nodo della valvola del manometro, rasterizzato a 6×: **pulito**, la freccia non tocca più il simbolo |
+| — | Vincolo nuovo «la propria tratta non rientra nel proprio accessorio» | **tiene** | È applicato **dopo** il taglio, sugli accessori e sui segmenti della stessa tratta, con `intrudes_into` — la stessa misura del cancello. Non è aggirabile in silenzio: in modo tollerante (`settle_sheet(tolerant=True)`, il ciclo di miglioramento) la tratta finisce fra le `unfit`, e il ciclo rifiuta ogni mossa che le aumenti; in modo non tollerante — `compose.py:214`, la composizione vera — solleva e il foglio non esce. E se anche passasse, il cancello di correttezza lo riprende con lo stesso predicato |
+| D-2 | Riempimento gonfiato da una propaggine | **NON chiuso** | Vedi **R-2** |
+| D-3 | Misura e regola in disaccordo su chi isola | **CHIUSO** | `metriche.py` importa `ISOLATING_FUNCTIONS` dal codice e l'esenzione `ends_here` è sparita. Censimento mio sul file consegnato: **22 valvole, 20 soggette alla regola, 16 dentro 2,5÷5 mm**; sulla baseline rimisurata, **6 su 20**. La valvola bloccabile aperta ora è censita (5,0 mm) |
+| D-4 | Coppia valvola-circolatore a 0 mm | **CHIUSO** | Riquadri misurati da me su `finale/geometria.json`: `valve-isolation-circolatore-a` `(212,5 · 123,5 → 217,5 · 128,5)`, `circolatore` `(220,0 · 121,0 → 230,0 · 131,0)` → **2,5 mm**. Nel codice lo stacco si misura ora sul riquadro anche all'indietro (`snapped - extent_here/2 < cursor + lead` scarta la stazione), e la lista `trails`, che era codice morto, è stata tolta |
+| D-5 | Proposta di chiusura di I-007 non sostenibile | **CHIUSO** | La riga del registro dice ora «la chiusura **NON** si propone» e nomina il rilievo bloccante che resta. §4.1 riporta 37,5 mm, e il numero è vero: il preflight della tavola rigenerata **da me** dice 37,5 mm |
+| D-6 | Suite rossa sul commit consegnato | **CHIUSO** | `tests/layout/test_accessori_appesi.py` più le tre prove nuove più `tests/validation`: **72 passed, 1 xfailed**. `ruff check src tests`: verde. `mypy src tests examples`: *no issues in 133 source files*. La guardia è rimessa in piedi con una prova propria, e il caso di regressione di I-018 continua a fallire su `ebe165a` (**2 failed, 4 passed**) |
+
+---
+
+## Difetti del secondo giro
+
+### R-1 — La tavola consegnata **non passa il cancello di correttezza**, e la consegna dice che lo passa
+
+Eseguito da me, sul file consegnato:
+
+```
+>>> validate_drawing_geometry(DrawingGeometry(finale/geometria.json), NOVE_C_A3)
+finale:   [('LABEL_COLLISION', ['t1', 'address-valve-isolation-accumulo-secondary-in'])]
+baseline: []
+```
+
+`LABEL_COLLISION` ha severità **BLOCKING**. È **nuovo**: sulla baseline non c'è. E si vede:
+rasterizzato a 6×, l'indirizzo `RS.01.N.02` e l'indirizzo `CS.01.N.03` sono stampati uno
+dentro l'altro — l'ultimo «2» del primo e la «C» del secondo si sovrappongono. L'ho trovato
+guardando la tavola prima di misurarlo.
+
+`finale/metriche.json` dichiara `rilievi_correttezza: []`.
+
+**Perché la misura non lo vede, ed è la parte che conta.** `metriche.py` compone la tavola
+con `compose_on_ordinary_frame`, che **non posa gli indirizzi**; il comando `draw` li posa
+dopo, in modalità verifica. Le due tavole differiscono e le impronte lo dicono:
+
+| | impronta |
+|---|---|
+| `finale/geometria.json`, `.svg`, `.pdf`, `.png`, `preflight.txt` | `644c8e9613a8f21e…` |
+| `finale/metriche.json` (`impronta`) | `2ad560fc313fbe2c…` |
+
+Ho verificato quale sia quale: rigenerando la tavola con `disegnatore_mep draw … --verifica`
+ottengo `644c8e96…`, identica a quella agli atti; rieseguendo `metriche.py` ottengo
+`2ad560fc…`. Ho poi confrontato le due geometrie: **simboli identici, tratte identiche,
+etichette assenti** nella seconda — quarantacinque etichette su quarantacinque.
+
+Ne discendono due cose:
+
+- le sette misure numeriche del rapporto **restano valide** (riempimento, quadranti, incroci,
+  pieghe, lunghezza, valvole: nessuna guarda le etichette), e le ho ricontrollate tutte;
+- ma la riga «rilievi di correttezza» della consegna **non è una misura della tavola
+  consegnata**, e la tavola consegnata ha un rilievo bloccante che nessuno ha dichiarato.
+
+**La causa prima non è del DEV, e va detto.** In `cli.py:262-266` il cancello gira **prima**
+che gli indirizzi siano posati:
+
+```
+frame, drawing = compose_on_ordinary_frame(project, catalog)
+geometry_report = validate_drawing_geometry(drawing, frame)   # ← qui gli indirizzi non ci sono
+...
+if args.verifica:
+    drawing = _with_addresses(drawing, project, catalog, frame, args.naming)   # ← posati qui
+```
+
+Una collisione fra indirizzi di verifica non può quindi **mai** essere vista dal cancello.
+`cli.py` è **fuori perimetro** e il DEV ha fatto bene a non toccarlo. Ma due cose erano suo
+dovere: **guardare la tavola che consegna** — e la collisione si vede — e non far dire allo
+strumento di misura «nessun rilievo di correttezza» quando lo strumento misura un'altra
+tavola. È lo stesso principio che il rapporto enuncia due volte in proprio: «devono dare la
+stessa risposta, o si approva una tavola e se ne consegna un'altra».
+
+### R-2 — `stretch` è la stessa quantità di `spread`: il rimedio di D-2 è nullo
+
+`_Outcome.stretch` è definito come lo squilibrio dell'inchiostro fra i quadranti
+dell'**ingombro**; `spread` come quello fra i quadranti dell'**area di disegno**, ma
+`_centred_on` costruisce quell'area **centrata sull'ingombro stesso**. Le due partizioni
+hanno quindi le **stesse due rette di divisione** — `x = centro_x`, `y = centro_y` — e tutto
+l'inchiostro sta dentro l'ingombro: ogni quadrante dell'area centrata contiene esattamente
+l'inchiostro del quadrante corrispondente dell'ingombro. Le due misure non possono differire.
+
+Verificato, non dedotto:
+
+```
+tavola consegnata:      spread = 2.8732   stretch = 2.8732   uguali
+3000 layout casuali con l'ingombro dentro l'area:  stretch != spread in  0  casi
+```
+
+(la condizione «ingombro dentro l'area» non è una comodità della prova: `is_valid` in
+`improve.py` scarta ogni mossa che porti un pezzo fuori dall'area di posa, quindi è l'unico
+caso che il ciclo possa produrre.)
+
+La condizione aggiunta al ramo `filling` —
+`(spread ≤ 3 or spread non peggiora) and (stretch ≤ 3 or stretch non peggiora)` — è dunque
+**logicamente identica** alla condizione che c'era già. Il ciclo accetta esattamente le stesse
+mosse di prima.
+
+E infatti la propaggine c'è ancora. Misurata da me sul file consegnato:
+
+| | riempimento | senza il pezzo più isolato |
+|---|---:|---:|
+| baseline | 28,7 % | 27,9 % (valvola di sicurezza) |
+| finale | **41,8 %** | **35,9 %** (sfiato aria) |
+| guadagno | **+13,1 punti** | **+8,0 punti** |
+
+`air-vent-accumulo-primary-out` sta a `y = 71,0`; **l'inchiostro successivo comincia a
+`y = 88,5`**. In mezzo, 17,5 mm di foglio bianco attraversati da un solo stelo. Rasterizzato:
+è un lecca-lecca isolato in alto a destra del vuoto. Al primo giro la propaggine era la
+valvola di sicurezza a 27,5 mm e valeva 9,2 punti; ora è lo sfiato a 17,5 mm e vale 5,9. Il
+difetto è **dimezzato, non chiuso** — e non è stato dimezzato dalla misura nuova, che non
+fa nulla, ma dal fatto che il ciclo greedy ha preso un altro cammino dopo le altre modifiche
+(le voci `long_runs` e `shortened` nell'accettazione). Cioè: **per caso**.
+
+Va aggiunto, a favore del pezzo: uno sfiato **si monta in alto**, e alzarlo non è sbagliato
+come lo era alzare una valvola di sicurezza. Ma 17,5 mm di stelo nudo non sono una scelta di
+disegno, sono il residuo di una mossa comprata per il numero.
+
+**Cosa non va, in una riga:** il rapporto §1.3 afferma «Ora una seconda misura lo impedisce…
+sui quadranti dell'**ingombro** una propaggine si vede subito», e la docstring di `stretch`
+afferma «Lo squilibrio sull'area di disegno non lo vede». Sono due affermazioni **false**, e
+sono esattamente la classe di difetto per cui il primo giro è stato respinto.
+
+---
+
+## Osservazioni non bloccanti del secondo giro
+
+**O2-1 — Numeri in contraddizione dentro la stessa cella del registro.** La riga I-018 di
+`docs/input-pm/REGISTRO.md` contiene ora sia «**quindici** valvole su **diciannove**» (frase
+del primo giro, non aggiornata) sia «**Sedici** valvole su **venti**» (frase nuova). Il PO che
+la legge trova due censimenti diversi nello stesso paragrafo.
+
+**O2-2 — Due scostamenti di D-120 sono peggiorati, e la ragione è dichiarata ma non provata.**
+`valve-isolation-dhw-hot-utenze-a` passa da 7,5 a **13,5 mm** e la valvola del manometro resta
+a **12,5 mm**. Il conteggio complessivo migliora (6 → 16 su 20) e questo è il numero del
+criterio; ma il rapporto §4.2 spiega tutt'e quattro i residui con «il minimo raggiungibile» e
+«la posa non trova un nodo libero più vicino», e per i due a 12,5-13,5 mm — più del doppio
+dello stacco ordinario — quell'affermazione **non è dimostrata da nessuna misura agli atti**.
+Basterebbe scrivere quali nodi sono stati provati e da cosa erano occupati.
+
+**O2-3 — Le due impronte convivono nella consegna senza che nessuno lo dica.** Anche
+sistemata R-1, resta che `preflight.txt` stampa `644c8e96…` e `metriche.json` `2ad560fc…`:
+chi verifica non ha modo di sapere che sono la stessa tavola con e senza indirizzi. Una riga
+nel rapporto, o l'uso del secondo argomento di `metriche.py` (che ora sa leggere una geometria
+agli atti) sulla geometria vera, chiude la questione.
+
+**O2-4 — L'esenzione B5 resta aperta, ed è ora dichiarata.** Il rapporto §4.4 la registra
+correttamente, con i miei numeri (94 casi prima, 95 dopo). Nessuna obiezione: è la seconda
+metà della stessa causa e sta fuori dal pacchetto.
+
+**O2-5 — Confermate le voci che già andavano bene al primo giro.** Grafo canonico rigenerato
+da me su `e57ecd7`: `sha256 5d3334f5c87b84ef…`, identico a `ebe165a` e all'artefatto.
+Determinismo: due rigenerazioni mie in processi distinti danno la stessa impronta, e la
+rigenerazione con `draw` riproduce l'impronta agli atti. Perimetro: 30 file, tutti dentro
+l'elenco del Work Package — in particolare `cli.py` **non** è stato toccato, ed è la scelta
+giusta. Nessuna riga del registro chiusa dal DEV. Nessuna regola cablata sull'esempio.
+
+---
+
+## Cosa manca perché la consegna sia accettabile
+
+1. **Togliere la collisione fra i due indirizzi**, o — se non è risolvibile dentro il
+   perimetro — **dichiararla** nel rapporto fra i difetti residui, con il codice del rilievo,
+   e scrivere che il cancello non può vederla perché in `cli.py` gira prima che gli indirizzi
+   siano posati. In nessun caso la consegna può continuare a dire `rilievi_correttezza: []`.
+2. **O far funzionare la misura contro la propaggine, o smettere di dire che funziona.** Se
+   serve una misura che veda un pezzo isolato, deve guardare qualcosa che `spread` non guarda
+   già — per esempio quanta parte dell'ingombro è vuota, o la distanza del pezzo più lontano
+   dal resto dell'inchiostro. Altrimenti si tolgono `stretch` e le due frasi che lo
+   descrivono, e il rapporto pubblica i due numeri affiancati: **41,8 % e 35,9 % al netto del
+   pezzo isolato**, lasciando al PM il giudizio sul criterio 5.
+3. **Allineare i numeri della riga I-018** del registro (O2-1).
+
+Il resto della consegna, per quanto ho potuto misurarlo, è in ordine.
+
+---
+
+## Come ho misurato il secondo giro
+
+- Predicato storico di `ebe165a` riapplicato alla nuova geometria; misura mia
+  dell'attraversamento del corpo aperto; elenco dei tratti a filo del bordo.
+- `enters_body`/`lies_inside`/`intrudes_into` letti riga per riga contro il codice di
+  `ebe165a`.
+- `validate_drawing_geometry` (il cancello vero) eseguito su `baseline/geometria.json` e
+  `finale/geometria.json`.
+- `drawing_fingerprint` calcolata sui file agli atti e confrontata con `metriche.json` e
+  `preflight.txt`; tavola rigenerata con `disegnatore_mep draw … --verifica` e con
+  `compose_on_ordinary_frame`, e le due geometrie confrontate campo per campo.
+- `spread` e `stretch` calcolate con le funzioni del progetto sulla tavola consegnata e su
+  **3000** layout casuali con l'ingombro dentro l'area di disegno.
+- Riempimento ricalcolato escludendo il pezzo più isolato, con la stessa procedura del primo
+  giro.
+- Distanze delle valvole rilette da `metriche.json` e **ricalcolate** sui riquadri della
+  geometria.
+- Modello canonico rigenerato su `e57ecd7` e confrontato con `sha256sum`.
+- Prove: `test_linea_sotto_simbolo` su un worktree a `ebe165a` (2 failed, 4 passed) e sul
+  ramo; `test_vicinanza_valvole`, `test_riempimento_del_foglio`, `tests/validation`,
+  `test_accessori_appesi` (72 passed, 1 xfailed); `ruff`; `mypy src tests examples`. La suite
+  completa, che costa tredici minuti, non è stata duplicata: ho eseguito il file che al primo
+  giro era rosso, ed è verde.
+- Tavola guardata: `finale/impianto1.png` a piena pagina e quattro ingrandimenti a 6× sui
+  nodi che al primo giro erano difettosi e su quello nuovo.

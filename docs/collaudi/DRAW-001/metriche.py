@@ -33,7 +33,9 @@ from disegnatore_mep.layout.geometry import (  # noqa: E402
     DrawingGeometry,
     box_of,
     drawing_fingerprint,
+    fill_ratio,
     ink_box,
+    ink_coverage,
     intrudes_into,
     moves_of,
 )
@@ -49,6 +51,38 @@ from disegnatore_mep.validation.preflight import (  # noqa: E402
 )
 
 TOLERANCE_MM = 1e-6
+
+def _fill_without_the_loneliest(sheet: object, area: object) -> float:
+    """Il riempimento tolto il pezzo piu' lontano dal resto dell'inchiostro.
+
+    E' la misura che smaschera una **propaggine**: se togliendo un simbolo solo
+    — e la tratta che lo raggiunge — il riempimento crolla, quel numero non era
+    del disegno, era di quel pezzo. Il collaudo indipendente l'ha usata per
+    respingere due consegne, e da allora sta qui accanto all'altra.
+    """
+    symbols = list(sheet.symbols)  # type: ignore[attr-defined]
+    routes = list(sheet.routes)  # type: ignore[attr-defined]
+    rect = (area.x_mm, area.y_mm, area.right_mm, area.bottom_mm)  # type: ignore[attr-defined]
+    base = fill_ratio(symbols, routes, rect)
+    worst = base
+    for index, symbol in enumerate(symbols):
+        kept = symbols[:index] + symbols[index + 1 :]
+        # Anche la tratta che lo raggiunge se ne va: un pezzo isolato porta con
+        # se' il proprio stelo, ed e' lo stelo a disegnare il vuoto.
+        box = (symbol.origin.x_mm, symbol.origin.y_mm, symbol.right_mm, symbol.bottom_mm)
+        others = [
+            route
+            for route in routes
+            if not any(
+                box[0] - 5.0 <= point.x_mm <= box[2] + 5.0
+                and box[1] - 5.0 <= point.y_mm <= box[3] + 5.0
+                for segment in route.segments
+                for point in segment
+            )
+        ]
+        worst = min(worst, fill_ratio(kept, others, rect))
+    return worst
+
 
 def measure(
     project_path: Path, geometry_path: Path | None = None
@@ -226,6 +260,13 @@ def measure(
                     for item in (ink_box(sheet.symbols, sheet.routes) or (0, 0, 0, 0))
                 ],
                 "riempimento_pct": round(_fill_ratio(sheet, area) * 100, 1),
+                "riempimento_senza_il_piu_isolato_pct": round(
+                    _fill_without_the_loneliest(sheet, area) * 100, 1
+                ),
+                "copertura_ingombro": round(
+                    ink_coverage(sheet.symbols, sheet.routes, ink_box(sheet.symbols, sheet.routes)),
+                    3,
+                ),
                 "quadranti_rapporto": (
                     round(max(ink) / min(ink), 2) if min(ink) > TOLERANCE_MM else None
                 ),

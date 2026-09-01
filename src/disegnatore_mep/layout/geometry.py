@@ -492,6 +492,68 @@ def ink_imbalance(
     return max(areas) / min(areas)
 
 
+INK_COVERAGE_CELLS = 8
+"""In quante parti per lato si divide l'ingombro per contare i vuoti.
+
+Otto per otto sono sessantaquattro celle: abbastanza fitte da isolare una
+propaggine larga un tubo, abbastanza larghe da non contare come vuoto lo stacco
+fra due componenti vicini.
+"""
+
+
+INK_COVERAGE_MIN = 0.75
+"""Sotto questa copertura l'ingombro porta una fascia vuota: una propaggine.
+
+**Taratura, misurata sulle tavole dell'impianto 1** e non scelta a occhio: la
+tavola compatta di partenza copre 0,86; quella che si era comprata tredici punti
+di riempimento spingendo uno sfiato diciassette millimetri sopra tutto il resto
+copre 0,69; quella senza propaggini, 0,81. Tre quarti stanno in mezzo, e
+lasciano al collocatore lo spazio per aprire il disegno senza lasciarci dentro
+una striscia di carta bianca attraversata da un solo stelo.
+"""
+
+
+def ink_coverage(
+    symbols: list[PlacedSymbol],
+    routes: list[RoutedTrunk],
+    box: tuple[float, float, float, float] | None,
+    cells: int = INK_COVERAGE_CELLS,
+) -> float:
+    """Quante celle dell'ingombro portano inchiostro, sul totale.
+
+    E' la misura che riconosce una **propaggine**, e serve perche' il
+    riempimento da solo non la vede: il riempimento guarda il rettangolo che
+    circonda il disegno, quindi un pezzo leggero spinto lontano da tutti lo
+    allunga di due centimetri di carta bianca e il numero sale. Qui invece quel
+    pezzo riempie una cella su otto della propria fascia, e la copertura scende.
+
+    ⛔ **Non basta guardare lo squilibrio fra i quattro quadranti**, ed e' un
+    errore gia' commesso: misurato sui quadranti dell'ingombro da' *esattamente*
+    lo stesso numero che sui quadranti dell'area centrata su di esso — stesse
+    rette di divisione, stesso inchiostro — quindi non aggiunge niente. Una
+    propaggine sta dentro un quadrante e non lo svuota: lo si vede solo
+    guardando piu' fitto.
+    """
+    if box is None or cells <= 0:
+        return 1.0
+    width, height = box[2] - box[0], box[3] - box[1]
+    if width <= TOLERANCE_MM or height <= TOLERANCE_MM:
+        return 1.0
+    step_x, step_y = width / cells, height / cells
+    filled = 0
+    for row in range(cells):
+        for col in range(cells):
+            cell = (
+                box[0] + col * step_x,
+                box[1] + row * step_y,
+                box[0] + (col + 1) * step_x,
+                box[1] + (row + 1) * step_y,
+            )
+            if ink_area_mm2(symbols, routes, cell, 1.0) > TOLERANCE_MM:
+                filled += 1
+    return filled / float(cells * cells)
+
+
 def drawing_fingerprint(drawing: DrawingGeometry) -> str:
     """Impronta riproducibile della geometria.
 
