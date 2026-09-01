@@ -23,7 +23,14 @@ from disegnatore_mep.catalog.schema import ComponentTrait
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
 from .errors import LayoutError
-from .geometry import PlacedSymbol, Point, RoutedTrunk, run_intrudes_on
+from .geometry import (
+    PlacedSymbol,
+    Point,
+    RoutedTrunk,
+    intrudes_into,
+    moves_of,
+    run_intrudes_on,
+)
 from .grid import Cell, GridSpace
 from .route import port_aprons, route_sheet
 from .trunks import Trunk
@@ -241,12 +248,13 @@ def place_inline_accessories(
     last = len(resolved) - 1
     snug_head = bool(resolved) and isolates[0] and services(trunk.start)
     snug_tail = bool(resolved) and isolates[last] and services(trunk.end)
-    # Lo stacco che ciascun accessorio pretende prima e dopo di se'. Vale un
-    # passo fra due accessori qualunque; scende a zero — cioe' resta il solo
-    # passo che il vicino gia' chiede — fra chi isola e l'apparecchio in linea
-    # che isola.
+    # Lo stacco che ciascun accessorio pretende **prima di se'**. Vale un passo
+    # fra due accessori qualunque; scende a zero — e resta allora il solo passo
+    # che chi lo precede si tiene dietro — fra chi isola e l'apparecchio in
+    # linea che isola. Dopo di se' lo stacco e' sempre un passo, e non c'e' un
+    # secondo elenco: uno solo dei due margini varia, e tenerne due darebbe una
+    # simmetria apparente.
     leads = [MIN_SPACING_MM] * len(resolved)
-    trails = [MIN_SPACING_MM] * len(resolved)
     for index in range(1, len(resolved)):
         pair = (isolates[index] and serviced[index - 1]) or (
             serviced[index] and isolates[index - 1]
@@ -337,7 +345,7 @@ def place_inline_accessories(
     for index, component in enumerate(resolved):
         manifest = component.symbol.manifest
         gap = manifest.inline_gap_mm or 0.0
-        lead, trail = leads[index], trails[index]
+        lead, trail = leads[index], MIN_SPACING_MM
         needed = gap + lead + trail
         # Il capo contro cui questo accessorio si stringe, se e' quello che
         # isola l'apparecchio da manutenere: gli altri accessori tengono lo
@@ -386,6 +394,17 @@ def place_inline_accessories(
                     x_mm=station.point.x_mm - turned.width_mm / 2,
                     y_mm=station.point.y_mm - turned.height_mm / 2,
                 )
+                # **Lo stacco si misura sul riquadro anche all'indietro.** La
+                # stazione si sceglie sulla lunghezza del taglio, ma il simbolo
+                # e' largo il proprio riquadro, che puo' sporgere oltre il
+                # taglio da tutt'e due i lati: chi arriva dopo si ritrovava
+                # appoggiato al fianco di chi lo precede, e con la coppia di
+                # D-120 — che rinuncia al proprio passo di testa — i due
+                # arrivavano a toccarsi. Si guarda dove il **riquadro**
+                # comincia, non dove comincia l'interruzione.
+                extent_here = turned.width_mm if station.horizontal else turned.height_mm
+                if snapped - extent_here / 2 < cursor + lead - 1e-9:
+                    continue
                 if (
                     clear_of_symbols(origin, turned.width_mm, turned.height_mm)
                     and clear_of_other_runs(origin, turned.width_mm, turned.height_mm)
@@ -442,7 +461,28 @@ def place_inline_accessories(
             rebuilt.extend(_split(part, local_low, local_high))
         segments = rebuilt
 
-    return placed, routed.model_copy(update={"segments": segments})
+    # **E la propria tratta non deve rientrare nel riquadro di un accessorio.**
+    # Il taglio toglie il pezzo di linea che passa **per** il simbolo, ma una
+    # spezzata che piega li' accanto puo' rientrare nel riquadro da un altro
+    # lato, e allora la linea e' disegnata sotto il simbolo esattamente come se
+    # non fosse stata interrotta. Si guarda **dopo** il taglio, perche' prima
+    # ogni posizione sarebbe intrusa dalla linea che il simbolo sta per
+    # interrompere; e si guarda con la stessa misura del cancello, o si
+    # approverebbe una posa che la tavola poi rifiuta.
+    trimmed = routed.model_copy(update={"segments": segments})
+    for item in placed:
+        box = (item.origin.x_mm, item.origin.y_mm, item.right_mm, item.bottom_mm)
+        for part in segments:
+            if any(
+                intrudes_into(box, before, after) for before, after in moves_of(part)
+            ):
+                raise LayoutError(
+                    f"run {trunk.connection_ids[0]} still passes under "
+                    f"{item.symbol_id} after breaking for it: the accessory sits "
+                    f"where its own run bends back into it, give the run a longer "
+                    f"straight length"
+                )
+    return placed, trimmed
 
 
 def _offset_of(points: list[Point], start: Point) -> float:

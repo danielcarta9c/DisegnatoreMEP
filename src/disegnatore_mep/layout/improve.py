@@ -30,7 +30,7 @@ l'andata e ritorno. Nell'ordine:
    indietro non e' un disegno caro, e' un disegno sbagliato. Una mossa che ne
    toglie una si accetta anche a obiettivo invariato; una che ne aggiunge una
    non si accetta mai, per nessun guadagno;
-3. gli attraversamenti, che non devono crescere;
+3. gli attraversamenti e le tratte oltre le tre pieghe, che non devono crescere;
 4. l'obiettivo totale, che deve scendere strettamente.
 
 Vincoli mai violabili, qualunque sia il guadagno:
@@ -108,8 +108,12 @@ Il tetto scatta in modo deterministico — stessi ingressi, stesse prove, stesso
 punto di arresto — quindi non costa la riproducibilita' bit-a-bit.
 
 Il numero segue le passate e il costo di una prova, che ora comprende la posa
-degli accessori: la tavola completa ne spende poco piu' di 260 e disegna in una
-ventina di secondi. E' il tetto che tiene il costo limitato, non le passate.
+degli accessori. E' il tetto che tiene il costo limitato, non le passate.
+
+**Alzarlo non serve**, ed e' misurato: portandolo a seicentocinquanta, sulla
+tavola dell'impianto 1 non cambia una sola misura. Quando il ciclo si ferma con
+un'andata e ritorno ancora in piedi non e' perche' ha finito le prove: e'
+perche' nessuna delle mosse che conosce la toglie.
 """
 
 NUDGE_STEPS = (1, 2, 4)
@@ -217,6 +221,23 @@ class _Outcome(NamedTuple):
 
     fill: float = 0.0
     """Quanta area di disegno copre l'ingombro dell'inchiostro (A1, D-111)."""
+
+    stretch: float = 1.0
+    """Squilibrio dell'inchiostro fra i quattro quadranti del **proprio ingombro**.
+
+    Serve a una cosa sola, e ce ne vuole una apposta: impedire che il
+    riempimento si compri con una **propaggine**. Il riempimento misura il
+    rettangolo che circonda il disegno, quindi basta spingere un pezzo leggero
+    lontano da tutti — una valvola di sicurezza da cinque millimetri, con il suo
+    stelo — per allungare quel rettangolo di due centimetri e mezzo di carta
+    bianca. Misurato: su una prima versione di questo ciclo, dei tredici punti
+    di riempimento guadagnati **nove venivano da un pezzo solo**, e la tavola
+    non era migliore di quanto il numero diceva.
+
+    Lo squilibrio sull'area di disegno non lo vede — quel pezzo pesa troppo poco
+    per spostarlo — mentre sui quadranti dell'**ingombro** una propaggine si
+    vede subito: il quadrante che si allunga resta quasi vuoto.
+    """
 
     spread: float = 1.0
     """Squilibrio dell'inchiostro fra i quattro quadranti dell'area di disegno.
@@ -518,6 +539,12 @@ def improve_sheet(
                 _centred_on(ink_box(settled.symbols, settled.routes), sheet_rect),
                 frame.standard.line_medium_mm,
             ),
+            stretch=ink_imbalance(
+                settled.symbols,
+                settled.routes,
+                ink_box(settled.symbols, settled.routes) or sheet_rect,
+                frame.standard.line_medium_mm,
+            ),
         )
 
     def candidates_of(component_id: str) -> list[_Move]:
@@ -787,13 +814,30 @@ def improve_sheet(
                 straightened = same_fit and len(found.turnbacks) < len(
                     current_best.turnbacks
                 )
+                # Una tratta che smette di girare attorno a un ostacolo si
+                # accetta anche a obiettivo fermo, come si accetta un'andata e
+                # ritorno in meno: quattro pieghe su una tratta sola non sono
+                # una tavola piu' cara, sono un giro (B4).
+                shortened = (
+                    same_fit
+                    and len(found.turnbacks) == len(current_best.turnbacks)
+                    and found.crossings <= current_best.crossings
+                    and found.long_runs < current_best.long_runs
+                )
                 better = (
                     same_fit
                     and len(found.turnbacks) == len(current_best.turnbacks)
                     and found.crossings <= current_best.crossings
+                    # Nemmeno una tratta in piu' oltre le tre pieghe: e' un
+                    # rilievo di qualita' per se' (B4), e l'obiettivo totale non
+                    # lo vede — trenta pieghe sparse su venti tratte le somma
+                    # come quattro su una sola, che invece e' un giro attorno a
+                    # un ostacolo. Senza questa voce il ciclo comprava una
+                    # tratta lunga per risparmiare due pieghe altrove.
+                    and found.long_runs <= current_best.long_runs
                     and found.objective < current_best.objective
                 )
-                if repaired or straightened or better:
+                if repaired or straightened or shortened or better:
                     best = trial
                     current_best = found
                     moved = True
@@ -982,9 +1026,21 @@ def _spread_out(
                     # distribuzione non peggiori**, poi si distribuisce a
                     # riempimento fermo.
                     if filling:
+                        # Riempire e' ammesso finche' l'inchiostro resta
+                        # distribuito, e le due misure guardano due cose
+                        # diverse: `spread` che la tavola non stia da un lato,
+                        # `stretch` che il rettangolo non si allunghi su una
+                        # propaggine. La seconda e' quella che impedisce di
+                        # comprare punti con un pezzo leggero spinto lontano.
                         gained = found.fill > current_best.fill + _TOLERANCE_MM and (
-                            found.spread <= QUADRANT_IMBALANCE_MAX
-                            or found.spread <= current_best.spread + _TOLERANCE_MM
+                            (
+                                found.spread <= QUADRANT_IMBALANCE_MAX
+                                or found.spread <= current_best.spread + _TOLERANCE_MM
+                            )
+                            and (
+                                found.stretch <= QUADRANT_IMBALANCE_MAX
+                                or found.stretch <= current_best.stretch + _TOLERANCE_MM
+                            )
                         )
                     else:
                         gained = (

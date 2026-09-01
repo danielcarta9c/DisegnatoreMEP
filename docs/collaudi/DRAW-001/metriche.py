@@ -6,7 +6,10 @@ regole, ricompone la tavola con la catena corrente e stampa in JSON le sette
 misure che il pacchetto chiede, piu' l'impronta della geometria.
 
 Uso:
-    .venv/bin/python docs/collaudi/DRAW-001/metriche.py MODELLO.json > metriche.json
+    .venv/bin/python docs/collaudi/DRAW-001/metriche.py MODELLO.json [GEOMETRIA.json]
+
+Con la geometria, la tavola si legge invece di ricomporla: e' il modo di
+rimisurare con lo strumento di oggi una tavola prodotta ieri.
 """
 
 from __future__ import annotations
@@ -22,17 +25,22 @@ from disegnatore_mep.catalog.registry import ComponentRegistry  # noqa: E402
 from disegnatore_mep.catalog.schema import ComponentTrait  # noqa: E402
 from disegnatore_mep.graphics.registry import SymbolRegistry  # noqa: E402
 from disegnatore_mep.io.project_json import load_project  # noqa: E402
-from disegnatore_mep.layout.compose import compose_on_ordinary_frame  # noqa: E402
+from disegnatore_mep.layout.compose import (  # noqa: E402
+    compose_on_ordinary_frame,
+    inline_component_ids,
+)
 from disegnatore_mep.layout.geometry import (  # noqa: E402
+    DrawingGeometry,
     box_of,
-    ink_box,
     drawing_fingerprint,
+    ink_box,
+    intrudes_into,
     moves_of,
 )
-from disegnatore_mep.validation.geometry import validate_drawing_geometry  # noqa: E402
+from disegnatore_mep.layout.inline import ISOLATING_FUNCTIONS  # noqa: E402
 from disegnatore_mep.layout.partition import partition_project  # noqa: E402
 from disegnatore_mep.layout.trunks import build_trunks  # noqa: E402
-from disegnatore_mep.layout.compose import inline_component_ids  # noqa: E402
+from disegnatore_mep.validation.geometry import validate_drawing_geometry  # noqa: E402
 from disegnatore_mep.validation.preflight import (  # noqa: E402
     _fill_ratio,
     _ink_area_mm2,
@@ -42,41 +50,38 @@ from disegnatore_mep.validation.preflight import (  # noqa: E402
 
 TOLERANCE_MM = 1e-6
 
+def measure(
+    project_path: Path, geometry_path: Path | None = None
+) -> dict[str, object]:
+    """Le misure della tavola di questo modello.
 
-def _crosses_body(
-    before: object, after: object, box: tuple[float, float, float, float]
-) -> bool:
-    """Vero se il tratto condivide superficie con il riquadro pieno del simbolo.
-
-    E' la misura del criterio 1 del pacchetto, e non quella storica: un tratto
-    **interamente** dentro il riquadro e' solo il caso estremo di attraversarlo.
+    Con `geometry_path` la geometria si **legge** invece di ricomporla: serve a
+    rimisurare una tavola gia' agli atti con lo strumento di oggi, cosi' che le
+    due colonne di un confronto siano calcolate con la stessa definizione. Senza,
+    la tavola si ricompone dalla catena corrente.
     """
-    left, top, right, bottom = box
-    x_low, x_high = min(before.x_mm, after.x_mm), max(before.x_mm, after.x_mm)  # type: ignore[attr-defined]
-    y_low, y_high = min(before.y_mm, after.y_mm), max(before.y_mm, after.y_mm)  # type: ignore[attr-defined]
-    return (
-        x_low < right - TOLERANCE_MM
-        and left < x_high - TOLERANCE_MM
-        and y_low < bottom - TOLERANCE_MM
-        and top < y_high - TOLERANCE_MM
-    )
-
-
-def measure(project_path: Path) -> dict[str, object]:
     symbols = SymbolRegistry.from_directory(ROOT / "assets" / "symbols")
     catalog = ComponentRegistry.from_directory(
         ROOT / "examples" / "layout" / "catalog", symbols=symbols
     )
     project = load_project(project_path)
     frame, drawing = compose_on_ordinary_frame(project, catalog)
+    if geometry_path is not None:
+        drawing = DrawingGeometry.model_validate_json(
+            geometry_path.read_text(encoding="utf-8")
+        )
     area = frame.drawing_rect_mm
     line_mm = frame.standard.line_medium_mm
 
     inline_ids = inline_component_ids(project, catalog)
+    # Chi isola si riconosce con **la stessa definizione della regola**: se la
+    # misura e la regola non concordano su chi sia una valvola, il numero che
+    # certifica la regola non certifica niente.
     isolators = {
         item.id
         for item in project.components
-        if "isolation" in catalog.resolve(item.definition_id).definition.functions
+        if ISOLATING_FUNCTIONS
+        & set(catalog.resolve(item.definition_id).definition.functions)
     }
     definitions = {item.id: item.definition_id for item in project.components}
     maintainable = {
@@ -113,23 +118,19 @@ def measure(project_path: Path) -> dict[str, object]:
                 long_runs += 1
             crossings += len(route.crossings)
 
-        # Tubo dentro il corpo di un simbolo, contando anche l'attraversamento
-        # parziale: il tratto che finisce su un attacco non conta, e si
-        # riconosce dal capo della spezzata che cade sul riquadro.
+        # Tubo dentro il corpo di un simbolo, **senza nessuna esenzione**: la
+        # stessa misura del cancello di correttezza, che conta l'attraversamento
+        # e il tratto che corre a filo dentro il riquadro. Chi termina su un
+        # attacco non compare per costruzione — una porta sta sul perimetro — e
+        # non serve saltarne la spezzata: saltarla reintrodurrebbe proprio
+        # l'esenzione che era meta' del difetto.
         under: list[str] = []
         for symbol in sheet.symbols:
             box = box_of(symbol)
             for route in sheet.routes:
                 for segment in route.segments:
-                    ends_here = any(
-                        box[0] - TOLERANCE_MM <= point.x_mm <= box[2] + TOLERANCE_MM
-                        and box[1] - TOLERANCE_MM <= point.y_mm <= box[3] + TOLERANCE_MM
-                        for point in (segment[0], segment[-1])
-                    )
-                    if ends_here:
-                        continue
                     if any(
-                        _crosses_body(before, after, box)
+                        intrudes_into(box, before, after)
                         for before, after in moves_of(segment)
                     ):
                         under.append(f"{symbol.component_id}<-{route.connection_ids}")
@@ -257,4 +258,5 @@ def measure(project_path: Path) -> dict[str, object]:
 
 
 if __name__ == "__main__":
-    print(json.dumps(measure(Path(sys.argv[1])), ensure_ascii=False, indent=2))
+    given = Path(sys.argv[2]) if len(sys.argv) > 2 else None
+    print(json.dumps(measure(Path(sys.argv[1]), given), ensure_ascii=False, indent=2))

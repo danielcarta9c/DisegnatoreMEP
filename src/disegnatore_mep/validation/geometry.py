@@ -10,7 +10,7 @@ from disegnatore_mep.layout.geometry import (
     DrawingGeometry,
     PlacedSymbol,
     SheetGeometry,
-    enters_body,
+    intrudes_into,
 )
 from disegnatore_mep.layout.labels import CHAR_WIDTH_RATIO
 from disegnatore_mep.model.types import IssueSeverity
@@ -94,15 +94,18 @@ def validate_sheet_geometry(
                         )
                     )
                 for symbol in sheet.symbols:
-                    # D-027 — **attraversare basta**, non serve essere coperti.
-                    # La misura era il contenimento del tratto nel riquadro, e
-                    # vedeva solo il caso estremo: un tratto che entrava da un
-                    # lato e usciva dall'altro passava per buono ed era una
-                    # linea disegnata sotto un simbolo. Il tratto che termina
-                    # su un attacco resta ammesso per costruzione: una porta
-                    # sta sul perimetro, quindi quel tratto tocca il bordo e
-                    # non entra nel corpo.
-                    if enters_body(_box(symbol), before, after):
+                    # D-027 — **attraversare basta**, non serve essere coperti,
+                    # e il contenimento resta quello che era. La misura vecchia
+                    # guardava solo se il riquadro contenesse il tratto, e non
+                    # vedeva chi entrava da un lato e usciva dall'altro; quella
+                    # nuova le si **aggiunge**, non la sostituisce, perche' la
+                    # vecchia prendeva anche la linea che corre a filo del
+                    # fianco — un difetto di rappresentazione che non tocca al
+                    # disegnatore riscrivere. Il tratto che termina su un
+                    # attacco resta ammesso per costruzione: una porta sta sul
+                    # perimetro, quindi quel tratto tocca il bordo, non entra
+                    # nel corpo e non ci corre dentro.
+                    if intrudes_into(_box(symbol), before, after):
                         issues.append(
                             _issue(
                                 "LINE_UNDER_SYMBOL",

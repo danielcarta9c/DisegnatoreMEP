@@ -53,11 +53,22 @@ esce: il committente non puo' verificarci niente, e infatti se n'e' accorto in
 pochi minuti. La correzione resta; a rientrare devono essere gli impianti,
 quando la composizione compatta. Il conto e' in `NON_COMPONGONO`."""
 
-NON_COMPONGONO = (
-    "prova-2-pdc-deviatrice-acs.json",
-    "prova-3-pdc-diretta-pavimento.json",
-)
+NON_COMPONGONO = ("prova-2-pdc-deviatrice-acs.json",)
 """Gli impianti che componevano il 9 agosto e oggi no, con il motivo misurato."""
+
+TORNATO_A_COMPORRE = ("prova-3-pdc-diretta-pavimento.json",)
+"""Chi era in `NON_COMPONGONO` e ha ricominciato a comporre (DRAW-001).
+
+Il terzo impianto chiedeva 420 mm contro i 335 di una A3 e non entrava. Da
+quando il collocatore **distende** invece di limitarsi a stringere (D-111) —
+e la posa che ne esce e' un'altra — la sua fila rientra e la tavola si compone
+in un foglio solo.
+
+⚠ **Che componga e' un fatto, che sia bella non lo dice nessuno.** Qui si
+verifica solo che la catena arrivi in fondo: la **qualita'** delle altre quattro
+tavole non si guarda e non si consegna finche' il PO non ha approvato la prima
+(D-116). La riga esiste perche' un guadagno misurato non vada perso, non per
+aprire un cantiere sul terzo impianto."""
 
 
 def catalog() -> ComponentRegistry:
@@ -275,5 +286,16 @@ def test_chi_genera_sta_a_sinistra_di_chi_utilizza(name: str) -> None:
 )
 @pytest.mark.parametrize("name", NON_COMPONGONO)
 def test_tornano_a_comporre_quando_la_composizione_compatta(name: str) -> None:
+    drawing = compose_drawing(completato(name), catalog(), NOVE_C_A3)
+    assert len(drawing.sheets) == 1
+
+
+@pytest.mark.parametrize("name", TORNATO_A_COMPORRE)
+def test_chi_e_tornato_a_comporre_compone_in_un_foglio_solo(name: str) -> None:
+    """Il terzo impianto rientra in una A3 da quando il collocatore distende.
+
+    Solo che compone, e nient'altro: le altre quattro tavole non si guardano
+    finche' la prima non e' approvata (D-116).
+    """
     drawing = compose_drawing(completato(name), catalog(), NOVE_C_A3)
     assert len(drawing.sheets) == 1

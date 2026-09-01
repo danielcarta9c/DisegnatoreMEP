@@ -230,6 +230,30 @@ def box_of(symbol: PlacedSymbol) -> tuple[float, float, float, float]:
     return (symbol.origin.x_mm, symbol.origin.y_mm, symbol.right_mm, symbol.bottom_mm)
 
 
+def lies_inside(
+    box: tuple[float, float, float, float], before: Point, after: Point
+) -> bool:
+    """Vero se il riquadro **contiene** il tratto, bordi compresi.
+
+    E' la misura storica di D-027, tenuta parola per parola. Prende due cose
+    che l'attraversamento non prende, e la seconda vale la pena dirla: il
+    tratto tutto dentro il corpo, e il tratto che corre **a filo del bordo**
+    per la lunghezza del riquadro. Il secondo caso non entra nel corpo — sulla
+    carta la linea passa esattamente sul fianco del simbolo — ma si legge come
+    se ci passasse sopra, e la freccia del flusso ci finisce dentro. E' il
+    difetto che il commento di questa misura chiamava «esattamente il difetto
+    peggiore», ed e' una convenzione di rappresentazione: **restringerla non e'
+    del disegnatore** (D-124).
+    """
+    left, top, right, bottom = box
+    return (
+        left < min(before.x_mm, after.x_mm) + TOLERANCE_MM
+        and max(before.x_mm, after.x_mm) < right + TOLERANCE_MM
+        and top < min(before.y_mm, after.y_mm) + TOLERANCE_MM
+        and max(before.y_mm, after.y_mm) < bottom + TOLERANCE_MM
+    )
+
+
 def enters_body(
     box: tuple[float, float, float, float], before: Point, after: Point
 ) -> bool:
@@ -246,14 +270,19 @@ def enters_body(
     - il tratto che **attraversa** il simbolo entra, e non importa se ne esce
       dall'altra parte.
 
-    ⛔ **Prima si guardava il contenimento**, cioe' se il riquadro conteneva il
-    tratto **per intero**, e quella misura vedeva soltanto il caso estremo. Un
-    tratto che entrava da un lato e usciva dall'altro — o che sporgeva di un
-    millimetro oltre il bordo — passava per buono, e sulla tavola era una linea
-    disegnata **sotto** un simbolo invece che interrotta da lui. E' il difetto
-    che la regola di vicinanza del PM (D-120) ha fatto affiorare avvicinando le
-    valvole agli attacchi delle macchine: e' bastato che l'accessorio si
-    sedesse dove un'altra tratta si attacca alla stessa macchina.
+    ⛔ **Da sola questa misura non basta, e non sostituisce quella storica.**
+    Prima si guardava il **contenimento** (`lies_inside`), che vedeva soltanto il
+    caso estremo: un tratto che entrava da un lato e usciva dall'altro — o che
+    sporgeva di un millimetro oltre il bordo — passava per buono, ed era una
+    linea disegnata **sotto** un simbolo invece che interrotta da lui. E' il
+    difetto che la regola di vicinanza del PM (D-120) ha fatto affiorare
+    avvicinando le valvole agli attacchi: e' bastato che l'accessorio si sedesse
+    dove un'altra tratta si attacca alla stessa macchina.
+
+    Le due misure prendono cose diverse e si usano **insieme**
+    (`intrudes_into`): questa vede chi attraversa, quella vede chi corre a filo
+    del fianco. Sostituire la seconda con la prima avrebbe **allentato** un
+    controllo di rappresentazione, che non e' del disegnatore.
     """
     left, top, right, bottom = box
     x_low, x_high = min(before.x_mm, after.x_mm), max(before.x_mm, after.x_mm)
@@ -276,6 +305,19 @@ def enters_body(
     return inside_x > TOLERANCE_MM and inside_y > TOLERANCE_MM
 
 
+def intrudes_into(
+    box: tuple[float, float, float, float], before: Point, after: Point
+) -> bool:
+    """La misura completa di D-027: chi attraversa il corpo o chi ci corre dentro.
+
+    E' l'unione delle due, e sta in un posto solo perche' i due consumatori — il
+    cancello di correttezza e chi posa gli accessori — devono dare la stessa
+    risposta: chi posa chiede «questa posizione la consegno o no?», e se le due
+    misure divergono si approva una tavola e se ne disegna un'altra.
+    """
+    return enters_body(box, before, after) or lies_inside(box, before, after)
+
+
 def run_intrudes_on(
     box: tuple[float, float, float, float],
     routes: list[RoutedTrunk],
@@ -290,16 +332,16 @@ def run_intrudes_on(
     - **B5**: un tratto passa a meno della distanza di rispetto dal riquadro.
       Le spezzate che finiscono dentro il riquadro non si misurano: e' il modo
       in cui il preflight riconosce un attacco, e vale anche qui.
-    - **D-027**: un tratto entra nel corpo del riquadro, e allora la linea
-      passa **sotto** il simbolo invece di essere interrotta da lui. Questo si
-      misura sempre, esenzione o no: una spezzata che si attacca al simbolo e'
-      esente dalla distanza di rispetto — e' cosi' che si riconosce un attacco
-      — ma non dall'attraversarlo, che e' esattamente il difetto peggiore.
+    - **D-027**: un tratto entra nel corpo del riquadro **o gli corre dentro a
+      filo del bordo**, e allora la linea passa **sotto** il simbolo invece di
+      essere interrotta da lui. Questo si misura sempre, esenzione o no: una
+      spezzata che si attacca al simbolo e' esente dalla distanza di rispetto —
+      e' cosi' che si riconosce un attacco — ma non dall'attraversarlo.
     """
     for route in routes:
         for segment in route.segments:
             moves = moves_of(segment)
-            if any(enters_body(box, before, after) for before, after in moves):
+            if any(intrudes_into(box, before, after) for before, after in moves):
                 return True
             if attaches_to(segment, box):
                 continue

@@ -4,10 +4,16 @@
     350.0,
     235.0
   ],
-  "impronta": "2ecad99b1080008ff4732a8cff311ab3da6eefcdf83b1bca7992dd01609a38ba",
+  "impronta": "e524794b9a8ba578f2c82f6b9c0355c8d6e301586322d5a02f4eaf8b2060de40",
   "fogli": [
     {
       "sheet_id": "t1",
+      "ingombro_mm": [
+        17.5,
+        88.5,
+        280.0,
+        178.5
+      ],
       "riempimento_pct": 28.7,
       "quadranti_rapporto": 12.6,
       "quadranti_mm2": [
@@ -21,28 +27,115 @@
       "tratte_oltre_tre_pieghe": 3,
       "lunghezza_totale_mm": 1030.0,
       "tubo_sotto_simbolo": [],
-      "valvole_distanza_mm": {
-        "valve-isolation-pdc-master-water-supply": 7.5,
-        "valve-isolation-pdc-slave-water-supply": 7.5,
-        "valve-isolation-accumulo-primary-in": 7.5,
-        "valve-isolation-accumulo-primary-out": 3.536,
-        "valve-isolation-dirt-separator-collettore-ritorno-a-b": 20.156,
-        "valve-isolation-strainer-pdc-master-water-return-a": 10.308,
-        "valve-isolation-pdc-master-water-return": 24.622,
-        "valve-isolation-strainer-pdc-slave-water-return-a": 7.5,
-        "valve-isolation-pdc-slave-water-return": 21.506,
-        "valve-isolation-accumulo-secondary-out": 15.207,
-        "valve-isolation-circolatore-a": 25.125,
-        "valve-isolation-circolatore-b": 32.5,
-        "valve-isolation-radiatori-in": 22.5,
-        "valve-isolation-radiatori-out": 5.0,
-        "valve-isolation-accumulo-secondary-in": 15.0,
-        "valve-isolation-filling-unit-collettore-ritorno-a-a": 7.5,
-        "valve-isolation-pressure-gauge-collettore-ritorno-a-a": 12.5,
-        "valve-isolation-dhw-acquedotto-a": 5.59,
-        "valve-isolation-dhw-accumulo-cold-in": 18.028,
-        "valve-isolation-dhw-hot-accumulo-dhw-out": 5.59,
-        "valve-isolation-dhw-hot-utenze-a": 23.717
+      "valvole_d120": {
+        "valve-isolation-pdc-master-water-supply": {
+          "caso": "primo",
+          "isola": "pdc-master",
+          "distanza_mm": 7.5
+        },
+        "valve-isolation-pdc-slave-water-supply": {
+          "caso": "primo",
+          "isola": "pdc-slave",
+          "distanza_mm": 7.5
+        },
+        "valve-isolation-accumulo-primary-in": {
+          "caso": "fuori regola",
+          "distanza_mm": 7.5
+        },
+        "valve-isolation-accumulo-primary-out": {
+          "caso": "primo",
+          "isola": "accumulo",
+          "distanza_mm": 3.536
+        },
+        "valve-isolation-dirt-separator-collettore-ritorno-a-b": {
+          "caso": "coppia",
+          "isola": "dirt-separator-collettore-ritorno-a",
+          "distanza_mm": 7.5
+        },
+        "valve-isolation-strainer-pdc-master-water-return-a": {
+          "caso": "coppia",
+          "isola": "strainer-pdc-master-water-return",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-pdc-master-water-return": {
+          "caso": "ultimo",
+          "isola": "pdc-master",
+          "distanza_mm": 30.0
+        },
+        "valve-isolation-strainer-pdc-slave-water-return-a": {
+          "caso": "coppia",
+          "isola": "strainer-pdc-slave-water-return",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-pdc-slave-water-return": {
+          "caso": "ultimo",
+          "isola": "pdc-slave",
+          "distanza_mm": 33.354
+        },
+        "valve-isolation-accumulo-secondary-out": {
+          "caso": "primo",
+          "isola": "accumulo",
+          "distanza_mm": 15.207
+        },
+        "valve-isolation-circolatore-a": {
+          "caso": "coppia",
+          "isola": "circolatore",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-circolatore-b": {
+          "caso": "coppia",
+          "isola": "circolatore",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-radiatori-in": {
+          "caso": "ultimo",
+          "isola": "radiatori",
+          "distanza_mm": 22.5
+        },
+        "valve-isolation-radiatori-out": {
+          "caso": "primo",
+          "isola": "radiatori",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-accumulo-secondary-in": {
+          "caso": "ultimo",
+          "isola": "accumulo",
+          "distanza_mm": 108.311
+        },
+        "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "expansion-connection-collettore-ritorno-a",
+          "distanza_mm": 7.5
+        },
+        "valve-isolation-filling-unit-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "filling-unit-collettore-ritorno-a",
+          "distanza_mm": 7.5
+        },
+        "valve-isolation-pressure-gauge-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "pressure-gauge-collettore-ritorno-a",
+          "distanza_mm": 12.5
+        },
+        "valve-isolation-dhw-acquedotto-a": {
+          "caso": "fuori regola",
+          "distanza_mm": 5.59
+        },
+        "valve-isolation-dhw-accumulo-cold-in": {
+          "caso": "ultimo",
+          "isola": "accumulo",
+          "distanza_mm": 20.0
+        },
+        "valve-isolation-dhw-hot-accumulo-dhw-out": {
+          "caso": "primo",
+          "isola": "accumulo",
+          "distanza_mm": 5.59
+        },
+        "valve-isolation-dhw-hot-utenze-a": {
+          "caso": "coppia",
+          "isola": "mixing-valve-thermostatic-accumulo-dhw-out",
+          "distanza_mm": 11.18
+        }
       },
       "simboli": 45,
       "tratte": 20
