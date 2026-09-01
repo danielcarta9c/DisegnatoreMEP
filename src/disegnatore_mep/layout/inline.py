@@ -19,7 +19,8 @@ from math import ceil
 from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.catalog.schema import ComponentTrait
+from disegnatore_mep.model.project import PortRef, ProjectModel
 
 from .errors import LayoutError
 from .geometry import PlacedSymbol, Point, RoutedTrunk, run_intrudes_on
@@ -29,6 +30,20 @@ from .trunks import Trunk
 
 MIN_SPACING_MM = 2.5
 """Distanza minima fra due accessori sulla stessa tratta: un passo di griglia."""
+
+SNUG_CLEARANCE_MM = 2.5
+"""Stacco di chi isola contro l'apparecchio che si manutiene (D-120).
+
+Un passo, e non zero, perche' **davanti a un attacco c'e' una cella sola ed e'
+la sua unica uscita** (D-113): quella corsia non e' gioco. Un passo oltre e' il
+minimo raggiungibile, e porta il fianco della valvola a cinque millimetri dal
+punto d'attacco invece dei dodici e mezzo che lasciava lo stacco ordinario.
+
+E' la regola che il PM ha dato «da senior al disegnatore»: «le valvole di
+intercettazione che vengono montate per manutenere le macchine devono essere
+disegnate molto piu' vicine agli attacchi, una regola di vicinanza fissa e
+piuttosto piccola, esempio 2 mm» (I-018).
+"""
 
 END_CLEARANCE_MM = 5.0
 """Stacco fra un accessorio e il componente all'estremo della propria tratta.
@@ -41,18 +56,24 @@ della pompa di calore le si e' appoggiata al fianco e ha chiuso il corridoio del
 ritorno del primario: l'instradamento e' fallito con una diagnostica che parlava
 di tutt'altro.
 
-⚠ **Il PM ha chiesto di abbassarlo** (I-018): «le valvole di intercettazione che
-vengono montate per manutenere le macchine devono essere disegnate molto piu'
-vicine agli attacchi, una regola di vicinanza fissa e piuttosto piccola, esempio
-2 mm». Ha ragione su come si monta, e **il tentativo e' stato fatto e misurato,
-non lasciato a metà**: portandolo a un passo, sull'impianto 1 la valvola si
-avvicina all'attacco da 7,5 a 5 millimetri, ma i rilievi di qualita' salgono da
-sei a nove, gli incroci da 13 a 15 e due tratte passano da quattro pieghe a sei.
-Il guadagno non paga il prezzo, e la causa e' che questa costante non distingue
-**la valvola che isola una macchina** — quella che lui sta guardando — da un
-accessorio qualunque in mezzo a una tratta. La regola giusta e' piu' stretta di
-cosi', e vale solo per il primo accessorio contro il proprio componente: e' la
-riga I-018, che resta aperta con la misura scritta.
+⚠ **Il PM ha chiesto di abbassarlo** (I-018), e abbassarlo per tutti fu provato
+e ritirato: portando questa costante a un passo, sull'impianto 1 i rilievi di
+qualita' salivano da sei a nove e gli incroci da 13 a 15. La causa era che una
+costante sola non distingue **la valvola che isola una macchina** — quella che
+il PM sta guardando — da un accessorio qualunque in mezzo a una tratta.
+
+**Questo stacco resta quello ordinario**; chi isola l'apparecchio che si
+manutiene usa invece `SNUG_CLEARANCE_MM` (D-120).
+"""
+
+
+ISOLATING_FUNCTIONS = frozenset({"isolation", "isolation_locked_open"})
+"""Chi isola, secondo il catalogo e mai secondo il nome (D-090, D-120).
+
+Sono i mestieri che la regola dell'intercettazione assegna: quello comune e
+quello bloccabile aperto. Un componente che li dichiara e' li' per fermare
+l'acqua attorno a un pezzo che si smonta, ed e' quello che va disegnato **sul
+suo attacco**.
 """
 
 
@@ -189,16 +210,71 @@ def place_inline_accessories(
             f"never shrunk to fit, give the run more room"
         )
 
+    # **Chi isola una macchina si disegna sul suo attacco** (D-120). Lo dice il
+    # catalogo da due lati e mai il nome del pezzo: la funzione di chi ferma
+    # l'acqua, e la proprieta' `maintainable` di cio' che si smonta in esercizio
+    # — la stessa che la regola dell'intercettazione legge per chiedere quella
+    # valvola. Tre casi, come la regola del PM:
+    #
+    # 1. il **primo** accessorio della tratta contro l'estremo da cui parte;
+    # 2. l'**ultimo** contro l'estremo a cui arriva, che si posa **all'indietro
+    #    dal proprio attacco** invece di essere lasciato a mezza strada;
+    # 3. la **coppia in fila** con un apparecchio che sta esso stesso sulla
+    #    tubazione — il circolatore, che il PM ha nominato: li' lo stacco fra i
+    #    due scende a un passo, perche' fra la valvola e cio' che isola non c'e'
+    #    niente da mettere in mezzo.
+    isolates = [
+        bool(ISOLATING_FUNCTIONS & set(item.definition.functions)) for item in resolved
+    ]
+    serviced = [
+        item.definition.has_trait(ComponentTrait.MAINTAINABLE) for item in resolved
+    ]
+
+    def services(ref: PortRef) -> bool:
+        definition_id = definitions.get(ref.component_id)
+        if definition_id is None:
+            return False
+        return catalog.resolve(definition_id).definition.has_trait(
+            ComponentTrait.MAINTAINABLE
+        )
+
+    last = len(resolved) - 1
+    snug_head = bool(resolved) and isolates[0] and services(trunk.start)
+    snug_tail = bool(resolved) and isolates[last] and services(trunk.end)
+    # Lo stacco che ciascun accessorio pretende prima e dopo di se'. Vale un
+    # passo fra due accessori qualunque; scende a zero — cioe' resta il solo
+    # passo che il vicino gia' chiede — fra chi isola e l'apparecchio in linea
+    # che isola.
+    leads = [MIN_SPACING_MM] * len(resolved)
+    trails = [MIN_SPACING_MM] * len(resolved)
+    for index in range(1, len(resolved)):
+        pair = (
+            isolates[index]
+            and serviced[index - 1]
+            or serviced[index]
+            and isolates[index - 1]
+        )
+        if pair:
+            leads[index] = 0.0
+
     # Un accessorio va posato al **centro di un tratto rettilineo** abbastanza
     # lungo da contenerlo, non a una frazione arbitraria della lunghezza: se la
     # rotta piega accanto a lui, il moncone che resta gli passa dentro il
     # riquadro, e la linea risulta disegnata sotto il simbolo.
-    straights = [
-        (max(low, END_CLEARANCE_MM), min(high, total - END_CLEARANCE_MM))
-        for low, high in _straight_stretches(points)
-    ]
-    straights = [item for item in straights if item[1] > item[0]]
-    if not straights:
+    raw_straights = _straight_stretches(points)
+
+    def stretches(head_mm: float, tail_mm: float) -> list[tuple[float, float]]:
+        """I rettilinei disponibili, tenendo i due capi liberi di quanto detto."""
+        found = [
+            (max(low, head_mm), min(high, total - tail_mm))
+            for low, high in raw_straights
+        ]
+        return [item for item in found if item[1] > item[0]]
+
+    if not stretches(END_CLEARANCE_MM, END_CLEARANCE_MM) and not stretches(
+        SNUG_CLEARANCE_MM if snug_head else END_CLEARANCE_MM,
+        SNUG_CLEARANCE_MM if snug_tail else END_CLEARANCE_MM,
+    ):
         raise LayoutError(
             f"run {trunk.connection_ids[0]} has no straight stretch to sit an "
             f"accessory on"
@@ -262,19 +338,42 @@ def place_inline_accessories(
     for index, component in enumerate(resolved):
         manifest = component.symbol.manifest
         gap = manifest.inline_gap_mm or 0.0
-        needed = gap + 2 * MIN_SPACING_MM
+        lead, trail = leads[index], trails[index]
+        needed = gap + lead + trail
+        # Il capo contro cui questo accessorio si stringe, se e' quello che
+        # isola l'apparecchio da manutenere: gli altri accessori tengono lo
+        # stacco ordinario, che serve a lasciare libera la colonna da cui
+        # passano le tubazioni degli altri attacchi del pezzo.
+        head_mm = SNUG_CLEARANCE_MM if (index == 0 and snug_head) else END_CLEARANCE_MM
+        tail_mm = (
+            SNUG_CLEARANCE_MM if (index == last and snug_tail) else END_CLEARANCE_MM
+        )
+        # L'ultimo che isola l'estremo di arrivo si posa **all'indietro dal
+        # proprio attacco**: si parte dal punto piu' avanzato ammesso e si
+        # arretra di un passo per volta. Tutti gli altri avanzano dal cursore,
+        # che e' l'ordine in cui il fluido li attraversa.
+        backwards = index == last and snug_tail
+        window = stretches(head_mm, tail_mm)
         found: _Station | None = None
         turned = manifest
         rotation = 0
         distance = 0.0
-        for low, high in straights:
+
+        for low, high in (list(reversed(window)) if backwards else window):
             # Il primo nodo di griglia da cui l'accessorio sta nel rettilineo,
             # oltre l'accessorio precedente: avanzare invece di spezzare tiene
             # l'ordine e non spreca nemmeno un passo. Se il riquadro casca su
-            # un simbolo posato, si avanza di un passo e si riprova.
-            wanted = max(low, cursor) + needed / 2
-            snapped = ceil((wanted - 1e-9) / step) * step
-            while snapped + needed / 2 <= high + 1e-9:
+            # un simbolo posato, si avanza di un passo e si riprova. Chi si
+            # posa all'indietro percorre gli stessi nodi partendo dall'altro
+            # capo.
+            first = ceil((max(low, cursor) + lead + gap / 2 - 1e-9) / step) * step
+            stop = high - trail - gap / 2
+            nodes: list[float] = []
+            here = first
+            while here <= stop + 1e-9:
+                nodes.append(here)
+                here += step
+            for snapped in (reversed(nodes) if backwards else nodes):
                 station = _station_at(points, snapped)
                 rotation = 0 if station.horizontal else 90
                 if rotation not in manifest.allowed_rotations_deg:
@@ -297,7 +396,6 @@ def place_inline_accessories(
                 ):
                     found, distance = station, snapped
                     break
-                snapped += step
             if found is not None:
                 break
         if found is None:
@@ -307,7 +405,13 @@ def place_inline_accessories(
                 f"{clearance:g}mm clear of the other symbols and runs: symbols are "
                 f"never shrunk to fit, give the run a longer straight length"
             )
-        cursor = distance + needed / 2
+        # Il cursore riparte dal **riquadro**, non dall'interruzione: un
+        # simbolo piu' largo del proprio taglio sporge oltre di esso, e chi
+        # viene dopo gli si appoggiava al fianco. Con la coppia di D-120, che
+        # chiede un passo secco, i due si toccavano e sulla carta si leggevano
+        # come un pezzo solo.
+        extent = turned.width_mm if found.horizontal else turned.height_mm
+        cursor = distance + max(gap, extent) / 2 + trail
         component_id = trunk.inline_component_ids[index]
         placed.append(
             PlacedSymbol(

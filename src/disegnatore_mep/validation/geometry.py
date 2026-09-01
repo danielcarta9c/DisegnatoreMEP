@@ -6,7 +6,12 @@ qualita' percettiva: quella la dice solo l'occhio, e la stampa (§12.4).
 """
 
 from disegnatore_mep.graphics.frame import SheetFrame
-from disegnatore_mep.layout.geometry import DrawingGeometry, PlacedSymbol, SheetGeometry
+from disegnatore_mep.layout.geometry import (
+    DrawingGeometry,
+    PlacedSymbol,
+    SheetGeometry,
+    enters_body,
+)
 from disegnatore_mep.layout.labels import CHAR_WIDTH_RATIO
 from disegnatore_mep.model.types import IssueSeverity
 
@@ -89,14 +94,15 @@ def validate_sheet_geometry(
                         )
                     )
                 for symbol in sheet.symbols:
-                    box = _box(symbol)
-                    inside = (
-                        box[0] < min(before.x_mm, after.x_mm) + TOLERANCE_MM
-                        and max(before.x_mm, after.x_mm) < box[2] + TOLERANCE_MM
-                        and box[1] < min(before.y_mm, after.y_mm) + TOLERANCE_MM
-                        and max(before.y_mm, after.y_mm) < box[3] + TOLERANCE_MM
-                    )
-                    if inside:
+                    # D-027 — **attraversare basta**, non serve essere coperti.
+                    # La misura era il contenimento del tratto nel riquadro, e
+                    # vedeva solo il caso estremo: un tratto che entrava da un
+                    # lato e usciva dall'altro passava per buono ed era una
+                    # linea disegnata sotto un simbolo. Il tratto che termina
+                    # su un attacco resta ammesso per costruzione: una porta
+                    # sta sul perimetro, quindi quel tratto tocca il bordo e
+                    # non entra nel corpo.
+                    if enters_body(_box(symbol), before, after):
                         issues.append(
                             _issue(
                                 "LINE_UNDER_SYMBOL",

@@ -230,15 +230,50 @@ def box_of(symbol: PlacedSymbol) -> tuple[float, float, float, float]:
     return (symbol.origin.x_mm, symbol.origin.y_mm, symbol.right_mm, symbol.bottom_mm)
 
 
-def _covers(box: tuple[float, float, float, float], before: Point, after: Point) -> bool:
-    """Vero se il riquadro contiene per intero il tratto: la linea gli passa sotto."""
+def enters_body(
+    box: tuple[float, float, float, float], before: Point, after: Point
+) -> bool:
+    """Vero se il tratto entra nel **corpo pieno** del riquadro (D-027).
+
+    Entrare vuol dire percorrere una lunghezza maggiore di zero dentro il
+    riquadro **aperto**, cioe' bordi esclusi. Ne discendono le due cose che
+    servono, senza bisogno di sapere quali tratte tocchino quale componente:
+
+    - il tratto che **termina su un attacco** non entra. Una porta sta sul
+      perimetro del simbolo e l'instradamento ci arriva da fuori: il tratto
+      tocca il bordo e si ferma li', quindi la sua lunghezza dentro il corpo
+      e' nulla. Vale anche per chi costeggia il fianco a filo;
+    - il tratto che **attraversa** il simbolo entra, e non importa se ne esce
+      dall'altra parte.
+
+    ⛔ **Prima si guardava il contenimento**, cioe' se il riquadro conteneva il
+    tratto **per intero**, e quella misura vedeva soltanto il caso estremo. Un
+    tratto che entrava da un lato e usciva dall'altro — o che sporgeva di un
+    millimetro oltre il bordo — passava per buono, e sulla tavola era una linea
+    disegnata **sotto** un simbolo invece che interrotta da lui. E' il difetto
+    che la regola di vicinanza del PM (D-120) ha fatto affiorare avvicinando le
+    valvole agli attacchi delle macchine: e' bastato che l'accessorio si
+    sedesse dove un'altra tratta si attacca alla stessa macchina.
+    """
     left, top, right, bottom = box
-    return (
-        left < min(before.x_mm, after.x_mm) + TOLERANCE_MM
-        and max(before.x_mm, after.x_mm) < right + TOLERANCE_MM
-        and top < min(before.y_mm, after.y_mm) + TOLERANCE_MM
-        and max(before.y_mm, after.y_mm) < bottom + TOLERANCE_MM
-    )
+    x_low, x_high = min(before.x_mm, after.x_mm), max(before.x_mm, after.x_mm)
+    y_low, y_high = min(before.y_mm, after.y_mm), max(before.y_mm, after.y_mm)
+    inside_x = min(x_high, right) - max(x_low, left)
+    inside_y = min(y_high, bottom) - max(y_low, top)
+    if inside_x < -TOLERANCE_MM or inside_y < -TOLERANCE_MM:
+        return False
+    # Un tratto ortogonale ha spessore nullo su un asse: li' basta che cada
+    # **dentro** il riquadro, bordi esclusi, e sull'altro che percorra una
+    # lunghezza vera.
+    if abs(y_high - y_low) <= TOLERANCE_MM:
+        return top + TOLERANCE_MM < y_low < bottom - TOLERANCE_MM and (
+            inside_x > TOLERANCE_MM
+        )
+    if abs(x_high - x_low) <= TOLERANCE_MM:
+        return left + TOLERANCE_MM < x_low < right - TOLERANCE_MM and (
+            inside_y > TOLERANCE_MM
+        )
+    return inside_x > TOLERANCE_MM and inside_y > TOLERANCE_MM
 
 
 def run_intrudes_on(
@@ -255,16 +290,16 @@ def run_intrudes_on(
     - **B5**: un tratto passa a meno della distanza di rispetto dal riquadro.
       Le spezzate che finiscono dentro il riquadro non si misurano: e' il modo
       in cui il preflight riconosce un attacco, e vale anche qui.
-    - **D-027**: un tratto sta dentro il riquadro per intero, e allora la linea
+    - **D-027**: un tratto entra nel corpo del riquadro, e allora la linea
       passa **sotto** il simbolo invece di essere interrotta da lui. Questo si
-      misura sempre, esenzione o no: una linea che corre lungo il bordo del
-      riquadro ha i capi sul riquadro e sembrerebbe un attacco, mentre e'
-      esattamente il difetto peggiore.
+      misura sempre, esenzione o no: una spezzata che si attacca al simbolo e'
+      esente dalla distanza di rispetto — e' cosi' che si riconosce un attacco
+      — ma non dall'attraversarlo, che e' esattamente il difetto peggiore.
     """
     for route in routes:
         for segment in route.segments:
             moves = moves_of(segment)
-            if any(_covers(box, before, after) for before, after in moves):
+            if any(enters_body(box, before, after) for before, after in moves):
                 return True
             if attaches_to(segment, box):
                 continue
@@ -274,6 +309,145 @@ def run_intrudes_on(
             ):
                 return True
     return False
+
+
+SHEET_FILL_MIN_RATIO = 0.60
+"""Quota dell'area di disegno che l'ingombro dell'inchiostro deve coprire (A1).
+
+**Taratura**, non norma: la carta dice «il foglio e' pieno in modo uniforme» e
+non da' un numero. Sotto tre quinti dell'area il disegno e' una fascia o un
+angolo, non una tavola.
+
+Vive accanto alla misura, e non fra i controlli, perche' da D-111 la leggono in
+due: il **preflight**, che avvisa a tavola finita, e il **collocatore**, che la
+insegue mentre dispone. Un numero solo, in un posto solo.
+"""
+
+QUADRANT_IMBALANCE_MAX = 3.0
+"""Rapporto massimo fra il quadrante piu' pieno e il piu' vuoto (A1, A3).
+
+**Taratura.** «Si copre meta' foglio con una mano: se una meta' e' quasi bianca
+e l'altra e' fitta, non va», e «i quattro margini bianchi si somigliano». Tre
+volte e' lo squilibrio oltre il quale la differenza si vede da due metri.
+"""
+
+
+def ink_box(
+    symbols: list[PlacedSymbol], routes: list[RoutedTrunk]
+) -> tuple[float, float, float, float] | None:
+    """L'ingombro di cio' che e' disegnato: simboli e tubazioni.
+
+    Legenda e fluidi vivono nella propria fascia, fuori dall'area di disegno per
+    costruzione, e non entrano nel conto: il riempimento che la carta chiede e'
+    quello del disegno, non quello del foglio.
+    """
+    xs: list[float] = []
+    ys: list[float] = []
+    for symbol in symbols:
+        xs += [symbol.origin.x_mm, symbol.right_mm]
+        ys += [symbol.origin.y_mm, symbol.bottom_mm]
+    for route in routes:
+        for segment in route.segments:
+            xs += [point.x_mm for point in segment]
+            ys += [point.y_mm for point in segment]
+    if not xs or not ys:
+        return None
+    return (min(xs), min(ys), max(xs), max(ys))
+
+
+def fill_ratio(
+    symbols: list[PlacedSymbol],
+    routes: list[RoutedTrunk],
+    area: tuple[float, float, float, float],
+) -> float:
+    """Quanta parte dell'area di disegno copre l'ingombro dell'inchiostro (A1).
+
+    Vive qui, e non fra i controlli, perche' due moduli la devono leggere
+    identica: il **preflight**, che avvisa quando la tavola e' una fascia, e il
+    **collocatore**, che da D-111 la usa come obiettivo mentre dispone invece di
+    scoprirla alla fine. Finche' stavano su due formule diverse il collocatore
+    poteva credere di aver riempito un foglio che il preflight vedeva vuoto.
+    """
+    box = ink_box(symbols, routes)
+    if box is None:
+        return 0.0
+    width = max(box[2] - box[0], TOLERANCE_MM)
+    height = max(box[3] - box[1], TOLERANCE_MM)
+    span_x = max(area[2] - area[0], TOLERANCE_MM)
+    span_y = max(area[3] - area[1], TOLERANCE_MM)
+    return (width * height) / (span_x * span_y)
+
+
+def quadrants_of(
+    area: tuple[float, float, float, float],
+) -> list[tuple[float, float, float, float]]:
+    """I quattro quadranti di un rettangolo, in ordine di lettura."""
+    half_width = (area[2] - area[0]) / 2.0
+    half_height = (area[3] - area[1]) / 2.0
+    return [
+        (x_mm, y_mm, x_mm + half_width, y_mm + half_height)
+        for y_mm in (area[1], area[1] + half_height)
+        for x_mm in (area[0], area[0] + half_width)
+    ]
+
+
+def _clipped_length_mm(
+    before: Point, after: Point, area: tuple[float, float, float, float]
+) -> float:
+    """Quanto di un tratto ortogonale cade dentro un rettangolo."""
+    if abs(before.y_mm - after.y_mm) <= TOLERANCE_MM:
+        if not area[1] - TOLERANCE_MM <= before.y_mm <= area[3] + TOLERANCE_MM:
+            return 0.0
+        low, high = min(before.x_mm, after.x_mm), max(before.x_mm, after.x_mm)
+        return max(min(high, area[2]) - max(low, area[0]), 0.0)
+    if abs(before.x_mm - after.x_mm) <= TOLERANCE_MM:
+        if not area[0] - TOLERANCE_MM <= before.x_mm <= area[2] + TOLERANCE_MM:
+            return 0.0
+        low, high = min(before.y_mm, after.y_mm), max(before.y_mm, after.y_mm)
+        return max(min(high, area[3]) - max(low, area[1]), 0.0)
+    return 0.0
+
+
+def ink_area_mm2(
+    symbols: list[PlacedSymbol],
+    routes: list[RoutedTrunk],
+    area: tuple[float, float, float, float],
+    line_mm: float,
+) -> float:
+    """L'inchiostro dentro un rettangolo: riquadri dei simboli piu' tratto delle linee."""
+    total = 0.0
+    for symbol in symbols:
+        left, top, right, bottom = box_of(symbol)
+        width = max(min(right, area[2]) - max(left, area[0]), 0.0)
+        height = max(min(bottom, area[3]) - max(top, area[1]), 0.0)
+        total += width * height
+    for route in routes:
+        for segment in route.segments:
+            for before, after in moves_of(segment):
+                total += _clipped_length_mm(before, after, area) * line_mm
+    return total
+
+
+def ink_imbalance(
+    symbols: list[PlacedSymbol],
+    routes: list[RoutedTrunk],
+    area: tuple[float, float, float, float],
+    line_mm: float,
+) -> float:
+    """Quanto il quadrante piu' pieno pesa piu' del piu' vuoto (A1, A3).
+
+    Un quadrante senza inchiostro vale infinito: e' il caso del disegno tutto
+    su un lato, che non e' uno squilibrio grande ma un difetto di specie diversa.
+    """
+    areas = [
+        ink_area_mm2(symbols, routes, quadrant, line_mm)
+        for quadrant in quadrants_of(area)
+    ]
+    if max(areas) <= TOLERANCE_MM:
+        return 1.0
+    if min(areas) <= TOLERANCE_MM:
+        return math.inf
+    return max(areas) / min(areas)
 
 
 def drawing_fingerprint(drawing: DrawingGeometry) -> str:
