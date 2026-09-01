@@ -98,12 +98,8 @@ Carta**, cioè quello che oggi si chiama **PO**. Quei documenti **non vanno risc
 leggono con questa chiave. Il percorso `docs/input-pm/` resta invariato per la stessa
 ragione.
 
-> **Punto aperto, che spetta al PO.** **D-068** (2026-08-04, tuttora *Approvata*) contiene
-> la frase «le sue correzioni non sono mai tecniche», che questa sezione ha rimosso dalle
-> regole operative. GOV-001-R1 autorizzava a toccare nel decision log soltanto lo stato di
-> D-117 e l'aggiunta di D-123: **D-068 non è stata modificata**, e su questo punto resta in
-> contraddizione con le regole qui sopra. Superarla è un atto del PO. La stessa frase
-> sopravvive in `docs/archivio/HANDOFF.md`, che è fuori dal perimetro di questo pacchetto.
+**D-068 è superata da D-124** (PO, 1 settembre 2026): il modello a due ruoli che essa
+fissava è sostituito da PO/PM/DEV, e le disposizioni tecniche del PO sono vincolanti.
 
 ## Ogni input del PO prende una riga, il giorno stesso
 

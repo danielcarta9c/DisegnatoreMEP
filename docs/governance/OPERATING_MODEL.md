@@ -201,12 +201,12 @@ riferimenti senza aggiungere una sola informazione.
 | D-083, «l'orchestratore» | orchestratore | orchestratore **interno al DEV** |
 | D-083, «il committente» | committente | PO |
 
-> **Punto aperto, che spetta al PO.** La chiave di lettura risolve il vocabolario, non il
-> merito. **D-068** (2026-08-04, tuttora *Approvata*) afferma che le correzioni del PO «non
-> sono mai tecniche»: è in contraddizione con §1.1, e GOV-001-R1 non autorizzava a toccarla
-> — nel decision log erano consentiti solo lo stato di D-117 e l'aggiunta di D-123.
-> Superare D-068 è un atto del PO. La stessa frase sopravvive in `docs/archivio/HANDOFF.md`,
-> fuori dal perimetro di questo pacchetto.
+**D-124** (PO, 1 settembre 2026) ha sostituito il precedente **modello a due ruoli** —
+fissato da D-068, ora `Superata da D-124` — con il modello **PO/PM/DEV** descritto in §1, e
+ha stabilito che **le disposizioni del PO possono essere tecniche e sono vincolanti**. Di
+D-068 restano valide le parti che non riguardavano l'autorità tecnica: il PO giudica il
+risultato, la comunicazione verso di lui è essenziale, il dettaglio implementativo vive nei
+documenti tecnici.
 
 ---
 
