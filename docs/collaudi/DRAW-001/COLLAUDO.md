@@ -795,3 +795,111 @@ Un quarto giro può limitarsi a rileggere quelle righe: **tutto il resto è veri
   examples`; `pytest tests/layout tests/validation`.
 - `finale/impianto1.png` e `prima-dopo.png` a piena pagina, più due ingrandimenti a 6× sul
   nodo di R-1 e sulla propaggine.
+
+---
+---
+
+# DRAW-001 — collaudo indipendente, **quarto giro**
+
+**Revisione collaudata:** `9a72265`. **Base:** `ebe165a`. Copia di lavoro pulita.
+I tre verbali precedenti restano sopra, e ho verificato che non sia stata tolta **nessuna
+riga**: il commit li ha soltanto messi agli atti.
+
+---
+
+## Verdetto del quarto giro
+
+# APPROVATO
+
+Il giro è stato limitato a quello che avevo contestato, e quello che avevo contestato è
+corretto. Ho verificato **prima** che non fosse cambiato nient'altro: fra `e4be6cd` e
+`9a72265` non è toccato **un solo file** di `src/`, `tests/`, `baseline/`, `finale/` o
+`metriche.py`. Cambiano tre documenti. La tavola è la stessa che al terzo giro ho rigenerato
+io e trovato **identica byte per byte** a quella agli atti, quindi tutte le misure di quel
+verbale valgono senza rifarle.
+
+## T-1 — chiuso
+
+Il numero è ora **misurato invece che ricordato**, e lo dicono tutti e tre i punti che avevo
+indicato:
+
+- **§2**, riga propria nella tabella: «L'andata e ritorno del ramo sanitario · 37,5 mm ·
+  **40 mm** · rilievo bloccante preesistente, **peggiorato di 2,5 mm**»;
+- **§2**, riga di sintesi: «Il bloccante è **lo stesso di prima e su un numero peggiore**:
+  40 mm contro 37,5»;
+- **§4.1**, titolo: «preesistente, e **peggiorata di 2,5 mm**», con nel corpo i due numeri
+  separati e la ragione tecnica giusta — il ciclo protegge il **numero** delle andate e
+  ritorno, non la loro entità, quindi quei 2,5 mm sono stati comprati legittimamente. È vero:
+  la condizione di accettazione confronta `len(found.turnbacks)`, non l'entità, e l'avevo
+  letta al primo giro;
+- **I-007** nel registro: «40 mm contro i 37,5 della baseline», al posto del vecchio 37,5.
+
+Ho anche riletto il paragrafo che spiega perché è successo tre volte. Non è una scusa: dice
+la cosa giusta, cioè che quando la tavola si rigenera vanno rigenerati anche i numeri dentro
+la prosa, e che la fonte è il preflight agli atti. È la sola lezione che serviva.
+
+**Controprova mia, meccanica.** Ho riconfrontato **ogni** voce della tabella del §2 con i due
+`metriche.json` agli atti, senza leggere il rapporto per ricavarle:
+
+| voce | rapporto | misurato da me |
+|---|---|---|
+| riempimento | 28,7 → 41,0 % | 28.7 → 41.0 |
+| riempimento tolto il pezzo più isolato | 27,9 → 36,8 % | 27.9 → 36.8 |
+| copertura dell'ingombro | 0,86 → 0,77 | 0.859 → 0.766 |
+| quadranti | 12,6 → 2,59 | 12.6 → 2.59 |
+| incroci | 13 → 12 | 13 → 12 |
+| pieghe | 33 → 27 | 33 → 27 |
+| tratte oltre le tre pieghe | 3 → 1 | 3 → 1 |
+| lunghezza | 1030 → 1177,5 mm | 1030.0 → 1177.5 |
+| tubo dentro un simbolo | 0 → 0 | 0 → 0 |
+| rilievi di correttezza | nessuno → nessuno | 0 → 0 |
+| valvole sull'attacco | 6 su 20 → 17 su 20 | 6/20 → 17/20 |
+| andata e ritorno | 37,5 → 40 mm | 37.5 → 40 |
+
+**Dodici voci su dodici coincidono.** Non c'è più, in questa consegna, un numero che dica
+più di quello che gli artefatti mostrano.
+
+## I due non bloccanti
+
+- **O3-2 — chiuso.** Il §4.2 non dice più «tutti su coppie»: dice «una coppia di accessori
+  consecutivi e due ultimi di tratta», che è esattamente ciò che il censimento riporta —
+  `coppia` il prelievo ACS a 13,5 mm, `ultimo` gli altri due a 7,5 mm.
+- **O3-1 — chiuso a metà.** Nel rapporto (§4.5) la regola è ora attribuita a **D-110**, ed è
+  giusto. Nel codice no: la docstring di `free()` in `src/disegnatore_mep/layout/labels.py`
+  dice ancora «ed è **D-111** a dirlo», e mette fra virgolette una frase che nella decisione
+  non c'è (D-110 scrive «può essere attraversata da un tubo»). **Non è bloccante** — l'avevo
+  dichiarato facoltativo — e non cambia una riga di comportamento; si sistema quando quel
+  file si tocca la prossima volta.
+
+## Che cosa approvo, e che cosa resta del PM
+
+Approvo perché la consegna **non afferma più di quanto le prove dimostrino**, che è la cosa
+che questo collaudo esiste per verificare e che l'aveva fatta respingere tre volte.
+
+Resta una cosa che non è mia da decidere e che va detta chiaramente al PM, perché non passi
+in silenzio dentro un verbale di approvazione: **il criterio 3 non è soddisfatto alla
+lettera.** Le valvole di D-120 dentro la forbice 2,5÷5 mm sono **17 su 20**, non 20 su 20.
+Le tre che restano sono a 13,5, 7,5 e 7,5 mm, sono elencate una per una nel §4.2 con la
+distanza misurata, e il rapporto **dichiara apertamente** che la prova nodo per nodo del
+«non c'era posto più vicino» non è agli atti e chiederebbe uno strumento che oggi non esiste.
+Io certifico che il numero è vero, che è misurato con la stessa definizione su entrambe le
+colonne (**6 su 20** sulla baseline) e che è dichiarato onestamente. **Se 17 su 20 basti è
+una decisione del PM**, non del collaudo.
+
+Allo stesso modo restano dichiarati, e li ho verificati tutti: il rilievo bloccante a 40 mm
+peggiorato di 2,5 (§4.1), il riempimento sotto il 60 % per un limite di composizione che è
+del PO (§4.3), l'esenzione di distanza B5 (§4.4), l'ordine dei due passi nel comando di
+disegno che sta fuori perimetro (§4.5), e la propaggine ridotta a 12,5 mm con il numero al
+netto pubblicato in tabella.
+
+## Come ho misurato il quarto giro
+
+- `git diff --name-only e4be6cd..9a72265` ristretto a `src`, `tests`, `finale`, `baseline`,
+  `metriche.py`, `PROJECT_STATE.md`: **vuoto**.
+- `git diff` del verbale: **zero righe rimosse**, i tre giri precedenti sono integri.
+- Numero dell'andata e ritorno riletto da `baseline/preflight.txt`, `finale/preflight.txt` e
+  dal campo `rilievi_qualita` dei due `metriche.json`: **37,5** e **40**.
+- Confronto meccanico delle dodici voci del §2 con i due `metriche.json`, calcolando in
+  proprio il conteggio delle valvole dentro forbice dal campo `valvole_d120`.
+- Lettura del diff di `RAPPORTO.md` e `REGISTRO.md`, e verifica che nel codice la citazione
+  di D-110/D-111 sia rimasta com'era.

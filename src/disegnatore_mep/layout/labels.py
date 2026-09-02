@@ -357,11 +357,11 @@ def place_addresses(
     def free(box: Box) -> bool:
         """Il posto e' libero da simboli e da altre scritte.
 
-        ⚠ **Le tubazioni non contano, ed e' D-111 a dirlo**: «un tubo che passa
-        sopra l'etichetta non e' un problema e non va evitato». Contarle fra gli
-        ostacoli non rendeva la tavola piu' pulita: toglieva alla ricerca quasi
-        tutti i posti buoni, e quando non ne restava nessuno la scritta cadeva
-        sul ripiego — cioe' **sopra un'altra scritta**, che invece e' un rilievo
+        ⚠ **Le tubazioni non contano, ed e' D-110 a dirlo**: l'etichetta di
+        verifica puo' essere attraversata da un tubo. Contarle fra gli ostacoli
+        non rendeva la tavola piu' pulita: toglieva alla ricerca quasi tutti i
+        posti buoni, e quando non ne restava nessuno la scritta cadeva sul
+        ripiego — cioe' **sopra un'altra scritta**, che invece e' un rilievo
         bloccante. Su una tavola due indirizzi finivano stampati uno dentro
         l'altro, e si leggeva.
         """

@@ -252,12 +252,18 @@ perché sta in un file fuori dal perimetro di questo pacchetto.
   (`ebe165a`) fallisce su due prove, e sul ramo passa.
 - **Due generazioni consecutive** dello stesso ingresso danno la stessa impronta
   della geometria e lo stesso SVG, byte per byte; il collaudo ne ha fatte tre.
-- **Collaudo indipendente a contesto separato** (D-083): due verbali in
-  `COLLAUDO.md`, entrambi **RESPINTI**. Il primo giro su sei punti, il secondo su
-  due — una collisione fra due indirizzi che la consegna dichiarava assente
-  perché misurava una tavola senza indirizzi, e una misura contro le propaggini
-  che era matematicamente identica a quella che c'era già, quindi inutile.
-  Questa consegna risponde a tutti e otto.
+- **Collaudo indipendente a contesto separato** (D-083): quattro verbali in
+  `COLLAUDO.md`. I primi tre **RESPINTI** — sei punti, poi due, poi uno — e il
+  quarto **APPROVATO**. I difetti che ha trovato erano tutti della stessa
+  specie, e vale la pena elencarli perché è la cosa che questo pacchetto ha
+  sbagliato: un controllo grafico ristretto senza dirlo; un riempimento gonfiato
+  da un pezzo spinto in aria; una collisione fra due indirizzi che la consegna
+  dichiarava assente perché misurava un'altra tavola; un rimedio matematicamente
+  identico a ciò che c'era già; e un numero peggiorato che il rapporto dava per
+  invariato. Nessuno riguardava il disegno: riguardavano tutti **la distanza fra
+  ciò che la consegna dichiarava e ciò che gli artefatti mostrano**.
+  Nell'ultimo giro il collaudo ha riconfrontato una per una le dodici voci della
+  tabella del §2 con i file agli atti: dodici su dodici coincidono.
 
 ## 6. Artefatti
 
