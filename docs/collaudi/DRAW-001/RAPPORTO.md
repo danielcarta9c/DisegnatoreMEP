@@ -146,12 +146,13 @@ la stessa definizione di ogni voce.
 | Lunghezza totale delle tubazioni | 1030 mm | 1177,5 mm | è il prezzo del riempimento |
 | Tubazioni dentro il corpo di un simbolo | 0 | **0** | misura completa: attraversamento **e** filo del bordo, nessuna esenzione |
 | Rilievi di correttezza (il cancello che blocca) | nessuno | **nessuno** | misurati sulla geometria consegnata, indirizzi compresi |
+| L'andata e ritorno del ramo sanitario | 37,5 mm | **40 mm** | rilievo bloccante preesistente, **peggiorato di 2,5 mm** (§4.1) |
 | Valvole di isolamento a 2,5÷5 mm dal proprio attacco | 6 su 20 | **17 su 20** | i tre casi residui al §4.2 |
 
 Rilievi del controllo di qualità sulla tavola: da **1 bloccante + 6 avvisi** a
 **1 bloccante + 3 avvisi**. Sparito l'avviso «il disegno è tutto su un lato»;
-spariti due dei tre «tratta con troppe pieghe». Il bloccante è lo stesso di
-prima, **con lo stesso numero** (§4.1).
+spariti due dei tre «tratta con troppe pieghe». Il bloccante è **lo stesso di
+prima e su un numero peggiore**: 40 mm contro 37,5 (§4.1).
 
 Formato: A3, come prima. Area di disegno 350 × 235 mm.
 
@@ -165,18 +166,26 @@ entrambe le revisioni e ha verificato lo stesso `sha256`.
 
 ## 4. Difetti residui, dichiarati
 
-### 4.1 L'andata e ritorno del ramo sanitario — **preesistente, e identica**
+### 4.1 L'andata e ritorno del ramo sanitario — **preesistente, e peggiorata di 2,5 mm**
 
 `RUN_OVERSHOOTS_ITS_PORT` sulla tratta `p4-a-a-1-1, p4-a-a-1-2`: la linea supera
-la propria porta di arrivo e ci torna. C'è sulla baseline e c'è dopo, **con lo
-stesso numero: 37,5 mm**. Il ciclo di miglioramento la conta fra le voci che non
-deve peggiorare, ma non riesce a toglierla né prima né dopo: è un difetto della
-disposizione e sta fuori dalle due cause di questo pacchetto.
+la propria porta di arrivo e ci torna. C'è sulla baseline, **37,5 mm**, e c'è
+sulla tavola consegnata, **40 mm**. Il ciclo di miglioramento la conta fra le
+voci che non deve peggiorare — nessuna mossa può **aggiungere** un'andata e
+ritorno — ma protegge il loro **numero**, non la loro entità: quei due
+millimetri e mezzo in più sono stati comprati legittimamente dal criterio di
+accettazione, insieme al riempimento. Il difetto in sé è della disposizione e
+sta fuori dalle due cause di questo pacchetto: il ciclo non riesce a toglierlo
+né prima né dopo.
 
-*Nella prima stesura questa tratta arrivava a 40 mm e il rapporto la dichiarava
-«identica»: due numeri diversi presentati come uno. Il collaudo l'ha rilevato; la
-seconda stesura del ciclo la riporta a 37,5 mm, e il numero è verificabile nel
-preflight agli atti.*
+⛔ **Questo numero è stato dichiarato male tre volte, ed è la cosa che questo
+pacchetto ha imparato peggio.** Prima «identico» con due numeri diversi accanto;
+poi 37,5 mm, che era vero per la tavola di quel momento; poi ancora 37,5 mm
+dopo aver rigenerato la tavola — cioè un paragrafo lasciato indietro mentre le
+misure accanto venivano rifatte. Il collaudo indipendente l'ha ripreso ogni
+volta. La lezione non è «rileggere»: è che **quando la tavola si rigenera, si
+rigenerano tutti i numeri che la descrivono**, compresi quelli dentro la prosa,
+e la fonte è il preflight agli atti, non la memoria di quello che c'era scritto.
 
 ### 4.2 Tre valvole su venti non arrivano al minimo
 
@@ -192,9 +201,8 @@ al primo nodo si sposta di un passo.
 
 ⚠ **Il collaudo ha chiesto la prova di quel «non trova posto», e ha ragione a
 chiederla: non è agli atti.** Quello che è agli atti è il conto — **17 su 20**
-contro le **6 su 20** della baseline — e il fatto che i tre residui stiano tutti
-su coppie di accessori consecutivi, dove lo spazio è conteso da due simboli e non
-da uno. Dimostrare nodo per nodo che cosa occupava le posizioni più vicine
+contro le **6 su 20** della baseline — e il fatto che i tre residui siano tutti casi in cui lo
+spazio è conteso — una coppia di accessori consecutivi e due ultimi di tratta. Dimostrare nodo per nodo che cosa occupava le posizioni più vicine
 chiederebbe uno strumento che oggi non c'è; è lavoro di un pacchetto, non di una
 riga di rapporto.
 
@@ -222,7 +230,7 @@ Trovato dal collaudo, e vale la pena scriverlo perché non si perda: nella caten
 del comando di disegno il controllo di correttezza gira **prima** che gli
 indirizzi della modalità verifica siano posati, quindi una collisione fra due di
 essi non può mai essere vista da lì. La collisione che c'era è stata tolta alla
-radice — gli indirizzi non evitano più le tubazioni, che D-111 dice espressamente
+radice — gli indirizzi non evitano più le tubazioni, che D-110 dice espressamente
 di non evitare, e con quello spazio in più trovano posto senza accavallarsi — e
 la tavola consegnata non ne ha; ma **l'ordine dei due passi resta come era**,
 perché sta in un file fuori dal perimetro di questo pacchetto.

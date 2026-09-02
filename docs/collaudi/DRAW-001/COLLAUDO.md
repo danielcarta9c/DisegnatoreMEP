@@ -629,3 +629,169 @@ Il resto della consegna, per quanto ho potuto misurarlo, è in ordine.
   giro era rosso, ed è verde.
 - Tavola guardata: `finale/impianto1.png` a piena pagina e quattro ingrandimenti a 6× sui
   nodi che al primo giro erano difettosi e su quello nuovo.
+
+---
+---
+
+# DRAW-001 — collaudo indipendente, **terzo giro**
+
+**Revisione collaudata:** `e4be6cd` (`e57ecd7` era la consegna respinta al secondo giro).
+**Base:** `ebe165a`. **Copia di lavoro pulita.** I due verbali precedenti restano sopra,
+integralmente, e non sono stati toccati.
+
+---
+
+## Verdetto del terzo giro
+
+# RESPINTO
+
+**I due punti del secondo giro sono chiusi davvero, e li ho verificati uno per uno con lo
+stesso metodo che li aveva aperti.** Non resta niente da progettare: il codice, le misure e
+gli artefatti di questa consegna, per tutto ciò che ho potuto misurare, sono in ordine.
+
+Respingo per **una frase**, e la respingo perché è la terza volta che compare lo stesso
+numero sbagliato, in un paragrafo che parla proprio di quell'errore:
+
+> §4.1 — «C'è sulla baseline e c'è dopo, **con lo stesso numero: 37,5 mm**» … «la seconda
+> stesura del ciclo la riporta a 37,5 mm, e il numero è verificabile nel preflight agli atti».
+
+**Sulla tavola consegnata quel numero è 40 mm**, e la baseline è 37,5. Il rilievo è
+**bloccante**, ed è quindi peggiorato rispetto alla baseline mentre il rapporto dichiara che
+non è cambiato. Vedi **T-1**. È una correzione di una riga, non di un algoritmo.
+
+---
+
+## I due punti del secondo giro
+
+| # | Punto | Esito | Prova mia |
+|---|---|---|---|
+| R-1 | Collisione fra indirizzi, e strumento che misura un'altra tavola | **CHIUSO** | `validate_drawing_geometry` eseguita da me su `finale/geometria.json`: **nessun rilievo** (prima: `LABEL_COLLISION` bloccante). Misura mia delle sovrapposizioni fra 52 etichette e 45 riquadri: **0**, e 0 anche sulla baseline. Nessuna etichetta esce dall'area di disegno. Il nodo dove avevo visto `RS.01.N.02` dentro `CS.01.N.03`, rasterizzato a 6×: le tre scritte `CS.01.N.01/02/03` sono separate e leggibili; una è attraversata da un tubo, che **D-110 ammette espressamente**. Le tre impronte ora coincidono: `a74b12fd…` in `geometria.json`, in `metriche.json` e in `preflight.txt` (baseline: `e524794b…` in tutte e tre) |
+| — | *(prova più forte, che il secondo giro non aveva superato)* | **CHIUSO** | Ho **rigenerato** la tavola con `disegnatore_mep draw … --verifica`: geometria **uguale campo per campo** a quella agli atti, **SVG identico**, `preflight.txt` identico. La consegna è ora riproducibile, ed è anche la prova di determinismo del criterio 4 |
+| R-2 | `stretch` era la stessa quantità di `spread`: rimedio nullo | **CHIUSO** | `stretch` è stata tolta. `ink_coverage` **non** è una funzione di `spread`, e l'ho verificato in due modi: su 4000 layout casuali, **27 dei 30 valori distinti di `spread` corrispondono a molti valori diversi di `coverage`**; e su un caso costruito, aggiungere una propaggine leggera muove `spread` di `+1,90` e `coverage` di **`−0,41`**. È una misura che vede davvero quello che dice di vedere |
+| — | Taratura di `INK_COVERAGE_MIN` | **verificata sui fatti** | Calcolata da me sulle quattro geometrie agli atti: baseline **0,859**; consegna del 1º giro **0,688**; 2º giro **0,688**; questa **0,766**. I numeri della docstring (0,86 / 0,69) sono esatti, e la soglia 0,75 sta effettivamente in mezzo |
+| — | Il guadagno di riempimento al netto della propaggine | **migliorato e pubblicato** | Con il mio metodo del primo giro — tolgo il pezzo più isolato e la sua tratta — misuro **36,8 %**, cioè **esattamente** il numero che `metriche.py` pubblica ora da sé. Il guadagno al netto della propaggine sale di giro in giro: **+4,7 → +8,0 → +8,9 punti**. Ed è ora **agli atti nella tabella del rapporto**, che era la seconda delle due strade che avevo indicato |
+| O2-1 | Due censimenti nella stessa riga del registro | **CHIUSO** | La riga I-018 porta un solo censimento: «Diciassette valvole su venti». Nessuna riga del registro è chiusa dal DEV (I-007: «la chiusura NON si propone»; I-018: proposta, che è ammessa) |
+| O2-2 | «Non trova un nodo più vicino» affermato senza prova | **affrontato bene** | Il §4.2 ora **dichiara** che la prova nodo per nodo non è agli atti e chiederebbe uno strumento che non c'è. È la risposta giusta a un'obiezione di quel tipo: non si prova ciò che non si può provare, lo si dice |
+| O2-3 | Due impronte diverse nella stessa consegna | **CHIUSO** | Coincidono, verificato sopra |
+
+---
+
+## Difetto del terzo giro
+
+### T-1 — Il rilievo bloccante è **peggiorato**, e il rapporto dichiara che non è cambiato
+
+Il numero, letto da me in **quattro** posti indipendenti:
+
+| fonte | valore |
+|---|---:|
+| `baseline/preflight.txt` | 37,5 mm |
+| `finale/preflight.txt` (agli atti) | **40 mm** |
+| `finale/metriche.json`, campo `rilievi_qualita` (agli atti) | **40 mm** |
+| il `preflight.txt` che ho ottenuto **rigenerando io** la tavola | **40 mm** |
+
+Il rapporto dice, al §4.1 e ripetuto al §2 («Il bloccante è lo stesso di prima, **con lo
+stesso numero**»), che sono 37,5 mm su entrambe le colonne.
+
+Perché non è una svista qualunque:
+
+1. **Il rilievo è bloccante** (`RUN_OVERSHOOTS_ITS_PORT`, B12/D-078). Il §4 si intitola
+   «Difetti residui, **dichiarati**», e il suo mestiere è dire l'entità di ciò che resta. Un
+   PM che legge quel paragrafo conclude che nulla è peggiorato: invece il ritorno del ramo
+   sanitario supera la propria porta di **2,5 mm in più** della baseline.
+2. **Il numero giusto è dentro la consegna stessa.** `finale/metriche.json`, rigenerato in
+   questo giro, contiene la stringa «supera di 40 mm». La misura è stata fatta e pubblicata;
+   la prosa accanto dice un'altra cosa.
+3. **È la terza volta.** Al primo giro erano 40 mm dichiarati «identici» ai 37,5 della
+   baseline, e lo rilevai. Al secondo la tavola tornò davvero a 37,5 e il §4.1 lo scrisse
+   con ragione. In questo giro la posa è cambiata di nuovo — il riempimento passa da 41,8 a
+   41,0 %, le pieghe da 29 a 27, le tratte lunghe da 2 a 1, la lunghezza da 1182,5 a
+   1177,5 mm — e con essa è tornato il 40 mm, **ma il paragrafo non è stato rimisurato**.
+   Ora contiene per di più una nota che racconta di aver corretto proprio questo errore, e
+   quella nota è a sua volta falsa rispetto all'artefatto che accompagna.
+
+Non chiedo di togliere i 40 mm dalla tavola: è un difetto preesistente, sta fuori dalle due
+cause del pacchetto, e il ciclo di miglioramento protegge il **numero** delle andate e
+ritorno, non la loro entità — cosa che va detta, perché spiega come 2,5 mm possano essere
+comprati legittimamente. Chiedo che il §4.1 e il §2 dicano **40 mm contro 37,5**, che è
+quello che gli artefatti mostrano.
+
+---
+
+## Osservazioni non bloccanti del terzo giro
+
+**O3-1 — La citazione che motiva la correzione di R-1 è attribuita alla decisione sbagliata.**
+La docstring di `free()` e il §4.5 scrivono «D-111 dice espressamente che *un tubo che passa
+sopra l'etichetta non è un problema e non va evitato*». La regola c'è ed è vera, ma sta in
+**D-110** («l'etichetta dell'indirizzo … **può essere attraversata da un tubo**, non deve
+essere allineata alle altre, non si sposta per evitare sovrapposizioni»); D-111 la emenda su
+altro. Inoltre la frase è fra virgolette ma è una parafrasi, non il testo. Su un progetto la
+cui regola numero uno è «una fonte si guarda, non si descrive a memoria», vale la pena
+sistemare il riferimento.
+
+**O3-2 — La spiegazione dei tre residui di D-120 non regge sui dati agli atti.** Il §4.2
+dice che i tre stanno «tutti su coppie di accessori consecutivi». Nel censimento di
+`finale/metriche.json` **uno solo** è classificato `coppia` (prelievo ACS, 13,5 mm); gli
+altri due — valvola del manometro e ingresso freddo del bollitore, 7,5 mm — sono
+classificati `ultimo`. Il conteggio 17 su 20 è giusto e l'ho ricontato; è la frase che lo
+spiega a non corrispondere.
+
+**O3-3 — La propaggine è ridotta, non sparita, e la consegna ora lo dice.** Lo sfiato aria
+sta ancora a `y = 71,0` con il simbolo successivo a `y = 83,5`: dodici millimetri e mezzo di
+stelo nudo (erano 27,5 al primo giro, 17,5 al secondo). La copertura dell'ingombro, **0,766**,
+è sopra la soglia di 0,75 ma sotto lo 0,81 che la docstring di `INK_COVERAGE_MIN` indica come
+valore di una tavola «senza propaggini». Nessuna obiezione: uno sfiato **si monta in alto**,
+il numero al netto del pezzo isolato è pubblicato, e il giudizio è del PM.
+
+**O3-4 — Voci confermate.** Attraversamenti del corpo di un simbolo con la mia misura
+indipendente: **0** su 74 tratti × 45 simboli; `LINE_UNDER_SYMBOL` con il predicato storico
+di `ebe165a`: **0** su entrambe le colonne; tratti a filo del bordo: **2**, da 2,5 mm,
+entrambi sporgenti oltre il riquadro e quindi fuori anche dalla convenzione storica. Grafo
+canonico rigenerato da me su `e4be6cd`: `sha256 5d3334f5c87b84ef…`, identico. Valvole:
+**17 su 20** dentro forbice contro **6 su 20** della baseline, ricontate da me sulla
+geometria. `ruff check src tests` verde; `mypy src tests examples`: *no issues in 133 source
+files*; `pytest tests/layout tests/validation`: **206 passed, 13 skipped, 2 xfailed**.
+Perimetro: 31 file, tutti dentro l'elenco del Work Package; `cli.py` **non** toccato, ed è
+la scelta giusta. Tavola guardata a piena pagina e a 6×: leggibile, e il confronto
+prima/dopo rende visibile il miglioramento.
+
+---
+
+## Cosa manca
+
+Una cosa sola, e non è lavoro di progettazione:
+
+1. **Rimisurare il §4.1 sull'artefatto consegnato** e scrivere **40 mm contro i 37,5 mm della
+   baseline**, correggendo di conseguenza la frase «con lo stesso numero» al §2 e la nota
+   storica che dichiara chiuso quell'errore. Se serve, aggiungere la ragione tecnica — il
+   ciclo protegge il numero delle andate e ritorno, non la loro entità — che è vera e va a
+   favore di chi consegna.
+
+Facoltativi, non bloccanti: il riferimento a D-110 invece di D-111 (**O3-1**) e la frase sui
+tre residui (**O3-2**).
+
+Un quarto giro può limitarsi a rileggere quelle righe: **tutto il resto è verificato**.
+
+---
+
+## Come ho misurato il terzo giro
+
+- `validate_drawing_geometry` (il cancello vero) su `baseline/geometria.json` e
+  `finale/geometria.json`; misura mia delle sovrapposizioni etichetta/simbolo e
+  etichetta/etichetta; controllo che nessuna etichetta esca dall'area di disegno.
+- `drawing_fingerprint` calcolata sui file agli atti e confrontata con `metriche.json` e
+  `preflight.txt`; tavola **rigenerata** con `disegnatore_mep draw … --verifica --geometry` e
+  confrontata con gli artefatti (geometria `==`, SVG identico, preflight identico).
+- `ink_coverage` e `ink_imbalance` calcolate con le funzioni del progetto sulle **quattro**
+  geometrie agli atti (baseline e le tre consegne), e su 4000 layout casuali per verificare
+  che `coverage` non sia una funzione di `spread`; più un caso costruito con e senza
+  propaggine.
+- Riempimento al netto del pezzo più isolato ricalcolato con **il mio** metodo, indipendente
+  da `_fill_without_the_loneliest`, sulle quattro geometrie.
+- Misura mia dell'attraversamento del corpo aperto e dei tratti a filo del bordo; predicato
+  storico di `ebe165a` riapplicato.
+- Censimento delle valvole D-120 ricontato dalla geometria; numero dell'andata e ritorno
+  letto da quattro fonti indipendenti.
+- Modello canonico rigenerato e confrontato con `sha256sum`; `ruff`; `mypy src tests
+  examples`; `pytest tests/layout tests/validation`.
+- `finale/impianto1.png` e `prima-dopo.png` a piena pagina, più due ingrandimenti a 6× sul
+  nodo di R-1 e sulla propaggine.
