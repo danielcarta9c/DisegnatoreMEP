@@ -30,7 +30,7 @@ l'andata e ritorno. Nell'ordine:
    indietro non e' un disegno caro, e' un disegno sbagliato. Una mossa che ne
    toglie una si accetta anche a obiettivo invariato; una che ne aggiunge una
    non si accetta mai, per nessun guadagno;
-3. gli attraversamenti, che non devono crescere;
+3. gli attraversamenti e le tratte oltre le tre pieghe, che non devono crescere;
 4. l'obiettivo totale, che deve scendere strettamente.
 
 Vincoli mai violabili, qualunque sia il guadagno:
@@ -61,6 +61,7 @@ esce, non un'approssimazione piu' comoda: costa di piu' per prova, e si paga
 abbassando il tetto delle prove, non guardando la tavola sbagliata.
 """
 
+from collections.abc import Callable
 from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -71,10 +72,16 @@ from disegnatore_mep.model.project import ProjectModel
 from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
 from .geometry import (
+    INK_COVERAGE_MIN,
+    QUADRANT_IMBALANCE_MAX,
     PlacedSymbol,
     Point,
     RoutedTrunk,
     box_of,
+    fill_ratio,
+    ink_box,
+    ink_coverage,
+    ink_imbalance,
     overshoot_mm,
     run_intrudes_on,
 )
@@ -103,12 +110,53 @@ Il tetto scatta in modo deterministico — stessi ingressi, stesse prove, stesso
 punto di arresto — quindi non costa la riproducibilita' bit-a-bit.
 
 Il numero segue le passate e il costo di una prova, che ora comprende la posa
-degli accessori: la tavola completa ne spende poco piu' di 260 e disegna in una
-ventina di secondi. E' il tetto che tiene il costo limitato, non le passate.
+degli accessori. E' il tetto che tiene il costo limitato, non le passate.
+
+**Alzarlo non serve**, ed e' misurato: portandolo a seicentocinquanta, sulla
+tavola dell'impianto 1 non cambia una sola misura. Quando il ciclo si ferma con
+un'andata e ritorno ancora in piedi non e' perche' ha finito le prove: e'
+perche' nessuna delle mosse che conosce la toglie.
 """
 
 NUDGE_STEPS = (1, 2, 4)
 """Le traslazioni provate, in passi di griglia: le vicine prima delle lontane."""
+
+SPREAD_STEPS = (2, 4, 8, 16)
+"""Gli allontanamenti dal centro provati dalla distensione, in passi di griglia.
+
+Piu' lunghi delle traslazioni del ciclo che li precede, e per un motivo
+diverso: quelle cercano di **togliere una piega**, e una piega si toglie
+allineandosi a un vicino; questa cerca di **occupare il foglio**, e il foglio e'
+grande. Sedici passi sono quaranta millimetri, un ottavo della larghezza utile
+di una A3, e piu' in la' non si guadagna piu' niente: provare anche
+ventiquattro passi non ha cambiato una misura, e ogni passo in piu' e' un
+instradamento di prova speso.
+"""
+
+FILL_TARGET_RATIO = 0.60
+"""Il riempimento oltre il quale la distensione si ferma (A1, D-111).
+
+E' **lo stesso numero del preflight**, che avvisa quando la tavola e' piena
+per meno di tre quinti: il collocatore non insegue un obiettivo proprio, insegue
+quello gia' dichiarato. Fermarsi appena e' raggiunto e' la meta' che conta di
+D-080 — «anche la lunghezza delle tratte costa, non facciamo che spargiamo le
+macchine in giro»: la distensione compra riempimento pagando in lunghezza, e
+smette appena il riempimento c'e'.
+"""
+
+MAX_SPREAD_TRIALS = 700
+"""Tetto di instradamenti di prova per la sola distensione.
+
+Separato da quello del ciclo che la precede, perche' le due fasi cercano cose
+diverse e una non deve consumare il bilancio dell'altra. Come l'altro, scatta
+in modo deterministico: stessi ingressi, stesse prove, stesso punto di arresto.
+
+Il numero e' **misurato, non scelto**: sull'impianto 1 la distensione si
+esaurisce da sola dopo poco piu' di cinquecento prove, quando nessuna mossa
+migliora piu' nulla. Un tetto piu' basso la fermava prima del capolinea, e la
+tavola usciva riempita a meta' — il tetto non deve essere il vincolo che decide
+la tavola.
+"""
 
 _SNUG_STEPS = 2
 """Stacco fra la porta di chi si avvicina e quella del suo pari.
@@ -116,6 +164,13 @@ _SNUG_STEPS = 2
 Due passi, come `place.CLEARANCE_STEPS`: e' la distanza a cui una linea si
 stacca dal bordo del simbolo, quindi la minima a cui due porte affacciate si
 collegano senza che la tratta sembri disegnata sul simbolo.
+"""
+
+BENDS_PER_RUN_MAX = 3
+"""Pieghe oltre le quali una tratta e' un giro attorno a qualcosa (B4, D-060).
+
+Lo stesso numero che il preflight usa per il proprio avviso: la distensione non
+deve poter comprare una tratta che il controllo di qualita' segnalera'.
 """
 
 _TOLERANCE_MM = 1e-6
@@ -147,6 +202,57 @@ class _Outcome(NamedTuple):
     objective: int
     crossings: int
     routes: list[RoutedTrunk]
+
+    long_runs: int = 0
+    """Le tratte che cambiano direzione piu' di tre volte (B4, D-060).
+
+    Contate a parte dal totale delle pieghe, perche' sono due difetti diversi:
+    trenta pieghe sparse su venti tratte sono un disegno normale, quattro su una
+    sola tratta sono un giro attorno a un ostacolo. La distensione non deve
+    comprare ne' l'uno ne' l'altro.
+    """
+
+    bends: int = 0
+    """Le pieghe, contate a parte dall'obiettivo.
+
+    L'obiettivo le somma alla lunghezza, e alla distensione serve invece
+    tenerle separate: li' la lunghezza **deve** poter crescere — allontanare due
+    pezzi allunga il tubo che li unisce — mentre le pieghe non devono crescere
+    di una.
+    """
+
+    fill: float = 0.0
+    """Quanta area di disegno copre l'ingombro dell'inchiostro (A1, D-111)."""
+
+    coverage: float = 1.0
+    """Quante celle dell'ingombro portano inchiostro, sul totale.
+
+    Serve a una cosa sola, e ce ne vuole una apposta: impedire che il
+    riempimento si compri con una **propaggine**. Il riempimento misura il
+    rettangolo che circonda il disegno, quindi basta spingere un pezzo leggero
+    lontano da tutti — una valvola di sicurezza, uno sfiato, con il loro stelo —
+    per allungare quel rettangolo di due centimetri di carta bianca. Misurato:
+    su una prima versione di questo ciclo, dei tredici punti di riempimento
+    guadagnati **nove venivano da un pezzo solo**.
+
+    ⛔ **Il primo rimedio non rimediava niente**, e vale la pena scriverlo:
+    misurare lo squilibrio fra i quattro quadranti dell'**ingombro** da'
+    esattamente lo stesso numero che misurarlo sui quadranti dell'area centrata
+    su di esso — stesse rette di divisione, stesso inchiostro — quindi la
+    condizione in piu' era logicamente identica a quella che c'era gia'. Una
+    propaggine sta **dentro** un quadrante e non lo svuota: la si vede solo
+    guardando piu' fitto, ed e' quello che fa questa misura.
+    """
+
+    spread: float = 1.0
+    """Squilibrio dell'inchiostro fra i quattro quadranti dell'area di disegno.
+
+    E' la seconda misura che la carta chiede — «si copre meta' foglio con una
+    mano: se una meta' e' quasi bianca e l'altra e' fitta, non va» — ed e' la
+    stessa che il preflight pesa a tavola finita. Il riempimento da solo non la
+    ottiene: un disegno puo' coprire i tre quarti del foglio e avere tutto
+    l'inchiostro in una striscia.
+    """
 
 
 _HORIZONTAL_FACES = (PortFace.LEFT, PortFace.RIGHT)
@@ -217,6 +323,32 @@ def _relation(left: float, right: float) -> int:
     return (left > right) - (left < right)
 
 
+def _centred_on(
+    box: tuple[float, float, float, float] | None,
+    area: tuple[float, float, float, float],
+) -> tuple[float, float, float, float]:
+    """L'area di disegno **come la vedra' il blocco una volta centrato**.
+
+    Il ciclo sceglie una posa, e dopo di lui la composizione porta il blocco al
+    centro del foglio: misurare i quadranti dove i pezzi stanno adesso vuol dire
+    misurare una tavola che non uscira'. Al posto di traslare la posa — che
+    costa e non serve a nulla — si trasla il rettangolo: stessa misura, e
+    invariante rispetto a dove il blocco si trova in questo momento.
+    """
+    if box is None:
+        return area
+    centre_x = (box[0] + box[2]) / 2.0
+    centre_y = (box[1] + box[3]) / 2.0
+    half_width = (area[2] - area[0]) / 2.0
+    half_height = (area[3] - area[1]) / 2.0
+    return (
+        centre_x - half_width,
+        centre_y - half_height,
+        centre_x + half_width,
+        centre_y + half_height,
+    )
+
+
 def improve_sheet(
     project: ProjectModel,
     partition: SheetPartition,
@@ -250,6 +382,9 @@ def improve_sheet(
         width_mm=drawing.width_mm - 2 * ROUTING_MARGIN_MM,
         height_mm=drawing.height_mm - 2 * ROUTING_MARGIN_MM,
     )
+    # Il riempimento si misura sull'**area di disegno**, che e' il foglio meno
+    # margini e fascia della legenda: la stessa che guarda il preflight.
+    sheet_rect = (drawing.x_mm, drawing.y_mm, drawing.right_mm, drawing.bottom_mm)
     grid = GridSpace(origin=drawing, standard=frame.standard)
     step = grid.step_mm
     clearance = frame.standard.min_clearance_mm
@@ -391,6 +526,29 @@ def improve_sheet(
             objective=objective_of(settled.routes, step),
             crossings=sum(len(route.crossings) for route in settled.routes),
             routes=settled.routes,
+            bends=sum(
+                max(len(segment) - 2, 0)
+                for route in settled.routes
+                for segment in route.segments
+            ),
+            long_runs=sum(
+                1
+                for route in settled.routes
+                if sum(max(len(segment) - 2, 0) for segment in route.segments)
+                > BENDS_PER_RUN_MAX
+            ),
+            fill=fill_ratio(settled.symbols, settled.routes, sheet_rect),
+            spread=ink_imbalance(
+                settled.symbols,
+                settled.routes,
+                _centred_on(ink_box(settled.symbols, settled.routes), sheet_rect),
+                frame.standard.line_medium_mm,
+            ),
+            coverage=ink_coverage(
+                settled.symbols,
+                settled.routes,
+                ink_box(settled.symbols, settled.routes),
+            ),
         )
 
     def candidates_of(component_id: str) -> list[_Move]:
@@ -591,7 +749,10 @@ def improve_sheet(
     if current_best is None:
         return list(placed)
 
+    exhausted = False
     for _ in range(MAX_PASSES):
+        if exhausted:
+            break
         moved = False
         offending: set[str] = set()
         for index, (trunk, route) in enumerate(
@@ -621,7 +782,12 @@ def improve_sheet(
                 if not is_valid(component_id, move):
                     continue
                 if trials >= MAX_TRIAL_ROUTINGS:
-                    return [best[item] for item in order]
+                    # Il tetto ferma **questo** ciclo, non la composizione: la
+                    # distensione che segue ha il proprio bilancio e le proprie
+                    # mosse, e finiva saltata per intero ogni volta che il
+                    # foglio spendeva qui tutte le prove.
+                    exhausted = True
+                    break
                 box = manifest_at(component_id, move.rotation_deg)
                 trial = dict(best)
                 trial[component_id] = current.model_copy(
@@ -652,19 +818,248 @@ def improve_sheet(
                 straightened = same_fit and len(found.turnbacks) < len(
                     current_best.turnbacks
                 )
+                # Una tratta che smette di girare attorno a un ostacolo si
+                # accetta anche a obiettivo fermo, come si accetta un'andata e
+                # ritorno in meno: quattro pieghe su una tratta sola non sono
+                # una tavola piu' cara, sono un giro (B4).
+                shortened = (
+                    same_fit
+                    and len(found.turnbacks) == len(current_best.turnbacks)
+                    and found.crossings <= current_best.crossings
+                    and found.long_runs < current_best.long_runs
+                )
                 better = (
                     same_fit
                     and len(found.turnbacks) == len(current_best.turnbacks)
                     and found.crossings <= current_best.crossings
+                    # Nemmeno una tratta in piu' oltre le tre pieghe: e' un
+                    # rilievo di qualita' per se' (B4), e l'obiettivo totale non
+                    # lo vede — trenta pieghe sparse su venti tratte le somma
+                    # come quattro su una sola, che invece e' un giro attorno a
+                    # un ostacolo. Senza questa voce il ciclo comprava una
+                    # tratta lunga per risparmiare due pieghe altrove.
+                    and found.long_runs <= current_best.long_runs
                     and found.objective < current_best.objective
                 )
-                if repaired or straightened or better:
+                if repaired or straightened or shortened or better:
                     best = trial
                     current_best = found
                     moved = True
                     break
+            if exhausted:
+                break
         if not moved:
             break
+
+    # **Poi si distende**, ed e' la seconda meta' del lavoro (D-111, A1).
+    #
+    # Il ciclo qui sopra ottimizza pieghe, incroci e lunghezza, e le tre voci
+    # tirano tutte dalla stessa parte: **stringere**. Il risultato e' corretto e
+    # sta in un angolo — sull'impianto 1 il foglio finiva pieno al 29 %, contro
+    # il 60 % che la carta chiede, con il quadrante piu' pieno che portava dodici
+    # volte l'inchiostro del piu' vuoto. La misura c'era gia' nel preflight; a
+    # mancare era che qualcuno la usasse **mentre** dispone, invece di scoprirla
+    # alla fine con un avviso.
+    #
+    # La distensione allontana i pezzi dal centro del disegno e tiene la mossa
+    # solo se il foglio si riempie o l'inchiostro si distribuisce meglio, **e**
+    # se non costa niente di cio' che il PM ha messo prima: nessuna piega in
+    # piu', nessun incrocio in piu', nessuna andata e ritorno in piu', nessuna
+    # tratta che perde i propri accessori. Cresce solo la lunghezza, che e' il
+    # prezzo dichiarato del riempimento, e cresce **finche' serve**: raggiunto
+    # il riempimento richiesto la fase si ferma (D-080).
+    return _spread_out(
+        order=order,
+        best=best,
+        current_best=current_best,
+        evaluate=evaluate,
+        is_valid=is_valid,
+        manifest_at=manifest_at,
+        step=step,
+    )
+
+
+def _spread_out(
+    *,
+    order: list[str],
+    best: dict[str, PlacedSymbol],
+    current_best: _Outcome,
+    evaluate: Callable[[dict[str, PlacedSymbol]], _Outcome | None],
+    is_valid: Callable[[str, _Move], bool],
+    manifest_at: Callable[[str, int], SymbolManifest],
+    step: float,
+) -> list[PlacedSymbol]:
+    """Allontana i pezzi dal centro finche' il foglio si riempie (A1, D-111).
+
+    Greedy e deterministico come il ciclo che la precede: i componenti si
+    esaminano nell'ordine di posa, le mosse in ordine fisso, si accetta la prima
+    che migliora, e un tetto di prove ferma la fase in un punto che non dipende
+    da quanto tempo ha girato.
+
+    Le mosse sono **allontanamenti dal centro dell'ingombro**: chi sta a destra
+    va a destra, chi sta in alto va in alto. E' la mossa che apre il disegno
+    senza rimescolarlo — l'ordine di processo da sinistra a destra e le colonne
+    restano quelli che erano, perche' a difenderli e' lo stesso predicato di
+    validita' del ciclo precedente.
+    """
+    trials = 0
+    # Due passaggi con le stesse mosse e due criteri diversi, e in quest'ordine:
+    # prima si **riempie** il foglio, poi si **distribuisce** l'inchiostro a
+    # riempimento fermo. Sono le due misure che la carta chiede (A1, A3) e che
+    # il preflight gia' pesava a tavola finita; un criterio solo non le ottiene
+    # entrambe, perche' quasi ogni mossa cambia il riempimento di un pelo e il
+    # bilanciamento non arriverebbe mai al proprio turno.
+    # Due giri, non uno: la fase che distribuisce lascia dietro di se' un
+    # margine — lo squilibrio scende sotto il limite — e quel margine e' spazio
+    # in cui la fase che riempie puo' tornare a lavorare. Con un giro solo
+    # restava inutilizzato.
+    for filling in (False, True, False, True):
+        moved = True
+        while moved and (not filling or current_best.fill < FILL_TARGET_RATIO):
+            moved = False
+            box = ink_box([best[item] for item in order], current_best.routes)
+            if box is None:
+                break
+            centre_x = (box[0] + box[2]) / 2.0
+            centre_y = (box[1] + box[3]) / 2.0
+            # ⚠ **Le due fasi guardano gli stessi pezzi e provano le stesse
+            # mosse**, e conviene lasciarle cosi'. Restringere la fase che
+            # distribuisce ai soli pezzi del quadrante piu' pieno, o mandarli
+            # verso il piu' vuoto invece che via dal centro, sembra piu' mirato
+            # e costa meno prove: misurato, porta il riempimento dal 42 al 37 %
+            # e peggiora anche incroci e pieghe. Il motivo e' che questa fase
+            # non serve solo a se stessa — rimescola la posa, e da quel
+            # rimescolamento la fase che riempie riparte.
+            for component_id in order:
+                current = best[component_id]
+                here_x = current.origin.x_mm + current.width_mm / 2
+                here_y = current.origin.y_mm + current.height_mm / 2
+                away_x = 1.0 if here_x >= centre_x else -1.0
+                away_y = 1.0 if here_y >= centre_y else -1.0
+                # **Il foglio lo allarga solo chi sta sul bordo dell'ingombro.**
+                # Spostare un pezzo interno non sposta di un millimetro il
+                # rettangolo che il riempimento misura, quindi in questa fase
+                # non e' una candidata: e' una prova di instradamento buttata, e
+                # le prove sono contate. Nella fase che distribuisce
+                # l'inchiostro valgono invece tutti, perche' li' conta dove il
+                # pezzo sta dentro il rettangolo, non quanto e' grande.
+                on_edge_x = (
+                    current.right_mm >= box[2] - step - _TOLERANCE_MM
+                    if away_x > 0
+                    else current.origin.x_mm <= box[0] + step + _TOLERANCE_MM
+                )
+                on_edge_y = (
+                    current.bottom_mm >= box[3] - step - _TOLERANCE_MM
+                    if away_y > 0
+                    else current.origin.y_mm <= box[1] + step + _TOLERANCE_MM
+                )
+                candidates = [
+                    _Move(
+                        Point(
+                            x_mm=current.origin.x_mm + away_x * count * step,
+                            y_mm=current.origin.y_mm,
+                        ),
+                        current.rotation_deg,
+                    )
+                    for count in SPREAD_STEPS
+                    if on_edge_x or not filling
+                ] + [
+                    _Move(
+                        Point(
+                            x_mm=current.origin.x_mm,
+                            y_mm=current.origin.y_mm + away_y * count * step,
+                        ),
+                        current.rotation_deg,
+                    )
+                    for count in SPREAD_STEPS
+                    if on_edge_y or not filling
+                ] + [
+                    # E in diagonale, che e' la mossa che apre davvero un
+                    # angolo: chi sta in un vertice dell'ingombro lo allarga su
+                    # tutti e due gli assi insieme, e una traslazione per volta
+                    # non ci arriva mai perche' la prima da sola non guadagna
+                    # niente e viene scartata.
+                    _Move(
+                        Point(
+                            x_mm=current.origin.x_mm + away_x * count * step,
+                            y_mm=current.origin.y_mm + away_y * count * step,
+                        ),
+                        current.rotation_deg,
+                    )
+                    for count in SPREAD_STEPS
+                    if (on_edge_x and on_edge_y) or not filling
+                ]
+                for move in candidates:
+                    if trials >= MAX_SPREAD_TRIALS:
+                        return [best[item] for item in order]
+                    if not is_valid(component_id, move):
+                        continue
+                    trials += 1
+                    shape = manifest_at(component_id, move.rotation_deg)
+                    trial = dict(best)
+                    trial[component_id] = current.model_copy(
+                        update={
+                            "origin": move.origin,
+                            "rotation_deg": move.rotation_deg,
+                            "width_mm": shape.width_mm,
+                            "height_mm": shape.height_mm,
+                        }
+                    )
+                    found = evaluate(trial)
+                    if found is None:
+                        continue
+                    # Niente di cio' che viene prima puo' peggiorare: la tavola
+                    # che ospita i propri accessori, le andate e ritorno, gli
+                    # incroci e le pieghe. La lunghezza si', ed e' il prezzo.
+                    if (
+                        len(found.unfit) > len(current_best.unfit)
+                        or len(found.turnbacks) > len(current_best.turnbacks)
+                        or found.crossings > current_best.crossings
+                        or found.bends > current_best.bends
+                        or found.long_runs > current_best.long_runs
+                    ):
+                        continue
+                    # Le due misure si tengono per mano, e questo e' il punto.
+                    # Riempire senza guardare la distribuzione non fa una
+                    # tavola: basta portare un pezzo leggero in cima al foglio
+                    # per far salire il riempimento — e' un rettangolo che si
+                    # allunga — mentre l'inchiostro resta tutto in basso. Sulla
+                    # prima prova il riempimento saliva dal 29 al 63 % e lo
+                    # squilibrio fra quadranti da 12 a 32: un numero migliore e
+                    # una tavola peggiore. Quindi: si riempie **a patto che la
+                    # distribuzione non peggiori**, poi si distribuisce a
+                    # riempimento fermo.
+                    if filling:
+                        # Riempire e' ammesso finche' l'inchiostro resta
+                        # distribuito, e le due misure guardano due cose
+                        # diverse: `spread` che la tavola non stia tutta da un
+                        # lato, `coverage` che il rettangolo non si allunghi su
+                        # una **propaggine** — un pezzo leggero spinto lontano
+                        # da tutti, che allunga l'ingombro riempiendo una cella
+                        # sola. La seconda e' l'unica che impedisce di comprare
+                        # punti di riempimento con carta bianca.
+                        gained = found.fill > current_best.fill + _TOLERANCE_MM and (
+                            (
+                                found.spread <= QUADRANT_IMBALANCE_MAX
+                                or found.spread <= current_best.spread + _TOLERANCE_MM
+                            )
+                            and (
+                                found.coverage >= INK_COVERAGE_MIN
+                                or found.coverage
+                                >= current_best.coverage - _TOLERANCE_MM
+                            )
+                        )
+                    else:
+                        gained = (
+                            found.fill >= current_best.fill - _TOLERANCE_MM
+                            and found.spread < current_best.spread - _TOLERANCE_MM
+                        )
+                    if not gained:
+                        continue
+                    best = trial
+                    current_best = found
+                    moved = True
+                    break
     return [best[item] for item in order]
 
 

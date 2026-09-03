@@ -353,12 +353,21 @@ def place_addresses(
             for item in already or ()
         ),
     ]
-    lines = _line_boxes(routes)
 
     def free(box: Box) -> bool:
+        """Il posto e' libero da simboli e da altre scritte.
+
+        ⚠ **Le tubazioni non contano, ed e' D-110 a dirlo**: l'etichetta di
+        verifica puo' essere attraversata da un tubo. Contarle fra gli ostacoli
+        non rendeva la tavola piu' pulita: toglieva alla ricerca quasi tutti i
+        posti buoni, e quando non ne restava nessuno la scritta cadeva sul
+        ripiego — cioe' **sopra un'altra scritta**, che invece e' un rilievo
+        bloccante. Su una tavola due indirizzi finivano stampati uno dentro
+        l'altro, e si leggeva.
+        """
         if floor_y_mm is not None and box[3] > floor_y_mm + 1e-9:
             return False
-        return not any(_overlap(box, other) for other in (*taken, *lines))
+        return not any(_overlap(box, other) for other in taken)
 
     labels: list[PlacedLabel] = []
     for item in placed:

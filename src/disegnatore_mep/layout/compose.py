@@ -31,7 +31,7 @@ from .geometry import (
 from .grid import GridSpace
 from .improve import improve_sheet
 from .inline import settle_sheet
-from .labels import place_labels
+from .labels import CHAR_WIDTH_RATIO, place_labels
 from .legend import build_legend
 from .partition import SheetLink, SheetPartition, partition_project
 from .place import place_sheet
@@ -80,14 +80,14 @@ def _cross_references(
     return references
 
 
-def _shifted(point: Point, delta_mm: float) -> Point:
-    return Point(x_mm=point.x_mm, y_mm=point.y_mm + delta_mm)
+def _shifted(point: Point, delta_mm: float, across_mm: float = 0.0) -> Point:
+    return Point(x_mm=point.x_mm + across_mm, y_mm=point.y_mm + delta_mm)
 
 
 def centre_vertically(
     sheet: SheetGeometry, drawing: Rect, step_mm: float, text_mm: float
 ) -> SheetGeometry:
-    """Porta il blocco disegnato al centro verticale dell'area.
+    """Porta il blocco disegnato al centro dell'area di disegno.
 
     La composizione nasce appoggiata a una linea di terra a quota fissa, e un
     impianto basso lasciava vuoti i due terzi alti del foglio. Non si puo'
@@ -116,24 +116,50 @@ def centre_vertically(
     delta = min(delta, drawing.bottom_mm - bottom)
     delta = max(delta, drawing.y_mm - top)
     delta = round(delta / step_mm) * step_mm
-    if delta == 0:
+
+    # **E anche in orizzontale**, per la stessa ragione e con lo stesso limite.
+    # L'ordine di processo va da sinistra a destra (D-060), ma non dice che il
+    # disegno debba stare **appoggiato** al margine sinistro: appoggiato, un
+    # impianto largo la meta' del foglio lasciava i due quadranti di destra
+    # senza inchiostro, ed e' meta' dello squilibrio che la carta misura
+    # (A1, A3). Spostare tutto in mezzo non cambia ne' l'ordine ne' una
+    # distanza: cambia dove il blocco sta sulla carta.
+    lefts = [item.origin.x_mm for item in sheet.symbols]
+    rights = [item.right_mm for item in sheet.symbols]
+    for route in sheet.routes:
+        for segment in route.segments:
+            lefts.extend(point.x_mm for point in segment)
+            rights.extend(point.x_mm for point in segment)
+    lefts.extend(item.anchor.x_mm for item in sheet.labels)
+    rights.extend(
+        item.anchor.x_mm + len(item.text) * text_mm * CHAR_WIDTH_RATIO
+        for item in sheet.labels
+    )
+    left, right = min(lefts), max(rights)
+    wanted_x = drawing.x_mm + (drawing.width_mm - (right - left)) / 2
+    across = round((wanted_x - left) / step_mm) * step_mm
+    across = min(across, drawing.right_mm - right)
+    across = max(across, drawing.x_mm - left)
+    across = round(across / step_mm) * step_mm
+
+    if delta == 0 and across == 0:
         return sheet
 
     return sheet.model_copy(
         update={
             "symbols": [
-                item.model_copy(update={"origin": _shifted(item.origin, delta)})
+                item.model_copy(update={"origin": _shifted(item.origin, delta, across)})
                 for item in sheet.symbols
             ],
             "routes": [
                 item.model_copy(
                     update={
                         "segments": [
-                            [_shifted(point, delta) for point in segment]
+                            [_shifted(point, delta, across) for point in segment]
                             for segment in item.segments
                         ],
                         "crossings": [
-                            _shifted(point, delta) for point in item.crossings
+                            _shifted(point, delta, across) for point in item.crossings
                         ],
                     }
                 )
@@ -142,18 +168,18 @@ def centre_vertically(
             "labels": [
                 item.model_copy(
                     update={
-                        "anchor": _shifted(item.anchor, delta),
+                        "anchor": _shifted(item.anchor, delta, across),
                         "leader_from": (
                             None
                             if item.leader_from is None
-                            else _shifted(item.leader_from, delta)
+                            else _shifted(item.leader_from, delta, across)
                         ),
                     }
                 )
                 for item in sheet.labels
             ],
             "cross_references": [
-                item.model_copy(update={"anchor": _shifted(item.anchor, delta)})
+                item.model_copy(update={"anchor": _shifted(item.anchor, delta, across)})
                 for item in sheet.cross_references
             ],
             "ground_line_y_mm": (
