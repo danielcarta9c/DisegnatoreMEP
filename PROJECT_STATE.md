@@ -10,7 +10,7 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **1077 verdi, 22 parcheggiate, 13 marcate sui difetti aperti** (DRAW-002-R3, sul ramo in PR) | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** — che ora compone, ma resta fuori dai budget di qualità — e 4 il foglio di riscontro dei simboli, che non entra più in una pagina sola |
+| Test | **1090 verdi, 22 parcheggiate, 13 marcate sui difetti aperti** (DRAW-003, sul ramo in PR) | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** — che ora compone, ma resta fuori dai budget di qualità — e 4 il foglio di riscontro dei simboli, che non entra più in una pagina sola |
 | Libreria simboli | 39 pubblicati | A scala fissa ne entrano 32 per foglio: il foglio di riscontro va impaginato su piu' pagine |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |

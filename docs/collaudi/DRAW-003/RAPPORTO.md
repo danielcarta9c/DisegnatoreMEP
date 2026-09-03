@@ -126,8 +126,9 @@ etichetta è libera o richiamata a 45 gradi.
 
 ## 5. Verifiche eseguite
 
-- Suite completa: **__SUITE__**; `ruff check src tests examples`: nessun rilievo;
-  `mypy --strict src tests examples`: nessun errore.
+- Suite completa: **1090 verdi, 22 parcheggiate, 13 marcate rosse apposta** sui difetti
+  aperti (in 27 minuti); `ruff check src tests examples`: nessun rilievo;
+  `mypy --strict src tests examples`: nessun errore su 136 file.
 - Il modello completo dell'impianto 1 è lo stesso file di DRAW-002 (`prima/impianto1-completo.json`).
 - Due generazioni consecutive danno la stessa impronta della geometria, etichette comprese.
 
