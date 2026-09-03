@@ -18,7 +18,6 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 
-from .composition import levels_of
 from .errors import LayoutError
 from .geometry import (
     CrossReference,
@@ -31,7 +30,7 @@ from .geometry import (
 from .grid import GridSpace
 from .improve import improve_sheet
 from .inline import settle_sheet
-from .labels import CHAR_WIDTH_RATIO, place_labels
+from .labels import place_labels
 from .legend import build_legend
 from .partition import SheetLink, SheetPartition, partition_project
 from .place import place_sheet
@@ -85,28 +84,31 @@ def _shifted(point: Point, delta_mm: float, across_mm: float = 0.0) -> Point:
 
 
 def centre_vertically(
-    sheet: SheetGeometry, drawing: Rect, step_mm: float, text_mm: float
+    sheet: SheetGeometry, drawing: Rect, step_mm: float, text_mm: float = 0.0
 ) -> SheetGeometry:
     """Porta il blocco disegnato al centro dell'area di disegno.
 
-    La composizione nasce appoggiata a una linea di terra a quota fissa, e un
-    impianto basso lasciava vuoti i due terzi alti del foglio. Non si puo'
-    rimediare ingrandendo i simboli — la scala di stampa e' invariante
-    (ADR 0003) — quindi si sposta: il blocco resta quello che e' e si mette in
-    mezzo, richiami e linea di terra compresi.
+    La composizione nasce appoggiata a una quota interna di posa, e un impianto
+    basso lasciava vuoti i due terzi alti del foglio. Non si puo' rimediare
+    ingrandendo i simboli — la scala di stampa e' invariante (ADR 0003) —
+    quindi si sposta: il blocco resta quello che e' e si mette in mezzo.
+
+    **Il blocco sono i simboli e le tubazioni, e nient'altro** (DRAW-003): la
+    quota di terra non e' un elemento della tavola (D-121) e i testi si posano
+    dopo, su una geometria gia' ferma. Se la centratura li contasse, la
+    lunghezza di una sigla sposterebbe le macchine, e il contratto per cui le
+    etichette non toccano posa e routing sarebbe falso. `text_mm` resta nella
+    firma per chi la chiama ancora, e non e' usato.
 
     Lo spostamento e' un multiplo del passo, cosi' nulla esce dalla griglia.
     """
+    del text_mm
     tops = [item.origin.y_mm for item in sheet.symbols]
     bottoms = [item.bottom_mm for item in sheet.symbols]
     for route in sheet.routes:
         for segment in route.segments:
             tops.extend(point.y_mm for point in segment)
             bottoms.extend(point.y_mm for point in segment)
-    # I richiami sono la riga piu' bassa: il testo scende sotto la propria base.
-    bottoms.extend(item.anchor.y_mm + text_mm for item in sheet.labels)
-    if sheet.ground_line_y_mm is not None:
-        bottoms.append(sheet.ground_line_y_mm)
     if not tops:
         return sheet
 
@@ -130,11 +132,6 @@ def centre_vertically(
         for segment in route.segments:
             lefts.extend(point.x_mm for point in segment)
             rights.extend(point.x_mm for point in segment)
-    lefts.extend(item.anchor.x_mm for item in sheet.labels)
-    rights.extend(
-        item.anchor.x_mm + len(item.text) * text_mm * CHAR_WIDTH_RATIO
-        for item in sheet.labels
-    )
     left, right = min(lefts), max(rights)
     wanted_x = drawing.x_mm + (drawing.width_mm - (right - left)) / 2
     across = round((wanted_x - left) / step_mm) * step_mm
@@ -182,11 +179,6 @@ def centre_vertically(
                 item.model_copy(update={"anchor": _shifted(item.anchor, delta, across)})
                 for item in sheet.cross_references
             ],
-            "ground_line_y_mm": (
-                None
-                if sheet.ground_line_y_mm is None
-                else sheet.ground_line_y_mm + delta
-            ),
         }
     )
 
@@ -199,9 +191,6 @@ def compose_sheet(
     inline_ids: frozenset[str],
 ) -> SheetGeometry:
     grid = GridSpace(origin=frame.drawing_rect_mm, standard=frame.standard)
-    levels = levels_of(
-        frame.drawing_rect_mm.y_mm, frame.drawing_rect_mm.height_mm, grid.step_mm
-    )
     first = place_sheet(project, partition, catalog, frame, inline_ids)
     # La disposizione serve le linee, non il contrario (D-078): dopo la prima
     # ipotesi di posa, i componenti si spostano dove l'instradamento di prova
@@ -227,34 +216,42 @@ def compose_sheet(
     entries, keys = build_legend(
         project, placed, partition.network_ids, catalog, frame
     )
-    composed = SheetGeometry(
-        sheet_id=partition.sheet_id,
-        title=partition.title,
-        symbols=placed,
-        routes=broken,
-        labels=place_labels(
-            project,
-            placed,
-            frame.standard,
-            # Le sigle stanno accanto al proprio pezzo (D-075): la riga di
-            # richiami a fondo tavola e' ritirata. Le tratte servono a far
-            # scansare un testo che finirebbe su una linea.
+    # L'ordine e' un contratto (DRAW-003, I-025): prima la posa, poi
+    # l'instradamento completo, poi la centratura del blocco — e **solo alla
+    # fine** i testi, su simboli e rotte ormai definitivi. Le etichette non
+    # entrano nella centratura ne' in nessuna misura della posa: cambiare una
+    # sigla non muove un simbolo ne' un punto di una rotta. La quota di terra
+    # non si esporta: non e' un elemento della tavola (D-121).
+    composed = centre_vertically(
+        SheetGeometry(
+            sheet_id=partition.sheet_id,
+            title=partition.title,
+            symbols=placed,
             routes=broken,
-            # Nessun pavimento sotto cui una scritta non possa scendere
-            # (D-121): la quota di terra non divide il foglio in due.
-            floor_y_mm=None,
+            legend=entries,
+            network_keys=keys,
+            cross_references=_cross_references(
+                partition,
+                {item.component_id: item for item in placed},
+                {item.id: item.name for item in project.networks},
+            ),
         ),
-        legend=entries,
-        network_keys=keys,
-        ground_line_y_mm=levels.ground_mm,
-        cross_references=_cross_references(
-            partition,
-            {item.component_id: item for item in placed},
-            {item.id: item.name for item in project.networks},
-        ),
+        frame.drawing_rect_mm,
+        grid.step_mm,
     )
-    return centre_vertically(
-        composed, frame.drawing_rect_mm, grid.step_mm, frame.standard.text_small_mm
+    return composed.model_copy(
+        update={
+            "labels": place_labels(
+                project,
+                composed.symbols,
+                frame.standard,
+                # Le sigle stanno accanto al proprio pezzo (D-075), e al primo
+                # conflitto con un tubo, un simbolo, un'altra scritta o il
+                # margine si sposta il solo testo con il richiamo obliquo.
+                routes=composed.routes,
+                area=frame.drawing_rect_mm,
+            )
+        }
     )
 
 

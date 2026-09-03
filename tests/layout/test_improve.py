@@ -534,7 +534,7 @@ def test_the_complete_case_fits_one_a3_with_a_stacked_pair() -> None:
     # con lo stacco di fascia; chi resta a terra ci appoggia esattamente.
     assert tank.origin.x_mm == buffer.origin.x_mm
     assert buffer.bottom_mm + ROW_GAP_MM == tank.origin.y_mm
-    ground = drawn.sheets[0].ground_line_y_mm
-    assert ground is not None
-    assert tank.bottom_mm == ground
+    # La quota di terra non e' piu' sulla tavola (D-121): chi resta a terra e'
+    # il piu' basso di tutti.
+    assert tank.bottom_mm == max(item.bottom_mm for item in placed.values())
     assert buffer.bottom_mm < tank.origin.y_mm

@@ -125,6 +125,21 @@ def validate_sheet_geometry(
             label.anchor.x_mm + width,
             label.anchor.y_mm,
         )
+        # Il margine e' un conflitto come gli altri (DRAW-003): un testo che
+        # esce dall'area di disegno finisce sulla legenda o sul cartiglio.
+        if not (
+            drawing.x_mm - TOLERANCE_MM <= box[0]
+            and drawing.y_mm - TOLERANCE_MM <= box[1]
+            and box[2] <= drawing.right_mm + TOLERANCE_MM
+            and box[3] <= drawing.bottom_mm + TOLERANCE_MM
+        ):
+            issues.append(
+                _issue(
+                    "LABEL_OUTSIDE_DRAWING_AREA",
+                    f"label {label.id} leaves the drawing area",
+                    [sheet.sheet_id, label.id],
+                )
+            )
         if any(_overlap(box, other) for other in boxes):
             issues.append(
                 _issue(
