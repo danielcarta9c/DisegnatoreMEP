@@ -6,4 +6,4 @@ Avvisi
     codice: SHEET_BARELY_FILLED · t1
   - la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 3.3 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)
     codice: DRAWING_ALL_ON_ONE_SIDE · t1
-3117ffedba84791c137ddf0c560c50b4c41f5b468db62d4e2b13cba4f793dfb4
+a39cf5d70e8073f75bef71fd1d424dc3de3ee8d912fff304fc371411c7f99458

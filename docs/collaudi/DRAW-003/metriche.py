@@ -54,6 +54,7 @@ from disegnatore_mep.validation.geometry import validate_drawing_geometry  # noq
 from disegnatore_mep.validation.preflight import (  # noqa: E402
     _fill_ratio,
     _ink_area_mm2,
+    _leader_enters,
     _quadrants,
     preflight_drawing,
 )
@@ -315,6 +316,11 @@ def measure(
         label_on_run = label_on_symbol = label_on_label = 0
         leaders = [(item.leader_from, item.anchor) for item in sheet.labels if item.leader_from is not None]
         leader_on_run = sum(1 for lead in leaders if any(segments_cross(lead, seg) for seg in segments))
+        leader_on_symbol = sum(
+            1
+            for lead in leaders
+            if any(_leader_enters(lead, box_of(symbol)) for symbol in sheet.symbols)
+        )
         leaders_crossing = sum(
             1
             for i, lead in enumerate(leaders)
@@ -336,11 +342,20 @@ def measure(
                 "sheet_id": sheet.sheet_id,
                 "linea_di_terra_esportata": sheet.ground_line_y_mm is not None,
                 "etichette": len(sheet.labels),
+                "sigle": sum(1 for item in sheet.labels if item.role == "tag"),
+                "sigle_omesse": sum(
+                    1
+                    for symbol in sheet.symbols
+                    if symbol.tag
+                    and f"{symbol.component_id}-tag" not in {item.id for item in sheet.labels}
+                ),
+                "indirizzi": sum(1 for item in sheet.labels if item.role == "address"),
                 "etichette_con_richiamo": len(leaders),
                 "etichette_su_tubo": label_on_run,
                 "etichette_su_simbolo": label_on_symbol,
                 "etichette_su_etichetta": label_on_label,
                 "richiami_su_tubo": leader_on_run,
+                "richiami_su_simbolo": leader_on_symbol,
                 "richiami_incrociati": leaders_crossing,
                 "ingombro_mm": [
                     round(item, 1)

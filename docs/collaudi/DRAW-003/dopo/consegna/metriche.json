@@ -4,15 +4,15 @@
     350.0,
     235.0
   ],
-  "impronta": "3117ffedba84791c137ddf0c560c50b4c41f5b468db62d4e2b13cba4f793dfb4",
+  "impronta": "a39cf5d70e8073f75bef71fd1d424dc3de3ee8d912fff304fc371411c7f99458",
   "fogli": [
     {
       "sheet_id": "t1",
       "linea_di_terra_esportata": false,
-      "etichette": 42,
+      "etichette": 7,
       "sigle": 7,
       "sigle_omesse": 0,
-      "indirizzi": 35,
+      "indirizzi": 0,
       "etichette_con_richiamo": 0,
       "etichette_su_tubo": 0,
       "etichette_su_simbolo": 0,

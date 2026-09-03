@@ -1390,39 +1390,30 @@
           "text": "RP.01a.N.04",
           "role": "address",
           "anchor": {
-            "x_mm": 95.0,
-            "y_mm": 113.5
+            "x_mm": 36.62,
+            "y_mm": 134.4
           },
-          "leader_from": {
-            "x_mm": 90.0,
-            "y_mm": 118.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-pdc-master",
           "text": "CP.01.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 95.0,
-            "y_mm": 193.5
+            "x_mm": 37.7,
+            "y_mm": 174.4
           },
-          "leader_from": {
-            "x_mm": 90.0,
-            "y_mm": 188.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-acquedotto",
           "text": "AF.01.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 195.0,
-            "y_mm": 153.5
+            "x_mm": 182.5,
+            "y_mm": 166.8
           },
-          "leader_from": {
-            "x_mm": 190.0,
-            "y_mm": 158.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-utenze",
@@ -1439,13 +1430,10 @@
           "text": "CP.01.N.06",
           "role": "address",
           "anchor": {
-            "x_mm": 247.5,
-            "y_mm": 118.5
+            "x_mm": 244.0,
+            "y_mm": 149.20000000000002
           },
-          "leader_from": {
-            "x_mm": 242.5,
-            "y_mm": 123.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-air-vent-accumulo-primary-out",
@@ -1472,39 +1460,20 @@
           "text": "CS.01.N.06",
           "role": "address",
           "anchor": {
-            "x_mm": 322.5,
-            "y_mm": 116.0
+            "x_mm": 302.5,
+            "y_mm": 139.3
           },
-          "leader_from": {
-            "x_mm": 317.5,
-            "y_mm": 121.0
-          }
-        },
-        {
-          "id": "address-collettore-mandata",
-          "text": "CP.01.N.03",
-          "role": "address",
-          "anchor": {
-            "x_mm": 90.0,
-            "y_mm": 143.5
-          },
-          "leader_from": {
-            "x_mm": 107.5,
-            "y_mm": 161.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-tee-valve-safety-accumulo-primary-in",
           "text": "CP.01.N.05",
           "role": "address",
           "anchor": {
-            "x_mm": 190.0,
-            "y_mm": 121.0
+            "x_mm": 177.5,
+            "y_mm": 134.3
           },
-          "leader_from": {
-            "x_mm": 185.0,
-            "y_mm": 126.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-safety-accumulo-primary-in",
@@ -1521,78 +1490,60 @@
           "text": "RP.01.N.07",
           "role": "address",
           "anchor": {
-            "x_mm": 135.0,
-            "y_mm": 176.0
+            "x_mm": 122.5,
+            "y_mm": 164.5
           },
-          "leader_from": {
-            "x_mm": 130.0,
-            "y_mm": 171.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-tee-pressure-gauge-collettore-ritorno-a",
           "text": "RP.01.N.04",
           "role": "address",
           "anchor": {
-            "x_mm": 150.0,
-            "y_mm": 136.0
+            "x_mm": 137.5,
+            "y_mm": 139.5
           },
-          "leader_from": {
-            "x_mm": 145.0,
-            "y_mm": 141.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-pressure-gauge-collettore-ritorno-a",
           "text": "RP.01.N.04.2",
           "role": "address",
           "anchor": {
-            "x_mm": 167.5,
-            "y_mm": 141.0
+            "x_mm": 135.0,
+            "y_mm": 176.8
           },
-          "leader_from": {
-            "x_mm": 145.0,
-            "y_mm": 163.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-tee-filling-unit-collettore-ritorno-a",
           "text": "RP.01.N.03",
           "role": "address",
           "anchor": {
-            "x_mm": 165.0,
-            "y_mm": 136.0
+            "x_mm": 152.5,
+            "y_mm": 139.5
           },
-          "leader_from": {
-            "x_mm": 160.0,
-            "y_mm": 141.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-filling-unit-collettore-ritorno-a",
           "text": "RP.01.N.03.2",
           "role": "address",
           "anchor": {
-            "x_mm": 165.0,
-            "y_mm": 183.5
+            "x_mm": 150.0,
+            "y_mm": 181.8
           },
-          "leader_from": {
-            "x_mm": 160.0,
-            "y_mm": 178.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-tee-expansion-connection-collettore-ritorno-a",
           "text": "RP.01.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 180.0,
-            "y_mm": 151.0
+            "x_mm": 167.5,
+            "y_mm": 139.5
           },
-          "leader_from": {
-            "x_mm": 175.0,
-            "y_mm": 146.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-expansion-connection-collettore-ritorno-a",
@@ -1605,30 +1556,14 @@
           "leader_from": null
         },
         {
-          "id": "address-valve-isolation-pdc-master-water-supply",
-          "text": "CP.01.N.02",
-          "role": "address",
-          "anchor": {
-            "x_mm": 90.0,
-            "y_mm": 156.0
-          },
-          "leader_from": {
-            "x_mm": 95.0,
-            "y_mm": 161.0
-          }
-        },
-        {
           "id": "address-valve-isolation-pdc-slave-water-supply",
           "text": "CP.02.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 105.0,
-            "y_mm": 116.0
+            "x_mm": 92.5,
+            "y_mm": 119.5
           },
-          "leader_from": {
-            "x_mm": 100.0,
-            "y_mm": 121.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-accumulo-primary-in",
@@ -1645,182 +1580,90 @@
           "text": "RP.01.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 202.5,
-            "y_mm": 136.0
+            "x_mm": 205.0,
+            "y_mm": 139.5
           },
-          "leader_from": {
-            "x_mm": 207.5,
-            "y_mm": 141.0
-          }
-        },
-        {
-          "id": "address-dirt-separator-collettore-ritorno-a",
-          "text": "RP.01.N.05",
-          "role": "address",
-          "anchor": {
-            "x_mm": 125.0,
-            "y_mm": 141.0
-          },
-          "leader_from": {
-            "x_mm": 130.0,
-            "y_mm": 146.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-dirt-separator-collettore-ritorno-a-b",
           "text": "RP.01.N.06",
           "role": "address",
           "anchor": {
-            "x_mm": 122.5,
-            "y_mm": 143.5
+            "x_mm": 120.2,
+            "y_mm": 156.9
           },
-          "leader_from": {
-            "x_mm": 132.5,
-            "y_mm": 153.5
-          }
-        },
-        {
-          "id": "address-valve-isolation-strainer-pdc-master-water-return-a",
-          "text": "RP.01.N.08",
-          "role": "address",
-          "anchor": {
-            "x_mm": 125.0,
-            "y_mm": 178.5
-          },
-          "leader_from": {
-            "x_mm": 117.5,
-            "y_mm": 171.0
-          }
-        },
-        {
-          "id": "address-strainer-pdc-master-water-return",
-          "text": "RP.01.N.09",
-          "role": "address",
-          "anchor": {
-            "x_mm": 97.5,
-            "y_mm": 178.5
-          },
-          "leader_from": {
-            "x_mm": 105.0,
-            "y_mm": 171.0
-          }
-        },
-        {
-          "id": "address-valve-isolation-pdc-master-water-return",
-          "text": "RP.01.N.10",
-          "role": "address",
-          "anchor": {
-            "x_mm": 90.0,
-            "y_mm": 161.0
-          },
-          "leader_from": {
-            "x_mm": 95.0,
-            "y_mm": 166.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-strainer-pdc-slave-water-return-a",
           "text": "RP.01a.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 130.0,
-            "y_mm": 183.5
+            "x_mm": 117.5,
+            "y_mm": 181.8
           },
-          "leader_from": {
-            "x_mm": 125.0,
-            "y_mm": 178.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-strainer-pdc-slave-water-return",
           "text": "RP.01a.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 125.0,
-            "y_mm": 186.0
+            "x_mm": 99.12,
+            "y_mm": 179.20000000000002
           },
-          "leader_from": {
-            "x_mm": 117.5,
-            "y_mm": 178.5
-          }
-        },
-        {
-          "id": "address-valve-isolation-pdc-slave-water-return",
-          "text": "RP.01a.N.03",
-          "role": "address",
-          "anchor": {
-            "x_mm": 105.0,
-            "y_mm": 121.0
-          },
-          "leader_from": {
-            "x_mm": 100.0,
-            "y_mm": 126.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-accumulo-secondary-out",
           "text": "CS.01.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 257.5,
-            "y_mm": 136.0
+            "x_mm": 245.0,
+            "y_mm": 124.5
           },
-          "leader_from": {
-            "x_mm": 252.5,
-            "y_mm": 131.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-circolatore-a",
           "text": "CS.01.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 252.5,
-            "y_mm": 121.0
+            "x_mm": 255.0,
+            "y_mm": 122.2
           },
-          "leader_from": {
-            "x_mm": 257.5,
-            "y_mm": 126.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-circolatore",
           "text": "CS.01.N.03",
           "role": "address",
           "anchor": {
-            "x_mm": 280.0,
-            "y_mm": 118.5
+            "x_mm": 265.0,
+            "y_mm": 136.8
           },
-          "leader_from": {
-            "x_mm": 275.0,
-            "y_mm": 123.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-circolatore-b",
           "text": "CS.01.N.04",
           "role": "address",
           "anchor": {
-            "x_mm": 287.5,
-            "y_mm": 121.0
+            "x_mm": 275.0,
+            "y_mm": 124.5
           },
-          "leader_from": {
-            "x_mm": 282.5,
-            "y_mm": 126.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-radiatori-in",
           "text": "CS.01.N.05",
           "role": "address",
           "anchor": {
-            "x_mm": 300.0,
-            "y_mm": 138.5
+            "x_mm": 285.0,
+            "y_mm": 134.3
           },
-          "leader_from": {
-            "x_mm": 292.5,
-            "y_mm": 131.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-radiatori-out",
@@ -1837,117 +1680,60 @@
           "text": "RS.01.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 257.5,
-            "y_mm": 151.0
+            "x_mm": 245.0,
+            "y_mm": 139.5
           },
-          "leader_from": {
-            "x_mm": 252.5,
-            "y_mm": 146.0
-          }
-        },
-        {
-          "id": "address-valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a",
-          "text": "RP.01.N.02.1",
-          "role": "address",
-          "anchor": {
-            "x_mm": 182.5,
-            "y_mm": 166.0
-          },
-          "leader_from": {
-            "x_mm": 175.0,
-            "y_mm": 158.5
-          }
-        },
-        {
-          "id": "address-valve-isolation-filling-unit-collettore-ritorno-a-a",
-          "text": "RP.01.N.03.1",
-          "role": "address",
-          "anchor": {
-            "x_mm": 172.5,
-            "y_mm": 176.0
-          },
-          "leader_from": {
-            "x_mm": 160.0,
-            "y_mm": 163.5
-          }
-        },
-        {
-          "id": "address-valve-isolation-pressure-gauge-collettore-ritorno-a-a",
-          "text": "RP.01.N.04.1",
-          "role": "address",
-          "anchor": {
-            "x_mm": 160.0,
-            "y_mm": 138.5
-          },
-          "leader_from": {
-            "x_mm": 145.0,
-            "y_mm": 153.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-dhw-acquedotto-a",
           "text": "AF.01.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 210.0,
-            "y_mm": 171.0
+            "x_mm": 195.0,
+            "y_mm": 157.0
           },
-          "leader_from": {
-            "x_mm": 202.5,
-            "y_mm": 163.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-dhw-accumulo-cold-in",
           "text": "AF.01.N.03",
           "role": "address",
           "anchor": {
-            "x_mm": 202.5,
-            "y_mm": 168.5
+            "x_mm": 205.0,
+            "y_mm": 166.8
           },
-          "leader_from": {
-            "x_mm": 207.5,
-            "y_mm": 163.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-dhw-hot-accumulo-dhw-out",
           "text": "ACS.01.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 210.0,
-            "y_mm": 101.0
+            "x_mm": 209.12,
+            "y_mm": 116.9
           },
-          "leader_from": {
-            "x_mm": 222.5,
-            "y_mm": 113.5
-          }
+          "leader_from": null
         },
         {
           "id": "address-mixing-valve-thermostatic-accumulo-dhw-out",
           "text": "ACS.01.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 235.0,
-            "y_mm": 101.0
+            "x_mm": 206.62,
+            "y_mm": 109.4
           },
-          "leader_from": {
-            "x_mm": 230.0,
-            "y_mm": 106.0
-          }
+          "leader_from": null
         },
         {
           "id": "address-valve-isolation-dhw-hot-utenze-a",
           "text": "ACS.01.N.03",
           "role": "address",
           "anchor": {
-            "x_mm": 232.5,
-            "y_mm": 93.5
+            "x_mm": 229.0,
+            "y_mm": 101.9
           },
-          "leader_from": {
-            "x_mm": 227.5,
-            "y_mm": 98.5
-          }
+          "leader_from": null
         }
       ],
       "legend": [
