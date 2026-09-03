@@ -4,6 +4,7 @@ I controlli automatici dimostrano che nulla si sovrappone, non che il disegno
 si legga: quella risposta la danno solo l'occhio e la stampa (§12.4).
 """
 
+import math
 import os
 import subprocess
 import sys
@@ -16,12 +17,19 @@ from _pytest.capture import CaptureFixture
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.cli import main
-from disegnatore_mep.graphics.frame import NOVE_C_A3
+from disegnatore_mep.graphics.frame import NOVE_C_A3, SheetFrame
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import DRAFT_MARK, render_sheet
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import compose_drawing
-from disegnatore_mep.layout.geometry import DrawingGeometry
+from disegnatore_mep.layout.geometry import (
+    DrawingGeometry,
+    PlacedSymbol,
+    Point,
+    RoutedTrunk,
+)
+from disegnatore_mep.layout.trunks import Trunk
+from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import IssueSeverity
 from disegnatore_mep.validation.geometry import validate_drawing_geometry
 from disegnatore_mep.validation.preflight import preflight_drawing
@@ -401,3 +409,170 @@ def test_a_boundary_that_cuts_a_run_with_accessories_is_refused(
     )
     assert exit_code == 1
     assert "must not carry any" in capsys.readouterr().err
+
+
+# ---------------------------------------------------------------------------
+# DRAW-002 — la tavola 1 rispetta i criteri del pacchetto (misurati, non letti)
+# ---------------------------------------------------------------------------
+#
+# L'impianto 1 e' quello che il PO guarda (D-116). Qui i criteri di accettazione
+# DEV del pacchetto DRAW-002 diventano una regressione: se una modifica futura
+# li peggiora, la suite lo dice prima del PM. Nessun identificativo ne'
+# coordinata dell'impianto entra nelle attese: i pezzi si trovano dal catalogo.
+
+PROVA_1 = ROOT / "examples" / "prova" / "prova-1-due-pdc-accumulo-combinato.json"
+RULES = ROOT / "rules" / "hydronic"
+
+BASELINE_DRAW_001 = {"incroci": 12, "lunghezza_mm": 1177.5}
+"""I numeri della tavola di DRAW-001, che DRAW-002 deve battere."""
+
+
+@cache
+def _tavola_1() -> tuple[ProjectModel, DrawingGeometry, SheetFrame]:
+    from disegnatore_mep.layout.compose import compose_on_ordinary_frame
+    from disegnatore_mep.rules.apply import saturate
+    from disegnatore_mep.rules.registry import RuleRegistry
+
+    registry = catalog()
+    rules = RuleRegistry.from_directory(RULES)
+    rules.cross_check(registry)
+    completed, _, _ = saturate(load_project(PROVA_1), registry, rules)
+    frame, drawn = compose_on_ordinary_frame(completed, registry)
+    return completed, drawn, frame
+
+
+def _tratte_1() -> list[tuple[Trunk, RoutedTrunk]]:
+    from disegnatore_mep.layout.compose import inline_component_ids
+    from disegnatore_mep.layout.partition import partition_project
+    from disegnatore_mep.layout.trunks import build_trunks
+
+    project, drawn, _ = _tavola_1()
+    inline = inline_component_ids(project, catalog())
+    partition = partition_project(project, build_trunks(project, inline))[0]
+    return list(zip(partition.trunks, drawn.sheets[0].routes, strict=True))
+
+
+def _porta(project: ProjectModel, symbol: PlacedSymbol, port_id: str) -> Point:
+    definition = next(item.definition_id for item in project.components if item.id == symbol.component_id)
+    port = catalog().resolve(definition).symbol.manifest.rotated(symbol.rotation_deg).port(port_id)
+    return Point(x_mm=symbol.origin.x_mm + port.x_mm, y_mm=symbol.origin.y_mm + port.y_mm)
+
+
+def test_tavola_1_nessuna_tratta_torna_indietro() -> None:
+    """Criterio 1: zero tratte e zero millimetri di andata e ritorno."""
+    from disegnatore_mep.layout.geometry import overshoot_mm
+    from disegnatore_mep.layout.improve import overshoot_beyond_goal_mm
+
+    project, drawn, frame = _tavola_1()
+    by_id = {item.component_id: item for item in drawn.sheets[0].symbols}
+    step = frame.standard.grid_mm
+    back: list[tuple[str, float]] = []
+    for trunk, route in _tratte_1():
+        goal = _porta(project, by_id[trunk.end.component_id], trunk.end.port_id)
+        worst = max(
+            overshoot_beyond_goal_mm(route, goal),
+            max((overshoot_mm(segment, step) for segment in route.segments), default=0.0),
+        )
+        if worst > 1e-6:
+            back.append((trunk.connection_ids[0], worst))
+    assert back == []
+
+
+def test_tavola_1_le_valvole_d120_stanno_sull_attacco() -> None:
+    """Criterio 2: chi isola un pezzo manutenibile sta a 2,5-5 mm dal suo attacco."""
+    from disegnatore_mep.catalog.schema import ComponentTrait
+    from disegnatore_mep.layout.inline import (
+        END_CLEARANCE_MM,
+        ISOLATING_FUNCTIONS,
+        SNUG_CLEARANCE_MM,
+    )
+
+    project, drawn, _ = _tavola_1()
+    by_id = {item.component_id: item for item in drawn.sheets[0].symbols}
+    definitions = {item.id: item.definition_id for item in project.components}
+
+    def isolates(component_id: str) -> bool:
+        return bool(ISOLATING_FUNCTIONS & set(catalog().resolve(definitions[component_id]).definition.functions))
+
+    def serviced(component_id: str) -> bool:
+        return catalog().resolve(definitions[component_id]).definition.has_trait(ComponentTrait.MAINTAINABLE)
+
+    def gap(valve: PlacedSymbol, point: Point) -> float:
+        left, top, right, bottom = valve.origin.x_mm, valve.origin.y_mm, valve.right_mm, valve.bottom_mm
+        return math.hypot(
+            max(left - point.x_mm, point.x_mm - right, 0.0),
+            max(top - point.y_mm, point.y_mm - bottom, 0.0),
+        )
+
+    measured: dict[str, float] = {}
+    for trunk, _ in _tratte_1():
+        members = list(trunk.inline_component_ids)
+        if not members:
+            continue
+        for position, ref in ((0, trunk.start), (len(members) - 1, trunk.end)):
+            valve = members[position]
+            if isolates(valve) and serviced(ref.component_id) and valve in by_id:
+                measured[valve] = gap(by_id[valve], _porta(project, by_id[ref.component_id], ref.port_id))
+    assert measured, "l'impianto 1 porta valvole che isolano una macchina"
+    fuori = {name: value for name, value in measured.items() if not SNUG_CLEARANCE_MM - 1e-6 <= value <= END_CLEARANCE_MM + 1e-6}
+    assert fuori == {}
+
+
+def test_tavola_1_nessuna_tratta_supera_tre_pieghe_e_gli_incroci_scendono() -> None:
+    """Criteri 3, 4 e 5: pieghe per tratta, incroci e lunghezza sotto DRAW-001."""
+    from disegnatore_mep.layout.geometry import moves_of
+
+    _, drawn, _ = _tavola_1()
+    sheet = drawn.sheets[0]
+    for route in sheet.routes:
+        turns = sum(max(len(segment) - 2, 0) for segment in route.segments)
+        assert turns <= 3, (route.connection_ids, turns)
+    crossings = sum(len(route.crossings) for route in sheet.routes)
+    assert crossings < BASELINE_DRAW_001["incroci"]
+    length = sum(
+        abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
+        for route in sheet.routes
+        for segment in route.segments
+        for before, after in moves_of(segment)
+    )
+    assert length < BASELINE_DRAW_001["lunghezza_mm"]
+
+
+def test_tavola_1_nessun_tubo_sotto_un_simbolo_e_nessuna_sovrapposizione() -> None:
+    """Criterio 6: il cancello di correttezza e il preflight non bloccano."""
+    _, drawn, frame = _tavola_1()
+    report = validate_drawing_geometry(drawn, frame)
+    assert report.ok, [item.model_dump() for item in report.issues]
+    blocking = [item for item in preflight_drawing(drawn, frame, catalog()) if item.severity is IssueSeverity.BLOCKING]
+    assert blocking == [], [item.model_dump() for item in blocking]
+
+
+def test_tavola_1_il_terminale_sta_addosso_all_accumulo() -> None:
+    """Criterio 7: fra terminale e accumulo c'e' solo il rettilineo degli accessori."""
+    from disegnatore_mep.layout.flow import LOAD_FUNCTIONS, STORE_FUNCTIONS
+    from disegnatore_mep.layout.place import inline_room_mm
+
+    project, drawn, frame = _tavola_1()
+    by_id = {item.component_id: item for item in drawn.sheets[0].symbols}
+    definitions = {item.id: item.definition_id for item in project.components}
+
+    def functions(component_id: str) -> frozenset[str]:
+        return frozenset(catalog().resolve(definitions[component_id]).definition.functions)
+
+    checked = 0
+    for trunk, _ in _tratte_1():
+        start, end = trunk.start.component_id, trunk.end.component_id
+        stores = functions(start) & STORE_FUNCTIONS
+        loads = functions(end) & {"emission"}
+        if not (stores and loads) or start not in by_id or end not in by_id:
+            continue
+        first = _porta(project, by_id[start], trunk.start.port_id)
+        second = _porta(project, by_id[end], trunk.end.port_id)
+        distance = abs(second.x_mm - first.x_mm) + abs(second.y_mm - first.y_mm)
+        room = inline_room_mm(project, catalog(), trunk.inline_component_ids)
+        # Al piu' due passi di griglia oltre il rettilineo che gli accessori
+        # pretendono: nessuna distanza e' introdotta per riempire il foglio.
+        assert distance <= room + 2 * frame.standard.grid_mm, (trunk.connection_ids, distance, room)
+        checked += 1
+    assert checked, "l'impianto 1 ha un terminale alimentato dall'accumulo"
+    assert LOAD_FUNCTIONS & {"emission"}

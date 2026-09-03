@@ -8,6 +8,10 @@
 # propri millimetri e la pagina li rispetta, quindi un simbolo stampato misura
 # quello che il modello dice.
 #
+# Da DRAW-002 scrive anche la geometria, il PNG e le misure di ogni tavola:
+# sono gli artefatti con cui il PM confronta prima e dopo, e devono uscire
+# dallo stesso comando che produce la tavola.
+#
 # Uso: scripts/tavole-di-verifica.sh [cartella-di-uscita]
 set -euo pipefail
 
@@ -32,7 +36,8 @@ for project in "$ROOT"/examples/prova/prova-*.json; do
     --catalog "$ROOT/examples/layout/catalog" \
     --symbols "$ROOT/assets/symbols" \
     --naming "$ROOT/naming" \
-    --verifica --out "$OUT" >"$OUT/$name-preflight.txt" 2>&1 || {
+    --verifica --geometry "$OUT/$name-geometria.json" \
+    --out "$OUT" >"$OUT/$name-preflight.txt" 2>&1 || {
       echo "   la tavola non esce: $(tail -1 "$OUT/$name-preflight.txt")"
       continue
     }
@@ -40,7 +45,14 @@ for project in "$ROOT"/examples/prova/prova-*.json; do
   for svg in "$OUT/$name"-*.svg; do
     [ -e "$svg" ] || continue
     "$ROOT/scripts/to-pdf.sh" "$svg" "${svg%.svg}.pdf"
+    "$ROOT/scripts/rasterize.sh" "$svg" "${svg%.svg}.png"
   done
+
+  # Le misure della tavola, con lo stesso strumento del collaudo DRAW-002:
+  # geometria letta dal file appena scritto, cosi' che i numeri descrivano
+  # esattamente la tavola consegnata e non una ricomposizione.
+  "$PY" "$ROOT/docs/collaudi/DRAW-002/metriche.py" \
+    "$OUT/$name-completo.json" "$OUT/$name-geometria.json" >"$OUT/$name-metriche.json"
 done
 
 echo

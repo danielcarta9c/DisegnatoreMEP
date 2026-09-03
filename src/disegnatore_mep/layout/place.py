@@ -169,6 +169,17 @@ class _Hanging:
     """
 
 
+def _file_order(project: ProjectModel) -> dict[str, int]:
+    """La posizione di ogni componente nel modello: lo spareggio che non e' un nome.
+
+    Dove due pezzi sono pari su ogni criterio strutturale si segue l'ordine in
+    cui il progettista li ha elencati, mai l'ordine alfabetico dei loro
+    identificativi (D-093): due impianti uguali con nomi diversi devono dare la
+    stessa tavola.
+    """
+    return {item.id: index for index, item in enumerate(project.components)}
+
+
 def _hanging_accessories(
     project: ProjectModel,
     partition: SheetPartition,
@@ -227,7 +238,11 @@ def _hanging_accessories(
         if parent_id in claimed:
             for item in hanging.pop(parent_id):
                 claimed.discard(item.component_id)
-    return {key: sorted(value, key=lambda item: item.component_id) for key, value in hanging.items()}
+    rank = _file_order(project)
+    return {
+        key: sorted(value, key=lambda item: rank.get(item.component_id, 0))
+        for key, value in hanging.items()
+    }
 
 
 @dataclass(frozen=True)
@@ -245,25 +260,27 @@ class _RunChain:
     """Quelli attaccati al primo della catena: dicono da che parte si comincia."""
 
 
-def _ordered(chain: set[str], neighbours: dict[str, set[str]]) -> tuple[str, ...]:
+def _ordered(
+    chain: set[str], neighbours: dict[str, set[str]], rank: Callable[[str], int]
+) -> tuple[str, ...]:
     """La catena in ordine di percorrenza, se e' un cammino semplice.
 
     Dove non lo e' — una catena che si biforca — non esiste un «lungo la
-    tubazione», e l'ordine alfabetico basta a tenere il risultato ripetibile.
+    tubazione», e l'ordine del modello basta a tenere il risultato ripetibile.
     """
-    ends = sorted(item for item in chain if len(neighbours[item] & chain) <= 1)
+    ends = sorted((item for item in chain if len(neighbours[item] & chain) <= 1), key=rank)
     if not ends:
-        return tuple(sorted(chain))
+        return tuple(sorted(chain, key=rank))
     order = [ends[0]]
     walked = {ends[0]}
     while True:
-        forward = sorted((neighbours[order[-1]] & chain) - walked)
+        forward = sorted((neighbours[order[-1]] & chain) - walked, key=rank)
         if len(forward) != 1:
             break
         order.append(forward[0])
         walked.add(forward[0])
     if len(order) != len(chain):
-        return tuple(sorted(chain))
+        return tuple(sorted(chain, key=rank))
     return tuple(order)
 
 
@@ -320,6 +337,7 @@ def _pieces_on_the_run(
     placeable: frozenset[str],
     hung: frozenset[str],
     is_zoned: Callable[[str], bool],
+    rank: Callable[[str], int],
 ) -> list[_RunChain]:
     """Chi esce dalla fila delle colonne, e a quali pezzi e' legato (D-120).
 
@@ -354,7 +372,7 @@ def _pieces_on_the_run(
     }
     seen: set[str] = set()
     result: list[_RunChain] = []
-    for start in sorted(free):
+    for start in sorted(free, key=rank):
         if start in seen:
             continue
         chain: set[str] = set()
@@ -372,18 +390,19 @@ def _pieces_on_the_run(
                 for item in chain
                 for other in neighbours[item]
                 if other not in chain and is_zoned(other) and other not in hung
-            }
+            },
+            key=rank,
         )
         if len(anchors) < 2:
             # Con un estremo solo non c'e' un «in mezzo»: la catena tiene le
             # proprie colonne, che e' il comportamento di prima.
             continue
-        members = _ordered(chain, neighbours)
+        members = _ordered(chain, neighbours, rank)
         result.append(
             _RunChain(
                 members=members,
                 anchors=tuple(anchors),
-                head_anchors=tuple(sorted(neighbours[members[0]] & set(anchors))),
+                head_anchors=tuple(sorted(neighbours[members[0]] & set(anchors), key=rank)),
             )
         )
     return result
@@ -444,7 +463,7 @@ def _assign_bands(
                     (depth_of(component_id) for component_id in item.component_ids),
                     default=len(project.components),
                 ),
-                item.id,
+                project.subsystems.index(item),
             ),
         )
         for index, subsystem in enumerate(ranked):
@@ -476,6 +495,7 @@ class _Process:
         trunks = list(partition.trunks)
         oriented = orient_trunks(project, catalog, trunks)
         self.feed: dict[str, tuple[PortRef, PortRef]] = {}
+        self.position = _file_order(project)
         successors: dict[str, list[str]] = defaultdict(list)
         members: set[str] = set()
         for trunk in trunks:
@@ -515,12 +535,15 @@ class _Process:
                 frontier.extend(successors[current])
             self.downstream[component_id] = len(seen)
 
-    def order_of(self, component_id: str) -> tuple[int, int, str]:
-        """Piu' e' a valle piu' sta a destra; a pari profondita' prima i rami morti."""
+    def order_of(self, component_id: str) -> tuple[int, int, int]:
+        """Piu' e' a valle piu' sta a destra; a pari profondita' prima i rami morti.
+
+        L'ultimo spareggio e' la posizione nel modello, non il nome (D-093).
+        """
         return (
             self.depth.get(component_id, 0),
             self.downstream.get(component_id, 0),
-            component_id,
+            self.position.get(component_id, 0),
         )
 
 
@@ -730,7 +753,11 @@ def place_sheet(
         return bool(functions_of.get(component_id, frozenset()) & ZONED_FUNCTIONS)
 
     chains = _pieces_on_the_run(
-        partition, frozenset(placeable), frozenset(hung), is_zoned
+        partition,
+        frozenset(placeable),
+        frozenset(hung),
+        is_zoned,
+        lambda item: process.position.get(item, 0),
     )
     on_the_run = {item for chain in chains for item in chain.members}
     standing_columns = [
@@ -1629,6 +1656,9 @@ def place_sheet(
         hang(component_id, left, top)
         return placed[-1]
 
+    def chain_rank(item: str) -> int:
+        return process.position.get(item, 0)
+
     for chain in chains:
         ends = [
             place for place in (centre_of(item) for item in chain.anchors)
@@ -1652,7 +1682,8 @@ def place_sheet(
         members = chain.members
         head_ids = set(chain.head_anchors)
         head = [
-            place for place in (centre_of(item) for item in sorted(head_ids))
+            place
+            for place in (centre_of(item) for item in sorted(head_ids, key=chain_rank))
             if place is not None
         ]
         if head and min(
@@ -1668,8 +1699,12 @@ def place_sheet(
         # millimetri dalla macchina, e la valvola di intercettazione della sua
         # tratta non aveva dove sedersi.
         tail_ids = {item for item in chain.anchors if item not in head_ids} or head_ids
-        head_placed = [settled[item] for item in sorted(head_ids) if item in settled]
-        tail_placed = [settled[item] for item in sorted(tail_ids) if item in settled]
+        head_placed = [
+            settled[item] for item in sorted(head_ids, key=chain_rank) if item in settled
+        ]
+        tail_placed = [
+            settled[item] for item in sorted(tail_ids, key=chain_rank) if item in settled
+        ]
         if head_placed and tail_placed:
             first, last = _facing_edges(
                 head_placed, tail_placed, horizontal=horizontal
@@ -1723,3 +1758,86 @@ def place_sheet(
             cursor = max(cursor + sizes[index] * scale, reached)
 
     return placed
+
+
+# ---------------------------------------------------------------------------
+# Cio' che il miglioratore legge della posa (DRAW-002)
+#
+# Il ciclo che rivede la disposizione muove **figure**, non pezzi: chi pende da
+# uno stacco viaggia col proprio pezzo, e una catena di raccordi sulla tratta si
+# rimette in fila tutta insieme. Le tre letture che gli servono sono le stesse
+# con cui questo modulo posa, esposte qui perche' non vengano riscritte in due
+# modi diversi.
+# ---------------------------------------------------------------------------
+
+
+def inline_room_mm(
+    project: ProjectModel, catalog: ComponentRegistry, inline_ids: tuple[str, ...]
+) -> float:
+    """Il rettilineo che gli accessori in linea di una tratta pretendono.
+
+    E' lo stesso conto che `inline.py` fara' dopo l'instradamento: ogni
+    accessorio vuole la propria interruzione piu' uno stacco dal vicino, e la
+    fila intera vuole due stacchi dai componenti agli estremi. Una tratta senza
+    accessori non pretende niente.
+    """
+    accessories = [item for item in project.components if item.id in inline_ids]
+    if not accessories:
+        return 0.0
+    return sum(
+        (catalog.resolve(item.definition_id).symbol.manifest.inline_gap_mm or 0.0)
+        + 2 * MIN_SPACING_MM
+        for item in accessories
+    ) + 2 * END_CLEARANCE_MM
+
+
+def hanging_children(
+    project: ProjectModel,
+    partition: SheetPartition,
+    catalog: ComponentRegistry,
+    placeable: frozenset[str],
+) -> dict[str, tuple[tuple[str, str], ...]]:
+    """Chi pende da uno stacco, per pezzo che lo regge: `(figlio, attacco)`.
+
+    Lo stesso criterio della posa (D-101): chi sta all'altro capo di un attacco
+    fuori dal percorso del fluido, e ha un attacco solo, e' un accessorio appeso
+    e si muove col proprio pezzo.
+    """
+    found = _hanging_accessories(
+        project, partition, catalog, placeable, lambda _ids: 0.0
+    )
+    return {
+        parent: tuple((item.component_id, item.parent_port_id) for item in items)
+        for parent, items in found.items()
+    }
+
+
+def run_chains(
+    project: ProjectModel,
+    partition: SheetPartition,
+    catalog: ComponentRegistry,
+    placeable: frozenset[str],
+) -> list[tuple[str, ...]]:
+    """Le catene di pezzi che stanno sulla tratta fra due pezzi grossi (D-120).
+
+    In ordine di percorrenza, come la posa le legge: un raccordo non e' un passo
+    del processo e si rimette in fila con i suoi compagni di tratta.
+    """
+    functions_of = {
+        item.id: frozenset(catalog.resolve(item.definition_id).definition.functions)
+        for item in project.components
+    }
+    hung = frozenset(
+        child
+        for items in hanging_children(project, partition, catalog, placeable).values()
+        for child, _ in items
+    )
+    rank = _file_order(project)
+    chains = _pieces_on_the_run(
+        partition,
+        placeable,
+        hung,
+        lambda item: bool(functions_of.get(item, frozenset()) & ZONED_FUNCTIONS),
+        lambda item: rank.get(item, 0),
+    )
+    return [chain.members for chain in chains]

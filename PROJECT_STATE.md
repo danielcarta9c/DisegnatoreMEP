@@ -10,7 +10,7 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **1047 verdi, 22 parcheggiate, 14 marcate sui difetti aperti** | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** — che ora compone, ma resta fuori dai budget di qualità — e 4 il foglio di riscontro dei simboli, che non entra più in una pagina sola |
+| Test | **1077 verdi, 22 parcheggiate, 13 marcate sui difetti aperti** (DRAW-002-R3, sul ramo in PR) | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** — che ora compone, ma resta fuori dai budget di qualità — e 4 il foglio di riscontro dei simboli, che non entra più in una pagina sola |
 | Libreria simboli | 39 pubblicati | A scala fissa ne entrano 32 per foglio: il foglio di riscontro va impaginato su piu' pagine |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
@@ -59,6 +59,25 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 > a tutti e otto i punti. La causa che teneva ferma la regola era una **misura**: «linea sotto il
 > simbolo» guardava se il riquadro contenesse il tratto per intero, e non vedeva chi lo
 > attraversava da parte a parte. Rapporto e artefatti in `docs/collaudi/DRAW-001/`.
+>
+> **✔ E DRAW-002-R3 è consegnato in PR (3 settembre), in attesa del verdetto del PM.**
+> Il PO aveva respinto la tavola di DRAW-001 (I-021, I-022): tubi che tornano indietro,
+> macchine equidistanti, spazio comprato con tubazioni. La causa era duplice: la posa
+> iniziale metteva i raccordi del corredo di rete dalla parte opposta alla porta di
+> uscita del ritorno, e il ciclo di miglioramento congelava quell'ordine muovendo un
+> pezzo per volta di pochi passi, poi **distendeva** pagando riempimento con tubo. Ora
+> la posa finale la decide **un solo confronto lessicografico della tavola** —
+> violazioni, andate e ritorno in tratte e millimetri, tratte oltre tre pieghe, pieghe,
+> incroci, lunghezza, e riempimento solo come spareggio — su candidati ricavati dalla
+> topologia (porte allineate e affacciate, catene di raccordi rimesse in fila, pile e
+> colonne traslate come gruppo, scambi nella pila, spazio aperto spingendo chi è
+> d'intralcio), ognuno misurato dopo l'instradamento completo. Sull'impianto 1: andate e
+> ritorno da 1 tratta e 75 mm a **zero**, incroci da 12 a **2**, pieghe da 27 a **10**,
+> tratte oltre tre pieghe da 1 a **0**, tubo da 1177,5 a **597,5 mm**, valvole D-120
+> sull'attacco da 17 a **20 su 20**; nessun rilievo bloccante. Prezzo dichiarato:
+> riempimento dal 41 al 36 %, avviso e non obiettivo. Il collocatore non spareggia più
+> per nome dei pezzi ma per posizione nel modello: due impianti uguali con nomi diversi
+> danno la stessa tavola. Rapporto e artefatti in `docs/collaudi/DRAW-002/`.
 >
 > **E il criterio con cui si sceglie cosa fare** (I-013): le tavole prodotte finora il PM
 > le considera **da buttare**, quindi non si rifiniscono. Si chiudono le sue righe aperte
@@ -217,6 +236,7 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
 
 | Commit | Cosa |
 |---|---|
+| — | **DRAW-002-R3 — la posa finale la decide il costo delle tubazioni** (in PR, verdetto del PM atteso). Un solo confronto lessicografico della tavola, niente distensione, candidati dalla topologia, ogni prova dopo l'instradamento completo. Impianto 1: andate e ritorno a zero, incroci da 12 a 2, pieghe da 27 a 10, tubo da 1177,5 a 597,5 mm, valvole D-120 sull'attacco 20 su 20. Sei prove generali scritte prima del codice, cinque prove di regressione sui criteri della tavola 1 |
 | `de5194c` `75bd720` | **DRAW-001 — la tavola dell'impianto 1 migliora, e la regola di vicinanza entra.** La linea non passa più sotto un simbolo: la misura contava il contenimento e lasciava passare chi attraversava da parte a parte, e chi si attaccava al simbolo era per di più esente dalla distanza. Chi isola si posa sull'attacco di ciò che si manutiene, a un passo oltre la cella riservata (D-113, D-120). Riempimento e bilanciamento diventano obiettivi del collocatore invece che avvisi a tavola finita (D-111): riempimento dal 29 al 41 %, squilibrio da 12,6 a 2,6, incroci da 13 a 12, pieghe da 33 a 27, tratte con troppe pieghe da 3 a 1, valvole sull'attacco da 6 a 17 su 20 |
 | — | **La tavola esce**: tre impianti su cinque su A3, in modalità verifica, da SVG a PDF a misura reale. Chi pende da uno stacco sta accanto al proprio pezzo; la soglia di ogni attacco è riservata (D-113); le fasce si leggono per processo e non per nome di sottosistema; il collocatore usa anche l'altezza. 15 prove nuove, 1050 verdi |
 | — | **Sei incoerenze chiuse nella documentazione** e l'indirizzo del PM dell'8 agosto registrato come **D-112**: la centrale non si spezza, prima si ottimizza il foglio che c'è, il formato maggiore per ultimo con motivazione verificabile |

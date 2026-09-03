@@ -1,21 +1,19 @@
-"""Il foglio pieno e l'inchiostro distribuito sono obiettivi, non avvisi (D-111).
+"""Il riempimento del foglio non e' piu' un obiettivo del collocatore (DRAW-002).
 
-Le due misure esistevano gia' — il preflight avvisa quando il foglio e' pieno
-per meno di tre quinti e quando il quadrante piu' pieno pesa piu' di tre volte
-il piu' vuoto — ma **nessuno le guardava mentre disponeva**: il collocatore le
-scopriva alla fine, sotto forma di rilievo, quando non c'era piu' niente da
-fare. Il ciclo che rivede la disposizione tira in una direzione sola, stringere,
-perche' pieghe, incroci e lunghezza si pagano tutti accorciando: il risultato
-era corretto e stava in un angolo del foglio.
+Con DRAW-001 il ciclo, finite le linee, **distendeva**: allontanava i pezzi dal
+centro per inseguire il 60 % di riempimento che il preflight dichiara, e lo
+pagava in lunghezza di tubo. Il PO ha respinto quella tavola (I-021, I-022):
+«bisogna spostare le macchine perche' spostare le macchine costa zero; invece
+incroci, curve e lunghezze costano», e nessuna distanza va introdotta per
+riempire il foglio.
 
-Qui si prova che il collocatore, dopo aver ottimizzato le linee, **distende** —
-e che lo fa senza vendere niente di cio' che viene prima: nessuna piega in piu',
-nessun incrocio in piu', nessuna tratta che perde i propri accessori.
+Da DRAW-002 riempimento e bilanciamento restano **misure diagnostiche e
+spareggi**: contano solo fra due geometrie uguali su violazioni, andate e
+ritorno, pieghe, incroci e lunghezza. Qui si prova che il ciclo non compra piu'
+carta con tubo, e che resta deterministico.
 """
 
 from pathlib import Path
-
-import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import NOVE_C_A3
@@ -23,14 +21,8 @@ from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout import improve
 from disegnatore_mep.layout.compose import inline_component_ids
-from disegnatore_mep.layout.geometry import (
-    PlacedSymbol,
-    RoutedTrunk,
-    fill_ratio,
-    ink_imbalance,
-)
-from disegnatore_mep.layout.grid import GridSpace
-from disegnatore_mep.layout.inline import settle_sheet
+from disegnatore_mep.layout.geometry import PlacedSymbol
+from disegnatore_mep.layout.improve import Improver
 from disegnatore_mep.layout.partition import SheetPartition, partition_project
 from disegnatore_mep.layout.place import place_sheet
 from disegnatore_mep.layout.trunks import build_trunks
@@ -40,13 +32,6 @@ ROOT = Path(__file__).resolve().parents[2]
 PROJECT = ROOT / "examples" / "layout" / "heat-pump-dhw-buffer-two-zones.json"
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
-
-AREA = (
-    NOVE_C_A3.drawing_rect_mm.x_mm,
-    NOVE_C_A3.drawing_rect_mm.y_mm,
-    NOVE_C_A3.drawing_rect_mm.right_mm,
-    NOVE_C_A3.drawing_rect_mm.bottom_mm,
-)
 
 
 def _registry() -> ComponentRegistry:
@@ -62,69 +47,45 @@ def _case() -> tuple[ProjectModel, SheetPartition, frozenset[str]]:
     return project, partition, inline
 
 
-def _drawn(
-    project: ProjectModel, partition: SheetPartition, placed: list[PlacedSymbol]
-) -> tuple[list[PlacedSymbol], list[RoutedTrunk]]:
-    grid = GridSpace(origin=NOVE_C_A3.drawing_rect_mm, standard=NOVE_C_A3.standard)
-    settled = settle_sheet(
-        project, list(partition.trunks), placed, _registry(), grid, tolerant=True
-    )
-    return settled.symbols, settled.routes
-
-
-def _bends(routes: list[RoutedTrunk]) -> int:
-    return sum(
-        max(len(segment) - 2, 0) for route in routes for segment in route.segments
-    )
-
-
-def test_la_distensione_riempie_il_foglio_senza_vendere_le_linee(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
-    """La stessa disposizione, con e senza distensione: quella distesa riempie.
-
-    Il confronto e' fra le due uscite dello **stesso** ciclo, non fra la posa di
-    partenza e quella rivista: il ciclo che ottimizza le linee stringe — e' il
-    suo mestiere — e la distensione lavora dopo di lui, su cio' che lui lascia.
-    Metterle sulla stessa bilancia direbbe soltanto quale delle due tira piu'
-    forte.
-
-    Le voci del PM restano davanti a tutto (D-060): quello che la distensione
-    puo' spendere e' **solo** lunghezza di tubazione, che e' il prezzo dichiarato
-    del riempimento.
-    """
+def _posa() -> tuple[ProjectModel, SheetPartition, frozenset[str], list[PlacedSymbol]]:
     project, partition, inline = _case()
-    first = place_sheet(project, partition, _registry(), NOVE_C_A3, inline)
-
-    monkeypatch.setattr(improve, "MAX_SPREAD_TRIALS", 0)
-    tight = improve.improve_sheet(
-        project, partition, _registry(), NOVE_C_A3, list(first), inline
-    )
-    monkeypatch.undo()
-    spread = improve.improve_sheet(
-        project, partition, _registry(), NOVE_C_A3, list(first), inline
+    return project, partition, inline, place_sheet(
+        project, partition, _registry(), NOVE_C_A3, inline
     )
 
-    tight_symbols, tight_routes = _drawn(project, partition, tight)
-    spread_symbols, spread_routes = _drawn(project, partition, spread)
 
-    assert fill_ratio(spread_symbols, spread_routes, AREA) > fill_ratio(
-        tight_symbols, tight_routes, AREA
+def test_il_riempimento_non_si_compra_con_il_tubo() -> None:
+    """La posa rivista non e' mai piu' lunga, piu' piegata o piu' incrociata
+    della posa di partenza: il riempimento puo' solo salire a costo fermo.
+
+    E' il rovescio della vecchia distensione, che accettava tubo in piu' in
+    cambio di carta coperta. Ora il confronto unico della tavola la vieta.
+    """
+    project, partition, inline, first = _posa()
+    improver = Improver(project, partition, _registry(), NOVE_C_A3, first, inline)
+    before = improver.measure(first)
+    after = improver.measure(
+        improve.improve_sheet(project, partition, _registry(), NOVE_C_A3, list(first), inline)
     )
-    assert _bends(spread_routes) <= _bends(tight_routes)
-    assert sum(len(route.crossings) for route in spread_routes) <= sum(
-        len(route.crossings) for route in tight_routes
-    )
-    line_mm = NOVE_C_A3.standard.line_medium_mm
-    assert ink_imbalance(
-        spread_symbols, spread_routes, AREA, line_mm
-    ) <= ink_imbalance(tight_symbols, tight_routes, AREA, line_mm)
+    assert before is not None and after is not None
+    assert not before.cost.beats(after.cost)
+    assert after.cost.length_mm <= before.cost.length_mm
+    assert after.cost.bends <= before.cost.bends
+    assert after.cost.crossings <= before.cost.crossings
+
+
+def test_la_distensione_non_esiste_piu() -> None:
+    """Nessun obiettivo minimo di riempimento dentro il collocatore (§2)."""
+    for name in ("FILL_TARGET_RATIO", "SPREAD_STEPS", "MAX_SPREAD_TRIALS"):
+        assert not hasattr(improve, name), name
+    # Le voci di spareggio stanno in coda al costo, dopo la lunghezza.
+    fields = improve.SheetCost._fields
+    assert fields.index("length_mm") < fields.index("fill") < fields.index("imbalance")
 
 
 def test_la_disposizione_rivista_e_sempre_la_stessa() -> None:
     """Determinismo: mosse in ordine fisso, accettazione greedy, tetto fisso."""
-    project, partition, inline = _case()
-    first = place_sheet(project, partition, _registry(), NOVE_C_A3, inline)
+    project, partition, inline, first = _posa()
     once = improve.improve_sheet(
         project, partition, _registry(), NOVE_C_A3, list(first), inline
     )
