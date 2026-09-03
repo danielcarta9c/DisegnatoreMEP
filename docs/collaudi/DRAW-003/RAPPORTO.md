@@ -127,7 +127,7 @@ regola nuova e alla misura `omitted_tags`.
 
 ## 5. Verifiche eseguite
 
-- Suite completa: **in esecuzione al momento di questo salvataggio; l'esito è nel commit successivo**; `ruff check src tests examples`: nessun rilievo;
+- Suite completa: **1095 verdi, 22 parcheggiate, 13 marcate rosse apposta** sui difetti aperti (in 27 minuti); `ruff check src tests examples`: nessun rilievo;
   `mypy --strict src tests examples`: nessun errore su 136 file.
 - Il modello completo dell'impianto 1 è lo stesso file di DRAW-002 (`prima/impianto1-completo.json`).
 - Due generazioni consecutive danno la stessa impronta della geometria, etichette comprese.
