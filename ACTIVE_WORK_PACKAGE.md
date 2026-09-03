@@ -1,4 +1,4 @@
-# ACTIVE WORK PACKAGE — DRAW-002-R1
+# ACTIVE WORK PACKAGE — DRAW-002-R2
 
 **Stato:** ASSEGNATO DAL PM — revisione vincolante dopo controllo visivo del PO  
 **Data:** 2026-09-03  
@@ -23,6 +23,33 @@ Questa non è una nuova preferenza: è l'applicazione vincolante di D-078, D-080
 
 La precedente versione di DRAW-002 subordinava ancora troppo il lavoro alle rotte esistenti e imponeva di conservare il riempimento al 41%. Quel vincolo è ritirato: non si conserva una dispersione ottenuta allungando le tubazioni.
 
+## Riferimenti visivi vincolanti
+
+Prima di modificare il codice, il DEV e il collaudatore indipendente devono aprire e renderizzare tutti i PDF in:
+
+`docs/input-pm/riferimenti-grafici/2026-09-03/`
+
+Riferimenti principali forniti dal PO e prodotti dal suo disegnatore:
+
+1. `schema-tipologico-pdc-volume-integrato.pdf` — riferimento più vicino alla tavola 1: PDC raggruppate, dorsali mandata/ritorno parallele, accumulo e distribuzione adiacenti;
+2. `schema-tipologico-3-vie.pdf` — riferimento per compattezza, connessioni dirette e accessori prossimi alla tratta servita;
+3. `schema-idraulico-sdp.pdf` — dimostra che anche un impianto complesso resta leggibile tramite gruppi funzionali e percorsi principali riconoscibili;
+4. `schema-tipologico.pdf` — riferimento per dorsali rettilinee e sequenza degli apparecchi lungo il flusso.
+
+Lo schizzo `schizzo-informale-po.png` conserva l'intuizione del PO, ma è secondario e non è un benchmark di qualità.
+
+Questi documenti definiscono la grammatica grafica, non la topologia tecnica della tavola 1. Non si devono copiare componenti, collegamenti o contenuti appartenenti ad altri impianti. Si devono invece applicare le regole ricorrenti:
+
+- mandata e ritorno leggibili come dorsali continue e distinguibili;
+- apparecchi principali vicini in funzione delle connessioni, senza equidistanza artificiale;
+- sequenza geometrica coerente con la sequenza idraulica;
+- accessori collocati vicino all'attacco o alla tratta che servono;
+- rami brevi, diretti e ortogonali; nessun avanzamento seguito da ritorno;
+- etichette e richiami tenuti fuori dai percorsi principali;
+- circuiti ausiliari separati quando la separazione aumenta la leggibilità.
+
+Il rapporto finale deve includere una tabella «regola osservata → almeno due riferimenti in cui ricorre → applicazione nella tavola 1». Non è sufficiente affermare di aver letto i file.
+
 ## Obiettivo
 
 Ricostruire la disposizione della tavola 1 facendo dipendere le posizioni delle macchine dal costo complessivo delle tubazioni.
@@ -41,8 +68,8 @@ Ordine vincolante di valutazione:
 2. **backtracking:** prima il numero di tratte che superano la meta e tornano indietro, poi la somma dei millimetri di ritorno;
 3. **pieghe:** numero complessivo e tratte oltre tre pieghe;
 4. **incroci:** costano, ma un incrocio leggibile resta più economico di un lungo giro costruito per evitarlo;
-5. **lunghezza totale delle tubazioni;**
-6. **riempimento, equilibrio e simmetria:** discriminano soltanto fra soluzioni comparabili sui costi precedenti; non comprano tubo, curve o dispersione artificiale.
+6. **lunghezza totale delle tubazioni;**
+7. **riempimento, equilibrio e simmetria:** discriminano soltanto fra soluzioni comparabili sui costi precedenti; non comprano tubo, curve o dispersione artificiale.
 
 Il confronto può essere lessicografico o numerico con pesi documentati, ma deve dimostrare queste priorità con test di proprietà. Non è ammesso premiare la distanza regolare fra gruppi o la distanza dal centro del foglio.
 
@@ -73,17 +100,18 @@ Se la causa richiede altro, il DEV si ferma e lo segnala al PM.
 
 ## Metodo obbligatorio
 
-1. Usare la tavola finale DRAW-001 come baseline.
-2. Individuare perché il posizionamento produce fasce quasi equidistanti e perché il ciclo di miglioramento non sa avvicinare terminale e accumulo.
-3. Scrivere prima test generali che dimostrino:
+1. Aprire e renderizzare i quattro PDF di riferimento; registrare le regole ricorrenti prima di formulare la soluzione.
+2. Usare la tavola finale DRAW-001 come baseline.
+3. Individuare perché il posizionamento produce fasce quasi equidistanti e perché il ciclo di miglioramento non sa avvicinare terminale e accumulo.
+4. Scrivere prima test generali che dimostrino:
    - una macchina collegata può spostarsi senza penalità propria;
    - fra due disposizioni valide vince quella con meno ritorno, pieghe, incroci o tubo, nell'ordine stabilito;
    - il riempimento non può vincere comprando lunghezza o curve;
    - l'ordine di processo resta rispettato senza imporre distanze regolari.
-4. Ampliare la ricerca delle posizioni: non soltanto piccoli spostamenti attorno alla posa iniziale, ma candidati deterministici ricavati da porte, adiacenze funzionali e allineamenti con i componenti collegati.
-5. Re-instradare sempre l'intera tavola dopo ogni candidato e misurare l'uscita effettivamente disegnata.
-6. Rigenerare PDF, PNG, SVG, metriche e confronto prima/dopo.
-7. Eseguire test mirati, suite completa, ruff, mypy e collaudo indipendente D-083.
+5. Ampliare la ricerca delle posizioni: non soltanto piccoli spostamenti attorno alla posa iniziale, ma candidati deterministici ricavati da porte, adiacenze funzionali e allineamenti con i componenti collegati.
+6. Re-instradare sempre l'intera tavola dopo ogni candidato e misurare l'uscita effettivamente disegnata.
+7. Rigenerare PDF, PNG, SVG, metriche e confronto prima/dopo.
+8. Eseguire test mirati, suite completa, ruff, mypy e collaudo indipendente D-083.
 
 ## Criteri di accettazione
 
@@ -99,7 +127,9 @@ Se la causa richiede altro, il DEV si ferma e lo segnala al PM.
 10. Grafo canonico invariato e due generazioni consecutive identiche.
 11. Suite completa, ruff e mypy verdi.
 12. Il collaudo indipendente giudica leggibile il flusso complessivo, non soltanto conformi le metriche.
-13. Nessun file fuori perimetro; PR aperta fino al verdetto PM.
+13. La tavola rende immediatamente riconoscibili le dorsali di mandata e ritorno e applica la grammatica ricorrente dei quattro riferimenti, senza copiarne la topologia.
+14. Il collaudatore dichiara esplicitamente di avere aperto e confrontato i quattro PDF con il raster finale.
+15. Nessun file fuori perimetro; PR aperta fino al verdetto PM.
 
 Se l'obiettivo di 5 incroci non è raggiungibile senza aumentare backtracking, pieghe o lunghezza in modo contrario al costo-peso, il DEV consegna la frontiera dei candidati misurati e chiede al PM; non altera i pesi e non forza un giro.
 
@@ -107,6 +137,7 @@ Se l'obiettivo di 5 incroci non è raggiungibile senza aumentare backtracking, p
 
 La PR deve mostrare:
 
+- tabella delle regole ricorrenti osservate nei quattro PDF e loro applicazione;
 - causa dell'equidistanza implicita;
 - funzione costo-peso prima e dopo;
 - tabella con backtracking, pieghe, incroci, lunghezza, distanze valvole e riempimento;
