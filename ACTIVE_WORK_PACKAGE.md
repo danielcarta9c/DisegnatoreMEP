@@ -1,41 +1,46 @@
-# ACTIVE WORK PACKAGE — DRAW-001
+# ACTIVE WORK PACKAGE — DRAW-002
 
 **Stato:** ASSEGNATO DAL PM  
-**Data:** 2026-09-01  
+**Data:** 2026-09-03  
 **Assegnato da:** PM (Codex)  
 **Assegnato a:** DEV team (Claude)  
-**Ramo da creare:** `claude/draw-001-tavola1-qualita`  
-**Base:** il `main` corrente che contiene questo Work Package. Prima di lavorare, il DEV deve riportarne lo SHA.
+**Ramo da creare:** `claude/draw-002-routing-qualita`  
+**Base:** l'ultima `main`, che deve contenere il merge commit di DRAW-001 `bbe33ec83f8f442090fd549b2145c145412f531d`.
 
 ## Regola di ingresso
 
-Questo è l'unico incarico operativo corrente. Le sezioni storiche `Now`, `Next` e “primo lavoro” di `HANDOFF.md` e `PROJECT_STATE.md` servono come contesto, ma non autorizzano attività aggiuntive.
+Questo è l'unico incarico operativo corrente. Il DEV parte dall'ultima `main`, crea il ramo indicato, esegue un solo pacchetto sostanziale e apre una sola PR. Non pubblica gli stessi commit su rami storici.
 
-Il DEV deve:
-
-1. leggere integralmente `HANDOFF.md`, `AGENTS.md`, questo file e gli input PO collegati;
-2. rispondere ai sentinel checks dell'handoff;
-3. creare il ramo indicato dal `main` corrente;
-4. lavorare solo su questo pacchetto;
-5. aprire una sola PR e fermarsi in attesa della verifica PM.
+Prima di lavorare legge `HANDOFF.md`, `AGENTS.md`, questo file, `PROJECT_STATE.md`, `docs/input-pm/REGISTRO.md` e il collaudo di DRAW-001.
 
 ## Contesto
 
-Il PO vuole tornare subito allo sviluppo reale e vedere un miglioramento visibile della tavola dell'**impianto 1**. Le prime tavole sono state giudicate da buttare: tubazioni con giri inutili, spazio usato male e componenti troppo distanti.
+DRAW-001 è stato accettato e fuso perché ha prodotto un avanzamento reale:
 
-Il primo blocco tecnico già misurato è I-018/D-120: avvicinando correttamente le valvole di intercettazione agli attacchi delle macchine, una tubazione finisce sotto un simbolo invece di essere interrotta. La regola di vicinanza è già costruita e migliorativa, ma non può essere consegnata finché questo difetto non è chiuso.
+- riempimento 28,7% → 41,0%;
+- squilibrio fra quadranti 12,6 → 2,59;
+- incroci 13 → 12;
+- pieghe 33 → 27;
+- tratte oltre tre pieghe 3 → 1;
+- valvole D-120 in soglia 6/20 → 17/20;
+- nessuna tubazione attraversa il corpo di un simbolo;
+- grafo canonico invariato e suite completa verde.
 
-La tavola, dopo D-118, è inoltre troppo compressa in un angolo: riempimento storico circa 27%, mentre la misura di qualità esistente richiede 60%. La misura esiste già; deve diventare un obiettivo del collocatore, come previsto da D-111 e D-114.
+La tavola resta però in modalità verifica. Il preflight porta ancora un bloccante: una tratta del ramo sanitario supera la propria porta e torna indietro per 40 mm. Tre valvole D-120 sono ancora fuori dalla fascia 2,5–5 mm. Restano inoltre 12 incroci, contro la soglia di qualità di 5.
 
-## Obiettivo del pacchetto
+Questi sono difetti di prodotto, non formalismi documentali.
 
-Produrre una nuova tavola dell'impianto 1 **visibilmente migliore**, chiudendo nello stesso ciclo due cause ad alto impatto:
+## Obiettivo
 
-1. impedire che una tubazione attraversi il corpo di un simbolo quando deve terminare sul suo attacco;
-2. attivare la vicinanza delle valvole di intercettazione prevista da D-120;
-3. usare riempimento e bilanciamento già misurati come obiettivi nella scelta deterministica del layout, senza introdurre un Drawing Director AI.
+Portare la tavola 1 dal primo miglioramento misurabile a una disposizione idraulica pulita, senza giri di ritorno e senza perdere i risultati di DRAW-001.
 
-Non è un audit e non è un pacchetto di documentazione. Il risultato principale è una tavola PDF e raster confrontabile con la baseline.
+Il pacchetto deve affrontare insieme le cause di disposizione e routing che producono:
+
+1. il ritorno sanitario che supera la porta e torna indietro;
+2. le tre valvole D-120 fuori soglia;
+3. gli incroci e la tratta con troppe pieghe ancora presenti.
+
+La correzione deve essere generale e deterministica. Vietate coordinate, identificativi o eccezioni specifiche dell'impianto 1.
 
 ## Perimetro consentito
 
@@ -46,84 +51,68 @@ Il DEV può modificare soltanto quanto necessario dentro:
 - `tests/layout/**`
 - `tests/validation/**`
 - `tests/acceptance/test_drawing.py`
-- `scripts/tavole-di-verifica.sh`, solo se necessario per rendere riproducibile la generazione
-- `docs/collaudi/DRAW-001/**`, esclusivamente per rapporto, metriche e artefatti prima/dopo
-- `PROJECT_STATE.md`, esclusivamente per registrare la consegna e i risultati misurati
-- `docs/input-pm/REGISTRO.md`, senza chiudere input del PO: il DEV può soltanto proporne la chiusura
+- `scripts/tavole-di-verifica.sh`, solo se necessario per la riproducibilità
+- `docs/collaudi/DRAW-002/**`, per rapporto, metriche e artefatti prima/dopo
+- `PROJECT_STATE.md`, per registrare la consegna
+- `docs/input-pm/REGISTRO.md`, senza chiudere input del PO
 
-Se la causa richiede un file fuori da questo elenco, il DEV si ferma e lo comunica al PM prima di modificarlo.
+Se la causa richiede un file fuori perimetro, il DEV si ferma e lo segnala al PM.
 
 ## Fuori perimetro
 
-- interprete, grafo, assemblatore e regole MEP;
-- cataloghi e simboli;
+- interprete, grafo, assemblatore, regole MEP, cataloghi e simboli;
+- modifica della linea di terra o della convenzione che tiene le macchine alla stessa quota;
+- decisione sul formato minimo A3;
+- obiettivo del 60% di riempimento;
 - impianti 2–5;
 - Drawing Director AI;
-- nuove decisioni di prodotto;
-- riorganizzazione generale dei documenti;
-- recupero, merge o cancellazione dei rami storici;
 - modifica di questo Work Package;
-- merge della propria PR.
+- merge della propria PR o interventi su rami storici.
 
-## Metodo di esecuzione
+Le questioni su quota macchine, 60% e formato richiedono una successiva decisione del PO; non bloccano DRAW-002.
 
-### 1. Baseline obbligatoria
+## Metodo
 
-Prima delle modifiche:
-
-- eseguire `bash scripts/setup-env.sh`;
-- rigenerare esclusivamente la tavola dell'impianto 1 dalla pipeline corrente;
-- salvare PDF, PNG rasterizzato e metriche in `docs/collaudi/DRAW-001/baseline/`;
-- registrare almeno: riempimento, rapporto tra quadranti, incroci, lunghezza totale, tratte con più di tre pieghe, collisioni tubo-simbolo e distanza delle valvole dagli attacchi;
-- verificare che due generazioni dallo stesso input producano lo stesso layout.
-
-### 2. Correzione delle cause
-
-- trovare la causa per cui la linea non viene interrotta dal simbolo;
-- correggerla come invariante generale di routing/resa grafica, non come eccezione per l'impianto 1;
-- attivare la regola D-120 sulle valvole vicine;
-- integrare riempimento e bilanciamento nella funzione di costo o nella scelta tra candidati già deterministici;
-- non spostare manualmente componenti e non introdurre coordinate specifiche dell'esempio.
-
-### 3. Verifica e artefatti
-
-Dopo le modifiche:
-
-- rigenerare l'impianto 1;
-- salvare PDF, PNG e metriche in `docs/collaudi/DRAW-001/finale/`;
-- produrre un confronto affiancato `prima-dopo.png`;
-- eseguire test mirati, suite completa, ruff e mypy;
-- far eseguire il collaudo indipendente previsto da D-083.
+1. Rigenerare dall'ultima `main` la sola tavola 1 e usare l'uscita di DRAW-001 come baseline.
+2. Riprodurre con test mirati il ritorno da 40 mm e ciascuna delle tre valvole fuori soglia.
+3. Individuare la causa comune nella disposizione/routing; non limitarsi a spostare localmente il caso.
+4. Integrare nel costo la gravità dell'andata e ritorno, non soltanto il suo conteggio.
+5. Cercare posizioni alternative che rendano raggiungibile la fascia D-120 senza occupare la soglia delle porte.
+6. Ridurre gli incroci e le pieghe proteggendo riempimento, bilanciamento e assenza di linee sotto i simboli.
+7. Rigenerare PDF, PNG, SVG, metriche e confronto prima/dopo in `docs/collaudi/DRAW-002/`.
+8. Eseguire test mirati, suite completa, ruff, mypy e collaudo indipendente D-083.
 
 ## Criteri di accettazione
 
 La PR è accettabile soltanto se:
 
-1. nessuna tubazione attraversa il corpo pieno di un simbolo, salvo il tratto che termina esattamente su un attacco previsto;
-2. il caso di regressione che riproduce I-018 fallisce sulla baseline e passa dopo la correzione;
-3. le valvole interessate da D-120 risultano a 2,5–5 mm dagli attacchi dell'apparecchio da isolare;
-4. due generazioni consecutive dello stesso input producono lo stesso layout;
-5. il riempimento aumenta di almeno 10 punti percentuali rispetto alla baseline oppure raggiunge il 60%;
-6. il rapporto tra quadrante più pieno e più vuoto migliora rispetto alla baseline;
-7. incroci e tratte con più di tre pieghe non peggiorano rispetto alla baseline;
-8. il grafo canonico dell'impianto 1 resta invariato;
-9. PDF e raster finale sono leggibili e il confronto prima/dopo rende visibile il miglioramento;
-10. la suite completa, ruff e mypy passano, salvo difetti preesistenti documentati con prova;
-11. nessun file fuori perimetro è modificato;
-12. la PR resta aperta e non fusa fino al verdetto del PM.
+1. `RUN_OVERSHOOTS_ITS_PORT` è assente: nessuna tratta supera la propria porta per poi tornare indietro;
+2. tutte le valvole interessate da D-120 sono a 2,5–5 mm dall'attacco che devono isolare; nessuna soglia di porta è occupata;
+3. gli incroci della tavola 1 scendono da 12 a non più di 5;
+4. nessuna tratta supera tre pieghe;
+5. nessuna tubazione attraversa o corre sotto il corpo di un simbolo;
+6. il riempimento resta almeno al 41% e il rapporto fra quadranti non supera 3;
+7. il grafo canonico resta invariato;
+8. due generazioni consecutive producono geometria e SVG identici;
+9. il preflight non contiene bloccanti né gli avvisi `TOO_MANY_CROSSINGS` e `RUN_WITH_TOO_MANY_BENDS`; resta ammesso soltanto l'avviso sul riempimento sotto il 60%, perché dipende da una scelta del PO fuori perimetro;
+10. suite completa, ruff e mypy passano;
+11. il confronto raster mostra una tavola più pulita senza regressioni visive;
+12. nessun file fuori perimetro è modificato e la PR resta aperta fino al verdetto PM.
+
+Se un criterio risulta tecnicamente irraggiungibile, il DEV non lo allenta e non lo reinterpreta: si ferma con prova quantitativa e chiede una decisione al PM prima di continuare.
 
 ## Consegna al PM
 
-La PR deve contenere:
+La PR deve riportare:
 
-- causa tecnica dei due difetti;
-- metriche prima/dopo in tabella;
-- PDF finale;
-- PNG finale;
-- confronto raster prima/dopo;
-- test aggiunti e output delle verifiche;
-- elenco completo dei file modificati;
-- SHA iniziale e SHA finale;
-- eventuali difetti residui realmente bloccanti.
+- causa tecnica dei difetti;
+- tabella prima/dopo;
+- PDF e PNG finali;
+- confronto raster;
+- output di test, ruff e mypy;
+- SHA iniziale e finale;
+- elenco file modificati;
+- risultato del collaudo indipendente;
+- eventuali difetti residui, senza dichiarare consegnabile una tavola che il preflight blocca.
 
-Il DEV consegna. Il PM verifica, approva o respinge e, se approva, esegue direttamente il merge.
+Il DEV consegna. Il PM verifica una volta, approva o respinge con soli blocker materiali e, se approva, esegue direttamente il merge.
