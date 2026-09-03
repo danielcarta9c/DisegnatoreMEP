@@ -86,6 +86,18 @@ Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 > per nome dei pezzi ma per posizione nel modello: due impianti uguali con nomi diversi
 > danno la stessa tavola. Rapporto e artefatti in `docs/collaudi/DRAW-002/`.
 >
+> **✔ DRAW-003 è consegnato in PR (3 settembre), in attesa del verdetto del PM.** Il PO
+> aveva visto ancora la linea continua di terra su DRAW-002 (I-024) e chiesto che i testi
+> fossero l'ultima fase, senza toccare posa e tubazioni (I-025). Ora la tavola non
+> disegna più la terra in nessun percorso di rendering e non esporta la quota, che resta
+> un riferimento interno della posa; la centratura conta solo simboli e tubazioni; i
+> testi si posano per ultimi su una geometria ferma, con una sola posizione preferita e
+> il richiamo obliquo al primo conflitto con tubo, simbolo, altra scritta o margine. Il
+> preflight misura i testi sui tubi e i richiami che si incrociano. Sull'impianto 1
+> simboli e rotte sono identici a DRAW-002; le etichette sopra un tubo passano da 23 a
+> zero; in modalità verifica 38 testi su 52 portano il richiamo, la tavola di consegna
+> nessuno. Rapporto e artefatti in `docs/collaudi/DRAW-003/`.
+>
 > **E il criterio con cui si sceglie cosa fare** (I-013): le tavole prodotte finora il PM
 > le considera **da buttare**, quindi non si rifiniscono. Si chiudono le sue righe aperte
 > nel registro degli input, che è il primo file da leggere dopo l'handoff.
@@ -243,7 +255,8 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
 
 | Commit | Cosa |
 |---|---|
-| — | **DRAW-002-R3 — la posa finale la decide il costo delle tubazioni** (in PR, verdetto del PM atteso). Un solo confronto lessicografico della tavola, niente distensione, candidati dalla topologia, ogni prova dopo l'instradamento completo. Impianto 1: andate e ritorno a zero, incroci da 12 a 2, pieghe da 27 a 10, tubo da 1177,5 a 597,5 mm, valvole D-120 sull'attacco 20 su 20. Sei prove generali scritte prima del codice, cinque prove di regressione sui criteri della tavola 1 |
+| — | **DRAW-003 — via la linea di terra, testi come fase terminale** (in PR, verdetto del PM atteso). Nessuna linea o tratteggio di terra nell'SVG, quota non esportata, centratura su simboli e tubazioni; etichette al posto preferito o richiamate a 45 gradi al primo conflitto, indirizzi compresi; nuove misure di preflight e di correttezza sui testi. Impianto 1: simboli e rotte identici a DRAW-002, etichette sopra un tubo da 23 a 0 |
+| `2396bff` | **DRAW-002-R3 — la posa finale la decide il costo delle tubazioni** (approvato e fuso dal PM il 3 settembre). Un solo confronto lessicografico della tavola, niente distensione, candidati dalla topologia, ogni prova dopo l'instradamento completo. Impianto 1: andate e ritorno a zero, incroci da 12 a 2, pieghe da 27 a 10, tubo da 1177,5 a 597,5 mm, valvole D-120 sull'attacco 20 su 20. Sei prove generali scritte prima del codice, cinque prove di regressione sui criteri della tavola 1 |
 | `de5194c` `75bd720` | **DRAW-001 — la tavola dell'impianto 1 migliora, e la regola di vicinanza entra.** La linea non passa più sotto un simbolo: la misura contava il contenimento e lasciava passare chi attraversava da parte a parte, e chi si attaccava al simbolo era per di più esente dalla distanza. Chi isola si posa sull'attacco di ciò che si manutiene, a un passo oltre la cella riservata (D-113, D-120). Riempimento e bilanciamento diventano obiettivi del collocatore invece che avvisi a tavola finita (D-111): riempimento dal 29 al 41 %, squilibrio da 12,6 a 2,6, incroci da 13 a 12, pieghe da 33 a 27, tratte con troppe pieghe da 3 a 1, valvole sull'attacco da 6 a 17 su 20 |
 | — | **La tavola esce**: tre impianti su cinque su A3, in modalità verifica, da SVG a PDF a misura reale. Chi pende da uno stacco sta accanto al proprio pezzo; la soglia di ogni attacco è riservata (D-113); le fasce si leggono per processo e non per nome di sottosistema; il collocatore usa anche l'altezza. 15 prove nuove, 1050 verdi |
 | — | **Sei incoerenze chiuse nella documentazione** e l'indirizzo del PM dell'8 agosto registrato come **D-112**: la centrale non si spezza, prima si ottimizza il foglio che c'è, il formato maggiore per ultimo con motivazione verificabile |

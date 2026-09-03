@@ -1,0 +1,171 @@
+{
+  "formato": "420x297",
+  "area_disegno_mm": [
+    350.0,
+    235.0
+  ],
+  "impronta": "dd4f21bd0648124ea13dc97beaea300cccfb6fa77157657f7c4ccf6b30237ef2",
+  "fogli": [
+    {
+      "sheet_id": "t1",
+      "linea_di_terra_esportata": false,
+      "etichette": 52,
+      "etichette_con_richiamo": 38,
+      "etichette_su_tubo": 0,
+      "etichette_su_simbolo": 0,
+      "etichette_su_etichetta": 0,
+      "richiami_su_tubo": 5,
+      "richiami_incrociati": 1,
+      "ingombro_mm": [
+        50.0,
+        78.5,
+        322.5,
+        188.5
+      ],
+      "riempimento_pct": 36.4,
+      "riempimento_senza_il_piu_isolato_pct": 29.8,
+      "copertura_ingombro": 0.625,
+      "quadranti_rapporto": 3.25,
+      "quadranti_mm2": [
+        765.2,
+        921.6,
+        2487.5,
+        1159.8
+      ],
+      "backtracking_tratte": 0,
+      "backtracking_mm": 0.0,
+      "incroci": 2,
+      "pieghe_totali": 10,
+      "tratte_oltre_tre_pieghe": 0,
+      "lunghezza_totale_mm": 597.5,
+      "tubo_sotto_simbolo": [],
+      "valvole_d120": {
+        "valve-isolation-pdc-master-water-supply": {
+          "caso": "primo",
+          "isola": "pdc-master",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-pdc-slave-water-supply": {
+          "caso": "primo",
+          "isola": "pdc-slave",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-accumulo-primary-in": {
+          "caso": "fuori regola",
+          "distanza_mm": 3.536
+        },
+        "valve-isolation-accumulo-primary-out": {
+          "caso": "primo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dirt-separator-collettore-ritorno-a-b": {
+          "caso": "coppia",
+          "isola": "dirt-separator-collettore-ritorno-a",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-strainer-pdc-master-water-return-a": {
+          "caso": "coppia",
+          "isola": "strainer-pdc-master-water-return",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-pdc-master-water-return": {
+          "caso": "ultimo",
+          "isola": "pdc-master",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-strainer-pdc-slave-water-return-a": {
+          "caso": "coppia",
+          "isola": "strainer-pdc-slave-water-return",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-pdc-slave-water-return": {
+          "caso": "ultimo",
+          "isola": "pdc-slave",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-accumulo-secondary-out": {
+          "caso": "primo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-circolatore-a": {
+          "caso": "coppia",
+          "isola": "circolatore",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-circolatore-b": {
+          "caso": "coppia",
+          "isola": "circolatore",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-radiatori-in": {
+          "caso": "ultimo",
+          "isola": "radiatori",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-radiatori-out": {
+          "caso": "primo",
+          "isola": "radiatori",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-accumulo-secondary-in": {
+          "caso": "ultimo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "expansion-connection-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-filling-unit-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "filling-unit-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-pressure-gauge-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "pressure-gauge-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-acquedotto-a": {
+          "caso": "fuori regola",
+          "distanza_mm": 7.5
+        },
+        "valve-isolation-dhw-accumulo-cold-in": {
+          "caso": "ultimo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-hot-accumulo-dhw-out": {
+          "caso": "primo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-hot-utenze-a": {
+          "caso": "coppia",
+          "isola": "mixing-valve-thermostatic-accumulo-dhw-out",
+          "distanza_mm": 2.5
+        }
+      },
+      "valvole_d120_entro_2_5_5_mm": 20,
+      "valvole_d120_totali": 20,
+      "simboli": 45,
+      "tratte": 20
+    }
+  ],
+  "rilievi_qualita": [
+    "warning:LEADER_CROSSES_A_RUN:il richiamo dell'etichetta address-collettore-mandata attraversa la tratta p6-a-a, p6-a-b, p6-b-a, p6-b-b: obliquo com'e' non si scambia per un tubo, ma esisteva forse una diagonale libera (D2, DRAW-003)",
+    "warning:LEADER_CROSSES_A_RUN:il richiamo dell'etichetta address-pressure-gauge-collettore-ritorno-a attraversa la tratta p4-a-a-1-3: obliquo com'e' non si scambia per un tubo, ma esisteva forse una diagonale libera (D2, DRAW-003)",
+    "warning:LEADER_CROSSES_A_SYMBOL:il richiamo dell'etichetta address-valve-isolation-strainer-pdc-master-water-return-a passa sopra il simbolo valve-isolation-strainer-pdc-slave-water-return-a: il pezzo era murato e nessuna diagonale libera esisteva (D2, DRAW-003)",
+    "warning:LEADER_CROSSES_A_RUN:il richiamo dell'etichetta address-strainer-pdc-master-water-return attraversa la tratta p6-a-a, p6-a-b, p6-b-a, p6-b-b: obliquo com'e' non si scambia per un tubo, ma esisteva forse una diagonale libera (D2, DRAW-003)",
+    "warning:LEADER_CROSSES_A_RUN:il richiamo dell'etichetta address-valve-isolation-pdc-master-water-return attraversa la tratta p1-a, p1-b: obliquo com'e' non si scambia per un tubo, ma esisteva forse una diagonale libera (D2, DRAW-003)",
+    "warning:LEADER_CROSSES_A_RUN:il richiamo dell'etichetta address-valve-isolation-pdc-slave-water-return attraversa la tratta p2-a, p2-b: obliquo com'e' non si scambia per un tubo, ma esisteva forse una diagonale libera (D2, DRAW-003)",
+    "warning:LEADER_CROSSES_A_SYMBOL:il richiamo dell'etichetta address-valve-isolation-pressure-gauge-collettore-ritorno-a-a passa sopra il simbolo tee-filling-unit-collettore-ritorno-a: il pezzo era murato e nessuna diagonale libera esisteva (D2, DRAW-003)",
+    "warning:LEADERS_CROSS:i richiami delle etichette address-valve-isolation-dhw-acquedotto-a e address-valve-isolation-dhw-accumulo-cold-in si incrociano: due richiami che si attraversano non dicono piu' chi parla di chi (D2, DRAW-003)",
+    "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 36%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)",
+    "warning:DRAWING_ALL_ON_ONE_SIDE:la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 3.3 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)"
+  ],
+  "rilievi_correttezza": []
+}
