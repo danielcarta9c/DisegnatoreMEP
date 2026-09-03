@@ -1,0 +1,17 @@
+
+Preflight di qualita'
+
+Bloccanti
+  - la tratta p4-a-a-1-1, p4-a-a-1-2 supera di 40 mm la propria porta di arrivo e ci torna indietro: si sposta l'oggetto, non si allunga la linea (B12, D-078)
+    codice: RUN_OVERSHOOTS_ITS_PORT · t1, p4-a-a-1-1, p4-a-a-1-2
+
+Avvisi
+  - la tratta p4-a-a-1-1, p4-a-a-1-2 cambia direzione 4 volte, oltre le 3 pieghe che bastano a unire due porte: la piega in piu' la chiede un ostacolo, e l'ostacolo si sposta (B4, D-078)
+    codice: RUN_WITH_TOO_MANY_BENDS · t1, p4-a-a-1-1, p4-a-a-1-2
+  - la tavola t1 porta 12 nodi condivisi fra tratte diverse: su una centrale semplice gli incroci stanno sulle dita di una mano, cioe' 5 (B3, D-060)
+    codice: TOO_MANY_CROSSINGS · t1
+  - la tavola t1: il foglio e' pieno solo al 41%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)
+    codice: SHEET_BARELY_FILLED · t1
+a74b12fdfcf36a87e644d906767f9a9ca8cb4e068e06e9a6df225b7fe690dc8e
+
+Foglio scritto in modalità verifica, con i rilievi qui sopra ancora aperti: si guarda, non si consegna (D-063).
