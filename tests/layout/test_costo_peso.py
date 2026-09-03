@@ -323,7 +323,9 @@ def test_il_miglioratore_non_peggiora_mai_il_costo_della_posa_di_partenza() -> N
 def test_una_pila_collegata_puo_traslare_come_gruppo() -> None:
     """Due macchine impilate si spostano insieme, senza sfilarne una (§3)."""
     project = due_macchine_in_parallelo()
-    placed = _posa(project)
+    # La posa iniziale appoggia la pila al margine sinistro: la si sposta di
+    # quattro centimetri perche' abbia spazio da tutte e due le parti.
+    placed = [_shifted(item, 40.0) for item in _posa(project)]
     where = {item.component_id: item for item in placed}
     assert where["prima"].origin.x_mm == where["seconda"].origin.x_mm, "la posa le impila"
     improver = _improver(project, placed)

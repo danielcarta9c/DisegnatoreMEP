@@ -1,67 +1,60 @@
-"""La disposizione al servizio delle linee (D-078, D-080).
+"""La posa finale, decisa dal costo delle tubazioni (D-078, D-080, DRAW-002).
 
-Il PM, cerchiando il giro attorno al prelievo ACS sulla tavola completa:
-«potevi spostarlo, metterlo in linea, e non fare quel giretto li'. Abbiamo
-detto che le curve costano, invece spostare gli oggetti sulla tavola e'
-gratis. Non devi mettere gli oggetti in tavola e poi fare le linee — o meglio
-lo fai, ma poi gli oggetti si spostano per ottimizzare il routing, non
-viceversa.» E subito dopo, la correzione preventiva (D-080): «ricordati che
-anche la lunghezza delle tratte costa, non facciamo che spargiamo le macchine
-in giro, dobbiamo bilanciare tutto.»
+Il PO, sulla tavola di DRAW-001 (I-021): «bisogna spostare le macchine perche'
+spostare le macchine costa zero; invece incroci, curve e lunghezze costano». E
+prima ancora (D-078): «non devi mettere gli oggetti in tavola e poi fare le
+linee — o meglio lo fai, ma poi gli oggetti si spostano per ottimizzare il
+routing, non viceversa».
 
-Qui la disposizione di `place.py` smette di essere l'ultima parola. Dopo un
-instradamento di prova si generano mosse discrete dei componenti — traslazioni
-**e rotazioni** fra quelle che il manifesto ammette; per ciascuna si reinstrada
-l'**intero foglio** e la mossa si tiene solo se l'obiettivo totale — pieghe,
-attraversamenti e lunghezza, con i pesi di D-060 — scende davvero. Mai una voce
-sola a spese delle altre.
+Qui `place.py` ha gia' dato una posa iniziale valida e ordinata per processo;
+questo modulo decide la posa **finale** reinstradando l'intera tavola a ogni
+prova. Tre regole, nell'ordine del pacchetto DRAW-002:
 
-La rotazione serve un difetto che nessuna traslazione chiude: un terminale con
-una porta sola — il confine di rete dell'ACS — la tiene rivolta a destra mentre
-l'alimentazione gli arriva da sinistra, e la linea deve superarlo e tornare
-indietro. Spostarlo non cambia da che parte guarda: girarlo si'.
+1. **Un solo confronto esplicito della tavola**, `SheetCost`, con precedenza
+   lessicografica: violazioni bloccanti e tratte che non ospitano i propri
+   accessori; tratte con andata e ritorno; millimetri di andata e ritorno;
+   tratte oltre tre pieghe; pieghe; incroci; lunghezza; e solo come spareggio
+   fra geometrie uguali su tutte e sette, riempimento e bilanciamento. Nessun
+   peso: una voce successiva non compensa mai una precedente, e il movimento
+   dei simboli non entra nel costo.
+2. **Niente distensione.** Prima il ciclo, finite le linee, allontanava i
+   pezzi dal centro per inseguire il 60 % di riempimento pagando in lunghezza
+   di tubo: quel comportamento e' rimosso. `fill` e `imbalance` restano misure
+   diagnostiche e spareggi, mai ragioni per aumentare tubo, curve, incroci o
+   andate e ritorno.
+3. **Le pose vengono dalla topologia, non da distanze prefissate.** I candidati
+   si ricavano dalle coordinate delle porte e dei vicini collegati: la quota
+   che allinea due porte, la distanza minima che lascia il rettilineo agli
+   accessori in linea, la rotazione che rivolge una porta verso il proprio
+   collegamento, la catena di raccordi rimessa in fila dalla porta del pezzo
+   grosso, la traslazione di una pila o di una colonna come gruppo, lo
+   spostamento di tutto cio' che sta oltre un pezzo verso il pezzo che lo
+   precede. Possono valere anche molti passi di griglia.
 
-**Il confronto e' lessicografico**, e la prima voce non e' l'obiettivo ma
-l'andata e ritorno. Nell'ordine:
-
-1. le tratte che non ospitano i propri accessori in linea (D-027): una mossa
-   che ne recupera una vale qualunque obiettivo;
-2. le **andate e ritorno** (B12): una tratta che supera la propria meta e torna
-   indietro non e' un disegno caro, e' un disegno sbagliato. Una mossa che ne
-   toglie una si accetta anche a obiettivo invariato; una che ne aggiunge una
-   non si accetta mai, per nessun guadagno;
-3. gli attraversamenti e le tratte oltre le tre pieghe, che non devono crescere;
-4. l'obiettivo totale, che deve scendere strettamente.
+Ogni candidato si misura **dopo `settle_sheet`**, accessori in linea posati e
+tutte le tratte reinstradate: e' la stessa funzione con cui `compose_sheet`
+disegna, quindi cio' che si misura e' cio' che esce. Nessuna approssimazione su
+geometrie parziali.
 
 Vincoli mai violabili, qualunque sia il guadagno:
 
-- l'ordine di processo da sinistra a destra (D-060): nessuno spostamento
-  altera l'ordine orizzontale dei centri di due estremi collegati;
-- le distanze minime fra simboli, con lo stesso predicato del posizionamento;
-- chi sta a terra resta alla propria quota: si scorre lungo la fascia, non si
-  vola. La quota di un componente a terra la decide il posizionamento —
-  compreso l'impilamento di D-073 — non questo ciclo;
-- tutto sulla griglia e dentro l'area di disegno; i simboli non si toccano;
-- nessun accessorio in linea a meno della distanza di rispetto da una tratta
-  che non e' la sua, e nessuno sovrapposto a un simbolo: il preflight lo tratta
-  come bloccante, quindi qui non e' un costo da pagare ma una posa da scartare;
-- determinismo: candidati in ordine fisso, accettazione greedy della prima
-  mossa che migliora, tetto fisso di instradamenti di prova.
+- l'ordine di processo da sinistra a destra (D-060), letto sul verso del
+  fluido: una tratta di mandata non porta la meta a sinistra della sorgente,
+  una di ritorno non la porta a destra; dove il verso non e' deciso l'ordine
+  disegnato non cambia. Una posa iniziale che gia' contraddice il verso puo'
+  essere corretta, mai peggiorata;
+- chi sta a terra resta alla propria quota: si scorre lungo la fascia;
+- le distanze minime fra simboli, la griglia, l'area di disegno;
+- una pila o una colonna non si sfila di un elemento: si trasla insieme;
+- determinismo: candidati in ordine fisso, accettazione della prima mossa che
+  batte la posa corrente sul confronto unico, tetto dichiarato di prove.
 
-L'instradamento di prova e' quello **completo**, accessori in linea compresi:
-`settle_sheet`, la stessa funzione con cui `compose_sheet` disegna. Prima era
-quello senza, e il ragionamento sembrava solido — gli accessori si posano sulla
-tratta gia' instradata (D-027), quindi non possono cambiare il segno di un
-confronto. Non e' vero, e la tavola del caso completo lo ha dimostrato in due
-modi: un accessorio posato dopo che una **altra** tratta era gia' passata di li'
-le finiva addosso a 0 mm — tre rilievi bloccanti — e un'andata e ritorno che il
-ciclo credeva di aver tolto restava nel disegno consegnato, perche' la
-geometria misurata non era quella disegnata. Il ciclo deve ottimizzare cio' che
-esce, non un'approssimazione piu' comoda: costa di piu' per prova, e si paga
-abbassando il tetto delle prove, non guardando la tavola sbagliata.
+Il ciclo e' greedy e reversibile: ogni mossa accettata batte strettamente la
+precedente, quindi termina; il tetto di instradamenti di prova lo ferma comunque
+in un punto che dipende solo dagli ingressi.
 """
 
-from collections.abc import Callable
+from collections.abc import Iterable
 from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -71,16 +64,14 @@ from disegnatore_mep.model.project import ProjectModel
 
 from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
+from .flow import orient_trunks
 from .geometry import (
-    INK_COVERAGE_MIN,
-    QUADRANT_IMBALANCE_MAX,
     PlacedSymbol,
     Point,
     RoutedTrunk,
     box_of,
     fill_ratio,
     ink_box,
-    ink_coverage,
     ink_imbalance,
     overshoot_mm,
     run_intrudes_on,
@@ -88,190 +79,125 @@ from .geometry import (
 from .grid import GridSpace, is_on_grid
 from .inline import SettledSheet, settle_sheet
 from .partition import SheetPartition
-from .place import ROUTING_MARGIN_MM, ROW_GAP_MM
+from .place import (
+    ROUTING_MARGIN_MM,
+    ROW_GAP_MM,
+    hanging_children,
+    inline_room_mm,
+    run_chains,
+)
 from .route import CROSS_COST, STEP_COST, TURN_COST
+from .trunks import Trunk
 
-MAX_PASSES = 8
-"""Passate del ciclo di miglioramento: limitato e monotono (D-078).
+MAX_PASSES = 12
+"""Passate del ciclo: ognuna scorre tutti i pezzi una volta.
 
-Erano tre, e tre bastavano finche' il ciclo valutava un instradamento senza
-accessori. Da quando valuta quello vero le prime passate le spende a togliere
-le tratte che non ospitano i propri accessori — la voce che comanda il
-confronto — e chiudevano il ciclo con un giro attorno a un oggetto ancora li'.
-Alla quarta passata quel giro se ne va; dall'ottava il guadagno per passata e'
-ormai qualche millimetro di lunghezza, e il tempo lo si paga tutto.
+Una passata senza mosse accettate chiude il ciclo; dodici lo chiudono comunque.
+Il numero e' un limite di sicurezza, non un obiettivo: il tetto che governa il
+costo e' quello degli instradamenti di prova.
 """
 
-MAX_TRIAL_ROUTINGS = 400
-"""Tetto di instradamenti di prova per foglio.
+MAX_TRIAL_ROUTINGS = 1500
+"""Tetto di instradamenti di prova per foglio: il limite di ricerca dichiarato.
 
-Raggiunto il tetto si restituisce la migliore disposizione trovata fin li'.
-Il tetto scatta in modo deterministico — stessi ingressi, stesse prove, stesso
-punto di arresto — quindi non costa la riproducibilita' bit-a-bit.
-
-Il numero segue le passate e il costo di una prova, che ora comprende la posa
-degli accessori. E' il tetto che tiene il costo limitato, non le passate.
-
-**Alzarlo non serve**, ed e' misurato: portandolo a seicentocinquanta, sulla
-tavola dell'impianto 1 non cambia una sola misura. Quando il ciclo si ferma con
-un'andata e ritorno ancora in piedi non e' perche' ha finito le prove: e'
-perche' nessuna delle mosse che conosce la toglie.
+Raggiunto il tetto si restituisce la migliore posa trovata fin li'. Scatta in
+modo deterministico — stessi ingressi, stesse prove, stesso punto di arresto —
+quindi non costa la riproducibilita'. Ogni prova e' un `settle_sheet` completo,
+e vale circa un decimo di secondo sull'impianto 1.
 """
 
-NUDGE_STEPS = (1, 2, 4)
-"""Le traslazioni provate, in passi di griglia: le vicine prima delle lontane."""
+NUDGE_STEPS = (1, 2, 4, 8)
+"""Le traslazioni cieche, in passi di griglia: l'ultima risorsa, dopo le mosse
+ricavate dalle porte. Servono a scansare un ostacolo che nessuna porta indica."""
 
-SPREAD_STEPS = (2, 4, 8, 16)
-"""Gli allontanamenti dal centro provati dalla distensione, in passi di griglia.
+SLACK_STEPS = (0, 2, 4)
+"""Il gioco in piu' provato oltre la distanza minima, in passi di griglia.
 
-Piu' lunghi delle traslazioni del ciclo che li precede, e per un motivo
-diverso: quelle cercano di **togliere una piega**, e una piega si toglie
-allineandosi a un vicino; questa cerca di **occupare il foglio**, e il foglio e'
-grande. Sedici passi sono quaranta millimetri, un ottavo della larghezza utile
-di una A3, e piu' in la' non si guadagna piu' niente: provare anche
-ventiquattro passi non ha cambiato una misura, e ogni passo in piu' e' un
-instradamento di prova speso.
-"""
-
-FILL_TARGET_RATIO = 0.60
-"""Il riempimento oltre il quale la distensione si ferma (A1, D-111).
-
-E' **lo stesso numero del preflight**, che avvisa quando la tavola e' piena
-per meno di tre quinti: il collocatore non insegue un obiettivo proprio, insegue
-quello gia' dichiarato. Fermarsi appena e' raggiunto e' la meta' che conta di
-D-080 — «anche la lunghezza delle tratte costa, non facciamo che spargiamo le
-macchine in giro»: la distensione compra riempimento pagando in lunghezza, e
-smette appena il riempimento c'e'.
-"""
-
-MAX_SPREAD_TRIALS = 700
-"""Tetto di instradamenti di prova per la sola distensione.
-
-Separato da quello del ciclo che la precede, perche' le due fasi cercano cose
-diverse e una non deve consumare il bilancio dell'altra. Come l'altro, scatta
-in modo deterministico: stessi ingressi, stesse prove, stesso punto di arresto.
-
-Il numero e' **misurato, non scelto**: sull'impianto 1 la distensione si
-esaurisce da sola dopo poco piu' di cinquecento prove, quando nessuna mossa
-migliora piu' nulla. Un tetto piu' basso la fermava prima del capolinea, e la
-tavola usciva riempita a meta' — il tetto non deve essere il vincolo che decide
-la tavola.
-"""
-
-_SNUG_STEPS = 2
-"""Stacco fra la porta di chi si avvicina e quella del suo pari.
-
-Due passi, come `place.CLEARANCE_STEPS`: e' la distanza a cui una linea si
-stacca dal bordo del simbolo, quindi la minima a cui due porte affacciate si
-collegano senza che la tratta sembri disegnata sul simbolo.
+La distanza minima e' quella che lascia il rettilineo agli accessori in linea;
+qualche passo in piu' serve quando un altro pezzo o una tratta altrui occupano
+proprio quel rettilineo.
 """
 
 BENDS_PER_RUN_MAX = 3
 """Pieghe oltre le quali una tratta e' un giro attorno a qualcosa (B4, D-060).
 
-Lo stesso numero che il preflight usa per il proprio avviso: la distensione non
-deve poter comprare una tratta che il controllo di qualita' segnalera'.
+Lo stesso numero che il preflight usa per il proprio avviso.
 """
 
 _TOLERANCE_MM = 1e-6
-
-
-class _Move(NamedTuple):
-    """Una candidata: dove va l'origine del riquadro e come e' girato.
-
-    Traslazione e rotazione sono la stessa cosa per il ciclo — una posa
-    alternativa da provare instradando — e viaggiano insieme perche' la
-    validita' di un riquadro dipende da entrambe: a 90 e 270 gradi il
-    manifesto scambia larghezza e altezza, e il riquadro da verificare contro
-    l'area, la terra e i vicini non e' piu' quello di prima.
-    """
-
-    origin: Point
-    rotation_deg: int
-
-
-class _Outcome(NamedTuple):
-    """Cio' che una prova di instradamento dice della disposizione provata."""
-
-    unfit: tuple[int, ...]
-    """Indici delle tratte che non ospitano i propri accessori in linea."""
-
-    turnbacks: tuple[int, ...]
-    """Indici delle tratte che fanno un'andata e ritorno (B12)."""
-
-    objective: int
-    crossings: int
-    routes: list[RoutedTrunk]
-
-    long_runs: int = 0
-    """Le tratte che cambiano direzione piu' di tre volte (B4, D-060).
-
-    Contate a parte dal totale delle pieghe, perche' sono due difetti diversi:
-    trenta pieghe sparse su venti tratte sono un disegno normale, quattro su una
-    sola tratta sono un giro attorno a un ostacolo. La distensione non deve
-    comprare ne' l'uno ne' l'altro.
-    """
-
-    bends: int = 0
-    """Le pieghe, contate a parte dall'obiettivo.
-
-    L'obiettivo le somma alla lunghezza, e alla distensione serve invece
-    tenerle separate: li' la lunghezza **deve** poter crescere — allontanare due
-    pezzi allunga il tubo che li unisce — mentre le pieghe non devono crescere
-    di una.
-    """
-
-    fill: float = 0.0
-    """Quanta area di disegno copre l'ingombro dell'inchiostro (A1, D-111)."""
-
-    coverage: float = 1.0
-    """Quante celle dell'ingombro portano inchiostro, sul totale.
-
-    Serve a una cosa sola, e ce ne vuole una apposta: impedire che il
-    riempimento si compri con una **propaggine**. Il riempimento misura il
-    rettangolo che circonda il disegno, quindi basta spingere un pezzo leggero
-    lontano da tutti — una valvola di sicurezza, uno sfiato, con il loro stelo —
-    per allungare quel rettangolo di due centimetri di carta bianca. Misurato:
-    su una prima versione di questo ciclo, dei tredici punti di riempimento
-    guadagnati **nove venivano da un pezzo solo**.
-
-    ⛔ **Il primo rimedio non rimediava niente**, e vale la pena scriverlo:
-    misurare lo squilibrio fra i quattro quadranti dell'**ingombro** da'
-    esattamente lo stesso numero che misurarlo sui quadranti dell'area centrata
-    su di esso — stesse rette di divisione, stesso inchiostro — quindi la
-    condizione in piu' era logicamente identica a quella che c'era gia'. Una
-    propaggine sta **dentro** un quadrante e non lo svuota: la si vede solo
-    guardando piu' fitto, ed e' quello che fa questa misura.
-    """
-
-    spread: float = 1.0
-    """Squilibrio dell'inchiostro fra i quattro quadranti dell'area di disegno.
-
-    E' la seconda misura che la carta chiede — «si copre meta' foglio con una
-    mano: se una meta' e' quasi bianca e l'altra e' fitta, non va» — ed e' la
-    stessa che il preflight pesa a tavola finita. Il riempimento da solo non la
-    ottiene: un disegno puo' coprire i tre quarti del foglio e avere tutto
-    l'inchiostro in una striscia.
-    """
-
-
 _HORIZONTAL_FACES = (PortFace.LEFT, PortFace.RIGHT)
-"""Le facce per cui l'allineamento in quota ha senso.
+_DIRECTION: dict[PortFace, tuple[float, float]] = {
+    PortFace.RIGHT: (1.0, 0.0),
+    PortFace.BOTTOM: (0.0, 1.0),
+    PortFace.LEFT: (-1.0, 0.0),
+    PortFace.TOP: (0.0, -1.0),
+}
 
-Due porte affacciate su fianchi si collegano con una linea orizzontale quando
-stanno sulla stessa riga: e' la mossa che toglie pieghe. Una porta sul fondo o
-sul cielo scarica in verticale, e portarla «sulla riga» dell'altra non produce
-nessuna linea diritta: produce l'uncino che poi l'instradamento paga.
-"""
+Move = dict[str, PlacedSymbol]
+"""Una candidata: i soli simboli che cambiano posa, gia' posati dove andrebbero."""
+
+
+class SheetCost(NamedTuple):
+    """Il valore confrontabile della geometria completa, nell'ordine del pacchetto.
+
+    Si confronta con `beats`, che e' l'ordine lessicografico delle voci: la
+    prima che differisce decide. Riempimento e bilanciamento chiudono la fila e
+    contano solo a parita' di tutte le altre.
+    """
+
+    violations: int
+    """Tratte che non ospitano i propri accessori, e accessori posati addosso a
+    una tratta altrui o a un simbolo: cio' che il preflight blocca."""
+
+    turnback_runs: int
+    """Tratte con andata e ritorno (B12, D-078)."""
+
+    turnback_mm: float
+    """Millimetri complessivi di andata e ritorno."""
+
+    long_runs: int
+    """Tratte oltre le tre pieghe (B4)."""
+
+    bends: int
+    crossings: int
+    length_mm: float
+
+    fill: float
+    """Riempimento dell'area di disegno: spareggio, piu' e' meglio."""
+
+    imbalance: float
+    """Squilibrio dell'inchiostro fra i quadranti: spareggio, meno e' meglio."""
+
+    def key(self) -> tuple[int, int, float, int, int, int, float, float, float]:
+        """La chiave d'ordine: le sette voci, poi i due spareggi."""
+        return (
+            self.violations,
+            self.turnback_runs,
+            round(self.turnback_mm, 3),
+            self.long_runs,
+            self.bends,
+            self.crossings,
+            round(self.length_mm, 3),
+            round(-self.fill, 6),
+            round(self.imbalance, 6),
+        )
+
+    def beats(self, other: "SheetCost") -> bool:
+        """Vero se questa geometria e' strettamente migliore dell'altra."""
+        return self.key() < other.key()
+
+
+class Measured(NamedTuple):
+    """Una posa misurata: il suo costo e la tavola instradata da cui viene."""
+
+    cost: SheetCost
+    settled: SettledSheet
 
 
 def objective_of(routes: list[RoutedTrunk], step_mm: float) -> int:
-    """L'obiettivo del PM, intero: pieghe, attraversamenti, lunghezza (D-060).
-
-    Stessi pesi dell'instradatore — `TURN_COST`, `CROSS_COST`, `STEP_COST` —
-    perche' e' la stessa regola: qui si sommano sulle tratte gia' instradate
-    invece che sui passi di un percorso da scegliere.
-    """
+    """L'obiettivo storico del PM, intero: pieghe, attraversamenti, lunghezza
+    (D-060), con i pesi dell'instradatore. Resta come misura di confronto delle
+    prove: il ciclo non lo usa piu' per decidere, decide `SheetCost`."""
     total = 0
     for route in routes:
         for segment in route.segments:
@@ -285,8 +211,8 @@ def objective_of(routes: list[RoutedTrunk], step_mm: float) -> int:
     return total
 
 
-def overshoots_the_goal(route: RoutedTrunk, goal: Point) -> bool:
-    """Vero se la tratta supera la porta di destinazione per poi tornarci (B12).
+def overshoot_beyond_goal_mm(route: RoutedTrunk, goal: Point) -> float:
+    """Di quanto la tratta supera la porta di destinazione per poi tornarci (B12).
 
     Il corollario di D-078: «un componente non si raggiunge mai con un'andata
     e ritorno; se la linea lo supera e torna indietro, e' l'oggetto a essere
@@ -295,18 +221,15 @@ def overshoots_the_goal(route: RoutedTrunk, goal: Point) -> bool:
     verticale l'orizzontale. Ogni punto della spezzata oltre quel confine, nel
     verso di arrivo, e' un'andata oltre la meta che la tratta deve disfare.
 
-    E' il **giro attorno all'oggetto**, quello che il PM ha cerchiato: la porta
-    guarda da una parte e la linea arriva dall'altra, quindi la tratta scavalca
-    il pezzo per rientrargli dal lato giusto. Non e' la stessa cosa che misura
-    `geometry.overshoot_mm`, che guarda la spezzata disegnata e vede se torna
-    su se stessa; il ciclo le conta **tutte e due**, perche' sono due difetti e
-    non due nomi dello stesso.
+    Non e' la stessa cosa che misura `geometry.overshoot_mm`, che guarda la
+    spezzata disegnata e vede se torna su se stessa; il ciclo le conta **tutte
+    e due**, perche' sono due difetti e non due nomi dello stesso.
     """
     if not route.segments:
-        return False
+        return 0.0
     last = route.segments[-1]
     if len(last) < 2:
-        return False
+        return 0.0
     end, before = last[-1], last[-2]
     horizontal = abs(end.x_mm - before.x_mm) > abs(end.y_mm - before.y_mm)
     points = [point for segment in route.segments for point in segment]
@@ -316,7 +239,12 @@ def overshoots_the_goal(route: RoutedTrunk, goal: Point) -> bool:
     else:
         sign = 1.0 if end.y_mm > before.y_mm else -1.0
         overshoot = max((point.y_mm - goal.y_mm) * sign for point in points)
-    return overshoot > _TOLERANCE_MM
+    return max(overshoot, 0.0)
+
+
+def overshoots_the_goal(route: RoutedTrunk, goal: Point) -> bool:
+    """Vero se la tratta supera la porta di destinazione per poi tornarci (B12)."""
+    return overshoot_beyond_goal_mm(route, goal) > _TOLERANCE_MM
 
 
 def _relation(left: float, right: float) -> int:
@@ -331,9 +259,7 @@ def _centred_on(
 
     Il ciclo sceglie una posa, e dopo di lui la composizione porta il blocco al
     centro del foglio: misurare i quadranti dove i pezzi stanno adesso vuol dire
-    misurare una tavola che non uscira'. Al posto di traslare la posa — che
-    costa e non serve a nulla — si trasla il rettangolo: stessa misura, e
-    invariante rispetto a dove il blocco si trova in questo momento.
+    misurare una tavola che non uscira'. Si trasla il rettangolo, non la posa.
     """
     if box is None:
         return area
@@ -349,115 +275,269 @@ def _centred_on(
     )
 
 
-def improve_sheet(
-    project: ProjectModel,
-    partition: SheetPartition,
-    catalog: ComponentRegistry,
-    frame: SheetFrame,
-    placed: list[PlacedSymbol],
-    inline_ids: frozenset[str],
-) -> list[PlacedSymbol]:
-    """Rivede la disposizione reinstradando: si tiene solo cio' che migliora.
+def _snap_up(value_mm: float, step_mm: float) -> float:
+    """Il primo multiplo del passo non inferiore al valore."""
+    steps = int(value_mm / step_mm)
+    if value_mm - steps * step_mm > _TOLERANCE_MM:
+        steps += 1
+    return steps * step_mm
 
-    Greedy e deterministico: i componenti colpevoli — estremi di tratte con
-    pieghe, attraversamenti o andate e ritorno — si esaminano nell'ordine di
-    posa; per ciascuno si prova una lista fissa di mosse alternative —
-    traslazioni e rotazioni ammesse dal manifesto — e si accetta la prima che
-    migliora nell'ordine lessicografico del modulo. Una passata senza mosse
-    chiude il ciclo; tre passate lo chiudono comunque.
 
-    `inline_ids` non entra nel ciclo: gli accessori in linea non sono ancora
-    posati, e l'instradamento di prova gira apposta senza di loro.
-    """
-    trunks = list(partition.trunks)
-    if not placed or not trunks:
-        return list(placed)
-
-    drawing = frame.drawing_rect_mm
-    # Lo stesso rettangolo ridotto dentro cui `place_sheet` posa: il corridoio
-    # di instradamento lungo il bordo resta libero anche quando ci si sposta.
-    area = Rect(
-        x_mm=drawing.x_mm + ROUTING_MARGIN_MM,
-        y_mm=drawing.y_mm + ROUTING_MARGIN_MM,
-        width_mm=drawing.width_mm - 2 * ROUTING_MARGIN_MM,
-        height_mm=drawing.height_mm - 2 * ROUTING_MARGIN_MM,
+def _signature(layout: Move) -> tuple[tuple[str, float, float, int], ...]:
+    return tuple(
+        (item.component_id, item.origin.x_mm, item.origin.y_mm, item.rotation_deg)
+        for item in layout.values()
     )
-    # Il riempimento si misura sull'**area di disegno**, che e' il foglio meno
-    # margini e fascia della legenda: la stessa che guarda il preflight.
-    sheet_rect = (drawing.x_mm, drawing.y_mm, drawing.right_mm, drawing.bottom_mm)
-    grid = GridSpace(origin=drawing, standard=frame.standard)
-    step = grid.step_mm
-    clearance = frame.standard.min_clearance_mm
-    levels = levels_of(drawing.y_mm, drawing.height_mm, step)
 
-    definitions = {item.id: item.definition_id for item in project.components}
-    upright: dict[str, SymbolManifest] = {}
-    features: dict[str, tuple[frozenset[str], bool]] = {}
-    for item in placed:
-        resolved = catalog.resolve(definitions[item.component_id])
-        upright[item.component_id] = resolved.symbol.manifest
-        features[item.component_id] = (
-            frozenset(resolved.definition.functions),
-            resolved.is_inline,
+
+class Improver:
+    """Il ciclo di miglioramento di un foglio, con le sue letture della posa.
+
+    Si costruisce sulla posa iniziale e la migliora con `run`. I metodi
+    `candidates`, `is_valid` e `measure` sono pubblici perche' le prove generali
+    del pacchetto verificano **quali** mosse il ciclo sa generare, non solo
+    dove arriva.
+    """
+
+    def __init__(
+        self,
+        project: ProjectModel,
+        partition: SheetPartition,
+        catalog: ComponentRegistry,
+        frame: SheetFrame,
+        placed: list[PlacedSymbol],
+        inline_ids: frozenset[str],
+    ) -> None:
+        self.project = project
+        self.partition = partition
+        self.catalog = catalog
+        self.frame = frame
+        self.inline_ids = inline_ids
+        self.trunks: list[Trunk] = list(partition.trunks)
+        self.order = [item.component_id for item in placed]
+        self.best: Move = {item.component_id: item for item in placed}
+        # L'ordine di scansione e' quello della posa iniziale letta da sinistra
+        # a destra e dall'alto in basso, mai quello dei nomi: due impianti
+        # uguali con identificativi diversi devono dare la stessa tavola.
+        self.scan = sorted(
+            self.order,
+            key=lambda item: (
+                self.best[item].origin.x_mm,
+                self.best[item].origin.y_mm,
+                self.best[item].symbol_id,
+            ),
         )
 
-    turned: dict[tuple[str, int], SymbolManifest] = {}
+        drawing = frame.drawing_rect_mm
+        # Lo stesso rettangolo ridotto dentro cui `place_sheet` posa: il
+        # corridoio di instradamento lungo il bordo resta libero.
+        self.area = Rect(
+            x_mm=drawing.x_mm + ROUTING_MARGIN_MM,
+            y_mm=drawing.y_mm + ROUTING_MARGIN_MM,
+            width_mm=drawing.width_mm - 2 * ROUTING_MARGIN_MM,
+            height_mm=drawing.height_mm - 2 * ROUTING_MARGIN_MM,
+        )
+        self.sheet_rect = (drawing.x_mm, drawing.y_mm, drawing.right_mm, drawing.bottom_mm)
+        self.grid = GridSpace(origin=drawing, standard=frame.standard)
+        self.step = self.grid.step_mm
+        self.clearance = frame.standard.min_clearance_mm
+        self.levels = levels_of(drawing.y_mm, drawing.height_mm, self.step)
 
-    def manifest_at(component_id: str, rotation_deg: int) -> SymbolManifest:
-        """Il manifesto del componente girato di tanto, calcolato una volta.
+        definitions = {item.id: item.definition_id for item in project.components}
+        self.upright: dict[str, SymbolManifest] = {}
+        self.features: dict[str, tuple[frozenset[str], bool]] = {}
+        for item in placed:
+            resolved = catalog.resolve(definitions[item.component_id])
+            self.upright[item.component_id] = resolved.symbol.manifest
+            self.features[item.component_id] = (
+                frozenset(resolved.definition.functions),
+                resolved.is_inline,
+            )
+        self._turned: dict[tuple[str, int], SymbolManifest] = {}
+        self.standings = {
+            item.component_id: self.standing_at(item.component_id, item.rotation_deg)
+            for item in placed
+        }
 
-        Si parte sempre dal manifesto **diritto** del catalogo: ruotare un
-        manifesto gia' ruotato rimappa le rotazioni ammesse, e chiedergli
-        quelle originali darebbe la risposta sbagliata.
-        """
-        found = turned.get((component_id, rotation_deg))
+        # Il verso del fluido, che decide l'ordine di processo (D-059, D-060).
+        self.flow = orient_trunks(project, catalog, self.trunks)
+
+        # Le figure: chi pende da chi, e chi sta in fila su una tratta.
+        placeable = frozenset(self.order)
+        self.children: dict[str, tuple[tuple[str, str], ...]] = hanging_children(
+            project, partition, catalog, placeable
+        )
+        self.parent_of: dict[str, tuple[str, str]] = {
+            child: (parent, port_id)
+            for parent, items in self.children.items()
+            for child, port_id in items
+        }
+        self.chains = sorted(
+            (
+                chain
+                for chain in run_chains(project, partition, catalog, placeable)
+                if all(item in self.best for item in chain)
+            ),
+            key=lambda chain: min(self.scan.index(item) for item in chain),
+        )
+        self.room: dict[tuple[str, ...], float] = {
+            trunk.connection_ids: inline_room_mm(project, catalog, trunk.inline_component_ids)
+            for trunk in self.trunks
+        }
+        # Lo stacco di ogni appeso dal proprio attacco, misurato sulla posa
+        # iniziale lungo l'asse dello stacco: si conserva quando il pezzo si
+        # muove o si gira, perche' l'ha deciso il posizionamento.
+        self.hang_gap: dict[str, float] = {}
+        self._refresh_hang_gaps()
+
+        self.owning_run = {
+            component_id: index
+            for index, trunk in enumerate(self.trunks)
+            for component_id in trunk.inline_component_ids
+        }
+        self.trials = 0
+        self._memo: dict[tuple[tuple[str, float, float, int], ...], Measured | None] = {}
+
+    # -- letture del manifesto -------------------------------------------------
+
+    def manifest_at(self, component_id: str, rotation_deg: int) -> SymbolManifest:
+        """Il manifesto del componente girato di tanto, dal manifesto diritto."""
+        found = self._turned.get((component_id, rotation_deg))
         if found is None:
-            found = upright[component_id].rotated(rotation_deg)
-            turned[component_id, rotation_deg] = found
+            found = self.upright[component_id].rotated(rotation_deg)
+            self._turned[component_id, rotation_deg] = found
         return found
 
-    def manifest_of(item: PlacedSymbol) -> SymbolManifest:
-        return manifest_at(item.component_id, item.rotation_deg)
-
-    def standing_at(component_id: str, rotation_deg: int) -> Standing:
-        functions, is_inline = features[component_id]
+    def standing_at(self, component_id: str, rotation_deg: int) -> Standing:
+        functions, is_inline = self.features[component_id]
         return standing_of(
-            manifest_at(component_id, rotation_deg).height_mm, functions, is_inline
+            self.manifest_at(component_id, rotation_deg).height_mm, functions, is_inline
         )
 
-    standings = {
-        item.component_id: standing_at(item.component_id, item.rotation_deg)
-        for item in placed
-    }
+    def port_at(self, item: PlacedSymbol, port_id: str) -> tuple[Point, PortFace]:
+        """Dove sta una porta di un simbolo posato, e dove guarda."""
+        port = self.manifest_at(item.component_id, item.rotation_deg).port(port_id)
+        return (
+            Point(x_mm=item.origin.x_mm + port.x_mm, y_mm=item.origin.y_mm + port.y_mm),
+            port.face,
+        )
 
-    order = [item.component_id for item in placed]
-    best = {item.component_id: item for item in placed}
-    trials = 0
+    def _placed(self, component_id: str, origin: Point, rotation_deg: int) -> PlacedSymbol:
+        shape = self.manifest_at(component_id, rotation_deg)
+        return self.best[component_id].model_copy(
+            update={
+                "origin": origin,
+                "rotation_deg": rotation_deg,
+                "width_mm": shape.width_mm,
+                "height_mm": shape.height_mm,
+            }
+        )
 
-    owning_run = {
-        component_id: index
-        for index, trunk in enumerate(trunks)
-        for component_id in trunk.inline_component_ids
-    }
+    def leader_of(self, component_id: str) -> str:
+        """Il pezzo che si muove: un appeso viaggia col pezzo che lo regge."""
+        parent = self.parent_of.get(component_id)
+        return component_id if parent is None else parent[0]
 
-    def accessories_are_clear(settled: SettledSheet) -> bool:
-        """Nessun accessorio addosso a una tratta altrui o a un simbolo (B5).
+    def unit_of(self, component_id: str) -> tuple[str, ...]:
+        leader = self.leader_of(component_id)
+        return (leader, *(child for child, _ in self.children.get(leader, ())))
 
-        E' la misura del preflight, letta qui prima che la tavola esista: un
-        accessorio e' un simbolo, e una tratta che non e' la sua gli deve stare
-        alla distanza di rispetto. Quale sia la sua non si indovina dalla
-        geometria come fa il preflight: lo dice la tratta che lo porta.
+    # -- la misura ---------------------------------------------------------------
+
+    def measure(self, layout: Iterable[PlacedSymbol] | Move) -> Measured | None:
+        """Un instradamento di prova completo, contato contro il tetto.
+
+        Completo vuol dire con gli accessori posati: `settle_sheet` e' la stessa
+        funzione con cui la tavola si disegna. `None` e' una posa che non si
+        lascia instradare: non e' una candidata.
         """
+        table = layout if isinstance(layout, dict) else {
+            item.component_id: item for item in layout
+        }
+        signature = _signature({item: table[item] for item in self.order})
+        if signature in self._memo:
+            return self._memo[signature]
+        self.trials += 1
+        symbols = [table[item] for item in self.order]
+        try:
+            settled = settle_sheet(
+                self.project, self.trunks, symbols, self.catalog, self.grid, tolerant=True
+            )
+        except LayoutError:
+            self._memo[signature] = None
+            return None
+        found = Measured(cost=self.cost_of(table, settled), settled=settled)
+        self._memo[signature] = found
+        return found
+
+    def cost_of(self, table: Move, settled: SettledSheet) -> SheetCost:
+        """Il confronto unico, letto sulla tavola instradata."""
+        violations = len(settled.unfit) + self._accessories_out_of_place(settled)
+        turnback_runs = 0
+        turnback_mm = 0.0
+        long_runs = 0
+        bends = 0
+        crossings = 0
+        length_mm = 0.0
+        for trunk, route in zip(self.trunks, settled.routes, strict=True):
+            arrival = table[trunk.end.component_id]
+            goal, _ = self.port_at(arrival, trunk.end.port_id)
+            back = max(
+                overshoot_beyond_goal_mm(route, goal),
+                max(
+                    (overshoot_mm(segment, self.step) for segment in route.segments),
+                    default=0.0,
+                ),
+            )
+            if back > _TOLERANCE_MM:
+                turnback_runs += 1
+                turnback_mm += back
+            turns = sum(max(len(segment) - 2, 0) for segment in route.segments)
+            bends += turns
+            if turns > BENDS_PER_RUN_MAX:
+                long_runs += 1
+            crossings += len(route.crossings)
+            length_mm += sum(
+                abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
+                for segment in route.segments
+                for before, after in zip(segment, segment[1:], strict=False)
+            )
+        box = ink_box(settled.symbols, settled.routes)
+        return SheetCost(
+            violations=violations,
+            turnback_runs=turnback_runs,
+            turnback_mm=turnback_mm,
+            long_runs=long_runs,
+            bends=bends,
+            crossings=crossings,
+            length_mm=length_mm,
+            fill=fill_ratio(settled.symbols, settled.routes, self.sheet_rect),
+            imbalance=ink_imbalance(
+                settled.symbols,
+                settled.routes,
+                _centred_on(box, self.sheet_rect),
+                self.frame.standard.line_medium_mm,
+            ),
+        )
+
+    def _accessories_out_of_place(self, settled: SettledSheet) -> int:
+        """Accessori addosso a una tratta altrui o a un simbolo (B5, D-027).
+
+        E' la misura del preflight, letta prima che la tavola esista: un
+        accessorio e' un simbolo, e una tratta che non e' la sua gli deve stare
+        alla distanza di rispetto. Quale sia la sua lo dice la tratta che lo
+        porta, non la geometria.
+        """
+        count = 0
         for accessory in settled.accessories:
             box = box_of(accessory)
-            mine = owning_run.get(accessory.component_id)
+            mine = self.owning_run.get(accessory.component_id)
             others = [
-                route
-                for index, route in enumerate(settled.routes)
-                if index != mine
+                route for index, route in enumerate(settled.routes) if index != mine
             ]
-            if run_intrudes_on(box, others, clearance):
-                return False
+            if run_intrudes_on(box, others, self.clearance):
+                count += 1
+                continue
             for other in settled.symbols:
                 if other is accessory:
                     continue
@@ -467,606 +547,862 @@ def improve_sheet(
                     and box[1] < other.bottom_mm - _TOLERANCE_MM
                     and other.origin.y_mm < box[3] - _TOLERANCE_MM
                 ):
-                    return False
-        return True
+                    count += 1
+                    break
+        return count
 
-    def evaluate(layout: dict[str, PlacedSymbol]) -> _Outcome | None:
-        """Un instradamento di prova completo, contato contro il tetto.
+    # -- le figure -------------------------------------------------------------
 
-        Completo vuol dire **con gli accessori posati**: `settle_sheet` e' la
-        stessa funzione con cui la tavola si disegna, quindi cio' che si misura
-        qui e' cio' che uscira'. Oltre all'obiettivo restituisce quali tratte
-        non riescono a ospitare i propri accessori in linea (D-027) —
-        avvicinare e' gratis solo finche' gli accessori trovano il proprio
-        rettilineo, e una disposizione che glielo toglie costerebbe l'intera
-        tavola, non una piega — e quali fanno un'andata e ritorno (B12), che e'
-        la voce che comanda il confronto.
-
-        Due esiti non sono candidature e valgono `None`: una posa che non si
-        lascia instradare, e una che ci riesce mettendo un accessorio addosso a
-        una tratta che non e' la sua. La seconda e' un rilievo bloccante del
-        preflight: pagarla con qualche piega in meno sarebbe comprare una
-        tavola che non si consegna.
-        """
-        nonlocal trials
-        trials += 1
-        symbols = [layout[item] for item in order]
-        try:
-            settled = settle_sheet(
-                project, trunks, list(symbols), catalog, grid, tolerant=True
+    def _neighbours(self, component_id: str) -> frozenset[str]:
+        """A cosa un pezzo e' attaccato, senza contare cio' che pende."""
+        return frozenset(
+            other
+            for trunk in self.trunks
+            for mine, other in (
+                (trunk.start.component_id, trunk.end.component_id),
+                (trunk.end.component_id, trunk.start.component_id),
             )
-        except LayoutError:
-            return None
-        if not accessories_are_clear(settled):
-            return None
-        # Le due andate e ritorno, contate insieme e sulle spezzate
-        # **disegnate**: il giro attorno all'oggetto, che guarda la porta di
-        # arrivo, e il ritorno su se stessa, che e' la misura del preflight e
-        # legge entrambi i capi. Prima il ciclo contava solo la prima, e sulla
-        # geometria senza accessori: cosi' non vedeva ne' il giro sulla porta di
-        # **partenza** ne' l'effetto delle interruzioni sulle spezzate.
-        turnbacks: list[int] = []
-        for index, (trunk, route) in enumerate(
-            zip(trunks, settled.routes, strict=True)
-        ):
-            arrival = layout[trunk.end.component_id]
-            port = manifest_of(arrival).port(trunk.end.port_id)
-            goal = Point(
-                x_mm=arrival.origin.x_mm + port.x_mm,
-                y_mm=arrival.origin.y_mm + port.y_mm,
-            )
-            if overshoots_the_goal(route, goal) or any(
-                overshoot_mm(segment, step) > _TOLERANCE_MM
-                for segment in route.segments
-            ):
-                turnbacks.append(index)
-        return _Outcome(
-            unfit=settled.unfit,
-            turnbacks=tuple(turnbacks),
-            objective=objective_of(settled.routes, step),
-            crossings=sum(len(route.crossings) for route in settled.routes),
-            routes=settled.routes,
-            bends=sum(
-                max(len(segment) - 2, 0)
-                for route in settled.routes
-                for segment in route.segments
-            ),
-            long_runs=sum(
-                1
-                for route in settled.routes
-                if sum(max(len(segment) - 2, 0) for segment in route.segments)
-                > BENDS_PER_RUN_MAX
-            ),
-            fill=fill_ratio(settled.symbols, settled.routes, sheet_rect),
-            spread=ink_imbalance(
-                settled.symbols,
-                settled.routes,
-                _centred_on(ink_box(settled.symbols, settled.routes), sheet_rect),
-                frame.standard.line_medium_mm,
-            ),
-            coverage=ink_coverage(
-                settled.symbols,
-                settled.routes,
-                ink_box(settled.symbols, settled.routes),
-            ),
+            if mine == component_id and other not in self.parent_of and other in self.best
         )
 
-    def candidates_of(component_id: str) -> list[_Move]:
-        """Le mosse alternative, in ordine fisso: prima gli allineamenti di
-        porta, poi le rotazioni, poi le traslazioni verticali, poi le
-        orizzontali.
+    def column_of(self, component_id: str) -> tuple[str, ...]:
+        """La colonna o la pila a cui un pezzo appartiene, lui compreso.
 
-        Le rotazioni stanno **dopo gli allineamenti e prima delle
-        traslazioni** perche' costano meno di tutte: girare un simbolo non lo
-        muove di un millimetro, quindi non tocca ne' l'ordine di processo ne'
-        lo spazio dei vicini, e nella catena greedy conviene provarla prima di
-        mettersi a far scorrere l'oggetto per la tavola. E' anche l'unica
-        mossa che possa pagare un'andata e ritorno dovuta al verso di una
-        porta, che nessuna traslazione toglie.
+        Due letture, che sono quelle del posizionamento: chi sta a terra e
+        divide la colonna con un altro a terra (D-073), e chi ha lo stesso bordo
+        sinistro di un pari — stessi vicini — sopra o sotto di lui (A3, D-119).
+        La colonna e' una figura: si trasla insieme, non si sfila.
         """
-        me = best[component_id]
-        manifest = manifest_of(me)
-        here = me.rotation_deg
-        out: list[_Move] = []
-        # (a) La quota che porta la propria porta sulla riga della porta del
-        # pari, per ogni tratta che li collega: e' la mossa che rende
-        # possibile la linea diritta. E la stessa quota con l'ascissa appena
-        # oltre la porta del pari, per chi puo' avvicinarsi.
-        for trunk in trunks:
-            for mine, other in (
-                (trunk.start, trunk.end),
-                (trunk.end, trunk.start),
+        leader = self.leader_of(component_id)
+        leaders = [item for item in self.scan if item not in self.parent_of]
+
+        def stacked(first: str, second: str) -> bool:
+            one, two = self.best[first], self.best[second]
+            if (
+                self.standings[first] is Standing.GROUND
+                and self.standings[second] is Standing.GROUND
+                and one.origin.x_mm < two.right_mm - _TOLERANCE_MM
+                and two.origin.x_mm < one.right_mm - _TOLERANCE_MM
             ):
-                if mine.component_id != component_id:
-                    continue
-                peer = best.get(other.component_id)
-                if peer is None:
-                    continue
-                own_port = manifest.port(mine.port_id)
-                peer_port = manifest_of(peer).port(other.port_id)
-                if (
-                    own_port.face not in _HORIZONTAL_FACES
-                    or peer_port.face not in _HORIZONTAL_FACES
-                ):
-                    continue
-                aligned_y = peer.origin.y_mm + peer_port.y_mm - own_port.y_mm
-                out.append(_Move(Point(x_mm=me.origin.x_mm, y_mm=aligned_y), here))
-                snug_x = (
-                    peer.origin.x_mm
-                    + peer_port.x_mm
-                    + _SNUG_STEPS * step
-                    - own_port.x_mm
+                return True
+            if abs(one.origin.x_mm - two.origin.x_mm) > _TOLERANCE_MM:
+                return False
+            apart = (
+                one.bottom_mm <= two.origin.y_mm + _TOLERANCE_MM
+                or two.bottom_mm <= one.origin.y_mm + _TOLERANCE_MM
+            )
+            return apart and self._neighbours(first) == self._neighbours(second)
+
+        column = {leader}
+        frontier = [leader]
+        while frontier:
+            current = frontier.pop()
+            for other in leaders:
+                if other not in column and stacked(current, other):
+                    column.add(other)
+                    frontier.append(other)
+        return tuple(item for item in leaders if item in column)
+
+    # -- come si costruisce una candidata --------------------------------------
+
+    def place_unit(self, leader: str, origin: Point, rotation_deg: int) -> Move:
+        """Il pezzo posato la', con cio' che gli pende riappeso al proprio attacco."""
+        parent = self._placed(leader, origin, rotation_deg)
+        move: Move = {leader: parent}
+        for child, port_id in self.children.get(leader, ()):
+            move[child] = self._rehung(child, parent, port_id)
+        return move
+
+    def _rehung(
+        self, child: str, parent: PlacedSymbol, port_id: str, gap_mm: float | None = None
+    ) -> PlacedSymbol:
+        """L'appeso rimesso dalla parte in cui lo stacco guarda, allo stacco di prima.
+
+        Il figlio si gira, se il manifesto lo ammette, perche' il suo unico
+        attacco guardi lo stacco; altrimenti tiene il verso che aveva. Con
+        `gap_mm` lo stacco cambia lunghezza: e' la mossa che libera una riga a
+        chi deve passarci.
+        """
+        stub, face = self.port_at(parent, port_id)
+        direction = _DIRECTION[face]
+        gap = self.hang_gap[child] if gap_mm is None else gap_mm
+        current = self.best[child]
+        own_port_id = self.upright[child].ports[0].id
+        wanted = face.opposite
+        rotations = sorted(
+            self.upright[child].allowed_rotations_deg,
+            key=lambda item: (item != current.rotation_deg, item),
+        )
+        chosen = current.rotation_deg
+        for degrees in rotations:
+            if self.manifest_at(child, degrees).port(own_port_id).face is wanted:
+                chosen = degrees
+                break
+        port = self.manifest_at(child, chosen).port(own_port_id)
+        origin = Point(
+            x_mm=stub.x_mm + direction[0] * gap - port.x_mm,
+            y_mm=stub.y_mm + direction[1] * gap - port.y_mm,
+        )
+        return self._placed(child, origin, chosen)
+
+    def _translated(self, leaders: Iterable[str], dx_mm: float, dy_mm: float) -> Move:
+        move: Move = {}
+        for leader in leaders:
+            here = self.best[leader]
+            move.update(
+                self.place_unit(
+                    leader,
+                    Point(x_mm=here.origin.x_mm + dx_mm, y_mm=here.origin.y_mm + dy_mm),
+                    here.rotation_deg,
                 )
-                out.append(_Move(Point(x_mm=snug_x, y_mm=aligned_y), here))
-        # (b) Rotazioni: quelle che il manifesto ammette, in gradi crescenti,
-        # con l'origine ferma. Il riquadro pero' cambia — a 90 e 270 gradi
-        # larghezza e altezza si scambiano — e lo rivaluta il predicato di
-        # validita' come per qualunque altra mossa.
-        for degrees in sorted(upright[component_id].allowed_rotations_deg):
-            if degrees != here:
-                out.append(_Move(me.origin, degrees))
-        # (c) Traslazioni verticali: in alto prima che in basso, vicino prima
-        # che lontano.
-        for count in NUDGE_STEPS:
-            out.append(
-                _Move(Point(x_mm=me.origin.x_mm, y_mm=me.origin.y_mm - count * step), here)
             )
-            out.append(
-                _Move(Point(x_mm=me.origin.x_mm, y_mm=me.origin.y_mm + count * step), here)
+        return move
+
+    def _need_mm(self, trunk: Trunk) -> float:
+        """La distanza minima fra due porte affacciate su questa tratta.
+
+        Il rettilineo che gli accessori pretendono, e mai meno dello stacco
+        minimo fra due simboli (D-062).
+        """
+        return _snap_up(max(ROW_GAP_MM, self.room[trunk.connection_ids]), self.step)
+
+    def _facing_rotations(self, component_id: str, port_id: str, wanted: PortFace) -> list[int]:
+        """Le rotazioni ammesse che portano la porta a guardare da quella parte,
+        prima quella attuale."""
+        current = self.best[component_id].rotation_deg
+        return [
+            degrees
+            for degrees in sorted(
+                self.upright[component_id].allowed_rotations_deg,
+                key=lambda item: (item != current, item),
             )
-        # (d) Traslazioni orizzontali: l'ordine di processo le limita, e a
-        # controllarlo e' il predicato di validita'.
-        for count in NUDGE_STEPS:
-            out.append(
-                _Move(Point(x_mm=me.origin.x_mm - count * step, y_mm=me.origin.y_mm), here)
-            )
-            out.append(
-                _Move(Point(x_mm=me.origin.x_mm + count * step, y_mm=me.origin.y_mm), here)
-            )
+            if self.manifest_at(component_id, degrees).port(port_id).face is wanted
+        ]
+
+    def _trunks_of(self, leader: str) -> list[tuple[Trunk, str, str, str]]:
+        """Le tratte fra questo pezzo e un pezzo di un'altra figura:
+        `(tratta, porta mia, pezzo pari, porta del pari)`."""
+        unit = set(self.unit_of(leader))
+        found: list[tuple[Trunk, str, str, str]] = []
+        for trunk in self.trunks:
+            for mine, other in ((trunk.start, trunk.end), (trunk.end, trunk.start)):
+                if mine.component_id != leader:
+                    continue
+                if other.component_id in unit or other.component_id not in self.best:
+                    continue
+                found.append((trunk, mine.port_id, other.component_id, other.port_id))
+        return found
+
+    def _port_moves(self, leader: str) -> list[Move]:
+        """Le pose ricavate dalle porte dei vicini collegati.
+
+        Per ogni tratta verso un pari gia' posato: la quota che allinea le due
+        porte; la posa affacciata alla distanza minima che lascia il rettilineo
+        agli accessori, dalla parte in cui la porta del pari guarda, con la
+        rotazione che rivolge la propria porta verso di lui; e la stessa con
+        qualche passo di gioco.
+        """
+        out: list[Move] = []
+        me = self.best[leader]
+        for trunk, my_port, peer_id, peer_port in self._trunks_of(leader):
+            peer = self.best[peer_id]
+            anchor, face = self.port_at(peer, peer_port)
+            direction = _DIRECTION[face]
+            need = self._need_mm(trunk)
+            rotations = self._facing_rotations(leader, my_port, face.opposite)
+            if me.rotation_deg not in rotations:
+                rotations = [me.rotation_deg, *rotations]
+            grounded = self.standings[leader] is Standing.GROUND
+            for degrees in rotations:
+                port = self.manifest_at(leader, degrees).port(my_port)
+                # (a) allineamento: la porta sulla riga (o sulla colonna) della
+                # porta del pari, senza muoversi lungo l'asse del collegamento.
+                # Chi sta a terra non cambia quota: si allinea solo in ascissa.
+                if face in _HORIZONTAL_FACES:
+                    if grounded:
+                        continue
+                    aligned = Point(x_mm=me.origin.x_mm, y_mm=anchor.y_mm - port.y_mm)
+                else:
+                    aligned = Point(x_mm=anchor.x_mm - port.x_mm, y_mm=me.origin.y_mm)
+                out.append(self.place_unit(leader, aligned, degrees))
+            for degrees in rotations:
+                port = self.manifest_at(leader, degrees).port(my_port)
+                # (b) affacciato alla distanza minima, e con un po' di gioco.
+                if port.face is not face.opposite:
+                    continue
+                for slack in SLACK_STEPS:
+                    reach = need + slack * self.step
+                    origin = Point(
+                        x_mm=anchor.x_mm + direction[0] * reach - port.x_mm,
+                        y_mm=me.origin.y_mm if grounded else anchor.y_mm + direction[1] * reach - port.y_mm,
+                    )
+                    out.append(self.place_unit(leader, origin, degrees))
         return out
 
-    def in_a_ground_column(component_id: str) -> bool:
-        """Vero se il componente a terra divide la colonna con un altro.
+    def _chain_moves(self, leader: str) -> list[Move]:
+        """La catena di raccordi rimessa in fila dalla porta di un pezzo grosso.
 
-        E' la coppia impilata di D-073: si muove insieme o non si muove, e
-        questo ciclo non ha mosse di coppia. Sfilare orizzontalmente uno dei
-        due trasformerebbe la pila in una scala.
+        Dal capo attaccato all'ancora si cammina lungo la direzione in cui la
+        porta dell'ancora guarda: ogni membro prende la rotazione che rivolge la
+        propria porta d'ingresso all'indietro, si posa alla distanza minima che
+        la tratta pretende, e se la sua porta d'uscita guarda altrove la fila
+        gira con lei. E' la posa che un tecnico disegna a mano, e nessuna
+        traslazione di un pezzo solo la raggiunge.
         """
-        me = best[component_id]
-        for other_id in order:
-            if other_id == component_id or standings[other_id] is not Standing.GROUND:
+        out: list[Move] = []
+        for chain in self.chains:
+            if leader not in chain:
                 continue
-            other = best[other_id]
-            if me.origin.x_mm < other.right_mm and other.origin.x_mm < me.right_mm:
-                return True
-        return False
+            for members in (chain, tuple(reversed(chain))):
+                head = members[0]
+                for trunk, my_port, anchor_id, anchor_port in self._trunks_of(head):
+                    if anchor_id in chain:
+                        continue
+                    for slack in SLACK_STEPS:
+                        laid = self._lay(members, anchor_id, anchor_port, trunk, my_port, slack)
+                        if laid is not None:
+                            out.append(laid)
+        return out
 
-    def heads_a_column_with_another(component_id: str) -> bool:
-        """Vero se un altro componente ha lo stesso bordo sinistro, sopra o sotto.
+    def _lay(
+        self,
+        members: tuple[str, ...],
+        anchor_id: str,
+        anchor_port: str,
+        first_trunk: Trunk,
+        first_port: str,
+        slack: int,
+    ) -> Move | None:
+        move: Move = {}
+        anchor, face = self.port_at(self.best[anchor_id], anchor_port)
+        trunk, entry_port = first_trunk, first_port
+        for index, member in enumerate(members):
+            direction = _DIRECTION[face]
+            reach = self._need_mm(trunk) + slack * self.step
+            rotations = self._facing_rotations(member, entry_port, face.opposite)
+            degrees = rotations[0] if rotations else self.best[member].rotation_deg
+            port = self.manifest_at(member, degrees).port(entry_port)
+            origin = Point(
+                x_mm=anchor.x_mm + direction[0] * reach - port.x_mm,
+                y_mm=anchor.y_mm + direction[1] * reach - port.y_mm,
+            )
+            move.update(self.place_unit(member, origin, degrees))
+            if index == len(members) - 1:
+                break
+            following = members[index + 1]
+            link = next(
+                (
+                    (item, mine.port_id, other.port_id)
+                    for item in self.trunks
+                    for mine, other in ((item.start, item.end), (item.end, item.start))
+                    if mine.component_id == member and other.component_id == following
+                ),
+                None,
+            )
+            if link is None:
+                return None
+            trunk, exit_port, entry_port = link
+            anchor, face = self.port_at(move[member], exit_port)
+        return move
 
-        E' la stessa ragione di `in_a_ground_column`, estesa a chi a terra non
-        sta: i rami paralleli che il posizionamento incolonna — le due zone
-        servite dallo stesso collettore — stanno una sopra l'altra e allineate a
-        sinistra, e quell'allineamento e' cio' che le fa leggere come due rami
-        della stessa derivazione invece che come due pezzi sparsi (A3, D-073).
-        Il ciclo non ha mosse di coppia: sfilarne uno in orizzontale non sposta
-        una colonna, la trasforma in una scala. Le mosse verticali restano
-        libere, perche' non toccano l'allineamento.
+    def _column_moves(self, leader: str) -> list[Move]:
+        """La pila o la colonna traslata come gruppo, per gli stessi motivi per
+        cui uno dei suoi membri si muoverebbe da solo."""
+        column = self.column_of(leader)
+        if len(column) < 2:
+            return []
+        grounded = any(self.standings[item] is Standing.GROUND for item in column)
+        out: list[Move] = []
+        seen: set[tuple[float, float]] = set()
+        for member in column:
+            here = self.best[member]
+            for single in self._port_moves(member):
+                target = single[member]
+                if target.rotation_deg != here.rotation_deg:
+                    continue
+                dx = target.origin.x_mm - here.origin.x_mm
+                dy = 0.0 if grounded else target.origin.y_mm - here.origin.y_mm
+                if (dx, dy) == (0.0, 0.0) or (dx, dy) in seen:
+                    continue
+                seen.add((dx, dy))
+                out.append(self._translated(column, dx, dy))
+        return out
+
+    def _shift_moves(self, leader: str) -> list[Move]:
+        """Tutto cio' che sta oltre un pezzo si avvicina al pezzo che lo precede.
+
+        E' l'avvicinamento di un gruppo funzionale al successivo: si sposta in
+        blocco cio' che sta a destra del bordo sinistro del pezzo — lui compreso
+        — di quanto serve a chiudere il varco con cio' che sta a sinistra, o di
+        quanto una tratta che attraversa quel confine chiede per affacciare le
+        proprie porte. E specularmente verso destra, per chi sta a sinistra.
         """
-        me = best[component_id]
-        for other_id in order:
-            if other_id == component_id:
+        out: list[Move] = []
+        me = self.best[leader]
+        leaders = [item for item in self.scan if item not in self.parent_of]
+        for rightwards in (False, True):
+            if rightwards:
+                group = [
+                    item for item in leaders if self.best[item].right_mm <= me.right_mm + _TOLERANCE_MM
+                ]
+                rest = [item for item in leaders if item not in group]
+                if not rest:
+                    continue
+                gap = min(self.best[item].origin.x_mm for item in rest) - max(
+                    self.best[item].right_mm for item in group
+                )
+                sign = 1.0
+            else:
+                group = [
+                    item for item in leaders if self.best[item].origin.x_mm >= me.origin.x_mm - _TOLERANCE_MM
+                ]
+                rest = [item for item in leaders if item not in group]
+                if not rest:
+                    continue
+                gap = min(self.best[item].origin.x_mm for item in group) - max(
+                    self.best[item].right_mm for item in rest
+                )
+                sign = -1.0
+            deltas: list[float] = []
+            closing = gap - ROW_GAP_MM
+            if closing > _TOLERANCE_MM:
+                deltas.append(sign * (int(closing / self.step) * self.step))
+            crossing = set(group)
+            for trunk in self.trunks:
+                one, two = trunk.start, trunk.end
+                if (one.component_id in crossing) == (two.component_id in crossing):
+                    continue
+                if one.component_id not in self.best or two.component_id not in self.best:
+                    continue
+                first, _ = self.port_at(self.best[one.component_id], one.port_id)
+                second, _ = self.port_at(self.best[two.component_id], two.port_id)
+                inner = first if one.component_id in crossing else second
+                outer = second if one.component_id in crossing else first
+                span = abs(inner.x_mm - outer.x_mm) - self._need_mm(trunk)
+                if span > _TOLERANCE_MM:
+                    deltas.append(sign * (int(span / self.step) * self.step))
+            seen: set[float] = set()
+            for delta in deltas:
+                if delta == 0.0 or delta in seen:
+                    continue
+                seen.add(delta)
+                out.append(self._translated(group, delta, 0.0))
+        return out
+
+    def _collisions(self, move: Move) -> list[tuple[str, PlacedSymbol, PlacedSymbol]]:
+        """Le figure ferme contro cui una candidata va a sbattere: `(capo, mio, suo)`."""
+        after = dict(self.best)
+        after.update(move)
+        moved_units = {self.leader_of(item) for item in move}
+        found: list[tuple[str, PlacedSymbol, PlacedSymbol]] = []
+        for other_id in self.order:
+            leader = self.leader_of(other_id)
+            if leader in moved_units:
                 continue
-            other = best[other_id]
+            other = after[other_id]
+            for item in move:
+                mine = after[item]
+                if (
+                    mine.origin.x_mm < other.right_mm + ROW_GAP_MM - _TOLERANCE_MM
+                    and other.origin.x_mm - ROW_GAP_MM < mine.right_mm - _TOLERANCE_MM
+                    and mine.origin.y_mm < other.bottom_mm + ROW_GAP_MM - _TOLERANCE_MM
+                    and other.origin.y_mm - ROW_GAP_MM < mine.bottom_mm - _TOLERANCE_MM
+                ):
+                    found.append((leader, mine, other))
+        return found
+
+    def _with_room(self, move: Move, direction: tuple[float, float]) -> list[Move]:
+        """La stessa candidata, con lo spazio che le manca aperto lungo il suo asse.
+
+        Una posa ricavata dalle porte puo' finire addosso a chi sta gia' li':
+        non e' una ragione per scartarla, e' una ragione per spostare anche gli
+        altri, che costano zero (D-078). Tre varianti, tutte lungo l'asse della
+        mossa: si **spinge** chi e' addosso nel verso della mossa, a cascata con
+        chi gli sta oltre; lo si spinge nel verso **opposto**, quando e' il
+        posto davanti a una porta a dover essere liberato da chi lo occupava;
+        oppure si **arretra** la mossa con tutto cio' che le sta dietro, il
+        pezzo grosso da cui e' partita compreso. Chi sta a terra si sposta solo
+        in orizzontale: lungo un asse verticale la variante che lo toccherebbe
+        non e' valida, e cade da sola.
+        """
+        collisions = self._collisions(move)
+        if not collisions:
+            return []
+        horizontal = direction[0] != 0.0
+        sign = direction[0] if horizontal else direction[1]
+        out: list[Move] = []
+        for push in (sign, -sign):
+            pushed = self._pushed(move, horizontal, push)
+            if pushed is not None:
+                out.append(pushed)
+        retreated = self._retreated(move, collisions, horizontal, sign)
+        if retreated is not None:
+            out.append(retreated)
+        return out
+
+    def _low(self, item: PlacedSymbol, horizontal: bool) -> float:
+        return item.origin.x_mm if horizontal else item.origin.y_mm
+
+    def _high(self, item: PlacedSymbol, horizontal: bool) -> float:
+        return item.right_mm if horizontal else item.bottom_mm
+
+    def _overlap(
+        self, mine: PlacedSymbol, other: PlacedSymbol, horizontal: bool, sign: float
+    ) -> float:
+        """Di quanto l'altro va spostato nel verso dato per liberare lo stacco."""
+        if sign > 0:
+            return self._high(mine, horizontal) + ROW_GAP_MM - self._low(other, horizontal)
+        return self._high(other, horizontal) + ROW_GAP_MM - self._low(mine, horizontal)
+
+    def _shifted_units(self, items: Iterable[str], horizontal: bool, amount: float) -> Move:
+        leaders = sorted({self.leader_of(item) for item in items}, key=self.scan.index)
+        return self._translated(
+            leaders, amount if horizontal else 0.0, 0.0 if horizontal else amount
+        )
+
+    def _pushed(self, move: Move, horizontal: bool, sign: float) -> Move | None:
+        """Chi e' addosso alla mossa si sposta nel verso dato, e chi gli sta
+        oltre lo segue di altrettanto, a cascata."""
+        pushed = dict(move)
+        for _ in range(len(self.order)):
+            hits = self._collisions(pushed)
+            if not hits:
+                return pushed
+            amount = _snap_up(
+                max(self._overlap(mine, other, horizontal, sign) for _, mine, other in hits),
+                self.step,
+            )
+            if amount <= 0.0:
+                return None
+            edge = (
+                min(self._low(other, horizontal) for _, _, other in hits)
+                if sign > 0
+                else max(self._high(other, horizontal) for _, _, other in hits)
+            )
+            taken = {self.leader_of(key) for key in pushed}
+            beyond = [
+                item
+                for item in self.order
+                if self.leader_of(item) not in taken
+                and (
+                    self._low(self.best[item], horizontal) >= edge - _TOLERANCE_MM
+                    if sign > 0
+                    else self._high(self.best[item], horizontal) <= edge + _TOLERANCE_MM
+                )
+            ]
+            for column_member in list(beyond):
+                beyond.extend(
+                    mate for mate in self.column_of(column_member) if mate not in beyond
+                )
+            pushed = {**self._shifted_units(beyond, horizontal, sign * amount), **pushed}
+        return None
+
+    def _retreated(
+        self,
+        move: Move,
+        collisions: list[tuple[str, PlacedSymbol, PlacedSymbol]],
+        horizontal: bool,
+        sign: float,
+    ) -> Move | None:
+        """La mossa e tutto cio' che le sta alle spalle — chi non collide e sta
+        dal lato da cui e' partita — indietreggiano di quanto serve; chi
+        collideva resta dov'e'."""
+        amount = _snap_up(
+            max(self._overlap(mine, other, horizontal, sign) for _, mine, other in collisions),
+            self.step,
+        )
+        colliding = {leader for leader, _, _ in collisions}
+        moving = {self.leader_of(key) for key in move}
+        front = (
+            min(self._low(item, horizontal) for item in move.values())
+            if sign > 0
+            else max(self._high(item, horizontal) for item in move.values())
+        )
+        behind = [
+            item
+            for item in self.order
+            if self.leader_of(item) not in colliding
+            and self.leader_of(item) not in moving
+            and (
+                self._high(self.best[item], horizontal) <= front + _TOLERANCE_MM
+                if sign > 0
+                else self._low(self.best[item], horizontal) >= front - _TOLERANCE_MM
+            )
+        ]
+        for column_member in list(behind):
+            behind.extend(mate for mate in self.column_of(column_member) if mate not in behind)
+        retreated: Move = {}
+        for item, placed in move.items():
+            retreated[item] = placed.model_copy(
+                update={
+                    "origin": Point(
+                        x_mm=placed.origin.x_mm - (sign * amount if horizontal else 0.0),
+                        y_mm=placed.origin.y_mm - (0.0 if horizontal else sign * amount),
+                    )
+                }
+            )
+        retreated.update(self._shifted_units(behind, horizontal, -sign * amount))
+        if self._collisions(retreated):
+            return None
+        return retreated
+
+    def _swap_moves(self, leader: str) -> list[Move]:
+        """Due membri di una pila si scambiano di posto.
+
+        Con due macchine impilate, quale sta sopra decide da che parte i
+        raccordi le ricevono: un raccordo a T ha una mano sola, e la macchina
+        che gli entra dall'alto non puo' essere quella che sta sotto.
+        """
+        column = self.column_of(leader)
+        out: list[Move] = []
+        me = self.best[leader]
+        for mate in column:
+            if mate == leader:
+                continue
+            other = self.best[mate]
             if abs(other.origin.x_mm - me.origin.x_mm) > _TOLERANCE_MM:
                 continue
-            if (
-                other.bottom_mm <= me.origin.y_mm + _TOLERANCE_MM
-                or me.bottom_mm <= other.origin.y_mm + _TOLERANCE_MM
-            ):
-                return True
-        return False
+            # Ognuno prende l'origine dell'altro; chi e' piu' alto si allinea
+            # in basso al posto che prende, come una macchina a terra.
+            mine = Point(x_mm=other.origin.x_mm, y_mm=other.bottom_mm - me.height_mm)
+            theirs = Point(x_mm=me.origin.x_mm, y_mm=me.bottom_mm - other.height_mm)
+            move = self.place_unit(leader, mine, me.rotation_deg)
+            move.update(self.place_unit(mate, theirs, other.rotation_deg))
+            out.append(move)
+            # Lo scambio da solo raramente paga: e' il raccordo che li serve a
+            # doversi rimettere in fila dalla porta che ora gli sta davanti.
+            # Le catene e le pose da porta dei vicini si ricavano **sulla pila
+            # gia' scambiata**, e viaggiano nella stessa mossa.
+            out.extend(self._composed_with(move, (leader, mate)))
+        return out
 
-    def is_valid(component_id: str, move: _Move) -> bool:
-        me = best[component_id]
-        target = move.origin
-        manifest = manifest_at(component_id, move.rotation_deg)
-        # Girare un simbolo non puo' cambiare che cosa e' sulla tavola: se la
-        # rotazione lo fa scendere sotto la soglia delle macchine, o salirci,
-        # non e' piu' lo stesso pezzo e la sua quota la deve decidere il
-        # posizionamento, non questo ciclo.
-        if standing_at(component_id, move.rotation_deg) is not standings[component_id]:
-            return False
-        # Chi sta a terra scorre lungo la fascia: la quota non si tocca. Vale
-        # anche per chi la terra l'ha lasciata impilandosi (D-073): quella
-        # quota l'ha decisa il posizionamento, non questo ciclo. E non si gira
-        # in modo da cambiare altezza, che e' lo stesso che sollevarlo.
-        if standings[component_id] is Standing.GROUND:
-            if target.y_mm != me.origin.y_mm:
-                return False
-            if manifest.height_mm != me.height_mm:
-                return False
-            if target.x_mm != me.origin.x_mm and in_a_ground_column(component_id):
-                return False
-        # E chi divide la colonna con un altro non ci si sfila da solo, a terra
-        # o no: la colonna e' una figura, e questo ciclo muove un pezzo per volta.
-        if target.x_mm != me.origin.x_mm and heads_a_column_with_another(component_id):
-            return False
-        # Sulla griglia, misurata dall'origine dell'area come nel posizionamento.
-        if not is_on_grid(target.x_mm - area.x_mm, step):
-            return False
-        if not is_on_grid(target.y_mm - area.y_mm, step):
-            return False
-        # Dentro l'area di posa, e mai sotto la linea di terra.
-        if target.x_mm < area.x_mm - _TOLERANCE_MM:
-            return False
-        if target.y_mm < area.y_mm - _TOLERANCE_MM:
-            return False
-        if target.x_mm + manifest.width_mm > area.right_mm + _TOLERANCE_MM:
-            return False
-        if target.y_mm + manifest.height_mm > levels.ground_mm + _TOLERANCE_MM:
-            return False
-        # Lo stesso stacco del posizionamento fra due simboli (D-062).
-        for other_id in order:
-            if other_id == component_id:
+    def _composed_with(self, move: Move, around: tuple[str, ...]) -> list[Move]:
+        """Le mosse dei vicini, ricavate come se `move` fosse gia' stata fatta."""
+        saved = self.best
+        self.best = {**saved, **move}
+        try:
+            neighbours = [
+                item
+                for item in self.scan
+                if item not in self.parent_of
+                and item not in around
+                and any(item in self._neighbours(member) for member in around)
+            ]
+            out: list[Move] = []
+            for neighbour in neighbours:
+                for extra in self._chain_moves(neighbour) + self._port_moves(neighbour):
+                    out.append({**move, **extra})
+            return out
+        finally:
+            self.best = saved
+
+    def _hang_moves(self, leader: str) -> list[Move]:
+        """Lo stacco di un appeso si allunga o si accorcia di qualche passo.
+
+        Un appeso porta i propri organi sullo stacco, e quegli organi occupano
+        una riga: la tratta di un altro pezzo che deve passarci trova la strada
+        chiusa e gira. Spostare l'appeso di un passo la riapre, e costa zero.
+        """
+        out: list[Move] = []
+        parent = self.best[leader]
+        for child, port_id in self.children.get(leader, ()):
+            for count in (1, 2, -1):
+                gap = self.hang_gap[child] + count * self.step
+                if gap < ROW_GAP_MM - _TOLERANCE_MM:
+                    continue
+                out.append({child: self._rehung(child, parent, port_id, gap)})
+        return out
+
+    def _refresh_hang_gaps(self) -> None:
+        """Gli stacchi degli appesi, riletti dalla posa corrente."""
+        for child, (parent, port_id) in self.parent_of.items():
+            stub, _ = self.port_at(self.best[parent], port_id)
+            own, _ = self.port_at(self.best[child], self.upright[child].ports[0].id)
+            self.hang_gap[child] = max(abs(own.x_mm - stub.x_mm), abs(own.y_mm - stub.y_mm))
+
+    def _rotation_moves(self, leader: str) -> list[Move]:
+        me = self.best[leader]
+        return [
+            self.place_unit(leader, me.origin, degrees)
+            for degrees in sorted(self.upright[leader].allowed_rotations_deg)
+            if degrees != me.rotation_deg
+        ]
+
+    def _nudge_moves(self, leader: str) -> list[Move]:
+        """Le traslazioni cieche: in alto prima che in basso, vicino prima che
+        lontano; poi le orizzontali, che l'ordine di processo limita."""
+        me = self.best[leader]
+        column = self.column_of(leader)
+        out: list[Move] = []
+        for count in NUDGE_STEPS:
+            for dy in (-count * self.step, count * self.step):
+                out.append(self.place_unit(leader, Point(x_mm=me.origin.x_mm, y_mm=me.origin.y_mm + dy), me.rotation_deg))
+        for count in NUDGE_STEPS:
+            for dx in (-count * self.step, count * self.step):
+                if len(column) > 1:
+                    out.append(self._translated(column, dx, 0.0))
+                else:
+                    out.append(self.place_unit(leader, Point(x_mm=me.origin.x_mm + dx, y_mm=me.origin.y_mm), me.rotation_deg))
+        return out
+
+    def _axis_of(self, move: Move) -> tuple[float, float]:
+        """Il verso di una candidata: dove il suo baricentro e' andato."""
+        before_x = before_y = after_x = after_y = 0.0
+        for item, placed in move.items():
+            was = self.best[item]
+            before_x += was.origin.x_mm
+            before_y += was.origin.y_mm
+            after_x += placed.origin.x_mm
+            after_y += placed.origin.y_mm
+        dx, dy = after_x - before_x, after_y - before_y
+        if abs(dx) >= abs(dy):
+            return (1.0, 0.0) if dx >= 0 else (-1.0, 0.0)
+        return (0.0, 1.0) if dy > 0 else (0.0, -1.0)
+
+    def candidates(self, component_id: str) -> list[Move]:
+        """Le mosse alternative per un pezzo, in ordine fisso e senza doppioni.
+
+        Prima le pose ricavate dalla topologia — catene, porte, colonne, gruppi
+        — poi le rotazioni, infine le traslazioni cieche. Ogni mossa porta la
+        posa nuova dei soli simboli che cambiano.
+        """
+        leader = self.leader_of(component_id)
+        chained = self._chain_moves(leader)
+        ported = self._port_moves(leader)
+        roomy: list[Move] = []
+        for move in chained + ported:
+            roomy.extend(self._with_room(move, self._axis_of(move)))
+        generated = (
+            chained
+            + ported
+            + roomy
+            + self._column_moves(leader)
+            + self._shift_moves(leader)
+            + self._swap_moves(leader)
+            + self._hang_moves(leader)
+            + self._rotation_moves(leader)
+            + self._nudge_moves(leader)
+        )
+        # Chi divide una pila a terra con altri non se ne sfila: una mossa che
+        # lo sposta in orizzontale porta con se' i compagni, dello stesso tanto.
+        # Chi sta su una tubazione prova tutte e due le cose: da solo e in
+        # colonna, e decide il costo.
+        column = self.column_of(leader)
+        if len(column) > 1:
+            completed: list[Move] = []
+            grounded = self.standings[leader] is Standing.GROUND
+            for move in generated:
+                if leader not in move:
+                    completed.append(move)
+                    continue
+                dx = move[leader].origin.x_mm - self.best[leader].origin.x_mm
+                mates = [item for item in column if item != leader and item not in move]
+                if dx == 0.0 or not mates:
+                    completed.append(move)
+                    continue
+                if not grounded:
+                    completed.append(move)
+                completed.append({**self._translated(mates, dx, 0.0), **move})
+            generated = completed
+        out: list[Move] = []
+        seen: set[tuple[tuple[str, float, float, int], ...]] = set()
+        for move in generated:
+            changed = {
+                item: placed
+                for item, placed in move.items()
+                if (placed.origin, placed.rotation_deg)
+                != (self.best[item].origin, self.best[item].rotation_deg)
+            }
+            if not changed:
                 continue
-            other = best[other_id]
-            if (
-                target.x_mm < other.right_mm + ROW_GAP_MM
-                and other.origin.x_mm - ROW_GAP_MM < target.x_mm + manifest.width_mm
-                and target.y_mm < other.bottom_mm + ROW_GAP_MM
-                and other.origin.y_mm - ROW_GAP_MM < target.y_mm + manifest.height_mm
-            ):
-                return False
-        # L'ordine di processo e' un vincolo, non un costo (D-060): l'ordine
-        # orizzontale dei centri dei due estremi di **ogni** tratta resta
-        # quello della disposizione corrente. Per le tratte orientate e' il
-        # verso del fluido; per quelle che la topologia non decide vale
-        # l'ordine gia' disegnato, che da quel verso discende.
-        old_centre = me.origin.x_mm + me.width_mm / 2
-        new_centre = target.x_mm + manifest.width_mm / 2
-        for trunk in trunks:
-            start_id = trunk.start.component_id
-            end_id = trunk.end.component_id
-            if component_id not in (start_id, end_id) or start_id == end_id:
+            key = _signature(dict(sorted(changed.items())))
+            if key in seen:
                 continue
-            other_id = end_id if start_id == component_id else start_id
-            peer = best.get(other_id)
-            if peer is None:
-                continue
-            other_centre = peer.origin.x_mm + peer.width_mm / 2
-            if start_id == component_id:
-                before = _relation(old_centre, other_centre)
-                after = _relation(new_centre, other_centre)
-            else:
-                before = _relation(other_centre, old_centre)
-                after = _relation(other_centre, new_centre)
-            if after != before:
+            seen.add(key)
+            out.append(changed)
+        return out
+
+    # -- la validita' --------------------------------------------------------
+
+    def is_valid(self, move: Move) -> bool:
+        """I vincoli che nessun guadagno compra: standing, terra, griglia, area,
+        stacchi, colonne intere, ordine di processo."""
+        after = dict(self.best)
+        after.update(move)
+        moved_leaders = {self.leader_of(item) for item in move}
+        units = {item: self.leader_of(item) for item in self.order}
+        for item, placed in move.items():
+            before = self.best[item]
+            if self.standing_at(item, placed.rotation_deg) is not self.standings[item]:
                 return False
+            if self.standings[item] is Standing.GROUND and item not in self.parent_of:
+                if placed.height_mm != before.height_mm:
+                    return False
+                if placed.origin.y_mm != before.origin.y_mm and not self._swapped_in_column(
+                    item, move
+                ):
+                    return False
+            if not is_on_grid(placed.origin.x_mm - self.area.x_mm, self.step):
+                return False
+            if not is_on_grid(placed.origin.y_mm - self.area.y_mm, self.step):
+                return False
+            if placed.origin.x_mm < self.area.x_mm - _TOLERANCE_MM:
+                return False
+            if placed.origin.y_mm < self.area.y_mm - _TOLERANCE_MM:
+                return False
+            if placed.right_mm > self.area.right_mm + _TOLERANCE_MM:
+                return False
+            if placed.bottom_mm > self.levels.ground_mm + _TOLERANCE_MM:
+                return False
+            # Lo stesso stacco del posizionamento fra due simboli di figure
+            # diverse (D-062); dentro la stessa figura basta non sovrapporsi.
+            for other_id in self.order:
+                if other_id == item:
+                    continue
+                other = after[other_id]
+                gap = 0.0 if units[other_id] == units[item] else ROW_GAP_MM
+                if (
+                    placed.origin.x_mm < other.right_mm + gap - _TOLERANCE_MM
+                    and other.origin.x_mm - gap < placed.right_mm - _TOLERANCE_MM
+                    and placed.origin.y_mm < other.bottom_mm + gap - _TOLERANCE_MM
+                    and other.origin.y_mm - gap < placed.bottom_mm - _TOLERANCE_MM
+                ):
+                    return False
+        # Una pila a terra non si sfila di un elemento (D-073): chi la divide
+        # con un altro si sposta in orizzontale solo insieme a lui. Chi sta su
+        # una tubazione e divide la colonna con un pari puo' anche muoversi da
+        # solo: la mossa di gruppo esiste comunque, e decide il costo.
+        for leader in moved_leaders:
+            if move.get(leader, self.best[leader]).origin.x_mm == self.best[leader].origin.x_mm:
+                continue
+            if self.standings[leader] is not Standing.GROUND:
+                continue
+            column = self.column_of(leader)
+            dx = move[leader].origin.x_mm - self.best[leader].origin.x_mm
+            for mate in column:
+                if mate == leader:
+                    continue
+                if mate not in move or move[mate].origin.x_mm - self.best[mate].origin.x_mm != dx:
+                    return False
+        # L'ordine di processo e' un vincolo, non un costo (D-060), e si legge
+        # sul verso del fluido: la mandata va a destra, il ritorno torna a
+        # sinistra. Una posa che gia' contraddice il verso puo' essere corretta,
+        # e nessuna puo' cominciare a contraddirlo; dove il verso non e' deciso
+        # vale l'ordine gia' disegnato.
+        for trunk in self.trunks:
+            start_id, end_id = trunk.start.component_id, trunk.end.component_id
+            if start_id == end_id or start_id not in self.best or end_id not in self.best:
+                continue
+            if units[start_id] == units[end_id]:
+                continue
+            if units[start_id] not in moved_leaders and units[end_id] not in moved_leaders:
+                continue
+
+            def centre(table: Move, item: str) -> float:
+                return table[item].origin.x_mm + table[item].width_mm / 2
+
+            was = _relation(centre(self.best, start_id), centre(self.best, end_id))
+            now = _relation(centre(after, start_id), centre(after, end_id))
+            if now == was:
+                continue
+            flow = self.flow.get(trunk.connection_ids)
+            if flow is True and now <= 0:
+                continue
+            if flow is False and now >= 0:
+                continue
+            return False
         return True
 
-    current_best = evaluate(best)
-    if current_best is None:
-        return list(placed)
+    def _swapped_in_column(self, item: str, move: Move) -> bool:
+        """Vero se la quota nuova e' quella che un compagno di pila lascia.
 
-    exhausted = False
-    for _ in range(MAX_PASSES):
-        if exhausted:
-            break
-        moved = False
-        offending: set[str] = set()
+        Chi sta a terra non vola: le quote di una pila restano quelle che il
+        posizionamento ha deciso, e i suoi membri possono solo scambiarsele.
+        """
+        column = [mate for mate in self.column_of(item) if self.standings[mate] is Standing.GROUND]
+        if len(column) < 2:
+            return False
+        before = sorted(self.best[mate].bottom_mm for mate in column)
+        after = sorted(move.get(mate, self.best[mate]).bottom_mm for mate in column)
+        return before == after
+
+    # -- il ciclo --------------------------------------------------------------
+
+    def _offenders(self, current: Measured) -> list[str]:
+        """I pezzi ai capi di una tratta che costa qualcosa, in ordine di posa."""
+        guilty: set[str] = set()
         for index, (trunk, route) in enumerate(
-            zip(trunks, current_best.routes, strict=True)
+            zip(self.trunks, current.settled.routes, strict=True)
         ):
             has_bends = any(len(segment) > 2 for segment in route.segments)
-            if (
-                has_bends
-                or route.crossings
-                or index in current_best.unfit
-                or index in current_best.turnbacks
-            ):
-                offending.add(trunk.start.component_id)
-                offending.add(trunk.end.component_id)
-        for component_id in (item for item in order if item in offending):
-            current = best[component_id]
-            seen: set[tuple[float, float, int]] = set()
-            for move in candidates_of(component_id):
-                key = (move.origin.x_mm, move.origin.y_mm, move.rotation_deg)
-                if key in seen or key == (
-                    current.origin.x_mm,
-                    current.origin.y_mm,
-                    current.rotation_deg,
-                ):
-                    continue
-                seen.add(key)
-                if not is_valid(component_id, move):
-                    continue
-                if trials >= MAX_TRIAL_ROUTINGS:
-                    # Il tetto ferma **questo** ciclo, non la composizione: la
-                    # distensione che segue ha il proprio bilancio e le proprie
-                    # mosse, e finiva saltata per intero ogni volta che il
-                    # foglio spendeva qui tutte le prove.
-                    exhausted = True
-                    break
-                box = manifest_at(component_id, move.rotation_deg)
-                trial = dict(best)
-                trial[component_id] = current.model_copy(
-                    update={
-                        "origin": move.origin,
-                        "rotation_deg": move.rotation_deg,
-                        "width_mm": box.width_mm,
-                        "height_mm": box.height_mm,
-                    }
-                )
-                found = evaluate(trial)
-                if found is None:
-                    continue
-                # Il confronto lessicografico del modulo, nell'ordine.
-                # Prima di tutto viene la tavola intera: una mossa che fa
-                # entrare gli accessori di una tratta che non li ospitava vale
-                # qualunque obiettivo. Poi l'andata e ritorno, che non e' un
-                # costo ma un errore: toglierne una si accetta anche a
-                # obiettivo fermo, aggiungerne una non si accetta mai. Solo a
-                # parita' di entrambe si guarda al disegno: gli
-                # attraversamenti non devono crescere — non si comprano
-                # nemmeno pagando in pieghe e lunghezza, perche' sono la voce
-                # che l'occhio paga per prima dopo le pieghe (D-060) — e
-                # l'obiettivo **totale** deve scendere, mai una voce a spese
-                # del totale (D-080).
-                same_fit = len(found.unfit) == len(current_best.unfit)
-                repaired = len(found.unfit) < len(current_best.unfit)
-                straightened = same_fit and len(found.turnbacks) < len(
-                    current_best.turnbacks
-                )
-                # Una tratta che smette di girare attorno a un ostacolo si
-                # accetta anche a obiettivo fermo, come si accetta un'andata e
-                # ritorno in meno: quattro pieghe su una tratta sola non sono
-                # una tavola piu' cara, sono un giro (B4).
-                shortened = (
-                    same_fit
-                    and len(found.turnbacks) == len(current_best.turnbacks)
-                    and found.crossings <= current_best.crossings
-                    and found.long_runs < current_best.long_runs
-                )
-                better = (
-                    same_fit
-                    and len(found.turnbacks) == len(current_best.turnbacks)
-                    and found.crossings <= current_best.crossings
-                    # Nemmeno una tratta in piu' oltre le tre pieghe: e' un
-                    # rilievo di qualita' per se' (B4), e l'obiettivo totale non
-                    # lo vede — trenta pieghe sparse su venti tratte le somma
-                    # come quattro su una sola, che invece e' un giro attorno a
-                    # un ostacolo. Senza questa voce il ciclo comprava una
-                    # tratta lunga per risparmiare due pieghe altrove.
-                    and found.long_runs <= current_best.long_runs
-                    and found.objective < current_best.objective
-                )
-                if repaired or straightened or shortened or better:
-                    best = trial
-                    current_best = found
-                    moved = True
-                    break
-            if exhausted:
-                break
-        if not moved:
-            break
+            arrival = self.best[trunk.end.component_id]
+            goal, _ = self.port_at(arrival, trunk.end.port_id)
+            turned_back = overshoot_beyond_goal_mm(route, goal) > _TOLERANCE_MM or any(
+                overshoot_mm(segment, self.step) > _TOLERANCE_MM for segment in route.segments
+            )
+            far = sum(
+                abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
+                for segment in route.segments
+                for before, after in zip(segment, segment[1:], strict=False)
+            ) > self._need_mm(trunk) + _TOLERANCE_MM
+            if has_bends or route.crossings or index in current.settled.unfit or turned_back or far:
+                guilty.add(self.leader_of(trunk.start.component_id))
+                guilty.add(self.leader_of(trunk.end.component_id))
+        return [item for item in self.scan if item in guilty]
 
-    # **Poi si distende**, ed e' la seconda meta' del lavoro (D-111, A1).
-    #
-    # Il ciclo qui sopra ottimizza pieghe, incroci e lunghezza, e le tre voci
-    # tirano tutte dalla stessa parte: **stringere**. Il risultato e' corretto e
-    # sta in un angolo — sull'impianto 1 il foglio finiva pieno al 29 %, contro
-    # il 60 % che la carta chiede, con il quadrante piu' pieno che portava dodici
-    # volte l'inchiostro del piu' vuoto. La misura c'era gia' nel preflight; a
-    # mancare era che qualcuno la usasse **mentre** dispone, invece di scoprirla
-    # alla fine con un avviso.
-    #
-    # La distensione allontana i pezzi dal centro del disegno e tiene la mossa
-    # solo se il foglio si riempie o l'inchiostro si distribuisce meglio, **e**
-    # se non costa niente di cio' che il PM ha messo prima: nessuna piega in
-    # piu', nessun incrocio in piu', nessuna andata e ritorno in piu', nessuna
-    # tratta che perde i propri accessori. Cresce solo la lunghezza, che e' il
-    # prezzo dichiarato del riempimento, e cresce **finche' serve**: raggiunto
-    # il riempimento richiesto la fase si ferma (D-080).
-    return _spread_out(
-        order=order,
-        best=best,
-        current_best=current_best,
-        evaluate=evaluate,
-        is_valid=is_valid,
-        manifest_at=manifest_at,
-        step=step,
-    )
-
-
-def _spread_out(
-    *,
-    order: list[str],
-    best: dict[str, PlacedSymbol],
-    current_best: _Outcome,
-    evaluate: Callable[[dict[str, PlacedSymbol]], _Outcome | None],
-    is_valid: Callable[[str, _Move], bool],
-    manifest_at: Callable[[str, int], SymbolManifest],
-    step: float,
-) -> list[PlacedSymbol]:
-    """Allontana i pezzi dal centro finche' il foglio si riempie (A1, D-111).
-
-    Greedy e deterministico come il ciclo che la precede: i componenti si
-    esaminano nell'ordine di posa, le mosse in ordine fisso, si accetta la prima
-    che migliora, e un tetto di prove ferma la fase in un punto che non dipende
-    da quanto tempo ha girato.
-
-    Le mosse sono **allontanamenti dal centro dell'ingombro**: chi sta a destra
-    va a destra, chi sta in alto va in alto. E' la mossa che apre il disegno
-    senza rimescolarlo — l'ordine di processo da sinistra a destra e le colonne
-    restano quelli che erano, perche' a difenderli e' lo stesso predicato di
-    validita' del ciclo precedente.
-    """
-    trials = 0
-    # Due passaggi con le stesse mosse e due criteri diversi, e in quest'ordine:
-    # prima si **riempie** il foglio, poi si **distribuisce** l'inchiostro a
-    # riempimento fermo. Sono le due misure che la carta chiede (A1, A3) e che
-    # il preflight gia' pesava a tavola finita; un criterio solo non le ottiene
-    # entrambe, perche' quasi ogni mossa cambia il riempimento di un pelo e il
-    # bilanciamento non arriverebbe mai al proprio turno.
-    # Due giri, non uno: la fase che distribuisce lascia dietro di se' un
-    # margine — lo squilibrio scende sotto il limite — e quel margine e' spazio
-    # in cui la fase che riempie puo' tornare a lavorare. Con un giro solo
-    # restava inutilizzato.
-    for filling in (False, True, False, True):
-        moved = True
-        while moved and (not filling or current_best.fill < FILL_TARGET_RATIO):
+    def run(self) -> list[PlacedSymbol]:
+        """Greedy, lessicografico, limitato: la prima mossa che batte la posa
+        corrente sul confronto unico si tiene; una passata senza mosse chiude."""
+        current = self.measure(self.best)
+        if current is None:
+            return [self.best[item] for item in self.order]
+        for _ in range(MAX_PASSES):
             moved = False
-            box = ink_box([best[item] for item in order], current_best.routes)
-            if box is None:
-                break
-            centre_x = (box[0] + box[2]) / 2.0
-            centre_y = (box[1] + box[3]) / 2.0
-            # ⚠ **Le due fasi guardano gli stessi pezzi e provano le stesse
-            # mosse**, e conviene lasciarle cosi'. Restringere la fase che
-            # distribuisce ai soli pezzi del quadrante piu' pieno, o mandarli
-            # verso il piu' vuoto invece che via dal centro, sembra piu' mirato
-            # e costa meno prove: misurato, porta il riempimento dal 42 al 37 %
-            # e peggiora anche incroci e pieghe. Il motivo e' che questa fase
-            # non serve solo a se stessa — rimescola la posa, e da quel
-            # rimescolamento la fase che riempie riparte.
-            for component_id in order:
-                current = best[component_id]
-                here_x = current.origin.x_mm + current.width_mm / 2
-                here_y = current.origin.y_mm + current.height_mm / 2
-                away_x = 1.0 if here_x >= centre_x else -1.0
-                away_y = 1.0 if here_y >= centre_y else -1.0
-                # **Il foglio lo allarga solo chi sta sul bordo dell'ingombro.**
-                # Spostare un pezzo interno non sposta di un millimetro il
-                # rettangolo che il riempimento misura, quindi in questa fase
-                # non e' una candidata: e' una prova di instradamento buttata, e
-                # le prove sono contate. Nella fase che distribuisce
-                # l'inchiostro valgono invece tutti, perche' li' conta dove il
-                # pezzo sta dentro il rettangolo, non quanto e' grande.
-                on_edge_x = (
-                    current.right_mm >= box[2] - step - _TOLERANCE_MM
-                    if away_x > 0
-                    else current.origin.x_mm <= box[0] + step + _TOLERANCE_MM
-                )
-                on_edge_y = (
-                    current.bottom_mm >= box[3] - step - _TOLERANCE_MM
-                    if away_y > 0
-                    else current.origin.y_mm <= box[1] + step + _TOLERANCE_MM
-                )
-                candidates = [
-                    _Move(
-                        Point(
-                            x_mm=current.origin.x_mm + away_x * count * step,
-                            y_mm=current.origin.y_mm,
-                        ),
-                        current.rotation_deg,
-                    )
-                    for count in SPREAD_STEPS
-                    if on_edge_x or not filling
-                ] + [
-                    _Move(
-                        Point(
-                            x_mm=current.origin.x_mm,
-                            y_mm=current.origin.y_mm + away_y * count * step,
-                        ),
-                        current.rotation_deg,
-                    )
-                    for count in SPREAD_STEPS
-                    if on_edge_y or not filling
-                ] + [
-                    # E in diagonale, che e' la mossa che apre davvero un
-                    # angolo: chi sta in un vertice dell'ingombro lo allarga su
-                    # tutti e due gli assi insieme, e una traslazione per volta
-                    # non ci arriva mai perche' la prima da sola non guadagna
-                    # niente e viene scartata.
-                    _Move(
-                        Point(
-                            x_mm=current.origin.x_mm + away_x * count * step,
-                            y_mm=current.origin.y_mm + away_y * count * step,
-                        ),
-                        current.rotation_deg,
-                    )
-                    for count in SPREAD_STEPS
-                    if (on_edge_x and on_edge_y) or not filling
-                ]
-                for move in candidates:
-                    if trials >= MAX_SPREAD_TRIALS:
-                        return [best[item] for item in order]
-                    if not is_valid(component_id, move):
+            for leader in self._offenders(current):
+                for move in self.candidates(leader):
+                    if self.trials >= MAX_TRIAL_ROUTINGS:
+                        return [self.best[item] for item in self.order]
+                    if not self.is_valid(move):
                         continue
-                    trials += 1
-                    shape = manifest_at(component_id, move.rotation_deg)
-                    trial = dict(best)
-                    trial[component_id] = current.model_copy(
-                        update={
-                            "origin": move.origin,
-                            "rotation_deg": move.rotation_deg,
-                            "width_mm": shape.width_mm,
-                            "height_mm": shape.height_mm,
-                        }
-                    )
-                    found = evaluate(trial)
-                    if found is None:
+                    trial = dict(self.best)
+                    trial.update(move)
+                    found = self.measure(trial)
+                    if found is None or not found.cost.beats(current.cost):
                         continue
-                    # Niente di cio' che viene prima puo' peggiorare: la tavola
-                    # che ospita i propri accessori, le andate e ritorno, gli
-                    # incroci e le pieghe. La lunghezza si', ed e' il prezzo.
-                    if (
-                        len(found.unfit) > len(current_best.unfit)
-                        or len(found.turnbacks) > len(current_best.turnbacks)
-                        or found.crossings > current_best.crossings
-                        or found.bends > current_best.bends
-                        or found.long_runs > current_best.long_runs
-                    ):
-                        continue
-                    # Le due misure si tengono per mano, e questo e' il punto.
-                    # Riempire senza guardare la distribuzione non fa una
-                    # tavola: basta portare un pezzo leggero in cima al foglio
-                    # per far salire il riempimento — e' un rettangolo che si
-                    # allunga — mentre l'inchiostro resta tutto in basso. Sulla
-                    # prima prova il riempimento saliva dal 29 al 63 % e lo
-                    # squilibrio fra quadranti da 12 a 32: un numero migliore e
-                    # una tavola peggiore. Quindi: si riempie **a patto che la
-                    # distribuzione non peggiori**, poi si distribuisce a
-                    # riempimento fermo.
-                    if filling:
-                        # Riempire e' ammesso finche' l'inchiostro resta
-                        # distribuito, e le due misure guardano due cose
-                        # diverse: `spread` che la tavola non stia tutta da un
-                        # lato, `coverage` che il rettangolo non si allunghi su
-                        # una **propaggine** — un pezzo leggero spinto lontano
-                        # da tutti, che allunga l'ingombro riempiendo una cella
-                        # sola. La seconda e' l'unica che impedisce di comprare
-                        # punti di riempimento con carta bianca.
-                        gained = found.fill > current_best.fill + _TOLERANCE_MM and (
-                            (
-                                found.spread <= QUADRANT_IMBALANCE_MAX
-                                or found.spread <= current_best.spread + _TOLERANCE_MM
-                            )
-                            and (
-                                found.coverage >= INK_COVERAGE_MIN
-                                or found.coverage
-                                >= current_best.coverage - _TOLERANCE_MM
-                            )
-                        )
-                    else:
-                        gained = (
-                            found.fill >= current_best.fill - _TOLERANCE_MM
-                            and found.spread < current_best.spread - _TOLERANCE_MM
-                        )
-                    if not gained:
-                        continue
-                    best = trial
-                    current_best = found
+                    self.best = trial
+                    self._refresh_hang_gaps()
+                    current = found
                     moved = True
                     break
-    return [best[item] for item in order]
+            if not moved:
+                break
+        return [self.best[item] for item in self.order]
+
+
+def improve_sheet(
+    project: ProjectModel,
+    partition: SheetPartition,
+    catalog: ComponentRegistry,
+    frame: SheetFrame,
+    placed: list[PlacedSymbol],
+    inline_ids: frozenset[str],
+) -> list[PlacedSymbol]:
+    """Rivede la disposizione reinstradando: si tiene solo cio' che batte la
+    posa corrente sul confronto unico della tavola (`SheetCost`)."""
+    if not placed or not partition.trunks:
+        return list(placed)
+    return Improver(project, partition, catalog, frame, placed, inline_ids).run()
 
 
 __all__ = [
     "MAX_PASSES",
     "MAX_TRIAL_ROUTINGS",
+    "Improver",
+    "Measured",
+    "Move",
+    "SheetCost",
     "improve_sheet",
     "objective_of",
+    "overshoot_beyond_goal_mm",
     "overshoots_the_goal",
 ]
