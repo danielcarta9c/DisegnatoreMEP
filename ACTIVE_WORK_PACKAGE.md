@@ -1,146 +1,102 @@
-# ACTIVE WORK PACKAGE — DRAW-003
+# ACTIVE WORK PACKAGE — DRAW-003-R1
 
 - **Release:** 0.2 — tavola 1 leggibile e approvabile
-- **Stato:** ASSEGNATO DAL PM
+- **Stato:** REVISIONE RICHIESTA DAL PM SULLA PR #11
 - **Data:** 2026-09-03
 - **Assegnato a:** DEV team (Claude)
 - **Ramo:** `claude/draw-003-terra-etichette`
-- **Base:** ultima `main`
+- **PR:** `#11`, da aggiornare senza aprirne un'altra
+- **Base:** integrare l'ultima `main` nel ramo esistente
 
-## Risultato richiesto
+## Correzione del PM
 
-Rigenerare la sola tavola 1 eliminando definitivamente la linea continua di terra e
-rendendo verificabile l'ordine della pipeline grafica:
+Questa revisione sostituisce le parti di DRAW-003 che rendevano bloccante la posa delle
+etichette e ordinavano di usare il richiamo al primo conflitto. Erano specifiche errate.
 
-1. posa dei componenti;
-2. instradamento completo delle tubazioni;
-3. posa delle etichette, senza più modificare componenti o tubazioni;
-4. se il posto preferito di un'etichetta collide, si sposta soltanto l'etichetta e si
-   usa un richiamo obliquo.
+Le etichette dei nodi sono un ausilio della modalità verifica: servono al PO per indicare
+un elemento durante la revisione. Non governano il disegno e non compariranno nella
+tavola definitiva.
 
-Il grafo, i componenti, le rotte e le metriche di DRAW-002 restano invariati, salvo una
-variazione che il DEV dimostri essere indispensabile per correggere un difetto reale.
+## Gerarchia vincolante del prodotto
 
-## Diagnosi del PM
+1. correttezza del grafo e delle connessioni;
+2. geometria di macchine, accessori e tubazioni;
+3. costo delle tubazioni: backtracking, curve, incroci/sormonti e lunghezza;
+4. soltanto dopo che la geometria è congelata, annotazioni e testi.
 
-### Linea di terra
+Spostare macchine e accessori costa zero. Etichette e richiami hanno costo nullo rispetto
+alla geometria e non possono far spostare, ruotare o reinstradare niente.
 
-`D-121` è implementata soltanto a metà. Il routing e le etichette possono attraversare
-la quota interna, ma la tavola continua a esportare `ground_line_y_mm` e il renderer
-disegna una linea orizzontale continua con tratteggio. La tavola DRAW-002 mostra ancora
-quel segno, nonostante D-121 stabilisca che nella centrale non deve esistere una linea di
-terra che attraversa il foglio.
+## Risultato richiesto in questa revisione
 
-La quota interna può restare un riferimento di allineamento per le macchine appoggiate;
-non deve diventare una primitiva grafica continua. Un eventuale segno di appoggio è parte
-del singolo simbolo e resta corto sotto la sola macchina.
+### 1. Linea di terra
 
-### Etichette
+Conservare la correzione già consegnata:
 
-La pipeline corrente esegue già `settle_sheet` prima di `place_labels`: le tubazioni non
-ricevono formalmente le etichette come ostacoli. Questo ordine deve diventare un contratto
-provato, perché il risultato visivo dà al PO la sensazione opposta.
+- nessuna linea o tratteggio continuo di terra nel PDF, PNG o SVG;
+- la quota interna può allineare le macchine ma non è renderizzata e non è un ostacolo;
+- l'eventuale segno di appoggio è corto e appartiene al singolo simbolo.
 
-Il posizionatore attuale cerca numerose posizioni adiacenti senza richiamo prima di usare
-la soluzione con leader. Il comportamento richiesto è più netto:
+### 2. Indipendenza dei testi
 
-- per ogni testo esiste una posizione preferita adiacente al proprio componente;
-- se quella posizione è libera, il testo resta lì senza richiamo;
-- se collide con tubo, simbolo, altra etichetta o margine, **non si muove nulla di ciò che
-  è già disegnato**: si cerca deterministicamente una posizione libera per il solo testo
-  e si collega con un richiamo rettilineo obliquo;
-- i richiami non sono tubazioni: mai ortogonali, a 45°, senza incrociarsi
-  fra loro quando esiste un'alternativa libera equivalente;
-- le etichette degli indirizzi della modalità verifica seguono lo stesso ordine postumo
-  e non alterano la geometria che sarà consegnata senza indirizzi.
+Conservare e provare il contratto:
 
-Questa specifica attua D-075, D-110, D-111 e D-121; il DEV non deve ricavarne altri
-requisiti dall'immagine annotata del PO.
+- posa e routing terminano prima dei testi;
+- aggiungere, cambiare o togliere testi non modifica simboli, rotazioni o segmenti;
+- etichette e richiami non entrano in metriche, candidati o funzione di costo del layout.
 
-## Modifiche funzionali obbligatorie
+### 3. Semplificare le etichette
 
-### 1. Ritirare il terreno dalla tavola
+Ritirare l'algoritmo che ha prodotto 38 richiami su 52 testi e che degrada volontariamente
+fino ad attraversare tubi, simboli e altri richiami.
 
-- Non emettere nel PDF/SVG alcuna linea continua di terra, tratteggio o gruppo grafico
-  equivalente.
-- Non usare la quota di terra come ostacolo per routing, testi o centratura.
-- Conservare, se necessario, una quota interna di posa per allineare le macchine, senza
-  renderla e senza esportarla come elemento visibile della tavola.
-- Cercare e correggere tutti i percorsi di rendering che possono reintrodurre il segno,
-  non soltanto il caso dell'impianto 1.
+- **Modalità verifica:** gli indirizzi dei nodi sono un overlay best-effort. Si scrivono
+  vicino al nodo quando esiste una posizione semplice e leggibile; possono essere omessi
+  quando non esiste. Nessun obbligo di mostrarli tutti, nessun groviglio di richiami,
+  nessun errore bloccante per un indirizzo omesso o imperfetto.
+- **Tavola definitiva:** nessun indirizzo della rete. Restano soltanto le etichette delle
+  macchine principali, posate dopo il routing e senza influenzarlo.
+- Un richiamo si usa soltanto quando chiarisce davvero il rapporto fra testo e macchina;
+  non viene aggiunto automaticamente se produce più confusione del testo.
+- L'impossibilità di collocare un'etichetta non blocca mai l'emissione della tavola.
 
-### 2. Rendere le etichette una fase terminale indipendente
-
-- Componenti e rotte devono essere definitivi prima della posa dei testi.
-- Modificare contenuto, lunghezza, presenza o modalità delle etichette non deve cambiare
-  coordinate e rotazioni dei simboli né punti e segmenti delle rotte.
-- Nessuna metrica o funzione di costo del layout può includere gli ingombri delle
-  etichette.
-
-### 3. Risolvere i conflitti muovendo il testo
-
-- Tentare una posizione preferita coerente col ruolo del testo.
-- Al primo conflitto della posizione preferita, attivare la posa con richiamo; non
-  peregrinare fra lati e distanze senza dichiarare graficamente il legame.
-- La posizione richiamata deve evitare testi, simboli, tubazioni e limiti del foglio.
-- Il richiamo deve identificare senza ambiguità il componente, essere obliquo e non
-  sovrapporsi a una tubazione.
+Non costruire in questa revisione un ottimizzatore globale delle annotazioni: non è il
+cuore del prodotto e non deve assorbire altro sviluppo della release 0.2.
 
 ## Perimetro
 
-- `src/disegnatore_mep/layout/compose.py`
-- `src/disegnatore_mep/layout/composition.py`, solo se serve a separare quota interna e
-  segno grafico
-- `src/disegnatore_mep/layout/labels.py`
-- `src/disegnatore_mep/layout/geometry.py`, solo se serve a ritirare il dato grafico
-- `src/disegnatore_mep/graphics/sheet.py`
-- `src/disegnatore_mep/validation/**`
-- test grafici, layout, validazione e accettazione pertinenti
-- `docs/collaudi/DRAW-003/**`
-- `PROJECT_STATE.md`
-- `docs/input-pm/REGISTRO.md`, senza chiudere input del PO
+Restano ammessi i file di DRAW-003 necessari a semplificare o ritirare il codice già
+introdotto, più:
 
-Fuori perimetro: grafo, interprete, completatore, assemblatore, cataloghi, simboli,
-regole MEP, cartiglio, impianti 2–5 e modifiche al costo-peso di DRAW-002.
+- `docs/collaudi/DRAW-003/**`;
+- `PROJECT_STATE.md`;
+- `docs/input-pm/REGISTRO.md`, senza chiudere input del PO.
 
-## Prove richieste prima del codice applicativo
+Fuori perimetro: modifiche al routing, al grafo, alle regole MEP, ai cataloghi e ai
+simboli. I nuovi rilievi sul costo geometrico si registrano ma si implementano in
+DRAW-004.
 
-1. Un test sul rendering fallisce se l'SVG contiene il gruppo, la linea o il tratteggio
-   continuo del terreno.
-2. La stessa geometria prodotta con indirizzi di verifica presenti e assenti ha simboli
-   e rotte identici.
-3. Cambiare una sigla con un testo molto più lungo non cambia simboli o rotte.
-4. Un'etichetta con posizione preferita libera resta adiacente e senza richiamo.
-5. Un'etichetta la cui posizione preferita interseca una tubazione viene spostata con
-   richiamo obliquo; la tubazione resta bit-identica.
-6. Due etichette in conflitto vengono risolte spostando quella posata dopo con richiamo,
-   senza sovrapposizione finale.
-7. Due generazioni consecutive producono lo stesso output.
+## Input PO da registrare per DRAW-004, senza implementarli qui
 
-## Criteri di accettazione DEV
+1. Le linee fra PDC e accumulo conservano curve evitabili. Il motore deve poter
+   allontanare leggermente e riallineare inlet/outlet delle macchine principali quando
+   ciò riduce curve, incroci e lunghezza complessiva.
+2. Una T può usare due imbocchi ortogonali e assorbire una curva, eliminando un gomito.
+   Questa posa deve entrare fra i candidati quando riduce il costo totale.
+3. Etichette e richiami non partecipano mai al confronto fra due pose.
 
-1. Nessuna linea o tratteggio continuo di terra nel PDF, PNG e SVG della tavola 1.
-2. Nessuna regressione sulle metriche di DRAW-002: backtracking 0, tratte oltre tre
-   pieghe 0, incroci non oltre 2, lunghezza non superiore a 597,5 mm, valvole D-120
-   20/20.
-3. Simboli e rotte della tavola 1 coincidono con DRAW-002, salvo differenze motivate e
-   approvate dal PM prima dell'implementazione.
-4. Nessuna collisione finale etichetta/etichetta, etichetta/simbolo o etichetta/tubo.
-5. Ogni etichetta spostata dalla posizione preferita porta un richiamo obliquo leggibile.
-6. Modalità verifica e consegna differiscono soltanto per il velo delle etichette di
-   indirizzo, mai per posa o routing.
-7. Suite completa, `ruff` e `mypy --strict` verdi; output deterministico.
-8. Consegna di PDF, PNG e SVG aggiornati, confronto con DRAW-002 e rapporto criterio per
-   criterio.
+## Criteri di accettazione
 
-## Collaudo del PM
+1. Linea e tratteggio continui di terra assenti.
+2. Simboli e rotte identici a DRAW-002: backtracking 0, tratte oltre tre pieghe 0,
+   incroci non oltre 2, lunghezza non oltre 597,5 mm, valvole D-120 20/20.
+3. Modifica, presenza o assenza delle etichette non cambia la geometria.
+4. Nessun groviglio automatico di richiami: la modalità verifica privilegia indirizzi
+   semplici e può omettere quelli non collocabili.
+5. La tavola definitiva mostra soltanto le etichette delle macchine principali.
+6. Nessun rilievo sulle etichette blocca PDF, PNG o SVG.
+7. Suite completa, `ruff`, `mypy --strict` e determinismo verdi.
+8. Artefatti aggiornati e rapporto corretto senza dichiarare le etichette prioritarie
+   rispetto alla geometria.
 
-Il PM controllerà il codice e la geometria, ma approverà il pacchetto soltanto guardando
-il PDF e il raster a misura di stampa. Prima di consegnare al PO dovranno essere visibili:
-
-- assenza completa della linea di terra continua;
-- tubazioni geometricamente identiche a DRAW-002 e indipendenti dai testi;
-- testi vicini quando liberi e richiamati quando spostati;
-- richiami chiaramente distinguibili dalle tubazioni.
-
-Il DEV apre la PR e si ferma. Il merge spetta al PM.
+Il DEV aggiorna la PR #11 e si ferma. Il merge spetta al PM.
