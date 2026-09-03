@@ -159,8 +159,9 @@ dal catalogo e non dai nomi.
 
 ## 5. Verifiche eseguite
 
-- Suite completa, `ruff check src tests examples`, `mypy --strict src tests examples`:
-  verdi (esiti nella PR).
+- Suite completa: **1077 verdi, 22 parcheggiate, 13 marcate rosse apposta** sui difetti
+  aperti (in 14 minuti); `ruff check src tests examples`: nessun rilievo;
+  `mypy --strict src tests examples`: nessun errore su 134 file.
 - Due generazioni consecutive dello stesso ingresso danno la stessa impronta; la
   composizione dell'impianto 1 dura circa 46 secondi, contro i due minuti di DRAW-001.
 - Il modello completo dell'impianto 1 generato oggi dalle regole ha lo stesso `sha256`
@@ -206,3 +207,18 @@ dal catalogo e non dai nomi.
 
 Si rigenera tutto con `bash scripts/tavole-di-verifica.sh`, che da questo pacchetto
 scrive anche geometria, PNG e misure di ogni tavola.
+
+## 9. Censimento dei rami (D-123)
+
+Rami remoti con commit che `origin/main` non contiene, al momento della consegna.
+Elencati e lasciati dove sono: fonderli o cancellarli non è di questo pacchetto.
+
+| Ramo | Commit fuori da `main` | Cosa |
+|---|---:|---|
+| `claude/draw-002-routing-qualita-rhy6yu` | 3 | **questo pacchetto**, in PR |
+| `claude/disegnatoremep-main-resume-890881` | 10 | la linea dell'8 agosto, il debito aperto già censito in `PROJECT_STATE.md` (D-115): si riporta un pezzo per volta |
+| `archivio/fase-grafica-2026-08-03` | 72 | storia separata, senza antenati in comune: archivio, non si fonde |
+| `claude/gov-001-baseline-m6b0mn` | 3 | i commit originali di GOV-001, entrati in `main` per merge del PM con altra storia |
+| `pm/claude-entrypoint`, `pm/draw-001-active-work-package`, `pm/draw-002-r2-riferimenti-visivi`, `pm/draw-002-r3-specifica-tecnica` | 1–2 ciascuno | rami del PM, i cui contenuti sono in `main` con commit di merge propri |
+
+Gli altri rami remoti sono dentro `main`.
