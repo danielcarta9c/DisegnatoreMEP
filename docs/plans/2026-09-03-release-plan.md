@@ -8,8 +8,8 @@ Obiettivo: portare l'impianto 1 a una tavola idraulicamente invariata, determini
 graficamente approvata dal PM/PO.
 
 - `DRAW-002`: motore di posa costo-peso e routing compatto;
-- eventuale correzione successiva soltanto su un difetto materiale osservato nella
-  tavola risultante, con criterio già formulato dal PM;
+- `DRAW-003`: rimozione definitiva della linea continua di terra e fase terminale delle
+  etichette, indipendente da posa e routing;
 - uscita: PDF, PNG, SVG e metriche riproducibili della tavola 1.
 
 Gate: il PO riconosce un disegno ordinato e tecnicamente leggibile. Finché questo gate

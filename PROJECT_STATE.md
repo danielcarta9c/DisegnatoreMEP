@@ -17,6 +17,13 @@
 
 ## Now — in corso
 
+> **DRAW-002-R3 è stato approvato e fuso dal PM il 3 settembre (`2396bff`).** Il controllo
+> del PO ha confermato il miglioramento, ma ha rilevato due difetti materiali per il gate
+> della release 0.2: la linea continua di terra è ancora visibile, in violazione di
+> D-121, e la fase delle etichette deve risultare inequivocabilmente successiva e
+> indipendente dal routing. Il pacchetto attivo **DRAW-003** elimina il terreno dal
+> rendering e rende contrattuale la sequenza posa → tubazioni → testi con richiamo.
+
 Il progetto costruisce la skill **un pezzo alla volta**, sulla logica del grafo (D-099).
 Piano corrente: `docs/plans/2026-08-06-piano-costruzione-skill.md`.
 
