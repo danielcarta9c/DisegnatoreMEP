@@ -223,8 +223,9 @@ def test_the_tag_sits_above_its_component_and_the_value_below() -> None:
 def test_a_label_that_fits_beside_its_component_carries_no_leader() -> None:
     """D3: la riga di richiami a fondo tavola non esiste piu'.
 
-    Chi ha il posto preferito libero sta li' senza richiamo; chi porta un
-    richiamo lo porta perche' quel posto era occupato (DRAW-003).
+    Chi ha il posto preferito libero sta li' senza richiamo; chi non ce l'ha
+    prende un altro lato adiacente, sempre senza richiamo (DRAW-003-R1); il
+    richiamo compare solo quando nessun lato e' libero.
     """
     from disegnatore_mep.layout.labels import preferred_anchor
 
@@ -245,11 +246,15 @@ def test_a_label_that_fits_beside_its_component_carries_no_leader() -> None:
             height_mm=HEIGHT_MM, step_mm=step,
         )
         box = label_box(item)
-        if item.leader_from is None:
-            assert (item.anchor.x_mm, item.anchor.y_mm) == (wanted.x_mm, wanted.y_mm), item.id
-        else:
+        at_preferred = (item.anchor.x_mm, item.anchor.y_mm) == (wanted.x_mm, wanted.y_mm)
+        if not at_preferred:
             preferred = (wanted.x_mm, wanted.y_mm - HEIGHT_MM, wanted.x_mm + box[2] - box[0], wanted.y_mm)
             assert not all(apart(preferred, other) for other in seen), item.id
+        if item.leader_from is None:
+            own = symbol_box(owner)
+            gap_x = max(own[0] - box[2], box[0] - own[2], 0.0)
+            gap_y = max(own[1] - box[3], box[1] - own[3], 0.0)
+            assert max(gap_x, gap_y) <= TAG_GAP_MM + HEIGHT_MM + 0.5 + 1e-9, item.id
         seen.append(box)
 
 
@@ -266,8 +271,8 @@ def test_every_label_of_the_case_stays_beside_its_own_component() -> None:
 def test_a_label_steps_aside_from_a_routed_line() -> None:
     """Senza le tratte il testo cade sopra una tubazione e nessuno se ne accorge.
 
-    Con le tratte il testo si sposta, e da DRAW-003 lo fa **con il richiamo**:
-    il posto preferito era occupato, e non si peregrina fra i lati.
+    Con le tratte il testo prende un altro lato adiacente, **senza richiamo**
+    (DRAW-003-R1): un lato libero c'e', e basta quello.
     """
     project = load_project(PROJECT)
     placed = [symbol("x", 100.0, 100.0, tag="X-01")]
@@ -279,7 +284,8 @@ def test_a_label_steps_aside_from_a_routed_line() -> None:
     boxes = line_boxes(crossing)
     assert not all(apart(label_box(blind), other) for other in boxes)
     assert all(apart(label_box(aware), other) for other in boxes)
-    assert aware.leader_from is not None
+    assert aware.leader_from is None
+    assert aware.anchor.y_mm == 110.0 + VALUE_GAP_MM + HEIGHT_MM
 
 
 # --- D-075: e quando non ci sta, la diagonale a 45 gradi ---------------------
@@ -288,9 +294,9 @@ def test_a_label_steps_aside_from_a_routed_line() -> None:
 def crowded() -> tuple[list[PlacedSymbol], list[RoutedTrunk]]:
     """Un pezzo murato dentro un reticolo di tubazioni a un passo di distanza.
 
-    Ogni posizione adiacente — sopra, sotto, destra, sinistra, e ogni passo di
-    griglia piu' in la' — finisce su una linea: e' il caso che obbliga al
-    richiamo. Lo spazio libero c'e', ma solo fuori dal reticolo.
+    Ogni posizione adiacente finisce su una linea, e ogni diagonale dagli
+    spigoli attraversa il reticolo: e' il caso in cui **nessun** posto pulito
+    esiste. La sigla si omette (DRAW-003-R1), non si scrive sopra qualcosa.
     """
     placed = [symbol("x", 100.0, 100.0, tag="X-01")]
     routes = [
@@ -308,8 +314,29 @@ def crowded() -> tuple[list[PlacedSymbol], list[RoutedTrunk]]:
     return placed, routes
 
 
-def test_a_label_with_nowhere_to_go_gets_a_45_degree_leader() -> None:
+def hugged() -> tuple[list[PlacedSymbol], list[RoutedTrunk]]:
+    """Un pezzo con un tubo a un passo e uno a due passi su ognuno dei quattro
+    lati, lunghi quanto il pezzo: nessun lato libero in nessuna delle due file,
+    ma dagli spigoli partono diagonali che non attraversano niente. E' il caso
+    che chiede il richiamo."""
+    placed = [symbol("x", 100.0, 100.0, tag="X-01")]
+    routes: list[RoutedTrunk] = []
+    for k in (2.5, 5.0):
+        routes.append(run((100.0, 100.0 - k), (110.0, 100.0 - k)))
+        routes.append(run((100.0, 110.0 + k), (110.0, 110.0 + k)))
+        routes.append(run((100.0 - k, 100.0), (100.0 - k, 110.0)))
+        routes.append(run((110.0 + k, 100.0), (110.0 + k, 110.0)))
+    return placed, routes
+
+
+def test_a_label_walled_in_on_every_side_is_omitted_not_written_over_something() -> None:
     placed, routes = crowded()
+    written = place_labels(load_project(PROJECT), placed, NOVE_C_A3.standard, routes=routes)
+    assert written == []
+
+
+def test_a_label_with_no_free_side_gets_a_45_degree_leader() -> None:
+    placed, routes = hugged()
     written = place_labels(load_project(PROJECT), placed, NOVE_C_A3.standard, routes=routes)
     assert len(written) == 1
     leader = written[0].leader_from
@@ -321,7 +348,7 @@ def test_a_label_with_nowhere_to_go_gets_a_45_degree_leader() -> None:
 
 
 def test_the_leader_starts_on_a_corner_of_its_own_component() -> None:
-    placed, routes = crowded()
+    placed, routes = hugged()
     written = place_labels(load_project(PROJECT), placed, NOVE_C_A3.standard, routes=routes)
     leader = written[0].leader_from
     assert leader is not None
@@ -340,7 +367,7 @@ def test_no_leader_is_orthogonal_or_askew() -> None:
     Nessuna tubazione e' mai obliqua (B1): e' per questo che il richiamo lo e'.
     Un richiamo ortogonale sarebbe un tubo in piu' sulla tavola.
     """
-    placed, routes = crowded()
+    placed, routes = hugged()
     written = place_labels(load_project(PROJECT), placed, NOVE_C_A3.standard, routes=routes)
     for item in (*written, *fixture_labels()):
         if item.leader_from is None:
@@ -353,7 +380,7 @@ def test_no_leader_is_orthogonal_or_askew() -> None:
 
 def test_no_label_overlaps_a_symbol_another_label_or_a_line() -> None:
     """La prova che vale su entrambe: quella affollata e quella vera."""
-    placed, routes = crowded()
+    placed, routes = hugged()
     cases = [
         (placed, routes, place_labels(
             load_project(PROJECT), placed, NOVE_C_A3.standard, routes=routes

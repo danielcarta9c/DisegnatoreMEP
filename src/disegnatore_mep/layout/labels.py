@@ -7,28 +7,30 @@ mai il nome di un componente — solo la sua sigla e i suoi valori.
 
 D-075 dice **dove** si scrive, e ritira la riga di richiami a fondo tavola:
 «un'etichetta e' una scritta piccola vicino al proprio componente, e basta».
-Il motivo e' preciso: le tubazioni sono sempre ortogonali (D-041, B1), quindi
-un richiamo disegnato verticale-poi-orizzontale ha la forma **e la giacitura**
-di un tubo, e sulla tavola si legge come un tubo in piu'. Quando accanto al
-pezzo non c'e' posto — e solo allora — il testo si allontana con una diagonale
-a **45 gradi**, l'unica giacitura che nessuna tubazione puo' avere.
 
 **I testi sono l'ultima fase del disegno** (DRAW-003, I-025). Componenti e
 rotte sono definitivi quando questo modulo entra in gioco, e niente di cio' che
-decide qui puo' toccarli: un testo si posa, non sposta. La regola di posa e'
-netta, ed e' quella del PM:
+decide qui puo' toccarli: un testo si posa, non sposta. E i testi hanno
+**costo nullo rispetto alla geometria** (DRAW-003-R1): non entrano in nessuna
+misura, candidato o funzione di costo della posa, e non bloccano mai
+l'emissione della tavola. La posa e' quindi semplice e a buon fine, non un
+ottimizzatore:
 
-- ogni testo ha **una** posizione preferita accanto al proprio pezzo — la sigla
-  sopra, i valori sotto, l'indirizzo di fianco;
-- se e' libera, il testo resta li' senza richiamo;
-- se collide con un tubo, un simbolo, un'altra etichetta o il margine
-  dell'area di disegno, **non si muove nulla di cio' che e' gia' disegnato**:
-  si cerca deterministicamente un posto libero per il solo testo e lo si lega
-  al pezzo con un richiamo rettilineo obliquo. Niente peregrinazioni fra lati e
-  distanze senza dichiarare graficamente il legame;
-- il richiamo e' a 45 gradi, parte da uno spigolo del proprio pezzo, non passa
-  sopra simboli o testi, e non attraversa tubazioni ne' altri richiami finche'
-  esiste una diagonale libera equivalente.
+- ogni testo prova, in un **ordine fisso**, i posti adiacenti al proprio pezzo
+  — la sigla sopra, poi sotto, a destra, a sinistra; i valori sotto per
+  primi; l'indirizzo di verifica a destra per primo — prima nella fila che
+  tocca il pezzo, poi in una seconda fila una riga piu' in la', e si ferma
+  al primo libero da simboli, tubi, altri testi e margine, senza richiamo;
+- le **sigle e i valori delle macchine** — i testi della tavola definitiva —
+  se nessun posto adiacente e' libero provano un richiamo **corto** a 45
+  gradi da uno spigolo del pezzo, l'unica giacitura che nessuna tubazione puo'
+  avere (D-041, B1), e solo se non attraversa tubi, simboli, testi ne' altri
+  richiami: un richiamo si disegna quando chiarisce, mai quando confonde;
+- se nemmeno quello esiste, il testo **si omette**: la tavola esce lo stesso e
+  il preflight lo dice come avviso;
+- gli **indirizzi della modalita' verifica** sono un velo a buon fine, che
+  serve al PO per indicare un pezzo: adiacenti se c'e' posto, altrimenti
+  omessi, mai richiamati. Nessun obbligo di scriverli tutti.
 
 La quota di terra non entra qui: non e' un ostacolo per i testi (D-121).
 
@@ -79,13 +81,13 @@ come un richiamo: la diagonale deve essere abbastanza lunga da dichiarare la
 propria giacitura al primo sguardo (D2).
 """
 
-LEADER_MAX_STEPS = 40
-"""Quante volte la diagonale si allunga di un passo cercando spazio libero.
+LEADER_MAX_STEPS = 12
+"""Quante volte la diagonale si allunga di un passo cercando un posto pulito.
 
-Quaranta passi sono cento millimetri di diagonale: oltre, il richiamo non
-identifica piu' niente. Prima erano ventiquattro, e bastavano quando il
-richiamo poteva attraversare le tubazioni; ora che le evita gli serve piu'
-corsa, e la corsa la paga solo chi non trova posto prima.
+Dodici passi sono poco piu' di trenta millimetri di corsa per asse: un richiamo
+piu' lungo non chiarisce piu' di chi parla, e la regola (DRAW-003-R1) e' che
+un richiamo si disegna solo quando chiarisce. **Taratura**, non norma: si
+rivede sulle tavole reali.
 """
 
 CHAR_WIDTH_RATIO = 0.6
@@ -96,6 +98,35 @@ sovrappongono, quindi un errore in eccesso e' innocuo.
 """
 
 TOLERANCE_MM = 1e-6
+
+SIDES_BY_ROLE: dict[str, tuple[str, ...]] = {
+    "tag": ("above", "below", "right", "left"),
+    "data": ("below", "above", "right", "left"),
+    "address": ("right", "left", "above", "below"),
+}
+"""I lati che ogni ruolo prova, nell'ordine.
+
+Il primo e' il posto preferito di D-075 e D-110 — la sigla sopra, i valori
+sotto, l'indirizzo di fianco — e gli altri sono i ripieghi, sempre adiacenti:
+un testo che cambia lato resta una scritta accanto al proprio pezzo, e non ha
+bisogno di un richiamo per dire di chi parla (D1).
+"""
+
+ADJACENT_ROWS = 2
+"""Quante file di testo si provano su ogni lato prima di rinunciare al lato.
+
+La prima fila tocca il pezzo a meno dello stacco; la seconda sta una riga
+piu' in la', oltre cio' che occupa la prima — di solito un tubo attaccato al
+pezzo — e si legge ancora come la scritta di quel pezzo. Una terza fila
+sarebbe gia' lontana: da li' in poi, richiamo o niente.
+"""
+
+LEADER_ROLES = frozenset({"tag", "data"})
+"""I ruoli che possono portare un richiamo: i testi della tavola definitiva.
+
+Gli indirizzi di verifica no: sono un velo a buon fine, e un groviglio di
+richiami per identificare le valvole confonde piu' di quanto identifichi.
+"""
 
 DIAGONALS: tuple[tuple[int, int], ...] = ((1, -1), (1, 1), (-1, -1), (-1, 1))
 """Le quattro diagonali del richiamo: alto-destra, basso-destra, alto-sinistra,
@@ -246,6 +277,40 @@ def _texts_of(
     return texts
 
 
+def anchor_beside(
+    item: PlacedSymbol,
+    side: str,
+    slot: int,
+    width_mm: float,
+    *,
+    height_mm: float,
+    step_mm: float,
+) -> Point:
+    """La base di un testo scritto su un lato del pezzo.
+
+    Sopra e sotto il testo si centra sul riquadro restando su un nodo della
+    griglia; di fianco sta in quota col centro del pezzo. Lo stacco dal
+    riquadro vale un millimetro e mezzo perche' e' quanto deve valere: portarlo
+    sul passo lo raddoppierebbe allontanando ogni scritta dal proprio pezzo,
+    che e' il difetto che D-075 corregge. `slot` impila i testi dello stesso
+    pezzo sullo stesso lato, uno per riga.
+    """
+    centred = (
+        item.origin.x_mm + round((item.width_mm - width_mm) / 2 / step_mm) * step_mm
+    )
+    stack = slot * (height_mm + CALLOUT_LINE_GAP_MM)
+    if side == "above":
+        return Point(x_mm=centred, y_mm=item.origin.y_mm - TAG_GAP_MM - stack)
+    if side == "below":
+        return Point(
+            x_mm=centred, y_mm=item.bottom_mm + VALUE_GAP_MM + height_mm + stack
+        )
+    middle = item.origin.y_mm + item.height_mm / 2 + height_mm / 2 + stack
+    if side == "right":
+        return Point(x_mm=item.right_mm + SIDE_GAP_MM, y_mm=middle)
+    return Point(x_mm=item.origin.x_mm - SIDE_GAP_MM - width_mm, y_mm=middle)
+
+
 def preferred_anchor(
     item: PlacedSymbol,
     role: str,
@@ -255,28 +320,11 @@ def preferred_anchor(
     height_mm: float,
     step_mm: float,
 ) -> Point:
-    """La posizione preferita di un testo, secondo il suo ruolo.
-
-    La sigla sta **sopra** il riquadro, i valori **sotto** — uno per riga, nel
-    loro ordine — e l'indirizzo di verifica **a destra**, in quota col centro
-    del pezzo. Sopra e sotto il testo si centra sul riquadro restando su un
-    nodo della griglia; lo stacco dal riquadro vale invece un millimetro e
-    mezzo perche' e' quanto deve valere: portarlo sul passo lo raddoppierebbe
-    allontanando ogni scritta dal proprio pezzo, che e' il difetto che D-075
-    corregge.
-    """
-    centred = (
-        item.origin.x_mm + round((item.width_mm - width_mm) / 2 / step_mm) * step_mm
+    """La posizione preferita di un testo, secondo il suo ruolo: il primo dei
+    lati di `SIDES_BY_ROLE`."""
+    return anchor_beside(
+        item, SIDES_BY_ROLE[role][0], slot, width_mm, height_mm=height_mm, step_mm=step_mm
     )
-    stack = slot * (height_mm + CALLOUT_LINE_GAP_MM)
-    if role == "tag":
-        return Point(x_mm=centred, y_mm=item.origin.y_mm - TAG_GAP_MM - stack)
-    if role == "data":
-        return Point(
-            x_mm=centred, y_mm=item.bottom_mm + VALUE_GAP_MM + height_mm + stack
-        )
-    middle = item.origin.y_mm + item.height_mm / 2 + height_mm / 2 + stack
-    return Point(x_mm=item.right_mm + SIDE_GAP_MM, y_mm=middle)
 
 
 def _leader_corner(item: PlacedSymbol, way: tuple[int, int]) -> Point:
@@ -319,25 +367,14 @@ class _Canvas:
             _overlap(box, other) for other in (*self.symbols, *self.texts, *self.lines)
         )
 
-    def leader_fits(self, start: Point, end: Point, box: Box, *, rigour: int) -> bool:
-        """La diagonale, a tre gradi di rigore.
-
-        Al grado 2 non passa sopra simboli o testi, non attraversa tubazioni ne'
-        altri richiami, e non passa sotto il proprio testo: e' la ricerca che si
-        fa per prima. Al grado 1 puo' attraversare tubazioni e altri richiami —
-        obliqua com'e' non la si scambia per un tubo (B1) — ma non simboli ne'
-        testi. Al grado 0 puo' passare anche sopra un simbolo o sotto il
-        proprio testo: e' l'ultima risorsa di un pezzo murato fra due macchine,
-        e il preflight lo segnala; un testo mancante sarebbe peggio.
-        """
-        if _crosses(start, end, box) and rigour > 0:
+    def leader_fits(self, start: Point, end: Point, box: Box) -> bool:
+        """La diagonale non passa sopra simboli o testi — il proprio compreso —
+        e non attraversa tubazioni ne' altri richiami. Un solo grado di rigore:
+        un richiamo che attraversa qualcosa confonde, e allora non si disegna."""
+        if _crosses(start, end, box):
             return False
-        if rigour > 0 and any(
-            _crosses(start, end, other) for other in (*self.symbols, *self.texts)
-        ):
+        if any(_crosses(start, end, other) for other in (*self.symbols, *self.texts)):
             return False
-        if rigour < 2:
-            return True
         leader = (start, end)
         if any(segments_cross(leader, other) for other in self.line_segments):
             return False
@@ -356,49 +393,34 @@ def _leader(
     height_mm: float,
     step_mm: float,
     canvas: _Canvas,
-) -> tuple[Point, Point]:
-    """Il primo posto raggiungibile con una diagonale a 45 gradi.
+) -> tuple[Point, Point] | None:
+    """Il primo posto pulito raggiungibile con una diagonale corta a 45 gradi.
 
     La diagonale parte da uno spigolo del simbolo e finisce **sulla base del
     testo**: un solo segmento obliquo, nessuna piega. La codina orizzontale
     sotto la scritta — la «scaletta» del disegno a mano — si potrebbe
     aggiungere, e deliberatamente non c'e': porterebbe i due capi del richiamo a
     un angolo diverso da 45 gradi, e i due capi sono cio' che la geometria
-    dichiara e che il preflight misura. Un richiamo che *si disegna* a 45 gradi
-    ma *si misura* a 60 non e' verificabile.
+    dichiara e che il preflight misura.
 
     Il posto si cerca allungando la diagonale di un passo per volta, quindi e'
-    il piu' vicino fra i liberi. Tre giri, dal piu' rigoroso al meno: nel primo
-    la diagonale non attraversa niente; nel secondo puo' attraversare tubazioni
-    e altri richiami — un richiamo che incrocia un tubo resta leggibile, perche'
-    obliquo com'e' non lo si scambia per un tubo (B1); nel terzo puo' passare
-    anche sopra un simbolo, che e' il caso del pezzo murato fra due macchine. In
-    ogni giro il testo sta dentro l'area e non copre niente. Un testo mancante
-    sarebbe peggio di un richiamo brutto, e il preflight dice dove e' brutto.
+    il piu' vicino fra i puliti; in ogni caso il testo sta dentro l'area, non
+    copre niente e la diagonale non attraversa niente. Se entro la corsa
+    massima non c'e' un posto cosi', non c'e' richiamo: `None`, e chi chiama
+    omette il testo.
     """
     reach = ceil(LEADER_MIN_LENGTH_MM / sqrt(2) / step_mm) * step_mm
-
-    def reached(way: tuple[int, int], span: float) -> tuple[Point, Point]:
-        start = _leader_corner(item, way)
-        return start, Point(
-            x_mm=start.x_mm + way[0] * span, y_mm=start.y_mm + way[1] * span
-        )
-
-    for rigour in (2, 1, 0):
-        for ring in range(LEADER_MAX_STEPS):
-            span = reach + ring * step_mm
-            for way in DIAGONALS:
-                start, anchor = reached(way, span)
-                box = _text_box(anchor, width_mm, height_mm)
-                if not canvas.free(box):
-                    continue
-                if not canvas.leader_fits(start, anchor, box, rigour=rigour):
-                    continue
+    for ring in range(LEADER_MAX_STEPS):
+        span = reach + ring * step_mm
+        for way in DIAGONALS:
+            start = _leader_corner(item, way)
+            anchor = Point(
+                x_mm=start.x_mm + way[0] * span, y_mm=start.y_mm + way[1] * span
+            )
+            box = _text_box(anchor, width_mm, height_mm)
+            if canvas.free(box) and canvas.leader_fits(start, anchor, box):
                 return start, anchor
-    # Nemmeno una diagonale libera: si scrive comunque, sulla prima. Un testo
-    # mancante e' un difetto peggiore di un testo affollato, e il preflight lo
-    # misura (D5).
-    return reached(DIAGONALS[0], reach)
+    return None
 
 
 def _canvas(
@@ -428,16 +450,26 @@ def _settle(
     height_mm: float,
     step_mm: float,
     canvas: _Canvas,
-) -> PlacedLabel:
-    """Un testo al proprio posto preferito se e' libero, altrimenti richiamato."""
+) -> PlacedLabel | None:
+    """Un testo sul primo lato libero, prima fila poi seconda; per le sigle
+    delle macchine, poi, un richiamo corto e pulito; altrimenti niente."""
     width = text_width_mm(text, height_mm)
-    spot = preferred_anchor(item, role, slot, width, height_mm=height_mm, step_mm=step_mm)
-    start: Point | None = None
-    if not canvas.free(_text_box(spot, width, height_mm)):
-        start, spot = _leader(
-            item, width, height_mm=height_mm, step_mm=step_mm, canvas=canvas
-        )
-    canvas.take(_text_box(spot, width, height_mm), None if start is None else (start, spot))
+    for row in range(ADJACENT_ROWS):
+        for side in SIDES_BY_ROLE[role]:
+            spot = anchor_beside(
+                item, side, slot + row, width, height_mm=height_mm, step_mm=step_mm
+            )
+            box = _text_box(spot, width, height_mm)
+            if canvas.free(box):
+                canvas.take(box, None)
+                return PlacedLabel(id=label_id, text=text, role=role, anchor=spot)
+    if role not in LEADER_ROLES:
+        return None
+    found = _leader(item, width, height_mm=height_mm, step_mm=step_mm, canvas=canvas)
+    if found is None:
+        return None
+    start, spot = found
+    canvas.take(_text_box(spot, width, height_mm), (start, spot))
     return PlacedLabel(id=label_id, text=text, role=role, anchor=spot, leader_from=start)
 
 
@@ -454,15 +486,15 @@ def place_addresses(
     """L'indirizzo del nodo scritto accanto al proprio pezzo (D-110, D-111).
 
     E' la **terza specie di scritta** sulla tavola: la legenda dice *cosa* e' un
-    simbolo, la sigla dice *quale*, l'indirizzo dice **dove** — cosi' il
-    progettista guarda il disegno, punta un pezzo, ne legge il codice e va a
-    cercarlo sul grafo.
+    simbolo, la sigla dice *quale*, l'indirizzo dice **dove** — cosi' il PO
+    guarda il disegno, punta un pezzo, ne legge il codice e lo nomina.
 
     Si posa **dopo tutto il resto e non sposta niente**: e' un velo sopra una
     tavola gia' finita, e le due modalita' — verifica e consegna — danno percio'
-    la stessa identica tavola, una con le etichette in piu'. Segue lo stesso
-    ordine delle altre scritte (DRAW-003): posto preferito di fianco al pezzo
-    se libero, altrimenti richiamo obliquo, e non finisce sopra un tubo.
+    la stessa identica tavola, una con le etichette in piu'. Ed e' un velo **a
+    buon fine** (DRAW-003-R1): l'indirizzo si scrive su un lato libero del
+    pezzo, e se non ce n'e' uno si omette, senza richiamo e senza rilievo.
+    Nessun obbligo di scriverli tutti.
 
     `floor_y_mm` e' accettato per la catena che ancora lo passa e non e' usato:
     la quota di terra non e' un ostacolo per i testi (D-121).
@@ -481,18 +513,18 @@ def place_addresses(
         text = addresses.get(item.component_id)
         if text is None:
             continue
-        labels.append(
-            _settle(
-                item,
-                f"address-{item.component_id}",
-                text,
-                "address",
-                0,
-                height_mm=height,
-                step_mm=step,
-                canvas=canvas,
-            )
+        settled = _settle(
+            item,
+            f"address-{item.component_id}",
+            text,
+            "address",
+            0,
+            height_mm=height,
+            step_mm=step,
+            canvas=canvas,
         )
+        if settled is not None:
+            labels.append(settled)
     return labels
 
 
@@ -507,12 +539,12 @@ def place_labels(
 ) -> list[PlacedLabel]:
     """Sigle e valori, scritti piccoli accanto al proprio componente (D-075).
 
-    La sigla va **sopra** il riquadro, i valori **sotto**, senza alcuna linea di
-    richiamo: il testo sta vicino a cio' che nomina, e non serve seguire niente
-    per capire di chi parla (D1). Quel posto e' l'unico che si prova: se e'
-    occupato da un simbolo, da una tubazione, da un'altra etichetta o dal
-    margine, il testo si sposta con il richiamo obliquo (D2), e niente di cio'
-    che e' gia' disegnato si muove.
+    Sono i testi della tavola definitiva: la sigla sopra il riquadro, i valori
+    sotto, e se quel lato e' occupato un altro lato adiacente, sempre senza
+    richiamo (D1). Solo quando nessun lato e' libero la sigla prende un
+    richiamo corto a 45 gradi che non attraversa niente (D2); se nemmeno
+    quello esiste la sigla si omette, e niente di cio' che e' gia' disegnato si
+    muove.
 
     `routes` porta le tubazioni gia' instradate: senza, un testo puo' cadere
     sopra una linea senza che nulla se ne accorga. Resta opzionale perche' i
@@ -520,7 +552,7 @@ def place_labels(
     `floor_y_mm` e' accettato per compatibilita' e non e' usato (D-121).
 
     Deterministico: l'ordine segue quello dei simboli posati, e a parita' di
-    ingombro la ricerca percorre sempre le stesse posizioni nello stesso ordine.
+    ingombro la ricerca percorre sempre gli stessi lati nello stesso ordine.
     """
     del floor_y_mm
     properties = {item.id: item.properties for item in project.components}
@@ -531,17 +563,17 @@ def place_labels(
     for item in placed:
         slots = {"tag": 0, "data": 0}
         for label_id, text, role in _texts_of(item, properties):
-            labels.append(
-                _settle(
-                    item,
-                    label_id,
-                    text,
-                    role,
-                    slots[role],
-                    height_mm=height,
-                    step_mm=step,
-                    canvas=canvas,
-                )
+            settled = _settle(
+                item,
+                label_id,
+                text,
+                role,
+                slots[role],
+                height_mm=height,
+                step_mm=step,
+                canvas=canvas,
             )
             slots[role] += 1
+            if settled is not None:
+                labels.append(settled)
     return labels

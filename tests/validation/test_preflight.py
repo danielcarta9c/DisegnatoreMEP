@@ -424,6 +424,8 @@ def everything_wrong() -> DrawingGeometry:
             placed("good", 100, 40),
             placed("near", 250, 50),
             placed("invented", 300, 200, symbol_id="probe_bad"),
+            # Una macchina con la sigla che nessuna etichetta scrive (DRAW-003-R1).
+            placed("mute", 300, 250).model_copy(update={"tag": "MUTE-01"}),
         ],
         routes=[
             run("b", [at(20, 20), at(40, 20), at(40, 40), at(60, 40), at(60, 60), at(80, 60)]),
@@ -462,6 +464,7 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
         preflight.orthogonality_of_leaders(broken),
         preflight.labels_on_runs(broken, FRAME),
         preflight.leader_crossings(broken),
+        preflight.omitted_tags(broken),
         preflight.sheet_fill(broken, FRAME),
         preflight.next_sheet_fill(broken, FRAME),
         preflight.symbol_sources(broken, registry),

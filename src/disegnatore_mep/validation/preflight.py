@@ -151,6 +151,7 @@ MEASURE_ORDER: tuple[str, ...] = (
     "orthogonality_of_leaders",
     "labels_on_runs",
     "leader_crossings",
+    "omitted_tags",
     "sheet_fill",
     "next_sheet_fill",
     "symbol_sources",
@@ -566,13 +567,14 @@ def _boxes_overlap(
 
 
 def labels_on_runs(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
-    """D5, DRAW-003 — un testo non copre mai una tubazione.
+    """D5, DRAW-003 — un testo non copre una tubazione.
 
-    Le etichette sono l'ultima fase del disegno: se il posto preferito di un
-    testo cade su un tubo, il testo si sposta con un richiamo, e il tubo resta.
-    Un testo che si trova sopra una linea — o a meno del franco che i testi
-    tengono dalle linee — e' un difetto bloccante, come lo e' un testo sopra un
-    simbolo per il cancello di correttezza.
+    Le etichette sono l'ultima fase del disegno e non hanno costo rispetto
+    alla geometria (DRAW-003-R1): il disegnatore scrive un testo solo su un
+    posto libero, e se non ce n'e' uno lo omette. Un testo sopra una linea — o
+    a meno del franco che i testi tengono dalle linee — e' quindi una tavola
+    che non esce dal disegnatore, o una regressione; e' un **avviso**, perche'
+    nessun rilievo sui testi blocca l'emissione della tavola.
     """
     findings: list[ValidationIssue] = []
     height = frame.standard.text_small_mm
@@ -598,11 +600,37 @@ def labels_on_runs(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validati
             findings.append(
                 _finding(
                     "LABEL_ON_A_RUN",
-                    IssueSeverity.BLOCKING,
+                    IssueSeverity.WARNING,
                     f"l'etichetta {label.id} copre la tratta {_run_name(hit)}: un testo "
-                    f"non copre mai una linea, si sposta il testo con un richiamo "
-                    f"(D5, D-075)",
+                    f"si scrive su un posto libero o si omette (D5, D-075, DRAW-003-R1)",
                     sorted({sheet.sheet_id, label.id, *hit.connection_ids}),
+                )
+            )
+    return findings
+
+
+def omitted_tags(drawing: DrawingGeometry) -> list[ValidationIssue]:
+    """DRAW-003-R1 — una sigla di macchina che non ha trovato posto.
+
+    Il disegnatore scrive la sigla su un lato libero del pezzo o con un
+    richiamo corto che non attraversa niente; se nemmeno quello esiste la
+    omette, e la tavola esce lo stesso. Chi legge il preflight deve pero'
+    saperlo: e' un avviso, mai un blocco, perche' l'impossibilita' di
+    collocare un testo non ferma l'emissione della tavola.
+    """
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        written = {label.id for label in sheet.labels if label.role == "tag"}
+        for symbol in sheet.symbols:
+            if not symbol.tag or f"{symbol.component_id}-tag" in written:
+                continue
+            findings.append(
+                _finding(
+                    "TAG_OMITTED",
+                    IssueSeverity.WARNING,
+                    f"la sigla {symbol.tag} di {symbol.component_id} non e' scritta: "
+                    f"nessun lato libero e nessun richiamo pulito (DRAW-003-R1)",
+                    [sheet.sheet_id, symbol.component_id],
                 )
             )
     return findings
@@ -632,9 +660,10 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
     """DRAW-003 — i richiami non si incrociano fra loro, non attraversano tubi
     e non passano sopra simboli.
 
-    Non e' un divieto assoluto: quando nessuna diagonale libera esiste il testo
-    si scrive lo stesso, perche' un testo mancante e' peggio. E' un avviso, che
-    dice dove la tavola e' affollata.
+    Il disegnatore non produce un richiamo cosi' (DRAW-003-R1): quando nessuna
+    diagonale pulita esiste il testo si omette. Un richiamo che attraversa
+    qualcosa e' percio' una geometria scritta a mano o una regressione, ed e'
+    un avviso: nessun rilievo sui testi blocca la tavola.
     """
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
@@ -675,8 +704,8 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
                         "LEADER_CROSSES_A_SYMBOL",
                         IssueSeverity.WARNING,
                         f"il richiamo dell'etichetta {label.id} passa sopra il simbolo "
-                        f"{covered.component_id}: il pezzo era murato e nessuna "
-                        f"diagonale libera esisteva (D2, DRAW-003)",
+                        f"{covered.component_id}: un richiamo che confonde non si "
+                        f"disegna, il testo si omette (D2, DRAW-003-R1)",
                         sorted({sheet.sheet_id, label.id, covered.component_id}),
                     )
                 )
@@ -687,8 +716,8 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
                         "LEADER_CROSSES_A_RUN",
                         IssueSeverity.WARNING,
                         f"il richiamo dell'etichetta {label.id} attraversa la tratta "
-                        f"{_run_name(crossed)}: obliquo com'e' non si scambia per un "
-                        f"tubo, ma esisteva forse una diagonale libera (D2, DRAW-003)",
+                        f"{_run_name(crossed)}: un richiamo che confonde non si "
+                        f"disegna, il testo si omette (D2, DRAW-003-R1)",
                         sorted({sheet.sheet_id, label.id, *crossed.connection_ids}),
                     )
                 )
@@ -924,6 +953,7 @@ def preflight_drawing(
         *orthogonality_of_leaders(drawing),
         *labels_on_runs(drawing, frame),
         *leader_crossings(drawing),
+        *omitted_tags(drawing),
         *sheet_fill(drawing, frame),
         *next_sheet_fill(drawing, frame),
         *symbol_sources(drawing, catalog),
