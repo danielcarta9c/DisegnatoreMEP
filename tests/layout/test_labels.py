@@ -221,10 +221,36 @@ def test_the_tag_sits_above_its_component_and_the_value_below() -> None:
 
 
 def test_a_label_that_fits_beside_its_component_carries_no_leader() -> None:
-    """D3: la riga di richiami a fondo tavola non esiste piu'."""
+    """D3: la riga di richiami a fondo tavola non esiste piu'.
+
+    Chi ha il posto preferito libero sta li' senza richiamo; chi porta un
+    richiamo lo porta perche' quel posto era occupato (DRAW-003).
+    """
+    from disegnatore_mep.layout.labels import preferred_anchor
+
+    sheet = fixture_sheet()
     written = fixture_labels()
     assert written
-    assert all(item.leader_from is None for item in written)
+    assert any(item.leader_from is None for item in written)
+    placed = {item.component_id: item for item in sheet.symbols}
+    step = NOVE_C_A3.standard.grid_mm
+    seen: list[Box] = [symbol_box(item) for item in sheet.symbols] + line_boxes(sheet.routes)
+    slots: dict[tuple[str, str], int] = {}
+    for item in written:
+        owner = placed[item.id.rsplit("-", 1)[0]]
+        slot = slots.get((owner.component_id, item.role), 0)
+        slots[owner.component_id, item.role] = slot + 1
+        wanted = preferred_anchor(
+            owner, item.role, slot, text_width_mm(item.text, HEIGHT_MM),
+            height_mm=HEIGHT_MM, step_mm=step,
+        )
+        box = label_box(item)
+        if item.leader_from is None:
+            assert (item.anchor.x_mm, item.anchor.y_mm) == (wanted.x_mm, wanted.y_mm), item.id
+        else:
+            preferred = (wanted.x_mm, wanted.y_mm - HEIGHT_MM, wanted.x_mm + box[2] - box[0], wanted.y_mm)
+            assert not all(apart(preferred, other) for other in seen), item.id
+        seen.append(box)
 
 
 def test_every_label_of_the_case_stays_beside_its_own_component() -> None:
@@ -238,7 +264,11 @@ def test_every_label_of_the_case_stays_beside_its_own_component() -> None:
 
 
 def test_a_label_steps_aside_from_a_routed_line() -> None:
-    """Senza le tratte il testo cade sopra una tubazione e nessuno se ne accorge."""
+    """Senza le tratte il testo cade sopra una tubazione e nessuno se ne accorge.
+
+    Con le tratte il testo si sposta, e da DRAW-003 lo fa **con il richiamo**:
+    il posto preferito era occupato, e non si peregrina fra i lati.
+    """
     project = load_project(PROJECT)
     placed = [symbol("x", 100.0, 100.0, tag="X-01")]
     crossing = [run((90.0, 98.0), (130.0, 98.0))]
@@ -249,7 +279,7 @@ def test_a_label_steps_aside_from_a_routed_line() -> None:
     boxes = line_boxes(crossing)
     assert not all(apart(label_box(blind), other) for other in boxes)
     assert all(apart(label_box(aware), other) for other in boxes)
-    assert aware.leader_from is None
+    assert aware.leader_from is not None
 
 
 # --- D-075: e quando non ci sta, la diagonale a 45 gradi ---------------------
@@ -338,11 +368,3 @@ def test_no_label_overlaps_a_symbol_another_label_or_a_line() -> None:
                 assert apart(box, other), (item.id, box, other)
             boxes.append(box)
 
-
-def test_the_retired_callout_row_still_answers_when_asked_for() -> None:
-    """Il meccanismo ritirato da D-075 resta finche' la catena lo passa."""
-    project, placed = placed_case()
-    written = place_labels(project, placed, NOVE_C_A3.standard, callout_y_mm=250.0)
-    assert written
-    assert all(item.anchor.y_mm >= 250.0 for item in written)
-    assert any(item.leader_from is not None for item in written)

@@ -45,12 +45,11 @@ def area_y(fraction: float) -> float:
     return rect.y_mm + round(rect.height_mm * fraction / step) * step
 
 
-def test_the_ground_line_is_recorded_on_the_sheet() -> None:
-    """La quota e' relativa al blocco, non al foglio: il blocco viene centrato."""
+def test_the_ground_line_is_not_on_the_sheet() -> None:
+    """La quota di terra e' un riferimento interno della posa, non un elemento
+    della tavola (D-121, DRAW-003): la geometria non la esporta."""
     drawn = sheet()
-    area = NOVE_C_A3.drawing_rect_mm
-    assert drawn.ground_line_y_mm is not None
-    assert area.y_mm <= drawn.ground_line_y_mm <= area.bottom_mm
+    assert drawn.ground_line_y_mm is None
 
 
 def test_the_drawn_block_is_centred_in_the_drawing_area() -> None:
@@ -61,14 +60,11 @@ def test_the_drawn_block_is_centred_in_the_drawing_area() -> None:
     """
     drawn = sheet()
     area = NOVE_C_A3.drawing_rect_mm
-    # Il blocco e' tutto cio' che si vede: simboli, tratte, testi e linea di
-    # terra. Misurare il fondo sui soli testi valeva finche' i richiami stavano
+    # Il blocco che si centra sono simboli e tratte: i testi si posano dopo e
+    # non entrano nella centratura (DRAW-003). Misurare il fondo sui soli testi valeva finche' i richiami stavano
     # in una riga sotto il disegno, e D-075 quella riga l'ha ritirata.
     tops = [item.origin.y_mm for item in drawn.symbols]
     bottoms = [item.bottom_mm for item in drawn.symbols]
-    bottoms.extend(item.anchor.y_mm for item in drawn.labels)
-    if drawn.ground_line_y_mm is not None:
-        bottoms.append(drawn.ground_line_y_mm)
     for route in drawn.routes:
         for segment in route.segments:
             tops.extend(point.y_mm for point in segment)
@@ -82,8 +78,9 @@ def test_machines_and_storage_stand_on_the_ground() -> None:
     """Appoggiati, non appesi: e' la prima cosa che si vede in una tavola vera."""
     drawn = sheet()
     placed = {item.component_id: item for item in drawn.symbols}
-    for component_id in ("hp", "cylinder", "buffer"):
-        assert placed[component_id].bottom_mm == drawn.ground_line_y_mm, component_id
+    # Nessuna linea disegnata: appoggiati vuol dire allineati in basso fra loro.
+    bottoms = {placed[component_id].bottom_mm for component_id in ("hp", "cylinder", "buffer")}
+    assert len(bottoms) == 1
 
 
 def test_an_inline_accessory_rides_its_own_run() -> None:
@@ -101,8 +98,8 @@ def test_an_inline_accessory_rides_its_own_run() -> None:
     """
     drawn = sheet()
     strainer = next(item for item in drawn.symbols if item.component_id == "strainer")
-    assert drawn.ground_line_y_mm is not None
-    assert strainer.bottom_mm <= drawn.ground_line_y_mm + 1e-9
+    floor = max(item.bottom_mm for item in drawn.symbols if item.component_id == "hp")
+    assert strainer.bottom_mm <= floor + 1e-9
     centre_x = (strainer.origin.x_mm + strainer.right_mm) / 2
     centre_y = (strainer.origin.y_mm + strainer.bottom_mm) / 2
     # Il simbolo sta **dentro l'interruzione** che ha aperto, quindi non tocca
@@ -186,7 +183,7 @@ def test_labels_sit_beside_their_component_without_a_leader() -> None:
     quando il testo non ci sta, ed e' obliquo a 45 gradi.
     """
     drawn = sheet()
-    assert drawn.labels and drawn.ground_line_y_mm is not None
+    assert drawn.labels
     placed = {item.component_id: item for item in drawn.symbols}
     for label in drawn.labels:
         # La scritta puo' scendere anche sotto la quota di terra (D-121): li'
@@ -213,8 +210,9 @@ def test_a_leader_starts_on_the_component_it_names() -> None:
         symbol = placed.get(component_id)
         if symbol is None:
             continue
-        assert symbol.origin.x_mm <= label.leader_from.x_mm <= symbol.right_mm
-        assert label.leader_from.y_mm == symbol.bottom_mm
+        # Da uno spigolo del proprio pezzo, quello verso cui la diagonale punta.
+        assert label.leader_from.x_mm in (symbol.origin.x_mm, symbol.right_mm)
+        assert label.leader_from.y_mm in (symbol.origin.y_mm, symbol.bottom_mm)
 
 
 def test_standing_is_decided_by_size_and_function_not_by_name() -> None:

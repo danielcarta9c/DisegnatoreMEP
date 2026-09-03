@@ -108,7 +108,11 @@ class SheetGeometry(StrictModel):
     network_keys: list[NetworkKey] = Field(default_factory=list)
     cross_references: list[CrossReference] = Field(default_factory=list)
     ground_line_y_mm: FiniteFloat | None = None
-    """Quota della linea di terra: le macchine ci appoggiano sopra."""
+    """Ritirata (D-121, DRAW-003): la composizione non la scrive piu' e il
+    renderer non la disegna in nessun caso. Il campo resta, sempre `None`, per
+    leggere le geometrie gia' agli atti e per la catena che ancora lo nomina;
+    la quota su cui le macchine si allineano e' un riferimento interno della
+    posa, non un elemento della tavola."""
 
 
 class DrawingGeometry(StrictModel):

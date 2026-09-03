@@ -437,7 +437,14 @@ def everything_wrong() -> DrawingGeometry:
             run("c", [at(245, 56.5), at(280, 56.5)]),
             run("u", [at(20, 150), at(80, 150), at(80, 170), at(60, 170)]),
         ],
-        labels=[label("l1", anchor=at(300, 160), leader_from=at(300, 150))],
+        labels=[
+            label("l1", anchor=at(300, 160), leader_from=at(300, 150)),
+            # Un testo sopra la tratta orizzontale `h`, e due richiami obliqui
+            # che si incrociano (DRAW-003).
+            label("l2", anchor=at(150, 101)),
+            label("l3", anchor=at(330, 210), leader_from=at(320, 200)),
+            label("l4", anchor=at(320, 210), leader_from=at(330, 200)),
+        ],
     )
     scrap = sheet("t2", symbols=[placed("scrap", 20, 20)])
     return drawing(first, scrap)
@@ -453,6 +460,8 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
         preflight.clearances(broken, FRAME),
         preflight.u_turns(broken, FRAME),
         preflight.orthogonality_of_leaders(broken),
+        preflight.labels_on_runs(broken, FRAME),
+        preflight.leader_crossings(broken),
         preflight.sheet_fill(broken, FRAME),
         preflight.next_sheet_fill(broken, FRAME),
         preflight.symbol_sources(broken, registry),

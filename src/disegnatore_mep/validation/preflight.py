@@ -28,6 +28,7 @@ from disegnatore_mep.layout.geometry import (
     QUADRANT_IMBALANCE_MAX,
     SHEET_FILL_MIN_RATIO,
     DrawingGeometry,
+    PlacedLabel,
     Point,
     RoutedTrunk,
     SheetGeometry,
@@ -39,6 +40,11 @@ from disegnatore_mep.layout.geometry import (
     moves_of,
     overshoot_mm,
     quadrants_of,
+)
+from disegnatore_mep.layout.labels import (
+    LINE_CLEARANCE_MM,
+    segments_cross,
+    text_width_mm,
 )
 from disegnatore_mep.model.types import IssueSeverity
 
@@ -143,6 +149,8 @@ MEASURE_ORDER: tuple[str, ...] = (
     "clearances",
     "u_turns",
     "orthogonality_of_leaders",
+    "labels_on_runs",
+    "leader_crossings",
     "sheet_fill",
     "next_sheet_fill",
     "symbol_sources",
@@ -534,6 +542,159 @@ def u_turns(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue
     return findings
 
 
+def _label_box(
+    label: PlacedLabel, height_mm: float
+) -> tuple[float, float, float, float]:
+    width = text_width_mm(label.text, height_mm)
+    return (
+        label.anchor.x_mm,
+        label.anchor.y_mm - height_mm,
+        label.anchor.x_mm + width,
+        label.anchor.y_mm,
+    )
+
+
+def _boxes_overlap(
+    first: tuple[float, float, float, float], second: tuple[float, float, float, float]
+) -> bool:
+    return (
+        first[0] < second[2] - TOLERANCE_MM
+        and second[0] < first[2] - TOLERANCE_MM
+        and first[1] < second[3] - TOLERANCE_MM
+        and second[1] < first[3] - TOLERANCE_MM
+    )
+
+
+def labels_on_runs(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
+    """D5, DRAW-003 — un testo non copre mai una tubazione.
+
+    Le etichette sono l'ultima fase del disegno: se il posto preferito di un
+    testo cade su un tubo, il testo si sposta con un richiamo, e il tubo resta.
+    Un testo che si trova sopra una linea — o a meno del franco che i testi
+    tengono dalle linee — e' un difetto bloccante, come lo e' un testo sopra un
+    simbolo per il cancello di correttezza.
+    """
+    findings: list[ValidationIssue] = []
+    height = frame.standard.text_small_mm
+    for sheet in drawing.sheets:
+        stretches = [
+            (
+                route,
+                (
+                    min(before.x_mm, after.x_mm) - LINE_CLEARANCE_MM,
+                    min(before.y_mm, after.y_mm) - LINE_CLEARANCE_MM,
+                    max(before.x_mm, after.x_mm) + LINE_CLEARANCE_MM,
+                    max(before.y_mm, after.y_mm) + LINE_CLEARANCE_MM,
+                ),
+            )
+            for _, route, segment in _run_polylines(sheet)
+            for before, after in moves_of(segment)
+        ]
+        for label in sheet.labels:
+            box = _label_box(label, height)
+            hit = next((route for route, other in stretches if _boxes_overlap(box, other)), None)
+            if hit is None:
+                continue
+            findings.append(
+                _finding(
+                    "LABEL_ON_A_RUN",
+                    IssueSeverity.BLOCKING,
+                    f"l'etichetta {label.id} copre la tratta {_run_name(hit)}: un testo "
+                    f"non copre mai una linea, si sposta il testo con un richiamo "
+                    f"(D5, D-075)",
+                    sorted({sheet.sheet_id, label.id, *hit.connection_ids}),
+                )
+            )
+    return findings
+
+
+def _leader_enters(
+    leader: tuple[Point, Point], box: tuple[float, float, float, float]
+) -> bool:
+    """Vero se il richiamo percorre l'interno del riquadro (Liang-Barsky)."""
+    before, after = leader
+    origin = (before.x_mm, before.y_mm)
+    delta = (after.x_mm - before.x_mm, after.y_mm - before.y_mm)
+    low, high = 0.0, 1.0
+    for axis, (lower, upper) in enumerate(((box[0], box[2]), (box[1], box[3]))):
+        if abs(delta[axis]) <= TOLERANCE_MM:
+            if not lower + TOLERANCE_MM < origin[axis] < upper - TOLERANCE_MM:
+                return False
+            continue
+        first = (lower - origin[axis]) / delta[axis]
+        second = (upper - origin[axis]) / delta[axis]
+        low = max(low, min(first, second))
+        high = min(high, max(first, second))
+    return low < high - TOLERANCE_MM
+
+
+def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
+    """DRAW-003 — i richiami non si incrociano fra loro, non attraversano tubi
+    e non passano sopra simboli.
+
+    Non e' un divieto assoluto: quando nessuna diagonale libera esiste il testo
+    si scrive lo stesso, perche' un testo mancante e' peggio. E' un avviso, che
+    dice dove la tavola e' affollata.
+    """
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        leaders = [
+            (label, (label.leader_from, label.anchor))
+            for label in sheet.labels
+            if label.leader_from is not None
+        ]
+        runs = [
+            (route, (before, after))
+            for _, route, segment in _run_polylines(sheet)
+            for before, after in moves_of(segment)
+        ]
+        for index, (label, leader) in enumerate(leaders):
+            for other, other_leader in leaders[index + 1 :]:
+                if segments_cross(leader, other_leader):
+                    findings.append(
+                        _finding(
+                            "LEADERS_CROSS",
+                            IssueSeverity.WARNING,
+                            f"i richiami delle etichette {label.id} e {other.id} si "
+                            f"incrociano: due richiami che si attraversano non dicono "
+                            f"piu' chi parla di chi (D2, DRAW-003)",
+                            sorted({sheet.sheet_id, label.id, other.id}),
+                        )
+                    )
+            covered = next(
+                (
+                    symbol
+                    for symbol in sheet.symbols
+                    if _leader_enters(leader, box_of(symbol))
+                ),
+                None,
+            )
+            if covered is not None:
+                findings.append(
+                    _finding(
+                        "LEADER_CROSSES_A_SYMBOL",
+                        IssueSeverity.WARNING,
+                        f"il richiamo dell'etichetta {label.id} passa sopra il simbolo "
+                        f"{covered.component_id}: il pezzo era murato e nessuna "
+                        f"diagonale libera esisteva (D2, DRAW-003)",
+                        sorted({sheet.sheet_id, label.id, covered.component_id}),
+                    )
+                )
+            crossed = next((route for route, run in runs if segments_cross(leader, run)), None)
+            if crossed is not None:
+                findings.append(
+                    _finding(
+                        "LEADER_CROSSES_A_RUN",
+                        IssueSeverity.WARNING,
+                        f"il richiamo dell'etichetta {label.id} attraversa la tratta "
+                        f"{_run_name(crossed)}: obliquo com'e' non si scambia per un "
+                        f"tubo, ma esisteva forse una diagonale libera (D2, DRAW-003)",
+                        sorted({sheet.sheet_id, label.id, *crossed.connection_ids}),
+                    )
+                )
+    return findings
+
+
 def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
     """D2, D3, D-075 — un richiamo e' obliquo a 45 gradi, mai ortogonale.
 
@@ -761,6 +922,8 @@ def preflight_drawing(
         *clearances(drawing, frame),
         *u_turns(drawing, frame),
         *orthogonality_of_leaders(drawing),
+        *labels_on_runs(drawing, frame),
+        *leader_crossings(drawing),
         *sheet_fill(drawing, frame),
         *next_sheet_fill(drawing, frame),
         *symbol_sources(drawing, catalog),
