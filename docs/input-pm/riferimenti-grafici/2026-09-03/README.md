@@ -1,6 +1,10 @@
 # Riferimenti grafici — 3 settembre 2026
 
-Materiale fornito dal PO come benchmark visivo per DRAW-002-R2.
+Materiale fornito dal PO come benchmark visivo per il collaudo PM di DRAW-002.
+
+Il DEV non deve ricavare autonomamente requisiti da questi file: esegue la specifica
+tecnica contenuta in `ACTIVE_WORK_PACKAGE.md`. I riferimenti servono al PM per formulare
+quella specifica e per giudicare il raster consegnato.
 
 ## Gerarchia
 
@@ -12,7 +16,7 @@ Materiale fornito dal PO come benchmark visivo per DRAW-002-R2.
 | `schema-tipologico.pdf` | Dorsali rettilinee e sequenza geometrica coerente col flusso |
 | `schizzo-informale-po.png` | Indicazione concettuale secondaria; non è un benchmark grafico |
 
-## Regole ricorrenti da estrarre
+## Criteri ricavati dal PM
 
 - mandata e ritorno formano percorsi principali riconoscibili;
 - le macchine si spostano per ridurre lunghezze, curve e incroci;
