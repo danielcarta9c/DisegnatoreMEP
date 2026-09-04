@@ -58,11 +58,16 @@ solo dagli ingressi. Sull'impianto 1 la posa usa 1291 prove e la rifinitura
   affacciato alla distanza minima. Si genera per il pezzo in catena e per i due capi.
 - **La T che gira.** Quale attacco fisico serve ciascuna porta del modello è una
   proprietà della posa: `PlacedSymbol.port_map`, letto dal routing e dal ciclo. Le
-  rotazioni ammesse dal simbolo e le permutazioni fra attacchi — ammesse quando il pezzo
-  ha almeno tre attacchi tutti dello stesso dominio e fluido e tutti presenti nel
-  manifesto, cioè un raccordo che si disegna come un punto — sono candidati; si scartano
-  prima di misurarle quelle in cui un attacco volta le spalle al proprio pari. Grafo,
-  connessioni, `connection_ids` e verso del fluido non cambiano.
+  rotazioni ammesse dal simbolo e le permutazioni fra attacchi sono candidati; si scartano
+  prima di misurarle quelle in cui un attacco volta le spalle al proprio pari. Le
+  permutazioni sono ammesse **soltanto a un raccordo**: un pezzo che il catalogo dichiara
+  con le funzioni di raccordo (`junction`, `branch_off`), con almeno tre attacchi dello
+  stesso dominio e fluido, tutti presenti nel manifesto. Il criterio è la funzione di
+  catalogo, mai il nome del pezzo: una valvola miscelatrice o deviatrice, un collettore di
+  zona, un accumulo a quattro attacchi hanno porte dello stesso fluido con un ruolo
+  ciascuna, e non ne permutano nessuna (revisione chiesta dal PM sulla PR #14; prove
+  negative sulla miscelatrice e sul collettore di zona). Grafo, connessioni,
+  `connection_ids` e verso del fluido non cambiano.
 - **Il diario.** Ogni candidata misurata lascia una riga: fase, specie, pezzo, costo,
   accettata o no. È la materia del §3.
 
