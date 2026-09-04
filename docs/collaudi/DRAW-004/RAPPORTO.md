@@ -191,7 +191,7 @@ lessicografico (`test_the_total_objective_strictly_improves_and_no_term_worsens`
 
 ## 7. Verifiche eseguite
 
-- Suite completa: **__SUITE__**; `ruff check src tests examples`: nessun rilievo;
+- Suite completa: **1103 verdi, 22 parcheggiate, 13 marcate rosse apposta** sui difetti aperti (in 26 minuti); `ruff check src tests examples`: nessun rilievo;
   `mypy --strict src tests examples`: nessun errore.
 - Il modello completo dell'impianto 1 è lo stesso file di DRAW-002 (`prima/impianto1-completo.json`).
 - Due generazioni consecutive danno la stessa impronta della geometria.
