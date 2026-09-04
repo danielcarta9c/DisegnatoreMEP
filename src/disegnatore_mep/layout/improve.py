@@ -31,6 +31,29 @@ prova. Tre regole, nell'ordine del pacchetto DRAW-002:
    spostamento di tutto cio' che sta oltre un pezzo verso il pezzo che lo
    precede. Possono valere anche molti passi di griglia.
 
+E da DRAW-004 (I-026, I-027, I-029) il ciclo ragiona come un disegnatore:
+prima gli assi fra le porte delle macchine e le dorsali continue, poi gli
+stacchi. Sono **candidati**, non regole: si generano e si confrontano con la
+posa corrente sul solo `SheetCost`.
+
+- **Assi fra le porte.** Per ogni collegamento verso un pari: la mia colonna
+  sull'asse della sua porta, la sua colonna sull'asse della mia, e le due
+  colonne su un asse comune a meta' strada. Anche in verticale, e anche per
+  chi sta a terra: la quota iniziale e' un suggerimento di posa, non un
+  vincolo, e il modello non dichiara vincoli fisici che la impongano.
+- **Dorsale prima, stacchi dopo.** La catena di raccordi rimessa in fila dalla
+  porta di un pezzo grosso, con ogni raccordo che prosegue diritto, e il pezzo
+  grosso all'altro capo portato sull'asse d'uscita della catena — o affacciato
+  alla distanza minima — cosi' che la sequenza principale resti rettilinea e i
+  rami partano dai raccordi che stanno sull'asse.
+- **La T che assorbe una curva.** Un raccordo a T si disegna come un punto e
+  ha tre attacchi uguali: quale attacco fisico serva ciascuna porta del
+  modello e' una proprieta' della posa (`PlacedSymbol.port_map`), non del
+  grafo. Le rotazioni ammesse dal simbolo e le permutazioni fra attacchi
+  dello stesso dominio e fluido sono candidati: il percorso principale puo'
+  usare due attacchi ortogonali e girare nel raccordo invece che in un gomito
+  a parte. Vince solo se la tavola completa costa meno.
+
 Ogni candidato si misura **dopo `settle_sheet`**, accessori in linea posati e
 tutte le tratte reinstradate: e' la stessa funzione con cui `compose_sheet`
 disegna, quindi cio' che si misura e' cio' che esce. Nessuna approssimazione su
@@ -43,9 +66,10 @@ Vincoli mai violabili, qualunque sia il guadagno:
   una di ritorno non la porta a destra; dove il verso non e' deciso l'ordine
   disegnato non cambia. Una posa iniziale che gia' contraddice il verso puo'
   essere corretta, mai peggiorata;
-- chi sta a terra resta alla propria quota: si scorre lungo la fascia;
 - le distanze minime fra simboli, la griglia, l'area di disegno;
-- una pila o una colonna non si sfila di un elemento: si trasla insieme;
+- una pila o una colonna non si sfila di un elemento: si trasla insieme, e
+  una pila a terra conserva l'ordine dei propri membri (chi sta sopra resta
+  sopra) e il proprio interasse non scende sotto lo stacco di fascia;
 - determinismo: candidati in ordine fisso, accettazione della prima mossa che
   batte la posa corrente sul confronto unico, tetto dichiarato di prove.
 
@@ -55,11 +79,12 @@ in un punto che dipende solo dagli ingressi.
 """
 
 from collections.abc import Iterable
+from itertools import permutations
 from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
-from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
+from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest, SymbolPort
 from disegnatore_mep.model.project import ProjectModel
 
 from .composition import Standing, levels_of, standing_of
@@ -135,6 +160,30 @@ _DIRECTION: dict[PortFace, tuple[float, float]] = {
 
 Move = dict[str, PlacedSymbol]
 """Una candidata: i soli simboli che cambiano posa, gia' posati dove andrebbero."""
+
+PortMap = dict[str, str]
+"""Quale attacco fisico serve ciascuna porta del modello; vuoto e' l'identita'."""
+
+Orientation = tuple[int, tuple[tuple[str, str], ...]]
+"""Una rotazione e una permutazione degli attacchi, come chiave ordinabile."""
+
+Signature = tuple[tuple[str, float, float, int, tuple[tuple[str, str], ...]], ...]
+
+
+class Attempt(NamedTuple):
+    """Una riga del diario del ciclo: una candidata provata, e com'e' andata.
+
+    Il rapporto di collaudo deve dire quali alternative di asse sono state
+    provate e perche' quella finale ha vinto (DRAW-004): qui restano la
+    specie della candidata, il pezzo per cui e' stata generata, la chiave di
+    costo misurata — `None` se la posa non si lascia instradare — e se e'
+    stata accettata.
+    """
+
+    kind: str
+    leader: str
+    cost: tuple[int, int, float, int, int, int, float, float, float] | None
+    accepted: bool
 
 
 class SheetCost(NamedTuple):
@@ -283,10 +332,50 @@ def _snap_up(value_mm: float, step_mm: float) -> float:
     return steps * step_mm
 
 
-def _signature(layout: Move) -> tuple[tuple[str, float, float, int], ...]:
+def _admitted_permutations(
+    manifest: SymbolManifest, ports: list[tuple[str, str]]
+) -> list[PortMap]:
+    """Le permutazioni degli attacchi che il simbolo e il catalogo ammettono.
+
+    L'identita' viene sempre prima. Le altre esistono solo per un pezzo con
+    almeno tre attacchi, tutti dello stesso dominio e fluido nel catalogo e
+    tutti presenti nel manifesto: un raccordo, che si disegna come un punto e
+    nel quale ogni attacco vale l'altro. Un simbolo con attacchi di natura
+    diversa — un accumulo, una macchina — non ne ammette nessuna: le sue
+    porte hanno un posto ciascuna.
+    """
+    identity: PortMap = {}
+    ids = [port_id for port_id, _ in ports]
+    if len(ids) < 3 or len({kind for _, kind in ports}) != 1:
+        return [identity]
+    if any(port_id not in manifest.port_ids for port_id in ids):
+        return [identity]
+    found: list[PortMap] = [identity]
+    for order in permutations(ids):
+        mapping = {mine: physical for mine, physical in zip(ids, order, strict=True) if mine != physical}
+        if mapping:
+            found.append(mapping)
+    return found
+
+
+def _signature(layout: Move) -> Signature:
     return tuple(
-        (item.component_id, item.origin.x_mm, item.origin.y_mm, item.rotation_deg)
+        (
+            item.component_id,
+            item.origin.x_mm,
+            item.origin.y_mm,
+            item.rotation_deg,
+            tuple(sorted(item.port_map.items())),
+        )
         for item in layout.values()
+    )
+
+
+def _same_pose(one: PlacedSymbol, two: PlacedSymbol) -> bool:
+    return (
+        one.origin == two.origin
+        and one.rotation_deg == two.rotation_deg
+        and one.port_map == two.port_map
     )
 
 
@@ -346,12 +435,21 @@ class Improver:
         definitions = {item.id: item.definition_id for item in project.components}
         self.upright: dict[str, SymbolManifest] = {}
         self.features: dict[str, tuple[frozenset[str], bool]] = {}
+        self.permutations: dict[str, list[PortMap]] = {}
         for item in placed:
             resolved = catalog.resolve(definitions[item.component_id])
             self.upright[item.component_id] = resolved.symbol.manifest
             self.features[item.component_id] = (
                 frozenset(resolved.definition.functions),
                 resolved.is_inline,
+            )
+            # Le permutazioni ammesse: fra attacchi che il simbolo dichiara
+            # con la stessa geometria di attacco — un raccordo che si disegna
+            # come un punto — e che il catalogo dichiara dello stesso dominio
+            # e fluido. Un simbolo con attacchi diversi non ne ammette nessuna.
+            self.permutations[item.component_id] = _admitted_permutations(
+                resolved.symbol.manifest,
+                [(port.id, f"{port.domain}:{port.medium}") for port in resolved.definition.ports],
             )
         self._turned: dict[tuple[str, int], SymbolManifest] = {}
         self.standings = {
@@ -396,7 +494,8 @@ class Improver:
             for component_id in trunk.inline_component_ids
         }
         self.trials = 0
-        self._memo: dict[tuple[tuple[str, float, float, int], ...], Measured | None] = {}
+        self.journal: list[Attempt] = []
+        self._memo: dict[Signature, Measured | None] = {}
 
     # -- letture del manifesto -------------------------------------------------
 
@@ -415,23 +514,39 @@ class Improver:
         )
 
     def port_at(self, item: PlacedSymbol, port_id: str) -> tuple[Point, PortFace]:
-        """Dove sta una porta di un simbolo posato, e dove guarda."""
-        port = self.manifest_at(item.component_id, item.rotation_deg).port(port_id)
+        """Dove sta una porta di un simbolo posato, e dove guarda: sull'attacco
+        fisico che la posa le ha assegnato."""
+        port = self.manifest_at(item.component_id, item.rotation_deg).port(
+            item.physical_port(port_id)
+        )
         return (
             Point(x_mm=item.origin.x_mm + port.x_mm, y_mm=item.origin.y_mm + port.y_mm),
             port.face,
         )
 
-    def _placed(self, component_id: str, origin: Point, rotation_deg: int) -> PlacedSymbol:
+    def _port_of(
+        self, component_id: str, rotation_deg: int, port_map: PortMap, port_id: str
+    ) -> SymbolPort:
+        """Una porta del modello su un pezzo girato e permutato cosi'."""
+        return self.manifest_at(component_id, rotation_deg).port(port_map.get(port_id, port_id))
+
+    def _placed(
+        self,
+        component_id: str,
+        origin: Point,
+        rotation_deg: int,
+        port_map: PortMap | None = None,
+    ) -> PlacedSymbol:
         shape = self.manifest_at(component_id, rotation_deg)
-        return self.best[component_id].model_copy(
-            update={
-                "origin": origin,
-                "rotation_deg": rotation_deg,
-                "width_mm": shape.width_mm,
-                "height_mm": shape.height_mm,
-            }
-        )
+        update: dict[str, object] = {
+            "origin": origin,
+            "rotation_deg": rotation_deg,
+            "width_mm": shape.width_mm,
+            "height_mm": shape.height_mm,
+        }
+        if port_map is not None:
+            update["port_map"] = dict(port_map)
+        return self.best[component_id].model_copy(update=update)
 
     def leader_of(self, component_id: str) -> str:
         """Il pezzo che si muove: un appeso viaggia col pezzo che lo regge."""
@@ -605,9 +720,11 @@ class Improver:
 
     # -- come si costruisce una candidata --------------------------------------
 
-    def place_unit(self, leader: str, origin: Point, rotation_deg: int) -> Move:
+    def place_unit(
+        self, leader: str, origin: Point, rotation_deg: int, port_map: PortMap | None = None
+    ) -> Move:
         """Il pezzo posato la', con cio' che gli pende riappeso al proprio attacco."""
-        parent = self._placed(leader, origin, rotation_deg)
+        parent = self._placed(leader, origin, rotation_deg, port_map)
         move: Move = {leader: parent}
         for child, port_id in self.children.get(leader, ()):
             move[child] = self._rehung(child, parent, port_id)
@@ -666,18 +783,88 @@ class Improver:
         """
         return _snap_up(max(ROW_GAP_MM, self.room[trunk.connection_ids]), self.step)
 
-    def _facing_rotations(self, component_id: str, port_id: str, wanted: PortFace) -> list[int]:
-        """Le rotazioni ammesse che portano la porta a guardare da quella parte,
-        prima quella attuale."""
-        current = self.best[component_id].rotation_deg
-        return [
-            degrees
-            for degrees in sorted(
-                self.upright[component_id].allowed_rotations_deg,
-                key=lambda item: (item != current, item),
-            )
-            if self.manifest_at(component_id, degrees).port(port_id).face is wanted
+    def _looks_at_its_peers(self, component_id: str, degrees: int, port_map: PortMap) -> bool:
+        """Vero se, girato e permutato cosi', nessuna porta collegata volta le
+        spalle al pezzo con cui parla.
+
+        Un attacco che guarda dalla parte opposta al proprio pari obbliga la
+        tratta a uscire e tornare indietro: quella posa non e' una candidata,
+        e' rumore. Si legge dalla posizione attuale del pezzo e dei pari.
+        """
+        me = self.best[component_id]
+        for _, my_port, peer_id, peer_port in self._trunks_of(component_id):
+            port = self._port_of(component_id, degrees, port_map, my_port)
+            outward = _DIRECTION[port.face]
+            theirs, _ = self.port_at(self.best[peer_id], peer_port)
+            dx = theirs.x_mm - (me.origin.x_mm + port.x_mm)
+            dy = theirs.y_mm - (me.origin.y_mm + port.y_mm)
+            if dx * outward[0] + dy * outward[1] < -_TOLERANCE_MM:
+                return False
+        return True
+
+    def _orientations(
+        self, component_id: str, *, toward_peers: bool = True
+    ) -> list[tuple[int, PortMap]]:
+        """Rotazioni ammesse per permutazioni ammesse, senza doppioni di
+        giacitura: due combinazioni che mettono ogni porta del modello sulla
+        stessa faccia sono la stessa posa. Prima quella attuale, poi in ordine
+        di rotazione e di permutazione. Con `toward_peers` restano solo le
+        pose in cui nessuna porta volta le spalle al proprio pari."""
+        current = self.best[component_id]
+        found: list[tuple[int, PortMap]] = []
+        seen: set[tuple[tuple[str, PortFace], ...]] = set()
+        ordered = sorted(
+            self.upright[component_id].allowed_rotations_deg,
+            key=lambda item: (item != current.rotation_deg, item),
+        )
+        maps = sorted(
+            self.permutations[component_id],
+            key=lambda item: (item != current.port_map, sorted(item.items())),
+        )
+        for degrees in ordered:
+            shape = self.manifest_at(component_id, degrees)
+            for port_map in maps:
+                faces = tuple(
+                    (port.id, shape.port(port_map.get(port.id, port.id)).face)
+                    for port in self.upright[component_id].ports
+                )
+                if faces in seen:
+                    continue
+                seen.add(faces)
+                if toward_peers and not self._looks_at_its_peers(component_id, degrees, port_map):
+                    continue
+                found.append((degrees, port_map))
+        return found
+
+    def _facing(
+        self,
+        component_id: str,
+        port_id: str,
+        wanted: PortFace,
+        *,
+        straight: tuple[str, PortFace] | None = None,
+    ) -> list[tuple[int, PortMap]]:
+        """Le pose del pezzo — rotazione e permutazione — che portano la porta
+        a guardare da quella parte, prima quella attuale.
+
+        Con `straight` si chiede anche che un'altra porta guardi in una data
+        direzione: e' il raccordo che prosegue diritto lungo una dorsale.
+        Quelle che lo fanno vengono prima; le altre restano, perche' il
+        raccordo puo' anche girare.
+        """
+        found = [
+            (degrees, port_map)
+            for degrees, port_map in self._orientations(component_id)
+            if self._port_of(component_id, degrees, port_map, port_id).face is wanted
         ]
+        if straight is None:
+            return found
+        exit_port, exit_face = straight
+        return sorted(
+            found,
+            key=lambda item: self._port_of(component_id, item[0], item[1], exit_port).face
+            is not exit_face,
+        )
 
     def _trunks_of(self, leader: str) -> list[tuple[Trunk, str, str, str]]:
         """Le tratte fra questo pezzo e un pezzo di un'altra figura:
@@ -709,24 +896,23 @@ class Improver:
             anchor, face = self.port_at(peer, peer_port)
             direction = _DIRECTION[face]
             need = self._need_mm(trunk)
-            rotations = self._facing_rotations(leader, my_port, face.opposite)
-            if me.rotation_deg not in rotations:
-                rotations = [me.rotation_deg, *rotations]
-            grounded = self.standings[leader] is Standing.GROUND
-            for degrees in rotations:
-                port = self.manifest_at(leader, degrees).port(my_port)
+            poses = self._facing(leader, my_port, face.opposite)
+            if (me.rotation_deg, me.port_map) not in poses:
+                poses = [(me.rotation_deg, me.port_map), *poses]
+            for degrees, port_map in poses:
+                port = self._port_of(leader, degrees, port_map, my_port)
                 # (a) allineamento: la porta sulla riga (o sulla colonna) della
                 # porta del pari, senza muoversi lungo l'asse del collegamento.
-                # Chi sta a terra non cambia quota: si allinea solo in ascissa.
+                # Anche chi sta a terra cambia quota (DRAW-004): la quota
+                # iniziale e' un suggerimento, e il modello non dichiara un
+                # vincolo fisico che la imponga.
                 if face in _HORIZONTAL_FACES:
-                    if grounded:
-                        continue
                     aligned = Point(x_mm=me.origin.x_mm, y_mm=anchor.y_mm - port.y_mm)
                 else:
                     aligned = Point(x_mm=anchor.x_mm - port.x_mm, y_mm=me.origin.y_mm)
-                out.append(self.place_unit(leader, aligned, degrees))
-            for degrees in rotations:
-                port = self.manifest_at(leader, degrees).port(my_port)
+                out.append(self.place_unit(leader, aligned, degrees, port_map))
+            for degrees, port_map in poses:
+                port = self._port_of(leader, degrees, port_map, my_port)
                 # (b) affacciato alla distanza minima, e con un po' di gioco.
                 if port.face is not face.opposite:
                     continue
@@ -734,9 +920,9 @@ class Improver:
                     reach = need + slack * self.step
                     origin = Point(
                         x_mm=anchor.x_mm + direction[0] * reach - port.x_mm,
-                        y_mm=me.origin.y_mm if grounded else anchor.y_mm + direction[1] * reach - port.y_mm,
+                        y_mm=anchor.y_mm + direction[1] * reach - port.y_mm,
                     )
-                    out.append(self.place_unit(leader, origin, degrees))
+                    out.append(self.place_unit(leader, origin, degrees, port_map))
         return out
 
     def _chain_moves(self, leader: str) -> list[Move]:
@@ -764,6 +950,79 @@ class Improver:
                             out.append(laid)
         return out
 
+    def _spine_moves(self, leader: str) -> list[Move]:
+        """Dorsale prima, stacchi dopo (DRAW-004).
+
+        La sequenza principale fra due pezzi grossi e' la catena di raccordi
+        che li unisce: la si rimette in fila dalla porta di un capo, con ogni
+        raccordo che prosegue diritto, e **anche il pezzo grosso all'altro
+        capo** si porta sull'asse d'uscita della catena — o vi si affaccia
+        alla distanza minima — con la propria colonna. Cosi' la dorsale resta
+        rettilinea finche' non serve davvero girare, i raccordi stanno
+        sull'asse e i rami partono da li'. Si genera per il pezzo che e' in
+        catena e per i due capi.
+        """
+        out: list[Move] = []
+        for chain in self.chains:
+            ends = set(chain)
+            for members in (chain, tuple(reversed(chain))):
+                head, tail = members[0], members[-1]
+                ends.update(other for _, _, other, _ in self._trunks_of(head))
+                ends.update(other for _, _, other, _ in self._trunks_of(tail))
+            if leader not in ends:
+                continue
+            for members in (chain, tuple(reversed(chain))):
+                head, tail = members[0], members[-1]
+                for trunk, my_port, anchor_id, anchor_port in self._trunks_of(head):
+                    if anchor_id in chain:
+                        continue
+                    laid = self._lay(members, anchor_id, anchor_port, trunk, my_port, 0)
+                    if laid is None:
+                        continue
+                    for far_trunk, exit_port, far_id, far_port in self._trunks_of(tail):
+                        if far_id in chain or far_id == anchor_id:
+                            continue
+                        out.extend(
+                            self._far_end_on_the_axis(
+                                laid, tail, exit_port, far_trunk, far_id, far_port
+                            )
+                        )
+        return out
+
+    def _far_end_on_the_axis(
+        self,
+        laid: Move,
+        tail: str,
+        exit_port: str,
+        trunk: Trunk,
+        far_id: str,
+        far_port: str,
+    ) -> list[Move]:
+        """Il pezzo grosso all'altro capo della catena, portato con la propria
+        colonna sull'asse d'uscita della catena gia' rimessa in fila: alla
+        distanza che ha, o affacciato alla distanza minima."""
+        exit_point, face = self.port_at(laid[tail], exit_port)
+        far = self.best[far_id]
+        own, _ = self.port_at(far, far_port)
+        column = [item for item in self.column_of(far_id) if item not in laid]
+        if not column:
+            return []
+        direction = _DIRECTION[face]
+        out: list[Move] = []
+        horizontal = face in _HORIZONTAL_FACES
+        aligned_dx = 0.0 if horizontal else exit_point.x_mm - own.x_mm
+        aligned_dy = exit_point.y_mm - own.y_mm if horizontal else 0.0
+        if (aligned_dx, aligned_dy) != (0.0, 0.0):
+            out.append({**laid, **self._translated(column, aligned_dx, aligned_dy)})
+        reach = self._need_mm(trunk)
+        snug = Point(
+            x_mm=exit_point.x_mm + direction[0] * reach, y_mm=exit_point.y_mm + direction[1] * reach
+        )
+        snug_dx, snug_dy = snug.x_mm - own.x_mm, snug.y_mm - own.y_mm
+        if (snug_dx, snug_dy) not in ((0.0, 0.0), (aligned_dx, aligned_dy)):
+            out.append({**laid, **self._translated(column, snug_dx, snug_dy)})
+        return out
+
     def _lay(
         self,
         members: tuple[str, ...],
@@ -779,28 +1038,38 @@ class Improver:
         for index, member in enumerate(members):
             direction = _DIRECTION[face]
             reach = self._need_mm(trunk) + slack * self.step
-            rotations = self._facing_rotations(member, entry_port, face.opposite)
-            degrees = rotations[0] if rotations else self.best[member].rotation_deg
-            port = self.manifest_at(member, degrees).port(entry_port)
+            link: tuple[Trunk, str, str] | None = None
+            if index < len(members) - 1:
+                following = members[index + 1]
+                link = next(
+                    (
+                        (item, mine.port_id, other.port_id)
+                        for item in self.trunks
+                        for mine, other in ((item.start, item.end), (item.end, item.start))
+                        if mine.component_id == member and other.component_id == following
+                    ),
+                    None,
+                )
+                if link is None:
+                    return None
+            # Il raccordo prende la posa che rivolge l'ingresso all'indietro e,
+            # potendo, fa proseguire l'uscita diritta: e' la dorsale.
+            poses = self._facing(
+                member,
+                entry_port,
+                face.opposite,
+                straight=None if link is None else (link[1], face),
+            )
+            here = self.best[member]
+            degrees, port_map = poses[0] if poses else (here.rotation_deg, here.port_map)
+            port = self._port_of(member, degrees, port_map, entry_port)
             origin = Point(
                 x_mm=anchor.x_mm + direction[0] * reach - port.x_mm,
                 y_mm=anchor.y_mm + direction[1] * reach - port.y_mm,
             )
-            move.update(self.place_unit(member, origin, degrees))
-            if index == len(members) - 1:
-                break
-            following = members[index + 1]
-            link = next(
-                (
-                    (item, mine.port_id, other.port_id)
-                    for item in self.trunks
-                    for mine, other in ((item.start, item.end), (item.end, item.start))
-                    if mine.component_id == member and other.component_id == following
-                ),
-                None,
-            )
+            move.update(self.place_unit(member, origin, degrees, port_map))
             if link is None:
-                return None
+                break
             trunk, exit_port, entry_port = link
             anchor, face = self.port_at(move[member], exit_port)
         return move
@@ -811,17 +1080,16 @@ class Improver:
         column = self.column_of(leader)
         if len(column) < 2:
             return []
-        grounded = any(self.standings[item] is Standing.GROUND for item in column)
         out: list[Move] = []
         seen: set[tuple[float, float]] = set()
         for member in column:
             here = self.best[member]
             for single in self._port_moves(member):
                 target = single[member]
-                if target.rotation_deg != here.rotation_deg:
+                if target.rotation_deg != here.rotation_deg or target.port_map != here.port_map:
                     continue
                 dx = target.origin.x_mm - here.origin.x_mm
-                dy = 0.0 if grounded else target.origin.y_mm - here.origin.y_mm
+                dy = target.origin.y_mm - here.origin.y_mm
                 if (dx, dy) == (0.0, 0.0) or (dx, dy) in seen:
                     continue
                 seen.add((dx, dy))
@@ -1046,34 +1314,74 @@ class Improver:
             return None
         return retreated
 
-    def _swap_moves(self, leader: str) -> list[Move]:
-        """Due membri di una pila si scambiano di posto.
+    def _axis_moves(self, leader: str) -> list[Move]:
+        """Gli assi fra le porte, coordinati (DRAW-004).
 
-        Con due macchine impilate, quale sta sopra decide da che parte i
-        raccordi le ricevono: un raccordo a T ha una mano sola, e la macchina
-        che gli entra dall'alto non puo' essere quella che sta sotto.
+        Per ogni collegamento verso un pari di un'altra figura ci sono tre
+        modi di mettere le due porte sullo stesso asse: muovo la mia colonna
+        sull'asse della sua porta (e' la posa da porta, che esiste gia'),
+        muovo la **sua** colonna sull'asse della mia, oppure muovo **tutte e
+        due** verso un asse comune a meta' strada, sul passo. Nessuno dei tre
+        e' una regola: sono candidati, e decide il costo della tavola.
         """
-        column = self.column_of(leader)
         out: list[Move] = []
         me = self.best[leader]
-        for mate in column:
-            if mate == leader:
+        mine = self.column_of(leader)
+        for _, my_port, peer_id, peer_port in self._trunks_of(leader):
+            anchor, face = self.port_at(self.best[peer_id], peer_port)
+            own, _ = self.port_at(me, my_port)
+            theirs = [item for item in self.column_of(peer_id) if item not in mine]
+            if not theirs:
                 continue
-            other = self.best[mate]
-            if abs(other.origin.x_mm - me.origin.x_mm) > _TOLERANCE_MM:
+            horizontal = face in _HORIZONTAL_FACES
+            gap = (own.y_mm - anchor.y_mm) if horizontal else (own.x_mm - anchor.x_mm)
+            if abs(gap) <= _TOLERANCE_MM:
                 continue
-            # Ognuno prende l'origine dell'altro; chi e' piu' alto si allinea
-            # in basso al posto che prende, come una macchina a terra.
-            mine = Point(x_mm=other.origin.x_mm, y_mm=other.bottom_mm - me.height_mm)
-            theirs = Point(x_mm=me.origin.x_mm, y_mm=me.bottom_mm - other.height_mm)
-            move = self.place_unit(leader, mine, me.rotation_deg)
-            move.update(self.place_unit(mate, theirs, other.rotation_deg))
-            out.append(move)
-            # Lo scambio da solo raramente paga: e' il raccordo che li serve a
-            # doversi rimettere in fila dalla porta che ora gli sta davanti.
-            # Le catene e le pose da porta dei vicini si ricavano **sulla pila
-            # gia' scambiata**, e viaggiano nella stessa mossa.
-            out.extend(self._composed_with(move, (leader, mate)))
+            # La colonna del pari sul mio asse.
+            out.append(self._shifted_units(theirs, not horizontal, gap))
+            # Tutte e due su un asse comune: io di mezza distanza, sul passo,
+            # e il pari di quanto resta.
+            half = round(-gap / 2 / self.step) * self.step
+            if half != 0.0 and half != -gap:
+                out.append(
+                    {
+                        **self._shifted_units(mine, not horizontal, half),
+                        **self._shifted_units(theirs, not horizontal, gap + half),
+                    }
+                )
+        return out
+
+    def _tee_moves(self, leader: str) -> list[Move]:
+        """La T che puo' girare (DRAW-004, I-027).
+
+        Per un raccordo che ammette permutazioni degli attacchi, ogni posa —
+        rotazione e permutazione — diversa da quella attuale, sul posto: cosi'
+        il percorso principale puo' usare due attacchi ortogonali e il gomito
+        separato sparisce. Per ognuna, anche la colonna di ogni pari portata
+        sull'asse della porta che ora le sta davanti: e' il raccordo che
+        decide da che parte riceve, e chi riceve si mette in asse.
+        """
+        if len(self.permutations[leader]) < 2:
+            return []
+        me = self.best[leader]
+        out: list[Move] = []
+        for degrees, port_map in self._orientations(leader):
+            if (degrees, port_map) == (me.rotation_deg, me.port_map):
+                continue
+            turned = self.place_unit(leader, me.origin, degrees, port_map)
+            out.append(turned)
+            for _, my_port, peer_id, peer_port in self._trunks_of(leader):
+                own, face = self.port_at(turned[leader], my_port)
+                theirs, _ = self.port_at(self.best[peer_id], peer_port)
+                column = [item for item in self.column_of(peer_id) if item not in turned]
+                if not column:
+                    continue
+                if face in _HORIZONTAL_FACES:
+                    dx, dy = 0.0, own.y_mm - theirs.y_mm
+                else:
+                    dx, dy = own.x_mm - theirs.x_mm, 0.0
+                if (dx, dy) != (0.0, 0.0):
+                    out.append({**turned, **self._translated(column, dx, dy)})
         return out
 
     def _composed_with(self, move: Move, around: tuple[str, ...]) -> list[Move]:
@@ -1123,9 +1431,9 @@ class Improver:
     def _rotation_moves(self, leader: str) -> list[Move]:
         me = self.best[leader]
         return [
-            self.place_unit(leader, me.origin, degrees)
-            for degrees in sorted(self.upright[leader].allowed_rotations_deg)
-            if degrees != me.rotation_deg
+            self.place_unit(leader, me.origin, degrees, port_map)
+            for degrees, port_map in self._orientations(leader)
+            if (degrees, port_map) != (me.rotation_deg, me.port_map)
         ]
 
     def _nudge_moves(self, leader: str) -> list[Move]:
@@ -1160,58 +1468,69 @@ class Improver:
         return (0.0, 1.0) if dy > 0 else (0.0, -1.0)
 
     def candidates(self, component_id: str) -> list[Move]:
-        """Le mosse alternative per un pezzo, in ordine fisso e senza doppioni.
+        """Le mosse alternative per un pezzo, in ordine fisso e senza doppioni."""
+        return [move for _, move in self.candidates_by_kind(component_id)]
 
-        Prima le pose ricavate dalla topologia — catene, porte, colonne, gruppi
-        — poi le rotazioni, infine le traslazioni cieche. Ogni mossa porta la
-        posa nuova dei soli simboli che cambiano.
+    def candidates_by_kind(self, component_id: str) -> list[tuple[str, Move]]:
+        """Le mosse alternative per un pezzo, ciascuna con la propria specie.
+
+        Prima le pose ricavate dalla topologia — dorsali, catene, porte, assi,
+        colonne, gruppi, la T che gira — poi le rotazioni, infine le
+        traslazioni cieche. Ogni mossa porta la posa nuova dei soli simboli
+        che cambiano. La specie serve al diario: il rapporto dice quali
+        alternative sono state provate.
         """
         leader = self.leader_of(component_id)
         chained = self._chain_moves(leader)
         ported = self._port_moves(leader)
-        roomy: list[Move] = []
-        for move in chained + ported:
-            roomy.extend(self._with_room(move, self._axis_of(move)))
-        generated = (
-            chained
-            + ported
-            + roomy
-            + self._column_moves(leader)
-            + self._shift_moves(leader)
-            + self._swap_moves(leader)
-            + self._hang_moves(leader)
-            + self._rotation_moves(leader)
-            + self._nudge_moves(leader)
-        )
+        roomy: list[tuple[str, Move]] = []
+        for kind, moves in (("catena", chained), ("porta", ported)):
+            for move in moves:
+                roomy.extend(
+                    (f"{kind}+spazio", extra)
+                    for extra in self._with_room(move, self._axis_of(move))
+                )
+        generated: list[tuple[str, Move]] = [
+            *(("dorsale", move) for move in self._spine_moves(leader)),
+            *(("catena", move) for move in chained),
+            *(("porta", move) for move in ported),
+            *(("asse", move) for move in self._axis_moves(leader)),
+            *roomy,
+            *(("colonna", move) for move in self._column_moves(leader)),
+            *(("gruppo", move) for move in self._shift_moves(leader)),
+            *(("tee", move) for move in self._tee_moves(leader)),
+            *(("stacco", move) for move in self._hang_moves(leader)),
+            *(("rotazione", move) for move in self._rotation_moves(leader)),
+            *(("passo", move) for move in self._nudge_moves(leader)),
+        ]
         # Chi divide una pila a terra con altri non se ne sfila: una mossa che
         # lo sposta in orizzontale porta con se' i compagni, dello stesso tanto.
         # Chi sta su una tubazione prova tutte e due le cose: da solo e in
         # colonna, e decide il costo.
         column = self.column_of(leader)
         if len(column) > 1:
-            completed: list[Move] = []
+            completed: list[tuple[str, Move]] = []
             grounded = self.standings[leader] is Standing.GROUND
-            for move in generated:
+            for kind, move in generated:
                 if leader not in move:
-                    completed.append(move)
+                    completed.append((kind, move))
                     continue
                 dx = move[leader].origin.x_mm - self.best[leader].origin.x_mm
                 mates = [item for item in column if item != leader and item not in move]
                 if dx == 0.0 or not mates:
-                    completed.append(move)
+                    completed.append((kind, move))
                     continue
                 if not grounded:
-                    completed.append(move)
-                completed.append({**self._translated(mates, dx, 0.0), **move})
+                    completed.append((kind, move))
+                completed.append((kind, {**self._translated(mates, dx, 0.0), **move}))
             generated = completed
-        out: list[Move] = []
-        seen: set[tuple[tuple[str, float, float, int], ...]] = set()
-        for move in generated:
+        out: list[tuple[str, Move]] = []
+        seen: set[Signature] = set()
+        for kind, move in generated:
             changed = {
                 item: placed
                 for item, placed in move.items()
-                if (placed.origin, placed.rotation_deg)
-                != (self.best[item].origin, self.best[item].rotation_deg)
+                if not _same_pose(placed, self.best[item])
             }
             if not changed:
                 continue
@@ -1219,7 +1538,7 @@ class Improver:
             if key in seen:
                 continue
             seen.add(key)
-            out.append(changed)
+            out.append((kind, changed))
         return out
 
     # -- la validita' --------------------------------------------------------
@@ -1232,16 +1551,10 @@ class Improver:
         moved_leaders = {self.leader_of(item) for item in move}
         units = {item: self.leader_of(item) for item in self.order}
         for item, placed in move.items():
-            before = self.best[item]
             if self.standing_at(item, placed.rotation_deg) is not self.standings[item]:
                 return False
-            if self.standings[item] is Standing.GROUND and item not in self.parent_of:
-                if placed.height_mm != before.height_mm:
-                    return False
-                if placed.origin.y_mm != before.origin.y_mm and not self._swapped_in_column(
-                    item, move
-                ):
-                    return False
+            if placed.port_map and placed.port_map not in self.permutations[item]:
+                return False
             if not is_on_grid(placed.origin.x_mm - self.area.x_mm, self.step):
                 return False
             if not is_on_grid(placed.origin.y_mm - self.area.y_mm, self.step):
@@ -1272,12 +1585,20 @@ class Improver:
         # con un altro si sposta in orizzontale solo insieme a lui. Chi sta su
         # una tubazione e divide la colonna con un pari puo' anche muoversi da
         # solo: la mossa di gruppo esiste comunque, e decide il costo.
+        # E una pila conserva il proprio ordine (DRAW-004): chi sta sopra
+        # resta sopra, qualunque quota prendano i membri.
         for leader in moved_leaders:
+            column = self.column_of(leader)
+            if len(column) < 2:
+                continue
+            stacked_before = sorted(column, key=lambda item: self.best[item].origin.y_mm)
+            stacked_after = sorted(column, key=lambda item: after[item].origin.y_mm)
+            if stacked_before != stacked_after:
+                return False
             if move.get(leader, self.best[leader]).origin.x_mm == self.best[leader].origin.x_mm:
                 continue
             if self.standings[leader] is not Standing.GROUND:
                 continue
-            column = self.column_of(leader)
             dx = move[leader].origin.x_mm - self.best[leader].origin.x_mm
             for mate in column:
                 if mate == leader:
@@ -1313,19 +1634,6 @@ class Improver:
             return False
         return True
 
-    def _swapped_in_column(self, item: str, move: Move) -> bool:
-        """Vero se la quota nuova e' quella che un compagno di pila lascia.
-
-        Chi sta a terra non vola: le quote di una pila restano quelle che il
-        posizionamento ha deciso, e i suoi membri possono solo scambiarsele.
-        """
-        column = [mate for mate in self.column_of(item) if self.standings[mate] is Standing.GROUND]
-        if len(column) < 2:
-            return False
-        before = sorted(self.best[mate].bottom_mm for mate in column)
-        after = sorted(move.get(mate, self.best[mate]).bottom_mm for mate in column)
-        return before == after
-
     # -- il ciclo --------------------------------------------------------------
 
     def _offenders(self, current: Measured) -> list[str]:
@@ -1359,7 +1667,7 @@ class Improver:
         for _ in range(MAX_PASSES):
             moved = False
             for leader in self._offenders(current):
-                for move in self.candidates(leader):
+                for kind, move in self.candidates_by_kind(leader):
                     if self.trials >= MAX_TRIAL_ROUTINGS:
                         return [self.best[item] for item in self.order]
                     if not self.is_valid(move):
@@ -1367,7 +1675,11 @@ class Improver:
                     trial = dict(self.best)
                     trial.update(move)
                     found = self.measure(trial)
-                    if found is None or not found.cost.beats(current.cost):
+                    accepted = found is not None and found.cost.beats(current.cost)
+                    self.journal.append(
+                        Attempt(kind, leader, None if found is None else found.cost.key(), accepted)
+                    )
+                    if found is None or not accepted:
                         continue
                     self.best = trial
                     self._refresh_hang_gaps()
@@ -1397,6 +1709,7 @@ def improve_sheet(
 __all__ = [
     "MAX_PASSES",
     "MAX_TRIAL_ROUTINGS",
+    "Attempt",
     "Improver",
     "Measured",
     "Move",

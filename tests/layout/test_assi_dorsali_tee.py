@@ -294,11 +294,14 @@ def test_un_allineamento_gratuito_toglie_una_curva_e_batte_la_posa_iniziale() ->
     # Il candidato sposta soltanto simboli: nessuna tratta e' toccata a mano.
     assert all(isinstance(item, PlacedSymbol) for move in winners for item in move.values())
 
+    # Il ciclo e' greedy sul costo della tavola intera: alla fine batte la
+    # posa iniziale e ha tolto curve, anche se la strada che ha preso puo'
+    # non essere quella del primo candidato che allineava.
     final = {item.component_id: item for item in improver.run()}
-    after = improver.measure(final)
-    assert after is not None
-    assert after.cost.beats(before.cost)
-    assert _bends_of(improver, final)[("c1",)] < bends[("c1",)]
+    settled = improver.measure(final)
+    assert settled is not None
+    assert settled.cost.beats(before.cost)
+    assert sum(_bends_of(improver, final).values()) < sum(bends.values())
 
 
 def test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore() -> None:
@@ -361,7 +364,10 @@ def test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore() -> None
     # Ogni mossa accettata ha battuto strettamente la precedente: l'asse non
     # e' mai stato imposto.
     accepted = [entry for entry in improver.journal if entry.accepted]
-    keys = [before.cost.key(), *(entry.cost for entry in accepted)]
+    keys = [before.cost.key()]
+    for entry in accepted:
+        assert entry.cost is not None
+        keys.append(entry.cost)
     assert all(later < earlier for earlier, later in zip(keys, keys[1:], strict=False))
 
 

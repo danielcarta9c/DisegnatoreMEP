@@ -169,15 +169,17 @@ def test_the_improvement_is_deterministic() -> None:
 
 
 def test_the_total_objective_strictly_improves_and_no_term_worsens() -> None:
-    """Il criterio rivisto di WP3: obiettivo totale strettamente giu';
-    pieghe e attraversamenti mai peggiori, almeno uno strettamente meglio;
-    lunghezza entro il +10% del pre-miglioramento (qui scende)."""
+    """Il criterio rivisto di WP3, letto con l'ordine di DRAW-002 e DRAW-004:
+    obiettivo totale strettamente giu'; le voci del costo si confrontano in
+    ordine lessicografico — pieghe prima degli attraversamenti — quindi una
+    voce successiva puo' salire solo se una precedente e' scesa; lunghezza
+    entro il +10% del pre-miglioramento (qui scende)."""
     before, after = before_and_after()
     objective0, bends0, crossings0, length0 = measured(before)
     objective1, bends1, crossings1, length1 = measured(after)
     assert objective1 < objective0
     assert bends1 <= bends0
-    assert crossings1 <= crossings0
+    assert bends1 < bends0 or crossings1 <= crossings0
     assert bends1 < bends0 or crossings1 < crossings0
     assert length1 <= length0 * 1.10
 
@@ -212,8 +214,10 @@ def test_the_hard_constraints_hold_after_improvement() -> None:
         is_left = centre_x(after, start_id) < centre_x(after, end_id)
         assert was_left == is_left, trunk.connection_ids
 
-    # Chi sta a terra per costruzione ci sta ancora, esattamente sulla linea.
-    # (Non chi la sfiorava per caso: un terminale su tubazione puo' alzarsi.)
+    # Chi sta a terra per costruzione resta dentro l'area e sulla griglia. Da
+    # DRAW-004 la quota di terra e' un suggerimento di posa, non un vincolo:
+    # una macchina puo' salire per allineare le proprie porte, se il modello
+    # non dichiara un vincolo fisico, e nessuna scende sotto la quota.
     drawing = NOVE_C_A3.drawing_rect_mm
     grid = GridSpace(origin=drawing, standard=NOVE_C_A3.standard)
     ground = levels_of(drawing.y_mm, drawing.height_mm, grid.step_mm).ground_mm
@@ -234,7 +238,7 @@ def test_the_hard_constraints_hold_after_improvement() -> None:
     grounded = [item for item in after if stands_on_the_ground(item)]
     assert grounded, "il caso ha macchine a terra"
     for item in grounded:
-        assert item.bottom_mm == ground, item.component_id
+        assert item.bottom_mm <= ground + 1e-9, item.component_id
     # E tutto resta sulla griglia: una coordinata fuori passo solleva.
     for item in after:
         grid.to_cell(item.origin.x_mm, item.origin.y_mm)

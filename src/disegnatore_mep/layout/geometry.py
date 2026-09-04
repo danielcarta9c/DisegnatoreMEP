@@ -31,6 +31,17 @@ class PlacedSymbol(StrictModel):
     width_mm: FiniteFloat = Field(gt=0)
     height_mm: FiniteFloat = Field(gt=0)
     tag: str | None = None
+    port_map: dict[str, str] = Field(default_factory=dict)
+    """Quale attacco fisico del simbolo serve ciascuna porta del modello.
+
+    Vuoto vuol dire «lo stesso»: la porta `a` del modello sta sull'attacco
+    `a` del simbolo. Per un raccordo a T — che si disegna come un punto e ha
+    tre attacchi uguali — la posa puo' decidere che la porta di prosecuzione
+    stia sull'attacco perpendicolare, cosi' che il percorso principale giri
+    nel raccordo invece che in un gomito a parte (DRAW-004, I-027). E' una
+    proprieta' della posa: il grafo, le connessioni e le porte del modello
+    non cambiano, e ogni lettura di una porta passa da qui.
+    """
 
     @property
     def right_mm(self) -> float:
@@ -39,6 +50,10 @@ class PlacedSymbol(StrictModel):
     @property
     def bottom_mm(self) -> float:
         return self.origin.y_mm + self.height_mm
+
+    def physical_port(self, port_id: str) -> str:
+        """L'attacco del simbolo su cui sta questa porta del modello."""
+        return self.port_map.get(port_id, port_id)
 
 
 class RoutedTrunk(StrictModel):
