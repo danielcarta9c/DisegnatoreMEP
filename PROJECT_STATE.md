@@ -10,19 +10,27 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **1095 verdi, 22 parcheggiate, 13 marcate sui difetti aperti** (DRAW-003-R1, fuso su `main`) | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** — che ora compone, ma resta fuori dai budget di qualità — e 4 il foglio di riscontro dei simboli, che non entra più in una pagina sola |
+| Test | **1095 verdi, 22 parcheggiate, 13 marcate sui difetti aperti** (DRAW-004, sul ramo in PR: __SUITE__) | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** — che ora compone, ma resta fuori dai budget di qualità — e 4 il foglio di riscontro dei simboli, che non entra più in una pagina sola |
 | Libreria simboli | 39 pubblicati | A scala fissa ne entrano 32 per foglio: il foglio di riscontro va impaginato su piu' pagine |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
 
 ## Now — in corso
 
+> **✔ DRAW-004 è consegnato in PR (4 settembre), in attesa del verdetto del PM.** Il
+> ciclo di miglioramento lavora in due fasi: la posa di DRAW-002 così com'era, poi la
+> rifinitura da disegnatore a discesa più ripida — assi coordinati fra le porte, dorsale
+> rimessa in fila con il pezzo all'altro capo sull'asse, la T che gira usando due attacchi
+> ortogonali, le macchine a terra che possono cambiare quota — dove ogni candidata si
+> misura dopo il reinstradamento completo e vince solo sul costo unico della tavola. La
+> coppia di attacchi usata da un raccordo è una proprietà della posa (`port_map`), non del
+> grafo. Impianto 1: curve da 10 a 6, incroci da 2 a 1, tubo da 597,5 a 577,5 mm,
+> backtracking e tratte lunghe a zero, valvole 20/20, terra assente, sette sigle in
+> consegna. Rapporto e artefatti in `docs/collaudi/DRAW-004/`.
+>
 > **DRAW-003-R1 è approvato e fuso.** La terra è assente; la geometria resta quella di
 > DRAW-002; la consegna mostra soltanto sette sigle principali e nessun richiamo; gli
-> indirizzi di verifica sono un velo best-effort che non muove nulla. È attivo
-> **DRAW-004**: il motore deve generare e confrontare alternative di allineamento fra
-> porte, dorsali rettilinee e T che assorbono una curva, senza trasformarle in obblighi
-> geometrici e senza eccezioni per la tavola 1.
+> indirizzi di verifica sono un velo best-effort che non muove nulla.
 
 > **DRAW-002-R3 è stato approvato e fuso dal PM il 3 settembre (`2396bff`).** Il controllo
 > del PO ha confermato il miglioramento, ma ha rilevato due difetti materiali per il gate
@@ -264,6 +272,7 @@ dichiarato, vale il corredo minimo, e quella è una domanda — non un'invenzion
 
 | Commit | Cosa |
 |---|---|
+| — | **DRAW-004 — assi fra le porte, dorsali e T che assorbe una curva** (in PR, verdetto del PM atteso). Seconda fase del ciclo a discesa più ripida con candidati da disegnatore, `port_map` sul simbolo posato, macchine a terra libere in quota nella rifinitura, diario delle candidate provate. Impianto 1: curve da 10 a 6, incroci da 2 a 1, tubo da 597,5 a 577,5 mm; otto prove generali scritte prima del codice |
 | — | **DRAW-003-R1 — via la linea di terra, testi come fase terminale a costo zero** (sulla PR #11, verdetto del PM atteso). Nessuna linea o tratteggio di terra nell'SVG, quota non esportata, centratura su simboli e tubazioni; etichette sul primo lato adiacente libero, richiamo corto e pulito solo per le sigle delle macchine, indirizzi di verifica a buon fine; nessun rilievo sui testi è bloccante. Impianto 1: simboli e rotte identici a DRAW-002; verifica 42 etichette (7 sigle e 35 indirizzi su 45, 10 omessi perché senza un lato libero), nessun richiamo, nessuna scritta sopra tubi, simboli o altre scritte; consegna le sole 7 sigle delle macchine, nessun richiamo, nessuna sigla omessa, tavola identica alla prima consegna. Registrati I-026, I-027 e I-028 per DRAW-004 |
 | `2396bff` | **DRAW-002-R3 — la posa finale la decide il costo delle tubazioni** (approvato e fuso dal PM il 3 settembre). Un solo confronto lessicografico della tavola, niente distensione, candidati dalla topologia, ogni prova dopo l'instradamento completo. Impianto 1: andate e ritorno a zero, incroci da 12 a 2, pieghe da 27 a 10, tubo da 1177,5 a 597,5 mm, valvole D-120 sull'attacco 20 su 20. Sei prove generali scritte prima del codice, cinque prove di regressione sui criteri della tavola 1 |
 | `de5194c` `75bd720` | **DRAW-001 — la tavola dell'impianto 1 migliora, e la regola di vicinanza entra.** La linea non passa più sotto un simbolo: la misura contava il contenimento e lasciava passare chi attraversava da parte a parte, e chi si attaccava al simbolo era per di più esente dalla distanza. Chi isola si posa sull'attacco di ciò che si manutiene, a un passo oltre la cella riservata (D-113, D-120). Riempimento e bilanciamento diventano obiettivi del collocatore invece che avvisi a tavola finita (D-111): riempimento dal 29 al 41 %, squilibrio da 12,6 a 2,6, incroci da 13 a 12, pieghe da 33 a 27, tratte con troppe pieghe da 3 a 1, valvole sull'attacco da 6 a 17 su 20 |

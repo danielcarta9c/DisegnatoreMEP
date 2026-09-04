@@ -6,10 +6,14 @@ regole, ricompone la tavola con la catena corrente e stampa in JSON le
 misure che il pacchetto chiede, piu' l'impronta della geometria.
 
 Uso:
-    .venv/bin/python docs/collaudi/DRAW-004/metriche.py MODELLO.json [GEOMETRIA.json]
+    .venv/bin/python docs/collaudi/DRAW-004/metriche.py MODELLO.json [GEOMETRIA.json] [--diario]
 
 Con la geometria, la tavola si legge invece di ricomporla: e' il modo di
-rimisurare con lo strumento di oggi una tavola prodotta ieri.
+rimisurare con lo strumento di oggi una tavola prodotta ieri. Con `--diario`
+si rifa' da capo la posa e il ciclo di miglioramento per stampare **il
+diario delle candidate provate** (DRAW-004, criterio 4): quali alternative di
+asse, dorsale e T sono state misurate, per quale pezzo, con quale costo, e
+quale ha vinto.
 """
 
 from __future__ import annotations
@@ -416,6 +420,107 @@ def measure(
     }
 
 
+def diario(project_path: Path) -> dict[str, object]:
+    """Il diario del ciclo di miglioramento, rifatto da capo sul modello.
+
+    Due fasi (DRAW-004): la posa di DRAW-002 e la rifinitura da disegnatore.
+    Per la seconda si elencano, pezzo per pezzo, le specie di candidate
+    misurate — dorsale, asse, tee, porta, colonna, e le altre — con quante
+    sono state provate, il costo migliore fra loro e quale e' stata accettata:
+    e' la risposta a «quali alternative di asse sono state provate e perche'
+    quella finale ha vinto».
+    """
+    from collections import Counter, defaultdict
+
+    from disegnatore_mep.layout.improve import Improver
+    from disegnatore_mep.layout.partition import partition_project
+    from disegnatore_mep.layout.place import place_sheet
+    from disegnatore_mep.layout.trunks import build_trunks
+
+    symbols = SymbolRegistry.from_directory(ROOT / "assets" / "symbols")
+    catalog = ComponentRegistry.from_directory(
+        ROOT / "examples" / "layout" / "catalog", symbols=symbols
+    )
+    project = load_project(project_path)
+    inline = inline_component_ids(project, catalog)
+    partition = partition_project(project, build_trunks(project, inline))[0]
+    frame, _ = compose_on_ordinary_frame(project, catalog)
+    placed = place_sheet(project, partition, catalog, frame, inline)
+    improver = Improver(project, partition, catalog, frame, placed, inline)
+    start = improver.measure(improver.best)
+    improver.run()
+    end = improver.measure(improver.best)
+
+    names = (
+        "violazioni", "tratte_con_backtracking", "backtracking_mm", "tratte_oltre_tre_pieghe",
+        "pieghe", "incroci", "lunghezza_mm", "riempimento_negato", "squilibrio",
+    )
+
+    def named(key: tuple[object, ...] | None) -> dict[str, object] | None:
+        return None if key is None else dict(zip(names[:7], key[:7], strict=False))
+
+    placement = [entry for entry in improver.journal if entry.phase == "posa"]
+    refinement = [entry for entry in improver.journal if entry.phase == "rifinitura"]
+    settled = [entry for entry in placement if entry.accepted]
+
+    per_piece: dict[str, dict[str, dict[str, object]]] = defaultdict(dict)
+    for entry in refinement:
+        row = per_piece[entry.leader].setdefault(
+            entry.kind, {"provate": 0, "instradabili": 0, "migliore": None, "accettate": 0}
+        )
+        row["provate"] = int(row["provate"]) + 1
+        if entry.cost is not None:
+            row["instradabili"] = int(row["instradabili"]) + 1
+            best = row["migliore"]
+            if best is None or entry.cost < tuple(best):  # type: ignore[arg-type]
+                row["migliore"] = list(entry.cost)
+        if entry.accepted:
+            row["accettate"] = int(row["accettate"]) + 1
+
+    return {
+        "costo_iniziale": named(None if start is None else start.cost.key()),
+        "prove_posa": improver.trials - improver.axis_trials,
+        "prove_rifinitura": improver.axis_trials,
+        "costo_dopo_la_posa": named(settled[-1].cost)
+        if settled
+        else named(None if start is None else start.cost.key()),
+        "costo_finale": named(None if end is None else end.cost.key()),
+        "posa_specie_provate": dict(Counter(entry.kind for entry in placement)),
+        "posa_accettate": [
+            {"specie": entry.kind, "pezzo": entry.leader, "costo": named(entry.cost)}
+            for entry in placement
+            if entry.accepted
+        ],
+        "rifinitura_specie_provate": dict(Counter(entry.kind for entry in refinement)),
+        "rifinitura_accettate": [
+            {"specie": entry.kind, "pezzo": entry.leader, "costo": named(entry.cost)}
+            for entry in refinement
+            if entry.accepted
+        ],
+        "rifinitura_per_pezzo": {
+            leader: {
+                kind: {**row, "migliore": named(tuple(row["migliore"])) if row["migliore"] else None}  # type: ignore[arg-type]
+                for kind, row in kinds.items()
+            }
+            for leader, kinds in per_piece.items()
+        },
+        "posa_finale": [
+            {
+                "pezzo": item.component_id,
+                "x_mm": item.origin.x_mm,
+                "y_mm": item.origin.y_mm,
+                "rotazione": item.rotation_deg,
+                "attacchi": item.port_map,
+            }
+            for item in improver.best.values()
+        ],
+    }
+
+
 if __name__ == "__main__":
-    given = Path(sys.argv[2]) if len(sys.argv) > 2 else None
-    print(json.dumps(measure(Path(sys.argv[1]), given), ensure_ascii=False, indent=2))
+    arguments = [item for item in sys.argv[1:] if not item.startswith("--")]
+    given = Path(arguments[1]) if len(arguments) > 1 else None
+    if "--diario" in sys.argv:
+        print(json.dumps(diario(Path(arguments[0])), ensure_ascii=False, indent=2))
+    else:
+        print(json.dumps(measure(Path(arguments[0]), given), ensure_ascii=False, indent=2))
