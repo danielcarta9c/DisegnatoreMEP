@@ -28,6 +28,15 @@
 
 ### Intercettazione delle PDC e dell'accumulo
 
+- L'interasse fra gli attacchi di mandata e ritorno della PDC deve lasciare spazio agli
+  accessori sui due rami senza sovrapposizioni e deve consentire, ove conveniente, tubi
+  più diritti verso la macchina collegata. L'aumento dell'interasse è un mezzo per
+  ridurre il costo complessivo, non una quota assoluta valida per ogni macchina.
+- Lo stesso controllo deve essere esteso a tutti gli accessori e ai simboli delle
+  macchine principali e trasformato in una regola generale: geometria, porte, ingombri
+  e aree di rispetto devono consentire le combinazioni dichiarate dal catalogo senza
+  imporre sovrapposizioni o deviazioni evitabili. La regola ricava il distacco necessario
+  dagli ingombri e dalla griglia; non assegna a tutti i simboli lo stesso interasse.
 - Con il filtro a Y correttamente posto all'imbocco del ritorno della PDC, sul relativo
   ramo basta la valvola sul lato destro/rete: la valvola aggiuntiva fra filtro e PDC è
   ridondante.
@@ -73,6 +82,7 @@
 4. [`04-riempimento-e-af.png`](rilievi-grafici/2026-09-04-draw004/04-riempimento-e-af.png)
 5. [`05-accumulo-combinato.png`](rilievi-grafici/2026-09-04-draw004/05-accumulo-combinato.png)
 6. [`06-serpentino-riferimento.png`](rilievi-grafici/2026-09-04-draw004/06-serpentino-riferimento.png)
+7. [`07-interasse-porte-pdc.png`](rilievi-grafici/2026-09-04-draw004/07-interasse-porte-pdc.png)
 
 ## Vincolo operativo
 
