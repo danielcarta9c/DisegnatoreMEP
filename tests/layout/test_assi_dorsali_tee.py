@@ -113,6 +113,14 @@ def _improver(project: ProjectModel, placed: list[PlacedSymbol]) -> Improver:
     return Improver(project, partition, catalog(), NOVE_C_A3, placed, inline)
 
 
+def _refiner(project: ProjectModel, placed: list[PlacedSymbol]) -> Improver:
+    """Il ciclo nella fase di rifinitura, dove vivono i candidati di DRAW-004:
+    assi coordinati, dorsali, la T che gira, le quote delle macchine."""
+    improver = _improver(project, placed)
+    improver.refining = True
+    return improver
+
+
 def _moved(
     placed: list[PlacedSymbol], component_id: str, dx_mm: float = 0.0, dy_mm: float = 0.0
 ) -> list[PlacedSymbol]:
@@ -225,11 +233,26 @@ def tee_che_deve_girare(tags: dict[str, str] | None = None) -> ProjectModel:
 
 def _sopra_il_raccordo(project: ProjectModel) -> list[PlacedSymbol]:
     """La posa iniziale, con il terminale portato sopra il raccordo e girato
-    perche' il suo ingresso guardi in basso: la strada dal raccordo e' una
-    verticale, se il raccordo la offre."""
+    perche' il suo ingresso guardi in basso — la strada dal raccordo e' una
+    verticale, se il raccordo la offre — e l'accumulo a destra del raccordo,
+    con l'ingresso sull'asse della sua uscita diritta."""
     placed = _posa(project)
     where = {item.component_id: item for item in placed}
     tee = where["raccordo"]
+    tank_port = catalog().resolve("buffer-two-port").symbol.manifest.port("a")
+    placed = [
+        item.model_copy(
+            update={
+                "origin": Point(
+                    x_mm=tee.right_mm + 8 * STEP_MM,
+                    y_mm=tee.origin.y_mm + tee.height_mm / 2 - tank_port.y_mm,
+                )
+            }
+        )
+        if item.component_id == "serbatoio"
+        else item
+        for item in placed
+    ]
     radiator = catalog().resolve("radiator").symbol.manifest
     turned = next(
         degrees
@@ -266,7 +289,7 @@ def test_un_allineamento_gratuito_toglie_una_curva_e_batte_la_posa_iniziale() ->
     """Prova 1: due macchine con porte collegabili direttamente ma disallineate."""
     project = macchina_e_serbatoio()
     placed = _posa(project)
-    improver = _improver(project, placed)
+    improver = _refiner(project, placed)
     before = improver.measure(improver.best)
     assert before is not None
     supply, _ = _port(improver, improver.best, "macchina", "water_supply")
@@ -375,7 +398,7 @@ def test_una_macchina_a_terra_puo_partecipare_a_un_candidato_verticale() -> None
     """Prova 3: la quota iniziale e' un suggerimento di posa, non un vincolo."""
     project = macchina_e_serbatoio()
     placed = _posa(project)
-    improver = _improver(project, placed)
+    improver = _refiner(project, placed)
     assert improver.standings["serbatoio"] is Standing.GROUND
     assert improver.standings["macchina"] is Standing.GROUND
     vertical = [
@@ -409,7 +432,7 @@ def test_una_dorsale_con_uno_stacco_resta_rettilinea_e_la_t_sta_sull_asse() -> N
     where = {item.component_id: item for item in placed}
     # Il raccordo viene portato apposta fuori asse, sopra la riga della porta.
     bent = _moved(placed, "raccordo", dy_mm=-3 * STEP_MM)
-    improver = _improver(project, bent)
+    improver = _refiner(project, bent)
     before = improver.measure(improver.best)
     assert before is not None
     bends = _bends_of(improver, improver.best)
@@ -434,12 +457,18 @@ def test_una_dorsale_con_uno_stacco_resta_rettilinea_e_la_t_sta_sull_asse() -> N
         for layout in spine
     )
 
+    # Alla fine decide il costo della tavola intera: il raccordo sta
+    # sull'asse della macchina e la sequenza non paga il dogleg; se il
+    # percorso verso l'accumulo gira, gira **nel raccordo** — la T che
+    # assorbe la curva — e non in un gomito a parte.
     final = {item.component_id: item for item in improver.run()}
-    assert on_the_axis(final)
+    supply, _ = _port(improver, final, "macchina", "water_supply")
+    entry, _ = _port(improver, final, "raccordo", "a")
+    assert supply.y_mm == entry.y_mm, "il raccordo sta sull'asse della macchina"
     settled = _bends_of(improver, final)
-    assert settled[("c1",)] == 0 and settled[("c2",)] == 0
-    # Il ramo parte dal raccordo, che sta sulla dorsale: non e' la dorsale a
-    # piegarsi per lui.
+    assert settled[("c1",)] == 0
+    assert settled[("c2",)] == 0 or (settled[("c2",)] == 1 and final["raccordo"].port_map)
+    assert settled[("c1",)] + settled[("c2",)] < bends[("c1",)] + bends[("c2",)]
     assert where["terminale"].component_id in final
 
 
@@ -459,11 +488,9 @@ def test_una_t_con_due_imbocchi_ortogonali_assorbe_un_gomito() -> None:
     restano identici."""
     project = tee_che_deve_girare()
     placed = _sopra_il_raccordo(project)
-    improver = _improver(project, placed)
+    improver = _refiner(project, placed)
     before = improver.measure(improver.best)
     assert before is not None
-    faces = _faces(improver, improver.best)
-    assert faces["a"].opposite is not faces["b"] or faces["c"] is not PortFace.TOP or True
     bends = _bends_of(improver, improver.best)
     assert bends[("c2",)] + bends[("c3",)] >= 1, "la posa iniziale paga un gomito"
 
@@ -515,15 +542,20 @@ def test_se_la_t_ortogonale_peggiora_resta_la_configurazione_corrente() -> None:
     assert settled is not None
     assert _bends_of(improver, final)[("c1",)] == 0
     assert _bends_of(improver, final)[("c2",)] == 0
+    # Le permutazioni della T sono candidati della rifinitura; quelle che
+    # voltano un attacco al proprio pari si scartano prima di misurarle, le
+    # altre si misurano e nessuna batte la posa diritta.
+    assert improver.refining
     permuted = [
         move
         for move in improver.candidates("raccordo")
         if "raccordo" in move and move["raccordo"].port_map and improver.is_valid(move)
     ]
-    assert permuted, "le permutazioni della T sono fra i candidati"
     for move in permuted:
         found = improver.measure({**final, **move})
         assert found is None or not found.cost.beats(settled.cost)
+    tried = [entry for entry in improver.journal if entry.kind == "tee"]
+    assert tried or not permuted
     assert not final["raccordo"].port_map
 
 

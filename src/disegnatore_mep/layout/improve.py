@@ -131,6 +131,16 @@ quindi non costa la riproducibilita'. Ogni prova e' un `settle_sheet` completo,
 e vale circa un decimo di secondo sull'impianto 1.
 """
 
+MAX_AXIS_TRIALS = 1000
+"""Tetto di instradamenti di prova della seconda fase, quella degli assi.
+
+Il ciclo lavora in due fasi (DRAW-004): prima la posa di DRAW-002, con le
+sue candidate e il suo tetto; poi, dall'ottimo raggiunto, la rifinitura da
+disegnatore — assi fra le porte, dorsali, la T che gira, le quote delle
+macchine — con un tetto proprio, perche' la seconda fase non consumi la
+prima. Anche questo scatta in modo deterministico.
+"""
+
 NUDGE_STEPS = (1, 2, 4, 8)
 """Le traslazioni cieche, in passi di griglia: l'ultima risorsa, dopo le mosse
 ricavate dalle porte. Servono a scansare un ostacolo che nessuna porta indica."""
@@ -494,7 +504,12 @@ class Improver:
             for component_id in trunk.inline_component_ids
         }
         self.trials = 0
+        self.axis_trials = 0
         self.journal: list[Attempt] = []
+        # La fase: nella prima chi sta a terra tiene la quota e i raccordi
+        # provano le sole rotazioni; nella seconda le macchine possono
+        # cambiare quota e i raccordi anche permutare gli attacchi.
+        self.refining = False
         self._memo: dict[Signature, Measured | None] = {}
 
     # -- letture del manifesto -------------------------------------------------
@@ -818,7 +833,7 @@ class Improver:
             key=lambda item: (item != current.rotation_deg, item),
         )
         maps = sorted(
-            self.permutations[component_id],
+            self.permutations[component_id] if self.refining else [current.port_map],
             key=lambda item: (item != current.port_map, sorted(item.items())),
         )
         for degrees in ordered:
@@ -831,7 +846,11 @@ class Improver:
                 if faces in seen:
                     continue
                 seen.add(faces)
-                if toward_peers and not self._looks_at_its_peers(component_id, degrees, port_map):
+                if (
+                    toward_peers
+                    and self.refining
+                    and not self._looks_at_its_peers(component_id, degrees, port_map)
+                ):
                     continue
                 found.append((degrees, port_map))
         return found
@@ -857,7 +876,7 @@ class Improver:
             for degrees, port_map in self._orientations(component_id)
             if self._port_of(component_id, degrees, port_map, port_id).face is wanted
         ]
-        if straight is None:
+        if straight is None or not self.refining:
             return found
         exit_port, exit_face = straight
         return sorted(
@@ -899,14 +918,17 @@ class Improver:
             poses = self._facing(leader, my_port, face.opposite)
             if (me.rotation_deg, me.port_map) not in poses:
                 poses = [(me.rotation_deg, me.port_map), *poses]
+            # Nella prima fase chi sta a terra non cambia quota; nella seconda
+            # si' (DRAW-004): la quota iniziale e' un suggerimento di posa, e
+            # il modello non dichiara un vincolo fisico che la imponga.
+            grounded = self.standings[leader] is Standing.GROUND and not self.refining
             for degrees, port_map in poses:
                 port = self._port_of(leader, degrees, port_map, my_port)
                 # (a) allineamento: la porta sulla riga (o sulla colonna) della
                 # porta del pari, senza muoversi lungo l'asse del collegamento.
-                # Anche chi sta a terra cambia quota (DRAW-004): la quota
-                # iniziale e' un suggerimento, e il modello non dichiara un
-                # vincolo fisico che la imponga.
                 if face in _HORIZONTAL_FACES:
+                    if grounded:
+                        continue
                     aligned = Point(x_mm=me.origin.x_mm, y_mm=anchor.y_mm - port.y_mm)
                 else:
                     aligned = Point(x_mm=anchor.x_mm - port.x_mm, y_mm=me.origin.y_mm)
@@ -920,7 +942,9 @@ class Improver:
                     reach = need + slack * self.step
                     origin = Point(
                         x_mm=anchor.x_mm + direction[0] * reach - port.x_mm,
-                        y_mm=anchor.y_mm + direction[1] * reach - port.y_mm,
+                        y_mm=me.origin.y_mm
+                        if grounded
+                        else anchor.y_mm + direction[1] * reach - port.y_mm,
                     )
                     out.append(self.place_unit(leader, origin, degrees, port_map))
         return out
@@ -1080,6 +1104,9 @@ class Improver:
         column = self.column_of(leader)
         if len(column) < 2:
             return []
+        grounded = not self.refining and any(
+            self.standings[item] is Standing.GROUND for item in column
+        )
         out: list[Move] = []
         seen: set[tuple[float, float]] = set()
         for member in column:
@@ -1089,7 +1116,7 @@ class Improver:
                 if target.rotation_deg != here.rotation_deg or target.port_map != here.port_map:
                     continue
                 dx = target.origin.x_mm - here.origin.x_mm
-                dy = target.origin.y_mm - here.origin.y_mm
+                dy = 0.0 if grounded else target.origin.y_mm - here.origin.y_mm
                 if (dx, dy) == (0.0, 0.0) or (dx, dy) in seen:
                     continue
                 seen.add((dx, dy))
@@ -1314,6 +1341,38 @@ class Improver:
             return None
         return retreated
 
+    def _swap_moves(self, leader: str) -> list[Move]:
+        """Due membri di una pila si scambiano di posto (prima fase).
+
+        Con due macchine impilate, quale sta sopra decide da che parte i
+        raccordi le ricevono: un raccordo a T ha una mano sola, e la macchina
+        che gli entra dall'alto non puo' essere quella che sta sotto. E' una
+        candidata della posa di DRAW-002; nella rifinitura una pila conserva
+        il proprio ordine, e lo scambio non si genera.
+        """
+        column = self.column_of(leader)
+        out: list[Move] = []
+        me = self.best[leader]
+        for mate in column:
+            if mate == leader:
+                continue
+            other = self.best[mate]
+            if abs(other.origin.x_mm - me.origin.x_mm) > _TOLERANCE_MM:
+                continue
+            # Ognuno prende l'origine dell'altro; chi e' piu' alto si allinea
+            # in basso al posto che prende, come una macchina a terra.
+            mine = Point(x_mm=other.origin.x_mm, y_mm=other.bottom_mm - me.height_mm)
+            theirs = Point(x_mm=me.origin.x_mm, y_mm=me.bottom_mm - other.height_mm)
+            move = self.place_unit(leader, mine, me.rotation_deg)
+            move.update(self.place_unit(mate, theirs, other.rotation_deg))
+            out.append(move)
+            # Lo scambio da solo raramente paga: e' il raccordo che li serve a
+            # doversi rimettere in fila dalla porta che ora gli sta davanti.
+            # Le catene e le pose da porta dei vicini si ricavano **sulla pila
+            # gia' scambiata**, e viaggiano nella stessa mossa.
+            out.extend(self._composed_with(move, (leader, mate)))
+        return out
+
     def _axis_moves(self, leader: str) -> list[Move]:
         """Gli assi fra le porte, coordinati (DRAW-004).
 
@@ -1490,19 +1549,32 @@ class Improver:
                     (f"{kind}+spazio", extra)
                     for extra in self._with_room(move, self._axis_of(move))
                 )
-        generated: list[tuple[str, Move]] = [
-            *(("dorsale", move) for move in self._spine_moves(leader)),
-            *(("catena", move) for move in chained),
-            *(("porta", move) for move in ported),
-            *(("asse", move) for move in self._axis_moves(leader)),
-            *roomy,
-            *(("colonna", move) for move in self._column_moves(leader)),
-            *(("gruppo", move) for move in self._shift_moves(leader)),
-            *(("tee", move) for move in self._tee_moves(leader)),
-            *(("stacco", move) for move in self._hang_moves(leader)),
-            *(("rotazione", move) for move in self._rotation_moves(leader)),
-            *(("passo", move) for move in self._nudge_moves(leader)),
-        ]
+        if self.refining:
+            generated: list[tuple[str, Move]] = [
+                *(("dorsale", move) for move in self._spine_moves(leader)),
+                *(("catena", move) for move in chained),
+                *(("porta", move) for move in ported),
+                *(("asse", move) for move in self._axis_moves(leader)),
+                *roomy,
+                *(("colonna", move) for move in self._column_moves(leader)),
+                *(("gruppo", move) for move in self._shift_moves(leader)),
+                *(("tee", move) for move in self._tee_moves(leader)),
+                *(("stacco", move) for move in self._hang_moves(leader)),
+                *(("rotazione", move) for move in self._rotation_moves(leader)),
+                *(("passo", move) for move in self._nudge_moves(leader)),
+            ]
+        else:
+            generated = [
+                *(("catena", move) for move in chained),
+                *(("porta", move) for move in ported),
+                *roomy,
+                *(("colonna", move) for move in self._column_moves(leader)),
+                *(("gruppo", move) for move in self._shift_moves(leader)),
+                *(("scambio", move) for move in self._swap_moves(leader)),
+                *(("stacco", move) for move in self._hang_moves(leader)),
+                *(("rotazione", move) for move in self._rotation_moves(leader)),
+                *(("passo", move) for move in self._nudge_moves(leader)),
+            ]
         # Chi divide una pila a terra con altri non se ne sfila: una mossa che
         # lo sposta in orizzontale porta con se' i compagni, dello stesso tanto.
         # Chi sta su una tubazione prova tutte e due le cose: da solo e in
@@ -1551,10 +1623,25 @@ class Improver:
         moved_leaders = {self.leader_of(item) for item in move}
         units = {item: self.leader_of(item) for item in self.order}
         for item, placed in move.items():
+            before = self.best[item]
             if self.standing_at(item, placed.rotation_deg) is not self.standings[item]:
                 return False
             if placed.port_map and placed.port_map not in self.permutations[item]:
                 return False
+            # Nella prima fase chi sta a terra resta alla propria quota, salvo
+            # scambiarsela con un compagno di pila; nella seconda la quota e'
+            # libera dentro l'area (DRAW-004).
+            if (
+                not self.refining
+                and self.standings[item] is Standing.GROUND
+                and item not in self.parent_of
+            ):
+                if placed.height_mm != before.height_mm:
+                    return False
+                if placed.origin.y_mm != before.origin.y_mm and not self._swapped_in_column(
+                    item, move
+                ):
+                    return False
             if not is_on_grid(placed.origin.x_mm - self.area.x_mm, self.step):
                 return False
             if not is_on_grid(placed.origin.y_mm - self.area.y_mm, self.step):
@@ -1593,7 +1680,7 @@ class Improver:
                 continue
             stacked_before = sorted(column, key=lambda item: self.best[item].origin.y_mm)
             stacked_after = sorted(column, key=lambda item: after[item].origin.y_mm)
-            if stacked_before != stacked_after:
+            if self.refining and stacked_before != stacked_after:
                 return False
             if move.get(leader, self.best[leader]).origin.x_mm == self.best[leader].origin.x_mm:
                 continue
@@ -1634,6 +1721,15 @@ class Improver:
             return False
         return True
 
+    def _swapped_in_column(self, item: str, move: Move) -> bool:
+        """Vero se la quota nuova e' quella che un compagno di pila lascia."""
+        column = [mate for mate in self.column_of(item) if self.standings[mate] is Standing.GROUND]
+        if len(column) < 2:
+            return False
+        before = sorted(self.best[mate].bottom_mm for mate in column)
+        after = sorted(move.get(mate, self.best[mate]).bottom_mm for mate in column)
+        return before == after
+
     # -- il ciclo --------------------------------------------------------------
 
     def _offenders(self, current: Measured) -> list[str]:
@@ -1659,17 +1755,34 @@ class Improver:
         return [item for item in self.scan if item in guilty]
 
     def run(self) -> list[PlacedSymbol]:
-        """Greedy, lessicografico, limitato: la prima mossa che batte la posa
-        corrente sul confronto unico si tiene; una passata senza mosse chiude."""
+        """Due fasi, entrambe lessicografiche e limitate.
+
+        **La posa** (DRAW-002): greedy, la prima mossa che batte la posa
+        corrente sul confronto unico si tiene; una passata senza mosse chiude.
+        **La rifinitura** (DRAW-004): dall'ottimo raggiunto, per ogni pezzo
+        che sta a un capo di una tratta che costa si misurano **tutte** le
+        candidate valide — assi, dorsali, la T che gira, le quote delle
+        macchine, e ancora tutte quelle della posa — e si tiene la migliore,
+        se batte la tavola corrente: cosi' un guadagno grande non e' scavalcato
+        da uno piccolo generato prima. Ogni fase ha il proprio tetto, che
+        scatta in un punto che dipende solo dagli ingressi. Ogni prova finisce
+        nel diario.
+        """
         current = self.measure(self.best)
         if current is None:
             return [self.best[item] for item in self.order]
+        current = self._settle_placement(current)
+        self.refining = True
+        self._refine_axes(current)
+        return [self.best[item] for item in self.order]
+
+    def _settle_placement(self, current: Measured) -> Measured:
         for _ in range(MAX_PASSES):
             moved = False
             for leader in self._offenders(current):
                 for kind, move in self.candidates_by_kind(leader):
                     if self.trials >= MAX_TRIAL_ROUTINGS:
-                        return [self.best[item] for item in self.order]
+                        return current
                     if not self.is_valid(move):
                         continue
                     trial = dict(self.best)
@@ -1688,7 +1801,44 @@ class Improver:
                     break
             if not moved:
                 break
-        return [self.best[item] for item in self.order]
+        return current
+
+    def _refine_axes(self, current: Measured) -> Measured:
+        spent = self.trials
+        for _ in range(MAX_PASSES):
+            moved = False
+            for leader in self._offenders(current):
+                best_found: Measured | None = None
+                best_trial: Move | None = None
+                best_kind = ""
+                for kind, move in self.candidates_by_kind(leader):
+                    if self.trials - spent >= MAX_AXIS_TRIALS:
+                        break
+                    if not self.is_valid(move):
+                        continue
+                    trial = dict(self.best)
+                    trial.update(move)
+                    found = self.measure(trial)
+                    self.journal.append(
+                        Attempt(kind, leader, None if found is None else found.cost.key(), False)
+                    )
+                    if found is None or not found.cost.beats(current.cost):
+                        continue
+                    if best_found is None or found.cost.beats(best_found.cost):
+                        best_found, best_trial, best_kind = found, trial, kind
+                if best_found is not None and best_trial is not None:
+                    self.journal.append(Attempt(best_kind, leader, best_found.cost.key(), True))
+                    self.best = best_trial
+                    self._refresh_hang_gaps()
+                    current = best_found
+                    moved = True
+                if self.trials - spent >= MAX_AXIS_TRIALS:
+                    self.axis_trials = self.trials - spent
+                    return current
+            if not moved:
+                break
+        self.axis_trials = self.trials - spent
+        return current
 
 
 def improve_sheet(
@@ -1707,6 +1857,7 @@ def improve_sheet(
 
 
 __all__ = [
+    "MAX_AXIS_TRIALS",
     "MAX_PASSES",
     "MAX_TRIAL_ROUTINGS",
     "Attempt",
