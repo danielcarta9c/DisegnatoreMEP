@@ -183,8 +183,10 @@ ortogonale lo fanno con un incrocio.
 7. ridenominare tutti gli ID non cambia la geometria; due generazioni coincidono;
 8. aggiungere, cambiare o togliere testi non cambia nessun candidato, simbolo o tubo.
 
-Due prove esistenti sono state riallineate alla specifica: la macchina a terra può
-salire (`test_the_hard_constraints_hold_after_improvement`) e il confronto delle voci è
+Tre prove esistenti sono state riallineate alla specifica: la macchina a terra può
+salire (`test_the_hard_constraints_hold_after_improvement`,
+`test_machines_and_storage_stand_on_the_ground`: la posa le allinea ancora, la
+rifinitura può alzarne una di passi interi e nessuna scende) e il confronto delle voci è
 lessicografico (`test_the_total_objective_strictly_improves_and_no_term_worsens`).
 
 ## 7. Verifiche eseguite

@@ -75,12 +75,46 @@ def test_the_drawn_block_is_centred_in_the_drawing_area() -> None:
 
 
 def test_machines_and_storage_stand_on_the_ground() -> None:
-    """Appoggiati, non appesi: e' la prima cosa che si vede in una tavola vera."""
-    drawn = sheet()
-    placed = {item.component_id: item for item in drawn.symbols}
-    # Nessuna linea disegnata: appoggiati vuol dire allineati in basso fra loro.
-    bottoms = {placed[component_id].bottom_mm for component_id in ("hp", "cylinder", "buffer")}
-    assert len(bottoms) == 1
+    """Appoggiati, non appesi: e' la prima cosa che si vede in una tavola vera.
+
+    La **posa** li allinea in basso fra loro. Da DRAW-004 la quota di terra e'
+    un suggerimento di posa, non un vincolo: la rifinitura puo' alzare una
+    macchina per mettere le porte in asse, se il modello non dichiara un
+    vincolo fisico, e nessuna scende sotto la quota di posa. Sulla tavola
+    composta, quindi, nessuna macchina sta piu' in basso della piu' bassa
+    posata, e la piu' bassa e' ancora appoggiata.
+    """
+    from disegnatore_mep.layout.compose import inline_component_ids
+    from disegnatore_mep.layout.partition import partition_project
+    from disegnatore_mep.layout.place import place_sheet
+    from disegnatore_mep.layout.trunks import build_trunks
+
+    project = load_project(PROJECT)
+    registry = ComponentRegistry.from_directory(
+        CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
+    )
+    inline = inline_component_ids(project, registry)
+    partition = partition_project(project, build_trunks(project, inline))[0]
+    placed = {
+        item.component_id: item
+        for item in place_sheet(project, partition, registry, NOVE_C_A3, inline)
+    }
+    machines = ("hp", "cylinder", "buffer")
+    assert len({placed[component_id].bottom_mm for component_id in machines}) == 1
+
+    # Sulla tavola composta la centratura trasla tutto il blocco insieme:
+    # si confrontano le distanze fra le macchine, non le quote assolute. Chi
+    # e' salito lo ha fatto di passi interi, e nessuna e' scesa sotto la
+    # quota di posa comune.
+    drawn = {item.component_id: item for item in sheet().symbols}
+    step = NOVE_C_A3.standard.grid_mm
+    lowest = max(drawn[component_id].bottom_mm for component_id in machines)
+    placed_ground = placed["hp"].bottom_mm
+    for component_id in machines:
+        lifted = lowest - drawn[component_id].bottom_mm
+        assert lifted >= 0.0
+        assert lifted % step == 0.0, (component_id, lifted)
+        assert placed[component_id].bottom_mm == placed_ground
 
 
 def test_an_inline_accessory_rides_its_own_run() -> None:
