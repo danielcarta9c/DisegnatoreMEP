@@ -10,12 +10,19 @@
 | Sviluppo | Locale o cloud | Ambiente ricostruibile con `bash scripts/setup-env.sh` |
 | Interprete | Python 3.12, minimo 3.11 | |
 | Pacchetto | `disegnatore-mep` 0.1.0 | Installato in editable nella `.venv` |
-| Test | **1090 verdi, 22 parcheggiate, 13 marcate sui difetti aperti** (DRAW-003-R1, sul ramo in PR) | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** — che ora compone, ma resta fuori dai budget di qualità — e 4 il foglio di riscontro dei simboli, che non entra più in una pagina sola |
+| Test | **1095 verdi, 22 parcheggiate, 13 marcate sui difetti aperti** (DRAW-003-R1, fuso su `main`) | `pytest`, `ruff` e `mypy --strict` a exit `0` su `src`, `tests` ed `examples`. Delle 22 parcheggiate, **18 riguardano la composizione** — che ora compone, ma resta fuori dai budget di qualità — e 4 il foglio di riscontro dei simboli, che non entra più in una pagina sola |
 | Libreria simboli | 39 pubblicati | A scala fissa ne entrano 32 per foglio: il foglio di riscontro va impaginato su piu' pagine |
 | Catalogo | 53 voci, 17 regole | |
 | Release | Non disponibile | |
 
 ## Now — in corso
+
+> **DRAW-003-R1 è approvato e fuso.** La terra è assente; la geometria resta quella di
+> DRAW-002; la consegna mostra soltanto sette sigle principali e nessun richiamo; gli
+> indirizzi di verifica sono un velo best-effort che non muove nulla. È attivo
+> **DRAW-004**: il motore deve generare e confrontare alternative di allineamento fra
+> porte, dorsali rettilinee e T che assorbono una curva, senza trasformarle in obblighi
+> geometrici e senza eccezioni per la tavola 1.
 
 > **DRAW-002-R3 è stato approvato e fuso dal PM il 3 settembre (`2396bff`).** Il controllo
 > del PO ha confermato il miglioramento, ma ha rilevato due difetti materiali per il gate
