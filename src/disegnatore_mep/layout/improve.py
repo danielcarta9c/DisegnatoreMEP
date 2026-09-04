@@ -190,6 +190,9 @@ class Attempt(NamedTuple):
     stata accettata.
     """
 
+    phase: str
+    """`posa` (DRAW-002) o `rifinitura` (DRAW-004)."""
+
     kind: str
     leader: str
     cost: tuple[int, int, float, int, int, int, float, float, float] | None
@@ -1790,7 +1793,9 @@ class Improver:
                     found = self.measure(trial)
                     accepted = found is not None and found.cost.beats(current.cost)
                     self.journal.append(
-                        Attempt(kind, leader, None if found is None else found.cost.key(), accepted)
+                        Attempt(
+                            "posa", kind, leader, None if found is None else found.cost.key(), accepted
+                        )
                     )
                     if found is None or not accepted:
                         continue
@@ -1820,14 +1825,22 @@ class Improver:
                     trial.update(move)
                     found = self.measure(trial)
                     self.journal.append(
-                        Attempt(kind, leader, None if found is None else found.cost.key(), False)
+                        Attempt(
+                            "rifinitura",
+                            kind,
+                            leader,
+                            None if found is None else found.cost.key(),
+                            False,
+                        )
                     )
                     if found is None or not found.cost.beats(current.cost):
                         continue
                     if best_found is None or found.cost.beats(best_found.cost):
                         best_found, best_trial, best_kind = found, trial, kind
                 if best_found is not None and best_trial is not None:
-                    self.journal.append(Attempt(best_kind, leader, best_found.cost.key(), True))
+                    self.journal.append(
+                        Attempt("rifinitura", best_kind, leader, best_found.cost.key(), True)
+                    )
                     self.best = best_trial
                     self._refresh_hang_gaps()
                     current = best_found

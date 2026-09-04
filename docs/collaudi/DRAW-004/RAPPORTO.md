@@ -90,7 +90,7 @@ solo dagli ingressi. Sull'impianto 1 la posa usa 1291 prove e la rifinitura
 | Linea continua di terra | assente | **assente** | 6 |
 | Etichette in consegna | 7 sigle | **7 sigle** | 6 |
 | Riempimento (solo diagnostica) | 36,4 % | 38,1 % | — |
-| Impronta della geometria (consegna) | `a39cf5d7…` | `__IMP__` | |
+| Impronta della geometria (consegna) | `a39cf5d7…` | `ac7036bd…` | |
 
 ## 3. Le alternative di asse provate, e perché quella finale ha vinto (criterio 4)
 
