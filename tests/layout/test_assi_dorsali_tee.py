@@ -559,6 +559,80 @@ def test_se_la_t_ortogonale_peggiora_resta_la_configurazione_corrente() -> None:
     assert not final["raccordo"].port_map
 
 
+def _keeps_every_port_in_place(project: ProjectModel, component_id: str) -> None:
+    """Nessuna permutazione per un pezzo che non e' un raccordo: ne' fra le
+    ammesse, ne' in nessun candidato di nessun pezzo, ne' nella posa finale."""
+    placed = _posa(project)
+    improver = _improver(project, placed)
+    assert improver.permutations[component_id] == [{}]
+    for leader in improver.order:
+        for move in improver.candidates(leader):
+            for item, pose in move.items():
+                assert pose.port_map == {}, (leader, item)
+    final = {item.component_id: item for item in improver.run()}
+    assert final[component_id].port_map == {}
+    assert all(item.port_map == {} for item in final.values())
+    drawn = compose_drawing(project, catalog(), NOVE_C_A3).sheets[0]
+    assert all(item.port_map == {} for item in drawn.symbols)
+
+
+def test_una_valvola_miscelatrice_a_tre_vie_non_permuta_le_porte() -> None:
+    """Tre porte dello stesso fluido, ma ognuna con un ruolo: calda, fredda,
+    uscita. Il catalogo la dichiara `circuit_mixing`, non raccordo, e il
+    disegnatore non le scambia mai."""
+    project = _plant(
+        components=[
+            ("macchina", "heat-pump-air-water"),
+            ("miscelatrice", "mixing-valve-3way"),
+            ("terminale", "radiator"),
+        ],
+        connections=[
+            ("c1", "macchina", "water_supply", "miscelatrice", "hot_in"),
+            ("c2", "miscelatrice", "out", "terminale", "in"),
+            ("c3", "terminale", "out", "miscelatrice", "cold_in"),
+        ],
+        subsystems=[
+            ("generazione", ["macchina"]),
+            ("distribuzione", ["miscelatrice"]),
+            ("utenza", ["terminale"]),
+        ],
+    )
+    _keeps_every_port_in_place(project, "miscelatrice")
+
+
+def test_un_collettore_di_zona_non_permuta_le_porte() -> None:
+    """Un ingresso e due uscite dello stesso fluido: il catalogo lo dichiara
+    `distribution`, e le sue porte restano dove sono."""
+    project = _plant(
+        components=[
+            ("macchina", "heat-pump-air-water"),
+            ("collettore", "zone-manifold"),
+            ("zona-uno", "radiator"),
+            ("zona-due", "radiator"),
+        ],
+        connections=[
+            ("c1", "macchina", "water_supply", "collettore", "in"),
+            ("c2", "collettore", "out_1", "zona-uno", "in"),
+            ("c3", "collettore", "out_2", "zona-due", "in"),
+        ],
+        subsystems=[
+            ("generazione", ["macchina"]),
+            ("distribuzione", ["collettore"]),
+            ("utenza", ["zona-uno", "zona-due"]),
+        ],
+    )
+    _keeps_every_port_in_place(project, "collettore")
+
+
+def test_solo_un_raccordo_dichiarato_dal_catalogo_ammette_permutazioni() -> None:
+    """Il criterio e' la funzione di catalogo, non il numero di porte."""
+    project = tee_che_deve_girare()
+    improver = _improver(project, _posa(project))
+    assert len(improver.permutations["raccordo"]) > 1
+    assert improver.permutations["macchina"] == [{}]
+    assert improver.permutations["serbatoio"] == [{}]
+
+
 # ---------------------------------------------------------------------------
 # 7-8. Determinismo, identificativi, testi
 # ---------------------------------------------------------------------------

@@ -83,6 +83,7 @@ from itertools import permutations
 from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.catalog.schema import FITTING_FUNCTIONS
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest, SymbolPort
 from disegnatore_mep.model.project import ProjectModel
@@ -346,18 +347,24 @@ def _snap_up(value_mm: float, step_mm: float) -> float:
 
 
 def _admitted_permutations(
-    manifest: SymbolManifest, ports: list[tuple[str, str]]
+    manifest: SymbolManifest, ports: list[tuple[str, str]], functions: frozenset[str]
 ) -> list[PortMap]:
-    """Le permutazioni degli attacchi che il simbolo e il catalogo ammettono.
+    """Le permutazioni degli attacchi che il catalogo e il simbolo ammettono.
 
-    L'identita' viene sempre prima. Le altre esistono solo per un pezzo con
-    almeno tre attacchi, tutti dello stesso dominio e fluido nel catalogo e
-    tutti presenti nel manifesto: un raccordo, che si disegna come un punto e
-    nel quale ogni attacco vale l'altro. Un simbolo con attacchi di natura
-    diversa — un accumulo, una macchina — non ne ammette nessuna: le sue
-    porte hanno un posto ciascuna.
+    L'identita' viene sempre prima. Le altre esistono solo per un **raccordo**:
+    un pezzo che il catalogo dichiara semanticamente come tale — le funzioni di
+    `FITTING_FUNCTIONS`, unire due tubazioni o aprire una derivazione — con
+    almeno tre attacchi, tutti dello stesso dominio e fluido e tutti presenti
+    nel manifesto. Un raccordo si disegna come un punto e ogni suo attacco
+    vale l'altro. Tutto il resto non ne ammette nessuna, anche se ha tre o
+    piu' porte dello stesso fluido: in una valvola miscelatrice, in una
+    deviatrice, in un collettore o in un accumulo ogni porta ha un ruolo, e
+    scambiarle cambierebbe l'impianto, non il disegno. Il criterio e' la
+    funzione dichiarata dal catalogo (D-069), mai il nome del pezzo.
     """
     identity: PortMap = {}
+    if not functions & FITTING_FUNCTIONS:
+        return [identity]
     ids = [port_id for port_id, _ in ports]
     if len(ids) < 3 or len({kind for _, kind in ports}) != 1:
         return [identity]
@@ -456,13 +463,15 @@ class Improver:
                 frozenset(resolved.definition.functions),
                 resolved.is_inline,
             )
-            # Le permutazioni ammesse: fra attacchi che il simbolo dichiara
-            # con la stessa geometria di attacco — un raccordo che si disegna
-            # come un punto — e che il catalogo dichiara dello stesso dominio
-            # e fluido. Un simbolo con attacchi diversi non ne ammette nessuna.
+            # Le permutazioni ammesse: solo per un raccordo — cosi' lo dice il
+            # catalogo, con le sue funzioni — fra attacchi dello stesso dominio
+            # e fluido. Una valvola a tre vie o un collettore hanno tre porte
+            # dello stesso fluido e non ne ammettono nessuna: ogni porta ha un
+            # ruolo.
             self.permutations[item.component_id] = _admitted_permutations(
                 resolved.symbol.manifest,
                 [(port.id, f"{port.domain}:{port.medium}") for port in resolved.definition.ports],
+                frozenset(resolved.definition.functions),
             )
         self._turned: dict[tuple[str, int], SymbolManifest] = {}
         self.standings = {
