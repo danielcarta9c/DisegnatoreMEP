@@ -10,6 +10,8 @@ graficamente approvata dal PM/PO.
 - `DRAW-002`: motore di posa costo-peso e routing compatto;
 - `DRAW-003`: rimozione definitiva della linea continua di terra e fase terminale delle
   etichette, indipendente da posa e routing;
+- `DRAW-004`: candidati di allineamento fra porte, dorsali principali rettilinee e T che
+  può assorbire una curva, sempre scelti dal costo globale e mai come regole assolute;
 - uscita: PDF, PNG, SVG e metriche riproducibili della tavola 1.
 
 Gate: il PO riconosce un disegno ordinato e tecnicamente leggibile. Finché questo gate
