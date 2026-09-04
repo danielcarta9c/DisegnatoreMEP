@@ -1,170 +1,164 @@
-# DRAW-003 — via la linea di terra, e i testi come fase terminale
+# DRAW-003 / R1 — via la linea di terra, e i testi come fase terminale a costo zero
 
-**Ramo:** `claude/draw-003-terra-etichette`
-**Base:** `c1ddfbf` — il `main` che porta il Work Package DRAW-003 e il merge di DRAW-002
+**Ramo:** `claude/draw-003-terra-etichette` — PR #11, aggiornata
+**Base:** `c1ddfbf` (DRAW-003) integrata con `ceaa6e5` (DRAW-003-R1)
 **Campo:** il solo impianto 1 (D-116)
 
 Tutto ciò che segue è misurato sulla stessa catena, con lo stesso ingresso, il giorno
 stesso. Gli artefatti stanno in `prima/` — la tavola di DRAW-002, rimisurata con lo
 strumento di oggi — e in `dopo/`; lo strumento è `metriche.py`, che legge la geometria
-agli atti e non la ricompone. L'immagine annotata del PO non è stata usata per ricavare
-requisiti: questo lavoro attua la specifica del Work Package.
+agli atti e non la ricompone.
 
-## 1. Che cosa è cambiato, e perché
+## 0. La revisione, e perché
 
-### 1.1 La linea di terra non esiste più sulla tavola (D-121, I-024)
+La prima consegna di DRAW-003 toglieva la linea di terra e rendeva contrattuale la
+sequenza posa → tubazioni → centratura → testi: quelle due parti sono accettate dal PM e
+qui restano invariate. Trattava però le etichette come un criterio bloccante, con un
+richiamo al primo conflitto e tre gradi di rigore che arrivavano ad attraversare tubi e
+simboli: sull'impianto 1 ne uscivano 38 richiami su 52 testi. Il PO ha corretto la
+priorità, e il PM ha ritirato quella specifica come errata.
 
-**Causa.** D-121 era attuata a metà: tubazioni e testi potevano attraversare la quota,
-ma la composizione continuava a scrivere `ground_line_y_mm` nella geometria, il renderer
-disegnava una linea continua con il tratteggio del pavimento su tutta la larghezza
-dell'area, e la centratura del blocco contava quella quota come fondo del disegno.
+**La gerarchia vincolante** (DRAW-003-R1): correttezza del grafo; geometria di macchine,
+accessori e tubazioni; costo delle tubazioni; e soltanto a geometria congelata i testi,
+che hanno **costo nullo** rispetto alla geometria, non spostano niente e non bloccano mai
+l'emissione della tavola. Questo rapporto non dichiara più alcun criterio sulle etichette
+come prioritario rispetto alla geometria.
 
-**Correzione.**
-- Il renderer non disegna più la linea né il tratteggio, **qualunque cosa porti la
-  geometria**: anche una geometria vecchia con la quota scritta esce senza terra. È
-  l'unico percorso di rendering della tavola; il foglio di riscontro dei simboli non ha
-  mai avuto una terra.
-- La composizione non esporta più la quota. Il campo resta nel modello geometrico,
-  sempre `None`, perché le geometrie già agli atti si leggano e perché il comando di
-  disegno, fuori perimetro, lo nomina ancora passandolo alla posa degli indirizzi, che
-  ora lo ignora.
-- La quota interna di posa (`levels.ground_mm`) resta il riferimento su cui le macchine
-  si allineano in basso: è un dato del collocatore, non un elemento della tavola.
-- La centratura conta soltanto simboli e tubazioni.
+## 1. Che cosa è cambiato in R1
 
-### 1.2 I testi sono l'ultima fase, e non toccano niente (I-025, D-075, D-110, D-111)
+### 1.1 Conservato: nessuna linea di terra, testi dopo il routing
 
-**Sequenza.** `compose_sheet` ora fa, nell'ordine: posa, instradamento completo con gli
-accessori in linea, centratura del blocco, e **solo alla fine** i testi, su simboli e
-rotte già definitivi. Prima i testi entravano nella centratura: la lunghezza di una sigla
-poteva spostare le macchine. Il contratto è provato: una sigla di cinquanta caratteri,
-o nessuna sigla, o il velo degli indirizzi di verifica, danno simboli e rotte
-bit-identici.
+- Il renderer non disegna la linea né il tratteggio, qualunque cosa porti la geometria;
+  la composizione non esporta la quota; la centratura conta solo simboli e tubazioni.
+  Invariato rispetto alla prima consegna, riprovato (`tests/graphics/test_terra.py`).
+- La sequenza posa → tubazioni → centratura → testi è un contratto provato: una sigla di
+  cinquanta caratteri, nessuna sigla, o il velo degli indirizzi di verifica danno simboli
+  e rotte bit-identici. Etichette e richiami non entrano in `SheetCost`, nei candidati
+  né in nessuna misura del collocatore.
 
-**Posa dei testi.** Ogni testo ha una posizione preferita: la sigla sopra il pezzo, i
-valori sotto, l'indirizzo di verifica a destra. Se è libera, il testo resta lì senza
-richiamo. Se collide con un tubo, un simbolo, un'altra etichetta o il margine dell'area
-di disegno, non si muove nulla di ciò che è disegnato: il testo prende una diagonale a
-45 gradi da uno spigolo del proprio pezzo, allungata di un passo per volta, e si ferma
-al primo posto libero. Le vecchie ricerche per lati e anelli senza richiamo — fino a
-otto passi di distanza — sono rimosse.
+### 1.2 Ritirato: il richiamo al primo conflitto e i gradi di rigore
 
-**Il richiamo.** Tre gradi di rigore, provati in quest'ordine: la diagonale non
-attraversa tubi, simboli, testi né altri richiami; poi può attraversare tubi e altri
-richiami; poi, ultima risorsa di un pezzo murato fra due macchine, anche un simbolo. In
-ogni caso il testo sta dentro l'area e non copre nulla. Il preflight dice dove il rigore
-è sceso.
+La ricerca della diagonale a tre gradi di rigore — che al secondo attraversava tubi e
+altri richiami, al terzo passava sopra i simboli, e in ultimo scriveva comunque sulla
+prima diagonale — è rimossa. Rimosso anche il carattere bloccante dei rilievi sui testi.
 
-**Gli indirizzi di verifica** seguono lo stesso ordine e la stessa regola, e da oggi
-non finiscono più sopra un tubo: la vecchia nota di D-110 che li ammetteva attraversati
-da una tubazione è superata dal criterio 4 del pacchetto.
+### 1.3 La regola nuova, semplice e a buon fine
 
-### 1.3 Validazione
+- Ogni testo prova, in **ordine fisso**, i lati adiacenti al proprio pezzo — la sigla
+  sopra, poi sotto, a destra, a sinistra; i valori sotto per primi; l'indirizzo di
+  verifica a destra per primo — e si ferma al primo posto libero da simboli, tubi, altri
+  testi e margine, **senza richiamo**: un testo che cambia lato resta una scritta accanto
+  al proprio pezzo (D1).
+- **Sigle e valori delle macchine** (i testi della tavola definitiva): se nessun lato è
+  libero, un richiamo **corto** a 45 gradi da uno spigolo del pezzo, al massimo dodici
+  passi di corsa, e solo se non attraversa tubi, simboli, testi né altri richiami. Se
+  nemmeno quello esiste, il testo **si omette** e il preflight lo dice con l'avviso
+  `TAG_OMITTED`. Un richiamo si disegna quando chiarisce, mai quando confonde.
+- **Indirizzi della modalità verifica**: velo a buon fine per identificare un pezzo.
+  Adiacenti se c'è un lato libero, altrimenti **omessi**; mai richiamati, nessun rilievo.
+- **Tavola definitiva**: nessun indirizzo della rete; restano le sole sigle delle macchine
+  principali — sull'impianto 1 le sette macchine che il modello sigla — posate dopo il
+  routing e senza influenzarlo.
 
-- Cancello di correttezza: `LABEL_OUTSIDE_DRAWING_AREA` (bloccante), oltre a
-  `LABEL_COLLISION` che c'era.
-- Preflight: `LABEL_ON_A_RUN` (bloccante); `LEADERS_CROSS`, `LEADER_CROSSES_A_RUN`,
-  `LEADER_CROSSES_A_SYMBOL` (avvisi, perché sono l'esito dichiarato di una tavola
-  affollata, non un difetto della regola).
+### 1.4 Validazione
+
+- Il cancello di correttezza è invariato (`LABEL_COLLISION`, `LABEL_OUTSIDE_DRAWING_AREA`):
+  il disegnatore non produce più quei casi per costruzione, perché scrive solo su un posto
+  libero o omette.
+- Preflight: `LABEL_ON_A_RUN`, `LEADERS_CROSS`, `LEADER_CROSSES_A_RUN`,
+  `LEADER_CROSSES_A_SYMBOL` e il nuovo `TAG_OMITTED` sono tutti **avvisi**. Nessun rilievo
+  sui testi blocca PDF, PNG o SVG. Gli indirizzi si aggiungono dopo i cancelli, come già
+  in DRAW-001, quindi non li attraversano nemmeno.
 
 ## 2. Le misure, prima e dopo
 
-| Misura | Prima (DRAW-002) | Dopo (DRAW-003) | |
-|---|---:|---:|---|
-| Linea continua di terra nell'SVG | sì (gruppo `ground`, linea + 254 trattini) | **no** | criterio 1 |
-| Quota di terra esportata nella geometria | 188,5 mm | **nessuna** | |
-| Etichette (modalità verifica) | 52 | 52 | |
-| Etichette sopra un tubo | 23 | **0** | criterio 4 |
-| Etichette sopra un simbolo o un'altra etichetta | 0 | **0** | criterio 4 |
-| Etichette con richiamo obliquo | 0 | 38 | criterio 5 |
-| Richiami che attraversano un tubo | — | 5 | avviso |
-| Richiami che passano sopra un simbolo | — | 2 | avviso |
-| Coppie di richiami che si incrociano | — | 1 | avviso |
-| Backtracking | 0 tratte, 0 mm | **0 tratte, 0 mm** | criterio 2 |
-| Tratte oltre tre pieghe | 0 | **0** | criterio 2 |
-| Incroci | 2 | **2** | criterio 2 |
-| Lunghezza delle tubazioni | 597,5 mm | **597,5 mm** | criterio 2 |
-| Valvole D-120 a 2,5÷5 mm | 20 su 20 | **20 su 20** | criterio 2 |
-| Simboli e rotte rispetto a DRAW-002 | — | **identici, traslazione nulla** | criterio 3 |
-| Rilievi bloccanti (con lo strumento di oggi) | 23 `LABEL_ON_A_RUN` | **0** | |
-| Impronta della geometria (verifica) | `992ccb58…` | `dd4f21bd…` | cambia per le sole etichette |
+| Misura | Prima (DRAW-002) | DRAW-003 prima consegna | **DRAW-003-R1** | |
+|---|---:|---:|---:|---|
+| Linea continua di terra nell'SVG | sì (linea + 254 trattini) | no | **no** | criterio 1 |
+| Backtracking | 0 tratte, 0 mm | 0 / 0 | **0 / 0** | criterio 2 |
+| Tratte oltre tre pieghe | 0 | 0 | **0** | criterio 2 |
+| Incroci | 2 | 2 | **2** | criterio 2 |
+| Lunghezza delle tubazioni | 597,5 mm | 597,5 mm | **597,5 mm** | criterio 2 |
+| Valvole D-120 a 2,5÷5 mm | 20 su 20 | 20 su 20 | **20 su 20** | criterio 2 |
+| Simboli e rotte rispetto a DRAW-002 | — | identici | **identici, traslazione nulla** | criteri 2, 3 |
+| Etichette in modalità verifica (sigle + indirizzi) | 52 (7 + 45) | 52 (7 + 45) | **42 (7 + 35)** | criterio 4 |
+| Indirizzi omessi perché senza lato libero | 0 | 0 | **10 su 45** | criterio 4 |
+| Etichette con richiamo (verifica) | 0 | 38 | **0** | criterio 4 |
+| Richiami che attraversano tubi, simboli o altri richiami | — | 5 + 2 + 1 coppia | **0** | |
+| Etichette sopra un tubo, un simbolo o un'altra etichetta | 23 / 0 / 0 | 0 / 0 / 0 | **0 / 0 / 0** | |
+| Etichette in tavola definitiva | 7 sigle | 7 sigle | **7 sigle, 0 richiami, 0 omesse** | criterio 5 |
+| Rilievi bloccanti sui testi | — | 23 `LABEL_ON_A_RUN` sulla tavola vecchia | **nessuno, per costruzione** | criterio 6 |
+| Impronta della geometria (verifica) | `992ccb58…` | `dd4f21bd…` | `3117ffed…` | cambia per le sole etichette |
 
-I 23 rilievi bloccanti della colonna «prima» non esistevano al tempo di DRAW-002: sono
-la misura nuova di questo pacchetto applicata alla tavola vecchia, e dicono quanto quel
-difetto era esteso.
-
-## 3. I criteri di accettazione DEV, uno per uno
+## 3. I criteri di accettazione DRAW-003-R1, uno per uno
 
 | # | Criterio | Esito | Prova |
 |---|---|---|---|
-| 1 | Nessuna linea o tratteggio continuo di terra nel PDF, PNG e SVG | **soddisfatto** | `dopo/impianto1.svg` non contiene il gruppo `ground` né linee orizzontali che attraversano l'area; PDF e PNG sono resi da quello stesso SVG; prova `tests/graphics/test_terra.py` su una tavola a mano che dichiara ancora la quota e sulla tavola composta |
-| 2 | Nessuna regressione sulle metriche di DRAW-002 | **soddisfatto** | `dopo/metriche.json`: backtracking 0/0, tratte oltre tre pieghe 0, incroci 2, lunghezza 597,5 mm, valvole 20/20 |
-| 3 | Simboli e rotte coincidono con DRAW-002 | **soddisfatto** | confronto punto per punto fra `prima/geometria.json` e `dopo/geometria.json`: stesse origini, rotazioni e riquadri dei 45 simboli, stessi punti delle 20 rotte, traslazione nulla |
-| 4 | Nessuna collisione finale etichetta/etichetta, etichetta/simbolo, etichetta/tubo | **soddisfatto** | `etichette_su_tubo 0`, `etichette_su_simbolo 0`, `etichette_su_etichetta 0`; rilievi di correttezza vuoti; nessun `LABEL_ON_A_RUN` |
-| 5 | Ogni etichetta spostata porta un richiamo obliquo leggibile | **soddisfatto** | 38 richiami, tutti a 45 gradi da uno spigolo del proprio pezzo (nessun `ORTHOGONAL_LABEL_LEADER` né `LEADER_NOT_AT_45_DEGREES`); i 14 testi senza richiamo stanno al posto preferito |
-| 6 | Verifica e consegna differiscono solo per il velo degli indirizzi | **soddisfatto** | `dopo/geometria.json` e `dopo/consegna/geometria.json`: simboli e rotte uguali; le 7 sigle di consegna sono identiche nelle due tavole; prova `test_gli_indirizzi_di_verifica_non_cambiano_simboli_ne_rotte` |
-| 7 | Suite, `ruff`, `mypy --strict` verdi; output deterministico | **soddisfatto** | §5; due generazioni consecutive danno la stessa impronta |
-| 8 | PDF, PNG, SVG aggiornati, confronto con DRAW-002, rapporto criterio per criterio | **soddisfatto** | `dopo/`, `dopo/consegna/`, `prima-dopo.png`, questo rapporto |
+| 1 | Linea e tratteggio continui di terra assenti | **soddisfatto** | `dopo/impianto1.svg` senza gruppo `ground` né linee che attraversano l'area; `tests/graphics/test_terra.py` |
+| 2 | Simboli e rotte identici a DRAW-002: backtracking 0, tratte oltre tre pieghe 0, incroci ≤ 2, lunghezza ≤ 597,5 mm, valvole 20/20 | **soddisfatto** | `dopo/metriche.json`; confronto punto per punto fra `prima/geometria.json` e `dopo/geometria.json`: 45 simboli e 20 rotte identici |
+| 3 | Modifica, presenza o assenza delle etichette non cambia la geometria | **soddisfatto** | `test_una_sigla_molto_piu_lunga_non_cambia_simboli_ne_rotte`, `test_senza_nessuna_sigla_simboli_e_rotte_restano_gli_stessi`, `test_gli_indirizzi_di_verifica_non_cambiano_simboli_ne_rotte` |
+| 4 | Nessun groviglio automatico di richiami: la verifica privilegia indirizzi semplici e può omettere quelli non collocabili | **soddisfatto** | gli indirizzi non portano mai il richiamo (`test_un_indirizzo_non_porta_mai_il_richiamo`); sull'impianto 1 35 indirizzi scritti adiacenti e 10 omessi, 0 richiami in tutto |
+| 5 | La tavola definitiva mostra soltanto le etichette delle macchine principali | **soddisfatto** | `dopo/consegna/geometria.json`: 7 sigle, nessun indirizzo; `test_la_tavola_di_consegna_porta_solo_le_sigle_delle_macchine` |
+| 6 | Nessun rilievo sulle etichette blocca PDF, PNG o SVG | **soddisfatto** | tutti i rilievi sui testi sono avvisi; una sigla senza posto si omette e la tavola esce (`test_una_sigla_senza_nessun_posto_pulito_si_omette_e_la_tavola_esce`) |
+| 7 | Suite completa, `ruff`, `mypy --strict` e determinismo verdi | **soddisfatto** | §5 |
+| 8 | Artefatti aggiornati e rapporto corretto senza dichiarare le etichette prioritarie rispetto alla geometria | **soddisfatto** | `dopo/`, `dopo/consegna/`, `prima-dopo.png`, questo rapporto |
 
-## 4. Le prove scritte prima del codice
+## 4. Le prove
 
-`tests/graphics/test_terra.py` e `tests/layout/test_etichette_postume.py`:
+`tests/layout/test_etichette_postume.py`, riscritte prima del codice per la regola nuova:
 
-1. l'SVG di una tavola che dichiara la quota di terra, e quello della tavola composta,
-   non contengono il gruppo, la linea o il tratteggio del terreno;
-2. la stessa geometria con e senza indirizzi di verifica ha simboli e rotte identici;
-3. una sigla molto più lunga — e nessuna sigla — non cambia simboli o rotte;
-4. un'etichetta con posizione preferita libera resta adiacente e senza richiamo;
-5. un'etichetta la cui posizione preferita interseca una tubazione si sposta con
-   richiamo obliquo, la tubazione resta bit-identica, e il richiamo non la attraversa;
-6. due etichette in conflitto: la seconda prende il richiamo, nessuna sovrapposizione;
-7. due generazioni consecutive danno lo stesso output.
+1. un'etichetta con il posto libero resta adiacente e senza richiamo;
+2. un'etichetta sulla tubazione prende un altro lato, senza richiamo, e il tubo resta
+   bit-identico;
+3. i lati si provano in ordine fisso e il primo libero vince;
+4. due etichette in conflitto: la seconda prende un altro lato, nessuna sovrapposizione;
+5. un'etichetta non esce dall'area di disegno;
+6. una sigla murata da quattro tubi prende un richiamo corto che non attraversa niente,
+   da uno spigolo del proprio pezzo;
+7. una sigla senza nessun posto pulito si omette, e la tavola esce;
+8. un richiamo non attraversa un altro richiamo né un'altra sigla;
+9. un indirizzo prende un lato libero o si omette, e non porta mai il richiamo;
+10. il contratto: sigla lunghissima, nessuna sigla e velo degli indirizzi non cambiano
+    simboli né rotte; la tavola definitiva porta solo le sigle delle macchine; due
+    generazioni consecutive danno lo stesso output.
 
-Più: l'indirizzo di verifica segue lo stesso ordine; un'etichetta non esce dall'area di
-disegno; i richiami non si incrociano quando esiste un'alternativa; sulla tavola 1 ogni
-etichetta è libera o richiamata a 45 gradi.
+`tests/layout/test_labels.py` e `tests/validation/test_preflight.py` aggiornati alla
+regola nuova e alla misura `omitted_tags`.
 
 ## 5. Verifiche eseguite
 
-- Suite completa: **1090 verdi, 22 parcheggiate, 13 marcate rosse apposta** sui difetti
-  aperti (in 27 minuti); `ruff check src tests examples`: nessun rilievo;
+- Suite completa: **1095 verdi, 22 parcheggiate, 13 marcate rosse apposta** sui difetti aperti (in 27 minuti); `ruff check src tests examples`: nessun rilievo;
   `mypy --strict src tests examples`: nessun errore su 136 file.
 - Il modello completo dell'impianto 1 è lo stesso file di DRAW-002 (`prima/impianto1-completo.json`).
 - Due generazioni consecutive danno la stessa impronta della geometria, etichette comprese.
 
 ## 6. Osservazioni per il PM, che non decido io
 
-- **In modalità verifica 38 testi su 52 portano il richiamo.** È l'effetto della regola
-  netta del pacchetto su una tavola compatta: gli indirizzi sono lunghi (dieci caratteri)
-  e il posto preferito di fianco a una valvola su un tubo è quasi sempre occupato dal
-  tubo stesso. La tavola di consegna, con le sole sette sigle, non ha nessun richiamo.
-  Se il PO preferisce meno richiami in verifica, la leva è la posizione preferita degli
-  indirizzi o la loro lunghezza: scelte di rappresentazione, non del disegnatore.
-- **Otto richiami sono al rigore ridotto**: cinque attraversano un tubo, due passano
-  sopra un simbolo vicino, una coppia si incrocia. Il preflight li elenca come avvisi.
-  Sono i pezzi murati fra due macchine o fra tubi paralleli, dove nessuna diagonale
-  libera esiste; scrivere il testo comunque è la scelta fatta, perché un testo mancante
-  è peggio.
-- Riempimento e squilibrio (36 %, 3,25) sono invariati da DRAW-002: non erano nel
-  perimetro.
+- **Dieci indirizzi su 45 non sono scritti** in modalità verifica: sono le valvole e i filtri stretti fra tubi paralleli e altri pezzi, dove nessuna delle due file su nessuno dei quattro lati è libera. La regola del pacchetto li ammette omessi; se il PO ne vuole qualcuno in particolare, la leva è la rappresentazione (testo più corto, o un lato preferito diverso per quel tipo di pezzo), non un richiamo automatico. L'elenco dei pezzi senza indirizzo si ricava da `dopo/geometria.json` (simboli senza etichetta `address-…`).
+- Il capo del richiamo è sempre la base sinistra del testo, quindi la diagonale in basso a
+  sinistra non si usa mai (passerebbe sotto il proprio testo): un capo sul lato destro del
+  testo chiede un campo in più nella geometria. Non serve sull'impianto 1.
+- Riempimento e squilibrio (36 %, 3,25) sono invariati da DRAW-002: non erano nel perimetro.
 
-## 7. Fuori perimetro, scoperto e lasciato dov'è
+## 7. Registrato per DRAW-004, non implementato qui
+
+I-026 (allontanare e riallineare inlet/outlet delle macchine principali quando riduce
+curve, incroci e lunghezza), I-027 (una T con due imbocchi ortogonali che assorbe una
+curva) e I-028 (etichette e richiami mai nel confronto fra due pose) sono nel registro
+degli input. Il routing non è stato toccato in questa revisione.
+
+## 8. Fuori perimetro, scoperto e lasciato dov'è
 
 - `cli.py` passa ancora `floor_y_mm=sheet.ground_line_y_mm` alla posa degli indirizzi:
-  il valore è sempre `None` e il parametro è ignorato, ma la riga e il campo si tolgono
-  in un pacchetto che abbia il comando di disegno in perimetro.
-- Il richiamo termina sempre alla base sinistra del testo: sulla diagonale in basso a
-  sinistra passerebbe sotto il proprio testo, quindi quella direzione si usa solo
-  all'ultimo grado di rigore. Un capo di richiamo sul lato destro del testo chiede un
-  campo in più nella geometria.
+  il valore è sempre `None` e il parametro è ignorato.
 
-## 8. Artefatti
+## 9. Artefatti
 
 | File | Cosa |
 |---|---|
 | `prima/impianto1.{pdf,png,svg}` · `prima/geometria.json` · `prima/metriche.json` · `prima/preflight.txt` | la tavola di DRAW-002, rimisurata con lo strumento di oggi |
-| `dopo/impianto1.{pdf,png,svg}` · `dopo/geometria.json` · `dopo/metriche.json` · `dopo/preflight.txt` | la tavola dopo, in modalità verifica |
-| `dopo/consegna/impianto1.{pdf,png,svg}` · `dopo/consegna/geometria.json` | la stessa tavola senza il velo degli indirizzi |
-| `prima-dopo.png` | il confronto affiancato |
-| `metriche.py` | lo strumento di misura, con le voci sulle etichette |
+| `dopo/impianto1.{pdf,png,svg}` · `dopo/geometria.json` · `dopo/metriche.json` · `dopo/preflight.txt` | la tavola R1 in modalità verifica |
+| `dopo/consegna/impianto1.{pdf,png,svg}` · `dopo/consegna/geometria.json` · `dopo/consegna/metriche.json` | la tavola definitiva, senza il velo degli indirizzi |
+| `prima-dopo.png` | il confronto affiancato, DRAW-002 e R1 in modalità verifica |
+| `metriche.py` | lo strumento di misura, con le voci sulle etichette e sulle sigle omesse |
 | `prima/impianto1-completo.json` | il modello completato dalle regole, invariato |
