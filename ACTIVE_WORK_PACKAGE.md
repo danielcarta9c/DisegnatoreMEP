@@ -1,102 +1,158 @@
-# ACTIVE WORK PACKAGE — DRAW-003-R1
+# ACTIVE WORK PACKAGE — DRAW-004
 
 - **Release:** 0.2 — tavola 1 leggibile e approvabile
-- **Stato:** REVISIONE RICHIESTA DAL PM SULLA PR #11
-- **Data:** 2026-09-03
+- **Stato:** APPROVATO DAL PM, PRONTO PER IL DEV
+- **Data:** 2026-09-04
 - **Assegnato a:** DEV team (Claude)
-- **Ramo:** `claude/draw-003-terra-etichette`
-- **PR:** `#11`, da aggiornare senza aprirne un'altra
-- **Base:** integrare l'ultima `main` nel ramo esistente
+- **Base:** ultima `main`
+- **Ramo:** `claude/draw-004-assi-dorsali-tee`
+- **Campo:** solo impianto 1 (D-116)
 
-## Correzione del PM
+## Obiettivo di prodotto
 
-Questa revisione sostituisce le parti di DRAW-003 che rendevano bloccante la posa delle
-etichette e ordinavano di usare il richiamo al primo conflitto. Erano specifiche errate.
+Ridurre ancora il costo reale della rete facendo ragionare la posa come un disegnatore:
+prima si cercano buoni assi fra le porte delle macchine e dorsali principali continue;
+poi si innestano gli stacchi. Spostare o ruotare macchine, pile e accessori non ha costo;
+backtracking, curve, incroci/sormonti e lunghezza delle tubazioni hanno costo.
 
-Le etichette dei nodi sono un ausilio della modalità verifica: servono al PO per indicare
-un elemento durante la revisione. Non governano il disegno e non compariranno nella
-tavola definitiva.
+Questa non è una regola geometrica assoluta. L'allineamento fra due porte, la dorsale
+rettilinea e la T che assorbe una curva sono **candidati** da generare e confrontare con
+la posa corrente. Il motore li accetta solo se la tavola completa, dopo il routing di
+tutte le reti, migliora secondo `SheetCost` e rispetta tutti i vincoli.
 
-## Gerarchia vincolante del prodotto
+Gli esempi grafici del PO restano materiale del collaudo PM. Il DEV non deve ricavarne
+requisiti ulteriori: deve attuare quanto scritto qui.
 
-1. correttezza del grafo e delle connessioni;
-2. geometria di macchine, accessori e tubazioni;
-3. costo delle tubazioni: backtracking, curve, incroci/sormonti e lunghezza;
-4. soltanto dopo che la geometria è congelata, annotazioni e testi.
+## Diagnosi tecnica del PM
 
-Spostare macchine e accessori costa zero. Etichette e richiami hanno costo nullo rispetto
-alla geometria e non possono far spostare, ruotare o reinstradare niente.
+La pipeline resta `place_sheet -> improve_sheet -> settle_sheet`.
 
-## Risultato richiesto in questa revisione
+1. `layout/improve.py::_port_moves()` genera già l'allineamento con la porta del vicino,
+   ma per una porta orizzontale salta il candidato quando il leader è `Standing.GROUND`.
+   Anche `_column_moves()` annulla lo spostamento verticale se nella colonna esiste un
+   pezzo a terra. In uno schema funzionale la quota iniziale è un suggerimento di posa,
+   non una ragione per conservare una curva evitabile.
+2. Le mosse correnti tendono a muovere un solo estremo verso l'altro. Mancano candidati
+   coordinati che confrontino almeno: movimento del gruppo a monte, movimento del gruppo
+   a valle e riallineamento di entrambi attorno a un asse comune.
+3. La rete viene misurata correttamente come tavola completa, ma fra i candidati manca
+   l'ossatura «dorsale prima, stacchi dopo»: una catena principale può quindi conservare
+   un dogleg anche quando spostare gratuitamente i suoi pezzi renderebbe continuo l'asse.
+4. `layout/place.py::rotation_for()` impone che tutti gli attacchi non destinati al ramo
+   di una T restino orizzontali. Di conseguenza il raccordo non può usare due imbocchi
+   ortogonali come prosecuzione e assorbire il gomito nel punto di diramazione.
 
-### 1. Linea di terra
+## Comportamento da costruire
 
-Conservare la correzione già consegnata:
+### 1. Candidati di allineamento delle porte
 
-- nessuna linea o tratteggio continuo di terra nel PDF, PNG o SVG;
-- la quota interna può allineare le macchine ma non è renderizzata e non è un ostacolo;
-- l'eventuale segno di appoggio è corto e appartiene al singolo simbolo.
+Per ogni collegamento fra macchine principali o fra una macchina e una dorsale:
 
-### 2. Indipendenza dei testi
+- ricavare gli assi possibili dalle coordinate e dalle facce delle porte, mai dagli ID;
+- generare l'alternativa che allinea le porte e lascia il rettilineo necessario agli
+  accessori in linea;
+- generare, quando applicabile, lo spostamento del gruppo a monte, del gruppo a valle e
+  dei due gruppi verso un asse comune;
+- consentire anche spostamenti verticali di macchine o pile inizialmente classificate a
+  terra, se non esiste un vincolo fisico dichiarato dal modello e se restano rispettati
+  griglia, distanze, area e ordinamento di processo;
+- una pila può cambiare posizione o interasse in modo coordinato, ma non può perdere il
+  proprio ordine né sovrapporre i membri.
 
-Conservare e provare il contratto:
+Non scrivere coordinate, nomi `pdc-*`, `accumulo` o eccezioni per l'impianto 1.
 
-- posa e routing terminano prima dei testi;
-- aggiungere, cambiare o togliere testi non modifica simboli, rotazioni o segmenti;
-- etichette e richiami non entrano in metriche, candidati o funzione di costo del layout.
+### 2. Dorsale prima, stacchi dopo
 
-### 3. Semplificare le etichette
+Individuare dalla topologia le sequenze principali fra sorgente, accumulo/separatore e
+utilizzatore. Fra i candidati deve esistere una posa che:
 
-Ritirare l'algoritmo che ha prodotto 38 richiami su 52 testi e che degrada volontariamente
-fino ad attraversare tubi, simboli e altri richiami.
+- conserva rettilineo l'asse principale finché non serve davvero cambiare direzione;
+- colloca i raccordi sulla dorsale e fa partire da lì i rami;
+- evita che l'inserimento di un ramo pieghi inutilmente la dorsale;
+- valuta comunque l'esito soltanto dopo `settle_sheet` e il reinstradamento completo di
+  tutte le reti.
 
-- **Modalità verifica:** gli indirizzi dei nodi sono un overlay best-effort. Si scrivono
-  vicino al nodo quando esiste una posizione semplice e leggibile; possono essere omessi
-  quando non esiste. Nessun obbligo di mostrarli tutti, nessun groviglio di richiami,
-  nessun errore bloccante per un indirizzo omesso o imperfetto.
-- **Tavola definitiva:** nessun indirizzo della rete. Restano soltanto le etichette delle
-  macchine principali, posate dopo il routing e senza influenzarlo.
-- Un richiamo si usa soltanto quando chiarisce davvero il rapporto fra testo e macchina;
-  non viene aggiunto automaticamente se produce più confusione del testo.
-- L'impossibilità di collocare un'etichetta non blocca mai l'emissione della tavola.
+Non introdurre un secondo costo o un secondo decisore: il confronto finale resta
+`SheetCost`.
 
-Non costruire in questa revisione un ottimizzatore globale delle annotazioni: non è il
-cuore del prodotto e non deve assorbire altro sviluppo della release 0.2.
+### 3. T che può assorbire una curva
+
+Quando tre collegamenti si incontrano, il motore deve poter provare anche una posa nella
+quale il percorso principale usa due attacchi ortogonali della T e il terzo è lo stacco.
+La T resta presente: ciò che può sparire è il gomito separato.
+
+- la scelta della coppia di attraversamento è una proprietà della posa, non una modifica
+  del grafo né della connettività;
+- provare soltanto rotazioni e permutazioni ammesse dal simbolo;
+- conservare verso del fluido, appartenenza alla rete e `connection_ids`;
+- la configurazione ortogonale vince solo se riduce il costo complessivo della tavola.
+
+### 4. Gerarchia invariata
+
+- correttezza del grafo e delle connessioni;
+- violazioni geometriche e accessori non ospitati;
+- backtracking, tratte oltre tre pieghe, curve, incroci/sormonti, lunghezza;
+- riempimento e bilanciamento soltanto come spareggio;
+- testi e richiami dopo la geometria, con costo nullo e senza alcuna influenza sul
+  confronto.
+
+Non cambiare l'ordine di `SheetCost` in questo pacchetto. Se due obiettivi rivelano un
+conflitto concreto, misurarlo nel rapporto e lasciarne la decisione al PM.
+
+## Test generali da scrivere prima del codice
+
+1. Due macchine con porte collegabili direttamente ma disallineate: esiste un candidato
+   che sposta gratuitamente una macchina o il suo gruppo, elimina almeno una curva e
+   batte la posa iniziale.
+2. Lo stesso allineamento non viene accettato quando introduce una violazione, un
+   backtracking o un incrocio che lo rende globalmente peggiore.
+3. Una macchina classificata `Standing.GROUND` può partecipare a un candidato verticale
+   quando la quota non è un vincolo fisico del modello.
+4. Una sequenza principale con uno stacco conserva la dorsale rettilinea e colloca la T
+   sull'asse, invece di piegare l'intera sequenza per il ramo.
+5. Una T con due imbocchi ortogonali assorbe un gomito e batte la variante T più gomito;
+   il grafo e gli identificativi delle connessioni restano identici.
+6. Se la T ortogonale peggiora la tavola completa, resta la configurazione corrente.
+7. Ridenominare tutti gli ID non cambia la geometria; due generazioni sono identiche.
+8. Aggiungere, cambiare o togliere testi non modifica nessun candidato, simbolo o tubo.
+
+## Criteri di accettazione sulla tavola 1
+
+Baseline DRAW-003-R1: backtracking `0`, tratte oltre tre pieghe `0`, curve `10`,
+incroci `2`, lunghezza `597,5 mm`, valvole D-120 `20/20`.
+
+La consegna deve rispettare tutti i punti seguenti:
+
+1. nessuna regressione di correttezza, backtracking, tratte lunghe o valvole;
+2. incroci non oltre `2` e lunghezza non oltre `597,5 mm`;
+3. curve totali non oltre `8`;
+4. nessun dogleg evitabile fra le PDC e la dorsale primaria: il rapporto deve mostrare
+   quali alternative di asse sono state provate e perché quella finale ha vinto;
+5. almeno un caso generale dimostra la T che assorbe una curva; sulla tavola 1 la si usa
+   soltanto se il costo completo migliora;
+6. linea di terra assente; tavola definitiva con sole sigle principali; modalità
+   verifica best-effort e mai influente sulla geometria;
+7. suite completa, `ruff`, `mypy --strict` e determinismo verdi;
+8. PDF, PNG, SVG, geometria, metriche e confronto prima/dopo in
+   `docs/collaudi/DRAW-004/`.
+
+Il limite di 8 curve è il target misurabile di questo ciclo, non un invito a comprare il
+numero con più incroci o più tubo: i limiti 1 e 2 restano simultaneamente vincolanti.
 
 ## Perimetro
 
-Restano ammessi i file di DRAW-003 necessari a semplificare o ritirare il codice già
-introdotto, più:
+Consentiti:
 
-- `docs/collaudi/DRAW-003/**`;
-- `PROJECT_STATE.md`;
-- `docs/input-pm/REGISTRO.md`, senza chiudere input del PO.
+- `src/disegnatore_mep/layout/improve.py`;
+- `src/disegnatore_mep/layout/place.py` e i moduli di posa/routing strettamente necessari
+  per rappresentare la coppia di attacchi usata dalla T;
+- test generali di layout, costo e routing;
+- `docs/collaudi/DRAW-004/**`, `PROJECT_STATE.md`, `docs/input-pm/REGISTRO.md`.
 
-Fuori perimetro: modifiche al routing, al grafo, alle regole MEP, ai cataloghi e ai
-simboli. I nuovi rilievi sul costo geometrico si registrano ma si implementano in
-DRAW-004.
+Vietati: modifica del grafo dell'impianto 1, coordinate speciali, eccezioni per ID,
+ottimizzazione delle etichette, lavoro sugli impianti 2-5, simboli e cartiglio.
 
-## Input PO da registrare per DRAW-004, senza implementarli qui
+## Consegna
 
-1. Le linee fra PDC e accumulo conservano curve evitabili. Il motore deve poter
-   allontanare leggermente e riallineare inlet/outlet delle macchine principali quando
-   ciò riduce curve, incroci e lunghezza complessiva.
-2. Una T può usare due imbocchi ortogonali e assorbire una curva, eliminando un gomito.
-   Questa posa deve entrare fra i candidati quando riduce il costo totale.
-3. Etichette e richiami non partecipano mai al confronto fra due pose.
-
-## Criteri di accettazione
-
-1. Linea e tratteggio continui di terra assenti.
-2. Simboli e rotte identici a DRAW-002: backtracking 0, tratte oltre tre pieghe 0,
-   incroci non oltre 2, lunghezza non oltre 597,5 mm, valvole D-120 20/20.
-3. Modifica, presenza o assenza delle etichette non cambia la geometria.
-4. Nessun groviglio automatico di richiami: la modalità verifica privilegia indirizzi
-   semplici e può omettere quelli non collocabili.
-5. La tavola definitiva mostra soltanto le etichette delle macchine principali.
-6. Nessun rilievo sulle etichette blocca PDF, PNG o SVG.
-7. Suite completa, `ruff`, `mypy --strict` e determinismo verdi.
-8. Artefatti aggiornati e rapporto corretto senza dichiarare le etichette prioritarie
-   rispetto alla geometria.
-
-Il DEV aggiorna la PR #11 e si ferma. Il merge spetta al PM.
+Il DEV salva progressivamente sul ramo remoto, apre una sola PR verso `main` e si ferma.
+Il PM verifica codice, metriche e tavola; il merge spetta al PM.
