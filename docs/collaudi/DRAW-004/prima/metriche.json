@@ -1,0 +1,167 @@
+{
+  "formato": "420x297",
+  "area_disegno_mm": [
+    350.0,
+    235.0
+  ],
+  "impronta": "a39cf5d70e8073f75bef71fd1d424dc3de3ee8d912fff304fc371411c7f99458",
+  "fogli": [
+    {
+      "sheet_id": "t1",
+      "linea_di_terra_esportata": false,
+      "etichette": 7,
+      "sigle": 7,
+      "sigle_omesse": 0,
+      "indirizzi": 0,
+      "etichette_con_richiamo": 0,
+      "etichette_su_tubo": 0,
+      "etichette_su_simbolo": 0,
+      "etichette_su_etichetta": 0,
+      "richiami_su_tubo": 0,
+      "richiami_su_simbolo": 0,
+      "richiami_incrociati": 0,
+      "ingombro_mm": [
+        50.0,
+        78.5,
+        322.5,
+        188.5
+      ],
+      "riempimento_pct": 36.4,
+      "riempimento_senza_il_piu_isolato_pct": 29.8,
+      "copertura_ingombro": 0.625,
+      "quadranti_rapporto": 3.25,
+      "quadranti_mm2": [
+        765.2,
+        921.6,
+        2487.5,
+        1159.8
+      ],
+      "backtracking_tratte": 0,
+      "backtracking_mm": 0.0,
+      "incroci": 2,
+      "pieghe_totali": 10,
+      "tratte_oltre_tre_pieghe": 0,
+      "lunghezza_totale_mm": 597.5,
+      "tubo_sotto_simbolo": [],
+      "valvole_d120": {
+        "valve-isolation-pdc-master-water-supply": {
+          "caso": "primo",
+          "isola": "pdc-master",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-pdc-slave-water-supply": {
+          "caso": "primo",
+          "isola": "pdc-slave",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-accumulo-primary-in": {
+          "caso": "fuori regola",
+          "distanza_mm": 3.536
+        },
+        "valve-isolation-accumulo-primary-out": {
+          "caso": "primo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dirt-separator-collettore-ritorno-a-b": {
+          "caso": "coppia",
+          "isola": "dirt-separator-collettore-ritorno-a",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-strainer-pdc-master-water-return-a": {
+          "caso": "coppia",
+          "isola": "strainer-pdc-master-water-return",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-pdc-master-water-return": {
+          "caso": "ultimo",
+          "isola": "pdc-master",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-strainer-pdc-slave-water-return-a": {
+          "caso": "coppia",
+          "isola": "strainer-pdc-slave-water-return",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-pdc-slave-water-return": {
+          "caso": "ultimo",
+          "isola": "pdc-slave",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-accumulo-secondary-out": {
+          "caso": "primo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-circolatore-a": {
+          "caso": "coppia",
+          "isola": "circolatore",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-circolatore-b": {
+          "caso": "coppia",
+          "isola": "circolatore",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-radiatori-in": {
+          "caso": "ultimo",
+          "isola": "radiatori",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-radiatori-out": {
+          "caso": "primo",
+          "isola": "radiatori",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-accumulo-secondary-in": {
+          "caso": "ultimo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "expansion-connection-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-filling-unit-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "filling-unit-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-pressure-gauge-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "pressure-gauge-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-acquedotto-a": {
+          "caso": "fuori regola",
+          "distanza_mm": 7.5
+        },
+        "valve-isolation-dhw-accumulo-cold-in": {
+          "caso": "ultimo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-hot-accumulo-dhw-out": {
+          "caso": "primo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-hot-utenze-a": {
+          "caso": "coppia",
+          "isola": "mixing-valve-thermostatic-accumulo-dhw-out",
+          "distanza_mm": 2.5
+        }
+      },
+      "valvole_d120_entro_2_5_5_mm": 20,
+      "valvole_d120_totali": 20,
+      "simboli": 45,
+      "tratte": 20
+    }
+  ],
+  "rilievi_qualita": [
+    "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 36%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)",
+    "warning:DRAWING_ALL_ON_ONE_SIDE:la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 3.3 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)"
+  ],
+  "rilievi_correttezza": []
+}

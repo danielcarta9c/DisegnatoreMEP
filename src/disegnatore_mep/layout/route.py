@@ -265,9 +265,13 @@ def _port_anchor(
     definition_id: str,
     grid: GridSpace,
 ) -> tuple[Cell, Cell]:
-    """Nodo e direzione uscente di una porta, sul simbolo gia' posato e ruotato."""
+    """Nodo e direzione uscente di una porta, sul simbolo gia' posato e ruotato.
+
+    La porta del modello si legge sull'attacco fisico che la posa le ha
+    assegnato (`port_map`): per un raccordo a T puo' non essere l'omonimo.
+    """
     manifest = catalog.resolve(definition_id).symbol.manifest.rotated(placed.rotation_deg)
-    port = manifest.port(port_id)
+    port = manifest.port(placed.physical_port(port_id))
     cell = grid.to_cell(
         placed.origin.x_mm + port.x_mm, placed.origin.y_mm + port.y_mm
     )
