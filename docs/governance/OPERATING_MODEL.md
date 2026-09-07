@@ -3,9 +3,9 @@
 > Documento di governance. Descrive **chi decide cosa** e **come il lavoro arriva su
 > `main`**. Non contiene requisiti di prodotto e non modifica decisioni esistenti.
 >
-> **Stato: candidato nella PR #1** del pacchetto GOV-001. **Diventa vigente soltanto con il
-> merge della PR, dopo la verifica del PM.** Finché la PR non è fusa, questo documento non
-> è una regola in vigore, e il DEV non può dichiararlo approvato o vigente da sé.
+> **Stato: vigente.** GOV-001 è stato approvato e fuso nella PR #1. Il modello è stato
+> aggiornato dalla D-123: il DEV consegna tramite PR, il PM verifica e fonde; il PO entra
+> quando serve una decisione di prodotto, MEP o rappresentazione.
 
 ---
 

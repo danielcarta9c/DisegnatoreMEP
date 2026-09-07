@@ -20,11 +20,16 @@ conversazione. La skill capisce di che impianto si tratta, **aggiunge gli access
 mancano e che un impianto deve avere**, glieli fa approvare, e poi ne **disegna la tavola
 tecnica** — pronta da stampare e da portare in cantiere.
 
+Il prodotto finale non è il solo pacchetto Python: è una **skill/tool installabile nelle
+chat di lavoro** che orchestra interpretazione, approvazione, motore deterministico,
+verifica e restituzione degli artefatti. `CLAUDE.md` istruisce il team DEV e non è
+l'entrypoint della skill destinata all'utente.
+
 **Quello che la skill non fa mai:** progettare. Non inventa potenze, temperature,
 prevalenze, tarature, volumi né diametri. Se il progettista glieli dà, li scrive sulla
 tavola; se non glieli dà, sulla tavola non compaiono (D-087).
 
-**Il confine, detto come lo ha detto il PM** (D-104). Lui porta lo schema a livello di
+**Il confine, detto come lo ha detto il PO** (D-104). Lui porta lo schema a livello di
 **definitivo**; la skill lo porta a livello **esecutivo** aggiungendo la ferramenta che su
 una tavola esecutiva c'è sempre — le intercettazioni, uno sfiato, un filtro, uno scarico,
 gli strumenti di lettura. Nient'altro. In particolare: **non decide quanti pezzi ci

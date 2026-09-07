@@ -1,7 +1,8 @@
 # Disegnatore MEP
 
-Skill che trasforma un impianto termotecnico **già deciso e dimensionato dall'ingegnere**
-in una tavola tecnica professionale, pronta da stampare e da portare in cantiere.
+Skill/tool installabile da usare nelle chat di lavoro, che trasforma un impianto
+termotecnico **già deciso e dimensionato dall'ingegnere** in una tavola tecnica
+professionale, pronta da stampare e da portare in cantiere.
 
 La skill non progetta: non inventa potenze, temperature, prevalenze, tarature, volumi né
 diametri. Interpreta l'impianto, propone gli accessori mancanti motivandoli, li fa
@@ -9,13 +10,13 @@ approvare, e poi disegna.
 
 ## Da dove si comincia
 
-1. **`HANDOFF.md`** — il cancello di lettura: cosa stiamo costruendo, da dove si riparte,
-   e le domande a cui rispondere prima di toccare qualunque cosa.
-2. **`docs/SKILL.md`** — com'è fatta la skill: i pezzi, cosa fa ciascuno e quando è
+1. **`ACTIVE_WORK_PACKAGE.md`** — l'unico incarico operativo corrente del DEV.
+2. **`HANDOFF.md`** — missione, stato sintetico e confini PO/PM/DEV.
+3. **`docs/SKILL.md`** — com'è fatta la skill: i pezzi, cosa fa ciascuno e quando è
    finito. È il documento autorevole sull'architettura.
-3. **`PROJECT_STATE.md`** — a che punto siamo e cosa manca. È l'unico posto in cui è
+4. **`PROJECT_STATE.md`** — a che punto siamo e cosa manca. È l'unico posto in cui è
    scritto lo stato.
-4. **`AGENTS.md`** — come si lavora: i due ruoli, il metodo, come si scrive al PM.
+5. **`AGENTS.md`** — come si lavora: i tre ruoli, il metodo, come si consegna al PM.
 
 Il resto si apre quando serve.
 
@@ -40,7 +41,7 @@ Il resto si apre quando serve.
 | `docs/adr/` | Le decisioni strutturali, costose da cambiare. |
 | `docs/prodotto/` | Cosa fa il prodotto e cosa non fa. |
 | `docs/standard/` | Come si disegna: lo standard grafico, le regole del colpo d'occhio, il protocollo dell'occhio terzo. |
-| `docs/plans/` | Il piano di costruzione **corrente** e i suoi verdetti. Racconta **come è andata un'esecuzione**, non come funziona la skill: per quello c'è `docs/SKILL.md`. |
+| `docs/plans/` | La roadmap corrente è `2026-09-03-release-plan.md`; gli altri piani sono storia di esecuzione. |
 | `docs/collaudi/` | I verbali per esteso dei collaudi indipendenti: i criteri scritti prima e l'esito di ciascuno. |
 | `docs/fonti/` | Da dove vengono simboli e prescrizioni. |
 | `docs/prompts/` | Le istruzioni degli agenti AI della skill. |
