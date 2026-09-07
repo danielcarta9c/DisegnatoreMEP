@@ -84,23 +84,25 @@ vivono in `graphics/symbol.py` e `graphics/registry.py`; il tracciato delle frec
   opzione che li porta in tavola (`--verifica`); la consegna ha le sole sigle delle
   macchine. Nessuna modalità entra in posa o routing: la prova generale confronta simboli
   e rotte delle due tavole e li trova identici.
-- **Le tratte non seguono l'ordine del file.** `build_trunks` percorre le connessioni
-  per identificativo, che è l'ordine della forma canonica. Prima seguiva l'ordine in
-  cui il modello le elencava: lo stesso impianto completato dalle regole in memoria e
-  riletto dal suo JSON dava due tavole diverse, e con il grafo nuovo quella in memoria
-  non si componeva (le prove che compongono l'impianto 1 in-process fallivano mentre
-  la CLI, che rilegge il JSON, riusciva). La CLI produce la stessa tavola di prima
-  della correzione, perché il JSON canonico è già ordinato; la prova
-  `test_le_tratte_sono_le_stesse_comunque_il_modello_elenchi_le_connessioni` lo tiene
-  vero in generale.
 - **Il ciclo parte anche da una posa che non si instrada.** Se la posa iniziale non
   trova strada nemmeno in modo tollerante — uno stacco murato da un vicino — prima
   l'ottimizzatore rinunciava senza provare una mossa, e la tavola falliva o riusciva a
   seconda di un dettaglio della posa iniziale. Ora cerca la **prima** candidata che si
   lascia instradare, nell'ordine di posa, e da lì riparte come sempre
   (`Improver._first_routable`); il tetto di prove è quello della posa e ogni prova
-  finisce nel diario. Sulla tavola 1 la pre-fase non entra (la posa iniziale si instrada)
-  e l'impronta resta `6e8e64ae…`.
+  finisce nel diario. È ciò che ha fatto emergere il grafo nuovo: l'impianto 1 completato
+  dalle regole **in memoria** — l'ordine in cui `apply_proposals` elenca le connessioni —
+  non si instradava alla prima posa, mentre riletto dal suo JSON canonico, che ordina le
+  connessioni per identificativo, sì; e l'ottimizzatore rinunciava. Sulla tavola della
+  CLI la pre-fase non entra (la posa iniziale si instrada) e l'impronta resta
+  `6e8e64ae…`.
+- **L'ordine delle tratte resta quello del file.** Ho provato a percorrere le
+  connessioni per identificativo, per rendere la geometria una funzione del grafo e non
+  del suo file: rende identiche la tavola in memoria e quella riletta dal JSON, ma
+  **rompe il contratto di DRAW-004** per cui rinominare gli identificativi non cambia la
+  geometria (due prove esistenti lo pretendono). Ripristinato l'ordine di DRAW-004; la
+  dipendenza dall'ordine del file è preesistente (su `dc3dad5` l'impianto 3 in memoria e
+  riletto dà due impronte diverse) e la segnalo in §8.
 
 `SheetCost` è invariato: stesso ordine, stesse voci.
 
@@ -268,11 +270,10 @@ altri nomi.
   spazio funzionale della PDC è di 15 mm e non è una costante; il serpentino del combinato
   è continuo da `cold_in` a `dhw_out` e gli attacchi tecnici entrano nel mantello; sigle
   sempre, indirizzi solo su richiesta, testi invarianti.
-- **C — posa** (`tests/layout/test_consegna_e_verifica.py`, 11 prove): consegna e
+- **C — posa** (`tests/layout/test_consegna_e_verifica.py`, 10 prove): consegna e
   verifica hanno gli stessi simboli e le stesse rotte; le riserve non permutano porte e le
   rotte finiscono sugli attacchi del manifesto; la valvola che isola oltre un raccordo
-  passante sta contro il raccordo (2,5÷5 mm) e non a mezza strada; le tratte sono le
-  stesse comunque il modello elenchi le connessioni.
+  passante sta contro il raccordo (2,5÷5 mm) e non a mezza strada.
 
 Sei prove esistenti sono state riallineate: il foglio dei simboli sa che il filtro a Y
 ammette due sole rotazioni; le due del motore che
@@ -321,12 +322,20 @@ macchina; quella del confronto legge i conteggi aggiornati.
   lo stesso schema.
 - **L'impianto 3 non compone più** (`test_chi_e_tornato_a_comporre_compone_in_un_foglio_solo`,
   ora marcata rossa apposta con la misura). Con l'intercettazione per gruppo il terzo
-  impianto ha meno organi e la posa iniziale cambia: in ordine canonico delle tratte il
-  ritorno rientra sotto il defangatore dopo il taglio, in ordine del file la linea
-  sanitaria dallo scaldacqua non trova il rettilineo di 7,5 mm per la miscelatrice. Sul
-  commit `dc3dad5` componeva in entrambi gli ordini. È una regressione di **posa** sul
-  grafo nuovo, non del grafo: il campo di lavoro è il solo impianto 1 (D-116) e non l'ho
-  indagata oltre la misura; la riga esiste perché il difetto non sia scoperto due volte.
+  impianto ha meno organi e la posa iniziale cambia: la linea sanitaria dallo scaldacqua
+  non trova il rettilineo di 7,5 mm per la miscelatrice (e, con le tratte in ordine di
+  identificativo, il ritorno rientra sotto il defangatore). Sul commit `dc3dad5`
+  componeva in entrambi gli ordini. È una regressione di **posa** sul grafo nuovo, non
+  del grafo: il campo di lavoro è il solo impianto 1 (D-116) e non l'ho indagata oltre la
+  misura; la riga esiste perché il difetto non sia scoperto due volte.
+- **La geometria dipende dall'ordine in cui il modello elenca le connessioni**, perché
+  le tratte si instradano in quell'ordine e ognuna è un ostacolo per le successive: la
+  tavola dell'impianto 1 composta in memoria dalle prove (`7f23d255…`) non è la tavola
+  della CLI (`6e8e64ae…`), che rilegge il JSON canonico. È preesistente (su `dc3dad5`
+  vale lo stesso per l'impianto 3) e non è coperta da nessuna prova; renderla una
+  funzione del grafo richiede un ordine delle tratte invariante sia al file sia agli
+  identificativi — per esempio l'ordine di processo della posa — ed è una decisione di
+  posa fuori da questo pacchetto.
 - **La revisione avversaria** (sei lenti sul diff, poi due scettici per rilievo) è stata
   interrotta dal limite di sessione dei sottoagenti: una sola lente, quella dei simboli,
   ha concluso, con due rilievi minori che ho trattato io — la contro-rotazione dei glifi
