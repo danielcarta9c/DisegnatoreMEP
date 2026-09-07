@@ -382,10 +382,15 @@ def evaluate(
                 if component_id in taken:
                     continue
                 if rule.satisfied_by.scope is not SatisfactionScope.ON_THE_NETWORK:
-                    stretch = (context.stretch_from(anchor), function)
-                    if stretch in claimed:
-                        continue
-                    claimed.add(stretch)
+                    # Solo un tratto vero identifica qualcosa: un attacco di
+                    # servizio ancora libero non ha tubazioni, e due pezzi che
+                    # ne aspettano uno ciascuno non condividono niente.
+                    pipes = context.stretch_from(anchor)
+                    if pipes:
+                        stretch = (pipes, function)
+                        if stretch in claimed:
+                            continue
+                        claimed.add(stretch)
                 # Solo per chi pende da uno stacco, e solo se la macchina
                 # dichiara l'attacco per quella funzione: altrimenti resta
                 # vuoto e lo stacco si apre sulla tubazione (D-101).
