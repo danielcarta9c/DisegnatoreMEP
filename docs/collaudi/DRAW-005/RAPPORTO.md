@@ -93,6 +93,14 @@ vivono in `graphics/symbol.py` e `graphics/registry.py`; il tracciato delle frec
   della correzione, perché il JSON canonico è già ordinato; la prova
   `test_le_tratte_sono_le_stesse_comunque_il_modello_elenchi_le_connessioni` lo tiene
   vero in generale.
+- **Il ciclo parte anche da una posa che non si instrada.** Se la posa iniziale non
+  trova strada nemmeno in modo tollerante — uno stacco murato da un vicino — prima
+  l'ottimizzatore rinunciava senza provare una mossa, e la tavola falliva o riusciva a
+  seconda di un dettaglio della posa iniziale. Ora cerca la **prima** candidata che si
+  lascia instradare, nell'ordine di posa, e da lì riparte come sempre
+  (`Improver._first_routable`); il tetto di prove è quello della posa e ogni prova
+  finisce nel diario. Sulla tavola 1 la pre-fase non entra (la posa iniziale si instrada)
+  e l'impronta resta `6e8e64ae…`.
 
 `SheetCost` è invariato: stesso ordine, stesse voci.
 
@@ -311,6 +319,14 @@ macchina; quella del confronto legge i conteggi aggiornati.
 - **L'impronta della geometria** cambia quando lo schema acquista un campo, anche a
   valore predefinito: chi confronta impronte fra pacchetti deve rileggere la geometria con
   lo stesso schema.
+- **L'impianto 3 non compone più** (`test_chi_e_tornato_a_comporre_compone_in_un_foglio_solo`,
+  ora marcata rossa apposta con la misura). Con l'intercettazione per gruppo il terzo
+  impianto ha meno organi e la posa iniziale cambia: in ordine canonico delle tratte il
+  ritorno rientra sotto il defangatore dopo il taglio, in ordine del file la linea
+  sanitaria dallo scaldacqua non trova il rettilineo di 7,5 mm per la miscelatrice. Sul
+  commit `dc3dad5` componeva in entrambi gli ordini. È una regressione di **posa** sul
+  grafo nuovo, non del grafo: il campo di lavoro è il solo impianto 1 (D-116) e non l'ho
+  indagata oltre la misura; la riga esiste perché il difetto non sia scoperto due volte.
 - **La revisione avversaria** (sei lenti sul diff, poi due scettici per rilievo) è stata
   interrotta dal limite di sessione dei sottoagenti: una sola lente, quella dei simboli,
   ha concluso, con due rilievi minori che ho trattato io — la contro-rotazione dei glifi
