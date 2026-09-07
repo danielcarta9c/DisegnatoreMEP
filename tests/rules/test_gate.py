@@ -9,11 +9,13 @@ stesse regole devono capirli tutti e tre.
 from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.catalog.schema import CLOSING_FUNCTIONS
 from disegnatore_mep.graph import Naming
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import IntegrationCategory
+from disegnatore_mep.rules.context import RuleContext
 from disegnatore_mep.rules.engine import evaluate
 from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.rules.report import build_report
@@ -190,13 +192,35 @@ def test_the_same_rules_serve_a_medium_they_were_not_written_for() -> None:
     registry = ComponentRegistry.from_directory(
         CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
     )
-    found = evaluate(water_service(), registry, RuleRegistry.from_directory(RULES))
-    by_rule = {item.rule_id: item for item in found.proposals}
-    guard = by_rule["isolate-what-is-serviced"]
+    rules = RuleRegistry.from_directory(RULES)
+    # La regola dell'intercettazione, da sola, serve l'acqua fredda: il pezzo
+    # che propone lo sceglie il catalogo sul fluido della rete.
+    alone = RuleRegistry(
+        rules=tuple(item for item in rules.all() if item.id == "isolate-what-is-serviced")
+    )
+    guard = next(
+        item
+        for item in evaluate(water_service(), registry, alone).proposals
+        if item.rule_id == "isolate-what-is-serviced"
+    )
     assert {
         port.medium for port in registry.get(guard.definition_id).ports
     } == {"cold_water"}
+    # Con tutte le regole insieme, l'organo sul confine e quello che isola il
+    # riduttore stanno sullo stesso tratto: se ne propone **uno** (DRAW-005,
+    # un organo per tratto), e a proporlo e' la regola del confine, che parla
+    # per prima; l'intercettazione trova il tratto gia' chiuso.
+    found = evaluate(water_service(), registry, rules)
+    by_rule = {item.rule_id: item for item in found.proposals}
     assert "boundary-shutoff-at-the-edge-of-the-plant" in by_rule
+    closers = [
+        item
+        for item in found.proposals
+        if CLOSING_FUNCTIONS & set(registry.get(item.definition_id).functions)
+    ]
+    context = RuleContext.build(water_service(), registry)
+    stretches = [context.stretch_from(item.anchor) for item in closers]
+    assert len(set(stretches)) == len(stretches), [item.anchor for item in closers]
 
 
 def _two_separate_rings() -> ProjectModel:

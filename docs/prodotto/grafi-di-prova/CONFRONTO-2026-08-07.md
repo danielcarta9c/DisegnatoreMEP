@@ -5,6 +5,17 @@
 > archiviate nella storia del progetto: qui vedi che cosa è cambiato, impianto per
 > impianto.
 
+> **Aggiornamento del 7 settembre 2026 (DRAW-005).** I conteggi «a N pezzi» qui sotto
+> sono quelli di oggi, dopo la regola dell'isolamento per gruppo (scheda 7 di
+> `REGOLE_ACCESSORI.md`, su tua indicazione — I-034): la macchina e il filtro sul suo
+> ritorno sono un gruppo che si chiude dall'esterno, un rubinetto per tratto di tubo, e
+> i rubinetti in fila sullo stesso volume sono spariti. Le descrizioni impianto per
+> impianto restano quelle del 7 agosto e dicono che cosa era cambiato allora; i numeri
+> di partenza («da N») sono quelli dei grafi del 6 agosto. Rispetto al 7 agosto:
+> impianto 1, 45 pezzi allora e 39 oggi; impianto 2, 54 e 46; impianto 3, 48 e 44;
+> impianto 4, 52 e 43; impianto 5, 108 e 98. I grafi rigenerati stanno accanto a questo
+> documento; la tavola rifatta è la sola dell'impianto 1 (D-116).
+
 ---
 
 ## Perché sono cambiati
@@ -30,7 +41,7 @@ scrivere le regole:
 
 ## Impianto per impianto
 
-**1 — Due pompe di calore e accumulo combinato: da 59 a 45 pezzi.**
+**1 — Due pompe di calore e accumulo combinato: da 59 a 39 pezzi.**
 Escono i due separatori d'aria, i due termometri e una delle due sicurezze; il
 defangatore passa da tre a uno, sul ritorno generale prima della ripartizione verso le
 due macchine; i filtri a Y restano due, uno per macchina, e il circolatore perde il suo;
@@ -38,23 +49,23 @@ entra lo sfogo aria sull'attacco dedicato dell'accumulo, e la sicurezza supersti
 sull'accumulo. Vaso, riempimento e manometro stanno adesso sul tratto comune, non più
 sul ramo della prima macchina.
 
-**2 — Pompa di calore con deviatrice e bollitore: da 58 a 54 pezzi.**
+**2 — Pompa di calore con deviatrice e bollitore: da 58 a 46 pezzi.**
 Escono separatore, termometro e il defangatore doppio; entra lo sfogo sul volano; la
 sicurezza sta sul volano. Lo scarico del bollitore si sposta dall'uscita calda
 all'ingresso dell'acqua fredda.
 
-**3 — Pompa di calore diretta su pavimento: da 55 a 48 pezzi.**
+**3 — Pompa di calore diretta su pavimento: da 55 a 44 pezzi.**
 Stesse uscite del regime piccolo (separatore, termometro), sfogo e sicurezza sul volano
 in linea, e lo scarico del boiler sull'ingresso freddo.
 
-**4 — Ibrido pompa di calore e caldaia: da 68 a 52 pezzi.**
+**4 — Ibrido pompa di calore e caldaia: da 68 a 43 pezzi.**
 Il ritorno generale è il tratto fra il volume tecnico e il punto in cui il ritorno si
 divide verso le due macchine: lì stanno vaso, riempimento, manometro e l'unico
 defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul volano;
 escono i due separatori, i due termometri e una sicurezza. **Sul circuito sanitario non
 c'è filtro**, come è giusto in un impianto domestico.
 
-**5 — Cascata di tre pompe di calore: da 105 a 108 pezzi.**
+**5 — Cascata di tre pompe di calore: da 105 a 98 pezzi.**
 È l'unico dei cinque **sopra i 35 kW** — tre macchine da 35, e non è una centrale
 domestica — quindi tiene il corredo da grande centrale: sicurezza e termometro per ogni
 macchina, e il separatore d'aria sulla mandata generale. I cinque defangatori diventano

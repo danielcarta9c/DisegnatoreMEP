@@ -7,18 +7,15 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graph.lines import read_lines
-from disegnatore_mep.graph.naming import LineNaming, Naming
-from disegnatore_mep.graph.plant import read_plant
-from disegnatore_mep.graphics.frame import SheetFrame
+from disegnatore_mep.graph.naming import Naming
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import render_sheet
 from disegnatore_mep.graphics.svg import render_symbol_sheet
 from disegnatore_mep.io.canonical import canonical_json, project_fingerprint
 from disegnatore_mep.io.project_json import load_project
+from disegnatore_mep.layout.addresses import VERIFY_MARK, with_addresses
 from disegnatore_mep.layout.compose import compose_on_ordinary_frame
-from disegnatore_mep.layout.geometry import DrawingGeometry, drawing_fingerprint
-from disegnatore_mep.layout.labels import place_addresses
+from disegnatore_mep.layout.geometry import drawing_fingerprint
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import IssueSeverity
 from disegnatore_mep.rules.apply import saturate
@@ -37,12 +34,10 @@ SEVERITY_LABELS: dict[IssueSeverity, str] = {
 }
 """Le tre classi di esito della §13, in ordine di gravita' e in italiano (D-068)."""
 
-VERIFY_MARK = "MODALITÀ VERIFICA"
-"""Come si riconosce a colpo d'occhio una tavola che non e' una consegna.
-
-Sta nell'intestazione, dove il progettista la vede prima del disegno: una tavola
-con gli indirizzi addosso non e' quella che va in cantiere, e confonderle
-costerebbe piu' di quanto la verifica faccia risparmiare (D-110)."""
+_with_addresses = with_addresses
+"""Il velo degli indirizzi vive in `layout.addresses` (DRAW-005, I-030): e' la
+sola opzione esplicita che porta gli indirizzi in tavola, e nessuna modalita'
+tocca posa o routing. Il nome di prima resta per chi lo importava da qui."""
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -182,49 +177,6 @@ def _print_preflight(findings: list[ValidationIssue]) -> None:
             print(f"    codice: {item.code} · {', '.join(item.entity_ids)}")
 
 
-def _with_addresses(
-    drawing: DrawingGeometry,
-    project: ProjectModel,
-    catalog: ComponentRegistry,
-    frame: SheetFrame,
-    naming_dir: Path,
-) -> DrawingGeometry:
-    """La stessa tavola, con l'indirizzo di ogni nodo scritto accanto (D-110).
-
-    Le etichette si posano **sopra una tavola gia' finita** e non spostano
-    niente: le due modalita' danno percio' la stessa identica tavola, una con un
-    velo in piu'. E' il punto della decisione, e va tenuto vero: cio' che il
-    progettista verifica dev'essere esattamente cio' che gli viene consegnato.
-    """
-    lines = read_lines(
-        project,
-        catalog,
-        read_plant(project, catalog, Naming.from_directory(naming_dir)),
-        LineNaming.from_directory(naming_dir),
-    )
-    sheets = []
-    for sheet in drawing.sheets:
-        sheets.append(
-            sheet.model_copy(
-                update={
-                    "title": f"{sheet.title} · {VERIFY_MARK}",
-                    "labels": [
-                        *sheet.labels,
-                        *place_addresses(
-                            sheet.symbols,
-                            lines.addresses,
-                            frame.standard,
-                            routes=sheet.routes,
-                            already=sheet.labels,
-                            floor_y_mm=sheet.ground_line_y_mm,
-                        ),
-                    ],
-                }
-            )
-        )
-    return drawing.model_copy(update={"sheets": sheets})
-
-
 def _draw(args: argparse.Namespace) -> int:
     """Compone e scrive una tavola SVG per foglio.
 
@@ -276,7 +228,7 @@ def _draw(args: argparse.Namespace) -> int:
         return 2
 
     if args.verifica:
-        drawing = _with_addresses(drawing, project, catalog, frame, args.naming)
+        drawing = with_addresses(drawing, project, catalog, frame, args.naming)
 
     args.out.mkdir(parents=True, exist_ok=True)
     for sheet in drawing.sheets:

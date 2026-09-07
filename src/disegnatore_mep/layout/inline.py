@@ -19,7 +19,7 @@ from math import ceil
 from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import ComponentTrait
+from disegnatore_mep.catalog.schema import CLOSING_FUNCTIONS, ComponentTrait
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
 from .errors import LayoutError
@@ -74,13 +74,14 @@ manutiene usa invece `SNUG_CLEARANCE_MM` (D-120).
 """
 
 
-ISOLATING_FUNCTIONS = frozenset({"isolation", "isolation_locked_open"})
+ISOLATING_FUNCTIONS = CLOSING_FUNCTIONS
 """Chi isola, secondo il catalogo e mai secondo il nome (D-090, D-120).
 
 Sono i mestieri che la regola dell'intercettazione assegna: quello comune e
 quello bloccabile aperto. Un componente che li dichiara e' li' per fermare
 l'acqua attorno a un pezzo che si smonta, ed e' quello che va disegnato **sul
-suo attacco**.
+suo attacco**. L'elenco vive nel catalogo, con chi lo legge per proporre e
+per saturare: qui se ne tiene il nome che la posa usa da D-120.
 """
 
 
@@ -174,6 +175,7 @@ def place_inline_accessories(
     obstacles: list[PlacedSymbol] | None = None,
     runs: list[RoutedTrunk] | None = None,
     reserved: frozenset[Cell] = frozenset(),
+    trunks: list[Trunk] | None = None,
 ) -> tuple[list[PlacedSymbol], RoutedTrunk]:
     """Posa gli accessori della tratta e restituisce la spezzata interrotta.
 
@@ -194,6 +196,12 @@ def place_inline_accessories(
     una tratta instradata prima di loro, ed erano tre rilievi bloccanti sulla
     tavola consegnata. Le stazioni che non rispettano lo stacco si saltano,
     esattamente come quelle che cascano su un simbolo.
+
+    `trunks` sono tutte le tratte del foglio: servono a guardare **oltre un
+    raccordo passante** per sapere se al capo di questa tratta, attraverso il
+    raccordo, sta un pezzo che si manutiene (DRAW-005, I-035). Senza, la valvola
+    che isola l'accumulo restava a mezza strada, perche' la sua tratta finiva
+    sul raccordo della sicurezza e non sull'accumulo.
     """
     if not trunk.inline_component_ids:
         return [], routed
@@ -238,12 +246,43 @@ def place_inline_accessories(
     ]
 
     def services(ref: PortRef) -> bool:
-        definition_id = definitions.get(ref.component_id)
-        if definition_id is None:
-            return False
-        return catalog.resolve(definition_id).definition.has_trait(
-            ComponentTrait.MAINTAINABLE
-        )
+        """Al di la' di questo capo c'e' un pezzo che si manutiene.
+
+        Si guarda **attraverso i raccordi passanti** (I-035): la sicurezza
+        dell'accumulo pende da un raccordo sulla sua mandata, e la tratta della
+        valvola finisce sul raccordo, non sull'accumulo. Il raccordo e' l'unico
+        organo che per funzione resta fra la valvola e l'attacco: la valvola si
+        stringe a lui, cioe' all'attacco. La camminata attraversa un raccordo
+        solo se il percorso vi prosegue in una direzione sola; una ripartizione
+        la ferma, perche' oltre di lei i volumi sono due.
+        """
+        seen: set[str] = set()
+        cursor = ref
+        while cursor.component_id not in seen:
+            seen.add(cursor.component_id)
+            definition_id = definitions.get(cursor.component_id)
+            if definition_id is None:
+                return False
+            definition = catalog.resolve(definition_id).definition
+            if definition.has_trait(ComponentTrait.MAINTAINABLE):
+                return True
+            if not definition.is_a_fitting or trunks is None:
+                return False
+            onward = [
+                port.id
+                for port in definition.ports
+                if not port.off_the_run and port.id != cursor.port_id
+            ]
+            if len(onward) != 1:
+                return False
+            beyond = PortRef(component_id=cursor.component_id, port_id=onward[0])
+            following = [
+                item for item in trunks if beyond in (item.start, item.end)
+            ]
+            if len(following) != 1:
+                return False
+            cursor = following[0].end if following[0].start == beyond else following[0].start
+        return False
 
     last = len(resolved) - 1
     snug_head = bool(resolved) and isolates[0] and services(trunk.start)
@@ -382,13 +421,19 @@ def place_inline_accessories(
                 here += step
             for snapped in (reversed(nodes) if backwards else nodes):
                 station = _station_at(points, snapped)
-                rotation = 0 if station.horizontal else 90
-                if rotation not in manifest.allowed_rotations_deg:
+                # La giacitura la da' il tratto; fra le due rotazioni che la
+                # danno si prende la prima che il simbolo ammette. Un filtro a Y
+                # ammette solo quelle in cui il gambo non punta in su (I-031):
+                # su una verticale gira di 270 gradi, non di 90.
+                wanted = (0, 180) if station.horizontal else (90, 270)
+                allowed = [item for item in wanted if item in manifest.allowed_rotations_deg]
+                if not allowed:
                     raise LayoutError(
                         f"inline accessory {manifest.id} cannot be drawn rotated by "
-                        f"{rotation} degrees, which the run it sits on requires: "
-                        f"allowed {sorted(manifest.allowed_rotations_deg)}"
+                        f"{wanted[0]} or {wanted[1]} degrees, which the run it sits on "
+                        f"requires: allowed {sorted(manifest.allowed_rotations_deg)}"
                     )
+                rotation = allowed[0]
                 turned = manifest.rotated(rotation)
                 origin = Point(
                     x_mm=station.point.x_mm - turned.width_mm / 2,
@@ -443,6 +488,7 @@ def place_inline_accessories(
                 width_mm=turned.width_mm,
                 height_mm=turned.height_mm,
                 tag=tags.get(component_id),
+                port_flows=component.glyph_flows,
             )
         )
         cuts.append((distance - gap / 2, distance + gap / 2))
@@ -556,7 +602,7 @@ def settle_sheet(
     def settle(trunk: Trunk, route: RoutedTrunk) -> list[PlacedSymbol]:
         try:
             found, pieces = place_inline_accessories(
-                project, trunk, route, catalog, grid, symbols, drawn, reserved
+                project, trunk, route, catalog, grid, symbols, drawn, reserved, list(trunks)
             )
         except LayoutError:
             if not tolerant:

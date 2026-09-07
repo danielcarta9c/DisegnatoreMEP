@@ -230,6 +230,10 @@ def _already_there(
     # riproporrebbe a ogni passata.
     if context.service_port_is_taken(anchor.component_id, function):
         return True
+    if rule.satisfied_by.scope is SatisfactionScope.ON_THE_GROUP:
+        # Il gruppo si isola dall'esterno, mai fra i membri (I-034): l'organo
+        # c'e' gia' sul tratto, oppure il tratto porta a un membro del gruppo.
+        return context.group_holds(anchor, function)
     return context.port_carries(anchor, function)
 
 
@@ -276,10 +280,15 @@ def evaluate(
 ) -> Evaluation:
     """Le integrazioni che il modello non ha ancora, con il perche' di ciascuna,
     e i punti in cui una regola si applica ma il catalogo non ha il pezzo."""
-    context = RuleContext.build(project, catalog)
+    context = RuleContext.build(project, catalog, {item.id: item for item in rules.all()})
     taken = {item.id for item in project.components}
     proposals: list[RuleProposal] = []
     gaps: dict[tuple[str, str, str, str], RuleGap] = {}
+    # Un tratto, un organo (I-034). Due attacchi affacciati sullo stesso tratto
+    # — l'accumulo e il circolatore che ne parte — chiedono lo stesso pezzo
+    # sullo stesso volume: la seconda proposta e' la prima, non un doppione da
+    # applicare. Il tratto si riconosce dalle tubazioni che lo compongono.
+    claimed: set[tuple[frozenset[str], str]] = set()
 
     for rule in rules.all():
         # Il regime della centrale si legge come ogni altra proprieta'
@@ -372,6 +381,11 @@ def evaluate(
                 component_id = proposed_component_id(definition.id, anchor)
                 if component_id in taken:
                     continue
+                if rule.satisfied_by.scope is not SatisfactionScope.ON_THE_NETWORK:
+                    stretch = (context.stretch_from(anchor), function)
+                    if stretch in claimed:
+                        continue
+                    claimed.add(stretch)
                 # Solo per chi pende da uno stacco, e solo se la macchina
                 # dichiara l'attacco per quella funzione: altrimenti resta
                 # vuoto e lo stacco si apre sulla tubazione (D-101).

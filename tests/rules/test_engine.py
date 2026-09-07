@@ -16,7 +16,7 @@ from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.types import IntegrationCategory
 from disegnatore_mep.rules import apply as apply_module
-from disegnatore_mep.rules.apply import apply_proposals, saturate
+from disegnatore_mep.rules.apply import apply_proposals, evaluate_in_phases, saturate
 from disegnatore_mep.rules.engine import evaluate
 from disegnatore_mep.rules.errors import RuleError
 from disegnatore_mep.rules.proposal import RuleProposal
@@ -88,7 +88,9 @@ def test_completing_takes_more_than_one_pass_and_then_stops() -> None:
     passes = 0
     current = project
     while True:
-        found = evaluate(current, catalog(), rules())
+        # La passata e' quella della catena, a fasi: prima cio' che entra nel
+        # gruppo, poi cio' che lo chiude (DRAW-005).
+        found = evaluate_in_phases(current, catalog(), rules())
         if found.is_empty:
             break
         # Come fa la catena: applicare e **rimettere in fila**, perche'
@@ -162,7 +164,7 @@ def test_the_limit_counts_productive_passes_and_not_the_one_that_finds_nothing(
     productive = 0
     current = project
     while True:
-        found = evaluate(current, catalog(), rules())
+        found = evaluate_in_phases(current, catalog(), rules())
         if found.is_empty:
             break
         # Come fa la catena: applicare e **rimettere in fila**, perche'

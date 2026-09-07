@@ -13,6 +13,7 @@ Impianti costruiti qui, con il catalogo di prova: nessun identificativo o
 coordinata della tavola 1.
 """
 
+import math
 from datetime import date
 from functools import cache
 from pathlib import Path
@@ -35,6 +36,7 @@ from disegnatore_mep.model.project import (
     PortRef,
     ProjectMetadata,
     ProjectModel,
+    SubsystemModel,
 )
 from disegnatore_mep.model.types import PlantRegime
 from disegnatore_mep.rules.apply import saturate
@@ -79,6 +81,7 @@ def _plant(
     networks: list[tuple[str, str]],
     components: list[tuple[str, str, str | None]],
     connections: list[ConnectionModel],
+    subsystems: list[tuple[str, list[str], list[str]]] | None = None,
 ) -> ProjectModel:
     return ProjectModel(
         metadata=ProjectMetadata(
@@ -99,6 +102,10 @@ def _plant(
             for item, definition, tag in components
         ],
         connections=connections,
+        subsystems=[
+            SubsystemModel(id=item, name=item, component_ids=members, network_ids=nets)
+            for item, members, nets in (subsystems or [])
+        ],
     )
 
 
@@ -155,6 +162,45 @@ def con_accumulo_combinato() -> ProjectModel:
             _pipe("s3", "secondo", ("corpo", "out"), ("serbatoio", "secondary_in")),
             _pipe("w1", "fredda", ("rete-idrica", "a"), ("serbatoio", "cold_in")),
             _pipe("w2", "calda", ("serbatoio", "dhw_out"), ("rubinetti", "a")),
+        ],
+    )
+
+
+def due_macchine_con_accumulo_combinato() -> ProjectModel:
+    """Due pompe di calore in parallelo su un accumulo combinato: la stessa
+    famiglia di impianto della tavola 1, con altri nomi e senza coordinate."""
+    return _plant(
+        [("primo", HEATING), ("secondo", HEATING), ("fredda", COLD), ("calda", DHW)],
+        [
+            ("nord", "heat-pump-air-water", "PDC-A"),
+            ("sud", "heat-pump-air-water", "PDC-B"),
+            ("unione", "tee-junction", None),
+            ("ripartizione", "tee-split", None),
+            ("serbatoio", "buffer-combined", "ACC-A"),
+            ("pompa", "pump-circulator", "CIR-A"),
+            ("corpo", "radiator", "RAD-A"),
+            ("rete-idrica", "cold-water-inlet", "AF-A"),
+            ("rubinetti", "dhw-draw-off", "ACS-A"),
+        ],
+        [
+            _pipe("p1", "primo", ("nord", "water_supply"), ("unione", "a")),
+            _pipe("p2", "primo", ("sud", "water_supply"), ("unione", "c")),
+            _pipe("p3", "primo", ("unione", "b"), ("serbatoio", "primary_in")),
+            _pipe("p4", "primo", ("serbatoio", "primary_out"), ("ripartizione", "a")),
+            _pipe("p5", "primo", ("ripartizione", "b"), ("nord", "water_return")),
+            _pipe("p6", "primo", ("ripartizione", "c"), ("sud", "water_return")),
+            _pipe("s1", "secondo", ("serbatoio", "secondary_out"), ("pompa", "a")),
+            _pipe("s2", "secondo", ("pompa", "b"), ("corpo", "in")),
+            _pipe("s3", "secondo", ("corpo", "out"), ("serbatoio", "secondary_in")),
+            _pipe("w1", "fredda", ("rete-idrica", "a"), ("serbatoio", "cold_in")),
+            _pipe("w2", "calda", ("serbatoio", "dhw_out"), ("rubinetti", "a")),
+        ],
+        # Le fasce della tavola, come le dichiara qualunque impianto che si
+        # impagina: chi genera, chi accumula, chi distribuisce.
+        [
+            ("generazione", ["nord", "sud", "unione", "ripartizione"], ["primo"]),
+            ("accumulo", ["serbatoio", "rete-idrica", "rubinetti"], ["primo", "fredda", "calda"]),
+            ("distribuzione", ["pompa", "corpo"], ["secondo"]),
         ],
     )
 
@@ -277,7 +323,7 @@ def _gap_to_point(symbol: PlacedSymbol, x_mm: float, y_mm: float) -> float:
     left, top, right, bottom = box_of(symbol)
     gap_x = max(left - x_mm, x_mm - right, 0.0)
     gap_y = max(top - y_mm, y_mm - bottom, 0.0)
-    return (gap_x**2 + gap_y**2) ** 0.5
+    return math.hypot(gap_x, gap_y)
 
 
 def _port_point(
@@ -329,7 +375,7 @@ def test_la_valvola_che_isola_oltre_un_raccordo_passante_si_stringe_al_raccordo(
     valvola che isola l'accumulo sta prima del raccordo, e il raccordo e'
     l'unico organo che per funzione resta fra lei e l'attacco. Si posa
     percio' contro il raccordo, non a mezza strada."""
-    project, _, _ = saturate(con_puffer(), catalog(), rules())
+    project, _, _ = saturate(due_macchine_con_accumulo_combinato(), catalog(), rules())
     registry = catalog()
     drawing = compose_drawing(project, registry, NOVE_C_A3)
     sheet = drawing.sheets[0]

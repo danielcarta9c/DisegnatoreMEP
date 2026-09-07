@@ -159,11 +159,23 @@ def _the_y(symbol: Symbol) -> tuple[Pt, Segment, Segment]:
         item
         for item in segments
         if item != branch
-        and (close(item[0], tip) or close(item[1], tip))
+        and _on_segment(tip, item)
         and min(item[0][1], item[1][1]) > axis_y + TOLERANCE_MM
     ]
     assert stems, f"{manifest.id}: al ramo inclinato manca il gambo inferiore"
     return root, (root, tip), stems[0]
+
+
+def _on_segment(point: Pt, segment: Segment, tolerance: float = 1e-3) -> bool:
+    """Il punto sta sul tratto: e' un capo, oppure vi cade dentro."""
+    (x1, y1), (x2, y2) = segment
+    cross = (x2 - x1) * (point[1] - y1) - (y2 - y1) * (point[0] - x1)
+    if abs(cross) > tolerance:
+        return False
+    return (
+        min(x1, x2) - tolerance <= point[0] <= max(x1, x2) + tolerance
+        and min(y1, y2) - tolerance <= point[1] <= max(y1, y2) + tolerance
+    )
 
 
 @pytest.mark.parametrize("symbol", _strainer_symbols(), ids=lambda item: item.manifest.id)
@@ -232,11 +244,16 @@ def _glyph_paths(root: ElementTree.Element, component_id: str) -> list[ElementTr
     return [item for item in group.iter() if item.get("class") == "flow-glyph"]
 
 
-def _tip_and_base(path: ElementTree.Element) -> tuple[Pt, Pt]:
+def _tip_and_base(path: ElementTree.Element, origin: Point) -> tuple[Pt, Pt]:
+    """Punta e base della freccia, portate nelle coordinate del foglio: il
+    tracciato sta dentro il gruppo del simbolo, che e' traslato sull'origine."""
     vertices = path_vertices(path.get("d", ""))
     assert len(vertices) >= 3, path.get("d")
-    tip = vertices[0]
-    base = ((vertices[1][0] + vertices[2][0]) / 2, (vertices[1][1] + vertices[2][1]) / 2)
+    tip = (vertices[0][0] + origin.x_mm, vertices[0][1] + origin.y_mm)
+    base = (
+        (vertices[1][0] + vertices[2][0]) / 2 + origin.x_mm,
+        (vertices[1][1] + vertices[2][1]) / 2 + origin.y_mm,
+    )
     return tip, base
 
 
@@ -274,7 +291,7 @@ def test_la_freccia_del_confine_punta_nel_verso_locale_dell_acqua(degrees: int) 
         at = (item.origin.x_mm + port.x_mm, item.origin.y_mm + port.y_mm)
         paths = _glyph_paths(root, item.component_id)
         assert len(paths) == 1, item.component_id
-        tip, base = _tip_and_base(paths[0])
+        tip, base = _tip_and_base(paths[0], item.origin)
         nearer = math.dist(tip, at) < math.dist(base, at)
         assert nearer == (item.component_id == "uscente"), (degrees, item.component_id)
         # La punta sta sull'asse della porta, dentro il riquadro.
@@ -303,7 +320,7 @@ def test_senza_un_verso_dichiarato_il_confine_si_disegna_uscente_e_non_muto() ->
     paths = _glyph_paths(root, "muto")
     assert len(paths) == 1
     port = symbol.manifest.port(outgoing.ports[0].id)
-    tip, base = _tip_and_base(paths[0])
+    tip, base = _tip_and_base(paths[0], placed.origin)
     at = (100.0 + port.x_mm, 100.0 + port.y_mm)
     assert math.dist(tip, at) < math.dist(base, at)
 
@@ -374,7 +391,7 @@ def test_la_posa_scrive_il_verso_di_ogni_porta_con_glifo_leggendolo_dal_catalogo
         turned = library().get(item.symbol_id).manifest.rotated(item.rotation_deg)
         port = turned.port("a")
         at = (item.origin.x_mm + port.x_mm, item.origin.y_mm + port.y_mm)
-        tip, base = _tip_and_base(_glyph_paths(root, name)[0])
+        tip, base = _tip_and_base(_glyph_paths(root, name)[0], item.origin)
         assert (math.dist(tip, at) < math.dist(base, at)) == expected_nearer, name
 
 
@@ -596,7 +613,7 @@ def test_cinque_millimetri_fra_due_porte_non_passano_la_misura() -> None:
     """La misura riconosce il difetto di DRAW-004: due attacchi a cinque
     millimetri portano due valvole che si toccano."""
     room = functional_room_mm(catalog(), HEATING, A3_LANDSCAPE)
-    assert 5.0 < room
+    assert room > 5.0
 
 
 # ---------------------------------------------------------------------------

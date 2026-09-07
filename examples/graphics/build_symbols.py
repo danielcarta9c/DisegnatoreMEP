@@ -58,6 +58,19 @@ I corpi sono **disegnati in funzione del riquadro**, non scritti come
 coordinate fisse: cambiare una taglia della gerarchia non puo' cosi' lasciare
 un disegno fuori dal proprio box.
 
+## I segni corretti da DRAW-005
+
+La matrice PM del 5 settembre 2026 (`docs/pm/2026-09-05-audit-simboli-e-contenuto-tavola1.md`)
+fissa per i simboli critici della tavola 1: il filtro a Y nella forma classica,
+con ramo inclinato e gambo che non sale mai sopra l'asse; la freccia del
+confine di rete come **glifo di verso** dichiarato, che il renderer punta nel
+verso locale dell'acqua; le lettere di manometro e termometro come **glifi
+leggibili**, contro-ruotati dal registro; l'interasse di quindici millimetri
+fra mandata e ritorno della pompa di calore; e tre riserve con tre corpi —
+puffer, bollitore, accumulo combinato — in cui chi attraversa la riserva senza
+mescolarsi lo fa in un serpentino continuo e chi entra nel volume tocca il
+mantello.
+
 Rieseguire questo script deve produrre file bit per bit identici.
 """
 
@@ -83,6 +96,13 @@ EXPANSION_VESSEL_ROTATIONS_DEG = [0, 180]
 """Un vaso di espansione a membrana si disegna in piedi."""
 UPRIGHT_ROTATIONS_DEG = [0]
 """Accumuli e macchine si disegnano nel proprio verso: coricarli non aiuta a leggere."""
+STRAINER_ROTATIONS_DEG = [0, 270]
+"""Un filtro a Y ha il gambo in basso, in ogni rotazione ammessa (DRAW-005, I-031).
+
+Il ramo inclinato scende dall'asse verso il basso a sinistra: a 0 gradi punta
+in basso, a 270 — la rotazione che lo posa su una tubazione verticale — in
+basso a destra. A 90 e a 180 il gambo salirebbe sopra l'asse, e un cestello
+che pesca in alto non raccoglie niente: quelle due non si ammettono."""
 
 CLEARANCE_MM = A3_LANDSCAPE.min_clearance_mm
 GRID_MM = A3_LANDSCAPE.grid_mm
@@ -163,13 +183,44 @@ def port_at(port_id: str, face: str, along_mm: float, width_mm: float, height_mm
     return {"id": port_id, "face": face, "x_mm": coordinate[0], "y_mm": coordinate[1]}
 
 
-def keep_out(ports: list[dict[str, Any]]) -> dict[str, float]:
+def keep_out(ports: list[dict[str, Any]], clearance_mm: float = CLEARANCE_MM) -> dict[str, float]:
     """Area di rispetto sui lati che portano una porta, derivata dalle porte."""
     faces = {item["face"] for item in ports}
     return {
-        f"{side}_mm": CLEARANCE_MM if side in faces else 0.0
+        f"{side}_mm": clearance_mm if side in faces else 0.0
         for side in ("left", "right", "top", "bottom")
     }
+
+
+FITTING_CLEARANCE_MM = 0.5
+"""L'area di rispetto di un raccordo (D-119): mezzo millimetro.
+
+Un raccordo e' un punto della tubazione, non un apparecchio, e non c'e' niente
+da cui tenersi distanti. Il riquadro resta 5 x 5, perche' i tre attacchi devono
+cadere su nodi della griglia (D-054): cio' che si toglie e' il rispetto, non il
+segno. Portato qui dal manifesto committato: il segno era stato corretto a mano,
+e il generatore lo rigenerava com'era prima."""
+
+SOURCE_UNI_TAB1_FITTING = (
+    "UNI 9511 Tab. 1, tramite SRC-016 — area di rispetto azzerata (D-119b): un "
+    "raccordo e' un punto della tubazione, non un apparecchio, e non c'e' niente da "
+    "cui tenersi distanti. Il segno disegnato e' un punto di due decimi di "
+    "millimetro: chi guarda vede le linee dividersi e sa che li' c'e' un T"
+)
+"""La fonte dei raccordi, con la decisione che ne ha ridotto il rispetto."""
+
+SOURCE_UNI_CHECK_VALVE = (
+    "UNI 9511 Tab. 3 «valvola di non ritorno», tramite SRC-016, e la parola del PM "
+    "che l'ha respinta due volte: «una sorta di z di fianco con freccia sopra». Il "
+    "segno e' una **z** — barra alta, diagonale, barra bassa — con la freccia del "
+    "senso del flusso sopra. La versione precedente provava a farla con due "
+    "barrette VERTICALI unite da una diagonale: sulla carta non legge come una z, "
+    "legge come una N storta, ed e' quella che il PM ha visto e respinto. Il segno "
+    "e' stato guardato rasterizzato prima di scriverlo, non descritto a memoria: e' "
+    "la stessa lezione di I-004, applicata anche al proprio disegno e non solo alle "
+    "fonti altrui"
+)
+"""La fonte del ritegno, con la decisione che ne ha rifatto il segno (D-122)."""
 
 
 # ---------------------------------------------------------------------------
@@ -201,19 +252,23 @@ def valve_isolation_body(w: float, h: float) -> str:
 
 
 def valve_check_body(w: float, h: float) -> str:
-    """Valvola di non ritorno (UNI 9511 Tab. 3): triangolo vuoto con il vertice
-    contro la battuta, freccia del senso del flusso sopra il segno."""
-    inset = w / 6
-    left, seat = inset, w - inset
-    y = h / 2
-    top, bottom = h * 0.26, h * 0.74
-    arrow_y = h * 0.12
+    """Valvola di non ritorno (UNI 9511 Tab. 3, D-122): una **z** — barra alta,
+    diagonale, barra bassa — con la freccia del senso del flusso sopra.
+
+    E' il segno che il PM ha approvato dopo averlo visto rasterizzato; il
+    generatore lo riproduce dal manifesto committato, che era stato corretto a
+    mano (DRAW-005)."""
+    inset = w / 5
+    left, right = inset, w - inset
+    top, bottom = h * 0.24, h * 0.76
+    arrow_y = h * 0.06
     tail, head = w * 0.28, w * 0.72
     barb = w * 0.12
     return (
         stubs_horizontal(w, h, inset)
-        + f'<path d="M{n(left)} {n(top)} L{n(left)} {n(bottom)} L{n(seat)} {n(y)} Z"/>'
-        f'<line x1="{n(seat)}" y1="{n(top)}" x2="{n(seat)}" y2="{n(bottom)}"/>'
+        + f'<line x1="{n(left)}" y1="{n(top)}" x2="{n(right)}" y2="{n(top)}"/>'
+        f'<line x1="{n(right)}" y1="{n(top)}" x2="{n(left)}" y2="{n(bottom)}"/>'
+        f'<line x1="{n(left)}" y1="{n(bottom)}" x2="{n(right)}" y2="{n(bottom)}"/>'
         f'<line x1="{n(tail)}" y1="{n(arrow_y)}" x2="{n(head)}" y2="{n(arrow_y)}"/>'
         f'<line x1="{n(head)}" y1="{n(arrow_y)}" '
         f'x2="{n(head - barb)}" y2="{n(arrow_y - barb / 2)}"/>'
@@ -223,12 +278,22 @@ def valve_check_body(w: float, h: float) -> str:
 
 
 def strainer_body(w: float, h: float) -> str:
-    """Filtro a Y: la linea passa dritta, il cestello scende sotto."""
+    """Filtro a Y, nella forma classica (DRAW-005, I-031): la linea passa
+    dritta fra le due porte, dal centro scende il **ramo inclinato** a
+    quarantacinque gradi verso il basso a sinistra — il lato da cui l'acqua
+    arriva — e in fondo al ramo sta il **gambo**, il tappo del cestello,
+    perpendicolare al ramo. La Y si legge cosi', e il segno precedente — un
+    triangolo a V sotto la linea — non era mai stato approvato dal PO."""
     y = h / 2
+    cx = w / 2
+    reach = min(w, h) * 0.32
+    tip_x, tip_y = cx - reach, y + reach
+    cap = min(w, h) * 0.1 / 2**0.5
     return (
         f'<line x1="0" y1="{n(y)}" x2="{n(w)}" y2="{n(y)}"/>'
-        f'<path d="M{n(w * 0.3)} {n(y)} L{n(w * 0.7)} {n(y)} '
-        f'L{n(w / 2)} {n(h * 0.95)} Z"/>'
+        f'<line x1="{n(cx)}" y1="{n(y)}" x2="{n(tip_x)}" y2="{n(tip_y)}"/>'
+        f'<line x1="{n(tip_x - cap)}" y1="{n(tip_y - cap)}" '
+        f'x2="{n(tip_x + cap)}" y2="{n(tip_y + cap)}"/>'
     )
 
 
@@ -438,34 +503,122 @@ def heat_pump_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
     )
 
 
-def cylinder_body(w: float, h: float, coil: bool, ports: list[dict[str, Any]]) -> str:
-    """Serbatoio verticale a fondi bombati. Con serpentino se scaldato da uno."""
-    x, y = w * 0.14, h * 0.06
-    bw, bh = w * 0.72, h * 0.88
+def _shell_of(w: float, h: float) -> tuple[float, float, float, float]:
+    """Il mantello di una riserva: x, y, larghezza e altezza nel riquadro."""
+    return w * 0.14, h * 0.06, w * 0.72, h * 0.88
+
+
+def stubs_into_the_shell(ports: list[dict[str, Any]], w: float, h: float) -> str:
+    """Un moncone da ogni porta **fino al mantello**: l'attacco entra nel volume.
+
+    Disegnato dalle porte, come `stubs_to_ports`, ma il capo interno sta sul
+    mantello e non a una quota fissa: e' cosi' che si legge che quell'attacco
+    comunica col volume (DRAW-005, I-036).
+    """
+    x, y, bw, bh = _shell_of(w, h)
+    segments = []
+    for item in ports:
+        px, py = item["x_mm"], item["y_mm"]
+        target = {
+            "left": (x, py),
+            "right": (x + bw, py),
+            "top": (px, y),
+            "bottom": (px, y + bh),
+        }[item["face"]]
+        segments.append(
+            f'<line x1="{n(px)}" y1="{n(py)}" x2="{n(target[0])}" y2="{n(target[1])}"/>'
+        )
+    return "".join(segments)
+
+
+def coil_between(
+    entry: dict[str, Any], exit: dict[str, Any], w: float, h: float, rows: int
+) -> str:
+    """Il serpentino: **un tracciato solo** dall'attacco d'ingresso a quello
+    d'uscita, che entra nel mantello, vi gira avanti e indietro, e ne esce.
+
+    E' il segno che dice che quel fluido attraversa la riserva scambiando
+    calore senza mescolarsi (DRAW-005, I-036): l'acqua fredda che diventa
+    sanitaria nell'accumulo combinato, l'acqua tecnica che scalda il
+    bollitore. Un serpentino tracciato a pezzi non si legge come tale.
+    """
+    x, y, bw, bh = _shell_of(w, h)
+    left, right = x + bw * 0.2, x + bw * 0.8
+    top_row, bottom_row = y + bh * 0.2, y + bh * 0.84
+    entry_y, exit_y = entry["y_mm"], exit["y_mm"]
+    points: list[tuple[float, float]] = [(entry["x_mm"], entry_y)]
+    if entry["face"] == "left":
+        points.append((left, entry_y))
+        start_y = entry_y
+    else:
+        points.append((entry["x_mm"], top_row))
+        start_y = top_row
+    if exit["face"] == "top":
+        end_y = top_row
+    elif exit["face"] == "left":
+        end_y = exit_y
+    else:
+        end_y = bottom_row
+    span = (end_y - start_y) / rows
+    here_x = left
+    row_y = start_y
+    for index in range(rows):
+        other = right if here_x == left else left
+        points.append((other, row_y))
+        here_x = other
+        if index < rows - 1:
+            row_y += span
+            points.append((here_x, row_y))
+    if exit["face"] == "top":
+        points.append((exit["x_mm"], row_y))
+        points.append((exit["x_mm"], y))
+    elif exit["face"] == "left":
+        points.append((left, end_y))
+        points.append((exit["x_mm"], end_y))
+    else:
+        points.append((exit["x_mm"], row_y))
+        points.append((exit["x_mm"], y + bh))
+    points.append((exit["x_mm"], exit["y_mm"]))
+    tidy: list[tuple[float, float]] = []
+    for point in points:
+        if not tidy or (n(tidy[-1][0]), n(tidy[-1][1])) != (n(point[0]), n(point[1])):
+            tidy.append(point)
+    d = "M" + " L".join(f"{n(px)} {n(py)}" for px, py in tidy)
+    return (
+        f'<path class="coil" data-from="{entry["id"]}" data-to="{exit["id"]}" d="{d}"/>'
+    )
+
+
+def reserve_body(
+    w: float,
+    h: float,
+    ports: list[dict[str, Any]],
+    coil: tuple[str, str] | None = None,
+    rows: int = 5,
+) -> str:
+    """Una riserva: il mantello, gli attacchi che entrano nel volume e, se un
+    fluido la attraversa senza mescolarsi, il suo serpentino.
+
+    Tre riserve, tre corpi (DRAW-005, I-036): il **puffer** ha il solo volume
+    di acqua tecnica e nessun serpentino; il **bollitore** tiene in serbo acqua
+    sanitaria, e il serpentino tecnico che lo scalda va dal proprio ingresso al
+    proprio ritorno; l'**accumulo combinato** tiene in serbo acqua tecnica, e il
+    serpentino sanitario va dall'ingresso dell'acqua fredda all'uscita
+    dell'acqua calda. Quale coppia di attacchi sia il serpentino lo dice il
+    catalogo — i fluidi diversi da quello tenuto in serbo — e qui si scrive per
+    nome soltanto perche' questo generatore non legge il catalogo.
+    """
+    x, y, bw, bh = _shell_of(w, h)
     shell = (
         f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}" '
         f'rx="{n(bw * 0.18)}"/>'
     )
-    stubs = stubs_to_ports(ports, w, h, min(w, h) * 0.1)
-    if not coil:
+    by_id = {item["id"]: item for item in ports}
+    through = set(coil or ())
+    stubs = stubs_into_the_shell([item for item in ports if item["id"] not in through], w, h)
+    if coil is None:
         return shell + stubs
-    turns = "".join(
-        f'<path d="M{n(x + bw * 0.2)} {n(y + bh * (0.28 + i * 0.14))} '
-        f'Q{n(x + bw * 0.5)} {n(y + bh * (0.35 + i * 0.14))} '
-        f'{n(x + bw * 0.8)} {n(y + bh * (0.28 + i * 0.14))}"/>'
-        for i in range(4)
-    )
-    return shell + turns + stubs
-
-
-def buffer_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
-    """Volano a quattro attacchi: serbatoio con gli stacchi sulle proprie porte."""
-    x, y = w * 0.14, h * 0.06
-    bw, bh = w * 0.72, h * 0.88
-    return (
-        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}" '
-        f'rx="{n(bw * 0.18)}"/>' + stubs_to_ports(ports, w, h, x)
-    )
+    return shell + coil_between(by_id[coil[0]], by_id[coil[1]], w, h, rows) + stubs
 
 
 def diverting_valve_body(w: float, h: float) -> str:
@@ -702,14 +855,28 @@ def drain_connection_body(w: float, h: float) -> str:
     )
 
 
+DIAL_GLYPH_ID = "lettera"
+"""Il glifo leggibile di uno strumento indicatore: la lettera nel quadrante."""
+
+
+def dial_centre(w: float, h: float) -> tuple[float, float]:
+    """Il centro del quadrante, attorno a cui la lettera resta dritta."""
+    return w / 2, h * 0.3
+
+
 def _dial(w: float, h: float, mark_of: Any) -> str:
-    """Strumento indicatore appeso al proprio attacco: il quadrante e la lettera."""
+    """Strumento indicatore appeso al proprio attacco: il quadrante e la lettera.
+
+    La lettera sta in un gruppo dichiarato leggibile (DRAW-005, I-033): chi
+    ruota il simbolo la contro-ruota attorno al centro del quadrante, cosi'
+    che `P` e `T` si leggano nel verso della tavola anche a strumento girato.
+    """
     r = w * 0.4
-    cy = h * 0.3
+    cx, cy = dial_centre(w, h)
     return (
         _stem(w, h, "bottom", cy + r)
-        + f'<circle cx="{n(w / 2)}" cy="{n(cy)}" r="{n(r)}"/>'
-        + str(mark_of(w / 2, cy, r))
+        + f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>'
+        + f'<g data-glyph="{DIAL_GLYPH_ID}">{mark_of(cx, cy, r)}</g>'
     )
 
 
@@ -786,13 +953,27 @@ def pressure_reducer_body(w: float, h: float) -> str:
 
 
 def network_boundary_body(w: float, h: float) -> str:
-    """Confine di rete: da dove il fluido arriva, o dove se ne va."""
+    """Confine di rete: da dove il fluido arriva, o dove se ne va.
+
+    Il corpo e' la sola linea fino alla porta. La freccia non sta nel corpo:
+    e' un glifo di verso dichiarato nel manifesto (`boundary_flow_glyph`), e
+    chi disegna la punta nel verso locale dell'acqua letto dal catalogo
+    (DRAW-005, I-032) — verso la porta sull'acquedotto, da cui l'acqua esce
+    verso l'impianto; verso l'interno sulle utenze, in cui l'acqua entra."""
     cy = h / 2
-    return (
-        f'<line x1="0" y1="{n(cy)}" x2="{n(w * 0.45)}" y2="{n(cy)}"/>'
-        f'<path d="M{n(w * 0.45)} {n(cy - h * 0.2)} L{n(w)} {n(cy)} '
-        f'L{n(w * 0.45)} {n(cy + h * 0.2)} Z"/>'
-    )
+    return f'<line x1="0" y1="{n(cy)}" x2="{n(w)}" y2="{n(cy)}"/>'
+
+
+def boundary_flow_glyph(w: float, h: float) -> dict[str, Any]:
+    """La freccia del confine, centrata sul tratto che porta alla porta: a
+    verso uscente ridisegna esattamente il triangolo che il corpo aveva."""
+    return {
+        "port": "a",
+        "x_mm": w * 0.725,
+        "y_mm": h / 2,
+        "length_mm": w * 0.55,
+        "half_width_mm": h * 0.2,
+    }
 
 
 
@@ -809,6 +990,17 @@ class SymbolSpec:
     allowed_rotations_deg: list[int] = field(
         default_factory=lambda: list(ALLOWED_ROTATIONS_DEG)
     )
+    flow_glyphs: list[dict[str, Any]] = field(default_factory=list)
+    """Le frecce di verso legate a una porta, che il renderer traccia nel verso
+    locale dell'acqua (DRAW-005, I-032)."""
+    upright_glyphs: list[dict[str, Any]] = field(default_factory=list)
+    """I glifi interni dichiarati leggibili, che restano dritti rispetto al
+    foglio quando il corpo ruota (DRAW-005, I-033)."""
+    version: str = VERSION
+    """La versione del manifesto: sale quando il segno cambia forma o porte."""
+    clearance_mm: float = CLEARANCE_MM
+    """L'area di rispetto sulle facce con porta. Un raccordo e' un punto della
+    tubazione, non un apparecchio, e ne tiene una minima (D-119)."""
 
 
 def inline_symbol(
@@ -817,6 +1009,8 @@ def inline_symbol(
     size: tuple[float, float],
     body_of: Any,
     source: str,
+    allowed_rotations_deg: list[int] | None = None,
+    version: str = VERSION,
 ) -> SymbolSpec:
     """Componente in linea: due porte opposte, a sinistra e a destra."""
     w, h = size
@@ -829,6 +1023,8 @@ def inline_symbol(
         ports=[port("a", "left", w, h), port("b", "right", w, h)],
         body=body_of(w, h),
         source=source,
+        allowed_rotations_deg=list(allowed_rotations_deg or ALLOWED_ROTATIONS_DEG),
+        version=version,
     )
 
 
@@ -840,6 +1036,9 @@ def single_port_symbol(
     body_of: Any,
     source: str,
     allowed_rotations_deg: list[int] | None = None,
+    flow_glyphs: list[dict[str, Any]] | None = None,
+    upright_glyphs: list[dict[str, Any]] | None = None,
+    version: str = VERSION,
 ) -> SymbolSpec:
     w, h = size
     return SymbolSpec(
@@ -852,7 +1051,16 @@ def single_port_symbol(
         body=body_of(w, h),
         source=source,
         allowed_rotations_deg=list(allowed_rotations_deg or ALLOWED_ROTATIONS_DEG),
+        flow_glyphs=list(flow_glyphs or []),
+        upright_glyphs=list(upright_glyphs or []),
+        version=version,
     )
+
+
+def dial_glyph(size: tuple[float, float]) -> list[dict[str, Any]]:
+    """La lettera di uno strumento indicatore, dichiarata leggibile."""
+    cx, cy = dial_centre(*size)
+    return [{"id": DIAL_GLYPH_ID, "x_mm": cx, "y_mm": cy}]
 
 
 def two_port_terminal(symbol_id: str, name: str, body_of: Any, source: str) -> SymbolSpec:
@@ -880,8 +1088,15 @@ MANIFOLD_W, MANIFOLD_H = MANIFOLD
 MANIFOLD_OUTLETS = (12.5, 27.5)
 
 HEAT_PUMP_PORTS = [
+    # Quindici millimetri fra mandata e ritorno (DRAW-005, I-039): e' l'interasse
+    # del simbolo della pompa di calore della tavola 1, e non una costante per
+    # tutte le macchine. Cinque millimetri erano l'altezza di una valvola: due
+    # valvole sui due rami si toccavano, e la posa pagava gradini. Con quindici
+    # gli accessori dei due rami hanno lo spazio funzionale che il catalogo
+    # chiede, e le porte stanno alle stesse quote di quelle primarie
+    # dell'accumulo, che e' cio' che permette una mandata diritta.
     port_at("water_supply", "right", 5.0, HEAT_PUMP_W, HEAT_PUMP_H),
-    port_at("water_return", "right", 10.0, HEAT_PUMP_W, HEAT_PUMP_H),
+    port_at("water_return", "right", 20.0, HEAT_PUMP_W, HEAT_PUMP_H),
 ]
 CYLINDER_PORTS = [
     port_at("coil_in", "left", 7.5, STORAGE_W, STORAGE_H),
@@ -967,17 +1182,20 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     single_port_symbol(
         "thermometer", "Termometro", BRANCHED_ACCESSORY, "bottom",
-        thermometer_body, SOURCE_UNI_TAB10,
+        thermometer_body, SOURCE_UNI_TAB10, upright_glyphs=dial_glyph(BRANCHED_ACCESSORY),
+        version="2.0.0",
     ),
     single_port_symbol(
         "pressure-gauge", "Manometro", BRANCHED_ACCESSORY, "bottom",
-        pressure_gauge_body, SOURCE_UNI_TAB10,
+        pressure_gauge_body, SOURCE_UNI_TAB10, upright_glyphs=dial_glyph(BRANCHED_ACCESSORY),
+        version="2.0.0",
     ),
     inline_symbol("mixing-valve-thermostatic", "Valvola miscelatrice termostatica", BRANCHED_ACCESSORY, mixing_valve_body, SOURCE_UNI_TAB3),
     inline_symbol("pressure-reducer", "Riduttore di pressione", BRANCHED_ACCESSORY, pressure_reducer_body, SOURCE_PRACTICE_HYDRONIC),
     single_port_symbol(
         "network-boundary", "Confine di rete", INLINE_ACCESSORY, "right", network_boundary_body,
-        SOURCE_PRACTICE_HYDRONIC,
+        SOURCE_PRACTICE_HYDRONIC, flow_glyphs=[boundary_flow_glyph(*INLINE_ACCESSORY)],
+        version="2.0.0",
     ),
     # --- le famiglie dei cinque impianti di prova del committente -----------
     SymbolSpec(
@@ -1019,9 +1237,10 @@ SYMBOLS: list[SymbolSpec] = [
         height_mm=STORAGE[1],
         inline=False,
         ports=BUFFER_TWO_PORTS,
-        body=buffer_body(STORAGE_W, STORAGE_H, BUFFER_TWO_PORTS),
+        body=reserve_body(STORAGE_W, STORAGE_H, BUFFER_TWO_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        version="1.1.0",
     ),
     SymbolSpec(
         id="buffer-combined",
@@ -1030,9 +1249,14 @@ SYMBOLS: list[SymbolSpec] = [
         height_mm=STORAGE[1],
         inline=False,
         ports=BUFFER_COMBINED_PORTS,
-        body=cylinder_body(STORAGE_W, STORAGE_H, True, BUFFER_COMBINED_PORTS),
+        # Il serpentino sanitario, continuo da `cold_in` a `dhw_out`; i quattro
+        # attacchi tecnici entrano nel volume del mantello (I-036, I-037).
+        body=reserve_body(
+            STORAGE_W, STORAGE_H, BUFFER_COMBINED_PORTS, coil=("cold_in", "dhw_out"), rows=6
+        ),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        version="2.0.0",
     ),
     SymbolSpec(
         id="dhw-heat-pump",
@@ -1041,9 +1265,10 @@ SYMBOLS: list[SymbolSpec] = [
         height_mm=STORAGE[1],
         inline=False,
         ports=DHW_HEAT_PUMP_PORTS,
-        body=cylinder_body(STORAGE_W, STORAGE_H, False, DHW_HEAT_PUMP_PORTS),
+        body=reserve_body(STORAGE_W, STORAGE_H, DHW_HEAT_PUMP_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        version="1.1.0",
     ),
     SymbolSpec(
         id="mixing-valve-3way",
@@ -1078,7 +1303,9 @@ SYMBOLS: list[SymbolSpec] = [
             port("b", "right", *INLINE_ACCESSORY),
         ],
         body=tee_junction_body(*INLINE_ACCESSORY),
-        source=SOURCE_UNI_TAB1,
+        source=SOURCE_UNI_TAB1_FITTING,
+        version="2.0.0",
+        clearance_mm=FITTING_CLEARANCE_MM,
     ),
     SymbolSpec(
         id="tee-branch",
@@ -1092,11 +1319,19 @@ SYMBOLS: list[SymbolSpec] = [
             port("b", "right", *INLINE_ACCESSORY),
         ],
         body=tee_junction_body(*INLINE_ACCESSORY),
-        source=SOURCE_UNI_TAB1,
+        source=SOURCE_UNI_TAB1_FITTING,
+        version="2.0.0",
+        clearance_mm=FITTING_CLEARANCE_MM,
     ),
     inline_symbol("valve-isolation", "Valvola di intercettazione", INLINE_ACCESSORY, valve_isolation_body, SOURCE_UNI_TAB3),
-    inline_symbol("valve-check", "Valvola di ritegno", INLINE_ACCESSORY, valve_check_body, SOURCE_UNI_TAB3),
-    inline_symbol("strainer", "Filtro a Y", INLINE_ACCESSORY, strainer_body, SOURCE_PRACTICE_HYDRONIC),
+    inline_symbol(
+        "valve-check", "Valvola di ritegno", INLINE_ACCESSORY, valve_check_body,
+        SOURCE_UNI_CHECK_VALVE, version="3.0.0",
+    ),
+    inline_symbol(
+        "strainer", "Filtro a Y", INLINE_ACCESSORY, strainer_body, SOURCE_PRACTICE_HYDRONIC,
+        STRAINER_ROTATIONS_DEG, version="2.0.0",
+    ),
     inline_symbol("pump-circulator", "Pompa di circolazione", DEVICE, pump_body, SOURCE_PRACTICE_HYDRONIC),
     single_port_symbol(
         "air-vent", "Valvola di sfiato aria", TERMINAL_ACCESSORY, "bottom",
@@ -1112,6 +1347,7 @@ SYMBOLS: list[SymbolSpec] = [
         body=heat_pump_body(HEAT_PUMP_W, HEAT_PUMP_H, HEAT_PUMP_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        version="2.0.0",
     ),
     SymbolSpec(
         id="dhw-cylinder",
@@ -1120,9 +1356,14 @@ SYMBOLS: list[SymbolSpec] = [
         height_mm=STORAGE_H,
         inline=False,
         ports=CYLINDER_PORTS,
-        body=cylinder_body(STORAGE_W, STORAGE_H, True, CYLINDER_PORTS),
+        # Il serpentino tecnico, continuo da `coil_in` a `coil_out`; acqua fredda
+        # e acqua calda sanitaria entrano nel volume che il bollitore tiene in serbo.
+        body=reserve_body(
+            STORAGE_W, STORAGE_H, CYLINDER_PORTS, coil=("coil_in", "coil_out"), rows=4
+        ),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        version="2.0.0",
     ),
     SymbolSpec(
         id="buffer-four-port",
@@ -1131,9 +1372,10 @@ SYMBOLS: list[SymbolSpec] = [
         height_mm=STORAGE_H,
         inline=False,
         ports=BUFFER_PORTS,
-        body=buffer_body(STORAGE_W, STORAGE_H, BUFFER_PORTS),
+        body=reserve_body(STORAGE_W, STORAGE_H, BUFFER_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        version="1.1.0",
     ),
     SymbolSpec(
         id="diverting-valve-3way",
@@ -1199,7 +1441,7 @@ SYMBOLS: list[SymbolSpec] = [
 def manifest_payload(spec: SymbolSpec) -> dict[str, Any]:
     payload: dict[str, Any] = {
         "id": spec.id,
-        "version": VERSION,
+        "version": spec.version,
         "name": spec.name,
         "width_mm": spec.width_mm,
         "height_mm": spec.height_mm,
@@ -1210,7 +1452,11 @@ def manifest_payload(spec: SymbolSpec) -> dict[str, Any]:
         # destra, quindi l'asse che le unisce e' orizzontale.
         payload["inline_gap_mm"] = spec.width_mm
     payload["ports"] = spec.ports
-    payload["keep_out"] = keep_out(spec.ports)
+    payload["keep_out"] = keep_out(spec.ports, spec.clearance_mm)
+    if spec.flow_glyphs:
+        payload["flow_glyphs"] = spec.flow_glyphs
+    if spec.upright_glyphs:
+        payload["upright_glyphs"] = spec.upright_glyphs
     payload["source"] = spec.source
     return payload
 

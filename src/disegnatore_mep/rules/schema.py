@@ -293,6 +293,21 @@ class SatisfactionScope(StrEnum):
     """Da qualche parte su quella rete: un circuito chiuso vuole **un** vaso di
     espansione, non uno per attacco."""
 
+    ON_THE_GROUP = "on_the_group"
+    """Sul **gruppo manutenibile** a cui l'attacco appartiene (DRAW-005, I-034).
+
+    Un gruppo e' una macchina con gli accessori che una regola per componente
+    le ha posato sui suoi stessi attacchi: la pompa di calore e il filtro a Y
+    sul suo ritorno. Si isola il gruppo dall'esterno, mai fra i suoi membri: la
+    regola e' soddisfatta se sulla tubazione dell'attacco c'e' gia' l'organo,
+    **oppure** se quella tubazione porta a un membro dello stesso gruppo, che
+    l'organo lo condivide. E' la regola del PM: «isolare il gruppo senza
+    duplicare organi consecutivi che chiudono lo stesso volume».
+
+    Una regola con questo ambito si valuta **dopo** tutte le altre: l'organo
+    chiude un volume, e il volume deve essere gia' completo di cio' che le
+    altre regole vi mettono."""
+
 
 class SatisfactionCriterion(StrictModel):
     """Come si riconosce che quello che la regola propone c'e' gia' (D-070)."""

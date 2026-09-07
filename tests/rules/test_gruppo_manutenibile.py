@@ -330,7 +330,35 @@ class Walk:
         return found
 
     def stops(self, component_id: str) -> bool:
-        return component_id not in self.inline or self.maintainable(component_id)
+        """Chi ferma una camminata: un nodo, un pezzo manutenibile, un raccordo
+        da cui il percorso prosegue in piu' direzioni."""
+        return (
+            component_id not in self.inline
+            or self.maintainable(component_id)
+            or len(self.run_pipes_of.get(component_id, [])) > 2
+        )
+
+    def holder_of(self, hung: str) -> str:
+        """Il pezzo del percorso da cui pende un accessorio: si risale lo
+        stacco attraverso gli organi in fila fino a chi regge il braccio."""
+        current = hung
+        arrived_from: str | None = None
+        while True:
+            ports = [
+                port.id
+                for port in self.definitions[current].ports
+                if (current, port.id) in self.at_port
+                and self.at_port[(current, port.id)].id != arrived_from
+            ]
+            connection = self.at_port[(current, ports[0])]
+            peer = next(
+                ref.component_id
+                for ref in (connection.endpoint_a, connection.endpoint_b)
+                if ref.component_id != current
+            )
+            if self.definitions[peer].is_a_fitting or peer not in self.inline:
+                return peer
+            current, arrived_from = peer, connection.id
 
     def machines_needing_a_filter(self) -> list[str]:
         return sorted(
@@ -517,11 +545,7 @@ def test_il_riempimento_e_uno_solo_e_sta_sul_ritorno_dell_acqua_tecnica(index: i
         item for item in walk.definitions if walk.definitions[item].stored_medium == HEATING
         and {"cold_in", "dhw_out"} <= walk.definitions[item].port_ids
     )
-    holder = next(
-        ref.component_id
-        for ref in (stub.endpoint_a, stub.endpoint_b)
-        if ref.component_id != filler
-    )
+    holder = walk.holder_of(filler)
     out_port = next(
         port.id
         for port in walk.definitions[tank].ports

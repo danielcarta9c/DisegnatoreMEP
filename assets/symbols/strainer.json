@@ -1,13 +1,11 @@
 {
   "id": "strainer",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Filtro a Y",
   "width_mm": 5.0,
   "height_mm": 5.0,
   "allowed_rotations_deg": [
     0,
-    90,
-    180,
     270
   ],
   "inline_gap_mm": 5.0,

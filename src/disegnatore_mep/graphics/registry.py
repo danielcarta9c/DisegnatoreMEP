@@ -33,6 +33,11 @@ class Symbol:
         Le due trasformazioni devono coincidere, o il disegno si stacca dai
         propri attacchi; `tests/graphics/test_rotation.py` lo verifica angolo
         per angolo su tutta la libreria pubblicata.
+
+        **I glifi dichiarati leggibili non girano** (DRAW-005, I-033): ogni
+        gruppo `data-glyph` del corpo riceve la rotazione contraria attorno al
+        proprio centro, cosi' che la lettera segua il centro spostato e resti
+        dritta rispetto al foglio. Corpo e porte girano come sempre.
         """
         manifest = self.manifest.rotated(degrees)
         if degrees == 0:
@@ -43,9 +48,17 @@ class Symbol:
             180: f"translate({width:g} {height:g}) rotate(180)",
             270: f"translate(0 {width:g}) rotate(270)",
         }[degrees]
+        body = self.body
+        for glyph in self.manifest.upright_glyphs:
+            body = body.replace(
+                f'<g data-glyph="{glyph.id}"',
+                f'<g data-glyph="{glyph.id}" '
+                f'transform="rotate({-degrees:g} {glyph.x_mm:g} {glyph.y_mm:g})"',
+                1,
+            )
         return Symbol(
             manifest=manifest,
-            body=f'<g transform="{transform}">{self.body}</g>',
+            body=f'<g transform="{transform}">{body}</g>',
             body_transform=transform,
         )
 
@@ -86,6 +99,21 @@ class SymbolRegistry:
                 raise SymbolError(f"svg body is not well-formed xml {body_path}: {exc}") from exc
             if any(_local_name(element.tag) == "svg" for element in root.iter()):
                 raise SymbolError(f"svg body must not contain an <svg> root: {body_path}")
+            # Ogni glifo dichiarato leggibile ha il proprio gruppo nel corpo, e
+            # viceversa: un glifo dichiarato e non disegnato resterebbe una
+            # promessa, uno disegnato e non dichiarato girerebbe col corpo.
+            declared = {item.id for item in manifest.upright_glyphs}
+            drawn = [
+                element.get("data-glyph", "")
+                for element in root.iter()
+                if _local_name(element.tag) == "g" and element.get("data-glyph")
+            ]
+            if len(drawn) != len(set(drawn)) or set(drawn) != declared:
+                raise SymbolError(
+                    f"upright glyphs of {manifest.id} do not match its body: the "
+                    f"manifest declares {sorted(declared)}, the body draws "
+                    f"{sorted(drawn)} — each declared glyph is one data-glyph group"
+                )
             symbols.append(Symbol(manifest=manifest, body=body))
         if not symbols:
             raise SymbolError(f"no symbol manifests found in: {directory}")
