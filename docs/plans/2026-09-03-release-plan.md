@@ -4,18 +4,27 @@
 
 ## 0.2 — Prima tavola approvata
 
-Obiettivo: portare l'impianto 1 a una tavola idraulicamente invariata, deterministica e
-graficamente approvata dal PM/PO.
+Obiettivo: portare l'impianto 1 a una tavola **impiantisticamente corretta secondo il
+grafo approvato dal PO**, deterministica e graficamente approvata dal PM/PO.
 
 - `DRAW-002`: motore di posa costo-peso e routing compatto;
 - `DRAW-003`: rimozione definitiva della linea continua di terra e fase terminale delle
   etichette, indipendente da posa e routing;
 - `DRAW-004`: candidati di allineamento fra porte, dorsali principali rettilinee e T che
   può assorbire una curva, sempre scelti dal costo globale e mai come regole assolute;
+- `DRAW-005`: correttezza del grafo dell'impianto 1 e simboli/porte che influenzano la
+  posa; etichette di nodo opzionali, sigle principali sempre presenti;
 - uscita: PDF, PNG, SVG e metriche riproducibili della tavola 1.
 
 Gate: il PO riconosce un disegno ordinato e tecnicamente leggibile. Finché questo gate
 non passa, non si estende il lavoro agli altri impianti.
+
+### 0.2B — Vertical slice nella chat di lavoro
+
+Prima della generalizzazione, installare la skill in un ambiente pulito e collaudare un
+percorso reale: input naturale → grafo e domande → approvazione PO → generazione
+deterministica → verifica → link al PDF. Questo gate anticipa il rischio d'integrazione
+oggi rimandato impropriamente alla 1.0.
 
 ## 0.3 — Generalizzazione
 
@@ -28,7 +37,8 @@ legate agli identificativi degli esempi.
 
 ## 0.4 — Tavola professionale completa
 
-Completare ciò che non appartiene al layout: simboli ancora aperti, spessori normati,
+Completare ciò che non altera la geometria critica già collaudata: simboli secondari,
+spessori normati,
 cartiglio Nove C, legenda, testi e gestione motivata del formato/paginazione.
 
 Gate: tavola stampabile e utilizzabile come elaborato tecnico, non soltanto come prova

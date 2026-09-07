@@ -1,158 +1,118 @@
-# ACTIVE WORK PACKAGE — DRAW-004
+# ACTIVE WORK PACKAGE — DRAW-005
 
-- **Release:** 0.2 — tavola 1 leggibile e approvabile
+- **Release:** 0.2A — tavola 1 tecnicamente corretta e approvabile
 - **Stato:** APPROVATO DAL PM, PRONTO PER IL DEV
-- **Data:** 2026-09-04
+- **Data:** 2026-09-05
 - **Assegnato a:** DEV team (Claude)
-- **Base:** ultima `main`
-- **Ramo:** `claude/draw-004-assi-dorsali-tee`
+- **Base:** ultima `main`, contenente il merge di `DRAW-004` e questo pacchetto
+- **Ramo:** `claude/draw-005-contenuto-simboli-tavola1`
 - **Campo:** solo impianto 1 (D-116)
 
-## Obiettivo di prodotto
+## Obiettivo
 
-Ridurre ancora il costo reale della rete facendo ragionare la posa come un disegnatore:
-prima si cercano buoni assi fra le porte delle macchine e dorsali principali continue;
-poi si innestano gli stacchi. Spostare o ruotare macchine, pile e accessori non ha costo;
-backtracking, curve, incroci/sormonti e lunghezza delle tubazioni hanno costo.
+Correggere contenuto MEP e simboli critici della tavola 1 secondo la matrice già
+verificata dal PM in `docs/pm/2026-09-05-audit-simboli-e-contenuto-tavola1.md`.
 
-Questa non è una regola geometrica assoluta. L'allineamento fra due porte, la dorsale
-rettilinea e la T che assorbe una curva sono **candidati** da generare e confrontare con
-la posa corrente. Il motore li accetta solo se la tavola completa, dopo il routing di
-tutte le reti, migliora secondo `SheetCost` e rispetta tutti i vincoli.
+Non devi interpretare gli allegati del PO, fare ricerca di dominio, scegliere una
+simbologia o ridefinire la roadmap. Implementa la matrice e segnala soltanto eventuali
+incompatibilità tecniche reali.
 
-Gli esempi grafici del PO restano materiale del collaudo PM. Il DEV non deve ricavarne
-requisiti ulteriori: deve attuare quanto scritto qui.
+## Ordine di lavoro
 
-## Diagnosi tecnica del PM
+### A. Prove del grafo prima del disegno
 
-La pipeline resta `place_sheet -> improve_sheet -> settle_sheet`.
+Scrivere test generali che dimostrino:
 
-1. `layout/improve.py::_port_moves()` genera già l'allineamento con la porta del vicino,
-   ma per una porta orizzontale salta il candidato quando il leader è `Standing.GROUND`.
-   Anche `_column_moves()` annulla lo spostamento verticale se nella colonna esiste un
-   pezzo a terra. In uno schema funzionale la quota iniziale è un suggerimento di posa,
-   non una ragione per conservare una curva evitabile.
-2. Le mosse correnti tendono a muovere un solo estremo verso l'altro. Mancano candidati
-   coordinati che confrontino almeno: movimento del gruppo a monte, movimento del gruppo
-   a valle e riallineamento di entrambi attorno a un asse comune.
-3. La rete viene misurata correttamente come tavola completa, ma fra i candidati manca
-   l'ossatura «dorsale prima, stacchi dopo»: una catena principale può quindi conservare
-   un dogleg anche quando spostare gratuitamente i suoi pezzi renderebbe continuo l'asse.
-4. `layout/place.py::rotation_for()` impone che tutti gli attacchi non destinati al ramo
-   di una T restino orizzontali. Di conseguenza il raccordo non può usare due imbocchi
-   ortogonali come prosecuzione e assorbire il gomito nel punto di diramazione.
+1. una macchina e il filtro sul proprio ritorno possono formare un gruppo isolato da una
+   sola valvola lato rete più l'intercettazione sull'altro ramo; non compare una valvola
+   ridondante fra filtro e macchina;
+2. il gruppo di riempimento dell'accumulo combinato è uno solo e appartiene alla rete di
+   acqua tecnica, sul ritorno comune o su attacco tecnico dedicato; mai sulla rete
+   sanitaria;
+3. l'accumulo combinato espone `cold_in` e `dhw_out`, collegati rispettivamente ad AF e
+   distribuzione ACS, mentre il volume tecnico alimenta primario e secondario;
+4. puffer, bollitore e accumulo combinato sono definizioni diverse con porte e medium
+   coerenti; nessuna porta viene permutata dal layout.
 
-## Comportamento da costruire
+Correggere regole, catalogo, assemblatore e fixture della tavola 1 quanto basta a far
+passare queste prove. Non aggiungere dispositivi non richiesti e non modificare potenze,
+volumi, temperature o diametri.
 
-### 1. Candidati di allineamento delle porte
+### B. Contratti grafici
 
-Per ogni collegamento fra macchine principali o fra una macchina e una dorsale:
+Scrivere test generali che dimostrino:
 
-- ricavare gli assi possibili dalle coordinate e dalle facce delle porte, mai dagli ID;
-- generare l'alternativa che allinea le porte e lascia il rettilineo necessario agli
-  accessori in linea;
-- generare, quando applicabile, lo spostamento del gruppo a monte, del gruppo a valle e
-  dei due gruppi verso un asse comune;
-- consentire anche spostamenti verticali di macchine o pile inizialmente classificate a
-  terra, se non esiste un vincolo fisico dichiarato dal modello e se restano rispettati
-  griglia, distanze, area e ordinamento di processo;
-- una pila può cambiare posizione o interasse in modo coordinato, ma non può perdere il
-  proprio ordine né sovrapporre i membri.
+1. il filtro è una Y riconoscibile con ramo e gambo inferiori in ogni rotazione ammessa;
+2. un confine uscente e uno entrante condividono il tipo grafico ma puntano entrambi nel
+   verso locale dell'acqua;
+3. `P`, `T`, `F` e qualunque futuro glifo interno dichiarato leggibile restano dritti
+   rispetto al foglio a 0/90/180/270°, senza alterare corpo e porte;
+4. il simbolo PDC usato dalla tavola 1 ha 15 mm fra mandata e ritorno e lascia spazio
+   funzionale agli accessori senza sovrapposizioni;
+5. il simbolo dell'accumulo combinato mostra un serpentino sanitario continuo da
+   `cold_in` a `dhw_out`, mentre gli attacchi tecnici entrano nel volume del mantello;
+6. sigle delle macchine principali sempre presenti; indirizzi di nodo assenti per
+   default e attivabili esplicitamente; testi invarianti rispetto a simboli e tubazioni.
 
-Non scrivere coordinate, nomi `pdc-*`, `accumulo` o eccezioni per l'impianto 1.
+Aggiornare i manifesti, il generatore dei simboli e il renderer con una soluzione
+generale. Non correggere stringhe SVG a mano senza aggiornare la fonte generativa e i
+test raster/vector.
 
-### 2. Dorsale prima, stacchi dopo
+### C. Posa sul nuovo grafo
 
-Individuare dalla topologia le sequenze principali fra sorgente, accumulo/separatore e
-utilizzatore. Fra i candidati deve esistere una posa che:
+- rigenerare la tavola 1 usando il motore `DRAW-004`;
+- mettere la valvola comune di mandata vicino a `primary_in` dell'accumulo;
+- usare il maggiore interasse PDC per ridurre i gradini, senza imporre l'allineamento se
+  il costo globale peggiora;
+- dopo ogni modifica al grafo eseguire routing e costo sull'intera tavola;
+- non introdurre coordinate o eccezioni per ID dell'impianto 1.
 
-- conserva rettilineo l'asse principale finché non serve davvero cambiare direzione;
-- colloca i raccordi sulla dorsale e fa partire da lì i rami;
-- evita che l'inserimento di un ramo pieghi inutilmente la dorsale;
-- valuta comunque l'esito soltanto dopo `settle_sheet` e il reinstradamento completo di
-  tutte le reti.
+## Gerarchia di accettazione
 
-Non introdurre un secondo costo o un secondo decisore: il confronto finale resta
-`SheetCost`.
+1. correttezza del grafo e delle porte;
+2. nessun dispositivo ridondante o sulla rete sbagliata;
+3. simboli conformi alla matrice e leggibili;
+4. zero backtracking e zero tratte oltre tre pieghe;
+5. minimizzazione di curve, incroci e lunghezza sul **nuovo grafo**;
+6. testi solo dopo la geometria e con costo nullo.
 
-### 3. T che può assorbire una curva
+La lunghezza DRAW-004 di 577,5 mm non è un limite sul nuovo grafo: il contenuto cambia.
+Il rapporto deve però separare chiaramente quanto tubo deriva da nuovi collegamenti e
+quanto dal layout, evitando di dichiarare miglioramenti fra grafi non equivalenti.
 
-Quando tre collegamenti si incontrano, il motore deve poter provare anche una posa nella
-quale il percorso principale usa due attacchi ortogonali della T e il terzo è lo stacco.
-La T resta presente: ciò che può sparire è il gomito separato.
+## Criteri di accettazione
 
-- la scelta della coppia di attraversamento è una proprietà della posa, non una modifica
-  del grafo né della connettività;
-- provare soltanto rotazioni e permutazioni ammesse dal simbolo;
-- conservare verso del fluido, appartenenza alla rete e `connection_ids`;
-- la configurazione ortogonale vince solo se riduce il costo complessivo della tavola.
+1. Tutte le prove A e B sono verdi e non dipendono da ID o coordinate della tavola 1.
+2. Il JSON completato dell'impianto 1 soddisfa integralmente le cinque regole
+   impiantistiche dell'audit PM.
+3. Nessuna valvola fra ciascun filtro a Y di ritorno e la relativa PDC; una valvola lato
+   rete per ramo di ritorno e l'intercettazione di mandata necessaria.
+4. Un solo gruppo di riempimento sulla rete tecnica; zero gruppi sulle reti AF/ACS.
+5. AF collegata a `cold_in` e uscita sanitaria da `dhw_out`, visibili anche nel simbolo.
+6. Confini orientati col flusso e glifi interni sempre leggibili rispetto alla tavola.
+7. Nessuna sovrapposizione simbolo/simbolo o tubo/simbolo; zero backtracking; zero tratte
+   oltre tre pieghe. Curve, incroci e lunghezza sono riportati senza confronto improprio.
+8. Modalità consegna: sole sigle principali. Modalità verifica: indirizzi attivabili;
+   nessuna modalità modifica posa o routing.
+9. Suite completa, `ruff`, `mypy --strict` e determinismo verdi.
+10. PDF, PNG, SVG, modello completato, geometria, metriche, preflight e rapporto in
+    `docs/collaudi/DRAW-005/`, con confronto visivo contro DRAW-004.
 
-### 4. Gerarchia invariata
+## Perimetro consentito
 
-- correttezza del grafo e delle connessioni;
-- violazioni geometriche e accessori non ospitati;
-- backtracking, tratte oltre tre pieghe, curve, incroci/sormonti, lunghezza;
-- riempimento e bilanciamento soltanto come spareggio;
-- testi e richiami dopo la geometria, con costo nullo e senza alcuna influenza sul
-  confronto.
+- `rules/hydronic/` e moduli di rules/assembly necessari alla logica di isolamento;
+- `examples/layout/catalog/` e fixture dell'impianto 1;
+- `assets/symbols/`, `examples/graphics/build_symbols.py`, registry/renderer grafico;
+- posa/routing soltanto se richiesti dalla nuova geometria delle porte, senza cambiare
+  l'ordine di `SheetCost`;
+- test generali e `docs/collaudi/DRAW-005/**`;
+- aggiornamento di `PROJECT_STATE.md` e dello stato delle righe I-030… I-040, senza
+  chiuderle.
 
-Non cambiare l'ordine di `SheetCost` in questo pacchetto. Se due obiettivi rivelano un
-conflitto concreto, misurarlo nel rapporto e lasciarne la decisione al PM.
-
-## Test generali da scrivere prima del codice
-
-1. Due macchine con porte collegabili direttamente ma disallineate: esiste un candidato
-   che sposta gratuitamente una macchina o il suo gruppo, elimina almeno una curva e
-   batte la posa iniziale.
-2. Lo stesso allineamento non viene accettato quando introduce una violazione, un
-   backtracking o un incrocio che lo rende globalmente peggiore.
-3. Una macchina classificata `Standing.GROUND` può partecipare a un candidato verticale
-   quando la quota non è un vincolo fisico del modello.
-4. Una sequenza principale con uno stacco conserva la dorsale rettilinea e colloca la T
-   sull'asse, invece di piegare l'intera sequenza per il ramo.
-5. Una T con due imbocchi ortogonali assorbe un gomito e batte la variante T più gomito;
-   il grafo e gli identificativi delle connessioni restano identici.
-6. Se la T ortogonale peggiora la tavola completa, resta la configurazione corrente.
-7. Ridenominare tutti gli ID non cambia la geometria; due generazioni sono identiche.
-8. Aggiungere, cambiare o togliere testi non modifica nessun candidato, simbolo o tubo.
-
-## Criteri di accettazione sulla tavola 1
-
-Baseline DRAW-003-R1: backtracking `0`, tratte oltre tre pieghe `0`, curve `10`,
-incroci `2`, lunghezza `597,5 mm`, valvole D-120 `20/20`.
-
-La consegna deve rispettare tutti i punti seguenti:
-
-1. nessuna regressione di correttezza, backtracking, tratte lunghe o valvole;
-2. incroci non oltre `2` e lunghezza non oltre `597,5 mm`;
-3. curve totali non oltre `8`;
-4. nessun dogleg evitabile fra le PDC e la dorsale primaria: il rapporto deve mostrare
-   quali alternative di asse sono state provate e perché quella finale ha vinto;
-5. almeno un caso generale dimostra la T che assorbe una curva; sulla tavola 1 la si usa
-   soltanto se il costo completo migliora;
-6. linea di terra assente; tavola definitiva con sole sigle principali; modalità
-   verifica best-effort e mai influente sulla geometria;
-7. suite completa, `ruff`, `mypy --strict` e determinismo verdi;
-8. PDF, PNG, SVG, geometria, metriche e confronto prima/dopo in
-   `docs/collaudi/DRAW-004/`.
-
-Il limite di 8 curve è il target misurabile di questo ciclo, non un invito a comprare il
-numero con più incroci o più tubo: i limiti 1 e 2 restano simultaneamente vincolanti.
-
-## Perimetro
-
-Consentiti:
-
-- `src/disegnatore_mep/layout/improve.py`;
-- `src/disegnatore_mep/layout/place.py` e i moduli di posa/routing strettamente necessari
-  per rappresentare la coppia di attacchi usata dalla T;
-- test generali di layout, costo e routing;
-- `docs/collaudi/DRAW-004/**`, `PROJECT_STATE.md`, `docs/input-pm/REGISTRO.md`.
-
-Vietati: modifica del grafo dell'impianto 1, coordinate speciali, eccezioni per ID,
-ottimizzazione delle etichette, lavoro sugli impianti 2-5, simboli e cartiglio.
+Vietati: impianti 2–5, audit autonomo dei restanti simboli, nuova architettura AI,
+cartiglio/spessori, chiusura degli input PO, modifica dei criteri o merge.
 
 ## Consegna
 
-Il DEV salva progressivamente sul ramo remoto, apre una sola PR verso `main` e si ferma.
-Il PM verifica codice, metriche e tavola; il merge spetta al PM.
+Salva progressivamente sul ramo remoto, apri una sola PR verso `main` e fermati. Il PM
+verifica codice, grafo, fonti applicate e PDF; il PO decide la chiusura dei propri input.
