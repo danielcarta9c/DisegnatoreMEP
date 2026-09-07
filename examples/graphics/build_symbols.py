@@ -280,10 +280,13 @@ def valve_check_body(w: float, h: float) -> str:
 def strainer_body(w: float, h: float) -> str:
     """Filtro a Y, nella forma classica (DRAW-005, I-031): la linea passa
     dritta fra le due porte, dal centro scende il **ramo inclinato** a
-    quarantacinque gradi verso il basso a sinistra — il lato da cui l'acqua
-    arriva — e in fondo al ramo sta il **gambo**, il tappo del cestello,
-    perpendicolare al ramo. La Y si legge cosi', e il segno precedente — un
-    triangolo a V sotto la linea — non era mai stato approvato dal PO."""
+    quarantacinque gradi verso il basso, nel riquadro del simbolo verso
+    sinistra, e in fondo al ramo sta il **gambo**, il tappo del cestello,
+    perpendicolare al ramo. Il contratto e' che il gambo non punti mai in su:
+    per questo le rotazioni ammesse sono 0 e 270, e il posatore sceglie fra
+    quelle. Il verso dell'acqua non entra nella scelta: lo dice il tubo, non il
+    filtro. La Y si legge cosi', e il segno precedente — un triangolo a V sotto
+    la linea — non era mai stato approvato dal PO."""
     y = h / 2
     cx = w / 2
     reach = min(w, h) * 0.32

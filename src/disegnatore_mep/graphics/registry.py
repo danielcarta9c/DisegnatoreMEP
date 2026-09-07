@@ -114,6 +114,21 @@ class SymbolRegistry:
                     f"manifest declares {sorted(declared)}, the body draws "
                     f"{sorted(drawn)} — each declared glyph is one data-glyph group"
                 )
+            # La rotazione contraria si scrive nel testo del gruppo, subito
+            # dopo `data-glyph`: il gruppo va scritto cosi', e senza una
+            # trasformazione propria, o ne avrebbe due.
+            for glyph_id in drawn:
+                element = next(
+                    item
+                    for item in root.iter()
+                    if _local_name(item.tag) == "g" and item.get("data-glyph") == glyph_id
+                )
+                if element.get("transform") is not None or f'<g data-glyph="{glyph_id}"' not in body:
+                    raise SymbolError(
+                        f"the glyph group {glyph_id} of {manifest.id} must open with "
+                        f'<g data-glyph="{glyph_id}" and carry no transform of its '
+                        f"own: the registry writes the counter-rotation there"
+                    )
             symbols.append(Symbol(manifest=manifest, body=body))
         if not symbols:
             raise SymbolError(f"no symbol manifests found in: {directory}")

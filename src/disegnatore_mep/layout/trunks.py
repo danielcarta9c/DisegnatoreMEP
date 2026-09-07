@@ -43,11 +43,21 @@ def _incidence(project: ProjectModel) -> dict[str, list[ConnectionModel]]:
 def build_trunks(
     project: ProjectModel, inline_component_ids: frozenset[str]
 ) -> list[Trunk]:
-    """Ricompone le tratte. L'ordine segue quello delle connessioni nel modello.
+    """Ricompone le tratte, nell'ordine degli identificativi delle tubazioni.
 
     `inline_component_ids` arriva da `ResolvedComponent.is_inline`: e' la
     libreria a dire quali componenti spezzano una linea, non un elenco scritto
     qui dentro.
+
+    **L'ordine non e' quello del file.** Le tratte si instradano una dopo
+    l'altra e ognuna e' un ostacolo per le successive: seguire l'ordine in cui
+    il modello elenca le connessioni faceva dipendere la tavola da come il
+    modello era stato scritto — lo stesso impianto completato dalle regole in
+    memoria e riletto dal suo JSON canonico, che ordina le connessioni per
+    identificativo, dava due tavole diverse, e una delle due non si componeva
+    (DRAW-005). Le connessioni si percorrono per identificativo, che e' lo
+    stesso ordine della forma canonica: cosi' la geometria e' una funzione del
+    grafo e non del suo file.
     """
     incidence = _incidence(project)
 
@@ -68,7 +78,7 @@ def build_trunks(
     trunks: list[Trunk] = []
     consumed: set[str] = set()
 
-    for connection in project.connections:
+    for connection in sorted(project.connections, key=lambda item: item.id):
         if connection.id in consumed:
             continue
         anchors = [

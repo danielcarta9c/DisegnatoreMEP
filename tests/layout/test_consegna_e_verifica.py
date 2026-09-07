@@ -24,6 +24,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import CLOSING_FUNCTIONS, ComponentTrait
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
+from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.layout.addresses import with_addresses
 from disegnatore_mep.layout.compose import compose_drawing, inline_component_ids
 from disegnatore_mep.layout.geometry import DrawingGeometry, PlacedSymbol, Point, box_of
@@ -312,6 +313,26 @@ def test_ogni_tubazione_arriva_sull_attacco_che_il_manifesto_da_alla_riserva(
                     and abs(end.y_mm - expected.y_mm) <= TOLERANCE_MM
                     for end in ends
                 ), (reserve, ref.port_id, ends, expected)
+
+
+# ---------------------------------------------------------------------------
+# Le tratte non dipendono dall'ordine del file
+# ---------------------------------------------------------------------------
+
+
+def test_le_tratte_sono_le_stesse_comunque_il_modello_elenchi_le_connessioni() -> None:
+    """La tavola e' una funzione del grafo, non del suo file: lo stesso impianto
+    completato in memoria e riletto dal JSON canonico — che ordina le
+    connessioni per identificativo — deve dare le stesse tratte nello stesso
+    ordine, perche' l'instradamento le percorre una dopo l'altra e ognuna e'
+    un ostacolo per le successive."""
+    project, _, _ = saturate(due_macchine_con_accumulo_combinato(), catalog(), rules())
+    inline = inline_component_ids(project, catalog())
+    reference = build_trunks(project, inline)
+    shuffled = project.model_copy(update={"connections": list(reversed(project.connections))})
+    assert build_trunks(shuffled, inline) == reference
+    canonical = ProjectModel.model_validate_json(canonical_json(project))
+    assert build_trunks(canonical, inline) == reference
 
 
 # ---------------------------------------------------------------------------

@@ -84,6 +84,15 @@ vivono in `graphics/symbol.py` e `graphics/registry.py`; il tracciato delle frec
   opzione che li porta in tavola (`--verifica`); la consegna ha le sole sigle delle
   macchine. Nessuna modalità entra in posa o routing: la prova generale confronta simboli
   e rotte delle due tavole e li trova identici.
+- **Le tratte non seguono l'ordine del file.** `build_trunks` percorre le connessioni
+  per identificativo, che è l'ordine della forma canonica. Prima seguiva l'ordine in
+  cui il modello le elencava: lo stesso impianto completato dalle regole in memoria e
+  riletto dal suo JSON dava due tavole diverse, e con il grafo nuovo quella in memoria
+  non si componeva (le prove che compongono l'impianto 1 in-process fallivano mentre
+  la CLI, che rilegge il JSON, riusciva). La CLI produce la stessa tavola di prima
+  della correzione, perché il JSON canonico è già ordinato; la prova
+  `test_le_tratte_sono_le_stesse_comunque_il_modello_elenchi_le_connessioni` lo tiene
+  vero in generale.
 
 `SheetCost` è invariato: stesso ordine, stesse voci.
 
@@ -251,12 +260,14 @@ altri nomi.
   spazio funzionale della PDC è di 15 mm e non è una costante; il serpentino del combinato
   è continuo da `cold_in` a `dhw_out` e gli attacchi tecnici entrano nel mantello; sigle
   sempre, indirizzi solo su richiesta, testi invarianti.
-- **C — posa** (`tests/layout/test_consegna_e_verifica.py`, 10 prove): consegna e
+- **C — posa** (`tests/layout/test_consegna_e_verifica.py`, 11 prove): consegna e
   verifica hanno gli stessi simboli e le stesse rotte; le riserve non permutano porte e le
   rotte finiscono sugli attacchi del manifesto; la valvola che isola oltre un raccordo
-  passante sta contro il raccordo (2,5÷5 mm) e non a mezza strada.
+  passante sta contro il raccordo (2,5÷5 mm) e non a mezza strada; le tratte sono le
+  stesse comunque il modello elenchi le connessioni.
 
-Cinque prove esistenti sono state riallineate alla regola nuova: le due del motore che
+Sei prove esistenti sono state riallineate: il foglio dei simboli sa che il filtro a Y
+ammette due sole rotazioni; le due del motore che
 rifanno il ciclo a mano usano `evaluate_in_phases`; quella del cancello sull'acqua fredda
 prova la regola da sola e poi che, insieme al confine, sul tratto esce un organo solo;
 quella del defangatore chiede un organo fra macchina e defangatore, non più ancorato alla
@@ -300,6 +311,13 @@ macchina; quella del confronto legge i conteggi aggiornati.
 - **L'impronta della geometria** cambia quando lo schema acquista un campo, anche a
   valore predefinito: chi confronta impronte fra pacchetti deve rileggere la geometria con
   lo stesso schema.
+- **La revisione avversaria** (sei lenti sul diff, poi due scettici per rilievo) è stata
+  interrotta dal limite di sessione dei sottoagenti: una sola lente, quella dei simboli,
+  ha concluso, con due rilievi minori che ho trattato io — la contro-rotazione dei glifi
+  è scritta nel testo del gruppo, e il registro ora rifiuta un gruppo che non si apra con
+  `data-glyph` o che porti una trasformazione propria; il docstring del filtro a Y non
+  promette più un orientamento rispetto al verso dell'acqua. Le altre cinque lenti non
+  hanno prodotto un giudizio: il PM lo sappia nel pesare la verifica.
 
 ## 9. Fuori perimetro, scoperto e lasciato dov'è
 
