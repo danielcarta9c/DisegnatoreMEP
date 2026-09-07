@@ -38,7 +38,9 @@ correttezza impiantistica del grafo, che il PO ha corretto con gli input I-030�
   backtracking 0; tratte oltre tre pieghe 0; 16 valvole su 16 a 2,5÷5 mm; la valvola
   comune di mandata a 5 mm dal raccordo della sicurezza;
 - prove generali nuove: 35 (grafo), 39 (contratti grafici), 10 (posa e modalità);
-  `ruff` e `mypy --strict` puliti; determinismo verificato su due generazioni;
+  suite completa 1190 verdi, 22 sospese, 14 xfail (una nuova, dichiarata: la
+  composizione dell'impianto 3 sul grafo nuovo); `ruff` e `mypy --strict` puliti;
+  determinismo verificato su due generazioni;
 - rapporto e artefatti in `docs/collaudi/DRAW-005/`; righe I-030… I-040 aggiornate nello
   stato, non chiuse.
 

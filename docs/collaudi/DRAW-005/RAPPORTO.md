@@ -286,7 +286,9 @@ macchina; quella del confronto legge i conteggi aggiornati.
 
 - `ruff check src tests examples`: nessun rilievo; `mypy --strict src tests examples`:
   nessun errore su 142 file.
-- Suite completa: vedi la riga in calce a questa sezione, aggiornata all'ultimo giro.
+- Suite completa (`python3 -m pytest -q`, sul codice finale): **1190 verdi, 22
+  parcheggiate, 14 marcate rosse apposta** — le 13 di prima più la composizione
+  dell'impianto 3 (§8) — in 27 minuti e mezzo.
 - Determinismo: due generazioni consecutive della tavola 1 (una in `outputs` di
   sessione, una in `dopo/consegna/`) danno la stessa impronta `6e8e64ae…` e lo stesso
   modello completato byte per byte.
