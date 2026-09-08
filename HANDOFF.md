@@ -50,8 +50,8 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
 - Release in corso: **0.2 — prima tavola tecnicamente corretta e approvata**.
 - `DRAW-005` è stato verificato e fuso nella PR #18: tavola 1 con 4 curve, 1 incrocio,
   525 mm, zero backtracking; simboli e contenuto critici corretti.
-- Nessun incarico DEV è attivo: il gate 0.2A attende il giudizio visivo del PO. Una nuova
-  sessione DEV deve fermarsi finché il PM non pubblica il pacchetto successivo.
+- Il PO ha approvato l'impostazione generale e ha richiesto le rifiniture raccolte in
+  `DRAW-005-R1`, ora unico incarico DEV attivo.
 - Stato e rischi: `PROJECT_STATE.md`.
 - Roadmap: `docs/plans/2026-09-03-release-plan.md`.
 - Architettura: `docs/SKILL.md` e ADR 0005.
