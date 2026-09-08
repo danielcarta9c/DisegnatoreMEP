@@ -149,7 +149,8 @@ file dice, in forma leggibile anche da un non programmatore:
 
 - **quando** si applica — espresso solo con le **funzioni** dei componenti («qualsiasi cosa
   si manutenga», «qualsiasi generatore»), mai col nome di un componente;
-- **quante volte** può proporre — una per rete, una per componente, **una per attacco**;
+- **quante volte** può proporre — una per rete, una per componente, una per attacco o
+  **una per gruppo/tratto**, secondo lo scopo dichiarato dalla regola;
 - **cosa** propone e **in che punto** funzionale;
 - **come si riconosce che c'è già**, così rieseguirla non duplica niente;
 - **perché**, in una frase leggibile dal PM, e da **quale fonte** viene.
@@ -208,8 +209,9 @@ generatore non ha il defangatore»*. Ogni proposta porta il **perché** e la **f
 parte dal **motivo per cui l'accessorio esiste**, ed è sempre **generale**:
 
 > La valvola di intercettazione serve a chiudere l'acqua per smontare o sostituire un
-> pezzo. Quindi va su **ogni tubo che entra o esce da qualcosa che si manutiene o si
-> sostituisce**.
+> pezzo o un gruppo che si manutiene insieme. Quindi va su **ogni tubo che esce dal
+> gruppo verso l'impianto**, senza duplicarla fra membri dello stesso gruppo né sullo
+> stesso tratto condiviso.
 
 Non «il volano vuole quattro valvole». Quattro è il *risultato*, perché quel volano ha
 quattro attacchi. Il catalogo dichiara le **proprietà** dei componenti (si manutiene, si
@@ -220,7 +222,7 @@ Ogni accessorio ha la propria ragione di posizionamento, ed è buona pratica con
 
 | Accessorio | Perché sta lì |
 |---|---|
-| Valvola di intercettazione | per isolare un pezzo senza svuotare l'impianto → su ogni attacco di ciò che si manutiene |
+| Valvola di intercettazione | per isolare un pezzo o gruppo senza svuotare l'impianto → sui tubi che escono dal gruppo, un solo organo per tratto condiviso |
 | Filtro a Y | protegge lo scambiatore stretto → sul ritorno di **ogni generatore**, e solo sul primario |
 | Defangatore | i fanghi viaggiano col ritorno → **uno solo**, sul ritorno generale, a monte della prima ripartizione |
 | Separatore d'aria | l'aria si libera dove l'acqua è più calda → sulla mandata generale, **sopra i 35 kW**; sotto basta lo sfogo sul serbatoio |
