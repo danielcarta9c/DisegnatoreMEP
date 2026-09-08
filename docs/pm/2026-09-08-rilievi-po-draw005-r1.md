@@ -19,15 +19,18 @@
    blu. Non rappresentano una portata ordinaria unidirezionale: nessuna freccia di
    circolazione. Lo stesso principio vale per uno sfogo o una sicurezza finché non è
    modellata una vera tubazione di scarico.
-4. **Sicurezza e sfogo aria sono separati.** La sicurezza esterna di DRAW-005, vicina
-   all'accumulo e separata dalle PDC dalle loro intercettazioni, non protegge i generatori.
-   SRC-027 prescrive la sommità del generatore o la mandata più vicina possibile, senza
-   intercettazioni sulla connessione. Idraulica 61 dice che sicurezza e sfogo **possono**
-   essere integrati nella PDC: il catalogo deve dichiararlo macchina per macchina. Il
-   catalogo generico attuale dichiara a bordo soltanto il circolatore, quindi non può
-   presumere la sicurezza integrata. Per la tavola 1 servono due sicurezze esterne, una
-   per ciascuna PDC isolabile, prima della rispettiva valvola di mandata. Lo sfogo
-   sull'attacco alto dell'accumulo resta corretto e non va spostato per analogia.
+4. **Sicurezza e sfogo aria sono separati.** SRC-027 prescrive la sommità del generatore
+   o la mandata più vicina possibile, senza intercettazioni sulla connessione. Questo non
+   significa però automaticamente “una sicurezza per ogni PDC”: va protetto ogni dominio
+   pressurizzato che possa rimanere isolato dalla protezione nelle configurazioni ammesse.
+   Una sicurezza comune può servire più macchine se resta comunicante col dominio da
+   proteggere; una protezione per macchina richiede invece un dato di catalogo o uno
+   schema che crei domini autonomi. Idraulica 61 dice inoltre che sicurezza e sfogo
+   **possono** essere integrati nella PDC. L'assenza della funzione `safety` dal catalogo
+   generico è un dato mancante, non la prova che il dispositivo non sia a bordo. Nella
+   tavola 1 la sicurezza esistente va **spostata** dall'accumulo alla mandata vicino al
+   gruppo PDC, non mantenuta e duplicata: deve risultarne una sola. Lo sfogo sull'attacco
+   alto dell'accumulo resta distinto e non va moltiplicato per il numero delle PDC.
 5. **Catena sul ritorno PDC.** Due macchine uguali con la stessa catena funzionale devono
    produrre la stessa geometria locale: porta PDC → filtro a Y → valvola → rete. Filtro e
    valvola stanno sul primo rettilineo utile dalla porta, prima della prima curva; una
@@ -56,3 +59,16 @@
 L'immagine della ricerca Google è un input del PO, non una fonte tecnica. È corretta sul
 principio della sicurezza non intercettabile vicino al generatore, ma non rende la
 posizione dello sfogo aria una regola assoluta.
+
+## Correzione PM dopo il collaudo DRAW-005-R1
+
+Il PDF prodotto dalla PR #21 ha mostrato due ulteriori errori di posa (I-046):
+
+- gli stacchi di sicurezza e degli altri accessori appesi non hanno una lunghezza fissa
+  arbitraria: usano il minimo tratto compatibile con ingombro del simbolo, spessore e
+  leggibilità; ogni millimetro ulteriore entra nel costo;
+- se catene o raccordi delle PDC si contendono lo spazio, il primo candidato è aumentare
+  l'interasse verticale fra le macchine a passi di griglia. La traslazione dei
+  componenti non costa; curve, incroci e lunghezza sì.
+
+La precedente imposizione di due sicurezze esterne per-PDC è ritirata.
