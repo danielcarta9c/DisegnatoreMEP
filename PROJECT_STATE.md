@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-08 (PM, dopo verifica e merge di DRAW-005)
+**Aggiornato:** 2026-09-08 (PM, rilievi PO successivi a DRAW-005)
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md`
 **Release corrente:** 0.2 — prima tavola tecnicamente corretta e approvata
 
@@ -46,9 +46,10 @@ correttezza impiantistica del grafo, che il PO ha corretto con gli input I-030�
 
 ## Lavoro corrente
 
-Nessun incarico DEV è attivo. `DRAW-005` è accettato dal PM e attende il giudizio visivo
-del PO sul PDF per chiudere il gate 0.2A. La specifica PM è stata attuata senza chiedere
-al DEV di interpretare gli esempi del PO.
+`DRAW-005-R1` è il pacchetto attivo. Il PO ha approvato l'impostazione generale della
+tavola e ha chiesto rifiniture puntuali su simboli, rami di servizio, sicurezza e posa
+locale degli accessori PDC. La diagnosi e le fonti sono state fissate dal PM; il DEV deve
+soltanto implementarle.
 
 Punti vincolanti del pacchetto, tutti attuati in PR:
 
@@ -86,9 +87,10 @@ Punti vincolanti del pacchetto, tutti attuati in PR:
 ## Prossimi gate
 
 1. `DRAW-005`: grafo e simboli critici dell'impianto 1 corretti — **accettato e fuso dal PM**.
-2. Gate 0.2A: giudizio PO sul PDF e chiusura degli input attuati.
-3. Gate 0.2B: vertical slice della skill in una chat di lavoro pulita.
-4. Release 0.3: generalizzazione controllata agli impianti 2–5.
+2. `DRAW-005-R1`: rifiniture PO successive alla verifica del PDF.
+3. Gate 0.2A: giudizio PO sul nuovo PDF e chiusura degli input attuati.
+4. Gate 0.2B: vertical slice della skill in una chat di lavoro pulita.
+5. Release 0.3: generalizzazione controllata agli impianti 2–5.
 
 ## Documenti canonici
 
