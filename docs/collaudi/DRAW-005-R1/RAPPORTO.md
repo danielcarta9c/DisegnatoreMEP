@@ -189,7 +189,11 @@ Le quattro correzioni di §1.4 (rettilineo imposto, corridoi, vicini attraverso 
 raccordi, rami paralleli allo stesso livello) sono generali e riportano la tavola a
 comporre con il contratto duro soddisfatto. Il costo globale (funzione invariata, fuori
 perimetro) sceglie fra le pose che lo rispettano: `dopo/diario.json` elenca le
-candidate provate e accettate.
+candidate provate e accettate. Il ciclo parte da una posa iniziale che rispetta il
+contratto (0 violazioni, 12 pieghe, 5 incroci, 712,5 mm dopo la posa) e arriva alla
+tavola consegnata (7 pieghe, 2 incroci, 767,5 mm): 1500 candidate di posa e 1000 di
+rifinitura, 51 e 11 accettate; la lunghezza cresce di 55 mm per togliere 5 pieghe e 3
+incroci, che è l'ordine dei pesi della funzione di costo com'è.
 
 ## 5. Le curve e gli incroci che restano
 
@@ -233,7 +237,23 @@ non è più «solo sopra i 35 kW»), `test_contratti_simboli_tavola1.py` e `test
 
 ## 7. Verifiche eseguite (criterio 8)
 
-@@VERIFICHE@@
+- `ruff check src tests examples docs/collaudi/DRAW-005-R1/metriche.py`: nessun rilievo;
+  `mypy --strict src tests examples`: nessun errore su 147 file.
+- Suite completa (`python -m pytest -q`, sul codice finale): **1290 verdi, 23 parcheggiate,
+  13 marcate rosse apposta** in 31 minuti e 52 secondi. Contro DRAW-005 (1190 / 22 / 14):
+  cento verdi in più (le 53 prove nuove e le parametrizzazioni), **nessuna nuova `xfail`**;
+  una rossa-apposta in meno e una parcheggiata in più sono la stessa prova, quella del
+  quinto impianto in `test_zone_dei_pezzi_grossi.py`, che su `cc7ff93` era rossa apposta
+  sull'asserzione e oggi è parcheggiata perché l'impianto 5 non si posa (§9).
+- La prova del difetto di §1.4 (`test_chi_segue_la_catena_di_testa_le_sta_a_un_passo_e_non_la_tocca`)
+  è rossa senza la correzione del cursore e verde con essa (verificato riportando la riga
+  e rieseguendola).
+- Determinismo: due generazioni consecutive dallo stesso ingresso (`rules` e `draw`, una
+  in `dopo/consegna/`, una in una cartella di sessione) danno lo stesso modello completato
+  byte per byte, lo stesso SVG di consegna byte per byte e la stessa impronta `45fcab22…`.
+- Verifica e consegna: stessi simboli e stesse rotte (43 simboli, 24 tratte in entrambe,
+  7 curve, 2 incroci, 767,5 mm); la verifica aggiunge 41 indirizzi, nessuno su tubo,
+  simbolo o altra scritta (`dopo/metriche.json`).
 
 ## 8. Osservazioni per il PM, che non decido io
 
@@ -270,6 +290,13 @@ non è più «solo sopra i 35 kW»), `test_contratti_simboli_tavola1.py` e `test
 - Gli impianti 2–5 cambiano nei documenti derivati per conseguenza meccanica della
   regola (una sicurezza per generatore); non li ho guardati per merito né composti.
 - La dipendenza della geometria dall'ordine delle connessioni resta com'era (DRAW-005 §8).
+- **L'impianto 5 non si posa più** (`cascata-ritorno-a sits on a run and finds no free
+  spot along it`): su `cc7ff93` si posava, e la prova
+  `test_nessun_raccordo_sta_a_sinistra_di_cio_che_unisce[prova-5]` era rossa apposta
+  sull'asserzione; oggi è parcheggiata perché la posa non riesce. È verosimile che siano
+  i corridoi davanti alle porte delle tre macchine in cascata a togliere al raccordo il
+  posto sulla tratta, ma non l'ho indagato oltre la misura: gli impianti 2–5 sono fuori
+  perimetro (D-116) e la riga esiste perché il difetto non sia scoperto due volte.
 - Nessuna modifica a cartiglio, etichette, riempimento del foglio, funzione di costo,
   packaging.
 
