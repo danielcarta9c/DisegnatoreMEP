@@ -20,7 +20,7 @@ from dataclasses import dataclass
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.model.project import ConnectionModel, PortRef, ProjectModel
 from disegnatore_mep.model.types import PortFlow
-from disegnatore_mep.rules.schema import RuleDefinition
+from disegnatore_mep.rules.schema import RuleCardinality, RuleDefinition
 
 
 class AssemblyError(ValueError):
@@ -39,6 +39,13 @@ class Piece:
 
     against_the_anchor: bool = False
     """Sta attaccato alla macchina: fra lui e lei non ci va nessun altro pezzo."""
+
+    of_the_anchor: bool = False
+    """E' **della** macchina a cui e' ancorato (DRAW-005, I-034): una regola per
+    componente lo ha posato sul suo attacco — il filtro a Y sul ritorno. Con
+    lei forma il gruppo manutenibile, e nella fila le sta vicino: il corredo
+    di rete, che si posa sul tratto comune anche quando quel tratto comincia
+    sull'attacco della macchina, viene dopo di lui, verso l'impianto."""
 
     before: tuple[str, ...] = ()
     """I mestieri che devono venire **dopo** di lui, verso l'impianto."""
@@ -252,6 +259,11 @@ class _Assembler:
             functions=frozenset(self._definitions[speaks_for].functions),
             anchor=self.anchor_of(speaks_for),
             against_the_anchor=bool(rule and rule.ordering.against_the_anchor),
+            of_the_anchor=bool(
+                rule
+                and rule.cardinality is not RuleCardinality.PER_NETWORK
+                and not rule.then.placement.on_a_common_run
+            ),
             before=tuple(rule.ordering.before) if rule else (),
             after=tuple(rule.ordering.after) if rule else (),
             rule=rule_id,
@@ -347,9 +359,11 @@ def _sorted(pieces: list[Piece]) -> list[Piece]:
 
     Un pezzo che dichiara «prima di cio' che chiude» precede ogni pezzo che
     chiude; uno che dichiara «dopo l'intercettazione» la segue. Dove i vincoli
-    non dicono niente l'ordine e' libero, e si tiene stabile per identificativo:
-    stabile non vuol dire significativo, e nessuno deve leggerci un ordine
-    impiantistico che non c'e'.
+    non dicono niente, **cio' che e' della macchina le sta vicino** (DRAW-005,
+    I-034): il filtro a Y sul suo ritorno viene prima del corredo di rete che
+    la stessa tubazione porta. Per il resto l'ordine e' libero, e si tiene
+    stabile per identificativo: stabile non vuol dire significativo, e nessuno
+    deve leggerci un ordine impiantistico che non c'e'.
     """
     if len(pieces) < 2:
         return list(pieces)
@@ -384,7 +398,10 @@ def _sorted(pieces: list[Piece]) -> list[Piece]:
     placed: list[Piece] = []
     waiting = dict(needs)
     while waiting:
-        free = sorted(key for key, before in waiting.items() if not (before & set(waiting)))
+        free = sorted(
+            (key for key, before in waiting.items() if not (before & set(waiting))),
+            key=lambda key: (not by_id[key].of_the_anchor, key),
+        )
         if not free:
             stuck = sorted(waiting)
             rules = sorted({by_id[key].rule or key for key in stuck})

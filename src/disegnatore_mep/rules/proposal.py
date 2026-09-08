@@ -6,6 +6,7 @@ una proposta senza motivazione non e' rappresentabile, perche' non ci sarebbe
 niente da approvare.
 """
 
+from collections.abc import Iterable
 from enum import StrEnum
 
 from pydantic import Field
@@ -106,4 +107,28 @@ def proposed_component_id(definition_id: str, anchor: PortRef) -> str:
     return f"{definition_id}-{anchor.component_id}-{anchor.port_id}".replace("_", "-")
 
 
-__all__ = ["GapReason", "RuleGap", "RuleProposal", "proposed_component_id"]
+def anchor_of_proposed(
+    component_id: str, definition_id: str, attachments: Iterable[tuple[str, str]]
+) -> PortRef | None:
+    """L'attacco su cui una proposta e' stata posata, riletto dal suo identificativo.
+
+    E' l'inverso di `proposed_component_id`, e si legge **confrontando** con gli
+    attacchi che esistono davvero, mai spezzando la stringa a naso: un
+    identificativo derivato dai dati si riconosce solo ricostruendolo dagli
+    stessi dati. Vuoto per cio' che nessuna proposta ha posato — quello che il
+    progettista ha scritto — o che non deriva da nessuno di questi attacchi.
+    """
+    for owner, port_id in attachments:
+        anchor = PortRef(component_id=owner, port_id=port_id)
+        if proposed_component_id(definition_id, anchor) == component_id:
+            return anchor
+    return None
+
+
+__all__ = [
+    "GapReason",
+    "RuleGap",
+    "RuleProposal",
+    "anchor_of_proposed",
+    "proposed_component_id",
+]

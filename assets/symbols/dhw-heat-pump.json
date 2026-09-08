@@ -1,6 +1,6 @@
 {
   "id": "dhw-heat-pump",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "Boiler in pompa di calore",
   "width_mm": 25.0,
   "height_mm": 45.0,

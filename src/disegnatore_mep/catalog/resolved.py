@@ -74,3 +74,15 @@ class ResolvedComponent:
 
     def ports(self) -> tuple[ResolvedPort, ...]:
         return tuple(self.port(item.id) for item in self.definition.ports)
+
+    @property
+    def glyph_flows(self) -> dict[str, str]:
+        """Il verso dell'acqua sulle porte che il simbolo segna con una freccia.
+
+        E' cio' che la posa scrive nel simbolo posato (DRAW-005, I-032): il
+        verso viene dalla definizione, porta per porta, mai dal nome del pezzo.
+        """
+        return {
+            glyph.port: self.port(glyph.port).definition.flow.value
+            for glyph in self.symbol.manifest.flow_glyphs
+        }

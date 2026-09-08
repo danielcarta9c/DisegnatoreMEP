@@ -1,6 +1,6 @@
 {
   "id": "network-boundary",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Confine di rete",
   "width_mm": 5.0,
   "height_mm": 5.0,
@@ -24,5 +24,14 @@
     "top_mm": 0.0,
     "bottom_mm": 0.0
   },
+  "flow_glyphs": [
+    {
+      "port": "a",
+      "x_mm": 3.625,
+      "y_mm": 2.5,
+      "length_mm": 2.75,
+      "half_width_mm": 1.0
+    }
+  ],
   "source": "pratica di settore, cfr. SRC-008"
 }

@@ -1463,6 +1463,7 @@ def place_sheet(
                     width_mm=child.width_mm,
                     height_mm=child.height_mm,
                     tag=tags.get(item.component_id),
+                    port_flows=resolved[item.component_id].glyph_flows,
                 )
             )
             boxes.append(
@@ -1537,6 +1538,9 @@ def place_sheet(
                         width_mm=manifest.width_mm,
                         height_mm=manifest.height_mm,
                         tag=tags.get(component_id),
+                        # Il verso dell'acqua sulle porte con freccia, dal
+                        # catalogo (I-032): la posa lo scrive, il renderer lo legge.
+                        port_flows=resolved[component_id].glyph_flows,
                     )
                 )
                 boxes.append(
@@ -1649,6 +1653,7 @@ def place_sheet(
                 width_mm=manifest.width_mm,
                 height_mm=manifest.height_mm,
                 tag=tags.get(component_id),
+                port_flows=resolved[component_id].glyph_flows,
             )
         )
         boxes.append((left, top, left + manifest.width_mm, top + manifest.height_mm))

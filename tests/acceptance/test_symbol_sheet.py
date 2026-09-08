@@ -100,10 +100,15 @@ def test_every_other_shipped_symbol_admits_all_four_rotations() -> None:
         "dhw-heat-pump",
         "gas-boiler",
         "plate-heat-exchanger",
+        # Il filtro a Y (DRAW-005, I-031): il gambo non punta mai in su, quindi
+        # su una verticale gira di 270 gradi e non di 90. La prova del contratto
+        # sta in tests/graphics/test_contratti_simboli_tavola1.py.
+        "strainer",
     }
     for symbol in SymbolRegistry.from_directory(SYMBOLS).all():
         if symbol.manifest.id not in restricted:
             assert symbol.manifest.allowed_rotations_deg == [0, 90, 180, 270]
+    assert SymbolRegistry.from_directory(SYMBOLS).get("strainer").manifest.allowed_rotations_deg == [0, 270]
 
 
 def test_missing_symbol_directory_returns_one(tmp_path: Path) -> None:

@@ -18,6 +18,7 @@ from disegnatore_mep.layout.geometry import Point, RoutedTrunk, SheetGeometry
 from disegnatore_mep.layout.legend import style_for
 
 from .frame import Rect, SheetFrame
+from .glyphs import flow_glyph_path
 from .registry import SymbolRegistry
 
 DRAFT_MARK = "BOZZA — cartiglio non compilato"
@@ -379,12 +380,23 @@ def render_sheet(
 
     for placed in sheet.symbols:
         symbol = symbols.get(placed.symbol_id).rotated(placed.rotation_deg)
+        # La freccia di verso si traccia qui, non nel corpo: punta nel verso
+        # locale dell'acqua che la posa ha letto dal catalogo (I-032), e ruota
+        # con la porta a cui e' legata.
+        arrows = "".join(
+            flow_glyph_path(
+                glyph,
+                symbol.manifest.port(glyph.port).face,
+                placed.port_flows.get(glyph.port),
+            )
+            for glyph in symbol.manifest.flow_glyphs
+        )
         parts.append(
             f'<g class="symbol" data-component-id="{_escape(placed.component_id)}" '
             f'data-symbol-id="{_escape(placed.symbol_id)}" '
             f'transform="translate({placed.origin.x_mm:g} {placed.origin.y_mm:g})" '
             f'stroke="black" stroke-width="{standard.line_medium_mm:g}" fill="none">'
-            f"{symbol.body}</g>"
+            f"{symbol.body}{arrows}</g>"
         )
 
     # Il pallino del collegamento sta **sopra** i simboli: cade su un attacco, e
@@ -430,11 +442,15 @@ def render_sheet(
         top = entry.anchor.y_mm - LEGEND_SWATCH_MM
         left = entry.anchor.x_mm + (LEGEND_SWATCH_MM - symbol.manifest.width_mm * scale) / 2
         middle = top + (LEGEND_SWATCH_MM - symbol.manifest.height_mm * scale) / 2
+        arrows = "".join(
+            flow_glyph_path(glyph, symbol.manifest.port(glyph.port).face, None)
+            for glyph in symbol.manifest.flow_glyphs
+        )
         parts.append(
             f'<g class="legend-symbol" data-symbol-id="{_escape(entry.symbol_id)}" '
             f'transform="translate({left:g} {middle:g}) scale({scale:g})" '
             f'stroke="black" stroke-width="{standard.line_thin_mm / scale:g}" fill="none">'
-            f"{symbol.body}</g>"
+            f"{symbol.body}{arrows}</g>"
             f'<text class="legend-name" '
             f'x="{entry.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '
             f'y="{top + LEGEND_SWATCH_MM / 2 + standard.text_small_mm / 2:g}" '

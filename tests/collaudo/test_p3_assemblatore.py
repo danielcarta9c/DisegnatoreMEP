@@ -263,18 +263,22 @@ def test_il_defangatore_sta_lato_impianto_rispetto_all_intercettazione() -> None
                 ).ports
                 if p.flow.value == "in" and not p.off_the_run
             )
+            # Da DRAW-005 l'organo che chiude il gruppo della macchina non e'
+            # piu' ancorato alla macchina: sta oltre il suo filtro, lato rete.
+            # Cio' che conta e' che **un** organo di chiusura stia fra la
+            # macchina e il defangatore, che e' corredo del circuito e non del
+            # gruppo: a organo chiuso il defangatore resta di la'.
             pieces = _run_from(done, machine, inlet)
-            own = [p for p in pieces if p.anchor == machine]
-            sludge = [i for i, p in enumerate(own) if "sludge_separation" in p.functions]
+            sludge = [i for i, p in enumerate(pieces) if "sludge_separation" in p.functions]
             valve = [
                 i
-                for i, p in enumerate(own)
+                for i, p in enumerate(pieces)
                 if p.functions & CLOSABLE and p.rule == "isolate-what-is-serviced"
             ]
-            assert sludge and valve, (machine, [p.component_id for p in own])
+            assert sludge and valve, (machine, [p.component_id for p in pieces])
             assert min(valve) < min(sludge), (
                 f"{machine}: il defangatore non e' lato impianto: "
-                f"{[p.component_id for p in own]}"
+                f"{[p.component_id for p in pieces]}"
             )
 
 

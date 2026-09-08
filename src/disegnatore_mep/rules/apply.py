@@ -29,10 +29,11 @@ from disegnatore_mep.model.project import (
 )
 from disegnatore_mep.model.types import ApprovalStatus
 
-from .engine import BRANCH_OFF, evaluate
+from .engine import BRANCH_OFF, Evaluation, evaluate
 from .errors import RuleError
 from .proposal import RuleGap, RuleProposal
 from .registry import RuleRegistry
+from .schema import SatisfactionScope
 
 """Il mestiere di cio' che apre una derivazione su una tubazione esistente.
 
@@ -55,8 +56,10 @@ ROUNDS = 8
 
 Le passate vere sono due — gli accessori, poi i loro organi di chiusura — e un
 organo di chiusura non si smonta in esercizio, quindi la catena si spegne da
-sola. Il limite esiste per trasformare un ciclo infinito, se un giorno due
-regole si rincorressero, in un errore che le nomina.
+sola. Da DRAW-005 le due passate sono anche **due fasi** (I-034): le regole
+che chiudono un gruppo parlano solo quando le altre non hanno piu' niente da
+mettere nel gruppo. Il limite esiste per trasformare un ciclo infinito, se un
+giorno due regole si rincorressero, in un errore che le nomina.
 
 E' il numero di passate che **aggiungono** qualcosa, non il numero di
 valutazioni: dopo l'ultima ce ne vuole una in piu' per accorgersi che non c'e'
@@ -290,6 +293,40 @@ def _medium_of(project: ProjectModel, network_id: str) -> str:
     raise RuleError(f"unknown network {network_id}")
 
 
+def evaluate_in_phases(
+    project: ProjectModel, catalog: ComponentRegistry, rules: RuleRegistry
+) -> Evaluation:
+    """Una passata **come la fa la catena**: prima cio' che entra nel gruppo,
+    poi cio' che lo chiude (DRAW-005, I-034).
+
+    Un organo di chiusura isola un volume: se parlasse insieme alle regole che
+    quel volume lo riempiono — il filtro sul ritorno della macchina — si
+    poserebbe fra la macchina e il suo filtro, dove poi non deve stare. Le
+    regole che si dichiarano soddisfatte «sul gruppo» aspettano percio' che
+    tutte le altre tacciano, e solo allora vedono il gruppo intero. I punti
+    aperti della prima fase si riportano anche quando parla la seconda: non si
+    risolvono chiudendo niente.
+
+    E' la passata di `saturate`, esposta perche' chi rifa' il ciclo a mano — le
+    prove del motore — lo rifaccia con le stesse fasi.
+    """
+    closers = RuleRegistry(
+        rules=tuple(
+            item
+            for item in rules.all()
+            if item.satisfied_by.scope is SatisfactionScope.ON_THE_GROUP
+        )
+    )
+    others = RuleRegistry(
+        rules=tuple(item for item in rules.all() if item not in closers.rules)
+    )
+    first = evaluate(project, catalog, others)
+    if not first.is_empty or not closers.rules:
+        return first
+    second = evaluate(project, catalog, rules)
+    return Evaluation(proposals=second.proposals, gaps=[*first.gaps, *second.gaps])
+
+
 def saturate(
     project: ProjectModel, catalog: ComponentRegistry, rules: RuleRegistry
 ) -> tuple[ProjectModel, list[RuleProposal], list[RuleGap]]:
@@ -317,7 +354,7 @@ def saturate(
     current = project
     applied: list[RuleProposal] = []
     gaps: dict[tuple[str, str, str, str], RuleGap] = {}
-    found = evaluate(current, catalog, rules)
+    found = evaluate_in_phases(current, catalog, rules)
     for _ in range(ROUNDS):
         for gap in found.gaps:
             gaps.setdefault(gap.key, gap)
@@ -327,7 +364,7 @@ def saturate(
         # attacco che era coperto solo perche' un pezzo stava dove non doveva.
         current = assembled(apply_proposals(current, found.proposals, catalog))
         applied.extend(found.proposals)
-        found = evaluate(current, catalog, rules)
+        found = evaluate_in_phases(current, catalog, rules)
     for gap in found.gaps:
         gaps.setdefault(gap.key, gap)
     if found.is_empty:
@@ -342,4 +379,4 @@ def saturate(
     )
 
 
-__all__ = ["ROUNDS", "apply_proposals", "saturate"]
+__all__ = ["ROUNDS", "apply_proposals", "evaluate_in_phases", "saturate"]

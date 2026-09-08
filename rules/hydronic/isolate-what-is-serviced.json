@@ -1,6 +1,6 @@
 {
   "id": "isolate-what-is-serviced",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Valvola di intercettazione",
   "category": "recommended",
   "cardinality": "per_port",
@@ -18,8 +18,8 @@
     "outlet_port": "b"
   },
   "satisfied_by": {
-    "scope": "on_the_attachment"
+    "scope": "on_the_group"
   },
-  "rationale": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. L'acqua arriva da ogni tubo che lo tocca, quindi ogni tubo che lo tocca vuole il proprio organo di chiusura: con uno solo si svuota il circuito per cambiare un pezzo. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte, bloccabile aperto per cio' che non deve mai restare escluso per distrazione.",
-  "source": "Buona pratica tecnica documentata — Caleffi, Componenti e schemi per impianti a pompa di calore aria-acqua (SRC-008)"
+  "rationale": "Cio' che si smonta a impianto in funzione — una macchina come un accessorio — si toglie solo se prima si ferma l'acqua che lo raggiunge. Si isola pero' il **gruppo** che si manutiene insieme, senza duplicare organi consecutivi che chiudono lo stesso volume: la macchina e il filtro che le sta sul ritorno sono un gruppo, e sul ritorno basta l'organo lato rete oltre a quello sulla mandata; fra il filtro e la macchina non ne va un secondo. Ogni tubo che esce dal gruppo vuole il proprio organo di chiusura, uno per tratto: due pezzi affacciati sullo stesso tubo lo condividono. L'organo e' quello che il pezzo stesso pretende: comune per la maggior parte, bloccabile aperto per cio' che non deve mai restare escluso per distrazione.",
+  "source": "Buona pratica tecnica documentata — Caleffi, Componenti e schemi per impianti a pompa di calore aria-acqua (SRC-008); Caleffi, Idraulica 61, p. 45: il filtro immediatamente a monte dell'ingresso dello scambiatore della macchina (SRC-019); regola impiantistica 1 dell'audit PM del 5 settembre 2026 su indicazione del PO (I-034)"
 }

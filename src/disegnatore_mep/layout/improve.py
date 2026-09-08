@@ -1782,11 +1782,52 @@ class Improver:
         """
         current = self.measure(self.best)
         if current is None:
+            current = self._first_routable()
+        if current is None:
             return [self.best[item] for item in self.order]
         current = self._settle_placement(current)
         self.refining = True
         self._refine_axes(current)
         return [self.best[item] for item in self.order]
+
+    def _first_routable(self) -> Measured | None:
+        """Una posa da cui partire, quando quella iniziale non si instrada.
+
+        La posa iniziale e' un'ipotesi, e puo' capitare che una sua tratta non
+        trovi strada nemmeno in modo tollerante — uno stacco murato da un
+        vicino, per esempio. Prima il ciclo rinunciava senza provare una
+        mossa, e la tavola falliva o riusciva a seconda di un dettaglio della
+        posa iniziale (DRAW-005). Qui si prova, pezzo per pezzo nell'ordine di
+        posa e specie per specie, la **prima** candidata che si lascia
+        instradare: e' una posa cattiva, ma misurabile, e da li' il ciclo
+        riparte come sempre. Il tetto di prove e' quello della posa, e scatta
+        in un punto che dipende solo dagli ingressi; ogni prova finisce nel
+        diario.
+        """
+        for leader in self.scan:
+            for kind, move in self.candidates_by_kind(leader):
+                if self.trials >= MAX_TRIAL_ROUTINGS:
+                    return None
+                if not self.is_valid(move):
+                    continue
+                trial = dict(self.best)
+                trial.update(move)
+                found = self.measure(trial)
+                self.journal.append(
+                    Attempt(
+                        "posa",
+                        kind,
+                        leader,
+                        None if found is None else found.cost.key(),
+                        found is not None,
+                    )
+                )
+                if found is None:
+                    continue
+                self.best = trial
+                self._refresh_hang_gaps()
+                return found
+        return None
 
     def _settle_placement(self, current: Measured) -> Measured:
         for _ in range(MAX_PASSES):

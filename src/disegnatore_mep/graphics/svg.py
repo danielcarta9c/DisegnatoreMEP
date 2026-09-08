@@ -8,6 +8,7 @@ scala.
 
 import math
 
+from .glyphs import flow_glyph_path
 from .registry import SymbolRegistry
 from .standard import A3_LANDSCAPE, GraphicStandard
 
@@ -139,11 +140,17 @@ def render_symbol_sheet(
             f'r="{PORT_MARKER_RADIUS_MM}" fill="black"/>'
             for port in symbol.manifest.ports
         )
+        # Le frecce di verso, nel verso in cui la libreria le pubblica: il
+        # foglio di riscontro non conosce il catalogo.
+        arrows = "".join(
+            flow_glyph_path(glyph, symbol.manifest.port(glyph.port).face, None)
+            for glyph in symbol.manifest.flow_glyphs
+        )
         parts.append(
             f'<g class="symbol" data-symbol-id="{_escape(symbol.manifest.id)}" '
             f'transform="translate({x} {y})" '
             f'stroke="black" stroke-width="{standard.line_medium_mm}" fill="none">'
-            f"{symbol.body}{markers}"
+            f"{symbol.body}{arrows}{markers}"
             f'<text class="symbol-name" x="0" '
             f'y="{symbol.manifest.height_mm + standard.text_small_mm + SYMBOL_LABEL_GAP_MM}" '
             f'font-size="{standard.text_small_mm}" stroke="none" fill="black">'

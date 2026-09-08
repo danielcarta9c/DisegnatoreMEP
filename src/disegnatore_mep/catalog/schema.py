@@ -108,6 +108,17 @@ SHUTOFF_REGIMES: frozenset[ComponentTrait] = frozenset(
 senza, un valore sottinteso deciderebbe al posto di chi compila il catalogo
 (D-094)."""
 
+CLOSING_FUNCTIONS: frozenset[str] = frozenset({"isolation", "isolation_locked_open"})
+"""I due mestieri di chi **chiude** il fluido: l'organo comune e quello bloccabile
+aperto.
+
+Sono funzioni, non pezzi (D-069): quale voce di catalogo le porti su un dato
+fluido lo dice il catalogo. Vivono qui perche' li leggono in tre — la regola
+dell'intercettazione, che li propone; la saturazione, che li posa per ultimi
+perche' un organo chiude un volume che deve essere gia' completo; la posa, che
+li stringe all'apparecchio che isolano (D-120) — e un elenco scritto tre volte
+diverge."""
+
 FITTING_FUNCTIONS: frozenset[str] = frozenset({"junction", "branch_off"})
 """I due mestieri di un raccordo: unire due tubazioni, o aprire una derivazione.
 
@@ -452,6 +463,7 @@ class ComponentDefinition(StrictModel):
 
 __all__ = [
     "ATTACHMENT_STYLES",
+    "CLOSING_FUNCTIONS",
     "FITTING_FUNCTIONS",
     "SHUTOFF_REGIMES",
     "ComponentDefinition",

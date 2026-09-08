@@ -51,6 +51,17 @@ class PlacedSymbol(StrictModel):
     def bottom_mm(self) -> float:
         return self.origin.y_mm + self.height_mm
 
+    port_flows: dict[str, str] = Field(default_factory=dict)
+    """Il verso dell'acqua sulle porte che portano una freccia di verso.
+
+    Lo scrive la posa leggendo il `PortFlow` della definizione di catalogo
+    (DRAW-005, I-032): il renderer, che riceve la geometria e la libreria dei
+    simboli ma non il catalogo, punta la freccia da qui — verso la porta se
+    l'acqua esce dal simbolo, verso l'interno se vi entra. Vuoto per i simboli
+    senza frecce; una geometria agli atti senza questo campo si legge ancora e
+    disegna le frecce verso la porta, come la libreria le pubblica.
+    """
+
     def physical_port(self, port_id: str) -> str:
         """L'attacco del simbolo su cui sta questa porta del modello."""
         return self.port_map.get(port_id, port_id)

@@ -190,9 +190,14 @@ ferma l'acqua che lo raggiunge. E l'acqua lo raggiunge da **ogni** tubo che lo t
 quindi ogni tubo che lo tocca vuole il proprio rubinetto. Con uno solo si finisce per
 svuotare il circuito per cambiare un pezzo, che è esattamente ciò che non si vuole.
 
-**Dove va, e perché proprio lì.** Su ogni attacco del pezzo, dal lato dell'impianto. Un
-pezzo con due attacchi ne riceve due, uno con quattro ne riceve quattro: non è una scelta,
-è il conto degli attacchi.
+**Dove va, e perché proprio lì.** Su ogni tubo che esce dal **gruppo** che si manutiene
+insieme, dal lato dell'impianto (aggiornato il 7 settembre 2026, DRAW-005, su tua
+indicazione — I-034). La macchina e il filtro che le sta sul ritorno sono un gruppo: sul
+ritorno il rubinetto sta oltre il filtro, lato rete, e sulla mandata sta sulla macchina;
+fra il filtro e la macchina non ne va un secondo, perché chiuderebbe lo stesso volume. Un
+tratto di tubo prende un rubinetto solo, anche quando due pezzi vi si affacciano dai due
+capi. Un pezzo con quattro tubi ne riceve quattro: non è una scelta, è il conto dei tubi
+che escono dal gruppo.
 
 **A chi si applica.** A tutto ciò che dichiara di smontarsi a impianto acceso — **macchine
 e accessori insieme**. Il filtro, il defangatore, il circolatore la ricevono come la pompa
@@ -209,12 +214,14 @@ sostituiscono a tratta già chiusa, e se la chiedessero, quei due rubinetti ne v
 altri quattro, senza fine. Un dispositivo di sicurezza non la riceve mai, per la ragione
 della scheda 1.
 
-**Come sappiamo che c'è già.** Se sulla tubazione di quell'attacco c'è già un rubinetto,
-quell'attacco è a posto e non ne aggiungiamo un secondo. È il motivo per cui i rubinetti
-che il progettista ha già messo a mano vengono riconosciuti e rispettati.
+**Come sappiamo che c'è già.** Se sul tratto di tubo che parte da quell'attacco c'è già un
+rubinetto, quell'attacco è a posto e non ne aggiungiamo un secondo; e se il tratto finisce
+su un membro dello stesso gruppo, fra i due non ne va nessuno. È il motivo per cui i
+rubinetti che il progettista ha già messo a mano vengono riconosciuti e rispettati.
 
-**Da dove viene.** Dagli schemi Caleffi per impianti a pompa di calore, e dalla tua
-indicazione: una valvola per ogni attacco.
+**Da dove viene.** Dagli schemi Caleffi per impianti a pompa di calore, dalla nota di
+Idraulica 61 sul filtro immediatamente a monte dello scambiatore della macchina, e dalla
+tua indicazione del 5 settembre 2026: si isola il gruppo, non ogni attacco (I-034).
 
 ## 8 · Valvola di intercettazione generale
 
@@ -443,10 +450,11 @@ filtro — che è il pezzo che si smonta più spesso di tutti — non ne aveva n
 crescita ti sembra eccessiva, il punto da discutere non è la regola: è **quali pezzi
 dichiarano di smontarsi a impianto acceso**, cioè l'elenco che hai già approvato.
 
-**Due macchine attaccate allo stesso tubo prendono due rubinetti, uno per una.** È la
-regola presa alla lettera: ogni attacco vuole il proprio. Un solo rubinetto in mezzo
-basterebbe a separarle fra loro, ma non a togliere l'una lasciando in servizio l'altra. Se
-preferisci che in quel caso ne compaia uno solo, è una decisione tua e la registriamo.
+**Due pezzi affacciati sullo stesso tubo prendono un rubinetto solo, in mezzo.** Dal 7
+settembre 2026 (DRAW-005): un tratto di tubo è un volume, e un volume si chiude una volta.
+Ognuno dei due resta smontabile da solo, perché ha chiusi tutti i tubi che lo toccano; il
+rubinetto in mezzo chiude quel tratto per tutti e due. Prima ne comparivano due in fila,
+ed era il doppione che hai segnalato.
 
 **Ciò che la macchina porta a bordo non si disegna.** Le monoblocco comuni hanno il
 circolatore primario dentro il mantello, e il loro catalogo adesso lo dichiara: nessuna

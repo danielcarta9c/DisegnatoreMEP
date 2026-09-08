@@ -13,6 +13,7 @@ un indice di funzioni.
 """
 
 from collections import defaultdict
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -22,6 +23,9 @@ from disegnatore_mep.catalog.schema import (
     PortDefinition,
 )
 from disegnatore_mep.model.project import ConnectionModel, PortRef, ProjectModel
+
+from .proposal import anchor_of_proposed
+from .schema import RuleCardinality, RuleDefinition
 
 
 @dataclass(frozen=True)
@@ -88,8 +92,27 @@ class RuleContext:
     members: dict[str, tuple[str, ...]] = field(default_factory=dict)
     """Componenti di ciascuna rete, in ordine di modello."""
 
+    own: dict[str, frozenset[str]] = field(default_factory=dict)
+    """Gli accessori **di ciascun pezzo**: quelli che una regola per componente
+    gli ha posato sui suoi stessi attacchi (DRAW-005, I-034).
+
+    Il filtro a Y sul ritorno della pompa di calore e' della pompa di calore:
+    la regola che lo vuole parte da una proprieta' della macchina, lo conta una
+    volta per macchina e lo posa sul suo attacco. Insieme formano il **gruppo
+    manutenibile**, che si isola dall'esterno e mai fra i membri. Non entrano
+    nel gruppo il corredo di rete — che si posa sul tratto comune e si conta
+    una volta per rete, anche quando quel tratto comincia sull'attacco della
+    macchina — ne' cio' che il progettista ha scritto, che non deriva da
+    nessuna regola. Si legge dai dati: la regola in calce al pezzo e
+    l'identificativo derivato dall'attacco, mai dal nome del pezzo."""
+
     @classmethod
-    def build(cls, project: ProjectModel, catalog: ComponentRegistry) -> "RuleContext":
+    def build(
+        cls,
+        project: ProjectModel,
+        catalog: ComponentRegistry,
+        rules: Mapping[str, RuleDefinition] | None = None,
+    ) -> "RuleContext":
         functions: dict[str, frozenset[str]] = {}
         traits: dict[str, frozenset[ComponentTrait]] = {}
         carried: dict[str, frozenset[str]] = {}
@@ -148,6 +171,28 @@ class RuleContext:
             outgoing[connection.endpoint_a.component_id].append(connection.id)
             incoming[connection.endpoint_b.component_id].append(connection.id)
 
+        own: dict[str, set[str]] = defaultdict(set)
+        if rules:
+            attachments = [
+                (item.id, port.id) for item in project.components for port in ports[item.id]
+            ]
+            for component in project.components:
+                rule = next(
+                    (
+                        rules.get(evidence.reference.split("@", 1)[0])
+                        for evidence in component.evidence
+                        if evidence.kind == "rule"
+                    ),
+                    None,
+                )
+                if rule is None or rule.cardinality is RuleCardinality.PER_NETWORK:
+                    continue
+                if rule.then.placement.on_a_common_run:
+                    continue
+                anchor = anchor_of_proposed(component.id, component.definition_id, attachments)
+                if anchor is not None and anchor.component_id != component.id:
+                    own[anchor.component_id].add(component.id)
+
         return cls(
             functions=functions,
             traits=traits,
@@ -169,6 +214,7 @@ class RuleContext:
             # Il collaudo ha visto il gruppo di riempimento migrare da una
             # pompa di calore all'altra permutando il file: si chiude qui.
             members={key: tuple(sorted(value)) for key, value in members.items()},
+            own={key: frozenset(value) for key, value in own.items()},
         )
 
     # --- cio' che una condizione puo' chiedere ------------------------------
@@ -356,6 +402,71 @@ class RuleContext:
             if holder == connection_id and candidate[0] != component_id:
                 return candidate[0]
         return None
+
+    # --- il gruppo manutenibile (DRAW-005, I-034) ---------------------------
+
+    def same_group(self, first: str, second: str) -> bool:
+        """I due pezzi sono un gruppo: uno e' un accessorio dell'altro."""
+        return second in self.own.get(first, frozenset()) or first in self.own.get(
+            second, frozenset()
+        )
+
+    def along(self, ref: PortRef) -> tuple[tuple[str, ...], tuple[str, ...]]:
+        """Il tratto che parte da un attacco: i pezzi incontrati e le tubazioni
+        percorse, fino al primo pezzo che **ferma**.
+
+        Ferma un pezzo che non sta in linea, un pezzo che si manutiene — perche'
+        il volume fra due pezzi manutenibili e' uno, e un organo oltre il
+        secondo non chiude il primo — o un raccordo da cui il percorso prosegue
+        in piu' direzioni. Il pezzo che ferma e' l'ultimo dell'elenco; una
+        tubazione che finisce nel vuoto lascia l'elenco com'e'. La strada si
+        sceglie sulla struttura, come `port_carries`, mai sull'ordine del file.
+        """
+        pieces: list[str] = []
+        pipes: list[str] = []
+        cursor = ref.component_id
+        connection_id = self.connection_of_port.get((ref.component_id, ref.port_id))
+        seen = {cursor}
+        while connection_id is not None:
+            pipes.append(connection_id)
+            peer = self._peer(connection_id, cursor)
+            if peer is None or peer in seen:
+                break
+            pieces.append(peer)
+            seen.add(peer)
+            if peer not in self.inline or self.has_trait(peer, ComponentTrait.MAINTAINABLE):
+                break
+            onward = [
+                item
+                for item in (*self.incoming.get(peer, ()), *self.outgoing.get(peer, ()))
+                if item != connection_id
+            ]
+            if len(onward) != 1:
+                break
+            connection_id = onward[0]
+            cursor = peer
+        return tuple(pieces), tuple(pipes)
+
+    def stretch_from(self, ref: PortRef) -> frozenset[str]:
+        """Le tubazioni del tratto che parte da quell'attacco: la sua identita'.
+
+        Due attacchi affacciati sullo stesso tratto danno lo stesso insieme,
+        percorso dai due capi: e' cosi' che due proposte dello stesso organo
+        sullo stesso volume si riconoscono come una."""
+        _, pipes = self.along(ref)
+        return frozenset(pipes)
+
+    def group_holds(self, ref: PortRef, function: str) -> bool:
+        """Il gruppo di quell'attacco e' gia' chiuso da quel lato.
+
+        Vero se sul tratto c'e' gia' un pezzo con quella funzione, oppure se il
+        tratto finisce su un membro dello stesso gruppo: fra i due non ci va
+        nessun organo, e il volume lo chiudono gli organi ai bordi del gruppo.
+        """
+        pieces, _ = self.along(ref)
+        if any(function in self.functions.get(item, frozenset()) for item in pieces):
+            return True
+        return bool(pieces) and self.same_group(ref.component_id, pieces[-1])
 
     def connected_ports(self, component_id: str) -> tuple[PortDefinition, ...]:
         """Gli attacchi **del flusso** che una connessione tocca davvero.

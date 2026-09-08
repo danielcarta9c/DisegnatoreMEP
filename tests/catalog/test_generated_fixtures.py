@@ -26,6 +26,11 @@ ROOT = Path(__file__).resolve().parents[2]
 GENERATORS: list[tuple[str, str]] = [
     ("examples/layout/build_layout_fixtures.py", "examples/layout/catalog"),
     ("examples/foundation/build_fixtures.py", "examples/foundation/catalog"),
+    # La libreria dei simboli: tre segni erano stati corretti a mano — i due
+    # raccordi (D-119) e il ritegno (D-122) — e il generatore li avrebbe
+    # riportati indietro alla prima rigenerazione. DRAW-005 li ha portati nel
+    # generatore, e da qui la libreria pubblicata e' la sua rigenerazione.
+    ("examples/graphics/build_symbols.py", "assets/symbols"),
 ]
 
 
@@ -33,12 +38,17 @@ def snapshot(directory: Path) -> dict[str, object]:
     """Il contenuto della cartella, letto come dati e non come testo.
 
     Confrontare i dati e non i byte tiene la prova sul punto che conta — cosa
-    dichiara il catalogo — invece di farla fallire per un a capo.
+    dichiara il catalogo — invece di farla fallire per un a capo. I corpi SVG
+    dei simboli si confrontano come testo, senza gli a capo ai bordi.
     """
-    return {
+    found: dict[str, object] = {
         path.name: json.loads(path.read_text(encoding="utf-8"))
         for path in sorted(directory.glob("*.json"))
     }
+    found.update(
+        {path.name: path.read_text(encoding="utf-8").strip() for path in sorted(directory.glob("*.svg"))}
+    )
+    return found
 
 
 @pytest.mark.parametrize(("script", "catalog"), GENERATORS)

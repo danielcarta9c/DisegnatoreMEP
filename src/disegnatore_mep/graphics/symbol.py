@@ -7,13 +7,18 @@ componente del catalogo e si unisce a questa per identificativo di porta.
 """
 
 from enum import StrEnum
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from pydantic import ConfigDict, Field, model_validator
 
 from disegnatore_mep.model.base import ID_PATTERN, FiniteFloat, StrictModel
 
 from .errors import SymbolError
+
+if TYPE_CHECKING:
+    from disegnatore_mep.catalog.registry import ComponentRegistry
+
+    from .standard import GraphicStandard
 
 TOLERANCE_MM = 1e-6
 
@@ -122,6 +127,44 @@ class LabelAnchor(StrictModel):
     y_mm: FiniteFloat
 
 
+class FlowGlyph(StrictModel):
+    """Una freccia di verso legata a una porta (DRAW-005, I-032).
+
+    Il corpo di un simbolo non sa da che parte scorre l'acqua: lo sa il
+    catalogo, porta per porta. Il confine di rete ne e' il caso: lo stesso
+    segno serve all'acquedotto, da cui l'acqua **esce** verso l'impianto, e
+    alle utenze, in cui l'acqua **entra**. Il manifesto dichiara percio' dove
+    sta la freccia e quanto e' lunga; chi disegna la punta nel verso locale
+    dell'acqua letto dal `PortFlow` della porta — verso la porta se il fluido
+    esce dal simbolo, verso l'interno se vi entra — e mai dall'identificativo
+    del pezzo o dal bordo del foglio. Senza un verso noto — il foglio di
+    riscontro, la legenda — la freccia punta verso la porta.
+
+    La freccia sta sull'asse della porta, centrata in `(x_mm, y_mm)` nel
+    riquadro non ruotato, e ruota con il corpo come ruotano le porte."""
+
+    port: str = Field(pattern=ID_PATTERN)
+    x_mm: FiniteFloat
+    y_mm: FiniteFloat
+    length_mm: FiniteFloat = Field(gt=0)
+    half_width_mm: FiniteFloat = Field(gt=0)
+
+
+class UprightGlyph(StrictModel):
+    """Un glifo interno dichiarato **leggibile** (DRAW-005, I-033).
+
+    La `P` del manometro, la `T` del termometro, la `F` di un flussostato che
+    entrera' domani: una lettera si legge nel verso della tavola, anche quando
+    il corpo dello strumento e' girato. Il corpo la disegna in un gruppo
+    marcato `data-glyph` con questo identificativo; chi ruota il simbolo la
+    contro-ruota attorno a `(x_mm, y_mm)`, cosi' che il glifo segua il proprio
+    centro senza girare, mentre corpo e porte girano come sempre."""
+
+    id: str = Field(pattern=ID_PATTERN)
+    x_mm: FiniteFloat
+    y_mm: FiniteFloat
+
+
 class SymbolManifest(StrictModel):
     id: str = Field(pattern=ID_PATTERN)
     version: str = Field(pattern=r"^\d+\.\d+\.\d+$")
@@ -133,6 +176,8 @@ class SymbolManifest(StrictModel):
     ports: list[SymbolPort] = Field(min_length=1)
     keep_out: KeepOut = Field(default_factory=KeepOut)
     label_anchors: list[LabelAnchor] = Field(default_factory=list)
+    flow_glyphs: list[FlowGlyph] = Field(default_factory=list)
+    upright_glyphs: list[UprightGlyph] = Field(default_factory=list)
     source: str = Field(min_length=1)
 
     def port(self, port_id: str) -> SymbolPort:
@@ -208,6 +253,31 @@ class SymbolManifest(StrictModel):
                 raise ValueError(f"duplicate label anchor id: {anchor.id}")
             anchors.add(anchor.id)
 
+        # Un glifo sta dentro il riquadro: una freccia legata a una porta che
+        # non esiste, o una lettera fuori dal corpo, sarebbero disegnate nel
+        # vuoto o su un attacco che non c'e'.
+        for glyph in self.flow_glyphs:
+            if glyph.port not in seen:
+                raise ValueError(
+                    f"flow glyph refers to unknown port {glyph.port}: the arrow of a "
+                    f"port that does not exist would point at nothing"
+                )
+            if not (
+                -TOLERANCE_MM <= glyph.x_mm <= self.width_mm + TOLERANCE_MM
+                and -TOLERANCE_MM <= glyph.y_mm <= self.height_mm + TOLERANCE_MM
+            ):
+                raise ValueError(f"flow glyph of port {glyph.port} falls outside the symbol box")
+        glyph_ids: set[str] = set()
+        for upright in self.upright_glyphs:
+            if upright.id in glyph_ids:
+                raise ValueError(f"duplicate upright glyph id: {upright.id}")
+            glyph_ids.add(upright.id)
+            if not (
+                -TOLERANCE_MM <= upright.x_mm <= self.width_mm + TOLERANCE_MM
+                and -TOLERANCE_MM <= upright.y_mm <= self.height_mm + TOLERANCE_MM
+            ):
+                raise ValueError(f"upright glyph {upright.id} falls outside the symbol box")
+
         if self.inline_gap_mm is not None:
             faces = {port.face for port in self.ports}
             opposed = any(face.opposite in faces for face in faces)
@@ -260,6 +330,19 @@ class SymbolManifest(StrictModel):
                 LabelAnchor(id=anchor.id, role=anchor.role, x_mm=x_mm, y_mm=y_mm)
             )
 
+        # I glifi seguono il corpo: il centro della freccia e quello della
+        # lettera si spostano come si sposta una porta. La freccia prende poi
+        # il verso dalla faccia ruotata della propria porta, la lettera resta
+        # dritta attorno al centro spostato.
+        flow_glyphs: list[FlowGlyph] = []
+        for glyph in self.flow_glyphs:
+            x_mm, y_mm = moved(glyph.x_mm, glyph.y_mm)
+            flow_glyphs.append(glyph.model_copy(update={"x_mm": x_mm, "y_mm": y_mm}))
+        upright_glyphs: list[UprightGlyph] = []
+        for upright in self.upright_glyphs:
+            x_mm, y_mm = moved(upright.x_mm, upright.y_mm)
+            upright_glyphs.append(upright.model_copy(update={"x_mm": x_mm, "y_mm": y_mm}))
+
         return SymbolManifest(
             id=self.id,
             version=self.version,
@@ -275,5 +358,42 @@ class SymbolManifest(StrictModel):
             ports=ports,
             keep_out=self.keep_out.rotated(degrees),
             label_anchors=anchors,
+            flow_glyphs=flow_glyphs,
+            upright_glyphs=upright_glyphs,
             source=self.source,
         )
+
+
+def inline_extent_mm(manifest: SymbolManifest) -> float:
+    """Quanto un accessorio in linea sporge **attraverso** la tubazione.
+
+    E' il lato del riquadro perpendicolare all'asse delle due porte: l'altezza
+    per un pezzo con le porte a destra e a sinistra, la larghezza per uno con
+    le porte sopra e sotto."""
+    faces = {port.face for port in manifest.ports}
+    if PortFace.LEFT in faces or PortFace.RIGHT in faces:
+        return manifest.height_mm
+    return manifest.width_mm
+
+
+def functional_room_mm(
+    catalog: "ComponentRegistry", medium: str, standard: "GraphicStandard"
+) -> float:
+    """Lo spazio che due attacchi affiancati devono lasciarsi (DRAW-005, I-039).
+
+    Non e' una costante per tutti i simboli: si **ricava** dagli accessori in
+    linea che il catalogo sa posare su quel fluido — il piu' alto attraverso la
+    tubazione — piu' la distanza minima di rispetto della griglia. Due attacchi
+    piu' vicini di cosi' portano due accessori che si toccano, ed e' cio' che
+    la tavola DRAW-004 mostrava con i cinque millimetri della pompa di calore.
+    """
+    tallest = max(
+        (
+            inline_extent_mm(catalog.resolve(definition.id).symbol.manifest)
+            for definition in catalog.all()
+            if catalog.resolve(definition.id).is_inline
+            and all(port.medium == medium for port in definition.ports)
+        ),
+        default=0.0,
+    )
+    return tallest + standard.min_clearance_mm
