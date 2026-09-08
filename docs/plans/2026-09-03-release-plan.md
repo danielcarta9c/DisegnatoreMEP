@@ -14,6 +14,8 @@ grafo approvato dal PO**, deterministica e graficamente approvata dal PM/PO.
   può assorbire una curva, sempre scelti dal costo globale e mai come regole assolute;
 - `DRAW-005`: correttezza del grafo dell'impianto 1 e simboli/porte che influenzano la
   posa; etichette di nodo opzionali, sigle principali sempre presenti;
+- `DRAW-005-R1`: rifiniture PO su flussi dei rami di servizio, sicurezza dei generatori,
+  coerenza locale degli accessori e leggibilità dei simboli;
 - uscita: PDF, PNG, SVG e metriche riproducibili della tavola 1.
 
 Gate: il PO riconosce un disegno ordinato e tecnicamente leggibile. Finché questo gate
