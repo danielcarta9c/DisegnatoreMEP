@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-05
+**Aggiornato:** 2026-09-08
 **Scopo:** ingresso operativo breve per una nuova sessione DEV.
 
 ## Prodotto
@@ -48,10 +48,10 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
 ## Stato corrente
 
 - Release in corso: **0.2 — prima tavola tecnicamente corretta e approvata**.
-- `DRAW-004` è stato fuso nella PR #14: 6 curve, 1 incrocio, 577,5 mm, zero
-  backtracking sulla tavola 1.
-- Il prossimo pacchetto corregge contenuto MEP e simboli critici dell'impianto 1 senza
-  generalizzare agli altri impianti.
+- `DRAW-005` è stato verificato e fuso nella PR #18: tavola 1 con 4 curve, 1 incrocio,
+  525 mm, zero backtracking; simboli e contenuto critici corretti.
+- Nessun incarico DEV è attivo: il gate 0.2A attende il giudizio visivo del PO. Una nuova
+  sessione DEV deve fermarsi finché il PM non pubblica il pacchetto successivo.
 - Stato e rischi: `PROJECT_STATE.md`.
 - Roadmap: `docs/plans/2026-09-03-release-plan.md`.
 - Architettura: `docs/SKILL.md` e ADR 0005.
