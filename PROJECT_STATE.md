@@ -46,10 +46,12 @@ correttezza impiantistica del grafo, che il PO ha corretto con gli input I-030�
 
 ## Lavoro corrente
 
-`DRAW-005-R1` è il pacchetto attivo. Il PO ha approvato l'impostazione generale della
-tavola e ha chiesto rifiniture puntuali su simboli, rami di servizio, sicurezza e posa
-locale degli accessori PDC. La diagnosi e le fonti sono state fissate dal PM; il DEV deve
-soltanto implementarle.
+`DRAW-005-R1` è il pacchetto attivo. La prima consegna DEV, PR #21, è respinta in
+revisione: pur correggendo simboli e rami di servizio, ha moltiplicato la sicurezza
+invece di spostarla, ha irrigidito gli stacchi, ha peggiorato il costo della tavola e ha
+reso non posabile l'impianto 5. I-046 corregge la precedente traduzione PM: una sola
+sicurezza di circuito nella tavola 1, stacchi minimi e aumento gratuito dell'interasse
+verticale fra le PDC prima di introdurre deviazioni.
 
 Punti vincolanti del pacchetto, tutti attuati in PR:
 

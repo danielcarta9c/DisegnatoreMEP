@@ -9,25 +9,28 @@
 
 ## Obiettivo
 
-Attuare gli input PO I-041…I-045 secondo la traduzione già svolta dal PM in
+Attuare gli input PO I-041…I-046 secondo la traduzione già svolta dal PM in
 `docs/pm/2026-09-08-rilievi-po-draw005-r1.md`. Non interpretare gli allegati e non fare
 ricerca di dominio: le decisioni da implementare sono qui sotto.
 
 ## A. Sicurezza e sfiato
 
-1. Eliminare l'assunzione che ogni PDC generica porti la sicurezza a bordo.
-2. La presenza a bordo è un dato esplicito del catalogo della macchina.
-3. Per ogni generatore che non dichiara una sicurezza integrata, posare una sicurezza
-   esterna sulla mandata, il più vicino possibile alla macchina e prima di qualunque
-   organo di intercettazione.
-4. Se la sicurezza è dichiarata a bordo, non aggiungere il doppione esterno.
-5. Sulla tavola 1, il catalogo generico dichiara solo il circolatore: servono quindi due
-   sicurezze esterne, una per ciascuna PDC isolabile. La sicurezza oggi vicina
-   all'accumulo non sostituisce quelle dei generatori.
-6. Non confondere lo sfogo aria con la sicurezza: conservare lo sfogo sull'attacco alto
-   dell'accumulo e non aggiungerne uno per PDC senza dato di catalogo o regola.
+1. Non dedurre il numero delle sicurezze dal numero dei generatori.
+2. Modellare il dominio di protezione: una sicurezza comune soddisfa più macchine solo
+   quando resta comunicante col volume da proteggere nelle configurazioni ammesse.
+3. La presenza a bordo è un dato esplicito tri-stato del catalogo: presente, assente,
+   ignoto. Un campo mancante significa **ignoto**, non assente, e non autorizza ad
+   aggiungere dispositivi.
+4. Sulla tavola 1 eliminare la sicurezza sull'accumulo e le due sicurezze per-PDC della
+   PR #21. Posare **una sola sicurezza di circuito** sulla mandata, vicino al gruppo PDC;
+   questa è la sicurezza di DRAW-005 riposizionata, non un nuovo dispositivo.
+5. Protezioni ulteriori compaiono solo con un dato di catalogo o con domini autonomi
+   esplicitamente modellati; in caso indeterminato il motore genera una domanda aperta.
+6. Non confondere lo sfogo aria con la sicurezza: conservare un solo sfogo sull'attacco
+   alto dell'accumulo.
 
-Scrivere prima prove generali su una e due macchine, con e senza sicurezza integrata.
+Scrivere prima prove generali su dominio unico e domini isolabili, con presenza a bordo
+presente, assente e ignota.
 
 ## B. Medium, colore e frecce dei rami di servizio
 
@@ -72,12 +75,24 @@ traslazione e rotazione:
 
 Il costo globale resta il criterio fra pose che rispettano questo contratto duro.
 
+## E. Stacchi minimi e spostamento gratuito delle macchine
+
+1. La lunghezza degli stacchi di sicurezza, sfiato, misura, espansione e riempimento è
+   la minima lunghezza su griglia che evita il contatto fra tubo e ingombro del simbolo
+   e conserva la leggibilità di stampa; non è una costante arbitraria.
+2. Ogni millimetro oltre il minimo peggiora il costo.
+3. Prima di introdurre curve, deviazioni o corridoi, il posatore prova la traslazione
+   verticale delle PDC e dei gruppi collegati a passi di griglia.
+4. L'interasse verticale delle PDC cresce quanto basta per non sovrapporre le catene
+   locali e rendere più rettilinee le dorsali: spostare le macchine costa zero.
+5. I corridoi davanti alle porte sono locali e non possono impedire la posa degli altri
+   impianti o deformare la composizione globale.
+
 ## Criteri di accettazione
 
-1. Tutti gli input I-041…I-045 sono visibili nel PDF e provati con test generali.
-2. Due sicurezze esterne proteggono le due PDC della tavola 1 prima delle rispettive
-   intercettazioni; zero sicurezza esterna duplicata quando il catalogo la dichiara a
-   bordo.
+1. Tutti gli input I-041…I-046 sono visibili nel PDF e provati con test generali.
+2. Una sola sicurezza di circuito sulla mandata vicino al gruppo PDC; zero sicurezza
+   sull'accumulo e zero duplicazioni automatiche per macchina.
 3. Riempimento diretto verso l'impianto; riempimento, vaso e manometro correttamente blu
    sul lato ritorno; zero frecce su vaso e manometro.
 4. Filtro a Y leggibile con barrette e tratto 0,50 mm in tavola, legenda e riscontro.
@@ -89,6 +104,11 @@ Il costo globale resta il criterio fra pose che rispettano questo contratto duro
 8. Nessuna nuova `xfail`; suite completa, ruff, mypy strict e determinismo verdi.
 9. PDF, PNG, SVG, geometria, metriche, preflight e confronto contro DRAW-005 in
    `docs/collaudi/DRAW-005-R1/`.
+10. Le PDC possono aumentare il proprio interasse verticale; nessuno stacco è più lungo
+    del minimo valido. La rete a flusso ordinario non supera DRAW-005: massimo 4 curve,
+    1 incrocio e 525 mm, misurati separatamente dagli stacchi statici.
+11. Tutti e cinque gli impianti arrivano almeno alla posa come sulla base `cc7ff93`;
+    nessuna regressione viene convertita in `skip` o `xfail`.
 
 ## Fuori perimetro
 
