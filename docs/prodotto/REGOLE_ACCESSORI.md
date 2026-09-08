@@ -19,9 +19,12 @@
 regole da grande centrale alle piccole. Adesso le regole conoscono **due regimi**.
 
 **Sotto i 35 kW** la centrale è quella di casa: niente separatore d'aria — basta lo sfogo
-sul serbatoio; niente termometro aggiunto — si usa quello della macchina; niente sicurezza
-per ogni generatore — sta sul serbatoio, e stop. È la prassi che ci hai dato, e l'abbiamo
-riscontrata riga per riga sugli schemi Caleffi delle centrali domestiche.
+sul serbatoio; niente termometro aggiunto — si usa quello della macchina. È la prassi che
+ci hai dato, e l'abbiamo riscontrata riga per riga sugli schemi Caleffi delle centrali
+domestiche. **La sicurezza per ogni generatore, invece, vale in tutti e due i regimi**
+(tua correzione dell'8 settembre 2026, I-043): una macchina la riceve esterna a meno che
+il suo catalogo non dichiari di portarla dentro il mantello — e quella generica non lo
+dichiara. La sicurezza del serbatoio resta, ed è un'altra cosa (scheda 2).
 
 **Sopra i 35 kW** vale la Raccolta R, che da lì in su si applica: sicurezza e termometro
 per ogni generatore, separatore d'aria vero.
@@ -61,20 +64,30 @@ scoppiare.
 quanto il circuito riesca ad assorbire. Serve una via che si apra da sé, senza che nessuno
 la comandi e senza che nessuno possa impedirlo.
 
-**Quando vale.** Sopra i 35 kW: è la Raccolta R, che prescrive i dispositivi per ogni
-generatore.
+**Quando vale.** In tutti e due i regimi, sul circuito chiuso dell'acqua tecnica. Sopra i
+35 kW è la Raccolta R, che prescrive i dispositivi per ogni generatore; sotto è la tua
+correzione dell'8 settembre 2026 (I-043): una macchina isolabile dalle proprie valvole è
+un volume chiuso che si scalda, e vuole la sua via che si apra da sola.
 
 **Dove va, e perché proprio lì.** Sulla tubazione che esce da ogni macchina che scalda, e
-**attaccata alla macchina**. Fra lei e ciò che protegge non ci va niente che si possa
-chiudere: una valvola chiusa davanti a una sicurezza è una sicurezza che non c'è.
+**attaccata alla macchina**, il più vicino possibile. Fra lei e ciò che protegge non ci va
+niente che si possa chiudere: una valvola chiusa davanti a una sicurezza è una sicurezza
+che non c'è.
 
-**Quante volte.** Una per ogni macchina che scalda.
+**Quante volte.** Una per ogni macchina che scalda **e non dichiara la sicurezza dentro il
+mantello**. Se il catalogo di quella macchina la dichiara a bordo, non ne aggiungiamo una
+seconda; se non la dichiara — ed è il caso della pompa di calore generica — la riceve. Non
+si presume mai.
 
-**Come sappiamo che c'è già.** Se su quella stessa tubazione c'è già un organo che scarica
-la sovrapressione, non ne aggiungiamo un secondo.
+**Come sappiamo che c'è già.** Se sulla tubazione di quell'attacco c'è già un organo che
+scarica la sovrapressione, o se la macchina lo dichiara a bordo, non ne aggiungiamo un
+secondo. La sicurezza del serbatoio non conta: protegge un altro volume.
 
-**Da dove viene.** Dalla Raccolta R, che elenca i dispositivi obbligatori di un impianto a
-vaso chiuso. È una prescrizione, non una buona abitudine.
+**Da dove viene.** Dalla scheda tecnica Caleffi delle valvole di sicurezza — sulla sommità
+del generatore o sulla mandata il più vicino possibile, con tubazione non intercettabile —
+e da Idraulica 61, che dice che sfogo e sicurezza **possono** essere integrati nella
+macchina: quindi lo dichiara il catalogo, macchina per macchina. Sopra i 35 kW anche dalla
+Raccolta R, che è una prescrizione.
 
 ## 2 · Valvola di sicurezza della piccola centrale
 
@@ -83,15 +96,18 @@ vaso chiuso. È una prescrizione, non una buona abitudine.
 **Perché esiste.** Anche il circuito piccolo è chiuso e si scalda: la via che si apre da
 sola serve comunque.
 
-**Quando vale.** Sotto i 35 kW, ed è la tua prassi: non una sicurezza per generatore — le
-macchine la portano già dentro il mantello — ma **una sola, sul serbatoio, e stop**.
+**Quando vale.** Sotto i 35 kW, ed è la tua prassi: **una sul serbatoio**. Non sostituisce
+quelle dei generatori (scheda 1), che dall'8 settembre 2026 ci sono anche nella piccola
+centrale: il serbatoio è isolabile dalle macchine dalle loro valvole, e il suo volume va
+protetto per conto suo.
 
 **Dove va, e perché proprio lì.** Sulla tubazione che entra nel serbatoio, nelle sue
 immediate vicinanze, senza niente di chiudibile in mezzo. Una per serbatoio: anche quando
 il serbatoio sta su due circuiti, l'acqua che ha dentro è una.
 
-**Come sappiamo che c'è già.** Se su quel circuito c'è già qualcosa che scarica la
-sovrapressione.
+**Come sappiamo che c'è già.** Se sulla tubazione di quell'attacco c'è già qualcosa che
+scarica la sovrapressione. Una sicurezza altrove sul circuito — quella di un generatore —
+non conta: protegge un altro volume.
 
 **Da dove viene.** Dalla tua prassi, registrata come decisione; lo schema tipico Caleffi
 disegna anche lui una sola sicurezza esterna sul tratto comune.

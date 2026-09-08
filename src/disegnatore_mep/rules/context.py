@@ -380,6 +380,13 @@ class RuleContext:
                 return False
             if function in self.functions.get(peer, frozenset()):
                 return True
+            # Cio' che pende da uno stacco del pezzo sta **su questa
+            # tubazione** (DRAW-005-R1, I-043): la sicurezza appesa al
+            # raccordo di derivazione e' la sicurezza di quell'attacco, e una
+            # camminata che passasse oltre il raccordo senza guardarci sopra
+            # la riproporrebbe a ogni passata.
+            if function in self.hanging_functions(peer):
+                return True
             if peer not in self.inline:
                 return False
             seen.add(peer)
@@ -402,6 +409,37 @@ class RuleContext:
             if holder == connection_id and candidate[0] != component_id:
                 return candidate[0]
         return None
+
+    def hanging_functions(self, component_id: str) -> frozenset[str]:
+        """Le funzioni di cio' che pende dagli stacchi di un pezzo.
+
+        Si risale ogni attacco fuori dal percorso — il braccio di un raccordo,
+        l'attacco di servizio di una macchina — attraverso gli organi in fila
+        sullo stacco, fino all'accessorio che vi pende. Lo stacco non e' strada
+        (`pipe_ends` non lo porta), quindi lo si percorre qui, a parte.
+        """
+        found: set[str] = set()
+        for port in self.ports.get(component_id, ()):
+            if not port.off_the_run:
+                continue
+            connection_id = self.connection_of_port.get((component_id, port.id))
+            cursor = component_id
+            seen = {cursor}
+            while connection_id is not None:
+                peer = self._peer(connection_id, cursor)
+                if peer is None or peer in seen:
+                    break
+                found |= self.functions.get(peer, frozenset())
+                seen.add(peer)
+                onward = [
+                    holder
+                    for (owner, _), holder in self.connection_of_port.items()
+                    if owner == peer and holder != connection_id
+                ]
+                if len(onward) != 1:
+                    break
+                connection_id, cursor = onward[0], peer
+        return frozenset(found)
 
     # --- il gruppo manutenibile (DRAW-005, I-034) ---------------------------
 

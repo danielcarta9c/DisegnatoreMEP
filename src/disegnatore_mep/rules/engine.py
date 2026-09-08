@@ -381,10 +381,17 @@ def evaluate(
                 component_id = proposed_component_id(definition.id, anchor)
                 if component_id in taken:
                     continue
-                if rule.satisfied_by.scope is not SatisfactionScope.ON_THE_NETWORK:
+                if (
+                    rule.satisfied_by.scope is not SatisfactionScope.ON_THE_NETWORK
+                    and not rule.ordering.against_the_anchor
+                ):
                     # Solo un tratto vero identifica qualcosa: un attacco di
                     # servizio ancora libero non ha tubazioni, e due pezzi che
-                    # ne aspettano uno ciascuno non condividono niente.
+                    # ne aspettano uno ciascuno non condividono niente. E cio'
+                    # che sta **attaccato alla propria macchina** non si
+                    # condivide mai (DRAW-005-R1, I-043): la sicurezza di un
+                    # generatore e quella della riserva sullo stesso tubo sono
+                    # due pezzi, ciascuno contro il proprio volume, non uno.
                     pipes = context.stretch_from(anchor)
                     if pipes:
                         stretch = (pipes, function)

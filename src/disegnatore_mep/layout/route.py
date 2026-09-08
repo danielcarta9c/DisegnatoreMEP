@@ -22,13 +22,15 @@ tralasciava.
 import heapq
 from collections.abc import Callable
 from dataclasses import dataclass
+from math import ceil
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
+from .chains import chain_room_mm, machine_chains
 from .errors import LayoutError
-from .flow import orient_trunks
+from .flow import classify_trunks
 from .geometry import PlacedSymbol, Point, RoutedTrunk
 from .grid import Cell, GridSpace
 from .trunks import Trunk
@@ -114,8 +116,18 @@ def route(
     crowded: frozenset[Cell] = frozenset(),
     prefer_high: bool | None = None,
     max_expansions: int = MAX_EXPANSIONS,
+    start_straight: int = 0,
+    goal_straight: int = 0,
 ) -> Route:
     """A* su stato `(cella, direzione di arrivo)`.
+
+    `start_straight` e `goal_straight` sono i passi che la tratta deve fare
+    **dritta** uscendo dalla porta di partenza e arrivando a quella di arrivo
+    (DRAW-005-R1, I-044): e' il rettilineo che la catena della macchina
+    occupera' — filtro e valvola a distanze fisse dalla porta, prima della
+    prima curva. Le celle di quei passi sono obbligate, e se una e' murata la
+    tratta non si instrada: una posa che non lascia quel rettilineo non e' una
+    candidata.
 
     La direzione entra nello stato perche' il costo di piega dipende da come ci
     si e' arrivati.
@@ -139,8 +151,43 @@ def route(
     """
     approach = (-goal_direction[0], -goal_direction[1])
 
+    def forced(origin: Cell, direction: Cell, steps: int) -> list[Cell]:
+        """Le celle obbligate oltre una porta, in ordine di percorrenza."""
+        found: list[Cell] = []
+        for count in range(1, steps + 1):
+            cell = (origin[0] + direction[0] * count, origin[1] + direction[1] * count)
+            if not (0 <= cell[0] < cols and 0 <= cell[1] < rows) or cell in blocked:
+                raise LayoutError(
+                    f"no route from {start} to {goal}: the {steps} straight steps the "
+                    f"chain needs beyond the port at {origin} run into an obstacle at {cell}"
+                )
+            previous = found[-1] if found else origin
+            if (previous, cell) in taken or (cell, previous) in taken:
+                raise LayoutError(
+                    f"no route from {start} to {goal}: the straight the chain needs "
+                    f"beyond the port at {origin} is already run by another line at {cell}"
+                )
+            found.append(cell)
+        return found
+
+    prefix = forced(start, start_direction, start_straight)
+    # Il rettilineo di arrivo: le celle obbligate davanti alla porta, piu' la
+    # cella oltre l'ultima, dove la tratta puo' girare per imboccarle. La
+    # ricerca finisce li', arrivando da qualunque parte; da li' alla porta la
+    # strada e' scritta.
+    suffix = list(reversed(forced(goal, goal_direction, goal_straight + 1))) if goal_straight else []
+    search_start = prefix[-1] if prefix else start
+    search_goal = suffix[0] if suffix else goal
+    if search_start == search_goal:
+        cells_only = [start, *prefix, *suffix[1:], goal] if (prefix or suffix) else [start]
+        return Route(
+            cells=tuple(dict.fromkeys(cells_only)),
+            cost=STEP_COST * (len(cells_only) - 1),
+            crossings=tuple(item for item in cells_only if item in occupied),
+        )
+
     def heuristic(cell: Cell, direction: Cell) -> int:
-        dx, dy = goal[0] - cell[0], goal[1] - cell[1]
+        dx, dy = search_goal[0] - cell[0], search_goal[1] - cell[1]
         distance = (abs(dx) + abs(dy)) * STEP_COST
         # Ammissibile e piu' stretta della sola Manhattan: se la meta' non e'
         # allineata serve almeno una piega, e se si sta andando dalla parte
@@ -159,29 +206,46 @@ def route(
         return cell[1] if prefer_high else rows - cell[1]
 
     open_heap: list[tuple[int, int, int, Cell, Cell]] = [
-        (heuristic(start, start_direction), lean(start), 0, start, start_direction)
+        (
+            heuristic(search_start, start_direction),
+            lean(search_start),
+            0,
+            search_start,
+            start_direction,
+        )
     ]
     best: dict[tuple[Cell, Cell], tuple[int, int]] = {
-        (start, start_direction): (0, lean(start))
+        (search_start, start_direction): (0, lean(search_start))
     }
     came: dict[tuple[Cell, Cell], tuple[Cell, Cell]] = {}
     expansions = 0
+    # Le celle obbligate non si ripercorrono: la ricerca parte oltre il
+    # rettilineo di uscita e finisce prima di quello di arrivo, e i due si
+    # cuciono attorno al percorso trovato.
+    forbidden = frozenset([start, *prefix[:-1], goal, *suffix[1:]]) - {search_start, search_goal}
 
     while open_heap:
         _, bias, cost, cell, direction = heapq.heappop(open_heap)
         if (cost, bias) > best.get((cell, direction), (cost, bias)):
             continue
-        if cell == goal and direction == approach:
+        if cell == search_goal and (direction == approach or suffix):
             cells = [cell]
             state = (cell, direction)
             while state in came:
                 state = came[state]
                 cells.append(state[0])
             cells.reverse()
+            whole = [start, *prefix[:-1], *cells, *suffix[1:], goal] if (prefix or suffix) else cells
+            straight = (len(prefix) + len(suffix)) * STEP_COST
+            if suffix and direction != approach:
+                # La piega con cui la tratta imbocca il rettilineo di arrivo si
+                # paga come ogni altra: fra due strade di pari costo vince
+                # quella che arriva gia' dritta.
+                straight += TURN_COST
             return Route(
-                cells=tuple(cells),
-                cost=cost,
-                crossings=tuple(item for item in cells if item in occupied),
+                cells=tuple(whole),
+                cost=cost + straight,
+                crossings=tuple(item for item in whole if item in occupied),
             )
 
         expansions += 1
@@ -195,7 +259,9 @@ def route(
             nxt = (cell[0] + step[0], cell[1] + step[1])
             if not (0 <= nxt[0] < cols and 0 <= nxt[1] < rows):
                 continue
-            if nxt in blocked and nxt != goal:
+            if nxt in blocked and nxt != search_goal:
+                continue
+            if nxt in forbidden:
                 continue
             # Percorrere un tratto gia' percorso da un'altra tubazione e'
             # **vietato**, non caro: due linee sovrapposte per il lungo sono una
@@ -381,8 +447,11 @@ def route_sheet(
     absorb(blocked)
     # Mandata o ritorno lo dice il modello, che e' orientato, e non la geometria:
     # un componente che finisce a sinistra del proprio alimentatore non per
-    # questo lo alimenta di ritorno (D-059).
-    orientation = orient_trunks(project, catalog, trunks)
+    # questo lo alimenta di ritorno (D-059). E la specie della tratta — flusso
+    # ordinario, ramo statico, ingresso, scarico — la dice il catalogo
+    # (DRAW-005-R1, I-042): uno stacco eredita il servizio di chi lo regge e
+    # non passa mai dal ripiego geometrico.
+    flows = classify_trunks(project, catalog, trunks)
 
     def anchor(ref: PortRef) -> tuple[Cell, Cell]:
         symbol = by_component.get(ref.component_id)
@@ -414,11 +483,24 @@ def route_sheet(
     for trunk in trunks:
         start, start_direction = anchor(trunk.start)
         goal, goal_direction = anchor(trunk.end)
+        # Il rettilineo che la catena della macchina occupera' dalla porta
+        # (I-044), in passi di griglia: l'instradatore lo lascia, la posa lo
+        # usa, e i due leggono la stessa catena.
+        head_chain, tail_chain = machine_chains(project, catalog, trunk)
+        start_straight = ceil(
+            chain_room_mm(project, catalog, head_chain, start_direction[1] == 0) / grid.step_mm
+            - 1e-9
+        )
+        goal_straight = ceil(
+            chain_room_mm(project, catalog, tail_chain, goal_direction[1] == 0) / grid.step_mm
+            - 1e-9
+        )
 
         # Il ripiego geometrico vale solo quando la topologia non decide: e' il
-        # caso di un anello in cui nessun utilizzatore separa andata e ritorno.
-        declared = orientation.get(trunk.connection_ids)
-        supply = declared if declared is not None else goal[0] >= start[0]
+        # caso di un anello del percorso in cui nessun utilizzatore separa
+        # andata e ritorno. Uno stacco non e' mai in quel caso.
+        declared = flows[trunk.connection_ids]
+        supply = declared.supply if declared.supply is not None else goal[0] >= start[0]
         ends = {start, goal}
         # Le proprie soglie servono a questa tratta, e le altre le deve lasciare
         # stare: e' l'unico modo perche' la riserva protegga senza impedire.
@@ -449,6 +531,8 @@ def route_sheet(
                 # Mandata sopra, ritorno sotto: a parita' di costo, e senza
                 # comprare nemmeno una piega per ottenerlo.
                 prefer_high=supply,
+                start_straight=start_straight,
+                goal_straight=goal_straight,
             )
         except LayoutError as exc:
             raise LayoutError(
@@ -463,6 +547,8 @@ def route_sheet(
                 network_id=trunk.network_id,
                 medium=media.get(trunk.network_id, ""),
                 supply=supply,
+                flow_kind=declared.kind,
+                flow_from_start=declared.flow_from_start,
                 connection_ids=list(trunk.connection_ids),
                 segments=[
                     [

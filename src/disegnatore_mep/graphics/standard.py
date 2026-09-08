@@ -10,6 +10,8 @@ from pydantic import Field, model_validator
 
 from disegnatore_mep.model.base import FiniteFloat, StrictModel
 
+from .symbol import StrokeWeight
+
 
 class GraphicStandard(StrictModel):
     sheet_width_mm: FiniteFloat = Field(gt=0)
@@ -34,6 +36,31 @@ class GraphicStandard(StrictModel):
     @property
     def usable_height_mm(self) -> float:
         return self.sheet_height_mm - self.margin_top_mm - self.margin_bottom_mm
+
+    def line_mm(self, weight: StrokeWeight) -> float:
+        """I millimetri di un peso di tratto dichiarato da un simbolo (I-041).
+
+        E' l'unica traduzione fra la classe dichiarata nel manifesto e la
+        carta: tavola, legenda e foglio di riscontro passano tutti da qui.
+        """
+        return {
+            StrokeWeight.THIN: self.line_thin_mm,
+            StrokeWeight.MEDIUM: self.line_medium_mm,
+            StrokeWeight.THICK: self.line_thick_mm,
+        }[weight]
+
+    def legend_line_mm(self, weight: StrokeWeight) -> float:
+        """Il tratto con cui la legenda disegna un simbolo di quel peso.
+
+        La legenda alleggerisce i simboli ordinari di una classe — li disegna
+        sottili, come ha sempre fatto, perche' un campione da otto millimetri
+        di un serbatoio scalato porta le linee vicine — ma **conserva il tratto
+        spesso dichiarato**: lo spessore e' parte del segno, e un filtro a Y
+        sottile in legenda non sarebbe il filtro della tavola (I-041).
+        """
+        if weight is StrokeWeight.THICK:
+            return self.line_thick_mm
+        return self.line_thin_mm
 
     @model_validator(mode="after")
     def geometry_is_coherent(self) -> "GraphicStandard":

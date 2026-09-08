@@ -14,7 +14,7 @@ di rendering; finche' non esistono, il foglio esce marcato come bozza (D-025).
 
 from dataclasses import dataclass
 
-from disegnatore_mep.layout.geometry import Point, RoutedTrunk, SheetGeometry
+from disegnatore_mep.layout.geometry import FlowKind, Point, RoutedTrunk, SheetGeometry
 from disegnatore_mep.layout.legend import style_for
 
 from .frame import Rect, SheetFrame
@@ -70,10 +70,16 @@ def _escape(text: str) -> str:
     )
 
 
-def _flow_arrow(segment: list[Point], colour: str) -> str:
-    """Una freccia a meta' del tratto piu' lungo: il verso si legge dal disegno."""
+def _flow_arrow(segment: list[Point], colour: str, forward: bool = True) -> str:
+    """Una freccia a meta' del tratto piu' lungo, nel verso del flusso.
+
+    Il verso lo porta la geometria, decisa sul modello (DRAW-005-R1, I-042):
+    lungo la spezzata, o contro di essa. Chi la disegna non lo deduce da come
+    la spezzata e' scritta."""
     if len(segment) < 2:
         return ""
+    if not forward:
+        segment = list(reversed(segment))
     best = max(
         zip(segment, segment[1:], strict=False),
         key=lambda pair: abs(pair[1].x_mm - pair[0].x_mm)
@@ -376,7 +382,10 @@ def render_sheet(
                     for before, after in zip(segment, segment[1:], strict=False)
                 )
             )
-            parts.append(_flow_arrow(segment, colour))
+            # La freccia compare solo dove esiste un flusso: un ramo statico
+            # — misura, espansione, sfiato, sicurezza su stacco — non ne porta.
+            if route.flow_kind is not FlowKind.STATIC:
+                parts.append(_flow_arrow(segment, colour, route.flow_from_start))
 
     for placed in sheet.symbols:
         symbol = symbols.get(placed.symbol_id).rotated(placed.rotation_deg)
@@ -391,11 +400,14 @@ def render_sheet(
             )
             for glyph in symbol.manifest.flow_glyphs
         )
+        # Il peso del tratto lo dichiara il manifesto (DRAW-005-R1, I-041):
+        # qui si traduce in millimetri, e basta.
         parts.append(
             f'<g class="symbol" data-component-id="{_escape(placed.component_id)}" '
             f'data-symbol-id="{_escape(placed.symbol_id)}" '
             f'transform="translate({placed.origin.x_mm:g} {placed.origin.y_mm:g})" '
-            f'stroke="black" stroke-width="{standard.line_medium_mm:g}" fill="none">'
+            f'stroke="black" stroke-width="{standard.line_mm(symbol.manifest.stroke_weight):g}" '
+            f'fill="none">'
             f"{symbol.body}{arrows}</g>"
         )
 
@@ -449,7 +461,9 @@ def render_sheet(
         parts.append(
             f'<g class="legend-symbol" data-symbol-id="{_escape(entry.symbol_id)}" '
             f'transform="translate({left:g} {middle:g}) scale({scale:g})" '
-            f'stroke="black" stroke-width="{standard.line_thin_mm / scale:g}" fill="none">'
+            f'stroke="black" '
+            f'stroke-width="{standard.legend_line_mm(symbol.manifest.stroke_weight) / scale:g}" '
+            f'fill="none">'
             f"{symbol.body}{arrows}</g>"
             f'<text class="legend-name" '
             f'x="{entry.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '

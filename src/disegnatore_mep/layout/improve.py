@@ -88,6 +88,7 @@ from disegnatore_mep.graphics.frame import Rect, SheetFrame
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest, SymbolPort
 from disegnatore_mep.model.project import ProjectModel
 
+from .chains import neighbours_beyond_fittings
 from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
 from .flow import orient_trunks
@@ -696,15 +697,15 @@ class Improver:
     # -- le figure -------------------------------------------------------------
 
     def _neighbours(self, component_id: str) -> frozenset[str]:
-        """A cosa un pezzo e' attaccato, senza contare cio' che pende."""
+        """A cosa un pezzo e' attaccato, senza contare cio' che pende e
+        guardando attraverso i raccordi passanti: la stessa lettura della
+        posa, o le due non vedrebbero le stesse pile."""
         return frozenset(
             other
-            for trunk in self.trunks
-            for mine, other in (
-                (trunk.start.component_id, trunk.end.component_id),
-                (trunk.end.component_id, trunk.start.component_id),
+            for other in neighbours_beyond_fittings(
+                self.project, self.catalog, self.trunks, component_id
             )
-            if mine == component_id and other not in self.parent_of and other in self.best
+            if other not in self.parent_of and other in self.best and other != component_id
         )
 
     def column_of(self, component_id: str) -> tuple[str, ...]:

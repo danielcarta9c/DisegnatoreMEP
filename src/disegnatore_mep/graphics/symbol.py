@@ -41,6 +41,23 @@ def rotate_point_mm(
     }[degrees]
 
 
+class StrokeWeight(StrEnum):
+    """Il peso del tratto con cui un simbolo si disegna (DRAW-005-R1, I-041).
+
+    E' un **dato del manifesto**, non una scelta del renderer: la libreria
+    dichiara che un segno vuole il tratto sottile, medio o spesso, e la tavola,
+    la legenda e il foglio di riscontro lo traducono nei millimetri dello
+    standard grafico. Il filtro a Y alla scala A3 con il tratto medio da 0,35
+    mm non si leggeva, e la risposta non e' un'eccezione nel renderer per il
+    suo identificativo: e' questa proprieta', che qualunque simbolo puo'
+    dichiarare.
+    """
+
+    THIN = "thin"
+    MEDIUM = "medium"
+    THICK = "thick"
+
+
 class PortFace(StrEnum):
     LEFT = "left"
     RIGHT = "right"
@@ -178,6 +195,9 @@ class SymbolManifest(StrictModel):
     label_anchors: list[LabelAnchor] = Field(default_factory=list)
     flow_glyphs: list[FlowGlyph] = Field(default_factory=list)
     upright_glyphs: list[UprightGlyph] = Field(default_factory=list)
+    stroke_weight: StrokeWeight = StrokeWeight.MEDIUM
+    """Il peso del tratto dichiarato dal simbolo. Medio se non detto: e' il
+    tratto con cui ogni simbolo si e' sempre disegnato."""
     source: str = Field(min_length=1)
 
     def port(self, port_id: str) -> SymbolPort:
@@ -360,6 +380,7 @@ class SymbolManifest(StrictModel):
             label_anchors=anchors,
             flow_glyphs=flow_glyphs,
             upright_glyphs=upright_glyphs,
+            stroke_weight=self.stroke_weight,
             source=self.source,
         )
 

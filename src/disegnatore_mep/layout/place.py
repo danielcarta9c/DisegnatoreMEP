@@ -41,6 +41,7 @@ from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.model.project import PortRef, ProjectModel
 from disegnatore_mep.model.types import BandRole
 
+from .chains import chain_room_mm, machine_chains, neighbours_beyond_fittings
 from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
 from .flow import (
@@ -259,29 +260,61 @@ class _RunChain:
     head_anchors: tuple[str, ...]
     """Quelli attaccati al primo della catena: dicono da che parte si comincia."""
 
+    levels: tuple[int, ...] = ()
+    """Il passo di percorrenza di ciascun membro, dai pezzi grossi a monte:
+    lungo un cammino semplice cresce di uno a ogni pezzo; dove la catena si
+    biforca, due rami paralleli stanno allo **stesso** passo (DRAW-005-R1) e
+    la posa li affianca invece di metterli in fila."""
+
 
 def _ordered(
-    chain: set[str], neighbours: dict[str, set[str]], rank: Callable[[str], int]
-) -> tuple[str, ...]:
+    chain: set[str],
+    neighbours: dict[str, set[str]],
+    rank: Callable[[str], int],
+    upstream: frozenset[str] = frozenset(),
+) -> tuple[tuple[str, ...], tuple[int, ...]]:
     """La catena in ordine di percorrenza, se e' un cammino semplice.
 
-    Dove non lo e' — una catena che si biforca — non esiste un «lungo la
-    tubazione», e l'ordine del modello basta a tenere il risultato ripetibile.
+    Dove non lo e' — una catena che si biforca — non esiste un solo «lungo la
+    tubazione»: si va per **distanza dai pezzi grossi a monte** (DRAW-005-R1),
+    cioe' per passi di tubazione da chi genera verso chi riceve, e a pari
+    distanza l'ordine del modello tiene il risultato ripetibile. Con due
+    macchine che portano ciascuna il raccordo della propria sicurezza prima
+    della confluenza (I-043), l'ordine del modello da solo metteva la
+    confluenza prima dei raccordi che la alimentano, e la posa nasceva al
+    contrario. Senza pezzi a monte dichiarati resta l'ordine del modello.
     """
     ends = sorted((item for item in chain if len(neighbours[item] & chain) <= 1), key=rank)
-    if not ends:
-        return tuple(sorted(chain, key=rank))
-    order = [ends[0]]
-    walked = {ends[0]}
-    while True:
-        forward = sorted((neighbours[order[-1]] & chain) - walked, key=rank)
-        if len(forward) != 1:
-            break
-        order.append(forward[0])
-        walked.add(forward[0])
-    if len(order) != len(chain):
-        return tuple(sorted(chain, key=rank))
-    return tuple(order)
+    if ends:
+        order = [ends[0]]
+        walked = {ends[0]}
+        while True:
+            forward = sorted((neighbours[order[-1]] & chain) - walked, key=rank)
+            if len(forward) != 1:
+                break
+            order.append(forward[0])
+            walked.add(forward[0])
+        if len(order) == len(chain):
+            return tuple(order), tuple(range(1, len(order) + 1))
+    if not upstream:
+        members = tuple(sorted(chain, key=rank))
+        return members, tuple(range(1, len(members) + 1))
+    distance: dict[str, int] = {}
+    frontier = sorted((item for item in chain if neighbours[item] & upstream), key=rank)
+    steps = 1
+    while frontier:
+        following: list[str] = []
+        for item in frontier:
+            if item in distance:
+                continue
+            distance[item] = steps
+            following.extend(sorted((neighbours[item] & chain) - set(distance), key=rank))
+        frontier = following
+        steps += 1
+    members = tuple(
+        sorted(chain, key=lambda item: (distance.get(item, len(chain) + 1), rank(item)))
+    )
+    return members, tuple(distance.get(item, len(chain) + 1) for item in members)
 
 
 def _facing_edges(
@@ -338,6 +371,7 @@ def _pieces_on_the_run(
     hung: frozenset[str],
     is_zoned: Callable[[str], bool],
     rank: Callable[[str], int],
+    stage: Callable[[str], int] | None = None,
 ) -> list[_RunChain]:
     """Chi esce dalla fila delle colonne, e a quali pezzi e' legato (D-120).
 
@@ -397,12 +431,32 @@ def _pieces_on_the_run(
             # Con un estremo solo non c'e' un «in mezzo»: la catena tiene le
             # proprie colonne, che e' il comportamento di prima.
             continue
-        members = _ordered(chain, neighbours, rank)
+        # I pezzi grossi **a monte** della catena: quelli al passo di processo
+        # piu' basso fra i suoi estremi — chi genera prima di chi accumula,
+        # chi accumula prima di chi utilizza. Da loro si conta la percorrenza
+        # quando la catena si biforca.
+        upstream: frozenset[str] = frozenset()
+        if stage is not None:
+            lowest = min(stage(item) for item in anchors)
+            upstream = frozenset(item for item in anchors if stage(item) == lowest)
+        members, levels = _ordered(chain, neighbours, rank, upstream)
+        # I pezzi grossi di testa sono quelli attaccati al **primo passo** della
+        # catena: uno solo lungo un cammino semplice, tutti i rami paralleli
+        # dove la catena si biforca — o la campata partirebbe da una macchina e
+        # finirebbe sull'altra, invece che sull'accumulo.
+        first_step = {item for item, level in zip(members, levels, strict=True) if level == levels[0]}
+        heads = {
+            other
+            for item in first_step
+            for other in neighbours[item]
+            if other in anchors
+        }
         result.append(
             _RunChain(
                 members=members,
                 anchors=tuple(anchors),
-                head_anchors=tuple(sorted(neighbours[members[0]] & set(anchors), key=rank)),
+                head_anchors=tuple(sorted(heads, key=rank)),
+                levels=levels,
             )
         )
     return result
@@ -758,6 +812,7 @@ def place_sheet(
         frozenset(hung),
         is_zoned,
         lambda item: process.position.get(item, 0),
+        process_rank,
     )
     on_the_run = {item for chain in chains for item in chain.members}
     standing_columns = [
@@ -886,6 +941,35 @@ def place_sheet(
     def on_grid(value_mm: float, origin_mm: float) -> float:
         return origin_mm + round((value_mm - origin_mm) / step) * step
 
+    def chain_room_of_port(component_id: str, port_id: str, horizontal: bool) -> float:
+        """Il rettilineo che la catena della macchina occupa da quell'attacco
+        (I-044): lo stesso che l'instradatore imporra' uscendo dalla porta."""
+        ref = PortRef(component_id=component_id, port_id=port_id)
+        for trunk in partition.trunks:
+            if trunk.start == ref:
+                head, _ = machine_chains(project, catalog, trunk)
+                return chain_room_mm(project, catalog, head, horizontal)
+            if trunk.end == ref:
+                _, tail = machine_chains(project, catalog, trunk)
+                return chain_room_mm(project, catalog, tail, horizontal)
+        return 0.0
+
+    def facing_room(here: set[str], there: set[str]) -> float:
+        """Il rettilineo che gli attacchi di una colonna rivolti verso l'altra
+        pretendono davanti a se' per la catena della macchina (I-044), da
+        qualunque parte vada poi la tratta: la tratta esce dritta dalla porta
+        per quel tratto, e un vicino piu' vicino di cosi' la mura."""
+        found = 0.0
+        for members, face in ((here, PortFace.RIGHT), (there, PortFace.LEFT)):
+            for component_id in members:
+                for port in manifests[component_id].ports:
+                    if port.face is face:
+                        found = max(found, chain_room_of_port(component_id, port.id, True))
+        # La cella in cui la tratta gira, e il bordo del vicino che conta come
+        # cella occupata: due passi in piu', o il rettilineo finirebbe dentro
+        # di lui.
+        return found + 2 * step if found > 0 else 0.0
+
     def inline_room(here: set[str], there: set[str]) -> float:
         """Quanto rettilineo vogliono gli accessori delle tratte fra due colonne.
 
@@ -897,7 +981,9 @@ def place_sheet(
         qualcosa non e' piu' possibile.
 
         Solo le tratte **fra queste due colonne**: quelle che vengono da lontano
-        hanno gia' il proprio rettilineo lungo la strada.
+        hanno gia' il proprio rettilineo lungo la strada. Piu' il rettilineo
+        che gli attacchi rivolti verso l'altra colonna pretendono per la
+        catena della macchina, ovunque vada la loro tratta (DRAW-005-R1).
         """
         return max(
             (
@@ -907,6 +993,17 @@ def place_sheet(
                 and {trunk.start.component_id, trunk.end.component_id} & there
             ),
             default=0.0,
+        ) if not here or not there else max(
+            max(
+                (
+                    _room_for(trunk.inline_component_ids)
+                    for trunk in partition.trunks
+                    if {trunk.start.component_id, trunk.end.component_id} & here
+                    and {trunk.start.component_id, trunk.end.component_id} & there
+                ),
+                default=0.0,
+            ),
+            facing_room(here, there),
         )
 
     used_roles = [role for role in BandRole if columns.get(role)]
@@ -1000,19 +1097,22 @@ def place_sheet(
         return left + max(own, stacked) + right
 
     def neighbours_of(component_id: str) -> frozenset[str]:
-        """A cosa un pezzo e' attaccato, senza contare cio' che gli pende.
+        """A cosa un pezzo e' attaccato, senza contare cio' che gli pende, e
+        guardando attraverso i raccordi passanti.
 
         Cio' che pende da uno stacco viaggia col proprio pezzo e non lo
         distingue da nessuno: contarlo direbbe che due pompe di calore identiche
-        non sono in parallelo perche' una ha lo sfiato e l'altra no.
+        non sono in parallelo perche' una ha lo sfiato e l'altra no. E il
+        raccordo della sicurezza davanti alla mandata (I-043) e' un punto del
+        tubo: contarlo direbbe che due pompe di calore in parallelo non lo
+        sono, perche' ciascuna vede il proprio raccordo e non la confluenza.
         """
         return frozenset(
             other
-            for trunk in partition.trunks
-            for ends in ({trunk.start.component_id, trunk.end.component_id},)
-            if component_id in ends
-            for other in ends - {component_id}
-            if other not in hung
+            for other in neighbours_beyond_fittings(
+                project, catalog, list(partition.trunks), component_id
+            )
+            if other not in hung and other != component_id
         )
 
     def column_height(slot: list[str]) -> float:
@@ -1281,8 +1381,45 @@ def place_sheet(
     placed: list[PlacedSymbol] = []
     boxes: list[tuple[float, float, float, float]] = []
 
-    def free_of_symbols(left: float, top: float, width: float, height: float) -> bool:
+    def corridors() -> list[tuple[float, float, float, float]]:
+        """Il rettilineo che la catena della macchina pretende davanti a ogni
+        attacco gia' posato (I-044), come area da lasciare libera.
+
+        L'instradatore fara' uscire la tratta dritta dalla porta per quel
+        tratto: un simbolo posato li' — un accessorio appeso a un raccordo, un
+        vicino — la murerebbe, e la posa non sarebbe una candidata. Meglio non
+        posarcelo. Una cella per lato, come la corsia della linea."""
+        found: list[tuple[float, float, float, float]] = []
+        for item in placed:
+            component_id = item.component_id
+            manifest = manifests[component_id]
+            for port in manifest.ports:
+                horizontal = port.face in (PortFace.LEFT, PortFace.RIGHT)
+                room = chain_room_of_port(component_id, port.id, horizontal)
+                if room <= 0:
+                    continue
+                # Le celle obbligate, la cella in cui la tratta gira, e il bordo
+                # del vicino che conta come cella occupata: due passi in piu'.
+                room += 2 * step
+                px, py = item.origin.x_mm + port.x_mm, item.origin.y_mm + port.y_mm
+                if port.face is PortFace.RIGHT:
+                    found.append((px, py - step, px + room, py + step))
+                elif port.face is PortFace.LEFT:
+                    found.append((px - room, py - step, px, py + step))
+                elif port.face is PortFace.BOTTOM:
+                    found.append((px - step, py, px + step, py + room))
+                else:
+                    found.append((px - step, py - room, px + step, py))
+        return found
+
+    def off_the_corridors(left: float, top: float, width: float, height: float) -> bool:
         return not any(
+            left < x1 - 1e-9 and x0 < left + width - 1e-9 and top < y1 - 1e-9 and y0 < top + height - 1e-9
+            for x0, y0, x1, y1 in corridors()
+        )
+
+    def free_of_symbols(left: float, top: float, width: float, height: float) -> bool:
+        return off_the_corridors(left, top, width, height) and not any(
             left < x1 + ROW_GAP_MM
             and x0 - ROW_GAP_MM < left + width
             and top < y1 + ROW_GAP_MM
@@ -1365,7 +1502,7 @@ def place_sheet(
             parent_left + parent.width_mm,
             parent_top + parent.height_mm,
         )
-        return not any(
+        return off_the_corridors(left, top, width, height) and not any(
             box != own
             and left < box[2] + step
             and box[0] - step < left + width
@@ -1721,19 +1858,37 @@ def place_sheet(
         # Dividere a passi uguali dava dieci millimetri a chi ne chiedeva
         # quindici e quindici a chi non ne chiedeva nessuno, e l'accessorio non
         # trovava dove sedersi.
+        # I membri si posano **per passo di percorrenza** (DRAW-005-R1): due
+        # rami paralleli — i raccordi delle sicurezze di due macchine in
+        # parallelo — stanno allo stesso passo e prendono la stessa ascissa
+        # lungo la campata, ciascuno alla quota del proprio attacco; il
+        # cursore avanza solo quando il passo cambia. Lungo un cammino
+        # semplice ogni pezzo e' un passo, ed e' la fila di prima.
+        steps = chain.levels if len(chain.levels) == len(members) else tuple(
+            range(1, len(members) + 1)
+        )
+        if members != chain.members:
+            steps = tuple(reversed(steps))
+        groups: list[list[str]] = []
+        for component_id, step_of_member in zip(members, steps, strict=True):
+            if groups and steps[members.index(groups[-1][0])] == step_of_member:
+                groups[-1].append(component_id)
+            else:
+                groups.append([component_id])
         sizes = [
-            manifests[item].width_mm if horizontal else manifests[item].height_mm
-            for item in members
+            max(
+                manifests[item].width_mm if horizontal else manifests[item].height_mm
+                for item in group
+            )
+            for group in groups
         ]
-        stops = (chain.head_anchors, *((item,) for item in members))
+        stops: tuple[tuple[str, ...], ...] = (chain.head_anchors, *(tuple(group) for group in groups))
         needs = [
             max(
                 (room_between(item, other) for item in stops[index] for other in group),
                 default=0.0,
             )
-            for index, group in enumerate(
-                (*((item,) for item in members), tuple(chain.anchors))
-            )
+            for index, group in enumerate((*(tuple(group) for group in groups), tuple(chain.anchors)))
         ]
         span_mm = abs(span_x) if horizontal else abs(span_y)
         wanted = sum(sizes) + sum(needs)
@@ -1741,26 +1896,29 @@ def place_sheet(
         spare = max(0.0, span_mm - wanted) / (len(needs) or 1)
         forward = 1 if (span_x if horizontal else span_y) >= 0 else -1
         cursor = 0.0
-        for index, component_id in enumerate(members):
+        for index, group in enumerate(groups):
             cursor += needs[index] * scale + spare
             share = (cursor + sizes[index] / 2.0) / span_mm if span_mm else 0.5
-            item = settle_on_the_run(
-                component_id,
-                first[0] + span_x * share,
-                first[1] + span_y * share,
-                along,
-                forward,
-            )
-            # Il cursore riparte da **dove il pezzo e' finito davvero**, non da
-            # dove lo si voleva: se ha dovuto scansare qualcuno, chi viene dopo
-            # ne tiene conto invece di ripetere lo scarto.
-            reached = (
-                (item.right_mm if forward > 0 else -item.origin.x_mm) - first[0] * forward
-                if horizontal
-                else (item.bottom_mm if forward > 0 else -item.origin.y_mm)
-                - first[1] * forward
-            )
-            cursor = max(cursor + sizes[index] * scale, reached)
+            reached = cursor + sizes[index] * scale
+            for component_id in group:
+                item = settle_on_the_run(
+                    component_id,
+                    first[0] + span_x * share,
+                    first[1] + span_y * share,
+                    along,
+                    forward,
+                )
+                # Il cursore riparte da **dove il pezzo e' finito davvero**, non
+                # da dove lo si voleva: se ha dovuto scansare qualcuno, chi
+                # viene dopo ne tiene conto invece di ripetere lo scarto.
+                reached = max(
+                    reached,
+                    (item.right_mm if forward > 0 else -item.origin.x_mm) - first[0] * forward
+                    if horizontal
+                    else (item.bottom_mm if forward > 0 else -item.origin.y_mm)
+                    - first[1] * forward,
+                )
+            cursor = reached
 
     return placed
 
@@ -1838,11 +1996,25 @@ def run_chains(
         for child, _ in items
     )
     rank = _file_order(project)
+
+    def stage(component_id: str) -> int:
+        """Lo stesso passo di processo con cui `place_sheet` legge le fasce:
+        chi genera, chi accumula, chi utilizza, il resto."""
+        functions = functions_of.get(component_id, frozenset())
+        if functions & GENERATOR_FUNCTIONS:
+            return 0
+        if functions & STORE_FUNCTIONS:
+            return 1
+        if functions & LOAD_FUNCTIONS:
+            return 2
+        return 3
+
     chains = _pieces_on_the_run(
         partition,
         placeable,
         hung,
         lambda item: bool(functions_of.get(item, frozenset()) & ZONED_FUNCTIONS),
         lambda item: rank.get(item, 0),
+        stage,
     )
     return [chain.members for chain in chains]
