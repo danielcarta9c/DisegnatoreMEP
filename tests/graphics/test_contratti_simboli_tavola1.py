@@ -73,14 +73,18 @@ def _numbers(text: str) -> list[float]:
 
 
 def path_vertices(d: str) -> list[Pt]:
-    """I vertici di un tracciato assoluto: M e L, e il punto d'arrivo di Q."""
+    """I vertici di un tracciato assoluto: M e L, e il punto d'arrivo di Q, C e A.
+
+    Da DRAW-005-R1 la serpentina dell'accumulo combinato e' fatta di archi
+    (I-045): un arco porta il tracciato al proprio punto d'arrivo come una
+    linea, e la continuita' si legge sugli stessi vertici."""
     vertices: list[Pt] = []
-    for command, arguments in re.findall(r"([MLQZ])([^MLQZ]*)", d):
+    for command, arguments in re.findall(r"([MLQCAZ])([^MLQCAZ]*)", d):
         numbers = _numbers(arguments)
         if command in ("M", "L"):
             vertices.extend(zip(numbers[0::2], numbers[1::2], strict=False))
-        elif command == "Q":
-            vertices.append((numbers[2], numbers[3]))
+        elif command in ("Q", "C", "A"):
+            vertices.append((numbers[-2], numbers[-1]))
     return vertices
 
 

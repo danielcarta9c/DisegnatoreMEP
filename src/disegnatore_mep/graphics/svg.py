@@ -149,7 +149,8 @@ def render_symbol_sheet(
         parts.append(
             f'<g class="symbol" data-symbol-id="{_escape(symbol.manifest.id)}" '
             f'transform="translate({x} {y})" '
-            f'stroke="black" stroke-width="{standard.line_medium_mm}" fill="none">'
+            f'stroke="black" stroke-width="{standard.line_mm(symbol.manifest.stroke_weight):g}" '
+            f'fill="none">'
             f"{symbol.body}{arrows}{markers}"
             f'<text class="symbol-name" x="0" '
             f'y="{symbol.manifest.height_mm + standard.text_small_mm + SYMBOL_LABEL_GAP_MM}" '

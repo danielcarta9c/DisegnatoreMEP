@@ -1,6 +1,6 @@
 {
   "id": "strainer",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "name": "Filtro a Y",
   "width_mm": 5.0,
   "height_mm": 5.0,
@@ -29,5 +29,6 @@
     "top_mm": 0.0,
     "bottom_mm": 0.0
   },
+  "stroke_weight": "thick",
   "source": "pratica di settore, cfr. SRC-008"
 }

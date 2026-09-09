@@ -20,8 +20,13 @@ from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import CLOSING_FUNCTIONS, ComponentTrait
+from disegnatore_mep.graphics.symbol import SymbolManifest
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
+from .chains import CHAIN_PORT_GAP_MM as CHAIN_PORT_GAP_MM
+from .chains import MIN_SPACING_MM as MIN_SPACING_MM
+from .chains import SNUG_CLEARANCE_MM as SNUG_CLEARANCE_MM
+from .chains import machine_chains
 from .errors import LayoutError
 from .geometry import (
     PlacedSymbol,
@@ -34,23 +39,6 @@ from .geometry import (
 from .grid import Cell, GridSpace
 from .route import port_aprons, route_sheet
 from .trunks import Trunk
-
-MIN_SPACING_MM = 2.5
-"""Distanza minima fra due accessori sulla stessa tratta: un passo di griglia."""
-
-SNUG_CLEARANCE_MM = 2.5
-"""Stacco di chi isola contro l'apparecchio che si manutiene (D-120).
-
-Un passo, e non zero, perche' **davanti a un attacco c'e' una cella sola ed e'
-la sua unica uscita** (D-113): quella corsia non e' gioco. Un passo oltre e' il
-minimo raggiungibile, e porta il fianco della valvola a cinque millimetri dal
-punto d'attacco invece dei dodici e mezzo che lasciava lo stacco ordinario.
-
-E' la regola che il PM ha dato «da senior al disegnatore»: «le valvole di
-intercettazione che vengono montate per manutenere le macchine devono essere
-disegnate molto piu' vicine agli attacchi, una regola di vicinanza fissa e
-piuttosto piccola, esempio 2 mm» (I-018).
-"""
 
 END_CLEARANCE_MM = 5.0
 """Stacco fra un accessorio e il componente all'estremo della propria tratta.
@@ -72,7 +60,6 @@ il PM sta guardando — da un accessorio qualunque in mezzo a una tratta.
 **Questo stacco resta quello ordinario**; chi isola l'apparecchio che si
 manutiene usa invece `SNUG_CLEARANCE_MM` (D-120).
 """
-
 
 ISOLATING_FUNCTIONS = CLOSING_FUNCTIONS
 """Chi isola, secondo il catalogo e mai secondo il nome (D-090, D-120).
@@ -225,19 +212,19 @@ def place_inline_accessories(
             f"never shrunk to fit, give the run more room"
         )
 
-    # **Chi isola una macchina si disegna sul suo attacco** (D-120). Lo dice il
+    # **Chi isola una macchina si disegna sul suo attacco** (D-120), e da
+    # DRAW-005-R1 con lui tutta la **catena della macchina** (I-044). Lo dice il
     # catalogo da due lati e mai il nome del pezzo: la funzione di chi ferma
-    # l'acqua, e la proprieta' `maintainable` di cio' che si smonta in esercizio
-    # — la stessa che la regola dell'intercettazione legge per chiedere quella
-    # valvola. Tre casi, come la regola del PM:
-    #
-    # 1. il **primo** accessorio della tratta contro l'estremo da cui parte;
-    # 2. l'**ultimo** contro l'estremo a cui arriva, che si posa **all'indietro
-    #    dal proprio attacco** invece di essere lasciato a mezza strada;
-    # 3. la **coppia in fila** con un apparecchio che sta esso stesso sulla
-    #    tubazione — il circolatore, che il PM ha nominato: li' lo stacco fra i
-    #    due scende a un passo, perche' fra la valvola e cio' che isola non c'e'
-    #    niente da mettere in mezzo.
+    # l'acqua, e la proprieta' `maintainable` di cio' che si smonta in
+    # esercizio — la stessa che la regola dell'intercettazione legge per
+    # chiedere quella valvola. La catena e' la fila dei pezzi in linea che
+    # parte dalla porta del pezzo che si manutiene fino al primo organo di
+    # chiusura compreso: il filtro a Y e la sua valvola sul ritorno della pompa
+    # di calore, o la sola valvola dove non c'e' altro. Si posa a **distanze
+    # fisse** dalla porta, sul **primo rettilineo** che ne parte, prima della
+    # prima curva: due macchine uguali con la stessa catena hanno la stessa
+    # geometria locale, anche se una catena ruota, e una posa in cui la catena
+    # non ci sta non e' una candidata.
     isolates = [
         bool(ISOLATING_FUNCTIONS & set(item.definition.functions)) for item in resolved
     ]
@@ -285,8 +272,24 @@ def place_inline_accessories(
         return False
 
     last = len(resolved) - 1
-    snug_head = bool(resolved) and isolates[0] and services(trunk.start)
-    snug_tail = bool(resolved) and isolates[last] and services(trunk.end)
+
+    # La catena della macchina la legge `chains.py`, lo stesso modulo da cui
+    # l'instradatore ha letto quanto rettilineo lasciarle dalla porta: i due
+    # devono vedere la stessa catena. Dove il capo e' un raccordo passante
+    # (I-035) vale invece la posa morbida: il solo organo, stretto al raccordo.
+    head_ids, tail_ids = machine_chains(project, catalog, trunk)
+    position = {component_id: index for index, component_id in enumerate(trunk.inline_component_ids)}
+    strict_head, strict_tail = bool(head_ids), bool(tail_ids)
+    head_chain = [position[item] for item in head_ids]
+    tail_chain = [position[item] for item in tail_ids]
+    if not strict_head and isolates[0] and services(trunk.start):
+        head_chain = [0]
+    if not strict_tail and isolates[last] and services(trunk.end):
+        tail_chain = [last]
+    if set(head_chain) & set(tail_chain):
+        head_chain = []
+    chained = set(head_chain) | set(tail_chain)
+
     # Lo stacco che ciascun accessorio pretende **prima di se'**. Vale un passo
     # fra due accessori qualunque; scende a zero — e resta allora il solo passo
     # che chi lo precede si tiene dietro — fra chi isola e l'apparecchio in
@@ -306,6 +309,12 @@ def place_inline_accessories(
     # rotta piega accanto a lui, il moncone che resta gli passa dentro il
     # riquadro, e la linea risulta disegnata sotto il simbolo.
     raw_straights = _straight_stretches(points)
+    moves = moves_of(points)
+    if not moves:
+        raise LayoutError(
+            f"run {trunk.connection_ids[0]} has no straight stretch to sit an "
+            f"accessory on"
+        )
 
     def stretches(head_mm: float, tail_mm: float) -> list[tuple[float, float]]:
         """I rettilinei disponibili, tenendo i due capi liberi di quanto detto."""
@@ -315,28 +324,9 @@ def place_inline_accessories(
         ]
         return [item for item in found if item[1] > item[0]]
 
-    # Il capolinea si misura con i clamp piu' larghi che questa tratta potra'
-    # usare: se nemmeno cosi' esiste un rettilineo, non ne esiste nessuno.
-    if not stretches(
-        SNUG_CLEARANCE_MM if snug_head else END_CLEARANCE_MM,
-        SNUG_CLEARANCE_MM if snug_tail else END_CLEARANCE_MM,
-    ):
-        raise LayoutError(
-            f"run {trunk.connection_ids[0]} has no straight stretch to sit an "
-            f"accessory on"
-        )
-
     placed: list[PlacedSymbol] = []
     cuts: list[tuple[float, float]] = []
     step = grid.step_mm
-    # Gli accessori si posano **nell'ordine della catena**, avanzando lungo la
-    # tratta: sulla tavola compaiono nell'ordine topologico in cui il fluido
-    # li attraversa, che e' l'unico ordine vero. Prima ciascuno prendeva il
-    # centro del rettilineo piu' lungo: l'ordine ne usciva rimescolato, e ogni
-    # taglio dimezzava la capacita' del rettilineo — su una tratta da quattro
-    # accessori di dieci millimetri il quarto non entrava piu' (D-074 ne mette
-    # quattro in fila davvero, e li vuole in fila davvero).
-    cursor = 0.0
 
     clearance = grid.standard.min_clearance_mm
     others = list(runs or [])
@@ -381,37 +371,190 @@ def place_inline_accessories(
         box = (origin.x_mm, origin.y_mm, origin.x_mm + width, origin.y_mm + height)
         return not run_intrudes_on(box, others, clearance)
 
-    for index, component in enumerate(resolved):
+    def turned_for(
+        manifest: SymbolManifest, horizontal: bool
+    ) -> tuple[int, SymbolManifest]:
+        """La giacitura la da' il tratto; fra le due rotazioni che la danno si
+        prende la prima che il simbolo ammette. Un filtro a Y ammette solo
+        quelle in cui il gambo non punta in su (I-031): su una verticale gira
+        di 270 gradi, non di 90."""
+        wanted = (0, 180) if horizontal else (90, 270)
+        allowed = [item for item in wanted if item in manifest.allowed_rotations_deg]
+        if not allowed:
+            raise LayoutError(
+                f"inline accessory {manifest.id} cannot be drawn rotated by "
+                f"{wanted[0]} or {wanted[1]} degrees, which the run it sits on "
+                f"requires: allowed {sorted(manifest.allowed_rotations_deg)}"
+            )
+        rotation = allowed[0]
+        return rotation, manifest.rotated(rotation)
+
+    def seat(
+        index: int, station: _Station, distance: float, rotation: int, turned: SymbolManifest
+    ) -> None:
+        component_id = trunk.inline_component_ids[index]
+        gap = turned.inline_gap_mm or 0.0
+        placed.append(
+            PlacedSymbol(
+                component_id=component_id,
+                symbol_id=turned.id,
+                rotation_deg=rotation,
+                origin=Point(
+                    x_mm=station.point.x_mm - turned.width_mm / 2,
+                    y_mm=station.point.y_mm - turned.height_mm / 2,
+                ),
+                width_mm=turned.width_mm,
+                height_mm=turned.height_mm,
+                tag=tags.get(component_id),
+                port_flows=resolved[index].glyph_flows,
+            )
+        )
+        cuts.append((distance - gap / 2, distance + gap / 2))
+
+    def place_softly(index: int, from_end: bool) -> float:
+        """L'organo che isola oltre un raccordo passante (I-035): stretto al
+        raccordo, al primo nodo di griglia libero dal suo capo, anche oltre una
+        curva — come si posava in DRAW-005. Restituisce fin dove arriva."""
+        manifest = resolved[index].symbol.manifest
+        gap = manifest.inline_gap_mm or 0.0
+        lead, trail = MIN_SPACING_MM, MIN_SPACING_MM
+        window = (
+            list(reversed(stretches(END_CLEARANCE_MM, SNUG_CLEARANCE_MM)))
+            if from_end
+            else stretches(SNUG_CLEARANCE_MM, END_CLEARANCE_MM)
+        )
+        for low, high in window:
+            first = ceil((low + lead + gap / 2 - 1e-9) / step) * step
+            stop = high - trail - gap / 2
+            nodes: list[float] = []
+            here = first
+            while here <= stop + 1e-9:
+                nodes.append(here)
+                here += step
+            for snapped in reversed(nodes) if from_end else nodes:
+                station = _station_at(points, snapped)
+                rotation, turned = turned_for(manifest, station.horizontal)
+                origin = Point(
+                    x_mm=station.point.x_mm - turned.width_mm / 2,
+                    y_mm=station.point.y_mm - turned.height_mm / 2,
+                )
+                if (
+                    clear_of_symbols(origin, turned.width_mm, turned.height_mm)
+                    and clear_of_other_runs(origin, turned.width_mm, turned.height_mm)
+                    and clear_of_port_thresholds(origin, turned.width_mm, turned.height_mm)
+                ):
+                    seat(index, station, snapped, rotation, turned)
+                    extent = turned.width_mm if station.horizontal else turned.height_mm
+                    edge = snapped + max(gap, extent) / 2
+                    return (total - (snapped - max(gap, extent) / 2)) if from_end else edge
+        raise LayoutError(
+            f"run {trunk.connection_ids[0]} has no straight stretch for "
+            f"{manifest.id} against the fitting it isolates through: symbols are "
+            f"never shrunk to fit, give the run a longer straight length"
+        )
+
+    def place_chain(indices: list[int], from_end: bool, strict: bool) -> float | None:
+        """La catena della macchina, a distanze fisse dalla porta, sul primo
+        rettilineo che ne parte (I-044). Restituisce fin dove arriva dalla
+        porta — il fianco lontano dell'ultimo pezzo — o niente senza catena.
+
+        Il primo pezzo lascia libera la soglia dell'attacco e un passo, come la
+        valvola di D-120; ogni pezzo successivo sta a un passo dal precedente.
+        Le distanze non dipendono dalla tratta: solo dai pezzi, nell'ordine in
+        cui la catena li elenca dalla porta. Se il rettilineo dalla porta alla
+        prima curva non li contiene, o il posto fisso e' occupato, la posa non
+        e' valida: la catena non si sposta oltre la curva. Senza `strict` — il
+        capo e' un raccordo passante — vale la posa morbida di I-035.
+        """
+        if not indices:
+            return None
+        if not strict:
+            return place_softly(indices[0], from_end)
+        low, high = raw_straights[-1] if from_end else raw_straights[0]
+        before, after = moves[-1] if from_end else moves[0]
+        horizontal = abs(after.y_mm - before.y_mm) <= 1e-9
+        owner = (trunk.end if from_end else trunk.start).component_id
+        reach = CHAIN_PORT_GAP_MM
+        for index in indices:
+            manifest = resolved[index].symbol.manifest
+            rotation, turned = turned_for(manifest, horizontal)
+            extent = turned.width_mm if horizontal else turned.height_mm
+            centre = reach + extent / 2
+            distance = total - centre if from_end else centre
+            if distance - extent / 2 < low - 1e-9 or distance + extent / 2 > high + 1e-9:
+                raise LayoutError(
+                    f"run {trunk.connection_ids[0]} bends before the chain of {owner} "
+                    f"fits on the first straight from its port: {manifest.id} needs the "
+                    f"straight to reach {reach + extent:g}mm, it is {high - low:g}mm long"
+                )
+            if abs(distance / step - round(distance / step)) > 1e-9:
+                raise LayoutError(
+                    f"run {trunk.connection_ids[0]}: the chain of {owner} would sit "
+                    f"off the grid at {distance:g}mm along the run"
+                )
+            station = _station_at(points, distance)
+            origin = Point(
+                x_mm=station.point.x_mm - turned.width_mm / 2,
+                y_mm=station.point.y_mm - turned.height_mm / 2,
+            )
+            if not (
+                clear_of_symbols(origin, turned.width_mm, turned.height_mm)
+                and clear_of_other_runs(origin, turned.width_mm, turned.height_mm)
+                and clear_of_port_thresholds(origin, turned.width_mm, turned.height_mm)
+            ):
+                raise LayoutError(
+                    f"run {trunk.connection_ids[0]}: the fixed place of {manifest.id} in "
+                    f"the chain of {owner} sits on another symbol or run, and a chain "
+                    f"does not slide: give the machine room on its port"
+                )
+            seat(index, station, distance, rotation, turned)
+            reach += extent + MIN_SPACING_MM
+        return reach - MIN_SPACING_MM
+
+    head_reach = place_chain(head_chain, from_end=False, strict=strict_head)
+    tail_reach = place_chain(tail_chain, from_end=True, strict=strict_tail)
+
+    # Il resto della fila si posa come sempre, avanzando dal cursore: dopo la
+    # catena di testa, e prima di quella di coda, a un passo da ciascuna.
+    head_mm = head_reach if head_reach is not None else END_CLEARANCE_MM
+    tail_mm = tail_reach if tail_reach is not None else END_CLEARANCE_MM
+    remaining = [index for index in range(len(resolved)) if index not in chained]
+    if remaining and not stretches(head_mm, tail_mm):
+        raise LayoutError(
+            f"run {trunk.connection_ids[0]} has no straight stretch to sit an "
+            f"accessory on"
+        )
+
+    # Gli accessori si posano **nell'ordine della catena**, avanzando lungo la
+    # tratta: sulla tavola compaiono nell'ordine topologico in cui il fluido
+    # li attraversa, che e' l'unico ordine vero. Prima ciascuno prendeva il
+    # centro del rettilineo piu' lungo: l'ordine ne usciva rimescolato, e ogni
+    # taglio dimezzava la capacita' del rettilineo — su una tratta da quattro
+    # accessori di dieci millimetri il quarto non entrava piu' (D-074 ne mette
+    # quattro in fila davvero, e li vuole in fila davvero).
+    # Il cursore e' **il riquadro piu' il passo**: e' cosi' che riparte dopo
+    # ogni pezzo posato, e la catena di testa e' un pezzo posato come gli
+    # altri. Senza il passo la coppia di D-120, che rinuncia al proprio
+    # passo di testa, si appoggiava al fianco dell'organo della catena.
+    cursor = head_reach + MIN_SPACING_MM if head_reach is not None else 0.0
+
+    for index in remaining:
+        component = resolved[index]
         manifest = component.symbol.manifest
         gap = manifest.inline_gap_mm or 0.0
         lead, trail = leads[index], MIN_SPACING_MM
         needed = gap + lead + trail
-        # Il capo contro cui questo accessorio si stringe, se e' quello che
-        # isola l'apparecchio da manutenere: gli altri accessori tengono lo
-        # stacco ordinario, che serve a lasciare libera la colonna da cui
-        # passano le tubazioni degli altri attacchi del pezzo.
-        head_mm = SNUG_CLEARANCE_MM if (index == 0 and snug_head) else END_CLEARANCE_MM
-        tail_mm = (
-            SNUG_CLEARANCE_MM if (index == last and snug_tail) else END_CLEARANCE_MM
-        )
-        # L'ultimo che isola l'estremo di arrivo si posa **all'indietro dal
-        # proprio attacco**: si parte dal punto piu' avanzato ammesso e si
-        # arretra di un passo per volta. Tutti gli altri avanzano dal cursore,
-        # che e' l'ordine in cui il fluido li attraversa.
-        backwards = index == last and snug_tail
         window = stretches(head_mm, tail_mm)
         found: _Station | None = None
         turned = manifest
         rotation = 0
         distance = 0.0
 
-        for low, high in (list(reversed(window)) if backwards else window):
+        for low, high in window:
             # Il primo nodo di griglia da cui l'accessorio sta nel rettilineo,
             # oltre l'accessorio precedente: avanzare invece di spezzare tiene
             # l'ordine e non spreca nemmeno un passo. Se il riquadro casca su
-            # un simbolo posato, si avanza di un passo e si riprova. Chi si
-            # posa all'indietro percorre gli stessi nodi partendo dall'altro
-            # capo.
+            # un simbolo posato, si avanza di un passo e si riprova.
             first = ceil((max(low, cursor) + lead + gap / 2 - 1e-9) / step) * step
             stop = high - trail - gap / 2
             nodes: list[float] = []
@@ -419,34 +562,21 @@ def place_inline_accessories(
             while here <= stop + 1e-9:
                 nodes.append(here)
                 here += step
-            for snapped in (reversed(nodes) if backwards else nodes):
+            for snapped in nodes:
                 station = _station_at(points, snapped)
-                # La giacitura la da' il tratto; fra le due rotazioni che la
-                # danno si prende la prima che il simbolo ammette. Un filtro a Y
-                # ammette solo quelle in cui il gambo non punta in su (I-031):
-                # su una verticale gira di 270 gradi, non di 90.
-                wanted = (0, 180) if station.horizontal else (90, 270)
-                allowed = [item for item in wanted if item in manifest.allowed_rotations_deg]
-                if not allowed:
-                    raise LayoutError(
-                        f"inline accessory {manifest.id} cannot be drawn rotated by "
-                        f"{wanted[0]} or {wanted[1]} degrees, which the run it sits on "
-                        f"requires: allowed {sorted(manifest.allowed_rotations_deg)}"
-                    )
-                rotation = allowed[0]
-                turned = manifest.rotated(rotation)
+                rotation, turned = turned_for(manifest, station.horizontal)
                 origin = Point(
                     x_mm=station.point.x_mm - turned.width_mm / 2,
                     y_mm=station.point.y_mm - turned.height_mm / 2,
                 )
-                # **Lo stacco si misura sul riquadro anche all'indietro.** La
-                # stazione si sceglie sulla lunghezza del taglio, ma il simbolo
-                # e' largo il proprio riquadro, che puo' sporgere oltre il
-                # taglio da tutt'e due i lati: chi arriva dopo si ritrovava
-                # appoggiato al fianco di chi lo precede, e con la coppia di
-                # D-120 — che rinuncia al proprio passo di testa — i due
-                # arrivavano a toccarsi. Si guarda dove il **riquadro**
-                # comincia, non dove comincia l'interruzione.
+                # **Lo stacco si misura sul riquadro.** La stazione si sceglie
+                # sulla lunghezza del taglio, ma il simbolo e' largo il proprio
+                # riquadro, che puo' sporgere oltre il taglio da tutt'e due i
+                # lati: chi arriva dopo si ritrovava appoggiato al fianco di
+                # chi lo precede, e con la coppia di D-120 — che rinuncia al
+                # proprio passo di testa — i due arrivavano a toccarsi. Si
+                # guarda dove il **riquadro** comincia, non dove comincia
+                # l'interruzione.
                 extent_here = turned.width_mm if station.horizontal else turned.height_mm
                 if snapped - extent_here / 2 < cursor + lead - 1e-9:
                     continue
@@ -475,23 +605,12 @@ def place_inline_accessories(
         # come un pezzo solo.
         extent = turned.width_mm if found.horizontal else turned.height_mm
         cursor = distance + max(gap, extent) / 2 + trail
-        component_id = trunk.inline_component_ids[index]
-        placed.append(
-            PlacedSymbol(
-                component_id=component_id,
-                symbol_id=turned.id,
-                rotation_deg=rotation,
-                origin=Point(
-                    x_mm=found.point.x_mm - turned.width_mm / 2,
-                    y_mm=found.point.y_mm - turned.height_mm / 2,
-                ),
-                width_mm=turned.width_mm,
-                height_mm=turned.height_mm,
-                tag=tags.get(component_id),
-                port_flows=component.glyph_flows,
-            )
-        )
-        cuts.append((distance - gap / 2, distance + gap / 2))
+        seat(index, found, distance, rotation, turned)
+
+    # I simboli escono nell'ordine della tratta, comunque siano stati posati.
+    order = {component_id: index for index, component_id in enumerate(trunk.inline_component_ids)}
+    placed.sort(key=lambda item: order[item.component_id])
+    cuts.sort()
 
     segments = [points]
     for low, high in cuts:

@@ -1,0 +1,2281 @@
+{
+  "costo_iniziale": {
+    "violazioni": 2,
+    "tratte_con_backtracking": 4,
+    "backtracking_mm": 162.5,
+    "tratte_oltre_tre_pieghe": 4,
+    "pieghe": 31,
+    "incroci": 9,
+    "lunghezza_mm": 970.0
+  },
+  "prove_posa": 1500,
+  "prove_rifinitura": 646,
+  "costo_dopo_la_posa": {
+    "violazioni": 0,
+    "tratte_con_backtracking": 0,
+    "backtracking_mm": 0.0,
+    "tratte_oltre_tre_pieghe": 0,
+    "pieghe": 10,
+    "incroci": 3,
+    "lunghezza_mm": 535.0
+  },
+  "costo_finale": {
+    "violazioni": 0,
+    "tratte_con_backtracking": 0,
+    "backtracking_mm": 0.0,
+    "tratte_oltre_tre_pieghe": 0,
+    "pieghe": 4,
+    "incroci": 1,
+    "lunghezza_mm": 470.0
+  },
+  "posa_specie_provate": {
+    "interasse": 452,
+    "catena": 27,
+    "porta": 274,
+    "gruppo": 71,
+    "porta+spazio": 172,
+    "catena+spazio": 99,
+    "stacco": 56,
+    "rotazione": 28,
+    "passo": 257,
+    "colonna": 17,
+    "scambio": 213
+  },
+  "posa_accettate": [
+    {
+      "specie": "interasse",
+      "pezzo": "pdc-master",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 4,
+        "backtracking_mm": 162.5,
+        "tratte_oltre_tre_pieghe": 4,
+        "pieghe": 32,
+        "incroci": 10,
+        "lunghezza_mm": 965.0
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "pdc-slave",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 4,
+        "backtracking_mm": 160.0,
+        "tratte_oltre_tre_pieghe": 4,
+        "pieghe": 32,
+        "incroci": 10,
+        "lunghezza_mm": 960.0
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "collettore-ritorno",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 4,
+        "backtracking_mm": 160.0,
+        "tratte_oltre_tre_pieghe": 4,
+        "pieghe": 32,
+        "incroci": 10,
+        "lunghezza_mm": 957.5
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "collettore-mandata",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 4,
+        "backtracking_mm": 160.0,
+        "tratte_oltre_tre_pieghe": 4,
+        "pieghe": 32,
+        "incroci": 10,
+        "lunghezza_mm": 952.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "tee-valve-safety-collettore-mandata-b",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 4,
+        "backtracking_mm": 157.5,
+        "tratte_oltre_tre_pieghe": 4,
+        "pieghe": 32,
+        "incroci": 10,
+        "lunghezza_mm": 970.0
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "tee-pressure-gauge-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 4,
+        "backtracking_mm": 155.0,
+        "tratte_oltre_tre_pieghe": 4,
+        "pieghe": 32,
+        "incroci": 10,
+        "lunghezza_mm": 965.0
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "tee-filling-unit-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 3,
+        "backtracking_mm": 127.5,
+        "tratte_oltre_tre_pieghe": 2,
+        "pieghe": 26,
+        "incroci": 7,
+        "lunghezza_mm": 910.0
+      }
+    },
+    {
+      "specie": "porta+spazio",
+      "pezzo": "acquedotto",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 3,
+        "backtracking_mm": 127.5,
+        "tratte_oltre_tre_pieghe": 2,
+        "pieghe": 26,
+        "incroci": 5,
+        "lunghezza_mm": 890.0
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "utenze",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 3,
+        "backtracking_mm": 125.0,
+        "tratte_oltre_tre_pieghe": 3,
+        "pieghe": 30,
+        "incroci": 5,
+        "lunghezza_mm": 892.5
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "tee-expansion-connection-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 3,
+        "backtracking_mm": 125.0,
+        "tratte_oltre_tre_pieghe": 3,
+        "pieghe": 30,
+        "incroci": 5,
+        "lunghezza_mm": 877.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "accumulo",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 3,
+        "backtracking_mm": 122.5,
+        "tratte_oltre_tre_pieghe": 3,
+        "pieghe": 30,
+        "incroci": 5,
+        "lunghezza_mm": 877.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "radiatori",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 3,
+        "backtracking_mm": 122.5,
+        "tratte_oltre_tre_pieghe": 3,
+        "pieghe": 28,
+        "incroci": 5,
+        "lunghezza_mm": 872.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "pdc-master",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 3,
+        "backtracking_mm": 122.5,
+        "tratte_oltre_tre_pieghe": 3,
+        "pieghe": 28,
+        "incroci": 5,
+        "lunghezza_mm": 862.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "pdc-slave",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 3,
+        "backtracking_mm": 120.0,
+        "tratte_oltre_tre_pieghe": 3,
+        "pieghe": 28,
+        "incroci": 7,
+        "lunghezza_mm": 862.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "collettore-ritorno",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 3,
+        "backtracking_mm": 120.0,
+        "tratte_oltre_tre_pieghe": 3,
+        "pieghe": 28,
+        "incroci": 5,
+        "lunghezza_mm": 855.0
+      }
+    },
+    {
+      "specie": "catena",
+      "pezzo": "collettore-mandata",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 2,
+        "backtracking_mm": 92.5,
+        "tratte_oltre_tre_pieghe": 2,
+        "pieghe": 25,
+        "incroci": 4,
+        "lunghezza_mm": 810.0
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "tee-valve-safety-collettore-mandata-b",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 2,
+        "backtracking_mm": 92.5,
+        "tratte_oltre_tre_pieghe": 2,
+        "pieghe": 25,
+        "incroci": 4,
+        "lunghezza_mm": 802.5
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "tee-pressure-gauge-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 2,
+        "backtracking_mm": 72.5,
+        "tratte_oltre_tre_pieghe": 2,
+        "pieghe": 25,
+        "incroci": 4,
+        "lunghezza_mm": 762.5
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "acquedotto",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 2,
+        "backtracking_mm": 72.5,
+        "tratte_oltre_tre_pieghe": 2,
+        "pieghe": 25,
+        "incroci": 4,
+        "lunghezza_mm": 752.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "utenze",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 2,
+        "backtracking_mm": 72.5,
+        "tratte_oltre_tre_pieghe": 2,
+        "pieghe": 25,
+        "incroci": 3,
+        "lunghezza_mm": 755.0
+      }
+    },
+    {
+      "specie": "catena",
+      "pezzo": "tee-expansion-connection-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 1,
+        "backtracking_mm": 42.5,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 14,
+        "incroci": 4,
+        "lunghezza_mm": 705.0
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "accumulo",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 1,
+        "backtracking_mm": 42.5,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 14,
+        "incroci": 4,
+        "lunghezza_mm": 665.0
+      }
+    },
+    {
+      "specie": "passo",
+      "pezzo": "radiatori",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 1,
+        "backtracking_mm": 42.5,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 14,
+        "incroci": 4,
+        "lunghezza_mm": 660.0
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "pdc-master",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 1,
+        "backtracking_mm": 42.5,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 14,
+        "incroci": 4,
+        "lunghezza_mm": 650.0
+      }
+    },
+    {
+      "specie": "scambio",
+      "pezzo": "pdc-slave",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 1,
+        "backtracking_mm": 2.5,
+        "tratte_oltre_tre_pieghe": 1,
+        "pieghe": 23,
+        "incroci": 6,
+        "lunghezza_mm": 685.0
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "collettore-ritorno",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 1,
+        "backtracking_mm": 2.5,
+        "tratte_oltre_tre_pieghe": 1,
+        "pieghe": 23,
+        "incroci": 5,
+        "lunghezza_mm": 680.0
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "acquedotto",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 1,
+        "backtracking_mm": 2.5,
+        "tratte_oltre_tre_pieghe": 1,
+        "pieghe": 23,
+        "incroci": 5,
+        "lunghezza_mm": 677.5
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "utenze",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 1,
+        "backtracking_mm": 2.5,
+        "tratte_oltre_tre_pieghe": 1,
+        "pieghe": 21,
+        "incroci": 3,
+        "lunghezza_mm": 622.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "tee-expansion-connection-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 1,
+        "backtracking_mm": 2.5,
+        "tratte_oltre_tre_pieghe": 1,
+        "pieghe": 21,
+        "incroci": 3,
+        "lunghezza_mm": 617.5
+      }
+    },
+    {
+      "specie": "passo",
+      "pezzo": "radiatori",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 1,
+        "backtracking_mm": 2.5,
+        "tratte_oltre_tre_pieghe": 1,
+        "pieghe": 21,
+        "incroci": 3,
+        "lunghezza_mm": 612.5
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "pdc-master",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 1,
+        "backtracking_mm": 2.5,
+        "tratte_oltre_tre_pieghe": 1,
+        "pieghe": 21,
+        "incroci": 3,
+        "lunghezza_mm": 607.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "pdc-slave",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 1,
+        "pieghe": 21,
+        "incroci": 2,
+        "lunghezza_mm": 607.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "collettore-ritorno",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 1,
+        "pieghe": 19,
+        "incroci": 2,
+        "lunghezza_mm": 605.0
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "collettore-mandata",
+      "costo": {
+        "violazioni": 1,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 1,
+        "pieghe": 17,
+        "incroci": 2,
+        "lunghezza_mm": 597.5
+      }
+    },
+    {
+      "specie": "catena+spazio",
+      "pezzo": "tee-valve-safety-collettore-mandata-b",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 15,
+        "incroci": 4,
+        "lunghezza_mm": 652.5
+      }
+    },
+    {
+      "specie": "catena",
+      "pezzo": "tee-pressure-gauge-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 13,
+        "incroci": 4,
+        "lunghezza_mm": 655.0
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "acquedotto",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 13,
+        "incroci": 4,
+        "lunghezza_mm": 652.5
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "tee-expansion-connection-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 13,
+        "incroci": 2,
+        "lunghezza_mm": 652.5
+      }
+    },
+    {
+      "specie": "passo",
+      "pezzo": "radiatori",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 13,
+        "incroci": 2,
+        "lunghezza_mm": 647.5
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "collettore-ritorno",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 12,
+        "incroci": 4,
+        "lunghezza_mm": 650.0
+      }
+    },
+    {
+      "specie": "catena",
+      "pezzo": "collettore-mandata",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 11,
+        "incroci": 3,
+        "lunghezza_mm": 677.5
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "tee-valve-safety-collettore-mandata-b",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 11,
+        "incroci": 3,
+        "lunghezza_mm": 672.5
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "tee-pressure-gauge-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 672.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "acquedotto",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 670.0
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "tee-expansion-connection-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 662.5
+      }
+    },
+    {
+      "specie": "passo",
+      "pezzo": "radiatori",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 657.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "pdc-master",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 652.5
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "pdc-slave",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 632.5
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "collettore-ritorno",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 622.5
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "collettore-mandata",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 617.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "acquedotto",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 615.0
+      }
+    },
+    {
+      "specie": "passo",
+      "pezzo": "pdc-master",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 610.0
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "collettore-mandata",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 605.0
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "tee-valve-safety-collettore-mandata-b",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 600.0
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "acquedotto",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 597.5
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "collettore-mandata",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 592.5
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "tee-valve-safety-collettore-mandata-b",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 582.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "acquedotto",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 580.0
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "collettore-mandata",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 575.0
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "tee-valve-safety-collettore-mandata-b",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 565.0
+      }
+    },
+    {
+      "specie": "passo",
+      "pezzo": "tee-pressure-gauge-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 565.0
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "acquedotto",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 562.5
+      }
+    },
+    {
+      "specie": "passo",
+      "pezzo": "collettore-ritorno",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 552.5
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "collettore-mandata",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 547.5
+      }
+    },
+    {
+      "specie": "gruppo",
+      "pezzo": "tee-valve-safety-collettore-mandata-b",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 537.5
+      }
+    },
+    {
+      "specie": "passo",
+      "pezzo": "tee-pressure-gauge-collettore-ritorno-a",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 537.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "acquedotto",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 535.0
+      }
+    }
+  ],
+  "rifinitura_specie_provate": {
+    "interasse": 177,
+    "dorsale": 7,
+    "dorsale+spazio": 174,
+    "porta+spazio": 133,
+    "colonna": 27,
+    "gruppo": 41,
+    "passo": 216,
+    "porta": 146,
+    "asse": 33,
+    "catena+spazio": 38,
+    "catena": 27,
+    "tee": 3,
+    "stacco": 34,
+    "rotazione": 1
+  },
+  "rifinitura_accettate": [
+    {
+      "specie": "passo",
+      "pezzo": "pdc-master",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 3,
+        "lunghezza_mm": 530.0
+      }
+    },
+    {
+      "specie": "catena+spazio",
+      "pezzo": "collettore-ritorno",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 1,
+        "lunghezza_mm": 512.5
+      }
+    },
+    {
+      "specie": "passo",
+      "pezzo": "collettore-mandata",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 1,
+        "lunghezza_mm": 492.5
+      }
+    },
+    {
+      "specie": "passo",
+      "pezzo": "tee-valve-safety-collettore-mandata-b",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 10,
+        "incroci": 1,
+        "lunghezza_mm": 482.5
+      }
+    },
+    {
+      "specie": "interasse",
+      "pezzo": "acquedotto",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 8,
+        "incroci": 1,
+        "lunghezza_mm": 480.0
+      }
+    },
+    {
+      "specie": "tee",
+      "pezzo": "collettore-ritorno",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 4,
+        "incroci": 1,
+        "lunghezza_mm": 480.0
+      }
+    },
+    {
+      "specie": "porta",
+      "pezzo": "pdc-master",
+      "costo": {
+        "violazioni": 0,
+        "tratte_con_backtracking": 0,
+        "backtracking_mm": 0.0,
+        "tratte_oltre_tre_pieghe": 0,
+        "pieghe": 4,
+        "incroci": 1,
+        "lunghezza_mm": 470.0
+      }
+    }
+  ],
+  "rifinitura_per_pezzo": {
+    "pdc-master": {
+      "interasse": {
+        "provate": 16,
+        "instradabili": 15,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 8,
+          "incroci": 1,
+          "lunghezza_mm": 485.0
+        },
+        "accettate": 0
+      },
+      "dorsale": {
+        "provate": 2,
+        "instradabili": 1,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 1,
+          "pieghe": 15,
+          "incroci": 3,
+          "lunghezza_mm": 552.5
+        },
+        "accettate": 0
+      },
+      "dorsale+spazio": {
+        "provate": 31,
+        "instradabili": 26,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 6,
+          "incroci": 2,
+          "lunghezza_mm": 492.5
+        },
+        "accettate": 0
+      },
+      "porta+spazio": {
+        "provate": 9,
+        "instradabili": 5,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 13,
+          "incroci": 1,
+          "lunghezza_mm": 580.0
+        },
+        "accettate": 0
+      },
+      "colonna": {
+        "provate": 11,
+        "instradabili": 7,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 3,
+          "lunghezza_mm": 545.0
+        },
+        "accettate": 0
+      },
+      "gruppo": {
+        "provate": 4,
+        "instradabili": 3,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 1,
+          "backtracking_mm": 2.5,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 6,
+          "incroci": 3,
+          "lunghezza_mm": 450.0
+        },
+        "accettate": 0
+      },
+      "passo": {
+        "provate": 27,
+        "instradabili": 27,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 480.0
+        },
+        "accettate": 1
+      },
+      "porta": {
+        "provate": 12,
+        "instradabili": 12,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 470.0
+        },
+        "accettate": 1
+      }
+    },
+    "pdc-slave": {
+      "interasse": {
+        "provate": 16,
+        "instradabili": 15,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 475.0
+        },
+        "accettate": 0
+      },
+      "dorsale": {
+        "provate": 2,
+        "instradabili": 1,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 3,
+          "pieghe": 19,
+          "incroci": 3,
+          "lunghezza_mm": 547.5
+        },
+        "accettate": 0
+      },
+      "porta": {
+        "provate": 3,
+        "instradabili": 3,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 3,
+          "lunghezza_mm": 545.0
+        },
+        "accettate": 0
+      },
+      "dorsale+spazio": {
+        "provate": 35,
+        "instradabili": 29,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 500.0
+        },
+        "accettate": 0
+      },
+      "porta+spazio": {
+        "provate": 8,
+        "instradabili": 6,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 3,
+          "lunghezza_mm": 725.0
+        },
+        "accettate": 0
+      },
+      "colonna": {
+        "provate": 16,
+        "instradabili": 12,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 520.0
+        },
+        "accettate": 0
+      },
+      "gruppo": {
+        "provate": 4,
+        "instradabili": 3,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 1,
+          "backtracking_mm": 2.5,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 6,
+          "incroci": 3,
+          "lunghezza_mm": 450.0
+        },
+        "accettate": 0
+      },
+      "passo": {
+        "provate": 28,
+        "instradabili": 28,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 480.0
+        },
+        "accettate": 0
+      }
+    },
+    "collettore-ritorno": {
+      "interasse": {
+        "provate": 20,
+        "instradabili": 16,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 9,
+          "incroci": 1,
+          "lunghezza_mm": 495.0
+        },
+        "accettate": 0
+      },
+      "porta": {
+        "provate": 36,
+        "instradabili": 33,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 7,
+          "incroci": 1,
+          "lunghezza_mm": 475.0
+        },
+        "accettate": 0
+      },
+      "asse": {
+        "provate": 7,
+        "instradabili": 3,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 1,
+          "lunghezza_mm": 485.0
+        },
+        "accettate": 0
+      },
+      "dorsale+spazio": {
+        "provate": 20,
+        "instradabili": 17,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 500.0
+        },
+        "accettate": 0
+      },
+      "catena+spazio": {
+        "provate": 14,
+        "instradabili": 14,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 6,
+          "incroci": 1,
+          "lunghezza_mm": 492.5
+        },
+        "accettate": 1
+      },
+      "porta+spazio": {
+        "provate": 12,
+        "instradabili": 10,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 2,
+          "backtracking_mm": 7.5,
+          "tratte_oltre_tre_pieghe": 1,
+          "pieghe": 16,
+          "incroci": 3,
+          "lunghezza_mm": 632.5
+        },
+        "accettate": 0
+      },
+      "gruppo": {
+        "provate": 14,
+        "instradabili": 10,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 6,
+          "incroci": 2,
+          "lunghezza_mm": 447.5
+        },
+        "accettate": 0
+      },
+      "passo": {
+        "provate": 27,
+        "instradabili": 26,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 6,
+          "incroci": 1,
+          "lunghezza_mm": 472.5
+        },
+        "accettate": 0
+      },
+      "tee": {
+        "provate": 2,
+        "instradabili": 2,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 480.0
+        },
+        "accettate": 1
+      },
+      "catena": {
+        "provate": 2,
+        "instradabili": 2,
+        "migliore": {
+          "violazioni": 3,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 1,
+          "pieghe": 16,
+          "incroci": 7,
+          "lunghezza_mm": 552.5
+        },
+        "accettate": 0
+      }
+    },
+    "collettore-mandata": {
+      "interasse": {
+        "provate": 16,
+        "instradabili": 15,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 8,
+          "incroci": 1,
+          "lunghezza_mm": 472.5
+        },
+        "accettate": 0
+      },
+      "dorsale": {
+        "provate": 1,
+        "instradabili": 0,
+        "migliore": null,
+        "accettate": 0
+      },
+      "catena": {
+        "provate": 11,
+        "instradabili": 11,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 525.0
+        },
+        "accettate": 0
+      },
+      "porta": {
+        "provate": 21,
+        "instradabili": 21,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 6,
+          "incroci": 1,
+          "lunghezza_mm": 475.0
+        },
+        "accettate": 0
+      },
+      "asse": {
+        "provate": 9,
+        "instradabili": 6,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 13,
+          "incroci": 1,
+          "lunghezza_mm": 515.0
+        },
+        "accettate": 0
+      },
+      "dorsale+spazio": {
+        "provate": 14,
+        "instradabili": 13,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 1,
+          "pieghe": 15,
+          "incroci": 4,
+          "lunghezza_mm": 587.5
+        },
+        "accettate": 0
+      },
+      "catena+spazio": {
+        "provate": 3,
+        "instradabili": 3,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 2,
+          "lunghezza_mm": 565.0
+        },
+        "accettate": 0
+      },
+      "porta+spazio": {
+        "provate": 3,
+        "instradabili": 3,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 11,
+          "incroci": 1,
+          "lunghezza_mm": 572.5
+        },
+        "accettate": 0
+      },
+      "tee": {
+        "provate": 1,
+        "instradabili": 1,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 8,
+          "incroci": 1,
+          "lunghezza_mm": 522.5
+        },
+        "accettate": 0
+      },
+      "passo": {
+        "provate": 28,
+        "instradabili": 28,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 472.5
+        },
+        "accettate": 1
+      },
+      "gruppo": {
+        "provate": 6,
+        "instradabili": 6,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 2,
+          "lunghezza_mm": 445.0
+        },
+        "accettate": 0
+      }
+    },
+    "tee-valve-safety-collettore-mandata-b": {
+      "interasse": {
+        "provate": 16,
+        "instradabili": 15,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 8,
+          "incroci": 1,
+          "lunghezza_mm": 472.5
+        },
+        "accettate": 0
+      },
+      "dorsale": {
+        "provate": 1,
+        "instradabili": 0,
+        "migliore": null,
+        "accettate": 0
+      },
+      "catena": {
+        "provate": 11,
+        "instradabili": 11,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 525.0
+        },
+        "accettate": 0
+      },
+      "porta": {
+        "provate": 16,
+        "instradabili": 16,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 475.0
+        },
+        "accettate": 0
+      },
+      "dorsale+spazio": {
+        "provate": 15,
+        "instradabili": 12,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 16,
+          "incroci": 4,
+          "lunghezza_mm": 725.0
+        },
+        "accettate": 0
+      },
+      "catena+spazio": {
+        "provate": 3,
+        "instradabili": 3,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 2,
+          "lunghezza_mm": 565.0
+        },
+        "accettate": 0
+      },
+      "porta+spazio": {
+        "provate": 24,
+        "instradabili": 24,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 9,
+          "incroci": 1,
+          "lunghezza_mm": 570.0
+        },
+        "accettate": 0
+      },
+      "stacco": {
+        "provate": 8,
+        "instradabili": 8,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 472.5
+        },
+        "accettate": 0
+      },
+      "passo": {
+        "provate": 27,
+        "instradabili": 27,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 472.5
+        },
+        "accettate": 1
+      }
+    },
+    "tee-pressure-gauge-collettore-ritorno-a": {
+      "interasse": {
+        "provate": 4,
+        "instradabili": 4,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 14,
+          "incroci": 1,
+          "lunghezza_mm": 487.5
+        },
+        "accettate": 0
+      },
+      "porta": {
+        "provate": 2,
+        "instradabili": 2,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 1,
+          "lunghezza_mm": 492.5
+        },
+        "accettate": 0
+      },
+      "dorsale+spazio": {
+        "provate": 8,
+        "instradabili": 6,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 1,
+          "backtracking_mm": 2.5,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 2,
+          "lunghezza_mm": 510.0
+        },
+        "accettate": 0
+      },
+      "catena+spazio": {
+        "provate": 5,
+        "instradabili": 5,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 1,
+          "lunghezza_mm": 520.0
+        },
+        "accettate": 0
+      },
+      "porta+spazio": {
+        "provate": 7,
+        "instradabili": 7,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 1,
+          "lunghezza_mm": 492.5
+        },
+        "accettate": 0
+      },
+      "stacco": {
+        "provate": 2,
+        "instradabili": 2,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 1,
+          "lunghezza_mm": 485.0
+        },
+        "accettate": 0
+      },
+      "passo": {
+        "provate": 3,
+        "instradabili": 3,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 1,
+          "lunghezza_mm": 482.5
+        },
+        "accettate": 0
+      }
+    },
+    "acquedotto": {
+      "interasse": {
+        "provate": 9,
+        "instradabili": 9,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 8,
+          "incroci": 1,
+          "lunghezza_mm": 480.0
+        },
+        "accettate": 1
+      },
+      "asse": {
+        "provate": 1,
+        "instradabili": 1,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 14,
+          "incroci": 1,
+          "lunghezza_mm": 512.5
+        },
+        "accettate": 0
+      },
+      "porta+spazio": {
+        "provate": 6,
+        "instradabili": 6,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 8,
+          "incroci": 1,
+          "lunghezza_mm": 487.5
+        },
+        "accettate": 0
+      },
+      "gruppo": {
+        "provate": 1,
+        "instradabili": 0,
+        "migliore": null,
+        "accettate": 0
+      },
+      "rotazione": {
+        "provate": 1,
+        "instradabili": 1,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 11,
+          "incroci": 1,
+          "lunghezza_mm": 487.5
+        },
+        "accettate": 0
+      },
+      "passo": {
+        "provate": 4,
+        "instradabili": 2,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 10,
+          "incroci": 1,
+          "lunghezza_mm": 502.5
+        },
+        "accettate": 0
+      }
+    },
+    "tee-expansion-connection-collettore-ritorno-a": {
+      "interasse": {
+        "provate": 16,
+        "instradabili": 16,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 8,
+          "incroci": 1,
+          "lunghezza_mm": 475.0
+        },
+        "accettate": 0
+      },
+      "porta": {
+        "provate": 24,
+        "instradabili": 24,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 1,
+          "pieghe": 8,
+          "incroci": 2,
+          "lunghezza_mm": 480.0
+        },
+        "accettate": 0
+      },
+      "dorsale+spazio": {
+        "provate": 18,
+        "instradabili": 16,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 500.0
+        },
+        "accettate": 0
+      },
+      "catena+spazio": {
+        "provate": 13,
+        "instradabili": 13,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 6,
+          "incroci": 1,
+          "lunghezza_mm": 492.5
+        },
+        "accettate": 0
+      },
+      "porta+spazio": {
+        "provate": 20,
+        "instradabili": 20,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 475.0
+        },
+        "accettate": 0
+      },
+      "stacco": {
+        "provate": 8,
+        "instradabili": 8,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 472.5
+        },
+        "accettate": 0
+      },
+      "passo": {
+        "provate": 20,
+        "instradabili": 20,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 470.0
+        },
+        "accettate": 0
+      },
+      "catena": {
+        "provate": 3,
+        "instradabili": 3,
+        "migliore": {
+          "violazioni": 3,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 1,
+          "pieghe": 16,
+          "incroci": 7,
+          "lunghezza_mm": 552.5
+        },
+        "accettate": 0
+      }
+    },
+    "accumulo": {
+      "interasse": {
+        "provate": 32,
+        "instradabili": 32,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 11,
+          "incroci": 2,
+          "lunghezza_mm": 560.0
+        },
+        "accettate": 0
+      },
+      "dorsale": {
+        "provate": 1,
+        "instradabili": 0,
+        "migliore": null,
+        "accettate": 0
+      },
+      "porta": {
+        "provate": 20,
+        "instradabili": 20,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 6,
+          "incroci": 1,
+          "lunghezza_mm": 470.0
+        },
+        "accettate": 0
+      },
+      "asse": {
+        "provate": 8,
+        "instradabili": 8,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 1,
+          "pieghe": 7,
+          "incroci": 1,
+          "lunghezza_mm": 495.0
+        },
+        "accettate": 0
+      },
+      "dorsale+spazio": {
+        "provate": 33,
+        "instradabili": 28,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 500.0
+        },
+        "accettate": 0
+      },
+      "porta+spazio": {
+        "provate": 44,
+        "instradabili": 44,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 6,
+          "incroci": 1,
+          "lunghezza_mm": 480.0
+        },
+        "accettate": 0
+      },
+      "gruppo": {
+        "provate": 8,
+        "instradabili": 8,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 440.0
+        },
+        "accettate": 0
+      },
+      "stacco": {
+        "provate": 16,
+        "instradabili": 16,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 472.5
+        },
+        "accettate": 0
+      },
+      "passo": {
+        "provate": 20,
+        "instradabili": 20,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 11,
+          "incroci": 3,
+          "lunghezza_mm": 590.0
+        },
+        "accettate": 0
+      }
+    },
+    "radiatori": {
+      "interasse": {
+        "provate": 32,
+        "instradabili": 32,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 5,
+          "incroci": 1,
+          "lunghezza_mm": 500.0
+        },
+        "accettate": 0
+      },
+      "porta": {
+        "provate": 12,
+        "instradabili": 12,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 490.0
+        },
+        "accettate": 0
+      },
+      "asse": {
+        "provate": 8,
+        "instradabili": 8,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 1,
+          "pieghe": 13,
+          "incroci": 1,
+          "lunghezza_mm": 510.0
+        },
+        "accettate": 0
+      },
+      "gruppo": {
+        "provate": 4,
+        "instradabili": 4,
+        "migliore": {
+          "violazioni": 1,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 440.0
+        },
+        "accettate": 0
+      },
+      "passo": {
+        "provate": 32,
+        "instradabili": 32,
+        "migliore": {
+          "violazioni": 0,
+          "tratte_con_backtracking": 0,
+          "backtracking_mm": 0.0,
+          "tratte_oltre_tre_pieghe": 0,
+          "pieghe": 4,
+          "incroci": 1,
+          "lunghezza_mm": 475.0
+        },
+        "accettate": 0
+      }
+    }
+  },
+  "posa_finale": [
+    {
+      "pezzo": "pdc-slave",
+      "x_mm": 80.0,
+      "y_mm": 88.5,
+      "rotazione": 0,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "pdc-master",
+      "x_mm": 80.0,
+      "y_mm": 128.5,
+      "rotazione": 0,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "acquedotto",
+      "x_mm": 222.5,
+      "y_mm": 163.5,
+      "rotazione": 0,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "utenze",
+      "x_mm": 250.0,
+      "y_mm": 83.5,
+      "rotazione": 90,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "accumulo",
+      "x_mm": 245.0,
+      "y_mm": 128.5,
+      "rotazione": 0,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "air-vent-accumulo-primary-out",
+      "x_mm": 260.0,
+      "y_mm": 113.5,
+      "rotazione": 0,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "drain-connection-accumulo-primary-in",
+      "x_mm": 255.0,
+      "y_mm": 178.5,
+      "rotazione": 0,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "radiatori",
+      "x_mm": 305.0,
+      "y_mm": 126.0,
+      "rotazione": 0,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "collettore-mandata",
+      "x_mm": 150.0,
+      "y_mm": 131.0,
+      "rotazione": 0,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "tee-valve-safety-collettore-mandata-b",
+      "x_mm": 165.0,
+      "y_mm": 131.0,
+      "rotazione": 0,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "valve-safety-collettore-mandata-b",
+      "x_mm": 165.0,
+      "y_mm": 116.0,
+      "rotazione": 0,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "collettore-ritorno",
+      "x_mm": 142.5,
+      "y_mm": 146.0,
+      "rotazione": 0,
+      "attacchi": {
+        "a": "b",
+        "b": "a"
+      }
+    },
+    {
+      "pezzo": "tee-pressure-gauge-collettore-ritorno-a",
+      "x_mm": 177.5,
+      "y_mm": 146.0,
+      "rotazione": 180,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "pressure-gauge-collettore-ritorno-a",
+      "x_mm": 177.5,
+      "y_mm": 166.0,
+      "rotazione": 180,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "tee-filling-unit-collettore-ritorno-a",
+      "x_mm": 192.5,
+      "y_mm": 146.0,
+      "rotazione": 180,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "filling-unit-collettore-ritorno-a",
+      "x_mm": 192.5,
+      "y_mm": 166.0,
+      "rotazione": 0,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "tee-expansion-connection-collettore-ritorno-a",
+      "x_mm": 207.5,
+      "y_mm": 146.0,
+      "rotazione": 180,
+      "attacchi": {}
+    },
+    {
+      "pezzo": "expansion-connection-collettore-ritorno-a",
+      "x_mm": 207.5,
+      "y_mm": 166.0,
+      "rotazione": 0,
+      "attacchi": {}
+    }
+  ]
+}

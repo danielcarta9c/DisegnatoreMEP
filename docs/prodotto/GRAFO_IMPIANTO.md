@@ -126,12 +126,12 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | Indirizzo | Sigla | Che cos'e' | Su quale fluido |
 |---|---|---|---|
 | CP.01.N.01 | **PDC-01** | Pompa di calore aria-acqua | acqua di riscaldamento |
-| CP.01.N.02 | **VI-02** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.03 | **VD-01** | Valvola deviatrice a tre vie | acqua di riscaldamento |
-| CP.01.N.04 | **VI-03** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.05 | **FIL-01** | Filtro a Y | acqua di riscaldamento |
-| CP.01.N.06 | **VI-04** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.07 | **DER-01** | Derivazione a T | acqua di riscaldamento |
+| CP.01.N.02 | **DER-01** | Derivazione a T | acqua di riscaldamento |
+| CP.01.N.03 | **VI-02** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.01.N.04 | **VD-01** | Valvola deviatrice a tre vie | acqua di riscaldamento |
+| CP.01.N.05 | **VI-03** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.01.N.06 | **FIL-01** | Filtro a Y | acqua di riscaldamento |
+| CP.01.N.07 | **VI-04** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.01.N.08 | **VOL-01** | Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento | acqua di riscaldamento |
 | RP.01.N.01 | **VI-01** | Valvola di intercettazione | acqua di riscaldamento |
 | RP.01.N.02 | **RC-01** | Raccordo a T | acqua di riscaldamento |
@@ -166,7 +166,7 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | CS.03.N.01 | **VI-18** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.01.N.08.1 | **SF-01** | Valvola di sfogo aria · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | CP.01.N.08.2 | **SC-01** | Attacco di scarico · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| CP.01.N.07.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.01.N.02.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-19** | Valvola di intercettazione | acqua fredda sanitaria |
 | AF.01.N.03 | **DER-05** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
@@ -205,14 +205,14 @@ Da **PDC-01** a **VOL-01**, circuito primario.
 
 1. **CP.01.N.01 · PDC-01** Pompa di calore aria-acqua · la linea parte dal suo braccio 1
     - qui arriva **RP.01**, da **VOL-01**, entrando dal braccio 2
-2. **CP.01.N.02 · VI-02** Valvola di intercettazione
-3. **CP.01.N.03 · VD-01** Valvola deviatrice a tre vie
+2. **CP.01.N.02 · DER-01** Derivazione a T
+    - **CP.01.N.02.1 · VS-01** Valvola di sicurezza · pende dallo stacco
+3. **CP.01.N.03 · VI-02** Valvola di intercettazione
+4. **CP.01.N.04 · VD-01** Valvola deviatrice a tre vie
     - qui si stacca **CP.01a**, verso **BOL-01**, dal braccio 3
-4. **CP.01.N.04 · VI-03** Valvola di intercettazione
-5. **CP.01.N.05 · FIL-01** Filtro a Y
-6. **CP.01.N.06 · VI-04** Valvola di intercettazione
-7. **CP.01.N.07 · DER-01** Derivazione a T
-    - **CP.01.N.07.1 · VS-01** Valvola di sicurezza · pende dallo stacco
+5. **CP.01.N.05 · VI-03** Valvola di intercettazione
+6. **CP.01.N.06 · FIL-01** Filtro a Y
+7. **CP.01.N.07 · VI-04** Valvola di intercettazione
 8. **CP.01.N.08 · VOL-01** Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento
     - **CP.01.N.08.1 · SF-01** Valvola di sfogo aria · pende dallo stacco
     - **CP.01.N.08.2 · SC-01** Attacco di scarico · pende dallo stacco
@@ -223,7 +223,7 @@ Da **PDC-01** a **VOL-01**, circuito primario.
 Da **VD-01** a **BOL-01**, circuito primario.
 Si stacca da **CP.01**.
 
-1. **VD-01** Valvola deviatrice a tre vie · gia' numerato, indirizzo CP.01.N.03 · la linea parte dal suo braccio 3
+1. **VD-01** Valvola deviatrice a tre vie · gia' numerato, indirizzo CP.01.N.04 · la linea parte dal suo braccio 3
 2. **CP.01a.N.01 · VI-11** Valvola di intercettazione
 3. **CP.01a.N.02 · BOL-01** Bollitore ACS · tiene in serbo acqua calda sanitaria
     - qui arriva **AF.01**, da **AF-01**, entrando dal braccio 4

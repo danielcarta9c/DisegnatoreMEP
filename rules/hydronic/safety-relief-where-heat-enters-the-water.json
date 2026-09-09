@@ -1,6 +1,6 @@
 {
   "id": "safety-relief-where-heat-enters-the-water",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "name": "Valvola di sicurezza",
   "category": "necessary",
   "cardinality": "per_component",
@@ -18,8 +18,8 @@
   "satisfied_by": {
     "scope": "on_the_attachment"
   },
-  "rationale": "Dove il calore entra nell'acqua la pressione puo' salire piu' in fretta di quanto il circuito riesca ad assorbire, e serve una via che si apra da sola prima del limite ammesso. Sopra i 35 kW la sicurezza sta su ogni generatore, sulla tubazione che esce e attaccata alla macchina: fra lei e cio' che protegge non ci va nulla che si possa chiudere. Sotto i 35 kW non si mette una sicurezza per generatore: sta sul serbatoio, e stop — e' un'altra regola.",
-  "source": "Raccolta R ed. 2009, cap. R.3.B.1 (SRC-012), che si applica sopra i 35 kW (R.1.A.1); sotto i 35 kW la prassi del PM, D-106",
+  "rationale": "Dove il calore entra nell'acqua la pressione puo' salire piu' in fretta di quanto il circuito riesca ad assorbire, e serve una via che si apra da sola prima del limite ammesso. Sopra i 35 kW la sicurezza sta su ogni generatore per prescrizione, sulla tubazione che esce e attaccata alla macchina: fra lei e cio' che protegge non ci va nulla che si possa chiudere. Sotto i 35 kW non e' una per generatore: e' una per dominio di protezione, sulla mandata generale vicino al gruppo dei generatori — un'altra regola (I-046).",
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1 (SRC-012), che si applica sopra i 35 kW (R.1.A.1); sotto i 35 kW la prassi del PM, D-106, corretta il 2026-09-08 (I-046)",
   "ordering": {
     "before": [
       "isolation",

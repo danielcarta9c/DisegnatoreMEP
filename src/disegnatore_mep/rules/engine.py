@@ -26,13 +26,20 @@ che lo ha generato.
 from dataclasses import dataclass, field
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.catalog.schema import OnBoard
 from disegnatore_mep.model.project import NetworkModel, PortRef, ProjectModel
 from disegnatore_mep.model.types import PlantRegime
 
 from .context import RuleContext
 from .proposal import GapReason, RuleGap, RuleProposal, proposed_component_id
 from .registry import RuleRegistry
-from .schema import Placement, RuleCardinality, RuleDefinition, SatisfactionScope
+from .schema import (
+    OnBoardPolicy,
+    Placement,
+    RuleCardinality,
+    RuleDefinition,
+    SatisfactionScope,
+)
 
 BRANCH_OFF = "branch_off"
 """Il mestiere del raccordo che apre una derivazione sulla tubazione."""
@@ -73,6 +80,13 @@ def _anchors(context: RuleContext, rule: RuleDefinition, network: NetworkModel) 
             continue
         if rule.when.network_fills_the_anchor and not context.fills_on(
             component_id, network_id
+        ):
+            continue
+        # Il dominio di protezione (I-046): la regola parla solo di chi, con i
+        # propri organi aperti, non arriva a nessun pezzo con quella funzione
+        # senza attraversare un organo altrui.
+        if rule.when.anchor_cut_off_from is not None and not context.cut_off_from(
+            component_id, rule.when.anchor_cut_off_from, network_id
         ):
             continue
         for port in context.connected_ports(component_id):
@@ -377,6 +391,17 @@ def evaluate(
                 ]
             for anchor in _limited(free, rule.cardinality, served):
                 function = _function_at(context, rule, anchor)
+                # Una regola che esiste in forza del bordo macchina non
+                # presume: se il catalogo non dice se la funzione sta dentro
+                # il mantello, il dato e' ignoto, e un dato ignoto e' una
+                # domanda al progettista, non un pezzo in piu' (I-046).
+                if (
+                    rule.then.if_on_board_is_unknown is OnBoardPolicy.ASK
+                    and context.on_board(anchor.component_id, function) is OnBoard.UNKNOWN
+                ):
+                    missing = _gap(context, rule, network, anchor, GapReason.ON_BOARD_UNKNOWN)
+                    gaps.setdefault(missing.key, missing)
+                    continue
                 definition = catalog.providing(function, network.medium)
                 component_id = proposed_component_id(definition.id, anchor)
                 if component_id in taken:

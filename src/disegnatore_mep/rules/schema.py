@@ -148,6 +148,19 @@ class RuleCondition(StrictModel):
     un serpentino sanitario istantaneo tocca l'acqua fredda senza riempirsene
     la riserva, e quel corredo non gli spetta."""
 
+    anchor_cut_off_from: str | None = None
+    """L'ancoraggio puo' restare **separato** da ogni pezzo con questa funzione
+    (I-046): sulla sua rete non ce n'e' nessuno, oppure fra lui e ciascuno c'e'
+    un organo di chiusura che non e' il suo.
+
+    E' la lettura del dominio di protezione dalla connettivita' e dalle
+    intercettazioni. La configurazione ammessa e' quella in cui la macchina
+    e' in esercizio con i propri organi aperti: attraverso quelli si passa,
+    attraverso quelli altrui no. Una regola che lo dichiara si valuta dopo
+    tutte le altre, quando il circuito ha gia' il proprio corredo — altrimenti
+    leggerebbe come «tagliato fuori» un generatore la cui protezione comune
+    non e' ancora stata posata."""
+
     plant_regime: PlantRegime | None = None
     """Il regime della centrale in cui questa regola vale (D-106).
 
@@ -165,6 +178,16 @@ class RuleCondition(StrictModel):
                 "the network"
             )
         return self
+
+
+class OnBoardPolicy(StrEnum):
+    """Come una regola tratta il bordo macchina **ignoto** (I-046)."""
+
+    ASSUME_ABSENT = "assume_absent"
+    """Come sempre: il pezzo si propone. Il corredo non dipende dal bordo."""
+
+    ASK = "ask"
+    """Il pezzo non si propone: esce una domanda aperta per il progettista."""
 
 
 class RuleProposalTemplate(StrictModel):
@@ -193,6 +216,16 @@ class RuleProposalTemplate(StrictModel):
     placement: Placement
     inlet_port: str = Field(pattern=ID_PATTERN)
     outlet_port: str = Field(pattern=ID_PATTERN)
+    if_on_board_is_unknown: OnBoardPolicy = OnBoardPolicy.ASSUME_ABSENT
+    """Cosa fare quando il catalogo non dice se l'ancoraggio porta a bordo la
+    funzione proposta (I-046).
+
+    Il sottinteso e' quello di sempre: l'accessorio si disegna, perche' il
+    corredo di una centrale non dipende dal bordo macchina — il filtro sul
+    ritorno ci va anche se il catalogo tace. `ask` e' per le regole che
+    esistono **solo** in forza di quel dato: un dispositivo che si aggiunge
+    perche' la macchina non lo ha e' un dispositivo che, se non si sa, non si
+    aggiunge — si chiede."""
 
     def function_for(self, regime: ComponentTrait) -> str:
         """La funzione da proporre a un ancoraggio con quel regime."""
@@ -360,8 +393,9 @@ class RuleDefinition(StrictModel):
 
 
 __all__ = [
-    "Placement",
+    "OnBoardPolicy",
     "Ordering",
+    "Placement",
     "RuleCardinality",
     "RuleCondition",
     "RuleDefinition",

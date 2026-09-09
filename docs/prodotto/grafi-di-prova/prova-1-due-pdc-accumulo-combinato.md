@@ -120,8 +120,8 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | CP.01.N.01 | **PDC-01** | Pompa di calore aria-acqua | acqua di riscaldamento |
 | CP.01.N.02 | **VI-01** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.01.N.03 | **RC-01** | Raccordo a T | acqua di riscaldamento |
-| CP.01.N.04 | **VI-02** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.05 | **DER-01** | Derivazione a T | acqua di riscaldamento |
+| CP.01.N.04 | **DER-01** | Derivazione a T | acqua di riscaldamento |
+| CP.01.N.05 | **VI-02** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.01.N.06 | **ACC-01** | Accumulo combinato · tiene in serbo acqua di riscaldamento | acqua di riscaldamento, acqua fredda sanitaria, acqua calda sanitaria |
 | RP.01.N.01 | **VI-03** | Valvola di intercettazione | acqua di riscaldamento |
 | RP.01.N.02 | **DER-02** | Derivazione a T | acqua di riscaldamento |
@@ -149,7 +149,7 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | RS.01.N.01 | **VI-12** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.01.N.06.1 | **SF-01** | Valvola di sfogo aria · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | CP.01.N.06.2 | **SC-01** | Attacco di scarico · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| CP.01.N.05.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.01.N.04.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-13** | Valvola di intercettazione | acqua fredda sanitaria |
 | ACS.01.N.01 | **VI-14** | Valvola di intercettazione | acqua calda sanitaria |
@@ -183,9 +183,9 @@ Da **PDC-01** a **ACC-01**, circuito primario.
 2. **CP.01.N.02 · VI-01** Valvola di intercettazione
 3. **CP.01.N.03 · RC-01** Raccordo a T
     - qui arriva **CP.02**, da **PDC-02**, entrando dal braccio 2
-4. **CP.01.N.04 · VI-02** Valvola di intercettazione
-5. **CP.01.N.05 · DER-01** Derivazione a T
-    - **CP.01.N.05.1 · VS-01** Valvola di sicurezza · pende dallo stacco
+4. **CP.01.N.04 · DER-01** Derivazione a T
+    - **CP.01.N.04.1 · VS-01** Valvola di sicurezza · pende dallo stacco
+5. **CP.01.N.05 · VI-02** Valvola di intercettazione
 6. **CP.01.N.06 · ACC-01** Accumulo combinato · tiene in serbo acqua di riscaldamento
     - **CP.01.N.06.1 · SF-01** Valvola di sfogo aria · pende dallo stacco
     - **CP.01.N.06.2 · SC-01** Attacco di scarico · pende dallo stacco

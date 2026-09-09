@@ -20,8 +20,14 @@ regole da grande centrale alle piccole. Adesso le regole conoscono **due regimi*
 
 **Sotto i 35 kW** la centrale è quella di casa: niente separatore d'aria — basta lo sfogo
 sul serbatoio; niente termometro aggiunto — si usa quello della macchina; niente sicurezza
-per ogni generatore — sta sul serbatoio, e stop. È la prassi che ci hai dato, e l'abbiamo
-riscontrata riga per riga sugli schemi Caleffi delle centrali domestiche.
+per ogni generatore — **una sola, di circuito, sulla mandata vicino al gruppo delle
+macchine** (tua correzione dell'8 settembre 2026, I-046: prima stava sul serbatoio, e la
+prima consegna l'aveva moltiplicata invece di spostarla). È la prassi che ci hai dato, e
+l'abbiamo riscontrata riga per riga sugli schemi Caleffi delle centrali domestiche. Il
+numero delle sicurezze non si deduce mai dal numero delle macchine: si protegge ogni
+**dominio** — ciò che resta in comunicazione con la sicurezza mentre è in esercizio — e
+una macchina che un organo altrui può separare da quella comune si guarda a parte, con il
+dato del suo catalogo (scheda 3).
 
 **Sopra i 35 kW** vale la Raccolta R, che da lì in su si applica: sicurezza e termometro
 per ogni generatore, separatore d'aria vero.
@@ -62,41 +68,89 @@ quanto il circuito riesca ad assorbire. Serve una via che si apra da sé, senza 
 la comandi e senza che nessuno possa impedirlo.
 
 **Quando vale.** Sopra i 35 kW: è la Raccolta R, che prescrive i dispositivi per ogni
-generatore.
+generatore. Sotto i 35 kW non è una per generatore: è una per circuito (scheda 2), e la
+macchina che può restare isolata da quella comune si guarda a parte (scheda 3).
 
 **Dove va, e perché proprio lì.** Sulla tubazione che esce da ogni macchina che scalda, e
-**attaccata alla macchina**. Fra lei e ciò che protegge non ci va niente che si possa
-chiudere: una valvola chiusa davanti a una sicurezza è una sicurezza che non c'è.
+**attaccata alla macchina**, il più vicino possibile. Fra lei e ciò che protegge non ci va
+niente che si possa chiudere: una valvola chiusa davanti a una sicurezza è una sicurezza
+che non c'è.
 
-**Quante volte.** Una per ogni macchina che scalda.
+**Quante volte.** Una per ogni macchina che scalda, sopra i 35 kW.
 
 **Come sappiamo che c'è già.** Se su quella stessa tubazione c'è già un organo che scarica
-la sovrapressione, non ne aggiungiamo un secondo.
+la sovrapressione, o se la macchina dichiara di portarlo dentro il mantello, non ne
+aggiungiamo un secondo.
 
 **Da dove viene.** Dalla Raccolta R, che elenca i dispositivi obbligatori di un impianto a
-vaso chiuso. È una prescrizione, non una buona abitudine.
+vaso chiuso. È una prescrizione, non una buona abitudine. Il «più vicino possibile» è
+della scheda tecnica Caleffi delle valvole di sicurezza: sulla sommità del generatore o
+sulla mandata, con tubazione non intercettabile.
 
-## 2 · Valvola di sicurezza della piccola centrale
+## 2 · Valvola di sicurezza del circuito
 
-**Cos'è.** La stessa valvola della scheda 1, ma nella centrale di casa.
+**Cos'è.** La stessa valvola della scheda 1, ma nella centrale di casa: una sola, per
+tutto il circuito dell'acqua tecnica.
 
 **Perché esiste.** Anche il circuito piccolo è chiuso e si scalda: la via che si apre da
-sola serve comunque.
+sola serve comunque. E ne basta una finché tutte le macchine **restano in comunicazione
+con lei** mentre sono in esercizio: la pressione è la stessa dappertutto, e una
+sicurezza comune protegge tutto ciò che le sta attorno senza organi chiusi in mezzo.
 
-**Quando vale.** Sotto i 35 kW, ed è la tua prassi: non una sicurezza per generatore — le
-macchine la portano già dentro il mantello — ma **una sola, sul serbatoio, e stop**.
+**Quando vale.** Sotto i 35 kW, ed è la tua prassi corretta l'8 settembre 2026 (I-046):
+**una sola, di circuito**, e non una per generatore. Prima stava sul serbatoio; tu hai
+chiesto di spostarla, non di moltiplicarla.
 
-**Dove va, e perché proprio lì.** Sulla tubazione che entra nel serbatoio, nelle sue
-immediate vicinanze, senza niente di chiudibile in mezzo. Una per serbatoio: anche quando
-il serbatoio sta su due circuiti, l'acqua che ha dentro è una.
+**Dove va, e perché proprio lì.** Sulla mandata generale, nel punto in cui le mandate delle
+macchine sono già diventate una — **attaccata a ciò che le unisce**, o alla macchina
+stessa se è una sola — e prima di qualunque organo di chiusura di quel tratto. Più vicino
+alle macchine di così non si può stare restando comune a tutte: da lì ogni macchina in
+esercizio la raggiunge attraversando solo i propri organi, che tiene aperti. Il serbatoio
+è protetto dalla stessa via finché comunica con le macchine; isolato da loro non si
+scalda. Niente più sicurezza sul serbatoio.
+
+**Quante volte.** Una per circuito. Non conta quante macchine ci sono.
 
 **Come sappiamo che c'è già.** Se su quel circuito c'è già qualcosa che scarica la
-sovrapressione.
+sovrapressione, oppure se **ogni** macchina dichiara di portarla dentro il mantello: se
+la dichiara una sola, il circuito la vuole lo stesso.
 
-**Da dove viene.** Dalla tua prassi, registrata come decisione; lo schema tipico Caleffi
-disegna anche lui una sola sicurezza esterna sul tratto comune.
+**Da dove viene.** Dalla scheda tecnica Caleffi delle valvole di sicurezza — sulla mandata,
+il più vicino possibile, con tubazione non intercettabile — e dalla tua prassi corretta:
+una sola, spostata dal serbatoio alla mandata vicino al gruppo delle macchine.
 
-## 3 · Gruppo di sicurezza sanitario
+## 3 · Valvola di sicurezza della macchina isolabile
+
+**Cos'è.** La stessa valvola, posata su una macchina sola: quella che un organo **non suo**
+può separare dalla sicurezza del circuito.
+
+**Perché esiste.** Se fra una macchina e la sicurezza comune c'è un organo che non è il
+suo — una valvola di zona, un organo di rete scritto dal progettista — quando quell'organo
+è chiuso e la macchina scalda, il suo volume è chiuso e non ha via d'uscita. È un altro
+dominio, e vuole la sua protezione.
+
+**Quando vale.** In tutti e due i regimi, ma solo per chi resta davvero separabile: si
+legge dalla connettività e dagli organi di chiusura, macchina per macchina, dopo che il
+circuito ha già ricevuto la sua sicurezza. Nella tavola 1 non vale per nessuna delle due
+pompe di calore: fra loro e la sicurezza del circuito ci sono solo le loro valvole.
+
+**Dove va, e perché proprio lì.** Sulla tubazione che esce dalla macchina, attaccata a lei
+e prima del suo organo: come nella scheda 1.
+
+**Quante volte.** Solo con un dato. Il catalogo della macchina dice se la sicurezza sta
+dentro il mantello, e il dato ha **tre stati**: presente, assente, ignoto. Presente:
+niente. Assente: la macchina la riceve. Ignoto — il campo manca, ed è il caso della pompa
+di calore generica — non vuol dire assente: **non si aggiunge nulla, e ti facciamo una
+domanda**. Un dispositivo in più su una presunzione è un errore quanto uno in meno.
+
+**Come sappiamo che c'è già.** Se sulla tubazione di quell'attacco c'è già un organo che
+scarica la sovrapressione, o se la macchina lo dichiara a bordo.
+
+**Da dove viene.** Dalla scheda tecnica Caleffi delle valvole di sicurezza e da Idraulica
+61, che dice che sfogo e sicurezza **possono** essere integrati nella macchina: quindi lo
+dice il catalogo, macchina per macchina, e quando non lo dice si chiede.
+
+## 4 · Gruppo di sicurezza sanitario
 
 **Cos'è.** Il gruppo che sta sull'ingresso dell'acqua fredda di un bollitore e che scarica
 se la pressione sale.
@@ -117,7 +171,7 @@ sovrapressione.
 **Da dove viene.** Dalla pratica corrente documentata negli schemi Caleffi: è il gruppo di
 sicurezza sanitario che si monta su ogni bollitore.
 
-## 4 · Vaso di espansione
+## 5 · Vaso di espansione
 
 **Cos'è.** Un recipiente con una membrana, che assorbe l'aumento di volume dell'acqua
 quando si scalda.
@@ -142,7 +196,7 @@ dilatazione — anche a bordo macchina, se il suo catalogo lo dichiara.
 **Da dove viene.** Dalla Raccolta R per il punto freddo; dagli schemi applicativi Caleffi,
 che mettono il vaso dell'impianto sul ritorno generale in tutti e cinque gli schemi.
 
-## 5 · Vaso di espansione sanitario
+## 6 · Vaso di espansione sanitario
 
 **Cos'è.** Lo stesso recipiente, per la riserva sanitaria.
 
@@ -160,7 +214,7 @@ dilatazione.
 **Da dove viene.** Dalle istruzioni d'installazione dei costruttori di bollitori, e dagli
 schemi Caleffi che lo disegnano sull'ingresso freddo.
 
-## 6 · Valvola di ritegno sanitaria
+## 7 · Valvola di ritegno sanitaria
 
 **Cos'è.** Una valvola che lascia passare l'acqua in un verso solo.
 
@@ -181,7 +235,7 @@ ritorno.
 
 # Le intercettazioni
 
-## 7 · Valvola di intercettazione — **la regola che era sei**
+## 8 · Valvola di intercettazione — **la regola che era sei**
 
 **Cos'è.** Il rubinetto che ferma l'acqua per poter togliere un pezzo.
 
@@ -223,7 +277,7 @@ rubinetti che il progettista ha già messo a mano vengono riconosciuti e rispett
 Idraulica 61 sul filtro immediatamente a monte dello scambiatore della macchina, e dalla
 tua indicazione del 5 settembre 2026: si isola il gruppo, non ogni attacco (I-034).
 
-## 8 · Valvola di intercettazione generale
+## 9 · Valvola di intercettazione generale
 
 **Cos'è.** Il rubinetto sul punto in cui il nostro impianto si attacca a qualcosa che non è
 nostro: la rete idrica, la distribuzione dell'edificio.
@@ -247,7 +301,7 @@ resti lavorabile.
 
 Sono due accessori diversi che sembrano lo stesso, e vale la pena guardare la differenza.
 
-## 9 · Filtro a Y
+## 10 · Filtro a Y
 
 **Cos'è.** Un filtro a rete, che si smonta e si pulisce.
 
@@ -267,7 +321,7 @@ filtrazione sta solo sul primario.
 filtro sull'ingresso dello scambiatore, e sporcandosi strozza la portata: quello esterno si
 pulisce meglio — e dalla tua prassi: un filtro sul ritorno di ogni pompa di calore.
 
-## 10 · Defangatore
+## 11 · Defangatore
 
 **Cos'è.** Un corpo largo, spesso con una calamita, dove l'acqua rallenta e i fanghi si
 depositano.
@@ -291,7 +345,7 @@ verso il generatore — e dagli schemi delle centrali domestiche, che ne disegna
 
 # Aria, misure, riempimento, svuotamento
 
-## 11 · Separatore d'aria
+## 12 · Separatore d'aria
 
 **Cos'è.** Un corpo dove l'acqua rallenta e le bollicine risalgono e vengono espulse.
 
@@ -311,7 +365,7 @@ raccogliere. Uno per circuito: uno per macchina era un doppione.
 obbligatorio nei circuiti chiusi, salvo i piccoli contenuti d'acqua dove basta la valvola
 di sfogo.
 
-## 12 · Valvola di sfogo aria
+## 13 · Valvola di sfogo aria
 
 **Cos'è.** La valvolina automatica che espelle l'aria dal punto alto.
 
@@ -329,7 +383,7 @@ portano già a bordo.
 **Da dove viene.** Dal quaderno Caleffi — sotto i 300 litri di contenuto basta la valvola
 di sfogo — e dalle legende dei costruttori di serbatoi, che dedicano allo sfiato un attacco.
 
-## 13 · Termometro
+## 14 · Termometro
 
 **Cos'è.** Un termometro in un pozzetto, che si legge senza toccare l'acqua.
 
@@ -349,7 +403,7 @@ altro numero.
 **Da dove viene.** Dalla Raccolta R; sotto i 35 kW dalla tua prassi, riscontrata sugli
 schemi.
 
-## 14 · Manometro
+## 15 · Manometro
 
 **Cos'è.** Un manometro con il suo rubinetto, che si sfila chiudendo l'acqua.
 
@@ -367,7 +421,7 @@ un secondo punto di lettura non aggiunge niente.
 
 **Da dove viene.** Dalla Raccolta R.
 
-## 15 · Gruppo di riempimento
+## 16 · Gruppo di riempimento
 
 **Cos'è.** Il gruppo che collega la rete idrica al circuito chiuso e ne controlla la
 pressione di carico.
@@ -388,7 +442,7 @@ circuito sanitario è già alimentato dalla rete e non ha niente da riempire.
 **Da dove viene.** Dalla Raccolta R; il punto d'innesto sul ritorno generale è quello
 dello schema tipico e degli schemi applicativi Caleffi.
 
-## 16 · Attacco di scarico
+## 17 · Attacco di scarico
 
 **Cos'è.** Il rubinetto in basso da cui si svuota un serbatoio.
 
@@ -422,7 +476,7 @@ bollitore no — e dalla pratica corrente documentata negli schemi Caleffi.
 
 # L'acqua calda sanitaria
 
-## 17 · Valvola miscelatrice termostatica
+## 18 · Valvola miscelatrice termostatica
 
 **Cos'è.** Una valvola che mescola acqua calda e fredda e tiene costante la temperatura in
 uscita.

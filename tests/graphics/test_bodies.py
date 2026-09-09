@@ -61,10 +61,20 @@ def geometry(body: str) -> tuple[list[tuple[float, float]], tuple[float, float, 
             xs += [cx - r, cx + r]
             ys += [cy - r, cy + r]
         elif tag == "path":
-            numbers = [float(v) for v in re.findall(r"-?\d+(?:\.\d+)?", get("d", ""))]
-            points += list(zip(numbers[0::2], numbers[1::2], strict=False))
-            xs += numbers[0::2]
-            ys += numbers[1::2]
+            # Comando per comando: M, L e Q portano coppie di coordinate; un
+            # arco (A, dalla serpentina di DRAW-005-R1) porta raggi e bandiere
+            # prima del punto d'arrivo, e letto a coppie sballerebbe tutto.
+            for command, arguments in re.findall(r"([MLQCAZ])([^MLQCAZ]*)", get("d", "")):
+                numbers = [float(v) for v in re.findall(r"-?\d+(?:\.\d+)?", arguments)]
+                if command in ("M", "L", "Q", "C"):
+                    found = list(zip(numbers[0::2], numbers[1::2], strict=False))
+                elif command == "A":
+                    found = [(numbers[-2], numbers[-1])]
+                else:
+                    found = []
+                points += found
+                xs += [item[0] for item in found]
+                ys += [item[1] for item in found]
     return points, (min(xs), max(xs), min(ys), max(ys))
 
 

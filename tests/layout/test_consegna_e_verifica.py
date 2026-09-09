@@ -25,6 +25,7 @@ from disegnatore_mep.catalog.schema import CLOSING_FUNCTIONS, ComponentTrait
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.layout.addresses import with_addresses
+from disegnatore_mep.layout.chains import machine_chains
 from disegnatore_mep.layout.compose import compose_drawing, inline_component_ids
 from disegnatore_mep.layout.geometry import DrawingGeometry, PlacedSymbol, Point, box_of
 from disegnatore_mep.layout.inline import END_CLEARANCE_MM, SNUG_CLEARANCE_MM
@@ -337,12 +338,13 @@ def _port_point(
 
 
 def _continues_to_a_serviced_piece(
-    project: ProjectModel, registry: ComponentRegistry, trunk: Trunk, trunks: list[Trunk]
+    project: ProjectModel, registry: ComponentRegistry, ref: PortRef, trunks: list[Trunk]
 ) -> bool:
-    """Vero se oltre il capo d'arrivo — attraverso i soli raccordi passanti —
-    si arriva a un pezzo manutenibile."""
+    """Vero se oltre questo capo — attraverso i soli raccordi passanti — si
+    arriva a un pezzo manutenibile. E' la stessa camminata che fa la posa
+    (`services`, I-035): una ripartizione la ferma, perche' oltre di lei i
+    volumi sono due."""
     definitions = {item.id: item.definition_id for item in project.components}
-    ref = trunk.end
     seen: set[str] = set()
     while ref.component_id not in seen:
         seen.add(ref.component_id)
@@ -387,17 +389,35 @@ def test_la_valvola_che_isola_oltre_un_raccordo_passante_si_stringe_al_raccordo(
     for trunk in trunks:
         if not trunk.inline_component_ids:
             continue
-        end = registry.get(definitions[trunk.end.component_id])
-        if not end.is_a_fitting or not _continues_to_a_serviced_piece(project, registry, trunk, trunks):
-            continue
-        last = trunk.inline_component_ids[-1]
-        if not CLOSING_FUNCTIONS & set(registry.get(definitions[last]).functions):
-            continue
-        tee_x, tee_y = _port_point(registry, project, placed[trunk.end.component_id], trunk.end.port_id)
-        start_x, start_y = _port_point(registry, project, placed[trunk.start.component_id], trunk.start.port_id)
-        measured.append(
-            (last, _gap_to_point(placed[last], tee_x, tee_y), _gap_to_point(placed[last], start_x, start_y))
-        )
+        # Il raccordo passante puo' stare a un capo o all'altro della tratta:
+        # da quando la sicurezza e' una sola, sulla mandata comune (I-046), il
+        # raccordo che la regge sta **prima** della valvola che isola la
+        # riserva, non dopo. La regola di posa e' la stessa nei due versi.
+        head_chain, tail_chain = machine_chains(project, registry, trunk)
+        chained = set(head_chain) | set(tail_chain)
+        for near, far in ((trunk.end, trunk.start), (trunk.start, trunk.end)):
+            end = registry.get(definitions[near.component_id])
+            if not end.is_a_fitting or not _continues_to_a_serviced_piece(
+                project, registry, near, trunks
+            ):
+                continue
+            last = (
+                trunk.inline_component_ids[-1]
+                if near == trunk.end
+                else trunk.inline_component_ids[0]
+            )
+            if not CLOSING_FUNCTIONS & set(registry.get(definitions[last]).functions):
+                continue
+            # Chi appartiene alla catena di una macchina sta a stazione fissa
+            # dalla porta della macchina (I-044), non stretto al raccordo: e'
+            # l'altro contratto, e ha una prova sua.
+            if last in chained:
+                continue
+            tee_x, tee_y = _port_point(registry, project, placed[near.component_id], near.port_id)
+            start_x, start_y = _port_point(registry, project, placed[far.component_id], far.port_id)
+            measured.append(
+                (last, _gap_to_point(placed[last], tee_x, tee_y), _gap_to_point(placed[last], start_x, start_y))
+            )
     assert measured, "nessuna valvola oltre un raccordo passante: la prova non direbbe nulla"
     for name, to_the_tee, to_the_start in measured:
         assert SNUG_CLEARANCE_MM - TOLERANCE_MM <= to_the_tee <= END_CLEARANCE_MM + TOLERANCE_MM, (name, to_the_tee)

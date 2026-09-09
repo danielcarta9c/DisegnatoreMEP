@@ -615,13 +615,20 @@ def _contenuto(modello: Any) -> Json:
 @pytest.mark.parametrize("n", IMPIANTI)
 def test_il_completatore_digerisce_il_grafo(n: int) -> None:
     """Le regole e l'assemblatore girano sui cinque grafi senza rompersi, e non
-    lasciano punti aperti."""
+    lasciano punti aperti — salvo le **domande** che la sicurezza per dominio
+    idraulico (I-046) deve fare al progettista invece di aggiungere pezzi:
+    dove il catalogo tace sulla sicurezza a bordo di una macchina isolabile,
+    o dove la mandata comune non si trova perche' una valvola deviatrice non
+    e' un pezzo passante. Sono punti aperti per contratto, non difetti."""
     cat, rl, _, _ = _catena()
     modello = load_project(PROVA / f"impianto-{n}" / "grafo.json")
     completo, proposte, buchi = saturate(modello, cat, rl)
     assert len(completo.components) > len(modello.components)
     assert proposte
-    assert buchi == [], f"impianto {n}: il completatore lascia punti aperti {[b.key for b in buchi]}"
+    domande = [b for b in buchi if b.rule_id.startswith("safety-relief-")]
+    assert buchi == domande, (
+        f"impianto {n}: il completatore lascia punti aperti {[b.key for b in buchi]}"
+    )
 
 
 @pytest.mark.parametrize("n", IMPIANTI)

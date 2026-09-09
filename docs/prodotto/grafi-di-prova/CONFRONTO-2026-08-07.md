@@ -16,6 +16,19 @@
 > impianto 4, 52 e 43; impianto 5, 108 e 98. I grafi rigenerati stanno accanto a questo
 > documento; la tavola rifatta è la sola dell'impianto 1 (D-116).
 
+> **Aggiornamento del 9 settembre 2026 (DRAW-005-R1, I-046).** I conteggi «a N pezzi»
+> sono quelli di oggi, dopo la tua correzione sulla sicurezza: nella piccola centrale la
+> sicurezza è **una per circuito**, sulla mandata dove le mandate sono già una, attaccata
+> alla confluenza — non una per generatore e non più sul serbatoio. È la sicurezza del
+> 7 settembre spostata, non moltiplicata. Rispetto al 7 settembre: impianto 1, 39 pezzi
+> allora e 39 oggi (la sicurezza si è spostata dall'ingresso dell'accumulo alla mandata
+> comune); impianto 2, 46 e 46; impianto 3, 44 e 44 (in tutti e due la sicurezza sta
+> sulla mandata della macchina sola, che è la mandata comune); impianto 4, 43 e 41 —
+> l'ibrido perde la sicurezza sul volume tecnico e non ne riceve una sulla mandata
+> comune, perché sulla mandata la camminata si ferma alla deviatrice della caldaia e la
+> mandata comune non si trova: sono i suoi tre punti aperti, sotto; impianto 5, 98 e 98 —
+> sopra i 35 kW le sicurezze per macchina c'erano già e restano.
+
 ---
 
 ## Perché sono cambiati
@@ -58,7 +71,7 @@ all'ingresso dell'acqua fredda.
 Stesse uscite del regime piccolo (separatore, termometro), sfogo e sicurezza sul volano
 in linea, e lo scarico del boiler sull'ingresso freddo.
 
-**4 — Ibrido pompa di calore e caldaia: da 68 a 43 pezzi.**
+**4 — Ibrido pompa di calore e caldaia: da 68 a 41 pezzi.**
 Il ritorno generale è il tratto fra il volume tecnico e il punto in cui il ritorno si
 divide verso le due macchine: lì stanno vaso, riempimento, manometro e l'unico
 defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul volano;
@@ -84,8 +97,13 @@ tre tubi si incontrano mettiamo due raccordi, che è la regola generale e non ri
 supporre un pezzo che non hai nominato. Di qui i pezzi in più rispetto a ieri, non da un
 irrigidimento delle regole.
 
-**Nessuno dei cinque ha punti aperti.** Ogni accessorio che le regole hanno chiesto ha
-trovato il pezzo e il posto.
+**Quattro dei cinque non hanno punti aperti.** Ogni accessorio che le regole hanno
+chiesto ha trovato il pezzo e il posto. L'ibrido (impianto 4) ne ha tre dal 9 settembre
+2026, tutti sulla sicurezza (I-046): sulla sua mandata non c'è un tratto comune su cui
+posare la sicurezza di circuito — la caldaia manda alla deviatrice, e oltre la
+deviatrice la camminata non va — e per ciascuna delle due macchine il catalogo non dice
+se la sicurezza sta dentro il mantello: il motore lo chiede invece di presumere. Sono
+tre domande per te, non tre pezzi.
 
 ---
 

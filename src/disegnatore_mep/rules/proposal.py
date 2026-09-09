@@ -26,6 +26,11 @@ class GapReason(StrEnum):
     """La regola si posa sul tratto comune della rete, e la rete non ne ha
     uno: le camminate dagli ancoraggi non condividono nessuna tubazione."""
 
+    ON_BOARD_UNKNOWN = "on_board_unknown"
+    """La regola aggiungerebbe un dispositivo perche' la macchina non lo porta
+    a bordo, ma il catalogo non dice se lo porta: il dato e' ignoto, e un
+    dato ignoto non e' un'assenza (I-046). Si chiede al progettista."""
+
 
 class RuleGap(StrictModel):
     """Una regola che si applica, e non ha niente da proporre.
@@ -61,7 +66,13 @@ class RuleGap(StrictModel):
 
     @property
     def key(self) -> tuple[str, str, str, str]:
-        """Cosa rende due punti aperti lo stesso punto aperto."""
+        """Cosa rende due punti aperti lo stesso punto aperto.
+
+        Il pezzo che manca in catalogo manca una volta per rete; il dato di
+        bordo che manca, invece, manca **per macchina**: la domanda si fa a
+        ciascuna, e due macchine sono due domande."""
+        if self.reason is GapReason.ON_BOARD_UNKNOWN:
+            return (self.rule_id, self.network_id, self.missing_function, self.anchor.component_id)
         return (self.rule_id, self.network_id, self.missing_function, self.medium)
 
 

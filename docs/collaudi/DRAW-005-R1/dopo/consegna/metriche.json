@@ -1,0 +1,804 @@
+{
+  "formato": "420x297",
+  "area_disegno_mm": [
+    350.0,
+    235.0
+  ],
+  "impronta": "92262dce1ef6308774aa48f5290c4017c7b5ba84080fc487e7a7eabcabcfe62d",
+  "fogli": [
+    {
+      "sheet_id": "t1",
+      "linea_di_terra_esportata": false,
+      "etichette": 7,
+      "sigle": 7,
+      "sigle_omesse": 0,
+      "indirizzi": 0,
+      "etichette_con_richiamo": 0,
+      "etichette_su_tubo": 0,
+      "etichette_su_simbolo": 0,
+      "etichette_su_etichetta": 0,
+      "richiami_su_tubo": 0,
+      "richiami_su_simbolo": 0,
+      "richiami_incrociati": 0,
+      "ingombro_mm": [
+        60.0,
+        81.0,
+        307.5,
+        186.0
+      ],
+      "riempimento_pct": 31.6,
+      "riempimento_senza_il_piu_isolato_pct": 27.8,
+      "copertura_ingombro": 0.656,
+      "quadranti_rapporto": 2.38,
+      "quadranti_mm2": [
+        1763.9,
+        742.2,
+        1278.0,
+        1355.4
+      ],
+      "backtracking_tratte": 0,
+      "backtracking_mm": 0.0,
+      "incroci": 1,
+      "pieghe_totali": 4,
+      "tratte_oltre_tre_pieghe": 0,
+      "lunghezza_totale_mm": 470.0,
+      "rete_ordinaria": {
+        "pieghe": 4,
+        "incroci": 1,
+        "lunghezza_mm": 425.0,
+        "tratte": 14,
+        "tratte_oltre_tre_pieghe": 0
+      },
+      "stacchi_statici": {
+        "pieghe": 0,
+        "incroci": 0,
+        "lunghezza_mm": 45.0,
+        "tratte": 6
+      },
+      "tubo_sotto_simbolo": [],
+      "valvole_d120": {
+        "valve-isolation-pdc-master-water-supply": {
+          "caso": "primo",
+          "isola": "pdc-master",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-pdc-slave-water-supply": {
+          "caso": "primo",
+          "isola": "pdc-slave",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-accumulo-primary-in": {
+          "caso": "ultimo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-accumulo-primary-out": {
+          "caso": "primo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dirt-separator-collettore-ritorno-a-b": {
+          "caso": "coppia",
+          "isola": "dirt-separator-collettore-ritorno-a",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-strainer-pdc-master-water-return-a": {
+          "caso": "coppia",
+          "isola": "strainer-pdc-master-water-return",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-strainer-pdc-slave-water-return-a": {
+          "caso": "coppia",
+          "isola": "strainer-pdc-slave-water-return",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-accumulo-secondary-out": {
+          "caso": "coppia",
+          "isola": "circolatore",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-circolatore-b": {
+          "caso": "coppia",
+          "isola": "circolatore",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-accumulo-secondary-in": {
+          "caso": "ultimo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "expansion-connection-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-filling-unit-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "filling-unit-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-pressure-gauge-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "pressure-gauge-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-acquedotto-a": {
+          "caso": "ultimo",
+          "isola": "accumulo",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-hot-accumulo-dhw-out": {
+          "caso": "coppia",
+          "isola": "mixing-valve-thermostatic-accumulo-dhw-out",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-dhw-hot-utenze-a": {
+          "caso": "coppia",
+          "isola": "mixing-valve-thermostatic-accumulo-dhw-out",
+          "distanza_mm": 2.5
+        }
+      },
+      "valvole_d120_entro_2_5_5_mm": 16,
+      "valvole_d120_totali": 16,
+      "tubo_per_collegamento": {
+        "p1": {
+          "mm": 25.0,
+          "accessori_in_linea": 1,
+          "rettilineo_minimo_mm": 7.5
+        },
+        "p2": {
+          "mm": 65.0,
+          "accessori_in_linea": 1,
+          "rettilineo_minimo_mm": 7.5
+        },
+        "p3": {
+          "mm": 80.0,
+          "accessori_in_linea": 1,
+          "rettilineo_minimo_mm": 7.5
+        },
+        "p4": {
+          "mm": 67.5,
+          "accessori_in_linea": 3,
+          "rettilineo_minimo_mm": 22.5
+        },
+        "p5": {
+          "mm": 12.5,
+          "accessori_in_linea": 2,
+          "rettilineo_minimo_mm": 15.0
+        },
+        "p6": {
+          "mm": 52.5,
+          "accessori_in_linea": 2,
+          "rettilineo_minimo_mm": 15.0
+        },
+        "s1": {
+          "mm": 15.0,
+          "accessori_in_linea": 3,
+          "rettilineo_minimo_mm": 27.5
+        },
+        "s3": {
+          "mm": 70.0,
+          "accessori_in_linea": 1,
+          "rettilineo_minimo_mm": 7.5
+        },
+        "w1": {
+          "mm": 12.5,
+          "accessori_in_linea": 1,
+          "rettilineo_minimo_mm": 7.5
+        },
+        "w2": {
+          "mm": 25.0,
+          "accessori_in_linea": 3,
+          "rettilineo_minimo_mm": 22.5
+        }
+      },
+      "tubo_su_collegamenti_di_partenza_mm": 425.0,
+      "tubo_su_stacchi_mm": 45.0,
+      "stacchi": 6,
+      "simboli": 39,
+      "tratte": 20
+    }
+  ],
+  "rami": {
+    "accumulo.primary_in": {
+      "verso": "in",
+      "fila": [
+        "valve-isolation-accumulo-primary-in [isolation]",
+        "tee-valve-safety-collettore-mandata-b",
+        "collettore-mandata"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 1,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "accumulo.primary_out": {
+      "verso": "out",
+      "fila": [
+        "valve-isolation-accumulo-primary-out [isolation]",
+        "tee-expansion-connection-collettore-ritorno-a",
+        "tee-filling-unit-collettore-ritorno-a",
+        "tee-pressure-gauge-collettore-ritorno-a",
+        "dirt-separator-collettore-ritorno-a [sludge_separation]",
+        "valve-isolation-dirt-separator-collettore-ritorno-a-b [isolation]",
+        "collettore-ritorno"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 2,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "accumulo.secondary_out": {
+      "verso": "out",
+      "fila": [
+        "valve-isolation-accumulo-secondary-out [isolation]",
+        "circolatore",
+        "valve-isolation-circolatore-b [isolation]"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 2,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "accumulo.secondary_in": {
+      "verso": "in",
+      "fila": [
+        "valve-isolation-accumulo-secondary-in [isolation]"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 1,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "accumulo.cold_in": {
+      "verso": "in",
+      "fila": [
+        "valve-isolation-dhw-acquedotto-a [isolation]"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 1,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "accumulo.dhw_out": {
+      "verso": "out",
+      "fila": [
+        "valve-isolation-dhw-hot-accumulo-dhw-out [isolation]",
+        "mixing-valve-thermostatic-accumulo-dhw-out",
+        "valve-isolation-dhw-hot-utenze-a [isolation]"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 2,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "expansion-connection-collettore-ritorno-a.a": {
+      "verso": "bidirectional",
+      "fila": [
+        "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a [isolation_locked_open]"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 1,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "filling-unit-collettore-ritorno-a.a": {
+      "verso": "bidirectional",
+      "fila": [
+        "valve-isolation-filling-unit-collettore-ritorno-a-a [isolation]"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 1,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "pdc-master.water_supply": {
+      "verso": "out",
+      "fila": [
+        "valve-isolation-pdc-master-water-supply [isolation]",
+        "collettore-mandata"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 1,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "pdc-master.water_return": {
+      "verso": "in",
+      "fila": [
+        "strainer-pdc-master-water-return [filtration]",
+        "valve-isolation-strainer-pdc-master-water-return-a [isolation]",
+        "collettore-ritorno"
+      ],
+      "filtri": 1,
+      "organi_di_chiusura": 1,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "pdc-slave.water_supply": {
+      "verso": "out",
+      "fila": [
+        "valve-isolation-pdc-slave-water-supply [isolation]",
+        "collettore-mandata"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 1,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "pdc-slave.water_return": {
+      "verso": "in",
+      "fila": [
+        "strainer-pdc-slave-water-return [filtration]",
+        "valve-isolation-strainer-pdc-slave-water-return-a [isolation]",
+        "collettore-ritorno"
+      ],
+      "filtri": 1,
+      "organi_di_chiusura": 1,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "pressure-gauge-collettore-ritorno-a.a": {
+      "verso": "bidirectional",
+      "fila": [
+        "valve-isolation-pressure-gauge-collettore-ritorno-a-a [isolation]"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 1,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "radiatori.in": {
+      "verso": "in",
+      "fila": [
+        "valve-isolation-circolatore-b [isolation]",
+        "circolatore",
+        "valve-isolation-accumulo-secondary-out [isolation]"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 2,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    },
+    "radiatori.out": {
+      "verso": "out",
+      "fila": [
+        "valve-isolation-accumulo-secondary-in [isolation]"
+      ],
+      "filtri": 0,
+      "organi_di_chiusura": 1,
+      "organi_fra_filtro_e_macchina": 0,
+      "organi_consecutivi": 0
+    }
+  },
+  "sicurezze": {
+    "accumulo.primary_in": {
+      "fila": [
+        "valve-isolation-accumulo-primary-in",
+        "tee-valve-safety-collettore-mandata-b",
+        "collettore-mandata"
+      ],
+      "prima_dell_intercettazione": [],
+      "sicurezze_prima_dell_intercettazione": [],
+      "sicurezze_sul_tratto": [
+        "valve-safety-collettore-mandata-b"
+      ],
+      "ruolo": "riserva"
+    },
+    "pdc-master.water_supply": {
+      "fila": [
+        "valve-isolation-pdc-master-water-supply",
+        "collettore-mandata"
+      ],
+      "prima_dell_intercettazione": [],
+      "sicurezze_prima_dell_intercettazione": [],
+      "sicurezze_sul_tratto": [],
+      "ruolo": "generatore",
+      "a_bordo": [
+        "circulation"
+      ]
+    },
+    "pdc-slave.water_supply": {
+      "fila": [
+        "valve-isolation-pdc-slave-water-supply",
+        "collettore-mandata"
+      ],
+      "prima_dell_intercettazione": [],
+      "sicurezze_prima_dell_intercettazione": [],
+      "sicurezze_sul_tratto": [],
+      "ruolo": "generatore",
+      "a_bordo": [
+        "circulation"
+      ]
+    }
+  },
+  "sfoghi_aria": [
+    "air-vent-accumulo-primary-out"
+  ],
+  "stacchi": {
+    "air-vent-accumulo-primary-out": {
+      "funzioni": [
+        "air_release"
+      ],
+      "regge": "accumulo",
+      "specie": "static",
+      "servizio": "andata",
+      "servizio_della_tratta_ospite": [],
+      "coerente_con_la_tratta_ospite": true,
+      "freccia": false,
+      "verso_la_radice": null,
+      "specie_dal_modello": "static"
+    },
+    "drain-connection-accumulo-primary-in": {
+      "funzioni": [
+        "drain"
+      ],
+      "regge": "accumulo",
+      "specie": "outbound",
+      "servizio": "andata",
+      "servizio_della_tratta_ospite": [],
+      "coerente_con_la_tratta_ospite": true,
+      "freccia": true,
+      "verso_la_radice": false,
+      "specie_dal_modello": "outbound"
+    },
+    "expansion-connection-collettore-ritorno-a": {
+      "funzioni": [
+        "expansion"
+      ],
+      "regge": "tee-expansion-connection-collettore-ritorno-a",
+      "specie": "static",
+      "servizio": "ritorno",
+      "servizio_della_tratta_ospite": [
+        "False"
+      ],
+      "coerente_con_la_tratta_ospite": true,
+      "freccia": false,
+      "verso_la_radice": null,
+      "specie_dal_modello": "static"
+    },
+    "filling-unit-collettore-ritorno-a": {
+      "funzioni": [
+        "filling"
+      ],
+      "regge": "tee-filling-unit-collettore-ritorno-a",
+      "specie": "inbound",
+      "servizio": "ritorno",
+      "servizio_della_tratta_ospite": [
+        "False"
+      ],
+      "coerente_con_la_tratta_ospite": true,
+      "freccia": true,
+      "verso_la_radice": true,
+      "specie_dal_modello": "inbound"
+    },
+    "pressure-gauge-collettore-ritorno-a": {
+      "funzioni": [
+        "pressure_measurement"
+      ],
+      "regge": "tee-pressure-gauge-collettore-ritorno-a",
+      "specie": "static",
+      "servizio": "ritorno",
+      "servizio_della_tratta_ospite": [
+        "False"
+      ],
+      "coerente_con_la_tratta_ospite": true,
+      "freccia": false,
+      "verso_la_radice": null,
+      "specie_dal_modello": "static"
+    },
+    "valve-safety-collettore-mandata-b": {
+      "funzioni": [
+        "safety"
+      ],
+      "regge": "tee-valve-safety-collettore-mandata-b",
+      "specie": "static",
+      "servizio": "andata",
+      "servizio_della_tratta_ospite": [
+        "True"
+      ],
+      "coerente_con_la_tratta_ospite": true,
+      "freccia": false,
+      "verso_la_radice": null,
+      "specie_dal_modello": "static"
+    }
+  },
+  "catene": {
+    "accumulo.cold_in": {
+      "verso": "in",
+      "primo_rettilineo_mm": 17.5,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-dhw-acquedotto-a",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "accumulo.dhw_out": {
+      "verso": "out",
+      "primo_rettilineo_mm": 40.0,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-dhw-hot-accumulo-dhw-out",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 90,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "accumulo.primary_in": {
+      "verso": "in",
+      "primo_rettilineo_mm": 75.0,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-accumulo-primary-in",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "accumulo.primary_out": {
+      "verso": "out",
+      "primo_rettilineo_mm": 32.5,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-accumulo-primary-out",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "accumulo.secondary_in": {
+      "verso": "in",
+      "primo_rettilineo_mm": 57.5,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-accumulo-secondary-in",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "accumulo.secondary_out": {
+      "verso": "out",
+      "primo_rettilineo_mm": 35.0,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-accumulo-secondary-out",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "expansion-connection-collettore-ritorno-a.a": {
+      "verso": "bidirectional",
+      "primo_rettilineo_mm": 15.0,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a",
+          "funzioni": [
+            "isolation_locked_open"
+          ],
+          "rotazione": 90,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "filling-unit-collettore-ritorno-a.a": {
+      "verso": "bidirectional",
+      "primo_rettilineo_mm": 15.0,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-filling-unit-collettore-ritorno-a-a",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 90,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "pdc-master.water_return": {
+      "verso": "in",
+      "primo_rettilineo_mm": 22.5,
+      "catena": [
+        {
+          "pezzo": "strainer-pdc-master-water-return",
+          "funzioni": [
+            "filtration"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        },
+        {
+          "pezzo": "valve-isolation-strainer-pdc-master-water-return-a",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 12.5,
+          "distanza_dal_precedente_mm": 2.5,
+          "centro_lungo_l_asse_mm": 15.0,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "pdc-master.water_supply": {
+      "verso": "out",
+      "primo_rettilineo_mm": 30.0,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-pdc-master-water-supply",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "pdc-slave.water_return": {
+      "verso": "in",
+      "primo_rettilineo_mm": 25.0,
+      "catena": [
+        {
+          "pezzo": "strainer-pdc-slave-water-return",
+          "funzioni": [
+            "filtration"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        },
+        {
+          "pezzo": "valve-isolation-strainer-pdc-slave-water-return-a",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 12.5,
+          "distanza_dal_precedente_mm": 2.5,
+          "centro_lungo_l_asse_mm": 15.0,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "pdc-slave.water_supply": {
+      "verso": "out",
+      "primo_rettilineo_mm": 32.5,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-pdc-slave-water-supply",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "pressure-gauge-collettore-ritorno-a.a": {
+      "verso": "bidirectional",
+      "primo_rettilineo_mm": 15.0,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-pressure-gauge-collettore-ritorno-a-a",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 90,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
+    "radiatori.in": {
+      "verso": "in",
+      "primo_rettilineo_mm": 35.0,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-circolatore-b",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    }
+  },
+  "simboli_a_tratto_spesso": [
+    "strainer-pdc-master-water-return",
+    "strainer-pdc-slave-water-return"
+  ],
+  "rilievi_qualita": [
+    "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 32%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)"
+  ],
+  "rilievi_correttezza": []
+}

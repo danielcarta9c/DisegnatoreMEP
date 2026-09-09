@@ -123,6 +123,15 @@ def build_report(
                     )
                     if item.reason is GapReason.NO_COMMON_RUN
                     else (
+                        f"il catalogo di {item.anchor.component_id} non dice se la "
+                        f"macchina porta a bordo "
+                        f"{naming.family_of((item.missing_function,), item.rule_id).name.lower()}: "
+                        f"il dato e' ignoto, non assente, e questo accessorio "
+                        f"{CATEGORY_ADJECTIVES[item.category]} non si aggiunge senza il "
+                        f"dato: va chiesto al progettista"
+                    )
+                    if item.reason is GapReason.ON_BOARD_UNKNOWN
+                    else (
                         f"in catalogo non c'e' nessun pezzo che faccia da "
                         f"{naming.family_of((item.missing_function,), item.rule_id).name.lower()} su "
                         f"{naming.name_of_medium(item.medium)}, quindi questo accessorio "

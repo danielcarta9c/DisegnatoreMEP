@@ -10,10 +10,36 @@ mai queste coordinate.
 import hashlib
 import json
 import math
+from enum import StrEnum
 
 from pydantic import Field
 
 from disegnatore_mep.model.base import FiniteFloat, StrictModel
+
+
+class FlowKind(StrEnum):
+    """Che specie di tratto e', ai fini della freccia (DRAW-005-R1, I-042).
+
+    La freccia di verso compare solo dove esiste un flusso ordinario diretto.
+    Uno stacco di servizio non lo ha: il manometro e il vaso insistono sul
+    ritorno tecnico senza portare una circolazione; lo sfiato e la sicurezza
+    su uno stacco nemmeno. Il riempimento e' acqua che **entra** nel circuito,
+    e uno scarico esplicitamente modellato e' acqua che ne **esce**. La specie
+    si decide sul modello e sul catalogo, mai sulla geometria.
+    """
+
+    ORDINARY = "ordinary"
+    """Una tubazione del percorso: la freccia segue il verso del modello."""
+
+    STATIC = "static"
+    """Uno stacco senza circolazione ordinaria: nessuna freccia."""
+
+    INBOUND = "inbound"
+    """Uno stacco da cui l'acqua entra nel circuito: la freccia va verso il
+    tratto che lo regge."""
+
+    OUTBOUND = "outbound"
+    """Uno stacco da cui l'acqua esce dal circuito: la freccia se ne allontana."""
 
 
 class Point(StrictModel):
@@ -79,10 +105,23 @@ class RoutedTrunk(StrictModel):
     medium: str = ""
     """Il fluido, che decide colore e tratto: la rete da sola non basta."""
     supply: bool = True
-    """Andata o ritorno. Su una tavola sono due linee distinte, non una."""
+    """Andata o ritorno. Su una tavola sono due linee distinte, non una.
+
+    Per uno stacco e' il servizio della tratta che lo regge (DRAW-005-R1,
+    I-042): il manometro appeso al ritorno e' del ritorno, blu, comunque lo
+    stacco sia disegnato."""
     connection_ids: list[str] = Field(default_factory=list)
     segments: list[list[Point]] = Field(default_factory=list)
     crossings: list[Point] = Field(default_factory=list)
+    flow_kind: FlowKind = FlowKind.ORDINARY
+    """La specie del tratto, che decide se e come si disegna la freccia.
+
+    Una geometria agli atti senza questo campo si legge ancora, come flusso
+    ordinario: e' cio' che ogni tratta era prima che la specie esistesse."""
+    flow_from_start: bool = True
+    """Il verso del flusso rispetto alla spezzata: dal primo punto all'ultimo,
+    oppure al contrario. Lo decide il modello — la porta da cui il fluido esce
+    — e non l'ordine in cui la tratta e' stata scritta o instradata."""
 
 
 class PlacedLabel(StrictModel):

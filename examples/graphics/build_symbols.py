@@ -277,24 +277,39 @@ def valve_check_body(w: float, h: float) -> str:
     )
 
 
+STRAINER_BAR_INSET = 0.1
+"""Dove stanno le barrette terminali del filtro, come frazione della larghezza
+dal capo: mezzo millimetro dentro la porta, cosi' che il tubo le raggiunga."""
+STRAINER_BAR_HALF_HEIGHT = 0.25
+"""Mezza altezza delle barrette, come frazione dell'altezza: a cavallo dell'asse."""
+
+
 def strainer_body(w: float, h: float) -> str:
-    """Filtro a Y, nella forma classica (DRAW-005, I-031): la linea passa
-    dritta fra le due porte, dal centro scende il **ramo inclinato** a
-    quarantacinque gradi verso il basso, nel riquadro del simbolo verso
-    sinistra, e in fondo al ramo sta il **gambo**, il tappo del cestello,
-    perpendicolare al ramo. Il contratto e' che il gambo non punti mai in su:
-    per questo le rotazioni ammesse sono 0 e 270, e il posatore sceglie fra
-    quelle. Il verso dell'acqua non entra nella scelta: lo dice il tubo, non il
-    filtro. La Y si legge cosi', e il segno precedente — un triangolo a V sotto
-    la linea — non era mai stato approvato dal PO."""
+    """Filtro a Y, nella forma classica (DRAW-005, I-031; DRAW-005-R1, I-041):
+    la linea passa dritta fra le due porte, dal centro scende il **ramo
+    inclinato** a quarantacinque gradi verso il basso, nel riquadro del simbolo
+    verso sinistra, e in fondo al ramo sta il **gambo**, il tappo del cestello,
+    perpendicolare al ramo. Ai due capi dell'asse passante stanno le **due
+    barrette terminali**, perpendicolari all'asse e a cavallo di esso: sono
+    cio' che chiude il segno e lo distingue da una linea con un ramo. Il
+    contratto e' che il gambo non punti mai in su: per questo le rotazioni
+    ammesse sono 0 e 270, e il posatore sceglie fra quelle. Il verso dell'acqua
+    non entra nella scelta: lo dice il tubo, non il filtro. Il tratto e' quello
+    spesso, dichiarato nel manifesto e non nel renderer."""
     y = h / 2
     cx = w / 2
     reach = min(w, h) * 0.32
     tip_x, tip_y = cx - reach, y + reach
     cap = min(w, h) * 0.1 / 2**0.5
+    half = h * STRAINER_BAR_HALF_HEIGHT
+    bars = "".join(
+        f'<line x1="{n(x)}" y1="{n(y - half)}" x2="{n(x)}" y2="{n(y + half)}"/>'
+        for x in (w * STRAINER_BAR_INSET, w * (1 - STRAINER_BAR_INSET))
+    )
     return (
         f'<line x1="0" y1="{n(y)}" x2="{n(w)}" y2="{n(y)}"/>'
-        f'<line x1="{n(cx)}" y1="{n(y)}" x2="{n(tip_x)}" y2="{n(tip_y)}"/>'
+        + bars
+        + f'<line x1="{n(cx)}" y1="{n(y)}" x2="{n(tip_x)}" y2="{n(tip_y)}"/>'
         f'<line x1="{n(tip_x - cap)}" y1="{n(tip_y - cap)}" '
         f'x2="{n(tip_x + cap)}" y2="{n(tip_y + cap)}"/>'
     )
@@ -592,12 +607,72 @@ def coil_between(
     )
 
 
+def smooth_coil_between(
+    entry: dict[str, Any], exit: dict[str, Any], w: float, h: float, rows: int
+) -> str:
+    """La serpentina **morbida** (DRAW-005-R1, I-045): un tracciato solo da un
+    attacco all'altro, con le righe orizzontali unite da semicerchi e la
+    curva finale raccordata, centrata nel mantello.
+
+    E' lo stesso contratto di `coil_between` — continuo dall'ingresso
+    all'uscita, dentro il mantello — con un corpo che si legge come una
+    serpentina e non come una spezzata rettangolare rigida. Le righe stanno a
+    passo costante dall'attacco d'ingresso verso l'alto, simmetriche rispetto
+    all'asse verticale del mantello; il numero di righe e' pari, cosi' che
+    l'ultima arrivi dal lato dell'uscita. Porte e attacchi non cambiano.
+
+    Il generatore la scrive per un ingresso a sinistra e un'uscita in alto,
+    che e' la forma dell'accumulo combinato; gli altri casi restano a
+    `coil_between`.
+    """
+    if entry["face"] != "left" or exit["face"] != "top":
+        raise ValueError("la serpentina morbida vuole l'ingresso a sinistra e l'uscita in alto")
+    if rows % 2:
+        raise ValueError("la serpentina morbida vuole un numero pari di righe")
+    x, y, bw, bh = _shell_of(w, h)
+    centre = x + bw / 2
+    exit_x, entry_y = exit["x_mm"], entry["y_mm"]
+    # Il passo fra le righe: dall'ingresso fino a un quarto del mantello dal
+    # bordo alto, dove parte la risalita verso l'uscita.
+    top_row = y + bh * 0.28
+    pitch = (entry_y - top_row) / (rows - 1)
+    radius = pitch / 2
+    # La riga finisce dove comincia l'arco: l'ultima curva, di un quarto di
+    # giro, porta il tracciato esattamente sull'ascissa dell'uscita.
+    left = exit_x + radius
+    right = 2 * centre - left
+    parts = [f"M{n(entry['x_mm'])} {n(entry_y)}"]
+    row_y = entry_y
+    at_right = True
+    parts.append(f"L{n(right)} {n(row_y)}")
+    for _ in range(1, rows):
+        next_y = row_y - pitch
+        if at_right:
+            # Semicerchio a destra, verso l'alto: da (right, row_y) a (right, next_y).
+            parts.append(f"A{n(radius)} {n(radius)} 0 0 0 {n(right)} {n(next_y)}")
+            parts.append(f"L{n(left)} {n(next_y)}")
+        else:
+            parts.append(f"A{n(radius)} {n(radius)} 0 0 1 {n(left)} {n(next_y)}")
+            parts.append(f"L{n(right)} {n(next_y)}")
+        at_right = not at_right
+        row_y = next_y
+    # L'ultima riga arriva da destra verso sinistra e si raccorda in su.
+    parts.append(f"A{n(radius)} {n(radius)} 0 0 1 {n(exit_x)} {n(row_y - radius)}")
+    parts.append(f"L{n(exit_x)} {n(y)}")
+    parts.append(f"L{n(exit_x)} {n(exit['y_mm'])}")
+    d = " ".join(parts)
+    return (
+        f'<path class="coil" data-from="{entry["id"]}" data-to="{exit["id"]}" d="{d}"/>'
+    )
+
+
 def reserve_body(
     w: float,
     h: float,
     ports: list[dict[str, Any]],
     coil: tuple[str, str] | None = None,
     rows: int = 5,
+    smooth: bool = False,
 ) -> str:
     """Una riserva: il mantello, gli attacchi che entrano nel volume e, se un
     fluido la attraversa senza mescolarsi, il suo serpentino.
@@ -621,7 +696,8 @@ def reserve_body(
     stubs = stubs_into_the_shell([item for item in ports if item["id"] not in through], w, h)
     if coil is None:
         return shell + stubs
-    return shell + coil_between(by_id[coil[0]], by_id[coil[1]], w, h, rows) + stubs
+    drawn = smooth_coil_between if smooth else coil_between
+    return shell + drawn(by_id[coil[0]], by_id[coil[1]], w, h, rows) + stubs
 
 
 def diverting_valve_body(w: float, h: float) -> str:
@@ -1001,6 +1077,11 @@ class SymbolSpec:
     foglio quando il corpo ruota (DRAW-005, I-033)."""
     version: str = VERSION
     """La versione del manifesto: sale quando il segno cambia forma o porte."""
+    stroke_weight: str = "medium"
+    """Il peso del tratto dichiarato dal simbolo (DRAW-005-R1, I-041): `thin`,
+    `medium` o `thick`. E' un dato del manifesto, che tavola, legenda e foglio
+    di riscontro traducono nei millimetri dello standard; il renderer non
+    conosce eccezioni per identificativo."""
     clearance_mm: float = CLEARANCE_MM
     """L'area di rispetto sulle facce con porta. Un raccordo e' un punto della
     tubazione, non un apparecchio, e ne tiene una minima (D-119)."""
@@ -1014,6 +1095,7 @@ def inline_symbol(
     source: str,
     allowed_rotations_deg: list[int] | None = None,
     version: str = VERSION,
+    stroke_weight: str = "medium",
 ) -> SymbolSpec:
     """Componente in linea: due porte opposte, a sinistra e a destra."""
     w, h = size
@@ -1028,6 +1110,7 @@ def inline_symbol(
         source=source,
         allowed_rotations_deg=list(allowed_rotations_deg or ALLOWED_ROTATIONS_DEG),
         version=version,
+        stroke_weight=stroke_weight,
     )
 
 
@@ -1252,14 +1335,20 @@ SYMBOLS: list[SymbolSpec] = [
         height_mm=STORAGE[1],
         inline=False,
         ports=BUFFER_COMBINED_PORTS,
-        # Il serpentino sanitario, continuo da `cold_in` a `dhw_out`; i quattro
-        # attacchi tecnici entrano nel volume del mantello (I-036, I-037).
+        # Il serpentino sanitario, continuo da `cold_in` a `dhw_out`, come
+        # serpentina morbida e centrata (I-036, I-037, I-045); i quattro
+        # attacchi tecnici entrano nel volume del mantello.
         body=reserve_body(
-            STORAGE_W, STORAGE_H, BUFFER_COMBINED_PORTS, coil=("cold_in", "dhw_out"), rows=6
+            STORAGE_W,
+            STORAGE_H,
+            BUFFER_COMBINED_PORTS,
+            coil=("cold_in", "dhw_out"),
+            rows=6,
+            smooth=True,
         ),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="2.0.0",
+        version="3.0.0",
     ),
     SymbolSpec(
         id="dhw-heat-pump",
@@ -1333,7 +1422,7 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     inline_symbol(
         "strainer", "Filtro a Y", INLINE_ACCESSORY, strainer_body, SOURCE_PRACTICE_HYDRONIC,
-        STRAINER_ROTATIONS_DEG, version="2.0.0",
+        STRAINER_ROTATIONS_DEG, version="3.0.0", stroke_weight="thick",
     ),
     inline_symbol("pump-circulator", "Pompa di circolazione", DEVICE, pump_body, SOURCE_PRACTICE_HYDRONIC),
     single_port_symbol(
@@ -1460,6 +1549,7 @@ def manifest_payload(spec: SymbolSpec) -> dict[str, Any]:
         payload["flow_glyphs"] = spec.flow_glyphs
     if spec.upright_glyphs:
         payload["upright_glyphs"] = spec.upright_glyphs
+    payload["stroke_weight"] = spec.stroke_weight
     payload["source"] = spec.source
     return payload
 

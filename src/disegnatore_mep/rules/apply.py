@@ -310,11 +310,16 @@ def evaluate_in_phases(
     E' la passata di `saturate`, esposta perche' chi rifa' il ciclo a mano — le
     prove del motore — lo rifaccia con le stesse fasi.
     """
+    # Parlano dopo anche le regole che leggono il **dominio di protezione**
+    # (I-046): «tagliato fuori da ogni sicurezza» e' vero di ogni generatore
+    # finche' la sicurezza di circuito non e' stata posata, e una domanda
+    # aperta fatta in quel momento sarebbe una domanda sbagliata.
     closers = RuleRegistry(
         rules=tuple(
             item
             for item in rules.all()
             if item.satisfied_by.scope is SatisfactionScope.ON_THE_GROUP
+            or item.when.anchor_cut_off_from is not None
         )
     )
     others = RuleRegistry(

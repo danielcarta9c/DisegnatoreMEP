@@ -34,14 +34,18 @@ RULES = ROOT / "rules" / "hydronic"
 PROVA = ROOT / "examples" / "prova"
 
 LARGE_ONLY = {
-    "safety-relief-where-heat-enters-the-water",
     "flow-temperature-where-heat-enters-the-water",
     "air-release-where-the-water-is-hottest",
+    "safety-relief-where-heat-enters-the-water",
 }
+"""Le regole del solo regime grande: sopra i 35 kW la Raccolta R vuole i
+dispositivi su ogni generatore."""
 SMALL_ONLY = {
     "air-vent-on-the-stored-volume",
-    "safety-relief-on-the-stored-volume",
+    "safety-relief-on-the-closed-circuit",
 }
+"""Le regole del solo regime piccolo: lo sfogo sul serbatoio, e la sicurezza
+di circuito sulla mandata generale vicino al gruppo dei generatori (I-046)."""
 
 
 def catalog() -> ComponentRegistry:
