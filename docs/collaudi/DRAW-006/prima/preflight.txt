@@ -1,0 +1,1 @@
+the plant does not fit on any ordinary sheet format: run p6-a-1-4 has no straight stretch of 10mm for valve-isolation that keeps 2mm clear of the other symbols and runs: symbols are never shrunk to fit, give the run a longer straight length
