@@ -1,13 +1,13 @@
 {
   "id": "pressure-gauge",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Manometro",
   "functions": [
     "pressure_measurement"
   ],
   "traits": [
     "maintainable",
-    "shutoff_ordinary",
+    "shutoff_instrument_tap",
     "attachment_branch"
   ],
   "symbol_id": "pressure-gauge",
@@ -22,6 +22,7 @@
     }
   ],
   "sources": [
-    "CONV-FOUNDATION"
+    "CONV-FOUNDATION",
+    "Raccolta R ed. 2009, cap. R.2.C punto 2.5, e Caleffi serie 690: la presa del manometro porta il proprio rubinetto a tre vie (traduzione PM del 2026-09-09)"
   ]
 }

@@ -1,6 +1,6 @@
 {
   "id": "filling-unit",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Gruppo di riempimento",
   "functions": [
     "filling"
@@ -10,8 +10,11 @@
     "shutoff_ordinary",
     "attachment_branch"
   ],
+  "carries_on_board": [
+    "isolation"
+  ],
   "symbol_id": "filling-unit",
-  "composite": false,
+  "composite": true,
   "ports": [
     {
       "id": "a",
@@ -22,6 +25,7 @@
     }
   ],
   "sources": [
-    "CONV-FOUNDATION"
+    "CONV-FOUNDATION",
+    "Caleffi serie 553, gruppo di riempimento automatico con intercettazione incorporata (traduzione PM del 2026-09-09)"
   ]
 }

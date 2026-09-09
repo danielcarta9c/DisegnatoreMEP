@@ -251,6 +251,32 @@ def valve_isolation_body(w: float, h: float) -> str:
     )
 
 
+def gauge_cock_body(w: float, h: float) -> str:
+    """Rubinetto portamanometro a tre vie (UNI 9511 Tab. 3, tre vie).
+
+    Il segno del valvolame con **tre** triangoli convergenti, come la
+    deviatrice; la terza via non prosegue nella tubazione ma finisce su un
+    tappo — e' l'attacco per il manometro campione, che non e' una tubazione
+    dell'impianto e percio' non e' una porta del componente. E' cosi' che sulla
+    tavola il rubinetto della presa si distingue a colpo d'occhio sia dalla
+    valvola di intercettazione, che di triangoli ne ha due, sia dalla
+    deviatrice, che la terza via ce l'ha aperta.
+    """
+    cx, cy = w / 2, h / 2
+    d = min(w, h) * 0.28
+    s = d * 0.8
+    cap = h * 0.12
+    return (
+        f'<line x1="0" y1="{n(cy)}" x2="{n(cx - d)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(cx + d)}" y1="{n(cy)}" x2="{n(w)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy - d)}" x2="{n(cx)}" y2="{n(cap)}"/>'
+        f'<line x1="{n(cx - s)}" y1="{n(cap)}" x2="{n(cx + s)}" y2="{n(cap)}"/>'
+        f'<path d="M{n(cx - d)} {n(cy - s)} L{n(cx - d)} {n(cy + s)} L{n(cx)} {n(cy)} Z"/>'
+        f'<path d="M{n(cx + d)} {n(cy - s)} L{n(cx + d)} {n(cy + s)} L{n(cx)} {n(cy)} Z"/>'
+        f'<path d="M{n(cx - s)} {n(cy - d)} L{n(cx + s)} {n(cy - d)} L{n(cx)} {n(cy)} Z"/>'
+    )
+
+
 def valve_check_body(w: float, h: float) -> str:
     """Valvola di non ritorno (UNI 9511 Tab. 3, D-122): una **z** — barra alta,
     diagonale, barra bassa — con la freccia del senso del flusso sopra.
@@ -1416,6 +1442,10 @@ SYMBOLS: list[SymbolSpec] = [
         clearance_mm=FITTING_CLEARANCE_MM,
     ),
     inline_symbol("valve-isolation", "Valvola di intercettazione", INLINE_ACCESSORY, valve_isolation_body, SOURCE_UNI_TAB3),
+    inline_symbol(
+        "valve-gauge-cock-3way", "Rubinetto portamanometro a tre vie",
+        INLINE_ACCESSORY, gauge_cock_body, SOURCE_UNI_TAB3,
+    ),
     inline_symbol(
         "valve-check", "Valvola di ritegno", INLINE_ACCESSORY, valve_check_body,
         SOURCE_UNI_CHECK_VALVE, version="3.0.0",

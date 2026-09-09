@@ -460,9 +460,20 @@ def test_ogni_gruppo_manutenibile_si_isola_su_ogni_attacco_verso_l_esterno(index
     """La proprieta' che sostituisce «una valvola per ogni porta»: da ogni
     attacco di ogni pezzo manutenibile si incontra un organo di chiusura
     prima di uscire dal gruppo, oppure si arriva a un membro dello stesso
-    gruppo, che l'organo lo condivide."""
+    gruppo, che l'organo lo condivide.
+
+    Chi l'organo lo **dichiara dentro il proprio mantello** e' isolato lo
+    stesso, e non lo si vede sulla tubazione perche' non c'e' niente da
+    disegnare: il gruppo di riempimento pubblicato incorpora la propria
+    intercettazione (DRAW-006, blocco B), e pretendergliene una esterna
+    sarebbe pretendere il pezzo ridondante che il PM ha tolto."""
     walk = _walk(index)
-    serviceable = sorted(item for item in walk.definitions if walk.maintainable(item))
+    serviceable = sorted(
+        item
+        for item in walk.definitions
+        if walk.maintainable(item)
+        and not CLOSING_FUNCTIONS & set(walk.definitions[item].carries_on_board)
+    )
     assert serviceable
     uncovered: list[str] = []
     for component_id in serviceable:

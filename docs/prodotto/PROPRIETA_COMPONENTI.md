@@ -25,6 +25,7 @@
 | **Si chiude come tutti** | Se lo si deve chiudere, lo fa un organo comune: non chiede niente di speciale. | È il caso ordinario, e va detto lo stesso. Ma leggi qui sotto: questa casella raccoglie anche chi in pratica non si chiude mai. | La grande maggioranza dei pezzi |
 | **Non si chiude mai** | Fra lui e ciò che protegge non ci va **nulla** che si possa chiudere. | Impedisce che un rubinetto finisca davanti a un organo di sicurezza: una valvola chiusa lì è un impianto che scoppia. È un vincolo di sicurezza, non una comodità di esercizio. | Valvola di sicurezza, di riscaldamento e sanitaria |
 | **Si chiude solo con organo bloccabile** | Lo si isola soltanto con una valvola che si blocca aperta e non si chiude per distrazione. | Il vaso di espansione va potuto staccare per la verifica, ma non deve mai restare escluso per sbaglio. | Vaso di espansione, di riscaldamento e sanitario |
+| **Si chiude con il rubinetto della propria presa** | Lo si toglie chiudendo il rubinetto della derivazione su cui è letto, non una valvola della condotta. | Uno strumento indicatore si legge su una presa dedicata e corta, e il suo rubinetto — quello a tre vie, con l'attacco per il manometro campione — sta sullo stacco: non interrompe la tubazione e non separa nessun pezzo dalla propria sicurezza. È anche ciò che distingue lo strumento dal pressostato, che a impianto in pressione non si smonta affatto. | Manometro |
 | **Sta in linea** | Il tubo ci passa dentro, o ci arriva: è sul percorso. | Il pezzo appartiene alla fila di ciò che sta lungo quel tubo, in un ordine che si legge da monte a valle. | Filtro, defangatore, circolatore, volano, bollitore |
 | **Sta su uno stacco** | Pende dal tubo con una propria derivazione: non è un organo di passaggio. | Quel pezzo ha una sua piccola fila laterale, con i propri accessori, che si legge a parte dalla fila del tubo principale. | Vaso di espansione, valvola di sicurezza, gruppo di riempimento, scarico, manometro |
 
@@ -66,7 +67,8 @@ carica.
 
 Ogni pezzo, macchina o accessorio che sia, **deve** dire due cose:
 
-1. **Come si lascia chiudere** — come tutti, mai, o solo con organo bloccabile.
+1. **Come si lascia chiudere** — come tutti, mai, solo con organo bloccabile, oppure con il
+   rubinetto della propria presa.
 2. **Come si attacca** — in linea sul tubo, oppure su uno stacco.
 
 Non c'è un valore sottinteso per chi non lo scrive: un componente che tace **non entra in

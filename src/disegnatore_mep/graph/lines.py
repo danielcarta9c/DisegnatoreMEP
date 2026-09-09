@@ -62,10 +62,6 @@ DISTRIBUTION_FUNCTIONS = frozenset({"distribution"})
 dentro, e da ogni sua uscita ne parte una nuova col proprio numero — il PM
 parla di «tre circuiti secondari», non di tre rami di uno stesso nome."""
 
-PASS_THROUGH_FUNCTIONS = frozenset({"diversion"})
-"""Chi sdoppia il flusso senza essere un raccordo: la valvola deviatrice.
-La linea la attraversa come attraversa un T, e il ramo deviato prende la
-lettera. I raccordi veri si riconoscono gia' da `is_a_fitting`."""
 
 
 @dataclass(frozen=True)
@@ -243,11 +239,17 @@ class _Liner:
         return frozenset(self._definitions[component_id].functions)
 
     def _passes_through(self, component_id: str) -> bool:
-        """Un raccordo o una deviatrice: la linea principale li attraversa."""
-        return (
-            self._definitions[component_id].is_a_fitting
-            or bool(self._functions(component_id) & PASS_THROUGH_FUNCTIONS)
-        )
+        """Un raccordo o un multivia: la linea principale li attraversa.
+
+        Quali pezzi si attraversino non e' un elenco di mestieri scritto qui: un
+        raccordo si riconosce da `is_a_fitting`, un multivia dal fatto che il
+        **catalogo dichiara i suoi stati idraulici** — cioe' dichiara per dove
+        la corsa puo' passare (DRAW-006, blocco C). Il dato e' uno solo, e lo
+        legge anche l'analisi della sicurezza: due elenchi scritti in due moduli
+        divergerebbero alla prima valvola nuova.
+        """
+        definition = self._definitions[component_id]
+        return definition.is_a_fitting or bool(definition.hydraulic_states)
 
     def _ends_the_line(self, component_id: str) -> bool:
         """Una macchina: sorgente, utilizzatore, riserva, confine, collettore.

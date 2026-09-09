@@ -15,7 +15,7 @@
     "attachment_inline"
   ],
   "symbol_id": "gas-boiler",
-  "composite": true,
+  "composite": false,
   "ports": [
     {
       "id": "gas_in",

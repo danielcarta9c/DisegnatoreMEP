@@ -48,7 +48,7 @@ from disegnatore_mep.model.project import (
 from disegnatore_mep.model.types import PlantRegime
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.context import RuleContext
-from disegnatore_mep.rules.proposal import GapReason
+from disegnatore_mep.rules.proposal import GapReason, RuleGap
 from disegnatore_mep.rules.registry import RuleRegistry
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -253,13 +253,28 @@ def deviatrice_fra_due_macchine(machine: str) -> ProjectModel:
     )
 
 
+SAFETY_RULES = ("safety-relief-on-the-closed-circuit", "safety-relief-on-an-isolable-generator")
+"""Le due regole della sicurezza: quella del circuito e quella del generatore
+isolabile. Le altre regole di rete hanno una cardinalita' diversa e un'altra
+prova: qui si guarda cosa succede alla protezione."""
+
+
 def completato(
     project: ProjectModel, registry: ComponentRegistry | None = None
-) -> tuple[ProjectModel, list[str]]:
-    """Il modello completato e i punti aperti, letti come `motivo su pezzo`."""
+) -> tuple[ProjectModel, list[RuleGap]]:
+    """Il modello completato e i suoi punti aperti."""
     used = registry or catalog()
     model, _, gaps = saturate(project, used, rules())
-    return model, [f"{item.reason.value}:{item.anchor.component_id}" for item in gaps]
+    return model, gaps
+
+
+def punti(gaps: list[RuleGap], reason: GapReason, rules_ids: tuple[str, ...] = SAFETY_RULES) -> list[str]:
+    """I punti aperti di quel motivo, per quelle regole, letti come `motivo:pezzo`."""
+    return sorted(
+        f"{item.reason.value}:{item.anchor.component_id}"
+        for item in gaps
+        if item.reason is reason and item.rule_id in rules_ids
+    )
 
 
 def pezzi_con(
@@ -371,22 +386,34 @@ def test_nessun_modulo_tiene_un_proprio_elenco_dei_mestieri_multivia() -> None:
 def test_la_nomenclatura_attraversa_chi_dichiara_gli_stati() -> None:
     """La linea attraversa una multivia perche' il **catalogo** lo dichiara.
 
-    Si prova sul dato: la stessa valvola, con e senza stati dichiarati, e la
-    lettura delle linee che cambia di conseguenza.
+    Si prova sul dato, e sul pezzo in cui la differenza si vede: una valvola che
+    devia **e** ripartisce. Un pezzo che ripartisce chiude la linea — la linea
+    ci finisce dentro e da ogni uscita ne riparte una nuova — a meno che non lo
+    si attraversi. Con gli stati dichiarati la linea passa; togliendoli, il
+    pezzo torna a chiuderla. Se la nomenclatura tenesse un proprio elenco di
+    mestieri, l'esito non cambierebbe.
     """
     project = deviatrice_fra_due_macchine(GENERIC)
     naming, line_naming = Naming.from_directory(NAMING), LineNaming.from_directory(NAMING)
 
-    def indirizzi(registry: ComponentRegistry) -> dict[str, str]:
+    def linee(registry: ComponentRegistry) -> tuple[str, ...]:
         graph = read_plant(project, registry, naming)
-        return dict(read_lines(project, registry, graph, line_naming).addresses)
+        return tuple(item.name for item in read_lines(project, registry, graph, line_naming).lines)
 
-    muta = diverter().model_copy(update={"hydraulic_states": []})
-    senza = ComponentRegistry(
-        [item for item in catalog().all() if item.id != DIVERTER] + [muta],
-        symbols=symbols(),
-    )
-    assert indirizzi(catalog()) != indirizzi(senza), (
+    def con(states: bool) -> ComponentRegistry:
+        base = diverter()
+        variante = base.model_copy(
+            update={
+                "functions": [*base.functions, "distribution"],
+                "hydraulic_states": base.hydraulic_states if states else (),
+            }
+        )
+        return ComponentRegistry(
+            [item for item in catalog().all() if item.id != DIVERTER] + [variante],
+            symbols=symbols(),
+        )
+
+    assert linee(con(True)) != linee(con(False)), (
         "togliere gli stati dichiarati non cambia la lettura delle linee: la "
         "nomenclatura non sta leggendo quel dato"
     )
@@ -437,7 +464,7 @@ def test_un_dominio_una_sicurezza_qualunque_sia_il_numero_delle_macchine(
     """La cardinalita' non si deduce dal numero dei generatori."""
     model, gaps = completato(macchine_in_parallelo(GENERIC, quante))
     assert len(pezzi_con(model, SAFETY)) == 1
-    assert not [item for item in gaps if item.startswith(GapReason.NO_COMMON_RUN.value)]
+    assert not punti(gaps, GapReason.NO_COMMON_RUN)
 
 
 def test_due_domini_scollegati_ricevono_una_sicurezza_ciascuno() -> None:
@@ -451,7 +478,10 @@ def test_due_domini_scollegati_ricevono_una_sicurezza_ciascuno() -> None:
         f"le sicurezze posate sono {pezzi_con(model, SAFETY)}: due circuiti "
         f"chiusi indipendenti sono due domini, e ciascuno vuole la propria"
     )
-    assert not [item for item in gaps if item.startswith(GapReason.NO_COMMON_RUN.value)]
+    assert not punti(gaps, GapReason.NO_COMMON_RUN), (
+        "la sicurezza e' stata negata a un dominio che il proprio tratto comune "
+        "ce l'ha"
+    )
 
 
 def test_una_sicurezza_valida_per_un_dominio_non_viene_scartata() -> None:
@@ -461,8 +491,9 @@ def test_una_sicurezza_valida_per_un_dominio_non_viene_scartata() -> None:
     non la si butta via perche' l'altra macchina non ci arriva in ogni stato.
     """
     model, gaps = completato(deviatrice_fra_due_macchine(GENERIC))
-    assert not [item for item in gaps if item.startswith(GapReason.NO_COMMON_RUN.value)], (
-        f"la rete e' stata dichiarata senza tratto comune: {gaps}"
+    assert not punti(gaps, GapReason.NO_COMMON_RUN), (
+        f"la rete e' stata dichiarata senza tratto comune per la sicurezza: "
+        f"{punti(gaps, GapReason.NO_COMMON_RUN)}"
     )
     assert pezzi_con(model, SAFETY), "il dominio che ha un tratto comune e' rimasto scoperto"
     context = RuleContext.build(model, catalog())
@@ -474,8 +505,8 @@ def test_una_sicurezza_valida_per_un_dominio_non_viene_scartata() -> None:
 # ---------------------------------------------------------------------------
 
 
-def domande_di_bordo(gaps: list[str]) -> list[str]:
-    return sorted(item for item in gaps if item.startswith(GapReason.ON_BOARD_UNKNOWN.value))
+def domande_di_bordo(gaps: list[RuleGap]) -> list[str]:
+    return punti(gaps, GapReason.ON_BOARD_UNKNOWN)
 
 
 def test_il_generatore_isolabile_con_dato_ignoto_apre_una_domanda() -> None:

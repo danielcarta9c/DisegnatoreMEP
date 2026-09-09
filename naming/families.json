@@ -84,6 +84,11 @@
       "name": "Valvola miscelatrice"
     },
     {
+      "function": "instrument_isolation",
+      "prefix": "RM",
+      "name": "Rubinetto portamanometro a tre vie"
+    },
+    {
       "function": "isolation_locked_open",
       "prefix": "VIB",
       "name": "Valvola di intercettazione bloccabile aperta"
