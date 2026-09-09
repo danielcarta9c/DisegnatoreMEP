@@ -1,124 +1,136 @@
-# ACTIVE WORK PACKAGE — DRAW-005-R1
+# ACTIVE WORK PACKAGE — DRAW-006
 
-- **Release:** 0.2A — rifinitura della tavola 1
+- **Release:** 0.3 — generalizzazione, prima tavola nuova
 - **Stato:** APPROVATO DAL PM, PRONTO PER IL DEV
-- **Data:** 2026-09-08
-- **Base:** ultima `main`, contenente la chiusura PM di DRAW-005
-- **Ramo:** `claude/draw-005-r1-rifiniture-tavola1`
-- **Campo:** solo impianto 1 e contratti generali necessari
+- **Data:** 2026-09-09
+- **Base:** ultima `main`, contenente il merge approvato di DRAW-005-R1
+- **Ramo:** `claude/draw-006-tavola2-semantica-componenti`
+- **Fixture grafica principale:** impianto 2
 
 ## Obiettivo
 
-Attuare gli input PO I-041…I-046 secondo la traduzione già svolta dal PM in
-`docs/pm/2026-09-08-rilievi-po-draw005-r1.md`. Non interpretare gli allegati e non fare
-ricerca di dominio: le decisioni da implementare sono qui sotto.
+Applicare il motore a un impianto nuovo e correggere tre difetti generali della semantica
+dei componenti:
 
-## A. Sicurezza e sfiato
+1. il manometro richiede un rubinetto portamanometro a tre vie, non una valvola di
+   intercettazione ordinaria;
+2. il gruppo di riempimento pubblicato incorpora già la propria intercettazione e non
+   deve riceverne una esterna;
+3. una valvola multivia possiede configurazioni idrauliche alternative: i domini di
+   protezione devono essere validi in ogni configurazione ammessa.
 
-1. Non dedurre il numero delle sicurezze dal numero dei generatori.
-2. Modellare il dominio di protezione: una sicurezza comune soddisfa più macchine solo
-   quando resta comunicante col volume da proteggere nelle configurazioni ammesse.
-3. La presenza a bordo è un dato esplicito tri-stato del catalogo: presente, assente,
-   ignoto. Un campo mancante significa **ignoto**, non assente, e non autorizza ad
-   aggiungere dispositivi.
-4. Sulla tavola 1 eliminare la sicurezza sull'accumulo e le due sicurezze per-PDC della
-   PR #21. Posare **una sola sicurezza di circuito** sulla mandata, vicino al gruppo PDC;
-   questa è la sicurezza di DRAW-005 riposizionata, non un nuovo dispositivo.
-5. Protezioni ulteriori compaiono solo con un dato di catalogo o con domini autonomi
-   esplicitamente modellati; in caso indeterminato il motore genera una domanda aperta.
-6. Non confondere lo sfogo aria con la sicurezza: conservare un solo sfogo sull'attacco
-   alto dell'accumulo.
+La tavola 2 è il nuovo caso di collaudo visivo perché contiene PDC, deviatrice e produzione
+ACS. Gli esempi sono fixture, non il prodotto: nessuna soluzione può dipendere da ID,
+nomi, coordinate, quantità di macchine o nomi dei file di prova.
 
-Scrivere prima prove generali su dominio unico e domini isolabili, con presenza a bordo
-presente, assente e ignota.
+## A. Manometro e rubinetto a tre vie
 
-## B. Medium, colore e frecce dei rami di servizio
+1. Introdurre un componente e un simbolo specifici per il **rubinetto portamanometro a
+   tre vie**, distinti dalla valvola di intercettazione ordinaria.
+2. Il gruppo funzionale è: presa sulla tubazione → stacco statico minimo → rubinetto a tre
+   vie → manometro. Il rubinetto vive sullo stacco, non interrompe la condotta principale.
+3. La regola vale indipendentemente dal diametro della condotta: la presa strumentale è
+   una derivazione propria e corta.
+4. Il rubinetto non è un organo ordinario capace di dividere un dominio idraulico.
+5. Scrivere prima prove generali che distinguano manometro e pressostato: un pressostato
+   di sicurezza/minima non riceve automaticamente questo rubinetto né una valvola
+   ordinaria.
 
-Introdurre una semantica generale che distingua flusso ordinario, ramo statico ed
-eventuale scarico:
+Riferimento PM: Raccolta R 2009, cap. R.2.C, punto 2.5; Caleffi serie 690 e 335.
 
-- il tratto lato impianto del riempimento è ritorno tecnico blu e la freccia punta dal
-  gruppo verso il circuito;
-- un eventuale tratto a monte del riempimento, se esplicitamente modellato, è adduzione
-  idrica;
-- gli stacchi di manometro e vaso sono dello stesso medium/colore del ritorno tecnico e
-  non hanno frecce;
-- sfiato e sicurezza su uno stacco non mostrano una freccia di circolazione; un'eventuale
-  tubazione di scarico esplicita potrà invece avere verso uscente;
-- il componente `P` della tavola 1 resta un manometro: non rinominarlo pressostato.
+## B. Gruppi compositi e riempimento
 
-La scelta non deve dipendere dall'orientamento geometrico, dall'ID o dal colore scritto a
-mano nel renderer.
+1. Correggere `filling-unit`: il simbolo pubblicato rappresenta un gruppo che incorpora
+   la propria intercettazione. Non aggiungere una valvola esterna per la sola proprietà
+   `maintainable`.
+2. Rendere esplicito nel catalogo quali funzioni sono interne a un composito. Una funzione
+   integrata dichiarata non viene duplicata; una funzione non dichiarata continua a essere
+   applicata dalle regole normali.
+3. Non dedurre dotazioni dal nome, dal disegno o dal solo `composite: true`.
+4. Non attribuire automaticamente al gruppo generico disconnettore BA, filtro, ritegno o
+   riduzione di pressione se la variante di catalogo non li dichiara.
+5. Un riempimento eventualmente presente sulla tavola 2 deve essere unico sul circuito
+   tecnico, orientato verso l'impianto e privo di valvola esterna ridondante.
 
-## C. Simboli
+Riferimento PM: Caleffi serie 553; per la variante con disconnettore, serie 580, EN 1717,
+EN 12729 ed EN 806-5.
 
-1. **Filtro a Y:** aggiungere le due barrette terminali perpendicolari all'asse passante.
-2. Aggiungere al manifesto una proprietà generale di peso del tratto (`thin`, `medium`,
-   `thick`) o soluzione equivalente validata; il filtro usa `thick` = 0,50 mm in tavola,
-   legenda e foglio simboli. Vietate eccezioni per `symbol_id` nel renderer.
-3. **Accumulo combinato:** sostituire il serpentino rettangolare con una serpentina
-   continua, morbida e centrata. Porte, riquadro, attacchi e grafo restano invariati.
-4. Aggiornare sempre `examples/graphics/build_symbols.py`; nessuna modifica manuale ai
-   soli SVG generati.
+## C. Connettività interna delle valvole multivia
 
-## D. Posa locale degli accessori PDC
+1. Il catalogo dichiara gli **stati idraulici ammessi** di un componente multivia. Per una
+   deviatrice a tre vie: `in ↔ out_a` oppure `in ↔ out_b`; i due rami non sono
+   contemporaneamente comunicanti e `out_a ↔ out_b` non è un passaggio autonomo.
+2. Nomenclatura delle linee e analisi della sicurezza devono leggere lo stesso dato di
+   catalogo, senza elenchi di funzioni duplicati nei moduli.
+3. Un generatore è protetto soltanto se raggiunge una sicurezza in ogni stato ammesso nel
+   quale può funzionare, senza attraversare un organo che possa separarlo.
+4. La cardinalità della sicurezza è per dominio di protezione effettivo, non per intera
+   rete né per numero dei generatori.
+5. Una sicurezza valida per una parte della rete non va scartata perché non protegge un
+   altro generatore: ogni dominio viene valutato separatamente.
+6. Per un generatore isolabile: dato a bordo ignoto → una domanda specifica; presente →
+   nessun pezzo; assente → sicurezza propria non intercettabile.
+7. La fixture dell'impianto 4 verifica questa logica senza produrre artefatti grafici: la
+   deviatrice non diventa genericamente passante, la PDC conserva la protezione del proprio
+   dominio e la caldaia genera al massimo la domanda dovuta al dato realmente ignoto.
 
-Per una catena appartenente alla macchina, la posa locale deve essere congruente sotto
-traslazione e rotazione:
+Riferimento PM: Raccolta R 2009, cap. R.3.B, punti 1, 2.4 e 2.5; UNI EN 12828:2014.
 
-- ordine sul ritorno: porta PDC → filtro a Y → valvola → rete;
-- filtro e valvola sul primo segmento rettilineo utile dalla porta, prima della prima
-  curva;
-- due PDC identiche con la stessa catena hanno le stesse distanze locali fra porta,
-  filtro e valvola, anche se una catena ruota;
-- nessuna coordinata o eccezione per gli ID della tavola 1.
+## D. Integrità dei test
 
-Il costo globale resta il criterio fra pose che rispettano questo contratto duro.
+Riscrivere `test_i_raccordi_non_prendono_una_colonna_a_testa`: l'ultima asserzione
+attuale è logicamente ridondante. La nuova prova deve fallire se un raccordo viene promosso
+a colonna di un pezzo grosso e deve derivare l'attesa dalla classificazione e dalla posa,
+senza soglie ricavate dalla tavola 1.
 
-## E. Stacchi minimi e spostamento gratuito delle macchine
+Il DEV non modifica criteri o soglie per far passare il lavoro. Un'incompatibilità si porta
+al PM prima di cambiare la prova.
 
-1. La lunghezza degli stacchi di sicurezza, sfiato, misura, espansione e riempimento è
-   la minima lunghezza su griglia che evita il contatto fra tubo e ingombro del simbolo
-   e conserva la leggibilità di stampa; non è una costante arbitraria.
-2. Ogni millimetro oltre il minimo peggiora il costo.
-3. Prima di introdurre curve, deviazioni o corridoi, il posatore prova la traslazione
-   verticale delle PDC e dei gruppi collegati a passi di griglia.
-4. L'interasse verticale delle PDC cresce quanto basta per non sovrapporre le catene
-   locali e rendere più rettilinee le dorsali: spostare le macchine costa zero.
-5. I corridoi davanti alle porte sono locali e non possono impedire la posa degli altri
-   impianti o deformare la composizione globale.
+## E. Tavola 2 e regressioni
+
+1. Generare la tavola 2 dalla sua fixture canonica senza modificare il grafo per ottenere
+   un disegno più facile.
+2. Applicare costo-peso, spostamenti gratuiti, assi, dorsali e T già approvati; nessuna
+   regola speciale per questa geometria.
+3. Consegnare metriche iniziali e finali della tavola 2, spiegando separatamente variazioni
+   del grafo, della posa e del rendering.
+4. Conservare la tavola 1 come regressione automatica: non oltre 4 curve, 1 incrocio e
+   425 mm di rete ordinaria; stacchi statici non oltre 0 curve, 0 incroci e 45 mm; zero
+   backtracking, tubo sotto simboli e tratte oltre tre curve.
+5. Gli impianti 3–5 devono arrivare alla posa; non generare i relativi pacchetti completi.
 
 ## Criteri di accettazione
 
-1. Tutti gli input I-041…I-046 sono visibili nel PDF e provati con test generali.
-2. Una sola sicurezza di circuito sulla mandata vicino al gruppo PDC; zero sicurezza
-   sull'accumulo e zero duplicazioni automatiche per macchina.
-3. Riempimento diretto verso l'impianto; riempimento, vaso e manometro correttamente blu
-   sul lato ritorno; zero frecce su vaso e manometro.
-4. Filtro a Y leggibile con barrette e tratto 0,50 mm in tavola, legenda e riscontro.
-5. Le due catene di ritorno PDC hanno ordine e distanze locali congruenti e stanno prima
-   della prima curva.
-6. Serpentino continuo e graficamente morbido; nessuna variazione delle porte.
-7. Zero tubo sotto simboli, zero backtracking, zero tratte oltre tre curve; curve,
-   incroci e lunghezza riportati sul nuovo grafo senza confronto improprio.
-8. Nessuna nuova `xfail`; suite completa, ruff, mypy strict e determinismo verdi.
-9. PDF, PNG, SVG, geometria, metriche, preflight e confronto contro DRAW-005 in
-   `docs/collaudi/DRAW-005-R1/`.
-10. Le PDC possono aumentare il proprio interasse verticale; nessuno stacco è più lungo
-    del minimo valido. La rete a flusso ordinario non supera DRAW-005: massimo 4 curve,
-    1 incrocio e 525 mm, misurati separatamente dagli stacchi statici.
-11. Tutti e cinque gli impianti arrivano almeno alla posa come sulla base `cc7ff93`;
-    nessuna regressione viene convertita in `skip` o `xfail`.
+1. La tavola 2 è tecnicamente coerente, leggibile e ottenuta senza eccezioni per la fixture.
+2. Il manometro, se presente, usa il rubinetto specifico a tre vie; mai una valvola
+   ordinaria. La proprietà è comunque coperta da prove generali.
+3. Il gruppo di riempimento, se presente, non ha intercettazione esterna ridondante. La
+   proprietà è comunque coperta da prove generali sui compositi.
+4. Prove generali dimostrano gli stati alternativi della deviatrice e la protezione in ogni
+   configurazione ammessa.
+5. L'impianto 4 non produce un `NO_COMMON_RUN` globale né protezioni inventate; restano
+   soltanto domande puntuali dovute a dati di catalogo ignoti.
+6. Il test sulle colonne dei raccordi prova realmente la proprietà e fallisce su una
+   mutazione negativa costruita nella prova.
+7. La tavola 1 rispetta integralmente le soglie di regressione del §E senza una nuova
+   consegna grafica completa.
+8. Tutti e cinque gli impianti arrivano alla posa; nessuna regressione viene convertita in
+   `skip` o `xfail`.
+9. Suite completa, `ruff`, `mypy --strict` e doppia generazione deterministica verdi.
+10. PDF, PNG, SVG, geometria, metriche, preflight e confronto della **sola tavola 2** in
+    `docs/collaudi/DRAW-006/`.
 
 ## Fuori perimetro
 
-- impianti 2–5 e regressione dell'impianto 3;
-- dipendenza della geometria dall'ordine delle connessioni;
-- packaging e vertical slice della skill;
-- audit dei simboli non coinvolti;
-- cartiglio, riempimento del foglio, etichette e funzione di costo globale.
+- nuovi PDF/PNG/SVG della tavola 1 e degli impianti 3–5;
+- ricerca tecnica o reinterpretazione delle fonti da parte del DEV;
+- chiusura degli input PO o modifica dei documenti di governance;
+- correzioni puramente estetiche non necessarie alla tavola 2;
+- audit dei simboli non coinvolti, cartiglio, etichette e Drawing Director;
+- ottimizzazione prestazionale generale del ciclo.
 
 ## Consegna
 
-Apri una PR dal ramo indicato verso `main` e fermati senza merge. Il PM verifica codice,
-fonti applicate e PDF; il PO giudica la tavola.
+Salvare progressivamente sul ramo remoto e aprire una PR verso `main`, senza merge. Il
+rapporto deve dichiarare esplicitamente che soltanto la tavola 2 è stata renderizzata come
+consegna; gli altri impianti sono stati usati esclusivamente nei test prescritti.
