@@ -216,6 +216,36 @@ valvola — ma il fatto che la posa riconosce «l'organo che isola un apparecchi
 due insiemi del catalogo: `CLOSING_FUNCTIONS` è una domanda idraulica, `SERVICE_ORGAN_FUNCTIONS`
 è una domanda di disegno, e confonderle costava tre curve.
 
+### Il difetto di posa che la correzione ha fatto affiorare
+
+È della specie che questo progetto conosce — D-120 fece affiorare «la linea sotto il
+simbolo» — e va detto per intero, perché non è un effetto della correzione ma un difetto
+che la correzione **scopre**.
+
+Togliere la valvola dallo stacco del riempimento cambia quale accessorio pende da quale
+raccordo. Un accessorio che pende **verso il basso** finisce contro la linea di terra, e
+lì non ha più dove allontanarsi. Se quel posto cade dentro il rettilineo che la catena di
+una macchina pretende davanti alla propria porta (I-044) — un contratto duro, non una
+preferenza — la tratta non si instrada più, e non su un formato: su nessuno. È successo
+sul gemello sintetico della tavola 1 che vive nelle prove (`due_macchine_con_accumulo_combinato`,
+la stessa topologia senza i suoi identificativi): la tavola smetteva di comporsi.
+
+La correzione è dove il difetto vive. Chi sceglie il posto di un raccordo guarda adesso
+anche **dove finisce ciò che gli pende**, e scarta i posti da cui l'appeso non può
+uscire. Il conto di dove l'appeso finisce vive in un posto solo — `hanging_place` — ed è
+lo stesso che la posa esegue: prima erano due conti che dovevano dare lo stesso numero, e
+divergevano. Tutti i ripieghi di prima restano: se nessun posto rispetta i corridoi si
+scende a quelli che non li rispettano, perché una posa che non c'è non la migliora
+nessuno. Tavola 1 e tavola 2 non cambiano di un millimetro — stesse impronte.
+
+Due strade sono state provate e **buttate**, e vale la pena non riprovarle: far scivolare
+l'appeso *di lato* quando lo stacco è murato (la tavola 1 passava a 8 curve e 4 incroci),
+e far parlare la derivazione per l'accessorio in fondo allo stacco invece che per l'organo
+che vi sta in mezzo (8 curve, 4 incroci, 457,5 mm). La seconda è però un difetto vero e
+sopravvive a questo pacchetto: la derivazione dichiara i vincoli d'ordine **dell'organo**
+sullo stacco, non dell'accessorio che ci pende, e l'ordine del corredo di rete finisce
+per dipendere dall'ordine alfabetico degli identificativi. Lo segnalo al PM al §9.
+
 ---
 
 ## 6. Gli impianti 3–5
@@ -268,9 +298,18 @@ cambiati, come già faceva per DRAW-005 e DRAW-005-R1.
 
 ## 8. Verifiche
 
-- Suite completa, `ruff check src tests examples`, `mypy --strict src tests examples` e
-  doppia generazione deterministica: i numeri stanno al §9 del ramo (commit di consegna).
-- Preflight della tavola 2: **nessun rilievo bloccante**; due avvisi di composizione
+- **Suite completa** (`python -m pytest -q`): **1369 verdi, 22 parcheggiate, 14 rosse
+  apposta, nessuna rossa**, in 42 minuti e 13 secondi. Contro la base di partenza: le
+  rosse apposta e le parcheggiate sono le stesse — nessuna prova è stata convertita in
+  `skip` o `xfail` — e le verdi crescono di trentatré, che sono le prove nuove dei
+  blocchi A, B e C.
+- **`ruff check src tests examples docs/collaudi/DRAW-006/metriche.py`**: nessun rilievo.
+- **`mypy src tests examples`** con il profilo `strict` di `pyproject.toml`: nessun errore
+  su 151 file.
+- **Determinismo**: due esecuzioni consecutive dallo stesso ingresso danno il modello
+  completato **identico byte per byte**, l'SVG di consegna **identico byte per byte**, la
+  stessa geometria e la stessa impronta `903c926b…`.
+- **Preflight della tavola 2**: **nessun rilievo bloccante**; due avvisi di composizione
   (`SHEET_BARELY_FILLED` al 39,4 %, `DRAWING_ALL_ON_ONE_SIDE`), che il perimetro esclude.
 
 ---
@@ -294,6 +333,15 @@ cambiati, come già faceva per DRAW-005 e DRAW-005-R1.
    loro.
 5. **Gli impianti 3 e 4 non arrivano a una tavola su A3**, già dalla base. Se la release
    0.3 li vuole disegnabili, è un pacchetto suo.
+6. **L'ordine del corredo di rete su una tratta dipende ancora dall'ordine alfabetico
+   degli identificativi**, e non dovrebbe. Una derivazione «parla per» ciò che le pende,
+   ma si ferma al **primo** pezzo dello stacco: se lì c'è un organo — la valvola del vaso,
+   il rubinetto del manometro — la derivazione dichiara i vincoli di quell'organo, che
+   non ne ha, invece di quelli dell'accessorio in fondo. Sulla tavola 1 il manometro
+   finisce così **prima** del riempimento, mentre la sua regola gli chiede di seguirlo.
+   Ho provato la correzione — far camminare la lettura fino in fondo allo stacco — e
+   l'ordine torna quello dichiarato, ma la tavola 1 passa a 8 curve, 4 incroci e 457,5 mm:
+   il difetto è vero, la sua correzione costa, e la scelta è del PM. Non l'ho consegnata.
 
 ---
 
