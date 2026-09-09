@@ -30,7 +30,7 @@ simbolo e nessuna tratta oltre tre pieghe.
 | Rete ordinaria — pieghe / incroci / lunghezza | — | **7 / 2 / 670,0 mm** |
 | Stacchi statici — pieghe / incroci / lunghezza | — | **0 / 0 / 62,5 mm** |
 | Backtracking · tubo sotto un simbolo · tratte oltre tre pieghe | — | **0 · 0 · 0** |
-| Valvole D-120 a 2,5÷5 mm | — | **15 su 16** |
+| Valvole D-120 a 2,5÷5 mm | — | **15 su 16** (una a 27,5 mm) |
 | Ingombro del disegno | — | **270,0 × 120,0 mm** |
 | Rilievi bloccanti · avvisi | 1 bloccante (la tavola non esce) | **0 · 2** |
 
@@ -106,6 +106,10 @@ Nel catalogo di fondazione `composite` **non si deduce più dal numero dei mesti
 caldaia che genera calore e brucia gas fa due cose e resta un apparecchio, non un gruppo.
 Era l'unica dichiarazione automatica rimasta, e attribuiva una dotazione a chi non ne ha
 nessuna.
+
+Sulla tavola 2 il riempimento c'è, ed è come il §B.5 lo vuole: **uno solo** sul circuito
+tecnico, sullo stacco del ritorno generale, con la freccia **verso** il circuito
+(`specie: inbound`, `verso_la_radice: true` nelle misure) e senza nessuna valvola esterna.
 
 ### 2.3 C — stati idraulici e domini di protezione
 
@@ -242,12 +246,23 @@ Nessuna è stata indebolita; ciascuna dice nel proprio testo perché è cambiata
 - `test_i_raccordi_non_prendono_una_colonna_a_testa`: riscritta per intero (§4).
 - `test_la_tavola_1_non_costa_piu_di_draw_005_sulla_rete_ordinaria`: soglie **strette**
   a quelle del §E (§5).
+- `test_dove_il_tratto_comune_non_esiste_davvero_esce_un_punto_aperto` (collaudo P5): su
+  due anelli separati la **sicurezza** non apre più il proprio punto e ne posa una per
+  anello — è il §C.4 e il §C.5 alla lettera, e nessun anello viene scelto in silenzio
+  perché si servono tutti e due. Le altre quattro regole di rete restano `per_network` e
+  il loro punto aperto, deciso in P2, è invariato: la prova adesso lo pretende
+  esplicitamente.
+- `test_il_confronto_per_il_pm_dice_il_vero_sui_documenti` (collaudo P5): i punti aperti
+  dell'ibrido passano da tre a **uno**.
 
 Fixture rigenerate dai loro generatori, mai a mano: il catalogo di layout, la libreria dei
 simboli, il catalogo di fondazione, il caso di accettazione completo
-(`examples/rules/centrale-pdc-completa.json`) e il documento del grafo
-(`docs/prodotto/GRAFO_IMPIANTO.md`). Il documento delle proprietà per il committente
-guadagna la riga del quarto regime.
+(`examples/rules/centrale-pdc-completa.json`), il documento del grafo
+(`docs/prodotto/GRAFO_IMPIANTO.md`) e i cinque grafi di prova
+(`docs/prodotto/grafi-di-prova/prova-*.md`). Il documento delle proprietà per il
+committente guadagna la riga del quarto regime; il confronto per il PM
+(`CONFRONTO-2026-08-07.md`) porta i conteggi di oggi e una nota datata su che cosa li ha
+cambiati, come già faceva per DRAW-005 e DRAW-005-R1.
 
 ---
 

@@ -445,23 +445,25 @@ def test_dove_il_tratto_comune_non_esiste_davvero_esce_un_punto_aperto() -> None
     tubazione porta tutta l'acqua che torna, e non c'e' nessun tratto che le
     serva entrambe. Qui il corredo non si posa su un anello scelto in
     silenzio — le quattro regole aprono un punto aperto con la ragione
-    giusta."""
+    giusta.
+
+    **La sicurezza no, e da DRAW-006 e' voluto.** Il suo conto e' per **dominio
+    di protezione** e non per rete (blocco C, punti 4 e 5): i due anelli sono
+    due domini, ciascuno con il proprio tratto comune, e ciascuno riceve la
+    propria — «una protezione valida per una parte della rete non si scarta
+    perche' un'altra parte non la raggiunge». Nessun anello viene scelto in
+    silenzio: si servono tutti e due. E poiche' ogni generatore la sua
+    sicurezza ce l'ha, nessuno resta tagliato fuori e il bordo ignoto non fa
+    piu' domande. Le altre quattro regole restano per rete, e il punto aperto
+    che aprono e' quello deciso in P2."""
     done, applied, gaps = saturate(_two_separate_rings(), CAT, REG)
     open_points = {g.rule_id: g for g in gaps}
-    # Con I-046 anche la sicurezza di circuito sta sul tratto comune, e apre
-    # il proprio punto; e senza nessuna sicurezza raggiungibile ogni
-    # generatore dal bordo ignoto e' una domanda al progettista, non un pezzo.
-    assert set(open_points) == KIT_COMUNE | {
-        "safety-relief-on-the-closed-circuit",
-        "safety-relief-on-an-isolable-generator",
-    }
+    assert set(open_points) == KIT_COMUNE
     for rule_id, gap in open_points.items():
-        expected = (
-            GapReason.ON_BOARD_UNKNOWN
-            if rule_id == "safety-relief-on-an-isolable-generator"
-            else GapReason.NO_COMMON_RUN
-        )
-        assert gap.reason is expected, rule_id
+        assert gap.reason is GapReason.NO_COMMON_RUN, rule_id
+    posate = [p for p in applied if p.rule_id == "safety-relief-on-the-closed-circuit"]
+    assert len(posate) == 2, [p.anchor for p in posate]
+    assert len({p.anchor.component_id for p in posate}) == 2, [p.anchor for p in posate]
     assert not any(p.rule_id in KIT_COMUNE for p in applied)
     banned = {"expansion", "filling", "pressure_measurement", "sludge_separation"}
     for component in done.components:
@@ -815,17 +817,17 @@ def test_il_confronto_per_il_pm_dice_il_vero_sui_documenti() -> None:
         ]
         assert len(rows) == expected, f"{name}: il documento non ha {expected} nodi"
     # La frase sui punti aperti dev'essere vera: quattro non ne hanno, e
-    # l'ibrido ne ha tre, tutti sulla sicurezza (I-046) — la mandata comune
-    # che non si trova oltre la deviatrice, e il bordo ignoto delle due
-    # macchine. Il documento li dichiara e il motore li conferma.
+    # l'ibrido ne ha **uno**. Da DRAW-006 la deviatrice dichiara i propri stati
+    # idraulici: la macchina che alla mandata comune ci arriva in ogni stato
+    # ammesso riceve la sicurezza del proprio dominio, e resta soltanto la
+    # domanda sul bordo ignoto della macchina che la deviatrice puo' isolare.
+    # Il documento lo dichiara e il motore lo conferma.
     assert "Quattro dei cinque non hanno punti aperti" in confronto
     for name in PROVE:
         _, _, found = saturo(name)
         if name == PROVE[3]:
             assert sorted((g.rule_id, g.reason.value) for g in found) == [
                 ("safety-relief-on-an-isolable-generator", "on_board_unknown"),
-                ("safety-relief-on-an-isolable-generator", "on_board_unknown"),
-                ("safety-relief-on-the-closed-circuit", "no_common_run"),
             ], name
             continue
         assert not found, (name, [(g.rule_id, g.reason.value) for g in found])

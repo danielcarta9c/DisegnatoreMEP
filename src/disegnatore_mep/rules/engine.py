@@ -319,6 +319,17 @@ def _matches(context: RuleContext, rule: RuleDefinition, network: NetworkModel) 
     )
 
 
+def _domain_at(
+    domains: dict[tuple[str, str], frozenset[str]], anchor: PortRef
+) -> frozenset[str] | None:
+    """Le tubazioni del dominio che quella testa serve, se la regola li conta.
+
+    Vuoto per ogni altra regola: allora l'ambito di soddisfazione resta quello
+    che la regola dichiara, e non cambia niente rispetto a prima.
+    """
+    return domains.get((anchor.component_id, anchor.port_id))
+
+
 def _gap(
     context: RuleContext,
     rule: RuleDefinition,
@@ -433,13 +444,13 @@ def evaluate(
                     ):
                         continue
                 anchors.append(anchor)
-            def here(anchor: PortRef, domains: dict[tuple[str, str], frozenset[str]] = domain_of) -> frozenset[str] | None:
-                return domains.get((anchor.component_id, anchor.port_id))
 
             satisfied = {
                 anchor.component_id
                 for anchor in anchors
-                if _already_there(context, rule, network.id, anchor, here(anchor))
+                if _already_there(
+                    context, rule, network.id, anchor, _domain_at(domain_of, anchor)
+                )
             }
             # Un componente gia' servito su una rete e' servito e basta: il
             # volano sta sul primario e sul secondario, e uno scarico per
@@ -456,7 +467,9 @@ def evaluate(
                 free = [
                     anchor
                     for anchor in anchors
-                    if not _already_there(context, rule, network.id, anchor, here(anchor))
+                    if not _already_there(
+                        context, rule, network.id, anchor, _domain_at(domain_of, anchor)
+                    )
                 ]
             # Le teste dei domini sono gia' una per dominio: tagliarle con la
             # cardinalita' di rete ne lascerebbe fuori tutti tranne il primo.
