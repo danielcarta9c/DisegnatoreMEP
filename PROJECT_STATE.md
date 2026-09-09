@@ -1,15 +1,15 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-08 (PM, rilievi PO successivi a DRAW-005)
+**Aggiornato:** 2026-09-09 (PM, merge DRAW-005-R1 e apertura DRAW-006)
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md`
-**Release corrente:** 0.2 — prima tavola tecnicamente corretta e approvata
+**Release corrente:** 0.3 — generalizzazione controllata, impianto 2
 
 ## Stato verificato
 
 | Area | Stato |
 |---|---|
 | Modello dati e grafo | operativi; il grafo resta la fonte unica |
-| Completamento e assemblaggio | operativi sulla tavola 1; intercettazione in logica di gruppo manutenibile verificata in DRAW-005 |
+| Completamento e assemblaggio | operativi sulla tavola 1; tutti e cinque gli impianti arrivano alla posa; aperta la semantica dei compositi e delle multivia |
 | Posa e routing | `DRAW-004` fuso; costo-peso, assi, dorsali e T ortogonali operativi |
 | Simboli | 39 manifesti: i 7 critici della tavola 1 sono verificati in DRAW-005; l'audit PM completo resta aperto prima della 0.3 |
 | Etichette | fase separata dalla geometria; sigle principali sempre, indirizzi come velo esplicito (`--verifica`) |
@@ -46,36 +46,27 @@ correttezza impiantistica del grafo, che il PO ha corretto con gli input I-030�
 
 ## Lavoro corrente
 
-`DRAW-005-R1` è il pacchetto attivo. La prima consegna DEV, PR #21, è respinta in
-revisione: pur correggendo simboli e rami di servizio, ha moltiplicato la sicurezza
-invece di spostarla, ha irrigidito gli stacchi, ha peggiorato il costo della tavola e ha
-reso non posabile l'impianto 5. I-046 corregge la precedente traduzione PM: una sola
-sicurezza di circuito nella tavola 1, stacchi minimi e aumento gratuito dell'interasse
-verticale fra le PDC prima di introdurre deviazioni.
+`DRAW-005-R1` è approvato e fuso con PR #21, merge `eeebc58`. Baseline della tavola 1:
+una sicurezza di circuito sulla mandata comune, zero sull'accumulo e sulle singole PDC;
+39 pezzi; rete ordinaria 4 curve, 1 incrocio e 425 mm; stacchi statici 0 curve,
+0 incroci e 45 mm. Tutti e cinque gli impianti arrivano alla posa.
 
-Punti vincolanti del pacchetto, tutti attuati in PR:
-
-- filtro a Y classico;
-- orientamento dei confini secondo il verso dell'acqua;
-- lettere interne ai simboli sempre leggibili rispetto al foglio;
-- intercettazione ragionata sul gruppo manutenibile, senza valvole ridondanti;
-- valvola comune di mandata vicina all'accumulo;
-- distinzione fra puffer, bollitore e accumulo combinato;
-- per l'accumulo combinato: acqua tecnica nel mantello, serpentino sanitario istantaneo,
-  ingresso AF e uscita ACS; un solo riempimento sul circuito tecnico;
-- geometria delle porte PDC compatibile con valvole e routing rettilineo;
-- sigle delle macchine sempre presenti; indirizzi di nodo opzionali.
+`DRAW-006` apre la generalizzazione 0.3 usando l'impianto 2 come unica nuova consegna
+grafica. Corregge il rubinetto del manometro, la semantica composita del gruppo di
+riempimento e i domini di sicurezza nelle configurazioni delle valvole multivia. La
+tavola 1 resta regressione automatica; gli impianti 3–5 non producono artefatti completi.
 
 ## Rischi aperti
 
-1. **Prodotto non ancora eseguito nel suo ambiente finale.** Prima degli impianti 2–5
-   serve una prova verticale: nuova chat, input naturale, approvazione del grafo,
-   generazione deterministica e restituzione del PDF.
-2. **Libreria simboli non interamente certificata.** Prima della generalizzazione il PM
-   deve completare la matrice fonti/forma/porte/ingombri; il DEV implementa solo la
-   matrice approvata.
+1. **Prodotto non ancora eseguito nel suo ambiente finale.** Dopo il collaudo controllato
+   dell'impianto 2 e prima di estendere il ciclo agli impianti 3–5 serve una prova
+   verticale: nuova chat, input naturale, approvazione del grafo, generazione
+   deterministica e restituzione del PDF.
+2. **Libreria simboli non interamente certificata.** Prima di dichiarare completa la
+   generalizzazione 0.3 il PM deve completare la matrice fonti/forma/porte/ingombri; il
+   DEV implementa solo la matrice approvata.
 3. **Costo computazionale.** La tavola 1 richiede circa 70 secondi e oltre 2.000 routing
-   di prova; va misurato sugli altri casi prima di consolidare l'algoritmo.
+   di prova; DRAW-006 deve misurare l'impianto 2 senza renderizzare inutilmente gli altri.
 4. **Vincoli fisici di posa non modellati.** Una macchina `GROUND` può oggi salire per
    allineare le porte; un futuro vincolo fisico deve essere un campo esplicito del modello.
 5. **Debito documentale storico.** Le vecchie sezioni operative sono conservate in Git,
@@ -83,16 +74,18 @@ Punti vincolanti del pacchetto, tutti attuati in PR:
 6. **Geometria sensibile all'ordine delle connessioni.** La tavola composta in memoria e
    quella ottenuta dalla CLI non hanno ancora la stessa impronta; va risolto prima di
    usare il percorso end-to-end come prova di determinismo.
-7. **Regressione nota sull'impianto 3.** Il grafo aggiornato non compone; la prova è xfail
-   e deve tornare verde prima di dichiarare completata la generalizzazione 0.3.
+7. **Test geometrico inefficace.** L'ultima condizione della prova sulle colonne dei
+   raccordi è logicamente ridondante; DRAW-006 deve sostituirla con una prova negativa
+   che fallisca realmente quando un raccordo diventa colonna.
+8. **Connettività multivia non modellata per stati.** Sull'impianto 4 produce domande di
+   sicurezza troppo ampie; DRAW-006 introduce configurazioni idrauliche alternative.
 
 ## Prossimi gate
 
-1. `DRAW-005`: grafo e simboli critici dell'impianto 1 corretti — **accettato e fuso dal PM**.
-2. `DRAW-005-R1`: rifiniture PO successive alla verifica del PDF.
-3. Gate 0.2A: giudizio PO sul nuovo PDF e chiusura degli input attuati.
-4. Gate 0.2B: vertical slice della skill in una chat di lavoro pulita.
-5. Release 0.3: generalizzazione controllata agli impianti 2–5.
+1. `DRAW-005-R1`: tavola 1 rifinita — **accettata e fusa dal PM**.
+2. `DRAW-006`: prima generalizzazione sull'impianto 2 e semantica dei componenti.
+3. Gate vertical slice: skill in una chat di lavoro pulita.
+4. Proseguire gli impianti 3–5 uno per volta, cercando classi di difetto nuove.
 
 ## Documenti canonici
 
