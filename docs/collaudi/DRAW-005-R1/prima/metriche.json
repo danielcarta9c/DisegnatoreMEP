@@ -42,6 +42,19 @@
       "pieghe_totali": 4,
       "tratte_oltre_tre_pieghe": 0,
       "lunghezza_totale_mm": 525.0,
+      "rete_ordinaria": {
+        "pieghe": 4,
+        "incroci": 1,
+        "lunghezza_mm": 525.0,
+        "tratte": 20,
+        "tratte_oltre_tre_pieghe": 0
+      },
+      "stacchi_statici": {
+        "pieghe": 0,
+        "incroci": 0,
+        "lunghezza_mm": 0.0,
+        "tratte": 0
+      },
       "tubo_sotto_simbolo": [],
       "valvole_d120": {
         "valve-isolation-pdc-master-water-supply": {

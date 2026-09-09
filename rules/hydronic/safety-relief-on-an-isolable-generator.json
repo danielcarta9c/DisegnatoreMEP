@@ -1,0 +1,32 @@
+{
+  "id": "safety-relief-on-an-isolable-generator",
+  "version": "1.0.0",
+  "name": "Valvola di sicurezza",
+  "category": "necessary",
+  "cardinality": "per_component",
+  "when": {
+    "network_domain": "hydronic",
+    "network_medium": "heating_water",
+    "anchor_has_function": "heat_generation",
+    "anchor_cut_off_from": "safety"
+  },
+  "then": {
+    "provides_function": "safety",
+    "placement": "on_outlet",
+    "inlet_port": "a",
+    "outlet_port": "b",
+    "if_on_board_is_unknown": "ask"
+  },
+  "satisfied_by": {
+    "scope": "on_the_attachment"
+  },
+  "rationale": "Un generatore che un organo altrui puo' separare dalla sicurezza di circuito — o che non ne raggiunge nessuna — e' un dominio a se': quando quell'organo e' chiuso e la macchina scalda, il suo volume e' chiuso e non ha via d'uscita. Va protetto per conto suo, sulla tubazione che esce, attaccata alla macchina e prima del suo organo. Ma solo con un dato: se il catalogo dichiara che la macchina porta la sicurezza dentro il mantello, non serve nulla; se dichiara che non la porta, la riceve; se non lo dice, il dato e' ignoto — non assente — e il motore non aggiunge un dispositivo su una presunzione: apre una domanda al progettista (I-046). Il numero delle sicurezze non si deduce mai dal numero dei generatori.",
+  "source": "Caleffi, valvole di sicurezza dp 01253/25, p. 4: sulla sommita' del generatore o sulla mandata il piu' vicino possibile, con tubazione di collegamento non intercettabile (SRC-027); Caleffi, Idraulica 61, p. 15: sfogo aria e sicurezza **possono** essere integrati nella macchina, quindi lo dice il catalogo, macchina per macchina (SRC-019); traduzione PM corretta dei rilievi PO del 2026-09-08 (I-046)",
+  "ordering": {
+    "before": [
+      "isolation",
+      "isolation_locked_open"
+    ],
+    "against_the_anchor": true
+  }
+}

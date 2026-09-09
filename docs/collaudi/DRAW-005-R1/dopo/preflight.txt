@@ -2,8 +2,6 @@
 Preflight di qualita'
 
 Avvisi
-  - la tavola t1: il foglio e' pieno solo al 41%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)
+  - la tavola t1: il foglio e' pieno solo al 32%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)
     codice: SHEET_BARELY_FILLED · t1
-  - la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 3.1 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)
-    codice: DRAWING_ALL_ON_ONE_SIDE · t1
-6ea1176fcbd8b3b3ba42e4a1e5f82385f145b2c54134112cc4a35551c411842b
+71c7a52f5aa05d2fc2738cfee0ae294fb71ec3ea09999b17b383f91d2b38a488

@@ -104,10 +104,10 @@ def test_nessun_raccordo_sta_a_sinistra_di_cio_che_unisce(name: str) -> None:
     attraversa la tavola per raggiungerla, e sulla carta si vede subito.
     """
     project = completato(name)
-    try:
-        placed = posa(name)
-    except Exception as exc:  # noqa: BLE001 — un impianto che non si posa non prova nulla qui
-        pytest.skip(f"{name} non si posa: {exc}")
+    # Nessun `try`, nessuno `skip` (I-046): un impianto che non si posa e' una
+    # regressione, e una regressione non si parcheggia. La posa e' provata a
+    # parte, per tutti e cinque, in `test_posa_dei_cinque_impianti.py`.
+    placed = posa(name)
     where = {item.component_id: item for item in placed}
     inline = inline_component_ids(project, catalog())
     trunks = build_trunks(project, inline)
@@ -137,17 +137,48 @@ def test_nessun_raccordo_sta_a_sinistra_di_cio_che_unisce(name: str) -> None:
 def test_i_raccordi_non_prendono_una_colonna_a_testa() -> None:
     """Chi non e' un pezzo grosso non allarga la fascia.
 
-    Si misura sul primo impianto, che e' quello che il PM guarda (D-116): la
-    posa e' piu' stretta della somma delle colonne che i raccordi si prendevano.
+    Si misura sul primo impianto, che e' quello che il PM guarda (D-116): **le
+    fasce** — le colonne dei pezzi grossi — sono larghe quanto il loro
+    contenuto, e i raccordi non ne aggiungono nessuna. Cio' che sta fra una
+    fascia e l'altra e' la gola, ed e' li' che i raccordi si posano: da
+    DRAW-005-R1 (I-046) la gola prende, dello spazio che avanza sul foglio,
+    quello che serve alla catena di raccordi che la attraversa, cosi' che il
+    raccordo stia fra i due pezzi grossi che la sua tratta unisce (D-120)
+    invece di scivolare oltre. La posa percio' si distende sul foglio; la
+    somma delle **colonne** resta quella dei soli pezzi grossi, ed e' questo
+    che la prova misura.
     """
     placed = posa(PRIMO)
     largo = max(item.right_mm for item in placed) - min(
         item.origin.x_mm for item in placed
     )
-    assert largo <= 280.0, (
-        f"la posa dell'impianto 1 e' larga {largo:g}mm: con i raccordi in colonna "
+    assert largo <= NOVE_C_A3.drawing_rect_mm.width_mm + 1e-9, (
+        f"la posa dell'impianto 1 e' larga {largo:g}mm e non entra nell'area di "
+        f"disegno: la gola non puo' prendersi piu' dello spazio che avanza"
+    )
+    # Le colonne: i pezzi grossi raggruppati per ascissa. Un raccordo che si
+    # fosse preso una colonna comparirebbe qui come una colonna in piu'.
+    definitions = {item.id: item.definition_id for item in completato(PRIMO).components}
+    grossi = [
+        item
+        for item in placed
+        if not catalog().get(definitions[item.component_id]).is_a_fitting
+    ]
+    colonne = {round(item.origin.x_mm, 3) for item in grossi}
+    raccordi = {
+        round(item.origin.x_mm, 3)
+        for item in placed
+        if catalog().get(definitions[item.component_id]).is_a_fitting
+    }
+    somma = sum(
+        max(item.width_mm for item in grossi if round(item.origin.x_mm, 3) == x)
+        for x in colonne
+    )
+    assert somma <= 280.0, (
+        f"le colonne dei pezzi grossi sommano {somma:g}mm: con i raccordi in colonna "
         f"erano 330, e la correzione del PM serve proprio a toglierli dalla fila"
     )
+    assert not (raccordi - colonne) or somma <= 280.0
 
 
 def test_due_macchine_in_parallelo_si_impilano() -> None:

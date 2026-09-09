@@ -227,7 +227,7 @@ Ogni accessorio ha la propria ragione di posizionamento, ed è buona pratica con
 | Defangatore | i fanghi viaggiano col ritorno → **uno solo**, sul ritorno generale, a monte della prima ripartizione |
 | Separatore d'aria | l'aria si libera dove l'acqua è più calda → sulla mandata generale, **sopra i 35 kW**; sotto basta lo sfogo sul serbatoio |
 | Vaso di espansione | l'acqua scaldata dilata → sul ritorno generale, dove lavora più freddo, sempre raggiungibile |
-| Valvola di sicurezza | deve poter scaricare **sempre** → fra lei e ciò che protegge non ci va nulla di chiudibile: per ogni generatore che non la dichiara a bordo, in ogni regime (I-043); in più sul serbatoio sotto i 35 kW |
+| Valvola di sicurezza | deve poter scaricare **sempre** → fra lei e ciò che protegge non ci va nulla di chiudibile: sotto i 35 kW **una per circuito chiuso**, sulla mandata comune subito dopo la confluenza dei generatori, prima di ogni intercettazione (I-046); sopra i 35 kW una per generatore che non la dichiara a bordo; una propria solo alla macchina che il catalogo dichiara **senza** sicurezza e che le sue intercettazioni isolano dal circuito; se il catalogo tace, il dato è ignoto e il motore chiede al progettista invece di aggiungere |
 | Gruppo di riempimento | è una **derivazione dall'acqua di rete** sul ritorno generale, non un organo di passaggio |
 | Scarico | da dove la riserva si riempie, da lì si svuota → sull'attacco dedicato, o sull'alimentazione della riserva |
 | Miscelatrice sanitaria | miscela caldo e freddo → vuole **entrambe** le alimentazioni |

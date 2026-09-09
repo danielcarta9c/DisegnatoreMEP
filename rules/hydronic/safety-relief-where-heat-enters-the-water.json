@@ -1,13 +1,13 @@
 {
   "id": "safety-relief-where-heat-enters-the-water",
-  "version": "4.0.0",
+  "version": "3.1.0",
   "name": "Valvola di sicurezza",
   "category": "necessary",
   "cardinality": "per_component",
   "when": {
     "network_domain": "hydronic",
-    "network_medium": "heating_water",
-    "anchor_has_function": "heat_generation"
+    "anchor_has_function": "heat_generation",
+    "plant_regime": "over_35_kw"
   },
   "then": {
     "provides_function": "safety",
@@ -18,8 +18,8 @@
   "satisfied_by": {
     "scope": "on_the_attachment"
   },
-  "rationale": "Dove il calore entra nell'acqua la pressione puo' salire piu' in fretta di quanto il circuito riesca ad assorbire, e serve una via che si apra da sola prima del limite ammesso. La sicurezza sta su ogni generatore, sulla tubazione che esce e il piu' vicino possibile alla macchina: fra lei e cio' che protegge non ci va nulla che si possa chiudere, perche' una macchina isolabile dalle proprie intercettazioni resta un volume chiuso che si scalda. Vale in ogni regime della centrale, sul circuito chiuso dell'acqua tecnica: una riserva sanitaria che si scalda da se' ha il proprio gruppo di sicurezza sull'alimentazione fredda, ed e' un'altra regola. Non si presume che una macchina la porti a bordo: la presenza a bordo e' un dato che il catalogo dichiara macchina per macchina, e solo chi la dichiara non riceve il doppione esterno. La sicurezza della riserva e' un'altra regola e protegge un altro volume: non sostituisce questa e non ne e' sostituita.",
-  "source": "Caleffi, valvole di sicurezza dp 01253/25, p. 4: sulla sommita' del generatore o sulla mandata il piu' vicino possibile, con tubazione di collegamento non intercettabile (SRC-027); Caleffi, Idraulica 61, p. 15: sfogo aria e sicurezza **possono** essere integrati nella macchina, quindi lo dichiara il catalogo (SRC-019); UNI EN 12828:2014, in vigore (SRC-028); sopra i 35 kW anche Raccolta R ed. 2009, cap. R.3.B.1 (SRC-012); traduzione PM dei rilievi PO del 2026-09-08 (I-043)",
+  "rationale": "Dove il calore entra nell'acqua la pressione puo' salire piu' in fretta di quanto il circuito riesca ad assorbire, e serve una via che si apra da sola prima del limite ammesso. Sopra i 35 kW la sicurezza sta su ogni generatore per prescrizione, sulla tubazione che esce e attaccata alla macchina: fra lei e cio' che protegge non ci va nulla che si possa chiudere. Sotto i 35 kW non e' una per generatore: e' una per dominio di protezione, sulla mandata generale vicino al gruppo dei generatori — un'altra regola (I-046).",
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1 (SRC-012), che si applica sopra i 35 kW (R.1.A.1); sotto i 35 kW la prassi del PM, D-106, corretta il 2026-09-08 (I-046)",
   "ordering": {
     "before": [
       "isolation",

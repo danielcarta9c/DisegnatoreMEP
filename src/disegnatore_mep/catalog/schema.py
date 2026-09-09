@@ -188,6 +188,20 @@ class PortDefinition(StrictModel):
         return self.stub or self.is_service
 
 
+class OnBoard(StrEnum):
+    """Cosa il catalogo dice di una funzione **dentro il mantello** (I-046).
+
+    Tre stati, non due: una macchina la dichiara a bordo, dichiara di non
+    averla, oppure non ne parla. Il campo che manca e' **ignoto**, non
+    assente — e ignoto non autorizza a disegnare un pezzo in piu': chi vuole
+    aggiungere un dispositivo sulla base di questo dato deve avere il dato.
+    """
+
+    PRESENT = "present"
+    ABSENT = "absent"
+    UNKNOWN = "unknown"
+
+
 class ComponentDefinition(StrictModel):
     """Voce di catalogo versionata che descrive un componente e le sue porte.
 
@@ -218,6 +232,15 @@ class ComponentDefinition(StrictModel):
     Non e' l'elenco dei mestieri (`functions`): un mestiere dice cosa il
     componente fa nell'impianto, questo dice quali pezzi **non vanno
     disegnati** perche' stanno gia' dentro il mantello.
+    """
+
+    lacks_on_board: list[str] = Field(default_factory=list)
+    """Le funzioni che la macchina dichiara di **non** integrare (I-046).
+
+    E' l'altra meta' del dato: `carries_on_board` dice cio' che c'e' dentro il
+    mantello, questo cio' che di sicuro non c'e'. Una funzione che non compare
+    in nessuno dei due elenchi e' **ignota**, e una regola che dipende da
+    quel dato lo tratta come tale — chiede, invece di presumere l'assenza.
     """
 
     stored_medium: str | None = Field(default=None, pattern=ID_PATTERN)
@@ -256,6 +279,15 @@ class ComponentDefinition(StrictModel):
     @property
     def port_ids(self) -> frozenset[str]:
         return frozenset(port.id for port in self.ports)
+
+    def on_board(self, function: str) -> OnBoard:
+        """Cosa il catalogo dice di quella funzione dentro il mantello: presente,
+        assente, o niente — e niente e' ignoto, non assente."""
+        if function in self.carries_on_board:
+            return OnBoard.PRESENT
+        if function in self.lacks_on_board:
+            return OnBoard.ABSENT
+        return OnBoard.UNKNOWN
 
     @property
     def trait_set(self) -> frozenset[ComponentTrait]:
@@ -368,6 +400,21 @@ class ComponentDefinition(StrictModel):
         empty = [item for item in self.carries_on_board if not item.strip()]
         if empty:
             raise ValueError(f"{self.id} dichiara a bordo una funzione senza nome")
+        contradictory = sorted(set(self.carries_on_board) & set(self.lacks_on_board))
+        if contradictory:
+            raise ValueError(
+                f"{self.id} dichiara {', '.join(contradictory)} sia a bordo sia non a "
+                f"bordo: il dato e' uno solo, e qui ce ne sono due"
+            )
+        lacking_jobs = sorted(set(self.lacks_on_board) & set(self.functions))
+        if lacking_jobs:
+            raise ValueError(
+                f"{self.id} dichiara {', '.join(lacking_jobs)} come mestiere e insieme "
+                f"di non portarlo a bordo: un mestiere lo si fa nell'impianto, e il "
+                f"bordo non c'entra"
+            )
+        if any(not item.strip() for item in self.lacks_on_board):
+            raise ValueError(f"{self.id} dichiara non a bordo una funzione senza nome")
         return self
 
     @model_validator(mode="after")
@@ -464,9 +511,10 @@ class ComponentDefinition(StrictModel):
 __all__ = [
     "ATTACHMENT_STYLES",
     "CLOSING_FUNCTIONS",
-    "FITTING_FUNCTIONS",
-    "SHUTOFF_REGIMES",
     "ComponentDefinition",
     "ComponentTrait",
+    "FITTING_FUNCTIONS",
+    "OnBoard",
     "PortDefinition",
+    "SHUTOFF_REGIMES",
 ]

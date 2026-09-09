@@ -52,6 +52,16 @@ ciò che la macchina dichiara di avere già dentro**. E la casella non può cont
 mestieri: una funzione o la fai nell'impianto o la porti integrata, non tutte e due — se
 un catalogo le dichiara entrambe, non si carica.
 
+**Il dato è a tre stati, e il silenzio non è un no** (I-046). Una macchina dice che cosa
+porta a bordo (`carries_on_board`) e, se la sua scheda lo dice, che cosa **non** porta
+(`lacks_on_board`); dove la voce di catalogo tace, il dato è **ignoto** — non assente. La
+differenza conta per la sicurezza: una macchina che dichiara di non avere la valvola
+integrata e sta in un dominio isolabile ne riceve una propria; una che tace non ne riceve
+una d'ufficio, e il motore apre una domanda al progettista, che è l'unico a poter
+rispondere leggendo la scheda. La stessa funzione non può stare in tutte e due le
+caselle, e nessuna delle due può ripetere un mestiere dichiarato: un catalogo così non si
+carica.
+
 ## Le due cose che nessun componente può tacere
 
 Ogni pezzo, macchina o accessorio che sia, **deve** dire due cose:

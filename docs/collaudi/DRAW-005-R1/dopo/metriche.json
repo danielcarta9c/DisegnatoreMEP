@@ -4,15 +4,15 @@
     350.0,
     235.0
   ],
-  "impronta": "6ea1176fcbd8b3b3ba42e4a1e5f82385f145b2c54134112cc4a35551c411842b",
+  "impronta": "71c7a52f5aa05d2fc2738cfee0ae294fb71ec3ea09999b17b383f91d2b38a488",
   "fogli": [
     {
       "sheet_id": "t1",
       "linea_di_terra_esportata": false,
-      "etichette": 48,
+      "etichette": 45,
       "sigle": 7,
       "sigle_omesse": 0,
-      "indirizzi": 41,
+      "indirizzi": 38,
       "etichette_con_richiamo": 0,
       "etichette_su_tubo": 0,
       "etichette_su_simbolo": 0,
@@ -21,41 +21,54 @@
       "richiami_su_simbolo": 0,
       "richiami_incrociati": 0,
       "ingombro_mm": [
-        30.0,
-        78.5,
-        340.0,
-        188.5
+        60.0,
+        81.0,
+        307.5,
+        186.0
       ],
-      "riempimento_pct": 41.5,
-      "riempimento_senza_il_piu_isolato_pct": 33.9,
-      "copertura_ingombro": 0.688,
-      "quadranti_rapporto": 3.08,
+      "riempimento_pct": 31.6,
+      "riempimento_senza_il_piu_isolato_pct": 27.8,
+      "copertura_ingombro": 0.656,
+      "quadranti_rapporto": 2.38,
       "quadranti_mm2": [
-        731.2,
-        970.5,
-        2251.2,
-        1440.6
+        1763.9,
+        742.2,
+        1278.0,
+        1355.4
       ],
       "backtracking_tratte": 0,
       "backtracking_mm": 0.0,
-      "incroci": 2,
-      "pieghe_totali": 7,
+      "incroci": 1,
+      "pieghe_totali": 4,
       "tratte_oltre_tre_pieghe": 0,
-      "lunghezza_totale_mm": 767.5,
+      "lunghezza_totale_mm": 470.0,
+      "rete_ordinaria": {
+        "pieghe": 4,
+        "incroci": 1,
+        "lunghezza_mm": 425.0,
+        "tratte": 14,
+        "tratte_oltre_tre_pieghe": 0
+      },
+      "stacchi_statici": {
+        "pieghe": 0,
+        "incroci": 0,
+        "lunghezza_mm": 45.0,
+        "tratte": 6
+      },
       "tubo_sotto_simbolo": [],
       "valvole_d120": {
         "valve-isolation-pdc-master-water-supply": {
-          "caso": "primo oltre il raccordo",
+          "caso": "primo",
           "isola": "pdc-master",
-          "distanza_mm": 10.0
+          "distanza_mm": 5.0
         },
         "valve-isolation-pdc-slave-water-supply": {
-          "caso": "primo oltre il raccordo",
+          "caso": "primo",
           "isola": "pdc-slave",
-          "distanza_mm": 10.0
+          "distanza_mm": 5.0
         },
         "valve-isolation-accumulo-primary-in": {
-          "caso": "ultimo oltre il raccordo",
+          "caso": "ultimo",
           "isola": "accumulo",
           "distanza_mm": 5.0
         },
@@ -125,36 +138,36 @@
           "distanza_mm": 2.5
         }
       },
-      "valvole_d120_entro_2_5_5_mm": 14,
+      "valvole_d120_entro_2_5_5_mm": 16,
       "valvole_d120_totali": 16,
       "tubo_per_collegamento": {
         "p1": {
-          "mm": 80.0,
+          "mm": 25.0,
           "accessori_in_linea": 1,
           "rettilineo_minimo_mm": 7.5
         },
         "p2": {
-          "mm": 75.0,
+          "mm": 65.0,
           "accessori_in_linea": 1,
           "rettilineo_minimo_mm": 7.5
         },
         "p3": {
-          "mm": 122.5,
+          "mm": 80.0,
           "accessori_in_linea": 1,
           "rettilineo_minimo_mm": 7.5
         },
         "p4": {
-          "mm": 70.0,
+          "mm": 67.5,
           "accessori_in_linea": 3,
           "rettilineo_minimo_mm": 22.5
         },
         "p5": {
-          "mm": 77.5,
+          "mm": 12.5,
           "accessori_in_linea": 2,
           "rettilineo_minimo_mm": 15.0
         },
         "p6": {
-          "mm": 107.5,
+          "mm": 52.5,
           "accessori_in_linea": 2,
           "rettilineo_minimo_mm": 15.0
         },
@@ -169,7 +182,7 @@
           "rettilineo_minimo_mm": 7.5
         },
         "w1": {
-          "mm": 15.0,
+          "mm": 12.5,
           "accessori_in_linea": 1,
           "rettilineo_minimo_mm": 7.5
         },
@@ -179,19 +192,19 @@
           "rettilineo_minimo_mm": 22.5
         }
       },
-      "tubo_su_collegamenti_di_partenza_mm": 657.5,
-      "tubo_su_stacchi_mm": 110.0,
-      "stacchi": 8,
-      "simboli": 43,
-      "tratte": 24
+      "tubo_su_collegamenti_di_partenza_mm": 425.0,
+      "tubo_su_stacchi_mm": 45.0,
+      "stacchi": 6,
+      "simboli": 39,
+      "tratte": 20
     }
   ],
   "rami": {
     "accumulo.primary_in": {
       "verso": "in",
       "fila": [
-        "tee-valve-safety-accumulo-primary-in",
         "valve-isolation-accumulo-primary-in [isolation]",
+        "tee-valve-safety-collettore-mandata-b",
         "collettore-mandata"
       ],
       "filtri": 0,
@@ -282,7 +295,6 @@
     "pdc-master.water_supply": {
       "verso": "out",
       "fila": [
-        "tee-valve-safety-pdc-master-water-supply",
         "valve-isolation-pdc-master-water-supply [isolation]",
         "collettore-mandata"
       ],
@@ -306,7 +318,6 @@
     "pdc-slave.water_supply": {
       "verso": "out",
       "fila": [
-        "tee-valve-safety-pdc-slave-water-supply",
         "valve-isolation-pdc-slave-water-supply [isolation]",
         "collettore-mandata"
       ],
@@ -363,36 +374,25 @@
   "sicurezze": {
     "accumulo.primary_in": {
       "fila": [
-        "tee-valve-safety-accumulo-primary-in",
         "valve-isolation-accumulo-primary-in",
+        "tee-valve-safety-collettore-mandata-b",
         "collettore-mandata"
       ],
-      "prima_dell_intercettazione": [
-        "tee-valve-safety-accumulo-primary-in"
-      ],
-      "sicurezze_prima_dell_intercettazione": [
-        "valve-safety-accumulo-primary-in"
-      ],
+      "prima_dell_intercettazione": [],
+      "sicurezze_prima_dell_intercettazione": [],
       "sicurezze_sul_tratto": [
-        "valve-safety-accumulo-primary-in"
+        "valve-safety-collettore-mandata-b"
       ],
       "ruolo": "riserva"
     },
     "pdc-master.water_supply": {
       "fila": [
-        "tee-valve-safety-pdc-master-water-supply",
         "valve-isolation-pdc-master-water-supply",
         "collettore-mandata"
       ],
-      "prima_dell_intercettazione": [
-        "tee-valve-safety-pdc-master-water-supply"
-      ],
-      "sicurezze_prima_dell_intercettazione": [
-        "valve-safety-pdc-master-water-supply"
-      ],
-      "sicurezze_sul_tratto": [
-        "valve-safety-pdc-master-water-supply"
-      ],
+      "prima_dell_intercettazione": [],
+      "sicurezze_prima_dell_intercettazione": [],
+      "sicurezze_sul_tratto": [],
       "ruolo": "generatore",
       "a_bordo": [
         "circulation"
@@ -400,19 +400,12 @@
     },
     "pdc-slave.water_supply": {
       "fila": [
-        "tee-valve-safety-pdc-slave-water-supply",
         "valve-isolation-pdc-slave-water-supply",
         "collettore-mandata"
       ],
-      "prima_dell_intercettazione": [
-        "tee-valve-safety-pdc-slave-water-supply"
-      ],
-      "sicurezze_prima_dell_intercettazione": [
-        "valve-safety-pdc-slave-water-supply"
-      ],
-      "sicurezze_sul_tratto": [
-        "valve-safety-pdc-slave-water-supply"
-      ],
+      "prima_dell_intercettazione": [],
+      "sicurezze_prima_dell_intercettazione": [],
+      "sicurezze_sul_tratto": [],
       "ruolo": "generatore",
       "a_bordo": [
         "circulation"
@@ -494,41 +487,11 @@
       "verso_la_radice": null,
       "specie_dal_modello": "static"
     },
-    "valve-safety-accumulo-primary-in": {
+    "valve-safety-collettore-mandata-b": {
       "funzioni": [
         "safety"
       ],
-      "regge": "tee-valve-safety-accumulo-primary-in",
-      "specie": "static",
-      "servizio": "andata",
-      "servizio_della_tratta_ospite": [
-        "True"
-      ],
-      "coerente_con_la_tratta_ospite": true,
-      "freccia": false,
-      "verso_la_radice": null,
-      "specie_dal_modello": "static"
-    },
-    "valve-safety-pdc-master-water-supply": {
-      "funzioni": [
-        "safety"
-      ],
-      "regge": "tee-valve-safety-pdc-master-water-supply",
-      "specie": "static",
-      "servizio": "andata",
-      "servizio_della_tratta_ospite": [
-        "True"
-      ],
-      "coerente_con_la_tratta_ospite": true,
-      "freccia": false,
-      "verso_la_radice": null,
-      "specie_dal_modello": "static"
-    },
-    "valve-safety-pdc-slave-water-supply": {
-      "funzioni": [
-        "safety"
-      ],
-      "regge": "tee-valve-safety-pdc-slave-water-supply",
+      "regge": "tee-valve-safety-collettore-mandata-b",
       "specie": "static",
       "servizio": "andata",
       "servizio_della_tratta_ospite": [
@@ -543,7 +506,7 @@
   "catene": {
     "accumulo.cold_in": {
       "verso": "in",
-      "primo_rettilineo_mm": 20.0,
+      "primo_rettilineo_mm": 17.5,
       "catena": [
         {
           "pezzo": "valve-isolation-dhw-acquedotto-a",
@@ -579,9 +542,28 @@
       "distanza_attesa_dalla_porta_mm": 5.0,
       "passo_atteso_mm": 2.5
     },
+    "accumulo.primary_in": {
+      "verso": "in",
+      "primo_rettilineo_mm": 75.0,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-accumulo-primary-in",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
     "accumulo.primary_out": {
       "verso": "out",
-      "primo_rettilineo_mm": 35.0,
+      "primo_rettilineo_mm": 32.5,
       "catena": [
         {
           "pezzo": "valve-isolation-accumulo-primary-out",
@@ -657,7 +639,7 @@
     },
     "filling-unit-collettore-ritorno-a.a": {
       "verso": "bidirectional",
-      "primo_rettilineo_mm": 25.0,
+      "primo_rettilineo_mm": 15.0,
       "catena": [
         {
           "pezzo": "valve-isolation-filling-unit-collettore-ritorno-a-a",
@@ -676,7 +658,7 @@
     },
     "pdc-master.water_return": {
       "verso": "in",
-      "primo_rettilineo_mm": 85.0,
+      "primo_rettilineo_mm": 22.5,
       "catena": [
         {
           "pezzo": "strainer-pdc-master-water-return",
@@ -704,9 +686,28 @@
       "distanza_attesa_dalla_porta_mm": 5.0,
       "passo_atteso_mm": 2.5
     },
+    "pdc-master.water_supply": {
+      "verso": "out",
+      "primo_rettilineo_mm": 30.0,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-pdc-master-water-supply",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
     "pdc-slave.water_return": {
       "verso": "in",
-      "primo_rettilineo_mm": 85.0,
+      "primo_rettilineo_mm": 25.0,
       "catena": [
         {
           "pezzo": "strainer-pdc-slave-water-return",
@@ -734,9 +735,28 @@
       "distanza_attesa_dalla_porta_mm": 5.0,
       "passo_atteso_mm": 2.5
     },
+    "pdc-slave.water_supply": {
+      "verso": "out",
+      "primo_rettilineo_mm": 32.5,
+      "catena": [
+        {
+          "pezzo": "valve-isolation-pdc-slave-water-supply",
+          "funzioni": [
+            "isolation"
+          ],
+          "rotazione": 0,
+          "distanza_dalla_porta_mm": 5.0,
+          "distanza_dal_precedente_mm": null,
+          "centro_lungo_l_asse_mm": 7.5,
+          "sul_primo_rettilineo": true
+        }
+      ],
+      "distanza_attesa_dalla_porta_mm": 5.0,
+      "passo_atteso_mm": 2.5
+    },
     "pressure-gauge-collettore-ritorno-a.a": {
       "verso": "bidirectional",
-      "primo_rettilineo_mm": 22.5,
+      "primo_rettilineo_mm": 15.0,
       "catena": [
         {
           "pezzo": "valve-isolation-pressure-gauge-collettore-ritorno-a-a",
@@ -778,8 +798,7 @@
     "strainer-pdc-slave-water-return"
   ],
   "rilievi_qualita": [
-    "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 41%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)",
-    "warning:DRAWING_ALL_ON_ONE_SIDE:la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 3.1 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)"
+    "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 32%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)"
   ],
   "rilievi_correttezza": []
 }

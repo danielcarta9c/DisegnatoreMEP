@@ -88,7 +88,6 @@ from disegnatore_mep.graphics.frame import Rect, SheetFrame
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest, SymbolPort
 from disegnatore_mep.model.project import ProjectModel
 
-from .chains import neighbours_beyond_fittings
 from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
 from .flow import orient_trunks
@@ -112,6 +111,7 @@ from .place import (
     hanging_children,
     inline_room_mm,
     run_chains,
+    stub_minimum_mm,
 )
 from .route import CROSS_COST, STEP_COST, TURN_COST
 from .trunks import Trunk
@@ -133,7 +133,7 @@ quindi non costa la riproducibilita'. Ogni prova e' un `settle_sheet` completo,
 e vale circa un decimo di secondo sull'impianto 1.
 """
 
-MAX_AXIS_TRIALS = 1000
+MAX_AXIS_TRIALS = 2000
 """Tetto di instradamenti di prova della seconda fase, quella degli assi.
 
 Il ciclo lavora in due fasi (DRAW-004): prima la posa di DRAW-002, con le
@@ -146,6 +146,11 @@ prima. Anche questo scatta in modo deterministico.
 NUDGE_STEPS = (1, 2, 4, 8)
 """Le traslazioni cieche, in passi di griglia: l'ultima risorsa, dopo le mosse
 ricavate dalle porte. Servono a scansare un ostacolo che nessuna porta indica."""
+
+LIFT_STEPS = (1, 2, 4, 6)
+"""Le traslazioni verticali gratuite di una macchina, in passi di griglia
+(I-046): la prima risorsa, non l'ultima. Spostare una macchina non costa;
+curve, incroci e lunghezza si'."""
 
 SLACK_STEPS = (0, 2, 4)
 """Il gioco in piu' provato oltre la distanza minima, in passi di griglia.
@@ -505,10 +510,50 @@ class Improver:
             trunk.connection_ids: inline_room_mm(project, catalog, trunk.inline_component_ids)
             for trunk in self.trunks
         }
+        # Le tratte vuote fra due raccordi di cui almeno uno regge un appeso
+        # (I-046): il raccordo della sicurezza sta stretto alla confluenza, il
+        # raccordo del manometro al raccordo del riempimento. Lungo una retta
+        # la lunghezza totale non cambia spostando un raccordo, e nessun
+        # costo lo terrebbe vicino a cio' a cui appartiene: e' un vincolo.
+        fittings = {
+            item.component_id
+            for item in placed
+            if catalog.get(definitions[item.component_id]).is_a_fitting
+        }
+        self.service_links: list[Trunk] = [
+            trunk
+            for trunk in self.trunks
+            if not trunk.inline_component_ids
+            and {trunk.start.component_id, trunk.end.component_id} <= fittings
+            and any(
+                self.children.get(item)
+                for item in (trunk.start.component_id, trunk.end.component_id)
+            )
+        ]
+        self.service_followers: dict[str, tuple[str, ...]] = {}
+        for trunk in self.service_links:
+            for mine, other in (
+                (trunk.start.component_id, trunk.end.component_id),
+                (trunk.end.component_id, trunk.start.component_id),
+            ):
+                self.service_followers[mine] = (*self.service_followers.get(mine, ()), other)
         # Lo stacco di ogni appeso dal proprio attacco, misurato sulla posa
         # iniziale lungo l'asse dello stacco: si conserva quando il pezzo si
         # muove o si gira, perche' l'ha deciso il posizionamento.
         self.hang_gap: dict[str, float] = {}
+        # Il minimo di ogni stacco, letto dalla tratta come lo legge la posa
+        # (I-046): sotto non si scende, sopra si paga in lunghezza.
+        self.hang_min: dict[str, float] = {}
+        for child, (parent, _port_id) in self.parent_of.items():
+            trunk = next(
+                item
+                for item in self.trunks
+                if {item.start.component_id, item.end.component_id} == {parent, child}
+            )
+            face = self.upright[child].ports[0].face
+            self.hang_min[child] = stub_minimum_mm(
+                project, catalog, trunk, face in _HORIZONTAL_FACES, self.step
+            )
         self._refresh_hang_gaps()
 
         self.owning_run = {
@@ -697,15 +742,15 @@ class Improver:
     # -- le figure -------------------------------------------------------------
 
     def _neighbours(self, component_id: str) -> frozenset[str]:
-        """A cosa un pezzo e' attaccato, senza contare cio' che pende e
-        guardando attraverso i raccordi passanti: la stessa lettura della
-        posa, o le due non vedrebbero le stesse pile."""
+        """A cosa un pezzo e' attaccato, senza contare cio' che pende."""
         return frozenset(
             other
-            for other in neighbours_beyond_fittings(
-                self.project, self.catalog, self.trunks, component_id
+            for trunk in self.trunks
+            for mine, other in (
+                (trunk.start.component_id, trunk.end.component_id),
+                (trunk.end.component_id, trunk.start.component_id),
             )
-            if other not in self.parent_of and other in self.best and other != component_id
+            if mine == component_id and other not in self.parent_of and other in self.best
         )
 
     def column_of(self, component_id: str) -> tuple[str, ...]:
@@ -802,6 +847,63 @@ class Improver:
                 )
             )
         return move
+
+    def _link_mm(self, table: Move, trunk: Trunk) -> float:
+        """Da porta a porta, lungo la griglia, sulla tavola data."""
+        start, _ = self.port_at(table[trunk.start.component_id], trunk.start.port_id)
+        goal, _ = self.port_at(table[trunk.end.component_id], trunk.end.port_id)
+        return abs(goal.x_mm - start.x_mm) + abs(goal.y_mm - start.y_mm)
+
+    def _with_followers(self, move: Move) -> Move:
+        """I raccordi di servizio seguono il raccordo a cui sono attaccati.
+
+        Una candidata che sposta o gira un raccordo rimette in fila, dalla
+        sua porta, i raccordi che gli stanno stretti su una tratta vuota
+        (I-046) — quello della sicurezza dopo la confluenza, quelli del
+        manometro, del riempimento e del vaso fra loro — con cio' che a loro
+        pende, alla distanza minima e con l'ingresso rivolto all'indietro,
+        come la catena. Cosi' la mossa resta una posa valida invece di
+        allungare la tratta vuota, e il ciclo puo' spostare la confluenza
+        senza lasciare indietro la sicurezza. Chi la mossa gia' colloca da
+        se' non si tocca.
+        """
+        out = dict(move)
+        frontier = [item for item in move if item in self.service_followers]
+        while frontier:
+            item = frontier.pop()
+            for trunk in self.service_links:
+                ends = (trunk.start, trunk.end)
+                if item not in {ref.component_id for ref in ends}:
+                    continue
+                mine, other = ends if ends[0].component_id == item else (ends[1], ends[0])
+                if other.component_id in out:
+                    continue
+                # La fila che continua oltre il seguace, lungo le tratte vuote.
+                members = [other.component_id]
+                while True:
+                    beyond = [
+                        follower
+                        for follower in self.service_followers.get(members[-1], ())
+                        if follower not in members and follower != item and follower not in out
+                    ]
+                    if not beyond:
+                        break
+                    members.append(beyond[0])
+                saved = self.best
+                self.best = {**saved, **out}
+                try:
+                    laid = self._lay(
+                        tuple(members), item, mine.port_id, trunk, other.port_id, 0
+                    )
+                finally:
+                    self.best = saved
+                if laid is None:
+                    continue
+                for member in members:
+                    if member in laid:
+                        frontier.append(member)
+                out.update(laid)
+        return out
 
     def _need_mm(self, trunk: Trunk) -> float:
         """La distanza minima fra due porte affacciate su questa tratta.
@@ -1486,9 +1588,9 @@ class Improver:
         out: list[Move] = []
         parent = self.best[leader]
         for child, port_id in self.children.get(leader, ()):
-            for count in (1, 2, -1):
+            for count in (-2, -1, 1, 2):
                 gap = self.hang_gap[child] + count * self.step
-                if gap < ROW_GAP_MM - _TOLERANCE_MM:
+                if gap < self.hang_min[child] - _TOLERANCE_MM:
                     continue
                 out.append({child: self._rehung(child, parent, port_id, gap)})
         return out
@@ -1507,6 +1609,25 @@ class Improver:
             for degrees, port_map in self._orientations(leader)
             if (degrees, port_map) != (me.rotation_deg, me.port_map)
         ]
+
+    def _lift_moves(self, leader: str) -> list[Move]:
+        """L'interasse: il pezzo trasla in verticale, da solo, con cio' che gli
+        pende (I-046). Costa zero e si prova **per primo**: due macchine
+        impilate le cui catene si contendono lo spazio si allontanano di
+        qualche passo prima che la tratta giri, devii o si scavi un corridoio.
+        Vicino prima che lontano, in alto prima che in basso."""
+        me = self.best[leader]
+        out: list[Move] = []
+        for count in LIFT_STEPS:
+            for dy in (-count * self.step, count * self.step):
+                out.append(
+                    self.place_unit(
+                        leader,
+                        Point(x_mm=me.origin.x_mm, y_mm=me.origin.y_mm + dy),
+                        me.rotation_deg,
+                    )
+                )
+        return out
 
     def _nudge_moves(self, leader: str) -> list[Move]:
         """Le traslazioni cieche: in alto prima che in basso, vicino prima che
@@ -1555,8 +1676,9 @@ class Improver:
         leader = self.leader_of(component_id)
         chained = self._chain_moves(leader)
         ported = self._port_moves(leader)
+        spined = self._spine_moves(leader) if self.refining else []
         roomy: list[tuple[str, Move]] = []
-        for kind, moves in (("catena", chained), ("porta", ported)):
+        for kind, moves in (("dorsale", spined), ("catena", chained), ("porta", ported)):
             for move in moves:
                 roomy.extend(
                     (f"{kind}+spazio", extra)
@@ -1564,7 +1686,8 @@ class Improver:
                 )
         if self.refining:
             generated: list[tuple[str, Move]] = [
-                *(("dorsale", move) for move in self._spine_moves(leader)),
+                *(("interasse", move) for move in self._lift_moves(leader)),
+                *(("dorsale", move) for move in spined),
                 *(("catena", move) for move in chained),
                 *(("porta", move) for move in ported),
                 *(("asse", move) for move in self._axis_moves(leader)),
@@ -1578,6 +1701,7 @@ class Improver:
             ]
         else:
             generated = [
+                *(("interasse", move) for move in self._lift_moves(leader)),
                 *(("catena", move) for move in chained),
                 *(("porta", move) for move in ported),
                 *roomy,
@@ -1614,7 +1738,7 @@ class Improver:
         for kind, move in generated:
             changed = {
                 item: placed
-                for item, placed in move.items()
+                for item, placed in self._with_followers(move).items()
                 if not _same_pose(placed, self.best[item])
             }
             if not changed:
@@ -1641,20 +1765,19 @@ class Improver:
                 return False
             if placed.port_map and placed.port_map not in self.permutations[item]:
                 return False
-            # Nella prima fase chi sta a terra resta alla propria quota, salvo
-            # scambiarsela con un compagno di pila; nella seconda la quota e'
-            # libera dentro l'area (DRAW-004).
+            # La quota di chi sta a terra e' libera dentro l'area in tutte e
+            # due le fasi (I-046): spostare una macchina in verticale costa
+            # zero, e l'interasse fra due macchine impilate e' la prima cosa
+            # da provare quando le loro catene si contendono lo spazio —
+            # prima di curve, deviazioni e corridoi. Il riquadro, invece,
+            # resta quello: la posa non ruota chi sta a terra.
             if (
                 not self.refining
                 and self.standings[item] is Standing.GROUND
                 and item not in self.parent_of
+                and placed.height_mm != before.height_mm
             ):
-                if placed.height_mm != before.height_mm:
-                    return False
-                if placed.origin.y_mm != before.origin.y_mm and not self._swapped_in_column(
-                    item, move
-                ):
-                    return False
+                return False
             if not is_on_grid(placed.origin.x_mm - self.area.x_mm, self.step):
                 return False
             if not is_on_grid(placed.origin.y_mm - self.area.y_mm, self.step):
@@ -1705,6 +1828,21 @@ class Improver:
                     continue
                 if mate not in move or move[mate].origin.x_mm - self.best[mate].origin.x_mm != dx:
                     return False
+        # Un raccordo che regge soltanto uno stacco statico sta **stretto** al
+        # raccordo a cui e' attaccato (I-046): la tratta vuota fra i due non
+        # si allunga oltre il minimo — una posa che gia' la tiene lunga puo'
+        # solo accorciarla. E' cosi' che la sicurezza di circuito resta vicino
+        # al gruppo: lungo la retta della mandata il tubo totale e' lo stesso
+        # ovunque stia il suo raccordo, e senza questo vincolo scivolava
+        # verso l'accumulo per uno spareggio.
+        for trunk in self.service_links:
+            ends = (trunk.start.component_id, trunk.end.component_id)
+            if not any(item in move for item in ends):
+                continue
+            was = self._link_mm(self.best, trunk)
+            now_mm = self._link_mm(after, trunk)
+            if now_mm > max(self._need_mm(trunk), was) + _TOLERANCE_MM:
+                return False
         # L'ordine di processo e' un vincolo, non un costo (D-060), e si legge
         # sul verso del fluido: la mandata va a destra, il ritorno torna a
         # sinistra. Una posa che gia' contraddice il verso puo' essere corretta,
@@ -1806,9 +1944,17 @@ class Improver:
         diario.
         """
         for leader in self.scan:
+            # Fra le candidate di un pezzo che si lasciano instradare si tiene
+            # **la migliore**, non la prima (I-046): la prima dipendeva
+            # dall'ordine in cui le mosse sono generate, e da li' il ciclo
+            # ripartiva da una posa cattiva che poi non lasciava piu'. Il
+            # tetto di prove resta quello, e scatta allo stesso modo.
+            best_found: Measured | None = None
+            best_trial: Move | None = None
+            best_kind = ""
             for kind, move in self.candidates_by_kind(leader):
                 if self.trials >= MAX_TRIAL_ROUTINGS:
-                    return None
+                    break
                 if not self.is_valid(move):
                     continue
                 trial = dict(self.best)
@@ -1820,14 +1966,20 @@ class Improver:
                         kind,
                         leader,
                         None if found is None else found.cost.key(),
-                        found is not None,
+                        False,
                     )
                 )
                 if found is None:
                     continue
-                self.best = trial
+                if best_found is None or found.cost.beats(best_found.cost):
+                    best_found, best_trial, best_kind = found, trial, kind
+            if best_found is not None and best_trial is not None:
+                self.journal.append(Attempt("posa", best_kind, leader, best_found.cost.key(), True))
+                self.best = best_trial
                 self._refresh_hang_gaps()
-                return found
+                return best_found
+            if self.trials >= MAX_TRIAL_ROUTINGS:
+                return None
         return None
 
     def _settle_placement(self, current: Measured) -> Measured:

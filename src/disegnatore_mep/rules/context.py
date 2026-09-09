@@ -18,8 +18,10 @@ from dataclasses import dataclass, field
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import (
+    CLOSING_FUNCTIONS,
     SHUTOFF_REGIMES,
     ComponentTrait,
+    OnBoard,
     PortDefinition,
 )
 from disegnatore_mep.model.project import ConnectionModel, PortRef, ProjectModel
@@ -93,6 +95,10 @@ class RuleContext:
     """Componenti di ciascuna rete, in ordine di modello."""
 
     own: dict[str, frozenset[str]] = field(default_factory=dict)
+    lacking: dict[str, frozenset[str]] = field(default_factory=dict)
+    """Le funzioni che ogni componente dichiara di **non** portare a bordo
+    (I-046): l'altra meta' di `carried`. Cio' che non sta in nessuno dei due
+    e' ignoto."""
     """Gli accessori **di ciascun pezzo**: quelli che una regola per componente
     gli ha posato sui suoi stessi attacchi (DRAW-005, I-034).
 
@@ -116,6 +122,7 @@ class RuleContext:
         functions: dict[str, frozenset[str]] = {}
         traits: dict[str, frozenset[ComponentTrait]] = {}
         carried: dict[str, frozenset[str]] = {}
+        lacking: dict[str, frozenset[str]] = {}
         stored_media: dict[str, str] = {}
         fill_ports: dict[str, str] = {}
         ports: dict[str, tuple[PortDefinition, ...]] = {}
@@ -126,6 +133,7 @@ class RuleContext:
             functions[component.id] = frozenset(resolved.definition.functions)
             traits[component.id] = resolved.definition.trait_set
             carried[component.id] = frozenset(resolved.definition.carries_on_board)
+            lacking[component.id] = frozenset(resolved.definition.lacks_on_board)
             if resolved.definition.fills_from is not None:
                 fill_ports[component.id] = resolved.definition.fills_from
             if resolved.definition.stored_medium is not None:
@@ -215,6 +223,7 @@ class RuleContext:
             # pompa di calore all'altra permutando il file: si chiude qui.
             members={key: tuple(sorted(value)) for key, value in members.items()},
             own={key: frozenset(value) for key, value in own.items()},
+            lacking=lacking,
         )
 
     # --- cio' che una condizione puo' chiedere ------------------------------
@@ -235,6 +244,89 @@ class RuleContext:
     def carries(self, component_id: str, function: str) -> bool:
         """Quel componente porta quella funzione a bordo, di fabbrica."""
         return function in self.carried.get(component_id, frozenset())
+
+    def on_board(self, component_id: str, function: str) -> OnBoard:
+        """Cosa il catalogo dice di quella funzione dentro il mantello di quel
+        pezzo: presente, assente, o ignoto — e ignoto non e' assente (I-046)."""
+        if function in self.carried.get(component_id, frozenset()):
+            return OnBoard.PRESENT
+        if function in self.lacking.get(component_id, frozenset()):
+            return OnBoard.ABSENT
+        return OnBoard.UNKNOWN
+
+    def own_closers(self, component_id: str) -> frozenset[str]:
+        """Gli organi **propri** di un pezzo: su ciascuno dei suoi attacchi del
+        percorso, il primo che chiude, letto attraverso i pezzi in linea —
+        anche quelli che si manutengono, perche' il filtro della macchina e'
+        della macchina e la valvola oltre il filtro isola tutti e due (I-034).
+        Sono gli organi che la macchina chiude per essere manutenuta: nella
+        configurazione ammessa, quando lei e' in esercizio, sono aperti."""
+        found: set[str] = set()
+        for port in self.connected_ports(component_id):
+            cursor = component_id
+            connection_id = self.connection_of_port.get((component_id, port.id))
+            seen = {cursor}
+            while connection_id is not None:
+                peer = self._peer(connection_id, cursor)
+                if peer is None or peer in seen:
+                    break
+                seen.add(peer)
+                if CLOSING_FUNCTIONS & self.functions.get(peer, frozenset()):
+                    found.add(peer)
+                    break
+                if peer not in self.inline:
+                    break
+                onward = [
+                    item
+                    for item in (*self.incoming.get(peer, ()), *self.outgoing.get(peer, ()))
+                    if item != connection_id
+                ]
+                if len(onward) != 1:
+                    break
+                connection_id = onward[0]
+                cursor = peer
+        return frozenset(found)
+
+    def cut_off_from(self, component_id: str, function: str, network_id: str) -> bool:
+        """Il pezzo puo' restare **separato** da ogni pezzo con quella funzione
+        sulla sua rete (I-046): il dominio di protezione, letto dalla
+        connettivita' e dalle intercettazioni.
+
+        Si cammina dagli attacchi del pezzo lungo le tubazioni della rete,
+        in tutte e due le direzioni, attraverso tutto cio' che comunica —
+        raccordi, accessori, macchine, serbatoi: l'acqua dentro e' una — e si
+        guarda anche cio' che pende dagli stacchi. Un organo di chiusura si
+        attraversa solo se e' **proprio** del pezzo: quelli sono aperti quando
+        la macchina e' in esercizio; un organo altrui puo' essere chiuso mentre
+        lei scalda, e oltre quello la protezione non conta. Vero se nessuna
+        strada cosi' arriva alla funzione cercata.
+        """
+        own = self.own_closers(component_id)
+        frontier: list[tuple[str, str]] = []
+        seen_pipes: set[str] = set()
+        for port in self.connected_ports(component_id):
+            connection_id = self.connection_of_port[(component_id, port.id)]
+            if self.network_of_connection.get(connection_id) != network_id:
+                continue
+            seen_pipes.add(connection_id)
+            frontier.append((connection_id, component_id))
+        seen_pieces = {component_id}
+        while frontier:
+            connection_id, cursor = frontier.pop(0)
+            peer = self._peer(connection_id, cursor)
+            if peer is None or peer in seen_pieces:
+                continue
+            seen_pieces.add(peer)
+            if function in self.functions.get(peer, frozenset()) or function in self.hanging_functions(peer):
+                return False
+            if CLOSING_FUNCTIONS & self.functions.get(peer, frozenset()) and peer not in own:
+                continue
+            for onward in sorted((*self.incoming.get(peer, ()), *self.outgoing.get(peer, ()))):
+                if onward in seen_pipes or self.network_of_connection.get(onward) != network_id:
+                    continue
+                seen_pipes.add(onward)
+                frontier.append((onward, peer))
+        return True
 
     def components_with(self, network_id: str, function: str) -> tuple[str, ...]:
         return tuple(

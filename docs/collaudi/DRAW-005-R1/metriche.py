@@ -255,18 +255,53 @@ def measure(
             if back > TOLERANCE_MM:
                 turnback_runs += 1
                 turnback_mm += back
+        # La rete a flusso ordinario e gli stacchi statici, **separati**
+        # (I-046): curve, incroci e lunghezza della rete si confrontano con
+        # DRAW-005; gli stacchi — sicurezza, sfogo, misura, espansione,
+        # riempimento, scarico — sono tubo nuovo e si contano a parte. Uno
+        # stacco e' una tratta la cui specie non e' quella ordinaria. Un
+        # incrocio fra una tratta ordinaria e uno stacco e' dello stacco.
+        stub_points = {
+            (round(point.x_mm, 3), round(point.y_mm, 3))
+            for route in sheet.routes
+            if route.flow_kind is not FlowKind.ORDINARY
+            for point in route.crossings
+        }
+        ordinary = {
+            "pieghe": 0,
+            "incroci": 0,
+            "lunghezza_mm": 0.0,
+            "tratte": 0,
+            "tratte_oltre_tre_pieghe": 0,
+        }
+        static = {"pieghe": 0, "incroci": 0, "lunghezza_mm": 0.0, "tratte": 0}
         for route in sheet.routes:
             turns = 0
+            mm = 0.0
             for segment in route.segments:
                 turns += max(len(segment) - 2, 0)
                 for before, after in moves_of(segment):
-                    length_mm += abs(after.x_mm - before.x_mm) + abs(
-                        after.y_mm - before.y_mm
-                    )
+                    mm += abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
+            length_mm += mm
             bends += turns
             if turns > 3:
                 long_runs += 1
             crossings += len(route.crossings)
+            is_stub = route.flow_kind is not FlowKind.ORDINARY
+            own_crossings = sum(
+                1
+                for point in route.crossings
+                if is_stub or (round(point.x_mm, 3), round(point.y_mm, 3)) not in stub_points
+            )
+            bucket = static if is_stub else ordinary
+            bucket["pieghe"] = int(bucket["pieghe"]) + turns
+            bucket["incroci"] = int(bucket["incroci"]) + own_crossings
+            bucket["lunghezza_mm"] = float(bucket["lunghezza_mm"]) + mm
+            bucket["tratte"] = int(bucket["tratte"]) + 1
+            if not is_stub and turns > 3:
+                ordinary["tratte_oltre_tre_pieghe"] = int(ordinary["tratte_oltre_tre_pieghe"]) + 1
+        ordinary["lunghezza_mm"] = round(float(ordinary["lunghezza_mm"]), 1)
+        static["lunghezza_mm"] = round(float(static["lunghezza_mm"]), 1)
 
         # Tubo dentro il corpo di un simbolo, **senza nessuna esenzione**: la
         # stessa misura del cancello di correttezza, che conta l'attraversamento
@@ -558,6 +593,8 @@ def measure(
                 "pieghe_totali": bends,
                 "tratte_oltre_tre_pieghe": long_runs,
                 "lunghezza_totale_mm": round(length_mm, 1),
+                "rete_ordinaria": ordinary,
+                "stacchi_statici": static,
                 "tubo_sotto_simbolo": sorted(set(under)),
                 "valvole_d120": gaps,
                 # Le valvole che la regola governa — chi isola un pezzo

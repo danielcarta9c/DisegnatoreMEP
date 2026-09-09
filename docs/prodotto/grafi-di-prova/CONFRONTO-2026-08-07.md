@@ -16,16 +16,18 @@
 > impianto 4, 52 e 43; impianto 5, 108 e 98. I grafi rigenerati stanno accanto a questo
 > documento; la tavola rifatta è la sola dell'impianto 1 (D-116).
 
-> **Aggiornamento dell'8 settembre 2026 (DRAW-005-R1).** I conteggi «a N pezzi» sono
-> quelli di oggi, dopo la tua correzione sulla sicurezza (I-043): una pompa di calore
-> generica non porta la sicurezza a bordo finché il suo catalogo non lo dichiara, quindi
-> ogni generatore isolabile riceve la propria sicurezza esterna sulla mandata, attaccata
-> alla macchina e prima della sua intercettazione; la sicurezza del serbatoio resta.
-> Rispetto al 7 settembre: impianto 1, 39 pezzi allora e 43 oggi (due sicurezze e i due
-> raccordi che le reggono); impianto 2, 46 e 48; impianto 3, 44 e 46; impianto 4, 43 e
-> 47 (una per macchina, pompa di calore e caldaia); impianto 5, 98 e 98 — sopra i 35 kW
-> le sicurezze per macchina c'erano già. Le frasi «esce una delle due sicurezze» qui
-> sotto descrivono il 7 agosto e non valgono più: oggi ogni macchina ha la sua.
+> **Aggiornamento del 9 settembre 2026 (DRAW-005-R1, I-046).** I conteggi «a N pezzi»
+> sono quelli di oggi, dopo la tua correzione sulla sicurezza: nella piccola centrale la
+> sicurezza è **una per circuito**, sulla mandata dove le mandate sono già una, attaccata
+> alla confluenza — non una per generatore e non più sul serbatoio. È la sicurezza del
+> 7 settembre spostata, non moltiplicata. Rispetto al 7 settembre: impianto 1, 39 pezzi
+> allora e 39 oggi (la sicurezza si è spostata dall'ingresso dell'accumulo alla mandata
+> comune); impianto 2, 46 e 46; impianto 3, 44 e 44 (in tutti e due la sicurezza sta
+> sulla mandata della macchina sola, che è la mandata comune); impianto 4, 43 e 41 —
+> l'ibrido perde la sicurezza sul volume tecnico e non ne riceve una sulla mandata
+> comune, perché sulla mandata la camminata si ferma alla deviatrice della caldaia e la
+> mandata comune non si trova: sono i suoi tre punti aperti, sotto; impianto 5, 98 e 98 —
+> sopra i 35 kW le sicurezze per macchina c'erano già e restano.
 
 ---
 
@@ -52,7 +54,7 @@ scrivere le regole:
 
 ## Impianto per impianto
 
-**1 — Due pompe di calore e accumulo combinato: da 59 a 43 pezzi.**
+**1 — Due pompe di calore e accumulo combinato: da 59 a 39 pezzi.**
 Escono i due separatori d'aria, i due termometri e una delle due sicurezze; il
 defangatore passa da tre a uno, sul ritorno generale prima della ripartizione verso le
 due macchine; i filtri a Y restano due, uno per macchina, e il circolatore perde il suo;
@@ -60,16 +62,16 @@ entra lo sfogo aria sull'attacco dedicato dell'accumulo, e la sicurezza supersti
 sull'accumulo. Vaso, riempimento e manometro stanno adesso sul tratto comune, non più
 sul ramo della prima macchina.
 
-**2 — Pompa di calore con deviatrice e bollitore: da 58 a 48 pezzi.**
+**2 — Pompa di calore con deviatrice e bollitore: da 58 a 46 pezzi.**
 Escono separatore, termometro e il defangatore doppio; entra lo sfogo sul volano; la
 sicurezza sta sul volano. Lo scarico del bollitore si sposta dall'uscita calda
 all'ingresso dell'acqua fredda.
 
-**3 — Pompa di calore diretta su pavimento: da 55 a 46 pezzi.**
+**3 — Pompa di calore diretta su pavimento: da 55 a 44 pezzi.**
 Stesse uscite del regime piccolo (separatore, termometro), sfogo e sicurezza sul volano
 in linea, e lo scarico del boiler sull'ingresso freddo.
 
-**4 — Ibrido pompa di calore e caldaia: da 68 a 47 pezzi.**
+**4 — Ibrido pompa di calore e caldaia: da 68 a 41 pezzi.**
 Il ritorno generale è il tratto fra il volume tecnico e il punto in cui il ritorno si
 divide verso le due macchine: lì stanno vaso, riempimento, manometro e l'unico
 defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul volano;
@@ -95,8 +97,13 @@ tre tubi si incontrano mettiamo due raccordi, che è la regola generale e non ri
 supporre un pezzo che non hai nominato. Di qui i pezzi in più rispetto a ieri, non da un
 irrigidimento delle regole.
 
-**Nessuno dei cinque ha punti aperti.** Ogni accessorio che le regole hanno chiesto ha
-trovato il pezzo e il posto.
+**Quattro dei cinque non hanno punti aperti.** Ogni accessorio che le regole hanno
+chiesto ha trovato il pezzo e il posto. L'ibrido (impianto 4) ne ha tre dal 9 settembre
+2026, tutti sulla sicurezza (I-046): sulla sua mandata non c'è un tratto comune su cui
+posare la sicurezza di circuito — la caldaia manda alla deviatrice, e oltre la
+deviatrice la camminata non va — e per ciascuna delle due macchine il catalogo non dice
+se la sicurezza sta dentro il mantello: il motore lo chiede invece di presumere. Sono
+tre domande per te, non tre pezzi.
 
 ---
 

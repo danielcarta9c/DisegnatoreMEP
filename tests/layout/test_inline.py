@@ -125,16 +125,26 @@ def test_the_break_is_as_long_as_the_declared_gap() -> None:
 
 
 def test_the_rotation_follows_the_run_and_is_allowed() -> None:
+    """La giacitura la da' il tratto, e la rotazione e' una che il simbolo
+    ammette. Non una coppia fissa di angoli: un filtro a Y non si specchia —
+    ammette 0 e 270 — e su un tratto verticale la sola giacitura possibile e'
+    270. Cio' che conta e' che il simbolo stia **lungo il proprio tubo**."""
     registry = catalog()
     project, _, _, _ = routed_case()
     definitions = {item.id: item.definition_id for item in project.components}
-    for _, _, accessories in with_accessories():
-        for accessory in accessories:
+    for _, broken, accessories in with_accessories():
+        for index, accessory in enumerate(accessories):
             manifest = registry.resolve(
                 definitions[accessory.component_id]
             ).symbol.manifest
             assert accessory.rotation_deg in manifest.allowed_rotations_deg
-            assert accessory.rotation_deg in (0, 90)
+            head, tail = broken[index][-1], broken[index + 1][0]
+            horizontal = abs(tail.y_mm - head.y_mm) <= 1e-9
+            assert accessory.rotation_deg in ((0, 180) if horizontal else (90, 270)), (
+                accessory.component_id,
+                accessory.rotation_deg,
+                horizontal,
+            )
 
 
 def test_an_accessory_centre_lands_on_a_grid_node() -> None:

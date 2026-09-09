@@ -102,6 +102,29 @@ class Route:
         return tuple(out)
 
 
+def _facing_line(
+    start: Cell, start_direction: Cell, goal: Cell, goal_direction: Cell
+) -> list[Cell] | None:
+    """Le celle da una porta all'altra, se le due porte si guardano sulla
+    stessa retta: la partenza guarda l'arrivo, l'arrivo guarda la partenza, e
+    fra le due ci sono solo passi in quella direzione. Altrimenti niente."""
+    if (start_direction[0], start_direction[1]) != (-goal_direction[0], -goal_direction[1]):
+        return None
+    dx, dy = goal[0] - start[0], goal[1] - start[1]
+    if start_direction[0] == 0:
+        if dx != 0 or dy == 0 or (dy > 0) != (start_direction[1] > 0):
+            return None
+        steps = abs(dy)
+    else:
+        if dy != 0 or dx == 0 or (dx > 0) != (start_direction[0] > 0):
+            return None
+        steps = abs(dx)
+    return [
+        (start[0] + start_direction[0] * count, start[1] + start_direction[1] * count)
+        for count in range(steps + 1)
+    ]
+
+
 def route(
     start: Cell,
     start_direction: Cell,
@@ -150,6 +173,34 @@ def route(
     finche' non lo si sceglie.
     """
     approach = (-goal_direction[0], -goal_direction[1])
+
+    # Due porte che si guardano sulla stessa retta — il raccordo e cio' che
+    # gli pende, a un passo o a una catena di distanza — hanno una tratta
+    # sola: quella retta. Il rettilineo che le catene pretendono e' scritto
+    # per intero, e non c'e' nessuna cella di curva da esigere **oltre** la
+    # porta opposta: pretenderla murava ogni stacco lungo il minimo (I-046),
+    # perche' oltre la porta del raccordo c'e' il raccordo. Vale solo quando
+    # una catena pretende un rettilineo: senza, la ricerca di sempre trova la
+    # stessa retta e paga incroci e tetto di prove come deve.
+    facing = (
+        _facing_line(start, start_direction, goal, goal_direction)
+        if start_straight or goal_straight
+        else None
+    )
+    if (
+        facing is not None
+        and all(0 <= cell[0] < cols and 0 <= cell[1] < rows for cell in facing)
+        and not any(cell in blocked for cell in facing[1:-1])
+        and not any(
+            (before, after) in taken or (after, before) in taken
+            for before, after in zip(facing, facing[1:], strict=False)
+        )
+    ):
+        return Route(
+            cells=tuple(facing),
+            cost=STEP_COST * (len(facing) - 1),
+            crossings=tuple(item for item in facing if item in occupied),
+        )
 
     def forced(origin: Cell, direction: Cell, steps: int) -> list[Cell]:
         """Le celle obbligate oltre una porta, in ordine di percorrenza."""

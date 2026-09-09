@@ -418,9 +418,18 @@ def test_l_ibrido_ha_il_suo_ritorno_generale_e_il_corredo_ci_finisce() -> None:
     sanitario e dichiarava quattro punti aperti su un impianto che il punto
     lo aveva. Adesso la camminata **si apre sui rami**, e il corredo ci
     finisce: una volta sola, sullo stesso attacco per tutte e quattro le
-    regole, e nessun punto aperto."""
+    regole, e nessun punto aperto **del corredo**.
+
+    La sicurezza e' un'altra storia (I-046): sulla mandata dell'ibrido la
+    camminata si ferma alla deviatrice della caldaia, la mandata generale non
+    si trova, e il motore lo dice — un punto aperto per la sicurezza di
+    circuito, e una domanda per macchina sul bordo ignoto — invece di posare
+    una sicurezza su un ramo scelto in silenzio. Quei punti non sono di questa
+    prova, e non spariscono da soli: li decide il progettista."""
     done, applied, gaps = saturo(PROVE[3])
-    assert not gaps, [(g.rule_id, g.reason.value) for g in gaps]
+    assert not [g for g in gaps if not g.rule_id.startswith("safety-relief")], [
+        (g.rule_id, g.reason.value) for g in gaps
+    ]
     posed = {p.rule_id: p.anchor for p in applied if p.rule_id in KIT_COMUNE}
     assert set(posed) == KIT_COMUNE
     anchors = {(a.component_id, a.port_id) for a in posed.values()}
@@ -439,9 +448,20 @@ def test_dove_il_tratto_comune_non_esiste_davvero_esce_un_punto_aperto() -> None
     giusta."""
     done, applied, gaps = saturate(_two_separate_rings(), CAT, REG)
     open_points = {g.rule_id: g for g in gaps}
-    assert set(open_points) == KIT_COMUNE
-    for gap in open_points.values():
-        assert gap.reason is GapReason.NO_COMMON_RUN, gap.rule_id
+    # Con I-046 anche la sicurezza di circuito sta sul tratto comune, e apre
+    # il proprio punto; e senza nessuna sicurezza raggiungibile ogni
+    # generatore dal bordo ignoto e' una domanda al progettista, non un pezzo.
+    assert set(open_points) == KIT_COMUNE | {
+        "safety-relief-on-the-closed-circuit",
+        "safety-relief-on-an-isolable-generator",
+    }
+    for rule_id, gap in open_points.items():
+        expected = (
+            GapReason.ON_BOARD_UNKNOWN
+            if rule_id == "safety-relief-on-an-isolable-generator"
+            else GapReason.NO_COMMON_RUN
+        )
+        assert gap.reason is expected, rule_id
     assert not any(p.rule_id in KIT_COMUNE for p in applied)
     banned = {"expansion", "filling", "pressure_measurement", "sludge_separation"}
     for component in done.components:
@@ -532,14 +552,19 @@ def test_termometro_e_sicurezza_a_bordo_fanno_tacere_le_regole_grandi() -> None:
     assert "safety-relief-where-heat-enters-the-water" not in fired
 
 
-def test_la_sicurezza_del_serbatoio_resta_anche_se_la_macchina_ha_la_sua() -> None:
-    """D-106: «le macchine la portano gia' a bordo, e la sicurezza esterna
-    della centrale e' quella del serbatoio» — e' la rationale della regola."""
+def test_la_sicurezza_di_circuito_non_si_aggiunge_se_ogni_macchina_la_porta_a_bordo() -> None:
+    """I-046 corregge D-106: la sicurezza della piccola centrale e' una per
+    dominio, sulla mandata vicino ai generatori, e il bordo di **ogni** membro
+    la soddisfa come soddisfa il vaso — se tutte le macchine la integrano,
+    non se ne disegna una esterna; se una sola la integra, il circuito la
+    vuole comunque."""
     doctored_cat = doctored("heat-pump-air-water", carries_on_board=["circulation", "safety"])
     found = evaluate(load(PROVE[1]), doctored_cat, REG)
-    assert any(
-        p.rule_id == "safety-relief-on-the-stored-volume" for p in found.proposals
-    ), "la sicurezza del serbatoio e' sparita perche' la macchina dichiara la propria"
+    assert not any(
+        p.rule_id == "safety-relief-on-the-closed-circuit" for p in found.proposals
+    ), "la sicurezza di circuito e' uscita anche se ogni macchina dichiara la propria"
+    plain = evaluate(load(PROVE[1]), CAT, REG)
+    assert any(p.rule_id == "safety-relief-on-the-closed-circuit" for p in plain.proposals)
 
 
 def test_la_dichiarazione_contraddittoria_non_si_carica() -> None:
@@ -616,25 +641,29 @@ def test_lo_scarico_del_bollitore_sta_sul_freddo_e_dal_lato_del_serbatoio() -> N
     assert ("volano", "drain") in holders
 
 
-def test_sfogo_e_sicurezza_stanno_sul_serbatoio_e_stop() -> None:
-    """D-106 nel regime piccolo: lo sfogo sull'attacco dedicato del serbatoio,
-    la sicurezza attaccata al serbatoio senza nulla di chiudibile in mezzo,
-    UNA ciascuno anche se il serbatoio sta su due reti; niente separatore
-    d'aria e niente termometro aggiunti, su nessuno dei cinque impianti."""
+def test_sfogo_sul_serbatoio_e_sicurezza_sulla_mandata_vicino_al_gruppo() -> None:
+    """D-106 nel regime piccolo, corretto da I-046: lo sfogo sull'attacco
+    dedicato del serbatoio; la sicurezza, UNA, sulla mandata generale
+    attaccata alla confluenza delle mandate — non al serbatoio — e prima
+    della valvola del serbatoio; niente separatore d'aria e niente termometro
+    aggiunti, su nessuno dei cinque impianti."""
     done, applied, _ = saturo(PROVE[0])
     vents = [p for p in applied if p.rule_id == "air-vent-on-the-stored-volume"]
     assert len(vents) == 1
     assert vents[0].anchor.component_id == "accumulo"
     assert vents[0].service_port == "vent"
-    safeties = [p for p in applied if p.rule_id == "safety-relief-on-the-stored-volume"]
+    safeties = [p for p in applied if p.rule_id == "safety-relief-on-the-closed-circuit"]
     assert len(safeties) == 1
-    assert safeties[0].anchor.component_id == "accumulo"
-    # La derivazione della sicurezza e' ADIACENTE all'accumulo: nulla in mezzo.
-    neighbours = fila(done, "accumulo", "primary_in", "collettore-mandata")
-    assert neighbours, "nessun pezzo fra l'accumulo e la confluenza?"
+    assert safeties[0].anchor.component_id == "collettore-mandata"
+    assert not any(p.rule_id == "safety-relief-on-the-stored-volume" for p in applied)
+    assert not any(p.rule_id == "safety-relief-on-an-isolable-generator" for p in applied)
+    # La derivazione della sicurezza e' ADIACENTE alla confluenza: nulla in
+    # mezzo, e la valvola del serbatoio viene dopo, verso il serbatoio.
+    neighbours = fila(done, "collettore-mandata", "b", "accumulo")
+    assert neighbours, "nessun pezzo fra la confluenza e l'accumulo?"
     first = neighbours[0]
     assert "safety" in hanging_functions(done, first), (
-        f"fra la sicurezza e il serbatoio c'e' {first}"
+        f"fra la sicurezza e la confluenza c'e' {first}"
     )
     # Su tutti e cinque, **nel regime piccolo**: separatore e termometro non
     # compaiono. L'impianto 5 il regime grande lo dichiara — tre macchine da
@@ -689,11 +718,11 @@ def test_il_vaso_sanitario_e_firmato_dalla_regola_dell_alimentazione() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_le_diciassette_regole_si_caricano_e_nessuna_nomina_un_componente() -> None:
+def test_le_diciotto_regole_si_caricano_e_nessuna_nomina_un_componente() -> None:
     """D-069: le condizioni parlano di proprieta', funzioni, domini e fluidi.
     Nessun valore in when, then, ordering o satisfied_by puo' essere
     l'identificativo di una voce di catalogo."""
-    assert len(REG.all()) == 17
+    assert len(REG.all()) == 18
     REG.cross_check(CAT)
     catalog_ids = {d.id for d in CAT.all()}
 
@@ -785,11 +814,20 @@ def test_il_confronto_per_il_pm_dice_il_vero_sui_documenti() -> None:
             line for line in doc.splitlines() if re.match(r"^\| [A-Z]+\.[0-9]", line)
         ]
         assert len(rows) == expected, f"{name}: il documento non ha {expected} nodi"
-    # La frase sui punti aperti dev'essere vera su tutti e cinque: dopo la
-    # correzione della camminata (7 agosto) nessuno ne ha piu'.
-    assert "Nessuno dei cinque ha punti aperti" in confronto
+    # La frase sui punti aperti dev'essere vera: quattro non ne hanno, e
+    # l'ibrido ne ha tre, tutti sulla sicurezza (I-046) — la mandata comune
+    # che non si trova oltre la deviatrice, e il bordo ignoto delle due
+    # macchine. Il documento li dichiara e il motore li conferma.
+    assert "Quattro dei cinque non hanno punti aperti" in confronto
     for name in PROVE:
         _, _, found = saturo(name)
+        if name == PROVE[3]:
+            assert sorted((g.rule_id, g.reason.value) for g in found) == [
+                ("safety-relief-on-an-isolable-generator", "on_board_unknown"),
+                ("safety-relief-on-an-isolable-generator", "on_board_unknown"),
+                ("safety-relief-on-the-closed-circuit", "no_common_run"),
+            ], name
+            continue
         assert not found, (name, [(g.rule_id, g.reason.value) for g in found])
     # Il regime che il confronto dichiara per ciascun impianto dev'essere
     # quello scritto nel modello: la tabella del documento e i cinque file

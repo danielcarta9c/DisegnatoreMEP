@@ -125,51 +125,6 @@ def chain_room_mm(
     return reach
 
 
-def neighbours_beyond_fittings(
-    project: ProjectModel,
-    catalog: ComponentRegistry,
-    trunks: list[Trunk],
-    component_id: str,
-) -> frozenset[str]:
-    """A cosa un pezzo e' attaccato, guardando **attraverso i raccordi
-    passanti** (I-035, DRAW-005-R1).
-
-    Un raccordo da cui pende un accessorio — quello della sicurezza della
-    macchina — sta sul tubo e non cambia a cosa la macchina e' legata: due
-    pompe di calore che portano ciascuna il proprio raccordo prima della
-    confluenza restano in parallelo, con gli stessi vicini. Si attraversa
-    un raccordo solo se il percorso vi prosegue in una direzione sola: una
-    ripartizione ferma, perche' oltre di lei le strade sono due.
-    """
-    definitions = {item.id: catalog.get(item.definition_id) for item in project.components}
-
-    def run_ports(owner: str) -> list[str]:
-        return [port.id for port in definitions[owner].ports if not port.off_the_run]
-
-    def passing(owner: str) -> bool:
-        return owner in definitions and definitions[owner].is_a_fitting and len(run_ports(owner)) == 2
-
-    found: set[str] = set()
-    for trunk in trunks:
-        for mine, other in ((trunk.start, trunk.end), (trunk.end, trunk.start)):
-            if mine.component_id != component_id:
-                continue
-            cursor = other
-            seen = {component_id}
-            while passing(cursor.component_id) and cursor.component_id not in seen:
-                seen.add(cursor.component_id)
-                onward = [port for port in run_ports(cursor.component_id) if port != cursor.port_id]
-                if len(onward) != 1:
-                    break
-                beyond = PortRef(component_id=cursor.component_id, port_id=onward[0])
-                following = [item for item in trunks if beyond in (item.start, item.end)]
-                if len(following) != 1:
-                    break
-                cursor = following[0].end if following[0].start == beyond else following[0].start
-            found.add(cursor.component_id)
-    return frozenset(found)
-
-
 __all__ = [
     "CHAIN_PORT_GAP_MM",
     "MIN_SPACING_MM",
@@ -177,5 +132,4 @@ __all__ = [
     "chain_room_mm",
     "is_machine_end",
     "machine_chains",
-    "neighbours_beyond_fittings",
 ]
