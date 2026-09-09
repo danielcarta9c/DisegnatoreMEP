@@ -21,18 +21,23 @@ grafo approvato dal PO**, deterministica e graficamente approvata dal PM/PO.
 Gate: il PO riconosce un disegno ordinato e tecnicamente leggibile. Finché questo gate
 non passa, non si estende il lavoro agli altri impianti.
 
-### 0.2B — Vertical slice nella chat di lavoro
+### Gate verticale — chat di lavoro
 
-Prima della generalizzazione, installare la skill in un ambiente pulito e collaudare un
-percorso reale: input naturale → grafo e domande → approvazione PO → generazione
-deterministica → verifica → link al PDF. Questo gate anticipa il rischio d'integrazione
-oggi rimandato impropriamente alla 1.0.
+Dopo la prima generalizzazione controllata sull'impianto 2 e prima di estendere il ciclo
+agli impianti 3–5, installare la skill in un ambiente pulito e collaudare un percorso
+reale: input naturale → grafo e domande → approvazione PO → generazione deterministica
+→ verifica → link al PDF. Questo gate anticipa il rischio d'integrazione oggi rimandato
+impropriamente alla 1.0 senza impedire al primo caso nuovo di verificare il motore.
 
 ## 0.3 — Generalizzazione
 
 Applicare senza coordinate speciali lo stesso motore agli impianti 2–5, uno per volta.
 Ogni nuovo impianto deve scoprire una classe di difetto nuova; non si ripetono quattro
 cicli sullo stesso errore.
+
+- `DRAW-006`: impianto 2 come prima nuova tavola; semantica dei gruppi accessori,
+  rubinetto portamanometro a tre vie e stati idraulici delle valvole multivia. La tavola 1
+  resta una regressione automatica; gli impianti 3–5 sono soltanto smoke test.
 
 Gate: cinque impianti deterministici, senza regressioni sulla tavola 1 e senza eccezioni
 legate agli identificativi degli esempi.
