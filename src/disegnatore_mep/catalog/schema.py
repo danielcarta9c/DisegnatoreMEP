@@ -139,7 +139,30 @@ diverge.
 (`shutoff_instrument_tap`). Chiude uno strumento, non un volume: sta su una
 derivazione propria, la condotta non lo attraversa, e contarlo qui farebbe
 risultare un generatore separato dalla propria sicurezza per via di una presa
-manometrica."""
+manometrica. Per la **posa** e' pero' un organo come gli altri, e sta in
+`SERVICE_ORGAN_FUNCTIONS`."""
+
+INSTRUMENT_ISOLATION = "instrument_isolation"
+"""Il mestiere del rubinetto che sta sulla **presa** di uno strumento.
+
+Come gli altri e' una funzione, non un pezzo (D-069): quale voce di catalogo la
+porti su un dato fluido lo dice il catalogo. Vive accanto ai mestieri di
+chiusura perche' e' l'organo che la stessa regola assegna, e va distinto da
+loro per una ragione sola: non separa un dominio idraulico."""
+
+SERVICE_ORGAN_FUNCTIONS: frozenset[str] = CLOSING_FUNCTIONS | {INSTRUMENT_ISOLATION}
+"""Gli organi che la regola dell'intercettazione assegna a cio' che si manutiene.
+
+Comprende i mestieri di chiusura **e** il rubinetto della presa strumentale:
+sono tutti organi che stanno li' per servire un pezzo preciso, e la posa li
+disegna sul suo attacco (D-120) invece che dove capita lungo la tratta. La
+differenza con `CLOSING_FUNCTIONS` non e' grafica ma idraulica: quelli chiudono
+un volume, e chi cammina sulla rete per capire chi resta separato da cosa
+attraversa gli uni e non gli altri.
+
+Il difetto che questa distinzione rende impossibile: dare al manometro il
+proprio rubinetto e vederlo scivolare via dalla presa, perche' la posa lo
+leggeva come un accessorio qualunque in mezzo a un tubo."""
 
 FITTING_FUNCTIONS: frozenset[str] = frozenset({"junction", "branch_off"})
 """I due mestieri di un raccordo: unire due tubazioni, o aprire una derivazione.
@@ -706,11 +729,13 @@ class ComponentDefinition(StrictModel):
 __all__ = [
     "ATTACHMENT_STYLES",
     "CLOSING_FUNCTIONS",
+    "INSTRUMENT_ISOLATION",
     "ComponentDefinition",
     "ComponentTrait",
     "FITTING_FUNCTIONS",
     "HydraulicState",
     "OnBoard",
     "PortDefinition",
+    "SERVICE_ORGAN_FUNCTIONS",
     "SHUTOFF_REGIMES",
 ]
