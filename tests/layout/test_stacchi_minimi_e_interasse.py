@@ -617,7 +617,7 @@ def test_la_tavola_1_non_costa_piu_di_draw_005_sulla_rete_ordinaria() -> None:
     codes = {
         item.code
         for item in (
-            *validate_drawing_geometry(drawing, NOVE_C_A3),
+            *validate_drawing_geometry(drawing, NOVE_C_A3).issues,
             *preflight_drawing(drawing, NOVE_C_A3, catalog()),
         )
     }

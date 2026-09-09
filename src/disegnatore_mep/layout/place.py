@@ -1582,6 +1582,105 @@ def place_sheet(
             for box in boxes
         )
 
+    def hanging_seat(
+        parent_id: str, parent_left: float, parent_top: float, item: _Hanging
+    ) -> tuple[float, float, float, float]:
+        """Il posto **preferito** di cio' che pende, prima di allontanarsi.
+
+        E' il conto che `hang` fa per primo: l'attacco da cui pende, lo stacco
+        minimo, e i due bordi che nessuno scavalca — l'area di disegno e la
+        terra. Vive a parte perche' lo guarda anche chi deve decidere **dove
+        posare il raccordo**: un raccordo che sta bene lui ma che manda il
+        proprio appeso dentro un corridoio non e' un buon posto.
+        """
+        parent = manifests[parent_id]
+        child = manifests[item.component_id]
+        stub_x, stub_y, _ = _port_of(parent, item.parent_port_id)
+        port_x, port_y, _ = _port_of(child, child.ports[0].id)
+        gap = hanging_gap(item)
+        side = hangs_toward(item.component_id)
+        if side is PortFace.TOP:
+            child_left = parent_left + stub_x - port_x
+            child_top = parent_top - gap - child.height_mm
+        elif side is PortFace.BOTTOM:
+            child_left = parent_left + stub_x - port_x
+            child_top = min(
+                parent_top + parent.height_mm + gap,
+                levels.ground_mm - child.height_mm,
+            )
+        elif side is PortFace.RIGHT:
+            child_left = parent_left + parent.width_mm + gap
+            child_top = parent_top + stub_y - port_y
+        else:
+            child_left = parent_left - gap - child.width_mm
+            child_top = parent_top + stub_y - port_y
+        child_left = on_grid(child_left, area.x_mm)
+        child_top = on_grid(child_top, area.y_mm)
+        child_left = min(max(child_left, area.x_mm), area.right_mm - child.width_mm)
+        child_top = min(max(child_top, area.y_mm), levels.ground_mm - child.height_mm)
+        return child_left, child_top, child.width_mm, child.height_mm
+
+    def hanging_place(
+        parent_id: str, parent_left: float, parent_top: float, item: _Hanging
+    ) -> tuple[float, float, float, float]:
+        """Dove l'appeso **finisce davvero**: il posto preferito, e da li'
+        l'allontanamento lungo il proprio stacco finche' non e' libero.
+
+        Il foglio e' condiviso: se al posto preferito c'e' gia' qualcuno ci si
+        allontana lungo lo stacco, un passo per volta, fino al bordo del foglio
+        o alla terra. Il conto vive qui perche' lo fanno in due — chi posa e chi
+        deve decidere **dove posare il raccordo** — e due conti che devono dare
+        lo stesso numero divergono.
+        """
+        child_left, child_top, width, height = hanging_seat(
+            parent_id, parent_left, parent_top, item
+        )
+        parent = manifests[parent_id]
+        side = hangs_toward(item.component_id)
+        reach = (
+            area.bottom_mm - area.y_mm
+            if side in (PortFace.TOP, PortFace.BOTTOM)
+            else area.width_mm
+        )
+        away = {
+            PortFace.TOP: (0.0, -step),
+            PortFace.BOTTOM: (0.0, step),
+            PortFace.RIGHT: (step, 0.0),
+            PortFace.LEFT: (-step, 0.0),
+        }[side]
+        for _ in range(int(reach / step)):
+            if clear_of_symbols(
+                child_left, child_top, width, height, parent_left, parent_top, parent
+            ):
+                break
+            moved_left = child_left + away[0]
+            moved_top = child_top + away[1]
+            if (
+                moved_left < area.x_mm - 1e-9
+                or moved_left + width > area.right_mm + 1e-9
+                or moved_top < area.y_mm - 1e-9
+                or moved_top + height > levels.ground_mm + 1e-9
+            ):
+                break
+            child_left, child_top = moved_left, moved_top
+        return child_left, child_top, width, height
+
+    def hanging_is_walled(parent_id: str, left: float, top: float) -> bool:
+        """Cio' che pende da qui finirebbe **dentro un corridoio**.
+
+        Il rettilineo che la catena di una macchina pretende davanti alla
+        propria porta e' un contratto duro (I-044): occuparlo rende la posa non
+        instradabile, su nessun formato. Un appeso che ci finisce dentro di
+        solito se ne allontana lungo il proprio stacco — ma lo stacco puo'
+        essere murato in fondo, dalla terra o dal bordo del foglio, e allora non
+        ha dove andare. Quel posto per il raccordo non e' un posto: se ne cerca
+        un altro, e solo se non ce n'e' nessuno si scende agli ultimi ripieghi.
+        """
+        return any(
+            not off_the_corridors(*hanging_place(parent_id, left, top, item))
+            for item in hanging.get(parent_id, ())
+        )
+
     def hang(parent_id: str, parent_left: float, parent_top: float) -> None:
         """Posa cio' che pende dal pezzo appena posato, accanto a lui.
 
@@ -1592,76 +1691,14 @@ def place_sheet(
         **Nulla scende sotto la linea di terra**: sotto c'e' il pavimento e la
         fascia dei richiami, e l'instradamento non ci passa. Chi dovrebbe finirci
         risale fin dove ci sta, e chi lo regge si e' gia' alzato quanto basta.
+        Dove il posto e' preso ci si allontana lungo lo stacco: il conto lo fa
+        `hanging_place`, lo stesso che guarda chi sceglie il posto del raccordo.
         """
-        parent = manifests[parent_id]
         for item in hanging.get(parent_id, ()):
             child = manifests[item.component_id]
-            stub_x, stub_y, _ = _port_of(parent, item.parent_port_id)
-            port_x, port_y, _ = _port_of(child, child.ports[0].id)
-            gap = hanging_gap(item)
-            side = hangs_toward(item.component_id)
-            if side is PortFace.TOP:
-                child_left = parent_left + stub_x - port_x
-                child_top = parent_top - gap - child.height_mm
-            elif side is PortFace.BOTTOM:
-                child_left = parent_left + stub_x - port_x
-                child_top = min(
-                    parent_top + parent.height_mm + gap,
-                    levels.ground_mm - child.height_mm,
-                )
-            elif side is PortFace.RIGHT:
-                child_left = parent_left + parent.width_mm + gap
-                child_top = parent_top + stub_y - port_y
-            else:
-                child_left = parent_left - gap - child.width_mm
-                child_top = parent_top + stub_y - port_y
-            child_left = on_grid(child_left, area.x_mm)
-            child_top = on_grid(child_top, area.y_mm)
-            # Il foglio ha un bordo, e un accessorio appeso non lo scavalca: se
-            # dalla parte del proprio attacco non c'e' spazio, si rientra. La
-            # tratta ci arriva lo stesso, con una piega in piu'.
-            child_left = min(
-                max(child_left, area.x_mm), area.right_mm - child.width_mm
+            child_left, child_top, _, _ = hanging_place(
+                parent_id, parent_left, parent_top, item
             )
-            child_top = min(
-                max(child_top, area.y_mm), levels.ground_mm - child.height_mm
-            )
-            # Il posto giusto e' quello, ma il foglio e' condiviso: se ci sta
-            # gia' qualcun altro ci si allontana lungo lo stacco, un passo per
-            # volta. Un accessorio appeso non ha diritto di posarsi addosso a
-            # una macchina solo perche' il suo raccordo guarda da quella parte.
-            reach = (
-                area.bottom_mm - area.y_mm
-                if side in (PortFace.TOP, PortFace.BOTTOM)
-                else area.width_mm
-            )
-            away = {
-                PortFace.TOP: (0.0, -step),
-                PortFace.BOTTOM: (0.0, step),
-                PortFace.RIGHT: (step, 0.0),
-                PortFace.LEFT: (-step, 0.0),
-            }[side]
-            for _ in range(int(reach / step)):
-                if clear_of_symbols(
-                    child_left,
-                    child_top,
-                    child.width_mm,
-                    child.height_mm,
-                    parent_left,
-                    parent_top,
-                    parent,
-                ):
-                    break
-                moved_left = child_left + away[0]
-                moved_top = child_top + away[1]
-                if (
-                    moved_left < area.x_mm - 1e-9
-                    or moved_left + child.width_mm > area.right_mm + 1e-9
-                    or moved_top < area.y_mm - 1e-9
-                    or moved_top + child.height_mm > levels.ground_mm + 1e-9
-                ):
-                    break
-                child_left, child_top = moved_left, moved_top
             placed.append(
                 PlacedSymbol(
                     component_id=item.component_id,
@@ -1886,6 +1923,7 @@ def place_sheet(
                         free_of_symbols(
                             moved_left, moved_top, manifest.width_mm, manifest.height_mm
                         )
+                        and not hanging_is_walled(component_id, moved_left, moved_top)
                         if respecting_corridors
                         else free_of_boxes(
                             moved_left, moved_top, manifest.width_mm, manifest.height_mm
