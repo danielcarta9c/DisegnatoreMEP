@@ -4,7 +4,7 @@
 **Assegnato a:** DEV
 **Data:** 2026-09-10
 **Release:** 0.3 — generalizzazione, revisione della tavola 2
-**Stato:** PROPOSTO AL PO
+**Stato:** APPROVATO DAL PO — 2026-09-10, con la primitiva del §A.1 scelta dal PO fra tre
 **Ramo da riutilizzare:** `claude/draw-006-tavola2-semantica-v4n8o5`
 **PR da aggiornare:** #24
 **Commit di partenza:** `e415dc0`
@@ -42,8 +42,28 @@ Input del PO collegati: **I-056**, **I-057**, **I-058**. Retrospettiva che li mo
 
 ## A. La gerarchia è una grandezza del grafo
 
-1. La gerarchia di una tratta si **calcola** dal grafo, non si elenca. Il criterio è
-   quello dichiarato dal PO: **quanta parte dell'impianto dipende da quella tratta.**
+> **Nota del PM, 2026-09-10, seconda stesura.** La prima stesura diceva «quanta parte
+> dell'impianto dipende da quella tratta». Il DEV l'ha prototipata prima di scrivere
+> codice, sulle due tavole vere, e **la misura collassa**: su un circuito chiuso il
+> cammino a valle rientra su sé stesso, quindi ogni tratta dell'anello raggiunge ogni
+> utilizzatore. Ventuno tratte su ventidue prendono lo stesso peso sulla tavola 1,
+> ventuno su ventitré sulla tavola 2. Non è una toppa mancante: è la primitiva sbagliata.
+> Il PO ha scelto fra tre alternative quella qui sotto. Il prototipo e il suo esito
+> restano nel rapporto di consegna.
+
+1. La gerarchia di una tratta si **calcola** dal grafo, non si elenca, e nasce dal
+   **tronco fra le macchine principali**:
+   - **macchine di spina** — le macchine di rango più alto della rete: la macchina di
+     generazione principale, ogni macchina che accumula o separa idraulicamente, ogni
+     collettore o ripartitore. «Principale», dove ce n'è più d'una, è la più alta di
+     mestiere, e a parità decide lo **spareggio strutturale** che già esiste
+     (`model/order.py`), mai un identificativo;
+   - **autostrada** — una tratta sta su un percorso fra **due** macchine di spina che non
+     attraversa né un'altra macchina di spina né un utilizzatore. Su un circuito chiuso
+     questo include **sia la mandata sia il ritorno**, che è precisamente ciò che il PO
+     chiama «le due macro-linee parallele»;
+   - **distribuzione** — il percorso porta a un utilizzatore;
+   - **servizio** — non porta né all'una né all'altro: stacchi ciechi e accessori.
 2. Si calcola **una volta sola** e ha **un solo posto**. In questo pacchetto la leggono
    due clienti — il costo di posa (§B) e l'obiettivo di allineamento (§C); un terzo
    arriverà con `DRAW-008`. Tre calcoli separati sono un pacchetto respinto.
@@ -56,10 +76,11 @@ Input del PO collegati: **I-056**, **I-057**, **I-058**. Retrospettiva che li mo
      ACS, vaso, manometro, sicurezze.
 4. La classificazione **non nomina nessun componente, nessun identificativo, nessun file,
    nessuna quantità di fixture**. Vale D-069 senza eccezioni.
-5. Il circuito chiuso è la difficoltà nota: mandata e ritorno sono percorsi paralleli, e
-   «togli la tratta e conta chi resta scollegato» non funziona così com'è. Va risolto sul
-   verso del flusso, che è la portata di progetto. **Se la soluzione scelta ha un limite,
-   si dichiara nel rapporto**, non si nasconde in una costante.
+5. **La portata di progetto non entra qui.** È il criterio idraulico più corretto e il PO
+   lo sa, ma quel dato nel modello non esiste: nessun componente dichiara una portata.
+   Aggiungerlo è un dato di prodotto, quindi catalogo, quindi fuori dal perimetro di
+   questo pacchetto. Se la definizione del §A.1 ha un limite su una forma di impianto,
+   **si dichiara nel rapporto**, non si nasconde in una costante.
 
 ## B. Il costo di posa pesa la gerarchia
 
