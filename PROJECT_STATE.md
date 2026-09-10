@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-09 (PM, merge DRAW-005-R1 e apertura DRAW-006)
+**Aggiornato:** 2026-09-10 (PM, revisione PR #24 e apertura DRAW-006-R1)
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md`
 **Release corrente:** 0.3 — generalizzazione controllata, impianto 2
 
@@ -51,10 +51,14 @@ una sicurezza di circuito sulla mandata comune, zero sull'accumulo e sulle singo
 39 pezzi; rete ordinaria 4 curve, 1 incrocio e 425 mm; stacchi statici 0 curve,
 0 incroci e 45 mm. Tutti e cinque gli impianti arrivano alla posa.
 
-`DRAW-006` apre la generalizzazione 0.3 usando l'impianto 2 come unica nuova consegna
-grafica. Corregge il rubinetto del manometro, la semantica composita del gruppo di
-riempimento e i domini di sicurezza nelle configurazioni delle valvole multivia. La
-tavola 1 resta regressione automatica; gli impianti 3–5 non producono artefatti completi.
+La PR #24 di `DRAW-006`, testa `9b925b7`, è respinta nello stato corrente. Conserva
+avanzamenti validi su rubinetto portamanometro, compositi e stati delle multivia, ma
+presenta blocker materiali: ordine degli accessori dipendente dagli ID, mancato
+allineamento PDC–puffer attraverso la deviatrice, adduzione ACS e riempimento tecnico
+modellati in modo non corretto e una valvola D-120 a 27,5 mm.
+
+`DRAW-006-R1` corregge gli stessi punti sulla stessa PR #24. La tavola 2 resta l'unica
+consegna grafica completa; tavola 1 regressione automatica, impianti 3–5 soltanto posa.
 
 ## Rischi aperti
 
@@ -79,11 +83,17 @@ tavola 1 resta regressione automatica; gli impianti 3–5 non producono artefatt
    che fallisca realmente quando un raccordo diventa colonna.
 8. **Connettività multivia non modellata per stati.** Sull'impianto 4 produce domande di
    sicurezza troppo ampie; DRAW-006 introduce configurazioni idrauliche alternative.
+9. **Semantica e geometria ancora accoppiate.** Applicare il corretto ordine funzionale
+   peggiora oggi curve e incroci: DRAW-006-R1 rende l'ordine un vincolo e recupera costo
+   con movimenti di gruppo e routing, mai alterando la semantica.
+10. **Riempimento tecnico modellato a una porta.** Non rappresenta il ponte reale fra
+    acqua fredda e ritorno tecnico; DRAW-006-R1 introduce due reti, due porte e funzioni
+    integrate di catalogo.
 
 ## Prossimi gate
 
 1. `DRAW-005-R1`: tavola 1 rifinita — **accettata e fusa dal PM**.
-2. `DRAW-006`: prima generalizzazione sull'impianto 2 e semantica dei componenti.
+2. `DRAW-006-R1`: approvare la PR #24 corretta sulla prima generalizzazione dell'impianto 2.
 3. Gate vertical slice: skill in una chat di lavoro pulita.
 4. Proseguire gli impianti 3–5 uno per volta, cercando classi di difetto nuove.
 
