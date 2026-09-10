@@ -38,6 +38,9 @@ cicli sullo stesso errore.
 - `DRAW-006`: impianto 2 come prima nuova tavola; semantica dei gruppi accessori,
   rubinetto portamanometro a tre vie e stati idraulici delle valvole multivia. La tavola 1
   resta una regressione automatica; gli impianti 3–5 sono soltanto smoke test.
+- `DRAW-006-R1`: ordine funzionale indipendente dagli ID, assi attraverso multivia,
+  gruppo sanitario EN 1487 composito, riempimento tecnico a due reti e chiusura D-120;
+  consegna grafica completa ancora limitata alla sola tavola 2.
 
 Gate: cinque impianti deterministici, senza regressioni sulla tavola 1 e senza eccezioni
 legate agli identificativi degli esempi.

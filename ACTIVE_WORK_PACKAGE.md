@@ -1,136 +1,108 @@
-# ACTIVE WORK PACKAGE — DRAW-006
+# ACTIVE WORK PACKAGE — DRAW-006-R1
 
-- **Release:** 0.3 — generalizzazione, prima tavola nuova
+- **Release:** 0.3 — generalizzazione, revisione della tavola 2
 - **Stato:** APPROVATO DAL PM, PRONTO PER IL DEV
-- **Data:** 2026-09-09
-- **Base:** ultima `main`, contenente il merge approvato di DRAW-005-R1
-- **Ramo:** `claude/draw-006-tavola2-semantica-componenti`
+- **Data:** 2026-09-10
+- **PR da aggiornare:** #24
+- **Base tecnica da conservare:** testa `9b925b7`, integrata con l'ultima `main`
+- **Ramo da riutilizzare:** `claude/draw-006-tavola2-semantica-v4n8o5`
 - **Fixture grafica principale:** impianto 2
 
-## Obiettivo
+## Verdetto e obiettivo
 
-Applicare il motore a un impianto nuovo e correggere tre difetti generali della semantica
-dei componenti:
+La PR #24 non è approvata nello stato corrente, ma contiene avanzamenti validi da
+conservare: rubinetto portamanometro, funzioni interne dei compositi e stati idraulici
+delle multivia. Questa revisione corregge quattro difetti generali: ordine semantico degli
+accessori, allineamento attraverso componenti multivia, distinzione fra adduzione ACS e
+riempimento tecnico, vicinanza D-120.
 
-1. il manometro richiede un rubinetto portamanometro a tre vie, non una valvola di
-   intercettazione ordinaria;
-2. il gruppo di riempimento pubblicato incorpora già la propria intercettazione e non
-   deve riceverne una esterna;
-3. una valvola multivia possiede configurazioni idrauliche alternative: i domini di
-   protezione devono essere validi in ogni configurazione ammessa.
+Le correzioni sono regole di prodotto valide per qualunque impianto. Sono vietate
+eccezioni basate su ID, coordinate, nomi dei file o quantità dei componenti delle fixture.
 
-La tavola 2 è il nuovo caso di collaudo visivo perché contiene PDC, deviatrice e produzione
-ACS. Gli esempi sono fixture, non il prodotto: nessuna soluzione può dipendere da ID,
-nomi, coordinate, quantità di macchine o nomi dei file di prova.
+## A. Ordine semantico indipendente dagli identificativi
 
-## A. Manometro e rubinetto a tre vie
+1. Il soggetto semantico di uno stacco è l'accessorio terminale raggiunto attraverso i
+   raccordi e gli organi propri dello stacco, non il primo organo incontrato.
+2. I vincoli `before`/`after` ordinano topologicamente i componenti nel verso del fluido.
+   ID, ordine nel file e ordine delle connessioni possono spareggiare soltanto elementi
+   semanticamente equivalenti.
+3. L'ordine semantico è un vincolo duro. Se aumenta curve o incroci, il motore deve
+   recuperare geometria con traslazioni, movimenti di gruppo e nuovo routing; non può
+   conservare l'ordine sbagliato perché costa meno.
+4. Scrivere prima prove che rinominano gli ID, ne invertono l'ordinamento e mescolano le
+   connessioni: l'ordine funzionale e il costo devono restare invarianti.
+5. Regressione tavola 1: il manometro resta dopo il riempimento, con rete ordinaria non
+   oltre 4 curve, 1 incrocio e 425 mm; stacchi statici non oltre 0/0/45 mm.
 
-1. Introdurre un componente e un simbolo specifici per il **rubinetto portamanometro a
-   tre vie**, distinti dalla valvola di intercettazione ordinaria.
-2. Il gruppo funzionale è: presa sulla tubazione → stacco statico minimo → rubinetto a tre
-   vie → manometro. Il rubinetto vive sullo stacco, non interrompe la condotta principale.
-3. La regola vale indipendentemente dal diametro della condotta: la presa strumentale è
-   una derivazione propria e corta.
-4. Il rubinetto non è un organo ordinario capace di dividere un dominio idraulico.
-5. Scrivere prima prove generali che distinguano manometro e pressostato: un pressostato
-   di sicurezza/minima non riceve automaticamente questo rubinetto né una valvola
-   ordinaria.
+## B. Allineamento per stato idraulico
 
-Riferimento PM: Raccolta R 2009, cap. R.2.C, punto 2.5; Caleffi serie 690 e 335.
+1. Generalizzare i candidati di asse: cercare coppie di porte compatibili fra macchine
+   principali anche attraverso raccordi, catene inline e componenti multivia, per ciascuno
+   stato idraulico ammesso dal catalogo.
+2. Provare almeno: traslazione del gruppo a monte, del gruppo a valle e asse comune.
+   Quando due macchine hanno coppie mandata/ritorno compatibili, provare l'allineamento
+   simultaneo delle due coppie.
+3. Gli accessori locali si muovono con il gruppo; ogni candidata viene reinstradata per
+   intero e confrontata col costo-peso. L'allineamento è una candidata, non un assoluto.
+4. Sulla tavola 2 deve essere realmente provato l'allineamento PDC–puffer attraverso la
+   deviatrice e scelto quando riduce il costo totale.
 
-## B. Gruppi compositi e riempimento
+## C. Adduzione fredda del bollitore ACS
 
-1. Correggere `filling-unit`: il simbolo pubblicato rappresenta un gruppo che incorpora
-   la propria intercettazione. Non aggiungere una valvola esterna per la sola proprietà
-   `maintainable`.
-2. Rendere esplicito nel catalogo quali funzioni sono interne a un composito. Una funzione
-   integrata dichiarata non viene duplicata; una funzione non dichiarata continua a essere
-   applicata dalle regole normali.
-3. Non dedurre dotazioni dal nome, dal disegno o dal solo `composite: true`.
-4. Non attribuire automaticamente al gruppo generico disconnettore BA, filtro, ritegno o
-   riduzione di pressione se la variante di catalogo non li dichiara.
-5. Un riempimento eventualmente presente sulla tavola 2 deve essere unico sul circuito
-   tecnico, orientato verso l'impianto e privo di valvola esterna ridondante.
+1. Per un accumulo sanitario pressurizzato usare un solo **gruppo di sicurezza composito
+   EN 1487** sull'ingresso freddo. Il catalogo ne dichiara intercettazione, ritegno
+   controllabile e sicurezza; le regole non aggiungono duplicati esterni.
+2. Il vaso di espansione sanitario non è automatico: dato di progetto/catalogo presente
+   → applicare; assente → domanda o raccomandazione, senza aggiungere il pezzo. Nella
+   fixture 2, priva del dato, non va generato automaticamente.
+3. Non aggiungere uno sfiato automatico al bollitore ACS salvo porta dedicata e fonte o
+   requisito esplicito. Il riempimento sanitario ordinario si sfoga da un'utenza aperta.
+4. Lo scarico preferisce la porta `drain` dichiarata dal serbatoio. Soltanto se la porta
+   non esiste è ammesso lo stacco sulla linea fredda, con motivazione nel rapporto.
+5. Prove sintetiche devono coprire sia il serbatoio con porta di scarico sia quello senza.
 
-Riferimento PM: Caleffi serie 553; per la variante con disconnettore, serie 580, EN 1717,
-EN 12729 ed EN 806-5.
+## D. Riempimento del circuito tecnico
 
-## C. Connettività interna delle valvole multivia
+1. Modellare il gruppo di riempimento come ponte a due reti e due porte:
+   `cold_water` in ingresso → gruppo → `heating_water` in uscita.
+2. Collegarlo mediante T a una sorgente AF già approvata e al ritorno tecnico comune. Se
+   manca una sorgente AF approvata, produrre una domanda: mai un componente pendente.
+3. La variante Caleffi 553 dichiara come funzioni interne riduttore di pressione, filtro,
+   intercettazione e ritegno; non vanno duplicati esternamente.
+4. Il verso è AF → circuito tecnico e la posa deve mantenere leggibilmente distinta questa
+   derivazione dall'adduzione fredda del bollitore ACS.
+5. Scrivere prove generali su medium, porte, verso, funzioni integrate e assenza di
+   duplicati.
 
-1. Il catalogo dichiara gli **stati idraulici ammessi** di un componente multivia. Per una
-   deviatrice a tre vie: `in ↔ out_a` oppure `in ↔ out_b`; i due rami non sono
-   contemporaneamente comunicanti e `out_a ↔ out_b` non è un passaggio autonomo.
-2. Nomenclatura delle linee e analisi della sicurezza devono leggere lo stesso dato di
-   catalogo, senza elenchi di funzioni duplicati nei moduli.
-3. Un generatore è protetto soltanto se raggiunge una sicurezza in ogni stato ammesso nel
-   quale può funzionare, senza attraversare un organo che possa separarlo.
-4. La cardinalità della sicurezza è per dominio di protezione effettivo, non per intera
-   rete né per numero dei generatori.
-5. Una sicurezza valida per una parte della rete non va scartata perché non protegge un
-   altro generatore: ogni dominio viene valutato separatamente.
-6. Per un generatore isolabile: dato a bordo ignoto → una domanda specifica; presente →
-   nessun pezzo; assente → sicurezza propria non intercettabile.
-7. La fixture dell'impianto 4 verifica questa logica senza produrre artefatti grafici: la
-   deviatrice non diventa genericamente passante, la PDC conserva la protezione del proprio
-   dominio e la caldaia genera al massimo la domanda dovuta al dato realmente ignoto.
+## E. Vicinanza degli organi D-120
 
-Riferimento PM: Raccolta R 2009, cap. R.3.B, punti 1, 2.4 e 2.5; UNI EN 12828:2014.
-
-## D. Integrità dei test
-
-Riscrivere `test_i_raccordi_non_prendono_una_colonna_a_testa`: l'ultima asserzione
-attuale è logicamente ridondante. La nuova prova deve fallire se un raccordo viene promosso
-a colonna di un pezzo grosso e deve derivare l'attesa dalla classificazione e dalla posa,
-senza soglie ricavate dalla tavola 1.
-
-Il DEV non modifica criteri o soglie per far passare il lavoro. Un'incompatibilità si porta
-al PM prima di cambiare la prova.
-
-## E. Tavola 2 e regressioni
-
-1. Generare la tavola 2 dalla sua fixture canonica senza modificare il grafo per ottenere
-   un disegno più facile.
-2. Applicare costo-peso, spostamenti gratuiti, assi, dorsali e T già approvati; nessuna
-   regola speciale per questa geometria.
-3. Consegnare metriche iniziali e finali della tavola 2, spiegando separatamente variazioni
-   del grafo, della posa e del rendering.
-4. Conservare la tavola 1 come regressione automatica: non oltre 4 curve, 1 incrocio e
-   425 mm di rete ordinaria; stacchi statici non oltre 0 curve, 0 incroci e 45 mm; zero
-   backtracking, tubo sotto simboli e tratte oltre tre curve.
-5. Gli impianti 3–5 devono arrivare alla posa; non generare i relativi pacchetti completi.
+1. Correggere la valvola rimasta a 27,5 mm: tutti i 16 organi della tavola 2 devono stare
+   a 2,5÷5 mm dal pezzo servito.
+2. La proprietà deve derivare dalla relazione funzionale. Prima di dichiararla
+   irrealizzabile provare la traslazione gratuita del gruppo locale.
 
 ## Criteri di accettazione
 
-1. La tavola 2 è tecnicamente coerente, leggibile e ottenuta senza eccezioni per la fixture.
-2. Il manometro, se presente, usa il rubinetto specifico a tre vie; mai una valvola
-   ordinaria. La proprietà è comunque coperta da prove generali.
-3. Il gruppo di riempimento, se presente, non ha intercettazione esterna ridondante. La
-   proprietà è comunque coperta da prove generali sui compositi.
-4. Prove generali dimostrano gli stati alternativi della deviatrice e la protezione in ogni
-   configurazione ammessa.
-5. L'impianto 4 non produce un `NO_COMMON_RUN` globale né protezioni inventate; restano
-   soltanto domande puntuali dovute a dati di catalogo ignoti.
-6. Il test sulle colonne dei raccordi prova realmente la proprietà e fallisce su una
-   mutazione negativa costruita nella prova.
-7. La tavola 1 rispetta integralmente le soglie di regressione del §E senza una nuova
-   consegna grafica completa.
-8. Tutti e cinque gli impianti arrivano alla posa; nessuna regressione viene convertita in
-   `skip` o `xfail`.
+1. Ordine degli accessori invariato rinominando ID e mescolando connessioni.
+2. La tavola 1 conserva ordine funzionale e soglie 4/1/425 mm e 0/0/45 mm.
+3. Il motore genera e valuta assi attraverso multivia; sulla tavola 2 PDC e puffer sono
+   allineati quando questa è la candidata di costo minore.
+4. L'ingresso ACS contiene un solo gruppo EN 1487 composito, senza vaso o sfiato inventati.
+5. Lo scarico usa la porta dedicata quando dichiarata e il fallback soltanto quando manca.
+6. Il riempimento tecnico collega davvero AF e ritorno tecnico comune, senza organi
+   duplicati e senza confondersi con l'adduzione ACS.
+7. Vicinanza D-120 tavola 2: 16/16.
+8. Tutti e cinque gli impianti arrivano alla posa; nessuna regressione diventa `skip` o
+   `xfail`.
 9. Suite completa, `ruff`, `mypy --strict` e doppia generazione deterministica verdi.
-10. PDF, PNG, SVG, geometria, metriche, preflight e confronto della **sola tavola 2** in
-    `docs/collaudi/DRAW-006/`.
 
-## Fuori perimetro
+## Consegna e perimetro
 
-- nuovi PDF/PNG/SVG della tavola 1 e degli impianti 3–5;
-- ricerca tecnica o reinterpretazione delle fonti da parte del DEV;
-- chiusura degli input PO o modifica dei documenti di governance;
-- correzioni puramente estetiche non necessarie alla tavola 2;
-- audit dei simboli non coinvolti, cartiglio, etichette e Drawing Director;
-- ottimizzazione prestazionale generale del ciclo.
+Aggiornare la stessa PR #24 e lo stesso ramo, senza merge. Consegnare PDF, PNG, SVG,
+geometria, metriche, preflight e confronto prima/dopo della **sola tavola 2**, usando
+`9b925b7` come prima. La tavola 1 è soltanto regressione automatica; gli impianti 3–5
+sono soltanto test di posa. Non generare i loro pacchetti grafici completi.
 
-## Consegna
-
-Salvare progressivamente sul ramo remoto e aprire una PR verso `main`, senza merge. Il
-rapporto deve dichiarare esplicitamente che soltanto la tavola 2 è stata renderizzata come
-consegna; gli altri impianti sono stati usati esclusivamente nei test prescritti.
+Fuori perimetro: riempimento estetico del foglio, cartiglio, revisione della sigla
+provvisoria `RM`, audit di simboli estranei, governance e ottimizzazione generale delle
+prestazioni.
