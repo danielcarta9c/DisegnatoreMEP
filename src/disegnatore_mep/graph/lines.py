@@ -39,8 +39,9 @@ from dataclasses import dataclass
 from typing import Literal
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import ComponentDefinition
+from disegnatore_mep.catalog.schema import SERVICE_ORGAN_FUNCTIONS, ComponentDefinition
 from disegnatore_mep.layout.flow import GENERATOR_FUNCTIONS, LOAD_FUNCTIONS, STORE_FUNCTIONS
+from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import Domain
 
@@ -174,25 +175,48 @@ class _Liner:
         """
         hanging: dict[str, tuple[str, ...]] = {}
         pipes: set[str] = set()
-        for component in self._project.components:
+        # Un civico ha **un** indirizzo, quindi pende da un nodo solo. Il ponte
+        # fra due reti pende da due prese — una per parte — e senza questa
+        # riserva compariva sotto tutte e due, con due numeri di cui uno solo
+        # era il suo (DRAW-006-R1, blocco D). Il primo nodo che lo raggiunge se
+        # lo tiene, e l'ordine e' quello **strutturale**: non un nome.
+        claimed: set[str] = set()
+        seats = structural_order(self._project)
+        for component in sorted(self._project.components, key=lambda item: seats[item.id]):
             found: list[str] = []
             for port in self._definitions[component.id].ports:
                 if not port.off_the_run:
                     continue
                 for pipe in self._pipes_at(component.id, port.id):
                     pipes.add(pipe.connection_id)
-                    found.extend(self._chain_from(component.id, pipe, pipes))
+                    found.extend(
+                        item
+                        for item in self._chain_from(component.id, pipe, pipes)
+                        if item not in claimed
+                    )
             if found:
                 hanging[component.id] = tuple(found)
+                claimed.update(found)
         return hanging, pipes
 
     def _chain_from(self, owner: str, first: Pipe, pipes: set[str]) -> list[str]:
-        """La catena appesa a uno stacco, un pezzo alla volta."""
+        """La catena appesa a uno stacco, un pezzo alla volta.
+
+        Si ferma sull'**accessorio**: raccordi e organi di servizio si
+        attraversano perche' sono dello stacco, tutto il resto e' cio' per cui
+        lo stacco esiste. Senza questa fermata un **ponte fra due reti** faceva
+        proseguire la camminata oltre se stesso, fino alla presa dall'altra
+        parte: le due prese risultavano civico l'una dell'altra, e l'indirizzo
+        cresceva di due livelli oltre la grammatica della strada
+        (DRAW-006-R1, blocco D).
+        """
         chain: list[str] = []
         previous, current = owner, _far_side(first, owner)
         edge = first
         while current not in chain:
             chain.append(current)
+            if not self._is_of_the_stub(current):
+                break
             onward = [
                 pipe
                 for arm in self._graph.node(current).arms
@@ -207,6 +231,15 @@ class _Liner:
             pipes.add(edge.connection_id)
             previous, current = current, _far_side(edge, current)
         return chain
+
+    def _is_of_the_stub(self, component_id: str) -> bool:
+        """Un raccordo, o un organo posato per servire cio' che sta in fondo."""
+        definition = self._definitions.get(component_id)
+        if definition is None:
+            return False
+        return definition.is_a_fitting or bool(
+            SERVICE_ORGAN_FUNCTIONS & set(definition.functions)
+        )
 
     def _pipes_at(self, component_id: str, port_id: str) -> list[Pipe]:
         return [

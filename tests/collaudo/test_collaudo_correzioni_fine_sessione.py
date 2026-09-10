@@ -60,6 +60,16 @@ KIT = {
     "dirt-separation-before-what-it-would-ruin",
 }
 
+KIT_SENZA_ACQUEDOTTO = KIT - {"filling-unit-on-return"}
+"""Il corredo di rete degli impianti di prova che non dichiarano l'acqua fredda.
+
+Il riempimento e' un **ponte fra due reti** (DRAW-006-R1, blocco D): dove
+l'acquedotto non e' dichiarato la regola chiede al progettista invece di posare
+un gruppo appeso al nulla. Le altre tre regole restano, e sono loro a misurare
+il tratto comune, che e' cio' che queste prove guardano. I cinque impianti del
+committente l'acquedotto ce l'hanno, e li' il corredo resta intero.
+"""
+
 TESTO = ROOT / "examples" / "prova" / "input" / "2026-08-06-impianti-di-prova.txt"
 ISTRUZIONI = ROOT / "skill" / "capire" / "ISTRUZIONI.md"
 CONFRONTO = ROOT / "docs" / "prodotto" / "grafi-di-prova" / "CONFRONTO-2026-08-07.md"
@@ -367,7 +377,7 @@ def test_con_tre_macchine_il_corredo_sta_a_monte_di_tutte_e_due_le_ripartizioni(
     """Il ritorno si apre due volte: il corredo non deve fermarsi alla seconda."""
     model = tre_macchine_due_ripartizioni()
     posato = kit_posato(model)
-    assert set(posato) == KIT
+    assert set(posato) == KIT_SENZA_ACQUEDOTTO
     assert set(posato.values()) == {("primario", "ra", "a")}
     assert not generatori_che_si_chiudono_senza(model, "primario", "r0")
 
@@ -391,7 +401,7 @@ def test_con_due_tratti_comuni_in_fila_si_prende_quello_vicino_alle_macchine() -
 def test_un_anello_sul_ritorno_non_manda_la_camminata_in_tondo() -> None:
     """Il grafo con un anello deve terminare e dare una risposta, non girare."""
     posato = kit_posato(anello_di_ritorno())
-    assert set(posato) == KIT
+    assert set(posato) == KIT_SENZA_ACQUEDOTTO
 
 
 def test_dove_il_tratto_comune_non_esiste_resta_un_punto_aperto() -> None:
@@ -446,21 +456,21 @@ def test_il_tratto_scelto_porta_davvero_l_acqua_di_tutti_i_generatori(nome: str)
     )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "DIFETTO 2 del collaudo. Con un anello sul ritorno, il tratto scelto cambia "
-        "col NOME delle macchine, a topologia identica: chiamandole gen-a/gen-b il "
-        "corredo va su `s1.a` (giusto: `t1` porta tutta l'acqua), chiamandole "
-        "zeta/alfa va su `s2.a` — che sta a VALLE della prima ripartizione e porta "
-        "solo la parte di acqua che la prima macchina non ha preso. La camminata "
-        "parte dal primo generatore in ordine alfabetico e prende il primo tratto "
-        "condiviso che incontra: con un anello, «il primo che incontro» dipende da "
-        "chi parte. E' esattamente il difetto che la regola dice di non avere — il "
-        "corredo sul ramo di una macchina sola."
-    ),
-)
 def test_su_un_anello_il_corredo_non_dipende_dal_nome_delle_macchine() -> None:
+    """DIFETTO 2 del collaudo, **chiuso** da DRAW-006-R1 (blocco A.2).
+
+    Era questo: con un anello sul ritorno il tratto scelto cambiava col nome
+    delle macchine, a topologia identica. Chiamandole gen-a/gen-b il corredo
+    andava su `s1.a` — giusto, `t1` porta tutta l'acqua — e chiamandole
+    zeta/alfa su `s2.a`, che sta a valle della prima ripartizione e porta solo
+    la parte che la prima macchina non ha preso. La camminata partiva dal primo
+    generatore **in ordine alfabetico**, e con un anello «il primo che incontro»
+    dipende da chi parte.
+
+    Adesso i membri di una rete sono in ordine **strutturale**: la voce di
+    catalogo e gli attacchi verso i vicini, mai il nome. Due impianti uguali con
+    nomi diversi danno lo stesso corredo, sullo stesso tratto.
+    """
     primo = kit_posato(anello_di_ritorno("gen-a", "gen-b"))
     secondo = kit_posato(anello_di_ritorno("zeta", "alfa"))
     assert {(n, c, p) for n, c, p in primo.values()} == {
@@ -468,14 +478,10 @@ def test_su_un_anello_il_corredo_non_dipende_dal_nome_delle_macchine() -> None:
     }
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "DIFETTO 2 del collaudo, l'altra faccia: sull'anello con le macchine chiamate "
-        "zeta/alfa il tratto scelto (`t2`) non porta l'acqua di `zeta`."
-    ),
-)
 def test_su_un_anello_il_tratto_scelto_porta_l_acqua_di_tutti() -> None:
+    """L'altra faccia dello stesso difetto, **chiusa** con lui: il tratto che
+    il corredo sceglie porta l'acqua di tutti i generatori, comunque le
+    macchine si chiamino."""
     model = anello_di_ritorno("zeta", "alfa")
     rete, componente, attacco = next(iter(kit_posato(model).values()))
     tratto = tratto_di(model, componente, attacco)

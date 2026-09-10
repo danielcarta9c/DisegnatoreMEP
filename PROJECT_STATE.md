@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-10 (PM, revisione PR #24 e apertura DRAW-006-R1)
+**Aggiornato:** 2026-09-10 (DEV, consegna di DRAW-006-R1 sulla PR #24)
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md`
 **Release corrente:** 0.3 — generalizzazione controllata, impianto 2
 
@@ -51,14 +51,37 @@ una sicurezza di circuito sulla mandata comune, zero sull'accumulo e sulle singo
 39 pezzi; rete ordinaria 4 curve, 1 incrocio e 425 mm; stacchi statici 0 curve,
 0 incroci e 45 mm. Tutti e cinque gli impianti arrivano alla posa.
 
-La PR #24 di `DRAW-006`, testa `9b925b7`, è respinta nello stato corrente. Conserva
-avanzamenti validi su rubinetto portamanometro, compositi e stati delle multivia, ma
-presenta blocker materiali: ordine degli accessori dipendente dagli ID, mancato
-allineamento PDC–puffer attraverso la deviatrice, adduzione ACS e riempimento tecnico
-modellati in modo non corretto e una valvola D-120 a 27,5 mm.
+`DRAW-006-R1` è stato eseguito sulla stessa PR #24 e consegnato il 2026-09-10 **con due
+rilievi aperti dichiarati**: la geometria non recuperata e la **suite non verde** (1373
+verdi, 29 rosse all'ultima esecuzione integrale; 16 chiuse dopo, 13 rimaste). Il PM non
+l'ha ancora verificato. I quattro difetti semantici sono corretti e provati:
 
-`DRAW-006-R1` corregge gli stessi punti sulla stessa PR #24. La tavola 2 resta l'unica
-consegna grafica completa; tavola 1 regressione automatica, impianti 3–5 soltanto posa.
+- **ordine semantico** indipendente dagli identificativi: il piede di uno stacco parla per
+  l'accessorio terminale, e lo spareggio fra pezzi altrimenti pari è **strutturale**
+  (`src/disegnatore_mep/model/order.py`), non un nome né una posizione nel file. Chiude
+  anche il DIFETTO 2 del collaudo di fine sessione, che era ancora `xfail`;
+- **assi attraverso i pezzi**: `Improver.linked_peers` cammina fra raccordi, catene in
+  linea e multivia, uno stato ammesso per volta;
+- **adduzione ACS**: un solo gruppo composito EN 1487 (`dhw-safety-group`), nessun
+  duplicato esterno di ritegno e intercettazione, vaso sanitario condizionale al dato di
+  bordo, scarico sulla porta dedicata dove il serbatoio la dichiara;
+- **riempimento**: ponte a due reti e due porte, `cold_water` → `heating_water`, con le
+  funzioni della serie 553 dichiarate interne e una domanda dove la sorgente fredda non è
+  dichiarata.
+
+La vicinanza D-120 del §E è chiusa dove il Work Package la nomina: la valvola che stava a
+27,5 mm dal defangatore sta a 2,5 mm, e le due prove generali del blocco sono verdi. La
+misura di collaudo dice però 14 su 15, perché conta anche un quarto caso che la regola non
+dichiara — l'organo che raggiunge il pezzo servito attraverso un raccordo: l'intercettazione
+generale dell'acqua fredda passa da 5,0 a 7,5 mm perché il ponte del riempimento aggiunge
+una seconda presa sulla stessa linea.
+
+Il grafo dell'impianto 2 passa da 45 a 41 pezzi. **La geometria non è stata recuperata** e
+resta il rilievo aperto del pacchetto: rete ordinaria della tavola 2 da 7/2/670 mm a
+12/8/785 mm, e la tavola 1 esce dalle soglie del §A.5 (11 pieghe contro 4, 487,5 mm contro
+425). La prova di regressione della tavola 1 è **rossa e lasciata rossa**, come il Work
+Package prescrive per un'incompatibilità. Misure, analisi e alternative provate stanno in
+`docs/collaudi/DRAW-006-R1/RAPPORTO.md` §8.
 
 ## Rischi aperti
 
@@ -83,17 +106,23 @@ consegna grafica completa; tavola 1 regressione automatica, impianti 3–5 solta
    che fallisca realmente quando un raccordo diventa colonna.
 8. **Connettività multivia non modellata per stati.** Sull'impianto 4 produce domande di
    sicurezza troppo ampie; DRAW-006 introduce configurazioni idrauliche alternative.
-9. **Semantica e geometria ancora accoppiate.** Applicare il corretto ordine funzionale
-   peggiora oggi curve e incroci: DRAW-006-R1 rende l'ordine un vincolo e recupera costo
-   con movimenti di gruppo e routing, mai alterando la semantica.
-10. **Riempimento tecnico modellato a una porta.** Non rappresenta il ponte reale fra
-    acqua fredda e ritorno tecnico; DRAW-006-R1 introduce due reti, due porte e funzioni
-    integrate di catalogo.
+9. **La posa non sa ancora trattare un ponte fra due reti.** DRAW-006-R1 ha reso l'ordine
+   funzionale un vincolo duro e ha generalizzato i candidati di asse, ma il ciclo di posa
+   si ferma in un ottimo locale peggiore: la tavola 2 passa da 7 pieghe e 2 incroci a 12 e
+   8, e la tavola 1 esce dalle soglie di regressione. Non è il tetto di ricerca —
+   alzandolo l'esito non cambia. È il rischio principale aperto oggi.
+10. **La misura «stacchi statici» conta anche ciò che statico non è.** Nel bucket finisce
+    ogni tratta che non è rete ordinaria, quindi anche la linea di alimentazione del
+    riempimento, che il vocabolario del progetto chiama `INBOUND`. Con il ponte la riga
+    cresce senza che sia comparso uno stacco statico in più. La misura non è stata toccata:
+    è una soglia del Work Package.
 
 ## Prossimi gate
 
 1. `DRAW-005-R1`: tavola 1 rifinita — **accettata e fusa dal PM**.
-2. `DRAW-006-R1`: approvare la PR #24 corretta sulla prima generalizzazione dell'impianto 2.
+2. `DRAW-006-R1`: **consegnato con riserva**, in attesa di verifica del PM sulla PR #24.
+   Le decisioni che il pacchetto chiede sono due: il rilievo geometrico del §8 del
+   rapporto e le 13 prove rosse del §9.1, che il DEV non ha ammorbidito.
 3. Gate vertical slice: skill in una chat di lavoro pulita.
 4. Proseguire gli impianti 3–5 uno per volta, cercando classi di difetto nuove.
 

@@ -500,15 +500,24 @@ def place_inline_accessories(
                 x_mm=station.point.x_mm - turned.width_mm / 2,
                 y_mm=station.point.y_mm - turned.height_mm / 2,
             )
-            if not (
-                clear_of_symbols(origin, turned.width_mm, turned.height_mm)
-                and clear_of_other_runs(origin, turned.width_mm, turned.height_mm)
-                and clear_of_port_thresholds(origin, turned.width_mm, turned.height_mm)
-            ):
+            blocked = [
+                what
+                for what, free in (
+                    ("un simbolo", clear_of_symbols(origin, turned.width_mm, turned.height_mm)),
+                    ("una tratta", clear_of_other_runs(origin, turned.width_mm, turned.height_mm)),
+                    (
+                        "la soglia di un attacco",
+                        clear_of_port_thresholds(origin, turned.width_mm, turned.height_mm),
+                    ),
+                )
+                if not free
+            ]
+            if blocked:
                 raise LayoutError(
                     f"run {trunk.connection_ids[0]}: the fixed place of {manifest.id} in "
-                    f"the chain of {owner} sits on another symbol or run, and a chain "
-                    f"does not slide: give the machine room on its port"
+                    f"the chain of {owner}, at ({origin.x_mm:g}, {origin.y_mm:g}), is "
+                    f"taken by {' e '.join(blocked)}, and a chain does not slide: "
+                    f"give the machine room on its port"
                 )
             seat(index, station, distance, rotation, turned)
             reach += extent + MIN_SPACING_MM

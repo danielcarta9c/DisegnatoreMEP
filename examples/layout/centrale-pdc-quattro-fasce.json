@@ -333,19 +333,6 @@
       "tag": null
     },
     {
-      "definition_id": "tee-branch-cold",
-      "evidence": [
-        {
-          "kind": "rule",
-          "note": "Una riserva d'acqua che si scalda dilata, e il ritegno le ha appena tolto la via di ritorno verso la rete: senza uno scarico che si apra da solo la pressione sale fino alla rottura del serbatoio. Il gruppo sta sull'alimentazione fredda e dal lato del serbatoio rispetto a qualunque organo che si chiuda, perche' una via di scarico dietro un rubinetto chiuso non e' una via di scarico.",
-          "reference": "safety-group-on-the-stored-volume@1.0.0"
-        }
-      ],
-      "id": "tee-valve-safety-dhw-cylinder-cold-in",
-      "properties": {},
-      "tag": null
-    },
-    {
       "definition_id": "tee-branch",
       "evidence": [
         {
@@ -743,7 +730,7 @@
       "tag": null
     },
     {
-      "definition_id": "valve-safety-dhw",
+      "definition_id": "dhw-safety-group",
       "evidence": [
         {
           "kind": "rule",
@@ -751,7 +738,7 @@
           "reference": "safety-group-on-the-stored-volume@1.0.0"
         }
       ],
-      "id": "valve-safety-dhw-cylinder-cold-in",
+      "id": "dhw-safety-group-cylinder-cold-in",
       "properties": {},
       "tag": null
     },
@@ -1542,20 +1529,6 @@
     },
     {
       "endpoint_a": {
-        "component_id": "tee-valve-safety-dhw-cylinder-cold-in",
-        "port_id": "branch"
-      },
-      "endpoint_b": {
-        "component_id": "valve-safety-dhw-cylinder-cold-in",
-        "port_id": "a"
-      },
-      "evidence": [],
-      "id": "stub-valve-safety-dhw-cylinder-cold-in",
-      "network_id": "cold",
-      "properties": {}
-    },
-    {
-      "endpoint_a": {
         "component_id": "tee-valve-safety-hp-water-supply",
         "port_id": "branch"
       },
@@ -1630,7 +1603,7 @@
         "port_id": "b"
       },
       "endpoint_b": {
-        "component_id": "tee-valve-safety-dhw-cylinder-cold-in",
+        "component_id": "dhw-safety-group-cylinder-cold-in",
         "port_id": "a"
       },
       "evidence": [],
@@ -1640,7 +1613,7 @@
     },
     {
       "endpoint_a": {
-        "component_id": "tee-valve-safety-dhw-cylinder-cold-in",
+        "component_id": "dhw-safety-group-cylinder-cold-in",
         "port_id": "b"
       },
       "endpoint_b": {
@@ -2268,13 +2241,11 @@
     {
       "category": "necessary",
       "entity_ids": [
-        "valve-safety-dhw-cylinder-cold-in",
-        "tee-valve-safety-dhw-cylinder-cold-in",
+        "dhw-safety-group-cylinder-cold-in",
         "w1-b-b-b-b-a",
-        "w1-b-b-b-b-b",
-        "stub-valve-safety-dhw-cylinder-cold-in"
+        "w1-b-b-b-b-b"
       ],
-      "id": "applied-valve-safety-dhw-cylinder-cold-in",
+      "id": "applied-dhw-safety-group-cylinder-cold-in",
       "rule_id": "safety-group-on-the-stored-volume",
       "rule_version": "1.0.0",
       "status": "approved"
@@ -2406,8 +2377,7 @@
         "drain-connection-buffer-primary-out",
         "drain-connection-dhw-cylinder-dhw-out",
         "tee-drain-connection-dhw-cylinder-dhw-out",
-        "valve-safety-dhw-cylinder-cold-in",
-        "tee-valve-safety-dhw-cylinder-cold-in",
+        "dhw-safety-group-cylinder-cold-in",
         "valve-isolation-locked-open-dhw-expansion-connection-dhw-cylinder-cold-in-a"
       ],
       "id": "storage",

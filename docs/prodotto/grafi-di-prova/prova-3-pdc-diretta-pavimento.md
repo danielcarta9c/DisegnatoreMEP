@@ -89,7 +89,6 @@ famiglia vuol dire aggiungere una riga a una tabella, non toccare il programma.
 | **VIB** | Valvola di intercettazione bloccabile aperta |
 | **VM** | Valvola miscelatrice |
 | **VOL** | Accumulo inerziale |
-| **VR** | Valvola di ritegno |
 | **VS** | Valvola di sicurezza |
 
 ---
@@ -135,18 +134,18 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | RP.01.N.02 | **RC-01** | Raccordo a T | acqua di riscaldamento |
 | RP.01.N.03 | **VI-06** | Valvola di intercettazione | acqua di riscaldamento |
 | RP.01.N.04 | **VOL-01** | Volano termico a due attacchi · tiene in serbo acqua di riscaldamento | acqua di riscaldamento |
-| RP.02.N.01 | **DER-02** | Derivazione a T | acqua di riscaldamento |
-| RP.02.N.02 | **DER-03** | Derivazione a T | acqua di riscaldamento |
-| RP.02.N.03 | **DER-04** | Derivazione a T | acqua di riscaldamento |
-| RP.02.N.04 | **VI-07** | Valvola di intercettazione | acqua di riscaldamento |
+| RP.02.N.01 | **VI-07** | Valvola di intercettazione | acqua di riscaldamento |
+| RP.02.N.02 | **DER-02** | Derivazione a T | acqua di riscaldamento |
+| RP.02.N.03 | **DER-03** | Derivazione a T | acqua di riscaldamento |
+| RP.02.N.04 | **DER-04** | Derivazione a T | acqua di riscaldamento |
 | RP.02.N.05 | **DEF-01** | Defangatore | acqua di riscaldamento |
 | RP.02.N.06 | **VI-08** | Valvola di intercettazione | acqua di riscaldamento |
 | RP.02.N.07 | **FIL-01** | Filtro a Y | acqua di riscaldamento |
-| RP.02.N.03.1 | **GR-01** | Gruppo di riempimento · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| RP.02.N.04.1 | **VIB-01** | Valvola di intercettazione bloccabile aperta | acqua di riscaldamento |
+| RP.02.N.04.2 | **VE-01** | Vaso di espansione · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| RP.02.N.03.1 | **GR-01** | Gruppo di riempimento · pende dal tubo con una propria derivazione | acqua di riscaldamento, acqua fredda sanitaria |
 | RP.02.N.02.1 | **RM-01** | Rubinetto portamanometro a tre vie | acqua di riscaldamento |
 | RP.02.N.02.2 | **MN-01** | Manometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| RP.02.N.01.1 | **VIB-01** | Valvola di intercettazione bloccabile aperta | acqua di riscaldamento |
-| RP.02.N.01.2 | **VE-01** | Vaso di espansione · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | RP.01.N.04.1 | **SF-01** | Valvola di sfogo aria · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | RP.01.N.04.2 | **SC-01** | Attacco di scarico · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | RP.03.N.01 | **VI-09** | Valvola di intercettazione | acqua di riscaldamento |
@@ -156,13 +155,9 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-11** | Valvola di intercettazione | acqua fredda sanitaria |
 | AF.01.N.03 | **DER-05** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.04 | **VR-01** | Valvola di ritegno sanitaria | acqua fredda sanitaria |
-| AF.01.N.05 | **DER-06** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.06 | **DER-07** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.06.1 | **VS-02** | Valvola di sicurezza sanitaria · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
-| AF.01.N.05.1 | **SC-02** | Attacco di scarico sull'acqua fredda · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
-| AF.01.N.03.1 | **VIB-02** | Valvola di intercettazione bloccabile aperta | acqua fredda sanitaria |
-| AF.01.N.03.2 | **VE-02** | Vaso di espansione sanitario · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
+| AF.01.N.04 | **DER-06** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
+| AF.01.N.05 | **VS-02** | Gruppo di sicurezza sanitario | acqua fredda sanitaria |
+| AF.01.N.04.1 | **SC-02** | Attacco di scarico sull'acqua fredda · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
 
 ---
 
@@ -237,15 +232,15 @@ Da **PAV-01** a **VOL-01**, circuito di riscaldamento.
 Da **VOL-01** a **PDC-01**, circuito di riscaldamento.
 
 1. **VOL-01** Volano termico a due attacchi · gia' numerato, indirizzo RP.01.N.04 · la linea parte dal suo braccio 2
-2. **RP.02.N.01 · DER-02** Derivazione a T
-    - **RP.02.N.01.1 · VIB-01** Valvola di intercettazione bloccabile aperta · pende dallo stacco
-    - **RP.02.N.01.2 · VE-01** Vaso di espansione · pende dallo stacco
-3. **RP.02.N.02 · DER-03** Derivazione a T
+2. **RP.02.N.01 · VI-07** Valvola di intercettazione
+3. **RP.02.N.02 · DER-02** Derivazione a T
     - **RP.02.N.02.1 · RM-01** Rubinetto portamanometro a tre vie · pende dallo stacco
     - **RP.02.N.02.2 · MN-01** Manometro · pende dallo stacco
-4. **RP.02.N.03 · DER-04** Derivazione a T
+4. **RP.02.N.03 · DER-03** Derivazione a T
     - **RP.02.N.03.1 · GR-01** Gruppo di riempimento · pende dallo stacco
-5. **RP.02.N.04 · VI-07** Valvola di intercettazione
+5. **RP.02.N.04 · DER-04** Derivazione a T
+    - **RP.02.N.04.1 · VIB-01** Valvola di intercettazione bloccabile aperta · pende dallo stacco
+    - **RP.02.N.04.2 · VE-01** Vaso di espansione · pende dallo stacco
 6. **RP.02.N.05 · DEF-01** Defangatore
 7. **RP.02.N.06 · VI-08** Valvola di intercettazione
 8. **RP.02.N.07 · FIL-01** Filtro a Y
@@ -266,14 +261,10 @@ Da **AF-01** a **BPC-01**, acqua fredda sanitaria.
 1. **AF.01.N.01 · AF-01** Alimentazione acqua fredda · la linea parte dal suo braccio 1
 2. **AF.01.N.02 · VI-11** Valvola di intercettazione
 3. **AF.01.N.03 · DER-05** Derivazione a T sull'acqua fredda
-    - **AF.01.N.03.1 · VIB-02** Valvola di intercettazione bloccabile aperta · pende dallo stacco
-    - **AF.01.N.03.2 · VE-02** Vaso di espansione sanitario · pende dallo stacco
-4. **AF.01.N.04 · VR-01** Valvola di ritegno sanitaria
-5. **AF.01.N.05 · DER-06** Derivazione a T sull'acqua fredda
-    - **AF.01.N.05.1 · SC-02** Attacco di scarico sull'acqua fredda · pende dallo stacco
-6. **AF.01.N.06 · DER-07** Derivazione a T sull'acqua fredda
-    - **AF.01.N.06.1 · VS-02** Valvola di sicurezza sanitaria · pende dallo stacco
-7. **BPC-01** Boiler in pompa di calore · **qui ci si innesta su BPC-01**, che si e' gia' letto, entrando dal suo braccio 1 (ACS.01.N.01)
+4. **AF.01.N.04 · DER-06** Derivazione a T sull'acqua fredda
+    - **AF.01.N.04.1 · SC-02** Attacco di scarico sull'acqua fredda · pende dallo stacco
+5. **AF.01.N.05 · VS-02** Gruppo di sicurezza sanitario
+6. **BPC-01** Boiler in pompa di calore · **qui ci si innesta su BPC-01**, che si e' gia' letto, entrando dal suo braccio 1 (ACS.01.N.01)
 
 ---
 
@@ -289,8 +280,11 @@ arriva a ogni pezzo dell'impianto.
 
 **Tubazioni non lette:** nessuna. Ogni tubazione compare nella passeggiata.
 
-**Punti aperti:** nessuno. Per ogni accessorio che le regole hanno chiesto,
-c'era il pezzo adatto al fluido e il posto dove metterlo.
+**Punti aperti: qui una regola si applicava e non c'era dove o con cosa
+servirla.** Non e' una dimenticanza del disegno: e' una scelta che torna al
+progettista.
+
+- **manca vaso di espansione** su **BPC-01** Boiler in pompa di calore: servirebbe, e in catalogo non c'e' nessun pezzo che lo faccia sull'acqua fredda sanitaria. Va deciso dal progettista.
 
 ---
 

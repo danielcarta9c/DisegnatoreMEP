@@ -68,7 +68,7 @@ scrivere le regole:
 
 ## Impianto per impianto
 
-**1 — Due pompe di calore e accumulo combinato: da 59 a 38 pezzi.**
+**1 — Due pompe di calore e accumulo combinato: da 59 a 39 pezzi.**
 Escono i due separatori d'aria, i due termometri e una delle due sicurezze; il
 defangatore passa da tre a uno, sul ritorno generale prima della ripartizione verso le
 due macchine; i filtri a Y restano due, uno per macchina, e il circolatore perde il suo;
@@ -76,23 +76,23 @@ entra lo sfogo aria sull'attacco dedicato dell'accumulo, e la sicurezza supersti
 sull'accumulo. Vaso, riempimento e manometro stanno adesso sul tratto comune, non più
 sul ramo della prima macchina.
 
-**2 — Pompa di calore con deviatrice e bollitore: da 58 a 45 pezzi.**
+**2 — Pompa di calore con deviatrice e bollitore: da 58 a 41 pezzi.**
 Escono separatore, termometro e il defangatore doppio; entra lo sfogo sul volano; la
 sicurezza sta sul volano. Lo scarico del bollitore si sposta dall'uscita calda
 all'ingresso dell'acqua fredda.
 
-**3 — Pompa di calore diretta su pavimento: da 55 a 43 pezzi.**
+**3 — Pompa di calore diretta su pavimento: da 55 a 39 pezzi.**
 Stesse uscite del regime piccolo (separatore, termometro), sfogo e sicurezza sul volano
 in linea, e lo scarico del boiler sull'ingresso freddo.
 
-**4 — Ibrido pompa di calore e caldaia: da 68 a 42 pezzi.**
+**4 — Ibrido pompa di calore e caldaia: da 68 a 43 pezzi.**
 Il ritorno generale è il tratto fra il volume tecnico e il punto in cui il ritorno si
 divide verso le due macchine: lì stanno vaso, riempimento, manometro e l'unico
 defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul volano;
 escono i due separatori, i due termometri e una sicurezza. **Sul circuito sanitario non
 c'è filtro**, come è giusto in un impianto domestico.
 
-**5 — Cascata di tre pompe di calore: da 105 a 97 pezzi.**
+**5 — Cascata di tre pompe di calore: da 105 a 93 pezzi.**
 È l'unico dei cinque **sopra i 35 kW** — tre macchine da 35, e non è una centrale
 domestica — quindi tiene il corredo da grande centrale: sicurezza e termometro per ogni
 macchina, e il separatore d'aria sulla mandata generale. I cinque defangatori diventano
@@ -111,15 +111,21 @@ tre tubi si incontrano mettiamo due raccordi, che è la regola generale e non ri
 supporre un pezzo che non hai nominato. Di qui i pezzi in più rispetto a ieri, non da un
 irrigidimento delle regole.
 
-**Quattro dei cinque non hanno punti aperti.** Ogni accessorio che le regole hanno
-chiesto ha trovato il pezzo e il posto. L'ibrido (impianto 4) ne ha **uno**, sulla
-sicurezza. Dal 9 settembre 2026 (DRAW-006) la deviatrice dichiara i propri stati
-idraulici: l'ingresso va su un ramo oppure sull'altro, mai su tutti e due. La pompa di
-calore, che alla mandata comune ci arriva comunque stia la deviatrice, **riceve** la
-sicurezza di circuito del proprio dominio; la caldaia, che in uno degli stati ammessi la
-deviatrice manda allo scambiatore sanitario, è un dominio a sé, e per lei il catalogo non
-dice se la sicurezza sta dentro il mantello. È **una** domanda per te, non un pezzo — e
-non è più, come fino a ieri, l'intera rete dichiarata senza tratto comune.
+**Ogni punto aperto è una domanda su un dato che non abbiamo, mai un pezzo perso.**
+Uno solo dei cinque non ne ha nessuno; gli altri quattro ne hanno **uno a testa**, e
+ciascuno chiede una cosa sola.
+
+L'ibrido (impianto 4) chiede della **sicurezza**. Dal 9 settembre 2026 (DRAW-006) la
+deviatrice dichiara i propri stati idraulici: l'ingresso va su un ramo oppure sull'altro,
+mai su tutti e due. La pompa di calore, che alla mandata comune ci arriva comunque stia la
+deviatrice, **riceve** la sicurezza di circuito del proprio dominio; la caldaia, che in
+uno degli stati ammessi la deviatrice manda allo scambiatore sanitario, è un dominio a sé,
+e per lei il catalogo non dice se la sicurezza sta dentro il mantello.
+
+Gli impianti 2, 3 e 5 chiedono del **vaso di espansione sanitario**. Dal 10 settembre 2026
+(DRAW-006-R1) non lo aggiungiamo al buio: molti accumuli sanitari lo portano già dentro il
+mantello, e il catalogo del tuo può tacere. Dove tace, la domanda è per te — una riga, e
+il vaso si posa o si lascia stare.
 
 ---
 

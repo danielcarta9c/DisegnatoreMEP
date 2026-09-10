@@ -46,6 +46,7 @@ from helpers import ROOT, catalog, naming, permuted, rules
 
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.rules.apply import saturate
+from disegnatore_mep.rules.proposal import GapReason
 
 PROVA = ROOT / "skill" / "capire" / "prova-2026-08-07"
 METRO = ROOT / "examples" / "prova"
@@ -625,7 +626,16 @@ def test_il_completatore_digerisce_il_grafo(n: int) -> None:
     completo, proposte, buchi = saturate(modello, cat, rl)
     assert len(completo.components) > len(modello.components)
     assert proposte
-    domande = [b for b in buchi if b.rule_id.startswith("safety-relief-")]
+    # Le domande per contratto: la sicurezza per dominio idraulico (I-046) e,
+    # da DRAW-006-R1, il **vaso sanitario**, che si aggiunge solo dove il
+    # catalogo dell'accumulo dichiara di non portarlo a bordo — e nessun
+    # accumulo pubblicato lo dichiara, in nessuno dei due sensi (blocco C.2).
+    domande = [
+        b
+        for b in buchi
+        if b.rule_id.startswith("safety-relief-")
+        or b.reason is GapReason.ON_BOARD_UNKNOWN
+    ]
     assert buchi == domande, (
         f"impianto {n}: il completatore lascia punti aperti {[b.key for b in buchi]}"
     )

@@ -94,6 +94,15 @@ KIT_COMUNE = {
     "dirt-separation-before-what-it-would-ruin",
 }
 
+KIT_SENZA_ACQUEDOTTO = KIT_COMUNE - {"filling-unit-on-return"}
+"""Il corredo di rete di un impianto che non dichiara l'acqua fredda.
+
+Il riempimento e' un **ponte fra due reti** (DRAW-006-R1, blocco D): senza
+sorgente fredda gia' approvata la regola chiede al progettista invece di posare
+un gruppo appeso al nulla. Le altre tre restano, e sono loro a dire dove il
+tratto comune comincia — che e' cio' che queste prove misurano.
+"""
+
 Saturo = tuple[ProjectModel, tuple[RuleProposal, ...], tuple[RuleGap, ...]]
 
 
@@ -401,10 +410,12 @@ def test_con_una_macchina_sola_la_posa_coincide_con_quella_di_sempre() -> None:
     )
     done, applied, gaps = saturate(single, CAT, REG)
     kit = [p for p in applied if p.rule_id in KIT_COMUNE]
-    assert Counter(p.rule_id for p in kit) == dict.fromkeys(KIT_COMUNE, 1)
+    assert Counter(p.rule_id for p in kit) == dict.fromkeys(KIT_SENZA_ACQUEDOTTO, 1)
     for p in kit:
         assert (p.anchor.component_id, p.anchor.port_id) == ("pdc", "water_return"), p.rule_id
-    assert not gaps
+    # L'unico punto aperto ammesso e' la domanda del riempimento: questo
+    # impianto sintetico non dichiara l'acqua fredda da cui il ponte pesca.
+    assert [item.rule_id for item in gaps] == ["filling-unit-on-return"]
     assert validate_project(done, CAT).ok
 
 
@@ -605,8 +616,20 @@ def test_il_corredo_sanitario_va_solo_a_chi_si_riempie_dalla_rete() -> None:
     assert not any(g.rule_id in corredo for g in gaps_combinato), (
         "il corredo che non spetta non deve nemmeno uscire come punto aperto"
     )
-    _, applied_bollitore, _ = saturo(PROVE[1])
-    on_cold = {p.rule_id for p in applied_bollitore if p.network_id == "fredda"}
+    # Al bollitore il corredo spetta, e da DRAW-006-R1 (blocco C) **parla**
+    # tutto: il gruppo di sicurezza EN 1487 si posa e si porta dentro il
+    # ritegno, che percio' non si aggiunge fuori; il vaso della riserva esce
+    # come domanda, perche' il catalogo non dice se l'accumulo lo ha a bordo.
+    # Parlare e' cio' che la prova misura — nessuna delle tre resta muta.
+    _, applied_bollitore, gaps_bollitore = saturo(PROVE[1])
+    on_cold = {
+        p.rule_id for p in applied_bollitore if p.network_id == "fredda"
+    } | {g.rule_id for g in gaps_bollitore if g.network_id == "fredda"}
+    on_cold |= {
+        item
+        for item in ("dhw-check-on-cold-inlet",)
+        if _il_gruppo_lo_porta_dentro(item)
+    }
     assert corredo <= on_cold
 
 
@@ -702,16 +725,36 @@ def test_il_punto_di_riempimento_dichiarato_e_validato_al_caricamento() -> None:
 
 
 def test_il_vaso_sanitario_e_firmato_dalla_regola_dell_alimentazione() -> None:
-    """Chi firma il vaso della riserva sanitaria deve essere la regola del
-    corredo di alimentazione, non quella del circuito chiuso."""
+    """Chi parla del vaso della riserva sanitaria deve essere la regola del
+    corredo di alimentazione, non quella del circuito chiuso.
+
+    Da DRAW-006-R1 (blocco C.2) quella regola **chiede** invece di posare,
+    finche' il catalogo dell'accumulo non dice se il vaso e' a bordo: la firma
+    resta la sua, e la si legge sul punto aperto.
+    """
     found = evaluate(load(PROVE[2]), CAT, REG)
-    on_cold = [
-        p for p in found.proposals
-        if p.network_id == "fredda" and "expansion" in p.definition_id
+    firme = [
+        item.rule_id
+        for item in found.proposals
+        if item.network_id == "fredda" and "expansion" in item.definition_id
+    ] + [
+        item.rule_id
+        for item in found.gaps
+        if item.network_id == "fredda" and "expansion" in item.missing_function
     ]
-    assert len(on_cold) == 1
-    assert on_cold[0].rule_id == "expansion-on-the-stored-volume-feed", (
-        f"il vaso sanitario e' firmato da {on_cold[0].rule_id}"
+    assert len(firme) == 1
+    assert firme[0] == "expansion-on-the-stored-volume-feed", (
+        f"il vaso sanitario e' firmato da {firme[0]}"
+    )
+
+
+def _il_gruppo_lo_porta_dentro(rule_id: str) -> bool:
+    """Quella regola e' soddisfatta da cio' che un gruppo si porta dentro."""
+    rule = next(item for item in REG.all() if item.id == rule_id)
+    wanted = set(rule.then.functions())
+    return any(
+        definition.composite and wanted & set(definition.carries_on_board)
+        for definition in CAT.all()
     )
 
 
@@ -816,21 +859,22 @@ def test_il_confronto_per_il_pm_dice_il_vero_sui_documenti() -> None:
             line for line in doc.splitlines() if re.match(r"^\| [A-Z]+\.[0-9]", line)
         ]
         assert len(rows) == expected, f"{name}: il documento non ha {expected} nodi"
-    # La frase sui punti aperti dev'essere vera: quattro non ne hanno, e
-    # l'ibrido ne ha **uno**. Da DRAW-006 la deviatrice dichiara i propri stati
-    # idraulici: la macchina che alla mandata comune ci arriva in ogni stato
-    # ammesso riceve la sicurezza del proprio dominio, e resta soltanto la
-    # domanda sul bordo ignoto della macchina che la deviatrice puo' isolare.
-    # Il documento lo dichiara e il motore lo conferma.
-    assert "Quattro dei cinque non hanno punti aperti" in confronto
+    # La frase sui punti aperti dev'essere vera: uno solo dei cinque non ne ha,
+    # e gli altri quattro ne hanno **uno a testa**, sempre su un dato di bordo
+    # che il catalogo non dichiara — la sicurezza della macchina che la
+    # deviatrice puo' isolare (impianto 4), il vaso sanitario dove un accumulo
+    # si riempie dalla rete fredda (DRAW-006-R1, blocco C.2). Il documento lo
+    # dichiara e il motore lo conferma.
+    assert "uno a testa" in confronto
+    senza_domande = 0
     for name in PROVE:
         _, _, found = saturo(name)
-        if name == PROVE[3]:
-            assert sorted((g.rule_id, g.reason.value) for g in found) == [
-                ("safety-relief-on-an-isolable-generator", "on_board_unknown"),
-            ], name
+        if not found:
+            senza_domande += 1
             continue
-        assert not found, (name, [(g.rule_id, g.reason.value) for g in found])
+        assert len(found) == 1, (name, [(g.rule_id, g.reason.value) for g in found])
+        assert found[0].reason is GapReason.ON_BOARD_UNKNOWN, name
+    assert senza_domande == 1
     # Il regime che il confronto dichiara per ciascun impianto dev'essere
     # quello scritto nel modello: la tabella del documento e i cinque file
     # non possono divergere.

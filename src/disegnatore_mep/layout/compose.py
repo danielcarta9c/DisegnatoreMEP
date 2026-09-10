@@ -19,6 +19,7 @@ from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import ProjectModel
 
+from .chains import machine_chains
 from .errors import LayoutError
 from .geometry import (
     CrossReference,
@@ -268,12 +269,21 @@ def compose_drawing(
     # (DRAW-006-R1, blocco A.2).
     rank = structural_order(project)
 
-    def place_in_line(trunk: Trunk) -> tuple[tuple[int, str], tuple[int, str]]:
+    def place_in_line(trunk: Trunk) -> tuple[int, tuple[int, str], tuple[int, str]]:
+        """L'ordine in cui le tratte si instradano.
+
+        Prima quelle che portano una **catena di macchina**: i loro accessori
+        stanno a distanza fissa dalla porta e non scivolano (I-044), quindi o
+        quel posto e' libero o la tavola non esce. Chi puo' spostarsi si
+        instrada dopo e gira attorno. Poi l'ordine strutturale dei capi, che i
+        nomi non decidono.
+        """
         ends = sorted(
             (rank.get(ref.component_id, 0), ref.port_id)
             for ref in (trunk.start, trunk.end)
         )
-        return (ends[0], ends[1])
+        head, tail = machine_chains(project, catalog, trunk)
+        return (0 if head or tail else 1, ends[0], ends[1])
 
     trunks = sorted(build_trunks(project, inline_ids), key=place_in_line)
     partitions = partition_project(project, trunks)

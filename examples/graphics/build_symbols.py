@@ -109,6 +109,13 @@ GRID_MM = A3_LANDSCAPE.grid_mm
 
 # La gerarchia dimensionale (D-055). Ogni misura e' un multiplo del passo.
 INLINE_ACCESSORY = (5.0, 5.0)
+WIDE_INLINE_ACCESSORY = (10.0, 5.0)
+"""Accessorio in linea che porta piu' organi: un **gruppo**.
+
+Largo il doppio, alto uguale. Il doppio serve perche' tre organi in serie non
+stanno in cinque millimetri; l'altezza resta quella degli altri perche' un
+riquadro piu' alto si siede sugli attacchi del pezzo che il gruppo serve, e
+sul bollitore dell'impianto 2 lo faceva davvero."""
 TERMINAL_ACCESSORY = (5.0, 10.0)
 BRANCHED_ACCESSORY = (5.0, 10.0)
 """Accessorio che sta **sulla** tubazione ma pende da una derivazione.
@@ -962,23 +969,27 @@ def dhw_safety_group_body(w: float, h: float) -> str:
     Tre organi in serie lungo l'asse, come il gruppo li porta dentro: la
     valvola di intercettazione (due triangoli convergenti), il ritegno
     controllabile (la **z** del non ritorno) e la sicurezza, che sta sul ramo
-    di scarico e per questo si stacca dall'asse verso il basso — un triangolo
-    con la molla. Il segno non nasconde cio' che c'e' dentro: e' la ragione per
-    cui le regole non aggiungono i pezzi che il gruppo dichiara.
+    di scarico e per questo si stacca dall'asse — un triangolo con la molla. Il
+    segno non nasconde cio' che c'e' dentro: e' la ragione per cui le regole
+    non aggiungono i pezzi che il gruppo dichiara.
+
+    Il riquadro e' **largo il doppio di un accessorio in linea e alto quanto
+    lui**: tre organi non stanno in cinque millimetri, e un riquadro alto il
+    doppio si sedeva sugli attacchi del serbatoio che il gruppo serve.
     """
-    axis = h * 0.4
-    d = w * 0.09
-    s = h * 0.14
-    check_left, check_right = w * 0.42, w * 0.62
-    top, bottom = axis - h * 0.13, axis + h * 0.13
+    axis = h / 2
+    cx = w * 0.16
+    d = w * 0.07
+    s = h * 0.28
+    check_left, check_right = w * 0.4, w * 0.58
+    top, bottom = axis - h * 0.26, axis + h * 0.26
     relief_x = w * 0.82
-    base_y, apex_y = h * 0.62, h * 0.86
-    half = w * 0.09
-    spring = f"M{n(relief_x)} {n(base_y)} " + " ".join(
+    base_y, apex_y = axis - h * 0.16, axis - h * 0.44
+    half = w * 0.07
+    spring = f"M{n(relief_x)} {n(apex_y)} " + " ".join(
         f"L{n(relief_x + (-half if index % 2 == 0 else half))} {n(y)}"
-        for index, y in enumerate((h * 0.55, h * 0.49, h * 0.43, h * 0.37))
+        for index, y in enumerate((h * 0.16, h * 0.1, h * 0.04))
     )
-    cx = w * 0.18
     return (
         f'<line x1="0" y1="{n(axis)}" x2="{n(w)}" y2="{n(axis)}"/>'
         f'<path d="M{n(cx - d)} {n(axis - s)} L{n(cx - d)} {n(axis + s)} '
@@ -1371,7 +1382,7 @@ SYMBOLS: list[SymbolSpec] = [
         filling_unit_body, SOURCE_PRACTICE_HYDRONIC, version="2.0.0",
     ),
     inline_symbol(
-        "dhw-safety-group", "Gruppo di sicurezza sanitario", DEVICE,
+        "dhw-safety-group", "Gruppo di sicurezza sanitario", WIDE_INLINE_ACCESSORY,
         dhw_safety_group_body, SOURCE_EN_1487,
     ),
     single_port_symbol(

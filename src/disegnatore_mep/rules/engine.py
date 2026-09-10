@@ -476,12 +476,16 @@ def evaluate(
                         continue
                 anchors.append(anchor)
 
-            def here(anchor: PortRef) -> bool:
-                return _already_there(
+            # Cio' che la regola porterebbe c'e' gia', attacco per attacco. Si
+            # calcola una volta sola: la stessa risposta serve a chi conta i
+            # componenti serviti e a chi sceglie gli attacchi ancora liberi.
+            covered = {
+                (anchor.component_id, anchor.port_id): _already_there(
                     context, rule, network.id, anchor, _domain_at(domain_of, anchor)
                 )
-
-            satisfied = {anchor.component_id for anchor in anchors if here(anchor)}
+                for anchor in anchors
+            }
+            satisfied = {item for (item, _), found in covered.items() if found}
             # Un componente gia' servito su una rete e' servito e basta: il
             # volano sta sul primario e sul secondario, e uno scarico per
             # accumulo deve restare uno anche quando la prima passata non ha
@@ -494,7 +498,11 @@ def evaluate(
                 # perche' la valvola era finita sull'altro lato.
                 free = [item for item in anchors if item.component_id not in satisfied]
             else:
-                free = [anchor for anchor in anchors if not here(anchor)]
+                free = [
+                    anchor
+                    for anchor in anchors
+                    if not covered[(anchor.component_id, anchor.port_id)]
+                ]
             # Le teste dei domini sono gia' una per dominio: tagliarle con la
             # cardinalita' di rete ne lascerebbe fuori tutti tranne il primo.
             allowed = (
@@ -510,6 +518,14 @@ def evaluate(
             source: PortRef | None = None
             if rule.then.bridges_from_medium is not None:
                 source = _source_for(context, project, rule.then.bridges_from_medium)
+                # E la derivazione con cui pescare da quella rete: senza il
+                # raccordo per quel fluido il ponte non si puo' innestare, ed
+                # e' lo stesso silenzio del pezzo mancante — un punto aperto,
+                # non un crollo a meta' catena.
+                if source is not None and not catalog.serving(
+                    BRANCH_OFF, rule.then.bridges_from_medium
+                ):
+                    source = None
                 if source is None:
                     for anchor in allowed:
                         missing = _gap(

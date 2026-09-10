@@ -348,27 +348,54 @@ def test_a_missing_piece_is_named_at_the_node_where_it_is_missing() -> None:
     project, _, gaps = saturate(
         load_project(ESSENTIAL), without, RuleRegistry.from_directory(RULES)
     )
-    assert gaps
+    # Il punto aperto che questa prova interroga e' quello dello scarico, non
+    # il primo che capita: da DRAW-006-R1 l'impianto essenziale ne porta anche
+    # un altro, il vaso sanitario che nessun bollitore dichiara a bordo.
+    dello_scarico = [
+        gap for gap in gaps if gap.rule_id == "let-what-holds-its-own-volume-empty"
+    ]
+    assert len(dello_scarico) == 1, gaps
 
     written = str(module.build(project, without, naming(), gaps))
-    tank = read_plant(project, without, naming()).node(gaps[0].anchor.component_id).sigla
+    plant = read_plant(project, without, naming())
+    tank = plant.node(dello_scarico[0].anchor.component_id).sigla
     said = [line for line in written.splitlines() if "manca" in line and tank in line]
     assert said, written
-    assert "attacco di scarico" in said[0].lower()
-    assert "acqua calda sanitaria" in said[0]
+    detto = [line for line in said if "attacco di scarico" in line.lower()]
+    assert detto, said
+    assert "acqua calda sanitaria" in detto[0]
     assert "Punti aperti" in written
 
 
-def test_the_published_document_has_no_open_point_because_the_plant_has_none() -> None:
-    """L'altro verso: la sezione c'e' sempre, e dice il vero."""
+def test_the_published_document_says_the_open_points_the_plant_really_has() -> None:
+    """L'altro verso: la sezione c'e' sempre, e dice il vero.
+
+    Fino a DRAW-006 l'impianto essenziale non aveva punti aperti e la prova
+    pretendeva il «nessuno». Da DRAW-006-R1 un punto aperto ce l'ha davvero —
+    il vaso sanitario, che il catalogo non sa se il bollitore porti a bordo
+    (blocco C.2) — e pretenderne l'assenza vorrebbe dire pretendere che il
+    motore torni ad aggiungerlo al buio. La prova diventa allora piu' stretta,
+    non piu' larga: **ogni** punto aperto che il motore trova deve comparire
+    nel documento pubblicato, sul nodo che lo porta, e la formula del
+    «nessuno» resta provata sul verso in cui davvero non ce n'e' nemmeno uno.
+    """
+    module = generator()
     registry = ComponentRegistry.from_directory(
         HYDRONIC_CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
     )
-    _, _, gaps = saturate(
+    project, _, gaps = saturate(
         load_project(ESSENTIAL), registry, RuleRegistry.from_directory(RULES)
     )
-    assert gaps == []
-    assert "**Punti aperti:** nessuno" in text()
+    assert gaps
+    written = text()
+    plant = read_plant(project, registry, naming())
+    for gap in gaps:
+        sigla = plant.node(gap.anchor.component_id).sigla
+        assert [
+            line for line in written.splitlines() if "manca" in line and sigla in line
+        ], (sigla, written)
+    senza = str(module.build(project, registry, naming(), []))
+    assert "**Punti aperti:** nessuno" in senza
 
 
 @pytest.mark.parametrize("plant,directory", [(TWO_ZONES, HYDRONIC_CATALOG), (MIXED, FOUNDATION_CATALOG)])

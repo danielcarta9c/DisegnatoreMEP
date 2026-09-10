@@ -330,17 +330,28 @@ def test_nessun_organo_esterno_duplica_cio_che_il_gruppo_ha_dentro() -> None:
     model, _ = completato(circuito_con_acqua_fredda())
     gruppo = pezzi_con(model, FILLING)[0]
     definitions = {item.id: catalog().get(item.definition_id) for item in model.components}
-    attorno = {peer for peer, _ in vicini_di(model, gruppo).values()}
-    # Il giro si allarga di un passo: fra il gruppo e la condotta ci puo'
-    # stare la derivazione, e l'organo di troppo sarebbe subito oltre.
-    for peer in list(attorno):
-        attorno |= {other for other, _ in vicini_di(model, peer).values()}
-    doppioni = sorted(
-        item
-        for item in attorno - {gruppo}
-        if set(definitions[item].functions) & set(filling_definition().carries_on_board)
-    )
-    assert not doppioni, (
-        f"attorno al gruppo di riempimento ci sono organi che il gruppo si "
-        f"porta gia' dentro: {doppioni}"
+    # I due stacchi del gruppo, dal suo attacco fino alla propria presa: e' li'
+    # che un organo esterno si poserebbe, e li' che non deve essercene nessuno.
+    doppioni: list[str] = []
+    for peer, _ in vicini_di(model, gruppo).values():
+        cursor, seen = peer, {gruppo}
+        while cursor not in seen:
+            seen.add(cursor)
+            if set(definitions[cursor].functions) & set(
+                filling_definition().carries_on_board
+            ):
+                doppioni.append(cursor)
+            if definitions[cursor].is_a_fitting:
+                break
+            onward = [
+                other
+                for other, _ in vicini_di(model, cursor).values()
+                if other not in seen
+            ]
+            if len(onward) != 1:
+                break
+            cursor = onward[0]
+    assert not sorted(doppioni), (
+        f"sugli stacchi del gruppo di riempimento ci sono organi che il gruppo "
+        f"si porta gia' dentro: {sorted(doppioni)}"
     )

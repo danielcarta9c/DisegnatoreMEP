@@ -223,7 +223,7 @@ def _misure_d120(
     def gap(first: tuple[float, float, float, float], second: tuple[float, float, float, float]) -> float:
         dx = max(first[0] - second[2], second[0] - first[2], 0.0)
         dy = max(first[1] - second[3], second[1] - first[3], 0.0)
-        return (dx**2 + dy**2) ** 0.5
+        return float((dx**2 + dy**2) ** 0.5)
 
     def port_box(ref: PortRef) -> tuple[float, float, float, float] | None:
         host = by_id.get(ref.component_id)

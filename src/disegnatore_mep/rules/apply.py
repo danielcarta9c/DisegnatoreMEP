@@ -33,7 +33,7 @@ from .engine import BRANCH_OFF, Evaluation, evaluate
 from .errors import RuleError
 from .proposal import RuleGap, RuleProposal
 from .registry import RuleRegistry
-from .schema import SatisfactionScope
+from .schema import RuleDefinition, SatisfactionScope
 
 """Il mestiere di cio' che apre una derivazione su una tubazione esistente.
 
@@ -208,7 +208,16 @@ def apply_proposals(
     """
     current = project
     for proposal in proposals:
-        added = [_instance(proposal.component_id, proposal.definition_id, proposal)]
+        # I pezzi nuovi, ciascuno con il componente nel cui sottosistema entra:
+        # un accessorio appartiene al gruppo funzionale di cio' che serve, e il
+        # ponte fra due reti ha un capo per parte — la sua derivazione fredda
+        # sta con l'acqua fredda, non con la macchina all'altro capo.
+        added: list[tuple[ComponentInstance, str]] = [
+            (
+                _instance(proposal.component_id, proposal.definition_id, proposal),
+                proposal.anchor.component_id,
+            )
+        ]
         network_id = proposal.network_id
         # I pezzi nuovi entrano nel sottosistema dell'ancoraggio; le tubazioni
         # nate o spezzate restano fuori di li' e finiscono nella tracciabilita'.
@@ -232,10 +241,15 @@ def apply_proposals(
                 )
                 junction_id = f"tee-{proposal.component_id}-{port_id}"
                 added.append(
-                    _instance(
-                        junction_id,
-                        catalog.providing(BRANCH_OFF, _medium_of(current, network)).id,
-                        proposal,
+                    (
+                        _instance(
+                            junction_id,
+                            catalog.providing(
+                                BRANCH_OFF, _medium_of(current, network)
+                            ).id,
+                            proposal,
+                        ),
+                        anchor.component_id,
                     )
                 )
                 pieces = _derivation(connection, proposal, junction_id)
@@ -282,12 +296,15 @@ def apply_proposals(
             if catalog.get(proposal.definition_id).attaches_on_a_branch:
                 junction_id = f"tee-{proposal.component_id}"
                 added.append(
-                    _instance(
-                        junction_id,
-                        catalog.providing(
-                            BRANCH_OFF, _medium_of(current, network_id)
-                        ).id,
-                        proposal,
+                    (
+                        _instance(
+                            junction_id,
+                            catalog.providing(
+                                BRANCH_OFF, _medium_of(current, network_id)
+                            ).id,
+                            proposal,
+                        ),
+                        proposal.anchor.component_id,
                     )
                 )
                 pieces = _derivation(connection, proposal, junction_id)
@@ -311,13 +328,11 @@ def apply_proposals(
             pipes.extend(item.id for item in (*pieces, *extra))
 
         subsystems = list(current.subsystems)
-        for component in added:
-            subsystems = _with_member(
-                subsystems, proposal.anchor.component_id, component.id
-            )
+        for component, host_id in added:
+            subsystems = _with_member(subsystems, host_id, component.id)
         current = current.model_copy(
             update={
-                "components": [*current.components, *added],
+                "components": [*current.components, *(item for item, _ in added)],
                 "connections": connections,
                 "subsystems": subsystems,
                 "rule_applications": [
@@ -328,7 +343,7 @@ def apply_proposals(
                         rule_version=proposal.rule_version,
                         category=proposal.category,
                         status=ApprovalStatus.APPROVED,
-                        entity_ids=[*(item.id for item in added), *pipes],
+                        entity_ids=[*(item.id for item, _ in added), *pipes],
                     ),
                 ],
             }
@@ -370,27 +385,13 @@ def evaluate_in_phases(
     # (I-046): «tagliato fuori da ogni sicurezza» e' vero di ogni generatore
     # finche' la sicurezza di circuito non e' stata posata, e una domanda
     # aperta fatta in quel momento sarebbe una domanda sbagliata.
-    # E parlano dopo anche le regole che un **gruppo in linea** puo'
-    # soddisfare. Un gruppo che sta sulla tubazione porta i propri organi su
-    # quella tubazione: chiedere una di quelle funzioni nella stessa passata in
-    # cui il gruppo viene proposto produce il doppione che il PM ha tolto — il
-    # ritegno sanitario accanto al gruppo EN 1487 che lo contiene. Chi pende da
-    # uno stacco non conta: il filtro dentro un gruppo di riempimento appeso a
-    # un T non e' il filtro del ritorno della macchina. Chi decide non e' un
-    # elenco di nomi: e' il catalogo (DRAW-006-R1, blocco C.1).
-    carried_on_the_run = {
-        function
-        for definition in catalog.all()
-        if definition.composite and not definition.attaches_on_a_branch
-        for function in definition.carries_on_board
-    }
     closers = RuleRegistry(
         rules=tuple(
             item
             for item in rules.all()
             if item.satisfied_by.scope is SatisfactionScope.ON_THE_GROUP
             or item.when.anchor_cut_off_from is not None
-            or set(item.then.functions()) & carried_on_the_run
+            or _a_group_may_satisfy(item, rules, catalog)
         )
     )
     others = RuleRegistry(
@@ -401,6 +402,48 @@ def evaluate_in_phases(
         return first
     second = evaluate(project, catalog, rules)
     return Evaluation(proposals=second.proposals, gaps=[*first.gaps, *second.gaps])
+
+
+def _a_group_may_satisfy(
+    rule: RuleDefinition, rules: RuleRegistry, catalog: ComponentRegistry
+) -> bool:
+    """Un'altra regola, sullo stesso ancoraggio, puo' posare un **gruppo in
+    linea** che si porta dentro cio' che questa chiede.
+
+    Allora questa parla dopo. Un gruppo che sta sulla tubazione porta i propri
+    organi su quella tubazione: chiederne uno nella stessa passata in cui il
+    gruppo viene proposto produce il doppione che il PM ha tolto — il ritegno
+    sanitario accanto al gruppo EN 1487 che lo contiene (DRAW-006-R1, blocco
+    C.1).
+
+    «Sullo stesso ancoraggio» e' la meta' che tiene la fase stretta: due regole
+    che parlano di pezzi diversi non si soddisfano a vicenda, e mandarle
+    entrambe in fase due lascerebbe decidere all'ordine alfabetico dei file
+    quale delle due si posa. Chi pende da uno stacco non conta: il filtro dentro
+    un gruppo di riempimento appeso a un T non e' il filtro del ritorno della
+    macchina. Chi decide non e' un elenco di nomi: e' il catalogo.
+    """
+    wanted = set(rule.then.functions())
+    for other in rules.all():
+        if other.id == rule.id:
+            continue
+        if (other.when.anchor_has_trait, other.when.anchor_has_function) != (
+            rule.when.anchor_has_trait,
+            rule.when.anchor_has_function,
+        ):
+            continue
+        if other.when.network_medium != rule.when.network_medium:
+            continue
+        for function in other.then.functions():
+            for definition in catalog.all():
+                if (
+                    function in definition.functions
+                    and definition.composite
+                    and not definition.attaches_on_a_branch
+                    and wanted & set(definition.carries_on_board)
+                ):
+                    return True
+    return False
 
 
 def saturate(

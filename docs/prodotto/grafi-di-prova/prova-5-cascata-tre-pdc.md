@@ -176,11 +176,11 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | CP.03.N.03 | **VI-12** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.03.N.02.1 | **TM-02** | Termometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | CP.03.N.01.1 | **VS-02** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| RP.01.N.05.1 | **GR-01** | Gruppo di riempimento · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| RP.01.N.04.1 | **RM-01** | Rubinetto portamanometro a tre vie | acqua di riscaldamento |
-| RP.01.N.04.2 | **MN-01** | Manometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| RP.01.N.03.1 | **VIB-01** | Valvola di intercettazione bloccabile aperta | acqua di riscaldamento |
-| RP.01.N.03.2 | **VE-01** | Vaso di espansione · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| RP.01.N.05.1 | **VIB-01** | Valvola di intercettazione bloccabile aperta | acqua di riscaldamento |
+| RP.01.N.05.2 | **VE-01** | Vaso di espansione · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| RP.01.N.04.1 | **GR-01** | Gruppo di riempimento · pende dal tubo con una propria derivazione | acqua di riscaldamento, acqua fredda sanitaria |
+| RP.01.N.03.1 | **RM-01** | Rubinetto portamanometro a tre vie | acqua di riscaldamento |
+| RP.01.N.03.2 | **MN-01** | Manometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | RP.02.N.01 | **VI-13** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.01a.N.02 | **BOL-01** | Bollitore ACS · tiene in serbo acqua calda sanitaria | acqua di riscaldamento, acqua fredda sanitaria, acqua calda sanitaria |
 | CP.01a.N.01 | **VI-14** | Valvola di intercettazione | acqua di riscaldamento |
@@ -215,13 +215,9 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-28** | Valvola di intercettazione | acqua fredda sanitaria |
 | AF.01.N.03 | **DER-10** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.04 | **VR-03** | Valvola di ritegno sanitaria | acqua fredda sanitaria |
-| AF.01.N.05 | **DER-11** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.06 | **DER-12** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.06.1 | **VS-04** | Valvola di sicurezza sanitaria · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
-| AF.01.N.05.1 | **SC-02** | Attacco di scarico sull'acqua fredda · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
-| AF.01.N.03.1 | **VIB-02** | Valvola di intercettazione bloccabile aperta | acqua fredda sanitaria |
-| AF.01.N.03.2 | **VE-02** | Vaso di espansione sanitario · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
+| AF.01.N.04 | **DER-11** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
+| AF.01.N.05 | **VS-04** | Gruppo di sicurezza sanitario | acqua fredda sanitaria |
+| AF.01.N.04.1 | **SC-02** | Attacco di scarico sull'acqua fredda · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
 | ACS.01.N.01 | **VI-29** | Valvola di intercettazione | acqua calda sanitaria |
 | ACS.01.N.02 | **VM-02** | Valvola miscelatrice termostatica | acqua calda sanitaria |
 | ACS.01.N.03 | **VI-30** | Valvola di intercettazione | acqua calda sanitaria |
@@ -295,13 +291,13 @@ Da **VOL-01** a **PDC-01**, circuito primario.
 3. **RP.01.N.02 · RC-03** Raccordo a T
     - qui arriva **RP.02**, da **BOL-01**, entrando dal braccio 2
 4. **RP.01.N.03 · DER-03** Derivazione a T
-    - **RP.01.N.03.1 · VIB-01** Valvola di intercettazione bloccabile aperta · pende dallo stacco
-    - **RP.01.N.03.2 · VE-01** Vaso di espansione · pende dallo stacco
+    - **RP.01.N.03.1 · RM-01** Rubinetto portamanometro a tre vie · pende dallo stacco
+    - **RP.01.N.03.2 · MN-01** Manometro · pende dallo stacco
 5. **RP.01.N.04 · DER-04** Derivazione a T
-    - **RP.01.N.04.1 · RM-01** Rubinetto portamanometro a tre vie · pende dallo stacco
-    - **RP.01.N.04.2 · MN-01** Manometro · pende dallo stacco
+    - **RP.01.N.04.1 · GR-01** Gruppo di riempimento · pende dallo stacco
 6. **RP.01.N.05 · DER-05** Derivazione a T
-    - **RP.01.N.05.1 · GR-01** Gruppo di riempimento · pende dallo stacco
+    - **RP.01.N.05.1 · VIB-01** Valvola di intercettazione bloccabile aperta · pende dallo stacco
+    - **RP.01.N.05.2 · VE-01** Vaso di espansione · pende dallo stacco
 7. **RP.01.N.06 · VI-06** Valvola di intercettazione
 8. **RP.01.N.07 · DEF-01** Defangatore
 9. **RP.01.N.08 · VI-07** Valvola di intercettazione
@@ -479,14 +475,10 @@ Da **AF-01** a **BOL-01**, acqua fredda sanitaria.
 1. **AF.01.N.01 · AF-01** Alimentazione acqua fredda · la linea parte dal suo braccio 1
 2. **AF.01.N.02 · VI-28** Valvola di intercettazione
 3. **AF.01.N.03 · DER-10** Derivazione a T sull'acqua fredda
-    - **AF.01.N.03.1 · VIB-02** Valvola di intercettazione bloccabile aperta · pende dallo stacco
-    - **AF.01.N.03.2 · VE-02** Vaso di espansione sanitario · pende dallo stacco
-4. **AF.01.N.04 · VR-03** Valvola di ritegno sanitaria
-5. **AF.01.N.05 · DER-11** Derivazione a T sull'acqua fredda
-    - **AF.01.N.05.1 · SC-02** Attacco di scarico sull'acqua fredda · pende dallo stacco
-6. **AF.01.N.06 · DER-12** Derivazione a T sull'acqua fredda
-    - **AF.01.N.06.1 · VS-04** Valvola di sicurezza sanitaria · pende dallo stacco
-7. **BOL-01** Bollitore ACS · **qui ci si innesta su BOL-01**, che si e' gia' letto, entrando dal suo braccio 4 (CP.01a.N.02)
+4. **AF.01.N.04 · DER-11** Derivazione a T sull'acqua fredda
+    - **AF.01.N.04.1 · SC-02** Attacco di scarico sull'acqua fredda · pende dallo stacco
+5. **AF.01.N.05 · VS-04** Gruppo di sicurezza sanitario
+6. **BOL-01** Bollitore ACS · **qui ci si innesta su BOL-01**, che si e' gia' letto, entrando dal suo braccio 4 (CP.01a.N.02)
 
 ---
 
@@ -502,8 +494,11 @@ arriva a ogni pezzo dell'impianto.
 
 **Tubazioni non lette:** nessuna. Ogni tubazione compare nella passeggiata.
 
-**Punti aperti:** nessuno. Per ogni accessorio che le regole hanno chiesto,
-c'era il pezzo adatto al fluido e il posto dove metterlo.
+**Punti aperti: qui una regola si applicava e non c'era dove o con cosa
+servirla.** Non e' una dimenticanza del disegno: e' una scelta che torna al
+progettista.
+
+- **manca vaso di espansione** su **BOL-01** Bollitore ACS: servirebbe, e in catalogo non c'e' nessun pezzo che lo faccia sull'acqua fredda sanitaria. Va deciso dal progettista.
 
 ---
 

@@ -1,0 +1,13 @@
+
+Preflight di qualita'
+
+Avvisi
+  - la tratta stub-filling-unit-pdc-water-return-b cambia direzione 4 volte, oltre le 3 pieghe che bastano a unire due porte: la piega in piu' la chiede un ostacolo, e l'ostacolo si sposta (B4, D-078)
+    codice: RUN_WITH_TOO_MANY_BENDS · t1, stub-filling-unit-pdc-water-return-b
+  - la tavola t1 porta 12 nodi condivisi fra tratte diverse: su una centrale semplice gli incroci stanno sulle dita di una mano, cioe' 5 (B3, D-060)
+    codice: TOO_MANY_CROSSINGS · t1
+  - la tavola t1: il foglio e' pieno solo al 41%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)
+    codice: SHEET_BARELY_FILLED · t1
+  - la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 4.0 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)
+    codice: DRAWING_ALL_ON_ONE_SIDE · t1
+bfc682b387334060fa4333e2a167f7838f13bcfd60b725c22b8c927ae4b0d0a0

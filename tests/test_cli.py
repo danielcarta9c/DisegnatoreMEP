@@ -90,15 +90,32 @@ def test_rules_prints_what_the_catalogue_cannot_offer(
 
 
 def test_rules_on_a_complete_model_says_so_and_opens_no_point(
-    capsys: CaptureFixture[str],
+    capsys: CaptureFixture[str], tmp_path: Path
 ) -> None:
-    """L'altro verso: senza lacune, il messaggio di completezza dice il vero."""
+    """L'altro verso: senza lacune, il messaggio di completezza dice il vero.
+
+    Da DRAW-006-R1 il modello completo pubblicato una domanda ce l'ha: il vaso
+    sanitario, che l'accumulo non dichiara di portare a bordo (blocco C.2), e
+    un dato ignoto non e' un'assenza. Perche' resti provato il verso negativo —
+    quello in cui il dossier davvero non ha niente da dire — la domanda si
+    chiude dove va chiusa, cioe' **nel catalogo**: qui in una copia di lavoro,
+    perche' il dato di un prodotto reale lo dichiara il PM, non questa prova.
+    """
+    dichiarato = tmp_path / "catalogo"
+    dichiarato.mkdir()
+    for source in sorted(CATALOG.glob("*.json")):
+        (dichiarato / source.name).write_text(source.read_text("utf-8"), encoding="utf-8")
+    riserva = dichiarato / "dhw-cylinder.json"
+    definition = json.loads(riserva.read_text("utf-8"))
+    definition["carries_on_board"] = ["expansion"]
+    riserva.write_text(json.dumps(definition, ensure_ascii=False, indent=2), encoding="utf-8")
+
     exit_code = main(
         [
             "rules",
             str(ROOT / "examples" / "rules" / "centrale-pdc-completa.json"),
             "--catalog",
-            str(CATALOG),
+            str(dichiarato),
             "--symbols",
             str(SYMBOLS),
             "--rules",

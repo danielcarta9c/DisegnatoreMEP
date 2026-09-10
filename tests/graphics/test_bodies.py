@@ -87,7 +87,9 @@ def published() -> list[Symbol]:
 
 
 def test_the_libraries_are_not_empty() -> None:
-    assert len(published()) == 48
+    # 49 da DRAW-006-R1: il gruppo di sicurezza sanitario EN 1487 e' un segno
+    # nuovo, e la valvola di sicurezza di circuito resta al proprio posto.
+    assert len(published()) == 49
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)

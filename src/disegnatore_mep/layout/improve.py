@@ -1055,13 +1055,20 @@ class Improver:
                 for other in sorted(state.linked(port_id))
             ]
         _, is_inline = self.features[component_id]
-        if not (is_inline or definition.is_a_fitting):
+        # Un accessorio che pende da uno stacco con **due** attacchi non e' un
+        # capolinea: la corsa ci entra e ne esce, ed e' il ponte fra due reti —
+        # il gruppo di riempimento, che porta l'acqua dell'acquedotto nel
+        # ritorno tecnico. Le sue due prese vanno allineate fra loro, o la
+        # derivazione fredda gira attorno al foglio per raggiungerlo
+        # (DRAW-006-R1, blocco D). Chi ha un attacco solo non prosegue, e una
+        # macchina non pende da nessuno stacco.
+        on_the_run = [port for port in definition.ports if not port.off_the_run]
+        passes = is_inline or definition.is_a_fitting or (
+            definition.attaches_on_a_branch and len(on_the_run) == 2
+        )
+        if not passes:
             return []
-        return [
-            (port.id, "")
-            for port in definition.ports
-            if port.id != port_id and not port.off_the_run
-        ]
+        return [(port.id, "") for port in on_the_run if port.id != port_id]
 
     def linked_peers(self, leader: str) -> list[PortPair]:
         """Le coppie di porte allineabili fra questo pezzo e un pezzo d'altra figura.

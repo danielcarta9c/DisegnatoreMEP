@@ -239,15 +239,17 @@ def fila_di_mestieri(model: ProjectModel) -> list[tuple[str, ...]]:
     found: list[tuple[str, ...]] = []
     for run in runs_of(model, catalog(), rule_table()):
         row = [
-            tuple(sorted(definition_of(model, _speaks_for(model, item.component_id)).functions))
+            ",".join(
+                sorted(definition_of(model, _speaks_for(model, item.component_id)).functions)
+            )
             for item in run.pieces
         ]
-        ends = [
-            tuple(sorted(definition_of(model, ref.component_id).functions))
+        head, tail = (
+            ",".join(sorted(definition_of(model, ref.component_id).functions))
             for ref in (run.head, run.tail)
-        ]
-        forward = (*ends[:1], *(str(item) for item in row), *ends[1:])
-        backward = (*ends[1:], *(str(item) for item in reversed(row)), *ends[:1])
+        )
+        forward: tuple[str, ...] = (head, *row, tail)
+        backward: tuple[str, ...] = (tail, *reversed(row), head)
         found.append(min(forward, backward))
     return sorted(found)
 
