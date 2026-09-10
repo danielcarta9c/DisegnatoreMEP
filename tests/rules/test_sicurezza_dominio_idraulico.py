@@ -583,9 +583,21 @@ class Walk:
         return False
 
 
+def _senza_la_domanda_sull_acqua_di_riempimento(gaps: list[RuleGap]) -> list[RuleGap]:
+    """I punti aperti diversi dalla domanda sulla sorgente di acqua fredda.
+
+    Questi impianti di prova non dichiarano un acquedotto — non e' cio' che
+    misurano — e da DRAW-006-R1 il gruppo di riempimento e' un **ponte fra due
+    reti**: senza una sorgente fredda gia' approvata la regola chiede al
+    progettista invece di appendere un pezzo al nulla. E' un punto aperto vero,
+    e non riguarda la proprieta' provata qui.
+    """
+    return [item for item in gaps if item.reason is not GapReason.NO_SOURCE_NETWORK]
+
+
 def _saturated(model: ProjectModel) -> tuple[Walk, list[RuleGap]]:
     done, _, gaps = saturate(model, catalog(), rules())
-    return Walk(done), gaps
+    return Walk(done), _senza_la_domanda_sull_acqua_di_riempimento(gaps)
 
 
 def _walk(build: Callable[[str], ProjectModel], machine: str) -> Walk:

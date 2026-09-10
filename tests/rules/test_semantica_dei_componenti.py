@@ -85,13 +85,22 @@ FILLING = "filling"
 DRAIN = "drain"
 SAFETY = "safety"
 
-CORREDO_DEL_GRUPPO_GENERICO = ("non_return", "filtration", "pressure_control")
-"""Le dotazioni che al gruppo di riempimento **generico** non spettano.
+CORREDO_DELLA_VARIANTE = ("backflow_prevention",)
+"""Le dotazioni che al gruppo di riempimento **pubblicato** non spettano.
 
-Il PM: disconnettore, filtro, ritegno e riduzione di pressione appartengono
-alle varianti che li dichiarano (serie 580, EN 1717, EN 12729, EN 806-5), non
-al gruppo pubblicato. Sono nomi di **mestieri**, non di pezzi.
+Il disconnettore appartiene alla variante che lo dichiara — serie 580,
+EN 1717, EN 12729, EN 806-5 — e il catalogo pubblicato non ne porta nessuna.
+Riduttore, filtro, intercettazione e ritegno erano in questo elenco fino a
+DRAW-006: la traduzione PM del 2026-09-10 li ha messi **dentro** il gruppo
+pubblicato, che e' la serie 553, e da allora sono dotazione dichiarata. La
+proprieta' provata qui non e' cambiata — cio' che il catalogo non dichiara non
+si attribuisce — e' cambiato cio' che il catalogo dichiara.
+
+Sono nomi di **mestieri**, non di pezzi.
 """
+
+CORREDO_DELLA_553 = ("isolation", "non_return", "filtration", "pressure_control")
+"""Cio' che il gruppo pubblicato dichiara di portarsi dentro (serie 553)."""
 
 
 # ---------------------------------------------------------------------------
@@ -190,7 +199,12 @@ def composite(definition_id: str, integrates: list[str]) -> ComponentDefinition:
             ComponentTrait.ATTACHMENT_BRANCH,
         ],
         carries_on_board=integrates,
-        symbol_id="filling-unit",
+        # Un segno con **un attacco solo**: questi gruppi di prova pendono da
+        # uno stacco, e il segno del gruppo di riempimento pubblicato ha due
+        # attacchi da quando e' un ponte fra due reti (DRAW-006-R1, blocco D).
+        # Quale segno porti non conta: la prova dimostra che la dotazione
+        # segue la **dichiarazione**, e i due gemelli lo condividono.
+        symbol_id="drain-connection",
         composite=True,
         ports=[_port("a", PortFlow.BIDIRECTIONAL)],
         sources=["prova generale DRAW-006"],
@@ -526,19 +540,24 @@ def test_un_composito_dichiara_cosa_si_porta_dentro() -> None:
 
 
 def test_il_gruppo_di_riempimento_pubblicato_incorpora_la_propria_intercettazione() -> None:
-    """Il gruppo pubblicato dichiara l'intercettazione interna, e nient'altro.
+    """Il gruppo pubblicato dichiara cosa si porta dentro, e non oltre.
 
-    E' il punto 4 del blocco B: disconnettore, filtro, ritegno e riduzione di
-    pressione appartengono alle varianti che li dichiarano, non al gruppo
-    generico.
+    E' il punto 4 del blocco B, con la dotazione che il PM ha tradotto dalla
+    serie 553 il 2026-09-10: intercettazione, ritegno, filtro e riduttore
+    stanno dentro il mantello. Il disconnettore no — appartiene alla variante
+    che lo dichiara, e nessuna variante e' pubblicata.
     """
-    unit = published().get("filling-unit")
+    unit = next(item for item in published().all() if FILLING in item.functions)
     assert unit.composite
-    assert ISOLATION in unit.carries_on_board
-    for job in CORREDO_DEL_GRUPPO_GENERICO:
+    for job in CORREDO_DELLA_553:
+        assert job in unit.carries_on_board, (
+            f"il gruppo pubblicato non dichiara {job}: le regole gliene "
+            f"aggiungerebbero uno fuori"
+        )
+    for job in CORREDO_DELLA_VARIANTE:
         assert job not in unit.carries_on_board, (
-            f"il gruppo generico dichiara di portare dentro {job}: quel corredo "
-            f"appartiene alla variante che lo dichiara"
+            f"il gruppo pubblicato dichiara di portare dentro {job}: quel "
+            f"corredo appartiene alla variante che lo dichiara"
         )
 
 
@@ -599,22 +618,22 @@ def test_la_dotazione_non_si_deduce_dal_nome_ne_dal_disegno() -> None:
     )
 
 
-def test_al_gruppo_generico_non_si_attribuisce_altro_corredo() -> None:
-    """Niente disconnettore, filtro, ritegno o riduzione sul gruppo generico."""
-    registry = catalog()
-    model = completato(anello_con("riempimento", "filling-unit"), registry)
+def test_al_gruppo_che_dichiara_tutto_non_si_attribuisce_altro_corredo() -> None:
+    """Un gruppo che dichiara ogni dotazione non ne riceve nessuna in piu'.
+
+    L'altra meta' della prova precedente, e sull'impianto invece che sul solo
+    catalogo: un composito che si porta dentro il corredo intero non riceve
+    niente da fuori. Il gruppo di riempimento **pubblicato** e' provato
+    end-to-end fra le prove del blocco D, dove vive il suo ponte fra due reti.
+    """
+    dotazione = list(dict.fromkeys([ISOLATION, *CORREDO_DELLA_553]))
+    registry = with_definitions(composite("gruppo-con-tutto", dotazione))
+    model = completato(anello_con("riempimento", "gruppo-con-tutto"), registry)
     for jobs in organi_della_presa(model, registry, "riempimento"):
-        assert not jobs & set(CORREDO_DEL_GRUPPO_GENERICO), (
-            f"sul gruppo di riempimento generico e' comparso {sorted(jobs)}: "
-            f"quel corredo appartiene alla variante che lo dichiara"
+        assert not jobs & set(dotazione), (
+            f"sul gruppo che dichiara il corredo intero e' comparso "
+            f"{sorted(jobs)}: e' cio' che ha gia' dentro"
         )
-
-
-def test_il_riempimento_e_uno_solo_per_circuito_tecnico() -> None:
-    """Un circuito chiuso si reintegra da un punto, e il punto e' uno."""
-    registry = catalog()
-    model = completato(anello_con("riempimento", "filling-unit"), registry)
-    assert len(pezzi_con(model, registry, FILLING)) == 1
 
 
 def test_il_bordo_di_un_composito_non_soddisfa_la_rete() -> None:

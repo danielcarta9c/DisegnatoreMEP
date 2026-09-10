@@ -26,10 +26,21 @@ from disegnatore_mep.catalog.schema import (
     OnBoard,
     PortDefinition,
 )
+from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import ConnectionModel, PortRef, ProjectModel
+from disegnatore_mep.model.types import PortFlow
 
 from .proposal import anchor_of_proposed
 from .schema import RuleCardinality, RuleDefinition
+
+BOUNDARY = "boundary"
+"""Il mestiere di cio' che sta al **confine** dell'impianto.
+
+E' una funzione di catalogo come le altre, non un nome di pezzo: chi la
+dichiara e' il punto in cui l'impianto si attacca a qualcosa che non e' suo —
+l'acquedotto, la distribuzione dell'edificio. Vive qui perche' chi deve pescare
+da una rete deve poterne riconoscere la sorgente **gia' approvata** invece di
+inventarla (DRAW-006-R1, blocco D.2)."""
 
 
 @dataclass(frozen=True)
@@ -93,6 +104,15 @@ class RuleContext:
     inline: frozenset[str] = frozenset()
     """Chi sta **su** una tubazione invece di essere un nodo del disegno."""
 
+    composites: frozenset[str] = frozenset()
+    """I **gruppi**: un mantello attorno a organi che stanno sulla tubazione.
+
+    Lo dichiara il catalogo, e cambia una cosa sola: cio' che un gruppo si
+    porta dentro conta come presente **sulla linea**, mentre cio' che una
+    macchina porta a bordo conta solo per la macchina. Un gruppo di sicurezza
+    EN 1487 e' tre organi in un mantello, e le regole non ne aggiungono un
+    quarto fuori (DRAW-006-R1, blocco C.1)."""
+
     states: dict[str, tuple[HydraulicState, ...]] = field(default_factory=dict)
     """Le configurazioni idrauliche ammesse di ciascun **multivia** (DRAW-006).
 
@@ -138,7 +158,13 @@ class RuleContext:
         fill_ports: dict[str, str] = {}
         ports: dict[str, tuple[PortDefinition, ...]] = {}
         inline: set[str] = set()
+        composites: set[str] = set()
         service_ports: dict[tuple[str, str], str] = {}
+        # Lo spareggio strutturale di D-093: non e' un nome e non e' una
+        # posizione nel file. Serve piu' sotto, dove i membri di una rete
+        # vanno messi in un ordine che non dipenda ne' dagli identificativi ne'
+        # da come l'impianto e' stato scritto.
+        seats = structural_order(project)
         for component in project.components:
             resolved = catalog.resolve(component.definition_id)
             functions[component.id] = frozenset(resolved.definition.functions)
@@ -159,6 +185,8 @@ class RuleContext:
             # la corsa ci passa attraverso e la camminata non si ferma.
             if resolved.is_inline or resolved.definition.is_a_fitting:
                 inline.add(component.id)
+            if resolved.definition.composite:
+                composites.add(component.id)
 
         touched: dict[str, set[str]] = defaultdict(set)
         members: dict[str, list[str]] = defaultdict(list)
@@ -229,31 +257,90 @@ class RuleContext:
             incoming={key: tuple(value) for key, value in incoming.items()},
             outgoing={key: tuple(value) for key, value in outgoing.items()},
             inline=frozenset(inline),
+            composites=frozenset(composites),
             states=states,
-            # In ordine di nome, mai nell'ordine in cui il file elenca le
-            # tubazioni: una regola che serve «il primo» della rete deve
-            # servire lo stesso pezzo comunque l'impianto sia stato scritto.
-            # Il collaudo ha visto il gruppo di riempimento migrare da una
-            # pompa di calore all'altra permutando il file: si chiude qui.
-            members={key: tuple(sorted(value)) for key, value in members.items()},
+            # Nell'ordine **strutturale**, che nessuno dei due modi di
+            # riscrivere un impianto cambia: ne' permutare le tubazioni, che
+            # faceva migrare il gruppo di riempimento da una pompa di calore
+            # all'altra, ne' rinominare i pezzi, che cambiava l'impianto
+            # completato perche' l'ordine era quello alfabetico (DRAW-006-R1,
+            # blocco A.2). Chi serve «il primo» della rete serve lo stesso
+            # pezzo comunque l'impianto sia stato scritto.
+            members={
+                key: tuple(sorted(value, key=seats.__getitem__))
+                for key, value in members.items()
+            },
             own={key: frozenset(value) for key, value in own.items()},
             lacking=lacking,
         )
 
     # --- cio' che una condizione puo' chiedere ------------------------------
 
+    def provides(self, component_id: str, function: str) -> bool:
+        """Quel pezzo **porta quella funzione sulla linea**.
+
+        Due modi, e uno solo dei due e' nuovo: la funzione e' un suo mestiere,
+        oppure il pezzo e' un **gruppo** e la dichiara fra le proprie funzioni
+        interne. Un composito e' un mantello attorno a organi che stanno sulla
+        tubazione: il gruppo di sicurezza sanitario EN 1487 porta dentro il
+        ritegno controllabile, e quel ritegno e' un pezzo di quella rete come
+        se fosse disegnato a parte (DRAW-006-R1, blocco C.1).
+
+        Il bordo di una **macchina** non conta qui, ed e' la differenza: cio'
+        che sta dentro una pompa di calore serve la pompa di calore, non la
+        tubazione. La distinzione non e' un elenco di nomi: la dichiara il
+        catalogo con `composite`.
+
+        Vale su cio' che sta **sul percorso**, che e' l'unico posto in cui un
+        organo interno e' anche un organo di quella tubazione: chi cammina
+        lungo un tratto lo attraversa davvero. Non vale sulla rete intera —
+        sarebbe far sparire un organo altrove per un gruppo che sta qui — ne'
+        su cio' che pende da uno stacco, che la corsa non attraversa: il filtro
+        dentro un gruppo di riempimento appeso a un T non e' il filtro del
+        ritorno della macchina.
+        """
+        if function in self.functions.get(component_id, frozenset()):
+            return True
+        return component_id in self.composites and function in self.carried.get(
+            component_id, frozenset()
+        )
+
     def network_has(self, network_id: str, function: str) -> bool:
         """La funzione c'e' su quella rete, come **pezzo** dell'impianto.
 
-        Il bordo macchina non entra qui: cio' che una macchina integra
-        soddisfa i bisogni ancorati a lei (`carries`), non quelli della rete
-        intera — contarlo qui faceva sparire in silenzio la sicurezza del
-        serbatoio quando la pompa di calore dichiarava la propria.
+        Ne' il bordo di una macchina ne' quello di un gruppo entrano qui.
+        Cio' che una macchina integra soddisfa i bisogni ancorati a lei
+        (`carries`), non quelli della rete intera — contarlo faceva sparire in
+        silenzio la sicurezza del serbatoio quando la pompa di calore
+        dichiarava la propria. E cio' che un gruppo si porta dentro sta **sul
+        proprio tratto**, non ovunque sulla rete: lo si conta camminando lungo
+        la tubazione (`provides`), che e' dove quel dato significa qualcosa.
         """
         return any(
             function in self.functions.get(component_id, frozenset())
             for component_id in self.members.get(network_id, ())
         )
+
+    def source_port_on(self, network_id: str) -> PortRef | None:
+        """L'attacco da cui quella rete **riceve** il proprio fluido.
+
+        E' il confine che il progettista ha gia' dichiarato e approvato: un
+        pezzo che fa da confine di rete e da cui il fluido esce verso
+        l'impianto. Serve a chi deve pescare da una rete senza inventarne la
+        sorgente (DRAW-006-R1, blocco D.2). Vuoto se quella rete non ha nessun
+        confine che alimenti: allora non c'e' niente da cui pescare, e chi
+        chiede lo deve dire invece di appendere un pezzo al nulla.
+        """
+        for component_id in self.members.get(network_id, ()):
+            if not self.provides(component_id, BOUNDARY):
+                continue
+            for port in self.connected_ports(component_id):
+                if port.flow is not PortFlow.OUT:
+                    continue
+                connection_id = self.connection_of_port.get((component_id, port.id))
+                if self.network_of_connection.get(connection_id or "") == network_id:
+                    return PortRef(component_id=component_id, port_id=port.id)
+        return None
 
     def carries(self, component_id: str, function: str) -> bool:
         """Quel componente porta quella funzione a bordo, di fabbrica."""
@@ -472,8 +559,7 @@ class RuleContext:
             for ref in self.pipe_ends[pipe]
         }
         return any(
-            function in self.functions.get(item, frozenset())
-            or function in self.hanging_functions(item)
+            self.provides(item, function) or function in self.hanging_functions(item)
             for item in pieces
         )
 
@@ -627,7 +713,7 @@ class RuleContext:
             peer = self._peer(connection_id, cursor)
             if peer is None or peer in seen:
                 return False
-            if function in self.functions.get(peer, frozenset()):
+            if self.provides(peer, function):
                 return True
             # Cio' che pende da uno stacco del pezzo sta **su questa
             # tubazione** (DRAW-005-R1, I-043): la sicurezza appesa al
@@ -761,7 +847,7 @@ class RuleContext:
         nessun organo, e il volume lo chiudono gli organi ai bordi del gruppo.
         """
         pieces, _ = self.along(ref)
-        if any(function in self.functions.get(item, frozenset()) for item in pieces):
+        if any(self.provides(item, function) for item in pieces):
             return True
         return bool(pieces) and self.same_group(ref.component_id, pieces[-1])
 

@@ -231,6 +231,23 @@ class RuleProposalTemplate(StrictModel):
     placement: Placement
     inlet_port: str = Field(pattern=ID_PATTERN)
     outlet_port: str = Field(pattern=ID_PATTERN)
+
+    bridges_from_medium: str | None = Field(default=None, pattern=ID_PATTERN)
+    """Il fluido da cui il pezzo **pesca**, quando e' un ponte fra due reti.
+
+    Vuoto per tutto cio' che sta dentro una tubazione sola, che e' la
+    stragrande maggioranza. Chi lo dichiara non e' un accessorio della rete su
+    cui la regola parla: e' il pezzo che mette quella rete in comunicazione con
+    un'altra, e vuole una derivazione da ciascuna parte — il gruppo di
+    riempimento, che porta l'acqua dell'acquedotto nel circuito tecnico
+    (DRAW-006-R1, blocco D).
+
+    Il verso non e' configurabile: si entra dal fluido dichiarato qui, per
+    `inlet_port`, e si esce su quello della rete della regola, per
+    `outlet_port`. La sorgente dev'essere **gia' approvata** dal progettista:
+    dove non c'e', la regola non propone un pezzo appeso a nulla ma un punto
+    aperto.
+    """
     if_on_board_is_unknown: OnBoardPolicy = OnBoardPolicy.ASSUME_ABSENT
     """Cosa fare quando il catalogo non dice se l'ancoraggio porta a bordo la
     funzione proposta (I-046).
@@ -252,6 +269,16 @@ class RuleProposalTemplate(StrictModel):
             self.provides_function,
             *sorted(set(self.provides_function_by_shutoff_regime.values())),
         )
+
+    @model_validator(mode="after")
+    def a_bridge_joins_two_different_media(self) -> "RuleProposalTemplate":
+        """Un ponte fra due fluidi uguali non e' un ponte."""
+        if self.bridges_from_medium is not None and self.provides_function_by_shutoff_regime:
+            raise ValueError(
+                "a bridge between two networks is not an organ posed on what it "
+                "serves: it cannot change with the anchor's shutoff regime"
+            )
+        return self
 
     @model_validator(mode="after")
     def the_two_ports_differ(self) -> "RuleProposalTemplate":

@@ -330,6 +330,37 @@ def _domain_at(
     return domains.get((anchor.component_id, anchor.port_id))
 
 
+def _catalogue_has(
+    catalog: ComponentRegistry, rule: RuleDefinition, function: str, medium: str
+) -> bool:
+    """Il catalogo ha un pezzo per quella funzione su quel fluido.
+
+    Un **ponte** si cerca altrove: le sue porte non stanno tutte sullo stesso
+    fluido, quindi `serving` non lo trova ne' lo deve trovare — non e' un pezzo
+    da infilare in una tratta.
+    """
+    if rule.then.bridges_from_medium is not None:
+        return bool(catalog.bridging(function, rule.then.bridges_from_medium, medium))
+    return bool(catalog.serving(function, medium))
+
+
+def _source_for(
+    context: RuleContext, project: ProjectModel, medium: str
+) -> PortRef | None:
+    """L'attacco della sorgente gia' approvata per quel fluido.
+
+    Le reti si guardano in ordine di nome, come ovunque nel motore: quale rete
+    alimenti il ponte non deve dipendere da come l'impianto e' stato scritto.
+    """
+    for network in sorted(project.networks, key=lambda item: item.id):
+        if network.medium != medium:
+            continue
+        found = context.source_port_on(network.id)
+        if found is not None:
+            return found
+    return None
+
+
 def _gap(
     context: RuleContext,
     rule: RuleDefinition,
@@ -419,8 +450,8 @@ def evaluate(
             # si ferma: la sceglierebbe il programma.
             anchors: list[PortRef] = []
             for anchor in candidates:
-                if not catalog.serving(
-                    _function_at(context, rule, anchor), network.medium
+                if not _catalogue_has(
+                    catalog, rule, _function_at(context, rule, anchor), network.medium
                 ):
                     missing = _gap(context, rule, network, anchor)
                     gaps.setdefault(missing.key, missing)
@@ -445,13 +476,12 @@ def evaluate(
                         continue
                 anchors.append(anchor)
 
-            satisfied = {
-                anchor.component_id
-                for anchor in anchors
-                if _already_there(
+            def here(anchor: PortRef) -> bool:
+                return _already_there(
                     context, rule, network.id, anchor, _domain_at(domain_of, anchor)
                 )
-            }
+
+            satisfied = {anchor.component_id for anchor in anchors if here(anchor)}
             # Un componente gia' servito su una rete e' servito e basta: il
             # volano sta sul primario e sul secondario, e uno scarico per
             # accumulo deve restare uno anche quando la prima passata non ha
@@ -464,13 +494,7 @@ def evaluate(
                 # perche' la valvola era finita sull'altro lato.
                 free = [item for item in anchors if item.component_id not in satisfied]
             else:
-                free = [
-                    anchor
-                    for anchor in anchors
-                    if not _already_there(
-                        context, rule, network.id, anchor, _domain_at(domain_of, anchor)
-                    )
-                ]
+                free = [anchor for anchor in anchors if not here(anchor)]
             # Le teste dei domini sono gia' una per dominio: tagliarle con la
             # cardinalita' di rete ne lascerebbe fuori tutti tranne il primo.
             allowed = (
@@ -478,6 +502,22 @@ def evaluate(
                 if rule.cardinality is RuleCardinality.PER_PROTECTION_DOMAIN
                 else _limited(free, rule.cardinality, served)
             )
+            # Il ponte fra due reti (DRAW-006-R1, blocco D): la sorgente da
+            # cui pescare dev'essere gia' dichiarata dal progettista. Si cerca
+            # una volta per rete servita, prima di proporre: se non c'e', ogni
+            # ancoraggio diventa un punto aperto invece di un pezzo appeso a
+            # nulla.
+            source: PortRef | None = None
+            if rule.then.bridges_from_medium is not None:
+                source = _source_for(context, project, rule.then.bridges_from_medium)
+                if source is None:
+                    for anchor in allowed:
+                        missing = _gap(
+                            context, rule, network, anchor, GapReason.NO_SOURCE_NETWORK
+                        )
+                        gaps.setdefault(missing.key, missing)
+                    continue
+
             for anchor in allowed:
                 function = _function_at(context, rule, anchor)
                 # Una regola che esiste in forza del bordo macchina non
@@ -491,7 +531,13 @@ def evaluate(
                     missing = _gap(context, rule, network, anchor, GapReason.ON_BOARD_UNKNOWN)
                     gaps.setdefault(missing.key, missing)
                     continue
-                definition = catalog.providing(function, network.medium)
+                definition = (
+                    catalog.bridge(
+                        function, rule.then.bridges_from_medium, network.medium
+                    )
+                    if rule.then.bridges_from_medium is not None
+                    else catalog.providing(function, network.medium)
+                )
                 component_id = proposed_component_id(definition.id, anchor)
                 if component_id in taken:
                     continue
@@ -540,6 +586,7 @@ def evaluate(
                         inlet_port=rule.then.inlet_port,
                         outlet_port=rule.then.outlet_port,
                         service_port=service_port,
+                        source_anchor=source,
                         rationale=rule.rationale,
                         source=rule.source,
                     )

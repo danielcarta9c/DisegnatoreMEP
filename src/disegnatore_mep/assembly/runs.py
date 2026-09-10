@@ -18,6 +18,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.catalog.schema import SERVICE_ORGAN_FUNCTIONS
 from disegnatore_mep.model.project import ConnectionModel, PortRef, ProjectModel
 from disegnatore_mep.model.types import PortFlow
 from disegnatore_mep.rules.schema import RuleCardinality, RuleDefinition
@@ -223,15 +224,72 @@ class _Assembler:
         return collected, current, pipes
 
     def hanging_from(self, component_id: str) -> str | None:
-        """Cio' che pende dallo stacco di quel pezzo, se ci pende qualcosa."""
+        """L'**accessorio terminale** in fondo allo stacco di quel pezzo.
+
+        Non il primo pezzo che si incontra: si cammina lungo la derivazione
+        attraverso i raccordi e gli organi che sono propri dello stacco — la
+        valvola bloccabile del vaso, il rubinetto della presa manometrica — e
+        ci si ferma sul primo pezzo che non e' ne' l'uno ne' l'altro. E' lui il
+        **soggetto semantico** dello stacco (DRAW-006-R1, blocco A.1).
+
+        Il difetto che questo chiude: fermandosi al primo organo, la derivazione
+        dichiarava i vincoli d'ordine di un pezzo che non ne ha, e l'ordine del
+        corredo di rete finiva per dipendere dall'ordine alfabetico degli
+        identificativi — il manometro prima del riempimento, contro la propria
+        regola.
+        """
         for owner, port_id in sorted(self._off_the_run):
             if owner != component_id:
                 continue
             for connection in self._pipes_of(owner, port_id):
                 for ref in (connection.endpoint_a, connection.endpoint_b):
                     if ref.component_id != component_id:
-                        return ref.component_id
+                        return self._end_of_the_stub(component_id, ref.component_id)
         return None
+
+    def _end_of_the_stub(self, foot: str, first: str) -> str:
+        """Camminando dalla presa verso l'esterno, l'ultimo pezzo dello stacco.
+
+        Si attraversa cio' che **e' dello stacco**: i raccordi, perche' un
+        raccordo non e' un apparecchio, e gli organi di servizio, perche' sono
+        li' per servire cio' che sta in fondo. Ci si ferma davanti a tutto il
+        resto, e davanti a un bivio: se la derivazione si apre in due, nessuno
+        dei due rami e' «l'accessorio», e la presa parla per se stessa.
+        """
+        seen = {foot, first}
+        cursor = first
+        while self._is_of_the_stub(cursor):
+            onward = [item for item in self._peers_of(cursor) if item not in seen]
+            if len(onward) != 1:
+                break
+            cursor = onward[0]
+            seen.add(cursor)
+        return cursor
+
+    def _is_of_the_stub(self, component_id: str) -> bool:
+        """Un raccordo, o un organo posato per servire cio' che sta in fondo."""
+        definition = self._definitions.get(component_id)
+        if definition is None:
+            return False
+        return definition.is_a_fitting or bool(
+            SERVICE_ORGAN_FUNCTIONS & set(definition.functions)
+        )
+
+    def _peers_of(self, component_id: str) -> list[str]:
+        """I pezzi collegati a questo, nell'ordine delle proprie porte.
+
+        L'ordine viene dal **catalogo** — le porte come la voce le elenca — e
+        non da come il file elenca le tubazioni: e' l'unico ordine che due
+        impianti uguali con nomi diversi condividono.
+        """
+        definition = self._definitions[component_id]
+        found: list[str] = []
+        for port in definition.ports:
+            for connection in self._pipes_of(component_id, port.id):
+                for ref in (connection.endpoint_a, connection.endpoint_b):
+                    if ref.component_id != component_id and ref.component_id not in found:
+                        found.append(ref.component_id)
+        return found
 
     def _pipes_of(self, component_id: str, port_id: str) -> list[ConnectionModel]:
         return [

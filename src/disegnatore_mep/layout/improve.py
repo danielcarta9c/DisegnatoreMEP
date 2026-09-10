@@ -206,6 +206,22 @@ class Attempt(NamedTuple):
     accepted: bool
 
 
+class PortPair(NamedTuple):
+    """Due porte che il fluido collega, e cio' che sta in mezzo.
+
+    `through` sono i pezzi attraversati per arrivarci: vuoto quando le due
+    porte sono i capi della stessa tratta, e altrimenti i raccordi, gli
+    accessori in linea e i multivia che la corsa percorre. Serve al rapporto
+    di collaudo, che deve poter dire **attraverso cosa** un asse e' stato
+    provato.
+    """
+
+    my_port: str
+    peer_id: str
+    peer_port: str
+    through: tuple[str, ...] = ()
+
+
 class SheetCost(NamedTuple):
     """Il valore confrontabile della geometria completa, nell'ordine del pacchetto.
 
@@ -459,6 +475,13 @@ class Improver:
         self.levels = levels_of(drawing.y_mm, drawing.height_mm, self.step)
 
         definitions = {item.id: item.definition_id for item in project.components}
+        # La voce di catalogo di ciascun pezzo posato: la legge chi cammina
+        # lungo le tratte per sapere che cosa si attraversa e a quali
+        # condizioni (DRAW-006-R1, blocco B).
+        self.definitions = {
+            item.component_id: catalog.get(definitions[item.component_id])
+            for item in placed
+        }
         self.upright: dict[str, SymbolManifest] = {}
         self.features: dict[str, tuple[frozenset[str], bool]] = {}
         self.permutations: dict[str, list[PortMap]] = {}
@@ -1014,6 +1037,93 @@ class Improver:
                 found.append((trunk, mine.port_id, other.component_id, other.port_id))
         return found
 
+    def _passes_through(self, component_id: str, port_id: str) -> list[tuple[str, str]]:
+        """Le porte che comunicano con questa **dentro** il pezzo, e lo stato.
+
+        Tre casi, e nessuno e' un elenco di nomi. Un **multivia** lo dice il
+        catalogo, stato per stato: l'ingresso di una deviatrice comunica con un
+        ramo oppure con l'altro, e i due rami non comunicano mai fra loro. Un
+        **raccordo** o un accessorio **in linea** si attraversa fra tutti i
+        propri attacchi del percorso. Una macchina no: li' la corsa finisce, ed
+        e' quello il pezzo con cui ci si allinea.
+        """
+        definition = self.definitions[component_id]
+        if definition.hydraulic_states:
+            return [
+                (other, state.id)
+                for state in definition.hydraulic_states
+                for other in sorted(state.linked(port_id))
+            ]
+        _, is_inline = self.features[component_id]
+        if not (is_inline or definition.is_a_fitting):
+            return []
+        return [
+            (port.id, "")
+            for port in definition.ports
+            if port.id != port_id and not port.off_the_run
+        ]
+
+    def linked_peers(self, leader: str) -> list[PortPair]:
+        """Le coppie di porte allineabili fra questo pezzo e un pezzo d'altra figura.
+
+        Prima erano i soli capi diretti di una tratta, e bastava una deviatrice
+        fra due macchine perche' l'asse ovvio fra le loro porte non venisse
+        nemmeno provato (DRAW-006-R1, blocco B). Adesso si cammina: attraverso
+        i raccordi, attraverso le catene di accessori in linea e — **uno stato
+        ammesso per volta** — attraverso i multivia. Fermarsi e' un fatto del
+        pezzo, non della distanza: si arriva a cio' che la corsa non attraversa.
+
+        L'ordine e' quello delle tratte, che e' gia' strutturale; le coppie non
+        si ripetono. E' una **lettura**, non una regola: quali candidate ne
+        nascano e quale vinca lo decide il costo della tavola.
+        """
+        unit = set(self.unit_of(leader))
+        found: list[PortPair] = []
+        seen: set[tuple[str, str, str]] = set()
+        # Si parte da ogni tratta che tocca il pezzo e si prosegue finche' si
+        # attraversa. Il tetto e' il numero dei pezzi: una camminata che non
+        # ripassa da dove e' gia' stata non puo' essere piu' lunga.
+        queue: list[tuple[str, str, str, tuple[str, ...]]] = [
+            (mine.port_id, other.component_id, other.port_id, ())
+            for trunk in self.trunks
+            for mine, other in ((trunk.start, trunk.end), (trunk.end, trunk.start))
+            if mine.component_id == leader
+        ]
+        while queue:
+            my_port, peer_id, peer_port, through = queue.pop(0)
+            if peer_id not in self.best or len(through) > len(self.order):
+                continue
+            key = (my_port, peer_id, peer_port)
+            if peer_id not in unit and key not in seen:
+                seen.add(key)
+                found.append(
+                    PortPair(
+                        my_port=my_port,
+                        peer_id=peer_id,
+                        peer_port=peer_port,
+                        through=through,
+                    )
+                )
+            for onward, _state in self._passes_through(peer_id, peer_port):
+                for trunk in self.trunks:
+                    for here, there in (
+                        (trunk.start, trunk.end),
+                        (trunk.end, trunk.start),
+                    ):
+                        if (here.component_id, here.port_id) != (peer_id, onward):
+                            continue
+                        if there.component_id in {*through, peer_id, leader}:
+                            continue
+                        queue.append(
+                            (
+                                my_port,
+                                there.component_id,
+                                there.port_id,
+                                (*through, peer_id),
+                            )
+                        )
+        return found
+
     def _port_moves(self, leader: str) -> list[Move]:
         """Le pose ricavate dalle porte dei vicini collegati.
 
@@ -1489,40 +1599,60 @@ class Improver:
         return out
 
     def _axis_moves(self, leader: str) -> list[Move]:
-        """Gli assi fra le porte, coordinati (DRAW-004).
+        """Gli assi fra le porte, coordinati (DRAW-004, DRAW-006-R1 blocco B).
 
-        Per ogni collegamento verso un pari di un'altra figura ci sono tre
-        modi di mettere le due porte sullo stesso asse: muovo la mia colonna
-        sull'asse della sua porta (e' la posa da porta, che esiste gia'),
-        muovo la **sua** colonna sull'asse della mia, oppure muovo **tutte e
-        due** verso un asse comune a meta' strada, sul passo. Nessuno dei tre
-        e' una regola: sono candidati, e decide il costo della tavola.
+        Per ogni coppia di porte che il fluido collega — anche attraverso un
+        raccordo, una catena di accessori in linea o un multivia, uno stato per
+        volta — ci sono tre modi di metterle sullo stesso asse: muovo la mia
+        colonna sull'asse della sua porta, muovo **la sua** sull'asse della
+        mia, oppure muovo **tutte e due** verso un asse comune a meta' strada,
+        sul passo.
+
+        Le coppie che chiedono **lo stesso spostamento** si servono con una
+        mossa sola: e' l'allineamento simultaneo di mandata e ritorno fra due
+        macchine, che una candidata per coppia non avrebbe mai prodotto.
+
+        Nessuno dei tre e' una regola: sono candidati, e decide il costo della
+        tavola.
         """
         out: list[Move] = []
         me = self.best[leader]
         mine = self.column_of(leader)
-        for _, my_port, peer_id, peer_port in self._trunks_of(leader):
-            anchor, face = self.port_at(self.best[peer_id], peer_port)
-            own, _ = self.port_at(me, my_port)
-            theirs = [item for item in self.column_of(peer_id) if item not in mine]
-            if not theirs:
+        # Per ogni pari e per ciascuno dei due assi, gli scostamenti che le sue
+        # coppie chiedono. Uno scostamento condiviso da due coppie e' una mossa
+        # sola che le allinea tutte e due.
+        wanted: dict[tuple[str, bool], list[float]] = {}
+        for pair in self.linked_peers(leader):
+            if pair.peer_id not in self.best:
                 continue
+            anchor, face = self.port_at(self.best[pair.peer_id], pair.peer_port)
+            own, _ = self.port_at(me, pair.my_port)
             horizontal = face in _HORIZONTAL_FACES
             gap = (own.y_mm - anchor.y_mm) if horizontal else (own.x_mm - anchor.x_mm)
             if abs(gap) <= _TOLERANCE_MM:
                 continue
-            # La colonna del pari sul mio asse.
-            out.append(self._shifted_units(theirs, not horizontal, gap))
-            # Tutte e due su un asse comune: io di mezza distanza, sul passo,
-            # e il pari di quanto resta.
-            half = round(-gap / 2 / self.step) * self.step
-            if half != 0.0 and half != -gap:
-                out.append(
-                    {
-                        **self._shifted_units(mine, not horizontal, half),
-                        **self._shifted_units(theirs, not horizontal, gap + half),
-                    }
-                )
+            found = wanted.setdefault((pair.peer_id, horizontal), [])
+            if not any(abs(gap - item) <= _TOLERANCE_MM for item in found):
+                found.append(gap)
+        for (peer_id, horizontal), gaps in wanted.items():
+            theirs = [item for item in self.column_of(peer_id) if item not in mine]
+            if not theirs:
+                continue
+            for gap in gaps:
+                # La colonna del pari sul mio asse.
+                out.append(self._shifted_units(theirs, not horizontal, gap))
+                # La mia colonna sull'asse del pari.
+                out.append(self._shifted_units(mine, not horizontal, -gap))
+                # Tutte e due su un asse comune: io di mezza distanza, sul
+                # passo, e il pari di quanto resta.
+                half = round(-gap / 2 / self.step) * self.step
+                if half != 0.0 and half != -gap:
+                    out.append(
+                        {
+                            **self._shifted_units(mine, not horizontal, half),
+                            **self._shifted_units(theirs, not horizontal, gap + half),
+                        }
+                    )
         return out
 
     def _tee_moves(self, leader: str) -> list[Move]:

@@ -140,15 +140,15 @@ def deviatrice_fra_due_macchine() -> ProjectModel:
         components=[
             ("macchina", "heat-pump-air-water"),
             ("multivia", "diverting-valve-3way"),
-            ("serbatoio", "buffer-two-port"),
+            ("serbatoio", "buffer-four-port"),
             ("riserva", "dhw-cylinder"),
             ("confluenza", "tee-junction"),
         ],
         connections=[
             ("c1", "macchina", "water_supply", "multivia", "in"),
-            ("c2", "multivia", "out_a", "serbatoio", "a"),
+            ("c2", "multivia", "out_a", "serbatoio", "primary_in"),
             ("c3", "multivia", "out_b", "riserva", "coil_in"),
-            ("c4", "serbatoio", "b", "confluenza", "a"),
+            ("c4", "serbatoio", "primary_out", "confluenza", "a"),
             ("c5", "riserva", "coil_out", "confluenza", "c"),
             ("c6", "confluenza", "b", "macchina", "water_return"),
         ],
@@ -244,7 +244,7 @@ def test_le_coppie_di_asse_attraversano_un_multivia_stato_per_stato() -> None:
         "misurerebbe niente"
     )
     trovate = _pairs(improver, "macchina")
-    assert ("water_supply", "serbatoio", "a") in trovate, (
+    assert ("water_supply", "serbatoio", "primary_in") in trovate, (
         "lo stato che manda l'acqua sul primo ramo non genera nessuna coppia"
     )
     assert ("water_supply", "riserva", "coil_in") in trovate, (
@@ -257,13 +257,20 @@ def test_i_due_rami_di_un_multivia_non_diventano_una_coppia() -> None:
 
     E' la stessa proprieta' che governa la sicurezza (DRAW-006, blocco C): se
     l'asse la violasse, il ciclo allineerebbe due porte che l'acqua non collega
-    mai — e la deviatrice tornerebbe genericamente passante.
+    mai — e la deviatrice tornerebbe genericamente passante. Che i due rami si
+    ritrovino piu' in la', dove i ritorni confluiscono, e' un'altra strada e un
+    altro passaggio: la prova guarda **attraverso cosa** la coppia e' stata
+    trovata.
     """
     improver = _refiner(deviatrice_fra_due_macchine())
-    peers = {peer for _, peer, _ in _pairs(improver, "serbatoio")}
-    assert "riserva" not in peers, (
-        "il ciclo considera allineabili i due rami della deviatrice, che non "
-        "comunicano in nessuno stato ammesso"
+    attraverso_il_multivia = [
+        item
+        for item in improver.linked_peers("serbatoio")
+        if item.peer_id == "riserva" and "multivia" in item.through
+    ]
+    assert not attraverso_il_multivia, (
+        "il ciclo attraversa la deviatrice da un ramo all'altro: quel "
+        "passaggio non esiste in nessuno stato ammesso"
     )
 
 
@@ -292,7 +299,7 @@ def test_l_asse_attraverso_il_multivia_ha_una_candidata_che_lo_realizza() -> Non
     """
     project = deviatrice_fra_due_macchine()
     improver = _refiner(project)
-    coppia = (("macchina", "water_supply"), ("serbatoio", "a"))
+    coppia = (("macchina", "water_supply"), ("serbatoio", "primary_in"))
     trovate = [
         move
         for leader in ("macchina", "serbatoio")
@@ -309,10 +316,10 @@ def test_l_asse_attraverso_il_multivia_ha_una_candidata_che_lo_realizza() -> Non
 
 def test_due_coppie_compatibili_si_provano_anche_insieme() -> None:
     """Mandata e ritorno di due macchine: c'e' la candidata che le allinea tutte e due."""
-    project = catena_in_linea_fra_due_macchine()
+    project = deviatrice_fra_due_macchine()
     improver = _refiner(project)
-    mandata = (("macchina", "water_supply"), ("serbatoio", "a"))
-    ritorno = (("macchina", "water_return"), ("serbatoio", "b"))
+    mandata = (("macchina", "water_supply"), ("serbatoio", "primary_in"))
+    ritorno = (("macchina", "water_return"), ("serbatoio", "primary_out"))
     trovate = [
         move
         for leader in ("macchina", "serbatoio")

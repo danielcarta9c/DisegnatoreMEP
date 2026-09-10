@@ -138,6 +138,12 @@ SOURCE_UNI_TAB3 = "UNI 9511 Tab. 3, tramite SRC-016"
 """Valvolame: tavola 3 della norma, pubblicata da Oppo (SRC-016)."""
 SOURCE_UNI_TAB10 = "UNI 9511 Tab. 10, tramite SRC-016"
 """Apparecchi indicatori: lettera in un cerchio, tavola 10 (SRC-016)."""
+SOURCE_EN_1487 = (
+    "EN 1487; Caleffi serie 5261, gruppo di sicurezza per scaldacqua ad "
+    "accumulo (traduzione PM del 2026-09-10)"
+)
+"""Il gruppo di sicurezza dell'accumulo sanitario: la norma e il prodotto che il
+PM ha nominato nella revisione della PR #24."""
 SOURCE_UNI_VESSELS = "UNI 9511, tramite SRC-015"
 """Vasi di espansione: segni della norma riprodotti nel materiale di SRC-015."""
 SOURCE_UNI_EXCHANGERS = "UNI 9511, tramite SRC-015"
@@ -924,8 +930,15 @@ def dirt_separator_body(w: float, h: float) -> str:
 
 
 def filling_unit_body(w: float, h: float) -> str:
-    """Gruppo di riempimento appeso al proprio attacco: valvola a farfalla e
-    riduttore a triangolo in serie, uno sopra l'altro lungo lo stacco."""
+    """Gruppo di riempimento come **ponte fra due reti** (DRAW-006-R1, blocco D).
+
+    L'acqua fredda entra dall'attacco di sopra e l'acqua del circuito esce da
+    quello di sotto: il segno attraversa il riquadro da parte a parte, con la
+    valvola a farfalla e il riduttore a triangolo in serie lungo l'asse. Un
+    solo attacco raccontava un accessorio appeso a un tubo, che il gruppo non
+    e': e' il pezzo che mette in comunicazione l'acquedotto e il circuito
+    tecnico, e la tavola deve poterlo leggere.
+    """
     cx = w / 2
     half = w * 0.24
     v_top, v_mid, v_bottom = h * 0.24, h * 0.4, h * 0.56
@@ -939,6 +952,46 @@ def filling_unit_body(w: float, h: float) -> str:
         f'<line x1="{n(cx)}" y1="{n(v_bottom)}" x2="{n(cx)}" y2="{n(r_base)}"/>'
         f'<path d="M{n(cx - half)} {n(r_base)} L{n(cx + half)} {n(r_base)} '
         f'L{n(cx)} {n(r_apex)} Z"/>'
+        f'<line x1="{n(cx)}" y1="{n(r_apex)}" x2="{n(cx)}" y2="{n(h)}"/>'
+    )
+
+
+def dhw_safety_group_body(w: float, h: float) -> str:
+    """Gruppo di sicurezza sanitario EN 1487, in linea sull'ingresso freddo.
+
+    Tre organi in serie lungo l'asse, come il gruppo li porta dentro: la
+    valvola di intercettazione (due triangoli convergenti), il ritegno
+    controllabile (la **z** del non ritorno) e la sicurezza, che sta sul ramo
+    di scarico e per questo si stacca dall'asse verso il basso — un triangolo
+    con la molla. Il segno non nasconde cio' che c'e' dentro: e' la ragione per
+    cui le regole non aggiungono i pezzi che il gruppo dichiara.
+    """
+    axis = h * 0.4
+    d = w * 0.09
+    s = h * 0.14
+    check_left, check_right = w * 0.42, w * 0.62
+    top, bottom = axis - h * 0.13, axis + h * 0.13
+    relief_x = w * 0.82
+    base_y, apex_y = h * 0.62, h * 0.86
+    half = w * 0.09
+    spring = f"M{n(relief_x)} {n(base_y)} " + " ".join(
+        f"L{n(relief_x + (-half if index % 2 == 0 else half))} {n(y)}"
+        for index, y in enumerate((h * 0.55, h * 0.49, h * 0.43, h * 0.37))
+    )
+    cx = w * 0.18
+    return (
+        f'<line x1="0" y1="{n(axis)}" x2="{n(w)}" y2="{n(axis)}"/>'
+        f'<path d="M{n(cx - d)} {n(axis - s)} L{n(cx - d)} {n(axis + s)} '
+        f'L{n(cx)} {n(axis)} Z"/>'
+        f'<path d="M{n(cx + d)} {n(axis - s)} L{n(cx + d)} {n(axis + s)} '
+        f'L{n(cx)} {n(axis)} Z"/>'
+        f'<line x1="{n(check_left)}" y1="{n(top)}" x2="{n(check_right)}" y2="{n(top)}"/>'
+        f'<line x1="{n(check_right)}" y1="{n(top)}" x2="{n(check_left)}" y2="{n(bottom)}"/>'
+        f'<line x1="{n(check_left)}" y1="{n(bottom)}" x2="{n(check_right)}" y2="{n(bottom)}"/>'
+        f'<line x1="{n(relief_x)}" y1="{n(axis)}" x2="{n(relief_x)}" y2="{n(base_y)}"/>'
+        f'<path d="M{n(relief_x - half)} {n(base_y)} L{n(relief_x + half)} {n(base_y)} '
+        f'L{n(relief_x)} {n(apex_y)} Z"/>'
+        f'<path d="{spring}"/>'
     )
 
 
@@ -1140,6 +1193,35 @@ def inline_symbol(
     )
 
 
+def two_port_bridge(
+    symbol_id: str,
+    name: str,
+    size: tuple[float, float],
+    body_of: Any,
+    source: str,
+    version: str = VERSION,
+) -> SymbolSpec:
+    """Ponte fra due reti: si entra da sopra e si esce da sotto.
+
+    Non e' un componente in linea — la tubazione non lo attraversa, ci finisce
+    dentro e ne riparte con un altro fluido — e non e' nemmeno un accessorio
+    appeso, che di attacchi ne ha uno solo.
+    """
+    w, h = size
+    return SymbolSpec(
+        id=symbol_id,
+        name=name,
+        width_mm=w,
+        height_mm=h,
+        inline=False,
+        ports=[port("a", "top", w, h), port("b", "bottom", w, h)],
+        body=body_of(w, h),
+        source=source,
+        allowed_rotations_deg=list(ALLOWED_ROTATIONS_DEG),
+        version=version,
+    )
+
+
 def single_port_symbol(
     symbol_id: str,
     name: str,
@@ -1284,9 +1366,13 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     inline_symbol("air-separator", "Separatore d'aria", BRANCHED_ACCESSORY, air_separator_body, SOURCE_PRACTICE_HYDRONIC),
     inline_symbol("dirt-separator", "Defangatore", BRANCHED_ACCESSORY, dirt_separator_body, SOURCE_PRACTICE_HYDRONIC),
-    single_port_symbol(
-        "filling-unit", "Gruppo di riempimento", BRANCHED_ACCESSORY, "top",
-        filling_unit_body, SOURCE_PRACTICE_HYDRONIC,
+    two_port_bridge(
+        "filling-unit", "Gruppo di riempimento", BRANCHED_ACCESSORY,
+        filling_unit_body, SOURCE_PRACTICE_HYDRONIC, version="2.0.0",
+    ),
+    inline_symbol(
+        "dhw-safety-group", "Gruppo di sicurezza sanitario", DEVICE,
+        dhw_safety_group_body, SOURCE_EN_1487,
     ),
     single_port_symbol(
         "drain-connection", "Attacco di scarico", BRANCHED_ACCESSORY, "top",

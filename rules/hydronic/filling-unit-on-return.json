@@ -1,6 +1,6 @@
 {
   "id": "filling-unit-on-return",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "name": "Gruppo di riempimento",
   "category": "necessary",
   "cardinality": "per_network",
@@ -13,13 +13,14 @@
     "provides_function": "filling",
     "placement": "on_the_common_return",
     "inlet_port": "a",
-    "outlet_port": "b"
+    "outlet_port": "b",
+    "bridges_from_medium": "cold_water"
   },
   "satisfied_by": {
     "scope": "on_the_network"
   },
-  "rationale": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo si innesta sul ritorno generale, a monte della prima ripartizione: e' il punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo, ed e' il tratto comune, cosi' il reintegro serve tutte le macchine e non il ramo di una sola.",
-  "source": "Raccolta R ed. 2009, cap. R.3.B.1 (SRC-012); schema tipico e schemi applicativi Caleffi, il gruppo di caricamento innestato sul ritorno generale (SRC-019 Fig. 41, SRC-008); D-106",
+  "rationale": "Un circuito chiuso non si alimenta da nessuna parte: va riempito e poi reintegrato quando cala, e a pressione controllata, altrimenti la rete idrica lo porterebbe alla propria. Il gruppo e' percio' un **ponte**: pesca dall'acqua fredda gia' dichiarata dal progettista e la immette nel circuito tecnico, con una derivazione da ciascuna parte. Si innesta sul ritorno generale, a monte della prima ripartizione: e' il punto piu' freddo del circuito, dove l'acqua di rete entra senza scaldarsi di colpo, ed e' il tratto comune, cosi' il reintegro serve tutte le macchine e non il ramo di una sola. Dove l'acqua fredda non e' stata dichiarata, il gruppo non si posa appeso a nulla: si chiede.",
+  "source": "Raccolta R ed. 2009, cap. R.3.B.1 (SRC-012); schema tipico e schemi applicativi Caleffi, il gruppo di caricamento innestato sul ritorno generale (SRC-019 Fig. 41, SRC-008); Caleffi serie 553, gruppo di riempimento automatico con riduttore, filtro, intercettazione e ritegno incorporati; manuale Cordivari STS B2, collegamento del riempimento tramite utenza aperta (traduzione PM del 2026-09-10); D-106",
   "ordering": {
     "after": [
       "isolation",

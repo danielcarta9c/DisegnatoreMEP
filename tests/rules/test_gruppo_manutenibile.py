@@ -38,7 +38,7 @@ from disegnatore_mep.model.project import (
 )
 from disegnatore_mep.model.types import PlantRegime, PortFlow
 from disegnatore_mep.rules.apply import saturate
-from disegnatore_mep.rules.proposal import proposed_component_id
+from disegnatore_mep.rules.proposal import GapReason, RuleGap, proposed_component_id
 from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.rules.schema import RuleCardinality, RuleDefinition
 
@@ -338,9 +338,14 @@ class Walk:
             or len(self.run_pipes_of.get(component_id, [])) > 2
         )
 
-    def holder_of(self, hung: str) -> str:
+    def holder_of(self, hung: str, from_port: str | None = None) -> str:
         """Il pezzo del percorso da cui pende un accessorio: si risale lo
-        stacco attraverso gli organi in fila fino a chi regge il braccio."""
+        stacco attraverso gli organi in fila fino a chi regge il braccio.
+
+        `from_port` sceglie da quale attacco risalire, per chi ne ha piu' d'uno
+        su stacchi diversi: il gruppo di riempimento e' un ponte, e i suoi due
+        capi pendono da due tubazioni diverse (DRAW-006-R1, blocco D).
+        """
         current = hung
         arrived_from: str | None = None
         while True:
@@ -349,6 +354,7 @@ class Walk:
                 for port in self.definitions[current].ports
                 if (current, port.id) in self.at_port
                 and self.at_port[(current, port.id)].id != arrived_from
+                and (from_port is None or current != hung or port.id == from_port)
             ]
             connection = self.at_port[(current, ports[0])]
             peer = next(
@@ -379,6 +385,7 @@ class Walk:
 @cache
 def _done(index: int) -> ProjectModel:
     done, _, gaps = saturate(CASI[index](), catalog(), rules())
+    gaps = _senza_la_domanda_sull_acqua_di_riempimento(gaps)
     assert not gaps, [(gap.rule_id, gap.reason.value) for gap in gaps]
     return done
 
@@ -390,6 +397,18 @@ def _walk(index: int) -> Walk:
 # ---------------------------------------------------------------------------
 # A1 — il gruppo macchina + filtro si isola dall'esterno, mai fra i membri
 # ---------------------------------------------------------------------------
+
+
+def _senza_la_domanda_sull_acqua_di_riempimento(gaps: list[RuleGap]) -> list[RuleGap]:
+    """I punti aperti diversi dalla domanda sulla sorgente di acqua fredda.
+
+    Questi impianti di prova non dichiarano un acquedotto — non e' cio' che
+    misurano — e da DRAW-006-R1 il gruppo di riempimento e' un **ponte fra due
+    reti**: senza una sorgente fredda gia' approvata la regola chiede al
+    progettista invece di appendere un pezzo al nulla. E' un punto aperto vero,
+    e non riguarda la proprieta' provata qui.
+    """
+    return [item for item in gaps if item.reason is not GapReason.NO_SOURCE_NETWORK]
 
 
 @pytest.mark.parametrize("index", range(len(CASI)))
@@ -548,7 +567,15 @@ def test_il_riempimento_e_uno_solo_e_sta_sul_ritorno_dell_acqua_tecnica(index: i
     fillers = sorted(item for item in walk.definitions if "filling" in walk.functions(item))
     assert len(fillers) == 1, fillers
     filler = fillers[0]
-    stub = walk.at_port[(filler, walk.definitions[filler].ports[0].id)]
+    # Il gruppo e' un **ponte** (DRAW-006-R1, blocco D): l'attacco che guarda
+    # il circuito tecnico e' quello sull'acqua di riscaldamento, e l'altro
+    # pesca dall'acqua fredda. Si cerca per fluido, non per posizione.
+    into = next(
+        port.id
+        for port in walk.definitions[filler].ports
+        if port.medium == HEATING
+    )
+    stub = walk.at_port[(filler, into)]
     assert walk.medium_of[walk.network_of[stub.id]] == HEATING
     # Sta sul ritorno comune: partendo dall'uscita primaria dell'accumulo la
     # camminata incontra il raccordo che lo regge prima di fermarsi.
@@ -556,7 +583,7 @@ def test_il_riempimento_e_uno_solo_e_sta_sul_ritorno_dell_acqua_tecnica(index: i
         item for item in walk.definitions if walk.definitions[item].stored_medium == HEATING
         and {"cold_in", "dhw_out"} <= walk.definitions[item].port_ids
     )
-    holder = walk.holder_of(filler)
+    holder = walk.holder_of(filler, into)
     out_port = next(
         port.id
         for port in walk.definitions[tank].ports
@@ -567,16 +594,26 @@ def test_il_riempimento_e_uno_solo_e_sta_sul_ritorno_dell_acqua_tecnica(index: i
 
 
 @pytest.mark.parametrize("index", (2, 3))
-def test_nessun_riempimento_sulle_reti_sanitarie(index: int) -> None:
+def test_nessun_riempimento_sull_acqua_calda_sanitaria(index: int) -> None:
+    """Il ponte pesca dalla fredda e sbocca sul tecnico, mai sulla sanitaria.
+
+    Prima la prova escludeva anche l'acqua fredda, ed era giusto finche' il
+    gruppo aveva un attacco solo: adesso e' un ponte, e l'acqua fredda e'
+    proprio da dove pesca (DRAW-006-R1, blocco D). Cio' che resta escluso e'
+    l'acqua calda sanitaria, che non riempie nessun circuito chiuso.
+    """
     walk = _walk(index)
     for item in walk.definitions:
         if "filling" not in walk.functions(item):
             continue
+        media = set()
         for port in walk.definitions[item].ports:
             connection = walk.at_port.get((item, port.id))
             if connection is None:
                 continue
-            assert walk.medium_of[walk.network_of[connection.id]] not in (COLD, DHW), item
+            media.add(walk.medium_of[walk.network_of[connection.id]])
+        assert DHW not in media, item
+        assert media == {COLD, HEATING}, (item, sorted(media))
 
 
 # ---------------------------------------------------------------------------

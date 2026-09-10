@@ -214,7 +214,58 @@ def apply_proposals(
         # nate o spezzate restano fuori di li' e finiscono nella tracciabilita'.
         pipes: list[str] = []
 
-        if proposal.service_port is not None:
+        if proposal.source_anchor is not None:
+            # Un **ponte** fra due reti (DRAW-006-R1, blocco D): una derivazione
+            # per parte, e il gruppo in mezzo. La rete della regola riceve
+            # l'uscita, quella della sorgente alimenta l'ingresso: il verso non
+            # si sceglie qui, lo dichiara il catalogo con il fluido di ciascuna
+            # porta.
+            source_network = _network_of_port(current, proposal.source_anchor)
+            connections = list(current.connections)
+            pipes = []
+            for anchor, network, port_id in (
+                (proposal.source_anchor, source_network, proposal.inlet_port),
+                (proposal.anchor, network_id, proposal.outlet_port),
+            ):
+                connection = _connection_touching(
+                    current.model_copy(update={"connections": connections}), anchor
+                )
+                junction_id = f"tee-{proposal.component_id}-{port_id}"
+                added.append(
+                    _instance(
+                        junction_id,
+                        catalog.providing(BRANCH_OFF, _medium_of(current, network)).id,
+                        proposal,
+                    )
+                )
+                pieces = _derivation(connection, proposal, junction_id)
+                stub = ConnectionModel(
+                    id=f"stub-{proposal.component_id}-{port_id}",
+                    network_id=network,
+                    endpoint_a=PortRef(component_id=junction_id, port_id=BRANCH_PORT),
+                    endpoint_b=PortRef(
+                        component_id=proposal.component_id, port_id=port_id
+                    ),
+                )
+                # Il verso di una tubazione va da chi esce a chi entra: sul lato
+                # in cui il ponte **esce** i due capi si scambiano.
+                if port_id == proposal.outlet_port:
+                    stub = stub.model_copy(
+                        update={
+                            "endpoint_a": stub.endpoint_b,
+                            "endpoint_b": stub.endpoint_a,
+                        }
+                    )
+                connections = [
+                    *(
+                        item
+                        for existing in connections
+                        for item in (pieces if existing.id == connection.id else [existing])
+                    ),
+                    stub,
+                ]
+                pipes.extend(item.id for item in (*pieces, stub))
+        elif proposal.service_port is not None:
             # La macchina l'attacco ce l'ha: nessuna tubazione viene spezzata.
             stub = _stub(
                 proposal,
@@ -285,6 +336,11 @@ def apply_proposals(
     return current
 
 
+def _network_of_port(project: ProjectModel, anchor: PortRef) -> str:
+    """La rete della tubazione che tocca quell'attacco."""
+    return _connection_touching(project, anchor).network_id
+
+
 def _medium_of(project: ProjectModel, network_id: str) -> str:
     """Il fluido di una rete. Il raccordo si sceglie su quello, come ogni pezzo."""
     for network in project.networks:
@@ -314,12 +370,27 @@ def evaluate_in_phases(
     # (I-046): «tagliato fuori da ogni sicurezza» e' vero di ogni generatore
     # finche' la sicurezza di circuito non e' stata posata, e una domanda
     # aperta fatta in quel momento sarebbe una domanda sbagliata.
+    # E parlano dopo anche le regole che un **gruppo in linea** puo'
+    # soddisfare. Un gruppo che sta sulla tubazione porta i propri organi su
+    # quella tubazione: chiedere una di quelle funzioni nella stessa passata in
+    # cui il gruppo viene proposto produce il doppione che il PM ha tolto — il
+    # ritegno sanitario accanto al gruppo EN 1487 che lo contiene. Chi pende da
+    # uno stacco non conta: il filtro dentro un gruppo di riempimento appeso a
+    # un T non e' il filtro del ritorno della macchina. Chi decide non e' un
+    # elenco di nomi: e' il catalogo (DRAW-006-R1, blocco C.1).
+    carried_on_the_run = {
+        function
+        for definition in catalog.all()
+        if definition.composite and not definition.attaches_on_a_branch
+        for function in definition.carries_on_board
+    }
     closers = RuleRegistry(
         rules=tuple(
             item
             for item in rules.all()
             if item.satisfied_by.scope is SatisfactionScope.ON_THE_GROUP
             or item.when.anchor_cut_off_from is not None
+            or set(item.then.functions()) & carried_on_the_run
         )
     )
     others = RuleRegistry(

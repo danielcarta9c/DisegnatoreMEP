@@ -1,8 +1,8 @@
 {
   "id": "expansion-on-the-stored-volume-feed",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "name": "Vaso di espansione sanitario",
-  "category": "necessary",
+  "category": "recommended",
   "cardinality": "per_network",
   "when": {
     "network_domain": "hydronic",
@@ -14,13 +14,14 @@
     "provides_function": "expansion",
     "placement": "on_inlet",
     "inlet_port": "a",
-    "outlet_port": "b"
+    "outlet_port": "b",
+    "if_on_board_is_unknown": "ask"
   },
   "satisfied_by": {
     "scope": "on_the_network"
   },
-  "rationale": "Anche la riserva sanitaria si scalda e dilata, e il ritegno sull'alimentazione le ha tolto la via di ritorno verso la rete: senza un vaso suo la dilatazione apre la sicurezza a ogni ciclo. Il vaso sta sulla tubazione dell'acqua fredda in ingresso alla riserva, dal lato del serbatoio, dove il costruttore prescrive di prevederlo insieme alla sicurezza.",
-  "source": "Rehau, istruzioni d'installazione degli accumuli: l'installazione preveda valvola di sicurezza tarata e vaso di espansione commisurato sull'alimentazione fredda (SRC-018, documento delle posizioni, parte seconda)",
+  "rationale": "Anche la riserva sanitaria si scalda e dilata, e il ritegno sull'alimentazione le ha tolto la via di ritorno verso la rete: senza un vaso suo la dilatazione apre la sicurezza a ogni ciclo. Il vaso sta sulla tubazione dell'acqua fredda in ingresso alla riserva, dal lato del serbatoio. Non e' pero' un pezzo che si aggiunge al buio: molti accumuli lo portano gia' dentro il mantello, e il catalogo puo' tacere. Dove il dato manca resta una domanda al progettista, non un vaso aggiunto per prudenza.",
+  "source": "Rehau, istruzioni d'installazione degli accumuli: l'installazione preveda valvola di sicurezza tarata e vaso di espansione commisurato sull'alimentazione fredda (SRC-018, documento delle posizioni, parte seconda); DRAW-006-R1 blocco C.2, traduzione PM del 2026-09-10: il vaso sanitario e' condizionale al dato di progetto o di catalogo",
   "ordering": {
     "after": [
       "isolation_locked_open"

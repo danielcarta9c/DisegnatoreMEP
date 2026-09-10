@@ -231,13 +231,34 @@ class Plant:
         aperto, uno strumento indicatore il rubinetto della propria presa.
         """
         wanted = {organ_for(self.definitions[component_id].shutoff_regime)}
+        # L'organo puo' stare **dentro un mantello**, e allora non si disegna
+        # fuori: nel pezzo stesso, se il suo catalogo lo dichiara a bordo — il
+        # gruppo di riempimento con la propria intercettazione — oppure in un
+        # **gruppo** posato su quella fila, che e' un mantello attorno a organi
+        # che stanno sulla tubazione: il gruppo di sicurezza EN 1487 porta
+        # dentro l'intercettazione dell'ingresso freddo (DRAW-006-R1, blocco
+        # C.1). La proprieta' e' la stessa — quell'attacco si chiude — e cambia
+        # solo dove sta l'organo che la realizza.
+        if set(self.definitions[component_id].carries_on_board) & wanted:
+            return [component_id]
         found: list[str] = []
         for chain in self.chains_of(component_id, port_id):
             for item in chain:
-                if self.functions_of(item) & wanted:
+                if self._brings(item) & wanted:
                     found.append(item)
                     break
         return found
+
+    def _brings(self, component_id: str) -> frozenset[str]:
+        """I mestieri che quel pezzo porta **sulla tubazione**.
+
+        I propri, e quelli che un gruppo dichiara di portarsi dentro: un
+        composito e' un mantello attorno a organi che stanno sulla linea.
+        """
+        definition = self.definitions[component_id]
+        if not definition.composite:
+            return self.functions_of(component_id)
+        return self.functions_of(component_id) | frozenset(definition.carries_on_board)
 
 
 def acceptance() -> Plant:

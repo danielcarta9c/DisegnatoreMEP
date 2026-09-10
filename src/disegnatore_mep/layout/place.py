@@ -39,6 +39,7 @@ from math import ceil
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
+from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import PortRef, ProjectModel
 from disegnatore_mep.model.types import BandRole
 
@@ -165,14 +166,17 @@ class _Hanging:
 
 
 def _file_order(project: ProjectModel) -> dict[str, int]:
-    """La posizione di ogni componente nel modello: lo spareggio che non e' un nome.
+    """Lo spareggio strutturale fra pezzi altrimenti pari: mai un nome (D-093).
 
-    Dove due pezzi sono pari su ogni criterio strutturale si segue l'ordine in
-    cui il progettista li ha elencati, mai l'ordine alfabetico dei loro
-    identificativi (D-093): due impianti uguali con nomi diversi devono dare la
-    stessa tavola.
+    Era la posizione nel file, e la posizione nel file non sopravvive al JSON
+    canonico, che riordina i pezzi per identificativo: la catena della CLI
+    disegna quel file, e rinominare un pezzo cambiava la tavola. Adesso l'ordine
+    si legge dalla **forma dell'impianto** — voce di catalogo e attacchi verso i
+    vicini — e l'identificativo spareggia soltanto fra pezzi che nessun dato
+    dell'impianto distingue (DRAW-006-R1, blocco A.2). Il conto vive in
+    `layout.order`.
     """
-    return {item.id: index for index, item in enumerate(project.components)}
+    return structural_order(project)
 
 
 def _hanging_accessories(
@@ -724,9 +728,14 @@ def place_sheet(
     grid = GridSpace(origin=area, standard=frame.standard)
     step = grid.step_mm
 
-    placeable = [
-        item for item in partition.component_ids if item not in inline_component_ids
-    ]
+    # I pezzi si posano nell'ordine **strutturale**, non in quello in cui il
+    # file li elenca: il JSON canonico li riordina per identificativo, e la posa
+    # e' greedy — chi si posa prima prende il posto migliore (DRAW-006-R1, §A.2).
+    seats = structural_order(project)
+    placeable = sorted(
+        (item for item in partition.component_ids if item not in inline_component_ids),
+        key=lambda item: seats.get(item, 0),
+    )
     if not placeable:
         raise LayoutError(
             f"sheet {partition.sheet_id} carries only inline accessories: an "
