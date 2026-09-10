@@ -1,108 +1,203 @@
-# ACTIVE WORK PACKAGE — DRAW-006-R1
+# ACTIVE WORK PACKAGE — DRAW-007
 
-- **Release:** 0.3 — generalizzazione, revisione della tavola 2
-- **Stato:** APPROVATO DAL PM, PRONTO PER IL DEV
-- **Data:** 2026-09-10
-- **PR da aggiornare:** #24
-- **Base tecnica da conservare:** testa `9b925b7`, integrata con l'ultima `main`
-- **Ramo da riutilizzare:** `claude/draw-006-tavola2-semantica-v4n8o5`
-- **Fixture grafica principale:** impianto 2
+**Assegnato da:** PM-autore (Claude, in sessione col PO — `OPERATING_MODEL.md` §1.2.1)
+**Assegnato a:** DEV
+**Data:** 2026-09-10
+**Release:** 0.3 — generalizzazione, revisione della tavola 2
+**Stato:** PROPOSTO AL PO
+**Ramo da riutilizzare:** `claude/draw-006-tavola2-semantica-v4n8o5`
+**PR da aggiornare:** #24
+**Commit di partenza:** `e415dc0`
+**Fixture grafica principale:** impianto 2; impianto 1 come regressione automatica
 
-## Verdetto e obiettivo
+---
 
-La PR #24 non è approvata nello stato corrente, ma contiene avanzamenti validi da
-conservare: rubinetto portamanometro, funzioni interne dei compositi e stati idraulici
-delle multivia. Questa revisione corregge quattro difetti generali: ordine semantico degli
-accessori, allineamento attraverso componenti multivia, distinzione fra adduzione ACS e
-riempimento tecnico, vicinanza D-120.
+## Contesto
 
-Le correzioni sono regole di prodotto valide per qualunque impianto. Sono vietate
-eccezioni basate su ID, coordinate, nomi dei file o quantità dei componenti delle fixture.
+`DRAW-006-R1` ha chiuso i quattro difetti semantici e ha **peggiorato la geometria**: la
+rete ordinaria della tavola 2 è passata da 7 pieghe / 2 incroci / 670 mm a 12 / 8 / 785 mm,
+la tavola 1 è uscita dalle proprie soglie, e tredici prove sono rimaste rosse. Il rapporto
+di collaudo attribuiva il fatto a un ciclo greedy fermo in un ottimo locale. **Era una
+diagnosi sbagliata**, ed è stata corretta dalla revisione incrociata del 10 settembre e dal
+riscontro del PO:
 
-## A. Ordine semantico indipendente dagli identificativi
+> «Le tubazioni che vanno alle macchine principali sono l'autostrada, e su quelle i costi
+> dovrebbero essere ancora maggiori. Oggi nel nostro router non abbiamo distinzione tra
+> autostrada principale e strade secondarie: tutto è principale ma non è così.»
 
-1. Il soggetto semantico di uno stacco è l'accessorio terminale raggiunto attraverso i
-   raccordi e gli organi propri dello stacco, non il primo organo incontrato.
-2. I vincoli `before`/`after` ordinano topologicamente i componenti nel verso del fluido.
-   ID, ordine nel file e ordine delle connessioni possono spareggiare soltanto elementi
-   semanticamente equivalenti.
-3. L'ordine semantico è un vincolo duro. Se aumenta curve o incroci, il motore deve
-   recuperare geometria con traslazioni, movimenti di gruppo e nuovo routing; non può
-   conservare l'ordine sbagliato perché costa meno.
-4. Scrivere prima prove che rinominano gli ID, ne invertono l'ordinamento e mescolano le
-   connessioni: l'ordine funzionale e il costo devono restare invarianti.
-5. Regressione tavola 1: il manometro resta dopo il riempimento, con rete ordinaria non
-   oltre 4 curve, 1 incrocio e 425 mm; stacchi statici non oltre 0/0/45 mm.
+Il costo di posa è **piatto**: una piega sulla dorsale generatore–accumulo pesa quanto una
+piega sullo stacco del manometro. Con quel criterio il ciclo respinge un allineamento che
+costa tre pieghe di contorno, e lo fa **correttamente** — sta ottimizzando la cosa
+sbagliata. La stessa causa spiega la prova rossa sulle zone non impilate, dove il ciclo
+migliora il totale (11 pieghe contro 12, 437,5 mm contro 467,5) barattando la struttura
+della tavola.
 
-## B. Allineamento per stato idraulico
+Input del PO collegati: **I-056**, **I-057**, **I-058**. Retrospettiva che li motiva:
+`docs/retrospectives/2026-09-10-retro-draw006r1.md`.
 
-1. Generalizzare i candidati di asse: cercare coppie di porte compatibili fra macchine
-   principali anche attraverso raccordi, catene inline e componenti multivia, per ciascuno
-   stato idraulico ammesso dal catalogo.
-2. Provare almeno: traslazione del gruppo a monte, del gruppo a valle e asse comune.
-   Quando due macchine hanno coppie mandata/ritorno compatibili, provare l'allineamento
-   simultaneo delle due coppie.
-3. Gli accessori locali si muovono con il gruppo; ogni candidata viene reinstradata per
-   intero e confrontata col costo-peso. L'allineamento è una candidata, non un assoluto.
-4. Sulla tavola 2 deve essere realmente provato l'allineamento PDC–puffer attraverso la
-   deviatrice e scelto quando riduce il costo totale.
+**I-059 — lo spessore del tratto per gerarchia — è fuori da questo pacchetto** e sarà
+`DRAW-008`: è rendering, dipende da questo ma non lo condiziona.
 
-## C. Adduzione fredda del bollitore ACS
+---
 
-1. Per un accumulo sanitario pressurizzato usare un solo **gruppo di sicurezza composito
-   EN 1487** sull'ingresso freddo. Il catalogo ne dichiara intercettazione, ritegno
-   controllabile e sicurezza; le regole non aggiungono duplicati esterni.
-2. Il vaso di espansione sanitario non è automatico: dato di progetto/catalogo presente
-   → applicare; assente → domanda o raccomandazione, senza aggiungere il pezzo. Nella
-   fixture 2, priva del dato, non va generato automaticamente.
-3. Non aggiungere uno sfiato automatico al bollitore ACS salvo porta dedicata e fonte o
-   requisito esplicito. Il riempimento sanitario ordinario si sfoga da un'utenza aperta.
-4. Lo scarico preferisce la porta `drain` dichiarata dal serbatoio. Soltanto se la porta
-   non esiste è ammesso lo stacco sulla linea fredda, con motivazione nel rapporto.
-5. Prove sintetiche devono coprire sia il serbatoio con porta di scarico sia quello senza.
+## A. La gerarchia è una grandezza del grafo
 
-## D. Riempimento del circuito tecnico
+1. La gerarchia di una tratta si **calcola** dal grafo, non si elenca. Il criterio è
+   quello dichiarato dal PO: **quanta parte dell'impianto dipende da quella tratta.**
+2. Si calcola **una volta sola** e ha **un solo posto**. In questo pacchetto la leggono
+   due clienti — il costo di posa (§B) e l'obiettivo di allineamento (§C); un terzo
+   arriverà con `DRAW-008`. Tre calcoli separati sono un pacchetto respinto.
+3. I livelli sono tre, e sono quelli che il PO ha definito:
+   - **autostrada** — il tronco che porta la portata piena: generatore ↔ accumulo,
+     accumulo ↔ circolatore ↔ collettore;
+   - **distribuzione** — ciò che si dirama portando una frazione: collettore → utenze,
+     i generatori oltre il primo allineato, volume ACS → miscelatrice;
+   - **servizio** — tubazioni accessorie e stacchi ciechi: l'AF dei ricarichi, l'uscita
+     ACS, vaso, manometro, sicurezze.
+4. La classificazione **non nomina nessun componente, nessun identificativo, nessun file,
+   nessuna quantità di fixture**. Vale D-069 senza eccezioni.
+5. Il circuito chiuso è la difficoltà nota: mandata e ritorno sono percorsi paralleli, e
+   «togli la tratta e conta chi resta scollegato» non funziona così com'è. Va risolto sul
+   verso del flusso, che è la portata di progetto. **Se la soluzione scelta ha un limite,
+   si dichiara nel rapporto**, non si nasconde in una costante.
 
-1. Modellare il gruppo di riempimento come ponte a due reti e due porte:
-   `cold_water` in ingresso → gruppo → `heating_water` in uscita.
-2. Collegarlo mediante T a una sorgente AF già approvata e al ritorno tecnico comune. Se
-   manca una sorgente AF approvata, produrre una domanda: mai un componente pendente.
-3. La variante Caleffi 553 dichiara come funzioni interne riduttore di pressione, filtro,
-   intercettazione e ritegno; non vanno duplicati esternamente.
-4. Il verso è AF → circuito tecnico e la posa deve mantenere leggibilmente distinta questa
-   derivazione dall'adduzione fredda del bollitore ACS.
-5. Scrivere prove generali su medium, porte, verso, funzioni integrate e assenza di
-   duplicati.
+## B. Il costo di posa pesa la gerarchia
 
-## E. Vicinanza degli organi D-120
+1. Pieghe, incroci e lunghezza su una tratta di livello **autostrada** costano più che
+   sulle stesse misure a livello distribuzione, che a loro volta costano più che a livello
+   servizio.
+2. Il peso è un dato dichiarato in un posto solo, leggibile, non sparso fra le funzioni di
+   costo.
+3. L'ordine lessicografico esistente di `SheetCost` **non si stravolge**: le violazioni
+   restano prima di tutto, il backtracking resta prima delle pieghe. Cambia il **conto
+   dentro ciascuna voce**, non l'ordine delle voci.
 
-1. Correggere la valvola rimasta a 27,5 mm: tutti i 16 organi della tavola 2 devono stare
-   a 2,5÷5 mm dal pezzo servito.
-2. La proprietà deve derivare dalla relazione funzionale. Prima di dichiararla
-   irrealizzabile provare la traslazione gratuita del gruppo locale.
+## C. L'allineamento è un obiettivo di fase, non una candidata
+
+1. L'allineamento delle porte delle macchine di livello autostrada si **cerca prima**
+   della rifinitura, non si mette in concorrenza a costo piatto dentro il ciclo greedy.
+2. La mossa di allineamento deve poter muovere **una macchina con il proprio corredo**, e
+   non soltanto una colonna intera: la granularità di colonna di oggi trascina pezzi che
+   non c'entrano e fa pagare contorno estraneo. Questo è il primo sospettato per lo scarto
+   della candidata PDC–puffer sulla tavola 2.
+3. Prima di dichiarare irraggiungibile un allineamento, il DEV **stampa e riporta** le
+   coppie che il generatore di candidate produce su quella tavola. Alzare i tetti di
+   ricerca non serve: è già stato provato (1 500/2 000 → 6 000/6 000, esito identico).
+
+## D. Le tredici prove rosse
+
+1. Tornano verdi tutte. Ognuna è elencata nel rapporto con l'esito e la causa.
+2. `tests/layout/test_catena_macchina.py` **non è geometria**: l'impianto di prova non
+   dichiara nessuna rete di acqua fredda e il ponte del riempimento apre un punto aperto.
+   È manutenzione ordinaria di prova, e la fa il DEV: dichiarare l'allaccio nella fixture,
+   oppure restringere la guardia a «nessun punto aperto oltre quello, e quello per questa
+   ragione». **Non si porta al PM.**
+3. Nessuna prova diventa `skip` o `xfail`.
+
+## E. Le soglie: cosa questo pacchetto ribattezza, e cosa no
+
+Cambiando il conto del costo, **i totali diventano incomparabili**: 4 pieghe, 1 incrocio e
+425 mm sono numeri di un costo piatto. Gating su quei numeri sarebbe misurare il vecchio
+comportamento col nuovo motore. Il PM decide quindi così, ed è una decisione del PM, non
+del DEV:
+
+1. **Il cancello si sposta sulle proprietà strutturali** (§Criteri 4, 5, 6): allineamento,
+   dorsali senza pieghe, rami paralleli impilati, zero backtracking, nessun tubo sotto un
+   simbolo. Sono binarie e non dipendono da come si pesa il costo.
+2. **I totali restano misurati e riportati**, e non peggiorano rispetto a `71b39db`.
+3. **L'unico allentamento consentito** è convertire un'asserzione su un totale assoluto in
+   un'asserzione di non-regressione contro i valori misurati a `71b39db`, elencando ogni
+   conversione nel rapporto con il valore vecchio e quello nuovo. Qualunque altro
+   allentamento è un pacchetto respinto.
+4. **I bersagli dichiarati**, che il rapporto riporta come distanza residua e che **non
+   sono cancelli**: tavola 1 rete ordinaria 4 / 1 / 425 mm e stacchi 0 / 0 / 45 mm;
+   tavola 2 rete ordinaria non peggiore di 7 / 2 / 670 mm.
+
+---
+
+## Perimetro dei file — modifiche consentite esclusivamente a
+
+- `src/disegnatore_mep/layout/**` (compreso il modulo nuovo della gerarchia)
+- `src/disegnatore_mep/model/order.py`
+- `tests/**`
+- `docs/collaudi/DRAW-007/**`
+- `PROJECT_STATE.md`
+
+## Fuori perimetro — da non toccare
+
+- **catalogo, regole, simboli, `naming/`**: questo pacchetto non cambia il contenuto del
+  grafo. Se un difetto di contenuto emerge, si riporta e non si corregge qui;
+- **spessori di linea e qualunque cosa di I-059**: è `DRAW-008`;
+- riempimento estetico del foglio, cartiglio, sigla provvisoria `RM`, audit dei simboli;
+- gli impianti 3–5 oltre la prova di posa: nessun loro PDF, PNG, SVG o rapporto;
+- decisioni esistenti, registro degli input del PO, documenti di governance.
+
+## Vincoli
+
+- Nessun merge su `main`. **Il merge è del PO** (`OPERATING_MODEL.md` §1.2.1).
+- Nessuna decisione esistente rinumerata, riscritta o cambiata di stato. Una decisione
+  nuova si registra come **Proposta**.
+- Nessun input del PO chiuso: al massimo se ne propone la chiusura.
+- **Deviazione da D-123 dichiarata:** un pacchetto, un ramo, una PR. Qui `DRAW-007`
+  riusa il ramo e la PR di `DRAW-006-R1`, perché quella consegna **non è fusa e non è
+  mergeable** — tredici prove rosse — e questo pacchetto la porta a termine invece di
+  affiancarle un secondo ramo. La PR #24 diventa la consegna di `DRAW-006-R1 + DRAW-007`.
+  Il PO può disporre diversamente.
 
 ## Criteri di accettazione
 
-1. Ordine degli accessori invariato rinominando ID e mescolando connessioni.
-2. La tavola 1 conserva ordine funzionale e soglie 4/1/425 mm e 0/0/45 mm.
-3. Il motore genera e valuta assi attraverso multivia; sulla tavola 2 PDC e puffer sono
-   allineati quando questa è la candidata di costo minore.
-4. L'ingresso ACS contiene un solo gruppo EN 1487 composito, senza vaso o sfiato inventati.
-5. Lo scarico usa la porta dedicata quando dichiarata e il fallback soltanto quando manca.
-6. Il riempimento tecnico collega davvero AF e ritorno tecnico comune, senza organi
-   duplicati e senza confondersi con l'adduzione ACS.
-7. Vicinanza D-120 tavola 2: 16/16.
-8. Tutti e cinque gli impianti arrivano alla posa; nessuna regressione diventa `skip` o
-   `xfail`.
-9. Suite completa, `ruff`, `mypy --strict` e doppia generazione deterministica verdi.
+Ogni criterio si chiude con **il comando eseguito e il suo output**, mai con la parola
+«verificato». Un criterio che nomina un risultato osservabile si prova sul risultato
+osservabile: «il motore genera la candidata» non chiude «le due macchine sono allineate».
 
-## Consegna e perimetro
+- [ ] **1. La gerarchia è strutturale.** Una prova generale mostra che rinominando gli
+      identificativi, invertendone l'ordinamento e mescolando le connessioni la
+      classificazione delle tratte **non cambia**. Una seconda prova mostra che nel modulo
+      che la calcola non compare nessun identificativo, nome di componente o nome di file
+      di fixture.
+- [ ] **2. I tre livelli rispettano l'ordine dichiarato.** Prova generale, su impianti
+      costruiti dentro la prova: ogni tratta che unisce due macchine che portano la
+      portata piena pesa **più** di ogni tratta che termina su un accessorio appeso; una
+      tratta pesa **almeno quanto** ogni tratta che dipende da lei. Nessuna soglia
+      numerica, nessun nome.
+- [ ] **3. Il costo pesa la gerarchia, e si vede.** Prova **negativa** costruita dentro la
+      prova: una posa in cui la stessa piega può stare sulla dorsale o su uno stacco. Con
+      il costo di questo pacchetto il ciclo la mette sullo stacco; la stessa prova
+      fallisce se i pesi sono resi uguali. La prova esibisce entrambi gli esiti.
+- [ ] **4. Sulla tavola 2 le porte di mandata e ritorno della macchina principale e
+      dell'accumulo principale stanno sullo stesso asse.** Osservabile sulla geometria
+      composta, non sul generatore di candidate. Chiude I-056 dal lato del risultato.
+- [ ] **5. Nessuna piega sulle tratte di livello autostrada**, sulla tavola 1 e sulla
+      tavola 2. È l'espressione geometrica delle «due macro-linee parallele» di I-057. Se
+      il DEV dimostra che su una forma specifica è irraggiungibile, **si ferma e riporta
+      il caso**: non allarga il criterio.
+- [ ] **6. `tests/layout/test_objective.py::test_parallel_branches_are_stacked_not_strung_out`
+      è verde** senza che la prova sia stata toccata.
+- [ ] **7. La suite è verde.** `python -m pytest -q` senza prove rosse. Nessuna prova
+      convertita in `skip` o `xfail`. Le tredici rosse di `71b39db` elencate una per una
+      nel rapporto con l'esito e la causa.
+- [ ] **8. Le soglie ribattezzate sono soltanto quelle del §E.3**, ciascuna elencata nel
+      rapporto con il valore vecchio, quello nuovo e la ragione. Nessun altro allentamento.
+- [ ] **9. I totali non peggiorano** rispetto a `71b39db`: tavola 1 rete ordinaria
+      11 / 1 / 487,5 mm e stacchi 6 / 0 / 125,0 mm; tavola 2 rete ordinaria
+      12 / 8 / 785,0 mm e stacchi 6 / 4 / 125,0 mm. Il rapporto riporta anche la distanza
+      residua dai bersagli del §E.4.
+- [ ] **10. `ruff`, `mypy --strict` e doppia generazione deterministica** verdi, con
+      l'impronta della geometria riportata.
+- [ ] **11. Tutti e cinque gli impianti arrivano alla posa**, e nessun artefatto grafico è
+      prodotto oltre quello della tavola 2.
+- [ ] **12. Nessun file fuori dal perimetro risulta modificato nel diff.**
 
-Aggiornare la stessa PR #24 e lo stesso ramo, senza merge. Consegnare PDF, PNG, SVG,
-geometria, metriche, preflight e confronto prima/dopo della **sola tavola 2**, usando
-`9b925b7` come prima. La tavola 1 è soltanto regressione automatica; gli impianti 3–5
-sono soltanto test di posa. Non generare i loro pacchetti grafici completi.
+## Consegna attesa
 
-Fuori perimetro: riempimento estetico del foglio, cartiglio, revisione della sigla
-provvisoria `RM`, audit di simboli estranei, governance e ottimizzazione generale delle
-prestazioni.
+- La PR #24 aggiornata, **non fusa**.
+- Rapporto in `docs/collaudi/DRAW-007/RAPPORTO.md` con: ramo, SHA iniziale, SHA finale,
+  file modificati, criteri uno per uno **col comando e l'output**, misure prima/dopo,
+  difetti noti, punti aperti.
+- Pacchetto grafico della **sola tavola 2**: PDF, PNG, SVG, geometria, metriche,
+  preflight, e il confronto con `71b39db`.
+
+## In caso di ambiguità o di criterio irraggiungibile
+
+Fermarsi e riportarlo, **prima** di cambiare la prova. Un'incompatibilità si porta al PM;
+la manutenzione ordinaria di una prova, no — quella la fa il DEV (§D.2).

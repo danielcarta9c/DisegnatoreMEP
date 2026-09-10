@@ -127,14 +127,27 @@ Package prescrive per un'incompatibilità. Misure, analisi e alternative provate
     cresce senza che sia comparso uno stacco statico in più. La misura non è stata toccata:
     è una soglia del Work Package.
 
+## Pacchetto attivo
+
+`DRAW-007 — la gerarchia della tavola` (`ACTIVE_WORK_PACKAGE.md`), proposto al PO il
+2026-09-10 dal PM-autore. Attacca la causa dei rilievi di `DRAW-006-R1` invece dei
+sintomi: il costo di posa non distingue la dorsale dagli stacchi, quindi baratta la
+struttura del disegno per un totale più basso. Il cancello del pacchetto è **strutturale**
+— allineamento delle macchine principali, dorsali senza pieghe, rami paralleli impilati —
+e non un totale, perché un totale prodotto da un costo che stiamo cambiando non misura una
+regressione. Input **I-056**, **I-057**, **I-058**. Lo spessore di linea per gerarchia
+(**I-059**) è rinviato a `DRAW-008`.
+
 ## Prossimi gate
 
 1. `DRAW-005-R1`: tavola 1 rifinita — **accettata e fusa dal PM**.
 2. `DRAW-006-R1`: **consegnato con riserva**, in attesa di verifica del PM sulla PR #24.
    Le decisioni che il pacchetto chiede sono due: il rilievo geometrico del §8 del
    rapporto e le 13 prove rosse del §9.1, che il DEV non ha ammorbidito.
-3. Gate vertical slice: skill in una chat di lavoro pulita.
-4. Proseguire gli impianti 3–5 uno per volta, cercando classi di difetto nuove.
+3. `DRAW-007`: la gerarchia della tavola — **pacchetto attivo**, proposto al PO.
+4. `DRAW-008`: lo spessore del tratto per gerarchia (**I-059**), dopo DRAW-007.
+5. Gate vertical slice: skill in una chat di lavoro pulita.
+6. Proseguire gli impianti 3–5 uno per volta, cercando classi di difetto nuove.
 
 ## Documenti canonici
 
