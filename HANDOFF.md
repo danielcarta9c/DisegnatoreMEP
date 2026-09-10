@@ -50,8 +50,12 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
 - Release in corso: **0.2 — prima tavola tecnicamente corretta e approvata**.
 - `DRAW-005` è stato verificato e fuso nella PR #18: tavola 1 con 4 curve, 1 incrocio,
   525 mm, zero backtracking; simboli e contenuto critici corretti.
-- Il PO ha approvato l'impostazione generale e ha richiesto le rifiniture raccolte in
-  `DRAW-005-R1`, ora unico incarico DEV attivo.
+- `DRAW-005-R1` è stato fuso con la PR #21; `DRAW-006` e `DRAW-006-R1` sono stati
+  consegnati sulla PR #24, in attesa di verifica del PM.
+- **Chi tocca posa, costo o routing legge prima**
+  `docs/retrospectives/2026-09-10-retro-draw006r1.md`: la tavola ha una gerarchia —
+  dorsale contro strade secondarie — che il costo di posa oggi non conosce (input I-057
+  e I-058).
 - Stato e rischi: `PROJECT_STATE.md`.
 - Roadmap: `docs/plans/2026-09-03-release-plan.md`.
 - Architettura: `docs/SKILL.md` e ADR 0005.

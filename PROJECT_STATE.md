@@ -110,8 +110,18 @@ Package prescrive per un'incompatibilità. Misure, analisi e alternative provate
    funzionale un vincolo duro e ha generalizzato i candidati di asse, ma il ciclo di posa
    si ferma in un ottimo locale peggiore: la tavola 2 passa da 7 pieghe e 2 incroci a 12 e
    8, e la tavola 1 esce dalle soglie di regressione. Non è il tetto di ricerca —
-   alzandolo l'esito non cambia. È il rischio principale aperto oggi.
-10. **La misura «stacchi statici» conta anche ciò che statico non è.** Nel bucket finisce
+   alzandolo l'esito non cambia. La revisione incrociata del 10 settembre indica come
+   causa più probabile il rischio 10, non il ciclo in sé.
+10. **Il costo di posa non ha gerarchia: per il router tutte le tubazioni sono uguali.**
+    La dorsale che unisce generatore e accumulo — quella che il PO chiama «l'autostrada» —
+    pesa quanto lo stacco di un manometro, quindi il ciclo baratta volentieri la struttura
+    della tavola per un numero totale più basso. È la spiegazione più probabile del
+    rilievo 9 e della prova sulle zone impilate, e **non è intercettabile da nessuna
+    soglia**, perché le soglie misurano il totale e non dove il totale si concentra.
+    Input **I-057** e **I-058**; analisi in
+    `docs/retrospectives/2026-09-10-retro-draw006r1.md` §1. **È il rischio principale
+    aperto oggi**, e viene prima del rilievo 9.
+11. **La misura «stacchi statici» conta anche ciò che statico non è.** Nel bucket finisce
     ogni tratta che non è rete ordinaria, quindi anche la linea di alimentazione del
     riempimento, che il vocabolario del progetto chiama `INBOUND`. Con il ponte la riga
     cresce senza che sia comparso uno stacco statico in più. La misura non è stata toccata:
@@ -134,4 +144,7 @@ Package prescrive per un'incompatibilità. Misure, analisi e alternative provate
 - roadmap: `docs/plans/2026-09-03-release-plan.md`;
 - responsabilità: `docs/governance/OPERATING_MODEL.md`;
 - input PO: `docs/input-pm/REGISTRO.md`;
-- retrospettiva: `docs/retrospectives/2026-09-05-retro-pm.md`.
+- retrospettive: `docs/retrospectives/2026-09-05-retro-pm.md` e
+  `docs/retrospectives/2026-09-10-retro-draw006r1.md` — **quest'ultima è vincolante per
+  chi tocca posa, costo o routing**: §4 elenca le regole che lascia alle sessioni
+  successive.
