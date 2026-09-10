@@ -67,6 +67,40 @@ Gli appartengono:
 - l'**accettazione o il rifiuto** della consegna, criterio per criterio;
 - la porta d'ingresso su `main`: nessuna PR entra senza la sua accettazione.
 
+#### 1.2.1 Il PM sdoppiato (PO, 10 settembre 2026)
+
+Dal 10 settembre 2026 il ruolo PM non è più tenuto da un agente esterno dedicato. Il PO ha
+disposto che venga **sdoppiato**, perché i compiti che contiene hanno bisogno di due cose
+opposte:
+
+| | Chi | Perché |
+|---|---|---|
+| **PM-autore** | l'assistente in sessione col PO | Pacchetto, criteri di accettazione, soglie, traduzione degli input del PO, roadmap, documentazione corrente. Qui serve **memoria del progetto**: un agente che riparte da zero scrive pacchetti peggiori |
+| **PM-revisore** | un **agente separato, avviato da zero su ogni consegna** | Verifica della consegna, criterio per criterio. Qui la memoria è un **handicap**: chi ha scritto il codice si porta dietro le proprie razionalizzazioni, e il difetto grosso di `DRAW-006-R1` è stato trovato da una revisione indipendente, non dal DEV |
+| **Merge su `main`** | il **PO** | Finché il PM è tenuto dalla stessa testa che sviluppa, la porta d'ingresso su `main` è del PO. La regola «il DEV non fonde» non cambia |
+
+**Il PM-autore non approva mai il proprio pacchetto.** Ogni pacchetto è sottoposto al PO
+prima che il lavoro cominci; il PO lo approva, lo corregge o lo respinge.
+
+**Regole che rendono avversariale il PM-revisore.** Senza queste è teatro:
+
+1. **Riceve i criteri e gli artefatti, non il racconto.** Il rapporto di consegna del DEV
+   gli è precluso finché non ha formato le proprie misure. Poi lo legge, e segnala le
+   differenze.
+2. **Ogni criterio si chiude con un comando e il suo output.** Non «verificato»: il
+   comando eseguito e ciò che ha stampato. Un criterio senza prova eseguibile è **non
+   raggiunto**, non «probabilmente raggiunto».
+3. **Un criterio che nomina un risultato osservabile si prova sul risultato osservabile.**
+   «Il motore genera la candidata» non chiude «sulla tavola le due macchine sono
+   allineate». È l'errore di `DRAW-006-R1`.
+4. **Riesegue la suite integrale**, e non si fida del numero dichiarato dal DEV.
+5. **Il suo verdetto è scritto**, criterio per criterio, e vive in `docs/pm/`.
+
+**Limite dichiarato, che il PO conosce.** PM-autore e PM-revisore condividono oggi lo
+stesso modello, quindi i punti ciechi sono in parte correlati. Si mitiga con la regola 1 —
+dare i file e i criteri, mai la narrazione — ma non si annulla. Quando torna disponibile
+un agente di modello diverso, il PM-revisore torna a lui.
+
 ### 1.3 DEV — team di sviluppo
 
 Esegue. Può **proporre** alternative tecniche e deve motivarle. Il metodo interno del DEV
@@ -125,6 +159,11 @@ PO                    PM                         DEV
 
 Nessuna freccia salta un passaggio. In particolare: **non esiste una freccia dal DEV a
 `main`.**
+
+Dal 10 settembre 2026, col PM sdoppiato (§1.2.1), lo schema si legge così: la colonna «PM»
+è il **PM-autore** finché scrive il pacchetto, diventa il **PM-revisore** — un agente
+separato — quando arriva la consegna, e la freccia finale del merge parte dal **PO**, non
+dal PM.
 
 ---
 

@@ -30,10 +30,19 @@ L'AI non modifica direttamente coordinate o connettività approvata.
 
 - **PO — Daniel Carta:** dominio MEP, requisiti, convenzioni grafiche, priorità e giudizio
   finale del prodotto.
-- **PM — Codex:** ricerca e verifica delle fonti, traduzione degli input PO, roadmap,
-  Work Package, criteri di accettazione, revisione, documentazione corrente e merge.
+- **PM — sdoppiato dal 10 settembre 2026** (Codex non è più disponibile):
+  - **PM-autore**, tenuto da Claude in sessione col PO: fonti, traduzione degli input PO,
+    roadmap, Work Package, criteri di accettazione, documentazione corrente. Non approva
+    mai il proprio pacchetto — lo sottopone al PO prima che il lavoro cominci;
+  - **PM-revisore**, un **agente separato avviato da zero su ogni consegna**: giudizio
+    criterio per criterio, con i criteri e gli artefatti in mano **prima** del rapporto
+    del DEV;
+  - **il merge su `main` è del PO.**
+
+  Le regole che lo rendono avversariale: `docs/governance/OPERATING_MODEL.md` §1.2.1.
 - **DEV — Claude:** implementazione, test, artefatti e proposte tecniche reversibili
   dentro il Work Package. Non deduce requisiti dagli esempi e non decide regole MEP.
+  Quando indossa il cappello del PM-autore lo dichiara.
 
 ## Ordine di lettura DEV
 
