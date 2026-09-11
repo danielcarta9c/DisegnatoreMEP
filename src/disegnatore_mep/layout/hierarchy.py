@@ -95,14 +95,44 @@ def weight_of(level: Level) -> int:
 
 
 def _is_a_machine(definition: ComponentDefinition) -> bool:
-    """Un apparecchio, non un raccordo e non qualcosa che pende da uno stacco.
+    """Un apparecchio: non un raccordo, non un multivia, non un appeso.
 
-    E' la distinzione che il catalogo dichiara gia': un raccordo lo si
-    attraversa e basta, un accessorio appeso e' un capolinea che non porta da
-    nessuna parte. Cio' che resta e' una macchina, e sono le macchine che la
-    gerarchia unisce.
+    E' la distinzione che il catalogo dichiara gia'. Un raccordo lo si
+    attraversa e basta. Un **multivia** lo si attraversa stato per stato — e'
+    un organo sulla tubazione, non una destinazione: contarlo come macchina
+    spezzava il tronco proprio dove il tronco passa, ed e' il difetto che il PO
+    ha visto sulla tavola 2, dove la mandata dalla pompa di calore al puffer
+    non risultava nemmeno autostrada perche' in mezzo c'e' una deviatrice. Un
+    accessorio appeso e' un capolinea che non porta da nessuna parte. Cio' che
+    resta e' una macchina, e sono le macchine che la gerarchia unisce.
     """
-    return not definition.is_a_fitting and not definition.attaches_on_a_branch
+    return (
+        not definition.is_a_fitting
+        and not definition.attaches_on_a_branch
+        and not definition.hydraulic_states
+    )
+
+
+def _through(definition: ComponentDefinition, port_id: str) -> frozenset[str]:
+    """Le porte che comunicano con questa **dentro** il pezzo.
+
+    Un multivia lo dice il catalogo, stato per stato: l'ingresso di una
+    deviatrice comunica con un ramo oppure con l'altro, e i due rami non
+    comunicano mai fra loro. Un raccordo si attraversa fra tutti i propri
+    attacchi del percorso. Tutto il resto non si attraversa: una macchina e' il
+    capolinea con cui ci si allinea, e un accessorio appeso resta un capolinea
+    anche con due porte — il ponte del riempimento tocca due reti, e chi lo
+    attraversasse leggerebbe come tronco una tubazione di servizio.
+    """
+    if definition.hydraulic_states:
+        return definition.linked_ports(port_id)
+    if definition.is_a_fitting:
+        return frozenset(
+            port.id
+            for port in definition.ports
+            if port.id != port_id and not port.off_the_run
+        )
+    return frozenset()
 
 
 _WEIGHT.update(
@@ -166,53 +196,54 @@ def hierarchy_of(
     machines = {key for key, value in definitions.items() if _is_a_machine(value)}
     spine = spine_machines(project, catalog)
 
-    edges: dict[str, list[tuple[str, TrunkKey]]] = {}
+    Attacco = tuple[str, str]
+    edges: dict[Attacco, list[tuple[Attacco, TrunkKey]]] = {}
     for trunk in trunks:
-        first, second = trunk.start.component_id, trunk.end.component_id
+        first = (trunk.start.component_id, trunk.start.port_id)
+        second = (trunk.end.component_id, trunk.end.port_id)
         edges.setdefault(first, []).append((second, trunk.connection_ids))
         edges.setdefault(second, []).append((first, trunk.connection_ids))
 
-    def machines_beyond(start: str, without: TrunkKey) -> frozenset[str]:
-        """Le macchine raggiunte da `start` senza attraversarne una, e senza
-        rientrare per la tratta da cui si sta guardando.
+    def machines_beyond(entry: Attacco, without: TrunkKey) -> frozenset[str]:
+        """Le macchine raggiunte entrando da quell'attacco, senza attraversarne
+        una e senza rientrare per la tratta da cui si sta guardando.
 
-        **Si attraversano soltanto i raccordi.** Un accessorio appeso e' un
-        capolinea anche quando ha due porte: il gruppo di riempimento, da
-        DRAW-006-R1, e' un ponte fra la rete fredda e il circuito, e chi lo
-        attraversasse leggerebbe come tronco fra due macchine di spina uno
-        stacco che di spina non ha niente — collegando per giunta due reti che
-        sulla tavola non si toccano.
+        Si cammina **per attacchi**, non per pezzi: dentro un multivia si passa
+        solo dove il catalogo dichiara che si passa, e i due rami di una
+        deviatrice non comunicano mai fra loro.
         """
-        if start in machines:
-            return frozenset({start})
-        if not definitions[start].is_a_fitting:
-            # Il capolinea vale anche quando ci si parte, non solo quando ci si
-            # arriva: guardando dal ponte del riempimento verso il proprio
-            # stacco, dall'altra sua porta non si esce.
+        if entry[0] in machines:
+            return frozenset({entry[0]})
+        if not _through(definitions[entry[0]], entry[1]):
             return frozenset()
-        seen = {start}
+        seen = {entry}
         found: set[str] = set()
-        frontier = [start]
+        frontier = [entry]
         while frontier:
-            onward: list[str] = []
-            for node in frontier:
-                for other, key in edges.get(node, ()):
-                    if key == without or other in seen:
-                        continue
-                    seen.add(other)
-                    if other in machines:
-                        found.add(other)
-                        continue
-                    if not definitions[other].is_a_fitting:
-                        continue
-                    onward.append(other)
+            onward: list[Attacco] = []
+            for component_id, port_id in frontier:
+                for inner in _through(definitions[component_id], port_id):
+                    for other, key in edges.get((component_id, inner), ()):
+                        if key == without or other in seen:
+                            continue
+                        seen.add(other)
+                        if other[0] in machines:
+                            found.add(other[0])
+                            continue
+                        if not _through(definitions[other[0]], other[1]):
+                            continue
+                        onward.append(other)
             frontier = onward
         return frozenset(found)
 
     levels: dict[TrunkKey, Level] = {}
     for trunk in trunks:
-        here = machines_beyond(trunk.start.component_id, trunk.connection_ids)
-        there = machines_beyond(trunk.end.component_id, trunk.connection_ids)
+        here = machines_beyond(
+            (trunk.start.component_id, trunk.start.port_id), trunk.connection_ids
+        )
+        there = machines_beyond(
+            (trunk.end.component_id, trunk.end.port_id), trunk.connection_ids
+        )
         if here & spine and there & spine:
             levels[trunk.connection_ids] = Level.AUTOSTRADA
         elif here and there:
