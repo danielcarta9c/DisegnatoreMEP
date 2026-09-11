@@ -647,11 +647,20 @@ class Improver:
         # `SheetCost`. Una tratta che il tronco non e' riuscito a raddrizzare
         # non diventa per questo libera di peggiorare: il vincolo e' che il
         # numero di quelle dritte non cali mai.
-        self.autostrade: list[Trunk] = [
-            trunk
-            for trunk in self.trunks
-            if self.hierarchy[trunk.connection_ids] is Level.AUTOSTRADA
-        ]
+        # Senza una fase del tronco alle spalle non c'e' nessuna forma da
+        # conservare, e il ciclo torna quello di prima: e' cosi' che le prove
+        # che costruiscono un `Improver` da sole continuano a misurare cio' che
+        # misuravano, ed e' anche il ripiego di `compose_sheet` quando la
+        # catena a fasi non consegna una tavola instradabile.
+        self.autostrade: list[Trunk] = (
+            [
+                trunk
+                for trunk in self.trunks
+                if self.hierarchy[trunk.connection_ids] is Level.AUTOSTRADA
+            ]
+            if spine_layout is not None
+            else []
+        )
         self._memo: dict[Signature, Measured | None] = {}
 
     # -- letture del manifesto -------------------------------------------------
@@ -2293,7 +2302,7 @@ class Improver:
         # asse, invece, non la tocca — e resta permesso, perche' e' cosi' che
         # una strada di servizio trova la propria strada senza chiedere al
         # tronco di piegarsi.
-        if self.phase is Phase.SERVIZIO:
+        if self.phase is Phase.SERVIZIO and self.spine_layout is not None:
             for item, placed in move.items():
                 if item not in self.spine:
                     continue

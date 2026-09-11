@@ -14,6 +14,8 @@ La partizione precede il layout: tagliare un disegno gia' disposto spezzerebbe
 circuiti in modo arbitrario (D-028).
 """
 
+from collections.abc import Callable
+
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.model.order import structural_order
@@ -215,15 +217,32 @@ def compose_sheet(
         sheet = settle_sheet(project, list(partition.trunks), base, catalog, grid)
         return sheet.symbols, sheet.routes
 
-    try:
-        placed, broken = settled(improved)
-    except LayoutError:
-        # Il miglioramento non compra mai il fallimento della tavola: il ciclo
-        # scarta le pose che non si instradano, ma il suo tetto di prove puo'
-        # fermarlo su una posa che non ha ancora finito di sistemare. Allora
-        # vale la disposizione di partenza, che e' quella provvista dei propri
-        # rettilinei.
-        placed, broken = settled(first)
+    # Il miglioramento non compra mai il fallimento della tavola: il ciclo
+    # scarta le pose che non si instradano, ma il suo tetto di prove puo'
+    # fermarlo su una posa che non ha ancora finito di sistemare. Si ripiega
+    # allora, in quest'ordine: sulla posa che la fase del tronco ha seminato;
+    # **sul ciclo senza le fasi**, cioe' la tavola che sarebbe uscita prima di
+    # DRAW-008, perche' una fase nuova non puo' togliere una tavola a un
+    # impianto che ce l'aveva; e infine sulla disposizione di partenza, che e'
+    # quella provvista dei propri rettilinei.
+    found: tuple[list[PlacedSymbol], list[RoutedTrunk]] | None = None
+    ripieghi: tuple[Callable[[], list[PlacedSymbol]], ...] = (
+        lambda: improved,
+        lambda: seeded,
+        lambda: improve_sheet(project, partition, catalog, frame, first, inline_ids),
+        lambda: first,
+    )
+    for base in ripieghi:
+        try:
+            found = settled(base())
+        except LayoutError:
+            continue
+        break
+    if found is None:
+        # Nessuna delle quattro si instrada: la tavola non esce, e chi chiama
+        # deve vedere il perche' della prima, che e' quella che si voleva.
+        found = settled(improved)
+    placed, broken = found
 
     entries, keys = build_legend(
         project, placed, partition.network_ids, catalog, frame

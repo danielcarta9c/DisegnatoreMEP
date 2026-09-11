@@ -62,6 +62,7 @@ from .partition import SheetPartition
 from .place import (
     ROUTING_MARGIN_MM,
     ROW_GAP_MM,
+    chain_room_of_port_mm,
     hanging_children,
     inline_room_mm,
 )
@@ -369,15 +370,31 @@ class _Spine:
             port.face,
         )
 
-    def span_mm(self, trunk: Trunk) -> float:
+    def span_mm(self, trunk: Trunk, horizontal: bool = True) -> float:
         """La campata che questa tratta pretende fra le due porte.
 
-        E' il rettilineo che i suoi accessori in linea occuperanno, e mai meno
-        dello stacco minimo fra due simboli (D-062). E' anche il numero che la
-        fase del corredo allunghera' se il conto risultera' stretto: il tronco
-        si allunga, non si piega (DRAW-008 §B.2).
+        Tre cose la decidono, e si prende la piu' grande: il rettilineo che i
+        suoi accessori in linea occuperanno, lo stacco minimo fra due simboli
+        (D-062), e **il rettilineo che la catena di macchina pretende davanti a
+        ciascuna delle due porte** (I-044). L'ultimo non e' un dettaglio: e'
+        quello che l'instradatore imporra' uscendo dalla porta, e una campata
+        che non lo conta consegna una posa in cui la tratta non si instrada —
+        con una diagnostica che parla di un ostacolo, non di una campata corta.
+
+        E' anche il numero che la fase del corredo allunghera' se il conto
+        risultera' stretto: il tronco si allunga, non si piega (§B.2).
         """
-        want = max(ROW_GAP_MM, self.room.get(trunk.connection_ids, 0.0))
+        catene = max(
+            chain_room_of_port_mm(
+                self.project, self.catalog, self.trunks, ref, horizontal
+            )
+            for ref in (trunk.start, trunk.end)
+        )
+        if catene > 0:
+            # La cella in cui la tratta gira e il bordo del vicino che conta
+            # come cella occupata: due passi in piu', come nella posa.
+            catene += 2 * self.step
+        want = max(ROW_GAP_MM, self.room.get(trunk.connection_ids, 0.0), catene)
         steps = int(want / self.step)
         if want - steps * self.step > _TOLERANCE_MM:
             steps += 1
@@ -660,9 +677,9 @@ class _Spine:
             its_face = self.face(there, its_pose, trunk.end.port_id)
             mine = self.offset(here, my_pose, trunk.start.port_id)
             its = self.offset(there, its_pose, trunk.end.port_id)
-            span = self.span_mm(trunk)
             along = 0 if my_face in _HORIZONTAL_FACES else 1
             across = 1 - along
+            span = self.span_mm(trunk, along == 0)
             self.facing[trunk.connection_ids] = its_face is my_face.opposite
             if its_face is my_face.opposite:
                 same = _Same(here, there, mine[across] - its[across])
