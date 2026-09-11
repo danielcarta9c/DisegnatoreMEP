@@ -103,6 +103,7 @@ from .geometry import (
     run_intrudes_on,
 )
 from .grid import GridSpace, is_on_grid
+from .hierarchy import hierarchy_of, weight_of
 from .inline import SettledSheet, settle_sheet
 from .partition import SheetPartition
 from .place import (
@@ -244,8 +245,15 @@ class SheetCost(NamedTuple):
     """Tratte oltre le tre pieghe (B4)."""
 
     bends: int
+    """Pieghe, **pesate per gerarchia** (DRAW-007 §B): non e' il numero di
+    pieghe della tavola, e' il loro costo. Il numero vero si legge sulla
+    geometria, dove lo leggono le misure di collaudo."""
+
     crossings: int
+    """Incroci, pesati per gerarchia come le pieghe."""
+
     length_mm: float
+    """Millimetri di tubo, pesati per gerarchia come le pieghe."""
 
     fill: float
     """Riempimento dell'area di disegno: spareggio, piu' e' meglio."""
@@ -445,6 +453,10 @@ class Improver:
         self.frame = frame
         self.inline_ids = inline_ids
         self.trunks: list[Trunk] = list(partition.trunks)
+        # La gerarchia della tavola, calcolata una volta sola e letta da qui in
+        # avanti: il costo la pesa, l'obiettivo di allineamento la guarda. Il
+        # conto vive in `hierarchy.py` e in nessun altro posto (DRAW-007 §A.2).
+        self.hierarchy = hierarchy_of(project, catalog, self.trunks)
         self.order = [item.component_id for item in placed]
         self.best: Move = {item.component_id: item for item in placed}
         # L'ordine di scansione e' quello della posa iniziale letta da sinistra
@@ -691,6 +703,11 @@ class Improver:
         crossings = 0
         length_mm = 0.0
         for trunk, route in zip(self.trunks, settled.routes, strict=True):
+            # Il peso della gerarchia (DRAW-007 §B): una piega sul tronco fra le
+            # macchine principali non vale una piega su uno stacco cieco, e con
+            # il conto piatto il ciclo barattava la struttura della tavola per
+            # un totale piu' basso — facendo, correttamente, la cosa sbagliata.
+            weight = weight_of(self.hierarchy[trunk.connection_ids])
             arrival = table[trunk.end.component_id]
             goal, _ = self.port_at(arrival, trunk.end.port_id)
             back = max(
@@ -704,11 +721,14 @@ class Improver:
                 turnback_runs += 1
                 turnback_mm += back
             turns = sum(max(len(segment) - 2, 0) for segment in route.segments)
-            bends += turns
+            bends += turns * weight
+            # Il tetto delle pieghe per tratta resta un **conto**, non un peso:
+            # tre pieghe sono tre pieghe ovunque, e una tratta che le supera e'
+            # fuori regola anche se sta su uno stacco.
             if turns > BENDS_PER_RUN_MAX:
                 long_runs += 1
-            crossings += len(route.crossings)
-            length_mm += sum(
+            crossings += len(route.crossings) * weight
+            length_mm += weight * sum(
                 abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
                 for segment in route.segments
                 for before, after in zip(segment, segment[1:], strict=False)

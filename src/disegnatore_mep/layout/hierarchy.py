@@ -73,6 +73,27 @@ class Level(IntEnum):
     macro-linee parallele»."""
 
 
+_WEIGHT: dict["Level", int] = {}
+"""Riempito sotto, dopo che `Level` esiste. Sta qui, e in nessun altro posto."""
+
+
+def weight_of(level: Level) -> int:
+    """Quanto pesa una piega, un incrocio o un millimetro su quel livello.
+
+    La scala e' 1 / 4 / 16, e il numero che la fissa e' il PO:
+
+        «Si accettano volentieri dieci pieghe in piu' sulle strade secondarie
+        per tenere pulite le due macro-linee.»
+
+    Sedici e' il primo gradino della scala che supera quel dieci: una piega
+    sull'autostrada costa piu' di dieci pieghe di servizio, e il ciclo
+    preferisce sempre spostarla fuori dal tronco. Non e' una costante arbitraria
+    e non e' tarata su una fixture: e' la frase del PO tradotta in un numero, e
+    se il PO la cambia questa e' l'unica riga da toccare.
+    """
+    return _WEIGHT[level]
+
+
 def _is_a_machine(definition: ComponentDefinition) -> bool:
     """Un apparecchio, non un raccordo e non qualcosa che pende da uno stacco.
 
@@ -82,6 +103,15 @@ def _is_a_machine(definition: ComponentDefinition) -> bool:
     gerarchia unisce.
     """
     return not definition.is_a_fitting and not definition.attaches_on_a_branch
+
+
+_WEIGHT.update(
+    {
+        Level.SERVIZIO: 1,
+        Level.DISTRIBUZIONE: 4,
+        Level.AUTOSTRADA: 16,
+    }
+)
 
 
 def spine_machines(project: ProjectModel, catalog: ComponentRegistry) -> frozenset[str]:
