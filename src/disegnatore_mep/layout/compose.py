@@ -30,12 +30,14 @@ from .geometry import (
     SheetGeometry,
 )
 from .grid import GridSpace
+from .hierarchy import hierarchy_of
 from .improve import improve_sheet
 from .inline import settle_sheet
 from .labels import place_labels
 from .legend import build_legend
 from .partition import SheetLink, SheetPartition, partition_project
 from .place import place_sheet
+from .spine import carry_the_rest, lay_the_spine
 from .trunks import Trunk, build_trunks
 
 CROSS_REFERENCE_GAP_MM = 2.5
@@ -194,10 +196,18 @@ def compose_sheet(
 ) -> SheetGeometry:
     grid = GridSpace(origin=frame.drawing_rect_mm, standard=frame.standard)
     first = place_sheet(project, partition, catalog, frame, inline_ids)
+    # **Prima le autostrade** (DRAW-008 §A). La posa del tronco non e' una
+    # rifinitura del ciclo: e' una fase a se', che costruisce la forma invece di
+    # cercarla, e il resto dell'impianto le va dietro. Da qui in avanti la
+    # rettilineita' del tronco e' un vincolo, non una voce di costo.
+    spine = lay_the_spine(project, partition, catalog, frame, first)
+    seeded = carry_the_rest(project, partition, catalog, first, spine)
     # La disposizione serve le linee, non il contrario (D-078): dopo la prima
     # ipotesi di posa, i componenti si spostano dove l'instradamento di prova
     # dice che l'obiettivo intero — pieghe, incroci, lunghezza — migliora.
-    improved = improve_sheet(project, partition, catalog, frame, first, inline_ids)
+    improved = improve_sheet(
+        project, partition, catalog, frame, seeded, inline_ids, spine
+    )
 
     def settled(base: list[PlacedSymbol]) -> tuple[list[PlacedSymbol], list[RoutedTrunk]]:
         """La tavola instradata con gli accessori posati: la stessa che valuta
@@ -269,23 +279,39 @@ def compose_drawing(
     # (DRAW-006-R1, blocco A.2).
     rank = structural_order(project)
 
-    def place_in_line(trunk: Trunk) -> tuple[int, tuple[int, str], tuple[int, str]]:
+    all_trunks = build_trunks(project, inline_ids)
+    levels = hierarchy_of(project, catalog, all_trunks)
+
+    def place_in_line(
+        trunk: Trunk,
+    ) -> tuple[int, int, tuple[int, str], tuple[int, str]]:
         """L'ordine in cui le tratte si instradano.
 
-        Prima quelle che portano una **catena di macchina**: i loro accessori
-        stanno a distanza fissa dalla porta e non scivolano (I-044), quindi o
-        quel posto e' libero o la tavola non esce. Chi puo' spostarsi si
-        instrada dopo e gira attorno. Poi l'ordine strutturale dei capi, che i
-        nomi non decidono.
+        **Prima le autostrade** (DRAW-008, e il PO l'11 settembre: «prima devi
+        disegnare le autostrade»). L'instradamento e' seriale — ogni tratta
+        evita quelle gia' disegnate — quindi l'ordine e' il modo in cui la
+        gerarchia arriva fino all'ultimo anello della catena: chi si instrada
+        prima sceglie la propria strada, chi viene dopo gira attorno. Con le
+        autostrade in coda erano loro a girare attorno agli stacchi.
+
+        A parita' di rango, prima quelle che portano una **catena di
+        macchina**: i loro accessori stanno a distanza fissa dalla porta e non
+        scivolano (I-044), quindi o quel posto e' libero o la tavola non esce.
+        Poi l'ordine strutturale dei capi, che i nomi non decidono.
         """
         ends = sorted(
             (rank.get(ref.component_id, 0), ref.port_id)
             for ref in (trunk.start, trunk.end)
         )
         head, tail = machine_chains(project, catalog, trunk)
-        return (0 if head or tail else 1, ends[0], ends[1])
+        return (
+            -int(levels[trunk.connection_ids]),
+            0 if head or tail else 1,
+            ends[0],
+            ends[1],
+        )
 
-    trunks = sorted(build_trunks(project, inline_ids), key=place_in_line)
+    trunks = sorted(all_trunks, key=place_in_line)
     partitions = partition_project(project, trunks)
     return DrawingGeometry(
         project_id=project.metadata.project_id,
