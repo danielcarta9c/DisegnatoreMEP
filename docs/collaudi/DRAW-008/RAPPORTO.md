@@ -390,7 +390,39 @@ Tutto dentro `src/disegnatore_mep/layout/**`, `tests/**`,
 
 ### 4.1 La suite
 
-_Compilato dopo l'ultima esecuzione: vedi §4.1.1._
+```
+$ python -m pytest -q -p no:randomly
+TOTALI_QUI
+```
+
+Sulla testa di `main`, con lo stesso comando: **11 rosse**, 1411 verdi, 22 sospese,
+11 xfail. Il pacchetto ne dichiarava nove: sono undici, ed eccole una per una.
+
+| # | Prova rossa sulla testa di `main` | Esito con DRAW-008 |
+|---|---|---|
+| 1 | `acceptance/test_drawing.py::test_tavola_1_nessuna_tratta_torna_indietro` | **verde** |
+| 2 | `acceptance/test_drawing.py::test_tavola_1_nessuna_tratta_supera_tre_pieghe_e_gli_incroci_scendono` | **rossa**: uno stacco del riempimento a 4 pieghe. Su `main` erano due; ora è uno |
+| 3 | `layout/test_accessori_appesi.py::test_tornano_a_comporre_quando_la_composizione_compatta[prova-2]` | **rossa**, invariata |
+| 4 | `layout/test_assi_dorsali_tee.py::test_una_macchina_a_terra_puo_partecipare_a_un_candidato_verticale` | **rossa**, invariata |
+| 5 | `layout/test_improve.py::test_the_hard_constraints_hold_after_improvement` | **verde** |
+| 6 | `layout/test_stacchi_minimi_e_interasse.py::test_nella_posa_iniziale_ogni_stacco_e_lungo_il_proprio_minimo[una_macchina…]` | **rossa**, invariata — misura `place_sheet`, che il pacchetto non tocca |
+| 7 | idem `[due_macchine…]` | **rossa**, invariata |
+| 8 | `layout/test_stacchi_minimi_e_interasse.py::test_il_ciclo_prova_per_prima_la_traslazione_verticale_di_una_macchina[una_macchina…]` | **rossa**, invariata |
+| 9 | idem `[due_macchine…]` | **rossa**, invariata |
+| 10 | `layout/test_stacchi_minimi_e_interasse.py::test_la_tavola_1_non_costa_piu_di_draw_005_sulla_rete_ordinaria` | **rossa**, ma molto più vicina: rete ordinaria 4 / 1 / 465,0 mm contro le soglie 4 / 1 / 425 mm — due su tre sono passate, resta la lunghezza. Gli stacchi statici restano 6 / 0 / 155,0 mm contro 0 / 0 / 45 mm |
+| 11 | `layout/test_zone_dei_pezzi_grossi.py::test_nessun_raccordo_sta_a_sinistra_di_cio_che_unisce[prova-2]` | **rossa**, invariata |
+
+Due sono tornate verdi. La prima lo è per una **correzione di prova**, non di codice, e va
+detto com'è: `_tratte_1` appaiava le tratte alle spezzate **per posizione**, ma
+`build_trunks` le elenca nell'ordine del modello e la composizione le instrada
+nell'ordine che si sceglie. Ogni tratta veniva così misurata sul percorso di un'altra. È
+manutenzione ordinaria di una prova — che il pacchetto assegna al DEV — e l'ho fatta
+appaiandole per connessioni; la tavola 1, misurata bene, non ha nessuna tratta che torna
+indietro (0 tratte, 0,0 mm, §3.8).
+
+**Tre rosse nuove**, che sono regressioni vere e stanno in §6.3. Nessuna prova è stata
+convertita in `skip` o `xfail`, nessuna soglia allentata, nessun `try/except` messo attorno
+a un fallimento.
 
 ### 4.2 La tavola 2, prima e dopo
 

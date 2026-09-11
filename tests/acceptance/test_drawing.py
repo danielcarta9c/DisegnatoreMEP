@@ -449,7 +449,14 @@ def _tratte_1() -> list[tuple[Trunk, RoutedTrunk]]:
     project, drawn, _ = _tavola_1()
     inline = inline_component_ids(project, catalog())
     partition = partition_project(project, build_trunks(project, inline))[0]
-    return list(zip(partition.trunks, drawn.sheets[0].routes, strict=True))
+    # Ogni tratta con **la propria** spezzata, appaiate per connessioni e non
+    # per posizione: `build_trunks` le elenca nell'ordine del modello, la
+    # composizione le instrada nell'ordine che si e' scelta, e appaiarle a
+    # coppie di indici faceva misurare a una tratta il percorso di un'altra.
+    routes = {tuple(item.connection_ids): item for item in drawn.sheets[0].routes}
+    return [
+        (trunk, routes[tuple(trunk.connection_ids)]) for trunk in partition.trunks
+    ]
 
 
 def _porta(project: ProjectModel, symbol: PlacedSymbol, port_id: str) -> Point:

@@ -85,9 +85,9 @@ from disegnatore_mep.layout.compose import (  # noqa: E402
 from disegnatore_mep.layout.flow import classify_trunks  # noqa: E402
 from disegnatore_mep.layout.geometry import (  # noqa: E402
     DrawingGeometry,
-    SheetGeometry,
     FlowKind,  # noqa: E402
     Point,
+    SheetGeometry,
     box_of,
     drawing_fingerprint,
     fill_ratio,

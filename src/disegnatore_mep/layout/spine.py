@@ -701,8 +701,22 @@ class _Spine:
                 continue
             # Il gomito: una distanza minima lungo il mio asse e una lungo il
             # suo, cosi' che la spezzata giri una volta sola e poi entri dritta.
+            # Ciascuna chiede la campata **del proprio asse**: il rettilineo che
+            # una catena di macchina pretende non e' lo stesso in orizzontale e
+            # in verticale, e chiederlo una volta sola per tutt'e due avrebbe
+            # dato a una delle due meno di quel che l'instradatore le imporra'.
             demand(_apart(here, there, my_face, mine[along], its[along], span), along)
-            demand(_apart(there, here, its_face, its[theirs], mine[theirs], span), theirs)
+            demand(
+                _apart(
+                    there,
+                    here,
+                    its_face,
+                    its[theirs],
+                    mine[theirs],
+                    self.span_mm(trunk, theirs == 0),
+                ),
+                theirs,
+            )
         return (same_x, apart_x, same_y, apart_y)
 
     def _starts_after(self, here: str, there: str, index: int) -> bool:
