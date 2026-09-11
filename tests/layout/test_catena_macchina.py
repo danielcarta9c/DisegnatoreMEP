@@ -57,6 +57,7 @@ from disegnatore_mep.model.project import (
 )
 from disegnatore_mep.model.types import PlantRegime, PortFlow
 from disegnatore_mep.rules.apply import saturate
+from disegnatore_mep.rules.proposal import GapReason
 from disegnatore_mep.rules.registry import RuleRegistry
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -454,8 +455,18 @@ CASI_IDS = [item.__name__ for item in CASI]
 
 @cache
 def _composed(index: int) -> tuple[ProjectModel, DrawingGeometry]:
+    """Gli impianti di questo file sono costruiti per misurare **le catene di
+    macchina**, e uno dei due non dichiara nessuna rete di acqua fredda.
+
+    Da DRAW-006-R1 il gruppo di riempimento e' un ponte fra due reti: senza una
+    sorgente fredda dichiarata non si posa appeso a nulla e resta una domanda al
+    progettista, che e' il comportamento voluto. La guardia si stringe percio'
+    su **quella** domanda invece di sparire: qualunque altro punto aperto e' un
+    difetto, e questo file lo deve vedere.
+    """
     done, _, gaps = saturate(CASI[index](), catalog(), rules())
-    assert not gaps
+    altri = [gap for gap in gaps if gap.reason is not GapReason.NO_SOURCE_NETWORK]
+    assert not altri, [(gap.rule_id, gap.reason.value) for gap in altri]
     return done, compose_drawing(done, catalog(), NOVE_C_A3)
 
 
