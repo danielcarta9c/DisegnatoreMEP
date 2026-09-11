@@ -1853,8 +1853,20 @@ class Improver:
         chained = self._chain_moves(leader)
         ported = self._port_moves(leader)
         spined = self._spine_moves(leader) if self.refining else []
+        assi = self._axis_moves(leader, only_spine=not self.refining)
         roomy: list[tuple[str, Move]] = []
-        for kind, moves in (("dorsale", spined), ("catena", chained), ("porta", ported)):
+        # L'asse entra fra le mosse che sanno **fare spazio** (PO, 11 settembre
+        # 2026): «mi sembra evidente che anche la seconda PDC la puoi spostare;
+        # non c'e' nessuna distanza fissa fra le due». Una posa che allinea la
+        # prima macchina e finisce addosso alla seconda non e' una ragione per
+        # scartarla: e' una ragione per spostare anche la seconda, di quanto
+        # serve a lei e non per forza di quanto si e' mossa la prima.
+        for kind, moves in (
+            ("dorsale", spined),
+            ("catena", chained),
+            ("porta", ported),
+            ("asse", assi),
+        ):
             for move in moves:
                 roomy.extend(
                     (f"{kind}+spazio", extra)
@@ -1866,7 +1878,7 @@ class Improver:
                 *(("dorsale", move) for move in spined),
                 *(("catena", move) for move in chained),
                 *(("porta", move) for move in ported),
-                *(("asse", move) for move in self._axis_moves(leader)),
+                *(("asse", move) for move in assi),
                 *roomy,
                 *(("colonna", move) for move in self._column_moves(leader)),
                 *(("gruppo", move) for move in self._shift_moves(leader)),
@@ -1886,7 +1898,7 @@ class Improver:
                 # attorno a una posa che non le prevedeva. Qui la fase prima
                 # guarda **solo le macchine di spina**: l'asse del tronco e' una
                 # struttura, il resto e' contorno e si sistema dopo.
-                *(("asse", move) for move in self._axis_moves(leader, only_spine=True)),
+                *(("asse", move) for move in assi),
                 *(("catena", move) for move in chained),
                 *(("porta", move) for move in ported),
                 *roomy,
@@ -1973,8 +1985,17 @@ class Improver:
                 return False
             if placed.right_mm > self.area.right_mm + _TOLERANCE_MM:
                 return False
-            if placed.bottom_mm > self.levels.ground_mm + _TOLERANCE_MM:
-                return False
+            # La «linea di terra» non e' un vincolo (PO, 11 settembre 2026):
+            #
+            #     «Non c'e', non esiste. E' uno schema quello che disegniamo,
+            #     non c'e' nessun sopra e sotto linea di terra o simile.»
+            #
+            # Il segno non si disegna piu' da DRAW-004, ma la regola era
+            # rimasta: niente poteva scendere sotto l'83% dell'altezza del
+            # foglio, e quel pavimento invisibile impediva all'accumulo di
+            # scendere — perche' il suo scarico ci arrivava contro — e quindi
+            # impediva l'allineamento del tronco. Il solo limite e' il foglio,
+            # ed e' controllato sopra.
             # Lo stesso stacco del posizionamento fra due simboli di figure
             # diverse (D-062); dentro la stessa figura basta non sovrapporsi.
             for other_id in self.order:
