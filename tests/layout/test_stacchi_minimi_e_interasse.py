@@ -28,7 +28,7 @@ from pathlib import Path
 import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import ComponentTrait
+from disegnatore_mep.catalog.schema import ComponentDefinition, ComponentTrait
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.canonical import canonical_json
@@ -61,7 +61,7 @@ from disegnatore_mep.model.project import (
     ProjectMetadata,
     ProjectModel,
 )
-from disegnatore_mep.model.types import PlantRegime
+from disegnatore_mep.model.types import PlantRegime, PortFlow
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.validation.geometry import validate_drawing_geometry
@@ -324,9 +324,23 @@ def test_nella_posa_iniziale_ogni_stacco_e_lungo_il_proprio_minimo(index: int) -
         if parent is None or child is None:
             continue
         holder, hung = placed[parent.component_id], placed[child.component_id]
-        if len(catalog().get(next(item.definition_id for item in project.components if item.id == hung.component_id)).ports) != 1:
+        # Chi pende lo dice il **catalogo**, non il numero delle porte. Da
+        # DRAW-006-R1 il gruppo di riempimento e' un ponte a due porte che
+        # pende lo stesso: contando le porte, questa lettura scambiava il
+        # raccordo con l'accessorio e misurava lo stacco al contrario.
+        if not _definition(project, hung.component_id).attaches_on_a_branch:
             holder, hung = hung, holder
             parent, child = child, parent
+        appeso = _definition(project, hung.component_id)
+        if len({port.medium for port in appeso.ports}) > 1:
+            # Un ponte ha i due capi su due linee diverse: stringerlo al minimo
+            # su tutt'e due e' un vincolo che nessuna posa puo' rispettare. Lo
+            # stacco che si misura e' quello del capo su cui e' montato, e
+            # l'altro — quello con cui pesca dall'altra rete — non e' uno
+            # stacco statico: e' la tubazione che unisce le due reti.
+            porta = next(item for item in appeso.ports if item.id == child.port_id)
+            if porta.flow is PortFlow.IN:
+                continue
         stub = _port(project, holder, parent.port_id)
         own = _port(project, hung, child.port_id)
         gap = max(abs(own[0] - stub[0]), abs(own[1] - stub[1]))
@@ -516,6 +530,13 @@ def test_traslare_una_macchina_non_cambia_il_suo_riquadro_ne_stacca_cio_che_le_p
 # La tavola 1, letta come fixture di regressione: la rete ordinaria non costa
 # piu' di DRAW-005 — i tre numeri vivono solo qui
 # ---------------------------------------------------------------------------
+
+
+def _definition(project: ProjectModel, component_id: str) -> ComponentDefinition:
+    """La voce di catalogo di un pezzo dell'impianto."""
+    return catalog().get(
+        next(item.definition_id for item in project.components if item.id == component_id)
+    )
 
 
 def _ordinary_and_static(drawing: DrawingGeometry) -> tuple[dict[str, float], dict[str, float]]:
