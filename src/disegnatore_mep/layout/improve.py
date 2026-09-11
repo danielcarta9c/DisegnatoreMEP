@@ -103,7 +103,7 @@ from .geometry import (
     run_intrudes_on,
 )
 from .grid import GridSpace, is_on_grid
-from .hierarchy import hierarchy_of, weight_of
+from .hierarchy import hierarchy_of, spine_machines, weight_of
 from .inline import SettledSheet, settle_sheet
 from .partition import SheetPartition
 from .place import (
@@ -457,6 +457,7 @@ class Improver:
         # avanti: il costo la pesa, l'obiettivo di allineamento la guarda. Il
         # conto vive in `hierarchy.py` e in nessun altro posto (DRAW-007 §A.2).
         self.hierarchy = hierarchy_of(project, catalog, self.trunks)
+        self.spine = spine_machines(project, catalog)
         self.order = [item.component_id for item in placed]
         self.best: Move = {item.component_id: item for item in placed}
         # L'ordine di scansione e' quello della posa iniziale letta da sinistra
@@ -1625,7 +1626,7 @@ class Improver:
             out.extend(self._composed_with(move, (leader, mate)))
         return out
 
-    def _axis_moves(self, leader: str) -> list[Move]:
+    def _axis_moves(self, leader: str, only_spine: bool = False) -> list[Move]:
         """Gli assi fra le porte, coordinati (DRAW-004, DRAW-006-R1 blocco B).
 
         Per ogni coppia di porte che il fluido collega — anche attraverso un
@@ -1649,8 +1650,12 @@ class Improver:
         # coppie chiedono. Uno scostamento condiviso da due coppie e' una mossa
         # sola che le allinea tutte e due.
         wanted: dict[tuple[str, bool], list[float]] = {}
+        if only_spine and leader not in self.spine:
+            return []
         for pair in self.linked_peers(leader):
             if pair.peer_id not in self.best:
+                continue
+            if only_spine and pair.peer_id not in self.spine:
                 continue
             anchor, face = self.port_at(self.best[pair.peer_id], pair.peer_port)
             own, _ = self.port_at(me, pair.my_port)
@@ -1662,24 +1667,38 @@ class Improver:
             if not any(abs(gap - item) <= _TOLERANCE_MM for item in found):
                 found.append(gap)
         for (peer_id, horizontal), gaps in wanted.items():
-            theirs = [item for item in self.column_of(peer_id) if item not in mine]
-            if not theirs:
-                continue
-            for gap in gaps:
-                # La colonna del pari sul mio asse.
-                out.append(self._shifted_units(theirs, not horizontal, gap))
-                # La mia colonna sull'asse del pari.
-                out.append(self._shifted_units(mine, not horizontal, -gap))
-                # Tutte e due su un asse comune: io di mezza distanza, sul
-                # passo, e il pari di quanto resta.
-                half = round(-gap / 2 / self.step) * self.step
-                if half != 0.0 and half != -gap:
-                    out.append(
-                        {
-                            **self._shifted_units(mine, not horizontal, half),
-                            **self._shifted_units(theirs, not horizontal, gap + half),
-                        }
-                    )
+            # Due granularita', e si provano tutt'e due (DRAW-007 §C.2). La
+            # colonna e' cio' che il ciclo sapeva muovere fino a DRAW-006-R1, e
+            # trascina pezzi che con questa coppia di porte non c'entrano: paga
+            # contorno estraneo, e per quel contorno il costo la respinge. La
+            # **macchina col proprio corredo** e' la mossa che un disegnatore
+            # fa davvero, e non paga niente che non sia suo. Nessuna delle due
+            # e' una regola: decide il costo della tavola.
+            grane = [
+                (mine, [item for item in self.column_of(peer_id) if item not in mine]),
+                (
+                    list(self.unit_of(leader)),
+                    [item for item in self.unit_of(peer_id) if item not in mine],
+                ),
+            ]
+            for mia, loro in grane:
+                if not loro:
+                    continue
+                for gap in gaps:
+                    # La sua parte sul mio asse.
+                    out.append(self._shifted_units(loro, not horizontal, gap))
+                    # La mia sull'asse del pari.
+                    out.append(self._shifted_units(mia, not horizontal, -gap))
+                    # Tutte e due su un asse comune: io di mezza distanza, sul
+                    # passo, e il pari di quanto resta.
+                    half = round(-gap / 2 / self.step) * self.step
+                    if half != 0.0 and half != -gap:
+                        out.append(
+                            {
+                                **self._shifted_units(mia, not horizontal, half),
+                                **self._shifted_units(loro, not horizontal, gap + half),
+                            }
+                        )
         return out
 
     def _tee_moves(self, leader: str) -> list[Move]:
@@ -1859,6 +1878,15 @@ class Improver:
         else:
             generated = [
                 *(("interasse", move) for move in self._lift_moves(leader)),
+                # L'allineamento del tronco entra **nella posa**, non solo nella
+                # rifinitura (DRAW-007 §C.1). Fino a DRAW-006-R1 le candidate di
+                # asse nascevano soltanto a rifinitura, cioe' quando la
+                # disposizione era gia' decisa: si chiedeva al ciclo di
+                # raddrizzare due macro-linee dopo aver costruito la tavola
+                # attorno a una posa che non le prevedeva. Qui la fase prima
+                # guarda **solo le macchine di spina**: l'asse del tronco e' una
+                # struttura, il resto e' contorno e si sistema dopo.
+                *(("asse", move) for move in self._axis_moves(leader, only_spine=True)),
                 *(("catena", move) for move in chained),
                 *(("porta", move) for move in ported),
                 *roomy,
