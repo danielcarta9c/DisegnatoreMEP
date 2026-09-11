@@ -61,10 +61,12 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
   525 mm, zero backtracking; simboli e contenuto critici corretti.
 - `DRAW-005-R1` è stato fuso con la PR #21; `DRAW-006` e `DRAW-006-R1` sono stati
   consegnati sulla PR #24, in attesa di verifica del PM.
-- **Chi tocca posa, costo o routing legge prima**
-  `docs/retrospectives/2026-09-10-retro-draw006r1.md`: la tavola ha una gerarchia —
-  dorsale contro strade secondarie — che il costo di posa oggi non conosce (input I-057
-  e I-058).
+- **Chi tocca posa, costo o routing legge prima due documenti**, in quest'ordine:
+  `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md` — l'ordine delle decisioni che il
+  PO ha fissato: prima le autostrade e dritte, poi il corredo con lo stretch invece della
+  piega, poi le strade di servizio — e
+  `docs/retrospectives/2026-09-10-retro-draw006r1.md`, che dice come ci siamo arrivati
+  (input I-057, I-058, I-061, I-062, I-063).
 - Stato e rischi: `PROJECT_STATE.md`.
 - Roadmap: `docs/plans/2026-09-03-release-plan.md`.
 - Architettura: `docs/SKILL.md` e ADR 0005.

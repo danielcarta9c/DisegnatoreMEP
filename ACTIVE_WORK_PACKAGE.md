@@ -1,208 +1,123 @@
-# ACTIVE WORK PACKAGE — DRAW-007
+# ACTIVE WORK PACKAGE — DRAW-008
 
+**Titolo:** La posa a fasi — prima le autostrade
 **Assegnato da:** PM-autore (Claude, in sessione col PO — `OPERATING_MODEL.md` §1.2.1)
 **Assegnato a:** DEV
-**Data:** 2026-09-10
+**Data:** 2026-09-11
+**Stato:** APPROVATO DAL PO — architettura confermata in sessione l'11 settembre 2026
 **Release:** 0.3 — generalizzazione, revisione della tavola 2
-**Stato:** APPROVATO DAL PO — 2026-09-10, con la primitiva del §A.1 scelta dal PO fra tre
-**Ramo da riutilizzare:** `claude/draw-006-tavola2-semantica-v4n8o5`
-**PR da aggiornare:** #24
-**Commit di partenza:** `e415dc0`
+**Ramo:** `claude/draw-008-posa-a-fasi`
+**Commit di partenza:** la testa di `main` (DRAW-007 è fuso)
 **Fixture grafica principale:** impianto 2; impianto 1 come regressione automatica
+
+> **Leggere prima, e per intero:** `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`.
+> Questo pacchetto ne è l'attuazione e non lo ripete.
 
 ---
 
 ## Contesto
 
-`DRAW-006-R1` ha chiuso i quattro difetti semantici e ha **peggiorato la geometria**: la
-rete ordinaria della tavola 2 è passata da 7 pieghe / 2 incroci / 670 mm a 12 / 8 / 785 mm,
-la tavola 1 è uscita dalle proprie soglie, e tredici prove sono rimaste rosse. Il rapporto
-di collaudo attribuiva il fatto a un ciclo greedy fermo in un ottimo locale. **Era una
-diagnosi sbagliata**, ed è stata corretta dalla revisione incrociata del 10 settembre e dal
-riscontro del PO:
+DRAW-007 ha dato alla tavola una **gerarchia** — autostrada, distribuzione, servizio — e
+l'ha messa nel costo. Non è bastato, e il perché è architetturale: il ciclo è un greedy
+globale, quindi ogni proprietà del disegno è una voce di costo che si compra e si vende.
+In poche ore la stessa serie di modifiche ha reso buona la tavola 1 e ha fatto smettere di
+uscire la tavola 2.
 
-> «Le tubazioni che vanno alle macchine principali sono l'autostrada, e su quelle i costi
-> dovrebbero essere ancora maggiori. Oggi nel nostro router non abbiamo distinzione tra
-> autostrada principale e strade secondarie: tutto è principale ma non è così.»
+Il PO ha dato l'ordine delle decisioni: **prima le autostrade, dritte; poi il corredo, e
+se non ci sta si allunga il tronco invece di piegarlo; poi le strade di servizio, dove
+qualche curva si accetta.** La funzione di costo resta e ottimizza dentro ciascuna fase.
 
-Il costo di posa è **piatto**: una piega sulla dorsale generatore–accumulo pesa quanto una
-piega sullo stacco del manometro. Con quel criterio il ciclo respinge un allineamento che
-costa tre pieghe di contorno, e lo fa **correttamente** — sta ottimizzando la cosa
-sbagliata. La stessa causa spiega la prova rossa sulle zone non impilate, dove il ciclo
-migliora il totale (11 pieghe contro 12, 437,5 mm contro 467,5) barattando la struttura
-della tavola.
+**Stato di partenza, dichiarato:** sulla testa di `main` la **tavola 2 non esce** — il
+preflight trova un rilievo bloccante (`RUN_OVERSHOOTS_ITS_PORT`) e una tavola con un
+bloccante non si scrive (D-063). La tavola 1 esce ed è la migliore mai prodotta: rete
+ordinaria 6 pieghe, 3 incroci, 550,0 mm; zero pieghe su tutte e otto le tratte di
+autostrada; accumulo e PDC-master con quattro porte sullo stesso asse. Nove prove di
+geometria sono rosse. **Non è un difetto da nascondere: è il punto di partenza.**
 
-Input del PO collegati: **I-056**, **I-057**, **I-058**. Retrospettiva che li motiva:
-`docs/retrospectives/2026-09-10-retro-draw006r1.md`.
+## A. La fase del tronco
 
-**I-059 — lo spessore del tratto per gerarchia — è fuori da questo pacchetto** e sarà
-`DRAW-008`: è rendering, dipende da questo ma non lo condiziona.
+1. Si posano le sole **macchine di spina** (`layout/hierarchy.spine_machines`) e si
+   instrada la sola **autostrada** (`layout/hierarchy.Level.AUTOSTRADA`).
+2. L'obiettivo della fase è una **forma**, non un costo: ogni tratta del tronco è un
+   rettilineo. Dove il tronco si biforca, uno dei due rami resta sull'asse principale e
+   l'altro se ne stacca; resta sull'asse il ramo verso l'accumulo maggiore.
+3. Spostare una macchina costa zero: la fase ha tutta la libertà che le serve.
+4. Al termine la rettilineità del tronco diventa un **vincolo duro**. Va dove stanno «i
+   vincoli che nessun guadagno compra» (`Improver.is_valid`), non fra le voci di
+   `SheetCost`.
 
----
+## B. La fase del corredo
 
-## A. La gerarchia è una grandezza del grafo
+1. Valvole, filtri, raccordi e accessori in linea entrano **dentro** il tronco già posato.
+2. Dove non ci stanno, il tronco **si allunga**: due macchine di spina si allontanano
+   lungo l'asse e ciò che sta in mezzo le segue. È una **mossa nuova** — oggi il ciclo
+   muove pezzi, non allunga tratte — e costa zero, come ogni spostamento di macchina.
+3. Piegare il tronco per far posto a un organo è **vietato**, non caro.
 
-> **Nota del PM, 2026-09-10, seconda stesura.** La prima stesura diceva «quanta parte
-> dell'impianto dipende da quella tratta». Il DEV l'ha prototipata prima di scrivere
-> codice, sulle due tavole vere, e **la misura collassa**: su un circuito chiuso il
-> cammino a valle rientra su sé stesso, quindi ogni tratta dell'anello raggiunge ogni
-> utilizzatore. Ventuno tratte su ventidue prendono lo stesso peso sulla tavola 1,
-> ventuno su ventitré sulla tavola 2. Non è una toppa mancante: è la primitiva sbagliata.
-> Il PO ha scelto fra tre alternative quella qui sotto. Il prototipo e il suo esito
-> restano nel rapporto di consegna.
+## C. La fase delle strade di servizio
 
-1. La gerarchia di una tratta si **calcola** dal grafo, non si elenca, e nasce dal
-   **tronco fra le macchine principali**:
-   - **macchine di spina** — le macchine di rango più alto della rete: la macchina di
-     generazione principale, ogni macchina che accumula o separa idraulicamente, ogni
-     collettore o ripartitore. «Principale», dove ce n'è più d'una, è la più alta di
-     mestiere, e a parità decide lo **spareggio strutturale** che già esiste
-     (`model/order.py`), mai un identificativo;
-   - **autostrada** — una tratta sta su un percorso fra **due** macchine di spina che non
-     attraversa né un'altra macchina di spina né un utilizzatore. Su un circuito chiuso
-     questo include **sia la mandata sia il ritorno**, che è precisamente ciò che il PO
-     chiama «le due macro-linee parallele»;
-   - **distribuzione** — il percorso porta a un utilizzatore;
-   - **servizio** — non porta né all'una né all'altro: stacchi ciechi e accessori.
-2. Si calcola **una volta sola** e ha **un solo posto**. In questo pacchetto la leggono
-   due clienti — il costo di posa (§B) e l'obiettivo di allineamento (§C); un terzo
-   arriverà con `DRAW-008`. Tre calcoli separati sono un pacchetto respinto.
-3. I livelli sono tre, e sono quelli che il PO ha definito:
-   - **autostrada** — il tronco che porta la portata piena: generatore ↔ accumulo,
-     accumulo ↔ circolatore ↔ collettore;
-   - **distribuzione** — ciò che si dirama portando una frazione: collettore → utenze,
-     i generatori oltre il primo allineato, volume ACS → miscelatrice;
-   - **servizio** — tubazioni accessorie e stacchi ciechi: l'AF dei ricarichi, l'uscita
-     ACS, vaso, manometro, sicurezze.
-4. La classificazione **non nomina nessun componente, nessun identificativo, nessun file,
-   nessuna quantità di fixture**. Vale D-069 senza eccezioni.
-5. **La portata di progetto non entra qui.** È il criterio idraulico più corretto e il PO
-   lo sa, ma quel dato nel modello non esiste: nessun componente dichiara una portata.
-   Aggiungerlo è un dato di prodotto, quindi catalogo, quindi fuori dal perimetro di
-   questo pacchetto. Se la definizione del §A.1 ha un limite su una forma di impianto,
-   **si dichiara nel rapporto**, non si nasconde in una costante.
+1. Stacchi, diramazioni, adduzioni e accessori appesi si attaccano a un tronco **fermo**.
+2. Qui le curve si pagano, con i pesi di gerarchia già scritti, e si accettano.
+3. Una strada di servizio non piega mai un'autostrada per accorciarsi.
 
-## B. Il costo di posa pesa la gerarchia
+## D. Il costo, che resta
 
-1. Pieghe, incroci e lunghezza su una tratta di livello **autostrada** costano più che
-   sulle stesse misure a livello distribuzione, che a loro volta costano più che a livello
-   servizio.
-2. Il peso è un dato dichiarato in un posto solo, leggibile, non sparso fra le funzioni di
-   costo.
-3. L'ordine lessicografico esistente di `SheetCost` **non si stravolge**: le violazioni
-   restano prima di tutto, il backtracking resta prima delle pieghe. Cambia il **conto
-   dentro ciascuna voce**, non l'ordine delle voci.
-
-## C. L'allineamento è un obiettivo di fase, non una candidata
-
-1. L'allineamento delle porte delle macchine di livello autostrada si **cerca prima**
-   della rifinitura, non si mette in concorrenza a costo piatto dentro il ciclo greedy.
-2. La mossa di allineamento deve poter muovere **una macchina con il proprio corredo**, e
-   non soltanto una colonna intera: la granularità di colonna di oggi trascina pezzi che
-   non c'entrano e fa pagare contorno estraneo. Questo è il primo sospettato per lo scarto
-   della candidata PDC–puffer sulla tavola 2.
-3. Prima di dichiarare irraggiungibile un allineamento, il DEV **stampa e riporta** le
-   coppie che il generatore di candidate produce su quella tavola. Alzare i tetti di
-   ricerca non serve: è già stato provato (1 500/2 000 → 6 000/6 000, esito identico).
-
-## D. Le tredici prove rosse
-
-1. Tornano verdi tutte. Ognuna è elencata nel rapporto con l'esito e la causa.
-2. `tests/layout/test_catena_macchina.py` **non è geometria**: l'impianto di prova non
-   dichiara nessuna rete di acqua fredda e il ponte del riempimento apre un punto aperto.
-   È manutenzione ordinaria di prova, e la fa il DEV: dichiarare l'allaccio nella fixture,
-   oppure restringere la guardia a «nessun punto aperto oltre quello, e quello per questa
-   ragione». **Non si porta al PM.**
-3. Nessuna prova diventa `skip` o `xfail`.
-
-## E. Le soglie: cosa questo pacchetto ribattezza, e cosa no
-
-Cambiando il conto del costo, **i totali diventano incomparabili**: 4 pieghe, 1 incrocio e
-425 mm sono numeri di un costo piatto. Gating su quei numeri sarebbe misurare il vecchio
-comportamento col nuovo motore. Il PM decide quindi così, ed è una decisione del PM, non
-del DEV:
-
-1. **Il cancello si sposta sulle proprietà strutturali** (§Criteri 4, 5, 6): allineamento,
-   dorsali senza pieghe, rami paralleli impilati, zero backtracking, nessun tubo sotto un
-   simbolo. Sono binarie e non dipendono da come si pesa il costo.
-2. **I totali restano misurati e riportati**, e non peggiorano rispetto a `71b39db`.
-3. **L'unico allentamento consentito** è convertire un'asserzione su un totale assoluto in
-   un'asserzione di non-regressione contro i valori misurati a `71b39db`, elencando ogni
-   conversione nel rapporto con il valore vecchio e quello nuovo. Qualunque altro
-   allentamento è un pacchetto respinto.
-4. **I bersagli dichiarati**, che il rapporto riporta come distanza residua e che **non
-   sono cancelli**: tavola 1 rete ordinaria 4 / 1 / 425 mm e stacchi 0 / 0 / 45 mm;
-   tavola 2 rete ordinaria non peggiore di 7 / 2 / 670 mm.
-
----
+1. `SheetCost` e i pesi di `hierarchy.weight_of` **non si toccano** salvo che una prova
+   dimostri il contrario: ottimizzano dentro ciascuna fase.
+2. L'ordine lessicografico resta quello che è.
 
 ## Perimetro dei file — modifiche consentite esclusivamente a
 
-- `src/disegnatore_mep/layout/**` (compreso il modulo nuovo della gerarchia)
-- `src/disegnatore_mep/model/order.py`
+- `src/disegnatore_mep/layout/**`
 - `tests/**`
-- `docs/collaudi/DRAW-007/**`
+- `docs/collaudi/DRAW-008/**`
 - `PROJECT_STATE.md`
 
 ## Fuori perimetro — da non toccare
 
 - **catalogo, regole, simboli, `naming/`**: questo pacchetto non cambia il contenuto del
-  grafo. Se un difetto di contenuto emerge, si riporta e non si corregge qui;
-- **spessori di linea e qualunque cosa di I-059**: è `DRAW-008`;
-- riempimento estetico del foglio, cartiglio, sigla provvisoria `RM`, audit dei simboli;
-- gli impianti 3–5 oltre la prova di posa: nessun loro PDF, PNG, SVG o rapporto;
+  grafo;
+- **I-061**, gli ingressi ripetuti dell'AF: è il pacchetto successivo, e va fatto **dopo**
+  perché cambia cosa c'è da instradare, non come lo si instrada;
+- **I-059**, lo spessore del tratto per gerarchia;
+- riempimento estetico del foglio, cartiglio, audit dei simboli;
+- gli impianti 3–5 oltre la prova di posa;
 - decisioni esistenti, registro degli input del PO, documenti di governance.
 
 ## Vincoli
 
-- Nessun merge su `main`. **Il merge è del PO** (`OPERATING_MODEL.md` §1.2.1).
-- Nessuna decisione esistente rinumerata, riscritta o cambiata di stato. Una decisione
-  nuova si registra come **Proposta**.
+- Nessun merge su `main`: **il merge è del PO** (`OPERATING_MODEL.md` §1.2.1).
+- Nessuna decisione esistente rinumerata, riscritta o cambiata di stato.
 - Nessun input del PO chiuso: al massimo se ne propone la chiusura.
-- **Deviazione da D-123 dichiarata:** un pacchetto, un ramo, una PR. Qui `DRAW-007`
-  riusa il ramo e la PR di `DRAW-006-R1`, perché quella consegna **non è fusa e non è
-  mergeable** — tredici prove rosse — e questo pacchetto la porta a termine invece di
-  affiancarle un secondo ramo. La PR #24 diventa la consegna di `DRAW-006-R1 + DRAW-007`.
-  Il PO può disporre diversamente.
+- Un pacchetto, un ramo, una PR (D-123).
 
 ## Criteri di accettazione
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**, mai con la parola
 «verificato». Un criterio che nomina un risultato osservabile si prova sul risultato
-osservabile: «il motore genera la candidata» non chiude «le due macchine sono allineate».
+osservabile.
 
-- [ ] **1. La gerarchia è strutturale.** Una prova generale mostra che rinominando gli
-      identificativi, invertendone l'ordinamento e mescolando le connessioni la
-      classificazione delle tratte **non cambia**. Una seconda prova mostra che nel modulo
-      che la calcola non compare nessun identificativo, nome di componente o nome di file
-      di fixture.
-- [ ] **2. I tre livelli rispettano l'ordine dichiarato.** Prova generale, su impianti
-      costruiti dentro la prova: ogni tratta che unisce due macchine che portano la
-      portata piena pesa **più** di ogni tratta che termina su un accessorio appeso; una
-      tratta pesa **almeno quanto** ogni tratta che dipende da lei. Nessuna soglia
-      numerica, nessun nome.
-- [ ] **3. Il costo pesa la gerarchia, e si vede.** Prova **negativa** costruita dentro la
-      prova: una posa in cui la stessa piega può stare sulla dorsale o su uno stacco. Con
-      il costo di questo pacchetto il ciclo la mette sullo stacco; la stessa prova
-      fallisce se i pesi sono resi uguali. La prova esibisce entrambi gli esiti.
-- [ ] **4. Sulla tavola 2 le porte di mandata e ritorno della macchina principale e
-      dell'accumulo principale stanno sullo stesso asse.** Osservabile sulla geometria
-      composta, non sul generatore di candidate. Chiude I-056 dal lato del risultato.
-- [ ] **5. Nessuna piega sulle tratte di livello autostrada**, sulla tavola 1 e sulla
-      tavola 2. È l'espressione geometrica delle «due macro-linee parallele» di I-057. Se
-      il DEV dimostra che su una forma specifica è irraggiungibile, **si ferma e riporta
-      il caso**: non allarga il criterio.
-- [ ] **6. `tests/layout/test_objective.py::test_parallel_branches_are_stacked_not_strung_out`
-      è verde** senza che la prova sia stata toccata.
-- [ ] **7. La suite è verde.** `python -m pytest -q` senza prove rosse. Nessuna prova
-      convertita in `skip` o `xfail`. Le tredici rosse di `71b39db` elencate una per una
-      nel rapporto con l'esito e la causa.
-- [ ] **8. Le soglie ribattezzate sono soltanto quelle del §E.3**, ciascuna elencata nel
-      rapporto con il valore vecchio, quello nuovo e la ragione. Nessun altro allentamento.
-- [ ] **9. I totali non peggiorano** rispetto a `71b39db`: tavola 1 rete ordinaria
-      11 / 1 / 487,5 mm e stacchi 6 / 0 / 125,0 mm; tavola 2 rete ordinaria
-      12 / 8 / 785,0 mm e stacchi 6 / 4 / 125,0 mm. Il rapporto riporta anche la distanza
-      residua dai bersagli del §E.4.
+- [ ] **1. La fase del tronco esiste ed è separata.** Una prova generale mostra che la
+      posa del tronco produce una geometria delle sole macchine di spina e delle sole
+      tratte di autostrada, e che il resto dell'impianto non vi partecipa.
+- [ ] **2. Il tronco è dritto.** Su impianti costruiti dentro la prova, e sulle due tavole:
+      **zero pieghe** su ogni tratta di livello autostrada.
+- [ ] **3. La rettilineità è un vincolo, non un costo.** Prova negativa: una mossa che
+      piegherebbe il tronco guadagnando sul costo totale viene **rifiutata**, e la stessa
+      prova fallisce se il vincolo è spostato fra le voci di `SheetCost`.
+- [ ] **4. Il tronco si allunga invece di piegarsi.** Prova generale: un corredo che non
+      entra nella campata disponibile produce uno **stretch** — due macchine di spina più
+      lontane, tronco ancora dritto — e non una piega.
+- [ ] **5. Le strade di servizio non piegano il tronco.** Prova generale su un impianto in
+      cui una diramazione accorcerebbe piegando un'autostrada: non lo fa.
+- [ ] **6. La tavola 2 esce**, senza rilievi bloccanti nel preflight.
+- [ ] **7. La tavola 2 rispetta il §4 dell'architettura**: le porte della macchina
+      principale e dell'accumulo maggiore sono sullo stesso asse, e nessuna tratta di rango
+      inferiore attraversa un'autostrada.
+- [ ] **8. La tavola 1 non peggiora** rispetto alla testa di `main`: rete ordinaria non
+      oltre 6 pieghe / 3 incroci / 550,0 mm, zero pieghe di autostrada, macchine allineate.
+- [ ] **9. La suite è verde.** Nessuna prova convertita in `skip` o `xfail`. Le nove rosse
+      di partenza elencate una per una nel rapporto con l'esito.
 - [ ] **10. `ruff`, `mypy --strict` e doppia generazione deterministica** verdi, con
       l'impronta della geometria riportata.
 - [ ] **11. Tutti e cinque gli impianti arrivano alla posa**, e nessun artefatto grafico è
@@ -211,14 +126,14 @@ osservabile: «il motore genera la candidata» non chiude «le due macchine sono
 
 ## Consegna attesa
 
-- La PR #24 aggiornata, **non fusa**.
-- Rapporto in `docs/collaudi/DRAW-007/RAPPORTO.md` con: ramo, SHA iniziale, SHA finale,
-  file modificati, criteri uno per uno **col comando e l'output**, misure prima/dopo,
-  difetti noti, punti aperti.
-- Pacchetto grafico della **sola tavola 2**: PDF, PNG, SVG, geometria, metriche,
-  preflight, e il confronto con `71b39db`.
+- Una sola PR, **non fusa**.
+- Rapporto in `docs/collaudi/DRAW-008/RAPPORTO.md`: ramo, SHA iniziale, SHA finale, file
+  modificati, criteri uno per uno **col comando e l'output**, misure prima/dopo, difetti
+  noti, punti aperti.
+- Pacchetto grafico della **sola tavola 2**: PDF, PNG, SVG, geometria, metriche, preflight
+  e confronto con la testa di `main`.
 
 ## In caso di ambiguità o di criterio irraggiungibile
 
 Fermarsi e riportarlo, **prima** di cambiare la prova. Un'incompatibilità si porta al PM;
-la manutenzione ordinaria di una prova, no — quella la fa il DEV (§D.2).
+la manutenzione ordinaria di una prova, no — quella la fa il DEV.
