@@ -11,12 +11,14 @@
 
 1. **La tavola 2 esce, senza rilievi bloccanti.** Era il motivo del pacchetto.
 2. **Due tratte di autostrada della tavola 2 non possono essere rettilinee**, e non per
-   un difetto della posa: nessuna rotazione ammessa dal catalogo mette le loro porte una
-   di fronte all'altra. Il criterio 2 e' quindi **raggiunto su tutto ciò che è
-   raggiungibile e non oltre**; §3.2 lo dimostra, e §7 chiede al PM che cosa farne.
-3. **Tre prove rosse in più** rispetto alla testa di `main`, e sono regressioni vere: due
-   sulla distanza di un organo della tavola 2, una sull'ordine di due zone in una fixture
-   di posa. Non ho ammorbidito nessuna prova; §6.3 le diagnostica una per una.
+   un difetto della posa: con il tronco che tiene l'asse verso l'accumulo maggiore, come
+   il PO ha disposto, nessuna posa ammessa dal catalogo mette le loro porte una di fronte
+   all'altra. Il criterio 2 è quindi **raggiunto su tutto ciò che è raggiungibile e non
+   oltre**; §3.2 lo dimostra, e §7.1 chiede al PM che cosa farne.
+3. **La suite non è verde, e il saldo è peggiorato di due**: undici rosse in partenza,
+   tredici adesso. Tre sono nuove e sono regressioni vere — due sulla distanza di un organo
+   della tavola 2, una sull'ordine di due zone in una fixture di posa. Non ho ammorbidito
+   nessuna prova: §4.1 le elenca, §6.3 le diagnostica.
 
 ---
 
@@ -37,6 +39,7 @@
 | `src/disegnatore_mep/layout/improve.py` | le fasi, il vincolo di rettilineità, la mossa `allungo` |
 | `src/disegnatore_mep/layout/compose.py` | la catena a fasi e l'ordine di instradamento per gerarchia |
 | `tests/layout/test_posa_a_fasi.py` | **nuovo** — le prove del pacchetto |
+| `tests/acceptance/test_drawing.py` | una prova che appaiava le tratte alle spezzate per posizione invece che per connessioni (§4.1) |
 | `docs/collaudi/DRAW-008/**` | rapporto, misure, pacchetto grafico della tavola 2 |
 | `PROJECT_STATE.md` | stato e rischi aggiornati |
 
@@ -65,9 +68,11 @@ in più — sarebbe stato lo stesso difetto con un altro nome. È una **costruzi
    È lo stretch, prima ancora che una mossa lo chieda.
 
 Fra tutte le soluzioni che rispettano i vincoli si sceglie **quella più vicina alla prima
-ipotesi di posa**. Non è un dettaglio di comodo: una soluzione «tutto a sinistra» sposta
-mezzo foglio e la fase seguente passa il proprio tempo a rimetterlo a posto. Con la
-soluzione compatta la tavola 1 usciva a 14 pieghe di rete ordinaria; con questa, a 4.
+ipotesi di posa**. Non è un dettaglio di comodo: una soluzione «tutto a sinistra» rispetta
+gli stessi vincoli e sposta mezzo foglio, e la fase seguente passa il proprio tempo a
+rimetterlo a posto. La prima stesura la sceglieva, e la tavola 1 ne usciva peggiore: non
+riporto un numero perché quella stesura differiva anche in altro, e un numero che non
+isola una sola causa non è una misura.
 
 ### 2.2 La rettilineità passa da voce di costo a vincolo
 
@@ -104,17 +109,30 @@ perpendicolari, e le tratte vuote fra due raccordi di cui uno regge uno stacco (
 **Lettura che il DEV dichiara, e che il PM può correggere.** Il pacchetto dice «un tronco
 fermo». L'ho tradotto in *fermo nella forma*: una macchina di spina non cambia giacitura e
 nessuna tratta del tronco si piega, ma la macchina può ancora **scorrere lungo il proprio
-asse**, perché scorrere non tocca la forma. Bloccarla del tutto era la prima stesura, ed è
-misurata: la tavola 1 usciva a 9 pieghe di rete ordinaria invece di 4, perché gli stacchi
-non trovavano più il modo di sistemarsi attorno a macchine immobili. Se il PO intende
-«fermo» in senso stretto, il numero è quello.
+asse**, perché scorrere non tocca la forma.
+
+L'altra lettura — la macchina di spina immobile del tutto — l'ho **misurata sul codice
+finale**, cambiando la sola riga che la decide:
+
+| tavola 1, rete ordinaria | pieghe | incroci | lunghezza |
+|---|---|---|---|
+| «fermo nella forma» (questa consegna) | **4** | 1 | **465,0 mm** |
+| «fermo» in senso stretto | 6 | 1 | 602,5 mm |
+| tetto del criterio 8 | ≤ 6 | ≤ 3 | ≤ 550,0 mm |
+
+Con la lettura stretta il tronco resta ugualmente dritto (8 autostrade su 8), ma la tavola
+1 **sfonda il tetto di lunghezza del criterio 8**: gli stacchi non trovano più il modo di
+sistemarsi attorno a macchine immobili e pagano in tubo. Se il PO intende «fermo» in senso
+stretto, questo è il prezzo, e va deciso da lui.
 
 ### 2.5 L'instradamento segue la gerarchia
 
 L'instradamento è seriale: chi si instrada prima sceglie la propria strada, chi viene dopo
 gira attorno. Le autostrade erano in coda e giravano attorno agli stacchi. Ora vengono
 prima — è la stessa frase del PO, applicata anche qui: «prima devi disegnare le
-autostrade». Sulla tavola 2 gli incroci contati **sull'**autostrada scendono da 5 a 1.
+autostrade». Misurato da solo, cioè togliendo e rimettendo la sola chiave d'ordine sul
+codice finale: sulla tavola 2 gli incroci contati **sull'**autostrada scendono da 3 a 1, e
+sulla tavola 1 la rete ordinaria da 467,5 a 465,0 mm. È poco, ed è coerente.
 
 ---
 
@@ -326,8 +344,10 @@ Esito riportato in §4.1. **Nessuna prova è stata convertita in `skip` o `xfail
 nessuna soglia è stata allentata.** Le rosse di partenza sono elencate una per una in
 §4.1 con il loro esito.
 
-**Esito: non soddisfatto alla lettera — la suite non è verde.** Restano rosse prove che
-misurano budget diversi da quelli di questo pacchetto; §4.1 dice quali e perché.
+**Esito: non soddisfatto — la suite non è verde.** Undici rosse in partenza, tredici
+adesso: una delle undici è tornata verde, tre sono nuove. Il saldo è **negativo di due**, e
+non lo maschero: §4.1 le elenca una per una, §6.3 diagnostica le tre nuove e §7 porta al PM
+le decisioni che non sono del DEV.
 
 ### 3.10 Criterio 10 — `ruff`, `mypy --strict`, doppia generazione
 
@@ -355,6 +375,7 @@ Doppia generazione dallo stesso modello, con la CLI:
 ```
 $ python -m pytest -q -p no:randomly tests/layout/test_posa_dei_cinque_impianti.py \
     tests/layout/test_posa_a_fasi.py -k "cinque or arriva_alla_fase_del_tronco"
+11 passed
 ```
 
 Tutti e cinque arrivano alla posa, e tutti e cinque attraversano la fase del tronco senza
@@ -392,7 +413,7 @@ Tutto dentro `src/disegnatore_mep/layout/**`, `tests/**`,
 
 ```
 $ python -m pytest -q -p no:randomly
-TOTALI_QUI
+13 failed, 1435 passed, 22 skipped, 11 xfailed in 2179.81s (0:36:19)
 ```
 
 Sulla testa di `main`, con lo stesso comando: **11 rosse**, 1411 verdi, 22 sospese,
@@ -404,7 +425,7 @@ Sulla testa di `main`, con lo stesso comando: **11 rosse**, 1411 verdi, 22 sospe
 | 2 | `acceptance/test_drawing.py::test_tavola_1_nessuna_tratta_supera_tre_pieghe_e_gli_incroci_scendono` | **rossa**: uno stacco del riempimento a 4 pieghe. Su `main` erano due; ora è uno |
 | 3 | `layout/test_accessori_appesi.py::test_tornano_a_comporre_quando_la_composizione_compatta[prova-2]` | **rossa**, invariata |
 | 4 | `layout/test_assi_dorsali_tee.py::test_una_macchina_a_terra_puo_partecipare_a_un_candidato_verticale` | **rossa**, invariata |
-| 5 | `layout/test_improve.py::test_the_hard_constraints_hold_after_improvement` | **verde** |
+| 5 | `layout/test_improve.py::test_the_hard_constraints_hold_after_improvement` | **rossa**, invariata. Nota per il PM: era diventata verde in una stesura intermedia, quando il vincolo di rettilineità si applicava **anche** al ciclo costruito senza una fase del tronco. L'ho tolto di lì apposta — un `Improver` senza tronco deve misurare ciò che misurava, e il ripiego di §6.2 dev'essere davvero il ciclo di prima — e la prova è tornata rossa com'era su `main`. Non l'ho tenuta verde per un effetto collaterale |
 | 6 | `layout/test_stacchi_minimi_e_interasse.py::test_nella_posa_iniziale_ogni_stacco_e_lungo_il_proprio_minimo[una_macchina…]` | **rossa**, invariata — misura `place_sheet`, che il pacchetto non tocca |
 | 7 | idem `[due_macchine…]` | **rossa**, invariata |
 | 8 | `layout/test_stacchi_minimi_e_interasse.py::test_il_ciclo_prova_per_prima_la_traslazione_verticale_di_una_macchina[una_macchina…]` | **rossa**, invariata |
@@ -412,8 +433,8 @@ Sulla testa di `main`, con lo stesso comando: **11 rosse**, 1411 verdi, 22 sospe
 | 10 | `layout/test_stacchi_minimi_e_interasse.py::test_la_tavola_1_non_costa_piu_di_draw_005_sulla_rete_ordinaria` | **rossa**, ma molto più vicina: rete ordinaria 4 / 1 / 465,0 mm contro le soglie 4 / 1 / 425 mm — due su tre sono passate, resta la lunghezza. Gli stacchi statici restano 6 / 0 / 155,0 mm contro 0 / 0 / 45 mm |
 | 11 | `layout/test_zone_dei_pezzi_grossi.py::test_nessun_raccordo_sta_a_sinistra_di_cio_che_unisce[prova-2]` | **rossa**, invariata |
 
-Due sono tornate verdi. La prima lo è per una **correzione di prova**, non di codice, e va
-detto com'è: `_tratte_1` appaiava le tratte alle spezzate **per posizione**, ma
+Una sola è tornata verde, ed è per una **correzione di prova**, non di codice: va detto
+com'è. `_tratte_1` appaiava le tratte alle spezzate **per posizione**, ma
 `build_trunks` le elenca nell'ordine del modello e la composizione le instrada
 nell'ordine che si sceglie. Ogni tratta veniva così misurata sul percorso di un'altra. È
 manutenzione ordinaria di una prova — che il pacchetto assegna al DEV — e l'ho fatta
@@ -441,6 +462,14 @@ a un fallimento.
 | nodi condivisi col tronco | 9 | **8** |
 | squilibrio fra quadranti | 11,3 | **3,74** |
 | riempimento | 63,2 % | 37,6 % |
+
+**Che cosa si vede, guardando i due PNG uno accanto all'altro.** Prima, la mandata usciva
+dalla pompa di calore, saliva, andava a destra e risaliva ancora: una scala, e il tronco
+non si leggeva. Ora la pompa di calore sta a sinistra e due rette parallele — la mandata
+rossa sopra, il ritorno blu sotto — la uniscono al volano attraversando tutto il foglio,
+con i raccordi in fila su di esse. Il bollitore pende sotto, appeso alla seconda uscita
+della deviatrice, e il sanitario risale al miscelatore. È la figura che il PO ha disegnato
+a colori.
 
 Avvisi residui sulla tavola 2: `RUN_WITH_TOO_MANY_BENDS` su uno stacco del riempimento,
 `TOO_MANY_CROSSINGS` (11 contro 5), `SHEET_BARELY_FILLED` (38 %),

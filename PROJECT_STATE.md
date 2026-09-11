@@ -79,7 +79,7 @@ lette sulla geometria che la CLI scrive; il rapporto completo sta in
 | **Tavola 1** | rete ordinaria 6 pieghe / 3 incroci / 550,0 mm; zero pieghe sulle 8 autostrade | rete ordinaria **4 / 1 / 465,0 mm**; zero pieghe sulle 8 autostrade; backtracking 0; D-120 14 su 15 |
 | **Tavola 2** | **non esce**: un rilievo bloccante (`RUN_OVERSHOOTS_ITS_PORT`) | **esce, nessun bloccante**; rete ordinaria 9 / 6 / 755,0 mm; 8 autostrade rettilinee su 10 |
 | **Autostrade storte, tavola 2** | 4 su 10 | **2 su 10**, ed è il massimo raggiungibile: nessuna posa ammessa dal catalogo le raddrizza (vedi rischio 12) |
-| **Suite** | 11 prove rosse | vedi `docs/collaudi/DRAW-008/RAPPORTO.md` §4.1 |
+| **Suite** | 11 rosse, 1411 verdi | **13 rosse, 1435 verdi**: una delle undici è tornata verde, tre sono nuove e sono regressioni dichiarate (rischio 15). Nessuna prova convertita in `skip` o `xfail` |
 | **`ruff`, `mypy --strict`** | puliti | puliti |
 | **Determinismo** | — | due generazioni, stessa impronta e stessa geometria byte per byte, su tavola 1 e tavola 2 |
 
@@ -134,11 +134,18 @@ lette sulla geometria che la CLI scrive; il rapporto completo sta in
     dall'altra parte del tronco. È **I-061**, che l'architettura ha già messo fuori
     perimetro: finché l'acqua fredda attraversa il foglio con una linea sola, un tronco che
     passa in mezzo la incrocia per forza.
-14. **L'impianto 4 non produce più una tavola.** Sulla testa di `main` usciva; con la posa
-    a fasi l'instradamento fallisce su `p7-a`. Gli impianti 3–5 oltre la prova di posa sono
-    fuori dal perimetro di `DRAW-008`, e 3 e 5 non uscivano già prima: il 4 è una
-    regressione dichiarata, con un ripiego in `compose_sheet` che riprova la tavola con il
-    ciclo senza le fasi. Esito e misura in `docs/collaudi/DRAW-008/RAPPORTO.md` §6.2.
+14. **La catena a fasi, da sola, toglieva la tavola all'impianto 4.** Sulla testa di `main`
+    l'impianto 4 usciva; con le sole fasi l'instradamento falliva su `p7-a`. `compose_sheet`
+    ha ora un **ripiego dichiarato** — posa seminata dal tronco, poi il ciclo senza le fasi,
+    poi la disposizione di partenza — e con quello l'impianto 4 torna a uscire. Il ripiego
+    è una rete di sicurezza, non una soluzione: finché scatta, quell'impianto non gode
+    della posa a fasi. `docs/collaudi/DRAW-008/RAPPORTO.md` §6.2.
+15. **Tre prove rosse nuove, e sono regressioni vere.** Due sulla tavola 2: l'organo
+    `valve-isolation-dhw-hot-utenze-a` sta a 10 mm dalla miscelatrice con cui fa coppia
+    invece che a 2,5÷5 mm, e gli organi governati da D-120 passano da 14 su 15 a 13 su 15 —
+    il bollitore sta sotto il tronco e il sanitario deve risalirlo. Una sulla fixture
+    `heat-pump-dhw-buffer-two-zones`: le due zone restano impilate ma in ordine invertito.
+    Nessuna prova è stata ammorbidita. `docs/collaudi/DRAW-008/RAPPORTO.md` §6.3.
 
 ## Pacchetto attivo
 

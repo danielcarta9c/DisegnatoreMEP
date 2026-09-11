@@ -34,12 +34,15 @@ all'accumulo maggiore.
 
 **Il limite che il catalogo impone, e che qui si dichiara.** Una tratta e'
 rettilinea soltanto se le sue due porte si guardano: facce opposte, stesso
-asse. Ci sono coppie per cui nessuna rotazione ammessa e nessuna permutazione
-ammessa lo consente — l'uscita secondaria di una deviatrice guarda in basso, la
-serpentina di un bollitore si imbocca da sinistra e il bollitore non ammette
-rotazioni. Quelle tratte **non possono** essere rettilinee, e non e' un difetto
-della posa: `unstraightenable_runs` le calcola e le nomina, cosi' che la misura
-sappia distinguere «non e' dritta» da «non puo' esserlo».
+asse. La posa di un pezzo pero' serve **tutte** le sue porte insieme: l'uscita
+secondaria di una deviatrice non puo' voltarsi senza che si volti anche quella
+principale, e se la principale tiene l'asse verso l'accumulo maggiore — come
+l'architettura §4 dispone — la secondaria resta dov'e'. Quando in quella
+situazione la porta dall'altra parte non ammette nessuna posa che la guardi in
+faccia — la serpentina di un bollitore che si imbocca da sinistra, e il
+bollitore non si gira — la tratta **non puo'** essere rettilinea, e non e' un
+difetto della posa. `unstraightenable_runs` calcola quelle tratte e le nomina,
+cosi' che la misura sappia distinguere «non e' dritta» da «non poteva esserlo».
 """
 
 from collections import deque
@@ -104,7 +107,12 @@ class SpineRun:
     """Vero se la tratta e' un rettilineo: una spezzata sola, senza pieghe."""
 
     possible: bool
-    """Falso se nessuna posa ammessa dei due capi la renderebbe rettilinea."""
+    """Vero se le due porte si guardano nelle pose che la fase ha scelto.
+
+    Falso vuol dire che, **dato il resto del tronco**, nessuna posa ammessa del
+    pezzo a valle mette la sua porta di fronte a quella da cui si arriva: la
+    tratta sara' un gomito, e non per un difetto della posa.
+    """
 
 
 @dataclass(frozen=True)
@@ -130,7 +138,7 @@ class SpineLayout:
 
     @property
     def impossible(self) -> tuple[TrunkKey, ...]:
-        """Le autostrade che nessuna posa ammessa renderebbe rettilinee."""
+        """Le autostrade che, dato il resto del tronco, nessuna posa raddrizza."""
         return tuple(run.key for run in self.runs if not run.possible)
 
     @property
@@ -1107,14 +1115,15 @@ class _Spine:
 
 
 def can_be_straight(here: frozenset[PortFace], there: frozenset[PortFace]) -> bool:
-    """Vero se fra le facce ammesse alle due porte ce n'e' una coppia opposta.
+    """Vero se fra le facce che le due porte possono prendere ce n'e' una coppia
+    opposta: e' la condizione perche' una retta le unisca.
 
-    E' la domanda che separa «questa tratta e' venuta storta» da «questa tratta
-    non puo' venire dritta»: la seconda non e' un difetto della posa, e' il
-    catalogo. Un bollitore che non ammette rotazioni e si imbocca da sinistra,
-    servito dall'uscita secondaria di una deviatrice che guarda in basso, non
-    dara' mai un rettilineo — e finche' il grafo e i simboli sono quelli,
-    nessuna posa lo cambia.
+    Prende **insiemi di facce**, non pezzi: chi la chiama decide quali facce
+    siano davvero disponibili. Su un pezzo libero sono quelle di tutte le sue
+    pose ammesse; su un pezzo che il resto del tronco ha gia' fermato — la
+    deviatrice che tiene l'asse verso l'accumulo maggiore — e' una sola. Con una
+    faccia sola da una parte e una sola dall'altra, la risposta e' un fatto del
+    catalogo e nessuna posa lo cambia.
     """
     return any(face.opposite in there for face in here)
 
@@ -1131,7 +1140,7 @@ def unstraightenable_runs(
     frame: SheetFrame,
     placed: list[PlacedSymbol],
 ) -> tuple[TrunkKey, ...]:
-    """Le autostrade che nessuna posa ammessa renderebbe rettilinee."""
+    """Le autostrade che, dato il resto del tronco, nessuna posa raddrizza."""
     return _Spine(project, partition, catalog, frame, placed).build().impossible
 
 
