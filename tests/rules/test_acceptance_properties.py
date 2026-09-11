@@ -42,6 +42,22 @@ espansione pretende quello bloccabile aperto, non quello comune."""
 
 LOCKS_OPEN = "isolation_locked_open"
 
+ISOLATION_RULE = "isolate-what-is-serviced"
+"""La regola che da' l'organo a cio' che si smonta in esercizio.
+
+L'organo non e' sempre uno di `CLOSES`: il pezzo dichiara **come si lascia
+chiudere**, e la regola dice quale mestiere ciascun regime pretende — comune per
+la maggior parte, bloccabile aperto per il vaso, il rubinetto della propria
+presa per uno strumento indicatore (DRAW-006, blocco A). La prova legge quella
+tabella invece di tenerne una propria, cosi' non puo' divergere dalla regola.
+"""
+
+
+def organ_for(regime: ComponentTrait) -> str:
+    """Il mestiere che quel regime di intercettazione pretende."""
+    rule = next(item for item in rules().all() if item.id == ISOLATION_RULE)
+    return rule.then.function_for(regime)
+
 
 def catalog() -> ComponentRegistry:
     return ComponentRegistry.from_directory(
@@ -206,17 +222,43 @@ class Plant:
         ]
 
     def closers_of(self, component_id: str, port_id: str) -> list[str]:
-        """Il **primo** organo che chiude su ciascuna fila di quell'attacco.
+        """Il **primo** organo di servizio su ciascuna fila di quell'attacco.
 
         Il primo e non tutti: e' quello che separa il pezzo dal resto, ed e'
-        quello di cui conta la specie."""
+        quello di cui conta la specie. Quale mestiere sia lo dice il **regime**
+        che il pezzo dichiara, letto dalla stessa tabella della regola: chi si
+        chiude come tutti vuole l'organo comune, il vaso quello bloccabile
+        aperto, uno strumento indicatore il rubinetto della propria presa.
+        """
+        wanted = {organ_for(self.definitions[component_id].shutoff_regime)}
+        # L'organo puo' stare **dentro un mantello**, e allora non si disegna
+        # fuori: nel pezzo stesso, se il suo catalogo lo dichiara a bordo — il
+        # gruppo di riempimento con la propria intercettazione — oppure in un
+        # **gruppo** posato su quella fila, che e' un mantello attorno a organi
+        # che stanno sulla tubazione: il gruppo di sicurezza EN 1487 porta
+        # dentro l'intercettazione dell'ingresso freddo (DRAW-006-R1, blocco
+        # C.1). La proprieta' e' la stessa — quell'attacco si chiude — e cambia
+        # solo dove sta l'organo che la realizza.
+        if set(self.definitions[component_id].carries_on_board) & wanted:
+            return [component_id]
         found: list[str] = []
         for chain in self.chains_of(component_id, port_id):
             for item in chain:
-                if self.functions_of(item) & CLOSES:
+                if self._brings(item) & wanted:
                     found.append(item)
                     break
         return found
+
+    def _brings(self, component_id: str) -> frozenset[str]:
+        """I mestieri che quel pezzo porta **sulla tubazione**.
+
+        I propri, e quelli che un gruppo dichiara di portarsi dentro: un
+        composito e' un mantello attorno a organi che stanno sulla linea.
+        """
+        definition = self.definitions[component_id]
+        if not definition.composite:
+            return self.functions_of(component_id)
+        return self.functions_of(component_id) | frozenset(definition.carries_on_board)
 
 
 def acceptance() -> Plant:

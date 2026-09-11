@@ -1,6 +1,6 @@
 {
   "id": "filling-unit",
-  "version": "1.0.0",
+  "version": "3.0.0",
   "name": "Gruppo di riempimento",
   "functions": [
     "filling"
@@ -10,18 +10,32 @@
     "shutoff_ordinary",
     "attachment_branch"
   ],
+  "carries_on_board": [
+    "isolation",
+    "non_return",
+    "filtration",
+    "pressure_control"
+  ],
   "symbol_id": "filling-unit",
-  "composite": false,
+  "composite": true,
   "ports": [
     {
       "id": "a",
       "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
       "medium": "heating_water",
-      "flow": "bidirectional",
+      "flow": "out",
       "required": true
     }
   ],
   "sources": [
-    "CONV-FOUNDATION"
+    "CONV-FOUNDATION",
+    "Caleffi serie 553, gruppo di riempimento automatico con riduttore di pressione, filtro, intercettazione e ritegno incorporati; il gruppo e' il ponte fra l'acqua fredda e il ritorno del circuito tecnico (traduzione PM del 2026-09-10)"
   ]
 }

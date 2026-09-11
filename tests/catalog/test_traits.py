@@ -462,8 +462,23 @@ avere due porte passanti, questa prova lo direbbe."""
 
 
 def looks_like_a_run_through(definition: ComponentDefinition) -> bool:
+    """Una tubazione sola gli passa attraverso: entra da una porta ed esce
+    dall'altra, **sullo stesso fluido**.
+
+    Il fluido e' la meta' che mancava. Un **ponte fra due reti** ha anch'esso un
+    ingresso e un'uscita, ma su due fluidi diversi: nessuna tubazione lo
+    attraversa — ne pende una per parte, e il disegno non lo spezza su niente.
+    E' il gruppo di riempimento di DRAW-006-R1, che non e' il debito di D-094 e
+    non va confuso con lui.
+    """
     flows = {port.flow for port in definition.ports}
-    return len(definition.ports) == 2 and PortFlow.IN in flows and PortFlow.OUT in flows
+    media = {port.medium for port in definition.ports}
+    return (
+        len(definition.ports) == 2
+        and len(media) == 1
+        and PortFlow.IN in flows
+        and PortFlow.OUT in flows
+    )
 
 
 def test_the_branch_accessories_still_drawn_in_line_are_the_known_ones() -> None:

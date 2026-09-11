@@ -10,6 +10,28 @@
     "shutoff_ordinary",
     "attachment_inline"
   ],
+  "hydraulic_states": [
+    {
+      "id": "verso_a",
+      "name": "Deviazione sul primo ramo",
+      "connects": [
+        [
+          "in",
+          "out_a"
+        ]
+      ]
+    },
+    {
+      "id": "verso_b",
+      "name": "Deviazione sul secondo ramo",
+      "connects": [
+        [
+          "in",
+          "out_b"
+        ]
+      ]
+    }
+  ],
   "symbol_id": "diverting-valve-3way",
   "composite": false,
   "ports": [

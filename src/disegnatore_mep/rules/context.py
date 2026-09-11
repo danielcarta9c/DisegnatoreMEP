@@ -15,19 +15,32 @@ un indice di funzioni.
 from collections import defaultdict
 from collections.abc import Mapping
 from dataclasses import dataclass, field
+from itertools import product
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import (
     CLOSING_FUNCTIONS,
     SHUTOFF_REGIMES,
     ComponentTrait,
+    HydraulicState,
     OnBoard,
     PortDefinition,
 )
+from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import ConnectionModel, PortRef, ProjectModel
+from disegnatore_mep.model.types import PortFlow
 
 from .proposal import anchor_of_proposed
 from .schema import RuleCardinality, RuleDefinition
+
+BOUNDARY = "boundary"
+"""Il mestiere di cio' che sta al **confine** dell'impianto.
+
+E' una funzione di catalogo come le altre, non un nome di pezzo: chi la
+dichiara e' il punto in cui l'impianto si attacca a qualcosa che non e' suo —
+l'acquedotto, la distribuzione dell'edificio. Vive qui perche' chi deve pescare
+da una rete deve poterne riconoscere la sorgente **gia' approvata** invece di
+inventarla (DRAW-006-R1, blocco D.2)."""
 
 
 @dataclass(frozen=True)
@@ -91,6 +104,23 @@ class RuleContext:
     inline: frozenset[str] = frozenset()
     """Chi sta **su** una tubazione invece di essere un nodo del disegno."""
 
+    composites: frozenset[str] = frozenset()
+    """I **gruppi**: un mantello attorno a organi che stanno sulla tubazione.
+
+    Lo dichiara il catalogo, e cambia una cosa sola: cio' che un gruppo si
+    porta dentro conta come presente **sulla linea**, mentre cio' che una
+    macchina porta a bordo conta solo per la macchina. Un gruppo di sicurezza
+    EN 1487 e' tre organi in un mantello, e le regole non ne aggiungono un
+    quarto fuori (DRAW-006-R1, blocco C.1)."""
+
+    states: dict[str, tuple[HydraulicState, ...]] = field(default_factory=dict)
+    """Le configurazioni idrauliche ammesse di ciascun **multivia** (DRAW-006).
+
+    Solo per chi le dichiara. E' l'unico dato su cui si decide se una porta
+    comunica con un'altra dentro un pezzo che non e' un raccordo: chi cammina
+    sulla rete lo legge da qui, e nessun modulo tiene un proprio elenco dei
+    mestieri che si attraversano."""
+
     members: dict[str, tuple[str, ...]] = field(default_factory=dict)
     """Componenti di ciascuna rete, in ordine di modello."""
 
@@ -121,17 +151,26 @@ class RuleContext:
     ) -> "RuleContext":
         functions: dict[str, frozenset[str]] = {}
         traits: dict[str, frozenset[ComponentTrait]] = {}
+        states: dict[str, tuple[HydraulicState, ...]] = {}
         carried: dict[str, frozenset[str]] = {}
         lacking: dict[str, frozenset[str]] = {}
         stored_media: dict[str, str] = {}
         fill_ports: dict[str, str] = {}
         ports: dict[str, tuple[PortDefinition, ...]] = {}
         inline: set[str] = set()
+        composites: set[str] = set()
         service_ports: dict[tuple[str, str], str] = {}
+        # Lo spareggio strutturale di D-093: non e' un nome e non e' una
+        # posizione nel file. Serve piu' sotto, dove i membri di una rete
+        # vanno messi in un ordine che non dipenda ne' dagli identificativi ne'
+        # da come l'impianto e' stato scritto.
+        seats = structural_order(project)
         for component in project.components:
             resolved = catalog.resolve(component.definition_id)
             functions[component.id] = frozenset(resolved.definition.functions)
             traits[component.id] = resolved.definition.trait_set
+            if resolved.definition.hydraulic_states:
+                states[component.id] = resolved.definition.hydraulic_states
             carried[component.id] = frozenset(resolved.definition.carries_on_board)
             lacking[component.id] = frozenset(resolved.definition.lacks_on_board)
             if resolved.definition.fills_from is not None:
@@ -146,6 +185,8 @@ class RuleContext:
             # la corsa ci passa attraverso e la camminata non si ferma.
             if resolved.is_inline or resolved.definition.is_a_fitting:
                 inline.add(component.id)
+            if resolved.definition.composite:
+                composites.add(component.id)
 
         touched: dict[str, set[str]] = defaultdict(set)
         members: dict[str, list[str]] = defaultdict(list)
@@ -216,30 +257,90 @@ class RuleContext:
             incoming={key: tuple(value) for key, value in incoming.items()},
             outgoing={key: tuple(value) for key, value in outgoing.items()},
             inline=frozenset(inline),
-            # In ordine di nome, mai nell'ordine in cui il file elenca le
-            # tubazioni: una regola che serve «il primo» della rete deve
-            # servire lo stesso pezzo comunque l'impianto sia stato scritto.
-            # Il collaudo ha visto il gruppo di riempimento migrare da una
-            # pompa di calore all'altra permutando il file: si chiude qui.
-            members={key: tuple(sorted(value)) for key, value in members.items()},
+            composites=frozenset(composites),
+            states=states,
+            # Nell'ordine **strutturale**, che nessuno dei due modi di
+            # riscrivere un impianto cambia: ne' permutare le tubazioni, che
+            # faceva migrare il gruppo di riempimento da una pompa di calore
+            # all'altra, ne' rinominare i pezzi, che cambiava l'impianto
+            # completato perche' l'ordine era quello alfabetico (DRAW-006-R1,
+            # blocco A.2). Chi serve «il primo» della rete serve lo stesso
+            # pezzo comunque l'impianto sia stato scritto.
+            members={
+                key: tuple(sorted(value, key=seats.__getitem__))
+                for key, value in members.items()
+            },
             own={key: frozenset(value) for key, value in own.items()},
             lacking=lacking,
         )
 
     # --- cio' che una condizione puo' chiedere ------------------------------
 
+    def provides(self, component_id: str, function: str) -> bool:
+        """Quel pezzo **porta quella funzione sulla linea**.
+
+        Due modi, e uno solo dei due e' nuovo: la funzione e' un suo mestiere,
+        oppure il pezzo e' un **gruppo** e la dichiara fra le proprie funzioni
+        interne. Un composito e' un mantello attorno a organi che stanno sulla
+        tubazione: il gruppo di sicurezza sanitario EN 1487 porta dentro il
+        ritegno controllabile, e quel ritegno e' un pezzo di quella rete come
+        se fosse disegnato a parte (DRAW-006-R1, blocco C.1).
+
+        Il bordo di una **macchina** non conta qui, ed e' la differenza: cio'
+        che sta dentro una pompa di calore serve la pompa di calore, non la
+        tubazione. La distinzione non e' un elenco di nomi: la dichiara il
+        catalogo con `composite`.
+
+        Vale su cio' che sta **sul percorso**, che e' l'unico posto in cui un
+        organo interno e' anche un organo di quella tubazione: chi cammina
+        lungo un tratto lo attraversa davvero. Non vale sulla rete intera —
+        sarebbe far sparire un organo altrove per un gruppo che sta qui — ne'
+        su cio' che pende da uno stacco, che la corsa non attraversa: il filtro
+        dentro un gruppo di riempimento appeso a un T non e' il filtro del
+        ritorno della macchina.
+        """
+        if function in self.functions.get(component_id, frozenset()):
+            return True
+        return component_id in self.composites and function in self.carried.get(
+            component_id, frozenset()
+        )
+
     def network_has(self, network_id: str, function: str) -> bool:
         """La funzione c'e' su quella rete, come **pezzo** dell'impianto.
 
-        Il bordo macchina non entra qui: cio' che una macchina integra
-        soddisfa i bisogni ancorati a lei (`carries`), non quelli della rete
-        intera — contarlo qui faceva sparire in silenzio la sicurezza del
-        serbatoio quando la pompa di calore dichiarava la propria.
+        Ne' il bordo di una macchina ne' quello di un gruppo entrano qui.
+        Cio' che una macchina integra soddisfa i bisogni ancorati a lei
+        (`carries`), non quelli della rete intera — contarlo faceva sparire in
+        silenzio la sicurezza del serbatoio quando la pompa di calore
+        dichiarava la propria. E cio' che un gruppo si porta dentro sta **sul
+        proprio tratto**, non ovunque sulla rete: lo si conta camminando lungo
+        la tubazione (`provides`), che e' dove quel dato significa qualcosa.
         """
         return any(
             function in self.functions.get(component_id, frozenset())
             for component_id in self.members.get(network_id, ())
         )
+
+    def source_port_on(self, network_id: str) -> PortRef | None:
+        """L'attacco da cui quella rete **riceve** il proprio fluido.
+
+        E' il confine che il progettista ha gia' dichiarato e approvato: un
+        pezzo che fa da confine di rete e da cui il fluido esce verso
+        l'impianto. Serve a chi deve pescare da una rete senza inventarne la
+        sorgente (DRAW-006-R1, blocco D.2). Vuoto se quella rete non ha nessun
+        confine che alimenti: allora non c'e' niente da cui pescare, e chi
+        chiede lo deve dire invece di appendere un pezzo al nulla.
+        """
+        for component_id in self.members.get(network_id, ()):
+            if not self.provides(component_id, BOUNDARY):
+                continue
+            for port in self.connected_ports(component_id):
+                if port.flow is not PortFlow.OUT:
+                    continue
+                connection_id = self.connection_of_port.get((component_id, port.id))
+                if self.network_of_connection.get(connection_id or "") == network_id:
+                    return PortRef(component_id=component_id, port_id=port.id)
+        return None
 
     def carries(self, component_id: str, function: str) -> bool:
         """Quel componente porta quella funzione a bordo, di fabbrica."""
@@ -253,6 +354,69 @@ class RuleContext:
         if function in self.lacking.get(component_id, frozenset()):
             return OnBoard.ABSENT
         return OnBoard.UNKNOWN
+
+    # --- chi comunica con chi, dentro un pezzo (DRAW-006, blocco C) ---------
+
+    def admitted_states(self, component_id: str) -> tuple[HydraulicState | None, ...]:
+        """Le configurazioni ammesse di un pezzo, o l'unica implicita.
+
+        Chi non dichiara stati ne ha uno solo, che non ha nome: e' il modo in
+        cui il pezzo e' sempre stato — un raccordo o un accessorio in linea si
+        attraversa, una macchina no.
+        """
+        return self.states.get(component_id) or (None,)
+
+    def linked_ports(
+        self, component_id: str, port_id: str, state: HydraulicState | None = None
+    ) -> frozenset[str]:
+        """Gli attacchi del percorso che comunicano con questo, dentro il pezzo.
+
+        Per un **multivia** lo dice il catalogo, stato per stato: l'ingresso di
+        una deviatrice comunica con un ramo oppure con l'altro, e i due rami
+        non comunicano mai fra loro. Per tutti gli altri vale la regola di
+        sempre: chi sta in linea — o e' un raccordo — lascia passare la corsa
+        fra tutti i suoi attacchi del percorso; una macchina la ferma.
+        """
+        declared = self.states.get(component_id)
+        if declared:
+            if state is not None:
+                return state.linked(port_id)
+            found: set[str] = set()
+            for item in declared:
+                found |= item.linked(port_id)
+            return frozenset(found)
+        if component_id not in self.inline:
+            return frozenset()
+        return frozenset(
+            port.id
+            for port in self.ports.get(component_id, ())
+            if port.id != port_id and not port.off_the_run
+        )
+
+    def _stateful_on(self, network_id: str) -> tuple[str, ...]:
+        """I multivia della rete, in ordine: su di loro si enumerano gli stati."""
+        return tuple(
+            component_id
+            for component_id in self.members.get(network_id, ())
+            if component_id in self.states
+        )
+
+    def _assignments(
+        self, network_id: str
+    ) -> tuple[dict[str, HydraulicState], ...]:
+        """Le configurazioni ammesse della rete: una per ogni combinazione.
+
+        Il prodotto degli stati dei multivia che la rete contiene. Senza
+        multivia c'e' una configurazione sola, quella di sempre, e il costo e'
+        quello di prima.
+        """
+        stateful = self._stateful_on(network_id)
+        if not stateful:
+            return ({},)
+        return tuple(
+            dict(zip(stateful, combination, strict=True))
+            for combination in product(*(self.states[item] for item in stateful))
+        )
 
     def own_closers(self, component_id: str) -> frozenset[str]:
         """Gli organi **propri** di un pezzo: su ciascuno dei suoi attacchi del
@@ -290,7 +454,7 @@ class RuleContext:
     def cut_off_from(self, component_id: str, function: str, network_id: str) -> bool:
         """Il pezzo puo' restare **separato** da ogni pezzo con quella funzione
         sulla sua rete (I-046): il dominio di protezione, letto dalla
-        connettivita' e dalle intercettazioni.
+        connettivita', dalle intercettazioni e dalle configurazioni ammesse.
 
         Si cammina dagli attacchi del pezzo lungo le tubazioni della rete,
         in tutte e due le direzioni, attraverso tutto cio' che comunica —
@@ -298,9 +462,30 @@ class RuleContext:
         guarda anche cio' che pende dagli stacchi. Un organo di chiusura si
         attraversa solo se e' **proprio** del pezzo: quelli sono aperti quando
         la macchina e' in esercizio; un organo altrui puo' essere chiuso mentre
-        lei scalda, e oltre quello la protezione non conta. Vero se nessuna
-        strada cosi' arriva alla funzione cercata.
+        lei scalda, e oltre quello la protezione non conta.
+
+        Dentro un **multivia** si passa solo per una comunicazione che lo stato
+        ammette (DRAW-006, blocco C): l'ingresso di una deviatrice va su un ramo
+        o sull'altro, mai su tutti e due, e i due rami non comunicano fra loro.
+        La camminata si rifa' percio' in **ogni configurazione ammessa** della
+        rete: e' protetto chi raggiunge la funzione in tutte; basta una
+        configurazione in cui non la raggiunge perche' il pezzo sia un dominio
+        a se'. Vero se esiste una configurazione in cui nessuna strada arriva
+        alla funzione cercata.
         """
+        return any(
+            not self._reaches(component_id, function, network_id, assignment)
+            for assignment in self._assignments(network_id)
+        )
+
+    def _reaches(
+        self,
+        component_id: str,
+        function: str,
+        network_id: str,
+        assignment: Mapping[str, HydraulicState],
+    ) -> bool:
+        """La camminata di `cut_off_from`, in **una** configurazione della rete."""
         own = self.own_closers(component_id)
         frontier: list[tuple[str, str]] = []
         seen_pipes: set[str] = set()
@@ -313,20 +498,70 @@ class RuleContext:
         seen_pieces = {component_id}
         while frontier:
             connection_id, cursor = frontier.pop(0)
-            peer = self._peer(connection_id, cursor)
-            if peer is None or peer in seen_pieces:
+            arrival = self._peer_ref(connection_id, cursor)
+            if arrival is None or arrival.component_id in seen_pieces:
                 continue
+            peer = arrival.component_id
             seen_pieces.add(peer)
             if function in self.functions.get(peer, frozenset()) or function in self.hanging_functions(peer):
-                return False
+                return True
             if CLOSING_FUNCTIONS & self.functions.get(peer, frozenset()) and peer not in own:
                 continue
-            for onward in sorted((*self.incoming.get(peer, ()), *self.outgoing.get(peer, ()))):
+            for onward in sorted(self._onward(arrival, assignment)):
                 if onward in seen_pipes or self.network_of_connection.get(onward) != network_id:
                     continue
                 seen_pipes.add(onward)
                 frontier.append((onward, peer))
-        return True
+        return False
+
+    def _onward(
+        self, arrival: PortRef, assignment: Mapping[str, HydraulicState]
+    ) -> tuple[str, ...]:
+        """Le tubazioni per cui la camminata prosegue oltre un pezzo raggiunto.
+
+        Per un **multivia** sono quelle degli attacchi che lo stato assegnato
+        mette in comunicazione con l'attacco da cui si e' arrivati; per tutti
+        gli altri sono tutte quelle del percorso, come e' sempre stato — dentro
+        una macchina o un serbatoio l'acqua e' una sola.
+        """
+        state = assignment.get(arrival.component_id)
+        if state is None:
+            return (
+                *self.incoming.get(arrival.component_id, ()),
+                *self.outgoing.get(arrival.component_id, ()),
+            )
+        return tuple(
+            connection_id
+            for port_id in sorted(
+                self.linked_ports(arrival.component_id, arrival.port_id, state)
+            )
+            if (
+                connection_id := self.connection_of_port.get(
+                    (arrival.component_id, port_id)
+                )
+            )
+            is not None
+        )
+
+    def run_holds(self, pipes: frozenset[str], function: str) -> bool:
+        """Quella funzione e' gia' su uno di quei tratti, o vi pende.
+
+        E' la soddisfazione di una regola che si posa su un **tratto comune**:
+        l'ambito non e' la rete intera ma il dominio che quel tratto serve. Con
+        l'ambito di rete, un secondo circuito chiuso restava senza il proprio
+        corredo perche' il primo ce l'aveva gia' — ed e' il difetto che il PM
+        ha visto sulla sicurezza (DRAW-006, blocco C, punti 4 e 5).
+        """
+        pieces = {
+            ref.component_id
+            for pipe in pipes
+            if pipe in self.pipe_ends
+            for ref in self.pipe_ends[pipe]
+        }
+        return any(
+            self.provides(item, function) or function in self.hanging_functions(item)
+            for item in pieces
+        )
 
     def components_with(self, network_id: str, function: str) -> tuple[str, ...]:
         return tuple(
@@ -420,12 +655,20 @@ class RuleContext:
         while frontier:
             current = frontier.pop(0)
             leaves, enters = self.pipe_ends[current]
-            component_id = (leaves if upstream else enters).component_id
-            if component_id not in self.inline:
-                continue
-            for item in sorted(
-                (self.incoming if upstream else self.outgoing).get(component_id, ())
-            ):
+            ref = leaves if upstream else enters
+            here = (self.incoming if upstream else self.outgoing).get(
+                ref.component_id, ()
+            )
+            # Dentro un multivia si prosegue solo per una comunicazione che
+            # **qualche** stato ammette: il tratto comune e' un fatto di
+            # topologia — dove le mandate possono diventare una — e chi lo
+            # raggiunga davvero, in ogni configurazione, lo dice il dominio di
+            # protezione, che e' un'altra lettura (DRAW-006, blocco C).
+            reachable = {
+                self.connection_of_port.get((ref.component_id, port_id))
+                for port_id in self.linked_ports(ref.component_id, ref.port_id)
+            }
+            for item in sorted(set(here) & {item for item in reachable if item}):
                 if item in seen or self.network_of_connection.get(item) != network_id:
                     continue
                 seen.add(item)
@@ -470,7 +713,7 @@ class RuleContext:
             peer = self._peer(connection_id, cursor)
             if peer is None or peer in seen:
                 return False
-            if function in self.functions.get(peer, frozenset()):
+            if self.provides(peer, function):
                 return True
             # Cio' che pende da uno stacco del pezzo sta **su questa
             # tubazione** (DRAW-005-R1, I-043): la sicurezza appesa al
@@ -497,9 +740,19 @@ class RuleContext:
         return False
 
     def _peer(self, connection_id: str, component_id: str) -> str | None:
+        found = self._peer_ref(connection_id, component_id)
+        return None if found is None else found.component_id
+
+    def _peer_ref(self, connection_id: str, component_id: str) -> PortRef | None:
+        """L'altro capo di una tubazione, **con l'attacco su cui arriva**.
+
+        L'attacco serve a chi deve sapere se dentro il pezzo si prosegue: in un
+        multivia dipende da quale porta si e' entrati, e la sola identita' del
+        pezzo non basta piu' a dirlo.
+        """
         for candidate, holder in self.connection_of_port.items():
             if holder == connection_id and candidate[0] != component_id:
-                return candidate[0]
+                return PortRef(component_id=candidate[0], port_id=candidate[1])
         return None
 
     def hanging_functions(self, component_id: str) -> frozenset[str]:
@@ -594,7 +847,7 @@ class RuleContext:
         nessun organo, e il volume lo chiudono gli organi ai bordi del gruppo.
         """
         pieces, _ = self.along(ref)
-        if any(function in self.functions.get(item, frozenset()) for item in pieces):
+        if any(self.provides(item, function) for item in pieces):
             return True
         return bool(pieces) and self.same_group(ref.component_id, pieces[-1])
 

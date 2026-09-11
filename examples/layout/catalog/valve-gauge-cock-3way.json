@@ -1,0 +1,34 @@
+{
+  "id": "valve-gauge-cock-3way",
+  "version": "1.0.0",
+  "name": "Rubinetto portamanometro a tre vie",
+  "functions": [
+    "instrument_isolation"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "valve-gauge-cock-3way",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "Raccolta R ed. 2009, cap. R.2.C punto 2.5, e Caleffi serie 690, rubinetto portamanometro con attacco per il manometro campione (traduzione PM del 2026-09-09)"
+  ]
+}

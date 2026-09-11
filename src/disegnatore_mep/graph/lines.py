@@ -39,8 +39,9 @@ from dataclasses import dataclass
 from typing import Literal
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import ComponentDefinition
+from disegnatore_mep.catalog.schema import SERVICE_ORGAN_FUNCTIONS, ComponentDefinition
 from disegnatore_mep.layout.flow import GENERATOR_FUNCTIONS, LOAD_FUNCTIONS, STORE_FUNCTIONS
+from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import Domain
 
@@ -62,10 +63,6 @@ DISTRIBUTION_FUNCTIONS = frozenset({"distribution"})
 dentro, e da ogni sua uscita ne parte una nuova col proprio numero — il PM
 parla di «tre circuiti secondari», non di tre rami di uno stesso nome."""
 
-PASS_THROUGH_FUNCTIONS = frozenset({"diversion"})
-"""Chi sdoppia il flusso senza essere un raccordo: la valvola deviatrice.
-La linea la attraversa come attraversa un T, e il ramo deviato prende la
-lettera. I raccordi veri si riconoscono gia' da `is_a_fitting`."""
 
 
 @dataclass(frozen=True)
@@ -178,25 +175,48 @@ class _Liner:
         """
         hanging: dict[str, tuple[str, ...]] = {}
         pipes: set[str] = set()
-        for component in self._project.components:
+        # Un civico ha **un** indirizzo, quindi pende da un nodo solo. Il ponte
+        # fra due reti pende da due prese — una per parte — e senza questa
+        # riserva compariva sotto tutte e due, con due numeri di cui uno solo
+        # era il suo (DRAW-006-R1, blocco D). Il primo nodo che lo raggiunge se
+        # lo tiene, e l'ordine e' quello **strutturale**: non un nome.
+        claimed: set[str] = set()
+        seats = structural_order(self._project)
+        for component in sorted(self._project.components, key=lambda item: seats[item.id]):
             found: list[str] = []
             for port in self._definitions[component.id].ports:
                 if not port.off_the_run:
                     continue
                 for pipe in self._pipes_at(component.id, port.id):
                     pipes.add(pipe.connection_id)
-                    found.extend(self._chain_from(component.id, pipe, pipes))
+                    found.extend(
+                        item
+                        for item in self._chain_from(component.id, pipe, pipes)
+                        if item not in claimed
+                    )
             if found:
                 hanging[component.id] = tuple(found)
+                claimed.update(found)
         return hanging, pipes
 
     def _chain_from(self, owner: str, first: Pipe, pipes: set[str]) -> list[str]:
-        """La catena appesa a uno stacco, un pezzo alla volta."""
+        """La catena appesa a uno stacco, un pezzo alla volta.
+
+        Si ferma sull'**accessorio**: raccordi e organi di servizio si
+        attraversano perche' sono dello stacco, tutto il resto e' cio' per cui
+        lo stacco esiste. Senza questa fermata un **ponte fra due reti** faceva
+        proseguire la camminata oltre se stesso, fino alla presa dall'altra
+        parte: le due prese risultavano civico l'una dell'altra, e l'indirizzo
+        cresceva di due livelli oltre la grammatica della strada
+        (DRAW-006-R1, blocco D).
+        """
         chain: list[str] = []
         previous, current = owner, _far_side(first, owner)
         edge = first
         while current not in chain:
             chain.append(current)
+            if not self._is_of_the_stub(current):
+                break
             onward = [
                 pipe
                 for arm in self._graph.node(current).arms
@@ -211,6 +231,15 @@ class _Liner:
             pipes.add(edge.connection_id)
             previous, current = current, _far_side(edge, current)
         return chain
+
+    def _is_of_the_stub(self, component_id: str) -> bool:
+        """Un raccordo, o un organo posato per servire cio' che sta in fondo."""
+        definition = self._definitions.get(component_id)
+        if definition is None:
+            return False
+        return definition.is_a_fitting or bool(
+            SERVICE_ORGAN_FUNCTIONS & set(definition.functions)
+        )
 
     def _pipes_at(self, component_id: str, port_id: str) -> list[Pipe]:
         return [
@@ -243,11 +272,17 @@ class _Liner:
         return frozenset(self._definitions[component_id].functions)
 
     def _passes_through(self, component_id: str) -> bool:
-        """Un raccordo o una deviatrice: la linea principale li attraversa."""
-        return (
-            self._definitions[component_id].is_a_fitting
-            or bool(self._functions(component_id) & PASS_THROUGH_FUNCTIONS)
-        )
+        """Un raccordo o un multivia: la linea principale li attraversa.
+
+        Quali pezzi si attraversino non e' un elenco di mestieri scritto qui: un
+        raccordo si riconosce da `is_a_fitting`, un multivia dal fatto che il
+        **catalogo dichiara i suoi stati idraulici** — cioe' dichiara per dove
+        la corsa puo' passare (DRAW-006, blocco C). Il dato e' uno solo, e lo
+        legge anche l'analisi della sicurezza: due elenchi scritti in due moduli
+        divergerebbero alla prima valvola nuova.
+        """
+        definition = self._definitions[component_id]
+        return definition.is_a_fitting or bool(definition.hydraulic_states)
 
     def _ends_the_line(self, component_id: str) -> bool:
         """Una macchina: sorgente, utilizzatore, riserva, confine, collettore.

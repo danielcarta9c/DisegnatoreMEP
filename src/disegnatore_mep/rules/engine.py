@@ -114,23 +114,67 @@ def _regime_allows(rule: RuleDefinition, declared: PlantRegime | None) -> bool:
     return declared is not PlantRegime.OVER_35_KW
 
 
-def _common_run_anchor(
+def _domains(
+    chains: list[tuple[str, ...]],
+) -> list[tuple[tuple[str, ...], frozenset[str]]]:
+    """Le camminate raggruppate per **dominio**, con il tratto che ciascuno ha
+    in comune.
+
+    Due ancoraggi stanno nello stesso dominio se le loro camminate condividono
+    una tubazione: da li' in poi il percorso e' lo stesso, e un pezzo posato su
+    quel tratto serve tutti e due. Chi non condivide niente con nessuno resta un
+    dominio a se', **e non fa perdere il proprio tratto agli altri**: era il
+    difetto che il PM ha visto sull'ibrido, dove la protezione valida per una
+    macchina veniva scartata perche' l'altra, dietro la deviatrice, non ci
+    arrivava.
+
+    Restituisce, per ogni dominio, la prima camminata — quella che detta la
+    testa — e le tubazioni comuni a tutte le sue. L'ordine e' quello degli
+    ancoraggi, che e' gia' invariante rispetto all'ordine del file.
+    """
+    groups: list[tuple[list[tuple[str, ...]], frozenset[str]]] = [
+        ([chain], frozenset(chain)) for chain in chains
+    ]
+    merged = True
+    while merged:
+        merged = False
+        for first in range(len(groups)):
+            for second in range(first + 1, len(groups)):
+                shared = groups[first][1] & groups[second][1]
+                if not shared:
+                    continue
+                groups[first] = ([*groups[first][0], *groups[second][0]], shared)
+                del groups[second]
+                merged = True
+                break
+            if merged:
+                break
+    return [(group[0], shared) for group, shared in groups]
+
+
+def _common_run_anchors(
     context: RuleContext, rule: RuleDefinition, network: NetworkModel
-) -> tuple[PortRef | None, PortRef | None]:
-    """La testa del tratto comune della rete, per gli ancoraggi della regola.
+) -> tuple[list[tuple[PortRef, frozenset[str]]], PortRef | None]:
+    """La testa del tratto comune di **ogni dominio** della rete.
 
     Dal ritorno (o dalla mandata) di ciascun ancoraggio si cammina lungo il
     percorso — contro il fluido per il ritorno, seguendolo per la mandata —
-    finche' la strada resta una sola. Le tubazioni che **tutte** le camminate
-    condividono sono il tratto comune; il pezzo si posa sulla prima di esse,
-    cioe' la piu' vicina agli ancoraggi: a monte della prima ripartizione sul
-    ritorno, a valle dell'ultima confluenza sulla mandata. Con un ancoraggio
-    solo il tratto comune comincia sul suo stesso attacco, e la posa coincide
-    con quella di sempre.
+    attraverso cio' che lascia passare la corsa; dentro un multivia si passa per
+    le comunicazioni che i suoi stati ammettono, mai da un ramo all'altro. Le
+    tubazioni che le camminate di un dominio condividono sono il suo tratto
+    comune; il pezzo si posa sulla prima di esse, cioe' la piu' vicina agli
+    ancoraggi: a monte della prima ripartizione sul ritorno, a valle
+    dell'ultima confluenza sulla mandata. Con un ancoraggio solo il tratto
+    comune comincia sul suo stesso attacco.
 
-    Restituisce `(ancoraggio, ripiego)`: il primo e' la testa del tratto
-    comune, o niente se non esiste; il secondo e' l'attacco del primo
-    ancoraggio, che serve a dire **dove** la rete non ha un tratto comune.
+    La cardinalita' e' percio' **per dominio**, non per rete: due circuiti
+    chiusi indipendenti dichiarati sulla stessa rete sono due domini e vogliono
+    ciascuno il proprio corredo (DRAW-006, blocco C, punto 4).
+
+    Restituisce `(teste, ripiego)`: ogni testa viene con le tubazioni del
+    proprio dominio, su cui si guarda se il corredo c'e' gia'; il ripiego e'
+    l'attacco del primo ancoraggio, che serve a dire **dove** la rete non ha
+    nessun tratto comune.
     """
     upstream = rule.then.placement is Placement.ON_THE_COMMON_RETURN
     chains: list[tuple[str, ...]] = []
@@ -160,14 +204,12 @@ def _common_run_anchor(
             )
             if chain:
                 chains.append(chain)
-    if not chains or fallback is None:
-        return None, None
-    shared = set(chains[0]).intersection(*(set(item) for item in chains[1:]))
-    if not shared:
-        return None, fallback
-    head = next(item for item in chains[0] if item in shared)
-    leaves, enters = context.pipe_ends[head]
-    return (enters if upstream else leaves), fallback
+    found: list[tuple[PortRef, frozenset[str]]] = []
+    for first, shared in _domains(chains):
+        head = next(item for item in first if item in shared)
+        leaves, enters = context.pipe_ends[head]
+        found.append(((enters if upstream else leaves), shared))
+    return found, fallback
 
 
 def _limited(
@@ -226,7 +268,11 @@ def _carried_by_every_anchor(
 
 
 def _already_there(
-    context: RuleContext, rule: RuleDefinition, network_id: str, anchor: PortRef
+    context: RuleContext,
+    rule: RuleDefinition,
+    network_id: str,
+    anchor: PortRef,
+    domain: frozenset[str] | None = None,
 ) -> bool:
     """La funzione che la regola porterebbe qui c'e' gia', nell'ambito dichiarato."""
     function = _function_at(context, rule, anchor)
@@ -236,9 +282,15 @@ def _already_there(
     if context.carries(anchor.component_id, function):
         return True
     if rule.satisfied_by.scope is SatisfactionScope.ON_THE_NETWORK:
-        return context.network_has(network_id, function) or _carried_by_every_anchor(
-            context, rule, network_id, function
+        # Su un tratto comune l'ambito e' il **dominio** che quel tratto serve,
+        # non la rete intera: con l'ambito di rete il corredo di un secondo
+        # circuito chiuso spariva perche' il primo ce l'aveva gia' (DRAW-006).
+        present = (
+            context.run_holds(domain, function)
+            if domain is not None
+            else context.network_has(network_id, function)
         )
+        return present or _carried_by_every_anchor(context, rule, network_id, function)
     # Un accessorio posato sull'attacco di servizio non sta sulla tubazione
     # principale: camminando lungo quella non lo si troverebbe, e lo si
     # riproporrebbe a ogni passata.
@@ -265,6 +317,48 @@ def _matches(context: RuleContext, rule: RuleDefinition, network: NetworkModel) 
         rule.when.network_lacks_function is not None
         and context.network_has(network.id, rule.when.network_lacks_function)
     )
+
+
+def _domain_at(
+    domains: dict[tuple[str, str], frozenset[str]], anchor: PortRef
+) -> frozenset[str] | None:
+    """Le tubazioni del dominio che quella testa serve, se la regola li conta.
+
+    Vuoto per ogni altra regola: allora l'ambito di soddisfazione resta quello
+    che la regola dichiara, e non cambia niente rispetto a prima.
+    """
+    return domains.get((anchor.component_id, anchor.port_id))
+
+
+def _catalogue_has(
+    catalog: ComponentRegistry, rule: RuleDefinition, function: str, medium: str
+) -> bool:
+    """Il catalogo ha un pezzo per quella funzione su quel fluido.
+
+    Un **ponte** si cerca altrove: le sue porte non stanno tutte sullo stesso
+    fluido, quindi `serving` non lo trova ne' lo deve trovare — non e' un pezzo
+    da infilare in una tratta.
+    """
+    if rule.then.bridges_from_medium is not None:
+        return bool(catalog.bridging(function, rule.then.bridges_from_medium, medium))
+    return bool(catalog.serving(function, medium))
+
+
+def _source_for(
+    context: RuleContext, project: ProjectModel, medium: str
+) -> PortRef | None:
+    """L'attacco della sorgente gia' approvata per quel fluido.
+
+    Le reti si guardano in ordine di nome, come ovunque nel motore: quale rete
+    alimenti il ponte non deve dipendere da come l'impianto e' stato scritto.
+    """
+    for network in sorted(project.networks, key=lambda item: item.id):
+        if network.medium != medium:
+            continue
+        found = context.source_port_on(network.id)
+        if found is not None:
+            return found
+    return None
 
 
 def _gap(
@@ -318,20 +412,34 @@ def evaluate(
             if not _matches(context, rule, network):
                 continue
 
+            # Le tubazioni del dominio di ciascuna testa, per le regole che si
+            # posano su un tratto comune: e' li' che si guarda se il corredo
+            # c'e' gia', invece che sull'intera rete.
+            domain_of: dict[tuple[str, str], frozenset[str]] = {}
             if rule.then.placement.on_a_common_run:
                 # Il pezzo non si posa su un attacco dell'ancoraggio ma sul
-                # tratto comune della rete. Una rete che non ne ha uno non si
-                # serve in silenzio: e' un punto aperto per il progettista.
-                found_anchor, fallback = _common_run_anchor(context, rule, network)
-                if found_anchor is None and fallback is None:
-                    continue
-                if found_anchor is None and fallback is not None:
+                # tratto comune. Chi si conta **per rete** ne vuole uno solo, e
+                # una rete i cui ancoraggi non condividono nessuna tubazione non
+                # si serve in silenzio: sceglierne un dominio sarebbe decidere al
+                # posto del progettista, e tacere sarebbe peggio — esce un punto
+                # aperto. Chi si conta **per dominio di protezione** li serve
+                # invece tutti: nessun dominio perde il proprio pezzo perche' un
+                # altro non lo raggiunge (DRAW-006, blocco C, punti 4 e 5).
+                heads, fallback = _common_run_anchors(context, rule, network)
+                per_domain = rule.cardinality is RuleCardinality.PER_PROTECTION_DOMAIN
+                if not heads or (len(heads) > 1 and not per_domain):
+                    if fallback is None:
+                        continue
                     missing = _gap(
                         context, rule, network, fallback, GapReason.NO_COMMON_RUN
                     )
                     gaps.setdefault(missing.key, missing)
                     continue
-                candidates = [item for item in (found_anchor,) if item is not None]
+                candidates = [head for head, _ in heads]
+                if per_domain:
+                    domain_of = {
+                        (head.component_id, head.port_id): pipes for head, pipes in heads
+                    }
             else:
                 candidates = _anchors(context, rule, network)
 
@@ -342,8 +450,8 @@ def evaluate(
             # si ferma: la sceglierebbe il programma.
             anchors: list[PortRef] = []
             for anchor in candidates:
-                if not catalog.serving(
-                    _function_at(context, rule, anchor), network.medium
+                if not _catalogue_has(
+                    catalog, rule, _function_at(context, rule, anchor), network.medium
                 ):
                     missing = _gap(context, rule, network, anchor)
                     gaps.setdefault(missing.key, missing)
@@ -367,11 +475,17 @@ def evaluate(
                     ):
                         continue
                 anchors.append(anchor)
-            satisfied = {
-                anchor.component_id
+
+            # Cio' che la regola porterebbe c'e' gia', attacco per attacco. Si
+            # calcola una volta sola: la stessa risposta serve a chi conta i
+            # componenti serviti e a chi sceglie gli attacchi ancora liberi.
+            covered = {
+                (anchor.component_id, anchor.port_id): _already_there(
+                    context, rule, network.id, anchor, _domain_at(domain_of, anchor)
+                )
                 for anchor in anchors
-                if _already_there(context, rule, network.id, anchor)
             }
+            satisfied = {item for (item, _), found in covered.items() if found}
             # Un componente gia' servito su una rete e' servito e basta: il
             # volano sta sul primario e sul secondario, e uno scarico per
             # accumulo deve restare uno anche quando la prima passata non ha
@@ -387,9 +501,40 @@ def evaluate(
                 free = [
                     anchor
                     for anchor in anchors
-                    if not _already_there(context, rule, network.id, anchor)
+                    if not covered[(anchor.component_id, anchor.port_id)]
                 ]
-            for anchor in _limited(free, rule.cardinality, served):
+            # Le teste dei domini sono gia' una per dominio: tagliarle con la
+            # cardinalita' di rete ne lascerebbe fuori tutti tranne il primo.
+            allowed = (
+                free
+                if rule.cardinality is RuleCardinality.PER_PROTECTION_DOMAIN
+                else _limited(free, rule.cardinality, served)
+            )
+            # Il ponte fra due reti (DRAW-006-R1, blocco D): la sorgente da
+            # cui pescare dev'essere gia' dichiarata dal progettista. Si cerca
+            # una volta per rete servita, prima di proporre: se non c'e', ogni
+            # ancoraggio diventa un punto aperto invece di un pezzo appeso a
+            # nulla.
+            source: PortRef | None = None
+            if rule.then.bridges_from_medium is not None:
+                source = _source_for(context, project, rule.then.bridges_from_medium)
+                # E la derivazione con cui pescare da quella rete: senza il
+                # raccordo per quel fluido il ponte non si puo' innestare, ed
+                # e' lo stesso silenzio del pezzo mancante — un punto aperto,
+                # non un crollo a meta' catena.
+                if source is not None and not catalog.serving(
+                    BRANCH_OFF, rule.then.bridges_from_medium
+                ):
+                    source = None
+                if source is None:
+                    for anchor in allowed:
+                        missing = _gap(
+                            context, rule, network, anchor, GapReason.NO_SOURCE_NETWORK
+                        )
+                        gaps.setdefault(missing.key, missing)
+                    continue
+
+            for anchor in allowed:
                 function = _function_at(context, rule, anchor)
                 # Una regola che esiste in forza del bordo macchina non
                 # presume: se il catalogo non dice se la funzione sta dentro
@@ -402,7 +547,13 @@ def evaluate(
                     missing = _gap(context, rule, network, anchor, GapReason.ON_BOARD_UNKNOWN)
                     gaps.setdefault(missing.key, missing)
                     continue
-                definition = catalog.providing(function, network.medium)
+                definition = (
+                    catalog.bridge(
+                        function, rule.then.bridges_from_medium, network.medium
+                    )
+                    if rule.then.bridges_from_medium is not None
+                    else catalog.providing(function, network.medium)
+                )
                 component_id = proposed_component_id(definition.id, anchor)
                 if component_id in taken:
                     continue
@@ -451,6 +602,7 @@ def evaluate(
                         inlet_port=rule.then.inlet_port,
                         outlet_port=rule.then.outlet_port,
                         service_port=service_port,
+                        source_anchor=source,
                         rationale=rule.rationale,
                         source=rule.source,
                     )

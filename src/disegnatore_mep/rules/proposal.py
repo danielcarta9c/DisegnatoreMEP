@@ -26,6 +26,12 @@ class GapReason(StrEnum):
     """La regola si posa sul tratto comune della rete, e la rete non ne ha
     uno: le camminate dagli ancoraggi non condividono nessuna tubazione."""
 
+    NO_SOURCE_NETWORK = "no_source_network"
+    """La regola propone un **ponte** fra due reti, e la rete da cui il ponte
+    dovrebbe pescare non c'e' o non ha una sorgente gia' approvata. Un ponte
+    con un capo nel vuoto non e' un pezzo: e' una domanda al progettista
+    (DRAW-006-R1, blocco D.2)."""
+
     ON_BOARD_UNKNOWN = "on_board_unknown"
     """La regola aggiungerebbe un dispositivo perche' la macchina non lo porta
     a bordo, ma il catalogo non dice se lo porta: il dato e' ignoto, e un
@@ -93,6 +99,15 @@ class RuleProposal(StrictModel):
 
     inlet_port: str = Field(pattern=ID_PATTERN)
     outlet_port: str = Field(pattern=ID_PATTERN)
+
+    source_anchor: PortRef | None = None
+    """L'attacco della rete da cui un **ponte** pesca (DRAW-006-R1, blocco D).
+
+    Vuoto per tutto cio' che sta dentro una tubazione sola. Quando c'e', il
+    pezzo ha due capi: `anchor` e' quello sulla rete di cui la regola parla, e
+    questo e' quello sulla rete da cui il fluido arriva — la sorgente che il
+    progettista ha gia' dichiarato. Chi applica apre una derivazione da
+    ciascuna parte."""
 
     service_port: str | None = Field(default=None, pattern=ID_PATTERN)
     """L'attacco di servizio dell'ancoraggio su cui questo accessorio si appende.

@@ -89,6 +89,21 @@ class ComponentTrait(StrEnum):
     """Lo si chiude solo con un organo bloccabile o piombabile, che non si
     chiude per distrazione."""
 
+    SHUTOFF_INSTRUMENT_TAP = "shutoff_instrument_tap"
+    """Lo si chiude con il rubinetto della **propria presa**, non con un organo
+    di linea.
+
+    E' il regime di cio' che si legge o si tara su una derivazione dedicata: lo
+    strumento si smonta chiudendo il rubinetto della presa, che sta sullo
+    stacco e non interrompe la condotta. Dirlo qui, e non nella regola, e' cio'
+    che tiene una sola regola dell'intercettazione: il pezzo dichiara come lo
+    si chiude, la regola dice quale organo ciascun regime pretende.
+
+    Non e' una deroga all'intercettazione: e' un modo di chiudere. L'organo che
+    ne deriva non e' un mestiere di chiusura (`CLOSING_FUNCTIONS`), perche' non
+    sta sul percorso del fluido e non separa nessun dominio.
+    """
+
     ATTACHMENT_INLINE = "attachment_inline"
     """Sta sul percorso del tubo: il fluido ci passa dentro o ci arriva."""
 
@@ -102,9 +117,10 @@ SHUTOFF_REGIMES: frozenset[ComponentTrait] = frozenset(
         ComponentTrait.SHUTOFF_ORDINARY,
         ComponentTrait.SHUTOFF_NEVER,
         ComponentTrait.SHUTOFF_LOCKABLE_ONLY,
+        ComponentTrait.SHUTOFF_INSTRUMENT_TAP,
     }
 )
-"""I tre modi in cui un componente si lascia chiudere. Uno e' obbligatorio:
+"""I modi in cui un componente si lascia chiudere. Uno e' obbligatorio:
 senza, un valore sottinteso deciderebbe al posto di chi compila il catalogo
 (D-094)."""
 
@@ -117,7 +133,36 @@ fluido lo dice il catalogo. Vivono qui perche' li leggono in tre — la regola
 dell'intercettazione, che li propone; la saturazione, che li posa per ultimi
 perche' un organo chiude un volume che deve essere gia' completo; la posa, che
 li stringe all'apparecchio che isolano (D-120) — e un elenco scritto tre volte
-diverge."""
+diverge.
+
+**Chi non c'e', e apposta**: l'organo della presa strumentale
+(`shutoff_instrument_tap`). Chiude uno strumento, non un volume: sta su una
+derivazione propria, la condotta non lo attraversa, e contarlo qui farebbe
+risultare un generatore separato dalla propria sicurezza per via di una presa
+manometrica. Per la **posa** e' pero' un organo come gli altri, e sta in
+`SERVICE_ORGAN_FUNCTIONS`."""
+
+INSTRUMENT_ISOLATION = "instrument_isolation"
+"""Il mestiere del rubinetto che sta sulla **presa** di uno strumento.
+
+Come gli altri e' una funzione, non un pezzo (D-069): quale voce di catalogo la
+porti su un dato fluido lo dice il catalogo. Vive accanto ai mestieri di
+chiusura perche' e' l'organo che la stessa regola assegna, e va distinto da
+loro per una ragione sola: non separa un dominio idraulico."""
+
+SERVICE_ORGAN_FUNCTIONS: frozenset[str] = CLOSING_FUNCTIONS | {INSTRUMENT_ISOLATION}
+"""Gli organi che la regola dell'intercettazione assegna a cio' che si manutiene.
+
+Comprende i mestieri di chiusura **e** il rubinetto della presa strumentale:
+sono tutti organi che stanno li' per servire un pezzo preciso, e la posa li
+disegna sul suo attacco (D-120) invece che dove capita lungo la tratta. La
+differenza con `CLOSING_FUNCTIONS` non e' grafica ma idraulica: quelli chiudono
+un volume, e chi cammina sulla rete per capire chi resta separato da cosa
+attraversa gli uni e non gli altri.
+
+Il difetto che questa distinzione rende impossibile: dare al manometro il
+proprio rubinetto e vederlo scivolare via dalla presa, perche' la posa lo
+leggeva come un accessorio qualunque in mezzo a un tubo."""
 
 FITTING_FUNCTIONS: frozenset[str] = frozenset({"junction", "branch_off"})
 """I due mestieri di un raccordo: unire due tubazioni, o aprire una derivazione.
@@ -186,6 +231,63 @@ class PortDefinition(StrictModel):
     def off_the_run(self) -> bool:
         """Non e' sul percorso del fluido: e' uno stacco, di qualunque specie."""
         return self.stub or self.is_service
+
+
+class HydraulicState(StrictModel):
+    """Una configurazione ammessa di un componente multivia.
+
+    Un pezzo a piu' vie non e' un raccordo: quali delle sue porte comunichino
+    **cambia con lo stato**, e attraversarle tutte insieme descriverebbe una
+    comunicazione che non esiste. Una deviatrice a tre vie manda l'ingresso su
+    un ramo oppure sull'altro, e i due rami non sono mai in comunicazione fra
+    loro.
+
+    `connects` sono i **gruppi** di porte in comunicazione in questo stato: un
+    gruppo e' un volume unico, due gruppi sono due volumi separati. Quasi
+    sempre e' un gruppo solo di due porte; ce ne sono due quando un pezzo
+    scambia due coppie insieme.
+    """
+
+    id: str = Field(pattern=ID_PATTERN)
+    """Come si chiama questo stato: serve a chi legge una diagnostica."""
+
+    name: str | None = Field(default=None, min_length=1)
+    """Come lo si dice in italiano, per il documento. Facoltativo."""
+
+    connects: list[list[str]] = Field(min_length=1)
+    """I gruppi di porte che comunicano in questo stato."""
+
+    @property
+    def groups(self) -> tuple[frozenset[str], ...]:
+        return tuple(frozenset(item) for item in self.connects)
+
+    def linked(self, port_id: str) -> frozenset[str]:
+        """Le porte che comunicano con questa, in questo stato."""
+        found: set[str] = set()
+        for group in self.groups:
+            if port_id in group:
+                found |= group - {port_id}
+        return frozenset(found)
+
+    @model_validator(mode="after")
+    def a_group_is_a_communication(self) -> "HydraulicState":
+        for group in self.connects:
+            if len(set(group)) < 2:
+                raise ValueError(
+                    f"lo stato {self.id} dichiara il gruppo {group}: una "
+                    f"comunicazione ha almeno due porte, altrimenti non e' un "
+                    f"passaggio"
+                )
+        seen: set[str] = set()
+        for volume in self.groups:
+            shared = sorted(volume & seen)
+            if shared:
+                raise ValueError(
+                    f"lo stato {self.id} mette {', '.join(shared)} in due gruppi: "
+                    f"due volumi che condividono una porta sono un volume solo"
+                )
+            seen |= volume
+        return self
 
 
 class OnBoard(StrEnum):
@@ -271,14 +373,51 @@ class ComponentDefinition(StrictModel):
     riempimento dell'impianto, e non dichiara niente.
     """
 
+    hydraulic_states: tuple[HydraulicState, ...] = ()
+    """Le configurazioni idrauliche ammesse, per chi ne ha piu' d'una.
+
+    Vuoto per la stragrande maggioranza dei pezzi: un raccordo, una valvola di
+    linea, una macchina non cambiano quali porte comunichino. Chi le dichiara e'
+    un **multivia**, e da quel momento chiunque cammini sulla rete lo attraversa
+    solo attraverso una comunicazione ammessa — mai da un ramo all'altro, che
+    sarebbe un passaggio inesistente.
+
+    E' l'unico posto in cui questo fatto e' scritto: la nomenclatura delle
+    linee e l'analisi della sicurezza lo leggono da qui, e nessun modulo tiene
+    un proprio elenco dei mestieri che «si attraversano» (DRAW-006, blocco C).
+    """
+
     symbol_id: str = Field(pattern=ID_PATTERN)
     composite: bool = False
+    """Il pezzo pubblicato e' un **gruppo**: dentro il suo mantello ci sono piu'
+    organi.
+
+    Da solo non dota di niente (DRAW-006, blocco B, punto 3): dichiara che c'e'
+    qualcosa da dichiarare, e obbliga a scriverlo in `carries_on_board`. Quali
+    funzioni un gruppo integri lo dice quell'elenco, mai il nome, mai il segno
+    e mai questa bandiera.
+    """
+
     ports: list[PortDefinition] = Field(min_length=1)
     sources: list[str] = Field(min_length=1)
 
     @property
     def port_ids(self) -> frozenset[str]:
         return frozenset(port.id for port in self.ports)
+
+    def linked_ports(self, port_id: str, state: HydraulicState | None = None) -> frozenset[str]:
+        """Le porte che comunicano con questa, in uno stato o in almeno uno.
+
+        Per chi non dichiara stati la risposta e' vuota: quali porte comunichino
+        dentro una macchina non e' un fatto che il catalogo dichiari, e chi
+        cammina sulla rete si ferma li' come ha sempre fatto.
+        """
+        if state is not None:
+            return state.linked(port_id)
+        found: set[str] = set()
+        for item in self.hydraulic_states:
+            found |= item.linked(port_id)
+        return frozenset(found)
 
     def on_board(self, function: str) -> OnBoard:
         """Cosa il catalogo dice di quella funzione dentro il mantello: presente,
@@ -488,6 +627,85 @@ class ComponentDefinition(StrictModel):
         return self
 
     @model_validator(mode="after")
+    def the_states_are_alternatives_between_real_ports(self) -> "ComponentDefinition":
+        """Gli stati sono configurazioni **alternative** fra porte del percorso.
+
+        Quattro modi di sbagliarli, e nessuno si vede al disegno: una porta che
+        non esiste; uno stacco, che non e' una via; uno stato solo, che non e'
+        un'alternativa ma un pezzo dichiarato passante; due stati identici, che
+        sono lo stesso stato scritto due volte. Il difetto che questa regola
+        rende impossibile e' il piu' silenzioso di tutti — una valvola che
+        diventa genericamente passante e una macchina che risulta protetta da
+        una sicurezza che, nella configurazione sbagliata, non raggiunge.
+        """
+        if not self.hydraulic_states:
+            return self
+        run = {port.id for port in self.ports if not port.off_the_run}
+        for state in self.hydraulic_states:
+            named = {item for group in state.connects for item in group}
+            unknown = sorted(named - self.port_ids)
+            if unknown:
+                raise ValueError(
+                    f"{self.id} dichiara lo stato {state.id} fra porte che non ha: "
+                    f"{', '.join(unknown)}"
+                )
+            off = sorted(named - run)
+            if off:
+                raise ValueError(
+                    f"{self.id} dichiara lo stato {state.id} su {', '.join(off)}, "
+                    f"che e' uno stacco: gli stati dicono per dove passa il "
+                    f"percorso, e uno stacco non e' una via"
+                )
+        if len(self.hydraulic_states) < 2:
+            raise ValueError(
+                f"{self.id} dichiara un solo stato idraulico: gli stati servono a "
+                f"dire quali configurazioni sono **alternative**, e con una sola "
+                f"il pezzo sarebbe passante — che si dichiara non dichiarando "
+                f"stati"
+            )
+        ids = [item.id for item in self.hydraulic_states]
+        twice = sorted({item for item in ids if ids.count(item) > 1})
+        if twice:
+            raise ValueError(
+                f"{self.id} dichiara due volte lo stato {', '.join(twice)}"
+            )
+        shapes = [
+            tuple(sorted(tuple(sorted(group)) for group in state.groups))
+            for state in self.hydraulic_states
+        ]
+        if len(set(shapes)) != len(shapes):
+            raise ValueError(
+                f"{self.id} dichiara due stati con le stesse comunicazioni: sono "
+                f"lo stesso stato scritto due volte"
+            )
+        mute = sorted(item for item in run if not self.linked_ports(item))
+        if mute:
+            raise ValueError(
+                f"{self.id} dichiara gli stati idraulici e lascia fuori "
+                f"{', '.join(mute)}: una porta del percorso che non comunica in "
+                f"nessuno stato non ha modo di essere raggiunta"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def a_group_says_what_it_carries(self) -> "ComponentDefinition":
+        """Un composito dichiara cosa si porta dentro, o non e' un composito.
+
+        La bandiera da sola non dota di niente (blocco B, punto 3): senza
+        l'elenco, «il gruppo ha gia' le sue valvole» sarebbe una cosa che si sa
+        e non una cosa che il catalogo dice — e la stessa frase varrebbe per il
+        disconnettore, il filtro e il ritegno, che a un gruppo generico non
+        spettano.
+        """
+        if self.composite and not self.carries_on_board:
+            raise ValueError(
+                f"{self.id} si dichiara un gruppo composito senza dire quali "
+                f"funzioni si porta dentro: un composito che non lo dichiara "
+                f"chiede di indovinare la propria dotazione"
+            )
+        return self
+
+    @model_validator(mode="after")
     def what_is_serviced_is_not_what_never_closes(self) -> "ComponentDefinition":
         """Le due proprieta' si contraddicono, e la contraddizione e' silenziosa.
 
@@ -511,10 +729,13 @@ class ComponentDefinition(StrictModel):
 __all__ = [
     "ATTACHMENT_STYLES",
     "CLOSING_FUNCTIONS",
+    "INSTRUMENT_ISOLATION",
     "ComponentDefinition",
     "ComponentTrait",
     "FITTING_FUNCTIONS",
+    "HydraulicState",
     "OnBoard",
     "PortDefinition",
+    "SERVICE_ORGAN_FUNCTIONS",
     "SHUTOFF_REGIMES",
 ]

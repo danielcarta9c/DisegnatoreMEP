@@ -29,13 +29,28 @@ lavoro.**
   espressa.** Vale anche quando è formulata in termini tecnici: il PO **può prescrivere una
   soluzione**, non solo segnalare che qualcosa non va, e una sua prescrizione non è una
   proposta da valutare.
-- **Codex è il Project Manager (PM).** Assegna i pacchetti di lavoro, ne scrive i criteri
-  di accettazione **prima** che il lavoro cominci, giudica le consegne e le **approva o
-  respinge**. Porta al PO ciò che è del PO: cosa deve fare il prodotto, priorità, costi,
-  compromessi.
-- **Claude è il DEV team.** Esegue il pacchetto assegnato dentro il perimetro dichiarato.
-  Può **proporre** alternative tecniche, e le motiva; non decide al posto del PO né al
-  posto del PM.
+- **Il Project Manager (PM) è sdoppiato dal 10 settembre 2026**, per disposizione del PO.
+  Fino a quella data il ruolo era di Codex, che non è più disponibile. I compiti restano
+  gli stessi — pacchetti, criteri di accettazione scritti **prima** che il lavoro
+  cominci, giudizio delle consegne — ma sono tenuti da due soggetti diversi:
+  - **PM-autore:** l'assistente in sessione col PO. Scrive il pacchetto, i criteri, le
+    soglie, traduce gli input del PO e tiene la documentazione corrente. **Non approva mai
+    il proprio pacchetto:** lo sottopone al PO prima che il lavoro cominci.
+  - **PM-revisore:** un **agente separato, avviato da zero su ogni consegna**. Giudica
+    criterio per criterio, e riceve i criteri e gli artefatti **prima** del rapporto del
+    DEV. Il suo verdetto è scritto e vive in `docs/pm/`.
+  - **Il merge su `main` è del PO**, finché il PM è tenuto dalla stessa testa che
+    sviluppa. La regola «il DEV non fonde» non cambia.
+
+  Le regole che rendono avversariale il PM-revisore, e senza le quali è teatro, stanno in
+  `docs/governance/OPERATING_MODEL.md` §1.2.1. La prima e la più importante: **un criterio
+  si chiude con il comando eseguito e il suo output**, mai con la parola «verificato», e un
+  criterio che nomina un risultato osservabile si prova sul risultato osservabile.
+- **Claude è il DEV team**, e dal 10 settembre 2026 anche il **PM-autore**. Esegue il
+  pacchetto assegnato dentro il perimetro dichiarato. Può **proporre** alternative
+  tecniche, e le motiva; non decide al posto del PO. Quando indossa il cappello del
+  PM-autore lo **dichiara**, e ciò che scrive in quel ruolo va approvato dal PO prima di
+  diventare lavoro.
 
 ### Come si tratta una disposizione del PO
 

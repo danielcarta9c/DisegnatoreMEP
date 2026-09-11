@@ -30,10 +30,19 @@ L'AI non modifica direttamente coordinate o connettività approvata.
 
 - **PO — Daniel Carta:** dominio MEP, requisiti, convenzioni grafiche, priorità e giudizio
   finale del prodotto.
-- **PM — Codex:** ricerca e verifica delle fonti, traduzione degli input PO, roadmap,
-  Work Package, criteri di accettazione, revisione, documentazione corrente e merge.
+- **PM — sdoppiato dal 10 settembre 2026** (Codex non è più disponibile):
+  - **PM-autore**, tenuto da Claude in sessione col PO: fonti, traduzione degli input PO,
+    roadmap, Work Package, criteri di accettazione, documentazione corrente. Non approva
+    mai il proprio pacchetto — lo sottopone al PO prima che il lavoro cominci;
+  - **PM-revisore**, un **agente separato avviato da zero su ogni consegna**: giudizio
+    criterio per criterio, con i criteri e gli artefatti in mano **prima** del rapporto
+    del DEV;
+  - **il merge su `main` è del PO.**
+
+  Le regole che lo rendono avversariale: `docs/governance/OPERATING_MODEL.md` §1.2.1.
 - **DEV — Claude:** implementazione, test, artefatti e proposte tecniche reversibili
   dentro il Work Package. Non deduce requisiti dagli esempi e non decide regole MEP.
+  Quando indossa il cappello del PM-autore lo dichiara.
 
 ## Ordine di lettura DEV
 
@@ -50,8 +59,14 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
 - Release in corso: **0.2 — prima tavola tecnicamente corretta e approvata**.
 - `DRAW-005` è stato verificato e fuso nella PR #18: tavola 1 con 4 curve, 1 incrocio,
   525 mm, zero backtracking; simboli e contenuto critici corretti.
-- Il PO ha approvato l'impostazione generale e ha richiesto le rifiniture raccolte in
-  `DRAW-005-R1`, ora unico incarico DEV attivo.
+- `DRAW-005-R1` è stato fuso con la PR #21; `DRAW-006` e `DRAW-006-R1` sono stati
+  consegnati sulla PR #24, in attesa di verifica del PM.
+- **Chi tocca posa, costo o routing legge prima due documenti**, in quest'ordine:
+  `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md` — l'ordine delle decisioni che il
+  PO ha fissato: prima le autostrade e dritte, poi il corredo con lo stretch invece della
+  piega, poi le strade di servizio — e
+  `docs/retrospectives/2026-09-10-retro-draw006r1.md`, che dice come ci siamo arrivati
+  (input I-057, I-058, I-061, I-062, I-063).
 - Stato e rischi: `PROJECT_STATE.md`.
 - Roadmap: `docs/plans/2026-09-03-release-plan.md`.
 - Architettura: `docs/SKILL.md` e ADR 0005.

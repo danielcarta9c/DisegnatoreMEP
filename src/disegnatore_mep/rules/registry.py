@@ -60,6 +60,9 @@ class RuleRegistry:
             for function in definition.functions
         }
         for rule in self.rules:
+            if rule.then.bridges_from_medium is not None:
+                self._bridges(rule, catalog)
+                continue
             for proposed in rule.then.functions():
                 self._resolves_everywhere(rule.id, proposed, catalog)
             for label, awaited in (
@@ -73,6 +76,37 @@ class RuleRegistry:
                         f"which no catalogue definition declares: a rule that waits "
                         f"for a function nobody has never fires"
                     )
+
+    @staticmethod
+    def _bridges(rule: RuleDefinition, catalog: ComponentRegistry) -> None:
+        """Un ponte si risolve fra due fluidi, e uno solo lo deve portare.
+
+        `serving` non lo troverebbe, e non lo deve trovare: le porte di un ponte
+        non stanno tutte sullo stesso fluido perche' il pezzo non si cala dentro
+        una tubazione (DRAW-006-R1, blocco D).
+        """
+        source = rule.then.bridges_from_medium
+        assert source is not None
+        media = {
+            port.medium
+            for definition in catalog.all()
+            for port in definition.ports
+        }
+        resolved = 0
+        for medium in sorted(media - {source}):
+            if not catalog.bridging(rule.then.provides_function, source, medium):
+                continue
+            try:
+                catalog.bridge(rule.then.provides_function, source, medium)
+            except CatalogError as exc:
+                raise RuleError(f"rule {rule.id} proposes a bridge: {exc}") from exc
+            resolved += 1
+        if resolved == 0:
+            raise RuleError(
+                f"rule {rule.id} proposes a bridge that carries "
+                f"{rule.then.provides_function!r} from {source!r}, and no "
+                f"catalogue definition does"
+            )
 
     @staticmethod
     def _resolves_everywhere(

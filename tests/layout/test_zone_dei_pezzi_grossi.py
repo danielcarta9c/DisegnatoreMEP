@@ -56,11 +56,19 @@ def completato(name: str) -> ProjectModel:
     return completed
 
 
-def posa(name: str) -> list[PlacedSymbol]:
+def posa(name: str, registry: ComponentRegistry | None = None) -> list[PlacedSymbol]:
+    """La posa iniziale dell'impianto, letta con il catalogo che si passa.
+
+    Il catalogo e' un parametro perche' e' li' che vive la **classificazione**:
+    chi merita una colonna e chi e' un raccordo lo dicono i mestieri dichiarati,
+    e una prova che voglia mostrare cosa succederebbe se la classificazione
+    cambiasse deve poterla cambiare.
+    """
+    used = registry or catalog()
     project = completato(name)
-    inline = inline_component_ids(project, catalog())
+    inline = inline_component_ids(project, used)
     partition = partition_project(project, build_trunks(project, inline))[0]
-    return place_sheet(project, partition, catalog(), NOVE_C_A3, inline)
+    return place_sheet(project, partition, used, NOVE_C_A3, inline)
 
 
 def funzioni(project: ProjectModel, component_id: str) -> frozenset[str]:
@@ -134,19 +142,50 @@ def test_nessun_raccordo_sta_a_sinistra_di_cio_che_unisce(name: str) -> None:
         )
 
 
-def test_i_raccordi_non_prendono_una_colonna_a_testa() -> None:
-    """Chi non e' un pezzo grosso non allarga la fascia.
+def _colonne(
+    placed: list[PlacedSymbol], name: str, registry: ComponentRegistry
+) -> tuple[frozenset[float], frozenset[float]]:
+    """Le ascisse della **fila** e quelle dei raccordi, dalla stessa posa.
 
-    Si misura sul primo impianto, che e' quello che il PM guarda (D-116): **le
-    fasce** — le colonne dei pezzi grossi — sono larghe quanto il loro
-    contenuto, e i raccordi non ne aggiungono nessuna. Cio' che sta fra una
-    fascia e l'altra e' la gola, ed e' li' che i raccordi si posano: da
-    DRAW-005-R1 (I-046) la gola prende, dello spazio che avanza sul foglio,
-    quello che serve alla catena di raccordi che la attraversa, cosi' che il
-    raccordo stia fra i due pezzi grossi che la sua tratta unisce (D-120)
-    invece di scivolare oltre. La posa percio' si distende sul foglio; la
-    somma delle **colonne** resta quella dei soli pezzi grossi, ed e' questo
-    che la prova misura.
+    La fila e' fatta dai pezzi che meritano una zona (D-120): la classificazione
+    li riconosce dai mestieri dichiarati, e la posa dice a quale ascissa
+    ciascuno sia finito. Due pezzi alla stessa ascissa stanno nella stessa
+    colonna, come le due macchine impilate.
+    """
+    definitions = {item.id: item.definition_id for item in completato(name).components}
+
+    def jobs(item: PlacedSymbol) -> frozenset[str]:
+        return frozenset(registry.get(definitions[item.component_id]).functions)
+
+    fila = frozenset(
+        round(item.origin.x_mm, 3) for item in placed if jobs(item) & ZONED_FUNCTIONS
+    )
+    raccordi = frozenset(
+        round(item.origin.x_mm, 3)
+        for item in placed
+        if registry.get(definitions[item.component_id]).is_a_fitting
+    )
+    return fila, raccordi
+
+
+def test_i_raccordi_non_prendono_una_colonna_a_testa() -> None:
+    """Un raccordo non e' un passo del processo e non tiene una colonna.
+
+    **L'attesa viene dalla classificazione**: le colonne della fila sono quelle
+    dei pezzi che il catalogo dichiara degni di una zona (D-120) — chi genera,
+    accumula, utilizza, spinge, ripartisce, confina. **La misura viene dalla
+    posa**: l'ascissa a cui ciascun pezzo e' finito. La proprieta' e' che
+    nessun raccordo sta su una di quelle ascisse: o condivide la colonna di un
+    pezzo grosso — la ferramenta compressa dentro la zona, un modo gia' provato
+    e buttato — oppure ne apre una propria, e in tutti e due i casi il raccordo
+    e' entrato nella fila.
+
+    Nessuna soglia della tavola 1 compare qui: l'unica misura assoluta e'
+    l'area di disegno del foglio, che e' del formato e non dell'impianto.
+
+    In coda la prova costruisce la **mutazione negativa** che deve farla
+    fallire: lo stesso raccordo che dichiara anche un mestiere da colonna. Se
+    la misura non se ne accorgesse, non starebbe misurando cio' che nomina.
     """
     placed = posa(PRIMO)
     largo = max(item.right_mm for item in placed) - min(
@@ -156,29 +195,41 @@ def test_i_raccordi_non_prendono_una_colonna_a_testa() -> None:
         f"la posa dell'impianto 1 e' larga {largo:g}mm e non entra nell'area di "
         f"disegno: la gola non puo' prendersi piu' dello spazio che avanza"
     )
-    # Le colonne: i pezzi grossi raggruppati per ascissa. Un raccordo che si
-    # fosse preso una colonna comparirebbe qui come una colonna in piu'.
-    definitions = {item.id: item.definition_id for item in completato(PRIMO).components}
-    grossi = [
-        item
-        for item in placed
-        if not catalog().get(definitions[item.component_id]).is_a_fitting
-    ]
-    colonne = {round(item.origin.x_mm, 3) for item in grossi}
-    raccordi = {
-        round(item.origin.x_mm, 3)
-        for item in placed
-        if catalog().get(definitions[item.component_id]).is_a_fitting
-    }
-    somma = sum(
-        max(item.width_mm for item in grossi if round(item.origin.x_mm, 3) == x)
-        for x in colonne
+    fila, raccordi = _colonne(placed, PRIMO, catalog())
+    assert fila and raccordi, (
+        "la fixture non ha insieme pezzi grossi e raccordi: la prova non "
+        "direbbe niente"
     )
-    assert somma <= 280.0, (
-        f"le colonne dei pezzi grossi sommano {somma:g}mm: con i raccordi in colonna "
-        f"erano 330, e la correzione del PM serve proprio a toglierli dalla fila"
+    assert not raccordi & fila, (
+        f"alle ascisse {sorted(raccordi & fila)} un raccordo sta in una colonna "
+        f"della fila: le colonne sono dei soli pezzi grossi, e i raccordi stanno "
+        f"nella gola, fra i pezzi che la loro tratta unisce"
     )
-    assert not (raccordi - colonne) or somma <= 280.0
+
+    # La mutazione negativa. Il raccordo resta un raccordo — unisce due
+    # tubazioni — ma dichiara anche di ripartire, cioe' un mestiere che merita
+    # una zona: la posa gli da' una colonna, la fila si allunga, e la misura
+    # qui sopra lo vede.
+    promosso = "tee-junction"
+    mutato = ComponentRegistry(
+        [
+            item.model_copy(update={"functions": [*item.functions, "distribution"]})
+            if item.id == promosso
+            else item
+            for item in catalog().all()
+        ],
+        symbols=SymbolRegistry.from_directory(SYMBOLS),
+    )
+    assert mutato.get(promosso).is_a_fitting, "la mutazione ha smesso di essere un raccordo"
+    fila_mutata, raccordi_mutati = _colonne(posa(PRIMO, mutato), PRIMO, mutato)
+    assert len(fila_mutata) > len(fila), (
+        "promuovere un raccordo non ha aggiunto nessuna colonna: la mutazione "
+        "non e' una mutazione, e la prova non starebbe misurando niente"
+    )
+    assert raccordi_mutati & fila_mutata, (
+        "la misura non si accorge di un raccordo promosso a colonna di un pezzo "
+        "grosso: non sta provando la proprieta' che nomina"
+    )
 
 
 def test_due_macchine_in_parallelo_si_impilano() -> None:

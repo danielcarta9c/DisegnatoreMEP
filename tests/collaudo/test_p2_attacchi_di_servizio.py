@@ -147,11 +147,19 @@ def test_il_bollitore_si_svuota_dall_ingresso_freddo_con_una_derivazione() -> No
 
 
 def test_senza_attacco_dedicato_nasce_una_derivazione_e_il_percorso_resta_intero() -> None:
-    """La PdC non ha attacchi di servizio: vaso, riempimento e manometro
-    pendono da derivazioni saldate sul tubo, ciascuno dalla propria."""
+    """La PdC non ha attacchi di servizio: vaso e manometro pendono da
+    derivazioni saldate sul tubo, ciascuno dalla propria.
+
+    Il gruppo di **riempimento** non compare qui: questo impianto di prova non
+    dichiara l'acquedotto, e da DRAW-006-R1 il gruppo e' un ponte fra due reti
+    che senza sorgente fredda approvata diventa una domanda. Le sue due
+    derivazioni — una per rete — sono provate in
+    `tests/rules/test_riempimento_tecnico.py`, su un impianto che l'acqua
+    fredda ce l'ha.
+    """
     done, _, _ = saturate(_volano_plant(), CAT, REG)
     assert validate_project(done, CAT).ok
-    for definition_id in ("expansion-connection", "filling-unit", "pressure-gauge"):
+    for definition_id in ("expansion-connection", "pressure-gauge"):
         hung = [c for c in done.components if c.definition_id == definition_id]
         assert hung, definition_id
         for item in hung:
@@ -181,8 +189,10 @@ def test_chi_pende_da_uno_stacco_non_e_mai_in_fila_sul_percorso() -> None:
             if not defs[component.id].attaches_on_a_branch:
                 continue
             pipes_touching = touching.get(component.id, [])
-            assert len(pipes_touching) == 1, component.id
-            # Risali la catena dello stacco fino al piede.
+            # Una tubazione per attacco: quasi sempre una sola, due per il
+            # ponte fra due reti, che pende da uno stacco per parte.
+            assert len(pipes_touching) == len(defs[component.id].ports), component.id
+            # Risali la catena di **ciascuno** dei suoi stacchi fino al piede.
             current, edge = component.id, pipes_touching[0]
             for _ in range(10):
                 other = (
@@ -214,9 +224,18 @@ def test_chi_pende_da_uno_stacco_non_e_mai_in_fila_sul_percorso() -> None:
                 raise AssertionError(f"catena troppo lunga da {component.id}")
 
 
-def test_gli_accessori_che_pendono_hanno_un_attacco_solo() -> None:
+def test_gli_accessori_che_pendono_hanno_un_attacco_per_rete_toccata() -> None:
     """Le famiglie che pendono: vaso, sicurezza, scarico, riempimento,
-    strumenti. Ognuna con UN attacco, in tutto il catalogo pubblicato."""
+    strumenti. Un attacco per **rete toccata**, in tutto il catalogo pubblicato.
+
+    Quasi sempre e' uno solo: un vaso, uno scarico, uno strumento toccano una
+    rete sola e da uno stacco solo. Il **ponte fra due reti** ne tocca due — il
+    gruppo di riempimento pesca dall'acquedotto e sbocca sul circuito tecnico
+    (DRAW-006-R1, blocco D) — e pende da uno stacco per parte. Cio' che la
+    prova esclude resta lo stesso: un accessorio a stacco non ha mai due
+    attacchi sullo **stesso** fluido, perche' allora la tubazione lo
+    attraverserebbe e non sarebbe piu' un accessorio a stacco.
+    """
     hanging = [
         entry
         for entry in CAT.all()
@@ -226,7 +245,6 @@ def test_gli_accessori_che_pendono_hanno_un_attacco_solo() -> None:
         "expansion-connection",
         "expansion-connection-dhw",
         "valve-safety",
-        "valve-safety-dhw",
         "drain-connection",
         "drain-connection-dhw",
         "filling-unit",
@@ -234,7 +252,8 @@ def test_gli_accessori_che_pendono_hanno_un_attacco_solo() -> None:
         "thermometer",
     }
     for entry in hanging:
-        assert len(entry.ports) == 1, (entry.id, [p.id for p in entry.ports])
+        media = [port.medium for port in entry.ports]
+        assert len(media) == len(set(media)), (entry.id, [p.id for p in entry.ports])
 
 
 # ---------------------------------------------------------------------------

@@ -15,7 +15,7 @@ le funzioni che chiudono dall'altra.
 """
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import CLOSING_FUNCTIONS, ComponentTrait
+from disegnatore_mep.catalog.schema import SERVICE_ORGAN_FUNCTIONS, ComponentTrait
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
 from .trunks import Trunk
@@ -75,7 +75,8 @@ def machine_chains(
     definitions = {item.id: item.definition_id for item in project.components}
     members = list(trunk.inline_component_ids)
     closes = [
-        bool(CLOSING_FUNCTIONS & set(catalog.get(definitions[item]).functions)) for item in members
+        bool(SERVICE_ORGAN_FUNCTIONS & set(catalog.get(definitions[item]).functions))
+        for item in members
     ]
 
     def along(order: list[int]) -> list[int]:

@@ -33,7 +33,7 @@ from .engine import BRANCH_OFF, Evaluation, evaluate
 from .errors import RuleError
 from .proposal import RuleGap, RuleProposal
 from .registry import RuleRegistry
-from .schema import SatisfactionScope
+from .schema import RuleDefinition, SatisfactionScope
 
 """Il mestiere di cio' che apre una derivazione su una tubazione esistente.
 
@@ -208,13 +208,78 @@ def apply_proposals(
     """
     current = project
     for proposal in proposals:
-        added = [_instance(proposal.component_id, proposal.definition_id, proposal)]
+        # I pezzi nuovi, ciascuno con il componente nel cui sottosistema entra:
+        # un accessorio appartiene al gruppo funzionale di cio' che serve, e il
+        # ponte fra due reti ha un capo per parte — la sua derivazione fredda
+        # sta con l'acqua fredda, non con la macchina all'altro capo.
+        added: list[tuple[ComponentInstance, str]] = [
+            (
+                _instance(proposal.component_id, proposal.definition_id, proposal),
+                proposal.anchor.component_id,
+            )
+        ]
         network_id = proposal.network_id
         # I pezzi nuovi entrano nel sottosistema dell'ancoraggio; le tubazioni
         # nate o spezzate restano fuori di li' e finiscono nella tracciabilita'.
         pipes: list[str] = []
 
-        if proposal.service_port is not None:
+        if proposal.source_anchor is not None:
+            # Un **ponte** fra due reti (DRAW-006-R1, blocco D): una derivazione
+            # per parte, e il gruppo in mezzo. La rete della regola riceve
+            # l'uscita, quella della sorgente alimenta l'ingresso: il verso non
+            # si sceglie qui, lo dichiara il catalogo con il fluido di ciascuna
+            # porta.
+            source_network = _network_of_port(current, proposal.source_anchor)
+            connections = list(current.connections)
+            pipes = []
+            for anchor, network, port_id in (
+                (proposal.source_anchor, source_network, proposal.inlet_port),
+                (proposal.anchor, network_id, proposal.outlet_port),
+            ):
+                connection = _connection_touching(
+                    current.model_copy(update={"connections": connections}), anchor
+                )
+                junction_id = f"tee-{proposal.component_id}-{port_id}"
+                added.append(
+                    (
+                        _instance(
+                            junction_id,
+                            catalog.providing(
+                                BRANCH_OFF, _medium_of(current, network)
+                            ).id,
+                            proposal,
+                        ),
+                        anchor.component_id,
+                    )
+                )
+                pieces = _derivation(connection, proposal, junction_id)
+                stub = ConnectionModel(
+                    id=f"stub-{proposal.component_id}-{port_id}",
+                    network_id=network,
+                    endpoint_a=PortRef(component_id=junction_id, port_id=BRANCH_PORT),
+                    endpoint_b=PortRef(
+                        component_id=proposal.component_id, port_id=port_id
+                    ),
+                )
+                # Il verso di una tubazione va da chi esce a chi entra: sul lato
+                # in cui il ponte **esce** i due capi si scambiano.
+                if port_id == proposal.outlet_port:
+                    stub = stub.model_copy(
+                        update={
+                            "endpoint_a": stub.endpoint_b,
+                            "endpoint_b": stub.endpoint_a,
+                        }
+                    )
+                connections = [
+                    *(
+                        item
+                        for existing in connections
+                        for item in (pieces if existing.id == connection.id else [existing])
+                    ),
+                    stub,
+                ]
+                pipes.extend(item.id for item in (*pieces, stub))
+        elif proposal.service_port is not None:
             # La macchina l'attacco ce l'ha: nessuna tubazione viene spezzata.
             stub = _stub(
                 proposal,
@@ -231,12 +296,15 @@ def apply_proposals(
             if catalog.get(proposal.definition_id).attaches_on_a_branch:
                 junction_id = f"tee-{proposal.component_id}"
                 added.append(
-                    _instance(
-                        junction_id,
-                        catalog.providing(
-                            BRANCH_OFF, _medium_of(current, network_id)
-                        ).id,
-                        proposal,
+                    (
+                        _instance(
+                            junction_id,
+                            catalog.providing(
+                                BRANCH_OFF, _medium_of(current, network_id)
+                            ).id,
+                            proposal,
+                        ),
+                        proposal.anchor.component_id,
                     )
                 )
                 pieces = _derivation(connection, proposal, junction_id)
@@ -260,13 +328,11 @@ def apply_proposals(
             pipes.extend(item.id for item in (*pieces, *extra))
 
         subsystems = list(current.subsystems)
-        for component in added:
-            subsystems = _with_member(
-                subsystems, proposal.anchor.component_id, component.id
-            )
+        for component, host_id in added:
+            subsystems = _with_member(subsystems, host_id, component.id)
         current = current.model_copy(
             update={
-                "components": [*current.components, *added],
+                "components": [*current.components, *(item for item, _ in added)],
                 "connections": connections,
                 "subsystems": subsystems,
                 "rule_applications": [
@@ -277,12 +343,17 @@ def apply_proposals(
                         rule_version=proposal.rule_version,
                         category=proposal.category,
                         status=ApprovalStatus.APPROVED,
-                        entity_ids=[*(item.id for item in added), *pipes],
+                        entity_ids=[*(item.id for item, _ in added), *pipes],
                     ),
                 ],
             }
         )
     return current
+
+
+def _network_of_port(project: ProjectModel, anchor: PortRef) -> str:
+    """La rete della tubazione che tocca quell'attacco."""
+    return _connection_touching(project, anchor).network_id
 
 
 def _medium_of(project: ProjectModel, network_id: str) -> str:
@@ -320,6 +391,7 @@ def evaluate_in_phases(
             for item in rules.all()
             if item.satisfied_by.scope is SatisfactionScope.ON_THE_GROUP
             or item.when.anchor_cut_off_from is not None
+            or _a_group_may_satisfy(item, rules, catalog)
         )
     )
     others = RuleRegistry(
@@ -330,6 +402,48 @@ def evaluate_in_phases(
         return first
     second = evaluate(project, catalog, rules)
     return Evaluation(proposals=second.proposals, gaps=[*first.gaps, *second.gaps])
+
+
+def _a_group_may_satisfy(
+    rule: RuleDefinition, rules: RuleRegistry, catalog: ComponentRegistry
+) -> bool:
+    """Un'altra regola, sullo stesso ancoraggio, puo' posare un **gruppo in
+    linea** che si porta dentro cio' che questa chiede.
+
+    Allora questa parla dopo. Un gruppo che sta sulla tubazione porta i propri
+    organi su quella tubazione: chiederne uno nella stessa passata in cui il
+    gruppo viene proposto produce il doppione che il PM ha tolto — il ritegno
+    sanitario accanto al gruppo EN 1487 che lo contiene (DRAW-006-R1, blocco
+    C.1).
+
+    «Sullo stesso ancoraggio» e' la meta' che tiene la fase stretta: due regole
+    che parlano di pezzi diversi non si soddisfano a vicenda, e mandarle
+    entrambe in fase due lascerebbe decidere all'ordine alfabetico dei file
+    quale delle due si posa. Chi pende da uno stacco non conta: il filtro dentro
+    un gruppo di riempimento appeso a un T non e' il filtro del ritorno della
+    macchina. Chi decide non e' un elenco di nomi: e' il catalogo.
+    """
+    wanted = set(rule.then.functions())
+    for other in rules.all():
+        if other.id == rule.id:
+            continue
+        if (other.when.anchor_has_trait, other.when.anchor_has_function) != (
+            rule.when.anchor_has_trait,
+            rule.when.anchor_has_function,
+        ):
+            continue
+        if other.when.network_medium != rule.when.network_medium:
+            continue
+        for function in other.then.functions():
+            for definition in catalog.all():
+                if (
+                    function in definition.functions
+                    and definition.composite
+                    and not definition.attaches_on_a_branch
+                    and wanted & set(definition.carries_on_board)
+                ):
+                    return True
+    return False
 
 
 def saturate(

@@ -1,0 +1,38 @@
+{
+  "id": "dhw-safety-group",
+  "version": "1.0.0",
+  "name": "Gruppo di sicurezza sanitario",
+  "functions": [
+    "safety"
+  ],
+  "traits": [
+    "shutoff_never",
+    "attachment_inline"
+  ],
+  "carries_on_board": [
+    "isolation",
+    "non_return"
+  ],
+  "symbol_id": "dhw-safety-group",
+  "composite": true,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "EN 1487, gruppo di sicurezza per accumuli sanitari a pressione: intercettazione, ritegno controllabile e sicurezza in un solo gruppo; Caleffi serie 5261; UNI EN 806-2:2008 §10.2.3 (traduzione PM del 2026-09-10)"
+  ]
+}

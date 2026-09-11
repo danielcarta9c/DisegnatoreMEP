@@ -1,0 +1,2227 @@
+{
+  "project_id": "prova-2-pdc-deviatrice-acs",
+  "sheets": [
+    {
+      "sheet_id": "t1",
+      "title": "Pompa di calore con deviazione fra climatizzazione e ACS · MODALITÀ VERIFICA",
+      "symbols": [
+        {
+          "component_id": "pdc",
+          "symbol_id": "heat-pump-air-water",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 50.0,
+            "y_mm": 143.5
+          },
+          "width_mm": 40.0,
+          "height_mm": 30.0,
+          "tag": "PDC-01",
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "acquedotto",
+          "symbol_id": "network-boundary",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 107.5,
+            "y_mm": 183.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": "AF-01",
+          "port_map": {},
+          "port_flows": {
+            "a": "out"
+          }
+        },
+        {
+          "component_id": "bollitore",
+          "symbol_id": "dhw-cylinder",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 192.5,
+            "y_mm": 148.5
+          },
+          "width_mm": 25.0,
+          "height_mm": 45.0,
+          "tag": "BOL-01",
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "utenze",
+          "symbol_id": "network-boundary",
+          "rotation_deg": 180,
+          "origin": {
+            "x_mm": 222.5,
+            "y_mm": 123.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": "ACS-01",
+          "port_map": {},
+          "port_flows": {
+            "a": "in"
+          }
+        },
+        {
+          "component_id": "volano",
+          "symbol_id": "buffer-four-port",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 237.5,
+            "y_mm": 88.5
+          },
+          "width_mm": 25.0,
+          "height_mm": 45.0,
+          "tag": "VOL-01",
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "air-vent-volano-primary-out",
+          "symbol_id": "air-vent",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 247.5,
+            "y_mm": 73.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 10.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "drain-connection-volano-primary-in",
+          "symbol_id": "drain-connection",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 247.5,
+            "y_mm": 138.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 10.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "ventilconvettori",
+          "symbol_id": "fan-coil",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 297.5,
+            "y_mm": 86.0
+          },
+          "width_mm": 20.0,
+          "height_mm": 15.0,
+          "tag": "VC-01",
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "tee-valve-safety-pdc-water-supply",
+          "symbol_id": "tee-branch",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 100.0,
+            "y_mm": 146.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {
+            "b": "branch",
+            "branch": "b"
+          },
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-safety-pdc-water-supply",
+          "symbol_id": "valve-safety",
+          "rotation_deg": 90,
+          "origin": {
+            "x_mm": 110.0,
+            "y_mm": 146.0
+          },
+          "width_mm": 10.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "deviatrice",
+          "symbol_id": "diverting-valve-3way",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 122.5,
+            "y_mm": 88.5
+          },
+          "width_mm": 10.0,
+          "height_mm": 10.0,
+          "tag": "VD-01",
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "tee-filling-unit-pdc-water-return",
+          "symbol_id": "tee-branch",
+          "rotation_deg": 180,
+          "origin": {
+            "x_mm": 132.5,
+            "y_mm": 121.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "filling-unit-pdc-water-return",
+          "symbol_id": "filling-unit",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 132.5,
+            "y_mm": 131.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 10.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "tee-pressure-gauge-pdc-water-return",
+          "symbol_id": "tee-branch",
+          "rotation_deg": 180,
+          "origin": {
+            "x_mm": 147.5,
+            "y_mm": 121.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "pressure-gauge-pdc-water-return",
+          "symbol_id": "pressure-gauge",
+          "rotation_deg": 180,
+          "origin": {
+            "x_mm": 147.5,
+            "y_mm": 143.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 10.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "tee-expansion-connection-pdc-water-return",
+          "symbol_id": "tee-branch",
+          "rotation_deg": 180,
+          "origin": {
+            "x_mm": 162.5,
+            "y_mm": 121.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "expansion-connection-pdc-water-return",
+          "symbol_id": "expansion-connection",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 162.5,
+            "y_mm": 141.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 10.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "ritorno",
+          "symbol_id": "tee-junction",
+          "rotation_deg": 270,
+          "origin": {
+            "x_mm": 177.5,
+            "y_mm": 121.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {
+            "a": "b",
+            "c": "a",
+            "b": "c"
+          },
+          "port_flows": {}
+        },
+        {
+          "component_id": "tee-expansion-connection-dhw-bollitore-cold-in",
+          "symbol_id": "tee-branch",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 132.5,
+            "y_mm": 183.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "expansion-connection-dhw-bollitore-cold-in",
+          "symbol_id": "expansion-connection",
+          "rotation_deg": 180,
+          "origin": {
+            "x_mm": 132.5,
+            "y_mm": 158.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 10.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "tee-drain-connection-cold-bollitore-cold-in",
+          "symbol_id": "tee-branch",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 162.5,
+            "y_mm": 183.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "drain-connection-cold-bollitore-cold-in",
+          "symbol_id": "drain-connection",
+          "rotation_deg": 180,
+          "origin": {
+            "x_mm": 162.5,
+            "y_mm": 168.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 10.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "tee-valve-safety-dhw-bollitore-cold-in",
+          "symbol_id": "tee-branch",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 177.5,
+            "y_mm": 183.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-safety-dhw-bollitore-cold-in",
+          "symbol_id": "valve-safety",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 177.5,
+            "y_mm": 168.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 10.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-deviatrice-in",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 112.5,
+            "y_mm": 91.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-deviatrice-out-a",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 227.5,
+            "y_mm": 91.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-volano-primary-out",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 227.5,
+            "y_mm": 106.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-bollitore-coil-in",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 182.5,
+            "y_mm": 153.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-bollitore-coil-out",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 182.5,
+            "y_mm": 163.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-dirt-separator-pdc-water-return-a",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 90,
+          "origin": {
+            "x_mm": 120.0,
+            "y_mm": 126.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "dirt-separator-pdc-water-return",
+          "symbol_id": "dirt-separator",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 117.5,
+            "y_mm": 158.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 10.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-dirt-separator-pdc-water-return-b",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 102.5,
+            "y_mm": 161.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "strainer-pdc-water-return",
+          "symbol_id": "strainer",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 95.0,
+            "y_mm": 161.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-circolatore-a",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 267.5,
+            "y_mm": 91.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "circolatore",
+          "symbol_id": "pump-circulator",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 275.0,
+            "y_mm": 88.5
+          },
+          "width_mm": 10.0,
+          "height_mm": 10.0,
+          "tag": "CIR-01",
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-circolatore-b",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 287.5,
+            "y_mm": 91.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-ventilconvettori-out",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 267.5,
+            "y_mm": 106.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-locked-open-dhw-expansion-connection-dhw-bollitore-cold-in-a",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 90,
+          "origin": {
+            "x_mm": 132.5,
+            "y_mm": 173.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 90,
+          "origin": {
+            "x_mm": 162.5,
+            "y_mm": 131.0
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a",
+          "symbol_id": "valve-gauge-cock-3way",
+          "rotation_deg": 90,
+          "origin": {
+            "x_mm": 147.5,
+            "y_mm": 133.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-dhw-acquedotto-a",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 122.5,
+            "y_mm": 183.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-check-dhw-bollitore-cold-in",
+          "symbol_id": "valve-check",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 145.0,
+            "y_mm": 183.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-dhw-hot-bollitore-dhw-out",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 90,
+          "origin": {
+            "x_mm": 197.5,
+            "y_mm": 138.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "mixing-valve-thermostatic-bollitore-dhw-out",
+          "symbol_id": "mixing-valve-thermostatic",
+          "rotation_deg": 90,
+          "origin": {
+            "x_mm": 195.0,
+            "y_mm": 131.0
+          },
+          "width_mm": 10.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        },
+        {
+          "component_id": "valve-isolation-dhw-hot-utenze-a",
+          "symbol_id": "valve-isolation",
+          "rotation_deg": 0,
+          "origin": {
+            "x_mm": 200.0,
+            "y_mm": 123.5
+          },
+          "width_mm": 5.0,
+          "height_mm": 5.0,
+          "tag": null,
+          "port_map": {},
+          "port_flows": {}
+        }
+      ],
+      "routes": [
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": true,
+          "connection_ids": [
+            "p1-a"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 90.0,
+                "y_mm": 148.5
+              },
+              {
+                "x_mm": 100.0,
+                "y_mm": 148.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": true,
+          "connection_ids": [
+            "p1-b-a",
+            "p1-b-b"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 102.5,
+                "y_mm": 146.0
+              },
+              {
+                "x_mm": 102.5,
+                "y_mm": 93.5
+              },
+              {
+                "x_mm": 112.5,
+                "y_mm": 93.5
+              }
+            ],
+            [
+              {
+                "x_mm": 117.5,
+                "y_mm": 93.5
+              },
+              {
+                "x_mm": 122.5,
+                "y_mm": 93.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": true,
+          "connection_ids": [
+            "p2-a",
+            "p2-b"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 132.5,
+                "y_mm": 93.5
+              },
+              {
+                "x_mm": 227.5,
+                "y_mm": 93.5
+              }
+            ],
+            [
+              {
+                "x_mm": 232.5,
+                "y_mm": 93.5
+              },
+              {
+                "x_mm": 237.5,
+                "y_mm": 93.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": false,
+          "connection_ids": [
+            "p3-a",
+            "p3-b"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 237.5,
+                "y_mm": 108.5
+              },
+              {
+                "x_mm": 232.5,
+                "y_mm": 108.5
+              }
+            ],
+            [
+              {
+                "x_mm": 227.5,
+                "y_mm": 108.5
+              },
+              {
+                "x_mm": 180.0,
+                "y_mm": 108.5
+              },
+              {
+                "x_mm": 180.0,
+                "y_mm": 121.0
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": true,
+          "connection_ids": [
+            "p4-a",
+            "p4-b"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 127.5,
+                "y_mm": 98.5
+              },
+              {
+                "x_mm": 127.5,
+                "y_mm": 156.0
+              },
+              {
+                "x_mm": 182.5,
+                "y_mm": 156.0
+              }
+            ],
+            [
+              {
+                "x_mm": 187.5,
+                "y_mm": 156.0
+              },
+              {
+                "x_mm": 192.5,
+                "y_mm": 156.0
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": false,
+          "connection_ids": [
+            "p5-a",
+            "p5-b"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 192.5,
+                "y_mm": 166.0
+              },
+              {
+                "x_mm": 187.5,
+                "y_mm": 166.0
+              }
+            ],
+            [
+              {
+                "x_mm": 182.5,
+                "y_mm": 166.0
+              },
+              {
+                "x_mm": 180.0,
+                "y_mm": 166.0
+              },
+              {
+                "x_mm": 180.0,
+                "y_mm": 126.0
+              }
+            ]
+          ],
+          "crossings": [
+            {
+              "x_mm": 180.0,
+              "y_mm": 156.0
+            }
+          ],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": false,
+          "connection_ids": [
+            "p6-a-1-1"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 177.5,
+                "y_mm": 123.5
+              },
+              {
+                "x_mm": 167.5,
+                "y_mm": 123.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": false,
+          "connection_ids": [
+            "p6-a-1-2"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 162.5,
+                "y_mm": 123.5
+              },
+              {
+                "x_mm": 152.5,
+                "y_mm": 123.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": false,
+          "connection_ids": [
+            "p6-a-1-3"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 147.5,
+                "y_mm": 123.5
+              },
+              {
+                "x_mm": 137.5,
+                "y_mm": 123.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": false,
+          "connection_ids": [
+            "p6-a-1-4",
+            "p6-a-1-5",
+            "p6-a-1-6",
+            "p6-a-1-7",
+            "p6-a-1-8"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 132.5,
+                "y_mm": 123.5
+              },
+              {
+                "x_mm": 122.5,
+                "y_mm": 123.5
+              },
+              {
+                "x_mm": 122.5,
+                "y_mm": 126.0
+              }
+            ],
+            [
+              {
+                "x_mm": 122.5,
+                "y_mm": 131.0
+              },
+              {
+                "x_mm": 122.5,
+                "y_mm": 163.5
+              }
+            ],
+            [
+              {
+                "x_mm": 117.5,
+                "y_mm": 163.5
+              },
+              {
+                "x_mm": 107.5,
+                "y_mm": 163.5
+              }
+            ],
+            [
+              {
+                "x_mm": 102.5,
+                "y_mm": 163.5
+              },
+              {
+                "x_mm": 100.0,
+                "y_mm": 163.5
+              }
+            ],
+            [
+              {
+                "x_mm": 95.0,
+                "y_mm": 163.5
+              },
+              {
+                "x_mm": 90.0,
+                "y_mm": 163.5
+              }
+            ]
+          ],
+          "crossings": [
+            {
+              "x_mm": 127.5,
+              "y_mm": 123.5
+            }
+          ],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "secondario",
+          "medium": "heating_water",
+          "supply": true,
+          "connection_ids": [
+            "s1-a",
+            "s1-b",
+            "s2-a",
+            "s2-b"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 262.5,
+                "y_mm": 93.5
+              },
+              {
+                "x_mm": 267.5,
+                "y_mm": 93.5
+              }
+            ],
+            [
+              {
+                "x_mm": 272.5,
+                "y_mm": 93.5
+              },
+              {
+                "x_mm": 275.0,
+                "y_mm": 93.5
+              }
+            ],
+            [
+              {
+                "x_mm": 285.0,
+                "y_mm": 93.5
+              },
+              {
+                "x_mm": 287.5,
+                "y_mm": 93.5
+              }
+            ],
+            [
+              {
+                "x_mm": 292.5,
+                "y_mm": 93.5
+              },
+              {
+                "x_mm": 297.5,
+                "y_mm": 93.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "secondario",
+          "medium": "heating_water",
+          "supply": false,
+          "connection_ids": [
+            "s3-a",
+            "s3-b"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 317.5,
+                "y_mm": 93.5
+              },
+              {
+                "x_mm": 320.0,
+                "y_mm": 93.5
+              },
+              {
+                "x_mm": 320.0,
+                "y_mm": 108.5
+              },
+              {
+                "x_mm": 272.5,
+                "y_mm": 108.5
+              }
+            ],
+            [
+              {
+                "x_mm": 267.5,
+                "y_mm": 108.5
+              },
+              {
+                "x_mm": 262.5,
+                "y_mm": 108.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": true,
+          "connection_ids": [
+            "stub-air-vent-volano-primary-out"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 250.0,
+                "y_mm": 88.5
+              },
+              {
+                "x_mm": 250.0,
+                "y_mm": 83.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "static",
+          "flow_from_start": false
+        },
+        {
+          "network_id": "fredda",
+          "medium": "cold_water",
+          "supply": true,
+          "connection_ids": [
+            "stub-drain-connection-cold-bollitore-cold-in"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 165.0,
+                "y_mm": 183.5
+              },
+              {
+                "x_mm": 165.0,
+                "y_mm": 178.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "outbound",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": true,
+          "connection_ids": [
+            "stub-drain-connection-volano-primary-in"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 250.0,
+                "y_mm": 133.5
+              },
+              {
+                "x_mm": 250.0,
+                "y_mm": 138.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "outbound",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "fredda",
+          "medium": "cold_water",
+          "supply": true,
+          "connection_ids": [
+            "stub-expansion-connection-dhw-bollitore-cold-in-a",
+            "stub-expansion-connection-dhw-bollitore-cold-in-b"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 135.0,
+                "y_mm": 183.5
+              },
+              {
+                "x_mm": 135.0,
+                "y_mm": 178.5
+              }
+            ],
+            [
+              {
+                "x_mm": 135.0,
+                "y_mm": 173.5
+              },
+              {
+                "x_mm": 135.0,
+                "y_mm": 168.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "static",
+          "flow_from_start": false
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": false,
+          "connection_ids": [
+            "stub-expansion-connection-pdc-water-return-a",
+            "stub-expansion-connection-pdc-water-return-b"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 165.0,
+                "y_mm": 126.0
+              },
+              {
+                "x_mm": 165.0,
+                "y_mm": 131.0
+              }
+            ],
+            [
+              {
+                "x_mm": 165.0,
+                "y_mm": 136.0
+              },
+              {
+                "x_mm": 165.0,
+                "y_mm": 141.0
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "static",
+          "flow_from_start": false
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": false,
+          "connection_ids": [
+            "stub-filling-unit-pdc-water-return"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 135.0,
+                "y_mm": 126.0
+              },
+              {
+                "x_mm": 135.0,
+                "y_mm": 131.0
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "inbound",
+          "flow_from_start": false
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": false,
+          "connection_ids": [
+            "stub-pressure-gauge-pdc-water-return-a",
+            "stub-pressure-gauge-pdc-water-return-b"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 150.0,
+                "y_mm": 126.0
+              },
+              {
+                "x_mm": 150.0,
+                "y_mm": 133.5
+              }
+            ],
+            [
+              {
+                "x_mm": 150.0,
+                "y_mm": 138.5
+              },
+              {
+                "x_mm": 150.0,
+                "y_mm": 143.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "static",
+          "flow_from_start": false
+        },
+        {
+          "network_id": "fredda",
+          "medium": "cold_water",
+          "supply": true,
+          "connection_ids": [
+            "stub-valve-safety-dhw-bollitore-cold-in"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 180.0,
+                "y_mm": 183.5
+              },
+              {
+                "x_mm": 180.0,
+                "y_mm": 178.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "static",
+          "flow_from_start": false
+        },
+        {
+          "network_id": "primario",
+          "medium": "heating_water",
+          "supply": true,
+          "connection_ids": [
+            "stub-valve-safety-pdc-water-supply"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 105.0,
+                "y_mm": 148.5
+              },
+              {
+                "x_mm": 110.0,
+                "y_mm": 148.5
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "static",
+          "flow_from_start": false
+        },
+        {
+          "network_id": "fredda",
+          "medium": "cold_water",
+          "supply": true,
+          "connection_ids": [
+            "w1-a-1",
+            "w1-a-2"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 112.5,
+                "y_mm": 186.0
+              },
+              {
+                "x_mm": 122.5,
+                "y_mm": 186.0
+              }
+            ],
+            [
+              {
+                "x_mm": 127.5,
+                "y_mm": 186.0
+              },
+              {
+                "x_mm": 132.5,
+                "y_mm": 186.0
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "fredda",
+          "medium": "cold_water",
+          "supply": true,
+          "connection_ids": [
+            "w1-a-3",
+            "w1-a-4"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 137.5,
+                "y_mm": 186.0
+              },
+              {
+                "x_mm": 145.0,
+                "y_mm": 186.0
+              }
+            ],
+            [
+              {
+                "x_mm": 150.0,
+                "y_mm": 186.0
+              },
+              {
+                "x_mm": 162.5,
+                "y_mm": 186.0
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "fredda",
+          "medium": "cold_water",
+          "supply": true,
+          "connection_ids": [
+            "w1-a-5"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 167.5,
+                "y_mm": 186.0
+              },
+              {
+                "x_mm": 177.5,
+                "y_mm": 186.0
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "fredda",
+          "medium": "cold_water",
+          "supply": true,
+          "connection_ids": [
+            "w1-a-6"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 182.5,
+                "y_mm": 186.0
+              },
+              {
+                "x_mm": 192.5,
+                "y_mm": 186.0
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        },
+        {
+          "network_id": "sanitaria",
+          "medium": "domestic_hot_water",
+          "supply": true,
+          "connection_ids": [
+            "w2-a-a-a",
+            "w2-a-a-b",
+            "w2-a-b",
+            "w2-b"
+          ],
+          "segments": [
+            [
+              {
+                "x_mm": 200.0,
+                "y_mm": 148.5
+              },
+              {
+                "x_mm": 200.0,
+                "y_mm": 143.5
+              }
+            ],
+            [
+              {
+                "x_mm": 200.0,
+                "y_mm": 138.5
+              },
+              {
+                "x_mm": 200.0,
+                "y_mm": 136.0
+              }
+            ],
+            [
+              {
+                "x_mm": 200.0,
+                "y_mm": 131.0
+              },
+              {
+                "x_mm": 200.0,
+                "y_mm": 126.0
+              }
+            ],
+            [
+              {
+                "x_mm": 205.0,
+                "y_mm": 126.0
+              },
+              {
+                "x_mm": 222.5,
+                "y_mm": 126.0
+              }
+            ]
+          ],
+          "crossings": [],
+          "flow_kind": "ordinary",
+          "flow_from_start": true
+        }
+      ],
+      "labels": [
+        {
+          "id": "pdc-tag",
+          "text": "PDC-01",
+          "role": "tag",
+          "anchor": {
+            "x_mm": 67.5,
+            "y_mm": 142.0
+          },
+          "leader_from": null
+        },
+        {
+          "id": "acquedotto-tag",
+          "text": "AF-01",
+          "role": "tag",
+          "anchor": {
+            "x_mm": 107.5,
+            "y_mm": 182.0
+          },
+          "leader_from": null
+        },
+        {
+          "id": "bollitore-tag",
+          "text": "BOL-01",
+          "role": "tag",
+          "anchor": {
+            "x_mm": 202.5,
+            "y_mm": 147.0
+          },
+          "leader_from": null
+        },
+        {
+          "id": "utenze-tag",
+          "text": "ACS-01",
+          "role": "tag",
+          "anchor": {
+            "x_mm": 222.5,
+            "y_mm": 122.0
+          },
+          "leader_from": null
+        },
+        {
+          "id": "volano-tag",
+          "text": "VOL-01",
+          "role": "tag",
+          "anchor": {
+            "x_mm": 264.0,
+            "y_mm": 114.2
+          },
+          "leader_from": null
+        },
+        {
+          "id": "ventilconvettori-tag",
+          "text": "VC-01",
+          "role": "tag",
+          "anchor": {
+            "x_mm": 305.0,
+            "y_mm": 84.5
+          },
+          "leader_from": null
+        },
+        {
+          "id": "deviatrice-tag",
+          "text": "VD-01",
+          "role": "tag",
+          "anchor": {
+            "x_mm": 125.0,
+            "y_mm": 87.0
+          },
+          "leader_from": null
+        },
+        {
+          "id": "circolatore-tag",
+          "text": "CIR-01",
+          "role": "tag",
+          "anchor": {
+            "x_mm": 277.5,
+            "y_mm": 87.0
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-pdc",
+          "text": "CP.01.N.01",
+          "role": "address",
+          "anchor": {
+            "x_mm": 91.5,
+            "y_mm": 159.4
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-acquedotto",
+          "text": "AF.01.N.01",
+          "role": "address",
+          "anchor": {
+            "x_mm": 95.2,
+            "y_mm": 186.9
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-bollitore",
+          "text": "CP.01a.N.02",
+          "role": "address",
+          "anchor": {
+            "x_mm": 219.0,
+            "y_mm": 171.9
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-utenze",
+          "text": "ACS.01.N.04",
+          "role": "address",
+          "anchor": {
+            "x_mm": 220.0,
+            "y_mm": 131.8
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-volano",
+          "text": "CP.01.N.06",
+          "role": "address",
+          "anchor": {
+            "x_mm": 225.2,
+            "y_mm": 114.2
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-air-vent-volano-primary-out",
+          "text": "CP.01.N.06.1",
+          "role": "address",
+          "anchor": {
+            "x_mm": 254.0,
+            "y_mm": 79.4
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-drain-connection-volano-primary-in",
+          "text": "CP.01.N.06.2",
+          "role": "address",
+          "anchor": {
+            "x_mm": 254.0,
+            "y_mm": 144.4
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-ventilconvettori",
+          "text": "CS.01.N.04",
+          "role": "address",
+          "anchor": {
+            "x_mm": 302.5,
+            "y_mm": 104.3
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-tee-valve-safety-pdc-water-supply",
+          "text": "CP.01.N.02",
+          "role": "address",
+          "anchor": {
+            "x_mm": 97.5,
+            "y_mm": 154.3
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-safety-pdc-water-supply",
+          "text": "CP.01.N.02.1",
+          "role": "address",
+          "anchor": {
+            "x_mm": 107.5,
+            "y_mm": 144.5
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-deviatrice",
+          "text": "CP.01.N.04",
+          "role": "address",
+          "anchor": {
+            "x_mm": 134.0,
+            "y_mm": 96.7
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-tee-filling-unit-pdc-water-return",
+          "text": "RP.01.N.05",
+          "role": "address",
+          "anchor": {
+            "x_mm": 130.0,
+            "y_mm": 119.5
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-tee-pressure-gauge-pdc-water-return",
+          "text": "RP.01.N.04",
+          "role": "address",
+          "anchor": {
+            "x_mm": 145.0,
+            "y_mm": 119.5
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-pressure-gauge-pdc-water-return",
+          "text": "RP.01.N.04.2",
+          "role": "address",
+          "anchor": {
+            "x_mm": 133.04,
+            "y_mm": 149.4
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-tee-expansion-connection-pdc-water-return",
+          "text": "RP.01.N.03",
+          "role": "address",
+          "anchor": {
+            "x_mm": 160.0,
+            "y_mm": 119.5
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-expansion-connection-pdc-water-return",
+          "text": "RP.01.N.03.2",
+          "role": "address",
+          "anchor": {
+            "x_mm": 157.5,
+            "y_mm": 154.3
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-ritorno",
+          "text": "RP.01.N.02",
+          "role": "address",
+          "anchor": {
+            "x_mm": 184.0,
+            "y_mm": 124.4
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-tee-expansion-connection-dhw-bollitore-cold-in",
+          "text": "AF.01.N.03",
+          "role": "address",
+          "anchor": {
+            "x_mm": 130.0,
+            "y_mm": 191.8
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-expansion-connection-dhw-bollitore-cold-in",
+          "text": "AF.01.N.03.2",
+          "role": "address",
+          "anchor": {
+            "x_mm": 139.0,
+            "y_mm": 164.4
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-tee-drain-connection-cold-bollitore-cold-in",
+          "text": "AF.01.N.05",
+          "role": "address",
+          "anchor": {
+            "x_mm": 160.0,
+            "y_mm": 191.8
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-drain-connection-cold-bollitore-cold-in",
+          "text": "AF.01.N.05.1",
+          "role": "address",
+          "anchor": {
+            "x_mm": 148.04,
+            "y_mm": 174.4
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-tee-valve-safety-dhw-bollitore-cold-in",
+          "text": "AF.01.N.06",
+          "role": "address",
+          "anchor": {
+            "x_mm": 175.0,
+            "y_mm": 191.8
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-deviatrice-in",
+          "text": "CP.01.N.03",
+          "role": "address",
+          "anchor": {
+            "x_mm": 110.0,
+            "y_mm": 89.5
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-deviatrice-out-a",
+          "text": "CP.01.N.05",
+          "role": "address",
+          "anchor": {
+            "x_mm": 225.0,
+            "y_mm": 89.5
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-volano-primary-out",
+          "text": "RP.01.N.01",
+          "role": "address",
+          "anchor": {
+            "x_mm": 225.0,
+            "y_mm": 104.5
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-dirt-separator-pdc-water-return-a",
+          "text": "RP.01.N.06",
+          "role": "address",
+          "anchor": {
+            "x_mm": 107.7,
+            "y_mm": 129.4
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-dirt-separator-pdc-water-return",
+          "text": "RP.01.N.07",
+          "role": "address",
+          "anchor": {
+            "x_mm": 115.0,
+            "y_mm": 171.8
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-dirt-separator-pdc-water-return-b",
+          "text": "RP.01.N.08",
+          "role": "address",
+          "anchor": {
+            "x_mm": 100.0,
+            "y_mm": 169.3
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-strainer-pdc-water-return",
+          "text": "RP.01.N.09",
+          "role": "address",
+          "anchor": {
+            "x_mm": 92.5,
+            "y_mm": 157.2
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-circolatore-a",
+          "text": "CS.01.N.01",
+          "role": "address",
+          "anchor": {
+            "x_mm": 265.0,
+            "y_mm": 87.2
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-circolatore",
+          "text": "CS.01.N.02",
+          "role": "address",
+          "anchor": {
+            "x_mm": 275.0,
+            "y_mm": 101.8
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-circolatore-b",
+          "text": "CS.01.N.03",
+          "role": "address",
+          "anchor": {
+            "x_mm": 285.0,
+            "y_mm": 89.5
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-ventilconvettori-out",
+          "text": "RS.01.N.01",
+          "role": "address",
+          "anchor": {
+            "x_mm": 265.0,
+            "y_mm": 104.5
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-locked-open-dhw-expansion-connection-dhw-bollitore-cold-in-a",
+          "text": "AF.01.N.03.1",
+          "role": "address",
+          "anchor": {
+            "x_mm": 139.0,
+            "y_mm": 176.9
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-dhw-acquedotto-a",
+          "text": "AF.01.N.02",
+          "role": "address",
+          "anchor": {
+            "x_mm": 120.0,
+            "y_mm": 182.0
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-check-dhw-bollitore-cold-in",
+          "text": "AF.01.N.04",
+          "role": "address",
+          "anchor": {
+            "x_mm": 142.5,
+            "y_mm": 182.0
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-dhw-hot-bollitore-dhw-out",
+          "text": "ACS.01.N.01",
+          "role": "address",
+          "anchor": {
+            "x_mm": 204.0,
+            "y_mm": 141.9
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-mixing-valve-thermostatic-bollitore-dhw-out",
+          "text": "ACS.01.N.02",
+          "role": "address",
+          "anchor": {
+            "x_mm": 206.5,
+            "y_mm": 134.4
+          },
+          "leader_from": null
+        },
+        {
+          "id": "address-valve-isolation-dhw-hot-utenze-a",
+          "text": "ACS.01.N.03",
+          "role": "address",
+          "anchor": {
+            "x_mm": 186.62,
+            "y_mm": 126.9
+          },
+          "leader_from": null
+        }
+      ],
+      "legend": [
+        {
+          "symbol_id": "air-vent",
+          "name": "Valvola di sfiato aria",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 23.5
+          }
+        },
+        {
+          "symbol_id": "buffer-four-port",
+          "name": "Volano termico a quattro attacchi",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 31.0
+          }
+        },
+        {
+          "symbol_id": "dhw-cylinder",
+          "name": "Bollitore ACS",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 38.5
+          }
+        },
+        {
+          "symbol_id": "dirt-separator",
+          "name": "Defangatore",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 46.0
+          }
+        },
+        {
+          "symbol_id": "diverting-valve-3way",
+          "name": "Valvola deviatrice a tre vie",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 53.5
+          }
+        },
+        {
+          "symbol_id": "drain-connection",
+          "name": "Attacco di scarico",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 61.0
+          }
+        },
+        {
+          "symbol_id": "expansion-connection",
+          "name": "Vaso di espansione",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 68.5
+          }
+        },
+        {
+          "symbol_id": "fan-coil",
+          "name": "Ventilconvettore",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 76.0
+          }
+        },
+        {
+          "symbol_id": "filling-unit",
+          "name": "Gruppo di riempimento",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 83.5
+          }
+        },
+        {
+          "symbol_id": "heat-pump-air-water",
+          "name": "Pompa di calore aria-acqua",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 91.0
+          }
+        },
+        {
+          "symbol_id": "mixing-valve-thermostatic",
+          "name": "Valvola miscelatrice termostatica",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 98.5
+          }
+        },
+        {
+          "symbol_id": "network-boundary",
+          "name": "Confine di rete",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 106.0
+          }
+        },
+        {
+          "symbol_id": "pressure-gauge",
+          "name": "Manometro",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 113.5
+          }
+        },
+        {
+          "symbol_id": "pump-circulator",
+          "name": "Pompa di circolazione",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 121.0
+          }
+        },
+        {
+          "symbol_id": "strainer",
+          "name": "Filtro a Y",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 128.5
+          }
+        },
+        {
+          "symbol_id": "tee-branch",
+          "name": "Derivazione a T",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 136.0
+          }
+        },
+        {
+          "symbol_id": "tee-junction",
+          "name": "Raccordo a T",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 143.5
+          }
+        },
+        {
+          "symbol_id": "valve-check",
+          "name": "Valvola di ritegno",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 151.0
+          }
+        },
+        {
+          "symbol_id": "valve-gauge-cock-3way",
+          "name": "Rubinetto portamanometro a tre vie",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 158.5
+          }
+        },
+        {
+          "symbol_id": "valve-isolation",
+          "name": "Valvola di intercettazione",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 166.0
+          }
+        },
+        {
+          "symbol_id": "valve-safety",
+          "name": "Valvola di sicurezza",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 173.5
+          }
+        }
+      ],
+      "network_keys": [
+        {
+          "medium": "cold_water",
+          "name": "Acqua fredda sanitaria — andata",
+          "colour": "#5dade2",
+          "dash": "3 2",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 186.0
+          }
+        },
+        {
+          "medium": "cold_water",
+          "name": "Acqua fredda sanitaria — ritorno",
+          "colour": "#5d6d7e",
+          "dash": "3 2",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 193.5
+          }
+        },
+        {
+          "medium": "domestic_hot_water",
+          "name": "Acqua calda sanitaria — andata",
+          "colour": "#d68910",
+          "dash": "none",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 201.0
+          }
+        },
+        {
+          "medium": "domestic_hot_water",
+          "name": "Acqua calda sanitaria — ritorno",
+          "colour": "#5dade2",
+          "dash": "none",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 208.5
+          }
+        },
+        {
+          "medium": "heating_water",
+          "name": "Acqua di riscaldamento — andata",
+          "colour": "#c0392b",
+          "dash": "none",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 216.0
+          }
+        },
+        {
+          "medium": "heating_water",
+          "name": "Acqua di riscaldamento — ritorno",
+          "colour": "#2471a3",
+          "dash": "none",
+          "anchor": {
+            "x_mm": 362.5,
+            "y_mm": 223.5
+          }
+        }
+      ],
+      "cross_references": [],
+      "ground_line_y_mm": null
+    }
+  ]
+}

@@ -101,12 +101,18 @@ VARIANTS = {
 def test_the_same_rules_understand_every_variant() -> None:
     registry = RuleRegistry.from_directory(RULES)
     for name, project in VARIANTS.items():
-        found = evaluate(project, catalog(), registry).proposals
-        fired = {item.rule_id for item in found}
+        found = evaluate(project, catalog(), registry)
+        fired = {item.rule_id for item in found.proposals}
         assert "expansion-on-closed-circuit" in fired, name
         assert "safety-relief-where-heat-enters-the-water" in fired, name
-        assert "filling-unit-on-return" in fired, name
         assert "isolate-what-is-serviced" in fired, name
+        # Il riempimento parla su ogni variante, ed e' cio' che il gate
+        # misura. Da DRAW-006-R1 e' un **ponte** fra due reti: su una variante
+        # che non dichiara l'acqua fredda parla come punto aperto invece che
+        # come pezzo, ed e' la risposta giusta — appendere il gruppo al nulla
+        # sarebbe la risposta sbagliata.
+        spoke = fired | {item.rule_id for item in found.gaps}
+        assert "filling-unit-on-return" in spoke, name
 
 
 def test_no_variant_shares_an_identifier_with_another() -> None:

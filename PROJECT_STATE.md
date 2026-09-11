@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-10 (PM, revisione PR #24 e apertura DRAW-006-R1)
+**Aggiornato:** 2026-09-11 (PM-autore, DRAW-006-R1 e DRAW-007 fusi in `main` dal PO)
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md`
 **Release corrente:** 0.3 — generalizzazione controllata, impianto 2
 
@@ -46,19 +46,38 @@ correttezza impiantistica del grafo, che il PO ha corretto con gli input I-030�
 
 ## Lavoro corrente
 
-`DRAW-005-R1` è approvato e fuso con PR #21, merge `eeebc58`. Baseline della tavola 1:
-una sicurezza di circuito sulla mandata comune, zero sull'accumulo e sulle singole PDC;
-39 pezzi; rete ordinaria 4 curve, 1 incrocio e 425 mm; stacchi statici 0 curve,
-0 incroci e 45 mm. Tutti e cinque gli impianti arrivano alla posa.
+`DRAW-006-R1` e `DRAW-007` sono stati **fusi in `main` dal PO** l'11 settembre 2026, con i
+rilievi aperti dichiarati qui sotto. Non erano approvati criterio per criterio: il PO ha
+scelto di consolidare il lavoro e di ripartire da un'architettura nuova, che è
+`DRAW-008`.
 
-La PR #24 di `DRAW-006`, testa `9b925b7`, è respinta nello stato corrente. Conserva
-avanzamenti validi su rubinetto portamanometro, compositi e stati delle multivia, ma
-presenta blocker materiali: ordine degli accessori dipendente dagli ID, mancato
-allineamento PDC–puffer attraverso la deviatrice, adduzione ACS e riempimento tecnico
-modellati in modo non corretto e una valvola D-120 a 27,5 mm.
+**DRAW-006-R1** ha chiuso i quattro difetti semantici — ordine indipendente dagli
+identificativi, assi per stato idraulico, gruppo EN 1487 unico sull'adduzione ACS,
+riempimento come ponte fra due reti — e ha peggiorato la geometria.
 
-`DRAW-006-R1` corregge gli stessi punti sulla stessa PR #24. La tavola 2 resta l'unica
-consegna grafica completa; tavola 1 regressione automatica, impianti 3–5 soltanto posa.
+**DRAW-007** ha dato alla tavola una **gerarchia**: autostrada, distribuzione, servizio,
+calcolata sul grafo in `src/disegnatore_mep/layout/hierarchy.py` e letta dal costo di posa
+e dall'obiettivo di allineamento. Ha inoltre tolto due cose che non dovevano esserci:
+
+- **il pavimento invisibile.** La linea di terra non si disegna più da DRAW-004, ma la
+  regola era rimasta: niente poteva scendere sotto l'83% dell'altezza del foglio. Il PO ha
+  disposto che quel vincolo non esiste — «è uno schema quello che disegniamo» — e toglierlo
+  ha portato la tavola 1 da 10 pieghe a 6;
+- **il multivia contato come macchina.** La mandata dalla pompa di calore al puffer non
+  risultava nemmeno autostrada, perché in mezzo c'è una deviatrice. Il tronco ci passa
+  attraverso, stato per stato.
+
+### Dove siamo davvero, sulla testa di `main`
+
+| | Stato |
+|---|---|
+| **Tavola 1** | esce, ed è la migliore mai prodotta: rete ordinaria 6 pieghe / 3 incroci / 550,0 mm; **zero pieghe** su tutte e otto le tratte di autostrada; accumulo e PDC-master con **quattro porte sullo stesso asse**; D-120 15 su 15 |
+| **Tavola 2** | **non esce.** Il preflight trova un rilievo bloccante — una tratta supera di 2,5 mm la propria porta e ci torna indietro — e una tavola con un bloccante non si scrive (D-063) |
+| **Suite** | **nove prove di geometria rosse**, elencate nel pacchetto DRAW-008. Nessuna ammorbidita, nessuna convertita in `skip` o `xfail` |
+| **`ruff`, `mypy --strict`** | puliti |
+
+Il PO ha visto la tavola 2 e l'ha dichiarata non revisionabile. Aveva ragione, e la causa
+non era una taratura.
 
 ## Rischi aperti
 
@@ -71,8 +90,11 @@ consegna grafica completa; tavola 1 regressione automatica, impianti 3–5 solta
    DEV implementa solo la matrice approvata.
 3. **Costo computazionale.** La tavola 1 richiede circa 70 secondi e oltre 2.000 routing
    di prova; DRAW-006 deve misurare l'impianto 2 senza renderizzare inutilmente gli altri.
-4. **Vincoli fisici di posa non modellati.** Una macchina `GROUND` può oggi salire per
-   allineare le porte; un futuro vincolo fisico deve essere un campo esplicito del modello.
+4. **Vincoli fisici di posa non modellati.** Dall'11 settembre 2026 **non esiste nessuna
+   linea di terra**: il PO ha disposto che su uno schema non c'è un sopra e un sotto, e il
+   pavimento invisibile che era rimasto in `is_valid` è stato tolto. Se un giorno servirà
+   un vincolo fisico vero — un'altezza, un ancoraggio — dovrà essere un campo esplicito del
+   modello, dichiarato, non una frazione dell'altezza del foglio.
 5. **Debito documentale storico.** Le vecchie sezioni operative sono conservate in Git,
    non devono tornare nei file di ingresso correnti.
 6. **Geometria sensibile all'ordine delle connessioni.** La tavola composta in memoria e
@@ -83,19 +105,51 @@ consegna grafica completa; tavola 1 regressione automatica, impianti 3–5 solta
    che fallisca realmente quando un raccordo diventa colonna.
 8. **Connettività multivia non modellata per stati.** Sull'impianto 4 produce domande di
    sicurezza troppo ampie; DRAW-006 introduce configurazioni idrauliche alternative.
-9. **Semantica e geometria ancora accoppiate.** Applicare il corretto ordine funzionale
-   peggiora oggi curve e incroci: DRAW-006-R1 rende l'ordine un vincolo e recupera costo
-   con movimenti di gruppo e routing, mai alterando la semantica.
-10. **Riempimento tecnico modellato a una porta.** Non rappresenta il ponte reale fra
-    acqua fredda e ritorno tecnico; DRAW-006-R1 introduce due reti, due porte e funzioni
-    integrate di catalogo.
+9. **La tavola 2 non esce.** Sulla testa di `main` il preflight trova un rilievo
+   bloccante — una tratta supera di 2,5 mm la propria porta e ci torna indietro — e una
+   tavola con un bloccante non si scrive (D-063). È una regressione comparsa l'11 settembre
+   quando la gerarchia ha cominciato a riconoscere come autostrada la mandata attraverso la
+   deviatrice: la classificazione è giusta, la posa non la sa ancora onorare. La chiude
+   `DRAW-008`.
+10. **Il costo può barattare tutto con tutto, ed è il difetto di fondo.** Il ciclo è un
+    greedy globale su un costo lessicografico, quindi ogni proprietà del disegno — la
+    rettilineità del tronco, l'allineamento, i rami impilati — è una voce che si compra e
+    si vende. L'11 settembre la stessa serie di modifiche ha reso buona la tavola 1 e ha
+    fatto smettere di uscire la tavola 2. Non è un tetto di ricerca: alzarlo da 1 500/2 000
+    a 6 000/6 000 non cambia nulla. **È il rischio principale aperto**, lo attacca
+    `DRAW-008` con le fasi, e l'analisi sta in
+    `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`.
+11. **La misura «stacchi statici» conta anche ciò che statico non è.** Nel bucket finisce
+    ogni tratta che non è rete ordinaria, quindi anche la linea di alimentazione del
+    riempimento, che il vocabolario del progetto chiama `INBOUND`. Con il ponte la riga
+    cresce senza che sia comparso uno stacco statico in più. La misura non è stata toccata:
+    è una soglia del Work Package.
+
+## Pacchetto attivo
+
+`DRAW-008 — la posa a fasi: prima le autostrade` (`ACTIVE_WORK_PACKAGE.md`), approvato dal
+PO l'11 settembre 2026. Architettura in
+`docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`, che **va letta per intera prima
+del pacchetto**.
+
+Il difetto che attacca non è una soglia: è che oggi ogni proprietà del disegno è una voce
+di costo, quindi si compra e si vende. Tre fasi con un invariante duro ciascuna — il
+tronco dritto per primo, poi il corredo che allunga il tronco invece di piegarlo, poi le
+strade di servizio dove le curve si accettano — e la funzione di costo che ottimizza
+**dentro** ciascuna fase invece che attraverso tutte.
 
 ## Prossimi gate
 
 1. `DRAW-005-R1`: tavola 1 rifinita — **accettata e fusa dal PM**.
-2. `DRAW-006-R1`: approvare la PR #24 corretta sulla prima generalizzazione dell'impianto 2.
-3. Gate vertical slice: skill in una chat di lavoro pulita.
-4. Proseguire gli impianti 3–5 uno per volta, cercando classi di difetto nuove.
+2. `DRAW-006-R1`: **consegnato con riserva**, in attesa di verifica del PM sulla PR #24.
+   Le decisioni che il pacchetto chiede sono due: il rilievo geometrico del §8 del
+   rapporto e le 13 prove rosse del §9.1, che il DEV non ha ammorbidito.
+3. `DRAW-007`: la gerarchia della tavola — **fuso in `main`** con rilievi aperti.
+4. `DRAW-008`: la posa a fasi — **pacchetto attivo**.
+5. `DRAW-009`: gli ingressi ripetuti dell'adduzione (**I-061**), dopo DRAW-008.
+6. `DRAW-010`: lo spessore del tratto per gerarchia (**I-059**).
+7. Gate vertical slice: skill in una chat di lavoro pulita.
+8. Proseguire gli impianti 3–5 uno per volta, cercando classi di difetto nuove.
 
 ## Documenti canonici
 
@@ -105,4 +159,7 @@ consegna grafica completa; tavola 1 regressione automatica, impianti 3–5 solta
 - roadmap: `docs/plans/2026-09-03-release-plan.md`;
 - responsabilità: `docs/governance/OPERATING_MODEL.md`;
 - input PO: `docs/input-pm/REGISTRO.md`;
-- retrospettiva: `docs/retrospectives/2026-09-05-retro-pm.md`.
+- retrospettive: `docs/retrospectives/2026-09-05-retro-pm.md` e
+  `docs/retrospectives/2026-09-10-retro-draw006r1.md` — **quest'ultima è vincolante per
+  chi tocca posa, costo o routing**: §4 elenca le regole che lascia alle sessioni
+  successive.

@@ -1,9 +1,9 @@
 {
   "id": "safety-relief-on-the-closed-circuit",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Valvola di sicurezza",
   "category": "necessary",
-  "cardinality": "per_network",
+  "cardinality": "per_protection_domain",
   "when": {
     "network_domain": "hydronic",
     "network_medium": "heating_water",
@@ -20,7 +20,7 @@
   "satisfied_by": {
     "scope": "on_the_network"
   },
-  "rationale": "Nella piccola centrale il circuito chiuso dell'acqua tecnica vuole una via che si apra da sola prima del limite ammesso, e ne vuole una per dominio di protezione, non una per generatore: una sicurezza comune serve tutte le macchine finche' resta comunicante con loro nelle configurazioni ammesse — cioe' finche' fra la macchina in esercizio, con i propri organi aperti, e la sicurezza non c'e' nulla di chiudibile che non sia suo. Sta percio' sulla mandata generale, dove le mandate sono gia' una, attaccata a cio' che le unisce — o alla macchina, se e' una sola — e prima di qualunque organo di quel tratto: piu' vicino ai generatori di cosi' non si puo' stare restando comune a tutti. Il volume della riserva e' protetto dalla stessa via finche' comunica con i generatori; isolata dai generatori non si scalda. E' la sicurezza di sempre della piccola centrale, spostata dalla riserva alla mandata (I-046): non un dispositivo in piu'. Chi puo' restare separato da lei da un organo altrui e' un altro dominio, ed e' un'altra regola. La riserva sanitaria che si scalda da se' ha il proprio gruppo sull'alimentazione fredda: e' un'altra regola.",
+  "rationale": "Nella piccola centrale il circuito chiuso dell'acqua tecnica vuole una via che si apra da sola prima del limite ammesso, e ne vuole una per dominio di protezione, non una per generatore: una sicurezza comune serve tutte le macchine finche' resta comunicante con loro nelle configurazioni ammesse — cioe' finche' fra la macchina in esercizio, con i propri organi aperti, e la sicurezza non c'e' nulla di chiudibile che non sia suo. Sta percio' sulla mandata generale, dove le mandate sono gia' una, attaccata a cio' che le unisce — o alla macchina, se e' una sola — e prima di qualunque organo di quel tratto: piu' vicino ai generatori di cosi' non si puo' stare restando comune a tutti. Il volume della riserva e' protetto dalla stessa via finche' comunica con i generatori; isolata dai generatori non si scalda. E' la sicurezza di sempre della piccola centrale, spostata dalla riserva alla mandata (I-046): non un dispositivo in piu'. Il conto e' per **dominio di protezione**, non per rete: una rete che porta piu' circuiti chiusi indipendenti ha piu' tratti comuni, e ciascuno vuole la propria — una protezione valida per una parte della rete non si scarta perche' un'altra parte non la raggiunge. Chi puo' restare separato da lei da un organo altrui, o da una valvola multivia che in uno degli stati ammessi lo manda altrove, e' un altro dominio, ed e' un'altra regola. La riserva sanitaria che si scalda da se' ha il proprio gruppo sull'alimentazione fredda: e' un'altra regola.",
   "source": "Caleffi, valvole di sicurezza dp 01253/25, p. 4: sulla sommita' del generatore o sulla mandata il piu' vicino possibile, con tubazione di collegamento non intercettabile (SRC-027); UNI EN 12828:2014, in vigore (SRC-028); prassi del PM nella piccola centrale, D-106, corretta dal PO il 2026-09-08 (I-046): una sola sicurezza di circuito, sulla mandata vicino al gruppo dei generatori",
   "ordering": {
     "before": [

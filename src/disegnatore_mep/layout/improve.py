@@ -103,6 +103,7 @@ from .geometry import (
     run_intrudes_on,
 )
 from .grid import GridSpace, is_on_grid
+from .hierarchy import hierarchy_of, spine_machines, weight_of
 from .inline import SettledSheet, settle_sheet
 from .partition import SheetPartition
 from .place import (
@@ -206,6 +207,22 @@ class Attempt(NamedTuple):
     accepted: bool
 
 
+class PortPair(NamedTuple):
+    """Due porte che il fluido collega, e cio' che sta in mezzo.
+
+    `through` sono i pezzi attraversati per arrivarci: vuoto quando le due
+    porte sono i capi della stessa tratta, e altrimenti i raccordi, gli
+    accessori in linea e i multivia che la corsa percorre. Serve al rapporto
+    di collaudo, che deve poter dire **attraverso cosa** un asse e' stato
+    provato.
+    """
+
+    my_port: str
+    peer_id: str
+    peer_port: str
+    through: tuple[str, ...] = ()
+
+
 class SheetCost(NamedTuple):
     """Il valore confrontabile della geometria completa, nell'ordine del pacchetto.
 
@@ -228,8 +245,15 @@ class SheetCost(NamedTuple):
     """Tratte oltre le tre pieghe (B4)."""
 
     bends: int
+    """Pieghe, **pesate per gerarchia** (DRAW-007 §B): non e' il numero di
+    pieghe della tavola, e' il loro costo. Il numero vero si legge sulla
+    geometria, dove lo leggono le misure di collaudo."""
+
     crossings: int
+    """Incroci, pesati per gerarchia come le pieghe."""
+
     length_mm: float
+    """Millimetri di tubo, pesati per gerarchia come le pieghe."""
 
     fill: float
     """Riempimento dell'area di disegno: spareggio, piu' e' meglio."""
@@ -429,6 +453,11 @@ class Improver:
         self.frame = frame
         self.inline_ids = inline_ids
         self.trunks: list[Trunk] = list(partition.trunks)
+        # La gerarchia della tavola, calcolata una volta sola e letta da qui in
+        # avanti: il costo la pesa, l'obiettivo di allineamento la guarda. Il
+        # conto vive in `hierarchy.py` e in nessun altro posto (DRAW-007 §A.2).
+        self.hierarchy = hierarchy_of(project, catalog, self.trunks)
+        self.spine = spine_machines(project, catalog)
         self.order = [item.component_id for item in placed]
         self.best: Move = {item.component_id: item for item in placed}
         # L'ordine di scansione e' quello della posa iniziale letta da sinistra
@@ -459,6 +488,13 @@ class Improver:
         self.levels = levels_of(drawing.y_mm, drawing.height_mm, self.step)
 
         definitions = {item.id: item.definition_id for item in project.components}
+        # La voce di catalogo di ciascun pezzo posato: la legge chi cammina
+        # lungo le tratte per sapere che cosa si attraversa e a quali
+        # condizioni (DRAW-006-R1, blocco B).
+        self.definitions = {
+            item.component_id: catalog.get(definitions[item.component_id])
+            for item in placed
+        }
         self.upright: dict[str, SymbolManifest] = {}
         self.features: dict[str, tuple[frozenset[str], bool]] = {}
         self.permutations: dict[str, list[PortMap]] = {}
@@ -668,6 +704,11 @@ class Improver:
         crossings = 0
         length_mm = 0.0
         for trunk, route in zip(self.trunks, settled.routes, strict=True):
+            # Il peso della gerarchia (DRAW-007 §B): una piega sul tronco fra le
+            # macchine principali non vale una piega su uno stacco cieco, e con
+            # il conto piatto il ciclo barattava la struttura della tavola per
+            # un totale piu' basso — facendo, correttamente, la cosa sbagliata.
+            weight = weight_of(self.hierarchy[trunk.connection_ids])
             arrival = table[trunk.end.component_id]
             goal, _ = self.port_at(arrival, trunk.end.port_id)
             back = max(
@@ -681,11 +722,14 @@ class Improver:
                 turnback_runs += 1
                 turnback_mm += back
             turns = sum(max(len(segment) - 2, 0) for segment in route.segments)
-            bends += turns
+            bends += turns * weight
+            # Il tetto delle pieghe per tratta resta un **conto**, non un peso:
+            # tre pieghe sono tre pieghe ovunque, e una tratta che le supera e'
+            # fuori regola anche se sta su uno stacco.
             if turns > BENDS_PER_RUN_MAX:
                 long_runs += 1
-            crossings += len(route.crossings)
-            length_mm += sum(
+            crossings += len(route.crossings) * weight
+            length_mm += weight * sum(
                 abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
                 for segment in route.segments
                 for before, after in zip(segment, segment[1:], strict=False)
@@ -1012,6 +1056,100 @@ class Improver:
                 if other.component_id in unit or other.component_id not in self.best:
                     continue
                 found.append((trunk, mine.port_id, other.component_id, other.port_id))
+        return found
+
+    def _passes_through(self, component_id: str, port_id: str) -> list[tuple[str, str]]:
+        """Le porte che comunicano con questa **dentro** il pezzo, e lo stato.
+
+        Tre casi, e nessuno e' un elenco di nomi. Un **multivia** lo dice il
+        catalogo, stato per stato: l'ingresso di una deviatrice comunica con un
+        ramo oppure con l'altro, e i due rami non comunicano mai fra loro. Un
+        **raccordo** o un accessorio **in linea** si attraversa fra tutti i
+        propri attacchi del percorso. Una macchina no: li' la corsa finisce, ed
+        e' quello il pezzo con cui ci si allinea.
+        """
+        definition = self.definitions[component_id]
+        if definition.hydraulic_states:
+            return [
+                (other, state.id)
+                for state in definition.hydraulic_states
+                for other in sorted(state.linked(port_id))
+            ]
+        _, is_inline = self.features[component_id]
+        # Un accessorio che pende da uno stacco con **due** attacchi non e' un
+        # capolinea: la corsa ci entra e ne esce, ed e' il ponte fra due reti —
+        # il gruppo di riempimento, che porta l'acqua dell'acquedotto nel
+        # ritorno tecnico. Le sue due prese vanno allineate fra loro, o la
+        # derivazione fredda gira attorno al foglio per raggiungerlo
+        # (DRAW-006-R1, blocco D). Chi ha un attacco solo non prosegue, e una
+        # macchina non pende da nessuno stacco.
+        on_the_run = [port for port in definition.ports if not port.off_the_run]
+        passes = is_inline or definition.is_a_fitting or (
+            definition.attaches_on_a_branch and len(on_the_run) == 2
+        )
+        if not passes:
+            return []
+        return [(port.id, "") for port in on_the_run if port.id != port_id]
+
+    def linked_peers(self, leader: str) -> list[PortPair]:
+        """Le coppie di porte allineabili fra questo pezzo e un pezzo d'altra figura.
+
+        Prima erano i soli capi diretti di una tratta, e bastava una deviatrice
+        fra due macchine perche' l'asse ovvio fra le loro porte non venisse
+        nemmeno provato (DRAW-006-R1, blocco B). Adesso si cammina: attraverso
+        i raccordi, attraverso le catene di accessori in linea e — **uno stato
+        ammesso per volta** — attraverso i multivia. Fermarsi e' un fatto del
+        pezzo, non della distanza: si arriva a cio' che la corsa non attraversa.
+
+        L'ordine e' quello delle tratte, che e' gia' strutturale; le coppie non
+        si ripetono. E' una **lettura**, non una regola: quali candidate ne
+        nascano e quale vinca lo decide il costo della tavola.
+        """
+        unit = set(self.unit_of(leader))
+        found: list[PortPair] = []
+        seen: set[tuple[str, str, str]] = set()
+        # Si parte da ogni tratta che tocca il pezzo e si prosegue finche' si
+        # attraversa. Il tetto e' il numero dei pezzi: una camminata che non
+        # ripassa da dove e' gia' stata non puo' essere piu' lunga.
+        queue: list[tuple[str, str, str, tuple[str, ...]]] = [
+            (mine.port_id, other.component_id, other.port_id, ())
+            for trunk in self.trunks
+            for mine, other in ((trunk.start, trunk.end), (trunk.end, trunk.start))
+            if mine.component_id == leader
+        ]
+        while queue:
+            my_port, peer_id, peer_port, through = queue.pop(0)
+            if peer_id not in self.best or len(through) > len(self.order):
+                continue
+            key = (my_port, peer_id, peer_port)
+            if peer_id not in unit and key not in seen:
+                seen.add(key)
+                found.append(
+                    PortPair(
+                        my_port=my_port,
+                        peer_id=peer_id,
+                        peer_port=peer_port,
+                        through=through,
+                    )
+                )
+            for onward, _state in self._passes_through(peer_id, peer_port):
+                for trunk in self.trunks:
+                    for here, there in (
+                        (trunk.start, trunk.end),
+                        (trunk.end, trunk.start),
+                    ):
+                        if (here.component_id, here.port_id) != (peer_id, onward):
+                            continue
+                        if there.component_id in {*through, peer_id, leader}:
+                            continue
+                        queue.append(
+                            (
+                                my_port,
+                                there.component_id,
+                                there.port_id,
+                                (*through, peer_id),
+                            )
+                        )
         return found
 
     def _port_moves(self, leader: str) -> list[Move]:
@@ -1488,41 +1626,79 @@ class Improver:
             out.extend(self._composed_with(move, (leader, mate)))
         return out
 
-    def _axis_moves(self, leader: str) -> list[Move]:
-        """Gli assi fra le porte, coordinati (DRAW-004).
+    def _axis_moves(self, leader: str, only_spine: bool = False) -> list[Move]:
+        """Gli assi fra le porte, coordinati (DRAW-004, DRAW-006-R1 blocco B).
 
-        Per ogni collegamento verso un pari di un'altra figura ci sono tre
-        modi di mettere le due porte sullo stesso asse: muovo la mia colonna
-        sull'asse della sua porta (e' la posa da porta, che esiste gia'),
-        muovo la **sua** colonna sull'asse della mia, oppure muovo **tutte e
-        due** verso un asse comune a meta' strada, sul passo. Nessuno dei tre
-        e' una regola: sono candidati, e decide il costo della tavola.
+        Per ogni coppia di porte che il fluido collega — anche attraverso un
+        raccordo, una catena di accessori in linea o un multivia, uno stato per
+        volta — ci sono tre modi di metterle sullo stesso asse: muovo la mia
+        colonna sull'asse della sua porta, muovo **la sua** sull'asse della
+        mia, oppure muovo **tutte e due** verso un asse comune a meta' strada,
+        sul passo.
+
+        Le coppie che chiedono **lo stesso spostamento** si servono con una
+        mossa sola: e' l'allineamento simultaneo di mandata e ritorno fra due
+        macchine, che una candidata per coppia non avrebbe mai prodotto.
+
+        Nessuno dei tre e' una regola: sono candidati, e decide il costo della
+        tavola.
         """
         out: list[Move] = []
         me = self.best[leader]
         mine = self.column_of(leader)
-        for _, my_port, peer_id, peer_port in self._trunks_of(leader):
-            anchor, face = self.port_at(self.best[peer_id], peer_port)
-            own, _ = self.port_at(me, my_port)
-            theirs = [item for item in self.column_of(peer_id) if item not in mine]
-            if not theirs:
+        # Per ogni pari e per ciascuno dei due assi, gli scostamenti che le sue
+        # coppie chiedono. Uno scostamento condiviso da due coppie e' una mossa
+        # sola che le allinea tutte e due.
+        wanted: dict[tuple[str, bool], list[float]] = {}
+        if only_spine and leader not in self.spine:
+            return []
+        for pair in self.linked_peers(leader):
+            if pair.peer_id not in self.best:
                 continue
+            if only_spine and pair.peer_id not in self.spine:
+                continue
+            anchor, face = self.port_at(self.best[pair.peer_id], pair.peer_port)
+            own, _ = self.port_at(me, pair.my_port)
             horizontal = face in _HORIZONTAL_FACES
             gap = (own.y_mm - anchor.y_mm) if horizontal else (own.x_mm - anchor.x_mm)
             if abs(gap) <= _TOLERANCE_MM:
                 continue
-            # La colonna del pari sul mio asse.
-            out.append(self._shifted_units(theirs, not horizontal, gap))
-            # Tutte e due su un asse comune: io di mezza distanza, sul passo,
-            # e il pari di quanto resta.
-            half = round(-gap / 2 / self.step) * self.step
-            if half != 0.0 and half != -gap:
-                out.append(
-                    {
-                        **self._shifted_units(mine, not horizontal, half),
-                        **self._shifted_units(theirs, not horizontal, gap + half),
-                    }
-                )
+            found = wanted.setdefault((pair.peer_id, horizontal), [])
+            if not any(abs(gap - item) <= _TOLERANCE_MM for item in found):
+                found.append(gap)
+        for (peer_id, horizontal), gaps in wanted.items():
+            # Due granularita', e si provano tutt'e due (DRAW-007 §C.2). La
+            # colonna e' cio' che il ciclo sapeva muovere fino a DRAW-006-R1, e
+            # trascina pezzi che con questa coppia di porte non c'entrano: paga
+            # contorno estraneo, e per quel contorno il costo la respinge. La
+            # **macchina col proprio corredo** e' la mossa che un disegnatore
+            # fa davvero, e non paga niente che non sia suo. Nessuna delle due
+            # e' una regola: decide il costo della tavola.
+            grane = [
+                (mine, [item for item in self.column_of(peer_id) if item not in mine]),
+                (
+                    list(self.unit_of(leader)),
+                    [item for item in self.unit_of(peer_id) if item not in mine],
+                ),
+            ]
+            for mia, loro in grane:
+                if not loro:
+                    continue
+                for gap in gaps:
+                    # La sua parte sul mio asse.
+                    out.append(self._shifted_units(loro, not horizontal, gap))
+                    # La mia sull'asse del pari.
+                    out.append(self._shifted_units(mia, not horizontal, -gap))
+                    # Tutte e due su un asse comune: io di mezza distanza, sul
+                    # passo, e il pari di quanto resta.
+                    half = round(-gap / 2 / self.step) * self.step
+                    if half != 0.0 and half != -gap:
+                        out.append(
+                            {
+                                **self._shifted_units(mia, not horizontal, half),
+                                **self._shifted_units(loro, not horizontal, gap + half),
+                            }
+                        )
         return out
 
     def _tee_moves(self, leader: str) -> list[Move]:
@@ -1677,8 +1853,20 @@ class Improver:
         chained = self._chain_moves(leader)
         ported = self._port_moves(leader)
         spined = self._spine_moves(leader) if self.refining else []
+        assi = self._axis_moves(leader, only_spine=not self.refining)
         roomy: list[tuple[str, Move]] = []
-        for kind, moves in (("dorsale", spined), ("catena", chained), ("porta", ported)):
+        # L'asse entra fra le mosse che sanno **fare spazio** (PO, 11 settembre
+        # 2026): «mi sembra evidente che anche la seconda PDC la puoi spostare;
+        # non c'e' nessuna distanza fissa fra le due». Una posa che allinea la
+        # prima macchina e finisce addosso alla seconda non e' una ragione per
+        # scartarla: e' una ragione per spostare anche la seconda, di quanto
+        # serve a lei e non per forza di quanto si e' mossa la prima.
+        for kind, moves in (
+            ("dorsale", spined),
+            ("catena", chained),
+            ("porta", ported),
+            ("asse", assi),
+        ):
             for move in moves:
                 roomy.extend(
                     (f"{kind}+spazio", extra)
@@ -1690,7 +1878,7 @@ class Improver:
                 *(("dorsale", move) for move in spined),
                 *(("catena", move) for move in chained),
                 *(("porta", move) for move in ported),
-                *(("asse", move) for move in self._axis_moves(leader)),
+                *(("asse", move) for move in assi),
                 *roomy,
                 *(("colonna", move) for move in self._column_moves(leader)),
                 *(("gruppo", move) for move in self._shift_moves(leader)),
@@ -1702,6 +1890,15 @@ class Improver:
         else:
             generated = [
                 *(("interasse", move) for move in self._lift_moves(leader)),
+                # L'allineamento del tronco entra **nella posa**, non solo nella
+                # rifinitura (DRAW-007 §C.1). Fino a DRAW-006-R1 le candidate di
+                # asse nascevano soltanto a rifinitura, cioe' quando la
+                # disposizione era gia' decisa: si chiedeva al ciclo di
+                # raddrizzare due macro-linee dopo aver costruito la tavola
+                # attorno a una posa che non le prevedeva. Qui la fase prima
+                # guarda **solo le macchine di spina**: l'asse del tronco e' una
+                # struttura, il resto e' contorno e si sistema dopo.
+                *(("asse", move) for move in assi),
                 *(("catena", move) for move in chained),
                 *(("porta", move) for move in ported),
                 *roomy,
@@ -1788,8 +1985,17 @@ class Improver:
                 return False
             if placed.right_mm > self.area.right_mm + _TOLERANCE_MM:
                 return False
-            if placed.bottom_mm > self.levels.ground_mm + _TOLERANCE_MM:
-                return False
+            # La «linea di terra» non e' un vincolo (PO, 11 settembre 2026):
+            #
+            #     «Non c'e', non esiste. E' uno schema quello che disegniamo,
+            #     non c'e' nessun sopra e sotto linea di terra o simile.»
+            #
+            # Il segno non si disegna piu' da DRAW-004, ma la regola era
+            # rimasta: niente poteva scendere sotto l'83% dell'altezza del
+            # foglio, e quel pavimento invisibile impediva all'accumulo di
+            # scendere — perche' il suo scarico ci arrivava contro — e quindi
+            # impediva l'allineamento del tronco. Il solo limite e' il foglio,
+            # ed e' controllato sopra.
             # Lo stesso stacco del posizionamento fra due simboli di figure
             # diverse (D-062); dentro la stessa figura basta non sovrapporsi.
             for other_id in self.order:

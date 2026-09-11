@@ -28,7 +28,7 @@ from pathlib import Path
 import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import ComponentTrait
+from disegnatore_mep.catalog.schema import ComponentDefinition, ComponentTrait
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.canonical import canonical_json
@@ -61,9 +61,11 @@ from disegnatore_mep.model.project import (
     ProjectMetadata,
     ProjectModel,
 )
-from disegnatore_mep.model.types import PlantRegime
+from disegnatore_mep.model.types import PlantRegime, PortFlow
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.registry import RuleRegistry
+from disegnatore_mep.validation.geometry import validate_drawing_geometry
+from disegnatore_mep.validation.preflight import preflight_drawing
 
 ROOT = Path(__file__).resolve().parents[2]
 CATALOG = ROOT / "examples" / "layout" / "catalog"
@@ -322,9 +324,23 @@ def test_nella_posa_iniziale_ogni_stacco_e_lungo_il_proprio_minimo(index: int) -
         if parent is None or child is None:
             continue
         holder, hung = placed[parent.component_id], placed[child.component_id]
-        if len(catalog().get(next(item.definition_id for item in project.components if item.id == hung.component_id)).ports) != 1:
+        # Chi pende lo dice il **catalogo**, non il numero delle porte. Da
+        # DRAW-006-R1 il gruppo di riempimento e' un ponte a due porte che
+        # pende lo stesso: contando le porte, questa lettura scambiava il
+        # raccordo con l'accessorio e misurava lo stacco al contrario.
+        if not _definition(project, hung.component_id).attaches_on_a_branch:
             holder, hung = hung, holder
             parent, child = child, parent
+        appeso = _definition(project, hung.component_id)
+        if len({port.medium for port in appeso.ports}) > 1:
+            # Un ponte ha i due capi su due linee diverse: stringerlo al minimo
+            # su tutt'e due e' un vincolo che nessuna posa puo' rispettare. Lo
+            # stacco che si misura e' quello del capo su cui e' montato, e
+            # l'altro — quello con cui pesca dall'altra rete — non e' uno
+            # stacco statico: e' la tubazione che unisce le due reti.
+            porta = next(item for item in appeso.ports if item.id == child.port_id)
+            if porta.flow is PortFlow.IN:
+                continue
         stub = _port(project, holder, parent.port_id)
         own = _port(project, hung, child.port_id)
         gap = max(abs(own[0] - stub[0]), abs(own[1] - stub[1]))
@@ -516,6 +532,13 @@ def test_traslare_una_macchina_non_cambia_il_suo_riquadro_ne_stacca_cio_che_le_p
 # ---------------------------------------------------------------------------
 
 
+def _definition(project: ProjectModel, component_id: str) -> ComponentDefinition:
+    """La voce di catalogo di un pezzo dell'impianto."""
+    return catalog().get(
+        next(item.definition_id for item in project.components if item.id == component_id)
+    )
+
+
 def _ordinary_and_static(drawing: DrawingGeometry) -> tuple[dict[str, float], dict[str, float]]:
     sheet = drawing.sheets[0]
     stub_points = {
@@ -582,8 +605,16 @@ def test_il_raccordo_che_regge_uno_stacco_sta_stretto_al_raccordo_a_cui_e_attacc
 
 
 def test_la_tavola_1_non_costa_piu_di_draw_005_sulla_rete_ordinaria() -> None:
-    """Regressione sulla fixture della tavola 1 (I-046, criterio 10): al netto
-    degli stacchi statici, curve, incroci e lunghezza non superano DRAW-005."""
+    """Regressione sulla fixture della tavola 1 (DRAW-006, §E.4).
+
+    La tavola 1 non si riconsegna piu' come elaborato: resta una **regressione
+    automatica**, e le soglie sono quelle della consegna approvata di
+    DRAW-005-R1, non piu' quelle piu' larghe di DRAW-005. Rete ordinaria: non
+    oltre 4 curve, 1 incrocio e 425 mm. Stacchi statici: non oltre 0 curve,
+    0 incroci e 45 mm. E le tre qualita' che non hanno numero — zero
+    backtracking, zero tubo sotto un simbolo, nessuna tratta oltre tre curve —
+    lette dai validatori invece che ricontate qui.
+    """
     done, _, gaps = saturate(load_project(PROVA_1), catalog(), rules())
     assert not gaps
     # Il modello passa dal JSON canonico, come nella catena della CLI: la
@@ -594,10 +625,22 @@ def test_la_tavola_1_non_costa_piu_di_draw_005_sulla_rete_ordinaria() -> None:
     ordinary, static = _ordinary_and_static(drawing)
     assert ordinary["curve"] <= 4, ordinary
     assert ordinary["incroci"] <= 1, ordinary
-    assert ordinary["mm"] <= 525.0 + TOLERANCE_MM, ordinary
+    assert ordinary["mm"] <= 425.0 + TOLERANCE_MM, ordinary
+    assert static["curve"] <= 0, static
+    assert static["incroci"] <= 0, static
+    assert static["mm"] <= 45.0 + TOLERANCE_MM, static
+    assert static["mm"] > 0
     # E gli stacchi sono tubo nuovo, contato a parte: nessuno oltre tre curve,
     # e nessuno che rientri su se stesso.
     for route in drawing.sheets[0].routes:
         if route.flow_kind is not FlowKind.ORDINARY:
             assert _bends(route) <= 3, route.connection_ids
-    assert static["mm"] > 0
+    codes = {
+        item.code
+        for item in (
+            *validate_drawing_geometry(drawing, NOVE_C_A3).issues,
+            *preflight_drawing(drawing, NOVE_C_A3, catalog()),
+        )
+    }
+    for code in ("LINE_UNDER_SYMBOL", "RUN_OVERSHOOTS_ITS_PORT", "RUN_WITH_TOO_MANY_BENDS"):
+        assert code not in codes, sorted(codes)

@@ -48,6 +48,21 @@ class RuleCardinality(StrEnum):
     PER_PORT = "per_port"
     """Una per attacco: le valvole di sezionamento di un componente sostituibile."""
 
+    PER_PROTECTION_DOMAIN = "per_protection_domain"
+    """Una per **dominio di protezione**: la sicurezza del circuito chiuso.
+
+    E' la cardinalita' che il PM ha chiesto per la sicurezza (DRAW-006, blocco
+    C, punti 4 e 5): non una per rete, che scarta la protezione valida di una
+    parte perche' un'altra non la raggiunge, e nemmeno una per generatore, che
+    la deduce dal numero delle macchine. Una rete puo' portare piu' domini —
+    due circuiti chiusi indipendenti, o un generatore che una valvola multivia
+    puo' separare dal resto — e ciascuno vuole la propria.
+
+    Si dichiara **solo** con una posa su tratto comune: il dominio si riconosce
+    da quale tratto le camminate degli ancoraggi condividono, e senza quel
+    tratto non c'e' niente da raggruppare.
+    """
+
 
 class Placement(StrEnum):
     """Su quale attacco dell'ancoraggio si posa la proposta.
@@ -216,6 +231,23 @@ class RuleProposalTemplate(StrictModel):
     placement: Placement
     inlet_port: str = Field(pattern=ID_PATTERN)
     outlet_port: str = Field(pattern=ID_PATTERN)
+
+    bridges_from_medium: str | None = Field(default=None, pattern=ID_PATTERN)
+    """Il fluido da cui il pezzo **pesca**, quando e' un ponte fra due reti.
+
+    Vuoto per tutto cio' che sta dentro una tubazione sola, che e' la
+    stragrande maggioranza. Chi lo dichiara non e' un accessorio della rete su
+    cui la regola parla: e' il pezzo che mette quella rete in comunicazione con
+    un'altra, e vuole una derivazione da ciascuna parte — il gruppo di
+    riempimento, che porta l'acqua dell'acquedotto nel circuito tecnico
+    (DRAW-006-R1, blocco D).
+
+    Il verso non e' configurabile: si entra dal fluido dichiarato qui, per
+    `inlet_port`, e si esce su quello della rete della regola, per
+    `outlet_port`. La sorgente dev'essere **gia' approvata** dal progettista:
+    dove non c'e', la regola non propone un pezzo appeso a nulla ma un punto
+    aperto.
+    """
     if_on_board_is_unknown: OnBoardPolicy = OnBoardPolicy.ASSUME_ABSENT
     """Cosa fare quando il catalogo non dice se l'ancoraggio porta a bordo la
     funzione proposta (I-046).
@@ -237,6 +269,16 @@ class RuleProposalTemplate(StrictModel):
             self.provides_function,
             *sorted(set(self.provides_function_by_shutoff_regime.values())),
         )
+
+    @model_validator(mode="after")
+    def a_bridge_joins_two_different_media(self) -> "RuleProposalTemplate":
+        """Un ponte fra due fluidi uguali non e' un ponte."""
+        if self.bridges_from_medium is not None and self.provides_function_by_shutoff_regime:
+            raise ValueError(
+                "a bridge between two networks is not an organ posed on what it "
+                "serves: it cannot change with the anchor's shutoff regime"
+            )
+        return self
 
     @model_validator(mode="after")
     def the_two_ports_differ(self) -> "RuleProposalTemplate":
@@ -376,18 +418,35 @@ class RuleDefinition(StrictModel):
 
     @model_validator(mode="after")
     def a_common_run_is_one_per_network(self) -> "RuleDefinition":
-        """Il tratto comune e' uno per rete, e la cardinalita' deve dirlo.
+        """Il tratto comune non si conta per componente, e la cardinalita' deve
+        dirlo.
 
         Una regola che si posasse sul ritorno generale «una volta per
         componente» direbbe due cose che non stanno insieme: il tratto e' lo
-        stesso per tutti i componenti della rete, e la seconda posa
+        stesso per tutti i componenti che vi confluiscono, e la seconda posa
         ricadrebbe sul punto della prima.
+
+        Chi vuole invece **un pezzo per dominio** — la sicurezza, che non si
+        scarta perche' una parte della rete non la raggiunge — lo dichiara con
+        `per_protection_domain`, e quella cardinalita' esiste solo qui: senza un
+        tratto comune non ci sarebbe niente da raggruppare (DRAW-006, blocco C).
         """
-        if self.then.placement.on_a_common_run and self.cardinality is not RuleCardinality.PER_NETWORK:
+        on_a_run = {RuleCardinality.PER_NETWORK, RuleCardinality.PER_PROTECTION_DOMAIN}
+        if self.then.placement.on_a_common_run and self.cardinality not in on_a_run:
             raise ValueError(
-                f"{self.id} si posa su un tratto comune della rete e dichiara "
-                f"cardinalita' {self.cardinality}: il tratto comune e' uno per "
-                f"rete, la cardinalita' puo' essere solo {RuleCardinality.PER_NETWORK}"
+                f"{self.id} si posa su un tratto comune e dichiara cardinalita' "
+                f"{self.cardinality}: il tratto comune non si conta per componente "
+                f"ne' per attacco, ma fra {', '.join(sorted(on_a_run))}"
+            )
+        if (
+            self.cardinality is RuleCardinality.PER_PROTECTION_DOMAIN
+            and not self.then.placement.on_a_common_run
+        ):
+            raise ValueError(
+                f"{self.id} dichiara {RuleCardinality.PER_PROTECTION_DOMAIN} senza "
+                f"posarsi su un tratto comune: il dominio si riconosce dal tratto "
+                f"che gli ancoraggi condividono, e senza quel tratto non c'e' "
+                f"niente da raggruppare"
             )
         return self
 

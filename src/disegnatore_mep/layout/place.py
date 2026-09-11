@@ -39,8 +39,9 @@ from math import ceil
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
+from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import PortRef, ProjectModel
-from disegnatore_mep.model.types import BandRole
+from disegnatore_mep.model.types import BandRole, PortFlow
 
 from .chains import CHAIN_PORT_GAP_MM, chain_room_mm, machine_chains
 from .composition import Standing, levels_of, standing_of
@@ -155,6 +156,13 @@ class _Hanging:
     component_id: str
     parent_id: str
     parent_port_id: str
+    port_id: str
+    """L'attacco **dell'appeso** su questo stacco.
+
+    Non e' sempre il primo del manifesto: un ponte fra due reti ha due attacchi
+    e pende da quello che guarda il proprio raccordo. Da qui si legge da che
+    parte l'appeso si sporge e su quale punto va allineato (DRAW-006-R1)."""
+
     room_mm: float
     """Il rettilineo che gli organi di chiusura dello stacco pretendono.
 
@@ -165,14 +173,17 @@ class _Hanging:
 
 
 def _file_order(project: ProjectModel) -> dict[str, int]:
-    """La posizione di ogni componente nel modello: lo spareggio che non e' un nome.
+    """Lo spareggio strutturale fra pezzi altrimenti pari: mai un nome (D-093).
 
-    Dove due pezzi sono pari su ogni criterio strutturale si segue l'ordine in
-    cui il progettista li ha elencati, mai l'ordine alfabetico dei loro
-    identificativi (D-093): due impianti uguali con nomi diversi devono dare la
-    stessa tavola.
+    Era la posizione nel file, e la posizione nel file non sopravvive al JSON
+    canonico, che riordina i pezzi per identificativo: la catena della CLI
+    disegna quel file, e rinominare un pezzo cambiava la tavola. Adesso l'ordine
+    si legge dalla **forma dell'impianto** — voce di catalogo e attacchi verso i
+    vicini — e l'identificativo spareggia soltanto fra pezzi che nessun dato
+    dell'impianto distingue (DRAW-006-R1, blocco A.2). Il conto vive in
+    `layout.order`.
     """
-    return {item.id: index for index, item in enumerate(project.components)}
+    return structural_order(project)
 
 
 def _hanging_accessories(
@@ -202,6 +213,50 @@ def _hanging_accessories(
             for port in ports_of.get(component_id, [])
         )
 
+    def hangs_entirely(component_id: str) -> bool:
+        """Ogni attacco di quel pezzo pende da uno stacco altrui.
+
+        E' la forma generale di «ha un attacco solo»: un accessorio appeso ne
+        ha uno, un **ponte fra due reti** ne ha due e pendono tutti e due — dal
+        raccordo sul ritorno tecnico e da quello sull'acqua fredda. In nessuno
+        dei due casi la tubazione principale attraversa il pezzo, ed e' quello
+        che conta per la posa: non e' un passo del processo e non merita una
+        colonna sua, sta accanto a cio' da cui pende (DRAW-006-R1, blocco D).
+        """
+        ports = ports_of.get(component_id, [])
+        if not ports:
+            return False
+        holders = {
+            (other.component_id, other.port_id)
+            for trunk in partition.trunks
+            for mine, other in ((trunk.start, trunk.end), (trunk.end, trunk.start))
+            if mine.component_id == component_id
+        }
+        touched = {
+            mine.port_id
+            for trunk in partition.trunks
+            for mine, _ in ((trunk.start, trunk.end), (trunk.end, trunk.start))
+            if mine.component_id == component_id
+        }
+        return len(touched) == len(ports) and bool(holders) and all(
+            off_the_run(owner, port_id) for owner, port_id in holders
+        )
+
+    def is_the_mounting_side(component_id: str, port_id: str) -> bool:
+        """Il pezzo e' montato sul circuito in cui **sbocca**.
+
+        Un ponte porta acqua da una rete all'altra: la sua sede e' quella di
+        arrivo — il gruppo di riempimento sta in centrale, sul ritorno tecnico,
+        e l'acqua fredda ce la si porta. Con un attacco solo la domanda non si
+        pone e la risposta e' sempre vera.
+        """
+        ports = ports_of.get(component_id, [])
+        if len(ports) < 2:
+            return True
+        return any(
+            port.id == port_id and port.flow is PortFlow.OUT for port in ports
+        )
+
     hanging: dict[str, list[_Hanging]] = defaultdict(list)
     claimed: set[str] = set()
     for trunk in partition.trunks:
@@ -212,7 +267,9 @@ def _hanging_accessories(
                 continue
             if child.component_id not in placeable or parent.component_id not in placeable:
                 continue
-            if len(ports_of.get(child.component_id, [])) != 1:
+            if not hangs_entirely(child.component_id):
+                continue
+            if not is_the_mounting_side(child.component_id, child.port_id):
                 continue
             if not off_the_run(parent.component_id, parent.port_id):
                 continue
@@ -222,12 +279,13 @@ def _hanging_accessories(
                     for item in project.components
                     if item.id == child.component_id
                 )
-            ).symbol.manifest.ports[0].face
+            ).symbol.manifest.port(child.port_id).face
             hanging[parent.component_id].append(
                 _Hanging(
                     component_id=child.component_id,
                     parent_id=parent.component_id,
                     parent_port_id=parent.port_id,
+                    port_id=child.port_id,
                     room_mm=room_of(trunk, face in (PortFace.LEFT, PortFace.RIGHT)),
                 )
             )
@@ -374,6 +432,7 @@ def _pieces_on_the_run(
     is_zoned: Callable[[str], bool],
     rank: Callable[[str], int],
     stage: Callable[[str], int] | None = None,
+    joins_two_media: Callable[[str], bool] | None = None,
 ) -> list[_RunChain]:
     """Chi esce dalla fila delle colonne, e a quali pezzi e' legato (D-120).
 
@@ -401,10 +460,19 @@ def _pieces_on_the_run(
         neighbours[first].add(second)
         neighbours[second].add(first)
 
+    # Chi mette in comunicazione **due fluidi** non sta in una catena: una
+    # catena e' un tratto di tubazione fra due pezzi grossi, e un ponte non e'
+    # un tratto — e' il punto in cui due reti si toccano. Lasciarcelo entrare
+    # cuciva insieme la fila del ritorno tecnico e quella dell'acqua fredda, e
+    # le prese dell'acqua fredda finivano all'altro capo del foglio
+    # (DRAW-006-R1, blocco D).
     free = {
         item
         for item in placeable
-        if item not in hung and not is_zoned(item) and len(neighbours[item]) > 1
+        if item not in hung
+        and not is_zoned(item)
+        and len(neighbours[item]) > 1
+        and not (joins_two_media is not None and joins_two_media(item))
     }
     seen: set[str] = set()
     result: list[_RunChain] = []
@@ -552,10 +620,34 @@ class _Process:
         oriented = orient_trunks(project, catalog, trunks)
         self.feed: dict[str, tuple[PortRef, PortRef]] = {}
         self.position = _file_order(project)
+        stubs = {
+            (item.id, port.id)
+            for item in project.components
+            for port in catalog.get(item.definition_id).ports
+            if port.off_the_run
+        }
         successors: dict[str, list[str]] = defaultdict(list)
         members: set[str] = set()
         for trunk in trunks:
             members.update({trunk.start.component_id, trunk.end.component_id})
+            # Uno **stacco va sempre dal percorso a cio' che vi pende**, e mai
+            # al contrario: e' una derivazione, non un passo del processo, e
+            # chi la regge non viene dopo di lei. Il verso della corsa qui non
+            # decide niente — prendendolo alla lettera, il raccordo che regge
+            # un ponte fra due reti finiva in fondo alla fila e il gruppo di
+            # riempimento tirava la propria presa sull'acqua fredda all'altro
+            # capo del foglio (DRAW-006-R1, blocco D).
+            hangs = [
+                (ref, other)
+                for ref, other in ((trunk.start, trunk.end), (trunk.end, trunk.start))
+                if (ref.component_id, ref.port_id) in stubs
+            ]
+            if hangs:
+                holder, hung = hangs[0]
+                if holder.component_id != hung.component_id:
+                    successors[holder.component_id].append(hung.component_id)
+                    self.feed.setdefault(hung.component_id, (holder, hung))
+                continue
             if oriented.get(trunk.connection_ids) is not True:
                 continue
             source, target = trunk.start.component_id, trunk.end.component_id
@@ -724,9 +816,14 @@ def place_sheet(
     grid = GridSpace(origin=area, standard=frame.standard)
     step = grid.step_mm
 
-    placeable = [
-        item for item in partition.component_ids if item not in inline_component_ids
-    ]
+    # I pezzi si posano nell'ordine **strutturale**, non in quello in cui il
+    # file li elenca: il JSON canonico li riordina per identificativo, e la posa
+    # e' greedy — chi si posa prima prende il posto migliore (DRAW-006-R1, §A.2).
+    seats = structural_order(project)
+    placeable = sorted(
+        (item for item in partition.component_ids if item not in inline_component_ids),
+        key=lambda item: seats.get(item, 0),
+    )
     if not placeable:
         raise LayoutError(
             f"sheet {partition.sheet_id} carries only inline accessories: an "
@@ -809,6 +906,13 @@ def place_sheet(
     )
     hung = {item.component_id for group in hanging.values() for item in group}
 
+    def joins_two_media(component_id: str) -> bool:
+        """Il pezzo tocca piu' di un fluido: e' un ponte fra due reti."""
+        found = resolved.get(component_id)
+        if found is None:
+            return False
+        return len({port.medium for port in found.definition.ports}) > 1
+
     def is_zoned(component_id: str) -> bool:
         return bool(functions_of.get(component_id, frozenset()) & ZONED_FUNCTIONS)
 
@@ -819,6 +923,7 @@ def place_sheet(
         is_zoned,
         lambda item: process.position.get(item, 0),
         process_rank,
+        joins_two_media,
     )
     on_the_run = {item for chain in chains for item in chain.members}
     standing_columns = [
@@ -1095,8 +1200,15 @@ def place_sheet(
     )
     heights = {item: manifests[item].height_mm for item in placeable}
 
-    def hangs_toward(component_id: str) -> PortFace:
-        return _OPPOSITE[manifests[component_id].ports[0].face]
+    def hangs_toward(item: _Hanging) -> PortFace:
+        """Da che parte l'appeso si sporge rispetto a chi lo regge.
+
+        Dall'attacco **con cui pende da quel raccordo**, non dal primo del
+        manifesto: un ponte fra due reti ne ha due, e prendere sempre il primo
+        lo appendeva per l'attacco sbagliato — la tubazione girava attorno al
+        pezzo per raggiungerlo dal lato opposto (DRAW-006-R1, blocco D).
+        """
+        return _OPPOSITE[_port_of(manifests[item.component_id], item.port_id)[2]]
 
     def hanging_gap(item: _Hanging) -> float:
         """Quanto lo stacco e' lungo: il minimo su griglia (I-046), gia' letto
@@ -1109,7 +1221,7 @@ def place_sheet(
         """Quanto un pezzo sporge a sinistra e a destra per cio' che gli pende."""
         left = right = 0.0
         for item in hanging.get(component_id, ()):
-            side = hangs_toward(item.component_id)
+            side = hangs_toward(item)
             width = manifests[item.component_id].width_mm + hanging_gap(item)
             if side is PortFace.LEFT:
                 left += width
@@ -1129,7 +1241,7 @@ def place_sheet(
             (
                 hanging_gap(item) + manifests[item.component_id].height_mm
                 for item in hanging.get(component_id, ())
-                if hangs_toward(item.component_id) is side
+                if hangs_toward(item) is side
             ),
             default=0.0,
         )
@@ -1157,7 +1269,7 @@ def place_sheet(
             (
                 manifests[item.component_id].width_mm
                 for item in hanging.get(component_id, ())
-                if hangs_toward(item.component_id) in (PortFace.TOP, PortFace.BOTTOM)
+                if hangs_toward(item) in (PortFace.TOP, PortFace.BOTTOM)
             ),
             default=0.0,
         )
@@ -1582,6 +1694,105 @@ def place_sheet(
             for box in boxes
         )
 
+    def hanging_seat(
+        parent_id: str, parent_left: float, parent_top: float, item: _Hanging
+    ) -> tuple[float, float, float, float]:
+        """Il posto **preferito** di cio' che pende, prima di allontanarsi.
+
+        E' il conto che `hang` fa per primo: l'attacco da cui pende, lo stacco
+        minimo, e i due bordi che nessuno scavalca — l'area di disegno e la
+        terra. Vive a parte perche' lo guarda anche chi deve decidere **dove
+        posare il raccordo**: un raccordo che sta bene lui ma che manda il
+        proprio appeso dentro un corridoio non e' un buon posto.
+        """
+        parent = manifests[parent_id]
+        child = manifests[item.component_id]
+        stub_x, stub_y, _ = _port_of(parent, item.parent_port_id)
+        port_x, port_y, _ = _port_of(child, item.port_id)
+        gap = hanging_gap(item)
+        side = hangs_toward(item)
+        if side is PortFace.TOP:
+            child_left = parent_left + stub_x - port_x
+            child_top = parent_top - gap - child.height_mm
+        elif side is PortFace.BOTTOM:
+            child_left = parent_left + stub_x - port_x
+            child_top = min(
+                parent_top + parent.height_mm + gap,
+                levels.ground_mm - child.height_mm,
+            )
+        elif side is PortFace.RIGHT:
+            child_left = parent_left + parent.width_mm + gap
+            child_top = parent_top + stub_y - port_y
+        else:
+            child_left = parent_left - gap - child.width_mm
+            child_top = parent_top + stub_y - port_y
+        child_left = on_grid(child_left, area.x_mm)
+        child_top = on_grid(child_top, area.y_mm)
+        child_left = min(max(child_left, area.x_mm), area.right_mm - child.width_mm)
+        child_top = min(max(child_top, area.y_mm), levels.ground_mm - child.height_mm)
+        return child_left, child_top, child.width_mm, child.height_mm
+
+    def hanging_place(
+        parent_id: str, parent_left: float, parent_top: float, item: _Hanging
+    ) -> tuple[float, float, float, float]:
+        """Dove l'appeso **finisce davvero**: il posto preferito, e da li'
+        l'allontanamento lungo il proprio stacco finche' non e' libero.
+
+        Il foglio e' condiviso: se al posto preferito c'e' gia' qualcuno ci si
+        allontana lungo lo stacco, un passo per volta, fino al bordo del foglio
+        o alla terra. Il conto vive qui perche' lo fanno in due — chi posa e chi
+        deve decidere **dove posare il raccordo** — e due conti che devono dare
+        lo stesso numero divergono.
+        """
+        child_left, child_top, width, height = hanging_seat(
+            parent_id, parent_left, parent_top, item
+        )
+        parent = manifests[parent_id]
+        side = hangs_toward(item)
+        reach = (
+            area.bottom_mm - area.y_mm
+            if side in (PortFace.TOP, PortFace.BOTTOM)
+            else area.width_mm
+        )
+        away = {
+            PortFace.TOP: (0.0, -step),
+            PortFace.BOTTOM: (0.0, step),
+            PortFace.RIGHT: (step, 0.0),
+            PortFace.LEFT: (-step, 0.0),
+        }[side]
+        for _ in range(int(reach / step)):
+            if clear_of_symbols(
+                child_left, child_top, width, height, parent_left, parent_top, parent
+            ):
+                break
+            moved_left = child_left + away[0]
+            moved_top = child_top + away[1]
+            if (
+                moved_left < area.x_mm - 1e-9
+                or moved_left + width > area.right_mm + 1e-9
+                or moved_top < area.y_mm - 1e-9
+                or moved_top + height > levels.ground_mm + 1e-9
+            ):
+                break
+            child_left, child_top = moved_left, moved_top
+        return child_left, child_top, width, height
+
+    def hanging_is_walled(parent_id: str, left: float, top: float) -> bool:
+        """Cio' che pende da qui finirebbe **dentro un corridoio**.
+
+        Il rettilineo che la catena di una macchina pretende davanti alla
+        propria porta e' un contratto duro (I-044): occuparlo rende la posa non
+        instradabile, su nessun formato. Un appeso che ci finisce dentro di
+        solito se ne allontana lungo il proprio stacco — ma lo stacco puo'
+        essere murato in fondo, dalla terra o dal bordo del foglio, e allora non
+        ha dove andare. Quel posto per il raccordo non e' un posto: se ne cerca
+        un altro, e solo se non ce n'e' nessuno si scende agli ultimi ripieghi.
+        """
+        return any(
+            not off_the_corridors(*hanging_place(parent_id, left, top, item))
+            for item in hanging.get(parent_id, ())
+        )
+
     def hang(parent_id: str, parent_left: float, parent_top: float) -> None:
         """Posa cio' che pende dal pezzo appena posato, accanto a lui.
 
@@ -1592,76 +1803,14 @@ def place_sheet(
         **Nulla scende sotto la linea di terra**: sotto c'e' il pavimento e la
         fascia dei richiami, e l'instradamento non ci passa. Chi dovrebbe finirci
         risale fin dove ci sta, e chi lo regge si e' gia' alzato quanto basta.
+        Dove il posto e' preso ci si allontana lungo lo stacco: il conto lo fa
+        `hanging_place`, lo stesso che guarda chi sceglie il posto del raccordo.
         """
-        parent = manifests[parent_id]
         for item in hanging.get(parent_id, ()):
             child = manifests[item.component_id]
-            stub_x, stub_y, _ = _port_of(parent, item.parent_port_id)
-            port_x, port_y, _ = _port_of(child, child.ports[0].id)
-            gap = hanging_gap(item)
-            side = hangs_toward(item.component_id)
-            if side is PortFace.TOP:
-                child_left = parent_left + stub_x - port_x
-                child_top = parent_top - gap - child.height_mm
-            elif side is PortFace.BOTTOM:
-                child_left = parent_left + stub_x - port_x
-                child_top = min(
-                    parent_top + parent.height_mm + gap,
-                    levels.ground_mm - child.height_mm,
-                )
-            elif side is PortFace.RIGHT:
-                child_left = parent_left + parent.width_mm + gap
-                child_top = parent_top + stub_y - port_y
-            else:
-                child_left = parent_left - gap - child.width_mm
-                child_top = parent_top + stub_y - port_y
-            child_left = on_grid(child_left, area.x_mm)
-            child_top = on_grid(child_top, area.y_mm)
-            # Il foglio ha un bordo, e un accessorio appeso non lo scavalca: se
-            # dalla parte del proprio attacco non c'e' spazio, si rientra. La
-            # tratta ci arriva lo stesso, con una piega in piu'.
-            child_left = min(
-                max(child_left, area.x_mm), area.right_mm - child.width_mm
+            child_left, child_top, _, _ = hanging_place(
+                parent_id, parent_left, parent_top, item
             )
-            child_top = min(
-                max(child_top, area.y_mm), levels.ground_mm - child.height_mm
-            )
-            # Il posto giusto e' quello, ma il foglio e' condiviso: se ci sta
-            # gia' qualcun altro ci si allontana lungo lo stacco, un passo per
-            # volta. Un accessorio appeso non ha diritto di posarsi addosso a
-            # una macchina solo perche' il suo raccordo guarda da quella parte.
-            reach = (
-                area.bottom_mm - area.y_mm
-                if side in (PortFace.TOP, PortFace.BOTTOM)
-                else area.width_mm
-            )
-            away = {
-                PortFace.TOP: (0.0, -step),
-                PortFace.BOTTOM: (0.0, step),
-                PortFace.RIGHT: (step, 0.0),
-                PortFace.LEFT: (-step, 0.0),
-            }[side]
-            for _ in range(int(reach / step)):
-                if clear_of_symbols(
-                    child_left,
-                    child_top,
-                    child.width_mm,
-                    child.height_mm,
-                    parent_left,
-                    parent_top,
-                    parent,
-                ):
-                    break
-                moved_left = child_left + away[0]
-                moved_top = child_top + away[1]
-                if (
-                    moved_left < area.x_mm - 1e-9
-                    or moved_left + child.width_mm > area.right_mm + 1e-9
-                    or moved_top < area.y_mm - 1e-9
-                    or moved_top + child.height_mm > levels.ground_mm + 1e-9
-                ):
-                    break
-                child_left, child_top = moved_left, moved_top
             placed.append(
                 PlacedSymbol(
                     component_id=item.component_id,
@@ -1886,6 +2035,7 @@ def place_sheet(
                         free_of_symbols(
                             moved_left, moved_top, manifest.width_mm, manifest.height_mm
                         )
+                        and not hanging_is_walled(component_id, moved_left, moved_top)
                         if respecting_corridors
                         else free_of_boxes(
                             moved_left, moved_top, manifest.width_mm, manifest.height_mm
@@ -2264,6 +2414,12 @@ def run_chains(
         item.id: frozenset(catalog.resolve(item.definition_id).definition.functions)
         for item in project.components
     }
+    media_of = {
+        item.id: frozenset(
+            port.medium for port in catalog.get(item.definition_id).ports
+        )
+        for item in project.components
+    }
     hung = frozenset(
         child
         for items in hanging_children(project, partition, catalog, placeable).values()
@@ -2290,5 +2446,6 @@ def run_chains(
         lambda item: bool(functions_of.get(item, frozenset()) & ZONED_FUNCTIONS),
         lambda item: rank.get(item, 0),
         stage,
+        lambda item: len(media_of.get(item, frozenset())) > 1,
     )
     return [chain.members for chain in chains]

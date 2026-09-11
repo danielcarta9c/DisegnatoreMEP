@@ -531,6 +531,28 @@ def route_sheet(
     aprons = port_aprons(project, trunks, placed, catalog, grid)
     reserved = frozenset(aprons.values())
 
+    # E la **corsia della catena**, non la sola soglia. Davanti a un attacco
+    # con una catena di macchina i pezzi stanno a distanza fissa e non
+    # scivolano (I-044): una tratta altrui che ci passa sopra non fa fallire
+    # se stessa — fa fallire quella catena, piu' tardi, con una diagnostica
+    # che parla di un'altra tratta. Riservarla e' la stessa medicina della
+    # soglia, sull'intera lunghezza che la catena occupera'.
+    corridors: dict[tuple[str, str], frozenset[Cell]] = {}
+    for trunk in trunks:
+        head_chain, tail_chain = machine_chains(project, catalog, trunk)
+        for ref, chain in ((trunk.start, head_chain), (trunk.end, tail_chain)):
+            if not chain or ref.component_id not in by_component:
+                continue
+            cell, direction = anchor(ref)
+            room = ceil(
+                chain_room_mm(project, catalog, chain, direction[1] == 0) / grid.step_mm
+                - 1e-9
+            )
+            corridors[(ref.component_id, ref.port_id)] = frozenset(
+                (cell[0] + direction[0] * step, cell[1] + direction[1] * step)
+                for step in range(1, room + 1)
+            )
+
     for trunk in trunks:
         start, start_direction = anchor(trunk.start)
         goal, goal_direction = anchor(trunk.end)
@@ -560,6 +582,13 @@ def route_sheet(
             for ref in (trunk.start, trunk.end)
             if (ref.component_id, ref.port_id) in aprons
         }
+        mine = {(ref.component_id, ref.port_id) for ref in (trunk.start, trunk.end)}
+        elsewhere = frozenset(
+            cell
+            for key, cells in corridors.items()
+            if key not in mine
+            for cell in cells
+        )
         try:
             found = route(
                 start,
@@ -568,7 +597,7 @@ def route_sheet(
                 goal_direction,
                 cols=grid.cols,
                 rows=grid.rows,
-                blocked=(blocked | reserved) - ends - own,
+                blocked=(blocked | reserved | elsewhere) - ends - own,
                 occupied=frozenset(occupied),
                 # Vietati tutti i tratti gia' percorsi, tranne quelli che
                 # toccano un attacco condiviso con questa tratta: li' due linee

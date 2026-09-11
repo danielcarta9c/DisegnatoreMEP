@@ -19,7 +19,7 @@ from math import ceil
 from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import CLOSING_FUNCTIONS, ComponentTrait
+from disegnatore_mep.catalog.schema import SERVICE_ORGAN_FUNCTIONS, ComponentTrait
 from disegnatore_mep.graphics.symbol import SymbolManifest
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
@@ -61,14 +61,17 @@ il PM sta guardando — da un accessorio qualunque in mezzo a una tratta.
 manutiene usa invece `SNUG_CLEARANCE_MM` (D-120).
 """
 
-ISOLATING_FUNCTIONS = CLOSING_FUNCTIONS
+ISOLATING_FUNCTIONS = SERVICE_ORGAN_FUNCTIONS
 """Chi isola, secondo il catalogo e mai secondo il nome (D-090, D-120).
 
-Sono i mestieri che la regola dell'intercettazione assegna: quello comune e
-quello bloccabile aperto. Un componente che li dichiara e' li' per fermare
-l'acqua attorno a un pezzo che si smonta, ed e' quello che va disegnato **sul
-suo attacco**. L'elenco vive nel catalogo, con chi lo legge per proporre e
-per saturare: qui se ne tiene il nome che la posa usa da D-120.
+Sono i mestieri che la regola dell'intercettazione assegna: quello comune,
+quello bloccabile aperto e il rubinetto della presa strumentale. Un componente
+che li dichiara e' li' per fermare l'acqua attorno a un pezzo che si smonta, ed
+e' quello che va disegnato **sul suo attacco**. Alla posa non interessa se
+quell'organo separi anche un dominio idraulico — quella e' un'altra domanda, e
+la fa chi cammina sulla rete: interessa che l'organo appartenga a un pezzo, e
+percio' gli stia stretto. L'elenco vive nel catalogo, con chi lo legge per
+proporre e per saturare: qui se ne tiene il nome che la posa usa da D-120.
 """
 
 
@@ -497,15 +500,24 @@ def place_inline_accessories(
                 x_mm=station.point.x_mm - turned.width_mm / 2,
                 y_mm=station.point.y_mm - turned.height_mm / 2,
             )
-            if not (
-                clear_of_symbols(origin, turned.width_mm, turned.height_mm)
-                and clear_of_other_runs(origin, turned.width_mm, turned.height_mm)
-                and clear_of_port_thresholds(origin, turned.width_mm, turned.height_mm)
-            ):
+            blocked = [
+                what
+                for what, free in (
+                    ("un simbolo", clear_of_symbols(origin, turned.width_mm, turned.height_mm)),
+                    ("una tratta", clear_of_other_runs(origin, turned.width_mm, turned.height_mm)),
+                    (
+                        "la soglia di un attacco",
+                        clear_of_port_thresholds(origin, turned.width_mm, turned.height_mm),
+                    ),
+                )
+                if not free
+            ]
+            if blocked:
                 raise LayoutError(
                     f"run {trunk.connection_ids[0]}: the fixed place of {manifest.id} in "
-                    f"the chain of {owner} sits on another symbol or run, and a chain "
-                    f"does not slide: give the machine room on its port"
+                    f"the chain of {owner}, at ({origin.x_mm:g}, {origin.y_mm:g}), is "
+                    f"taken by {' e '.join(blocked)}, and a chain does not slide: "
+                    f"give the machine room on its port"
                 )
             seat(index, station, distance, rotation, turned)
             reach += extent + MIN_SPACING_MM

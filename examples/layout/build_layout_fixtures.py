@@ -104,6 +104,16 @@ def hydronic_port(
     }
 
 
+def state(state_id: str, name: str, *groups: list[str]) -> dict[str, Any]:
+    """Una configurazione ammessa di un multivia (DRAW-006, blocco C).
+
+    Dichiara **quali porte comunicano** in quello stato: una deviatrice a tre
+    vie manda l'ingresso su un ramo oppure sull'altro, e i due rami non sono mai
+    in comunicazione fra loro.
+    """
+    return {"id": state_id, "name": name, "connects": [list(item) for item in groups]}
+
+
 def definition(
     definition_id: str,
     name: str,
@@ -114,6 +124,8 @@ def definition(
     stored_medium: str | None = None,
     carries_on_board: list[str] | None = None,
     fills_from: str | None = None,
+    hydraulic_states: list[dict[str, Any]] | None = None,
+    composite: bool = False,
 ) -> dict[str, Any]:
     """Una voce di catalogo. `traits` non ha default **per scelta**: un
     componente che non dichiara come si isola non deve poter nascere da qui piu'
@@ -143,10 +155,14 @@ def definition(
     # dai cataloghi dei costruttori. Dove si riempie, da li' si svuota.
     if fills_from is not None:
         entry["fills_from"] = fills_from
+    # Le configurazioni ammesse di un multivia: solo chi ne ha piu' d'una le
+    # dichiara, e chi tace resta com'e' sempre stato.
+    if hydraulic_states is not None:
+        entry["hydraulic_states"] = hydraulic_states
     entry.update(
         {
             "symbol_id": symbol_id or definition_id,
-            "composite": False,
+            "composite": composite,
             "ports": ports,
             "sources": [SOURCE],
         }
@@ -445,6 +461,13 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("in", "in"),
             hydronic_port("out_a", "out"),
             hydronic_port("out_b", "out"),
+        ],
+        # I due stati della deviazione. L'ingresso comunica con un ramo oppure
+        # con l'altro; i due rami non comunicano mai fra loro, e attraversarli
+        # insieme descriverebbe un passaggio che non esiste (DRAW-006, blocco C).
+        hydraulic_states=[
+            state("verso_a", "Deviazione sul primo ramo", ["in", "out_a"]),
+            state("verso_b", "Deviazione sul secondo ramo", ["in", "out_b"]),
         ],
     ),
     definition(

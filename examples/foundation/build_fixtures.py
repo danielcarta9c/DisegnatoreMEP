@@ -55,7 +55,12 @@ def definition(
         "functions": functions,
         "traits": traits,
         "symbol_id": component_id,
-        "composite": len(functions) > 1,
+        # **Non** si deduce dal numero dei mestieri. Una caldaia che genera
+        # calore e brucia gas fa due cose, e resta un apparecchio solo: un
+        # composito e' un **gruppo** che dentro il mantello porta piu' organi, e
+        # da DRAW-006 deve dichiarare quali (blocco B). Dedurlo dai mestieri
+        # attribuiva una dotazione a chi non ne ha nessuna.
+        "composite": False,
         "ports": ports,
         "sources": ["CONV-FOUNDATION"],
     }

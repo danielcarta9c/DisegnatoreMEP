@@ -257,6 +257,23 @@ class Branches:
             and function in self.functions(self.far_end_of(trunk))
         ]
 
+    def is_the_source_side(self, trunk: Trunk) -> bool:
+        """Il capo con cui un ponte pesca dall'altra rete.
+
+        Un accessorio che vive su un fluido solo non ne ha nessuno. Un ponte
+        fra due reti — il gruppo di riempimento da DRAW-006-R1 — ha l'ingresso
+        su una rete e l'uscita sull'altra: sul circuito che serve sta la
+        seconda, e la prima e' acqua che entra, non mandata ne' ritorno.
+        """
+        root = self.root_of(trunk)
+        assert root is not None
+        mine = trunk.end if root == trunk.start else trunk.start
+        definition = self.definitions[mine.component_id]
+        if len({port.medium for port in definition.ports}) == 1:
+            return False
+        port = next(item for item in definition.ports if item.id == mine.port_id)
+        return port.flow is PortFlow.IN
+
     def host_of(self, trunk: Trunk) -> list[Trunk]:
         """Le tratte del percorso che passano per chi regge lo stacco, se chi lo
         regge e' un raccordo; vuoto se e' una macchina."""
@@ -354,13 +371,24 @@ def test_con_due_macchine_in_parallelo_nessuna_tratta_del_primario_resta_indecis
 
 @pytest.mark.parametrize("index", range(len(CASI)), ids=CASI_IDS)
 def test_riempimento_vaso_e_manometro_sono_ritorno_tecnico(index: int) -> None:
+    """Da DRAW-006-R1 il riempimento e' un ponte fra due reti, e ha percio' due
+    capi: uno sul circuito e uno sull'acqua fredda. Il capo che pesca
+    dall'acquedotto non e' ne' mandata ne' ritorno del circuito — e' acqua che
+    entra, e il modello la chiama `INBOUND`. La proprieta' resta quella di
+    prima sul capo che conta, ed e' piu' stretta di prima perche' pretende
+    anche che quel capo **ci sia**: ogni accessorio di servizio ha almeno un
+    ramo sul circuito, e ogni suo ramo sul circuito sta sul ritorno."""
     project = _done(index)
     branches = Branches(project)
     kinds = classify_trunks(project, catalog(), branches.trunks)
     for function in ("filling", "expansion", "pressure_measurement"):
         found = branches.branches_with(function)
         assert found, function
-        for trunk in found:
+        sul_circuito = [
+            trunk for trunk in found if not branches.is_the_source_side(trunk)
+        ]
+        assert sul_circuito, (function, "nessun ramo sul circuito", found)
+        for trunk in sul_circuito:
             assert kinds[trunk.connection_ids].supply is False, (function, trunk)
     for trunk in branches.branches_with("safety"):
         root = branches.root_of(trunk)

@@ -3,6 +3,7 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from disegnatore_mep.graphics.registry import SymbolRegistry
+from disegnatore_mep.model.types import PortFlow
 
 from .errors import CatalogError
 from .resolved import ResolvedComponent
@@ -86,6 +87,55 @@ class ComponentRegistry:
             if function in definition.functions
             and all(port.medium == medium for port in definition.ports)
         )
+
+    def bridging(
+        self, function: str, source_medium: str, target_medium: str
+    ) -> tuple[ComponentDefinition, ...]:
+        """Le voci che portano quella funzione **da** un fluido **a** un altro.
+
+        E' l'altra meta' di `serving`, e le due non si sovrappongono: li' tutte
+        le porte stanno sullo stesso fluido, perche' il pezzo si cala dentro una
+        tubazione; qui il pezzo e' un ponte, entra da un fluido e esce
+        sull'altro, e nessuna tubazione lo contiene. Il verso e' parte
+        dell'identita': si entra da una porta che **entra** sul fluido di
+        partenza e si esce da una che **esce** su quello di arrivo.
+        """
+        if source_medium == target_medium:
+            return ()
+        return tuple(
+            definition
+            for definition in self.all()
+            if function in definition.functions
+            and {port.medium for port in definition.ports}
+            == {source_medium, target_medium}
+            and any(
+                port.medium == source_medium and port.flow is PortFlow.IN
+                for port in definition.ports
+            )
+            and any(
+                port.medium == target_medium and port.flow is PortFlow.OUT
+                for port in definition.ports
+            )
+        )
+
+    def bridge(
+        self, function: str, source_medium: str, target_medium: str
+    ) -> ComponentDefinition:
+        """L'unica voce che porta quella funzione da un fluido all'altro."""
+        found = self.bridging(function, source_medium, target_medium)
+        if not found:
+            raise CatalogError(
+                f"no catalogue definition bridges {function!r} from "
+                f"{source_medium!r} to {target_medium!r}"
+            )
+        if len(found) > 1:
+            raise CatalogError(
+                f"{len(found)} catalogue definitions bridge {function!r} from "
+                f"{source_medium!r} to {target_medium!r} "
+                f"({', '.join(item.id for item in found)}): which one a rule "
+                f"means would be the programme's choice, not the catalogue's"
+            )
+        return found[0]
 
     def providing(self, function: str, medium: str) -> ComponentDefinition:
         """L'unica voce che porta quella funzione su quel fluido.

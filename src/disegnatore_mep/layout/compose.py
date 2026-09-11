@@ -16,8 +16,10 @@ circuiti in modo arbitrario (D-028).
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
+from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import ProjectModel
 
+from .chains import machine_chains
 from .errors import LayoutError
 from .geometry import (
     CrossReference,
@@ -34,7 +36,7 @@ from .labels import place_labels
 from .legend import build_legend
 from .partition import SheetLink, SheetPartition, partition_project
 from .place import place_sheet
-from .trunks import build_trunks
+from .trunks import Trunk, build_trunks
 
 CROSS_REFERENCE_GAP_MM = 2.5
 """Stacco fra la porta e il marcatore di rimando."""
@@ -260,7 +262,30 @@ def compose_drawing(
 ) -> DrawingGeometry:
     """Dal modello tecnico approvato alla geometria di tutte le tavole."""
     inline_ids = inline_component_ids(project, catalog)
-    trunks = build_trunks(project, inline_ids)
+    # Le tratte si instradano nell'ordine **strutturale** dei propri capi, non
+    # in quello in cui il file elenca le tubazioni: l'instradamento e' seriale
+    # — ogni tratta evita quelle gia' disegnate — quindi quell'ordine e' parte
+    # della geometria, e non deve dipendere da come i pezzi si chiamano
+    # (DRAW-006-R1, blocco A.2).
+    rank = structural_order(project)
+
+    def place_in_line(trunk: Trunk) -> tuple[int, tuple[int, str], tuple[int, str]]:
+        """L'ordine in cui le tratte si instradano.
+
+        Prima quelle che portano una **catena di macchina**: i loro accessori
+        stanno a distanza fissa dalla porta e non scivolano (I-044), quindi o
+        quel posto e' libero o la tavola non esce. Chi puo' spostarsi si
+        instrada dopo e gira attorno. Poi l'ordine strutturale dei capi, che i
+        nomi non decidono.
+        """
+        ends = sorted(
+            (rank.get(ref.component_id, 0), ref.port_id)
+            for ref in (trunk.start, trunk.end)
+        )
+        head, tail = machine_chains(project, catalog, trunk)
+        return (0 if head or tail else 1, ends[0], ends[1])
+
+    trunks = sorted(build_trunks(project, inline_ids), key=place_in_line)
     partitions = partition_project(project, trunks)
     return DrawingGeometry(
         project_id=project.metadata.project_id,
