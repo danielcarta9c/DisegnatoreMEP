@@ -79,6 +79,7 @@ in un punto che dipende solo dagli ingressi.
 """
 
 from collections.abc import Iterable
+from enum import IntEnum
 from itertools import permutations
 from typing import NamedTuple
 
@@ -103,7 +104,7 @@ from .geometry import (
     run_intrudes_on,
 )
 from .grid import GridSpace, is_on_grid
-from .hierarchy import hierarchy_of, spine_machines, weight_of
+from .hierarchy import Level, hierarchy_of, spine_machines, weight_of
 from .inline import SettledSheet, settle_sheet
 from .partition import SheetPartition
 from .place import (
@@ -115,6 +116,7 @@ from .place import (
     stub_minimum_mm,
 )
 from .route import CROSS_COST, STEP_COST, TURN_COST
+from .spine import SpineLayout
 from .trunks import Trunk
 
 MAX_PASSES = 12
@@ -142,6 +144,14 @@ sue candidate e il suo tetto; poi, dall'ottimo raggiunto, la rifinitura da
 disegnatore — assi fra le porte, dorsali, la T che gira, le quote delle
 macchine — con un tetto proprio, perche' la seconda fase non consumi la
 prima. Anche questo scatta in modo deterministico.
+"""
+
+STRETCH_STEPS = (2, 4, 8)
+"""Gli allungamenti ciechi del tronco, in passi di griglia (DRAW-008 §B.2).
+
+Oltre a quello **calcolato** — esattamente il rettilineo che manca al corredo —
+qualche allungamento in piu', perche' il corredo che non entra non e' sempre
+quello della tratta che si allunga: a volte e' il vicino che ruba la corsia.
 """
 
 NUDGE_STEPS = (1, 2, 4, 8)
@@ -176,6 +186,25 @@ _DIRECTION: dict[PortFace, tuple[float, float]] = {
     PortFace.TOP: (0.0, -1.0),
 }
 
+class Phase(IntEnum):
+    """Le tre fasi della posa (DRAW-008), nell'ordine che il PO ha fissato.
+
+    Ordinate perche' la validita' di una mossa dipende da **quanto avanti** si
+    e': ogni fase eredita gli invarianti di quelle prima e non puo' comprarli.
+    """
+
+    TRONCO = 0
+    """La forma del tronco: la costruisce `spine.lay_the_spine`, non il ciclo."""
+
+    CORREDO = 1
+    """Valvole, filtri e raccordi entrano nel tronco. Se non ci stanno, il
+    tronco si allunga: due macchine di spina si allontanano lungo l'asse."""
+
+    SERVIZIO = 2
+    """Stacchi, diramazioni e appesi si attaccano a un tronco fermo: le
+    macchine di spina non si muovono piu', e nessuna curva piega un'autostrada."""
+
+
 Move = dict[str, PlacedSymbol]
 """Una candidata: i soli simboli che cambiano posa, gia' posati dove andrebbero."""
 
@@ -199,7 +228,9 @@ class Attempt(NamedTuple):
     """
 
     phase: str
-    """`posa` (DRAW-002) o `rifinitura` (DRAW-004)."""
+    """La fase in cui la candidata e' stata provata: `posa` (la prima posa
+    instradabile), `corredo` e `servizio` (DRAW-008 §B e §C), `rifinitura`
+    (DRAW-004)."""
 
     kind: str
     leader: str
@@ -446,6 +477,7 @@ class Improver:
         frame: SheetFrame,
         placed: list[PlacedSymbol],
         inline_ids: frozenset[str],
+        spine_layout: SpineLayout | None = None,
     ) -> None:
         self.project = project
         self.partition = partition
@@ -604,6 +636,31 @@ class Improver:
         # provano le sole rotazioni; nella seconda le macchine possono
         # cambiare quota e i raccordi anche permutare gli attacchi.
         self.refining = False
+        # La fase. Il ciclo comincia dal corredo perche' il tronco l'ha gia'
+        # costruito `spine.lay_the_spine`: qui non si cerca piu' una forma, la
+        # si eredita e non la si perde (DRAW-008 §A.4).
+        self.phase = Phase.CORREDO
+        self.spine_layout = spine_layout
+        # Le tratte del tronco, e quali di esse sono arrivate **dritte**. La
+        # rettilineita' di queste e' un vincolo, non una voce di costo: sta
+        # qui, fra «i vincoli che nessun guadagno compra», e non in
+        # `SheetCost`. Una tratta che il tronco non e' riuscito a raddrizzare
+        # non diventa per questo libera di peggiorare: il vincolo e' che il
+        # numero di quelle dritte non cali mai.
+        # Senza una fase del tronco alle spalle non c'e' nessuna forma da
+        # conservare, e il ciclo torna quello di prima: e' cosi' che le prove
+        # che costruiscono un `Improver` da sole continuano a misurare cio' che
+        # misuravano, ed e' anche il ripiego di `compose_sheet` quando la
+        # catena a fasi non consegna una tavola instradabile.
+        self.autostrade: list[Trunk] = (
+            [
+                trunk
+                for trunk in self.trunks
+                if self.hierarchy[trunk.connection_ids] is Level.AUTOSTRADA
+            ]
+            if spine_layout is not None
+            else []
+        )
         self._memo: dict[Signature, Measured | None] = {}
 
     # -- letture del manifesto -------------------------------------------------
@@ -1701,6 +1758,172 @@ class Improver:
                         )
         return out
 
+    def lies_straight(self, table: Move, trunk: Trunk) -> bool:
+        """Vero se questa tratta, **con questa posa**, e' un rettilineo.
+
+        Si legge sulle porte e non sulla spezzata: due porte che si guardano,
+        sullo stesso asse e nel verso giusto, sono unite da una retta e
+        l'instradatore non ha motivo di piegare. E' la forma che la fase del
+        tronco ha costruito, scritta come predicato perche' `is_valid` possa
+        negarne la perdita **senza instradare**: un vincolo si verifica prima
+        di misurare, altrimenti e' un costo.
+        """
+        here = table.get(trunk.start.component_id) or self.best[trunk.start.component_id]
+        there = table.get(trunk.end.component_id) or self.best[trunk.end.component_id]
+        source, face = self.port_at(here, trunk.start.port_id)
+        goal, other = self.port_at(there, trunk.end.port_id)
+        if other is not face.opposite:
+            return False
+        direction = _DIRECTION[face]
+        if face in _HORIZONTAL_FACES:
+            if abs(source.y_mm - goal.y_mm) > _TOLERANCE_MM:
+                return False
+            return (goal.x_mm - source.x_mm) * direction[0] > _TOLERANCE_MM
+        if abs(source.x_mm - goal.x_mm) > _TOLERANCE_MM:
+            return False
+        return (goal.y_mm - source.y_mm) * direction[1] > _TOLERANCE_MM
+
+    def straight_spine(self, table: Move) -> frozenset[tuple[str, ...]]:
+        """Le autostrade che, con questa posa, sono rettilinee."""
+        return frozenset(
+            trunk.connection_ids
+            for trunk in self.autostrade
+            if self.lies_straight(table, trunk)
+        )
+
+    def _span_mm(self, table: Move, trunk: Trunk) -> float:
+        """La campata fra le due porte di una tratta, lungo il proprio asse."""
+        here = table.get(trunk.start.component_id) or self.best[trunk.start.component_id]
+        there = table.get(trunk.end.component_id) or self.best[trunk.end.component_id]
+        source, face = self.port_at(here, trunk.start.port_id)
+        goal, _ = self.port_at(there, trunk.end.port_id)
+        if face in _HORIZONTAL_FACES:
+            return abs(goal.x_mm - source.x_mm)
+        return abs(goal.y_mm - source.y_mm)
+
+    def _stretch_moves(self, leader: str) -> list[Move]:
+        """Il tronco si allunga, invece di piegarsi (DRAW-008 §B.2).
+
+        E' la mossa che al ciclo mancava: fino a DRAW-007 le candidate
+        spostavano **pezzi**, e per far posto a una valvola che non entrava
+        l'unica strada era deviare la tubazione. Qui si taglia il foglio a meta'
+        della tratta e si allontana tutto cio' che sta oltre, lungo l'asse della
+        tratta stessa. Due macchine di spina si allontanano e cio' che sta in
+        mezzo le segue: la campata cresce, **nessuna quota cambia**, e percio'
+        nessun allineamento si perde e nessuna autostrada si piega.
+
+        Le tratte che attraversano il taglio nell'altro verso — le rette
+        perpendicolari — si portano dietro il proprio capo, altrimenti sarebbero
+        loro a spezzarsi. E una tratta che il taglio **accorcerebbe** annulla la
+        candidata: allungare il tronco da una parte per stringerlo dall'altra
+        non e' uno stretch, e' un'altra piega mascherata.
+        """
+        out: list[Move] = []
+        seen: set[tuple[bool, float, float]] = set()
+        for trunk, my_port, peer, peer_port in self._trunks_of(leader):
+            if self.hierarchy[trunk.connection_ids] is not Level.AUTOSTRADA:
+                continue
+            if not self.lies_straight(self.best, trunk):
+                continue
+            source, face = self.port_at(self.best[leader], my_port)
+            goal, _ = self.port_at(self.best[peer], peer_port)
+            horizontal = face in _HORIZONTAL_FACES
+            span = self._span_mm(self.best, trunk)
+            want = self._need_mm(trunk)
+            amounts = [self.step * steps for steps in STRETCH_STEPS]
+            if want > span + _TOLERANCE_MM:
+                amounts.insert(0, _snap_up(want - span, self.step))
+            cut = (
+                (source.x_mm + goal.x_mm) / 2 if horizontal
+                else (source.y_mm + goal.y_mm) / 2
+            )
+            direction = _DIRECTION[face][0 if horizontal else 1]
+            for amount in amounts:
+                # Allontanare si puo' da tutt'e due le parti: si spinge in la'
+                # quel che sta oltre il taglio, oppure indietro quel che sta di
+                # qua. La campata cresce uguale, e quale delle due entri nel
+                # foglio lo dice `is_valid`, non questa funzione.
+                for signed in (direction * amount, -direction * amount):
+                    key = (horizontal, cut, signed)
+                    if key in seen:
+                        continue
+                    seen.add(key)
+                    found = self._stretched(cut, horizontal, signed)
+                    if found:
+                        out.append(found)
+        return out
+
+    def _stretched(
+        self, cut_mm: float, horizontal: bool, amount_mm: float
+    ) -> Move | None:
+        """Tutto cio' che sta oltre il taglio, allontanato lungo quell'asse."""
+
+        def beyond(item: str) -> bool:
+            placed = self.best[item]
+            middle = (
+                placed.origin.x_mm + placed.width_mm / 2
+                if horizontal
+                else placed.origin.y_mm + placed.height_mm / 2
+            )
+            return (middle - cut_mm) * amount_mm > _TOLERANCE_MM
+
+        moving = {item for item in self.order if beyond(item)}
+        if not moving or len(moving) == len(self.order):
+            return None
+        # Due cose non si lasciano spezzare da un taglio, e chi le divide con un
+        # pezzo che si muove si muove con lui: **le rette perpendicolari**, che
+        # altrimenti sarebbero loro a piegarsi, e **le tratte vuote fra due
+        # raccordi di cui uno regge uno stacco** (I-046), che sono gia' al
+        # proprio minimo e non possono allungarsi — il raccordo della sicurezza
+        # sta stretto alla confluenza, e allungare il tronco non e' una ragione
+        # per staccarnelo.
+        for _ in range(len(self.order)):
+            grown = set(moving)
+            for trunk in self.autostrade:
+                if not self.lies_straight(self.best, trunk):
+                    continue
+                _, face = self.port_at(
+                    self.best[trunk.start.component_id], trunk.start.port_id
+                )
+                if (face in _HORIZONTAL_FACES) == horizontal:
+                    continue
+                ends = {trunk.start.component_id, trunk.end.component_id}
+                if ends & grown:
+                    grown |= ends
+            for trunk in self.service_links:
+                ends = {trunk.start.component_id, trunk.end.component_id}
+                if ends & grown:
+                    grown |= ends
+            if grown == moving:
+                break
+            moving = grown
+        moving |= {
+            child
+            for leader in list(moving)
+            for child, _ in self.children.get(leader, ())
+        }
+        if len(moving) == len(self.order):
+            return None
+        # Nessuna campata del tronco si accorcia: un taglio che stringe da una
+        # parte quel che allarga dall'altra non e' un allungamento.
+        for trunk in self.autostrade:
+            here = trunk.start.component_id
+            there = trunk.end.component_id
+            if (here in moving) == (there in moving):
+                continue
+            _, face = self.port_at(self.best[here], trunk.start.port_id)
+            if (face in _HORIZONTAL_FACES) != horizontal:
+                return None
+            outward = _DIRECTION[face][0 if horizontal else 1] * amount_mm
+            if (there in moving) != (outward > 0):
+                return None
+        leaders = sorted({self.leader_of(item) for item in moving})
+        return self._translated(
+            leaders,
+            amount_mm if horizontal else 0.0,
+            0.0 if horizontal else amount_mm,
+        )
+
     def _tee_moves(self, leader: str) -> list[Move]:
         """La T che puo' girare (DRAW-004, I-027).
 
@@ -1872,8 +2095,10 @@ class Improver:
                     (f"{kind}+spazio", extra)
                     for extra in self._with_room(move, self._axis_of(move))
                 )
+        stretched = self._stretch_moves(leader)
         if self.refining:
             generated: list[tuple[str, Move]] = [
+                *(("allungo", move) for move in stretched),
                 *(("interasse", move) for move in self._lift_moves(leader)),
                 *(("dorsale", move) for move in spined),
                 *(("catena", move) for move in chained),
@@ -1889,6 +2114,10 @@ class Improver:
             ]
         else:
             generated = [
+                # L'allungo viene per primo: quando il corredo non entra, la
+                # risposta giusta e' allungare il tronco, non spostare il pezzo
+                # che ci sta stretto (DRAW-008 §B.2).
+                *(("allungo", move) for move in stretched),
                 *(("interasse", move) for move in self._lift_moves(leader)),
                 # L'allineamento del tronco entra **nella posa**, non solo nella
                 # rifinitura (DRAW-007 §C.1). Fino a DRAW-006-R1 le candidate di
@@ -2049,6 +2278,39 @@ class Improver:
             now_mm = self._link_mm(after, trunk)
             if now_mm > max(self._need_mm(trunk), was) + _TOLERANCE_MM:
                 return False
+        # **La rettilineita' del tronco e' un vincolo, non una voce di costo**
+        # (DRAW-008 §A.4). Sta qui, dove stanno i vincoli che nessun guadagno
+        # compra, e non in `SheetCost`: una mossa che piega un'autostrada gia'
+        # dritta viene rifiutata anche se la tavola intera costasse meno. Il
+        # conto e' monotono, come l'ordine di processo: cio' che e' dritto non
+        # si storce, cio' che storto era puo' solo raddrizzarsi.
+        if self.autostrade:
+            for trunk in self.autostrade:
+                if not self.lies_straight(self.best, trunk):
+                    continue
+                ends = (trunk.start.component_id, trunk.end.component_id)
+                if not any(item in move for item in ends):
+                    continue
+                if not self.lies_straight(after, trunk):
+                    return False
+        # **Nella fase delle strade di servizio il tronco e' fermo nella forma**
+        # (DRAW-008 §C.1). «Fermo» qui vuol dire due cose, e tutt'e due sono
+        # vincoli: nessuna mossa piega un'autostrada — l'ha appena detto il
+        # blocco sopra — e nessuna **gira** una macchina di spina o ne
+        # ridistribuisce gli attacchi. Girare una macchina di spina rifa' la
+        # forma del tronco, e la forma e' decisa; scorrere lungo il proprio
+        # asse, invece, non la tocca — e resta permesso, perche' e' cosi' che
+        # una strada di servizio trova la propria strada senza chiedere al
+        # tronco di piegarsi.
+        if self.phase is Phase.SERVIZIO and self.spine_layout is not None:
+            for item, placed in move.items():
+                if item not in self.spine:
+                    continue
+                before = self.best[item]
+                if placed.rotation_deg != before.rotation_deg:
+                    return False
+                if placed.port_map != before.port_map:
+                    return False
         # L'ordine di processo e' un vincolo, non un costo (D-060), e si legge
         # sul verso del fluido: la mandata va a destra, il ritorno torna a
         # sinistra. Una posa che gia' contraddice il verso puo' essere corretta,
@@ -2112,28 +2374,97 @@ class Improver:
         return [item for item in self.scan if item in guilty]
 
     def run(self) -> list[PlacedSymbol]:
-        """Due fasi, entrambe lessicografiche e limitate.
+        """Le fasi, nell'ordine che il PO ha fissato (DRAW-008).
 
-        **La posa** (DRAW-002): greedy, la prima mossa che batte la posa
-        corrente sul confronto unico si tiene; una passata senza mosse chiude.
-        **La rifinitura** (DRAW-004): dall'ottimo raggiunto, per ogni pezzo
-        che sta a un capo di una tratta che costa si misurano **tutte** le
-        candidate valide — assi, dorsali, la T che gira, le quote delle
-        macchine, e ancora tutte quelle della posa — e si tiene la migliore,
-        se batte la tavola corrente: cosi' un guadagno grande non e' scavalcato
-        da uno piccolo generato prima. Ogni fase ha il proprio tetto, che
-        scatta in un punto che dipende solo dagli ingressi. Ogni prova finisce
-        nel diario.
+        Il **tronco** non si cerca qui: `spine.lay_the_spine` l'ha gia'
+        costruito e questo ciclo lo riceve gia' dritto. Da qui in avanti la sua
+        rettilineita' e' un vincolo di `is_valid`, non una voce di costo.
+
+        **Il corredo** (§B): valvole, filtri e raccordi entrano dentro il tronco
+        posato; dove non ci stanno il tronco si allunga, con la mossa nuova
+        `allungo`. Le macchine di spina si muovono ancora, perche' allungare
+        vuol dire proprio allontanarle.
+
+        **Le strade di servizio** (§C): stacchi, diramazioni e appesi si
+        attaccano a un tronco ormai **fermo**. Qui le curve si pagano, con i
+        pesi della gerarchia, e si accettano — ma nessuna piega un'autostrada.
+
+        Dentro ciascuna fase decide `SheetCost`, che non cambia: e' l'ordine
+        delle decisioni a cambiare, non il criterio (§D).
         """
         current = self.measure(self.best)
         if current is None:
             current = self._first_routable()
         if current is None:
             return [self.best[item] for item in self.order]
+        self.phase = Phase.CORREDO
+        current = self._fit_the_corredo(current)
+        self.phase = Phase.SERVIZIO
         current = self._settle_placement(current)
         self.refining = True
         self._refine_axes(current)
         return [self.best[item] for item in self.order]
+
+    def _fit_the_corredo(self, current: Measured) -> Measured:
+        """La fase del corredo: si allunga il tronco finche' i pezzi ci stanno.
+
+        Si guardano le sole tratte che **non ospitano i propri accessori** —
+        quelle che `settle_sheet` segna `unfit` — e le sole macchine di spina ai
+        loro capi, perche' allungare e' una mossa del tronco. Una passata basta
+        quasi sempre; il tetto e' quello della posa, e scatta in un punto che
+        dipende solo dagli ingressi.
+        """
+        for _ in range(MAX_PASSES):
+            moved = False
+            for leader in self._cramped(current):
+                for kind, move in self.candidates_by_kind(leader):
+                    if kind != "allungo":
+                        continue
+                    if self.trials >= MAX_TRIAL_ROUTINGS:
+                        return current
+                    if not self.is_valid(move):
+                        continue
+                    trial = dict(self.best)
+                    trial.update(move)
+                    found = self.measure(trial)
+                    accepted = found is not None and found.cost.beats(current.cost)
+                    self.journal.append(
+                        Attempt(
+                            "corredo",
+                            kind,
+                            leader,
+                            None if found is None else found.cost.key(),
+                            accepted,
+                        )
+                    )
+                    if found is None or not accepted:
+                        continue
+                    self.best = trial
+                    self._refresh_hang_gaps()
+                    current = found
+                    moved = True
+                    break
+            if not moved:
+                break
+        return current
+
+    def _cramped(self, current: Measured) -> list[str]:
+        """Le macchine di spina ai capi di una tratta a cui manca il rettilineo.
+
+        Sono le tratte che non ospitano i propri accessori e quelle la cui
+        campata e' piu' corta di quel che gli accessori pretendono: le prime le
+        dichiara `settle_sheet`, le seconde si contano sulle porte.
+        """
+        guilty: set[str] = set()
+        for index, trunk in enumerate(self.trunks):
+            short = self._span_mm(self.best, trunk) + _TOLERANCE_MM < self._need_mm(
+                trunk
+            )
+            if index not in current.settled.unfit and not short:
+                continue
+            for item in (trunk.start.component_id, trunk.end.component_id):
+                guilty.add(self.leader_of(item))
+        return [item for item in self.scan if item in guilty]
 
     def _first_routable(self) -> Measured | None:
         """Una posa da cui partire, quando quella iniziale non si instrada.
@@ -2203,7 +2534,11 @@ class Improver:
                     accepted = found is not None and found.cost.beats(current.cost)
                     self.journal.append(
                         Attempt(
-                            "posa", kind, leader, None if found is None else found.cost.key(), accepted
+                            self.phase.name.lower(),
+                            kind,
+                            leader,
+                            None if found is None else found.cost.key(),
+                            accepted,
                         )
                     )
                     if found is None or not accepted:
@@ -2270,22 +2605,30 @@ def improve_sheet(
     frame: SheetFrame,
     placed: list[PlacedSymbol],
     inline_ids: frozenset[str],
+    spine_layout: SpineLayout | None = None,
 ) -> list[PlacedSymbol]:
     """Rivede la disposizione reinstradando: si tiene solo cio' che batte la
-    posa corrente sul confronto unico della tavola (`SheetCost`)."""
+    posa corrente sul confronto unico della tavola (`SheetCost`).
+
+    Con `spine_layout` il ciclo sa che il tronco e' gia' stato costruito e non
+    torna a cercarlo: lo riceve e non lo perde (DRAW-008)."""
     if not placed or not partition.trunks:
         return list(placed)
-    return Improver(project, partition, catalog, frame, placed, inline_ids).run()
+    return Improver(
+        project, partition, catalog, frame, placed, inline_ids, spine_layout
+    ).run()
 
 
 __all__ = [
     "MAX_AXIS_TRIALS",
     "MAX_PASSES",
     "MAX_TRIAL_ROUTINGS",
+    "STRETCH_STEPS",
     "Attempt",
     "Improver",
     "Measured",
     "Move",
+    "Phase",
     "SheetCost",
     "improve_sheet",
     "objective_of",
