@@ -152,7 +152,7 @@ def _pezzi(
     partition = partition_project(project, build_trunks(project, inline))[0]
     first = place_sheet(project, partition, catalog(), NOVE_C_A3, inline)
     spine = lay_the_spine(project, partition, catalog(), NOVE_C_A3, first)
-    seeded = carry_the_rest(project, partition, catalog(), first, spine)
+    seeded = carry_the_rest(project, partition, catalog(), first, spine, NOVE_C_A3)
     improver = Improver(
         project, partition, catalog(), NOVE_C_A3, seeded, inline, spine
     )

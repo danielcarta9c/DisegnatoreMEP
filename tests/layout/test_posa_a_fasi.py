@@ -245,7 +245,7 @@ def _improver(project: ProjectModel) -> Improver:
     partition = _partizione(project)
     first = place_sheet(project, partition, registry, NOVE_C_A3, inline)
     spine = lay_the_spine(project, partition, registry, NOVE_C_A3, first)
-    seeded = carry_the_rest(project, partition, registry, first, spine)
+    seeded = carry_the_rest(project, partition, registry, first, spine, NOVE_C_A3)
     return Improver(project, partition, registry, NOVE_C_A3, seeded, inline, spine)
 
 
@@ -865,7 +865,7 @@ def test_ogni_impianto_di_prova_arriva_alla_fase_del_tronco(path: Path) -> None:
     partition = _partizione(project)
     first = place_sheet(project, partition, registry, NOVE_C_A3, inline)
     layout = lay_the_spine(project, partition, registry, NOVE_C_A3, first)
-    seeded = carry_the_rest(project, partition, registry, first, layout)
+    seeded = carry_the_rest(project, partition, registry, first, layout, NOVE_C_A3)
     assert len(seeded) == len(first)
     assert {item.component_id for item in seeded} == {
         item.component_id for item in first

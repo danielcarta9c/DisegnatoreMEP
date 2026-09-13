@@ -1167,6 +1167,7 @@ def carry_the_rest(
     catalog: ComponentRegistry,
     placed: list[PlacedSymbol],
     layout: SpineLayout,
+    frame: SheetFrame | None = None,
 ) -> list[PlacedSymbol]:
     """La posa del resto che parte dal tronco (architettura §5).
 
@@ -1181,6 +1182,15 @@ def carry_the_rest(
     riappende. Un manometro appeso al raccordo del ritorno, quando il raccordo
     gira il proprio stacco verso il basso, va sotto — e restarsene sopra
     significherebbe consegnare una figura spezzata.
+
+    Con `frame`, una figura riappesa che finirebbe **fuori dall'area di disegno**
+    accorcia il proprio stacco finche' ci rientra, fino al minimo di un passo.
+    Il tronco si sposta guardando i soli partecipanti (`_into_the_area`), e
+    quando scende porta con se' cio' che gli pende: una figura profonda — dal
+    raccordo il gruppo di riempimento, dal gruppo il proprio ingresso — arriva
+    piu' in basso di chi la regge, ed e' uscita dal foglio. Fuori dal foglio una
+    tratta non si instrada, e la fase consegnava una posa che non si poteva
+    nemmeno misurare.
 
     E' una prima ipotesi, non una posa finale: a sistemarla sono le fasi del
     corredo e delle strade di servizio.
@@ -1243,7 +1253,7 @@ def carry_the_rest(
             link = hung.get(component_id)
             if link is None or link[0] not in settled:
                 continue
-            settled[component_id] = _rehung(
+            hung_now = _rehung(
                 item,
                 settled[link[0]],
                 link[1],
@@ -1252,10 +1262,76 @@ def carry_the_rest(
                 definitions,
                 own_ports.get(component_id),
             )
+            settled[component_id] = _inside(
+                hung_now,
+                settled[link[0]],
+                link[1],
+                catalog,
+                definitions,
+                own_ports.get(component_id),
+                frame,
+            )
             changed = True
     for item in placed:
         settled.setdefault(item.component_id, carried(item))
     return [settled[item.component_id] for item in placed]
+
+
+def _inside(
+    child: PlacedSymbol,
+    parent: PlacedSymbol,
+    port_id: str,
+    catalog: ComponentRegistry,
+    definitions: dict[str, str],
+    own_port_id: str | None,
+    frame: SheetFrame | None,
+) -> PlacedSymbol:
+    """L'appeso riportato dentro l'area, accorciando il proprio stacco.
+
+    Si accorcia un passo per volta, e non si scende sotto un passo: uno stacco
+    lungo zero metterebbe due simboli a contatto. Se nemmeno cosi' ci sta, si
+    lascia dov'e' e la posa si giudica come sempre — cattiva, ma misurabile.
+    """
+    if frame is None:
+        return child
+    area = frame.drawing_rect_mm
+    step = frame.standard.grid_mm
+
+    def fits(item: PlacedSymbol) -> bool:
+        return (
+            item.origin.x_mm >= area.x_mm - _TOLERANCE_MM
+            and item.origin.y_mm >= area.y_mm - _TOLERANCE_MM
+            and item.right_mm <= area.right_mm + _TOLERANCE_MM
+            and item.bottom_mm <= area.bottom_mm + _TOLERANCE_MM
+        )
+
+    if fits(child):
+        return child
+    upright = catalog.resolve(definitions[child.component_id]).symbol.manifest
+    shape = catalog.resolve(definitions[parent.component_id]).symbol.manifest
+    port = shape.rotated(parent.rotation_deg).port(parent.physical_port(port_id))
+    mine_id = own_port_id or upright.ports[0].id
+    stub = Point(
+        x_mm=parent.origin.x_mm + port.x_mm, y_mm=parent.origin.y_mm + port.y_mm
+    )
+    direction = _DIRECTION[port.face]
+    mine = upright.rotated(child.rotation_deg).port(mine_id)
+    here = Point(x_mm=child.origin.x_mm + mine.x_mm, y_mm=child.origin.y_mm + mine.y_mm)
+    gap = abs(here.x_mm - stub.x_mm) + abs(here.y_mm - stub.y_mm)
+    shorter = child
+    while gap > step + _TOLERANCE_MM:
+        gap -= step
+        shorter = child.model_copy(
+            update={
+                "origin": Point(
+                    x_mm=stub.x_mm + direction[0] * gap - mine.x_mm,
+                    y_mm=stub.y_mm + direction[1] * gap - mine.y_mm,
+                )
+            }
+        )
+        if fits(shorter):
+            return shorter
+    return shorter
 
 
 def _followers(

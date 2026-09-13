@@ -221,7 +221,7 @@ def test_il_bollitore_non_ruota_e_non_ruotano_i_suoi_attacchi(name: str) -> None
     partition = partition_project(project, build_trunks(project, inline))[0]
     first = place_sheet(project, partition, catalog(), NOVE_C_A3, inline)
     spine = lay_the_spine(project, partition, catalog(), NOVE_C_A3, first)
-    seeded = carry_the_rest(project, partition, catalog(), first, spine)
+    seeded = carry_the_rest(project, partition, catalog(), first, spine, NOVE_C_A3)
     improver = Improver(project, partition, catalog(), NOVE_C_A3, seeded, inline, spine)
 
     accumuli = [
