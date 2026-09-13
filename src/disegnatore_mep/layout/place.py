@@ -1818,6 +1818,30 @@ def place_sheet(
         child_top = min(max(child_top, area.y_mm), levels.ground_mm - child.height_mm)
         return child_left, child_top, child.width_mm, child.height_mm
 
+    stub_lanes: dict[str, tuple[float, float, float, float]] = {}
+    """La corsia dello stacco con cui ogni appeso e' stato collegato al proprio
+    pezzo: li' passa un tubo, non e' spazio libero.
+
+    Serve alle figure **profonde**: chi pende da un appeso non deve sedersi sullo
+    stacco con cui l'appeso e' attaccato al proprio pezzo. Senza, l'ingresso
+    dell'acqua fredda del gruppo di riempimento si posava esattamente in mezzo
+    allo stacco che lega il gruppo al raccordo del ritorno, e quella tratta non
+    si instradava piu'.
+    """
+
+    def off_the_stub_lane(
+        parent_id: str, left: float, top: float, width: float, height: float
+    ) -> bool:
+        lane = stub_lanes.get(parent_id)
+        if lane is None:
+            return True
+        return not (
+            left < lane[2] - 1e-9
+            and lane[0] < left + width - 1e-9
+            and top < lane[3] - 1e-9
+            and lane[1] < top + height - 1e-9
+        )
+
     def hanging_place(
         parent_id: str, parent_left: float, parent_top: float, item: _Hanging
     ) -> tuple[float, float, float, float]:
@@ -1849,7 +1873,7 @@ def place_sheet(
         for _ in range(int(reach / step)):
             if clear_of_symbols(
                 child_left, child_top, width, height, parent_left, parent_top, parent
-            ):
+            ) and off_the_stub_lane(parent_id, child_left, child_top, width, height):
                 break
             moved_left = child_left + away[0]
             moved_top = child_top + away[1]
@@ -1921,6 +1945,20 @@ def place_sheet(
                     child_left + child.width_mm,
                     child_top + child.height_mm,
                 )
+            )
+            # La corsia dello stacco appena disegnato, perche' chi pende da
+            # questo appeso non ci si sieda sopra.
+            holder_x, holder_y, _ = _port_of(
+                manifests[parent_id], item.parent_port_id
+            )
+            own_x, own_y, _ = _port_of(child, item.port_id)
+            here = (parent_left + holder_x, parent_top + holder_y)
+            there = (child_left + own_x, child_top + own_y)
+            stub_lanes[item.component_id] = (
+                min(here[0], there[0]),
+                min(here[1], there[1]),
+                max(here[0], there[0]),
+                max(here[1], there[1]),
             )
             # E cio' che pende dall'appeso appena posato: la figura si posa
             # tutta, non solo il primo livello.
@@ -2490,6 +2528,29 @@ def hanging_children(
     return {
         parent: tuple((item.component_id, item.parent_port_id) for item in items)
         for parent, items in found.items()
+    }
+
+
+def hanging_ports(
+    project: ProjectModel,
+    partition: SheetPartition,
+    catalog: ComponentRegistry,
+    placeable: frozenset[str],
+) -> dict[str, str]:
+    """Per ogni appeso, **il proprio** attacco con cui pende.
+
+    Non e' sempre il primo del manifesto: un ponte fra due reti ne ha due e
+    pende da quello in cui sbocca. Chi lo riappende deve sapere quale, o lo
+    rimette allineato sull'attacco sbagliato e il pezzo scivola dalla parte
+    opposta del proprio stacco (DRAW-006-R1, blocco D).
+    """
+    found = _hanging_accessories(
+        project, partition, catalog, placeable, lambda _trunk, _horizontal: 0.0
+    )
+    return {
+        item.component_id: item.port_id
+        for items in found.values()
+        for item in items
     }
 
 

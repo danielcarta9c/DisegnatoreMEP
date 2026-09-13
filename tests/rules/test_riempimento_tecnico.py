@@ -260,27 +260,63 @@ def test_il_riempimento_collega_l_acqua_fredda_e_il_ritorno_tecnico() -> None:
     )
 
 
-def test_il_riempimento_pesca_dalla_sorgente_di_acqua_fredda_approvata() -> None:
-    """L'acqua arriva dalla rete che il progettista ha gia' dichiarato.
+def test_il_riempimento_porta_il_proprio_ingresso_di_acqua_fredda() -> None:
+    """Il gruppo ha **il proprio** ingresso, e non pesca dalla linea di un altro.
 
-    Non da una sorgente inventata dalla skill: la sorgente e' quella che porta
-    il mestiere di confine sulla rete fredda, e il gruppo vi si innesta con una
-    derivazione, senza interrompere l'adduzione di nessun altro.
+    Fino a DRAW-008 il capo di monte apriva una derivazione sull'adduzione gia'
+    dichiarata dal progettista, e ne usciva una rete di acqua fredda sola che
+    serviva due utenti lontani. Il PO l'ha vietato (I-061, 11 settembre 2026):
+    «non si deve fare una rete unica di af, non si fa cosi'; si fanno piu'
+    ingressi». La ragione non e' estetica ed e' misurata: una linea che traversa
+    il foglio per servire due utenti **inchioda i pezzi che tocca**.
+
+    La proprieta' provata qui e' quindi l'opposta, e non e' piu' debole: il capo
+    freddo del ponte sta su un **confine di rete**, quel confine **non e' quello
+    che il progettista ha dichiarato**, sta su una **rete propria**, e
+    l'adduzione dichiarata resta intatta — nessun raccordo le e' stato saldato
+    sopra.
+
+    Resta vero, e provato altrove, che il gruppo non nasce dove l'acqua fredda
+    non e' stata dichiarata: li' e' una domanda al progettista.
     """
     model, _ = completato(circuito_con_acqua_fredda())
     gruppo = pezzi_con(model, FILLING)[0]
     definition = filling_definition()
     cold_port = next(port.id for port in definition.ports if port.medium == COLD)
     presa, _ = vicini_di(model, gruppo)[cold_port]
-    fredde = {item.id for item in model.networks if item.medium == COLD}
-    assert reti_di(model, presa) & fredde, (
-        f"la presa del riempimento, {presa}, non sta sulla rete fredda"
+    definizioni = {item.id: item.definition_id for item in model.components}
+
+    entry = catalog().get(definizioni[presa])
+    assert "boundary" in entry.functions, (
+        f"il capo freddo del riempimento sta su {presa}, che non e' un confine "
+        f"di rete: il gruppo deve portare il proprio ingresso"
     )
-    assert catalog().get(
-        next(item.definition_id for item in model.components if item.id == presa)
-    ).is_a_fitting, (
-        f"il riempimento e' attaccato a {presa}, che non e' una derivazione: il "
-        f"gruppo si innesta con un T, non spezzando l'adduzione"
+    assert presa != "acquedotto", (
+        "il riempimento si e' attaccato all'ingresso gia' dichiarato dal "
+        "progettista invece di portare il proprio"
+    )
+
+    fredde = {item.id for item in model.networks if item.medium == COLD}
+    assert len(fredde) == 2, f"le reti di acqua fredda sono {sorted(fredde)}"
+    sua = reti_di(model, presa) & fredde
+    assert len(sua) == 1, f"l'ingresso del riempimento sta su {sorted(sua)}"
+    assert sua.isdisjoint(reti_di(model, "acquedotto")), (
+        "l'ingresso del riempimento e quello dichiarato stanno sulla stessa "
+        "rete: e' la linea unica che il PO ha vietato"
+    )
+
+    # E l'adduzione dichiarata non e' stata toccata: nessun raccordo di
+    # derivazione e' comparso sulla rete dell'acquedotto.
+    dichiarata = reti_di(model, "acquedotto") & fredde
+    saldati = [
+        item.id
+        for item in model.components
+        if catalog().get(item.definition_id).is_a_fitting
+        and reti_di(model, item.id) & dichiarata
+        and item.id.startswith(f"tee-{gruppo}")
+    ]
+    assert saldati == [], (
+        f"sull'adduzione dichiarata e' stato saldato {saldati} per il riempimento"
     )
 
 

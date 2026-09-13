@@ -67,6 +67,7 @@ from .place import (
     ROW_GAP_MM,
     chain_room_of_port_mm,
     hanging_children,
+    hanging_ports,
     inline_room_mm,
 )
 from .route import route_sheet
@@ -1204,6 +1205,7 @@ def carry_the_rest(
         for parent, items in children.items()
         for child, port_id in items
     }
+    own_ports = hanging_ports(project, partition, catalog, frozenset(before))
     following = _followers(partition, frozenset(before), delta)
     definitions = {item.id: item.definition_id for item in project.components}
 
@@ -1242,7 +1244,13 @@ def carry_the_rest(
             if link is None or link[0] not in settled:
                 continue
             settled[component_id] = _rehung(
-                item, settled[link[0]], link[1], before[link[0]], catalog, definitions
+                item,
+                settled[link[0]],
+                link[1],
+                before[link[0]],
+                catalog,
+                definitions,
+                own_ports.get(component_id),
             )
             changed = True
     for item in placed:
@@ -1305,10 +1313,17 @@ def _rehung(
     was: PlacedSymbol,
     catalog: ComponentRegistry,
     definitions: dict[str, str],
+    own_port_id: str | None = None,
 ) -> PlacedSymbol:
     """L'appeso rimesso dalla parte in cui lo stacco guarda adesso, allo stacco
     di prima: e' la stessa regola con cui il ciclo lo riappende quando gira il
-    pezzo che lo regge."""
+    pezzo che lo regge.
+
+    `own_port_id` e' **il suo** attacco su quello stacco. Non e' sempre il primo
+    del manifesto: un ponte fra due reti ne ha due, e riappenderlo per l'altro
+    lo manda dalla parte opposta del proprio stacco — con il nipote che gli
+    pende addosso a finire in mezzo alla tubazione (DRAW-006-R1, blocco D).
+    """
     upright = catalog.resolve(definitions[child.component_id]).symbol.manifest
     shape = catalog.resolve(definitions[parent.component_id]).symbol.manifest
     port = shape.rotated(parent.rotation_deg).port(parent.physical_port(port_id))
@@ -1316,7 +1331,8 @@ def _rehung(
     stub = Point(
         x_mm=parent.origin.x_mm + port.x_mm, y_mm=parent.origin.y_mm + port.y_mm
     )
-    own = upright.rotated(child.rotation_deg).port(upright.ports[0].id)
+    mine_id = own_port_id or upright.ports[0].id
+    own = upright.rotated(child.rotation_deg).port(mine_id)
     gap = abs(
         (was.origin.x_mm + old.x_mm) - (child.origin.x_mm + own.x_mm)
     ) + abs((was.origin.y_mm + old.y_mm) - (child.origin.y_mm + own.y_mm))
@@ -1327,11 +1343,11 @@ def _rehung(
         upright.allowed_rotations_deg,
         key=lambda item: (item != child.rotation_deg, item),
     ):
-        if upright.rotated(degrees).port(upright.ports[0].id).face is wanted:
+        if upright.rotated(degrees).port(mine_id).face is wanted:
             chosen = degrees
             break
     turned = upright.rotated(chosen)
-    mine = turned.port(upright.ports[0].id)
+    mine = turned.port(mine_id)
     return child.model_copy(
         update={
             "origin": Point(

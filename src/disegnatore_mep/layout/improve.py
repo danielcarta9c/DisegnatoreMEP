@@ -111,6 +111,7 @@ from .place import (
     ROUTING_MARGIN_MM,
     ROW_GAP_MM,
     hanging_children,
+    hanging_ports,
     inline_room_mm,
     run_chains,
     stub_minimum_mm,
@@ -588,6 +589,11 @@ class Improver:
             for parent, items in self.children.items()
             for child, port_id in items
         }
+        # **Il suo** attacco su quello stacco, non il primo del manifesto: un
+        # ponte fra due reti ne ha due e pende da quello in cui sbocca.
+        self.hang_port: dict[str, str] = hanging_ports(
+            project, partition, catalog, placeable
+        )
         self.chains = sorted(
             (
                 chain
@@ -640,7 +646,9 @@ class Improver:
                 for item in self.trunks
                 if {item.start.component_id, item.end.component_id} == {parent, child}
             )
-            face = self.upright[child].ports[0].face
+            face = self.upright[child].port(
+                self.hang_port.get(child, self.upright[child].ports[0].id)
+            ).face
             self.hang_min[child] = stub_minimum_mm(
                 project, catalog, trunk, face in _HORIZONTAL_FACES, self.step
             )
@@ -973,7 +981,7 @@ class Improver:
         direction = _DIRECTION[face]
         gap = self.hang_gap[child] if gap_mm is None else gap_mm
         current = self.best[child]
-        own_port_id = self.upright[child].ports[0].id
+        own_port_id = self.hang_port.get(child, self.upright[child].ports[0].id)
         wanted = face.opposite
         rotations = sorted(
             self.upright[child].allowed_rotations_deg,
@@ -2131,7 +2139,10 @@ class Improver:
         """Gli stacchi degli appesi, riletti dalla posa corrente."""
         for child, (parent, port_id) in self.parent_of.items():
             stub, _ = self.port_at(self.best[parent], port_id)
-            own, _ = self.port_at(self.best[child], self.upright[child].ports[0].id)
+            own, _ = self.port_at(
+                self.best[child],
+                self.hang_port.get(child, self.upright[child].ports[0].id),
+            )
             self.hang_gap[child] = max(abs(own.x_mm - stub.x_mm), abs(own.y_mm - stub.y_mm))
 
     def _rotation_moves(self, leader: str) -> list[Move]:

@@ -670,8 +670,36 @@ def test_le_connessioni_sanitarie_della_tavola_1_sono_preservate_non_duplicate()
     assert len(cold) == 1 and len(hot) == 1
     assert walk.medium_of[cold[0].network_id] == COLD
     assert walk.medium_of[hot[0].network_id] == DHW
+    # I confini **sulle reti dell'accumulo** restano due, e sono quelli che il
+    # progettista ha dichiarato: l'adduzione fredda e il prelievo caldo. Nessuno
+    # e' stato duplicato, ed e' la proprieta' che questa prova protegge.
+    #
+    # Che nel modello completato ce ne sia un terzo non la contraddice: da
+    # DRAW-009 §A.1 il gruppo di riempimento porta il **proprio** ingresso, su
+    # una rete sua, perche' due utenti di acqua fredda non si servono con una
+    # linea sola (I-061). Quel confine non tocca ne' `cold_in` ne' `dhw_out`, e
+    # la prova lo verifica invece di contarlo insieme agli altri.
     boundaries = [item for item in walk.definitions if "boundary" in walk.functions(item)]
-    assert len(boundaries) == 2
+    sue = {cold[0].network_id, hot[0].network_id}
+    addosso = [
+        item
+        for item in boundaries
+        if any(
+            item in (c.endpoint_a.component_id, c.endpoint_b.component_id)
+            for c in done.connections
+            if c.network_id in sue
+        )
+    ]
+    assert len(addosso) == 2, addosso
+    for item in boundaries:
+        if item in addosso:
+            continue
+        toccate = {
+            c.network_id
+            for c in done.connections
+            if item in (c.endpoint_a.component_id, c.endpoint_b.component_id)
+        }
+        assert toccate.isdisjoint(sue), (item, toccate)
 
 
 # ---------------------------------------------------------------------------
