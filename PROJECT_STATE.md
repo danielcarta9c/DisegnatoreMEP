@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-11 (PM-autore, DRAW-006-R1 e DRAW-007 fusi in `main` dal PO)
+**Aggiornato:** 2026-09-11 (DEV, consegna di DRAW-008 — la posa a fasi)
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md`
 **Release corrente:** 0.3 — generalizzazione controllata, impianto 2
 
@@ -10,7 +10,7 @@
 |---|---|
 | Modello dati e grafo | operativi; il grafo resta la fonte unica |
 | Completamento e assemblaggio | operativi sulla tavola 1; tutti e cinque gli impianti arrivano alla posa; aperta la semantica dei compositi e delle multivia |
-| Posa e routing | `DRAW-004` fuso; costo-peso, assi, dorsali e T ortogonali operativi |
+| Posa e routing | `DRAW-004` fuso; costo-peso, assi, dorsali e T ortogonali operativi. Da `DRAW-008` la posa è **a fasi**: il tronco si costruisce (`layout/spine.py`), il corredo lo allunga invece di piegarlo, le strade di servizio si attaccano a un tronco fermo nella forma |
 | Simboli | 39 manifesti: i 7 critici della tavola 1 sono verificati in DRAW-005; l'audit PM completo resta aperto prima della 0.3 |
 | Etichette | fase separata dalla geometria; sigle principali sempre, indirizzi come velo esplicito (`--verifica`) |
 | Packaging skill/chat | non ancora installabile né collaudato in una chat pulita |
@@ -67,17 +67,21 @@ e dall'obiettivo di allineamento. Ha inoltre tolto due cose che non dovevano ess
   risultava nemmeno autostrada, perché in mezzo c'è una deviatrice. Il tronco ci passa
   attraverso, stato per stato.
 
-### Dove siamo davvero, sulla testa di `main`
+### Dove siamo davvero, con DRAW-008 consegnato (non fuso)
 
-| | Stato |
-|---|---|
-| **Tavola 1** | esce, ed è la migliore mai prodotta: rete ordinaria 6 pieghe / 3 incroci / 550,0 mm; **zero pieghe** su tutte e otto le tratte di autostrada; accumulo e PDC-master con **quattro porte sullo stesso asse**; D-120 15 su 15 |
-| **Tavola 2** | **non esce.** Il preflight trova un rilievo bloccante — una tratta supera di 2,5 mm la propria porta e ci torna indietro — e una tavola con un bloccante non si scrive (D-063) |
-| **Suite** | **nove prove di geometria rosse**, elencate nel pacchetto DRAW-008. Nessuna ammorbidita, nessuna convertita in `skip` o `xfail` |
-| **`ruff`, `mypy --strict`** | puliti |
+`DRAW-008` è **consegnato in PR, non fuso**: il merge su `main` è del PO
+(`OPERATING_MODEL.md` §1.2.1). Le misure qui sotto sono quelle del ramo di consegna,
+lette sulla geometria che la CLI scrive; il rapporto completo sta in
+`docs/collaudi/DRAW-008/RAPPORTO.md`.
 
-Il PO ha visto la tavola 2 e l'ha dichiarata non revisionabile. Aveva ragione, e la causa
-non era una taratura.
+| | testa di `main` | DRAW-008 |
+|---|---|---|
+| **Tavola 1** | rete ordinaria 6 pieghe / 3 incroci / 550,0 mm; zero pieghe sulle 8 autostrade | rete ordinaria **4 / 1 / 465,0 mm**; zero pieghe sulle 8 autostrade; backtracking 0; D-120 14 su 15 |
+| **Tavola 2** | **non esce**: un rilievo bloccante (`RUN_OVERSHOOTS_ITS_PORT`) | **esce, nessun bloccante**; rete ordinaria 9 / 6 / 755,0 mm; 8 autostrade rettilinee su 10 |
+| **Autostrade storte, tavola 2** | 4 su 10 | **2 su 10**, ed è il massimo raggiungibile: nessuna posa ammessa dal catalogo le raddrizza (vedi rischio 12) |
+| **Suite** | 11 rosse, 1411 verdi | **13 rosse, 1435 verdi**: una delle undici è tornata verde, tre sono nuove e sono regressioni dichiarate (rischio 15). Nessuna prova convertita in `skip` o `xfail` |
+| **`ruff`, `mypy --strict`** | puliti | puliti |
+| **Determinismo** | — | due generazioni, stessa impronta e stessa geometria byte per byte, su tavola 1 e tavola 2 |
 
 ## Rischi aperti
 
@@ -105,61 +109,63 @@ non era una taratura.
    che fallisca realmente quando un raccordo diventa colonna.
 8. **Connettività multivia non modellata per stati.** Sull'impianto 4 produce domande di
    sicurezza troppo ampie; DRAW-006 introduce configurazioni idrauliche alternative.
-9. **La tavola 2 non esce.** Sulla testa di `main` il preflight trova un rilievo
-   bloccante — una tratta supera di 2,5 mm la propria porta e ci torna indietro — e una
-   tavola con un bloccante non si scrive (D-063). È una regressione comparsa l'11 settembre
-   quando la gerarchia ha cominciato a riconoscere come autostrada la mandata attraverso la
-   deviatrice: la classificazione è giusta, la posa non la sa ancora onorare. La chiude
-   `DRAW-008`.
-10. **Il costo può barattare tutto con tutto, ed è il difetto di fondo.** Il ciclo è un
-    greedy globale su un costo lessicografico, quindi ogni proprietà del disegno — la
-    rettilineità del tronco, l'allineamento, i rami impilati — è una voce che si compra e
-    si vende. L'11 settembre la stessa serie di modifiche ha reso buona la tavola 1 e ha
-    fatto smettere di uscire la tavola 2. Non è un tetto di ricerca: alzarlo da 1 500/2 000
-    a 6 000/6 000 non cambia nulla. **È il rischio principale aperto**, lo attacca
-    `DRAW-008` con le fasi, e l'analisi sta in
-    `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`.
+9. **La tavola 2 non esce — chiuso da `DRAW-008`, in attesa del merge del PO.** Sulla
+   testa di `main` il preflight trovava un rilievo bloccante; sul ramo di consegna di
+   `DRAW-008` la tavola esce senza bloccanti.
+10. **Il costo poteva barattare tutto con tutto — attenuato da `DRAW-008`, non chiuso.**
+    Il ciclo resta un greedy su un costo lessicografico, ma **la rettilineità del tronco
+    non è più una voce di costo**: è un vincolo di `Improver.is_valid`, e nessun guadagno
+    la compra. Restano voci di costo l'allineamento del resto e i rami impilati. L'analisi
+    sta in `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`.
 11. **La misura «stacchi statici» conta anche ciò che statico non è.** Nel bucket finisce
     ogni tratta che non è rete ordinaria, quindi anche la linea di alimentazione del
     riempimento, che il vocabolario del progetto chiama `INBOUND`. Con il ponte la riga
     cresce senza che sia comparso uno stacco statico in più. La misura non è stata toccata:
     è una soglia del Work Package.
+12. **Due tratte di autostrada della tavola 2 non possono essere rettilinee.** L'uscita
+    secondaria della deviatrice guarda in basso, la serpentina del bollitore si imbocca da
+    sinistra e il bollitore non ammette rotazioni: nessuna posa le mette una di fronte
+    all'altra. Non è un difetto della posa, è il catalogo, e il codice lo calcola e lo
+    nomina (`spine.SpineLayout.impossible`). Il PO decide se accettarlo, dare una
+    rotazione al bollitore o mettere un raccordo nel grafo.
+13. **Le tratte di rango inferiore attraversano ancora il tronco.** Sulla tavola 2 restano
+    8 nodi condivisi fra un'autostrada e un rango inferiore: la linea dell'acqua fredda, lo
+    stacco del riempimento e l'uscita sanitaria, che devono raggiungere un bollitore posto
+    dall'altra parte del tronco. È **I-061**, che l'architettura ha già messo fuori
+    perimetro: finché l'acqua fredda attraversa il foglio con una linea sola, un tronco che
+    passa in mezzo la incrocia per forza.
+14. **La catena a fasi, da sola, toglieva la tavola all'impianto 4.** Sulla testa di `main`
+    l'impianto 4 usciva; con le sole fasi l'instradamento falliva su `p7-a`. `compose_sheet`
+    ha ora un **ripiego dichiarato** — posa seminata dal tronco, poi il ciclo senza le fasi,
+    poi la disposizione di partenza — e con quello l'impianto 4 torna a uscire. Il ripiego
+    è una rete di sicurezza, non una soluzione: finché scatta, quell'impianto non gode
+    della posa a fasi. `docs/collaudi/DRAW-008/RAPPORTO.md` §6.2.
+15. **Tre prove rosse nuove, e sono regressioni vere.** Due sulla tavola 2: l'organo
+    `valve-isolation-dhw-hot-utenze-a` sta a 10 mm dalla miscelatrice con cui fa coppia
+    invece che a 2,5÷5 mm, e gli organi governati da D-120 passano da 14 su 15 a 13 su 15 —
+    il bollitore sta sotto il tronco e il sanitario deve risalirlo. Una sulla fixture
+    `heat-pump-dhw-buffer-two-zones`: le due zone restano impilate ma in ordine invertito.
+    Nessuna prova è stata ammorbidita. `docs/collaudi/DRAW-008/RAPPORTO.md` §6.3.
 
 ## Pacchetto attivo
 
-`DRAW-008 — la posa a fasi: prima le autostrade` (`ACTIVE_WORK_PACKAGE.md`), approvato dal
-PO l'11 settembre 2026. Architettura in
-`docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`, che **va letta per intera prima
-del pacchetto**.
+`DRAW-009 — l'ingresso vicino a chi serve, e il tronco che si sposta tutto intero`
+(`ACTIVE_WORK_PACKAGE.md`), approvato dal PO in sessione fra l'11 e il 13 settembre 2026.
+Parte dalla testa di `main` con `DRAW-008` fuso.
 
-Il difetto che attacca non è una soglia: è che oggi ogni proprietà del disegno è una voce
-di costo, quindi si compra e si vende. Tre fasi con un invariante duro ciascuna — il
-tronco dritto per primo, poi il corredo che allunga il tronco invece di piegarlo, poi le
-strade di servizio dove le curve si accettano — e la funzione di costo che ottimizza
-**dentro** ciascuna fase invece che attraverso tutte.
+Le tre cose che il PO ha deciso e che il pacchetto attua:
 
-## Prossimi gate
+1. **Gli ingressi dell'acqua fredda si moltiplicano e si posano addosso a chi servono**
+   (I-061). Sulla tavola 2 la rete `fredda` è oggi **una linea sola che serve due utenti in
+   serie** ai due capi del foglio, e sei degli otto nodi che un rango inferiore condivide
+   col tronco sono suoi.
+2. **Il tronco è un corpo rigido, non un corpo immobile**: trasla tutto intero portandosi
+   dietro ciò che gli pende, e si allunga lungo il proprio asse. Non si piega e non si
+   deforma. È una mossa che il ciclo oggi non ha.
+3. **Il bollitore non ruota, né lui né i suoi attacchi.** Le due tratte che non possono
+   essere rettilinee si risolvono con l'**ordine degli stacchi lungo il tronco**, non con
+   una rotazione né con un raccordo aggiunto al grafo.
 
-1. `DRAW-005-R1`: tavola 1 rifinita — **accettata e fusa dal PM**.
-2. `DRAW-006-R1`: **consegnato con riserva**, in attesa di verifica del PM sulla PR #24.
-   Le decisioni che il pacchetto chiede sono due: il rilievo geometrico del §8 del
-   rapporto e le 13 prove rosse del §9.1, che il DEV non ha ammorbidito.
-3. `DRAW-007`: la gerarchia della tavola — **fuso in `main`** con rilievi aperti.
-4. `DRAW-008`: la posa a fasi — **pacchetto attivo**.
-5. `DRAW-009`: gli ingressi ripetuti dell'adduzione (**I-061**), dopo DRAW-008.
-6. `DRAW-010`: lo spessore del tratto per gerarchia (**I-059**).
-7. Gate vertical slice: skill in una chat di lavoro pulita.
-8. Proseguire gli impianti 3–5 uno per volta, cercando classi di difetto nuove.
-
-## Documenti canonici
-
-- missione e architettura: `docs/SKILL.md`;
-- requisiti prodotto: `docs/prodotto/PRD_DISEGNATORE_MEP.md`;
-- incarico DEV: `ACTIVE_WORK_PACKAGE.md`;
-- roadmap: `docs/plans/2026-09-03-release-plan.md`;
-- responsabilità: `docs/governance/OPERATING_MODEL.md`;
-- input PO: `docs/input-pm/REGISTRO.md`;
-- retrospettive: `docs/retrospectives/2026-09-05-retro-pm.md` e
-  `docs/retrospectives/2026-09-10-retro-draw006r1.md` — **quest'ultima è vincolante per
-  chi tocca posa, costo o routing**: §4 elenca le regole che lascia alle sessioni
-  successive.
+Rapporto della consegna precedente in `docs/collaudi/DRAW-008/RAPPORTO.md`; architettura
+della posa a fasi in `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`, che resta da
+leggere per intera prima del pacchetto.

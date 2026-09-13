@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-08
+**Aggiornato:** 2026-09-13
 **Scopo:** ingresso operativo breve per una nuova sessione DEV.
 
 ## Prodotto
@@ -59,8 +59,14 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
 - Release in corso: **0.2 — prima tavola tecnicamente corretta e approvata**.
 - `DRAW-005` è stato verificato e fuso nella PR #18: tavola 1 con 4 curve, 1 incrocio,
   525 mm, zero backtracking; simboli e contenuto critici corretti.
-- `DRAW-005-R1` è stato fuso con la PR #21; `DRAW-006` e `DRAW-006-R1` sono stati
-  consegnati sulla PR #24, in attesa di verifica del PM.
+- `DRAW-005-R1` è stato fuso con la PR #21; `DRAW-006` e `DRAW-006-R1` con la PR #24.
+- `DRAW-007` e `DRAW-008` sono stati fusi su `main`. `DRAW-008` — la posa a fasi — ha
+  riportato in tavola l'impianto 2 e ha consegnato con **tre regressioni dichiarate** e due
+  criteri irraggiungibili alla lettera: `docs/collaudi/DRAW-008/RAPPORTO.md` §6 e §7. Una
+  delle tre regressioni il PO l'ha già chiusa per decisione (l'ordine delle due zone è
+  indifferente); le altre due sono voci di `DRAW-009`.
+- Il pacchetto attivo è **`DRAW-009`** (`ACTIVE_WORK_PACKAGE.md`), approvato dal PO in
+  sessione fra l'11 e il 13 settembre.
 - **Chi tocca posa, costo o routing legge prima due documenti**, in quest'ordine:
   `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md` — l'ordine delle decisioni che il
   PO ha fissato: prima le autostrade e dritte, poi il corredo con lo stretch invece della
