@@ -47,6 +47,7 @@ from .chains import CHAIN_PORT_GAP_MM, chain_room_mm, machine_chains
 from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
 from .flow import (
+    BOUNDARY_FUNCTION,
     GENERATOR_FUNCTIONS,
     LOAD_FUNCTIONS,
     STORE_FUNCTIONS,
@@ -206,6 +207,11 @@ def _hanging_accessories(
         for item in project.components
         if item.id in placeable
     }
+    functions_of = {
+        item.id: frozenset(catalog.resolve(item.definition_id).definition.functions)
+        for item in project.components
+        if item.id in placeable
+    }
 
     def off_the_run(component_id: str, port_id: str) -> bool:
         return any(
@@ -238,8 +244,35 @@ def _hanging_accessories(
             for mine, _ in ((trunk.start, trunk.end), (trunk.end, trunk.start))
             if mine.component_id == component_id
         }
+        # Un **ingresso di rete** che regge una porta conta come uno stacco:
+        # non ha una posizione propria (§A.2), quindi non puo' portare con se'
+        # il pezzo dentro la lettura. Senza questa riga il gruppo di
+        # riempimento, che da DRAW-009 prende l'acqua dal proprio ingresso
+        # invece che dalla linea di un altro, smetteva di essere un appeso e si
+        # prendeva una colonna in testa al foglio.
         return len(touched) == len(ports) and bool(holders) and all(
-            off_the_run(owner, port_id) for owner, port_id in holders
+            off_the_run(owner, port_id) or is_an_inlet(owner)
+            for owner, port_id in holders
+        )
+
+    def is_an_inlet(component_id: str) -> bool:
+        """Un confine di rete **da cui il fluido entra**: un ingresso.
+
+        Lo dichiara il catalogo con la propria funzione e con il verso del
+        proprio attacco, come ogni altra cosa: un ingresso non si riconosce da
+        un nome ne' da un elenco nel motore. Un attacco solo, perche' di la'
+        dal confine non c'e' impianto.
+
+        Un **prelievo** e' un confine anche lui, ma e' dove il fluido se ne va
+        (D-098): e' l'ultimo passo della lettura e sta in fondo, come ogni
+        utilizzatore. La distinzione e' la stessa che il progetto fa gia'
+        altrove, e non e' un'eccezione aperta qui.
+        """
+        ports = ports_of.get(component_id, [])
+        return (
+            len(ports) == 1
+            and ports[0].flow is PortFlow.OUT
+            and BOUNDARY_FUNCTION in functions_of.get(component_id, frozenset())
         )
 
     def is_the_mounting_side(component_id: str, port_id: str) -> bool:
@@ -267,11 +300,27 @@ def _hanging_accessories(
                 continue
             if child.component_id not in placeable or parent.component_id not in placeable:
                 continue
-            if not hangs_entirely(child.component_id):
-                continue
-            if not is_the_mounting_side(child.component_id, child.port_id):
-                continue
-            if not off_the_run(parent.component_id, parent.port_id):
+            # **Un ingresso di rete non ha una posizione propria** (I-061,
+            # DRAW-009 §A.2). Esiste per immettere, e va posato nelle immediate
+            # vicinanze dell'utente che serve, con la propria tratta dritta e
+            # senza attraversamenti. Prima era un passo del processo come un
+            # altro: l'acquedotto apriva la lettura, il proprio utente stava
+            # cinque passi piu' a valle, e la sua linea attraversava il foglio
+            # inchiodando ogni pezzo che toccava — il bollitore non si spostava
+            # di un passo di griglia senza che l'acqua fredda smettesse di
+            # instradarsi. Un ingresso che traversa il foglio e' un difetto
+            # **anche quando l'utente e' uno solo**, ed e' per questo che la
+            # regola non guarda quanti utenti ci sono.
+            if not is_an_inlet(child.component_id):
+                if not hangs_entirely(child.component_id):
+                    continue
+                if not is_the_mounting_side(child.component_id, child.port_id):
+                    continue
+                if not off_the_run(parent.component_id, parent.port_id):
+                    continue
+            elif is_an_inlet(parent.component_id):
+                # Due confini affacciati non si appendono l'uno all'altro:
+                # nessuno dei due e' l'utente dell'altro.
                 continue
             face = catalog.resolve(
                 next(
@@ -292,13 +341,37 @@ def _hanging_accessories(
             claimed.add(child.component_id)
             break
 
-    # Un appeso che regge a sua volta un appeso tornerebbe a essere una colonna
-    # senza che nessuno lo posi: la catena si ferma al primo livello, e chi
-    # resta fuori riprende il proprio posto in fila.
-    for parent_id in list(hanging):
-        if parent_id in claimed:
-            for item in hanging.pop(parent_id):
-                claimed.discard(item.component_id)
+    # Una figura puo' essere **profonda**: il gruppo di riempimento pende dal
+    # raccordo sul ritorno tecnico e dal gruppo pende il proprio ingresso
+    # dell'acqua fredda. Chi la posa scende lungo la catena (`hang` si richiama
+    # su cio' che ha appena posato), e le misure di ingombro la percorrono tutta.
+    # Cio' che non si ammette e' un **anello**: due pezzi che pendono l'uno
+    # dall'altro non li posa nessuno, perche' nessuno dei due e' posato per
+    # primo. Un anello si scioglie, e i suoi membri riprendono il proprio posto
+    # in fila.
+    parent_of = {
+        item.component_id: parent_id
+        for parent_id, items in hanging.items()
+        for item in items
+    }
+    for start in list(parent_of):
+        seen: set[str] = set()
+        walk: str | None = start
+        while walk is not None and walk not in seen:
+            seen.add(walk)
+            walk = parent_of.get(walk)
+        if walk is None:
+            continue
+        for member in seen:
+            parent_id = parent_of.pop(member, None)
+            if parent_id is None:
+                continue
+            hanging[parent_id] = [
+                item for item in hanging[parent_id] if item.component_id != member
+            ]
+            if not hanging[parent_id]:
+                hanging.pop(parent_id)
+            claimed.discard(member)
     rank = _file_order(project)
     return {
         key: sorted(value, key=lambda item: rank.get(item.component_id, 0))
@@ -1218,11 +1291,21 @@ def place_sheet(
         return item.room_mm
 
     def sideways(component_id: str) -> tuple[float, float]:
-        """Quanto un pezzo sporge a sinistra e a destra per cio' che gli pende."""
+        """Quanto un pezzo sporge a sinistra e a destra per cio' che gli pende.
+
+        La figura si percorre **tutta**: da un appeso puo' pendere a sua volta
+        qualcosa — dal gruppo di riempimento pende il proprio ingresso — e un
+        conto fermo al primo livello lascerebbe il nipote fuori dalla colonna.
+        """
         left = right = 0.0
         for item in hanging.get(component_id, ()):
             side = hangs_toward(item)
-            width = manifests[item.component_id].width_mm + hanging_gap(item)
+            below = sideways(item.component_id)
+            width = (
+                manifests[item.component_id].width_mm
+                + hanging_gap(item)
+                + (below[0] if side is PortFace.LEFT else below[1])
+            )
             if side is PortFace.LEFT:
                 left += width
             elif side is PortFace.RIGHT:
@@ -1235,11 +1318,14 @@ def place_sheet(
         Non e' decorazione: fra il pezzo e cio' che gli pende passa il tubo che
         li unisce, e quel corridoio va **riservato**. Senza, impilare due colonne
         mette il pezzo di sotto proprio nel varco dello stacco di quello di
-        sopra, e la tratta piu' corta della tavola non si instrada piu'.
+        sopra, e la tratta piu' corta della tavola non si instrada piu'. Come
+        per i fianchi, la figura si percorre tutta.
         """
         return max(
             (
-                hanging_gap(item) + manifests[item.component_id].height_mm
+                hanging_gap(item)
+                + manifests[item.component_id].height_mm
+                + overhang(item.component_id, side)
                 for item in hanging.get(component_id, ())
                 if hangs_toward(item) is side
             ),
@@ -1788,10 +1874,15 @@ def place_sheet(
         ha dove andare. Quel posto per il raccordo non e' un posto: se ne cerca
         un altro, e solo se non ce n'e' nessuno si scende agli ultimi ripieghi.
         """
-        return any(
-            not off_the_corridors(*hanging_place(parent_id, left, top, item))
-            for item in hanging.get(parent_id, ())
-        )
+        for item in hanging.get(parent_id, ()):
+            child_left, child_top, width, height = hanging_place(
+                parent_id, left, top, item
+            )
+            if not off_the_corridors(child_left, child_top, width, height):
+                return True
+            if hanging_is_walled(item.component_id, child_left, child_top):
+                return True
+        return False
 
     def hang(parent_id: str, parent_left: float, parent_top: float) -> None:
         """Posa cio' che pende dal pezzo appena posato, accanto a lui.
@@ -1831,6 +1922,9 @@ def place_sheet(
                     child_top + child.height_mm,
                 )
             )
+            # E cio' che pende dall'appeso appena posato: la figura si posa
+            # tutta, non solo il primo livello.
+            hang(item.component_id, child_left, child_top)
 
     position_of = {role: index for index, role in enumerate(used_roles)}
     x_mm = area.x_mm

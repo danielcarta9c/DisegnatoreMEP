@@ -1206,40 +1206,48 @@ def carry_the_rest(
     }
     following = _followers(partition, frozenset(before), delta)
     definitions = {item.id: item.definition_id for item in project.components}
-    out: list[PlacedSymbol] = []
-    for item in placed:
-        found = moved.get(item.component_id)
-        if found is not None:
-            out.append(found)
-            continue
-        parent = hung.get(item.component_id)
-        if parent is not None and parent[0] in moved:
-            out.append(
-                _rehung(
-                    item,
-                    moved[parent[0]],
-                    parent[1],
-                    before[parent[0]],
-                    catalog,
-                    definitions,
-                )
-            )
-            continue
+
+    def carried(item: PlacedSymbol) -> PlacedSymbol:
         step = following.get(item.component_id)
         if step is None:
-            out.append(item)
-            continue
+            return item
         dx, dy = step
-        out.append(
-            item.model_copy(
-                update={
-                    "origin": Point(
-                        x_mm=item.origin.x_mm + dx, y_mm=item.origin.y_mm + dy
-                    )
-                }
-            )
+        return item.model_copy(
+            update={
+                "origin": Point(x_mm=item.origin.x_mm + dx, y_mm=item.origin.y_mm + dy)
+            }
         )
-    return out
+
+    settled: dict[str, PlacedSymbol] = {}
+    for item in placed:
+        component_id = item.component_id
+        if component_id in moved:
+            settled[component_id] = moved[component_id]
+        elif component_id not in hung:
+            settled[component_id] = carried(item)
+    # **La figura si riappende tutta, dall'alto in basso.** Una figura puo'
+    # essere profonda — dal raccordo pende il gruppo di riempimento e dal gruppo
+    # pende il proprio ingresso — e fermarsi al primo livello lasciava il nipote
+    # a seguire il grafo per conto suo: padre e figlio prendevano due
+    # traslazioni diverse e la figura si spezzava, senza che nessun vincolo se
+    # ne accorgesse.
+    changed = True
+    while changed:
+        changed = False
+        for item in placed:
+            component_id = item.component_id
+            if component_id in settled:
+                continue
+            link = hung.get(component_id)
+            if link is None or link[0] not in settled:
+                continue
+            settled[component_id] = _rehung(
+                item, settled[link[0]], link[1], before[link[0]], catalog, definitions
+            )
+            changed = True
+    for item in placed:
+        settled.setdefault(item.component_id, carried(item))
+    return [settled[item.component_id] for item in placed]
 
 
 def _followers(

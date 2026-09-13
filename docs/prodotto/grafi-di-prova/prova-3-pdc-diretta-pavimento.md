@@ -52,6 +52,7 @@ Qui si parte da:
 - **BPC-01** Boiler in pompa di calore, sull'acqua calda sanitaria
 - **PDC-01** Pompa di calore aria-acqua, sull'acqua di riscaldamento
 - **AF-01** Alimentazione acqua fredda, sull'acqua fredda sanitaria
+- **AF-02** Alimentazione acqua fredda, sull'acqua fredda sanitaria
 
 **Costo di questa scelta, detto subito:** se domani si aggiunge un pezzo vicino a
 una sorgente, i numeri della sua famiglia a valle scalano tutti di uno. E' normale
@@ -109,6 +110,7 @@ dice che acqua porta e da che parte va.
 | **RP.02** | ritorno primario | VOL-01 | PDC-01 |
 | **RP.03** | ritorno primario | PAV-02 | RC-01 |
 | **AF.01** | acqua fredda sanitaria | AF-01 | BPC-01 |
+| **AF.02** | acqua fredda sanitaria | AF-02 | GR-01 |
 
 ---
 
@@ -155,9 +157,9 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-11** | Valvola di intercettazione | acqua fredda sanitaria |
 | AF.01.N.03 | **DER-05** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.04 | **DER-06** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.05 | **VS-02** | Gruppo di sicurezza sanitario | acqua fredda sanitaria |
-| AF.01.N.04.1 | **SC-02** | Attacco di scarico sull'acqua fredda · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
+| AF.01.N.04 | **VS-02** | Gruppo di sicurezza sanitario | acqua fredda sanitaria |
+| AF.01.N.03.1 | **SC-02** | Attacco di scarico sull'acqua fredda · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
+| AF.02.N.01 | **AF-02** | Alimentazione acqua fredda | acqua fredda sanitaria |
 
 ---
 
@@ -261,10 +263,16 @@ Da **AF-01** a **BPC-01**, acqua fredda sanitaria.
 1. **AF.01.N.01 · AF-01** Alimentazione acqua fredda · la linea parte dal suo braccio 1
 2. **AF.01.N.02 · VI-11** Valvola di intercettazione
 3. **AF.01.N.03 · DER-05** Derivazione a T sull'acqua fredda
-4. **AF.01.N.04 · DER-06** Derivazione a T sull'acqua fredda
-    - **AF.01.N.04.1 · SC-02** Attacco di scarico sull'acqua fredda · pende dallo stacco
-5. **AF.01.N.05 · VS-02** Gruppo di sicurezza sanitario
-6. **BPC-01** Boiler in pompa di calore · **qui ci si innesta su BPC-01**, che si e' gia' letto, entrando dal suo braccio 1 (ACS.01.N.01)
+    - **AF.01.N.03.1 · SC-02** Attacco di scarico sull'acqua fredda · pende dallo stacco
+4. **AF.01.N.04 · VS-02** Gruppo di sicurezza sanitario
+5. **BPC-01** Boiler in pompa di calore · **qui ci si innesta su BPC-01**, che si e' gia' letto, entrando dal suo braccio 1 (ACS.01.N.01)
+
+### AF.02 — acqua fredda sanitaria
+
+Da **AF-02** a **GR-01**, acqua fredda sanitaria.
+
+1. **AF.02.N.01 · AF-02** Alimentazione acqua fredda · la linea parte dal suo braccio 1
+2. **GR-01** Gruppo di riempimento · **qui ci si innesta su GR-01**, che si e' gia' letto, entrando dal suo braccio 1 (RP.02.N.03.1)
 
 ---
 

@@ -154,6 +154,18 @@ qualche allungamento in piu', perche' il corredo che non entra non e' sempre
 quello della tratta che si allunga: a volte e' il vicino che ruba la corsia.
 """
 
+BLOCK_STEPS = (1, 2, 3, 4, 6, 8, 10)
+"""Le traslazioni di blocco, in passi di griglia (DRAW-009 §B).
+
+Il PO, il 12 settembre 2026, correggendo la lettura che DRAW-008 aveva
+adottato: **il tronco e' un corpo rigido, non un corpo immobile.** Trasla tutto
+intero e porta con se' cio' che gli sta appeso; se il corredo dell'ACS non sta
+sotto, si alzano le macchine di spina. La misura del PM sulla tavola 2 dice che
+la mossa buona sta intorno agli otto passi, e sotto i due non cambia niente:
+l'elenco copre quell'arco e si ferma, perche' ogni passo e' un instradamento di
+prova e il tetto delle prove e' quello.
+"""
+
 NUDGE_STEPS = (1, 2, 4, 8)
 """Le traslazioni cieche, in passi di griglia: l'ultima risorsa, dopo le mosse
 ricavate dalle porte. Servono a scansare un ostacolo che nessuna porta indica."""
@@ -452,6 +464,16 @@ def _signature(layout: Move) -> Signature:
     )
 
 
+def _too_close(one: PlacedSymbol, two: PlacedSymbol, gap_mm: float) -> bool:
+    """Vero se i due riquadri si toccano, contando lo stacco fra figure diverse."""
+    return (
+        one.origin.x_mm < two.right_mm + gap_mm - _TOLERANCE_MM
+        and two.origin.x_mm - gap_mm < one.right_mm - _TOLERANCE_MM
+        and one.origin.y_mm < two.bottom_mm + gap_mm - _TOLERANCE_MM
+        and two.origin.y_mm - gap_mm < one.bottom_mm - _TOLERANCE_MM
+    )
+
+
 def _same_pose(one: PlacedSymbol, two: PlacedSymbol) -> bool:
     return (
         one.origin == two.origin
@@ -715,13 +737,35 @@ class Improver:
         return self.best[component_id].model_copy(update=update)
 
     def leader_of(self, component_id: str) -> str:
-        """Il pezzo che si muove: un appeso viaggia col pezzo che lo regge."""
-        parent = self.parent_of.get(component_id)
-        return component_id if parent is None else parent[0]
+        """Il pezzo che si muove: un appeso viaggia col pezzo che lo regge.
+
+        La catena si risale **fino in cima**: una figura puo' essere profonda —
+        dal raccordo pende il gruppo di riempimento e dal gruppo pende il
+        proprio ingresso dell'acqua fredda — e chi si muove e' la radice, non il
+        primo che si incontra salendo.
+        """
+        seen: set[str] = set()
+        walk = component_id
+        while walk in self.parent_of and walk not in seen:
+            seen.add(walk)
+            walk = self.parent_of[walk][0]
+        return walk
+
+    def below(self, leader: str) -> tuple[str, ...]:
+        """Tutta la figura sotto un pezzo, dall'alto in basso."""
+        out: list[str] = []
+        frontier = [child for child, _ in self.children.get(leader, ())]
+        while frontier:
+            item = frontier.pop(0)
+            if item in out:
+                continue
+            out.append(item)
+            frontier.extend(child for child, _ in self.children.get(item, ()))
+        return tuple(out)
 
     def unit_of(self, component_id: str) -> tuple[str, ...]:
         leader = self.leader_of(component_id)
-        return (leader, *(child for child, _ in self.children.get(leader, ())))
+        return (leader, *self.below(leader))
 
     # -- la misura ---------------------------------------------------------------
 
@@ -900,9 +944,20 @@ class Improver:
         """Il pezzo posato la', con cio' che gli pende riappeso al proprio attacco."""
         parent = self._placed(leader, origin, rotation_deg, port_map)
         move: Move = {leader: parent}
-        for child, port_id in self.children.get(leader, ()):
-            move[child] = self._rehung(child, parent, port_id)
+        self._rehang_below(leader, parent, move)
         return move
+
+    def _rehang_below(self, leader: str, parent: PlacedSymbol, move: Move) -> None:
+        """Riappende la figura intera, un livello per volta.
+
+        Chi pende da un appeso va riappeso al **suo** pezzo dopo che questo si
+        e' mosso: fermarsi al primo livello lasciava indietro il nipote, e la
+        figura si spezzava senza che nessun vincolo se ne accorgesse.
+        """
+        for child, port_id in self.children.get(leader, ()):
+            hung = self._rehung(child, parent, port_id)
+            move[child] = hung
+            self._rehang_below(child, hung, move)
 
     def _rehung(
         self, child: str, parent: PlacedSymbol, port_id: str, gap_mm: float | None = None
@@ -1783,6 +1838,86 @@ class Improver:
             return False
         return (goal.y_mm - source.y_mm) * direction[1] > _TOLERANCE_MM
 
+    def block_of(self, leader: str) -> tuple[str, ...]:
+        """Il **corpo rigido** di cui un pezzo del tronco fa parte (DRAW-009 §B).
+
+        Il tronco non si piega e non si deforma, ma trasla: il blocco e'
+        l'insieme dei pezzi che una tratta di autostrada **gia' rettilinea**
+        tiene allineati, chiuso per transitivita'. Chi e' unito al blocco da una
+        tratta che dritta non e' — la serpentina del bollitore, che nessuna posa
+        raddrizza — non fa parte dello stesso corpo: traslarlo insieme non
+        conserverebbe niente, e il blocco esiste proprio per conservare.
+
+        L'insieme e' vuoto per chi non sta sul tronco, e vuoto quando non c'e'
+        nessuna fase del tronco alle spalle: senza una forma da conservare non
+        c'e' nessun corpo rigido.
+        """
+        if not self.autostrade:
+            return ()
+        joined: dict[str, set[str]] = {}
+        for trunk in self.autostrade:
+            if not self.lies_straight(self.best, trunk):
+                continue
+            one = self.leader_of(trunk.start.component_id)
+            two = self.leader_of(trunk.end.component_id)
+            if one == two:
+                continue
+            joined.setdefault(one, set()).add(two)
+            joined.setdefault(two, set()).add(one)
+        root = self.leader_of(leader)
+        if root not in joined:
+            return ()
+        seen = {root}
+        frontier = [root]
+        while frontier:
+            item = frontier.pop()
+            for other in sorted(joined.get(item, ())):
+                if other in seen:
+                    continue
+                seen.add(other)
+                frontier.append(other)
+        return tuple(item for item in self.scan if item in seen)
+
+    def _block_moves(self, leader: str) -> list[Move]:
+        """La **traslazione di blocco**: il tronco si sposta tutto intero.
+
+        DRAW-008 aveva letto «un tronco fermo» come *fermo nella forma e nella
+        quota*, e su quella lettura la tavola 2 non aveva nessuna mossa capace
+        di alzare le macchine di spina insieme al loro corredo: `_shift_moves`
+        sposta un gruppo per una relazione gia' esistente, `_column_moves` una
+        colonna, `_stretch_moves` taglia il foglio a meta' e pretende che
+        qualcuno resti fermo. Nessuna trasla un blocco allineato **insieme a
+        tutto cio' che deve seguirlo**.
+
+        Qui il blocco si sposta tutto intero della stessa quantita', con le
+        figure che gli pendono (`place_unit` le riappende al proprio attacco) e
+        il corredo in linea, che segue le proprie tratte. **Il blocco non si
+        deforma**: la traslazione e' rigida per costruzione, quindi ogni
+        distanza interna resta quella di prima. Il resto del foglio non si
+        muove.
+
+        Se un pezzo non puo' seguire — fuori dall'area, addosso a un altro — la
+        mossa **non si fa**: la rifiuta `is_valid`, che guarda la candidata
+        intera. Non si fa a meta'.
+
+        Come ogni spostamento di macchina costa zero: si giudica sulla chiave di
+        costo del foglio intero dopo il reinstradamento, mai sul solo tronco.
+        """
+        block = self.block_of(leader)
+        if len(block) < 2:
+            return []
+        # Un blocco lo propone **un pezzo solo**, il primo in ordine di posa:
+        # proporlo da ciascun membro moltiplicherebbe la stessa candidata per
+        # il numero dei membri, e ogni candidata e' un instradamento di prova.
+        if self.leader_of(leader) != block[0]:
+            return []
+        out: list[Move] = []
+        for steps in BLOCK_STEPS:
+            amount = steps * self.step
+            for dx, dy in ((0.0, -amount), (0.0, amount), (-amount, 0.0), (amount, 0.0)):
+                out.append(self._translated(block, dx, dy))
+        return out
+
     def straight_spine(self, table: Move) -> frozenset[tuple[str, ...]]:
         """Le autostrade che, con questa posa, sono rettilinee."""
         return frozenset(
@@ -1898,9 +2033,7 @@ class Improver:
                 break
             moving = grown
         moving |= {
-            child
-            for leader in list(moving)
-            for child, _ in self.children.get(leader, ())
+            item for leader in list(moving) for item in self.below(leader)
         }
         if len(moving) == len(self.order):
             return None
@@ -2099,6 +2232,16 @@ class Improver:
         if self.refining:
             generated: list[tuple[str, Move]] = [
                 *(("allungo", move) for move in stretched),
+                # **La traslazione di blocco sta qui, nella rifinitura**, e non
+                # nella posa. DRAW-008 §C.1 diceva «un tronco fermo»; DRAW-009
+                # §B.1 corregge: il tronco e' un corpo rigido, non un corpo
+                # immobile, e trasla. Ma trasla su una tavola gia' disposta: in
+                # mezzo alla posa la stessa mossa apre un ramo del greedy che
+                # vince sulla chiave e perde l'impilamento dei rami paralleli —
+                # misurato sulla fixture a due zone, dove le due zone smettono
+                # di stare sulla stessa colonna. Il tronco si alza quando il
+                # resto ha gia' preso il proprio posto.
+                *(("blocco", move) for move in self._block_moves(leader)),
                 *(("interasse", move) for move in self._lift_moves(leader)),
                 *(("dorsale", move) for move in spined),
                 *(("catena", move) for move in chained),
@@ -2230,14 +2373,19 @@ class Improver:
             for other_id in self.order:
                 if other_id == item:
                     continue
-                other = after[other_id]
                 gap = 0.0 if units[other_id] == units[item] else ROW_GAP_MM
-                if (
-                    placed.origin.x_mm < other.right_mm + gap - _TOLERANCE_MM
-                    and other.origin.x_mm - gap < placed.right_mm - _TOLERANCE_MM
-                    and placed.origin.y_mm < other.bottom_mm + gap - _TOLERANCE_MM
-                    and other.origin.y_mm - gap < placed.bottom_mm - _TOLERANCE_MM
-                ):
+                if not _too_close(placed, after[other_id], gap):
+                    continue
+                # **Una mossa risponde di cio' che crea, non di cio' che
+                # trova.** Se i due erano gia' addosso prima — capita quando la
+                # fase del tronco consegna una posa che si sovrappone, e sulla
+                # tavola 2 ne consegna nove coppie — pretendere che ogni
+                # candidata li separi rende **ogni** candidata non valida, e il
+                # ciclo resta inchiodato sulla posa peggiore che abbia mai
+                # avuto. E' lo stesso difetto per cui esiste `_first_routable`:
+                # il ciclo rinunciava senza provare una mossa. Cio' che nessuna
+                # mossa puo' fare e' **aggiungere** una sovrapposizione.
+                if not _too_close(self.best[item], self.best[other_id], gap):
                     return False
         # Una pila a terra non si sfila di un elemento (D-073): chi la divide
         # con un altro si sposta in orizzontale solo insieme a lui. Chi sta su
@@ -2620,6 +2768,7 @@ def improve_sheet(
 
 
 __all__ = [
+    "BLOCK_STEPS",
     "MAX_AXIS_TRIALS",
     "MAX_PASSES",
     "MAX_TRIAL_ROUTINGS",

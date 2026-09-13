@@ -52,6 +52,7 @@ Qui si parte da:
 - **PDC-01** Pompa di calore aria-acqua, sull'acqua di riscaldamento
 - **PDC-02** Pompa di calore aria-acqua, sull'acqua di riscaldamento
 - **AF-01** Alimentazione acqua fredda, sull'acqua fredda sanitaria
+- **AF-02** Alimentazione acqua fredda, sull'acqua fredda sanitaria
 
 **Costo di questa scelta, detto subito:** se domani si aggiunge un pezzo vicino a
 una sorgente, i numeri della sua famiglia a valle scalano tutti di uno. E' normale
@@ -108,6 +109,7 @@ dice che acqua porta e da che parte va.
 | **CS.01** | mandata secondaria | ACC-01 | RAD-01 |
 | **RS.01** | ritorno secondario | RAD-01 | ACC-01 |
 | **AF.01** | acqua fredda sanitaria | AF-01 | ACC-01 |
+| **AF.02** | acqua fredda sanitaria | AF-02 | GR-01 |
 
 ---
 
@@ -152,7 +154,7 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | CP.01.N.04.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-11** | Valvola di intercettazione | acqua fredda sanitaria |
-| AF.01.N.03 | **DER-05** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
+| AF.02.N.01 | **AF-02** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | ACS.01.N.01 | **VI-12** | Valvola di intercettazione | acqua calda sanitaria |
 | ACS.01.N.02 | **VM-01** | Valvola miscelatrice termostatica | acqua calda sanitaria |
 | ACS.01.N.03 | **VI-13** | Valvola di intercettazione | acqua calda sanitaria |
@@ -267,8 +269,14 @@ Da **AF-01** a **ACC-01**, acqua fredda sanitaria.
 
 1. **AF.01.N.01 · AF-01** Alimentazione acqua fredda · la linea parte dal suo braccio 1
 2. **AF.01.N.02 · VI-11** Valvola di intercettazione
-3. **AF.01.N.03 · DER-05** Derivazione a T sull'acqua fredda
-4. **ACC-01** Accumulo combinato · **qui ci si innesta su ACC-01**, che si e' gia' letto, entrando dal suo braccio 5 (CP.01.N.06)
+3. **ACC-01** Accumulo combinato · **qui ci si innesta su ACC-01**, che si e' gia' letto, entrando dal suo braccio 5 (CP.01.N.06)
+
+### AF.02 — acqua fredda sanitaria
+
+Da **AF-02** a **GR-01**, acqua fredda sanitaria.
+
+1. **AF.02.N.01 · AF-02** Alimentazione acqua fredda · la linea parte dal suo braccio 1
+2. **GR-01** Gruppo di riempimento · **qui ci si innesta su GR-01**, che si e' gia' letto, entrando dal suo braccio 1 (RP.01.N.03.1)
 
 ---
 

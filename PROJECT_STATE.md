@@ -1,6 +1,7 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-11 (DEV, consegna di DRAW-008 — la posa a fasi)
+**Aggiornato:** 2026-09-13 (DEV, consegna di DRAW-009 — l'ingresso vicino a chi serve,
+e il tronco che si sposta tutto intero)
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md`
 **Release corrente:** 0.3 — generalizzazione controllata, impianto 2
 
@@ -10,7 +11,7 @@
 |---|---|
 | Modello dati e grafo | operativi; il grafo resta la fonte unica |
 | Completamento e assemblaggio | operativi sulla tavola 1; tutti e cinque gli impianti arrivano alla posa; aperta la semantica dei compositi e delle multivia |
-| Posa e routing | `DRAW-004` fuso; costo-peso, assi, dorsali e T ortogonali operativi. Da `DRAW-008` la posa è **a fasi**: il tronco si costruisce (`layout/spine.py`), il corredo lo allunga invece di piegarlo, le strade di servizio si attaccano a un tronco fermo nella forma |
+| Posa e routing | `DRAW-004` fuso; costo-peso, assi, dorsali e T ortogonali operativi. Da `DRAW-008` la posa è **a fasi**: il tronco si costruisce (`layout/spine.py`), il corredo lo allunga invece di piegarlo. Da `DRAW-009` il tronco **trasla tutto intero** portandosi dietro il proprio corredo (`Improver._block_moves`), e un **ingresso di rete** si posa addosso all'utente che serve invece di aprire la lettura. L'instradatore e i suoi pesi non sono stati toccati |
 | Simboli | 39 manifesti: i 7 critici della tavola 1 sono verificati in DRAW-005; l'audit PM completo resta aperto prima della 0.3 |
 | Etichette | fase separata dalla geometria; sigle principali sempre, indirizzi come velo esplicito (`--verifica`) |
 | Packaging skill/chat | non ancora installabile né collaudato in una chat pulita |
@@ -67,12 +68,34 @@ e dall'obiettivo di allineamento. Ha inoltre tolto due cose che non dovevano ess
   risultava nemmeno autostrada, perché in mezzo c'è una deviatrice. Il tronco ci passa
   attraverso, stato per stato.
 
-### Dove siamo davvero, con DRAW-008 consegnato (non fuso)
+### Dove siamo davvero, con DRAW-009 consegnato (non fuso)
 
-`DRAW-008` è **consegnato in PR, non fuso**: il merge su `main` è del PO
+`DRAW-009` è **consegnato in PR, non fuso**: il merge su `main` è del PO
 (`OPERATING_MODEL.md` §1.2.1). Le misure qui sotto sono quelle del ramo di consegna,
 lette sulla geometria che la CLI scrive; il rapporto completo sta in
-`docs/collaudi/DRAW-008/RAPPORTO.md`.
+`docs/collaudi/DRAW-009/RAPPORTO.md`.
+
+| | testa di `main` (DRAW-008 fuso) | DRAW-009 |
+|---|---|---|
+| **Tavola 1** — rete ordinaria | 4 pieghe / 1 incrocio / 465,0 mm | **4 / 1 / 425,0 mm** |
+| **Tavola 1** — totale | 10 pieghe / 1 incrocio / 620,0 mm | **8 / 1 / 515,0 mm** |
+| **Tavola 1** — autostrade rettilinee | 8 su 8, zero pieghe | **8 su 8, zero pieghe** |
+| **Tavola 1** — organi D-120 | 14 su 15 | **15 su 15** |
+| **Tavola 2** — rete ordinaria | 9 / 6 / 755,0 mm | **5 / 1 / 550,0 mm** |
+| **Tavola 2** — totale | 15 pieghe / 11 incroci / 877,5 mm | **9 / 1 / 637,5 mm** |
+| **Tavola 2** — pieghe di autostrada | 4 | **2**, una per ciascuna delle due tratte che nessuna posa raddrizza |
+| **Tavola 2** — `deviatrice.out_b → bollitore.coil_in` | 3 pieghe | **1 piega**: scende, attraversa il ritorno in perpendicolare, corre bassa |
+| **Tavola 2** — nodi condivisi col tronco | 8 | **0** |
+| **Tavola 2** — confini di rete su `cold_water` | 1, con una linea che serve due utenti in serie | **2**, uno per utente, ciascuno con la propria rete |
+| **Tavola 2** — organi D-120 | 13 su 15 | **14 su 15** |
+
+Il perché del salto sulla tratta `deviatrice.out_b → bollitore.coil_in` è misurato in
+`docs/collaudi/DRAW-009/RAPPORTO.md` §3.9, e lo strumento che lo rimisura è
+`docs/collaudi/DRAW-009/perche-la-strada-bassa-non-c-era.py`: la strada bassa non era cara,
+**non c'era**, e a murarla erano il vaso, il manometro e la soglia del riempimento, tutti
+appesi sotto il tronco alla quota del `coil_in`.
+
+### Le misure di DRAW-008, per confronto
 
 | | testa di `main` | DRAW-008 |
 |---|---|---|
@@ -128,30 +151,44 @@ lette sulla geometria che la CLI scrive; il rapporto completo sta in
     all'altra. Non è un difetto della posa, è il catalogo, e il codice lo calcola e lo
     nomina (`spine.SpineLayout.impossible`). Il PO decide se accettarlo, dare una
     rotazione al bollitore o mettere un raccordo nel grafo.
-13. **Le tratte di rango inferiore attraversano ancora il tronco.** Sulla tavola 2 restano
-    8 nodi condivisi fra un'autostrada e un rango inferiore: la linea dell'acqua fredda, lo
-    stacco del riempimento e l'uscita sanitaria, che devono raggiungere un bollitore posto
-    dall'altra parte del tronco. È **I-061**, che l'architettura ha già messo fuori
-    perimetro: finché l'acqua fredda attraversa il foglio con una linea sola, un tronco che
-    passa in mezzo la incrocia per forza.
+13. **Le tratte di rango inferiore attraversavano il tronco — chiuso da `DRAW-009`.**
+    Erano 8 nodi condivisi; adesso sono **zero**. L'acqua fredda non attraversa più il
+    foglio perché ciascun utente ha il proprio ingresso (I-061), e ogni ingresso si posa
+    addosso a chi serve.
 14. **La catena a fasi, da sola, toglieva la tavola all'impianto 4.** Sulla testa di `main`
     l'impianto 4 usciva; con le sole fasi l'instradamento falliva su `p7-a`. `compose_sheet`
     ha ora un **ripiego dichiarato** — posa seminata dal tronco, poi il ciclo senza le fasi,
     poi la disposizione di partenza — e con quello l'impianto 4 torna a uscire. Il ripiego
     è una rete di sicurezza, non una soluzione: finché scatta, quell'impianto non gode
     della posa a fasi. `docs/collaudi/DRAW-008/RAPPORTO.md` §6.2.
-15. **Tre prove rosse nuove, e sono regressioni vere.** Due sulla tavola 2: l'organo
-    `valve-isolation-dhw-hot-utenze-a` sta a 10 mm dalla miscelatrice con cui fa coppia
-    invece che a 2,5÷5 mm, e gli organi governati da D-120 passano da 14 su 15 a 13 su 15 —
-    il bollitore sta sotto il tronco e il sanitario deve risalirlo. Una sulla fixture
-    `heat-pump-dhw-buffer-two-zones`: le due zone restano impilate ma in ordine invertito.
-    Nessuna prova è stata ammorbidita. `docs/collaudi/DRAW-008/RAPPORTO.md` §6.3.
+15. **Le tre prove rosse di `DRAW-008` — chiuse da `DRAW-009`.** Le due di vicinanza
+    tornano verdi senza essere toccate, come `DRAW-009` §E prevedeva; la terza si chiude
+    per decisione del PO, con la prova riscritta su ciò che vuole davvero — l'impilamento,
+    non l'ordine — e con la sua negativa.
+16. **La fase del tronco consegna ancora una posa con pezzi sovrapposti.** Sulla tavola 2
+    `lay_the_spine` + `carry_the_rest` consegnano nove coppie di pezzi addosso, fra cui il
+    bollitore e il volano. `_relieve` non le separa perché il tronco di un circuito chiuso
+    è un **anello**: qualunque sottoalbero si sposti contiene anche l'altro pezzo della
+    coppia. Non è nuovo — la stessa posa esce identica sulla testa di `main` — e `DRAW-009`
+    l'ha reso innocuo invece che risolto, permettendo al ciclo di uscirne. Finché resta
+    così, la tavola 2 esce dal **ripiego** di `compose_sheet` invece che dalla propria posa
+    a fasi. `docs/collaudi/DRAW-009/RAPPORTO.md` §6.3 e §7.3.
+17. **L'ordine degli stacchi lungo il tronco non ha ancora un padrone.** La proprietà è
+    misurata e vale su tutt'e due le tavole — le due tratte verso lo stesso pezzo corrono
+    annidate — ma vale perché la topologia del flusso la impone, non perché la fase del
+    tronco la scelga. `docs/collaudi/DRAW-009/RAPPORTO.md` §3.11 e §7.1.
+18. **La tratta del prelievo ACS ha una piega.** Migliora — da 2 pieghe e 2 nodi su
+    autostrada a 1 piega e zero — ma il criterio 3 chiede zero. `DRAW-009` posa addosso al
+    proprio utente gli **ingressi**, non i prelievi: se il PO intende la regola anche per
+    quelli è una riga, ma è una scelta di rappresentazione.
+    `docs/collaudi/DRAW-009/RAPPORTO.md` §6.1 e §7.2.
 
 ## Pacchetto attivo
 
 `DRAW-009 — l'ingresso vicino a chi serve, e il tronco che si sposta tutto intero`
 (`ACTIVE_WORK_PACKAGE.md`), approvato dal PO in sessione fra l'11 e il 13 settembre 2026.
-Parte dalla testa di `main` con `DRAW-008` fuso.
+Parte dalla testa di `main` con `DRAW-008` fuso, ed è **consegnato in PR, non fuso**:
+`docs/collaudi/DRAW-009/RAPPORTO.md`.
 
 Le tre cose che il PO ha deciso e che il pacchetto attua:
 

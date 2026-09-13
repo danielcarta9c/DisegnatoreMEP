@@ -35,6 +35,9 @@ from disegnatore_mep.validation.topology import validate_project
 CAT = catalog()
 REG = rules()
 
+BOUNDARY = "boundary"
+"""Il mestiere di chi sta al confine dell'impianto: di la' non c'e' percorso."""
+
 PROVE = [
     "prova-1-due-pdc-accumulo-combinato.json",
     "prova-2-pdc-deviatrice-acs.json",
@@ -175,8 +178,17 @@ def test_senza_attacco_dedicato_nasce_una_derivazione_e_il_percorso_resta_intero
 def test_chi_pende_da_uno_stacco_non_e_mai_in_fila_sul_percorso() -> None:
     """Su tutti e cinque gli impianti del committente piu' il sintetico: ogni
     accessorio a stacco ha una sola tubazione, e risalendo la sua piccola
-    catena (ammessa: e' la fila dello stacco) si arriva a un attacco di
-    servizio o al braccio di un raccordo — mai a un attacco del percorso."""
+    catena (ammessa: e' la fila dello stacco) si arriva a un piede — **mai** a
+    un attacco del percorso.
+
+    I piedi ammessi sono tre. Due di sempre: un attacco di servizio della
+    macchina, e il braccio di un raccordo di derivazione. Il terzo e' nato con
+    DRAW-009 §A.1: un **confine di rete**, cioe' l'ingresso che il ponte fra due
+    reti si porta appresso invece di pescare dalla linea di un altro utente. Al
+    di la' di un confine non c'e' impianto, quindi non c'e' nessun percorso su
+    cui il pezzo possa essersi seduto: e' un piede a tutti gli effetti, e va
+    riconosciuto come tale invece di far camminare la catena oltre il bordo.
+    Cio' che la prova vieta non cambia di una virgola."""
     plants = [load(name) for name in PROVE] + [_volano_plant()]
     for model in plants:
         done, _, _ = saturate(model, CAT, REG)
@@ -206,6 +218,8 @@ def test_chi_pende_da_uno_stacco_non_e_mai_in_fila_sul_percorso() -> None:
                 if port.off_the_run:
                     break  # piede dello stacco: attacco di servizio o braccio
                 holder = defs[other.component_id]
+                if BOUNDARY in holder.functions and len(holder.ports) == 1:
+                    break  # piede dello stacco: il confine da cui il fluido entra
                 assert not holder.is_a_fitting, (
                     f"{component.id}: la catena arriva a "
                     f"{other.component_id}.{other.port_id}, che e' il percorso"
