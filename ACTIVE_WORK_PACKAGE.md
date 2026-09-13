@@ -3,12 +3,14 @@
 **Titolo:** L'ingresso vicino a chi serve, e il tronco che si sposta tutto intero
 **Assegnato da:** PM-autore (Claude, in sessione col PO — `OPERATING_MODEL.md` §1.2.1)
 **Assegnato a:** DEV
-**Data:** 2026-09-12
+**Data:** 2026-09-13
 **Stato:** APPROVATO DAL PO in sessione — contenuti dati dal PO l'11, il 12 e il 13
 settembre 2026; il PO ha disposto di portarlo su `main` e di aprire la sessione successiva
 **Release:** 0.3 — generalizzazione, revisione della tavola 2
-**Ramo:** `claude/draw-009-ingressi-e-blocco`
-**Commit di partenza:** la testa di `main` **dopo il merge di DRAW-008 (PR #26)**
+**Ramo:** quello che la piattaforma assegna alla sessione. Il pacchetto **non ne prescrive
+uno**: DRAW-008 lo faceva e la sessione, vincolata al proprio, ha dovuto segnalare una
+differenza di forma che non serviva a nessuno.
+**Commit di partenza:** la testa di `main` con DRAW-008 fuso (`c142ba9`, PR #26)
 **Fixture grafica principale:** impianto 2; impianto 1 come regressione automatica
 
 > **Leggere prima:** `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md` (l'ordine delle
