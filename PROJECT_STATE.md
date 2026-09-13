@@ -149,44 +149,23 @@ lette sulla geometria che la CLI scrive; il rapporto completo sta in
 
 ## Pacchetto attivo
 
-`DRAW-008 — la posa a fasi: prima le autostrade` (`ACTIVE_WORK_PACKAGE.md`), approvato dal
-PO l'11 settembre 2026 e **consegnato in PR dal DEV lo stesso giorno**. Architettura in
-`docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`, che **va letta per intera prima
-del pacchetto**; rapporto di consegna in `docs/collaudi/DRAW-008/RAPPORTO.md`.
+`DRAW-009 — l'ingresso vicino a chi serve, e il tronco che si sposta tutto intero`
+(`ACTIVE_WORK_PACKAGE.md`), approvato dal PO in sessione fra l'11 e il 13 settembre 2026.
+Parte dalla testa di `main` con `DRAW-008` fuso.
 
-Il difetto che attacca non è una soglia: è che ogni proprietà del disegno era una voce di
-costo, quindi si comprava e si vendeva. Tre fasi con un invariante duro ciascuna — il
-tronco dritto per primo, poi il corredo che allunga il tronco invece di piegarlo, poi le
-strade di servizio dove le curve si accettano — e la funzione di costo che ottimizza
-**dentro** ciascuna fase invece che attraverso tutte.
+Le tre cose che il PO ha deciso e che il pacchetto attua:
 
-**Due criteri non sono raggiungibili alla lettera**, e il rapporto lo dimostra invece di
-ammorbidire le prove: il criterio 2 sulla tavola 2 (rischio 12) e la seconda metà del
-criterio 7 (rischio 13). Sono due decisioni del PO, non del DEV.
+1. **Gli ingressi dell'acqua fredda si moltiplicano e si posano addosso a chi servono**
+   (I-061). Sulla tavola 2 la rete `fredda` è oggi **una linea sola che serve due utenti in
+   serie** ai due capi del foglio, e sei degli otto nodi che un rango inferiore condivide
+   col tronco sono suoi.
+2. **Il tronco è un corpo rigido, non un corpo immobile**: trasla tutto intero portandosi
+   dietro ciò che gli pende, e si allunga lungo il proprio asse. Non si piega e non si
+   deforma. È una mossa che il ciclo oggi non ha.
+3. **Il bollitore non ruota, né lui né i suoi attacchi.** Le due tratte che non possono
+   essere rettilinee si risolvono con l'**ordine degli stacchi lungo il tronco**, non con
+   una rotazione né con un raccordo aggiunto al grafo.
 
-## Prossimi gate
-
-1. `DRAW-005-R1`: tavola 1 rifinita — **accettata e fusa dal PM**.
-2. `DRAW-006-R1`: **consegnato con riserva**, in attesa di verifica del PM sulla PR #24.
-   Le decisioni che il pacchetto chiede sono due: il rilievo geometrico del §8 del
-   rapporto e le 13 prove rosse del §9.1, che il DEV non ha ammorbidito.
-3. `DRAW-007`: la gerarchia della tavola — **fuso in `main`** con rilievi aperti.
-4. `DRAW-008`: la posa a fasi — **consegnato in PR, non fuso**; attende il PM-revisore e
-   il merge del PO.
-5. `DRAW-009`: gli ingressi ripetuti dell'adduzione (**I-061**), dopo DRAW-008.
-6. `DRAW-010`: lo spessore del tratto per gerarchia (**I-059**).
-7. Gate vertical slice: skill in una chat di lavoro pulita.
-8. Proseguire gli impianti 3–5 uno per volta, cercando classi di difetto nuove.
-
-## Documenti canonici
-
-- missione e architettura: `docs/SKILL.md`;
-- requisiti prodotto: `docs/prodotto/PRD_DISEGNATORE_MEP.md`;
-- incarico DEV: `ACTIVE_WORK_PACKAGE.md`;
-- roadmap: `docs/plans/2026-09-03-release-plan.md`;
-- responsabilità: `docs/governance/OPERATING_MODEL.md`;
-- input PO: `docs/input-pm/REGISTRO.md`;
-- retrospettive: `docs/retrospectives/2026-09-05-retro-pm.md` e
-  `docs/retrospectives/2026-09-10-retro-draw006r1.md` — **quest'ultima è vincolante per
-  chi tocca posa, costo o routing**: §4 elenca le regole che lascia alle sessioni
-  successive.
+Rapporto della consegna precedente in `docs/collaudi/DRAW-008/RAPPORTO.md`; architettura
+della posa a fasi in `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`, che resta da
+leggere per intera prima del pacchetto.
