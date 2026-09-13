@@ -4,9 +4,10 @@
 **Assegnato da:** PM-autore (Claude, in sessione col PO — `OPERATING_MODEL.md` §1.2.1)
 **Assegnato a:** DEV
 **Data:** 2026-09-12
-**Stato:** BOZZA — sottoposta al PO, non ancora approvata
+**Stato:** APPROVATO DAL PO in sessione — contenuti dati dal PO l'11, il 12 e il 13
+settembre 2026; il PO ha disposto di portarlo su `main` e di aprire la sessione successiva
 **Release:** 0.3 — generalizzazione, revisione della tavola 2
-**Ramo:** da assegnare
+**Ramo:** `claude/draw-009-ingressi-e-blocco`
 **Commit di partenza:** la testa di `main` **dopo il merge di DRAW-008 (PR #26)**
 **Fixture grafica principale:** impianto 2; impianto 1 come regressione automatica
 
@@ -131,19 +132,72 @@ Ha due metà, e sono separabili: la prima è **contenuto**, la seconda è **dise
 
 ---
 
-## C. Il gomito solo
+## C. L'ordine degli stacchi lungo il tronco
 
-1. Dove una tratta di tronco **non può** essere rettilinea — perché il catalogo non lo
-   consente, ed è il caso delle due tratte della tavola 2 (`spine.SpineLayout.impossible`)
-   — la fase del tronco oggi la posa alla **campata minima**. Sbagliato: alla campata
-   minima il gomito si moltiplica.
-2. La fase del tronco deve posare quella tratta **dove il gomito esce singolo**: una piega
-   e una sola. Fra le pose che danno una piega sola si sceglie la più corta; se nessuna la
-   dà, si sceglie quella con meno pieghe e il codice la nomina.
-3. Questo è l'anello che mancava in DRAW-008 e che ha prodotto la tavola che il PO ha
-   ridisegnato a mano.
+Il PO ha chiuso in sessione, il 13 settembre, la domanda §7.1 del rapporto DRAW-008:
 
----
+> «Preferirei che il bollitore non ruotasse, né lui stesso né i suoi ingressi. Gli ingressi
+> si possono spostare, quello sì, per far sì che le linee siano dritte. Però non serve
+> operare sugli ingressi del bollitore: è sufficiente mettere gli stacchi di mandata e
+> ritorno dal tronco principale nel giusto ordine. Se avessi messo lo stacco della mandata
+> rossa a destra rispetto allo stacco del ritorno blu avrei pagato molti più
+> attraversamenti.»
+
+**Il bollitore non ruota, e non ruotano i suoi attacchi.** La libreria dei simboli non si
+tocca e nessun raccordo si aggiunge al grafo: delle tre strade di §7.1, il PO ha scelto la
+prima, e il modo di percorrerla è questo paragrafo. Un confine di rete o un pezzo si
+**spostano** per far uscire dritta una linea (vale A.2); non si **girano**.
+
+### C.1 La regola
+
+1. Quando due tratte lasciano il tronco per raggiungere lo stesso pezzo, **l'ordine dei
+   loro stacchi lungo il tronco deve rispettare l'ordine degli attacchi di destinazione.**
+   Così le due tratte corrono annidate e non si incrociano mai; invertito l'ordine, si
+   incrociano per forza e l'incrocio non si può togliere a valle.
+2. Questa proprietà oggi **non ha un padrone**. Non è dell'instradatore: l'instradatore
+   riceve due capi già fissati e cerca il percorso fra loro. Dove una tratta lascia il
+   tronco lo decide **prima** la fase del tronco, che ordina i partecipanti per topologia
+   del flusso e per rettilineità del tronco, **cieca a ciò che pende sotto di loro**. Se
+   l'ordine esce giusto è per caso.
+3. La fase del tronco deve quindi guardare anche a valle: fra le pose che tengono il tronco
+   dritto, sceglie quella in cui gli stacchi escono nell'ordine dei loro arrivi.
+
+### C.2 Sulla tavola 2 l'ordine è già quello giusto, e il difetto è accanto
+
+Va detto per intero, perché cambia il lavoro del DEV. Misure sulla geometria consegnata:
+
+| pezzo | x (mm) | ruolo |
+|---|---|---|
+| `deviatrice` | 122,5 | stacco della **mandata** verso il bollitore (`p4`) |
+| `ritorno` | 187,5 | stacco del **ritorno** dal bollitore (`p5`) |
+| `bollitore` | 212,5 | arrivo |
+
+L'ordine è già quello che il PO prescrive — la mandata a sinistra del ritorno — e infatti
+**`p5` esce pulita: 1 piega, 0 incroci**, che è esattamente il gomito solo dello schizzo.
+`p4` invece fa **3 pieghe e 1 incrocio**:
+
+```
+(127,5 · 118,5) → (127,5 · 121,0) → (197,5 · 121,0) → (197,5 · 151,0) → (212,5 · 151,0)
+```
+
+Scende di due millimetri e mezzo, poi **cammina settanta millimetri appiccicata sotto il
+tronco di mandata** e scende soltanto a x = 197,5, cioè **oltre** lo stacco del ritorno.
+Sta girando attorno al tronco del ritorno invece di attraversarlo. Lo schizzo del PO fa il
+contrario: scende subito, passa il ritorno **in perpendicolare**, e corre basso fino al
+bollitore.
+
+### C.3 Il giro costa più dell'attraversamento, e i pesi già lo dicono
+
+Il giro che `p4` fa costa **due pieghe in più** per risparmiare **un attraversamento**.
+Con i pesi dell'instradatore — `TURN_COST = 100`, `CROSS_COST = 30` — due pieghe valgono
+200 e un attraversamento 30: l'instradatore dovrebbe preferire l'attraversamento di quasi
+sette volte, e non lo fa. **Non è una questione di pesi**, ed è coerente con la misura già
+fatta: portando `TURN_COST` da 100 a 800 la tavola esce identica.
+
+Quindi la strada bassa non è cara: **non è disponibile**. Perché non lo sia è la prima cosa
+che il DEV deve stabilire, con la misura in mano — ordine di instradamento, celle già
+occupate, divieto di sovrapposizione per il lungo — e il rapporto deve dirlo. Le ipotesi
+non si scrivono qui: si misurano lì.
 
 ## D. L'ordine delle due zone è libero
 
@@ -180,17 +234,16 @@ Le due prove tornano verdi senza essere toccate, oppure il DEV riferisce perché
 ## Perimetro
 
 **Dentro:** il completamento del grafo per gli ingressi di rete (A.1); la posa dei confini
-di rete (A.2); la mossa di traslazione di blocco (B); la scelta di posa delle tratte non
-rettilineabili nella fase del tronco (C); la riscrittura della prova sulle due zone (D); le
-misure e il rapporto di consegna.
+di rete (A.2); la mossa di traslazione di blocco (B); l'ordine degli stacchi lungo il tronco
+e il giro di `p4` (C); la riscrittura della prova sulle due zone (D); le misure e il
+rapporto di consegna.
 
 **Fuori:** l'opzione dell'unione a T dichiarata dal progettista (A.1.4 — si scrive la
-regola, non il campo del modello); la rotazione del bollitore nella libreria dei simboli;
-qualunque raccordo aggiunto al grafo per raddrizzare le due tratte impossibili (§7.1 del
-rapporto DRAW-008 — **decisione del PO**, vedi sotto); le permutazioni fra attacchi pari di
-un collettore (vedi sotto); I-059, lo spessore del tratto per gerarchia; il riempimento
-estetico del foglio, il cartiglio, l'audit dei simboli; gli impianti 3–5 oltre la prova di
-posa.
+regola, non il campo del modello); **la rotazione del bollitore e dei suoi attacchi, che il
+PO ha escluso**; qualunque raccordo aggiunto al grafo per raddrizzare le due tratte
+impossibili, escluso dallo stesso input; le permutazioni fra attacchi pari di un collettore
+(vedi in fondo); I-059, lo spessore del tratto per gerarchia; il riempimento estetico del
+foglio, il cartiglio, l'audit dei simboli; gli impianti 3–5 oltre la prova di posa.
 
 ---
 
@@ -219,25 +272,34 @@ criterio irraggiungibile si dichiara tale con la misura che lo prova, non si amm
 8. **Sulla tavola 2 le pieghe di livello autostrada scendono da 3 a 1** — il valore
    misurato sulla mossa che il PO ha indicato. Se non è raggiungibile, si dichiara con la
    misura.
-9. **Ogni tratta di tronco non rettilineabile ha una piega sola**, e l'elenco delle
-   eccezioni lo calcola il codice.
-10. **`test_parallel_branches_are_stacked_not_strung_out` riscritta sull'impilamento**,
+9. **`p4` perde il giro**: la tratta `deviatrice.out_b → bollitore.coil_in` passa da 3
+   pieghe a **una sola**, e il rapporto dice **perché** oggi la strada bassa non è
+   disponibile — con la misura, non con un'ipotesi. Un attraversamento in più al posto di
+   due pieghe è un guadagno, non un prezzo.
+10. **Ogni tratta di tronco che non può essere rettilinea ha una piega sola**, e l'elenco
+    delle eccezioni lo calcola il codice. `p5` lo è già oggi e non deve peggiorare.
+11. **Una prova generale sull'ordine degli stacchi**: dati due stacchi dal tronco verso lo
+    stesso pezzo, la fase del tronco li posa nell'ordine dei loro arrivi, e una prova
+    negativa mostra che l'ordine invertito produce l'incrocio che non si può togliere a
+    valle. **Il bollitore non ruota e non ruotano i suoi attacchi**: nessuna posa candidata
+    può cambiarne `rotation_deg` o `port_map`.
+12. **`test_parallel_branches_are_stacked_not_strung_out` riscritta sull'impilamento**,
     senza ordine, verde, e con una prova negativa che fallisce davvero se le due zone si
     allungano in fila.
-11. **Le due prove di vicinanza tornano verdi**: gli organi governati da D-120 tornano 15
+13. **Le due prove di vicinanza tornano verdi**: gli organi governati da D-120 tornano 15
     su 15 sulla tavola 2. Se no, il DEV riferisce perché con la misura.
-12. **La tavola 1 non peggiora** su nessuno dei tre budget (pieghe, incroci, lunghezza), e
+14. **La tavola 1 non peggiora** su nessuno dei tre budget (pieghe, incroci, lunghezza), e
     nessuna delle sue tratte di autostrada prende una piega.
-13. **Determinismo**: doppia generazione dalla CLI con la stessa impronta, e impronta
+15. **Determinismo**: doppia generazione dalla CLI con la stessa impronta, e impronta
     invariante alla ridenominazione degli identificativi.
-14. **Il saldo della suite migliora e non peggiora.** Nessuna prova convertita in `skip` o
+16. **Il saldo della suite migliora e non peggiora.** Nessuna prova convertita in `skip` o
     `xfail`, nessuna soglia allentata.
 
 ---
 
 ## Consegna
 
-Una PR sola, non fusa. Rapporto in `docs/collaudi/DRAW-009/RAPPORTO.md` con i quattordici
+Una PR sola, non fusa. Rapporto in `docs/collaudi/DRAW-009/RAPPORTO.md` con i sedici
 criteri chiusi uno per uno; pacchetto grafico `prima/` e `dopo/` per la sola tavola 2, con
 l'impianto 1 misurato come regressione. Il DEV apre la PR e si ferma; il PM-revisore è un
 agente separato avviato da zero; **il merge su `main` è del PO**.
@@ -246,22 +308,20 @@ agente separato avviato da zero; **il merge su `main` è del PO**.
 
 ## Decisioni che restano al PO
 
-1. **Le due tratte impossibili della tavola 2** (§7.1 del rapporto DRAW-008). L'uscita
-   secondaria della deviatrice guarda in basso, la serpentina del bollitore si imbocca da
-   sinistra, il bollitore non ammette rotazioni: nessuna posa le mette una di fronte
-   all'altra. Tre strade, nessuna del DEV: accettare il limite (e il criterio 9 diventa la
-   forma definitiva della regola), dare una rotazione al bollitore nella libreria, oppure
-   mettere un raccordo nel grafo. **Questo pacchetto assume la prima** e la scrive come
-   criterio 9; se il PO ne sceglie un'altra, il criterio cambia.
-2. **Gli attacchi pari di un collettore.** La risposta al punto D apre una domanda più
-   profonda che questo pacchetto non tocca. Oggi `_admitted_permutations` mette il
-   collettore di zona nella stessa categoria della valvola miscelatrice: nessuna
-   permutazione, perché «ogni porta ha un ruolo». Ma su un collettore `out_1` e `out_2`
-   sono due prese identiche sulla stessa barra, e se l'ordine delle zone è libero allora
-   sono scambiabili. Il guaio è che **il catalogo oggi non sa dirlo**: su
-   `mixing-valve-3way` gli attacchi `hot_in` e `cold_in` dichiarano lo stesso dominio, lo
-   stesso fluido e lo stesso verso, e si distinguono solo per il nome. Una regola meccanica
-   «stesso dominio, stesso fluido, stesso verso ⇒ scambiabili» scambierebbe la calda con la
-   fredda su una miscelatrice, che è un errore d'impianto, non una scelta di disegno.
-   Perciò la scambiabilità va **dichiarata nel catalogo**, non dedotta — ed è un pacchetto
-   a sé, da aprire se e quando il PO lo vuole.
+Una sola, e non blocca questo pacchetto.
+
+**Gli attacchi pari di un collettore.** La risposta al punto D apre una domanda più profonda
+che questo pacchetto non tocca. Oggi `_admitted_permutations` mette il collettore di zona
+nella stessa categoria della valvola miscelatrice: nessuna permutazione, perché «ogni porta
+ha un ruolo». Ma su un collettore `out_1` e `out_2` sono due prese identiche sulla stessa
+barra, e se l'ordine delle zone è libero allora sono scambiabili. Il guaio è che **il
+catalogo oggi non sa dirlo**: su `mixing-valve-3way` gli attacchi `hot_in` e `cold_in`
+dichiarano lo stesso dominio, lo stesso fluido e lo stesso verso, e si distinguono solo per
+il nome. Una regola meccanica «stesso dominio, stesso fluido, stesso verso ⇒ scambiabili»
+scambierebbe la calda con la fredda su una miscelatrice, che è un errore d'impianto, non
+una scelta di disegno. Perciò la scambiabilità va **dichiarata nel catalogo**, non dedotta —
+ed è un pacchetto a sé, da aprire se e quando il PO lo vuole.
+
+*(La questione delle due tratte impossibili della tavola 2, §7.1 del rapporto DRAW-008, è
+chiusa: il PO ha scelto di non ruotare il bollitore né i suoi attacchi e di non aggiungere
+raccordi al grafo. Vedi §C.)*
