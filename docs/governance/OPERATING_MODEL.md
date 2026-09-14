@@ -77,7 +77,7 @@ opposte:
 |---|---|---|
 | **PM-autore** | l'assistente in sessione col PO | Pacchetto, criteri di accettazione, soglie, traduzione degli input del PO, roadmap, documentazione corrente. Qui serve **memoria del progetto**: un agente che riparte da zero scrive pacchetti peggiori |
 | **PM-revisore** | un **agente separato, avviato da zero su ogni consegna** | Verifica della consegna, criterio per criterio. Qui la memoria è un **handicap**: chi ha scritto il codice si porta dietro le proprie razionalizzazioni, e il difetto grosso di `DRAW-006-R1` è stato trovato da una revisione indipendente, non dal DEV |
-| **Merge su `main`** | il **PO** | Finché il PM è tenuto dalla stessa testa che sviluppa, la porta d'ingresso su `main` è del PO. La regola «il DEV non fonde» non cambia |
+| **Merge su `main`** | il **PM-revisore** (dal 14 settembre 2026, **D-125**) | Fonde chi ha misurato, e non è chi ha scritto il codice. Fino al 13 settembre il merge era del PO; il PO ha disposto che non opera direttamente su git, e la porta d'ingresso su `main` è tornata al PM come vuole D-123. Il contrappeso resta dov'è: il PM-revisore è **avviato da zero su ogni consegna**. La regola «il DEV non fonde» non cambia, e restano tutti e nove gli obblighi di §3 — in particolare, su `main` si arriva **solo tramite pull request** |
 
 **Il PM-autore non approva mai il proprio pacchetto.** Ogni pacchetto è sottoposto al PO
 prima che il lavoro cominci; il PO lo approva, lo corregge o lo respinge.
@@ -161,9 +161,11 @@ Nessuna freccia salta un passaggio. In particolare: **non esiste una freccia dal
 `main`.**
 
 Dal 10 settembre 2026, col PM sdoppiato (§1.2.1), lo schema si legge così: la colonna «PM»
-è il **PM-autore** finché scrive il pacchetto, diventa il **PM-revisore** — un agente
-separato — quando arriva la consegna, e la freccia finale del merge parte dal **PO**, non
-dal PM.
+è il **PM-autore** finché scrive il pacchetto, e diventa il **PM-revisore** — un agente
+separato, avviato da zero — quando arriva la consegna. La freccia finale del merge parte dal
+**PM-revisore** (D-125, 14 settembre 2026): fonde chi ha misurato la consegna. Il PO entra
+prima — approva il pacchetto e i criteri — e dopo, quando guarda il risultato; **non opera
+su git**.
 
 ---
 

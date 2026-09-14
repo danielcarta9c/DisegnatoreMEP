@@ -1,329 +1,265 @@
-# DRAW-009 — L'ingresso vicino a chi serve, e il tronco che si sposta tutto intero
+# DRAW-010 — Il tronco posa senza pezzi addosso, e l'impianto 4 torna a uscire
 
-**Titolo:** L'ingresso vicino a chi serve, e il tronco che si sposta tutto intero
+**Titolo:** Il tronco posa senza pezzi addosso, e l'impianto 4 torna a uscire
 **Assegnato da:** PM-autore (Claude, in sessione col PO — `OPERATING_MODEL.md` §1.2.1)
 **Assegnato a:** DEV
-**Data:** 2026-09-13
-**Stato:** APPROVATO DAL PO in sessione — contenuti dati dal PO l'11, il 12 e il 13
-settembre 2026; il PO ha disposto di portarlo su `main` e di aprire la sessione successiva
+**Data:** 2026-09-14
+**Stato:** **BOZZA — da sottoporre al PO.** Il PM-autore non approva mai il proprio
+pacchetto. I contenuti di §D vengono dal PO in sessione il 14 settembre 2026; §A, §B, §C
+ed §E sono proposta del PM e vanno approvati prima che il lavoro cominci
 **Release:** 0.3 — generalizzazione, revisione della tavola 2
 **Ramo:** quello che la piattaforma assegna alla sessione. Il pacchetto **non ne prescrive
-uno**: DRAW-008 lo faceva e la sessione, vincolata al proprio, ha dovuto segnalare una
-differenza di forma che non serviva a nessuno.
-**Commit di partenza:** la testa di `main` con DRAW-008 fuso (`c142ba9`, PR #26)
-**Fixture grafica principale:** impianto 2; impianto 1 come regressione automatica
+uno**
+**Commit di partenza:** la testa di `main` con `DRAW-009` fuso (`2155c22`, PR #27)
+**Fixture grafica principale:** impianto 4 e impianto 2; impianto 1 come regressione automatica
 
-> **Leggere prima:** `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md` (l'ordine delle
-> decisioni) e `docs/collaudi/DRAW-008/RAPPORTO.md` §6 e §7 (che cosa è rimasto aperto e
-> perché). Questo pacchetto ne è il seguito e non li ripete.
+> **Leggere prima:** `docs/pm/2026-09-14-review-pr27-draw009.md` (il verdetto del
+> PM-revisore, in particolare §3.1 e la postilla sull'impianto 4) e
+> `docs/collaudi/DRAW-009/RAPPORTO.md` §6.3, §6.5 e §7.3. Questo pacchetto ne è il seguito
+> e non li ripete.
 
 ---
 
 ## Contesto
 
-DRAW-008 ha dato alla posa tre fasi e un invariante per fase. La tavola 2 esce, senza
-rilievi bloccanti, e la tavola 1 migliora su tutti e tre i budget. Ma il PO, guardandola,
-ha ridisegnato a mano un'autostrada più in basso e ha chiesto perché il motore non ci
-fosse arrivato da solo. La risposta, misurata, è che **non è una questione di pesi**:
-alzando `TURN_COST` da 100 a 800 la tavola esce identica, e abbassando `STEP_COST`
-peggiora. La strada pulita che il PO vede non è cara: è **murata**.
+`DRAW-009` è stato verificato e fuso. Ha fatto ciò che il suo pacchetto chiedeva: l'acqua
+fredda non è più una linea sola, i nodi che un rango inferiore condivideva col tronco sono
+passati da 8 a zero, `p4` ha perso il giro, la tavola 1 è migliorata su due budget su tre e
+non è peggiorata su nessuno.
 
-Murata da due cose, e questo pacchetto le toglie entrambe.
+**Ma ha lasciato scoperta la posa da cui tutto parte, e si è visto dopo il merge.**
 
-**La prima è l'acqua fredda.** Sulla tavola 2 la rete `fredda` è **una linea sola** che
-parte dall'`acquedotto`, attraversa il foglio, raccoglie per strada il gruppo di
-riempimento del ritorno PDC e finisce sul `cold_in` del bollitore:
+### L'impianto 4 non produce più una tavola
 
-```
-acquedotto.a
-  → valve-isolation-dhw-acquedotto-a
-  → tee-filling-unit-pdc-water-return-a   ← primo utente
-  → tee-drain-connection-cold-bollitore-cold-in
-  → dhw-safety-group-bollitore-cold-in
-  → bollitore.cold_in                      ← secondo utente
-```
+Misurato dal PM-revisore sulla testa di `main` appena fusa, con lo stesso comando sui due
+lati:
 
-Questo è esattamente ciò che il PO ha vietato, e l'ha già detto una volta (I-061,
-11 settembre): «non si deve fare una rete unica di af, non si fa così; si fanno più
-ingressi». Una linea che traversa il foglio per servire due utenti lontani **inchioda i
-pezzi che tocca**: il bollitore non si può spostare di cinque millimetri senza che
-l'instradamento della fredda fallisca, e sei dei nodi che un rango inferiore condivide con
-il tronco sono suoi.
-
-Misura, sulla geometria consegnata da DRAW-008:
-
-| nodi condivisi fra un'autostrada e un rango inferiore | 8 |
+| impianto 4 | esito |
 |---|---|
-| di cui della rete `fredda` | **6** |
-| di cui della rete `sanitaria` | 2 |
-
-**La seconda è che il tronco, per il ciclo, è fermo.** Il PO ha corretto la lettura che
-avevo adottato: il tronco è un **corpo rigido, non un corpo immobile**. Trasla tutto
-intero, si allunga lungo il proprio asse, e porta con sé ciò che gli sta appeso. Se il
-corredo dell'ACS non sta sotto, si alzano PDC e puffer.
-
-Misura, sulla tavola 2 consegnata, alzando in blocco i partecipanti al tronco:
+| base `b63e3e6` | **la tavola esce** |
+| `main` `2155c22` | **non esce**, in 12 secondi |
 
 ```
-base:      chiave (0, 0, 0.0, 1, 90, 41, 8182.5)   pieghe autostrada = 3
-su di  5:  valida,     instradabile,  pieghe autostrada = 3
-su di 10:  valida,     NON instradabile
-su di 15:  valida,     NON instradabile
-su di 20:  NON valida, instradabile,  pieghe autostrada = 1
-su di 25:  NON valida, NON instradabile
+run s3-a sul secondario: nessun percorso da (147,70) a (116,76):
+i 6 passi dritti che la catena chiede oltre l'attacco a (116,76)
+finiscono contro un ostacolo a (118,76)
 ```
 
-A 20 mm **le pieghe dell'autostrada scendono da 3 a 1**: la geometria che il PO ha
-ridisegnato esiste e il router la trova. È stata rifiutata perché la traslazione era
-grezza — ho spostato i soli partecipanti al tronco e ho lasciato giù tutto il resto, e la
-chiave complessiva è peggiorata di conseguenza `(1, 1, 17.5, 5, 162, 79, 9802.5)`. La mossa
-giusta esiste; **oggi il ciclo non ce l'ha**: `_shift_moves` sposta un gruppo per una
-relazione già esistente, `_column_moves` una colonna, `allungo` taglia il foglio e pretende
-che qualcuno resti fermo. Nessuna trasla un blocco allineato *insieme a tutto ciò che deve
-seguirlo*.
+Dodici secondi: non è un esaurimento del tempo, è un rifiuto dell'instradatore.
 
----
+**Il rischio 14 si è avverato.** Diceva che l'impianto 4 usciva **soltanto grazie al
+ripiego** di `compose_sheet`, e che il ripiego era «una rete di sicurezza, non una
+soluzione». Adesso la rete non regge più.
 
-## A. Gli ingressi dell'acqua fredda (I-061)
+**Nessuna prova se n'è accorta**, perché la suite pretende che **un impianto solo** sappia
+comporsi:
 
-Ha due metà, e sono separabili: la prima è **contenuto**, la seconda è **disegno**.
+```python
+COMPONIBILI = ("prova-1-due-pdc-accumulo-combinato.json",)
+```
 
-### A.1 Un ingresso per utente — contenuto
+L'impianto 4 componeva **per capacità, non per contratto**. Quando l'ha perso, la suite è
+rimasta verde. Questo è un difetto della copertura, e vale quanto il difetto che ha
+nascosto.
 
-1. Dove più utenti prendono acqua fredda, il grafo porta **più confini di rete distinti**,
-   uno per utente, ciascuno con la propria rete. **Mai** una rete unica che si dirama.
-2. I due ingressi sono pezzi diversi, con sigle diverse nella serie `AF.01`, `AF.02`, …, e
-   stanno **lontani l'uno dall'altro**: ciascuno vicino al proprio utente.
-3. Sulla tavola 2 questo significa due ingressi al posto di uno: uno per il gruppo di
-   riempimento del ritorno PDC, uno per il `cold_in` del bollitore.
-4. **L'unione a T con un ingresso solo esiste**, per risparmiare sui piccoli componenti a
-   servizio dell'ingresso — è rara, ed è **un'opzione che chiede il progettista**. Non è
-   mai il default, non si deduce dal grafo e non la sceglie il codice. Finché il
-   progettista non la dichiara, gli ingressi restano separati.
-5. Questa metà tocca il completamento deterministico del grafo, non il disegnatore. Vale il
-   contratto di `HANDOFF.md`: nessun requisito MEP nasce dal codice.
+### La causa a monte è l'anello, ed è il rischio 16
 
-### A.2 L'ingresso si posa addosso a chi serve — disegno
+La fase del tronco consegna una posa in cui dei pezzi stanno addosso l'uno all'altro.
+`_relieve` non li separa perché su un circuito chiuso il tronco è un **anello**: qualunque
+sottoalbero si sposti contiene anche l'altro pezzo della coppia, e la mossa si scarta.
 
-1. Un confine di rete non ha una posizione propria: esiste per immettere. Va posato **nelle
-   immediate vicinanze dell'utente che serve**, e la posizione si sceglie per azzerare
-   attraversamenti e pieghe della sua tratta.
-2. Questo vale per ogni confine di rete, non solo per l'acqua fredda, e vale anche se
-   A.1 non viene attuata: **un ingresso che traversa il foglio è un difetto anche quando
-   l'utente è uno solo.**
-3. Un confine di rete non può inchiodare una macchina di spina. Se la tratta di un ingresso
-   è l'unica ragione per cui un pezzo non si può spostare, si sposta l'ingresso.
+`DRAW-009` non l'ha risolto: l'ha reso **innocuo**, rendendo `is_valid` monotona — una mossa
+risponde delle sovrapposizioni che **crea**, non di quelle che trova. Il ciclo così esce
+dall'impasse, ma il cancello che avrebbe intercettato una posa sovrapposta resta allargato,
+e una prova di `DRAW-007` è diventata rossa (rischio 19).
 
----
+E la posa intermedia **è peggiorata**, cosa che il rapporto di consegna dichiara come
+invariata. Misura del PM-revisore, stesso strumento sui due lati:
 
-## B. Il tronco è un corpo rigido, non un corpo immobile
-
-1. La fase delle strade di servizio (DRAW-008 §C.1) diceva «un tronco fermo». Si corregge:
-   il tronco **non si piega e non si deforma**, ma **trasla** lungo i propri assi e **si
-   allunga** lungo il proprio asse.
-2. Nasce una **mossa nuova**: la **traslazione di blocco**. Un insieme di pezzi allineati
-   si sposta tutto intero di una stessa quantità, portando con sé tutto ciò che deve
-   seguirlo — accessori in linea, corredo appeso ai suoi membri, figure che pendono da un
-   partecipante. Il resto del foglio resta dov'è.
-3. Il blocco **non si deforma**: dopo la traslazione ogni distanza interna al blocco è
-   quella di prima. Se un pezzo non può seguire, la mossa non si fa; non si fa a metà.
-4. Come ogni spostamento di macchina, la traslazione **costa zero**. Si giudica solo sulla
-   chiave di costo del **foglio intero** dopo il reinstradamento, mai sul solo tronco.
-5. Gli invarianti di fase di DRAW-008 restano: la traslazione non può piegare il tronco né
-   rendere storta una tratta che era rettilinea (`Improver.is_valid`).
-
----
-
-## C. L'ordine degli stacchi lungo il tronco
-
-Il PO ha chiuso in sessione, il 13 settembre, la domanda §7.1 del rapporto DRAW-008:
-
-> «Preferirei che il bollitore non ruotasse, né lui stesso né i suoi ingressi. Gli ingressi
-> si possono spostare, quello sì, per far sì che le linee siano dritte. Però non serve
-> operare sugli ingressi del bollitore: è sufficiente mettere gli stacchi di mandata e
-> ritorno dal tronco principale nel giusto ordine. Se avessi messo lo stacco della mandata
-> rossa a destra rispetto allo stacco del ritorno blu avrei pagato molti più
-> attraversamenti.»
-
-**Il bollitore non ruota, e non ruotano i suoi attacchi.** La libreria dei simboli non si
-tocca e nessun raccordo si aggiunge al grafo: delle tre strade di §7.1, il PO ha scelto la
-prima, e il modo di percorrerla è questo paragrafo. Un confine di rete o un pezzo si
-**spostano** per far uscire dritta una linea (vale A.2); non si **girano**.
-
-### C.1 La regola
-
-1. Quando due tratte lasciano il tronco per raggiungere lo stesso pezzo, **l'ordine dei
-   loro stacchi lungo il tronco deve rispettare l'ordine degli attacchi di destinazione.**
-   Così le due tratte corrono annidate e non si incrociano mai; invertito l'ordine, si
-   incrociano per forza e l'incrocio non si può togliere a valle.
-2. Questa proprietà oggi **non ha un padrone**. Non è dell'instradatore: l'instradatore
-   riceve due capi già fissati e cerca il percorso fra loro. Dove una tratta lascia il
-   tronco lo decide **prima** la fase del tronco, che ordina i partecipanti per topologia
-   del flusso e per rettilineità del tronco, **cieca a ciò che pende sotto di loro**. Se
-   l'ordine esce giusto è per caso.
-3. La fase del tronco deve quindi guardare anche a valle: fra le pose che tengono il tronco
-   dritto, sceglie quella in cui gli stacchi escono nell'ordine dei loro arrivi.
-
-### C.2 Sulla tavola 2 l'ordine è già quello giusto, e il difetto è accanto
-
-Va detto per intero, perché cambia il lavoro del DEV. Misure sulla geometria consegnata:
-
-| pezzo | x (mm) | ruolo |
+| posa consegnata dalla fase del tronco, tavola 2 | base `b63e3e6` | `main` `2155c22` |
 |---|---|---|
-| `deviatrice` | 122,5 | stacco della **mandata** verso il bollitore (`p4`) |
-| `ritorno` | 187,5 | stacco del **ritorno** dal bollitore (`p5`) |
-| `bollitore` | 212,5 | arrivo |
-
-L'ordine è già quello che il PO prescrive — la mandata a sinistra del ritorno — e infatti
-**`p5` esce pulita: 1 piega, 0 incroci**, che è esattamente il gomito solo dello schizzo.
-`p4` invece fa **3 pieghe e 1 incrocio**:
-
-```
-(127,5 · 118,5) → (127,5 · 121,0) → (197,5 · 121,0) → (197,5 · 151,0) → (212,5 · 151,0)
-```
-
-Scende di due millimetri e mezzo, poi **cammina settanta millimetri appiccicata sotto il
-tronco di mandata** e scende soltanto a x = 197,5, cioè **oltre** lo stacco del ritorno.
-Sta girando attorno al tronco del ritorno invece di attraversarlo. Lo schizzo del PO fa il
-contrario: scende subito, passa il ritorno **in perpendicolare**, e corre basso fino al
-bollitore.
-
-### C.3 Il giro costa più dell'attraversamento, e i pesi già lo dicono
-
-Il giro che `p4` fa costa **due pieghe in più** per risparmiare **un attraversamento**.
-Con i pesi dell'instradatore — `TURN_COST = 100`, `CROSS_COST = 30` — due pieghe valgono
-200 e un attraversamento 30: l'instradatore dovrebbe preferire l'attraversamento di quasi
-sette volte, e non lo fa. **Non è una questione di pesi**, ed è coerente con la misura già
-fatta: portando `TURN_COST` da 100 a 800 la tavola esce identica.
-
-Quindi la strada bassa non è cara: **non è disponibile**. Perché non lo sia è la prima cosa
-che il DEV deve stabilire, con la misura in mano — ordine di instradamento, celle già
-occupate, divieto di sovrapposizione per il lungo — e il rapporto deve dirlo. Le ipotesi
-non si scrivono qui: si misurano lì.
-
-## D. L'ordine delle due zone è libero
-
-Risposta del PO del 12 settembre al punto §7.4 del rapporto DRAW-008:
-
-> «Ovviamente l'ordine non è importante. Zona 1 e 2 con radiatori o pavimento radiante è
-> indifferente, a meno che non sia il progettista a dare una specifica diversa nel suo
-> input.»
-
-1. `tests/layout/test_objective.py::test_parallel_branches_are_stacked_not_strung_out` va
-   **riscritta su ciò che vuole davvero**: le due zone stanno impilate sulla stessa
-   colonna, e non allungate in fila. L'ordine verticale **non si asserisce**.
-2. La regressione 3 di DRAW-008 (§6.3) si chiude **per decisione, non per codice**: non era
-   un difetto, era una prova che vincolava più del dovuto.
-3. La specifica del progettista, se un giorno arriverà, sarà un campo dichiarato del
-   modello. **Non è di questo pacchetto** e non si anticipa.
+| coppie che si sovrappongono davvero | **0** | **1** (`bollitore` ↔ `volano`) |
+| coppie più vicine dello stacco ammesso | **4** | **8** |
 
 ---
 
-## E. Le due regressioni di vicinanza di DRAW-008
+## A. La fase del tronco consegna una posa senza pezzi addosso
 
-`tests/layout/test_vicinanza_valvole.py`, due prove rosse: sulla tavola 2 l'organo
-`valve-isolation-dhw-hot-utenze-a` sta a 10,0 mm dalla miscelatrice con cui fa coppia
-invece che a 2,5÷5 mm, e gli organi governati da D-120 passano da 14 su 15 a 13 su 15.
+1. `lay_the_spine` + `carry_the_rest` devono consegnare una posa in cui **nessuna coppia di
+   simboli si sovrappone** e nessuna sta più vicina dello stacco che la posa stessa impone
+   fra figure diverse.
+2. Il difetto non è la mossa che separa: è che **l'anello non le dà un sottoalbero da
+   spostare**. La cura sta lì, e il DEV deve stabilire **con la misura** perché oggi ogni
+   candidata di `_relieve` si scarti — non con un'ipotesi. È lo stesso metodo che `DRAW-009`
+   ha usato per il giro di `p4`, ed è il metodo che funziona.
+3. Vale il contratto: **spostare macchine e accessori non costa.** Se la separazione chiede
+   più foglio, si prende più foglio.
+4. Gli invarianti di fase di `DRAW-008` restano: la separazione non può piegare il tronco né
+   rendere storta una tratta che era rettilinea.
 
-La causa dichiarata nel rapporto è geometrica: il bollitore sta sotto il tronco e la sua
-uscita sanitaria deve risalirlo, e su quella tratta il rettilineo accanto alla miscelatrice
-non basta più. **A e B tolgono proprio quel vincolo**: liberato dall'ingresso dell'acqua
-fredda, il bollitore si sposta; con la traslazione di blocco si sposta anche il tronco.
-Le due prove tornano verdi senza essere toccate, oppure il DEV riferisce perché no.
+## B. L'impianto 4 torna a uscire, e con lui si guarda il 3
+
+1. **L'impianto 4 produce di nuovo una tavola.** È il criterio che misura §A sul campo.
+2. **La tavola 2 esce dalla propria posa a fasi e non dal ripiego.** Oggi esce dal terzo
+   ripiego di `compose_sheet` (rischio 16); quando §A è fatto, non deve più servire.
+3. **L'impianto 3 si misura e si riferisce.** Oggi si ferma su `p6-a`. Se §A lo fa uscire,
+   bene; se no, il rapporto dice **perché**, con la misura. Non è un criterio di
+   accettazione: è una misura chiesta.
+4. Il ripiego di `compose_sheet` **non si toglie** in questo pacchetto. Va però riferito
+   quante volte scatta, impianto per impianto, prima e dopo.
+
+## C. La copertura dice quali impianti devono comporsi
+
+1. `COMPONIBILI` si allarga a **tutti gli impianti che sanno comporsi** alla fine di questo
+   pacchetto. Un impianto che compone e non è nell'elenco è una capacità che nessuno
+   sorveglia, ed è esattamente come si è perso l'impianto 4.
+2. L'elenco è **esplicito e dichiarato**: chi non compone sta nell'altro elenco, con la
+   ragione scritta accanto.
+3. Il **rischio 22** si incassa qui: l'impianto 2 compone su una A3 e la sua prova è un
+   `xfail(strict=True)` rosso anche sulla testa di partenza. Va spostato fra i componibili.
+
+## D. Le tre decisioni del PO del 14 settembre 2026
+
+Il PO ha guardato la tavola 2 consegnata e ha deciso tre cose. Sono **disposizioni**, non
+proposte: si attuano come sono espresse (§1.1.1).
+
+### D.1 Il prelievo si posa come un ingresso
+
+> «Il primo gomito in uscita non è sbagliato perché il disegnatore ha tentato di tenere il
+> flusso di lettura da sinistra a destra. Giusto. Non capisco però perché abbia forzato a
+> mettersi ACS.01 verso l'alto, pagando così una curva inutile. Bastava mettere ACS.01 verso
+> destra ed era meglio.»
+
+1. Il gomito con cui la linea esce dal bollitore e piega verso destra **resta**: tiene il
+   flusso di lettura da sinistra a destra, ed è voluto.
+2. Il **prelievo** si posa nelle immediate vicinanze del pezzo che serve e con la propria
+   giacitura scelta per non pagare pieghe — come già fanno gli **ingressi** da `DRAW-009`
+   §A.2. Oggi `utenze` è posato a rotazione 90, con la bocchetta verso il basso, e la linea
+   deve risalirci dentro.
+3. La porta `dhw_out` **resta sulla faccia superiore** del bollitore. Su un bollitore quella
+   posizione dice dove si preleva l'acqua calda, ed è la stratificazione. **La libreria dei
+   simboli non si tocca.**
+4. Il PO ha aggiunto la ragione che la rende definitiva: la faccia destra del bollitore
+   servirà al **disegno dei comandi** — la sonda del bollitore collegata alla pompa di
+   calore — e portarci anche l'uscita ACS le metterebbe l'una addosso all'altra.
+
+### D.2 Niente freccia sotto la lunghezza minima
+
+> «Secondo me possiamo non metterla tanto si capisce bene lo stesso.»
+
+Su una tratta più corta di quanto una freccia di flusso richieda, **la freccia non si
+mette**, e la prova che oggi ne pretende una su ogni tratta non statica si corregge su
+questa regola.
+
+### D.3 Lo scarico del bollitore sta dal lato del serbatoio
+
+Difetto trovato dal PM-revisore rispondendo al PO, e **antecedente**: stesso ordine sulla
+base `b63e3e6`. La catena dell'acqua fredda è
+
+```
+acquedotto → intercettazione → T dello SCARICO → GRUPPO DI SICUREZZA → bollitore
+```
+
+e il gruppo di sicurezza porta **il ritegno a bordo** (`carries_on_board: [isolation,
+non_return]`). Il ritegno sta quindi fra lo scarico e il serbatoio: **aprendo quel rubinetto
+il bollitore non si svuota**, si svuota solo il tratto a monte.
+
+La regola `let-what-holds-its-own-volume-empty` lo vieta già con parole sue — «sta dal lato
+del serbatoio rispetto all'organo che lo chiude» — ma il motore la applica contro
+l'intercettazione, che è un pezzo a sé, e **non contro un organo dichiarato a bordo di un
+gruppo**. È lì la cura: chi ordina gli accessori deve contare anche ciò che un composito si
+porta dentro.
+
+## E. `is_valid` torna stretta, se §A lo permette
+
+1. Fatto §A, la regola monotona di `DRAW-009` non serve più a sbloccare il ciclo. Va
+   riportata alla forma stretta — **nessuna candidata lascia due pezzi addosso** — e la
+   prova di `DRAW-007` che oggi è rossa torna verde.
+2. Se la misura dice che non si può, si dichiara **con la misura**, e la regola monotona
+   resta con la sua motivazione aggiornata. Lo strumento per misurarlo esiste già:
+   `docs/collaudi/DRAW-009/le-due-sovrapposizioni.py`.
 
 ---
 
 ## Perimetro
 
-**Dentro:** il completamento del grafo per gli ingressi di rete (A.1); la posa dei confini
-di rete (A.2); la mossa di traslazione di blocco (B); l'ordine degli stacchi lungo il tronco
-e il giro di `p4` (C); la riscrittura della prova sulle due zone (D); le misure e il
-rapporto di consegna.
+**Dentro:** la posa consegnata dalla fase del tronco e il meccanismo che separa i pezzi
+(§A); gli impianti 4, 3 e 2 come banco (§B); gli elenchi di copertura della suite (§C); la
+posa del prelievo (§D.1); la freccia sotto la lunghezza minima (§D.2); l'ordine degli
+accessori rispetto agli organi dichiarati a bordo di un composito (§D.3); `is_valid` (§E);
+le misure e il rapporto di consegna.
 
-**Fuori:** l'opzione dell'unione a T dichiarata dal progettista (A.1.4 — si scrive la
-regola, non il campo del modello); **la rotazione del bollitore e dei suoi attacchi, che il
-PO ha escluso**; qualunque raccordo aggiunto al grafo per raddrizzare le due tratte
-impossibili, escluso dallo stesso input; le permutazioni fra attacchi pari di un collettore
-(vedi in fondo); I-059, lo spessore del tratto per gerarchia; il riempimento estetico del
-foglio, il cartiglio, l'audit dei simboli; gli impianti 3–5 oltre la prova di posa.
+**Fuori:** la libreria dei simboli, e in particolare la posizione di `dhw_out` sul bollitore
+— il PO l'ha escluso esplicitamente; l'ordine degli stacchi lungo il tronco (rischio 17,
+resta aperto); le due prove che difendono il pavimento invisibile (rischio 21); lo
+squilibrio fra quadranti della tavola 2; gli attacchi pari di un collettore; l'impianto 5
+oltre la misura; qualunque decisione MEP che il PO non abbia dato.
 
 ---
 
 ## Criteri di accettazione
 
-Ogni criterio si chiude con **il comando eseguito e il suo output**, come in DRAW-008. Un
-criterio irraggiungibile si dichiara tale con la misura che lo prova, non si ammorbidisce.
+Ogni criterio si chiude con **il comando eseguito e il suo output**. Un criterio
+irraggiungibile si dichiara tale con la misura che lo prova, non si ammorbidisce.
 
-1. **Sulla tavola 2 la rete fredda non è più una linea sola.** Il grafo completato porta
-   due confini di rete distinti, con due reti distinte, e nessuna tratta di acqua fredda
-   serve due utenti in serie.
-2. **Una prova generale** mostra che, dati due utenti di acqua fredda, il completamento
-   produce due ingressi e non una rete che si dirama — e che l'unione a T non compare mai
-   se non è dichiarata.
-3. **Ogni confine di rete della tavola 2 ha una tratta senza pieghe** e non attraversa
-   nessuna tratta di livello autostrada.
-4. **I nodi condivisi fra un'autostrada e un rango inferiore sulla tavola 2 scendono da 8 a
-   non più di 2**, con la ripartizione per rete prima e dopo.
-5. **Esiste la mossa di traslazione di blocco**, e una prova su un impianto costruito a
-   mano la mostra vincere là dove nessuna mossa esistente vince.
-6. **La traslazione di blocco non deforma il blocco**: prova generale che dopo la mossa
-   ogni distanza interna al blocco è invariata, e che se un pezzo non può seguire la mossa
-   non si fa.
-7. **Una prova negativa**: una traslazione che piega il tronco viene rifiutata da
-   `is_valid` anche quando batte la chiave di costo.
-8. **Sulla tavola 2 le pieghe di livello autostrada scendono da 3 a 1** — il valore
-   misurato sulla mossa che il PO ha indicato. Se non è raggiungibile, si dichiara con la
-   misura.
-9. **`p4` perde il giro**: la tratta `deviatrice.out_b → bollitore.coil_in` passa da 3
-   pieghe a **una sola**, e il rapporto dice **perché** oggi la strada bassa non è
-   disponibile — con la misura, non con un'ipotesi. Un attraversamento in più al posto di
-   due pieghe è un guadagno, non un prezzo.
-10. **Ogni tratta di tronco che non può essere rettilinea ha una piega sola**, e l'elenco
-    delle eccezioni lo calcola il codice. `p5` lo è già oggi e non deve peggiorare.
-11. **Una prova generale sull'ordine degli stacchi**: dati due stacchi dal tronco verso lo
-    stesso pezzo, la fase del tronco li posa nell'ordine dei loro arrivi, e una prova
-    negativa mostra che l'ordine invertito produce l'incrocio che non si può togliere a
-    valle. **Il bollitore non ruota e non ruotano i suoi attacchi**: nessuna posa candidata
-    può cambiarne `rotation_deg` o `port_map`.
-12. **`test_parallel_branches_are_stacked_not_strung_out` riscritta sull'impilamento**,
-    senza ordine, verde, e con una prova negativa che fallisce davvero se le due zone si
-    allungano in fila.
-13. **Le due prove di vicinanza tornano verdi**: gli organi governati da D-120 tornano 15
-    su 15 sulla tavola 2. Se no, il DEV riferisce perché con la misura.
-14. **La tavola 1 non peggiora** su nessuno dei tre budget (pieghe, incroci, lunghezza), e
-    nessuna delle sue tratte di autostrada prende una piega.
-15. **Determinismo**: doppia generazione dalla CLI con la stessa impronta, e impronta
+1. **La posa consegnata dalla fase del tronco sulla tavola 2 non ha nessuna coppia di
+   simboli sovrapposta**, e nessuna coppia più vicina dello stacco ammesso fra figure
+   diverse. Misura prima e dopo, con lo stesso strumento: oggi 1 sovrapposta e 8 troppo
+   vicine.
+2. **Il rapporto dice perché l'anello impediva la separazione**, con la misura — quali
+   candidate `_relieve` generava e perché ciascuna si scartava. Non un'ipotesi.
+3. **Una prova generale** mostra che su un tronco ad anello la separazione trova una mossa,
+   e una prova negativa mostra che una separazione che piega il tronco viene rifiutata.
+4. **L'impianto 4 produce una tavola**, dalla CLI, con la stessa riga di comando con cui
+   oggi fallisce. Il rapporto porta la tavola.
+5. **La tavola 2 esce dalla propria posa a fasi e non dal ripiego**, e il rapporto dice
+   quante volte il ripiego scatta su ciascuno dei cinque impianti, prima e dopo.
+6. **L'impianto 3 è misurato**: esce, oppure il rapporto dice dove si ferma e perché.
+7. **`COMPONIBILI` elenca tutti gli impianti che compongono** alla fine del pacchetto, e
+   l'elenco di chi non compone porta accanto la ragione. L'impianto 2 è fra i componibili.
+8. **Sulla tavola 2 la tratta del prelievo ACS non ha nessuna piega oltre quella che tiene
+   il flusso di lettura da sinistra a destra**, e `utenze` non è più posato con la bocchetta
+   verso il basso. `dhw_out` è ancora sulla faccia superiore e la libreria dei simboli è
+   identica al commit di partenza.
+9. **Nessuna tratta non statica più corta della lunghezza minima di una freccia pretende una
+   freccia**, e la prova lo dice nella propria regola invece che nel proprio esito.
+10. **Sulla tavola 2 lo scarico del bollitore sta fra il gruppo di sicurezza e il
+    serbatoio**, e una prova generale mostra che un organo dichiarato **a bordo** di un
+    composito conta come organo che chiude, ai fini dell'ordine degli accessori.
+11. **`is_valid` è tornata stretta** e `test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore`
+    è verde — oppure il rapporto dichiara con la misura perché non si può, e la regola
+    monotona resta.
+12. **La tavola 1 non peggiora** su nessuno dei tre budget (pieghe, incroci, lunghezza), e
+    nessuna delle sue tratte di autostrada prende una piega. Riferimento: 4 pieghe,
+    1 incrocio, 470,0 mm.
+13. **La tavola 2 non peggiora** su nessuno dei tre budget. Riferimento: 5 pieghe,
+    1 incrocio, 600,0 mm, nodi condivisi col tronco 0, organi D-120 14 su 15.
+14. **Determinismo**: doppia generazione dalla CLI con la stessa impronta, e forma
     invariante alla ridenominazione degli identificativi.
-16. **Il saldo della suite migliora e non peggiora.** Nessuna prova convertita in `skip` o
-    `xfail`, nessuna soglia allentata.
+15. **Il saldo della suite migliora e non peggiora.** Nessuna prova convertita in `skip` o
+    `xfail`, nessuna soglia allentata, nessuna fixture toccata per far passare una prova.
+    Riferimento di partenza: 10 rosse, 1470 verdi, 24 saltate, 11 xfailed.
+16. **Nessun impianto che compone all'inizio del pacchetto smette di comporre alla fine.**
+    Il rapporto lo misura su tutti e cinque, con il comando e l'esito, prima e dopo. È il
+    criterio che esiste perché l'impianto 4 non si perda una seconda volta.
 
 ---
 
 ## Consegna
 
-Una PR sola, non fusa. Rapporto in `docs/collaudi/DRAW-009/RAPPORTO.md` con i sedici
-criteri chiusi uno per uno; pacchetto grafico `prima/` e `dopo/` per la sola tavola 2, con
-l'impianto 1 misurato come regressione. Il DEV apre la PR e si ferma; il PM-revisore è un
-agente separato avviato da zero; **il merge su `main` è del PO**.
+Una PR sola, non fusa. Rapporto in `docs/collaudi/DRAW-010/RAPPORTO.md` con i sedici criteri
+chiusi uno per uno; pacchetto grafico `prima/` e `dopo/` per l'impianto 4 e per la tavola 2,
+con l'impianto 1 misurato come regressione. Il DEV apre la PR e si ferma; il PM-revisore è
+un agente separato avviato da zero.
 
 ---
 
 ## Decisioni che restano al PO
 
-Una sola, e non blocca questo pacchetto.
-
-**Gli attacchi pari di un collettore.** La risposta al punto D apre una domanda più profonda
-che questo pacchetto non tocca. Oggi `_admitted_permutations` mette il collettore di zona
-nella stessa categoria della valvola miscelatrice: nessuna permutazione, perché «ogni porta
-ha un ruolo». Ma su un collettore `out_1` e `out_2` sono due prese identiche sulla stessa
-barra, e se l'ordine delle zone è libero allora sono scambiabili. Il guaio è che **il
-catalogo oggi non sa dirlo**: su `mixing-valve-3way` gli attacchi `hot_in` e `cold_in`
-dichiarano lo stesso dominio, lo stesso fluido e lo stesso verso, e si distinguono solo per
-il nome. Una regola meccanica «stesso dominio, stesso fluido, stesso verso ⇒ scambiabili»
-scambierebbe la calda con la fredda su una miscelatrice, che è un errore d'impianto, non
-una scelta di disegno. Perciò la scambiabilità va **dichiarata nel catalogo**, non dedotta —
-ed è un pacchetto a sé, da aprire se e quando il PO lo vuole.
-
-*(La questione delle due tratte impossibili della tavola 2, §7.1 del rapporto DRAW-008, è
-chiusa: il PO ha scelto di non ruotare il bollitore né i suoi attacchi e di non aggiungere
-raccordi al grafo. Vedi §C.)*
+1. **L'ordine degli stacchi lungo il tronco** (rischio 17). La proprietà oggi vale per
+   topologia su tutt'e due le tavole, non perché qualcuno la scelga. Diventa esigibile su un
+   impianto che la violi: se l'impianto 4 o il 3 la violano, il PO dirà se aprirla.
+2. **Lo squilibrio fra quadranti della tavola 2**, da 3,74 a 32,50. Nessun criterio lo copre
+   e nessuna voce di costo lo insegue. Il PO ha visto la tavola e non l'ha sollevato: resta
+   qui perché non si perda.
+3. **Gli attacchi pari di un collettore**, ereditata da `DRAW-009` e non toccata.

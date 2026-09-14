@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-13
+**Aggiornato:** 2026-09-14
 **Scopo:** ingresso operativo breve per una nuova sessione DEV.
 
 ## Prodotto
@@ -37,7 +37,7 @@ L'AI non modifica direttamente coordinate o connettività approvata.
   - **PM-revisore**, un **agente separato avviato da zero su ogni consegna**: giudizio
     criterio per criterio, con i criteri e gli artefatti in mano **prima** del rapporto
     del DEV;
-  - **il merge su `main` è del PO.**
+  - **il merge su `main` è del PM-revisore** (D-125).
 
   Le regole che lo rendono avversariale: `docs/governance/OPERATING_MODEL.md` §1.2.1.
 - **DEV — Claude:** implementazione, test, artefatti e proposte tecniche reversibili
@@ -65,8 +65,13 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
   criteri irraggiungibili alla lettera: `docs/collaudi/DRAW-008/RAPPORTO.md` §6 e §7. Una
   delle tre regressioni il PO l'ha già chiusa per decisione (l'ordine delle due zone è
   indifferente); le altre due sono voci di `DRAW-009`.
-- Il pacchetto attivo è **`DRAW-009`** (`ACTIVE_WORK_PACKAGE.md`), approvato dal PO in
-  sessione fra l'11 e il 13 settembre.
+- `DRAW-009` è stato **verificato dal PM-revisore e fuso** il 14 settembre con la PR #27
+  (`2155c22`): dodici criteri raggiunti, quattro raggiunti in parte, nessuno non raggiunto.
+  Verdetto in `docs/pm/2026-09-14-review-pr27-draw009.md`. **Dopo il merge** si è scoperto
+  che l'impianto 4 non produce più una tavola: §7 del verdetto, e primo criterio del
+  pacchetto nuovo.
+- Il pacchetto attivo è **`DRAW-010`** (`ACTIVE_WORK_PACKAGE.md`), **in bozza del PM-autore,
+  non ancora approvato dal PO**.
 - **Chi tocca posa, costo o routing legge prima due documenti**, in quest'ordine:
   `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md` — l'ordine delle decisioni che il
   PO ha fissato: prima le autostrade e dritte, poi il corredo con lo stretch invece della

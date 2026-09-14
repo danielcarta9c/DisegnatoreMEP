@@ -68,10 +68,12 @@ e dall'obiettivo di allineamento. Ha inoltre tolto due cose che non dovevano ess
   risultava nemmeno autostrada, perché in mezzo c'è una deviatrice. Il tronco ci passa
   attraverso, stato per stato.
 
-### Dove siamo davvero, con DRAW-009 consegnato (non fuso)
+### Dove siamo davvero, con DRAW-009 fuso (PR #27, `2155c22`)
 
-`DRAW-009` è **consegnato in PR, non fuso**: il merge su `main` è del PO
-(`OPERATING_MODEL.md` §1.2.1). Le misure qui sotto sono quelle del ramo di consegna,
+`DRAW-009` è stato **verificato dal PM-revisore e fuso** il 14 settembre 2026 attraverso la
+PR #27, su autorizzazione del PO al merge (D-123, disposizione del 14 settembre): dodici
+criteri raggiunti, quattro raggiunti in parte, nessuno non raggiunto. Verdetto criterio per
+criterio in `docs/pm/2026-09-14-review-pr27-draw009.md`. Le misure qui sotto sono quelle del ramo di consegna,
 lette sulla geometria che la CLI scrive; il rapporto completo sta in
 `docs/collaudi/DRAW-009/RAPPORTO.md`.
 
@@ -162,6 +164,12 @@ appesi sotto il tronco alla quota del `coil_in`.
     poi la disposizione di partenza — e con quello l'impianto 4 torna a uscire. Il ripiego
     è una rete di sicurezza, non una soluzione: finché scatta, quell'impianto non gode
     della posa a fasi. `docs/collaudi/DRAW-008/RAPPORTO.md` §6.2.
+    **AVVERATO il 14 settembre 2026, dopo il merge di `DRAW-009`.** La rete non regge più:
+    l'impianto 4 **non produce più una tavola**. Misurato dal PM-revisore con lo stesso
+    comando sui due lati — su `b63e3e6` esce, su `2155c22` no, in 12 secondi, con
+    `run s3-a on network secondario cannot be routed`. Nessuna prova se n'è accorta (rischio
+    23). È il primo criterio di `DRAW-010`.
+    `docs/pm/2026-09-14-review-pr27-draw009.md` §7.
 15. **Le tre prove rosse di `DRAW-008` — chiuse da `DRAW-009`.** Le due di vicinanza
     tornano verdi senza essere toccate, come `DRAW-009` §E prevedeva; la terza si chiude
     per decisione del PO, con la prova riscritta su ciò che vuole davvero — l'impilamento,
@@ -217,26 +225,37 @@ appesi sotto il tronco alla quota del `coil_in`.
     `NON_COMPONGONO` a `COMPONIBILI` è una riga, toglie una rossa e ne rende esigibili
     cinque verdi; non è stata fatta perché la rossa non nasce qui. `RAPPORTO.md` §7.9.
 
+23. **La suite sorveglia la composizione di un impianto solo.**
+    `COMPONIBILI = ("prova-1-due-pdc-accumulo-combinato.json",)`: è l'unico impianto di cui
+    una prova pretenda che sappia comporsi. Gli altri compongono — quando compongono — **per
+    capacità, non per contratto**, e se la perdono la suite resta verde. È così che si è
+    perso l'impianto 4 senza che nessuno se ne accorgesse, ed è un difetto della copertura
+    che vale quanto il difetto che ha nascosto. `DRAW-010` §C.
+
 ## Pacchetto attivo
 
-`DRAW-009 — l'ingresso vicino a chi serve, e il tronco che si sposta tutto intero`
-(`ACTIVE_WORK_PACKAGE.md`), approvato dal PO in sessione fra l'11 e il 13 settembre 2026.
-Parte dalla testa di `main` con `DRAW-008` fuso, ed è **consegnato in PR, non fuso**:
-`docs/collaudi/DRAW-009/RAPPORTO.md`.
+`DRAW-010 — il tronco posa senza pezzi addosso, e l'impianto 4 torna a uscire`
+(`ACTIVE_WORK_PACKAGE.md`), **in bozza del PM-autore, da sottoporre al PO**. Parte dalla
+testa di `main` con `DRAW-009` fuso (`2155c22`, PR #27).
 
-Le tre cose che il PO ha deciso e che il pacchetto attua:
+Le cinque cose che il pacchetto affronta:
 
-1. **Gli ingressi dell'acqua fredda si moltiplicano e si posano addosso a chi servono**
-   (I-061). Sulla tavola 2 la rete `fredda` è oggi **una linea sola che serve due utenti in
-   serie** ai due capi del foglio, e sei degli otto nodi che un rango inferiore condivide
-   col tronco sono suoi.
-2. **Il tronco è un corpo rigido, non un corpo immobile**: trasla tutto intero portandosi
-   dietro ciò che gli pende, e si allunga lungo il proprio asse. Non si piega e non si
-   deforma. È una mossa che il ciclo oggi non ha.
-3. **Il bollitore non ruota, né lui né i suoi attacchi.** Le due tratte che non possono
-   essere rettilinee si risolvono con l'**ordine degli stacchi lungo il tronco**, non con
-   una rotazione né con un raccordo aggiunto al grafo.
+1. **La fase del tronco consegna una posa senza pezzi addosso** (§A). È la causa a monte del
+   rischio 16, che `DRAW-009` ha reso innocua invece che risolta. Misura: oggi la posa
+   consegnata sulla tavola 2 ha una coppia sovrapposta e otto più vicine dello stacco
+   ammesso; sulla base erano zero e quattro.
+2. **L'impianto 4 torna a uscire** (§B), e la tavola 2 esce dalla propria posa a fasi invece
+   che dal ripiego di `compose_sheet`.
+3. **La copertura dice quali impianti devono comporsi** (§C), così che una capacità non si
+   possa più perdere in silenzio. Qui si incassa anche il rischio 22.
+4. **Le tre disposizioni del PO del 14 settembre** (§D): il prelievo si posa come un ingresso
+   e `dhw_out` resta in testa al bollitore; niente freccia sotto la lunghezza minima; lo
+   scarico del bollitore va dal lato del serbatoio rispetto al ritegno che il gruppo di
+   sicurezza porta a bordo.
+5. **`is_valid` torna stretta** se §A lo permette (§E), e la prova di `DRAW-007` che
+   `DRAW-009` ha reso rossa torna verde.
 
-Rapporto della consegna precedente in `docs/collaudi/DRAW-008/RAPPORTO.md`; architettura
-della posa a fasi in `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`, che resta da
-leggere per intera prima del pacchetto.
+Verdetto della consegna precedente in `docs/pm/2026-09-14-review-pr27-draw009.md`; rapporto
+del DEV in `docs/collaudi/DRAW-009/RAPPORTO.md`; architettura della posa a fasi in
+`docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`, che resta da leggere per intera
+prima del pacchetto.
