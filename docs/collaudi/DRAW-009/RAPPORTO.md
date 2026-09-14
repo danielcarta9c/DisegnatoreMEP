@@ -59,6 +59,8 @@ sposta tutto intero»
 | `tests/layout/test_objective.py` | §D — la prova sull'impilamento riscritta su ciò che vuole davvero, con la sua negativa |
 | `tests/collaudo/test_p2_attacchi_di_servizio.py` | il **terzo piede** di una catena appesa: un confine di rete (§2.6) |
 | `tests/collaudo/test_p4_indirizzo_dei_nodi.py` | il **secondo modo** in cui una strada muore: su un civico (§2.6) |
+| `tests/rules/test_riempimento_tecnico.py` | il gruppo di riempimento porta il **proprio** ingresso di acqua fredda: la prova prende il nome di ciò che adesso misura |
+| `tests/rules/test_gruppo_manutenibile.py` | i confini sulle reti **proprie** del bollitore, non su quella di un altro utente |
 | `PROJECT_STATE.md` | stato e rischi aggiornati |
 | `tests/rules/test_ingressi_di_rete.py` | **nuovo** — le prove di §A.1 |
 | `tests/layout/test_traslazione_di_blocco.py` | **nuovo** — le prove di §B |
