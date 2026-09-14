@@ -5,11 +5,11 @@ sposta tutto intero»
 **Documenti di riferimento:** `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`;
 `docs/collaudi/DRAW-008/RAPPORTO.md` §6 e §7
 **Ruolo:** DEV
-**Data:** 2026-09-13
+**Data:** 2026-09-13 (misure della suite rifatte il 2026-09-14)
 
 ---
 
-## 0. Le quattro cose da leggere prima di tutto il resto
+## 0. Le cinque cose da leggere prima di tutto il resto
 
 1. **Il criterio 9 ha una causa misurata, ed è che la strada bassa non esisteva.** Non è
    una questione di pesi e non è una questione di instradatore: delle 48 celle della
@@ -33,6 +33,14 @@ sposta tutto intero»
    proprietà — le due tratte corrono annidate, misurato — ma **non** il padrone: la fase
    del tronco ancora non sceglie l'ordine degli stacchi, lo eredita dalla topologia del
    flusso. §6 e §7.
+5. **C'è una regressione, una sola, ed è dichiarata con la misura che dice anche perché
+   non la chiudo.** `test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore`
+   di DRAW-007 chiede a `is_valid` di rifiutare una mossa che porta un accumulo più dentro
+   l'altro; §2.5 le chiede il contrario, perché senza quella regola il ciclo resta
+   inchiodato sulla posa sovrapposta che la fase del tronco gli consegna. La regola più
+   stretta che le farebbe convivere l'ho scritta e misurata: **toglie al ciclo la mossa
+   che questo pacchetto aggiunge**. Non l'ho ammorbidita, non l'ho convertita in `xfail`,
+   non ho toccato la sua fixture. §6.5 e §7.5.
 
 ---
 
