@@ -78,16 +78,17 @@ lette sulla geometria che la CLI scrive; il rapporto completo sta in
 | | testa di `main` (DRAW-008 fuso) | DRAW-009 |
 |---|---|---|
 | **Tavola 1** — rete ordinaria | 4 pieghe / 1 incrocio / 465,0 mm | **4 / 1 / 430,0 mm** |
-| **Tavola 1** — totale | 10 pieghe / 1 incrocio / 620,0 mm | **4 / 1 / 485,0 mm** |
+| **Tavola 1** — totale | 10 pieghe / 1 incrocio / 620,0 mm | **4 / 1 / 470,0 mm** |
 | **Tavola 1** — autostrade rettilinee | 8 su 8, zero pieghe | **8 su 8, zero pieghe** |
 | **Tavola 1** — organi D-120 | 14 su 15 | **15 su 15** |
 | **Tavola 2** — rete ordinaria | 9 / 6 / 755,0 mm | **5 / 1 / 555,0 mm** |
-| **Tavola 2** — totale | 15 pieghe / 11 incroci / 877,5 mm | **5 / 1 / 607,5 mm** |
+| **Tavola 2** — totale | 15 pieghe / 11 incroci / 877,5 mm | **5 / 1 / 600,0 mm** |
 | **Tavola 2** — pieghe di autostrada | 4 | **2**, una per ciascuna delle due tratte che nessuna posa raddrizza |
 | **Tavola 2** — `deviatrice.out_b → bollitore.coil_in` | 3 pieghe | **1 piega**: scende, attraversa il ritorno in perpendicolare, corre bassa |
 | **Tavola 2** — nodi condivisi col tronco | 8 | **0** |
 | **Tavola 2** — confini di rete su `cold_water` | 1, con una linea che serve due utenti in serie | **2**, uno per utente, ciascuno con la propria rete |
 | **Tavola 2** — organi D-120 | 13 su 15 | **14 su 15** |
+| **Suite** | 13 rosse, 1435 verdi | **10 rosse, 1470 verdi**: sei chiuse, tre nuove e dichiarate con la misura, sette che erano rosse e restano. Nessuna prova convertita in `skip` o `xfail` |
 
 Il perché del salto sulla tratta `deviatrice.out_b → bollitore.coil_in` è misurato in
 `docs/collaudi/DRAW-009/RAPPORTO.md` §3.9, e lo strumento che lo rimisura è
@@ -193,6 +194,28 @@ appesi sotto il tronco alla quota del `coil_in`.
     traslazione di blocco, misurato. La cura vera è il rischio 16.
     `docs/collaudi/DRAW-009/RAPPORTO.md` §6.5 e §7.5; lo strumento è
     `docs/collaudi/DRAW-009/le-due-sovrapposizioni.py`.
+20. **Due prove hanno perso il proprio caso.** La prova che tiene la valvola di isolamento
+    stretta al raccordo passante non trova più, sulla propria fixture, nessuna tratta con
+    quella forma: §A.1 ha tolto il raccordo dell'acqua fredda dal ritorno tecnico e con lui
+    la scomposizione che metteva la valvola dalla parte giusta. La sua guardia grida invece
+    di passare a vuoto, ed è giusto così, ma **quella proprietà non è più sorvegliata da
+    nessuna parte**. E la prova sulle frecce pretende che ogni tratta non statica ne porti
+    una, mentre il renderer una freccia la mette solo su un tratto lungo almeno 4,0 mm: la
+    tavola ha adesso una tratta ordinaria lunga un passo. `RAPPORTO.md` §6.7 e §7.7–§7.8;
+    lo strumento è `docs/collaudi/DRAW-009/due-prove-senza-caso.py`.
+21. **Due prove difendono il pavimento invisibile, che non esiste più.**
+    `test_una_macchina_a_terra_puo_partecipare_a_un_candidato_verticale` e
+    `test_the_hard_constraints_hold_after_improvement` asseriscono ancora
+    `bottom_mm <= levels.ground_mm`, cioè il vincolo che il PO ha abolito l'11 settembre
+    2026 e che `DRAW-008` ha tolto da `is_valid`. Sono rosse sulla testa di `main` e restano
+    rosse: fuori dal perimetro di `DRAW-009`, ma finché stanno lì chi le legge crede che la
+    regola esista. `RAPPORTO.md` §7.6.
+22. **Un cricchetto già scattato, e non incassato.** L'impianto 2 torna a comporsi su una A3
+    — `test_tornano_a_comporre_quando_la_composizione_compatta` è un `xfail(strict=True)` ed
+    è rosso **anche sulla testa di `main`**. Sul ramo di `DRAW-009` quell'impianto passa
+    tutte e cinque le prove che `COMPONIBILI` impone, misurato. Spostarlo da
+    `NON_COMPONGONO` a `COMPONIBILI` è una riga, toglie una rossa e ne rende esigibili
+    cinque verdi; non è stata fatta perché la rossa non nasce qui. `RAPPORTO.md` §7.9.
 
 ## Pacchetto attivo
 
