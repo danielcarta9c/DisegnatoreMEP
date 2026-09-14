@@ -2124,15 +2124,28 @@ class Improver:
         Un appeso porta i propri organi sullo stacco, e quegli organi occupano
         una riga: la tratta di un altro pezzo che deve passarci trova la strada
         chiusa e gira. Spostare l'appeso di un passo la riapre, e costa zero.
+
+        Chi pende **dall'appeso** viene con lui: da quando una figura puo'
+        essere profonda — dal raccordo il gruppo di riempimento, dal gruppo il
+        proprio ingresso — accorciare lo stacco del gruppo senza portarsi
+        l'ingresso spezzava la figura, e la candidata cadeva. Era per questo che
+        lo stacco del gruppo restava un passo piu' lungo del proprio minimo
+        senza che nulla occupasse il posto piu' vicino.
         """
         out: list[Move] = []
-        parent = self.best[leader]
-        for child, port_id in self.children.get(leader, ()):
+        for child in self.unit_of(leader):
+            link = self.parent_of.get(child)
+            if link is None:
+                continue
+            parent_id, port_id = link
             for count in (-2, -1, 1, 2):
                 gap = self.hang_gap[child] + count * self.step
                 if gap < self.hang_min[child] - _TOLERANCE_MM:
                     continue
-                out.append({child: self._rehung(child, parent, port_id, gap)})
+                hung = self._rehung(child, self.best[parent_id], port_id, gap)
+                move: Move = {child: hung}
+                self._rehang_below(child, hung, move)
+                out.append(move)
         return out
 
     def _refresh_hang_gaps(self) -> None:
@@ -2530,6 +2543,15 @@ class Improver:
             if has_bends or route.crossings or index in current.settled.unfit or turned_back or far:
                 guilty.add(self.leader_of(trunk.start.component_id))
                 guilty.add(self.leader_of(trunk.end.component_id))
+        # E chi regge un appeso il cui stacco e' **piu' lungo del proprio
+        # minimo**: accorciarlo toglie tubo e non costa niente, ma nessuna delle
+        # voci qui sopra se ne accorge. Uno stacco dritto, senza incroci e piu'
+        # corto del rettilineo che la tratta pretende (`_need_mm`, che non
+        # scende sotto lo stacco fra due simboli) non e' «lontano» per nessuno,
+        # e restava lungo com'era uscito dalla posa (I-046).
+        for child, (parent, _port_id) in self.parent_of.items():
+            if self.hang_gap[child] > self.hang_min[child] + _TOLERANCE_MM:
+                guilty.add(self.leader_of(parent))
         return [item for item in self.scan if item in guilty]
 
     def run(self) -> list[PlacedSymbol]:

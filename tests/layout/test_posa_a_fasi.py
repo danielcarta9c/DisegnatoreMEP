@@ -501,7 +501,16 @@ def _stringi(improver: Improver, trunk: Trunk) -> dict[str, object]:
         )
         return (middle - cut) * verso > TOLERANCE_MM
 
-    leaders = sorted({improver.leader_of(item) for item in improver.order if oltre(item)})
+    # Chi pende va dove va il pezzo che lo regge: sta «da una parte del taglio»
+    # solo se ci sta il suo capofila. Da quando un ingresso di rete pende
+    # dall'utente che serve (DRAW-009 §A.2), prendere il capofila di **ogni**
+    # pezzo oltre il taglio ne trascinava di qua uno che stava di la', e la
+    # campata non si stringeva piu' di un millimetro.
+    leaders = sorted(
+        leader
+        for leader in {improver.leader_of(item) for item in improver.order if oltre(item)}
+        if oltre(leader)
+    )
     indietro = -verso * improver.step
     return improver._translated(
         leaders, indietro if horizontal else 0.0, 0.0 if horizontal else indietro
