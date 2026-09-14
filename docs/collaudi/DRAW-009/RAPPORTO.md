@@ -24,23 +24,21 @@ sposta tutto intero»
    gli pende sotto (§B) e l'ingresso di rete che non inchioda più il bollitore (§A).
 3. **La tavola 2 migliora su ogni budget, e i nodi condivisi col tronco vanno da 8 a
    zero.** Rete ordinaria da 9 pieghe / 6 incroci / 755,0 mm a **5 / 1 / 555,0 mm**, e la
-   tavola intera da 15 pieghe / 11 incroci / 877,5 mm a **5 / 1 / 607,5 mm**;
+   tavola intera da 15 pieghe / 11 incroci / 877,5 mm a **5 / 1 / 600,0 mm**;
    `deviatrice.out_b → bollitore.coil_in` da **3 pieghe a 1**, che è lo schizzo del PO.
    La tavola 1 migliora anche lei su tutti e tre i budget — intera, da 10 / 1 / 620,0 mm a
-   **4 / 1 / 485,0 mm** — e i suoi organi governati da D-120 tornano **15 su 15**.
+   **4 / 1 / 470,0 mm** — e i suoi organi governati da D-120 tornano **15 su 15**.
 4. **Due criteri non sono raggiunti alla lettera e sono dichiarati con la misura**: il 3
    (la tratta del prelievo ACS ha una piega, non zero) e l'11, di cui è raggiunta la
    proprietà — le due tratte corrono annidate, misurato — ma **non** il padrone: la fase
    del tronco ancora non sceglie l'ordine degli stacchi, lo eredita dalla topologia del
    flusso. §6 e §7.
-5. **C'è una regressione, una sola, ed è dichiarata con la misura che dice anche perché
-   non la chiudo.** `test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore`
-   di DRAW-007 chiede a `is_valid` di rifiutare una mossa che porta un accumulo più dentro
-   l'altro; §2.5 le chiede il contrario, perché senza quella regola il ciclo resta
-   inchiodato sulla posa sovrapposta che la fase del tronco gli consegna. La regola più
-   stretta che le farebbe convivere l'ho scritta e misurata: **toglie al ciclo la mossa
-   che questo pacchetto aggiunge**. Non l'ho ammorbidita, non l'ho convertita in `xfail`,
-   non ho toccato la sua fixture. §6.5 e §7.5.
+5. **Il saldo della suite migliora: 13 rosse diventano 10, e le verdi salgono da 1435 a
+   1470.** Sei rosse si chiudono, tre sono nuove, e ciascuna delle tre è dichiarata con la
+   misura che la prova: la prova di DRAW-007 in conflitto con §2.5 (§6.5), e due prove che
+   **hanno perso il proprio caso** perché il grafo nuovo lo ha tolto o ne ha creato uno
+   che non avevano previsto (§6.7). Nessuna prova convertita in `skip` o `xfail`, nessuna
+   soglia allentata, nessuna fixture toccata per farla passare.
 
 ---
 
@@ -581,15 +579,15 @@ misura passa da 14 su 15 a **15 su 15**.
 | rete ordinaria — pieghe | 4 | **4** |
 | rete ordinaria — incroci | 1 | **1** |
 | rete ordinaria — lunghezza | 465,0 mm | **430,0 mm** |
-| stacchi statici — pieghe / incroci / lunghezza | 6 / 0 / 155,0 mm | **0 / 0 / 55,0 mm** |
-| totale — pieghe / incroci / lunghezza | 10 / 1 / 620,0 mm | **4 / 1 / 485,0 mm** |
+| stacchi statici — pieghe / incroci / lunghezza | 6 / 0 / 155,0 mm | **0 / 0 / 40,0 mm** |
+| totale — pieghe / incroci / lunghezza | 10 / 1 / 620,0 mm | **4 / 1 / 470,0 mm** |
 | tratte oltre tre pieghe | 1 | **0** |
 | backtracking / tubo sotto un simbolo | 0 / 0 | **0 / 0** |
 | autostrade rettilinee | 8 su 8 | **8 su 8** |
 | pieghe di livello autostrada | 0 | **0** |
 | organi D-120 in regola | 14 su 15 | **15 su 15** |
 | rilievi di qualità | 2 | **1** |
-| impronta | `cc0e1f4d…` | `4525158d…` |
+| impronta | `cc0e1f4d…` | `0ac139ee…` |
 
 La colonna di destra si legge su `docs/collaudi/DRAW-009/impianto1/metriche.json`, che è
 agli atti. Quella di sinistra non lo è — il pacchetto chiede il pacchetto grafico per la
@@ -614,9 +612,9 @@ impronta cc0e1f4d…
 Nessuna delle sue tratte di autostrada prende una piega, che è la seconda metà del
 criterio.
 
-L'unica voce che va indietro è il **riempimento**, da 35,1 % a 30,5 %: è la conseguenza
-aritmetica di 135 mm di tubo in meno su un foglio che resta quello, ed è uno spareggio del
-costo, non un budget. Lo squilibrio fra quadranti migliora, da 2,11 a **1,97**.
+L'unica voce che va indietro è il **riempimento**, da 35,1 % a 29,8 %: è la conseguenza
+aritmetica di 150 mm di tubo in meno su un foglio che resta quello, ed è uno spareggio del
+costo, non un budget. Lo squilibrio fra quadranti resta identico (2,11).
 
 ### 3.15 Criterio 15 — determinismo
 
@@ -627,8 +625,8 @@ $ for d in 1 2; do .venv/bin/python -m disegnatore_mep draw \
       docs/collaudi/DRAW-009/dopo/impianto2-completo.json \
       --catalog examples/layout/catalog --symbols assets/symbols --naming naming \
       --verifica --geometry /tmp/det$d/g.json --out /tmp/det$d | tail -1; done
-676ab4a2a4b1f280e4218f6a616c9843b0a783491bf503c2b74fffe9862ce098
-676ab4a2a4b1f280e4218f6a616c9843b0a783491bf503c2b74fffe9862ce098
+80a58849796d25433eb798fcb53b17f3dae86926bacb52b1425b0a3e88d0bd6b
+80a58849796d25433eb798fcb53b17f3dae86926bacb52b1425b0a3e88d0bd6b
 
 $ diff -q /tmp/det1/g.json /tmp/det2/g.json && echo "geometrie identiche"
 geometrie identiche
@@ -641,8 +639,11 @@ $ .venv/bin/python -m pytest \
 
 ### 3.16 Criterio 16 — il saldo della suite
 
-Vedi §4.3. Nessuna prova è stata convertita in `skip` o `xfail`, nessuna soglia allentata,
-nessuna prova cancellata.
+**RAGGIUNTO.** Rosse da **13 a 10**, verdi da **1435 a 1470**; sei rosse chiuse, tre nuove,
+sette che erano rosse e restano tali. Nessuna prova convertita in `skip` o `xfail`, nessuna
+soglia allentata, nessuna prova cancellata, nessuna fixture toccata per far passare una
+prova. Il dettaglio, nome per nome, è in §4.3; ciascuna delle tre nuove ha la propria misura
+in §6.5 e §6.7.
 
 ---
 
@@ -663,8 +664,8 @@ nessuna prova cancellata.
 |---|---|---|
 | formato | 420×297 | 420×297 |
 | rete ordinaria — pieghe / incroci / lunghezza | 9 / 6 / 755,0 mm | **5 / 1 / 555,0 mm** |
-| stacchi statici — pieghe / incroci / lunghezza | 6 / 5 / 122,5 mm | **0 / 0 / 52,5 mm** |
-| totale — pieghe / incroci / lunghezza | 15 / 11 / 877,5 mm | **5 / 1 / 607,5 mm** |
+| stacchi statici — pieghe / incroci / lunghezza | 6 / 5 / 122,5 mm | **0 / 0 / 45,0 mm** |
+| totale — pieghe / incroci / lunghezza | 15 / 11 / 877,5 mm | **5 / 1 / 600,0 mm** |
 | tratte oltre tre pieghe | 1 | **0** |
 | backtracking | 0 | **0** |
 | autostrada — tratte / pieghe / incroci / lunghezza | 10 / 4 / 1 / 420,0 mm | **10 / 2 / 1 / 395,0 mm** |
@@ -676,14 +677,80 @@ nessuna prova cancellata.
 | rilievi di qualità | 4 | **2** |
 | rilievi bloccanti | 0 | **0** |
 | riempimento | 37,6 % | **50,1 %** |
-| squilibrio fra quadranti | 3,74 | **31,62** |
-| impronta | `503db386…` | `676ab4a2…` |
+| squilibrio fra quadranti | 3,74 | **32,50** |
+| impronta | `503db386…` | `80a58849…` |
 
 Lo squilibrio fra quadranti peggiora ed è l'unica voce che va indietro: §6.2.
 
 ### 4.3 La suite
 
-_(compilato dall'esecuzione finale — vedi §4.3.1)_
+Due esecuzioni complete, la testa di partenza e il ramo di consegna, con il metodo di §4.4.
+
+```
+$ cd /tmp/base && PYTHONPATH="$PWD/src" .venv/bin/python -m pytest -q -p no:cacheprovider
+13 failed, 1435 passed, 22 skipped, 11 xfailed in 1869.26s (0:31:09)
+
+$ .venv/bin/python -m pytest -q
+10 failed, 1470 passed, 24 skipped, 11 xfailed in 1725.99s (0:28:45)
+```
+
+| | testa di partenza | DRAW-009 |
+|---|---|---|
+| rosse | 13 | **10** |
+| verdi | 1435 | **1470** |
+| `skip` | 22 | 24 |
+| `xfail` | 11 | 11 |
+
+I due `skip` in più sono i due che §3.11 dichiara: le prove sull'accumulo sanitario non
+hanno un caso sulla tavola 1, che ha un accumulo **combinato**, e lo dicono invece di
+passare su un insieme vuoto. Gli `xfail` sono gli stessi undici, con le stesse motivazioni:
+**nessuna prova è stata convertita in `skip` o `xfail` qui**.
+
+**Sei rosse chiuse:**
+
+```
+tests/acceptance/test_drawing.py::test_tavola_1_nessuna_tratta_supera_tre_pieghe_e_gli_incroci_scendono
+tests/layout/test_objective.py::test_parallel_branches_are_stacked_not_strung_out
+tests/layout/test_stacchi_minimi_e_interasse.py::test_nella_posa_iniziale_ogni_stacco_e_lungo_il_proprio_minimo[due_macchine_con_accumulo_combinato]
+tests/layout/test_vicinanza_valvole.py::test_l_organo_in_coppia_con_un_accessorio_gli_sta_stretto
+tests/layout/test_vicinanza_valvole.py::test_ogni_organo_della_tavola_2_sta_sul_pezzo_che_serve
+tests/layout/test_zone_dei_pezzi_grossi.py::test_nessun_raccordo_sta_a_sinistra_di_cio_che_unisce[prova-2-pdc-deviatrice-acs.json]
+```
+
+Le due di vicinanza sono le regressioni 1 e 2 di DRAW-008, e tornano verdi **senza essere
+toccate** (§3.13); quella sull'impilamento è §D (§3.12); le altre tre sono guadagni che il
+pacchetto non aveva promesso.
+
+**Tre rosse nuove**, ciascuna con la propria misura:
+
+```
+tests/layout/test_assi_dorsali_tee.py::test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore
+tests/layout/test_consegna_e_verifica.py::test_la_valvola_che_isola_oltre_un_raccordo_passante_si_stringe_al_raccordo
+tests/layout/test_rami_di_servizio.py::test_nessuna_freccia_sui_rami_statici_e_la_freccia_giusta_sugli_altri[una_macchina_con_accumulo_combinato]
+```
+
+La prima è il conflitto con §2.5: §6.5. Le altre due hanno **perso il proprio caso**, e
+§6.7 lo misura riga per riga.
+
+**Sette rosse che erano rosse e restano tali**, nessuna nel perimetro del pacchetto:
+
+```
+tests/layout/test_accessori_appesi.py::test_tornano_a_comporre_quando_la_composizione_compatta[prova-2-pdc-deviatrice-acs.json]
+tests/layout/test_assi_dorsali_tee.py::test_una_macchina_a_terra_puo_partecipare_a_un_candidato_verticale
+tests/layout/test_improve.py::test_the_hard_constraints_hold_after_improvement
+tests/layout/test_stacchi_minimi_e_interasse.py::test_il_ciclo_prova_per_prima_la_traslazione_verticale_di_una_macchina[una_macchina_con_accumulo_combinato]
+tests/layout/test_stacchi_minimi_e_interasse.py::test_il_ciclo_prova_per_prima_la_traslazione_verticale_di_una_macchina[due_macchine_con_accumulo_combinato]
+tests/layout/test_stacchi_minimi_e_interasse.py::test_la_tavola_1_non_costa_piu_di_draw_005_sulla_rete_ordinaria
+tests/layout/test_stacchi_minimi_e_interasse.py::test_nella_posa_iniziale_ogni_stacco_e_lungo_il_proprio_minimo[una_macchina_con_accumulo_combinato]
+```
+
+Due di queste sette sono l'eredità di DRAW-008 sulla **linea di terra**:
+`test_una_macchina_a_terra_puo_partecipare_a_un_candidato_verticale` e
+`test_the_hard_constraints_hold_after_improvement` pretendono ancora che nulla scenda sotto
+`levels.ground_mm`, e il pavimento invisibile il PO l'ha abolito l'11 settembre («non c'è,
+non esiste»). La prima è §7.6; la riga di `test_la_tavola_1_non_costa_piu_di_draw_005` è a
+430,0 mm contro una soglia di 425,0, e migliora rispetto ai 465,0 della testa di partenza
+senza arrivarci.
 
 ### 4.4 `ruff` e `mypy`
 
@@ -747,7 +814,7 @@ zero — ma non arriva a zero, e il criterio 3 chiede zero.
 
 ### 6.2 Lo squilibrio fra quadranti della tavola 2 peggiora
 
-Da 3,74 a 31,62, con il riempimento che sale da 37,6 % a 50,1 %. È il rovescio della stessa
+Da 3,74 a 32,50, con il riempimento che sale da 37,6 % a 50,1 %. È il rovescio della stessa
 medaglia: il disegno è più compatto e più corto, quindi lascia più bianco tutto da una
 parte. Resta un **avviso** del preflight, non un rilievo bloccante, e nessuna voce del
 costo lo insegue — è uno spareggio. La misura c'è perché il PM la veda.
@@ -771,10 +838,11 @@ terzo ripiego — il ciclo senza le fasi. Le misure di §4.2 sono quelle di quel
 a fare il proprio lavoro: `SpineLayout` resta la fonte di `is_valid` per la rettilineità, e
 l'elenco delle autostrade impossibili viene da lì.
 
-### 6.5 Una prova di DRAW-007 diventa rossa, ed è l'unica regressione
+### 6.5 La prova di DRAW-007 che §2.5 rende rossa
 
 `tests/layout/test_assi_dorsali_tee.py::test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore`
-passa sulla testa di partenza e non passa qui. La causa è §2.5, ed è **voluta fin dove la
+passa sulla testa di partenza e non passa qui. È una delle **tre** rosse nuove di questa
+consegna (§4.3); le altre due stanno in §6.7. La causa è §2.5, ed è **voluta fin dove la
 misura arriva**, non un incidente: le due cose non possono valere insieme finché la fase
 del tronco consegna pose sovrapposte (§6.3).
 
@@ -825,8 +893,9 @@ Tre cose si leggono lì dentro, e sono le tre che servono a decidere.
    diversa da quella che il suo commento dichiara.
 2. **La regola più stretta costerebbe il pacchetto.** «Né crea né approfondisce» è una
    regola migliore in astratto, e l'ho scritta e misurata. Sulla tavola 1 e sulla tavola 2
-   non cambia una cella: 4 pieghe / 485,0 mm e 5 pieghe / 607,5 mm con l'una e con
-   l'altra. Sul banco della traslazione di blocco invece cancella la mossa: la candidata
+   non cambiava una cella — misurato allora sulle due tavole di quel momento, 4 pieghe e 5
+   pieghe con l'una e con l'altra. Sul banco della traslazione di blocco invece cancella
+   la mossa: la candidata
    che vince — il blocco che **scende** di 7,5 mm, da 64 pieghe a 32 e da 16 incroci a
    zero — scende proprio dentro la sovrapposizione che ha trovato, e con la regola più
    stretta non è più valida. Rimane un solo scarto ammesso, che peggiora la partenza.
@@ -862,6 +931,75 @@ appese **profonde**, e la profondità li ha scoperti tutti e quattro nello stess
   scende sotto un passo.
 - **Una strada ribattezzava un civico.** È §2.6, ed è la sola dei quattro che nasce da
   §A.1 invece che da §A.2.
+- **Uno stacco più lungo del proprio minimo, che nessuno guardava.** Quello del gruppo di
+  riempimento restava a 7,5 mm contro i 5,0 del minimo, e nessuno occupava il posto più
+  vicino. Due cause, tutte e due chiuse: `_hang_moves` riappendeva il **solo figlio**,
+  quindi accorciare lo stacco del gruppo senza portarsi il proprio ingresso spezzava la
+  figura e la candidata cadeva — adesso percorre tutta l'unità e ogni mossa porta con sé ciò
+  che pende sotto; e `_offenders` non vedeva il difetto, perché uno stacco dritto, senza
+  incroci e più corto del rettilineo che la tratta pretende non è «lontano» per nessuna
+  delle sue voci — adesso chi regge un appeso il cui stacco supera il proprio minimo è un
+  imputato come gli altri (I-046). Le due tavole ci hanno guadagnato: la 1 da 485,0 a
+  **470,0 mm**, la 2 da 607,5 a **600,0 mm**.
+
+  **Una terza strada, tentata e scartata con la misura.** Il posto dell'appeso si calcola
+  da **bordo a bordo**, mentre `stub_minimum_mm` — il numero che gli si dà — è misurato da
+  **attacco ad attacco**: i due coincidono solo quando l'attacco del pezzo che regge sta sul
+  bordo, e sulla derivazione di un tee, che sta in mezzeria, lo stacco esce più lungo del
+  proprio minimo di quanto l'attacco è rientrato. Correggere `hanging_seat` perché misuri da
+  attacco ad attacco è la cosa giusta in astratto e chiude il difetto alla radice; misurata,
+  porta la **tavola 2 da 5 pieghe / 600,0 mm a 16 pieghe / 1062,5 mm**. Non è nel ramo, e la
+  segnalo qui perché chi la ritroverà sappia che è già stata provata.
+
+### 6.7 Due prove che hanno perso il proprio caso
+
+Sono le altre due rosse nuove. Nessuna delle due è stata toccata; lo strumento che le
+misura è `docs/collaudi/DRAW-009/due-prove-senza-caso.py`.
+
+**La valvola oltre un raccordo passante** (DRAW-006). La prova cerca, sull'impianto a due
+macchine, una tratta che finisca su un raccordo che **prosegue verso un pezzo servito**,
+con una **valvola di chiusura** come ultimo accessorio in linea da quella parte e fuori
+dalla catena di una macchina. Apre con una guardia — «nessuna valvola oltre un raccordo
+passante: la prova non direbbe nulla» — ed è la guardia che scatta: il caso non c'è più.
+
+```
+$ .venv/bin/python docs/collaudi/DRAW-009/due-prove-senza-caso.py
+1. la valvola oltre un raccordo passante: le tre condizioni, tratta per tratta
+   tratta                                   capo                                     prosegue  ultimo in linea                                chiude  in catena
+   p1-a/p1-b                                unione                                   False     valve-isolation-nord-water-supply              True    True
+   ...
+   p4-a-4/p4-a-5-a/p4-a-5-b                 ripartizione                             False     valve-isolation-dirt-separator-ripartizione-a- True    False
+   p4-a-4/p4-a-5-a/p4-a-5-b                 tee-expansion-connection-ripartizione-a  True      dirt-separator-ripartizione-a                  False   False
+   casi che la prova misurerebbe: 0
+```
+
+Si legge nelle ultime due righe. La tratta del ritorno tecnico è l'unica che presenta un
+raccordo che prosegue verso un pezzo servito, e da quel capo l'ultimo accessorio in linea è
+il **defangatore**, che non è un organo di chiusura; dal capo opposto la valvola c'è, ma
+quel raccordo non prosegue. §A.1 ha tolto il raccordo dell'acqua fredda da quella linea, e
+con lui la scomposizione in tratte che metteva la valvola dalla parte giusta. La guardia fa
+esattamente il proprio mestiere: grida invece di passare a vuoto, ed è per questo che è
+scritta. Che cosa farne — dare alla fixture un caso, o spostare la prova su una fixture che
+ce l'ha — è §7.7.
+
+**La freccia su una tratta lunga un passo.** La prova pretende che **ogni** tratta non
+statica porti almeno una freccia. Il renderer — e la prova stessa, che ne rifà la regola —
+una freccia la mette solo su un tratto lungo almeno `2 × ARROW_LENGTH_MM`, cioè 4,0 mm. Con
+l'ingresso del riempimento posato al proprio minimo la tavola ha adesso una tratta ordinaria
+lunga **un passo**:
+
+```
+2. le tratte non statiche piu' corte di una freccia
+   una freccia chiede almeno 2 x ARROW_LENGTH_MM = 4 mm
+   una_macchina_con_accumulo_combinato:
+     inlet-filling-unit-generatore-water-return-a         ordinary  tratto piu' lungo = 2.5 mm
+   due_macchine_con_accumulo_combinato:
+```
+
+Una sola, e sulla sola prima fixture. Le due regole si contraddicono su di lei, e la
+contraddizione non si scioglie dal codice: «una tratta lunga un passo porta una freccia più
+corta, o non ne porta?» è una domanda di rappresentazione, e nessun requisito MEP nasce dal
+codice. §7.8.
 
 ---
 
@@ -912,6 +1050,46 @@ sola — e la prova sull'impilamento tornerà rossa, con la misura che spiega pe
    un altro pacchetto e il DEV non la tocca senza che il PM lo chieda.
 3. **Tenere la regola assoluta** e rinunciare a §B: la misura di §6.5 dice quanto costa,
    ed è il criterio 5.
+
+### 7.6 Due prove pretendono ancora il pavimento invisibile
+
+`test_una_macchina_a_terra_puo_partecipare_a_un_candidato_verticale` e
+`test_the_hard_constraints_hold_after_improvement` sono rosse sulla testa di partenza e
+restano rosse qui: tutte e due asseriscono `item.bottom_mm <= levels.ground_mm`, cioè il
+vincolo che il PO ha abolito l'11 settembre 2026 e che DRAW-008 ha tolto da `is_valid`. Non
+le ho toccate perché sono fuori perimetro, ma sono due prove che difendono una regola che
+non esiste più: finché stanno lì, chiunque le legga crede che esista. Il PM decida se
+farle aggiornare.
+
+### 7.7 La prova della valvola oltre un raccordo ha perso il caso
+
+§6.7. Delle due strade — dare alla fixture di DRAW-006 un caso che la prova possa misurare,
+oppure spostare la prova su una fixture che ce l'ha — nessuna è del DEV: la prima cambia un
+impianto di prova, la seconda cambia che cosa quella prova sorveglia. Segnalo che la
+proprietà **non è più sorvegliata da nessuna parte**, ed è quella che tiene la valvola di
+isolamento stretta al raccordo invece che a mezza strada.
+
+### 7.8 Una tratta lunga un passo porta la freccia?
+
+§6.7. La tavola ha adesso una tratta ordinaria lunga 2,5 mm — l'ingresso dell'acqua fredda
+del gruppo di riempimento, posato al proprio minimo — e una freccia ne chiede 4,0. O la
+freccia si accorcia sulle tratte corte, o una tratta così corta non la porta e la prova lo
+dice. È una scelta di rappresentazione del PO.
+
+### 7.9 Un cricchetto già scattato sulla testa di `main`
+
+`test_tornano_a_comporre_quando_la_composizione_compatta[prova-2-pdc-deviatrice-acs.json]`
+è un `xfail(strict=True)`: esiste per diventare rosso il giorno in cui l'impianto 2 torna a
+comporsi in un foglio solo. Quel giorno è già arrivato **prima di questo pacchetto** — è
+rosso anche sulla testa di partenza — e nessuno l'ha incassato.
+
+Sul ramo di consegna l'impianto 2 non solo compone: passa **tutte e cinque** le prove che
+`COMPONIBILI` impone, misurato spostandolo in quella lista in una copia di lavoro del file
+e rieseguendo (`5 passed, 2 deselected`) — la tavola esce su una A3 con simboli e tratte,
+nessun simbolo si sovrappone a un altro, e ciò che pende sta accanto al proprio pezzo.
+Incassare il cricchetto — `prova-2` da `NON_COMPONGONO` a `COMPONIBILI` — è una riga, toglie
+una rossa e ne rende esigibili cinque verdi. Non l'ho fatta: è un file di un altro
+pacchetto, la rossa non è mia, e la decisione è del PM.
 
 ---
 

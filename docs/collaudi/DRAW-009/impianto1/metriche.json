@@ -4,15 +4,15 @@
     350.0,
     235.0
   ],
-  "impronta": "4525158d0e513742e9b8818f57ea133ad94785ccfb286f8e0bc99a3d2b3ae6d5",
+  "impronta": "0ac139ee8f6cba9edd8cacb1f586f02de0f2f80765e2709add2d0cc3fcf0a4b9",
   "fogli": [
     {
       "sheet_id": "t1",
       "linea_di_terra_esportata": false,
-      "etichette": 47,
+      "etichette": 46,
       "sigle": 8,
       "sigle_omesse": 0,
-      "indirizzi": 39,
+      "indirizzi": 38,
       "etichette_con_richiamo": 0,
       "etichette_su_tubo": 0,
       "etichette_su_simbolo": 0,
@@ -22,26 +22,26 @@
       "richiami_incrociati": 0,
       "ingombro_mm": [
         62.5,
-        81.0,
+        83.5,
         307.5,
         183.5
       ],
-      "riempimento_pct": 30.5,
-      "riempimento_senza_il_piu_isolato_pct": 27.1,
-      "copertura_ingombro": 0.656,
-      "quadranti_rapporto": 1.97,
+      "riempimento_pct": 29.8,
+      "riempimento_senza_il_piu_isolato_pct": 26.1,
+      "copertura_ingombro": 0.625,
+      "quadranti_rapporto": 2.11,
       "quadranti_mm2": [
-        1964.8,
-        996.6,
-        1080.6,
-        1102.8
+        1863.9,
+        883.2,
+        1176.2,
+        1216.1
       ],
       "backtracking_tratte": 0,
       "backtracking_mm": 0.0,
       "incroci": 1,
       "pieghe_totali": 4,
       "tratte_oltre_tre_pieghe": 0,
-      "lunghezza_totale_mm": 485.0,
+      "lunghezza_totale_mm": 470.0,
       "rete_ordinaria": {
         "pieghe": 4,
         "incroci": 1,
@@ -52,7 +52,7 @@
       "stacchi_statici": {
         "pieghe": 0,
         "incroci": 0,
-        "lunghezza_mm": 55.0,
+        "lunghezza_mm": 40.0,
         "tratte": 6
       },
       "tubo_sotto_simbolo": [],
@@ -193,7 +193,7 @@
         }
       },
       "tubo_su_collegamenti_di_partenza_mm": 430.0,
-      "tubo_su_stacchi_mm": 55.0,
+      "tubo_su_stacchi_mm": 40.0,
       "stacchi": 6,
       "simboli": 39,
       "tratte": 21,
@@ -215,7 +215,7 @@
             "tratte": 7,
             "pieghe": 0,
             "incroci": 0,
-            "lunghezza_mm": 60.0
+            "lunghezza_mm": 45.0
           }
         },
         "autostrade": 8,
@@ -812,7 +812,7 @@
     "strainer-pdc-slave-water-return"
   ],
   "rilievi_qualita": [
-    "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 31%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)"
+    "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 30%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)"
   ],
   "rilievi_correttezza": []
 }

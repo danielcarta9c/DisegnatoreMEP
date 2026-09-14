@@ -58,7 +58,7 @@
           "symbol_id": "drain-connection",
           "rotation_deg": 90,
           "origin": {
-            "x_mm": 167.5,
+            "x_mm": 172.5,
             "y_mm": 186.0
           },
           "width_mm": 10.0,
@@ -243,7 +243,7 @@
           "rotation_deg": 180,
           "origin": {
             "x_mm": 152.5,
-            "y_mm": 98.5
+            "y_mm": 96.0
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -257,7 +257,7 @@
           "rotation_deg": 270,
           "origin": {
             "x_mm": 152.5,
-            "y_mm": 113.5
+            "y_mm": 111.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -1284,11 +1284,11 @@
             [
               {
                 "x_mm": 155.0,
-                "y_mm": 113.5
+                "y_mm": 111.0
               },
               {
                 "x_mm": 155.0,
-                "y_mm": 108.5
+                "y_mm": 106.0
               }
             ]
           ],
@@ -1310,7 +1310,7 @@
                 "y_mm": 188.5
               },
               {
-                "x_mm": 177.5,
+                "x_mm": 182.5,
                 "y_mm": 188.5
               }
             ]
@@ -1330,7 +1330,7 @@
             [
               {
                 "x_mm": 155.0,
-                "y_mm": 98.5
+                "y_mm": 96.0
               },
               {
                 "x_mm": 155.0,
@@ -1443,7 +1443,7 @@
           "role": "tag",
           "anchor": {
             "x_mm": 152.5,
-            "y_mm": 121.8
+            "y_mm": 119.3
           },
           "leader_from": null
         },
@@ -1492,7 +1492,7 @@
           "text": "AF.01.N.03.1",
           "role": "address",
           "anchor": {
-            "x_mm": 153.04,
+            "x_mm": 158.04,
             "y_mm": 189.4
           },
           "leader_from": null
@@ -1622,8 +1622,8 @@
           "text": "AF.02.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 159.0,
-            "y_mm": 119.2
+            "x_mm": 150.0,
+            "y_mm": 121.6
           },
           "leader_from": null
         },
@@ -1643,7 +1643,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 162.5,
-            "y_mm": 121.6
+            "y_mm": 119.3
           },
           "leader_from": null
         },

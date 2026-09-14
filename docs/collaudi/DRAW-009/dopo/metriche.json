@@ -4,7 +4,7 @@
     350.0,
     235.0
   ],
-  "impronta": "676ab4a2a4b1f280e4218f6a616c9843b0a783491bf503c2b74fffe9862ce098",
+  "impronta": "80a58849796d25433eb798fcb53b17f3dae86926bacb52b1425b0a3e88d0bd6b",
   "fogli": [
     {
       "sheet_id": "t1",
@@ -29,11 +29,11 @@
       "riempimento_pct": 50.1,
       "riempimento_senza_il_piu_isolato_pct": 41.3,
       "copertura_ingombro": 0.625,
-      "quadranti_rapporto": 31.62,
+      "quadranti_rapporto": 32.5,
       "quadranti_mm2": [
-        1786.9,
+        1786.0,
         2051.5,
-        64.9,
+        63.1,
         1420.2
       ],
       "backtracking_tratte": 0,
@@ -41,7 +41,7 @@
       "incroci": 1,
       "pieghe_totali": 5,
       "tratte_oltre_tre_pieghe": 0,
-      "lunghezza_totale_mm": 607.5,
+      "lunghezza_totale_mm": 600.0,
       "rete_ordinaria": {
         "pieghe": 5,
         "incroci": 1,
@@ -52,7 +52,7 @@
       "stacchi_statici": {
         "pieghe": 0,
         "incroci": 0,
-        "lunghezza_mm": 52.5,
+        "lunghezza_mm": 45.0,
         "tratte": 7
       },
       "tubo_sotto_simbolo": [],
@@ -193,7 +193,7 @@
         }
       },
       "tubo_su_collegamenti_di_partenza_mm": 555.0,
-      "tubo_su_stacchi_mm": 52.5,
+      "tubo_su_stacchi_mm": 45.0,
       "stacchi": 7,
       "simboli": 41,
       "tratte": 23,
@@ -215,7 +215,7 @@
             "tratte": 8,
             "pieghe": 0,
             "incroci": 0,
-            "lunghezza_mm": 57.5
+            "lunghezza_mm": 50.0
           }
         },
         "autostrade": 10,
@@ -821,7 +821,7 @@
   ],
   "rilievi_qualita": [
     "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 50%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)",
-    "warning:DRAWING_ALL_ON_ONE_SIDE:la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 31.6 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)"
+    "warning:DRAWING_ALL_ON_ONE_SIDE:la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 32.5 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)"
   ],
   "rilievi_correttezza": []
 }

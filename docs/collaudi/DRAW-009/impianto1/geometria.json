@@ -11,7 +11,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 62.5,
-            "y_mm": 121.0
+            "y_mm": 123.5
           },
           "width_mm": 40.0,
           "height_mm": 30.0,
@@ -25,7 +25,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 62.5,
-            "y_mm": 81.0
+            "y_mm": 83.5
           },
           "width_mm": 40.0,
           "height_mm": 30.0,
@@ -39,7 +39,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 197.5,
-            "y_mm": 101.0
+            "y_mm": 103.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -55,7 +55,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 225.0,
-            "y_mm": 121.0
+            "y_mm": 123.5
           },
           "width_mm": 25.0,
           "height_mm": 45.0,
@@ -69,7 +69,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 240.0,
-            "y_mm": 106.0
+            "y_mm": 108.5
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -83,7 +83,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 205.0,
-            "y_mm": 156.0
+            "y_mm": 158.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -99,7 +99,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 235.0,
-            "y_mm": 171.0
+            "y_mm": 173.5
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -113,7 +113,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 285.0,
-            "y_mm": 118.5
+            "y_mm": 121.0
           },
           "width_mm": 20.0,
           "height_mm": 15.0,
@@ -127,7 +127,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 125.0,
-            "y_mm": 138.5
+            "y_mm": 141.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -144,7 +144,7 @@
           "rotation_deg": 180,
           "origin": {
             "x_mm": 160.0,
-            "y_mm": 138.5
+            "y_mm": 141.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -158,7 +158,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 160.0,
-            "y_mm": 158.5
+            "y_mm": 161.0
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -172,7 +172,7 @@
           "rotation_deg": 180,
           "origin": {
             "x_mm": 175.0,
-            "y_mm": 138.5
+            "y_mm": 141.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -186,7 +186,7 @@
           "rotation_deg": 180,
           "origin": {
             "x_mm": 175.0,
-            "y_mm": 163.5
+            "y_mm": 151.0
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -200,7 +200,7 @@
           "rotation_deg": 270,
           "origin": {
             "x_mm": 175.0,
-            "y_mm": 178.5
+            "y_mm": 166.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -216,7 +216,7 @@
           "rotation_deg": 180,
           "origin": {
             "x_mm": 190.0,
-            "y_mm": 138.5
+            "y_mm": 141.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -230,7 +230,7 @@
           "rotation_deg": 180,
           "origin": {
             "x_mm": 190.0,
-            "y_mm": 158.5
+            "y_mm": 161.0
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -244,7 +244,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 132.5,
-            "y_mm": 123.5
+            "y_mm": 126.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -258,7 +258,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 147.5,
-            "y_mm": 123.5
+            "y_mm": 126.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -272,7 +272,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 147.5,
-            "y_mm": 108.5
+            "y_mm": 111.0
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -286,7 +286,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 215.0,
-            "y_mm": 123.5
+            "y_mm": 126.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -300,7 +300,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 215.0,
-            "y_mm": 138.5
+            "y_mm": 141.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -314,7 +314,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 115.0,
-            "y_mm": 138.5
+            "y_mm": 141.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -328,7 +328,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 107.5,
-            "y_mm": 138.5
+            "y_mm": 141.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -342,7 +342,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 107.5,
-            "y_mm": 123.5
+            "y_mm": 126.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -356,7 +356,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 147.5,
-            "y_mm": 136.0
+            "y_mm": 138.5
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -370,7 +370,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 140.0,
-            "y_mm": 138.5
+            "y_mm": 141.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -384,7 +384,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 215.0,
-            "y_mm": 156.0
+            "y_mm": 158.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -398,7 +398,7 @@
           "rotation_deg": 90,
           "origin": {
             "x_mm": 230.0,
-            "y_mm": 111.0
+            "y_mm": 113.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -412,7 +412,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 227.5,
-            "y_mm": 98.5
+            "y_mm": 101.0
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -426,7 +426,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 220.0,
-            "y_mm": 101.0
+            "y_mm": 103.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -440,7 +440,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 255.0,
-            "y_mm": 138.5
+            "y_mm": 141.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -454,7 +454,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 255.0,
-            "y_mm": 123.5
+            "y_mm": 126.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -468,7 +468,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 262.5,
-            "y_mm": 121.0
+            "y_mm": 123.5
           },
           "width_mm": 10.0,
           "height_mm": 10.0,
@@ -482,7 +482,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 275.0,
-            "y_mm": 123.5
+            "y_mm": 126.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -496,7 +496,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 115.0,
-            "y_mm": 98.5
+            "y_mm": 101.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -510,7 +510,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 107.5,
-            "y_mm": 98.5
+            "y_mm": 101.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -524,7 +524,7 @@
           "rotation_deg": 0,
           "origin": {
             "x_mm": 107.5,
-            "y_mm": 83.5
+            "y_mm": 86.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -538,7 +538,7 @@
           "rotation_deg": 90,
           "origin": {
             "x_mm": 160.0,
-            "y_mm": 148.5
+            "y_mm": 151.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -552,7 +552,7 @@
           "rotation_deg": 90,
           "origin": {
             "x_mm": 190.0,
-            "y_mm": 148.5
+            "y_mm": 151.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -574,21 +574,21 @@
             [
               {
                 "x_mm": 152.5,
-                "y_mm": 126.0
+                "y_mm": 128.5
               },
               {
                 "x_mm": 215.0,
-                "y_mm": 126.0
+                "y_mm": 128.5
               }
             ],
             [
               {
                 "x_mm": 220.0,
-                "y_mm": 126.0
+                "y_mm": 128.5
               },
               {
                 "x_mm": 225.0,
-                "y_mm": 126.0
+                "y_mm": 128.5
               }
             ]
           ],
@@ -608,21 +608,21 @@
             [
               {
                 "x_mm": 225.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 220.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ],
             [
               {
                 "x_mm": 215.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 195.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ]
           ],
@@ -643,31 +643,31 @@
             [
               {
                 "x_mm": 125.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 120.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ],
             [
               {
                 "x_mm": 115.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 112.5,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ],
             [
               {
                 "x_mm": 107.5,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 102.5,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ]
           ],
@@ -687,21 +687,21 @@
             [
               {
                 "x_mm": 102.5,
-                "y_mm": 126.0
+                "y_mm": 128.5
               },
               {
                 "x_mm": 107.5,
-                "y_mm": 126.0
+                "y_mm": 128.5
               }
             ],
             [
               {
                 "x_mm": 112.5,
-                "y_mm": 126.0
+                "y_mm": 128.5
               },
               {
                 "x_mm": 132.5,
-                "y_mm": 126.0
+                "y_mm": 128.5
               }
             ]
           ],
@@ -720,11 +720,11 @@
             [
               {
                 "x_mm": 175.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 165.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ]
           ],
@@ -745,31 +745,31 @@
             [
               {
                 "x_mm": 160.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 152.5,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ],
             [
               {
                 "x_mm": 147.5,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 145.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ],
             [
               {
                 "x_mm": 140.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 130.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ]
           ],
@@ -788,11 +788,11 @@
             [
               {
                 "x_mm": 190.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 180.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ]
           ],
@@ -811,11 +811,11 @@
             [
               {
                 "x_mm": 137.5,
-                "y_mm": 126.0
+                "y_mm": 128.5
               },
               {
                 "x_mm": 147.5,
-                "y_mm": 126.0
+                "y_mm": 128.5
               }
             ]
           ],
@@ -835,21 +835,21 @@
             [
               {
                 "x_mm": 210.0,
-                "y_mm": 158.5
+                "y_mm": 161.0
               },
               {
                 "x_mm": 215.0,
-                "y_mm": 158.5
+                "y_mm": 161.0
               }
             ],
             [
               {
                 "x_mm": 220.0,
-                "y_mm": 158.5
+                "y_mm": 161.0
               },
               {
                 "x_mm": 225.0,
-                "y_mm": 158.5
+                "y_mm": 161.0
               }
             ]
           ],
@@ -871,41 +871,41 @@
             [
               {
                 "x_mm": 232.5,
-                "y_mm": 121.0
+                "y_mm": 123.5
               },
               {
                 "x_mm": 232.5,
-                "y_mm": 116.0
+                "y_mm": 118.5
               }
             ],
             [
               {
                 "x_mm": 232.5,
-                "y_mm": 111.0
+                "y_mm": 113.5
               },
               {
                 "x_mm": 232.5,
-                "y_mm": 103.5
+                "y_mm": 106.0
               }
             ],
             [
               {
                 "x_mm": 227.5,
-                "y_mm": 103.5
+                "y_mm": 106.0
               },
               {
                 "x_mm": 225.0,
-                "y_mm": 103.5
+                "y_mm": 106.0
               }
             ],
             [
               {
                 "x_mm": 220.0,
-                "y_mm": 103.5
+                "y_mm": 106.0
               },
               {
                 "x_mm": 202.5,
-                "y_mm": 103.5
+                "y_mm": 106.0
               }
             ]
           ],
@@ -925,29 +925,29 @@
             [
               {
                 "x_mm": 305.0,
-                "y_mm": 126.0
+                "y_mm": 128.5
               },
               {
                 "x_mm": 307.5,
-                "y_mm": 126.0
+                "y_mm": 128.5
               },
               {
                 "x_mm": 307.5,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 260.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ],
             [
               {
                 "x_mm": 255.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               },
               {
                 "x_mm": 250.0,
-                "y_mm": 141.0
+                "y_mm": 143.5
               }
             ]
           ],
@@ -969,41 +969,41 @@
             [
               {
                 "x_mm": 250.0,
-                "y_mm": 126.0
+                "y_mm": 128.5
               },
               {
                 "x_mm": 255.0,
-                "y_mm": 126.0
+                "y_mm": 128.5
               }
             ],
             [
               {
                 "x_mm": 260.0,
-                "y_mm": 126.0
+                "y_mm": 128.5
               },
               {
                 "x_mm": 262.5,
-                "y_mm": 126.0
+                "y_mm": 128.5
               }
             ],
             [
               {
                 "x_mm": 272.5,
-                "y_mm": 126.0
+                "y_mm": 128.5
               },
               {
                 "x_mm": 275.0,
-                "y_mm": 126.0
+                "y_mm": 128.5
               }
             ],
             [
               {
                 "x_mm": 280.0,
-                "y_mm": 126.0
+                "y_mm": 128.5
               },
               {
                 "x_mm": 285.0,
-                "y_mm": 126.0
+                "y_mm": 128.5
               }
             ]
           ],
@@ -1024,42 +1024,42 @@
             [
               {
                 "x_mm": 127.5,
-                "y_mm": 138.5
+                "y_mm": 141.0
               },
               {
                 "x_mm": 127.5,
-                "y_mm": 101.0
+                "y_mm": 103.5
               },
               {
                 "x_mm": 120.0,
-                "y_mm": 101.0
+                "y_mm": 103.5
               }
             ],
             [
               {
                 "x_mm": 115.0,
-                "y_mm": 101.0
+                "y_mm": 103.5
               },
               {
                 "x_mm": 112.5,
-                "y_mm": 101.0
+                "y_mm": 103.5
               }
             ],
             [
               {
                 "x_mm": 107.5,
-                "y_mm": 101.0
+                "y_mm": 103.5
               },
               {
                 "x_mm": 102.5,
-                "y_mm": 101.0
+                "y_mm": 103.5
               }
             ]
           ],
           "crossings": [
             {
               "x_mm": 127.5,
-              "y_mm": 126.0
+              "y_mm": 128.5
             }
           ],
           "flow_kind": "ordinary",
@@ -1077,25 +1077,25 @@
             [
               {
                 "x_mm": 102.5,
-                "y_mm": 86.0
+                "y_mm": 88.5
               },
               {
                 "x_mm": 107.5,
-                "y_mm": 86.0
+                "y_mm": 88.5
               }
             ],
             [
               {
                 "x_mm": 112.5,
-                "y_mm": 86.0
+                "y_mm": 88.5
               },
               {
                 "x_mm": 135.0,
-                "y_mm": 86.0
+                "y_mm": 88.5
               },
               {
                 "x_mm": 135.0,
-                "y_mm": 123.5
+                "y_mm": 126.0
               }
             ]
           ],
@@ -1115,21 +1115,21 @@
             [
               {
                 "x_mm": 162.5,
-                "y_mm": 143.5
+                "y_mm": 146.0
               },
               {
                 "x_mm": 162.5,
-                "y_mm": 148.5
+                "y_mm": 151.0
               }
             ],
             [
               {
                 "x_mm": 162.5,
-                "y_mm": 153.5
+                "y_mm": 156.0
               },
               {
                 "x_mm": 162.5,
-                "y_mm": 158.5
+                "y_mm": 161.0
               }
             ]
           ],
@@ -1149,21 +1149,21 @@
             [
               {
                 "x_mm": 192.5,
-                "y_mm": 143.5
+                "y_mm": 146.0
               },
               {
                 "x_mm": 192.5,
-                "y_mm": 148.5
+                "y_mm": 151.0
               }
             ],
             [
               {
                 "x_mm": 192.5,
-                "y_mm": 153.5
+                "y_mm": 156.0
               },
               {
                 "x_mm": 192.5,
-                "y_mm": 158.5
+                "y_mm": 161.0
               }
             ]
           ],
@@ -1182,11 +1182,11 @@
             [
               {
                 "x_mm": 242.5,
-                "y_mm": 121.0
+                "y_mm": 123.5
               },
               {
                 "x_mm": 242.5,
-                "y_mm": 116.0
+                "y_mm": 118.5
               }
             ]
           ],
@@ -1205,11 +1205,11 @@
             [
               {
                 "x_mm": 237.5,
-                "y_mm": 166.0
+                "y_mm": 168.5
               },
               {
                 "x_mm": 237.5,
-                "y_mm": 171.0
+                "y_mm": 173.5
               }
             ]
           ],
@@ -1228,11 +1228,11 @@
             [
               {
                 "x_mm": 177.5,
-                "y_mm": 178.5
+                "y_mm": 166.0
               },
               {
                 "x_mm": 177.5,
-                "y_mm": 173.5
+                "y_mm": 161.0
               }
             ]
           ],
@@ -1251,11 +1251,11 @@
             [
               {
                 "x_mm": 177.5,
-                "y_mm": 163.5
+                "y_mm": 151.0
               },
               {
                 "x_mm": 177.5,
-                "y_mm": 143.5
+                "y_mm": 146.0
               }
             ]
           ],
@@ -1274,11 +1274,11 @@
             [
               {
                 "x_mm": 150.0,
-                "y_mm": 123.5
+                "y_mm": 126.0
               },
               {
                 "x_mm": 150.0,
-                "y_mm": 118.5
+                "y_mm": 121.0
               }
             ]
           ],
@@ -1294,7 +1294,7 @@
           "role": "tag",
           "anchor": {
             "x_mm": 80.0,
-            "y_mm": 119.5
+            "y_mm": 122.0
           },
           "leader_from": null
         },
@@ -1304,7 +1304,7 @@
           "role": "tag",
           "anchor": {
             "x_mm": 80.0,
-            "y_mm": 79.5
+            "y_mm": 82.0
           },
           "leader_from": null
         },
@@ -1314,7 +1314,7 @@
           "role": "tag",
           "anchor": {
             "x_mm": 197.5,
-            "y_mm": 99.5
+            "y_mm": 102.0
           },
           "leader_from": null
         },
@@ -1324,7 +1324,7 @@
           "role": "tag",
           "anchor": {
             "x_mm": 235.0,
-            "y_mm": 119.5
+            "y_mm": 122.0
           },
           "leader_from": null
         },
@@ -1334,7 +1334,7 @@
           "role": "tag",
           "anchor": {
             "x_mm": 205.0,
-            "y_mm": 154.5
+            "y_mm": 157.0
           },
           "leader_from": null
         },
@@ -1344,7 +1344,7 @@
           "role": "tag",
           "anchor": {
             "x_mm": 292.5,
-            "y_mm": 117.0
+            "y_mm": 119.5
           },
           "leader_from": null
         },
@@ -1354,7 +1354,7 @@
           "role": "tag",
           "anchor": {
             "x_mm": 175.0,
-            "y_mm": 186.8
+            "y_mm": 174.3
           },
           "leader_from": null
         },
@@ -1364,7 +1364,7 @@
           "role": "tag",
           "anchor": {
             "x_mm": 265.0,
-            "y_mm": 119.5
+            "y_mm": 122.0
           },
           "leader_from": null
         },
@@ -1374,7 +1374,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 104.0,
-            "y_mm": 136.9
+            "y_mm": 139.4
           },
           "leader_from": null
         },
@@ -1384,7 +1384,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 104.0,
-            "y_mm": 96.9
+            "y_mm": 99.4
           },
           "leader_from": null
         },
@@ -1394,7 +1394,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 184.12,
-            "y_mm": 104.4
+            "y_mm": 106.9
           },
           "leader_from": null
         },
@@ -1404,7 +1404,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 251.5,
-            "y_mm": 146.70000000000002
+            "y_mm": 149.20000000000002
           },
           "leader_from": null
         },
@@ -1414,7 +1414,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 246.5,
-            "y_mm": 111.9
+            "y_mm": 114.4
           },
           "leader_from": null
         },
@@ -1424,7 +1424,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 202.5,
-            "y_mm": 164.3
+            "y_mm": 166.8
           },
           "leader_from": null
         },
@@ -1434,7 +1434,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 241.5,
-            "y_mm": 176.9
+            "y_mm": 179.4
           },
           "leader_from": null
         },
@@ -1444,7 +1444,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 290.0,
-            "y_mm": 136.8
+            "y_mm": 139.3
           },
           "leader_from": null
         },
@@ -1454,7 +1454,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 122.5,
-            "y_mm": 146.8
+            "y_mm": 149.3
           },
           "leader_from": null
         },
@@ -1464,7 +1464,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 157.5,
-            "y_mm": 137.0
+            "y_mm": 139.5
           },
           "leader_from": null
         },
@@ -1474,7 +1474,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 145.54,
-            "y_mm": 164.4
+            "y_mm": 166.9
           },
           "leader_from": null
         },
@@ -1484,17 +1484,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 172.5,
-            "y_mm": 137.0
-          },
-          "leader_from": null
-        },
-        {
-          "id": "address-filling-unit-collettore-ritorno-a",
-          "text": "RP.01.N.03.1",
-          "role": "address",
-          "anchor": {
-            "x_mm": 181.5,
-            "y_mm": 171.70000000000002
+            "y_mm": 139.5
           },
           "leader_from": null
         },
@@ -1503,8 +1493,8 @@
           "text": "AF.02.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 181.5,
-            "y_mm": 181.9
+            "x_mm": 172.5,
+            "y_mm": 176.60000000000002
           },
           "leader_from": null
         },
@@ -1514,7 +1504,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 187.5,
-            "y_mm": 137.0
+            "y_mm": 139.5
           },
           "leader_from": null
         },
@@ -1523,8 +1513,8 @@
           "text": "RP.01.N.02.2",
           "role": "address",
           "anchor": {
-            "x_mm": 196.5,
-            "y_mm": 166.70000000000002
+            "x_mm": 185.0,
+            "y_mm": 174.3
           },
           "leader_from": null
         },
@@ -1534,7 +1524,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 130.0,
-            "y_mm": 131.8
+            "y_mm": 134.3
           },
           "leader_from": null
         },
@@ -1544,7 +1534,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 145.0,
-            "y_mm": 131.8
+            "y_mm": 134.3
           },
           "leader_from": null
         },
@@ -1554,7 +1544,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 154.0,
-            "y_mm": 114.4
+            "y_mm": 116.9
           },
           "leader_from": null
         },
@@ -1564,7 +1554,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 212.5,
-            "y_mm": 122.0
+            "y_mm": 124.5
           },
           "leader_from": null
         },
@@ -1574,7 +1564,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 212.5,
-            "y_mm": 137.0
+            "y_mm": 139.5
           },
           "leader_from": null
         },
@@ -1584,7 +1574,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 112.5,
-            "y_mm": 134.7
+            "y_mm": 137.2
           },
           "leader_from": null
         },
@@ -1594,7 +1584,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 105.0,
-            "y_mm": 146.8
+            "y_mm": 149.3
           },
           "leader_from": null
         },
@@ -1604,7 +1594,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 105.0,
-            "y_mm": 122.0
+            "y_mm": 124.5
           },
           "leader_from": null
         },
@@ -1614,7 +1604,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 145.0,
-            "y_mm": 134.5
+            "y_mm": 137.0
           },
           "leader_from": null
         },
@@ -1624,7 +1614,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 137.5,
-            "y_mm": 149.10000000000002
+            "y_mm": 151.60000000000002
           },
           "leader_from": null
         },
@@ -1634,7 +1624,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 212.5,
-            "y_mm": 154.5
+            "y_mm": 157.0
           },
           "leader_from": null
         },
@@ -1644,7 +1634,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 216.62,
-            "y_mm": 114.4
+            "y_mm": 116.9
           },
           "leader_from": null
         },
@@ -1654,7 +1644,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 234.0,
-            "y_mm": 104.4
+            "y_mm": 106.9
           },
           "leader_from": null
         },
@@ -1664,7 +1654,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 206.62,
-            "y_mm": 106.7
+            "y_mm": 109.2
           },
           "leader_from": null
         },
@@ -1674,7 +1664,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 252.5,
-            "y_mm": 137.0
+            "y_mm": 139.5
           },
           "leader_from": null
         },
@@ -1684,7 +1674,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 252.5,
-            "y_mm": 119.7
+            "y_mm": 122.2
           },
           "leader_from": null
         },
@@ -1694,7 +1684,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 262.5,
-            "y_mm": 134.3
+            "y_mm": 136.8
           },
           "leader_from": null
         },
@@ -1704,7 +1694,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 272.5,
-            "y_mm": 122.0
+            "y_mm": 124.5
           },
           "leader_from": null
         },
@@ -1714,7 +1704,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 112.5,
-            "y_mm": 106.8
+            "y_mm": 109.3
           },
           "leader_from": null
         },
@@ -1724,7 +1714,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 105.0,
-            "y_mm": 94.7
+            "y_mm": 97.2
           },
           "leader_from": null
         },
@@ -1734,7 +1724,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 105.0,
-            "y_mm": 82.0
+            "y_mm": 84.5
           },
           "leader_from": null
         },
@@ -1744,7 +1734,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 145.54,
-            "y_mm": 151.9
+            "y_mm": 154.4
           },
           "leader_from": null
         },
@@ -1754,7 +1744,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 196.5,
-            "y_mm": 151.9
+            "y_mm": 154.4
           },
           "leader_from": null
         }
