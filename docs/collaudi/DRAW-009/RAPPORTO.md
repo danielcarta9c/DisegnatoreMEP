@@ -130,7 +130,7 @@ figura profonda — dal raccordo pende il gruppo, dal gruppo pende il suo ingres
 posti in cui la profondità andava riconosciuta: `hang` che scende lungo la catena, le
 misure di ingombro che la percorrono tutta, e `carry_the_rest`, che riappendeva il solo
 primo livello e **spezzava la figura** lasciando il nipote a seguire il grafo per conto suo.
-Quest'ultimo era il difetto che teneva la tavola 1 a 592,5 mm invece di 425,0.
+Quest'ultimo era il difetto che teneva la tavola 1 a 592,5 mm invece di 430,0.
 
 ### 2.4 §B — la traslazione di blocco
 
@@ -891,6 +891,10 @@ sola — e la prova sull'impilamento tornerà rossa, con la misura che spiega pe
 - **Il padrone dell'ordine degli stacchi** (§7.1).
 - **La posa dei prelievi** addosso al proprio pezzo (§7.2).
 - **La fase del tronco che non sa sciogliere l'anello** (§7.3): fuori perimetro.
+- **La regola di validità più stretta** che farebbe passare la prova di DRAW-007 (§6.5,
+  §7.5): l'ho scritta e misurata, e costa la mossa del pacchetto. Non è nel ramo.
+- **La fixture della prova di DRAW-007**, che non dice ciò che il suo commento dichiara
+  (§7.5, punto 2): è di un altro pacchetto, e il DEV non la corregge da solo.
 - **I-059**, lo spessore del tratto per gerarchia; il riempimento estetico, il cartiglio,
   l'audit dei simboli: fuori perimetro.
 - Nessuna decisione rinumerata, riscritta o cambiata di stato; nessun input del PO chiuso.
