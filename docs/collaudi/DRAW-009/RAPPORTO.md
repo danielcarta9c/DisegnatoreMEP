@@ -59,7 +59,7 @@ sposta tutto intero»
 | `src/disegnatore_mep/layout/flow.py` | `BOUNDARY_FUNCTION`, il mestiere del confine, dichiarato dove stanno gli altri |
 | `src/disegnatore_mep/layout/spine.py` | `carry_the_rest` riappende la figura **intera**, non il solo primo livello; `_inside` riporta dentro il foglio una figura riappesa che ne era uscita (§6.6) |
 | `src/disegnatore_mep/layout/compose.py` | la fase del corredo riceve il foglio, perché `carry_the_rest` ne ha bisogno |
-| `src/disegnatore_mep/layout/improve.py` | §B — `block_of` e `_block_moves`, la traslazione di blocco; `leader_of`/`place_unit` percorrono la figura fino in fondo; una mossa risponde delle sovrapposizioni che **crea**, non di quelle che trova |
+| `src/disegnatore_mep/layout/improve.py` | §B — `block_of` e `_block_moves`, la traslazione di blocco; `leader_of`/`place_unit` percorrono la figura fino in fondo; una mossa risponde delle sovrapposizioni che **crea**, non di quelle che trova; `_hang_moves` percorre tutta l'unità e `_offenders` vede uno stacco più lungo del proprio minimo (§6.6) |
 | `src/disegnatore_mep/graph/lines.py` | una strada muore su un **civico** invece di ribattezzarlo: è la conseguenza di §A.1 sulla lettura degli indirizzi (§2.6) |
 | `docs/prodotto/grafi-di-prova/*.md` | rigenerati dal loro generatore, perché il grafo completato porta un ingresso e una rete in più |
 | `tests/layout/test_objective.py` | §D — la prova sull'impilamento riscritta su ciò che vuole davvero, con la sua negativa |
@@ -71,8 +71,8 @@ sposta tutto intero»
 | `tests/rules/test_ingressi_di_rete.py` | **nuovo** — le prove di §A.1 |
 | `tests/layout/test_traslazione_di_blocco.py` | **nuovo** — le prove di §B |
 | `tests/layout/test_ordine_degli_stacchi.py` | **nuovo** — le prove di §C |
-| `tests/layout/test_posa_a_fasi.py`, `tests/layout/test_traslazione_di_blocco.py`, `tests/layout/test_ordine_degli_stacchi.py` | le tre chiamate a `carry_the_rest` passano il foglio |
-| `docs/collaudi/DRAW-009/**` | rapporto, strumenti di misura — `criteri.py`, `perche-la-strada-bassa-non-c-era.py`, `le-due-sovrapposizioni.py` — pacchetto grafico `prima/` e `dopo/`, impianto 1 |
+| `tests/layout/test_posa_a_fasi.py`, `tests/layout/test_traslazione_di_blocco.py`, `tests/layout/test_ordine_degli_stacchi.py` | le tre chiamate a `carry_the_rest` passano il foglio; in più, nel banco di DRAW-008, `_stringi` non trascina di qua un capofila che sta di là (§6.6) |
+| `docs/collaudi/DRAW-009/**` | rapporto, strumenti di misura — `criteri.py`, `perche-la-strada-bassa-non-c-era.py`, `le-due-sovrapposizioni.py`, `due-prove-senza-caso.py` — pacchetto grafico `prima/` e `dopo/`, impianto 1 |
 
 **Non toccati:** `src/disegnatore_mep/layout/route.py` (l'instradatore e i suoi pesi), il
 catalogo, le regole, i simboli, `naming/`, le decisioni, il registro degli input del PO, i
