@@ -182,6 +182,17 @@ appesi sotto il tronco alla quota del `coil_in`.
     proprio utente gli **ingressi**, non i prelievi: se il PO intende la regola anche per
     quelli è una riga, ma è una scelta di rappresentazione.
     `docs/collaudi/DRAW-009/RAPPORTO.md` §6.1 e §7.2.
+19. **Una prova di `DRAW-007` e la regola monotona di `DRAW-009` non possono valere
+    insieme.** `Improver.is_valid` rifiutava ogni candidata che lasciasse due pezzi
+    addosso; `DRAW-009` la rende monotona — una mossa risponde delle sovrapposizioni che
+    **crea**, non di quelle che trova — perché senza quella regola, sulla posa sovrapposta
+    del rischio 16, *ogni* candidata è non valida e il ciclo resta inchiodato.
+    `test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore` chiede il
+    contrario, e diventa rossa: è l'unica regressione di `DRAW-009`. La regola più stretta
+    che la farebbe passare — «né crea né approfondisce» — toglierebbe al ciclo la
+    traslazione di blocco, misurato. La cura vera è il rischio 16.
+    `docs/collaudi/DRAW-009/RAPPORTO.md` §6.5 e §7.5; lo strumento è
+    `docs/collaudi/DRAW-009/le-due-sovrapposizioni.py`.
 
 ## Pacchetto attivo
 

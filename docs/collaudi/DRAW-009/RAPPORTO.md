@@ -50,7 +50,8 @@ sposta tutto intero»
 | `src/disegnatore_mep/rules/apply.py` | §A.1 — il ponte fra due reti porta il **proprio** confine invece di pescare dalla linea di un altro; la sigla del confine nuovo nella serie del suo pari |
 | `src/disegnatore_mep/layout/place.py` | §A.2 — un **ingresso di rete** non ha una posizione propria e si posa addosso all'utente che serve; le figure appese possono essere profonde |
 | `src/disegnatore_mep/layout/flow.py` | `BOUNDARY_FUNCTION`, il mestiere del confine, dichiarato dove stanno gli altri |
-| `src/disegnatore_mep/layout/spine.py` | `carry_the_rest` riappende la figura **intera**, non il solo primo livello |
+| `src/disegnatore_mep/layout/spine.py` | `carry_the_rest` riappende la figura **intera**, non il solo primo livello; `_inside` riporta dentro il foglio una figura riappesa che ne era uscita (§6.6) |
+| `src/disegnatore_mep/layout/compose.py` | la fase del corredo riceve il foglio, perché `carry_the_rest` ne ha bisogno |
 | `src/disegnatore_mep/layout/improve.py` | §B — `block_of` e `_block_moves`, la traslazione di blocco; `leader_of`/`place_unit` percorrono la figura fino in fondo; una mossa risponde delle sovrapposizioni che **crea**, non di quelle che trova |
 | `src/disegnatore_mep/graph/lines.py` | una strada muore su un **civico** invece di ribattezzarlo: è la conseguenza di §A.1 sulla lettura degli indirizzi (§2.6) |
 | `docs/prodotto/grafi-di-prova/*.md` | rigenerati dal loro generatore, perché il grafo completato porta un ingresso e una rete in più |
@@ -61,7 +62,8 @@ sposta tutto intero»
 | `tests/rules/test_ingressi_di_rete.py` | **nuovo** — le prove di §A.1 |
 | `tests/layout/test_traslazione_di_blocco.py` | **nuovo** — le prove di §B |
 | `tests/layout/test_ordine_degli_stacchi.py` | **nuovo** — le prove di §C |
-| `docs/collaudi/DRAW-009/**` | rapporto, strumenti di misura, pacchetto grafico `prima/` e `dopo/`, impianto 1 |
+| `tests/layout/test_posa_a_fasi.py`, `tests/layout/test_traslazione_di_blocco.py`, `tests/layout/test_ordine_degli_stacchi.py` | le tre chiamate a `carry_the_rest` passano il foglio |
+| `docs/collaudi/DRAW-009/**` | rapporto, strumenti di misura — `criteri.py`, `perche-la-strada-bassa-non-c-era.py`, `le-due-sovrapposizioni.py` — pacchetto grafico `prima/` e `dopo/`, impianto 1 |
 
 **Non toccati:** `src/disegnatore_mep/layout/route.py` (l'instradatore e i suoi pesi), il
 catalogo, le regole, i simboli, `naming/`, le decisioni, il registro degli input del PO, i
@@ -168,6 +170,12 @@ e con quella regola *ogni* candidata risultava non valida: il ciclo restava inch
 sulla posa peggiore che avesse mai avuto, e `_first_routable` girava a vuoto. È lo stesso
 difetto per cui `_first_routable` esiste. La regola diventa monotona: ciò che nessuna mossa
 può fare è **aggiungere** una sovrapposizione.
+
+**Ha un prezzo, ed è una prova di DRAW-007 che diventa rossa**:
+`test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore`. È l'unica
+regressione di questo pacchetto, è misurata in §6.5, e la misura dice anche perché non si
+chiude con una regola più stretta: quella che la farebbe passare — «né crea né
+approfondisce» — toglierebbe al ciclo proprio la mossa che DRAW-009 aggiunge.
 
 ### 2.6 La conseguenza di §A.1 sulla lettura degli indirizzi
 
@@ -643,7 +651,7 @@ _(compilato dall'esecuzione finale — vedi §4.3.1)_
 ### 4.4 `ruff` e `mypy`
 
 ```
-$ .venv/bin/python -m ruff check src tests
+$ .venv/bin/python -m ruff check src tests docs/collaudi/DRAW-009
 All checks passed!
 
 $ .venv/bin/python -m mypy src tests
@@ -708,6 +716,98 @@ terzo ripiego — il ciclo senza le fasi. Le misure di §4.2 sono quelle di quel
 a fare il proprio lavoro: `SpineLayout` resta la fonte di `is_valid` per la rettilineità, e
 l'elenco delle autostrade impossibili viene da lì.
 
+### 6.5 Una prova di DRAW-007 diventa rossa, ed è l'unica regressione
+
+`tests/layout/test_assi_dorsali_tee.py::test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore`
+passa sulla testa di partenza e non passa qui. La causa è §2.5, ed è **voluta fin dove la
+misura arriva**, non un incidente: le due cose non possono valere insieme finché la fase
+del tronco consegna pose sovrapposte (§6.3).
+
+```
+$ .venv/bin/python docs/collaudi/DRAW-009/le-due-sovrapposizioni.py
+1. la posa da cui la prova di DRAW-007 parte
+   serbatoio  y= 166.0 ..  211.0  (x=  97.5, larghezza 25)
+   riserva    y= 178.5 ..  223.5  (x=  97.5, larghezza 25)
+   gia' addosso: True  compenetrazione = (35.0, 42.5) mm
+   la mossa che la prova vuole rifiutata porta la compenetrazione a (35.0, 52.5) mm
+   is_valid con la regola consegnata: True
+   la stessa mossa approfondisce: True
+
+2. che cosa di quella prova regge lo stesso
+   A. la mossa che si allinea da sola e' rifiutata .... False   <- l'unica che cade
+   B. il ciclo non peggiora mai la tavola ............. True   ((0, 0, 0.0, 1, 56, 12, 2410.0) -> (0, 0, 0.0, 1, 24, 8, 890.0))
+   C. la tavola finisce senza violazioni ............. True   (0)
+   D. ogni mossa accettata batte la precedente ....... True   (9 accettate)
+
+3. il banco della traslazione di blocco
+   blocco: generatore, deviatrice, stacco-vaso, ritorno, serbatoio
+   posa di partenza: (0, 0, 0.0, 0, 64, 16, 2085.0, -0.080243, inf)
+   coppie gia' sovrapposte nella posa che la fase del tronco consegna:
+     serbatoio <-> bollitore  compenetrazione = (32.5, 40.0) mm
+     bollitore <-> ritorno  compenetrazione = (2.5, 15.0) mm
+     deviatrice <-> stacco-vaso  compenetrazione = (15.0, 2.5) mm
+   con la regola consegnata (non crea):
+     blocco           (0, 0, 0.0, 0, 32, 0, 1845.0, ...)  scarti=[(0.0, 7.5)]  batte la partenza
+     porta+spazio     (0, 0, 0.0, 0, 64, 16, 2085.0, ...)  scarti=[(5.0, 0.0)]  non la batte
+     allungo          (0, 0, 0.0, 0, 64, 16, 2245.0, ...)  scarti=[(5.0, 0.0)]  non la batte
+     dorsale+spazio   (0, 0, 0.0, 0, 64, 16, 2805.0, ...)  non la batte
+     asse+spazio      (0, 0, 0.0, 0, 64, 32, 3365.0, ...)  non la batte
+   con la regola piu' stretta (ne' crea ne' approfondisce):
+     porta+spazio     (0, 0, 0.0, 0, 64, 16, 2085.0, ...)  scarti=[(5.0, 0.0)]  non la batte
+     blocco           (0, 0, 0.0, 0, 64, 16, 2165.0, ...)  scarti=[(0.0, -2.5)]  non la batte
+     allungo          (0, 0, 0.0, 0, 64, 16, 2245.0, ...)  scarti=[(5.0, 0.0)]  non la batte
+     dorsale+spazio   (0, 0, 0.0, 0, 64, 16, 2805.0, ...)  non la batte
+     asse+spazio      (0, 0, 0.0, 0, 64, 32, 3365.0, ...)  non la batte
+```
+
+Tre cose si leggono lì dentro, e sono le tre che servono a decidere.
+
+1. **La posa da cui quella prova parte è già invalida.** I due accumuli sono 25 × 32,5 mm
+   uno dentro l'altro — stessa colonna, stessa larghezza — prima che qualunque mossa si
+   provi. Ciò che la prova chiama «violare la distanza minima» è quindi «non separare una
+   sovrapposizione **trovata**», che è esattamente la cosa che §2.5 dice che nessuna mossa
+   è tenuta a fare. La prova passava perché `is_valid` era assoluta, cioè per una ragione
+   diversa da quella che il suo commento dichiara.
+2. **La regola più stretta costerebbe il pacchetto.** «Né crea né approfondisce» è una
+   regola migliore in astratto, e l'ho scritta e misurata. Sulla tavola 1 e sulla tavola 2
+   non cambia una cella: 4 pieghe / 485,0 mm e 5 pieghe / 607,5 mm con l'una e con
+   l'altra. Sul banco della traslazione di blocco invece cancella la mossa: la candidata
+   che vince — il blocco che **scende** di 7,5 mm, da 64 pieghe a 32 e da 16 incroci a
+   zero — scende proprio dentro la sovrapposizione che ha trovato, e con la regola più
+   stretta non è più valida. Rimane un solo scarto ammesso, che peggiora la partenza.
+   Nessuna candidata batterebbe più la posa iniziale: il criterio 5 si chiuderebbe in
+   rosso per pagare questa prova.
+3. **Di quella prova cade una asserzione su quattro.** Le altre tre — il ciclo non
+   peggiora mai la tavola, finisce senza violazioni, ogni mossa accettata batte
+   strettamente la precedente — sono l'invariante da cui la prova prende il nome, e
+   valgono: il ciclo porta quella tavola da 56 pieghe e 12 incroci a 24 e 8, in nove mosse
+   accettate.
+
+Non l'ho ammorbidita, non l'ho convertita in `xfail`, non ho toccato la sua fixture. Resta
+rossa, e la decisione è del PM: §7.5.
+
+### 6.6 Quattro difetti trovati strada facendo, e chiusi
+
+Nessuno dei quattro era nel pacchetto; ciascuno è emerso perché §A.2 ha reso le figure
+appese **profonde**, e la profondità li ha scoperti tutti e quattro nello stesso punto.
+
+- **`_rehung` riappendeva dal primo attacco.** Prendeva `ports[0]` del manifesto, che per
+  un ponte a due porte — il gruppo di riempimento — è l'attacco sbagliato: il pezzo si
+  riappendeva dalla parte del ritorno tecnico invece che da quella dell'acqua fredda.
+  Adesso `hanging_ports` dice, per ogni appeso, **il proprio** attacco, e `place.py` è
+  l'unico posto che lo decide.
+- **Un nipote si sedeva sullo stacco del padre.** Il gruppo di riempimento pende dal
+  raccordo; il suo ingresso pende dal gruppo. Senza saperlo, il posatore metteva
+  l'ingresso sulla corsia che lo stacco del gruppo occupava. `stub_lanes` e
+  `off_the_stub_lane` la riservano.
+- **Una figura riappesa finiva sotto il foglio.** Quando il tronco scende, una figura
+  profonda arriva più in basso di chi la regge e può uscire dall'area di disegno; fuori
+  dal foglio una tratta non si instrada, e la fase consegnava una posa che non si poteva
+  nemmeno misurare. `spine._inside` accorcia lo stacco dell'appeso finché rientra, e non
+  scende sotto un passo.
+- **Una strada ribattezzava un civico.** È §2.6, ed è la sola dei quattro che nasce da
+  §A.1 invece che da §A.2.
+
 ---
 
 ## 7. Punti aperti per il PM
@@ -742,6 +842,21 @@ consegnare la **propria** tavola invece della migliore fra i ripieghi.
 §2.4. Offerta anche durante la posa vince sulla chiave e perde l'impilamento dei rami
 paralleli, con la misura riportata lì. Se il PM preferisce l'altra scelta, la riga è una
 sola — e la prova sull'impilamento tornerà rossa, con la misura che spiega perché.
+
+### 7.5 La prova di DRAW-007 in conflitto con §2.5
+
+§6.5. Ci sono tre strade, e nessuna è del DEV.
+
+1. **La cura vera è §6.3**: se la fase del tronco smette di consegnare pose sovrapposte,
+   il conflitto sparisce da sé, perché non ci sarebbe più nessuna sovrapposizione da
+   tollerare, e la regola assoluta e quella monotona direbbero la stessa cosa. È la strada
+   che consiglio, ed è già aperta come §7.3.
+2. **Correggere la fixture di quella prova**, che non dice ciò che il suo commento
+   dichiara: «la riserva sta sopra il serbatoio, a un passo da dove il serbatoio allineato
+   finirebbe», mentre la riserva ci sta dentro per 32,5 mm. È una riga, ma è una prova di
+   un altro pacchetto e il DEV non la tocca senza che il PM lo chieda.
+3. **Tenere la regola assoluta** e rinunciare a §B: la misura di §6.5 dice quanto costa,
+   ed è il criterio 5.
 
 ---
 
