@@ -668,9 +668,27 @@ Found 2 errors in 1 file (checked 159 source files)
 ```
 
 I due errori di `mypy` sono **ereditati**: sono gli stessi, nello stesso file e alle stesse
-righe, sulla testa di partenza (`git stash` e rimisura: `Found 2 errors in 1 file (checked
-156 source files)`). Non sono stati introdotti qui e non sono stati corretti, perché
+righe, sulla testa di partenza — `Found 2 errors in 1 file (checked 156 source files)`
+contro i 159 file di qui. Non sono stati introdotti e non sono stati corretti, perché
 `tests/layout/test_posa_a_fasi.py` è fuori dal perimetro di questo pacchetto.
+
+**Come si misura la testa di partenza, e un tranello da evitare.** Il pacchetto è
+installato in modo *editable*: `.venv/.../__editable__.disegnatore_mep-0.1.0.pth` contiene
+il percorso assoluto `/home/user/DisegnatoreMEP/src`. Un `git worktree` sul commit di
+partenza che riusa quell'ambiente esegue quindi **le prove di prima con il codice di
+adesso**, e la misura che ne esce non è una misura di prima. Tutte le misure della testa
+di partenza in questo rapporto — la suite di §4.3, `mypy`, le tavole di §4.2 — sono prese
+così:
+
+```
+$ git worktree add /tmp/base b63e3e6
+$ cd /tmp/base && ln -s /home/user/DisegnatoreMEP/.venv .venv
+$ PYTHONPATH="$PWD/src" .venv/bin/python -m pytest -q -p no:cacheprovider
+```
+
+`PYTHONPATH` precede le aggiunte dei `.pth`, e con quello `disegnatore_mep` si importa
+davvero dal worktree. Si verifica in una riga:
+`PYTHONPATH="$PWD/src" .venv/bin/python -c "import disegnatore_mep; print(disegnatore_mep.__file__)"`.
 
 ---
 
