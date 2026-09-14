@@ -1,20 +1,21 @@
 # DRAW-010 — Il tronco posa senza pezzi addosso, e l'impianto 4 torna a uscire
 
 **Titolo:** Il tronco posa senza pezzi addosso, e l'impianto 4 torna a uscire
-**Assegnato da:** PM-autore (Claude, in sessione col PO — `OPERATING_MODEL.md` §1.2.1)
+**Assegnato da:** PM (Claude — `OPERATING_MODEL.md` §1.2.1)
 **Assegnato a:** DEV
 **Data:** 2026-09-14
-**Stato:** **BOZZA — da sottoporre al PO.** Il PM-autore non approva mai il proprio
-pacchetto. I contenuti di §D vengono dal PO in sessione il 14 settembre 2026; §A, §B, §C
-ed §E sono proposta del PM e vanno approvati prima che il lavoro cominci
+**Stato:** **ATTIVO.** Il PO ha disposto in sessione il 14 settembre 2026 che il pacchetto
+vada su `main`, così che la sessione DEV successiva sappia che cosa fare. I contenuti di §D
+sono **disposizioni del PO** date quella sera (D-126, D-127, D-129); §A, §B, §C ed §E sono
+mezzi scelti dal PM in funzione di ciò che la verifica di `DRAW-009` ha trovato
 **Release:** 0.3 — generalizzazione, revisione della tavola 2
 **Ramo:** quello che la piattaforma assegna alla sessione. Il pacchetto **non ne prescrive
 uno**
 **Commit di partenza:** la testa di `main` con `DRAW-009` fuso (`2155c22`, PR #27)
 **Fixture grafica principale:** impianto 4 e impianto 2; impianto 1 come regressione automatica
 
-> **Leggere prima:** `docs/pm/2026-09-14-review-pr27-draw009.md` (il verdetto del
-> PM-revisore, in particolare §3.1 e la postilla sull'impianto 4) e
+> **Leggere prima:** `docs/pm/2026-09-14-review-pr27-draw009.md` (il verdetto del PM sulla
+> consegna precedente, in particolare §3.1 e la postilla sull'impianto 4) e
 > `docs/collaudi/DRAW-009/RAPPORTO.md` §6.3, §6.5 e §7.3. Questo pacchetto ne è il seguito
 > e non li ripete.
 
@@ -31,7 +32,7 @@ non è peggiorata su nessuno.
 
 ### L'impianto 4 non produce più una tavola
 
-Misurato dal PM-revisore sulla testa di `main` appena fusa, con lo stesso comando sui due
+Misurato dal PM sulla testa di `main` appena fusa, con lo stesso comando sui due
 lati:
 
 | impianto 4 | esito |
@@ -74,7 +75,7 @@ dall'impasse, ma il cancello che avrebbe intercettato una posa sovrapposta resta
 e una prova di `DRAW-007` è diventata rossa (rischio 19).
 
 E la posa intermedia **è peggiorata**, cosa che il rapporto di consegna dichiara come
-invariata. Misura del PM-revisore, stesso strumento sui due lati:
+invariata. Misura del PM, stesso strumento sui due lati:
 
 | posa consegnata dalla fase del tronco, tavola 2 | base `b63e3e6` | `main` `2155c22` |
 |---|---|---|
@@ -153,7 +154,7 @@ questa regola.
 
 ### D.3 Lo scarico del bollitore sta dal lato del serbatoio
 
-Difetto trovato dal PM-revisore rispondendo al PO, e **antecedente**: stesso ordine sulla
+Difetto trovato dal PM rispondendo al PO, e **antecedente**: stesso ordine sulla
 base `b63e3e6`. La catena dell'acqua fredda è
 
 ```
@@ -249,8 +250,8 @@ irraggiungibile si dichiara tale con la misura che lo prova, non si ammorbidisce
 
 Una PR sola, non fusa. Rapporto in `docs/collaudi/DRAW-010/RAPPORTO.md` con i sedici criteri
 chiusi uno per uno; pacchetto grafico `prima/` e `dopo/` per l'impianto 4 e per la tavola 2,
-con l'impianto 1 misurato come regressione. Il DEV apre la PR e si ferma; il PM-revisore è
-un agente separato avviato da zero.
+con l'impianto 1 misurato come regressione. Il DEV apre la PR e si ferma; verifica e merge sono
+del PM, che è una sessione diversa dal DEV.
 
 ---
 

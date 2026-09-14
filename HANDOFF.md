@@ -30,19 +30,19 @@ L'AI non modifica direttamente coordinate o connettività approvata.
 
 - **PO — Daniel Carta:** dominio MEP, requisiti, convenzioni grafiche, priorità e giudizio
   finale del prodotto.
-- **PM — sdoppiato dal 10 settembre 2026** (Codex non è più disponibile):
-  - **PM-autore**, tenuto da Claude in sessione col PO: fonti, traduzione degli input PO,
-    roadmap, Work Package, criteri di accettazione, documentazione corrente. Non approva
-    mai il proprio pacchetto — lo sottopone al PO prima che il lavoro cominci;
-  - **PM-revisore**, un **agente separato avviato da zero su ogni consegna**: giudizio
-    criterio per criterio, con i criteri e gli artefatti in mano **prima** del rapporto
-    del DEV;
-  - **il merge su `main` è del PM-revisore** (D-125).
+- **PM — Claude, uno solo** (D-130, 14 settembre 2026): pacchetti, criteri di
+  accettazione, fonti, traduzione degli input del PO, roadmap, documentazione corrente;
+  verifica della consegna **criterio per criterio**; merge su `main`, solo tramite pull
+  request. Non approva i propri pacchetti al posto del PO: li sottopone prima che il lavoro
+  cominci. Lo sdoppiamento in PM-autore e PM-revisore, disposto il 10 settembre, è abolito.
 
-  Le regole che lo rendono avversariale: `docs/governance/OPERATING_MODEL.md` §1.2.1.
-- **DEV — Claude:** implementazione, test, artefatti e proposte tecniche reversibili
-  dentro il Work Package. Non deduce requisiti dagli esempi e non decide regole MEP.
-  Quando indossa il cappello del PM-autore lo dichiara.
+  **Ciò che resta separato è che il PM non è il DEV.** Le regole con cui il PM verifica —
+  prima le misure e poi il racconto del DEV, ogni criterio chiuso con un comando e il suo
+  output, la suite riletta per intero — stanno in `OPERATING_MODEL.md` §1.2.1.
+
+- **DEV — Claude, in una sessione diversa dal PM:** implementazione, test, artefatti e
+  proposte tecniche reversibili dentro il Work Package. Non deduce requisiti dagli esempi e
+  non decide regole MEP.
 
 ## Ordine di lettura DEV
 
@@ -65,13 +65,13 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
   criteri irraggiungibili alla lettera: `docs/collaudi/DRAW-008/RAPPORTO.md` §6 e §7. Una
   delle tre regressioni il PO l'ha già chiusa per decisione (l'ordine delle due zone è
   indifferente); le altre due sono voci di `DRAW-009`.
-- `DRAW-009` è stato **verificato dal PM-revisore e fuso** il 14 settembre con la PR #27
+- `DRAW-009` è stato **verificato dal PM e fuso** il 14 settembre con la PR #27
   (`2155c22`): dodici criteri raggiunti, quattro raggiunti in parte, nessuno non raggiunto.
   Verdetto in `docs/pm/2026-09-14-review-pr27-draw009.md`. **Dopo il merge** si è scoperto
   che l'impianto 4 non produce più una tavola: §7 del verdetto, e primo criterio del
   pacchetto nuovo.
-- Il pacchetto attivo è **`DRAW-010`** (`ACTIVE_WORK_PACKAGE.md`), **in bozza del PM-autore,
-  non ancora approvato dal PO**.
+- Il pacchetto attivo è **`DRAW-010`** (`ACTIVE_WORK_PACKAGE.md`): il tronco posa senza
+  pezzi addosso, e l'impianto 4 torna a uscire. Sedici criteri, con le misure di partenza.
 - **Chi tocca posa, costo o routing legge prima due documenti**, in quest'ordine:
   `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md` — l'ordine delle decisioni che il
   PO ha fissato: prima le autostrade e dritte, poi il corredo con lo stretch invece della

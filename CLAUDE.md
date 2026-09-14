@@ -14,4 +14,9 @@ si apre soltanto quando il pacchetto rinvia a una decisione precisa: non è onbo
 
 Se il Work Package è assente, già consegnato, ambiguo o incompatibile con lo stato del repository, fermati e riferisci al PM. Non scegliere autonomamente il lavoro successivo.
 
-Il DEV consegna tramite PR e non esegue il merge. Dal 10 settembre 2026 il ruolo PM è **sdoppiato** (`docs/governance/OPERATING_MODEL.md` §1.2.1): il **PM-autore** — questo assistente, in sessione col PO — scrive il pacchetto e i criteri e li sottopone al PO prima che il lavoro cominci; il **PM-revisore** è un **agente separato avviato da zero su ogni consegna**, che giudica criterio per criterio con i criteri e gli artefatti in mano prima del rapporto del DEV; **il merge su `main` è del PM-revisore** (D-125). Quando indossi il cappello del PM-autore, dichiaralo.
+Il DEV consegna tramite PR e non esegue il merge. **Il PM è uno solo**
+(`docs/governance/OPERATING_MODEL.md` §1.2.1, D-130 del 14 settembre 2026): scrive i pacchetti
+e i criteri, li sottopone al PO prima che il lavoro cominci, verifica la consegna criterio per
+criterio e fonde su `main` — solo tramite pull request. Ciò che resta separato è che **il PM
+non è il DEV**: il DEV lavora in una sessione diversa, esegue soltanto il pacchetto attivo,
+apre la PR e si ferma.

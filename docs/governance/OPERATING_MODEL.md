@@ -67,39 +67,52 @@ Gli appartengono:
 - l'**accettazione o il rifiuto** della consegna, criterio per criterio;
 - la porta d'ingresso su `main`: nessuna PR entra senza la sua accettazione.
 
-#### 1.2.1 Il PM sdoppiato (PO, 10 settembre 2026)
+#### 1.2.1 Il PM è uno solo (PO, 14 settembre 2026 — D-130)
 
-Dal 10 settembre 2026 il ruolo PM non è più tenuto da un agente esterno dedicato. Il PO ha
-disposto che venga **sdoppiato**, perché i compiti che contiene hanno bisogno di due cose
-opposte:
+Dal 14 settembre 2026 **il PM è uno**. Scrive i pacchetti, verifica le consegne e fonde su
+`main`. Lo sdoppiamento in PM-autore e PM-revisore, disposto il 10 settembre, è **abolito**:
+il PO l'ha giudicato una stortura, e lo era — aveva creato due interlocutori dove il PO ne
+vede uno, e costringeva a dichiarare quale cappello si stesse indossando in mezzo a una
+conversazione.
 
-| | Chi | Perché |
-|---|---|---|
-| **PM-autore** | l'assistente in sessione col PO | Pacchetto, criteri di accettazione, soglie, traduzione degli input del PO, roadmap, documentazione corrente. Qui serve **memoria del progetto**: un agente che riparte da zero scrive pacchetti peggiori |
-| **PM-revisore** | un **agente separato, avviato da zero su ogni consegna** | Verifica della consegna, criterio per criterio. Qui la memoria è un **handicap**: chi ha scritto il codice si porta dietro le proprie razionalizzazioni, e il difetto grosso di `DRAW-006-R1` è stato trovato da una revisione indipendente, non dal DEV |
-| **Merge su `main`** | il **PM-revisore** (dal 14 settembre 2026, **D-125**) | Fonde chi ha misurato, e non è chi ha scritto il codice. Fino al 13 settembre il merge era del PO; il PO ha disposto che non opera direttamente su git, e la porta d'ingresso su `main` è tornata al PM come vuole D-123. Il contrappeso resta dov'è: il PM-revisore è **avviato da zero su ogni consegna**. La regola «il DEV non fonde» non cambia, e restano tutti e nove gli obblighi di §3 — in particolare, su `main` si arriva **solo tramite pull request** |
+Gli appartiene per intero:
 
-**Il PM-autore non approva mai il proprio pacchetto.** Ogni pacchetto è sottoposto al PO
-prima che il lavoro cominci; il PO lo approva, lo corregge o lo respinge.
+| | |
+|---|---|
+| **I pacchetti** | Obiettivi, perimetro dei file, criteri di accettazione, pianificazione, traduzione degli input del PO, documentazione corrente |
+| **La verifica** | Accettazione o rifiuto della consegna, **criterio per criterio**, con i comandi e i loro output |
+| **Il merge su `main`** | Fonde chi ha misurato. Solo tramite pull request, mai con un merge locale seguito da push (§3, obblighi 2 e 3). La regola «il DEV non fonde» non cambia (D-125) |
+| **Le correzioni** | In funzione di ciò che la verifica ha trovato, il PM scrive che cosa va fatto nel pacchetto successivo |
 
-**Regole che rendono avversariale il PM-revisore.** Senza queste è teatro:
+**Ciò che resta separato, ed è la cosa che conta: il PM non è il DEV.** Il difetto grosso di
+`DRAW-006-R1` fu trovato da una verifica indipendente e non da chi aveva scritto il codice.
+L'indipendenza sta lì, fra chi esegue e chi giudica, non in due metà del PM. Il DEV lavora in
+una **sessione separata**, esegue soltanto il pacchetto attivo, apre la PR e si ferma.
 
-1. **Riceve i criteri e gli artefatti, non il racconto.** Il rapporto di consegna del DEV
-   gli è precluso finché non ha formato le proprie misure. Poi lo legge, e segnala le
-   differenze.
-2. **Ogni criterio si chiude con un comando e il suo output.** Non «verificato»: il
-   comando eseguito e ciò che ha stampato. Un criterio senza prova eseguibile è **non
-   raggiunto**, non «probabilmente raggiunto».
+**Come il PM verifica.** Queste regole non dipendevano dallo sdoppiamento e restano:
+
+1. **Prima le misure, poi il racconto.** Il rapporto di consegna del DEV si legge **dopo**
+   aver formato le proprie misure, e poi si segnalano le differenze. Vale anche per il corpo
+   della PR e per i messaggi dei commit.
+2. **Ogni criterio si chiude con un comando e il suo output.** Non «verificato»: il comando
+   eseguito e ciò che ha stampato. Un criterio senza prova eseguibile è **non raggiunto**,
+   non «probabilmente raggiunto».
 3. **Un criterio che nomina un risultato osservabile si prova sul risultato osservabile.**
-   «Il motore genera la candidata» non chiude «sulla tavola le due macchine sono
-   allineate». È l'errore di `DRAW-006-R1`.
-4. **Riesegue la suite integrale**, e non si fida del numero dichiarato dal DEV.
-5. **Il suo verdetto è scritto**, criterio per criterio, e vive in `docs/pm/`.
+   «Il motore genera la candidata» non chiude «sulla tavola le due macchine sono allineate».
+   È l'errore di `DRAW-006-R1`.
+4. **La suite si riesegue per intero**, sui due lati, e non ci si fida del numero dichiarato
+   dal DEV.
+5. **Il verdetto è scritto**, criterio per criterio, e vive in `docs/pm/`.
 
-**Limite dichiarato, che il PO conosce.** PM-autore e PM-revisore condividono oggi lo
-stesso modello, quindi i punti ciechi sono in parte correlati. Si mitiga con la regola 1 —
-dare i file e i criteri, mai la narrazione — ma non si annulla. Quando torna disponibile
-un agente di modello diverso, il PM-revisore torna a lui.
+**Una sesta regola, nata dalla verifica di `DRAW-009`.** Si misura anche **ciò che il
+pacchetto dichiara fuori perimetro**, quando è una capacità che il prodotto aveva. L'impianto
+4 produceva una tavola prima di `DRAW-009` e non la produce dopo; nessun criterio lo
+chiedeva, nessuna prova lo sorvegliava, e la verifica non se n'è accorta perché quella misura
+era stata saltata proprio in quanto fuori perimetro.
+
+**Il PM non approva i propri pacchetti al posto del PO.** Un pacchetto si sottopone al PO
+prima che il lavoro cominci; il PO lo approva, lo corregge o lo respinge. Ciò che il PM
+decide da sé sono i **mezzi**: perimetro dei file, criteri, ordine dei lavori.
 
 ### 1.3 DEV — team di sviluppo
 
@@ -160,12 +173,10 @@ PO                    PM                         DEV
 Nessuna freccia salta un passaggio. In particolare: **non esiste una freccia dal DEV a
 `main`.**
 
-Dal 10 settembre 2026, col PM sdoppiato (§1.2.1), lo schema si legge così: la colonna «PM»
-è il **PM-autore** finché scrive il pacchetto, e diventa il **PM-revisore** — un agente
-separato, avviato da zero — quando arriva la consegna. La freccia finale del merge parte dal
-**PM-revisore** (D-125, 14 settembre 2026): fonde chi ha misurato la consegna. Il PO entra
-prima — approva il pacchetto e i criteri — e dopo, quando guarda il risultato; **non opera
-su git**.
+Dal 14 settembre 2026 (D-130) la colonna «PM» è **una sola persona per tutto il giro**:
+scrive il pacchetto, verifica la consegna e fonde. Il PO entra prima — approva il pacchetto e
+i criteri — e dopo, quando guarda il risultato; **non opera su git**. Ciò che resta separato
+è la colonna «DEV», che è una **sessione diversa**.
 
 ---
 

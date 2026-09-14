@@ -70,7 +70,7 @@ e dall'obiettivo di allineamento. Ha inoltre tolto due cose che non dovevano ess
 
 ### Dove siamo davvero, con DRAW-009 fuso (PR #27, `2155c22`)
 
-`DRAW-009` è stato **verificato dal PM-revisore e fuso** il 14 settembre 2026 attraverso la
+`DRAW-009` è stato **verificato dal PM e fuso** il 14 settembre 2026 attraverso la
 PR #27, su autorizzazione del PO al merge (D-123, disposizione del 14 settembre): dodici
 criteri raggiunti, quattro raggiunti in parte, nessuno non raggiunto. Verdetto criterio per
 criterio in `docs/pm/2026-09-14-review-pr27-draw009.md`. Le misure qui sotto sono quelle del ramo di consegna,
@@ -165,7 +165,7 @@ appesi sotto il tronco alla quota del `coil_in`.
     è una rete di sicurezza, non una soluzione: finché scatta, quell'impianto non gode
     della posa a fasi. `docs/collaudi/DRAW-008/RAPPORTO.md` §6.2.
     **AVVERATO il 14 settembre 2026, dopo il merge di `DRAW-009`.** La rete non regge più:
-    l'impianto 4 **non produce più una tavola**. Misurato dal PM-revisore con lo stesso
+    l'impianto 4 **non produce più una tavola**. Misurato dal PM con lo stesso
     comando sui due lati — su `b63e3e6` esce, su `2155c22` no, in 12 secondi, con
     `run s3-a on network secondario cannot be routed`. Nessuna prova se n'è accorta (rischio
     23). È il primo criterio di `DRAW-010`.
@@ -235,8 +235,9 @@ appesi sotto il tronco alla quota del `coil_in`.
 ## Pacchetto attivo
 
 `DRAW-010 — il tronco posa senza pezzi addosso, e l'impianto 4 torna a uscire`
-(`ACTIVE_WORK_PACKAGE.md`), **in bozza del PM-autore, da sottoporre al PO**. Parte dalla
-testa di `main` con `DRAW-009` fuso (`2155c22`, PR #27).
+(`ACTIVE_WORK_PACKAGE.md`), **attivo**: il PO ha disposto il 14 settembre 2026 che vada su
+`main`, così che la sessione DEV successiva lo trovi. Parte dalla testa di `main` con
+`DRAW-009` fuso (`2155c22`, PR #27).
 
 Le cinque cose che il pacchetto affronta:
 
