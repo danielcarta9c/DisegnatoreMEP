@@ -17,11 +17,16 @@ di raccontarlo.
 Stampa, in quest'ordine:
 
 1. **la posa da cui la prova di DRAW-007 parte**: i due accumuli sono gia'
-   32,5 mm uno dentro l'altro, cioe' la posa di partenza e' gia' invalida. Cio'
+   25 x 32,5 mm uno dentro l'altro — la compenetrazione stampata conta anche i
+   10 mm di stacco fra figure — cioe' la posa di partenza e' gia' invalida. Cio'
    che la prova chiama «violare la distanza minima» e' quindi «non separare una
    sovrapposizione trovata», che e' esattamente cio' che §2.5 dice che nessuna
    mossa e' tenuta a fare;
-2. **il banco della traslazione di blocco**, con la migliore candidata di ogni
+2. **che cosa di quella prova regge lo stesso**: delle sue quattro asserzioni
+   soltanto la prima cade. Le altre tre — il ciclo non peggiora mai la tavola,
+   finisce senza violazioni, e ogni mossa accettata batte strettamente la
+   precedente — sono l'invariante da cui la prova prende il nome, e valgono;
+3. **il banco della traslazione di blocco**, con la migliore candidata di ogni
    specie, due volte: con la regola consegnata, e con la regola piu' stretta
    («ne' crea ne' approfondisce») che farebbe passare la prova di DRAW-007. Con
    quella piu' stretta la mossa che il pacchetto aggiunge **sparisce**: il
@@ -155,12 +160,40 @@ def _draw_007() -> None:
     print(f"   la stessa mossa approfondisce: {_deepens(improver, alone)}")
     print()
 
+    print("2. che cosa di quella prova regge lo stesso")
+    before = improver.measure(improver.best)
+    assert before is not None
+    final = {item.component_id: item for item in improver.run()}
+    after = improver.measure(final)
+    assert after is not None
+    accepted = [entry for entry in improver.journal if entry.accepted]
+    keys = [before.cost.key(), *(entry.cost for entry in accepted if entry.cost)]
+    print(
+        f"   A. la mossa che si allinea da sola e' rifiutata .... "
+        f"{not improver.is_valid(alone)}   <- l'unica che cade"
+    )
+    print(
+        f"   B. il ciclo non peggiora mai la tavola ............. "
+        f"{not before.cost.beats(after.cost)}   "
+        f"({before.cost.key()[:7]} -> {after.cost.key()[:7]})"
+    )
+    print(
+        f"   C. la tavola finisce senza violazioni ............. "
+        f"{after.cost.violations == 0}   ({after.cost.violations})"
+    )
+    print(
+        f"   D. ogni mossa accettata batte la precedente ....... "
+        f"{all(later < earlier for earlier, later in zip(keys, keys[1:], strict=False))}   "
+        f"({len(accepted)} accettate)"
+    )
+    print()
+
 
 def _banco_due_regole() -> None:
     improver, block = _banco()
     base = improver.measure(improver.best)
     assert base is not None
-    print("2. il banco della traslazione di blocco")
+    print("3. il banco della traslazione di blocco")
     print(f"   blocco: {', '.join(block)}")
     print(f"   posa di partenza: {base.cost.key()}")
     units = {item: improver.leader_of(item) for item in improver.order}
