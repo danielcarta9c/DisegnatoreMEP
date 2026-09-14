@@ -581,6 +581,26 @@ misura passa da 14 su 15 a **15 su 15**.
 | rilievi di qualità | 2 | **1** |
 | impronta | `cc0e1f4d…` | `4525158d…` |
 
+La colonna di destra si legge su `docs/collaudi/DRAW-009/impianto1/metriche.json`, che è
+agli atti. Quella di sinistra non lo è — il pacchetto chiede il pacchetto grafico per la
+sola tavola 2 — e si rifà con lo stesso comando sul worktree della testa di partenza,
+secondo §4.4:
+
+```
+$ cd /tmp/base && PYTHONPATH="$PWD/src" .venv/bin/python -m disegnatore_mep rules \
+      examples/prova/prova-1-due-pdc-accumulo-combinato.json --apply-all \
+      --catalog examples/layout/catalog --symbols assets/symbols \
+      --rules rules/hydronic --naming naming --out /tmp/base1/impianto1-completo.json
+$ ... draw ... --geometry /tmp/base1/geometria.json --out /tmp/base1
+$ ... docs/collaudi/DRAW-008/metriche.py /tmp/base1/impianto1-completo.json \
+      /tmp/base1/geometria.json
+impronta cc0e1f4d…
+  rete_ordinaria  {"pieghe": 4, "incroci": 1, "lunghezza_mm": 465.0, "tratte": 15}
+  stacchi_statici {"pieghe": 6, "incroci": 0, "lunghezza_mm": 155.0, "tratte": 7}
+  pieghe_totali 10   incroci 1   lunghezza_totale_mm 620.0
+  tratte_oltre_tre_pieghe 1   valvole_d120 14/15   riempimento 35.1   quadranti 2.11
+```
+
 Nessuna delle sue tratte di autostrada prende una piega, che è la seconda metà del
 criterio.
 
