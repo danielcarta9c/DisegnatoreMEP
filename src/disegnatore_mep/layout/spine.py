@@ -67,6 +67,7 @@ from .place import (
     ROW_GAP_MM,
     chain_room_of_port_mm,
     hanging_children,
+    hanging_ports,
     inline_room_mm,
 )
 from .route import route_sheet
@@ -1166,6 +1167,7 @@ def carry_the_rest(
     catalog: ComponentRegistry,
     placed: list[PlacedSymbol],
     layout: SpineLayout,
+    frame: SheetFrame | None = None,
 ) -> list[PlacedSymbol]:
     """La posa del resto che parte dal tronco (architettura §5).
 
@@ -1180,6 +1182,15 @@ def carry_the_rest(
     riappende. Un manometro appeso al raccordo del ritorno, quando il raccordo
     gira il proprio stacco verso il basso, va sotto — e restarsene sopra
     significherebbe consegnare una figura spezzata.
+
+    Con `frame`, una figura riappesa che finirebbe **fuori dall'area di disegno**
+    accorcia il proprio stacco finche' ci rientra, fino al minimo di un passo.
+    Il tronco si sposta guardando i soli partecipanti (`_into_the_area`), e
+    quando scende porta con se' cio' che gli pende: una figura profonda — dal
+    raccordo il gruppo di riempimento, dal gruppo il proprio ingresso — arriva
+    piu' in basso di chi la regge, ed e' uscita dal foglio. Fuori dal foglio una
+    tratta non si instrada, e la fase consegnava una posa che non si poteva
+    nemmeno misurare.
 
     E' una prima ipotesi, non una posa finale: a sistemarla sono le fasi del
     corredo e delle strade di servizio.
@@ -1204,42 +1215,123 @@ def carry_the_rest(
         for parent, items in children.items()
         for child, port_id in items
     }
+    own_ports = hanging_ports(project, partition, catalog, frozenset(before))
     following = _followers(partition, frozenset(before), delta)
     definitions = {item.id: item.definition_id for item in project.components}
-    out: list[PlacedSymbol] = []
-    for item in placed:
-        found = moved.get(item.component_id)
-        if found is not None:
-            out.append(found)
-            continue
-        parent = hung.get(item.component_id)
-        if parent is not None and parent[0] in moved:
-            out.append(
-                _rehung(
-                    item,
-                    moved[parent[0]],
-                    parent[1],
-                    before[parent[0]],
-                    catalog,
-                    definitions,
-                )
-            )
-            continue
+
+    def carried(item: PlacedSymbol) -> PlacedSymbol:
         step = following.get(item.component_id)
         if step is None:
-            out.append(item)
-            continue
+            return item
         dx, dy = step
-        out.append(
-            item.model_copy(
-                update={
-                    "origin": Point(
-                        x_mm=item.origin.x_mm + dx, y_mm=item.origin.y_mm + dy
-                    )
-                }
-            )
+        return item.model_copy(
+            update={
+                "origin": Point(x_mm=item.origin.x_mm + dx, y_mm=item.origin.y_mm + dy)
+            }
         )
-    return out
+
+    settled: dict[str, PlacedSymbol] = {}
+    for item in placed:
+        component_id = item.component_id
+        if component_id in moved:
+            settled[component_id] = moved[component_id]
+        elif component_id not in hung:
+            settled[component_id] = carried(item)
+    # **La figura si riappende tutta, dall'alto in basso.** Una figura puo'
+    # essere profonda — dal raccordo pende il gruppo di riempimento e dal gruppo
+    # pende il proprio ingresso — e fermarsi al primo livello lasciava il nipote
+    # a seguire il grafo per conto suo: padre e figlio prendevano due
+    # traslazioni diverse e la figura si spezzava, senza che nessun vincolo se
+    # ne accorgesse.
+    changed = True
+    while changed:
+        changed = False
+        for item in placed:
+            component_id = item.component_id
+            if component_id in settled:
+                continue
+            link = hung.get(component_id)
+            if link is None or link[0] not in settled:
+                continue
+            hung_now = _rehung(
+                item,
+                settled[link[0]],
+                link[1],
+                before[link[0]],
+                catalog,
+                definitions,
+                own_ports.get(component_id),
+            )
+            settled[component_id] = _inside(
+                hung_now,
+                settled[link[0]],
+                link[1],
+                catalog,
+                definitions,
+                own_ports.get(component_id),
+                frame,
+            )
+            changed = True
+    for item in placed:
+        settled.setdefault(item.component_id, carried(item))
+    return [settled[item.component_id] for item in placed]
+
+
+def _inside(
+    child: PlacedSymbol,
+    parent: PlacedSymbol,
+    port_id: str,
+    catalog: ComponentRegistry,
+    definitions: dict[str, str],
+    own_port_id: str | None,
+    frame: SheetFrame | None,
+) -> PlacedSymbol:
+    """L'appeso riportato dentro l'area, accorciando il proprio stacco.
+
+    Si accorcia un passo per volta, e non si scende sotto un passo: uno stacco
+    lungo zero metterebbe due simboli a contatto. Se nemmeno cosi' ci sta, si
+    lascia dov'e' e la posa si giudica come sempre — cattiva, ma misurabile.
+    """
+    if frame is None:
+        return child
+    area = frame.drawing_rect_mm
+    step = frame.standard.grid_mm
+
+    def fits(item: PlacedSymbol) -> bool:
+        return (
+            item.origin.x_mm >= area.x_mm - _TOLERANCE_MM
+            and item.origin.y_mm >= area.y_mm - _TOLERANCE_MM
+            and item.right_mm <= area.right_mm + _TOLERANCE_MM
+            and item.bottom_mm <= area.bottom_mm + _TOLERANCE_MM
+        )
+
+    if fits(child):
+        return child
+    upright = catalog.resolve(definitions[child.component_id]).symbol.manifest
+    shape = catalog.resolve(definitions[parent.component_id]).symbol.manifest
+    port = shape.rotated(parent.rotation_deg).port(parent.physical_port(port_id))
+    mine_id = own_port_id or upright.ports[0].id
+    stub = Point(
+        x_mm=parent.origin.x_mm + port.x_mm, y_mm=parent.origin.y_mm + port.y_mm
+    )
+    direction = _DIRECTION[port.face]
+    mine = upright.rotated(child.rotation_deg).port(mine_id)
+    here = Point(x_mm=child.origin.x_mm + mine.x_mm, y_mm=child.origin.y_mm + mine.y_mm)
+    gap = abs(here.x_mm - stub.x_mm) + abs(here.y_mm - stub.y_mm)
+    shorter = child
+    while gap > step + _TOLERANCE_MM:
+        gap -= step
+        shorter = child.model_copy(
+            update={
+                "origin": Point(
+                    x_mm=stub.x_mm + direction[0] * gap - mine.x_mm,
+                    y_mm=stub.y_mm + direction[1] * gap - mine.y_mm,
+                )
+            }
+        )
+        if fits(shorter):
+            return shorter
+    return shorter
 
 
 def _followers(
@@ -1297,10 +1389,17 @@ def _rehung(
     was: PlacedSymbol,
     catalog: ComponentRegistry,
     definitions: dict[str, str],
+    own_port_id: str | None = None,
 ) -> PlacedSymbol:
     """L'appeso rimesso dalla parte in cui lo stacco guarda adesso, allo stacco
     di prima: e' la stessa regola con cui il ciclo lo riappende quando gira il
-    pezzo che lo regge."""
+    pezzo che lo regge.
+
+    `own_port_id` e' **il suo** attacco su quello stacco. Non e' sempre il primo
+    del manifesto: un ponte fra due reti ne ha due, e riappenderlo per l'altro
+    lo manda dalla parte opposta del proprio stacco — con il nipote che gli
+    pende addosso a finire in mezzo alla tubazione (DRAW-006-R1, blocco D).
+    """
     upright = catalog.resolve(definitions[child.component_id]).symbol.manifest
     shape = catalog.resolve(definitions[parent.component_id]).symbol.manifest
     port = shape.rotated(parent.rotation_deg).port(parent.physical_port(port_id))
@@ -1308,7 +1407,8 @@ def _rehung(
     stub = Point(
         x_mm=parent.origin.x_mm + port.x_mm, y_mm=parent.origin.y_mm + port.y_mm
     )
-    own = upright.rotated(child.rotation_deg).port(upright.ports[0].id)
+    mine_id = own_port_id or upright.ports[0].id
+    own = upright.rotated(child.rotation_deg).port(mine_id)
     gap = abs(
         (was.origin.x_mm + old.x_mm) - (child.origin.x_mm + own.x_mm)
     ) + abs((was.origin.y_mm + old.y_mm) - (child.origin.y_mm + own.y_mm))
@@ -1319,11 +1419,11 @@ def _rehung(
         upright.allowed_rotations_deg,
         key=lambda item: (item != child.rotation_deg, item),
     ):
-        if upright.rotated(degrees).port(upright.ports[0].id).face is wanted:
+        if upright.rotated(degrees).port(mine_id).face is wanted:
             chosen = degrees
             break
     turned = upright.rotated(chosen)
-    mine = turned.port(upright.ports[0].id)
+    mine = turned.port(mine_id)
     return child.model_copy(
         update={
             "origin": Point(

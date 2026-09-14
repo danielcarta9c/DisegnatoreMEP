@@ -16,12 +16,15 @@ modello completo, ed e' anche il motivo per cui rieseguire le regole su di essa
 non proponeva zero.
 """
 
+import re
+
 from disegnatore_mep.assembly import assemble
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.model.project import (
     ComponentInstance,
     ConnectionModel,
     EvidenceRef,
+    NetworkModel,
     PortRef,
     ProjectModel,
     RuleApplicationModel,
@@ -222,63 +225,104 @@ def apply_proposals(
         # I pezzi nuovi entrano nel sottosistema dell'ancoraggio; le tubazioni
         # nate o spezzate restano fuori di li' e finiscono nella tracciabilita'.
         pipes: list[str] = []
+        # Le reti restano quelle, tranne quando un ponte porta il proprio
+        # confine: allora ne nasce una, sua e di nessun altro (§A.1).
+        networks = list(current.networks)
 
         if proposal.source_anchor is not None:
-            # Un **ponte** fra due reti (DRAW-006-R1, blocco D): una derivazione
-            # per parte, e il gruppo in mezzo. La rete della regola riceve
-            # l'uscita, quella della sorgente alimenta l'ingresso: il verso non
-            # si sceglie qui, lo dichiara il catalogo con il fluido di ciascuna
-            # porta.
-            source_network = _network_of_port(current, proposal.source_anchor)
-            connections = list(current.connections)
-            pipes = []
-            for anchor, network, port_id in (
-                (proposal.source_anchor, source_network, proposal.inlet_port),
-                (proposal.anchor, network_id, proposal.outlet_port),
-            ):
-                connection = _connection_touching(
-                    current.model_copy(update={"connections": connections}), anchor
-                )
-                junction_id = f"tee-{proposal.component_id}-{port_id}"
-                added.append(
-                    (
-                        _instance(
-                            junction_id,
-                            catalog.providing(
-                                BRANCH_OFF, _medium_of(current, network)
-                            ).id,
-                            proposal,
-                        ),
-                        anchor.component_id,
-                    )
-                )
-                pieces = _derivation(connection, proposal, junction_id)
-                stub = ConnectionModel(
-                    id=f"stub-{proposal.component_id}-{port_id}",
-                    network_id=network,
-                    endpoint_a=PortRef(component_id=junction_id, port_id=BRANCH_PORT),
-                    endpoint_b=PortRef(
-                        component_id=proposal.component_id, port_id=port_id
+            # Un **ponte** fra due reti (DRAW-006-R1, blocco D): il gruppo in
+            # mezzo, un capo per parte. La rete della regola riceve l'uscita,
+            # quella della sorgente alimenta l'ingresso: il verso non si sceglie
+            # qui, lo dichiara il catalogo con il fluido di ciascuna porta.
+            #
+            # **Il capo di monte porta il proprio confine di rete** (I-061,
+            # DRAW-009 §A.1). Il PO, l'11 settembre 2026: «non si deve fare una
+            # rete unica di af, non si fa cosi'; si fanno piu' ingressi». Prima
+            # questo capo apriva una derivazione sulla linea di un altro utente,
+            # e ne usciva una linea sola che attraversava il foglio per servirne
+            # due: una linea cosi' **inchioda i pezzi che tocca** — l'utente in
+            # fondo non si sposta piu' di un passo di griglia senza che
+            # l'instradamento della fredda fallisca. Dove due utenti prendono
+            # acqua fredda ci sono due ingressi, ciascuno con la propria rete e
+            # ciascuno vicino al proprio utente.
+            #
+            # L'unione a T con un ingresso solo esiste, per risparmiare sui
+            # piccoli componenti a servizio dell'ingresso, ma e' **un'opzione
+            # che chiede il progettista** (§A.1.4): non si deduce dal grafo e
+            # non la sceglie il codice.
+            source_network = _network(
+                current, _network_of_port(current, proposal.source_anchor)
+            )
+            declared = _component(current, proposal.source_anchor.component_id)
+            boundary_id = f"inlet-{proposal.component_id}"
+            own_network = NetworkModel(
+                id=f"{source_network.id}-{proposal.component_id}",
+                name=source_network.name,
+                domain=source_network.domain,
+                medium=source_network.medium,
+            )
+            networks = [*networks, own_network]
+            added.append(
+                (
+                    _instance(boundary_id, declared.definition_id, proposal).model_copy(
+                        update={"tag": _next_in_the_series(current, declared)}
                     ),
+                    # Il confine entra nel sottosistema dell'**utente**, non in
+                    # quello dell'ingresso gia' dichiarato: un confine di rete
+                    # non ha una posizione propria, esiste per immettere, e va
+                    # posato nelle immediate vicinanze di chi serve (§A.2).
+                    proposal.anchor.component_id,
                 )
-                # Il verso di una tubazione va da chi esce a chi entra: sul lato
-                # in cui il ponte **esce** i due capi si scambiano.
-                if port_id == proposal.outlet_port:
-                    stub = stub.model_copy(
-                        update={
-                            "endpoint_a": stub.endpoint_b,
-                            "endpoint_b": stub.endpoint_a,
-                        }
-                    )
-                connections = [
-                    *(
-                        item
-                        for existing in connections
-                        for item in (pieces if existing.id == connection.id else [existing])
+            )
+            feed = ConnectionModel(
+                id=f"inlet-{proposal.component_id}-{proposal.inlet_port}",
+                network_id=own_network.id,
+                endpoint_a=PortRef(
+                    component_id=boundary_id, port_id=proposal.source_anchor.port_id
+                ),
+                endpoint_b=PortRef(
+                    component_id=proposal.component_id, port_id=proposal.inlet_port
+                ),
+            )
+            connections = [*current.connections, feed]
+            pipes = [feed.id, own_network.id]
+            # Il capo di valle resta una derivazione sulla tubazione che la
+            # regola nomina: li' il ponte si innesta su una rete che c'e' gia' e
+            # che non e' sua.
+            connection = _connection_touching(
+                current.model_copy(update={"connections": connections}), proposal.anchor
+            )
+            junction_id = f"tee-{proposal.component_id}-{proposal.outlet_port}"
+            added.append(
+                (
+                    _instance(
+                        junction_id,
+                        catalog.providing(BRANCH_OFF, _medium_of(current, network_id)).id,
+                        proposal,
                     ),
-                    stub,
-                ]
-                pipes.extend(item.id for item in (*pieces, stub))
+                    proposal.anchor.component_id,
+                )
+            )
+            pieces = _derivation(connection, proposal, junction_id)
+            # Il verso di una tubazione va da chi esce a chi entra: qui il ponte
+            # **esce**, quindi parte dal gruppo e arriva al braccio del raccordo.
+            stub = ConnectionModel(
+                id=f"stub-{proposal.component_id}-{proposal.outlet_port}",
+                network_id=network_id,
+                endpoint_a=PortRef(
+                    component_id=proposal.component_id, port_id=proposal.outlet_port
+                ),
+                endpoint_b=PortRef(component_id=junction_id, port_id=BRANCH_PORT),
+            )
+            connections = [
+                *(
+                    item
+                    for existing in connections
+                    for item in (pieces if existing.id == connection.id else [existing])
+                ),
+                stub,
+            ]
+            pipes.extend(item.id for item in (*pieces, stub))
         elif proposal.service_port is not None:
             # La macchina l'attacco ce l'ha: nessuna tubazione viene spezzata.
             stub = _stub(
@@ -334,6 +378,7 @@ def apply_proposals(
             update={
                 "components": [*current.components, *(item for item, _ in added)],
                 "connections": connections,
+                "networks": networks,
                 "subsystems": subsystems,
                 "rule_applications": [
                     *current.rule_applications,
@@ -354,6 +399,49 @@ def apply_proposals(
 def _network_of_port(project: ProjectModel, anchor: PortRef) -> str:
     """La rete della tubazione che tocca quell'attacco."""
     return _connection_touching(project, anchor).network_id
+
+
+def _network(project: ProjectModel, network_id: str) -> NetworkModel:
+    for network in project.networks:
+        if network.id == network_id:
+            return network
+    raise RuleError(f"unknown network {network_id}")
+
+
+def _component(project: ProjectModel, component_id: str) -> ComponentInstance:
+    for item in project.components:
+        if item.id == component_id:
+            return item
+    raise RuleError(f"unknown component {component_id}")
+
+
+def _next_in_the_series(project: ProjectModel, like: ComponentInstance) -> str | None:
+    """La sigla successiva della serie di quel pezzo: `AF-01` -> `AF-02`.
+
+    Il PO, sui due ingressi dell'acqua fredda (I-061, DRAW-009 §A.1.2): «sono
+    pezzi diversi, con sigle diverse nella serie AF.01, AF.02, ...». Due
+    confini che portano la stessa sigla sarebbero lo stesso confine disegnato
+    due volte, ed e' esattamente cio' che la regola vieta.
+
+    La serie si legge dalle sigle **gia' nel modello** per quella voce di
+    catalogo, mai da un contatore del programma: se il progettista non ne ha
+    data nessuna, non se ne inventa una.
+    """
+    if like.tag is None:
+        return None
+    shape = re.fullmatch(r"([A-Za-z]+)[-.](\d+)", like.tag)
+    if shape is None:
+        return None
+    prefix, digits = shape.group(1), shape.group(2)
+    highest = 0
+    for item in project.components:
+        if item.definition_id != like.definition_id or item.tag is None:
+            continue
+        other = re.fullmatch(rf"{re.escape(prefix)}[-.](\d+)", item.tag)
+        if other is not None:
+            highest = max(highest, int(other.group(1)))
+    separator = like.tag[len(prefix)]
+    return f"{prefix}{separator}{highest + 1:0{len(digits)}d}"
 
 
 def _medium_of(project: ProjectModel, network_id: str) -> str:

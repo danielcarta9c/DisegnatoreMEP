@@ -75,6 +75,11 @@ cose non sono in contraddizione: dipende da quale rete si sta guardando, ed e'
 per questo che l'orientamento si calcola **una rete alla volta**.
 """
 
+BOUNDARY_FUNCTION = "boundary"
+"""Il mestiere di chi sta al confine dell'impianto: da li' il fluido entra o se
+ne va. La posa lo legge per sapere che quel pezzo **non ha una posizione
+propria** e va accanto all'utente che serve (I-061, DRAW-009 §A.2)."""
+
 LOAD_FUNCTIONS = frozenset(
     {
         "emission",
@@ -84,7 +89,7 @@ LOAD_FUNCTIONS = frozenset(
         "dhw_storage",
         "hydraulic_separation",
         "heat_exchange",
-        "boundary",
+        BOUNDARY_FUNCTION,
     }
 )
 """Dove il fluido cede o prende calore, e quindi cambia da mandata a ritorno.

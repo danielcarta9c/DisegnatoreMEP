@@ -155,6 +155,11 @@ class _Liner:
 
         self._hanging, hang_pipes = self._read_hangs()
         self._run_pipes = self._read_run_pipes(hang_pipes)
+        self._hung = {
+            member for chain in self._hanging.values() for member in chain
+        }
+        """I civici: chi pende gia' dal proprio nodo, e ha gia' il proprio
+        indirizzo. Nessuna strada se li prende camminando."""
 
         self._assigned: set[str] = set()
         """Le tubazioni gia' date a una linea."""
@@ -465,6 +470,18 @@ class _Liner:
             if current in self._owner and self._owner[current] != name:
                 # La strada finisce su un nodo di un'altra linea: e' l'innesto,
                 # o il punto dove il giro si richiude. La secondaria muore qui.
+                break
+            if current in self._hung:
+                # E finisce anche su un **civico**: un pezzo che pende gia' dal
+                # proprio nodo ha gia' il proprio indirizzo, e la strada che ci
+                # arriva non lo ribattezza. E' il caso del ponte fra due reti —
+                # il gruppo di riempimento, che pende dal ritorno tecnico e
+                # riceve l'acqua fredda dal proprio ingresso: la linea fredda
+                # muore su di lui come su un innesto, e il civico resta quello
+                # della strada da cui il ponte pende davvero (DRAW-006-R1,
+                # blocco D; DRAW-009 §A.1). Senza questa riga il pezzo risultava
+                # di due strade, con un indirizzo che ne diceva una e un
+                # proprietario che ne diceva un'altra.
                 break
             if current not in self._owner:
                 self._owner[current] = name

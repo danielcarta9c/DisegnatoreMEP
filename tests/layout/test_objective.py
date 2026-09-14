@@ -28,7 +28,7 @@ from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import compose_drawing
-from disegnatore_mep.layout.geometry import SheetGeometry
+from disegnatore_mep.layout.geometry import Point, SheetGeometry
 
 ROOT = Path(__file__).resolve().parents[2]
 PROJECT = ROOT / "examples" / "layout" / "heat-pump-dhw-buffer-two-zones.json"
@@ -226,11 +226,50 @@ def test_a_run_between_aligned_ports_is_a_straight_line() -> None:
 
 
 def test_parallel_branches_are_stacked_not_strung_out() -> None:
-    """Due zone servite dallo stesso collettore stanno una sopra l'altra."""
+    """Due zone servite dallo stesso collettore stanno **impilate**, non in fila.
+
+    L'ordine verticale non si asserisce. Il PO, il 12 settembre 2026, alla
+    domanda §7.4 del rapporto DRAW-008:
+
+        «Ovviamente l'ordine non e' importante. Zona 1 e 2 con radiatori o
+        pavimento radiante e' indifferente, a meno che non sia il progettista a
+        dare una specifica diversa nel suo input.»
+
+    La prova scritta prima pretendeva anche che i radiatori stessero **sopra**
+    il pavimento radiante, e quando la posa a fasi li ha scambiati e' diventata
+    rossa: vincolava piu' di quanto il prodotto voglia. Qui asserisce cio' che
+    vuole davvero — stessa colonna, riquadri disgiunti in verticale — e la
+    specifica del progettista, il giorno che esistera', sara' un campo
+    dichiarato del modello, non un'abitudine di questa fixture.
+    """
     placed = {item.component_id: item for item in sheet().symbols}
     radiators, underfloor = placed["radiators"], placed["underfloor"]
     assert radiators.origin.x_mm == underfloor.origin.x_mm
-    assert radiators.bottom_mm < underfloor.origin.y_mm
+    above, below = sorted((radiators, underfloor), key=lambda item: item.origin.y_mm)
+    assert above.bottom_mm <= below.origin.y_mm, (above.bottom_mm, below.origin.y_mm)
+
+
+def test_two_zones_side_by_side_would_fail_the_stacking_test() -> None:
+    """La prova negativa: due zone **in fila** non passano l'impilamento.
+
+    Senza di lei l'asserzione di sopra sarebbe vera anche per una posa che
+    allunga le due zone una accanto all'altra, che e' esattamente il difetto
+    che protegge. Si costruiscono due riquadri affiancati e si misura la stessa
+    proprieta': deve fallire.
+    """
+    placed = {item.component_id: item for item in sheet().symbols}
+    radiators = placed["radiators"]
+    strung_out = radiators.model_copy(
+        update={
+            "origin": Point(
+                x_mm=radiators.origin.x_mm + radiators.width_mm + 10.0,
+                y_mm=radiators.origin.y_mm,
+            )
+        }
+    )
+    assert strung_out.origin.x_mm != radiators.origin.x_mm
+    above, below = sorted((radiators, strung_out), key=lambda item: item.origin.y_mm)
+    assert above.bottom_mm > below.origin.y_mm
 
 
 def test_no_run_climbs_above_the_plant_without_a_reason() -> None:

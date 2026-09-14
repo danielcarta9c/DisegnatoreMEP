@@ -203,7 +203,7 @@ def compose_sheet(
     # cercarla, e il resto dell'impianto le va dietro. Da qui in avanti la
     # rettilineita' del tronco e' un vincolo, non una voce di costo.
     spine = lay_the_spine(project, partition, catalog, frame, first)
-    seeded = carry_the_rest(project, partition, catalog, first, spine)
+    seeded = carry_the_rest(project, partition, catalog, first, spine, frame)
     # La disposizione serve le linee, non il contrario (D-078): dopo la prima
     # ipotesi di posa, i componenti si spostano dove l'instradamento di prova
     # dice che l'obiettivo intero — pieghe, incroci, lunghezza — migliora.

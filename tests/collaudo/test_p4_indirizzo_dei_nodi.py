@@ -326,15 +326,36 @@ def test_la_principale_tira_dritto_e_i_forestieri_stanno_solo_ai_capi(plant: Pat
 
 @OGNI_IMPIANTO
 def test_la_secondaria_muore_su_un_nodo_che_resta_della_principale(plant: Path) -> None:
+    """Dove una strada finisce, il nodo resta di chi ce l'aveva.
+
+    Due modi, e il secondo e' nato con DRAW-009. Una strada puo' morire **su un
+    nodo di un'altra linea** — l'innesto di sempre — oppure **su un civico**:
+    un pezzo che pende gia' dal proprio nodo e ha gia' il proprio indirizzo. E'
+    il caso del ponte fra due reti da quando ciascun ponte porta il proprio
+    ingresso (§A.1): la linea di acqua fredda parte dal proprio confine e
+    finisce sul gruppo di riempimento, che e' un civico del ritorno tecnico.
+    In tutt'e due i casi la proprieta' e' la stessa, e qui si misura per intero:
+    il nodo su cui la strada muore appartiene a una linea che lo ha gia', e il
+    suo indirizzo lo dice.
+    """
     done, _ = completato(plant)
     _, lines = lettura(done)
     for line in lines.lines:
         tail = line.node_ids[-1]
         if lines.owner.get(tail) == line.name:
             continue
-        principale = lines.line(lines.owner[tail])
-        assert tail in principale.node_ids, line.name
-        assert lines.addresses[tail].startswith(f"{principale.name}.N."), line.name
+        if tail in lines.owner:
+            principale = lines.line(lines.owner[tail])
+            assert tail in principale.node_ids, line.name
+            assert lines.addresses[tail].startswith(f"{principale.name}.N."), line.name
+            continue
+        holder = next(
+            (node for node, chain in lines.hanging.items() if tail in chain), None
+        )
+        assert holder is not None, (line.name, tail)
+        principale = lines.line(lines.owner[holder])
+        assert holder in principale.node_ids, line.name
+        assert lines.addresses[tail].startswith(f"{lines.addresses[holder]}."), line.name
 
 
 @OGNI_IMPIANTO
