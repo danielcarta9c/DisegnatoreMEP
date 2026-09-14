@@ -4,15 +4,15 @@
     350.0,
     235.0
   ],
-  "impronta": "e65682c5b20a87512eae3376b2795ce58634b1a17d4edbf073f1e5526412efb9",
+  "impronta": "4525158d0e513742e9b8818f57ea133ad94785ccfb286f8e0bc99a3d2b3ae6d5",
   "fogli": [
     {
       "sheet_id": "t1",
       "linea_di_terra_esportata": false,
-      "etichette": 46,
+      "etichette": 47,
       "sigle": 8,
       "sigle_omesse": 0,
-      "indirizzi": 38,
+      "indirizzi": 39,
       "etichette_con_richiamo": 0,
       "etichette_su_tubo": 0,
       "etichette_su_simbolo": 0,
@@ -22,37 +22,37 @@
       "richiami_incrociati": 0,
       "ingombro_mm": [
         62.5,
-        83.5,
+        81.0,
         307.5,
         183.5
       ],
-      "riempimento_pct": 29.8,
-      "riempimento_senza_il_piu_isolato_pct": 26.4,
-      "copertura_ingombro": 0.641,
-      "quadranti_rapporto": 2.11,
+      "riempimento_pct": 30.5,
+      "riempimento_senza_il_piu_isolato_pct": 27.1,
+      "copertura_ingombro": 0.656,
+      "quadranti_rapporto": 1.97,
       "quadranti_mm2": [
-        1863.9,
-        883.2,
-        1192.0,
-        1216.1
+        1964.8,
+        996.6,
+        1080.6,
+        1102.8
       ],
       "backtracking_tratte": 0,
       "backtracking_mm": 0.0,
       "incroci": 1,
-      "pieghe_totali": 8,
-      "tratte_oltre_tre_pieghe": 1,
-      "lunghezza_totale_mm": 515.0,
+      "pieghe_totali": 4,
+      "tratte_oltre_tre_pieghe": 0,
+      "lunghezza_totale_mm": 485.0,
       "rete_ordinaria": {
         "pieghe": 4,
         "incroci": 1,
-        "lunghezza_mm": 425.0,
+        "lunghezza_mm": 430.0,
         "tratte": 15,
         "tratte_oltre_tre_pieghe": 0
       },
       "stacchi_statici": {
-        "pieghe": 4,
+        "pieghe": 0,
         "incroci": 0,
-        "lunghezza_mm": 90.0,
+        "lunghezza_mm": 55.0,
         "tratte": 6
       },
       "tubo_sotto_simbolo": [],
@@ -137,7 +137,7 @@
       "valvole_d120_totali": 15,
       "tubo_per_collegamento": {
         "inlet-filling-unit-collettore-ritorno": {
-          "mm": 0.0,
+          "mm": 5.0,
           "accessori_in_linea": 0,
           "rettilineo_minimo_mm": 0.0
         },
@@ -192,8 +192,8 @@
           "rettilineo_minimo_mm": 27.5
         }
       },
-      "tubo_su_collegamenti_di_partenza_mm": 425.0,
-      "tubo_su_stacchi_mm": 90.0,
+      "tubo_su_collegamenti_di_partenza_mm": 430.0,
+      "tubo_su_stacchi_mm": 55.0,
       "stacchi": 6,
       "simboli": 39,
       "tratte": 21,
@@ -213,9 +213,9 @@
           },
           "SERVIZIO": {
             "tratte": 7,
-            "pieghe": 4,
+            "pieghe": 0,
             "incroci": 0,
-            "lunghezza_mm": 90.0
+            "lunghezza_mm": 60.0
           }
         },
         "autostrade": 8,
@@ -812,8 +812,7 @@
     "strainer-pdc-slave-water-return"
   ],
   "rilievi_qualita": [
-    "warning:RUN_WITH_TOO_MANY_BENDS:la tratta stub-filling-unit-collettore-ritorno-a-b cambia direzione 4 volte, oltre le 3 pieghe che bastano a unire due porte: la piega in piu' la chiede un ostacolo, e l'ostacolo si sposta (B4, D-078)",
-    "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 30%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)"
+    "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 31%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)"
   ],
   "rilievi_correttezza": []
 }

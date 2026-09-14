@@ -23,10 +23,11 @@ sposta tutto intero»
    stato toccato**. Ciò che mancava era la mossa che alza il tronco insieme al corredo che
    gli pende sotto (§B) e l'ingresso di rete che non inchioda più il bollitore (§A).
 3. **La tavola 2 migliora su ogni budget, e i nodi condivisi col tronco vanno da 8 a
-   zero.** Rete ordinaria da 9 pieghe / 6 incroci / 755,0 mm a **5 / 1 / 550,0 mm**;
+   zero.** Rete ordinaria da 9 pieghe / 6 incroci / 755,0 mm a **5 / 1 / 555,0 mm**, e la
+   tavola intera da 15 pieghe / 11 incroci / 877,5 mm a **5 / 1 / 607,5 mm**;
    `deviatrice.out_b → bollitore.coil_in` da **3 pieghe a 1**, che è lo schizzo del PO.
-   La tavola 1 migliora anche lei su tutti e tre i budget — 4 / 1 / **425,0 mm** contro
-   4 / 1 / 465,0 — e i suoi organi governati da D-120 tornano **15 su 15**.
+   La tavola 1 migliora anche lei su tutti e tre i budget — intera, da 10 / 1 / 620,0 mm a
+   **4 / 1 / 485,0 mm** — e i suoi organi governati da D-120 tornano **15 su 15**.
 4. **Due criteri non sono raggiunti alla lettera e sono dichiarati con la misura**: il 3
    (la tratta del prelievo ACS ha una piega, non zero) e l'11, di cui è raggiunta la
    proprietà — le due tratte corrono annidate, misurato — ma **non** il padrone: la fase
@@ -569,20 +570,23 @@ misura passa da 14 su 15 a **15 su 15**.
 |---|---|---|
 | rete ordinaria — pieghe | 4 | **4** |
 | rete ordinaria — incroci | 1 | **1** |
-| rete ordinaria — lunghezza | 465,0 mm | **425,0 mm** |
-| stacchi statici | 6 / 0 / 155,0 mm | **4 / 0 / 90,0 mm** |
-| totale — pieghe / incroci / lunghezza | 10 / 1 / 620,0 mm | **8 / 1 / 515,0 mm** |
-| tratte oltre tre pieghe | 0 | **0** |
+| rete ordinaria — lunghezza | 465,0 mm | **430,0 mm** |
+| stacchi statici — pieghe / incroci / lunghezza | 6 / 0 / 155,0 mm | **0 / 0 / 55,0 mm** |
+| totale — pieghe / incroci / lunghezza | 10 / 1 / 620,0 mm | **4 / 1 / 485,0 mm** |
+| tratte oltre tre pieghe | 1 | **0** |
+| backtracking / tubo sotto un simbolo | 0 / 0 | **0 / 0** |
 | autostrade rettilinee | 8 su 8 | **8 su 8** |
 | pieghe di livello autostrada | 0 | **0** |
 | organi D-120 in regola | 14 su 15 | **15 su 15** |
+| rilievi di qualità | 2 | **1** |
+| impronta | `cc0e1f4d…` | `4525158d…` |
 
 Nessuna delle sue tratte di autostrada prende una piega, che è la seconda metà del
 criterio.
 
-L'unica voce che va indietro è il **riempimento**, da 35,1 % a 29,8 %: è la conseguenza
-aritmetica di 105 mm di tubo in meno su un foglio che resta quello, ed è uno spareggio del
-costo, non un budget. Lo squilibrio fra quadranti resta identico (2,11).
+L'unica voce che va indietro è il **riempimento**, da 35,1 % a 30,5 %: è la conseguenza
+aritmetica di 135 mm di tubo in meno su un foglio che resta quello, ed è uno spareggio del
+costo, non un budget. Lo squilibrio fra quadranti migliora, da 2,11 a **1,97**.
 
 ### 3.15 Criterio 15 — determinismo
 
@@ -593,8 +597,11 @@ $ for d in 1 2; do .venv/bin/python -m disegnatore_mep draw \
       docs/collaudi/DRAW-009/dopo/impianto2-completo.json \
       --catalog examples/layout/catalog --symbols assets/symbols --naming naming \
       --verifica --geometry /tmp/det$d/g.json --out /tmp/det$d | tail -1; done
-dd719ac984888b31609164060b11c6d090020a3e3259ce518da353fdb3083794
-dd719ac984888b31609164060b11c6d090020a3e3259ce518da353fdb3083794
+676ab4a2a4b1f280e4218f6a616c9843b0a783491bf503c2b74fffe9862ce098
+676ab4a2a4b1f280e4218f6a616c9843b0a783491bf503c2b74fffe9862ce098
+
+$ diff -q /tmp/det1/g.json /tmp/det2/g.json && echo "geometrie identiche"
+geometrie identiche
 
 $ .venv/bin/python -m pytest \
       tests/layout/test_assi_dorsali_tee.py::test_ridenominare_gli_id_non_cambia_la_geometria_e_due_generazioni_coincidono -q
@@ -625,10 +632,10 @@ nessuna prova cancellata.
 | | DRAW-008 | DRAW-009 |
 |---|---|---|
 | formato | 420×297 | 420×297 |
-| rete ordinaria — pieghe / incroci / lunghezza | 9 / 6 / 755,0 mm | **5 / 1 / 550,0 mm** |
-| stacchi statici — pieghe / incroci / lunghezza | 6 / 5 / 122,5 mm | **4 / 0 / 87,5 mm** |
-| totale — pieghe / incroci / lunghezza | 15 / 11 / 877,5 mm | **9 / 1 / 637,5 mm** |
-| tratte oltre tre pieghe | 0 | **0** |
+| rete ordinaria — pieghe / incroci / lunghezza | 9 / 6 / 755,0 mm | **5 / 1 / 555,0 mm** |
+| stacchi statici — pieghe / incroci / lunghezza | 6 / 5 / 122,5 mm | **0 / 0 / 52,5 mm** |
+| totale — pieghe / incroci / lunghezza | 15 / 11 / 877,5 mm | **5 / 1 / 607,5 mm** |
+| tratte oltre tre pieghe | 1 | **0** |
 | backtracking | 0 | **0** |
 | autostrada — tratte / pieghe / incroci / lunghezza | 10 / 4 / 1 / 420,0 mm | **10 / 2 / 1 / 395,0 mm** |
 | autostrade rettilinee | 8 su 10 | **8 su 10** |
@@ -636,11 +643,11 @@ nessuna prova cancellata.
 | `deviatrice.out_b → bollitore.coil_in` | 3 pieghe, 1 incrocio | **1 piega, 1 incrocio** |
 | `bollitore.coil_out → ritorno.c` | 1 piega | **1 piega** |
 | organi D-120 in regola (metriche) | 13 su 15 | **14 su 15** |
-| rilievi di qualità | 4 | **3** |
+| rilievi di qualità | 4 | **2** |
 | rilievi bloccanti | 0 | **0** |
 | riempimento | 37,6 % | **50,1 %** |
 | squilibrio fra quadranti | 3,74 | **31,62** |
-| impronta | `503db386…` | `dd719ac9…` |
+| impronta | `503db386…` | `676ab4a2…` |
 
 Lo squilibrio fra quadranti peggiora ed è l'unica voce che va indietro: §6.2.
 

@@ -77,12 +77,12 @@ lette sulla geometria che la CLI scrive; il rapporto completo sta in
 
 | | testa di `main` (DRAW-008 fuso) | DRAW-009 |
 |---|---|---|
-| **Tavola 1** — rete ordinaria | 4 pieghe / 1 incrocio / 465,0 mm | **4 / 1 / 425,0 mm** |
-| **Tavola 1** — totale | 10 pieghe / 1 incrocio / 620,0 mm | **8 / 1 / 515,0 mm** |
+| **Tavola 1** — rete ordinaria | 4 pieghe / 1 incrocio / 465,0 mm | **4 / 1 / 430,0 mm** |
+| **Tavola 1** — totale | 10 pieghe / 1 incrocio / 620,0 mm | **4 / 1 / 485,0 mm** |
 | **Tavola 1** — autostrade rettilinee | 8 su 8, zero pieghe | **8 su 8, zero pieghe** |
 | **Tavola 1** — organi D-120 | 14 su 15 | **15 su 15** |
-| **Tavola 2** — rete ordinaria | 9 / 6 / 755,0 mm | **5 / 1 / 550,0 mm** |
-| **Tavola 2** — totale | 15 pieghe / 11 incroci / 877,5 mm | **9 / 1 / 637,5 mm** |
+| **Tavola 2** — rete ordinaria | 9 / 6 / 755,0 mm | **5 / 1 / 555,0 mm** |
+| **Tavola 2** — totale | 15 pieghe / 11 incroci / 877,5 mm | **5 / 1 / 607,5 mm** |
 | **Tavola 2** — pieghe di autostrada | 4 | **2**, una per ciascuna delle due tratte che nessuna posa raddrizza |
 | **Tavola 2** — `deviatrice.out_b → bollitore.coil_in` | 3 pieghe | **1 piega**: scende, attraversa il ritorno in perpendicolare, corre bassa |
 | **Tavola 2** — nodi condivisi col tronco | 8 | **0** |

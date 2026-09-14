@@ -240,10 +240,10 @@
         {
           "component_id": "filling-unit-pdc-water-return",
           "symbol_id": "filling-unit",
-          "rotation_deg": 0,
+          "rotation_deg": 180,
           "origin": {
             "x_mm": 152.5,
-            "y_mm": 103.5
+            "y_mm": 98.5
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -254,10 +254,10 @@
         {
           "component_id": "inlet-filling-unit-pdc-water-return",
           "symbol_id": "network-boundary",
-          "rotation_deg": 90,
+          "rotation_deg": 270,
           "origin": {
             "x_mm": 152.5,
-            "y_mm": 98.5
+            "y_mm": 113.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -1284,7 +1284,11 @@
             [
               {
                 "x_mm": 155.0,
-                "y_mm": 103.5
+                "y_mm": 113.5
+              },
+              {
+                "x_mm": 155.0,
+                "y_mm": 108.5
               }
             ]
           ],
@@ -1326,23 +1330,7 @@
             [
               {
                 "x_mm": 155.0,
-                "y_mm": 113.5
-              },
-              {
-                "x_mm": 155.0,
-                "y_mm": 116.0
-              },
-              {
-                "x_mm": 147.5,
-                "y_mm": 116.0
-              },
-              {
-                "x_mm": 147.5,
-                "y_mm": 93.5
-              },
-              {
-                "x_mm": 155.0,
-                "y_mm": 93.5
+                "y_mm": 98.5
               },
               {
                 "x_mm": 155.0,
@@ -1455,7 +1443,7 @@
           "role": "tag",
           "anchor": {
             "x_mm": 152.5,
-            "y_mm": 97.0
+            "y_mm": 121.8
           },
           "leader_from": null
         },
@@ -1630,12 +1618,12 @@
           "leader_from": null
         },
         {
-          "id": "address-filling-unit-pdc-water-return",
-          "text": "RP.01.N.04.1",
+          "id": "address-inlet-filling-unit-pdc-water-return",
+          "text": "AF.02.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 147.5,
-            "y_mm": 119.1
+            "x_mm": 159.0,
+            "y_mm": 119.2
           },
           "leader_from": null
         },
@@ -1655,7 +1643,7 @@
           "role": "address",
           "anchor": {
             "x_mm": 162.5,
-            "y_mm": 119.3
+            "y_mm": 121.6
           },
           "leader_from": null
         },

@@ -4,7 +4,7 @@
     350.0,
     235.0
   ],
-  "impronta": "dd719ac984888b31609164060b11c6d090020a3e3259ce518da353fdb3083794",
+  "impronta": "676ab4a2a4b1f280e4218f6a616c9843b0a783491bf503c2b74fffe9862ce098",
   "fogli": [
     {
       "sheet_id": "t1",
@@ -31,7 +31,7 @@
       "copertura_ingombro": 0.625,
       "quadranti_rapporto": 31.62,
       "quadranti_mm2": [
-        1797.4,
+        1786.9,
         2051.5,
         64.9,
         1420.2
@@ -39,20 +39,20 @@
       "backtracking_tratte": 0,
       "backtracking_mm": 0.0,
       "incroci": 1,
-      "pieghe_totali": 9,
-      "tratte_oltre_tre_pieghe": 1,
-      "lunghezza_totale_mm": 637.5,
+      "pieghe_totali": 5,
+      "tratte_oltre_tre_pieghe": 0,
+      "lunghezza_totale_mm": 607.5,
       "rete_ordinaria": {
         "pieghe": 5,
         "incroci": 1,
-        "lunghezza_mm": 550.0,
+        "lunghezza_mm": 555.0,
         "tratte": 16,
         "tratte_oltre_tre_pieghe": 0
       },
       "stacchi_statici": {
-        "pieghe": 4,
+        "pieghe": 0,
         "incroci": 0,
-        "lunghezza_mm": 87.5,
+        "lunghezza_mm": 52.5,
         "tratte": 7
       },
       "tubo_sotto_simbolo": [],
@@ -137,7 +137,7 @@
       "valvole_d120_totali": 15,
       "tubo_per_collegamento": {
         "inlet-filling-unit-pdc-water-return": {
-          "mm": 0.0,
+          "mm": 5.0,
           "accessori_in_linea": 0,
           "rettilineo_minimo_mm": 0.0
         },
@@ -192,8 +192,8 @@
           "rettilineo_minimo_mm": 27.5
         }
       },
-      "tubo_su_collegamenti_di_partenza_mm": 550.0,
-      "tubo_su_stacchi_mm": 87.5,
+      "tubo_su_collegamenti_di_partenza_mm": 555.0,
+      "tubo_su_stacchi_mm": 52.5,
       "stacchi": 7,
       "simboli": 41,
       "tratte": 23,
@@ -213,9 +213,9 @@
           },
           "SERVIZIO": {
             "tratte": 8,
-            "pieghe": 4,
+            "pieghe": 0,
             "incroci": 0,
-            "lunghezza_mm": 87.5
+            "lunghezza_mm": 57.5
           }
         },
         "autostrade": 10,
@@ -820,7 +820,6 @@
     "strainer-pdc-water-return"
   ],
   "rilievi_qualita": [
-    "warning:RUN_WITH_TOO_MANY_BENDS:la tratta stub-filling-unit-pdc-water-return-b cambia direzione 4 volte, oltre le 3 pieghe che bastano a unire due porte: la piega in piu' la chiede un ostacolo, e l'ostacolo si sposta (B4, D-078)",
     "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 50%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)",
     "warning:DRAWING_ALL_ON_ONE_SIDE:la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 31.6 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)"
   ],

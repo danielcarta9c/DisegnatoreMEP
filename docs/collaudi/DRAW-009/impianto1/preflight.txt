@@ -2,8 +2,6 @@
 Preflight di qualita'
 
 Avvisi
-  - la tratta stub-filling-unit-collettore-ritorno-a-b cambia direzione 4 volte, oltre le 3 pieghe che bastano a unire due porte: la piega in piu' la chiede un ostacolo, e l'ostacolo si sposta (B4, D-078)
-    codice: RUN_WITH_TOO_MANY_BENDS · t1, stub-filling-unit-collettore-ritorno-a-b
-  - la tavola t1: il foglio e' pieno solo al 30%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)
+  - la tavola t1: il foglio e' pieno solo al 31%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)
     codice: SHEET_BARELY_FILLED · t1
-e65682c5b20a87512eae3376b2795ce58634b1a17d4edbf073f1e5526412efb9
+4525158d0e513742e9b8818f57ea133ad94785ccfb286f8e0bc99a3d2b3ae6d5
