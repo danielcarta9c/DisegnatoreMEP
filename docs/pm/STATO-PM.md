@@ -41,12 +41,12 @@ modello da riusare.
 |---|---|
 | `main` | `5ef4f14` (PR #31, 15 settembre) |
 | Release dichiarata | **0.3 — generalizzazione, impianto 2** (`docs/plans/2026-09-03-release-plan.md`) |
-| Pacchetto attivo | **DRAW-010** (`ACTIVE_WORK_PACKAGE.md`). **Non ancora consegnato al 15 settembre sera:** nessuna PR aperta, nessun ramo DEV spinto |
-| Ultima consegna verificata | **DRAW-009**, fusa il 14 settembre, PR #27 |
-| Suite su `main` | **10 rosse, 1470 verdi, 24 saltate, 11 xfailed**; `ruff` pulito; `mypy` 2 errori ereditati in `tests/layout/test_posa_a_fasi.py` |
+| Pacchetto attivo | **DRAW-010**, consegnato con la PR #32 e **verificato: non si fonde**. Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`, pubblicato anche sulla PR |
+| Ultima consegna verificata | **DRAW-010**, PR #32: dodici criteri raggiunti, due in parte, due no. Torna al DEV |
+| Suite su `main` | **10 rosse, 1470 verdi, 24 saltate, 11 xfailed** — rimisurata dal PM il 15 settembre, coincide. Sulla PR #32: 14 rosse |
 | Tavola 1 | 4 pieghe · 1 incrocio · 470,0 mm · autostrada 0 pieghe · D-120 15 su 15 |
 | Tavola 2 | 5 pieghe · 1 incrocio · 600,0 mm · nodi condivisi col tronco 0 · D-120 14 su 15 |
-| Impianti 3, 4, 5 | **nessuno produce una tavola.** Il 4 la produceva prima di DRAW-009 |
+| Impianti 3, 4, 5 | su `main` nessuno produce una tavola. **Sulla PR #32 il 4 torna a uscire**; il 5 arretra e non arriva più alla posa |
 | Registro degli input | **12 righe aperte + 4 regole permanenti**, su 63. Il triage del 15 settembre e le sei disposizioni del PO che ne sono seguite (D-131 … D-136) hanno chiuso le altre 44 |
 | Prodotto in chat | **mai eseguito nel suo ambiente finale.** È il rischio 1, il più vecchio |
 
@@ -89,6 +89,10 @@ Gli strumenti di misura esistono e non vanno riscritti: `docs/collaudi/DRAW-008/
 In ordine di quanto pesano, dopo le sei disposizioni del PO del 15 settembre. I rischi
 numerati stanno in `PROJECT_STATE.md`.
 
+0. **L'attuazione di D-126 sul prelievo è la causa unica di quasi tutto ciò che la PR #32
+   rompe**: i tre incroci e i 45 mm della tavola 2, le otto prove nuove rosse, l'impianto 5
+   che non arriva più alla posa. Il DEV e il PO ci sono arrivati per strade indipendenti. È
+   la prima voce del pacchetto di correzione, e con essa rientra quasi tutto il resto.
 1. **L'anello della fase del tronco** (rischio 16). È la causa a monte di quasi tutto:
    tiene la tavola 2 sul ripiego, ha costretto ad allargare `is_valid` (rischio 19) e con
    ogni probabilità è ciò che blocca gli impianti 3, 4 e 5. **È §A di DRAW-010**, in corso.
