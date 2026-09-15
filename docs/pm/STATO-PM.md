@@ -31,9 +31,9 @@ riscrivilo come lo diresti a un collega guardando il disegno.
 
 | | |
 |---|---|
-| `main` | `af6fad8` |
+| `main` | `5ef4f14` (PR #31, 15 settembre) |
 | Release dichiarata | **0.3 — generalizzazione, impianto 2** (`docs/plans/2026-09-03-release-plan.md`) |
-| Pacchetto attivo | **DRAW-010**, in corso presso il DEV (`ACTIVE_WORK_PACKAGE.md`) |
+| Pacchetto attivo | **DRAW-010** (`ACTIVE_WORK_PACKAGE.md`). **Non ancora consegnato al 15 settembre sera:** nessuna PR aperta, nessun ramo DEV spinto |
 | Ultima consegna verificata | **DRAW-009**, fusa il 14 settembre, PR #27 |
 | Suite su `main` | **10 rosse, 1470 verdi, 24 saltate, 11 xfailed**; `ruff` pulito; `mypy` 2 errori ereditati in `tests/layout/test_posa_a_fasi.py` |
 | Tavola 1 | 4 pieghe · 1 incrocio · 470,0 mm · autostrada 0 pieghe · D-120 15 su 15 |
@@ -108,12 +108,32 @@ già chiuse; le altre chiedono il PO.
   dal PO.
 - **`I-014` chiede il contrario di `D-123`.** «Ogni sessione finisce su `main`, sempre»: è la
   regola **D-117**, che **D-123 ha superato** il 31 agosto. L'input è ancora aperto.
-- **54 input aperti su 63, 5 chiusi.** «Aperto» ha smesso di voler dire qualcosa. Molti sono
-  con ogni evidenza soddisfatti — `I-019` sulla linea di terra è chiuso mentre `I-024`, che
-  dice la stessa cosa, è aperto. **Serve una passata di triage col PO**, una sessione
-  dedicata: il PM porta le prove, il PO chiude. Non è lavoro che il PM possa fare da solo
-  (§1.1: la chiusura di un input è del PO).
-- **Quattro input senza stato leggibile**: `I-001`, `I-003`, `I-004`, `I-005`.
+- **Il registro degli input non distingue più il lavoro dall'archivio.** Il dossier di
+  triage è pronto e sta in `docs/pm/2026-09-15-triage-input-aperti.md`: ogni riga ha una
+  disposizione proposta e la prova accanto. **Aspetta soltanto sei risposte del PO** (§10 del
+  dossier). La chiusura di un input è sua (§1.1), quindi il PM non ne ha chiuso nessuno.
+
+  I numeri corretti, contati sul file: **63 righe**, di cui **3** archiviate fra le chiuse,
+  **60** nella tabella delle aperte — e di queste **4** dicono già «CHIUSA» nella propria
+  casella (`I-011`, `I-015`, `I-016`, `I-019`). Gli input effettivamente chiusi sono quindi
+  **7**, non 5. Le righe senza stato leggibile sono **3**, non quattro: sono quelle della
+  tabella delle chiuse, che non ha la colonna. `I-005` uno stato ce l'ha.
+
+  Rispondendo alle sei domande, il registro scende ad **al più 17 righe aperte**.
+
+### Trovate nella passata di triage del 15 settembre
+
+- **La tavola 1 non risulta approvata da nessun atto**, e `D-116` — «si lavora su una tavola
+  sola finché il PO non approva la prima» — è tuttora «Approvata» e mai superata. Di fatto si
+  lavora sulla tavola 2 da `DRAW-006`. Non è una violazione: è un cardine mai registrato, e
+  la 0.3 ci si appoggia sopra. Basta una parola del PO.
+- **`I-002` e `I-059` chiedono allo spessore del tratto due cose incompatibili**: il calibro
+  normato (0,50 / 0,25, dalla fonte che il PO ha indicato) e la gerarchia (stacchi ciechi più
+  sottili). Nessuno dei due è assegnabile finché il PO non sceglie il canale.
+- **`I-017` è soddisfatta da mesi e nessuno se n'era accorto.** Il prelievo ACS non sta più
+  accanto all'acquedotto: sulla tavola 2 sta 70 mm a destra e 85 mm sopra, oltre il
+  bollitore, perché `D-098` distingue l'ingresso dal prelievo. Ciò che resta della riga è la
+  giacitura, che è già `D-126` e §D.1 di `DRAW-010`.
 
 ### Da sistemare in un pacchetto
 
@@ -174,6 +194,7 @@ Tre, ciascuna già pagata almeno una volta.
 
 1. Legge questo file e `ACTIVE_WORK_PACKAGE.md`.
 2. Controlla se il DEV ha aperto la PR di DRAW-010. Se sì, verifica secondo §3.
-3. Se il PO è in sessione, gli porta la passata di triage sugli input aperti (§5) e la lista
-   dei rami da cancellare (§6): sono le due cose che aspettano solo lui.
+3. Se il PO è in sessione, gli porta le sei domande del dossier di triage
+   (`docs/pm/2026-09-15-triage-input-aperti.md` §10) e la lista dei rami da cancellare (§6):
+   sono le due cose che aspettano solo lui.
 4. Prima di chiudere la sessione, **aggiorna questo file**.
