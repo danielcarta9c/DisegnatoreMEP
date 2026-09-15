@@ -11,8 +11,10 @@ mezzi scelti dal PM in funzione di ciò che la verifica di `DRAW-009` ha trovato
 **Release:** 0.3 — generalizzazione, revisione della tavola 2
 **Ramo:** quello che la piattaforma assegna alla sessione. Il pacchetto **non ne prescrive
 uno**
-**Commit di partenza:** la testa di `main`, `b825b25` — `DRAW-009` fuso (PR #27) e questo
-pacchetto reso attivo (PR #28)
+**Commit di partenza:** **la testa di `main`**, qualunque essa sia quando la sessione parte.
+Questo pacchetto vive su `main`, quindi chi lo legge è già sulla base giusta per definizione.
+Il contenuto della base: `DRAW-009` fuso (PR #27). *(Non si scrive qui un SHA: ogni ritocco al
+pacchetto sposta la testa e il numero scritto nasce vecchio.)*
 **Fixture grafica principale:** impianto 4 e impianto 2; impianto 1 come regressione automatica
 
 > **Leggere prima:** `docs/pm/2026-09-14-review-pr27-draw009.md` (il verdetto del PM sulla
