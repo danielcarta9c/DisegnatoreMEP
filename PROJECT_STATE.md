@@ -1,7 +1,7 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-13 (DEV, consegna di DRAW-009 — l'ingresso vicino a chi serve,
-e il tronco che si sposta tutto intero)
+**Aggiornato:** 2026-09-15 (PM, cold eye review dopo il merge di DRAW-009)
+**Ingresso del PM:** `docs/pm/STATO-PM.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md`
 **Release corrente:** 0.3 — generalizzazione controllata, impianto 2
 
@@ -231,6 +231,17 @@ appesi sotto il tronco alla quota del `coil_in`.
     capacità, non per contratto**, e se la perdono la suite resta verde. È così che si è
     perso l'impianto 4 senza che nessuno se ne accorgesse, ed è un difetto della copertura
     che vale quanto il difetto che ha nascosto. `DRAW-010` §C.
+
+24. **«Aperto» ha smesso di voler dire qualcosa nel registro degli input.** 54 righe aperte
+    su 63, 5 chiuse. Molte sono con ogni evidenza soddisfatte — `I-019` sulla linea di terra
+    è chiuso mentre `I-024`, che dice la stessa cosa, è aperto — e due chiedono oggi il
+    **contrario** di una decisione vigente: `I-060` vuole il PM sdoppiato che `D-130` ha
+    abolito, `I-014` vuole la regola «ogni sessione finisce su `main`» che `D-123` ha
+    superato. Quattro righe non hanno uno stato leggibile (`I-001`, `I-003`, `I-004`,
+    `I-005`). Serve una passata di triage col PO: la chiusura di un input è sua, non del PM.
+25. **`DRAW-007` non ha cartella di collaudo.** `docs/collaudi/` porta DRAW-001…006-R1, 008
+    e 009: il 007 è stato fuso senza rapporto agli atti, ed è l'unico buco nella catena delle
+    consegne.
 
 ## Pacchetto attivo
 
