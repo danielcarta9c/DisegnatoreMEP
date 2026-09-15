@@ -27,6 +27,14 @@ l'implementazione. Mostragli la tavola, non i criteri numerati; niente nomi di f
 funzioni o di prove. Se stai per scrivere «il criterio 8 è raggiunto in parte», fermati e
 riscrivilo come lo diresti a un collega guardando il disegno.
 
+**Vale anche per le sigle degli input.** Il 15 settembre gli ho portato le domande del
+triage scritte come «`I-002` e `I-059` chiedono allo spessore due cose incompatibili», e me
+le ha rimandate indietro: «per me non significano assolutamente nulla. O non le scrivi
+proprio, oppure se mi chiedi qualcosa deve essere tradotta in termini che io possa capire».
+Le sigle servono a noi per ritrovare la riga e restano di qua. La versione buona — la stessa
+domanda detta guardando il disegno — sta in `2026-09-15-triage-input-aperti.md` §11, ed è il
+modello da riusare.
+
 ## 2. Dove siamo, al 15 settembre 2026
 
 | | |

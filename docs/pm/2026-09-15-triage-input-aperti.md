@@ -235,3 +235,57 @@ Sei cose, in ordine di quanto costa rispondere.
 Se rispondi a tutte, il registro passa da 60 righe aperte ad **al più 17** — le 11 vive di
 §8 e le 6 di §7, di cui alcune si chiudono invece di diventare lavoro — e «aperto» torna a
 voler dire qualcosa.
+
+---
+
+## 11. Le stesse sei domande, come vanno poste al PO
+
+Il PO ha rimandato indietro la prima versione di questo elenco: «se mi parli di
+`I-002` e `I-059` non ti seguo, non so nel dettaglio cosa ci sia». Aveva ragione, ed è
+già scritto in `STATO-PM.md` §1 — *mostragli la tavola, non i criteri numerati*. Sotto c'è
+la traduzione, ed è **questa** la versione che si porta al PO. Le sigle servono al PM per
+ritrovare la riga, e restano di qua.
+
+**1. Il quaderno delle tue richieste.** Ho ricontrollato una per una le sessanta richieste
+che risultano ancora da fare. **Trentasette sono già fatte**, verificate e misurate quando
+sono state consegnate: è il quaderno che non è mai stato aggiornato. Sono cose come il
+filtro a Y col ramo inclinato, la linea di terra sparita dal foglio, la valvola di ritegno
+disegnata a z, le valvole a un passo dagli attacchi delle macchine, un solo gruppo di
+sicurezza sull'acqua fredda del bollitore, puffer bollitore e accumulo combinato come tre
+oggetti distinti, le lettere dentro i simboli che restano dritte quando il simbolo ruota.
+→ *Le depenno tutte in blocco, o c'è qualcosa che vuoi riguardare sul disegno prima?*
+
+**2. Lo spessore delle linee — mi hai chiesto due cose che non stanno insieme.** Il 5 agosto
+mi hai dato le tavole UNI come simbologia giusta, e lì lo spessore è **normato**: 0,50 mm
+per la tubazione di progetto, 0,25 mm per l'esistente. Il 10 settembre mi hai chiesto di
+fare gli stacchi ciechi **più sottili** delle autostrade, per far vedere a colpo d'occhio
+chi è dorsale e chi è servizio. Se lo spessore è quello normato non può anche dire la
+gerarchia: è un canale solo.
+→ *Lo spessore dice il calibro normato, o la gerarchia? Se scegli la gerarchia, lo mettiamo
+agli atti come scostamento voluto dalla norma.*
+
+**3. La tavola 1 la consideri approvata?** Ad agosto avevi detto: si lavora su una tavola
+sola, le altre quattro solo dopo che approvi la prima. Da settembre lavoriamo sulla tavola 2
+e stiamo misurando la 3 e la 4 — ma da nessuna parte risulta che tu abbia detto «la tavola 1
+va bene». Non è un problema di disegno: è che tutto il lavoro da settembre in poi poggia su
+un tuo sì che non è mai stato scritto.
+→ *Me lo dici adesso e lo registro.*
+
+**4. Il foglio pieno.** Ne volevi il 60 %. Oggi siamo al 36 %, e il motivo è una correzione
+che hai chiesto tu: prima il disegnatore comprava riempimento allungando i tubi, adesso non
+lo fa più e i gruppi stanno alla distanza minima che gli accessori consentono. Per arrivare
+al 60 % bisogna decidere **dove stanno le macchine in altezza**, ed è una scelta di
+composizione tua, non una misura.
+→ *Il foglio pieno ti interessa ancora, o lo togliamo dagli obiettivi?*
+
+**5. Il formato minimo.** Da quando il pavimento non è più un muro invalicabile, la centrale
+della tavola 1 **ci sta su un A4**, e la regola dice di provare sempre il formato più
+piccolo che regge. La tavola 2 invece chiede un A3.
+→ *Una centrale su A4 te la tieni, o il minimo per una centrale è A3 comunque?*
+
+**6. Il verso di mandata e ritorno.** Ad agosto avevi segnalato tre difetti come priorità.
+Due sono chiusi — i tubi che tornavano indietro e la distanza senza senso fra i gruppi. Il
+terzo è ancora lì e **nessuno l'ha mai preso in mano**: su circa un terzo delle tratte il
+verso mandata/ritorno non lo decide l'acqua, lo decide dove il pezzo è finito sul foglio.
+Vuol dire che il colore di quel tubo è giusto per caso.
+→ *Questo lo metto nel prossimo lavoro del disegnatore, o hai qualcosa di più urgente?*
