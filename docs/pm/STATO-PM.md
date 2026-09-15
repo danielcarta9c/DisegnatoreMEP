@@ -47,6 +47,7 @@ modello da riusare.
 | Tavola 1 | 4 pieghe · 1 incrocio · 470,0 mm · autostrada 0 pieghe · D-120 15 su 15 |
 | Tavola 2 | 5 pieghe · 1 incrocio · 600,0 mm · nodi condivisi col tronco 0 · D-120 14 su 15 |
 | Impianti 3, 4, 5 | **nessuno produce una tavola.** Il 4 la produceva prima di DRAW-009 |
+| Registro degli input | **12 righe aperte + 4 regole permanenti**, su 63. Il triage del 15 settembre e le sei disposizioni del PO che ne sono seguite (D-131 … D-136) hanno chiuso le altre 44 |
 | Prodotto in chat | **mai eseguito nel suo ambiente finale.** È il rischio 1, il più vecchio |
 
 Il verdetto completo su DRAW-009, con tutte le misure e i comandi, sta in
@@ -79,74 +80,61 @@ Gli strumenti di misura esistono e non vanno riscritti: `docs/collaudi/DRAW-008/
 
 ## 4. I fili che il PM porta
 
-In ordine di quanto pesano. I rischi numerati stanno in `PROJECT_STATE.md`.
+In ordine di quanto pesano, dopo le sei disposizioni del PO del 15 settembre. I rischi
+numerati stanno in `PROJECT_STATE.md`.
 
 1. **L'anello della fase del tronco** (rischio 16). È la causa a monte di quasi tutto:
    tiene la tavola 2 sul ripiego, ha costretto ad allargare `is_valid` (rischio 19) e con
-   ogni probabilità è ciò che blocca gli impianti 3, 4 e 5. **È §A di DRAW-010.**
-2. **Il prodotto non gira in una chat vera** (rischio 1). Il più vecchio e il meno toccato.
+   ogni probabilità è ciò che blocca gli impianti 3, 4 e 5. **È §A di DRAW-010**, in corso.
+2. **Il verso di mandata e ritorno lo decide la geometria** (`I-010`, aperto dal 9 agosto).
+   Su circa un terzo delle tratte il colore di quel tubo è giusto per caso. **Il PO l'ha
+   dichiarato fondamentale** — D-136 — ed è la voce principale del pacchetto dopo DRAW-010.
+   Nessuno strumento lo misura ancora: `supply` è un booleano già deciso quando arriva alla
+   geometria esportata, quindi l'indecisione va misurata dentro la camminata sul grafo.
+3. **Il prodotto non gira in una chat vera** (rischio 1). Il più vecchio e il meno toccato.
    La 0.3 non si può dichiarare finita senza una prova verticale in una chat pulita.
-3. **L'audit della libreria dei simboli** (rischio 2), che il PO deve approvare prima della
+4. **Lo spessore del tratto dice la gerarchia** (D-132): 0,50 mm autostrade, 0,25 mm
+   servizio, due livelli e non tre. Oggi la tavola usa 0,18 / 0,35 / 0,50. Da assegnare, e
+   porta con sé un nodo che D-132 lascia aperto — con due spessori in un nodo, il pallino di
+   derivazione a quattro volte lo spessore va agganciato a uno dei due; il PM propone il più
+   grosso.
+5. **L'audit della libreria dei simboli** (rischio 2), che il PO deve approvare prima della
    0.3.
-4. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
+6. **L'agio finale** (D-134): a disegno risolto, un passo a sé che allarga l'impianto e lo
+   mette più comodo, per far posto alle sigle. Non partecipa a posa e instradamento, e non è
+   il riempimento del foglio — quello ha smesso di essere un obiettivo.
+7. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
    due tavole; diventa esigibile su un impianto che lo violi.
-5. **Lo squilibrio fra quadranti della tavola 2**, da 3,74 a 32,50. Nessuna voce di costo lo
-   insegue. Il PO ha visto la tavola e non l'ha sollevato.
-6. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
+8. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
    dedotta. Pacchetto a sé, da aprire se il PO lo vuole.
 
-## 5. Cold eye review del 15 settembre — le incoerenze trovate
+Non è più un filo: **lo squilibrio fra quadranti della tavola 2** e il riempimento del
+foglio. D-134 li toglie dagli obiettivi.
 
-Fatte da una lettura dei registri, non da memoria. Quelle che il PM può chiudere da sé sono
-già chiuse; le altre chiedono il PO.
+## 5. Cold eye review del 15 settembre — che cosa non tornava, e com'è finita
 
-### Chiuse in questa passata
+Lettura dei registri del 15 settembre, non memoria. **Tutte chiuse in giornata**: quelle del
+PM da sé, le altre con le sei disposizioni del PO della stessa sera.
 
-- **Tre numeri di release diversi in tre file.** `HANDOFF.md` diceva 0.2, `PROJECT_STATE.md`
-  0.3, `pyproject.toml` `0.1.0`. `HANDOFF.md` è stato allineato a **0.3**, che è ciò che il
-  piano di release e il lavoro effettivo dicono. **Resta noto e non allineato** il numero di
-  versione Python, che non ha mai seguito le release dichiarate: è un asse diverso, e
-  cambiarlo è una modifica di codice che va in un pacchetto.
+| Che cosa non tornava | Come si è chiusa |
+|---|---|
+| Tre numeri di release in tre file (0.2, 0.3, `0.1.0`) | `HANDOFF.md` allineato a **0.3**. Resta noto e non allineato il numero di versione Python, che non ha mai seguito le release: è un asse diverso e cambiarlo è codice |
+| `I-060` chiedeva il PM sdoppiato che D-130 ha abolito | Ritirata, superata da **D-130** |
+| `I-014` chiedeva la regola che D-123 ha superato | Ritirata, superata da **D-123** |
+| «Aperto» non distingueva più il lavoro dall'archivio: 60 righe su 63 | Triage in `2026-09-15-triage-input-aperti.md`, poi **D-131 … D-136**. Da 60 righe a **12 aperte più 4 regole** |
+| La tavola 1 non risultava approvata da nessun atto, e D-116 ci poggiava sopra | **D-133**: le cinque tavole sono casi di prova, non elaborati da approvare. D-116 superata. La domanda era mal posta, e il PO l'ha corretta |
+| `I-002` e `I-059` chiedevano allo spessore due cose incompatibili | **D-132**: lo spessore dice la gerarchia. Scostamento voluto dalla norma, dichiarato |
+| `I-017` era soddisfatta da mesi senza che nessuno se ne fosse accorto | Chiusa con la misura sulla tavola 2: il prelievo sta 70 mm a destra e 85 mm sopra l'acquedotto |
+| `DRAW-007` non ha cartella di collaudo | **Aperta.** Unico buco nella catena: `docs/collaudi/` porta DRAW-001…006-R1, 008 e 009. Va sistemata in un pacchetto |
 
-### Che chiedono il PO
+### La correzione che il PO ha fatto al PM, e che vale più delle otto righe sopra
 
-- **`I-060` chiede il contrario di `D-130`.** L'input del 10 settembre chiede di **sdoppiare**
-  il ruolo PM; la decisione del 14 settembre lo **abolisce**. L'input è ancora aperto, quindi
-  il registro chiede una cosa e il modello operativo ne fa un'altra. Va chiuso o riscritto
-  dal PO.
-- **`I-014` chiede il contrario di `D-123`.** «Ogni sessione finisce su `main`, sempre»: è la
-  regola **D-117**, che **D-123 ha superato** il 31 agosto. L'input è ancora aperto.
-- **Il registro degli input non distingue più il lavoro dall'archivio.** Il dossier di
-  triage è pronto e sta in `docs/pm/2026-09-15-triage-input-aperti.md`: ogni riga ha una
-  disposizione proposta e la prova accanto. **Aspetta soltanto sei risposte del PO** (§10 del
-  dossier). La chiusura di un input è sua (§1.1), quindi il PM non ne ha chiuso nessuno.
-
-  I numeri corretti, contati sul file: **63 righe**, di cui **3** archiviate fra le chiuse,
-  **60** nella tabella delle aperte — e di queste **4** dicono già «CHIUSA» nella propria
-  casella (`I-011`, `I-015`, `I-016`, `I-019`). Gli input effettivamente chiusi sono quindi
-  **7**, non 5. Le righe senza stato leggibile sono **3**, non quattro: sono quelle della
-  tabella delle chiuse, che non ha la colonna. `I-005` uno stato ce l'ha.
-
-  Rispondendo alle sei domande, il registro scende ad **al più 17 righe aperte**.
-
-### Trovate nella passata di triage del 15 settembre
-
-- **La tavola 1 non risulta approvata da nessun atto**, e `D-116` — «si lavora su una tavola
-  sola finché il PO non approva la prima» — è tuttora «Approvata» e mai superata. Di fatto si
-  lavora sulla tavola 2 da `DRAW-006`. Non è una violazione: è un cardine mai registrato, e
-  la 0.3 ci si appoggia sopra. Basta una parola del PO.
-- **`I-002` e `I-059` chiedono allo spessore del tratto due cose incompatibili**: il calibro
-  normato (0,50 / 0,25, dalla fonte che il PO ha indicato) e la gerarchia (stacchi ciechi più
-  sottili). Nessuno dei due è assegnabile finché il PO non sceglie il canale.
-- **`I-017` è soddisfatta da mesi e nessuno se n'era accorto.** Il prelievo ACS non sta più
-  accanto all'acquedotto: sulla tavola 2 sta 70 mm a destra e 85 mm sopra, oltre il
-  bollitore, perché `D-098` distingue l'ingresso dal prelievo. Ciò che resta della riga è la
-  giacitura, che è già `D-126` e §D.1 di `DRAW-010`.
-
-### Da sistemare in un pacchetto
-
-- **`DRAW-007` non ha cartella di collaudo.** `docs/collaudi/` porta DRAW-001…006-R1, 008 e
-  009; il 007 è stato fuso senza rapporto agli atti. È l'unico buco nella catena.
+Gli ho portato queste stesse cose scritte con le sigle degli input, e me le ha rimandate
+indietro: «per me non significano assolutamente nulla». Poi ha corretto la domanda sulla
+tavola 1, che era mal posta alla radice: **non approviamo tavole, costruiamo un tool**; le
+cinque tavole sono prove, un test passato può tornare a fallire, e non si generano tutte a
+ogni giro perché lo stesso errore si paga cinque volte. È D-133, ed è la cosa che più cambia
+il modo di lavorare da qui in avanti.
 
 ## 6. Igiene di git
 
@@ -202,7 +190,7 @@ Tre, ciascuna già pagata almeno una volta.
 
 1. Legge questo file e `ACTIVE_WORK_PACKAGE.md`.
 2. Controlla se il DEV ha aperto la PR di DRAW-010. Se sì, verifica secondo §3.
-3. Se il PO è in sessione, gli porta le sei domande del dossier di triage
-   (`docs/pm/2026-09-15-triage-input-aperti.md` §10) e la lista dei rami da cancellare (§6):
-   sono le due cose che aspettano solo lui.
+3. Se il PO è in sessione, l'unica cosa che aspetta ancora solo lui è la lista dei rami da
+   cancellare (§6). Il triage degli input è **fatto**: dossier in
+   `docs/pm/2026-09-15-triage-input-aperti.md`, esito in D-131 … D-136.
 4. Prima di chiudere la sessione, **aggiorna questo file**.

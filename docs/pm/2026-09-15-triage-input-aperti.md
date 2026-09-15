@@ -289,3 +289,41 @@ terzo è ancora lì e **nessuno l'ha mai preso in mano**: su circa un terzo dell
 verso mandata/ritorno non lo decide l'acqua, lo decide dove il pezzo è finito sul foglio.
 Vuol dire che il colore di quel tubo è giusto per caso.
 → *Questo lo metto nel prossimo lavoro del disegnatore, o hai qualcosa di più urgente?*
+
+---
+
+## 12. Esito — che cosa ha deciso il PO, la sera del 15 settembre
+
+Tutte e sei, in una passata. Le disposizioni sono in `DECISION_LOG.md`, **D-131 … D-136**.
+
+| Domanda | Risposta del PO | Decisione |
+|---|---|---|
+| Le 37 già fatte | «Depenna. Poi se ci accorgiamo dalle prossime tavole che qualcosa non torna le ripeschiamo» | **D-131** — una riga chiusa non è un verdetto definitivo: la riapre una misura, non un permesso |
+| Lo spessore del tratto | «Preferisco la scelta fatta da me: 0,50 per autostrade e 0,25 per servizio» | **D-132** — lo spessore dice la **gerarchia**, due livelli. Scostamento voluto dalla norma, dichiarato: l'esistente perde il proprio spessore |
+| La tavola 1 è approvata? | «Era approvata. Ma la domanda è sbagliata» | **D-133** — vedi sotto |
+| Il foglio pieno | «Il riempimento non è un obiettivo. Poi vediamo se mettere un tool finale che allarga e mette più comodo» | **D-134** — l'agio è un passo finale a sé, separato dalla composizione |
+| Il formato minimo | «Teniamo A3» | **D-135** — modifica D-058 nella sola regola del formato più piccolo |
+| Il verso di mandata e ritorno | «Mi sembra fondamentale sì» | **D-136** — priorità del pacchetto dopo `DRAW-010` |
+
+**Risultato sul registro:** da 60 righe aperte a **12 aperte più 4 regole permanenti**, su 63
+totali. Nessuna riga persa, nessun duplicato, nessun buco nella numerazione.
+
+### La domanda era sbagliata, e la correzione vale più delle sei risposte
+
+«Lo scopo del progetto non è approvare le tavole 1-5 ma costruire un tool che generi ogni
+tavola descritta dal progettista. Le tavole 1-5 sono solo dei test. Quindi il test tavola 1 è
+passato a un certo punto, ma con le modifiche successive eseguite lo stesso test potrebbe non
+passare più. Poi usiamo più test per vedere comportamenti diversi del disegnatore. E non
+voglio generare tutti i test a ogni run di sviluppo per non sprecare token.»
+
+Chiedere «la tavola 1 è approvata?» presupponeva che l'oggetto del progetto fossero le
+tavole. Non lo sono: sono prove. Ne discende che **non esiste un cancello di approvazione**
+da registrare, che una prova passata può tornare a fallire, e che generare cinque tavole a
+ogni giro è spreco perché lo stesso difetto si paga cinque volte.
+
+**E ne discende la cosa che il PM deve tenere ferma.** Se non si guardano tutte le tavole a
+ogni giro, la sorveglianza automatica deve coprirle tutte: quale impianto sappia comporsi è
+un **contratto dichiarato nella suite**, non una capacità che si scopre per caso. È la
+lezione dell'impianto 4, che ha smesso di uscire senza che nessuna prova se ne accorgesse —
+la suite ne pretendeva uno solo. Generare meno tavole è economia sana **solo** se la
+sorveglianza non si restringe insieme a loro; ed è già §C del pacchetto attivo.

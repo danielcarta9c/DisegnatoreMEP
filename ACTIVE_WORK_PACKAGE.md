@@ -287,7 +287,28 @@ del PM, che è una sessione diversa dal DEV.
 1. **L'ordine degli stacchi lungo il tronco** (rischio 17). La proprietà oggi vale per
    topologia su tutt'e due le tavole, non perché qualcuno la scelga. Diventa esigibile su un
    impianto che la violi: se l'impianto 4 o il 3 la violano, il PO dirà se aprirla.
-2. **Lo squilibrio fra quadranti della tavola 2**, da 3,74 a 32,50. Nessun criterio lo copre
-   e nessuna voce di costo lo insegue. Il PO ha visto la tavola e non l'ha sollevato: resta
-   qui perché non si perda.
-3. **Gli attacchi pari di un collettore**, ereditata da `DRAW-009` e non toccata.
+2. **Gli attacchi pari di un collettore**, ereditata da `DRAW-009` e non toccata.
+
+*(Lo squilibrio fra quadranti della tavola 2 non è più una decisione pendente: **D-134** ha
+tolto il riempimento del foglio dagli obiettivi.)*
+
+---
+
+## Postilla del 15 settembre 2026 — sei disposizioni del PO, e i criteri non cambiano
+
+Il PO ha dato sei disposizioni la sera del 15 settembre (**D-131 … D-136**). **Nessuno dei
+sedici criteri qui sopra cambia**, e il perimetro resta quello. Ciò che il DEV deve sapere
+perché non lavori contro una decisione appena presa:
+
+- **D-133 — le cinque tavole sono casi di prova, non elaborati da approvare.** Non si
+  generano tutte a ogni giro di sviluppo, e proprio per questo **quale impianto sappia
+  comporsi dev'essere un contratto dichiarato nella suite**: è §C, che ne esce rafforzato.
+  Il PO l'ha detto con le sue parole: «non voglio generare tutti i test a ogni run per non
+  sprecare token».
+- **D-135 — il formato di una centrale è l'A3**, anche quando il contenuto entrerebbe in un
+  A4. Conferma §C.3: l'impianto 2 compone su A3 e va fra i componibili.
+- **D-134 — il riempimento del foglio non è un obiettivo.** Lo spazio che avanza non va
+  riempito: servirà a un passo finale, separato, che allarga il disegno per far posto alle
+  sigle. Nessun criterio di questo pacchetto lo insegue, e non va inseguito.
+- **D-132 (spessore del tratto per gerarchia) e D-136 (il verso di mandata e ritorno)** sono
+  **fuori** da questo pacchetto: vivono in quello successivo. Non si anticipano qui.
