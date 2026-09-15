@@ -1,0 +1,18 @@
+== confini di rete (criterio 3) ==
+   inlet-filling-unit-collettore-ritorno-a.a -> filling-unit-collettore-ritorno-a.a pieghe=0 nodi_su_autostrada=0
+   acquedotto.a -> scambiatore.secondary_in                   pieghe=0 nodi_su_autostrada=0
+   scambiatore.secondary_out -> utenze.a                      pieghe=0 nodi_su_autostrada=0
+
+== nodi condivisi fra un'autostrada e un rango inferiore (criterio 4) ==
+   totale: 8
+     rete primario (heating_water): 6
+     rete secondario (heating_water): 2
+
+== tratte di tronco che non possono essere rettilinee (criterio 10) ==
+   autostrade con almeno una piega: 6
+     ritorno-caldaia.b -> caldaia.water_return                  pieghe=1
+     caldaia.water_supply -> deviatrice.in                      pieghe=1
+     deviatrice.out_a -> collettore-mandata.c                   pieghe=2
+     volano.primary_out -> tee-pressure-gauge-collettore-ritorno-a.a pieghe=2
+     tee-pressure-gauge-collettore-ritorno-a.b -> tee-filling-unit-collettore-ritorno-a-b.a pieghe=1
+     tee-expansion-connection-collettore-ritorno-a.b -> collettore-ritorno.a pieghe=1

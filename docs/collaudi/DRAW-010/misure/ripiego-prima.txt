@@ -1,0 +1,47 @@
+== impianto 1 — prova-1-due-pdc-accumulo-combinato.json
+   la tavola esce su 420x297, 1 foglio/i
+   297x210 / tavola t1: il ripiego scatta 5 volte
+     0. il ciclo sulle fasi: cade: run w2-a-a-a still passes under mixing-valve-thermostatic after breaking for it: the accessory sits where its own run bends back into it, give the run a longer straight length
+     1. la posa seminata dalla fase del tronco: cade: run w2-a-a-a still passes under mixing-valve-thermostatic after breaking for it: the accessory sits where its own run bends back into it, give the run a longer straight length
+     2. il ciclo senza le fasi: cade: run s3-a on network secondario cannot be routed: no route from (87, 27) to (60, 33): every orthogonal path is blocked
+     3. la disposizione di partenza: cade: run s3-a on network secondario cannot be routed: no route from (87, 27) to (60, 33): every orthogonal path is blocked
+     4. l'ultima prova: cade: run w2-a-a-a still passes under mixing-valve-thermostatic after breaking for it: the accessory sits where its own run bends back into it, give the run a longer straight length
+   420x297 / tavola t1: il ripiego scatta 0 volte
+     0. il ciclo sulle fasi: si instrada
+
+== impianto 2 — prova-2-pdc-deviatrice-acs.json
+   la tavola esce su 420x297, 1 foglio/i
+   297x210 / tavola t1: il ripiego scatta 0 volte
+   420x297 / tavola t1: il ripiego scatta 0 volte
+     0. il ciclo sulle fasi: si instrada
+
+== impianto 3 — prova-3-pdc-diretta-pavimento.json
+   la tavola NON esce: the plant does not fit on any ordinary sheet format: run p6-a on network riscaldamento cannot be routed: no route from (64, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+   297x210 / tavola t1: il ripiego scatta 0 volte
+   420x297 / tavola t1: il ripiego scatta 5 volte
+     0. il ciclo sulle fasi: cade: run p6-a on network riscaldamento cannot be routed: no route from (64, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+     1. la posa seminata dalla fase del tronco: cade: run p6-a on network riscaldamento cannot be routed: no route from (64, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+     2. il ciclo senza le fasi: cade: run p6-a on network riscaldamento cannot be routed: no route from (64, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+     3. la disposizione di partenza: cade: run p6-a on network riscaldamento cannot be routed: no route from (64, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+     4. l'ultima prova: cade: run p6-a on network riscaldamento cannot be routed: no route from (64, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+
+== impianto 4 — prova-4-ibrido-pdc-caldaia.json
+   la tavola NON esce: the plant does not fit on any ordinary sheet format: run s3-a on network secondario cannot be routed: no route from (147, 70) to (116, 76): the 6 straight steps the chain needs beyond the port at (116, 76) run into an obstacle at (118, 76)
+   297x210 / tavola t1: il ripiego scatta 0 volte
+   420x297 / tavola t1: il ripiego scatta 5 volte
+     0. il ciclo sulle fasi: cade: run s3-a on network secondario cannot be routed: no route from (147, 70) to (116, 76): the 6 straight steps the chain needs beyond the port at (116, 76) run into an obstacle at (118, 76)
+     1. la posa seminata dalla fase del tronco: cade: run s3-a on network secondario cannot be routed: no route from (147, 70) to (116, 76): the 6 straight steps the chain needs beyond the port at (116, 76) run into an obstacle at (118, 76)
+     2. il ciclo senza le fasi: cade: run p5-a-1-a: the fixed place of valve-isolation in the chain of volano, at (150, 168.5), is taken by una tratta, and a chain does not slide: give the machine room on its port
+     3. la disposizione di partenza: cade: run p5-a-1-a: the fixed place of valve-isolation in the chain of volano, at (150, 168.5), is taken by una tratta, and a chain does not slide: give the machine room on its port
+     4. l'ultima prova: cade: run s3-a on network secondario cannot be routed: no route from (147, 70) to (116, 76): the 6 straight steps the chain needs beyond the port at (116, 76) run into an obstacle at (118, 76)
+
+== impianto 5 — prova-5-cascata-tre-pdc.json
+   la tavola NON esce: the plant does not fit on any ordinary sheet format: run p5-a-a on network primario cannot be routed: no route from (88, 64) to (104, 64): every orthogonal path is blocked
+   297x210 / tavola t1: il ripiego scatta 0 volte
+   420x297 / tavola t1: il ripiego scatta 5 volte
+     0. il ciclo sulle fasi: cade: run p5-a-a on network primario cannot be routed: no route from (88, 64) to (104, 64): every orthogonal path is blocked
+     1. la posa seminata dalla fase del tronco: cade: run p5-a-a on network primario cannot be routed: no route from (88, 64) to (104, 64): every orthogonal path is blocked
+     2. il ciclo senza le fasi: cade: run p10-a-4-a has no straight stretch of 7.5mm for dirt-separator that keeps 2mm clear of the other symbols and runs: symbols are never shrunk to fit, give the run a longer straight length
+     3. la disposizione di partenza: cade: run p10-a-4-a has no straight stretch of 7.5mm for dirt-separator that keeps 2mm clear of the other symbols and runs: symbols are never shrunk to fit, give the run a longer straight length
+     4. l'ultima prova: cade: run p5-a-a on network primario cannot be routed: no route from (88, 64) to (104, 64): every orthogonal path is blocked
+

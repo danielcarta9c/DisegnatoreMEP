@@ -1,0 +1,16 @@
+== confini di rete (criterio 3) ==
+   inlet-filling-unit-pdc-water-return.a -> filling-unit-pdc-water-return.a pieghe=0 nodi_su_autostrada=0
+   acquedotto.a -> tee-drain-connection-cold-bollitore-cold-in.a pieghe=0 nodi_su_autostrada=0
+   bollitore.dhw_out -> utenze.a                              pieghe=0 nodi_su_autostrada=1
+
+== nodi condivisi fra un'autostrada e un rango inferiore (criterio 4) ==
+   totale: 2
+     rete fredda (cold_water): 1
+     rete sanitaria (domestic_hot_water): 1
+
+== tratte di tronco che non possono essere rettilinee (criterio 10) ==
+   deviatrice.out_b -> bollitore.coil_in                      pieghe=1
+   bollitore.coil_out -> ritorno.c                            pieghe=1
+   autostrade con almeno una piega: 2
+     deviatrice.out_b -> bollitore.coil_in                      pieghe=1
+     bollitore.coil_out -> ritorno.c                            pieghe=1

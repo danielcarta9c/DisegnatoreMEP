@@ -1,0 +1,39 @@
+== impianto 1 — prova-1-due-pdc-accumulo-combinato.json
+   fredda: acquedotto.a -> accumulo.cold_in
+     valve-isolation-dhw-acquedotto-a  [isolation]
+   fredda-filling-unit-collettore-ritorno-a: inlet-filling-unit-collettore-ritorno-a.a -> tee-filling-unit-collettore-ritorno-a-b.branch
+     filling-unit-collettore-ritorno-a  [filling, filtration, isolation, non_return, pressure_control] (a bordo: filtration, isolation, non_return, pressure_control)
+
+== impianto 2 — prova-2-pdc-deviatrice-acs.json
+   fredda-filling-unit-pdc-water-return: inlet-filling-unit-pdc-water-return.a -> tee-filling-unit-pdc-water-return-b.branch
+     filling-unit-pdc-water-return  [filling, filtration, isolation, non_return, pressure_control] (a bordo: filtration, isolation, non_return, pressure_control)
+   fredda: acquedotto.a -> bollitore.cold_in
+     valve-isolation-dhw-acquedotto-a  [isolation]
+     dhw-safety-group-bollitore-cold-in  [isolation, non_return, safety] (a bordo: isolation, non_return)
+     tee-drain-connection-cold-bollitore-cold-in  [drain]
+     lo scarico sta dal lato del serbatoio: True   (scarico in posizione [2], organi che chiudono [0, 1], fila ['valve-isolation-dhw-acquedotto-a', 'dhw-safety-group-bollitore-cold-in', 'tee-drain-connection-cold-bollitore-cold-in'])
+
+== impianto 3 — prova-3-pdc-diretta-pavimento.json
+   fredda-filling-unit-pdc-water-return: inlet-filling-unit-pdc-water-return.a -> tee-filling-unit-pdc-water-return-b.branch
+     filling-unit-pdc-water-return  [filling, filtration, isolation, non_return, pressure_control] (a bordo: filtration, isolation, non_return, pressure_control)
+   fredda: acquedotto.a -> boiler.cold_in
+     valve-isolation-dhw-acquedotto-a  [isolation]
+     dhw-safety-group-boiler-cold-in  [isolation, non_return, safety] (a bordo: isolation, non_return)
+     tee-drain-connection-cold-boiler-cold-in  [drain]
+     lo scarico sta dal lato del serbatoio: True   (scarico in posizione [2], organi che chiudono [0, 1], fila ['valve-isolation-dhw-acquedotto-a', 'dhw-safety-group-boiler-cold-in', 'tee-drain-connection-cold-boiler-cold-in'])
+
+== impianto 4 — prova-4-ibrido-pdc-caldaia.json
+   fredda: acquedotto.a -> scambiatore.secondary_in
+     valve-isolation-dhw-acquedotto-a  [isolation]
+   fredda-filling-unit-collettore-ritorno-a: inlet-filling-unit-collettore-ritorno-a.a -> tee-filling-unit-collettore-ritorno-a-b.branch
+     filling-unit-collettore-ritorno-a  [filling, filtration, isolation, non_return, pressure_control] (a bordo: filtration, isolation, non_return, pressure_control)
+
+== impianto 5 — prova-5-cascata-tre-pdc.json
+   fredda-filling-unit-cascata-ritorno-a-a: inlet-filling-unit-cascata-ritorno-a-a.a -> tee-filling-unit-cascata-ritorno-a-a-b.branch
+     filling-unit-cascata-ritorno-a-a  [filling, filtration, isolation, non_return, pressure_control] (a bordo: filtration, isolation, non_return, pressure_control)
+   fredda: acquedotto.a -> bollitore.cold_in
+     valve-isolation-dhw-acquedotto-a  [isolation]
+     dhw-safety-group-bollitore-cold-in  [isolation, non_return, safety] (a bordo: isolation, non_return)
+     tee-drain-connection-cold-bollitore-cold-in  [drain]
+     lo scarico sta dal lato del serbatoio: True   (scarico in posizione [2], organi che chiudono [0, 1], fila ['valve-isolation-dhw-acquedotto-a', 'dhw-safety-group-bollitore-cold-in', 'tee-drain-connection-cold-bollitore-cold-in'])
+

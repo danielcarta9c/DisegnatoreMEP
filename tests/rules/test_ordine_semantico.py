@@ -553,3 +553,69 @@ def _costo(drawing: object) -> tuple[int, int, float]:
         for before, after in zip(segment, segment[1:], strict=False)
     )
     return bends, crossings, round(length, 3)
+
+
+# ---------------------------------------------------------------------------
+# DRAW-010 §D.3: cio' che un composito si porta dentro conta come il proprio
+# ---------------------------------------------------------------------------
+
+CLOSING = frozenset({"isolation", "isolation_locked_open"})
+"""I mestieri che chiudono una tratta: chi li dichiara in `before` vuole starci
+davanti, dal lato dell'ancora."""
+
+
+def test_un_organo_a_bordo_di_un_composito_conta_come_organo_che_chiude() -> None:
+    """Chi dichiara «prima di cio' che chiude» sta dal lato dell'ancora rispetto
+    a **qualunque** pezzo che chiuda: che l'organo sia il suo mestiere o stia
+    dentro il suo mantello.
+
+    E' il difetto che il PM ha trovato sulla tavola 2 (DRAW-010 §D.3). Il gruppo
+    di sicurezza sanitario e' un composito e monta intercettazione e ritegno
+    dentro il mantello; il motore ordinava guardando le sole `functions`, quindi
+    non lo vedeva come organo che chiude e lo scarico del serbatoio gli finiva
+    davanti. Aprendo quel rubinetto il serbatoio non si svuotava: si svuotava il
+    tratto a monte.
+
+    La prova non nomina nessun pezzo. Cerca nel modello completato una coppia in
+    cui il mestiere che uno pretende «dopo di se'» esiste **solo** a bordo
+    dell'altro, e misura da che parte stanno.
+    """
+    model = completato(circuito_chiuso())
+    misurate = 0
+    for run in runs_of(model, catalog(), rule_table()):
+        head, tail = run.head.component_id, run.tail.component_id
+        pieces = list(run.pieces)
+        for index, item in enumerate(pieces):
+            wanted = CLOSING & set(item.before)
+            if not wanted:
+                continue
+            for other_index, other in enumerate(pieces):
+                if other.component_id == item.component_id:
+                    continue
+                definition = definition_of(model, other.component_id)
+                if not wanted & set(definition.carries_on_board):
+                    continue
+                assert not wanted & set(definition.functions), (
+                    f"{other.component_id} dichiara {sorted(wanted)} anche fra "
+                    f"le proprie funzioni: la prova non starebbe misurando "
+                    f"cio' che il composito si porta dentro"
+                )
+                # La fila si legge dall'ancora verso l'impianto: chi chiude deve
+                # stare piu' lontano dall'ancora di chi lo dichiara.
+                if item.anchor == tail:
+                    assert other_index < index, (
+                        run.network_id,
+                        [piece.component_id for piece in pieces],
+                    )
+                elif item.anchor == head:
+                    assert other_index > index, (
+                        run.network_id,
+                        [piece.component_id for piece in pieces],
+                    )
+                else:
+                    continue
+                misurate += 1
+    assert misurate, (
+        "nessun composito che porta a bordo un organo che chiude si e' trovato "
+        "in fila con chi lo dichiara: la prova non direbbe niente"
+    )

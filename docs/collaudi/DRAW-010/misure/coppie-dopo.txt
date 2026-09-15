@@ -1,0 +1,34 @@
+== impianto 1 — prova-1-due-pdc-accumulo-combinato.json
+   la fase del tronco ha consegnato una posa: True
+   coppie che si sovrappongono davvero     : 0
+   coppie piu' vicine dello stacco ammesso : 0
+
+== impianto 2 — prova-2-pdc-deviatrice-acs.json
+   la fase del tronco ha consegnato una posa: True
+   coppie che si sovrappongono davvero     : 0
+   coppie piu' vicine dello stacco ammesso : 0
+
+== impianto 3 — prova-3-pdc-diretta-pavimento.json
+   la fase del tronco ha consegnato una posa: False
+   coppie che si sovrappongono davvero     : 0
+   coppie piu' vicine dello stacco ammesso : 2
+       drain-connection-volano-a <-> inlet-filling-unit-pdc-water-return
+       filling-unit-pdc-water-return <-> pdc
+
+== impianto 4 — prova-4-ibrido-pdc-caldaia.json
+   la fase del tronco ha consegnato una posa: True
+   coppie che si sovrappongono davvero     : 0
+   coppie piu' vicine dello stacco ammesso : 0
+
+Traceback (most recent call last):
+  File "/home/user/DisegnatoreMEP/docs/collaudi/DRAW-010/le-coppie-addosso.py", line 137, in <module>
+    raise SystemExit(main(sys.argv[1:]))
+                     ^^^^^^^^^^^^^^^^^^
+  File "/home/user/DisegnatoreMEP/docs/collaudi/DRAW-010/le-coppie-addosso.py", line 132, in main
+    _report(number)
+  File "/home/user/DisegnatoreMEP/docs/collaudi/DRAW-010/le-coppie-addosso.py", line 92, in _report
+    first = place_sheet(model, partition, registry, NOVE_C_A3, inline)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/user/DisegnatoreMEP/src/disegnatore_mep/layout/place.py", line 1703, in place_sheet
+    raise overflow
+disegnatore_mep.layout.errors.LayoutError: the 4 functional bands need 447.5mm but the drawing area is 335mm wide: symbols are never shrunk to fit, split the plant across more sheets
