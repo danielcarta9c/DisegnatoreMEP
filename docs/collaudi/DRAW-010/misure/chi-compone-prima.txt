@@ -1,0 +1,15 @@
+== impianto 1 — prova-1-due-pdc-accumulo-combinato.json
+   compose_drawing su A3, un foglio solo : SI
+   la CLI (formato ordinario piu' piccolo): SI  (420x297, 1 foglio/i)
+== impianto 2 — prova-2-pdc-deviatrice-acs.json
+   compose_drawing su A3, un foglio solo : SI
+   la CLI (formato ordinario piu' piccolo): SI  (420x297, 1 foglio/i)
+== impianto 3 — prova-3-pdc-diretta-pavimento.json
+   compose_drawing su A3, un foglio solo : NO  (run p6-a on network riscaldamento cannot be routed: no route from (64, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56))
+   la CLI (formato ordinario piu' piccolo): NO  (the plant does not fit on any ordinary sheet format: run p6-a on network riscaldamento cannot be routed: no route from (64, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56))
+== impianto 4 — prova-4-ibrido-pdc-caldaia.json
+   compose_drawing su A3, un foglio solo : NO  (run s3-a on network secondario cannot be routed: no route from (147, 70) to (116, 76): the 6 straight steps the chain needs beyond the port at (116, 76) run into an obstacle at (118, 76))
+   la CLI (formato ordinario piu' piccolo): NO  (the plant does not fit on any ordinary sheet format: run s3-a on network secondario cannot be routed: no route from (147, 70) to (116, 76): the 6 straight steps the chain needs beyond the port at (116, 76) run into an obstacle at (118, 76))
+== impianto 5 — prova-5-cascata-tre-pdc.json
+   compose_drawing su A3, un foglio solo : NO  (run p5-a-a on network primario cannot be routed: no route from (88, 64) to (104, 64): every orthogonal path is blocked)
+   la CLI (formato ordinario piu' piccolo): NO  (the plant does not fit on any ordinary sheet format: run p5-a-a on network primario cannot be routed: no route from (88, 64) to (104, 64): every orthogonal path is blocked)

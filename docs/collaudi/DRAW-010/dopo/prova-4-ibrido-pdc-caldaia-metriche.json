@@ -1,0 +1,134 @@
+{
+  "formato": "420x297",
+  "area_disegno_mm": [
+    350.0,
+    235.0
+  ],
+  "impronta": "902360a11224fa3270ff4e6e5728f18765d757812bb04e0f9de15afc9917b62e",
+  "fogli": [
+    {
+      "sheet_id": "t1",
+      "ingombro_mm": [
+        52.5,
+        46.0,
+        315.0,
+        223.5
+      ],
+      "riempimento_pct": 56.6,
+      "riempimento_senza_il_piu_isolato_pct": 49.6,
+      "copertura_ingombro": 0.703,
+      "quadranti_rapporto": 9.01,
+      "quadranti_mm2": [
+        356.6,
+        798.6,
+        3213.5,
+        1514.5
+      ],
+      "backtracking_tratte": 1,
+      "backtracking_mm": 2.5,
+      "incroci": 9,
+      "pieghe_totali": 14,
+      "tratte_oltre_tre_pieghe": 0,
+      "lunghezza_totale_mm": 1327.5,
+      "tubo_sotto_simbolo": [],
+      "valvole_d120": {
+        "valve-isolation-pdc-water-supply": {
+          "caso": "primo",
+          "isola": "pdc",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-strainer-caldaia-water-return-a": {
+          "caso": "coppia",
+          "isola": "strainer-caldaia-water-return",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-deviatrice-in": {
+          "caso": "primo",
+          "isola": "caldaia",
+          "distanza_mm": 70.0
+        },
+        "valve-isolation-deviatrice-out-a": {
+          "caso": "primo",
+          "isola": "deviatrice",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-volano-primary-in": {
+          "caso": "ultimo",
+          "isola": "volano",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-volano-primary-out": {
+          "caso": "primo",
+          "isola": "volano",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dirt-separator-collettore-ritorno-a-b": {
+          "caso": "coppia",
+          "isola": "dirt-separator-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-strainer-pdc-water-return-a": {
+          "caso": "coppia",
+          "isola": "strainer-pdc-water-return",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-deviatrice-out-b": {
+          "caso": "primo",
+          "isola": "deviatrice",
+          "distanza_mm": 140.0
+        },
+        "valve-isolation-scambiatore-primary-out": {
+          "caso": "primo",
+          "isola": "scambiatore",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-volano-secondary-out": {
+          "caso": "primo",
+          "isola": "volano",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-circolatore-b": {
+          "caso": "ultimo",
+          "isola": "radiatori",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-volano-secondary-in": {
+          "caso": "primo",
+          "isola": "radiatori",
+          "distanza_mm": 56.403
+        },
+        "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "expansion-connection-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-gauge-cock-3way-pressure-gauge-collettore-ritorno-a-a": {
+          "caso": "ultimo",
+          "isola": "pressure-gauge-collettore-ritorno-a",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-acquedotto-a": {
+          "caso": "ultimo",
+          "isola": "scambiatore",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-hot-utenze-a": {
+          "caso": "primo",
+          "isola": "scambiatore",
+          "distanza_mm": 5.0
+        }
+      },
+      "valvole_d120_entro_2_5_5_mm": 14,
+      "valvole_d120_totali": 17,
+      "simboli": 43,
+      "tratte": 25
+    }
+  ],
+  "rilievi_qualita": [
+    "warning:TOO_MANY_CROSSINGS:la tavola t1 porta 9 nodi condivisi fra tratte diverse: su una centrale semplice gli incroci stanno sulle dita di una mano, cioe' 5 (B3, D-060)",
+    "blocking:RUN_OVERSHOOTS_ITS_PORT:la tratta p5-a-1-a, p5-a-1-b supera di 2.5 mm la propria porta di arrivo e ci torna indietro: si sposta l'oggetto, non si allunga la linea (B12, D-078)",
+    "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 57%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)",
+    "warning:DRAWING_ALL_ON_ONE_SIDE:la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 9.0 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)"
+  ],
+  "rilievi_correttezza": []
+}

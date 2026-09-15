@@ -1,0 +1,70 @@
+== impianto 1 — prova-1-due-pdc-accumulo-combinato.json
+   coppie che si sovrappongono davvero          : 0
+   coppie piu' vicine dello stacco ammesso      : 0   (comprese le sovrapposte: e' la regola di is_valid)
+   i gruppi dell'asse x (una retta li tiene insieme):
+     accumulo: accumulo
+     collettore-mandata: collettore-mandata
+     collettore-ritorno: collettore-ritorno
+     pdc-master: pdc-master
+     tee-expansion-connection-collettore-ritorno-a: tee-expansion-connection-collettore-ritorno-a
+     tee-filling-unit-collettore-ritorno-a-b: tee-filling-unit-collettore-ritorno-a-b
+     tee-pressure-gauge-collettore-ritorno-a: tee-pressure-gauge-collettore-ritorno-a
+     tee-valve-safety-collettore-mandata-b: tee-valve-safety-collettore-mandata-b
+   i gruppi dell'asse y (una retta li tiene insieme):
+     collettore-ritorno: pdc-master, accumulo, collettore-ritorno, tee-expansion-connection-collettore-ritorno-a, tee-filling-unit-collettore-ritorno-a-b, tee-pressure-gauge-collettore-ritorno-a, collettore-mandata, tee-valve-safety-collettore-mandata-b
+   il diario di _relieve:
+     nessuna coppia addosso fra i partecipanti al tronco
+
+== impianto 2 — prova-2-pdc-deviatrice-acs.json
+   coppie che si sovrappongono davvero          : 0
+   coppie piu' vicine dello stacco ammesso      : 0   (comprese le sovrapposte: e' la regola di is_valid)
+   i gruppi dell'asse x (una retta li tiene insieme):
+     bollitore: bollitore
+     deviatrice: deviatrice
+     pdc: pdc
+     ritorno: ritorno
+     tee-expansion-connection-pdc-water-return: tee-expansion-connection-pdc-water-return
+     tee-filling-unit-pdc-water-return-b: tee-filling-unit-pdc-water-return-b
+     tee-pressure-gauge-pdc-water-return: tee-pressure-gauge-pdc-water-return
+     tee-valve-safety-pdc-water-supply: tee-valve-safety-pdc-water-supply
+     volano: volano
+   i gruppi dell'asse y (una retta li tiene insieme):
+     bollitore: bollitore
+     pdc: pdc, volano, tee-valve-safety-pdc-water-supply, deviatrice, tee-expansion-connection-pdc-water-return, tee-filling-unit-pdc-water-return-b, tee-pressure-gauge-pdc-water-return, ritorno
+   il diario di _relieve:
+   coppia addosso: bollitore <-> volano
+     la mossa di prima (DRAW-009):
+       candidata «sposta volano»: allunga la campata deviatrice.out_a -> volano, verso right
+         sottoalbero di _beyond (8): volano, ritorno, bollitore, tee-pressure-gauge-pdc-water-return, tee-filling-unit-pdc-water-return-b, tee-expansion-connection-pdc-water-return, pdc, tee-valve-safety-pdc-water-supply
+         SCARTATA — l'ancora bollitore sta nel sottoalbero: l'anello lo riporta dentro, e spostarlo porta dietro tutti e due senza separarli
+       candidata «sposta bollitore»: allunga la campata deviatrice.out_b -> bollitore, verso bottom
+         sottoalbero di _beyond (8): bollitore, ritorno, volano, tee-pressure-gauge-pdc-water-return, tee-filling-unit-pdc-water-return-b, tee-expansion-connection-pdc-water-return, pdc, tee-valve-safety-pdc-water-supply
+         SCARTATA — l'ancora volano sta nel sottoalbero: l'anello lo riporta dentro, e spostarlo porta dietro tutti e due senza separarli
+     la mossa di adesso (DRAW-010):
+       x avanti    «sposta bollitore»: AMMESSA — scorre 60 mm, blocco (1): bollitore
+       x indietro  «sposta bollitore»: AMMESSA — scorre 10 mm, blocco (8): pdc, bollitore, tee-valve-safety-pdc-water-supply, deviatrice, tee-expansion-connection-pdc-water-return, tee-filling-unit-pdc-water-return-b, tee-pressure-gauge-pdc-water-return, ritorno
+       x avanti    «sposta volano»: AMMESSA — scorre 10 mm, blocco (1): volano
+       x indietro  «sposta volano»: AMMESSA — scorre 60 mm, blocco (8): pdc, volano, tee-valve-safety-pdc-water-supply, deviatrice, tee-expansion-connection-pdc-water-return, tee-filling-unit-pdc-water-return-b, tee-pressure-gauge-pdc-water-return, ritorno
+       y avanti    «sposta bollitore»: AMMESSA — scorre 30 mm, blocco (1): bollitore
+       y indietro  «sposta bollitore»: SCARTATA — l'ancora volano e' nel blocco (9 pezzi)
+       y avanti    «sposta volano»: SCARTATA — l'ancora bollitore e' nel blocco (9 pezzi)
+       y indietro  «sposta volano»: AMMESSA — scorre 30 mm, blocco (8): pdc, volano, tee-valve-safety-pdc-water-supply, deviatrice, tee-expansion-connection-pdc-water-return, tee-filling-unit-pdc-water-return-b, tee-pressure-gauge-pdc-water-return, ritorno
+     esito: separati — bollitore (+0, +30)
+
+== impianto 3 — prova-3-pdc-diretta-pavimento.json
+   coppie che si sovrappongono davvero          : 0
+   coppie piu' vicine dello stacco ammesso      : 2   (comprese le sovrapposte: e' la regola di is_valid)
+       drain-connection-volano-a <-> inlet-filling-unit-pdc-water-return
+       filling-unit-pdc-water-return <-> pdc
+Traceback (most recent call last):
+  File "/home/user/DisegnatoreMEP/docs/collaudi/DRAW-010/perche-l-anello-non-separava.py", line 298, in <module>
+    raise SystemExit(main(sys.argv[1:]))
+                     ^^^^^^^^^^^^^^^^^^
+  File "/home/user/DisegnatoreMEP/docs/collaudi/DRAW-010/perche-l-anello-non-separava.py", line 293, in main
+    _report(number)
+  File "/home/user/DisegnatoreMEP/docs/collaudi/DRAW-010/perche-l-anello-non-separava.py", line 281, in _report
+    _gruppi(builder)
+  File "/home/user/DisegnatoreMEP/docs/collaudi/DRAW-010/perche-l-anello-non-separava.py", line 247, in _gruppi
+    demands = builder.axes[axis]
+              ^^^^^^^^^^^^
+AttributeError: '_Watched' object has no attribute 'axes'
