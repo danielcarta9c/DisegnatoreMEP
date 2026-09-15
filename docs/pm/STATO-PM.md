@@ -58,6 +58,12 @@ verdetto.
 
 DRAW-010 chiede sedici criteri. Quando arriva la PR:
 
+0. **Prima guardi la tavola, poi conti.** È la regola nata il 15 settembre, sulla consegna di
+   DRAW-010 (`I-064`): il PM aveva portato al PO pieghe, incroci e lunghezza senza aver letto
+   il disegno, e i quattro difetti veri — il prelievo tornato al centro del foglio, lo stretch
+   mai avvenuto, lo scarico che attraversa la mandata, la tavola 4 illeggibile — li ha visti
+   il PO. Una misura dice se un numero peggiora; non dice se il disegno ha senso. Si apre
+   guardando, si chiude misurando.
 1. **Prima le tue misure, poi il suo rapporto.** Il rapporto del DEV, il corpo della PR e i
    messaggi dei commit ti sono preclusi finché non hai formato i tuoi numeri. Poi li leggi e
    segnali ogni differenza.
