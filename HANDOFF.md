@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-14
+**Aggiornato:** 2026-09-15
 **Scopo:** ingresso operativo breve per una nuova sessione DEV.
 
 ## Prodotto
@@ -44,6 +44,11 @@ L'AI non modifica direttamente coordinate o connettività approvata.
   proposte tecniche reversibili dentro il Work Package. Non deduce requisiti dagli esempi e
   non decide regole MEP.
 
+## Se sei il PM
+
+Il tuo documento d'ingresso è **`docs/pm/STATO-PM.md`**: stato di fatto, fili aperti,
+incoerenze note, igiene di git e che cosa fare appena subentri. Leggi quello e sei operativo.
+
 ## Ordine di lettura DEV
 
 1. `CLAUDE.md`;
@@ -56,7 +61,8 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
 
 ## Stato corrente
 
-- Release in corso: **0.2 — prima tavola tecnicamente corretta e approvata**.
+- Release in corso: **0.3 — generalizzazione, impianto 2**. (Il numero di versione
+  Python resta `0.1.0`: non ha mai seguito le release dichiarate.)
 - `DRAW-005` è stato verificato e fuso nella PR #18: tavola 1 con 4 curve, 1 incrocio,
   525 mm, zero backtracking; simboli e contenuto critici corretti.
 - `DRAW-005-R1` è stato fuso con la PR #21; `DRAW-006` e `DRAW-006-R1` con la PR #24.
