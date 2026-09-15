@@ -1,0 +1,1 @@
+the plant does not fit on any ordinary sheet format: run p5-a-a on network primario cannot be routed: no route from (88, 64) to (104, 64): every orthogonal path is blocked

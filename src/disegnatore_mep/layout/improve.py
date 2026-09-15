@@ -2398,18 +2398,16 @@ class Improver:
                 if other_id == item:
                     continue
                 gap = 0.0 if units[other_id] == units[item] else ROW_GAP_MM
-                if not _too_close(placed, after[other_id], gap):
-                    continue
-                # **Una mossa risponde di cio' che crea, non di cio' che
-                # trova.** Se i due erano gia' addosso prima — capita quando la
-                # fase del tronco consegna una posa che si sovrappone, e sulla
-                # tavola 2 ne consegna nove coppie — pretendere che ogni
-                # candidata li separi rende **ogni** candidata non valida, e il
-                # ciclo resta inchiodato sulla posa peggiore che abbia mai
-                # avuto. E' lo stesso difetto per cui esiste `_first_routable`:
-                # il ciclo rinunciava senza provare una mossa. Cio' che nessuna
-                # mossa puo' fare e' **aggiungere** una sovrapposizione.
-                if not _too_close(self.best[item], self.best[other_id], gap):
+                # **Nessuna candidata lascia due pezzi addosso.** DRAW-009
+                # aveva dovuto ammorbidire questa riga — una mossa rispondeva
+                # delle sovrapposizioni che creava, non di quelle che trovava —
+                # perche' la fase del tronco consegnava una posa con nove coppie
+                # sovrapposte, e con la regola stretta **ogni** candidata era
+                # non valida e il ciclo restava inchiodato. Da DRAW-010 §A la
+                # fase del tronco separa cio' che sta addosso, e il cancello
+                # torna quello che era: il ciclo non ha piu' bisogno di
+                # tollerare una sovrapposizione per potersi muovere.
+                if _too_close(placed, after[other_id], gap):
                     return False
         # Una pila a terra non si sfila di un elemento (D-073): chi la divide
         # con un altro si sposta in orizzontale solo insieme a lui. Chi sta su

@@ -1,0 +1,121 @@
+{
+  "formato": "420x297",
+  "area_disegno_mm": [
+    350.0,
+    235.0
+  ],
+  "impronta": "80a58849796d25433eb798fcb53b17f3dae86926bacb52b1425b0a3e88d0bd6b",
+  "fogli": [
+    {
+      "sheet_id": "t1",
+      "ingombro_mm": [
+        57.5,
+        53.5,
+        315.0,
+        213.5
+      ],
+      "riempimento_pct": 50.1,
+      "riempimento_senza_il_piu_isolato_pct": 41.3,
+      "copertura_ingombro": 0.625,
+      "quadranti_rapporto": 32.5,
+      "quadranti_mm2": [
+        1786.0,
+        2051.5,
+        63.1,
+        1420.2
+      ],
+      "backtracking_tratte": 0,
+      "backtracking_mm": 0.0,
+      "incroci": 1,
+      "pieghe_totali": 5,
+      "tratte_oltre_tre_pieghe": 0,
+      "lunghezza_totale_mm": 600.0,
+      "tubo_sotto_simbolo": [],
+      "valvole_d120": {
+        "valve-isolation-deviatrice-in": {
+          "caso": "ultimo",
+          "isola": "deviatrice",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-volano-primary-in": {
+          "caso": "primo",
+          "isola": "deviatrice",
+          "distanza_mm": 15.0
+        },
+        "valve-isolation-volano-primary-out": {
+          "caso": "primo",
+          "isola": "volano",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-bollitore-coil-in": {
+          "caso": "primo",
+          "isola": "deviatrice",
+          "distanza_mm": 77.661
+        },
+        "valve-isolation-bollitore-coil-out": {
+          "caso": "primo",
+          "isola": "bollitore",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dirt-separator-pdc-water-return-a": {
+          "caso": "coppia",
+          "isola": "dirt-separator-pdc-water-return",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-dirt-separator-pdc-water-return-b": {
+          "caso": "coppia",
+          "isola": "dirt-separator-pdc-water-return",
+          "distanza_mm": 2.5
+        },
+        "valve-isolation-volano-secondary-out": {
+          "caso": "primo",
+          "isola": "volano",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-ventilconvettori-in": {
+          "caso": "ultimo",
+          "isola": "ventilconvettori",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-volano-secondary-in": {
+          "caso": "primo",
+          "isola": "ventilconvettori",
+          "distanza_mm": 46.704
+        },
+        "valve-isolation-locked-open-expansion-connection-pdc-water-return-a": {
+          "caso": "ultimo",
+          "isola": "expansion-connection-pdc-water-return",
+          "distanza_mm": 5.0
+        },
+        "valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a": {
+          "caso": "ultimo",
+          "isola": "pressure-gauge-pdc-water-return",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-acquedotto-a": {
+          "caso": "fuori regola",
+          "distanza_mm": 7.5
+        },
+        "valve-isolation-dhw-hot-bollitore-dhw-out": {
+          "caso": "primo",
+          "isola": "bollitore",
+          "distanza_mm": 5.0
+        },
+        "valve-isolation-dhw-hot-utenze-a": {
+          "caso": "coppia",
+          "isola": "mixing-valve-thermostatic-bollitore-dhw-out",
+          "distanza_mm": 2.5
+        }
+      },
+      "valvole_d120_entro_2_5_5_mm": 11,
+      "valvole_d120_totali": 14,
+      "simboli": 41,
+      "tratte": 23
+    }
+  ],
+  "rilievi_qualita": [
+    "warning:SHEET_BARELY_FILLED:la tavola t1: il foglio e' pieno solo al 50%, sotto il 60% dichiarato: il disegno e' una fascia, non una tavola (A1)",
+    "warning:DRAWING_ALL_ON_ONE_SIDE:la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 32.5 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)"
+  ],
+  "rilievi_correttezza": []
+}

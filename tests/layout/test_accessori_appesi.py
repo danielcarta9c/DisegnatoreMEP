@@ -21,6 +21,7 @@ from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import compose_drawing, inline_component_ids
+from disegnatore_mep.layout.errors import LayoutError
 from disegnatore_mep.layout.geometry import PlacedSymbol, SheetGeometry
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.partition import SheetPartition, partition_project
@@ -37,39 +38,53 @@ SYMBOLS = ROOT / "assets" / "symbols"
 RULES = ROOT / "rules" / "hydronic"
 PROVA = ROOT / "examples" / "prova"
 
-COMPONIBILI = ("prova-1-due-pdc-accumulo-combinato.json",)
-"""L'impianto che entra in una A3 oggi.
+COMPONIBILI = (
+    "prova-1-due-pdc-accumulo-combinato.json",
+    "prova-2-pdc-deviatrice-acs.json",
+    "prova-4-ibrido-pdc-caldaia.json",
+)
+"""Gli impianti che si compongono in una A3, **tutti quelli che lo fanno**.
 
-⛔ **Il 9 agosto erano tre, e sono tornati uno. Non e' un ammorbidimento: e' un
-prezzo, ed e' misurato.** Il verso del fluido era sbagliato — sulla rete di
-acqua fredda il disegnatore prendeva il bollitore come sorgente invece
-dell'acquedotto, e disegnava **tutta l'adduzione come un ritorno**. Correggerlo
-cambia l'ordine con cui il collocatore legge il processo, e la disposizione non
-regge il cambiamento: il terzo impianto chiede 420 mm contro i 335 di una A3, e
-il secondo non trova piu' il rettilineo per una valvola.
+⛔ **Un impianto che compone e non sta qui e' una capacita' che nessuno
+sorveglia, ed e' esattamente cosi' che si e' perso l'impianto 4.** Componeva
+per capacita' e non per contratto: `DRAW-009` gli ha tolto la tavola, la suite
+e' rimasta verde, e il difetto e' stato trovato **dopo il merge**, misurando a
+mano (verdetto del PM sulla PR #27, §7). Da `DRAW-010` §C l'elenco e' esplicito
+e dichiarato: chi compone sta qui, chi non compone sta in `NON_COMPONGONO` con
+la ragione scritta accanto, e i due elenchi insieme coprono tutti e cinque gli
+impianti di prova.
 
-Un disegno che sbaglia il verso dell'acqua e' peggio di un disegno che non
-esce: il committente non puo' verificarci niente, e infatti se n'e' accorto in
-pochi minuti. La correzione resta; a rientrare devono essere gli impianti,
-quando la composizione compatta. Il conto e' in `NON_COMPONGONO`."""
-
-NON_COMPONGONO = ("prova-2-pdc-deviatrice-acs.json",)
-"""Gli impianti che componevano il 9 agosto e oggi no, con il motivo misurato."""
-
-TORNATO_A_COMPORRE = ("prova-3-pdc-diretta-pavimento.json",)
-"""Chi era in `NON_COMPONGONO` e ha ricominciato a comporre (DRAW-001).
-
-Il terzo impianto chiedeva 420 mm contro i 335 di una A3 e non entrava. Da
-quando il collocatore **distende** invece di limitarsi a stringere (D-111) —
-e la posa che ne esce e' un'altra — la sua fila rientra e la tavola si compone
-in un foglio solo.
+La storia: il 9 agosto erano tre, poi tornarono uno. Non fu un ammorbidimento
+ma un prezzo misurato — il verso del fluido era sbagliato, sulla rete di acqua
+fredda il disegnatore prendeva il bollitore come sorgente invece
+dell'acquedotto e disegnava **tutta l'adduzione come un ritorno**. Correggerlo
+cambio' l'ordine con cui il collocatore legge il processo, e la disposizione
+non resse il cambiamento.
 
 ⚠ **Che componga e' un fatto, che sia bella non lo dice nessuno.** Qui si
-verifica solo che la catena arrivi in fondo: la **qualita'** delle altre quattro
-tavole non si guarda e non si consegna finche' il PO non ha approvato la prima
-(D-116). La riga esiste perche' un guadagno misurato non vada perso, non per
-aprire un cantiere sul terzo impianto."""
+verifica che la catena arrivi in fondo; la **qualita'** delle altre tavole non
+si guarda e non si consegna finche' il PO non ha approvato la prima (D-116)."""
 
+NON_COMPONGONO = (
+    (
+        "prova-3-pdc-diretta-pavimento.json",
+        "il ritorno del pavimento radiante non si instrada: la tratta p6-a "
+        "chiede sei passi dritti oltre la porta e trova un ostacolo. Non "
+        "componeva nemmeno prima di DRAW-009 ne' prima di DRAW-010: e' la "
+        "linea di partenza, non una regressione",
+    ),
+    (
+        "prova-5-cascata-tre-pdc.json",
+        "le quattro fasce funzionali chiedono piu' larghezza di quanta ne "
+        "abbia l'area di disegno di una A3, e la posa si ferma prima di "
+        "arrivare all'instradamento. Non componeva nemmeno prima",
+    ),
+)
+"""Chi non compone, e **perche'**, misurato.
+
+La ragione non e' un commento: e' il dato che dice se un impianto e' tornato
+indietro o non c'e' mai arrivato. Si rimisura con
+`docs/collaudi/DRAW-010/chi-compone.py`."""
 
 def catalog() -> ComponentRegistry:
     return ComponentRegistry.from_directory(
@@ -269,45 +284,31 @@ def test_chi_genera_sta_a_sinistra_di_chi_utilizza(name: str) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Il prezzo del verso corretto (aperto)
+# Chi non compone, e il conto di quanto manca
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="APERTO, e misurato. Questi due impianti componevano il 9 agosto e "
-    "hanno smesso quando il verso del fluido e' stato corretto: sulla rete di "
-    "acqua fredda la sorgente era il bollitore invece dell'acquedotto, e tutta "
-    "l'adduzione veniva disegnata come un ritorno. Il verso giusto cambia "
-    "l'ordine del processo, e la disposizione non lo regge: il terzo impianto "
-    "chiede 420 mm contro i 335 di una A3, il secondo non trova il rettilineo "
-    "per una valvola di intercettazione. Torna verde quando la composizione "
-    "compatta davvero — non abbassando i minimi grafici.",
-)
-@pytest.mark.parametrize("name", NON_COMPONGONO)
-def test_tornano_a_comporre_quando_la_composizione_compatta(name: str) -> None:
-    drawing = compose_drawing(completato(name), catalog(), NOVE_C_A3)
-    assert len(drawing.sheets) == 1
+@pytest.mark.parametrize("name,ragione", NON_COMPONGONO, ids=[item[0] for item in NON_COMPONGONO])
+def test_chi_non_compone_non_compone_per_la_ragione_scritta(
+    name: str, ragione: str
+) -> None:
+    """Chi sta in `NON_COMPONGONO` non compone davvero, e il motivo e' quello.
 
+    **La prova serve nei due versi.** Se un impianto smette di comporre senza
+    essere in elenco, il parametrizzato di `COMPONIBILI` lo dice; se uno
+    **ricomincia** a comporre e nessuno lo sposta, lo dice questa — un
+    guadagno che resta fuori elenco e' un guadagno che si perde la volta dopo,
+    ed e' come si e' perso l'impianto 4.
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="APERTO, e misurato (DRAW-005, 2026-09-07). Con l'intercettazione "
-    "per gruppo il terzo impianto ha meno organi e la posa iniziale cambia: "
-    "in ordine canonico delle tratte il ritorno rientra sotto il defangatore "
-    "dopo il taglio, in ordine del file la linea sanitaria dallo scaldacqua "
-    "non trova il rettilineo di 7,5 mm per la miscelatrice. Sul commit "
-    "dc3dad5 componeva in entrambi gli ordini. Il campo di lavoro e' il solo "
-    "impianto 1 (D-116): la riga esiste perche' il difetto non sia scoperto "
-    "due volte, e torna verde quando la posa regge il grafo nuovo, non "
-    "allentando la regola ne' i minimi grafici.",
-)
-@pytest.mark.parametrize("name", TORNATO_A_COMPORRE)
-def test_chi_e_tornato_a_comporre_compone_in_un_foglio_solo(name: str) -> None:
-    """Il terzo impianto rientra in una A3 da quando il collocatore distende.
-
-    Solo che compone, e nient'altro: le altre quattro tavole non si guardano
-    finche' la prima non e' approvata (D-116).
+    Il motivo scritto accanto si controlla sulla diagnostica che la catena
+    emette: non basta che non componga, deve non comporre **per quello**.
     """
-    drawing = compose_drawing(completato(name), catalog(), NOVE_C_A3)
-    assert len(drawing.sheets) == 1
+    assert ragione
+    with pytest.raises(LayoutError) as caduta:
+        compose_drawing(completato(name), catalog(), NOVE_C_A3)
+    detto = str(caduta.value)
+    assert (
+        "cannot be routed" in detto
+        or "does not fit" in detto
+        or "functional bands" in detto
+    ), detto

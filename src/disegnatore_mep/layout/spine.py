@@ -65,6 +65,7 @@ from .partition import SheetPartition
 from .place import (
     ROUTING_MARGIN_MM,
     ROW_GAP_MM,
+    boundary_faces_the_plant,
     chain_room_of_port_mm,
     hanging_children,
     hanging_ports,
@@ -80,6 +81,15 @@ _RELIEF_STEPS = 40
 
 Un tetto, non un obiettivo: la compattazione si ferma qui e dichiara cio' che
 non ha risolto, invece di camminare fuori dal foglio.
+"""
+
+_RELIEF_ROUNDS = 200
+"""Quante coppie la compattazione prova a separare, in tutto.
+
+Ogni giro chiude una coppia o la mette da parte come irriducibile, e una mossa
+puo' avvicinarne un'altra: il tetto e' generoso perche' il lavoro e' finito
+quando non resta niente da separare, non dopo un numero di giri deciso a
+tavolino. Serve solo perche' un ciclo che si rincorre finisca.
 """
 
 _HORIZONTAL_FACES = (PortFace.LEFT, PortFace.RIGHT)
@@ -243,6 +253,21 @@ class _Apart:
     gap: float
 
 
+@dataclass(frozen=True)
+class _AxisDemands:
+    """Quel che un asse pretende, tenuto da parte dopo averlo risolto.
+
+    `leader` dice, per ogni pezzo, il gruppo che una retta gli impone: chi sta
+    sulla stessa retta dell'altro asse ha lo stesso capo e su questo asse non
+    puo' muoversi da solo senza piegarla. `within` e' lo scarto di ciascuno
+    dentro il proprio gruppo, e `apart` sono le campate.
+    """
+
+    leader: dict[str, str]
+    within: dict[str, float]
+    apart: tuple["_Apart", ...]
+
+
 def _apart(
     here: str, there: str, face: PortFace, mine: float, its: float, span: float
 ) -> _Apart:
@@ -279,6 +304,7 @@ class _Spine:
     ) -> None:
         self.project = project
         self.catalog = catalog
+        self.partition = partition
         self.trunks = list(partition.trunks)
         self.levels = hierarchy_of(project, catalog, self.trunks)
         self.autostrade = [
@@ -322,6 +348,21 @@ class _Spine:
             )
             for trunk in self.autostrade
         }
+        # Quanto il disegno intero occupa nella prima ipotesi di posa, sui due
+        # assi, e quanto la compattazione l'ha gia' allargato. Non sono i soli
+        # partecipanti: chi li segue esce dal foglio con loro, e la tratta di
+        # un utilizzatore finito oltre il bordo non si instrada. Serve a
+        # scegliere **da che parte** allargare: la tavola 2 ha 335 mm di
+        # larghezza occupata su 350 e settantacinque millimetri di altezza su
+        # 235, quindi lo stesso stacco costa il foglio in orizzontale e non
+        # costa niente in verticale.
+        self.spread = (
+            max(item.right_mm for item in placed)
+            - min(item.origin.x_mm for item in placed),
+            max(item.bottom_mm for item in placed)
+            - min(item.origin.y_mm for item in placed),
+        ) if placed else (0.0, 0.0)
+        self.grown = [0.0, 0.0]
         self.order = structural_order(project)
         self._turned: dict[tuple[str, int], SymbolManifest] = {}
         self.pose: dict[str, Pose] = {}
@@ -734,8 +775,45 @@ class _Spine:
         its = self.start[there].origin
         return (mine.x_mm, mine.y_mm)[index] > (its.x_mm, its.y_mm)[index]
 
+    def _fits_the_sheet(self, values: dict[str, float], index: int) -> bool:
+        """Vero se, con quelle coordinate, il disegno intero sta nel foglio.
+
+        Intero vuol dire **anche chi non partecipa**: il tronco si sposta e il
+        resto lo segue, e a uscire dal bordo e' quasi sempre chi sta in fondo a
+        una fila, non una macchina di spina. Il conto rifa' la stessa lettura di
+        `carry_the_rest` — chi tocca un partecipante prende la sua traslazione —
+        sulla prima ipotesi di posa.
+        """
+        root = self._root()
+        base = self.start[root].origin
+        anchor = values[root]
+        start = (base.x_mm, base.y_mm)[index]
+        delta: dict[str, tuple[float, float]] = {}
+        for item in self.participants:
+            here = self.start[item].origin
+            shift = start + values[item] - anchor - (here.x_mm, here.y_mm)[index]
+            delta[item] = (shift, 0.0) if index == 0 else (0.0, shift)
+        following = _followers(self.partition, frozenset(self.start), delta)
+        low: float | None = None
+        high: float | None = None
+        for item, placed in self.start.items():
+            move = delta.get(item) or following.get(item) or (0.0, 0.0)
+            shift = move[index]
+            near = (placed.origin.x_mm, placed.origin.y_mm)[index] + shift
+            far = (placed.right_mm, placed.bottom_mm)[index] + shift
+            low = near if low is None else min(low, near)
+            high = far if high is None else max(high, far)
+        if low is None or high is None:
+            return True
+        size = (self.area.width_mm, self.area.height_mm)[index]
+        return high - low <= size + _TOLERANCE_MM
+
     def _solve_axis(
-        self, same: list["_Same"], apart: list["_Apart"], index: int
+        self,
+        same: list["_Same"],
+        apart: list["_Apart"],
+        index: int,
+        compact: bool = False,
     ) -> dict[str, float]:
         """Le coordinate di un asse, risolte tutte insieme.
 
@@ -769,7 +847,7 @@ class _Spine:
             if root(link.low) != root(link.high)
         ]
         earliest = self._earliest(groups, edges)
-        order = self._ordered(groups, edges)
+        order = None if compact else self._ordered(groups, edges)
         if order is None:
             return {item: earliest[root(item)] + within[item] for item in self.participants}
         wanted = {
@@ -887,8 +965,29 @@ class _Spine:
         """Le due passate, e la posa che ne esce."""
         self._walk(root)
         same_x, apart_x, same_y, apart_y = self._demands()
+        # I due assi si conservano: la compattazione che viene dopo non
+        # improvvisa una propria idea di «che cosa si muove insieme», la legge
+        # da qui. Un gruppo e' cio' che una retta tiene insieme su quell'asse, e
+        # una campata e' l'ordine che due gruppi si devono.
+        self.axes = (
+            _AxisDemands(*self._grouped(same_x), tuple(apart_x)),
+            _AxisDemands(*self._grouped(same_y), tuple(apart_y)),
+        )
         xs = self._solve_axis(same_x, apart_x, 0)
         ys = self._solve_axis(same_y, apart_y, 1)
+        # **Il foglio viene prima della prima ipotesi.** Fra tutte le soluzioni
+        # che rispettano le campate, `_solve_axis` sceglie quella piu' vicina
+        # alla posa di partenza, che e' la scelta giusta finche' ci sta: la fase
+        # deve raddrizzare il tronco, non riscrivere la tavola. Quando pero'
+        # quella soluzione porta il disegno **oltre il bordo**, non e' una
+        # soluzione: chi segue il tronco esce dal foglio con lui, e una tratta
+        # oltre il bordo non si instrada — sulla tavola 2 erano i
+        # ventilconvettori, trentacinque millimetri fuori. Allora si prende
+        # quella compatta, che rispetta le stesse campate e occupa il minimo.
+        if not self._fits_the_sheet(xs, 0):
+            xs = self._solve_axis(same_x, apart_x, 0, compact=True)
+        if not self._fits_the_sheet(ys, 1):
+            ys = self._solve_axis(same_y, apart_y, 1, compact=True)
         base = self.start[root].origin
         anchor_x, anchor_y = xs[root], ys[root]
         for item in self.participants:
@@ -928,17 +1027,20 @@ class _Spine:
         campata e non tocca nessun allineamento: e' la stessa mossa che la fase
         del corredo chiamera' stretch. Muoverlo di traverso, invece, piegherebbe
         la tratta — ed e' esattamente cio' che questa fase non fa.
+
+        **Una coppia che non si separa non ferma le altre.** Prima di DRAW-010
+        la prima coppia irriducibile chiudeva la compattazione, e sulla tavola 2
+        era la prima in ordine: il resto non veniva nemmeno guardato.
         """
-        edges = self._edges()
-        for _ in range(len(self.participants) + 1):
-            clash = self._first_clash()
+        stuck: set[frozenset[str]] = set()
+        for _ in range(_RELIEF_ROUNDS):
+            clash = self._first_clash(stuck)
             if clash is None:
                 return
-            one, two = clash
-            if not self._push_apart(edges, one, two):
-                return
+            if not self._push_apart(*clash):
+                stuck.add(frozenset(clash))
 
-    def _first_clash(self) -> tuple[str, str] | None:
+    def _first_clash(self, stuck: set[frozenset[str]]) -> tuple[str, str] | None:
         """Due partecipanti troppo vicini, escluse le coppie che una tratta unisce.
 
         Chi sta ai due capi della stessa autostrada e' gia' alla distanza che
@@ -952,67 +1054,132 @@ class _Spine:
         items = list(self.participants)
         for index, one in enumerate(items):
             for two in items[index + 1 :]:
-                if frozenset({one, two}) in joined:
+                pair = frozenset({one, two})
+                if pair in joined or pair in stuck:
                     continue
                 if self._overlaps(self.laid[one], self.laid[two]):
                     return (one, two)
         return None
 
-    def _push_apart(
-        self, edges: dict[str, list[tuple[Trunk, str, str, str]]], one: str, two: str
-    ) -> bool:
-        """Allunga la campata della tratta che porta al piu' lontano dei due.
+    def _push_apart(self, one: str, two: str) -> bool:
+        """Allontana i due lungo un asse, portandosi dietro chi li segue.
 
-        Si sposta il **sottoalbero** oltre quella tratta, cosi' che la retta
-        resti retta e con essa tutti gli allineamenti che stanno oltre.
+        **Perche' non basta il sottoalbero oltre una tratta.** Fino a DRAW-009
+        la mossa cercava il sottoalbero al di la' della tratta che porta al piu'
+        lontano dei due. Su un albero quel sottoalbero e' un insieme che si
+        stacca; su un **anello** — e il tronco di un circuito chiuso e' un
+        anello — togliere una tratta non stacca niente: si cammina fino in fondo
+        e si torna indietro dall'altro capo, con dentro anche l'ancora. Le due
+        candidate si scartavano tutte e due e la posa usciva coi pezzi addosso
+        (`docs/collaudi/DRAW-010/perche-l-anello-non-separava.py`).
+
+        **Cio' che si muove insieme lo dicono i vincoli, non la topologia.** Su
+        un asse, una retta dell'altro asse tiene insieme un **gruppo**: chi vi
+        appartiene non si muove da solo senza piegarla. Fra gruppi valgono le
+        campate, che sono disuguaglianze con un verso. Spostare in avanti un
+        gruppo **con tutti quelli che gli stanno oltre** — o all'indietro un
+        gruppo con tutti quelli che gli stanno prima — allunga le campate al
+        confine e non ne accorcia nessuna: nessuna retta si piega, nessuna
+        tratta che era rettilinea diventa storta, e ogni tratta conserva almeno
+        il rettilineo che pretende. E' lo stretch del PO, applicato a un anello.
         """
-        for victim, anchor in ((two, one), (one, two)):
-            edge = next(
-                (item for item in edges.get(victim, ()) if item[2] in self.laid), None
-            )
-            if edge is None:
-                continue
-            peer, peer_port = edge[2], edge[3]
-            _, face = self.port_at(self.laid[peer], peer_port)
-            direction = _DIRECTION[face]
-            block = self._beyond(edges, peer, victim)
-            if anchor in block:
-                continue
-            for _ in range(_RELIEF_STEPS):
-                for item in block:
-                    here = self.laid[item]
-                    self.laid[item] = here.model_copy(
-                        update={
-                            "origin": Point(
-                                x_mm=here.origin.x_mm + direction[0] * self.step,
-                                y_mm=here.origin.y_mm + direction[1] * self.step,
-                            )
-                        }
-                    )
-                if not self._overlaps(self.laid[one], self.laid[two]):
-                    return True
-        return False
-
-    def _beyond(
-        self,
-        edges: dict[str, list[tuple[Trunk, str, str, str]]],
-        origin: str,
-        first: str,
-    ) -> list[str]:
-        seen = {origin, first}
-        frontier = [first]
-        found = [first]
-        while frontier:
-            onward: list[str] = []
-            for item in frontier:
-                for _, _, other, _ in edges.get(item, ()):
-                    if other in seen:
+        best: (
+            tuple[tuple[int, float, int, int, int, str], list[str], int, float] | None
+        ) = None
+        for axis in (0, 1):
+            for victim, anchor in ((one, two), (two, one)):
+                for sign in (1, -1):
+                    block = self._follow(axis, sign, victim)
+                    if anchor in block:
+                        # L'ancora si muove con la vittima: la coppia resta
+                        # com'e'. E' il caso dell'anello.
                         continue
-                    seen.add(other)
-                    found.append(other)
-                    onward.append(other)
-            frontier = onward
-        return found
+                    room = self._clearance(victim, anchor, axis, sign)
+                    if room <= _TOLERANCE_MM or room > _RELIEF_STEPS * self.step:
+                        continue
+                    # **Prima cio' che ci sta nel foglio, poi cio' che costa
+                    # meno.** Allargare di venti millimetri dalla parte in cui
+                    # il disegno e' gia' al bordo porta fuori foglio chi segue
+                    # il tronco — un utilizzatore oltre il bordo non si
+                    # instrada — mentre trenta dalla parte libera non costano
+                    # niente: spostare macchine e accessori non costa, e la
+                    # misura della posa dice da che parte c'e' spazio.
+                    room_left = (
+                        self.area.width_mm if axis == 0 else self.area.height_mm
+                    )
+                    fuori = (
+                        0
+                        if self.spread[axis] + self.grown[axis] + room
+                        <= room_left + _TOLERANCE_MM
+                        else 1
+                    )
+                    key = (fuori, room, len(block), axis, 0 if sign > 0 else 1, victim)
+                    if best is None or key < best[0]:
+                        best = (key, block, axis, sign * room)
+        if best is None:
+            return False
+        _, block, axis, shift = best
+        self._shift(block, axis, shift)
+        self.grown[axis] += abs(shift)
+        return True
+
+    def _follow(self, axis: int, sign: int, victim: str) -> list[str]:
+        """Chi si sposta insieme al `victim`, su quell'asse e in quel verso.
+
+        Il suo gruppo, e a ruota tutti i gruppi che le campate obbligano a
+        stargli oltre — o a stargli prima, se il verso e' all'indietro.
+        """
+        demands = self.axes[axis]
+        leader = demands.leader
+        onward: dict[str, list[str]] = {}
+        for link in demands.apart:
+            low, high = leader[link.low], leader[link.high]
+            if low == high:
+                continue
+            first, then = (low, high) if sign > 0 else (high, low)
+            onward.setdefault(first, []).append(then)
+        seen = {leader[victim]}
+        frontier = [leader[victim]]
+        while frontier:
+            name = frontier.pop()
+            for other in onward.get(name, ()):
+                if other in seen:
+                    continue
+                seen.add(other)
+                frontier.append(other)
+        return [item for item in self.participants if leader[item] in seen]
+
+    def _clearance(self, victim: str, anchor: str, axis: int, sign: int) -> float:
+        """Di quanto il `victim` deve scorrere per uscire da sotto l'`anchor`.
+
+        Il conto e' sull'asse e nel verso dati, riportato in su al passo di
+        griglia: la posa resta sui nodi della griglia come la fase l'ha fatta.
+        """
+        here, there = self.laid[victim], self.laid[anchor]
+        if axis == 0:
+            mine = (here.origin.x_mm, here.right_mm)
+            its = (there.origin.x_mm, there.right_mm)
+        else:
+            mine = (here.origin.y_mm, here.bottom_mm)
+            its = (there.origin.y_mm, there.bottom_mm)
+        want = (
+            its[1] + ROW_GAP_MM - mine[0]
+            if sign > 0
+            else mine[1] - (its[0] - ROW_GAP_MM)
+        )
+        return self._steps_up(want) if want > _TOLERANCE_MM else 0.0
+
+    def _shift(self, block: list[str], axis: int, shift: float) -> None:
+        for item in block:
+            here = self.laid[item]
+            self.laid[item] = here.model_copy(
+                update={
+                    "origin": Point(
+                        x_mm=here.origin.x_mm + (shift if axis == 0 else 0.0),
+                        y_mm=here.origin.y_mm + (0.0 if axis == 0 else shift),
+                    )
+                }
+            )
 
     def _into_the_area(self) -> None:
         """Porta il tronco dentro l'area di disegno, senza cambiarne la forma."""
@@ -1274,7 +1441,133 @@ def carry_the_rest(
             changed = True
     for item in placed:
         settled.setdefault(item.component_id, carried(item))
+    _spread_the_hung(settled, placed, hung, catalog, definitions, frame)
     return [settled[item.component_id] for item in placed]
+
+
+def _spread_the_hung(
+    settled: dict[str, PlacedSymbol],
+    placed: list[PlacedSymbol],
+    hung: dict[str, tuple[str, str]],
+    catalog: ComponentRegistry,
+    definitions: dict[str, str],
+    frame: SheetFrame | None,
+) -> None:
+    """Allontana lungo il proprio stacco una figura appesa finita addosso a un'altra.
+
+    **Perche' serve, e perche' proprio qui.** Chi posa per la prima volta gia' lo
+    fa: `place.hanging_place` cerca il posto preferito dell'appeso e, se e'
+    occupato, si allontana lungo lo stacco un passo per volta. Poi pero' la fase
+    del tronco sposta il tronco, e `carry_the_rest` riappende le figure a un
+    pezzo che sta altrove: il posto che era libero puo' non esserlo piu', e
+    nessuno lo guardava. E' cosi' che sulla tavola 2 lo scarico del volano
+    finiva dentro il bollitore e il prelievo dentro il volano.
+
+    La regola e' quella della posa, applicata alla posa nuova: si scorre lungo
+    lo stacco — nel verso in cui l'appeso si sporge, cioe' l'opposto della faccia
+    del proprio attacco — finche' la figura non tocca piu' nessuno, e non si esce
+    dall'area di disegno. Lo stacco si allunga; niente si piega, e il tronco non
+    si tocca. Chi non trova posto resta dov'e' e la posa lo dichiara com'e'.
+    """
+    if frame is None:
+        return
+    area = frame.drawing_rect_mm
+    step = frame.standard.grid_mm
+    leader: dict[str, str] = {}
+    for item in placed:
+        head, seen = item.component_id, {item.component_id}
+        while head in hung and hung[head][0] not in seen:
+            head = hung[head][0]
+            seen.add(head)
+        leader[item.component_id] = head
+    below: dict[str, list[str]] = {}
+    for child, (parent, _port) in hung.items():
+        below.setdefault(parent, []).append(child)
+
+    def figure(head: str) -> list[str]:
+        out, frontier = [head], [head]
+        while frontier:
+            here = frontier.pop()
+            for child in below.get(here, ()):
+                out.append(child)
+                frontier.append(child)
+        return out
+
+    def clear(moving: list[str], shift: tuple[float, float]) -> bool:
+        block = set(moving)
+        for name in moving:
+            here = _moved(settled[name], shift)
+            if (
+                here.origin.x_mm < area.x_mm - _TOLERANCE_MM
+                or here.origin.y_mm < area.y_mm - _TOLERANCE_MM
+                or here.right_mm > area.right_mm + _TOLERANCE_MM
+                or here.bottom_mm > area.bottom_mm + _TOLERANCE_MM
+            ):
+                return False
+            for other in settled:
+                if other in block:
+                    continue
+                gap = 0.0 if leader[other] == leader[name] else ROW_GAP_MM
+                if _touching(here, settled[other], gap):
+                    return False
+        return True
+
+    # Dall'alto in basso: una figura profonda si sposta tutta insieme, e il
+    # nipote non si muove da solo prima del padre.
+    order = sorted(hung, key=lambda item: len(figure(item)), reverse=True)
+    for component_id in order:
+        moving = figure(component_id)
+        if clear(moving, (0.0, 0.0)):
+            continue
+        upright = catalog.resolve(definitions[component_id]).symbol.manifest
+        here = settled[component_id]
+        mine = upright.rotated(here.rotation_deg).port(
+            here.physical_port(hung[component_id][1])
+            if hung[component_id][1] in here.port_map
+            else upright.ports[0].id
+        )
+        # Prima lungo lo stacco, che e' la regola della posa e non piega
+        # niente; poi, se lungo lo stacco non c'e' posto — capita quando il
+        # tronco ha impilato due macchine e la figura di una e' finita dentro
+        # l'altra — **di traverso**, che allo stacco costa una piega. Una piega
+        # su uno stacco di servizio e' cio' che il PO ha detto di accettare
+        # («quelle si', accettiamo qualche curva in piu'»); un pezzo dentro un
+        # altro no.
+        lungo = _DIRECTION[mine.face.opposite]
+        di_traverso = (
+            (0.0, 1.0) if lungo[0] else (1.0, 0.0),
+            (0.0, -1.0) if lungo[0] else (-1.0, 0.0),
+        )
+        for direction in (lungo, *di_traverso):
+            found = False
+            for count in range(1, _RELIEF_STEPS + 1):
+                shift = (direction[0] * step * count, direction[1] * step * count)
+                if clear(moving, shift):
+                    for name in moving:
+                        settled[name] = _moved(settled[name], shift)
+                    found = True
+                    break
+            if found:
+                break
+
+
+def _moved(item: PlacedSymbol, shift: tuple[float, float]) -> PlacedSymbol:
+    return item.model_copy(
+        update={
+            "origin": Point(
+                x_mm=item.origin.x_mm + shift[0], y_mm=item.origin.y_mm + shift[1]
+            )
+        }
+    )
+
+
+def _touching(one: PlacedSymbol, two: PlacedSymbol, gap_mm: float) -> bool:
+    return (
+        one.origin.x_mm < two.right_mm + gap_mm - _TOLERANCE_MM
+        and two.origin.x_mm - gap_mm < one.right_mm - _TOLERANCE_MM
+        and one.origin.y_mm < two.bottom_mm + gap_mm - _TOLERANCE_MM
+        and two.origin.y_mm - gap_mm < one.bottom_mm - _TOLERANCE_MM
+    )
 
 
 def _inside(
@@ -1400,13 +1693,36 @@ def _rehung(
     lo manda dalla parte opposta del proprio stacco — con il nipote che gli
     pende addosso a finire in mezzo alla tubazione (DRAW-006-R1, blocco D).
     """
-    upright = catalog.resolve(definitions[child.component_id]).symbol.manifest
+    resolved = catalog.resolve(definitions[child.component_id])
+    upright = resolved.symbol.manifest
     shape = catalog.resolve(definitions[parent.component_id]).symbol.manifest
     port = shape.rotated(parent.rotation_deg).port(parent.physical_port(port_id))
     old = shape.rotated(was.rotation_deg).port(was.physical_port(port_id))
     stub = Point(
         x_mm=parent.origin.x_mm + port.x_mm, y_mm=parent.origin.y_mm + port.y_mm
     )
+    if boundary_faces_the_plant(resolved.definition) is not None:
+        # **Un confine di rete non si rigira dietro lo stacco** (DRAW-010 §D.1).
+        # La sua giacitura non la decide il pezzo che lo regge: la decide la
+        # lettura, da sinistra a destra, e la posa l'ha gia' scelta. Riappenderlo
+        # come gli altri lo rimetterebbe con l'attacco rivolto verso lo stacco —
+        # sul bollitore, la cui uscita ACS sta sulla faccia superiore, con la
+        # bocchetta verso il basso e la linea che deve risalirci dentro, cioe'
+        # proprio la curva che il PO ha chiesto di togliere. Segue percio' il
+        # proprio stacco di pura traslazione, e la piega che resta e' quella
+        # voluta: il gomito che tiene il flusso di lettura da sinistra a destra.
+        return child.model_copy(
+            update={
+                "origin": Point(
+                    x_mm=child.origin.x_mm
+                    + (port.x_mm - old.x_mm)
+                    + (parent.origin.x_mm - was.origin.x_mm),
+                    y_mm=child.origin.y_mm
+                    + (port.y_mm - old.y_mm)
+                    + (parent.origin.y_mm - was.origin.y_mm),
+                )
+            }
+        )
     mine_id = own_port_id or upright.ports[0].id
     own = upright.rotated(child.rotation_deg).port(mine_id)
     gap = abs(

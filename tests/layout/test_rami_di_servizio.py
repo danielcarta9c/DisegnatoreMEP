@@ -521,6 +521,22 @@ def _arrow_stations(route: RoutedTrunk) -> list[tuple[Pt, Pt]]:
     return found
 
 
+def _the_longest_stretch_mm(route: RoutedTrunk) -> float:
+    """Il tratto rettilineo piu' lungo della spezzata, in millimetri.
+
+    E' la misura su cui si decide se una freccia ci sta: una freccia occupa
+    `2 x ARROW_LENGTH_MM`, e su un tratto piu' corto non c'e' posto per il segno.
+    """
+    return max(
+        (
+            abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
+            for segment in route.segments
+            for before, after in moves_of(segment)
+        ),
+        default=0.0,
+    )
+
+
 def _arrow_at(arrows: list[tuple[Pt, Pt]], point: Pt, along: Pt) -> list[float]:
     """Le frecce con la punta in quel punto e parallele a quel verso: il
     prodotto scalare fra la loro direzione e il verso del tratto."""
@@ -539,7 +555,15 @@ def _arrow_at(arrows: list[tuple[Pt, Pt]], point: Pt, along: Pt) -> list[float]:
 @pytest.mark.parametrize("index", range(len(CASI)), ids=CASI_IDS)
 def test_nessuna_freccia_sui_rami_statici_e_la_freccia_giusta_sugli_altri(index: int) -> None:
     """Sui rami statici nessuna freccia; su tutti gli altri una freccia per
-    pezzo di spezzata, nel verso che la specie prescrive."""
+    pezzo di spezzata, nel verso che la specie prescrive — **salvo dove non ci
+    sta**.
+
+    Il PO, il 14 settembre 2026, sulla tratta lunga un passo: «Secondo me
+    possiamo non metterla tanto si capisce bene lo stesso». Una tratta il cui
+    tratto rettilineo piu' lungo non arriva a `2 x ARROW_LENGTH_MM` non porta
+    nessuna freccia, e non e' un difetto: e' la regola. Sta scritta qui, sulla
+    misura della tratta, non nell'esito del renderer.
+    """
     sheet = _drawing(index).sheets[0]
     root = ElementTree.fromstring(render_sheet(sheet, NOVE_C_A3, symbols()))
     arrows = _arrows(root)
@@ -551,6 +575,12 @@ def test_nessuna_freccia_sui_rami_statici_e_la_freccia_giusta_sugli_altri(index:
         if route.flow_kind is FlowKind.STATIC:
             for point, along in stations:
                 assert not _arrow_at(arrows, point, along), (route.connection_ids, point)
+            continue
+        if _the_longest_stretch_mm(route) < 2 * ARROW_LENGTH_MM:
+            assert not stations, route.connection_ids
+            assert not [tip for tip, _ in arrows if _on_route(tip, route)], (
+                route.connection_ids
+            )
             continue
         assert stations, route.connection_ids
         for point, along in stations:
