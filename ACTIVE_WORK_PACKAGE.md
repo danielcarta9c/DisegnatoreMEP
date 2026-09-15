@@ -11,7 +11,8 @@ mezzi scelti dal PM in funzione di ciò che la verifica di `DRAW-009` ha trovato
 **Release:** 0.3 — generalizzazione, revisione della tavola 2
 **Ramo:** quello che la piattaforma assegna alla sessione. Il pacchetto **non ne prescrive
 uno**
-**Commit di partenza:** la testa di `main` con `DRAW-009` fuso (`2155c22`, PR #27)
+**Commit di partenza:** la testa di `main`, `b825b25` — `DRAW-009` fuso (PR #27) e questo
+pacchetto reso attivo (PR #28)
 **Fixture grafica principale:** impianto 4 e impianto 2; impianto 1 come regressione automatica
 
 > **Leggere prima:** `docs/pm/2026-09-14-review-pr27-draw009.md` (il verdetto del PM sulla
@@ -179,6 +180,30 @@ porta dentro.
 2. Se la misura dice che non si può, si dichiara **con la misura**, e la regola monotona
    resta con la sua motivazione aggiornata. Lo strumento per misurarlo esiste già:
    `docs/collaudi/DRAW-009/le-due-sovrapposizioni.py`.
+
+---
+
+## Nota di metodo — come si misura prima e dopo
+
+Tre cose che sono già costate tempo, una volta ciascuna. Non sono criteri: sono avvertenze.
+
+1. **Il pacchetto è installato in modo *editable*, e il `.pth` in
+   `.venv/lib/python3.11/site-packages/` contiene il percorso assoluto di UNA cartella.** Un
+   `git worktree` che riusa lo stesso ambiente esegue le prove di prima **con il codice di
+   adesso**: un confronto privo di senso, e senza nessun errore che lo dica. Due modi buoni:
+   misurare base e ramo **nella stessa cartella**, passando con `git checkout`, oppure usare
+   un worktree con `PYTHONPATH="$PWD/src"` davanti al comando. `DRAW-009` ha usato il
+   secondo, la verifica il primo, e i numeri coincidono.
+2. **La suite integrale richiede circa mezz'ora per esecuzione, e ne servono due** — una per
+   lato. Si avviano presto e si lavora ad altro mentre girano.
+3. **Sul commit di partenza gli impianti 3 e 5 non producono tavola**, e l'impianto 4 nemmeno
+   (§B). Il 3 e il 5 non la producevano nemmeno prima di `DRAW-009`: è la linea di partenza,
+   non una regressione da inseguire. L'impianto 4 invece la produceva, ed è il criterio 4.
+
+Gli strumenti di misura già scritti, che non vanno riscritti da capo:
+`docs/collaudi/DRAW-008/metriche.py` (misure della tavola per livello di gerarchia),
+`docs/collaudi/DRAW-009/criteri.py`, `le-due-sovrapposizioni.py` (il conflitto fra la regola
+monotona e la prova di `DRAW-007`, §E) e `due-prove-senza-caso.py`.
 
 ---
 
