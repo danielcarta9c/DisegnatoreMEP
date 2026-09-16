@@ -1,6 +1,6 @@
 # STATO PM — il documento d'ingresso del PM
 
-**Aggiornato:** 2026-09-15
+**Aggiornato:** 2026-09-16
 **A chi serve:** alla sessione PM che subentra. Leggi questo e sei operativo: non ti serve
 un prompt lungo, e chi te lo dà ti sta raccontando qualcosa che dovrebbe stare qui.
 **Regola di questo file:** ogni sessione PM lo aggiorna prima di chiudere. Un file di stato
@@ -41,7 +41,8 @@ modello da riusare.
 |---|---|
 | `main` | `5ef4f14` (PR #31, 15 settembre) |
 | Release dichiarata | **0.3 — generalizzazione, impianto 2** (`docs/plans/2026-09-03-release-plan.md`) |
-| Pacchetto attivo | **DRAW-010**, consegnato con la PR #32 e **verificato: non si fonde**. Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`, pubblicato anche sulla PR |
+| Pacchetto attivo | **DRAW-011** (`ACTIVE_WORK_PACKAGE.md`), scritto il 16 settembre: il prelievo torna nella distribuzione e il caso di prova 4 si riscrive |
+| PR #32 (DRAW-010) | **verificata e respinta.** Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`, pubblicato anche sulla PR. Il suo lavoro **non è su `main`** |
 | Ultima consegna verificata | **DRAW-010**, PR #32: dodici criteri raggiunti, due in parte, due no. Torna al DEV |
 | Suite su `main` | **10 rosse, 1470 verdi, 24 saltate, 11 xfailed** — rimisurata dal PM il 15 settembre, coincide. Sulla PR #32: 14 rosse |
 | Tavola 1 | 4 pieghe · 1 incrocio · 470,0 mm · autostrada 0 pieghe · D-120 15 su 15 |
