@@ -90,33 +90,41 @@ Gli strumenti di misura esistono e non vanno riscritti: `docs/collaudi/DRAW-008/
 In ordine di quanto pesano, dopo le sei disposizioni del PO del 15 settembre. I rischi
 numerati stanno in `PROJECT_STATE.md`.
 
-0. **L'attuazione di D-126 sul prelievo è la causa unica di quasi tutto ciò che la PR #32
+0. **«Un passo avanti e uno indietro»** (`I-067`, 16 settembre). Il PO l'ha detto e ha
+   ragione: `DRAW-009` migliora la tavola 1 e perde l'impianto 4, `DRAW-010` riprende
+   l'impianto 4 e perde due budget e quattro prove. **La causa è del PM**: i pacchetti
+   chiedono «non peggiora» e nessuno chiede «migliora», quindi il miglior esito possibile è
+   pari. Da `DRAW-011` §F ogni pacchetto chiede **almeno un budget che migliora**, e i
+   criteri di non-regressione si misurano **prima** di aprire la PR: se uno peggiora, il DEV
+   non consegna, si ferma e riferisce. È la voce che pesa di più, perché non è un difetto del
+   prodotto ma del modo in cui lo chiediamo.
+1. **L'attuazione di D-126 sul prelievo è la causa unica di quasi tutto ciò che la PR #32
    rompe**: i tre incroci e i 45 mm della tavola 2, le otto prove nuove rosse, l'impianto 5
    che non arriva più alla posa. Il DEV e il PO ci sono arrivati per strade indipendenti. È
    la prima voce del pacchetto di correzione, e con essa rientra quasi tutto il resto.
-1. **L'anello della fase del tronco** (rischio 16). È la causa a monte di quasi tutto:
+2. **L'anello della fase del tronco** (rischio 16). È la causa a monte di quasi tutto:
    tiene la tavola 2 sul ripiego, ha costretto ad allargare `is_valid` (rischio 19) e con
    ogni probabilità è ciò che blocca gli impianti 3, 4 e 5. **È §A di DRAW-010**, in corso.
-2. **Il verso di mandata e ritorno lo decide la geometria** (`I-010`, aperto dal 9 agosto).
+3. **Il verso di mandata e ritorno lo decide la geometria** (`I-010`, aperto dal 9 agosto).
    Su circa un terzo delle tratte il colore di quel tubo è giusto per caso. **Il PO l'ha
    dichiarato fondamentale** — D-136 — ed è la voce principale del pacchetto dopo DRAW-010.
    Nessuno strumento lo misura ancora: `supply` è un booleano già deciso quando arriva alla
    geometria esportata, quindi l'indecisione va misurata dentro la camminata sul grafo.
-3. **Il prodotto non gira in una chat vera** (rischio 1). Il più vecchio e il meno toccato.
+4. **Il prodotto non gira in una chat vera** (rischio 1). Il più vecchio e il meno toccato.
    La 0.3 non si può dichiarare finita senza una prova verticale in una chat pulita.
-4. **Lo spessore del tratto dice la gerarchia** (D-132): 0,50 mm autostrade, 0,25 mm
+5. **Lo spessore del tratto dice la gerarchia** (D-132): 0,50 mm autostrade, 0,25 mm
    servizio, due livelli e non tre. Oggi la tavola usa 0,18 / 0,35 / 0,50. Da assegnare, e
    porta con sé un nodo che D-132 lascia aperto — con due spessori in un nodo, il pallino di
    derivazione a quattro volte lo spessore va agganciato a uno dei due; il PM propone il più
    grosso.
-5. **L'audit della libreria dei simboli** (rischio 2), che il PO deve approvare prima della
+6. **L'audit della libreria dei simboli** (rischio 2), che il PO deve approvare prima della
    0.3.
-6. **L'agio finale** (D-134): a disegno risolto, un passo a sé che allarga l'impianto e lo
+7. **L'agio finale** (D-134): a disegno risolto, un passo a sé che allarga l'impianto e lo
    mette più comodo, per far posto alle sigle. Non partecipa a posa e instradamento, e non è
    il riempimento del foglio — quello ha smesso di essere un obiettivo.
-7. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
+8. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
    due tavole; diventa esigibile su un impianto che lo violi.
-8. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
+9. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
    dedotta. Pacchetto a sé, da aprire se il PO lo vuole.
 
 Non è più un filo: **lo squilibrio fra quadranti della tavola 2** e il riempimento del

@@ -213,8 +213,9 @@ irraggiungibile si dichiara tale con la misura che lo prova, non si ammorbidisce
    misura: posizioni prima e dopo, e i millimetri di foglio ancora liberi.
 4. **Nessuno stacco attraversa una tratta quando il verso opposto è libero**, con una prova
    generale che lo dice nella propria regola.
-5. **La tavola 2 non peggiora su nessuno dei tre budget.** Riferimento: 5 pieghe, 1 incrocio,
-   600,0 mm; organi D-120 vicini 11 su 14.
+5. **La tavola 2 non peggiora su nessuno dei tre budget, e ne migliora almeno uno.**
+   Riferimento: 5 pieghe, 1 incrocio, 600,0 mm; organi D-120 vicini 11 su 14. **Pari non
+   basta**: vedi §F.
 6. **La tavola 1 non peggiora.** Riferimento: 4 pieghe, 1 incrocio, 470,0 mm.
 7. **Il saldo della suite migliora e non peggiora.** Riferimento: 10 rosse, 1470 verdi,
    24 saltate, 11 xfailed.
@@ -234,6 +235,35 @@ irraggiungibile si dichiara tale con la misura che lo prova, non si ammorbidisce
 
 ---
 
+## F. Un passo avanti e nessuno indietro
+
+Il PO, il 16 settembre 2026: «ho sempre la sensazione di fare un passo avanti e uno indietro.
+Vorrei vedere dei veri miglioramenti al prossimo pacchetto». Ha ragione, ed è misurabile:
+`DRAW-009` ha migliorato la tavola 1 e ha perso l'impianto 4; `DRAW-010` ha ripreso
+l'impianto 4 e ha perso due budget della tavola 2 e quattro prove.
+
+**La causa è nel modo in cui il PM ha scritto i pacchetti, non nel lavoro del DEV.** I
+criteri dicono «non peggiora». Nessuno dice «migliora». Il miglior esito possibile di un
+pacchetto così è **pari**, e siccome ogni proprietà del disegno è una voce di costo che si
+baratta con le altre, pari è difficile e sotto pari è facile. Da qui in avanti:
+
+1. **Almeno un budget della tavola 2 migliora, e nessuno peggiora.** È il criterio 5, ed è la
+   differenza fra un pacchetto che difende e uno che avanza.
+2. **Il cancello prima della consegna, non dopo.** I criteri di non-regressione — 5, 6, 7, 8,
+   13 — si misurano **quando il lavoro sembra finito e prima di aprire la PR**. Se uno
+   peggiora, **il DEV non consegna**: si ferma, scrive al PM che cosa peggiora e di quanto, e
+   aspetta. Una consegna che peggiora un budget costa al PO un giro intero, e questo giro è
+   costato esattamente così.
+3. **I quattro rilievi del PO del 15 settembre sono una lista di controllo**, e si guardano
+   sulla tavola prima di consegnare: il prelievo sta nella distribuzione? le macchine si sono
+   allargate o il disegno si è compattato? c'è uno stacco che attraversa mentre dall'altra
+   parte il foglio è libero? la tavola si capisce a occhio?
+
+Non è burocrazia: sono tre minuti alla fine del lavoro, e sono la differenza fra una consegna
+che entra e una che torna indietro.
+
+---
+
 ## Consegna
 
 Una PR sola, non fusa. Rapporto in `docs/collaudi/DRAW-011/RAPPORTO.md` con i quattordici
@@ -241,7 +271,7 @@ criteri chiusi uno per uno; pacchetto grafico `prima/` e `dopo/` per la tavola 2
 l'impianto 4, con l'impianto 1 misurato come regressione. Il DEV apre la PR e si ferma;
 verifica e merge sono del PM, che è una sessione diversa dal DEV.
 
-**E una cosa in più, che questa volta conta:** prima di chiudere, **guarda le tavole**. I
+**E le tre cose di §F prima di aprire la PR.** In particolare: prima di chiudere, **guarda le tavole**. I
 quattro difetti che hanno respinto `DRAW-010` li ha visti il PO a occhio, e nessuno dei
 sedici criteri li copriva. Se una tavola ti sembra sbagliata e i numeri dicono che va bene,
 scrivilo nel rapporto: è il rilievo più utile che puoi portare.
