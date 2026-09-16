@@ -163,6 +163,50 @@ Non è un criterio di accettazione alla prima consegna — il grafo è nuovo e n
 riferimento con cui confrontarlo — ma il rapporto porta la tavola e le misure, e il PO la
 guarda.
 
+### E.1 Perché l'autostrada sulla tavola 4 non c'è: diagnosi del PM, già fatta
+
+Il PO ha chiesto perché le autostrade della tavola 4 non uscissero. Misurato dal PM il
+16 settembre sul ramo della PR #32, **il DEV non deve rifare questa indagine**:
+
+```
+$ python auto2.py <worktree> prova-4-ibrido-pdc-caldaia.json <geometria.json>
+AUTOSTRADE dichiarate: 10 su 25 tratte di tronco
+   caldaia.water_supply  →  deviatrice.in
+   deviatrice.out_a      →  collettore-mandata.c
+   ...
+$ le tratte che toccano la pompa di calore:
+   pdc.water_supply      → collettore-mandata.a     no
+   collettore-ritorno.b  → pdc.water_return         no
+```
+
+**Due difetti, tutti e due del motore e non dell'impianto.**
+
+1. **Con due generatori, la pompa di calore non è autostrada.** Sull'impianto 4 le tratte
+   classificate autostrada partono **dalla caldaia**; quelle della pompa di calore — mandata
+   e ritorno — **non lo sono**. La dorsale che il PO si aspetta di vedere, generatore
+   principale → accumulo, non è mai stata trattata come tale: nessuno l'ha posata per prima e
+   nessuno l'ha tenuta dritta. Sulla tavola 2, che ha un generatore solo, `pdc.water_supply`
+   è la prima autostrada dell'elenco. **È la stessa famiglia di `I-062`** — «la mandata
+   PDC→puffer non era nemmeno classificata autostrada» — curata l'11 settembre per un caso
+   singolo e non per il caso generale. Con ogni probabilità è anche una delle ragioni per cui
+   l'impianto 5, che è una cascata di tre pompe di calore, non arriva in fondo.
+2. **Un'autostrada non è una tratta: è una catena di frammenti da 5 o 10 mm.** Ogni accessorio
+   che incontra la spezza in un troncone nuovo — dieci tronconi su venticinque tratte, per
+   l'impianto 4. La rettilineità è verificata **su ciascun frammento**, ed è vera per
+   costruzione perché un frammento lungo 5 mm è dritto sempre. **Nessun invariante dice che la
+   catena intera sia una retta.** Vale anche sulla tavola 2, dove però i pezzi restano
+   allineati per altre ragioni e il difetto non si vede.
+
+**Questo pacchetto non lo cura.** Curarlo vuol dire toccare come si classifica la gerarchia
+delle tratte e come si verifica la rettilineità, ed è un pacchetto a sé: caricarlo qui sopra
+significherebbe consegnare male tutt'e due le cose — che è esattamente il modo in cui abbiamo
+perso gli ultimi due giri (§F).
+
+**Quello che questo pacchetto chiede è la misura**, criterio 12: il rapporto dice, per il
+grafo nuovo, **quali tratte risultano autostrada e quali no**, e se le tratte dei due
+generatori ci sono entrambe. Serve a sapere se il grafo corretto da solo basta, o se il
+difetto resta anche con uno schema sano.
+
 ---
 
 ## Nota di metodo
@@ -225,9 +269,11 @@ irraggiungibile si dichiara tale con la misura che lo prova, non si ammorbidisce
 10. **La commutatrice a tre vie è una voce di catalogo con la propria funzione dichiarata**,
     non una miscelatrice piegata, e ha il proprio simbolo.
 11. **L'impianto 4 produce una tavola** con il grafo nuovo, e il rapporto la porta.
-12. **I ritorni della tavola 4 seguono l'asse**: il rapporto misura quante tratte prendono
-    una piega e quanto sono lunghe, e le confronta con le otto e i 197,5 / 155,0 / 137,5 mm
-    di adesso.
+12. **Il rapporto dice quali tratte della tavola 4 risultano autostrada**, e se le tratte
+    dei due generatori ci sono entrambe (§E.1). Misura anche quante tratte prendono una piega
+    e quanto sono lunghe, da confrontare con le otto e i 197,5 / 155,0 / 137,5 mm di adesso.
+    **È una misura chiesta, non un criterio da raggiungere**: la cura della classificazione
+    non è in questo pacchetto.
 13. **Nessun impianto che compone all'inizio smette di comporre alla fine**, misurato su tutti
     e cinque con il comando e l'esito.
 14. **Determinismo**: doppia generazione dalla CLI con la stessa impronta, e forma invariante
