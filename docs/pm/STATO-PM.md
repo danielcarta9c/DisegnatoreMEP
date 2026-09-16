@@ -134,16 +134,16 @@ numerati stanno in `PROJECT_STATE.md`.
    grosso.
 8. **L'audit della libreria dei simboli** (rischio 2), che il PO deve approvare prima della
    0.3.
-9. **L'agio finale** (D-134): a disegno risolto, un passo a sé che allarga l'impianto e lo
-   mette più comodo, per far posto alle sigle. Non partecipa a posa e instradamento, e non è
-   il riempimento del foglio — quello ha smesso di essere un obiettivo.
+9. **La finestra del riempimento** (D-139): il PO deve fissare fra quali due percentuali un
+   disegno è «comodo». Finché non è fissata, il criterio 6 di DRAW-012 non si può chiudere.
+   L'agio non è più un passo finale: è il parametro stesso.
 10. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
    due tavole; diventa esigibile su un impianto che lo violi.
 11. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
    dedotta. Pacchetto a sé, da aprire se il PO lo vuole.
 
-Non è più un filo: **lo squilibrio fra quadranti della tavola 2** e il riempimento del
-foglio. D-134 li toglie dagli obiettivi.
+Non è più un filo: **lo squilibrio fra quadranti della tavola 2**. Il riempimento invece è
+tornato, ma come finestra e non come traguardo (D-139), e la lunghezza è uscita del tutto.
 
 ## 5. Cold eye review del 15 settembre — che cosa non tornava, e com'è finita
 
