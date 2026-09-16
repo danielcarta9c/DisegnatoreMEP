@@ -97,17 +97,26 @@ lo è.
    pur essendo ogni frammento dritto. È la prova che oggi manca, ed è il motivo per cui il
    difetto non si vedeva.
 
-## D. In fase 1 la lunghezza non è un costo
+## D. I millimetri escono dal costo, il riempimento entra come finestra
 
-1. L'ordine delle voci di `SheetCost` — curve, poi attraversamenti, poi lunghezza — **è già
-   quello giusto** e non si tocca. Ciò che cambia è che **nella fase della struttura la
-   lunghezza non partecipa**: a parità di curve e attraversamenti il motore non deve
-   preferire la posa più corta.
-2. **Ci si tiene larghi**: occupare più foglio non è un difetto. Oggi la tavola 2 usa 257,5 mm
-   su 350 disponibili, e ha fatto rientrare il prelievo di 45 mm verso il centro mentre a
-   destra il foglio era libero.
-3. Questo **non contraddice D-134**: il riempimento non è un obiettivo da inseguire, e non lo
-   diventa. Si toglie un costo, non si aggiunge un premio.
+Disposizione del PO, **D-139**: «i mm non sono un vero costo da misurare, lo è più avere un
+buon riempimento, né troppo poco né troppo».
+
+1. **La lunghezza delle tubazioni esce dalle voci di costo.** Non in fase 1 soltanto: esce.
+   Restano i costi veri, nell'ordine — le **curve**, poi gli **attraversamenti**. Oggi
+   `SheetCost` porta `length_mm` fra `crossings` e `fill`, ed è lei che a parità di curve e
+   attraversamenti decide sempre per la posa più corta.
+2. **Al suo posto entra il riempimento, e non è monotono.** Non «più è meglio» — che è ciò che
+   D-134 ha rifiutato e resta rifiutato — ma una **finestra**: sotto si è vuoti, sopra si è
+   stretti. Un disegno ben fatto è **comodo**, e ci deve stare lo spazio per le sigle.
+3. **La finestra la fissa il PO**, e finché non l'ha fissata il DEV **non la inventa**: usa il
+   valore che il pacchetto porterà qui, e se non c'è si ferma e chiede al PM.
+4. **Ci si tiene larghi.** Misura del PM su tutte le tavole prodotte: nessuna supera i
+   **262,5 mm di larghezza su 350 disponibili**, su nessuno dei cinque impianti; l'altezza
+   usata va da 100 a 177,5 mm su 235. Il tetto di fatto intorno ai 260 mm è il primo posto
+   dove guardare.
+5. **L'agio smette di essere un passo finale.** D-134 lo metteva in coda, a disegno risolto;
+   D-139 lo rende il parametro stesso. Non serve più un passo separato che allarga.
 
 ## E. In fase 2 il corredo entra, e se non ci sta si allarga
 
@@ -152,7 +161,7 @@ del ripiego (§F); il caso di prova 4 e la commutatrice (§G); l'aggiornamento d
 architettura dell'11 settembre.
 
 **Fuori:** lo spessore del tratto per gerarchia (**D-132**); il verso di mandata e ritorno
-deciso dalla geometria (**D-136**); l'agio finale (**D-134**); la libreria dei simboli, salvo
+deciso dalla geometria (**D-136**); la libreria dei simboli, salvo
 il simbolo della commutatrice; qualunque decisione MEP che il PO non abbia dato.
 
 ---
@@ -170,31 +179,36 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
    interrompe né declassa l'autostrada.**
 4. **Esiste un oggetto «autostrada intera»** e una prova generale **fallisce** se la catena
    prende una piega mentre ogni suo frammento è dritto.
-5. **Nella fase della struttura la lunghezza non entra nel confronto**, e una prova lo mostra
-   su due pose che differiscono solo per la lunghezza.
-6. **La tavola 2 occupa più foglio di adesso, o almeno non meno**, e il prelievo non rientra
-   verso il centro quando a destra c'è spazio. Riferimento: 257,5 mm occupati su 350.
-7. **Lo stretch si usa davvero**: il rapporto mostra almeno un caso in cui il corredo non
+5. **La lunghezza non entra più nel confronto fra due pose**, e una prova generale lo mostra
+   su due pose che differiscono solo per quella.
+6. **Il riempimento è una voce di costo a finestra**, non monotona, e una prova mostra che una
+   posa dentro la finestra batte sia una più vuota sia una più stretta. La finestra è quella
+   che il PO ha fissato: **[da fissare]**.
+7. **La tavola 2 occupa più foglio di adesso**, e il prelievo non rientra verso il centro
+   quando a destra c'è spazio. Riferimenti: 257,5 mm di larghezza su 350, riempimento 50,1 %.
+8. **Lo stretch si usa davvero**: il rapporto mostra almeno un caso in cui il corredo non
    entrava e il tronco si è allungato invece di piegarsi, con le posizioni prima e dopo.
-8. **Nessun impianto esce dal ripiego che scarta le fasi.** Se uno ci esce, il rapporto dice
+9. **Nessun impianto esce dal ripiego che scarta le fasi.** Se uno ci esce, il rapporto dice
    quale, perché, e che cosa ha impedito la cessione graduale di §F.
-9. **La tavola 4 ha un'autostrada visibile dalla pompa di calore all'accumulo**, e il rapporto
+10. **La tavola 4 ha un'autostrada visibile dalla pompa di calore all'accumulo**, e il rapporto
    porta la tavola. È il criterio che il PO giudica a occhio.
-10. **Il caso di prova 4 è riscritto** secondo D-137, e la commutatrice è una voce di catalogo
+11. **Il caso di prova 4 è riscritto** secondo D-137, e la commutatrice è una voce di catalogo
     con la propria funzione dichiarata e il proprio simbolo.
-11. **Gli impianti 1, 2 e 4 producono una tavola.** Il 3 e il 5 si misurano e si riferiscono:
+12. **Gli impianti 1, 2 e 4 producono una tavola.** Il 3 e il 5 si misurano e si riferiscono:
     se l'ordine nuovo li fa uscire, bene; se no, il rapporto dice dove si fermano.
-12. **Il saldo della suite non peggiora.** Riferimento su `main`: 10 rosse, 1470 verdi,
+13. **Il saldo della suite non peggiora.** Riferimento su `main`: 10 rosse, 1470 verdi,
     24 saltate, 11 xfailed. Nessuna prova convertita in `skip` o `xfail`, nessuna soglia
     allentata, nessuna fixture toccata per far passare una prova.
-13. **I budget delle tavole 1 e 2 sono misurati e riferiti, prima e dopo.** Riferimenti:
-    tavola 1 · 4 pieghe, 1 incrocio, 470,0 mm; tavola 2 · 5 pieghe, 1 incrocio, 600,0 mm.
-    **Non è un criterio di non-regressione**: un peggioramento è ammesso se il rapporto lo
-    spiega con l'ordine nuovo. È il metro che cambia, e va visto cambiare.
-14. **Determinismo**: doppia generazione dalla CLI con la stessa impronta.
-15. **Il documento di architettura dell'11 settembre è aggiornato** all'ordine di D-138, o
+14. **Le tavole 1 e 2 sono misurate e riferite, prima e dopo, con il metro nuovo**: curve,
+    attraversamenti e riempimento. Riferimenti: tavola 1 · 4 curve, 1 attraversamento,
+    riempimento 29,8 %; tavola 2 · 5 curve, 1 attraversamento, riempimento 50,1 %. La
+    lunghezza si riporta ancora, ma **come misura e non come giudizio** (D-139).
+    **Non è un criterio di non-regressione**: un peggioramento su curve o attraversamenti è
+    ammesso se il rapporto lo spiega con l'ordine nuovo. È il metro che cambia, e va visto
+    cambiare.
+15. **Determinismo**: doppia generazione dalla CLI con la stessa impronta.
+16. **Il documento di architettura dell'11 settembre è aggiornato** all'ordine di D-138, o
     marcato come superato da un documento nuovo. Non resta a contraddire il codice.
-
 ---
 
 ## Consegna
