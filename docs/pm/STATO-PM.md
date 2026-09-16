@@ -41,7 +41,7 @@ modello da riusare.
 |---|---|
 | `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR #33, che porta il triage degli input, il verdetto sulla PR #32 e DRAW-011 |
 | Release dichiarata | **0.3 — generalizzazione, impianto 2** (`docs/plans/2026-09-03-release-plan.md`) |
-| Pacchetto attivo | **DRAW-011** (`ACTIVE_WORK_PACKAGE.md`), scritto il 16 settembre: il prelievo torna nella distribuzione e il caso di prova 4 si riscrive |
+| Pacchetto attivo | **DRAW-012** (`ACTIVE_WORK_PACKAGE.md`): il motore disegna nell'ordine del disegnatore (D-138). **DRAW-011 è sospeso**: curava sintomi dell'architettura che DRAW-012 cambia |
 | In attesa | la consegna di **DRAW-011** dal DEV. Nessuna PR aperta al 16 settembre |
 | PR #32 (DRAW-010) | **verificata e respinta.** Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`, pubblicato anche sulla PR. Il suo lavoro **non è su `main`** |
 | Ultima consegna verificata | **DRAW-010**, PR #32: dodici criteri raggiunti, due in parte, due no. Torna al DEV |
@@ -91,7 +91,15 @@ Gli strumenti di misura esistono e non vanno riscritti: `docs/collaudi/DRAW-008/
 In ordine di quanto pesano, dopo le sei disposizioni del PO del 15 settembre. I rischi
 numerati stanno in `PROJECT_STATE.md`.
 
-0. **«Un passo avanti e uno indietro»** (`I-067`, 16 settembre). Il PO l'ha detto e ha
+0. **Il motore non ragiona nell'ordine del disegnatore** (`I-069`, D-138, 16 settembre). Il
+   PO: «stiamo ottimizzando la punta di una lancia storta». Cinque differenze misurate fra
+   l'ordine che ha dettato e quello che il motore esegue, **quattro a monte di qualunque
+   taratura**: le strade secondarie sono in ultima fase, il circolatore non fa nemmeno tratta,
+   con due generatori uno perde la classificazione, l'autostrada è una catena di frammenti
+   senza invariante sulla catena, e quando l'invariante non si può tenere il motore butta via
+   la fase invece di cedere una curva. **È DRAW-012**, ed è la voce che rende le altre
+   misurabili. Analisi in `2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md`.
+1. **«Un passo avanti e uno indietro»** (`I-067`, 16 settembre). Il PO l'ha detto e ha
    ragione: `DRAW-009` migliora la tavola 1 e perde l'impianto 4, `DRAW-010` riprende
    l'impianto 4 e perde due budget e quattro prove. **La causa è del PM**: i pacchetti
    chiedono «non peggiora» e nessuno chiede «migliora», quindi il miglior esito possibile è
@@ -99,39 +107,39 @@ numerati stanno in `PROJECT_STATE.md`.
    criteri di non-regressione si misurano **prima** di aprire la PR: se uno peggiora, il DEV
    non consegna, si ferma e riferisce. È la voce che pesa di più, perché non è un difetto del
    prodotto ma del modo in cui lo chiediamo.
-1. **L'attuazione di D-126 sul prelievo è la causa unica di quasi tutto ciò che la PR #32
+2. **L'attuazione di D-126 sul prelievo è la causa unica di quasi tutto ciò che la PR #32
    rompe**: i tre incroci e i 45 mm della tavola 2, le otto prove nuove rosse, l'impianto 5
    che non arriva più alla posa. Il DEV e il PO ci sono arrivati per strade indipendenti. È
    la prima voce del pacchetto di correzione, e con essa rientra quasi tutto il resto.
-2. **L'autostrada non esiste come oggetto** (`I-068`, misurato il 16 settembre). Con due
+3. **L'autostrada non esiste come oggetto** (`I-068`, misurato il 16 settembre). Con due
    generatori la pompa di calore non viene classificata autostrada — sull'impianto 4 lo è la
    caldaia e lei no — e in ogni caso un'autostrada è una catena di frammenti da 5-10 mm, uno
    per accessorio, con la rettilineità verificata su ciascun frammento e nessun invariante
    sulla catena intera. Diagnosi in `ACTIVE_WORK_PACKAGE.md` §E.1, cura da assegnare: è il
    candidato naturale del pacchetto dopo `DRAW-011`, insieme a D-136.
-3. **L'anello della fase del tronco** (rischio 16). È la causa a monte di quasi tutto:
+4. **L'anello della fase del tronco** (rischio 16). È la causa a monte di quasi tutto:
    tiene la tavola 2 sul ripiego, ha costretto ad allargare `is_valid` (rischio 19) e con
    ogni probabilità è ciò che blocca gli impianti 3, 4 e 5. **È §A di DRAW-010**, in corso.
-4. **Il verso di mandata e ritorno lo decide la geometria** (`I-010`, aperto dal 9 agosto).
+5. **Il verso di mandata e ritorno lo decide la geometria** (`I-010`, aperto dal 9 agosto).
    Su circa un terzo delle tratte il colore di quel tubo è giusto per caso. **Il PO l'ha
    dichiarato fondamentale** — D-136 — ed è la voce principale del pacchetto dopo DRAW-010.
    Nessuno strumento lo misura ancora: `supply` è un booleano già deciso quando arriva alla
    geometria esportata, quindi l'indecisione va misurata dentro la camminata sul grafo.
-5. **Il prodotto non gira in una chat vera** (rischio 1). Il più vecchio e il meno toccato.
+6. **Il prodotto non gira in una chat vera** (rischio 1). Il più vecchio e il meno toccato.
    La 0.3 non si può dichiarare finita senza una prova verticale in una chat pulita.
-6. **Lo spessore del tratto dice la gerarchia** (D-132): 0,50 mm autostrade, 0,25 mm
+7. **Lo spessore del tratto dice la gerarchia** (D-132): 0,50 mm autostrade, 0,25 mm
    servizio, due livelli e non tre. Oggi la tavola usa 0,18 / 0,35 / 0,50. Da assegnare, e
    porta con sé un nodo che D-132 lascia aperto — con due spessori in un nodo, il pallino di
    derivazione a quattro volte lo spessore va agganciato a uno dei due; il PM propone il più
    grosso.
-7. **L'audit della libreria dei simboli** (rischio 2), che il PO deve approvare prima della
+8. **L'audit della libreria dei simboli** (rischio 2), che il PO deve approvare prima della
    0.3.
-8. **L'agio finale** (D-134): a disegno risolto, un passo a sé che allarga l'impianto e lo
+9. **L'agio finale** (D-134): a disegno risolto, un passo a sé che allarga l'impianto e lo
    mette più comodo, per far posto alle sigle. Non partecipa a posa e instradamento, e non è
    il riempimento del foglio — quello ha smesso di essere un obiettivo.
-9. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
+10. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
    due tavole; diventa esigibile su un impianto che lo violi.
-10. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
+11. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
    dedotta. Pacchetto a sé, da aprire se il PO lo vuole.
 
 Non è più un filo: **lo squilibrio fra quadranti della tavola 2** e il riempimento del

@@ -80,9 +80,14 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
   sedici raggiunti, ma la tavola 2 peggiorava su due budget e la suite passava da 10 rosse a
   14. Il verdetto è in `docs/pm/2026-09-15-review-pr32-draw010.md`, pubblicato anche sulla
   PR. **Il suo lavoro non è su `main`**: chi prende il pacchetto nuovo riparte da `main`.
-- Il pacchetto attivo è **`DRAW-011`** (`ACTIVE_WORK_PACKAGE.md`): il prelievo torna nella
-  distribuzione, e il caso di prova 4 viene riscritto perché quello di adesso non sta in
-  piedi idraulicamente. Quattordici criteri, con le misure di partenza.
+- Il pacchetto attivo è **`DRAW-012`** (`ACTIVE_WORK_PACKAGE.md`): **il motore disegna
+  nell'ordine del disegnatore** — prima la struttura, autostrade e strade secondarie insieme,
+  poi il corredo, e una curva sull'autostrada solo come ultima spiaggia (**D-138**).
+  Quindici criteri. **`DRAW-011` è sospeso**: curava sintomi dell'architettura che DRAW-012
+  cambia; ne sopravvive la riscrittura del caso di prova 4, che diventa il banco.
+- **Chi tocca la posa legge prima l'analisi del 16 settembre**,
+  `docs/pm/2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md`: le cinque differenze
+  misurate fra l'ordine del disegnatore e quello del motore.
 - **Chi tocca posa, costo o routing legge prima due documenti**, in quest'ordine:
   `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md` — l'ordine delle decisioni che il
   PO ha fissato: prima le autostrade e dritte, poi il corredo con lo stretch invece della
