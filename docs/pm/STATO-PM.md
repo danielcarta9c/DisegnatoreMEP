@@ -103,29 +103,35 @@ numerati stanno in `PROJECT_STATE.md`.
    rompe**: i tre incroci e i 45 mm della tavola 2, le otto prove nuove rosse, l'impianto 5
    che non arriva più alla posa. Il DEV e il PO ci sono arrivati per strade indipendenti. È
    la prima voce del pacchetto di correzione, e con essa rientra quasi tutto il resto.
-2. **L'anello della fase del tronco** (rischio 16). È la causa a monte di quasi tutto:
+2. **L'autostrada non esiste come oggetto** (`I-068`, misurato il 16 settembre). Con due
+   generatori la pompa di calore non viene classificata autostrada — sull'impianto 4 lo è la
+   caldaia e lei no — e in ogni caso un'autostrada è una catena di frammenti da 5-10 mm, uno
+   per accessorio, con la rettilineità verificata su ciascun frammento e nessun invariante
+   sulla catena intera. Diagnosi in `ACTIVE_WORK_PACKAGE.md` §E.1, cura da assegnare: è il
+   candidato naturale del pacchetto dopo `DRAW-011`, insieme a D-136.
+3. **L'anello della fase del tronco** (rischio 16). È la causa a monte di quasi tutto:
    tiene la tavola 2 sul ripiego, ha costretto ad allargare `is_valid` (rischio 19) e con
    ogni probabilità è ciò che blocca gli impianti 3, 4 e 5. **È §A di DRAW-010**, in corso.
-3. **Il verso di mandata e ritorno lo decide la geometria** (`I-010`, aperto dal 9 agosto).
+4. **Il verso di mandata e ritorno lo decide la geometria** (`I-010`, aperto dal 9 agosto).
    Su circa un terzo delle tratte il colore di quel tubo è giusto per caso. **Il PO l'ha
    dichiarato fondamentale** — D-136 — ed è la voce principale del pacchetto dopo DRAW-010.
    Nessuno strumento lo misura ancora: `supply` è un booleano già deciso quando arriva alla
    geometria esportata, quindi l'indecisione va misurata dentro la camminata sul grafo.
-4. **Il prodotto non gira in una chat vera** (rischio 1). Il più vecchio e il meno toccato.
+5. **Il prodotto non gira in una chat vera** (rischio 1). Il più vecchio e il meno toccato.
    La 0.3 non si può dichiarare finita senza una prova verticale in una chat pulita.
-5. **Lo spessore del tratto dice la gerarchia** (D-132): 0,50 mm autostrade, 0,25 mm
+6. **Lo spessore del tratto dice la gerarchia** (D-132): 0,50 mm autostrade, 0,25 mm
    servizio, due livelli e non tre. Oggi la tavola usa 0,18 / 0,35 / 0,50. Da assegnare, e
    porta con sé un nodo che D-132 lascia aperto — con due spessori in un nodo, il pallino di
    derivazione a quattro volte lo spessore va agganciato a uno dei due; il PM propone il più
    grosso.
-6. **L'audit della libreria dei simboli** (rischio 2), che il PO deve approvare prima della
+7. **L'audit della libreria dei simboli** (rischio 2), che il PO deve approvare prima della
    0.3.
-7. **L'agio finale** (D-134): a disegno risolto, un passo a sé che allarga l'impianto e lo
+8. **L'agio finale** (D-134): a disegno risolto, un passo a sé che allarga l'impianto e lo
    mette più comodo, per far posto alle sigle. Non partecipa a posa e instradamento, e non è
    il riempimento del foglio — quello ha smesso di essere un obiettivo.
-8. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
+9. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
    due tavole; diventa esigibile su un impianto che lo violi.
-9. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
+10. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
    dedotta. Pacchetto a sé, da aprire se il PO lo vuole.
 
 Non è più un filo: **lo squilibrio fra quadranti della tavola 2** e il riempimento del
