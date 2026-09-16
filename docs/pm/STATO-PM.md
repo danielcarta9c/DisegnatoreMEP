@@ -39,9 +39,10 @@ modello da riusare.
 
 | | |
 |---|---|
-| `main` | `5ef4f14` (PR #31, 15 settembre) |
+| `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR #33, che porta il triage degli input, il verdetto sulla PR #32 e DRAW-011 |
 | Release dichiarata | **0.3 — generalizzazione, impianto 2** (`docs/plans/2026-09-03-release-plan.md`) |
 | Pacchetto attivo | **DRAW-011** (`ACTIVE_WORK_PACKAGE.md`), scritto il 16 settembre: il prelievo torna nella distribuzione e il caso di prova 4 si riscrive |
+| In attesa | la consegna di **DRAW-011** dal DEV. Nessuna PR aperta al 16 settembre |
 | PR #32 (DRAW-010) | **verificata e respinta.** Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`, pubblicato anche sulla PR. Il suo lavoro **non è su `main`** |
 | Ultima consegna verificata | **DRAW-010**, PR #32: dodici criteri raggiunti, due in parte, due no. Torna al DEV |
 | Suite su `main` | **10 rosse, 1470 verdi, 24 saltate, 11 xfailed** — rimisurata dal PM il 15 settembre, coincide. Sulla PR #32: 14 rosse |
@@ -199,9 +200,11 @@ ha autorizzato la pulizia in sessione il 15 settembre; l'autorizzazione copre i 
 Tre, ciascuna già pagata almeno una volta.
 
 1. **Il `.pth` dell'installazione editable** (vedi §3.2). Ha già falsato un confronto.
-2. **Un SHA scritto dentro `ACTIVE_WORK_PACKAGE.md` nasce vecchio**, perché il file vive su
-   `main` e ogni suo ritocco sposta la testa. Si definisce la base per contenuto, non per
-   numero.
+2. **Uno SHA scritto dentro un file che vive su `main` nasce vecchio**, perché ogni ritocco
+   al file sposta la testa. Vale per `ACTIVE_WORK_PACKAGE.md` — dove è già stato corretto — e
+   **vale per questo file**: la riga `main` di §2 è stata trovata vecchia dal PM che è
+   subentrato il 15 settembre, ed è stata trovata vecchia di nuovo un'ora dopo. Ora non porta
+   più un numero. La base si dice per contenuto.
 3. **Gli impianti 3 e 5 non producono tavola da prima di DRAW-009.** È la linea di partenza,
    non una regressione da inseguire. Il 4 invece è una regressione vera.
 
