@@ -535,8 +535,13 @@ provate e nessun allungo fra loro**.
 ### 9 — Nessun impianto esce dal ripiego che scarta le fasi · **raggiunto**
 
 ```
-impianto1-completo.json: … ripiego «le fasi» · cedute 0
-impianto2-completo.json: … ripiego «le fasi» · cedute 0
+.venv/bin/python docs/collaudi/DRAW-012/criteri.py docs/collaudi/DRAW-012/dopo/impianto*-completo.json
+
+impianto1-completo.json: 13/21 tratte autostrada, 7 catene — riemp 45.1% · cop 0.75 ·
+  curve 4 · attrav 1 · ripiego «le fasi» · cedute 0
+impianto2-completo.json: 13/23 tratte autostrada, 7 catene — riemp 64.1% · cop 0.75 ·
+  curve 5 · attrav 1 · ripiego «le fasi» · cedute 0
+impianto4-completo.json: 17/25 tratte autostrada, 9 catene — non esce
 ```
 
 Le due tavole che escono, escono dalla **prima** via. Nessuna cessione è stata necessaria.
