@@ -303,9 +303,9 @@ pezzo isolato.
 | | `main` (`8589620`) | questa consegna |
 |---|---|---|
 | rosse | 10 | **13** |
-| verdi | 1470 | VERDI_QUI |
-| saltate | 24 | SALTATE_QUI |
-| xfailed | 11 | XFAILED_QUI |
+| verdi | 1470 | **1482** |
+| saltate | 24 | 24 |
+| xfailed | 11 | 11 |
 
 **Il saldo peggiora di tre, e il criterio 13 non è raggiunto.** Le dieci di `main` sono
 ancora rosse e sono le stesse; le tre in più stanno tutte in
@@ -659,7 +659,7 @@ stessa famiglia, tutti **locali** e nessuno strutturale:
 
 ```
 .venv/bin/python -m pytest -q -n 3
-SALDO_RIGA
+13 failed, 1482 passed, 24 skipped, 11 xfailed in 2286.16s (0:38:06)
 ```
 
 Riferimento su `main`, misurato da me nello stesso worktree pulito: **10 rosse, 1470 verdi,
@@ -673,9 +673,20 @@ test_sulla_tavola_composta_nessuno_stacco_e_piu_lungo_del_minimo_senza_una_ragio
 test_il_raccordo_che_regge_uno_stacco_sta_stretto_al_raccordo_a_cui_e_attaccato[due_macchine_con_accumulo_combinato]
 ```
 
+Le altre dieci sono, una per una, quelle di `main`: `test_accessori_appesi` sulla tavola 2,
+le due di `test_assi_dorsali_tee`, `test_improve::test_the_hard_constraints_hold_after_improvement`,
+`test_consegna_e_verifica`, `test_rami_di_servizio`, e quattro di
+`test_stacchi_minimi_e_interasse` — `nella_posa_iniziale`, le due di
+`il_ciclo_prova_per_prima_la_traslazione_verticale` e `la_tavola_1_non_costa_piu_di_draw_005`.
+Nessuna nuova fuori da `test_stacchi_minimi_e_interasse.py`.
+
 **Non le ho nascoste e non le ho aggirate**: non ho toccato quelle prove, non le ho
 convertite in `skip` né in `xfail`, non ho allentato una soglia. Le porto qui con la
 diagnosi, e §7.7 dice che cosa ho provato e perché mi sono fermato.
+
+Le verdi sono **1482 contro 1470**: dodici in più, che sono le prove nuove del pacchetto —
+quattordici in `test_ordine_del_disegnatore.py` e una in `test_collaudo_interprete.py`, meno
+le due parametrizzazioni che l'impianto 4 non porta più nel confronto arco per arco (§4.2).
 
 Le altre quindici rosse che il primo giro aveva portato **le ho chiuse tutte**, e sono in
 §4.2: erano i documenti pubblicati che il caso di prova 4 nuovo ha reso vecchi, il conto dei
