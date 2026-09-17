@@ -136,9 +136,14 @@ numerati stanno in `PROJECT_STATE.md`.
    0.3.
 9. **La tavola 1 è sotto la finestra del riempimento**: 29,8 % contro un minimo di 45
    (D-140). È l'impianto su cui il tenersi larghi si vedrà di più, ed è dentro DRAW-012.
-10. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
+10. **L'export DXF** (`I-072`, 17 settembre). Fattibile e indipendente da tutto il resto: legge
+    la geometria già esportata, non tocca posa né instradamento, e la libreria dei simboli è
+    fatta quasi solo di rette, rettangoli e cerchi — sei archi e tre curve in tutto. **È il
+    filo che cambia l'asticella**: se il disegnatore umano rifinisce in CAD, il motore non
+    deve più essere perfetto al primo colpo. Pacchetto a sé, da aprire quando il PO lo vuole.
+11. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
    due tavole; diventa esigibile su un impianto che lo violi.
-11. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
+12. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
    dedotta. Pacchetto a sé, da aprire se il PO lo vuole.
 
 Non è più un filo: **lo squilibrio fra quadranti della tavola 2**. Il riempimento invece è
