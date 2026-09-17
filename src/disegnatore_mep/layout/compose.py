@@ -15,9 +15,11 @@ circuiti in modo arbitrario (D-028).
 """
 
 from collections.abc import Callable
+from dataclasses import dataclass, field
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
+from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import ProjectModel
 
@@ -33,6 +35,7 @@ from .geometry import (
 )
 from .grid import GridSpace
 from .hierarchy import hierarchy_of
+from .highways import Highway, highways, lies_in_line
 from .improve import improve_sheet
 from .inline import settle_sheet
 from .labels import place_labels
@@ -44,6 +47,56 @@ from .trunks import Trunk, build_trunks
 
 CROSS_REFERENCE_GAP_MM = 2.5
 """Stacco fra la porta e il marcatore di rimando."""
+
+TrunkKey = tuple[str, ...]
+
+MAX_SURRENDERS = 4
+"""Quante catene, al piu', l'ultima spiaggia arriva a cedere (§F.3).
+
+Un tetto dichiarato, come quello degli instradamenti di prova: ogni cessione e'
+un ciclo di miglioramento intero, e un impianto con quindici autostrade
+consumerebbe quindici cicli prima di arrivare alle reti ultime. Quattro bastano
+a coprire i casi visti — la prima cessione e' quella delle catene che nessuna
+posa raddrizza, e non costa niente — e chi arriva in fondo senza una tavola non
+l'avrebbe avuta nemmeno alla dodicesima. Il tetto scatta in modo deterministico,
+e il rapporto dice sempre con quale via la tavola e' uscita.
+"""
+
+
+@dataclass
+class ComposeNote:
+    """Come e' uscita una tavola: con quale ripiego, e a che prezzo (§F.3).
+
+    Esiste perche' il pacchetto lo chiede per iscritto: «la cessione e'
+    **graduale e dichiarata**: si cede una piega per volta, sulla tratta che ne
+    ha meno bisogno, e il rapporto dice dove e perche' per ciascun impianto che
+    ha dovuto cedere», e «ogni volta che scatta [il ripiego che scarta le fasi]
+    va scritto». Un ripiego silenzioso e' come la tavola 4 e' arrivata in
+    revisione senza che nessuna misura se ne accorgesse.
+    """
+
+    sheet_id: str
+    ripiego: str
+    """Quale delle vie ha consegnato la tavola, in italiano e per esteso."""
+
+    conceded: tuple[TrunkKey, ...] = ()
+    """Le tratte delle catene a cui si e' concessa la piega, in ordine di resa."""
+
+    crooked: tuple[TrunkKey, ...] = ()
+    """Le catene che la tavola consegnata non ha dritte, cedute o no."""
+
+    highways: int = 0
+    """Quante autostrade intere ha questo foglio."""
+
+
+@dataclass
+class ComposeJournal:
+    """Il diario della composizione: una nota per foglio."""
+
+    notes: list[ComposeNote] = field(default_factory=list)
+
+    def clear(self) -> None:
+        self.notes.clear()
 
 
 def inline_component_ids(
@@ -189,12 +242,79 @@ def centre_vertically(
     )
 
 
+def _reader_of(
+    project: ProjectModel,
+    catalog: ComponentRegistry,
+    placed: list[PlacedSymbol],
+) -> Callable[[str, str], tuple[Point, PortFace] | None]:
+    """Dove sta ogni porta su questa tavola: la lettura che l'invariante chiede.
+
+    E' la stessa di `Improver.port_at`, scritta qui perche' il diario la usa su
+    una tavola gia' consegnata, dove un ciclo di miglioramento non serve piu'.
+    """
+    definitions = {item.id: item.definition_id for item in project.components}
+    by_id = {item.component_id: item for item in placed}
+
+    def at(component_id: str, port_id: str) -> tuple[Point, PortFace] | None:
+        item = by_id.get(component_id)
+        if item is None or component_id not in definitions:
+            return None
+        manifest = catalog.resolve(definitions[component_id]).symbol.manifest.rotated(
+            item.rotation_deg
+        )
+        port = manifest.port(item.physical_port(port_id))
+        return (
+            Point(x_mm=item.origin.x_mm + port.x_mm, y_mm=item.origin.y_mm + port.y_mm),
+            port.face,
+        )
+
+    return at
+
+
+def _order_of_surrender(
+    laid: tuple[Highway, ...],
+    impossible: frozenset[TrunkKey],
+    order: dict[str, int],
+    straight: Callable[[Highway], bool],
+) -> tuple[Highway, ...]:
+    """L'ordine in cui si cede una piega: prima a chi ne ha meno bisogno (§F.3).
+
+    **Si cede solo cio' che si sta tenendo.** L'invariante e' monotono — «cio'
+    che e' dritto non si storce, cio' che storto era puo' solo raddrizzarsi» —
+    quindi su una catena che la fase del tronco ha gia' consegnato storta non
+    vincola niente, e toglierla dall'invariante non libera niente: sarebbe un
+    ciclo di miglioramento intero speso per non cambiare nulla.
+
+    Fra quelle che restano, tre criteri, e il primo viene prima:
+
+    1. **Le catene che nessuna posa raddrizza comunque.** La fase del tronco le
+       nomina gia' (`SpineLayout.impossible`): li' la piega non si concede, si
+       constata, e concederla non costa niente.
+    2. **La catena piu' corta.** Una catena di una tratta e' meno struttura di
+       una di quattro: piegarla toglie meno forma alla tavola.
+    3. A parita', **l'ordine strutturale** del capo da cui comincia — mai
+       l'identificativo, che e' un nome (D-093).
+    """
+    return tuple(
+        sorted(
+            (item for item in laid if straight(item)),
+            key=lambda item: (
+                0 if set(item.keys) & impossible else 1,
+                len(item.steps),
+                order.get(item.head.component_id, 0),
+                item.keys,
+            ),
+        )
+    )
+
+
 def compose_sheet(
     project: ProjectModel,
     partition: SheetPartition,
     catalog: ComponentRegistry,
     frame: SheetFrame,
     inline_ids: frozenset[str],
+    journal: ComposeJournal | None = None,
 ) -> SheetGeometry:
     grid = GridSpace(origin=frame.drawing_rect_mm, standard=frame.standard)
     first = place_sheet(project, partition, catalog, frame, inline_ids)
@@ -217,32 +337,98 @@ def compose_sheet(
         sheet = settle_sheet(project, list(partition.trunks), base, catalog, grid)
         return sheet.symbols, sheet.routes
 
-    # Il miglioramento non compra mai il fallimento della tavola: il ciclo
-    # scarta le pose che non si instradano, ma il suo tetto di prove puo'
-    # fermarlo su una posa che non ha ancora finito di sistemare. Si ripiega
-    # allora, in quest'ordine: sulla posa che la fase del tronco ha seminato;
-    # **sul ciclo senza le fasi**, cioe' la tavola che sarebbe uscita prima di
-    # DRAW-008, perche' una fase nuova non puo' togliere una tavola a un
-    # impianto che ce l'aveva; e infine sulla disposizione di partenza, che e'
-    # quella provvista dei propri rettilinei.
-    found: tuple[list[PlacedSymbol], list[RoutedTrunk]] | None = None
-    ripieghi: tuple[Callable[[], list[PlacedSymbol]], ...] = (
-        lambda: improved,
-        lambda: seeded,
-        lambda: improve_sheet(project, partition, catalog, frame, first, inline_ids),
-        lambda: first,
+    # **Quando la struttura non si instrada, si cede una curva: non si butta la
+    # struttura** (DRAW-012 §F, e il PO in D-138). Fino a `DRAW-011` il terzo
+    # ripiego era «il ciclo senza le fasi», cioe' la tavola che il motore
+    # produceva **prima che le autostrade esistessero**: l'impianto 4 usciva da
+    # li', e non era un'autostrada venuta storta — era una tavola disegnata da
+    # un motore che non sa che cosa sia un'autostrada.
+    #
+    # L'ordine nuovo:
+    #
+    #   1. la posa delle fasi, migliorata;
+    #   2. la posa che la fase del tronco ha seminato;
+    #   3. **la cessione graduale**: una catena per volta, a partire da quella
+    #      che ne ha meno bisogno, si toglie dall'invariante e il ciclo puo'
+    #      piegarla per far entrare il resto;
+    #   4. il ciclo senza le fasi — **l'ultimissima rete**, e ogni volta che
+    #      scatta va scritto;
+    #   5. la disposizione di partenza.
+    laid = highways(project, catalog, list(partition.trunks))
+    on_the_seed = _reader_of(project, catalog, seeded)
+    surrender = _order_of_surrender(
+        laid,
+        frozenset(spine.impossible),
+        structural_order(project),
+        lambda item: lies_in_line(item, on_the_seed),
     )
-    for base in ripieghi:
+    giving_up: list[frozenset[tuple[str, ...]]] = []
+    ceded: list[tuple[str, ...]] = []
+    for highway in surrender[:MAX_SURRENDERS]:
+        ceded.extend(highway.keys)
+        giving_up.append(frozenset(ceded))
+
+    ways: list[tuple[str, tuple[TrunkKey, ...], Callable[[], list[PlacedSymbol]]]] = [
+        ("le fasi", (), lambda: improved),
+        ("la posa seminata dal tronco", (), lambda: seeded),
+    ]
+    ways.extend(
+        (
+            f"la cessione graduale, {index} catena/e ceduta/e",
+            tuple(sorted(given)),
+            (
+                lambda given=given: improve_sheet(  # type: ignore[misc]
+                    project,
+                    partition,
+                    catalog,
+                    frame,
+                    seeded,
+                    inline_ids,
+                    spine,
+                    conceded=given,
+                )
+            ),
+        )
+        for index, given in enumerate(giving_up, start=1)
+    )
+    ways.append(
+        (
+            "il ciclo senza le fasi (ultimissima rete)",
+            (),
+            lambda: improve_sheet(project, partition, catalog, frame, first, inline_ids),
+        )
+    )
+    ways.append(("la disposizione di partenza", (), lambda: first))
+
+    found: tuple[list[PlacedSymbol], list[RoutedTrunk]] | None = None
+    story = ("nessuna: la tavola non esce", ())
+    for note, given, base in ways:
         try:
             found = settled(base())
         except LayoutError:
             continue
+        story = (note, given)
         break
     if found is None:
-        # Nessuna delle quattro si instrada: la tavola non esce, e chi chiama
-        # deve vedere il perche' della prima, che e' quella che si voleva.
+        # Nessuna via si instrada: la tavola non esce, e chi chiama deve vedere
+        # il perche' della prima, che e' quella che si voleva.
         found = settled(improved)
     placed, broken = found
+    if journal is not None:
+        journal.notes.append(
+            ComposeNote(
+                sheet_id=partition.sheet_id,
+                ripiego=story[0],
+                conceded=story[1],
+                crooked=tuple(
+                    key
+                    for item in laid
+                    if not lies_in_line(item, _reader_of(project, catalog, placed))
+                    for key in item.keys
+                ),
+                highways=len(laid),
+            )
+        )
 
     entries, keys = build_legend(
         project, placed, partition.network_ids, catalog, frame
@@ -287,7 +473,10 @@ def compose_sheet(
 
 
 def compose_drawing(
-    project: ProjectModel, catalog: ComponentRegistry, frame: SheetFrame
+    project: ProjectModel,
+    catalog: ComponentRegistry,
+    frame: SheetFrame,
+    journal: ComposeJournal | None = None,
 ) -> DrawingGeometry:
     """Dal modello tecnico approvato alla geometria di tutte le tavole."""
     inline_ids = inline_component_ids(project, catalog)
@@ -335,7 +524,7 @@ def compose_drawing(
     return DrawingGeometry(
         project_id=project.metadata.project_id,
         sheets=[
-            compose_sheet(project, partition, catalog, frame, inline_ids)
+            compose_sheet(project, partition, catalog, frame, inline_ids, journal)
             for partition in partitions
         ],
     )
@@ -345,6 +534,7 @@ def compose_on_ordinary_frame(
     project: ProjectModel,
     catalog: ComponentRegistry,
     frames: tuple[SheetFrame, ...] = ORDINARY_FRAMES,
+    journal: ComposeJournal | None = None,
 ) -> tuple[SheetFrame, DrawingGeometry]:
     """Il disegno sul piu' piccolo formato ordinario su cui entra (D-058).
 
@@ -360,7 +550,11 @@ def compose_on_ordinary_frame(
     last: LayoutError | None = None
     for frame in frames:
         try:
-            return frame, compose_drawing(project, catalog, frame)
+            # Il diario descrive **la tavola consegnata**: un formato provato e
+            # scartato non lascia note dietro di se'.
+            if journal is not None:
+                journal.clear()
+            return frame, compose_drawing(project, catalog, frame, journal)
         except LayoutError as exc:
             last = exc
     reason = str(last) if last is not None else "no format was offered to try"
@@ -370,6 +564,9 @@ def compose_on_ordinary_frame(
 
 
 __all__ = [
+    "MAX_SURRENDERS",
+    "ComposeJournal",
+    "ComposeNote",
     "SheetLink",
     "centre_vertically",
     "compose_drawing",

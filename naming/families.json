@@ -79,6 +79,11 @@
       "name": "Valvola deviatrice"
     },
     {
+      "function": "circuit_switching",
+      "prefix": "VC",
+      "name": "Valvola commutatrice di circuito"
+    },
+    {
       "function": "dhw_mixing",
       "prefix": "VM",
       "name": "Valvola miscelatrice"

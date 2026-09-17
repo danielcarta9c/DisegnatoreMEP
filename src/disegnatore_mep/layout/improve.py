@@ -91,20 +91,25 @@ from disegnatore_mep.model.project import ProjectModel
 
 from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
-from .flow import orient_trunks
+from .flow import TrunkKey, orient_trunks
 from .geometry import (
+    INK_COVERAGE_MIN,
+    SHEET_FILL_MAX_RATIO,
+    SHEET_FILL_MIN_RATIO,
     PlacedSymbol,
     Point,
     RoutedTrunk,
     box_of,
     fill_ratio,
     ink_box,
+    ink_coverage,
     ink_imbalance,
     overshoot_mm,
     run_intrudes_on,
 )
 from .grid import GridSpace, is_on_grid
 from .hierarchy import Level, hierarchy_of, spine_machines, weight_of
+from .highways import Highway, highways, lies_in_line
 from .inline import SettledSheet, settle_sheet
 from .partition import SheetPartition
 from .place import (
@@ -267,12 +272,45 @@ class PortPair(NamedTuple):
     through: tuple[str, ...] = ()
 
 
+FILL_WINDOW = (SHEET_FILL_MIN_RATIO, SHEET_FILL_MAX_RATIO)
+"""La finestra del riempimento (**D-140**): ne' troppo poco ne' troppo.
+
+Le due sponde stanno in `layout.geometry`, accanto alla misura, e non qui: le
+leggono il **preflight**, che avvisa a tavola finita, e questo **costo**, che le
+insegue mentre dispone. Un numero solo, in un posto solo — se divergessero, il
+ciclo crederebbe di aver riempito un foglio che il controllo vede vuoto.
+
+Sotto il 45 % il disegno e' vuoto e stretto insieme; sopra il 65 % non ci sta
+piu' lo spazio per le sigle dei componenti. La percentuale si misura sull'area
+di disegno, che e' gia' al netto del cartiglio e della legenda — su una A3,
+350 x 235 mm — ed e' la stessa che `fill_ratio` calcola.
+
+⛔ **Non e' un traguardo**, ed e' precisamente per questo che e' una finestra:
+cio' che D-134 rifiutava — inseguire una percentuale sempre piu' alta — resta
+rifiutato. Il PO (**D-139**): «i mm non sono un vero costo da misurare, lo e'
+piu' avere un buon riempimento, ne' troppo poco ne' troppo».
+"""
+
+
 class SheetCost(NamedTuple):
     """Il valore confrontabile della geometria completa, nell'ordine del pacchetto.
 
-    Si confronta con `beats`, che e' l'ordine lessicografico delle voci: la
-    prima che differisce decide. Riempimento e bilanciamento chiudono la fila e
-    contano solo a parita' di tutte le altre.
+    Si confronta con `beats`, che e' l'ordine lessicografico delle voci di
+    `key()`: la prima che differisce decide.
+
+    **Che cosa costa, da D-139.** Le violazioni, l'andata e ritorno, le tratte
+    troppo piegate, poi i due costi veri del disegno — le **curve** e, in
+    secondo luogo, gli **attraversamenti** — e infine il **riempimento**, letto
+    dentro la sua finestra. Il bilanciamento chiude la fila.
+
+    ⛔ **La lunghezza non e' piu' una voce di costo.** Resta nella tupla, e si
+    riporta, ma **come misura e non come giudizio**: `key()` non la legge. Il PO
+    (D-139): «i mm non sono un vero parametro». Finche' stava fra
+    `crossings` e il riempimento era lei che, a parita' di curve e
+    attraversamenti, decideva **sempre** per la posa piu' corta — e il
+    riempimento, ultimo dopo di lei, non poteva mai comprare un millimetro. E'
+    la compattazione che si misurava sulla tavola 2: 257,5 mm occupati su 350
+    disponibili, con il foglio libero a destra.
     """
 
     violations: int
@@ -296,17 +334,54 @@ class SheetCost(NamedTuple):
     crossings: int
     """Incroci, pesati per gerarchia come le pieghe."""
 
-    length_mm: float
-    """Millimetri di tubo, pesati per gerarchia come le pieghe."""
-
     fill: float
-    """Riempimento dell'area di disegno: spareggio, piu' e' meglio."""
+    """Riempimento dell'area di disegno: **non** si legge da solo (D-141)."""
+
+    coverage: float
+    """Quanta parte dell'ingombro porta davvero inchiostro (D-141).
+
+    Sta accanto al riempimento e non altrove perche' il riempimento **si gonfia
+    spostando un pezzo in un angolo**: il rettangolo cresce, la percentuale
+    sale, e il disegno resta vuoto come prima. Finche' il riempimento era una
+    misura il difetto non contava; adesso che e' un obiettivo, qualcuno lo
+    farebbe."""
 
     imbalance: float
     """Squilibrio dell'inchiostro fra i quadranti: spareggio, meno e' meglio."""
 
-    def key(self) -> tuple[int, int, float, int, int, int, float, float, float]:
-        """La chiave d'ordine: le sette voci, poi i due spareggi."""
+    length_mm: float
+    """Millimetri di tubo, pesati per gerarchia. **Misura, non giudizio**
+    (D-139): sta in fondo alla tupla e `key()` non la legge."""
+
+    @property
+    def fill_gap(self) -> float:
+        """Quanto la tavola e' lontana dall'essere **ben riempita**.
+
+        Zero e' il bersaglio, e ci si arriva da tutt'e due i lati: e' la
+        finestra di D-140, non una percentuale da inseguire. Una posa piu'
+        vuota e una piu' stretta della finestra costano tutt'e due, ed e'
+        esattamente cio' che «ne' troppo poco ne' troppo» vuol dire.
+
+        **E non si legge mai da solo** (D-141): accanto alla distanza dalla
+        finestra sta quanto l'ingombro e' spoglio, e vince — cioe' costa — la
+        peggiore delle due. Cosi' una posa che alza il riempimento spingendo un
+        pezzo in un angolo **non guadagna niente**: il riempimento entra nella
+        finestra ma la copertura crolla, e la voce peggiora invece di
+        migliorare. Un numero solo, con dentro la propria guardia: due voci
+        separate avrebbero lasciato la seconda a fare da spareggio della prima,
+        che e' il modo in cui il trucco tornerebbe a pagare.
+        """
+        low, high = FILL_WINDOW
+        outside = max(low - self.fill, self.fill - high, 0.0)
+        bare = max(INK_COVERAGE_MIN - self.coverage, 0.0)
+        return max(outside, bare)
+
+    def key(self) -> tuple[int, int, float, int, int, int, float, float]:
+        """La chiave d'ordine: le sei voci, il riempimento, poi lo spareggio.
+
+        La lunghezza non c'e', ed e' la sola differenza con l'ordine di prima
+        (D-139): resta nella tupla come misura, e non decide piu' niente.
+        """
         return (
             self.violations,
             self.turnback_runs,
@@ -314,8 +389,7 @@ class SheetCost(NamedTuple):
             self.long_runs,
             self.bends,
             self.crossings,
-            round(self.length_mm, 3),
-            round(-self.fill, 6),
+            round(self.fill_gap, 6),
             round(self.imbalance, 6),
         )
 
@@ -501,6 +575,7 @@ class Improver:
         placed: list[PlacedSymbol],
         inline_ids: frozenset[str],
         spine_layout: SpineLayout | None = None,
+        conceded: frozenset[TrunkKey] = frozenset(),
     ) -> None:
         self.project = project
         self.partition = partition
@@ -691,6 +766,20 @@ class Improver:
             if spine_layout is not None
             else []
         )
+        # **L'autostrada intera** (DRAW-012 §C). Le tratte qui sopra sono i suoi
+        # frammenti, e su un frammento la rettilineita' e' vera per costruzione:
+        # cinque millimetri sono dritti sempre. L'oggetto che si conserva e' la
+        # catena, e l'invariante si verifica su di lei.
+        self.conceded = frozenset(conceded)
+        self.highways: tuple[Highway, ...] = (
+            tuple(
+                item
+                for item in highways(project, catalog, self.trunks)
+                if not (set(item.keys) & self.conceded)
+            )
+            if spine_layout is not None
+            else ()
+        )
         self._memo: dict[Signature, Measured | None] = {}
 
     # -- letture del manifesto -------------------------------------------------
@@ -851,14 +940,15 @@ class Improver:
             long_runs=long_runs,
             bends=bends,
             crossings=crossings,
-            length_mm=length_mm,
             fill=fill_ratio(settled.symbols, settled.routes, self.sheet_rect),
+            coverage=ink_coverage(settled.symbols, settled.routes, box),
             imbalance=ink_imbalance(
                 settled.symbols,
                 settled.routes,
                 _centred_on(box, self.sheet_rect),
                 self.frame.standard.line_medium_mm,
             ),
+            length_mm=length_mm,
         )
 
     def _accessories_out_of_place(self, settled: SettledSheet) -> int:
@@ -1846,6 +1936,32 @@ class Improver:
             return False
         return (goal.y_mm - source.y_mm) * direction[1] > _TOLERANCE_MM
 
+    def chain_in_line(self, table: Move, highway: Highway) -> bool:
+        """Vero se l'**autostrada intera**, con questa posa, e' una retta sola.
+
+        Legge la stessa geometria di `lies_straight` — le porte, non la spezzata
+        — e vi aggiunge la sola condizione che mancava: fra una tratta e la
+        successiva la retta non cambia ne' direzione ne' quota. Il conto sta in
+        `highways.py`, che e' l'unico posto dove si sa che cos'e' una catena.
+        """
+
+        def at(component_id: str, port_id: str) -> tuple[Point, PortFace] | None:
+            placed = table.get(component_id) or self.best.get(component_id)
+            if placed is None:
+                return None
+            return self.port_at(placed, port_id)
+
+        return lies_in_line(highway, at)
+
+    def crooked_chains(self, table: Move) -> tuple[Highway, ...]:
+        """Le autostrade intere che con questa posa non sono una retta.
+
+        La legge il ripiego graduale di `compose_sheet`, che deve sapere **a
+        quale** catena sta per concedere una piega (§F.3)."""
+        return tuple(
+            item for item in self.highways if not self.chain_in_line(table, item)
+        )
+
     def block_of(self, leader: str) -> tuple[str, ...]:
         """Il **corpo rigido** di cui un pezzo del tronco fa parte (DRAW-009 §B).
 
@@ -2465,6 +2581,20 @@ class Improver:
                     continue
                 if not self.lies_straight(after, trunk):
                     return False
+        # **E l'invariante vero sta sulla catena intera** (DRAW-012 §C). Quello
+        # qui sopra guarda una tratta per volta, e su una tratta di cinque
+        # millimetri fra due raccordi e' vero comunque la si posi: e' il motivo
+        # per cui la tavola 4 usciva storta con tutti i numeri verdi. Qui si
+        # guarda l'**autostrada intera** — da un capo all'altro, attraverso i
+        # propri crocevia — e si nega alla mossa di farle prendere una piega che
+        # non aveva. Stessa monotonia: cio' che e' dritto non si storce.
+        for highway in self.highways:
+            if not self.chain_in_line(self.best, highway):
+                continue
+            if not any(item in move for item in highway.component_ids):
+                continue
+            if not self.chain_in_line(after, highway):
+                return False
         # **Nella fase delle strade di servizio il tronco e' fermo nella forma**
         # (DRAW-008 §C.1). «Fermo» qui vuol dire due cose, e tutt'e due sono
         # vincoli: nessuna mossa piega un'autostrada — l'ha appena detto il
@@ -2787,16 +2917,22 @@ def improve_sheet(
     placed: list[PlacedSymbol],
     inline_ids: frozenset[str],
     spine_layout: SpineLayout | None = None,
+    conceded: frozenset[TrunkKey] = frozenset(),
 ) -> list[PlacedSymbol]:
     """Rivede la disposizione reinstradando: si tiene solo cio' che batte la
     posa corrente sul confronto unico della tavola (`SheetCost`).
 
     Con `spine_layout` il ciclo sa che il tronco e' gia' stato costruito e non
-    torna a cercarlo: lo riceve e non lo perde (DRAW-008)."""
+    torna a cercarlo: lo riceve e non lo perde (DRAW-008).
+
+    `conceded` sono le tratte a cui **l'ultima spiaggia** ha gia' concesso la
+    piega (DRAW-012 §F): le catene che le contengono escono dall'invariante, e
+    il ciclo puo' piegarle per far entrare il resto. Si concede una catena per
+    volta, e chi chiama dichiara quale."""
     if not placed or not partition.trunks:
         return list(placed)
     return Improver(
-        project, partition, catalog, frame, placed, inline_ids, spine_layout
+        project, partition, catalog, frame, placed, inline_ids, spine_layout, conceded
     ).run()
 
 

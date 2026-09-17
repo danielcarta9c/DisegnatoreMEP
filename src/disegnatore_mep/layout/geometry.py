@@ -422,16 +422,24 @@ def run_intrudes_on(
     return False
 
 
-SHEET_FILL_MIN_RATIO = 0.60
-"""Quota dell'area di disegno che l'ingombro dell'inchiostro deve coprire (A1).
+SHEET_FILL_MIN_RATIO = 0.45
+"""Sotto questa quota dell'area di disegno il foglio e' **vuoto** (A1, D-140).
 
-**Taratura**, non norma: la carta dice «il foglio e' pieno in modo uniforme» e
-non da' un numero. Sotto tre quinti dell'area il disegno e' una fascia o un
-angolo, non una tavola.
+**Numero del PO**, non taratura del PM: il 17 settembre 2026 il PO ha fissato la
+finestra del riempimento in **45–65 %** — «sotto il 45 % il disegno e' vuoto e
+stretto insieme». Prima era tre quinti, e la soglia era una taratura del PM.
 
 Vive accanto alla misura, e non fra i controlli, perche' da D-111 la leggono in
 due: il **preflight**, che avvisa a tavola finita, e il **collocatore**, che la
 insegue mentre dispone. Un numero solo, in un posto solo.
+"""
+
+SHEET_FILL_MAX_RATIO = 0.65
+"""Sopra questa quota il foglio e' **stretto** (D-140).
+
+L'altra sponda della finestra, e il motivo per cui e' una finestra e non una
+soglia: il PO, «sopra il 65 % non ci sta piu' lo spazio per le sigle dei
+componenti». Un disegno ben fatto e' anche **comodo** (D-139).
 """
 
 QUADRANT_IMBALANCE_MAX = 3.0
@@ -609,18 +617,51 @@ def ink_coverage(
     if width <= TOLERANCE_MM or height <= TOLERANCE_MM:
         return 1.0
     step_x, step_y = width / cells, height / cells
-    filled = 0
-    for row in range(cells):
-        for col in range(cells):
-            cell = (
-                box[0] + col * step_x,
-                box[1] + row * step_y,
-                box[0] + (col + 1) * step_x,
-                box[1] + (row + 1) * step_y,
-            )
-            if ink_area_mm2(symbols, routes, cell, 1.0) > TOLERANCE_MM:
-                filled += 1
-    return filled / float(cells * cells)
+
+    # L'inchiostro si versa **nelle celle** che ciascun pezzo tocca, invece di
+    # rileggere tutto il disegno per ciascuna delle sessantaquattro. E' la
+    # stessa somma, con la stessa formula e nello stesso ordine — prima i
+    # simboli, poi le tubazioni — quindi lo stesso numero: cambia solo che le
+    # celle lontane da un pezzo non gli fanno piu' sommare uno zero. Da
+    # `DRAW-012` questo conto sta accanto al riempimento **dentro** il costo di
+    # posa (D-141), e vi si entra migliaia di volte per tavola.
+    poured = [0.0] * (cells * cells)
+
+    def span(low: float, high: float, origin: float, step: float) -> range:
+        """Le celle di un lato che un intervallo puo' toccare, tolleranza compresa."""
+        first = int((low - origin - TOLERANCE_MM) // step)
+        last = int((high - origin + TOLERANCE_MM) // step)
+        return range(max(first, 0), min(last, cells - 1) + 1)
+
+    for symbol in symbols:
+        left, top, right, bottom = box_of(symbol)
+        for row in span(top, bottom, box[1], step_y):
+            top_mm = box[1] + row * step_y
+            bottom_mm = top_mm + step_y
+            covered = max(min(bottom, bottom_mm) - max(top, top_mm), 0.0)
+            if covered <= 0.0:
+                continue
+            for col in span(left, right, box[0], step_x):
+                left_mm = box[0] + col * step_x
+                right_mm = left_mm + step_x
+                across = max(min(right, right_mm) - max(left, left_mm), 0.0)
+                poured[row * cells + col] += across * covered
+
+    for route in routes:
+        for segment in route.segments:
+            for before, after in moves_of(segment):
+                low_x, high_x = min(before.x_mm, after.x_mm), max(before.x_mm, after.x_mm)
+                low_y, high_y = min(before.y_mm, after.y_mm), max(before.y_mm, after.y_mm)
+                for row in span(low_y, high_y, box[1], step_y):
+                    top_mm = box[1] + row * step_y
+                    for col in span(low_x, high_x, box[0], step_x):
+                        left_mm = box[0] + col * step_x
+                        cell = (left_mm, top_mm, left_mm + step_x, top_mm + step_y)
+                        poured[row * cells + col] += _clipped_length_mm(
+                            before, after, cell
+                        )
+
+    return sum(1 for value in poured if value > TOLERANCE_MM) / float(cells * cells)
 
 
 def drawing_fingerprint(drawing: DrawingGeometry) -> str:
