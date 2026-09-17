@@ -113,14 +113,21 @@ buon riempimento, né troppo poco né troppo».
    netto di cartiglio e legenda: su una A3 sono **350 × 235 mm**, fra x 10 e x 360. La legenda
    è una fascia di 50 mm sul lato destro, il cartiglio una banda di 36 mm in basso, e nessuno
    dei due entra nel conto.
-4. **Ci si tiene larghi, e il primo posto dove guardare è la centratura.** Misura del PM su
+4. **Che cosa è il riempimento, e la guardia che gli serve** (**D-141**). È l'area del
+   **rettangolo che contiene tutto l'inchiostro** — simboli e tubazioni — divisa per l'area di
+   disegno: larghezza **e** altezza, già bidimensionale. Ma **si gonfia spostando un pezzo in
+   un angolo**, e adesso che è un obiettivo qualcuno lo farà. Quindi non si legge mai da sola:
+   accanto vanno sempre la **copertura dell'ingombro** (oggi 0,625 su quasi tutte le tavole) e
+   il **riempimento senza il pezzo più isolato**, che le metriche già calcolano. **Un
+   riempimento che sale mentre la copertura scende non è un miglioramento.**
+5. **Ci si tiene larghi, e il primo posto dove guardare è la centratura.** Misura del PM su
    tutte le tavole prodotte: nessuna supera i **262,5 mm di larghezza su 350 disponibili**, su
    nessuno dei cinque impianti. E il bianco che avanza **non sta tutto da una parte: sta
    diviso a metà fra i due lati**, perché il disegno viene centrato. Sulla tavola 2 i simboli
    vanno da x 55 a x 312,5, quindi restano 45 mm a sinistra e 47,5 a destra. Il tetto intorno
    ai 260 mm e la centratura che lo conserva sono la stessa cosa da guardare: allargare vuol
    dire che la centratura non deve ricomprimere ciò che la struttura ha aperto.
-5. **L'agio smette di essere un passo finale.** D-134 lo metteva in coda, a disegno risolto;
+6. **L'agio smette di essere un passo finale.** D-134 lo metteva in coda, a disegno risolto;
    D-139 lo rende il parametro stesso. Non serve più un passo separato che allarga.
 
 ## E. In fase 2 il corredo entra, e se non ci sta si allarga
@@ -189,6 +196,10 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
 6. **Il riempimento è una voce di costo a finestra**, non monotona, e una prova mostra che una
    posa dentro la finestra batte sia una più vuota sia una più stretta. La finestra è
    **45–65 %** (D-140), misurata sull'area di disegno al netto di cartiglio e legenda.
+   **Una prova mostra anche che il trucco non paga**: una posa che alza il riempimento
+   spostando un pezzo in un angolo, e abbassa la copertura dell'ingombro, **non deve vincere**
+   (D-141). Il rapporto porta i tre numeri insieme — riempimento, copertura, riempimento senza
+   il pezzo più isolato — su tutte le tavole, prima e dopo.
 7. **La tavola 1 entra nella finestra.** Oggi è al **29,8 %**, sotto il minimo: è l'impianto su
    cui il tenersi larghi si vede di più. La tavola 2, al 50,1 %, è già dentro e ci resta.
 8. **Lo stretch si usa davvero**: il rapporto mostra almeno un caso in cui il corredo non
