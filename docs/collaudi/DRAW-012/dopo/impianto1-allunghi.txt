@@ -1,0 +1,24 @@
+t1 su 420x297: 340 allunghi provati, 4 accettati
+  accettato in fase «servizio» su tee-expansion-connection-collettore-ritorno-a
+  accettato in fase «servizio» su tee-filling-unit-collettore-ritorno-a-b
+  accettato in fase «servizio» su tee-pressure-gauge-collettore-ritorno-a
+  accettato in fase «servizio» su collettore-mandata
+    pdc-master: (17.5, 181) -> (30, 178.5)
+    pdc-slave: (17.5, 148.5) -> (30, 133.5)
+    utenze: (232.5, 136) -> (232.5, 133.5)
+    accumulo: (227.5, 181) -> (227.5, 178.5)
+    air-vent-accumulo-primary-out: (242.5, 166) -> (242.5, 148.5)
+    acquedotto: (205, 216) -> (205, 213.5)
+    drain-connection-accumulo-primary-in: (237.5, 231) -> (237.5, 228.5)
+    radiatori: (332.5, 178.5) -> (332.5, 176)
+    collettore-ritorno: (87.5, 198.5) -> (92.5, 196)
+    tee-expansion-connection-collettore-ritorno-a: (150, 198.5) -> (132.5, 196)
+    expansion-connection-collettore-ritorno-a: (150, 218.5) -> (132.5, 216)
+    tee-filling-unit-collettore-ritorno-a-b: (165, 198.5) -> (147.5, 196)
+    filling-unit-collettore-ritorno-a: (165, 223.5) -> (147.5, 221)
+    inlet-filling-unit-collettore-ritorno-a: (165, 238.5) -> (147.5, 236)
+    tee-pressure-gauge-collettore-ritorno-a: (202.5, 198.5) -> (162.5, 196)
+    pressure-gauge-collettore-ritorno-a: (202.5, 173.5) -> (162.5, 216)
+    collettore-mandata: (82.5, 183.5) -> (177.5, 181)
+    tee-valve-safety-collettore-mandata-b: (97.5, 183.5) -> (192.5, 181)
+    valve-safety-collettore-mandata-b: (97.5, 168.5) -> (192.5, 126)

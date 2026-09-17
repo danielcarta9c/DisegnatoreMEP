@@ -1,0 +1,334 @@
+[
+  {
+    "modello": "impianto1-completo.json",
+    "macchine_di_spina": [
+      "accumulo",
+      "pdc-master",
+      "pdc-slave"
+    ],
+    "utenze": [
+      "radiatori",
+      "utenze"
+    ],
+    "tratte": {
+      "inlet-filling-unit-collettore-ritorno-a.a -> filling-unit-collettore-ritorno-a.a": "SERVIZIO",
+      "pdc-master.water_supply -> collettore-mandata.a": "AUTOSTRADA",
+      "pdc-slave.water_supply -> collettore-mandata.c": "AUTOSTRADA",
+      "collettore-mandata.b -> tee-valve-safety-collettore-mandata-b.a": "AUTOSTRADA",
+      "tee-valve-safety-collettore-mandata-b.b -> accumulo.primary_in": "AUTOSTRADA",
+      "accumulo.primary_out -> tee-pressure-gauge-collettore-ritorno-a.a": "AUTOSTRADA",
+      "tee-pressure-gauge-collettore-ritorno-a.b -> tee-filling-unit-collettore-ritorno-a-b.a": "AUTOSTRADA",
+      "tee-filling-unit-collettore-ritorno-a-b.b -> tee-expansion-connection-collettore-ritorno-a.a": "AUTOSTRADA",
+      "tee-expansion-connection-collettore-ritorno-a.b -> collettore-ritorno.a": "AUTOSTRADA",
+      "collettore-ritorno.b -> pdc-master.water_return": "AUTOSTRADA",
+      "collettore-ritorno.c -> pdc-slave.water_return": "AUTOSTRADA",
+      "accumulo.secondary_out -> radiatori.in": "AUTOSTRADA",
+      "radiatori.out -> accumulo.secondary_in": "AUTOSTRADA",
+      "accumulo.vent -> air-vent-accumulo-primary-out.a": "SERVIZIO",
+      "accumulo.drain -> drain-connection-accumulo-primary-in.a": "SERVIZIO",
+      "tee-expansion-connection-collettore-ritorno-a.branch -> expansion-connection-collettore-ritorno-a.a": "SERVIZIO",
+      "filling-unit-collettore-ritorno-a.b -> tee-filling-unit-collettore-ritorno-a-b.branch": "SERVIZIO",
+      "tee-pressure-gauge-collettore-ritorno-a.branch -> pressure-gauge-collettore-ritorno-a.a": "SERVIZIO",
+      "tee-valve-safety-collettore-mandata-b.branch -> valve-safety-collettore-mandata-b.a": "SERVIZIO",
+      "acquedotto.a -> accumulo.cold_in": "DISTRIBUZIONE",
+      "accumulo.dhw_out -> utenze.a": "AUTOSTRADA"
+    },
+    "autostrade_intere": [
+      {
+        "tratte": [
+          [
+            "w2-a-a-a",
+            "w2-a-a-b",
+            "w2-a-b",
+            "w2-b"
+          ]
+        ],
+        "percorso": "accumulo.dhw_out→utenze.a"
+      },
+      {
+        "tratte": [
+          [
+            "p3-b-a",
+            "p3-b-b"
+          ],
+          [
+            "p3-a"
+          ],
+          [
+            "p1-a",
+            "p1-b"
+          ]
+        ],
+        "percorso": "accumulo.primary_in→tee-valve-safety-collettore-mandata-b.b · tee-valve-safety-collettore-mandata-b.a→collettore-mandata.b · collettore-mandata.a→pdc-master.water_supply"
+      },
+      {
+        "tratte": [
+          [
+            "p4-a-1-a",
+            "p4-a-1-b"
+          ],
+          [
+            "p4-a-2"
+          ],
+          [
+            "p4-a-3"
+          ],
+          [
+            "p4-a-4",
+            "p4-a-5-a",
+            "p4-a-5-b"
+          ],
+          [
+            "p5-a-a",
+            "p5-a-b",
+            "p5-b"
+          ]
+        ],
+        "percorso": "accumulo.primary_out→tee-pressure-gauge-collettore-ritorno-a.a · tee-pressure-gauge-collettore-ritorno-a.b→tee-filling-unit-collettore-ritorno-a-b.a · tee-filling-unit-collettore-ritorno-a-b.b→tee-expansion-connection-collettore-ritorno-a.a · tee-expansion-connection-collettore-ritorno-a.b→collettore-ritorno.a · collettore-ritorno.b→pdc-master.water_return"
+      },
+      {
+        "tratte": [
+          [
+            "s1-a",
+            "s1-b",
+            "s2-a",
+            "s2-b"
+          ]
+        ],
+        "percorso": "accumulo.secondary_out→radiatori.in"
+      },
+      {
+        "tratte": [
+          [
+            "p6-a-a",
+            "p6-a-b",
+            "p6-b"
+          ]
+        ],
+        "percorso": "pdc-slave.water_return→collettore-ritorno.c"
+      },
+      {
+        "tratte": [
+          [
+            "p2-a",
+            "p2-b"
+          ]
+        ],
+        "percorso": "pdc-slave.water_supply→collettore-mandata.c"
+      },
+      {
+        "tratte": [
+          [
+            "s3-a",
+            "s3-b"
+          ]
+        ],
+        "percorso": "radiatori.out→accumulo.secondary_in"
+      }
+    ],
+    "formato": "420x297",
+    "fogli": [
+      {
+        "foglio": "t1",
+        "riempimento_pct": 45.4,
+        "copertura_ingombro": 0.734,
+        "curve": 4,
+        "attraversamenti": 1,
+        "ingombro_mm": [
+          22.5,
+          76.0,
+          347.5,
+          191.0
+        ],
+        "ripiego": "le fasi",
+        "autostrade_intere": 7,
+        "tratte_cedute": [],
+        "catene_storte": [
+          [
+            "p6-a-a",
+            "p6-a-b",
+            "p6-b"
+          ],
+          [
+            "p2-a",
+            "p2-b"
+          ],
+          [
+            "s3-a",
+            "s3-b"
+          ]
+        ]
+      }
+    ],
+    "impronta": "9f52126abbb7c03fcb0c20c9f1c6d9c6698b1e4330a082a8ce4418d9a62bd89d",
+    "secondi": 85.3
+  },
+  {
+    "modello": "impianto2-completo.json",
+    "macchine_di_spina": [
+      "bollitore",
+      "pdc",
+      "volano"
+    ],
+    "utenze": [
+      "utenze",
+      "ventilconvettori"
+    ],
+    "tratte": {
+      "inlet-filling-unit-pdc-water-return.a -> filling-unit-pdc-water-return.a": "SERVIZIO",
+      "pdc.water_supply -> tee-valve-safety-pdc-water-supply.a": "AUTOSTRADA",
+      "tee-valve-safety-pdc-water-supply.b -> deviatrice.in": "AUTOSTRADA",
+      "deviatrice.out_a -> volano.primary_in": "AUTOSTRADA",
+      "volano.primary_out -> ritorno.a": "AUTOSTRADA",
+      "deviatrice.out_b -> bollitore.coil_in": "AUTOSTRADA",
+      "bollitore.coil_out -> ritorno.c": "AUTOSTRADA",
+      "ritorno.b -> tee-pressure-gauge-pdc-water-return.a": "AUTOSTRADA",
+      "tee-pressure-gauge-pdc-water-return.b -> tee-filling-unit-pdc-water-return-b.a": "AUTOSTRADA",
+      "tee-filling-unit-pdc-water-return-b.b -> tee-expansion-connection-pdc-water-return.a": "AUTOSTRADA",
+      "tee-expansion-connection-pdc-water-return.b -> pdc.water_return": "AUTOSTRADA",
+      "volano.secondary_out -> ventilconvettori.in": "AUTOSTRADA",
+      "ventilconvettori.out -> volano.secondary_in": "AUTOSTRADA",
+      "volano.vent -> air-vent-volano-primary-out.a": "SERVIZIO",
+      "tee-drain-connection-cold-bollitore-cold-in.branch -> drain-connection-cold-bollitore-cold-in.a": "SERVIZIO",
+      "volano.drain -> drain-connection-volano-primary-in.a": "SERVIZIO",
+      "tee-expansion-connection-pdc-water-return.branch -> expansion-connection-pdc-water-return.a": "SERVIZIO",
+      "filling-unit-pdc-water-return.b -> tee-filling-unit-pdc-water-return-b.branch": "SERVIZIO",
+      "tee-pressure-gauge-pdc-water-return.branch -> pressure-gauge-pdc-water-return.a": "SERVIZIO",
+      "tee-valve-safety-pdc-water-supply.branch -> valve-safety-pdc-water-supply.a": "SERVIZIO",
+      "acquedotto.a -> tee-drain-connection-cold-bollitore-cold-in.a": "DISTRIBUZIONE",
+      "tee-drain-connection-cold-bollitore-cold-in.b -> bollitore.cold_in": "DISTRIBUZIONE",
+      "bollitore.dhw_out -> utenze.a": "AUTOSTRADA"
+    },
+    "autostrade_intere": [
+      {
+        "tratte": [
+          [
+            "p2-a",
+            "p2-b"
+          ],
+          [
+            "p1-b-a",
+            "p1-b-b"
+          ],
+          [
+            "p1-a"
+          ]
+        ],
+        "percorso": "volano.primary_in→deviatrice.out_a · deviatrice.in→tee-valve-safety-pdc-water-supply.b · tee-valve-safety-pdc-water-supply.a→pdc.water_supply"
+      },
+      {
+        "tratte": [
+          [
+            "p3-a",
+            "p3-b"
+          ],
+          [
+            "p5-a",
+            "p5-b"
+          ]
+        ],
+        "percorso": "volano.primary_out→ritorno.a · ritorno.c→bollitore.coil_out"
+      },
+      {
+        "tratte": [
+          [
+            "s1-a",
+            "s1-b",
+            "s2-a",
+            "s2-b"
+          ]
+        ],
+        "percorso": "volano.secondary_out→ventilconvettori.in"
+      },
+      {
+        "tratte": [
+          [
+            "p4-a",
+            "p4-b"
+          ]
+        ],
+        "percorso": "bollitore.coil_in→deviatrice.out_b"
+      },
+      {
+        "tratte": [
+          [
+            "w2-a-a-a",
+            "w2-a-a-b",
+            "w2-a-b",
+            "w2-b"
+          ]
+        ],
+        "percorso": "bollitore.dhw_out→utenze.a"
+      },
+      {
+        "tratte": [
+          [
+            "s3-a",
+            "s3-b"
+          ]
+        ],
+        "percorso": "ventilconvettori.out→volano.secondary_in"
+      },
+      {
+        "tratte": [
+          [
+            "p6-a-4-a",
+            "p6-a-4-b",
+            "p6-a-5-a",
+            "p6-a-5-b",
+            "p6-a-6"
+          ],
+          [
+            "p6-a-3"
+          ],
+          [
+            "p6-a-2"
+          ],
+          [
+            "p6-a-1"
+          ]
+        ],
+        "percorso": "pdc.water_return→tee-expansion-connection-pdc-water-return.b · tee-expansion-connection-pdc-water-return.a→tee-filling-unit-pdc-water-return-b.b · tee-filling-unit-pdc-water-return-b.a→tee-pressure-gauge-pdc-water-return.b · tee-pressure-gauge-pdc-water-return.a→ritorno.b"
+      }
+    ],
+    "formato": "420x297",
+    "fogli": [
+      {
+        "foglio": "t1",
+        "riempimento_pct": 66.7,
+        "copertura_ingombro": 0.719,
+        "curve": 8,
+        "attraversamenti": 3,
+        "ingombro_mm": [
+          17.5,
+          53.5,
+          355.0,
+          216.0
+        ],
+        "ripiego": "le fasi",
+        "autostrade_intere": 7,
+        "tratte_cedute": [],
+        "catene_storte": [
+          [
+            "p3-a",
+            "p3-b"
+          ],
+          [
+            "p5-a",
+            "p5-b"
+          ],
+          [
+            "p4-a",
+            "p4-b"
+          ],
+          [
+            "s3-a",
+            "s3-b"
+          ]
+        ]
+      }
+    ],
+    "impronta": "44e055a3d88439d6f70ad7fd194f3620752d1851d19ea32a0cd5b9973531a540",
+    "secondi": 121.9
+  }
+]

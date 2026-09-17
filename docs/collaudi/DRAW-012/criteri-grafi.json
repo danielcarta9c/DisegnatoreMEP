@@ -1,0 +1,413 @@
+[
+  {
+    "modello": "prova-1-due-pdc-accumulo-combinato.json",
+    "macchine_di_spina": [
+      "accumulo",
+      "pdc-master",
+      "pdc-slave"
+    ],
+    "utenze": [
+      "radiatori",
+      "utenze"
+    ],
+    "tratte": {
+      "pdc-master.water_supply -> collettore-mandata.a": "AUTOSTRADA",
+      "pdc-slave.water_supply -> collettore-mandata.c": "AUTOSTRADA",
+      "collettore-mandata.b -> accumulo.primary_in": "AUTOSTRADA",
+      "accumulo.primary_out -> collettore-ritorno.a": "AUTOSTRADA",
+      "collettore-ritorno.b -> pdc-master.water_return": "AUTOSTRADA",
+      "collettore-ritorno.c -> pdc-slave.water_return": "AUTOSTRADA",
+      "accumulo.secondary_out -> radiatori.in": "AUTOSTRADA",
+      "radiatori.out -> accumulo.secondary_in": "AUTOSTRADA",
+      "acquedotto.a -> accumulo.cold_in": "DISTRIBUZIONE",
+      "accumulo.dhw_out -> utenze.a": "AUTOSTRADA"
+    },
+    "autostrade_intere": [
+      {
+        "tratte": [
+          [
+            "w2"
+          ]
+        ],
+        "percorso": "accumulo.dhw_out→utenze.a"
+      },
+      {
+        "tratte": [
+          [
+            "p3"
+          ],
+          [
+            "p1"
+          ]
+        ],
+        "percorso": "accumulo.primary_in→collettore-mandata.b · collettore-mandata.a→pdc-master.water_supply"
+      },
+      {
+        "tratte": [
+          [
+            "p4"
+          ],
+          [
+            "p5"
+          ]
+        ],
+        "percorso": "accumulo.primary_out→collettore-ritorno.a · collettore-ritorno.b→pdc-master.water_return"
+      },
+      {
+        "tratte": [
+          [
+            "s1",
+            "s2"
+          ]
+        ],
+        "percorso": "accumulo.secondary_out→radiatori.in"
+      },
+      {
+        "tratte": [
+          [
+            "p6"
+          ]
+        ],
+        "percorso": "pdc-slave.water_return→collettore-ritorno.c"
+      },
+      {
+        "tratte": [
+          [
+            "p2"
+          ]
+        ],
+        "percorso": "pdc-slave.water_supply→collettore-mandata.c"
+      },
+      {
+        "tratte": [
+          [
+            "s3"
+          ]
+        ],
+        "percorso": "radiatori.out→accumulo.secondary_in"
+      }
+    ],
+    "formato": "297x210",
+    "fogli": [
+      {
+        "foglio": "t1",
+        "riempimento_pct": 37.0,
+        "copertura_ingombro": 0.672,
+        "curve": 4,
+        "attraversamenti": 0,
+        "ingombro_mm": [
+          35.0,
+          56.0,
+          212.5,
+          126.0
+        ],
+        "ripiego": "le fasi",
+        "autostrade_intere": 7,
+        "tratte_cedute": [],
+        "catene_storte": [
+          [
+            "p6"
+          ],
+          [
+            "p2"
+          ],
+          [
+            "s3"
+          ]
+        ]
+      }
+    ],
+    "impronta": "ff7f37fac920615a802dfd9bb87c5162668c52dc65e255c94730f399839f22bd",
+    "secondi": 1.2
+  },
+  {
+    "modello": "prova-2-pdc-deviatrice-acs.json",
+    "macchine_di_spina": [
+      "bollitore",
+      "pdc",
+      "volano"
+    ],
+    "utenze": [
+      "utenze",
+      "ventilconvettori"
+    ],
+    "tratte": {
+      "pdc.water_supply -> deviatrice.in": "AUTOSTRADA",
+      "deviatrice.out_a -> volano.primary_in": "AUTOSTRADA",
+      "volano.primary_out -> ritorno.a": "AUTOSTRADA",
+      "deviatrice.out_b -> bollitore.coil_in": "AUTOSTRADA",
+      "bollitore.coil_out -> ritorno.c": "AUTOSTRADA",
+      "ritorno.b -> pdc.water_return": "AUTOSTRADA",
+      "volano.secondary_out -> ventilconvettori.in": "AUTOSTRADA",
+      "ventilconvettori.out -> volano.secondary_in": "AUTOSTRADA",
+      "acquedotto.a -> bollitore.cold_in": "DISTRIBUZIONE",
+      "bollitore.dhw_out -> utenze.a": "AUTOSTRADA"
+    },
+    "autostrade_intere": [
+      {
+        "tratte": [
+          [
+            "p2"
+          ],
+          [
+            "p1"
+          ]
+        ],
+        "percorso": "volano.primary_in→deviatrice.out_a · deviatrice.in→pdc.water_supply"
+      },
+      {
+        "tratte": [
+          [
+            "p3"
+          ],
+          [
+            "p5"
+          ]
+        ],
+        "percorso": "volano.primary_out→ritorno.a · ritorno.c→bollitore.coil_out"
+      },
+      {
+        "tratte": [
+          [
+            "s1",
+            "s2"
+          ]
+        ],
+        "percorso": "volano.secondary_out→ventilconvettori.in"
+      },
+      {
+        "tratte": [
+          [
+            "p4"
+          ]
+        ],
+        "percorso": "bollitore.coil_in→deviatrice.out_b"
+      },
+      {
+        "tratte": [
+          [
+            "w2"
+          ]
+        ],
+        "percorso": "bollitore.dhw_out→utenze.a"
+      },
+      {
+        "tratte": [
+          [
+            "s3"
+          ]
+        ],
+        "percorso": "ventilconvettori.out→volano.secondary_in"
+      },
+      {
+        "tratte": [
+          [
+            "p6"
+          ]
+        ],
+        "percorso": "pdc.water_return→ritorno.b"
+      }
+    ],
+    "formato": "297x210",
+    "fogli": [
+      {
+        "foglio": "t1",
+        "riempimento_pct": 67.3,
+        "copertura_ingombro": 0.672,
+        "curve": 6,
+        "attraversamenti": 2,
+        "ingombro_mm": [
+          27.5,
+          31.0,
+          220.0,
+          148.5
+        ],
+        "ripiego": "le fasi",
+        "autostrade_intere": 7,
+        "tratte_cedute": [],
+        "catene_storte": [
+          [
+            "p3"
+          ],
+          [
+            "p5"
+          ],
+          [
+            "p4"
+          ],
+          [
+            "s3"
+          ]
+        ]
+      }
+    ],
+    "impronta": "b9b24a38e17398a290fe07d0be070258f46f3c00e826600b5a2326c58a8ef44e",
+    "secondi": 6.4
+  },
+  {
+    "modello": "prova-4-ibrido-pdc-caldaia.json",
+    "macchine_di_spina": [
+      "caldaia",
+      "disgiuntore",
+      "pdc",
+      "scambiatore"
+    ],
+    "utenze": [
+      "radiatori",
+      "utenze"
+    ],
+    "tratte": {
+      "pdc.water_supply -> collettore-mandata.a": "AUTOSTRADA",
+      "caldaia.water_supply -> deviatrice-caldaia.in": "AUTOSTRADA",
+      "deviatrice-caldaia.out_a -> collettore-mandata.c": "AUTOSTRADA",
+      "collettore-mandata.b -> disgiuntore.primary_in": "AUTOSTRADA",
+      "disgiuntore.primary_out -> collettore-ritorno.a": "AUTOSTRADA",
+      "collettore-ritorno.b -> pdc.water_return": "AUTOSTRADA",
+      "collettore-ritorno.c -> commutatrice-ritorno.in_a": "AUTOSTRADA",
+      "deviatrice-caldaia.out_b -> scambiatore.primary_in": "AUTOSTRADA",
+      "scambiatore.primary_out -> commutatrice-ritorno.in_b": "AUTOSTRADA",
+      "commutatrice-ritorno.out -> caldaia.water_return": "AUTOSTRADA",
+      "disgiuntore.secondary_out -> radiatori.in": "AUTOSTRADA",
+      "radiatori.out -> disgiuntore.secondary_in": "AUTOSTRADA",
+      "acquedotto.a -> scambiatore.secondary_in": "DISTRIBUZIONE",
+      "scambiatore.secondary_out -> utenze.a": "AUTOSTRADA"
+    },
+    "autostrade_intere": [
+      {
+        "tratte": [
+          [
+            "p6"
+          ],
+          [
+            "p4",
+            "p5"
+          ],
+          [
+            "p3"
+          ]
+        ],
+        "percorso": "disgiuntore.primary_in→collettore-mandata.b · collettore-mandata.c→deviatrice-caldaia.out_a · deviatrice-caldaia.in→caldaia.water_supply"
+      },
+      {
+        "tratte": [
+          [
+            "p7"
+          ],
+          [
+            "p9"
+          ],
+          [
+            "p12"
+          ]
+        ],
+        "percorso": "disgiuntore.primary_out→collettore-ritorno.a · collettore-ritorno.c→commutatrice-ritorno.in_a · commutatrice-ritorno.out→caldaia.water_return"
+      },
+      {
+        "tratte": [
+          [
+            "s1",
+            "s2"
+          ]
+        ],
+        "percorso": "disgiuntore.secondary_out→radiatori.in"
+      },
+      {
+        "tratte": [
+          [
+            "p8"
+          ]
+        ],
+        "percorso": "pdc.water_return→collettore-ritorno.b"
+      },
+      {
+        "tratte": [
+          [
+            "p1",
+            "p2"
+          ]
+        ],
+        "percorso": "pdc.water_supply→collettore-mandata.a"
+      },
+      {
+        "tratte": [
+          [
+            "p10"
+          ]
+        ],
+        "percorso": "scambiatore.primary_in→deviatrice-caldaia.out_b"
+      },
+      {
+        "tratte": [
+          [
+            "p11"
+          ]
+        ],
+        "percorso": "scambiatore.primary_out→commutatrice-ritorno.in_b"
+      },
+      {
+        "tratte": [
+          [
+            "w2"
+          ]
+        ],
+        "percorso": "scambiatore.secondary_out→utenze.a"
+      },
+      {
+        "tratte": [
+          [
+            "s3"
+          ]
+        ],
+        "percorso": "radiatori.out→disgiuntore.secondary_in"
+      }
+    ],
+    "formato": "420x297",
+    "fogli": [
+      {
+        "foglio": "t1",
+        "riempimento_pct": 48.9,
+        "copertura_ingombro": 0.766,
+        "curve": 10,
+        "attraversamenti": 7,
+        "ingombro_mm": [
+          17.5,
+          73.5,
+          352.5,
+          193.5
+        ],
+        "ripiego": "le fasi",
+        "autostrade_intere": 9,
+        "tratte_cedute": [],
+        "catene_storte": [
+          [
+            "p7"
+          ],
+          [
+            "p9"
+          ],
+          [
+            "p12"
+          ],
+          [
+            "p8"
+          ],
+          [
+            "p1",
+            "p2"
+          ],
+          [
+            "p10"
+          ],
+          [
+            "p11"
+          ],
+          [
+            "s3"
+          ]
+        ]
+      }
+    ],
+    "impronta": "aa71e2a49d78fb492d2463e9060456c5fe7d3564366687a3d3fb474bfca11be9",
+    "secondi": 31.5
+  }
+]
