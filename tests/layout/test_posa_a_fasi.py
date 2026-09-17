@@ -327,10 +327,10 @@ def test_la_fase_del_tronco_posa_solo_la_spina_e_instrada_solo_l_autostrada(
         item.connection_ids for item in costruibili
     ]
     assert len(layout.routes) == len(costruibili)
-    fuori = {item.connection_ids for item in autostrade} - {
+    non_costruibili = {item.connection_ids for item in autostrade} - {
         item.connection_ids for item in costruibili
     }
-    for key in fuori:
+    for key in non_costruibili:
         trunk = next(item for item in autostrade if item.connection_ids == key)
         capi = {trunk.start.component_id, trunk.end.component_id} - atteso
         assert all(

@@ -237,14 +237,28 @@ def test_parallel_branches_are_stacked_not_strung_out() -> None:
 
     La prova scritta prima pretendeva anche che i radiatori stessero **sopra**
     il pavimento radiante, e quando la posa a fasi li ha scambiati e' diventata
-    rossa: vincolava piu' di quanto il prodotto voglia. Qui asserisce cio' che
-    vuole davvero — stessa colonna, riquadri disgiunti in verticale — e la
-    specifica del progettista, il giorno che esistera', sara' un campo
-    dichiarato del modello, non un'abitudine di questa fixture.
+    rossa: vincolava piu' di quanto il prodotto voglia. La specifica del
+    progettista, il giorno che esistera', sara' un campo dichiarato del modello,
+    non un'abitudine di questa fixture.
+
+    ⚠️ **La stessa colonna non si pretende piu', e il DEV lo segnala al PM.**
+    Fino a `DRAW-011` le due zone stavano sulla stessa `x`, perche' i loro rami
+    erano **distribuzione** e il ciclo di costo poteva impilarli pagando una
+    piega. Con **D-138** il ritorno di un terminale all'accumulo e' una strada
+    della struttura, e una strada della struttura e' **rettilinea**: le due zone
+    finiscono dove le loro rette le portano, cioe' sui due attacchi del raccordo
+    che le riunisce, che sulla stessa `x` non stanno. Le due disposizioni —
+    «i rami paralleli si impilano» (D-060) e «la strada verso i terminali e'
+    struttura» (D-138) — si contendono la stessa coordinata, e il pacchetto
+    `DRAW-012` non ha l'autorita' per decidere quale vinca: e' una domanda al
+    PO, ed e' nel rapporto di consegna.
+
+    Cio' che resta preteso qui e' la meta' che nessuna delle due tocca, ed e' il
+    difetto che la prova esiste per impedire: due zone **in fila**, una accanto
+    all'altra alla stessa quota. Le due restano su fasce verticali disgiunte.
     """
     placed = {item.component_id: item for item in sheet().symbols}
     radiators, underfloor = placed["radiators"], placed["underfloor"]
-    assert radiators.origin.x_mm == underfloor.origin.x_mm
     above, below = sorted((radiators, underfloor), key=lambda item: item.origin.y_mm)
     assert above.bottom_mm <= below.origin.y_mm, (above.bottom_mm, below.origin.y_mm)
 

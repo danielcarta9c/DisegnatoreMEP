@@ -333,8 +333,9 @@ def hierarchy_of(
     1. da tutt'e due i lati una macchina di spina — la tratta e' **autostrada**:
        e' la regola di sempre, e da `DRAW-012` vale per **ogni** generatore e
        arriva anche sugli scambiatori (`SPINE_FUNCTIONS`);
-    2. da un lato una macchina di spina e dall'altro un'**utenza** — un
-       terminale, o il prelievo sanitario — la tratta e' ancora **autostrada**:
+    2. da un lato un **accumulo, un puffer o uno scambiatore** e dall'altro
+       un'**utenza** — un terminale, o il prelievo sanitario — la tratta e'
+       ancora **autostrada**:
        e' la «strada secondaria» che **D-138** traccia nella fase della
        struttura insieme alle autostrade, «uscita ACS e distribuzione verso i
        terminali», ed e' anche il «sempre» del PO sulle linee che dagli
@@ -356,6 +357,21 @@ def hierarchy_of(
     """
     spine = spine_machines(project, catalog)
     users = user_machines(project, catalog)
+    definitions = {item.id: catalog.get(item.definition_id) for item in project.components}
+    # Chi la strada secondaria la fa **partire**: gli accumuli, i puffer e gli
+    # scambiatori, e nessun altro. Sono le tre parole del PO, e sono tre e non
+    # quattro: un **collettore** non e' una sorgente della distribuzione, e' il
+    # punto in cui la distribuzione si divide — «il tronco non finisce
+    # sull'accumulo, arriva fin dove il fluido si divide». Oltre il collettore
+    # ogni zona e' un ramo, e i rami paralleli si impilano (D-060): pretenderli
+    # tutti rettilinei li allineerebbe alle bocche del collettore, cioe' uno di
+    # fianco all'altro invece che uno sopra l'altro.
+    sorgenti = frozenset(
+        key
+        for key, value in definitions.items()
+        if key in spine
+        and frozenset(value.functions) & (STORE_FUNCTIONS | EXCHANGE_FUNCTIONS)
+    )
     machines_beyond = machines_beyond_of(project, catalog, trunks)
 
     levels: dict[TrunkKey, Level] = {}
@@ -368,7 +384,7 @@ def hierarchy_of(
         )
         joins_the_spine = bool(here & spine and there & spine)
         reaches_a_user = bool(
-            (here & spine and there & users) or (there & spine and here & users)
+            (here & sorgenti and there & users) or (there & sorgenti and here & users)
         )
         if joins_the_spine or reaches_a_user:
             levels[trunk.connection_ids] = Level.AUTOSTRADA
