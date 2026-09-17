@@ -148,7 +148,7 @@
           },
           "width_mm": 10.0,
           "height_mm": 10.0,
-          "tag": "VC-01",
+          "tag": "VCR-01",
           "port_map": {},
           "port_flows": {}
         },
@@ -725,7 +725,7 @@
         },
         {
           "id": "commutatrice-ritorno-tag",
-          "text": "VC-01",
+          "text": "VCR-01",
           "role": "tag",
           "anchor": {
             "x_mm": 170.0,

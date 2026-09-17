@@ -669,11 +669,18 @@ Impronte della geometria, due generazioni indipendenti dalla CLI:
 
 | tavola | prima generazione | seconda generazione |
 |---|---|---|
-| 1 | `b4b8bdbfd156cea9f04aa248…` | `b4b8bdbfd156cea9f04aa248…` |
-| 2 | `ea1012bd7f907aaa62695c2c…` | `ea1012bd7f907aaa62695c2c…` |
+| 1 | `c62024f14b661aeac783952f…` | `c62024f14b661aeac783952f…` |
+| 2 | `661cd0c2bcd5a49068ac1abf…` | `661cd0c2bcd5a49068ac1abf…` |
 
 Le due generazioni scrivono in cartelle diverse e si confrontano sulle geometrie esportate,
 non sui file: è l'impronta della tavola, non quella del testo.
+
+E c'è una terza prova, che non avevo cercato: **il pacchetto grafico l'ho rigenerato due
+volte** a distanza di ore, da due invocazioni diverse dello stesso comando, e le due volte
+le due tavole sono uscite con le stesse impronte, lo stesso riempimento, la stessa copertura,
+le stesse curve e gli stessi attraversamenti — e i tre impianti che non escono si sono
+fermati sulla **stessa cella** con lo stesso messaggio. Il determinismo non è solo della
+doppia generazione ravvicinata: tiene fra due sessioni.
 
 ### 16 — Il documento dell'11 settembre è aggiornato · **raggiunto**
 
