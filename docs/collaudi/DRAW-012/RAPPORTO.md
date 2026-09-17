@@ -540,6 +540,26 @@ impianto2-completo.json: … ripiego «le fasi» · cedute 0
 ```
 
 Le due tavole che escono, escono dalla **prima** via. Nessuna cessione è stata necessaria.
+
+**Un caso in cui il ripiego ultimo scatta davvero, e va detto perché il criterio lo chiede.**
+Non è una tavola consegnata: è il **grafo di prima stesura** dell'impianto 5, quello senza il
+corredo, che misuro con lo stesso strumento (`criteri-grafi.json`).
+
+```
+prova-5-cascata-tre-pdc.json: 28/32 tratte autostrada, 15 catene —
+  riemp 83.3% · cop 0.75 · curve 53 · attrav 30 ·
+  ripiego «il ciclo senza le fasi (ultimissima rete)» · cedute 0
+```
+
+Gli altri quattro grafi escono da «le fasi» con zero cessioni; il quinto arriva in fondo alla
+scala. **E `cedute 0` è il dato che il criterio chiede**: la cessione graduale non ha
+impedito niente, non ha ceduto niente — le quattro vie della cessione le ha provate e
+nessuna si è instradata, quindi la tavola è scesa al gradino successivo. Il perché è la
+taglia: trentadue tratte, ventotto di autostrada, quindici catene intere e un riempimento
+all'83 %, molto oltre la sponda alta della finestra. È il solo dei cinque **sopra i 35 kW**,
+e la sua centrale non è domestica; il pacchetto lo mette fra gli impianti «da misurare», e
+questa è la misura. Lo porto al PM come il caso in cui la scala di §F lavora per intero e
+arriva comunque in fondo.
 Le tavole 3, 4 e 5 non escono da nessuna via — né qui né su `main` — e il criterio chiede in
 quel caso di dire che cosa ha impedito la cessione graduale: la risposta è in §6.2 per la
 4, e in §5, criterio 12, per le altre due.
