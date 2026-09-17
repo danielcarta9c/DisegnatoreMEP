@@ -109,12 +109,17 @@ buon riempimento, né troppo poco né troppo».
 2. **Al suo posto entra il riempimento, e non è monotono.** Non «più è meglio» — che è ciò che
    D-134 ha rifiutato e resta rifiutato — ma una **finestra**: sotto si è vuoti, sopra si è
    stretti. Un disegno ben fatto è **comodo**, e ci deve stare lo spazio per le sigle.
-3. **La finestra la fissa il PO**, e finché non l'ha fissata il DEV **non la inventa**: usa il
-   valore che il pacchetto porterà qui, e se non c'è si ferma e chiede al PM.
-4. **Ci si tiene larghi.** Misura del PM su tutte le tavole prodotte: nessuna supera i
-   **262,5 mm di larghezza su 350 disponibili**, su nessuno dei cinque impianti; l'altezza
-   usata va da 100 a 177,5 mm su 235. Il tetto di fatto intorno ai 260 mm è il primo posto
-   dove guardare.
+3. **La finestra è 45–65 %** (**D-140**), e si misura sull'**area di disegno**, che è già al
+   netto di cartiglio e legenda: su una A3 sono **350 × 235 mm**, fra x 10 e x 360. La legenda
+   è una fascia di 50 mm sul lato destro, il cartiglio una banda di 36 mm in basso, e nessuno
+   dei due entra nel conto.
+4. **Ci si tiene larghi, e il primo posto dove guardare è la centratura.** Misura del PM su
+   tutte le tavole prodotte: nessuna supera i **262,5 mm di larghezza su 350 disponibili**, su
+   nessuno dei cinque impianti. E il bianco che avanza **non sta tutto da una parte: sta
+   diviso a metà fra i due lati**, perché il disegno viene centrato. Sulla tavola 2 i simboli
+   vanno da x 55 a x 312,5, quindi restano 45 mm a sinistra e 47,5 a destra. Il tetto intorno
+   ai 260 mm e la centratura che lo conserva sono la stessa cosa da guardare: allargare vuol
+   dire che la centratura non deve ricomprimere ciò che la struttura ha aperto.
 5. **L'agio smette di essere un passo finale.** D-134 lo metteva in coda, a disegno risolto;
    D-139 lo rende il parametro stesso. Non serve più un passo separato che allarga.
 
@@ -182,10 +187,10 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
 5. **La lunghezza non entra più nel confronto fra due pose**, e una prova generale lo mostra
    su due pose che differiscono solo per quella.
 6. **Il riempimento è una voce di costo a finestra**, non monotona, e una prova mostra che una
-   posa dentro la finestra batte sia una più vuota sia una più stretta. La finestra è quella
-   che il PO ha fissato: **[da fissare]**.
-7. **La tavola 2 occupa più foglio di adesso**, e il prelievo non rientra verso il centro
-   quando a destra c'è spazio. Riferimenti: 257,5 mm di larghezza su 350, riempimento 50,1 %.
+   posa dentro la finestra batte sia una più vuota sia una più stretta. La finestra è
+   **45–65 %** (D-140), misurata sull'area di disegno al netto di cartiglio e legenda.
+7. **La tavola 1 entra nella finestra.** Oggi è al **29,8 %**, sotto il minimo: è l'impianto su
+   cui il tenersi larghi si vede di più. La tavola 2, al 50,1 %, è già dentro e ci resta.
 8. **Lo stretch si usa davvero**: il rapporto mostra almeno un caso in cui il corredo non
    entrava e il tronco si è allungato invece di piegarsi, con le posizioni prima e dopo.
 9. **Nessun impianto esce dal ripiego che scarta le fasi.** Se uno ci esce, il rapporto dice

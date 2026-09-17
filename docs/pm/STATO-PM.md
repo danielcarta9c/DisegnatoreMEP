@@ -1,6 +1,6 @@
 # STATO PM — il documento d'ingresso del PM
 
-**Aggiornato:** 2026-09-16
+**Aggiornato:** 2026-09-17
 **A chi serve:** alla sessione PM che subentra. Leggi questo e sei operativo: non ti serve
 un prompt lungo, e chi te lo dà ti sta raccontando qualcosa che dovrebbe stare qui.
 **Regola di questo file:** ogni sessione PM lo aggiorna prima di chiudere. Un file di stato
@@ -134,9 +134,8 @@ numerati stanno in `PROJECT_STATE.md`.
    grosso.
 8. **L'audit della libreria dei simboli** (rischio 2), che il PO deve approvare prima della
    0.3.
-9. **La finestra del riempimento** (D-139): il PO deve fissare fra quali due percentuali un
-   disegno è «comodo». Finché non è fissata, il criterio 6 di DRAW-012 non si può chiudere.
-   L'agio non è più un passo finale: è il parametro stesso.
+9. **La tavola 1 è sotto la finestra del riempimento**: 29,8 % contro un minimo di 45
+   (D-140). È l'impianto su cui il tenersi larghi si vedrà di più, ed è dentro DRAW-012.
 10. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
    due tavole; diventa esigibile su un impianto che lo violi.
 11. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
