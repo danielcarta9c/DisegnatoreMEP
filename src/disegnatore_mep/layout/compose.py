@@ -401,7 +401,7 @@ def compose_sheet(
     ways.append(("la disposizione di partenza", (), lambda: first))
 
     found: tuple[list[PlacedSymbol], list[RoutedTrunk]] | None = None
-    story = ("nessuna: la tavola non esce", ())
+    story: tuple[str, tuple[TrunkKey, ...]] = ("nessuna: la tavola non esce", ())
     for note, given, base in ways:
         try:
             found = settled(base())
@@ -506,6 +506,14 @@ def compose_drawing(
         macchina**: i loro accessori stanno a distanza fissa dalla porta e non
         scivolano (I-044), quindi o quel posto e' libero o la tavola non esce.
         Poi l'ordine strutturale dei capi, che i nomi non decidono.
+
+        **Una riga che `DRAW-012` ha guardato e lasciato dov'era.** Da §B le
+        autostrade non sono piu' il solo circuito dei generatori, e dentro lo
+        stesso rango ci sono adesso decine di tratte: scambiare le due chiavi —
+        prima le rigide, poi il rango — e' una strada che ho provato e misurato,
+        e sull'impianto 4 non cambia l'esito. L'ho lasciata fuori dalla consegna
+        perche' cambierebbe l'ordine di instradamento di **ogni** tavola senza
+        un guadagno che si veda; resta agli atti nel rapporto come filo per il PM.
         """
         ends = sorted(
             (rank.get(ref.component_id, 0), ref.port_id)

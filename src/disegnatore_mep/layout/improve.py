@@ -252,7 +252,7 @@ class Attempt(NamedTuple):
 
     kind: str
     leader: str
-    cost: tuple[int, int, float, int, int, int, float, float, float] | None
+    cost: tuple[int, int, float, int, int, int, float, float] | None
     accepted: bool
 
 
@@ -2082,8 +2082,20 @@ class Improver:
         for trunk, my_port, peer, peer_port in self._trunks_of(leader):
             if self.hierarchy[trunk.connection_ids] is not Level.AUTOSTRADA:
                 continue
-            if not self.lies_straight(self.best, trunk):
-                continue
+            # ⛔ **Non si pretende piu' che la tratta sia gia' dritta.** Fino a
+            # `DRAW-011` l'allungo era offerto solo dove il tronco era gia' un
+            # rettilineo, e la cosa si mordeva la coda: quando la posa e'
+            # stretta il tronco **non e'** dritto — e' proprio quello il
+            # problema — e l'unica mossa capace di fare spazio spariva
+            # dall'elenco. Misurato sul banco di DRAW-012, l'impianto 4: il
+            # ciclo esauriva **centonovantotto** candidate senza che una sola
+            # fosse un allungo. E' il «nessuna consegna ha ancora usato davvero
+            # lo stretch» del pacchetto (§E.2), letto nel codice.
+            #
+            # Il taglio resta quello che era: si allontana cio' che sta oltre
+            # **lungo un asse solo**, quindi nessuna quota dell'altro asse
+            # cambia e nessun allineamento si perde. Cio' che era dritto non si
+            # storce lo dice `is_valid`, come per ogni altra mossa.
             source, face = self.port_at(self.best[leader], my_port)
             goal, _ = self.port_at(self.best[peer], peer_port)
             horizontal = face in _HORIZONTAL_FACES

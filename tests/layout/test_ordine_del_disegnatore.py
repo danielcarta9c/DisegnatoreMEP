@@ -24,6 +24,7 @@ Gli impianti veri si guardano dove il pacchetto li nomina — le fixture di
 prova, perche' una regola provata su una sola tavola e' una coincidenza.
 """
 
+from collections.abc import Callable
 from datetime import date
 from functools import cache
 from pathlib import Path
@@ -32,6 +33,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.io.project_json import load_project
+from disegnatore_mep.layout import compose
 from disegnatore_mep.layout.compose import inline_component_ids
 from disegnatore_mep.layout.geometry import INK_COVERAGE_MIN, Point
 from disegnatore_mep.layout.hierarchy import (
@@ -267,9 +269,12 @@ def test_sulla_tavola_2_la_distribuzione_e_l_acs_sono_autostrada() -> None:
 # ---------------------------------------------------------------------------
 
 
+Attacco = tuple[str, str]
+
+
 def _laid(
-    places: dict[str, tuple[float, float]], faces: dict[tuple[str, str], PortFace]
-):
+    places: dict[Attacco, tuple[float, float]], faces: dict[Attacco, PortFace]
+) -> Callable[[str, str], tuple[Point, PortFace] | None]:
     """Una lettura delle porte scritta a mano, per provare l'invariante senza
     passare da una posa vera: `lies_in_line` prende proprio questa firma."""
 
@@ -465,3 +470,80 @@ def test_l_ordine_delle_voci_e_quello_di_D_139() -> None:
     assert _cost(crossings=0, fill=0.05, coverage=0.2).beats(
         _cost(crossings=1, fill=0.55, coverage=1.0)
     )
+
+
+# ---------------------------------------------------------------------------
+# §F — l'ultima spiaggia: si cede una curva, non si butta la struttura
+# ---------------------------------------------------------------------------
+
+
+def test_il_ciclo_senza_le_fasi_e_l_ultimissima_rete_e_la_cessione_viene_prima() -> None:
+    """§F.1 — il ripiego che scarta le fasi non e' piu' il terzo, e' l'ultimo.
+
+    Prima di `DRAW-012` `compose_sheet` ripiegava in quattro passi e il terzo
+    era «il ciclo senza le fasi, cioe' la tavola che sarebbe uscita prima di
+    DRAW-008»: l'impianto 4 usciva da li'. Adesso fra la posa seminata e quella
+    rete c'e' la **cessione graduale**, e la rete che scarta le fasi e' la
+    penultima via — dopo di lei resta solo la disposizione di partenza.
+    """
+    sorgente = Path(compose.__file__).read_text(encoding="utf-8")
+    fasi = sorgente.index('("le fasi"')
+    seminata = sorgente.index('"la posa seminata dal tronco"')
+    cessione = sorgente.index('"la cessione graduale')
+    senza = sorgente.index('"il ciclo senza le fasi')
+    partenza = sorgente.index('"la disposizione di partenza"')
+    assert fasi < seminata < cessione < senza < partenza
+    # E la cessione e' limitata da un tetto dichiarato, come gli instradamenti
+    # di prova: un ciclo di miglioramento per catena non e' gratis.
+    assert isinstance(compose.MAX_SURRENDERS, int)
+    assert compose.MAX_SURRENDERS > 0
+
+
+def test_si_cede_prima_a_chi_ne_ha_meno_bisogno_e_solo_a_chi_si_sta_tenendo() -> None:
+    """§F.3 — l'ordine della resa, e chi ne resta fuori.
+
+    Fuori restano le catene che la posa **non tiene gia' dritte**: su di loro
+    l'invariante non vincola niente — e' monotono — e cederle sarebbe un ciclo
+    intero speso per non cambiare nulla.
+    """
+    def catena(name: str, passi: int) -> Highway:
+        steps = tuple(
+            (
+                PortRef(component_id=f"{name}-{index}", port_id="a"),
+                PortRef(component_id=f"{name}-{index + 1}", port_id="b"),
+            )
+            for index in range(passi)
+        )
+        return Highway(keys=tuple((f"{name}{index}",) for index in range(passi)), steps=steps)
+
+    corta = catena("corta", 1)
+    lunga = catena("lunga", 3)
+    impossibile = catena("impossibile", 4)
+    storta = catena("storta", 1)
+    ordine = compose._order_of_surrender(
+        (lunga, corta, impossibile, storta),
+        frozenset({("impossibile0",)}),
+        {},
+        lambda item: item is not storta,
+    )
+    # Prima quella che nessuna posa raddrizza, poi la piu' corta, poi la lunga.
+    assert [item.keys[0][0] for item in ordine] == ["impossibile0", "corta0", "lunga0"]
+    assert storta not in ordine
+
+
+def test_il_diario_dice_con_quale_via_la_tavola_e_uscita() -> None:
+    """§F.3 e criterio 9 — un ripiego silenzioso e' come la tavola 4 e' arrivata
+    in revisione senza che nessuna misura se ne accorgesse."""
+    project = load_project(TAVOLA_2)
+    journal = compose.ComposeJournal()
+    frame, drawing = compose.compose_on_ordinary_frame(
+        project, catalog(), journal=journal
+    )
+    assert len(journal.notes) == len(drawing.sheets)
+    nota = journal.notes[0]
+    assert nota.sheet_id == drawing.sheets[0].sheet_id
+    assert nota.ripiego
+    assert nota.highways > 0
+    # Il pacchetto chiede che **nessun impianto** esca dal ripiego che scarta le
+    # fasi: sulla tavola 2 non ci esce, e il diario e' il posto in cui si legge.
+    assert "senza le fasi" not in nota.ripiego
