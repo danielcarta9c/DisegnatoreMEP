@@ -80,7 +80,7 @@
     },
     {
       "function": "circuit_switching",
-      "prefix": "VC",
+      "prefix": "VCR",
       "name": "Valvola commutatrice di circuito"
     },
     {

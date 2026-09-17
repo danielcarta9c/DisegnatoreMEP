@@ -10,8 +10,8 @@
           "symbol_id": "heat-pump-air-water",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 17.5,
-            "y_mm": 76.0
+            "x_mm": 27.5,
+            "y_mm": 66.0
           },
           "width_mm": 40.0,
           "height_mm": 30.0,
@@ -24,8 +24,8 @@
           "symbol_id": "tee-branch",
           "rotation_deg": 180,
           "origin": {
-            "x_mm": 165.0,
-            "y_mm": 191.0
+            "x_mm": 145.0,
+            "y_mm": 193.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -41,8 +41,8 @@
           "symbol_id": "network-boundary",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 142.5,
-            "y_mm": 191.0
+            "x_mm": 105.0,
+            "y_mm": 193.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -57,8 +57,8 @@
           "symbol_id": "drain-connection",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 165.0,
-            "y_mm": 206.0
+            "x_mm": 145.0,
+            "y_mm": 208.5
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -71,8 +71,8 @@
           "symbol_id": "dhw-cylinder",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 247.5,
-            "y_mm": 156.0
+            "x_mm": 245.0,
+            "y_mm": 158.5
           },
           "width_mm": 25.0,
           "height_mm": 45.0,
@@ -85,8 +85,8 @@
           "symbol_id": "network-boundary",
           "rotation_deg": 90,
           "origin": {
-            "x_mm": 252.5,
-            "y_mm": 53.5
+            "x_mm": 305.0,
+            "y_mm": 131.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -101,8 +101,8 @@
           "symbol_id": "buffer-four-port",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 262.5,
-            "y_mm": 76.0
+            "x_mm": 260.0,
+            "y_mm": 66.0
           },
           "width_mm": 25.0,
           "height_mm": 45.0,
@@ -115,8 +115,8 @@
           "symbol_id": "air-vent",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 272.5,
-            "y_mm": 61.0
+            "x_mm": 270.0,
+            "y_mm": 51.0
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -129,8 +129,8 @@
           "symbol_id": "drain-connection",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 272.5,
-            "y_mm": 136.0
+            "x_mm": 270.0,
+            "y_mm": 116.0
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -143,8 +143,8 @@
           "symbol_id": "fan-coil",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 332.5,
-            "y_mm": 73.5
+            "x_mm": 320.0,
+            "y_mm": 63.5
           },
           "width_mm": 20.0,
           "height_mm": 15.0,
@@ -157,8 +157,8 @@
           "symbol_id": "tee-branch",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 67.5,
-            "y_mm": 78.5
+            "x_mm": 147.5,
+            "y_mm": 68.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -171,8 +171,8 @@
           "symbol_id": "valve-safety",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 67.5,
-            "y_mm": 63.5
+            "x_mm": 147.5,
+            "y_mm": 53.5
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -185,8 +185,8 @@
           "symbol_id": "diverting-valve-3way",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 222.5,
-            "y_mm": 76.0
+            "x_mm": 180.0,
+            "y_mm": 66.0
           },
           "width_mm": 10.0,
           "height_mm": 10.0,
@@ -199,8 +199,8 @@
           "symbol_id": "tee-branch",
           "rotation_deg": 180,
           "origin": {
-            "x_mm": 97.5,
-            "y_mm": 93.5
+            "x_mm": 107.5,
+            "y_mm": 83.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -213,8 +213,8 @@
           "symbol_id": "expansion-connection",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 97.5,
-            "y_mm": 113.5
+            "x_mm": 107.5,
+            "y_mm": 103.5
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -227,8 +227,8 @@
           "symbol_id": "tee-branch",
           "rotation_deg": 180,
           "origin": {
-            "x_mm": 112.5,
-            "y_mm": 93.5
+            "x_mm": 122.5,
+            "y_mm": 83.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -241,8 +241,8 @@
           "symbol_id": "filling-unit",
           "rotation_deg": 180,
           "origin": {
-            "x_mm": 112.5,
-            "y_mm": 193.5
+            "x_mm": 122.5,
+            "y_mm": 96.0
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -255,8 +255,8 @@
           "symbol_id": "network-boundary",
           "rotation_deg": 270,
           "origin": {
-            "x_mm": 112.5,
-            "y_mm": 208.5
+            "x_mm": 122.5,
+            "y_mm": 111.0
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -271,8 +271,8 @@
           "symbol_id": "tee-branch",
           "rotation_deg": 180,
           "origin": {
-            "x_mm": 127.5,
-            "y_mm": 93.5
+            "x_mm": 137.5,
+            "y_mm": 83.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -285,8 +285,8 @@
           "symbol_id": "pressure-gauge",
           "rotation_deg": 180,
           "origin": {
-            "x_mm": 127.5,
-            "y_mm": 203.5
+            "x_mm": 137.5,
+            "y_mm": 103.5
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -299,8 +299,8 @@
           "symbol_id": "tee-junction",
           "rotation_deg": 180,
           "origin": {
-            "x_mm": 142.5,
-            "y_mm": 93.5
+            "x_mm": 152.5,
+            "y_mm": 83.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -313,8 +313,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 252.5,
-            "y_mm": 78.5
+            "x_mm": 250.0,
+            "y_mm": 68.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -327,8 +327,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 252.5,
-            "y_mm": 93.5
+            "x_mm": 250.0,
+            "y_mm": 83.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -341,8 +341,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 292.5,
-            "y_mm": 93.5
+            "x_mm": 290.0,
+            "y_mm": 83.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -355,8 +355,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 292.5,
-            "y_mm": 78.5
+            "x_mm": 290.0,
+            "y_mm": 68.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -369,8 +369,8 @@
           "symbol_id": "pump-circulator",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 300.0,
-            "y_mm": 76.0
+            "x_mm": 297.5,
+            "y_mm": 66.0
           },
           "width_mm": 10.0,
           "height_mm": 10.0,
@@ -383,8 +383,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 322.5,
-            "y_mm": 78.5
+            "x_mm": 310.0,
+            "y_mm": 68.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -397,8 +397,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 237.5,
-            "y_mm": 161.0
+            "x_mm": 235.0,
+            "y_mm": 163.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -411,8 +411,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 237.5,
-            "y_mm": 171.0
+            "x_mm": 235.0,
+            "y_mm": 173.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -425,8 +425,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 90,
           "origin": {
-            "x_mm": 252.5,
-            "y_mm": 146.0
+            "x_mm": 250.0,
+            "y_mm": 148.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -437,13 +437,13 @@
         {
           "component_id": "mixing-valve-thermostatic-bollitore-dhw-out",
           "symbol_id": "mixing-valve-thermostatic",
-          "rotation_deg": 90,
+          "rotation_deg": 0,
           "origin": {
-            "x_mm": 250.0,
-            "y_mm": 138.5
+            "x_mm": 252.5,
+            "y_mm": 136.0
           },
-          "width_mm": 10.0,
-          "height_mm": 5.0,
+          "width_mm": 5.0,
+          "height_mm": 10.0,
           "tag": null,
           "port_map": {},
           "port_flows": {}
@@ -451,10 +451,10 @@
         {
           "component_id": "valve-isolation-dhw-hot-utenze-a",
           "symbol_id": "valve-isolation",
-          "rotation_deg": 90,
+          "rotation_deg": 0,
           "origin": {
-            "x_mm": 252.5,
-            "y_mm": 131.0
+            "x_mm": 260.0,
+            "y_mm": 138.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -467,8 +467,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 212.5,
-            "y_mm": 78.5
+            "x_mm": 170.0,
+            "y_mm": 68.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -481,8 +481,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 85.0,
-            "y_mm": 93.5
+            "x_mm": 95.0,
+            "y_mm": 83.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -495,8 +495,8 @@
           "symbol_id": "dirt-separator",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 77.5,
-            "y_mm": 91.0
+            "x_mm": 87.5,
+            "y_mm": 81.0
           },
           "width_mm": 5.0,
           "height_mm": 10.0,
@@ -509,8 +509,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 70.0,
-            "y_mm": 93.5
+            "x_mm": 80.0,
+            "y_mm": 83.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -523,8 +523,8 @@
           "symbol_id": "strainer",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 62.5,
-            "y_mm": 93.5
+            "x_mm": 72.5,
+            "y_mm": 83.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -537,8 +537,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 155.0,
-            "y_mm": 191.0
+            "x_mm": 135.0,
+            "y_mm": 193.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -551,8 +551,8 @@
           "symbol_id": "dhw-safety-group",
           "rotation_deg": 0,
           "origin": {
-            "x_mm": 177.5,
-            "y_mm": 191.0
+            "x_mm": 157.5,
+            "y_mm": 193.5
           },
           "width_mm": 10.0,
           "height_mm": 5.0,
@@ -565,8 +565,8 @@
           "symbol_id": "valve-isolation",
           "rotation_deg": 90,
           "origin": {
-            "x_mm": 97.5,
-            "y_mm": 103.5
+            "x_mm": 107.5,
+            "y_mm": 93.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -579,8 +579,8 @@
           "symbol_id": "valve-gauge-cock-3way",
           "rotation_deg": 90,
           "origin": {
-            "x_mm": 127.5,
-            "y_mm": 193.5
+            "x_mm": 137.5,
+            "y_mm": 93.5
           },
           "width_mm": 5.0,
           "height_mm": 5.0,
@@ -601,22 +601,22 @@
           "segments": [
             [
               {
-                "x_mm": 232.5,
-                "y_mm": 81.0
+                "x_mm": 190.0,
+                "y_mm": 71.0
               },
               {
-                "x_mm": 252.5,
-                "y_mm": 81.0
+                "x_mm": 250.0,
+                "y_mm": 71.0
               }
             ],
             [
               {
-                "x_mm": 257.5,
-                "y_mm": 81.0
+                "x_mm": 255.0,
+                "y_mm": 71.0
               },
               {
-                "x_mm": 262.5,
-                "y_mm": 81.0
+                "x_mm": 260.0,
+                "y_mm": 71.0
               }
             ]
           ],
@@ -635,22 +635,22 @@
           "segments": [
             [
               {
-                "x_mm": 262.5,
-                "y_mm": 96.0
+                "x_mm": 260.0,
+                "y_mm": 86.0
               },
               {
-                "x_mm": 257.5,
-                "y_mm": 96.0
+                "x_mm": 255.0,
+                "y_mm": 86.0
               }
             ],
             [
               {
-                "x_mm": 252.5,
-                "y_mm": 96.0
+                "x_mm": 250.0,
+                "y_mm": 86.0
               },
               {
-                "x_mm": 147.5,
-                "y_mm": 96.0
+                "x_mm": 157.5,
+                "y_mm": 86.0
               }
             ]
           ],
@@ -669,30 +669,30 @@
           "segments": [
             [
               {
-                "x_mm": 352.5,
-                "y_mm": 81.0
+                "x_mm": 340.0,
+                "y_mm": 71.0
               },
               {
-                "x_mm": 355.0,
-                "y_mm": 81.0
+                "x_mm": 342.5,
+                "y_mm": 71.0
               },
               {
-                "x_mm": 355.0,
-                "y_mm": 96.0
+                "x_mm": 342.5,
+                "y_mm": 86.0
               },
               {
-                "x_mm": 297.5,
-                "y_mm": 96.0
+                "x_mm": 295.0,
+                "y_mm": 86.0
               }
             ],
             [
               {
-                "x_mm": 292.5,
-                "y_mm": 96.0
+                "x_mm": 290.0,
+                "y_mm": 86.0
               },
               {
-                "x_mm": 287.5,
-                "y_mm": 96.0
+                "x_mm": 285.0,
+                "y_mm": 86.0
               }
             ]
           ],
@@ -713,42 +713,42 @@
           "segments": [
             [
               {
-                "x_mm": 287.5,
-                "y_mm": 81.0
+                "x_mm": 285.0,
+                "y_mm": 71.0
               },
               {
-                "x_mm": 292.5,
-                "y_mm": 81.0
+                "x_mm": 290.0,
+                "y_mm": 71.0
               }
             ],
             [
+              {
+                "x_mm": 295.0,
+                "y_mm": 71.0
+              },
               {
                 "x_mm": 297.5,
-                "y_mm": 81.0
-              },
-              {
-                "x_mm": 300.0,
-                "y_mm": 81.0
+                "y_mm": 71.0
               }
             ],
             [
+              {
+                "x_mm": 307.5,
+                "y_mm": 71.0
+              },
               {
                 "x_mm": 310.0,
-                "y_mm": 81.0
-              },
-              {
-                "x_mm": 322.5,
-                "y_mm": 81.0
+                "y_mm": 71.0
               }
             ],
             [
               {
-                "x_mm": 327.5,
-                "y_mm": 81.0
+                "x_mm": 315.0,
+                "y_mm": 71.0
               },
               {
-                "x_mm": 332.5,
-                "y_mm": 81.0
+                "x_mm": 320.0,
+                "y_mm": 71.0
               }
             ]
           ],
@@ -767,33 +767,33 @@
           "segments": [
             [
               {
-                "x_mm": 227.5,
-                "y_mm": 86.0
+                "x_mm": 185.0,
+                "y_mm": 76.0
               },
               {
-                "x_mm": 227.5,
-                "y_mm": 163.5
+                "x_mm": 185.0,
+                "y_mm": 166.0
               },
               {
-                "x_mm": 237.5,
-                "y_mm": 163.5
+                "x_mm": 235.0,
+                "y_mm": 166.0
               }
             ],
             [
               {
-                "x_mm": 242.5,
-                "y_mm": 163.5
+                "x_mm": 240.0,
+                "y_mm": 166.0
               },
               {
-                "x_mm": 247.5,
-                "y_mm": 163.5
+                "x_mm": 245.0,
+                "y_mm": 166.0
               }
             ]
           ],
           "crossings": [
             {
-              "x_mm": 227.5,
-              "y_mm": 96.0
+              "x_mm": 185.0,
+              "y_mm": 86.0
             }
           ],
           "flow_kind": "ordinary",
@@ -810,26 +810,26 @@
           "segments": [
             [
               {
-                "x_mm": 247.5,
-                "y_mm": 173.5
+                "x_mm": 245.0,
+                "y_mm": 176.0
               },
               {
-                "x_mm": 242.5,
-                "y_mm": 173.5
+                "x_mm": 240.0,
+                "y_mm": 176.0
               }
             ],
             [
               {
-                "x_mm": 237.5,
-                "y_mm": 173.5
+                "x_mm": 235.0,
+                "y_mm": 176.0
               },
               {
-                "x_mm": 145.0,
-                "y_mm": 173.5
+                "x_mm": 155.0,
+                "y_mm": 176.0
               },
               {
-                "x_mm": 145.0,
-                "y_mm": 98.5
+                "x_mm": 155.0,
+                "y_mm": 88.5
               }
             ]
           ],
@@ -850,71 +850,50 @@
           "segments": [
             [
               {
-                "x_mm": 255.0,
-                "y_mm": 156.0
+                "x_mm": 252.5,
+                "y_mm": 158.5
               },
               {
-                "x_mm": 255.0,
-                "y_mm": 151.0
+                "x_mm": 252.5,
+                "y_mm": 153.5
               }
             ],
             [
               {
-                "x_mm": 255.0,
-                "y_mm": 146.0
+                "x_mm": 252.5,
+                "y_mm": 148.5
               },
               {
-                "x_mm": 255.0,
-                "y_mm": 143.5
+                "x_mm": 252.5,
+                "y_mm": 141.0
               }
             ],
             [
               {
-                "x_mm": 255.0,
-                "y_mm": 138.5
+                "x_mm": 257.5,
+                "y_mm": 141.0
               },
               {
-                "x_mm": 255.0,
+                "x_mm": 260.0,
+                "y_mm": 141.0
+              }
+            ],
+            [
+              {
+                "x_mm": 265.0,
+                "y_mm": 141.0
+              },
+              {
+                "x_mm": 307.5,
+                "y_mm": 141.0
+              },
+              {
+                "x_mm": 307.5,
                 "y_mm": 136.0
-              }
-            ],
-            [
-              {
-                "x_mm": 255.0,
-                "y_mm": 131.0
-              },
-              {
-                "x_mm": 255.0,
-                "y_mm": 103.5
-              },
-              {
-                "x_mm": 247.5,
-                "y_mm": 103.5
-              },
-              {
-                "x_mm": 247.5,
-                "y_mm": 63.5
-              },
-              {
-                "x_mm": 255.0,
-                "y_mm": 63.5
-              },
-              {
-                "x_mm": 255.0,
-                "y_mm": 58.5
               }
             ]
           ],
-          "crossings": [
-            {
-              "x_mm": 247.5,
-              "y_mm": 96.0
-            },
-            {
-              "x_mm": 247.5,
-              "y_mm": 81.0
-            }
-          ],
+          "crossings": [],
           "flow_kind": "ordinary",
           "flow_from_start": true
         },
@@ -929,22 +908,22 @@
           "segments": [
             [
               {
-                "x_mm": 72.5,
-                "y_mm": 81.0
+                "x_mm": 152.5,
+                "y_mm": 71.0
               },
               {
-                "x_mm": 212.5,
-                "y_mm": 81.0
+                "x_mm": 170.0,
+                "y_mm": 71.0
               }
             ],
             [
               {
-                "x_mm": 217.5,
-                "y_mm": 81.0
+                "x_mm": 175.0,
+                "y_mm": 71.0
               },
               {
-                "x_mm": 222.5,
-                "y_mm": 81.0
+                "x_mm": 180.0,
+                "y_mm": 71.0
               }
             ]
           ],
@@ -966,52 +945,52 @@
           "segments": [
             [
               {
-                "x_mm": 97.5,
-                "y_mm": 96.0
+                "x_mm": 107.5,
+                "y_mm": 86.0
               },
               {
-                "x_mm": 90.0,
-                "y_mm": 96.0
+                "x_mm": 100.0,
+                "y_mm": 86.0
               }
             ],
             [
+              {
+                "x_mm": 95.0,
+                "y_mm": 86.0
+              },
+              {
+                "x_mm": 92.5,
+                "y_mm": 86.0
+              }
+            ],
+            [
+              {
+                "x_mm": 87.5,
+                "y_mm": 86.0
+              },
               {
                 "x_mm": 85.0,
-                "y_mm": 96.0
-              },
-              {
-                "x_mm": 82.5,
-                "y_mm": 96.0
+                "y_mm": 86.0
               }
             ],
             [
+              {
+                "x_mm": 80.0,
+                "y_mm": 86.0
+              },
               {
                 "x_mm": 77.5,
-                "y_mm": 96.0
-              },
-              {
-                "x_mm": 75.0,
-                "y_mm": 96.0
+                "y_mm": 86.0
               }
             ],
             [
               {
-                "x_mm": 70.0,
-                "y_mm": 96.0
+                "x_mm": 72.5,
+                "y_mm": 86.0
               },
               {
                 "x_mm": 67.5,
-                "y_mm": 96.0
-              }
-            ],
-            [
-              {
-                "x_mm": 62.5,
-                "y_mm": 96.0
-              },
-              {
-                "x_mm": 57.5,
-                "y_mm": 96.0
+                "y_mm": 86.0
               }
             ]
           ],
@@ -1029,12 +1008,12 @@
           "segments": [
             [
               {
-                "x_mm": 57.5,
-                "y_mm": 81.0
+                "x_mm": 67.5,
+                "y_mm": 71.0
               },
               {
-                "x_mm": 67.5,
-                "y_mm": 81.0
+                "x_mm": 147.5,
+                "y_mm": 71.0
               }
             ]
           ],
@@ -1052,12 +1031,12 @@
           "segments": [
             [
               {
-                "x_mm": 127.5,
-                "y_mm": 96.0
+                "x_mm": 137.5,
+                "y_mm": 86.0
               },
               {
-                "x_mm": 117.5,
-                "y_mm": 96.0
+                "x_mm": 127.5,
+                "y_mm": 86.0
               }
             ]
           ],
@@ -1075,12 +1054,12 @@
           "segments": [
             [
               {
-                "x_mm": 112.5,
-                "y_mm": 96.0
+                "x_mm": 122.5,
+                "y_mm": 86.0
               },
               {
-                "x_mm": 102.5,
-                "y_mm": 96.0
+                "x_mm": 112.5,
+                "y_mm": 86.0
               }
             ]
           ],
@@ -1098,12 +1077,12 @@
           "segments": [
             [
               {
-                "x_mm": 142.5,
-                "y_mm": 96.0
+                "x_mm": 152.5,
+                "y_mm": 86.0
               },
               {
-                "x_mm": 132.5,
-                "y_mm": 96.0
+                "x_mm": 142.5,
+                "y_mm": 86.0
               }
             ]
           ],
@@ -1122,22 +1101,22 @@
           "segments": [
             [
               {
-                "x_mm": 147.5,
-                "y_mm": 193.5
+                "x_mm": 110.0,
+                "y_mm": 196.0
               },
               {
-                "x_mm": 155.0,
-                "y_mm": 193.5
+                "x_mm": 135.0,
+                "y_mm": 196.0
               }
             ],
             [
               {
-                "x_mm": 160.0,
-                "y_mm": 193.5
+                "x_mm": 140.0,
+                "y_mm": 196.0
               },
               {
-                "x_mm": 165.0,
-                "y_mm": 193.5
+                "x_mm": 145.0,
+                "y_mm": 196.0
               }
             ]
           ],
@@ -1156,22 +1135,22 @@
           "segments": [
             [
               {
-                "x_mm": 170.0,
-                "y_mm": 193.5
+                "x_mm": 150.0,
+                "y_mm": 196.0
               },
               {
-                "x_mm": 177.5,
-                "y_mm": 193.5
+                "x_mm": 157.5,
+                "y_mm": 196.0
               }
             ],
             [
               {
-                "x_mm": 187.5,
-                "y_mm": 193.5
+                "x_mm": 167.5,
+                "y_mm": 196.0
               },
               {
-                "x_mm": 247.5,
-                "y_mm": 193.5
+                "x_mm": 245.0,
+                "y_mm": 196.0
               }
             ]
           ],
@@ -1190,22 +1169,22 @@
           "segments": [
             [
               {
-                "x_mm": 100.0,
-                "y_mm": 98.5
+                "x_mm": 110.0,
+                "y_mm": 88.5
               },
               {
-                "x_mm": 100.0,
-                "y_mm": 103.5
+                "x_mm": 110.0,
+                "y_mm": 93.5
               }
             ],
             [
               {
-                "x_mm": 100.0,
-                "y_mm": 108.5
+                "x_mm": 110.0,
+                "y_mm": 98.5
               },
               {
-                "x_mm": 100.0,
-                "y_mm": 113.5
+                "x_mm": 110.0,
+                "y_mm": 103.5
               }
             ]
           ],
@@ -1224,22 +1203,22 @@
           "segments": [
             [
               {
-                "x_mm": 130.0,
-                "y_mm": 98.5
+                "x_mm": 140.0,
+                "y_mm": 88.5
               },
               {
-                "x_mm": 130.0,
-                "y_mm": 193.5
+                "x_mm": 140.0,
+                "y_mm": 93.5
               }
             ],
             [
               {
-                "x_mm": 130.0,
-                "y_mm": 198.5
+                "x_mm": 140.0,
+                "y_mm": 98.5
               },
               {
-                "x_mm": 130.0,
-                "y_mm": 203.5
+                "x_mm": 140.0,
+                "y_mm": 103.5
               }
             ]
           ],
@@ -1257,12 +1236,12 @@
           "segments": [
             [
               {
-                "x_mm": 275.0,
-                "y_mm": 76.0
+                "x_mm": 272.5,
+                "y_mm": 66.0
               },
               {
-                "x_mm": 275.0,
-                "y_mm": 71.0
+                "x_mm": 272.5,
+                "y_mm": 61.0
               }
             ]
           ],
@@ -1280,12 +1259,12 @@
           "segments": [
             [
               {
-                "x_mm": 275.0,
-                "y_mm": 121.0
+                "x_mm": 272.5,
+                "y_mm": 111.0
               },
               {
-                "x_mm": 275.0,
-                "y_mm": 136.0
+                "x_mm": 272.5,
+                "y_mm": 116.0
               }
             ]
           ],
@@ -1303,12 +1282,12 @@
           "segments": [
             [
               {
-                "x_mm": 115.0,
-                "y_mm": 208.5
+                "x_mm": 125.0,
+                "y_mm": 111.0
               },
               {
-                "x_mm": 115.0,
-                "y_mm": 203.5
+                "x_mm": 125.0,
+                "y_mm": 106.0
               }
             ]
           ],
@@ -1326,12 +1305,12 @@
           "segments": [
             [
               {
-                "x_mm": 167.5,
-                "y_mm": 196.0
+                "x_mm": 147.5,
+                "y_mm": 198.5
               },
               {
-                "x_mm": 167.5,
-                "y_mm": 206.0
+                "x_mm": 147.5,
+                "y_mm": 208.5
               }
             ]
           ],
@@ -1349,12 +1328,12 @@
           "segments": [
             [
               {
-                "x_mm": 115.0,
-                "y_mm": 193.5
+                "x_mm": 125.0,
+                "y_mm": 96.0
               },
               {
-                "x_mm": 115.0,
-                "y_mm": 98.5
+                "x_mm": 125.0,
+                "y_mm": 88.5
               }
             ]
           ],
@@ -1372,12 +1351,12 @@
           "segments": [
             [
               {
-                "x_mm": 70.0,
-                "y_mm": 78.5
+                "x_mm": 150.0,
+                "y_mm": 68.5
               },
               {
-                "x_mm": 70.0,
-                "y_mm": 73.5
+                "x_mm": 150.0,
+                "y_mm": 63.5
               }
             ]
           ],
@@ -1392,8 +1371,8 @@
           "text": "PDC-01",
           "role": "tag",
           "anchor": {
-            "x_mm": 35.0,
-            "y_mm": 74.5
+            "x_mm": 45.0,
+            "y_mm": 64.5
           },
           "leader_from": null
         },
@@ -1402,8 +1381,8 @@
           "text": "AF-01",
           "role": "tag",
           "anchor": {
-            "x_mm": 142.5,
-            "y_mm": 189.5
+            "x_mm": 105.0,
+            "y_mm": 192.0
           },
           "leader_from": null
         },
@@ -1412,8 +1391,8 @@
           "text": "BOL-01",
           "role": "tag",
           "anchor": {
-            "x_mm": 257.5,
-            "y_mm": 154.5
+            "x_mm": 255.0,
+            "y_mm": 157.0
           },
           "leader_from": null
         },
@@ -1422,8 +1401,8 @@
           "text": "ACS-01",
           "role": "tag",
           "anchor": {
-            "x_mm": 252.5,
-            "y_mm": 52.0
+            "x_mm": 305.0,
+            "y_mm": 129.5
           },
           "leader_from": null
         },
@@ -1432,8 +1411,8 @@
           "text": "VOL-01",
           "role": "tag",
           "anchor": {
-            "x_mm": 289.0,
-            "y_mm": 101.7
+            "x_mm": 286.5,
+            "y_mm": 91.7
           },
           "leader_from": null
         },
@@ -1442,8 +1421,8 @@
           "text": "VC-01",
           "role": "tag",
           "anchor": {
-            "x_mm": 340.0,
-            "y_mm": 72.0
+            "x_mm": 327.5,
+            "y_mm": 62.0
           },
           "leader_from": null
         },
@@ -1452,8 +1431,8 @@
           "text": "VD-01",
           "role": "tag",
           "anchor": {
-            "x_mm": 225.0,
-            "y_mm": 74.5
+            "x_mm": 182.5,
+            "y_mm": 64.5
           },
           "leader_from": null
         },
@@ -1462,8 +1441,8 @@
           "text": "AF-02",
           "role": "tag",
           "anchor": {
-            "x_mm": 112.5,
-            "y_mm": 216.8
+            "x_mm": 122.5,
+            "y_mm": 119.3
           },
           "leader_from": null
         },
@@ -1472,8 +1451,8 @@
           "text": "CIR-01",
           "role": "tag",
           "anchor": {
-            "x_mm": 302.5,
-            "y_mm": 74.5
+            "x_mm": 300.0,
+            "y_mm": 64.5
           },
           "leader_from": null
         },
@@ -1482,8 +1461,8 @@
           "text": "CP.01.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 59.0,
-            "y_mm": 91.9
+            "x_mm": 69.0,
+            "y_mm": 81.9
           },
           "leader_from": null
         },
@@ -1492,8 +1471,8 @@
           "text": "AF.01.N.03",
           "role": "address",
           "anchor": {
-            "x_mm": 162.5,
-            "y_mm": 189.5
+            "x_mm": 142.5,
+            "y_mm": 192.0
           },
           "leader_from": null
         },
@@ -1502,8 +1481,8 @@
           "text": "AF.01.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 140.0,
-            "y_mm": 199.3
+            "x_mm": 92.7,
+            "y_mm": 196.9
           },
           "leader_from": null
         },
@@ -1512,8 +1491,8 @@
           "text": "AF.01.N.03.1",
           "role": "address",
           "anchor": {
-            "x_mm": 171.5,
-            "y_mm": 211.9
+            "x_mm": 151.5,
+            "y_mm": 214.4
           },
           "leader_from": null
         },
@@ -1522,8 +1501,8 @@
           "text": "CP.01a.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 274.0,
-            "y_mm": 179.4
+            "x_mm": 271.5,
+            "y_mm": 181.9
           },
           "leader_from": null
         },
@@ -1532,8 +1511,8 @@
           "text": "ACS.01.N.04",
           "role": "address",
           "anchor": {
-            "x_mm": 259.0,
-            "y_mm": 56.9
+            "x_mm": 311.5,
+            "y_mm": 134.4
           },
           "leader_from": null
         },
@@ -1542,8 +1521,8 @@
           "text": "CP.01.N.06",
           "role": "address",
           "anchor": {
-            "x_mm": 250.2,
-            "y_mm": 101.7
+            "x_mm": 247.7,
+            "y_mm": 91.7
           },
           "leader_from": null
         },
@@ -1552,8 +1531,8 @@
           "text": "CP.01.N.06.1",
           "role": "address",
           "anchor": {
-            "x_mm": 279.0,
-            "y_mm": 66.9
+            "x_mm": 276.5,
+            "y_mm": 56.9
           },
           "leader_from": null
         },
@@ -1562,8 +1541,8 @@
           "text": "CP.01.N.06.2",
           "role": "address",
           "anchor": {
-            "x_mm": 279.0,
-            "y_mm": 141.9
+            "x_mm": 276.5,
+            "y_mm": 121.9
           },
           "leader_from": null
         },
@@ -1572,8 +1551,8 @@
           "text": "CS.01.N.04",
           "role": "address",
           "anchor": {
-            "x_mm": 337.5,
-            "y_mm": 91.8
+            "x_mm": 325.0,
+            "y_mm": 81.8
           },
           "leader_from": null
         },
@@ -1582,8 +1561,8 @@
           "text": "CP.01.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 65.0,
-            "y_mm": 86.8
+            "x_mm": 145.0,
+            "y_mm": 76.8
           },
           "leader_from": null
         },
@@ -1592,8 +1571,8 @@
           "text": "CP.01.N.02.1",
           "role": "address",
           "anchor": {
-            "x_mm": 74.0,
-            "y_mm": 69.4
+            "x_mm": 154.0,
+            "y_mm": 59.4
           },
           "leader_from": null
         },
@@ -1602,8 +1581,8 @@
           "text": "CP.01.N.04",
           "role": "address",
           "anchor": {
-            "x_mm": 234.0,
-            "y_mm": 84.2
+            "x_mm": 191.5,
+            "y_mm": 74.2
           },
           "leader_from": null
         },
@@ -1612,8 +1591,8 @@
           "text": "RP.01.N.05",
           "role": "address",
           "anchor": {
-            "x_mm": 95.0,
-            "y_mm": 92.0
+            "x_mm": 105.0,
+            "y_mm": 82.0
           },
           "leader_from": null
         },
@@ -1622,8 +1601,8 @@
           "text": "RP.01.N.05.2",
           "role": "address",
           "anchor": {
-            "x_mm": 83.03999999999999,
-            "y_mm": 119.4
+            "x_mm": 93.03999999999999,
+            "y_mm": 109.4
           },
           "leader_from": null
         },
@@ -1632,18 +1611,8 @@
           "text": "RP.01.N.04",
           "role": "address",
           "anchor": {
-            "x_mm": 110.0,
-            "y_mm": 92.0
-          },
-          "leader_from": null
-        },
-        {
-          "id": "address-filling-unit-pdc-water-return",
-          "text": "RP.01.N.04.1",
-          "role": "address",
-          "anchor": {
-            "x_mm": 98.03999999999999,
-            "y_mm": 199.4
+            "x_mm": 120.0,
+            "y_mm": 82.0
           },
           "leader_from": null
         },
@@ -1652,8 +1621,8 @@
           "text": "AF.02.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 100.2,
-            "y_mm": 211.9
+            "x_mm": 129.0,
+            "y_mm": 116.7
           },
           "leader_from": null
         },
@@ -1662,8 +1631,8 @@
           "text": "RP.01.N.03",
           "role": "address",
           "anchor": {
-            "x_mm": 125.0,
-            "y_mm": 92.0
+            "x_mm": 135.0,
+            "y_mm": 82.0
           },
           "leader_from": null
         },
@@ -1672,8 +1641,8 @@
           "text": "RP.01.N.03.2",
           "role": "address",
           "anchor": {
-            "x_mm": 134.0,
-            "y_mm": 209.4
+            "x_mm": 132.5,
+            "y_mm": 119.1
           },
           "leader_from": null
         },
@@ -1682,8 +1651,8 @@
           "text": "RP.01.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 140.0,
-            "y_mm": 92.0
+            "x_mm": 150.0,
+            "y_mm": 82.0
           },
           "leader_from": null
         },
@@ -1692,8 +1661,8 @@
           "text": "CP.01.N.05",
           "role": "address",
           "anchor": {
-            "x_mm": 250.0,
-            "y_mm": 77.0
+            "x_mm": 247.5,
+            "y_mm": 67.0
           },
           "leader_from": null
         },
@@ -1702,8 +1671,8 @@
           "text": "RP.01.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 250.0,
-            "y_mm": 92.0
+            "x_mm": 247.5,
+            "y_mm": 82.0
           },
           "leader_from": null
         },
@@ -1712,8 +1681,8 @@
           "text": "RS.01.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 290.0,
-            "y_mm": 92.0
+            "x_mm": 287.5,
+            "y_mm": 82.0
           },
           "leader_from": null
         },
@@ -1722,8 +1691,8 @@
           "text": "CS.01.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 290.0,
-            "y_mm": 74.7
+            "x_mm": 287.5,
+            "y_mm": 64.7
           },
           "leader_from": null
         },
@@ -1732,8 +1701,8 @@
           "text": "CS.01.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 300.0,
-            "y_mm": 89.3
+            "x_mm": 297.5,
+            "y_mm": 79.3
           },
           "leader_from": null
         },
@@ -1742,8 +1711,8 @@
           "text": "CS.01.N.03",
           "role": "address",
           "anchor": {
-            "x_mm": 320.0,
-            "y_mm": 77.0
+            "x_mm": 307.5,
+            "y_mm": 67.0
           },
           "leader_from": null
         },
@@ -1752,8 +1721,8 @@
           "text": "CP.01a.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 235.0,
-            "y_mm": 159.5
+            "x_mm": 232.5,
+            "y_mm": 162.0
           },
           "leader_from": null
         },
@@ -1762,8 +1731,8 @@
           "text": "RP.02.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 235.0,
-            "y_mm": 169.5
+            "x_mm": 232.5,
+            "y_mm": 172.0
           },
           "leader_from": null
         },
@@ -1772,8 +1741,8 @@
           "text": "ACS.01.N.01",
           "role": "address",
           "anchor": {
-            "x_mm": 259.0,
-            "y_mm": 149.4
+            "x_mm": 256.5,
+            "y_mm": 151.9
           },
           "leader_from": null
         },
@@ -1782,7 +1751,7 @@
           "text": "ACS.01.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 236.62,
+            "x_mm": 239.12,
             "y_mm": 141.9
           },
           "leader_from": null
@@ -1792,8 +1761,8 @@
           "text": "ACS.01.N.03",
           "role": "address",
           "anchor": {
-            "x_mm": 259.0,
-            "y_mm": 134.4
+            "x_mm": 257.5,
+            "y_mm": 137.0
           },
           "leader_from": null
         },
@@ -1802,8 +1771,8 @@
           "text": "CP.01.N.03",
           "role": "address",
           "anchor": {
-            "x_mm": 210.0,
-            "y_mm": 77.0
+            "x_mm": 167.5,
+            "y_mm": 67.0
           },
           "leader_from": null
         },
@@ -1812,8 +1781,8 @@
           "text": "RP.01.N.06",
           "role": "address",
           "anchor": {
-            "x_mm": 82.5,
-            "y_mm": 92.0
+            "x_mm": 92.5,
+            "y_mm": 82.0
           },
           "leader_from": null
         },
@@ -1822,8 +1791,8 @@
           "text": "RP.01.N.07",
           "role": "address",
           "anchor": {
-            "x_mm": 75.0,
-            "y_mm": 89.5
+            "x_mm": 85.0,
+            "y_mm": 79.5
           },
           "leader_from": null
         },
@@ -1832,8 +1801,8 @@
           "text": "RP.01.N.08",
           "role": "address",
           "anchor": {
-            "x_mm": 67.5,
-            "y_mm": 104.1
+            "x_mm": 77.5,
+            "y_mm": 94.1
           },
           "leader_from": null
         },
@@ -1842,8 +1811,8 @@
           "text": "RP.01.N.09",
           "role": "address",
           "anchor": {
-            "x_mm": 60.0,
-            "y_mm": 101.8
+            "x_mm": 70.0,
+            "y_mm": 91.8
           },
           "leader_from": null
         },
@@ -1852,8 +1821,8 @@
           "text": "AF.01.N.02",
           "role": "address",
           "anchor": {
-            "x_mm": 152.5,
-            "y_mm": 199.3
+            "x_mm": 132.5,
+            "y_mm": 201.8
           },
           "leader_from": null
         },
@@ -1862,8 +1831,8 @@
           "text": "AF.01.N.04",
           "role": "address",
           "anchor": {
-            "x_mm": 177.5,
-            "y_mm": 189.5
+            "x_mm": 157.5,
+            "y_mm": 192.0
           },
           "leader_from": null
         },
@@ -1872,8 +1841,8 @@
           "text": "RP.01.N.05.1",
           "role": "address",
           "anchor": {
-            "x_mm": 83.03999999999999,
-            "y_mm": 106.9
+            "x_mm": 93.03999999999999,
+            "y_mm": 96.9
           },
           "leader_from": null
         }

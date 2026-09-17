@@ -296,28 +296,41 @@ dalla testa di `main` (`8589620`). Rapporto e artefatti: `docs/collaudi/DRAW-012
 - **Quando la struttura non si instrada non si butta la fase**: si cede una catena per
   volta, e il diario della composizione dice con quale via la tavola è uscita.
 - **Il caso di prova 4** è quello di D-137, e il catalogo ha la **commutatrice a tre vie**
-  (`switching-valve-3way`, funzione `circuit_switching`, famiglia VC).
+  (`switching-valve-3way`, funzione `circuit_switching`, famiglia **VCR**). Il documento
+  pubblicato dell'impianto 4 e il confronto per il PM sono rigenerati con il grafo nuovo:
+  43 pezzi il 9 settembre, **46** oggi.
 
 **Le misure**
 
 | | tavola 1 | tavola 2 |
 |---|---|---|
-| riempimento | 29,8 % → **45,4 %** | 50,1 % → **66,7 %** |
-| copertura ingombro | 0,625 → **0,734** | 0,625 → **0,719** |
-| curve | 4 → 4 | 5 → **8** |
-| attraversamenti | 1 → 1 | 1 → **3** |
-| squilibrio quadranti | 2,11 → 2,43 | 32,5 → **5,04** |
-| larghezza occupata | 245 → **325 mm** | 257,5 → **337,5 mm** |
+| riempimento | 29,8 % → **45,1 %** | 50,1 % → **64,1 %** |
+| copertura ingombro | 0,625 → **0,750** | 0,625 → **0,750** |
+| curve | 4 → 4 | 5 → 5 |
+| attraversamenti | 1 → 1 | 1 → 1 |
+| squilibrio quadranti | 2,11 → **1,94** | 32,5 → **8,16** |
+| larghezza occupata | 245 → **322,5 mm** | 257,5 → **315 mm** |
+
+Tutt'e due dentro la finestra 45–65 %, con la copertura dell'ingombro che sale insieme al
+riempimento (D-141) e **nessun peggioramento** su curve e attraversamenti.
+
+**La suite**
+
+Su `main` 10 rosse, 1470 verdi, 24 saltate, 11 xfailed. Qui le rosse sono **13**: il
+criterio 13 del pacchetto **non è raggiunto**, e le tre in più sono tutte in
+`tests/layout/test_stacchi_minimi_e_interasse.py`, sulle due fixture
+`*_con_accumulo_combinato`. Due di loro non falliscono su un'asserzione: falliscono perché
+la tavola non esce. Nessuna prova è stata spenta per far quadrare il saldo; il rapporto
+§7.7 porta le cinque misure con cui ho provato a chiuderle.
 
 **Che cosa resta aperto, e sta nel rapporto §7**
 
-1. L'ordine di instradamento e il rango sono la stessa chiave, e con la gerarchia nuova
-   quella chiave governa una classe molto più grande: si vede nell'uscita ACS che
-   attraversa la mandata sulla tavola 2 e nella mandata del secondo generatore sulla
-   tavola 1.
+1. **D-060 e D-138 si contendono la stessa coordinata**, ed è una domanda al PO: fra due
+   zone impilate e una strada di ritorno rettilinea, quale delle due vuole. È la sola cosa
+   che la consegna toglie — una prova di `test_objective.py` — ed è dichiarata.
 2. Due **corsie di catena di macchina** che si incrociano non le separa nessuna mossa di un
    pezzo solo: è ciò che ferma le tavole 4 e 5, e in altra forma la 3. Gli impianti che
    producono una tavola restano 1 e 2, come su `main`.
-3. La tavola 2 esce dalla finestra dall'alto (66,7 % contro 65 %): o serve una mossa che
-   stringa senza piegare, o il tetto va riguardato sulle tavole nuove. È una decisione del
-   PO.
+3. L'ordine di instradamento e il rango sono la stessa chiave, e con la gerarchia nuova
+   quella chiave governa una classe molto più grande. I confini di rete finiscono lontani
+   dal pezzo che servono, e nessun numero se ne accorge.

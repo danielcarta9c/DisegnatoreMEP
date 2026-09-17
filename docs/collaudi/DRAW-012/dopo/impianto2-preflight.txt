@@ -2,10 +2,6 @@
 Preflight di qualita'
 
 Avvisi
-  - la tratta w2-a-a-a, w2-a-a-b, w2-a-b, w2-b cambia direzione 4 volte, oltre le 3 pieghe che bastano a unire due porte: la piega in piu' la chiede un ostacolo, e l'ostacolo si sposta (B4, D-078)
-    codice: RUN_WITH_TOO_MANY_BENDS · t1, w2-a-a-a, w2-a-a-b, w2-a-b, w2-b
-  - la tavola t1: il foglio e' pieno al 67%, sopra il 65% dichiarato: non resta lo spazio per le sigle dei componenti (D-140)
-    codice: SHEET_TOO_FULL · t1
-  - la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 5.0 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)
+  - la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 8.2 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)
     codice: DRAWING_ALL_ON_ONE_SIDE · t1
-ea1012bd7f907aaa62695c2c027216f2c08f4bae7128639d62d53f4399660864
+661cd0c2bcd5a49068ac1abfc2617636a0ea5c8c85b2c8b033cffa1ed2ecbe19

@@ -1,55 +1,80 @@
 Perche' la tavola 4 non esce — misurato il 17 settembre 2026, sul ramo di DRAW-012.
 
+Comandi:
+    docs/collaudi/DRAW-012/tavole.sh . USCITA prova-4-ibrido-pdc-caldaia
+    .venv/bin/python docs/collaudi/DRAW-012/criteri.py examples/prova/prova-4-ibrido-pdc-caldaia.json
+
+
 1. LA FASE DEL TRONCO ADESSO POSA DAVVERO
 
    Ventidue pezzi su ventidue si spostano rispetto alla posa iniziale. Su `main` non se
    ne spostava nessuno: la fase costruiva la forma, le sue linee non si instradavano su
    un foglio ancora privo di corredo, e la fase consegnava `symbols=()`.
 
-   La posa sta dentro l'area di disegno (x 5..352, y 148..241 su 350 x 235 a partire da
-   10, 16), e le posizioni che contano sono queste:
 
-       deviatrice-caldaia        (130.0, 186.0)  10 x 10  rot 0
-       commutatrice-ritorno      (142.5, 196.0)  10 x 10  rot 180
+2. SUL FORMATO PICCOLO NON SI POSA NEMMENO
 
-2. CHE COSA LA FERMA: DUE CORSIE DI CATENA DI MACCHINA CHE SI INCROCIANO
+       formato 297 x 210:
+       the 4 functional bands need 257.5mm but the drawing area is 212mm wide
 
-       run p4-a on network primario cannot be routed:
-       no route from (52, 70) to (64, 70): the 5 straight steps the chain needs
-       beyond the port at (52, 70) run into an obstacle at (55, 70)
+   E' il formato che si prova per primo, e si scarta prima di disegnare: non e' il
+   blocco, e' il passo che porta all'A3.
 
-   In millimetri, con il passo di 2,5 mm e l'origine in (10, 16):
 
-   - la porta (52, 70) e' `deviatrice-caldaia.out_a`, a (140.0, 191.0). La catena che le
-     sta davanti — il ritegno della caldaia e il proprio organo di chiusura — pretende
-     cinque passi di rettilineo verso destra, cioe' fino a (152.5, 191.0);
-   - la cella (55, 70) e' (147.5, 191.0), ed e' dentro la corsia riservata all'altra
-     catena: quella di `commutatrice-ritorno.in_b`, che girata di mezzo giro guarda in
-     alto da (147.5, 196.0);
-   - una corsia di catena e' **riservata** (`route.py`, `corridors`/`elsewhere`): chi ci
-     passa sopra non fa fallire se stesso, fa fallire l'altra catena.
+3. CHE COSA LA FERMA SULL'A3: IL CONFINE SANITARIO FINISCE FUORI DAL FOGLIO
 
-3. NON E' UN VINCOLO DI §C
+       run w2-a on network sanitaria cannot be routed:
+       no route from (134, 80) to (144, 80): every orthogonal path is blocked
 
-   Cedendo **tutte e nove** le catene dell'impianto — cioe' togliendo del tutto
-   l'invariante dell'autostrada intera — l'esito non cambia, alla cella:
+   L'area di disegno dell'A3 e' x 10..360, y 16..251 (350 x 235 mm), e la griglia di
+   instradamento ha 140 colonne — indici 0..139, cioe' da x 10 a x 357,5.
 
-       tutte-cedute tolerant=False: run p4-a … obstacle at (55, 70)
-       tutte-cedute tolerant=True:  run p4-a … obstacle at (55, 70)
+   - la meta' (144, 80) sta a **x 370 mm**: dieci millimetri oltre il bordo destro
+     dell'area di disegno, e quattro colonne oltre l'ultima che la griglia possiede;
+   - e' la porta di ACS-01, il confine di rete del prelievo sanitario, un simbolo di
+     5 x 5 mm il cui riquadro occupa le celle (142..144, 79..81) — e infatti sono tutte
+     bloccate tranne la meta' stessa. Il ciclo lo consegna a (365, 158,5), che il
+     centraggio verticale della composizione porta a (365, 213,5): la **x** e' quella,
+     e il bordo destro del simbolo cade a 370;
+   - e' **l'unico** pezzo fuori dall'area, e lo e' gia' all'uscita della fase del tronco:
+     ventuno pezzi su ventidue stanno dentro, lui no;
+   - il pezzo a cui il confine e' appeso e' lo scambiatore a piastre, che e' la macchina
+     piu' a destra della tavola (x 332,5..345). Il confine «si posa addosso all'utente
+     che serve» (I-061, DRAW-009 §A.2), a destra di lui, e li' non c'e' piu' foglio.
 
-4. NON E' UNA MOSSA CHE IL CICLO SAPPIA FARE
+   Nessuna linea puo' raggiungere una porta che sta fuori dalla griglia, e nessuna mossa
+   del ciclo di miglioramento sposta un confine di rete: la sua posizione la decide il
+   pezzo a cui e' appeso.
 
-   Il ciclo esaurisce le proprie candidate senza trovarne una che instradi: centonovantotto
-   candidate valide provate, per specie
 
-       stacco 55 · porta 54 · passo 49 · gruppo 26 · catena 9 · porta+spazio 5
+4. LA CESSIONE GRADUALE DI §F NON C'ENTRA, E L'HO PROVATO
 
-   Nessuna mossa di **un pezzo solo** allontana due corsie perpendicolari che nascono a
-   sette millimetri e mezzo l'una dall'altra.
+   Ogni via della scala fallisce sulla **stessa** tratta e con lo **stesso** errore:
 
-5. SU `main` NON ESCE LO STESSO, E PRIMA
+       improved      tolerant=False/True : w2-a ... (134, 80) -> (144, 80)
+       tutte-cedute  tolerant=False/True : w2-a ... (134, 80) -> (144, 80)
+       seeded        tolerant=False/True : w2-a ... (134, 80) -> (144, 80)
 
-       the plant does not fit on any ordinary sheet format:
-       run s3-a on network secondario cannot be routed: no route from (147, 70) to (116, 76):
-       the 6 straight steps the chain needs beyond the port at (116, 76) run into an
-       obstacle at (118, 76)
+   «tutte-cedute» e' il ciclo a cui sono state cedute **tutte** le catene insieme, cioe'
+   piu' di quanto §F conceda: l'esito non cambia di una cella. Cio' che blocca non e'
+   l'invariante della catena intera, e non c'e' niente da cedere.
+
+
+5. LE DUE VIE CHE NON USANO LE FASI SI FERMANO ALTROVE, E PRIMA
+
+       senza-fasi / first:
+       run s3-a on network secondario cannot be routed:
+       no route from (101, 56) to (70, 62): the 6 straight steps the chain needs
+       beyond the port at (70, 62) run into an obstacle at (75, 62)
+
+   E' l'altra famiglia — la corsia di catena di macchina occupata da qualcos'altro — ed
+   e' quella che ferma anche l'impianto 5. Sulle vie con le fasi non si arriva nemmeno a
+   vederla, perche' il confine fuori foglio viene prima.
+
+
+6. CHE COSA CI VUOLE, E NON STA IN QUESTO PACCHETTO
+
+   Il confine di rete va riportato dentro l'area: o appendendolo dal lato dove il foglio
+   c'e' ancora, o riservandogli la colonna che gli serve quando il pezzo a cui pende e'
+   gia' sul bordo. E' `place.py`, la posa dei pezzi appesi, e non e' nel perimetro di
+   DRAW-012: il rapporto lo porta al PM in §7.1.

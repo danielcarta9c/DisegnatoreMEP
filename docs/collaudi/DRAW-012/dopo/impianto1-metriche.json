@@ -4,32 +4,32 @@
     350.0,
     235.0
   ],
-  "impronta": "b4b8bdbfd156cea9f04aa248a473487424546610aa3027490bcb73c2751a9d69",
+  "impronta": "c62024f14b661aeac783952f6556a9651320cacb1492522d630ed8120d570a7c",
   "fogli": [
     {
       "sheet_id": "t1",
       "ingombro_mm": [
-        22.5,
+        25.0,
         76.0,
         347.5,
         191.0
       ],
-      "riempimento_pct": 45.4,
-      "riempimento_senza_il_piu_isolato_pct": 41.6,
-      "copertura_ingombro": 0.734,
-      "quadranti_rapporto": 2.43,
+      "riempimento_pct": 45.1,
+      "riempimento_senza_il_piu_isolato_pct": 41.2,
+      "copertura_ingombro": 0.75,
+      "quadranti_rapporto": 1.94,
       "quadranti_mm2": [
-        1606.8,
-        662.1,
-        1563.4,
-        1486.6
+        1984.9,
+        1030.8,
+        1202.5,
+        1023.8
       ],
       "backtracking_tratte": 0,
       "backtracking_mm": 0.0,
       "incroci": 1,
       "pieghe_totali": 4,
       "tratte_oltre_tre_pieghe": 0,
-      "lunghezza_totale_mm": 782.5,
+      "lunghezza_totale_mm": 762.5,
       "tubo_sotto_simbolo": [],
       "valvole_d120": {
         "valve-isolation-pdc-master-water-supply": {
@@ -80,7 +80,7 @@
         "valve-isolation-accumulo-secondary-in": {
           "caso": "primo",
           "isola": "radiatori",
-          "distanza_mm": 90.864
+          "distanza_mm": 56.403
         },
         "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a": {
           "caso": "ultimo",

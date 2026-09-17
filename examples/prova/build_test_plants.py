@@ -331,7 +331,7 @@ QUATTRO = plant(
         # L'organo che sceglie **da dove la caldaia pesca**: dal primario quando
         # fa riscaldamento, dallo scambiatore quando fa sanitario. Senza, il
         # circuito sanitario dedicato non e' dedicato.
-        ("commutatrice-ritorno", "switching-valve-3way", "VC-01"),
+        ("commutatrice-ritorno", "switching-valve-3way", "VCR-01"),
         # Lo scambiatore sta **in centrale**, fra i collegamenti principali, e
         # non nella distribuzione: e' una macchina del gruppo centrale (I-066).
         ("scambiatore", "plate-heat-exchanger", "SCA-01"),

@@ -1,1 +1,1 @@
-the plant does not fit on any ordinary sheet format: run p4-a on network primario cannot be routed: no route from (52, 70) to (64, 70): the 5 straight steps the chain needs beyond the port at (52, 70) run into an obstacle at (55, 70)
+the plant does not fit on any ordinary sheet format: run w2-a on network sanitaria cannot be routed: no route from (134, 80) to (144, 80): every orthogonal path is blocked

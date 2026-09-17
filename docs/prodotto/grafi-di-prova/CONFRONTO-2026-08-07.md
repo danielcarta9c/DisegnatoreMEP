@@ -43,6 +43,17 @@
 > riempimento; impianto 5, 98 e 97. L'elaborato rifatto è la sola tavola 2 (I-050): la
 > tavola 1 resta una regressione automatica e non viene riconsegnata.
 
+> **Aggiornamento del 17 settembre 2026 (DRAW-012, D-137).** Il conteggio «a N pezzi»
+> dell'**impianto 4** qui sotto è quello di oggi, dopo che hai **sostituito il grafo**
+> dell'ibrido: quello precedente non stava in piedi — nessun ritegno in tutto l'impianto,
+> e il ritorno della caldaia che, mentre faceva sanitario, raccoglieva insieme dal
+> primario e dallo scambiatore. Il grafo nuovo dà **un ritegno a ciascun generatore** e
+> mette un organo di **commutazione sul ritorno** della caldaia, che il catalogo non
+> aveva e che questo pacchetto ha aggiunto. Rispetto al 9 settembre: impianto 4, 43 pezzi
+> allora e **46** oggi — tre pezzi dichiarati, più la ferramenta che le regole attaccano
+> ai due nuovi organi. Gli altri quattro impianti non cambiano di un pezzo. La tavola
+> dell'ibrido **non esce ancora**, e il rapporto di consegna dice dove si ferma.
+
 ---
 
 ## Perché sono cambiati
@@ -85,12 +96,14 @@ all'ingresso dell'acqua fredda.
 Stesse uscite del regime piccolo (separatore, termometro), sfogo e sicurezza sul volano
 in linea, e lo scarico del boiler sull'ingresso freddo.
 
-**4 — Ibrido pompa di calore e caldaia: da 68 a 43 pezzi.**
+**4 — Ibrido pompa di calore e caldaia: da 68 a 46 pezzi.**
 Il ritorno generale è il tratto fra il volume tecnico e il punto in cui il ritorno si
 divide verso le due macchine: lì stanno vaso, riempimento, manometro e l'unico
 defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul volano;
 escono i due separatori, i due termometri e una sicurezza. **Sul circuito sanitario non
-c'è filtro**, come è giusto in un impianto domestico.
+c'è filtro**, come è giusto in un impianto domestico. *(Dal 17 settembre il grafo è
+quello nuovo: un ritegno per generatore e la commutatrice sul ritorno della caldaia —
+vedi l'aggiornamento in testa.)*
 
 **5 — Cascata di tre pompe di calore: da 105 a 93 pezzi.**
 È l'unico dei cinque **sopra i 35 kW** — tre macchine da 35, e non è una centrale
