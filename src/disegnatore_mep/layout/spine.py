@@ -57,7 +57,7 @@ from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import ProjectModel
 
 from .errors import LayoutError
-from .flow import STORE_FUNCTIONS, TrunkKey
+from .flow import BOUNDARY_FUNCTION, STORE_FUNCTIONS, TrunkKey
 from .geometry import PlacedSymbol, Point, RoutedTrunk
 from .grid import GridSpace
 from .hierarchy import (
@@ -185,7 +185,21 @@ def spine_participants(
         for trunk in autostrada_trunks(project, catalog, trunks)
         for ref in (trunk.start, trunk.end)
     }
-    return frozenset(machines | ends)
+    # ⛔ **Un confine di rete non partecipa, per quanto alta sia la sua tratta.**
+    # Il catalogo dice che non ha una posizione propria: sta accanto all'utente
+    # che serve (I-061, `DRAW-009` §A.2, e il commento di `BOUNDARY_FUNCTION`).
+    # Da `DRAW-012` §B l'uscita ACS e' autostrada, e il prelievo sanitario ne e'
+    # un capo: senza questa riga la fase della struttura gli sceglieva una
+    # posizione propria — sulla tavola 2 in cima al foglio, dalla parte opposta
+    # del bollitore che lo alimenta — e la linea del sanitario doveva
+    # attraversare la mandata per raggiungerlo.
+    definitions = {item.id: catalog.get(item.definition_id) for item in project.components}
+    confini = {
+        key
+        for key, value in definitions.items()
+        if BOUNDARY_FUNCTION in value.functions
+    }
+    return frozenset((machines | ends) - confini)
 
 
 def _faces_of(manifest: SymbolManifest, port_map: PortMap, port_id: str) -> PortFace:
@@ -294,11 +308,6 @@ class _Spine:
         self.catalog = catalog
         self.trunks = list(partition.trunks)
         self.levels = hierarchy_of(project, catalog, self.trunks)
-        self.autostrade = [
-            item
-            for item in self.trunks
-            if self.levels[item.connection_ids] is Level.AUTOSTRADA
-        ]
         self.machines = spine_machines(project, catalog)
         self.start: dict[str, PlacedSymbol] = {
             item.component_id: item for item in placed
@@ -309,6 +318,21 @@ class _Spine:
             if item.component_id
             in spine_participants(project, catalog, self.trunks)
         )
+        # Le autostrade **che questa fase posa**: quelle i cui due capi sono
+        # partecipanti. Un'autostrada che finisce su un confine di rete — che
+        # una posizione propria non ce l'ha, e sta accanto all'utente che serve
+        # — resta di rango massimo per il costo e per l'invariante della catena,
+        # ma non e' una tratta che la fase della struttura possa costruire:
+        # costruirla vorrebbe dire scegliere per il confine una posizione che
+        # il catalogo gli nega.
+        partecipanti = frozenset(self.participants)
+        self.autostrade = [
+            item
+            for item in self.trunks
+            if self.levels[item.connection_ids] is Level.AUTOSTRADA
+            and item.start.component_id in partecipanti
+            and item.end.component_id in partecipanti
+        ]
         self.definitions = {
             item.id: item.definition_id for item in project.components
         }
@@ -1188,7 +1212,16 @@ class _Spine:
         symbols = [self.laid[item] for item in self.participants]
         try:
             routes = route_sheet(
-                self.project, list(self.autostrade), symbols, self.catalog, self.grid
+                self.project,
+                list(self.autostrade),
+                symbols,
+                self.catalog,
+                self.grid,
+                # In questa fase il corredo non c'e' ancora: le corsie che le
+                # catene di macchina occuperanno **in fase 2** non si riservano
+                # qui, o la fase della struttura dovrebbe risolvere un problema
+                # che non e' suo (D-138, fasi 1 e 2).
+                reserve_chains=False,
             )
         except LayoutError:
             # **Il tronco costruito non si instrada: si tiene la struttura, non

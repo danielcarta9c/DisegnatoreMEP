@@ -2176,6 +2176,18 @@ class Improver:
         # Nessuna campata del tronco si accorcia: un taglio che stringe da una
         # parte quel che allarga dall'altra non e' un allungamento.
         for trunk in self.autostrade:
+            # ⛔ **Si guardano le campate che una campata ce l'hanno**, cioe' le
+            # tratte rettilinee: e' lo stesso filtro del giro qui sopra, e qui
+            # mancava. Su una tratta a gomito la faccia della porta di partenza
+            # non dice da che parte stia l'altro capo — l'uscita di un radiatore
+            # guarda a destra e il suo accumulo sta a sinistra — e il verso
+            # calcolato da li' e' quello sbagliato: la candidata veniva
+            # annullata sempre. Finche' l'autostrada era il solo circuito dei
+            # generatori di tratte cosi' non ce n'erano; da `DRAW-012` §B lo
+            # sono anche i ritorni dei terminali, e l'allungo spariva
+            # dall'elenco proprio sulle tratte che ne avevano bisogno.
+            if not self.lies_straight(self.best, trunk):
+                continue
             here = trunk.start.component_id
             there = trunk.end.component_id
             if (here in moving) == (there in moving):
@@ -2463,6 +2475,19 @@ class Improver:
                 if not _same_pose(placed, self.best[item])
             }
             if not changed:
+                continue
+            # **Un allungo scorre lungo un asse, mai di traverso**: e' la
+            # ragione per cui conserva ogni allineamento. Il taglio si muove su
+            # un asse solo, ma cio' che si porta dietro no: una figura appesa a
+            # un pezzo che si muove si **riappende**, e riappendendosi puo'
+            # cambiare anche l'altra coordinata. Allora non e' piu' una campata
+            # che cresce, e' un pezzo che scavalca: la candidata si scarta qui,
+            # dove il seguito e' gia' stato aggiunto e si vede per intero.
+            if kind == "allungo" and any(
+                abs(placed.origin.x_mm - self.best[item].origin.x_mm) > _TOLERANCE_MM
+                and abs(placed.origin.y_mm - self.best[item].origin.y_mm) > _TOLERANCE_MM
+                for item, placed in changed.items()
+            ):
                 continue
             key = _signature(dict(sorted(changed.items())))
             if key in seen:

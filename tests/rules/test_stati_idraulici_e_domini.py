@@ -62,6 +62,14 @@ HEATING = "heating_water"
 SAFETY = "safety"
 HEAT_GENERATION = "heat_generation"
 DIVERTER = "diverting-valve-3way"
+SWITCH = "switching-valve-3way"
+"""La commutatrice a tre vie: il **secondo** multivia del catalogo (D-137 §D.2).
+
+Due ingressi e un'uscita, funzione di commutazione: e' l'organo con cui la caldaia
+sceglie da dove pesca — dal primario quando fa riscaldamento, dallo scambiatore
+quando fa sanitario. Senza, mentre fa sanitario pesca da tutt'e due, ed e' il
+«ritorno che torna ovunque» che il PO ha visto guardando la tavola 4. Gli stati
+li ha chiesti il PO, e la riga qui sotto e' il posto in cui si dichiara."""
 GENERIC = "heat-pump-air-water"
 WITH_SAFETY = "heat-pump-air-water-sicurezza-a-bordo"
 WITHOUT_SAFETY = "heat-pump-air-water-sicurezza-non-a-bordo"
@@ -606,10 +614,20 @@ def test_gli_stati_sono_un_dato_e_non_una_riga_di_programma() -> None:
     non lo dichiarano — raccordi, valvole di linea, macchine.
     """
     for definition in catalog().all():
-        if definition.id == DIVERTER:
+        if definition.id in (DIVERTER, SWITCH):
             continue
         assert definition.hydraulic_states == (), (
             f"{definition.id} ha acquisito stati idraulici senza che il PM li "
             f"abbia chiesti"
         )
+    # E i due che li dichiarano li dichiarano davvero, ciascuno con i propri:
+    # la deviatrice manda **un** ingresso su due uscite, la commutatrice porta
+    # **due** ingressi su una uscita, e i due stati non comunicano mai fra loro.
+    stati = {
+        item.id: {tuple(sorted(pair)) for state in item.hydraulic_states for pair in state.connects}
+        for item in catalog().all()
+        if item.id in (DIVERTER, SWITCH)
+    }
+    assert stati[DIVERTER] == {("in", "out_a"), ("in", "out_b")}
+    assert stati[SWITCH] == {("in_a", "out"), ("in_b", "out")}
     assert HydraulicState(id="solo", connects=[["in", "out_a"]]).connects

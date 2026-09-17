@@ -1,0 +1,55 @@
+Perche' la tavola 4 non esce — misurato il 17 settembre 2026, sul ramo di DRAW-012.
+
+1. LA FASE DEL TRONCO ADESSO POSA DAVVERO
+
+   Ventidue pezzi su ventidue si spostano rispetto alla posa iniziale. Su `main` non se
+   ne spostava nessuno: la fase costruiva la forma, le sue linee non si instradavano su
+   un foglio ancora privo di corredo, e la fase consegnava `symbols=()`.
+
+   La posa sta dentro l'area di disegno (x 5..352, y 148..241 su 350 x 235 a partire da
+   10, 16), e le posizioni che contano sono queste:
+
+       deviatrice-caldaia        (130.0, 186.0)  10 x 10  rot 0
+       commutatrice-ritorno      (142.5, 196.0)  10 x 10  rot 180
+
+2. CHE COSA LA FERMA: DUE CORSIE DI CATENA DI MACCHINA CHE SI INCROCIANO
+
+       run p4-a on network primario cannot be routed:
+       no route from (52, 70) to (64, 70): the 5 straight steps the chain needs
+       beyond the port at (52, 70) run into an obstacle at (55, 70)
+
+   In millimetri, con il passo di 2,5 mm e l'origine in (10, 16):
+
+   - la porta (52, 70) e' `deviatrice-caldaia.out_a`, a (140.0, 191.0). La catena che le
+     sta davanti — il ritegno della caldaia e il proprio organo di chiusura — pretende
+     cinque passi di rettilineo verso destra, cioe' fino a (152.5, 191.0);
+   - la cella (55, 70) e' (147.5, 191.0), ed e' dentro la corsia riservata all'altra
+     catena: quella di `commutatrice-ritorno.in_b`, che girata di mezzo giro guarda in
+     alto da (147.5, 196.0);
+   - una corsia di catena e' **riservata** (`route.py`, `corridors`/`elsewhere`): chi ci
+     passa sopra non fa fallire se stesso, fa fallire l'altra catena.
+
+3. NON E' UN VINCOLO DI §C
+
+   Cedendo **tutte e nove** le catene dell'impianto — cioe' togliendo del tutto
+   l'invariante dell'autostrada intera — l'esito non cambia, alla cella:
+
+       tutte-cedute tolerant=False: run p4-a … obstacle at (55, 70)
+       tutte-cedute tolerant=True:  run p4-a … obstacle at (55, 70)
+
+4. NON E' UNA MOSSA CHE IL CICLO SAPPIA FARE
+
+   Il ciclo esaurisce le proprie candidate senza trovarne una che instradi: centonovantotto
+   candidate valide provate, per specie
+
+       stacco 55 · porta 54 · passo 49 · gruppo 26 · catena 9 · porta+spazio 5
+
+   Nessuna mossa di **un pezzo solo** allontana due corsie perpendicolari che nascono a
+   sette millimetri e mezzo l'una dall'altra.
+
+5. SU `main` NON ESCE LO STESSO, E PRIMA
+
+       the plant does not fit on any ordinary sheet format:
+       run s3-a on network secondario cannot be routed: no route from (147, 70) to (116, 76):
+       the 6 straight steps the chain needs beyond the port at (116, 76) run into an
+       obstacle at (118, 76)

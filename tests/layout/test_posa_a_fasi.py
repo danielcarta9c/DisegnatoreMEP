@@ -42,7 +42,18 @@ from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import compose_drawing, inline_component_ids
-from disegnatore_mep.layout.geometry import FlowKind, RoutedTrunk, SheetGeometry
+from disegnatore_mep.layout.flow import BOUNDARY_FUNCTION
+from disegnatore_mep.layout.geometry import (
+    INK_COVERAGE_MIN,
+    SHEET_FILL_MAX_RATIO,
+    SHEET_FILL_MIN_RATIO,
+    FlowKind,
+    RoutedTrunk,
+    SheetGeometry,
+    fill_ratio,
+    ink_box,
+    ink_coverage,
+)
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.hierarchy import Level, hierarchy_of, spine_machines
 from disegnatore_mep.layout.improve import Improver, Phase
@@ -301,11 +312,34 @@ def test_la_fase_del_tronco_posa_solo_la_spina_e_instrada_solo_l_autostrada(
     assert {item.component_id for item in layout.symbols} == atteso
     assert layout.machines == spine_machines(project, registry)
 
+    # Le tratte della fase sono le autostrade **che la fase puo' costruire**:
+    # quelle i cui due capi sono partecipanti. Da `DRAW-012` §B un'autostrada
+    # puo' finire su un **confine di rete** — l'uscita ACS — che una posizione
+    # propria non ce l'ha: sta accanto all'utente che serve (I-061, DRAW-009
+    # §A.2), e sceglierne una qui vorrebbe dire contraddire il catalogo.
     autostrade = autostrada_trunks(project, registry, list(partition.trunks))
-    assert [item.connection_ids for item in layout.trunks] == [
-        item.connection_ids for item in autostrade
+    costruibili = [
+        item
+        for item in autostrade
+        if {item.start.component_id, item.end.component_id} <= atteso
     ]
-    assert len(layout.routes) == len(autostrade)
+    assert [item.connection_ids for item in layout.trunks] == [
+        item.connection_ids for item in costruibili
+    ]
+    assert len(layout.routes) == len(costruibili)
+    fuori = {item.connection_ids for item in autostrade} - {
+        item.connection_ids for item in costruibili
+    }
+    for key in fuori:
+        trunk = next(item for item in autostrade if item.connection_ids == key)
+        capi = {trunk.start.component_id, trunk.end.component_id} - atteso
+        assert all(
+            BOUNDARY_FUNCTION
+            in registry.get(
+                next(item.definition_id for item in project.components if item.id == name)
+            ).functions
+            for name in capi
+        ), capi
 
     # E il resto dell'impianto non partecipa: nessun utilizzatore, nessuna
     # tratta che non sia autostrada.
@@ -327,7 +361,21 @@ def test_la_fase_del_tronco_posa_solo_la_spina_e_instrada_solo_l_autostrada(
 
 @pytest.mark.parametrize("index", range(len(CASI)), ids=CASI_IDS)
 def test_la_fase_del_tronco_consegna_un_tronco_rettilineo(index: int) -> None:
-    """Ogni tratta del tronco e' un rettilineo: una spezzata sola, due punti."""
+    """Ogni tratta del tronco che **puo'** essere un rettilineo lo e'.
+
+    **Riscritta il 17 settembre 2026 da `DRAW-012` §B.** Fino a `DRAW-011` la
+    prova chiedeva zero tratte storte e `impossible` vuoto, e lo poteva chiedere
+    perche' il tronco era il solo circuito dei generatori: li' ogni coppia di
+    porte si guarda. Con **D-138** sono autostrada anche la strada verso i
+    terminali e l'uscita ACS, e ci sono coppie che **nessuna posa ammessa dal
+    catalogo** mette una di fronte all'altra — l'uscita di un radiatore e
+    l'ingresso secondario di un accumulo guardano tutt'e due a destra.
+
+    Il criterio non si allenta: si pretende che le storte siano **esattamente**
+    quelle che la fase dichiara impossibili, non una di piu'. E' lo stesso
+    contratto che la prova sulle due tavole vere usa da `DRAW-008`, e
+    «impossibile» lo calcola il motore sul catalogo, non la prova.
+    """
     project = _completato(index)
     registry = catalog()
     inline = inline_component_ids(project, registry)
@@ -336,13 +384,16 @@ def test_la_fase_del_tronco_consegna_un_tronco_rettilineo(index: int) -> None:
     layout = lay_the_spine(project, partition, registry, NOVE_C_A3, first)
 
     assert layout.routes, "la fase deve instradare qualcosa"
-    storte = [
-        (trunk.start.component_id, trunk.end.component_id)
+    assert layout.routed
+    storte = {
+        trunk.connection_ids
         for trunk, route in zip(layout.trunks, layout.routes, strict=True)
         if _pieghe(route) > 0
-    ]
-    assert not storte, storte
-    assert layout.impossible == ()
+    }
+    assert storte == set(layout.impossible), sorted(
+        storte.symmetric_difference(layout.impossible)
+    )
+    assert layout.is_straight
 
 
 @pytest.mark.parametrize("path", (TAVOLA_1, TAVOLA_2), ids=("tavola-1", "tavola-2"))
@@ -365,12 +416,33 @@ def test_sulle_due_tavole_ogni_autostrada_che_puo_essere_dritta_lo_e(
     layout = lay_the_spine(project, partition, registry, NOVE_C_A3, first)
     impossibili = set(layout.impossible)
 
+    # **Quelle che la fase costruisce**: le autostrade i cui due capi sono
+    # partecipanti. Da `DRAW-012` §B un'autostrada puo' finire su un confine di
+    # rete — l'uscita ACS — e un confine una posizione propria non ce l'ha: sta
+    # accanto all'utente che serve (I-061, `DRAW-009` §A.2). Quella tratta non
+    # e' nella promessa della fase, e la prova lo dice invece di allargare la
+    # promessa: le si chiede solo di essere nominata.
+    sue = {item.connection_ids for item in layout.trunks}
+    tutte = {
+        trunk.connection_ids: trunk
+        for trunk, _route in _autostrade_del_foglio(project, _tavola(path))
+    }
+    fuori = set(tutte) - sue
+    confini = {
+        item.id
+        for item in project.components
+        if BOUNDARY_FUNCTION in registry.get(item.definition_id).functions
+    }
+    for key in fuori:
+        capi = {tutte[key].start.component_id, tutte[key].end.component_id}
+        assert capi & confini, key
+
     storte = {
         trunk.connection_ids
         for trunk, route in _autostrade_del_foglio(project, _tavola(path))
         if _pieghe(route) > 0
     }
-    assert storte <= impossibili, sorted(storte - impossibili)
+    assert (storte & sue) <= impossibili, sorted((storte & sue) - impossibili)
 
 
 def test_la_tavola_2_dichiara_quale_tratta_non_puo_essere_un_rettilineo() -> None:
@@ -399,6 +471,13 @@ def test_la_tavola_2_dichiara_quale_tratta_non_puo_essere_un_rettilineo() -> Non
     assert nomi == [
         ("bollitore", "ritorno"),
         ("deviatrice", "bollitore"),
+        # La terza e' arrivata con `DRAW-012` §B, ed e' della stessa specie: il
+        # ritorno dei ventilconvettori al volano e' adesso autostrada, e le sue
+        # due porte guardano **dalla stessa parte** — l'uscita del terminale e
+        # l'ingresso secondario dell'accumulo. Nessuna posa ammessa le mette una
+        # di fronte all'altra, e la fase lo dichiara invece di lasciarla passare
+        # per una posa mancata.
+        ("ventilconvettori", "volano"),
     ], nomi
 
     # E la ragione, letta sul catalogo e non sul disegno: la porta del
@@ -745,7 +824,22 @@ def test_sulla_tavola_2_la_macchina_principale_e_l_accumulo_maggiore_sono_in_ass
     macchina = _porte_di_autostrada(project, sheet, "pdc")
     accumulo = _porte_di_autostrada(project, sheet, "volano")
     assert set(macchina) == {"water_supply", "water_return"}
-    assert set(accumulo) == {"primary_in", "primary_out"}
+    # Da `DRAW-012` §B anche il **secondario** del volano e' autostrada — e'
+    # la strada che dagli accumuli va ai circolatori e da li' ai terminali —
+    # quindi le porte di autostrada dell'accumulo sono quattro. Cio' che questa
+    # prova guarda resta il **primario**, che e' l'asse di cui parla
+    # l'architettura §4: le altre due si nominano per dire che ci sono.
+    assert set(accumulo) == {
+        "primary_in",
+        "primary_out",
+        "secondary_in",
+        "secondary_out",
+    }
+    accumulo = {
+        name: value
+        for name, value in accumulo.items()
+        if name in {"primary_in", "primary_out"}
+    }
     assert macchina["water_supply"] == pytest.approx(accumulo["primary_in"])
     assert macchina["water_return"] == pytest.approx(accumulo["primary_out"])
     assert macchina["water_supply"] != macchina["water_return"]
@@ -821,8 +915,28 @@ def test_sulla_tavola_1_il_tronco_e_dritto_e_la_rete_ordinaria_non_peggiora() ->
     project = _fixture(TAVOLA_1)
     sheet = _tavola(TAVOLA_1)
     autostrade = _autostrade_del_foglio(project, sheet)
-    assert len(autostrade) == 8
-    assert all(_pieghe(route) == 0 for _trunk, route in autostrade)
+    # **Tredici, ed erano otto.** Da `DRAW-012` §B sono autostrada anche la
+    # strada dall'accumulo ai terminali, il suo ritorno, l'uscita ACS e le
+    # tratte del **secondo** generatore: il conto cresce perche' cresce cio' che
+    # il motore considera struttura, non perche' la tavola sia cambiata.
+    assert len(autostrade) == 13
+    storte = {
+        trunk.connection_ids
+        for trunk, route in autostrade
+        if _pieghe(route) > 0
+    }
+    # Le storte sono esattamente quelle che la fase dichiara impossibili: le
+    # due tratte della seconda pompa di calore, che arriva al collettore da
+    # un'altra quota, e il ritorno del radiatore, che guarda dalla stessa parte
+    # dell'ingresso secondario dell'accumulo.
+    registry = catalog()
+    inline = inline_component_ids(project, registry)
+    partition = _partizione(project)
+    first = place_sheet(project, partition, registry, NOVE_C_A3, inline)
+    layout = lay_the_spine(project, partition, registry, NOVE_C_A3, first)
+    assert storte == set(layout.impossible), sorted(
+        storte.symmetric_difference(layout.impossible)
+    )
 
     pieghe = 0
     incroci = 0
@@ -849,7 +963,25 @@ def test_sulla_tavola_1_il_tronco_e_dritto_e_la_rete_ordinaria_non_peggiora() ->
         )
     assert pieghe <= 6, pieghe
     assert incroci <= 3, incroci
-    assert lunghezza <= 550.0 + TOLERANCE_MM, lunghezza
+    # ⛔ **La lunghezza non e' piu' un tetto** (**D-139**). Il PO: «i mm non sono
+    # un vero costo da misurare, lo e' piu' avere un buon riempimento, ne'
+    # troppo poco ne' troppo». Resta la misura, e si legge: ci si tiene larghi,
+    # quindi cresce, ed e' il segno che il metro e' cambiato — non un budget
+    # sfondato. Cio' che resta un tetto sono i due costi veri, le curve e gli
+    # attraversamenti, e sono qui sopra.
+    assert lunghezza > 0.0
+    # E il riempimento, che al posto della lunghezza e' diventato la voce, sta
+    # **dentro la finestra** di D-140, con la copertura dell'ingombro che la
+    # guarda (D-141): e' il criterio 7 del pacchetto letto sulla tavola 1, che
+    # prima della finestra stava al 29,8 %.
+    area = NOVE_C_A3.drawing_rect_mm
+    rect = (area.x_mm, area.y_mm, area.right_mm, area.bottom_mm)
+    riempimento = fill_ratio(sheet.symbols, sheet.routes, rect)
+    assert SHEET_FILL_MIN_RATIO <= riempimento <= SHEET_FILL_MAX_RATIO, riempimento
+    assert (
+        ink_coverage(sheet.symbols, sheet.routes, ink_box(sheet.symbols, sheet.routes))
+        >= INK_COVERAGE_MIN
+    )
 
 
 # ---------------------------------------------------------------------------
