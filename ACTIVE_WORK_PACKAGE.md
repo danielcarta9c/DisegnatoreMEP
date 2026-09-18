@@ -4,11 +4,24 @@
 **Assegnato da:** PM (Claude — `OPERATING_MODEL.md` §1.2.1)
 **Assegnato a:** DEV
 **Data:** 2026-09-18
-**Stato:** **BOZZA — da approvare dal PO prima che il lavoro cominci.**
+**Stato:** **ATTIVO.** Sostituisce `DRAW-012`, respinto con la PR #41 il 18 settembre. Il PO ha
+dato il via libera il 18 settembre, chiedendo come lanciarlo; le quattro disposizioni che lo
+motivano — **D-142, D-143, D-144, D-145** — sono sue e sono dello stesso giorno
 **Release:** 0.3 — generalizzazione, revisione della tavola 2
 **Ramo:** quello che la piattaforma assegna alla sessione. Il pacchetto **non ne prescrive uno**
-**Commit di partenza:** **`17ff425`, la testa del ramo di `DRAW-012`** (`claude/hopeful-ramanujan-9bs0cb`).
-**Non** la testa di `main`: il lavoro di `DRAW-012` non va rifatto, va corretto
+**Commit di partenza:** il lavoro di `DRAW-012` **non va rifatto, va corretto**, e questo pacchetto
+vive su `main`. Quindi, come **primo atto della sessione**, prima di leggere il codice:
+
+```
+git checkout -b <ramo-della-sessione> origin/main
+git merge origin/claude/hopeful-ramanujan-9bs0cb     # la testa di DRAW-012, 17ff425
+```
+
+Il ramo porta così il codice di `DRAW-012` **e** le disposizioni correnti. Se il merge dà
+conflitti, si risolvono tenendo il codice di `DRAW-012` e i documenti di `main`: i due insiemi
+non si sovrappongono, salvo `ACTIVE_WORK_PACKAGE.md` e `PROJECT_STATE.md`, dove vince `main`.
+**Il primo commit del ramo è quel merge**, da solo, così la revisione vede dove finisce
+`DRAW-012` e dove comincia `DRAW-013`
 **Fixture grafica principale:** impianto 1 e impianto 2; impianto 4 come misura
 
 > **Leggere prima:** `docs/pm/2026-09-18-review-pr41-draw012.md` — il verdetto sulla PR #41, che
@@ -222,8 +235,8 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
 ## Consegna
 
-Una PR sola, non fusa, **sopra il ramo di `DRAW-012`**, in modo che la PR contenga tutto il
-lavoro dei due pacchetti. Rapporto in `docs/collaudi/DRAW-013/RAPPORTO.md`, pacchetto grafico
+Una PR sola verso `main`, non fusa, che contiene **tutto il lavoro dei due pacchetti**: il merge
+di `DRAW-012` come primo commit e le correzioni di `DRAW-013` sopra. Rapporto in `docs/collaudi/DRAW-013/RAPPORTO.md`, pacchetto grafico
 `prima/` e `dopo/` per le tavole 1, 2 e 4 — dove `prima/` è **il ramo di partenza**, non `main`.
 
 **Prima di aprire la PR:**

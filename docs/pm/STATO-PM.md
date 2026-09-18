@@ -41,7 +41,7 @@ modello da riusare.
 |---|---|
 | `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR #33, che porta il triage degli input, il verdetto sulla PR #32 e DRAW-011 |
 | Release dichiarata | **0.3 — generalizzazione, impianto 2** (`docs/plans/2026-09-03-release-plan.md`) |
-| Pacchetto attivo | **DRAW-013** (`ACTIVE_WORK_PACKAGE.md`): la tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la sua forma (D-142, D-143, D-144, D-145). **BOZZA da approvare dal PO.** Parte dal ramo di `DRAW-012`, non da `main` |
+| Pacchetto attivo | **DRAW-013** (`ACTIVE_WORK_PACKAGE.md`): la tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la sua forma (D-142, D-143, D-144, D-145). **Attivo, approvato dal PO il 18 settembre.** Parte dal ramo di `DRAW-012`, non da `main` |
 | PR #41 (DRAW-012) | **verificata e respinta.** Tredici criteri su sedici, nessuno barato, rapporto onesto — ma il PO ha guardato le tavole e ha detto «era meglio prima». Verdetto in `docs/pm/2026-09-18-review-pr41-draw012.md`. **Il suo lavoro non è su `main`, e non va rifatto**: `DRAW-013` riparte dal ramo `claude/hopeful-ramanujan-9bs0cb` (`17ff425`) |
 | PR #32 (DRAW-010) | verificata e respinta il 15 settembre. Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`. Il suo lavoro non è su `main` |
 | Ultima consegna verificata | **DRAW-012**, PR #41. Torna al DEV con `DRAW-013` |

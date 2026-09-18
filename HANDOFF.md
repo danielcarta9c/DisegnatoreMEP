@@ -86,8 +86,7 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
   tutta insieme, in proporzione) e **D-143** (il disegno non tocca il bordo; margine
   variabile). **Il suo lavoro non va rifatto**: la struttura, le autostrade e l'invariante
   della catena intera restano validi.
-- Il pacchetto attivo è **`DRAW-013`** (`ACTIVE_WORK_PACKAGE.md`), in **bozza da approvare
-  dal PO**: la tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la
+- Il pacchetto attivo è **`DRAW-013`** (`ACTIVE_WORK_PACKAGE.md`): la tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la
   forma che il PO ha dettato come best practice il 18 settembre (**D-144**: dritto dal
   circolatore, una curva, la dorsale, i terminali a pettine) e gli organi di servizio tornano
   addosso al pezzo che servono come **vincolo** e non come costo (**D-145**). **Parte dal ramo di
