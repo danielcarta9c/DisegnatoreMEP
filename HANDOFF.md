@@ -87,7 +87,10 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
   variabile). **Il suo lavoro non va rifatto**: la struttura, le autostrade e l'invariante
   della catena intera restano validi.
 - Il pacchetto attivo è **`DRAW-013`** (`ACTIVE_WORK_PACKAGE.md`), in **bozza da approvare
-  dal PO**: la tavola si allarga tutta insieme e non tocca il bordo. **Parte dal ramo di
+  dal PO**: la tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la
+  forma che il PO ha dettato come best practice il 18 settembre (**D-144**: dritto dal
+  circolatore, una curva, la dorsale, i terminali a pettine) e gli organi di servizio tornano
+  addosso al pezzo che servono come **vincolo** e non come costo (**D-145**). **Parte dal ramo di
   `DRAW-012`** (`claude/hopeful-ramanujan-9bs0cb`, `17ff425`), non dalla testa di `main`.
 - **Chi tocca la posa legge prima l'analisi del 16 settembre**,
   `docs/pm/2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md`: le cinque differenze
