@@ -103,8 +103,19 @@ una **sessione separata**, esegue soltanto il pacchetto attivo, apre la PR e si 
 4. **La suite si riesegue per intero**, sui due lati, e non ci si fida del numero dichiarato
    dal DEV.
 5. **Il verdetto è scritto**, criterio per criterio, e vive in `docs/pm/`.
+6. **Le tavole arrivano al PO, sempre, e per prime** (**D-146**). Quando il PM riferisce al PO
+   — al verdetto, e comunque **prima** di proporre una fusione — la prima cosa che consegna sono
+   **le tavole**, prima di qualunque numero, criterio o racconto. Se non ne è uscita nessuna, lo
+   dice per primo. La regola non si salta perché i criteri sono tutti raggiunti, perché la
+   consegna è parziale, o perché il PO non le ha chieste. **La ragione è misurata**: su
+   `DRAW-010` i quattro difetti veri li ha visti il PO e non le misure; su `DRAW-012` il PM aveva
+   chiuso la verifica criterio per criterio ed era orientato a proporre la fusione, e il PO l'ha
+   ribaltata guardando due PDF. Due giri su due il giudizio che conta è arrivato dal suo occhio,
+   e tutte e due le volte perché **lui** ha chiesto le tavole. Il PO: «altrimenti come PO non ho
+   nulla da verificare e non posso contribuire. Rischiamo che tu come PM e il DEV prendiate
+   qualche deriva.»
 
-**Una sesta regola, nata dalla verifica di `DRAW-009`.** Si misura anche **ciò che il
+**Una settima regola, nata dalla verifica di `DRAW-009`.** Si misura anche **ciò che il
 pacchetto dichiara fuori perimetro**, quando è una capacità che il prodotto aveva. L'impianto
 4 produceva una tavola prima di `DRAW-009` e non la produce dopo; nessun criterio lo
 chiedeva, nessuna prova lo sorvegliava, e la verifica non se n'è accorta perché quella misura
@@ -140,8 +151,14 @@ Sei divieti, senza eccezioni:
 6. **Non sostituisce, reinterpreta o annulla una soluzione prescritta dal PO** perché ne
    ritiene preferibile un'altra (§1.1.1). La propone e aspetta una nuova decisione.
 
-E una regola di consegna: **il DEV non dichiara autonomamente completato il proprio
+E due regole di consegna. La prima: **il DEV non dichiara autonomamente completato il proprio
 lavoro.** Consegna e aspetta il verdetto del PM.
+
+La seconda, **D-146**, e non ha eccezioni: **ogni consegna porta le tavole prodotte, in PDF**,
+una per ogni impianto di prova che ne produce una, e il rapporto **le elenca in testa** invece di
+lasciarle in una cartella. **Per ogni impianto che non produce una tavola, il rapporto lo dice
+esplicitamente e dice dove si ferma**: «non esce nessuna tavola» e' esso stesso il segnale di
+prodotto piu' importante, e non deve essere una cosa che il PO scopre chiedendo.
 
 ---
 

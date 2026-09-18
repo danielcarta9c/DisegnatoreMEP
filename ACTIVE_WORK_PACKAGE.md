@@ -236,7 +236,13 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
 ## Consegna
 
 Una PR sola verso `main`, non fusa, che contiene **tutto il lavoro dei due pacchetti**: il merge
-di `DRAW-012` come primo commit e le correzioni di `DRAW-013` sopra. Rapporto in `docs/collaudi/DRAW-013/RAPPORTO.md`, pacchetto grafico
+di `DRAW-012` come primo commit e le correzioni di `DRAW-013` sopra.
+
+**Le tavole, per prime** (**D-146**, regola permanente e senza eccezioni). Il rapporto si apre con
+l'elenco delle **tavole prodotte in PDF**, una per ogni impianto di prova che ne produce una, con
+il percorso di ciascuna; e per ogni impianto che **non** produce una tavola dice esplicitamente
+che non esce e dove si ferma. Non si lasciano in una cartella perché qualcuno le cerchi: è il PO
+che giudica il prodotto, e senza le tavole non ha nulla da giudicare. Rapporto in `docs/collaudi/DRAW-013/RAPPORTO.md`, pacchetto grafico
 `prima/` e `dopo/` per le tavole 1, 2 e 4 — dove `prima/` è **il ramo di partenza**, non `main`.
 
 **Prima di aprire la PR:**

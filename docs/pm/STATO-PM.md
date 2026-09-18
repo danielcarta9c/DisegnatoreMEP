@@ -51,7 +51,7 @@ modello da riusare.
 | Tavola 2 su `main` | 5 pieghe · 1 incrocio · 600,0 mm · riempimento 50,1 % · copertura 0,625 · ingombro 257,5 × 160 mm |
 | Tavole sul ramo di DRAW-012 | 1 · 4/1 · 45,1 % · 0,750 · 322,5 × 115 mm — 2 · 5/1 · 64,1 % · 0,750 · 315 × 167,5 mm. **Bocciate dal PO**: riempimento comprato allungando i tratti, e disegno fino quasi al bordo |
 | Impianti 3, 4, 5 | nessuno produce una tavola, né su `main` né sul ramo di `DRAW-012`. La tavola 4 si ferma su un confine di rete posato dieci millimetri fuori dall'area di disegno |
-| Registro degli input | **12 righe aperte + 4 regole permanenti**, su 67. I-073 … I-076 del 18 settembre sono chiuse da D-142, D-143, D-144 e D-145 |
+| Registro degli input | **12 righe aperte + 4 regole permanenti**, su 68. I-073 … I-076 del 18 settembre sono chiuse da D-142 … D-145; **I-077 è una regola permanente nuova** (D-146: le tavole al PO, sempre e per prime) |
 | Prodotto in chat | **mai eseguito nel suo ambiente finale.** È il rischio 1, il più vecchio |
 
 Il verdetto completo su DRAW-009, con tutte le misure e i comandi, sta in
@@ -62,7 +62,13 @@ verdetto.
 
 `DRAW-013` chiede quindici criteri. Quando arriva la PR:
 
-0. **Prima guardi la tavola, poi conti.** È la regola nata il 15 settembre, sulla consegna di
+0. **Prima guardi la tavola, poi conti — e poi la mandi al PO** (**D-146**, regola permanente).
+   Le tavole prodotte gli arrivano **per prime**, prima di qualunque numero o criterio, e se non
+   ne è uscita nessuna glielo dici per primo. Non aspetti che le chieda: su `DRAW-010` e su
+   `DRAW-012` il giudizio che conta è arrivato dal suo occhio, e tutte e due le volte perché le
+   ha chieste lui. Il PO: «altrimenti come PO non ho nulla da verificare e non posso contribuire.
+   Rischiamo che tu come PM e il DEV prendiate qualche deriva.»
+   **Prima guardi la tavola, poi conti.** È la regola nata il 15 settembre, sulla consegna di
    DRAW-010 (`I-064`): il PM aveva portato al PO pieghe, incroci e lunghezza senza aver letto
    il disegno, e i quattro difetti veri — il prelievo tornato al centro del foglio, lo stretch
    mai avvenuto, lo scarico che attraversa la mandata, la tavola 4 illeggibile — li ha visti
