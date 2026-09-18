@@ -271,3 +271,66 @@ Verdetto della consegna precedente in `docs/pm/2026-09-14-review-pr27-draw009.md
 del DEV in `docs/collaudi/DRAW-009/RAPPORTO.md`; architettura della posa a fasi in
 `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`, che resta da leggere per intera
 prima del pacchetto.
+
+---
+
+## Consegna in revisione — DRAW-012 (scritta dal DEV, 17 settembre 2026)
+
+`DRAW-012 — il motore disegna nell'ordine del disegnatore` è consegnato in una PR non fusa,
+dalla testa di `main` (`8589620`). Rapporto e artefatti: `docs/collaudi/DRAW-012/`.
+
+**Che cosa cambia nel motore**
+
+- **La gerarchia**: sono macchine di spina **tutti** i generatori, gli scambiatori, gli
+  accumuli e i collettori; è autostrada anche la strada che dagli accumuli porta ai
+  terminali e al prelievo sanitario, con il circolatore dentro la tratta. L'ingresso
+  dell'acqua fredda resta uno stacco di servizio, riconosciuto dal verso della porta del
+  confine di rete.
+- **`layout/highways.py`** è nuovo: l'**autostrada intera**, la catena di tratte che
+  attraversa i propri crocevia, con l'invariante verificato su di lei e non su ogni
+  frammento.
+- **Il costo** non guarda più i millimetri (D-139): restano curve e attraversamenti, e il
+  riempimento entra come **finestra** 45–65 % (D-140) letta insieme alla copertura
+  dell'ingombro (D-141). La finestra è un dato condiviso fra costo e preflight, che adesso
+  avvisa anche quando il foglio è troppo pieno.
+- **Quando la struttura non si instrada non si butta la fase**: si cede una catena per
+  volta, e il diario della composizione dice con quale via la tavola è uscita.
+- **Il caso di prova 4** è quello di D-137, e il catalogo ha la **commutatrice a tre vie**
+  (`switching-valve-3way`, funzione `circuit_switching`, famiglia **VCR**). Il documento
+  pubblicato dell'impianto 4 e il confronto per il PM sono rigenerati con il grafo nuovo:
+  43 pezzi il 9 settembre, **46** oggi.
+
+**Le misure**
+
+| | tavola 1 | tavola 2 |
+|---|---|---|
+| riempimento | 29,8 % → **45,1 %** | 50,1 % → **64,1 %** |
+| copertura ingombro | 0,625 → **0,750** | 0,625 → **0,750** |
+| curve | 4 → 4 | 5 → 5 |
+| attraversamenti | 1 → 1 | 1 → 1 |
+| squilibrio quadranti | 2,11 → **1,94** | 32,5 → **8,16** |
+| larghezza occupata | 245 → **322,5 mm** | 257,5 → **315 mm** |
+
+Tutt'e due dentro la finestra 45–65 %, con la copertura dell'ingombro che sale insieme al
+riempimento (D-141) e **nessun peggioramento** su curve e attraversamenti.
+
+**La suite**
+
+Su `main` 10 rosse, 1470 verdi, 24 saltate, 11 xfailed. Qui le rosse sono **13**: il
+criterio 13 del pacchetto **non è raggiunto**, e le tre in più sono tutte in
+`tests/layout/test_stacchi_minimi_e_interasse.py`, sulle due fixture
+`*_con_accumulo_combinato`. Due di loro non falliscono su un'asserzione: falliscono perché
+la tavola non esce. Nessuna prova è stata spenta per far quadrare il saldo; il rapporto
+§7.7 porta le cinque misure con cui ho provato a chiuderle.
+
+**Che cosa resta aperto, e sta nel rapporto §7**
+
+1. **D-060 e D-138 si contendono la stessa coordinata**, ed è una domanda al PO: fra due
+   zone impilate e una strada di ritorno rettilinea, quale delle due vuole. È la sola cosa
+   che la consegna toglie — una prova di `test_objective.py` — ed è dichiarata.
+2. Due **corsie di catena di macchina** che si incrociano non le separa nessuna mossa di un
+   pezzo solo: è ciò che ferma le tavole 4 e 5, e in altra forma la 3. Gli impianti che
+   producono una tavola restano 1 e 2, come su `main`.
+3. L'ordine di instradamento e il rango sono la stessa chiave, e con la gerarchia nuova
+   quella chiave governa una classe molto più grande. I confini di rete finiscono lontani
+   dal pezzo che servono, e nessun numero se ne accorge.

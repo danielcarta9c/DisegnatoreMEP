@@ -26,6 +26,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
 from disegnatore_mep.layout.geometry import (
     QUADRANT_IMBALANCE_MAX,
+    SHEET_FILL_MAX_RATIO,
     SHEET_FILL_MIN_RATIO,
     DrawingGeometry,
     PlacedLabel,
@@ -795,6 +796,22 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
                     f"la tavola {sheet.sheet_id}: il foglio e' pieno solo al "
                     f"{ratio * 100:.0f}%, sotto il {SHEET_FILL_MIN_RATIO * 100:.0f}% "
                     f"dichiarato: il disegno e' una fascia, non una tavola (A1)",
+                    [sheet.sheet_id],
+                )
+            )
+        # **E l'altra sponda della finestra** (D-140): il riempimento non e' una
+        # scala, e' un intervallo. Sopra il tetto il disegno e' fitto e non ci
+        # sta piu' lo spazio per le sigle dei componenti — che e' la ragione per
+        # cui il PO ha voluto una finestra invece di una soglia.
+        if ratio > SHEET_FILL_MAX_RATIO:
+            findings.append(
+                _finding(
+                    "SHEET_TOO_FULL",
+                    IssueSeverity.WARNING,
+                    f"la tavola {sheet.sheet_id}: il foglio e' pieno al "
+                    f"{ratio * 100:.0f}%, sopra il {SHEET_FILL_MAX_RATIO * 100:.0f}% "
+                    f"dichiarato: non resta lo spazio per le sigle dei componenti "
+                    f"(D-140)",
                     [sheet.sheet_id],
                 )
             )

@@ -198,24 +198,33 @@ def _cost(**overrides: float) -> SheetCost:
         long_runs=0,
         bends=4,
         crossings=1,
-        length_mm=200.0,
-        fill=0.30,
+        fill=0.55,
+        coverage=0.80,
         imbalance=2.0,
+        length_mm=200.0,
     )
     base.update(overrides)
     return SheetCost(**base)  # type: ignore[arg-type]
 
 
 def test_l_ordine_del_costo_e_quello_del_pacchetto() -> None:
-    """Le otto voci, nell'ordine dichiarato, e nessuna che pesi le altre."""
-    assert SheetCost._fields[:7] == (
+    """Le voci di costo, nell'ordine dichiarato, e nessuna che pesi le altre.
+
+    **Riscritta il 17 settembre 2026 da `DRAW-012` §D.** Fino a `DRAW-011` le
+    voci in fila erano sette e la settima era `length_mm`; il PO l'ha tolta
+    (**D-139**): «i mm non sono un vero costo da misurare, lo e' piu' avere un
+    buon riempimento, ne' troppo poco ne' troppo». Restano i costi veri — le
+    curve e, in secondo luogo, gli attraversamenti — e al posto della lunghezza
+    entra il **riempimento dentro la propria finestra**. La lunghezza resta
+    nella tupla, e si riporta: come misura, non come giudizio.
+    """
+    assert SheetCost._fields[:6] == (
         "violations",
         "turnback_runs",
         "turnback_mm",
         "long_runs",
         "bends",
         "crossings",
-        "length_mm",
     )
     # Ogni voce comanda su tutte quelle che la seguono: una geometria peggiore
     # di uno su una voce non si compra con nessun guadagno su quelle dopo.
@@ -225,11 +234,11 @@ def test_l_ordine_del_costo_e_quello_del_pacchetto() -> None:
         long_runs=0,
         bends=0,
         crossings=0,
-        length_mm=1.0,
-        fill=0.99,
+        fill=0.55,
+        coverage=1.0,
         imbalance=1.0,
     )
-    for index, field in enumerate(SheetCost._fields[:7]):
+    for index, field in enumerate(SheetCost._fields[:6]):
         better = _cost()
         # La stessa tavola, migliore su tutto cio' che viene dopo `field`...
         rival_values = {
@@ -244,19 +253,28 @@ def test_l_ordine_del_costo_e_quello_del_pacchetto() -> None:
         assert not rival.beats(better), field
 
 
-def test_nessun_aumento_di_riempimento_compra_tubo_pieghe_incroci_o_backtracking() -> None:
-    """Riempimento e bilanciamento sono spareggi, mai ragioni per pagare (§2)."""
-    compact = _cost(fill=0.20, imbalance=5.0)
-    for field in ("length_mm", "crossings", "bends", "long_runs", "turnback_mm", "turnback_runs"):
-        spread = _cost(fill=0.90, imbalance=1.0)
+def test_nessun_riempimento_compra_pieghe_incroci_o_backtracking() -> None:
+    """Il riempimento e' una **finestra**, non una ragione per pagare (D-139).
+
+    **Riscritta il 17 settembre 2026 da `DRAW-012` §D**: la lunghezza esce
+    dall'elenco di cio' che il riempimento non puo' comprare, perche' non e'
+    piu' un costo. Tutto il resto resta com'era, ed e' il punto: una tavola con
+    una piega in piu' non si giustifica con un foglio meglio riempito.
+    """
+    compact = _cost(fill=0.20, coverage=0.4, imbalance=5.0)
+    for field in ("crossings", "bends", "long_runs", "turnback_mm", "turnback_runs"):
+        spread = _cost(fill=0.55, coverage=1.0, imbalance=1.0)
         spread = spread._replace(**{field: getattr(compact, field) + 1})
         assert compact.beats(spread), field
-    # A geometria uguale sulle sette voci, il foglio piu' pieno e piu'
-    # bilanciato vince: e' l'unico posto in cui le due misure contano.
-    assert _cost(fill=0.50).beats(_cost(fill=0.30))
+    # A geometria uguale sulle sei voci decide il riempimento, e decide **dentro
+    # la finestra**: si perde a stare sotto come a stare sopra.
+    assert _cost(fill=0.55).beats(_cost(fill=0.30))
+    assert _cost(fill=0.55).beats(_cost(fill=0.85))
     assert _cost(imbalance=1.5).beats(_cost(imbalance=2.0))
     assert not _cost().beats(_cost())
-    # E la distensione come obiettivo autonomo non esiste piu' (§2).
+    # E la distensione come obiettivo autonomo non esiste piu' (§2): una
+    # finestra non e' un traguardo, ed e' la ragione per cui D-139 puo'
+    # modificare D-134 senza contraddirla.
     for name in ("FILL_TARGET_RATIO", "SPREAD_STEPS", "MAX_SPREAD_TRIALS", "_spread_out"):
         assert not hasattr(improve, name), name
 
@@ -272,13 +290,19 @@ def test_il_limite_di_ricerca_e_dichiarato() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_una_posa_compatta_batte_una_posa_equidistante() -> None:
-    """Stesse macchine, stessa topologia: chi allunga il tubo perde.
+def test_allontanare_le_macchine_non_costa_piu_tubo() -> None:
+    """Stesse macchine, stessa topologia, solo piu' tubo: **e' indifferente**.
 
-    La posa «equidistante» e' la stessa posa iniziale con l'accumulo e il
-    terminale allontanati di quattro e otto centimetri: nessuna piega in piu',
-    nessun incrocio, solo tubo. Il confronto la boccia, e il miglioratore,
-    partendo da lei, torna a una geometria che non costa piu' della compatta.
+    **Riscritta il 17 settembre 2026 da `DRAW-012` §D.** Fino a `DRAW-011` la
+    prova si chiamava «una posa compatta batte una posa equidistante» e chiedeva
+    esattamente cio' che il PO ha tolto: che chi allunga il tubo perda. Il PO
+    (**D-139**): «continuo a pensare che i mm non siano un vero parametro. Anche
+    perche' un disegno ben fatto e' anche comodo e ho spazio per mettere i tag».
+
+    Cio' che resta vero — ed e' il punto — e' che allontanare le macchine non
+    deve **peggiorare** niente d'altro: le due pose differiscono per il solo
+    tubo, e sulle voci vere — pieghe e attraversamenti — sono pari. Chi vince
+    lo decide il riempimento, che e' un'altra prova.
     """
     project = generatore_accumulo_terminale()
     compact = _posa(project)
@@ -290,14 +314,16 @@ def test_una_posa_compatta_batte_una_posa_equidistante() -> None:
     compact_cost = improver.measure(compact)
     spread_cost = improver.measure(spread)
     assert compact_cost is not None and spread_cost is not None
+    # La posa larga e' piu' lunga — la misura c'e' ancora e si legge...
     assert compact_cost.cost.length_mm < spread_cost.cost.length_mm
-    assert compact_cost.cost.beats(spread_cost.cost)
-
-    improved = improve_sheet(project, improver.partition, catalog(), NOVE_C_A3, spread, improver.inline_ids)
-    improved_cost = improver.measure(improved)
-    assert improved_cost is not None
-    assert not compact_cost.cost.beats(improved_cost.cost)
-    assert improved_cost.cost.length_mm < spread_cost.cost.length_mm
+    # ...ma non decide: sulle voci di costo le due pose non differiscono per
+    # la lunghezza, e il confronto non la guarda.
+    assert compact_cost.cost.key()[:6] == spread_cost.cost.key()[:6]
+    solo_la_lunghezza = compact_cost.cost._replace(
+        length_mm=spread_cost.cost.length_mm
+    )
+    assert not solo_la_lunghezza.beats(compact_cost.cost)
+    assert not compact_cost.cost.beats(solo_la_lunghezza)
 
 
 def test_il_miglioratore_non_peggiora_mai_il_costo_della_posa_di_partenza() -> None:

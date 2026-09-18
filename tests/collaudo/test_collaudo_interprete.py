@@ -526,12 +526,63 @@ def corrispondenza(pa: Json, pb: Json, per_fluido: bool = False) -> dict[str, st
     return dict(mappa) if prova(0) else None
 
 
-@pytest.mark.parametrize("n", (1, 2, 3, 4))
+@pytest.mark.parametrize("n", (1, 2, 3))
 def test_topologia_identica_alla_lettura_manuale(n: int) -> None:
     """CONSEGNA.md §2: si confronta su reti, componenti e tubazioni. Sui primi
-    quattro impianti i due grafi coincidono arco per arco."""
+    tre impianti i due grafi coincidono arco per arco.
+
+    ⛔ **Il quarto e' uscito da qui il 17 settembre 2026, e non perche' sia
+    peggiorato.** Il PO ha **sostituito il metro** dell'impianto 4 (**D-137**):
+    il grafo precedente non stava in piedi — zero ritegni, il ritorno della
+    caldaia che raccoglieva insieme dal primario e dallo scambiatore — e quello
+    nuovo porta un ritegno per generatore e un organo di commutazione sul
+    ritorno. La camera pulita del 7 agosto e' un **verbale**, e ha letto il
+    metro di allora: confrontarla con il metro di adesso e' confrontare due
+    impianti diversi, non due letture dello stesso.
+
+    Non si toglie niente al collaudo: la differenza e' **inchiodata per intero**
+    dalla prova qui sotto, `test_quarto_impianto_differisce_dal_metro_per_cio_che_ha_disposto_il_po`,
+    che e' piu' stretta di questa perche' dice **quali** pezzi e quanti. Il
+    quinto impianto sta fuori dallo stesso confronto per la stessa ragione di
+    forma — la sua differenza ha una prova propria — dal collaudo del giro 3.
+    """
     assert corrispondenza(profilo(grafo(n)), profilo(metro(n))) is not None, (
         f"impianto {n}: la topologia della camera pulita non combacia con la lettura manuale"
+    )
+
+
+def test_quarto_impianto_differisce_dal_metro_per_cio_che_ha_disposto_il_po() -> None:
+    """L'impianto 4 differisce dalla lettura manuale **esattamente** per D-137.
+
+    Il PO ha sostituito il metro il 16 settembre 2026, e ha detto che cosa vi
+    entra: «i due generatori confluiscono su un collettore di mandata,
+    **ciascuno con il proprio ritegno**» e «perche' il circuito sanitario sia
+    davvero dedicato serve un organo di **commutazione anche sul ritorno** della
+    caldaia». Sono tre pezzi, e questa prova pretende che le differenze siano
+    **quelle e nient'altro**:
+
+    - due `valve-check` e una `switching-valve-3way` stanno nel metro e non
+      nella camera pulita — i tre pezzi che D-137 nomina;
+    - un `tee-junction` sta nella camera pulita e non nel metro: e' il raccordo
+      su cui il ritorno della caldaia si univa, che la commutatrice sostituisce.
+      E' il «ritorno che torna ovunque» che il PO aveva intuito guardando la
+      tavola, e che il grafo nuovo chiude;
+    - **le reti sono le stesse**, con la stessa molteplicita': la sostituzione e'
+      sul circuito, non sull'impianto.
+
+    Se un giorno la camera pulita rileggera' il testo del committente — che
+    l'Esempio 4 lo descrive gia' cosi' — questa prova diventera' rossa, ed e' il
+    momento in cui l'impianto 4 torna nel confronto arco per arco qui sopra.
+    """
+    pulita, manuale = profilo(grafo(4)), profilo(metro(4))
+    assert dict(manuale["componenti"] - pulita["componenti"]) == {
+        "valve-check": 2,
+        "switching-valve-3way": 1,
+    }
+    assert dict(pulita["componenti"] - manuale["componenti"]) == {"tee-junction": 1}
+    assert pulita["reti"] == manuale["reti"], (
+        f"impianto 4: le reti non combaciano — {dict(pulita['reti'])} "
+        f"contro {dict(manuale['reti'])}"
     )
 
 
@@ -892,11 +943,17 @@ def test_nessuna_domanda_su_un_dato_che_il_testo_scrive(n: int) -> None:
     assert colpevoli == [], f"grafo {n}: domande su dati che non si chiedono {colpevoli}"
 
 
-@pytest.mark.parametrize("n", IMPIANTI)
+@pytest.mark.parametrize("n", (1, 2, 3, 5))
 def test_dal_metro_manca_solo_la_ferramenta_che_il_metro_ha_messo(n: int) -> None:
     """La tabella di classificazione di CONSEGNA.md §2, scritta come prova.
 
-    Su tutti e cinque gli impianti, i pezzi che stanno nella lettura manuale e non nel
+    ⛔ **Il quarto sta fuori dal 17 settembre 2026**, per la stessa ragione della
+    prova sulla topologia: **D-137** ha sostituito il metro, e i tre pezzi che vi
+    sono entrati non sono una differenza da classificare — sono la disposizione
+    del PO. La prova che li inchioda uno per uno e'
+    `test_quarto_impianto_differisce_dal_metro_per_cio_che_ha_disposto_il_po`.
+
+    Sugli altri quattro impianti, i pezzi che stanno nella lettura manuale e non nel
     grafo della camera pulita sono **solo** ferramenta — e la ferramenta il §5 la vieta
     alla prima stesura. Quindi: nessuna differenza cade nel primo esito (detto dal testo
     e perso). E nessun pezzo sta nel grafo e non nel metro: nessuna differenza cade nel
