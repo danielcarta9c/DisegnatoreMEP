@@ -1,6 +1,6 @@
 # STATO PM — il documento d'ingresso del PM
 
-**Aggiornato:** 2026-09-17
+**Aggiornato:** 2026-09-18
 **A chi serve:** alla sessione PM che subentra. Leggi questo e sei operativo: non ti serve
 un prompt lungo, e chi te lo dà ti sta raccontando qualcosa che dovrebbe stare qui.
 **Regola di questo file:** ogni sessione PM lo aggiorna prima di chiudere. Un file di stato
@@ -35,21 +35,23 @@ Le sigle servono a noi per ritrovare la riga e restano di qua. La versione buona
 domanda detta guardando il disegno — sta in `2026-09-15-triage-input-aperti.md` §11, ed è il
 modello da riusare.
 
-## 2. Dove siamo, al 15 settembre 2026
+## 2. Dove siamo, al 18 settembre 2026
 
 | | |
 |---|---|
 | `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR #33, che porta il triage degli input, il verdetto sulla PR #32 e DRAW-011 |
 | Release dichiarata | **0.3 — generalizzazione, impianto 2** (`docs/plans/2026-09-03-release-plan.md`) |
-| Pacchetto attivo | **DRAW-012** (`ACTIVE_WORK_PACKAGE.md`): il motore disegna nell'ordine del disegnatore (D-138). **DRAW-011 è sospeso**: curava sintomi dell'architettura che DRAW-012 cambia |
-| In attesa | la consegna di **DRAW-011** dal DEV. Nessuna PR aperta al 16 settembre |
-| PR #32 (DRAW-010) | **verificata e respinta.** Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`, pubblicato anche sulla PR. Il suo lavoro **non è su `main`** |
-| Ultima consegna verificata | **DRAW-010**, PR #32: dodici criteri raggiunti, due in parte, due no. Torna al DEV |
-| Suite su `main` | **10 rosse, 1470 verdi, 24 saltate, 11 xfailed** — rimisurata dal PM il 15 settembre, coincide. Sulla PR #32: 14 rosse |
-| Tavola 1 | 4 pieghe · 1 incrocio · 470,0 mm · autostrada 0 pieghe · D-120 15 su 15 |
-| Tavola 2 | 5 pieghe · 1 incrocio · 600,0 mm · nodi condivisi col tronco 0 · D-120 14 su 15 |
-| Impianti 3, 4, 5 | su `main` nessuno produce una tavola. **Sulla PR #32 il 4 torna a uscire**; il 5 arretra e non arriva più alla posa |
-| Registro degli input | **12 righe aperte + 4 regole permanenti**, su 63. Il triage del 15 settembre e le sei disposizioni del PO che ne sono seguite (D-131 … D-136) hanno chiuso le altre 44 |
+| Pacchetto attivo | **DRAW-013** (`ACTIVE_WORK_PACKAGE.md`): la tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la sua forma (D-142, D-143, D-144, D-145). **Attivo, approvato dal PO il 18 settembre.** Parte dal ramo di `DRAW-012`, non da `main` |
+| PR #41 (DRAW-012) | **verificata e respinta.** Tredici criteri su sedici, nessuno barato, rapporto onesto — ma il PO ha guardato le tavole e ha detto «era meglio prima». Verdetto in `docs/pm/2026-09-18-review-pr41-draw012.md`. **Il suo lavoro non è su `main`, e non va rifatto**: `DRAW-013` riparte dal ramo `claude/hopeful-ramanujan-9bs0cb` (`17ff425`) |
+| PR #32 (DRAW-010) | verificata e respinta il 15 settembre. Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`. Il suo lavoro non è su `main` |
+| Ultima consegna verificata | **DRAW-012**, PR #41. Torna al DEV con `DRAW-013` |
+| Suite su `main` | **10 rosse, 1470 verdi, 24 saltate, 11 xfailed** — rimisurata dal PM il 17 settembre, coincide |
+| Suite sul ramo di DRAW-012 | **13 rosse, 1482 verdi, 24 saltate, 11 xfailed.** È il riferimento di `DRAW-013`, non quello di `main` |
+| Tavola 1 su `main` | 4 pieghe · 1 incrocio · 470,0 mm · riempimento 29,8 % · copertura 0,625 · ingombro 245 × 100 mm |
+| Tavola 2 su `main` | 5 pieghe · 1 incrocio · 600,0 mm · riempimento 50,1 % · copertura 0,625 · ingombro 257,5 × 160 mm |
+| Tavole sul ramo di DRAW-012 | 1 · 4/1 · 45,1 % · 0,750 · 322,5 × 115 mm — 2 · 5/1 · 64,1 % · 0,750 · 315 × 167,5 mm. **Bocciate dal PO**: riempimento comprato allungando i tratti, e disegno fino quasi al bordo |
+| Impianti 3, 4, 5 | nessuno produce una tavola, né su `main` né sul ramo di `DRAW-012`. La tavola 4 si ferma su un confine di rete posato dieci millimetri fuori dall'area di disegno |
+| Registro degli input | **12 righe aperte + 4 regole permanenti**, su 67. I-073 … I-076 del 18 settembre sono chiuse da D-142, D-143, D-144 e D-145 |
 | Prodotto in chat | **mai eseguito nel suo ambiente finale.** È il rischio 1, il più vecchio |
 
 Il verdetto completo su DRAW-009, con tutte le misure e i comandi, sta in
@@ -58,7 +60,7 @@ verdetto.
 
 ## 3. Che cosa aspetti dal DEV, e come lo verifichi
 
-DRAW-010 chiede sedici criteri. Quando arriva la PR:
+`DRAW-013` chiede quindici criteri. Quando arriva la PR:
 
 0. **Prima guardi la tavola, poi conti.** È la regola nata il 15 settembre, sulla consegna di
    DRAW-010 (`I-064`): il PM aveva portato al PO pieghe, incroci e lunghezza senza aver letto

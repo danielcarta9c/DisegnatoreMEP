@@ -1,251 +1,260 @@
-# DRAW-012 — Il motore disegna nell'ordine del disegnatore
+# DRAW-013 — La tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la sua forma
 
-**Titolo:** Il motore disegna nell'ordine del disegnatore
+**Titolo:** La tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la sua forma
 **Assegnato da:** PM (Claude — `OPERATING_MODEL.md` §1.2.1)
 **Assegnato a:** DEV
-**Data:** 2026-09-16
-**Stato:** **ATTIVO.** Sostituisce `DRAW-011`, che è **sospeso**: curava sintomi
-dell'architettura che questo pacchetto cambia, e misurava budget con un metro che sta per
-cambiare. Di `DRAW-011` sopravvive solo §D — la riscrittura del caso di prova 4 — che qui
-diventa il **banco** (§G).
+**Data:** 2026-09-18
+**Stato:** **ATTIVO.** Sostituisce `DRAW-012`, respinto con la PR #41 il 18 settembre. Il PO ha
+dato il via libera il 18 settembre, chiedendo come lanciarlo; le quattro disposizioni che lo
+motivano — **D-142, D-143, D-144, D-145** — sono sue e sono dello stesso giorno
 **Release:** 0.3 — generalizzazione, revisione della tavola 2
 **Ramo:** quello che la piattaforma assegna alla sessione. Il pacchetto **non ne prescrive uno**
-**Commit di partenza:** **la testa di `main`**. Contenuto della base: `DRAW-010` **non fuso**
-(PR #32 respinta), `DRAW-011` mai consegnato.
-**Fixture grafica principale:** impianto 2 e impianto 4; impianto 1 come regressione; impianti 3 e 5 come misura
+**Commit di partenza:** il lavoro di `DRAW-012` **non va rifatto, va corretto**, e questo pacchetto
+vive su `main`. Quindi, come **primo atto della sessione**, prima di leggere il codice:
 
-> **Leggere prima:** `docs/pm/2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md` — le
-> cinque differenze misurate fra l'ordine del disegnatore e quello del motore, con i comandi.
-> Questo pacchetto è la loro cura e non le ripete. Poi `D-138`, che è la disposizione del PO.
+```
+git checkout -b <ramo-della-sessione> origin/main
+git merge origin/claude/hopeful-ramanujan-9bs0cb     # la testa di DRAW-012, 17ff425
+```
+
+Il ramo porta così il codice di `DRAW-012` **e** le disposizioni correnti. Se il merge dà
+conflitti, si risolvono tenendo il codice di `DRAW-012` e i documenti di `main`: i due insiemi
+non si sovrappongono, salvo `ACTIVE_WORK_PACKAGE.md` e `PROJECT_STATE.md`, dove vince `main`.
+**Il primo commit del ramo è quel merge**, da solo, così la revisione vede dove finisce
+`DRAW-012` e dove comincia `DRAW-013`
+**Fixture grafica principale:** impianto 1 e impianto 2; impianto 4 come misura
+
+> **Leggere prima:** `docs/pm/2026-09-18-review-pr41-draw012.md` — il verdetto sulla PR #41, che
+> dice che cosa di `DRAW-012` resta e che cosa si rifà. Poi **D-142**, **D-143**, **D-144** e **D-145**,
+> le quattro disposizioni nuove del PO che sono l'intero motivo di questo pacchetto. D-144 ha uno schizzo
+> del PO: `docs/input-pm/riferimenti-grafici/2026-09-18/`, e si legge molto meglio guardandolo.
 
 ---
 
 ## Contesto
 
-Il PO, guardando la tavola 4: «è inutile che continuiamo a ottimizzare un motore di disegno
-che se non ragiona bene in questo ordine e non ha regole per fare queste cose: stiamo
-ottimizzando la punta di una lancia storta».
+`DRAW-012` ha fatto la cosa grossa e l'ha fatta bene: su tutt'e due le tavole la mandata e il
+ritorno sono adesso **due rette che attraversano il foglio**, e l'accumulo, il circolatore e i
+terminali stanno **sulla** mandata. È la figura che il PO descrive dal 10 settembre.
 
-Ha ragione, ed è misurato. Gli ultimi tre pacchetti hanno lavorato sulla punta — tre
-millimetri qui, una piega là — mentre **quattro difetti su cinque stanno a monte di qualunque
-taratura**: le strade secondarie sono nell'ultima fase, il circolatore non fa nemmeno tratta,
-con due generatori uno perde la classificazione, e quando l'invariante di fase non si può
-tenere il motore **butta via la fase** e ripiega sulla tavola che produceva prima che le
-autostrade esistessero. La tavola 4 è uscita da lì.
+Poi ha comprato il riempimento nel modo sbagliato, e il PO l'ha bocciata:
 
-**Questo pacchetto cambia l'ordine delle decisioni, non le tarature.**
+> «Ha poco senso questo stretch fatto così per il gusto di riempire la tavola. Il Disegnatore
+> non ha colto il senso. È stato tradotto in un criterio informatico sbagliato. Se devo rendere
+> comoda la tavola allargo tutte le linee di un X per cento, non che allungo solo un tratto per
+> prendere più spazio, è proprio brutto così. Era meglio prima.»
+>
+> «Non si mettono gli oggetti così vicini al bordo del foglio a meno che non ci sia un disegno
+> molto molto pieno. Ma un disegno così comodo non si disegna dal bordo a bordo.»
 
-### Il prezzo, dichiarato prima di cominciare
+**L'errore è del pacchetto, non del DEV.** `DRAW-012` chiedeva un numero dentro una finestra e
+lasciava al motore la scelta di come farcelo entrare; il motore ha scelto la strada che non
+costava, cioè allungare i tratti. Il numero è entrato e il disegno è peggiorato.
 
-Rifare l'ordine **può far peggiorare i budget delle tavole 1 e 2 per un giro**, e non sarebbe
-una regressione da respingere: è il metro che cambia. Il miglioramento da guardare non è
-«meno millimetri» — è **l'autostrada che esiste, è una linea sola e si vede a occhio**. Il PO
-lo ha accettato esplicitamente prima che il lavoro cominciasse.
+## Che cosa **non** si rifà
 
-### Se il pacchetto non ci sta in una consegna
+Si riparte dal ramo di `DRAW-012` e si tiene tutto questo, che il PM ha verificato e che resta
+valido: la classificazione delle autostrade (§B), l'autostrada come oggetto intero e il suo
+invariante (§C), la struttura in fase 1 (§A), la cessione graduale al posto del ripiego che
+scarta le fasi (§F), il caso di prova 4 e la commutatrice (§G), il documento di architettura
+aggiornato, e le quattordici prove nuove.
 
-È grosso, e una consegna parziale mal tagliata è il modo in cui abbiamo perso gli ultimi due
-giri. Se il DEV vede che non ce la fa, **taglia così e lo dice nel rapporto**:
-
-- **Prima metà, che vale da sola:** §A, §B, §C — che cosa è autostrada e che sia un oggetto
-  intero. Cambia ciò che il motore considera struttura, e si vede sulla tavola.
-- **Seconda metà:** §D, §E, §F — il costo della fase, lo stretch, l'ultima spiaggia.
-
-Non si taglia altrove, e **non si consegna una metà senza le sue prove**.
+**La lunghezza resta fuori dalle voci di costo** (D-139), la finestra resta **45–65 %** (D-140),
+la copertura dell'ingombro resta la guardia (D-141). Nessuna delle tre si tocca.
 
 ---
 
-## A. La fase 1 traccia la struttura, non il solo tronco
+## A. La tavola comoda si ottiene dilatando tutto, non allungando un tratto (D-142)
 
-1. La prima fase posa **i pezzi principali** e traccia **le autostrade e le strade
-   secondarie**, insieme. Oggi traccia la sola autostrada del circuito dei generatori e manda
-   tutto il resto in ultima fase.
-2. **Strade secondarie di fase 1** sono l'**uscita ACS** e la **distribuzione verso i
-   terminali**. Restano in fase 2 gli stacchi di servizio: ingresso AF, valvole jolly, vasi
-   di espansione.
-3. L'ordine dell'11 settembre (`2026-09-11-architettura-della-posa-a-fasi.md` §3) va
-   **aggiornato** da questo pacchetto, non lasciato a contraddire il codice.
+1. Entra una mossa nuova: la **dilatazione proporzionale** della posa. Tutte le distanze fra i
+   pezzi si moltiplicano per **lo stesso fattore**; i simboli restano della loro misura. Il
+   disegno cresce **conservando la propria forma**: nessun pezzo si sposta rispetto agli altri,
+   quindi la copertura dell'ingombro non può scendere e le curve e gli attraversamenti non
+   possono aumentare.
+2. Il fattore si sceglie **dopo** che il disegno è risolto, ed è **uno solo per foglio**: si
+   cerca il più grande che tenga il disegno dentro il margine di §B, e che porti il riempimento
+   dentro la finestra di D-140. Il risultato resta sulla griglia: se il fattore porta un pezzo
+   fuori passo, si prende il fattore ammissibile più vicino, non si arrotonda pezzo per pezzo.
+3. **Lo stretch del singolo tratto** (`DRAW-012` §E) **resta**, e resta ammesso soltanto per la
+   ragione per cui il contratto lo ammetteva: **far entrare il corredo dove non ci sta**. Non è
+   più uno strumento di riempimento, e il riempimento non deve poterlo comprare.
+4. Se il disegno non ci sta nemmeno al fattore 1, la dilatazione non entra in gioco e il foglio
+   resta quello: la dilatazione **non può** essere una contrazione.
 
-## B. Che cosa è autostrada, e chi lo decide
+## B. Il margine dal bordo, e non è fisso (D-143)
 
-Tre regole, dettate dal PO in **D-138**:
+1. Fra l'inchiostro e il bordo dell'**area di disegno** (350 × 235 mm su A3, già al netto di
+   cartiglio e legenda) c'è un **margine di rispetto**.
+2. Il margine **parte da 25 mm per lato** e si stringe **fino a 10 mm** soltanto quando il
+   disegno, a fattore 1, non ci starebbe altrimenti. Non si stringe per far salire il
+   riempimento: si stringe solo per far entrare un disegno.
+3. Il riempimento continua a misurarsi sui **350 × 235 mm**: il margine sta dentro quell'area,
+   non in aggiunta.
+4. Il preflight impara a segnalare il disegno che tocca il bordo senza esserne autorizzato.
 
-1. **Dai generatori agli accumuli e agli scambiatori**, passando per le valvole a tre vie e i
-   **collettori che mettono insieme i generatori**. Un collettore o una tre vie in mezzo non
-   interrompe l'autostrada e non la declassa.
-2. **Sempre**, le linee che dagli **accumuli, puffer e scambiatori** vanno ai **circolatori**
-   e da lì alla distribuzione. Oggi il circolatore è fra i venti componenti trattati come
-   accessori in linea e quella linea non è neppure una tratta di tronco.
-3. **Con più generatori, le autostrade sono più d'una.** Oggi sull'impianto 4 sono autostrada
-   le tratte della caldaia e non quelle della pompa di calore. Non c'è un generatore eletto:
-   ciascuno ha la propria autostrada fino al punto in cui confluiscono.
+## C. La forma della distribuzione: dritto, una curva, la dorsale, i terminali a pettine (D-144)
 
-**Prova richiesta:** un caso generale con due generatori mostra che **entrambe** le mandate
-sono autostrada, e un caso con accumulo e circolatore mostra che la linea verso i terminali
-lo è.
+Il PO l'ha dettata come **best practice** — «si fa sempre così» — con uno schizzo a mano.
 
-## C. Un'autostrada è un oggetto intero, non una catena di frammenti
+1. Dal **circolatore** esce un **tratto rettilineo**, e il ritorno rientra nell'accumulo con un
+   tratto rettilineo. Questo pezzo è autostrada e **non si piega**: è ciò che `DRAW-012` §C
+   proteggeva, e resta protetto.
+2. La distribuzione può poi fare **una curva, e una sola**.
+3. Dopo la curva c'è la **dorsale**: mandata e ritorno **affiancati e paralleli**, ciascuno
+   rettilineo.
+4. I **terminali si attaccano a pettine** sul fianco della dorsale, ciascuno con il proprio
+   stacco corto di mandata e di ritorno, **impilati** uno sotto l'altro lungo la dorsale.
 
-1. Oggi un'autostrada è spezzata da ogni accessorio che incontra — dieci tronconi su
-   venticinque tratte sull'impianto 4 — e l'invariante «ogni tratta è un rettilineo» è
-   verificato su ciascun frammento, dove è vero per costruzione: un frammento di 5 mm è dritto
-   sempre.
-2. Serve un **oggetto che rappresenti l'autostrada intera**, da un capo all'altro attraverso
-   i propri accessori, e **l'invariante si verifica su di lui**: la catena intera è una retta,
-   salvo le pieghe che §F ammette.
-3. **Prova richiesta:** una prova generale che fallisce se la catena intera prende una piega
-   pur essendo ogni frammento dritto. È la prova che oggi manca, ed è il motivo per cui il
-   difetto non si vedeva.
+**Che cosa cambia rispetto a `DRAW-012`.** L'invariante della catena intera non si applica più
+da un capo all'altro della strada verso i terminali: si applica **a tratti** — la gamba che esce
+dal circolatore, e la dorsale — con **una curva dichiarata** fra le due. Quella curva **non è una
+cessione** di §F e non si conta come tale: è la forma giusta, non un ripiego.
 
-## D. I millimetri escono dal costo, il riempimento entra come finestra
+**E chiude il conflitto che `DRAW-012` aveva lasciato aperto.** Il DEV aveva dovuto togliere
+l'asserzione «le due zone stanno sulla stessa colonna» perché D-060 e D-138 si contendevano la
+stessa coordinata. Con D-144 non se la contendono più: i rami paralleli si impilano **perché si
+appendono alla dorsale**. L'asserzione va **rimessa**, scritta su ciò che la dorsale garantisce.
 
-Disposizione del PO, **D-139**: «i mm non sono un vero costo da misurare, lo è più avere un
-buon riempimento, né troppo poco né troppo».
+## D. La tavola 4, e perché §B potrebbe chiuderla da sé
 
-1. **La lunghezza delle tubazioni esce dalle voci di costo.** Non in fase 1 soltanto: esce.
-   Restano i costi veri, nell'ordine — le **curve**, poi gli **attraversamenti**. Oggi
-   `SheetCost` porta `length_mm` fra `crossings` e `fill`, ed è lei che a parità di curve e
-   attraversamenti decide sempre per la posa più corta.
-2. **Al suo posto entra il riempimento, e non è monotono.** Non «più è meglio» — che è ciò che
-   D-134 ha rifiutato e resta rifiutato — ma una **finestra**: sotto si è vuoti, sopra si è
-   stretti. Un disegno ben fatto è **comodo**, e ci deve stare lo spazio per le sigle.
-3. **La finestra è 45–65 %** (**D-140**), e si misura sull'**area di disegno**, che è già al
-   netto di cartiglio e legenda: su una A3 sono **350 × 235 mm**, fra x 10 e x 360. La legenda
-   è una fascia di 50 mm sul lato destro, il cartiglio una banda di 36 mm in basso, e nessuno
-   dei due entra nel conto.
-4. **Che cosa è il riempimento, e la guardia che gli serve** (**D-141**). È l'area del
-   **rettangolo che contiene tutto l'inchiostro** — simboli e tubazioni — divisa per l'area di
-   disegno: larghezza **e** altezza, già bidimensionale. Ma **si gonfia spostando un pezzo in
-   un angolo**, e adesso che è un obiettivo qualcuno lo farà. Quindi non si legge mai da sola:
-   accanto vanno sempre la **copertura dell'ingombro** (oggi 0,625 su quasi tutte le tavole) e
-   il **riempimento senza il pezzo più isolato**, che le metriche già calcolano. **Un
-   riempimento che sale mentre la copertura scende non è un miglioramento.**
-5. **Ci si tiene larghi, e il primo posto dove guardare è la centratura.** Misura del PM su
-   tutte le tavole prodotte: nessuna supera i **262,5 mm di larghezza su 350 disponibili**, su
-   nessuno dei cinque impianti. E il bianco che avanza **non sta tutto da una parte: sta
-   diviso a metà fra i due lati**, perché il disegno viene centrato. Sulla tavola 2 i simboli
-   vanno da x 55 a x 312,5, quindi restano 45 mm a sinistra e 47,5 a destra. Il tetto intorno
-   ai 260 mm e la centratura che lo conserva sono la stessa cosa da guardare: allargare vuol
-   dire che la centratura non deve ricomprimere ciò che la struttura ha aperto.
-6. **L'agio smette di essere un passo finale.** D-134 lo metteva in coda, a disegno risolto;
-   D-139 lo rende il parametro stesso. Non serve più un passo separato che allarga.
+`DRAW-012` ha misurato cella per cella perché la tavola 4 non esce: il confine di rete del
+prelievo sanitario viene posato a **x 365**, dieci millimetri oltre il bordo dell'area di
+disegno, perché sta appeso alla macchina più a destra e «si posa addosso all'utente che serve».
 
-## E. In fase 2 il corredo entra, e se non ci sta si allarga
+**Ipotesi del PM, da misurare e non da credere:** con il margine di §B nessun pezzo può stare
+oltre `x 325`, quindi un confine appeso al pezzo più a destra cade dentro la griglia e la tratta
+si instrada. Se è così, la tavola 4 esce senza toccare `place.py`. Se non è così, il DEV misura
+dove si ferma e **non amplia il perimetro**: `place.py` sarà un pacchetto a sé.
 
-1. Valvole, componenti piccoli e strade di servizio entrano su una struttura **già ferma**.
-2. Se lo spazio non basta: **stretch e traslazione del tronco autostradale**, che è la mossa
-   che il contratto ammette da sempre — spostare le macchine non costa — e che nessuna
-   consegna ha ancora usato davvero.
-3. L'invariante di §C regge: allungare conserva la rettilineità, piegare no.
+## E. La guardia del riempimento diventa il controllo della mossa
 
-## F. L'ultima spiaggia: cedere una curva invece di buttare la struttura
+Il verdetto §5.1 ha misurato che la guardia di `DRAW-012` è una **soglia** (copertura sotto
+0,75) e non il divieto che D-141 scrive: una posa che alza il riempimento e abbassa la copertura
+da 0,80 a 0,70 **vince**. Con §A il problema si sposta: la dilatazione non può abbassare la
+copertura. La guardia va quindi riscritta per quello che serve adesso — **verificare che il
+riempimento sia salito per dilatazione e non per altro** — e la prova che la sorveglia deve
+esercitare anche il caso lieve, non solo quello grosso.
 
-1. Quando la struttura non si instrada, oggi `compose_sheet` ripiega in quattro passi e il
-   terzo è **«il ciclo senza le fasi, cioè la tavola che sarebbe uscita prima di DRAW-008»**.
-   L'impianto 4 esce da lì: non è un'autostrada venuta storta, è una tavola disegnata da un
-   motore che non sa cosa sia un'autostrada.
-2. Il PO dispone il contrario: **si concede una curva sull'autostrada, come ultima spiaggia**,
-   e si tiene la struttura.
-3. La cessione è **graduale e dichiarata**: si cede una piega per volta, sulla tratta che ne
-   ha meno bisogno, e **il rapporto dice dove e perché** per ciascun impianto che ha dovuto
-   cedere. Un ripiego che scarta l'intera fase resta solo come ultimissima rete, e ogni volta
-   che scatta va scritto.
+## F. Le tre rosse di `DRAW-012`
 
-## G. Il banco: il caso di prova 4 riscritto
+Restano tre prove rosse in `test_stacchi_minimi_e_interasse.py`.
 
-Il caso di prova 4 si riscrive secondo **D-137** — il grafo è dettato per esteso lì, componente
-per componente e collegamento per collegamento — e serve come banco di questo pacchetto: ha
-due generatori, un collettore che li unisce, un disgiuntore, un circolatore e una
-distribuzione, cioè **tutte e tre le regole di §B insieme**.
+- **La terza** — lo stacco di 7,5 mm contro un minimo di 5,0 — **si chiude con §G**: non
+  rimettendo la lunghezza nel costo, che D-139 vieta, ma facendo tornare la vicinanza come
+  **vincolo** (D-145). Il DEV di `DRAW-012` l'aveva portata rossa invece di riscriverla, e aveva
+  ragione.
+- **Le altre due** non falliscono su un'asserzione: falliscono perché `compose_drawing` non
+  consegna la tavola su due fixture che erano già fragili su `main`. `DRAW-012` §7.7 ha misurato
+  sette strade e nessuna le chiude; la causa sta nel **posizionamento**, che qui resta fuori
+  perimetro. Restano rosse, dichiarate, e **non si convertono in `skip` né in `xfail`**.
 
-Compresa la voce di catalogo nuova: la **commutatrice a tre vie** sul ritorno della caldaia,
-due ingressi e un'uscita, funzione di commutazione dichiarata — non la miscelatrice esistente
-piegata, che dichiara `circuit_mixing` e serve ad altro.
+Il saldo di riferimento di questo pacchetto non è più quello di `main`: è **13 rosse, 1482
+verdi, 24 saltate, 11 xfailed**, cioè la testa del ramo di partenza. Deve **migliorare di una**.
+
+## G. Gli organi di servizio tornano addosso al pezzo che servono (D-145)
+
+È la cura del difetto che ha fatto bocciare `DRAW-012` insieme al riempimento, e il PO l'ha
+dettata come vincolo e non come costo.
+
+1. Valvole di intercettazione e di sicurezza, scarichi, sfiati, manometri, vasi, gruppi di
+   riempimento, filtri e **confini di rete** si posano **addosso al pezzo che servono**: lo
+   stacco che li porta è **il proprio minimo su griglia**.
+2. Lo stacco può allungarsi **solo per un vincolo dichiarato** — per esempio far posto a un
+   altro accessorio in linea sulla stessa tratta — e mai per far salire un numero.
+3. È un **vincolo del motore**, che nessuna voce di costo può comprare. **D-139 non si tocca**:
+   i millimetri restano fuori dalle voci di costo, e la proprietà che quel costo teneva su torna
+   nella forma giusta.
+4. **La dilatazione di §A non lo viola**, perché scala tutto della stessa percentuale: uno stacco
+   al minimo resta al minimo *in proporzione*. Se invece il vincolo va inteso in millimetri
+   assoluti — cioè lo stacco non cresce mentre il resto cresce — **è una domanda al PM prima di
+   scrivere codice**, non una scelta del DEV.
+5. La ragione è **la leggibilità**: una valvola vicina al proprio oggetto dice a che serve; una
+   valvola in mezzo a una linea, lontana da tutto, è equivoca.
+
+**Questo chiude la terza rossa di §F**, quella che il DEV di `DRAW-012` aveva portato rossa
+invece di riscriverla. Aveva ragione lui.
 
 ---
 
 ## Perimetro
 
-**Dentro:** l'ordine delle fasi e che cosa entra in ciascuna (§A); la classificazione delle
-autostrade (§B); l'autostrada come oggetto intero e il suo invariante (§C); il costo della
-fase della struttura (§D); stretch e traslazione in fase 2 (§E); la cessione graduale al posto
-del ripiego (§F); il caso di prova 4 e la commutatrice (§G); l'aggiornamento del documento di
-architettura dell'11 settembre.
+**Dentro:** la dilatazione proporzionale e il fattore unico per foglio (§A); il margine variabile
+dal bordo e il suo rilievo di preflight (§B); la forma della distribuzione — gamba dritta, una
+curva, dorsale, terminali a pettine (§C); la misura sulla tavola 4 (§D); la guardia del
+riempimento riscritta (§E); gli organi di servizio addosso al pezzo che servono (§G); il
+pacchetto grafico prima/dopo.
 
-**Fuori:** lo spessore del tratto per gerarchia (**D-132**); il verso di mandata e ritorno
-deciso dalla geometria (**D-136**); la libreria dei simboli, salvo
-il simbolo della commutatrice; qualunque decisione MEP che il PO non abbia dato.
-
----
+**Fuori:** `place.py` e la posa dei pezzi appesi, salvo la misura di §D; lo spessore del tratto
+per gerarchia (D-132); il verso di mandata e ritorno deciso dalla geometria (D-136); qualunque
+decisione MEP che il PO non abbia dato.
 
 ## Criteri di accettazione
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-1. **Sulla tavola 2, la mandata dall'accumulo ai terminali e l'uscita ACS risultano
-   autostrada.** Oggi non lo sono: `volano.secondary_out → ventilconvettori.in`,
-   `ventilconvettori.out → volano.secondary_in`, `bollitore.dhw_out → utenze.a`.
-2. **Sull'impianto 4, entrambi i generatori hanno la propria autostrada.** Oggi la caldaia sì
-   e la pompa di calore no.
-3. **Una prova generale mostra che un collettore o una tre vie fra due generatori non
-   interrompe né declassa l'autostrada.**
-4. **Esiste un oggetto «autostrada intera»** e una prova generale **fallisce** se la catena
-   prende una piega mentre ogni suo frammento è dritto.
-5. **La lunghezza non entra più nel confronto fra due pose**, e una prova generale lo mostra
-   su due pose che differiscono solo per quella.
-6. **Il riempimento è una voce di costo a finestra**, non monotona, e una prova mostra che una
-   posa dentro la finestra batte sia una più vuota sia una più stretta. La finestra è
-   **45–65 %** (D-140), misurata sull'area di disegno al netto di cartiglio e legenda.
-   **Una prova mostra anche che il trucco non paga**: una posa che alza il riempimento
-   spostando un pezzo in un angolo, e abbassa la copertura dell'ingombro, **non deve vincere**
-   (D-141). Il rapporto porta i tre numeri insieme — riempimento, copertura, riempimento senza
-   il pezzo più isolato — su tutte le tavole, prima e dopo.
-7. **La tavola 1 entra nella finestra.** Oggi è al **29,8 %**, sotto il minimo: è l'impianto su
-   cui il tenersi larghi si vede di più. La tavola 2, al 50,1 %, è già dentro e ci resta.
-8. **Lo stretch si usa davvero**: il rapporto mostra almeno un caso in cui il corredo non
-   entrava e il tronco si è allungato invece di piegarsi, con le posizioni prima e dopo.
-9. **Nessun impianto esce dal ripiego che scarta le fasi.** Se uno ci esce, il rapporto dice
-   quale, perché, e che cosa ha impedito la cessione graduale di §F.
-10. **La tavola 4 ha un'autostrada visibile dalla pompa di calore all'accumulo**, e il rapporto
-   porta la tavola. È il criterio che il PO giudica a occhio.
-11. **Il caso di prova 4 è riscritto** secondo D-137, e la commutatrice è una voce di catalogo
-    con la propria funzione dichiarata e il proprio simbolo.
-12. **Gli impianti 1, 2 e 4 producono una tavola.** Il 3 e il 5 si misurano e si riferiscono:
-    se l'ordine nuovo li fa uscire, bene; se no, il rapporto dice dove si fermano.
-13. **Il saldo della suite non peggiora.** Riferimento su `main`: 10 rosse, 1470 verdi,
-    24 saltate, 11 xfailed. Nessuna prova convertita in `skip` o `xfail`, nessuna soglia
-    allentata, nessuna fixture toccata per far passare una prova.
-14. **Le tavole 1 e 2 sono misurate e riferite, prima e dopo, con il metro nuovo**: curve,
-    attraversamenti e riempimento. Riferimenti: tavola 1 · 4 curve, 1 attraversamento,
-    riempimento 29,8 %; tavola 2 · 5 curve, 1 attraversamento, riempimento 50,1 %. La
-    lunghezza si riporta ancora, ma **come misura e non come giudizio** (D-139).
-    **Non è un criterio di non-regressione**: un peggioramento su curve o attraversamenti è
-    ammesso se il rapporto lo spiega con l'ordine nuovo. È il metro che cambia, e va visto
-    cambiare.
-15. **Determinismo**: doppia generazione dalla CLI con la stessa impronta.
-16. **Il documento di architettura dell'11 settembre è aggiornato** all'ordine di D-138, o
-    marcato come superato da un documento nuovo. Non resta a contraddire il codice.
----
+1. **Esiste la dilatazione proporzionale**, con un fattore unico per foglio, e una prova generale
+   mostra che dopo la dilatazione **curve, attraversamenti e copertura dell'ingombro non
+   cambiano** e tutte le distanze fra i pezzi sono cresciute della stessa percentuale.
+2. **Il riempimento della tavola 1 e della tavola 2 entra nella finestra 45–65 % per
+   dilatazione**, e il rapporto porta il fattore usato per ciascuna.
+3. **Nessun tratto è più lungo del proprio minimo per ragioni di riempimento.** Sulla tavola 2,
+   l'ingresso dell'acqua fredda torna vicino al bollitore che alimenta: il rapporto porta la
+   distanza prima (140 mm sulla PR #41) e dopo.
+4. **Nessun pezzo sta a meno di 25 mm dal bordo dell'area di disegno**, su nessuna tavola che ci
+   sta; e se una non ci sta, il rapporto dice quale, di quanto si è stretta e perché.
+5. **Il preflight segnala un disegno che tocca il bordo senza essere autorizzato**, e una prova
+   lo mostra nei due versi.
+6. **Le tavole 1 e 2 non peggiorano su curve e attraversamenti** rispetto al ramo di partenza:
+   4/1 e 5/1. Un peggioramento va spiegato, e qui **non** è ammesso in bianco come lo era in
+   `DRAW-012`: il metro non cambia più.
+7. **La prova della guardia esercita anche il caso lieve** — riempimento che sale e copertura che
+   scende di poco — e il caso lieve non deve vincere.
+8. **La distribuzione ha la forma di D-144**, e una prova generale la pretende: gamba rettilinea
+   dal circolatore, **una** curva, dorsale con mandata e ritorno affiancati, terminali a pettine
+   con stacchi corti. La prova fallisce se la gamba si piega, se le curve sono due, o se un
+   terminale si attacca fuori dalla dorsale.
+9. **Sulla tavola 1 i radiatori e il pavimento radiante tornano impilati**, e l'asserzione che
+   `DRAW-012` aveva tolto da `test_objective.py` è **rimessa**, scritta su ciò che la dorsale
+   garantisce e non sull'abitudine della fixture.
+10. **La curva della distribuzione non è una cessione**: il diario non la conta fra le catene
+    cedute, e una prova lo mostra.
+11. **La tavola 4 si misura.** Se esce, il rapporto porta la tavola e si chiude anche il criterio
+    10 di `DRAW-012`. Se non esce, il rapporto dice dove si ferma, con il conto cella per cella.
+12. **Gli organi di servizio stanno al proprio minimo**, e una prova generale fallisce se uno si
+    allontana senza un vincolo dichiarato. Sulla tavola 2 il rapporto porta la distanza
+    dell'ingresso dell'acqua fredda dal bollitore, prima e dopo.
+13. **Il saldo della suite migliora di una** rispetto al ramo di partenza: **12 rosse** invece di
+    13, perché §G chiude
+    `test_stacchi_minimi_e_interasse.py::test_nella_posa_iniziale_ogni_stacco_e_lungo_il_proprio_minimo`.
+    Le altre due restano, dichiarate. Nessuna prova convertita in `skip` o `xfail`, nessuna soglia allentata,
+    nessuna fixture toccata per far passare una prova.
+14. **Determinismo:** doppia generazione dalla CLI con la stessa impronta.
+15. **Le tavole 1 e 2 sono misurate e riferite, prima e dopo**: curve, attraversamenti,
+    riempimento, copertura, riempimento senza il pezzo più isolato, ingombro, margine minimo dal
+    bordo, e la lunghezza come misura e non come giudizio.
 
 ## Consegna
 
-Una PR sola, non fusa. Rapporto in `docs/collaudi/DRAW-012/RAPPORTO.md` con i quindici criteri
-chiusi uno per uno; pacchetto grafico `prima/` e `dopo/` per le tavole 1, 2 e 4.
+Una PR sola verso `main`, non fusa, che contiene **tutto il lavoro dei due pacchetti**: il merge
+di `DRAW-012` come primo commit e le correzioni di `DRAW-013` sopra. Rapporto in `docs/collaudi/DRAW-013/RAPPORTO.md`, pacchetto grafico
+`prima/` e `dopo/` per le tavole 1, 2 e 4 — dove `prima/` è **il ramo di partenza**, non `main`.
 
-**Prima di aprire la PR**, le tre cose che `DRAW-011` §F aveva introdotto e che restano:
+**Prima di aprire la PR:**
 
-1. **Guarda le tavole.** I difetti che hanno respinto DRAW-010 li ha visti il PO a occhio e
-   nessun criterio li copriva. Se una tavola ti sembra sbagliata e i numeri dicono che va
-   bene, **scrivilo nel rapporto**: è il rilievo più utile che puoi portare.
-2. **Misura i criteri di non-regressione prima, non dopo.** Qui sono il 12 e l'11.
-3. **Se una disposizione del PO ammette due letture, fermati e chiedi al PM.** D-126 letta in
-   un modo invece che nell'altro è costata un pacchetto intero.
-
----
+1. **Guarda le tavole.** `DRAW-012` è stato bocciato da un occhio, non da un numero, e il DEV
+   quel difetto l'aveva visto e scritto. Se una tavola ti sembra sbagliata e i numeri dicono che
+   va bene, **scrivilo nel rapporto**: è il rilievo più utile che puoi portare, e questa volta
+   è dimostrato.
+2. **Misura i criteri di non-regressione prima, non dopo.** Qui sono il 6 e il 13.
+3. **Se una disposizione del PO ammette due letture, fermati e chiedi al PM.**
 
 ## Decisioni che restano al PO
 
-1. **Il pallino di derivazione con due spessori** (D-132): il PM propone che segua il tratto
-   più grosso.
+1. **Il pallino di derivazione con due spessori** (D-132): il PM propone che segua il tratto più
+   grosso.
 2. **L'ordine degli stacchi lungo il tronco** (rischio 17).
 3. **Gli attacchi pari di un collettore**, ereditata da `DRAW-009`.
+
+> Le due domande che `DRAW-012` lasciava aperte **sono chiuse**: il conflitto fra D-060 e D-138
+> da **D-144** (§C lo attua), e la tightness degli stacchi da **D-145** (§G la attua). Nessuna
+> delle due è più una domanda.
