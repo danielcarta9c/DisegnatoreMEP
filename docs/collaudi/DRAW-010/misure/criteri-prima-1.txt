@@ -1,0 +1,11 @@
+== confini di rete (criterio 3) ==
+   inlet-filling-unit-collettore-ritorno-a.a -> filling-unit-collettore-ritorno-a.a pieghe=0 nodi_su_autostrada=0
+   acquedotto.a -> accumulo.cold_in                           pieghe=0 nodi_su_autostrada=0
+   accumulo.dhw_out -> utenze.a                               pieghe=0 nodi_su_autostrada=0
+
+== nodi condivisi fra un'autostrada e un rango inferiore (criterio 4) ==
+   totale: 1
+     rete primario (heating_water): 1
+
+== tratte di tronco che non possono essere rettilinee (criterio 10) ==
+   autostrade con almeno una piega: 0

@@ -1,0 +1,40 @@
+== impianto 1 — prova-1-due-pdc-accumulo-combinato.json
+   la tavola esce su 420x297, 1 foglio/i
+   297x210 / tavola t1: il ripiego scatta 5 volte
+     0. il ciclo sulle fasi: cade: run s3-a on network secondario cannot be routed: no route from (121, 39) to (77, 45): every orthogonal path is blocked
+     1. la posa seminata dalla fase del tronco: cade: run s3-a on network secondario cannot be routed: no route from (121, 39) to (77, 45): every orthogonal path is blocked
+     2. il ciclo senza le fasi: cade: run w1-a on network fredda cannot be routed: no route from (5, 40) to (33, 40): every orthogonal path is blocked
+     3. la disposizione di partenza: cade: run w1-a on network fredda cannot be routed: no route from (5, 40) to (33, 40): every orthogonal path is blocked
+     4. l'ultima prova: cade: run s3-a on network secondario cannot be routed: no route from (121, 39) to (77, 45): every orthogonal path is blocked
+   420x297 / tavola t1: il ripiego scatta 0 volte
+     0. il ciclo sulle fasi: si instrada
+
+== impianto 2 — prova-2-pdc-deviatrice-acs.json
+   la tavola esce su 420x297, 1 foglio/i
+   297x210 / tavola t1: il ripiego scatta 0 volte
+   420x297 / tavola t1: il ripiego scatta 0 volte
+     0. il ciclo sulle fasi: si instrada
+
+== impianto 3 — prova-3-pdc-diretta-pavimento.json
+   la tavola NON esce: the plant does not fit on any ordinary sheet format: run p6-a on network riscaldamento cannot be routed: no route from (85, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+   297x210 / tavola t1: il ripiego scatta 0 volte
+   420x297 / tavola t1: il ripiego scatta 5 volte
+     0. il ciclo sulle fasi: cade: run p6-a on network riscaldamento cannot be routed: no route from (85, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+     1. la posa seminata dalla fase del tronco: cade: run p6-a on network riscaldamento cannot be routed: no route from (85, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+     2. il ciclo senza le fasi: cade: run p6-a on network riscaldamento cannot be routed: no route from (85, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+     3. la disposizione di partenza: cade: run p6-a on network riscaldamento cannot be routed: no route from (85, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+     4. l'ultima prova: cade: run p6-a on network riscaldamento cannot be routed: no route from (85, 66) to (3, 56): the 6 straight steps the chain needs beyond the port at (3, 56) run into an obstacle at (-1, 56)
+
+== impianto 4 — prova-4-ibrido-pdc-caldaia.json
+   la tavola esce su 420x297, 1 foglio/i
+   297x210 / tavola t1: il ripiego scatta 0 volte
+   420x297 / tavola t1: il ripiego scatta 2 volte
+     0. il ciclo sulle fasi: cade: run s3-a on network secondario cannot be routed: no route from (141, 70) to (109, 76): the 6 straight steps the chain needs beyond the port at (109, 76) run into an obstacle at (115, 76)
+     1. la posa seminata dalla fase del tronco: cade: run s3-a on network secondario cannot be routed: no route from (141, 70) to (109, 76): the 6 straight steps the chain needs beyond the port at (109, 76) run into an obstacle at (115, 76)
+     2. il ciclo senza le fasi: si instrada
+
+== impianto 5 — prova-5-cascata-tre-pdc.json
+   la tavola NON esce: the plant does not fit on any ordinary sheet format: the 4 functional bands need 447.5mm but the drawing area is 335mm wide: symbols are never shrunk to fit, split the plant across more sheets
+   297x210 / tavola t1: il ripiego scatta 0 volte
+   420x297 / tavola t1: il ripiego scatta 0 volte
+

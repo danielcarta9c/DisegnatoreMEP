@@ -34,6 +34,17 @@ class Piece:
 
     component_id: str
     functions: frozenset[str]
+    on_board: frozenset[str]
+    """I mestieri che un composito si porta **dentro il mantello** (`carries_on_board`).
+
+    Contano come i propri quando si mette la fila in ordine, ed e' un difetto
+    trovato dal PM (DRAW-010 §D.3): il gruppo di sicurezza sanitario porta a
+    bordo intercettazione e ritegno, e lo scarico del bollitore — che deve stare
+    **dal lato del serbatoio rispetto all'organo che lo chiude** — gli finiva
+    davanti, perche' l'ordinamento guardava le sole `functions`. Aprendo quel
+    rubinetto il bollitore non si svuotava: si svuotava il tratto a monte.
+    """
+
     anchor: str | None
     """La macchina a cui la regola lo ha ancorato. Vuoto per cio' che il
     progettista ha scritto: quello non si riordina."""
@@ -315,6 +326,14 @@ class _Assembler:
         return Piece(
             component_id=component_id,
             functions=frozenset(self._definitions[speaks_for].functions),
+            # **Del pezzo stesso, non di cio' che gli pende.** Un composito in
+            # linea porta i propri organi sulla tratta; il piede di uno stacco
+            # parla per cio' che ci pende — ne prende il mestiere, che e' il
+            # servizio che lo stacco offre alla tratta — ma gli organi che
+            # quell'accessorio ha dentro restano sullo stacco e non chiudono
+            # niente sulla tratta. Contarli qui spostava il corredo del ritorno
+            # dietro al piede del riempimento.
+            on_board=frozenset(self._definitions[component_id].carries_on_board),
             anchor=self.anchor_of(speaks_for),
             against_the_anchor=bool(rule and rule.ordering.against_the_anchor),
             of_the_anchor=bool(
@@ -426,7 +445,16 @@ def _sorted(pieces: list[Piece]) -> list[Piece]:
     if len(pieces) < 2:
         return list(pieces)
     # Chi sta attaccato alla macchina viene prima di tutto il resto: e' un
-    # vincolo di sicurezza, non una preferenza, e non si contratta con gli altri.
+    # vincolo di sicurezza, non una preferenza. **Cede pero' a un vincolo
+    # dichiarato** che pretenda un altro pezzo piu' vicino ancora, invece di
+    # scavalcarlo in silenzio — e l'unico caso che lo fa e' §D.3: il gruppo di
+    # sicurezza sanitario porta l'intercettazione a bordo, quindi lo scarico del
+    # bollitore, che deve stare dal lato del serbatoio rispetto all'organo che
+    # lo chiude, gli va davanti. Il piede di uno stacco non chiude niente: la
+    # via di sfogo che «attaccato alla macchina» difende resta aperta. Dove
+    # nessun vincolo lo contende — le tre valvole di sicurezza — il posto
+    # attaccato alla macchina resta suo, perche' nell'ordinamento sotto e' la
+    # prima preferenza fra i pezzi liberi.
     against = [item for item in pieces if item.against_the_anchor]
     if len(against) > 1:
         # Due pezzi non possono stare entrambi attaccati alla stessa macchina:
@@ -440,16 +468,21 @@ def _sorted(pieces: list[Piece]) -> list[Piece]:
             f"{' and '.join(rules)} both claim the place against the anchor, "
             f"so the file would be wrong whichever order came out"
         )
-    if against and len(against) != len(pieces):
-        return [*_sorted(against), *_sorted([item for item in pieces if item not in against])]
     needs: dict[str, set[str]] = {item.component_id: set() for item in pieces}
     for item in pieces:
         for other in pieces:
             if other.component_id == item.component_id:
                 continue
-            if other.functions & set(item.before):
+            # **Anche cio' che un composito si porta dentro** (§D.3): un
+            # gruppo che monta l'intercettazione nel proprio mantello e'
+            # l'organo che chiude, e chi deve stargli da una parte precisa non
+            # puo' non vederlo solo perche' il catalogo non lo elenca fra le
+            # `functions` — quelle dicono a che cosa serve il pezzo, non tutto
+            # quel che c'e' dentro.
+            does = other.functions | other.on_board
+            if does & set(item.before):
                 needs[other.component_id].add(item.component_id)
-            if other.functions & set(item.after):
+            if does & set(item.after):
                 needs[item.component_id].add(other.component_id)
 
     by_id = {item.component_id: item for item in pieces}
@@ -458,7 +491,11 @@ def _sorted(pieces: list[Piece]) -> list[Piece]:
     while waiting:
         free = sorted(
             (key for key, before in waiting.items() if not (before & set(waiting))),
-            key=lambda key: (not by_id[key].of_the_anchor, key),
+            key=lambda key: (
+                not by_id[key].against_the_anchor,
+                not by_id[key].of_the_anchor,
+                key,
+            ),
         )
         if not free:
             stuck = sorted(waiting)

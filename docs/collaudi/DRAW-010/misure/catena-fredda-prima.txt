@@ -1,0 +1,12 @@
+== impianto 1 — prova-1-due-pdc-accumulo-combinato.json
+   fredda: acquedotto.a -> accumulo.cold_in
+Traceback (most recent call last):
+  File "/tmp/claude-0/-home-user-DisegnatoreMEP/a14021b0-a03e-5e6e-afef-e5feeb6f8a90/scratchpad/base/docs/collaudi/DRAW-010/la-catena-fredda.py", line 116, in <module>
+    raise SystemExit(main(sys.argv[1:]))
+                     ^^^^^^^^^^^^^^^^^^
+  File "/tmp/claude-0/-home-user-DisegnatoreMEP/a14021b0-a03e-5e6e-afef-e5feeb6f8a90/scratchpad/base/docs/collaudi/DRAW-010/la-catena-fredda.py", line 111, in main
+    _report(number)
+  File "/tmp/claude-0/-home-user-DisegnatoreMEP/a14021b0-a03e-5e6e-afef-e5feeb6f8a90/scratchpad/base/docs/collaudi/DRAW-010/la-catena-fredda.py", line 79, in _report
+    does = sorted(piece.functions | piece.on_board)
+                                    ^^^^^^^^^^^^^^
+AttributeError: 'Piece' object has no attribute 'on_board'

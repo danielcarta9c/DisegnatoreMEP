@@ -1,0 +1,8 @@
+== tavola t1
+   acquedotto (ingresso): rotazione 0, attacco sulla faccia right
+      tratta w1-a: pieghe=0  [[(210.0, 161.0), (215.0, 161.0)], [(220.0, 161.0), (225.0, 161.0)]]
+   inlet-filling-unit-collettore-ritorno-a (ingresso): rotazione 270, attacco sulla faccia top
+      tratta inlet-filling-unit-collettore-ritorno-a-a: pieghe=0  [[(177.5, 166.0), (177.5, 161.0)]]
+   utenze (prelievo): rotazione 90, attacco sulla faccia bottom
+      tratta w2-a-a-a: pieghe=0  [[(232.5, 123.5), (232.5, 118.5)], [(232.5, 113.5), (232.5, 111.0)], [(232.5, 106.0), (232.5, 103.5)], [(232.5, 98.5), (232.5, 88.5)]]
+

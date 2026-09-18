@@ -37,6 +37,7 @@ from dataclasses import dataclass
 from math import ceil
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.catalog.schema import ComponentDefinition
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.model.order import structural_order
@@ -98,6 +99,34 @@ dividere e' un costo di lettura che si paga quando serve (D-056).
 """
 
 _HORIZONTAL_FACES = (PortFace.LEFT, PortFace.RIGHT)
+
+
+def boundary_faces_the_plant(definition: ComponentDefinition) -> PortFace | None:
+    """Da che parte guarda l'attacco di un confine di rete, o `None` se non lo e'.
+
+    Un confine di rete e' il punto in cui l'impianto comincia o finisce: un
+    attacco solo, e il verso di quell'attacco dice quale dei due. La lettura va
+    da sinistra a destra, quindi l'impianto sta **a destra di un ingresso** e
+    **a sinistra di un prelievo**: l'attacco guarda l'impianto.
+
+    Non e' un elenco di nomi ne' un'eccezione: e' la funzione dichiarata dal
+    catalogo e il verso dell'attacco, come per ogni altra lettura del motore.
+    """
+    if BOUNDARY_FUNCTION not in definition.functions or len(definition.ports) != 1:
+        return None
+    if definition.ports[0].flow is PortFlow.OUT:
+        return PortFace.RIGHT
+    if definition.ports[0].flow is PortFlow.IN:
+        return PortFace.LEFT
+    return None
+
+_STEP_TOWARD: dict[PortFace, tuple[float, float]] = {
+    PortFace.RIGHT: (1.0, 0.0),
+    PortFace.BOTTOM: (0.0, 1.0),
+    PortFace.LEFT: (-1.0, 0.0),
+    PortFace.TOP: (0.0, -1.0),
+}
+"""Il verso in cui una faccia guarda, in millimetri di foglio."""
 
 _OPPOSITE: dict[PortFace, PortFace] = {
     PortFace.BOTTOM: PortFace.TOP,
@@ -244,34 +273,43 @@ def _hanging_accessories(
             for mine, _ in ((trunk.start, trunk.end), (trunk.end, trunk.start))
             if mine.component_id == component_id
         }
-        # Un **ingresso di rete** che regge una porta conta come uno stacco:
+        # Un **confine di rete** che regge una porta conta come uno stacco:
         # non ha una posizione propria (§A.2), quindi non puo' portare con se'
         # il pezzo dentro la lettura. Senza questa riga il gruppo di
         # riempimento, che da DRAW-009 prende l'acqua dal proprio ingresso
         # invece che dalla linea di un altro, smetteva di essere un appeso e si
         # prendeva una colonna in testa al foglio.
         return len(touched) == len(ports) and bool(holders) and all(
-            off_the_run(owner, port_id) or is_an_inlet(owner)
+            off_the_run(owner, port_id) or is_a_boundary(owner)
             for owner, port_id in holders
         )
 
-    def is_an_inlet(component_id: str) -> bool:
-        """Un confine di rete **da cui il fluido entra**: un ingresso.
+    def is_a_boundary(component_id: str) -> bool:
+        """Un confine di rete: un attacco solo, perche' di la' non c'e' impianto.
 
         Lo dichiara il catalogo con la propria funzione e con il verso del
-        proprio attacco, come ogni altra cosa: un ingresso non si riconosce da
-        un nome ne' da un elenco nel motore. Un attacco solo, perche' di la'
-        dal confine non c'e' impianto.
+        proprio attacco, come ogni altra cosa: un confine non si riconosce da un
+        nome ne' da un elenco nel motore. Il verso dice di che confine si
+        tratta — **ingresso** se il fluido entra, **prelievo** se se ne va
+        (D-098) — e da qui in avanti i due si posano allo stesso modo.
 
-        Un **prelievo** e' un confine anche lui, ma e' dove il fluido se ne va
-        (D-098): e' l'ultimo passo della lettura e sta in fondo, come ogni
-        utilizzatore. La distinzione e' la stessa che il progetto fa gia'
-        altrove, e non e' un'eccezione aperta qui.
+        **Il prelievo si posa come un ingresso** (PO, 14 settembre 2026):
+
+            «Non capisco pero' perche' abbia forzato a mettersi ACS.01 verso
+            l'alto, pagando cosi' una curva inutile. Bastava mettere ACS.01
+            verso destra ed era meglio.»
+
+        Fino a DRAW-009 il prelievo era «l'ultimo passo della lettura», e stava
+        in fondo come un utilizzatore: la sua tratta pagava le pieghe per
+        raggiungerlo. Ma un prelievo non e' un utilizzatore — non e' un pezzo
+        dell'impianto, e' il punto in cui l'impianto finisce — e come l'ingresso
+        non ha una posizione propria: va nelle immediate vicinanze del pezzo che
+        serve, con la propria giacitura scelta perche' la tratta non pieghi.
         """
         ports = ports_of.get(component_id, [])
         return (
             len(ports) == 1
-            and ports[0].flow is PortFlow.OUT
+            and ports[0].flow in (PortFlow.OUT, PortFlow.IN)
             and BOUNDARY_FUNCTION in functions_of.get(component_id, frozenset())
         )
 
@@ -300,25 +338,26 @@ def _hanging_accessories(
                 continue
             if child.component_id not in placeable or parent.component_id not in placeable:
                 continue
-            # **Un ingresso di rete non ha una posizione propria** (I-061,
-            # DRAW-009 §A.2). Esiste per immettere, e va posato nelle immediate
-            # vicinanze dell'utente che serve, con la propria tratta dritta e
-            # senza attraversamenti. Prima era un passo del processo come un
-            # altro: l'acquedotto apriva la lettura, il proprio utente stava
-            # cinque passi piu' a valle, e la sua linea attraversava il foglio
+            # **Un confine di rete non ha una posizione propria** (I-061,
+            # DRAW-009 §A.2, e il prelievo da DRAW-010 §D.1). Esiste per
+            # immettere o per prelevare, e va posato nelle immediate vicinanze
+            # dell'utente che serve, con la propria tratta dritta e senza
+            # attraversamenti. Prima era un passo del processo come un altro:
+            # l'acquedotto apriva la lettura, il proprio utente stava cinque
+            # passi piu' a valle, e la sua linea attraversava il foglio
             # inchiodando ogni pezzo che toccava — il bollitore non si spostava
             # di un passo di griglia senza che l'acqua fredda smettesse di
-            # instradarsi. Un ingresso che traversa il foglio e' un difetto
+            # instradarsi. Un confine che traversa il foglio e' un difetto
             # **anche quando l'utente e' uno solo**, ed e' per questo che la
             # regola non guarda quanti utenti ci sono.
-            if not is_an_inlet(child.component_id):
+            if not is_a_boundary(child.component_id):
                 if not hangs_entirely(child.component_id):
                     continue
                 if not is_the_mounting_side(child.component_id, child.port_id):
                     continue
                 if not off_the_run(parent.component_id, parent.port_id):
                     continue
-            elif is_an_inlet(parent.component_id):
+            elif is_a_boundary(parent.component_id):
                 # Due confini affacciati non si appendono l'uno all'altro:
                 # nessuno dei due e' l'utente dell'altro.
                 continue
@@ -1009,7 +1048,29 @@ def place_sheet(
         standing_columns = [item for item in placeable if item not in hung]
 
     def default_rotation(component_id: str) -> int:
-        allowed = resolved[component_id].symbol.manifest.allowed_rotations_deg
+        """Come sta in libreria, salvo per un **confine di rete**.
+
+        Un confine ha un attacco solo, e di la' non c'e' impianto: nessun
+        vincolo idraulico dice come vada girato. Lo dice la **lettura**, che va
+        da sinistra a destra — il PO, il 14 settembre 2026, l'ha confermata
+        proprio sul gomito dell'uscita ACS: «Il primo gomito in uscita non e'
+        sbagliato perche' il disegnatore ha tentato di tenere il flusso di
+        lettura da sinistra a destra. Giusto». L'impianto sta quindi **a destra
+        di un ingresso** e **a sinistra di un prelievo**, e l'attacco del
+        confine guarda l'impianto: a destra per l'ingresso, a sinistra per il
+        prelievo. Girato cosi', il confine si siede dalla parte giusta di cio'
+        che serve — `hangs_toward` legge la faccia dell'attacco — e la tratta
+        non paga la piega in piu' che serviva a raggiungerlo dal lato sbagliato
+        (§D.1: «Bastava mettere ACS.01 verso destra ed era meglio»).
+        """
+        found = resolved[component_id]
+        manifest = found.symbol.manifest
+        allowed = manifest.allowed_rotations_deg
+        wanted = boundary_faces_the_plant(found.definition)
+        if wanted is not None:
+            for angle in sorted(allowed):
+                if manifest.rotated(angle).ports[0].face is wanted:
+                    return angle
         return 0 if 0 in allowed else min(allowed)
 
     def _sits_toward(component_id: str) -> PortFace:
@@ -1793,7 +1854,7 @@ def place_sheet(
         """
         parent = manifests[parent_id]
         child = manifests[item.component_id]
-        stub_x, stub_y, _ = _port_of(parent, item.parent_port_id)
+        stub_x, stub_y, stub_face = _port_of(parent, item.parent_port_id)
         port_x, port_y, _ = _port_of(child, item.port_id)
         gap = hanging_gap(item)
         side = hangs_toward(item)
@@ -1812,6 +1873,19 @@ def place_sheet(
         else:
             child_left = parent_left - gap - child.width_mm
             child_top = parent_top + stub_y - port_y
+        # **Il gomito vuole la propria gamba.** Dove l'attacco dell'appeso non
+        # guarda in faccia lo stacco — il prelievo sanitario sta di lato e
+        # prende la linea da sinistra, mentre il bollitore la manda in su dalla
+        # faccia superiore — la tratta gira una volta, ed e' il gomito che il PO
+        # ha detto di tenere (§D.1.1). Sedersi alla quota dello stacco lo
+        # lascerebbe senza gamba: la spezzata dovrebbe girare nella cella stessa
+        # della porta, e il rettilineo che la catena pretende appena fuori non
+        # ci starebbe. Ci si allontana percio' anche lungo lo stacco, dello
+        # stesso stacco minimo.
+        if (stub_face in _HORIZONTAL_FACES) != (side in _HORIZONTAL_FACES):
+            leg = _STEP_TOWARD[stub_face]
+            child_left += leg[0] * gap
+            child_top += leg[1] * gap
         child_left = on_grid(child_left, area.x_mm)
         child_top = on_grid(child_top, area.y_mm)
         child_left = min(max(child_left, area.x_mm), area.right_mm - child.width_mm)
@@ -2413,11 +2487,21 @@ def stub_minimum_mm(
     """
     if trunk.inline_component_ids:
         # La fila dalla porta di chi pende, passo di coda compreso; al posto
-        # del passo di coda, la soglia piu' un passo dell'altra porta.
+        # del passo di coda, la soglia piu' un passo dell'altra porta. E, **da
+        # due accessori in su**, il franco di estremita': chi posa gli
+        # accessori in linea (`inline.py`) non li siede mai a ridosso del capo
+        # della tratta, e con una fila di uno solo il posto lo trova comunque,
+        # perche' gli resta tutto il tratto per scorrere. Con due la fila e'
+        # rigida — fra loro un passo, ai capi il franco — e uno stacco lungo
+        # esattamente quanto la fila e' uno stacco su cui la fila non ci sta.
+        # Non si vedeva finche' nessuno stacco ne portava due; si e' visto
+        # quando l'ordine di §D.3 ha messo l'intercettazione e il gruppo di
+        # sicurezza sanitario sulla **stessa** tratta.
         room = (
             chain_room_mm(project, catalog, trunk.inline_component_ids, horizontal)
             - MIN_SPACING_MM
             + CHAIN_PORT_GAP_MM
+            + (END_CLEARANCE_MM if len(trunk.inline_component_ids) > 1 else 0.0)
         )
     else:
         room = 0.0

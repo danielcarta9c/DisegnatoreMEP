@@ -1,0 +1,66 @@
+== impianto 1 — prova-1-due-pdc-accumulo-combinato.json
+   la fase del tronco ha consegnato una posa: True
+   coppie che si sovrappongono davvero     : 0
+   coppie piu' vicine dello stacco ammesso : 0
+
+== impianto 2 — prova-2-pdc-deviatrice-acs.json
+   la fase del tronco ha consegnato una posa: True
+   coppie che si sovrappongono davvero     : 1
+       bollitore <-> volano
+   coppie piu' vicine dello stacco ammesso : 8
+       acquedotto <-> tee-pressure-gauge-pdc-water-return
+       bollitore <-> drain-connection-volano-primary-in
+       bollitore <-> volano
+       deviatrice <-> tee-expansion-connection-pdc-water-return
+       drain-connection-cold-bollitore-cold-in <-> ritorno
+       drain-connection-cold-bollitore-cold-in <-> tee-pressure-gauge-pdc-water-return
+       ritorno <-> tee-drain-connection-cold-bollitore-cold-in
+       tee-drain-connection-cold-bollitore-cold-in <-> tee-pressure-gauge-pdc-water-return
+
+== impianto 3 — prova-3-pdc-diretta-pavimento.json
+   la fase del tronco ha consegnato una posa: False
+   coppie che si sovrappongono davvero     : 0
+   coppie piu' vicine dello stacco ammesso : 2
+       drain-connection-volano-a <-> inlet-filling-unit-pdc-water-return
+       filling-unit-pdc-water-return <-> pdc
+
+== impianto 4 — prova-4-ibrido-pdc-caldaia.json
+   la fase del tronco ha consegnato una posa: True
+   coppie che si sovrappongono davvero     : 0
+   coppie piu' vicine dello stacco ammesso : 5
+       acquedotto <-> radiatori
+       collettore-mandata <-> collettore-ritorno
+       collettore-mandata <-> ritorno-caldaia
+       collettore-ritorno <-> tee-valve-safety-collettore-mandata-b
+       radiatori <-> utenze
+
+== impianto 5 — prova-5-cascata-tre-pdc.json
+   la fase del tronco ha consegnato una posa: True
+   coppie che si sovrappongono davvero     : 4
+       acquedotto <-> filling-unit-cascata-ritorno-a-a
+       bollitore <-> drain-connection-volano-primary-in
+       bollitore <-> volano
+       tee-thermometer-pdc-3-water-supply <-> thermometer-pdc-2-water-supply
+   coppie piu' vicine dello stacco ammesso : 21
+       acquedotto <-> filling-unit-cascata-ritorno-a-a
+       acquedotto <-> pressure-gauge-cascata-ritorno-a-a
+       acquedotto <-> tee-filling-unit-cascata-ritorno-a-a-b
+       acquedotto <-> tee-pressure-gauge-cascata-ritorno-a-a
+       bollitore <-> drain-connection-volano-primary-in
+       bollitore <-> volano
+       deviatrice <-> tee-expansion-connection-cascata-ritorno-a-a
+       deviatrice <-> tee-filling-unit-cascata-ritorno-a-a-b
+       deviatrice <-> tee-pressure-gauge-cascata-ritorno-a-a
+       drain-connection-cold-bollitore-cold-in <-> ritorno-primario
+       drain-connection-cold-bollitore-cold-in <-> tee-pressure-gauge-cascata-ritorno-a-a
+       expansion-connection-cascata-ritorno-a-a <-> secondario-ritorno-b
+       inlet-filling-unit-cascata-ritorno-a-a <-> ritorno-radiante
+       innesto-ricircolo <-> pdc-3
+       pressure-gauge-cascata-ritorno-a-a <-> tee-drain-connection-cold-bollitore-cold-in
+       ritorno-primario <-> tee-drain-connection-cold-bollitore-cold-in
+       tee-drain-connection-cold-bollitore-cold-in <-> tee-pressure-gauge-cascata-ritorno-a-a
+       tee-thermometer-pdc-2-water-supply <-> tee-thermometer-pdc-3-water-supply
+       tee-thermometer-pdc-3-water-supply <-> thermometer-pdc-2-water-supply
+       thermometer-pdc-2-water-supply <-> thermometer-pdc-3-water-supply
+       valve-safety-pdc-2-water-supply <-> valve-safety-pdc-3-water-supply
+

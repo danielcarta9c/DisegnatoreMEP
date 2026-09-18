@@ -155,9 +155,9 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | CP.01.N.02.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-11** | Valvola di intercettazione | acqua fredda sanitaria |
-| AF.01.N.03 | **DER-05** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.01.N.04 | **VS-02** | Gruppo di sicurezza sanitario | acqua fredda sanitaria |
-| AF.01.N.03.1 | **SC-02** | Attacco di scarico sull'acqua fredda · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
+| AF.01.N.03 | **VS-02** | Gruppo di sicurezza sanitario | acqua fredda sanitaria |
+| AF.01.N.04 | **DER-05** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
+| AF.01.N.04.1 | **SC-02** | Attacco di scarico sull'acqua fredda · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
 | AF.02.N.01 | **AF-02** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | ACS.01.N.01 | **VI-12** | Valvola di intercettazione | acqua calda sanitaria |
 | ACS.01.N.02 | **VM-01** | Valvola miscelatrice termostatica | acqua calda sanitaria |
@@ -272,9 +272,9 @@ Da **AF-01** a **BOL-01**, acqua fredda sanitaria.
 
 1. **AF.01.N.01 · AF-01** Alimentazione acqua fredda · la linea parte dal suo braccio 1
 2. **AF.01.N.02 · VI-11** Valvola di intercettazione
-3. **AF.01.N.03 · DER-05** Derivazione a T sull'acqua fredda
-    - **AF.01.N.03.1 · SC-02** Attacco di scarico sull'acqua fredda · pende dallo stacco
-4. **AF.01.N.04 · VS-02** Gruppo di sicurezza sanitario
+3. **AF.01.N.03 · VS-02** Gruppo di sicurezza sanitario
+4. **AF.01.N.04 · DER-05** Derivazione a T sull'acqua fredda
+    - **AF.01.N.04.1 · SC-02** Attacco di scarico sull'acqua fredda · pende dallo stacco
 5. **BOL-01** Bollitore ACS · **qui ci si innesta su BOL-01**, che si e' gia' letto, entrando dal suo braccio 4 (CP.01a.N.02)
 
 ### AF.02 — acqua fredda sanitaria

@@ -1,0 +1,1 @@
+the plant does not fit on any ordinary sheet format: the 4 functional bands need 447.5mm but the drawing area is 335mm wide: symbols are never shrunk to fit, split the plant across more sheets
