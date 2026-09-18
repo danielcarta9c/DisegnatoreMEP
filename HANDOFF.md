@@ -109,11 +109,17 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
 
 - un attacco porta una sola tubazione; ogni unione o diramazione è un raccordo nel grafo;
 - il contenuto si giudica sul grafo, il disegno sulla tavola;
-- spostare macchine e accessori non costa; backtracking, curve, incroci e lunghezza sì;
+- spostare macchine e accessori non costa; backtracking, curve e incroci sì. **La lunghezza no**
+  (D-139): si riporta come misura e non come giudizio. Ciò che teneva un organo di servizio
+  vicino al pezzo che serve è un **vincolo**, non un costo (D-145);
 - testi e richiami vengono dopo e non influenzano posa o routing;
 - nessun requisito MEP nasce dal codice, da un'immagine di esempio o dall'iniziativa DEV;
 - ogni input del PO viene registrato e resta aperto finché il PO non lo chiude o ritira;
-- il DEV apre la PR e si ferma; il PM revisiona e fonde.
+- il DEV apre la PR e si ferma; il PM revisiona e fonde;
+- **ogni consegna porta le tavole prodotte, in PDF, elencate in testa al rapporto** — e per ogni
+  impianto che non ne produce una, il rapporto lo dice e dice dove si ferma (D-146). Il PM le
+  porta al PO **per prime**, prima di qualunque numero: è il PO che giudica il prodotto, e senza
+  le tavole non ha nulla da giudicare.
 
 La storia precedente resta disponibile in Git. Non va caricata integralmente in ogni
 sessione: si consulta solo quando un documento corrente rinvia a una decisione specifica.

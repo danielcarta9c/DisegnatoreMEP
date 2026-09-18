@@ -41,13 +41,15 @@
 
 ## Righe aperte
 
-Ventisei righe: **ventuno aperte** e cinque **regole permanenti**, che vincolano ogni pacchetto
-ma non sono lavoro che qualcuno finira'. Il triage del 15 settembre 2026 e le sei disposizioni
+Trentadue righe: **ventuno aperte**, **sei regole permanenti** che vincolano ogni pacchetto ma
+non sono lavoro che qualcuno finira', e **quattro chiuse il 18 settembre** da D-142 … D-145,
+lasciate qui per un giro perche' le decisioni che le chiudono sono dello stesso giorno. Il triage del 15 settembre 2026 e le sei disposizioni
 del PO che ne sono seguite (D-131 … D-136) hanno chiuso le altre quarantaquattro:
 `docs/pm/2026-09-15-triage-input-aperti.md`.
 
 | # | Data | Cosa ha chiesto o dato | Dove vive | Stato |
 |---|---|---|---|---|
+| I-077 | 2026-09-18 | **Alla fine di ogni pacchetto il PO vuole vedere le tavole prodotte.** «Una regola per il DEV: sempre alla fine io voglio vedere le tavole prodotte, se vengono prodotte. Altrimenti come PO non ho nulla da verificare e non posso contribuire. Rischiamo che tu come PM e il DEV prendiate qualche deriva.» | Riscontro PO del 18 settembre 2026, alla chiusura della revisione della PR #41 | **REGOLA permanente**, attuata da **D-146** in `OPERATING_MODEL.md`, in `HANDOFF.md` fra i contratti da non violare, e nella sezione «Consegna» di ogni pacchetto. Il giro che l'ha generata la dimostra: il PM aveva verificato `DRAW-012` criterio per criterio ed era orientato a fonderla; il PO ha guardato due PDF e l'ha ribaltata |
 | I-076 | 2026-09-18 | **Gli organi di servizio restano vicini al pezzo che servono, ed è un vincolo.** «I millimetri non costano niente però le valvole di servizio devono rimanere vicino ai loro padroni. Altrimenti non si capisce più a cosa servono. Una valvola vicino al suo oggetto che serve fa capire a cosa serve. Una valvola in mezzo a una linea così lontana da tutto è equivoca. Sono cose note e che potevi capire anche da solo in qualità di PM.» | Riscontro PO del 18 settembre 2026, in risposta alla domanda del PM sul prezzo di D-139 | **CHIUSA da D-145.** Il PM aveva girato al PO una domanda che doveva risolvere da sé: la vicinanza è leggibilità, non estetica, e non era mai stata messa in discussione |
 | I-075 | 2026-09-18 | **La forma della distribuzione ai terminali, dettata come best practice.** «Importante è che abbiamo un tratto dritto che esce/entra dal circolatore poi si va verso la distribuzione. Spesso la distribuzione si accetta che faccia una curva e poi lì si attaccano i terminali tipo così per capirci. Serbatoio, pompa, tratto dritto, curva e giù attacchi i terminali. Si fa sempre così, puoi prenderla come best practice.» Con schizzo a mano | Riscontro PO del 18 settembre 2026; schizzo in `riferimenti-grafici/2026-09-18/distribuzione-dorsale-a-pettine.png` | **CHIUSA da D-144.** Chiude anche la domanda aperta su D-060 e D-138: i terminali si impilano perché si appendono alla dorsale, non per una regola a sé |
 | I-074 | 2026-09-18 | **Il disegno non si tira fino al bordo del foglio.** «Non si mettono gli oggetti così vicini al bordo del foglio a meno che non ci sia un disegno molto molto pieno. Ma un disegno così comodo non si disegna dal bordo a bordo.» | Riscontro PO del 18 settembre 2026 sulle tavole 1 e 2 della PR #41 | **CHIUSA da D-143.** Il margine è variabile: ampio sui disegni scarichi, e si stringe solo quando il disegno è davvero pieno |
