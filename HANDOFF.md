@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-15
+**Aggiornato:** 2026-09-18
 **Scopo:** ingresso operativo breve per una nuova sessione DEV.
 
 ## Prodotto
@@ -76,15 +76,19 @@ ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
   Verdetto in `docs/pm/2026-09-14-review-pr27-draw009.md`. **Dopo il merge** si è scoperto
   che l'impianto 4 non produce più una tavola: §7 del verdetto, e primo criterio del
   pacchetto nuovo.
-- **`DRAW-010` è stato consegnato con la PR #32 e respinto dal PM.** Dodici criteri su
-  sedici raggiunti, ma la tavola 2 peggiorava su due budget e la suite passava da 10 rosse a
-  14. Il verdetto è in `docs/pm/2026-09-15-review-pr32-draw010.md`, pubblicato anche sulla
-  PR. **Il suo lavoro non è su `main`**: chi prende il pacchetto nuovo riparte da `main`.
-- Il pacchetto attivo è **`DRAW-012`** (`ACTIVE_WORK_PACKAGE.md`): **il motore disegna
-  nell'ordine del disegnatore** — prima la struttura, autostrade e strade secondarie insieme,
-  poi il corredo, e una curva sull'autostrada solo come ultima spiaggia (**D-138**).
-  Quindici criteri. **`DRAW-011` è sospeso**: curava sintomi dell'architettura che DRAW-012
-  cambia; ne sopravvive la riscrittura del caso di prova 4, che diventa il banco.
+- **`DRAW-010` è stato consegnato con la PR #32 e respinto dal PM** il 15 settembre; il suo
+  lavoro non è su `main`. Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`.
+- **`DRAW-012` è stato consegnato con la PR #41 e respinto dal PM** il 18 settembre. Tredici
+  criteri su sedici, nessuno barato, rapporto onesto — ma **il PO ha guardato le tavole e ha
+  detto che erano meglio prima**: il riempimento era stato comprato allungando i singoli
+  tratti, e il disegno arrivava quasi al bordo del foglio. Verdetto in
+  `docs/pm/2026-09-18-review-pr41-draw012.md`. Ne sono nate **D-142** (la tavola si allarga
+  tutta insieme, in proporzione) e **D-143** (il disegno non tocca il bordo; margine
+  variabile). **Il suo lavoro non va rifatto**: la struttura, le autostrade e l'invariante
+  della catena intera restano validi.
+- Il pacchetto attivo è **`DRAW-013`** (`ACTIVE_WORK_PACKAGE.md`), in **bozza da approvare
+  dal PO**: la tavola si allarga tutta insieme e non tocca il bordo. **Parte dal ramo di
+  `DRAW-012`** (`claude/hopeful-ramanujan-9bs0cb`, `17ff425`), non dalla testa di `main`.
 - **Chi tocca la posa legge prima l'analisi del 16 settembre**,
   `docs/pm/2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md`: le cinque differenze
   misurate fra l'ordine del disegnatore e quello del motore.
