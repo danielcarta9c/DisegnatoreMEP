@@ -118,7 +118,8 @@ contendesse.
 | `src/disegnatore_mep/validation/preflight.py` | il rilievo del disegno che tocca il bordo senza esserne autorizzato (§B.4) |
 | `tests/layout/test_tavola_comoda.py` | **nuovo** — le prove del pacchetto |
 | `tests/layout/test_objective.py` | la prova che la curva dichiarata non è una cessione; la prova dell'impilamento, riscritta con la ragione per cui la colonna non torna |
-| `tests/layout/test_costo_peso.py`, `test_ordine_del_disegnatore.py`, `test_riempimento_del_foglio.py` | il campo nuovo del costo, dichiarato dove il costo si costruisce per intero |
+| `tests/layout/test_costo_peso.py`, `test_ordine_del_disegnatore.py`, `test_riempimento_del_foglio.py`, `test_assi_dorsali_tee.py` | il campo nuovo del costo, dichiarato dove il costo si costruisce per intero, e il tipo della chiave dove il diario la rilegge |
+| `PROJECT_STATE.md` | la voce della consegna in revisione |
 | `docs/collaudi/DRAW-013/**` | questo rapporto, gli strumenti di misura, il pacchetto grafico |
 
 ---
