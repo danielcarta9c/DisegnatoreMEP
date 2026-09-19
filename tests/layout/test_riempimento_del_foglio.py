@@ -94,7 +94,8 @@ def test_la_distensione_non_esiste_piu() -> None:
     assert fields.index("fill") < fields.index("imbalance") < fields.index("length_mm")
     corta = improve.SheetCost(
         violations=0, turnback_runs=0, turnback_mm=0.0, long_runs=0, bends=2,
-        crossings=0, fill=0.55, coverage=0.8, imbalance=1.0, length_mm=10.0,
+        crossings=0, margin_gap=0.0, fill=0.55, coverage=0.8, imbalance=1.0,
+        length_mm=10.0,
     )
     assert corta.key() == corta._replace(length_mm=10_000.0).key()
 

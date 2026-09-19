@@ -198,6 +198,9 @@ def _cost(**overrides: float) -> SheetCost:
         long_runs=0,
         bends=4,
         crossings=1,
+        # D-143: il margine di rispetto entra nella chiave fra gli
+        # attraversamenti e il riempimento (DRAW-013 §B).
+        margin_gap=0.0,
         fill=0.55,
         coverage=0.80,
         imbalance=2.0,

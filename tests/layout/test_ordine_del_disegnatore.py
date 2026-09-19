@@ -379,6 +379,7 @@ def _cost(**overrides: float) -> SheetCost:
         long_runs=0,
         bends=4,
         crossings=1,
+        margin_gap=0.0,
         fill=0.55,
         coverage=0.80,
         imbalance=2.0,
