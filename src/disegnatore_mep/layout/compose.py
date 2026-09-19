@@ -15,7 +15,7 @@ circuiti in modo arbitrario (D-028).
 """
 
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
@@ -24,6 +24,7 @@ from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import ProjectModel
 
 from .chains import machine_chains
+from .dilate import dilated_to_fit
 from .errors import LayoutError
 from .geometry import (
     CrossReference,
@@ -87,6 +88,14 @@ class ComposeNote:
 
     highways: int = 0
     """Quante autostrade intere ha questo foglio."""
+
+    dilation: float = 1.0
+    """Il fattore con cui il foglio e' stato allargato (**D-142**, §A).
+
+    Uno vuol dire che la dilatazione non e' entrata in gioco: o il disegno non
+    ci stava nemmeno cosi', o la griglia non ammetteva nessun altro fattore.
+    Il rapporto di collaudo lo porta per ciascuna tavola, perche' il criterio 2
+    chiede **con quale fattore** il riempimento e' entrato nella finestra."""
 
 
 @dataclass
@@ -439,7 +448,14 @@ def compose_sheet(
     # entrano nella centratura ne' in nessuna misura della posa: cambiare una
     # sigla non muove un simbolo ne' un punto di una rotta. La quota di terra
     # non si esporta: non e' un elemento della tavola (D-121).
-    composed = centre_vertically(
+    # **La tavola comoda si ottiene allargando tutto insieme** (D-142, §A): il
+    # disegno e' risolto, e solo adesso si sceglie **un** fattore per il foglio
+    # e si allargano tutti i vuoti della stessa percentuale. I simboli restano
+    # della loro misura, nessun pezzo si sposta rispetto agli altri, e percio'
+    # nessuna piega e nessun attraversamento nasce da qui. Lo stiramento del
+    # singolo tratto resta dov'era — dentro il ciclo, per far entrare il
+    # corredo — e il riempimento non lo puo' piu' comprare (§A.3).
+    grown, factor = dilated_to_fit(
         SheetGeometry(
             sheet_id=partition.sheet_id,
             title=partition.title,
@@ -456,6 +472,9 @@ def compose_sheet(
         frame.drawing_rect_mm,
         grid.step_mm,
     )
+    if journal is not None and journal.notes:
+        journal.notes[-1] = replace(journal.notes[-1], dilation=factor)
+    composed = centre_vertically(grown, frame.drawing_rect_mm, grid.step_mm)
     return composed.model_copy(
         update={
             "labels": place_labels(

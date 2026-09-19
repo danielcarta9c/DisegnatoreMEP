@@ -34,10 +34,12 @@ from disegnatore_mep.layout.geometry import (
     RoutedTrunk,
     SheetGeometry,
     attaches_to,
+    border_margin_mm,
     box_of,
     distance_to_box,
     fill_ratio,
     ink_area_mm2,
+    margin_allowed_mm,
     moves_of,
     overshoot_mm,
     quadrants_of,
@@ -812,6 +814,30 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
                     f"{ratio * 100:.0f}%, sopra il {SHEET_FILL_MAX_RATIO * 100:.0f}% "
                     f"dichiarato: non resta lo spazio per le sigle dei componenti "
                     f"(D-140)",
+                    [sheet.sheet_id],
+                )
+            )
+        # **Il disegno non arriva al bordo** (**D-143**, `DRAW-013` §B.4). Il
+        # margine di rispetto parte da venticinque millimetri per lato e si
+        # stringe fino a dieci **soltanto** per far entrare un disegno che
+        # altrimenti non ci starebbe. Il rilievo si fa quindi sul confronto fra
+        # il margine che c'e' e quello che questo disegno poteva permettersi: un
+        # disegno grande che sta a dodici millimetri dal bordo e' **autorizzato**
+        # — piu' dentro non ci stava — e uno piccolo spinto contro il bordo no.
+        rect = (area.x_mm, area.y_mm, area.right_mm, area.bottom_mm)
+        margin = border_margin_mm(sheet.symbols, sheet.routes, rect)
+        allowed = margin_allowed_mm(
+            sheet.symbols, sheet.routes, rect, frame.standard.grid_mm
+        )
+        if margin is not None and margin < allowed - TOLERANCE_MM:
+            findings.append(
+                _finding(
+                    "DRAWING_TOUCHES_THE_BORDER",
+                    IssueSeverity.WARNING,
+                    f"la tavola {sheet.sheet_id}: il disegno arriva a "
+                    f"{margin:.1f} mm dal bordo dell'area, e con il suo ingombro "
+                    f"poteva starne {allowed:.1f}: un disegno comodo non si "
+                    f"disegna dal bordo a bordo (D-143)",
                     [sheet.sheet_id],
                 )
             )

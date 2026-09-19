@@ -49,6 +49,8 @@ from .hierarchy import (
     is_a_machine,
     machines_beyond_of,
     ports_through,
+    source_machines,
+    user_machines,
 )
 from .trunks import Trunk
 
@@ -87,6 +89,19 @@ class Highway:
 
     keys: tuple[TrunkKey, ...]
     steps: tuple[tuple[PortRef, PortRef], ...]
+    turns_allowed: int = 0
+    """Quante curve la catena puo' fare restando **nella sua forma** (**D-144**).
+
+    Zero per l'autostrada fra le macchine di spina: quella e' una retta da un
+    capo all'altro, e resta cio' che `DRAW-012` §C ha costruito.
+
+    **Uno** per la strada che porta ai terminali, ed e' la forma che il PO ha
+    dettato come best practice il 18 settembre: «serbatoio, pompa, tratto
+    dritto, curva, e giu' attacchi i terminali. Si fa sempre cosi'». Dal
+    circolatore esce una **gamba rettilinea**, poi c'e' **una** curva, e dopo la
+    curva la **dorsale** su cui i terminali si attaccano a pettine. La curva e'
+    dichiarata: non e' una cessione di `compose._order_of_surrender` e non va
+    contata fra le catene cedute."""
 
     @property
     def head(self) -> PortRef:
@@ -142,6 +157,8 @@ def highways(
     }
     order = structural_order(project)
     machines = {key for key, value in definitions.items() if is_a_machine(value)}
+    sorgenti = source_machines(project, catalog)
+    users = user_machines(project, catalog)
 
     at_port: dict[tuple[str, str], Trunk] = {}
     for trunk in autostrade:
@@ -245,19 +262,87 @@ def highways(
                     chain.insert(0, (piece[1], piece[0]))
                     keys.insert(0, following.connection_ids)
                 cursor = piece[1]
-        found.append(Highway(keys=tuple(keys), steps=tuple(chain)))
+        head, tail = chain[0][0].component_id, chain[-1][1].component_id
+        # **La strada verso i terminali ha diritto a una curva** (D-144): e'
+        # quella che va da un accumulo, un puffer o uno scambiatore a
+        # un'utenza, cioe' esattamente la «strada secondaria» che la gerarchia
+        # riconosce. Dal circolatore esce la gamba dritta, poi la curva, poi la
+        # dorsale. L'autostrada fra le macchine di spina non ne ha diritto: li'
+        # la forma e' la retta intera, e resta quella.
+        found.append(
+            Highway(
+                keys=tuple(keys),
+                steps=tuple(chain),
+                turns_allowed=int(
+                    (head in sorgenti and tail in users)
+                    or (tail in sorgenti and head in users)
+                ),
+            )
+        )
     return tuple(found)
 
 
-def lies_in_line(highway: Highway, port_at: PortAt) -> bool:
-    """Vero se **la catena intera** e' una retta, con questa posa.
+def turns_of(highway: Highway, port_at: PortAt) -> int | None:
+    """Quante curve fa la catena con questa posa, o `None` se non si misura.
 
-    Tre condizioni, e le prime due sono quelle di sempre lette su ogni tratta:
-    le due porte di una tratta si guardano in faccia, e la tratta va nel verso
-    della porta da cui parte. La terza e' quella che mancava: **fra una tratta e
-    la successiva la retta non cambia**, ne' direzione ne' quota. E' la
-    condizione che fallisce quando ogni frammento e' dritto e la catena fa un
-    gomito sul raccordo che li unisce.
+    Ogni tratta deve restare un rettilineo: le due porte si guardano in faccia e
+    la tratta va nel verso della porta da cui parte. Fra una tratta e la
+    successiva la retta puo' **cambiare**, e ogni cambio — di direzione o di
+    quota — e' una curva. Zero curve e' la retta di `DRAW-012` §C; una curva e'
+    la forma che **D-144** chiede alla distribuzione.
+
+    `None` quando la posa non colloca un pezzo, o quando una tratta non e' un
+    rettilineo: non c'e' un numero di curve da dare, e chi chiama lo tratta come
+    una catena che non sta nella propria forma.
+    """
+    heading: tuple[float, float] | None = None
+    axis: float | None = None
+    turns = 0
+    for entry, exit_ in highway.steps:
+        here = port_at(entry.component_id, entry.port_id)
+        there = port_at(exit_.component_id, exit_.port_id)
+        if here is None or there is None:
+            return None
+        (source, face), (goal, other) = here, there
+        if other is not face.opposite:
+            return None
+        direction = _DIRECTION[face]
+        if face in _HORIZONTAL_FACES:
+            if abs(source.y_mm - goal.y_mm) > _TOLERANCE_MM:
+                return None
+            if (goal.x_mm - source.x_mm) * direction[0] <= _TOLERANCE_MM:
+                return None
+            quota = source.y_mm
+        else:
+            if abs(source.x_mm - goal.x_mm) > _TOLERANCE_MM:
+                return None
+            if (goal.y_mm - source.y_mm) * direction[1] <= _TOLERANCE_MM:
+                return None
+            quota = source.x_mm
+        if heading is not None and (
+            heading != direction or abs((axis or 0.0) - quota) > _TOLERANCE_MM
+        ):
+            turns += 1
+        heading, axis = direction, quota
+    if heading is None:
+        return None
+    return turns
+
+
+def lies_in_line(highway: Highway, port_at: PortAt) -> bool:
+    """Vero se la catena sta **nella propria forma**, con questa posa.
+
+    Per l'autostrada fra le macchine di spina la forma e' la retta intera, ed e'
+    l'invariante che `DRAW-012` §C ha costruito: le due porte di ogni tratta si
+    guardano in faccia, la tratta va nel verso della porta da cui parte, e fra
+    una tratta e la successiva **la retta non cambia**. E' la condizione che
+    fallisce quando ogni frammento e' dritto e la catena fa un gomito sul
+    raccordo che li unisce.
+
+    Per la strada verso i terminali la forma e' quella di **D-144**: gamba
+    rettilinea, **una** curva, dorsale. L'invariante non si applica piu' da un
+    capo all'altro — si applica **a tratti**, con una curva dichiarata fra le
+    due — e quella curva non e' una cessione: e' la forma giusta.
 
     Una posa che non colloca uno dei pezzi non e' una catena storta: e' una
     catena che non si puo' ancora misurare, e la risposta e' `False` senza
@@ -265,35 +350,8 @@ def lies_in_line(highway: Highway, port_at: PortAt) -> bool:
     non si storce», e su una catena non misurabile non c'e' niente da
     conservare.
     """
-    heading: tuple[float, float] | None = None
-    axis: float | None = None
-    for entry, exit_ in highway.steps:
-        here = port_at(entry.component_id, entry.port_id)
-        there = port_at(exit_.component_id, exit_.port_id)
-        if here is None or there is None:
-            return False
-        (source, face), (goal, other) = here, there
-        if other is not face.opposite:
-            return False
-        direction = _DIRECTION[face]
-        if face in _HORIZONTAL_FACES:
-            if abs(source.y_mm - goal.y_mm) > _TOLERANCE_MM:
-                return False
-            if (goal.x_mm - source.x_mm) * direction[0] <= _TOLERANCE_MM:
-                return False
-            quota = source.y_mm
-        else:
-            if abs(source.x_mm - goal.x_mm) > _TOLERANCE_MM:
-                return False
-            if (goal.y_mm - source.y_mm) * direction[1] <= _TOLERANCE_MM:
-                return False
-            quota = source.x_mm
-        if heading is not None and heading != direction:
-            return False
-        if axis is not None and abs(axis - quota) > _TOLERANCE_MM:
-            return False
-        heading, axis = direction, quota
-    return heading is not None
+    turns = turns_of(highway, port_at)
+    return turns is not None and turns <= highway.turns_allowed
 
 
 def crooked_highways(
@@ -309,4 +367,5 @@ __all__ = [
     "crooked_highways",
     "highways",
     "lies_in_line",
+    "turns_of",
 ]

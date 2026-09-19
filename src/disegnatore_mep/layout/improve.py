@@ -96,6 +96,7 @@ from .geometry import (
     INK_COVERAGE_MIN,
     SHEET_FILL_MAX_RATIO,
     SHEET_FILL_MIN_RATIO,
+    SHEET_MARGIN_MM,
     PlacedSymbol,
     Point,
     RoutedTrunk,
@@ -104,6 +105,7 @@ from .geometry import (
     ink_box,
     ink_coverage,
     ink_imbalance,
+    margin_allowed_mm,
     overshoot_mm,
     run_intrudes_on,
 )
@@ -334,6 +336,18 @@ class SheetCost(NamedTuple):
     crossings: int
     """Incroci, pesati per gerarchia come le pieghe."""
 
+    margin_gap: float
+    """Di quanto il disegno rinuncia al margine di rispetto (**D-143**).
+
+    Zero quando l'ingombro ci sta con i venticinque millimetri per lato che il
+    PO chiede; cresce fino a quindici quando il disegno e' cosi' largo che il
+    margine deve stringersi fino al suo minimo. **Sta prima del riempimento**
+    nella chiave, e non e' un ordine casuale: un disegno che si allarga fino al
+    bordo per far salire una percentuale e' esattamente cio' che il PO ha
+    bocciato — «non si mettono gli oggetti cosi' vicini al bordo del foglio». Lo
+    spazio comodo si prende **dopo**, con la dilatazione, che il margine limita.
+    """
+
     fill: float
     """Riempimento dell'area di disegno: **non** si legge da solo (D-141)."""
 
@@ -376,11 +390,18 @@ class SheetCost(NamedTuple):
         bare = max(INK_COVERAGE_MIN - self.coverage, 0.0)
         return max(outside, bare)
 
-    def key(self) -> tuple[int, int, float, int, int, int, float, float]:
-        """La chiave d'ordine: le sei voci, il riempimento, poi lo spareggio.
+    def key(
+        self, fill_gap: float | None = None
+    ) -> tuple[int, int, float, int, int, int, float, float, float]:
+        """La chiave d'ordine: le sei voci, il margine, il riempimento, lo spareggio.
 
         La lunghezza non c'e', ed e' la sola differenza con l'ordine di prima
         (D-139): resta nella tupla come misura, e non decide piu' niente.
+
+        `fill_gap` si passa quando il confronto **non deve leggere** il
+        riempimento vero di questa posa: e' la guardia di `beats`, che lo
+        sostituisce con quello dell'altra posa quando il riempimento e' salito
+        in un modo che D-141 o D-142 non riconoscono.
         """
         return (
             self.violations,
@@ -389,13 +410,41 @@ class SheetCost(NamedTuple):
             self.long_runs,
             self.bends,
             self.crossings,
-            round(self.fill_gap, 6),
+            round(self.margin_gap, 3),
+            round(self.fill_gap if fill_gap is None else fill_gap, 6),
             round(self.imbalance, 6),
         )
 
-    def beats(self, other: "SheetCost") -> bool:
-        """Vero se questa geometria e' strettamente migliore dell'altra."""
-        return self.key() < other.key()
+    def beats(self, other: "SheetCost", on_fill: bool = True) -> bool:
+        """Vero se questa geometria e' strettamente migliore dell'altra.
+
+        **La guardia del riempimento e' un divieto, non una soglia** (D-141,
+        `DRAW-013` §E). Il verdetto sulla PR #41 l'ha misurata: finche' la
+        copertura restava sopra `INK_COVERAGE_MIN` una posa che alzava il
+        riempimento **e abbassava la copertura** vinceva lo stesso — riempimento
+        30 % con copertura 0,80 perdeva contro riempimento 50 % con copertura
+        0,70. D-141 dice l'opposto, e lo dice senza soglie: «un riempimento che
+        sale mentre la copertura scende **non** e' un miglioramento». Qui il
+        caso **lieve** costa quanto il caso grosso: il riempimento salito cosi'
+        si legge come quello dell'altra posa, e non compra niente.
+
+        `on_fill=False` toglie al confronto il riempimento **comunque sia
+        venuto**, ed e' come si giudica un allungo (**D-142** §A.3): lo
+        stiramento del singolo tratto resta ammesso soltanto per far entrare il
+        corredo dove non ci sta, che e' la ragione per cui il contratto lo
+        ammetteva. La tavola comoda si ottiene con la dilatazione proporzionale
+        di `layout.dilate`, che allarga tutto insieme; un allungo che si
+        giustificasse col riempimento sarebbe di nuovo la mossa che il PO ha
+        bocciato — «allungo solo un tratto per prendere piu' spazio, e' proprio
+        brutto cosi'».
+        """
+        mine = self.fill_gap
+        bought = self.fill > other.fill + _TOLERANCE_MM and (
+            self.coverage < other.coverage - _TOLERANCE_MM
+        )
+        if not on_fill or bought:
+            mine = max(mine, other.fill_gap)
+        return self.key(mine) < other.key()
 
 
 class Measured(NamedTuple):
@@ -715,12 +764,16 @@ class Improver:
         # Il minimo di ogni stacco, letto dalla tratta come lo legge la posa
         # (I-046): sotto non si scende, sopra si paga in lunghezza.
         self.hang_min: dict[str, float] = {}
+        # La tratta di ciascuno stacco, tenuta da parte: la rilegge il vincolo
+        # di D-145, che deve sapere **quanto rettilineo** quella tratta chiede.
+        self.hang_trunk: dict[str, Trunk] = {}
         for child, (parent, _port_id) in self.parent_of.items():
             trunk = next(
                 item
                 for item in self.trunks
                 if {item.start.component_id, item.end.component_id} == {parent, child}
             )
+            self.hang_trunk[child] = trunk
             face = self.upright[child].port(
                 self.hang_port.get(child, self.upright[child].ports[0].id)
             ).face
@@ -940,6 +993,10 @@ class Improver:
             long_runs=long_runs,
             bends=bends,
             crossings=crossings,
+            margin_gap=SHEET_MARGIN_MM
+            - margin_allowed_mm(
+                settled.symbols, settled.routes, self.sheet_rect, self.step
+            ),
             fill=fill_ratio(settled.symbols, settled.routes, self.sheet_rect),
             coverage=ink_coverage(settled.symbols, settled.routes, box),
             imbalance=ink_imbalance(
@@ -2288,15 +2345,19 @@ class Improver:
                 out.append(move)
         return out
 
+    def _gap_of(self, table: Move, child: str) -> float:
+        """Lo stacco di un appeso dal proprio attacco, su una posa qualunque."""
+        parent, port_id = self.parent_of[child]
+        stub, _ = self.port_at(table[parent], port_id)
+        own, _ = self.port_at(
+            table[child], self.hang_port.get(child, self.upright[child].ports[0].id)
+        )
+        return max(abs(own.x_mm - stub.x_mm), abs(own.y_mm - stub.y_mm))
+
     def _refresh_hang_gaps(self) -> None:
         """Gli stacchi degli appesi, riletti dalla posa corrente."""
-        for child, (parent, port_id) in self.parent_of.items():
-            stub, _ = self.port_at(self.best[parent], port_id)
-            own, _ = self.port_at(
-                self.best[child],
-                self.hang_port.get(child, self.upright[child].ports[0].id),
-            )
-            self.hang_gap[child] = max(abs(own.x_mm - stub.x_mm), abs(own.y_mm - stub.y_mm))
+        for child in self.parent_of:
+            self.hang_gap[child] = self._gap_of(self.best, child)
 
     def _rotation_moves(self, leader: str) -> list[Move]:
         me = self.best[leader]
@@ -2603,6 +2664,40 @@ class Improver:
             now_mm = self._link_mm(after, trunk)
             if now_mm > max(self._need_mm(trunk), was) + _TOLERANCE_MM:
                 return False
+        # **Un organo di servizio sta addosso al pezzo che serve** (**D-145**,
+        # `DRAW-013` §G), e la vicinanza e' un **vincolo**, non un costo. Sta
+        # qui, fra cio' che nessun guadagno compra, e non in `SheetCost`: D-139
+        # ha tolto i millimetri dalle voci di costo e fin qui **niente** aveva
+        # preso il posto della riga che teneva stretto il corredo — «ogni
+        # millimetro oltre il minimo peggiora il costo» di `DRAW-005-R1`
+        # blocco E. Il PO: «le valvole di servizio devono rimanere vicino ai
+        # loro padroni; una valvola in mezzo a una linea cosi' lontana da tutto
+        # e' equivoca».
+        #
+        # Il conto e' **monotono**, come quello del tronco: uno stacco al
+        # proprio minimo non si allunga, e uno che il posizionamento ha dovuto
+        # fare piu' lungo — perche' il posto era preso — puo' solo accorciarsi.
+        # L'unico allungamento ammesso e' quello che il minimo stesso dichiara,
+        # cioe' il posto per gli accessori in linea sulla stessa tratta, e
+        # quello e' gia' dentro `hang_min` (`place.stub_minimum_mm`).
+        for child in self.parent_of:
+            parent, _port_id = self.parent_of[child]
+            if child not in move and parent not in move:
+                continue
+            # Il tetto: il proprio minimo, cio' che lo stacco e' gia', e **il
+            # rettilineo che la tratta pretende**. Quest'ultimo e' il «vincolo
+            # dichiarato» di §G.2 — far posto agli accessori in linea sulla
+            # stessa tratta — e senza di lui il vincolo murerebbe l'unica mossa
+            # capace di far entrare una valvola che non ci sta: misurato sulla
+            # tavola 2, dove l'intercettazione dell'acquedotto non trovava piu'
+            # il proprio rettilineo e la tavola smetteva di uscire.
+            ceiling = max(
+                self.hang_min[child],
+                self.hang_gap[child],
+                self._need_mm(self.hang_trunk[child]),
+            )
+            if self._gap_of(after, child) > ceiling + _TOLERANCE_MM:
+                return False
         # **La rettilineita' del tronco e' un vincolo, non una voce di costo**
         # (DRAW-008 §A.4). Sta qui, dove stanno i vincoli che nessun guadagno
         # compra, e non in `SheetCost`: una mossa che piega un'autostrada gia'
@@ -2775,7 +2870,12 @@ class Improver:
                     trial = dict(self.best)
                     trial.update(move)
                     found = self.measure(trial)
-                    accepted = found is not None and found.cost.beats(current.cost)
+                    # **L'allungo si paga con il corredo, non con il
+                    # riempimento** (D-142 §A.3): qui il criterio e' la sola
+                    # ragione per cui il contratto lo ammetteva.
+                    accepted = found is not None and found.cost.beats(
+                        current.cost, on_fill=False
+                    )
                     self.journal.append(
                         Attempt(
                             "corredo",
@@ -2856,7 +2956,9 @@ class Improver:
                 )
                 if found is None:
                     continue
-                if best_found is None or found.cost.beats(best_found.cost):
+                if best_found is None or found.cost.beats(
+                    best_found.cost, on_fill=kind != "allungo"
+                ):
                     best_found, best_trial, best_kind = found, trial, kind
             if best_found is not None and best_trial is not None:
                 self.journal.append(Attempt("posa", best_kind, leader, best_found.cost.key(), True))
@@ -2879,7 +2981,9 @@ class Improver:
                     trial = dict(self.best)
                     trial.update(move)
                     found = self.measure(trial)
-                    accepted = found is not None and found.cost.beats(current.cost)
+                    accepted = found is not None and found.cost.beats(
+                        current.cost, on_fill=kind != "allungo"
+                    )
                     self.journal.append(
                         Attempt(
                             self.phase.name.lower(),
@@ -2925,7 +3029,9 @@ class Improver:
                             False,
                         )
                     )
-                    if found is None or not found.cost.beats(current.cost):
+                    if found is None or not found.cost.beats(
+                        current.cost, on_fill=kind != "allungo"
+                    ):
                         continue
                     if best_found is None or found.cost.beats(best_found.cost):
                         best_found, best_trial, best_kind = found, trial, kind
