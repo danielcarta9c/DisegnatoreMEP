@@ -60,6 +60,27 @@ Al suo posto c'è la **dilatazione proporzionale** (`src/disegnatore_mep/layout/
 disegno risolto si sceglie **un fattore per foglio** e si allargano **tutti** i vuoti della stessa
 percentuale. Fattore usato: **1,08** sulla tavola 1 e **1,25** sulla tavola 2.
 
+**Quanto ha davvero mosso, e il PM lo deve sapere prima di guardare i numeri**: la griglia
+quantizza la mossa, e con un fattore piccolo la annulla quasi del tutto. Misurato sulla stessa
+tavola, prima e dopo la dilatazione — §7.5 spiega il meccanismo:
+
+| | prima della dilatazione | dopo |
+|---|---|---|
+| tavola 1 (fattore 1,08) | 297,5 × 117,5 mm — riempimento 42,5 % | **300,0 × 117,5 mm** — 42,9 % |
+| tavola 2 (fattore 1,25) | 290,0 × 167,5 mm — riempimento 59,1 % | **300,0 × 167,5 mm** — 61,1 % |
+
+La dilatazione ha aggiunto **due millimetri e mezzo** sulla tavola 1 e **dieci** sulla tavola
+2, su un asse solo in tutt'e due i casi: in altezza non ha mosso nulla. §7.5 dice perché, ed è
+un fatto della griglia, non una taratura.
+
+**Va detto subito, perché cambia come si legge il criterio 2**: le due tavole erano già dov'erano
+**prima** della dilatazione — 42,5 % e 59,1 % — e la dilatazione ha aggiunto meno di due punti.
+Il riempimento lo raggiunge ancora la **posa**, che ha la finestra di D-140 nella propria chiave
+come l'aveva prima; ciò che è cambiato è che adesso **il margine viene prima della finestra**,
+e che lo stiramento del singolo tratto non la può più comprare. Cioè: le due mosse che il PO ha
+bocciato sono chiuse, ma non è vero che «il riempimento sale per dilatazione e non per altro»
+come §E si aspettava. §7.6 lo porta al PM come la cosa da decidere.
+
 ### 1.3 L'ingresso dell'acqua fredda è tornato addosso al pezzo che alimenta — sulla tavola 1
 
 Sulla **tavola 1** la distanza fra il confine di rete dell'acquedotto e l'accumulo che alimenta
@@ -207,7 +228,7 @@ I comandi e i loro output sono in §5 e §6; qui c'è l'esito e dove leggerlo.
 | # | Esito | Dove |
 |---|---|---|
 | 1 | **raggiunto** | §5.1 — la prova generale della dilatazione |
-| 2 | **raggiunto in parte** | tavola 2 **61,1 %** in finestra con fattore **1,25**; tavola 1 **42,9 %** con fattore **1,08**, sotto la finestra. §7.3 misura perché la tavola 1 non ci arriva |
+| 2 | **NON raggiunto nel senso del pacchetto** | la tavola 2 è in finestra (61,1 %) e la tavola 1 no (42,9 %); ma **nessuna delle due ci entra *per dilatazione***: erano a 59,1 % e 42,5 % già prima, e la dilatazione ha aggiunto meno di due punti. §1.2, §7.3 e §7.6 |
 | 3 | **NON raggiunto sulla tavola 2** | 135,0 → 120,0 mm. Raggiunto sulla tavola 1: 40,0 → 20,0 mm. §7.1 |
 | 4 | **raggiunto** | 25,0 mm su tutt'e due le tavole, contro 12,5 e 17,5 |
 | 5 | **raggiunto** | §5.2 — la prova nei due versi |
@@ -409,10 +430,11 @@ minimo di 45). Il conto, per esteso:
 - l'area di disegno è 350 × 235 mm; con il margine di 25 mm per lato restano **300 × 185**;
 - la tavola 1 è larga **esattamente 300 mm**: la dilatazione si è fermata lì, ed è il margine a
   fermarla;
-- in **altezza** i vuoti della proiezione sono **due passi in tutto, cioè 5 mm**: i simboli
-  coprono quasi per intero la fascia verticale che il disegno occupa, e una dilatazione che non
-  sposta un pezzo rispetto a un altro **non ha niente da allargare** su quell'asse. Il disegno
-  cresce da 115,0 a 117,5 mm e si ferma;
+- in **altezza** i vuoti della proiezione sono **due, di un passo ciascuno, cioè 5 mm in
+  tutto**: i simboli coprono quasi per intero la fascia verticale che il disegno occupa, e una
+  dilatazione che non sposta un pezzo rispetto a un altro **non ha niente da allargare** su
+  quell'asse. A fattore 1,08 quei due vuoti restano di un passo (§7.5): l'altezza **non cambia
+  affatto**, 117,5 mm prima e 117,5 mm dopo;
 - 300 × 117,5 su 350 × 235 fa **42,9 %**. Per arrivare al 45 % servirebbero 123,4 mm di
   altezza, che su quell'asse non ci sono.
 
@@ -422,6 +444,19 @@ concilierebbe — spostare un pezzo rispetto agli altri. Ho scelto il **margine*
 dice in modo esplicito («non si stringe per far salire il riempimento») e perché è la
 disposizione nata dal difetto che ha fatto bocciare `DRAW-012`. Il preflight lo dichiara:
 `SHEET_BARELY_FILLED · t1`.
+
+**Ed ecco il prezzo, in millimetri.** Ho misurato che cosa succederebbe togliendo il margine e
+lasciando correre la dilatazione sulla tavola consegnata:
+
+| fattore in più | ingombro | riempimento | margine che resta |
+|---|---|---|---|
+| — | 300,0 × 117,5 | 42,9 % | **25,0 mm** |
+| × 1,2 | 322,5 × 117,5 | **46,1 %** | 13,75 mm |
+| × 1,3 | 345,0 × 117,5 | **49,3 %** | 2,5 mm |
+
+La riga di mezzo è esattamente la tavola che il PO ha bocciato: **322,5 mm di ingombro e
+tredici millimetri e tre quarti dal bordo** sono i numeri della PR #41. Portare la tavola 1 in
+finestra vuol dire tornare lì. Non è un'opinione: è il foglio.
 
 È una decisione da confermare, e la porto al PM: **se il PO preferisce il riempimento al
 margine, la tavola 1 torna in finestra stringendo il margine a 17,5 mm** — e allora D-143 va
@@ -447,6 +482,63 @@ Il pacchetto chiede di guardarle, e questo è ciò che vedo.
    migliorato (era 8,16). La dilatazione non lo può toccare: allarga, non redistribuisce.
 
 ---
+### 7.5 La griglia quantizza la dilatazione, e con un fattore piccolo la annulla
+
+È il rilievo tecnico più importante che porto, e non è nel pacchetto.
+
+Un vuoto lungo `g` passi, moltiplicato per il fattore `k` e riportato al passo, **cresce
+soltanto se** `round(g·k) > g`, cioè se `g ≥ 0,5 / (k − 1)`. Tradotto:
+
+| fattore | cresce solo un vuoto di almeno |
+|---|---|
+| 1,08 | **7 passi** (17,5 mm) |
+| 1,25 | **2 passi** (5,0 mm) |
+| 1,50 | **1 passo** (2,5 mm) |
+
+Sulla tavola 1, a fattore 1,08, dei diciassette vuoti dell'asse orizzontale **uno solo** arriva
+a sette passi: la dilatazione ha allargato quello, di un passo, e ha lasciato gli altri sedici
+dov'erano. Due millimetri e mezzo su un disegno largo trecento.
+
+**Perché il fattore si ferma a 1,08.** Non per prudenza: il passo successivo della scala, 1,09,
+porta quello stesso vuoto da diciotto a **venti** passi — cinque millimetri in più — e il
+disegno supera i trecento millimetri che il margine concede. La quantizzazione rende la ricerca
+a scatti: fra 1,08 e 1,09 non c'è nulla di intermedio da prendere.
+
+Ne segue una cosa che vale per il prossimo pacchetto: **la dilatazione paga dove i vuoti sono
+grandi**, e su questi impianti i vuoti sono quasi tutti di uno o due passi, perché sono i minimi
+di stacco che D-145 tiene stretti. Il riempimento «comodo» che il PO vuole non verrà mai da qui
+finché il disegno sarà fatto di pezzi addossati: verrà da una posa che **distribuisce**, e
+distribuire vuol dire spostare un pezzo rispetto a un altro — cioè proprio ciò che D-142 vieta
+alla dilatazione. Non è una contraddizione del PO: è che le due cose sono due mosse diverse, e
+questo pacchetto ne ha costruita una sola.
+
+### 7.6 «Il riempimento sale per dilatazione e non per altro» non è vero, e va deciso
+
+§E si aspettava che, con la dilatazione in campo, la guardia dovesse «verificare che il
+riempimento sia salito **per dilatazione e non per altro**». Nel motore che consegno non è così,
+e la scelta è mia: la spiego, perché il PM la deve poter ribaltare.
+
+**Perché ho lasciato la finestra nella chiave di posa.** Il pacchetto è esplicito nel dire che
+D-140 e D-141 **non si toccano**: la finestra resta 45–65 % e la copertura resta la guardia.
+Toglierle dal costo della posa sarebbe stato toccarle. Quindi la posa insegue ancora la
+finestra, e la dilatazione arriva dopo, su un disegno che ci è già quasi.
+
+**Che cosa è cambiato davvero**, e si misura:
+
+1. lo **stiramento del singolo tratto** non compra più riempimento (§A.3): è la mossa che il PO
+   ha chiamato «proprio brutta»;
+2. il **margine viene prima della finestra** nella chiave: allargarsi fino al bordo per far
+   salire una percentuale non paga più. È la seconda mossa che il PO ha bocciato;
+3. la **guardia di D-141 è un divieto** e non una soglia: il riempimento salito mentre la
+   copertura scende non vale, nemmeno di poco.
+
+**Che cosa non è cambiato**: la posa distribuisce ancora i pezzi anche per riempire, dentro il
+margine. Se il PO intendeva che **nessuna** mossa della posa debba inseguire il riempimento — e
+che la finestra debba essere un affare della sola dilatazione — allora la finestra esce dalla
+chiave, la posa si compatta come faceva `main`, e la dilatazione deve riempire da sola. Sui
+numeri di §7.5, **da sola non ce la fa**: i vuoti di questi impianti sono di uno o due passi e
+non crescono. Le due cose vanno decise insieme, e non da me.
+
 ---
 
 ## 8. La suite, e il determinismo
