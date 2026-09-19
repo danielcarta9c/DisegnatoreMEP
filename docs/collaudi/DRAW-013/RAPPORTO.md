@@ -608,7 +608,69 @@ stacco è il rettilineo della tratta, e perché».
 
 ## 8. La suite, e il determinismo
 
-*(sezione compilata)*
+### 8.1 Il saldo (criterio 13)
+
+Le due suite sono state misurate **nella stessa sessione e sulla stessa macchina**, in due
+alberi separati con due ambienti separati, per non incappare nella trappola del `.pth`: il ramo
+di partenza in un `git worktree` su `0a2b7fd`, questo ramo nell'albero di lavoro.
+
+```
+$ .venv/bin/python -m pytest -q          # ramo di partenza (0a2b7fd)
+13 failed, 1482 passed, 24 skipped, 11 xfailed in 3963.52s (1:06:03)
+```
+
+È **esattamente** il riferimento che il pacchetto dichiara — 13 rosse, 1482 verdi, 24 saltate,
+11 xfailed — e l'ho misurato invece di crederci.
+
+```
+$ .venv/bin/python -m pytest -q          # questo ramo
+__RAMO__
+```
+
+__SALDO__
+
+**Nessuna prova è stata convertita in `skip` o in `xfail`, nessuna soglia è stata allentata,
+nessuna fixture è stata toccata per far passare una prova.** Le prove che ho modificato sono
+quelle che costruiscono un `SheetCost` per intero — il costo ha un campo in più e chi lo scrive
+lo deve dire — e quella dell'impilamento, dove ho riscritto il **docstring** con la ragione per
+cui la colonna non torna, senza toccare l'asserzione.
+
+### 8.2 Le altre verifiche
+
+```
+$ .venv/bin/python -m ruff check src tests
+All checks passed!
+
+$ .venv/bin/python -m mypy src tests
+tests/layout/test_posa_a_fasi.py:594: error: Incompatible return value type ...
+tests/layout/test_posa_a_fasi.py:610: error: Unpacked dict entry 1 has incompatible type ...
+Found 2 errors in 1 file (checked 163 source files)
+```
+
+I due errori di `mypy` sono **gli stessi che stanno sul ramo di partenza**, in un file che
+questo pacchetto non tocca: non è una regressione. Ce n'erano altri dieci, introdotti dal campo
+nuovo del costo, e sono chiusi da `CostKey` — il tipo della chiave scritto una volta sola,
+invece che ripetuto in ogni firma.
+
+### 8.3 Determinismo (criterio 14)
+
+Due generazioni complete dalla CLI, in due cartelle diverse, con lo stesso comando:
+
+```
+prova-1-due-pdc-accumulo-combinato
+   impronta 1: 2fad7301bc112a2a4b6f959ecb74d8b80f1bef95e6238cd98da9d7d1d7b8ca6d
+   impronta 2: 2fad7301bc112a2a4b6f959ecb74d8b80f1bef95e6238cd98da9d7d1d7b8ca6d
+   SVG identico bit per bit
+prova-2-pdc-deviatrice-acs
+   impronta 1: aa9039a869becb4512ec52809f32a6be7127db246e463d5fcb2c7181cfeaa5a6
+   impronta 2: aa9039a869becb4512ec52809f32a6be7127db246e463d5fcb2c7181cfeaa5a6
+   SVG identico bit per bit
+```
+
+Sono le **stesse impronte** che `dopo/*-metriche.json` porta nella consegna: il pacchetto
+grafico è stato rigenerato tre volte durante la sessione, per misurare le varianti di §7.7, e
+la variante consegnata riproduce la geometria millimetro per millimetro. Il determinismo non è
+un numero, è una proprietà: chi verifica rifaccia la doppia generazione con il comando di §9.
 
 ---
 
