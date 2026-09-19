@@ -28,6 +28,7 @@ Qui si prova che sono **queste** le regole, e non una taratura migliorata:
   un vincolo che nessun costo compra.
 """
 
+from datetime import date
 from functools import cache
 from pathlib import Path
 
@@ -37,6 +38,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.symbol import PortFace
+from disegnatore_mep.layout.compose import inline_component_ids
 from disegnatore_mep.layout.dilate import (
     _gaps,
     _rigid_spans,
@@ -64,8 +66,21 @@ from disegnatore_mep.layout.highways import (
     lies_in_line,
     turns_of,
 )
-from disegnatore_mep.layout.improve import SheetCost
-from disegnatore_mep.model.project import PortRef
+from disegnatore_mep.layout.improve import Improver, SheetCost
+from disegnatore_mep.layout.partition import partition_project
+from disegnatore_mep.layout.place import place_sheet
+from disegnatore_mep.layout.spine import carry_the_rest, lay_the_spine
+from disegnatore_mep.layout.trunks import build_trunks
+from disegnatore_mep.model.project import (
+    ComponentInstance,
+    ConnectionModel,
+    NetworkModel,
+    PortRef,
+    ProjectMetadata,
+    ProjectModel,
+    SubsystemModel,
+)
+from disegnatore_mep.model.types import PlantRegime
 from disegnatore_mep.validation.preflight import preflight_drawing
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -481,3 +496,139 @@ def test_il_margine_viene_prima_del_riempimento() -> None:
     fino_al_bordo = _cost(fill=0.55, coverage=0.80, margin_gap=15.0)
     assert comoda.beats(fino_al_bordo)
     assert not fino_al_bordo.beats(comoda)
+
+
+# ---------------------------------------------------------------------------
+# §G — gli organi di servizio addosso al pezzo che servono (D-145)
+# ---------------------------------------------------------------------------
+
+
+def un_accumulo_con_i_suoi_organi() -> ProjectModel:
+    """Un impianto minimo con degli **appesi**: sfiato e scarico sull'accumulo.
+
+    Serve a provare il vincolo di D-145 dove si decide — in `is_valid` — invece
+    che sulla tavola finita: una regola provata su una sola tavola e' una
+    coincidenza.
+    """
+    return ProjectModel(
+        metadata=ProjectMetadata(
+            project_id="prova-organi",
+            client="prova",
+            project_name="prova",
+            commission_code="PROVA",
+            revision="00",
+            issue_date=date(2026, 9, 19),
+        ),
+        plant_regime=PlantRegime.UP_TO_35_KW,
+        networks=[
+            NetworkModel(id="primo", name="primo", domain="hydronic", medium="heating_water")
+        ],
+        components=[
+            ComponentInstance(id="generatore", definition_id="heat-pump-air-water", tag="PDC-01"),
+            ComponentInstance(id="accumulo", definition_id="buffer-four-port", tag="VOL-01"),
+            ComponentInstance(id="sfiato", definition_id="air-vent"),
+            ComponentInstance(id="scarico", definition_id="drain-connection"),
+        ],
+        connections=[
+            ConnectionModel(
+                id="p1",
+                network_id="primo",
+                endpoint_a=PortRef(component_id="generatore", port_id="water_supply"),
+                endpoint_b=PortRef(component_id="accumulo", port_id="primary_in"),
+            ),
+            ConnectionModel(
+                id="p2",
+                network_id="primo",
+                endpoint_a=PortRef(component_id="accumulo", port_id="primary_out"),
+                endpoint_b=PortRef(component_id="generatore", port_id="water_return"),
+            ),
+            ConnectionModel(
+                id="v1",
+                network_id="primo",
+                endpoint_a=PortRef(component_id="accumulo", port_id="vent"),
+                endpoint_b=PortRef(component_id="sfiato", port_id="a"),
+            ),
+            ConnectionModel(
+                id="d1",
+                network_id="primo",
+                endpoint_a=PortRef(component_id="accumulo", port_id="drain"),
+                endpoint_b=PortRef(component_id="scarico", port_id="a"),
+            ),
+        ],
+        subsystems=[
+            SubsystemModel(
+                id="tutto",
+                name="tutto",
+                component_ids=["generatore", "accumulo", "sfiato", "scarico"],
+                network_ids=["primo"],
+            )
+        ],
+    )
+
+
+def _improver() -> Improver:
+    project = un_accumulo_con_i_suoi_organi()
+    inline = inline_component_ids(project, catalog())
+    partition = partition_project(project, build_trunks(project, inline))[0]
+    first = place_sheet(project, partition, catalog(), NOVE_C_A3, inline)
+    spine = lay_the_spine(project, partition, catalog(), NOVE_C_A3, first)
+    seeded = carry_the_rest(project, partition, catalog(), first, spine, NOVE_C_A3)
+    return Improver(project, partition, catalog(), NOVE_C_A3, seeded, inline, spine)
+
+
+def test_un_organo_di_servizio_non_si_allontana_dal_pezzo_che_serve() -> None:
+    """Il criterio 12, **come vincolo e non come costo** (D-145).
+
+    Il PO: «i millimetri non costano niente pero' le valvole di servizio devono
+    rimanere vicino ai loro padroni. Una valvola in mezzo a una linea cosi'
+    lontana da tutto e' equivoca». D-139 aveva tolto i millimetri dalle voci di
+    costo e **niente** aveva preso il posto della riga che teneva stretto il
+    corredo: da qui un accessorio poteva allontanarsi senza che nessun numero
+    se ne accorgesse.
+
+    Qui si prova dove si decide: una mossa che allontana un appeso oltre il suo
+    tetto e' **non valida**, e nessun guadagno la compra.
+    """
+    improver = _improver()
+    assert improver.parent_of, "la fixture non ha appesi: non misurerebbe niente"
+    provati = 0
+    for child in improver.parent_of:
+        me = improver.best[child]
+        tetto = max(
+            improver.hang_min[child],
+            improver.hang_gap[child],
+            improver._need_mm(improver.hang_trunk[child]),
+        )
+        # Lontano dal tetto di un passo abbondante: qualunque sia l'asse dello
+        # stacco, una delle due mosse lo allunga oltre.
+        for dx, dy in ((tetto + 4 * STEP_MM, 0.0), (0.0, tetto + 4 * STEP_MM)):
+            lontano = improver.place_unit(
+                child,
+                Point(x_mm=me.origin.x_mm + dx, y_mm=me.origin.y_mm + dy),
+                me.rotation_deg,
+            )
+            if improver._gap_of({**improver.best, **lontano}, child) <= tetto + TOLERANCE_MM:
+                continue
+            assert not improver.is_valid(lontano), (child, dx, dy)
+            provati += 1
+    assert provati >= 2, provati
+
+
+def test_lo_stacco_puo_allungarsi_per_il_rettilineo_che_la_tratta_chiede() -> None:
+    """§G.2: l'unico allungamento ammesso e' un **vincolo dichiarato**.
+
+    Il tetto non e' il minimo dello stacco da solo: e' il piu' grande fra il
+    minimo, cio' che lo stacco gia' e', e il **rettilineo che la tratta
+    pretende** per i propri accessori in linea. Senza quest'ultimo il vincolo
+    murerebbe l'unica mossa capace di far entrare una valvola che non ci sta, e
+    la tavola 2 smetterebbe di uscire — misurato, ed e' §3.5 del rapporto.
+    """
+    improver = _improver()
+    for child in improver.parent_of:
+        tetto = max(
+            improver.hang_min[child],
+            improver.hang_gap[child],
+            improver._need_mm(improver.hang_trunk[child]),
+        )
+        assert tetto >= improver.hang_min[child]
+        assert tetto >= improver._need_mm(improver.hang_trunk[child])
