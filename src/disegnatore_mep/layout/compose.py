@@ -316,8 +316,8 @@ def _order_of_surrender(
     )
 
 
-def _no_spine(reason: LayoutError) -> SpineLayout:
-    """La fase del tronco che non c'e' stata, con dentro il perche'.
+def _no_spine() -> SpineLayout:
+    """La fase del tronco che non c'e' stata.
 
     Vuota in tutto: nessun partecipante, nessuna autostrada, nessuna posa. Chi
     la riceve la tratta come una fase che non ha vincolato niente —
@@ -326,9 +326,9 @@ def _no_spine(reason: LayoutError) -> SpineLayout:
 
     `routed=False` non e' un dettaglio: dice a chi legge il diario che le
     autostrade **non** si sono posate per prime, che e' la rinuncia vera. Il
-    motivo resta appeso come causa, per chi indaga.
+    motivo lo scrive chi compone, nella via con cui la tavola e' uscita.
     """
-    empty = SpineLayout(
+    return SpineLayout(
         machines=frozenset(),
         participants=(),
         trunks=(),
@@ -337,8 +337,6 @@ def _no_spine(reason: LayoutError) -> SpineLayout:
         runs=(),
         routed=False,
     )
-    empty.__cause__ = reason  # type: ignore[attr-defined]
-    return empty
 
 
 def compose_sheet(
@@ -371,10 +369,12 @@ def compose_sheet(
     # le autostrade non si posano per prime, e la tavola esce dal ciclo come
     # usciva prima che le fasi esistessero. La cura vera e' il collettore
     # verticale.
+    senza_tronco = ""
     try:
         spine = lay_the_spine(project, partition, catalog, frame, first)
     except LayoutError as exc:
-        spine = _no_spine(exc)
+        spine = _no_spine()
+        senza_tronco = f"senza la fase del tronco ({exc}); "
     seeded = carry_the_rest(project, partition, catalog, first, spine, frame)
     # La disposizione serve le linee, non il contrario (D-078): dopo la prima
     # ipotesi di posa, i componenti si spostano dove l'instradamento di prova
@@ -513,7 +513,7 @@ def compose_sheet(
         journal.notes.append(
             ComposeNote(
                 sheet_id=partition.sheet_id,
-                ripiego=story[0],
+                ripiego=f"{senza_tronco}{story[0]}",
                 conceded=story[1],
                 crooked=tuple(
                     key
