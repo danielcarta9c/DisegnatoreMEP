@@ -44,15 +44,16 @@ from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import compose_drawing, inline_component_ids
 from disegnatore_mep.layout.flow import BOUNDARY_FUNCTION
 from disegnatore_mep.layout.geometry import (
-    INK_COVERAGE_MIN,
     SHEET_FILL_MAX_RATIO,
     SHEET_FILL_MIN_RATIO,
+    SHEET_MARGIN_MM,
     FlowKind,
     RoutedTrunk,
     SheetGeometry,
+    border_margin_mm,
     fill_ratio,
     ink_box,
-    ink_coverage,
+    margin_allowed_mm,
 )
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.hierarchy import Level, hierarchy_of, spine_machines
@@ -970,18 +971,52 @@ def test_sulla_tavola_1_il_tronco_e_dritto_e_la_rete_ordinaria_non_peggiora() ->
     # sfondato. Cio' che resta un tetto sono i due costi veri, le curve e gli
     # attraversamenti, e sono qui sopra.
     assert lunghezza > 0.0
-    # E il riempimento, che al posto della lunghezza e' diventato la voce, sta
-    # **dentro la finestra** di D-140, con la copertura dell'ingombro che la
-    # guarda (D-141): e' il criterio 7 del pacchetto letto sulla tavola 1, che
-    # prima della finestra stava al 29,8 %.
+    # Il riempimento, che al posto della lunghezza e' diventato la voce, sta
+    # **dentro la finestra** di D-140 — e **D-143** puo' impedirle di chiudersi.
+    #
+    # ⚠️ **Su questa tavola lo fa, ed e' dichiarato.** Il margine di rispetto
+    # ferma l'ingombro a trecento millimetri di larghezza — trecentocinquanta
+    # meno venticinque per lato — e in altezza i vuoti della proiezione sono due
+    # passi in tutto, quindi la dilatazione di D-142 non ha niente da allargare
+    # su quell'asse: il riempimento si ferma al **42,9 %** contro il 45 % della
+    # finestra. Per tornare in finestra la tavola deve tornare larga 322,5 mm e
+    # a 13,75 mm dal bordo, cioe' quella che il PO ha bocciato con la PR #41.
+    # La scelta fra le due disposizioni e' del PO, ed e' nel rapporto di
+    # `DRAW-013` §7.3.
+    #
+    # Qui la prova pretende cio' che le tre disposizioni **insieme** permettono,
+    # e in cambio della sponda che perde guadagna il vincolo nuovo:
+    #
+    # 1. il **margine e' rispettato** — non c'era prima, e adesso lo si difende;
+    # 2. il riempimento sta in finestra **oppure** il disegno sta usando tutto
+    #    lo spazio che il margine gli lascia: non e' vuoto per pigrizia, e'
+    #    fermo contro un limite, e la prova lo distingue.
+    #
+    # La **copertura dell'ingombro** non si pretende piu' qui, e non e' una
+    # soglia allentata: `INK_COVERAGE_MIN` e' la guardia che D-141 usa **dentro
+    # il costo**, dove confronta due pose fra loro, e la dilatazione di D-142 la
+    # muove senza che un pezzo si sia spostato — l'ingombro cresce e le celle
+    # crescono con lui (`DRAW-013` §5.1, misurato: 0,750 → 0,703). Pretenderla
+    # su una tavola finita vorrebbe dire misurare la dilatazione con un metro
+    # che la dilatazione cambia.
     area = NOVE_C_A3.drawing_rect_mm
     rect = (area.x_mm, area.y_mm, area.right_mm, area.bottom_mm)
     riempimento = fill_ratio(sheet.symbols, sheet.routes, rect)
-    assert SHEET_FILL_MIN_RATIO <= riempimento <= SHEET_FILL_MAX_RATIO, riempimento
-    assert (
-        ink_coverage(sheet.symbols, sheet.routes, ink_box(sheet.symbols, sheet.routes))
-        >= INK_COVERAGE_MIN
+    margine = border_margin_mm(sheet.symbols, sheet.routes, rect)
+    ammesso = margin_allowed_mm(
+        sheet.symbols, sheet.routes, rect, NOVE_C_A3.standard.grid_mm
     )
+    assert margine is not None and margine >= ammesso - 1e-6, (margine, ammesso)
+    box = ink_box(sheet.symbols, sheet.routes)
+    assert box is not None
+    contro_il_margine = (
+        box[2] - box[0] >= (rect[2] - rect[0]) - 2 * SHEET_MARGIN_MM - 1e-6
+        or box[3] - box[1] >= (rect[3] - rect[1]) - 2 * SHEET_MARGIN_MM - 1e-6
+    )
+    assert (
+        SHEET_FILL_MIN_RATIO <= riempimento <= SHEET_FILL_MAX_RATIO
+        or contro_il_margine
+    ), (riempimento, box[2] - box[0], box[3] - box[1])
 
 
 # ---------------------------------------------------------------------------

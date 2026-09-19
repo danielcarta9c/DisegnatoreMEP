@@ -361,11 +361,20 @@ def test_a_drawing_pushed_into_one_corner_is_a_warning_with_the_ratio() -> None:
 # **finestra**, 45–65 % (**D-140**), e il 75 % e' fuori dall'altra sponda: non
 # c'e' piu' lo spazio per le sigle. La prova dice «un foglio ben riempito non ha
 # rilievi», e per continuare a dirlo il foglio deve essere ben riempito adesso.
+#
+# ⛔ **E stavano appoggiati in alto a sinistra** — l'ingombro andava da (30, 30)
+# a (280, 210), cioe' quattordici millimetri dal bordo superiore — e da
+# **D-143** quello e' un rilievo: fra l'inchiostro e il bordo dell'area ci sono
+# venticinque millimetri, e si stringono solo per far entrare un disegno che
+# altrimenti non ci starebbe. Questo ci sta comodo: duecentocinquanta per
+# centottanta su trecentocinquanta per duecentotrentacinque. La prova dice «un
+# foglio ben riempito non ha rilievi»; il foglio e' lo stesso, **centrato**, e
+# il riempimento non cambia di un punto.
 BEN_RIEMPITO = (
-    (30.0, 30.0),
-    (220.0, 30.0),
-    (30.0, 160.0),
-    (220.0, 160.0),
+    (60.0, 43.5),
+    (250.0, 43.5),
+    (60.0, 173.5),
+    (250.0, 173.5),
 )
 
 
@@ -506,7 +515,7 @@ def test_a_clean_drawing_produces_nothing() -> None:
             ("tl", "tr", "bl", "br"), BEN_RIEMPITO, strict=True
         )
     ]
-    joining = run("s", [at(90, 55), at(220, 55)])
-    tidy = sheet("t1", symbols=quarters, routes=[joining], labels=[label("l1", at(120, 40))])
+    joining = run("s", [at(120, 68.5), at(250, 68.5)])
+    tidy = sheet("t1", symbols=quarters, routes=[joining], labels=[label("l1", at(150, 53.5))])
     registry = catalog(probe_good=GOOD_SOURCE)
     assert preflight.preflight_drawing(drawing(tidy), FRAME, registry) == []
