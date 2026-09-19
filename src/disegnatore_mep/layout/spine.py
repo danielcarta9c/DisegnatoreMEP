@@ -1044,6 +1044,46 @@ class _Spine:
             self.laid[item] = self.placed(
                 item, self._on_grid(origin), self.pose[item]
             )
+        self._no_two_on_the_same_spot()
+
+    def _no_two_on_the_same_spot(self) -> None:
+        """Due macchine non stanno **nello stesso punto**, e non e' un dettaglio.
+
+        Il risolutore lavora per uguaglianze e campate lette sulle tratte: una
+        tratta orizzontale chiede la stessa quota ai suoi due capi. Quando piu'
+        macchine in parallelo pendono dalla stessa catena di raccordi e quella
+        catena corre **in orizzontale**, la stessa quota arriva a tutte — e due
+        macchine finiscono sovrapposte, una sopra l'altra allo stesso
+        millimetro.
+
+        **Misurato il 19 settembre sulla cascata di tre pompe**, appena la posa
+        iniziale ha smesso di metterle in fila: `pdc-1` e `pdc-3` uscivano da
+        questa fase tutt'e due a (17,5 / 316,0), e la tavola ne disegnava due
+        dove il progetto ne ha tre.
+
+        **La cura vera non e' qui**: se le macchine si impilano, deve impilarsi
+        anche la catena che le raccoglie — il collettore va in verticale, e
+        allora ogni macchina tiene la propria quota. Quello e' il lavoro delle
+        corsie e si fa dove si sceglie la posa dei raccordi.
+
+        Qui c'e' la sola cosa che va fatta comunque: **una posa che sovrappone
+        due macchine non e' una candidata.** La fase si dichiara fallita, chi
+        compone passa alla via successiva, e la tavola esce senza questo
+        difetto invece di uscire con lui.
+        """
+        dove: dict[tuple[float, float], str] = {}
+        for item in sorted(self.laid):
+            origin = self.laid[item].origin
+            cella = (round(origin.x_mm, 3), round(origin.y_mm, 3))
+            altro = dove.get(cella)
+            if altro is not None:
+                raise LayoutError(
+                    f"the spine phase puts {altro} and {item} on the same spot "
+                    f"({cella[0]:g}, {cella[1]:g}mm): parallel machines share the "
+                    f"quota of the fitting chain that collects them, and that chain "
+                    f"runs across instead of down"
+                )
+            dove[cella] = item
 
     def _on_grid(self, origin: Point) -> Point:
         """L'origine riportata sul nodo di griglia piu' vicino dell'area."""
