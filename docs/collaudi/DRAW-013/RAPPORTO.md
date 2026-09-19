@@ -218,13 +218,10 @@ Misurato: con il tetto fermo al solo minimo dello stacco, l'intercettazione dell
 trova più il proprio rettilineo e `compose_drawing` si ferma su
 `run w1-a has no straight stretch for valve-isolation`.
 
-**E il vincolo da solo non bastava, ed è la cosa che ho dovuto misurare due volte.** Un vincolo
-monotono impedisce a uno stacco di **allungarsi**, ma lascia lungo quello che la posa iniziale
-ha già fatto lungo — che è metà del difetto che il PO ha nominato. Perciò il ciclo lo **attua**:
-fra due pose che costano uguale, quella che avvicina di più gli organi di servizio è quella che
-si prende (`_repairs_a_stub`). Non è una voce di costo, e D-145 resta rispettata alla lettera —
-non compra niente, perché si accetta solo ciò che **non peggiora** la tavola su nessuna voce, e
-non vende niente, perché una posa che allontana un organo non passa di lì.
+**Il vincolo è monotono, e questo è un limite dichiarato.** Impedisce a uno stacco di
+**allungarsi**, ma lascia lungo quello che la posa iniziale ha già fatto lungo — che è metà del
+difetto che il PO ha nominato. L'altra metà l'ho scritta, misurata e **tolta**: §7.7 porta il
+conto, ed è la cosa più importante di questo rapporto dopo le tavole.
 
 ⚠️ **Un tetto sbagliato nascondeva tutto**: la prima scrittura leggeva il bisogno da
 `_need_mm`, che sembra la funzione giusta e non lo è — non scende mai sotto i dieci millimetri
@@ -252,7 +249,7 @@ I comandi e i loro output sono in §5 e §6; qui c'è l'esito e dove leggerlo.
 | 9 | **NON raggiunto** | la colonna non torna, e la ragione è quella di §3.3: sta nel simbolo, non nella posa |
 | 10 | **raggiunto** | §5.4 — il diario non conta la curva fra le cedute |
 | 11 | **misurata, e non esce** | §6 — il conto cella per cella |
-| 12 | **raggiunto come vincolo** | §5.5; sulla tavola 2 la distanza è quella di §7.1 |
+| 12 | **raggiunto come vincolo**, non come attuazione | §5.5; il vincolo impedisce di allontanare e non accorcia, e §7.7 misura che cosa costerebbe farlo accorciare |
 | 13 | da leggere in §8 | |
 | 14 | da leggere in §8 | |
 | 15 | **raggiunto** | §9 — la tabella prima/dopo |
@@ -346,8 +343,8 @@ il proprio tetto è **non valida**, e nessun guadagno la compra.
 `test_lo_stacco_puo_allungarsi_per_il_rettilineo_che_la_tratta_chiede` è §G.2: il tetto non è
 il minimo da solo, è il minimo **o** il posto che gli accessori in linea pretendono.
 
-L'**attuazione** — la parte che riporta indietro uno stacco già lungo — si legge invece sulle
-tavole vere, in `test_stacchi_minimi_e_interasse.py`, che è la prova che il pacchetto nomina.
+La parte che **riporta indietro** uno stacco già lungo non c'è, ed è §7.7: l'ho scritta, ho
+misurato che cosa faceva alle tavole, e l'ho tolta.
 
 Sulle tavole vere il criterio si legge nelle prove che c'erano già,
 `test_stacchi_minimi_e_interasse.py`, e nel numero di §1.3.
@@ -555,6 +552,45 @@ che la finestra debba essere un affare della sola dilatazione — allora la fine
 chiave, la posa si compatta come faceva `main`, e la dilatazione deve riempire da sola. Sui
 numeri di §7.5, **da sola non ce la fa**: i vuoti di questi impianti sono di uno o due passi e
 non crescono. Le due cose vanno decise insieme, e non da me.
+
+### 7.7 Chiudere la terza rossa costa due tavole peggiori, e l'ho misurato
+
+Il criterio 13 chiede **12 rosse invece di 13**, e nomina la prova: quella che pretende che
+sulla tavola composta nessuno stacco sia più lungo del proprio minimo senza una ragione. §G
+avrebbe dovuto chiuderla. **Non la chiude**, e la ragione è che il vincolo è monotono: impedisce
+di allungare, non accorcia.
+
+**L'ho fatta chiudere, e poi ho disfatto.** Ho aggiunto al ciclo l'attuazione del vincolo — fra
+due pose che costano uguale si prende quella che avvicina di più gli organi di servizio. Non era
+una voce di costo (D-145 lo vieta) e non comprava niente: accettava solo ciò che non peggiora la
+tavola su **nessuna** voce della chiave. La prova è diventata verde, il saldo del file è passato
+da 7 rosse a 6, e il criterio 13 era raggiunto.
+
+Poi ho guardato le tavole.
+
+| | con l'attuazione | senza |
+|---|---|---|
+| tavola 2 — acqua fredda dal bollitore | **192,5 mm** | 120,0 mm |
+| tavola 2 — lunghezza | 960,0 mm | 887,5 mm |
+| tavola 1 — squilibrio fra i quadranti | **3,78** (rilievo nuovo di preflight) | 1,92 |
+| tavola 1 — acqua fredda dall'accumulo | 15,0 mm | 20,0 mm |
+
+Sulla tavola 2 la linea tratteggiata dell'acqua fredda attraversava il foglio **da un capo
+all'altro**: peggio dei centotrentacinque millimetri che il PM aveva chiamato il difetto. Sulla
+tavola 1 nasceva un rilievo di preflight che prima non c'era.
+
+**Il meccanismo è quello che ci si aspetta da un greedy**: accettare una posa che costa uguale
+cambia la traiettoria della ricerca, e la traiettoria nuova finisce in un minimo diverso. Il
+vincolo faceva il proprio mestiere — gli stacchi si accorciavano — e il disegno intero
+peggiorava altrove.
+
+**Ho tolto l'attuazione e ho tenuto la correzione del tetto**, che è un difetto vero e non costa
+niente. La prova resta rossa e dichiarata, il criterio 13 **non è raggiunto**, e la decisione è
+del PO: *una riga verde vale una tavola peggiore?* Su `DRAW-010` e su `DRAW-012` la risposta è
+stata no due volte, e D-146 esiste per questo. Ho scelto come quelle due volte.
+
+La riga che l'attuazione realizzava è nella storia del ramo (commit «il vincolo di D-145 morde,
+e adesso ripara anche»), pronta a tornare se il PO decide diversamente.
 
 ---
 
