@@ -2362,6 +2362,56 @@ class Improver:
         )
         return max(abs(own.x_mm - stub.x_mm), abs(own.y_mm - stub.y_mm))
 
+    def _repairs_a_stub(
+        self, kind: str, table: Move, found: "Measured", current: "Measured"
+    ) -> bool:
+        """Vero se questa candidata **ripara** uno stacco che D-145 vuole corto.
+
+        E' l'attuazione del vincolo di §G, e sta qui e non in `SheetCost` per la
+        ragione che D-145 scrive: «e' un vincolo del motore, che nessuna voce di
+        costo puo' comprare». Infatti non compra niente — si accetta solo una
+        candidata che **non peggiora** la tavola su nessuna voce — e non vende
+        niente, perche' una posa che allontana un organo non passa di qui.
+
+        Senza questa riga il vincolo sarebbe monotono e basta: impedirebbe a uno
+        stacco di allungarsi e lascerebbe lungo quello che la posa iniziale ha
+        gia' fatto lungo, che e' la meta' del difetto che il PO ha nominato.
+        """
+        if kind != "stacco":
+            return False
+        if self._service_slack(table) >= self._service_slack(self.best) - _TOLERANCE_MM:
+            return False
+        return not current.cost.beats(found.cost)
+
+    def _hang_ceiling(self, child: str) -> float:
+        """Quanto puo' essere lungo, al piu', lo stacco di un appeso (**D-145**).
+
+        Il proprio minimo su griglia, e il posto che gli accessori in linea
+        pretendono su quella tratta — il «vincolo dichiarato» di §G.2. Niente
+        altro: cio' che lo stacco **e'** oggi non entra qui, perche' questo e'
+        il tetto della regola e non quello della mossa.
+        """
+        return max(
+            self.hang_min[child],
+            self.room[self.hang_trunk[child].connection_ids],
+        )
+
+    def _service_slack(self, table: Move) -> float:
+        """Quanti millimetri, in tutto, gli organi di servizio stanno lontani
+        dal pezzo che servono piu' di quanto la regola permetta.
+
+        Non e' una voce di costo — D-145 vieta che lo sia, e D-139 tiene i
+        millimetri fuori dal costo — ed e' per questo che non compare in
+        `SheetCost`. E' la misura con cui il ciclo **attua** il vincolo: fra due
+        pose che costano uguale, quella che lo rispetta di piu' e' quella
+        giusta, e il ciclo la prende. Nessun guadagno la compra, perche' qui non
+        si guadagna niente: si ripara.
+        """
+        return sum(
+            max(self._gap_of(table, child) - self._hang_ceiling(child), 0.0)
+            for child in self.parent_of
+        )
+
     def _refresh_hang_gaps(self) -> None:
         """Gli stacchi degli appesi, riletti dalla posa corrente."""
         for child in self.parent_of:
@@ -2693,17 +2743,23 @@ class Improver:
             if child not in move and parent not in move:
                 continue
             # Il tetto: il proprio minimo, cio' che lo stacco e' gia', e **il
-            # rettilineo che la tratta pretende**. Quest'ultimo e' il «vincolo
-            # dichiarato» di §G.2 — far posto agli accessori in linea sulla
-            # stessa tratta — e senza di lui il vincolo murerebbe l'unica mossa
-            # capace di far entrare una valvola che non ci sta: misurato sulla
-            # tavola 2, dove l'intercettazione dell'acquedotto non trovava piu'
-            # il proprio rettilineo e la tavola smetteva di uscire.
-            ceiling = max(
-                self.hang_min[child],
-                self.hang_gap[child],
-                self._need_mm(self.hang_trunk[child]),
-            )
+            # posto che gli accessori in linea pretendono su quella tratta**.
+            # Quest'ultimo e' il «vincolo dichiarato» di §G.2, ed e' esattamente
+            # l'esempio che D-145 fa — «far posto a un altro accessorio in linea
+            # sulla stessa tratta». Senza di lui il vincolo murerebbe l'unica
+            # mossa capace di far entrare una valvola che non ci sta: misurato
+            # sulla tavola 2, dove l'intercettazione dell'acquedotto non trovava
+            # piu' il proprio rettilineo e la tavola smetteva di uscire.
+            #
+            # ⛔ **Non si legge da `_need_mm`**, che sembrerebbe la funzione
+            # giusta e non lo e': quella non scende mai sotto `ROW_GAP_MM`,
+            # cioe' dieci millimetri, perche' misura la distanza fra **due
+            # simboli** e non il bisogno di questa tratta. Usata come tetto
+            # regalava cinque millimetri di gioco a ogni stacco vuoto — il cui
+            # minimo e' cinque — e il vincolo non teneva niente. Misurato sulla
+            # tavola 2: nove appesi, sei dei quali con `room` a zero e
+            # `_need_mm` a dieci.
+            ceiling = max(self._hang_ceiling(child), self.hang_gap[child])
             if self._gap_of(after, child) > ceiling + _TOLERANCE_MM:
                 return False
         # **La rettilineita' del tronco e' un vincolo, non una voce di costo**
@@ -2989,8 +3045,9 @@ class Improver:
                     trial = dict(self.best)
                     trial.update(move)
                     found = self.measure(trial)
-                    accepted = found is not None and found.cost.beats(
-                        current.cost, on_fill=kind != "allungo"
+                    accepted = found is not None and (
+                        found.cost.beats(current.cost, on_fill=kind != "allungo")
+                        or self._repairs_a_stub(kind, trial, found, current)
                     )
                     self.journal.append(
                         Attempt(
@@ -3037,8 +3094,9 @@ class Improver:
                             False,
                         )
                     )
-                    if found is None or not found.cost.beats(
-                        current.cost, on_fill=kind != "allungo"
+                    if found is None or not (
+                        found.cost.beats(current.cost, on_fill=kind != "allungo")
+                        or self._repairs_a_stub(kind, trial, found, current)
                     ):
                         continue
                     if best_found is None or found.cost.beats(best_found.cost):

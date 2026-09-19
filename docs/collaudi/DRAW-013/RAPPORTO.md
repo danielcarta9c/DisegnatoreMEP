@@ -209,16 +209,29 @@ non compra niente: il caso **lieve** costa quanto il caso grosso, e la prova ese
 
 ### 3.5 §G — gli organi di servizio addosso al pezzo che servono (D-145)
 
-Un vincolo di `is_valid`, non una voce di costo: **D-139 non si tocca**. Il conto è monotono,
-come quello del tronco — uno stacco al proprio minimo non si allunga, e uno che il
-posizionamento ha dovuto fare più lungo può solo accorciarsi. L'unico allungamento ammesso è
-quello che la **tratta dichiara**: il rettilineo che gli accessori in linea pretendono.
+Un vincolo di `is_valid`, non una voce di costo: **D-139 non si tocca**. Il tetto di uno stacco
+è il più grande fra **il proprio minimo su griglia** e **il posto che gli accessori in linea
+pretendono su quella tratta** — il «vincolo dichiarato» di §G.2, ed è l'esempio che D-145 fa.
 
 **Quel «vincolo dichiarato» non è un dettaglio: senza di lui la tavola 2 smette di uscire.**
 Misurato: con il tetto fermo al solo minimo dello stacco, l'intercettazione dell'acquedotto non
 trova più il proprio rettilineo e `compose_drawing` si ferma su
-`run w1-a has no straight stretch for valve-isolation`. È il caso che §G.2 nomina — «far posto a
-un altro accessorio in linea sulla stessa tratta» — e va letto sulla tratta, non sul minimo.
+`run w1-a has no straight stretch for valve-isolation`.
+
+**E il vincolo da solo non bastava, ed è la cosa che ho dovuto misurare due volte.** Un vincolo
+monotono impedisce a uno stacco di **allungarsi**, ma lascia lungo quello che la posa iniziale
+ha già fatto lungo — che è metà del difetto che il PO ha nominato. Perciò il ciclo lo **attua**:
+fra due pose che costano uguale, quella che avvicina di più gli organi di servizio è quella che
+si prende (`_repairs_a_stub`). Non è una voce di costo, e D-145 resta rispettata alla lettera —
+non compra niente, perché si accetta solo ciò che **non peggiora** la tavola su nessuna voce, e
+non vende niente, perché una posa che allontana un organo non passa di lì.
+
+⚠️ **Un tetto sbagliato nascondeva tutto**: la prima scrittura leggeva il bisogno da
+`_need_mm`, che sembra la funzione giusta e non lo è — non scende mai sotto i dieci millimetri
+di `ROW_GAP_MM`, perché misura la distanza fra **due simboli** e non il bisogno di quella
+tratta. Su uno stacco vuoto, il cui minimo è cinque, quel tetto regalava cinque millimetri di
+gioco a ciascuno e il vincolo non teneva niente. Misurato sulla tavola 2: nove appesi, sei dei
+quali con il posto richiesto a zero e `_need_mm` a dieci.
 
 ---
 
@@ -331,7 +344,10 @@ proprio budget di curve**.
 decide** — `is_valid` — e non su una tavola sola: per ogni appeso, una mossa che lo porta oltre
 il proprio tetto è **non valida**, e nessun guadagno la compra.
 `test_lo_stacco_puo_allungarsi_per_il_rettilineo_che_la_tratta_chiede` è §G.2: il tetto non è
-il minimo da solo.
+il minimo da solo, è il minimo **o** il posto che gli accessori in linea pretendono.
+
+L'**attuazione** — la parte che riporta indietro uno stacco già lungo — si legge invece sulle
+tavole vere, in `test_stacchi_minimi_e_interasse.py`, che è la prova che il pacchetto nomina.
 
 Sulle tavole vere il criterio si legge nelle prove che c'erano già,
 `test_stacchi_minimi_e_interasse.py`, e nel numero di §1.3.

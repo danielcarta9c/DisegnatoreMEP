@@ -1,7 +1,0 @@
-
-Preflight di qualita'
-
-Avvisi
-  - la tavola t1: il foglio e' pieno solo al 43%, sotto il 45% dichiarato: il disegno e' una fascia, non una tavola (A1)
-    codice: SHEET_BARELY_FILLED · t1
-2fad7301bc112a2a4b6f959ecb74d8b80f1bef95e6238cd98da9d7d1d7b8ca6d

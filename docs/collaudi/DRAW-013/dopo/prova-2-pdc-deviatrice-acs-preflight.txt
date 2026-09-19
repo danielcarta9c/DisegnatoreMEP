@@ -1,7 +1,0 @@
-
-Preflight di qualita'
-
-Avvisi
-  - la tavola t1: il disegno e' tutto su un lato, il quadrante piu' pieno porta 8.3 volte l'inchiostro del piu' vuoto, oltre il limite di 3 (A1, A3)
-    codice: DRAWING_ALL_ON_ONE_SIDE · t1
-aa9039a869becb4512ec52809f32a6be7127db246e463d5fcb2c7181cfeaa5a6
