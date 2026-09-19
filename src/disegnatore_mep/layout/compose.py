@@ -42,7 +42,7 @@ from .labels import place_labels
 from .legend import build_legend
 from .partition import SheetLink, SheetPartition, partition_project
 from .place import place_sheet
-from .spine import carry_the_rest, lay_the_spine
+from .spine import SpineLayout, carry_the_rest, lay_the_spine
 from .trunks import Trunk, build_trunks
 
 CROSS_REFERENCE_GAP_MM = 2.5
@@ -316,6 +316,31 @@ def _order_of_surrender(
     )
 
 
+def _no_spine(reason: LayoutError) -> SpineLayout:
+    """La fase del tronco che non c'e' stata, con dentro il perche'.
+
+    Vuota in tutto: nessun partecipante, nessuna autostrada, nessuna posa. Chi
+    la riceve la tratta come una fase che non ha vincolato niente —
+    `carry_the_rest` restituisce la posa com'era, e la cessione graduale non ha
+    catene da cedere.
+
+    `routed=False` non e' un dettaglio: dice a chi legge il diario che le
+    autostrade **non** si sono posate per prime, che e' la rinuncia vera. Il
+    motivo resta appeso come causa, per chi indaga.
+    """
+    empty = SpineLayout(
+        machines=frozenset(),
+        participants=(),
+        trunks=(),
+        symbols=(),
+        routes=(),
+        runs=(),
+        routed=False,
+    )
+    empty.__cause__ = reason  # type: ignore[attr-defined]
+    return empty
+
+
 def compose_sheet(
     project: ProjectModel,
     partition: SheetPartition,
@@ -331,7 +356,25 @@ def compose_sheet(
     # rifinitura del ciclo: e' una fase a se', che costruisce la forma invece di
     # cercarla, e il resto dell'impianto le va dietro. Da qui in avanti la
     # rettilineita' del tronco e' un vincolo, non una voce di costo.
-    spine = lay_the_spine(project, partition, catalog, frame, first)
+    # **Se la fase del tronco consegna una posa impossibile, cade la fase, non
+    # la tavola.** Succede quando piu' macchine in parallelo pendono dalla
+    # stessa catena di raccordi e quella catena corre di traverso: il
+    # risolutore le porta tutte alla stessa quota e due finiscono nello stesso
+    # punto (`spine._no_two_on_the_same_spot`).
+    #
+    # Senza questa riga quell'errore usciva dal motore e **la tavola non usciva
+    # affatto** — nemmeno col ripiego di D-150, che degrada l'instradamento e
+    # non la posa. Ma la posa iniziale, quella, e' giusta: e' lei che le
+    # macchine le ha incolonnate. Si riparte da li'.
+    #
+    # Resta una **rinuncia**, e il diario la scrive: senza la fase del tronco
+    # le autostrade non si posano per prime, e la tavola esce dal ciclo come
+    # usciva prima che le fasi esistessero. La cura vera e' il collettore
+    # verticale.
+    try:
+        spine = lay_the_spine(project, partition, catalog, frame, first)
+    except LayoutError as exc:
+        spine = _no_spine(exc)
     seeded = carry_the_rest(project, partition, catalog, first, spine, frame)
     # La disposizione serve le linee, non il contrario (D-078): dopo la prima
     # ipotesi di posa, i componenti si spostano dove l'instradamento di prova
