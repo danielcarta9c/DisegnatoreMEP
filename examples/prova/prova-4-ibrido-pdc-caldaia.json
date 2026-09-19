@@ -49,9 +49,27 @@
       "properties": {}
     },
     {
+      "id": "ritegno-pdc",
+      "definition_id": "valve-check",
+      "tag": "VR-01",
+      "properties": {}
+    },
+    {
+      "id": "ritegno-caldaia",
+      "definition_id": "valve-check",
+      "tag": "VR-02",
+      "properties": {}
+    },
+    {
       "id": "collettore-mandata",
       "definition_id": "tee-junction",
       "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "disgiuntore",
+      "definition_id": "buffer-four-port",
+      "tag": "VOL-01",
       "properties": {}
     },
     {
@@ -61,9 +79,21 @@
       "properties": {}
     },
     {
-      "id": "volano",
-      "definition_id": "buffer-four-port",
-      "tag": "VOL-01",
+      "id": "deviatrice-caldaia",
+      "definition_id": "diverting-valve-3way",
+      "tag": "VD-01",
+      "properties": {}
+    },
+    {
+      "id": "commutatrice-ritorno",
+      "definition_id": "switching-valve-3way",
+      "tag": "VCR-01",
+      "properties": {}
+    },
+    {
+      "id": "scambiatore",
+      "definition_id": "plate-heat-exchanger",
+      "tag": "SCA-01",
       "properties": {}
     },
     {
@@ -76,24 +106,6 @@
       "id": "radiatori",
       "definition_id": "radiator",
       "tag": "RAD-01",
-      "properties": {}
-    },
-    {
-      "id": "deviatrice",
-      "definition_id": "diverting-valve-3way",
-      "tag": "VD-01",
-      "properties": {}
-    },
-    {
-      "id": "scambiatore",
-      "definition_id": "plate-heat-exchanger",
-      "tag": "SCA-01",
-      "properties": {}
-    },
-    {
-      "id": "ritorno-caldaia",
-      "definition_id": "tee-junction",
-      "tag": null,
       "properties": {}
     },
     {
@@ -118,7 +130,7 @@
         "port_id": "water_supply"
       },
       "endpoint_b": {
-        "component_id": "collettore-mandata",
+        "component_id": "ritegno-pdc",
         "port_id": "a"
       },
       "properties": {}
@@ -127,12 +139,12 @@
       "id": "p2",
       "network_id": "primario",
       "endpoint_a": {
-        "component_id": "caldaia",
-        "port_id": "water_supply"
+        "component_id": "ritegno-pdc",
+        "port_id": "b"
       },
       "endpoint_b": {
-        "component_id": "deviatrice",
-        "port_id": "in"
+        "component_id": "collettore-mandata",
+        "port_id": "a"
       },
       "properties": {}
     },
@@ -140,8 +152,34 @@
       "id": "p3",
       "network_id": "primario",
       "endpoint_a": {
-        "component_id": "deviatrice",
+        "component_id": "caldaia",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "deviatrice-caldaia",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p4",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "deviatrice-caldaia",
         "port_id": "out_a"
+      },
+      "endpoint_b": {
+        "component_id": "ritegno-caldaia",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p5",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "ritegno-caldaia",
+        "port_id": "b"
       },
       "endpoint_b": {
         "component_id": "collettore-mandata",
@@ -150,23 +188,23 @@
       "properties": {}
     },
     {
-      "id": "p4",
+      "id": "p6",
       "network_id": "primario",
       "endpoint_a": {
         "component_id": "collettore-mandata",
         "port_id": "b"
       },
       "endpoint_b": {
-        "component_id": "volano",
+        "component_id": "disgiuntore",
         "port_id": "primary_in"
       },
       "properties": {}
     },
     {
-      "id": "p5",
+      "id": "p7",
       "network_id": "primario",
       "endpoint_a": {
-        "component_id": "volano",
+        "component_id": "disgiuntore",
         "port_id": "primary_out"
       },
       "endpoint_b": {
@@ -176,7 +214,7 @@
       "properties": {}
     },
     {
-      "id": "p6",
+      "id": "p8",
       "network_id": "primario",
       "endpoint_a": {
         "component_id": "collettore-ritorno",
@@ -189,10 +227,23 @@
       "properties": {}
     },
     {
-      "id": "p7",
+      "id": "p9",
       "network_id": "primario",
       "endpoint_a": {
-        "component_id": "deviatrice",
+        "component_id": "collettore-ritorno",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "commutatrice-ritorno",
+        "port_id": "in_a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p10",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "deviatrice-caldaia",
         "port_id": "out_b"
       },
       "endpoint_b": {
@@ -202,37 +253,24 @@
       "properties": {}
     },
     {
-      "id": "p8",
+      "id": "p11",
       "network_id": "primario",
       "endpoint_a": {
         "component_id": "scambiatore",
         "port_id": "primary_out"
       },
       "endpoint_b": {
-        "component_id": "ritorno-caldaia",
-        "port_id": "c"
+        "component_id": "commutatrice-ritorno",
+        "port_id": "in_b"
       },
       "properties": {}
     },
     {
-      "id": "p9",
+      "id": "p12",
       "network_id": "primario",
       "endpoint_a": {
-        "component_id": "collettore-ritorno",
-        "port_id": "c"
-      },
-      "endpoint_b": {
-        "component_id": "ritorno-caldaia",
-        "port_id": "a"
-      },
-      "properties": {}
-    },
-    {
-      "id": "p10",
-      "network_id": "primario",
-      "endpoint_a": {
-        "component_id": "ritorno-caldaia",
-        "port_id": "b"
+        "component_id": "commutatrice-ritorno",
+        "port_id": "out"
       },
       "endpoint_b": {
         "component_id": "caldaia",
@@ -244,7 +282,7 @@
       "id": "s1",
       "network_id": "secondario",
       "endpoint_a": {
-        "component_id": "volano",
+        "component_id": "disgiuntore",
         "port_id": "secondary_out"
       },
       "endpoint_b": {
@@ -274,7 +312,7 @@
         "port_id": "out"
       },
       "endpoint_b": {
-        "component_id": "volano",
+        "component_id": "disgiuntore",
         "port_id": "secondary_in"
       },
       "properties": {}
@@ -309,12 +347,12 @@
   "assumptions": [
     {
       "id": "a1",
-      "text": "Il ritorno comune ai due generatori e' un'assunzione: il testo dice che sono in parallelo e non descrive come rientrano.",
+      "text": "La cascata con priorita' alla pompa di calore e' logica di regolazione, non topologia: sul grafo si vedono i due ritegni e il collettore che unisce i due generatori.",
       "status": "proposed"
     },
     {
       "id": "a2",
-      "text": "«La caldaia da' priorita' al sanitario» e' logica di regolazione, non topologia: sul grafo si vede la deviatrice.",
+      "text": "La commutatrice sul ritorno della caldaia e' l'organo senza il quale il circuito sanitario non sarebbe dedicato: mentre fa sanitario la caldaia pescherebbe anche dal primario.",
       "status": "proposed"
     }
   ],
@@ -326,10 +364,12 @@
       "component_ids": [
         "pdc",
         "caldaia",
-        "deviatrice",
+        "ritegno-pdc",
+        "ritegno-caldaia",
+        "deviatrice-caldaia",
+        "commutatrice-ritorno",
         "collettore-mandata",
-        "collettore-ritorno",
-        "ritorno-caldaia"
+        "collettore-ritorno"
       ],
       "network_ids": [
         "primario"
@@ -337,12 +377,13 @@
     },
     {
       "id": "accumulo",
-      "name": "Accumulo",
+      "name": "Disgiuntore idraulico",
       "component_ids": [
-        "volano"
+        "disgiuntore"
       ],
       "network_ids": [
-        "primario"
+        "primario",
+        "secondario"
       ]
     },
     {

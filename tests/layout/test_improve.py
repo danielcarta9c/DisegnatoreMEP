@@ -6,9 +6,14 @@ totale scende senza che gli attraversamenti crescano. Il criterio di
 accettazione del pacchetto, rivisto dall'orchestratore sulla scorta della
 ricerca esaustiva (600 disposizioni: sotto i 9 nodi condivisi si va solo
 pagando 27 pieghe), e': nessuna voce peggiore del pre-miglioramento, almeno
-una strettamente migliore, obiettivo totale strettamente migliore, lunghezza
-entro il +10%. I vincoli rigidi — ordine di processo, distanze, griglia,
-terra — non si negoziano per nessun guadagno.
+una strettamente migliore, obiettivo totale strettamente migliore. I vincoli
+rigidi — ordine di processo, distanze, griglia, terra — non si negoziano per
+nessun guadagno.
+
+⛔ **Il tetto «lunghezza entro il +10%» e' caduto il 17 settembre 2026 con
+D-139**: i millimetri di tubo non sono piu' una voce di costo, e la fase della
+struttura si tiene larga per disposizione del PO. La lunghezza si misura
+ancora e si riporta; non giudica piu'.
 
 WP3b aggiunge le due cose che chiudono il residuo dichiarato — l'andata e
 ritorno sul prelievo ACS del caso di accettazione: le **rotazioni** fra le
@@ -172,8 +177,24 @@ def test_the_total_objective_strictly_improves_and_no_term_worsens() -> None:
     """Il criterio rivisto di WP3, letto con l'ordine di DRAW-002 e DRAW-004:
     obiettivo totale strettamente giu'; le voci del costo si confrontano in
     ordine lessicografico — pieghe prima degli attraversamenti — quindi una
-    voce successiva puo' salire solo se una precedente e' scesa; lunghezza
-    entro il +10% del pre-miglioramento (qui scende)."""
+    voce successiva puo' salire solo se una precedente e' scesa.
+
+    ⛔ **Il tetto sulla lunghezza — «entro il +10% del pre-miglioramento» — e'
+    caduto il 17 settembre 2026 con D-139.** Il PO: «i mm non sono un vero
+    costo da misurare, lo e' piu' avere un buon riempimento, ne' troppo poco
+    ne' troppo», e la fase della struttura «ci si tiene larghi e si occupa piu'
+    foglio anche se non serve». Su questa fixture la posa rivista misura
+    1512,5 mm contro 1017,5: **e' il segno che il metro e' cambiato**, non un
+    budget sfondato, ed e' lo stesso segno che si legge sulle due tavole vere
+    (470 → 762,5 mm sulla 1, 600 → 952,5 sulla 2) mentre curve e
+    attraversamenti non peggiorano.
+
+    Cio' che resta preteso qui e' tutto il resto, e non e' stato allentato di
+    una virgola: l'obiettivo **scende**, le pieghe non salgono, e una voce
+    successiva sale solo se una precedente e' scesa. La lunghezza si misura
+    ancora e si legge — e' la quarta voce che `measured` restituisce — ma non
+    giudica piu' niente, qui come nel costo.
+    """
     before, after = before_and_after()
     objective0, bends0, crossings0, length0 = measured(before)
     objective1, bends1, crossings1, length1 = measured(after)
@@ -181,7 +202,7 @@ def test_the_total_objective_strictly_improves_and_no_term_worsens() -> None:
     assert bends1 <= bends0
     assert bends1 < bends0 or crossings1 <= crossings0
     assert bends1 < bends0 or crossings1 < crossings0
-    assert length1 <= length0 * 1.10
+    assert length0 > 0.0 and length1 > 0.0
 
 
 def test_the_hard_constraints_hold_after_improvement() -> None:

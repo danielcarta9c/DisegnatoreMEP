@@ -300,19 +300,35 @@ def test_la_mandata_e_il_ritorno_di_un_circuito_chiuso_sono_tutt_e_due_autostrad
     assert set(ritorno) == {Level.AUTOSTRADA}, ritorno
 
 
-def test_il_ramo_che_porta_un_utilizzatore_e_distribuzione() -> None:
-    """Il collettore verso le utenze: porta a una macchina che di spina non e'."""
+def test_il_ramo_che_porta_un_utilizzatore_e_autostrada() -> None:
+    """La strada dal volano al terminale, e il suo ritorno.
+
+    **Riscritta il 17 settembre 2026 da `DRAW-012` §B.** Fino a `DRAW-011` era
+    distribuzione: «porta a una macchina che di spina non e'». Il PO (**D-138**)
+    la mette nella fase della struttura insieme alle autostrade — «gia' qui
+    disegna le strade secondarie: uscita ACS e distribuzione verso i terminali»
+    — e **sempre** le linee che dagli accumuli vanno ai circolatori e da li'
+    alla distribuzione. Il criterio 1 del pacchetto la nomina per esteso sulla
+    tavola 2, andata e ritorno.
+    """
     levels = _levels(cascata_con_utenza())
-    assert levels[("s2",)] is Level.DISTRIBUZIONE
-    assert levels[("s3",)] is Level.DISTRIBUZIONE
+    assert levels[("s2",)] is Level.AUTOSTRADA
+    assert levels[("s3",)] is Level.AUTOSTRADA
 
 
-def test_una_macchina_oltre_la_principale_non_alza_il_proprio_ramo() -> None:
-    """«I generatori oltre il primo allineato» sono distribuzione: una sola
-    macchina di generazione sta sulla spina, le altre ci si innestano."""
+def test_ogni_generatore_alza_il_proprio_ramo() -> None:
+    """Con piu' generatori le autostrade sono piu' d'una.
+
+    **Riscritta il 17 settembre 2026 da `DRAW-012` §B.3.** Fino a `DRAW-011`
+    «i generatori oltre il primo allineato» erano distribuzione, e sull'impianto
+    4 la pompa di calore spariva dalla struttura mentre la caldaia ci restava.
+    Il PO (**D-138**): «dai **generatori** agli accumuli, passando per i
+    collettori che **mettono insieme i generatori**» — non c'e' un generatore
+    eletto, ciascuno ha la propria autostrada fino al punto in cui confluiscono.
+    """
     levels = _levels(cascata_con_utenza())
     rami = {levels[("p2",)], levels[("p6",)]}
-    assert rami == {Level.DISTRIBUZIONE}, rami
+    assert rami == {Level.AUTOSTRADA}, rami
 
 
 def test_un_accessorio_appeso_non_si_attraversa_nemmeno_con_due_porte() -> None:
@@ -333,13 +349,20 @@ def test_uno_stacco_cieco_e_servizio() -> None:
     assert _levels(cascata_con_utenza())[("st",)] is Level.SERVIZIO
 
 
-def test_una_sola_macchina_di_generazione_sta_sulla_spina() -> None:
-    """La spina non e' «tutte le macchine»: la generazione ne mette una sola,
-    e a parita' di mestiere lo spareggio e' strutturale, mai un nome."""
+def test_sulla_spina_stanno_tutti_i_generatori_e_non_tutte_le_macchine() -> None:
+    """La spina non e' «tutte le macchine», ed e' **tutti i generatori**.
+
+    **Riscritta il 17 settembre 2026 da `DRAW-012` §B.3.** Fino a `DRAW-011` la
+    generazione ne metteva una sola, scelta dall'ordine strutturale. Con
+    **D-138** ci stanno tutte: il mestiere basta, e non c'e' piu' nessuno
+    spareggio da fare — quindi nemmeno un modo perche' un nome vi entri.
+
+    Cio' che **non** vi entra resta quello di prima, ed e' il punto della prova:
+    un terminale non e' una macchina di spina, e uno strumento appeso nemmeno.
+    """
     project = cascata_con_utenza()
     spina = spine_machines(project, catalog())
-    generatori = {"nord", "sud"} & spina
-    assert len(generatori) == 1, spina
+    assert {"nord", "sud"} <= spina, spina
     assert "volano" in spina
     assert "corpo" not in spina
     assert "manometro" not in spina

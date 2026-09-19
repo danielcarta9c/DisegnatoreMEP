@@ -91,20 +91,27 @@ from disegnatore_mep.model.project import ProjectModel
 
 from .composition import Standing, levels_of, standing_of
 from .errors import LayoutError
-from .flow import orient_trunks
+from .flow import TrunkKey, orient_trunks
 from .geometry import (
+    INK_COVERAGE_MIN,
+    SHEET_FILL_MAX_RATIO,
+    SHEET_FILL_MIN_RATIO,
+    SHEET_MARGIN_MM,
     PlacedSymbol,
     Point,
     RoutedTrunk,
     box_of,
     fill_ratio,
     ink_box,
+    ink_coverage,
     ink_imbalance,
+    margin_allowed_mm,
     overshoot_mm,
     run_intrudes_on,
 )
 from .grid import GridSpace, is_on_grid
 from .hierarchy import Level, hierarchy_of, spine_machines, weight_of
+from .highways import Highway, highways, lies_in_line
 from .inline import SettledSheet, settle_sheet
 from .partition import SheetPartition
 from .place import (
@@ -230,6 +237,16 @@ Orientation = tuple[int, tuple[tuple[str, str], ...]]
 Signature = tuple[tuple[str, float, float, int, tuple[tuple[str, str], ...]], ...]
 
 
+CostKey = tuple[int, int, float, int, int, int, float, float, float]
+"""La chiave d'ordine di `SheetCost`, scritta una volta sola.
+
+Le voci sono nove da `DRAW-013`: il **margine di rispetto** (D-143) si e'
+infilato fra gli attraversamenti e il riempimento. Vive qui, e non ripetuta in
+ogni firma, perche' la volta scorsa che e' cambiata il tipo del diario e' andato
+fuori sincrono senza che niente se ne accorgesse fino a `mypy`.
+"""
+
+
 class Attempt(NamedTuple):
     """Una riga del diario del ciclo: una candidata provata, e com'e' andata.
 
@@ -247,7 +264,7 @@ class Attempt(NamedTuple):
 
     kind: str
     leader: str
-    cost: tuple[int, int, float, int, int, int, float, float, float] | None
+    cost: CostKey | None
     accepted: bool
 
 
@@ -267,12 +284,45 @@ class PortPair(NamedTuple):
     through: tuple[str, ...] = ()
 
 
+FILL_WINDOW = (SHEET_FILL_MIN_RATIO, SHEET_FILL_MAX_RATIO)
+"""La finestra del riempimento (**D-140**): ne' troppo poco ne' troppo.
+
+Le due sponde stanno in `layout.geometry`, accanto alla misura, e non qui: le
+leggono il **preflight**, che avvisa a tavola finita, e questo **costo**, che le
+insegue mentre dispone. Un numero solo, in un posto solo — se divergessero, il
+ciclo crederebbe di aver riempito un foglio che il controllo vede vuoto.
+
+Sotto il 45 % il disegno e' vuoto e stretto insieme; sopra il 65 % non ci sta
+piu' lo spazio per le sigle dei componenti. La percentuale si misura sull'area
+di disegno, che e' gia' al netto del cartiglio e della legenda — su una A3,
+350 x 235 mm — ed e' la stessa che `fill_ratio` calcola.
+
+⛔ **Non e' un traguardo**, ed e' precisamente per questo che e' una finestra:
+cio' che D-134 rifiutava — inseguire una percentuale sempre piu' alta — resta
+rifiutato. Il PO (**D-139**): «i mm non sono un vero costo da misurare, lo e'
+piu' avere un buon riempimento, ne' troppo poco ne' troppo».
+"""
+
+
 class SheetCost(NamedTuple):
     """Il valore confrontabile della geometria completa, nell'ordine del pacchetto.
 
-    Si confronta con `beats`, che e' l'ordine lessicografico delle voci: la
-    prima che differisce decide. Riempimento e bilanciamento chiudono la fila e
-    contano solo a parita' di tutte le altre.
+    Si confronta con `beats`, che e' l'ordine lessicografico delle voci di
+    `key()`: la prima che differisce decide.
+
+    **Che cosa costa, da D-139.** Le violazioni, l'andata e ritorno, le tratte
+    troppo piegate, poi i due costi veri del disegno — le **curve** e, in
+    secondo luogo, gli **attraversamenti** — e infine il **riempimento**, letto
+    dentro la sua finestra. Il bilanciamento chiude la fila.
+
+    ⛔ **La lunghezza non e' piu' una voce di costo.** Resta nella tupla, e si
+    riporta, ma **come misura e non come giudizio**: `key()` non la legge. Il PO
+    (D-139): «i mm non sono un vero parametro». Finche' stava fra
+    `crossings` e il riempimento era lei che, a parita' di curve e
+    attraversamenti, decideva **sempre** per la posa piu' corta — e il
+    riempimento, ultimo dopo di lei, non poteva mai comprare un millimetro. E'
+    la compattazione che si misurava sulla tavola 2: 257,5 mm occupati su 350
+    disponibili, con il foglio libero a destra.
     """
 
     violations: int
@@ -296,17 +346,71 @@ class SheetCost(NamedTuple):
     crossings: int
     """Incroci, pesati per gerarchia come le pieghe."""
 
-    length_mm: float
-    """Millimetri di tubo, pesati per gerarchia come le pieghe."""
+    margin_gap: float
+    """Di quanto il disegno rinuncia al margine di rispetto (**D-143**).
+
+    Zero quando l'ingombro ci sta con i venticinque millimetri per lato che il
+    PO chiede; cresce fino a quindici quando il disegno e' cosi' largo che il
+    margine deve stringersi fino al suo minimo. **Sta prima del riempimento**
+    nella chiave, e non e' un ordine casuale: un disegno che si allarga fino al
+    bordo per far salire una percentuale e' esattamente cio' che il PO ha
+    bocciato — «non si mettono gli oggetti cosi' vicini al bordo del foglio». Lo
+    spazio comodo si prende **dopo**, con la dilatazione, che il margine limita.
+    """
 
     fill: float
-    """Riempimento dell'area di disegno: spareggio, piu' e' meglio."""
+    """Riempimento dell'area di disegno: **non** si legge da solo (D-141)."""
+
+    coverage: float
+    """Quanta parte dell'ingombro porta davvero inchiostro (D-141).
+
+    Sta accanto al riempimento e non altrove perche' il riempimento **si gonfia
+    spostando un pezzo in un angolo**: il rettangolo cresce, la percentuale
+    sale, e il disegno resta vuoto come prima. Finche' il riempimento era una
+    misura il difetto non contava; adesso che e' un obiettivo, qualcuno lo
+    farebbe."""
 
     imbalance: float
     """Squilibrio dell'inchiostro fra i quadranti: spareggio, meno e' meglio."""
 
-    def key(self) -> tuple[int, int, float, int, int, int, float, float, float]:
-        """La chiave d'ordine: le sette voci, poi i due spareggi."""
+    length_mm: float
+    """Millimetri di tubo, pesati per gerarchia. **Misura, non giudizio**
+    (D-139): sta in fondo alla tupla e `key()` non la legge."""
+
+    @property
+    def fill_gap(self) -> float:
+        """Quanto la tavola e' lontana dall'essere **ben riempita**.
+
+        Zero e' il bersaglio, e ci si arriva da tutt'e due i lati: e' la
+        finestra di D-140, non una percentuale da inseguire. Una posa piu'
+        vuota e una piu' stretta della finestra costano tutt'e due, ed e'
+        esattamente cio' che «ne' troppo poco ne' troppo» vuol dire.
+
+        **E non si legge mai da solo** (D-141): accanto alla distanza dalla
+        finestra sta quanto l'ingombro e' spoglio, e vince — cioe' costa — la
+        peggiore delle due. Cosi' una posa che alza il riempimento spingendo un
+        pezzo in un angolo **non guadagna niente**: il riempimento entra nella
+        finestra ma la copertura crolla, e la voce peggiora invece di
+        migliorare. Un numero solo, con dentro la propria guardia: due voci
+        separate avrebbero lasciato la seconda a fare da spareggio della prima,
+        che e' il modo in cui il trucco tornerebbe a pagare.
+        """
+        low, high = FILL_WINDOW
+        outside = max(low - self.fill, self.fill - high, 0.0)
+        bare = max(INK_COVERAGE_MIN - self.coverage, 0.0)
+        return max(outside, bare)
+
+    def key(self, fill_gap: float | None = None) -> CostKey:
+        """La chiave d'ordine: le sei voci, il margine, il riempimento, lo spareggio.
+
+        La lunghezza non c'e', ed e' la sola differenza con l'ordine di prima
+        (D-139): resta nella tupla come misura, e non decide piu' niente.
+
+        `fill_gap` si passa quando il confronto **non deve leggere** il
+        riempimento vero di questa posa: e' la guardia di `beats`, che lo
+        sostituisce con quello dell'altra posa quando il riempimento e' salito
+        in un modo che D-141 o D-142 non riconoscono.
+        """
         return (
             self.violations,
             self.turnback_runs,
@@ -314,14 +418,41 @@ class SheetCost(NamedTuple):
             self.long_runs,
             self.bends,
             self.crossings,
-            round(self.length_mm, 3),
-            round(-self.fill, 6),
+            round(self.margin_gap, 3),
+            round(self.fill_gap if fill_gap is None else fill_gap, 6),
             round(self.imbalance, 6),
         )
 
-    def beats(self, other: "SheetCost") -> bool:
-        """Vero se questa geometria e' strettamente migliore dell'altra."""
-        return self.key() < other.key()
+    def beats(self, other: "SheetCost", on_fill: bool = True) -> bool:
+        """Vero se questa geometria e' strettamente migliore dell'altra.
+
+        **La guardia del riempimento e' un divieto, non una soglia** (D-141,
+        `DRAW-013` §E). Il verdetto sulla PR #41 l'ha misurata: finche' la
+        copertura restava sopra `INK_COVERAGE_MIN` una posa che alzava il
+        riempimento **e abbassava la copertura** vinceva lo stesso — riempimento
+        30 % con copertura 0,80 perdeva contro riempimento 50 % con copertura
+        0,70. D-141 dice l'opposto, e lo dice senza soglie: «un riempimento che
+        sale mentre la copertura scende **non** e' un miglioramento». Qui il
+        caso **lieve** costa quanto il caso grosso: il riempimento salito cosi'
+        si legge come quello dell'altra posa, e non compra niente.
+
+        `on_fill=False` toglie al confronto il riempimento **comunque sia
+        venuto**, ed e' come si giudica un allungo (**D-142** §A.3): lo
+        stiramento del singolo tratto resta ammesso soltanto per far entrare il
+        corredo dove non ci sta, che e' la ragione per cui il contratto lo
+        ammetteva. La tavola comoda si ottiene con la dilatazione proporzionale
+        di `layout.dilate`, che allarga tutto insieme; un allungo che si
+        giustificasse col riempimento sarebbe di nuovo la mossa che il PO ha
+        bocciato — «allungo solo un tratto per prendere piu' spazio, e' proprio
+        brutto cosi'».
+        """
+        mine = self.fill_gap
+        bought = self.fill > other.fill + _TOLERANCE_MM and (
+            self.coverage < other.coverage - _TOLERANCE_MM
+        )
+        if not on_fill or bought:
+            mine = max(mine, other.fill_gap)
+        return self.key(mine) < other.key()
 
 
 class Measured(NamedTuple):
@@ -501,6 +632,7 @@ class Improver:
         placed: list[PlacedSymbol],
         inline_ids: frozenset[str],
         spine_layout: SpineLayout | None = None,
+        conceded: frozenset[TrunkKey] = frozenset(),
     ) -> None:
         self.project = project
         self.partition = partition
@@ -640,12 +772,16 @@ class Improver:
         # Il minimo di ogni stacco, letto dalla tratta come lo legge la posa
         # (I-046): sotto non si scende, sopra si paga in lunghezza.
         self.hang_min: dict[str, float] = {}
+        # La tratta di ciascuno stacco, tenuta da parte: la rilegge il vincolo
+        # di D-145, che deve sapere **quanto rettilineo** quella tratta chiede.
+        self.hang_trunk: dict[str, Trunk] = {}
         for child, (parent, _port_id) in self.parent_of.items():
             trunk = next(
                 item
                 for item in self.trunks
                 if {item.start.component_id, item.end.component_id} == {parent, child}
             )
+            self.hang_trunk[child] = trunk
             face = self.upright[child].port(
                 self.hang_port.get(child, self.upright[child].ports[0].id)
             ).face
@@ -690,6 +826,20 @@ class Improver:
             ]
             if spine_layout is not None
             else []
+        )
+        # **L'autostrada intera** (DRAW-012 §C). Le tratte qui sopra sono i suoi
+        # frammenti, e su un frammento la rettilineita' e' vera per costruzione:
+        # cinque millimetri sono dritti sempre. L'oggetto che si conserva e' la
+        # catena, e l'invariante si verifica su di lei.
+        self.conceded = frozenset(conceded)
+        self.highways: tuple[Highway, ...] = (
+            tuple(
+                item
+                for item in highways(project, catalog, self.trunks)
+                if not (set(item.keys) & self.conceded)
+            )
+            if spine_layout is not None
+            else ()
         )
         self._memo: dict[Signature, Measured | None] = {}
 
@@ -851,14 +1001,19 @@ class Improver:
             long_runs=long_runs,
             bends=bends,
             crossings=crossings,
-            length_mm=length_mm,
+            margin_gap=SHEET_MARGIN_MM
+            - margin_allowed_mm(
+                settled.symbols, settled.routes, self.sheet_rect, self.step
+            ),
             fill=fill_ratio(settled.symbols, settled.routes, self.sheet_rect),
+            coverage=ink_coverage(settled.symbols, settled.routes, box),
             imbalance=ink_imbalance(
                 settled.symbols,
                 settled.routes,
                 _centred_on(box, self.sheet_rect),
                 self.frame.standard.line_medium_mm,
             ),
+            length_mm=length_mm,
         )
 
     def _accessories_out_of_place(self, settled: SettledSheet) -> int:
@@ -1846,6 +2001,32 @@ class Improver:
             return False
         return (goal.y_mm - source.y_mm) * direction[1] > _TOLERANCE_MM
 
+    def chain_in_line(self, table: Move, highway: Highway) -> bool:
+        """Vero se l'**autostrada intera**, con questa posa, e' una retta sola.
+
+        Legge la stessa geometria di `lies_straight` — le porte, non la spezzata
+        — e vi aggiunge la sola condizione che mancava: fra una tratta e la
+        successiva la retta non cambia ne' direzione ne' quota. Il conto sta in
+        `highways.py`, che e' l'unico posto dove si sa che cos'e' una catena.
+        """
+
+        def at(component_id: str, port_id: str) -> tuple[Point, PortFace] | None:
+            placed = table.get(component_id) or self.best.get(component_id)
+            if placed is None:
+                return None
+            return self.port_at(placed, port_id)
+
+        return lies_in_line(highway, at)
+
+    def crooked_chains(self, table: Move) -> tuple[Highway, ...]:
+        """Le autostrade intere che con questa posa non sono una retta.
+
+        La legge il ripiego graduale di `compose_sheet`, che deve sapere **a
+        quale** catena sta per concedere una piega (§F.3)."""
+        return tuple(
+            item for item in self.highways if not self.chain_in_line(table, item)
+        )
+
     def block_of(self, leader: str) -> tuple[str, ...]:
         """Il **corpo rigido** di cui un pezzo del tronco fa parte (DRAW-009 §B).
 
@@ -1966,8 +2147,20 @@ class Improver:
         for trunk, my_port, peer, peer_port in self._trunks_of(leader):
             if self.hierarchy[trunk.connection_ids] is not Level.AUTOSTRADA:
                 continue
-            if not self.lies_straight(self.best, trunk):
-                continue
+            # ⛔ **Non si pretende piu' che la tratta sia gia' dritta.** Fino a
+            # `DRAW-011` l'allungo era offerto solo dove il tronco era gia' un
+            # rettilineo, e la cosa si mordeva la coda: quando la posa e'
+            # stretta il tronco **non e'** dritto — e' proprio quello il
+            # problema — e l'unica mossa capace di fare spazio spariva
+            # dall'elenco. Misurato sul banco di DRAW-012, l'impianto 4: il
+            # ciclo esauriva **centonovantotto** candidate senza che una sola
+            # fosse un allungo. E' il «nessuna consegna ha ancora usato davvero
+            # lo stretch» del pacchetto (§E.2), letto nel codice.
+            #
+            # Il taglio resta quello che era: si allontana cio' che sta oltre
+            # **lungo un asse solo**, quindi nessuna quota dell'altro asse
+            # cambia e nessun allineamento si perde. Cio' che era dritto non si
+            # storce lo dice `is_valid`, come per ogni altra mossa.
             source, face = self.port_at(self.best[leader], my_port)
             goal, _ = self.port_at(self.best[peer], peer_port)
             horizontal = face in _HORIZONTAL_FACES
@@ -2048,6 +2241,18 @@ class Improver:
         # Nessuna campata del tronco si accorcia: un taglio che stringe da una
         # parte quel che allarga dall'altra non e' un allungamento.
         for trunk in self.autostrade:
+            # ⛔ **Si guardano le campate che una campata ce l'hanno**, cioe' le
+            # tratte rettilinee: e' lo stesso filtro del giro qui sopra, e qui
+            # mancava. Su una tratta a gomito la faccia della porta di partenza
+            # non dice da che parte stia l'altro capo — l'uscita di un radiatore
+            # guarda a destra e il suo accumulo sta a sinistra — e il verso
+            # calcolato da li' e' quello sbagliato: la candidata veniva
+            # annullata sempre. Finche' l'autostrada era il solo circuito dei
+            # generatori di tratte cosi' non ce n'erano; da `DRAW-012` §B lo
+            # sono anche i ritorni dei terminali, e l'allungo spariva
+            # dall'elenco proprio sulle tratte che ne avevano bisogno.
+            if not self.lies_straight(self.best, trunk):
+                continue
             here = trunk.start.component_id
             there = trunk.end.component_id
             if (here in moving) == (there in moving):
@@ -2148,15 +2353,42 @@ class Improver:
                 out.append(move)
         return out
 
+    def _gap_of(self, table: Move, child: str) -> float:
+        """Lo stacco di un appeso dal proprio attacco, su una posa qualunque."""
+        parent, port_id = self.parent_of[child]
+        stub, _ = self.port_at(table[parent], port_id)
+        own, _ = self.port_at(
+            table[child], self.hang_port.get(child, self.upright[child].ports[0].id)
+        )
+        return max(abs(own.x_mm - stub.x_mm), abs(own.y_mm - stub.y_mm))
+
+    def _hang_ceiling(self, child: str) -> float:
+        """Quanto puo' essere lungo, al piu', lo stacco di un appeso (**D-145**).
+
+        Il proprio minimo su griglia, e **il rettilineo che quella tratta
+        pretende** — il «vincolo dichiarato» di §G.2. Cio' che lo stacco **e'**
+        oggi non entra qui: questo e' il tetto della regola, non quello della
+        mossa, e chi lo usa ci aggiunge il secondo.
+
+        ⚠️ **Il rettilineo si legge da `_need_mm`, e non dal solo posto degli
+        accessori in linea**, ed e' una scelta che il rapporto §7.1 porta al PM
+        con i numeri. `_need_mm` non scende mai sotto `ROW_GAP_MM`, cioe' lo
+        stacco minimo fra due simboli che **D-062** dichiara: e' un vincolo
+        dichiarato anche lui, e su uno stacco vuoto vale dieci millimetri dove
+        il minimo ne vale cinque. La lettura piu' stretta — solo il posto degli
+        accessori in linea — l'ho scritta e misurata: stringe il corredo e
+        **allontana il gruppo**, perche' toglie al ciclo le mosse con cui lo
+        avvicinava. Sulla tavola 2 l'ingresso dell'acqua fredda passa da 120 a
+        192,5 mm dal bollitore e la tavola 1 guadagna un rilievo di preflight.
+        Fra le due letture ho preso quella che **disegna meglio**, perche' e' il
+        PO che giudica il prodotto (D-146).
+        """
+        return max(self.hang_min[child], self._need_mm(self.hang_trunk[child]))
+
     def _refresh_hang_gaps(self) -> None:
         """Gli stacchi degli appesi, riletti dalla posa corrente."""
-        for child, (parent, port_id) in self.parent_of.items():
-            stub, _ = self.port_at(self.best[parent], port_id)
-            own, _ = self.port_at(
-                self.best[child],
-                self.hang_port.get(child, self.upright[child].ports[0].id),
-            )
-            self.hang_gap[child] = max(abs(own.x_mm - stub.x_mm), abs(own.y_mm - stub.y_mm))
+        for child in self.parent_of:
+            self.hang_gap[child] = self._gap_of(self.best, child)
 
     def _rotation_moves(self, leader: str) -> list[Move]:
         me = self.best[leader]
@@ -2336,6 +2568,19 @@ class Improver:
             }
             if not changed:
                 continue
+            # **Un allungo scorre lungo un asse, mai di traverso**: e' la
+            # ragione per cui conserva ogni allineamento. Il taglio si muove su
+            # un asse solo, ma cio' che si porta dietro no: una figura appesa a
+            # un pezzo che si muove si **riappende**, e riappendendosi puo'
+            # cambiare anche l'altra coordinata. Allora non e' piu' una campata
+            # che cresce, e' un pezzo che scavalca: la candidata si scarta qui,
+            # dove il seguito e' gia' stato aggiunto e si vede per intero.
+            if kind == "allungo" and any(
+                abs(placed.origin.x_mm - self.best[item].origin.x_mm) > _TOLERANCE_MM
+                and abs(placed.origin.y_mm - self.best[item].origin.y_mm) > _TOLERANCE_MM
+                for item, placed in changed.items()
+            ):
+                continue
             key = _signature(dict(sorted(changed.items())))
             if key in seen:
                 continue
@@ -2450,6 +2695,46 @@ class Improver:
             now_mm = self._link_mm(after, trunk)
             if now_mm > max(self._need_mm(trunk), was) + _TOLERANCE_MM:
                 return False
+        # **Un organo di servizio sta addosso al pezzo che serve** (**D-145**,
+        # `DRAW-013` §G), e la vicinanza e' un **vincolo**, non un costo. Sta
+        # qui, fra cio' che nessun guadagno compra, e non in `SheetCost`: D-139
+        # ha tolto i millimetri dalle voci di costo e fin qui **niente** aveva
+        # preso il posto della riga che teneva stretto il corredo — «ogni
+        # millimetro oltre il minimo peggiora il costo» di `DRAW-005-R1`
+        # blocco E. Il PO: «le valvole di servizio devono rimanere vicino ai
+        # loro padroni; una valvola in mezzo a una linea cosi' lontana da tutto
+        # e' equivoca».
+        #
+        # Il conto e' **monotono**, come quello del tronco: uno stacco al
+        # proprio minimo non si allunga, e uno che il posizionamento ha dovuto
+        # fare piu' lungo — perche' il posto era preso — puo' solo accorciarsi.
+        # L'unico allungamento ammesso e' quello che il minimo stesso dichiara,
+        # cioe' il posto per gli accessori in linea sulla stessa tratta, e
+        # quello e' gia' dentro `hang_min` (`place.stub_minimum_mm`).
+        for child in self.parent_of:
+            parent, _port_id = self.parent_of[child]
+            if child not in move and parent not in move:
+                continue
+            # Il tetto: il proprio minimo, cio' che lo stacco e' gia', e **il
+            # posto che gli accessori in linea pretendono su quella tratta**.
+            # Quest'ultimo e' il «vincolo dichiarato» di §G.2, ed e' esattamente
+            # l'esempio che D-145 fa — «far posto a un altro accessorio in linea
+            # sulla stessa tratta». Senza di lui il vincolo murerebbe l'unica
+            # mossa capace di far entrare una valvola che non ci sta: misurato
+            # sulla tavola 2, dove l'intercettazione dell'acquedotto non trovava
+            # piu' il proprio rettilineo e la tavola smetteva di uscire.
+            #
+            # ⛔ **Non si legge da `_need_mm`**, che sembrerebbe la funzione
+            # giusta e non lo e': quella non scende mai sotto `ROW_GAP_MM`,
+            # cioe' dieci millimetri, perche' misura la distanza fra **due
+            # simboli** e non il bisogno di questa tratta. Usata come tetto
+            # regalava cinque millimetri di gioco a ogni stacco vuoto — il cui
+            # minimo e' cinque — e il vincolo non teneva niente. Misurato sulla
+            # tavola 2: nove appesi, sei dei quali con `room` a zero e
+            # `_need_mm` a dieci.
+            ceiling = max(self._hang_ceiling(child), self.hang_gap[child])
+            if self._gap_of(after, child) > ceiling + _TOLERANCE_MM:
+                return False
         # **La rettilineita' del tronco e' un vincolo, non una voce di costo**
         # (DRAW-008 §A.4). Sta qui, dove stanno i vincoli che nessun guadagno
         # compra, e non in `SheetCost`: una mossa che piega un'autostrada gia'
@@ -2465,6 +2750,20 @@ class Improver:
                     continue
                 if not self.lies_straight(after, trunk):
                     return False
+        # **E l'invariante vero sta sulla catena intera** (DRAW-012 §C). Quello
+        # qui sopra guarda una tratta per volta, e su una tratta di cinque
+        # millimetri fra due raccordi e' vero comunque la si posi: e' il motivo
+        # per cui la tavola 4 usciva storta con tutti i numeri verdi. Qui si
+        # guarda l'**autostrada intera** — da un capo all'altro, attraverso i
+        # propri crocevia — e si nega alla mossa di farle prendere una piega che
+        # non aveva. Stessa monotonia: cio' che e' dritto non si storce.
+        for highway in self.highways:
+            if not self.chain_in_line(self.best, highway):
+                continue
+            if not any(item in move for item in highway.component_ids):
+                continue
+            if not self.chain_in_line(after, highway):
+                return False
         # **Nella fase delle strade di servizio il tronco e' fermo nella forma**
         # (DRAW-008 §C.1). «Fermo» qui vuol dire due cose, e tutt'e due sono
         # vincoli: nessuna mossa piega un'autostrada — l'ha appena detto il
@@ -2608,7 +2907,12 @@ class Improver:
                     trial = dict(self.best)
                     trial.update(move)
                     found = self.measure(trial)
-                    accepted = found is not None and found.cost.beats(current.cost)
+                    # **L'allungo si paga con il corredo, non con il
+                    # riempimento** (D-142 §A.3): qui il criterio e' la sola
+                    # ragione per cui il contratto lo ammetteva.
+                    accepted = found is not None and found.cost.beats(
+                        current.cost, on_fill=False
+                    )
                     self.journal.append(
                         Attempt(
                             "corredo",
@@ -2689,7 +2993,9 @@ class Improver:
                 )
                 if found is None:
                     continue
-                if best_found is None or found.cost.beats(best_found.cost):
+                if best_found is None or found.cost.beats(
+                    best_found.cost, on_fill=kind != "allungo"
+                ):
                     best_found, best_trial, best_kind = found, trial, kind
             if best_found is not None and best_trial is not None:
                 self.journal.append(Attempt("posa", best_kind, leader, best_found.cost.key(), True))
@@ -2712,7 +3018,9 @@ class Improver:
                     trial = dict(self.best)
                     trial.update(move)
                     found = self.measure(trial)
-                    accepted = found is not None and found.cost.beats(current.cost)
+                    accepted = found is not None and found.cost.beats(
+                        current.cost, on_fill=kind != "allungo"
+                    )
                     self.journal.append(
                         Attempt(
                             self.phase.name.lower(),
@@ -2758,7 +3066,9 @@ class Improver:
                             False,
                         )
                     )
-                    if found is None or not found.cost.beats(current.cost):
+                    if found is None or not found.cost.beats(
+                        current.cost, on_fill=kind != "allungo"
+                    ):
                         continue
                     if best_found is None or found.cost.beats(best_found.cost):
                         best_found, best_trial, best_kind = found, trial, kind
@@ -2787,16 +3097,22 @@ def improve_sheet(
     placed: list[PlacedSymbol],
     inline_ids: frozenset[str],
     spine_layout: SpineLayout | None = None,
+    conceded: frozenset[TrunkKey] = frozenset(),
 ) -> list[PlacedSymbol]:
     """Rivede la disposizione reinstradando: si tiene solo cio' che batte la
     posa corrente sul confronto unico della tavola (`SheetCost`).
 
     Con `spine_layout` il ciclo sa che il tronco e' gia' stato costruito e non
-    torna a cercarlo: lo riceve e non lo perde (DRAW-008)."""
+    torna a cercarlo: lo riceve e non lo perde (DRAW-008).
+
+    `conceded` sono le tratte a cui **l'ultima spiaggia** ha gia' concesso la
+    piega (DRAW-012 §F): le catene che le contengono escono dall'invariante, e
+    il ciclo puo' piegarle per far entrare il resto. Si concede una catena per
+    volta, e chi chiama dichiara quale."""
     if not placed or not partition.trunks:
         return list(placed)
     return Improver(
-        project, partition, catalog, frame, placed, inline_ids, spine_layout
+        project, partition, catalog, frame, placed, inline_ids, spine_layout, conceded
     ).run()
 
 

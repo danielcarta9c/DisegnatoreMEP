@@ -271,3 +271,149 @@ Verdetto della consegna precedente in `docs/pm/2026-09-14-review-pr27-draw009.md
 del DEV in `docs/collaudi/DRAW-009/RAPPORTO.md`; architettura della posa a fasi in
 `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`, che resta da leggere per intera
 prima del pacchetto.
+
+---
+
+## Consegna in revisione — DRAW-012 (scritta dal DEV, 17 settembre 2026)
+
+`DRAW-012 — il motore disegna nell'ordine del disegnatore` è consegnato in una PR non fusa,
+dalla testa di `main` (`8589620`). Rapporto e artefatti: `docs/collaudi/DRAW-012/`.
+
+**Che cosa cambia nel motore**
+
+- **La gerarchia**: sono macchine di spina **tutti** i generatori, gli scambiatori, gli
+  accumuli e i collettori; è autostrada anche la strada che dagli accumuli porta ai
+  terminali e al prelievo sanitario, con il circolatore dentro la tratta. L'ingresso
+  dell'acqua fredda resta uno stacco di servizio, riconosciuto dal verso della porta del
+  confine di rete.
+- **`layout/highways.py`** è nuovo: l'**autostrada intera**, la catena di tratte che
+  attraversa i propri crocevia, con l'invariante verificato su di lei e non su ogni
+  frammento.
+- **Il costo** non guarda più i millimetri (D-139): restano curve e attraversamenti, e il
+  riempimento entra come **finestra** 45–65 % (D-140) letta insieme alla copertura
+  dell'ingombro (D-141). La finestra è un dato condiviso fra costo e preflight, che adesso
+  avvisa anche quando il foglio è troppo pieno.
+- **Quando la struttura non si instrada non si butta la fase**: si cede una catena per
+  volta, e il diario della composizione dice con quale via la tavola è uscita.
+- **Il caso di prova 4** è quello di D-137, e il catalogo ha la **commutatrice a tre vie**
+  (`switching-valve-3way`, funzione `circuit_switching`, famiglia **VCR**). Il documento
+  pubblicato dell'impianto 4 e il confronto per il PM sono rigenerati con il grafo nuovo:
+  43 pezzi il 9 settembre, **46** oggi.
+
+**Le misure**
+
+| | tavola 1 | tavola 2 |
+|---|---|---|
+| riempimento | 29,8 % → **45,1 %** | 50,1 % → **64,1 %** |
+| copertura ingombro | 0,625 → **0,750** | 0,625 → **0,750** |
+| curve | 4 → 4 | 5 → 5 |
+| attraversamenti | 1 → 1 | 1 → 1 |
+| squilibrio quadranti | 2,11 → **1,94** | 32,5 → **8,16** |
+| larghezza occupata | 245 → **322,5 mm** | 257,5 → **315 mm** |
+
+Tutt'e due dentro la finestra 45–65 %, con la copertura dell'ingombro che sale insieme al
+riempimento (D-141) e **nessun peggioramento** su curve e attraversamenti.
+
+**La suite**
+
+Su `main` 10 rosse, 1470 verdi, 24 saltate, 11 xfailed. Qui le rosse sono **13**: il
+criterio 13 del pacchetto **non è raggiunto**, e le tre in più sono tutte in
+`tests/layout/test_stacchi_minimi_e_interasse.py`, sulle due fixture
+`*_con_accumulo_combinato`. Due di loro non falliscono su un'asserzione: falliscono perché
+la tavola non esce. Nessuna prova è stata spenta per far quadrare il saldo; il rapporto
+§7.7 porta le cinque misure con cui ho provato a chiuderle.
+
+**Che cosa resta aperto, e sta nel rapporto §7**
+
+1. **D-060 e D-138 si contendono la stessa coordinata**, ed è una domanda al PO: fra due
+   zone impilate e una strada di ritorno rettilinea, quale delle due vuole. È la sola cosa
+   che la consegna toglie — una prova di `test_objective.py` — ed è dichiarata.
+2. Due **corsie di catena di macchina** che si incrociano non le separa nessuna mossa di un
+   pezzo solo: è ciò che ferma le tavole 4 e 5, e in altra forma la 3. Gli impianti che
+   producono una tavola restano 1 e 2, come su `main`.
+3. L'ordine di instradamento e il rango sono la stessa chiave, e con la gerarchia nuova
+   quella chiave governa una classe molto più grande. I confini di rete finiscono lontani
+   dal pezzo che servono, e nessun numero se ne accorge.
+
+---
+
+## Consegna in revisione — DRAW-013 (scritta dal DEV, 19 settembre 2026)
+
+`DRAW-013 — la tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la
+sua forma` è consegnato in una PR non fusa. **Parte dal ramo di `DRAW-012`**, non da `main`:
+il primo commit del ramo è il merge di `17ff425` su `651310f`, da solo. Rapporto e artefatti:
+`docs/collaudi/DRAW-013/`, con le tavole in PDF (D-146).
+
+**Che cosa cambia nel motore**
+
+- **`layout/dilate.py`** è nuovo: la **dilatazione proporzionale** della posa (D-142). Su
+  ciascun asse una funzione monotona a tratti — pendenza 1 sui simboli, vuoti allargati di un
+  fattore unico per foglio — scelta dopo che il disegno è risolto. Simboli della loro misura,
+  nessun pezzo spostato rispetto agli altri, nessuna piega e nessun attraversamento in più.
+- **Il margine di rispetto** (D-143) entra in tre posti: la **chiave di costo della posa**
+  (prima del riempimento), il limite della dilatazione, e un rilievo di preflight nuovo,
+  `DRAWING_TOUCHES_THE_BORDER`, che scatta solo su chi il bordo lo tocca **senza esserne
+  autorizzato**.
+- **La forma della distribuzione** (D-144): `highways.turns_of` conta le curve, e la strada
+  che da un accumulo porta a un'utenza ne può fare **una, dichiarata** — che il diario non
+  conta fra le cedute. L'invariante della retta intera resta per le autostrade fra le macchine
+  di spina.
+- **La guardia del riempimento è un divieto** e non più una soglia (D-141): un riempimento
+  salito mentre la copertura scende si legge come quello dell'altra posa, e il caso lieve
+  costa quanto il caso grosso.
+- **Gli organi di servizio stanno addosso al pezzo che servono** (D-145), come **vincolo** di
+  `is_valid` e non come voce di costo: D-139 non è toccata.
+- **Lo stiramento del singolo tratto** resta, e il riempimento non lo può più comprare.
+
+**Le due tavole**
+
+| | tavola 1 | tavola 2 |
+|---|---|---|
+| margine dal bordo | 12,5 → **25,0 mm** | 17,5 → **25,0 mm** |
+| curve / attraversamenti | 4/1 → 4/1 | 5/1 → 5/1 |
+| riempimento | 45,1 → 42,9 % | 64,1 → 61,1 % |
+| acqua fredda dal pezzo che alimenta | 40,0 → **20,0 mm** | 135,0 → 120,0 mm |
+| fattore di dilatazione | 1,08 | 1,25 |
+
+Gli impianti che producono una tavola restano **1 e 2**, gli stessi del ramo di partenza.
+
+**La suite**
+
+Ramo di partenza: **13 rosse, 1482 verdi**, 24 saltate, 11 xfailed — esattamente il
+riferimento che il pacchetto dichiara, riprodotto in un worktree su `0a2b7fd` con il proprio
+ambiente. Qui: **12 rosse, 1500 verdi**, 24 saltate, 11 xfailed. Il criterio 13 è **raggiunto**,
+e le dodici rosse sono tutte sottoinsieme delle tredici: nessuna rossa nuova.
+
+⚠️ La rossa che si chiude **non è quella che il criterio nomina**: resta rossa
+`test_sulla_tavola_composta_nessuno_stacco_e_piu_lungo_del_minimo_senza_una_ragione`, e si
+chiude invece `test_rami_di_servizio.py::test_nessuna_freccia_sui_rami_statici...`. Il rapporto
+§7.7 misura che cosa costerebbe chiudere quella nominata: due tavole peggiori.
+
+`ruff` pulito; `mypy` con i **due** errori che stanno già sul ramo di partenza, in un file che
+questo pacchetto non tocca.
+
+**Che cosa resta aperto, e sta nel rapporto §7**
+
+1. **Il pettine di D-144 è bloccato dal simbolo del collettore**: `zone-manifold` dichiara
+   `allowed_rotations_deg: [0]`, e per D-049 quel campo è un vincolo tecnico. **Domanda al
+   PO**: un collettore di zona si può disegnare in verticale?
+2. **Il margine di D-143 e la finestra di D-140 non stanno insieme sulla tavola 1**: portarla
+   in finestra vuol dire tornare a 322,5 mm di ingombro e 13,75 mm dal bordo, cioè alla tavola
+   che il PO ha bocciato. **Domanda al PO.**
+3. **La griglia quantizza la dilatazione**: un vuoto cresce solo se `round(g·k) > g`, e su
+   questi impianti i vuoti sono quasi tutti di uno o due passi. La dilatazione ha mosso 2,5 mm
+   sulla tavola 1 e 10 mm sulla tavola 2.
+4. **Il riempimento non sale «per dilatazione e non per altro»**, come §E si aspettava: la posa
+   ha ancora la finestra nella chiave, perché D-140 e D-141 non si toccano. **Da decidere dal
+   PM**, con i numeri del rapporto §7.6.
+5. **§G ammette due letture del «vincolo dichiarato», e la più stretta disegna peggio.** Il
+   rapporto §7.7 porta tre varianti misurate sulle tavole: quella consegnata, il tetto stretto,
+   e il tetto stretto con l'attuazione del vincolo — che chiude la rossa del criterio 13 e
+   porta l'acqua fredda della tavola 2 a 192,5 mm, peggio dei 135 del ramo di partenza. **Da
+   decidere dal PM.**
+6. **L'acqua fredda della tavola 2** resta a 120 mm dal bollitore: il confine sta al proprio
+   minimo dal raccordo che lo regge, ed è la posa del gruppo a essere lontana. `place.py` è
+   fuori perimetro.
+7. **La tavola 4 non esce**, e non per il motivo che §D ipotizzava: `utenze` è posato a `x 365`
+   dalla fase del tronco, cinque millimetri oltre l'area. Conto cella per cella in
+   `docs/collaudi/DRAW-013/dopo/prova-4-perche-non-esce.txt`.

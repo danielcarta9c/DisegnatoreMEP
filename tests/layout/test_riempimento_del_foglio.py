@@ -54,12 +54,17 @@ def _posa() -> tuple[ProjectModel, SheetPartition, frozenset[str], list[PlacedSy
     )
 
 
-def test_il_riempimento_non_si_compra_con_il_tubo() -> None:
-    """La posa rivista non e' mai piu' lunga, piu' piegata o piu' incrociata
-    della posa di partenza: il riempimento puo' solo salire a costo fermo.
+def test_il_riempimento_non_si_compra_con_pieghe_e_incroci() -> None:
+    """La posa rivista non e' mai piu' piegata ne' piu' incrociata di quella di
+    partenza: il riempimento puo' salire, **le curve no**.
 
-    E' il rovescio della vecchia distensione, che accettava tubo in piu' in
-    cambio di carta coperta. Ora il confronto unico della tavola la vieta.
+    **Riscritta il 17 settembre 2026 da `DRAW-012` §D.** Fino a `DRAW-011`
+    questa prova chiedeva anche che la posa rivista non fosse **piu' lunga**:
+    era il rovescio della vecchia distensione, e con D-139 non e' piu' vero —
+    la lunghezza non e' un costo, e il riempimento puo' comprarne quanto gliene
+    serve per entrare nella propria finestra. Cio' che non puo' comprare resta
+    scritto qui, ed e' quanto il PO chiama il costo vero: le curve, e poi gli
+    attraversamenti.
     """
     project, partition, inline, first = _posa()
     improver = Improver(project, partition, _registry(), NOVE_C_A3, first, inline)
@@ -69,18 +74,30 @@ def test_il_riempimento_non_si_compra_con_il_tubo() -> None:
     )
     assert before is not None and after is not None
     assert not before.cost.beats(after.cost)
-    assert after.cost.length_mm <= before.cost.length_mm
     assert after.cost.bends <= before.cost.bends
     assert after.cost.crossings <= before.cost.crossings
 
 
 def test_la_distensione_non_esiste_piu() -> None:
-    """Nessun obiettivo minimo di riempimento dentro il collocatore (§2)."""
+    """Nessun obiettivo minimo di riempimento dentro il collocatore (§2).
+
+    Resta vero con D-139, e per la ragione che D-139 stessa dichiara: una
+    **finestra** non e' un traguardo. Cio' che D-134 rifiutava — inseguire una
+    percentuale sempre piu' alta — resta rifiutato, e la prova che il
+    riempimento non sia monotono sta in `test_ordine_del_disegnatore.py`.
+    """
     for name in ("FILL_TARGET_RATIO", "SPREAD_STEPS", "MAX_SPREAD_TRIALS"):
         assert not hasattr(improve, name), name
-    # Le voci di spareggio stanno in coda al costo, dopo la lunghezza.
+    # E la lunghezza non e' piu' una voce del confronto: sta nella tupla come
+    # misura, dopo gli spareggi, e `key()` non la legge (DRAW-012 §D.1).
     fields = improve.SheetCost._fields
-    assert fields.index("length_mm") < fields.index("fill") < fields.index("imbalance")
+    assert fields.index("fill") < fields.index("imbalance") < fields.index("length_mm")
+    corta = improve.SheetCost(
+        violations=0, turnback_runs=0, turnback_mm=0.0, long_runs=0, bends=2,
+        crossings=0, margin_gap=0.0, fill=0.55, coverage=0.8, imbalance=1.0,
+        length_mm=10.0,
+    )
+    assert corta.key() == corta._replace(length_mm=10_000.0).key()
 
 
 def test_la_disposizione_rivista_e_sempre_la_stessa() -> None:

@@ -89,7 +89,14 @@ def published() -> list[Symbol]:
 def test_the_libraries_are_not_empty() -> None:
     # 49 da DRAW-006-R1: il gruppo di sicurezza sanitario EN 1487 e' un segno
     # nuovo, e la valvola di sicurezza di circuito resta al proprio posto.
-    assert len(published()) == 49
+    #
+    # 50 dal 17 settembre 2026, `DRAW-012` §G: la **valvola commutatrice a tre
+    # vie** e' il segno che D-137 ha chiesto, senza il quale il circuito
+    # sanitario dedicato alla caldaia non si puo' disegnare. Il conto e' un
+    # conto e si aggiorna quando il catalogo cresce per una disposizione del
+    # PO; cio' che la prova difende — che le librerie non siano vuote e che
+    # nessun segno compaia per sbaglio — non cambia.
+    assert len(published()) == 50
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)

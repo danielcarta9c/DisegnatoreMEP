@@ -30,7 +30,7 @@ from disegnatore_mep.layout.geometry import (
     Point,
     drawing_fingerprint,
 )
-from disegnatore_mep.layout.improve import Improver, Move
+from disegnatore_mep.layout.improve import CostKey, Improver, Move
 from disegnatore_mep.layout.partition import SheetPartition, partition_project
 from disegnatore_mep.layout.place import place_sheet
 from disegnatore_mep.layout.trunks import build_trunks
@@ -387,7 +387,7 @@ def test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore() -> None
     # Ogni mossa accettata ha battuto strettamente la precedente: l'asse non
     # e' mai stato imposto.
     accepted = [entry for entry in improver.journal if entry.accepted]
-    keys = [before.cost.key()]
+    keys: list[CostKey] = [before.cost.key()]
     for entry in accepted:
         assert entry.cost is not None
         keys.append(entry.cost)

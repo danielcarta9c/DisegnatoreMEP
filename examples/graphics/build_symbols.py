@@ -1611,6 +1611,27 @@ SYMBOLS: list[SymbolSpec] = [
         source=SOURCE_UNI_TAB3,
     ),
     SymbolSpec(
+        id="switching-valve-3way",
+        name="Valvola commutatrice a tre vie",
+        width_mm=DEVICE[0],
+        height_mm=DEVICE[1],
+        inline=False,
+        # **La stessa valvola, montata al contrario** (DRAW-012 §G, D-137 §D.2).
+        # Il segno e' quello della tre vie di UNI 9511 Tab. 3 — tre triangoli
+        # che convergono al centro — e cio' che cambia non e' il disegno ma
+        # quale attacco fa che cosa: due ingressi e un'uscita, invece di un
+        # ingresso e due uscite. Il corpo e' quindi lo stesso, e l'asse passante
+        # e' `in_a` — `out`, con il secondo ingresso sulla terza via in basso,
+        # esattamente come la deviatrice tiene `in` — `out_a` sull'asse.
+        ports=[
+            port("in_a", "left", *DEVICE),
+            port("out", "right", *DEVICE),
+            port("in_b", "bottom", *DEVICE),
+        ],
+        body=diverting_valve_body(*DEVICE),
+        source=SOURCE_UNI_TAB3,
+    ),
+    SymbolSpec(
         id="zone-manifold",
         name="Collettore di zona",
         width_mm=MANIFOLD_W,

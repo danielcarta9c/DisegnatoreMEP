@@ -1,0 +1,63 @@
+{
+  "id": "switching-valve-3way",
+  "version": "1.0.0",
+  "name": "Valvola commutatrice a tre vie",
+  "functions": [
+    "circuit_switching"
+  ],
+  "traits": [
+    "maintainable",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "hydraulic_states": [
+    {
+      "id": "da_primario",
+      "name": "Pesca dal primario",
+      "connects": [
+        [
+          "in_a",
+          "out"
+        ]
+      ]
+    },
+    {
+      "id": "da_sanitario",
+      "name": "Pesca dal sanitario",
+      "connects": [
+        [
+          "in_b",
+          "out"
+        ]
+      ]
+    }
+  ],
+  "symbol_id": "switching-valve-3way",
+  "composite": false,
+  "ports": [
+    {
+      "id": "in_a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "in_b",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "out",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}

@@ -435,6 +435,7 @@ def route_sheet(
     catalog: ComponentRegistry,
     grid: GridSpace,
     on_routed: Callable[[Trunk, RoutedTrunk], list[PlacedSymbol]] | None = None,
+    reserve_chains: bool = True,
 ) -> list[RoutedTrunk]:
     """Instrada le tratte una dopo l'altra, accumulando le celle occupate.
 
@@ -583,11 +584,23 @@ def route_sheet(
             if (ref.component_id, ref.port_id) in aprons
         }
         mine = {(ref.component_id, ref.port_id) for ref in (trunk.start, trunk.end)}
-        elsewhere = frozenset(
-            cell
-            for key, cells in corridors.items()
-            if key not in mine
-            for cell in cells
+        # **Le corsie delle catene altrui si riservano quando le catene ci sono**
+        # (`reserve_chains`). Nella fase della struttura non ci sono: il corredo
+        # entra dopo, su una struttura gia' ferma, e dove non ci sta e' il tronco
+        # che si allunga (D-138, fasi 1 e 2). Riservare in fase 1 lo spazio che
+        # il corredo occupera' in fase 2 vuol dire chiedere alla prima fase di
+        # risolvere un problema della seconda: da `DRAW-012` §B le autostrade
+        # sono molte di piu', le corsie riservate anche, e sulla tavola 2 la
+        # fase del tronco non riusciva piu' a instradare la propria forma.
+        elsewhere = (
+            frozenset(
+                cell
+                for key, cells in corridors.items()
+                if key not in mine
+                for cell in cells
+            )
+            if reserve_chains
+            else frozenset()
         )
         try:
             found = route(

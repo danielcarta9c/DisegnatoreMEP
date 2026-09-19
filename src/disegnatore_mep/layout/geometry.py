@@ -422,17 +422,89 @@ def run_intrudes_on(
     return False
 
 
-SHEET_FILL_MIN_RATIO = 0.60
-"""Quota dell'area di disegno che l'ingombro dell'inchiostro deve coprire (A1).
+SHEET_FILL_MIN_RATIO = 0.45
+"""Sotto questa quota dell'area di disegno il foglio e' **vuoto** (A1, D-140).
 
-**Taratura**, non norma: la carta dice «il foglio e' pieno in modo uniforme» e
-non da' un numero. Sotto tre quinti dell'area il disegno e' una fascia o un
-angolo, non una tavola.
+**Numero del PO**, non taratura del PM: il 17 settembre 2026 il PO ha fissato la
+finestra del riempimento in **45–65 %** — «sotto il 45 % il disegno e' vuoto e
+stretto insieme». Prima era tre quinti, e la soglia era una taratura del PM.
 
 Vive accanto alla misura, e non fra i controlli, perche' da D-111 la leggono in
 due: il **preflight**, che avvisa a tavola finita, e il **collocatore**, che la
 insegue mentre dispone. Un numero solo, in un posto solo.
 """
+
+SHEET_FILL_MAX_RATIO = 0.65
+"""Sopra questa quota il foglio e' **stretto** (D-140).
+
+L'altra sponda della finestra, e il motivo per cui e' una finestra e non una
+soglia: il PO, «sopra il 65 % non ci sta piu' lo spazio per le sigle dei
+componenti». Un disegno ben fatto e' anche **comodo** (D-139).
+"""
+
+SHEET_MARGIN_MM = 25.0
+"""Il margine di rispetto fra l'inchiostro e il bordo dell'area (**D-143**).
+
+**Numero del PO**, non taratura del PM: «non si mettono gli oggetti cosi' vicini
+al bordo del foglio a meno che non ci sia un disegno molto molto pieno. Ma un
+disegno cosi' comodo non si disegna dal bordo a bordo». Venticinque millimetri
+per lato e' il **punto di partenza**, cioe' il margine di un disegno scarico.
+
+Il margine sta **dentro** l'area su cui si misura il riempimento, non in
+aggiunta: la finestra di D-140 continua a leggersi sui 350 x 235 mm.
+"""
+
+SHEET_MARGIN_MIN_MM = 10.0
+"""Fin dove il margine si stringe, e non oltre (**D-143**).
+
+Si stringe **solo per far entrare un disegno** che altrimenti non ci starebbe,
+mai per far salire il riempimento: quella e' la dilatazione di D-142, che il
+margine limita invece di assecondare.
+"""
+
+
+def border_margin_mm(
+    symbols: list[PlacedSymbol],
+    routes: list[RoutedTrunk],
+    area: tuple[float, float, float, float],
+) -> float | None:
+    """Quanto dista dal bordo dell'area il pezzo che gli sta piu' vicino.
+
+    E' il minimo dei quattro lati, e puo' essere negativo se il disegno esce.
+    `None` quando non c'e' inchiostro: un foglio vuoto non ha un margine.
+    """
+    box = ink_box(symbols, routes)
+    if box is None:
+        return None
+    return min(
+        box[0] - area[0], box[1] - area[1], area[2] - box[2], area[3] - box[3]
+    )
+
+
+def margin_allowed_mm(
+    symbols: list[PlacedSymbol],
+    routes: list[RoutedTrunk],
+    area: tuple[float, float, float, float],
+    step_mm: float,
+) -> float:
+    """Il margine che **questo** disegno puo' permettersi (D-143).
+
+    Venticinque millimetri se l'ingombro ci sta; altrimenti il piu' largo che
+    ci sta, sulla griglia, e mai meno di dieci. Un disegno che non entra
+    nemmeno a dieci resta con dieci: non e' il margine ad averlo stretto, e il
+    preflight lo dice.
+
+    E' la misura con cui si giudica un disegno vicino al bordo: vicino **e'
+    autorizzato** solo quando il disegno, di suo, non poteva stare piu' dentro.
+    """
+    box = ink_box(symbols, routes)
+    if box is None:
+        return SHEET_MARGIN_MM
+    width, height = box[2] - box[0], box[3] - box[1]
+    room = min((area[2] - area[0] - width) / 2.0, (area[3] - area[1] - height) / 2.0)
+    on_grid = int((room + TOLERANCE_MM) // step_mm) * step_mm
+    return max(min(SHEET_MARGIN_MM, on_grid), SHEET_MARGIN_MIN_MM)
+
 
 QUADRANT_IMBALANCE_MAX = 3.0
 """Rapporto massimo fra il quadrante piu' pieno e il piu' vuoto (A1, A3).
@@ -609,18 +681,51 @@ def ink_coverage(
     if width <= TOLERANCE_MM or height <= TOLERANCE_MM:
         return 1.0
     step_x, step_y = width / cells, height / cells
-    filled = 0
-    for row in range(cells):
-        for col in range(cells):
-            cell = (
-                box[0] + col * step_x,
-                box[1] + row * step_y,
-                box[0] + (col + 1) * step_x,
-                box[1] + (row + 1) * step_y,
-            )
-            if ink_area_mm2(symbols, routes, cell, 1.0) > TOLERANCE_MM:
-                filled += 1
-    return filled / float(cells * cells)
+
+    # L'inchiostro si versa **nelle celle** che ciascun pezzo tocca, invece di
+    # rileggere tutto il disegno per ciascuna delle sessantaquattro. E' la
+    # stessa somma, con la stessa formula e nello stesso ordine — prima i
+    # simboli, poi le tubazioni — quindi lo stesso numero: cambia solo che le
+    # celle lontane da un pezzo non gli fanno piu' sommare uno zero. Da
+    # `DRAW-012` questo conto sta accanto al riempimento **dentro** il costo di
+    # posa (D-141), e vi si entra migliaia di volte per tavola.
+    poured = [0.0] * (cells * cells)
+
+    def span(low: float, high: float, origin: float, step: float) -> range:
+        """Le celle di un lato che un intervallo puo' toccare, tolleranza compresa."""
+        first = int((low - origin - TOLERANCE_MM) // step)
+        last = int((high - origin + TOLERANCE_MM) // step)
+        return range(max(first, 0), min(last, cells - 1) + 1)
+
+    for symbol in symbols:
+        left, top, right, bottom = box_of(symbol)
+        for row in span(top, bottom, box[1], step_y):
+            top_mm = box[1] + row * step_y
+            bottom_mm = top_mm + step_y
+            covered = max(min(bottom, bottom_mm) - max(top, top_mm), 0.0)
+            if covered <= 0.0:
+                continue
+            for col in span(left, right, box[0], step_x):
+                left_mm = box[0] + col * step_x
+                right_mm = left_mm + step_x
+                across = max(min(right, right_mm) - max(left, left_mm), 0.0)
+                poured[row * cells + col] += across * covered
+
+    for route in routes:
+        for segment in route.segments:
+            for before, after in moves_of(segment):
+                low_x, high_x = min(before.x_mm, after.x_mm), max(before.x_mm, after.x_mm)
+                low_y, high_y = min(before.y_mm, after.y_mm), max(before.y_mm, after.y_mm)
+                for row in span(low_y, high_y, box[1], step_y):
+                    top_mm = box[1] + row * step_y
+                    for col in span(low_x, high_x, box[0], step_x):
+                        left_mm = box[0] + col * step_x
+                        cell = (left_mm, top_mm, left_mm + step_x, top_mm + step_y)
+                        poured[row * cells + col] += _clipped_length_mm(
+                            before, after, cell
+                        )
+
+    return sum(1 for value in poured if value > TOLERANCE_MM) / float(cells * cells)
 
 
 def drawing_fingerprint(drawing: DrawingGeometry) -> str:
