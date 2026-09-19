@@ -400,16 +400,24 @@ class SheetCost(NamedTuple):
         bare = max(INK_COVERAGE_MIN - self.coverage, 0.0)
         return max(outside, bare)
 
-    def key(self, fill_gap: float | None = None) -> CostKey:
-        """La chiave d'ordine: le sei voci, il margine, il riempimento, lo spareggio.
+    def key(self) -> CostKey:
+        """La chiave d'ordine: le sei voci, il margine, lo spareggio.
 
-        La lunghezza non c'e', ed e' la sola differenza con l'ordine di prima
-        (D-139): resta nella tupla come misura, e non decide piu' niente.
+        **Non ci sono ne' la lunghezza ne' il riempimento**, e per la stessa
+        ragione. La lunghezza e' uscita con D-139; il riempimento esce con
+        **D-149**, dopo tre pacchetti passati a inseguirlo:
 
-        `fill_gap` si passa quando il confronto **non deve leggere** il
-        riempimento vero di questa posa: e' la guardia di `beats`, che lo
-        sostituisce con quello dell'altra posa quando il riempimento e' salito
-        in un modo che D-141 o D-142 non riconoscono.
+        > «Toglierei anche questa cosa dello stretch e del riempimento foglio.
+        > Ha dato solo risultati peggiori. Prima il disegno era meglio.»
+
+        Tutt'e due restano nella tupla come **misure**, e il rapporto le porta;
+        nessuna delle due decide piu' niente. Con loro esce anche la copertura
+        dell'ingombro, che era la **guardia** del riempimento (D-141) e non
+        aveva senso da sola: sorvegliava un obiettivo che adesso non c'e'.
+
+        Resta il **margine** di D-143, che non e' un riempimento al contrario:
+        dice che il disegno non tocca il bordo, e il PO l'ha chiesto guardando
+        la tavola.
         """
         return (
             self.violations,
@@ -419,40 +427,25 @@ class SheetCost(NamedTuple):
             self.bends,
             self.crossings,
             round(self.margin_gap, 3),
-            round(self.fill_gap if fill_gap is None else fill_gap, 6),
             round(self.imbalance, 6),
         )
 
-    def beats(self, other: "SheetCost", on_fill: bool = True) -> bool:
+    def beats(self, other: "SheetCost") -> bool:
         """Vero se questa geometria e' strettamente migliore dell'altra.
 
-        **La guardia del riempimento e' un divieto, non una soglia** (D-141,
-        `DRAW-013` §E). Il verdetto sulla PR #41 l'ha misurata: finche' la
-        copertura restava sopra `INK_COVERAGE_MIN` una posa che alzava il
-        riempimento **e abbassava la copertura** vinceva lo stesso — riempimento
-        30 % con copertura 0,80 perdeva contro riempimento 50 % con copertura
-        0,70. D-141 dice l'opposto, e lo dice senza soglie: «un riempimento che
-        sale mentre la copertura scende **non** e' un miglioramento». Qui il
-        caso **lieve** costa quanto il caso grosso: il riempimento salito cosi'
-        si legge come quello dell'altra posa, e non compra niente.
+        Una riga sola, adesso che il riempimento e' uscito dalla chiave
+        (**D-149**). Qui stavano la guardia di D-141 — il riempimento salito
+        mentre la copertura scendeva non valeva — e l'interruttore `on_fill`
+        con cui si giudicava un allungo senza leggere il riempimento (D-142
+        §A.3). Nessuna delle due ha piu' un oggetto: quello che
+        sorvegliavano non entra piu' nel confronto.
 
-        `on_fill=False` toglie al confronto il riempimento **comunque sia
-        venuto**, ed e' come si giudica un allungo (**D-142** §A.3): lo
-        stiramento del singolo tratto resta ammesso soltanto per far entrare il
-        corredo dove non ci sta, che e' la ragione per cui il contratto lo
-        ammetteva. La tavola comoda si ottiene con la dilatazione proporzionale
-        di `layout.dilate`, che allarga tutto insieme; un allungo che si
-        giustificasse col riempimento sarebbe di nuovo la mossa che il PO ha
-        bocciato — «allungo solo un tratto per prendere piu' spazio, e' proprio
-        brutto cosi'».
+        **Lo stiramento del singolo tratto resta ammesso**, e resta ammesso per
+        la sola ragione per cui il contratto lo ammetteva: far entrare il
+        corredo dove non ci sta. Non serviva un interruttore a impedirgli di
+        comprare riempimento — non c'e' piu' riempimento da comprare.
         """
-        mine = self.fill_gap
-        bought = self.fill > other.fill + _TOLERANCE_MM and (
-            self.coverage < other.coverage - _TOLERANCE_MM
-        )
-        if not on_fill or bought:
-            mine = max(mine, other.fill_gap)
-        return self.key(mine) < other.key()
+        return self.key() < other.key()
 
 
 class Measured(NamedTuple):
@@ -2910,9 +2903,7 @@ class Improver:
                     # **L'allungo si paga con il corredo, non con il
                     # riempimento** (D-142 §A.3): qui il criterio e' la sola
                     # ragione per cui il contratto lo ammetteva.
-                    accepted = found is not None and found.cost.beats(
-                        current.cost, on_fill=False
-                    )
+                    accepted = found is not None and found.cost.beats(current.cost)
                     self.journal.append(
                         Attempt(
                             "corredo",
@@ -2993,9 +2984,7 @@ class Improver:
                 )
                 if found is None:
                     continue
-                if best_found is None or found.cost.beats(
-                    best_found.cost, on_fill=kind != "allungo"
-                ):
+                if best_found is None or found.cost.beats(best_found.cost):
                     best_found, best_trial, best_kind = found, trial, kind
             if best_found is not None and best_trial is not None:
                 self.journal.append(Attempt("posa", best_kind, leader, best_found.cost.key(), True))
@@ -3018,9 +3007,7 @@ class Improver:
                     trial = dict(self.best)
                     trial.update(move)
                     found = self.measure(trial)
-                    accepted = found is not None and found.cost.beats(
-                        current.cost, on_fill=kind != "allungo"
-                    )
+                    accepted = found is not None and found.cost.beats(current.cost)
                     self.journal.append(
                         Attempt(
                             self.phase.name.lower(),
@@ -3066,9 +3053,7 @@ class Improver:
                             False,
                         )
                     )
-                    if found is None or not found.cost.beats(
-                        current.cost, on_fill=kind != "allungo"
-                    ):
+                    if found is None or not found.cost.beats(current.cost):
                         continue
                     if best_found is None or found.cost.beats(best_found.cost):
                         best_found, best_trial, best_kind = found, trial, kind

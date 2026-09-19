@@ -708,6 +708,7 @@ def settle_sheet(
     catalog: ComponentRegistry,
     grid: GridSpace,
     tolerant: bool = False,
+    last_resort: bool = False,
 ) -> SettledSheet:
     """Instrada il foglio posando gli accessori appena instradata la loro tratta.
 
@@ -720,6 +721,15 @@ def settle_sheet(
     fa fallire il foglio: si annota fra le `unfit` e resta con la spezzata
     intera. Serve al ciclo di miglioramento, che deve poter **misurare** una
     posa cattiva per preferirle una buona; chi disegna la lascia sollevare.
+
+    Con `last_resort` anche una tratta che **non si instrada affatto** non fa
+    fallire il foglio: prende la spezzata di ripiego e si marca `unresolved`
+    (**D-150**). I due interruttori sono **separati apposta**, e non vanno
+    uniti: `tolerant` lo accende il ciclo di miglioramento a ogni posa che
+    misura, e se accendesse anche l'altro il ciclo accetterebbe come buona una
+    posa che non si instrada — cioe' sceglierebbe proprio quelle da scartare.
+    `last_resort` lo accende soltanto chi compone, e soltanto dopo che tutte le
+    vie hanno fallito.
     """
     symbols = list(placed)
     accessories: list[PlacedSymbol] = []
@@ -746,7 +756,9 @@ def settle_sheet(
         drawn.append(pieces)
         return found
 
-    route_sheet(project, list(trunks), symbols, catalog, grid, settle)
+    route_sheet(
+        project, list(trunks), symbols, catalog, grid, settle, tolerant=last_resort
+    )
     return SettledSheet(
         symbols=symbols, accessories=accessories, routes=drawn, unfit=tuple(unfit)
     )

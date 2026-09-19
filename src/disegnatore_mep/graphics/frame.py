@@ -20,7 +20,13 @@ from pydantic import Field, model_validator
 
 from disegnatore_mep.model.base import FiniteFloat, StrictModel
 
-from .standard import A3_LANDSCAPE, A4_LANDSCAPE, GraphicStandard
+from .standard import (
+    A1_LANDSCAPE,
+    A2_LANDSCAPE,
+    A3_LANDSCAPE,
+    A4_LANDSCAPE,
+    GraphicStandard,
+)
 
 TITLE_BLOCK_HEIGHT_MM = 36.0
 """Banda del cartiglio Nove C: 34 mm di banda piu' 2 mm di filetto."""
@@ -175,10 +181,21 @@ testo alla stessa altezza. Quando il cartiglio A4 arrivera', queste tre quote
 vanno rimisurate su quello, non ricalcolate da qui.
 """
 
-ORDINARY_FRAMES: tuple[SheetFrame, ...] = (NOVE_C_A4, NOVE_C_A3)
-"""I formati ordinari, dal piu' piccolo al piu' grande (D-058).
+NOVE_C_A2 = SheetFrame(standard=A2_LANDSCAPE)
+"""L'A2 orizzontale (D-148). Le bande sono quelle misurate sull'A3: un cartiglio
+non cresce col foglio, contiene le stesse righe di testo alla stessa altezza."""
+
+NOVE_C_A1 = SheetFrame(standard=A1_LANDSCAPE)
+"""L'A1 orizzontale (D-148), per l'impianto che non entra nemmeno su A2."""
+
+ORDINARY_FRAMES: tuple[SheetFrame, ...] = (NOVE_C_A4, NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
+"""I formati ordinari, dal piu' piccolo al piu' grande (D-058, esteso da D-148).
 
 L'ordine **e'** la regola di scelta: si prende il primo su cui il disegno entra.
-Oltre l'A3 non si va — ne' A2, ne' A0, ne' strisce: un elaborato che non entra
-su una A3 si divide in piu' A3 coordinate (D-019, D-056).
+
+**Oltre l'A3 adesso si va** (D-148): il divieto di D-058 e la preferenza di D-019
+per piu' A3 coordinate sono sospesi. Un elaborato che esce su A2 e' un elaborato
+che esiste; uno che non esce non si stampa e non si rifinisce. Quando i cinque
+impianti di prova usciranno tutti, la domanda «quale formato serve davvero» si
+riapre — e quel giorno questa tupla e' il posto in cui si risponde.
 """

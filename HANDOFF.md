@@ -1,18 +1,17 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-18
-**Scopo:** ingresso operativo breve per una nuova sessione DEV.
+**Aggiornato:** 2026-09-19
+**Scopo:** ingresso operativo breve per una nuova sessione.
 
 ## Prodotto
 
 Costruiamo una **skill/tool da installare e usare nelle chat di lavoro**. L'ingegnere
 descrive un impianto già progettato e dimensionato; la skill lo interpreta, espone
 assunzioni e integrazioni, ottiene l'approvazione dell'ingegnere e genera una tavola MEP
-vettoriale, deterministica e verificabile.
+vettoriale, deterministica e verificabile — in PDF e in **DXF**, che il disegnatore apre in
+AutoCAD e rifinisce (I-072).
 
 Claude è il team di sviluppo del repository, non il runtime finale del prodotto.
-L'eseguibilità reale della skill in una chat pulita deve essere collaudata prima della
-generalizzazione agli impianti 2–5.
 
 ## Catena invariabile
 
@@ -26,100 +25,66 @@ generalizzazione agli impianti 2–5.
 Una sola cosa attraversa la catena: **il grafo dell'impianto**. La tavola è una sua vista.
 L'AI non modifica direttamente coordinate o connettività approvata.
 
-## Autorità
+## Autorità — **un agente solo** (D-147, 19 settembre 2026)
 
-- **PO — Daniel Carta:** dominio MEP, requisiti, convenzioni grafiche, priorità e giudizio
-  finale del prodotto.
-- **PM — Claude, uno solo** (D-130, 14 settembre 2026): pacchetti, criteri di
-  accettazione, fonti, traduzione degli input del PO, roadmap, documentazione corrente;
-  verifica della consegna **criterio per criterio**; merge su `main`, solo tramite pull
-  request. Non approva i propri pacchetti al posto del PO: li sottopone prima che il lavoro
-  cominci. Lo sdoppiamento in PM-autore e PM-revisore, disposto il 10 settembre, è abolito.
+- **PO — Daniel Carta:** dominio MEP, requisiti, convenzioni grafiche, priorità, giudizio
+  finale del prodotto, e **l'approvazione della fusione**.
+- **L'agente — Claude, PM e DEV nella stessa sessione:** scrive il pacchetto, sviluppa,
+  misura, mostra le tavole, e fonde **solo dopo il sì del PO**. Nella stessa sessione scrive
+  `HANDOFF.md` e il pacchetto successivo.
 
-  **Ciò che resta separato è che il PM non è il DEV.** Le regole con cui il PM verifica —
-  prima le misure e poi il racconto del DEV, ogni criterio chiuso con un comando e il suo
-  output, la suite riletta per intero — stanno in `OPERATING_MODEL.md` §1.2.1.
+Lo sdoppiamento PM/DEV in due sessioni è **abolito**: `docs/governance/OPERATING_MODEL.md`
+§1.2.1 dice perché, con la misura che l'ha motivato. Non è cambiato il mestiere, è cambiato
+chi lo fa: i confini di §1.1.1 valgono intatti, e **una disposizione del PO si implementa
+come è espressa**.
 
-- **DEV — Claude, in una sessione diversa dal PM:** implementazione, test, artefatti e
-  proposte tecniche reversibili dentro il Work Package. Non deduce requisiti dagli esempi e
-  non decide regole MEP.
-
-## Se sei il PM
-
-Il tuo documento d'ingresso è **`docs/pm/STATO-PM.md`**: stato di fatto, fili aperti,
-incoerenze note, igiene di git e che cosa fare appena subentri. Leggi quello e sei operativo.
-
-## Ordine di lettura DEV
-
-1. `CLAUDE.md`;
-2. `ACTIVE_WORK_PACKAGE.md`;
-3. questo file;
-4. soltanto i documenti indicati dal Work Package.
-
-`ACTIVE_WORK_PACKAGE.md` è l'unico incarico operativo. Se manca, è già consegnato, è
-ambiguo o contrasta con `main`, il DEV si ferma e riferisce al PM.
+**Il controllo è uno: il PO guarda le tavole.** Senza tavole non c'è niente da approvare, e
+senza approvazione non si fonde.
 
 ## Stato corrente
 
-- Release in corso: **0.3 — generalizzazione, impianto 2**. (Il numero di versione
-  Python resta `0.1.0`: non ha mai seguito le release dichiarate.)
-- `DRAW-005` è stato verificato e fuso nella PR #18: tavola 1 con 4 curve, 1 incrocio,
-  525 mm, zero backtracking; simboli e contenuto critici corretti.
-- `DRAW-005-R1` è stato fuso con la PR #21; `DRAW-006` e `DRAW-006-R1` con la PR #24.
-- `DRAW-007` e `DRAW-008` sono stati fusi su `main`. `DRAW-008` — la posa a fasi — ha
-  riportato in tavola l'impianto 2 e ha consegnato con **tre regressioni dichiarate** e due
-  criteri irraggiungibili alla lettera: `docs/collaudi/DRAW-008/RAPPORTO.md` §6 e §7. Una
-  delle tre regressioni il PO l'ha già chiusa per decisione (l'ordine delle due zone è
-  indifferente); le altre due sono voci di `DRAW-009`.
-- `DRAW-009` è stato **verificato dal PM e fuso** il 14 settembre con la PR #27
-  (`2155c22`): dodici criteri raggiunti, quattro raggiunti in parte, nessuno non raggiunto.
-  Verdetto in `docs/pm/2026-09-14-review-pr27-draw009.md`. **Dopo il merge** si è scoperto
-  che l'impianto 4 non produce più una tavola: §7 del verdetto, e primo criterio del
-  pacchetto nuovo.
-- **`DRAW-010` è stato consegnato con la PR #32 e respinto dal PM** il 15 settembre; il suo
-  lavoro non è su `main`. Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`.
-- **`DRAW-012` è stato consegnato con la PR #41 e respinto dal PM** il 18 settembre. Tredici
-  criteri su sedici, nessuno barato, rapporto onesto — ma **il PO ha guardato le tavole e ha
-  detto che erano meglio prima**: il riempimento era stato comprato allungando i singoli
-  tratti, e il disegno arrivava quasi al bordo del foglio. Verdetto in
-  `docs/pm/2026-09-18-review-pr41-draw012.md`. Ne sono nate **D-142** (la tavola si allarga
-  tutta insieme, in proporzione) e **D-143** (il disegno non tocca il bordo; margine
-  variabile). **Il suo lavoro non va rifatto**: la struttura, le autostrade e l'invariante
-  della catena intera restano validi.
-- Il pacchetto attivo è **`DRAW-013`** (`ACTIVE_WORK_PACKAGE.md`): la tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la
-  forma che il PO ha dettato come best practice il 18 settembre (**D-144**: dritto dal
-  circolatore, una curva, la dorsale, i terminali a pettine) e gli organi di servizio tornano
-  addosso al pezzo che servono come **vincolo** e non come costo (**D-145**). **Parte dal ramo di
-  `DRAW-012`** (`claude/hopeful-ramanujan-9bs0cb`, `17ff425`), non dalla testa di `main`.
+- Release in corso: **0.3 — generalizzazione**. (Il numero di versione Python resta
+  `0.1.0`: non ha mai seguito le release dichiarate.)
+- **`DRAW-013` è stato fuso il 19 settembre con la PR #44.** Undici criteri su quindici;
+  i quattro mancanti erano tutti bloccati da `place.py` e dalle rotazioni del simbolo del
+  collettore, cioè da un perimetro che aveva scritto il PM. Verdetto nel corpo della PR.
+  Restano validi: il margine di 25 mm dal bordo (D-143), le autostrade e l'invariante della
+  catena (`DRAW-012`), il vincolo degli organi di servizio (D-145).
+- **Quattro disposizioni del PO del 19 settembre** hanno cambiato la rotta, e sono
+  `D-147`–`D-150`:
+  - **D-147** — agente unico (sopra);
+  - **D-148** — **oltre l'A3 si va**: i formati ordinari sono A4, A3, A2, A1. Misurato: le
+    tre tavole che non uscivano fallivano tutte **contro il bordo destro dell'area A3**;
+  - **D-149** — **il riempimento del foglio esce dagli obiettivi** e torna una misura; la
+    dilatazione di D-142 è ritirata (`layout/dilate.py` resta agli atti, non cancellato).
+    Restano lo stiramento per far entrare il corredo, e il margine di D-143;
+  - **D-150** — **una tratta che non si instrada non uccide più la tavola**: prende una
+    spezzata di ripiego, si marca `unresolved`, e il preflight la nomina con un rilievo
+    bloccante. La tavola esce **marcata**: si guarda e si rifinisce in CAD, non si consegna.
 - **Chi tocca la posa legge prima l'analisi del 16 settembre**,
-  `docs/pm/2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md`: le cinque differenze
-  misurate fra l'ordine del disegnatore e quello del motore.
-- **Chi tocca posa, costo o routing legge prima due documenti**, in quest'ordine:
-  `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md` — l'ordine delle decisioni che il
-  PO ha fissato: prima le autostrade e dritte, poi il corredo con lo stretch invece della
-  piega, poi le strade di servizio — e
-  `docs/retrospectives/2026-09-10-retro-draw006r1.md`, che dice come ci siamo arrivati
-  (input I-057, I-058, I-061, I-062, I-063).
-- Stato e rischi: `PROJECT_STATE.md`.
-- Roadmap: `docs/plans/2026-09-03-release-plan.md`.
-- Architettura: `docs/SKILL.md` e ADR 0005.
-- Input del PO: `docs/input-pm/REGISTRO.md`.
+  `docs/pm/2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md`.
+- **Chi tocca posa, costo o routing legge prima**
+  `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md` e
+  `docs/retrospectives/2026-09-10-retro-draw006r1.md`.
+- Stato e rischi: `PROJECT_STATE.md`. Roadmap: `docs/plans/2026-09-03-release-plan.md`.
+  Architettura: `docs/SKILL.md` e ADR 0005. Input del PO: `docs/input-pm/REGISTRO.md`.
 
 ## Contratti da non violare
 
 - un attacco porta una sola tubazione; ogni unione o diramazione è un raccordo nel grafo;
 - il contenuto si giudica sul grafo, il disegno sulla tavola;
-- spostare macchine e accessori non costa; backtracking, curve e incroci sì. **La lunghezza no**
-  (D-139): si riporta come misura e non come giudizio. Ciò che teneva un organo di servizio
-  vicino al pezzo che serve è un **vincolo**, non un costo (D-145);
+- spostare macchine e accessori non costa; backtracking, curve e incroci sì. **La lunghezza
+  no** (D-139) e **il riempimento nemmeno** (D-149): si riportano come misure e non come
+  giudizi. Ciò che tiene un organo di servizio vicino al pezzo che serve è un **vincolo**,
+  non un costo (D-145);
 - testi e richiami vengono dopo e non influenzano posa o routing;
-- nessun requisito MEP nasce dal codice, da un'immagine di esempio o dall'iniziativa DEV;
+- nessun requisito MEP nasce dal codice, da un'immagine di esempio o dall'iniziativa
+  dell'agente;
 - ogni input del PO viene registrato e resta aperto finché il PO non lo chiude o ritira;
-- il DEV apre la PR e si ferma; il PM revisiona e fonde;
-- **ogni consegna porta le tavole prodotte, in PDF, elencate in testa al rapporto** — e per ogni
-  impianto che non ne produce una, il rapporto lo dice e dice dove si ferma (D-146). Il PM le
-  porta al PO **per prime**, prima di qualunque numero: è il PO che giudica il prodotto, e senza
-  le tavole non ha nulla da giudicare.
+- **si consegna tramite PR, e si fonde solo col sì del PO sulle tavole** (D-147);
+- **ogni consegna porta le tavole prodotte, in PDF, elencate in testa al rapporto** — e per
+  ogni impianto che non ne produce una, il rapporto lo dice e dice dove si ferma (D-146).
+  Non è più una buona pratica: è la porta della fusione.
 
 La storia precedente resta disponibile in Git. Non va caricata integralmente in ogni
 sessione: si consulta solo quando un documento corrente rinvia a una decisione specifica.

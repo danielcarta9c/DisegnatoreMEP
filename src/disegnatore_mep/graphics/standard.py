@@ -102,3 +102,22 @@ A3_LANDSCAPE = GraphicStandard(
 A4_LANDSCAPE = A3_LANDSCAPE.model_copy(
     update={"sheet_width_mm": 297.0, "sheet_height_mm": 210.0}
 )
+
+# **Oltre l'A3 si va** (D-148, 19 settembre 2026). Il divieto di D-058 — «ne' A2, ne' A0,
+# ne' strisce» — nasceva da come l'elaborato veniva consegnato: si stampa in ufficio e si
+# maneggia. Da I-072 la tavola esce anche in **DXF**, e il disegnatore la rifinisce in
+# AutoCAD: il foglio e' diventato un contenitore, non il prodotto. E il divieto costava
+# tavole intere — misurato il 19 settembre, tutt'e tre gli impianti che non uscivano
+# fallivano contro il bordo destro dell'area A3, e l'impianto 4 esce su A2 senza toccare
+# nient'altro.
+#
+# Stessa squadratura e stessa taratura di tratti e testi: la scala di stampa e'
+# invariante (ADR 0003), quindi un simbolo misura lo stesso su ogni foglio e cambia
+# soltanto quanto ce ne sta.
+A2_LANDSCAPE = A3_LANDSCAPE.model_copy(
+    update={"sheet_width_mm": 594.0, "sheet_height_mm": 420.0}
+)
+
+A1_LANDSCAPE = A3_LANDSCAPE.model_copy(
+    update={"sheet_width_mm": 841.0, "sheet_height_mm": 594.0}
+)
