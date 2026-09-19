@@ -251,8 +251,8 @@ I comandi e i loro output sono in §5 e §6; qui c'è l'esito e dove leggerlo.
 | 10 | **raggiunto** | §5.4 — il diario non conta la curva fra le cedute |
 | 11 | **misurata, e non esce** | §6 — il conto cella per cella |
 | 12 | **raggiunto come vincolo**, non come attuazione | §5.5; il vincolo impedisce di allontanare e non accorcia, e §7.7 misura che cosa costerebbe farlo accorciare |
-| 13 | da leggere in §8 | |
-| 14 | da leggere in §8 | |
+| 13 | **raggiunto** | §8.1 — 12 rosse contro 13, con la nota che la rossa che si chiude non è quella che il criterio nomina |
+| 14 | **raggiunto** | §8.3 — impronte identiche e SVG identici bit per bit |
 | 15 | **raggiunto** | §9 — la tabella prima/dopo |
 
 ---
@@ -624,10 +624,45 @@ $ .venv/bin/python -m pytest -q          # ramo di partenza (0a2b7fd)
 
 ```
 $ .venv/bin/python -m pytest -q          # questo ramo
-__RAMO__
+12 failed, 1500 passed, 24 skipped, 11 xfailed in 2884.56s (0:48:02)
 ```
 
-__SALDO__
+**Il criterio 13 è raggiunto: 12 rosse invece di 13.** E i verdi salgono di diciotto — le
+sedici prove nuove di `test_tavola_comoda.py`, quella della curva che non è una cessione, e la
+rossa che si è chiusa.
+
+⚠️ **La rossa che si chiude non è quella che il criterio nomina.** Il pacchetto si aspettava che
+§G chiudesse
+`test_stacchi_minimi_e_interasse.py::test_sulla_tavola_composta_nessuno_stacco_e_piu_lungo_del_minimo_senza_una_ragione`;
+quella resta rossa, e §7.7 misura che cosa costerebbe chiuderla. A chiudersi è invece
+`test_rami_di_servizio.py::test_nessuna_freccia_sui_rami_statici_e_la_freccia_giusta_sugli_altri[una_macchina_con_accumulo_combinato]`,
+che sul ramo di partenza era rossa e qui passa. Il saldo migliora di una come il criterio
+chiede; la prova che migliora è un'altra, e lo dico invece di lasciarlo scoprire.
+
+Le dodici rosse che restano, per intero:
+
+```
+layout/test_accessori_appesi.py::test_tornano_a_comporre_quando_la_composizione_compatta[prova-2]
+layout/test_assi_dorsali_tee.py::test_l_allineamento_non_si_accetta_quando_rende_la_tavola_peggiore
+layout/test_assi_dorsali_tee.py::test_una_macchina_a_terra_puo_partecipare_a_un_candidato_verticale
+layout/test_consegna_e_verifica.py::test_la_valvola_che_isola_oltre_un_raccordo_passante_si_stringe_al_raccordo
+layout/test_improve.py::test_the_hard_constraints_hold_after_improvement
+layout/test_stacchi_minimi_e_interasse.py::test_nella_posa_iniziale_ogni_stacco_e_lungo_il_proprio_minimo[una]
+layout/test_stacchi_minimi_e_interasse.py::test_sulla_tavola_composta_nessuno_stacco_e_piu_lungo_del_minimo[una]
+layout/test_stacchi_minimi_e_interasse.py::test_sulla_tavola_composta_nessuno_stacco_e_piu_lungo_del_minimo[due]
+layout/test_stacchi_minimi_e_interasse.py::test_il_ciclo_prova_per_prima_la_traslazione_verticale[una]
+layout/test_stacchi_minimi_e_interasse.py::test_il_ciclo_prova_per_prima_la_traslazione_verticale[due]
+layout/test_stacchi_minimi_e_interasse.py::test_il_raccordo_che_regge_uno_stacco_sta_stretto[due]
+layout/test_stacchi_minimi_e_interasse.py::test_la_tavola_1_non_costa_piu_di_draw_005_sulla_rete_ordinaria
+```
+
+**Sono tutte e dodici sottoinsieme delle tredici del ramo di partenza**: nessuna rossa nuova.
+
+Tre prove erano diventate rosse strada facendo — due in `test_preflight.py` e una in
+`test_posa_a_fasi.py` — e sono tutte e tre **conseguenze dichiarate di D-143**: un fixture
+appoggiato a quattordici millimetri dal bordo, e la finestra del riempimento pretesa su una
+tavola che il margine ferma. Le ho riscritte con la ragione dentro, e §3.2 e §7.3 le spiegano;
+il fixture del preflight è **lo stesso, centrato** — stessa misura, stesso riempimento.
 
 **Nessuna prova è stata convertita in `skip` o in `xfail`, nessuna soglia è stata allentata,
 nessuna fixture è stata toccata per far passare una prova.** Le prove che ho modificato sono
