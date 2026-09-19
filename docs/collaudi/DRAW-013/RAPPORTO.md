@@ -220,8 +220,9 @@ trova più il proprio rettilineo e `compose_drawing` si ferma su
 
 **Il vincolo è monotono, e questo è un limite dichiarato.** Impedisce a uno stacco di
 **allungarsi**, ma lascia lungo quello che la posa iniziale ha già fatto lungo — che è metà del
-difetto che il PO ha nominato. L'altra metà l'ho scritta, misurata e **tolta**: §7.7 porta il
-conto, ed è la cosa più importante di questo rapporto dopo le tavole.
+difetto che il PO ha nominato. L'altra metà l'ho scritta, misurata e **tolta**, insieme a una
+lettura più stretta del tetto: **§7.7 porta il conto di tutt'e tre le varianti**, ed è la cosa
+più importante di questo rapporto dopo le tavole.
 
 ⚠️ **Un tetto sbagliato nascondeva tutto**: la prima scrittura leggeva il bisogno da
 `_need_mm`, che sembra la funzione giusta e non lo è — non scende mai sotto i dieci millimetri
@@ -410,6 +411,9 @@ che la vicinanza **non torna come costo**. Quindi la strada è un vincolo — «
 regge un confine di rete sta al minimo dalla macchina che il confine serve» — oppure una posa
 che lo colloca già lì. Tutt'e due stanno fuori da questo pacchetto.
 
+E c'è una cosa che il PM deve sapere **prima**: stringere §G sugli stacchi non lo avvicina, lo
+**allontana**. §7.7 lo misura su tre varianti.
+
 ### 7.2 Il pettine di D-144 è bloccato dal simbolo del collettore — domanda al PO
 
 Il criterio 9 non è raggiunto, e non per la posa. Sulla fixture delle due zone:
@@ -553,44 +557,52 @@ chiave, la posa si compatta come faceva `main`, e la dilatazione deve riempire d
 numeri di §7.5, **da sola non ce la fa**: i vuoti di questi impianti sono di uno o due passi e
 non crescono. Le due cose vanno decise insieme, e non da me.
 
-### 7.7 Chiudere la terza rossa costa due tavole peggiori, e l'ho misurato
+### 7.7 Tre varianti di §G, misurate sulle tavole: la più stretta disegna peggio
 
-Il criterio 13 chiede **12 rosse invece di 13**, e nomina la prova: quella che pretende che
-sulla tavola composta nessuno stacco sia più lungo del proprio minimo senza una ragione. §G
-avrebbe dovuto chiuderla. **Non la chiude**, e la ragione è che il vincolo è monotono: impedisce
-di allungare, non accorcia.
+Il criterio 13 chiede **12 rosse invece di 13**, e nomina la prova che pretende che sulla
+tavola composta nessuno stacco sia più lungo del proprio minimo senza una ragione. §G avrebbe
+dovuto chiuderla. **Non la chiude**, e ho provato due strade per farlo. Le porto tutt'e due con
+i numeri, perché la scelta fra loro è del PM e non mia.
 
-**L'ho fatta chiudere, e poi ho disfatto.** Ho aggiunto al ciclo l'attuazione del vincolo — fra
-due pose che costano uguale si prende quella che avvicina di più gli organi di servizio. Non era
-una voce di costo (D-145 lo vieta) e non comprava niente: accettava solo ciò che non peggiora la
-tavola su **nessuna** voce della chiave. La prova è diventata verde, il saldo del file è passato
-da 7 rosse a 6, e il criterio 13 era raggiunto.
+| | **consegnata** | tetto stretto | tetto stretto + attuazione |
+|---|---|---|---|
+| tavola 2 — acqua fredda dal bollitore | **120,0 mm** | 192,5 mm | 192,5 mm |
+| tavola 2 — lunghezza | **887,5 mm** | 1005,0 mm | 960,0 mm |
+| tavola 2 — squilibrio quadranti | 8,30 | 7,21 | 7,97 |
+| tavola 1 — acqua fredda dall'accumulo | 20,0 mm | **15,0 mm** | **15,0 mm** |
+| tavola 1 — squilibrio quadranti | **1,92** | 3,78 ⚠️ | 3,78 ⚠️ |
+| rilievi di preflight, in tutto | **2** | 3 | 3 |
+| la prova rossa che il criterio 13 nomina | rossa | rossa | **verde** |
 
-Poi ho guardato le tavole.
+Sul ramo di partenza l'acqua fredda della tavola 2 sta a **135,0 mm**: le due varianti strette
+la portano a 192,5, cioè **peggio di dove era**, con la linea tratteggiata che attraversa il
+foglio da un capo all'altro.
 
-| | con l'attuazione | senza |
-|---|---|---|
-| tavola 2 — acqua fredda dal bollitore | **192,5 mm** | 120,0 mm |
-| tavola 2 — lunghezza | 960,0 mm | 887,5 mm |
-| tavola 1 — squilibrio fra i quadranti | **3,78** (rilievo nuovo di preflight) | 1,92 |
-| tavola 1 — acqua fredda dall'accumulo | 15,0 mm | 20,0 mm |
+**Che cosa sono le due varianti.**
 
-Sulla tavola 2 la linea tratteggiata dell'acqua fredda attraversava il foglio **da un capo
-all'altro**: peggio dei centotrentacinque millimetri che il PM aveva chiamato il difetto. Sulla
-tavola 1 nasceva un rilievo di preflight che prima non c'era.
+1. **Il tetto stretto.** Il «vincolo dichiarato» di §G.2 ammette due letture, e sono tutt'e due
+   dichiarate: il **rettilineo che la tratta pretende** — che non scende mai sotto lo stacco
+   minimo fra due simboli, cioè **D-062** — oppure il solo **posto degli accessori in linea**.
+   La seconda è più stretta sulla lettera. Misurata: stringe il corredo e **allontana il
+   gruppo**, perché toglie al ciclo le mosse con cui lo avvicinava.
+2. **L'attuazione.** Un vincolo monotono impedisce di allungare, non accorcia. Ho aggiunto al
+   ciclo la regola che, fra due pose che costano uguale, prende quella che avvicina di più gli
+   organi di servizio — non una voce di costo, che D-145 vieta, ma l'attuazione del vincolo. La
+   prova è diventata verde. Il disegno no.
 
-**Il meccanismo è quello che ci si aspetta da un greedy**: accettare una posa che costa uguale
-cambia la traiettoria della ricerca, e la traiettoria nuova finisce in un minimo diverso. Il
-vincolo faceva il proprio mestiere — gli stacchi si accorciavano — e il disegno intero
-peggiorava altrove.
+**Il meccanismo è quello che ci si aspetta da un greedy**: sia stringere i vincoli sia accettare
+una posa che costa uguale cambiano la **traiettoria** della ricerca, e la traiettoria nuova
+finisce in un minimo diverso. Il vincolo faceva il proprio mestiere — gli stacchi si
+accorciavano — e il disegno intero peggiorava altrove.
 
-**Ho tolto l'attuazione e ho tenuto la correzione del tetto**, che è un difetto vero e non costa
-niente. La prova resta rossa e dichiarata, il criterio 13 **non è raggiunto**, e la decisione è
-del PO: *una riga verde vale una tavola peggiore?* Su `DRAW-010` e su `DRAW-012` la risposta è
-stata no due volte, e D-146 esiste per questo. Ho scelto come quelle due volte.
+**Ho consegnato la variante che disegna meglio**, e non è un compromesso sulla disposizione: le
+due letture del tetto sono tutt'e due dichiarate, e fra due letture ammesse ho preso quella che
+lascia la tavola migliore, perché è il PO che giudica il prodotto (D-146). Su `DRAW-010` e su
+`DRAW-012` la risposta a «una riga verde vale una tavola peggiore?» è stata **no** due volte.
 
-La riga che l'attuazione realizzava è nella storia del ramo (commit «il vincolo di D-145 morde,
-e adesso ripara anche»), pronta a tornare se il PO decide diversamente.
+Tutt'e due le varianti sono nella storia del ramo, pronte a tornare se il PM decide
+diversamente: i commit sono «il vincolo di D-145 morde, e adesso ripara anche» e «il tetto dello
+stacco è il rettilineo della tratta, e perché».
 
 ---
 
