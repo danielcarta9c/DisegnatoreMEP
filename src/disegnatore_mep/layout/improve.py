@@ -2362,27 +2362,6 @@ class Improver:
         )
         return max(abs(own.x_mm - stub.x_mm), abs(own.y_mm - stub.y_mm))
 
-    def _repairs_a_stub(
-        self, kind: str, table: Move, found: "Measured", current: "Measured"
-    ) -> bool:
-        """Vero se questa candidata **ripara** uno stacco che D-145 vuole corto.
-
-        E' l'attuazione del vincolo di §G, e sta qui e non in `SheetCost` per la
-        ragione che D-145 scrive: «e' un vincolo del motore, che nessuna voce di
-        costo puo' comprare». Infatti non compra niente — si accetta solo una
-        candidata che **non peggiora** la tavola su nessuna voce — e non vende
-        niente, perche' una posa che allontana un organo non passa di qui.
-
-        Senza questa riga il vincolo sarebbe monotono e basta: impedirebbe a uno
-        stacco di allungarsi e lascerebbe lungo quello che la posa iniziale ha
-        gia' fatto lungo, che e' la meta' del difetto che il PO ha nominato.
-        """
-        if kind != "stacco":
-            return False
-        if self._service_slack(table) >= self._service_slack(self.best) - _TOLERANCE_MM:
-            return False
-        return not current.cost.beats(found.cost)
-
     def _hang_ceiling(self, child: str) -> float:
         """Quanto puo' essere lungo, al piu', lo stacco di un appeso (**D-145**).
 
@@ -2394,22 +2373,6 @@ class Improver:
         return max(
             self.hang_min[child],
             self.room[self.hang_trunk[child].connection_ids],
-        )
-
-    def _service_slack(self, table: Move) -> float:
-        """Quanti millimetri, in tutto, gli organi di servizio stanno lontani
-        dal pezzo che servono piu' di quanto la regola permetta.
-
-        Non e' una voce di costo — D-145 vieta che lo sia, e D-139 tiene i
-        millimetri fuori dal costo — ed e' per questo che non compare in
-        `SheetCost`. E' la misura con cui il ciclo **attua** il vincolo: fra due
-        pose che costano uguale, quella che lo rispetta di piu' e' quella
-        giusta, e il ciclo la prende. Nessun guadagno la compra, perche' qui non
-        si guadagna niente: si ripara.
-        """
-        return sum(
-            max(self._gap_of(table, child) - self._hang_ceiling(child), 0.0)
-            for child in self.parent_of
         )
 
     def _refresh_hang_gaps(self) -> None:
@@ -3045,9 +3008,8 @@ class Improver:
                     trial = dict(self.best)
                     trial.update(move)
                     found = self.measure(trial)
-                    accepted = found is not None and (
-                        found.cost.beats(current.cost, on_fill=kind != "allungo")
-                        or self._repairs_a_stub(kind, trial, found, current)
+                    accepted = found is not None and found.cost.beats(
+                        current.cost, on_fill=kind != "allungo"
                     )
                     self.journal.append(
                         Attempt(
@@ -3094,9 +3056,8 @@ class Improver:
                             False,
                         )
                     )
-                    if found is None or not (
-                        found.cost.beats(current.cost, on_fill=kind != "allungo")
-                        or self._repairs_a_stub(kind, trial, found, current)
+                    if found is None or not found.cost.beats(
+                        current.cost, on_fill=kind != "allungo"
                     ):
                         continue
                     if best_found is None or found.cost.beats(best_found.cost):
