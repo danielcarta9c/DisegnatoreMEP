@@ -217,20 +217,227 @@ I comandi e i loro output sono in §5 e §6; qui c'è l'esito e dove leggerlo.
 
 ## 5. Le prove
 
-*(sezione compilata in §8 con i comandi e gli output)*
+Le prove nuove stanno in `tests/layout/test_tavola_comoda.py`, e sono **sedici**.
+
+```
+$ .venv/bin/python -m pytest tests/layout/test_tavola_comoda.py -q
+................                                                         [100%]
+16 passed in 0.24s
+```
+
+### 5.1 §A — la dilatazione (criterio 1)
+
+`test_la_dilatazione_allarga_tutti_i_vuoti_della_stessa_percentuale[1.5 | 2.0 | 2.5]`
+costruisce una tavola di prova con vuoti di misura diversa, la dilata e pretende, in una
+prova sola:
+
+- `factor_error` **zero**: il fattore è esatto su ogni vuoto;
+- ogni vuoto cresciuto **esattamente** del fattore, su tutt'e due gli assi;
+- ogni simbolo della **stessa misura** di prima, e nessuno che ne scavalchi un altro;
+- **pieghe e attraversamenti identici**.
+
+Accanto, tre prove che tengono su il resto: `..._conserva_le_colonne_e_le_quote` (due pezzi
+sulla stessa ascissa restano sulla stessa ascissa — è ciò che tiene insieme la dorsale),
+`..._non_e_mai_una_contrazione` (§A.4: un disegno che non ci sta resta quello che è) e
+`..._si_ferma_al_margine_e_non_lo_stringe`.
+
+**E una quarta che dice una cosa che il pacchetto dava per scontata**: §A.1 scrive che «la
+copertura dell'ingombro non può scendere». Il ragionamento è giusto — la dilatazione non
+sposta nessun pezzo rispetto agli altri, quindi non crea la propaggine che D-141 teme — ma la
+**misura** non è invariante: `ink_coverage` divide l'ingombro in sessantaquattro celle
+*relative all'ingombro stesso*, e quando l'ingombro cresce le celle crescono con lui. Misurato
+sulla tavola di prova: **0,3125 → 0,2500 a fattore 1,5**.
+`test_la_dilatazione_non_crea_la_propaggine_che_la_copertura_cerca` lo dichiara e prova al suo
+posto ciò che regge davvero: **tutti i vuoti crescono dello stesso fattore**, quindi nessun
+pezzo si allontana dagli altri più degli altri. Per questo la copertura **non** è nella
+guardia che accetta la dilatazione: tenercela l'avrebbe bocciata proprio sulle tavole scariche,
+che sono quelle per cui esiste. La variazione misurata sulle due tavole vere è in §9.
+
+### 5.2 §B — il margine (criteri 4 e 5)
+
+`test_il_margine_parte_da_venticinque_e_si_stringe_solo_per_far_entrare` misura le tre
+situazioni: un disegno piccolo ha 25 mm, uno largo 320 mm ne ha meno di 25 ma più di 10 e
+sulla griglia, uno largo quanto il foglio si ferma a 10.
+
+`test_il_preflight_segnala_il_disegno_che_tocca_il_bordo_senza_autorizzazione` è il criterio 5
+**nei due versi**: un disegno piccolo spinto contro il bordo è un rilievo; lo stesso bordo,
+toccato da un disegno largo 330 mm, non lo è — più dentro non ci stava.
+
+### 5.3 §E — la guardia (criterio 7)
+
+`test_la_guardia_del_riempimento_boccia_anche_il_caso_lieve` riproduce le tre pose che il PM
+ha misurato in §5.1 del verdetto:
+
+| posa | riempimento | copertura | prima | adesso |
+|---|---|---|---|---|
+| onesta | 30 % | 0,80 | — | — |
+| trucco **lieve** | 50 % | 0,70 | **vinceva** | perde |
+| trucco forte | 50 % | 0,45 | perdeva | perde |
+
+E una quarta riga che la prova pretende e che è altrettanto importante: una posa che migliora
+**tutt'e due** (50 %, 0,85) deve continuare a vincere, altrimenti la guardia avrebbe spento
+l'obiettivo invece di sorvegliarlo.
+
+`test_il_riempimento_non_compra_un_allungo` è §A.3, e
+`test_il_margine_viene_prima_del_riempimento` è l'ordine delle due voci nella chiave.
+
+### 5.4 §C — la forma, e la curva che non è una cessione (criteri 8 e 10)
+
+`test_la_distribuzione_fa_una_curva_e_una_sola` costruisce la forma dello schizzo — gamba
+dritta dal circolatore, curva, dorsale — e pretende che `turns_of` conti **una** curva e che la
+catena stia nella propria forma; poi costruisce la stessa catena **senza** il diritto alla
+curva, e pretende che cada; poi una catena con **due** curve, e pretende che cada anche con il
+diritto. È il criterio 8 alla lettera: fallisce se la gamba si piega e fallisce se le curve
+sono due.
+
+`test_objective.py::test_la_curva_della_distribuzione_non_e_una_cessione` è il criterio 10,
+misurato sulla tavola composta: il diario porta `conceded == ()` e **nessuna catena supera il
+proprio budget di curve**.
+
+### 5.5 §G — gli organi di servizio (criterio 12)
+
+`test_un_organo_di_servizio_non_si_allontana_dal_pezzo_che_serve` prova il vincolo **dove
+decide** — `is_valid` — e non su una tavola sola: per ogni appeso, una mossa che lo porta oltre
+il proprio tetto è **non valida**, e nessun guadagno la compra.
+`test_lo_stacco_puo_allungarsi_per_il_rettilineo_che_la_tratta_chiede` è §G.2: il tetto non è
+il minimo da solo.
+
+Sulle tavole vere il criterio si legge nelle prove che c'erano già,
+`test_stacchi_minimi_e_interasse.py`, e nel numero di §1.3.
 
 ---
 
 ## 6. §D — la tavola 4, misurata
 
-*(sezione compilata con il conto cella per cella)*
+Il conto per esteso, con i comandi, è in **`dopo/prova-4-perche-non-esce.txt`**. In breve:
+
+**L'ipotesi del pacchetto non è confermata.** §D proponeva che con il margine di §B nessun
+pezzo potesse stare oltre `x 325`, e che quindi il confine di rete appeso alla macchina più a
+destra cadesse dentro la griglia. Misurato:
+
+```
+formato 420 x 297: area x 10..360, y 16..251
+griglia di instradamento: 140 colonne (indici 0..140), 94 righe
+
+posa iniziale:          22 pezzi,  0 fuori dall'area
+seminata dal tronco:    22 pezzi,  1 fuori dall'area
+    utenze: x 365.0..370.0   y 158.5..163.5
+dopo il ciclo:          22 pezzi,  1 fuori dall'area
+    utenze: x 365.0..370.0   y 158.5..163.5
+```
+
+`utenze` è ACS-01, il confine del prelievo sanitario: cinque millimetri oltre il bordo destro
+dell'area, due colonne oltre l'ultima che la griglia possiede. È **l'unico** pezzo fuori, su
+ventidue, e la **posa iniziale lo teneva dentro**: è la fase del tronco a portarlo lì, perché
+il confine si posa addosso all'utente che serve e l'utente che serve è la macchina più a
+destra.
+
+Il margine di D-143 non lo riporta dentro perché nessuno dei tre posti in cui è entrato è
+quello che deciderebbe qui: la fase del tronco non legge il costo, e il ciclo rifiuta le mosse
+che portano un pezzo **fuori** ma quel pezzo è già fuori quando il ciclo comincia — «una mossa
+risponde di ciò che crea, non di ciò che trova».
+
+**Non ho ampliato il perimetro.** Quel che servirebbe sta in `place.py` e in `spine.py`, e la
+tavola 4 resta un pacchetto a sé — con, adesso, un numero solo da sistemare: cinque millimetri
+su un pezzo su ventidue.
 
 ---
 
 ## 7. I rilievi, e le domande
 
-*(sezione compilata)*
+### 7.1 L'acqua fredda della tavola 2 resta lontana, e non è l'organo ad essersi allontanato
 
+Il criterio 3 non è raggiunto sulla tavola 2: 135,0 → 120,0 mm. La misura dice **dove non
+cercare**:
+
+```
+acquedotto <- tee-drain-connection-cold-bollitore-cold-in (a)   min=15.0  gap=15.0  need=20.0
+```
+
+Il confine di rete sta **al proprio minimo** dal raccordo che lo regge, ed è esattamente ciò
+che D-145 pretende: §G funziona. I centoventi millimetri sono la distanza fra quel **raccordo**
+e il bollitore, cioè dove la posa mette il gruppo dell'acqua fredda — e la posa è `place.py`,
+fuori perimetro.
+
+C'è una cosa che il PM deve sapere prima di decidere il pacchetto che lo chiuderà: **niente
+può tirare indietro quel gruppo con il costo di oggi.** Avvicinarlo non toglie una curva né un
+attraversamento, e D-139 ha tolto i millimetri dalle voci di costo; D-145 dice esplicitamente
+che la vicinanza **non torna come costo**. Quindi la strada è un vincolo — «un raccordo che
+regge un confine di rete sta al minimo dalla macchina che il confine serve» — oppure una posa
+che lo colloca già lì. Tutt'e due stanno fuori da questo pacchetto.
+
+### 7.2 Il pettine di D-144 è bloccato dal simbolo del collettore — domanda al PO
+
+Il criterio 9 non è raggiunto, e non per la posa. Sulla fixture delle due zone:
+
+- le zone pendono da un `zone-manifold` largo 40 mm con `out_1` e `out_2` sulla faccia
+  **inferiore**, a quindici millimetri l'uno dall'altro;
+- chi pende da due attacchi affiancati su una faccia orizzontale **sta affiancato**: sulla
+  stessa colonna non ci può stare;
+- la dorsale dello schizzo del PO sarebbe **lo stesso collettore girato di novanta gradi**, con
+  gli attacchi impilati sul fianco;
+- `assets/symbols/zone-manifold.json` dichiara `allowed_rotations_deg: [0]`.
+
+Per **D-049** quel campo è «un vincolo **tecnico**, non geometrico: dice in quali orientamenti
+il pezzo si può disegnare in un impianto vero». Il collettore di zona non è fra i dodici che
+D-049 nomina. **La domanda al PO è una riga**: un collettore di zona si può disegnare in
+verticale? Se sì, `allowed_rotations_deg` diventa `[0, 90, 180, 270]` e il pettine ha dove
+nascere; se no, D-144 su un impianto con collettore vuol dire un'altra cosa, e va detta.
+
+Non l'ho cambiato da me: `HANDOFF.md` dice che nessun requisito MEP nasce dall'iniziativa DEV,
+e questo è un requisito MEP scritto in un file di simboli.
+
+Ho scritto e poi **tolto** la mossa che avrebbe portato un terminale sulla colonna di un altro:
+misurata, non è mai valida — il posto è occupato da una parte e dall'altra la tratta si
+piegherebbe — e una candidata che non può mai passare è codice che costa ricerca a ogni
+tavola. La riga che la reggeva è nella storia del ramo, se serve.
+
+### 7.3 La tavola 1 non entra nella finestra, e le due disposizioni si contendono il foglio
+
+Il criterio 2 è raggiunto sulla tavola 2 (61,1 %) e non sulla tavola 1 (**42,9 %**, contro un
+minimo di 45). Il conto, per esteso:
+
+- l'area di disegno è 350 × 235 mm; con il margine di 25 mm per lato restano **300 × 185**;
+- la tavola 1 è larga **esattamente 300 mm**: la dilatazione si è fermata lì, ed è il margine a
+  fermarla;
+- in **altezza** i vuoti della proiezione sono **due passi in tutto, cioè 5 mm**: i simboli
+  coprono quasi per intero la fascia verticale che il disegno occupa, e una dilatazione che non
+  sposta un pezzo rispetto a un altro **non ha niente da allargare** su quell'asse. Il disegno
+  cresce da 115,0 a 117,5 mm e si ferma;
+- 300 × 117,5 su 350 × 235 fa **42,9 %**. Per arrivare al 45 % servirebbero 123,4 mm di
+  altezza, che su quell'asse non ci sono.
+
+**Le due disposizioni si contendono il foglio, e su questa tavola non stanno insieme**: D-140
+chiede almeno il 45 %, D-143 chiede 25 mm per lato, e D-142 vieta la sola mossa che le
+concilierebbe — spostare un pezzo rispetto agli altri. Ho scelto il **margine**, perché §B.2 lo
+dice in modo esplicito («non si stringe per far salire il riempimento») e perché è la
+disposizione nata dal difetto che ha fatto bocciare `DRAW-012`. Il preflight lo dichiara:
+`SHEET_BARELY_FILLED · t1`.
+
+È una decisione da confermare, e la porto al PM: **se il PO preferisce il riempimento al
+margine, la tavola 1 torna in finestra stringendo il margine a 17,5 mm** — e allora D-143 va
+riscritta, perché così com'è non lo permette.
+
+### 7.4 Quello che vedo sulle tavole e che i numeri approvano
+
+Il pacchetto chiede di guardarle, e questo è ciò che vedo.
+
+1. **La tavola 1 resta una fascia in alto, con il terzo inferiore del foglio bianco.** I numeri
+   dicono 4 pieghe, 1 attraversamento, squilibrio dei quadranti 1,92 — tutto buono — e il
+   disegno è comunque sbilanciato in verticale. Non è un difetto che questo pacchetto potesse
+   chiudere: nasce dal fatto che l'impianto è una linea orizzontale e che nulla, nel motore,
+   distribuisce **in altezza**. Lo segnalo perché è la stessa specie di rilievo che il PO ha
+   fatto sul bordo: si vede a occhio e nessun numero lo dice.
+2. **Sulla tavola 1 la mandata della seconda pompa di calore corre a lungo alla propria quota
+   prima di scendere.** È il rilievo che il DEV di `DRAW-012` aveva già scritto, ed è ancora
+   lì: la linea rossa da PDC-02 attraversa mezzo foglio in orizzontale e poi scende. Con la
+   dilatazione quel tratto si è allungato **in proporzione**, come tutto il resto, quindi non è
+   peggiorato rispetto al disegno — ma resta la cosa più brutta della tavola.
+3. **Sulla tavola 2 il bollitore e il suo gruppo stanno in basso a destra e il quadrante in
+   basso a sinistra è vuoto**: lo squilibrio dei quadranti è 8,3, il preflight lo dice, e non è
+   migliorato (era 8,16). La dilatazione non lo può toccare: allarga, non redistribuisce.
+
+---
 ---
 
 ## 8. La suite, e il determinismo
@@ -241,4 +448,54 @@ I comandi e i loro output sono in §5 e §6; qui c'è l'esito e dove leggerlo.
 
 ## 9. Le misure, prima e dopo
 
-*(sezione compilata)*
+`prima/` è **il ramo di partenza** — la testa di `DRAW-012`, `17ff425` — e non `main`: è il
+confronto che il pacchetto chiede.
+
+```
+$ .venv/bin/python docs/collaudi/DRAW-013/criteri.py \
+      docs/collaudi/DRAW-013/prima docs/collaudi/DRAW-013/dopo
+```
+
+| misura | t1 prima | **t1 dopo** | t2 prima | **t2 dopo** |
+|---|---|---|---|---|
+| larghezza dell'ingombro | 322,5 mm | **300,0 mm** | 315,0 mm | **300,0 mm** |
+| altezza dell'ingombro | 115,0 mm | **117,5 mm** | 167,5 mm | **167,5 mm** |
+| **margine minimo dal bordo** | 12,5 mm | **25,0 mm** | 17,5 mm | **25,0 mm** |
+| margine che il disegno poteva permettersi | 12,5 mm | 25,0 mm | 17,5 mm | 25,0 mm |
+| **curve** | 4 | **4** | 5 | **5** |
+| **attraversamenti** | 1 | **1** | 1 | **1** |
+| tratte con andata e ritorno | 0 | 0 | 0 | 0 |
+| riempimento | 45,1 % | 42,9 % | 64,1 % | 61,1 % |
+| riempimento senza il pezzo più isolato | 41,2 % | 38,9 % | 55,0 % | 51,9 % |
+| copertura dell'ingombro | 0,750 | 0,703 | 0,750 | 0,656 |
+| squilibrio fra i quadranti | 1,94 | 1,92 | 8,16 | 8,30 |
+| lunghezza *(misura, non giudizio — D-139)* | 762,5 mm | 735,0 mm | 952,5 mm | 887,5 mm |
+| **fattore di dilatazione** | — | **1,08** | — | **1,25** |
+| acqua fredda dal pezzo che alimenta | 40,0 mm | **20,0 mm** | 135,0 mm | 120,0 mm |
+| simboli / tratte | 39 / 21 | 39 / 21 | 41 / 23 | 41 / 23 |
+
+Come si leggono le tre righe che peggiorano:
+
+- **riempimento**: scende perché la posa non lo insegue più fino al bordo, e la dilatazione lo
+  risale solo fin dove il margine permette. Sulla tavola 2 resta in finestra; sulla tavola 1
+  no, ed è §7.3;
+- **copertura**: scende perché è una misura **relativa all'ingombro** e l'ingombro è cresciuto
+  — §5.1 lo misura su una tavola di prova e ne spiega il meccanismo. Nessun pezzo si è
+  allontanato dagli altri: i vuoti sono cresciuti tutti dello stesso fattore;
+- **squilibrio dei quadranti** della tavola 2: 8,16 → 8,30, cioè fermo. La dilatazione allarga,
+  non redistribuisce, e il bollitore resta dov'è.
+
+Le due righe da guardare per prime restano **margine** e **curve/attraversamenti**: il primo è
+il difetto che il PO ha nominato, i secondi sono il prezzo che questo pacchetto **non** ha
+pagato.
+
+### I rilievi di preflight
+
+| | prima | dopo |
+|---|---|---|
+| tavola 1 | *nessuno* | `SHEET_BARELY_FILLED` (43 % < 45 %) |
+| tavola 2 | `DRAWING_ALL_ON_ONE_SIDE` (8,2×) | `DRAWING_ALL_ON_ONE_SIDE` (8,3×) |
+
+Il rilievo nuovo sulla tavola 1 è **dichiarato e voluto**: è il prezzo di §7.3, ed è il motivo
+per cui quel paragrafo esiste. **Nessuna delle due tavole porta `DRAWING_TOUCHES_THE_BORDER`**,
+che è il rilievo nuovo di questo pacchetto: il margine è rispettato su tutt'e due.
