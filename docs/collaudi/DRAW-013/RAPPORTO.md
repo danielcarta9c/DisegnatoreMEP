@@ -136,6 +136,15 @@ scarto fra il fattore nominale e quello realizzato su un vuoto è **meno di mezz
 meno di 1,25 mm**, e la tavola resta instradabile. `dilate.factor_error` lo misura e la prova
 generale pretende che sia **zero** sui vuoti che il fattore divide esattamente.
 
+**Come si distribuisce quello scarto, perché il PM non lo scopra da sé.** In millimetri è
+limitato per costruzione: mezzo passo, cioè **1,25 mm**, su ogni vuoto. In proporzione no, ed è
+tutto concentrato sui **vuoti da un passo solo**: un vuoto di 2,5 mm a fattore 1,25 resta di
+2,5 mm — la griglia non ha nulla fra un passo e due. Sulle due tavole consegnate i vuoti da un
+passo sono sette su diciassette (tavola 1) e cinque su quindici (tavola 2), e sono i minimi di
+stacco, cioè i posti in cui allargare serviva meno. Il disegno cresce dove c'era spazio e non
+si muove dove non ce n'era: è una conseguenza della griglia, non una scelta, e va guardata sulle
+tavole prima che sul numero.
+
 ### 3.2 §B — il margine dal bordo (D-143)
 
 Due costanti in `layout/geometry.py` — 25 mm di partenza, 10 mm di minimo — e due funzioni:
