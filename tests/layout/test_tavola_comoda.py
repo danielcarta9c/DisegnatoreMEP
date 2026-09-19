@@ -453,45 +453,57 @@ def _cost(fill: float, coverage: float, **extra: float) -> SheetCost:
     return SheetCost(**base)  # type: ignore[arg-type]
 
 
-def test_la_guardia_del_riempimento_boccia_anche_il_caso_lieve() -> None:
-    """Il criterio 7, ed e' il rilievo §5.1 del verdetto sulla PR #41.
+def test_la_guardia_del_riempimento_esce_con_il_riempimento() -> None:
+    """**D-149** — la guardia di D-141 non ha piu' niente da sorvegliare.
 
-    La guardia di `DRAW-012` era una **soglia**: finche' la copertura restava
-    sopra 0,75 una posa che alzava il riempimento e **abbassava** la copertura
-    vinceva lo stesso. Il PM l'ha misurato — riempimento 30 % con copertura 0,80
-    perdeva contro riempimento 50 % con copertura 0,70 — e D-141 dice l'opposto
-    senza soglie. Qui il caso **lieve** costa quanto il caso grosso.
+    Questa prova difendeva il criterio 7 di `DRAW-013`: la guardia doveva
+    bocciare anche il caso **lieve**, cioe' il riempimento che sale mentre la
+    copertura scende di poco. **Non e' stata allentata**: il PO ha tolto il
+    riempimento dagli obiettivi, e una guardia su un obiettivo che non esiste
+    sarebbe una voce che decide senza che nessuno l'abbia chiesto.
+
+    Cio' che deve restare vero e' che **nessuna** delle due combinazioni
+    compri niente: ne' il caso lieve, ne' quello grosso, ne' la posa che
+    migliora tutt'e due. Il riempimento non paga in nessun verso.
     """
     onesta = _cost(fill=0.30, coverage=0.80)
     lieve = _cost(fill=0.50, coverage=0.70)
     forte = _cost(fill=0.50, coverage=0.45)
-
-    assert not lieve.beats(onesta)
-    assert not forte.beats(onesta)
-    # E la guardia non punisce chi migliora **tutt'e due**: quella e' la posa
-    # buona, e deve continuare a vincere.
     buona = _cost(fill=0.50, coverage=0.85)
-    assert buona.beats(onesta)
+
+    for altra in (lieve, forte, buona):
+        assert not altra.beats(onesta)
+        assert not onesta.beats(altra)
+        assert altra.key() == onesta.key()
 
 
-def test_il_riempimento_non_compra_un_allungo() -> None:
-    """§A.3: lo stiramento del singolo tratto resta ammesso **solo** per far
-    entrare il corredo. Con `on_fill=False` il riempimento non conta, e un
-    allungo che si giustificasse con lui non passa; uno che fa entrare un
-    accessorio passa lo stesso, perche' vince su una voce che viene prima."""
+def test_l_allungo_non_ha_piu_un_riempimento_da_comprare() -> None:
+    """**D-149** — §A.3 di `DRAW-013` aveva bisogno di un interruttore
+    (`on_fill=False`) per impedire a un allungo di giustificarsi col
+    riempimento. L'interruttore e' sparito insieme alla voce che disarmava.
+
+    Quel che il contratto dice dello stiramento **non cambia**: resta ammesso
+    per far entrare il corredo dove non ci sta, e lo si vede qui — una posa
+    senza violazioni batte una che ne ha, che e' la voce con cui «il corredo
+    entra» si paga.
+    """
     prima = _cost(fill=0.30, coverage=0.80)
     solo_riempimento = _cost(fill=0.50, coverage=0.80)
-    assert solo_riempimento.beats(prima)
-    assert not solo_riempimento.beats(prima, on_fill=False)
+    assert not solo_riempimento.beats(prima)
+    assert not prima.beats(solo_riempimento)
 
     fa_entrare = _cost(fill=0.30, coverage=0.80, violations=0)
     con_violazione = _cost(fill=0.50, coverage=0.80, violations=1)
-    assert fa_entrare.beats(con_violazione, on_fill=False)
+    assert fa_entrare.beats(con_violazione)
 
 
-def test_il_margine_viene_prima_del_riempimento() -> None:
-    """§B con D-140: un disegno che rinuncia al margine per far salire una
-    percentuale perde. Lo spazio comodo si prende **dopo**, dilatando."""
+def test_il_margine_decide_e_il_riempimento_no() -> None:
+    """§B, e dopo **D-149** e' la differenza fra le due disposizioni.
+
+    Il riempimento era un numero che il PO non aveva mai chiesto di inseguire;
+    il margine gliel'ha chiesto lui guardando la tavola. Esce l'uno, resta
+    l'altro — e un disegno che va al bordo perde comunque, adesso senza
+    nemmeno un riempimento con cui giustificarsi."""
     comoda = _cost(fill=0.30, coverage=0.80, margin_gap=0.0)
     fino_al_bordo = _cost(fill=0.55, coverage=0.80, margin_gap=15.0)
     assert comoda.beats(fino_al_bordo)

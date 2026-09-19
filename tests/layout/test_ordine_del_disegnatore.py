@@ -35,7 +35,7 @@ from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout import compose
 from disegnatore_mep.layout.compose import inline_component_ids
-from disegnatore_mep.layout.geometry import INK_COVERAGE_MIN, Point
+from disegnatore_mep.layout.geometry import Point
 from disegnatore_mep.layout.hierarchy import (
     Level,
     hierarchy_of,
@@ -402,59 +402,65 @@ def test_la_lunghezza_non_entra_piu_nel_confronto() -> None:
     assert corta.length_mm == 100.0
 
 
-def test_il_riempimento_e_una_finestra_non_una_scala() -> None:
-    """Criterio 6 — dentro la finestra si vince, e si vince da tutt'e due i
-    lati: una posa piu' vuota e una piu' stretta perdono entrambe."""
+def test_il_riempimento_non_entra_piu_nel_confronto() -> None:
+    """**D-149** — due pose che differiscono solo per il riempimento sono
+    indifferenti, esattamente come per la lunghezza con D-139.
+
+    Fino al 19 settembre 2026 questa prova si chiamava
+    `test_il_riempimento_e_una_finestra_non_una_scala` e pretendeva l'opposto:
+    dentro la finestra si vinceva. **Non e' stata allentata — la disposizione
+    che difendeva e' stata revocata dal PO**, che ha guardato le tavole: «ha
+    dato solo risultati peggiori. Prima il disegno era meglio.»
+    """
     basso, alto = FILL_WINDOW
     dentro = _cost(fill=(basso + alto) / 2)
     vuota = _cost(fill=basso - 0.15)
     stretta = _cost(fill=alto + 0.15)
-    assert dentro.beats(vuota)
-    assert dentro.beats(stretta)
+    assert not dentro.beats(vuota)
     assert not vuota.beats(dentro)
+    assert not dentro.beats(stretta)
     assert not stretta.beats(dentro)
-    # Non e' monotona: oltre la finestra il riempimento **peggiora**.
-    assert _cost(fill=alto).beats(_cost(fill=alto + 0.10))
-    assert _cost(fill=basso).beats(_cost(fill=basso - 0.10))
+    assert dentro.key() == vuota.key() == stretta.key()
+    # E resta nella tupla: si riporta come misura, non come giudizio.
+    assert "fill" in SheetCost._fields
+    assert dentro.fill == (basso + alto) / 2
 
 
-def test_il_trucco_del_pezzo_nell_angolo_non_paga() -> None:
-    """Criterio 6, seconda meta' (D-141) — «un riempimento che sale mentre la
-    copertura scende non e' un miglioramento».
+def test_la_copertura_esce_con_il_riempimento_che_sorvegliava() -> None:
+    """**D-149** — la copertura dell'ingombro era la guardia del riempimento
+    (D-141) e non ha senso da sola: sorvegliava un obiettivo che non c'e' piu'.
 
-    La posa di partenza e' sotto la finestra e ben coperta; il trucco spinge un
-    pezzo in un angolo: il rettangolo dell'inchiostro cresce, il riempimento
-    entra nella finestra, e il disegno resta vuoto come prima. Non deve vincere.
+    Il trucco che D-141 nominava — spingere un pezzo in un angolo perche' il
+    rettangolo dell'inchiostro cresca — **non ha piu' niente da comprare**:
+    non c'e' nessuna voce che quel gonfiore faccia migliorare.
     """
     onesta = _cost(fill=0.30, coverage=0.80)
     trucco = _cost(fill=0.50, coverage=0.45)
     assert not trucco.beats(onesta)
-    assert onesta.beats(trucco)
-    # E una posa che apre il disegno **davvero** — riempimento nella finestra e
-    # copertura intatta — batte tutt'e due.
-    aperta = _cost(fill=0.50, coverage=0.80)
-    assert aperta.beats(onesta)
-    assert aperta.beats(trucco)
+    assert not onesta.beats(trucco)
+    assert onesta.key() == trucco.key()
+    # Resta come misura, e la voce che la calcolava e' ancora leggibile.
+    assert "coverage" in SheetCost._fields
+    assert trucco.coverage == 0.45
 
 
-def test_la_voce_del_riempimento_guarda_la_copertura() -> None:
-    """La guardia sta **dentro** la voce, non accanto: due voci separate
-    avrebbero lasciato la copertura a fare da spareggio del riempimento, che e'
-    il modo in cui il trucco tornerebbe a pagare."""
-    basso, alto = FILL_WINDOW
-    assert _cost(fill=(basso + alto) / 2, coverage=1.0).fill_gap == 0.0
-    # Sotto la soglia di copertura la voce peggiora anche a riempimento
-    # perfetto, ed e' quanto manca alla copertura.
-    scoperta = _cost(fill=(basso + alto) / 2, coverage=INK_COVERAGE_MIN - 0.2)
-    assert round(scoperta.fill_gap, 6) == 0.2
-    # Fuori dalla finestra la voce e' la distanza dal bordo piu' vicino.
-    assert round(_cost(fill=basso - 0.1, coverage=1.0).fill_gap, 6) == 0.1
-    assert round(_cost(fill=alto + 0.1, coverage=1.0).fill_gap, 6) == 0.1
+def test_il_margine_dal_bordo_resta_e_decide() -> None:
+    """**D-143 non e' toccata da D-149**, ed e' la differenza fra le due.
+
+    Il riempimento era un numero che il PO non aveva mai chiesto di inseguire;
+    il margine gliel'ha chiesto lui guardando la tavola — «non si mettono gli
+    oggetti cosi' vicini al bordo del foglio». Quindi esce l'uno e resta
+    l'altro, e la chiave lo dimostra.
+    """
+    comoda = _cost(margin_gap=0.0, fill=0.05)
+    al_bordo = _cost(margin_gap=12.0, fill=0.55)
+    assert comoda.beats(al_bordo)
+    assert not al_bordo.beats(comoda)
 
 
-def test_l_ordine_delle_voci_e_quello_di_D_139() -> None:
-    """Prima le curve, poi gli attraversamenti, poi il riempimento. E la
-    lunghezza **non c'e'**."""
+def test_l_ordine_delle_voci_e_quello_di_D_139_e_D_149() -> None:
+    """Prima le curve, poi gli attraversamenti, poi il margine. E **ne' la
+    lunghezza ne' il riempimento** entrano nella chiave."""
     assert SheetCost._fields[:6] == (
         "violations",
         "turnback_runs",
@@ -467,10 +473,13 @@ def test_l_ordine_delle_voci_e_quello_di_D_139() -> None:
     assert _cost(bends=3, fill=0.05, coverage=0.2, length_mm=9999.0).beats(
         _cost(bends=4, fill=0.55, coverage=1.0, length_mm=1.0)
     )
-    # A parita' di curve, un attraversamento in meno vince sul riempimento.
+    # A parita' di curve, un attraversamento in meno vince.
     assert _cost(crossings=0, fill=0.05, coverage=0.2).beats(
         _cost(crossings=1, fill=0.55, coverage=1.0)
     )
+    # La chiave ha otto voci: le sei sopra, il margine, lo spareggio. Nove
+    # erano prima di D-149, e la nona era il riempimento.
+    assert len(_cost().key()) == 8
 
 
 # ---------------------------------------------------------------------------

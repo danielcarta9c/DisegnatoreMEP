@@ -237,13 +237,16 @@ Orientation = tuple[int, tuple[tuple[str, str], ...]]
 Signature = tuple[tuple[str, float, float, int, tuple[tuple[str, str], ...]], ...]
 
 
-CostKey = tuple[int, int, float, int, int, int, float, float, float]
+CostKey = tuple[int, int, float, int, int, int, float, float]
 """La chiave d'ordine di `SheetCost`, scritta una volta sola.
 
-Le voci sono nove da `DRAW-013`: il **margine di rispetto** (D-143) si e'
-infilato fra gli attraversamenti e il riempimento. Vive qui, e non ripetuta in
-ogni firma, perche' la volta scorsa che e' cambiata il tipo del diario e' andato
-fuori sincrono senza che niente se ne accorgesse fino a `mypy`.
+Le voci sono **otto** da **D-149**: erano nove, e la nona era il riempimento,
+che il PO ha tolto dagli obiettivi. Resta il **margine di rispetto** (D-143),
+infilato da `DRAW-013` fra gli attraversamenti e lo spareggio.
+
+Vive qui, e non ripetuta in ogni firma, perche' la volta scorsa che e' cambiata
+il tipo del diario e' andato fuori sincrono senza che niente se ne accorgesse
+fino a `mypy` — ed e' successo di nuovo con D-149, che questa riga ha preso.
 """
 
 

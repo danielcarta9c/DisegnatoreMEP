@@ -127,14 +127,30 @@ def _last_resort(
     def dentro(cell: Cell) -> Cell:
         return (min(max(cell[0], 0), cols - 1), min(max(cell[1], 0), rows - 1))
 
+    def senza_ripetizioni(celle: list[Cell]) -> list[Cell]:
+        out: list[Cell] = []
+        for cella in celle:
+            if not out or cella != out[-1]:
+                out.append(cella)
+        return out
+
+    # **Due porte sulla stessa retta: la spezzata e' quella retta.** Uscire di
+    # un passo da ciascuna, qui, farebbe scavalcare i due passi e la linea
+    # tornerebbe su se stessa — misurato su due porte a un passo di distanza,
+    # che davano (a, b, a, b).
+    if start[0] == goal[0] or start[1] == goal[1]:
+        return (start,) if start == goal else (start, goal)
+
     first = dentro((start[0] + start_direction[0], start[1] + start_direction[1]))
     last = dentro((goal[0] + goal_direction[0], goal[1] + goal_direction[1]))
-    corner = (last[0], first[1])
-    out: list[Cell] = []
-    for cell in (start, first, corner, last, goal):
-        if not out or cell != out[-1]:
-            out.append(cell)
-    return tuple(out)
+    fuori = senza_ripetizioni([start, first, (last[0], first[1]), last, goal])
+    if len(fuori) == len(set(fuori)):
+        return tuple(fuori)
+    # I due passi si scavalcano lo stesso: si ripiega sulla **L semplice**, che
+    # su due porte non allineate non puo' degenerare. Si perde il passo dritto
+    # fuori dalla porta, e su una linea che e' gia' una finzione e' il male
+    # minore rispetto a una spezzata che si ripercorre.
+    return tuple(senza_ripetizioni([start, (goal[0], start[1]), goal]))
 
 
 def _facing_line(
@@ -685,10 +701,21 @@ def route_sheet(
             )
             found = Route(cells=cells, cost=STEP_COST * (len(cells) - 1), crossings=())
             unresolved.add(len(routed))
-        occupied.update(found.cells)
-        absorb(found.cells)
-        for before, after in zip(found.cells, found.cells[1:], strict=False):
-            taken.setdefault((before, after), set()).update(ends)
+        if len(routed) not in unresolved:
+            occupied.update(found.cells)
+            absorb(found.cells)
+            for before, after in zip(found.cells, found.cells[1:], strict=False):
+                taken.setdefault((before, after), set()).update(ends)
+        # **La spezzata di ripiego non occupa niente** (D-150). E' una finzione:
+        # dichiara dove una tratta *dovrebbe* passare, non dove passa. Se
+        # entrasse fra le celle occupate e i tratti gia' percorsi, vincolerebbe
+        # le tratte **vere** che si instradano dopo — e una tratta ceduta ne
+        # farebbe cadere altre, a valanga.
+        #
+        # Misurato sull'impianto 5 il 19 settembre: registrandola, **sette**
+        # tratte cedute; senza, quelle che cedono davvero. La differenza non e'
+        # cosmetica — ogni tratta ceduta in piu' e' un pezzo di disegno che il
+        # PO non puo' giudicare.
         current = RoutedTrunk(
                 network_id=trunk.network_id,
                 medium=media.get(trunk.network_id, ""),

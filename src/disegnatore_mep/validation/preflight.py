@@ -798,9 +798,13 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
                 _finding(
                     "SHEET_BARELY_FILLED",
                     IssueSeverity.WARNING,
-                    f"la tavola {sheet.sheet_id}: il foglio e' pieno solo al "
-                    f"{ratio * 100:.0f}%, sotto il {SHEET_FILL_MIN_RATIO * 100:.0f}% "
-                    f"dichiarato: il disegno e' una fascia, non una tavola (A1)",
+                    f"la tavola {sheet.sheet_id}: il foglio e' pieno al "
+                    f"{ratio * 100:.0f}%, sotto la finestra "
+                    f"{SHEET_FILL_MIN_RATIO * 100:.0f}-"
+                    f"{SHEET_FILL_MAX_RATIO * 100:.0f}% di D-140. **E' una misura, non "
+                    f"un difetto da chiudere** (D-149): la posa non insegue piu' questo "
+                    f"numero, e su un foglio piu' grande dell'A3 sta sotto per "
+                    f"costruzione",
                     [sheet.sheet_id],
                 )
             )
@@ -815,8 +819,9 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
                     IssueSeverity.WARNING,
                     f"la tavola {sheet.sheet_id}: il foglio e' pieno al "
                     f"{ratio * 100:.0f}%, sopra il {SHEET_FILL_MAX_RATIO * 100:.0f}% "
-                    f"dichiarato: non resta lo spazio per le sigle dei componenti "
-                    f"(D-140)",
+                    f"di D-140, e li' lo spazio per le sigle si stringe davvero. "
+                    f"Resta una **misura** e non un difetto da chiudere (D-149): la "
+                    f"posa non insegue piu' questo numero",
                     [sheet.sheet_id],
                 )
             )
