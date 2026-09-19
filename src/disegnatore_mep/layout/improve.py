@@ -2365,15 +2365,25 @@ class Improver:
     def _hang_ceiling(self, child: str) -> float:
         """Quanto puo' essere lungo, al piu', lo stacco di un appeso (**D-145**).
 
-        Il proprio minimo su griglia, e il posto che gli accessori in linea
-        pretendono su quella tratta — il «vincolo dichiarato» di §G.2. Niente
-        altro: cio' che lo stacco **e'** oggi non entra qui, perche' questo e'
-        il tetto della regola e non quello della mossa.
+        Il proprio minimo su griglia, e **il rettilineo che quella tratta
+        pretende** — il «vincolo dichiarato» di §G.2. Cio' che lo stacco **e'**
+        oggi non entra qui: questo e' il tetto della regola, non quello della
+        mossa, e chi lo usa ci aggiunge il secondo.
+
+        ⚠️ **Il rettilineo si legge da `_need_mm`, e non dal solo posto degli
+        accessori in linea**, ed e' una scelta che il rapporto §7.1 porta al PM
+        con i numeri. `_need_mm` non scende mai sotto `ROW_GAP_MM`, cioe' lo
+        stacco minimo fra due simboli che **D-062** dichiara: e' un vincolo
+        dichiarato anche lui, e su uno stacco vuoto vale dieci millimetri dove
+        il minimo ne vale cinque. La lettura piu' stretta — solo il posto degli
+        accessori in linea — l'ho scritta e misurata: stringe il corredo e
+        **allontana il gruppo**, perche' toglie al ciclo le mosse con cui lo
+        avvicinava. Sulla tavola 2 l'ingresso dell'acqua fredda passa da 120 a
+        192,5 mm dal bollitore e la tavola 1 guadagna un rilievo di preflight.
+        Fra le due letture ho preso quella che **disegna meglio**, perche' e' il
+        PO che giudica il prodotto (D-146).
         """
-        return max(
-            self.hang_min[child],
-            self.room[self.hang_trunk[child].connection_ids],
-        )
+        return max(self.hang_min[child], self._need_mm(self.hang_trunk[child]))
 
     def _refresh_hang_gaps(self) -> None:
         """Gli stacchi degli appesi, riletti dalla posa corrente."""

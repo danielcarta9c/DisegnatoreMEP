@@ -597,7 +597,7 @@ def test_un_organo_di_servizio_non_si_allontana_dal_pezzo_che_serve() -> None:
         tetto = max(
             improver.hang_min[child],
             improver.hang_gap[child],
-            improver.room[improver.hang_trunk[child].connection_ids],
+            improver._need_mm(improver.hang_trunk[child]),
         )
         # Lontano dal tetto di un passo abbondante: qualunque sia l'asse dello
         # stacco, una delle due mosse lo allunga oltre.
@@ -618,20 +618,17 @@ def test_lo_stacco_puo_allungarsi_per_il_rettilineo_che_la_tratta_chiede() -> No
     """§G.2: l'unico allungamento ammesso e' un **vincolo dichiarato**.
 
     Il tetto non e' il minimo dello stacco da solo: e' il piu' grande fra il
-    minimo, cio' che lo stacco gia' e', e il **posto che gli accessori in linea
-    pretendono su quella tratta**. Senza quest'ultimo il vincolo murerebbe
-    l'unica mossa capace di far entrare una valvola che non ci sta, e la tavola
-    2 smetterebbe di uscire — misurato, ed e' §3.5 del rapporto. E non si legge
-    da `_need_mm`, che non scende mai sotto i dieci millimetri di `ROW_GAP_MM`:
-    su uno stacco vuoto, il cui minimo e' cinque, quel tetto non terrebbe
-    niente.
+    minimo, cio' che lo stacco gia' e', e il **rettilineo che la tratta
+    pretende**. Senza quest'ultimo il vincolo murerebbe l'unica mossa capace di
+    far entrare una valvola che non ci sta, e la tavola 2 smetterebbe di
+    uscire — misurato, ed e' §3.5 del rapporto.
     """
     improver = _improver()
     for child in improver.parent_of:
         tetto = max(
             improver.hang_min[child],
             improver.hang_gap[child],
-            improver.room[improver.hang_trunk[child].connection_ids],
+            improver._need_mm(improver.hang_trunk[child]),
         )
         assert tetto >= improver.hang_min[child]
-        assert tetto >= improver.room[improver.hang_trunk[child].connection_ids]
+        assert tetto >= improver._need_mm(improver.hang_trunk[child])
