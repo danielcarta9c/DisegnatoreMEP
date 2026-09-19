@@ -1,0 +1,1 @@
+the plant does not fit on any ordinary sheet format: run w2-a on network sanitaria cannot be routed: no route from (134, 80) to (144, 80): every orthogonal path is blocked

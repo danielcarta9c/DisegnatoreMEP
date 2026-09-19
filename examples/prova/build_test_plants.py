@@ -304,17 +304,39 @@ TRE = plant(
 QUATTRO = plant(
     "prova-4-ibrido-pdc-caldaia",
     "Sistema ibrido con pompa di calore e caldaia a condensazione",
+    # **Lo schema e' quello che il PO ha scelto il 16 settembre 2026 (D-137).**
+    # Il precedente non stava in piedi, e la verifica del PM del 15 settembre lo
+    # ha misurato: zero ritegni in tutto l'impianto — quindi il generatore fermo
+    # attraversato in controflusso —, il ritorno della caldaia che raccoglieva
+    # insieme dal primario e dallo scambiatore — il «ritorno che torna ovunque»
+    # che il PO aveva intuito guardando la tavola —, e il volano in serie a
+    # valle del collettore invece che fra i generatori e la distribuzione.
+    # Fonti: `HVAC_Sime sistemi ibridi.pdf`, `Idraulica_64` Caleffi, scheda
+    # Paradigma L-DS, e il nostro `RM.039`.
     [
         ("pdc", "heat-pump-air-water", "PDC-01"),
         ("caldaia", "gas-boiler", "CAL-01"),
+        # Un ritegno per generatore: e' il pezzo che mancava, e la sua assenza
+        # lasciava il generatore fermo attraversato all'incontrario.
+        ("ritegno-pdc", "valve-check", "VR-01"),
+        ("ritegno-caldaia", "valve-check", "VR-02"),
         ("collettore-mandata", "tee-junction", None),
+        # Il volano **fa da disgiuntore** fra i generatori e la distribuzione:
+        # primario dal lato dei generatori, secondario dal lato delle utenze. Il
+        # catalogo gli dichiara gia' `hydraulic_separation`; a cambiare e' dove
+        # sta nel circuito, non che cosa e'.
+        ("disgiuntore", "buffer-four-port", "VOL-01"),
         ("collettore-ritorno", "tee-split", None),
-        ("volano", "buffer-four-port", "VOL-01"),
+        ("deviatrice-caldaia", "diverting-valve-3way", "VD-01"),
+        # L'organo che sceglie **da dove la caldaia pesca**: dal primario quando
+        # fa riscaldamento, dallo scambiatore quando fa sanitario. Senza, il
+        # circuito sanitario dedicato non e' dedicato.
+        ("commutatrice-ritorno", "switching-valve-3way", "VCR-01"),
+        # Lo scambiatore sta **in centrale**, fra i collegamenti principali, e
+        # non nella distribuzione: e' una macchina del gruppo centrale (I-066).
+        ("scambiatore", "plate-heat-exchanger", "SCA-01"),
         ("circolatore", "pump-circulator", "CIR-01"),
         ("radiatori", "radiator", "RAD-01"),
-        ("deviatrice", "diverting-valve-3way", "VD-01"),
-        ("scambiatore", "plate-heat-exchanger", "SCA-01"),
-        ("ritorno-caldaia", "tee-junction", None),
         ("acquedotto", "cold-water-inlet", "AF-01"),
         ("utenze", "dhw-draw-off", "ACS-01"),
     ],
@@ -325,22 +347,28 @@ QUATTRO = plant(
         network("sanitaria", "Acqua calda sanitaria", DHW),
     ],
     [
-        # La pompa di calore alimenta il volume tecnico.
-        pipe("p1", "primario", ("pdc", "water_supply"), ("collettore-mandata", "a")),
-        # La caldaia alimenta il volume tecnico oppure, quando serve ACS, la
-        # deviatrice manda il suo circuito allo scambiatore a piastre.
-        pipe("p2", "primario", ("caldaia", "water_supply"), ("deviatrice", "in")),
-        pipe("p3", "primario", ("deviatrice", "out_a"), ("collettore-mandata", "c")),
-        pipe("p4", "primario", ("collettore-mandata", "b"), ("volano", "primary_in")),
-        pipe("p5", "primario", ("volano", "primary_out"), ("collettore-ritorno", "a")),
-        pipe("p6", "primario", ("collettore-ritorno", "b"), ("pdc", "water_return")),
-        pipe("p7", "primario", ("deviatrice", "out_b"), ("scambiatore", "primary_in")),
-        pipe("p8", "primario", ("scambiatore", "primary_out"), ("ritorno-caldaia", "c")),
-        pipe("p9", "primario", ("collettore-ritorno", "c"), ("ritorno-caldaia", "a")),
-        pipe("p10", "primario", ("ritorno-caldaia", "b"), ("caldaia", "water_return")),
-        pipe("s1", "secondario", ("volano", "secondary_out"), ("circolatore", "a")),
+        # I due generatori confluiscono sul collettore di mandata, ciascuno con
+        # il proprio ritegno, e lavorano in cascata con priorita' alla pompa di
+        # calore.
+        pipe("p1", "primario", ("pdc", "water_supply"), ("ritegno-pdc", "a")),
+        pipe("p2", "primario", ("ritegno-pdc", "b"), ("collettore-mandata", "a")),
+        # La caldaia: la deviatrice sulla mandata manda o al primario o allo
+        # scambiatore a piastre. L'acqua calda sanitaria la fa **sempre** il gas.
+        pipe("p3", "primario", ("caldaia", "water_supply"), ("deviatrice-caldaia", "in")),
+        pipe("p4", "primario", ("deviatrice-caldaia", "out_a"), ("ritegno-caldaia", "a")),
+        pipe("p5", "primario", ("ritegno-caldaia", "b"), ("collettore-mandata", "c")),
+        pipe("p6", "primario", ("collettore-mandata", "b"), ("disgiuntore", "primary_in")),
+        pipe("p7", "primario", ("disgiuntore", "primary_out"), ("collettore-ritorno", "a")),
+        pipe("p8", "primario", ("collettore-ritorno", "b"), ("pdc", "water_return")),
+        pipe("p9", "primario", ("collettore-ritorno", "c"), ("commutatrice-ritorno", "in_a")),
+        # Il circuito sanitario dedicato: caldaia -> scambiatore -> caldaia.
+        pipe("p10", "primario", ("deviatrice-caldaia", "out_b"), ("scambiatore", "primary_in")),
+        pipe("p11", "primario", ("scambiatore", "primary_out"), ("commutatrice-ritorno", "in_b")),
+        pipe("p12", "primario", ("commutatrice-ritorno", "out"), ("caldaia", "water_return")),
+        # Il riscaldamento pende dal secondario del disgiuntore.
+        pipe("s1", "secondario", ("disgiuntore", "secondary_out"), ("circolatore", "a")),
         pipe("s2", "secondario", ("circolatore", "b"), ("radiatori", "in")),
-        pipe("s3", "secondario", ("radiatori", "out"), ("volano", "secondary_in")),
+        pipe("s3", "secondario", ("radiatori", "out"), ("disgiuntore", "secondary_in")),
         # L'acqua fredda attraversa lo scambiatore e va alle utenze: istantanea.
         pipe("w1", "fredda", ("acquedotto", "a"), ("scambiatore", "secondary_in")),
         pipe("w2", "sanitaria", ("scambiatore", "secondary_out"), ("utenze", "a")),
@@ -352,18 +380,20 @@ QUATTRO = plant(
             "component_ids": [
                 "pdc",
                 "caldaia",
-                "deviatrice",
+                "ritegno-pdc",
+                "ritegno-caldaia",
+                "deviatrice-caldaia",
+                "commutatrice-ritorno",
                 "collettore-mandata",
                 "collettore-ritorno",
-                "ritorno-caldaia",
             ],
             "network_ids": ["primario"],
         },
         {
             "id": "accumulo",
-            "name": "Accumulo",
-            "component_ids": ["volano"],
-            "network_ids": ["primario"],
+            "name": "Disgiuntore idraulico",
+            "component_ids": ["disgiuntore"],
+            "network_ids": ["primario", "secondario"],
         },
         {
             "id": "distribuzione",
@@ -379,10 +409,12 @@ QUATTRO = plant(
         },
     ],
     [
-        "Il ritorno comune ai due generatori e' un'assunzione: il testo dice che "
-        "sono in parallelo e non descrive come rientrano.",
-        "«La caldaia da' priorita' al sanitario» e' logica di regolazione, non "
-        "topologia: sul grafo si vede la deviatrice.",
+        "La cascata con priorita' alla pompa di calore e' logica di regolazione, "
+        "non topologia: sul grafo si vedono i due ritegni e il collettore che "
+        "unisce i due generatori.",
+        "La commutatrice sul ritorno della caldaia e' l'organo senza il quale il "
+        "circuito sanitario non sarebbe dedicato: mentre fa sanitario la caldaia "
+        "pescherebbe anche dal primario.",
     ],
     # 10 kW di pompa di calore e 24 kW di caldaia: 34 kW, sotto la soglia.
     regime="up_to_35_kw",

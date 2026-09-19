@@ -75,6 +75,25 @@ cose non sono in contraddizione: dipende da quale rete si sta guardando, ed e'
 per questo che l'orientamento si calcola **una rete alla volta**.
 """
 
+EXCHANGE_FUNCTIONS = frozenset({"heat_exchange"})
+"""Chi scambia calore fra due circuiti: lo scambiatore a piastre.
+
+E' una macchina di centrale, non un terminale (I-066, D-138): il PO la nomina
+accanto agli accumuli quando detta dove arrivano le autostrade — «dai generatori
+agli accumuli **e agli scambiatori**»."""
+
+TERMINAL_FUNCTIONS = frozenset(
+    {
+        "emission",
+        "air_terminal",
+        "direct_expansion_terminal",
+    }
+)
+"""Chi consegna il calore all'ambiente: il capolinea della distribuzione.
+
+Sono i «terminali» di D-138, quelli verso cui corre la strada secondaria che la
+fase della struttura traccia insieme alle autostrade."""
+
 BOUNDARY_FUNCTION = "boundary"
 """Il mestiere di chi sta al confine dell'impianto: da li' il fluido entra o se
 ne va. La posa lo legge per sapere che quel pezzo **non ha una posizione
@@ -444,8 +463,10 @@ def classify_trunks(
 
 
 __all__ = [
+    "EXCHANGE_FUNCTIONS",
     "INBOUND_FUNCTIONS",
     "OUTBOUND_FUNCTIONS",
+    "TERMINAL_FUNCTIONS",
     "TrunkFlow",
     "TrunkKey",
     "classify_trunks",

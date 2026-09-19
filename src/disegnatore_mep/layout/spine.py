@@ -57,10 +57,16 @@ from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import ProjectModel
 
 from .errors import LayoutError
-from .flow import STORE_FUNCTIONS, TrunkKey
+from .flow import BOUNDARY_FUNCTION, STORE_FUNCTIONS, TrunkKey
 from .geometry import PlacedSymbol, Point, RoutedTrunk
 from .grid import GridSpace
-from .hierarchy import Level, hierarchy_of, spine_machines
+from .hierarchy import (
+    Level,
+    axis_rank,
+    hierarchy_of,
+    machines_beyond_of,
+    spine_machines,
+)
 from .partition import SheetPartition
 from .place import (
     ROUTING_MARGIN_MM,
@@ -131,6 +137,13 @@ class SpineLayout:
     symbols: tuple[PlacedSymbol, ...]
     routes: tuple[RoutedTrunk, ...]
     runs: tuple[SpineRun, ...]
+    routed: bool = True
+    """Vero se le autostrade della fase si sono lasciate disegnare.
+
+    Falso vuol dire che la forma c'e' — `symbols` la porta — ma le sue linee
+    non si sono instradate su un foglio ancora privo di corredo. Non e' una
+    ragione per buttare la fase (§F): e' una ragione per dichiararlo.
+    """
 
     @property
     def crooked(self) -> tuple[TrunkKey, ...]:
@@ -172,7 +185,21 @@ def spine_participants(
         for trunk in autostrada_trunks(project, catalog, trunks)
         for ref in (trunk.start, trunk.end)
     }
-    return frozenset(machines | ends)
+    # ⛔ **Un confine di rete non partecipa, per quanto alta sia la sua tratta.**
+    # Il catalogo dice che non ha una posizione propria: sta accanto all'utente
+    # che serve (I-061, `DRAW-009` §A.2, e il commento di `BOUNDARY_FUNCTION`).
+    # Da `DRAW-012` §B l'uscita ACS e' autostrada, e il prelievo sanitario ne e'
+    # un capo: senza questa riga la fase della struttura gli sceglieva una
+    # posizione propria — sulla tavola 2 in cima al foglio, dalla parte opposta
+    # del bollitore che lo alimenta — e la linea del sanitario doveva
+    # attraversare la mandata per raggiungerlo.
+    definitions = {item.id: catalog.get(item.definition_id) for item in project.components}
+    confini = {
+        key
+        for key, value in definitions.items()
+        if BOUNDARY_FUNCTION in value.functions
+    }
+    return frozenset((machines | ends) - confini)
 
 
 def _faces_of(manifest: SymbolManifest, port_map: PortMap, port_id: str) -> PortFace:
@@ -281,11 +308,6 @@ class _Spine:
         self.catalog = catalog
         self.trunks = list(partition.trunks)
         self.levels = hierarchy_of(project, catalog, self.trunks)
-        self.autostrade = [
-            item
-            for item in self.trunks
-            if self.levels[item.connection_ids] is Level.AUTOSTRADA
-        ]
         self.machines = spine_machines(project, catalog)
         self.start: dict[str, PlacedSymbol] = {
             item.component_id: item for item in placed
@@ -296,6 +318,21 @@ class _Spine:
             if item.component_id
             in spine_participants(project, catalog, self.trunks)
         )
+        # Le autostrade **che questa fase posa**: quelle i cui due capi sono
+        # partecipanti. Un'autostrada che finisce su un confine di rete — che
+        # una posizione propria non ce l'ha, e sta accanto all'utente che serve
+        # — resta di rango massimo per il costo e per l'invariante della catena,
+        # ma non e' una tratta che la fase della struttura possa costruire:
+        # costruirla vorrebbe dire scegliere per il confine una posizione che
+        # il catalogo gli nega.
+        partecipanti = frozenset(self.participants)
+        self.autostrade = [
+            item
+            for item in self.trunks
+            if self.levels[item.connection_ids] is Level.AUTOSTRADA
+            and item.start.component_id in partecipanti
+            and item.end.component_id in partecipanti
+        ]
         self.definitions = {
             item.id: item.definition_id for item in project.components
         }
@@ -323,6 +360,9 @@ class _Spine:
             for trunk in self.autostrade
         }
         self.order = structural_order(project)
+        # La camminata «chi c'e' oltre questo attacco», costruita una volta e
+        # letta identica da `hierarchy_of` e dalle autostrade intere.
+        self.beyond = machines_beyond_of(project, catalog, self.trunks)
         self._turned: dict[tuple[str, int], SymbolManifest] = {}
         self.pose: dict[str, Pose] = {}
         self.laid: dict[str, PlacedSymbol] = {}
@@ -470,39 +510,56 @@ class _Spine:
         return min(pool, key=lambda item: (self.order.get(item, 0), item))
 
     def _size_of(self, component_id: str) -> float:
-        manifest = self.upright[component_id]
+        """L'ingombro dichiarato dal simbolo, participante o no.
+
+        Non tutte le macchine che una camminata incontra partecipano alla fase
+        del tronco — un utilizzatore, un generatore oltre la spina — e il loro
+        ingombro serve lo stesso, perche' e' con quello che si decide quale ramo
+        resta sull'asse. Leggerlo dai soli partecipanti faceva mancare la
+        chiave su chi non lo era: sull'impianto 5 la miscelatrice del radiante.
+        """
+        manifest = self.upright.get(component_id)
+        if manifest is None:
+            manifest = self.catalog.resolve(self.definitions[component_id]).symbol.manifest
         return manifest.width_mm * manifest.height_mm
 
     def _rank_of_branch(
-        self, edges: dict[str, list[tuple[Trunk, str, str, str]]], origin: str, first: str
-    ) -> tuple[float, int]:
+        self, trunk: Trunk, other: str, other_port: str
+    ) -> tuple[int, float, int]:
         """Quanto «pesa» il ramo che si imbocca: l'accumulo maggiore che porta.
 
-        Si cammina oltre il primo pezzo e **ci si ferma sulla prima macchina**,
-        come fa la gerarchia: su un circuito chiuso il cammino a valle rientra
-        su se' stesso, e un conto che non si fermasse darebbe a ogni ramo lo
-        stesso peso — e' la primitiva sbagliata che `hierarchy.py` ha gia'
-        scartato una volta. Fra le macchine che si incontrano vince la piu'
-        grande, e l'ingombro lo dichiara il simbolo: e' la traduzione di «resta
-        sull'asse il ramo verso l'accumulo maggiore» (architettura §4), e il
-        criterio e' un dato, mai un nome.
+        Si guarda **oltre** l'attacco di arrivo e ci si ferma sulla prima
+        macchina: la camminata e' quella di `hierarchy.machines_beyond_of`, che
+        cammina per attacchi e non per pezzi. Dentro un multivia si passa solo
+        dove il catalogo dichiara che si passa, e i due rami di una deviatrice
+        non comunicano mai fra loro.
+
+        ⛔ **Camminare per pezzi e' un errore, ed e' costato la tavola 4.** La
+        prima stesura seguiva i componenti: dal collettore di mandata il ramo
+        della caldaia «raggiungeva» anche lo scambiatore sanitario, che pende
+        dall'**altra** uscita della deviatrice e con quel ramo non comunica; lo
+        scambiatore e' un accumulo, il ramo ne guadagnava il rango, e l'asse
+        andava dietro a un circuito che di li' non passa.
+
+        Fra le macchine che si incontrano decide `hierarchy.axis_rank`, che e'
+        «il ramo verso l'**accumulo maggiore**» (architettura §4) letto nelle
+        sue due parole e in quest'ordine: prima chi il fluido lo riceve, poi chi
+        e' piu' grande. A parita', l'ordine strutturale della macchina
+        raggiunta, mai il suo identificativo.
         """
-        seen = {origin, first}
-        frontier = [first]
-        biggest = 0.0
-        while frontier:
-            onward: list[str] = []
-            for item in frontier:
-                if item in self.machines:
-                    biggest = max(biggest, self._size_of(item))
-                    continue
-                for _, _, other, _ in edges.get(item, ()):
-                    if other in seen:
-                        continue
-                    seen.add(other)
-                    onward.append(other)
-            frontier = onward
-        return (-biggest, self.order.get(first, 0))
+        found = self.beyond((other, other_port), trunk.connection_ids)
+        if not found:
+            return (2, 0.0, self.order.get(other, 0))
+        return min(
+            (
+                *axis_rank(
+                    frozenset(self.catalog.get(self.definitions[item]).functions),
+                    self._size_of(item),
+                ),
+                self.order.get(item, 0),
+            )
+            for item in found
+        )
 
     def _walk(self, root: str) -> None:
         """Prima passata: sceglie le pose e decide su che retta sta ogni tratta.
@@ -532,7 +589,7 @@ class _Spine:
                 edges.get(here, ()),
                 key=lambda edge: (
                     not self._on_the_axis(here, edge[1], arrived.get(here)),
-                    self._rank_of_branch(edges, here, edge[2]),
+                    self._rank_of_branch(edge[0], edge[2], edge[3]),
                     self.order.get(edge[2], 0),
                 ),
             )
@@ -624,7 +681,7 @@ class _Spine:
         onward = sorted(
             (item for item in edges.get(other, ()) if item[1] != other_port),
             key=lambda edge: (
-                self._rank_of_branch(edges, other, edge[2]),
+                self._rank_of_branch(edge[0], edge[2], edge[3]),
                 self.order.get(edge[2], 0),
             ),
         )
@@ -703,10 +760,22 @@ class _Spine:
                 # invece che non stiano sulla stessa riga, o le due corsie si
                 # sovrapporrebbero per il lungo. L'ordine di traverso e' quello
                 # che la prima ipotesi di posa gia' aveva.
+                #
+                # ⛔ **Di traverso si chiede uno stacco, non una campata.** La
+                # campata di `span_mm` e' il rettilineo che gli accessori della
+                # tratta occuperanno **lungo** di lei: chiederlo anche
+                # attraverso vuol dire pretendere che due corsie affiancate
+                # stiano lontane quanto e' lungo il loro corredo. Con un
+                # generatore solo sulla spina la cosa non si vedeva — di tratte
+                # cosi' ce n'era una; da `DRAW-012` i generatori sono tutti
+                # macchine di spina (§B.3) e sull'impianto 4 quelle campate
+                # sommate portavano la caldaia **duecentocinquanta millimetri**
+                # sotto la pompa di calore, fuori dal foglio. Cio' che serve e'
+                # che le due corsie non si sovrappongano: uno stacco fra figure.
                 low, high = here, there
                 if self._starts_after(here, there, across):
                     low, high = there, here
-                demand(_Apart(low=low, high=high, gap=span), across)
+                demand(_Apart(low=low, high=high, gap=ROW_GAP_MM), across)
                 continue
             # Il gomito: una distanza minima lungo il mio asse e una lungo il
             # suo, cosi' che la spezzata giri una volta sola e poi entri dritta.
@@ -763,11 +832,14 @@ class _Spine:
         groups: dict[str, list[str]] = {}
         for item in self.participants:
             groups.setdefault(root(item), []).append(item)
-        edges = [
-            (root(link.low), root(link.high), link.gap + within[link.low] - within[link.high])
-            for link in apart
-            if root(link.low) != root(link.high)
-        ]
+        edges = self._without_the_knots(
+            groups,
+            [
+                (root(link.low), root(link.high), link.gap + within[link.low] - within[link.high])
+                for link in apart
+                if root(link.low) != root(link.high)
+            ],
+        )
         earliest = self._earliest(groups, edges)
         order = self._ordered(groups, edges)
         if order is None:
@@ -800,6 +872,79 @@ class _Spine:
             ceiling = max(latest[name], floor)
             position[name] = min(max(self._snapped(wanted[name]), floor), ceiling)
         return {item: position[root(item)] + within[item] for item in self.participants}
+
+    def _without_the_knots(
+        self, groups: dict[str, list[str]], edges: list[tuple[str, str, float]]
+    ) -> list[tuple[str, str, float]]:
+        """Le campate, tolte quelle che si mordono la coda (DRAW-012 §F).
+
+        Due campate possono chiedere l'una il contrario dell'altra: sul circuito
+        sanitario dell'impianto 4 lo scambiatore deve stare **sotto** la
+        deviatrice della caldaia e **sopra** la commutatrice del suo ritorno,
+        mentre le due valvole stanno sulla stessa retta orizzontale. Non e' una
+        posa sbagliata: e' un anello di disuguaglianze che non ha soluzione, e
+        il circuito che lo genera e' quello che il PO ha chiesto (D-137).
+
+        ⛔ **Il modo sbagliato di reagire e' non reagire.** Prima l'anello
+        arrivava intatto a `_earliest`, che rilassa le disuguaglianze una dopo
+        l'altra: su un anello quel rilassamento non converge, e a ogni giro
+        somma un'altra campata. Sull'impianto 4 portava la pompa di calore
+        **duecentocinquanta millimetri** sopra il resto, fuori dal foglio, e la
+        fase del tronco non consegnava niente — il difetto che §F chiama
+        «buttare via la fase».
+
+        Il modo giusto e' **cedere di poco e dichiararlo**: si toglie una
+        campata per volta, quella **piu' corta** dell'anello, perche' e' quella
+        che chiede meno e la cui perdita si vede meno, finche' le campate non si
+        contraddicono piu'. A parita' decidono i nomi dei gruppi, che qui sono
+        capi scelti dalla struttura e non identificativi a mano. Cio' che si
+        cede e' una piega su quella tratta: e' la moneta che §F ammette.
+        """
+        kept = list(edges)
+        while self._ordered(groups, kept) is None:
+            knot = self._a_knot(groups, kept)
+            if not knot:
+                break
+            kept.remove(min(knot, key=lambda edge: (edge[2], edge[0], edge[1])))
+        return kept
+
+    def _a_knot(
+        self, groups: dict[str, list[str]], edges: list[tuple[str, str, float]]
+    ) -> list[tuple[str, str, float]]:
+        """Un anello di campate, se ce n'e' uno. Il primo che si incontra
+        scendendo dai gruppi in ordine, cosi' che la scelta non dipenda da come
+        l'elenco e' stato costruito."""
+        after: dict[str, list[tuple[str, str, float]]] = {}
+        for edge in edges:
+            after.setdefault(edge[0], []).append(edge)
+        state: dict[str, int] = dict.fromkeys(groups, 0)
+        path: list[tuple[str, str, float]] = []
+
+        def descend(name: str) -> list[tuple[str, str, float]]:
+            state[name] = 1
+            for edge in sorted(after.get(name, ())):
+                if state.get(edge[1], 0) == 1:
+                    ring = [edge]
+                    for step in reversed(path):
+                        ring.append(step)
+                        if step[0] == edge[1]:
+                            break
+                    return ring
+                if state.get(edge[1], 0) == 0:
+                    path.append(edge)
+                    found = descend(edge[1])
+                    path.pop()
+                    if found:
+                        return found
+            state[name] = 2
+            return []
+
+        for name in sorted(groups):
+            if state.get(name, 0) == 0:
+                found = descend(name)
+                if found:
+                    return found
+        return []
 
     def _grouped(self, same: list["_Same"]) -> tuple[dict[str, str], dict[str, float]]:
         """I pezzi legati dalle rette dell'altro asse, e lo scarto di ciascuno."""
@@ -1067,18 +1212,42 @@ class _Spine:
         symbols = [self.laid[item] for item in self.participants]
         try:
             routes = route_sheet(
-                self.project, list(self.autostrade), symbols, self.catalog, self.grid
+                self.project,
+                list(self.autostrade),
+                symbols,
+                self.catalog,
+                self.grid,
+                # In questa fase il corredo non c'e' ancora: le corsie che le
+                # catene di macchina occuperanno **in fase 2** non si riservano
+                # qui, o la fase della struttura dovrebbe risolvere un problema
+                # che non e' suo (D-138, fasi 1 e 2).
+                reserve_chains=False,
             )
         except LayoutError:
-            # Il tronco costruito non si instrada: la fase non ha una forma da
-            # consegnare e lo dice, invece di consegnarne una falsa. Chi la
-            # chiama torna alla posa di partenza e il rapporto lo dichiara.
+            # **Il tronco costruito non si instrada: si tiene la struttura, non
+            # si butta la fase** (DRAW-012 §F). Fino a `DRAW-011` questo ramo
+            # consegnava `symbols=()`, e chi chiamava tornava alla posa di
+            # partenza: la fase intera finiva nel cestino perche' le sue linee
+            # non si lasciavano disegnare **in questo momento**, quando ancora
+            # nessun accessorio e' posato e il corredo non ha avuto il proprio
+            # giro. E' lo stesso difetto di `compose_sheet` — scartare la fase
+            # invece di cedere di poco — e sull'impianto 4 costava tutto: la
+            # fase non muoveva un solo pezzo, e la tavola usciva dalla posa di
+            # partenza come se le autostrade non esistessero.
+            #
+            # Cio' che la fase ha da consegnare sono **le posizioni**: la forma
+            # che ha costruito. Le linee sono la sua verifica, non il suo esito.
+            # Si consegnano le posizioni, si dichiara che non si sono
+            # instradate — `routed` — e i propri rettilinei non valgono come
+            # acquisiti: chi viene dopo lavora su una struttura, e la cessione
+            # graduale di §F ha finalmente qualcosa da cui partire.
             return SpineLayout(
                 machines=self.machines,
                 participants=self.participants,
                 trunks=tuple(self.autostrade),
-                symbols=(),
+                symbols=tuple(symbols),
                 routes=(),
+                routed=False,
                 runs=tuple(
                     SpineRun(
                         key=trunk.connection_ids,

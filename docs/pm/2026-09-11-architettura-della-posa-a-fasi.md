@@ -7,6 +7,21 @@
 delle decisioni**. Questo documento fissa l'ordine giusto prima che qualcuno lo tari di
 nuovo.
 
+> ### ⚠️ §3 è stato riscritto il 17 settembre 2026 — **D-138**
+>
+> L'ordine a tre fasi che questo documento fissò l'11 settembre teneva le **strade
+> secondarie nell'ultima fase**, non contava i **circolatori**, eleggeva **un solo
+> generatore** e, quando l'invariante non si poteva tenere, **buttava via la fase**. Il PO
+> ha dettato l'ordine nuovo il 16 settembre (**D-138**), e `DRAW-012` lo ha attuato: §3 qui
+> sotto è quello nuovo, e porta accanto ciò che ha sostituito.
+>
+> Restano validi e non toccati: §1 (il difetto), §2 (le parole del PO dell'11 settembre),
+> §4 (che cosa vuol dire «dritto» — che `DRAW-012` §C precisa, aggiungendo l’invariante
+> sulla **catena intera**), §5 e §6.
+>
+> Le cinque differenze fra l'ordine vecchio e quello nuovo sono misurate in
+> `2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md`.
+
 ---
 
 ## 1. Il difetto, detto in una riga
@@ -43,34 +58,70 @@ E prima, sulla stessa tavola:
 > essere meno di una strada di servizio. Qui c'è proprio un epic fail. Prima devi
 > disegnare le autostrade.»
 
-## 3. La traduzione operativa
+## 3. La traduzione operativa — **riscritta il 17 settembre, D-138**
 
 Tre fasi, ciascuna con un **invariante duro** che le fasi successive non possono
 comprare. La funzione di costo resta, e ottimizza **dentro** ciascuna fase.
 
-### Fase 1 — il tronco
+### Fase 1 — **la struttura** (era: il tronco)
 
-Si posano le sole **macchine di spina** e si instrada la sola **autostrada**. L'obiettivo
-della fase non è un costo: è una forma. **Ogni tratta del tronco è un rettilineo.**
-Spostare una macchina costa zero, quindi la fase ha tutta la libertà che le serve.
+Si posano i **pezzi principali** e si tracciano **le autostrade e le strade secondarie,
+insieme**.
 
-Esito: una posa delle macchine di spina e un tronco dritto. Da qui in avanti la
-rettilineità del tronco è un **vincolo**, non una voce di costo: nessun guadagno la compra.
+**Che cosa è autostrada** (D-138, e `DRAW-012` §B):
+
+1. dai **generatori** agli **accumuli** e agli **scambiatori**, passando per le valvole a
+   tre vie e i **collettori che mettono insieme i generatori**: un collettore o una tre vie
+   in mezzo non interrompe l'autostrada e non la declassa;
+2. **sempre**, le linee che dagli **accumuli, puffer e scambiatori** vanno ai
+   **circolatori** e da lì alla distribuzione;
+3. con **più generatori**, le autostrade sono **più d'una**: non c'è un generatore eletto,
+   ciascuno ha la propria fino al punto in cui confluiscono.
+
+**Strade secondarie della stessa fase:** l'**uscita ACS** e la **distribuzione verso i
+terminali**. Restano alla fase del corredo gli stacchi di servizio — ingresso AF, valvole
+jolly, vasi di espansione.
+
+**Che cosa costa in questa fase:** le **curve**, e in secondo luogo gli
+**attraversamenti**. **La lunghezza no** (D-139): non è un parametro con cui si giudica un
+disegno. Ci si tiene larghi e si occupa più foglio anche se non serve; il riempimento è una
+**finestra**, 45–65 % dell'area di disegno (D-140), letta sempre insieme alla copertura
+dell'ingombro (D-141).
+
+L'obiettivo della fase non è un costo: è una forma. **L'autostrada intera — da un capo
+all'altro, attraverso i propri crocevia — è una retta** (`DRAW-012` §C). Non ogni suo
+frammento: la catena. Un frammento di cinque millimetri fra due raccordi è dritto sempre, e
+verificare l'invariante su di lui è verificare niente — è il difetto per cui la tavola 4
+usciva storta con tutti i numeri verdi.
+
+Esito: una posa dei pezzi principali e una struttura dritta. Da qui in avanti la
+rettilineità è un **vincolo**, non una voce di costo: nessun guadagno la compra.
+
+> **Che cosa diceva la versione dell'11 settembre.** «Si posano le sole macchine di spina e
+> si instrada la sola autostrada. Ogni tratta del tronco è un rettilineo.» Le strade
+> secondarie finivano in fase 3, il circolatore non faceva nemmeno tratta, un solo
+> generatore stava sulla spina, e l'invariante era su ogni tratta invece che sulla catena.
 
 ### Fase 2 — il corredo
 
-Valvole, filtri, raccordi, accessori in linea entrano **dentro** il tronco. Se non ci
-stanno, il tronco **non si piega: si allunga.** Allontanare due macchine di spina lungo
-l'asse è gratis e conserva la rettilineità; piegare il tronco per far posto a un organo è
-vietato.
+Valvole, componenti piccoli e **strade di servizio** entrano su una struttura **già ferma**.
+Se non ci stanno, il tronco **non si piega: si allunga**, e si trasla. Allontanare due
+macchine di spina lungo l'asse è gratis e conserva la rettilineità; piegare il tronco per
+far posto a un organo è vietato.
 
-Esito: il tronco completo dei propri pezzi, ancora dritto.
+Esito: la struttura completa del proprio corredo, ancora dritta.
 
-### Fase 3 — le strade di servizio
+### Fase 3 — **l'ultima spiaggia** (era: le strade di servizio)
 
-Stacchi, diramazioni, adduzioni e accessori appesi si attaccano a un tronco **già fermo**.
-Qui le curve si pagano — con i pesi della gerarchia — ma si accettano. Una strada di
-servizio non piega mai un'autostrada per accorciarsi.
+Se proprio non c'è spazio si concede **una curva sull'autostrada**, e si tiene la
+struttura. La cessione è **graduale e dichiarata**: una piega per volta, sulla catena che
+ne ha meno bisogno, e il rapporto dice dove e perché.
+
+> **Che cosa diceva la versione dell'11 settembre.** Qui stavano gli stacchi, le
+> diramazioni e gli accessori appesi, che adesso entrano in fase 2 con il resto del
+> corredo. E non c'era nessuna cessione graduale: quando la fase non si instradava, il
+> motore **la buttava via** e ripiegava sulla tavola che produceva prima che le autostrade
+> esistessero. L'impianto 4 usciva da lì.
 
 ## 4. La precisazione che il PM porta, e che il PO conferma o corregge
 
@@ -84,6 +135,24 @@ che questo documento adotta, salvo diversa disposizione del PO:
 - dove il tronco si biforca, **uno** dei due rami resta sull'asse principale e l'altro se
   ne stacca;
 - resta sull'asse il ramo verso l'**accumulo maggiore**.
+
+**Precisato il 17 settembre da `DRAW-012` §C, in due punti.**
+
+1. **«Ogni tratta è un rettilineo» non basta, e da solo non dice niente.** Una tratta del
+   modello finisce su ogni raccordo e su ogni multivia: sull'impianto 4 erano dieci
+   tronconi lunghi cinque o dieci millimetri, e un frammento di cinque millimetri è dritto
+   sempre. Ciò che si conserva è **l'autostrada intera** — la catena di tratte che si
+   susseguono attraverso i propri crocevia, da una macchina all'altra — e l'invariante si
+   verifica su di lei: la catena è una retta, né cambia direzione né cambia quota sul
+   raccordo che unisce due sue tratte.
+2. **«Il ramo verso l'accumulo maggiore» sono due parole, e vengono in quest'ordine.**
+   Prima **accumulo** — chi il fluido lo riceve: accumuli, puffer, separatori, scambiatori
+   e collettori — e poi **maggiore**, che è l'ingombro dichiarato dal simbolo. Finché un
+   solo generatore stava sulla spina non c'era niente da scegliere; con tutti i generatori
+   sulla spina (D-138) un collettore che unisce due pompe di calore vede due rami di
+   autostrada, e guardando il solo ingombro vinceva la **seconda pompa** (1200 mm²) contro
+   l'accumulo (1125 mm²): l'asse andava da un generatore all'altro e l'accumulo si
+   staccava di lato.
 
 ## 5. Cosa questo cambia nel codice, in prima ipotesi
 

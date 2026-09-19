@@ -352,12 +352,29 @@ def test_a_drawing_pushed_into_one_corner_is_a_warning_with_the_ratio() -> None:
     assert "160.0 volte" in leaning.message
 
 
+# I quattro pezzi ai quattro angoli di un ingombro che sta **dentro la
+# finestra** del riempimento: 250 x 180 mm su 350 x 235, cioe' il 55 %.
+#
+# ⛔ **Stavano a 250 e 200, e facevano il 75 %.** Erano stati scelti quando il
+# riempimento aveva un solo bordo — il 60 % sotto cui il disegno e' una fascia —
+# e piu' pieno era meglio era. Dal 17 settembre 2026 il riempimento e' una
+# **finestra**, 45–65 % (**D-140**), e il 75 % e' fuori dall'altra sponda: non
+# c'e' piu' lo spazio per le sigle. La prova dice «un foglio ben riempito non ha
+# rilievi», e per continuare a dirlo il foglio deve essere ben riempito adesso.
+BEN_RIEMPITO = (
+    (30.0, 30.0),
+    (220.0, 30.0),
+    (30.0, 160.0),
+    (220.0, 160.0),
+)
+
+
 def test_a_sheet_filled_and_balanced_says_nothing() -> None:
     quarters = [
-        placed("tl", 30, 30, width_mm=60.0, height_mm=50.0),
-        placed("tr", 250, 30, width_mm=60.0, height_mm=50.0),
-        placed("bl", 30, 200, width_mm=60.0, height_mm=50.0),
-        placed("br", 250, 200, width_mm=60.0, height_mm=50.0),
+        placed(name, x_mm, y_mm, width_mm=60.0, height_mm=50.0)
+        for name, (x_mm, y_mm) in zip(
+            ("tl", "tr", "bl", "br"), BEN_RIEMPITO, strict=True
+        )
     ]
     assert preflight.sheet_fill(drawing(sheet(symbols=quarters)), FRAME) == []
 
@@ -484,12 +501,12 @@ def test_every_declared_measure_is_a_function_of_this_module() -> None:
 
 def test_a_clean_drawing_produces_nothing() -> None:
     quarters = [
-        placed("tl", 30, 30, width_mm=60.0, height_mm=50.0),
-        placed("tr", 250, 30, width_mm=60.0, height_mm=50.0),
-        placed("bl", 30, 200, width_mm=60.0, height_mm=50.0),
-        placed("br", 250, 200, width_mm=60.0, height_mm=50.0),
+        placed(name, x_mm, y_mm, width_mm=60.0, height_mm=50.0)
+        for name, (x_mm, y_mm) in zip(
+            ("tl", "tr", "bl", "br"), BEN_RIEMPITO, strict=True
+        )
     ]
-    joining = run("s", [at(90, 55), at(250, 55)])
+    joining = run("s", [at(90, 55), at(220, 55)])
     tidy = sheet("t1", symbols=quarters, routes=[joining], labels=[label("l1", at(120, 40))])
     registry = catalog(probe_good=GOOD_SOURCE)
     assert preflight.preflight_drawing(drawing(tidy), FRAME, registry) == []

@@ -471,6 +471,33 @@ DEFINITIONS: list[dict[str, Any]] = [
         ],
     ),
     definition(
+        "switching-valve-3way",
+        "Valvola commutatrice a tre vie",
+        ["circuit_switching"],
+        [MAINTAINABLE, SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("in_a", "in"),
+            hydronic_port("in_b", "in"),
+            hydronic_port("out", "out"),
+        ],
+        # **Due ingressi e un'uscita: l'organo che sceglie da dove si pesca.**
+        # Serve perche' un circuito sanitario dedicato sia davvero dedicato
+        # (D-137): la caldaia deve poter pescare dal primario quando fa
+        # riscaldamento e dallo scambiatore quando fa sanitario, e senza questo
+        # organo, mentre fa sanitario, pesca da tutt'e due — e' il «ritorno che
+        # torna ovunque» che il PO ha visto guardando la tavola 4.
+        #
+        # ⛔ **Non e' la miscelatrice.** `mixing-valve-3way` ha la geometria
+        # giusta — due ingressi, un'uscita — ma dichiara `circuit_mixing`, che
+        # e' un altro mestiere: miscelare vuol dire far uscire i due ingressi
+        # **insieme**, commutare vuol dire farne passare **uno per volta**. Una
+        # funzione non si piega per far tornare un disegno (D-069).
+        hydraulic_states=[
+            state("da_primario", "Pesca dal primario", ["in_a", "out"]),
+            state("da_sanitario", "Pesca dal sanitario", ["in_b", "out"]),
+        ],
+    ),
+    definition(
         "buffer-four-port",
         "Volano termico a quattro attacchi",
         ["hydraulic_separation", "thermal_storage"],
