@@ -237,6 +237,16 @@ Orientation = tuple[int, tuple[tuple[str, str], ...]]
 Signature = tuple[tuple[str, float, float, int, tuple[tuple[str, str], ...]], ...]
 
 
+CostKey = tuple[int, int, float, int, int, int, float, float, float]
+"""La chiave d'ordine di `SheetCost`, scritta una volta sola.
+
+Le voci sono nove da `DRAW-013`: il **margine di rispetto** (D-143) si e'
+infilato fra gli attraversamenti e il riempimento. Vive qui, e non ripetuta in
+ogni firma, perche' la volta scorsa che e' cambiata il tipo del diario e' andato
+fuori sincrono senza che niente se ne accorgesse fino a `mypy`.
+"""
+
+
 class Attempt(NamedTuple):
     """Una riga del diario del ciclo: una candidata provata, e com'e' andata.
 
@@ -254,7 +264,7 @@ class Attempt(NamedTuple):
 
     kind: str
     leader: str
-    cost: tuple[int, int, float, int, int, int, float, float] | None
+    cost: CostKey | None
     accepted: bool
 
 
@@ -390,9 +400,7 @@ class SheetCost(NamedTuple):
         bare = max(INK_COVERAGE_MIN - self.coverage, 0.0)
         return max(outside, bare)
 
-    def key(
-        self, fill_gap: float | None = None
-    ) -> tuple[int, int, float, int, int, int, float, float, float]:
+    def key(self, fill_gap: float | None = None) -> CostKey:
         """La chiave d'ordine: le sei voci, il margine, il riempimento, lo spareggio.
 
         La lunghezza non c'e', ed e' la sola differenza con l'ordine di prima

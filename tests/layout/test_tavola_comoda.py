@@ -36,6 +36,7 @@ import pytest
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
+from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.layout.dilate import (
     _gaps,
     _rigid_spans,
@@ -57,7 +58,12 @@ from disegnatore_mep.layout.geometry import (
     margin_allowed_mm,
     moves_of,
 )
-from disegnatore_mep.layout.highways import Highway, lies_in_line, turns_of
+from disegnatore_mep.layout.highways import (
+    Highway,
+    PortAt,
+    lies_in_line,
+    turns_of,
+)
 from disegnatore_mep.layout.improve import SheetCost
 from disegnatore_mep.model.project import PortRef
 from disegnatore_mep.validation.preflight import preflight_drawing
@@ -336,9 +342,9 @@ def _chain(*steps: tuple[str, str, str, str], turns: int) -> Highway:
     )
 
 
-def _reader(places: dict[tuple[str, str], tuple[float, float, str]]):
-    from disegnatore_mep.graphics.symbol import PortFace
-
+def _reader(
+    places: dict[tuple[str, str], tuple[float, float, str]],
+) -> PortAt:
     faces = {
         "left": PortFace.LEFT,
         "right": PortFace.RIGHT,
@@ -346,7 +352,7 @@ def _reader(places: dict[tuple[str, str], tuple[float, float, str]]):
         "bottom": PortFace.BOTTOM,
     }
 
-    def at(component_id: str, port_id: str):
+    def at(component_id: str, port_id: str) -> tuple[Point, PortFace] | None:
         found = places.get((component_id, port_id))
         if found is None:
             return None

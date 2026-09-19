@@ -1,0 +1,68 @@
+Perche' la tavola 4 non esce — misurato il 19 settembre 2026, sul ramo di DRAW-013.
+
+Comandi:
+    docs/collaudi/DRAW-013/tavole.sh . USCITA prova-4-ibrido-pdc-caldaia
+    .venv/bin/python docs/collaudi/DRAW-013/tavola4.py
+
+L'ipotesi del pacchetto (§D): «con il margine di §B nessun pezzo puo' stare oltre x 325,
+quindi un confine appeso al pezzo piu' a destra cade dentro la griglia e la tratta si
+instrada. Se e' cosi', la tavola 4 esce senza toccare place.py».
+
+    L'IPOTESI NON E' CONFERMATA. La misura, uscita per uscita:
+
+
+1. SUL FORMATO PICCOLO NON SI POSA NEMMENO, E NON E' IL BLOCCO
+
+       formato 297 x 210: area x 10..237, y 16..164
+       the 4 functional bands need 257.5mm but the drawing area is 212mm wide
+
+   E' il formato che si prova per primo e si scarta prima di disegnare: e' il passo che
+   porta all'A3, non la causa.
+
+
+2. SULL'A3 IL CONFINE SANITARIO STA ANCORA FUORI DAL FOGLIO
+
+       formato 420 x 297: area x 10..360, y 16..251
+       griglia di instradamento: 140 colonne (indici 0..140), 94 righe
+
+       posa iniziale:          22 pezzi,  0 fuori dall'area
+       seminata dal tronco:    22 pezzi,  1 fuori dall'area
+           utenze: x 365.0..370.0   y 158.5..163.5
+       dopo il ciclo:          22 pezzi,  1 fuori dall'area
+           utenze: x 365.0..370.0   y 158.5..163.5
+
+   `utenze` e' ACS-01, il confine di rete del prelievo sanitario: un simbolo di 5 x 5 mm
+   il cui bordo sinistro cade a **x 365**, cioe' cinque millimetri oltre il bordo destro
+   dell'area di disegno e due colonne oltre l'ultima che la griglia possiede. E' l'unico
+   pezzo fuori dall'area, su ventidue.
+
+   Di qui l'errore dell'instradamento, che e' lo stesso del ramo di partenza:
+
+       run w2-a on network sanitaria cannot be routed:
+       no route from (134, 80) to (144, 80): every orthogonal path is blocked
+
+   La colonna 144 e' x 370: e' il riquadro del simbolo stesso.
+
+
+3. PERCHE' IL MARGINE DI D-143 NON LO RIPORTA DENTRO
+
+   Il margine di §B e' entrato in tre posti — la chiave di costo della posa, il limite
+   della dilatazione, il rilievo di preflight — e nessuno dei tre e' quello che deciderebbe
+   qui:
+
+   - **la posa iniziale** tiene tutti e ventidue i pezzi dentro l'area: non e' lei;
+   - e' la **fase del tronco** (`spine.lay_the_spine` / `carry_the_rest`) a portare `utenze`
+     a x 365, perche' il confine si posa **addosso all'utente che serve** e l'utente che
+     serve e' la macchina piu' a destra. Quella fase non legge ne' il margine ne' il costo:
+     costruisce la forma;
+   - il **ciclo di miglioramento** rifiuta ogni mossa che porti un pezzo fuori dall'area,
+     ma `utenze` e' gia' fuori quando il ciclo comincia, e la regola monotona — «una mossa
+     risponde di cio' che crea, non di cio' che trova» — lo lascia dov'e'.
+
+   Cio' che servirebbe e' che la **posa dei pezzi appesi** conoscesse il bordo: o la fase
+   del tronco lo legge, o il ciclo tratta «fuori dall'area» come una violazione da
+   riparare invece che da non peggiorare. Tutt'e due stanno in `place.py` e in `spine.py`,
+   che il pacchetto mette fuori perimetro salvo questa misura.
+
+   **Non ho ampliato il perimetro.** La tavola 4 resta un pacchetto a se', e adesso ha un
+   numero solo da sistemare: cinque millimetri su un pezzo su ventidue.

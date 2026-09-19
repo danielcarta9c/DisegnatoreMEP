@@ -26,6 +26,7 @@ import pytest
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
+from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.compose import (
     ComposeJournal,
@@ -309,7 +310,7 @@ def test_la_curva_della_distribuzione_non_e_una_cessione() -> None:
     posate = {item.component_id: item for item in drawn.symbols}
     definitions = {item.id: item.definition_id for item in project.components}
 
-    def at(component_id: str, port_id: str):
+    def at(component_id: str, port_id: str) -> tuple[Point, PortFace] | None:
         item = posate.get(component_id)
         if item is None or component_id not in definitions:
             return None
