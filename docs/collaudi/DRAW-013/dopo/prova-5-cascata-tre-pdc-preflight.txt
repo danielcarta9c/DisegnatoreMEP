@@ -1,0 +1,1 @@
+the plant does not fit on any ordinary sheet format: run s4-a on network secondario cannot be routed: no route from (137, 65) to (105, 71): the 5 straight steps the chain needs beyond the port at (137, 65) run into an obstacle at (140, 65)
