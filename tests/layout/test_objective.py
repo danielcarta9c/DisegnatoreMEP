@@ -27,8 +27,14 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
-from disegnatore_mep.layout.compose import compose_drawing
+from disegnatore_mep.layout.compose import (
+    ComposeJournal,
+    compose_drawing,
+    inline_component_ids,
+)
 from disegnatore_mep.layout.geometry import Point, SheetGeometry
+from disegnatore_mep.layout.highways import highways, turns_of
+from disegnatore_mep.layout.trunks import build_trunks
 
 ROOT = Path(__file__).resolve().parents[2]
 PROJECT = ROOT / "examples" / "layout" / "heat-pump-dhw-buffer-two-zones.json"
@@ -39,13 +45,27 @@ STEP_MM = 2.5
 
 
 @cache
-def sheet() -> SheetGeometry:
-    """Composta una volta per modulo: il ciclo di miglioramento reinstrada
-    decine di volte, e ogni prova la leggerebbe identica."""
-    registry = ComponentRegistry.from_directory(
+def catalog() -> ComponentRegistry:
+    return ComponentRegistry.from_directory(
         CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
     )
-    return compose_drawing(load_project(PROJECT), registry, NOVE_C_A3).sheets[0]
+
+
+@cache
+def _composed() -> tuple[SheetGeometry, ComposeJournal]:
+    """Composta una volta per modulo: il ciclo di miglioramento reinstrada
+    decine di volte, e ogni prova la leggerebbe identica.
+
+    Il **diario** viene con lei: da `DRAW-013` una prova deve poter dire con
+    quale via la tavola e' uscita e quali catene ha ceduto, e ricomporla una
+    seconda volta per averlo costerebbe un'altra decina di minuti."""
+    journal = ComposeJournal()
+    drawing = compose_drawing(load_project(PROJECT), catalog(), NOVE_C_A3, journal)
+    return (drawing.sheets[0], journal)
+
+
+def sheet() -> SheetGeometry:
+    return _composed()[0]
 
 
 def polylines(drawn: SheetGeometry) -> list[list[tuple[float, float]]]:
@@ -241,26 +261,74 @@ def test_parallel_branches_are_stacked_not_strung_out() -> None:
     progettista, il giorno che esistera', sara' un campo dichiarato del modello,
     non un'abitudine di questa fixture.
 
-    ⚠️ **La stessa colonna non si pretende piu', e il DEV lo segnala al PM.**
-    Fino a `DRAW-011` le due zone stavano sulla stessa `x`, perche' i loro rami
-    erano **distribuzione** e il ciclo di costo poteva impilarli pagando una
-    piega. Con **D-138** il ritorno di un terminale all'accumulo e' una strada
-    della struttura, e una strada della struttura e' **rettilinea**: le due zone
-    finiscono dove le loro rette le portano, cioe' sui due attacchi del raccordo
-    che le riunisce, che sulla stessa `x` non stanno. Le due disposizioni —
-    «i rami paralleli si impilano» (D-060) e «la strada verso i terminali e'
-    struttura» (D-138) — si contendono la stessa coordinata, e il pacchetto
-    `DRAW-012` non ha l'autorita' per decidere quale vinca: e' una domanda al
-    PO, ed e' nel rapporto di consegna.
+    ⚠️ **La stessa colonna non e' ancora tornata, e adesso si sa perche'.**
+    `DRAW-012` aveva dovuto togliere questa meta' dell'asserzione perche' D-060
+    e D-138 si contendevano la stessa coordinata, e aveva portato la domanda al
+    PO. **D-144** ha risposto — «serbatoio, pompa, tratto dritto, curva, e giu'
+    attacchi i terminali» — e i terminali stanno sulla stessa colonna perche'
+    pendono **dalla stessa dorsale**. Su questa fixture quella dorsale **non si
+    puo' disegnare**, e non per una scelta della posa:
 
-    Cio' che resta preteso qui e' la meta' che nessuna delle due tocca, ed e' il
-    difetto che la prova esiste per impedire: due zone **in fila**, una accanto
-    all'altra alla stessa quota. Le due restano su fasce verticali disgiunte.
+    * le due zone sono servite da un `zone-manifold`, che e' largo 40 mm e ha
+      `out_1` e `out_2` sulla faccia **inferiore**, a quindici millimetri
+      l'uno dall'altro;
+    * chi pende da due attacchi affiancati su una faccia orizzontale sta
+      affiancato: sulla stessa colonna non ci puo' stare;
+    * la dorsale sarebbe lo **stesso collettore girato di novanta gradi**, con
+      gli attacchi impilati sul fianco — ed e' esattamente lo schizzo del PO —
+      ma il simbolo dichiara `allowed_rotations_deg: [0]`.
+
+    Quel campo, per **D-049**, e' un vincolo **tecnico** e non geometrico: dice
+    in quali orientamenti il pezzo si puo' disegnare in un impianto vero. Non e'
+    il DEV a deciderlo (`HANDOFF.md`: nessun requisito MEP nasce dall'iniziativa
+    DEV), ed e' la domanda che il rapporto di `DRAW-013` porta al PO. Finche'
+    resta `[0]`, cio' che si puo' pretendere qui e' la meta' che nessuna
+    disposizione tocca, ed e' il difetto che la prova esiste per impedire: due
+    zone **in fila**, una accanto all'altra alla stessa quota.
     """
     placed = {item.component_id: item for item in sheet().symbols}
     radiators, underfloor = placed["radiators"], placed["underfloor"]
     above, below = sorted((radiators, underfloor), key=lambda item: item.origin.y_mm)
     assert above.bottom_mm <= below.origin.y_mm, (above.bottom_mm, below.origin.y_mm)
+
+
+def test_la_curva_della_distribuzione_non_e_una_cessione() -> None:
+    """**D-144**: la curva della distribuzione e' la forma giusta, non un ripiego.
+
+    Il diario della composizione dice quali catene la tavola ha dovuto **cedere**
+    — togliere dall'invariante per far entrare il resto — e quali sono uscite
+    storte. La curva che D-144 concede non e' ne' l'una ne' l'altra cosa: e'
+    dichiarata, sta dentro la forma, e il diario non la deve nominare.
+    """
+    drawn, journal = _composed()
+    nota = next(item for item in journal.notes if item.sheet_id == drawn.sheet_id)
+    assert nota.conceded == (), nota.conceded
+
+    project = load_project(PROJECT)
+    runs = build_trunks(project, inline_component_ids(project, catalog()))
+    posate = {item.component_id: item for item in drawn.symbols}
+    definitions = {item.id: item.definition_id for item in project.components}
+
+    def at(component_id: str, port_id: str):
+        item = posate.get(component_id)
+        if item is None or component_id not in definitions:
+            return None
+        manifest = catalog().resolve(definitions[component_id]).symbol.manifest.rotated(
+            item.rotation_deg
+        )
+        port = manifest.port(item.physical_port(port_id))
+        return (
+            Point(x_mm=item.origin.x_mm + port.x_mm, y_mm=item.origin.y_mm + port.y_mm),
+            port.face,
+        )
+
+    catene = highways(project, catalog(), runs)
+    assert catene, "nessuna autostrada: la prova non misurerebbe niente"
+    for catena in catene:
+        curve = turns_of(catena, at)
+        if curve is None:
+            continue
+        assert curve <= catena.turns_allowed, (catena.keys, curve, catena.turns_allowed)
 
 
 def test_two_zones_side_by_side_would_fail_the_stacking_test() -> None:
