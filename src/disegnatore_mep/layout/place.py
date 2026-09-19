@@ -1361,21 +1361,69 @@ def place_sheet(
         )
         return left + max(own, stacked) + right
 
-    def neighbours_of(component_id: str) -> frozenset[str]:
-        """A cosa un pezzo e' attaccato, senza contare cio' che gli pende.
+    definition_of = {
+        item.id: catalog.resolve(item.definition_id).definition
+        for item in project.components
+    }
+    adjacency: dict[str, set[str]] = defaultdict(set)
+    for trunk in partition.trunks:
+        first, second = trunk.start.component_id, trunk.end.component_id
+        if first != second:
+            adjacency[first].add(second)
+            adjacency[second].add(first)
 
-        Cio' che pende da uno stacco viaggia col proprio pezzo e non lo
-        distingue da nessuno: contarlo direbbe che due pompe di calore identiche
-        non sono in parallelo perche' una ha lo sfiato e l'altra no.
+    def is_a_fitting(component_id: str) -> bool:
+        definition = definition_of.get(component_id)
+        return definition is not None and definition.is_a_fitting
+
+    def neighbours_of(component_id: str) -> frozenset[str]:
+        """A cosa un pezzo e' attaccato **davvero**, guardando attraverso i raccordi.
+
+        Serve a `may_stack`, che riconosce il parallelo da un fatto solo: due
+        cose sono in parallelo quando pendono dalle stesse cose. Perche' quel
+        fatto si veda, i vicini vanno contati **come li conta un disegnatore**,
+        e un disegnatore non dice che due pompe sono diverse perche' ciascuna
+        ha il proprio T.
+
+        Due categorie si attraversano, e per la stessa ragione:
+
+        * **cio' che pende da uno stacco** viaggia col proprio pezzo — due
+          pompe identiche non smettono di essere in parallelo perche' una ha
+          lo sfiato e l'altra no;
+        * **i raccordi**, che D-118 ha gia' tolto dalla fila del processo
+          («raccordi, organi e strumenti escono dalla fila: non allargano la
+          fascia e non occupano un passo del processo») e che `is_a_fitting`
+          descrive come cio' che «il fluido attraversa e basta». Il T che porta
+          la valvola di sicurezza di una pompa e' equipaggiamento di quella
+          pompa, non un passo che la distingue dalle altre.
+
+        **Misurato sulla cascata di tre pompe il 19 settembre**, prima di questa
+        riga. I vicini erano:
+
+            pdc-1: cascata-ritorno-a, tee-valve-safety-pdc-1-water-supply
+            pdc-2: cascata-ritorno-b, tee-valve-safety-pdc-2-water-supply
+            pdc-3: cascata-ritorno-b, tee-valve-safety-pdc-3-water-supply
+
+        Tre insiemi diversi su tre macchine identiche in parallelo, quindi
+        `may_stack` le rifiutava **sempre** e nascevano in fila — con il PO che
+        guardava la tavola e chiedeva perche' i generatori non fossero
+        incolonnati. La regola c'era (**D-119**, «generatori a sinistra,
+        impilati in verticale se sono piu' di uno»), era scritta, era
+        implementata, ed era **irraggiungibile**.
         """
-        return frozenset(
-            other
-            for trunk in partition.trunks
-            for ends in ({trunk.start.component_id, trunk.end.component_id},)
-            if component_id in ends
-            for other in ends - {component_id}
-            if other not in hung
-        )
+        found: set[str] = set()
+        seen = {component_id}
+        frontier = sorted(adjacency[component_id])
+        while frontier:
+            current = frontier.pop()
+            if current in seen:
+                continue
+            seen.add(current)
+            if current in hung or is_a_fitting(current):
+                frontier.extend(sorted(adjacency[current] - seen))
+                continue
+            found.add(current)
+        return frozenset(found)
 
     def column_height(slot: list[str]) -> float:
         """Quanto e' alta una colonna con i suoi pezzi uno sopra l'altro.
@@ -1417,7 +1465,16 @@ def place_sheet(
             for second in under
         ):
             return False
-        if len({neighbours_of(item) for item in (*over, *under)}) != 1:
+        # **I candidati non si contano fra i propri vicini.** «In parallelo»
+        # vuol dire *pendere dalle stesse cose*, e tre pompe sullo stesso
+        # collettore pendono dalle stesse cose: il fatto che ciascuna veda
+        # anche le altre due le rende diverse **solo per esclusione di se
+        # stesse**, che e' un artefatto del conto e non una differenza del
+        # disegno. Misurato sulla cascata di tre pompe: dopo aver guardato
+        # attraverso i raccordi i tre insiemi coincidevano in tutto tranne che
+        # in questo, e le tre macchine restavano in fila lo stesso.
+        insieme = frozenset((*over, *under))
+        if len({neighbours_of(item) - insieme for item in insieme}) != 1:
             return False
         if len({standings[item] for item in (*over, *under)}) != 1:
             return False
@@ -1618,16 +1675,24 @@ def place_sheet(
         # meglio non ci sta». Si riprova una volta lasciando salire anche chi
         # sta a terra (D-073); solo se nemmeno cosi' entra, l'errore e' quello
         # originale, con la larghezza misurata della disposizione in fila.
-        # Il tentativo vale sul **formato piu' grande**, dove fallire vuol dire
-        # dividere: sui formati minori fallire vuol dire salire di formato, e
+        # **Si impila prima di salire di formato**, su ogni foglio tranne il piu'
+        # piccolo. La riga di prima faceva il tentativo solo sul formato piu'
+        # grande, perche' li' fallire voleva dire **dividere** la tavola mentre
+        # sotto voleva dire solo salire. Con D-148 la scala arriva all'A1, e
+        # quella riga ha smesso di fare quel che diceva: su A3 il tentativo
+        # spariva, l'impianto saliva di foglio invece di impilare, e usciva un
+        # disegno perso dentro un foglio grande — che e' esattamente cio' che
+        # il PO ha bocciato il 19 settembre guardando la cascata su A1.
+        #
+        # Il foglio piu' piccolo resta escluso, ed e' la ragione originale:
         # impilare li' comprimerebbe su una A4 un disegno che D-058 manda in A3.
         overflow = LayoutError(
             f"the {len(used_roles)} functional bands need {total:g}mm but the drawing "
             f"area is {area.width_mm:g}mm wide: symbols are never shrunk to fit, "
             f"split the plant across more sheets"
         )
-        largest = max(item.standard.usable_width_mm for item in ORDINARY_FRAMES)
-        if frame.standard.usable_width_mm < largest - 1e-9:
+        smallest = min(item.standard.usable_width_mm for item in ORDINARY_FRAMES)
+        if frame.standard.usable_width_mm <= smallest + 1e-9:
             raise overflow
         ground_ids = frozenset(
             item for item in placeable if standings[item] is Standing.GROUND
