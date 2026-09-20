@@ -43,6 +43,7 @@ una taratura per una norma).
 """
 
 from collections.abc import Iterable
+from math import ceil
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import ComponentDefinition
@@ -74,7 +75,13 @@ from disegnatore_mep.layout.hierarchy import (
     user_machines,
 )
 from disegnatore_mep.layout.partition import partition_project
-from disegnatore_mep.layout.place import hanging_children, stub_minimum_mm
+from disegnatore_mep.layout.place import (
+    ROW_GAP_MM,
+    hanging_children,
+    inline_room_mm,
+    port_corridors,
+    stub_minimum_mm,
+)
 from disegnatore_mep.layout.trunks import Trunk
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import IssueSeverity
@@ -335,6 +342,121 @@ def _organi_di_servizio(
     return sorted(trovati, key=lambda item: item[0])
 
 
+def _minimo_dello_stacco(
+    project: ProjectModel,
+    catalog: ComponentRegistry,
+    trunk: Trunk,
+    orizzontale: bool,
+    passo_mm: float,
+) -> float:
+    """Quanto corto puo' essere questo stacco, secondo il motore.
+
+    **Non e' una taratura di questo modulo e non e' una soglia**: sono tre
+    misure del motore, ciascuna con la propria fonte, prese come il ciclo le
+    prendeva finche' misurava il vincolo di **D-145**
+    (`layout/improve.py::_hang_ceiling`).
+
+    1. **`place.stub_minimum_mm`** — il minimo su griglia con cui la posa siede
+       un appeso (**I-046**): due passi su uno stacco vuoto, una cella
+       riservata davanti a ciascuno dei due attacchi (D-113); e, dove la tratta
+       porta accessori in linea, quanto la **catena della macchina** pretende
+       dalle due soglie (**I-044**, `chains.chain_room_mm`);
+    2. **`place.inline_room_mm`** — il rettilineo che quegli stessi accessori
+       pretenderanno **dopo l'instradamento**: l'interruzione di ciascuno piu'
+       lo stacco dal vicino (`inline.py`). Su una tratta piu' corta il motore
+       non riesce a sedercoli, e allungarla e' fattibilita', non estetica;
+    3. **`place.ROW_GAP_MM`** — la distanza minima fra due simboli qualunque
+       sul foglio (**D-062**): quattro passi, cioe' **tre corsie libere**, «e
+       con cinque millimetri ne restava una sola». Uno stacco piu' corto
+       metterebbe due simboli piu' vicini di quanto la posa li metta in
+       qualunque altro punto della tavola.
+
+    ⛔ **La lettura stretta — il solo punto 1 — l'ho scritta e misurata, e non
+    regge**: sulle cinque tavole consegnate accendeva il rilievo 9, 10, 8, 7 e
+    14 volte, e un terzo erano **due millimetri e mezzo**, cioe' un passo di
+    griglia su uno stacco gia' addosso al proprio pezzo. Un rilievo che si
+    accende su un termometro attaccato al proprio T non dice piu' niente su un
+    prelievo che sta cinquecento millimetri piu' in la'. **La correzione non e'
+    una soglia**: il minimo del motore non e' mai stato il solo punto 1.
+    """
+    return max(
+        stub_minimum_mm(project, catalog, trunk, orizzontale, passo_mm),
+        ceil(
+            max(ROW_GAP_MM, inline_room_mm(project, catalog, trunk.inline_component_ids))
+            / passo_mm
+            - TOLLERANZA_MM
+        )
+        * passo_mm,
+    )
+
+
+def _verso_il_pezzo_che_serve(
+    mio: Point, suo: Point, passo_mm: float
+) -> tuple[float, float]:
+    """Un passo di griglia **verso** il pezzo che l'organo serve.
+
+    Lungo l'asse su cui lo stacco corre davvero: se il suo scarto maggiore e'
+    in orizzontale lo stacco e' orizzontale, e viceversa. E' la stessa lettura
+    di `tests/layout/test_stacchi_minimi_e_interasse.py`, che la fa sui
+    riquadri; qui si fa sulle **porte**, che e' dove lo stacco comincia e
+    finisce davvero.
+    """
+    dx, dy = suo.x_mm - mio.x_mm, suo.y_mm - mio.y_mm
+    if abs(dx) >= abs(dy):
+        return (passo_mm if dx >= 0 else -passo_mm, 0.0)
+    return (0.0, passo_mm if dy >= 0 else -passo_mm)
+
+
+def _il_posto_e_preso(
+    posato: PlacedSymbol,
+    verso: tuple[float, float],
+    altri: Iterable[PlacedSymbol],
+    corridoi: Iterable[tuple[float, float, float, float]],
+    esclusi: frozenset[str],
+    passo_mm: float,
+) -> bool:
+    """Vero se, **un passo piu' vicino**, l'organo non ci starebbe.
+
+    E' il «**vincolo dichiarato**» di **D-145** punto 1 letto sulla tavola: uno
+    stacco piu' lungo del minimo non e' una violazione se il posto al minimo e'
+    **occupato**. Due modi di essere occupato, e sono quelli che il motore gia'
+    conosce:
+
+    - il riquadro dell'organo **toccherebbe un altro simbolo**, entro un passo
+      di griglia — la distanza sotto la quale la posa non mette mai due pezzi;
+    - il riquadro entrerebbe in un **corridoio di porta**
+      (`place.port_corridors`): il rettilineo che la catena della macchina
+      pretende davanti a un attacco (**I-044**), dove l'instradatore fara'
+      uscire la tratta dritta e dove un simbolo la murerebbe.
+
+    **Non e' una lettura nuova**: e' quella che
+    `tests/layout/test_stacchi_minimi_e_interasse.py::_taken_one_step_closer`
+    fa gia' sulla posa del motore, parola per parola — «un passo piu' vicino al
+    raccordo il posto e' preso: lo stacco e' lungo per necessita', non per una
+    costante». Sta qui perche' da **D-151** la posa non decide piu', e quella
+    prova misura una tavola che il piano non compone piu'.
+    """
+    sinistra = posato.origin.x_mm + verso[0]
+    alto = posato.origin.y_mm + verso[1]
+    destra, basso = sinistra + posato.width_mm, alto + posato.height_mm
+    if any(
+        sinistra < x1 - TOLLERANZA_MM
+        and x0 < destra - TOLLERANZA_MM
+        and alto < y1 - TOLLERANZA_MM
+        and y0 < basso - TOLLERANZA_MM
+        for x0, y0, x1, y1 in corridoi
+    ):
+        return True
+    return any(
+        altro.component_id not in esclusi
+        and sinistra < altro.right_mm + passo_mm
+        and altro.origin.x_mm - passo_mm < destra
+        and alto < altro.bottom_mm + passo_mm
+        and altro.origin.y_mm - passo_mm < basso
+        for altro in altri
+    )
+
+
 def _lunghezza_della_tratta(route: RoutedTrunk) -> float:
     """Quanto e' lunga la tratta sul foglio, **interruzioni comprese**.
 
@@ -380,19 +502,24 @@ def organi_di_servizio_lontani(
     contro **il suo minimo su griglia**. La violazione e' la tratta piu' lunga
     del proprio minimo, e il rilievo dice tutti e due i numeri.
 
-    **Il minimo non e' una taratura di questo modulo, ed e' del motore**: e'
-    `place.stub_minimum_mm`, la stessa funzione con cui la posa decide quanto e'
-    lungo uno stacco (I-046) e con cui il ciclo misurava il vincolo di D-145.
-    Vale **due passi di griglia** su uno stacco vuoto — una cella riservata
-    davanti a ciascuno dei due attacchi (D-113) — e, dove la tratta porta
-    **accessori in linea**, quanto la fila pretende dalle due soglie (**I-044**,
-    `chains.chain_room_mm`). Il passo e' quello del foglio, `grid_mm`.
+    **Il minimo non e' una taratura di questo modulo, ed e' del motore**:
+    `_minimo_dello_stacco` lo legge da `place.py`, dove la posa lo calcola, e il
+    suo docstring dice da quale delle tre voci viene ogni millimetro.
 
-    **L'eccezione di D-145 punto 1 e' dentro il minimo, e non e' un caso a
-    parte**: «puo' allungarsi solo per un vincolo dichiarato — per esempio far
-    posto a un altro accessorio in linea sulla stessa tratta». Un organo lontano
-    **perche' sulla sua tratta c'e' una valvola** ha un minimo piu' grande, e
-    questo controllo tace. Se e' lontano e basta, no.
+    **I «vincoli dichiarati» di D-145 punto 1 sono due, e nessuno dei due e' un
+    caso a parte scritto qui.** Il PO dice: «puo' allungarsi solo per un vincolo
+    dichiarato — **per esempio** far posto a un altro accessorio in linea sulla
+    stessa tratta». «Per esempio», non «soltanto»:
+
+    1. **gli accessori sulla derivazione** stanno **dentro il minimo**
+       (**I-044**): un organo lontano perche' sulla sua tratta c'e' una valvola
+       ha un minimo piu' grande, e il controllo tace da solo;
+    2. **il posto al minimo e' occupato** (`_il_posto_e_preso`): un passo piu'
+       vicino, l'organo toccherebbe un altro simbolo o entrerebbe nel corridoio
+       che una porta pretende. E' la stessa lettura che la posa difende in
+       `tests/layout/test_stacchi_minimi_e_interasse.py`, portata sulla tavola.
+
+    Se e' lontano e basta, il rilievo si accende.
 
     **Che cosa questa misura non vede, e va saputo.**
 
@@ -410,23 +537,34 @@ def organi_di_servizio_lontani(
       il preflight nomina gia' come bloccante.
     - **Una tratta che il foglio non porta**: una catena spezzata fra due tavole
       non ha una lunghezza da leggere qui.
+    - **Perche' il posto al minimo sia occupato**: il controllo vede che lo e',
+      non **chi** l'ha occupato ne' se quel vicino potesse stare altrove. Un
+      corredo composto stretto intorno a un raccordo passa; lo stesso corredo
+      con un pezzo di troppo nel mezzo passa anche lui, e quello lo dice A2.
     """
     passo_mm = frame.standard.grid_mm
+    trunks = tratte_del_progetto(project, catalog)
     organi = _organi_di_servizio(project, catalog)
     trovati: list[ValidationIssue] = []
     for sheet in drawing.sheets:
         porte = porte_in_tavola(sheet, project, catalog)
+        posati = {item.component_id: item for item in sheet.symbols}
+        corridoi = port_corridors(
+            project, catalog, trunks, list(sheet.symbols), passo_mm
+        )
         per_chiave = {tuple(route.connection_ids): route for route in sheet.routes}
         for organo, servito, trunk in organi:
             route = per_chiave.get(trunk.connection_ids)
             if route is None or route.unresolved:
                 continue
-            mio = trunk.start if trunk.start.component_id == organo else trunk.end
+            dritto = trunk.start.component_id == organo
+            mio = trunk.start if dritto else trunk.end
+            suo = trunk.end if dritto else trunk.start
             dove = porte.get((mio.component_id, mio.port_id))
             if dove is None:
                 continue
             lungo_mm = _lunghezza_della_tratta(route)
-            minimo_mm = stub_minimum_mm(
+            minimo_mm = _minimo_dello_stacco(
                 project,
                 catalog,
                 trunk,
@@ -434,6 +572,17 @@ def organi_di_servizio_lontani(
                 passo_mm,
             )
             if lungo_mm <= minimo_mm + TOLLERANZA_MM:
+                continue
+            posato = posati.get(organo)
+            altro = porte.get((servito, suo.port_id))
+            if posato is not None and altro is not None and _il_posto_e_preso(
+                posato,
+                _verso_il_pezzo_che_serve(dove[0], altro[0], passo_mm),
+                sheet.symbols,
+                corridoi,
+                frozenset({organo, servito}),
+                passo_mm,
+            ):
                 continue
             perche = (
                 f", che e' quanto pretendono gli accessori in linea "
