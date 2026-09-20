@@ -369,7 +369,32 @@ ordinaria A4 → A3 → A2 → A1 (D-148, dichiarata momentanea dal PO).
 
 *Fonte:* **D-060**; il difetto è misurato sulle due tavole composte del 20 settembre — 5,2
 volte l'inchiostro fra quadrante pieno e vuoto sull'impianto 1, **9,0** sul 5.
-*Controllo:* `DRAWING_ALL_ON_ONE_SIDE`. **È il primo difetto aperto del pianificatore.**
+*Controllo:* `DRAWING_ALL_ON_ONE_SIDE`, limite **3,0**. **È il primo difetto aperto del
+pianificatore.**
+
+**La soglia è tarata dalle tavole del disegnatore del PO, e regge.** Misurato il 20 settembre
+2026 rieseguendo la stessa formula — inchiostro per quadrante, rapporto pieno/vuoto — sui
+quattro PDF di `docs/input-pm/riferimenti-grafici/2026-09-03/`:
+
+| tavola del PO | sul foglio | sul riquadro del disegno |
+|---|---|---|
+| `schema-tipologico.pdf` | **1,4×** | 1,4× |
+| `schema-idraulico-sdp.pdf` | **1,6×** | 1,6× |
+| `schema-tipologico-pdc-volume-integrato.pdf` | **2,5×** | 2,8× |
+| `schema-tipologico-3-vie.pdf` | *un quadrante senza inchiostro* | 9,9× |
+
+**Tre su quattro stanno fra 1,4 e 2,5 contro un limite di 3,0**: il numero non è inventato, è
+dove stanno le tavole buone. La quarta è l'eccezione, e **guardandola si capisce perché**: è
+un'**A4 verticale con il disegno nella metà alta e la metà bassa bianca**, senza cornice né
+cartiglio — l'esportazione di una regione, non un foglio finito. Misurarci D3 è misurare il
+bianco del ritaglio.
+
+⚠ **«Il disegno è una fascia» non è di per sé il difetto.** Anche le tavole del PO sono
+fasce: `schema-tipologico.pdf` ha 3,7 e 3,0 mm di margine a sinistra e a destra contro 65 e
+67 sopra e sotto. La differenza è **dove sta la fascia**: la sua attraversa il foglio per
+intero ed è centrata, quindi tutti e quattro i quadranti portano inchiostro; la nostra sta in
+alto e non arriva a destra. **Quello che D3 accusa non è la forma a nastro: è il nastro messo
+storto sul foglio.**
 
 ---
 
