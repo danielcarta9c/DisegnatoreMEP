@@ -778,6 +778,7 @@ CODICI = {
     "B8": "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK",
     "B9": "PARALLEL_RUNS_WITHOUT_A_FREE_LANE",
     "B10": "RETURN_RUNS_ABOVE_ITS_SUPPLY",
+    "B11": "SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER",
 }
 """Il rilievo di ciascuna regola misurata, nell'ordine di `ORDINE_DELLE_REGOLE`.
 

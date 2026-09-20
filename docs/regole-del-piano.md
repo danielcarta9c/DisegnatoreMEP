@@ -314,6 +314,29 @@ tavole su cinque.
 hanno una costante: la colonna di mandata sta a sinistra del ritorno in una e a destra in
 un'altra. **Una regola sul lato dei verticali non esiste, e non si inventa.**
 
+### B11 — Mandata e ritorno corrono insieme, a interasse costante
+
+*Fonte:* il **PO**, 20 settembre 2026: «devi ricordare di disegnarle mandata e ritorno
+insieme… **corrono sempre insieme, non esiste che una va e l'altra va zig zag accanto**».
+*Riscontro:* su `schema-tipologico.pdf` le due corsie tengono un interasse costante per
+tutta la corsa e cominciano e finiscono alla stessa ascissa.
+*Controllo:* **`SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER`** —
+`validation/regole.py::coppie_che_non_corrono_insieme`. Si prendono **le due autostrade che
+uniscono le stesse due macchine**, una di andata e una di ritorno, e si campiona il tratto
+orizzontale **in comune** passo per passo.
+*Tavola:* impianto 4, `caldaia ~ disgiuntore` — **170 mm in comune e sei interassi diversi**,
+da −110 a +155: la coppia si apre e si scambia di lato. Impianto 1, `accumulo ~ radiatori`,
+due interassi (10 e 15).
+
+**Non si pretende un valore, si pretende che non cambi.** Quanto vale l'interasse lo
+decidono le porte delle macchine, non questa regola.
+
+⚠ **Quando il piano non ce la può fare.** Se le porte delle due macchine agli estremi
+vogliono interassi diversi — `gas-boiler` ha mandata e ritorno a **10 mm**,
+`buffer-four-port` a **15** — **nessuna posa può tenere l'interasse costante**: il cambio è
+**del catalogo**, non di chi compone. È la stessa famiglia di **B7**, e come B7 è una
+domanda al PO: o cambia il simbolo, o quella coppia cambia interasse una volta.
+
 ---
 
 ## C. Come si prende un pezzo

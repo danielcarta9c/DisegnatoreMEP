@@ -53,6 +53,7 @@ from disegnatore_mep.layout.autostrade import (
     AutostradaInTavola,
     PorteInTavola,
     autostrade_del_progetto,
+    autostrade_in_tavola,
     pieghe_dell_autostrada,
     porte_in_tavola,
     tratte_del_progetto,
@@ -1234,6 +1235,121 @@ def ritorni_sopra_la_mandata(
             )
     return trovati
 
+
+def _tratti_orizzontali(route: RoutedTrunk) -> list[tuple[float, float, float]]:
+    """(quota, da, a) di ogni tratto orizzontale della spezzata."""
+    out: list[tuple[float, float, float]] = []
+    for parte in route.segments:
+        for prima, poi in zip(parte, parte[1:], strict=False):
+            if prima.y_mm == poi.y_mm and prima.x_mm != poi.x_mm:
+                out.append((prima.y_mm, min(prima.x_mm, poi.x_mm), max(prima.x_mm, poi.x_mm)))
+    return out
+
+
+def _quota_in(tratti: list[tuple[float, float, float]], x: float) -> float | None:
+    for quota, da, a in tratti:
+        if da - TOLLERANZA_MM <= x <= a + TOLLERANZA_MM:
+            return quota
+    return None
+
+
+PASSO_DI_CAMPIONE_MM = 2.5
+"""Il passo con cui si campiona l'interasse di una coppia: quello della griglia.
+
+Non e' una taratura: e' la risoluzione su cui vive tutto il disegno, e campionare
+piu' fitto leggerebbe due volte lo stesso punto.
+"""
+
+PASSI_PERCHE_SIA_UNA_CORSA_MIN = 8
+"""Da quanti passi di griglia in comune due autostrade sono **una coppia**.
+
+Venti millimetri: sotto, due tratte si sfiorano e non corrono insieme. E' la
+stessa lettura dichiarata di B9 — si guarda una **corsa**, non uno spigolo.
+"""
+
+
+def coppie_che_non_corrono_insieme(
+    drawing: DrawingGeometry, catalog: ComponentRegistry, project: ProjectModel
+) -> list[ValidationIssue]:
+    """**B11** — mandata e ritorno corrono insieme, a interasse costante.
+
+    *Fonte:* il **PO**, 20 settembre 2026: «devi ricordare di disegnarle mandata
+    e ritorno insieme… **corrono sempre insieme, non esiste che una va e
+    l'altra va zig zag accanto**».
+    *Riscontro sulle tavole del suo disegnatore*: su `schema-tipologico.pdf` le
+    due corsie tengono un interasse **costante** per tutta la corsa e
+    **cominciano e finiscono alla stessa ascissa**.
+
+    **La misura.** Si prendono le **due autostrade che uniscono le stesse due
+    macchine** — una di andata e una di ritorno — e si campiona il loro tratto
+    orizzontale **in comune**, passo di griglia per passo di griglia. Se
+    l'interasse cambia, la coppia si e' aperta: e' lo zig-zag.
+
+    Non c'e' una soglia sull'interasse: **non si pretende un valore**, si
+    pretende che **non cambi**. Il valore lo decidono le porte delle macchine.
+
+    ⚠ **Quando il piano non ce la puo' fare, e va saputo.** Se le porte delle
+    due macchine agli estremi vogliono interassi diversi — `gas-boiler` ha
+    mandata e ritorno a **10 mm**, `buffer-four-port` a **15** — nessuna posa
+    puo' tenere l'interasse costante: il cambio e' **del catalogo**, non di chi
+    compone. Il rilievo si accende lo stesso, perche' il difetto sulla tavola
+    c'e'; chi lo legge trova qui perche'.
+    """
+    trovati: list[ValidationIssue] = []
+    trunks = tratte_del_progetto(project, catalog)
+    strade = autostrade_in_tavola(project, catalog, trunks)
+    for sheet in drawing.sheets:
+        per_capi: dict[frozenset[str], list[tuple[bool, list[tuple[float, float, float]], str]]] = {}
+        for strada in strade:
+            capi = frozenset((strada.pezzi[0], strada.pezzi[-1]))
+            tratti: list[tuple[float, float, float]] = []
+            supply: bool | None = None
+            for chiave in strada.catene:
+                route = next(
+                    (r for r in sheet.routes if tuple(r.connection_ids) == tuple(chiave)),
+                    None,
+                )
+                if route is None or route.unresolved:
+                    continue
+                tratti += _tratti_orizzontali(route)
+                supply = route.supply
+            if tratti and supply is not None:
+                per_capi.setdefault(capi, []).append((supply, tratti, strada.nome))
+        for capi, elenco in per_capi.items():
+            mandate = [item for item in elenco if item[0]]
+            ritorni = [item for item in elenco if not item[0]]
+            if not mandate or not ritorni:
+                continue
+            _, tm, nome_m = mandate[0]
+            _, tr, nome_r = ritorni[0]
+            da = max(min(t[1] for t in tm), min(t[1] for t in tr))
+            a = min(max(t[2] for t in tm), max(t[2] for t in tr))
+            interassi: list[float] = []
+            x = da
+            while x <= a + TOLLERANZA_MM:
+                qm, qr = _quota_in(tm, x), _quota_in(tr, x)
+                if qm is not None and qr is not None:
+                    interassi.append(round(qr - qm, 1))
+                x += PASSO_DI_CAMPIONE_MM
+            if len(interassi) < PASSI_PERCHE_SIA_UNA_CORSA_MIN:
+                continue
+            distinti = sorted(set(interassi))
+            if len(distinti) == 1:
+                continue
+            trovati.append(
+                _rilievo(
+                    "SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER",
+                    f"la tavola {sheet.sheet_id}: fra {' e '.join(sorted(capi))} la "
+                    f"mandata e il ritorno corrono insieme per "
+                    f"{len(interassi) * 2.5:.1f} mm ma cambiano interasse "
+                    f"{len(distinti)} volte ({', '.join(f'{v:g}' for v in distinti[:6])} "
+                    f"mm): la coppia si apre, e mandata e ritorno corrono sempre "
+                    f"insieme (B11, PO 20 settembre 2026)",
+                    [sheet.sheet_id, *sorted(capi)],
+                )
+            )
+    return trovati
+
 CODICE_DELLA_REGOLA: dict[str, str] = {
     "A1": "PIECE_OUTSIDE_ITS_BAND",
     "A4": "SERVICE_STUB_LONGER_THAN_ITS_MINIMUM",
@@ -1243,6 +1359,7 @@ CODICE_DELLA_REGOLA: dict[str, str] = {
     "B8": "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK",
     "B9": "PARALLEL_RUNS_WITHOUT_A_FREE_LANE",
     "B10": "RETURN_RUNS_ABOVE_ITS_SUPPLY",
+    "B11": "SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER",
 }
 """Il rilievo di ciascuna regola misurata, **e non c'e' un secondo posto**.
 
@@ -1407,6 +1524,7 @@ def rilievi_delle_regole(
         *scostamenti_che_tornano_indietro(drawing),
         *linee_parallele_senza_corsie(drawing),
         *ritorni_sopra_la_mandata(drawing),
+        *coppie_che_non_corrono_insieme(drawing, catalog, project),
     ]
 
 
@@ -1418,6 +1536,7 @@ __all__ = [
     "GENERAZIONE",
     "ORDINE_DELLE_REGOLE",
     "autostrade_storte",
+    "coppie_che_non_corrono_insieme",
     "fascia_del_pezzo",
     "linee_parallele_senza_corsie",
     "macchine_in_parallelo_senza_collettore",
