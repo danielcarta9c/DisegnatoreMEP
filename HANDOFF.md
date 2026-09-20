@@ -119,6 +119,11 @@ senza approvazione non si fonde.
   C1 e C3 non hanno un rilievo sulla tavola finita**. **A3 oggi non è tenuta su da niente** —
   l'unico posto che la faceva valere era il solutore — e **C3 è il buco peggiore**, perché è
   l'unico difetto di **contenuto** che nasce da una scelta **grafica**.
+- **Il saldo della suite peggiora di ventuno, ed è dichiarato.** `main` 17 fallite, la
+  consegna 38 (1564 passate, 24 `skip`, 12 `xfail`; zero `skip` e zero `xfail` **nuovi**).
+  È la contropartita di D-151: prove che, per la via ordinaria, pretendevano la qualità che
+  il solutore produceva. `DRAW-016` le prende in carico una per una, **senza `skip` e senza
+  `xfail`**, e da lì in poi il saldo si misura contro **38**, non contro `main`.
 - **Le due PR bocciate e mai chiuse — #32 (`DRAW-010`) e #41 (`DRAW-012`) — sono state
   chiuse**, con il rimando al verdetto agli atti. I rami non sono stati cancellati.
 
