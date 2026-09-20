@@ -165,11 +165,11 @@ scritto qui e non altrove.
 | 1 | Il revisore gira su almeno tre impianti, con la tavola prima e dopo | **raggiunto** — gira su tutti e cinque; su nessuno migliora, ed è scritto in §2 per primo. Il prima/dopo con un miglioramento vero è sull'impianto 4 guastato |
 | 2 | Ogni correzione porta il nome della regola | **raggiunto** — `Correzione.regola`, `tests/piano/test_revisore.py::test_ogni_correzione_porta_il_nome_della_regola` su tutt'e due i piani, più `test_ogni_cura_conosciuta_ha_la_propria_regola` |
 | 3 | Il revisore non peggiora in silenzio | **raggiunto** — §2, e quattro prove: `test_si_ferma_sempre_dicendo_perche`, `test_consegna_il_giro_migliore_e_mai_uno_peggiore`, `test_un_giro_che_peggiora_nomina_le_misure_peggiorate`, `test_non_smonta_una_catena_gia_dritta` |
-| 4 | Le quattro regole di D-154 hanno ciascuna un controllo, e una tavola su cui si vede | **raggiunto** — §4 |
+| 4 | Le quattro regole di D-154 hanno ciascuna un controllo, e una tavola su cui si vede | **raggiunto** — §4, **e sono cinque**: A4 è entrata guardando le tavole, §4bis |
 | 5 | Le due tavole composte restano a zero, dalla CLI | **raggiunto** — impianto 1 e 5: 0 bloccanti, 0 cedute, dal comando `disegnatore-mep piano` |
 | 6 | I cinque impianti producono ancora una tavola, e nessuno peggiora | **raggiunto e migliorato** — tutti e cinque, e il quinto passa da 6 tratte cedute a 0 |
 | 7 | Nessun percorso vigente chiama più il solutore | **raggiunto** — §5, con cinque prove in `tests/layout/test_il_solutore_e_fuori.py` |
-| 8 | Ogni file di `tests/layout/` ha la sua categoria, zero `skip`/`xfail` nuovi, saldo non peggiore | **§7** |
+| 8 | Ogni file di `tests/layout/` ha la sua categoria, zero `skip`/`xfail` nuovi, saldo non peggiore | **§7 e §10** — la categoria e gli `skip`/`xfail` sono raggiunti; **il saldo peggiora, ed è misurato e spiegato in §10** |
 | 9 | Nessun documento in terzo stato, citazione D-119 corretta ovunque | **raggiunto** — §8 |
 | 10 | Il formato del piano è documentato e validato | **raggiunto** — §9 |
 
