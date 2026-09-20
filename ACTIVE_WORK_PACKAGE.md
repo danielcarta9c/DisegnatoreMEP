@@ -175,11 +175,14 @@ progetto non prende. Per ciascuna, una delle due:
 2. **la proprietà era del solutore** — allora la prova dichiara in testa che cosa difendeva e
    perché è caduta, e **il conto si dichiara nel rapporto**, non si nasconde.
 
-**E la prima cosa da provare non è riscriverle.** Misurato (RAPPORTO §10): fra le rosse
-nuove, **diciassette su ventidue portano lo stesso identico errore** — `run … still passes
-under mixing-valve-thermostatic after breaking for it`, cioè l'impianto 1 e il 2 posati
-**senza piano**, dove la tratta della mandata sanitaria porta **tre accessori in linea** e non
-trova il rettilineo che pretendono (**B5**). Le altre cinque sono asserzioni diverse.
+**E la prima cosa da provare non è riscriverle.** Misurato chiedendo **alle ventidue e solo
+a quelle** quale errore le ferma (RAPPORTO §10): **diciassette nominano lo stesso pezzo**, il
+miscelatore termostatico, e **diciannove su ventidue sono un errore della posa
+deterministica**, non un'asserzione — sugli impianti 1 e 2 posati **senza piano** la tratta
+della mandata sanitaria porta **tre accessori in linea** e non trova il rettilineo che
+pretendono (**B5**). Le tre che restano sono asserzioni di qualità in
+`acceptance/test_drawing.py`: backtracking, `LINE_UNDER_SYMBOL`, il terminale non addosso
+all'accumulo — le proprietà che **il solutore comprava**.
 
 > **Un difetto solo che spiega diciassette prove è un candidato serio.** Se la posa
 > deterministica imparasse a dare quel rettilineo, diciassette tornerebbero verdi **senza
