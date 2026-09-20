@@ -594,41 +594,57 @@ sopra. **L'attribuzione delle ventuno file per file è in corso di rimisura** su
 integrale di `main` con `-rf`; quello che resta fermo è il saldo, **17 contro 38**, misurato
 su tutt'e due i lati con il comando qui sopra.
 
-### La causa è una sola, e non è «il solutore mancava a queste prove»
+### La causa non è «tante prove del solutore»: è **un difetto solo**, contato molte volte
 
-Otto delle ventuno stanno in file che dichiarano di aver difeso il **solutore**, e quelle non
-sorprendono. **Le altre tredici no**, e vanno spiegate invece che archiviate: dicono
-«difende il motore», o non dicono niente.
+Otto delle rosse stanno in file che dichiarano di aver difeso il **solutore**, e quelle non
+sorprendono. Le altre no, e vanno spiegate invece che archiviate: dicono «difende il motore»,
+o non dicono niente. **Misurate invece che raccontate.**
 
-**Compongono l'impianto senza un piano.** Riprodotta su una sola, che è la più corta:
+Preso il gruppo dei file che qui sono rossi e su `main` non lo erano, più quelli senza
+categoria, e chiesto a ciascuno **quale errore**:
 
 ```
-$ .venv/bin/python -m pytest \
-    "tests/layout/test_accessori_appesi.py::test_nessun_simbolo_si_sovrappone_a_un_altro" -q
-E  disegnatore_mep.layout.errors.LayoutError: run w2-a-a-a still passes under
-   mixing-valve-thermostatic after breaking for it: the accessory sits where its own run
-   bends back into it, give the run a longer straight length
+$ .venv/bin/python -m pytest -q --tb=line -rf \
+    tests/acceptance/test_drawing.py tests/layout/test_accessori_appesi.py \
+    tests/layout/test_catena_macchina.py tests/layout/test_ordine_degli_stacchi.py \
+    tests/layout/test_consegna_e_verifica.py tests/layout/test_format_choice.py \
+    tests/layout/test_rami_di_servizio.py tests/rules/test_ordine_semantico.py
+22 failed, 61 passed, 7 skipped, 2 xfailed in 5.52s
 ```
 
-È l'impianto 1 posato **deterministicamente, senza piano**: la tratta dell'ACS porta tre
-accessori in linea e non trova il rettilineo che pretendono. Su `main` la stessa posa
-riusciva **perché il solutore spostava i pezzi finché l'instradamento veniva**.
+| errore | quante |
+|---|---|
+| `run … still passes under mixing-valve-thermostatic after breaking for it` | **15** |
+| `run … has no straight stretch of 7.5mm for mixing-valve-thermostatic / dirt-separator` | 2 |
+| asserzioni varie (fasce che non entrano nel formato, `LINE_UNDER_SYMBOL`, misure di costo) | 5 |
 
-**Non è un difetto nuovo del motore: è il prezzo di D-151 già dichiarato e già misurato** —
+**Diciassette su ventidue sono lo stesso difetto**, ed è uno: sull'impianto 1 e sul 2 posati
+**deterministicamente, senza piano**, la tratta della mandata sanitaria porta **tre accessori
+in linea** e non trova il rettilineo che pretendono — la spezzata piega e rientra sotto il
+miscelatore. Su `main` la stessa posa riusciva **perché il solutore spostava i pezzi finché
+l'instradamento veniva**.
+
+**Non è un difetto nuovo del motore: è il prezzo di D-151, già dichiarato e già misurato** —
 `misura-senza-solutore.txt`, §5: senza solutore e senza piano tutti e cinque gli impianti
 finiscono sul formato più grande col ripiego, con 2–6 tratte cedute e 11–19 rilievi
-bloccanti. Le stesse proprietà, **sulla via vigente**, le tavole ce l'hanno: le cinque escono
-a **zero tratte cedute**.
+bloccanti. La stessa proprietà, **sulla via vigente**, le tavole ce l'hanno: le cinque escono
+a **zero tratte cedute**, e su quelle la tratta dell'ACS si posa perché **il piano le dà il
+rettilineo**.
 
-**Perché non le ho chiuse qui.** Chiuderle vuol dire riscrivere tredici prove perché misurino
-la stessa proprietà **dal piano** — è quello che è stato fatto per
-`test_il_primo_impianto_esce_dal_proprio_piano` — e la riscrittura di tredici prove, ciascuna
-col proprio impianto di partenza, è un pacchetto, non una coda. **Nessuna è stata messa a
-`skip` o a `xfail`.** `DRAW-016` punto 8 le prende in carico una per una.
+**Perché non le ho chiuse qui.** Chiuderle vuol dire riscrivere ciascuna perché misuri la
+stessa proprietà **dal piano** — è quello che è stato fatto per
+`test_il_primo_impianto_esce_dal_proprio_piano` — e sono venti prove, ciascuna col proprio
+impianto di partenza: è un pacchetto, non una coda. **Nessuna è a `skip` o a `xfail`.**
+`DRAW-016` punto 8 le prende in carico.
+
+> **E vale la pena guardarci dentro prima di riscriverle.** Un difetto solo che spiega
+> diciassette prove è un candidato serio: se la posa deterministica imparasse a dare il
+> rettilineo che tre accessori in linea pretendono (**B5**), diciassette tornerebbero verdi
+> senza toccare le prove. È la prima cosa da provare, non l'ultima.
 
 ⚠ **E c'è un buco nella categorizzazione:** `tests/acceptance/test_drawing.py` **non ha la
 riga `# categoria:`**, perché il punto 5 di `DRAW-015` diceva «i 36 file di `tests/layout/`» e
-quello sta altrove. Quattro delle ventuno sono lì. La riga va scritta, ed è in `DRAW-016`.
+quello sta altrove. Quattro delle rosse sono lì. La riga va scritta, ed è in `DRAW-016`.
 
 ---
 

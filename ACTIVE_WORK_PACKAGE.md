@@ -175,13 +175,18 @@ progetto non prende. Per ciascuna, una delle due:
 2. **la proprietà era del solutore** — allora la prova dichiara in testa che cosa difendeva e
    perché è caduta, e **il conto si dichiara nel rapporto**, non si nasconde.
 
-**Dove sono, misurate** (RAPPORTO `DRAW-015` §10): `test_posa_a_fasi` 5 ·
-`acceptance/test_drawing` 4 · `test_accessori_appesi` 3 · `test_assi_dorsali_tee` 2 ·
-`test_catena_macchina` 2 · `test_ordine_degli_stacchi` 2 · `test_consegna_e_verifica` 1 ·
-`test_costo_peso` 1 · `test_format_choice` 1. **Otto stanno in file che dichiarano di aver
-difeso il solutore; le altre tredici no, e sono quelle da guardare per prime**: compongono
-l'impianto **senza un piano**, ed è il prezzo di D-151 già misurato in
-`misura-senza-solutore.txt`.
+**E la prima cosa da provare non è riscriverle.** Misurato (RAPPORTO §10): fra le rosse
+nuove, **diciassette su ventidue portano lo stesso identico errore** — `run … still passes
+under mixing-valve-thermostatic after breaking for it`, cioè l'impianto 1 e il 2 posati
+**senza piano**, dove la tratta della mandata sanitaria porta **tre accessori in linea** e non
+trova il rettilineo che pretendono (**B5**). Le altre cinque sono asserzioni diverse.
+
+> **Un difetto solo che spiega diciassette prove è un candidato serio.** Se la posa
+> deterministica imparasse a dare quel rettilineo, diciassette tornerebbero verdi **senza
+> toccare una riga di prova**. Si prova questo per primo; la riscrittura «dal piano» — sul
+> modello di `test_il_primo_impianto_esce_dal_proprio_piano` — è il ripiego, non il piano A.
+> ⚠ Toccare la posa deterministica vuol dire toccare **il motore**, che questo perimetro non
+> autorizza: se si va di lì, si dichiara prima.
 
 ⚠ **`tests/acceptance/test_drawing.py` non ha la riga `# categoria:`** — il punto 5 di
 `DRAW-015` diceva «i 36 file di `tests/layout/`», e quello sta altrove. Quattro delle ventuno
