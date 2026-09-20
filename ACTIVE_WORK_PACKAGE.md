@@ -175,6 +175,18 @@ progetto non prende. Per ciascuna, una delle due:
 2. **la proprietà era del solutore** — allora la prova dichiara in testa che cosa difendeva e
    perché è caduta, e **il conto si dichiara nel rapporto**, non si nasconde.
 
+**Dove sono, misurate** (RAPPORTO `DRAW-015` §10): `test_posa_a_fasi` 5 ·
+`acceptance/test_drawing` 4 · `test_accessori_appesi` 3 · `test_assi_dorsali_tee` 2 ·
+`test_catena_macchina` 2 · `test_ordine_degli_stacchi` 2 · `test_consegna_e_verifica` 1 ·
+`test_costo_peso` 1 · `test_format_choice` 1. **Otto stanno in file che dichiarano di aver
+difeso il solutore; le altre tredici no, e sono quelle da guardare per prime**: compongono
+l'impianto **senza un piano**, ed è il prezzo di D-151 già misurato in
+`misura-senza-solutore.txt`.
+
+⚠ **`tests/acceptance/test_drawing.py` non ha la riga `# categoria:`** — il punto 5 di
+`DRAW-015` diceva «i 36 file di `tests/layout/`», e quello sta altrove. Quattro delle ventuno
+sono lì: la riga va scritta.
+
 ⚠ **Il criterio 9 di questo pacchetto si misura contro lo stato consegnato da `DRAW-015`,
 non contro `main`**: partire da 38 e arrivare a 38 è «non peggiora». **Arrivare sotto è il
 miglioramento che I-067 chiede.**

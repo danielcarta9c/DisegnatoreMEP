@@ -529,7 +529,66 @@ Su `main` quel caso **passa**, e uno `xfail` stretto che passa è un **falliment
 17. Qui fallisce davvero, quindi è contato fra gli `xfail`. **Zero `skip` e zero `xfail`
 nuovi resta vero.**
 
-<!-- L'elenco delle ventuno, file per file, si chiude qui sotto. -->
+### Le ventuno, file per file
+
+Le **38 di questo ramo**, raccolte per file (`pytest -q --tb=no -rf`):
+
+| file | fallite qui | categoria dichiarata nel file |
+|---|---|---|
+| `layout/test_stacchi_minimi_e_interasse.py` | 8 | difende il motore |
+| `layout/test_rami_di_servizio.py` | 8 | difende il motore |
+| `layout/test_posa_a_fasi.py` | 5 | **difendeva il solutore** |
+| `acceptance/test_drawing.py` | 4 | **nessuna — è fuori da `tests/layout/`** |
+| `layout/test_accessori_appesi.py` | 3 | difende il motore |
+| `layout/test_assi_dorsali_tee.py` | 2 | **difendeva il solutore** |
+| `layout/test_catena_macchina.py` | 2 | difende il motore |
+| `layout/test_ordine_degli_stacchi.py` | 2 | difende il motore |
+| `layout/test_consegna_e_verifica.py` | 1 | difende il motore |
+| `layout/test_costo_peso.py` | 1 | **difendeva il solutore** |
+| `layout/test_format_choice.py` | 1 | difende il motore |
+| `rules/test_ordine_semantico.py` | 1 | — |
+
+**Le ventuno nuove sono le nove righe in mezzo**: `test_posa_a_fasi` (5),
+`acceptance/test_drawing` (4), `test_accessori_appesi` (3), `test_assi_dorsali_tee` (2),
+`test_catena_macchina` (2), `test_ordine_degli_stacchi` (2), `test_consegna_e_verifica` (1),
+`test_costo_peso` (1), `test_format_choice` (1). Le altre tre righe — 8 + 8 + 1 = **17** —
+sono **le stesse che falliscono su `main`**.
+
+### La causa è una sola, e non è «il solutore mancava a queste prove»
+
+Otto delle ventuno stanno in file che dichiarano di aver difeso il **solutore**, e quelle non
+sorprendono. **Le altre tredici no**, e vanno spiegate invece che archiviate: dicono
+«difende il motore», o non dicono niente.
+
+**Compongono l'impianto senza un piano.** Riprodotta su una sola, che è la più corta:
+
+```
+$ .venv/bin/python -m pytest \
+    "tests/layout/test_accessori_appesi.py::test_nessun_simbolo_si_sovrappone_a_un_altro" -q
+E  disegnatore_mep.layout.errors.LayoutError: run w2-a-a-a still passes under
+   mixing-valve-thermostatic after breaking for it: the accessory sits where its own run
+   bends back into it, give the run a longer straight length
+```
+
+È l'impianto 1 posato **deterministicamente, senza piano**: la tratta dell'ACS porta tre
+accessori in linea e non trova il rettilineo che pretendono. Su `main` la stessa posa
+riusciva **perché il solutore spostava i pezzi finché l'instradamento veniva**.
+
+**Non è un difetto nuovo del motore: è il prezzo di D-151 già dichiarato e già misurato** —
+`misura-senza-solutore.txt`, §5: senza solutore e senza piano tutti e cinque gli impianti
+finiscono sul formato più grande col ripiego, con 2–6 tratte cedute e 11–19 rilievi
+bloccanti. Le stesse proprietà, **sulla via vigente**, le tavole ce l'hanno: le cinque escono
+a **zero tratte cedute**.
+
+**Perché non le ho chiuse qui.** Chiuderle vuol dire riscrivere tredici prove perché misurino
+la stessa proprietà **dal piano** — è quello che è stato fatto per
+`test_il_primo_impianto_esce_dal_proprio_piano` — e la riscrittura di tredici prove, ciascuna
+col proprio impianto di partenza, è un pacchetto, non una coda. **Nessuna è stata messa a
+`skip` o a `xfail`.** `DRAW-016` punto 8 le prende in carico una per una.
+
+⚠ **E c'è un buco nella categorizzazione:** `tests/acceptance/test_drawing.py` **non ha la
+riga `# categoria:`**, perché il punto 5 di `DRAW-015` diceva «i 36 file di `tests/layout/`» e
+quello sta altrove. Quattro delle ventuno sono lì. La riga va scritta, ed è in `DRAW-016`.
 
 ---
 
