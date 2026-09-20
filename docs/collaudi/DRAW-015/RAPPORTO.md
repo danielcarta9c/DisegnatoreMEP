@@ -497,7 +497,39 @@ il solo blocco che li usa; **nessuna riga di codice cambia**. È **fuori dal per
 dichiarato** del pacchetto e lo dichiaro: l'ho fatto perché un cancello rotto non misura
 niente, e perché la correzione è meccanica e verificabile.
 
-<!-- Il saldo della suite si scrive qui, con le due misure a confronto. -->
+### Il saldo della suite, misurato sui due lati
+
+Stessa versione dell'ambiente, stesso comando, `main` estratto in una cartella pulita e
+importato con `PYTHONPATH` — **non** con l'installazione modificabile, che farebbe importare
+al lato `main` il sorgente del ramo. È l'errore che questa misura ha già fatto una volta.
+
+```
+$ cd <copia pulita di origin/main> && PYTHONPATH=$PWD/src python -m pytest -q
+17 failed, 1509 passed, 24 skipped, 11 xfailed in 2320.77s (0:38:40)
+
+$ .venv/bin/python -m pytest -q
+38 failed, 1564 passed, 24 skipped, 12 xfailed in 612.31s (0:10:12)
+```
+
+| | `main` | questo ramo |
+|---|---|---|
+| prove raccolte | 1561 | **1638** (+77: le prove nuove) |
+| passate | 1509 | **1564** (+55) |
+| **fallite** | 17 | **38 (+21)** |
+| `skip` | 24 | **24** — nessuno nuovo |
+| `xfail` | 11 | 12 |
+
+⚠ **Il criterio 8 chiedeva «saldo non peggiore», e non è raggiunto: ventuno prove in più
+sono rosse.** Non lo nascondo dietro il +55 delle prove nuove.
+
+**Lo `xfail` in più non è nuovo:** i marcatori sono **dodici su tutt'e due i lati**
+(`grep -rn xfail tests/`), e uno è `strict=True` sul quinto impianto
+(`test_zone_dei_pezzi_grossi.py::test_nessun_raccordo_sta_a_sinistra_di_cio_che_unisce`).
+Su `main` quel caso **passa**, e uno `xfail` stretto che passa è un **fallimento**: sta fra i
+17. Qui fallisce davvero, quindi è contato fra gli `xfail`. **Zero `skip` e zero `xfail`
+nuovi resta vero.**
+
+<!-- L'elenco delle ventuno, file per file, si chiude qui sotto. -->
 
 ---
 
