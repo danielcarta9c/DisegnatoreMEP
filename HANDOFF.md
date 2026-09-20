@@ -32,7 +32,8 @@ Una sola cosa attraversa la catena: **il grafo dell'impianto**. La tavola è una
 L'agente non modifica connettività approvata: sposta pezzi, non collega pezzi.
 
 **I passi 4-6 sono nuovi (D-151) e sostituiscono il solutore.** `improve.py` e la fase del
-tronco non decidono più la posa. Restano agli atti, non cancellati.
+tronco non decidono più la posa. Restano agli atti, non cancellati. **Il passo 6 si costruisce
+adesso** (D-153): oggi l'anello lo chiude l'agente a mano, ed è il pacchetto attivo.
 
 ## Autorità — **un agente solo** (D-147), con agenti paralleli in sessione (D-152)
 
@@ -61,8 +62,8 @@ senza approvazione non si fonde.
   cinque tavole (D-148, D-150), e proprio guardandole il PO ha fermato la linea del solutore.
   Quello che di `DRAW-014` resta vivo è in `main` col ramo corrente; quello che resta
   incompiuto è nominato qui sotto.
-- **Sei disposizioni del PO fra il 19 e il 20 settembre** hanno cambiato la rotta, e sono
-  `D-147`–`D-152`:
+- **Otto disposizioni del PO fra il 19 e il 20 settembre** hanno cambiato la rotta, e sono
+  `D-147`–`D-154`:
   - **D-147** — agente unico; **D-152** — agenti paralleli in sessione, mai sessioni;
   - **D-148** — **oltre l'A3 si va**: i formati ordinari sono A4, A3, A2, A1. Dichiarata
     momentanea dal PO stesso;
@@ -71,7 +72,14 @@ senza approvazione non si fonde.
   - **D-150** — **una tratta che non si instrada non uccide più la tavola**: ripiego
     dichiarato, marcato `unresolved`, nominato dal preflight con un rilievo bloccante;
   - **D-151** — **il disegno lo compone un agente, non lo trova un solutore.** È la
-    decisione che governa tutto il resto.
+    decisione che governa tutto il resto;
+  - **D-153** — **il revisore si costruisce subito**, ed è lo strumento con cui si scrivono
+    le regole. Ne discende la forma di una regola: **un controllo che sa nominare la propria
+    violazione**;
+  - **D-154** — **tre macro fasce verticali** (generazione · accumuli e scambiatori ·
+    distribuzione); **prima le autostrade, dritte**; la tre vie **non spezza il tratto**;
+    più generatori o più terminali ⇒ **collettore verticale**. Vivono in
+    `docs/regole-del-piano.md`, che il PO ha dichiarato aperto.
 - **La prova che ha deciso D-151** è in `docs/collaudi/PROVA-PIANO/`: impianto 1 e impianto 5
   composti a mano ed eseguiti dal motore, **zero rilievi bloccanti e zero tratte cedute**,
   con un giro da **~30 secondi** contro i **10–40 minuti** del solutore.
@@ -79,6 +87,8 @@ senza approvazione non si fonde.
   molto da migliorare ancora, non assomiglia a come dovrebbe essere un disegno» (I-082).
   Resta storto, misurato: il disegno è una **fascia nella metà alta** del foglio, nessuno
   distribuisce in verticale; l'impianto 5 ha **quattordici incroci**.
+- **Chi compone legge prima** `docs/regole-del-piano.md`: è l'elenco delle regole, ciascuna
+  con la propria fonte e il proprio controllo. Le righe marcate `da scrivere` sono lavoro.
 - **Chi tocca il disegno legge prima**: `docs/ARCHITETTURA-DEL-PIANO.md`, e la ricerca del
   4 agosto `docs/fonti/2026-08-04-come-si-disegna-uno-schema-funzionale.md`, che è il
   documento che aveva già detto tutto e che il progetto non ha attuato per sei settimane.

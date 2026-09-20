@@ -42,7 +42,7 @@ linee si interrompono sotto i simboli, la legenda, le sigle, i validatori, il re
 ## L'esito
 
 **Impianto 1.** La mandata è una retta sola, da PDC-01 al radiatore, senza una piega; il ritorno
-è la sua parallela. Le due pompe sono incolonnate (D-119) e scendono sui collettori con uno
+è la sua parallela. Le due pompe sono incolonnate (D-041 + D-118) e scendono sui collettori con uno
 stacco corto. Il gruppo di servizio esce dalla fila e si appende sotto il ritorno (D-118).
 L'ordine del processo si legge da sinistra a destra (D-060).
 

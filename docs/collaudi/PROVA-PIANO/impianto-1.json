@@ -5,7 +5,7 @@
     "I-057 — l'asse e' pdc-master / collettori / accumulo: le porte stanno tutte",
     "sulle stesse due quote, quindi mandata e ritorno sono DUE RETTE che",
     "attraversano il foglio, e nessuna delle due si piega mai.",
-    "D-119 — pdc-slave impilata sopra, scende sul collettore con un solo stacco.",
+    "D-041 + D-118 — pdc-slave impilata sopra, scende sul collettore con un solo stacco.",
     "D-060 — da sinistra a destra: generatori, collettori, accumulo, distribuzione.",
     "D-118 — il gruppo di servizio esce dalla fila e si appende SOTTO il ritorno.",
     "I-017 — il prelievo ACS sta a destra, nella zona della distribuzione.",

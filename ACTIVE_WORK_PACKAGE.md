@@ -1,6 +1,6 @@
-# DRAW-015 — Il repository segue l'architettura del piano
+# DRAW-015 — Il revisore, e il repository che lo regge
 
-**Titolo:** Il repository segue l'architettura del piano
+**Titolo:** Il revisore, e il repository che lo regge
 **Scritto e svolto da:** l'agente unico (**D-147**), che può lanciare agenti paralleli in
 sessione (**D-152**, `docs/governance/OPERATING_MODEL.md` §1.2.2)
 **Data:** 2026-09-20
@@ -8,172 +8,181 @@ sessione (**D-152**, `docs/governance/OPERATING_MODEL.md` §1.2.2)
 **Release:** 0.3 — generalizzazione
 **Approvazione della fusione:** **del PO**, e si dà guardando le tavole (D-147, D-146)
 
-> **Questo pacchetto non migliora nessuna tavola, e non deve provarci.** Mette il
-> repository nella forma che l'architettura nuova richiede, e si giudica su una cosa sola:
-> **le tavole che uscivano prima escono anche dopo, identiche o migliori.** Una
-> ristrutturazione che perde una tavola è fallita, per bella che sia.
+> **Il cuore di questo pacchetto è il revisore**, e la ristrutturazione gli sta sotto perché
+> senza quella il revisore non ha su cosa lavorare: gli serve un **piano** che sia un
+> oggetto vero e non uno script di prova, e gli servono **regole che siano controlli**.
+>
+> Il PO ha corretto l'ordine dei lavori che l'agente aveva proposto, e la ragione è nella sua
+> frase: il revisore **è lo strumento con cui si scrivono le regole**, non il premio finale.
 
 ---
 
 ## Perché
 
-Il PO, il 20 settembre, approvando l'architettura:
+Il PO, il 20 settembre, sull'ordine dei lavori:
 
-> «Approviamo questa nuova architettura della skill… dobbiamo preparare un hand off per la
-> prossima sessione che sarà prettamente di ristrutturazione di tutto il materiale che
-> abbiamo in git per sistemare tutto con la nuova architettura di skill e nuova impostazione
-> di project management.»
+> «Secondo me il revisore va costruito subito perché è proprio quello che può aiutarci a
+> scrivere le regole una tavola alla volta. Altrimenti torniamo a fare tavole orribili e a
+> stressare me con tavole che qualunque AI confrontandole con quelle fatte da un disegnatore
+> vero riconosce subito che non vanno.»
 
-Oggi il repository descrive un prodotto che non esiste più. `docs/SKILL.md` e l'ADR 0005
-raccontano un solutore che minimizza una somma pesata; il pezzo che ha prodotto le due
-tavole buone è uno **script di prova**, `scripts/piano.py`, dentro una cartella di collaudo;
-e trentasei prove in `tests/layout/` difendono comportamenti di cui una parte è stata
-revocata. Chi apre la prossima sessione, leggendo il repository, ricostruirebbe il solutore.
+E sul contenuto delle regole:
 
-## Le due disposizioni che lo governano
+> «Tre macro fasce verticali di disegno: generazione, accumuli e scambiatori, distribuzione.
+> Prima le autostrade dritte il più possibile (la valvola a tre vie non deve spezzare il
+> tratto, allineare inlet-outlet; se ho più generatori o più terminali si fa un collettore
+> verticale… ecc).»
+
+Oggi il repository descrive un prodotto che non esiste più: `docs/SKILL.md` e l'ADR 0005
+raccontano un solutore che minimizza una somma pesata, e il pezzo che ha prodotto le due
+tavole buone è uno **script di prova** in una cartella di collaudo. Chi apre la prossima
+sessione, leggendo il repository, ricostruirebbe il solutore.
+
+## Le quattro disposizioni che lo governano
 
 | | |
 |---|---|
-| **D-151** | Il disegno lo compone un agente: pianificatore → motore → revisore. Il solutore esce dalla catena e resta agli atti |
-| **D-152** | Due agenti paralleli dentro la sessione, mai due sessioni. Perimetro dichiarato prima, un file o una coda |
+| **D-151** | Il disegno lo compone un agente: pianificatore → motore → revisore |
+| **D-152** | Due agenti paralleli dentro la sessione, mai due sessioni |
+| **D-153** | Il revisore si costruisce **subito**, ed è lo strumento con cui si scrivono le regole. **Una regola è un controllo che sa nominare la propria violazione** |
+| **D-154** | Tre macro fasce verticali; prima le autostrade dritte; la tre vie non spezza il tratto; più generatori o più terminali ⇒ collettore verticale |
 
-Il documento da cui si parte è `docs/ARCHITETTURA-DEL-PIANO.md`, che è **vigente**.
+Documenti: `docs/ARCHITETTURA-DEL-PIANO.md` (vigente) e `docs/regole-del-piano.md` (aperto).
 
-## Le cinque cose da fare
+## Le sei cose da fare
 
-### 1. Il piano diventa un pezzo del prodotto
+### 1. Il revisore — l'anello si chiude
 
-`scripts/piano.py` esce dagli script e diventa codice: un **formato del piano** dichiarato
-(modello `pydantic`, come tutto il resto), un **esecutore**, e un comando della CLI. Il
-formato è quello che la prova ha già usato — `formato`, `pezzi: {id: {x, y}}` — più le note,
-che sono parte del piano e non un commento: dicono **quale regola** ha messo il pezzo lì.
+Legge quello che è uscito e **corregge il piano**, poi rifà girare. Entra con:
 
-**Il piano non contiene ciò che si deduce.** La rotazione di un raccordo, quella di un pezzo
-con un attacco solo e la mappa degli attacchi si calcolano dai vicini
-(`ARCHITETTURA-DEL-PIANO.md` §4). L'unica eccezione nota è **un pezzo con due attacchi che
-non è una macchina** — il gruppo di riempimento: oggi la sua rotazione si scrive a mano, e il
-pacchetto deve **nominare il buco**, non necessariamente tapparlo.
+- la **tavola**, e la guarda — non solo i numeri (**D-153** punto 3). Con accanto le tavole
+  di riferimento del disegnatore del PO, `docs/input-pm/riferimenti-grafici/`;
+- i **rilievi** del preflight e le misure della geometria;
+- il **piano** che ha prodotto quella tavola e **`docs/regole-del-piano.md`**.
 
-### 2. Il solutore esce dalla catena, e si vede che è uscito
+Esce con **un piano corretto**, e ogni spostamento porta **il nome della regola** che lo
+motiva. Si ferma quando non resta nessun rilievo bloccante, quando un giro **non migliora**,
+o al tetto di giri — e in tutti e tre i casi **dice perché si è fermato**.
 
-`improve.py`, la fase del tronco di `spine.py` e `dilate.py` **non vengono cancellati**: il
-percorso vigente non li chiama più, e in testa a ciascuno c'è una riga che dice **quando è
-morto, perché, e dove è finito il suo lavoro**. Un file che nessuno chiama e non lo dichiara
-è una trappola per chi arriva dopo: è esattamente com'è nata la ricerca del 4 agosto,
-scritta e mai attuata per sei settimane.
+Ogni giro lascia la propria traccia: piano → rilievi → piano. È quella traccia che diventa
+una riga nuova in `docs/regole-del-piano.md`, ed è il motivo per cui il revisore viene prima
+delle regole e non dopo.
 
-### 3. Le prove dicono che cosa difendono adesso
+### 2. Le quattro regole del PO diventano controlli
 
-Trentasei file in `tests/layout/`. Ognuno finisce in una delle tre categorie, e la categoria
-si scrive nel file:
+Senza controllo il revisore non le può usare. Servono, per **A1** (tre fasce), **B1**
+(autostrade dritte), **B3** (collettore verticale) e **B4** (la tre vie non spezza il
+tratto), quattro rilievi che **nominino la violazione** e la dicano su una tavola.
 
-- **difende il motore** — resta e deve restare verde (instradamento, accessori appesi,
-  interruzioni, legenda, sigle, griglia, formati);
-- **difendeva il solutore** — si riscrive dichiarando che cosa difende adesso, oppure si
-  **archivia dichiarando la decisione che l'ha revocata**. **Non si converte in `skip`, non
-  si converte in `xfail`, non si allenta nessuna soglia**;
-- **difende una regola del piano** — è la categoria nuova, e oggi è quasi vuota: ci
-  finiscono le tre regole nate componendo il 20 settembre.
+**B1 chiede una cosa che oggi non c'è:** la geometria non sa **quali tratte sono autostrada**,
+e `RUN_WITH_TOO_MANY_BENDS` conta una piega della dorsale come una piega di uno stacchetto.
+È esattamente il difetto che ha generato D-151, e va chiuso qui.
 
-### 4. I documenti dicono il prodotto che c'è
+### 3. Il piano diventa un pezzo del prodotto
+
+`scripts/piano.py` esce dagli script: **formato** dichiarato (modello `pydantic`),
+**esecutore**, e un **comando della CLI**. Il formato è quello che la prova ha già usato —
+`formato`, `pezzi: {id: {x, y}}` — più le note, che sono parte del piano: dicono **quale
+regola** ha messo il pezzo lì.
+
+**Il piano non contiene ciò che si deduce** (C2, C3 in `regole-del-piano.md`). Buco noto da
+nominare: un pezzo con **due** attacchi che non è una macchina — il gruppo di riempimento.
+
+### 4. Il solutore esce dalla catena, e si vede che è uscito
+
+`improve.py`, la fase del tronco di `spine.py` e `dilate.py` **non si cancellano**: il
+percorso vigente non li chiama più, e in testa a ciascuno una riga dice **quando è morto,
+perché, e dove è finito il suo lavoro**. Un file che nessuno chiama e non lo dichiara è una
+trappola: è così che la ricerca del 4 agosto è rimasta inattuata per sei settimane.
+
+### 5. Le prove dicono che cosa difendono adesso
+
+Trentasei file in `tests/layout/`, ognuno in una delle tre categorie, scritta dentro:
+**difende il motore** (resta verde), **difendeva il solutore** (si riscrive dichiarando che
+cosa difende adesso, o si archivia dichiarando la decisione che l'ha revocato — **mai `skip`,
+mai `xfail`, nessuna soglia allentata**), **difende una regola del piano** (categoria nuova,
+oggi quasi vuota).
+
+### 6. I documenti dicono il prodotto che c'è
 
 `docs/SKILL.md`, ADR 0005, `PROJECT_STATE.md`, `README.md`, `AGENTS.md`, `CLAUDE.md`,
 `docs/plans/2026-09-03-release-plan.md`. Regola unica: **un documento o è vigente, o dice in
-testa che è storia e quale decisione l'ha superato.** Non esiste un terzo stato, ed è il
-terzo stato che ha fatto danno.
+testa che è storia e quale decisione l'ha superato.** Il terzo stato è quello che fa danno.
 
-### 5. Il primo foglio di regole del piano
-
-Un solo file, `docs/regole-del-piano.md`, e **non si scrive in astratto** — è così che è nata
-la funzione di costo. Ci entra solo ciò che ha già una fonte:
-
-- le **regole che il PO ha dato**: D-144 (tratto dritto dal circolatore, una curva, dorsale,
-  terminali a pettine), D-145 (organi di servizio addosso al pezzo che servono), D-119
-  (generatori incolonnati), D-118, D-060 (l'ordine del processo da sinistra a destra);
-- le **tre nate componendo** il 20 settembre, ciascuna con accanto **la tavola che l'ha
-  generata**: un rettilineo per la tratta con più accessori in linea; un pezzo si prende dal
-  lato delle sue porte; due linee fra gli stessi due raccordi si separano in quota;
-- la **composizione a corsie** della ricerca del 4 agosto §2.2, che è l'unica misura che
-  abbiamo su come sono fatte due tavole vere.
-
-Niente regole dedotte a tavolino. Una riga senza fonte non entra.
+**E una correzione di citazione**: «generatori a sinistra, impilati in verticale» è attribuita
+a **D-119** in `place.py`, `improve.py`, `test_zone_dei_pezzi_grossi.py`, nelle note dei due
+piani e nel README della prova. D-119 è l'area di rispetto dei raccordi. La regola è
+**D-041 + D-118**.
 
 ## Perimetro
 
-**Dentro:** `scripts/piano.py` e la sua nuova casa in `src/disegnatore_mep/`; `cli.py`;
-`layout/improve.py`, `layout/spine.py`, `layout/dilate.py` (le righe che dichiarano, e le
-chiamate che si tolgono dal percorso vigente); `tests/layout/**`; i documenti dell'elenco 4;
-`docs/regole-del-piano.md` (nuovo); `docs/collaudi/PROVA-PIANO/**`.
+**Dentro:** il revisore e la sua casa in `src/disegnatore_mep/`; `scripts/piano.py` e la sua
+casa nuova; `cli.py`; `validation/**` (i controlli nuovi); `layout/geometry.py` (che cos'è
+un'autostrada); `layout/improve.py`, `layout/spine.py`, `layout/dilate.py` (le righe che
+dichiarano e le chiamate che si tolgono); `tests/**`; i documenti dell'elenco 6;
+`docs/regole-del-piano.md`; `docs/collaudi/PROVA-PIANO/**` e `docs/collaudi/DRAW-015/`.
 
-**Fuori:** il motore che funziona — `route.py`, `inline.py`, `place.py` quanto alla posa
-degli accessori appesi, `legend.py`, `labels.py`, `addresses.py`, `graphics/**`,
-`validation/**` — salvo quando una cura dichiarata lo richiede, e allora si dice perché.
-**Fuori** qualunque decisione MEP che il PO non abbia dato, e qualunque convenzione grafica.
+**Fuori:** il motore che funziona — `route.py`, `inline.py`, `place.py` quanto alla posa,
+`legend.py`, `labels.py`, `addresses.py`, `graphics/**` — salvo quando una cura dichiarata lo
+richiede, e allora si dice perché. **Fuori** qualunque decisione MEP che il PO non abbia dato
+e qualunque convenzione grafica non dettata da D-154.
 
-**Non si migliora nessuna tavola in questo pacchetto.** Se componendo viene voglia di
-sistemare la fascia nella metà alta o i quattordici incroci dell'impianto 5, si scrive nel
-rapporto e si lascia al pacchetto dopo.
+**Non si inventa nessuna regola.** Una riga di `regole-del-piano.md` senza fonte è un difetto
+del pacchetto, non un contributo.
 
 ## Criteri di accettazione
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-1. **Le due tavole composte escono dal percorso nuovo**, cioè dalla CLI e non da uno script
-   in una cartella di collaudo, e sono **identiche o migliori** a quelle del 20 settembre:
-   **zero rilievi bloccanti, zero tratte cedute** su entrambe. Il rapporto le porta in PDF,
-   per prime (D-146).
-2. **I cinque impianti di prova producono ancora una tavola** per la via che avevano
-   (D-148, D-150), e per ciascuno il rapporto dice **formato** e **tratte cedute**. Nessuno
-   peggiora.
-3. **Nessun percorso vigente chiama più il solutore**, e lo mostra un comando: né
-   `improve_sheet`, né la fase del tronco, né la dilatazione. I file esistono e dichiarano
-   in testa quando sono morti e perché.
-4. **Ogni file di `tests/layout/` ha la sua categoria scritta dentro**, e il conteggio delle
-   tre categorie sta nel rapporto. **Zero `skip` e zero `xfail` nuovi**, e lo mostra un
-   comando.
-5. **Il saldo della suite non peggiora** rispetto al ramo di partenza. Le prove che
-   difendevano un comportamento **revocato dal PO** si riscrivono o si archiviano
-   **dichiarando la decisione che le ha revocate** — non si zittiscono.
-6. **Nessun documento resta in terzo stato**: un comando elenca i file di `docs/` toccati e,
-   per ciascuno, la riga che dice «vigente» o «storia, superato da D-nnn».
-7. **`docs/regole-del-piano.md` esiste e ogni riga ha una fonte** — una decisione, un input
-   del PO, la ricerca del 4 agosto, o la tavola che l'ha generata. Una riga senza fonte è un
-   criterio non raggiunto.
-8. **Il formato del piano è documentato e validato**: un piano malformato dà un errore che
-   dice cosa manca, non una traccia di stack. Una prova lo mostra.
-9. **Il buco noto è nominato**: il pezzo a due attacchi che non è una macchina.
+1. **Il revisore gira su almeno tre impianti** e il rapporto porta, per ciascuno, **la tavola
+   prima e la tavola dopo** e le misure di entrambe. Se non migliora, si dice.
+2. **Ogni correzione del revisore porta il nome della regola** che la motiva. Una correzione
+   senza regola è un criterio non raggiunto.
+3. **Il revisore non peggiora in silenzio**: se un giro peggiora una misura, si ferma e lo
+   nomina. Una prova lo mostra.
+4. **Le quattro regole di D-154 hanno ciascuna un controllo** che nomina la violazione, e per
+   ciascuna una tavola su cui si vede. **Compresa B1**, che richiede di distinguere
+   l'autostrada dal corredo nella geometria.
+5. **Le due tavole composte restano a zero**: zero rilievi bloccanti, zero tratte cedute, dal
+   percorso nuovo — la CLI, non uno script di collaudo.
+6. **I cinque impianti di prova producono ancora una tavola** per la via che avevano (D-148,
+   D-150), e nessuno peggiora. Formato e tratte cedute per ciascuno, nel rapporto.
+7. **Nessun percorso vigente chiama più il solutore**, e lo mostra un comando.
+8. **Ogni file di `tests/layout/` ha la sua categoria scritta dentro**, con il conteggio nel
+   rapporto, **zero `skip` e zero `xfail` nuovi**, e il saldo della suite non peggiora.
+9. **Nessun documento resta in terzo stato**, e la citazione D-119 è corretta ovunque.
+10. **Il formato del piano è documentato e validato**: un piano malformato dà un errore che
+    dice cosa manca, non una traccia di stack.
 
 ## Come si lavora, se si lanciano agenti paralleli (D-152)
 
-La divisione pulita di questo pacchetto è **codice** (1, 2, 3, 8) e **documenti** (4, 6, 7):
-due code che non toccano gli stessi file. Il perimetro di ciascun agente si dichiara **prima**
-di lanciarlo. Nessuno dei due consegna, fonde o chiude niente, e **quello che riferiscono non
-è una misura finché la sessione non l'ha rieseguito**.
+La divisione pulita è **il revisore e i controlli** (1, 2, 4) da una parte, **la
+ristrutturazione** (3, 5, 6) dall'altra: code diverse, file diversi. Il perimetro di ciascun
+agente si dichiara **prima** di lanciarlo. Nessuno dei due consegna, fonde o chiude niente, e
+**quello che riferiscono non è una misura finché la sessione non l'ha rieseguito**.
 
 ## Consegna
 
 Una PR sola verso `main`, **non fusa finché il PO non ha visto le tavole e detto di sì**.
 
-**Le tavole, per prime** (D-146): le due composte, e le cinque della via ordinaria con
-formato e tratte cedute. Rapporto in `docs/collaudi/DRAW-015/RAPPORTO.md`.
+**Le tavole, per prime** (D-146): il prima e il dopo del revisore, e le cinque della via
+ordinaria con formato e tratte cedute. Rapporto in `docs/collaudi/DRAW-015/RAPPORTO.md`.
 
 **Prima di chiedere l'approvazione:**
 
-1. **Guarda le tavole.** Se una ti sembra sbagliata e i numeri dicono che va bene, scrivilo.
-2. **Misura la non-regressione prima, non dopo.** Qui sono l'1, il 2 e il 5.
+1. **Guarda le tavole**, e mettile accanto a quelle del disegnatore del PO. Se una ti sembra
+   sbagliata e i numeri dicono che va bene, scrivilo.
+2. **Misura la non-regressione prima, non dopo.** Qui sono il 5, il 6 e l'8.
 3. **Se una disposizione del PO ammette due letture, fermati e chiedi al PO.**
 
 ## Quello che questo pacchetto **non** chiude
 
-- **Il revisore non si costruisce qui.** D-151 lo mette in catena; oggi l'anello lo chiude
-  l'agente a mano, ed è già abbastanza per lavorare. Costruirlo è il pacchetto dopo, e va
-  costruito **dopo** che qualche giro a mano avrà detto che forma hanno i rilievi utili.
-- **Le tavole non migliorano qui**, e il PO ha già detto che non somigliano a un disegno
-  (I-082). Il primo pacchetto dopo la ristrutturazione è quello: **la fascia nella metà alta**
-  — nessuno distribuisce in verticale — e **i quattordici incroci dell'impianto 5**.
-- **La domanda del PO sul seguito resta aperta** (I-083): la proposta dell'agente è di
-  **non** scrivere tutte le regole in astratto, e di separare da subito le due code —
-  difetti del motore e difetti del pianificatore — perché non si contendono niente. Ma è una
-  proposta: decide il PO.
-- **Il formato definitivo** (D-148 è dichiarata momentanea) e **la riproducibilità** (D-023,
-  sospesa da D-151) restano domande aperte del PO.
+- **Le tavole non diventano belle qui.** Il revisore serve a **trovare** perché non lo sono,
+  e a scrivere le regole che le miglioreranno. Il primo difetto in coda è già nominato: il
+  disegno è **una fascia nella metà alta** (D3 in `regole-del-piano.md`).
+- **L'elenco delle regole non si chiude** — lo ha detto il PO (I-085, aperta): «vanno solo
+  aggiunte altre e migliorate».
+- **La composizione a corsie** della ricerca del 4 agosto non entra finché non l'avremo
+  composta noi almeno una volta.
+- **Il formato definitivo** (D-148 è momentanea) e **la riproducibilità** (D-023, sospesa da
+  D-151) restano domande aperte del PO.

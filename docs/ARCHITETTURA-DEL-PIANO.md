@@ -31,9 +31,16 @@ gli accessori appesi, orienta i raccordi, instrada in griglia, interrompe le lin
 simboli, impagina, disegna, e passa i rilievi. È la parte che la ricerca del 4 agosto
 dichiara sana (§3: «regge la meccanica»), ed è quella che **resta**.
 
-**Il revisore** legge i rilievi e **corregge il piano**. È D-114, scritta il 9 agosto e mai
-costruita: «il validatore AI smette di essere un cancello a valle e diventa supervisore in
-anello chiuso». L'anello si chiude quando non resta nessun rilievo bloccante.
+**Il revisore** legge i rilievi, **guarda la tavola** e **corregge il piano**. È D-114,
+scritta il 9 agosto e mai costruita: «il validatore AI smette di essere un cancello a valle e
+diventa supervisore in anello chiuso». L'anello si chiude quando non resta nessun rilievo
+bloccante — o quando un giro non migliora, e allora lo dice.
+
+**Si costruisce subito** (D-153, PO): non è il premio a valle, è **l'attrezzo con cui si
+scrivono le regole**, una tavola alla volta. E il suo metro non è solo numerico: mette la
+nostra tavola accanto a quelle del disegnatore del PO
+(`docs/input-pm/riferimenti-grafici/`), perché è lì che sta la differenza che si vede a colpo
+d'occhio.
 
 ## 2. Che cosa è morto, e perché
 
@@ -87,6 +94,15 @@ pianificatore.
 
 ## 5. Le regole, e come si scrivono
 
+**Vivono in `docs/regole-del-piano.md`**, e sono due cose insieme: ciò che il pianificatore
+segue e ciò che il revisore verifica.
+
+**Una regola è un controllo che sa nominare la propria violazione** (D-153). Se non si può
+misurare, il revisore non la può usare e resta un'intenzione: è la differenza fra
+«l'autostrada deve essere dritta» e «la tratta `s3` piega quattro volte, e su un'autostrada
+le pieghe ammesse sono zero». Una riga senza controllo si scrive `da scrivere`, ed è lavoro
+aperto.
+
 **Non si scrivono in astratto.** È così che è nata la funzione di costo: regole dedotte a
 tavolino, e poi il disegno non somigliava a niente.
 
@@ -96,7 +112,7 @@ settembre sono nate così, e sono buone proprio per questo.
 
 La fonte delle regole è, in quest'ordine:
 
-1. le **correzioni del PO**, `docs/input-pm/REGISTRO.md` — sono ottantatré, ed è il
+1. le **correzioni del PO**, `docs/input-pm/REGISTRO.md` — sono ottantacinque, ed è il
    giacimento principale;
 2. le **decisioni** che ne sono nate, `docs/DECISION_LOG.md`;
 3. la **ricerca del 4 agosto**, `docs/fonti/2026-08-04-come-si-disegna-uno-schema-funzionale.md`,
