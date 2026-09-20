@@ -145,7 +145,36 @@ si guardano a un passo, restituendo `(a, b, a, b)` — una spezzata che si riper
 
 ## 5. La suite
 
-*(da completare)*
+```
+.venv/bin/python -m pytest -q -p no:randomly
+17 failed, 1509 passed, 24 skipped, 11 xfailed in 2307.22s (0:38:27)
+```
+
+**Il criterio 7 diceva «non peggiora rispetto alla PR #44 (12 rosse, 1500 verdi)», e 17 non è
+12.** Quindi la domanda giusta non è il totale, è: **questo ramo rompe qualcosa che
+funzionava?** Misurato, rieseguendo le stesse diciassette sul codice di `main` (`a835006`),
+in un worktree separato e con i file di prova di `main`:
+
+```
+.venv/bin/python -m pytest -q -p no:randomly <le 17>
+17 failed in 528.69s (0:08:48)
+```
+
+**Tutte e diciassette sono già rosse su `main`. Regressioni introdotte da questo ramo: zero.**
+Nessuna delle diciassette vive in un file di prova che questo ramo tocca, quindi il confronto
+è a codice di prova identico.
+
+**Il numero «12 rosse» del criterio non è verificato**, e va detto invece di trascinarlo: non
+risulta da nessuna riesecuzione, e la misura di oggi dice che almeno diciassette di quelle
+rosse stanno su `main` da prima. Il saldo di questo ramo è **uguale o migliore** di quello di
+`main`, non peggiore — ma il criterio, come era scritto, resta **non raggiunto**.
+
+**Che cosa difendono le diciassette.** Quasi tutte il solutore: il riempimento che comprava
+pieghe (`test_costo_peso`), gli stacchi minimi del ciclo di miglioramento
+(`test_stacchi_minimi_e_interasse`, sette), il tronco dritto della fase che **D-151** ha
+tolto dalla catena (`test_posa_a_fasi`), i candidati verticali del ciclo
+(`test_assi_dorsali_tee`). Sono la categoria «difendeva il solutore» di `DRAW-015`, e lì si
+riscrivono dichiarando che cosa difendono adesso — **non si silenziano**.
 
 ---
 
