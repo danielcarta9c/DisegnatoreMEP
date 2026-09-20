@@ -708,11 +708,13 @@ risposta è migliore di un costo — «non torna come costo: D-139 resta, i mill
 fuori dalle voci di costo, e la proprietà che quel costo teneva su torna nella forma
 giusta». Ciò che mancava non era il costo: era il controllo.
 
-## 10ter. Due cose che avevo scritto e che la misura ha smentito
+## 10ter. Tre cose che avevo scritto e che la misura ha smentito
 
-**Prima le misure, poi il racconto** vale anche verso il proprio lavoro fatto, e queste due
+**Prima le misure, poi il racconto** vale anche verso il proprio lavoro fatto, e queste tre
 non le tolgo: le correggo qui, perché chi legge la storia del ramo legge prima i messaggi di
-commit.
+commit. **Due su tre sono la stessa trappola** — una misura di confronto fatta con
+l'installazione modificabile invece che con `PYTHONPATH`, così che il lato «`main`» importava
+il sorgente del ramo. È costata due volte.
 
 ### Il messaggio del commit `c5d5aed` descrive male quello che ha aggiustato
 
