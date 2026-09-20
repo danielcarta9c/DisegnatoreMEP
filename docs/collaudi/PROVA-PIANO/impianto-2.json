@@ -3,7 +3,7 @@
   "note": [
     "A1 (D-154) — tre fasce verticali: generazione x=30..70 (pdc), accumuli e",
     "scambiatori x=230..330 (volano, bollitore e i raccordi del ritorno primario),",
-    "distribuzione x>=400 (ventilconvettori, utenze).",
+    "distribuzione x>=400 (ventilconvettori). Il prelievo ACS NON e' qui: vedi la nota su A4.",
     "B1 (D-154) — mandata primaria a quota y=125 e ritorno primario a y=140: sono",
     "le due quote delle porte della pdc (water_supply +5, water_return +20 sui 30",
     "mm del simbolo), e tutto il resto si allinea a loro. volano.primary_in sta a",
@@ -14,7 +14,6 @@
     "bollitore. La linea le passa dentro, non le gira intorno.",
     "B2/D-144 — il secondario: mandata dritta da volano.secondary_out al",
     "ventilconvettore, ritorno affiancato e parallelo sotto, a y=140.",
-    "I-017 — il prelievo ACS sta a destra, nella fascia della distribuzione.",
     "I-061 — l'acqua fredda entra da vicino al bollitore, non attraversa il foglio.",
     "Le distanze fra i raccordi del ritorno primario sono 35 mm perche' ogni",
     "tratta deve ospitare i propri accessori in linea (I-044).",
@@ -27,29 +26,116 @@
     "facce perpendicolari non stanno mai sulla stessa retta. «volano -> ritorno ->",
     "bollitore» chiede che primary_out e coil_out — tutt'e due su faccia SINISTRA",
     "— arrivino allo stesso raccordo da parti opposte. Il rilievo B1 che resta su",
-    "queste due e' vero, e la cura non e' nel piano."
+    "queste due e' vero, e la cura non e' nel piano.",
+    "A4 (D-145) — il prelievo ACS sta ADDOSSO al pezzo che serve, con lo stacco minimo. NON va nella fascia della distribuzione: un confine di rete non ha una posizione propria (I-061, flow.BOUNDARY_FUNCTION). Correzione del 20 settembre 2026: era a 205,0 mm, ed era un errore di chi ha composto — A1 applicata a un pezzo che A1 non governa."
   ],
   "pezzi": {
-    "pdc": { "x": 30, "y": 120, "regola": "A1 — fascia della generazione, a sinistra" },
-    "tee-valve-safety-pdc-water-supply": { "x": 95, "y": 122.5, "regola": "B1 — sulla mandata primaria, y=125" },
-    "valve-safety-pdc-water-supply": { "x": 95, "y": 100, "regola": "A4 — addosso al proprio raccordo" },
-    "deviatrice": { "x": 140, "y": 120, "rotazione": 0, "regola": "B4 — in e out_a in linea sulla mandata" },
-    "volano": { "x": 300, "y": 120, "regola": "A1 — fascia degli accumuli; B1 — primary_in su y=125" },
-    "air-vent-volano-primary-out": { "x": 312.5, "y": 102.5, "regola": "A4 — sopra lo sfiato del volano" },
-    "drain-connection-volano-primary-in": { "x": 312.5, "y": 172.5, "regola": "A4 — sotto lo scarico del volano" },
-    "ritorno": { "x": 230, "y": 137.5, "regola": "B1 — sul ritorno primario, y=140" },
-    "tee-pressure-gauge-pdc-water-return": { "x": 200, "y": 137.5, "regola": "B1 — sul ritorno primario" },
-    "pressure-gauge-pdc-water-return": { "x": 200, "y": 165, "regola": "A4 — addosso al proprio raccordo" },
-    "tee-filling-unit-pdc-water-return-b": { "x": 165, "y": 137.5, "regola": "B1 — sul ritorno primario" },
-    "filling-unit-pdc-water-return": { "x": 165, "y": 165, "rotazione": 180, "regola": "A4; rotazione a mano — due attacchi e non e' una macchina" },
-    "inlet-filling-unit-pdc-water-return": { "x": 165, "y": 190, "regola": "A4 — sotto il gruppo di riempimento" },
-    "tee-expansion-connection-pdc-water-return": { "x": 130, "y": 137.5, "regola": "B1 — sul ritorno primario" },
-    "expansion-connection-pdc-water-return": { "x": 130, "y": 165, "regola": "A4 — addosso al proprio raccordo" },
-    "bollitore": { "x": 270, "y": 220, "regola": "A1 — fascia degli accumuli, sotto il volano" },
-    "tee-drain-connection-cold-bollitore-cold-in": { "x": 230, "y": 255, "regola": "I-061 — l'acqua fredda entra da vicino" },
-    "drain-connection-cold-bollitore-cold-in": { "x": 230, "y": 280, "regola": "A4 — sotto il proprio raccordo" },
-    "acquedotto": { "x": 195, "y": 255, "regola": "I-061 — confine di rete accanto al bollitore" },
-    "ventilconvettori": { "x": 420, "y": 117.5, "regola": "A1 — fascia della distribuzione; B2 — in su y=125" },
-    "utenze": { "x": 470, "y": 190, "regola": "A1/I-017 — il prelievo ACS nella fascia della distribuzione" }
+    "pdc": {
+      "x": 30,
+      "y": 120,
+      "regola": "A1 — fascia della generazione, a sinistra"
+    },
+    "tee-valve-safety-pdc-water-supply": {
+      "x": 95,
+      "y": 122.5,
+      "regola": "B1 — sulla mandata primaria, y=125"
+    },
+    "valve-safety-pdc-water-supply": {
+      "x": 95,
+      "y": 100,
+      "regola": "A4 — addosso al proprio raccordo"
+    },
+    "deviatrice": {
+      "x": 140,
+      "y": 120,
+      "rotazione": 0,
+      "regola": "B4 — in e out_a in linea sulla mandata"
+    },
+    "volano": {
+      "x": 300,
+      "y": 120,
+      "regola": "A1 — fascia degli accumuli; B1 — primary_in su y=125"
+    },
+    "air-vent-volano-primary-out": {
+      "x": 312.5,
+      "y": 102.5,
+      "regola": "A4 — sopra lo sfiato del volano"
+    },
+    "drain-connection-volano-primary-in": {
+      "x": 312.5,
+      "y": 172.5,
+      "regola": "A4 — sotto lo scarico del volano"
+    },
+    "ritorno": {
+      "x": 230,
+      "y": 137.5,
+      "regola": "B1 — sul ritorno primario, y=140"
+    },
+    "tee-pressure-gauge-pdc-water-return": {
+      "x": 200,
+      "y": 137.5,
+      "regola": "B1 — sul ritorno primario"
+    },
+    "pressure-gauge-pdc-water-return": {
+      "x": 200,
+      "y": 165,
+      "regola": "A4 — addosso al proprio raccordo"
+    },
+    "tee-filling-unit-pdc-water-return-b": {
+      "x": 165,
+      "y": 137.5,
+      "regola": "B1 — sul ritorno primario"
+    },
+    "filling-unit-pdc-water-return": {
+      "x": 165,
+      "y": 165,
+      "rotazione": 180,
+      "regola": "A4; rotazione a mano — due attacchi e non e' una macchina"
+    },
+    "inlet-filling-unit-pdc-water-return": {
+      "x": 165,
+      "y": 190,
+      "regola": "A4 — sotto il gruppo di riempimento"
+    },
+    "tee-expansion-connection-pdc-water-return": {
+      "x": 130,
+      "y": 137.5,
+      "regola": "B1 — sul ritorno primario"
+    },
+    "expansion-connection-pdc-water-return": {
+      "x": 130,
+      "y": 165,
+      "regola": "A4 — addosso al proprio raccordo"
+    },
+    "bollitore": {
+      "x": 270,
+      "y": 220,
+      "regola": "A1 — fascia degli accumuli, sotto il volano"
+    },
+    "tee-drain-connection-cold-bollitore-cold-in": {
+      "x": 230,
+      "y": 255,
+      "regola": "I-061 — l'acqua fredda entra da vicino"
+    },
+    "drain-connection-cold-bollitore-cold-in": {
+      "x": 230,
+      "y": 280,
+      "regola": "A4 — sotto il proprio raccordo"
+    },
+    "acquedotto": {
+      "x": 195,
+      "y": 255,
+      "regola": "I-061 — confine di rete accanto al bollitore"
+    },
+    "ventilconvettori": {
+      "x": 420,
+      "y": 117.5,
+      "regola": "A1 — fascia della distribuzione; B2 — in su y=125"
+    },
+    "utenze": {
+      "x": 275,
+      "y": 180,
+      "regola": "A4/D-145 — addosso al pezzo che serve, stacco minimo"
+    }
   }
 }

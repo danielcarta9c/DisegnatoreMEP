@@ -78,6 +78,11 @@ ha quattro attacchi: i cataloghi dei costruttori dichiarano anche lo sfiato, lo 
 sede della sonda. Sono **attacchi di servizio**, ciascuno esiste per una funzione precisa, e
 il catalogo li dichiara macchina per macchina.
 
+> ⚠ **Il piano non è un ingresso della skill** (**D-155**). Nasce al pezzo 3a e muore quando
+> la tavola è uscita: **non esiste «il piano dell'impianto N»**, e il pianificatore è un pezzo
+> che la skill deve **imparare a scrivere**. I cinque piani scritti a mano che si trovano nel
+> repository sono **materiale di collaudo** del pezzo 3a — il bersaglio che deve pareggiare.
+
 La catena è quella di `HANDOFF.md` §«Catena invariabile» e di
 `docs/ARCHITETTURA-DEL-PIANO.md` §1, e si legge in sette passi:
 
@@ -144,6 +149,19 @@ prova serve a **scoprire** i difetti, mai a **definire** cosa è giusto (D-092).
 istruzioni per un'AI e un pezzo fatto di programma non si scrivono, non si provano e non
 si correggono allo stesso modo.
 
+> **Due numerazioni, e sono la stessa cosa.** `docs/ARCHITETTURA-DEL-PIANO.md` conta **i
+> cinque pezzi della catena**; questa tabella conta **tutti i pezzi della skill**, dati
+> compresi. Si leggono così, e chi trova una differenza fra i due documenti segnali il
+> difetto invece di scegliere:
+>
+> | architettura | qui |
+> |---|---|
+> | 1 Capire | 1 |
+> | 2 Completare | 2 e 2bis |
+> | 3 Comporre | 3a |
+> | 4 Eseguire | 3b, con 4 (simboli), 5 (cartiglio) e 6 (verificare) che lo servono |
+> | 5 Rivedere | 3c, che riceve i rilievi del 6 |
+
 | # | Pezzo | Di cosa è fatto | Dove vive |
 |---|---|---|---|
 | 1 | **Capire** | **Agente AI**, istruito con file di testo `.md` che gli spiegano cosa deve tirare fuori dalla conversazione e cosa non deve inventare | istruzioni della skill |
@@ -151,7 +169,7 @@ si correggono allo stesso modo.
 | 2bis | **Assemblare** | **Programma deterministico**: mette in fila i pezzi lungo ogni tubo secondo la posizione che ogni regola dichiara | codice + la posizione dichiarata in ogni regola |
 | 3a | **Comporre** | **Agente AI**, che segue le regole di `docs/regole-del-piano.md` e produce un **piano**: un file leggibile e correggibile a mano | istruzioni della skill + il foglio di regole |
 | 3b | **Eseguire e misurare** | **Programma deterministico**: posa gli accessori appesi, orienta, instrada in griglia, interrompe, impagina, disegna, misura. Non cerca niente | codice |
-| 3c | **Rivedere** | **Agente AI**, che legge i rilievi, **guarda la tavola** e corregge il piano | istruzioni della skill |
+| 3c | **Rivedere** | **Agente AI**, che legge i rilievi, **guarda la tavola** e scrive **vincoli** per 3a — mai mosse (**D-157**). Insieme a lui, deterministici, i controlli e le condizioni d'arresto | istruzioni della skill + codice |
 | 4 | **Libreria simboli** | **Dati**: per ogni simbolo un disegno vettoriale e una scheda che dichiara taglia, attacchi, imbocchi ammessi, rotazioni e fonte | file, uno per simbolo |
 | 5 | **Cartiglio** | **Dati**: un modello di riquadro fornito dall'azienda, riempito coi dati del progetto | file fornito dal PO |
 | 6 | **Verificare** | **Programma deterministico**: controlli di correttezza e preflight di qualità. I rilievi che produce sono l'ingresso del pezzo 3c | codice |

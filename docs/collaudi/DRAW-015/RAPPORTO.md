@@ -67,12 +67,12 @@ stanno sulle stesse due quote, e la linea le passa dentro.
    (5,2 sull'1, 7,6 sul 2, 3,9 sul 4), ma il numero non rende quanto si vede: la tavola
    sembra un nastro appoggiato in alto. **È il primo difetto aperto del pianificatore**
    (D3), ed è mio, non del motore.
-2. **I confini di rete finiscono lontanissimi.** Il prelievo ACS sta all'estrema destra con
-   una linea arancione che attraversa mezzo foglio vuoto, su 2, 3 e 4. A occhio è la cosa
-   più brutta di queste tavole. È una conseguenza di A1 — «la distribuzione sta a destra» —
-   applicata a un pezzo che **non ha una posizione propria** (I-061: «va accanto all'utente
-   che serve»). **Il controllo A1 lo sa e lo esclude dal proprio conto; il piano no, e sono
-   stato io a metterlo là.** Va scritta la riga che dice dove sta un confine di rete.
+2. ~~**I confini di rete finiscono lontanissimi.**~~ **Trovato guardando, e chiuso** — §10bis.
+   Il prelievo ACS stava all'estrema destra con una linea che attraversava mezzo foglio
+   vuoto: **205, 502 e 152 mm** su 2, 3 e 4. Era una conseguenza di A1 — «la distribuzione
+   sta a destra» — applicata da me a un pezzo che **non ha una posizione propria** (I-061,
+   D-145). Adesso stanno fra **17,5 e 50 mm**. La cosa che conta non è la correzione: è che
+   **nessun numero me l'aveva detto**, e da lì viene **D-158**.
 3. **Sull'impianto 5 i quattordici incroci si vedono**, e stanno quasi tutti dove il
    circuito sanitario attraversa i tre secondari.
 4. **Una tavola mi sembra sbagliata e i numeri dicono che va bene**, ed è il rilievo che
@@ -321,6 +321,78 @@ niente, e perché la correzione è meccanica e verificabile.
 <!-- Il saldo della suite si scrive qui, con le due misure a confronto. -->
 
 ---
+
+## 10bis. Il PO ha fermato lo sviluppo, e da lì sono nate quattro decisioni
+
+**È la parte più importante di questa consegna, e non è codice.** Dopo aver visto le tavole
+il PO ha fermato il lavoro e ha dettato l'architettura della skill. Le quattro decisioni che
+ne escono — **D-155**, **D-156**, **D-157**, **D-158** — stanno nel registro, e
+`docs/ARCHITETTURA-DEL-PIANO.md` è stato riscritto su di esse.
+
+### Che cosa ho sbagliato, ed è il motivo per cui l'architettura va scritta
+
+**Ho trattato il piano come un artefatto da consegnare.** Ho composto a mano i piani 2, 3 e 4
+e li ho committati come prodotto. Il PO:
+
+> «Lo scopo del progetto è avere un pezzo della nostra skill che scrive i piani. Non è che
+> c'è un piano scritto per ogni impianto. […] Se è così il piano non è mai qualcosa di pronto
+> input ma qualcosa che dobbiamo imparare a far scrivere all'agente AI della skill.»
+
+Il pianificatore — il **pezzo 3** — non esiste, e per cinque tavole l'ho fatto io a mano.
+I cinque piani non sono prodotto: sono **il bersaglio** che il pianificatore deve pareggiare.
+
+### Il revisore a mosse è un solutore in miniatura
+
+Il PO, sul revisore:
+
+> «Perché il revisore non fa la stessa cosa e gli dice cosa correggere? Dandogli magari dei
+> punti sulla tavola da rispettare.»
+
+Ha ragione, e la misura di questa stessa consegna lo dimostra: **la prima correzione del
+revisore a mosse ha peggiorato su quattro impianti su cinque** (§2). Una mossa è cieca a
+quello che le altre regole stavano tenendo. Un **vincolo** no: si accumula, si controlla per
+coerenza prima di comporre, e sopravvive alla ricomposizione. Da qui **D-157**, e la
+scoperta che **un vincolo e una regola sono la stessa cosa** — una regola è uno schema, una
+correzione è lo schema istanziato su identificativi veri.
+
+Le cure deterministiche di `piano/revisore.py` sono **dichiarate superate in testa al
+modulo** ed escono in `DRAW-016`. Restano la misura, il punteggio e le condizioni d'arresto.
+
+### Il difetto che ha prodotto D-158, e che avevo introdotto io
+
+Il PO, sui confini di rete:
+
+> «Il confine di rete lo sanno anche i muri. Si fa lì accanto facendo un tratto piccolo di
+> tubazione, non serve metterlo da qualche parte specifica della tavola.»
+
+Misurato, la tratta che porta il prelievo ACS, **prima e dopo**:
+
+| impianto | prima | dopo |
+|---|---|---|
+| 1 | 50,0 mm | 50,0 mm |
+| 2 | **205,0 mm** | **20,0 mm** |
+| 3 | **502,5 mm** | **20,0 mm** |
+| 4 | **152,5 mm** | **17,5 mm** |
+| 5 | 32,5 mm | 32,5 mm |
+
+**I tre lunghi erano esattamente i tre piani che ho composto io applicando A1**; i due corti
+sono quelli composti il 19 e il 20 prima che A1 fosse un controllo. Ho **peggiorato una cosa
+che funzionava applicando una regola** a un pezzo che quella regola non governa — un confine
+di rete non ha una posizione propria (I-061) — e **niente me l'ha detto**.
+
+Il perché è architetturale, ed è la decisione più utile di tutta la conversazione: **D-145 è
+un vincolo della posa del motore, D-151 ha spostato la posa al piano, e il piano la
+sovrascrive.** Senza un rilievo sulla tavola finita, si viola in silenzio. **Da qui D-158:
+ogni vincolo di posa ha un rilievo sulla tavola consegnata**, e vale per A1, A2, A3 e A4.
+
+Il foglio delle regole lo aveva già previsto senza che nessuno ci facesse caso: il controllo
+di A2 dice «`test_zone_dei_pezzi_grossi.py` (posa); **`da scrivere` come rilievo sulla
+tavola**».
+
+**Sulla lunghezza come costo**, che il PO ha riaperto: D-145 punto 2 aveva già risposto, e la
+risposta è migliore di un costo — «non torna come costo: D-139 resta, i millimetri restano
+fuori dalle voci di costo, e la proprietà che quel costo teneva su torna nella forma
+giusta». Ciò che mancava non era il costo: era il controllo.
 
 ## 11. Come è stato diviso il lavoro (D-152)
 

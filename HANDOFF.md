@@ -3,9 +3,13 @@
 **Aggiornato:** 2026-09-20, alla consegna di `DRAW-015`
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
-> **Il 20 settembre il progetto ha cambiato architettura, e `DRAW-015` l'ha costruita.** Se
-> leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`: dice chi
-> decide cosa, e la divisione che ne esce è anche il modo in cui si legge ogni difetto.
+> **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
+> Dice **quali sono i cinque pezzi della skill**, **di che pasta è fatto ciascuno** — agente
+> AI, deterministico, o misto — e **che cosa passa fra l'uno e l'altro**.
+>
+> È stato riscritto il 20 settembre perché una sessione ha sbagliato lo sviluppo pur avendo
+> tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
+> consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
 ## Prodotto
 
@@ -19,34 +23,40 @@ pagato: vedi *Domande aperte*.
 Claude è il team di sviluppo del repository **e**, da D-151, una parte del prodotto: il
 disegno lo **compone un agente**.
 
-## Catena invariabile
+## I cinque pezzi della skill
 
-1. l'AI interpreta la conversazione e produce il grafo di prima stesura;
-2. il motore deterministico completa e ordina gli accessori;
-3. il PO approva il grafo definitivo;
-4. **il pianificatore compone** — un piano che dice soltanto **dove stanno i pezzi**;
-5. **il motore esegue e misura** — orienta, instrada, interrompe, impagina, disegna, valida;
-6. **il revisore rilegge i rilievi e corregge il piano**, finché non ne resta uno bloccante;
-7. la chat restituisce la tavola e i rilievi.
+| | pezzo | di che pasta è | esiste? |
+|---|---|---|---|
+| **1** | **Capire** — dal testo dell'ingegnere al grafo di prima stesura | **agente AI** | **sì** — `skill/capire/` |
+| **2** | **Completare** — accessori, ordine, domande all'ingegnere | **deterministico** | **sì** — `rules/` |
+| **3** | **Comporre** — dal grafo completo al **piano** | **agente AI** | **no, ed è il buco** |
+| **4** | **Eseguire** — dal piano alla tavola e ai rilievi | **deterministico** | **sì** — `piano/esecutore.py`, `layout/` |
+| **5** | **Rivedere** — dalla tavola ai **vincoli** per il pezzo 3 | **AI + controlli** | **a metà**: i controlli ci sono, l'occhio no |
 
-Una sola cosa attraversa la catena: **il grafo dell'impianto**. La tavola è una sua vista.
-L'agente non modifica connettività approvata: sposta pezzi, non collega pezzi.
+**I pezzi 3 e 4 insieme sono l'instradatore-disegnatore, ed è misto** (D-156): l'agente
+decide **dove stanno i pezzi**, lo script deterministico fa **tutto il resto**. **Il pezzo 5
+rimanda al 3, mai al 4**: si corregge il piano, non il disegno.
 
-**I passi 4-6 sono costruiti** (`DRAW-015`), e si guidano dalla CLI:
+Fra il 2 e il 3 c'è l'unico cancello umano: **l'ingegnere approva il grafo definitivo**.
+
+**Una sola cosa attraversa la catena: il grafo.** La tavola è una sua vista, e nessun pezzo a
+valle tocca la connettività approvata.
+
+> ⚠ **Il piano non è un input del sistema** (**D-155**). Nasce al pezzo 3 e muore quando la
+> tavola è uscita. **Non esiste «il piano dell'impianto N»**, e i cinque piani scritti a mano
+> sono **materiale di collaudo del pezzo 3** — il bersaglio che deve pareggiare.
+
+Quello che oggi si può guidare dalla CLI è il **4**, e il **3** lo fa un umano a mano:
 
 ```
-disegnatore-mep rules   <progetto.json> … --apply-all --out <completo.json>
-disegnatore-mep piano   <completo.json> --piano <piano.json> … --out <cartella>
-disegnatore-mep revisiona <completo.json> --piano <piano.json> … --out <cartella>
+disegnatore-mep rules     <progetto.json>  … --apply-all --out <completo.json>
+disegnatore-mep piano     <completo.json>  --piano <piano.json> … --out <cartella>
+disegnatore-mep revisiona <completo.json>  --piano <piano.json> … --out <cartella>
 ```
 
-I cinque piani stanno in `docs/collaudi/PROVA-PIANO/impianto-N.json`, e
-`scripts/tavole-dal-piano.sh` li esegue tutti in un colpo.
-
-⚠ **Il piano si esegue sul progetto nella forma che `rules --apply-all --out` scrive.** La
-forma canonica riordina i componenti per identificativo, la posa di partenza legge
-quell'ordine (`place.py::_file_order`), e l'impianto 5 si instrada su quello e non su un
-altro.
+⚠ Il piano si esegue sul progetto nella forma che `rules --apply-all --out` scrive: la forma
+canonica riordina i componenti, la posa di partenza legge quell'ordine
+(`place.py::_file_order`), e l'impianto 5 si instrada su quello e non su un altro.
 
 ## Autorità — **un agente solo** (D-147), con agenti paralleli in sessione (D-152)
 
@@ -78,13 +88,24 @@ senza approvazione non si fonde.
 - **Tutti e cinque gli impianti di prova producono una tavola**, dal piano, con **zero
   tratte cedute**; il quinto passa da 6 cedute a 0. L'unico rilievo bloccante è
   sull'impianto 3 ed è strutturale (vedi B7).
-- **Quello che ancora non va, misurato e dichiarato:** il disegno è una fascia nella metà
-  alta su tutte e cinque (D3), e i **confini di rete finiscono lontanissimi** dal pezzo che
-  servono — a occhio è la cosa più brutta di queste tavole.
-- **I giri del revisore sui cinque piani consegnati: zero.** Non è un difetto del revisore:
-  i piani sono stati composti con le regole in mano, e quello che resta sono le violazioni
-  strutturali di B7, che nessuno spostamento chiude. Su un piano guastato apposta l'anello
-  gira e migliora in un giro.
+- **Poi il PO ha fermato lo sviluppo, e ha dettato l'architettura**: da lì **D-155**,
+  **D-156**, **D-157** e **D-158**, che sono la parte più importante di questa consegna.
+  Il piano **non è un input**; i pezzi della skill sono cinque; il revisore emette
+  **vincoli** e non mosse; ogni vincolo di posa vuole un **rilievo sulla tavola**.
+- **Un difetto trovato e chiuso in quella conversazione, ed è istruttivo.** I confini di rete
+  finivano lontanissimi: il prelievo ACS misurava **205 mm** sull'impianto 2, **502,5** sul 3,
+  **152,5** sul 4 — contro i **32,5 e 50** dei due piani composti il 19 e il 20 prima che A1
+  fosse un controllo. L'agente aveva **peggiorato una cosa che funzionava applicando una
+  regola** (A1) a un pezzo che quella regola non governa, e niente gliel'ha detto perché
+  **D-145 vive nella posa del motore e il piano la sovrascrive**. Corretto: adesso stanno fra
+  **17,5 e 50 mm**. Da qui D-158.
+- **I giri del revisore sui cinque piani consegnati: zero**, e la prima correzione ha
+  **peggiorato su quattro su cinque**. È la misura che ha prodotto D-157: un revisore a mosse
+  è un solutore in miniatura. Le cure deterministiche sono dichiarate superate in testa a
+  `piano/revisore.py` ed escono in `DRAW-016`.
+- **Quello che ancora non va:** il disegno è una fascia nella metà alta su tutte e cinque
+  (D3), e i due pezzi di skill che mancano — il **pianificatore** e **l'occhio del
+  revisore** — sono il pacchetto attivo.
 - **Le due PR bocciate e mai chiuse — #32 (`DRAW-010`) e #41 (`DRAW-012`) — sono state
   chiuse**, con il rimando al verdetto agli atti. I rami non sono stati cancellati.
 

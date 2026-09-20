@@ -1,5 +1,37 @@
 """Il revisore: legge i rilievi, **corregge il piano**, e rifa' girare.
 
+⚠ **META' DI QUESTO MODULO E' SUPERATA DA D-157, E VA SOSTITUITA.**
+
+**Che cosa e' superato:** le **cure** (`CURE`, `_cura_a1`, `_cura_b1`, `_cura_b3`,
+`_cura_b4`, `_cura_pieghe`) e tutto cio' che **sposta** un pezzo. D-157 dispone
+che il revisore **non sposti niente**: dichiara **vincoli** su nodi nominati —
+«questi nodi alla stessa quota», «questi T sulla stessa verticale», «questa
+tratta passa per questo punto» — e il **pianificatore** ricompone rispettandoli.
+
+**Perche', ed e' una misura, non un'opinione.** Sui cinque impianti di prova la
+prima correzione di questo revisore **ha peggiorato la tavola su quattro su
+cinque**: ogni mossa e' cieca a quello che le altre regole stavano tenendo — la
+cura di A1 spostava il radiatore e piegava un'autostrada, quella di B1 spostava
+l'accumulo e rompeva le due primarie, che erano due rette. **Un revisore a mosse
+e' un solutore in miniatura**, e sbaglia per la stessa ragione per cui e'
+fallito il solutore (D-151).
+
+**Che cosa invece resta, ed e' giusto che sia deterministico:** la **misura**
+(`misura`, `Punteggio`), le **condizioni d'arresto**, la guardia che **non
+peggiora in silenzio**, e la traccia dei giri. Sono l'occhio che non si stanca,
+sotto quello che guarda.
+
+**Dove va il resto:** l'occhio e' un **agente AI** e vive nella skill, nella
+stessa forma del pezzo «Capire» — `skill/rivedere/ISTRUZIONI.md`. Non esiste
+ancora, ed e' il pacchetto `DRAW-016`. Fino a quel giorno le cure restano qui e
+girano, perche' un revisore che non corregge niente non chiude nessun anello: ma
+**non sono il modello da seguire**, e chi ne aggiunge una sta allungando la vita
+a un pezzo che deve morire.
+
+Architettura: `docs/ARCHITETTURA-DEL-PIANO.md` §5.
+
+---
+
 E' il terzo pezzo della catena di **D-151** — pianificatore, motore, revisore —
 ed e' **D-114** scritta il 9 agosto e mai costruita: «il validatore AI smette di
 essere un cancello a valle e diventa supervisore in anello chiuso».

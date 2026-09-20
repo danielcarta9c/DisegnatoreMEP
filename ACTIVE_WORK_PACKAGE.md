@@ -1,167 +1,196 @@
-# DRAW-015 — consegnato, in attesa del sì del PO
+# DRAW-016 — Il pianificatore e l'occhio del revisore diventano pezzi della skill
 
-**Stato:** **CONSEGNATO**, non fuso. Rapporto e tavole in `docs/collaudi/DRAW-015/`.
-**La fusione è del PO**, e si dà guardando le tavole (D-146, D-147).
-
-> Le cinque tavole sono in `docs/collaudi/DRAW-015/tavole/`. **Escono tutte e cinque, con
-> zero tratte cedute**; l'unico rilievo bloccante è sull'impianto 3 ed è strutturale (B7).
-> Che cosa resta storto, lo dice §1 del rapporto — e lo dice guardando, non contando.
-
-Sotto c'è il pacchetto che **diventa attivo quando il PO approva la fusione**. Finché non
-l'ha approvata, l'incarico corrente è: rispondere al PO su `DRAW-015`.
-
----
-
-# DRAW-016 — Il disegno smette di essere un nastro
-
-**Titolo:** Il disegno smette di essere un nastro
+**Titolo:** Il pianificatore e l'occhio del revisore diventano pezzi della skill
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
+**Stato:** **ATTIVO** quando `DRAW-015` è fuso. Finché non lo è, l'incarico è rispondere al PO su quella consegna.
 **Release:** 0.3 — generalizzazione
 **Approvazione della fusione:** **del PO**, e si dà guardando le tavole (D-147, D-146)
 
-> **Questo pacchetto ha un solo obiettivo, ed è visivo:** che le cinque tavole smettano di
-> essere una fascia appoggiata nella metà alta del foglio, e che i confini di rete smettano
-> di finire dall'altra parte del disegno.
+> **Prima di tutto leggi `docs/ARCHITETTURA-DEL-PIANO.md`.** Dice quali sono i cinque pezzi
+> della skill e di che pasta è fatto ciascuno. Questo pacchetto costruisce **i due che
+> mancano**: il **pezzo 3 — Comporre** (non esiste) e **l'occhio del pezzo 5 — Rivedere**
+> (esiste solo la metà deterministica).
 >
-> `DRAW-015` ha costruito l'attrezzo — il revisore, e quattro regole che sanno nominare la
-> propria violazione. **Adesso l'attrezzo si usa per quello per cui è stato fatto**: si
-> compone, si guarda, e quello che si impara diventa una riga (D-153).
+> **Non comporre piani a mano e non committarli.** È l'errore che ha fatto la sessione del 20
+> settembre, e **D-155** esiste per non ripeterlo: il piano è un intermedio che la skill deve
+> **imparare a scrivere**, non un artefatto da consegnare.
+
+---
 
 ## Perché
 
-Il PO, guardando le due tavole della prova: «c'è molto da migliorare ancora, non assomiglia
-a come dovrebbe essere un disegno» (I-082). Dopo `DRAW-015` le tavole sono cinque e le
-autostrade sono dritte, ma il difetto che il PO ha nominato **non è stato toccato**, ed è
-misurato: `DRAWING_ALL_ON_ONE_SIDE` dà 5,2 sull'impianto 1, 7,6 sul 2, 3,9 sul 4, contro un
-limite di 3. Il terzo inferiore del foglio è vuoto su tutte e cinque.
+Il PO, il 20 settembre, fermando lo sviluppo:
 
-E accanto ce n'è uno che il numero non dice: **il prelievo ACS sta all'estrema destra con
-una linea che attraversa mezzo foglio vuoto**, su tre tavole su cinque. Il controllo A1 lo
-esclude dal conto delle fasce — un confine di rete «va accanto all'utente che serve»
-(I-061) — ma **nessuna riga dice dove metterlo**, e nei cinque piani l'ho messo lontano io.
+> «Lo scopo del progetto è avere un pezzo della nostra skill che scrive i piani. Non è che
+> c'è un piano scritto per ogni impianto. Poi capiamo come formalizzare nella skill il
+> pianificatore (con che regole deve farlo, quali best practice ecc.)»
 
-## Prima di cominciare: tre domande al PO
+Oggi il pezzo 3 lo fa **un umano** — l'agente in sessione, a mano. Le cinque tavole escono,
+ma escono perché qualcuno ha scritto cinque file di coordinate. La skill, da sola, non sa
+comporre.
 
-**Questo pacchetto non parte finché il PO non ha risposto alle prime due.** Sono in
-`HANDOFF.md`, e sono di contenuto:
+E il pezzo 5 misura ma **non guarda**: l'occhio che ha visto il prelievo ACS a mezzo foglio
+di distanza era quello dell'agente che leggeva il PDF, non un pezzo del prodotto.
 
-1. **B7** — `turns_allowed` vale zero senza guardare le facce delle porte, e quattro catene
-   su tre impianti non si possono raddrizzare. *O il catalogo cambia, o il bilancio diventa
-   il minimo raggiungibile.*
-2. **B1 contro B3 sulla cascata** — il collettore verticale che B3 pretende fa piegare la
-   catena che B1 vuole dritta: la tavola è giusta e il numero dice che è sbagliata.
-3. **Dove sta un confine di rete** — e questa il pacchetto la può anche portare al PO
-   **componendo**, con due tavole a confronto, che è il modo che D-153 prescrive.
+## Le decisioni che lo governano
+
+| | |
+|---|---|
+| **D-155** | Il piano non è un input: lo scrive il pianificatore, che è un pezzo della skill |
+| **D-156** | I cinque pezzi, e la natura di ciascuno. 3 e 4 sono l'instradatore-disegnatore, ed è misto |
+| **D-157** | Il revisore emette **vincoli** su nodi nominati, **mai mosse**. Punto di passaggio = disegno; nodo del grafo = contenuto, si propone |
+| **D-158** | Ogni vincolo di posa ha un **rilievo sulla tavola consegnata** |
+
+---
 
 ## Le cose da fare
 
-### 1. La regola che distribuisce in verticale — composta, non dedotta
+### 1. `skill/comporre/` — il pianificatore
 
-Si compone una tavola alla volta, si guarda, e la riga nasce da lì. **Non si scrive in
-astratto**: è così che è nata la funzione di costo.
+Nella **stessa forma del pezzo 1**, che è il modello e funziona: `ISTRUZIONI.md`
+autosufficienti («queste istruzioni bastano da sole, non serve leggere altro»),
+`CONSEGNA.md`, e le prove in camera pulita.
 
-Il punto di partenza è che oggi tutte le corsie stanno fra y=100 e y=260 su un'area alta
-358: le ho messe io così, per abitudine. Va provato che cosa succede distribuendo davvero —
-e va misurato con `DRAWING_ALL_ON_ONE_SIDE`, tavola per tavola, prima e dopo.
+Dentro `ISTRUZIONI.md` va **il metodo**, non l'elenco delle regole: *in che ordine si
+compone*. Il materiale c'è tutto e non si inventa niente:
 
-⚠ **La cura ovvia è già stata bocciata**: allargare il disegno per riempire è D-142, che il
-PO ha respinto («era meglio prima») e che **D-149** ha ritirato. Qui si distribuiscono i
-**pezzi**, non si stira il disegno.
+- `docs/regole-del-piano.md` — A1…A4, B1…B7, C1…C3, D1…D3, ciascuna con la propria fonte;
+- le **cinque composizioni a mano** (vedi punto 5): sono il modo in cui si è già composto, con
+  la regola scritta accanto a ogni pezzo;
+- `docs/input-pm/REGISTRO.md`, che è il giacimento principale delle correzioni del PO;
+- le tavole di riferimento del disegnatore del PO, `docs/input-pm/riferimenti-grafici/`.
 
-### 2. Dove sta un confine di rete
+**Il buco da chiudere per primo, e il PO l'ha già risposto:** un **confine di rete** non sta
+in una fascia, sta **addosso al pezzo che serve** con lo stacco minimo (A4, D-145, I-061).
+Chi scrive `ISTRUZIONI.md` deve dirlo esplicitamente, perché è l'errore che un agente che
+legge solo A1 rifarà.
 
-Una riga in `docs/regole-del-piano.md`, con il proprio controllo e la propria tavola. Il
-materiale c'è: I-017, I-061, D-145 («un organo di servizio sta addosso al pezzo che serve»),
-e `flow.BOUNDARY_FUNCTION`, che dichiara già che un confine non ha una posizione propria.
+⚠ **`ISTRUZIONI.md` non è il posto dove nascono le regole.** Se componendo si impara una cosa
+nuova, la riga va in `docs/regole-del-piano.md` con la propria fonte e la propria tavola, e le
+istruzioni la citano.
 
-**Il contenuto è del PO**: il pacchetto porta due tavole a confronto e la domanda.
+### 2. `skill/rivedere/` — l'occhio del revisore
 
-### 3. Il revisore impara le cure che oggi non ha
+Stessa forma. Riceve: la **tavola** (immagine), i **rilievi** (preflight + i controlli delle
+regole), il **piano** che l'ha prodotta, e `docs/regole-del-piano.md`. Restituisce **vincoli**,
+nel vocabolario di `ARCHITETTURA-DEL-PIANO.md` §5.
 
-Oggi cura quattro rilievi e si ferma su tutto il resto. Quello che ha incontrato e non sa
-chiudere, nominato dal rapporto: `RUN_OVERSHOOTS_ITS_PORT`, `TOO_MANY_CROSSINGS`,
-`DRAWING_ALL_ON_ONE_SIDE`.
+**Le tre regole che lo tengono lontano dal solutore**, e vanno scritte dentro `ISTRUZIONI.md`:
 
-**Non si aggiunge una cura senza la sua regola** (`REGOLA_DEL_RILIEVO`): una correzione che
-non sa dire quale regola la vuole è il solutore travestito.
+1. **gerarchia, mai somma** — A1 prima di B1 prima di B3 prima di B4; quando due vincoli si
+   contendono un pezzo, quello sotto **cede e lo dice**;
+2. **i vincoli nascono da un rilievo su una tavola vera**, pochi per giro;
+3. **punto di passaggio sì, nodo del grafo no**: un nodo del grafo si **propone** come
+   domanda dichiarata, nella forma delle `assumptions` del pezzo 1.
 
-⚠ E non si aggiunge la cura di `DRAWING_ALL_ON_ONE_SIDE` finché il punto 1 non ha prodotto
-una riga: senza, il revisore rifarebbe D-142 da solo.
+### 3. Il vocabolario dei vincoli, nel formato del piano
 
-### 4. Il revisore prova più di una cura per giro
+`piano/formato.py` cresce di una sezione `vincoli`. È il **contratto fra il pezzo 5 e il
+pezzo 3**, e va validato come il resto: un vincolo malformato dà un errore che dice che cosa
+manca (stesso criterio che `DRAW-015` ha chiuso per il piano).
 
-Misurato su `DRAW-015`: su quattro impianti su cinque la **prima** correzione peggiora, il
-revisore si ferma, e le correzioni successive — che magari andavano bene — non vengono mai
-provate. Un giro che ricade indietro e prova la cura successiva **non è una ricerca**: è un
-tetto dichiarato, come il tetto dei giri.
+Serve anche che il motore sappia eseguire **`passa-per`**: oggi la spezzata la decide da sola
+l'instradatore, e il piano può solo spostare i pezzi. È la leva che manca per chiudere le U
+del ritorno primario e gli incroci dell'impianto 5.
 
-**Il confine da non passare, e va scritto nel pacchetto prima di cominciare:** il numero di
-cure provate per giro è un tetto fisso e piccolo, e il criterio di scelta resta
-**lessicografico**. Il giorno in cui diventasse una somma pesata su un albero di tentativi,
-sarebbe il solutore rientrato dalla finestra.
+### 4. Le cure deterministiche del revisore escono
 
-### 5. I due documenti del motore dichiarano che cosa è storia
+`piano/revisore.py` dichiara già in testa che sono superate da **D-157**. Qui si tolgono:
+restano la misura, il punteggio, le condizioni d'arresto e la guardia che non peggiora in
+silenzio. Chi corregge è il pezzo 5, che scrive vincoli.
 
-`docs/pm/2026-09-11-architettura-della-posa-a-fasi.md` e
-`docs/pm/2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md` descrivono la fase del tronco
-e il ciclo di costo **come il modo in cui si decide la posa**. Oggi lo dichiara solo
-`HANDOFF.md`, dall'esterno, ed è il **terzo stato** che `DRAW-015` ha tolto da tutto il
-resto. Stessa regola: o vigente, o dice in testa che è storia e quale decisione l'ha
-superato. Stesso trattamento per `docs/plans/2026-08-06-piano-costruzione-skill.md`
-(«Stato: in corso»), `docs/standard/COLD_EYE_REVIEW.md` e `docs/DEFERRED.md:254`.
+### 5. I cinque piani a mano cambiano di posto e di nome
+
+Escono da `docs/collaudi/PROVA-PIANO/` — che li faceva sembrare prodotto — ed entrano nel
+**collaudo del pezzo 3**, accanto alle sue prove in camera pulita, nella stessa posizione in
+cui stanno i grafi di `skill/capire/prova-2026-08-07/`. Con in testa la riga che dice **che
+cosa sono**: il bersaglio, scritto a mano, che il pianificatore deve pareggiare.
+
+### 6. I rilievi che mancano ad A2 e A3 (D-158)
+
+`DRAW-015` ha chiuso A1 e A4. Restano **A2** — chi sta in parallelo si impila — e **A3** —
+l'ordine del processo si legge da sinistra a destra. Oggi vivono solo come vincoli della posa,
+e il piano li può rompere in silenzio: è la classe di difetto che D-158 nomina.
+
+### 7. I documenti del motore dichiarano che cosa è storia
+
+`docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`,
+`docs/pm/2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md`,
+`docs/plans/2026-08-06-piano-costruzione-skill.md`, `docs/standard/COLD_EYE_REVIEW.md` e
+`docs/DEFERRED.md:254` raccontano ancora il solutore come vigente. Regola unica: o vigente, o
+dice in testa che è storia e quale decisione l'ha superato.
+
+---
 
 ## Perimetro
 
-**Dentro:** `docs/collaudi/PROVA-PIANO/impianto-*.json` (i piani si ricompongono, ed è il
-lavoro); `docs/regole-del-piano.md`; `src/disegnatore_mep/piano/revisore.py`;
-`validation/regole.py` per i controlli nuovi; i cinque documenti dell'elenco 5;
+**Dentro:** `skill/comporre/**`, `skill/rivedere/**`; `src/disegnatore_mep/piano/formato.py`
+e `revisore.py`; `validation/regole.py` per i rilievi di A2 e A3; il `passa-per` nel motore —
+`layout/route.py` — che è **l'unica cosa fuori dal motore-che-funziona che questo pacchetto
+autorizza, e va dichiarata**; `docs/regole-del-piano.md`; i cinque documenti dell'elenco 7;
 `docs/collaudi/DRAW-016/`.
 
-**Fuori:** il motore che funziona — `route.py`, `inline.py`, `place.py`, `legend.py`,
-`labels.py`, `addresses.py`, `graphics/**` — salvo quando una cura dichiarata lo richiede, e
-allora si dice perché. **Fuori** `highways.py` e `turns_allowed` finché il PO non ha risposto
-alla domanda 1. **Fuori** qualunque decisione MEP che il PO non abbia dato.
+**Fuori:** tutto il resto del motore — `inline.py`, `place.py`, `legend.py`, `labels.py`,
+`addresses.py`, `graphics/**`. **Fuori** `highways.py` e `turns_allowed` finché il PO non ha
+risposto alla domanda **B7**. **Fuori** qualunque decisione MEP che il PO non abbia dato.
 
-**Non si inventa nessuna regola.** Una riga di `regole-del-piano.md` senza fonte è un difetto
-del pacchetto, non un contributo.
+---
 
 ## Criteri di accettazione
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-1. **`DRAWING_ALL_ON_ONE_SIDE` migliora su almeno tre tavole su cinque**, con il numero prima
-   e dopo per tutte e cinque. Se su una peggiora, si dice quale e perché.
-2. **La regola che distribuisce in verticale è scritta**, con fonte, controllo e **la tavola
-   che l'ha generata**. Se dal comporre non ne esce nessuna, il pacchetto lo dichiara: una
-   riga dedotta a tavolino è un difetto, non un contributo.
-3. **Nessuna tavola perde quello che ha guadagnato in `DRAW-015`**: zero tratte cedute su
-   tutte e cinque, e i rilievi bloccanti non aumentano su nessuna.
-4. **Il revisore chiude almeno un rilievo in più** di quelli che chiude oggi, e ogni cura
-   nuova porta il nome della propria regola.
-5. **Su almeno un impianto il revisore serve più di zero giri**, e il rapporto porta la
-   tavola prima e la tavola dopo.
-6. **Nessun documento resta in terzo stato**, compresi i cinque dell'elenco 5.
-7. **Il saldo della suite non peggiora**, zero `skip` e zero `xfail` nuovi, e `ruff` e `mypy`
-   restano verdi.
+1. **Il pianificatore esiste e gira in camera pulita**: un agente avviato da zero, che riceve
+   solo `skill/comporre/ISTRUZIONI.md` e il grafo completo, produce un piano che **si carica
+   e si instrada**. Su almeno **tre** dei cinque impianti.
+2. **Il confronto con il bersaglio, impianto per impianto**: rilievi bloccanti, tratte cedute,
+   violazioni di regola, pieghe, incroci del piano dell'agente contro quello scritto a mano.
+   **Se l'agente fa peggio si dice di quanto e su cosa** — non è un fallimento del pacchetto,
+   è la misura da cui si migliorano le istruzioni.
+3. **L'occhio del revisore esiste**, e su almeno un impianto **scrive vincoli** che il
+   pianificatore rispetta: prima e dopo, con le due tavole.
+4. **Nessuna tavola perde quello che ha guadagnato in `DRAW-015`**: cinque tavole, zero tratte
+   cedute, e i rilievi bloccanti non aumentano su nessuna.
+5. **Il confine di rete resta addosso**: lo stacco di ogni confine resta il proprio minimo su
+   tutte e cinque, e il rilievo di A4 lo misura.
+6. **A2 e A3 hanno il loro rilievo**, ciascuno con la tavola su cui si vede.
+7. **Le cure deterministiche non ci sono più**, e una prova lo sorveglia.
+8. **Nessun documento resta in terzo stato**, compresi i cinque dell'elenco 7.
+9. **Il saldo della suite non peggiora**, zero `skip` e zero `xfail` nuovi, `ruff` e `mypy`
+   verdi.
+
+---
 
 ## Consegna
 
 Una PR sola verso `main`, **non fusa finché il PO non ha visto le tavole e detto di sì**.
 
-**Le tavole, per prime** (D-146). Rapporto in `docs/collaudi/DRAW-016/RAPPORTO.md`.
+**Le tavole, per prime** (D-146) — comprese quelle che il **pianificatore** ha composto da
+solo, che sono il punto di questo pacchetto. Rapporto in `docs/collaudi/DRAW-016/RAPPORTO.md`.
 
 **Prima di chiedere l'approvazione:**
 
-1. **Guarda le tavole**, e mettile accanto a quelle del disegnatore del PO,
-   `docs/input-pm/riferimenti-grafici/`. Se una ti sembra sbagliata e i numeri dicono che va
-   bene, scrivilo: su `DRAW-015` è successo due volte su due ed è servito.
-2. **Misura la non-regressione prima, non dopo.** Qui sono il 3 e il 7.
+1. **Guarda le tavole**, e mettile accanto a quelle del disegnatore del PO. Se una ti sembra
+   sbagliata e i numeri dicono che va bene, scrivilo: su `DRAW-015` è successo due volte su
+   due ed è servito tutt'e due le volte.
+2. **Misura la non-regressione prima, non dopo.** Qui sono il 4, il 5 e il 9.
 3. **Se una disposizione del PO ammette due letture, fermati e chiedi al PO.**
+
+## Le domande aperte al PO — da portargli, non da risolvere
+
+1. **B7** — `turns_allowed` vale zero per ogni catena fra macchine di spina senza guardare se
+   le facce delle porte permettono una retta. Quattro catene su tre impianti non si possono
+   raddrizzare, e una è **l'unico rilievo bloccante** che resta (impianto 3). *O cambia il
+   catalogo, o il bilancio diventa il minimo raggiungibile.*
+2. **B1 contro B3 sulla cascata** — il collettore verticale che B3 pretende fa piegare la
+   catena che B1 vuole dritta: la tavola è giusta e il numero dice che è sbagliata.
+3. **Quando si apre il pacchetto DXF** — D-023 e D-148 sono state lasciate andare **perché**
+   l'elaborato esce in DXF, e quel pezzo non esiste.
 
 ## Quello che questo pacchetto **non** chiude
 
-- **Il DXF**, che è la contropartita di un prezzo già pagato (D-023 sospesa, D-148): resta
-  una domanda al PO su **quando**, non su **se**.
+- **Le tavole non diventano belle qui.** Il difetto in coda resta nominato e misurato: il
+  disegno è una fascia nella metà alta su tutte e cinque (D3).
 - **L'elenco delle regole**, che il PO ha dichiarato aperto (I-085).
 - **La composizione a corsie** della ricerca del 4 agosto §2.2 — entra quando l'avremo
   composta almeno una volta, con la sua tavola.
