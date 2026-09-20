@@ -4,10 +4,12 @@ Prima di analizzare il codice, proporre un piano o eseguire qualunque modifica:
 
 1. leggi integralmente `ACTIVE_WORK_PACKAGE.md`;
 2. leggi il breve `HANDOFF.md`;
-3. leggi in `AGENTS.md` soltanto il modello PO/agente e i documenti che il Work Package
+3. leggi `docs/ARCHITETTURA-DEL-PIANO.md` — dice **chi decide cosa** nel disegno, ed è
+   vigente da **D-151**;
+4. leggi in `AGENTS.md` soltanto il modello PO/agente e i documenti che il Work Package
    indica;
-4. verifica base, ramo e perimetro prescritti;
-5. esegui esclusivamente il Work Package attivo.
+5. verifica base, ramo e perimetro prescritti;
+6. esegui esclusivamente il Work Package attivo.
 
 `ACTIVE_WORK_PACKAGE.md` è l'unico incarico operativo corrente. La storia si apre soltanto
 quando il pacchetto rinvia a una decisione precisa: non è onboarding.
@@ -18,8 +20,10 @@ repository, fermati e chiedi al PO. Non scegliere autonomamente il lavoro succes
 ## Sei un agente solo
 
 Dal 19 settembre 2026 (**D-147**, `docs/governance/OPERATING_MODEL.md` §1.2.1) **PM e DEV
-sono la stessa sessione.** Non c'è un altro agente che scrive i pacchetti, e non c'è un
-altro agente che verifica la consegna. Sopra di te c'è il PO, e il suo controllo è uno:
+sono la stessa sessione.** Non c'è un'altra sessione che scrive i pacchetti, e non c'è
+un'altra sessione che verifica la consegna. Puoi lanciare **agenti in parallelo dentro la
+sessione** (**D-152**, §1.2.2) — perimetro dichiarato prima, e quello che riferiscono non è
+una misura finché non l'hai rieseguito. Sopra di te c'è il PO, e il suo controllo è uno:
 **guarda le tavole.**
 
 Il ciclo è:

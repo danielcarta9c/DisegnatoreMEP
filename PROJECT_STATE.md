@@ -1,5 +1,9 @@
 # PROJECT STATE — Disegnatore MEP
 
+> ⚠ **Fermo al 15 settembre, e in riallineamento — `DRAW-015`.** Quello che segue descrive il
+> progetto **prima** di D-147 … D-152 (19/20 settembre 2026). Lo stato corrente sta in
+> `HANDOFF.md`; l'architettura del disegno in `docs/ARCHITETTURA-DEL-PIANO.md`.
+
 **Aggiornato:** 2026-09-15 (PM, cold eye review dopo il merge di DRAW-009)
 **Ingresso del PM:** `docs/pm/STATO-PM.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md`

@@ -1,5 +1,11 @@
 # Com'è fatta la skill
 
+> ⚠ **In riallineamento — `DRAW-015`.** Le parti che descrivono la posa come una **ricerca**
+> (il ciclo di miglioramento, la somma pesata, la fase del tronco) sono **storia** da
+> **D-151**, 20 settembre 2026: il disegno lo **compone** un agente e il motore lo esegue e
+> lo misura. Finché questo documento non è riscritto, l'architettura vigente del disegno è
+> in `docs/ARCHITETTURA-DEL-PIANO.md`, che vince su ogni contrasto.
+
 > **Questo è il documento che mancava.** Dice di quali pezzi è fatta la skill, cosa fa
 > ciascuno, con cosa lavora e **quando è finito**. Se una domanda comincia con «come
 > funziona…» o «di chi è questo pezzo…», la risposta è qui e in nessun altro posto.

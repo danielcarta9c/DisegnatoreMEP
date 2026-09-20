@@ -9,6 +9,9 @@
 > sessione, e la fusione la approva il PO guardando le tavole.** Vedi §1.2.1, che è la
 > sezione da leggere per prima. D-123 resta in ciò che non è stato toccato: si consegna
 > tramite PR, e il PO entra quando serve una decisione di prodotto, MEP o rappresentazione.
+>
+> **E da D-152 (20 settembre 2026): dentro quella sessione si possono lanciare agenti in
+> parallelo**, mai sessioni. Vedi §1.2.2.
 
 ---
 
@@ -132,6 +135,33 @@ più disciplina, non con meno:
    rilievo più utile che si possa portare, ed è due volte su due il modo in cui i difetti
    veri sono stati trovati.
 7. **Le tavole al PO, sempre e per prime** (D-146). Vedi sopra: adesso è la porta.
+
+#### 1.2.2 Due agenti in parallelo, dentro la sessione (PO, 20 settembre 2026 — D-152)
+
+**Non si aprono sessioni separate.** D-147 resta com'è. Ciò che si può fare è **lanciare
+agenti in parallelo dentro la sessione**, quando il lavoro si divide in code che non si
+contendono niente.
+
+La divisione che serve davvero è quella che porta l'architettura del piano
+(`docs/ARCHITETTURA-DEL-PIANO.md`, D-151): **i difetti del motore** si curano con codice
+migliore, **i difetti del pianificatore** con una regola in più. Sono due mestieri diversi e
+due file diversi.
+
+**Perché adesso è sicuro e prima no.** Il danno che D-147 ha chiuso non veniva dal
+parallelismo: veniva dal **passaggio di consegne**. Un perimetro scritto in una sessione e
+letto in un'altra ha tenuto `place.py` fuori dal recinto per quattro pacchetti di fila, ed è
+lì che stavano le tavole 3, 4 e 5. Due agenti lanciati da chi li governa non hanno passaggio
+di consegne: il perimetro lo scrive e lo legge la stessa sessione, nello stesso minuto.
+
+**Le tre regole, e sono poche apposta.**
+
+1. **Il perimetro di un agente parallelo si dichiara prima di lanciarlo**, ed è un file o una
+   coda. Se due agenti possono toccare lo stesso file, non si lanciano in parallelo.
+2. **Un agente parallelo non consegna, non fonde e non chiude niente.** Riporta. La sessione
+   che l'ha lanciato raccoglie, misura, guarda le tavole e chiede l'approvazione al PO.
+3. **Quello che un agente parallelo riferisce non è una misura finché non è stato rieseguito
+   dalla sessione.** Un rapporto è un racconto; il comando e il suo output sono la prova
+   (§1.2.1, punto 2).
 
 ### 1.3 DEV — team di sviluppo
 
