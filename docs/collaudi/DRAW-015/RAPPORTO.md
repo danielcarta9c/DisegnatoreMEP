@@ -561,11 +561,23 @@ Le **38 di questo ramo**, raccolte per file (`pytest -q --tb=no -rf`):
 | `layout/test_format_choice.py` | 1 | difende il motore |
 | `rules/test_ordine_semantico.py` | 1 | — |
 
-**Le ventuno nuove sono le nove righe in mezzo**: `test_posa_a_fasi` (5),
-`acceptance/test_drawing` (4), `test_accessori_appesi` (3), `test_assi_dorsali_tee` (2),
-`test_catena_macchina` (2), `test_ordine_degli_stacchi` (2), `test_consegna_e_verifica` (1),
-`test_costo_peso` (1), `test_format_choice` (1). Le altre tre righe — 8 + 8 + 1 = **17** —
-sono **le stesse che falliscono su `main`**.
+⚠ **Correzione a una misura che avevo scritto e che era sbagliata.** Avevo riportato — ed
+era anche nel corpo della PR — che i tre file `test_stacchi_minimi_e_interasse`,
+`test_rami_di_servizio` e `test_ordine_semantico` davano «17 fallite su `main` e 17 qui».
+**Rimisurato sulla copia pulita con `PYTHONPATH`:**
+
+```
+$ PYTHONPATH=$PWD/src python -m pytest -q tests/layout/test_stacchi_minimi_e_interasse.py \
+    tests/layout/test_rami_di_servizio.py tests/rules/test_ordine_semantico.py
+7 failed, 35 passed in 254.89s        # origin/main — e tutte e sette sono nel primo file
+```
+
+Su questo ramo gli stessi tre file danno **17**. Quindi `test_rami_di_servizio` (8) e
+`test_ordine_semantico` (1) sono **verdi su `main` e rossi qui**, e la misura precedente era
+viziata dalla stessa trappola dell'installazione modificabile che questo rapporto nomina
+sopra. **L'attribuzione delle ventuno file per file è in corso di rimisura** sulla corsa
+integrale di `main` con `-rf`; quello che resta fermo è il saldo, **17 contro 38**, misurato
+su tutt'e due i lati con il comando qui sopra.
 
 ### La causa è una sola, e non è «il solutore mancava a queste prove»
 
