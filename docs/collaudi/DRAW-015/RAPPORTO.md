@@ -537,10 +537,25 @@ $ .venv/bin/python -m pytest -q tests/layout/test_accessori_appesi.py \
 3 failed, 347 passed, 12 xfailed in 15.66s
 ```
 
-Su `main` uno dei dodici non arriva a esito di `xfail` — non è quello `strict=True` del
-quinto impianto, che **xfalla anche lì** (`4 passed, 1 xfailed`, misurato sulla copia pulita).
-Il caso resta da isolare, ed è **un esito in meno di `xfail` su `main`, non un marcatore in
-più qui**: non cambia il saldo delle fallite, che è la misura di cui si discute.
+Su `main` gli stessi file danno **11**:
+
+```
+$ PYTHONPATH=$PWD/src python -m pytest -q tests/layout/test_accessori_appesi.py \
+    tests/layout/test_zone_dei_pezzi_grossi.py tests/collaudo/
+1 failed, 350 passed, 11 xfailed in 424.79s        # origin/main
+```
+
+**Il caso è isolato, ed è uno solo:**
+`test_accessori_appesi.py::test_tornano_a_comporre_quando_la_composizione_compatta[prova-2-pdc-deviatrice-acs.json]`.
+Il marcatore è `xfail(strict=True)` e dichiara un difetto **aperto**. **Su `main` quel caso
+passa** — un `xfail` stretto che passa è un **fallimento**, quindi sta fra i 17 — **e qui
+fallisce davvero**, quindi è contato fra i 12 `xfail`.
+
+Detto senza il gergo: su `main` l'impianto 2 **si compone compatto lo stesso**, perché ci
+pensava il solutore; qui no. **Non è una prova in meno rossa da festeggiare: è la stessa
+perdita delle altre, contata in un'altra casella.** Il saldo netto delle fallite ne tiene
+conto — ed è per questo che 38 − 17 = 21 è il numero **netto**, mentre le prove che passavano
+su `main` e non passano qui sono **ventidue**.
 
 ### Le ventuno, file per file
 
