@@ -68,6 +68,7 @@ from disegnatore_mep.layout.geometry import (
     PlacedSymbol,
     Point,
     RoutedTrunk,
+    SheetGeometry,
 )
 from disegnatore_mep.layout.hierarchy import (
     is_a_machine,
@@ -1063,6 +1064,111 @@ def _quota_della_coppia(prima: Point, poi: Point) -> str:
     return f"a quote diverse (y={prima.y_mm:.1f} e y={poi.y_mm:.1f})"
 
 
+
+CORSIE_LIBERE_FRA_DUE_LINEE_MM = ROW_GAP_MM
+"""Quanto si tengono discoste due tubazioni che si affiancano.
+
+**Non e' un numero nuovo**: e' `place.ROW_GAP_MM`, che il motore usa gia' per
+i pezzi — «quattro passi di griglia, cioe' **tre corsie libere**» — e che vale
+qui per la stessa ragione, letta sulla linea invece che sul pezzo.
+
+Ci arriva anche una fonte pubblicata, per un'altra strada: KLM Technology Group,
+*Project Engineering Standard — Piping and Instrumentation Diagrams*, Rev. 01,
+2011, §5 *Line spacing*: «the space between parallel lines shall not be less
+than twice the width of the heaviest of these lines with a minimum value of 1
+mm. **A spacing of 10 mm and more is desirable between flow lines.**» Due
+derivazioni indipendenti sullo stesso numero.
+"""
+
+
+def _affiancamenti(
+    sheet: SheetGeometry,
+) -> Iterable[tuple[RoutedTrunk, RoutedTrunk, float, float, str]]:
+    """Le coppie di tratti paralleli che si affiancano, con distanza e lunghezza."""
+    tratti: list[tuple[RoutedTrunk, str, float, float, float]] = []
+    for route in sheet.routes:
+        if route.unresolved:
+            continue
+        for parte in route.segments:
+            for prima, poi in zip(parte, parte[1:], strict=False):
+                if prima.y_mm == poi.y_mm and prima.x_mm != poi.x_mm:
+                    tratti.append(
+                        (route, "orizzontale", prima.y_mm,
+                         min(prima.x_mm, poi.x_mm), max(prima.x_mm, poi.x_mm))
+                    )
+                elif prima.x_mm == poi.x_mm and prima.y_mm != poi.y_mm:
+                    tratti.append(
+                        (route, "verticale", prima.x_mm,
+                         min(prima.y_mm, poi.y_mm), max(prima.y_mm, poi.y_mm))
+                    )
+    for i, (uno, asse, quota, da, a) in enumerate(tratti):
+        for altro, asse2, quota2, da2, a2 in tratti[i + 1:]:
+            if asse != asse2 or quota == quota2:
+                continue
+            if uno.connection_ids == altro.connection_ids:
+                continue
+            fianco = min(a, a2) - max(da, da2)
+            distanza = abs(quota - quota2)
+            if fianco <= 0:
+                continue
+            yield uno, altro, distanza, fianco, asse
+
+
+def linee_parallele_senza_corsie(
+    drawing: DrawingGeometry,
+) -> list[ValidationIssue]:
+    """**B9** — due tubazioni che si affiancano si tengono tre corsie libere.
+
+    *Fonte:* la nostra, **D-062** via `place.ROW_GAP_MM`: due pezzi affiancati
+    lasciano 10 mm perche' due tratte devono poterci passare senza sovrapporsi.
+    La stessa misura vale fra due **linee**, e per la stessa ragione — due tubi
+    a un passo di griglia si leggono come un tubo solo. Corroborata da una fonte
+    pubblicata che ci arriva per un'altra strada: KLM, *P&ID Project Engineering
+    Standard*, §5 — «a spacing of **10 mm and more** is desirable between flow
+    lines».
+
+    ⛔ **Non e' `PARALLEL_RUNS_TOO_CLOSE` del preflight**, che misura se due
+    linee si **toccano** (un fatto geometrico, bloccante). Questa misura se si
+    **leggono**, ed e' una regola del piano: si cura componendo.
+
+    **Quando due tratti si affiancano davvero.** Il rilievo si accende solo se
+    il fianco a fianco e' **almeno lungo quanto la distanza che li separa**: due
+    linee a 7,5 mm che si accostano per 2,5 sono un **angolo**, non un
+    corridoio. E' una **lettura dichiarata**, non una soglia tarata, e serve a
+    non accusare ogni spigolo.
+
+    **Che cosa non accusa:** i due tratti della **stessa** tratta, separati da
+    un'interruzione (D-027); le tratte **cedute** (D-150), che il preflight
+    nomina gia'.
+    """
+    trovati: list[ValidationIssue] = []
+    visti: set[tuple[str, str]] = set()
+    for sheet in drawing.sheets:
+        for uno, altro, distanza, fianco, asse in _affiancamenti(sheet):
+            if distanza >= CORSIE_LIBERE_FRA_DUE_LINEE_MM - TOLLERANZA_MM:
+                continue
+            if fianco < distanza:
+                continue
+            nomi = (
+                ", ".join(uno.connection_ids) or uno.network_id,
+                ", ".join(altro.connection_ids) or altro.network_id,
+            )
+            if nomi in visti or nomi[::-1] in visti:
+                continue
+            visti.add(nomi)
+            trovati.append(
+                _rilievo(
+                    "PARALLEL_RUNS_WITHOUT_A_FREE_LANE",
+                    f"la tavola {sheet.sheet_id}: le tratte {nomi[0]} e {nomi[1]} "
+                    f"corrono affiancate in {asse} per {fianco:.1f} mm a "
+                    f"{distanza:.1f} mm l'una dall'altra, e ne vogliono "
+                    f"{CORSIE_LIBERE_FRA_DUE_LINEE_MM:.0f}: sotto le tre corsie "
+                    f"libere due tubi si leggono come uno (B9, D-062)",
+                    [sheet.sheet_id, *uno.connection_ids, *altro.connection_ids],
+                )
+            )
+    return trovati
+
 CODICE_DELLA_REGOLA: dict[str, str] = {
     "A1": "PIECE_OUTSIDE_ITS_BAND",
     "A4": "SERVICE_STUB_LONGER_THAN_ITS_MINIMUM",
@@ -1070,6 +1176,7 @@ CODICE_DELLA_REGOLA: dict[str, str] = {
     "B3": "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",
     "B4": "INLINE_ORGAN_BREAKS_THE_RUN",
     "B8": "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK",
+    "B9": "PARALLEL_RUNS_WITHOUT_A_FREE_LANE",
 }
 """Il rilievo di ciascuna regola misurata, **e non c'e' un secondo posto**.
 
@@ -1232,6 +1339,7 @@ def rilievi_delle_regole(
         *macchine_in_parallelo_senza_collettore(drawing, frame, catalog, project),
         *organi_che_spezzano_il_tratto(drawing, catalog, project),
         *scostamenti_che_tornano_indietro(drawing),
+        *linee_parallele_senza_corsie(drawing),
     ]
 
 
@@ -1244,6 +1352,7 @@ __all__ = [
     "ORDINE_DELLE_REGOLE",
     "autostrade_storte",
     "fascia_del_pezzo",
+    "linee_parallele_senza_corsie",
     "macchine_in_parallelo_senza_collettore",
     "organi_che_spezzano_il_tratto",
     "organi_di_servizio_lontani",

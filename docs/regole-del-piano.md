@@ -61,6 +61,14 @@ Rimesso sulla quota, il tronco è **una retta sola** dal volano fino all'ultima 
 `autostrade_in_tavola` + `pieghe_dell_autostrada` dicono quali catene sono autostrade e
 quante pieghe fanno, **spezzata per spezzata**.
 
+**Non è solo nostra.** Caleffi, *Idraulica* n. 25 (dicembre 2003), monografico «Il disegno
+degli impianti idrotermosanitari», racconta di aver dovuto rifare l'archivio dei blocchi
+perché erano «disegni svolti in modo autonomo, **non pensati in modo specifico per essere fra
+loro facilmente componibili**… i **collettori non si raccordavano alle derivazioni delle
+caldaie**», e la cura è stata predisporli «per poter essere utilizzati come mattoncini Lego
+facilmente assemblabili fra loro». È lo stesso punto: **le quote delle porte devono
+combaciare fra i pezzi che si uniscono**, o la linea che li unisce piega.
+
 > **Quello che il piano non può raddrizzare, e va saputo.** Tre macchine in parallelo su due
 > raccordi a T vogliono **due cambi di giacitura** sul collettore: sono nel grafo, non nel
 > disegno, e ce li ha anche lo schizzo del PO del 3 settembre
@@ -256,6 +264,32 @@ ritorno della caldaia (7,5 mm per 80).
 > **uscito**. Dal **D-151** la posa la decide il piano, e un piano che mette due tratte sulla
 > stessa quota costringe l'instradatore a scansarne una. È **D-158** applicato alla tratta
 > invece che al pezzo.
+
+### B9 — Due tubazioni che si affiancano si tengono tre corsie libere
+
+Due tubi a un passo di griglia **si leggono come un tubo solo**. Chi corre affiancato a un
+altro si tiene **10 mm**, che sono quattro passi, cioè tre corsie libere.
+
+*Fonte:* la nostra, **D-062** via `place.ROW_GAP_MM` — «due pezzi affiancati lasciano 10 mm
+perché due tratte devono poterci passare senza sovrapporsi». La stessa misura vale fra due
+**linee**, e per la stessa ragione.
+*Corroborazione pubblicata, arrivata per un'altra strada:* KLM Technology Group, *Project
+Engineering Standard — Piping and Instrumentation Diagrams*, Rev. 01, 2011, §5 *Line
+spacing*: «a spacing of **10 mm and more** is desirable between flow lines». **Due
+derivazioni indipendenti sullo stesso numero.**
+*Controllo:* **`PARALLEL_RUNS_WITHOUT_A_FREE_LANE`** —
+`validation/regole.py::linee_parallele_senza_corsie`.
+*Tavola:* impianto 5, **quattordici** coppie; impianto 3, due. Sulle altre tre: **nessuna**,
+perché lì tutti gli affiancamenti stanno già a 10 mm.
+
+> **Non è `PARALLEL_RUNS_TOO_CLOSE` del preflight**, che misura se due linee si **toccano** —
+> un fatto geometrico, bloccante. Questa misura se si **leggono**, ed è una regola del piano:
+> si cura componendo.
+
+> **Quando due tratti si affiancano davvero.** Il rilievo si accende solo se il fianco a
+> fianco è **almeno lungo quanto la distanza che li separa**: due linee a 7,5 mm che si
+> accostano per 2,5 sono uno **spigolo**, non un corridoio. È una **lettura dichiarata**, non
+> una soglia tarata, e serve a non accusare ogni angolo.
 
 ---
 

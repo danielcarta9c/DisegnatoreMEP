@@ -45,6 +45,7 @@ from disegnatore_mep.validation.regole import (
     GENERAZIONE,
     ORDINE_DELLE_REGOLE,
     autostrade_storte,
+    linee_parallele_senza_corsie,
     macchine_in_parallelo_senza_collettore,
     organi_che_spezzano_il_tratto,
     organi_di_servizio_lontani,
@@ -774,6 +775,7 @@ CODICI = {
     "B3": "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",
     "B4": "INLINE_ORGAN_BREAKS_THE_RUN",
     "B8": "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK",
+    "B9": "PARALLEL_RUNS_WITHOUT_A_FREE_LANE",
 }
 """Il rilievo di ciascuna regola misurata, nell'ordine di `ORDINE_DELLE_REGOLE`.
 
@@ -905,3 +907,56 @@ def test_b8_una_tratta_ceduta_non_si_accusa() -> None:
     )
     ceduta = ceduta.model_copy(update={"unresolved": True})
     assert scostamenti_che_tornano_indietro(tavola([], [ceduta])) == []
+
+
+# --- B9: due tubazioni che si affiancano si tengono tre corsie libere --------
+
+
+def test_b9_dieci_millimetri_bastano() -> None:
+    """La distanza che il motore gia' usa fra i pezzi, letta sulla linea."""
+    su = tratta(["p1"], _punti((10, 100), (200, 100)))
+    giu = tratta(["p2"], _punti((10, 110), (200, 110)))
+    assert linee_parallele_senza_corsie(tavola([], [su, giu])) == []
+
+
+def test_b9_sotto_le_tre_corsie_il_rilievo_si_accende() -> None:
+    """Due tubi a tre passi di griglia si leggono come uno."""
+    su = tratta(["p1"], _punti((10, 100), (200, 100)))
+    giu = tratta(["p2"], _punti((10, 107.5), (200, 107.5)))
+    rilievi = linee_parallele_senza_corsie(tavola([], [su, giu]))
+    assert len(rilievi) == 1
+    assert rilievi[0].code == "PARALLEL_RUNS_WITHOUT_A_FREE_LANE"
+    assert "7.5 mm" in rilievi[0].message
+    assert {"p1", "p2"} <= set(rilievi[0].entity_ids)
+
+
+def test_b9_un_angolo_non_e_un_corridoio() -> None:
+    """Due linee vicine che si accostano per meno della distanza che le separa
+    sono uno **spigolo**, e il rilievo tace: e' la lettura dichiarata."""
+    lunga = tratta(["p1"], _punti((10, 100), (200, 100)))
+    spigolo = tratta(["p2"], _punti((10, 107.5), (12.5, 107.5)))
+    assert linee_parallele_senza_corsie(tavola([], [lunga, spigolo])) == []
+
+
+def test_b9_due_tratti_della_stessa_tratta_non_si_accusano() -> None:
+    """Un'interruzione (D-027) spezza la tratta, non la sdoppia."""
+    spezzata = tratta(
+        ["p1"],
+        _punti((10, 100), (200, 100)),
+        _punti((10, 107.5), (200, 107.5)),
+    )
+    assert linee_parallele_senza_corsie(tavola([], [spezzata])) == []
+
+
+def test_b9_vale_in_verticale_come_in_orizzontale() -> None:
+    a = tratta(["p1"], _punti((100, 10), (100, 200)))
+    b = tratta(["p2"], _punti((105, 10), (105, 200)))
+    rilievi = linee_parallele_senza_corsie(tavola([], [a, b]))
+    assert len(rilievi) == 1 and "verticale" in rilievi[0].message
+
+
+def test_b9_una_tratta_ceduta_non_si_accusa() -> None:
+    dritta = tratta(["p1"], _punti((10, 100), (200, 100)))
+    ceduta = tratta(["p2"], _punti((10, 105), (200, 105)))
+    ceduta = ceduta.model_copy(update={"unresolved": True})
+    assert linee_parallele_senza_corsie(tavola([], [dritta, ceduta])) == []
