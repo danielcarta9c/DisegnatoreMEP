@@ -159,6 +159,26 @@ e va scritta come decisione, non come costante.
 `docs/DEFERRED.md:254` raccontano ancora il solutore come vigente. Regola unica: o vigente, o
 dice in testa che è storia e quale decisione l'ha superato.
 
+### 8. Le ventuno prove rosse che il solutore si è portato dietro
+
+`DRAW-015` lascia il saldo della suite **peggiore di ventuno**: `main` 17 fallite, questo ramo
+38 (RAPPORTO §10). Sono la contropartita di D-151 — prove che, per la via ordinaria,
+pretendevano la qualità che il solutore produceva — e ciascuna sta in un file che porta già
+la propria riga `# categoria:`.
+
+**Non si chiudono con uno `skip` né con un `xfail`**, che è la scorciatoia che questo
+progetto non prende. Per ciascuna, una delle due:
+
+1. **la proprietà vale ancora sulla via vigente** — allora è una regressione vera e si
+   ripara, o si riscrive la prova perché misuri quella proprietà **dal piano**, come è stato
+   fatto per `test_il_primo_impianto_esce_dal_proprio_piano`;
+2. **la proprietà era del solutore** — allora la prova dichiara in testa che cosa difendeva e
+   perché è caduta, e **il conto si dichiara nel rapporto**, non si nasconde.
+
+⚠ **Il criterio 9 di questo pacchetto si misura contro lo stato consegnato da `DRAW-015`,
+non contro `main`**: partire da 38 e arrivare a 38 è «non peggiora». **Arrivare sotto è il
+miglioramento che I-067 chiede.**
+
 ---
 
 ## Perimetro
@@ -197,8 +217,9 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
 6. **A2 e A3 hanno il loro rilievo**, ciascuno con la tavola su cui si vede.
 7. **Le cure deterministiche non ci sono più**, e una prova lo sorveglia.
 8. **Nessun documento resta in terzo stato**, compresi i cinque dell'elenco 7.
-9. **Il saldo della suite non peggiora**, zero `skip` e zero `xfail` nuovi, `ruff` e `mypy`
-   verdi.
+9. **Il saldo della suite non peggiora rispetto allo stato consegnato da `DRAW-015`**
+   — 38 fallite, 1564 passate, 24 `skip`, 12 `xfail` — zero `skip` e zero `xfail` nuovi,
+   `ruff` e `mypy` verdi. **Ogni prova che torna verde si dice**, ed è il punto 8.
 
 ---
 
