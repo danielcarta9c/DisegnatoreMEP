@@ -557,90 +557,78 @@ perdita delle altre, contata in un'altra casella.** Il saldo netto delle fallite
 conto — ed è per questo che 38 − 17 = 21 è il numero **netto**, mentre le prove che passavano
 su `main` e non passano qui sono **ventidue**.
 
-### Le ventuno, file per file
+### Le ventidue, per nome
 
-Le **38 di questo ramo**, raccolte per file (`pytest -q --tb=no -rf`):
+Le due corse integrali con `-rf`, confrontate come insiemi di identificativi di prova:
 
-| file | fallite qui | categoria dichiarata nel file |
-|---|---|---|
-| `layout/test_stacchi_minimi_e_interasse.py` | 8 | difende il motore |
-| `layout/test_rami_di_servizio.py` | 8 | difende il motore |
-| `layout/test_posa_a_fasi.py` | 5 | **difendeva il solutore** |
-| `acceptance/test_drawing.py` | 4 | **nessuna — è fuori da `tests/layout/`** |
-| `layout/test_accessori_appesi.py` | 3 | difende il motore |
-| `layout/test_assi_dorsali_tee.py` | 2 | **difendeva il solutore** |
-| `layout/test_catena_macchina.py` | 2 | difende il motore |
-| `layout/test_ordine_degli_stacchi.py` | 2 | difende il motore |
-| `layout/test_consegna_e_verifica.py` | 1 | difende il motore |
-| `layout/test_costo_peso.py` | 1 | **difendeva il solutore** |
-| `layout/test_format_choice.py` | 1 | difende il motore |
-| `rules/test_ordine_semantico.py` | 1 | — |
+| | |
+|---|---|
+| rosse **solo su questo ramo** | **22** |
+| rosse **solo su `main`** | **1** |
+| saldo | **+21** |
 
-⚠ **Correzione a una misura che avevo scritto e che era sbagliata.** Avevo riportato — ed
-era anche nel corpo della PR — che i tre file `test_stacchi_minimi_e_interasse`,
-`test_rami_di_servizio` e `test_ordine_semantico` davano «17 fallite su `main` e 17 qui».
-**Rimisurato sulla copia pulita con `PYTHONPATH`:**
+L'unica rossa solo su `main` è
+`test_accessori_appesi.py::test_tornano_a_comporre_quando_la_composizione_compatta[prova-2]`,
+cioè lo `xfail(strict=True)` che lì **passa** e qui fallisce: **non è una prova recuperata,
+è la stessa perdita in un'altra casella** (sopra).
 
-```
-$ PYTHONPATH=$PWD/src python -m pytest -q tests/layout/test_stacchi_minimi_e_interasse.py \
-    tests/layout/test_rami_di_servizio.py tests/rules/test_ordine_semantico.py
-7 failed, 35 passed in 254.89s        # origin/main — e tutte e sette sono nel primo file
-```
-
-Su questo ramo gli stessi tre file danno **17**. Quindi `test_rami_di_servizio` (8) e
-`test_ordine_semantico` (1) sono **verdi su `main` e rossi qui**, e la misura precedente era
-viziata dalla stessa trappola dell'installazione modificabile che questo rapporto nomina
-sopra. **L'attribuzione delle ventuno file per file è in corso di rimisura** sulla corsa
-integrale di `main` con `-rf`; quello che resta fermo è il saldo, **17 contro 38**, misurato
-su tutt'e due i lati con il comando qui sopra.
+| file | su `main` | qui | nuove |
+|---|---|---|---|
+| `layout/test_rami_di_servizio.py` | 0 | 8 | **+8** |
+| `layout/test_posa_a_fasi.py` | 2 | 5 | **+3** |
+| `acceptance/test_drawing.py` | 1 | 4 | **+3** |
+| `layout/test_accessori_appesi.py` | 1 | 3 | **+2** (e una di `main` diventa `xfail`) |
+| `layout/test_catena_macchina.py` | 0 | 2 | **+2** |
+| `layout/test_stacchi_minimi_e_interasse.py` | 7 | 8 | **+1** |
+| `layout/test_ordine_degli_stacchi.py` | 1 | 2 | **+1** |
+| `rules/test_ordine_semantico.py` | 0 | 1 | **+1** |
+| `layout/test_assi_dorsali_tee.py` | 2 | 2 | 0 |
+| `layout/test_consegna_e_verifica.py` | 1 | 1 | 0 |
+| `layout/test_costo_peso.py` | 1 | 1 | 0 |
+| `layout/test_format_choice.py` | 1 | 1 | 0 |
+| **totale** | **17** | **38** | **+21** |
 
 ### La causa non è «tante prove del solutore»: è **un difetto solo**, contato molte volte
 
-Otto delle rosse stanno in file che dichiarano di aver difeso il **solutore**, e quelle non
-sorprendono. Le altre no, e vanno spiegate invece che archiviate: dicono «difende il motore»,
-o non dicono niente. **Misurate invece che raccontate.**
-
-Preso il gruppo dei file che qui sono rossi e su `main` non lo erano, più quelli senza
-categoria, e chiesto a ciascuno **quale errore**:
+Chiesto **alle ventidue e solo a quelle** quale errore le ferma:
 
 ```
-$ .venv/bin/python -m pytest -q --tb=line -rf \
-    tests/acceptance/test_drawing.py tests/layout/test_accessori_appesi.py \
-    tests/layout/test_catena_macchina.py tests/layout/test_ordine_degli_stacchi.py \
-    tests/layout/test_consegna_e_verifica.py tests/layout/test_format_choice.py \
-    tests/layout/test_rami_di_servizio.py tests/rules/test_ordine_semantico.py
-22 failed, 61 passed, 7 skipped, 2 xfailed in 5.52s
+$ .venv/bin/python -m pytest -q --tb=line <le 22, per identificativo>
+22 failed in 3.88s
 ```
 
 | errore | quante |
 |---|---|
-| `run … still passes under mixing-valve-thermostatic after breaking for it` | **15** |
-| `run … has no straight stretch of 7.5mm for mixing-valve-thermostatic / dirt-separator` | 2 |
-| asserzioni varie (fasce che non entrano nel formato, `LINE_UNDER_SYMBOL`, misure di costo) | 5 |
+| `run … still passes under mixing-valve-thermostatic after breaking for it` | **14** |
+| `run … has no straight stretch of 7.5mm for mixing-valve-thermostatic` | **3** |
+| `run … has no straight stretch of 7.5mm for dirt-separator` | 1 |
+| `run … on network calda cannot be routed` | 1 |
+| asserzioni di qualità in `acceptance/test_drawing.py` — backtracking, `LINE_UNDER_SYMBOL`, il terminale non addosso all'accumulo | 3 |
 
-**Diciassette su ventidue sono lo stesso difetto**, ed è uno: sull'impianto 1 e sul 2 posati
-**deterministicamente, senza piano**, la tratta della mandata sanitaria porta **tre accessori
-in linea** e non trova il rettilineo che pretendono — la spezzata piega e rientra sotto il
-miscelatore. Su `main` la stessa posa riusciva **perché il solutore spostava i pezzi finché
-l'instradamento veniva**.
+**Diciassette su ventidue nominano lo stesso pezzo**, il miscelatore termostatico, e
+diciannove su ventidue sono **un errore della posa deterministica**, non un'asserzione: sugli
+impianti 1 e 2 posati **senza piano**, la tratta della mandata sanitaria porta **tre accessori
+in linea** e non trova il rettilineo che pretendono (**B5**). Le tre asserzioni che restano
+sono le proprietà di qualità che **il solutore comprava**.
 
-**Non è un difetto nuovo del motore: è il prezzo di D-151, già dichiarato e già misurato** —
-`misura-senza-solutore.txt`, §5: senza solutore e senza piano tutti e cinque gli impianti
-finiscono sul formato più grande col ripiego, con 2–6 tratte cedute e 11–19 rilievi
-bloccanti. La stessa proprietà, **sulla via vigente**, le tavole ce l'hanno: le cinque escono
-a **zero tratte cedute**, e su quelle la tratta dell'ACS si posa perché **il piano le dà il
-rettilineo**.
+**Nessuna delle ventidue è un difetto della via che il prodotto usa.** Su `main` quella posa
+riusciva perché il solutore spostava i pezzi finché l'instradamento veniva; qui le cinque
+tavole escono a **zero tratte cedute**, perché **il piano quel rettilineo lo dà**.
 
-**Perché non le ho chiuse qui.** Chiuderle vuol dire riscrivere ciascuna perché misuri la
-stessa proprietà **dal piano** — è quello che è stato fatto per
-`test_il_primo_impianto_esce_dal_proprio_piano` — e sono venti prove, ciascuna col proprio
-impianto di partenza: è un pacchetto, non una coda. **Nessuna è a `skip` o a `xfail`.**
-`DRAW-016` punto 8 le prende in carico.
+**È il prezzo di D-151, già dichiarato e già misurato** — `misura-senza-solutore.txt`, §5:
+senza solutore e senza piano tutti e cinque gli impianti finiscono sul formato più grande col
+ripiego, con 2–6 tratte cedute e 11–19 rilievi bloccanti.
+
+**Perché non le ho chiuse qui.** Chiuderle vuol dire riscriverne ventidue perché misurino la
+stessa proprietà **dal piano** — come è stato fatto per
+`test_il_primo_impianto_esce_dal_proprio_piano` — ciascuna col proprio impianto di partenza:
+è un pacchetto, non una coda. **Nessuna è a `skip` o a `xfail`.** `DRAW-016` punto 8.
 
 > **E vale la pena guardarci dentro prima di riscriverle.** Un difetto solo che spiega
 > diciassette prove è un candidato serio: se la posa deterministica imparasse a dare il
 > rettilineo che tre accessori in linea pretendono (**B5**), diciassette tornerebbero verdi
-> senza toccare le prove. È la prima cosa da provare, non l'ultima.
+> **senza toccare una riga di prova**. È la prima cosa da provare, non l'ultima — sapendo che
+> è **il motore**, e che toccarlo si dichiara prima.
 
 ⚠ **E c'è un buco nella categorizzazione:** `tests/acceptance/test_drawing.py` **non ha la
 riga `# categoria:`**, perché il punto 5 di `DRAW-015` diceva «i 36 file di `tests/layout/`» e
@@ -748,6 +736,25 @@ scritta nel commit**.
 Il codice è a posto: il docstring di `organi_di_servizio_lontani` dice le tre voci e non
 ripete la diagnosi sbagliata. Resta sbagliato **solo** il messaggio di commit, e la storia
 non si riscrive su un ramo già spinto: sta qui.
+
+### La misura sui tre file, che avevo riportato sbagliata
+
+Avevo scritto — e stava anche nel corpo della PR — che sui file che il diff tocca davvero la
+misura era identica: «`test_stacchi_minimi_e_interasse` + `test_rami_di_servizio` +
+`test_ordine_semantico` danno 17 fallite su `main` e 17 qui». **Rimisurato sulla copia pulita
+con `PYTHONPATH`: su `main` sono 7, e tutte e sette nel primo file.**
+
+```
+$ PYTHONPATH=$PWD/src python -m pytest -q tests/layout/test_stacchi_minimi_e_interasse.py \
+    tests/layout/test_rami_di_servizio.py tests/rules/test_ordine_semantico.py
+7 failed, 35 passed in 254.89s        # origin/main
+```
+
+`test_rami_di_servizio` (8 qui) e `test_ordine_semantico` (1 qui) sono **verdi su `main`**.
+La misura vecchia era viziata dalla stessa trappola dell'installazione modificabile che
+questo rapporto nomina in §10: la copia «`main`» importava il sorgente del ramo. **È lo
+stesso errore due volte, ed è il motivo per cui la seconda misura si è fatta con
+`PYTHONPATH`.**
 
 ### A4 è entrata fra le regole e per un giorno non ha contato
 
