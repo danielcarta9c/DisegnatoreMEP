@@ -101,16 +101,45 @@ silenzio. Chi corregge è il pezzo 5, che scrive vincoli.
 
 ### 5. I cinque piani a mano cambiano di posto e di nome
 
+> Due di loro sono stati corretti il 20 settembre sera, **guardando le tavole**: il confine
+> ACS dell'impianto 1 da 65 a 40 mm (il proprio minimo) e quello dell'impianto 5 da 37,5 a
+> 22,5. Sul 5 più vicino **non si va**: a 662,5 la tavola non esce più. Il bersaglio quindi
+> non è pulito, e le note dei piani lo dicono.
+
 Escono da `docs/collaudi/PROVA-PIANO/` — che li faceva sembrare prodotto — ed entrano nel
 **collaudo del pezzo 3**, accanto alle sue prove in camera pulita, nella stessa posizione in
 cui stanno i grafi di `skill/capire/prova-2026-08-07/`. Con in testa la riga che dice **che
 cosa sono**: il bersaglio, scritto a mano, che il pianificatore deve pareggiare.
 
-### 6. I rilievi che mancano ad A2 e A3 (D-158)
+### 6. I rilievi che mancano, censiti (D-158)
 
-`DRAW-015` ha chiuso A1 e A4. Restano **A2** — chi sta in parallelo si impila — e **A3** —
-l'ordine del processo si legge da sinistra a destra. Oggi vivono solo come vincoli della posa,
-e il piano li può rompere in silenzio: è la classe di difetto che D-158 nomina.
+`DRAW-015` ha chiuso **A1** e **A4**. Il censimento del resto è in
+`docs/collaudi/DRAW-015/RAPPORTO.md` §4bis, verificato riga per riga sul codice vigente:
+
+| regola | oggi è tenuta su da | che cosa serve |
+|---|---|---|
+| **A2** — chi sta in parallelo si impila | `tests/layout/test_zone_dei_pezzi_grossi.py`, che misura **la posa**, non la tavola | il rilievo sulla tavola |
+| **A3** — l'ordine del processo da sinistra a destra | **niente** | tutto |
+| **B2** — dal circolatore un tratto dritto, una curva, la dorsale | l'errore dell'instradamento, quando c'è | il rilievo che lo nomina prima |
+| **C1** — un pezzo si prende dal lato delle sue porte | idem | idem |
+| **C3** — la mappa degli attacchi si rifà solo per i raccordi | **niente** | il confronto fra grafo e tavola |
+
+**Per primi A2 e A3**, che sono vincoli di posa nel senso stretto di D-158.
+**A3 è il caso limite**: l'unico posto che la faceva valere era il solutore, morto con D-151.
+**C3 è il buco peggiore** — lo dice già il foglio delle regole — perché è l'unico difetto di
+**contenuto** che nasce da una scelta **grafica**: il 20 settembre ha mandato l'acqua fredda
+sull'uscita primaria dell'accumulo, col grafo giusto e il disegno sbagliato.
+
+### 6bis. I rilievi di A4 che restano accesi, e sono veri
+
+Il controllo c'è, e sulle cinque tavole consegnate dice **4 rilievi sull'impianto 1 e 5 su
+ciascuno degli altri** (RAPPORTO §4bis, con i millimetri organo per organo). Non sono rumore:
+il peggiore è **l'acquedotto dell'impianto 3 a +50 mm**, e si vede a occhio — l'acqua fredda
+entra dal bordo sinistro invece che da accanto al bollitore.
+
+**Si chiudono componendo, non alzando la soglia.** Sette dei ventiquattro sono da **+2,5 mm**,
+cioè un passo di griglia: se si decide di tollerarli, **la tolleranza è il passo del foglio**
+e va scritta come decisione, non come costante.
 
 ### 7. I documenti del motore dichiarano che cosa è storia
 
@@ -151,8 +180,10 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
    pianificatore rispetta: prima e dopo, con le due tavole.
 4. **Nessuna tavola perde quello che ha guadagnato in `DRAW-015`**: cinque tavole, zero tratte
    cedute, e i rilievi bloccanti non aumentano su nessuna.
-5. **Il confine di rete resta addosso**: lo stacco di ogni confine resta il proprio minimo su
-   tutte e cinque, e il rilievo di A4 lo misura.
+5. **Il confine di rete non si allontana**: lo stacco di ogni confine non cresce su nessuna
+   delle cinque, e il rilievo di A4 lo misura. Il punto di partenza è **40 · 20 · 20 · 22,5 ·
+   22,5 mm** per il prelievo ACS e **25 · 30 · 70 · 37,5 · 30** per l'acquedotto (minimo 20).
+   *Migliorarli è il lavoro del pianificatore, e il bersaglio è zero rilievi di A4.*
 6. **A2 e A3 hanno il loro rilievo**, ciascuno con la tavola su cui si vede.
 7. **Le cure deterministiche non ci sono più**, e una prova lo sorveglia.
 8. **Nessun documento resta in terzo stato**, compresi i cinque dell'elenco 7.
@@ -186,6 +217,11 @@ solo, che sono il punto di questo pacchetto. Rapporto in `docs/collaudi/DRAW-016
    catena che B1 vuole dritta: la tavola è giusta e il numero dice che è sbagliata.
 3. **Quando si apre il pacchetto DXF** — D-023 e D-148 sono state lasciate andare **perché**
    l'elaborato esce in DXF, e quel pezzo non esiste.
+4. **Dove sta la presa del ricircolo sanitario.** Sull'impianto 5 il confine ACS sta adesso
+   addosso alla presa, com'è giusto, ma la presa sta **all'estremo destro del foglio** e la
+   mandata sanitaria attraversa da sola i tre secondari per arrivarci: è lì che stanno quasi
+   tutti i quattordici incroci. *O la presa sta in fondo all'anello e la linea lunga è vera,
+   o è un nodo che il disegno può avvicinare al bollitore.* È contenuto MEP, e non è mio.
 
 ## Quello che questo pacchetto **non** chiude
 

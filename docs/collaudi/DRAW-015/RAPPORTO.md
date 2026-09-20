@@ -9,13 +9,18 @@ sessione (D-152) · **Base:** `8b08233`, la testa di `origin/main`
 
 **Escono tutte e cinque.** È la prima volta nel progetto.
 
-| | tavola | formato | tratte | **cedute** | **bloccanti** | pieghe | incroci |
-|---|---|---|---|---|---|---|---|
-| impianto 1 — due PDC e accumulo combinato | [`tavole/tavola-1-DAL-PIANO.pdf`](tavole/tavola-1-DAL-PIANO.pdf) | A2 | 21 | **0** | **0** | 8 | 1 |
-| impianto 2 — PDC con deviatrice e ACS | [`tavole/tavola-2-DAL-PIANO.pdf`](tavole/tavola-2-DAL-PIANO.pdf) | A2 | 23 | **0** | **0** | 9 | 2 |
-| impianto 3 — PDC diretta su pavimento | [`tavole/tavola-3-DAL-PIANO.pdf`](tavole/tavola-3-DAL-PIANO.pdf) | A2 | 22 | **0** | **1** | 9 | 3 |
-| impianto 4 — ibrido PDC + caldaia | [`tavole/tavola-4-DAL-PIANO.pdf`](tavole/tavola-4-DAL-PIANO.pdf) | A2 | 25 | **0** | **0** | 14 | 3 |
-| impianto 5 — cascata di tre PDC | [`tavole/tavola-5-DAL-PIANO.pdf`](tavole/tavola-5-DAL-PIANO.pdf) | A1 | 54 | **0** | **0** | 33 | 14 |
+| | tavola | formato | tratte | **cedute** | **bloccanti** | violazioni | pieghe | incroci |
+|---|---|---|---|---|---|---|---|---|
+| impianto 1 — due PDC e accumulo combinato | [`tavole/tavola-1-DAL-PIANO.pdf`](tavole/tavola-1-DAL-PIANO.pdf) | A2 | 21 | **0** | **0** | 8 | 8 | 1 |
+| impianto 2 — PDC con deviatrice e ACS | [`tavole/tavola-2-DAL-PIANO.pdf`](tavole/tavola-2-DAL-PIANO.pdf) | A2 | 23 | **0** | **0** | 8 | 8 | 2 |
+| impianto 3 — PDC diretta su pavimento | [`tavole/tavola-3-DAL-PIANO.pdf`](tavole/tavola-3-DAL-PIANO.pdf) | A2 | 22 | **0** | **1** | 8 | 8 | 1 |
+| impianto 4 — ibrido PDC + caldaia | [`tavole/tavola-4-DAL-PIANO.pdf`](tavole/tavola-4-DAL-PIANO.pdf) | A2 | 25 | **0** | **0** | 10 | 14 | 3 |
+| impianto 5 — cascata di tre PDC | [`tavole/tavola-5-DAL-PIANO.pdf`](tavole/tavola-5-DAL-PIANO.pdf) | A1 | 54 | **0** | **0** | 18 | 33 | 14 |
+
+> **La colonna «violazioni» conta cinque regole, non quattro.** Da quando **A4** ha il
+> proprio rilievo (§4bis) il punteggio del revisore lo conta, e sono **cinque violazioni per
+> tavola** che prima non si vedevano: tutte e cinque le tavole ne portano quattro o cinque, e
+> §4bis le elenca con i millimetri. **Non è un peggioramento: è la misura che prima mancava.**
 
 **L'unico rilievo bloccante è sull'impianto 3**, ed è strutturale — §6.
 
@@ -26,11 +31,11 @@ Comando, e si riproduce intero:
 
 ```
 $ scripts/tavole-dal-piano.sh
-prova-1-due-pdc-accumulo-combinato   ESCE (uscita 0)  21 tratte, 0 cedute  bloccanti 0  rilievi 10
-prova-2-pdc-deviatrice-acs           ESCE (uscita 0)  23 tratte, 0 cedute  bloccanti 0  rilievi 7
-prova-3-pdc-diretta-pavimento        ESCE (uscita 2)  22 tratte, 0 cedute  bloccanti 1  rilievi 7
-prova-4-ibrido-pdc-caldaia           ESCE (uscita 0)  25 tratte, 0 cedute  bloccanti 0  rilievi 12
-prova-5-cascata-tre-pdc              ESCE (uscita 0)  54 tratte, 0 cedute  bloccanti 0  rilievi 27
+prova-1-due-pdc-accumulo-combinato   ESCE (uscita 0)  21 tratte, 0 cedute  bloccanti 0  rilievi 13
+prova-2-pdc-deviatrice-acs           ESCE (uscita 0)  23 tratte, 0 cedute  bloccanti 0  rilievi 13
+prova-3-pdc-diretta-pavimento        ESCE (uscita 2)  22 tratte, 0 cedute  bloccanti 1  rilievi 12
+prova-4-ibrido-pdc-caldaia           ESCE (uscita 0)  25 tratte, 0 cedute  bloccanti 0  rilievi 17
+prova-5-cascata-tre-pdc              ESCE (uscita 0)  54 tratte, 0 cedute  bloccanti 0  rilievi 32
 ```
 
 ### Il confronto con `main`, misurato
@@ -71,10 +76,22 @@ stanno sulle stesse due quote, e la linea le passa dentro.
    Il prelievo ACS stava all'estrema destra con una linea che attraversava mezzo foglio
    vuoto: **205, 502 e 152 mm** su 2, 3 e 4. Era una conseguenza di A1 — «la distribuzione
    sta a destra» — applicata da me a un pezzo che **non ha una posizione propria** (I-061,
-   D-145). Adesso stanno fra **17,5 e 50 mm**. La cosa che conta non è la correzione: è che
-   **nessun numero me l'aveva detto**, e da lì viene **D-158**.
+   D-145). Adesso il prelievo ACS sta a **40 · 20 · 20 · 22,5 · 22,5 mm** dal pezzo che
+   serve, e **tre dei cinque sono esattamente il proprio minimo**; gli altri due sono a un
+   passo di griglia, e §4bis dice perché più vicino non si va. La cosa che conta non è la
+   correzione: è che **nessun numero me l'aveva detto**, e da lì viene **D-158** — e infatti
+   adesso un numero c'è, ed è **A4** (§4bis).
+   ⚠ **L'acquedotto invece è ancora lontano su quattro tavole su cinque** — 25 · 30 · **70**
+   · 37,5 · 30 mm contro un minimo di 20 — e il peggiore, l'impianto 3, si vede a occhio:
+   l'acqua fredda entra dal bordo sinistro. È mio, e si cura componendo.
 3. **Sull'impianto 5 i quattordici incroci si vedono**, e stanno quasi tutti dove il
-   circuito sanitario attraversa i tre secondari.
+   circuito sanitario attraversa i tre secondari. **Guardandola dopo la correzione di A4,
+   quella linea ha un nome:** il confine ACS adesso sta addosso alla **presa del ricircolo**
+   — A4 è a posto — ma la presa l'ho messa io **all'estremo destro del foglio**, e la
+   mandata sanitaria attraversa da sola tutti e tre i secondari per arrivarci. È lo **stesso
+   difetto dei 502 mm, salito di un piano**: A4 governa l'organo, non il nodo del grafo da
+   cui pende. **Non la sposto**, perché dove sta la presa di un ricircolo è un contenuto MEP
+   e non è mio: è la domanda 4 al PO (§6).
 4. **Una tavola mi sembra sbagliata e i numeri dicono che va bene**, ed è il rilievo che
    questo progetto chiede di portare per primo: sull'impianto 5 la catena che attraversa il
    **collettore verticale che B3 pretende** fa due pieghe, e B1 la accusa perché
@@ -89,7 +106,7 @@ stanno sulle stesse due quote, e la linea le passa dentro.
 | impianto | giri di revisione serviti | giri provati | perché si è fermato |
 |---|---|---|---|
 | 1 | **0** | 1 | un giro ha peggiorato la tavola su `bloccanti, pieghe, incroci` |
-| 2 | **0** | 0 | nessuna cura si applica ai rilievi che restano (`DRAWING_ALL_ON_ONE_SIDE`, `HIGHWAY_IS_NOT_STRAIGHT`) |
+| 2 | **0** | 0 | nessuna cura si applica ai rilievi che restano (`DRAWING_ALL_ON_ONE_SIDE`, `HIGHWAY_IS_NOT_STRAIGHT`, `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM`, `SHEET_BARELY_FILLED`) |
 | 3 | **0** | 1 | un giro ha peggiorato la tavola su `avvisi, pieghe, incroci` |
 | 4 | **0** | 1 | la correzione ha tolto la tavola: il piano corretto non si instrada più |
 | 5 | **0** | 1 | un giro ha peggiorato la tavola su `avvisi, pieghe` |
@@ -104,19 +121,25 @@ guastato apposta — il radiatore portato dentro la fascia dello scambiatore —
 (`anello/impianto-4-guasto.json`):
 
 ```
-— giro 0: bloccanti 0, cedute 0, violazioni 7, avvisi 14, pieghe 14, incroci 3
+— giro 0: bloccanti 0, cedute 0, violazioni 12, avvisi 19, pieghe 14, incroci 3
   > radiatori: (310.0, 98.5) -> (315.0, 98.5) — regola A1 [PIECE_OUTSIDE_ITS_BAND]
-— giro 1: bloccanti 0, cedute 0, violazioni 5, avvisi 12, pieghe 14, incroci 3
+— giro 1: bloccanti 0, cedute 0, violazioni 10, avvisi 17, pieghe 14, incroci 3
   > caldaia: (30.0, 221.0) -> (30.0, 96.0) — regola B1 [HIGHWAY_IS_NOT_STRAIGHT]
   > deviatrice-caldaia: (120.0, 226.0) -> (120.0, 101.0) — regola B1 [HIGHWAY_IS_NOT_STRAIGHT]
 — giro 2: la correzione ha tolto la tavola
 Si e' fermato perche': la correzione ha tolto la tavola: il piano corretto non si instrada
 piu' (run p4-a ... run into an obstacle at (50, 36)). Si consegna il giro precedente
 Giri di revisione serviti: 1 (su 2 provati) · ha migliorato: si
+Rilievi per cui il revisore non ha una cura, e restano a chi compone:
+SERVICE_STUB_LONGER_THAN_ITS_MINIMUM
 ```
 
-**Un giro**, violazioni da 7 a 5, nessuna misura peggiorata, e l'arresto nominato. Le due
+**Un giro**, violazioni da 12 a 10, nessuna misura peggiorata, e l'arresto nominato. Le due
 tavole sono in `anello/`.
+
+E l'ultima riga è il comportamento che **D-157** chiede: A4 non ha una cura, quindi il
+revisore **la nomina e la lascia a chi compone** invece di inventarsi una mossa. È già la
+forma del pezzo 5.
 
 ### Due difetti del revisore, trovati guardando l'esito e chiusi
 
@@ -154,6 +177,10 @@ scritto qui e non altrove.
 
 ## 4. Le quattro regole del PO sono diventate quattro controlli (criterio 4)
 
+> **E poi sono diventate cinque.** **A4** è stata aggiunta dopo, guardando le tavole, e ha il
+> suo paragrafo: **§4bis**. Le quattro di questa tabella sono quelle che D-154 chiedeva.
+
+
 `src/disegnatore_mep/validation/regole.py`, una funzione per regola, tutte `warning`: una
 violazione di regola è un **difetto del piano da correggere dal revisore**, non un motivo
 per rifiutare la tavola — il cancello di consegna resta il preflight (D-063).
@@ -173,6 +200,88 @@ una piega di uno stacchetto.
 **La piega che nessuna tratta vedeva**, misurata sull'impianto 5: la catena
 `volano -> deviatrice -> cascata-mandata-b -> … -> pdc-2` ha **sei tratte tutte con zero
 pieghe** e la catena ne fa **due**. I numeri per tratta erano verdi e la catena era storta.
+
+---
+
+## 4bis. La quinta regola, A4 — e la classe di difetto che ha aperto
+
+**Non era nel pacchetto.** È nata guardando le tavole, dopo che il PO ha detto che un
+confine di rete «si fa lì accanto, facendo un tratto piccolo di tubazione». §10bis racconta
+come, D-158 è la decisione che ne esce; qui c'è la misura.
+
+| | codice | che cosa misura |
+|---|---|---|
+| **A4** | `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` | la **lunghezza della spezzata** che porta ogni organo di servizio — la spezzata come il foglio la disegna — contro **il proprio minimo su griglia**, letto da `place.py` e non tarato qui |
+
+Le due eccezioni che D-145 punto 1 chiama «vincoli dichiarati» sono dentro la misura e non
+sono casi a parte: gli **accessori in linea sulla derivazione** alzano il minimo da soli
+(I-044), e il **posto al minimo occupato** — un simbolo o il corridoio di una porta — si
+riconosce e tace. Se è lontano e basta, il rilievo si accende.
+
+### Quello che il rilievo dice sulle cinque tavole consegnate, ed è tutto vero
+
+Dopo la correzione dei confini di rete restano **4 rilievi sull'impianto 1 e 5 su ciascuno
+degli altri**. Non ne ho nascosto nessuno e non ho alzato nessuna soglia:
+
+| impianto | i millimetri di tubo in più, organo per organo |
+|---|---|
+| 1 | acquedotto **+5,0** · scarico dell'accumulo **+2,5** · gruppo di riempimento **+17,5** · presa del riempimento **+5,0** |
+| 2 | acquedotto **+10,0** · scarico **+10,0** · riempimento **+12,5** · presa **+5,0** · sicurezza **+2,5** |
+| 3 | acquedotto **+50,0** · scarico **+5,0** · riempimento **+17,5** · presa **+5,0** · sicurezza **+2,5** |
+| 4 | acquedotto **+17,5** · riempimento **+17,5** · presa **+5,0** · prelievo ACS **+2,5** · sicurezza **+2,5** |
+| 5 | acquedotto **+10,0** · scarico **+5,0** · riempimento **+22,5** · presa **+20,0** · prelievo ACS **+2,5** |
+
+**Sono miei, e si curano componendo meglio.** Il più grosso — l'acquedotto dell'impianto 3 a
+**+50 mm** — si vede a occhio: l'acqua fredda entra dal bordo sinistro invece che da accanto
+al bollitore. I sette rilievi da **+2,5 mm** sono un passo di griglia, cioè la risoluzione su
+cui vive tutto il disegno: se si decide di tollerarli, **la tolleranza è il passo del foglio**
+e non un numero inventato, ma è una scelta e la lascio dichiarata invece di farla di nascosto.
+
+### Le due correzioni fatte guardando, e la misura che le ha chieste
+
+Un agente parallelo ha misurato il rilievo su tutte e cinque e ha **rifiutato di aggiustare
+la soglia**, rimandando a me il giudizio sulla tavola: sull'1 il prelievo ACS stava a 65,0 mm
+dove il minimo ne vuole 40, sul 5 a 37,5 dove ne vuole 20. **Ho guardato, e i numeri avevano
+ragione:**
+
+- **impianto 1** — misurato sulla geometria consegnata, i tre organi in linea dell'ACS stanno
+  fra y=166 e y=186 e il confine stava a y=121: fra l'ultima valvola e il confine c'erano
+  **40 mm di tubo nudo**, di cui 15 sono il minimo del confine e **25 erano vuoti**. Portato
+  da y=45 a y=70 nel piano: adesso lo stacco è **40,0 mm, cioè esattamente il minimo**, e il
+  rilievo si spegne.
+- **impianto 5** — portato da x=680 a **x=665**. Più vicino non si va: a 662,5 la tavola
+  **non esce più** — «run w6-a has no straight stretch of 10mm for valve-isolation» — perché
+  l'intercettazione in linea pretende il proprio rettilineo (B5). Restano **2,5 mm**, un
+  passo, e sono misurati, non tollerati per comodità.
+
+**E guardando l'impianto 5 si vede il difetto salito di un piano** (§1.3): il confine adesso
+sta addosso alla presa del ricircolo, ma **la presa sta all'estremo destro del foglio** e la
+mandata sanitaria attraversa da sola i tre secondari per arrivarci. A4 governa l'organo, non
+il nodo del grafo da cui pende. Dove va la presa di un ricircolo è **contenuto MEP**: §6,
+domanda 4.
+
+### Il censimento di D-158: quali vincoli di posa non hanno ancora un rilievo
+
+Verificato riga per riga su `docs/regole-del-piano.md` e sul codice vigente:
+
+| regola | oggi è tenuta su da | manca |
+|---|---|---|
+| **A1** | `PIECE_OUTSIDE_ITS_BAND` | — chiusa qui |
+| **A4** | `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` | — chiusa qui |
+| **A2** | `tests/layout/test_zone_dei_pezzi_grossi.py`, che misura **la posa**, non la tavola | il rilievo |
+| **A3** | **niente** | tutto |
+| **B2**, **C1**, **C3** | l'errore dell'instradamento, quando c'è | il rilievo che li nomina prima |
+
+**A3 è il caso limite, e va detto chiaro: oggi non è tenuta su da niente.** L'unico posto che
+faceva valere l'ordine di processo era il solutore, ed è morto con D-151; `hierarchy.py` cita
+D-060 per l'impilamento di A2, non per l'ordine da sinistra a destra, e `compose.py` lo cita
+solo per dire che centrare il blocco non lo cambia.
+
+**C3 è il buco peggiore**, e lo dice già il foglio delle regole: è **l'unico difetto di
+contenuto che nasce da una scelta grafica** — il 20 settembre ha mandato l'acqua fredda
+sull'uscita primaria dell'accumulo, con il grafo giusto e il disegno sbagliato.
+
+Le apre `DRAW-016`.
 
 ---
 
@@ -234,6 +343,23 @@ codice. Non l'ho decisa io.
 che B3 pretende fa piegare la catena che B1 vuole dritta. Il PO ha detto «prima le autostrade
 dritte **il più possibile**»; come si scrive quel «il più possibile» è la stessa domanda.
 
+### Domanda 4 — dove sta la presa del ricircolo sanitario
+
+Nata guardando l'impianto 5 dopo la correzione di A4 (§4bis). Il confine ACS sta adesso
+**addosso alla presa del ricircolo**, com'è giusto, ma **la presa l'ho messa io all'estremo
+destro del foglio** e la mandata sanitaria attraversa da sola i tre circuiti secondari per
+arrivarci: è lì che stanno quasi tutti i quattordici incroci di quella tavola.
+
+Le due letture, e **non scelgo io perché è contenuto MEP**:
+
+1. **la presa sta in fondo alla distribuzione sanitaria e ci deve stare** — è il punto più
+   lontano dell'anello, e allora la linea lunga è vera e il difetto non esiste;
+2. **la presa è un nodo che il disegno può avvicinare** — e allora va accanto al bollitore
+   come il confine, e l'impianto 5 perde una decina di incroci.
+
+Se vale la seconda, diventa una riga nuova di `docs/regole-del-piano.md` con la propria
+fonte, e il rilievo che la misura è lo stesso di A4 salito di un piano.
+
 ---
 
 ## 7. Le prove (criterio 8)
@@ -255,6 +381,36 @@ dritte **il più possibile**»; come si scrive quel «il più possibile» è la 
 Prove nuove: `tests/layout/test_autostrade.py`, `tests/layout/test_il_solutore_e_fuori.py`,
 `tests/validation/test_regole_del_piano.py`, `tests/piano/test_formato_del_piano.py`,
 `tests/piano/test_esecutore.py`, `tests/piano/test_revisore.py`.
+
+### La prova che sorveglia il difetto di §10ter
+
+`tests/piano/test_revisore.py::test_ogni_regola_misurata_conta_come_violazione` pretende che
+**ogni sigla di `ORDINE_DELLE_REGOLE` sia portata da un codice di `CODICI_DELLE_REGOLE`**.
+Serve perché il difetto che ha lasciato A4 fuori dal punteggio era esattamente questo: una
+lista di codici scritta a mano accanto a una lista di regole che cresceva. Adesso i codici si
+**ricavano** dalla mappa `REGOLA_DEL_RILIEVO`, e la prova sorveglia che restino ricavati.
+
+### La prova di A4 che `main` non aveva, e il conto onesto
+
+`tests/layout/test_stacchi_minimi_e_interasse.py` era l'**unica** guardia di A4 prima di
+questo pacchetto, ed era già rossa su `main`. Misurato in una cartella pulita a
+`origin/main`, con `PYTHONPATH` e non con l'installazione modificabile:
+
+```
+$ PYTHONPATH=$PWD/src python -m pytest tests/layout/test_stacchi_minimi_e_interasse.py -q
+7 failed, 5 passed in 149.37s        # origin/main
+
+$ .venv/bin/python -m pytest tests/layout/test_stacchi_minimi_e_interasse.py -q
+8 failed, 4 passed                   # questo ramo
+```
+
+**Una prova in più è rossa qui, e la dico:**
+`test_il_raccordo_che_regge_uno_stacco_sta_stretto_al_raccordo_a_cui_e_attaccato[una_macchina_con_accumulo_combinato]`.
+Non si instrada — «run s3-a … the 6 straight steps the chain needs beyond the port at (47,62)
+run into an obstacle» — e su `main` passava **perché il solutore spostava i pezzi finché
+l'instradamento riusciva**. È la contropartita di D-151 su questo caso, non un difetto nuovo
+del motore: la stessa proprietà, sulla via vigente, la difende il piano dell'impianto 1, che
+esce a **zero cedute e zero bloccanti**. Il file lo dichiara già nella riga `# categoria:`.
 
 **Il saldo della suite: §10.**
 
@@ -394,6 +550,45 @@ risposta è migliore di un costo — «non torna come costo: D-139 resta, i mill
 fuori dalle voci di costo, e la proprietà che quel costo teneva su torna nella forma
 giusta». Ciò che mancava non era il costo: era il controllo.
 
+## 10ter. Due cose che avevo scritto e che la misura ha smentito
+
+**Prima le misure, poi il racconto** vale anche verso il proprio lavoro fatto, e queste due
+non le tolgo: le correggo qui, perché chi legge la storia del ramo legge prima i messaggi di
+commit.
+
+### Il messaggio del commit `c5d5aed` descrive male quello che ha aggiustato
+
+Dice: «il controllo sotto-contava il minimo quando fra l'organo e il pezzo che serve il
+grafo mette un **nodo** — tipicamente una valvola di intercettazione — invece di un
+accessorio in linea. Adesso il minimo è quello dell'intera catena di derivazione».
+
+**È sbagliato, e l'ha smentito una misura di un agente parallelo.** La valvola citata,
+`valve-isolation-locked-open`, è `attachment_inline`: `build_trunks` la ricompone **dentro**
+la stessa tratta, e il minimo la contava già — leggeva 15,0, non 5,0. Il caso «minimo 5,0»
+era un **altro pezzo**, il gruppo di riempimento.
+
+**Quello che ha davvero aggiustato il conto** è che il minimo ha smesso di essere un numero
+di questo modulo ed è diventato **le tre voci che la posa usa già**:
+`place.stub_minimum_mm`, `place.inline_room_mm` e `place.ROW_GAP_MM`, prese su griglia come
+fa `improve.py::_hang_ceiling`; più l'eccezione del **posto occupato**, che è la lettura che
+`test_stacchi_minimi_e_interasse.py::_taken_one_step_closer` difende nella posa. Il numero
+del rapporto resta quello misurato — 48 rilievi diventano 25 — ma **la ragione non è quella
+scritta nel commit**.
+
+Il codice è a posto: il docstring di `organi_di_servizio_lontani` dice le tre voci e non
+ripete la diagnosi sbagliata. Resta sbagliato **solo** il messaggio di commit, e la storia
+non si riscrive su un ramo già spinto: sta qui.
+
+### A4 è entrata fra le regole e per un giorno non ha contato
+
+Aggiunta a `ORDINE_DELLE_REGOLE`, il suo rilievo finiva fra gli **avvisi** — l'ultima voce
+del punteggio, quella che una piega in meno si compra — perché `CODICI_DELLE_REGOLE` in
+`piano/revisore.py` era una lista di quattro codici **scritta a mano**. Cioè: il controllo
+che serviva a non violare una regola in silenzio è stato per un giorno il controllo che
+nessuno contava. Adesso i codici si ricavano, e una prova lo sorveglia (§7).
+
+---
+
 ## 11. Come è stato diviso il lavoro (D-152)
 
 Quattro agenti paralleli **dentro** la sessione, perimetro dichiarato prima di lanciarli:
@@ -404,19 +599,29 @@ Quattro agenti paralleli **dentro** la sessione, perimetro dichiarato prima di l
 | piano | `piano/**`, `cli.py`, `tests/piano/**`, `tests/test_cli.py` | il formato, l'esecutore, il comando |
 | documenti | i sette documenti dell'elenco 6, più i commenti di `place.py` e `improve.py` | il riallineamento e la citazione D-119 |
 | categorie | i 36 file di `tests/layout/*.py` | la categoria dentro ciascuno |
+| A4 | `validation/regole.py`, `tests/validation/test_regole_del_piano.py` | il quinto controllo, e il censimento dei vincoli di posa senza rilievo (§4bis) |
 
 **Il revisore, la rimozione del solutore, i tre piani nuovi e tutte le misure di questo
 rapporto sono della sessione**, e quello che gli agenti hanno riferito è stato **rieseguito**
 prima di finire qui dentro: la suite, `mypy`, `ruff`, le cinque tavole e i giri del revisore
 li ho rifatti io.
 
+**Due volte quello che un agente ha riferito è stato smentito rieseguendolo**, ed è il motivo
+per cui la regola di D-152 esiste: la diagnosi del minimo di A4 (§10ter) e un esempio non
+riproducibile nella prima stesura di `ARCHITETTURA-DEL-PIANO.md`. **E una volta un agente ha
+rifiutato di aggiustare una soglia e ha rimandato indietro il giudizio sulla tavola** — «la
+tavola la guardi tu» — ed è così che sono nate le due correzioni di §4bis.
+
 ---
 
 ## 12. Quello che questo pacchetto non chiude
 
 - **Le tavole non sono diventate belle**, e non doveva chiuderlo. Il difetto in coda è
-  nominato e misurato: il disegno è una fascia nella metà alta (D3), e i confini di rete
-  finiscono lontanissimi (§1.2).
+  nominato e misurato: il disegno è una fascia nella metà alta (D3).
+- **A4 è misurata ma non è pulita**: restano 4 rilievi sull'impianto 1 e 5 su ciascuno degli
+  altri, e sono veri (§4bis). Li chiude chi compone, cioè `DRAW-016`.
+- **A2, A3, B2, C1 e C3 non hanno ancora un rilievo sulla tavola finita** (§4bis), e **A3
+  oggi non è tenuta su da niente**.
 - **B7 e la contraddizione B1/B3 sono domande al PO** (§6).
 - **B3 non morde con due macchine in parallelo**, e non misura *se* un collettore ci sia.
 - **Il DXF non esiste ancora.** La riproducibilità (D-023) e il vincolo dell'A3 (D-148) sono

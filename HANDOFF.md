@@ -68,7 +68,9 @@ canonica riordina i componenti, la posa di partenza legge quell'ordine
 - **Agenti paralleli:** si lanciano **dentro** la sessione, con un perimetro dichiarato prima
   — un file o una coda. Non consegnano, non fondono, non chiudono niente, e quello che
   riferiscono non è una misura finché la sessione non l'ha rieseguito. Su `DRAW-015` sono
-  stati quattro, e ha funzionato: §11 del rapporto dice chi ha fatto che cosa.
+  stati cinque, e ha funzionato: §11 del rapporto dice chi ha fatto che cosa. **Due volte
+  quello che un agente ha riferito è stato smentito rieseguendolo**, ed è il motivo per cui
+  la regola esiste.
 
 **Il controllo è uno: il PO guarda le tavole.** Senza tavole non c'è niente da approvare, e
 senza approvazione non si fonde.
@@ -81,8 +83,10 @@ senza approvazione non si fonde.
   - **il revisore esiste** (`piano/revisore.py`): esegue il piano, misura, corregge il piano
     nominando **la regola** di ogni correzione, e si ferma dicendo perché — compreso quando
     un giro peggiora, e allora consegna il precedente;
-  - **le quattro regole del PO sono quattro controlli** (`validation/regole.py`): A1 le tre
-    fasce, B1 le autostrade dritte, B3 il collettore verticale, B4 l'organo in linea;
+  - **cinque regole del PO sono cinque controlli** (`validation/regole.py`): A1 le tre
+    fasce, **A4 l'organo di servizio addosso al pezzo che serve**, B1 le autostrade dritte,
+    B3 il collettore verticale, B4 l'organo in linea. Le prime quattro le chiedeva D-154;
+    **A4 è nata guardando le tavole**, ed è la regola che ha prodotto D-158;
   - **il piano è un pezzo del prodotto** (`src/disegnatore_mep/piano/`), non più uno script;
   - **il solutore è uscito dalla catena** e i tre moduli lo dichiarano in testa.
 - **Tutti e cinque gli impianti di prova producono una tavola**, dal piano, con **zero
@@ -97,8 +101,10 @@ senza approvazione non si fonde.
   **152,5** sul 4 — contro i **32,5 e 50** dei due piani composti il 19 e il 20 prima che A1
   fosse un controllo. L'agente aveva **peggiorato una cosa che funzionava applicando una
   regola** (A1) a un pezzo che quella regola non governa, e niente gliel'ha detto perché
-  **D-145 vive nella posa del motore e il piano la sovrascrive**. Corretto: adesso stanno fra
-  **17,5 e 50 mm**. Da qui D-158.
+  **D-145 vive nella posa del motore e il piano la sovrascrive**. Corretto: il prelievo ACS
+  sta adesso a **40 · 20 · 20 · 22,5 · 22,5 mm** dal pezzo che serve, e **tre su cinque sono
+  esattamente il proprio minimo**. Da qui D-158, e da D-158 il controllo **A4**, che adesso
+  quel difetto lo misura sulla tavola finita.
 - **I giri del revisore sui cinque piani consegnati: zero**, e la prima correzione ha
   **peggiorato su quattro su cinque**. È la misura che ha prodotto D-157: un revisore a mosse
   è un solutore in miniatura. Le cure deterministiche sono dichiarate superate in testa a
@@ -106,6 +112,13 @@ senza approvazione non si fonde.
 - **Quello che ancora non va:** il disegno è una fascia nella metà alta su tutte e cinque
   (D3), e i due pezzi di skill che mancano — il **pianificatore** e **l'occhio del
   revisore** — sono il pacchetto attivo.
+- **A4 è misurata ma non è pulita:** restano 4 rilievi sull'impianto 1 e 5 su ciascuno degli
+  altri, il peggiore **+50 mm** (l'acquedotto dell'impianto 3, che entra dal bordo sinistro).
+  Sono difetti di composizione, non del controllo, e li chiude il pianificatore.
+- **Il censimento di D-158, verificato sul codice vigente** (RAPPORTO §4bis): **A2, A3, B2,
+  C1 e C3 non hanno un rilievo sulla tavola finita**. **A3 oggi non è tenuta su da niente** —
+  l'unico posto che la faceva valere era il solutore — e **C3 è il buco peggiore**, perché è
+  l'unico difetto di **contenuto** che nasce da una scelta **grafica**.
 - **Le due PR bocciate e mai chiuse — #32 (`DRAW-010`) e #41 (`DRAW-012`) — sono state
   chiuse**, con il rimando al verdetto agli atti. I rami non sono stati cancellati.
 
@@ -153,9 +166,13 @@ senza approvazione non si fonde.
 2. **B1 e B3 si contraddicono sulla cascata.** Il collettore verticale che B3 pretende fa
    piegare la catena che B1 vuole dritta: **la tavola è giusta e il numero dice che è
    sbagliata.** Come si scrive «il più possibile».
-3. **Dove sta un confine di rete.** A1 lo esclude dal conto delle fasce perché «va accanto
-   all'utente che serve» (I-061), ma nessuna riga dice dove metterlo, e nei cinque piani
-   finisce lontanissimo. È la cosa più brutta che si vede sulle tavole.
+3. **Dove sta la presa del ricircolo sanitario.** Il confine ACS adesso sta addosso alla
+   presa (A4, chiuso), ma sull'impianto 5 **la presa sta all'estremo destro del foglio** e la
+   mandata sanitaria attraversa da sola i tre secondari per arrivarci: è lì che stanno quasi
+   tutti i quattordici incroci di quella tavola. *O la presa sta in fondo all'anello e la
+   linea lunga è vera, o è un nodo che il disegno può avvicinare al bollitore.* Contenuto MEP.
+   — *La domanda precedente, «dove sta un confine di rete», l'ha chiusa il PO il 20 settembre:
+   «si fa lì accanto facendo un tratto piccolo di tubazione». È A4, ed è un controllo.*
 4. **Quando si apre il pacchetto DXF.** La riproducibilità (D-023) e il vincolo dell'A3
    (D-148) sono stati lasciati andare **perché** l'elaborato esce in DXF e si rifinisce in
    CAD. Quel pezzo non esiste.

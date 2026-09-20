@@ -132,18 +132,28 @@ In ordine di quanto pesano. I rischi numerati stanno in `PROJECT_STATE.md`.
    5,2 volte l'inchiostro fra quadrante pieno e vuoto sull'impianto 1 e **9,0** sul 5 — e
    l'impianto 5 ha **quattordici incroci**. È il **primo difetto aperto del pianificatore**
    (D3 in `docs/regole-del-piano.md`).
-1. **Il revisore non c'è ancora** (D-153). È il cuore di `DRAW-015`, ed è **lo strumento con
-   cui si scrivono le regole**, una tavola alla volta. Finché non c'è, l'anello lo chiude
-   l'agente a mano e le regole si scrivono a vista.
-2. **Nessun controllo sa che cos'è un'autostrada** (`I-068`). La **catena** esiste — è
-   `layout/highways.py`, su `main` con la PR #44 — ma **nessun rilievo sa nominare la piega
-   di un'autostrada**: `RUN_WITH_TOO_MANY_BENDS` conta una piega della dorsale come una
-   piega di uno stacchetto. È il difetto che ha generato D-151, ed è il **criterio 4** di
-   `DRAW-015` (regola B1).
-3. **Le quattro regole di D-154 non hanno ancora un controllo.** Tre fasce (A1), autostrade
-   dritte (B1), collettore verticale (B3), la tre vie che non spezza il tratto (B4): in
-   `docs/regole-del-piano.md` sono tutte `da scrivere`. **Una regola senza controllo è
-   un'intenzione**, e il revisore non la può usare (D-153).
+1. **I due pezzi di skill che mancano: il pianificatore e l'occhio del revisore.** È il
+   pacchetto attivo, `DRAW-016`. Oggi il **piano lo scrive un umano** — l'agente in sessione,
+   a mano — e le cinque tavole escono perché qualcuno ha scritto cinque file di coordinate:
+   **la skill, da sola, non sa comporre** (D-155, D-156). E il pezzo 5 **misura ma non
+   guarda**: l'occhio che ha visto il prelievo ACS a mezzo foglio di distanza era quello
+   dell'agente che leggeva il PDF, non un pezzo del prodotto.
+   — *~~Il revisore non c'è ancora (D-153)~~: **chiuso da `DRAW-015`** quanto alla metà
+   deterministica — `piano/revisore.py` esegue, misura, si ferma e dice perché.*
+2. ~~**Nessun controllo sa che cos'è un'autostrada** (`I-068`).~~ **Chiuso da `DRAW-015`:**
+   `layout/autostrade.py` porta la catena fino alla tavola instradata, B1 ha il proprio
+   rilievo, e `RUN_WITH_TOO_MANY_BENDS` usa il bilancio della catena invece del metro dello
+   stacchetto. Era il difetto che ha generato D-151.
+3. ~~**Le quattro regole di D-154 non hanno ancora un controllo.**~~ **Chiuso da
+   `DRAW-015`**, e sono **cinque**: A1, **A4**, B1, B3, B4 in `validation/regole.py`.
+   **Quello che resta aperto è il censimento di D-158:** **A2, A3, B2, C1 e C3 non hanno un
+   rilievo sulla tavola finita**, e **A3 oggi non è tenuta su da niente** — l'unico posto che
+   la faceva valere era il solutore. **C3 è il buco peggiore**: è l'unico difetto di
+   **contenuto** che nasce da una scelta **grafica**. Rapporto `DRAW-015` §4bis.
+3bis. **A4 è misurata ma non è pulita.** Restano 4 rilievi sull'impianto 1 e 5 su ciascuno
+   degli altri; il peggiore è **+50 mm** — l'acquedotto dell'impianto 3, che entra dal bordo
+   sinistro invece che da accanto al bollitore. **Si chiudono componendo, non alzando la
+   soglia**, ed è lavoro del pianificatore.
 4. **«Un passo avanti e uno indietro»** (`I-067`, 16 settembre). Il PO l'ha detto e ha
    ragione: `DRAW-009` migliora la tavola 1 e perde l'impianto 4, `DRAW-010` riprende
    l'impianto 4 e perde due budget e quattro prove. **La causa non è del prodotto ma del
@@ -170,9 +180,9 @@ In ordine di quanto pesano. I rischi numerati stanno in `PROJECT_STATE.md`.
    porta con sé un nodo che D-132 lascia aperto — con due spessori in un nodo, il pallino di
    derivazione a quattro volte lo spessore va agganciato a uno dei due.
 9. **L'audit della libreria dei simboli**, che il PO deve approvare prima della 0.3.
-10. **Le prove non dicono che cosa difendono.** Trentasei file in `tests/layout/`, fra cui
-    alcuni che difendevano il **solutore** e due che difendono il pavimento invisibile
-    abolito l'11 settembre. È il punto 5 di `DRAW-015`.
+10. ~~**Le prove non dicono che cosa difendono.**~~ **Chiuso da `DRAW-015`:** i 36 file di
+    `tests/layout/` portano dentro la propria riga `# categoria:` — 24 difendono il motore,
+    10 difendevano il solutore, 4 difendono una regola del piano.
 11. **L'ordine degli stacchi non ha un padrone.** Oggi vale per topologia sulle due tavole;
     diventa esigibile su un impianto che lo violi.
 12. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non

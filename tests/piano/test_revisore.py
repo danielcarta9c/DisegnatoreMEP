@@ -39,6 +39,7 @@ from disegnatore_mep.piano.revisore import (
 )
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.registry import RuleRegistry
+from disegnatore_mep.validation.regole import ORDINE_DELLE_REGOLE
 
 ROOT = Path(__file__).resolve().parents[2]
 PROVA = ROOT / "examples" / "prova"
@@ -236,6 +237,21 @@ def test_una_violazione_si_conta_una_volta_sola() -> None:
     giro = esito.giri[0]
     regole = sum(1 for item in giro.rilievi if item.code in CODICI_DELLE_REGOLE)
     assert giro.punteggio.violazioni == regole
+
+
+def test_ogni_regola_misurata_conta_come_violazione() -> None:
+    """Una regola nuova in `validation/regole.py` non puo' finire fra gli avvisi.
+
+    **Il difetto vero, misurato il 20 settembre.** `CODICI_DELLE_REGOLE` era una
+    lista scritta a mano di quattro codici: **A4** e' entrata in
+    `ORDINE_DELLE_REGOLE` e il suo rilievo — un confine di rete a mezzo foglio
+    dal pezzo che serve — e' finito fra gli **avvisi**, cioe' l'ultima voce del
+    punteggio, comprabile con una piega in meno. Adesso la lista si **ricava**,
+    e questa prova sorveglia che resti ricavata.
+    """
+    misurate = set(ORDINE_DELLE_REGOLE)
+    portate = {REGOLA_DEL_RILIEVO[codice] for codice in CODICI_DELLE_REGOLE}
+    assert portate == misurate, "una regola misurata non conta come violazione"
 
 
 def test_non_smonta_una_catena_gia_dritta() -> None:

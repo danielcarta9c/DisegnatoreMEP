@@ -52,8 +52,13 @@ perche'.
 ## Le cure che conosce, e quelle che non conosce
 
 Cura le **quattro regole che il PO ha dettato il 20 settembre** (**D-154**), che
-sono le quattro per cui esiste un controllo che sa nominare la propria
-violazione:
+sono le quattro per cui esiste **una cura** che sa nominare la propria regola.
+
+⚠ **Le regole misurate sono cinque, non quattro**: **A4** ha il suo rilievo
+(`SERVICE_STUB_LONGER_THAN_ITS_MINIMUM`) e **conta nel punteggio**, ma **non ha
+una cura** — il revisore la **nomina** e la lascia a chi compone, che e'
+esattamente quello che **D-157** chiede. La riga «rilievi per cui il revisore non
+ha una cura» in coda all'esito e' quella:
 
 | rilievo | regola | che cosa muove |
 |---|---|---|
@@ -113,6 +118,7 @@ from disegnatore_mep.model.types import IssueSeverity
 from disegnatore_mep.validation.issues import ValidationIssue
 from disegnatore_mep.validation.regole import (
     FASCE,
+    ORDINE_DELLE_REGOLE,
     fascia_del_pezzo,
     rilievi_delle_regole,
 )
@@ -129,34 +135,39 @@ correzione a mano della prova del 20 settembre sono il precedente
 (`docs/collaudi/PROVA-PIANO/README.md`); sei lascia un margine di uno.
 """
 
-CODICI_DELLE_REGOLE = frozenset(
-    {
-        "PIECE_OUTSIDE_ITS_BAND",
-        "HIGHWAY_IS_NOT_STRAIGHT",
-        "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",
-        "INLINE_ORGAN_BREAKS_THE_RUN",
-    }
-)
-"""I quattro rilievi che `validation/regole.py` misura, e **solo quelli**.
-
-Sono le violazioni vere e proprie: le conta il punteggio, e sono quelle che
-decidono se la revisione e' chiusa. `RUN_WITH_TOO_MANY_BENDS` non sta qui —
-resta un avviso del preflight — perche' su un'autostrada dice la stessa cosa di
-`HIGHWAY_IS_NOT_STRAIGHT` e contarli tutt'e due sarebbe contare due volte."""
-
 REGOLA_DEL_RILIEVO: dict[str, str] = {
     "PIECE_OUTSIDE_ITS_BAND": "A1",
+    "SERVICE_STUB_LONGER_THAN_ITS_MINIMUM": "A4",
     "HIGHWAY_IS_NOT_STRAIGHT": "B1",
     "RUN_WITH_TOO_MANY_BENDS": "B1",
     "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR": "B3",
     "INLINE_ORGAN_BREAKS_THE_RUN": "B4",
 }
-"""Quale regola di `docs/regole-del-piano.md` motiva la cura di quale rilievo.
+"""Quale regola di `docs/regole-del-piano.md` porta il nome di quale rilievo.
 
-E' la tabella che rende vero il criterio «**ogni correzione porta il nome della
-regola**»: una cura si scrive **entrando da qui**, e un rilievo che non e' in
-questa mappa non si cura — si nomina.
+E' la tabella che rende vero il criterio «**ogni rilievo porta il nome della
+regola**»: un rilievo che non e' in questa mappa non ha una regola dietro di
+se', e il revisore lo **nomina** senza pretendere di saperlo curare.
 """
+
+CODICI_DELLE_REGOLE = frozenset(
+    {
+        codice
+        for codice, regola in REGOLA_DEL_RILIEVO.items()
+        if regola in ORDINE_DELLE_REGOLE and codice != "RUN_WITH_TOO_MANY_BENDS"
+    }
+)
+"""I cinque rilievi che `validation/regole.py` misura, e **solo quelli**.
+
+Sono le violazioni vere e proprie: le conta il punteggio, e sono quelle che
+decidono se la revisione e' chiusa. Si ricavano da `REGOLA_DEL_RILIEVO` invece
+di riscriverli, perche' una regola nuova in `validation/regole.py` si aggiunge
+in **un** posto solo: **A4** e' entrata cosi' il 20 settembre, e finche' questa
+lista era scritta a mano il suo rilievo finiva fra gli avvisi.
+
+`RUN_WITH_TOO_MANY_BENDS` e' l'unica esclusione, e resta un avviso del
+preflight: su un'autostrada dice la stessa cosa di `HIGHWAY_IS_NOT_STRAIGHT`, e
+contarli tutt'e due sarebbe contare due volte."""
 
 
 @dataclass(frozen=True)
@@ -846,7 +857,7 @@ def _ordina(rilievi: Sequence[ValidationIssue]) -> list[ValidationIssue]:
     puo' essere la conseguenza di un pezzo nella fascia sbagliata, mai il
     contrario.
     """
-    peso = {"A1": 1, "B1": 2, "B3": 3, "B4": 4}
+    peso = {regola: i for i, regola in enumerate(ORDINE_DELLE_REGOLE)}
 
     def chiave(item: ValidationIssue) -> tuple[int, int, str]:
         return (

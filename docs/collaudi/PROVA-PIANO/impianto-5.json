@@ -14,10 +14,10 @@
     "loro simboli hanno l'ingresso a sinistra e l'uscita a destra: cosi' non",
     "attraversa la mandata.",
     "I-066 — il bollitore e' una macchina del gruppo centrale, sotto il volano.",
-    "I-017 — il prelievo sanitario sta nella zona della distribuzione.",
     "Le tratte verso i terminali portano tre accessori in linea ciascuna — due intercettazioni e un circolatore — quindi vogliono almeno 40 mm di rettilineo: i terminali stanno a 85 mm dalla dorsale.",
     "Il bollitore scende: la mandata sanitaria che ne esce porta tre accessori in linea e vuole il proprio rettilineo prima dell innesto del ricircolo.",
-    "La miscelatrice del radiante ha hot_in a sinistra, out a destra e cold_in sotto: va presa di fianco dalla dorsale e il ritorno le arriva da sotto. Se la mandata le arriva dall alto, la linea supera la porta e ci torna indietro."
+    "La miscelatrice del radiante ha hot_in a sinistra, out a destra e cold_in sotto: va presa di fianco dalla dorsale e il ritorno le arriva da sotto. Se la mandata le arriva dall alto, la linea supera la porta e ci torna indietro.",
+    "A4 (D-145) — il prelievo ACS sta ADDOSSO al pezzo che serve, con lo stacco minimo. NON va nella fascia della distribuzione: un confine di rete non ha una posizione propria (I-061, flow.BOUNDARY_FUNCTION). Correzione del 20 settembre 2026: lo stacco era 37,5 mm contro un minimo di 20,0, e adesso e' 22,5. Restano 2,5 mm, cioe' UN PASSO di griglia: a 662,5 la tratta non si instrada piu' — «run w6-a has no straight stretch of 10mm for valve-isolation». E' il limite del rettilineo che l'intercettazione pretende (B5), misurato, non una tolleranza inventata."
   ],
   "pezzi": {
     "pdc-1": {
@@ -165,8 +165,9 @@
       "y": 260
     },
     "utenze": {
-      "x": 680,
-      "y": 257.5
+      "x": 665,
+      "y": 257.5,
+      "regola": "A4/D-145 — addosso al pezzo che serve, stacco minimo"
     },
     "secondario-mandata-a": {
       "x": 430,

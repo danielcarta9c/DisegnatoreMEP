@@ -137,7 +137,7 @@ cancello a valle e diventa supervisore in anello chiuso».
 
 | metà | che cos'è | stato |
 |---|---|---|
-| **i controlli** | le quattro regole di D-154 più il preflight; il **punteggio** lessicografico; le **condizioni d'arresto**; la guardia che non peggiora in silenzio | **deterministica, e c'è** |
+| **i controlli** | le **cinque** regole misurate — le quattro di D-154 più **A4** — e il preflight; il **punteggio** lessicografico; le **condizioni d'arresto**; la guardia che non peggiora in silenzio | **deterministica, e c'è** |
 | **l'occhio** | guarda la **tavola**, con accanto quelle del disegnatore del PO, e scrive i **vincoli** | **agente AI, e manca** |
 
 **Il revisore non sposta niente. Dichiara vincoli** (**D-157**), e il pianificatore
@@ -262,6 +262,20 @@ una regola**, e niente gliel'ha detto.
 
 **Da qui D-158: ogni vincolo di posa ha un rilievo sulla tavola consegnata.** Vale per tutte
 le regole su *dove sta un pezzo rispetto a un altro* — A1, A2, A3, A4.
+
+**A4 ce l'ha, da `DRAW-015`**: `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` misura sulla tavola
+finita la spezzata che porta ogni organo di servizio contro il proprio minimo, e il minimo
+non è tarato lì — sono le tre voci che la posa usa già (`place.stub_minimum_mm`,
+`place.inline_room_mm`, `place.ROW_GAP_MM`).
+
+**A2 e A3 no, e A3 oggi non è tenuta su da niente:** l'unico posto che faceva valere l'ordine
+di processo era il solutore. È la prima cosa di `DRAW-016` su questo fronte.
+
+> ⚠ **E c'è un secondo modo di perdere un vincolo, che è successo subito dopo.** A4 è entrata
+> fra le regole misurate, ma l'elenco dei codici che il **punteggio** conta era scritto a mano
+> in `piano/revisore.py`: per un giorno il rilievo di A4 è finito fra gli **avvisi**, cioè la
+> voce che una piega in meno si compra. **Un controllo che non entra nel punteggio non è un
+> controllo.** Adesso i codici si ricavano dalla mappa delle regole, e una prova lo sorveglia.
 
 > ⚠ E vale anche al contrario, per chi aggiunge una regola: **una regola che vive solo nella
 > posa del motore è una regola che il piano può rompere.** Quando ne scrivi una, scrivi il

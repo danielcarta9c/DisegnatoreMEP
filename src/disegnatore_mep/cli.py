@@ -225,7 +225,11 @@ def _print_preflight(findings: list[ValidationIssue]) -> None:
 
 
 def _print_regole(findings: list[ValidationIssue]) -> None:
-    """Le quattro regole del PO (D-154), che si leggono accanto al preflight.
+    """Le regole del piano misurate, che si leggono accanto al preflight.
+
+    Sono **cinque**: le quattro dettate dal PO il 20 settembre (**D-154**) piu'
+    **A4**, aggiunta guardando le tavole — `ORDINE_DELLE_REGOLE` le tiene in
+    ordine, e questa funzione non ne conosce l'elenco.
 
     **Non si sommano ai rilievi del preflight e non ne cambiano il verdetto**:
     il preflight dice se la tavola e' consegnabile (D-063), questo dice se il

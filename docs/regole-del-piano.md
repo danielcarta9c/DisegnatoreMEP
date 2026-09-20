@@ -71,7 +71,18 @@ griglia**, e si allunga solo per un vincolo dichiarato. È **leggibilità**, non
 valvola lontana da tutto è equivoca.
 
 *Fonte:* **D-145** (PO, I-076).
-*Controllo:* vincolo del motore, `tests/layout/test_vicinanza_valvole.py`.
+*Controllo:* **`SERVICE_STUB_LONGER_THAN_ITS_MINIMUM`** —
+`validation/regole.py::organi_di_servizio_lontani`, che misura **sulla tavola finita** la
+tratta che porta ogni organo di servizio e la confronta col proprio minimo. La posa del
+motore ha ancora la sua prova (`tests/layout/test_vicinanza_valvole.py`), ma **non basta
+più**: D-151 ha spostato la posa dal motore al piano, e il piano sovrascrive le coordinate.
+
+> ⚠ **Il precedente, misurato il 20 settembre 2026.** Il confine di rete dell'ACS stava a
+> **205,0**, **502,5** e **152,5 mm** dal pezzo che serve sugli impianti 2, 3 e 4 — cinquecento
+> millimetri di tubo per arrivare a un prelievo che va messo lì accanto. Lo aveva scritto
+> **chi ha composto i piani**, applicando **A1** a un pezzo che A1 non governa: un confine di
+> rete **non ha una fascia**, perché non ha una posizione propria. È esattamente la classe di
+> difetto che **D-158** nomina, ed è il motivo per cui il rilievo esiste.
 
 ---
 
@@ -244,6 +255,15 @@ volte l'inchiostro fra quadrante pieno e vuoto sull'impianto 1, **9,0** sul 5.
   (`DRAW-015`): `layout/autostrade.py` porta l'autostrada fino alla tavola instradata, B1 ha
   il proprio rilievo, e `RUN_WITH_TOO_MANY_BENDS` usa il bilancio della catena invece del
   metro dello stacchetto. Era il difetto che ha generato D-151.
+- ~~**A4 non ha un rilievo sulla tavola finita.**~~ **Chiuso il 20 settembre 2026**
+  (`DRAW-015`): il vincolo era del motore, D-151 lo ha lasciato senza guardia, e adesso
+  `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` lo misura dove conta, cioè sull'elaborato.
+- **Cinque regole non hanno ancora un rilievo sulla tavola finita** — **A2**, **A3**, **B2**,
+  **C1**, **C3** — ed è la stessa classe di difetto che D-158 nomina. Due si distinguono:
+  **A3** oggi **non è tenuta su da niente** (l'unico posto che la faceva valere era il
+  solutore, che è morto con D-151; `hierarchy.py` cita D-060 per l'impilamento di A2, non per
+  l'ordine di processo), e **C3** è la peggiore, perché è l'unico difetto di **contenuto**
+  che nasce da una scelta **grafica**. Le apre `DRAW-016`.
 - **B1 e B3 si contraddicono sulla cascata, e la contraddizione è aperta.** Sull'impianto 5 la
   catena che attraversa il **collettore verticale che B3 pretende** fa due pieghe, e B1 —
   `turns_allowed` zero — la accusa. **Qui la tavola è giusta e il numero dice che è
