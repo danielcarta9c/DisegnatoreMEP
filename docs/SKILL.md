@@ -470,6 +470,15 @@ misurare, il revisore non la può usare e resta un'intenzione: è la differenza 
 le pieghe ammesse sono zero». Le righe di `docs/regole-del-piano.md` marcate `da scrivere`
 sono i controlli che mancano, ed è lavoro aperto.
 
+**Le regole misurate sono cinque** — A1, A4, B1, B3, B4 — e stanno in
+`validation/regole.py`, con sigla e codice in **un posto solo**, `CODICE_DELLA_REGOLA`. Chi
+ne aggiunge una entra da lì: **un controllo che non entra nel punteggio del revisore non è
+un controllo**, ed è successo ad A4 per un giorno (`DRAW-015` §10ter).
+
+⚠ **Un vincolo che vive solo nella posa del motore è un vincolo che il piano può rompere**
+(**D-158**): da D-151 la posa non decide più dove stanno i pezzi. Chi scrive una regola di
+posizione scrive **anche il rilievo sulla tavola finita**, non solo il vincolo.
+
 **Il terzo livello non è più un cancello a valle: è il revisore** (pezzo 3c, D-114 attuata
 da D-151), e il suo metro non è solo numerico — mette la nostra tavola accanto a quelle del
 disegnatore del PO, perché è lì che sta la differenza che si vede a colpo d'occhio (D-153).
