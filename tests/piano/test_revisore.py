@@ -255,6 +255,7 @@ def test_ogni_regola_misurata_conta_come_violazione() -> None:
         "HIGHWAY_IS_NOT_STRAIGHT",
         "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",
         "INLINE_ORGAN_BREAKS_THE_RUN",
+        "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK",
     }
     assert set(CODICI_DELLE_REGOLE) == attese, "il punteggio conta altre violazioni"
     portate = {REGOLA_DEL_RILIEVO[codice] for codice in CODICI_DELLE_REGOLE}

@@ -1069,6 +1069,7 @@ CODICE_DELLA_REGOLA: dict[str, str] = {
     "B1": "HIGHWAY_IS_NOT_STRAIGHT",
     "B3": "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",
     "B4": "INLINE_ORGAN_BREAKS_THE_RUN",
+    "B8": "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK",
 }
 """Il rilievo di ciascuna regola misurata, **e non c'e' un secondo posto**.
 
@@ -1078,6 +1079,120 @@ conta era una lista **scritta a mano** in `piano/revisore.py`, e per un giorno i
 rilievo di A4 e' finito fra gli **avvisi** — cioe' la voce che una piega in meno
 si compra. **Un controllo che non entra nel punteggio non e' un controllo.**
 """
+
+
+def _spezzata_intera(route: RoutedTrunk) -> list[Point]:
+    """La spezzata di una tratta come il foglio la disegna, **interruzioni comprese**.
+
+    Le interruzioni che gli accessori in linea aprono (D-027) spezzano
+    `segments` in piu' polilinee, ma la **forma** della tratta e' una sola: qui
+    si rimettono in fila, si tolgono i punti ripetuti e si collassano i punti
+    allineati, perche' tre punti su una retta sono due.
+    """
+    punti: list[Point] = []
+    for parte in route.segments:
+        for punto in parte:
+            if punti and punti[-1].x_mm == punto.x_mm and punti[-1].y_mm == punto.y_mm:
+                continue
+            punti.append(punto)
+    if len(punti) < 3:
+        return punti
+    snelli = [punti[0]]
+    for prima, qui, poi in zip(punti, punti[1:], punti[2:], strict=False):
+        allineati = (prima.x_mm == qui.x_mm == poi.x_mm) or (
+            prima.y_mm == qui.y_mm == poi.y_mm
+        )
+        if not allineati:
+            snelli.append(qui)
+    snelli.append(punti[-1])
+    return snelli
+
+
+def _tratti_ortogonali(punti: list[Point]) -> list[tuple[str, float, float]]:
+    """Ogni tratto come (asse, quota, lunghezza): la quota e' la coordinata che
+    il tratto **non** cambia, ed e' la riga su cui quel pezzo di linea vive."""
+    tratti: list[tuple[str, float, float]] = []
+    for prima, poi in zip(punti, punti[1:], strict=False):
+        if prima.y_mm == poi.y_mm:
+            tratti.append(("orizzontale", prima.y_mm, abs(poi.x_mm - prima.x_mm)))
+        elif prima.x_mm == poi.x_mm:
+            tratti.append(("verticale", prima.x_mm, abs(poi.y_mm - prima.y_mm)))
+    return tratti
+
+
+def scostamenti_che_tornano_indietro(
+    drawing: DrawingGeometry,
+) -> list[ValidationIssue]:
+    """**B8** — una linea non lascia la propria quota per poi tornarci.
+
+    *Fonte:* **D-065**, 4 agosto 2026 — «cio' che il cold eye review respinge
+    due volte per lo stesso motivo diventa una soglia del preflight
+    deterministico». I **sali-scendi** sono uno dei **quattro** difetti che quel
+    giudizio trovo' a occhio; gli altri tre sono diventati regole misurate
+    (D-059, D-062), **questo no**, ed e' rimasto soltanto un peso
+    dell'instradatore (`route.TURN_COST`: «con un valore vicino a quello del
+    passo l'instradatore compra pieghe per risparmiare lunghezza, e la tavola si
+    riempie di sali-scendi»). Riaperto dal PO il 20 settembre 2026, a penna
+    rossa su due tavole.
+
+    ⛔ **Perche' il peso non basta.** Un peso dice all'instradatore che cosa
+    preferire *mentre* cerca; non dice a nessuno che cosa e' uscito. Dal
+    **D-151** la posa la decide il piano, e un piano che mette due tratte sulla
+    stessa quota costringe l'instradatore a scansarne una: il sali-scendi esce
+    lo stesso, e **nessun rilievo lo nomina**. E' la classe di difetto di
+    **D-158**, sulla tratta invece che sul pezzo.
+
+    **La misura, e non ha soglie.** Si guarda la spezzata intera — interruzioni
+    comprese — come una sequenza di tratti ortogonali. Un **sali-scendi** e'
+    un'**escursione**: la linea lascia una quota, percorre un tratto su
+    un'altra, e **torna su quella di prima**. Sulla sequenza dei tratti, che si
+    alternano fra orizzontale e verticale, sono i due tratti dello **stesso
+    asse** e della **stessa quota** separati da un'andata e un ritorno.
+
+    Non c'e' niente da tarare: o la linea ci torna, o non ci torna.
+
+    **Che cosa questa misura non accusa, e va saputo.**
+
+    - **La U verso un terminale**: la linea che supera il pezzo e rientra dalla
+      faccia opposta **non torna sulla propria quota**, finisce su un'altra. E'
+      un'altra cosa, e la nomina `RUN_OVERSHOOTS_ITS_PORT`.
+    - **Il cambio di corsia**: lasciare una quota e restare sull'altra e' una
+      piega, non un sali-scendi, e la contano B1 e il preflight.
+    - **Le tratte cedute** (`unresolved`, D-150): la loro spezzata e' un ripiego
+      dichiarato, non una posa, e il preflight la nomina gia' come bloccante.
+
+    **Che cosa si fa quando si accende, e non e' allungare la linea.** Un
+    sali-scendi dice che **due cose si contendono la stessa quota**: si sposta
+    l'oggetto, non si piega il tubo. E' la stessa disposizione di
+    `RUN_OVERSHOOTS_ITS_PORT` (B12, D-078).
+    """
+    trovati: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        for route in sheet.routes:
+            if route.unresolved:
+                continue
+            tratti = _tratti_ortogonali(_spezzata_intera(route))
+            for i in range(len(tratti) - 4):
+                asse, quota, _ = tratti[i]
+                asse_mezzo, quota_mezzo, lungo = tratti[i + 2]
+                asse_dopo, quota_dopo, _ = tratti[i + 4]
+                if asse != asse_mezzo or asse != asse_dopo:
+                    continue
+                if quota != quota_dopo or quota == quota_mezzo:
+                    continue
+                nome = ", ".join(route.connection_ids) or route.network_id
+                trovati.append(
+                    _rilievo(
+                        "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK",
+                        f"la tavola {sheet.sheet_id}: la tratta {nome} lascia la "
+                        f"propria quota {asse} {quota:.1f}, se ne scosta di "
+                        f"{abs(quota_mezzo - quota):.1f} mm per {lungo:.1f} mm e ci "
+                        f"torna: e' un sali-scendi, e si toglie spostando l'oggetto "
+                        f"che occupa la quota, non piegando il tubo (B8, D-065)",
+                        [sheet.sheet_id, *route.connection_ids],
+                    )
+                )
+    return trovati
 
 ORDINE_DELLE_REGOLE: tuple[str, ...] = tuple(CODICE_DELLA_REGOLA)
 """L'ordine in cui i controlli girano, e quindi quello dell'esito.
@@ -1116,6 +1231,7 @@ def rilievi_delle_regole(
         *autostrade_storte(drawing, catalog, project),
         *macchine_in_parallelo_senza_collettore(drawing, frame, catalog, project),
         *organi_che_spezzano_il_tratto(drawing, catalog, project),
+        *scostamenti_che_tornano_indietro(drawing),
     ]
 
 
@@ -1133,4 +1249,5 @@ __all__ = [
     "organi_di_servizio_lontani",
     "pezzi_fuori_fascia",
     "rilievi_delle_regole",
+    "scostamenti_che_tornano_indietro",
 ]

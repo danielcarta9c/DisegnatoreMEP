@@ -50,6 +50,7 @@ from disegnatore_mep.validation.regole import (
     organi_di_servizio_lontani,
     pezzi_fuori_fascia,
     rilievi_delle_regole,
+    scostamenti_che_tornano_indietro,
 )
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -772,6 +773,7 @@ CODICI = {
     "B1": "HIGHWAY_IS_NOT_STRAIGHT",
     "B3": "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",
     "B4": "INLINE_ORGAN_BREAKS_THE_RUN",
+    "B8": "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK",
 }
 """Il rilievo di ciascuna regola misurata, nell'ordine di `ORDINE_DELLE_REGOLE`.
 
@@ -827,3 +829,79 @@ def test_a4_il_raccoglitore_porta_anche_lo_stacco_troppo_lungo() -> None:
 
     assert CODICI["A4"] in {item.code for item in rilievi}
     assert all(item.severity is IssueSeverity.WARNING for item in rilievi)
+
+
+# --- B8: una linea non lascia la propria quota per poi tornarci ---------------
+
+
+def _punti(*coppie: tuple[float, float]) -> list[Point]:
+    return [Point(x_mm=x, y_mm=y) for x, y in coppie]
+
+
+def test_b8_una_retta_non_e_un_sali_scendi() -> None:
+    """Il caso che deve tacere, e va scritto per primo."""
+    dritta = tratta(["p1"], _punti((10, 100), (200, 100)))
+    assert scostamenti_che_tornano_indietro(tavola([], [dritta])) == []
+
+
+def test_b8_una_piega_sola_non_e_un_sali_scendi() -> None:
+    """Cambiare corsia e restarci e' una piega: la contano B1 e il preflight."""
+    ell = tratta(["p1"], _punti((10, 100), (100, 100), (100, 200)))
+    assert scostamenti_che_tornano_indietro(tavola([], [ell])) == []
+
+
+def test_b8_la_u_verso_un_terminale_non_e_un_sali_scendi() -> None:
+    """Superare il pezzo e rientrare dalla faccia opposta finisce su **un'altra**
+    quota: e' `RUN_OVERSHOOTS_ITS_PORT` e non questo rilievo."""
+    u = tratta(["s1"], _punti((10, 100), (200, 100), (200, 130), (150, 130)))
+    assert scostamenti_che_tornano_indietro(tavola([], [u])) == []
+
+
+def test_b8_lo_scostamento_che_torna_sulla_quota_si_accende() -> None:
+    """Il difetto vero, misurato sulla tavola 4 del 20 settembre 2026: la linea
+    esce di 7,5 mm dalla propria quota, corre 80 mm e ci torna."""
+    gomito = tratta(
+        ["p12"],
+        _punti(
+            (205, 243.5), (208, 243.5), (208, 236), (128, 236), (128, 243.5), (122, 243.5)
+        ),
+    )
+    rilievi = scostamenti_che_tornano_indietro(tavola([], [gomito]))
+    assert len(rilievi) == 1
+    assert rilievi[0].code == "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK"
+    assert "7.5 mm" in rilievi[0].message and "80.0 mm" in rilievi[0].message
+    assert "p12" in rilievi[0].entity_ids
+
+
+def test_b8_vale_anche_in_verticale() -> None:
+    """La quota di un tratto verticale e' la sua x: il difetto e' lo stesso."""
+    gomito = tratta(
+        ["p2"],
+        _punti((100, 10), (100, 40), (110, 40), (110, 120), (100, 120), (100, 160)),
+    )
+    rilievi = scostamenti_che_tornano_indietro(tavola([], [gomito]))
+    assert len(rilievi) == 1
+    assert "verticale" in rilievi[0].message
+
+
+def test_b8_le_interruzioni_non_nascondono_un_sali_scendi() -> None:
+    """La forma della tratta e' **una sola** anche quando gli accessori in linea
+    la spezzano in piu' polilinee (D-027): il rilievo le rimette in fila."""
+    spezzata = tratta(
+        ["p9"],
+        _punti((205, 243.5), (208, 243.5), (208, 236)),
+        _punti((208, 236), (128, 236), (128, 243.5)),
+        _punti((128, 243.5), (122, 243.5)),
+    )
+    assert len(scostamenti_che_tornano_indietro(tavola([], [spezzata]))) == 1
+
+
+def test_b8_una_tratta_ceduta_non_si_accusa() -> None:
+    """La spezzata di ripiego (D-150) e' un ripiego dichiarato, non una posa, e
+    il preflight la nomina gia' come bloccante."""
+    ceduta = tratta(
+        ["p1"],
+        _punti((205, 243.5), (208, 243.5), (208, 236), (128, 236), (128, 243.5), (122, 243.5)),
+    )
+    ceduta = ceduta.model_copy(update={"unresolved": True})
+    assert scostamenti_che_tornano_indietro(tavola([], [ceduta])) == []

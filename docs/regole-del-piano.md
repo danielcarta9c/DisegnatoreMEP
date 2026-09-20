@@ -234,6 +234,29 @@ che nessun piano può raddrizzare, e un rilievo che non si può chiudere è rumo
 sullo stesso lato è un simbolo, non un vincolo idraulico), o `turns_allowed` diventa **il
 minimo raggiungibile** date le facce. La prima è materia MEP, la seconda è codice.
 
+### B8 — Una linea non lascia la propria quota per poi tornarci
+
+Un **sali-scendi** è una linea che esce dalla riga su cui corre, percorre un tratto su
+un'altra, e **ci torna**. Non è una piega: è un'**escursione**, e dice che due cose si
+contendono la stessa quota. **Si toglie spostando l'oggetto, non piegando il tubo** — è la
+stessa disposizione di B12 (D-078).
+
+*Fonte:* **D-065**, 4 agosto 2026. I sali-scendi sono uno dei **quattro** difetti che il cold
+eye review trovò a occhio; gli altri tre sono diventati regole misurate (D-059, D-062),
+**questo no** — è rimasto soltanto un peso dell'instradatore (`route.TURN_COST`). Riaperto
+dal **PO il 20 settembre 2026**, a penna rossa su due tavole.
+*Controllo:* **`RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK`** —
+`validation/regole.py::scostamenti_che_tornano_indietro`. **Non ha soglie**: o la linea ci
+torna, o non ci torna.
+*Tavola:* impianto 1, il ritorno del radiatore (esce di 12,5 mm per 92,5 mm); impianto 4, il
+ritorno della caldaia (7,5 mm per 80).
+
+> ⚠ **Perché un peso non bastava**, e vale per ogni regola di questo foglio: un peso dice
+> all'instradatore che cosa preferire **mentre cerca**; non dice a nessuno che cosa è
+> **uscito**. Dal **D-151** la posa la decide il piano, e un piano che mette due tratte sulla
+> stessa quota costringe l'instradatore a scansarne una. È **D-158** applicato alla tratta
+> invece che al pezzo.
+
 ---
 
 ## C. Come si prende un pezzo
