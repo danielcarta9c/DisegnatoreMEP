@@ -522,12 +522,25 @@ $ .venv/bin/python -m pytest -q
 ⚠ **Il criterio 8 chiedeva «saldo non peggiore», e non è raggiunto: ventuno prove in più
 sono rosse.** Non lo nascondo dietro il +55 delle prove nuove.
 
-**Lo `xfail` in più non è nuovo:** i marcatori sono **dodici su tutt'e due i lati**
-(`grep -rn xfail tests/`), e uno è `strict=True` sul quinto impianto
-(`test_zone_dei_pezzi_grossi.py::test_nessun_raccordo_sta_a_sinistra_di_cio_che_unisce`).
-Su `main` quel caso **passa**, e uno `xfail` stretto che passa è un **fallimento**: sta fra i
-17. Qui fallisce davvero, quindi è contato fra gli `xfail`. **Zero `skip` e zero `xfail`
-nuovi resta vero.**
+**Lo `xfail` in più non è un marcatore nuovo, ed è misurato:** i marcatori sono **dodici su
+tutt'e due i lati** — `grep -rn xfail tests/` ne conta 12 qui e 12 su `origin/main`, e il
+diff delle prove non ne aggiunge nessuno (`git diff origin/main...HEAD -- tests/ | grep
+'^+.*xfail'` è vuoto). **Zero `xfail` nuovi è vero al marcatore.**
+
+La differenza 11 → 12 è **un esito**, non un marcatore. Misurato sui file che contengono
+tutti e dodici i marcatori — `test_accessori_appesi.py`, `test_zone_dei_pezzi_grossi.py` e
+`tests/collaudo/` — questo ramo dà **12 `xfail`**:
+
+```
+$ .venv/bin/python -m pytest -q tests/layout/test_accessori_appesi.py \
+    tests/layout/test_zone_dei_pezzi_grossi.py tests/collaudo/
+3 failed, 347 passed, 12 xfailed in 15.66s
+```
+
+Su `main` uno dei dodici non arriva a esito di `xfail` — non è quello `strict=True` del
+quinto impianto, che **xfalla anche lì** (`4 passed, 1 xfailed`, misurato sulla copia pulita).
+Il caso resta da isolare, ed è **un esito in meno di `xfail` su `main`, non un marcatore in
+più qui**: non cambia il saldo delle fallite, che è la misura di cui si discute.
 
 ### Le ventuno, file per file
 
