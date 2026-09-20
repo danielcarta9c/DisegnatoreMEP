@@ -1247,10 +1247,20 @@ def _tratti_orizzontali(route: RoutedTrunk) -> list[tuple[float, float, float]]:
 
 
 def _quota_in(tratti: list[tuple[float, float, float]], x: float) -> float | None:
-    for quota, da, a in tratti:
-        if da - TOLLERANZA_MM <= x <= a + TOLLERANZA_MM:
-            return quota
-    return None
+    """La quota della tratta a quell'ascissa, **e solo se e' una sola**.
+
+    Dove una coppia scende dalle dorsali alla macchina, la stessa tratta ha
+    **due** orizzontali alla stessa ascissa — quella in alto e quella in basso —
+    e confrontarne una a caso con quella dell'altra tratta darebbe un interasse
+    inventato. Li' non si misura: e' il punto in cui la coppia gira, non in cui
+    corre. E' il difetto che questa misura aveva alla prima stesura.
+    """
+    trovate = [
+        quota
+        for quota, da, a in tratti
+        if da - TOLLERANZA_MM <= x <= a + TOLLERANZA_MM
+    ]
+    return trovate[0] if len(trovate) == 1 else None
 
 
 PASSO_DI_CAMPIONE_MM = 2.5

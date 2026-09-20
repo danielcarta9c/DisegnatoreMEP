@@ -332,10 +332,22 @@ due interassi (10 e 15).
 decidono le porte delle macchine, non questa regola.
 
 ⚠ **Quando il piano non ce la può fare.** Se le porte delle due macchine agli estremi
-vogliono interassi diversi — `gas-boiler` ha mandata e ritorno a **10 mm**,
-`buffer-four-port` a **15** — **nessuna posa può tenere l'interasse costante**: il cambio è
-**del catalogo**, non di chi compone. È la stessa famiglia di **B7**, e come B7 è una
-domanda al PO: o cambia il simbolo, o quella coppia cambia interasse una volta.
+vogliono interassi diversi, **nessuna posa può tenere l'interasse costante**: il cambio è
+**del catalogo**, non di chi compone.
+
+**Un caso è stato chiuso così, ed è il modello.** `gas-boiler` aveva mandata e ritorno a
+**10 mm** contro i **15** di tutte le altre macchine, e per questo la coppia
+`caldaia ~ disgiuntore` dell'impianto 4 non poteva stare insieme. Il PO, il 20 settembre
+2026 (**I-091**): «gli attacchi sulle macchine si devono poter spostare, sono simboli… si
+sposta **lungo la faccia su cui sta**, serve solo per allineare meglio le autostrade».
+`water_supply` è scesa da y=10 a y=5 sulla stessa faccia destra, e la coppia adesso
+**corre insieme**. La libreria dei simboli non si tocca **di faccia** (D-126 punto 3): si
+scorre lungo la faccia, e solo per le autostrade.
+
+**Un caso resta aperto, e non si chiude così.** `radiator` ha `in` e `out` **alla stessa
+quota** su facce opposte: la coppia che lo serve **deve** cambiare interasse, e farli
+distare 15 mm su un simbolo alto 15 non è uno scorrimento ma un ridisegno. È la stessa
+famiglia di **B7**, ed è una domanda al PO.
 
 ---
 
