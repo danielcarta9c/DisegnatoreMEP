@@ -260,6 +260,23 @@ mandata sanitaria attraversa da sola i tre secondari per arrivarci. A4 governa l
 il nodo del grafo da cui pende. Dove va la presa di un ricircolo è **contenuto MEP**: §6,
 domanda 4.
 
+### La citazione che aveva prodotto i confini lontani, e la decisione che la supera
+
+I piani 1 e 5 mettevano il prelievo ACS nella fascia della distribuzione citando **I-017**
+(10 agosto): «quel simbolo si mette in genere nella zona della distribuzione, perché di fatto
+anche lui fa parte della rete di distribuzione».
+
+**Sulla posizione, quella riga è superata dal PO stesso**, e da prima di questo pacchetto:
+**D-126** (14 settembre, approvata) dice che «un **prelievo** — il confine da cui il fluido
+lascia l'impianto — si posa nelle immediate vicinanze del pezzo che serve»; **D-145**
+(18 settembre) lo ripete per tutti gli organi di servizio; e il 20 settembre il PO l'ha detto
+in chiaro. **Chi ha composto ha citato l'input più vecchio invece della decisione più
+recente**, ed è la stessa specie di errore del D-119 al posto di D-041+D-118.
+
+Le note dei cinque piani adesso citano **A4/D-145**. **I-017 resta aperta**, perché ciò che
+nessuna decisione ha toccato è l'**appartenenza di rete** del simbolo, che è contenuto MEP e
+non è mio: la riga del registro lo dice.
+
 ### Il censimento di D-158: quali vincoli di posa non hanno ancora un rilievo
 
 Verificato riga per riga su `docs/regole-del-piano.md` e sul codice vigente:
