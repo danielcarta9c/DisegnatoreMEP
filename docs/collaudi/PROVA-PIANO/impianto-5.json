@@ -1,0 +1,208 @@
+{
+  "formato": "A1",
+  "nota": [
+    "CASCATA DI TRE POMPE. La forma, dalle regole del PO:",
+    "D-041 + D-118 — i tre generatori incolonnati a sinistra (D-119 e' un'altra cosa: l'area di rispetto dei raccordi).",
+    "I due collettori della cascata sono catene di T, e stanno VERTICALI:",
+    "ogni pompa entra con uno stacco corto orizzontale. E' il 'collettore dritto",
+    "in verticale' che il PO ha chiesto guardando la tavola del solutore.",
+    "I-057 — mandata e ritorno del primario sono due corsie, e la macchina che",
+    "le fissa e' il volano.",
+    "I-075 / D-144 — il secondario e' il pettine: dal volano un tratto dritto,",
+    "una curva, la dorsale verticale, e i tre terminali impilati di fianco.",
+    "Il ritorno del secondario sta dall'altra parte dei terminali, perche' i",
+    "loro simboli hanno l'ingresso a sinistra e l'uscita a destra: cosi' non",
+    "attraversa la mandata.",
+    "I-066 — il bollitore e' una macchina del gruppo centrale, sotto il volano.",
+    "I-017 — il prelievo sanitario sta nella zona della distribuzione.",
+    "Le tratte verso i terminali portano tre accessori in linea ciascuna — due intercettazioni e un circolatore — quindi vogliono almeno 40 mm di rettilineo: i terminali stanno a 85 mm dalla dorsale.",
+    "Il bollitore scende: la mandata sanitaria che ne esce porta tre accessori in linea e vuole il proprio rettilineo prima dell innesto del ricircolo.",
+    "La miscelatrice del radiante ha hot_in a sinistra, out a destra e cold_in sotto: va presa di fianco dalla dorsale e il ritorno le arriva da sotto. Se la mandata le arriva dall alto, la linea supera la porta e ci torna indietro."
+  ],
+  "pezzi": {
+    "pdc-1": {
+      "x": 35,
+      "y": 60
+    },
+    "pdc-2": {
+      "x": 35,
+      "y": 110
+    },
+    "pdc-3": {
+      "x": 35,
+      "y": 160
+    },
+    "tee-valve-safety-pdc-1-water-supply": {
+      "x": 100,
+      "y": 62.5
+    },
+    "valve-safety-pdc-1-water-supply": {
+      "x": 100,
+      "y": 45
+    },
+    "tee-thermometer-pdc-1-water-supply": {
+      "x": 125,
+      "y": 62.5
+    },
+    "thermometer-pdc-1-water-supply": {
+      "x": 125,
+      "y": 45
+    },
+    "tee-valve-safety-pdc-2-water-supply": {
+      "x": 100,
+      "y": 112.5
+    },
+    "valve-safety-pdc-2-water-supply": {
+      "x": 100,
+      "y": 95
+    },
+    "tee-thermometer-pdc-2-water-supply": {
+      "x": 125,
+      "y": 112.5
+    },
+    "thermometer-pdc-2-water-supply": {
+      "x": 125,
+      "y": 95
+    },
+    "tee-valve-safety-pdc-3-water-supply": {
+      "x": 100,
+      "y": 162.5
+    },
+    "valve-safety-pdc-3-water-supply": {
+      "x": 100,
+      "y": 145
+    },
+    "tee-thermometer-pdc-3-water-supply": {
+      "x": 125,
+      "y": 162.5
+    },
+    "thermometer-pdc-3-water-supply": {
+      "x": 125,
+      "y": 145
+    },
+    "cascata-mandata-a": {
+      "x": 160,
+      "y": 112.5
+    },
+    "cascata-mandata-b": {
+      "x": 160,
+      "y": 162.5
+    },
+    "cascata-ritorno-a": {
+      "x": 200,
+      "y": 77.5
+    },
+    "cascata-ritorno-b": {
+      "x": 200,
+      "y": 127.5
+    },
+    "deviatrice": {
+      "x": 240,
+      "y": 160
+    },
+    "volano": {
+      "x": 300,
+      "y": 160
+    },
+    "bollitore": {
+      "x": 300,
+      "y": 300
+    },
+    "drain-connection-volano-primary-in": {
+      "x": 310,
+      "y": 212.5
+    },
+    "ritorno-primario": {
+      "x": 275,
+      "y": 197.5
+    },
+    "tee-pressure-gauge-cascata-ritorno-a-a": {
+      "x": 255,
+      "y": 197.5
+    },
+    "pressure-gauge-cascata-ritorno-a-a": {
+      "x": 255,
+      "y": 220
+    },
+    "tee-filling-unit-cascata-ritorno-a-a-b": {
+      "x": 230,
+      "y": 197.5
+    },
+    "filling-unit-cascata-ritorno-a-a": {
+      "x": 230,
+      "y": 220
+    },
+    "inlet-filling-unit-cascata-ritorno-a-a": {
+      "x": 230,
+      "y": 245
+    },
+    "tee-expansion-connection-cascata-ritorno-a-a": {
+      "x": 205,
+      "y": 197.5
+    },
+    "expansion-connection-cascata-ritorno-a-a": {
+      "x": 205,
+      "y": 220
+    },
+    "acquedotto": {
+      "x": 230,
+      "y": 335
+    },
+    "tee-drain-connection-cold-bollitore-cold-in": {
+      "x": 265,
+      "y": 335
+    },
+    "drain-connection-cold-bollitore-cold-in": {
+      "x": 265,
+      "y": 355
+    },
+    "innesto-ricircolo": {
+      "x": 305,
+      "y": 230
+    },
+    "presa-ricircolo": {
+      "x": 640,
+      "y": 260
+    },
+    "utenze": {
+      "x": 680,
+      "y": 257.5
+    },
+    "secondario-mandata-a": {
+      "x": 430,
+      "y": 162.5
+    },
+    "secondario-mandata-b": {
+      "x": 430,
+      "y": 212.5
+    },
+    "batteria-uta": {
+      "x": 520,
+      "y": 157.5
+    },
+    "ventilconvettori": {
+      "x": 520,
+      "y": 207.5
+    },
+    "miscelatrice-radiante": {
+      "x": 470,
+      "y": 265
+    },
+    "pavimento-radiante": {
+      "x": 530,
+      "y": 262.5
+    },
+    "ritorno-radiante": {
+      "x": 590,
+      "y": 300
+    },
+    "secondario-ritorno-a": {
+      "x": 590,
+      "y": 162.5
+    },
+    "secondario-ritorno-b": {
+      "x": 590,
+      "y": 212.5
+    }
+  }
+}

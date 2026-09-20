@@ -42,6 +42,11 @@ Grande abbastanza da leggersi come un archetto e non come un ispessimento,
 piccolo abbastanza da non toccare la corsia accanto, che dista un passo.
 """
 
+UNRESOLVED_RUN_DASH = "2,1.5"
+"""Il tratteggio della tratta non risolta (**D-150**): fitto e irregolare
+rispetto a qualunque convenzione di fluido, perche' deve **saltare all'occhio**
+e non passare per una linea tratteggiata di norma."""
+
 JUNCTION_DOT_WIDTHS = 4.0
 """Diametro del pallino di collegamento, in spessori di tratto.
 
@@ -364,6 +369,14 @@ def render_sheet(
     marks = sheet_marks(sheet)
     for index, route in enumerate(sheet.routes):
         colour, dash = style_for(route.medium, route.supply)
+        # **La tratta non risolta si vede** (D-150). Tiene il proprio colore —
+        # e' pur sempre quel fluido, e chi guarda deve poter seguire il
+        # circuito — e cambia il **tratto**: un tratteggio fitto che nessuna
+        # convenzione della tavola usa, cosi' non si confonde con una linea
+        # regolarmente tratteggiata. Il rilievo di preflight la nomina; questo
+        # e' il segno che la fa trovare sul foglio senza leggere il rapporto.
+        if route.unresolved:
+            dash = UNRESOLVED_RUN_DASH
         dash_attribute = "" if dash == "none" else f' stroke-dasharray="{dash}"'
         hops = [mark.at for mark in marks.hops if mark.route_index == index]
         for segment in route.segments:

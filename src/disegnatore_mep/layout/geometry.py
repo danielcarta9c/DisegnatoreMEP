@@ -122,6 +122,18 @@ class RoutedTrunk(StrictModel):
     """Il verso del flusso rispetto alla spezzata: dal primo punto all'ultimo,
     oppure al contrario. Lo decide il modello — la porta da cui il fluido esce
     — e non l'ordine in cui la tratta e' stata scritta o instradata."""
+    unresolved: bool = False
+    """Vero quando questa tratta **non si e' instradata** e la spezzata che
+    porta e' un ripiego dichiarato (**D-150**).
+
+    Non e' un dettaglio di rendering: e' il contratto di questa tavola. Una
+    tratta cosi' non evita ostacoli, non rispetta i rettilinei che le catene
+    pretendono e puo' sovrapporsi ad altro. Esiste perche' **una tavola con una
+    tratta segnata vale piu' di nessuna tavola**: il PO la puo' guardare e
+    giudicare, e il disegnatore la chiude in CAD sul DXF.
+
+    Chi legge una geometria agli atti senza questo campo la legge come risolta,
+    che e' cio' che ogni tratta era prima che il ripiego esistesse."""
 
 
 class PlacedLabel(StrictModel):

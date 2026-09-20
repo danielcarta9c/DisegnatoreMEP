@@ -102,6 +102,57 @@ class Route:
         return tuple(out)
 
 
+def _last_resort(
+    start: Cell,
+    start_direction: Cell,
+    goal: Cell,
+    goal_direction: Cell,
+    cols: int,
+    rows: int,
+) -> tuple[Cell, ...]:
+    """La spezzata di ripiego per una tratta che non si instrada (**D-150**).
+
+    Esce di un passo da ciascuna porta nella direzione che la porta impone —
+    cosi' la linea nasce e muore **dritta sull'attacco**, che e' l'unica cosa
+    che resta giusta di questa tratta — e unisce i due punti con al piu' due
+    pieghe.
+
+    **Non evita niente.** Non gli ostacoli, non le altre linee, non i
+    rettilinei che le catene pretendono: se li rispettasse, l'instradatore
+    l'avrebbe trovata. E' il segno che dice *qui manca una tratta*, e il
+    preflight la nomina una per una. Chi la guarda deve poter vedere **dove**
+    il motore si e' fermato, e per vederlo la linea dev'esserci.
+    """
+
+    def dentro(cell: Cell) -> Cell:
+        return (min(max(cell[0], 0), cols - 1), min(max(cell[1], 0), rows - 1))
+
+    def senza_ripetizioni(celle: list[Cell]) -> list[Cell]:
+        out: list[Cell] = []
+        for cella in celle:
+            if not out or cella != out[-1]:
+                out.append(cella)
+        return out
+
+    # **Due porte sulla stessa retta: la spezzata e' quella retta.** Uscire di
+    # un passo da ciascuna, qui, farebbe scavalcare i due passi e la linea
+    # tornerebbe su se stessa — misurato su due porte a un passo di distanza,
+    # che davano (a, b, a, b).
+    if start[0] == goal[0] or start[1] == goal[1]:
+        return (start,) if start == goal else (start, goal)
+
+    first = dentro((start[0] + start_direction[0], start[1] + start_direction[1]))
+    last = dentro((goal[0] + goal_direction[0], goal[1] + goal_direction[1]))
+    fuori = senza_ripetizioni([start, first, (last[0], first[1]), last, goal])
+    if len(fuori) == len(set(fuori)):
+        return tuple(fuori)
+    # I due passi si scavalcano lo stesso: si ripiega sulla **L semplice**, che
+    # su due porte non allineate non puo' degenerare. Si perde il passo dritto
+    # fuori dalla porta, e su una linea che e' gia' una finzione e' il male
+    # minore rispetto a una spezzata che si ripercorre.
+    return tuple(senza_ripetizioni([start, (goal[0], start[1]), goal]))
+
+
 def _facing_line(
     start: Cell, start_direction: Cell, goal: Cell, goal_direction: Cell
 ) -> list[Cell] | None:
@@ -436,6 +487,7 @@ def route_sheet(
     grid: GridSpace,
     on_routed: Callable[[Trunk, RoutedTrunk], list[PlacedSymbol]] | None = None,
     reserve_chains: bool = True,
+    tolerant: bool = False,
 ) -> list[RoutedTrunk]:
     """Instrada le tratte una dopo l'altra, accumulando le celle occupate.
 
@@ -443,6 +495,14 @@ def route_sheet(
     converge fa fallire l'intero foglio con una diagnostica che la nomina: la
     specifica §10.2 vuole una partizione diversa o un errore, non un disegno
     approssimato.
+
+    Con `tolerant` non fallisce: la tratta prende la spezzata di ripiego di
+    `_last_resort`, si marca `unresolved` e il foglio esce lo stesso (**D-150**).
+    **Non e' la modalita' ordinaria e non va accesa per comodita'**: chi compone
+    la accende soltanto quando *tutte* le vie di ripiego della posa hanno gia'
+    fallito, perche' l'errore e' anche il segnale con cui il motore sceglie una
+    posa migliore — degradare subito gli toglierebbe quelle vie e la tavola
+    uscirebbe peggiore di quanto poteva.
 
     `on_routed` viene chiamato appena una tratta e' instradata e restituisce i
     simboli che vi sono stati posati sopra. Quei simboli diventano **ostacoli
@@ -473,6 +533,9 @@ def route_sheet(
     # del volano — che sulla tavola e' una derivazione, non due linee.
     taken: dict[tuple[Cell, Cell], set[Cell]] = {}
     routed: list[RoutedTrunk] = []
+    # Gli indici, in `routed`, delle tratte che hanno preso il ripiego di
+    # `_last_resort`: si leggono subito sotto, quando la tratta si costruisce.
+    unresolved: set[int] = set()
     # L'insieme dei nodi affollati si mantiene **incrementalmente**: e' identico
     # a `_crowded(blocked | occupied)`, ma ricalcolarlo da zero a ogni tratta
     # dominava il costo dell'intero instradamento — e da quando la disposizione
@@ -628,20 +691,38 @@ def route_sheet(
                 goal_straight=goal_straight,
             )
         except LayoutError as exc:
-            raise LayoutError(
-                f"run {trunk.connection_ids[0]} on network {trunk.network_id} "
-                f"cannot be routed: {exc}"
-            ) from exc
-        occupied.update(found.cells)
-        absorb(found.cells)
-        for before, after in zip(found.cells, found.cells[1:], strict=False):
-            taken.setdefault((before, after), set()).update(ends)
+            if not tolerant:
+                raise LayoutError(
+                    f"run {trunk.connection_ids[0]} on network {trunk.network_id} "
+                    f"cannot be routed: {exc}"
+                ) from exc
+            cells = _last_resort(
+                start, start_direction, goal, goal_direction, grid.cols, grid.rows
+            )
+            found = Route(cells=cells, cost=STEP_COST * (len(cells) - 1), crossings=())
+            unresolved.add(len(routed))
+        if len(routed) not in unresolved:
+            occupied.update(found.cells)
+            absorb(found.cells)
+            for before, after in zip(found.cells, found.cells[1:], strict=False):
+                taken.setdefault((before, after), set()).update(ends)
+        # **La spezzata di ripiego non occupa niente** (D-150). E' una finzione:
+        # dichiara dove una tratta *dovrebbe* passare, non dove passa. Se
+        # entrasse fra le celle occupate e i tratti gia' percorsi, vincolerebbe
+        # le tratte **vere** che si instradano dopo — e una tratta ceduta ne
+        # farebbe cadere altre, a valanga.
+        #
+        # Misurato sull'impianto 5 il 19 settembre: registrandola, **sette**
+        # tratte cedute; senza, quelle che cedono davvero. La differenza non e'
+        # cosmetica — ogni tratta ceduta in piu' e' un pezzo di disegno che il
+        # PO non puo' giudicare.
         current = RoutedTrunk(
                 network_id=trunk.network_id,
                 medium=media.get(trunk.network_id, ""),
                 supply=supply,
                 flow_kind=declared.kind,
                 flow_from_start=declared.flow_from_start,
+                unresolved=len(routed) in unresolved,
                 connection_ids=list(trunk.connection_ids),
                 segments=[
                     [

@@ -212,14 +212,37 @@ def _draw(args: argparse.Namespace) -> int:
         return 2
 
     frame, drawing = compose_on_ordinary_frame(project, catalog)
+    # **Una tavola che si dichiara incompleta non si misura come una completa**
+    # (D-150). Quando il motore ha dovuto cedere una tratta, la sua spezzata di
+    # ripiego passa sotto i simboli e si sovrappone: sono esattamente i difetti
+    # che questo controllo esiste per fermare, e fermarli qui vorrebbe dire
+    # rimettere la tavola nel cassetto da cui D-150 l'ha tirata fuori.
+    #
+    # Il contratto non si allenta, si sposta: i rilievi **si stampano per
+    # intero**, la tavola resta bloccata, e in `--verifica` esce marcata come
+    # esce marcata per qualunque altro rilievo bloccante (D-063). Per una
+    # tavola **senza** tratte cedute non cambia niente: il controllo la ferma
+    # come l'ha sempre fermata.
+    surrendered = [
+        route
+        for sheet in drawing.sheets
+        for route in sheet.routes
+        if route.unresolved
+    ]
     geometry_report = validate_drawing_geometry(drawing, frame)
     if not geometry_report.ok:
         print(geometry_report.model_dump_json(indent=2))
-        return 2
+        if not (surrendered and args.verifica):
+            return 2
+        print(
+            f"\nI rilievi qui sopra si leggono sapendo che {len(surrendered)} "
+            f"tratta/e non si e' instradata e porta un segno di ripiego (D-150): "
+            f"la tavola esce per essere guardata, non per essere consegnata."
+        )
 
     quality = preflight_drawing(drawing, frame, catalog)
     _print_preflight(quality)
-    blocked = not ValidationReport(issues=quality).ok
+    blocked = not ValidationReport(issues=quality).ok or not geometry_report.ok
     if blocked and not args.verifica:
         print(
             "\nLa tavola non viene scritta: una tavola finale non esce con un "

@@ -331,12 +331,42 @@ def test_a_leader_at_45_degrees_and_a_label_without_one_say_nothing() -> None:
 # --- 7. riempimento del foglio (A1, A3) ----------------------------------------
 
 
+def test_a_surrendered_run_is_blocking_and_names_itself() -> None:
+    """**D-150** — la tratta ceduta e' un rilievo **bloccante**, e si nomina.
+
+    E' l'unico rilievo che dice che la tavola **non e' finita**: tutti gli
+    altri misurano quanto bene e' disegnato qualcosa che c'e'.
+    """
+    perduta = run("w2-a", [at(40, 40), at(90, 40)]).model_copy(
+        update={"unresolved": True}
+    )
+    normale = run("w1", [at(40, 60), at(90, 60)])
+    findings = preflight.unresolved_runs(drawing(sheet(routes=[perduta, normale])))
+    trovato = only(findings, "RUN_UNRESOLVED")
+    assert trovato.severity is IssueSeverity.BLOCKING
+    assert "w2-a" in trovato.message
+    assert "w2-a" in trovato.entity_ids
+    # La tratta risolta non porta nessun rilievo: una tavola pulita resta pulita.
+    assert "w1" not in trovato.message
+
+
+def test_a_drawing_without_surrendered_runs_has_no_such_finding() -> None:
+    """Il criterio 2 di `DRAW-014`: chi non cede non viene marcato."""
+    pulita = drawing(sheet(routes=[run("w1", [at(40, 60), at(90, 60)])]))
+    assert preflight.unresolved_runs(pulita) == []
+
+
 def test_a_sheet_filled_only_in_part_is_a_warning_with_the_percentage() -> None:
     """L'ingombro copre un quarto dell'area di disegno: una fascia, non una tavola."""
     band = run("f", [at(10, 16), at(185, 16), at(185, 133.5)])
     findings = preflight.sheet_fill(drawing(sheet(routes=[band])), FRAME)
-    assert only(findings, "SHEET_BARELY_FILLED").severity is IssueSeverity.WARNING
-    assert "pieno solo al 25%" in only(findings, "SHEET_BARELY_FILLED").message
+    trovato = only(findings, "SHEET_BARELY_FILLED")
+    assert trovato.severity is IssueSeverity.WARNING
+    assert "pieno al 25%" in trovato.message
+    # **D-149**: si riporta il numero, non si prescrive di alzarlo. Il rilievo
+    # dice esplicitamente che e' una misura, cosi' nessuna sessione futura lo
+    # legge come un difetto da chiudere.
+    assert "misura" in trovato.message
 
 
 def test_a_drawing_pushed_into_one_corner_is_a_warning_with_the_ratio() -> None:
@@ -464,6 +494,11 @@ def everything_wrong() -> DrawingGeometry:
             run("o2", [at(227.5, 60), at(235, 60)]),
             run("c", [at(245, 56.5), at(280, 56.5)]),
             run("u", [at(20, 150), at(80, 150), at(80, 170), at(60, 170)]),
+            # **Una tratta ceduta** (D-150): il motore non l'ha instradata e la
+            # spezzata che porta e' un ripiego dichiarato.
+            run("perduta", [at(40, 200), at(90, 200)]).model_copy(
+                update={"unresolved": True}
+            ),
         ],
         labels=[
             label("l1", anchor=at(300, 160), leader_from=at(300, 150)),
@@ -482,6 +517,7 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
     broken = everything_wrong()
     registry = catalog(probe_good=GOOD_SOURCE, probe_bad=preflight.INVENTED_SOURCE)
     by_measure = [
+        preflight.unresolved_runs(broken),
         preflight.bends_per_run(broken),
         preflight.crossings(broken, FRAME),
         preflight.longitudinal_overlap(broken, FRAME),

@@ -24,7 +24,6 @@ from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import ProjectModel
 
 from .chains import machine_chains
-from .dilate import dilated_to_fit
 from .errors import LayoutError
 from .geometry import (
     CrossReference,
@@ -43,7 +42,7 @@ from .labels import place_labels
 from .legend import build_legend
 from .partition import SheetLink, SheetPartition, partition_project
 from .place import place_sheet
-from .spine import carry_the_rest, lay_the_spine
+from .spine import SpineLayout, carry_the_rest, lay_the_spine
 from .trunks import Trunk, build_trunks
 
 CROSS_REFERENCE_GAP_MM = 2.5
@@ -317,6 +316,29 @@ def _order_of_surrender(
     )
 
 
+def _no_spine() -> SpineLayout:
+    """La fase del tronco che non c'e' stata.
+
+    Vuota in tutto: nessun partecipante, nessuna autostrada, nessuna posa. Chi
+    la riceve la tratta come una fase che non ha vincolato niente —
+    `carry_the_rest` restituisce la posa com'era, e la cessione graduale non ha
+    catene da cedere.
+
+    `routed=False` non e' un dettaglio: dice a chi legge il diario che le
+    autostrade **non** si sono posate per prime, che e' la rinuncia vera. Il
+    motivo lo scrive chi compone, nella via con cui la tavola e' uscita.
+    """
+    return SpineLayout(
+        machines=frozenset(),
+        participants=(),
+        trunks=(),
+        symbols=(),
+        routes=(),
+        runs=(),
+        routed=False,
+    )
+
+
 def compose_sheet(
     project: ProjectModel,
     partition: SheetPartition,
@@ -324,6 +346,7 @@ def compose_sheet(
     frame: SheetFrame,
     inline_ids: frozenset[str],
     journal: ComposeJournal | None = None,
+    last_resort: bool = False,
 ) -> SheetGeometry:
     grid = GridSpace(origin=frame.drawing_rect_mm, standard=frame.standard)
     first = place_sheet(project, partition, catalog, frame, inline_ids)
@@ -331,7 +354,27 @@ def compose_sheet(
     # rifinitura del ciclo: e' una fase a se', che costruisce la forma invece di
     # cercarla, e il resto dell'impianto le va dietro. Da qui in avanti la
     # rettilineita' del tronco e' un vincolo, non una voce di costo.
-    spine = lay_the_spine(project, partition, catalog, frame, first)
+    # **Se la fase del tronco consegna una posa impossibile, cade la fase, non
+    # la tavola.** Succede quando piu' macchine in parallelo pendono dalla
+    # stessa catena di raccordi e quella catena corre di traverso: il
+    # risolutore le porta tutte alla stessa quota e due finiscono nello stesso
+    # punto (`spine._no_two_on_the_same_spot`).
+    #
+    # Senza questa riga quell'errore usciva dal motore e **la tavola non usciva
+    # affatto** — nemmeno col ripiego di D-150, che degrada l'instradamento e
+    # non la posa. Ma la posa iniziale, quella, e' giusta: e' lei che le
+    # macchine le ha incolonnate. Si riparte da li'.
+    #
+    # Resta una **rinuncia**, e il diario la scrive: senza la fase del tronco
+    # le autostrade non si posano per prime, e la tavola esce dal ciclo come
+    # usciva prima che le fasi esistessero. La cura vera e' il collettore
+    # verticale.
+    senza_tronco = ""
+    try:
+        spine = lay_the_spine(project, partition, catalog, frame, first)
+    except LayoutError as exc:
+        spine = _no_spine()
+        senza_tronco = f"senza la fase del tronco ({exc}); "
     seeded = carry_the_rest(project, partition, catalog, first, spine, frame)
     # La disposizione serve le linee, non il contrario (D-078): dopo la prima
     # ipotesi di posa, i componenti si spostano dove l'instradamento di prova
@@ -340,11 +383,35 @@ def compose_sheet(
         project, partition, catalog, frame, seeded, inline_ids, spine
     )
 
-    def settled(base: list[PlacedSymbol]) -> tuple[list[PlacedSymbol], list[RoutedTrunk]]:
+    def settled(
+        base: list[PlacedSymbol], last_resort: bool = False
+    ) -> tuple[list[PlacedSymbol], list[RoutedTrunk]]:
         """La tavola instradata con gli accessori posati: la stessa che valuta
-        il ciclo di miglioramento, perche' e' la stessa funzione (D-078)."""
-        sheet = settle_sheet(project, list(partition.trunks), base, catalog, grid)
-        return sheet.symbols, sheet.routes
+        il ciclo di miglioramento, perche' e' la stessa funzione (D-078).
+
+        Con `last_resort` niente fa piu' fallire il foglio (**D-150**): la
+        tratta che non si instrada prende la spezzata di ripiego, quella che
+        non ospita i propri accessori resta intera e li perde, e tutt'e due si
+        marcano `unresolved`. **Le due cose non sono lo stesso difetto** — una
+        linea sbagliata, un accessorio che non c'e' — ma hanno lo stesso
+        contratto verso chi guarda: *qui la tavola non e' quella che dovrebbe
+        essere, e il preflight ti dice dove*. Un accessorio perso in silenzio
+        sarebbe un errore di contenuto; dichiarato, e' un rilievo.
+        """
+        sheet = settle_sheet(
+            project,
+            list(partition.trunks),
+            base,
+            catalog,
+            grid,
+            tolerant=last_resort,
+            last_resort=last_resort,
+        )
+        routes = [
+            item.model_copy(update={"unresolved": True}) if index in set(sheet.unfit) else item
+            for index, item in enumerate(sheet.routes)
+        ]
+        return sheet.symbols, routes
 
     # **Quando la struttura non si instrada, si cede una curva: non si butta la
     # struttura** (DRAW-012 §F, e il PO in D-138). Fino a `DRAW-011` il terzo
@@ -419,15 +486,34 @@ def compose_sheet(
         story = (note, given)
         break
     if found is None:
-        # Nessuna via si instrada: la tavola non esce, e chi chiama deve vedere
-        # il perche' della prima, che e' quella che si voleva.
-        found = settled(improved)
+        # **Nessuna via si instrada, e la tavola esce lo stesso** (D-150). Fino
+        # a qui il motore rialzava l'errore della prima via e il foglio moriva:
+        # il PO non vedeva niente, e su tre impianti di prova su cinque non ha
+        # mai visto niente. Misurato il 19 settembre, tutt'e tre morivano per
+        # **una** tratta su decine.
+        #
+        # Il ripiego arriva **qui e non prima** perche' l'errore, finche' le vie
+        # restano, e' il segnale con cui il motore ne sceglie una migliore. Solo
+        # adesso che sono finite, una tavola con le tratte perse segnate vale
+        # piu' di nessuna tavola: il PO la guarda e la giudica, e il disegnatore
+        # la chiude in CAD sul DXF (I-072).
+        if not last_resort:
+            # Senza l'interruttore la tavola muore come e' sempre morta, e
+            # l'errore della prima via — quella che si voleva — arriva a chi
+            # compone. **Serve che muoia**: e' cosi' che la scala dei formati
+            # sa che su questo foglio non ci sta e deve provarne uno piu'
+            # grande. Se il ripiego scattasse qui, ogni foglio riuscirebbe e
+            # l'impianto finirebbe sull'A4.
+            found = settled(improved)
+        else:
+            found = settled(improved, last_resort=True)
+            story = ("il ripiego dichiarato: le tratte perse sono segnate", ())
     placed, broken = found
     if journal is not None:
         journal.notes.append(
             ComposeNote(
                 sheet_id=partition.sheet_id,
-                ripiego=story[0],
+                ripiego=f"{senza_tronco}{story[0]}",
                 conceded=story[1],
                 crooked=tuple(
                     key
@@ -448,14 +534,18 @@ def compose_sheet(
     # entrano nella centratura ne' in nessuna misura della posa: cambiare una
     # sigla non muove un simbolo ne' un punto di una rotta. La quota di terra
     # non si esporta: non e' un elemento della tavola (D-121).
-    # **La tavola comoda si ottiene allargando tutto insieme** (D-142, §A): il
-    # disegno e' risolto, e solo adesso si sceglie **un** fattore per il foglio
-    # e si allargano tutti i vuoti della stessa percentuale. I simboli restano
-    # della loro misura, nessun pezzo si sposta rispetto agli altri, e percio'
-    # nessuna piega e nessun attraversamento nasce da qui. Lo stiramento del
-    # singolo tratto resta dov'era — dentro il ciclo, per far entrare il
-    # corredo — e il riempimento non lo puo' piu' comprare (§A.3).
-    grown, factor = dilated_to_fit(
+    # **La dilatazione e' ritirata** (D-149). D-142 l'aveva chiesta per rendere
+    # la tavola comoda allargando tutto insieme, ed era la mossa giusta contro
+    # quella sbagliata; ma misurata sulla consegna di `DRAW-013` ha spostato
+    # **2,5 mm sulla tavola 1 e 10 mm sulla 2**, perche' la griglia quantizza:
+    # a fattore 1,08 cresce solo un vuoto lungo almeno sette passi, e qui i
+    # vuoti sono quasi tutti di uno o due. Il PO, guardando le tavole: «prima
+    # il disegno era meglio».
+    #
+    # `layout/dilate.py` **resta agli atti**, non cancellato: il giorno in cui
+    # una posa distribuira' davvero i pezzi, i vuoti saranno grandi e la
+    # dilatazione avra' qualcosa da allargare. Oggi no.
+    grown, factor = (
         SheetGeometry(
             sheet_id=partition.sheet_id,
             title=partition.title,
@@ -469,8 +559,7 @@ def compose_sheet(
                 {item.id: item.name for item in project.networks},
             ),
         ),
-        frame.drawing_rect_mm,
-        grid.step_mm,
+        1.0,
     )
     if journal is not None and journal.notes:
         journal.notes[-1] = replace(journal.notes[-1], dilation=factor)
@@ -496,8 +585,13 @@ def compose_drawing(
     catalog: ComponentRegistry,
     frame: SheetFrame,
     journal: ComposeJournal | None = None,
+    last_resort: bool = False,
 ) -> DrawingGeometry:
-    """Dal modello tecnico approvato alla geometria di tutte le tavole."""
+    """Dal modello tecnico approvato alla geometria di tutte le tavole.
+
+    `last_resort` lo accende soltanto `compose_on_ordinary_frame`, e soltanto
+    quando **nessun** formato ha retto (**D-150**).
+    """
     inline_ids = inline_component_ids(project, catalog)
     # Le tratte si instradano nell'ordine **strutturale** dei propri capi, non
     # in quello in cui il file elenca le tubazioni: l'instradamento e' seriale
@@ -551,7 +645,15 @@ def compose_drawing(
     return DrawingGeometry(
         project_id=project.metadata.project_id,
         sheets=[
-            compose_sheet(project, partition, catalog, frame, inline_ids, journal)
+            compose_sheet(
+                project,
+                partition,
+                catalog,
+                frame,
+                inline_ids,
+                journal,
+                last_resort=last_resort,
+            )
             for partition in partitions
         ],
     )
@@ -574,7 +676,6 @@ def compose_on_ordinary_frame(
     perche' lo spazio libero viene distribuito fra le fasce e un disegno riempie
     per costruzione il foglio su cui e' stato composto.
     """
-    last: LayoutError | None = None
     for frame in frames:
         try:
             # Il diario descrive **la tavola consegnata**: un formato provato e
@@ -582,12 +683,30 @@ def compose_on_ordinary_frame(
             if journal is not None:
                 journal.clear()
             return frame, compose_drawing(project, catalog, frame, journal)
-        except LayoutError as exc:
-            last = exc
-    reason = str(last) if last is not None else "no format was offered to try"
-    raise LayoutError(
-        f"the plant does not fit on any ordinary sheet format: {reason}"
-    ) from last
+        except LayoutError:
+            continue
+    if not frames:
+        raise LayoutError(
+            "the plant does not fit on any ordinary sheet format: "
+            "no format was offered to try"
+        )
+    # **Nessun formato ha retto, e la tavola esce lo stesso** (D-150). Si
+    # riprende il **piu' grande** — quello che lascia piu' spazio, quindi
+    # quello su cui le tratte perse saranno meno — e lo si ricompone col
+    # ripiego acceso: la tratta che non si instrada prende la spezzata
+    # dichiarata, l'accessorio che non ci sta manca, e il preflight li nomina
+    # uno per uno.
+    #
+    # **Il ripiego non anticipa mai la scala.** Un formato che regge davvero
+    # vince sempre su uno piu' grande col ripiego, perche' questa riga si
+    # legge soltanto dopo che il ciclo qui sopra e' finito a vuoto. Perche' la
+    # tavola sia uscita cosi' non lo dice piu' un'eccezione che nessuno vedra':
+    # lo dice il **preflight**, tratta per tratta, su quella che esce.
+    if journal is not None:
+        journal.clear()
+    return frames[-1], compose_drawing(
+        project, catalog, frames[-1], journal, last_resort=True
+    )
 
 
 __all__ = [

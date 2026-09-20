@@ -1,5 +1,13 @@
 # Regole operative — Disegnatore MEP
 
+> ⚠ **In riallineamento — `DRAW-015`.** Dal **20 settembre 2026** valgono, e vincono su
+> tutto ciò che segue: **D-147** (PM e DEV sono una sola sessione — lo sdoppiamento del PM
+> descritto più sotto è **abolito**), **D-152** (agenti paralleli dentro la sessione, mai
+> sessioni separate) e **D-151** (il disegno lo compone un agente: pianificatore → motore →
+> revisore). Il modello vigente è in `docs/governance/OPERATING_MODEL.md` §1.2.1 e §1.2.2;
+> l'architettura del disegno in `docs/ARCHITETTURA-DEL-PIANO.md`. Il resto di questo file è
+> valido finché non lo contraddice.
+
 ## Ordine di lettura obbligatorio
 
 **`HANDOFF.md` per primo: è il cancello di lettura e contiene le sentinel checks a cui

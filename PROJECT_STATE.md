@@ -1,5 +1,9 @@
 # PROJECT STATE — Disegnatore MEP
 
+> ⚠ **Fermo al 15 settembre, e in riallineamento — `DRAW-015`.** Quello che segue descrive il
+> progetto **prima** di D-147 … D-152 (19/20 settembre 2026). Lo stato corrente sta in
+> `HANDOFF.md`; l'architettura del disegno in `docs/ARCHITETTURA-DEL-PIANO.md`.
+
 **Aggiornato:** 2026-09-15 (PM, cold eye review dopo il merge di DRAW-009)
 **Ingresso del PM:** `docs/pm/STATO-PM.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md`
@@ -243,38 +247,45 @@ appesi sotto il tronco alla quota del `coil_in`.
     e 009: il 007 è stato fuso senza rapporto agli atti, ed è l'unico buco nella catena delle
     consegne.
 
-## Pacchetto attivo
+## Dove siamo — 19 settembre 2026, dopo la PR #44
 
-`DRAW-010 — il tronco posa senza pezzi addosso, e l'impianto 4 torna a uscire`
-(`ACTIVE_WORK_PACKAGE.md`), **attivo**: il PO ha disposto il 14 settembre 2026 che vada su
-`main`, così che la sessione DEV successiva lo trovi. Parte dalla testa di `main` con
-`DRAW-009` fuso (`2155c22`, PR #27).
+**`DRAW-012` e `DRAW-013` sono fusi** con la PR #44 (`a835006`): la struttura, le autostrade
+e l'invariante della catena di `DRAW-012`, piu' il margine di 25 mm dal bordo (D-143), il
+vincolo degli organi di servizio (D-145) e la curva dichiarata della distribuzione (D-144, in
+parte). Undici criteri su quindici; i quattro mancanti erano **tutti** bloccati da `place.py`
+e dalle rotazioni del simbolo del collettore — cioe' da un perimetro che aveva scritto il PM.
 
-Le cinque cose che il pacchetto affronta:
+**Lo stesso giorno il PO ha cambiato rotta**, e sono le disposizioni **D-147**–**D-150**:
 
-1. **La fase del tronco consegna una posa senza pezzi addosso** (§A). È la causa a monte del
-   rischio 16, che `DRAW-009` ha reso innocua invece che risolta. Misura: oggi la posa
-   consegnata sulla tavola 2 ha una coppia sovrapposta e otto più vicine dello stacco
-   ammesso; sulla base erano zero e quattro.
-2. **L'impianto 4 torna a uscire** (§B), e la tavola 2 esce dalla propria posa a fasi invece
-   che dal ripiego di `compose_sheet`.
-3. **La copertura dice quali impianti devono comporsi** (§C), così che una capacità non si
-   possa più perdere in silenzio. Qui si incassa anche il rischio 22.
-4. **Le tre disposizioni del PO del 14 settembre** (§D): il prelievo si posa come un ingresso
-   e `dhw_out` resta in testa al bollitore; niente freccia sotto la lunghezza minima; lo
-   scarico del bollitore va dal lato del serbatoio rispetto al ritegno che il gruppo di
-   sicurezza porta a bordo.
-5. **`is_valid` torna stretta** se §A lo permette (§E), e la prova di `DRAW-007` che
-   `DRAW-009` ha reso rossa torna verde.
+| | |
+|---|---|
+| **D-147** | PM e DEV tornano a essere **un agente solo**, nella stessa sessione. La fusione la approva il PO guardando le tavole |
+| **D-148** | **Oltre l'A3 si va**: i formati ordinari sono A4, A3, A2, A1 |
+| **D-149** | **Il riempimento del foglio esce dagli obiettivi** e torna una misura; la dilatazione di D-142 e' ritirata |
+| **D-150** | **Una tratta che non si instrada non uccide piu' la tavola**: prende una spezzata di ripiego, si marca `unresolved`, e il preflight la nomina |
 
-Verdetto della consegna precedente in `docs/pm/2026-09-14-review-pr27-draw009.md`; rapporto
-del DEV in `docs/collaudi/DRAW-009/RAPPORTO.md`; architettura della posa a fasi in
-`docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`, che resta da leggere per intera
-prima del pacchetto.
+La ragione di D-147, in una riga: **`place.py` e' stato fuori perimetro per quattro pacchetti
+di fila, ed e' li' che stavano le tavole 3, 4 e 5.**
+
+### Le tre tavole che non uscivano, e perche'
+
+Misurato il 19 settembre, prima di toccare il codice. **Tutt'e tre morivano per una sola
+tratta**, e tutt'e tre contro il **bordo destro dell'area A3**:
+
+| Impianto | Dove moriva | Che cos'e' in millimetri |
+|---|---|---|
+| 3 | `give the run a longer straight length` | non c'e' rettilineo |
+| 4 | `no route from (134, 80) to (144, 80)` | la destinazione e' a **x 370** su una griglia che finisce a **x 360**: e' fuori dal foglio |
+| 5 | `run into an obstacle at (140, 65)` | «l'ostacolo» e' **x 360,0 mm**, cioe' il bordo |
+
+**L'impianto 4 esce su A2 senza toccare nient'altro** (misurato: 195 s). Gli impianti 3 e 5
+su A2 falliscono ancora, ma per difetti **veri** — un ostacolo vero a due passi dove ne
+servono cinque, e uno stacco di 5 mm con un accessorio in linea che ne chiede 7,5 — non piu'
+contro il bordo. Quelle sono le cause da curare, ed e' il lavoro corrente.
 
 ---
 
-## Consegna in revisione — DRAW-012 (scritta dal DEV, 17 settembre 2026)
+## ~~Consegna in revisione~~ — DRAW-012, **fuso** nella PR #44 (scritta dal DEV, 17 settembre 2026)
 
 `DRAW-012 — il motore disegna nell'ordine del disegnatore` è consegnato in una PR non fusa,
 dalla testa di `main` (`8589620`). Rapporto e artefatti: `docs/collaudi/DRAW-012/`.
@@ -337,7 +348,7 @@ la tavola non esce. Nessuna prova è stata spenta per far quadrare il saldo; il 
 
 ---
 
-## Consegna in revisione — DRAW-013 (scritta dal DEV, 19 settembre 2026)
+## ~~Consegna in revisione~~ — DRAW-013, **fuso** nella PR #44 (scritta dal DEV, 19 settembre 2026)
 
 `DRAW-013 — la tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la
 sua forma` è consegnato in una PR non fusa. **Parte dal ramo di `DRAW-012`**, non da `main`:

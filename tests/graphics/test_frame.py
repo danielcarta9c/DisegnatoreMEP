@@ -117,18 +117,53 @@ def test_a_rect_knows_its_own_edges() -> None:
     assert not rect.overlaps(Rect(x_mm=40.0, y_mm=20.0, width_mm=5.0, height_mm=5.0))
 
 
-def test_the_ordinary_formats_are_a4_then_a3_and_stop_there() -> None:
-    """D-058: A3, o A4 se il disegno e' proprio piccolo. Niente A0, niente strisce."""
-    from disegnatore_mep.graphics.frame import NOVE_C_A4, ORDINARY_FRAMES
+def test_the_ordinary_formats_go_up_to_a1_in_growing_order() -> None:
+    """D-148: oltre l'A3 si va — A4, A3, A2, A1 — e la scala resta l'ordine.
 
-    assert ORDINARY_FRAMES == (NOVE_C_A4, NOVE_C_A3)
+    Fino al 19 settembre 2026 questa prova si chiamava
+    `..._are_a4_then_a3_and_stop_there` e difendeva la clausola di D-058 «ne'
+    A2, ne' A0, ne' strisce». **Non e' stata allentata: la disposizione che
+    difendeva e' stata sospesa dal PO**, e la ragione e' misurata — le tre
+    tavole di prova che non uscivano fallivano tutte contro il bordo destro
+    dell'area A3, e l'impianto 4 esce su A2 senza toccare nient'altro.
+    """
+    from disegnatore_mep.graphics.frame import (
+        NOVE_C_A1,
+        NOVE_C_A2,
+        NOVE_C_A4,
+        ORDINARY_FRAMES,
+    )
+
+    assert ORDINARY_FRAMES == (NOVE_C_A4, NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
     sizes = [
         (item.standard.sheet_width_mm, item.standard.sheet_height_mm)
         for item in ORDINARY_FRAMES
     ]
-    assert sizes == [(297.0, 210.0), (420.0, 297.0)]
-    # In ordine crescente: la scelta prende il primo su cui il disegno entra.
+    assert sizes == [(297.0, 210.0), (420.0, 297.0), (594.0, 420.0), (841.0, 594.0)]
+    # In ordine crescente: la scelta prende il primo su cui il disegno entra,
+    # quindi un foglio piu' grande non si prende mai per comodita'.
     assert sizes == sorted(sizes)
+
+
+def test_every_ordinary_format_keeps_the_bands_of_the_a3_title_block() -> None:
+    """Un cartiglio non cresce col foglio (D-148): porta le stesse righe."""
+    from disegnatore_mep.graphics.frame import ORDINARY_FRAMES
+
+    for item in ORDINARY_FRAMES:
+        assert item.title_block_height_mm == NOVE_C_A3.title_block_height_mm
+        assert item.header_height_mm == NOVE_C_A3.header_height_mm
+        assert item.legend_width_mm == NOVE_C_A3.legend_width_mm
+
+
+def test_every_ordinary_format_draws_at_the_same_scale() -> None:
+    """ADR 0003 vale anche sui formati nuovi: cambia quanto ci sta, non la misura."""
+    from disegnatore_mep.graphics.frame import ORDINARY_FRAMES
+
+    for item in ORDINARY_FRAMES:
+        for field in ("grid_mm", "line_thin_mm", "text_normal_mm", "min_clearance_mm"):
+            assert getattr(item.standard, field) == getattr(
+                NOVE_C_A3.standard, field
+            ), f"{item.standard.sheet_width_mm:g}mm: {field}"
 
 
 def test_the_a4_frame_keeps_the_bands_measured_on_the_a3_title_block() -> None:

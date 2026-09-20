@@ -146,6 +146,7 @@ QUADRANT_NAMES: tuple[str, ...] = (
 """I quattro quadranti dell'area di disegno, in ordine di lettura."""
 
 MEASURE_ORDER: tuple[str, ...] = (
+    "unresolved_runs",
     "bends_per_run",
     "crossings",
     "longitudinal_overlap",
@@ -160,7 +161,9 @@ MEASURE_ORDER: tuple[str, ...] = (
     "symbol_sources",
 )
 """L'ordine in cui `preflight_drawing` esegue le misure, e quindi l'ordine
-dell'esito: prima le linee, poi i testi, poi il foglio, infine le fonti.
+dell'esito: prima **cio' che manca**, poi le linee, poi i testi, poi il foglio,
+infine le fonti. La tratta non risolta apre l'elenco perche' e' l'unica che
+dice che la tavola non e' finita (D-150), e non va cercata in fondo.
 Dichiararlo qui rende l'ordine una scelta leggibile invece di un effetto della
 sequenza delle chiamate.
 """
@@ -795,9 +798,13 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
                 _finding(
                     "SHEET_BARELY_FILLED",
                     IssueSeverity.WARNING,
-                    f"la tavola {sheet.sheet_id}: il foglio e' pieno solo al "
-                    f"{ratio * 100:.0f}%, sotto il {SHEET_FILL_MIN_RATIO * 100:.0f}% "
-                    f"dichiarato: il disegno e' una fascia, non una tavola (A1)",
+                    f"la tavola {sheet.sheet_id}: il foglio e' pieno al "
+                    f"{ratio * 100:.0f}%, sotto la finestra "
+                    f"{SHEET_FILL_MIN_RATIO * 100:.0f}-"
+                    f"{SHEET_FILL_MAX_RATIO * 100:.0f}% di D-140. **E' una misura, non "
+                    f"un difetto da chiudere** (D-149): la posa non insegue piu' questo "
+                    f"numero, e su un foglio piu' grande dell'A3 sta sotto per "
+                    f"costruzione",
                     [sheet.sheet_id],
                 )
             )
@@ -812,8 +819,9 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
                     IssueSeverity.WARNING,
                     f"la tavola {sheet.sheet_id}: il foglio e' pieno al "
                     f"{ratio * 100:.0f}%, sopra il {SHEET_FILL_MAX_RATIO * 100:.0f}% "
-                    f"dichiarato: non resta lo spazio per le sigle dei componenti "
-                    f"(D-140)",
+                    f"di D-140, e li' lo spazio per le sigle si stringe davvero. "
+                    f"Resta una **misura** e non un difetto da chiudere (D-149): la "
+                    f"posa non insegue piu' questo numero",
                     [sheet.sheet_id],
                 )
             )
@@ -978,6 +986,41 @@ def _how_many_components(count: int) -> str:
     return f"usato da {count} componente" if count == 1 else f"usato da {count} componenti"
 
 
+def unresolved_runs(drawing: DrawingGeometry) -> list[ValidationIssue]:
+    """Le tratte consegnate col ripiego dichiarato (**D-150**).
+
+    **E' il primo rilievo del rapporto, e il piu' grave**, perche' e' l'unico
+    che dice che la tavola **non e' finita**. Tutti gli altri misurano quanto
+    bene e' disegnato qualcosa che c'e'; questo dice che qualcosa non c'e', o
+    c'e' sbagliato.
+
+    Esce **bloccante**, e il resto del motore gli da' gia' il comportamento
+    giusto senza che questa misura sappia niente di lui: con `--verifica` la
+    tavola **esce marcata** e i rilievi restano stampati per intero; senza, non
+    esce affatto (D-063). Cioe': si guarda e si rifinisce in CAD, e non si
+    consegna come finale. E' esattamente il contratto che D-150 vuole.
+    """
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        for route in sheet.routes:
+            if not route.unresolved:
+                continue
+            nome = route.connection_ids[0] if route.connection_ids else "senza nome"
+            findings.append(
+                _finding(
+                    "RUN_UNRESOLVED",
+                    IssueSeverity.BLOCKING,
+                    f"la tavola {sheet.sheet_id}: la tratta {nome} della rete "
+                    f"{route.network_id} **non e' stata risolta dal motore** e porta "
+                    f"un segno di ripiego — la linea non evita gli ostacoli e i suoi "
+                    f"accessori in linea possono mancare. Va chiusa a mano sul DXF, "
+                    f"oppure il motore va corretto (D-150)",
+                    [sheet.sheet_id, *route.connection_ids],
+                )
+            )
+    return findings
+
+
 def preflight_drawing(
     drawing: DrawingGeometry, frame: SheetFrame, catalog: ComponentRegistry
 ) -> list[ValidationIssue]:
@@ -988,6 +1031,9 @@ def preflight_drawing(
     posto, quale che sia la tavola.
     """
     return [
+        # **Per prima la tratta non risolta**: e' l'unico rilievo che dice che
+        # la tavola non e' finita, e chi legge non deve doverlo cercare.
+        *unresolved_runs(drawing),
         *bends_per_run(drawing),
         *crossings(drawing, frame),
         *longitudinal_overlap(drawing, frame),

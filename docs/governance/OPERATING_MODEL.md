@@ -3,9 +3,15 @@
 > Documento di governance. Descrive **chi decide cosa** e **come il lavoro arriva su
 > `main`**. Non contiene requisiti di prodotto e non modifica decisioni esistenti.
 >
-> **Stato: vigente.** GOV-001 è stato approvato e fuso nella PR #1. Il modello è stato
-> aggiornato dalla D-123: il DEV consegna tramite PR, il PM verifica e fonde; il PO entra
-> quando serve una decisione di prodotto, MEP o rappresentazione.
+> **Stato: vigente.** GOV-001 è stato approvato e fuso nella PR #1.
+>
+> **Aggiornato da D-147 (19 settembre 2026): PM e DEV sono un agente solo, nella stessa
+> sessione, e la fusione la approva il PO guardando le tavole.** Vedi §1.2.1, che è la
+> sezione da leggere per prima. D-123 resta in ciò che non è stato toccato: si consegna
+> tramite PR, e il PO entra quando serve una decisione di prodotto, MEP o rappresentazione.
+>
+> **E da D-152 (20 settembre 2026): dentro quella sessione si possono lanciare agenti in
+> parallelo**, mai sessioni. Vedi §1.2.2.
 
 ---
 
@@ -14,8 +20,8 @@
 | Ruolo | Chi | Autorità | Non può |
 |---|---|---|---|
 | **PO** — Product Owner | Daniel Carta | Dominio MEP; requisiti di prodotto; convenzioni e qualità della rappresentazione grafica; risultato funzionale atteso. Più: priorità, approvazione delle decisioni, chiusura dei propri input | — |
-| **PM** — Project Manager | Codex | Pacchetti di lavoro, criteri di accettazione, accettazione o rifiuto delle consegne, pianificazione | Decidere al posto del PO su uno dei suoi quattro ambiti |
-| **DEV** — team di sviluppo | Claude | Esecuzione dentro il perimetro assegnato; scelte implementative **reversibili** che non toccano requisiti, decisioni MEP, convenzioni grafiche o criteri di accettazione; proposte tecniche motivate; rapporti di consegna | Approvare decisioni, chiudere input del PO, cambiare criteri di accettazione, promuovere ipotesi a requisiti, ampliare il perimetro, **sostituire o reinterpretare una soluzione prescritta dal PO** |
+| **PM** — Project Manager | Claude, **lo stesso agente del DEV** da D-147 | Pacchetti di lavoro, criteri di accettazione, accettazione o rifiuto delle consegne, pianificazione | Decidere al posto del PO su uno dei suoi quattro ambiti |
+| **DEV** — team di sviluppo | Claude, **lo stesso agente del PM** da D-147 | Esecuzione dentro il perimetro assegnato; scelte implementative **reversibili** che non toccano requisiti, decisioni MEP, convenzioni grafiche o criteri di accettazione; proposte tecniche motivate; rapporti di consegna | Approvare decisioni, chiudere input del PO, cambiare criteri di accettazione, promuovere ipotesi a requisiti, ampliare il perimetro, **sostituire o reinterpretare una soluzione prescritta dal PO** |
 
 ### 1.1 PO — Product Owner
 
@@ -67,65 +73,105 @@ Gli appartengono:
 - l'**accettazione o il rifiuto** della consegna, criterio per criterio;
 - la porta d'ingresso su `main`: nessuna PR entra senza la sua accettazione.
 
-#### 1.2.1 Il PM è uno solo (PO, 14 settembre 2026 — D-130)
+#### 1.2.1 Un agente solo: il PM **è** il DEV (PO, 19 settembre 2026 — D-147)
 
-Dal 14 settembre 2026 **il PM è uno**. Scrive i pacchetti, verifica le consegne e fonde su
-`main`. Lo sdoppiamento in PM-autore e PM-revisore, disposto il 10 settembre, è **abolito**:
-il PO l'ha giudicato una stortura, e lo era — aveva creato due interlocutori dove il PO ne
-vede uno, e costringeva a dichiarare quale cappello si stesse indossando in mezzo a una
-conversazione.
+Dal 19 settembre 2026 **PM e DEV sono la stessa sessione**. D-130 aveva già abolito lo
+sdoppiamento del PM; D-147 abolisce anche quello fra PM e DEV. Resta un agente, e sopra di
+lui il PO.
 
-Gli appartiene per intero:
+**Perché.** La separazione serviva a tenere indipendente chi giudica da chi esegue. Il modo
+in cui ha fallito è un altro, ed è misurato: il PM scriveva un perimetro, il perimetro
+escludeva il file dove stava il blocco, e il DEV — correttamente, perché è ciò che gli si
+chiedeva — dichiarava «fuori perimetro» e non lo toccava. `place.py` è rimasto fuori
+perimetro per **quattro pacchetti di fila**, ed è lì che stavano le tavole 3, 4 e 5. Saldo:
+`DRAW-010` e `DRAW-012` respinte, `DRAW-013` consegnata con quattro criteri su quindici non
+raggiunti — **e tutti e quattro bloccati da quel recinto**. Il PO, il 19 settembre: «il
+progetto sta per essere buttato».
 
-| | |
-|---|---|
-| **I pacchetti** | Obiettivi, perimetro dei file, criteri di accettazione, pianificazione, traduzione degli input del PO, documentazione corrente |
-| **La verifica** | Accettazione o rifiuto della consegna, **criterio per criterio**, con i comandi e i loro output |
-| **Il merge su `main`** | Fonde chi ha misurato. Solo tramite pull request, mai con un merge locale seguito da push (§3, obblighi 2 e 3). La regola «il DEV non fonde» non cambia (D-125) |
-| **Le correzioni** | In funzione di ciò che la verifica ha trovato, il PM scrive che cosa va fatto nel pacchetto successivo |
+**Il ciclo.**
 
-**Ciò che resta separato, ed è la cosa che conta: il PM non è il DEV.** Il difetto grosso di
-`DRAW-006-R1` fu trovato da una verifica indipendente e non da chi aveva scritto il codice.
-L'indipendenza sta lì, fra chi esegue e chi giudica, non in due metà del PM. Il DEV lavora in
-una **sessione separata**, esegue soltanto il pacchetto attivo, apre la PR e si ferma.
+1. l'agente scrive il pacchetto e lo sviluppa, **nella stessa sessione**;
+2. **mostra le tavole al PO** — per prime, prima di qualunque numero (D-146);
+3. il PO guarda e **dà l'approvazione alla fusione**, o non la dà;
+4. la PR si fonde su `main` **solo dopo quell'approvazione**;
+5. **nella stessa sessione** si scrivono `HANDOFF.md` e il pacchetto successivo.
 
-**Come il PM verifica.** Queste regole non dipendevano dallo sdoppiamento e restano:
+**L'indipendenza che resta, e dove è andata.** Non c'è più un agente che giudica un altro
+agente: **c'è il PO che guarda le tavole.** È un controllo più debole sul codice e più forte
+sul prodotto, ed è una scelta deliberata — in tredici PR è l'unico che abbia intercettato
+qualcosa. Su `DRAW-010` i quattro difetti veri li ha visti il PO e non le misure; su
+`DRAW-012` il PM aveva chiuso la verifica criterio per criterio ed era orientato a proporre
+la fusione, e il PO l'ha ribaltata guardando due PDF.
 
-1. **Prima le misure, poi il racconto.** Il rapporto di consegna del DEV si legge **dopo**
-   aver formato le proprie misure, e poi si segnalano le differenze. Vale anche per il corpo
-   della PR e per i messaggi dei commit.
+**Ne segue che D-146 non è più una buona pratica: è la porta.** Senza le tavole il PO non ha
+niente da approvare, e senza la sua approvazione non si fonde. Se da un impianto non esce
+nessuna tavola, **quello** è la prima cosa che si dice.
+
+**Che cosa resta all'agente e che cosa no.** Restano i **mezzi**: perimetro, criteri, ordine
+dei lavori, scelte implementative reversibili. Non gli appartengono, e non gli sono mai
+appartenuti: approvare una decisione, chiudere un input del PO, decidere un contenuto MEP,
+cambiare una convenzione grafica. Su questi si chiede, e §1.1.1 vale intatta — **una
+disposizione del PO si implementa come è espressa**, anche adesso che chi la riceve è anche
+chi la eseguirà.
+
+**Come si verifica, adesso che nessuno verifica al posto tuo.** Queste regole non dipendevano
+dalla separazione, e proprio perché il controllo incrociato non c'è più vanno applicate con
+più disciplina, non con meno:
+
+1. **Prima le misure, poi il racconto.** Vale anche verso sé stessi: si misura, e poi si
+   scrive che cosa si è ottenuto — non il contrario.
 2. **Ogni criterio si chiude con un comando e il suo output.** Non «verificato»: il comando
-   eseguito e ciò che ha stampato. Un criterio senza prova eseguibile è **non raggiunto**,
-   non «probabilmente raggiunto».
+   eseguito e ciò che ha stampato. Un criterio senza prova eseguibile è **non raggiunto**.
 3. **Un criterio che nomina un risultato osservabile si prova sul risultato osservabile.**
    «Il motore genera la candidata» non chiude «sulla tavola le due macchine sono allineate».
    È l'errore di `DRAW-006-R1`.
-4. **La suite si riesegue per intero**, sui due lati, e non ci si fida del numero dichiarato
-   dal DEV.
-5. **Il verdetto è scritto**, criterio per criterio, e vive in `docs/pm/`.
-6. **Le tavole arrivano al PO, sempre, e per prime** (**D-146**). Quando il PM riferisce al PO
-   — al verdetto, e comunque **prima** di proporre una fusione — la prima cosa che consegna sono
-   **le tavole**, prima di qualunque numero, criterio o racconto. Se non ne è uscita nessuna, lo
-   dice per primo. La regola non si salta perché i criteri sono tutti raggiunti, perché la
-   consegna è parziale, o perché il PO non le ha chieste. **La ragione è misurata**: su
-   `DRAW-010` i quattro difetti veri li ha visti il PO e non le misure; su `DRAW-012` il PM aveva
-   chiuso la verifica criterio per criterio ed era orientato a proporre la fusione, e il PO l'ha
-   ribaltata guardando due PDF. Due giri su due il giudizio che conta è arrivato dal suo occhio,
-   e tutte e due le volte perché **lui** ha chiesto le tavole. Il PO: «altrimenti come PO non ho
-   nulla da verificare e non posso contribuire. Rischiamo che tu come PM e il DEV prendiate
-   qualche deriva.»
+4. **La suite si riesegue per intero**, sui due lati, e il saldo si misura invece di
+   ricordarlo.
+5. **Si misura anche ciò che il pacchetto dichiara fuori perimetro**, quando è una capacità
+   che il prodotto aveva. Nata dalla verifica di `DRAW-009`: l'impianto 4 produceva una
+   tavola prima e non dopo, nessun criterio lo chiedeva, e la verifica non se n'è accorta
+   perché quella misura era stata saltata **in quanto fuori perimetro**.
+6. **Se una tavola ti sembra sbagliata e i numeri dicono che va bene, scrivilo.** È il
+   rilievo più utile che si possa portare, ed è due volte su due il modo in cui i difetti
+   veri sono stati trovati.
+7. **Le tavole al PO, sempre e per prime** (D-146). Vedi sopra: adesso è la porta.
 
-**Una settima regola, nata dalla verifica di `DRAW-009`.** Si misura anche **ciò che il
-pacchetto dichiara fuori perimetro**, quando è una capacità che il prodotto aveva. L'impianto
-4 produceva una tavola prima di `DRAW-009` e non la produce dopo; nessun criterio lo
-chiedeva, nessuna prova lo sorvegliava, e la verifica non se n'è accorta perché quella misura
-era stata saltata proprio in quanto fuori perimetro.
+#### 1.2.2 Due agenti in parallelo, dentro la sessione (PO, 20 settembre 2026 — D-152)
 
-**Il PM non approva i propri pacchetti al posto del PO.** Un pacchetto si sottopone al PO
-prima che il lavoro cominci; il PO lo approva, lo corregge o lo respinge. Ciò che il PM
-decide da sé sono i **mezzi**: perimetro dei file, criteri, ordine dei lavori.
+**Non si aprono sessioni separate.** D-147 resta com'è. Ciò che si può fare è **lanciare
+agenti in parallelo dentro la sessione**, quando il lavoro si divide in code che non si
+contendono niente.
+
+La divisione che serve davvero è quella che porta l'architettura del piano
+(`docs/ARCHITETTURA-DEL-PIANO.md`, D-151): **i difetti del motore** si curano con codice
+migliore, **i difetti del pianificatore** con una regola in più. Sono due mestieri diversi e
+due file diversi.
+
+**Perché adesso è sicuro e prima no.** Il danno che D-147 ha chiuso non veniva dal
+parallelismo: veniva dal **passaggio di consegne**. Un perimetro scritto in una sessione e
+letto in un'altra ha tenuto `place.py` fuori dal recinto per quattro pacchetti di fila, ed è
+lì che stavano le tavole 3, 4 e 5. Due agenti lanciati da chi li governa non hanno passaggio
+di consegne: il perimetro lo scrive e lo legge la stessa sessione, nello stesso minuto.
+
+**Le tre regole, e sono poche apposta.**
+
+1. **Il perimetro di un agente parallelo si dichiara prima di lanciarlo**, ed è un file o una
+   coda. Se due agenti possono toccare lo stesso file, non si lanciano in parallelo.
+2. **Un agente parallelo non consegna, non fonde e non chiude niente.** Riporta. La sessione
+   che l'ha lanciato raccoglie, misura, guarda le tavole e chiede l'approvazione al PO.
+3. **Quello che un agente parallelo riferisce non è una misura finché non è stato rieseguito
+   dalla sessione.** Un rapporto è un racconto; il comando e il suo output sono la prova
+   (§1.2.1, punto 2).
 
 ### 1.3 DEV — team di sviluppo
+
+> **Da D-147 il DEV non è una sessione a sé: è lo stesso agente del §1.2.1.** Questa sezione
+> resta perché descrive **il mestiere**, e il mestiere non è cambiato: chi esegue ha gli
+> stessi confini di autonomia che aveva quando era un altro. Dove si legge «il PM assegna» e
+> «il DEV propone al PM», si legga: *l'agente si assegna il pacchetto e lo sottopone al PO
+> prima di cominciare*. Il confine dell'autonomia tecnica **non si allarga** perché adesso
+> chi esegue è anche chi ha scritto il criterio — anzi è il punto in cui serve più
+> disciplina, perché non c'è più nessuno a ricordarlo.
 
 Esegue. Può **proporre** alternative tecniche e deve motivarle. Il metodo interno del DEV
 (orchestratore, sviluppatori, collaudo indipendente — D-083) resta in vigore e sta **sotto**
