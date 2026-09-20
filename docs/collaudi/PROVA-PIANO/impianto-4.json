@@ -26,7 +26,8 @@
     "catene sono veri, e la cura non e' nel piano.",
     "A4 (D-145) — il prelievo ACS sta ADDOSSO al pezzo che serve, con lo stacco minimo. NON va nella fascia della distribuzione: un confine di rete non ha una posizione propria (I-061, flow.BOUNDARY_FUNCTION). Correzione del 20 settembre 2026: era a 152,5 mm, ed era un errore di chi ha composto — A1 applicata a un pezzo che A1 non governa.",
     "RIFATTO IL 20 SETTEMBRE SERA, SU DISPOSIZIONE DEL PO (vedi impianto-5): prima le autostrade. La commutatrice del ritorno stava 30 mm sotto la quota della propria porta sulla caldaia e la deviatrice era troppo vicina al collettore: la salita faceva un gomito di 10 mm e la linea verso lo scambiatore tre pieghe. Adesso la commutatrice sta sulla quota di caldaia.water_return e la deviatrice ha lo spazio per scendere dritta: la linea allo scambiatore e' UNA L.",
-    "Misurato prima e dopo: «scambiatore -> deviatrice-caldaia» da 3 pieghe a 1; incroci 3 -> 3, cedute 0 -> 0, bloccanti 0 -> 0."
+    "Misurato prima e dopo: «scambiatore -> deviatrice-caldaia» da 3 pieghe a 1; incroci 3 -> 3, cedute 0 -> 0, bloccanti 0 -> 0.",
+    "B8 (D-065), 20 settembre 2026 — misurato: portare la commutatrice sulla quota esatta di caldaia.water_return (y=235) raddrizza la salita ma CREA un sali-scendi, perche' la discesa del collettore e il ritorno della caldaia finiscono sulla stessa quota e una deve scansare l'altra. A y=255 le due quote si separano e il gomito sparisce, tenendo i guadagni: catena del ritorno da 6 pieghe a 4, «scambiatore -> deviatrice-caldaia» da 3 a 1. E' il caso in cui la regola giusta applicata alla lettera peggiora la tavola, e la misura lo dice."
   ],
   "pezzi": {
     "pdc": {
@@ -117,8 +118,8 @@
     },
     "commutatrice-ritorno": {
       "x": 160,
-      "y": 235,
-      "regola": "B1 — sull'autostrada: la quota e' quella della porta della macchina"
+      "y": 255,
+      "regola": "B8 — non sulla stessa quota della discesa del collettore"
     },
     "scambiatore": {
       "x": 300,

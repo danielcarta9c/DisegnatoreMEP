@@ -15,7 +15,8 @@
     "Il radiatore si allinea alla porta che lo alimenta davvero (secondary_in dell''accumulo, +20 dall''origine), non a quella che il nome suggerisce.",
     "La tratta dell''ACS porta TRE accessori in linea e si posano a distanze fisse dalla porta (I-044): con una piega in mezzo uno ci finisce sopra. Va data dritta.",
     "Il gruppo di riempimento ha DUE attacchi e pende da un ramo verticale: la rotazione va detta. La deduzione la fa solo per chi ha un attacco solo e per i raccordi; un pezzo a due attacchi che non e'' una macchina resta scoperto, ed e'' un buco del formato del piano.",
-    "A4 (D-145) — il prelievo ACS sta ADDOSSO al pezzo che serve, con lo stacco minimo. NON va nella fascia della distribuzione: un confine di rete non ha una posizione propria (I-061, flow.BOUNDARY_FUNCTION). Correzione del 20 settembre 2026: lo stacco era 65,0 mm contro un minimo di 40,0, e adesso e' 40,0. Piu' vicino non si va: il minimo e' gia' quello che pretendono i tre accessori in linea della tratta dell'ACS (I-044)."
+    "A4 (D-145) — il prelievo ACS sta ADDOSSO al pezzo che serve, con lo stacco minimo. NON va nella fascia della distribuzione: un confine di rete non ha una posizione propria (I-061, flow.BOUNDARY_FUNCTION). Correzione del 20 settembre 2026: lo stacco era 65,0 mm contro un minimo di 40,0, e adesso e' 40,0. Piu' vicino non si va: il minimo e' gia' quello che pretendono i tre accessori in linea della tratta dell'ACS (I-044).",
+    "B8 (D-065), 20 settembre 2026 — il ritorno del radiatore lasciava la quota y=201, se ne scostava di 12,5 mm per 92,5 e ci tornava: un sali-scendi, perche' la mandata scendeva sulla stessa quota proprio davanti al pezzo. Il radiatore e' salito da y=127,5 a 117,5 e il gomito non c'e' piu'. PROVATO E SCARTATO: ruotarlo di 180 toglie il gomito ma apre un rilievo BLOCCANTE (RUN_OVERSHOOTS_ITS_PORT) a ogni x provata."
   ],
   "pezzi": {
     "pdc-slave": {
@@ -85,7 +86,8 @@
     },
     "radiatori": {
       "x": 400,
-      "y": 127.5
+      "y": 117.5,
+      "regola": "B8 — la mandata e il ritorno non si contendono la quota davanti al pezzo"
     },
     "utenze": {
       "x": 295,
