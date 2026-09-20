@@ -260,6 +260,11 @@ ACS a **205, 502 e 152 millimetri** dal bollitore, contro i **32 e 50** dei due 
 composti prima che A1 fosse un controllo. **Ha peggiorato una cosa che funzionava applicando
 una regola**, e niente gliel'ha detto.
 
+> Quei numeri sono la **fotografia del difetto**, non lo stato di oggi: alla fine di
+> `DRAW-015` il prelievo ACS sta a **40 · 20 · 20 · 22,5 · 22,5 mm** sui cinque impianti,
+> e tre sono esattamente il proprio minimo. Anche i due piani «corti» avevano lo stesso
+> difetto in piccolo, e si è visto **solo quando il rilievo è esistito**.
+
 **Da qui D-158: ogni vincolo di posa ha un rilievo sulla tavola consegnata.** Vale per tutte
 le regole su *dove sta un pezzo rispetto a un altro* — A1, A2, A3, A4.
 
