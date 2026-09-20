@@ -45,8 +45,8 @@
 
 **I pezzi 3 e 4 insieme sono l'instradatore-disegnatore, ed è misto**: l'agente decide
 **dove stanno i pezzi**, lo script deterministico fa **tutto il resto**. Il tentativo di
-farlo interamente deterministico è stato fatto, è durato sei settimane ed è fallito: la
-ragione è in §4.
+farlo interamente deterministico è stato fatto — dalle voci di costo di **D-078** e
+**D-080**, in agosto, fino a **D-151**, il 20 settembre — ed è fallito: la ragione è in §4.
 
 **Il pezzo 5 rimanda al 3, mai al 4.** Si corregge il **piano**, non il disegno. Un revisore
 che ritoccasse la tavola sarebbe un disegnatore che cancella sopra, e il giro dopo il difetto
@@ -171,10 +171,17 @@ sorveglia (`tests/layout/test_il_solutore_e_fuori.py`).
 ### Il revisore a mosse
 
 Il primo revisore, costruito il 20 settembre, **spostava i pezzi** con cure scritte a mano.
-Misurato sui cinque impianti: **la prima correzione ha peggiorato su quattro su cinque.**
-Ogni mossa è cieca a quello che le altre regole stavano tenendo — la cura di A1 spostava il
-radiatore e piegava un'autostrada, quella di B1 spostava l'accumulo e rompeva le due
-primarie, che erano due rette.
+Misurato con `disegnatore-mep revisiona` sui cinque piani consegnati: **la prima correzione
+ha peggiorato quattro impianti su cinque** — e sul quinto nessuna cura si applicava, quindi
+**le mosse tentate hanno peggiorato quattro volte su quattro**. Impianto 1: apre un rilievo
+bloccante, pieghe 8→12, incroci 1→2. Impianto 3: avvisi 6→8, pieghe 8→14, incroci 1→3.
+Impianto 4: **il piano corretto non si instrada più e la tavola sparisce**. Impianto 5:
+avvisi 27→29, pieghe 33→37.
+
+**La causa è una sola: ogni mossa è cieca a quello che le altre regole stavano tenendo.** Le
+cure che hanno sparato sono tutte di B1 — raddrizzano una catena spostando la macchina che
+la storce, e rompono quello che un'altra regola teneva: sull'impianto 4 `caldaia` e
+`deviatrice-caldaia` salgono di 125 mm per B1, e la tratta `p4-a` non trova più strada.
 
 **Un revisore a mosse è un solutore in miniatura**, e sbaglia per la stessa ragione.
 
