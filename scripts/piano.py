@@ -77,25 +77,39 @@ _VERSO: dict[PortFace, tuple[float, float]] = {
 }
 
 
-def orienta_raccordi(posati, modello, partizione, catalogo):
-    """Gira ogni raccordo verso i vicini che ha davvero.
+def orienta(posati, modello, partizione, catalogo, fissate):
+    """Ogni pezzo si **gira verso i vicini che ha davvero**.
 
-    **Per un raccordo a T la posa decide quale attacco fisico serve quale porta
-    del modello** (`PlacedSymbol.port_map`): il T si disegna come un punto e i
-    suoi tre attacchi sono uguali, quindi «la porta di prosecuzione» puo' stare
-    sull'attacco perpendicolare perche' il percorso principale giri dentro il
-    raccordo invece che in un gomito a parte (D-004, I-027).
+    Il piano dice **dove** sta un pezzo. Da che parte guarda non glielo deve
+    dire: si deduce, e deve dedursi, perche' e' una conseguenza della posa e non
+    una scelta di chi compone.
 
-    Quella mappa e' **una proprieta' della posa**, non del grafo. Chi sposta i
-    pezzi senza rifarla lascia i T girati verso dove stavano prima: il ritorno
-    che arriva da destra pretende di entrare dall'attacco di sinistra, e non si
-    instrada nessuna linea.
+    Sono due cose insieme, e vanno decise insieme:
 
-    Qui la si ricava dal fatto piu' semplice che esista: **ogni porta guarda il
-    proprio vicino.** Per ciascuna porta del modello si sa dove sta il pezzo
-    dall'altro capo; fra gli attacchi liberi del simbolo si prende quello la cui
-    faccia punta di piu' da quella parte. Nessun peso, nessuna ricerca: un
-    prodotto scalare e un'assegnazione avida in ordine di preferenza.
+    * la **rotazione** del simbolo — quale faccia porta ciascun attacco;
+    * la **mappa delle porte** (`PlacedSymbol.port_map`) — quale attacco fisico
+      serve quale porta del modello. Per un raccordo a T, che si disegna come un
+      punto e ha tre attacchi uguali, la posa puo' mandare la prosecuzione
+      sull'attacco perpendicolare perche' il percorso principale giri dentro il
+      raccordo invece che in un gomito a parte (D-004, I-027).
+
+    **Misurato il 20 settembre, ed e' la ragione per cui questa funzione fa
+    anche la rotazione.** Nel primo piano dell'impianto 1 il tee del manometro
+    era rimasto a `rot=0`, cioe' con lo stacco rivolto **in su**, mentre il
+    piano aveva messo il manometro **sotto**. La linea usciva in alto, girava a
+    destra, scendeva per sessanta millimetri, tornava indietro e risaliva: il
+    rettangolo che il PO ha cerchiato chiedendo «perche' non sei andato
+    dritto?». Gli altri due tee dello stesso gruppo erano a `rot=180` per caso,
+    perche' cosi' li aveva lasciati la posa di partenza.
+
+    Il criterio e' uno solo e non ha pesi: **ogni porta guarda il proprio
+    vicino.** Fra le rotazioni che il simbolo dichiara ammesse si prende quella
+    che allinea meglio gli attacchi con i pezzi dall'altro capo; a rotazione
+    scelta, ogni porta prende l'attacco che punta di piu' da quella parte. Un
+    prodotto scalare e un'assegnazione avida.
+
+    `fissate` sono i pezzi per cui il piano ha scritto la rotazione a mano: li'
+    la scelta e' del compositore e non si tocca.
     """
     definizioni = {item.id: item.definition_id for item in modello.components}
     dove = {item.component_id: item for item in posati}
@@ -112,18 +126,9 @@ def orienta_raccordi(posati, modello, partizione, catalogo):
             item.origin.y_mm + item.height_mm / 2,
         )
 
-    fuori = []
-    for item in posati:
-        porte = vicini.get(item.component_id, {})
-        definizione = catalogo.resolve(definizioni[item.component_id]).definition
-        if not definizione.is_a_fitting or len(porte) < 2:
-            fuori.append(item)
-            continue
-        manifesto = catalogo.resolve(
-            definizioni[item.component_id]
-        ).symbol.manifest.rotated(item.rotation_deg)
+    def accoppia(manifesto, item, porte):
+        """Il punteggio della rotazione, e la mappa che ne esce."""
         mio_centro = centro(item)
-
         preferenze = []
         for porta, altro in sorted(porte.items()):
             if altro not in dove:
@@ -134,23 +139,65 @@ def orienta_raccordi(posati, modello, partizione, catalogo):
             verso = (verso[0] / norma, verso[1] / norma)
             for attacco in manifesto.ports:
                 faccia = _VERSO[attacco.face]
-                punteggio = faccia[0] * verso[0] + faccia[1] * verso[1]
-                preferenze.append((-punteggio, porta, attacco.id))
+                preferenze.append(
+                    (-(faccia[0] * verso[0] + faccia[1] * verso[1]), porta, attacco.id)
+                )
         preferenze.sort()
-
         mappa: dict[str, str] = {}
         presi: set[str] = set()
-        for _, porta, attacco in preferenze:
+        punteggio = 0.0
+        for meno_punteggio, porta, attacco in preferenze:
             if porta in mappa or attacco in presi:
                 continue
             mappa[porta] = attacco
             presi.add(attacco)
-        # Le porte del modello che nessun tronco usa tengono il proprio
-        # attacco omonimo, se e' rimasto libero.
+            punteggio -= meno_punteggio
         for attacco in manifesto.ports:
             if attacco.id not in presi and attacco.id not in mappa:
                 mappa.setdefault(attacco.id, attacco.id)
-        fuori.append(item.model_copy(update={"port_map": mappa}))
+        return punteggio, mappa
+
+    fuori = []
+    for item in posati:
+        porte = vicini.get(item.component_id, {})
+        if not porte:
+            fuori.append(item)
+            continue
+        risolto = catalogo.resolve(definizioni[item.component_id])
+        base = risolto.symbol.manifest
+        # **Si gira chi non ha scelta.** Un pezzo attaccato da una parte sola —
+        # uno sfiato, uno scarico, un vaso, un manometro — non decide come sta
+        # sul foglio: il suo unico attacco deve guardare chi lo regge, e
+        # basta. Lo stesso vale per un raccordo, che e' un punto sulla
+        # tubazione: il suo verso e' una conseguenza di dove passa la linea.
+        #
+        # Una macchina con due o piu' attacchi in uso **ha** una scelta, e
+        # quella scelta e' di chi compone: se l'accumulo guarda a destra o a
+        # sinistra cambia tutto il disegno. Misurato il 20 settembre: girando
+        # anche le macchine, l'accumulo ruotava e la mandata dell'ACS usciva da
+        # un'altra faccia, con la miscelatrice che si ritrovava sulla piega
+        # della propria tratta.
+        deduce = risolto.definition.is_a_fitting or len(porte) < 2
+        rotazioni = (
+            sorted(base.allowed_rotations_deg)
+            if deduce and item.component_id not in fissate
+            else [item.rotation_deg]
+        )
+        scelta = None
+        for gradi in rotazioni:
+            manifesto = base.rotated(gradi)
+            provvisorio = item.model_copy(
+                update={
+                    "rotation_deg": gradi,
+                    "width_mm": manifesto.width_mm,
+                    "height_mm": manifesto.height_mm,
+                }
+            )
+            punteggio, mappa = accoppia(manifesto, provvisorio, porte)
+            if scelta is None or punteggio > scelta[0] + 1e-9:
+                scelta = (punteggio, provvisorio, mappa)
+        assert scelta is not None
+        fuori.append(scelta[1].model_copy(update={"port_map": scelta[2]}))
     return fuori
 
 
@@ -213,7 +260,20 @@ def main() -> int:
         routed=True,
     )
     seminata = carry_the_rest(modello, partizione, catalogo, partenza, finta_fase, frame)
-    seminata = orienta_raccordi(seminata, modello, partizione, catalogo)
+    fissate = frozenset(
+        component_id
+        for component_id, dove in piano["pezzi"].items()
+        if "rotazione" in dove
+    )
+    prima_di_girare = {item.component_id: item.rotation_deg for item in seminata}
+    seminata = orienta(seminata, modello, partizione, catalogo, fissate)
+    girati = [
+        f"{item.component_id} {prima_di_girare[item.component_id]}->{item.rotation_deg}"
+        for item in seminata
+        if prima_di_girare[item.component_id] != item.rotation_deg
+    ]
+    if girati:
+        print("girati dalla deduzione: " + ", ".join(girati) + "\n")
 
     # 3. Da qui in avanti è il motore di sempre: instradamento, accessori in
     #    linea, legenda, centratura, testi. **Nessuna ricerca.**

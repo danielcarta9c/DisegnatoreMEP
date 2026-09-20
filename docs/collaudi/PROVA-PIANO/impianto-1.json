@@ -11,27 +11,87 @@
     "I-017 — il prelievo ACS sta a destra, nella zona della distribuzione.",
     "I-061 — l'acqua fredda entra da vicino, non attraversa il foglio.",
     "Le distanze fra i tee del ritorno sono 50 mm perche' ogni tratta deve",
-    "ospitare i propri accessori in linea con i 2 mm di rispetto."
+    "ospitare i propri accessori in linea con i 2 mm di rispetto.",
+    "utenze: la rotazione e'' fissata a mano. La deduzione la gira a 180 — il confine di rete guarda l''impianto, ed e'' giusto — ma poi la miscelatrice in linea finisce sulla piega della propria tratta. E'' un limite della posa degli accessori in linea, non del piano: va curato li''.",
+    "Il radiatore si allinea alla porta che lo alimenta davvero (secondary_in dell''accumulo, +20 dall''origine), non a quella che il nome suggerisce.",
+    "La tratta dell''ACS porta TRE accessori in linea e si posano a distanze fisse dalla porta (I-044): con una piega in mezzo uno ci finisce sopra. Va data dritta."
   ],
   "pezzi": {
-    "pdc-slave":                                     {"x": 35,  "y": 65},
-    "pdc-master":                                    {"x": 35,  "y": 115},
-    "collettore-ritorno":                            {"x": 100, "y": 132.5},
-    "collettore-mandata":                            {"x": 120, "y": 117.5},
-    "tee-expansion-connection-collettore-ritorno-a": {"x": 145, "y": 132.5},
-    "expansion-connection-collettore-ritorno-a":     {"x": 145, "y": 165},
-    "tee-valve-safety-collettore-mandata-b":         {"x": 170, "y": 117.5},
-    "valve-safety-collettore-mandata-b":             {"x": 170, "y": 100},
-    "tee-filling-unit-collettore-ritorno-a-b":       {"x": 195, "y": 132.5},
-    "filling-unit-collettore-ritorno-a":             {"x": 195, "y": 165},
-    "inlet-filling-unit-collettore-ritorno-a":       {"x": 195, "y": 190},
-    "tee-pressure-gauge-collettore-ritorno-a":       {"x": 245, "y": 132.5},
-    "pressure-gauge-collettore-ritorno-a":           {"x": 245, "y": 165},
-    "acquedotto":                                    {"x": 260, "y": 150},
-    "accumulo":                                      {"x": 290, "y": 115},
-    "air-vent-accumulo-primary-out":                 {"x": 305, "y": 97.5},
-    "drain-connection-accumulo-primary-in":          {"x": 300, "y": 172.5},
-    "radiatori":                                     {"x": 400, "y": 112.5},
-    "utenze":                                        {"x": 400, "y": 65}
+    "pdc-slave": {
+      "x": 35,
+      "y": 65
+    },
+    "pdc-master": {
+      "x": 35,
+      "y": 115
+    },
+    "collettore-ritorno": {
+      "x": 100,
+      "y": 132.5
+    },
+    "collettore-mandata": {
+      "x": 120,
+      "y": 117.5
+    },
+    "tee-expansion-connection-collettore-ritorno-a": {
+      "x": 145,
+      "y": 132.5
+    },
+    "expansion-connection-collettore-ritorno-a": {
+      "x": 145,
+      "y": 165
+    },
+    "tee-valve-safety-collettore-mandata-b": {
+      "x": 170,
+      "y": 117.5
+    },
+    "valve-safety-collettore-mandata-b": {
+      "x": 170,
+      "y": 100
+    },
+    "tee-filling-unit-collettore-ritorno-a-b": {
+      "x": 195,
+      "y": 132.5
+    },
+    "filling-unit-collettore-ritorno-a": {
+      "x": 195,
+      "y": 165
+    },
+    "tee-pressure-gauge-collettore-ritorno-a": {
+      "x": 245,
+      "y": 132.5
+    },
+    "pressure-gauge-collettore-ritorno-a": {
+      "x": 245,
+      "y": 165
+    },
+    "acquedotto": {
+      "x": 260,
+      "y": 150
+    },
+    "accumulo": {
+      "x": 290,
+      "y": 115
+    },
+    "air-vent-accumulo-primary-out": {
+      "x": 305,
+      "y": 98.5
+    },
+    "drain-connection-accumulo-primary-in": {
+      "x": 300,
+      "y": 172.5
+    },
+    "radiatori": {
+      "x": 400,
+      "y": 127.5
+    },
+    "utenze": {
+      "x": 295,
+      "y": 45
+    },
+    "inlet-filling-unit-collettore-ritorno-a": {
+      "x": 195,
+      "y": 190
+    }
   }
 }
