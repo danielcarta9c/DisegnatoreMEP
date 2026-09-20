@@ -1,4 +1,4 @@
-"""Le quattro regole di **D-154**, in forma di controllo.
+"""Le regole del piano, in forma di controllo.
 
 Una regola e' un controllo che sa **nominare la propria violazione** (**D-153**):
 se non si puo' misurare, il revisore non la puo' usare e resta un'intenzione. E'
@@ -7,17 +7,25 @@ quattro volte, e su un'autostrada le pieghe ammesse sono zero». Ogni messaggio
 di questo modulo porta **i nomi veri e i numeri veri**: mai «violazione della
 regola B1».
 
-Le quattro sono quelle che il PO ha dettato il 20 settembre 2026
-(`docs/DECISION_LOG.md`, **D-154**) e che vivono in `docs/regole-del-piano.md`:
+Quattro sono quelle che il PO ha dettato il 20 settembre 2026
+(`docs/DECISION_LOG.md`, **D-154**); la quinta, **A4**, e' **D-145** e viene da
+prima. Tutte vivono in `docs/regole-del-piano.md`:
 
 | | regola | rilievo |
 |---|---|---|
 | **A1** | tre macro fasce verticali | `PIECE_OUTSIDE_ITS_BAND` |
+| **A4** | un organo di servizio sta addosso al pezzo che serve | `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` |
 | **B1** | prima le autostrade, e il piu' dritte possibile | `HIGHWAY_IS_NOT_STRAIGHT` |
 | **B3** | piu' generatori o piu' terminali ⇒ collettore verticale | `PARALLEL_MACHINES_WITHOUT_A_COLLECTOR` |
 | **B4** | un organo in linea non spezza il tratto | `INLINE_ORGAN_BREAKS_THE_RUN` |
 
-**Perche' tutte e quattro escono `WARNING`, e non bloccanti.** Una violazione di
+⛔ **A4 e' qui per una ragione che vale per ogni riga futura.** Era gia' scritta
+— **D-145**, 18 settembre — ma come **vincolo della posa del motore**, e da
+**D-151** la posa non decide piu' dove stanno i pezzi: il piano scrive le
+coordinate e le sovrascrive. Un vincolo che nessun rilievo misura **sulla tavola
+finita** e' un vincolo che il piano rompe in silenzio, e questo l'ha rotto.
+
+**Perche' tutte escono `WARNING`, e non bloccanti.** Una violazione di
 regola e' un **difetto del piano**, e il piano lo corregge il revisore: e' il
 suo mestiere, ed e' il motivo per cui questi controlli esistono
 (`ARCHITETTURA-DEL-PIANO.md` §1). Il **cancello di consegna** resta quello del
@@ -65,6 +73,8 @@ from disegnatore_mep.layout.hierarchy import (
     ports_through,
     user_machines,
 )
+from disegnatore_mep.layout.partition import partition_project
+from disegnatore_mep.layout.place import hanging_children, stub_minimum_mm
 from disegnatore_mep.layout.trunks import Trunk
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import IssueSeverity
@@ -266,6 +276,183 @@ def pezzi_fuori_fascia(
                 )
     return trovati
 
+
+# --- A4 — un organo di servizio sta addosso al pezzo che serve ----------------
+
+
+def _organi_di_servizio(
+    project: ProjectModel, catalog: ComponentRegistry
+) -> list[tuple[str, str, Trunk]]:
+    """Ogni **organo di servizio**, il pezzo che serve, e la tratta che lo porta.
+
+    **La definizione non si inventa** (D-069, D-093): si legge da cio' che il
+    catalogo e `layout/flow.py` gia' dichiarano, e sono due letture sole.
+
+    - **chi pende da uno stacco**, che e' `place.hanging_children`: chi sta
+      all'altro capo di un attacco che il catalogo mette **fuori dal percorso
+      del fluido** (`PortDefinition.off_the_run`, D-101) e che non ha nessun
+      altro attacco sul percorso. Sono gli scarichi, gli sfiati, i vasi, i
+      manometri, le valvole di sicurezza e i gruppi di riempimento che **D-145**
+      nomina uno per uno. Il criterio e' **lo stesso con cui il motore li
+      posa**, e sta li' e non qui apposta: due letture separate darebbero prima
+      o poi due elenchi diversi sullo stesso impianto.
+    - **i confini di rete**, per mestiere: `flow.BOUNDARY_FUNCTION` dichiara
+      gia' che quel pezzo «non ha una posizione propria» e «va accanto
+      all'utente che serve» (**I-061**, `DRAW-009` §A.2). Vanno nominati a parte
+      perche' la posa ne tiene dentro **solo gli ingressi**: un **prelievo** —
+      l'acqua calda che se ne va verso le utenze — per il motore «e' l'ultimo
+      passo della lettura e sta in fondo, come ogni utilizzatore»
+      (`place._hanging_accessories`), quindi non pende da niente e **nessuno gli
+      misura lo stacco**. E' esattamente il pezzo che sulle cinque tavole di
+      `DRAW-015` finiva lontanissimo dall'accumulo che serve.
+
+    La tratta che porta l'organo e' quella che ce l'ha a un capo, e ce n'e' una
+    sola: un organo di servizio ha tutti gli attacchi su stacchi altrui, e un
+    confine con un attacco solo ha una tratta sola per definizione.
+    """
+    trunks = tratte_del_progetto(project, catalog)
+    appesi: dict[str, str] = {}
+    for partizione in partition_project(project, trunks):
+        for padre, figli in hanging_children(
+            project, partizione, catalog, frozenset(partizione.component_ids)
+        ).items():
+            for figlio, _attacco in figli:
+                appesi[figlio] = padre
+    definizioni = _definizioni(project, catalog)
+    trovati: list[tuple[str, str, Trunk]] = []
+    for trunk in trunks:
+        for mio, altro in ((trunk.start, trunk.end), (trunk.end, trunk.start)):
+            definition = definizioni.get(mio.component_id)
+            if definition is None:
+                continue
+            pende_di_qui = appesi.get(mio.component_id) == altro.component_id
+            confine_non_appeso = (
+                BOUNDARY_FUNCTION in definition.functions
+                and mio.component_id not in appesi
+            )
+            if pende_di_qui or confine_non_appeso:
+                trovati.append((mio.component_id, altro.component_id, trunk))
+    return sorted(trovati, key=lambda item: item[0])
+
+
+def _lunghezza_della_tratta(route: RoutedTrunk) -> float:
+    """Quanto e' lunga la tratta sul foglio, **interruzioni comprese**.
+
+    Si sommano i pezzi di spezzata **e** i salti sotto gli accessori in linea:
+    sotto quel simbolo la tubazione c'e' lo stesso (D-027), e il minimo con cui
+    questa lunghezza si confronta conta gli stessi accessori. Sommare il solo
+    inchiostro darebbe uno stacco piu' corto del vero di tutta la fila, e un
+    organo lontano passerebbe per vicino.
+    """
+    punti = [punto for segmento in route.segments for punto in segmento]
+    return sum(
+        abs(poi.x_mm - prima.x_mm) + abs(poi.y_mm - prima.y_mm)
+        for prima, poi in zip(punti, punti[1:], strict=False)
+    )
+
+
+def organi_di_servizio_lontani(
+    drawing: DrawingGeometry,
+    frame: SheetFrame,
+    catalog: ComponentRegistry,
+    project: ProjectModel,
+) -> list[ValidationIssue]:
+    """**A4** — un organo di servizio sta addosso al pezzo che serve.
+
+    *Fonte:* **D-145** (PO, I-076), `regole-del-piano.md` §A4: «valvole di
+    intercettazione e di sicurezza, scarichi, sfiati, manometri, vasi, gruppi di
+    riempimento, filtri e **confini di rete** si posano **addosso al pezzo che
+    servono**: lo stacco che li porta e' **il proprio minimo su griglia**, e puo'
+    allungarsi solo per un vincolo dichiarato». Per i confini di rete la fonte e'
+    **I-061**, che `flow.BOUNDARY_FUNCTION` gia' cita: un confine «non ha una
+    posizione propria e va accanto all'utente che serve». La ragione e' la
+    **leggibilita'**: «una valvola in mezzo a una linea, lontana da tutto, e'
+    equivoca».
+
+    ⛔ **Perche' questo controllo esiste, ed e' il punto.** D-145 era un
+    **vincolo della posa del motore**, e la posa dal **D-151** non decide piu'
+    dove stanno i pezzi: il piano scrive le coordinate e le sovrascrive. Il
+    vincolo non gira piu' su niente, e fino a qui **nessun rilievo lo misurava
+    sulla tavola finita** — il piano poteva romperlo in silenzio, e l'ha rotto.
+
+    **La misura.** Per ogni organo di servizio, la **lunghezza della tratta che
+    lo porta** — la spezzata come il foglio la disegna, interruzioni comprese —
+    contro **il suo minimo su griglia**. La violazione e' la tratta piu' lunga
+    del proprio minimo, e il rilievo dice tutti e due i numeri.
+
+    **Il minimo non e' una taratura di questo modulo, ed e' del motore**: e'
+    `place.stub_minimum_mm`, la stessa funzione con cui la posa decide quanto e'
+    lungo uno stacco (I-046) e con cui il ciclo misurava il vincolo di D-145.
+    Vale **due passi di griglia** su uno stacco vuoto — una cella riservata
+    davanti a ciascuno dei due attacchi (D-113) — e, dove la tratta porta
+    **accessori in linea**, quanto la fila pretende dalle due soglie (**I-044**,
+    `chains.chain_room_mm`). Il passo e' quello del foglio, `grid_mm`.
+
+    **L'eccezione di D-145 punto 1 e' dentro il minimo, e non e' un caso a
+    parte**: «puo' allungarsi solo per un vincolo dichiarato — per esempio far
+    posto a un altro accessorio in linea sulla stessa tratta». Un organo lontano
+    **perche' sulla sua tratta c'e' una valvola** ha un minimo piu' grande, e
+    questo controllo tace. Se e' lontano e basta, no.
+
+    **Che cosa questa misura non vede, e va saputo.**
+
+    - **Gli organi che stanno *sulla* linea** — la valvola di intercettazione e
+      il filtro della catena della macchina — che D-145 nomina insieme agli
+      altri: quelli non hanno uno stacco proprio, stanno **dentro** una tratta,
+      e la loro vicinanza e' un contratto a parte (**I-044**, D-120), difeso da
+      `tests/layout/test_vicinanza_valvole.py`. Qui si misura **lo stacco**, e
+      un pezzo senza stacco non ha niente da misurare.
+    - **Dove lo stacco punta**: uno stacco del proprio minimo esatto che parte
+      dalla faccia sbagliata resta del proprio minimo, e passa. La regola dice
+      «addosso», e addosso e' una distanza.
+    - **Le tratte cedute** (`unresolved`, D-150): la loro spezzata e' un ripiego
+      dichiarato, non una posa, e misurarla accuserebbe il piano di una cosa che
+      il preflight nomina gia' come bloccante.
+    - **Una tratta che il foglio non porta**: una catena spezzata fra due tavole
+      non ha una lunghezza da leggere qui.
+    """
+    passo_mm = frame.standard.grid_mm
+    organi = _organi_di_servizio(project, catalog)
+    trovati: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        porte = porte_in_tavola(sheet, project, catalog)
+        per_chiave = {tuple(route.connection_ids): route for route in sheet.routes}
+        for organo, servito, trunk in organi:
+            route = per_chiave.get(trunk.connection_ids)
+            if route is None or route.unresolved:
+                continue
+            mio = trunk.start if trunk.start.component_id == organo else trunk.end
+            dove = porte.get((mio.component_id, mio.port_id))
+            if dove is None:
+                continue
+            lungo_mm = _lunghezza_della_tratta(route)
+            minimo_mm = stub_minimum_mm(
+                project,
+                catalog,
+                trunk,
+                dove[1] in (PortFace.LEFT, PortFace.RIGHT),
+                passo_mm,
+            )
+            if lungo_mm <= minimo_mm + TOLLERANZA_MM:
+                continue
+            perche = (
+                f", che e' quanto pretendono gli accessori in linea "
+                f"({', '.join(trunk.inline_component_ids)})"
+                if trunk.inline_component_ids
+                else ""
+            )
+            trovati.append(
+                _rilievo(
+                    "SERVICE_STUB_LONGER_THAN_ITS_MINIMUM",
+                    f"la tavola {sheet.sheet_id}: lo stacco che porta {organo} da "
+                    f"{servito} e' lungo {lungo_mm:.1f} mm e il suo minimo su griglia "
+                    f"e' {minimo_mm:.1f}{perche}, cioe' {lungo_mm - minimo_mm:.1f} mm "
+                    f"di tubo in piu': un organo di servizio sta addosso al pezzo che "
+                    f"serve (A4, D-145)",
+                    [sheet.sheet_id, organo, servito],
+                )
+            )
+    return trovati
 
 # --- B1 — prima le autostrade, e il piu' dritte possibile ----------------------
 
@@ -727,13 +914,17 @@ def _quota_della_coppia(prima: Point, poi: Point) -> str:
     return f"a quote diverse (y={prima.y_mm:.1f} e y={poi.y_mm:.1f})"
 
 
-ORDINE_DELLE_REGOLE: tuple[str, ...] = ("A1", "B1", "B3", "B4")
+ORDINE_DELLE_REGOLE: tuple[str, ...] = ("A1", "A4", "B1", "B3", "B4")
 """L'ordine in cui i controlli girano, e quindi quello dell'esito.
 
 **Prima dove stanno i pezzi, poi come corrono le linee**: e' l'ordine in cui il
 PO le ha dettate e l'ordine in cui `regole-del-piano.md` le elenca, ed e' anche
 l'ordine in cui si correggono — una linea storta puo' essere la conseguenza di
-un pezzo nella fascia sbagliata, mai il contrario.
+un pezzo nella fascia sbagliata, mai il contrario. **A4 sta fra le due perche'
+dice dove sta un pezzo**, non come corre una linea: e' la lettera che
+`regole-del-piano.md` le da', ed e' anche l'ordine giusto per correggere —
+spostare un organo addosso al proprio pezzo cambia la tratta che lo porta, mai
+il contrario.
 """
 
 
@@ -743,7 +934,12 @@ def rilievi_delle_regole(
     catalog: ComponentRegistry,
     project: ProjectModel,
 ) -> list[ValidationIssue]:
-    """Tutte e quattro le regole di **D-154**, nell'ordine di `ORDINE_DELLE_REGOLE`.
+    """Tutte le regole misurabili del piano, nell'ordine di `ORDINE_DELLE_REGOLE`.
+
+    Sono le quattro di **D-154** piu' **A4**, che e' **D-145** e viene da prima:
+    era un **vincolo della posa del motore**, e da **D-151** la posa non decide
+    piu' dove stanno i pezzi — il piano lo sovrascrive. Un vincolo che nessuno
+    misura sulla tavola finita e' un vincolo che il piano rompe in silenzio.
 
     Non e' il preflight e non lo sostituisce: il preflight dice se la tavola e'
     **consegnabile** (D-063), questo dice se il **piano** e' fatto secondo le
@@ -751,6 +947,7 @@ def rilievi_delle_regole(
     """
     return [
         *pezzi_fuori_fascia(drawing, catalog, project),
+        *organi_di_servizio_lontani(drawing, frame, catalog, project),
         *autostrade_storte(drawing, catalog, project),
         *macchine_in_parallelo_senza_collettore(drawing, frame, catalog, project),
         *organi_che_spezzano_il_tratto(drawing, catalog, project),
@@ -767,6 +964,7 @@ __all__ = [
     "fascia_del_pezzo",
     "macchine_in_parallelo_senza_collettore",
     "organi_che_spezzano_il_tratto",
+    "organi_di_servizio_lontani",
     "pezzi_fuori_fascia",
     "rilievi_delle_regole",
 ]
