@@ -127,6 +127,14 @@ cosa sono**: il bersaglio, scritto a mano, che il pianificatore deve pareggiare.
 | **C3** — la mappa degli attacchi si rifà solo per i raccordi | **niente** | il confronto fra grafo e tavola |
 
 **Per primi A2 e A3**, che sono vincoli di posa nel senso stretto di D-158.
+
+> **Dove si aggancia un controllo nuovo, e non c'è un secondo posto:**
+> `validation/regole.py::CODICE_DELLA_REGOLA` — sigla → codice, nell'ordine in cui i
+> controlli girano. Da lì si ricavano `ORDINE_DELLE_REGOLE` e il `CODICI_DELLE_REGOLE` che il
+> **punteggio** del revisore conta. Aggiungere il controllo e dimenticare la riga vuol dire
+> che il rilievo finisce fra gli **avvisi**: è successo ad A4 e sono due prove a sorvegliarlo
+> (RAPPORTO `DRAW-015` §7 e §10ter). **Un controllo che non entra nel punteggio non è un
+> controllo.**
 **A3 è il caso limite**: l'unico posto che la faceva valere era il solutore, morto con D-151.
 **C3 è il buco peggiore** — lo dice già il foglio delle regole — perché è l'unico difetto di
 **contenuto** che nasce da una scelta **grafica**: il 20 settembre ha mandato l'acqua fredda

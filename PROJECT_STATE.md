@@ -24,14 +24,14 @@ decidono più la posa**.
 | | |
 |---|---|
 | Release | **0.3 — generalizzazione** |
-| Pacchetto attivo | **`DRAW-015` — il revisore, e il repository che lo regge** |
+| Pacchetto attivo | **`DRAW-016` — il pianificatore e l'occhio del revisore diventano pezzi della skill** (attivo quando `DRAW-015` è fuso) |
 | Chi sviluppa | **un agente solo** (D-147), con agenti paralleli **dentro** la sessione (D-152) |
 | Chi approva la fusione | **il PO, guardando le tavole** (D-146, D-147) |
 | Architettura del disegno | `docs/ARCHITETTURA-DEL-PIANO.md` — vigente, sostituisce quella del solutore |
 | Regole di composizione | `docs/regole-del-piano.md` — aperto per dichiarazione del PO |
 | Prodotto in chat | **mai eseguito nel suo ambiente finale.** È il rischio più vecchio |
 
-### Le otto disposizioni che hanno cambiato la rotta, 19–20 settembre
+### Le dodici disposizioni che hanno cambiato la rotta, 19–20 settembre
 
 **D-147** agente unico · **D-148** oltre l'A3 si va: A4, A3, A2, A1, dichiarata momentanea
 dal PO · **D-149** il riempimento del foglio esce dagli obiettivi e torna una misura; la
@@ -40,7 +40,11 @@ tavola: ripiego dichiarato, marcato `unresolved`, nominato dal preflight con un 
 bloccante · **D-151** il disegno lo compone un agente · **D-152** agenti paralleli in
 sessione, mai sessioni · **D-153** il revisore si costruisce subito, ed è lo strumento con
 cui si scrivono le regole · **D-154** tre macro fasce verticali, prima le autostrade dritte,
-la tre vie non spezza il tratto, più generatori o più terminali ⇒ collettore verticale.
+la tre vie non spezza il tratto, più generatori o più terminali ⇒ collettore verticale ·
+**D-155** il piano non è un input: lo scrive il pianificatore, che è un pezzo della skill ·
+**D-156** i cinque pezzi della skill e la natura di ciascuno; 3 e 4 sono l'instradatore-
+disegnatore, ed è misto · **D-157** il revisore emette **vincoli** su nodi nominati, mai
+mosse · **D-158** ogni vincolo di posa ha un **rilievo sulla tavola consegnata**.
 
 ### La misura che ha deciso D-151
 
@@ -83,21 +87,22 @@ distribuisce in verticale; l'impianto 5 ha **quattordici incroci**.
    — `DRAWING_ALL_ON_ONE_SIDE`, D3 in `docs/regole-del-piano.md`, 5,2 volte l'inchiostro fra
    quadrante pieno e vuoto sull'impianto 1 e **9,0** sul 5. È il primo difetto aperto **del
    pianificatore**.
-2. **Il revisore non esiste ancora.** Oggi l'anello lo chiude l'agente a mano (D-153): è il
-   cuore del pacchetto attivo, e finché non c'è le regole si scrivono a vista.
-3. **Nessun controllo sa che cos'è un'autostrada.** Finché la geometria non distingue
-   struttura e corredo, B1 non è verificabile e `RUN_WITH_TOO_MANY_BENDS` conta una piega
-   della dorsale come una piega di uno stacchetto. **È il difetto che ha generato D-151**, e
-   `DRAW-015` lo chiude.
+2. **Il pianificatore non esiste, e l'occhio del revisore nemmeno.** `DRAW-015` ha
+   costruito la **metà deterministica** del revisore — esegue, misura, si ferma e dice
+   perché — ma il **pezzo 3** lo fa ancora un umano a mano (D-155, D-156), e il pezzo 5
+   **misura senza guardare**. È il pacchetto attivo.
+3. ~~**Nessun controllo sa che cos'è un'autostrada.**~~ **Chiuso da `DRAW-015`**, insieme
+   alle altre quattro regole misurate: A1, **A4**, B1, B3, B4 in `validation/regole.py`.
+   **Resta aperto il censimento di D-158**: A2, A3, B2, C1 e C3 non hanno un rilievo sulla
+   tavola finita, e **A3 oggi non è tenuta su da niente**.
 4. **Prodotto mai eseguito nel suo ambiente finale.** Nuova chat, input naturale,
    approvazione del grafo, generazione, restituzione del PDF: mai fatto. È il rischio più
    vecchio del progetto e il meno toccato. La 0.3 non si dichiara finita senza.
 5. **Libreria simboli non interamente certificata.** La matrice fonti/forma/porte/ingombri
    va completata e **approvata dal PO** prima di dichiarare completa la 0.3.
-6. **Le prove non dicono più che cosa difendono.** Trentasei file in `tests/layout/`: alcuni
-   difendono il motore, alcuni difendevano il **solutore**, e la categoria «difende una
-   regola del piano» è quasi vuota. Una prova che difende un comportamento revocato è una
-   trappola. È il punto 5 di `DRAW-015`.
+6. ~~**Le prove non dicono più che cosa difendono.**~~ **Chiuso da `DRAW-015`:** i 36 file
+   di `tests/layout/` portano la propria riga `# categoria:` — 24 motore, 10 solutore,
+   4 regola del piano.
 7. **Due prove difendono il pavimento invisibile, che non esiste più.** Asseriscono ancora
    `bottom_mm <= levels.ground_mm`, cioè il vincolo che il PO ha abolito l'11 settembre
    2026. Sono rosse, e finché stanno lì chi le legge crede che la regola esista.
