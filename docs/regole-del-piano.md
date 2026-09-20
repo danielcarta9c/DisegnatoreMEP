@@ -445,5 +445,23 @@ storto sul foglio.**
 - **La composizione a corsie** della ricerca del 4 agosto §2.2 — le dorsali di mandata e
   ritorno con i componenti appesi — è misurata su due tavole vere e **non è ancora una riga
   qui**, perché non è stata ancora composta da noi. Quando lo sarà, entra con la sua tavola.
+- **Quante autostrade verticali sono ammesse fra due colonne? — domanda del PO, 20 settembre
+  2026.** Lui l'ha posta dubitandone: «in genere fra due colonne è consentita **una sola**
+  autostrada verticale se ho poi macchine/accumuli… ma forse non è una buona regola».
+  **Misurato sulle nostre cinque tavole**, contando le colonne verticali di autostrada lunghe
+  almeno 20 mm:
+
+  | impianto | colonne verticali | giudizio del PO sulla tavola |
+  |---|---|---|
+  | 1 | **2** | «va quasi bene» |
+  | 2 | **2** | «va quasi bene» |
+  | 3 | **3** | «va quasi bene» |
+  | 4 | **6** | «non hai minimamente risolto» |
+  | 5 | **12** | «non hai minimamente risolto» |
+
+  **È l'unico numero che separa le tavole che il PO approva da quelle che boccia**, e le
+  separa nettamente. Non è codificata come regola perché **il PO stesso ne dubita** e perché
+  «una sola» non regge sulle sue tavole di riferimento — ma il numero discrimina, e la
+  domanda va riportata con questa tabella in mano.
 - **Il PO ha detto che l'elenco è aperto**: «le regole sono sempre le stesse, vanno solo
   aggiunte altre e migliorate» (I-085, aperta).
