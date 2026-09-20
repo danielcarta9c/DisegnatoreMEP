@@ -1,3 +1,4 @@
+# categoria: difende il motore — la prima posa su griglia: fasce, rotazioni ammesse, nessuna sovrapposizione, nessuno fuori dall'area
 import os
 import subprocess
 import sys

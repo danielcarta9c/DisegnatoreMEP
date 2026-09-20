@@ -1,4 +1,27 @@
-"""La posa finale, decisa dal costo delle tubazioni (D-078, D-080, DRAW-002).
+"""⛔ **MORTO IL 20 SETTEMBRE 2026, E RESTA AGLI ATTI.**
+
+**Quando:** 20 settembre 2026. **Perche':** **D-151** — «il disegno lo compone un
+agente, non lo trova un solutore». **Dove e' finito il suo lavoro:** la posa la
+decide ora il **piano di composizione** (`disegnatore_mep.piano`), che un agente
+scrive e il motore esegue; il revisore (`piano/revisore.py`) chiude l'anello.
+L'architettura sta in `docs/ARCHITETTURA-DEL-PIANO.md`.
+
+**Nessun percorso vigente chiama piu' questo modulo.** `layout/compose.py` non lo
+importa piu'. Quello che segue descrive il prodotto **fino al 20 settembre**, e
+si legge come storia: la somma pesata, le sue sette manopole, e il greedy che le
+minimizzava.
+
+**Perche' non e' stato cancellato.** Un file che nessuno chiama e **non lo
+dichiara** e' una trappola: e' cosi' che la ricerca del 4 agosto e' rimasta
+inattuata per sei settimane. Qui la dichiarazione e' questa, in testa. Il
+difetto non era la taratura: era la **forma della domanda** — una somma pesata
+non sa esprimere una gerarchia di giudizio, e nessun peso dice «un collettore e'
+**una** linea dritta». Il giorno in cui servisse un ottimizzatore locale sopra
+un piano gia' composto, quello che c'e' qui dentro e' ancora buono; oggi no.
+
+---
+
+La posa finale, decisa dal costo delle tubazioni (D-078, D-080, DRAW-002).
 
 Il PO, sulla tavola di DRAW-001 (I-021): «bisogna spostare le macchine perche'
 spostare le macchine costa zero; invece incroci, curve e lunghezze costano». E
@@ -1062,7 +1085,7 @@ class Improver:
 
         Due letture, che sono quelle del posizionamento: chi sta a terra e
         divide la colonna con un altro a terra (D-073), e chi ha lo stesso bordo
-        sinistro di un pari — stessi vicini — sopra o sotto di lui (A3, D-119).
+        sinistro di un pari — stessi vicini — sopra o sotto di lui (A3, D-118).
         La colonna e' una figura: si trasla insieme, non si sfila.
         """
         leader = self.leader_of(component_id)

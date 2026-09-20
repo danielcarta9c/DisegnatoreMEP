@@ -5,6 +5,7 @@ di «piccolo» da valutare a priori: la prova **e'** il criterio, perche' il
 posizionamento fallisce esattamente quando il contenuto non entra alla scala
 fissa e ADR 0003 vieta di rimpicciolire i simboli per farceli stare.
 """
+# categoria: difende il motore — l'impaginazione: il formato si sceglie provando (D-058), e il rifiuto nomina una misura
 
 from pathlib import Path
 

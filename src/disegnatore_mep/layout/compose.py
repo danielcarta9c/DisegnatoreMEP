@@ -35,33 +35,18 @@ from .geometry import (
 )
 from .grid import GridSpace
 from .hierarchy import hierarchy_of
-from .highways import Highway, highways, lies_in_line
-from .improve import improve_sheet
+from .highways import highways, lies_in_line
 from .inline import settle_sheet
 from .labels import place_labels
 from .legend import build_legend
 from .partition import SheetLink, SheetPartition, partition_project
 from .place import place_sheet
-from .spine import SpineLayout, carry_the_rest, lay_the_spine
 from .trunks import Trunk, build_trunks
 
 CROSS_REFERENCE_GAP_MM = 2.5
 """Stacco fra la porta e il marcatore di rimando."""
 
 TrunkKey = tuple[str, ...]
-
-MAX_SURRENDERS = 4
-"""Quante catene, al piu', l'ultima spiaggia arriva a cedere (§F.3).
-
-Un tetto dichiarato, come quello degli instradamenti di prova: ogni cessione e'
-un ciclo di miglioramento intero, e un impianto con quindici autostrade
-consumerebbe quindici cicli prima di arrivare alle reti ultime. Quattro bastano
-a coprire i casi visti — la prima cessione e' quella delle catene che nessuna
-posa raddrizza, e non costa niente — e chi arriva in fondo senza una tavola non
-l'avrebbe avuta nemmeno alla dodicesima. Il tetto scatta in modo deterministico,
-e il rapporto dice sempre con quale via la tavola e' uscita.
-"""
-
 
 @dataclass
 class ComposeNote:
@@ -279,66 +264,6 @@ def _reader_of(
     return at
 
 
-def _order_of_surrender(
-    laid: tuple[Highway, ...],
-    impossible: frozenset[TrunkKey],
-    order: dict[str, int],
-    straight: Callable[[Highway], bool],
-) -> tuple[Highway, ...]:
-    """L'ordine in cui si cede una piega: prima a chi ne ha meno bisogno (§F.3).
-
-    **Si cede solo cio' che si sta tenendo.** L'invariante e' monotono — «cio'
-    che e' dritto non si storce, cio' che storto era puo' solo raddrizzarsi» —
-    quindi su una catena che la fase del tronco ha gia' consegnato storta non
-    vincola niente, e toglierla dall'invariante non libera niente: sarebbe un
-    ciclo di miglioramento intero speso per non cambiare nulla.
-
-    Fra quelle che restano, tre criteri, e il primo viene prima:
-
-    1. **Le catene che nessuna posa raddrizza comunque.** La fase del tronco le
-       nomina gia' (`SpineLayout.impossible`): li' la piega non si concede, si
-       constata, e concederla non costa niente.
-    2. **La catena piu' corta.** Una catena di una tratta e' meno struttura di
-       una di quattro: piegarla toglie meno forma alla tavola.
-    3. A parita', **l'ordine strutturale** del capo da cui comincia — mai
-       l'identificativo, che e' un nome (D-093).
-    """
-    return tuple(
-        sorted(
-            (item for item in laid if straight(item)),
-            key=lambda item: (
-                0 if set(item.keys) & impossible else 1,
-                len(item.steps),
-                order.get(item.head.component_id, 0),
-                item.keys,
-            ),
-        )
-    )
-
-
-def _no_spine() -> SpineLayout:
-    """La fase del tronco che non c'e' stata.
-
-    Vuota in tutto: nessun partecipante, nessuna autostrada, nessuna posa. Chi
-    la riceve la tratta come una fase che non ha vincolato niente —
-    `carry_the_rest` restituisce la posa com'era, e la cessione graduale non ha
-    catene da cedere.
-
-    `routed=False` non e' un dettaglio: dice a chi legge il diario che le
-    autostrade **non** si sono posate per prime, che e' la rinuncia vera. Il
-    motivo lo scrive chi compone, nella via con cui la tavola e' uscita.
-    """
-    return SpineLayout(
-        machines=frozenset(),
-        participants=(),
-        trunks=(),
-        symbols=(),
-        routes=(),
-        runs=(),
-        routed=False,
-    )
-
-
 def compose_sheet(
     project: ProjectModel,
     partition: SheetPartition,
@@ -348,40 +273,38 @@ def compose_sheet(
     journal: ComposeJournal | None = None,
     last_resort: bool = False,
 ) -> SheetGeometry:
+    """La tavola di questo foglio, **senza nessuna ricerca** (D-151).
+
+    Fino al 20 settembre 2026 qui giravano due cercatori: la **fase del tronco**
+    di `spine.py`, che posava le autostrade per prime risolvendo un sistema di
+    vincoli, e il **ciclo di miglioramento** di `improve.py`, che spostava i
+    pezzi minimizzando una somma pesata. **D-151 li ha tolti tutt'e due dalla
+    decisione della posa**, e questa funzione e' il posto in cui quella
+    decisione si vede: restano la posa deterministica di `place_sheet`,
+    l'instradamento, gli accessori in linea, la legenda, i testi.
+
+    **Il difetto non era la taratura, era la forma della domanda**: una somma
+    pesata non sa esprimere una gerarchia di giudizio, e nessun peso dice «un
+    collettore e' **una** linea dritta». Il PO, guardando l'autostrada che si
+    piegava mentre gli stacchetti restavano dritti: «abbiamo ottimizzato le
+    curve e gli attraversamenti sugli attacchetti e abbiamo fatto sta curva
+    senza senso».
+
+    **Che cosa mette i pezzi, adesso.** Il **piano di composizione**
+    (`disegnatore_mep.piano`), che lo compone un agente e lo esegue il motore.
+    Questa via resta per l'impianto che un piano non ce l'ha: quello che ne
+    esce e' **cio' che il motore sa fare da solo**, e i rilievi lo dicono.
+    Misurato il 20 settembre sui cinque impianti di prova, ed e' scritto nel
+    rapporto di `DRAW-015`: senza il solutore e senza un piano, tutti e cinque
+    finiscono sul formato piu' grande col ripiego dichiarato. **Non e' un
+    difetto nascosto: e' la ragione per cui i piani si scrivono.**
+
+    Dove e' finito il lavoro di chi e' uscito: `layout/improve.py`,
+    `layout/spine.py` (la fase del tronco) e `layout/dilate.py` lo dicono in
+    testa, ciascuno con la data e la decisione.
+    """
     grid = GridSpace(origin=frame.drawing_rect_mm, standard=frame.standard)
     first = place_sheet(project, partition, catalog, frame, inline_ids)
-    # **Prima le autostrade** (DRAW-008 §A). La posa del tronco non e' una
-    # rifinitura del ciclo: e' una fase a se', che costruisce la forma invece di
-    # cercarla, e il resto dell'impianto le va dietro. Da qui in avanti la
-    # rettilineita' del tronco e' un vincolo, non una voce di costo.
-    # **Se la fase del tronco consegna una posa impossibile, cade la fase, non
-    # la tavola.** Succede quando piu' macchine in parallelo pendono dalla
-    # stessa catena di raccordi e quella catena corre di traverso: il
-    # risolutore le porta tutte alla stessa quota e due finiscono nello stesso
-    # punto (`spine._no_two_on_the_same_spot`).
-    #
-    # Senza questa riga quell'errore usciva dal motore e **la tavola non usciva
-    # affatto** — nemmeno col ripiego di D-150, che degrada l'instradamento e
-    # non la posa. Ma la posa iniziale, quella, e' giusta: e' lei che le
-    # macchine le ha incolonnate. Si riparte da li'.
-    #
-    # Resta una **rinuncia**, e il diario la scrive: senza la fase del tronco
-    # le autostrade non si posano per prime, e la tavola esce dal ciclo come
-    # usciva prima che le fasi esistessero. La cura vera e' il collettore
-    # verticale.
-    senza_tronco = ""
-    try:
-        spine = lay_the_spine(project, partition, catalog, frame, first)
-    except LayoutError as exc:
-        spine = _no_spine()
-        senza_tronco = f"senza la fase del tronco ({exc}); "
-    seeded = carry_the_rest(project, partition, catalog, first, spine, frame)
-    # La disposizione serve le linee, non il contrario (D-078): dopo la prima
-    # ipotesi di posa, i componenti si spostano dove l'instradamento di prova
-    # dice che l'obiettivo intero — pieghe, incroci, lunghezza — migliora.
-    improved = improve_sheet(
-        project, partition, catalog, frame, seeded, inline_ids, spine
-    )
 
     def settled(
         base: list[PlacedSymbol], last_resort: bool = False
@@ -413,68 +336,20 @@ def compose_sheet(
         ]
         return sheet.symbols, routes
 
-    # **Quando la struttura non si instrada, si cede una curva: non si butta la
-    # struttura** (DRAW-012 §F, e il PO in D-138). Fino a `DRAW-011` il terzo
-    # ripiego era «il ciclo senza le fasi», cioe' la tavola che il motore
-    # produceva **prima che le autostrade esistessero**: l'impianto 4 usciva da
-    # li', e non era un'autostrada venuta storta — era una tavola disegnata da
-    # un motore che non sa che cosa sia un'autostrada.
+    # **La scala dei ripieghi se ne va con il solutore** (D-151). Fino al 20
+    # settembre qui c'era una scala di sei vie: le fasi, la posa seminata dal
+    # tronco, quattro cessioni graduali di una catena per volta, il ciclo senza
+    # le fasi, la disposizione di partenza. Cinque delle sei erano **modi di
+    # richiamare il solutore con un vincolo in meno**, e senza il solutore non
+    # vogliono dire piu' niente: quello che resta e' la posa deterministica,
+    # che era gia' l'ultimo gradino della scala.
     #
-    # L'ordine nuovo:
-    #
-    #   1. la posa delle fasi, migliorata;
-    #   2. la posa che la fase del tronco ha seminato;
-    #   3. **la cessione graduale**: una catena per volta, a partire da quella
-    #      che ne ha meno bisogno, si toglie dall'invariante e il ciclo puo'
-    #      piegarla per far entrare il resto;
-    #   4. il ciclo senza le fasi — **l'ultimissima rete**, e ogni volta che
-    #      scatta va scritto;
-    #   5. la disposizione di partenza.
+    # Il ripiego di **D-150** resta intero, ed e' l'unico: se questa posa non
+    # si instrada, la tratta persa si segna e la tavola esce lo stesso.
     laid = highways(project, catalog, list(partition.trunks))
-    on_the_seed = _reader_of(project, catalog, seeded)
-    surrender = _order_of_surrender(
-        laid,
-        frozenset(spine.impossible),
-        structural_order(project),
-        lambda item: lies_in_line(item, on_the_seed),
-    )
-    giving_up: list[frozenset[tuple[str, ...]]] = []
-    ceded: list[tuple[str, ...]] = []
-    for highway in surrender[:MAX_SURRENDERS]:
-        ceded.extend(highway.keys)
-        giving_up.append(frozenset(ceded))
-
     ways: list[tuple[str, tuple[TrunkKey, ...], Callable[[], list[PlacedSymbol]]]] = [
-        ("le fasi", (), lambda: improved),
-        ("la posa seminata dal tronco", (), lambda: seeded),
+        ("la posa deterministica, senza ricerca (D-151)", (), lambda: first),
     ]
-    ways.extend(
-        (
-            f"la cessione graduale, {index} catena/e ceduta/e",
-            tuple(sorted(given)),
-            (
-                lambda given=given: improve_sheet(  # type: ignore[misc]
-                    project,
-                    partition,
-                    catalog,
-                    frame,
-                    seeded,
-                    inline_ids,
-                    spine,
-                    conceded=given,
-                )
-            ),
-        )
-        for index, given in enumerate(giving_up, start=1)
-    )
-    ways.append(
-        (
-            "il ciclo senza le fasi (ultimissima rete)",
-            (),
-            lambda: improve_sheet(project, partition, catalog, frame, first, inline_ids),
-        )
-    )
-    ways.append(("la disposizione di partenza", (), lambda: first))
 
     found: tuple[list[PlacedSymbol], list[RoutedTrunk]] | None = None
     story: tuple[str, tuple[TrunkKey, ...]] = ("nessuna: la tavola non esce", ())
@@ -504,16 +379,16 @@ def compose_sheet(
             # sa che su questo foglio non ci sta e deve provarne uno piu'
             # grande. Se il ripiego scattasse qui, ogni foglio riuscirebbe e
             # l'impianto finirebbe sull'A4.
-            found = settled(improved)
+            found = settled(first)
         else:
-            found = settled(improved, last_resort=True)
+            found = settled(first, last_resort=True)
             story = ("il ripiego dichiarato: le tratte perse sono segnate", ())
     placed, broken = found
     if journal is not None:
         journal.notes.append(
             ComposeNote(
                 sheet_id=partition.sheet_id,
-                ripiego=f"{senza_tronco}{story[0]}",
+                ripiego=story[0],
                 conceded=story[1],
                 crooked=tuple(
                     key
@@ -710,7 +585,6 @@ def compose_on_ordinary_frame(
 
 
 __all__ = [
-    "MAX_SURRENDERS",
     "ComposeJournal",
     "ComposeNote",
     "SheetLink",

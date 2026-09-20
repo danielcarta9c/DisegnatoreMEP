@@ -27,6 +27,7 @@ Qui si prova che sono **queste** le regole, e non una taratura migliorata:
 - **§G / D-145**: un organo di servizio sta addosso al pezzo che serve, ed e'
   un vincolo che nessun costo compra.
 """
+# categoria: difendeva il solutore — la dilatazione di dilate.py e le voci di riempimento di SheetCost (DRAW-013); cinque prove difendono regole del piano, D1 B2 A4 B5: elencate nel rapporto
 
 from datetime import date
 from functools import cache

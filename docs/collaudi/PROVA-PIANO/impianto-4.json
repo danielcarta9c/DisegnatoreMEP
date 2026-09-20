@@ -1,0 +1,142 @@
+{
+  "formato": "A2",
+  "note": [
+    "A1 (D-154) — tre fasce verticali: generazione a sinistra (pdc e caldaia,",
+    "incolonnate secondo D-041 + D-118), accumuli e scambiatori in mezzo",
+    "(disgiuntore e scambiatore a piastre), distribuzione a destra (radiatori e",
+    "prelievo ACS).",
+    "B1 (D-154) — le due primarie sono DUE RETTE a y=105 e y=120, le quote delle",
+    "due porte della pompa di calore. Su quelle rette stanno, senza una piega:",
+    "pdc, il collettore di mandata, il T della valvola di sicurezza e il",
+    "disgiuntore; e al ritorno il disgiuntore, i tre raccordi di servizio, il",
+    "collettore di ritorno e la pompa di calore.",
+    "B3 (D-154) — due generatori in parallelo: si attaccano a una catena di T",
+    "incolonnata, non tirano ciascuno la propria tratta. Il collettore di mandata e",
+    "quello di ritorno stanno sulla verticale che sale dal ramo della caldaia.",
+    "B2/D-144 — il secondario: mandata dritta dal disgiuntore al radiatore,",
+    "ritorno affiancato sotto.",
+    "A4 (D-145) — manometro, riempimento e vaso pendono dai propri raccordi sul",
+    "ritorno primario con lo stacco minimo; sfiato sopra il disgiuntore, scarico",
+    "sotto.",
+    "I-061 — l'acqua fredda entra da vicino allo scambiatore.",
+    "MISURATO, E NON SI CHIUDE CON UN PIANO: il ramo della caldaia paga pieghe che",
+    "nessuna posa toglie. caldaia.water_return guarda a DESTRA come",
+    "commutatrice.out, e due porte che guardano dalla stessa parte non si uniscono",
+    "con un segmento; lo scambiatore a piastre ha primary_in e primary_out",
+    "tutt'e due su faccia SINISTRA e non ruota. I rilievi B1 che restano su quelle",
+    "catene sono veri, e la cura non e' nel piano."
+  ],
+  "pezzi": {
+    "pdc": {
+      "x": 30,
+      "y": 100,
+      "regola": "A1 — fascia della generazione; A2 — incolonnata sopra la caldaia"
+    },
+    "caldaia": {
+      "x": 30,
+      "y": 220,
+      "regola": "A2/D-118 — i generatori in parallelo si impilano"
+    },
+    "collettore-mandata": {
+      "x": 130,
+      "y": 102.5,
+      "regola": "B3 — nodo del collettore, sulla mandata primaria y=105"
+    },
+    "tee-valve-safety-collettore-mandata-b": {
+      "x": 170,
+      "y": 102.5,
+      "regola": "B1 — sulla mandata primaria"
+    },
+    "valve-safety-collettore-mandata-b": {
+      "x": 170,
+      "y": 80,
+      "regola": "A4 — addosso al proprio raccordo"
+    },
+    "disgiuntore": {
+      "x": 250,
+      "y": 100,
+      "regola": "A1 — fascia degli accumuli; B1 — primary_in su y=105"
+    },
+    "air-vent-disgiuntore-primary-out": {
+      "x": 260,
+      "y": 90,
+      "regola": "A4 — lo sfiato sta sopra"
+    },
+    "drain-connection-disgiuntore-primary-in": {
+      "x": 260,
+      "y": 145,
+      "regola": "A4 — lo scarico sta sotto"
+    },
+    "tee-pressure-gauge-collettore-ritorno-a": {
+      "x": 225,
+      "y": 117.5,
+      "regola": "B1 — sul ritorno primario y=120"
+    },
+    "pressure-gauge-collettore-ritorno-a": {
+      "x": 225,
+      "y": 150,
+      "regola": "A4 — addosso al proprio raccordo"
+    },
+    "tee-filling-unit-collettore-ritorno-a-b": {
+      "x": 185,
+      "y": 117.5,
+      "regola": "B1 — sul ritorno primario"
+    },
+    "filling-unit-collettore-ritorno-a": {
+      "x": 185,
+      "y": 150,
+      "rotazione": 180,
+      "regola": "A4; rotazione a mano — due attacchi e non e' una macchina"
+    },
+    "inlet-filling-unit-collettore-ritorno-a": {
+      "x": 185,
+      "y": 175,
+      "regola": "A4 — sotto il gruppo di riempimento"
+    },
+    "tee-expansion-connection-collettore-ritorno-a": {
+      "x": 145,
+      "y": 117.5,
+      "regola": "B1 — sul ritorno primario"
+    },
+    "expansion-connection-collettore-ritorno-a": {
+      "x": 145,
+      "y": 150,
+      "regola": "A4 — addosso al proprio raccordo"
+    },
+    "collettore-ritorno": {
+      "x": 100,
+      "y": 117.5,
+      "regola": "B3 — nodo del collettore di ritorno, sulla retta y=120"
+    },
+    "deviatrice-caldaia": {
+      "x": 120,
+      "y": 225,
+      "regola": "B4 — in e out_a in linea sulla mandata della caldaia, y=230"
+    },
+    "commutatrice-ritorno": {
+      "x": 160,
+      "y": 265,
+      "regola": "B4 — in_a e out in linea sul ritorno della caldaia"
+    },
+    "scambiatore": {
+      "x": 300,
+      "y": 280,
+      "regola": "A1 — fascia degli scambiatori; il primario gli arriva da sinistra"
+    },
+    "acquedotto": {
+      "x": 350,
+      "y": 297.5,
+      "regola": "I-061 — l'acqua fredda entra da vicino allo scambiatore"
+    },
+    "radiatori": {
+      "x": 420,
+      "y": 97.5,
+      "regola": "A1 — fascia della distribuzione; B2 — in su y=105"
+    },
+    "utenze": {
+      "x": 470,
+      "y": 282.5,
+      "regola": "A1/I-017 — il prelievo ACS nella fascia della distribuzione"
+    }
+  }
+}

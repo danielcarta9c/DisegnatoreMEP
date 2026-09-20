@@ -1,0 +1,5 @@
+prova-1-due-pdc-accumulo-combinato	ESCE (uscita 0)	21 tratte, 0 cedute
+prova-2-pdc-deviatrice-acs	ESCE (uscita 0)	23 tratte, 0 cedute
+prova-4-ibrido-pdc-caldaia	ESCE (uscita 0)	25 tratte, 0 cedute
+prova-5-cascata-tre-pdc	ESCE (uscita 0)	54 tratte, 6 cedute (p10-a-1, p7-a, s11-a, s14-a, w1-a, w5)
+prova-3-pdc-diretta-pavimento	ESCE (uscita 0)	22 tratte, 0 cedute

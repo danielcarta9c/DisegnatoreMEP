@@ -20,6 +20,7 @@ Due cose, quindi, e sono tutt'e due qui:
   motore sappia generare — ne' la fase del tronco ne' il ciclo — ne cambia
   `rotation_deg` o `port_map`.
 """
+# categoria: difende il motore — due tratte verso lo stesso pezzo corrono annidate (DRAW-009 §C); due prove difendevano il solutore, Improver e fase del tronco: elencate nel rapporto
 
 from functools import cache
 from pathlib import Path

@@ -17,6 +17,7 @@ dev'essere quello con la piega sullo stacco. Rendendo i pesi uguali la
 differenza sparisce — ed e' il modo in cui questa prova dimostra di misurare i
 pesi e non qualcos'altro.
 """
+# categoria: difendeva il solutore — i pesi di SheetCost per livello di gerarchia (DRAW-007 blocco B): e' la funzione di costo che D-151 ha tolto dalla decisione
 
 from datetime import date
 from pathlib import Path

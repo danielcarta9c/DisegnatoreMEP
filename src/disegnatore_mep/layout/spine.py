@@ -1,4 +1,29 @@
-"""La fase del tronco: prima le autostrade, e dritte (DRAW-008 §A).
+"""⛔ **LA FASE DEL TRONCO E' MORTA IL 20 SETTEMBRE 2026. IL RESTO DEL MODULO VIVE.**
+
+**Che cosa e' morto:** `lay_the_spine` e tutto cio' che serviva a **risolvere** la
+posa delle autostrade — il sistema di vincoli, i suoi ripieghi, le catene
+dichiarate impossibili. **Quando:** 20 settembre 2026. **Perche':** **D-151**, il
+disegno lo compone un agente. **Dove e' finito il suo lavoro:** le autostrade le
+tira dritte **il piano**, e a verificarle e' il controllo **B1**
+(`validation/regole.py::autostrade_storte`), che nomina la catena e le sue
+pieghe.
+
+**Che cosa vive, ed e' chiamato ogni giorno:** `carry_the_rest`, la semina che
+porta dietro a ogni pezzo cio' che gli e' appeso. La usa
+`disegnatore_mep.piano.esecutore`, ed e' il pezzo del modulo che la ricerca del
+4 agosto §3 dichiara sano.
+
+**Nessun percorso vigente chiama piu' `lay_the_spine`**: `layout/compose.py` non
+lo importa piu'.
+
+**Perche' non e' stato cancellato.** Un file che nessuno chiama e non lo dichiara
+e' una trappola. E perche' la fase del tronco aveva **ragione sulla domanda** —
+le autostrade vanno tirate per prime — e torto sul **come**: cercarle invece di
+comporle. La domanda e' sopravvissuta, ed e' la regola B1.
+
+---
+
+La fase del tronco: prima le autostrade, e dritte (DRAW-008 §A).
 
 Il PO, l'11 settembre 2026:
 

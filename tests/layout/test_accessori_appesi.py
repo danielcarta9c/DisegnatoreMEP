@@ -11,6 +11,7 @@ al progetto la convinzione sbagliata che «l'impianto non entra in larghezza»:
   accumula, chi utilizza — e non nell'ordine in cui il file elenca i
   sottosistemi.
 """
+# categoria: difende il motore
 
 from pathlib import Path
 

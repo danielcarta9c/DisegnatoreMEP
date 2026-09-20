@@ -1,8 +1,23 @@
 # Piano di release — Disegnatore MEP
 
-**Stato:** piano operativo del PM, 2026-09-03.
+**Scritto il 3 settembre 2026. Annotato il 20 settembre 2026** (`DRAW-015`).
 
-## 0.2 — Prima tavola approvata
+**La release in corso è la 0.3 — generalizzazione.** Il numero di versione Python resta
+`0.1.0`: non ha mai seguito le release dichiarate, ed è un asse diverso.
+
+> ⚠ **Due punti di questo piano sono storia, e lo dicono qui in testa.**
+>
+> - **La 0.2 è eseguita**: è il racconto di come è andata, non lavoro aperto.
+> - **Il motore «costo-peso» che la 0.2 descrive non decide più la posa.** Dal 20 settembre
+>   2026 (**D-151**) il disegno lo **compone un agente** — pianificatore → motore →
+>   revisore — e la catena vigente sta in `docs/ARCHITETTURA-DEL-PIANO.md`. Dove qui sotto
+>   si legge «costo globale», «costo-peso» o «Drawing Director», si legga quel documento.
+>
+> Le righe superate portano la loro nota, con la decisione che le ha superate. Il piano non
+> è stato riscritto oltre a questo: **che cosa viene dopo la 0.3 è una scelta del PO**, e
+> non si decide in una passata di riallineamento documentale.
+
+## 0.2 — Prima tavola approvata — **eseguita**
 
 Obiettivo: portare l'impianto 1 a una tavola **impiantisticamente corretta secondo il
 grafo approvato dal PO**, deterministica e graficamente approvata dal PM/PO.
@@ -20,6 +35,11 @@ grafo approvato dal PO**, deterministica e graficamente approvata dal PM/PO.
 
 Gate: il PO riconosce un disegno ordinato e tecnicamente leggibile. Finché questo gate
 non passa, non si estende il lavoro agli altri impianti.
+
+> **Nota del 20 settembre 2026.** Il «costo globale» di `DRAW-004` e il «motore di posa
+> costo-peso» di `DRAW-002` sono **storia da D-151**: una somma pesata non sa esprimere una
+> gerarchia di giudizio. `layout/improve.py`, la fase del tronco di `layout/spine.py` e
+> `layout/dilate.py` restano agli atti e non decidono più la posa (D-151, D-149).
 
 ### Gate verticale — chat di lavoro
 
@@ -42,8 +62,23 @@ cicli sullo stesso errore.
   gruppo sanitario EN 1487 composito, riempimento tecnico a due reti e chiusura D-120;
   consegna grafica completa ancora limitata alla sola tavola 2.
 
-Gate: cinque impianti deterministici, senza regressioni sulla tavola 1 e senza eccezioni
-legate agli identificativi degli esempi.
+Gate: cinque impianti, senza regressioni sulla tavola 1 e senza eccezioni legate agli
+identificativi degli esempi.
+
+> **Nota del 20 settembre 2026.** La parola «deterministici» esce dal gate: la
+> riproducibilità bit-per-bit di **D-023 è sospesa da D-151** — due composizioni dello
+> stesso impianto non danno la stessa tavola — ed è un prezzo dichiarato, accettabile
+> perché la tavola esce anche in **DXF** e si rifinisce in AutoCAD (I-072, D-148).
+>
+> Che cosa il gate misura adesso, e sta già negli atti: i formati ordinari sono **A4, A3,
+> A2, A1** (D-148, dichiarata momentanea dal PO); una tratta che non si instrada **non
+> uccide più la tavola** ma si marca `unresolved` e il preflight la nomina (D-150); il
+> riempimento del foglio è una **misura**, non un obiettivo (D-149).
+>
+> **Dove siamo, misurato:** gli impianti 1 e 5 sono stati **composti a mano** ed eseguiti
+> dal motore con **zero rilievi bloccanti e zero tratte cedute**
+> (`docs/collaudi/PROVA-PIANO/`). È la prova che ha deciso D-151. Quello che non dimostra,
+> e il PO l'ha detto, è che le tavole siano belle.
 
 ## 0.4 — Tavola professionale completa
 
@@ -54,20 +89,38 @@ cartiglio Nove C, legenda, testi e gestione motivata del formato/paginazione.
 Gate: tavola stampabile e utilizzabile come elaborato tecnico, non soltanto come prova
 del motore.
 
-## 0.5 — Drawing Director
+## ~~0.5 — Drawing Director~~ — **superata da D-151 e D-153, 20 settembre 2026**
 
-Introdurre il supervisore AI soltanto dopo la stabilizzazione delle metriche
-deterministiche. Il Director osserva il raster, propone correzioni attraverso parametri
-e candidati ammessi e richiede una nuova generazione; non modifica direttamente la
-tavola e non altera il grafo.
-
-Gate: miglioramento misurabile su casi non usati per costruire le regole, mantenendo
-riproducibilità e tracciabilità delle correzioni.
+> Questa voce diceva di introdurre il supervisore AI **soltanto dopo** la stabilizzazione
+> delle metriche deterministiche, e di farlo agire **sui parametri**. Tutte e due le cose
+> sono state ribaltate dal PO:
+>
+> - **il revisore si costruisce subito** (**D-153**), perché è lo strumento con cui si
+>   scrivono le regole, una tavola alla volta — non il premio a valle;
+> - **corregge il piano**, non i parametri (**D-151**): legge i rilievi, guarda la tavola, e
+>   ogni spostamento porta il nome della regola che lo motiva.
+>
+> Resta vero l'unico vincolo che questa voce poneva e che nessuna decisione ha tolto: **il
+> revisore non altera il grafo** — sposta pezzi, non collega pezzi (`HANDOFF.md`).
+>
+> Il testo originale: «Introdurre il supervisore AI soltanto dopo la stabilizzazione delle
+> metriche deterministiche. Il Director osserva il raster, propone correzioni attraverso
+> parametri e candidati ammessi e richiede una nuova generazione; non modifica direttamente
+> la tavola e non altera il grafo.» Gate: «miglioramento misurabile su casi non usati per
+> costruire le regole, mantenendo riproducibilità e tracciabilità delle correzioni.»
+>
+> **Dove vive adesso:** `docs/ARCHITETTURA-DEL-PIANO.md` §1 e §5, e il pacchetto attivo
+> `DRAW-015`.
 
 ## 1.0 — Release utilizzabile
 
 Pipeline completa dal modello approvato alla tavola verificata, documentazione di
 installazione, pacchetto versionato e collaudo sui casi di accettazione.
 
-Il PM aggiorna `ACTIVE_WORK_PACKAGE.md` dopo ogni merge. Il DEV esegue soltanto il
-pacchetto attivo; il PO interviene sui requisiti e sul giudizio del risultato.
+~~Il PM aggiorna `ACTIVE_WORK_PACKAGE.md` dopo ogni merge. Il DEV esegue soltanto il
+pacchetto attivo; il PO interviene sui requisiti e sul giudizio del risultato.~~
+
+**Dal 19 settembre 2026 (D-147)** PM e DEV sono **la stessa sessione**: quella sessione
+scrive il pacchetto, lo sviluppa, mostra le tavole al PO e — solo dopo il suo sì — fonde;
+poi, nella stessa sessione, scrive `HANDOFF.md` e il pacchetto successivo. Il PO decide i
+requisiti, giudica il risultato **guardando le tavole** e approva la fusione (D-146).

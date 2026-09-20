@@ -12,6 +12,7 @@
 Impianti costruiti qui, con il catalogo di prova: nessun identificativo o
 coordinata della tavola 1.
 """
+# categoria: difende il motore — le sigle della consegna e gli indirizzi di verifica come velo, e la porta che il manifesto da' alla riserva
 
 import math
 from datetime import date

@@ -15,6 +15,7 @@ from disegnatore_mep.catalog.schema import (
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import Symbol, SymbolRegistry
 from disegnatore_mep.graphics.symbol import KeepOut, PortFace, SymbolManifest, SymbolPort
+from disegnatore_mep.layout.autostrade import AutostradaInTavola
 from disegnatore_mep.layout.geometry import (
     DrawingGeometry,
     PlacedLabel,
@@ -23,6 +24,7 @@ from disegnatore_mep.layout.geometry import (
     RoutedTrunk,
     SheetGeometry,
 )
+from disegnatore_mep.model.project import PortRef
 from disegnatore_mep.model.types import Domain, IssueSeverity, PortFlow
 from disegnatore_mep.validation import preflight
 from disegnatore_mep.validation.issues import ValidationIssue
@@ -162,6 +164,62 @@ def test_a_run_that_bends_too_often_is_a_warning_with_the_count() -> None:
 def test_a_run_within_its_bend_budget_says_nothing() -> None:
     tidy = run("b", [at(20, 20), at(40, 20), at(40, 40), at(60, 40)])
     assert preflight.bends_per_run(drawing(sheet(routes=[tidy]))) == []
+
+
+def _autostrada(connection_id: str, curve_ammesse: int) -> AutostradaInTavola:
+    """Un'autostrada di una tratta sola, dichiarata a mano.
+
+    Non serve un impianto: qui si prova il **bilancio** che `bends_per_run`
+    applica, non il modo in cui le catene si riconoscono — quello sta in
+    `tests/layout/test_autostrade.py`.
+    """
+    capo = PortRef(component_id="pdc", port_id="water_supply")
+    altro = PortRef(component_id="volano", port_id="primary_in")
+    return AutostradaInTavola(
+        connection_ids=frozenset({connection_id}),
+        curve_ammesse=curve_ammesse,
+        pezzi=("pdc", "volano"),
+        nome="pdc -> volano",
+        catene=((connection_id,),),
+        passi=((capo, altro),),
+    )
+
+
+def test_a_highway_run_is_measured_against_its_own_chain_budget() -> None:
+    """Una piega su un'autostrada che ne ammette zero e' un rilievo (**D-151**).
+
+    La stessa tratta, se autostrada non fosse, starebbe dentro le tre pieghe
+    che bastano a unire due porte e non direbbe niente: e' precisamente il
+    difetto che il PO ha visto — «abbiamo fatto sta curva senza senso» — e che
+    nessuna misura per tratta sapeva nominare.
+    """
+    dorsale = run("p3", [at(20, 20), at(40, 20), at(40, 40)])
+    tavola = drawing(sheet(routes=[dorsale]))
+
+    assert preflight.bends_per_run(tavola) == []
+
+    findings = preflight.bends_per_run(tavola, [_autostrada("p3", 0)])
+    assert codes(findings) == ["RUN_WITH_TOO_MANY_BENDS"]
+    assert findings[0].severity is IssueSeverity.WARNING
+    assert "1 volta" in findings[0].message
+    assert "autostrada" in findings[0].message
+    assert "pdc -> volano" in findings[0].message
+    assert "le pieghe ammesse sono 0" in findings[0].message
+
+
+def test_a_highway_that_may_turn_once_spends_its_curve_without_a_finding() -> None:
+    """La strada verso i terminali ha diritto a **una** curva (**D-144**)."""
+    dorsale = run("s1", [at(20, 20), at(40, 20), at(40, 40)])
+    assert (
+        preflight.bends_per_run(drawing(sheet(routes=[dorsale])), [_autostrada("s1", 1)])
+        == []
+    )
+
+
+def test_a_run_outside_every_highway_keeps_the_budget_of_always() -> None:
+    """Uno stacchetto non si misura col metro della dorsale, e nemmeno al contrario."""
+    stacco = run("st", [at(20, 20), at(40, 20), at(40, 40)])
+    assert preflight.bends_per_run(drawing(sheet(routes=[stacco])), [_autostrada("p3", 0)]) == []
 
 
 # --- 2. incroci (B3) -----------------------------------------------------------

@@ -11,6 +11,7 @@ Il gruppo di riempimento del ritorno finiva **all'estrema sinistra del foglio**,
 prima delle due pompe di calore, e il ritorno attraversava la tavola due volte
 per raggiungerlo — che e' il rilievo I-007 del registro degli input.
 """
+# categoria: difende una regola del piano — A2, chi sta in parallelo si impila e chi non e' un pezzo grosso esce dalla fila
 
 from functools import cache
 from pathlib import Path
@@ -233,7 +234,12 @@ def test_i_raccordi_non_prendono_una_colonna_a_testa() -> None:
 
 
 def test_due_macchine_in_parallelo_si_impilano() -> None:
-    """«Generatori a sinistra, impilati in verticale se sono piu' di uno» (D-119).
+    """«Generatori a sinistra, impilati in verticale se sono piu' di uno»
+    (**D-041 + D-118**).
+
+    Fino a `DRAW-015` questa riga citava **D-119**, che e' un'altra cosa —
+    l'area di rispetto dei raccordi. I generatori a sinistra sono **D-041**,
+    l'impilamento di cio' che sta in parallelo e' **D-118** punto 3.
 
     Non e' estetica: affiancate, il collettore che le serve puo' stare da una
     parte sola, e il ritorno della seconda attraversa la tavola per
@@ -250,11 +256,37 @@ def test_due_macchine_in_parallelo_si_impilano() -> None:
     assert master.origin.y_mm != slave.origin.y_mm
 
 
-def test_il_primo_impianto_esce_ancora() -> None:
-    """La prova che vale piu' di tutte: la tavola che il PM guarda si compone."""
-    from disegnatore_mep.layout.compose import compose_drawing
+def test_il_primo_impianto_esce_dal_proprio_piano() -> None:
+    """La prova che vale piu' di tutte, **riscritta il 20 settembre 2026**.
 
-    project = completato(PRIMO)
-    drawing = compose_drawing(project, catalog(), NOVE_C_A3)
-    assert drawing.sheets
-    assert drawing.sheets[0].symbols
+    Che cosa difendeva: che l'impianto 1 si componesse da solo su una A3, con
+    `compose_drawing`. Quella proprieta' gliela dava il **solutore**, e
+    **D-151** l'ha tolto dalla decisione della posa: senza un piano, su una A3
+    sola e senza il ripiego di D-150, l'impianto 1 non si compone piu' — il
+    motore dice perche', ed e' un messaggio su cui si agisce («la tratta
+    `w2-a-a-a` passa ancora sotto la miscelatrice dopo essersi interrotta per
+    lei: dalle un rettilineo piu' lungo»).
+
+    **Non e' una regressione nascosta: e' il prezzo dichiarato di D-151**, e il
+    rapporto di `DRAW-015` lo porta con i numeri su tutti e cinque gli impianti.
+
+    Che cosa difende adesso, ed e' la proprieta' che conta: che l'impianto 1
+    esca **dal proprio piano di composizione**, quello agli atti, con **zero
+    rilievi bloccanti e zero tratte cedute**. Il disegno lo compone un agente;
+    il motore esegue e misura.
+    """
+    from disegnatore_mep.piano.esecutore import esegui_piano
+    from disegnatore_mep.piano.formato import carica_piano
+
+    radice = Path(__file__).resolve().parents[2]
+    esito = esegui_piano(
+        completato(PRIMO),
+        carica_piano(radice / "docs/collaudi/PROVA-PIANO/impianto-1.json"),
+        catalog(),
+        SymbolRegistry.from_directory(radice / "assets/symbols"),
+        radice / "naming",
+    )
+    assert esito.disegno is not None, esito.errore
+    assert esito.disegno.sheets[0].symbols
+    assert esito.bloccanti == [], [item.code for item in esito.bloccanti]
+    assert esito.cedute == ()

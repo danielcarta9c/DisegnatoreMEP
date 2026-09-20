@@ -1,4 +1,24 @@
-"""La dilatazione proporzionale della posa (**D-142**, `DRAW-013` §A).
+"""⛔ **RITIRATA IL 19 SETTEMBRE 2026, E RESTA AGLI ATTI.**
+
+**Quando:** 19 settembre 2026. **Perche':** **D-149** — il riempimento del foglio
+**esce dagli obiettivi** e torna una misura, come la lunghezza (D-139); con lui
+se ne va la dilatazione che D-142 aveva chiesto. **Dove e' finito il suo
+lavoro:** in nessun posto, e va detto — il riempimento non lo insegue piu'
+nessuno. `SHEET_BARELY_FILLED` e `SHEET_TOO_FULL` restano come **misure**.
+
+**Nessun percorso vigente chiama piu' questo modulo**, e non lo chiamava gia'
+prima di D-151: `compose.py` lo dichiara nel commento dove la dilatazione
+stava.
+
+**Perche' non e' stato cancellato.** Misurata sulla consegna di `DRAW-013` ha
+spostato 2,5 mm sulla tavola 1 e 10 mm sulla 2, perche' la griglia quantizza: a
+fattore 1,08 cresce solo un vuoto lungo almeno sette passi, e li' i vuoti erano
+quasi tutti di uno o due. Il giorno in cui una posa distribuira' davvero i
+pezzi, i vuoti saranno grandi e questo modulo avra' qualcosa da allargare.
+
+---
+
+La dilatazione proporzionale della posa (**D-142**, `DRAW-013` §A).
 
 Il PO, guardando le tavole della PR #41: «se devo rendere comoda la tavola
 **allargo tutte le linee di un X per cento**, non che allungo solo un tratto per

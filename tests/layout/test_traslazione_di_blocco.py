@@ -22,6 +22,7 @@ Quattro cose si provano qui, e sono i criteri 5, 6 e 7 del pacchetto:
 - una traslazione che **piega il tronco** e' rifiutata da `is_valid` anche
   quando batte la chiave di costo.
 """
+# categoria: difendeva il solutore — la mossa di traslazione di blocco dell'Improver sopra la fase del tronco (DRAW-009 §B)
 
 from datetime import date
 from functools import cache

@@ -13,6 +13,7 @@ pericoloso in due modi precisi, e sono questi due che le prove difendono:
 Insieme dicono una cosa sola: **il ripiego e' l'ultima riga, non una
 scorciatoia.**
 """
+# categoria: difende il motore — la spezzata di ripiego di route.py e la scala dei formati (D-150); una prova difendeva il solutore: elencata nel rapporto
 
 import inspect
 from typing import cast

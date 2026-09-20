@@ -1,3 +1,4 @@
+# categoria: difende il motore
 from functools import cache
 from math import hypot
 from pathlib import Path

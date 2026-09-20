@@ -34,8 +34,13 @@ pezzo posabile sta nella fascia della propria categoria.
 
 *Fonte:* PO, 20 settembre 2026 (**D-154**), che precisa **D-041** — quella nominava due poli,
 generatori a sinistra e distribuzione a destra, e non diceva che cosa sta in mezzo.
-*Controllo:* `da scrivere` — ogni pezzo grosso ricade nella fascia della propria categoria, e
-le fasce non si accavallano in orizzontale.
+*Controllo:* **`PIECE_OUTSIDE_ITS_BAND`** — `validation/regole.py::pezzi_fuori_fascia`. Ogni
+fascia occupa l'intervallo in x dei propri pezzi; la violazione è un pezzo che ricade
+nell'intervallo di un'altra fascia. **Chi non ha una fascia propria non viola niente**: un
+raccordo è un punto sulla tubazione, e un **confine di rete** non sceglie dove stare — «va
+accanto all'utente che serve» (I-061) — quindi nessuno dei due entra nel conto. *Tavola:*
+`docs/collaudi/DRAW-015/tavole/tavola-4-*` prima della revisione, con il radiatore spostato
+dentro la fascia dello scambiatore.
 
 ### A2 — Chi sta in parallelo si impila
 
@@ -80,8 +85,13 @@ attraversamenti erano ottimizzati **sugli stacchetti** mentre l'autostrada facev
 senza senso».
 
 *Fonte:* PO, 20 settembre 2026 (**D-154**); il precedente è del 19 (**D-151**).
-*Controllo:* `da scrivere` — serve che la geometria sappia **quali tratte sono autostrada**;
-`RUN_WITH_TOO_MANY_BENDS` oggi conta le pieghe di tutte allo stesso modo, ed è il difetto.
+*Controllo:* **`HIGHWAY_IS_NOT_STRAIGHT`** — `validation/regole.py::autostrade_storte`, che
+conta le pieghe **della catena intera**: quelle dentro ogni tratta più i cambi di giacitura
+**sui crocevia**, che nessuna tratta da sola vedeva. Il bilancio è `Highway.turns_allowed`
+— zero sulla spina, **una** verso i terminali (D-144). La geometria adesso sa quali tratte
+sono autostrada: `layout/autostrade.py`, e `RUN_WITH_TOO_MANY_BENDS` usa quel bilancio
+invece del metro dello stacchetto. *Tavola:* impianto 1 composto, «la tratta `s3-a, s3-b`
+piega 4 volte, e su un'autostrada le pieghe ammesse sono 1».
 
 ### B2 — Dal circolatore un tratto dritto, **una** curva, poi la dorsale a pettine
 
@@ -100,7 +110,15 @@ Le macchine in parallelo si attaccano a una **catena di T verticale e allineata*
 stacco corto ciascuna, invece di tirare ognuna la propria tratta verso la destinazione.
 
 *Fonte:* PO, 20 settembre 2026 (**D-154**).
-*Controllo:* `da scrivere`. *Tavola:* impianto 5 composto — i due collettori della cascata.
+*Controllo:* **`PARALLEL_MACHINES_WITHOUT_A_COLLECTOR`** —
+`validation/regole.py::macchine_in_parallelo_senza_collettore`. Camminando da ogni macchina
+del gruppo si trova il proprio **nodo di collettore** (un raccordo con tre o più attacchi sul
+percorso); la violazione è che i nodi non stiano sulla stessa verticale entro mezzo passo di
+griglia, o che una tratta fra due nodi non corra in verticale.
+⚠ **Non morde con due macchine in parallelo**: un nodo solo è allineato per costruzione, e la
+regola comincia a dire qualcosa da tre in su. *Tavola:* impianto 5 composto — i due
+collettori della cascata **passano**; la violazione si vede su una variante del piano 5 con
+`cascata-ritorno-b` spostato di 40 mm.
 
 ### B4 — Un organo in linea non spezza il tratto
 
@@ -109,8 +127,13 @@ di lato. Vale per ogni organo che sta *sulla* linea: la linea passa, non si pieg
 lui.
 
 *Fonte:* PO, 20 settembre 2026 (**D-154**).
-*Controllo:* `da scrivere` — le due porte in linea del pezzo stanno alla stessa quota, e la
-tratta che le unisce non ha pieghe nel suo intorno.
+*Controllo:* **`INLINE_ORGAN_BREAKS_THE_RUN`** —
+`validation/regole.py::organi_che_spezzano_il_tratto`. Soggetto: un pezzo che **non è un
+raccordo** e ha due porte su **facce opposte** del manifesto ruotato, tutt'e due in uso. La
+violazione è che il tratto che esce da una e quello che esce dall'altra **non abbiano la
+stessa giacitura**: stesso asse, stessa quota. *Tavola:* impianto 5 composto, il `ricircolo`
+— «ha `a` e `b` su facce opposte alla stessa quota x=677,5, ma il tratto di `a` corre
+orizzontale e quello di `b` verticale: l'organo sta sulla piega».
 
 ### B5 — Una tratta con più accessori in linea vuole il proprio rettilineo
 
@@ -130,6 +153,32 @@ altezza: si leggono come una sola linea.
 *Fonte:* **nata componendo**, 20 settembre 2026. *Tavola:* impianto 5 composto.
 *Controllo:* `PARALLEL_RUNS_TOO_CLOSE`, `RUNS_OVERLAP_LENGTHWISE`.
 
+### B7 — Due porte che guardano dalla stessa parte non si uniscono con un segmento
+
+Se la catena entra in una macchina da una porta e ne esce da una porta sulla **stessa faccia**
+— o su una faccia **perpendicolare** — allora quella catena **non può essere una retta**, e
+non è la posa a sbagliare: è la forma dei due simboli. Il piano non ci può fare niente, e il
+rilievo che ne esce è vero ma non azionabile da chi compone.
+
+*Fonte:* **nata componendo**, 20 settembre 2026, scrivendo i piani degli impianti 2, 3 e 4.
+*Tavole:* tutte e tre, e si conta sui casi:
+
+| catena | curve ammesse | perché non si chiude |
+|---|---|---|
+| impianto 2, `bollitore -> deviatrice` | 0 | `out_b` della tre vie è sulla faccia **inferiore**, `coil_in` del bollitore sulla **sinistra**: due facce perpendicolari |
+| impianto 2, `volano -> ritorno -> bollitore` | 0 | `primary_out` e `coil_out` sono tutt'e due sulla faccia **sinistra**, e devono arrivare allo stesso raccordo da parti opposte |
+| impianto 3, `volano -> … -> pdc` | 0 | `volano.b` e `pdc.water_return` guardano tutt'e due a **destra**: serve uscire, salire e tornare indietro — e quella è la **U** che `RUN_OVERSHOOTS_ITS_PORT` blocca |
+| impianto 4, `scambiatore -> commutatrice` e `scambiatore -> deviatrice` | 0 | lo scambiatore a piastre ha `primary_in` e `primary_out` tutt'e due a **sinistra**, e non ruota |
+
+*Controllo:* `da scrivere` — e va scritto **dove si assegnano le curve ammesse**, non fra i
+rilievi: `Highway.turns_allowed` oggi vale zero per ogni catena fra macchine di spina, senza
+guardare se le facce delle sue porte lo permettono. Finché non lo guarda, B1 accusa tavole
+che nessun piano può raddrizzare, e un rilievo che non si può chiudere è rumore.
+
+**Due letture, e la scelta è del PO.** O il catalogo cambia (una macchina con due attacchi
+sullo stesso lato è un simbolo, non un vincolo idraulico), o `turns_allowed` diventa **il
+minimo raggiungibile** date le facce. La prima è materia MEP, la seconda è codice.
+
 ---
 
 ## C. Come si prende un pezzo
@@ -148,7 +197,7 @@ Si deduce per un **raccordo** e per un pezzo con **un attacco solo**. Una **macc
 o più attacchi ha una scelta**, e quella scelta è del pianificatore.
 
 *Fonte:* **D-004**, **I-027**; la forma stretta è del 20 settembre 2026.
-*Controllo:* `scripts/piano.py::orienta` (da portare in `src/`, `DRAW-015`).
+*Controllo:* `piano/esecutore.py::orienta` — portato in `src/` da `DRAW-015`, come questa riga chiedeva.
 
 ### C3 — La mappa degli attacchi si rifà **solo per i raccordi**
 
@@ -191,9 +240,16 @@ volte l'inchiostro fra quadrante pieno e vuoto sull'impianto 1, **9,0** sul 5.
 
 ## Quello che manca, e si sa che manca
 
-- **Nessun controllo sa che cos'è un'autostrada.** Finché la geometria non distingue
-  struttura e corredo, B1 non è verificabile e `RUN_WITH_TOO_MANY_BENDS` conta una piega
-  della dorsale come una piega di uno stacchetto. È il difetto che ha generato D-151.
+- ~~**Nessun controllo sa che cos'è un'autostrada.**~~ **Chiuso il 20 settembre 2026**
+  (`DRAW-015`): `layout/autostrade.py` porta l'autostrada fino alla tavola instradata, B1 ha
+  il proprio rilievo, e `RUN_WITH_TOO_MANY_BENDS` usa il bilancio della catena invece del
+  metro dello stacchetto. Era il difetto che ha generato D-151.
+- **B1 e B3 si contraddicono sulla cascata, e la contraddizione è aperta.** Sull'impianto 5 la
+  catena che attraversa il **collettore verticale che B3 pretende** fa due pieghe, e B1 —
+  `turns_allowed` zero — la accusa. **Qui la tavola è giusta e il numero dice che è
+  sbagliata**, ed è il rilievo che questo progetto chiede di portare per primo. Il PO ha detto
+  «prima le autostrade dritte **il più possibile**», non «dritte». Come si scrive quel «il più
+  possibile» è una domanda al PO, e sta accanto a B7.
 - **La composizione a corsie** della ricerca del 4 agosto §2.2 — le dorsali di mandata e
   ritorno con i componenti appesi — è misurata su due tavole vere e **non è ancora una riga
   qui**, perché non è stata ancora composta da noi. Quando lo sarà, entra con la sua tavola.

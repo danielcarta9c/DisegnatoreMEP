@@ -14,6 +14,7 @@ catalogo di prova, e nessuna coordinata o identificativo dell'impianto 1 entra
 nel motore ne' nelle attese. Scritte prima del codice applicativo, come il
 pacchetto chiede.
 """
+# categoria: difendeva il solutore — mosse di allineamento e permutazioni dell'Improver (DRAW-004); tre prove difendono invece la regola C3: elencate nel rapporto
 
 from functools import cache
 from pathlib import Path

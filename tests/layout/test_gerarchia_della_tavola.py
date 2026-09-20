@@ -29,6 +29,7 @@ Il **tronco fra le macchine principali**:
 Nessuna prova qui fissa quante tratte ci siano per livello: quel numero e'
 della fixture, non della regola.
 """
+# categoria: difende il motore — hierarchy_of ricava autostrada, distribuzione e servizio dal grafo: e' la misura deterministica che serve a B1, non un peso
 
 import ast
 import inspect

@@ -27,6 +27,7 @@ e' il modo di non ammorbidire il criterio fingendo di rispettarlo.
 Gli impianti sono costruiti qui, con il catalogo di prova; le due tavole vere
 si guardano dove il pacchetto le nomina, cioe' sulle fixture di `examples`.
 """
+# categoria: difendeva il solutore — la fase del tronco di spine.py e le fasi dell'Improver (DRAW-008): D-151 le ha tolte dalla decisione della posa
 
 import json
 from datetime import date

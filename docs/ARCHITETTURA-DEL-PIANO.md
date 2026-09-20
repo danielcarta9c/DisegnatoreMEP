@@ -75,7 +75,11 @@ Le due code si lavorano **in parallelo** e non si contendono niente.
 
 ## 4. Il piano di composizione
 
-Oggi è `docs/collaudi/PROVA-PIANO/impianto-*.json`, eseguito da `scripts/piano.py`. Dice
+Vive in `docs/collaudi/PROVA-PIANO/impianto-*.json` — cinque, uno per impianto di prova — ed
+è un **pezzo del prodotto** da `DRAW-015`: formato dichiarato in
+`src/disegnatore_mep/piano/formato.py`, esecutore in `piano/esecutore.py`, comando
+`disegnatore-mep piano`. (Fino al 20 settembre 2026 lo eseguiva `scripts/piano.py`, che era
+uno script di collaudo: è uscito dagli script quando il piano è diventato prodotto.) Dice
 **dove** sta ogni pezzo posabile, e nient'altro:
 
 ```json

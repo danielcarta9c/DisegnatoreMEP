@@ -18,6 +18,7 @@ scarico — piu' l'ingresso del riempimento, decise sul modello e sul catalogo, 
 coordinate, senza identificativi e senza colori scritti a mano nel renderer.
 Impianti costruiti qui, con il catalogo di prova.
 """
+# categoria: difende il motore — specie, colore e freccia dei rami di servizio, e il renderer che non conosce ne' colori ne' nomi di pezzi (I-042)
 
 import math
 import re

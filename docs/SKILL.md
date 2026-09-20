@@ -1,17 +1,23 @@
 # Com'è fatta la skill
 
-> ⚠ **In riallineamento — `DRAW-015`.** Le parti che descrivono la posa come una **ricerca**
-> (il ciclo di miglioramento, la somma pesata, la fase del tronco) sono **storia** da
-> **D-151**, 20 settembre 2026: il disegno lo **compone** un agente e il motore lo esegue e
-> lo misura. Finché questo documento non è riscritto, l'architettura vigente del disegno è
-> in `docs/ARCHITETTURA-DEL-PIANO.md`, che vince su ogni contrasto.
+**Stato: vigente. Riallineato il 20 settembre 2026 a D-151** (`DRAW-015`).
+
+La posa non è più una **ricerca**. Il disegno lo **compone** un agente, il motore lo
+**esegue e lo misura**, un revisore rilegge i rilievi e **corregge il piano**. Il ciclo di
+miglioramento (`layout/improve.py`), la fase del tronco di `layout/spine.py` e
+`layout/dilate.py` **restano agli atti e non decidono più la posa** (D-151, D-149).
 
 > **Questo è il documento che mancava.** Dice di quali pezzi è fatta la skill, cosa fa
 > ciascuno, con cosa lavora e **quando è finito**. Se una domanda comincia con «come
 > funziona…» o «di chi è questo pezzo…», la risposta è qui e in nessun altro posto.
 >
-> **Blindato in ADR 0005.** L'architettura qui descritta non si ridiscute pezzo per pezzo:
-> si cambia con una nuova ADR.
+> **La catena del disegno sta in `docs/ARCHITETTURA-DEL-PIANO.md`**, che dice chi decide
+> cosa ed è il documento che vince su ogni contrasto; le regole con cui si compone stanno
+> in `docs/regole-del-piano.md`, che il PO ha dichiarato aperto.
+>
+> **ADR 0005 è superata da D-151** e vale come storia: fissava sette pezzi e il confine
+> «nessuna AI disegna, nessuna AI corregge il disegno», che è esattamente ciò che D-151 ha
+> cambiato.
 >
 > Non contiene stato («a che punto siamo» sta in `PROJECT_STATE.md`), non contiene storia
 > («perché abbiamo deciso così» sta in `docs/DECISION_LOG.md`), non contiene numeri di
@@ -28,8 +34,8 @@ tecnica** — pronta da stampare e da portare in cantiere.
 
 Il prodotto finale non è il solo pacchetto Python: è una **skill/tool installabile nelle
 chat di lavoro** che orchestra interpretazione, approvazione, motore deterministico,
-verifica e restituzione degli artefatti. `CLAUDE.md` istruisce il team DEV e non è
-l'entrypoint della skill destinata all'utente.
+verifica e restituzione degli artefatti. `CLAUDE.md` istruisce l'agente che sviluppa il
+repository e non è l'entrypoint della skill destinata all'utente.
 
 **Quello che la skill non fa mai:** progettare. Non inventa potenze, temperature,
 prevalenze, tarature, volumi né diametri. Se il progettista glieli dà, li scrive sulla
@@ -72,11 +78,14 @@ ha quattro attacchi: i cataloghi dei costruttori dichiarano anche lo sfiato, lo 
 sede della sonda. Sono **attacchi di servizio**, ciascuno esiste per una funzione precisa, e
 il catalogo li dichiara macchina per macchina.
 
+La catena è quella di `HANDOFF.md` §«Catena invariabile» e di
+`docs/ARCHITETTURA-DEL-PIANO.md` §1, e si legge in sette passi:
+
 ```
    la conversazione con l'ingegnere
               │
         ┌─────┴──────┐
-        │  1. CAPIRE │  interpretazione       ← non deterministico
+        │  1. CAPIRE │  l'AI interpreta                ← non deterministico
         └─────┬──────┘
               │  GRAFO DI PRIMA STESURA — solo ciò che l'ingegnere ha detto
         ┌─────┴──────────────┐
@@ -90,27 +99,39 @@ il catalogo li dichiara macchina per macchina.
         │    L'INGEGNERE APPROVA         ← cancello: niente si disegna prima
         └─────┬──────────────┘
         ┌─────┴──────────────┐
-        │ 3. DISPORRE        │  posizionamento e instradamento, a costi (D-060)
-        └─────┬──────────────┘
+        │ 3a. COMPORRE       │  il pianificatore dice DOVE STANNO I PEZZI,
+        └─────┬──────────────┘  e nient'altro                    ← agente
+        ┌─────┴──────────────┐
+        │ 3b. ESEGUIRE       │  il motore orienta, instrada, interrompe,
+        └─────┬──────────────┘  impagina, disegna e MISURA  ← deterministico
               │  usa: 4. LIBRERIA DEI SIMBOLI   e   5. CARTIGLIO
+              │  produce: la tavola   +   i rilievi del 6. VERIFICARE
         ┌─────┴──────────────┐
-        │ 6. VERIFICARE      │  validatori + preflight di qualità
-        └─────┬──────────────┘
-        ┌─────┴──────────────┐
-        │    L'OCCHIO TERZO GIUDICA      ← cancello: può respingere (D-086)
-        └─────┬──────────────┘
+        │ 3c. RIVEDERE       │  il revisore rilegge i rilievi, guarda la
+        └─────┬──────────────┘  tavola e CORREGGE IL PIANO       ← agente
+              │  si torna a 3b, finché non resta nessun rilievo bloccante
               │
-          la tavola
+       la chat restituisce la tavola e i rilievi
 ```
 
-**I due cancelli non sono opzionali.** Senza l'approvazione dell'ingegnere la skill
-modificherebbe il suo impianto in silenzio (D-004, D-013); senza l'occhio terzo
-consegnerebbe ciò che i propri controlli non sanno vedere (D-063, D-086).
+**I passi 3a–3c sono nuovi (D-151) e sostituiscono il solutore.** Il passo 3c **si
+costruisce adesso** (D-153): finché non esiste, l'anello lo chiude l'agente a mano.
+
+**Il cancello dell'approvazione non è opzionale**: senza di essa la skill modificherebbe
+l'impianto dell'ingegnere in silenzio (D-004, D-013). E **l'agente non modifica
+connettività approvata: sposta pezzi, non collega pezzi** (`HANDOFF.md`).
+
+**L'occhio terzo non è più un cancello a valle.** D-114 — «il validatore AI smette di
+essere un cancello a valle e diventa supervisore in anello chiuso» — è scritta il 9 agosto
+e costruita da D-151: quel giudizio è il **revisore**, ed entra nell'anello invece di stare
+alla fine. Il giudizio finale del prodotto resta del PO, e si dà **sulle tavole** (D-146).
 
 **Dove si guarda cosa.** Il contenuto — quali pezzi, in che punto, su che fluido — si
 giudica sul **grafo scritto**, non su un disegno (D-096). Il disegno è il banco di prova
-dell'instradatore, dei validatori e della skill finita. Se il grafo è giusto e la tavola è
-brutta, il difetto è nel disporre; se il grafo è sbagliato, la tavola non c'entra.
+del motore, dei validatori e della skill finita. Se il grafo è sbagliato, la tavola non
+c'entra. Se il grafo è giusto e la tavola è brutta, il difetto è **o del motore o del
+pianificatore**, e la prima cosa da fare è dire quale dei due
+(`docs/ARCHITETTURA-DEL-PIANO.md` §3).
 
 Ogni pezzo si costruisce e si collauda **da solo**, con un contratto suo. Il disegno di
 prova serve a **scoprire** i difetti, mai a **definire** cosa è giusto (D-092).
@@ -128,25 +149,40 @@ si correggono allo stesso modo.
 | 1 | **Capire** | **Agente AI**, istruito con file di testo `.md` che gli spiegano cosa deve tirare fuori dalla conversazione e cosa non deve inventare | istruzioni della skill |
 | 2 | **Completare** | **Programma deterministico** che legge **regole scritte come dato** (un file per regola) e le applica al modello | motore in codice, regole in file di dati |
 | 2bis | **Assemblare** | **Programma deterministico**: mette in fila i pezzi lungo ogni tubo secondo la posizione che ogni regola dichiara | codice + la posizione dichiarata in ogni regola |
-| 3 | **Disporre** | **Programma deterministico**: posiziona, instrada, distribuisce. Nessuna AI tocca le coordinate | codice |
+| 3a | **Comporre** | **Agente AI**, che segue le regole di `docs/regole-del-piano.md` e produce un **piano**: un file leggibile e correggibile a mano | istruzioni della skill + il foglio di regole |
+| 3b | **Eseguire e misurare** | **Programma deterministico**: posa gli accessori appesi, orienta, instrada in griglia, interrompe, impagina, disegna, misura. Non cerca niente | codice |
+| 3c | **Rivedere** | **Agente AI**, che legge i rilievi, **guarda la tavola** e corregge il piano | istruzioni della skill |
 | 4 | **Libreria simboli** | **Dati**: per ogni simbolo un disegno vettoriale e una scheda che dichiara taglia, attacchi, imbocchi ammessi, rotazioni e fonte | file, uno per simbolo |
-| 5 | **Cartiglio** | **Dati**: un modello di riquadro fornito dall'azienda, riempito coi dati del progetto | file fornito dal PM |
-| 6 | **Verificare** | **Due cose diverse**: (a) controlli e misure = **programma deterministico**; (b) occhio terzo = **agente AI** con contesto proprio | codice + istruzioni della skill |
+| 5 | **Cartiglio** | **Dati**: un modello di riquadro fornito dall'azienda, riempito coi dati del progetto | file fornito dal PO |
+| 6 | **Verificare** | **Programma deterministico**: controlli di correttezza e preflight di qualità. I rilievi che produce sono l'ingresso del pezzo 3c | codice |
 
 ### La linea di confine, e perché sta lì
 
 ```
-   AI          →   scegli GLI INGRESSI     (pezzo 1: capire)
-   PROGRAMMA   →   produci L'ELABORATO     (pezzi 2, 3, 4, 5)
-   AI          →   giudica IL RISULTATO    (pezzo 6b: occhio terzo)
+   AI          →   interpreta LA CONVERSAZIONE   (pezzo 1)
+   PROGRAMMA   →   completa e ordina IL GRAFO    (pezzi 2, 2bis)
+   AI          →   compone IL PIANO              (pezzo 3a)
+   PROGRAMMA   →   esegue, disegna e MISURA      (pezzi 3b, 4, 5, 6)
+   AI          →   rilegge i rilievi e CORREGGE IL PIANO   (pezzo 3c)
 ```
 
-**Nessuna AI disegna e nessuna AI corregge il disegno.** Il motivo è una proprietà che il
-prodotto non può perdere: *stesso impianto, stessa tavola, sempre*. Se un'AI potesse
-spostare una linea, due esecuzioni identiche darebbero due tavole diverse e non si
-saprebbe più quale è quella buona. Quando l'occhio terzo respinge, non tocca il disegno:
-cambia **gli ingressi** — l'impaginazione, l'ordine, il formato — e il programma
-ridisegna tutto da capo.
+**L'agente compone e corregge il piano; non tocca la geometria.** Il piano dice **dove
+stanno i pezzi**, e nient'altro: non coordinate di linee, non simboli, non scelte MEP. La
+connettività approvata non si tocca — si spostano pezzi, non si collegano pezzi.
+
+**Quello che si può dedurre non entra nel piano, e non si cerca.** La rotazione di un
+raccordo, quella di un pezzo con un attacco solo, la mappa degli attacchi: si deducono dai
+vicini che il pezzo ha davvero, e **la deduzione vince sempre sulla ricerca** (D-151). Una
+macchina con due o più attacchi **ha** una scelta, e quella è del pianificatore.
+
+**Il prezzo, ed è dichiarato.** La riproducibilità bit-per-bit di **D-023** se ne va: due
+composizioni dello stesso impianto non danno la stessa tavola. È accettabile perché
+l'elaborato esce anche in **DXF** e il disegnatore lo rifinisce in AutoCAD (I-072, D-148),
+ed è una scelta di prodotto del PO. ⚠ **L'export DXF non è ancora costruito**: `I-072` è
+aperta, e in `src/` non c'è nulla che lo scriva — il prezzo è già pagato, la contropartita
+no. Il motore non garantisce più che il disegno sia
+**bello**: garantisce che sia **valido** e che i difetti siano **nominati**. Il bello lo
+porta il piano, e il giudizio resta del PO, sulle tavole (D-146).
 
 ### Come sono fatte le regole del pezzo 2 — la risposta esatta
 
@@ -159,7 +195,7 @@ file dice, in forma leggibile anche da un non programmatore:
   **una per gruppo/tratto**, secondo lo scopo dichiarato dalla regola;
 - **cosa** propone e **in che punto** funzionale;
 - **come si riconosce che c'è già**, così rieseguirla non duplica niente;
-- **perché**, in una frase leggibile dal PM, e da **quale fonte** viene.
+- **perché**, in una frase leggibile dal PO, e da **quale fonte** viene.
 
 Questo è il motivo per cui sono dati e non codice: **si aggiunge una regola aggiungendo un
 file, senza toccare il programma.** Se per aggiungere una famiglia di accessori servisse
@@ -313,7 +349,7 @@ stare insieme** — invece di produrre in silenzio una fila sbagliata, che è es
 quello che succede oggi.
 
 Il guadagno: la regola dell'intercettazione resta **una sola** e vale anche **sugli
-accessori** che si dichiarano manutenibili; e i casi speciali che il PM ha segnalato non
+accessori** che si dichiarano manutenibili; e i casi speciali che il PO ha segnalato non
 sono eccezioni scritte dentro il programma, ma **proprietà dichiarate** dal pezzo.
 
 **È finito quando** per ogni tubo di un impianto qualunque esiste una fila scritta, ogni
@@ -322,20 +358,48 @@ la stessa che scriverebbe a mano un termotecnico.
 
 ---
 
-### Pezzo 3 — Disporre: posizionamento, instradamento, distribuzione
+### Pezzo 3 — Comporre, eseguire, rivedere
 
-**Cosa fa.** Decide **dove** va ogni macchina sul foglio e **come** corrono i tubi.
+Tre mestieri diversi, e la divisione serve a lavorare: **ogni difetto è o del motore o del
+pianificatore, e va classificato** (`docs/ARCHITETTURA-DEL-PIANO.md` §3). Un difetto del
+motore suona «ha fatto una cosa che nessuno gli ha chiesto» e si cura con codice migliore;
+un difetto del pianificatore suona «il piano ha messo il pezzo dove non andava» e si cura
+con **una regola in più**.
 
-**Le regole, che vengono dal PM e non si negoziano.** Si legge da sinistra a destra
-seguendo il processo. Costano, in quest'ordine: le **curve**, gli **incroci**, la
-**lunghezza**. Vietato sovrapporre due linee per il lungo. E soprattutto: **spostare un
-oggetto è gratis, piegare una linea costa** — quindi la posizione delle macchine non è un
-dato, è una variabile: si dispone, si instrada, si sposta, si reinstrada. Ma spostare non
-vuol dire spargere: il foglio deve restare pieno.
+**3a — Il pianificatore compone.** Riceve il grafo definitivo, il foglio di regole
+(`docs/regole-del-piano.md`) e le tavole di riferimento del disegnatore del PO
+(`docs/input-pm/riferimenti-grafici/`). Produce un **piano di composizione**: quale
+formato, e dove sta ogni pezzo posabile. È un file leggibile e correggibile a mano, e le
+sue note dicono **quale regola** ha messo il pezzo lì.
 
-**È finito quando** su un impianto qualunque nessuna linea fa un giro che si toglie
-spostando un pezzo, nessun incrocio resta se si può evitare invertendo qualcosa di libero,
-e nessuna curva è pagata senza motivo.
+**3b — Il motore esegue e misura.** È deterministico e **non cerca niente**: posa gli
+accessori appesi, orienta i raccordi per deduzione, instrada in griglia, interrompe le
+linee sotto i simboli, impagina, disegna e passa i rilievi. È la parte che la ricerca del
+4 agosto dichiara sana — «regge la meccanica» — ed è quella che **resta**.
+
+**3c — Il revisore rilegge e corregge.** Entra con la tavola, i rilievi del preflight, le
+misure della geometria e il piano che ha prodotto quella tavola. Esce con **un piano
+corretto**, e ogni spostamento porta **il nome della regola** che lo motiva. Si ferma
+quando non resta nessun rilievo bloccante, quando un giro **non migliora**, o al tetto di
+giri — e in tutti e tre i casi **dice perché si è fermato**.
+
+**Che cosa costa, oggi.** Restano a costo le **curve** e gli **incroci**. Non costano più:
+la **lunghezza** (D-139) e il **riempimento del foglio** (D-149), che si riportano come
+misure. La vicinanza di un organo di servizio al pezzo che serve è un **vincolo**, non un
+costo (D-145). I formati ordinari sono **A4, A3, A2, A1** (D-148, dichiarata momentanea dal
+PO), e una tratta che non si instrada non uccide più la tavola: prende un ripiego
+dichiarato, si marca `unresolved` e il preflight la nomina con un rilievo bloccante
+(D-150).
+
+**Il solutore è uscito.** `layout/improve.py`, la fase del tronco di `layout/spine.py` e
+`layout/dilate.py` restano agli atti e non decidono più la posa. Il motivo non era la
+taratura, era la forma della domanda: una somma pesata **non sa esprimere una gerarchia di
+giudizio**, e nessun peso dice «un collettore è **una** linea dritta» — quella è una
+figura, non un punteggio (D-151).
+
+**È finito quando** il revisore gira su un impianto qualunque, ogni sua correzione porta il
+nome della regola che la motiva, e l'anello si chiude senza rilievi bloccanti o dice perché
+si è fermato.
 
 ---
 
@@ -372,29 +436,43 @@ versione finale.
 
 ### Pezzo 6 — Verificare
 
-Tre livelli, e servono tutti e tre:
+Due livelli deterministici, e i loro rilievi sono l'ingresso del revisore:
 
 1. **Controlli di correttezza** — nulla si sovrappone, niente esce dal foglio, i testi non
    si scontrano, ogni rimando ha il suo gemello. Bloccanti.
 2. **Controllo di qualità (preflight)** — misura *come è disegnata*: curve, incroci,
-   distanze, giri inutili, riempimento del foglio, altezza dei testi, fonte dei simboli.
-   Bloccante o avviso. **Ogni misura va fatta dove la regola vive** — per attacco, per
+   distanze, giri inutili, altezza dei testi, fonte dei simboli, tratte cedute (D-150).
+   Bloccante o avviso. Il **riempimento del foglio** resta qui come **misura**, non come
+   obiettivo (D-149). **Ogni misura va fatta dove la regola vive** — per attacco, per
    tratta, per simbolo — mai su un totale: contare non è guardare (D-088).
-3. **Occhio terzo** — un disegnatore senior che **non conosce le nostre regole**, riceve
-   solo l'immagine stampata e la confronta con tavole vere. Può respingere. Ciò che
-   respinge due volte per lo stesso motivo diventa una misura automatica (D-065, D-086).
 
-**È finito quando** la tavola passa i primi due e l'occhio terzo la firmerebbe.
+**Una regola è un controllo che sa nominare la propria violazione** (D-153). Se non si può
+misurare, il revisore non la può usare e resta un'intenzione: è la differenza fra
+«l'autostrada deve essere dritta» e «la tratta `s3` piega quattro volte, e su un'autostrada
+le pieghe ammesse sono zero». Le righe di `docs/regole-del-piano.md` marcate `da scrivere`
+sono i controlli che mancano, ed è lavoro aperto.
+
+**Il terzo livello non è più un cancello a valle: è il revisore** (pezzo 3c, D-114 attuata
+da D-151), e il suo metro non è solo numerico — mette la nostra tavola accanto a quelle del
+disegnatore del PO, perché è lì che sta la differenza che si vede a colpo d'occhio (D-153).
+
+**È finito quando** la tavola passa i due livelli e il revisore non ha più una regola da
+nominare. Il giudizio del prodotto resta del PO, sulle tavole (D-146).
 
 ---
 
-## 3. Le tre regole di metodo che ci siamo dati, e che valgono per tutti e sei
+## 3. Le tre regole di metodo che ci siamo dati, e che valgono per ogni pezzo
 
-1. **Uno decide, uno o più fanno, uno controlla.** Chi costruisce non approva il proprio
-   lavoro (D-083).
+1. **Il controllo è uno: il PO guarda le tavole** (D-146, D-147). Il metodo dei tre ruoli
+   dentro il DEV (D-083 — «uno decide, uno o più fanno, uno controlla») presupponeva più
+   sessioni, e da D-147 la sessione è una sola: quel controllo incrociato non c'è più, e
+   **non si fonde finché il PO non ha visto le tavole e detto di sì**. Se da un impianto di
+   prova non esce nessuna tavola, quella è la **prima** cosa che si dice.
 2. **Si verifica guardando, non contando.** Ogni modifica si chiude guardando l'immagine
-   rigenerata, non solo la batteria di prove (D-088).
-3. **Gli esempi del PM non sono l'elenco dei difetti.** Per ogni difetto segnalato si
+   rigenerata, non solo la batteria di prove (D-088). E **se una tavola sembra sbagliata e
+   i numeri dicono che va bene, si scrive**: è il rilievo più utile, ed è due volte su due
+   il modo in cui i difetti veri sono stati trovati.
+3. **Gli esempi del PO non sono l'elenco dei difetti.** Per ogni difetto segnalato si
    cercano tutti i suoi simili e si chiudono insieme (D-089).
 
 ---
@@ -403,6 +481,9 @@ Tre livelli, e servono tutti e tre:
 
 | Domanda | Documento, e uno solo |
 |---|---|
+| **Chi decide cosa nel disegno** | **`docs/ARCHITETTURA-DEL-PIANO.md`** — vince su ogni contrasto |
+| **Con quali regole si compone** | **`docs/regole-del-piano.md`** — aperto per dichiarazione del PO |
+| Dove siamo adesso, in breve | `HANDOFF.md` |
 | Cosa fa il prodotto e cosa non fa | `docs/prodotto/PRD_DISEGNATORE_MEP.md` |
 | Cosa dichiara di sé un componente, e perché | `docs/prodotto/PROPRIETA_COMPONENTI.md` |
 | **Dove va ciascun accessorio, e chi lo dice** | `docs/prodotto/DOVE_VA_CIASCUN_ACCESSORIO.md` |
@@ -416,7 +497,7 @@ Tre livelli, e servono tutti e tre:
 | A che punto siamo e cosa manca | `PROJECT_STATE.md` |
 | Cosa è stato rimandato, e perché | `docs/DEFERRED.md` |
 | Da dove vengono simboli e prescrizioni | `docs/fonti/SOURCE_REGISTER.md` |
-| Come giudica l'occhio terzo | `docs/standard/COLD_EYE_REVIEW.md` |
+| Come giudicava l'occhio terzo, prima che diventasse il revisore (D-151) | `docs/standard/COLD_EYE_REVIEW.md` |
 
 `docs/plans/` contiene il **piano corrente** e i verdetti dei collaudi, ma è un registro di
 **esecuzione**: racconta come è andata, non cosa è vero adesso. Serve a sapere a che punto è
