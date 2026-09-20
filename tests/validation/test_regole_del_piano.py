@@ -51,6 +51,7 @@ from disegnatore_mep.validation.regole import (
     organi_di_servizio_lontani,
     pezzi_fuori_fascia,
     rilievi_delle_regole,
+    ritorni_sopra_la_mandata,
     scostamenti_che_tornano_indietro,
 )
 
@@ -776,6 +777,7 @@ CODICI = {
     "B4": "INLINE_ORGAN_BREAKS_THE_RUN",
     "B8": "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK",
     "B9": "PARALLEL_RUNS_WITHOUT_A_FREE_LANE",
+    "B10": "RETURN_RUNS_ABOVE_ITS_SUPPLY",
 }
 """Il rilievo di ciascuna regola misurata, nell'ordine di `ORDINE_DELLE_REGOLE`.
 
@@ -960,3 +962,58 @@ def test_b9_una_tratta_ceduta_non_si_accusa() -> None:
     ceduta = tratta(["p2"], _punti((10, 105), (200, 105)))
     ceduta = ceduta.model_copy(update={"unresolved": True})
     assert linee_parallele_senza_corsie(tavola([], [dritta, ceduta])) == []
+
+
+# --- B10: mandata sopra, ritorno sotto ---------------------------------------
+
+
+def _coppia(y_mandata: float, y_ritorno: float) -> list[RoutedTrunk]:
+    mandata = RoutedTrunk(
+        network_id="primo", medium="heating_water", supply=True,
+        connection_ids=["m1"], segments=[_punti((10, y_mandata), (200, y_mandata))],
+    )
+    ritorno = RoutedTrunk(
+        network_id="primo", medium="heating_water", supply=False,
+        connection_ids=["r1"], segments=[_punti((10, y_ritorno), (200, y_ritorno))],
+    )
+    return [mandata, ritorno]
+
+
+def test_b10_mandata_sopra_tace() -> None:
+    assert ritorni_sopra_la_mandata(tavola([], _coppia(100, 115))) == []
+
+
+def test_b10_ritorno_sopra_si_accende() -> None:
+    rilievi = ritorni_sopra_la_mandata(tavola([], _coppia(115, 100)))
+    assert len(rilievi) == 1
+    assert rilievi[0].code == "RETURN_RUNS_ABOVE_ITS_SUPPLY"
+    assert {"m1", "r1"} <= set(rilievi[0].entity_ids)
+
+
+def test_b10_reti_diverse_non_si_confrontano() -> None:
+    """Due reti diverse non sono una coppia mandata/ritorno."""
+    mandata, ritorno = _coppia(115, 100)
+    ritorno = ritorno.model_copy(update={"network_id": "secondo"})
+    assert ritorni_sopra_la_mandata(tavola([], [mandata, ritorno])) == []
+
+
+def test_b10_sulle_verticali_non_si_pretende_niente() -> None:
+    """Le tavole del PO **non hanno una costante** sul lato delle colonne: in una
+    la mandata sta a sinistra, in un'altra a destra. Qui non si inventa."""
+    mandata = RoutedTrunk(
+        network_id="primo", supply=True, connection_ids=["m1"],
+        segments=[_punti((115, 10), (115, 200))],
+    )
+    ritorno = RoutedTrunk(
+        network_id="primo", supply=False, connection_ids=["r1"],
+        segments=[_punti((100, 10), (100, 200))],
+    )
+    assert ritorni_sopra_la_mandata(tavola([], [mandata, ritorno])) == []
+
+
+def test_b10_uno_spigolo_non_e_una_corsia() -> None:
+    """Stessa lettura di B9: il fianco a fianco dev'essere almeno lungo quanto la
+    distanza che separa le due linee."""
+    mandata, ritorno = _coppia(115, 100)
+    mandata = mandata.model_copy(update={"segments": [_punti((10, 115), (15, 115))]})
+    assert ritorni_sopra_la_mandata(tavola([], [mandata, ritorno])) == []

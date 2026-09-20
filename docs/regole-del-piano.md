@@ -291,6 +291,29 @@ perché lì tutti gli affiancamenti stanno già a 10 mm.
 > accostano per 2,5 sono uno **spigolo**, non un corridoio. È una **lettura dichiarata**, non
 > una soglia tarata, e serve a non accusare ogni angolo.
 
+### B10 — Mandata sopra, ritorno sotto. Sulle orizzontali, sempre.
+
+*Fonte:* la nostra, e scritta da prima: `layout/composition.py` — «le tubazioni corrono su
+corsie orizzontali a quote fisse, con la **mandata sopra il ritorno**» — ricavata misurando
+una tavola di riferimento del PO. **Riscontro sul corpus** di
+`docs/input-pm/riferimenti-grafici/`: costante su tutte le tavole, comprese le due di mano
+del PO.
+*Controllo:* **`RETURN_RUNS_ABOVE_ITS_SUPPLY`** —
+`validation/regole.py::ritorni_sopra_la_mandata`.
+*Tavola:* misurato sulle cinque consegnate — **49 coppie giuste, 7 sbagliate**, su quattro
+tavole su cinque.
+
+> **Perché adesso si può pretendere, e prima no.** La prova che difendeva questa convenzione
+> — `tests/layout/test_composition.py` — dichiara che «sulla corsia la convenzione **non si
+> può pretendere**… imporlo costerebbe pieghe». Era vero quando la posa la decideva
+> **l'instradatore**. Dal **D-151** la posa la decide il **piano**, e mettere i pezzi sulle
+> quote giuste **non costa nessuna piega**: la cura è di chi compone. È lo stesso passaggio
+> di D-158, e vale per ogni convenzione che oggi vive come preferenza del router.
+
+⚠ **Solo le orizzontali, e non è una dimenticanza.** Sulle **verticali** le tavole del PO non
+hanno una costante: la colonna di mandata sta a sinistra del ritorno in una e a destra in
+un'altra. **Una regola sul lato dei verticali non esiste, e non si inventa.**
+
 ---
 
 ## C. Come si prende un pezzo

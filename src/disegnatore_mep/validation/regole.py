@@ -1169,6 +1169,71 @@ def linee_parallele_senza_corsie(
             )
     return trovati
 
+
+def ritorni_sopra_la_mandata(
+    drawing: DrawingGeometry,
+) -> list[ValidationIssue]:
+    """**B10** — mandata sopra, ritorno sotto. Sulle orizzontali, sempre.
+
+    *Fonte:* la nostra, ed e' scritta da prima: `layout/composition.py` —
+    «le tubazioni corrono su **corsie orizzontali a quote fisse**, con la
+    **mandata sopra il ritorno**» — ricavata misurando una tavola di riferimento
+    del PO. L'instradatore la preferisce gia' (`route.prefer_high=supply`), ma
+    solo **a parita' di costo**.
+    *Riscontro sulle tavole del disegnatore del PO*: la mandata sta sopra il
+    ritorno su **tutte** quelle del corpus di `input-pm/riferimenti-grafici/`.
+
+    ⛔ **Perche' adesso si puo' pretendere, e prima no.** La prova che
+    difendeva questa convenzione — `test_composition.py` — dichiara che «sulla
+    corsia la convenzione **non si puo' pretendere**… imporlo costerebbe
+    pieghe». Era vero quando la posa la decideva **l'instradatore**, che per
+    ottenerla avrebbe dovuto comprare una piega. Dal **D-151** la posa la decide
+    il **piano**: mettere i pezzi sulle quote giuste **non costa nessuna
+    piega**, e la cura non e' piu' dell'instradatore ma di chi compone. E' lo
+    stesso passaggio di **D-158**.
+
+    ⚠ **Solo le orizzontali, e non e' una dimenticanza.** Sulle **verticali** le
+    tavole del PO **non hanno una costante**: la colonna di mandata sta a
+    sinistra del ritorno in una e a destra in un'altra. Una regola sul lato dei
+    verticali **non esiste**, e non si inventa qui.
+
+    **Quando due tratte si affiancano davvero**: stessa lettura di **B9** — il
+    fianco a fianco e' almeno lungo quanto la distanza che le separa.
+    """
+    trovati: list[ValidationIssue] = []
+    visti: set[tuple[str, str]] = set()
+    for sheet in drawing.sheets:
+        for uno, altro, distanza, fianco, asse in _affiancamenti(sheet):
+            if asse != "orizzontale":
+                continue
+            if uno.network_id != altro.network_id or uno.supply == altro.supply:
+                continue
+            if fianco < distanza:
+                continue
+            mandata, ritorno = (uno, altro) if uno.supply else (altro, uno)
+            quota_m = min(p.y_mm for parte in mandata.segments for p in parte)
+            quota_r = min(p.y_mm for parte in ritorno.segments for p in parte)
+            if quota_m < quota_r:
+                continue
+            nomi = (
+                ", ".join(mandata.connection_ids) or mandata.network_id,
+                ", ".join(ritorno.connection_ids) or ritorno.network_id,
+            )
+            if nomi in visti:
+                continue
+            visti.add(nomi)
+            trovati.append(
+                _rilievo(
+                    "RETURN_RUNS_ABOVE_ITS_SUPPLY",
+                    f"la tavola {sheet.sheet_id}: il ritorno {nomi[1]} corre "
+                    f"**sopra** la mandata {nomi[0]} per {fianco:.1f} mm sulla rete "
+                    f"{uno.network_id}: mandata sopra, ritorno sotto (B10, "
+                    f"composition.py)",
+                    [sheet.sheet_id, *mandata.connection_ids, *ritorno.connection_ids],
+                )
+            )
+    return trovati
+
 CODICE_DELLA_REGOLA: dict[str, str] = {
     "A1": "PIECE_OUTSIDE_ITS_BAND",
     "A4": "SERVICE_STUB_LONGER_THAN_ITS_MINIMUM",
@@ -1177,6 +1242,7 @@ CODICE_DELLA_REGOLA: dict[str, str] = {
     "B4": "INLINE_ORGAN_BREAKS_THE_RUN",
     "B8": "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK",
     "B9": "PARALLEL_RUNS_WITHOUT_A_FREE_LANE",
+    "B10": "RETURN_RUNS_ABOVE_ITS_SUPPLY",
 }
 """Il rilievo di ciascuna regola misurata, **e non c'e' un secondo posto**.
 
@@ -1340,6 +1406,7 @@ def rilievi_delle_regole(
         *organi_che_spezzano_il_tratto(drawing, catalog, project),
         *scostamenti_che_tornano_indietro(drawing),
         *linee_parallele_senza_corsie(drawing),
+        *ritorni_sopra_la_mandata(drawing),
     ]
 
 
@@ -1358,5 +1425,6 @@ __all__ = [
     "organi_di_servizio_lontani",
     "pezzi_fuori_fascia",
     "rilievi_delle_regole",
+    "ritorni_sopra_la_mandata",
     "scostamenti_che_tornano_indietro",
 ]
