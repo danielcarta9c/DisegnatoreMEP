@@ -1063,7 +1063,23 @@ def _quota_della_coppia(prima: Point, poi: Point) -> str:
     return f"a quote diverse (y={prima.y_mm:.1f} e y={poi.y_mm:.1f})"
 
 
-ORDINE_DELLE_REGOLE: tuple[str, ...] = ("A1", "A4", "B1", "B3", "B4")
+CODICE_DELLA_REGOLA: dict[str, str] = {
+    "A1": "PIECE_OUTSIDE_ITS_BAND",
+    "A4": "SERVICE_STUB_LONGER_THAN_ITS_MINIMUM",
+    "B1": "HIGHWAY_IS_NOT_STRAIGHT",
+    "B3": "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",
+    "B4": "INLINE_ORGAN_BREAKS_THE_RUN",
+}
+"""Il rilievo di ciascuna regola misurata, **e non c'e' un secondo posto**.
+
+Chi conta le violazioni entra da qui. E' nato da un difetto: quando `A4` e'
+entrata fra le regole, l'elenco dei codici che il **punteggio** del revisore
+conta era una lista **scritta a mano** in `piano/revisore.py`, e per un giorno il
+rilievo di A4 e' finito fra gli **avvisi** — cioe' la voce che una piega in meno
+si compra. **Un controllo che non entra nel punteggio non e' un controllo.**
+"""
+
+ORDINE_DELLE_REGOLE: tuple[str, ...] = tuple(CODICE_DELLA_REGOLA)
 """L'ordine in cui i controlli girano, e quindi quello dell'esito.
 
 **Prima dove stanno i pezzi, poi come corrono le linee**: e' l'ordine in cui il
@@ -1105,6 +1121,7 @@ def rilievi_delle_regole(
 
 __all__ = [
     "ACCUMULI",
+    "CODICE_DELLA_REGOLA",
     "DISTRIBUZIONE",
     "FASCE",
     "GENERAZIONE",

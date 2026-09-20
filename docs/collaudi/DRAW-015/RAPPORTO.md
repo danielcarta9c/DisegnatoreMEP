@@ -384,11 +384,17 @@ Prove nuove: `tests/layout/test_autostrade.py`, `tests/layout/test_il_solutore_e
 
 ### La prova che sorveglia il difetto di §10ter
 
-`tests/piano/test_revisore.py::test_ogni_regola_misurata_conta_come_violazione` pretende che
-**ogni sigla di `ORDINE_DELLE_REGOLE` sia portata da un codice di `CODICI_DELLE_REGOLE`**.
-Serve perché il difetto che ha lasciato A4 fuori dal punteggio era esattamente questo: una
-lista di codici scritta a mano accanto a una lista di regole che cresceva. Adesso i codici si
-**ricavano** dalla mappa `REGOLA_DEL_RILIEVO`, e la prova sorveglia che restino ricavati.
+Due prove, e nessuna delle due importa la mappa che deve difendere — **una prova che importa
+ciò che difende non difende niente**:
+
+- `tests/piano/test_revisore.py::test_ogni_regola_misurata_conta_come_violazione` scrive i
+  **cinque codici a mano** e pretende che siano esattamente quelli che il punteggio conta;
+- `tests/validation/test_regole_del_piano.py::test_il_raccoglitore_ha_un_rilievo_per_ogni_regola_dichiarata`
+  tiene la propria copia di sigla → codice e pretende che coincida con
+  `CODICE_DELLA_REGOLA`, **ordine compreso**.
+
+Servono perché il difetto che ha lasciato A4 fuori dal punteggio era esattamente questo: una
+lista di codici scritta a mano accanto a una lista di regole che cresceva.
 
 ### La prova di A4 che `main` non aveva, e il conto onesto
 
@@ -585,7 +591,16 @@ Aggiunta a `ORDINE_DELLE_REGOLE`, il suo rilievo finiva fra gli **avvisi** — l
 del punteggio, quella che una piega in meno si compra — perché `CODICI_DELLE_REGOLE` in
 `piano/revisore.py` era una lista di quattro codici **scritta a mano**. Cioè: il controllo
 che serviva a non violare una regola in silenzio è stato per un giorno il controllo che
-nessuno contava. Adesso i codici si ricavano, e una prova lo sorveglia (§7).
+nessuno contava.
+
+**La cura non è stata aggiungere il codice mancante**, che avrebbe lasciato in piedi la
+trappola: sigla e codice adesso stanno insieme in **un posto solo**,
+`validation/regole.py::CODICE_DELLA_REGOLA`, e sia `ORDINE_DELLE_REGOLE` sia
+`CODICI_DELLE_REGOLE` si **ricavano** da lì. Una regola nuova si aggiunge in un punto e
+arriva nel punteggio da sola. Due prove lo sorvegliano (§7).
+
+**Un controllo che non entra nel punteggio non è un controllo**, ed è la riga che
+`ARCHITETTURA-DEL-PIANO.md` §7 aggiunge accanto a D-158.
 
 ---
 

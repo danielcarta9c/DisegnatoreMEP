@@ -63,7 +63,9 @@ compone*. Il materiale c'è tutto e non si inventa niente:
 **Il buco da chiudere per primo, e il PO l'ha già risposto:** un **confine di rete** non sta
 in una fascia, sta **addosso al pezzo che serve** con lo stacco minimo (A4, D-145, I-061).
 Chi scrive `ISTRUZIONI.md` deve dirlo esplicitamente, perché è l'errore che un agente che
-legge solo A1 rifarà.
+legge solo A1 rifarà — e adesso c'è anche il rilievo che glielo dice,
+`SERVICE_STUB_LONGER_THAN_ITS_MINIMUM`, che sui cinque piani a mano è **ancora acceso
+ventiquattro volte** (punto 6bis).
 
 ⚠ **`ISTRUZIONI.md` non è il posto dove nascono le regole.** Se componendo si impara una cosa
 nuova, la riga va in `docs/regole-del-piano.md` con la propria fonte e la propria tavola, e le

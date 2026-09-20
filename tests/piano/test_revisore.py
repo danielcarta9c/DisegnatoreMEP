@@ -249,9 +249,16 @@ def test_ogni_regola_misurata_conta_come_violazione() -> None:
     punteggio, comprabile con una piega in meno. Adesso la lista si **ricava**,
     e questa prova sorveglia che resti ricavata.
     """
-    misurate = set(ORDINE_DELLE_REGOLE)
+    attese = {
+        "PIECE_OUTSIDE_ITS_BAND",
+        "SERVICE_STUB_LONGER_THAN_ITS_MINIMUM",
+        "HIGHWAY_IS_NOT_STRAIGHT",
+        "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",
+        "INLINE_ORGAN_BREAKS_THE_RUN",
+    }
+    assert set(CODICI_DELLE_REGOLE) == attese, "il punteggio conta altre violazioni"
     portate = {REGOLA_DEL_RILIEVO[codice] for codice in CODICI_DELLE_REGOLE}
-    assert portate == misurate, "una regola misurata non conta come violazione"
+    assert portate == set(ORDINE_DELLE_REGOLE), "una regola misurata non e' contata"
 
 
 def test_non_smonta_una_catena_gia_dritta() -> None:

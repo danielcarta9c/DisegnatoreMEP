@@ -25,7 +25,7 @@ a mano, in sessione**, e lo esegue il motore che già c'è.
 
 | File | Cos'è |
 |---|---|
-| `impianto-1.json` … `impianto-5.json` | I cinque piani: **dove stanno i pezzi**, e la regola che ha messo ciascuno dove sta, scritta accanto. L'1 e il 5 sono del 19/20 settembre; il 2, il 3 e il 4 sono di `DRAW-015`, composti su disposizione del PO («tu scrivi ora i piani con le regole») |
+| `impianto-1.json` … `impianto-5.json` | I cinque piani: **dove stanno i pezzi**, e la regola che ha messo ciascuno dove sta, scritta accanto. L'1 e il 5 sono del 19/20 settembre; il 2, il 3 e il 4 sono di `DRAW-015`, composti su disposizione del PO («tu scrivi ora i piani con le regole»). **Tutti e cinque hanno avuto il confine ACS corretto il 20 settembre sera**, guardando le tavole: A4 vuole lo stacco minimo, e la nota di ciascuno dice da quanto a quanto |
 | `tavola1-DAL-PIANO.pdf`, `tavola5-DAL-PIANO.pdf` | Le due tavole della prova, agli atti come sono uscite allora |
 
 Le tavole correnti di tutti e cinque stanno in `docs/collaudi/DRAW-015/tavole/`.

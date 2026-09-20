@@ -40,6 +40,7 @@ from disegnatore_mep.model.project import (
 )
 from disegnatore_mep.model.types import IssueSeverity, PlantRegime
 from disegnatore_mep.validation.regole import (
+    CODICE_DELLA_REGOLA,
     DISTRIBUZIONE,
     GENERAZIONE,
     ORDINE_DELLE_REGOLE,
@@ -772,7 +773,12 @@ CODICI = {
     "B3": "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",
     "B4": "INLINE_ORGAN_BREAKS_THE_RUN",
 }
-"""Il rilievo di ciascuna regola misurata, nell'ordine di `ORDINE_DELLE_REGOLE`."""
+"""Il rilievo di ciascuna regola misurata, nell'ordine di `ORDINE_DELLE_REGOLE`.
+
+**E' riscritta a mano apposta**, invece di importare `CODICE_DELLA_REGOLA`: una
+prova che importa la mappa che deve difendere non difende niente. Qui la sigla,
+il codice e il loro ordine sono **detti due volte**, e le due devono coincidere.
+"""
 
 
 def test_il_raccoglitore_porta_tutte_le_regole_e_solo_avvisi() -> None:
@@ -806,6 +812,7 @@ def test_il_raccoglitore_ha_un_rilievo_per_ogni_regola_dichiarata() -> None:
     """
     assert set(ORDINE_DELLE_REGOLE) == set(CODICI)
     assert tuple(CODICI) == ORDINE_DELLE_REGOLE, "l'ordine e' quello delle sigle"
+    assert CODICE_DELLA_REGOLA == CODICI, "sigla e codice, detti due volte, coincidono"
 
 
 def test_a4_il_raccoglitore_porta_anche_lo_stacco_troppo_lungo() -> None:
