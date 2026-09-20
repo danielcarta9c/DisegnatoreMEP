@@ -14,7 +14,8 @@
     "ospitare i propri accessori in linea con i 2 mm di rispetto.",
     "utenze: la rotazione e'' fissata a mano. La deduzione la gira a 180 — il confine di rete guarda l''impianto, ed e'' giusto — ma poi la miscelatrice in linea finisce sulla piega della propria tratta. E'' un limite della posa degli accessori in linea, non del piano: va curato li''.",
     "Il radiatore si allinea alla porta che lo alimenta davvero (secondary_in dell''accumulo, +20 dall''origine), non a quella che il nome suggerisce.",
-    "La tratta dell''ACS porta TRE accessori in linea e si posano a distanze fisse dalla porta (I-044): con una piega in mezzo uno ci finisce sopra. Va data dritta."
+    "La tratta dell''ACS porta TRE accessori in linea e si posano a distanze fisse dalla porta (I-044): con una piega in mezzo uno ci finisce sopra. Va data dritta.",
+    "Il gruppo di riempimento ha DUE attacchi e pende da un ramo verticale: la rotazione va detta. La deduzione la fa solo per chi ha un attacco solo e per i raccordi; un pezzo a due attacchi che non e'' una macchina resta scoperto, ed e'' un buco del formato del piano."
   ],
   "pezzi": {
     "pdc-slave": {
@@ -55,7 +56,8 @@
     },
     "filling-unit-collettore-ritorno-a": {
       "x": 195,
-      "y": 165
+      "y": 165,
+      "rotazione": 180
     },
     "tee-pressure-gauge-collettore-ritorno-a": {
       "x": 245,

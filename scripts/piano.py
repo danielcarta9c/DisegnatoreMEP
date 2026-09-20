@@ -177,10 +177,23 @@ def orienta(posati, modello, partizione, catalogo, fissate):
         # anche le macchine, l'accumulo ruotava e la mandata dell'ACS usciva da
         # un'altra faccia, con la miscelatrice che si ritrovava sulla piega
         # della propria tratta.
-        deduce = risolto.definition.is_a_fitting or len(porte) < 2
+        # **La mappa delle porte si rifà soltanto per i raccordi.** Un T si
+        # disegna come un punto e ha tre attacchi **uguali**: quale porta del
+        # modello stia su quale attacco e' una scelta della posa (D-004,
+        # I-027). Su una macchina no: `primary_out` e `cold_in` di un accumulo
+        # sono due bocchettoni **fisici diversi del serbatoio**, e scambiarli
+        # non e' un ritocco grafico, e' un altro impianto.
+        #
+        # **Misurato il 20 settembre.** Rimappando anche le macchine, l'acqua
+        # fredda dell'impianto 1 finiva sulla porta a quota 211 — che e'
+        # `primary_out` — invece che su `cold_in` a 228,5: il ritorno e
+        # l'ingresso sanitario arrivavano allo stesso punto, e il PO l'ha visto
+        # guardando la tavola. Era un errore di **contenuto** prodotto da una
+        # deduzione grafica.
+        raccordo = risolto.definition.is_a_fitting
         rotazioni = (
             sorted(base.allowed_rotations_deg)
-            if deduce and item.component_id not in fissate
+            if (raccordo or len(porte) < 2) and item.component_id not in fissate
             else [item.rotation_deg]
         )
         scelta = None
@@ -197,7 +210,11 @@ def orienta(posati, modello, partizione, catalogo, fissate):
             if scelta is None or punteggio > scelta[0] + 1e-9:
                 scelta = (punteggio, provvisorio, mappa)
         assert scelta is not None
-        fuori.append(scelta[1].model_copy(update={"port_map": scelta[2]}))
+        fuori.append(
+            scelta[1].model_copy(update={"port_map": scelta[2]})
+            if raccordo
+            else scelta[1]
+        )
     return fuori
 
 
