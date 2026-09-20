@@ -25,6 +25,50 @@ Ne seguono tre obblighi per chi aggiunge una riga:
 
 ---
 
+## L'ordine in cui si compone — **prima le autostrade**
+
+**È la disposizione del PO del 20 settembre 2026**, e viene prima di ogni regola di questo
+foglio perché dice **in che ordine** si applicano:
+
+> «Sposta le macchine in modo che le linee delle autostrade vengano con pochissime curve,
+> poi attacchi il resto delle valvole piccole e strade secondarie. Ma **il disegno nasce
+> dalle linee delle autostrade**. Le macchine o cose in parallelo si disegnano come ti ho
+> già fatto vedere. LE AUTOSTRADE CON POCHE CURVE e pochi sormonti.»
+
+Il procedimento, in quest'ordine e non in un altro:
+
+1. **Leggi le porte delle macchine di spina.** La quota di un'autostrada **non si sceglie**:
+   è quella della porta che la genera. Un `buffer-four-port` ha `primary_in` a **+5** dalla
+   propria origine e `primary_out` a **+20**; una pompa di calore ha `water_supply` a **+5**
+   e `water_return` a **+20**. Due macchine con lo **stesso y di origine** danno **due
+   autostrade perfettamente rette**, gratis.
+2. **Posa le macchine su quelle quote.** È la mossa che decide la tavola. Tutto il resto si
+   adatta.
+3. **Chi sta in parallelo si impila** (A2) e si unisce con **una verticale sola**, corta,
+   **accanto alle macchine** (B3) — non in mezzo al foglio. Ogni macchina ci entra con uno
+   **stacco orizzontale corto**.
+4. **Tira le autostrade, e guarda che siano rette** prima di appendere qualunque cosa.
+5. **Solo adesso** appendi valvole, strumenti, confini di rete (A4) e strade secondarie.
+
+⚠ **Un pezzo che sta su un'autostrada si posa sulla quota dell'autostrada.** È l'errore che
+ha prodotto le tavole del 20 settembre: il tronco del ritorno primario dell'impianto 5 stava
+**20 mm sotto** la quota di `volano.primary_out`, e per raggiungerla risaliva con una
+verticale di **120 mm** che si portava dietro manometro, riempimento, vaso e defangatore.
+Rimesso sulla quota, il tronco è **una retta sola** dal volano fino all'ultima pompa.
+
+**L'attrezzo per farlo esiste e si usa prima di comporre**, non dopo:
+`layout/autostrade.py::porte_in_tavola` dice dove sta ogni porta di ogni pezzo posato, e
+`autostrade_in_tavola` + `pieghe_dell_autostrada` dicono quali catene sono autostrade e
+quante pieghe fanno, **spezzata per spezzata**.
+
+> **Quello che il piano non può raddrizzare, e va saputo.** Tre macchine in parallelo su due
+> raccordi a T vogliono **due cambi di giacitura** sul collettore: sono nel grafo, non nel
+> disegno, e ce li ha anche lo schizzo del PO del 3 settembre
+> (`input-pm/riferimenti-grafici/2026-09-03/schizzo-informale-po.png`). «Poche curve» vuol
+> dire **quelle e non altre**, non zero.
+
+---
+
 ## A. Dove stanno i pezzi
 
 ### A1 — Tre macro fasce verticali

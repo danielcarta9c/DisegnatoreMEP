@@ -24,7 +24,9 @@
     "con un segmento; lo scambiatore a piastre ha primary_in e primary_out",
     "tutt'e due su faccia SINISTRA e non ruota. I rilievi B1 che restano su quelle",
     "catene sono veri, e la cura non e' nel piano.",
-    "A4 (D-145) — il prelievo ACS sta ADDOSSO al pezzo che serve, con lo stacco minimo. NON va nella fascia della distribuzione: un confine di rete non ha una posizione propria (I-061, flow.BOUNDARY_FUNCTION). Correzione del 20 settembre 2026: era a 152,5 mm, ed era un errore di chi ha composto — A1 applicata a un pezzo che A1 non governa."
+    "A4 (D-145) — il prelievo ACS sta ADDOSSO al pezzo che serve, con lo stacco minimo. NON va nella fascia della distribuzione: un confine di rete non ha una posizione propria (I-061, flow.BOUNDARY_FUNCTION). Correzione del 20 settembre 2026: era a 152,5 mm, ed era un errore di chi ha composto — A1 applicata a un pezzo che A1 non governa.",
+    "RIFATTO IL 20 SETTEMBRE SERA, SU DISPOSIZIONE DEL PO (vedi impianto-5): prima le autostrade. La commutatrice del ritorno stava 30 mm sotto la quota della propria porta sulla caldaia e la deviatrice era troppo vicina al collettore: la salita faceva un gomito di 10 mm e la linea verso lo scambiatore tre pieghe. Adesso la commutatrice sta sulla quota di caldaia.water_return e la deviatrice ha lo spazio per scendere dritta: la linea allo scambiatore e' UNA L.",
+    "Misurato prima e dopo: «scambiatore -> deviatrice-caldaia» da 3 pieghe a 1; incroci 3 -> 3, cedute 0 -> 0, bloccanti 0 -> 0."
   ],
   "pezzi": {
     "pdc": {
@@ -109,14 +111,14 @@
       "regola": "B3 — nodo del collettore di ritorno, sulla retta y=120"
     },
     "deviatrice-caldaia": {
-      "x": 120,
+      "x": 200,
       "y": 225,
-      "regola": "B4 — in e out_a in linea sulla mandata della caldaia, y=230"
+      "regola": "B1 — sull'autostrada: la quota e' quella della porta della macchina"
     },
     "commutatrice-ritorno": {
       "x": 160,
-      "y": 265,
-      "regola": "B4 — in_a e out in linea sul ritorno della caldaia"
+      "y": 235,
+      "regola": "B1 — sull'autostrada: la quota e' quella della porta della macchina"
     },
     "scambiatore": {
       "x": 300,

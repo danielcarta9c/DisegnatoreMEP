@@ -17,7 +17,13 @@
     "Le tratte verso i terminali portano tre accessori in linea ciascuna — due intercettazioni e un circolatore — quindi vogliono almeno 40 mm di rettilineo: i terminali stanno a 85 mm dalla dorsale.",
     "Il bollitore scende: la mandata sanitaria che ne esce porta tre accessori in linea e vuole il proprio rettilineo prima dell innesto del ricircolo.",
     "La miscelatrice del radiante ha hot_in a sinistra, out a destra e cold_in sotto: va presa di fianco dalla dorsale e il ritorno le arriva da sotto. Se la mandata le arriva dall alto, la linea supera la porta e ci torna indietro.",
-    "A4 (D-145) — il prelievo ACS sta ADDOSSO al pezzo che serve, con lo stacco minimo. NON va nella fascia della distribuzione: un confine di rete non ha una posizione propria (I-061, flow.BOUNDARY_FUNCTION). Correzione del 20 settembre 2026: lo stacco era 37,5 mm contro un minimo di 20,0, e adesso e' 22,5. Restano 2,5 mm, cioe' UN PASSO di griglia: a 662,5 la tratta non si instrada piu' — «run w6-a has no straight stretch of 10mm for valve-isolation». E' il limite del rettilineo che l'intercettazione pretende (B5), misurato, non una tolleranza inventata."
+    "A4 (D-145) — il prelievo ACS sta ADDOSSO al pezzo che serve, con lo stacco minimo. NON va nella fascia della distribuzione: un confine di rete non ha una posizione propria (I-061, flow.BOUNDARY_FUNCTION). Correzione del 20 settembre 2026: lo stacco era 37,5 mm contro un minimo di 20,0, e adesso e' 22,5. Restano 2,5 mm, cioe' UN PASSO di griglia: a 662,5 la tratta non si instrada piu' — «run w6-a has no straight stretch of 10mm for valve-isolation». E' il limite del rettilineo che l'intercettazione pretende (B5), misurato, non una tolleranza inventata.",
+    "RIFATTO IL 20 SETTEMBRE SERA, SU DISPOSIZIONE DEL PO: «il disegno nasce dalle linee delle autostrade. Sposta le macchine in modo che le linee vengano con pochissime curve, poi attacchi il resto». Il metodo, in quest'ordine: (1) le quote delle due autostrade primarie si leggono dalle PORTE del volano — primary_in y=+5 dall'origine, primary_out y=+20 — e non si scelgono; (2) i pezzi che stanno su un'autostrada si posano su quella quota; (3) il collettore e' UNA verticale accanto alle macchine; (4) gli organi si appendono dopo.",
+    "Cio' che e' cambiato: il tronco del ritorno primario stava 20 mm sotto la quota di volano.primary_out e risaliva con una verticale di 120 mm che si portava dietro gli accessori; adesso e' UNA RETTA SOLA dal volano fino a pdc-3, con manometro, riempimento, vaso e defangatore appesi sopra. cascata-ritorno-a e -b stanno tutt'e due su quella quota: il tronco entra dritto e pdc-3 ci sta gia' sopra.",
+    "Misurato prima e dopo: incroci 14 -> 12, tratte cedute 0 -> 0, rilievi bloccanti 0 -> 0. Le pieghe che restano sul collettore sono quelle che il GRAFO impone: tre macchine in parallelo su due raccordi a T vogliono due cambi di giacitura, e sono gli stessi che ha lo schizzo del PO del 3 settembre.",
+    "RIFATTO IL 20 SETTEMBRE SERA, SU DISPOSIZIONE DEL PO: «il disegno nasce dalle linee delle autostrade. Sposta le macchine in modo che le linee vengano con pochissime curve, poi attacchi il resto». Il metodo, in quest'ordine: (1) le quote delle due autostrade primarie si leggono dalle PORTE del volano — primary_in a +5 dall'origine, primary_out a +20 — e non si scelgono; (2) i pezzi che stanno su un'autostrada si posano su quella quota; (3) il collettore e' UNA verticale accanto alle macchine; (4) gli organi si appendono dopo.",
+    "Cio' che e' cambiato: il tronco del ritorno primario stava 20 mm sotto la quota di volano.primary_out e risaliva con una verticale di 120 mm che si portava dietro gli accessori; adesso e' UNA RETTA SOLA dal volano fino a pdc-3, con manometro, riempimento, vaso e defangatore appesi sopra. cascata-ritorno-a e -b stanno tutt'e due su quella quota: il tronco entra dritto e pdc-3 ci sta gia' sopra.",
+    "Misurato prima e dopo: incroci 14 -> 12, tratte cedute 0 -> 0, rilievi bloccanti 0 -> 0. Le pieghe che restano sul collettore sono quelle che il GRAFO impone: tre macchine in parallelo su due raccordi a T vogliono due cambi di giacitura, e sono gli stessi che ha lo schizzo del PO del 3 settembre."
   ],
   "pezzi": {
     "pdc-1": {
@@ -89,75 +95,81 @@
       "y": 162.5
     },
     "cascata-ritorno-a": {
-      "x": 200,
-      "y": 77.5
+      "x": 195,
+      "y": 177.5,
+      "regola": "B3 — collettore verticale, sulla stessa x, accanto alle macchine"
     },
     "cascata-ritorno-b": {
-      "x": 200,
-      "y": 127.5
+      "x": 165,
+      "y": 177.5,
+      "regola": "B3 — collettore verticale, sulla stessa x, accanto alle macchine"
     },
     "deviatrice": {
-      "x": 240,
+      "x": 265,
       "y": 160
     },
     "volano": {
-      "x": 300,
+      "x": 350,
       "y": 160
     },
     "bollitore": {
-      "x": 300,
+      "x": 350,
       "y": 300
     },
     "drain-connection-volano-primary-in": {
-      "x": 310,
+      "x": 360,
       "y": 212.5
     },
     "ritorno-primario": {
-      "x": 275,
-      "y": 197.5
+      "x": 325,
+      "y": 177.5,
+      "regola": "B1 — sull'autostrada: la quota e' quella della porta della macchina"
     },
     "tee-pressure-gauge-cascata-ritorno-a-a": {
-      "x": 255,
-      "y": 197.5
+      "x": 295,
+      "y": 177.5,
+      "regola": "B1 — sull'autostrada: la quota e' quella della porta della macchina"
     },
     "pressure-gauge-cascata-ritorno-a-a": {
-      "x": 255,
-      "y": 220
+      "x": 295,
+      "y": 200
     },
     "tee-filling-unit-cascata-ritorno-a-a-b": {
-      "x": 230,
-      "y": 197.5
+      "x": 265,
+      "y": 177.5,
+      "regola": "B1 — sull'autostrada: la quota e' quella della porta della macchina"
     },
     "filling-unit-cascata-ritorno-a-a": {
-      "x": 230,
-      "y": 220
+      "x": 265,
+      "y": 200
     },
     "inlet-filling-unit-cascata-ritorno-a-a": {
-      "x": 230,
-      "y": 245
+      "x": 265,
+      "y": 225
     },
     "tee-expansion-connection-cascata-ritorno-a-a": {
-      "x": 205,
-      "y": 197.5
+      "x": 235,
+      "y": 177.5,
+      "regola": "B1 — sull'autostrada: la quota e' quella della porta della macchina"
     },
     "expansion-connection-cascata-ritorno-a-a": {
-      "x": 205,
-      "y": 220
+      "x": 235,
+      "y": 200
     },
     "acquedotto": {
-      "x": 230,
+      "x": 280,
       "y": 335
     },
     "tee-drain-connection-cold-bollitore-cold-in": {
-      "x": 265,
+      "x": 315,
       "y": 335
     },
     "drain-connection-cold-bollitore-cold-in": {
-      "x": 265,
+      "x": 315,
       "y": 355
     },
     "innesto-ricircolo": {
-      "x": 305,
+      "x": 355,
       "y": 230
     },
     "presa-ricircolo": {
