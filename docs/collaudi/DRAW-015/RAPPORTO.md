@@ -1,7 +1,12 @@
 # DRAW-015 — Il revisore, e il repository che lo regge
 
-**Data:** 20 settembre 2026 · **Agente unico** (D-147), con quattro agenti paralleli in
+**Data:** 20–21 settembre 2026 · **Agente unico** (D-147), con cinque agenti paralleli in
 sessione (D-152) · **Base:** `8b08233`, la testa di `origin/main`
+
+> **Le tavole sono state rifatte il 20 settembre sera, davanti al PO.** Lui le ha guardate e
+> ha detto che fanno schifo; da lì sono nate **cinque decisioni** (D-159…D-163), **quattro
+> regole misurate nuove** (B8, B9, B10, B11) e **l'occhio del revisore**. La cronaca, con le
+> misure, è in **§13**, e la tabella qui sotto è quella **dopo** le correzioni.
 
 ---
 
@@ -9,18 +14,27 @@ sessione (D-152) · **Base:** `8b08233`, la testa di `origin/main`
 
 **Escono tutte e cinque.** È la prima volta nel progetto.
 
-| | tavola | formato | tratte | **cedute** | **bloccanti** | violazioni | pieghe | incroci |
-|---|---|---|---|---|---|---|---|---|
-| impianto 1 — due PDC e accumulo combinato | [`tavole/tavola-1-DAL-PIANO.pdf`](tavole/tavola-1-DAL-PIANO.pdf) | A2 | 21 | **0** | **0** | 8 | 8 | 1 |
-| impianto 2 — PDC con deviatrice e ACS | [`tavole/tavola-2-DAL-PIANO.pdf`](tavole/tavola-2-DAL-PIANO.pdf) | A2 | 23 | **0** | **0** | 8 | 8 | 2 |
-| impianto 3 — PDC diretta su pavimento | [`tavole/tavola-3-DAL-PIANO.pdf`](tavole/tavola-3-DAL-PIANO.pdf) | A2 | 22 | **0** | **1** | 8 | 8 | 1 |
-| impianto 4 — ibrido PDC + caldaia | [`tavole/tavola-4-DAL-PIANO.pdf`](tavole/tavola-4-DAL-PIANO.pdf) | A2 | 25 | **0** | **0** | 10 | 14 | 3 |
-| impianto 5 — cascata di tre PDC | [`tavole/tavola-5-DAL-PIANO.pdf`](tavole/tavola-5-DAL-PIANO.pdf) | A1 | 54 | **0** | **0** | 18 | 33 | 14 |
+| | tavola | formato | tratte | **cedute** | **bloccanti** | rilievi | violazioni di regola | pieghe | incroci |
+|---|---|---|---|---|---|---|---|---|---|
+| impianto 1 — due PDC e accumulo combinato | [`tavole/tavola-1-DAL-PIANO.pdf`](tavole/tavola-1-DAL-PIANO.pdf) | A2 | 21 | **0** | **0** | 14 | 9 | 6 | 1 |
+| impianto 2 — PDC con deviatrice e ACS | [`tavole/tavola-2-DAL-PIANO.pdf`](tavole/tavola-2-DAL-PIANO.pdf) | A2 | 23 | **0** | **0** | 14 | 9 | 8 | 2 |
+| impianto 3 — PDC diretta su pavimento | [`tavole/tavola-3-DAL-PIANO.pdf`](tavole/tavola-3-DAL-PIANO.pdf) | A2 | 22 | **0** | **1** | 15 | 11 | 8 | 1 |
+| impianto 4 — ibrido PDC + caldaia | [`tavole/tavola-4-DAL-PIANO.pdf`](tavole/tavola-4-DAL-PIANO.pdf) | A2 | 25 | **0** | **0** | 20 | 12 | 12 | 3 |
+| impianto 5 — cascata di tre PDC | [`tavole/tavola-5-DAL-PIANO.pdf`](tavole/tavola-5-DAL-PIANO.pdf) | A1 | 54 | **0** | **0** | **38** | 25 | 29 | **12** |
 
-> **La colonna «violazioni» conta cinque regole, non quattro.** Da quando **A4** ha il
-> proprio rilievo (§4bis) il punteggio del revisore lo conta, e sono **cinque violazioni per
-> tavola** che prima non si vedevano: tutte e cinque le tavole ne portano quattro o cinque, e
-> §4bis le elenca con i millimetri. **Non è un peggioramento: è la misura che prima mancava.**
+> **Che cosa contano le colonne**, perché sia rifacibile. **rilievi**: tutte le righe
+> `codice:` del preflight. **violazioni di regola**: le sole che portano un codice di
+> `CODICE_DELLA_REGOLA`, cioè le nove regole misurate. **pieghe**: i cambi di giacitura sulla
+> spezzata **intera** di ogni tratta, ricucita attraverso le interruzioni sotto i simboli —
+> un'interruzione non è una piega. **incroci**: i `crossings` della geometria.
+>
+> **Le regole misurate sono nove, non quattro** (§13): alle quattro di D-154 si sono aggiunte
+> **A4** (§4bis) e poi **B8**, **B9**, **B10**, **B11**. Ogni regola che entra **alza** il
+> conto delle violazioni sulle stesse tavole: **non è un peggioramento, è la misura che prima
+> mancava.**
+>
+> **Il confronto che conta, sull'impianto 5**, la tavola che il PO ha bocciato per prima: da
+> **49 rilievi e 14 incroci** a **38 e 12**, a parità di regole misurate.
 
 **L'unico rilievo bloccante è sull'impianto 3**, ed è strutturale — §6.
 
@@ -815,3 +829,216 @@ tavola la guardi tu» — ed è così che sono nate le due correzioni di §4bis.
 - **Il DXF non esiste ancora.** La riproducibilità (D-023) e il vincolo dell'A3 (D-148) sono
   stati lasciati andare **perché** la tavola esce in DXF e si rifinisce in CAD (I-072), e in
   `src/` non c'è niente che scriva DXF. È la contropartita di un prezzo già pagato.
+
+---
+
+## 13. Il PO ha guardato le tavole, e la giornata è cambiata
+
+Questa sezione è la cronaca della sera del 20 settembre e della notte del 21. Sta qui perché
+**è la parte di `DRAW-015` che vale di più**, e perché il PO ha chiesto esplicitamente che
+tutto quello che è stato deciso resti agli atti.
+
+### 13.1 Quello che ha detto, e le due tavole segnate a penna
+
+> «Le tavole fanno schifo. Guardale per favore, ti sembrano tavole come dovrebbero essere?
+> **Sposta le macchine in modo che le linee delle autostrade vengano con pochissime curve,
+> poi attacchi il resto delle valvole piccole e strade secondarie. Ma il disegno nasce dalle
+> linee delle autostrade.** Le macchine o cose in parallelo si disegnano come ti ho già fatto
+> vedere. Stai lì a ottimizzare le cose inutili… ma la cosa più facile e più importante non la
+> facciamo. **LE AUTOSTRADE CON POCHE CURVE e pochi sormonti.**»
+
+Le due tavole che ha segnato — la 5 e la 4 — sono nel repository, con il messaggio riportato
+per intero e la mappa di che cosa è uscito da ogni segno:
+[`docs/input-pm/riferimenti-grafici/2026-09-20/`](../../input-pm/riferimenti-grafici/2026-09-20/).
+
+E il suo giudizio sulle cinque, che è il metro vero:
+
+> «1, 2, 3 vanno quasi bene; **la 4 e la 5 mi sembra che non hai minimamente risolto il
+> problema. Non vedo le autostrade ben tracciate.**»
+
+### 13.2 La cosa che non sapevamo, ed è D-159
+
+**La quota di un'autostrada non si sceglie: è quella della porta della macchina che la
+genera.** Un `buffer-four-port` ha `primary_in` a **+5** dalla propria origine e `primary_out`
+a **+20**; una pompa di calore ha `water_supply` a **+5** e `water_return` a **+20**. Due
+macchine con lo **stesso y** danno **due autostrade perfettamente rette, gratis**.
+
+**La misura che l'ha resa necessaria:** il tronco del ritorno primario dell'impianto 5 stava
+**20 mm sotto** la quota di `volano.primary_out`, e per raggiungerla risaliva con una verticale
+di **120 mm** che si portava dietro manometro, riempimento, vaso e defangatore. Rimesso sulla
+quota è **una retta sola** dal volano fino a PDC-3.
+
+Il procedimento in cinque passi sta in testa a `docs/regole-del-piano.md`, **prima di ogni
+regola**, perché dice in che ordine si applicano.
+
+*Corroborazione pubblicata, arrivata per un'altra strada:* Caleffi, **Idraulica n. 25**
+(dicembre 2003), monografico sul disegno degli impianti, racconta di aver rifatto l'archivio
+dei blocchi perché «i **collettori non si raccordavano alle derivazioni delle caldaie**»,
+ridisegnandoli «come mattoncini Lego facilmente assemblabili». È lo stesso punto: **le quote
+delle porte devono combaciare**, o la linea che unisce i pezzi piega.
+
+### 13.3 L'esperimento che il PO ha chiesto, e la sua risposta
+
+> «Riesci a tracciare quelle strade **senza mettere nessuna valvola**? Solo attrezzi
+> principali… così capiamo se l'errore è nella fase autostrade proprio, o legato a dopo.»
+
+Fatto: gli impianti 4 e 5 ridotti a **sole macchine e collettori**. Le autostrade **restano
+storte** — **5 spezzate piegate sul 4, 11 sul 5**.
+
+**L'errore è nella fase delle autostrade.** Non nasce quando si appendono gli organi.
+
+E due cose che l'esperimento ha chiarito e che non vanno rifatte:
+
+- **i collettori non si possono togliere**: tre pompe in parallelo senza collettore mettono
+  **tre tubazioni su una porta sola**, e il grafo non lo permette;
+- **l'impianto 4 non può uscire come lo schizzo del PO.** Impilata la caldaia sotto la pompa di
+  calore a **sei quote diverse**: 2 non si instradano affatto, 3 peggiorano, 1 pareggia. La
+  topologia del 4 non è quella dello schizzo — c'è un **disgiuntore idraulico** in mezzo.
+  **È una cosa da dire al PO, non da aggirare.**
+
+### 13.4 Le quattro regole nuove, ciascuna con la propria fonte e il proprio controllo
+
+Dalla disposizione «**crea delle regole di best practice di disegno e poi le fai rispettare**»
+(I-096). Le regole misurate passano da cinque a **nove**.
+
+| | regola | codice | da dove viene |
+|---|---|---|---|
+| **B8** | una linea non lascia la propria quota per poi tornarci | `RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK` | D-065, il cold eye review del 4 agosto: era uno dei quattro difetti, e l'unico rimasto **solo un peso dell'instradatore** |
+| **B9** | due tubazioni che si affiancano si tengono le corsie libere | `PARALLEL_RUNS_WITHOUT_A_FREE_LANE` | D-062 e la prassi pubblicata; la soglia è `ROW_GAP_MM`, non una costante nuova |
+| **B10** | mandata sopra, ritorno sotto — sulle orizzontali | `RETURN_RUNS_ABOVE_ITS_SUPPLY` | `composition.py` e le tavole del PO. **Solo sulle orizzontali**: sulle verticali le sue tavole non hanno una costante |
+| **B11** | mandata e ritorno corrono insieme, a interasse costante | `SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER` | il PO, testualmente: «**corrono sempre insieme, non esiste che una va e l'altra va zig zag accanto**» |
+
+**E una regola sul come si scrivono le regole**, che è **D-160**: sigla e codice stanno in **un
+posto solo**, `validation/regole.py::CODICE_DELLA_REGOLA`, da cui si ricavano sia l'ordine dei
+controlli sia l'insieme che il **punteggio** conta. Il precedente che l'ha prodotta è **A4**:
+era entrata fra le regole misurate ma `CODICI_DELLE_REGOLE` era una lista scritta a mano, e per
+un giorno il suo rilievo è finito fra gli **avvisi**. **Un controllo che non entra nel punteggio
+non è un controllo**, e la prova di guardia ha fermato B8, B9 e B11 esattamente per questo.
+
+**`RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK` è a zero su tutte e cinque le tavole.** I sali-scendi,
+che il cold eye review aveva trovato quarantasette giorni prima, sono chiusi.
+
+### 13.5 Due misure mie che erano sbagliate, e come me ne sono accorto
+
+**La prima.** Il primo controllo di B11 accoppiava **tutte** le mandate con **tutti** i ritorni
+di una rete, e leggeva le diramazioni come zig-zag. Riscritto: le coppie si formano per
+**macchina di estremità**.
+
+**La seconda, e questa è peggiore.** Anche dopo la riscrittura, B11 dava interassi assurdi —
+da **−110 a +155 mm** — proprio dove la coppia gira. Il motivo: `_quota_in` leggeva una quota
+anche dove la tratta ha **due** orizzontali sulla stessa x. Corretto: una quota si legge
+**solo** se a quella x c'è **un'orizzontale sola**.
+
+Nessuna delle due l'ha trovata un controllo: le ho trovate **sondando i numeri a mano**, perché
+non tornavano con quello che si vedeva sulla tavola. È la seconda regola del `CLAUDE.md`, ed è
+la seconda volta in due che funziona.
+
+### 13.6 Il revisore «calcola», e il PO ha detto che è sbagliato
+
+> «Il revisore ancora non capisco perché **calcola**. Dovrebbe invece **vedere come faccio
+> io**. Come fa un agente AI, non un altro motore di calcolo, **altrimenti è una copia del
+> motore che instrada**.»
+
+Ha ragione, ed è **D-162**. L'occhio è stato costruito — `skill/rivedere/`, con `ISTRUZIONI.md`,
+`CONSEGNA.md` e la prova in camera pulita — e la sua prima riga è: **non ricalcolare**. Riceve
+la tavola come **immagine** e i rilievi già misurati come **dati**.
+
+**Provato, e ha trovato due cose che nessun controllo poteva dare:**
+
+1. sull'**alimentazione fredda** del bollitore dell'impianto 5, **tre simboli in linea sono uno
+   dentro l'altro** — illeggibili — mentre la stessa valvola a trenta millimetri è disegnata
+   intera; e l'unico rilievo su quella tratta chiede di **accorciarla**, cioè di **peggiorare**.
+   L'immagine è in [`skill/rivedere/prova-2026-09-20/`](../../../skill/rivedere/prova-2026-09-20/);
+2. il **ritorno dell'ACS corre sopra la propria mandata** per 265 mm, e
+   `RETURN_RUNS_ABOVE_ITS_SUPPLY` **non lo vede**, perché le due tratte portano **tutt'e due
+   `supply=True`**. Non è un difetto del controllo: è il **verso del ricircolo che non si
+   ricava** (D-059), ed è una domanda al PO.
+
+### 13.7 «Perché dai la curva subito dopo la tre vie?» — e non era il disegnatore
+
+> «E la tavola 5, perché dai la curva subito dopo la valvola a tre vie? Basta andare giù e poi
+> girare una curva sola. **Allora è il disegnatore che sbaglia? O il piano non dice nulla di
+> come sono fatte le autostrade?**»
+
+**È la seconda, ed è D-161.** Misurato: la colonna sotto l'uscita della deviatrice era
+**occupata dal gruppo di riempimento** — raccordo a y=253,5, gruppo a y=276, presa a y=301,
+tutti a x=307,5…317,5, cioè **esattamente sotto la porta**. L'instradatore ha girato intorno
+**perché non poteva passare**. Spostato il gruppo di 20 mm: **da 3 pieghe a 1**, e i rilievi
+della tavola **da 42 a 38**.
+
+Né il disegnatore né il piano sbagliavano: **il piano è incompleto**. Il piano dice dove stanno
+i pezzi e **niente** su dove le autostrade devono poter passare; la forma della spezzata la
+sceglie l'instradatore sul costo. Chiedergli «scendi e fai una curva sola» **non si può
+scrivere**. La leva che manca ha un nome — **`passa-per`** — ed è il punto 3 di `DRAW-016`.
+
+### 13.8 Gli attacchi dei simboli si possono far scorrere, con un limite che vale di più
+
+> «Per me gli attacchi sulle macchine si devono poter spostare, sono simboli, non ha senso
+> tenerli fissi.» — e, scegliendo fra le due letture: «**l'attacco si sposta lungo la faccia su
+> cui sta, serve solo per allineare meglio le autostrade**.»
+
+È **D-163**. D-126 punto 3 regge: **la faccia non si cambia**. E il limite l'ha dato lui nella
+stessa risposta, e vale più della licenza:
+
+> «I puffer hanno delle particolarità: **serpentino che va rispettato**, altrimenti non si
+> capisce a che serve quel serpentino senza attacchi precisi su esso.»
+
+**Gli attacchi di uno scambiatore interno non si spostano**: la loro posizione dice dov'è la
+serpentina dentro l'accumulo. `coil_in` e `coil_out` di `dhw-cylinder` restano a 10 mm.
+
+**Attuata e misurata:** `gas-boiler.water_supply` è scesa da y=10 a **y=5** sulla stessa faccia
+destra (versione del simbolo 1.0.0 → 1.1.0), portando la caldaia all'**interasse 15** di tutte
+le altre macchine. La coppia `caldaia ~ disgiuntore` dell'impianto 4 è passata da **ZIG-ZAG a
+INSIEME**.
+
+### 13.9 Le mosse provate e scartate, perché nessuno le rifaccia
+
+1. **Ruotare il radiatore dell'impianto 1** toglie una piega e apre un rilievo **bloccante**
+   `RUN_OVERSHOOTS_ITS_PORT` **a ogni x provata**. Scartata.
+2. **Allineare la commutatrice esattamente sulla quota del ritorno della caldaia** (q6)
+   **crea** un sali-scendi: lo stacco del collettore e il ritorno finiscono sulla stessa quota.
+   Tenuta a **20 mm** (q36): il gomito sparisce e i guadagni restano.
+3. **Impilare la caldaia sotto la pompa di calore** sull'impianto 4, sei quote: 2 non si
+   instradano, 3 peggiorano, 1 pareggia (§13.3).
+4. **Contare le verticali e le orizzontali dal PDF** non è affidabile per via della rotazione
+   della pagina. **Quel numero non è stato riportato**, invece di riportarlo sbagliato.
+
+### 13.10 Le domande che restano al PO, e che nessuno può decidere al posto suo
+
+1. **Le tre convenzioni grafiche** (I-097), e non si possono dedurre perché **le sue tavole non
+   concordano fra loro**. **Gli incroci:** sul suo corpus, **4 volte niente**, **3 volte
+   interruzione**, **1 volta salto ad arco** — le due tavole di mano sua interrompono sempre.
+   **Gli spigoli:** `3-vie` li raccorda tutti e quattordici con lo stesso raggio (1,41 mm),
+   `sdp` li fa vivi, `schema-tipologico` non ne ha. **Il tratteggio:** in `3-vie` vuol dire
+   «limite di fornitura», in `sdp` «ritorno» — **lo stesso stile con due significati non può
+   stare nella stessa grammatica**.
+   *Un dato che accompagna la domanda, e non è un'opinione:* in Italia **nessuna norma
+   prescrive come si traccia uno schema funzionale** — UNI 9511 dà i **segni grafici**, non il
+   tracciamento; il DM 37/08 impone che lo schema **ci sia**. Le nostre convenzioni sono una
+   scelta di progetto legittima, ma **va dichiarata in legenda**.
+2. **Quante autostrade verticali fra due colonne** (I-098). Lui stesso ne dubitava: «in genere
+   ne è consentita una sola… ma forse non è una buona regola». **Contate, colonne lunghe almeno
+   20 mm: 2 · 2 · 3 · 6 · 12** sui cinque impianti — e lui ha approvato le prime tre e bocciato
+   le ultime due. **È l'unico numero che separa le tavole che approva da quelle che boccia**, e
+   le separa nettamente. Ma «una sola» **non regge** sulle sue tavole di riferimento: la soglia
+   è sua.
+3. **Il verso del ricircolo ACS** (§13.6, punto 2): è una rete con un verso, o due tratte della
+   stessa? Finché non si sa, B10 è cieca su quella rete.
+4. **L'ordine dei due collettori di un parallelo** — delegato da lui col criterio dei sormonti
+   (I-099), e **il criterio non discrimina**: sormonti **pari**, 12 e 12. Scelto col secondo
+   criterio, i rilievi: col collettore del **ritorno più vicino alle macchine** scendono **da 49
+   a 42** (B9 da 14 a 9, B10 da 3 a 1). È anche l'ordine del suo schizzo del 3 settembre.
+   **La chiusura resta sua.**
+
+### 13.11 Una cosa che mi sembra sbagliata anche se i numeri dicono che va bene
+
+**D3 — «il disegno non sta tutto da una parte» — ha una soglia di 3,0, e le tavole del PO la
+rispettano.** Misurate le sue: **1,4 · 1,6 · 2,5**. L'unico caso fuori scala, **9,9×**, è
+l'export di una **regione ritagliata**, non una tavola finita. La soglia è tarata sul suo
+corpus e regge.
+
+**Ma la tavola 5 continua a non sembrare una tavola**, e D3 dice che va bene. Il difetto che si
+vede non è «tutto da una parte»: è che **le autostrade non si leggono**. `HIGHWAY_IS_NOT_STRAIGHT`
+è acceso **12 volte** su quella tavola, e **12 sono anche le colonne verticali di autostrada**
+contro le 2 dell'impianto 1. **Il numero che descrive quello che il PO vede non è D3: è quello
+di I-098**, e non ha ancora una soglia.

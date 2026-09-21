@@ -50,14 +50,17 @@ Le sigle servono a noi per ritrovare la riga e restano di qua. La versione buona
 domanda detta guardando il disegno — sta in `2026-09-15-triage-input-aperti.md` §11, ed è il
 modello da riusare.
 
-## 2. Dove siamo, al 20 settembre 2026
+## 2. Dove siamo, al 21 settembre 2026
 
 | | |
 |---|---|
 | `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR **#45**, che porta `DRAW-014`, il cambio di architettura (D-151, D-152), la prova del piano e il pacchetto `DRAW-015` |
 | Release dichiarata | **0.3 — generalizzazione** (`docs/plans/2026-09-03-release-plan.md`) |
 | Architettura del disegno | **cambiata il 20 settembre**: pianificatore → motore → revisore (**D-151**). `docs/ARCHITETTURA-DEL-PIANO.md` è il documento che vince su ogni contrasto |
-| Pacchetto attivo | **`DRAW-015` — il revisore, e il repository che lo regge** (`ACTIVE_WORK_PACKAGE.md`). Sostituisce `DRAW-014` |
+| Pacchetto attivo | **`DRAW-016` — l'agente che scrive il piano, e l'agente che dice dove passare** (`ACTIVE_WORK_PACKAGE.md`), **attivo quando `DRAW-015` è fuso**. `DRAW-015` è **consegnato** e in attesa del sì del PO sulle tavole (PR #46) |
+| Il metodo con cui si compone | **`D-159`, e viene prima delle regole**: la quota di un'autostrada **non si sceglie**, è quella della **porta** della macchina che la genera. Per intero in testa a `docs/regole-del-piano.md` |
+| Le regole misurate | **nove** — A1, A4, B1, B3, B4, **B8** sali-scendi, **B9** corsie libere, **B10** mandata sopra ritorno sotto, **B11** la coppia corre insieme. Ciascuna con la propria **fonte** e il proprio **controllo** (**D-160**), tutte **dentro il punteggio** |
+| L'occhio del revisore | **esiste** — `skill/rivedere/`, **D-162**, provato in camera pulita. Ha trovato **due difetti che nessun controllo poteva dare**. **Manca l'anello**: i vincoli sono un rapporto in italiano, non dati |
 | Chi sviluppa, chi fonde | **un agente solo** (D-147), agenti paralleli dentro la sessione (D-152). **La fusione la approva il PO guardando le tavole** (D-146) |
 | `DRAW-014` | **superato in corsa da D-151**, non chiuso come previsto. Ha fatto uscire le cinque tavole (D-148, D-150) ed è guardandole che il PO ha fermato la linea del solutore. **Quello che ne resta vivo è su `main`** |
 | PR #41 (DRAW-012) | **verificata e respinta** il 18 settembre. Tredici criteri su sedici, nessuno barato, rapporto onesto — ma il PO ha guardato le tavole e ha detto «era meglio prima». Verdetto in `docs/pm/2026-09-18-review-pr41-draw012.md`. **Quella PR non è stata fusa.** ⚠ Ma il suo **contenuto** è su `main`: `DRAW-013` è ripartito da quel ramo ed è entrato con la **PR #44** (`a835006`), il commit dove compaiono `layout/highways.py` e `layout/dilate.py`. Non va rifatto |
@@ -122,7 +125,7 @@ Gli strumenti di misura esistono e non vanno riscritti: `docs/collaudi/DRAW-008/
 `perche-la-strada-bassa-non-c-era.py`. **Attenzione a che cosa misurano**: alcuni sono nati
 per giudicare il solutore, e le loro voci di costo non descrivono più il percorso vigente.
 
-## 4. I fili aperti, al 20 settembre 2026
+## 4. I fili aperti, al 21 settembre 2026
 
 In ordine di quanto pesano. I rischi numerati stanno in `PROJECT_STATE.md`.
 
@@ -132,14 +135,28 @@ In ordine di quanto pesano. I rischi numerati stanno in `PROJECT_STATE.md`.
    5,2 volte l'inchiostro fra quadrante pieno e vuoto sull'impianto 1 e **9,0** sul 5 — e
    l'impianto 5 ha **quattordici incroci**. È il **primo difetto aperto del pianificatore**
    (D3 in `docs/regole-del-piano.md`).
-1. **I due pezzi di skill che mancano: il pianificatore e l'occhio del revisore.** È il
-   pacchetto attivo, `DRAW-016`. Oggi il **piano lo scrive un umano** — l'agente in sessione,
-   a mano — e le cinque tavole escono perché qualcuno ha scritto cinque file di coordinate:
-   **la skill, da sola, non sa comporre** (D-155, D-156). E il pezzo 5 **misura ma non
-   guarda**: l'occhio che ha visto il prelievo ACS a mezzo foglio di distanza era quello
-   dell'agente che leggeva il PDF, non un pezzo del prodotto.
+1. **Il pianificatore non esiste, e l'anello del revisore è aperto.** È il pacchetto
+   attivo, `DRAW-016`, ed è il lavoro che il PO ha nominato chiudendo la sessione del 20
+   settembre: «**l'agente che scrive il piano, l'agente che fa le verifiche che dà i
+   suggerimenti precisi su dove passare**». Oggi il **piano lo scrive un umano** — l'agente in
+   sessione, a mano — e le cinque tavole escono perché qualcuno ha scritto cinque file di
+   coordinate: **la skill, da sola, non sa comporre** (D-155, D-156).
    — *~~Il revisore non c'è ancora (D-153)~~: **chiuso da `DRAW-015`** quanto alla metà
    deterministica — `piano/revisore.py` esegue, misura, si ferma e dice perché.*
+   — *~~E il pezzo 5 misura ma non guarda~~: **chiuso il 20 settembre** — `skill/rivedere/`
+   esiste ed è provato (D-162). **Quello che resta aperto è l'anello**: i vincoli che l'occhio
+   scrive sono prosa, e devono diventare **dati** nella sezione `vincoli` del piano perché il
+   pezzo 3 li riceva.*
+1bis. **Il piano non può chiedere la forma di una spezzata** (**D-161**), e la leva che manca
+   ha un nome: **`passa-per`**. Oggi l'unica mossa di chi compone è **togliere di mezzo chi
+   occupa la strada** — e costa: sull'impianto 5 una linea faceva **3 pieghe invece di 1**
+   perché il gruppo di riempimento stava nella colonna sotto la porta.
+1ter. **Le autostrade del 4 e del 5 sono storte, e il PO le ha bocciate:** «la 4 e la 5 mi
+   sembra che non hai minimamente risolto il problema». `HIGHWAY_IS_NOT_STRAIGHT` è acceso
+   **5 volte sul 4 e 12 sul 5**. **Misurato dove sta il difetto**, e l'esperimento l'ha
+   chiesto il PO: ridotti i due impianti a **sole macchine e collettori, senza una valvola**,
+   restano **5 spezzate piegate sul 4 e 11 sul 5**. È la fase delle autostrade, non quella
+   degli organi.
 2. ~~**Nessun controllo sa che cos'è un'autostrada** (`I-068`).~~ **Chiuso da `DRAW-015`:**
    `layout/autostrade.py` porta la catena fino alla tavola instradata, B1 ha il proprio
    rilievo, e `RUN_WITH_TOO_MANY_BENDS` usa il bilancio della catena invece del metro dello

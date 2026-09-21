@@ -14,7 +14,7 @@
 
 ---
 
-## Dove siamo — 20 settembre 2026
+## Dove siamo — 21 settembre 2026
 
 **Il 20 settembre il progetto ha cambiato architettura.** Il disegno non si cerca più: lo
 **compone un agente** — pianificatore → motore → revisore (**D-151**). `layout/improve.py`,
@@ -24,12 +24,37 @@ decidono più la posa**.
 | | |
 |---|---|
 | Release | **0.3 — generalizzazione** |
-| Pacchetto attivo | **`DRAW-016` — il pianificatore e l'occhio del revisore diventano pezzi della skill** (attivo quando `DRAW-015` è fuso) |
+| Pacchetto attivo | **`DRAW-016` — l'agente che scrive il piano, e l'agente che dice dove passare** (attivo quando `DRAW-015` è fuso) |
 | Chi sviluppa | **un agente solo** (D-147), con agenti paralleli **dentro** la sessione (D-152) |
 | Chi approva la fusione | **il PO, guardando le tavole** (D-146, D-147) |
 | Architettura del disegno | `docs/ARCHITETTURA-DEL-PIANO.md` — vigente, sostituisce quella del solutore |
 | Regole di composizione | `docs/regole-del-piano.md` — aperto per dichiarazione del PO |
 | Prodotto in chat | **mai eseguito nel suo ambiente finale.** È il rischio più vecchio |
+
+### Il 20 settembre il PO ha guardato le tavole, e ne sono uscite altre cinque
+
+Con due tavole segnate a penna in mano (`docs/input-pm/riferimenti-grafici/2026-09-20/`):
+«Le tavole fanno schifo… **il disegno nasce dalle linee delle autostrade**».
+
+**D-159** il metodo — la quota di un'autostrada **non si sceglie**, è quella della **porta**
+della macchina che la genera; si posa su quelle quote, si guarda che siano rette, e **solo
+dopo** si appendono valvole e confini di rete · **D-160** una regola ha **una fonte** e **un
+controllo**, e un controllo fuori dal punteggio non è un controllo · **D-161** il piano **non
+può chiedere la forma di una spezzata**: può solo liberarle il posto, e la leva che manca si
+chiama **`passa-per`** · **D-162** l'occhio del revisore **guarda** e **non ricalcola** ·
+**D-163** un attacco scorre **lungo la propria faccia**, mai di faccia, mai se è di un
+serpentino.
+
+**Che cosa ne è uscito, misurato:** le regole misurate sono **nove** (A1, A4, B1, B3, B4, e
+le nuove **B8** sali-scendi, **B9** corsie libere, **B10** mandata sopra ritorno sotto, **B11**
+la coppia corre insieme); **l'occhio del revisore esiste** — `skill/rivedere/`, provato in
+camera pulita, e ha trovato **due difetti che nessun controllo poteva dare**; i cinque piani
+sono stati corretti **guardando le tavole**, e l'impianto 5 è passato da **49 a 38** rilievi e
+da **14 a 12** incroci.
+
+**Il giudizio del PO sulle cinque, ed è il metro vero:** «1, 2, 3 vanno quasi bene; **la 4 e
+la 5 mi sembra che non hai minimamente risolto il problema. Non vedo le autostrade ben
+tracciate.**»
 
 ### Le dodici disposizioni che hanno cambiato la rotta, 19–20 settembre
 
@@ -80,19 +105,32 @@ distribuisce in verticale; l'impianto 5 ha **quattordici incroci**.
   solutore**. **Quello che di `DRAW-014` resta vivo è in `main`**; quello che resta
   incompiuto è nominato nei rischi qui sotto.
 
-## Rischi aperti — al 20 settembre 2026
+## Rischi aperti — al 21 settembre 2026
 
 1. **Le tavole non sono belle, e il PO lo ha detto guardandole** (I-082). Il primo difetto
    in coda è già nominato e misurato: il disegno è **una fascia nella metà alta** del foglio
    — `DRAWING_ALL_ON_ONE_SIDE`, D3 in `docs/regole-del-piano.md`, 5,2 volte l'inchiostro fra
    quadrante pieno e vuoto sull'impianto 1 e **9,0** sul 5. È il primo difetto aperto **del
    pianificatore**.
-2. **Il pianificatore non esiste, e l'occhio del revisore nemmeno.** `DRAW-015` ha
-   costruito la **metà deterministica** del revisore — esegue, misura, si ferma e dice
-   perché — ma il **pezzo 3** lo fa ancora un umano a mano (D-155, D-156), e il pezzo 5
-   **misura senza guardare**. È il pacchetto attivo.
+2. **Il pianificatore non esiste, e l'anello del revisore è aperto.** Il **pezzo 3** lo fa
+   ancora un umano a mano (D-155, D-156). L'**occhio** del pezzo 5 adesso **c'è** —
+   `skill/rivedere/`, D-162, provato in camera pulita — ma i vincoli che scrive sono un
+   **rapporto in italiano**, non dati: il pezzo 3 non li riceve. Chiudere l'anello è il
+   pacchetto attivo.
+2bis. **Le autostrade del 4 e del 5 sono storte, e il PO le ha bocciate.**
+   `HIGHWAY_IS_NOT_STRAIGHT` è acceso **5 volte sul 4 e 12 sul 5**. **Misurato dove sta il
+   difetto**, ed è la fase delle autostrade, non quella degli organi: ridotti i due impianti
+   a **sole macchine e collettori, senza una valvola**, restano **5 spezzate piegate sul 4 e
+   11 sul 5**.
+2ter. **Il piano non può chiedere la forma di una spezzata** (D-161), e `passa-per` non
+   esiste: l'unica leva di chi compone è togliere di mezzo chi occupa la strada. Costa —
+   sull'impianto 5 una linea faceva 3 pieghe invece di 1 **perché il gruppo di riempimento
+   stava nella colonna**.
 3. ~~**Nessun controllo sa che cos'è un'autostrada.**~~ **Chiuso da `DRAW-015`**, insieme
    alle altre quattro regole misurate: A1, **A4**, B1, B3, B4 in `validation/regole.py`.
+   **Il 20 settembre sono diventate nove** — **B8** i sali-scendi, **B9** le corsie libere
+   fra due linee, **B10** mandata sopra e ritorno sotto, **B11** la coppia mandata/ritorno
+   corre insieme — ciascuna con la propria fonte e il proprio controllo (**D-160**).
    **Resta aperto il censimento di D-158**: A2, A3, B2, C1 e C3 non hanno un rilievo sulla
    tavola finita, e **A3 oggi non è tenuta su da niente**.
 4. **Prodotto mai eseguito nel suo ambiente finale.** Nuova chat, input naturale,

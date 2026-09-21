@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-20, alla consegna di `DRAW-015`
+**Aggiornato:** 2026-09-21, alla consegna di `DRAW-015` e alla sessione che l'ha rivista con il PO
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -31,7 +31,7 @@ disegno lo **compone un agente**.
 | **2** | **Completare** — accessori, ordine, domande all'ingegnere | **deterministico** | **sì** — `rules/` |
 | **3** | **Comporre** — dal grafo completo al **piano** | **agente AI** | **no, ed è il buco** |
 | **4** | **Eseguire** — dal piano alla tavola e ai rilievi | **deterministico** | **sì** — `piano/esecutore.py`, `layout/` |
-| **5** | **Rivedere** — dalla tavola ai **vincoli** per il pezzo 3 | **AI + controlli** | **a metà**: i controlli ci sono, l'occhio no |
+| **5** | **Rivedere** — dalla tavola ai **vincoli** per il pezzo 3 | **AI + controlli** | **sì** — i controlli in `validation/regole.py`, l'**occhio** in `skill/rivedere/`. Manca l'anello: i vincoli non sono ancora dati |
 
 **I pezzi 3 e 4 insieme sono l'instradatore-disegnatore, ed è misto** (D-156): l'agente
 decide **dove stanno i pezzi**, lo script deterministico fa **tutto il resto**. **Il pezzo 5
@@ -53,6 +53,12 @@ disegnatore-mep rules     <progetto.json>  … --apply-all --out <completo.json>
 disegnatore-mep piano     <completo.json>  --piano <piano.json> … --out <cartella>
 disegnatore-mep revisiona <completo.json>  --piano <piano.json> … --out <cartella>
 ```
+
+> **Il disegno nasce dalle autostrade** (**D-159**). La quota di un'autostrada **non si
+> sceglie**: è quella della **porta** della macchina che la genera. Si posano le macchine su
+> quelle quote, si guarda che le autostrade siano rette, e **solo dopo** si appendono valvole,
+> strumenti e confini di rete. Il procedimento per intero sta in testa a
+> `docs/regole-del-piano.md`, prima di ogni regola, perché dice **in che ordine** si applicano.
 
 ⚠ Il piano si esegue sul progetto nella forma che `rules --apply-all --out` scrive: la forma
 canonica riordina i componenti, la posa di partenza legge quell'ordine
@@ -109,9 +115,67 @@ senza approvazione non si fonde.
   **peggiorato su quattro su cinque**. È la misura che ha prodotto D-157: un revisore a mosse
   è un solutore in miniatura. Le cure deterministiche sono dichiarate superate in testa a
   `piano/revisore.py` ed escono in `DRAW-016`.
+## Poi il PO ha guardato le tavole, e sono nate cinque decisioni
+
+Il 20 settembre, con due tavole segnate a penna in mano
+(`docs/input-pm/riferimenti-grafici/2026-09-20/`):
+
+> «Le tavole fanno schifo… **il disegno nasce dalle linee delle autostrade.** LE AUTOSTRADE
+> CON POCHE CURVE e pochi sormonti.» — e poi: «1, 2, 3 vanno quasi bene; **la 4 e la 5 mi
+> sembra che non hai minimamente risolto il problema**.»
+
+Da lì **D-159** (il metodo: prima le autostrade, e la quota è quella della porta), **D-160**
+(una regola ha una fonte e un controllo, e un controllo fuori dal punteggio non è un
+controllo), **D-161** (il piano non può chiedere la forma di una spezzata: può solo liberarle
+il posto — la leva che manca è **`passa-per`**), **D-162** (l'occhio guarda e non ricalcola),
+**D-163** (un attacco scorre lungo la propria faccia, mai di faccia, mai se è di un
+serpentino).
+
+**Che cosa è cambiato nel repository, in quattro righe:**
+
+- **le regole misurate sono nove, non cinque**: alle cinque di `DRAW-015` si aggiungono
+  **B8** i sali-scendi, **B9** le corsie libere fra due linee, **B10** mandata sopra e ritorno
+  sotto, **B11** la coppia mandata/ritorno corre insieme. Ciascuna con **la propria fonte** e
+  **il proprio controllo**, e tutte **dentro il punteggio** (D-160);
+- **l'occhio del revisore esiste** — `skill/rivedere/`, provato in camera pulita, e ha trovato
+  **due cose che nessun controllo poteva dare** (D-162);
+- **gli attacchi si possono far scorrere lungo la propria faccia** (D-163): `gas-boiler` è
+  passata da interasse 10 a 15 e la coppia `caldaia ~ disgiuntore` dell'impianto 4 da ZIG-ZAG
+  a INSIEME;
+- **i cinque piani sono stati corretti guardando le tavole**, e ogni mossa porta nel file la
+  regola che la motiva e la misura prima/dopo.
+
+### Le cinque tavole, misurate il 21 settembre
+
+| impianto | tratte | cedute | incroci | rilievi | bloccanti | B1 storte | A4 confini lontani |
+|---|---|---|---|---|---|---|---|
+| **1** | 21 | **0** | 1 | 14 | 0 | 4 | 4 |
+| **2** | 23 | **0** | 2 | 14 | 0 | 3 | 5 |
+| **3** | 22 | **0** | 1 | 15 | **1** (B7) | 3 | 5 |
+| **4** | 25 | **0** | 3 | 20 | 0 | 5 | 5 |
+| **5** | 54 | **0** | 12 | **38** | 0 | **12** | 5 |
+
+L'impianto 5 partiva da **49** rilievi e **14** incroci.
+**`RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK` è a zero su tutte e cinque**: i sali-scendi sono
+chiusi, ed erano uno dei quattro difetti che il cold eye review aveva trovato il 4 agosto.
+
+### Quello che è stato provato, e non va rifatto
+
+1. **Il difetto è nella fase delle autostrade, non dopo.** L'esperimento l'ha chiesto il PO:
+   ridotti il 4 e il 5 a **sole macchine e collettori, senza una valvola**, le autostrade
+   restano storte — **5 spezzate piegate sul 4, 11 sul 5**.
+2. **I collettori non si possono togliere**: tre pompe in parallelo senza collettore mettono
+   tre tubazioni su una porta sola.
+3. **L'impianto 4 non può uscire come lo schizzo del PO**: impilata la caldaia sotto la pompa
+   di calore a sei quote, 2 non si instradano, 3 peggiorano, 1 pareggia. La topologia è
+   diversa — c'è un disgiuntore idraulico in mezzo. **Va detto al PO.**
+4. Ruotare il radiatore dell'impianto 1 apre un rilievo bloccante a ogni x provata: **provato
+   e scartato**.
+
 - **Quello che ancora non va:** il disegno è una fascia nella metà alta su tutte e cinque
-  (D3), e i due pezzi di skill che mancano — il **pianificatore** e **l'occhio del
-  revisore** — sono il pacchetto attivo.
+  (D3); le **autostrade del 4 e del 5 sono storte**, ed è la cosa che il PO ha bocciato; e i
+  due pezzi che mancano — il **pianificatore** e **l'anello che porta i vincoli dall'occhio a
+  chi compone** — sono il pacchetto attivo.
 - **A4 è misurata ma non è pulita:** restano 4 rilievi sull'impianto 1 e 5 su ciascuno degli
   altri, il peggiore **+50 mm** (l'acquedotto dell'impianto 3, che entra dal bordo sinistro).
   Sono difetti di composizione, non del controllo, e li chiude il pianificatore.
@@ -129,8 +193,14 @@ senza approvazione non si fonde.
 
 ## Chi tocca che cosa, legge prima
 
-- **Chi compone un piano:** `docs/regole-del-piano.md` — l'elenco delle regole, ciascuna con
+- **Chi compone un piano:** `docs/regole-del-piano.md`, **a partire dall'apertura** — «L'ordine
+  in cui si compone: prima le autostrade» (D-159) — e poi l'elenco delle regole, ciascuna con
   la propria fonte e il proprio controllo. Le righe marcate `da scrivere` sono lavoro.
+- **Chi rivede una tavola:** `skill/rivedere/ISTRUZIONI.md`, e la prima riga è che **non si
+  ricalcola** (D-162): i numeri li hanno già misurati i controlli.
+- **Chi vuole capire che cosa il PO boccia:** `docs/input-pm/riferimenti-grafici/2026-09-20/`,
+  le due tavole che ha segnato a penna, col suo messaggio riportato per intero e la mappa di
+  che cosa è uscito da ogni segno.
 - **Chi tocca il disegno:** `docs/ARCHITETTURA-DEL-PIANO.md`, e la ricerca del 4 agosto
   `docs/fonti/2026-08-04-come-si-disegna-uno-schema-funzionale.md`.
 - **Chi tocca il motore** (non il piano): `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`
@@ -163,6 +233,20 @@ senza approvazione non si fonde.
 
 ## Domande aperte al PO — in ordine di quanto bloccano
 
+0. **Le tre convenzioni grafiche** (I-097), e nessuna si può decidere senza di lui perché le
+   sue stesse tavole non concordano fra loro. **Gli incroci:** sul suo corpus, 4 volte niente,
+   3 volte interruzione, 1 volta salto ad arco — le due tavole di mano sua interrompono
+   sempre. **Gli spigoli:** `3-vie` li raccorda tutti e quattordici con lo stesso raggio,
+   `sdp` li fa vivi. **Il tratteggio:** in `3-vie` vuol dire «limite di fornitura», in `sdp`
+   «ritorno» — lo stesso stile con due significati non può stare nella stessa grammatica.
+   *In Italia nessuna norma prescrive come si traccia uno schema funzionale: UNI 9511 dà i
+   segni grafici, non il tracciamento; il DM 37/08 impone che lo schema ci sia. È una scelta
+   di progetto legittima, ma va dichiarata in legenda.*
+0bis. **Quante autostrade verticali fra due colonne** (I-098). Lui stesso ne dubitava: «in
+   genere ne è consentita una sola… ma forse non è una buona regola». **Contate, colonne
+   lunghe almeno 20 mm: 2 · 2 · 3 · 6 · 12**, e lui ha approvato le prime tre e bocciato le
+   ultime due. **È l'unico numero che separa le tavole che approva da quelle che boccia**, e
+   le separa nettamente — ma «una sola» non regge sulle sue tavole di riferimento.
 1. **B7 — due porte che guardano dalla stessa parte non si uniscono con un segmento.**
    `Highway.turns_allowed` vale zero per ogni catena fra macchine di spina senza guardare se
    le facce delle porte lo permettono. Quattro catene su tre impianti non si possono
@@ -178,6 +262,11 @@ senza approvazione non si fonde.
    linea lunga è vera, o è un nodo che il disegno può avvicinare al bollitore.* Contenuto MEP.
    — *La domanda precedente, «dove sta un confine di rete», l'ha chiusa il PO il 20 settembre:
    «si fa lì accanto facendo un tratto piccolo di tubazione». È A4, ed è un controllo.*
+3bis. **Il verso del ricircolo ACS non si ricava** (D-059): la mandata e il ritorno del
+   ricircolo portano **tutt'e due `supply=True`**, e per questo **B10 non vede** il ritorno
+   che corre sopra la propria mandata per 265 mm sull'impianto 5. L'ha trovato l'occhio del
+   revisore, non un controllo. *Serve sapere se il ricircolo è una rete con un verso, o due
+   tratte della stessa.* Contenuto MEP.
 4. **Quando si apre il pacchetto DXF.** La riproducibilità (D-023) e il vincolo dell'A3
    (D-148) sono stati lasciati andare **perché** l'elaborato esce in DXF e si rifinisce in
    CAD. Quel pezzo non esiste.

@@ -41,7 +41,7 @@
 | **2** | **Completare** — accessori, ordine, domande all'ingegnere | **deterministico** | **sì** — `src/disegnatore_mep/rules/` |
 | **3** | **Comporre** — dal grafo completo al **piano** | **agente AI** | **no, ed è il buco** |
 | **4** | **Eseguire** — dal piano alla tavola e ai rilievi | **deterministico** | **sì** — `src/disegnatore_mep/piano/esecutore.py` e `layout/` |
-| **5** | **Rivedere** — dalla tavola ai **vincoli** per il pezzo 3 | **AI + controlli deterministici** | **a metà** — i controlli ci sono, l'occhio no |
+| **5** | **Rivedere** — dalla tavola ai **vincoli** per il pezzo 3 | **AI + controlli deterministici** | **sì** — i controlli in `validation/regole.py`, l'**occhio** in `skill/rivedere/`. **Manca l'anello**: i vincoli non sono ancora dati che il pezzo 3 riceve |
 
 **I pezzi 3 e 4 insieme sono l'instradatore-disegnatore, ed è misto**: l'agente decide
 **dove stanno i pezzi**, lo script deterministico fa **tutto il resto**. Il tentativo di
@@ -113,6 +113,23 @@ la rotazione di una **macchina con due o più attacchi**, che ha una scelta.
 > ⚠ **Un buco noto:** un pezzo con **due** attacchi che non è una macchina — il gruppo di
 > riempimento — non rientra in nessuno dei due casi, e la sua rotazione va scritta a mano.
 
+**Il metodo con cui compone è scritto, e viene prima delle regole** (**D-159**): la quota di
+un'autostrada **non si sceglie**, è quella della **porta** della macchina che la genera; si
+posano le macchine su quelle quote; chi sta in parallelo si impila e si unisce con una
+verticale corta accanto alle macchine; si guarda che le autostrade siano rette; e **solo
+allora** si appendono valvole, strumenti e confini di rete. Per intero in testa a
+`docs/regole-del-piano.md`.
+
+⛔ **E c'è una cosa che il piano non può dire** (**D-161**): **la forma di una spezzata**. Il
+piano dice dove stanno i pezzi, e la forma la sceglie l'instradatore sul costo. «Scendi e fai
+una curva sola» **non si può scrivere**: l'unica leva è **togliere di mezzo chi occupa la
+strada**. La leva che manca si chiama **`passa-per`**, ed è il punto 3 di `DRAW-016`.
+
+**Una leva che invece c'è, ed è nuova** (**D-163**): un **attacco scorre lungo la faccia su
+cui sta**, e si scorre **solo per allineare le autostrade**. Mai di faccia — D-126 punto 3
+regge — e **mai** se l'attacco appartiene a un **serpentino**, perché la sua posizione dice
+dov'è la serpentina dentro l'accumulo.
+
 **Oggi questo pezzo lo fa un umano**, cioè l'agente in sessione, a mano. È esattamente il
 lavoro che manca.
 
@@ -137,8 +154,23 @@ cancello a valle e diventa supervisore in anello chiuso».
 
 | metà | che cos'è | stato |
 |---|---|---|
-| **i controlli** | le **cinque** regole misurate — le quattro di D-154 più **A4** — e il preflight; il **punteggio** lessicografico; le **condizioni d'arresto**; la guardia che non peggiora in silenzio | **deterministica, e c'è** |
-| **l'occhio** | guarda la **tavola**, con accanto quelle del disegnatore del PO, e scrive i **vincoli** | **agente AI, e manca** |
+| **i controlli** | le **nove** regole misurate — A1, A4, B1, B3, B4, B8, B9, B10, B11 — e il preflight; il **punteggio** lessicografico; le **condizioni d'arresto**; la guardia che non peggiora in silenzio | **deterministica, e c'è** |
+| **l'occhio** | guarda la **tavola**, con accanto quelle del disegnatore del PO, e scrive i **vincoli** | **agente AI, e c'è** — `skill/rivedere/`, provato in camera pulita |
+
+> **La regola che tiene l'occhio separato dai controlli, e se si perde si perde il pezzo**
+> (**D-162**): **l'occhio non ricalcola.** Riceve la tavola come **immagine** e i rilievi già
+> misurati come **dati**. Se si mette a contare pieghe e millimetri è **una copia peggiore dei
+> controlli**, e il metro non è quanti difetti trova — è **se vede quello che vede il PO**.
+>
+> *La prova che l'ha convalidato, in camera pulita:* ha trovato **due cose che nessun controllo
+> poteva dare** — tre simboli in linea uno **dentro** l'altro sull'alimentazione fredda del
+> bollitore (e l'unico rilievo su quella tratta chiede di **accorciarla**, cioè di
+> peggiorare), e il **ritorno ACS sopra la propria mandata**, invisibile a `B10` perché le due
+> tratte portano tutt'e due `supply=True` (D-059).
+>
+> **Quello che ancora manca non è l'occhio: è l'anello.** I vincoli oggi sono un rapporto in
+> italiano; devono diventare **dati** nella sezione `vincoli` del piano, e il pezzo 3 deve
+> riceverli. È il punto 2 di `DRAW-016`.
 
 **Il revisore non sposta niente. Dichiara vincoli** (**D-157**), e il pianificatore
 ricompone rispettandoli. §5 dice perché, e non è una preferenza di stile: è una misura.
