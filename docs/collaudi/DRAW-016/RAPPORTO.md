@@ -58,6 +58,11 @@ nell'ordine sbagliato**.
 
 ## 2. Il pianificatore esiste, e in camera pulita batte il piano a mano
 
+> **Le tavole, gli scheletri e i piani della prova stanno in
+> [`prova-camera-pulita-2026-09-21/`](prova-camera-pulita-2026-09-21/).** Sono la **misura**
+> di che cosa sa fare il pianificatore il 21 settembre 2026, non prodotto: non si correggono a
+> mano, si **rifà la prova**.
+
 `skill/comporre/`, nella stessa forma del pezzo 1. Le istruzioni portano **il metodo di D-159
 prima delle regole**, con i numeri veri delle porte, e la leva che ne discende:
 
@@ -79,6 +84,34 @@ producono un piano che si carica e si instrada, **zero tratte cedute**.
 | | formato | A1 | **A2** |
 
 *(Misure rieseguite dalla sessione, non riferite dagli agenti — D-152.)*
+
+### E poi è arrivata B12, e le tavole sono state ricomposte applicandola
+
+| impianto | | a mano | 1° giro | **con B12** |
+|---|---|---|---|---|
+| **4** | formato | A2 | A3 | **A4** |
+| | spezzate piegate | 7 | 5 | **4** |
+| | pieghe | 12 | 7 | **5** |
+| | incroci | 3 | 5 | **3** |
+| **5** | formato | A1 | A2 | **A3** |
+| | spezzate piegate | 13 | 13 | **12** |
+| | pieghe | 23 | 16 | **16** |
+| | incroci | 12 | 6 | **5** |
+
+**Zero cedute e zero bloccanti su tutti.** Il salto è il **formato**: l'impianto 5 passa da
+**A1 ad A3** — un quarto di foglio — e il 4 da **A2 ad A4**. Il foglio più piccolo in cui un
+impianto ci sta è il modo più diretto che abbiamo per dire che il disegno **non spreca**.
+
+**E il pettine si vede.** Sull'impianto 5 le tre pompe sono impilate strette, i collettori
+stanno **addosso a loro**, e le tre utenze sono servite da **due colonne adiacenti con una
+coppia di orizzontali ciascuna**, affiancate fino al terminale, che entra da sinistra.
+Sull'impianto 4 la tratta caldaia → scambiatore corre come **due orizzontali a interasse 15**,
+che è quello che il PO aveva ridisegnato a mano.
+
+**Quello che non è venuto sta nel README della prova**, e sono tre cose che **non dipendono
+dalla posa**: il bilancio di B1 irraggiungibile dove il simbolo impone la piega (due agenti su
+due, con le stesse parole: «il numero è irraggiungibile, non il disegno è sbagliato»), B12 che
+presuppone una ramificazione simmetrica, e l'interasse dei terminali a 10.
 
 ### Le due cose che gli agenti hanno visto e che valgono più dei numeri
 

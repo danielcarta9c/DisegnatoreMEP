@@ -1,0 +1,742 @@
+{
+  "assumptions": [
+    {
+      "id": "a1",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "La cascata con priorita' alla pompa di calore e' logica di regolazione, non topologia: sul grafo si vedono i due ritegni e il collettore che unisce i due generatori."
+    },
+    {
+      "id": "a2",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "La commutatrice sul ritorno della caldaia e' l'organo senza il quale il circuito sanitario non sarebbe dedicato: mentre fa sanitario la caldaia pescherebbe anche dal primario."
+    }
+  ],
+  "components": [
+    {
+      "definition_id": "gas-boiler",
+      "evidence": [],
+      "id": "caldaia",
+      "properties": {},
+      "tag": "CAL-01"
+    },
+    {
+      "definition_id": "tee-junction",
+      "evidence": [],
+      "id": "collettore-mandata",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "tee-split",
+      "evidence": [],
+      "id": "collettore-ritorno",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "switching-valve-3way",
+      "evidence": [],
+      "id": "commutatrice-ritorno",
+      "properties": {},
+      "tag": "VCR-01"
+    },
+    {
+      "definition_id": "diverting-valve-3way",
+      "evidence": [],
+      "id": "deviatrice-caldaia",
+      "properties": {},
+      "tag": "VD-01"
+    },
+    {
+      "definition_id": "buffer-four-port",
+      "evidence": [],
+      "id": "disgiuntore",
+      "properties": {},
+      "tag": "VOL-01"
+    },
+    {
+      "definition_id": "heat-pump-air-water",
+      "evidence": [],
+      "id": "pdc",
+      "properties": {},
+      "tag": "PDC-01"
+    },
+    {
+      "definition_id": "radiator",
+      "evidence": [],
+      "id": "radiatori",
+      "properties": {},
+      "tag": "RAD-01"
+    },
+    {
+      "definition_id": "plate-heat-exchanger",
+      "evidence": [],
+      "id": "scambiatore",
+      "properties": {},
+      "tag": "SCA-01"
+    },
+    {
+      "definition_id": "dhw-draw-off",
+      "evidence": [],
+      "id": "utenze",
+      "properties": {},
+      "tag": "ACS-01"
+    }
+  ],
+  "connections": [
+    {
+      "id": "m1",
+      "endpoint_a": {
+        "component_id": "pdc",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-mandata",
+        "port_id": "a"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m2",
+      "endpoint_a": {
+        "component_id": "deviatrice-caldaia",
+        "port_id": "out_b"
+      },
+      "endpoint_b": {
+        "component_id": "scambiatore",
+        "port_id": "primary_in"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m3",
+      "endpoint_a": {
+        "component_id": "scambiatore",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "commutatrice-ritorno",
+        "port_id": "in_b"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m4",
+      "endpoint_a": {
+        "component_id": "commutatrice-ritorno",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "caldaia",
+        "port_id": "water_return"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m5",
+      "endpoint_a": {
+        "component_id": "caldaia",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "deviatrice-caldaia",
+        "port_id": "in"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m6",
+      "endpoint_a": {
+        "component_id": "deviatrice-caldaia",
+        "port_id": "out_a"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-mandata",
+        "port_id": "c"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m7",
+      "endpoint_a": {
+        "component_id": "collettore-mandata",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "disgiuntore",
+        "port_id": "primary_in"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m8",
+      "endpoint_a": {
+        "component_id": "disgiuntore",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-ritorno",
+        "port_id": "a"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m9",
+      "endpoint_a": {
+        "component_id": "collettore-ritorno",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc",
+        "port_id": "water_return"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m10",
+      "endpoint_a": {
+        "component_id": "collettore-ritorno",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "commutatrice-ritorno",
+        "port_id": "in_a"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m11",
+      "endpoint_a": {
+        "component_id": "disgiuntore",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "radiatori",
+        "port_id": "in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m12",
+      "endpoint_a": {
+        "component_id": "radiatori",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "disgiuntore",
+        "port_id": "secondary_in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m13",
+      "endpoint_a": {
+        "component_id": "scambiatore",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "utenze",
+        "port_id": "a"
+      },
+      "network_id": "sanitaria",
+      "evidence": [],
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "client": "Nove C",
+    "commission_code": "PROVA",
+    "issue_date": "2026-08-06",
+    "project_id": "prova-4-ibrido-pdc-caldaia",
+    "project_name": "Sistema ibrido con pompa di calore e caldaia a condensazione",
+    "revision": "00"
+  },
+  "networks": [
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "fredda",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "fredda-filling-unit-collettore-ritorno-a",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "primario",
+      "medium": "heating_water",
+      "name": "Circuito primario"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "sanitaria",
+      "medium": "domestic_hot_water",
+      "name": "Acqua calda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "secondario",
+      "medium": "heating_water",
+      "name": "Circuito secondario"
+    }
+  ],
+  "plant_regime": "up_to_35_kw",
+  "rule_applications": [
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "air-vent-disgiuntore-primary-out",
+        "stub-air-vent-disgiuntore-primary-out"
+      ],
+      "id": "applied-air-vent-disgiuntore-primary-out",
+      "rule_id": "air-vent-on-the-stored-volume",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "dirt-separator-collettore-ritorno-a",
+        "p7-a",
+        "p7-b"
+      ],
+      "id": "applied-dirt-separator-collettore-ritorno-a",
+      "rule_id": "dirt-separation-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "drain-connection-disgiuntore-primary-in",
+        "stub-drain-connection-disgiuntore-primary-in"
+      ],
+      "id": "applied-drain-connection-disgiuntore-primary-in",
+      "rule_id": "let-what-holds-its-own-volume-empty",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "expansion-connection-collettore-ritorno-a",
+        "tee-expansion-connection-collettore-ritorno-a",
+        "p7-b-a",
+        "p7-b-b",
+        "stub-expansion-connection-collettore-ritorno-a"
+      ],
+      "id": "applied-expansion-connection-collettore-ritorno-a",
+      "rule_id": "expansion-on-closed-circuit",
+      "rule_version": "4.1.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "filling-unit-collettore-ritorno-a",
+        "inlet-filling-unit-collettore-ritorno-a",
+        "tee-filling-unit-collettore-ritorno-a-b",
+        "inlet-filling-unit-collettore-ritorno-a-a",
+        "fredda-filling-unit-collettore-ritorno-a",
+        "p7-b-b-a",
+        "p7-b-b-b",
+        "stub-filling-unit-collettore-ritorno-a-b"
+      ],
+      "id": "applied-filling-unit-collettore-ritorno-a",
+      "rule_id": "filling-unit-on-return",
+      "rule_version": "5.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "pressure-gauge-collettore-ritorno-a",
+        "tee-pressure-gauge-collettore-ritorno-a",
+        "p7-b-b-b-a",
+        "p7-b-b-b-b",
+        "stub-pressure-gauge-collettore-ritorno-a"
+      ],
+      "id": "applied-pressure-gauge-collettore-ritorno-a",
+      "rule_id": "gauge-where-the-plant-is-charged",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "strainer-caldaia-water-return",
+        "p12-a",
+        "p12-b"
+      ],
+      "id": "applied-strainer-caldaia-water-return",
+      "rule_id": "debris-guard-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "strainer-pdc-water-return",
+        "p8-a",
+        "p8-b"
+      ],
+      "id": "applied-strainer-pdc-water-return",
+      "rule_id": "debris-guard-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-gauge-cock-3way-pressure-gauge-collettore-ritorno-a-a",
+        "stub-pressure-gauge-collettore-ritorno-a-a",
+        "stub-pressure-gauge-collettore-ritorno-a-b"
+      ],
+      "id": "applied-valve-gauge-cock-3way-pressure-gauge-collettore-ritorno-a-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-circolatore-b",
+        "s2-a",
+        "s2-b"
+      ],
+      "id": "applied-valve-isolation-circolatore-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-commutatrice-ritorno-in-a",
+        "p9-a",
+        "p9-b"
+      ],
+      "id": "applied-valve-isolation-commutatrice-ritorno-in-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-deviatrice-caldaia-in",
+        "p3-a",
+        "p3-b"
+      ],
+      "id": "applied-valve-isolation-deviatrice-caldaia-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-deviatrice-caldaia-out-a",
+        "p4-a",
+        "p4-b"
+      ],
+      "id": "applied-valve-isolation-deviatrice-caldaia-out-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-deviatrice-caldaia-out-b",
+        "p10-a",
+        "p10-b"
+      ],
+      "id": "applied-valve-isolation-deviatrice-caldaia-out-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-acquedotto-a",
+        "w1-a",
+        "w1-b"
+      ],
+      "id": "applied-valve-isolation-dhw-acquedotto-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-utenze-a",
+        "w2-a",
+        "w2-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-utenze-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dirt-separator-collettore-ritorno-a-b",
+        "p7-a-5-a",
+        "p7-a-5-b"
+      ],
+      "id": "applied-valve-isolation-dirt-separator-collettore-ritorno-a-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-disgiuntore-primary-in",
+        "p6-b-a",
+        "p6-b-b"
+      ],
+      "id": "applied-valve-isolation-disgiuntore-primary-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-disgiuntore-primary-out",
+        "p7-a-1-a",
+        "p7-a-1-b"
+      ],
+      "id": "applied-valve-isolation-disgiuntore-primary-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-disgiuntore-secondary-in",
+        "s3-a",
+        "s3-b"
+      ],
+      "id": "applied-valve-isolation-disgiuntore-secondary-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-disgiuntore-secondary-out",
+        "s1-a",
+        "s1-b"
+      ],
+      "id": "applied-valve-isolation-disgiuntore-secondary-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a",
+        "stub-expansion-connection-collettore-ritorno-a-a",
+        "stub-expansion-connection-collettore-ritorno-a-b"
+      ],
+      "id": "applied-valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-pdc-water-supply",
+        "p1-a",
+        "p1-b"
+      ],
+      "id": "applied-valve-isolation-pdc-water-supply",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-scambiatore-primary-out",
+        "p11-a",
+        "p11-b"
+      ],
+      "id": "applied-valve-isolation-scambiatore-primary-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-strainer-caldaia-water-return-a",
+        "p12-a-a",
+        "p12-a-b"
+      ],
+      "id": "applied-valve-isolation-strainer-caldaia-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-strainer-pdc-water-return-a",
+        "p8-a-a",
+        "p8-a-b"
+      ],
+      "id": "applied-valve-isolation-strainer-pdc-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-safety-collettore-mandata-b",
+        "tee-valve-safety-collettore-mandata-b",
+        "p6-a",
+        "p6-b",
+        "stub-valve-safety-collettore-mandata-b"
+      ],
+      "id": "applied-valve-safety-collettore-mandata-b",
+      "rule_id": "safety-relief-on-the-closed-circuit",
+      "rule_version": "2.0.0",
+      "status": "approved"
+    }
+  ],
+  "schema_version": "1.1.0",
+  "sheets": [],
+  "subsystems": [
+    {
+      "component_ids": [
+        "disgiuntore",
+        "air-vent-disgiuntore-primary-out",
+        "drain-connection-disgiuntore-primary-in",
+        "valve-isolation-disgiuntore-primary-in",
+        "valve-isolation-disgiuntore-primary-out",
+        "valve-isolation-disgiuntore-secondary-out",
+        "valve-isolation-disgiuntore-secondary-in"
+      ],
+      "id": "accumulo",
+      "name": "Disgiuntore idraulico",
+      "network_ids": [
+        "primario",
+        "secondario"
+      ]
+    },
+    {
+      "component_ids": [
+        "circolatore",
+        "radiatori",
+        "valve-isolation-circolatore-b"
+      ],
+      "id": "distribuzione",
+      "name": "Distribuzione",
+      "network_ids": [
+        "secondario"
+      ]
+    },
+    {
+      "component_ids": [
+        "pdc",
+        "caldaia",
+        "ritegno-pdc",
+        "ritegno-caldaia",
+        "deviatrice-caldaia",
+        "commutatrice-ritorno",
+        "collettore-mandata",
+        "collettore-ritorno",
+        "strainer-caldaia-water-return",
+        "strainer-pdc-water-return",
+        "dirt-separator-collettore-ritorno-a",
+        "expansion-connection-collettore-ritorno-a",
+        "tee-expansion-connection-collettore-ritorno-a",
+        "filling-unit-collettore-ritorno-a",
+        "inlet-filling-unit-collettore-ritorno-a",
+        "tee-filling-unit-collettore-ritorno-a-b",
+        "pressure-gauge-collettore-ritorno-a",
+        "tee-pressure-gauge-collettore-ritorno-a",
+        "valve-safety-collettore-mandata-b",
+        "tee-valve-safety-collettore-mandata-b",
+        "valve-isolation-dirt-separator-collettore-ritorno-a-b",
+        "valve-isolation-deviatrice-caldaia-in",
+        "valve-isolation-deviatrice-caldaia-out-a",
+        "valve-isolation-deviatrice-caldaia-out-b",
+        "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a",
+        "valve-isolation-pdc-water-supply",
+        "valve-gauge-cock-3way-pressure-gauge-collettore-ritorno-a-a",
+        "valve-isolation-strainer-caldaia-water-return-a",
+        "valve-isolation-strainer-pdc-water-return-a",
+        "valve-isolation-commutatrice-ritorno-in-a"
+      ],
+      "id": "generazione",
+      "name": "Generazione",
+      "network_ids": [
+        "primario"
+      ]
+    },
+    {
+      "component_ids": [
+        "scambiatore",
+        "acquedotto",
+        "utenze",
+        "valve-isolation-dhw-acquedotto-a",
+        "valve-isolation-dhw-hot-utenze-a",
+        "valve-isolation-scambiatore-primary-out"
+      ],
+      "id": "sanitario",
+      "name": "Acqua calda sanitaria istantanea",
+      "network_ids": [
+        "primario",
+        "fredda",
+        "sanitaria"
+      ]
+    }
+  ]
+}

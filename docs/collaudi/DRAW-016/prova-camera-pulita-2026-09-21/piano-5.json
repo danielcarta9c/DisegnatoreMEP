@@ -1,0 +1,135 @@
+{
+  "formato": "A3",
+  "note": [
+    "Cascata impilata stretta a x=15, passo 35 (5 mm fra una macchina e l'altra): le tre PdC hanno le due porte tutte sulla faccia destra, quindi i due collettori sono due verticali corte addosso a loro, x=70 il ritorno e x=85 la mandata, 15 mm l'una dall'altra (A2, B3, B12.2). Ogni macchina ci entra con uno stacco orizzontale corto.",
+    "Ordine di impilaggio pdc-3 / pdc-2 / pdc-1 dall'alto: la catena di mandata si chiude su pdc-3 e quella di ritorno si apre su pdc-1, quindi cosi' la mandata esce dalla cima del collettore e il ritorno rientra dal fondo - mandata sopra, ritorno sotto (B10).",
+    "Volano a y=25: primary_in cade a quota 30, la stessa a cui la deviatrice porta la mandata. Da cascata-mandata-b alla deviatrice al volano l'autostrada di mandata e' una retta unica (B1).",
+    "Fra la deviatrice e il bollitore la mandata scende su x=105 e il ritorno del volano risale su x=120: due verticali affiancate a 15 mm, un binario, non due strade separate (B11).",
+    "Bollitore impilato sotto il volano alla stessa x (A2), con 45 mm di stacco per lasciare uscire dhw_out verso l'alto: la deviatrice tiene la terza via verso il basso perche' il bollitore sta li' (D-168).",
+    "Pettine dei secondari (B12): tre utenze impilate a x=220 con passo 25, e alla loro sinistra due colonne adiacenti - il ritorno a x=185 e la mandata a x=200, 15 mm l'una dall'altra. Da quelle si stacca una coppia di orizzontali per ogni utenza: mandata sopra, ritorno sotto, affiancate a 10 mm per tutta la corsa fino al terminale.",
+    "I terminali si prendono da sinistra: in e out stanno tutt'e due sulla faccia sinistra a +2,5 e +12,5, la coppia entra affiancata e non si spreca la fascia a destra (D-167).",
+    "secondario-ritorno-a e' posato alla quota della porta out della batteria: il ritorno del pettine corre retto fino al volano, e ventilconvettore e radiante ci salgono con una verticale corta. Posandolo alla quota del ventilconvettore il ritorno della batteria scendeva e poi risaliva (B8).",
+    "Il ritorno del radiante rientra su una verticale sua a x=172,5, 12,5 mm a sinistra della colonna del ritorno: la topologia ha un ritorno invertito - secondario-ritorno-b raccoglie il radiante in basso e rimanda al volano in alto - e passando per la colonna andrebbe addosso a secondario-ritorno-a.",
+    "Ramo sanitario tenuto in basso, a quota 107,5, appena sopra il bollitore che serve: l'anello di ricircolo torna indietro sopra la corsa, e il confine ACS sta addosso alla presa e non a mezzo foglio (A4).",
+    "Tutto il piano parte da x=15 e y=25 e non dall'origine: le porte poste piu' in alto di circa 16 mm e piu' a sinistra di circa 10 mm cadono fuori dalla griglia su cui l'instradatore lavora, e le loro tratte non si instradano affatto. E' un margine di servizio, non una scelta di composizione: contano solo le posizioni relative."
+  ],
+  "pezzi": {
+    "pdc-3": {
+      "x": 15,
+      "y": 50,
+      "regola": "A2 - cascata impilata stretta, passo 35; in cima perche' la mandata esce da qui (B10)"
+    },
+    "pdc-2": {
+      "x": 15,
+      "y": 85,
+      "regola": "A2 - stessa x, passo verticale costante"
+    },
+    "pdc-1": {
+      "x": 15,
+      "y": 120,
+      "regola": "A2 - in fondo perche' il ritorno rientra da qui (B10)"
+    },
+    "cascata-mandata-a": {
+      "x": 82.5,
+      "y": 87.5,
+      "regola": "B3 - collettore di mandata, verticale corta a x=70; posato alla quota della porta di pdc-2 (B8)"
+    },
+    "cascata-mandata-b": {
+      "x": 82.5,
+      "y": 52.5,
+      "regola": "B3 - collettore di mandata: il flusso risale la colonna e ne esce dalla cima verso la deviatrice, che sta piu' in alto"
+    },
+    "cascata-ritorno-a": {
+      "x": 67.5,
+      "y": 137.5,
+      "regola": "B3 - collettore di ritorno sulla verticale piu' vicina alle macchine (x=55), quota della porta di pdc-1"
+    },
+    "cascata-ritorno-b": {
+      "x": 67.5,
+      "y": 102.5,
+      "regola": "B3 - stessa verticale, quota della porta di pdc-2; pdc-3 si serve dallo stesso stacco piu' in alto"
+    },
+    "deviatrice": {
+      "x": 100,
+      "y": 25,
+      "rotazione": 0,
+      "regola": "D-168 - terza via verso il basso perche' il bollitore sta sotto; in e out_a a quota 5, sull'autostrada di mandata"
+    },
+    "volano": {
+      "x": 135,
+      "y": 25,
+      "regola": "B1 - primary_in a quota 5, la stessa dell'uscita del collettore: mandata retta"
+    },
+    "ritorno-primario": {
+      "x": 117.5,
+      "y": 130,
+      "regola": "B8 - posato sulla quota di volano.primary_out (20), cosi' il ritorno non lascia la sua quota"
+    },
+    "bollitore": {
+      "x": 135,
+      "y": 115,
+      "regola": "A2 - impilato sotto il volano alla stessa x; distanziato per lasciare uscire dhw_out verso l'alto"
+    },
+    "secondario-ritorno-b": {
+      "x": 170,
+      "y": 42.5,
+      "regola": "B8 - quota 20 di volano.secondary_in: il rientro al volano e' retto"
+    },
+    "secondario-ritorno-a": {
+      "x": 182.5,
+      "y": 37.5,
+      "regola": "B12 - colonna di ritorno del pettine, posata alla quota della porta out della batteria: il ritorno corre retto fino al volano e le altre utenze ci salgono"
+    },
+    "secondario-mandata-a": {
+      "x": 197.5,
+      "y": 27.5,
+      "regola": "B12 - colonna di mandata del pettine (x=185), adiacente al ritorno e piu' vicina alle utenze; quota della porta in della batteria"
+    },
+    "secondario-mandata-b": {
+      "x": 197.5,
+      "y": 52.5,
+      "regola": "B12 - stessa colonna, quota della porta in del ventilconvettore"
+    },
+    "batteria-uta": {
+      "x": 220,
+      "y": 27.5,
+      "regola": "D-167 - utenza impilata, presa da sinistra dalla coppia mandata/ritorno"
+    },
+    "ventilconvettori": {
+      "x": 220,
+      "y": 52.5,
+      "regola": "D-167 - seconda dente del pettine, passo 25"
+    },
+    "miscelatrice-radiante": {
+      "x": 205,
+      "y": 75,
+      "rotazione": 0,
+      "regola": "D-168 - terza via (cold_in) verso il basso perche' il ricircolo radiante arriva da sotto"
+    },
+    "pavimento-radiante": {
+      "x": 220,
+      "y": 77.5,
+      "regola": "D-167 - terzo dente del pettine, servito dalla miscelatrice che gli sta addosso a sinistra"
+    },
+    "ritorno-radiante": {
+      "x": 207.5,
+      "y": 87.5,
+      "regola": "A4 - sotto la miscelatrice che serve, stacco di ricircolo verticale corto"
+    },
+    "innesto-ricircolo": {
+      "x": 165,
+      "y": 105,
+      "regola": "A4 - sopra il bollitore, sulla quota 82,5 della corsa sanitaria"
+    },
+    "presa-ricircolo": {
+      "x": 195,
+      "y": 105,
+      "regola": "A4 - stessa quota, l'anello di ricircolo torna indietro sopra la corsa"
+    },
+    "utenze": {
+      "x": 207.5,
+      "y": 105,
+      "regola": "A4 - confine ACS addosso alla presa di ricircolo, non nella fascia della distribuzione"
+    }
+  }
+}

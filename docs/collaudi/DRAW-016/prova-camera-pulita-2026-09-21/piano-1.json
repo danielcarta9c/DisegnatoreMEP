@@ -1,0 +1,23 @@
+{
+  "formato": "A4",
+  "note": [
+    "L'impianto ha sette pezzi posabili e un solo tronco che attraversa la centrale: pompa maestra -> collettore di mandata -> accumulo, e ritorno all'indietro sulla stessa corsa. Tutto il piano e' costruito su quelle due autostrade.",
+    "Pompa maestra e accumulo posati alla stessa quota y=90: hanno lo stesso interasse 15 fra le porte (+5 e +20), quindi la mandata del primario corre retta a y=95 e il ritorno retto a y=110 da un capo all'altro, senza una piega (B1, 2.1).",
+    "Le due pompe sono in parallelo: impilate alla stessa x=30, passo verticale 35 (A2). Il passo e' volutamente corto: allargandolo il disegno diventa una fascia orizzontale con una pompa che penzola in basso a sinistra e il quadrante in basso a destra resta vuoto (D3). Misurato: passo 35 -> squilibrio entro il limite; passo 40 -> 3.1 volte; passo 70 -> 23.7 volte.",
+    "Collettori: due verticali corte accanto alle pompe, x=85 (mandata) e x=100 (ritorno). E' l'ordine inverso a quello che B3 prescrive, e lo dichiaro come rilievo: con due macchine che hanno mandata e ritorno sulla stessa faccia un sormonto non e' evitabile in nessuno dei due ordini, ma mettendo il ritorno piu' vicino i sormonti diventano due (lo stacco di mandata della schiava e il ritorno dall'accumulo), mettendo la mandata piu' vicina resta uno solo. Misurato: 1 sormonto contro 2.",
+    "La pompa schiava entra nei due collettori con uno stacco orizzontale corto e una piega sola per lato: e' la forma del parallelo descritta in A2/B3 ed e' il minimo possibile, perche' la maestra occupa gia' il passante dei due raccordi.",
+    "Il radiatore e' un passante con le due porte alla stessa quota: posato a y=87.5 la mandata secondaria entra retta a y=95 e il ritorno rientra nell'accumulo a y=110, sotto la mandata, con una piega per lato (2.1, B10).",
+    "Confine ACS appena sopra l'accumulo, sulla verticale della porta dhw_out: stacco dritto di 10 mm, cioe' il minimo su griglia (A4).",
+    "Foglio A4: e' il piu' piccolo in cui l'impianto sta. Su A3 il foglio resta pieno al 29-31%, sotto la finestra; su A4 il riempimento rientra e lo squilibrio fra i quadranti rimane nei limiti. Spingendo l'accumulo oltre x=150 su A4 il ritorno del radiatore non si instrada piu': serve aria a destra del terminale per il suo giro.",
+    "Rilievo dichiarato: il preflight segnala che il ritorno m8 corre sopra la mandata m7, ma in geometria m7 sta a y=71 e m8 a y=86 sul foglio, cioe' il ritorno e' disegnato sotto. La tavola rispetta B10; e' il controllo che sembra invertito."
+  ],
+  "pezzi": {
+    "pdc-master": {"x": 30, "y": 90, "regola": "A1 — fascia di generazione, a sinistra; e' la sua quota che decide le due autostrade del primario"},
+    "pdc-slave": {"x": 30, "y": 125, "regola": "A2 — chi sta in parallelo si impila, stessa x, passo costante 35"},
+    "collettore-mandata": {"x": 85, "y": 92.5, "regola": "B3 — verticale corta accanto alle macchine, sulla quota della mandata y=95"},
+    "collettore-ritorno": {"x": 100, "y": 107.5, "regola": "B3 — seconda verticale corta, sulla quota del ritorno y=110"},
+    "accumulo": {"x": 150, "y": 90, "regola": "B1 — stesso y della pompa maestra: mandata e ritorno del primario rette, zero pieghe"},
+    "radiatori": {"x": 210, "y": 87.5, "regola": "A1 — fascia delle utenze; quota che tiene la mandata secondaria sulla sua linea (B8)"},
+    "utenze": {"x": 155, "y": 75, "regola": "A4 — confine di rete addosso all'accumulo che serve, sulla verticale di dhw_out"}
+  }
+}
