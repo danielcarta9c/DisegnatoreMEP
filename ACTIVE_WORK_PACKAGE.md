@@ -66,6 +66,45 @@ tubi**, non una fonte di convenzione, e le loro discordanze non sono un problema
 
 ---
 
+## ✅ Dove siamo arrivati il 21 settembre, e da dove si riparte
+
+**Il punto 0 e il punto 0bis sono fatti, e misurati.** La prova sta in
+[`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/),
+il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAPPORTO.md).
+
+| fatto | |
+|---|---|
+| **il riduttore a scheletro** | `docs/collaudi/DRAW-016/riduci-a-scheletro.py`, nel repository |
+| **il pianificatore esiste** | `skill/comporre/`, e **in camera pulita batte il piano scritto a mano su tutti e tre gli impianti provati** |
+| **B12 si compone** | impianto 5 da **A1 ad A3**, impianto 4 da **A2 ad A4**, zero cedute e zero bloccanti |
+| **B10 non accusa più tavole giuste** | il difetto trovato da un agente, corretto in `_affiancamenti`, con due prove |
+
+**Da dove riparte la prossima sessione, in quest'ordine:**
+
+1. **Ricomporre i cinque piani con `skill/comporre/`** — non a mano (**D-155**). È quello che
+   riporta il saldo della suite da **47 a 38 o sotto**, perché le nove rosse nuove sono tutte
+   il piano a mano dell'impianto 5 che, dopo D-167, apre un bloccante su `s8`. **I cinque piani
+   a mano sono vecchi e il loro README lo dice in testa.**
+2. **Chiudere l'anello** — l'occhio di `skill/rivedere/` scrive **vincoli in forma di dati**, il
+   pianificatore li riceve e li rispetta (punto 2).
+3. **`passa-per`** (punto 3).
+
+**E tre cose da portare al PO prima di toccarle**, tutte e tre riferite da agenti diversi e
+verificate:
+
+- **il bilancio di B1 è irraggiungibile dove il simbolo impone la piega** — un collettore
+  verticale ne ha due agli estremi per forza, una tre vie sulla terza via ne ha una. *«Il numero
+  è irraggiungibile, non il disegno è sbagliato.»* Stessa famiglia di **B7** e di **B1 contro
+  B3**;
+- **B12 presuppone una ramificazione simmetrica**, e l'impianto 5 ha un ritorno invertito: o la
+  terza colonna è vera, o il grafo va guardato. **Contenuto MEP**;
+- **D3 spinge nel verso sbagliato** — due agenti su tre hanno allontanato un pezzo dalla
+  macchina che serve **solo** per spegnere `DRAWING_ALL_ON_ONE_SIDE`, e tutti e due hanno
+  scritto da soli che un disegnatore non lo farebbe. *Proposta: D3 esce dal punteggio e resta
+  una cosa che l'occhio guarda.*
+
+---
+
 ## Da dove si parte — quello che la sessione del 20–21 settembre ha lasciato pronto
 
 Questo pacchetto non riparte da zero. Quattro cose sono già in piedi, e vanno usate.

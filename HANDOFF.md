@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-21, a `DRAW-015` **fuso** e `DRAW-016` aperto
+**Aggiornato:** 2026-09-21, a `DRAW-015` **fuso** e al punto 0 di `DRAW-016` **fatto**
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -68,6 +68,27 @@ che rientra dalla finestra** (D-151). E **la convenzione grafica non si tocca** 
 > non lo farebbe. **Quando c'è un numero, l'agente lo insegue**: un punteggio si ottimizza, e
 > **D3 si ottimizza nel verso sbagliato**. La direzione proposta — e la decisione è del PO — è
 > che **D3 esca dal punteggio e resti una cosa che l'occhio guarda**.
+
+## ✅ Il pianificatore esiste, e in camera pulita batte il piano scritto a mano
+
+**Il punto 0 di `DRAW-016` — la prova che il PO ha chiesto — è fatto.** Agenti avviati da zero,
+che hanno ricevuto **solo** `skill/comporre/ISTRUZIONI.md` e il grafo **scheletro** (sole
+macchine e collettori, nessuna valvola), e a cui era vietato leggere qualunque piano esistente.
+
+| impianto | | a mano | agente, 1° giro | agente **con B12** |
+|---|---|---|---|---|
+| **1** | formato · piegate · incroci | A2 · 4 · 1 | **A4 · 3 · 1** | — |
+| **4** | formato · piegate · incroci | A2 · 7 · 3 | A3 · 5 · 5 | **A4 · 4 · 3** |
+| **5** | formato · piegate · incroci | A1 · 13 · 12 | A2 · 13 · 6 | **A3 · 12 · 5** |
+
+Zero cedute e zero bloccanti su tutti. **Il salto è il formato**: l'impianto 5 su un **quarto**
+di foglio. Prova, piani e tavole in
+`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/`; rapporto in
+`docs/collaudi/DRAW-016/RAPPORTO.md`.
+
+> **Le misure sono rieseguite dalla sessione, non riferite dagli agenti** (D-152). Ed è servito:
+> gli agenti hanno trovato **due cose che nessun numero dava** — un controllo mio che accusava
+> tavole giuste, e il fatto che **D3 spinge nel verso sbagliato**.
 
 ## Prodotto
 
