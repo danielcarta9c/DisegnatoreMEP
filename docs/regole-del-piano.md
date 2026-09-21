@@ -344,6 +344,15 @@ sposta **lungo la faccia su cui sta**, serve solo per allineare meglio le autost
 **corre insieme**. La libreria dei simboli non si tocca **di faccia** (D-126 punto 3): si
 scorre lungo la faccia, e solo per le autostrade.
 
+⛔ **E c'è un limite, dato dal PO nella stessa conversazione, che vale più della licenza:
+gli attacchi di un serpentino non si spostano.** «I puffer hanno delle particolarità:
+serpentino che va rispettato, altrimenti non si capisce a che serve quel serpentino senza
+attacchi precisi su esso.» Sono `coil_in` e `coil_out` di `dhw-cylinder` — **10 mm l'uno
+dall'altro, e restano lì**: la loro posizione dice dov'è la serpentina dentro l'accumulo, e
+spostarli toglie senso al simbolo. **La conseguenza va accettata**: una coppia che serve una
+serpentina **cambia interasse**, e il rilievo di B11 su quella coppia è vero e non si cura.
+Chi scorre un attacco guarda prima se quell'attacco appartiene a uno scambiatore interno.
+
 **Un caso resta aperto, e non si chiude così.** `radiator` ha `in` e `out` **alla stessa
 quota** su facce opposte: la coppia che lo serve **deve** cambiare interasse, e farli
 distare 15 mm su un simbolo alto 15 non è uno scorrimento ma un ridisegno. È la stessa
