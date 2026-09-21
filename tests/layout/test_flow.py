@@ -4,6 +4,7 @@ Il difetto che queste prove chiudono: la valvola deviatrice del caso D-011 era
 finita a sinistra della pompa di calore, e la mandata che la alimenta veniva
 percio' disegnata come ritorno — blu, e in entrata dal lato sbagliato.
 """
+# categoria: difende il motore — mandata e ritorno dedotti dalla topologia (orient_trunks), non da dove il disegno ha messo i pezzi
 
 from pathlib import Path
 

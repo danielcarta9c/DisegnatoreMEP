@@ -1,6 +1,6 @@
 {
   "id": "gas-boiler",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "Caldaia a condensazione",
   "width_mm": 40.0,
   "height_mm": 30.0,
@@ -12,7 +12,7 @@
       "id": "water_supply",
       "face": "right",
       "x_mm": 40.0,
-      "y_mm": 10.0
+      "y_mm": 5.0
     },
     {
       "id": "water_return",

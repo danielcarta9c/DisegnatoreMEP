@@ -15,6 +15,7 @@ pezzo che si manutiene, i pezzi in linea fino al primo organo di chiusura compre
 E' un contratto duro: una posa che non lo rispetta non e' una candidata, e il costo
 globale sceglie fra quelle che lo rispettano. Impianti costruiti qui.
 """
+# categoria: difende il motore — la catena di accessori in linea sul primo rettilineo dalla porta (I-044): posa deterministica, letta dal catalogo
 
 import math
 from datetime import date

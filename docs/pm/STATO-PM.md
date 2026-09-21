@@ -1,26 +1,41 @@
-# STATO PM — il documento d'ingresso del PM
+# STATO PM — il dossier di stato della sessione
 
-**Aggiornato:** 2026-09-18
-**A chi serve:** alla sessione PM che subentra. Leggi questo e sei operativo: non ti serve
-un prompt lungo, e chi te lo dà ti sta raccontando qualcosa che dovrebbe stare qui.
-**Regola di questo file:** ogni sessione PM lo aggiorna prima di chiudere. Un file di stato
+**Aggiornato:** 2026-09-20 (riallineamento documentale, `DRAW-015`)
+**A chi serve:** alla sessione che subentra. Leggi questo e sei operativo: non ti serve un
+prompt lungo, e chi te lo dà ti sta raccontando qualcosa che dovrebbe stare qui.
+**Regola di questo file:** ogni sessione lo aggiorna prima di chiudere. Un file di stato
 vecchio è peggio di nessun file di stato.
+
+> **Il nome resta «STATO PM», il ruolo no.** Dal **19 settembre 2026** (**D-147**) **PM e
+> DEV sono la stessa sessione**: non c'è più un agente che scrive i pacchetti e un altro che
+> li giudica. Questo file smette di essere «l'ingresso del PM» e diventa **il dossier di
+> stato**: quello che una sessione deve sapere prima di toccare qualcosa. Il percorso
+> `docs/pm/` resta invariato, come `docs/input-pm/`, perché i verdetti che contiene sono
+> agli atti e non si riscrivono.
 
 ---
 
 ## 1. Chi sei
 
-Il **PM** del progetto, e il PM è **uno solo** (D-130). Scrivi i pacchetti e i criteri,
-verifichi le consegne criterio per criterio, fondi su `main`, e in funzione di ciò che la
-verifica trova scrivi le correzioni per il pacchetto successivo.
+**Un agente solo** (D-147): scrivi il pacchetto e i criteri, sviluppi, misuri, **mostri le
+tavole al PO** e — solo dopo il suo sì — fondi, tramite PR. Nella stessa sessione scrivi
+`HANDOFF.md` e il pacchetto successivo. Se il lavoro si divide in code che non si contendono
+niente, puoi lanciare **agenti paralleli dentro la sessione** (D-152), con il perimetro
+dichiarato prima; non consegnano, non fondono, non chiudono niente, e quello che riferiscono
+**non è una misura finché non l'hai rieseguito**.
 
-Le regole del mestiere stanno in `docs/governance/OPERATING_MODEL.md` §1.2.1 e §3. Le due
-che si dimenticano per prime:
+Le regole del mestiere stanno in `docs/governance/OPERATING_MODEL.md` §1.2.1, §1.2.2 e §3.
+Le tre che si dimenticano per prime:
 
-- **Non sei il DEV.** Il DEV è una sessione diversa, esegue il solo pacchetto attivo, apre
-  la PR e si ferma. L'indipendenza sta lì, fra chi esegue e chi giudica.
+- **Non c'è più un secondo agente che verifica al posto tuo.** Il controllo è uno: **il PO
+  guarda le tavole**. Ne segue che D-146 non è una buona pratica ma **la porta**.
+- **Prima le misure, poi il racconto**, anche verso te stesso. Un criterio senza un comando
+  e il suo output è **non raggiunto**.
 - **Non decidi al posto del PO.** Dominio MEP, requisiti, convenzioni grafiche e «è questo
   che volevo» sono suoi. Tu proponi e aspetti.
+
+> Lo sdoppiamento del PM in due soggetti è abolito da **D-130**; la separazione fra PM e DEV
+> in due sessioni da **D-147**. Quel modello non torna qui.
 
 **Come parlare col PO.** È un ingegnere MEP senior: giudica il **risultato**, non
 l'implementazione. Mostragli la tavola, non i criteri numerati; niente nomi di file, di
@@ -35,48 +50,60 @@ Le sigle servono a noi per ritrovare la riga e restano di qua. La versione buona
 domanda detta guardando il disegno — sta in `2026-09-15-triage-input-aperti.md` §11, ed è il
 modello da riusare.
 
-## 2. Dove siamo, al 18 settembre 2026
+## 2. Dove siamo, al 21 settembre 2026
 
 | | |
 |---|---|
-| `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR #33, che porta il triage degli input, il verdetto sulla PR #32 e DRAW-011 |
-| Release dichiarata | **0.3 — generalizzazione, impianto 2** (`docs/plans/2026-09-03-release-plan.md`) |
-| Pacchetto attivo | **DRAW-013** (`ACTIVE_WORK_PACKAGE.md`): la tavola si allarga tutta insieme, non tocca il bordo, e la distribuzione ha la sua forma (D-142, D-143, D-144, D-145). **Attivo, approvato dal PO il 18 settembre.** Parte dal ramo di `DRAW-012`, non da `main` |
-| PR #41 (DRAW-012) | **verificata e respinta.** Tredici criteri su sedici, nessuno barato, rapporto onesto — ma il PO ha guardato le tavole e ha detto «era meglio prima». Verdetto in `docs/pm/2026-09-18-review-pr41-draw012.md`. **Il suo lavoro non è su `main`, e non va rifatto**: `DRAW-013` riparte dal ramo `claude/hopeful-ramanujan-9bs0cb` (`17ff425`) |
-| PR #32 (DRAW-010) | verificata e respinta il 15 settembre. Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`. Il suo lavoro non è su `main` |
-| Ultima consegna verificata | **DRAW-012**, PR #41. Torna al DEV con `DRAW-013` |
-| Suite su `main` | **10 rosse, 1470 verdi, 24 saltate, 11 xfailed** — rimisurata dal PM il 17 settembre, coincide |
-| Suite sul ramo di DRAW-012 | **13 rosse, 1482 verdi, 24 saltate, 11 xfailed.** È il riferimento di `DRAW-013`, non quello di `main` |
-| Tavola 1 su `main` | 4 pieghe · 1 incrocio · 470,0 mm · riempimento 29,8 % · copertura 0,625 · ingombro 245 × 100 mm |
-| Tavola 2 su `main` | 5 pieghe · 1 incrocio · 600,0 mm · riempimento 50,1 % · copertura 0,625 · ingombro 257,5 × 160 mm |
-| Tavole sul ramo di DRAW-012 | 1 · 4/1 · 45,1 % · 0,750 · 322,5 × 115 mm — 2 · 5/1 · 64,1 % · 0,750 · 315 × 167,5 mm. **Bocciate dal PO**: riempimento comprato allungando i tratti, e disegno fino quasi al bordo |
-| Impianti 3, 4, 5 | nessuno produce una tavola, né su `main` né sul ramo di `DRAW-012`. La tavola 4 si ferma su un confine di rete posato dieci millimetri fuori dall'area di disegno |
-| Registro degli input | **12 righe aperte + 4 regole permanenti**, su 68. I-073 … I-076 del 18 settembre sono chiuse da D-142 … D-145; **I-077 è una regola permanente nuova** (D-146: le tavole al PO, sempre e per prime) |
-| Prodotto in chat | **mai eseguito nel suo ambiente finale.** È il rischio 1, il più vecchio |
+| `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR **#45**, che porta `DRAW-014`, il cambio di architettura (D-151, D-152), la prova del piano e il pacchetto `DRAW-015` |
+| Release dichiarata | **0.3 — generalizzazione** (`docs/plans/2026-09-03-release-plan.md`) |
+| Architettura del disegno | **cambiata il 20 settembre**: pianificatore → motore → revisore (**D-151**). `docs/ARCHITETTURA-DEL-PIANO.md` è il documento che vince su ogni contrasto |
+| Pacchetto attivo | **`DRAW-016` — l'agente che scrive il piano, e l'agente che dice dove passare** (`ACTIVE_WORK_PACKAGE.md`), **ATTIVO**. `DRAW-015` è **fuso** (PR #46), e **le tavole NON sono approvate** — **D-166**. La prima prova la dichiara il PO: le tavole **senza il corredo** |
+| Il criterio di un'autostrada | **non è un numero** (**D-164**): «un'autostrada per definizione ha poche curve e tratti rettilinei… un criterio **grafico non matematico**». Chi giudica è l'**occhio**. Trasformare un'osservazione in una soglia è **il solutore che rientra dalla finestra** |
+| La convenzione grafica | **è quella sviluppata finora e non si tocca** (**D-165**). Le tavole di `input-pm/riferimenti-grafici/` sono riferimenti **sull'instradamento**, non una fonte di convenzione |
+| Il metodo con cui si compone | **`D-159`, e viene prima delle regole**: la quota di un'autostrada **non si sceglie**, è quella della **porta** della macchina che la genera. Per intero in testa a `docs/regole-del-piano.md` |
+| Le regole misurate | **nove** — A1, A4, B1, B3, B4, **B8** sali-scendi, **B9** corsie libere, **B10** mandata sopra ritorno sotto, **B11** la coppia corre insieme. Ciascuna con la propria **fonte** e il proprio **controllo** (**D-160**), tutte **dentro il punteggio** |
+| L'occhio del revisore | **esiste** — `skill/rivedere/`, **D-162**, provato in camera pulita. Ha trovato **due difetti che nessun controllo poteva dare**. **Manca l'anello**: i vincoli sono un rapporto in italiano, non dati |
+| Chi sviluppa, chi fonde | **un agente solo** (D-147), agenti paralleli dentro la sessione (D-152). **La fusione la approva il PO guardando le tavole** (D-146) |
+| `DRAW-014` | **superato in corsa da D-151**, non chiuso come previsto. Ha fatto uscire le cinque tavole (D-148, D-150) ed è guardandole che il PO ha fermato la linea del solutore. **Quello che ne resta vivo è su `main`** |
+| PR #41 (DRAW-012) | **verificata e respinta** il 18 settembre. Tredici criteri su sedici, nessuno barato, rapporto onesto — ma il PO ha guardato le tavole e ha detto «era meglio prima». Verdetto in `docs/pm/2026-09-18-review-pr41-draw012.md`. **Quella PR non è stata fusa.** ⚠ Ma il suo **contenuto** è su `main`: `DRAW-013` è ripartito da quel ramo ed è entrato con la **PR #44** (`a835006`), il commit dove compaiono `layout/highways.py` e `layout/dilate.py`. Non va rifatto |
+| PR #32 (DRAW-010) | **verificata e respinta** il 15 settembre. Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`. **Il suo lavoro non è su `main`**: la testa del ramo, `df66709`, non è antenata di `main` |
+| Tavole composte a mano | impianto **1** e impianto **5**, in `docs/collaudi/PROVA-PIANO/`: **zero rilievi bloccanti, zero tratte cedute**, un giro da ~30 secondi contro i 10–40 minuti del solutore. È la misura che ha deciso D-151 |
+| Che cosa quelle tavole non dimostrano | **che siano belle.** Il PO (I-082): «c'è molto da migliorare ancora, non assomiglia a come dovrebbe essere un disegno». Misurato: il disegno è una **fascia nella metà alta**, l'impianto 5 ha **quattordici incroci** |
+| I cinque impianti | **da rimisurare.** D-148 (A4→A1) e D-150 (ripiego dichiarato) ne hanno cambiato le condizioni; il **criterio 6** di `DRAW-015` chiede formato e tratte cedute impianto per impianto. Finché quella misura non c'è, qui non si scrive un esito |
+| Registro degli input | **12 righe aperte + 4 regole permanenti**, su 68 al 18 settembre, più gli input del 19–20 settembre che hanno generato D-147…D-154. **I-085 è aperta per dichiarazione del PO**: «le regole vanno solo aggiunte altre e migliorate» |
+| Prodotto in chat | **mai eseguito nel suo ambiente finale.** È il rischio più vecchio |
+| Export DXF | **non costruito.** `I-072` è aperta, e non esiste codice di export in `src/` |
+
+> ⚠ **Una cosa che non torna, e va detta.** Il prezzo di D-151 — **via la riproducibilità
+> bit-per-bit** (D-023) — e la sospensione del vincolo dell'A3 (D-148) sono stati accettati
+> **perché** l'elaborato esce anche in DXF e il disegnatore lo rifinisce in AutoCAD (I-072).
+> **Il DXF non esiste ancora**: `I-072` è aperta e in `src/` non c'è nulla che lo scriva. Il
+> prezzo è già pagato, la contropartita no. Non è un errore di nessuno — è una sequenza da
+> guardare, e la decisione su quando costruire il DXF è del PO.
 
 Il verdetto completo su DRAW-009, con tutte le misure e i comandi, sta in
 `docs/pm/2026-09-14-review-pr27-draw009.md`. È anche il modello di come si scrive un
-verdetto.
+verdetto, e resta valido adesso che a scriverlo è la stessa sessione che sviluppa.
 
-## 3. Che cosa aspetti dal DEV, e come lo verifichi
+## 3. Come si verifica una consegna, adesso che la scrivi tu
 
-`DRAW-013` chiede quindici criteri. Quando arriva la PR:
+`DRAW-015` chiede dieci criteri. Il rito non cambia perché è sparito il secondo agente:
+cambia che **non c'è nessuno a cui delegarlo**.
 
-0. **Prima guardi la tavola, poi conti — e poi la mandi al PO** (**D-146**, regola permanente).
-   Le tavole prodotte gli arrivano **per prime**, prima di qualunque numero o criterio, e se non
-   ne è uscita nessuna glielo dici per primo. Non aspetti che le chieda: su `DRAW-010` e su
-   `DRAW-012` il giudizio che conta è arrivato dal suo occhio, e tutte e due le volte perché le
-   ha chieste lui. Il PO: «altrimenti come PO non ho nulla da verificare e non posso contribuire.
-   Rischiamo che tu come PM e il DEV prendiate qualche deriva.»
-   **Prima guardi la tavola, poi conti.** È la regola nata il 15 settembre, sulla consegna di
-   DRAW-010 (`I-064`): il PM aveva portato al PO pieghe, incroci e lunghezza senza aver letto
-   il disegno, e i quattro difetti veri — il prelievo tornato al centro del foglio, lo stretch
-   mai avvenuto, lo scarico che attraversa la mandata, la tavola 4 illeggibile — li ha visti
-   il PO. Una misura dice se un numero peggiora; non dice se il disegno ha senso. Si apre
-   guardando, si chiude misurando.
-1. **Prima le tue misure, poi il suo rapporto.** Il rapporto del DEV, il corpo della PR e i
-   messaggi dei commit ti sono preclusi finché non hai formato i tuoi numeri. Poi li leggi e
-   segnali ogni differenza.
+0. **Prima guardi la tavola, poi conti — e le tavole al PO per prime** (**D-146**, regola
+   permanente). Le tavole prodotte gli arrivano prima di qualunque numero o criterio, e se
+   non ne è uscita nessuna glielo dici per primo. Non aspetti che le chieda: su `DRAW-010`
+   e su `DRAW-012` il giudizio che conta è arrivato dal suo occhio, e tutte e due le volte
+   perché le ha chieste lui. Il PO: «altrimenti come PO non ho nulla da verificare e non
+   posso contribuire. Rischiamo che prendiate qualche deriva.»
+   La regola è nata il 15 settembre sulla consegna di `DRAW-010` (`I-064`): erano stati
+   portati al PO pieghe, incroci e lunghezza senza aver letto il disegno, e i quattro
+   difetti veri — il prelievo tornato al centro del foglio, lo stretch mai avvenuto, lo
+   scarico che attraversa la mandata, la tavola 4 illeggibile — li ha visti lui. **Una
+   misura dice se un numero peggiora; non dice se il disegno ha senso.** Si apre guardando,
+   si chiude misurando.
+1. **Misura la non-regressione prima di aprire la PR, non dopo.** Se un budget peggiora,
+   non consegni: ti fermi e lo riferisci.
 2. **Misura base e ramo nella stessa cartella**, passando con `git checkout`. Il pacchetto è
    installato *editable* e il `.pth` contiene il percorso assoluto di UNA cartella: un
    `git worktree` che riusa l'ambiente esegue le prove di prima **col codice di adesso**,
@@ -86,76 +113,119 @@ verdetto.
    raggiunto, non «probabilmente».
 5. **Misura anche ciò che il pacchetto dichiara fuori perimetro**, quando è una capacità che
    il prodotto aveva. È la regola nata dall'impianto 4, che si è perso proprio così.
-6. **Il verdetto è scritto** in `docs/pm/`, criterio per criterio, e si pubblica anche come
-   commento sulla PR.
+6. **Se una tavola ti sembra sbagliata e i numeri dicono che va bene, scrivilo.** È il
+   rilievo più utile che puoi portare, ed è due volte su due il modo in cui i difetti veri
+   sono stati trovati in questo progetto.
+7. **Quello che riferisce un agente parallelo non è una misura** finché non l'hai rieseguito
+   tu (D-152).
+8. **Il rapporto è scritto**, criterio per criterio, e vive nella cartella di collaudo del
+   pacchetto; si pubblica anche come commento sulla PR.
 
 Gli strumenti di misura esistono e non vanno riscritti: `docs/collaudi/DRAW-008/metriche.py`
 (misure per livello di gerarchia), `docs/collaudi/DRAW-009/criteri.py`,
 `le-due-sovrapposizioni.py`, `due-prove-senza-caso.py`,
-`perche-la-strada-bassa-non-c-era.py`.
+`perche-la-strada-bassa-non-c-era.py`. **Attenzione a che cosa misurano**: alcuni sono nati
+per giudicare il solutore, e le loro voci di costo non descrivono più il percorso vigente.
 
-## 4. I fili che il PM porta
+## 4. I fili aperti, al 21 settembre 2026
 
-In ordine di quanto pesano, dopo le sei disposizioni del PO del 15 settembre. I rischi
-numerati stanno in `PROJECT_STATE.md`.
+In ordine di quanto pesano. I rischi numerati stanno in `PROJECT_STATE.md`.
 
-0. **Il motore non ragiona nell'ordine del disegnatore** (`I-069`, D-138, 16 settembre). Il
-   PO: «stiamo ottimizzando la punta di una lancia storta». Cinque differenze misurate fra
-   l'ordine che ha dettato e quello che il motore esegue, **quattro a monte di qualunque
-   taratura**: le strade secondarie sono in ultima fase, il circolatore non fa nemmeno tratta,
-   con due generatori uno perde la classificazione, l'autostrada è una catena di frammenti
-   senza invariante sulla catena, e quando l'invariante non si può tenere il motore butta via
-   la fase invece di cedere una curva. **È DRAW-012**, ed è la voce che rende le altre
-   misurabili. Analisi in `2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md`.
-1. **«Un passo avanti e uno indietro»** (`I-067`, 16 settembre). Il PO l'ha detto e ha
+0. **Le tavole non assomigliano a un disegno vero, e l'ha detto il PO guardandole**
+   (`I-082`). È il filo che comanda tutti gli altri, perché è il criterio del prodotto.
+   Misurato: il disegno è una **fascia nella metà alta** del foglio — `DRAWING_ALL_ON_ONE_SIDE`,
+   5,2 volte l'inchiostro fra quadrante pieno e vuoto sull'impianto 1 e **9,0** sul 5 — e
+   l'impianto 5 ha **quattordici incroci**. È il **primo difetto aperto del pianificatore**
+   (D3 in `docs/regole-del-piano.md`).
+1. **Il pianificatore non esiste, e l'anello del revisore è aperto.** È il pacchetto
+   attivo, `DRAW-016`, ed è il lavoro che il PO ha nominato chiudendo la sessione del 20
+   settembre: «**l'agente che scrive il piano, l'agente che fa le verifiche che dà i
+   suggerimenti precisi su dove passare**». Oggi il **piano lo scrive un umano** — l'agente in
+   sessione, a mano — e le cinque tavole escono perché qualcuno ha scritto cinque file di
+   coordinate: **la skill, da sola, non sa comporre** (D-155, D-156).
+   — *~~Il revisore non c'è ancora (D-153)~~: **chiuso da `DRAW-015`** quanto alla metà
+   deterministica — `piano/revisore.py` esegue, misura, si ferma e dice perché.*
+   — *~~E il pezzo 5 misura ma non guarda~~: **chiuso il 20 settembre** — `skill/rivedere/`
+   esiste ed è provato (D-162). **Quello che resta aperto è l'anello**: i vincoli che l'occhio
+   scrive sono prosa, e devono diventare **dati** nella sezione `vincoli` del piano perché il
+   pezzo 3 li riceva.*
+1bis. **Il piano non può chiedere la forma di una spezzata** (**D-161**), e la leva che manca
+   ha un nome: **`passa-per`**. Oggi l'unica mossa di chi compone è **togliere di mezzo chi
+   occupa la strada** — e costa: sull'impianto 5 una linea faceva **3 pieghe invece di 1**
+   perché il gruppo di riempimento stava nella colonna sotto la porta.
+1ter. **Le autostrade del 4 e del 5 sono storte, e il PO le ha bocciate:** «la 4 e la 5 mi
+   sembra che non hai minimamente risolto il problema». `HIGHWAY_IS_NOT_STRAIGHT` è acceso
+   **5 volte sul 4 e 12 sul 5**. **Misurato dove sta il difetto**, e l'esperimento l'ha
+   chiesto il PO: ridotti i due impianti a **sole macchine e collettori, senza una valvola**,
+   restano **5 spezzate piegate sul 4 e 11 sul 5**. È la fase delle autostrade, non quella
+   degli organi.
+2. ~~**Nessun controllo sa che cos'è un'autostrada** (`I-068`).~~ **Chiuso da `DRAW-015`:**
+   `layout/autostrade.py` porta la catena fino alla tavola instradata, B1 ha il proprio
+   rilievo, e `RUN_WITH_TOO_MANY_BENDS` usa il bilancio della catena invece del metro dello
+   stacchetto. Era il difetto che ha generato D-151.
+3. ~~**Le quattro regole di D-154 non hanno ancora un controllo.**~~ **Chiuso da
+   `DRAW-015`**, e sono **cinque**: A1, **A4**, B1, B3, B4 in `validation/regole.py`.
+   **Quello che resta aperto è il censimento di D-158:** **A2, A3, B2, C1 e C3 non hanno un
+   rilievo sulla tavola finita**, e **A3 oggi non è tenuta su da niente** — l'unico posto che
+   la faceva valere era il solutore. **C3 è il buco peggiore**: è l'unico difetto di
+   **contenuto** che nasce da una scelta **grafica**. Rapporto `DRAW-015` §4bis.
+3bis. **A4 è misurata ma non è pulita.** Restano 4 rilievi sull'impianto 1 e 5 su ciascuno
+   degli altri; il peggiore è **+50 mm** — l'acquedotto dell'impianto 3, che entra dal bordo
+   sinistro invece che da accanto al bollitore. **Si chiudono componendo, non alzando la
+   soglia**, ed è lavoro del pianificatore.
+4. **«Un passo avanti e uno indietro»** (`I-067`, 16 settembre). Il PO l'ha detto e ha
    ragione: `DRAW-009` migliora la tavola 1 e perde l'impianto 4, `DRAW-010` riprende
-   l'impianto 4 e perde due budget e quattro prove. **La causa è del PM**: i pacchetti
-   chiedono «non peggiora» e nessuno chiede «migliora», quindi il miglior esito possibile è
-   pari. Da `DRAW-011` §F ogni pacchetto chiede **almeno un budget che migliora**, e i
-   criteri di non-regressione si misurano **prima** di aprire la PR: se uno peggiora, il DEV
-   non consegna, si ferma e riferisce. È la voce che pesa di più, perché non è un difetto del
-   prodotto ma del modo in cui lo chiediamo.
-2. **L'attuazione di D-126 sul prelievo è la causa unica di quasi tutto ciò che la PR #32
-   rompe**: i tre incroci e i 45 mm della tavola 2, le otto prove nuove rosse, l'impianto 5
-   che non arriva più alla posa. Il DEV e il PO ci sono arrivati per strade indipendenti. È
-   la prima voce del pacchetto di correzione, e con essa rientra quasi tutto il resto.
-3. **L'autostrada non esiste come oggetto** (`I-068`, misurato il 16 settembre). Con due
-   generatori la pompa di calore non viene classificata autostrada — sull'impianto 4 lo è la
-   caldaia e lei no — e in ogni caso un'autostrada è una catena di frammenti da 5-10 mm, uno
-   per accessorio, con la rettilineità verificata su ciascun frammento e nessun invariante
-   sulla catena intera. Diagnosi in `ACTIVE_WORK_PACKAGE.md` §E.1, cura da assegnare: è il
-   candidato naturale del pacchetto dopo `DRAW-011`, insieme a D-136.
-4. **L'anello della fase del tronco** (rischio 16). È la causa a monte di quasi tutto:
-   tiene la tavola 2 sul ripiego, ha costretto ad allargare `is_valid` (rischio 19) e con
-   ogni probabilità è ciò che blocca gli impianti 3, 4 e 5. **È §A di DRAW-010**, in corso.
+   l'impianto 4 e perde due budget e quattro prove. **La causa non è del prodotto ma del
+   modo in cui lo chiediamo**: i pacchetti chiedono «non peggiora» e nessuno chiede
+   «migliora», quindi il miglior esito possibile è pari. Da `DRAW-011` §F ogni pacchetto
+   chiede **almeno un budget che migliora**, e la non-regressione si misura **prima** di
+   aprire la PR: se un budget peggiora non si consegna, ci si ferma e si riferisce.
 5. **Il verso di mandata e ritorno lo decide la geometria** (`I-010`, aperto dal 9 agosto).
    Su circa un terzo delle tratte il colore di quel tubo è giusto per caso. **Il PO l'ha
-   dichiarato fondamentale** — D-136 — ed è la voce principale del pacchetto dopo DRAW-010.
-   Nessuno strumento lo misura ancora: `supply` è un booleano già deciso quando arriva alla
-   geometria esportata, quindi l'indecisione va misurata dentro la camminata sul grafo.
-6. **Il prodotto non gira in una chat vera** (rischio 1). Il più vecchio e il meno toccato.
-   La 0.3 non si può dichiarare finita senza una prova verticale in una chat pulita.
-7. **Lo spessore del tratto dice la gerarchia** (D-132): 0,50 mm autostrade, 0,25 mm
+   dichiarato fondamentale** — D-136. Nessuno strumento lo misura ancora: `supply` è un
+   booleano già deciso quando arriva alla geometria esportata, quindi l'indecisione va
+   misurata dentro la camminata sul grafo.
+6. **Il prodotto non gira in una chat vera.** Il filo più vecchio e il meno toccato. La 0.3
+   non si può dichiarare finita senza una prova verticale in una chat pulita.
+7. **L'export DXF** (`I-072`, 17 settembre). **Non costruito**: in `src/` non c'è nulla che
+   lo scriva. Fattibile e indipendente dal resto — legge la geometria già esportata, non
+   tocca posa né instradamento, e la libreria è fatta quasi solo di rette, rettangoli e
+   cerchi (sei archi e tre curve in tutto). **È anche la contropartita di due prezzi già
+   pagati**: la riproducibilità (D-023, sospesa da D-151) e il vincolo dell'A3 (D-148) sono
+   stati lasciati andare *perché* la tavola si rifinisce in CAD. Pacchetto a sé, **da aprire
+   quando il PO lo vuole** — ed è una domanda che vale la pena fargli adesso.
+8. **Lo spessore del tratto dice la gerarchia** (D-132): 0,50 mm autostrade, 0,25 mm
    servizio, due livelli e non tre. Oggi la tavola usa 0,18 / 0,35 / 0,50. Da assegnare, e
    porta con sé un nodo che D-132 lascia aperto — con due spessori in un nodo, il pallino di
-   derivazione a quattro volte lo spessore va agganciato a uno dei due; il PM propone il più
-   grosso.
-8. **L'audit della libreria dei simboli** (rischio 2), che il PO deve approvare prima della
-   0.3.
-9. **La tavola 1 è sotto la finestra del riempimento**: 29,8 % contro un minimo di 45
-   (D-140). È l'impianto su cui il tenersi larghi si vedrà di più, ed è dentro DRAW-012.
-10. **L'export DXF** (`I-072`, 17 settembre). Fattibile e indipendente da tutto il resto: legge
-    la geometria già esportata, non tocca posa né instradamento, e la libreria dei simboli è
-    fatta quasi solo di rette, rettangoli e cerchi — sei archi e tre curve in tutto. **È il
-    filo che cambia l'asticella**: se il disegnatore umano rifinisce in CAD, il motore non
-    deve più essere perfetto al primo colpo. Pacchetto a sé, da aprire quando il PO lo vuole.
-11. **L'ordine degli stacchi non ha un padrone** (rischio 17). Oggi vale per topologia sulle
-   due tavole; diventa esigibile su un impianto che lo violi.
+   derivazione a quattro volte lo spessore va agganciato a uno dei due.
+9. **L'audit della libreria dei simboli**, che il PO deve approvare prima della 0.3.
+10. ~~**Le prove non dicono che cosa difendono.**~~ **Chiuso da `DRAW-015`:** i 36 file di
+    `tests/layout/` portano dentro la propria riga `# categoria:` — 24 difendono il motore,
+    10 difendevano il solutore, 4 difendono una regola del piano.
+11. **L'ordine degli stacchi non ha un padrone.** Oggi vale per topologia sulle due tavole;
+    diventa esigibile su un impianto che lo violi.
 12. **Gli attacchi pari di un collettore**: la scambiabilità va dichiarata nel catalogo, non
-   dedotta. Pacchetto a sé, da aprire se il PO lo vuole.
+    dedotta. Pacchetto a sé, da aprire se il PO lo vuole.
 
-Non è più un filo: **lo squilibrio fra quadranti della tavola 2**. Il riempimento invece è
-tornato, ma come finestra e non come traguardo (D-139), e la lunghezza è uscita del tutto.
+**Che cosa non è più un filo, e per quale decisione.**
+
+- **«Il motore non ragiona nell'ordine del disegnatore»** (`I-069`, D-138) era il filo più
+  pesante il 16 settembre ed è stato `DRAW-012`, il cui contenuto è su `main` con la PR #44.
+  Da **D-151** la domanda si pone diversamente: l'ordine del disegnatore non si insegna a un
+  solutore, **lo compone il pianificatore**. L'analisi in
+  `2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md` resta utile per il motore; le sue
+  parti sul solutore sono storia.
+- **L'anello della fase del tronco** non è più un filo del percorso vigente: la fase del
+  tronco **non decide più la posa** (D-151). Resta agli atti.
+- **La tavola 1 sotto la finestra del riempimento** (D-140) è chiusa da **D-149**: il
+  riempimento esce dagli obiettivi e torna una misura, e la dilatazione di D-142 è ritirata.
+- **L'attuazione di D-126 sul prelievo**, che era la causa unica di quasi tutto ciò che la
+  PR #32 rompeva, è storia di quel giro: la PR è stata respinta e il suo lavoro non è su
+  `main`.
+
+**Ed è tornato a essere un filo** lo **squilibrio fra quadranti**: non come numero da far
+entrare in una finestra, ma come il difetto che si vede a colpo d'occhio sulle due tavole
+composte del 20 settembre. È la voce 0.
 
 ## 5. Cold eye review del 15 settembre — che cosa non tornava, e com'è finita
 
@@ -182,7 +252,11 @@ cinque tavole sono prove, un test passato può tornare a fallire, e non si gener
 ogni giro perché lo stesso errore si paga cinque volte. È D-133, ed è la cosa che più cambia
 il modo di lavorare da qui in avanti.
 
-## 6. Igiene di git
+## 6. Igiene di git — censimento del 15 settembre 2026
+
+> **Il censimento è di quella data e non è stato rifatto.** Dal 15 settembre sono state
+> fuse le PR #34…#45, quindi il conto dei rami fusi è certamente cresciuto. Si rifà prima di
+> usarlo.
 
 **Stato al 15 settembre: 35 rami remoti oltre `main`.** Di questi **22 sono completamente
 fusi** in `main` — il loro contenuto è tutto lì, cancellarli non perde niente — e **13
@@ -231,14 +305,31 @@ Tre, ciascuna già pagata almeno una volta.
    **vale per questo file**: la riga `main` di §2 è stata trovata vecchia dal PM che è
    subentrato il 15 settembre, ed è stata trovata vecchia di nuovo un'ora dopo. Ora non porta
    più un numero. La base si dice per contenuto.
-3. **Gli impianti 3 e 5 non producono tavola da prima di DRAW-009.** È la linea di partenza,
-   non una regressione da inseguire. Il 4 invece è una regressione vera.
+3. **Quali impianti producono una tavola è una misura, non un ricordo.** Fino al 18
+   settembre gli impianti 3, 4 e 5 non ne producevano — 3 e 5 da prima di `DRAW-009`, il 4
+   per una regressione vera. Poi **D-148** (A4→A1) e **D-150** (ripiego dichiarato) hanno
+   cambiato le condizioni. **Si rimisura prima di scriverlo**: è il criterio 6 di
+   `DRAW-015`, impianto per impianto, con formato e tratte cedute.
+4. **Un documento che descrive un prodotto morto senza dichiararlo.** È la trappola per cui
+   la ricerca del 4 agosto è rimasta inattuata per sei settimane, e la regola che la chiude
+   è una: **o un documento è vigente, o dice in testa che è storia e quale decisione l'ha
+   superato.** Il terzo stato è quello che fa danno.
 
-## 8. Che cosa fa il PM appena subentra
+## 8. Che cosa fa la sessione appena subentra
 
-1. Legge questo file e `ACTIVE_WORK_PACKAGE.md`.
-2. Controlla se il DEV ha aperto la PR di DRAW-010. Se sì, verifica secondo §3.
-3. Se il PO è in sessione, l'unica cosa che aspetta ancora solo lui è la lista dei rami da
-   cancellare (§6). Il triage degli input è **fatto**: dossier in
-   `docs/pm/2026-09-15-triage-input-aperti.md`, esito in D-131 … D-136.
-4. Prima di chiudere la sessione, **aggiorna questo file**.
+1. Legge `ACTIVE_WORK_PACKAGE.md`, `HANDOFF.md`, `docs/ARCHITETTURA-DEL-PIANO.md` e questo
+   file — l'ordine sta in `CLAUDE.md`.
+2. Esegue **soltanto** il pacchetto attivo, `DRAW-015`. Se il pacchetto è assente, già
+   consegnato, ambiguo o incompatibile con lo stato del repository, **si ferma e chiede al
+   PO**.
+3. Prima di proporre la fusione: **guarda le tavole**, le mette accanto a quelle del
+   disegnatore del PO (`docs/input-pm/riferimenti-grafici/`) e **le manda a lui per prime**
+   (D-146). Se da un impianto non ne esce nessuna, lo dice per primo.
+4. Quello che aspetta ancora solo il PO: la **lista dei rami da cancellare** (§6), il
+   **formato definitivo** (D-148 è momentanea), la **riproducibilità** (D-023, sospesa), il
+   **collettore di zona in verticale** (D-049 contro D-144), le **due autostrade storte
+   della tavola 2**, e **quando aprire l'export DXF** (`I-072`). Il triage degli input del
+   15 settembre è fatto: dossier in `docs/pm/2026-09-15-triage-input-aperti.md`, esito in
+   D-131 … D-136.
+5. Prima di chiudere la sessione, **aggiorna questo file**, `HANDOFF.md` e il pacchetto
+   successivo.

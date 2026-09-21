@@ -17,6 +17,7 @@ che sotto i 9 nodi condivisi si scende solo pagando 27 pieghe — 4 dei 9 sono
 le derivazioni obbligate sulle due porte condivise, gli altri 5 incroci
 topologicamente forzati da quest'ordine di fasce.
 """
+# categoria: difende il motore — misura la tavola composta (nessuna sovrapposizione, ordine da sinistra a destra, autostrade); tre prove sono soglie raggiunte dal ciclo e difendevano il solutore: elencate nel rapporto
 
 from functools import cache
 from pathlib import Path

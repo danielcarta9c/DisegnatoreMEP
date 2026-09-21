@@ -15,6 +15,7 @@ all'attacco** (D-113): quella corsia e' l'unica uscita di quell'attacco e non e'
 gioco. Ne discende il fianco della valvola a cinque millimetri dal punto
 d'attacco, contro i dodici e mezzo dello stacco ordinario.
 """
+# categoria: difende una regola del piano — A4, un organo di servizio sta addosso al pezzo che serve
 
 from pathlib import Path
 

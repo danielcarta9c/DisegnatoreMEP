@@ -17,6 +17,7 @@ Cio' che il pacchetto chiede:
 Le prove sono generali: gli impianti si costruiscono qui, e cio' che si pretende
 si legge dal **catalogo** — gli stati ammessi di un multivia — non da una tavola.
 """
+# categoria: difendeva il solutore — le coppie di asse che l'Improver genera attraverso raccordi, catene e multivia (DRAW-006-R1 blocco B)
 
 from functools import cache
 from pathlib import Path

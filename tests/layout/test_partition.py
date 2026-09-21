@@ -1,3 +1,4 @@
+# categoria: difende il motore — l'impaginazione: il progetto si divide in fogli, nessun componente si perde e nessuna tratta con accessori si taglia
 import pytest
 
 from disegnatore_mep.layout.errors import LayoutError

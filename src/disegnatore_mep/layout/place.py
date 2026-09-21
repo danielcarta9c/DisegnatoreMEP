@@ -1407,9 +1407,9 @@ def place_sheet(
         Tre insiemi diversi su tre macchine identiche in parallelo, quindi
         `may_stack` le rifiutava **sempre** e nascevano in fila — con il PO che
         guardava la tavola e chiedeva perche' i generatori non fossero
-        incolonnati. La regola c'era (**D-119**, «generatori a sinistra,
-        impilati in verticale se sono piu' di uno»), era scritta, era
-        implementata, ed era **irraggiungibile**.
+        incolonnati. La regola c'era (**D-041 + D-118**, «generatori a
+        sinistra, impilati in verticale se sono piu' di uno»), era scritta,
+        era implementata, ed era **irraggiungibile**.
         """
         found: set[str] = set()
         seen = {component_id}
@@ -1645,14 +1645,15 @@ def place_sheet(
             for role in used_roles
         }
         # **Cio' che sta in parallelo si impila, sempre — non solo quando manca
-        # la larghezza** (D-119): «generatori a sinistra, impilati in verticale
-        # se sono piu' di uno». Non e' una compressione, e' come si disegna una
-        # centrale: due macchine in parallelo hanno gli stessi vicini, e messe
-        # in fila costringono il collettore che le serve a stare da una parte
-        # sola — di qua o di la' — con il ritorno della seconda che attraversa
-        # la tavola per raggiungerlo. Prima capitava per caso: le due pompe si
-        # impilavano solo perche' la fila non entrava nel foglio, e appena la
-        # tavola si e' allargata si sono affiancate e il ritorno si e' rotto.
+        # la larghezza** (D-041 + D-118): «generatori a sinistra, impilati in
+        # verticale se sono piu' di uno». Non e' una compressione, e' come si
+        # disegna una centrale: due macchine in parallelo hanno gli stessi
+        # vicini, e messe in fila costringono il collettore che le serve a stare
+        # da una parte sola — di qua o di la' — con il ritorno della seconda che
+        # attraversa la tavola per raggiungerlo. Prima capitava per caso: le due
+        # pompe si impilavano solo perche' la fila non entrava nel foglio, e
+        # appena la tavola si e' allargata si sono affiancate e il ritorno si e'
+        # rotto.
         for role in used_roles:
             index = 1
             while index < len(slots[role]):
@@ -2307,9 +2308,14 @@ def place_sheet(
         # confluenza unisce due macchine affiancate a un accumulo, la campata e'
         # quella che va dalle macchine all'accumulo, non quella fra le due
         # macchine.
-        first = min(ends, key=lambda place: (place[0], place[1]))
-        last = max(ends, key=lambda place: (place[0], place[1]))
-        horizontal = abs(last[0] - first[0]) >= abs(last[1] - first[1])
+        # `capo` e `coda` si chiamavano `first` e `last`, e in questa
+        # funzione quei due nomi erano gia' presi da due **identificativi**
+        # (riga 1370): `mypy --strict` ne deduceva `str` e segnalava undici
+        # errori su questo blocco. Sono rinominati qui, e **niente altro**
+        # cambia: il difetto era nei nomi, non nel conto (DRAW-015).
+        capo = min(ends, key=lambda place: (place[0], place[1]))
+        coda = max(ends, key=lambda place: (place[0], place[1]))
+        horizontal = abs(coda[0] - capo[0]) >= abs(coda[1] - capo[1])
         along = (step, 0.0) if horizontal else (0.0, step)
         # La catena si percorre dal capo attaccato all'estremo da cui parte la
         # campata, o la fila si legge al contrario.
@@ -2321,8 +2327,8 @@ def place_sheet(
             if place is not None
         ]
         if head and min(
-            abs(place[0] - first[0]) + abs(place[1] - first[1]) for place in head
-        ) > (abs(last[0] - first[0]) + abs(last[1] - first[1])) / 2.0:
+            abs(place[0] - capo[0]) + abs(place[1] - capo[1]) for place in head
+        ) > (abs(coda[0] - capo[0]) + abs(coda[1] - capo[1])) / 2.0:
             members = tuple(reversed(members))
             head_ids = {
                 item for item in chain.anchors if item not in chain.head_anchors
@@ -2340,10 +2346,10 @@ def place_sheet(
             settled[item] for item in sorted(tail_ids, key=chain_rank) if item in settled
         ]
         if head_placed and tail_placed:
-            first, last = _facing_edges(
+            capo, coda = _facing_edges(
                 head_placed, tail_placed, horizontal=horizontal
             )
-        span_x, span_y = last[0] - first[0], last[1] - first[1]
+        span_x, span_y = coda[0] - capo[0], coda[1] - capo[1]
         # Lo spazio non si divide in parti uguali: si divide **secondo il
         # bisogno**. Ogni tratta della catena porta i propri accessori in linea
         # e vuole il proprio rettilineo; una tratta vuota non vuole niente.
@@ -2410,16 +2416,16 @@ def place_sheet(
             # La fila conserva l'ordine: un membro non torna indietro oltre
             # dove il precedente e' finito, e non scavalca il capo della
             # campata.
-            behind = (first[0] if horizontal else first[1]) + forward * cursor
-            ahead = last[0] if horizontal else last[1]
+            behind = (capo[0] if horizontal else capo[1]) + forward * cursor
+            ahead = coda[0] if horizontal else coda[1]
             cursor += needs[index] * scale + spares[index]
             share = (cursor + sizes[index] / 2.0) / span_mm if span_mm else 0.5
             reached = cursor + sizes[index] * scale
             for component_id in group:
                 item = settle_on_the_run(
                     component_id,
-                    first[0] + span_x * share,
-                    first[1] + span_y * share,
+                    capo[0] + span_x * share,
+                    capo[1] + span_y * share,
                     along,
                     forward,
                     (behind, ahead),
@@ -2429,10 +2435,10 @@ def place_sheet(
                 # viene dopo ne tiene conto invece di ripetere lo scarto.
                 reached = max(
                     reached,
-                    (item.right_mm if forward > 0 else -item.origin.x_mm) - first[0] * forward
+                    (item.right_mm if forward > 0 else -item.origin.x_mm) - capo[0] * forward
                     if horizontal
                     else (item.bottom_mm if forward > 0 else -item.origin.y_mm)
-                    - first[1] * forward,
+                    - capo[1] * forward,
                 )
             cursor = reached
 

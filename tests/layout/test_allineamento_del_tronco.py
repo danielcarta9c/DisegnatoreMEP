@@ -21,6 +21,7 @@ che con quella coppia di porte non c'entrano: pagava contorno estraneo, e per
 quel contorno il costo la respingeva. Deve poter muovere anche **una macchina
 col proprio corredo**, che e' la mossa che un disegnatore fa davvero.
 """
+# categoria: difendeva il solutore — le candidate di asse dell'Improver e il momento in cui nascono (DRAW-007 blocco C): D-151 ha tolto all'Improver la decisione della posa
 
 import json
 from pathlib import Path

@@ -5,6 +5,7 @@ compensatore e circolatore — e ha detto che quello e' il livello di ordine e
 disposizione atteso. Queste prove fissano cio' che ne e' stato ricavato, cosi'
 che il motore non possa tornare a impilare i componenti in colonne.
 """
+# categoria: difende il motore — le regole di composizione misurate sulla tavola di riferimento: quota di terra, accessorio sulla propria tratta, sigla accanto al pezzo
 
 from functools import cache
 from pathlib import Path

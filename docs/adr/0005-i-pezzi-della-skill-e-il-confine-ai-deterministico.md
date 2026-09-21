@@ -1,7 +1,24 @@
 # ADR 0005 — I pezzi della skill e il confine fra AI e deterministico
 
+> ⛔ **Storia. Superata il 20 settembre 2026 da D-151**, che sposta il confine qui fissato:
+> il disegno lo **compone un agente** — pianificatore → motore → revisore — e non lo trova
+> un programma che minimizza. Cadono con essa le due righe che la reggevano: «nessuna AI
+> disegna, nessuna AI corregge il disegno» e «stesso impianto, stessa tavola, sempre»
+> (D-023, sospesa da D-151). **Il suo argomento è passato a
+> `docs/ARCHITETTURA-DEL-PIANO.md`**, che è il documento vigente sulla catena del disegno,
+> e il dettaglio dei pezzi resta in `docs/SKILL.md`, riallineato lo stesso giorno.
+>
+> **Che cosa di questa ADR resta vero, e non è stato toccato da D-151:** le regole e i
+> simboli sono **dati, non codice**; un contraddittorio **si dichiara e non si risolve in
+> silenzio**; ogni pezzo si costruisce e si collauda **da solo**. Il resto si legge come
+> storia: dice perché il confine stava lì, non dove sta adesso.
+>
+> Non è stata riscritta, per la regola di `docs/adr/README.md` — un'ADR non si riscrive
+> dopo l'approvazione. Questa riga dice soltanto da quando è storia e dove è finito il suo
+> argomento.
+
 **Data:** 5 agosto 2026
-**Stato:** approvata dal PM
+**Stato:** ~~approvata dal PM~~ — **superata da D-151**, 20 settembre 2026
 **Sostituisce:** nulla. **Precisa:** ADR 0001, ADR 0002.
 
 ## Contesto

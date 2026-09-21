@@ -1,15 +1,203 @@
 # PROJECT STATE — Disegnatore MEP
 
-> ⚠ **Fermo al 15 settembre, e in riallineamento — `DRAW-015`.** Quello che segue descrive il
-> progetto **prima** di D-147 … D-152 (19/20 settembre 2026). Lo stato corrente sta in
-> `HANDOFF.md`; l'architettura del disegno in `docs/ARCHITETTURA-DEL-PIANO.md`.
+**Aggiornato:** 2026-09-20 (riallineamento documentale, `DRAW-015`)
+**Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
+`docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
+**Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
+**Release corrente:** **0.3 — generalizzazione** (il numero di versione Python resta
+`0.1.0`: non ha mai seguito le release dichiarate)
 
-**Aggiornato:** 2026-09-15 (PM, cold eye review dopo il merge di DRAW-009)
-**Ingresso del PM:** `docs/pm/STATO-PM.md`
-**Fonte operativa:** `ACTIVE_WORK_PACKAGE.md`
-**Release corrente:** 0.3 — generalizzazione controllata, impianto 2
+> **Come è fatto questo file.** In testa c'è **lo stato al 20 settembre 2026**, e sotto la
+> riga `# Storia di esecuzione` c'è il racconto dei pacchetti precedenti, ciascuno con la
+> propria data. Quella parte **non descrive il prodotto di oggi**: si legge per sapere come
+> ci siamo arrivati, non per sapere come funziona la skill.
 
-## Stato verificato
+---
+
+## Dove siamo — 21 settembre 2026
+
+> ⛔ **`DRAW-015` è fuso su `main`, e le tavole NON sono approvate** (**D-166**). Le ha
+> separate il PO: «la PR la puoi fondere **ma le tavole non sono "approvate"**… sono ancora
+> **lontane da ciò che voglio**. Però **la direzione ora è quella giusta**». **Quello che è
+> approvato è la direzione**, e nessuna sessione può citare quella fusione come approvazione di
+> una tavola.
+>
+> ⛔ **E il criterio di un'autostrada non è un numero** (**D-164**): «non c'è un numero…
+> **un'autostrada per definizione ha poche curve e tratti rettilinei**… un criterio **grafico
+> non matematico**». Chi giudica è l'**occhio**. **La convenzione grafica non si tocca**
+> (**D-165**).
+
+**Il 20 settembre il progetto ha cambiato architettura.** Il disegno non si cerca più: lo
+**compone un agente** — pianificatore → motore → revisore (**D-151**). `layout/improve.py`,
+la fase del tronco di `layout/spine.py` e `layout/dilate.py` **restano agli atti e non
+decidono più la posa**.
+
+| | |
+|---|---|
+| Release | **0.3 — generalizzazione** |
+| Pacchetto attivo | **`DRAW-016` — l'agente che scrive il piano, e l'agente che dice dove passare.** **ATTIVO**: `DRAW-015` è fuso. La **prima prova l'ha dichiarata il PO** — le tavole **senza il corredo**, per vedere se gli agenti sanno tracciare le autostrade «come farebbe un disegnatore umano» |
+| Chi sviluppa | **un agente solo** (D-147), con agenti paralleli **dentro** la sessione (D-152) |
+| Chi approva la fusione | **il PO, guardando le tavole** (D-146, D-147) |
+| Architettura del disegno | `docs/ARCHITETTURA-DEL-PIANO.md` — vigente, sostituisce quella del solutore |
+| Regole di composizione | `docs/regole-del-piano.md` — aperto per dichiarazione del PO |
+| Prodotto in chat | **mai eseguito nel suo ambiente finale.** È il rischio più vecchio |
+
+### Il 20 settembre il PO ha guardato le tavole, e ne sono uscite altre cinque
+
+Con due tavole segnate a penna in mano (`docs/input-pm/riferimenti-grafici/2026-09-20/`):
+«Le tavole fanno schifo… **il disegno nasce dalle linee delle autostrade**».
+
+**D-159** il metodo — la quota di un'autostrada **non si sceglie**, è quella della **porta**
+della macchina che la genera; si posa su quelle quote, si guarda che siano rette, e **solo
+dopo** si appendono valvole e confini di rete · **D-160** una regola ha **una fonte** e **un
+controllo**, e un controllo fuori dal punteggio non è un controllo · **D-161** il piano **non
+può chiedere la forma di una spezzata**: può solo liberarle il posto, e la leva che manca si
+chiama **`passa-per`** · **D-162** l'occhio del revisore **guarda** e **non ricalcola** ·
+**D-163** un attacco scorre **lungo la propria faccia**, mai di faccia, mai se è di un
+serpentino.
+
+**Che cosa ne è uscito, misurato:** le regole misurate sono **nove** (A1, A4, B1, B3, B4, e
+le nuove **B8** sali-scendi, **B9** corsie libere, **B10** mandata sopra ritorno sotto, **B11**
+la coppia corre insieme); **l'occhio del revisore esiste** — `skill/rivedere/`, provato in
+camera pulita, e ha trovato **due difetti che nessun controllo poteva dare**; i cinque piani
+sono stati corretti **guardando le tavole**, e l'impianto 5 è passato da **49 a 38** rilievi e
+da **14 a 12** incroci.
+
+**Il giudizio del PO sulle cinque, ed è il metro vero:** «1, 2, 3 vanno quasi bene; **la 4 e
+la 5 mi sembra che non hai minimamente risolto il problema. Non vedo le autostrade ben
+tracciate.**»
+
+### Le dodici disposizioni che hanno cambiato la rotta, 19–20 settembre
+
+**D-147** agente unico · **D-148** oltre l'A3 si va: A4, A3, A2, A1, dichiarata momentanea
+dal PO · **D-149** il riempimento del foglio esce dagli obiettivi e torna una misura; la
+dilatazione di D-142 è ritirata · **D-150** una tratta che non si instrada non uccide più la
+tavola: ripiego dichiarato, marcato `unresolved`, nominato dal preflight con un rilievo
+bloccante · **D-151** il disegno lo compone un agente · **D-152** agenti paralleli in
+sessione, mai sessioni · **D-153** il revisore si costruisce subito, ed è lo strumento con
+cui si scrivono le regole · **D-154** tre macro fasce verticali, prima le autostrade dritte,
+la tre vie non spezza il tratto, più generatori o più terminali ⇒ collettore verticale ·
+**D-155** il piano non è un input: lo scrive il pianificatore, che è un pezzo della skill ·
+**D-156** i cinque pezzi della skill e la natura di ciascuno; 3 e 4 sono l'instradatore-
+disegnatore, ed è misto · **D-157** il revisore emette **vincoli** su nodi nominati, mai
+mosse · **D-158** ogni vincolo di posa ha un **rilievo sulla tavola consegnata**.
+
+### La misura che ha deciso D-151
+
+`docs/collaudi/PROVA-PIANO/`: **impianto 1 e impianto 5 composti a mano** ed eseguiti dal
+motore, **zero rilievi bloccanti e zero tratte cedute**, con un giro di correzione da **~30
+secondi** contro i **10–40 minuti** del solutore.
+
+**Quello che la prova non dimostra, e il PO l'ha detto:** che le tavole siano belle. «C'è
+molto da migliorare ancora, non assomiglia a come dovrebbe essere un disegno» (**I-082**).
+Resta storto, misurato: il disegno è una **fascia nella metà alta** del foglio, nessuno
+distribuisce in verticale; l'impianto 5 ha **quattordici incroci**.
+
+### Le consegne, e dove è finito il loro lavoro
+
+- **PR #32 — `DRAW-010`: verificata e respinta** il 15 settembre 2026. Verdetto in
+  `docs/pm/2026-09-15-review-pr32-draw010.md`. **Il suo lavoro non è su `main`**: la testa
+  del ramo, `df66709`, non è antenata di `main` (verificato con `git merge-base
+  --is-ancestor`).
+- **PR #41 — `DRAW-012`: verificata e respinta** il 18 settembre 2026 — tredici criteri su
+  sedici, nessuno barato, ma il PO ha guardato le tavole e ha detto «era meglio prima».
+  Verdetto in `docs/pm/2026-09-18-review-pr41-draw012.md`. **Quella PR non è stata fusa** e
+  la testa del suo ramo non è antenata di `main`.
+
+  ⚠ **Va detto per intero, perché la misura dice una cosa in più del verdetto:**
+  `DRAW-013` è ripartito **dal ramo di `DRAW-012`** e non da `main`, e il 19 settembre è
+  entrato in `main` con la **PR #44** (`a835006`), che è il commit dove compaiono per la
+  prima volta `layout/highways.py` e `layout/dilate.py`. Quindi **il contenuto** di
+  `DRAW-012` è su `main` anche se la sua PR è stata respinta. Chi legge «respinta» e ne
+  deduce «da rifare» sbaglia due volte: il lavoro c'è, e la dilatazione che portava con sé
+  è stata poi **ritirata da D-149**.
+- **`DRAW-014`: superato in corsa da D-151**, non chiuso come previsto. Ha fatto uscire le
+  cinque tavole (D-148, D-150), e **proprio guardandole il PO ha fermato la linea del
+  solutore**. **Quello che di `DRAW-014` resta vivo è in `main`**; quello che resta
+  incompiuto è nominato nei rischi qui sotto.
+
+## Rischi aperti — al 21 settembre 2026
+
+1. **Le tavole non sono belle, e il PO lo ha detto guardandole** (I-082). Il primo difetto
+   in coda è già nominato e misurato: il disegno è **una fascia nella metà alta** del foglio
+   — `DRAWING_ALL_ON_ONE_SIDE`, D3 in `docs/regole-del-piano.md`, 5,2 volte l'inchiostro fra
+   quadrante pieno e vuoto sull'impianto 1 e **9,0** sul 5. È il primo difetto aperto **del
+   pianificatore**.
+2. **Il pianificatore non esiste, e l'anello del revisore è aperto.** Il **pezzo 3** lo fa
+   ancora un umano a mano (D-155, D-156). L'**occhio** del pezzo 5 adesso **c'è** —
+   `skill/rivedere/`, D-162, provato in camera pulita — ma i vincoli che scrive sono un
+   **rapporto in italiano**, non dati: il pezzo 3 non li riceve. Chiudere l'anello è il
+   pacchetto attivo.
+2bis. **Le autostrade del 4 e del 5 sono storte, e il PO le ha bocciate.**
+   `HIGHWAY_IS_NOT_STRAIGHT` è acceso **5 volte sul 4 e 12 sul 5**. **Misurato dove sta il
+   difetto**, ed è la fase delle autostrade, non quella degli organi: ridotti i due impianti
+   a **sole macchine e collettori, senza una valvola**, restano **5 spezzate piegate sul 4 e
+   11 sul 5**.
+2ter. **Il piano non può chiedere la forma di una spezzata** (D-161), e `passa-per` non
+   esiste: l'unica leva di chi compone è togliere di mezzo chi occupa la strada. Costa —
+   sull'impianto 5 una linea faceva 3 pieghe invece di 1 **perché il gruppo di riempimento
+   stava nella colonna**.
+3. ~~**Nessun controllo sa che cos'è un'autostrada.**~~ **Chiuso da `DRAW-015`**, insieme
+   alle altre quattro regole misurate: A1, **A4**, B1, B3, B4 in `validation/regole.py`.
+   **Il 20 settembre sono diventate nove** — **B8** i sali-scendi, **B9** le corsie libere
+   fra due linee, **B10** mandata sopra e ritorno sotto, **B11** la coppia mandata/ritorno
+   corre insieme — ciascuna con la propria fonte e il proprio controllo (**D-160**).
+   **Resta aperto il censimento di D-158**: A2, A3, B2, C1 e C3 non hanno un rilievo sulla
+   tavola finita, e **A3 oggi non è tenuta su da niente**.
+4. **Prodotto mai eseguito nel suo ambiente finale.** Nuova chat, input naturale,
+   approvazione del grafo, generazione, restituzione del PDF: mai fatto. È il rischio più
+   vecchio del progetto e il meno toccato. La 0.3 non si dichiara finita senza.
+5. **Libreria simboli non interamente certificata.** La matrice fonti/forma/porte/ingombri
+   va completata e **approvata dal PO** prima di dichiarare completa la 0.3.
+6. ~~**Le prove non dicono più che cosa difendono.**~~ **Chiuso da `DRAW-015`:** i 36 file
+   di `tests/layout/` portano la propria riga `# categoria:` — 24 motore, 10 solutore,
+   4 regola del piano.
+7. **Due prove difendono il pavimento invisibile, che non esiste più.** Asseriscono ancora
+   `bottom_mm <= levels.ground_mm`, cioè il vincolo che il PO ha abolito l'11 settembre
+   2026. Sono rosse, e finché stanno lì chi le legge crede che la regola esista.
+8. **`DRAW-007` non ha cartella di collaudo.** È l'unico buco nella catena delle consegne:
+   `docs/collaudi/` porta DRAW-001…006-R1, 008, 009, 012, 013.
+9. **Il formato definitivo è una domanda aperta del PO.** D-148 è **dichiarata momentanea**:
+   quando i cinque impianti usciranno tutti, «quale formato serve davvero» si riapre.
+10. **La riproducibilità bit-per-bit se n'è andata** (D-023, sospesa da D-151). È un prezzo
+    dichiarato e accettato — l'elaborato esce in DXF e si rifinisce in AutoCAD (I-072) — ma
+    va saputo: due composizioni dello stesso impianto non danno la stessa tavola, e nessuna
+    prova di non-regressione può più poggiare sull'impronta.
+11. **Il motore non garantisce più che il disegno sia bello.** Garantisce che sia **valido**
+    e che i difetti siano **nominati**. Il bello lo porta il piano, e il giudizio resta del
+    PO, sulle tavole (D-146).
+12. **Due tratte di autostrada della tavola 2 non possono essere rettilinee**, e non per
+    difetto della posa: è il catalogo. Il PO decide se accettarlo, dare una rotazione al
+    bollitore o mettere un raccordo nel grafo. **Domanda aperta, sua.**
+13. **Il pettine di D-144 è bloccato dal simbolo del collettore**: `zone-manifold` dichiara
+    `allowed_rotations_deg: [0]`, e per D-049 quel campo è un vincolo tecnico. **Domanda
+    aperta al PO**: un collettore di zona si può disegnare in verticale?
+
+**Che cosa non è più un rischio, e per quale decisione.** Il **riempimento del foglio** e la
+**dilatazione** escono dai rischi perché escono dagli obiettivi (**D-149**); la **lunghezza**
+era già uscita (D-139). Il **costo che poteva barattare tutto con tutto** e il **costo
+computazionale del ciclo di miglioramento** non sono più rischi del percorso vigente, perché
+quel percorso non chiama più il solutore (**D-151**); restano descritti nella storia qui
+sotto. Il registro degli input non è più ingovernabile: dal triage del 15 settembre
+(D-131…D-136) le righe aperte sono **dodici più quattro regole permanenti**, su 68.
+
+**Che cosa questo riallineamento non ha misurato, e non va dato per fatto.** Che i cinque
+impianti di prova producano oggi una tavola. D-148 e D-150 ne hanno cambiato le condizioni,
+ed è il **criterio 6** di `DRAW-015` a chiederne la misura, impianto per impianto, con
+formato e tratte cedute. Finché quella misura non è nel rapporto, qui non si scrive.
+
+---
+
+# Storia di esecuzione
+
+**Tutto ciò che segue descrive il progetto prima del 19 settembre 2026**, pacchetto per
+pacchetto. Si legge per sapere come ci siamo arrivati. Le parti che parlano di **costo**,
+**ciclo di miglioramento**, **fase del tronco**, **riempimento** e **dilatazione** sono
+storia: le hanno superate D-139, D-149 e D-151.
+
+**Aggiornato:** 2026-09-15 (cold eye review dopo il merge di DRAW-009)
+
+## Stato verificato — com'era al 15 settembre 2026
 
 | Area | Stato |
 |---|---|
@@ -49,7 +237,7 @@ correttezza impiantistica del grafo, che il PO ha corretto con gli input I-030�
 - rapporto e artefatti in `docs/collaudi/DRAW-005/`; righe I-030… I-040 restano aperte
   finché il PO non le chiude.
 
-## Lavoro corrente
+## Il lavoro di allora, pacchetto per pacchetto
 
 `DRAW-006-R1` e `DRAW-007` sono stati **fusi in `main` dal PO** l'11 settembre 2026, con i
 rilievi aperti dichiarati qui sotto. Non erano approvati criterio per criterio: il PO ha
@@ -113,7 +301,11 @@ appesi sotto il tronco alla quota del `coil_in`.
 | **`ruff`, `mypy --strict`** | puliti | puliti |
 | **Determinismo** | — | due generazioni, stessa impronta e stessa geometria byte per byte, su tavola 1 e tavola 2 |
 
-## Rischi aperti
+## Rischi aperti — come stavano al 15 settembre 2026
+
+> **Si leggono con l'elenco in testa a questo file**, che è quello vigente. Le voci che
+> parlano di costo, ciclo di miglioramento, fase del tronco, riempimento e dilatazione sono
+> storia: le hanno superate D-139, D-149 e D-151.
 
 1. **Prodotto non ancora eseguito nel suo ambiente finale.** Dopo il collaudo controllato
    dell'impianto 2 e prima di estendere il ciclo agli impianti 3–5 serve una prova

@@ -12,6 +12,7 @@ spareggi**: contano solo fra due geometrie uguali su violazioni, andate e
 ritorno, pieghe, incroci e lunghezza. Qui si prova che il ciclo non compra piu'
 carta con tubo, e che resta deterministico.
 """
+# categoria: difendeva il solutore — il riempimento come voce di SheetCost e la distensione tolta dal ciclo (DRAW-002; D-149 ha poi ritirato la voce)
 
 from pathlib import Path
 

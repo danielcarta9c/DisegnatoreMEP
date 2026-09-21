@@ -1,0 +1,149 @@
+{
+  "formato": "A2",
+  "note": [
+    "A1 (D-154) — tre fasce verticali: generazione x=30..85 (pdc e bollitore in",
+    "pompa di calore), accumuli x=250..275 (volano), distribuzione x>=340 (le due",
+    "B1 (D-154) — mandata primaria a y=125: e' la quota di pdc.water_supply, e da",
+    "li' e' UNA RETTA che attraversa il foglio fino a collettore.in, zero pieghe.",
+    "Il ritorno primario corre a y=140, la seconda quota della pompa di calore, e",
+    "porta i propri raccordi allineati.",
+    "B2/D-144 — le due zone a pettine sotto il collettore: dalle due uscite",
+    "inferiori si scende, si gira una volta sola, si entra. Sono RUOTATE di 180,",
+    "cosi' l'ingresso guarda il collettore e l'uscita guarda il ritorno.",
+    "A2/D-118 — le due zone sono incolonnate, non affiancate.",
+    "A4 (D-145) — ogni organo di servizio pende dal proprio raccordo con lo stacco",
+    "minimo: manometro, riempimento e vaso sotto il ritorno primario; lo sfiato",
+    "sopra il volano (il simbolo ammette solo rot 0, l'attacco e' di sotto) e lo",
+    "scarico sotto.",
+    "I-044 — i raccordi del ritorno primario stanno a 40 mm l'uno dall'altro: la",
+    "tratta verso la pompa di calore porta tre accessori in linea e ne chiede 22,5.",
+    "Il motore lo dice con un numero, ed e' cosi' che questo piano e' stato",
+    "corretto: «p7-a-4 e' lunga 15 mm ma i suoi 3 accessori ne chiedono 22,5».",
+    "I-061 — l'acqua fredda entra da vicino al bollitore, non attraversa il foglio.",
+    "MISURATO, E NON SI CHIUDE CON UN PIANO. Il ritorno primario non puo' essere",
+    "una retta: volano.b e pdc.water_return stanno tutt'e due su faccia DESTRA, e",
+    "due porte che guardano dalla stessa parte non si uniscono con un segmento —",
+    "si esce a destra dal volano, si sale e si torna indietro. Per la stessa",
+    "ragione volano.a guarda a SINISTRA, quindi il ritorno di zona deve arrivare",
+    "da sinistra del volano: ritorno-zone sta prima del volano, e le due zone gli",
+    "arrivano da sotto. Sono pieghe su catene che ne ammettono zero, e la cura non",
+    "e' nel piano: e' nella libreria dei simboli, o in chi assegna le curve",
+    "ammesse a una catena senza guardare se le facce delle sue porte lo permettono.",
+    "A4 (D-145) — il prelievo ACS sta ADDOSSO al pezzo che serve, con lo stacco minimo. NON va nella fascia della distribuzione: un confine di rete non ha una posizione propria (I-061, flow.BOUNDARY_FUNCTION). Correzione del 20 settembre 2026: era a 502,5 mm, ed era un errore di chi ha composto — A1 applicata a un pezzo che A1 non governa."
+  ],
+  "pezzi": {
+    "pdc": {
+      "x": 30,
+      "y": 120,
+      "regola": "A1 — fascia della generazione, a sinistra"
+    },
+    "tee-valve-safety-pdc-water-supply": {
+      "x": 110,
+      "y": 122.5,
+      "regola": "B1 — sulla mandata primaria, y=125"
+    },
+    "valve-safety-pdc-water-supply": {
+      "x": 110,
+      "y": 100,
+      "regola": "A4 — addosso al proprio raccordo"
+    },
+    "collettore": {
+      "x": 380,
+      "y": 122.5,
+      "regola": "B1 — in su y=125: la mandata arriva dritta"
+    },
+    "zona-giorno": {
+      "x": 340,
+      "y": 215,
+      "rotazione": 180,
+      "regola": "B2 — a pettine sotto il collettore, uscita verso il ritorno"
+    },
+    "zona-notte": {
+      "x": 340,
+      "y": 255,
+      "rotazione": 180,
+      "regola": "A2 — incolonnata sotto zona-giorno"
+    },
+    "ritorno-zone": {
+      "x": 215,
+      "y": 165,
+      "regola": "B1 — prima del volano, perche' volano.a guarda a sinistra"
+    },
+    "volano": {
+      "x": 250,
+      "y": 162.5,
+      "regola": "A1 — fascia degli accumuli"
+    },
+    "air-vent-volano-b": {
+      "x": 260,
+      "y": 152.5,
+      "regola": "A4 — lo sfiato sta sopra: e' l'unica giacitura che il simbolo ammette"
+    },
+    "drain-connection-volano-a": {
+      "x": 260,
+      "y": 207.5,
+      "regola": "A4 — lo scarico sta sotto"
+    },
+    "tee-pressure-gauge-pdc-water-return": {
+      "x": 195,
+      "y": 137.5,
+      "regola": "B1 — sul ritorno primario, y=140"
+    },
+    "pressure-gauge-pdc-water-return": {
+      "x": 195,
+      "y": 170,
+      "regola": "A4 — addosso al proprio raccordo"
+    },
+    "tee-filling-unit-pdc-water-return-b": {
+      "x": 155,
+      "y": 137.5,
+      "regola": "B1 — sul ritorno primario"
+    },
+    "filling-unit-pdc-water-return": {
+      "x": 155,
+      "y": 170,
+      "rotazione": 180,
+      "regola": "A4; rotazione a mano — due attacchi e non e' una macchina"
+    },
+    "inlet-filling-unit-pdc-water-return": {
+      "x": 155,
+      "y": 195,
+      "regola": "A4 — sotto il gruppo di riempimento"
+    },
+    "tee-expansion-connection-pdc-water-return": {
+      "x": 115,
+      "y": 137.5,
+      "regola": "B1 — sul ritorno primario; I-044 — 30 mm dalla pompa di calore"
+    },
+    "expansion-connection-pdc-water-return": {
+      "x": 115,
+      "y": 170,
+      "regola": "A4 — addosso al proprio raccordo"
+    },
+    "boiler": {
+      "x": 130,
+      "y": 250,
+      "regola": "A1 — fascia della generazione"
+    },
+    "tee-drain-connection-cold-boiler-cold-in": {
+      "x": 95,
+      "y": 285,
+      "regola": "I-061 — l'acqua fredda entra da vicino"
+    },
+    "drain-connection-cold-boiler-cold-in": {
+      "x": 95,
+      "y": 305,
+      "regola": "A4 — sotto il proprio raccordo"
+    },
+    "acquedotto": {
+      "x": 20,
+      "y": 285,
+      "regola": "I-061 — confine di rete accanto al bollitore"
+    },
+    "utenze": {
+      "x": 140,
+      "y": 210,
+      "regola": "A4/D-145 — addosso al pezzo che serve, stacco minimo"
+    }
+  }
+}

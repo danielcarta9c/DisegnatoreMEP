@@ -18,6 +18,7 @@ Impianti costruiti qui, salvo la regressione sulla fixture della tavola 1 in
 coda: la rete a flusso ordinario non deve costare piu' di DRAW-005 — 4 curve,
 1 incrocio, 525 mm — e quei tre numeri vivono **solo** in quella prova.
 """
+# categoria: difende il motore — lo stacco lungo il proprio minimo su griglia e i corridoi davanti alle porte (I-046); due prove difendevano il solutore: elencate nel rapporto
 
 import json
 import math

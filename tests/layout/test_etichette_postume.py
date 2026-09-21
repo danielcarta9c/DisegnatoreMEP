@@ -17,6 +17,7 @@ fine: adiacenti o omessi, mai richiamati.
 
 Scritte prima del codice applicativo, come il pacchetto chiede.
 """
+# categoria: difende il motore — le sigle sono l'ultima fase e non spostano ne' simboli ne' tubi (DRAW-003)
 
 from functools import cache
 from pathlib import Path

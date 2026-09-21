@@ -8,6 +8,7 @@ prova e' rossa. La qualita' geometrica dell'impianto 5 resta la sua prova
 rossa-apposta, altrove (`test_zone_dei_pezzi_grossi.py`); questa dice solo che
 il posatore lo posa, come sulla base.
 """
+# categoria: difende il motore — i cinque impianti di prova arrivano almeno alla posa, senza nessun try/except che nasconda una regressione (I-046)
 
 from functools import cache
 from pathlib import Path

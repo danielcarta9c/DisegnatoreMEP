@@ -1327,8 +1327,24 @@ BUFFER_PORTS = [
     port_at("probe", "left", 32.5, STORAGE_W, STORAGE_H),
 ]
 
+# **D-163, 20 settembre 2026 — la mandata scende da 10 a 5.**
+# Un attacco si sposta **lungo la faccia su cui sta**, e si sposta **solo per
+# allineare le autostrade**: e' la disposizione del PO, «l'attacco si sposta
+# lungo la faccia su cui sta, serve solo per allineare meglio le autostrade».
+# La faccia non cambia — D-126 punto 3 regge.
+#
+# **La misura che l'ha motivata:** la caldaia aveva mandata e ritorno a **10
+# mm** l'una dall'altra, mentre `buffer-four-port`, la pompa di calore e tutte
+# le altre macchine di spina le hanno a **15**. Per questo, su ogni tavola che
+# li unisce, la coppia mandata/ritorno **non poteva** tenere un interasse
+# costante (B11). Portata a 5, l'interasse e' 15 come tutti, e la coppia
+# `caldaia ~ disgiuntore` dell'impianto 4 passa da **ZIG-ZAG a INSIEME**.
+#
+# ⚠ **Non vale per un serpentino:** gli attacchi di uno scambiatore interno
+# dicono dov'e' la serpentina dentro l'accumulo, e non si spostano. Sono
+# `coil_in` e `coil_out` di `dhw-cylinder`, e restano a 10 mm l'uno dall'altro.
 GAS_BOILER_PORTS = [
-    port_at("water_supply", "right", 10.0, *MACHINE),
+    port_at("water_supply", "right", 5.0, *MACHINE),
     port_at("water_return", "right", 20.0, *MACHINE),
 ]
 EXCHANGER_PORTS = [
@@ -1417,6 +1433,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=gas_boiler_body(MACHINE[0], MACHINE[1], GAS_BOILER_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # Una porta si e' mossa: il manifesto sale di minore (D-163).
+        version="1.1.0",
     ),
     SymbolSpec(
         id="plate-heat-exchanger",

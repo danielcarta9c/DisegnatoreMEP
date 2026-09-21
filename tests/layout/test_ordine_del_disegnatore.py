@@ -23,6 +23,7 @@ Gli impianti veri si guardano dove il pacchetto li nomina — le fixture di
 `examples/prova` — e i casi generali si costruiscono qui, con il catalogo di
 prova, perche' una regola provata su una sola tavola e' una coincidenza.
 """
+# categoria: difende il motore — l'ordine delle decisioni di DRAW-012: autostrade intere, cessione graduale, diario; cinque prove misurano le voci di SheetCost e difendevano il solutore: elencate nel rapporto
 
 from collections.abc import Callable
 from datetime import date
@@ -487,58 +488,50 @@ def test_l_ordine_delle_voci_e_quello_di_D_139_e_D_149() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_il_ciclo_senza_le_fasi_e_l_ultimissima_rete_e_la_cessione_viene_prima() -> None:
-    """§F.1 — il ripiego che scarta le fasi non e' piu' il terzo, e' l'ultimo.
+def test_la_scala_dei_ripieghi_e_caduta_con_il_solutore() -> None:
+    """§F **revocato da D-151**, e questa prova difende la revoca.
 
-    Prima di `DRAW-012` `compose_sheet` ripiegava in quattro passi e il terzo
-    era «il ciclo senza le fasi, cioe' la tavola che sarebbe uscita prima di
-    DRAW-008»: l'impianto 4 usciva da li'. Adesso fra la posa seminata e quella
-    rete c'e' la **cessione graduale**, e la rete che scarta le fasi e' la
-    penultima via — dopo di lei resta solo la disposizione di partenza.
+    Che cosa difendeva prima, e non difende piu': la scala di sei vie con cui
+    `compose_sheet` ripiegava — le fasi, la posa seminata dal tronco, quattro
+    cessioni graduali di una catena per volta, il ciclo senza le fasi, la
+    disposizione di partenza — e l'ordine fra loro.
+
+    **Cinque di quelle sei erano modi di richiamare il solutore con un vincolo
+    in meno.** Il 20 settembre 2026 **D-151** ha tolto il solutore dalla
+    decisione della posa, e senza di lui non vogliono dire piu' niente: quello
+    che resta e' la posa deterministica, che era gia' l'ultimo gradino.
+
+    Che cosa difende adesso: che la scala **non torni**. Una via in piu' qui
+    dentro sarebbe una ricerca rientrata dalla finestra.
     """
     sorgente = Path(compose.__file__).read_text(encoding="utf-8")
-    fasi = sorgente.index('("le fasi"')
-    seminata = sorgente.index('"la posa seminata dal tronco"')
-    cessione = sorgente.index('"la cessione graduale')
-    senza = sorgente.index('"il ciclo senza le fasi')
-    partenza = sorgente.index('"la disposizione di partenza"')
-    assert fasi < seminata < cessione < senza < partenza
-    # E la cessione e' limitata da un tetto dichiarato, come gli instradamenti
-    # di prova: un ciclo di miglioramento per catena non e' gratis.
-    assert isinstance(compose.MAX_SURRENDERS, int)
-    assert compose.MAX_SURRENDERS > 0
+    assert '"la posa deterministica, senza ricerca (D-151)"' in sorgente
+    for morta in (
+        '("le fasi"',
+        '"la posa seminata dal tronco"',
+        '"la cessione graduale',
+        '"il ciclo senza le fasi',
+        '"la disposizione di partenza"',
+    ):
+        assert morta not in sorgente, morta
+    # Il tetto delle cessioni e l'ordine della resa non hanno piu' niente da
+    # limitare e da ordinare: sono usciti con la scala.
+    assert not hasattr(compose, "MAX_SURRENDERS")
+    assert not hasattr(compose, "_order_of_surrender")
 
 
-def test_si_cede_prima_a_chi_ne_ha_meno_bisogno_e_solo_a_chi_si_sta_tenendo() -> None:
-    """§F.3 — l'ordine della resa, e chi ne resta fuori.
+def test_il_ripiego_di_D_150_resta_intero() -> None:
+    """Quello che **non** e' caduto con la scala, e va difeso apposta.
 
-    Fuori restano le catene che la posa **non tiene gia' dritte**: su di loro
-    l'invariante non vincola niente — e' monotono — e cederle sarebbe un ciclo
-    intero speso per non cambiare nulla.
+    **D-150** e' un'altra cosa dai ripieghi del solutore: non cerca un'altra
+    posa, **dichiara una tratta persa** e lascia uscire la tavola lo stesso.
+    Senza di lui il PO non vedrebbe niente su tre impianti di prova su cinque,
+    ed e' misurato il 19 settembre: tutt'e tre morivano per **una** tratta su
+    decine.
     """
-    def catena(name: str, passi: int) -> Highway:
-        steps = tuple(
-            (
-                PortRef(component_id=f"{name}-{index}", port_id="a"),
-                PortRef(component_id=f"{name}-{index + 1}", port_id="b"),
-            )
-            for index in range(passi)
-        )
-        return Highway(keys=tuple((f"{name}{index}",) for index in range(passi)), steps=steps)
-
-    corta = catena("corta", 1)
-    lunga = catena("lunga", 3)
-    impossibile = catena("impossibile", 4)
-    storta = catena("storta", 1)
-    ordine = compose._order_of_surrender(
-        (lunga, corta, impossibile, storta),
-        frozenset({("impossibile0",)}),
-        {},
-        lambda item: item is not storta,
-    )
-    # Prima quella che nessuna posa raddrizza, poi la piu' corta, poi la lunga.
-    assert [item.keys[0][0] for item in ordine] == ["impossibile0", "corta0", "lunga0"]
-    assert storta not in ordine
+    sorgente = Path(compose.__file__).read_text(encoding="utf-8")
+    assert "il ripiego dichiarato: le tratte perse sono segnate" in sorgente
+    assert "last_resort=True" in sorgente
 
 
 def test_il_diario_dice_con_quale_via_la_tavola_e_uscita() -> None:

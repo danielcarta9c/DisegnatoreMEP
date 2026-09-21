@@ -1,4 +1,11 @@
-# La prova del piano di composizione — 19/20 settembre 2026
+# I piani di composizione — dalla prova del 19/20 settembre al prodotto
+
+> **Aggiornato il 20 settembre 2026 (`DRAW-015`).** Questa cartella era il collaudo di una
+> prova; adesso è **la casa dei piani**, e i piani sono cinque: uno per ogni impianto di
+> prova. Il pezzo che li esegue non è più uno script — è
+> `src/disegnatore_mep/piano/`, con il comando `disegnatore-mep piano`.
+
+## La prova che ha deciso D-151 — 19/20 settembre 2026
 
 **Domanda:** il disegno lo deve *trovare* un solutore che minimizza una somma pesata, o lo
 deve **comporre** chi sa come si fa un disegno, lasciando al motore deterministico la
@@ -18,17 +25,36 @@ a mano, in sessione**, e lo esegue il motore che già c'è.
 
 | File | Cos'è |
 |---|---|
-| `impianto-1.json` | Il piano dell'impianto 1: **dove stanno i pezzi**, e le regole del PO che lo motivano, scritte accanto |
-| `tavola1-DAL-PIANO.pdf` | La tavola che ne esce |
-| `impianto-5.json` | Il piano dell'impianto 5 — la cascata di tre PDC, l'impianto che il solutore non aveva mai fatto uscire decente |
-| `tavola5-DAL-PIANO.pdf` | La tavola che ne esce |
+| `impianto-1.json` … `impianto-5.json` | I cinque piani: **dove stanno i pezzi**, e la regola che ha messo ciascuno dove sta, scritta accanto. L'1 e il 5 sono del 19/20 settembre; il 2, il 3 e il 4 sono di `DRAW-015`, composti su disposizione del PO («tu scrivi ora i piani con le regole»). **Tutti e cinque hanno avuto il confine ACS corretto il 20 settembre sera**, guardando le tavole: A4 vuole lo stacco minimo, e la nota di ciascuno dice da quanto a quanto |
+| `tavola1-DAL-PIANO.pdf`, `tavola5-DAL-PIANO.pdf` | Le due tavole della prova, agli atti come sono uscite allora |
 
-Si riproduce con `scripts/piano.py`:
+Le tavole correnti di tutti e cinque stanno in `docs/collaudi/DRAW-015/tavole/`.
+
+Si riproducono tutte con un comando solo:
 
 ```
-.venv/bin/python scripts/piano.py <progetto-completo.json> \
-    docs/collaudi/PROVA-PIANO/impianto-N.json <cartella-uscita>
+scripts/tavole-dal-piano.sh
 ```
+
+e uno per volta dalla CLI, che è il percorso vigente:
+
+```
+.venv/bin/python -m disegnatore_mep piano <progetto-completo.json> \
+    --piano docs/collaudi/PROVA-PIANO/impianto-N.json \
+    --catalog examples/layout/catalog --symbols assets/symbols \
+    --naming naming --out <cartella-uscita>
+```
+
+⚠ **Il progetto si passa nella forma che `rules --apply-all --out` scrive.** Non è un
+dettaglio: la forma canonica riordina i componenti per identificativo, la posa di partenza
+è greedy e legge quell'ordine (`place.py::_file_order`), e sull'impianto 5 il piano si
+instrada sull'ordine canonico e **non** su quello di dichiarazione. I cinque piani sono
+stati composti contro quella forma.
+
+⚠ **`scripts/piano.py` non esiste più** (`DRAW-015`): era uno script di collaudo, e il piano
+è diventato un pezzo del prodotto. La sua logica — `orienta` compresa, con tutte le note
+misurate — è in `src/disegnatore_mep/piano/esecutore.py`, e le due tavole che ne escono sono
+**identiche byte per byte** a quelle che lo script produceva.
 
 ## Che cosa gira e che cosa no
 
@@ -54,7 +80,7 @@ cavolo di collettore dritto in verticale».
 
 ### La misura, rifatta il 20 settembre
 
-Comando: `.venv/bin/python scripts/piano.py <completo.json> docs/collaudi/PROVA-PIANO/impianto-N.json <uscita>`
+Comando di allora: `scripts/piano.py` (uscito da `DRAW-015`). Oggi: `disegnatore-mep piano`, e dà lo stesso byte per byte.
 
 | | tratte | **cedute** | **rilievi bloccanti** | pieghe | incroci |
 |---|---|---|---|---|---|

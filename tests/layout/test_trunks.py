@@ -1,3 +1,4 @@
+# categoria: difende il motore — le tratte si costruiscono dal grafo: una catena di accessori in linea e' una tratta sola
 import pytest
 
 from disegnatore_mep.layout.errors import LayoutError

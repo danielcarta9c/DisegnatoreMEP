@@ -31,6 +31,7 @@ piu' su un formato ordinario: e' il limite di composizione che il piano assegna
 a P6, non un difetto delle regole. Qui resta congelato l'impianto a quattro
 fasce con cui questo ciclo e' stato misurato, come dato d'ingresso del layout.
 """
+# categoria: difendeva il solutore — il ciclo di miglioramento di improve.py (D-078, D-080); otto prove su undici erano gia' ferme a skip prima di questo passaggio
 
 from functools import cache
 from pathlib import Path

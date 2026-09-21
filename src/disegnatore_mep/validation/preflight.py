@@ -20,10 +20,17 @@ no (D-083: vietato inventare, e vietato far passare una taratura per una norma).
 """
 
 import math
+from collections.abc import Iterable
 
 from disegnatore_mep.catalog.errors import CatalogError
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
+from disegnatore_mep.layout.autostrade import (
+    AutostradaInTavola,
+    autostrade_del_progetto,
+    e_autostrada,
+    pieghe_della_tratta,
+)
 from disegnatore_mep.layout.geometry import (
     QUADRANT_IMBALANCE_MAX,
     SHEET_FILL_MAX_RATIO,
@@ -49,6 +56,7 @@ from disegnatore_mep.layout.labels import (
     segments_cross,
     text_width_mm,
 )
+from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import IssueSeverity
 
 from .geometry import TOLERANCE_MM
@@ -182,21 +190,10 @@ def _stretches(polyline: list[Point]) -> list[tuple[Point, Point]]:
     return list(zip(polyline, polyline[1:], strict=False))
 
 
-def _sign(value: float) -> int:
-    if value > TOLERANCE_MM:
-        return 1
-    if value < -TOLERANCE_MM:
-        return -1
-    return 0
-
-
-def _bends(polyline: list[Point]) -> int:
-    """Quante volte la spezzata cambia direzione."""
-    steps = [
-        (_sign(after.x_mm - before.x_mm), _sign(after.y_mm - before.y_mm))
-        for before, after in moves_of(polyline)
-    ]
-    return sum(1 for before, after in zip(steps, steps[1:], strict=False) if before != after)
+# Quante volte la spezzata di una tratta cambia direzione lo conta
+# `layout.autostrade.pieghe_della_tratta`, e lo conta **una volta sola**: da
+# quando il controllo di B1 misura le stesse pieghe sulla catena intera, due
+# implementazioni direbbero prima o poi due cose diverse sulla stessa tratta.
 
 
 def _walk(before: Point, after: Point, ratio: float) -> tuple[float, float]:
@@ -326,26 +323,47 @@ def _ink_area_mm2(sheet: SheetGeometry, area: Rect, line_mm: float) -> float:
     return ink_area_mm2(sheet.symbols, sheet.routes, _rect(area), line_mm)
 
 
-def bends_per_run(drawing: DrawingGeometry) -> list[ValidationIssue]:
+def bends_per_run(
+    drawing: DrawingGeometry, autostrade: Iterable[AutostradaInTavola] = ()
+) -> list[ValidationIssue]:
     """B4 — una linea cambia direzione solo per una ragione.
 
     Si conta per **tratta**, non per spezzata: una tratta interrotta dai propri
     accessori in linea resta una tratta sola, e le sue pieghe si sommano.
+
+    **La piega di un'autostrada non e' la piega di uno stacchetto** (**D-151**).
+    Quando chi chiama passa le autostrade della tavola, una tratta di
+    autostrada si misura sul **bilancio della sua catena** — `curve_ammesse`,
+    di norma zero, **una** per la strada verso i terminali (D-144) — invece che
+    sulle tre pieghe che bastano a unire due porte. Senza le autostrade la
+    misura resta quella di sempre per ogni tratta: e' la condizione che tiene in
+    piedi le prove che la precedono.
     """
     findings: list[ValidationIssue] = []
+    conosciute = tuple(autostrade)
     for sheet in drawing.sheets:
         for route in sheet.routes:
-            total = sum(_bends(segment) for segment in route.segments)
-            if total <= BENDS_PER_RUN_MAX:
+            total = pieghe_della_tratta(route)
+            autostrada = e_autostrada(route, conosciute)
+            limite = (
+                BENDS_PER_RUN_MAX if autostrada is None else autostrada.curve_ammesse
+            )
+            if total <= limite:
                 continue
+            perche = (
+                f"oltre le {BENDS_PER_RUN_MAX} pieghe che bastano a unire due "
+                f"porte: la piega in piu' la chiede un ostacolo, e l'ostacolo si "
+                f"sposta (B4, D-078)"
+                if autostrada is None
+                else f"ed e' un'autostrada — {autostrada.nome} — a cui le pieghe "
+                f"ammesse sono {autostrada.curve_ammesse} (B1, D-154, D-144)"
+            )
             findings.append(
                 _finding(
                     "RUN_WITH_TOO_MANY_BENDS",
                     IssueSeverity.WARNING,
-                    f"la tratta {_run_name(route)} cambia direzione {total} volte, "
-                    f"oltre le {BENDS_PER_RUN_MAX} pieghe che bastano a unire due "
-                    f"porte: la piega in piu' la chiede un ostacolo, e l'ostacolo si "
-                    f"sposta (B4, D-078)",
+                    f"la tratta {_run_name(route)} cambia direzione {total} "
+                    f"{'volta' if total == 1 else 'volte'}, {perche}",
                     _run_ids(sheet, route),
                 )
             )
@@ -1022,19 +1040,33 @@ def unresolved_runs(drawing: DrawingGeometry) -> list[ValidationIssue]:
 
 
 def preflight_drawing(
-    drawing: DrawingGeometry, frame: SheetFrame, catalog: ComponentRegistry
+    drawing: DrawingGeometry,
+    frame: SheetFrame,
+    catalog: ComponentRegistry,
+    project: ProjectModel | None = None,
 ) -> list[ValidationIssue]:
     """Tutte le misure di qualita', nell'ordine dichiarato da `MEASURE_ORDER`.
 
     L'ordine e' parte dell'esito: chi legge il rapporto trova prima le linee,
     poi i testi, poi il foglio, infine le fonti — e lo trova sempre nello stesso
     posto, quale che sia la tavola.
+
+    **`project` e' facoltativo, e non per comodita'.** La tavola si misura anche
+    senza il modello che l'ha generata: e' cio' che il preflight ha sempre
+    fatto, ed e' cio' che trentasei file di prove verificano. Col modello in
+    mano il preflight sa in piu' **quali tratte sono autostrada** e conta le
+    loro pieghe con il bilancio della catena invece che con quello di uno
+    stacchetto (**D-151**): e' una misura piu' fine sulla stessa tavola, non
+    un'altra misura.
     """
+    autostrade = (
+        autostrade_del_progetto(project, catalog) if project is not None else ()
+    )
     return [
         # **Per prima la tratta non risolta**: e' l'unico rilievo che dice che
         # la tavola non e' finita, e chi legge non deve doverlo cercare.
         *unresolved_runs(drawing),
-        *bends_per_run(drawing),
+        *bends_per_run(drawing, autostrade),
         *crossings(drawing, frame),
         *longitudinal_overlap(drawing, frame),
         *clearances(drawing, frame),

@@ -1,0 +1,5 @@
+prova-3-pdc-diretta-pavimento	A1	22 tratte	6 cedute	12 bloccanti	41 pieghe	8 incroci	8s	senza la fase del tronco (la fase del tronco non gira piu' (D-151)); il ripiego dichiarato: le tratte perse sono segnate
+prova-1-due-pdc-accumulo-combinato	A1	21 tratte	2 cedute	11 bloccanti	25 pieghe	2 incroci	8s	senza la fase del tronco (la fase del tronco non gira piu' (D-151)); il ripiego dichiarato: le tratte perse sono segnate
+prova-4-ibrido-pdc-caldaia	A1	25 tratte	2 cedute	12 bloccanti	69 pieghe	20 incroci	18s	senza la fase del tronco (la fase del tronco non gira piu' (D-151)); il ripiego dichiarato: le tratte perse sono segnate
+prova-2-pdc-deviatrice-acs	A1	23 tratte	5 cedute	12 bloccanti	52 pieghe	10 incroci	19s	senza la fase del tronco (la fase del tronco non gira piu' (D-151)); il ripiego dichiarato: le tratte perse sono segnate
+prova-5-cascata-tre-pdc	A1	54 tratte	6 cedute	19 bloccanti	113 pieghe	31 incroci	25s	senza la fase del tronco (la fase del tronco non gira piu' (D-151)); il ripiego dichiarato: le tratte perse sono segnate

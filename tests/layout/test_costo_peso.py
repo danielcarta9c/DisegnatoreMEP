@@ -10,6 +10,7 @@ catalogo di prova, e nessuna coordinata o identificativo dell'impianto 1 entra
 nel motore ne' nelle attese. Sono scritte prima del codice applicativo, come il
 pacchetto chiede.
 """
+# categoria: difendeva il solutore — SheetCost e improve_sheet: l'ordine lessicografico delle voci e il ciclo di miglioramento (DRAW-002, D-078, D-080)
 
 from functools import cache
 from pathlib import Path

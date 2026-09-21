@@ -25,6 +25,7 @@ prima della correzione**, cosi' che si possano eseguire sulla revisione
 precedente e vederle fallire: e' la dimostrazione che il caso e' quello vero e
 non uno costruito attorno al rimedio.
 """
+# categoria: difende il motore
 
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.layout.geometry import (

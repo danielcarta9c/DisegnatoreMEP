@@ -1,3 +1,4 @@
+# categoria: difende il motore
 import time
 from pathlib import Path
 
