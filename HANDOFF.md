@@ -109,15 +109,18 @@ senza approvazione non si fonde.
 ## Stato corrente
 
 - Release in corso: **0.3 — generalizzazione**.
-- **`DRAW-015` consegnato**, rapporto in `docs/collaudi/DRAW-015/RAPPORTO.md`. Che cosa
-  porta, in quattro righe:
+- **`DRAW-015` fuso su `main`** con la PR **#46** — **e le tavole non approvate** (D-166, il
+  cartello in testa a questa pagina). Rapporto in `docs/collaudi/DRAW-015/RAPPORTO.md`, col
+  verdetto del PO in **§14**. Che cosa porta, in quattro righe:
   - **il revisore esiste** (`piano/revisore.py`): esegue il piano, misura, corregge il piano
     nominando **la regola** di ogni correzione, e si ferma dicendo perché — compreso quando
     un giro peggiora, e allora consegna il precedente;
-  - **cinque regole del PO sono cinque controlli** (`validation/regole.py`): A1 le tre
-    fasce, **A4 l'organo di servizio addosso al pezzo che serve**, B1 le autostrade dritte,
-    B3 il collettore verticale, B4 l'organo in linea. Le prime quattro le chiedeva D-154;
-    **A4 è nata guardando le tavole**, ed è la regola che ha prodotto D-158;
+  - **nove regole del PO sono nove controlli** (`validation/regole.py`): A1 le tre fasce,
+    **A4 l'organo di servizio addosso al pezzo che serve**, B1 le autostrade dritte, B3 il
+    collettore verticale, B4 l'organo in linea — e poi, guardando le tavole col PO, **B8** i
+    sali-scendi, **B9** le corsie libere, **B10** mandata sopra e ritorno sotto, **B11** la
+    coppia che corre insieme. Le prime quattro le chiedeva D-154; **A4 è nata guardando le
+    tavole**, ed è la regola che ha prodotto D-158; le ultime quattro sono I-096 e D-160;
   - **il piano è un pezzo del prodotto** (`src/disegnatore_mep/piano/`), non più uno script;
   - **il solutore è uscito dalla catena** e i tre moduli lo dichiarano in testa.
 - **Tutti e cinque gli impianti di prova producono una tavola**, dal piano, con **zero
