@@ -66,6 +66,45 @@ tubi**, non una fonte di convenzione, e le loro discordanze non sono un problema
 
 ---
 
+## ✅ Dove siamo arrivati il 21 settembre, e da dove si riparte
+
+**Il punto 0 e il punto 0bis sono fatti, e misurati.** La prova sta in
+[`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/),
+il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAPPORTO.md).
+
+| fatto | |
+|---|---|
+| **il riduttore a scheletro** | `docs/collaudi/DRAW-016/riduci-a-scheletro.py`, nel repository |
+| **il pianificatore esiste** | `skill/comporre/`, e **in camera pulita batte il piano scritto a mano su tutti e tre gli impianti provati** |
+| **B12 si compone** | impianto 5 da **A1 ad A3**, impianto 4 da **A2 ad A4**, zero cedute e zero bloccanti |
+| **B10 non accusa più tavole giuste** | il difetto trovato da un agente, corretto in `_affiancamenti`, con due prove |
+
+**Da dove riparte la prossima sessione, in quest'ordine:**
+
+1. **Ricomporre i cinque piani con `skill/comporre/`** — non a mano (**D-155**). È quello che
+   riporta il saldo della suite da **47 a 38 o sotto**, perché le nove rosse nuove sono tutte
+   il piano a mano dell'impianto 5 che, dopo D-167, apre un bloccante su `s8`. **I cinque piani
+   a mano sono vecchi e il loro README lo dice in testa.**
+2. **Chiudere l'anello** — l'occhio di `skill/rivedere/` scrive **vincoli in forma di dati**, il
+   pianificatore li riceve e li rispetta (punto 2).
+3. **`passa-per`** (punto 3).
+
+**E tre cose da portare al PO prima di toccarle**, tutte e tre riferite da agenti diversi e
+verificate:
+
+- **il bilancio di B1 è irraggiungibile dove il simbolo impone la piega** — un collettore
+  verticale ne ha due agli estremi per forza, una tre vie sulla terza via ne ha una. *«Il numero
+  è irraggiungibile, non il disegno è sbagliato.»* Stessa famiglia di **B7** e di **B1 contro
+  B3**;
+- **B12 presuppone una ramificazione simmetrica**, e l'impianto 5 ha un ritorno invertito: o la
+  terza colonna è vera, o il grafo va guardato. **Contenuto MEP**;
+- **D3 spinge nel verso sbagliato** — due agenti su tre hanno allontanato un pezzo dalla
+  macchina che serve **solo** per spegnere `DRAWING_ALL_ON_ONE_SIDE`, e tutti e due hanno
+  scritto da soli che un disegnatore non lo farebbe. *Proposta: D3 esce dal punteggio e resta
+  una cosa che l'occhio guarda.*
+
+---
+
 ## Da dove si parte — quello che la sessione del 20–21 settembre ha lasciato pronto
 
 Questo pacchetto non riparte da zero. Quattro cose sono già in piedi, e vanno usate.
@@ -168,6 +207,8 @@ Misurato il 20 settembre. Sta qui perché la prossima sessione non ci perda un'a
 | **D-164** | **Un'autostrada si giudica a occhio: il criterio è grafico, non matematico.** Nessuna soglia, mai |
 | **D-165** | **La convenzione grafica è quella sviluppata finora, e non si tocca** |
 | **D-166** | `DRAW-015` **è fuso**, e le tavole **non sono approvate**. Quello che è approvato è la direzione |
+| **D-167** | **Un terminale si prende da un lato solo**: `in` e `out` tutt'e due sulla faccia sinistra |
+| **D-168** | La **rotazione di una tre vie si sceglie e si scrive nel piano**: la terza via guarda il pezzo che serve |
 
 ---
 
@@ -399,6 +440,11 @@ versione del manifesto e porta la misura che lo giustifica.
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
+0bis. **Il pettine si compone** (**B12**, la regola che il PO ha disegnato il 21 settembre):
+   su almeno due impianti la coppia mandata/ritorno resta **affiancata** dalla colonna fino al
+   terminale, i collettori stanno **addosso alle macchine**, e il terminale si prende **da un
+   lato solo**. Le due tavole che il PO ha ridisegnato — la 4 e la 5 — sono il metro, e stanno
+   in `docs/input-pm/riferimenti-grafici/2026-09-21/`.
 0. **Le tavole senza il corredo, per prime** (punto 0, ed è la prova che il PO ha chiesto):
    il pianificatore compone i **cinque grafi ridotti a sole macchine, accumuli e collettori**,
    e le tavole escono. **Il giudizio si dà guardandole accanto agli schizzi del PO**, non
@@ -426,13 +472,17 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
 7. **A2, A3 e B5 hanno il loro rilievo**, ciascuno con la tavola su cui si vede.
 8. **Le cure deterministiche non ci sono più**, e una prova lo sorveglia.
 9. **Nessun documento resta in terzo stato**, compresi i cinque dell'elenco 7.
-10. **Il saldo della suite non peggiora rispetto allo stato consegnato da `DRAW-015`** — 38
-    fallite, **1582** passate, 24 `skip`, 12 `xfail` — zero `skip` e zero `xfail` nuovi, `ruff` e
+10. **Il saldo della suite torna a 38 o sotto** — zero `skip` e zero `xfail` nuovi, `ruff` e
     `mypy` verdi. **Ogni prova che torna verde si dice.**
 
-⚠ **Il criterio 10 si misura contro lo stato consegnato da `DRAW-015`, non contro `main`**:
-partire da 38 e arrivare a 38 è «non peggiora». **Arrivare sotto è il miglioramento che I-067
-chiede.**
+⚠ **Il saldo è salito a 47, per una ragione dichiarata, e va riportato giù.** `DRAW-015` aveva
+consegnato **38** fallite e **1582** passate. **D-167** — le porte dei terminali tutt'e due
+sullo stesso lato — ne ha aperte **nove**, e sono **una cosa sola**: i cinque piani scritti a
+mano sono composti per terminali **passanti**, mettono le utenze dove il pettine non passa, e
+sull'impianto 5 aprono un `RUN_OVERSHOOTS_ITS_PORT` **bloccante** su `s8`; le prove del
+revisore cadono a valle di quello. **Nessuna delle 38 precedenti è tornata verde.**
+**Si chiudono ricomponendo i cinque piani** (punti 0 e 5), non toccando le prove: i piani a
+mano sono il **bersaglio** del pianificatore, non il prodotto, e adesso sono **vecchi**.
 
 ---
 

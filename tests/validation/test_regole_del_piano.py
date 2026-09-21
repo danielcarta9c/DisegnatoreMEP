@@ -1012,6 +1012,58 @@ def test_b10_sulle_verticali_non_si_pretende_niente() -> None:
     assert ritorni_sopra_la_mandata(tavola([], [mandata, ritorno])) == []
 
 
+def test_b10_il_giro_attorno_a_un_terminale_non_accusa_il_ritorno() -> None:
+    """Il difetto del 21 settembre 2026, e la tavola su cui si e' visto.
+
+    Un terminale ha `in` e `out` alla **stessa quota su facce opposte**, quindi
+    e' un passante e il ritorno gli **gira intorno**: esce dalla faccia destra
+    alla quota della mandata, fa un mozzicone di **2,5 mm**, scende e torna
+    indietro quindici millimetri piu' in basso. Sulla tavola **la mandata sta
+    sopra**, e B10 e' rispettata.
+
+    Il controllo la accusava lo stesso, perche' ricavava la quota di ciascuna
+    tratta dal **minimo sulla tratta intera**: il mozzicone portava il ritorno
+    alla stessa quota della mandata e le due pareggiavano. Adesso confronta le
+    quote dei **tratti affiancati**, che sono 71 e 86.
+
+    I numeri sono quelli veri dell'impianto 1 composto in camera pulita, e il
+    difetto l'ha trovato l'agente che lo componeva: «la tavola mi sembra giusta
+    e i numeri dicono che e' sbagliata».
+    """
+    mandata = RoutedTrunk(
+        network_id="secondario", medium="heating_water", supply=True,
+        connection_ids=["m7"], segments=[_punti((167.5, 71), (202.5, 71))],
+    )
+    ritorno = RoutedTrunk(
+        network_id="secondario", medium="heating_water", supply=False,
+        connection_ids=["m8"],
+        segments=[_punti((222.5, 71), (225, 71), (225, 86), (167.5, 86))],
+    )
+    assert ritorni_sopra_la_mandata(tavola([], [mandata, ritorno])) == []
+
+
+def test_b10_lo_stesso_giro_rovesciato_si_accende_ancora() -> None:
+    """Il verso opposto, perche' la correzione non spenga il controllo.
+
+    Stessa identica forma della prova sopra, con i due versi scambiati: qui e'
+    la **mandata** a girare attorno al terminale e il **ritorno** a correre
+    dritto piu' in alto — corsa affiancata del ritorno a 71, della mandata a 86.
+    Il rilievo ci vuole, e la correzione non deve averlo spento.
+    """
+    ritorno = RoutedTrunk(
+        network_id="secondario", medium="heating_water", supply=False,
+        connection_ids=["m8"], segments=[_punti((167.5, 71), (202.5, 71))],
+    )
+    mandata = RoutedTrunk(
+        network_id="secondario", medium="heating_water", supply=True,
+        connection_ids=["m7"],
+        segments=[_punti((222.5, 71), (225, 71), (225, 86), (167.5, 86))],
+    )
+    rilievi = ritorni_sopra_la_mandata(tavola([], [mandata, ritorno]))
+    assert len(rilievi) == 1
+    assert rilievi[0].code == "RETURN_RUNS_ABOVE_ITS_SUPPLY"
+
+
 def test_b10_uno_spigolo_non_e_una_corsia() -> None:
     """Stessa lettura di B9: il fianco a fianco dev'essere almeno lungo quanto la
     distanza che separa le due linee."""

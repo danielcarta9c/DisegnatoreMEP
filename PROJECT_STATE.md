@@ -35,7 +35,7 @@ decidono più la posa**.
 | | |
 |---|---|
 | Release | **0.3 — generalizzazione** |
-| Pacchetto attivo | **`DRAW-016` — l'agente che scrive il piano, e l'agente che dice dove passare.** **ATTIVO**: `DRAW-015` è fuso. La **prima prova l'ha dichiarata il PO** — le tavole **senza il corredo**, per vedere se gli agenti sanno tracciare le autostrade «come farebbe un disegnatore umano» |
+| Pacchetto attivo | **`DRAW-016`**, **ATTIVO**. **Il punto 0 è fatto**: il pianificatore esiste (`skill/comporre/`) e in camera pulita **batte il piano scritto a mano** — impianto 5 da **A1 ad A3**, impianto 4 da **A2 ad A4**. Si riparte **ricomponendo i cinque piani**, che dopo D-167 sono vecchi |
 | Chi sviluppa | **un agente solo** (D-147), con agenti paralleli **dentro** la sessione (D-152) |
 | Chi approva la fusione | **il PO, guardando le tavole** (D-146, D-147) |
 | Architettura del disegno | `docs/ARCHITETTURA-DEL-PIANO.md` — vigente, sostituisce quella del solutore |

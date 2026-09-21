@@ -1,0 +1,624 @@
+{
+  "assumptions": [
+    {
+      "id": "a1",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "Il testo dice che le due macchine sono in parallelo e non dice come si uniscono: si e' assunto un collettore di mandata e uno di ritorno."
+    },
+    {
+      "id": "a2",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "Il carico automatico da acquedotto e lo scarico sono nominati sul volume tecnico: li aggiungono le regole, non sono scritti qui."
+    }
+  ],
+  "components": [
+    {
+      "definition_id": "buffer-combined",
+      "evidence": [],
+      "id": "accumulo",
+      "properties": {},
+      "tag": "ACC-01"
+    },
+    {
+      "definition_id": "tee-junction",
+      "evidence": [],
+      "id": "collettore-mandata",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "tee-split",
+      "evidence": [],
+      "id": "collettore-ritorno",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "heat-pump-air-water",
+      "evidence": [],
+      "id": "pdc-master",
+      "properties": {},
+      "tag": "PDC-01"
+    },
+    {
+      "definition_id": "heat-pump-air-water",
+      "evidence": [],
+      "id": "pdc-slave",
+      "properties": {},
+      "tag": "PDC-02"
+    },
+    {
+      "definition_id": "radiator",
+      "evidence": [],
+      "id": "radiatori",
+      "properties": {},
+      "tag": "RAD-01"
+    },
+    {
+      "definition_id": "dhw-draw-off",
+      "evidence": [],
+      "id": "utenze",
+      "properties": {},
+      "tag": "ACS-01"
+    }
+  ],
+  "connections": [
+    {
+      "id": "m1",
+      "endpoint_a": {
+        "component_id": "pdc-master",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-mandata",
+        "port_id": "a"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m2",
+      "endpoint_a": {
+        "component_id": "pdc-slave",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-mandata",
+        "port_id": "c"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m3",
+      "endpoint_a": {
+        "component_id": "collettore-mandata",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "accumulo",
+        "port_id": "primary_in"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m4",
+      "endpoint_a": {
+        "component_id": "accumulo",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "collettore-ritorno",
+        "port_id": "a"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m5",
+      "endpoint_a": {
+        "component_id": "collettore-ritorno",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-master",
+        "port_id": "water_return"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m6",
+      "endpoint_a": {
+        "component_id": "collettore-ritorno",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-slave",
+        "port_id": "water_return"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m7",
+      "endpoint_a": {
+        "component_id": "accumulo",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "radiatori",
+        "port_id": "in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m8",
+      "endpoint_a": {
+        "component_id": "radiatori",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "accumulo",
+        "port_id": "secondary_in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m9",
+      "endpoint_a": {
+        "component_id": "accumulo",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "utenze",
+        "port_id": "a"
+      },
+      "network_id": "sanitaria",
+      "evidence": [],
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "client": "Nove C",
+    "commission_code": "PROVA",
+    "issue_date": "2026-08-06",
+    "project_id": "prova-1-due-pdc-accumulo-combinato",
+    "project_name": "Due pompe di calore in parallelo con accumulo combinato",
+    "revision": "00"
+  },
+  "networks": [
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "fredda",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "fredda-filling-unit-collettore-ritorno-a",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "primario",
+      "medium": "heating_water",
+      "name": "Circuito primario"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "sanitaria",
+      "medium": "domestic_hot_water",
+      "name": "Acqua calda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "secondario",
+      "medium": "heating_water",
+      "name": "Circuito secondario"
+    }
+  ],
+  "plant_regime": "up_to_35_kw",
+  "rule_applications": [
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "air-vent-accumulo-primary-out",
+        "stub-air-vent-accumulo-primary-out"
+      ],
+      "id": "applied-air-vent-accumulo-primary-out",
+      "rule_id": "air-vent-on-the-stored-volume",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "dirt-separator-collettore-ritorno-a",
+        "p4-a",
+        "p4-b"
+      ],
+      "id": "applied-dirt-separator-collettore-ritorno-a",
+      "rule_id": "dirt-separation-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "drain-connection-accumulo-primary-in",
+        "stub-drain-connection-accumulo-primary-in"
+      ],
+      "id": "applied-drain-connection-accumulo-primary-in",
+      "rule_id": "let-what-holds-its-own-volume-empty",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "expansion-connection-collettore-ritorno-a",
+        "tee-expansion-connection-collettore-ritorno-a",
+        "p4-b-a",
+        "p4-b-b",
+        "stub-expansion-connection-collettore-ritorno-a"
+      ],
+      "id": "applied-expansion-connection-collettore-ritorno-a",
+      "rule_id": "expansion-on-closed-circuit",
+      "rule_version": "4.1.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "filling-unit-collettore-ritorno-a",
+        "inlet-filling-unit-collettore-ritorno-a",
+        "tee-filling-unit-collettore-ritorno-a-b",
+        "inlet-filling-unit-collettore-ritorno-a-a",
+        "fredda-filling-unit-collettore-ritorno-a",
+        "p4-b-b-a",
+        "p4-b-b-b",
+        "stub-filling-unit-collettore-ritorno-a-b"
+      ],
+      "id": "applied-filling-unit-collettore-ritorno-a",
+      "rule_id": "filling-unit-on-return",
+      "rule_version": "5.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "mixing-valve-thermostatic-accumulo-dhw-out",
+        "w2-a-a",
+        "w2-a-b"
+      ],
+      "id": "applied-mixing-valve-thermostatic-accumulo-dhw-out",
+      "rule_id": "dhw-mixing-on-draw-off",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "pressure-gauge-collettore-ritorno-a",
+        "tee-pressure-gauge-collettore-ritorno-a",
+        "p4-b-b-b-a",
+        "p4-b-b-b-b",
+        "stub-pressure-gauge-collettore-ritorno-a"
+      ],
+      "id": "applied-pressure-gauge-collettore-ritorno-a",
+      "rule_id": "gauge-where-the-plant-is-charged",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "strainer-pdc-master-water-return",
+        "p5-a",
+        "p5-b"
+      ],
+      "id": "applied-strainer-pdc-master-water-return",
+      "rule_id": "debris-guard-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "strainer-pdc-slave-water-return",
+        "p6-a",
+        "p6-b"
+      ],
+      "id": "applied-strainer-pdc-slave-water-return",
+      "rule_id": "debris-guard-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-gauge-cock-3way-pressure-gauge-collettore-ritorno-a-a",
+        "stub-pressure-gauge-collettore-ritorno-a-a",
+        "stub-pressure-gauge-collettore-ritorno-a-b"
+      ],
+      "id": "applied-valve-gauge-cock-3way-pressure-gauge-collettore-ritorno-a-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-accumulo-primary-in",
+        "p3-b-a",
+        "p3-b-b"
+      ],
+      "id": "applied-valve-isolation-accumulo-primary-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-accumulo-primary-out",
+        "p4-a-1-a",
+        "p4-a-1-b"
+      ],
+      "id": "applied-valve-isolation-accumulo-primary-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-accumulo-secondary-in",
+        "s3-a",
+        "s3-b"
+      ],
+      "id": "applied-valve-isolation-accumulo-secondary-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-accumulo-secondary-out",
+        "s1-a",
+        "s1-b"
+      ],
+      "id": "applied-valve-isolation-accumulo-secondary-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-circolatore-b",
+        "s2-a",
+        "s2-b"
+      ],
+      "id": "applied-valve-isolation-circolatore-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-acquedotto-a",
+        "w1-a",
+        "w1-b"
+      ],
+      "id": "applied-valve-isolation-dhw-acquedotto-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-accumulo-dhw-out",
+        "w2-a-a-a",
+        "w2-a-a-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-accumulo-dhw-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-utenze-a",
+        "w2-a",
+        "w2-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-utenze-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dirt-separator-collettore-ritorno-a-b",
+        "p4-a-5-a",
+        "p4-a-5-b"
+      ],
+      "id": "applied-valve-isolation-dirt-separator-collettore-ritorno-a-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a",
+        "stub-expansion-connection-collettore-ritorno-a-a",
+        "stub-expansion-connection-collettore-ritorno-a-b"
+      ],
+      "id": "applied-valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-pdc-master-water-supply",
+        "p1-a",
+        "p1-b"
+      ],
+      "id": "applied-valve-isolation-pdc-master-water-supply",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-pdc-slave-water-supply",
+        "p2-a",
+        "p2-b"
+      ],
+      "id": "applied-valve-isolation-pdc-slave-water-supply",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-strainer-pdc-master-water-return-a",
+        "p5-a-a",
+        "p5-a-b"
+      ],
+      "id": "applied-valve-isolation-strainer-pdc-master-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-strainer-pdc-slave-water-return-a",
+        "p6-a-a",
+        "p6-a-b"
+      ],
+      "id": "applied-valve-isolation-strainer-pdc-slave-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-safety-collettore-mandata-b",
+        "tee-valve-safety-collettore-mandata-b",
+        "p3-a",
+        "p3-b",
+        "stub-valve-safety-collettore-mandata-b"
+      ],
+      "id": "applied-valve-safety-collettore-mandata-b",
+      "rule_id": "safety-relief-on-the-closed-circuit",
+      "rule_version": "2.0.0",
+      "status": "approved"
+    }
+  ],
+  "schema_version": "1.1.0",
+  "sheets": [],
+  "subsystems": [
+    {
+      "component_ids": [
+        "accumulo",
+        "acquedotto",
+        "utenze",
+        "air-vent-accumulo-primary-out",
+        "valve-isolation-dhw-acquedotto-a",
+        "valve-isolation-dhw-hot-utenze-a",
+        "mixing-valve-thermostatic-accumulo-dhw-out",
+        "drain-connection-accumulo-primary-in",
+        "valve-isolation-accumulo-primary-in",
+        "valve-isolation-accumulo-primary-out",
+        "valve-isolation-dhw-hot-accumulo-dhw-out",
+        "valve-isolation-accumulo-secondary-out",
+        "valve-isolation-accumulo-secondary-in"
+      ],
+      "id": "accumulo",
+      "name": "Accumulo",
+      "network_ids": [
+        "primario",
+        "fredda",
+        "sanitaria"
+      ]
+    },
+    {
+      "component_ids": [
+        "circolatore",
+        "radiatori",
+        "valve-isolation-circolatore-b"
+      ],
+      "id": "distribuzione",
+      "name": "Distribuzione",
+      "network_ids": [
+        "secondario"
+      ]
+    },
+    {
+      "component_ids": [
+        "pdc-master",
+        "pdc-slave",
+        "collettore-mandata",
+        "collettore-ritorno",
+        "strainer-pdc-master-water-return",
+        "strainer-pdc-slave-water-return",
+        "dirt-separator-collettore-ritorno-a",
+        "expansion-connection-collettore-ritorno-a",
+        "tee-expansion-connection-collettore-ritorno-a",
+        "filling-unit-collettore-ritorno-a",
+        "inlet-filling-unit-collettore-ritorno-a",
+        "tee-filling-unit-collettore-ritorno-a-b",
+        "pressure-gauge-collettore-ritorno-a",
+        "tee-pressure-gauge-collettore-ritorno-a",
+        "valve-safety-collettore-mandata-b",
+        "tee-valve-safety-collettore-mandata-b",
+        "valve-isolation-dirt-separator-collettore-ritorno-a-b",
+        "valve-isolation-locked-open-expansion-connection-collettore-ritorno-a-a",
+        "valve-isolation-pdc-master-water-supply",
+        "valve-isolation-pdc-slave-water-supply",
+        "valve-gauge-cock-3way-pressure-gauge-collettore-ritorno-a-a",
+        "valve-isolation-strainer-pdc-master-water-return-a",
+        "valve-isolation-strainer-pdc-slave-water-return-a"
+      ],
+      "id": "generazione",
+      "name": "Generazione",
+      "network_ids": [
+        "primario"
+      ]
+    }
+  ]
+}

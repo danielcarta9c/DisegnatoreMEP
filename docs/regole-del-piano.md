@@ -384,6 +384,62 @@ famiglia di **B7**, ed è una domanda al PO.
 
 ---
 
+### B12 — La coppia è un binario, e si ramifica **a pettine**
+
+**È la regola che il PO ha disegnato, non detta.** Il 21 settembre 2026 ha preso due nostre
+tavole e ci ha ridisegnato sopra la stessa cosa due volte
+(`input-pm/riferimenti-grafici/2026-09-21/`):
+
+> «Ti faccio vedere come andava fatto.»
+
+**La forma, in una riga:**
+
+> **Mandata e ritorno sono un oggetto solo — un binario a due corsie — e si ramificano a
+> pettine.** Due colonne **adiacenti** portano il fluido, e da quelle si stacca **una coppia di
+> orizzontali per ogni utenza**: mandata sopra, ritorno sotto, **affiancate per tutta la
+> corsa**, fino al terminale, che si prende **da un lato solo**.
+
+**Che cosa vieta, e si vede sulle tavole che ha corretto:**
+
+- **una colonna di ritorno lontana**, con ogni utenza che va a prendersela: sulla tavola 5 il
+  ritorno dei secondari stava all'estremo destro e ogni terminale girava intorno a sé stesso
+  per raggiungerlo. Lui l'ha **cancellato in verde** e ha ridisegnato la colonna **accanto**
+  alla mandata;
+- **due collettori lontani fra loro**: sulla stessa tavola stavano a duecento millimetri, e li
+  ha ripassati in rosso spesso **addosso alle pompe**, su una colonna stretta;
+- **una coppia che si apre**: sulla tavola 4 la mandata e il ritorno fra caldaia e scambiatore
+  andavano per strade diverse, e lui li ha ridisegnati come **due orizzontali adiacenti**.
+
+**Non è una regola nuova del progetto: è quella che non riuscivamo a comporre.** `B2` la nomina
+già per il circolatore — «poi la **dorsale a pettine**» — e la ricerca del 4 agosto 2026 §2.2
+l'aveva trovata sulle tavole vere chiamandola «composizione a corsie», con la riga che diceva
+che sarebbe entrata «quando l'avremo composta almeno una volta». **L'ha composta il PO.**
+
+*Fonte:* il PO, 21 settembre 2026, `riferimenti-grafici/2026-09-21/`, con la ricerca del
+4 agosto §2.2 e B2 a monte.
+*Controllo:* **`da scrivere`.** Le parti che si possono già misurare le misurano **B11** (la
+coppia corre insieme a interasse costante) e **B9** (le corsie libere). Quello che manca è il
+rilievo che nomina **il pettine**: una ramificazione dove due colonne adiacenti servono più
+utenze con coppie affiancate.
+*Tavola:* impianto 5, `tavola-5-come-andava-fatta.webp`.
+
+> ### I due impedimenti che il PO ha tolto nella stessa risposta
+>
+> Non sono due osservazioni sparse: sono **le due ragioni per cui il pettine non ci veniva.**
+>
+> **1. Un terminale con le porte su facce opposte rompe il binario** (**D-167**). «I simboli dei
+> terminali vanno modificati: con uscita dall'altro lato **si spreca spazio**, meglio metterli
+> sempre con **ingresso e uscita su un lato solo** come ho fatto io.» Con `in` a sinistra e
+> `out` a destra il ritorno è **costretto** a uscire dall'altra faccia e girare attorno al
+> pezzo: la coppia si apre e la fascia a destra si butta. `radiator`, `fan-coil`, `ahu-coil` e
+> `underfloor-panel` hanno adesso **tutt'e due le porte sulla faccia sinistra**, `in` sopra e
+> `out` sotto (B10), a interasse **10**.
+>
+> **2. Una tre vie con la terza via sempre verso il basso costringe la diramazione a scendere**
+> (**D-168**). «La valvola a tre vie la metti sempre con uscita terza verso il basso, **guarda
+> che puoi ruotarla**.» La rotazione di una tre vie **si sceglie** e si scrive nel piano: la
+> terza via guarda **il pezzo che serve**. Non è una deduzione — è una decisione di chi compone.
+
 ## C. Come si prende un pezzo
 
 ### C1 — Un pezzo si prende dal lato delle sue porte

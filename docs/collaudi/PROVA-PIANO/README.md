@@ -1,5 +1,25 @@
 # I piani di composizione — dalla prova del 19/20 settembre al prodotto
 
+> ## ⛔ I cinque piani sono VECCHI, dal 21 settembre 2026. Non si correggono: si ricompongono.
+>
+> **D-167** ha spostato le porte dei terminali** — `radiator`, `fan-coil`, `ahu-coil`,
+> `underfloor-panel` hanno adesso `in` e `out` **tutt'e due sulla faccia sinistra**, su
+> disposizione del PO. Questi cinque piani sono composti per terminali **passanti**, con
+> l'uscita sull'altra faccia, e **mettono le utenze dove il pettine di B12 non passa**.
+>
+> **Misurato**, e non si nasconde: i rilievi passano da **14 · 13 · 15 · 18 · 38** a
+> **12 · 16 · 14 · 21 · 46**, l'impianto 5 apre un `RUN_OVERSHOOTS_ITS_PORT` **bloccante** su
+> `s8`, e la suite passa da **38 rosse a 47** — le nove nuove sono tutte quel bloccante e le
+> prove del revisore che cadono a valle.
+>
+> **Non sono da riparare a mano.** Sono il **bersaglio** che il pianificatore deve pareggiare
+> (**D-155**), non il prodotto: chi li ritocca a mano rifà l'errore che D-155 esiste per
+> impedire. Si chiudono **ricomponendoli con `skill/comporre/`**, ed è il punto 0 di
+> `DRAW-016`.
+>
+> Finché non sono ricomposti, **ogni misura presa su di loro va letta sapendo questo**.
+
+
 > **Aggiornato il 20 settembre 2026 (`DRAW-015`).** Questa cartella era il collaudo di una
 > prova; adesso è **la casa dei piani**, e i piani sono cinque: uno per ogni impianto di
 > prova. Il pezzo che li esegue non è più uno script — è

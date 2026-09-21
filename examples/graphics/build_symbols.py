@@ -512,7 +512,6 @@ def coil_body(w: float, h: float) -> str:
     return (
         f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
         f'<path d="{path}"/>'
-        + stubs_horizontal(w, h, x)
     )
 
 
@@ -778,8 +777,6 @@ def radiator_body(w: float, h: float) -> str:
     return (
         f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
         + elements
-        + f'<line x1="0" y1="{n(h / 2)}" x2="{n(x)}" y2="{n(h / 2)}"/>'
-        f'<line x1="{n(x + bw)}" y1="{n(h / 2)}" x2="{n(w)}" y2="{n(h / 2)}"/>'
     )
 
 
@@ -797,8 +794,6 @@ def underfloor_body(w: float, h: float) -> str:
     return (
         f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
         f'<path d="{" ".join(path)}"/>'
-        f'<line x1="0" y1="{n(h / 2)}" x2="{n(x)}" y2="{n(h / 2)}"/>'
-        f'<line x1="{n(x + bw)}" y1="{n(h / 2)}" x2="{n(w)}" y2="{n(h / 2)}"/>'
     )
 
 
@@ -819,8 +814,6 @@ def fan_coil_body(w: float, h: float) -> str:
         f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx)}" y2="{n(cy - r * 0.75)}"/>'
         f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx - r * 0.65)}" y2="{n(cy + r * 0.38)}"/>'
         f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx + r * 0.65)}" y2="{n(cy + r * 0.38)}"/>'
-        + f'<line x1="0" y1="{n(h / 2)}" x2="{n(x)}" y2="{n(h / 2)}"/>'
-        f'<line x1="{n(x + bw)}" y1="{n(h / 2)}" x2="{n(w)}" y2="{n(h / 2)}"/>'
     )
 
 
@@ -1268,22 +1261,63 @@ def dial_glyph(size: tuple[float, float]) -> list[dict[str, Any]]:
     return [{"id": DIAL_GLYPH_ID, "x_mm": cx, "y_mm": cy}]
 
 
+TERMINAL_PORTS_ALONG = (2.5, 12.5)
+"""Le quote di `in` e `out` di un terminale, **tutt'e due sulla faccia sinistra**.
+
+**D-167, 21 settembre 2026, su disposizione del PO**, che ha ridisegnato a mano
+due nostre tavole e poi l'ha detto a parole: «i **simboli dei terminali** vanno
+modificati: con uscita dall'altro lato **si spreca spazio**, meglio metterli
+sempre con **ingresso e uscita su un lato solo** come ho fatto io».
+
+**Perche' conta piu' di un ritocco.** Un terminale con `in` a sinistra e `out` a
+destra e' un **passante**: il ritorno esce dall'altra faccia ed e' **costretto a
+girargli intorno**. La coppia mandata/ritorno si apre, la fascia a destra del
+terminale si spreca, e il **pettine** di **B12** non si chiude. Con tutt'e due
+le porte sullo stesso lato la coppia arriva affiancata, entra e basta.
+
+**L'interasse e' 10 e non 15**, che e' quello delle macchine di spina: dentro un
+simbolo alto 15 due porte a 15 non ci stanno. Tenere l'ingombro 20 x 15 e'
+stata una scelta di questa sessione — la minima che fa quello che il PO ha
+chiesto — e **si rovescia alzando il simbolo**, che e' materia sua.
+
+⚠ **Supera D-163 punto 2 per questa classe di simboli, e solo per questa.** Li'
+era scritto che «la faccia non si cambia»; qui il PO ha disposto il contrario
+sui terminali. Su ogni altro simbolo D-163 regge, e **un attacco di serpentino
+non si sposta comunque**.
+"""
+
+
 def two_port_terminal(symbol_id: str, name: str, body_of: Any, source: str) -> SymbolSpec:
-    """Terminale d'impianto: ingresso a sinistra, uscita a destra.
+    """Terminale d'impianto: ingresso e uscita **tutt'e due sulla faccia sinistra**.
 
     Non e' un componente in linea: la tubazione ci finisce dentro, non ci passa
     attraverso, quindi non dichiara alcuna interruzione di linea.
+
+    Le due porte stanno sulla stessa faccia per **D-167**: vedi
+    `TERMINAL_PORTS_ALONG`. `in` sta **sopra** e `out` **sotto**, che e' **B10**
+    — mandata sopra, ritorno sotto.
+
+    ⚠ **I monconi li disegna `stubs_to_ports`, dalle porte.** Prima ogni corpo
+    se li tracciava da solo a `h/2`, a sinistra e a destra: quote ripetute a
+    mano, che con le porte spostate **non raggiungevano piu' niente**. E' lo
+    stesso difetto per cui la caldaia era rimasta scollegata dalla propria porta
+    il 21 settembre (`DRAW-015` RAPPORTO §13.8), e la cura e' la stessa — il
+    corpo si ricava dalle porte, o prima o poi diverge.
     """
     w, h = TERMINAL
+    su, giu = TERMINAL_PORTS_ALONG
+    porte = [port_at("in", "left", su, w, h), port_at("out", "left", giu, w, h)]
     return SymbolSpec(
         id=symbol_id,
         name=name,
         width_mm=w,
         height_mm=h,
         inline=False,
-        ports=[port("in", "left", w, h), port("out", "right", w, h)],
-        body=body_of(w, h),
+        ports=porte,
+        body=body_of(w, h) + stubs_to_ports(porte, w, h, w * 0.1),
         source=source,
+        # Una porta ha cambiato faccia: il manifesto sale di minore.
+        version="1.1.0",
     )
 
 
@@ -1291,6 +1325,14 @@ HEAT_PUMP_W, HEAT_PUMP_H = MACHINE
 STORAGE_W, STORAGE_H = STORAGE
 MANIFOLD_W, MANIFOLD_H = MANIFOLD
 MANIFOLD_OUTLETS = (12.5, 27.5)
+
+AHU_COIL_PORTS = [
+    port_at("in", "left", TERMINAL_PORTS_ALONG[0], *TERMINAL),
+    port_at("out", "left", TERMINAL_PORTS_ALONG[1], *TERMINAL),
+]
+"""Le porte della batteria di trattamento aria, che non passa da
+`two_port_terminal` ed e' l'unico terminale dichiarato a parte: **D-167** vale
+anche per lei, e qui e' il posto dove ci si dimenticherebbe."""
 
 HEAT_PUMP_PORTS = [
     # Quindici millimetri fra mandata e ritorno (DRAW-005, I-039): e' l'interasse
@@ -1453,9 +1495,14 @@ SYMBOLS: list[SymbolSpec] = [
         width_mm=TERMINAL[0],
         height_mm=TERMINAL[1],
         inline=False,
-        ports=[port("in", "left", *TERMINAL), port("out", "right", *TERMINAL)],
-        body=coil_body(*TERMINAL),
+        # Stesso trattamento degli altri terminali: tutt'e due le porte sulla
+        # faccia sinistra (**D-167**). Questo simbolo e' dichiarato a parte e
+        # non passa da `two_port_terminal`, quindi la regola va ripetuta qui —
+        # ed e' il posto dove si dimenticherebbe.
+        ports=AHU_COIL_PORTS,
+        body=coil_body(*TERMINAL) + stubs_to_ports(AHU_COIL_PORTS, *TERMINAL, TERMINAL[0] * 0.12),
         source=SOURCE_PRACTICE_HYDRONIC,
+        version="1.1.0",
     ),
     SymbolSpec(
         id="buffer-two-port",

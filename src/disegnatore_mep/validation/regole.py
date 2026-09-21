@@ -1084,8 +1084,16 @@ derivazioni indipendenti sullo stesso numero.
 
 def _affiancamenti(
     sheet: SheetGeometry,
-) -> Iterable[tuple[RoutedTrunk, RoutedTrunk, float, float, str]]:
-    """Le coppie di tratti paralleli che si affiancano, con distanza e lunghezza."""
+) -> Iterable[tuple[RoutedTrunk, RoutedTrunk, float, float, str, float, float]]:
+    """Le coppie di tratti paralleli che si affiancano, con distanza e lunghezza.
+
+    ⚠ **Restituisce anche le due quote**, e non e' un di piu'. Chi guarda una
+    coppia deve poter sapere a che quota corre **il tratto affiancato**, non la
+    tratta intera: una spezzata tocca piu' quote, e ricavarla dal minimo sulla
+    tratta e' un errore che si e' gia' fatto due volte — su **B11** il 20
+    settembre 2026, e su **B10** il 21, dove ha acceso un rilievo su una tavola
+    **giusta**. Le quote escono di qui perche' non si ricavino altrove.
+    """
     tratti: list[tuple[RoutedTrunk, str, float, float, float]] = []
     for route in sheet.routes:
         if route.unresolved:
@@ -1112,7 +1120,7 @@ def _affiancamenti(
             distanza = abs(quota - quota2)
             if fianco <= 0:
                 continue
-            yield uno, altro, distanza, fianco, asse
+            yield uno, altro, distanza, fianco, asse, quota, quota2
 
 
 def linee_parallele_senza_corsie(
@@ -1145,7 +1153,7 @@ def linee_parallele_senza_corsie(
     trovati: list[ValidationIssue] = []
     visti: set[tuple[str, str]] = set()
     for sheet in drawing.sheets:
-        for uno, altro, distanza, fianco, asse in _affiancamenti(sheet):
+        for uno, altro, distanza, fianco, asse, _, _ in _affiancamenti(sheet):
             if distanza >= CORSIE_LIBERE_FRA_DUE_LINEE_MM - TOLLERANZA_MM:
                 continue
             if fianco < distanza:
@@ -1204,16 +1212,24 @@ def ritorni_sopra_la_mandata(
     trovati: list[ValidationIssue] = []
     visti: set[tuple[str, str]] = set()
     for sheet in drawing.sheets:
-        for uno, altro, distanza, fianco, asse in _affiancamenti(sheet):
+        for uno, altro, distanza, fianco, asse, quota, quota2 in _affiancamenti(sheet):
             if asse != "orizzontale":
                 continue
             if uno.network_id != altro.network_id or uno.supply == altro.supply:
                 continue
             if fianco < distanza:
                 continue
+            # **Le quote sono quelle dei due tratti affiancati**, non il minimo
+            # sulle due tratte intere. Una spezzata tocca piu' quote: il ritorno
+            # che gira attorno a un terminale ha un mozzicone lungo 2,5 mm alla
+            # quota della mandata e la propria corsa vera quindici millimetri
+            # piu' in basso. Prendendo il minimo le due quote pareggiano, e il
+            # rilievo si accende su una tavola dove **la mandata sta sopra**.
+            # Trovato il 21 settembre 2026 dall'agente che componeva l'impianto
+            # 1 in camera pulita: «la tavola mi sembra giusta e i numeri dicono
+            # che e' sbagliata», ed era vero.
             mandata, ritorno = (uno, altro) if uno.supply else (altro, uno)
-            quota_m = min(p.y_mm for parte in mandata.segments for p in parte)
-            quota_r = min(p.y_mm for parte in ritorno.segments for p in parte)
+            quota_m, quota_r = (quota, quota2) if uno.supply else (quota2, quota)
             if quota_m < quota_r:
                 continue
             nomi = (

@@ -1,0 +1,70 @@
+{
+  "formato": "A4",
+  "note": [
+    "Due generatori in parallelo: pompa di calore e caldaia impilate alla stessa x=20 (A2).",
+    "Fascia del primario a y=50: pdc e disgiuntore allo stesso y, mandata retta a 55 e ritorno retto a 70, zero pieghe (B1, 2.1).",
+    "I due collettori del primario sono due T vicine, x=85 e x=105: da loro scendono le DUE VERTICALI verso la caldaia, dritte e a 20 mm l'una dall'altra (B3, B12).",
+    "Tratta caldaia-scambiatore come binario: mandata a y=115 e ritorno a y=130, affiancate a interasse 15 fino allo scambiatore, mandata sopra e ritorno sotto (B10, B11, B12).",
+    "Deviatrice a 270 gradi: la via dritta guarda in alto verso il collettore di mandata, la terza via guarda a destra verso lo scambiatore che serve (D-168).",
+    "Commutatrice a 180 gradi: uscita a sinistra dritta nel ritorno caldaia, terza via in alto a raccogliere il ritorno dello scambiatore (D-168).",
+    "Radiatore preso da sinistra, in e out sulla stessa faccia: la coppia dal disgiuntore gli arriva affiancata (D-167, B12).",
+    "Confine ACS a 10 mm dall'uscita secondaria dello scambiatore (A4).",
+    "Rilievo lasciato acceso di proposito: DRAWING_ALL_ON_ONE_SIDE (4.2 volte). Per spegnerlo bisognerebbe spostare scambiatore e confine ACS lontano dalla caldaia che li serve, e A4 dice il contrario: il rilievo resta, la posa no.",
+    "Piega strutturale su m3 e su m5: la terza via di una valvola a tre vie e' SEMPRE perpendicolare alla via dritta, quindi il ramo sanitario non puo' entrare e uscire in linea. La piega e' una sola, e sta sulla valvola.",
+    "Fra disgiuntore e radiatori la coppia cambia interasse 15->10: il terminale ha le porte a 10 mm, non a 15. E' il caso noto del pezzo con interasse proprio, e non si cura."
+  ],
+  "pezzi": {
+    "pdc": {
+      "x": 20,
+      "y": 50,
+      "regola": "A1 — generazione a sinistra; la sua porta decide la quota delle autostrade del primario"
+    },
+    "caldaia": {
+      "x": 20,
+      "y": 140,
+      "regola": "A2 — secondo generatore in parallelo: impilato sotto la pdc, stessa x"
+    },
+    "collettore-mandata": {
+      "x": 85,
+      "y": 52.5,
+      "regola": "B3 — collettore di mandata sulla quota 55; da qui scende la verticale di mandata verso la caldaia"
+    },
+    "collettore-ritorno": {
+      "x": 105,
+      "y": 67.5,
+      "regola": "B3 — collettore di ritorno sulla quota 70, verticale a 20 mm da quella di mandata e senza incroci"
+    },
+    "disgiuntore": {
+      "x": 160,
+      "y": 50,
+      "regola": "D-159 — stesso y della pdc: primario retto a 55 e a 70"
+    },
+    "radiatori": {
+      "x": 205,
+      "y": 52.5,
+      "regola": "D-167 — terminale preso da sinistra, sulla quota della mandata secondaria"
+    },
+    "deviatrice-caldaia": {
+      "x": 82.5,
+      "y": 110,
+      "rotazione": 270,
+      "regola": "D-168 — terza via a destra verso lo scambiatore, via dritta in alto verso il primario"
+    },
+    "commutatrice-ritorno": {
+      "x": 92.5,
+      "y": 155,
+      "rotazione": 180,
+      "regola": "D-168 — uscita a sinistra dentro il ritorno caldaia, terza via in alto verso lo scambiatore"
+    },
+    "scambiatore": {
+      "x": 135,
+      "y": 110,
+      "regola": "B12 — allineato al binario della caldaia: primary_in a 115 e primary_out a 130, interasse 15"
+    },
+    "utenze": {
+      "x": 157.5,
+      "y": 112.5,
+      "regola": "A4 — confine di rete addosso allo scambiatore che serve"
+    }
+  }
+}

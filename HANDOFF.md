@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-21, a `DRAW-015` **fuso** e `DRAW-016` aperto
+**Aggiornato:** 2026-09-21, a `DRAW-015` **fuso** e al punto 0 di `DRAW-016` **fatto**
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -23,6 +23,31 @@ Sono due cose diverse, e le ha separate il PO (**D-166**), il 21 settembre 2026:
 **Quello che è approvato è la direzione.** Nessuna sessione può citare quella fusione come
 approvazione di una tavola.
 
+## ⛔ La regola che il PO ha disegnato, e che comanda il disegno: **B12**
+
+Il 21 settembre ha ripreso due nostre tavole e **ci ha ridisegnato sopra**
+(`docs/input-pm/riferimenti-grafici/2026-09-21/`):
+
+> **La coppia mandata/ritorno è un oggetto solo — un binario a due corsie — e si ramifica a
+> pettine.** Due colonne **adiacenti** portano il fluido, e da quelle si stacca **una coppia di
+> orizzontali per ogni utenza**: mandata sopra, ritorno sotto, **affiancate per tutta la
+> corsa**, fino al terminale, che si prende **da un lato solo**.
+
+E le due cose che ha notato nella stessa risposta sono **i due impedimenti** a quella forma:
+
+- **D-167** — un terminale si prende **da un lato solo**. `radiator`, `fan-coil`, `ahu-coil` e
+  `underfloor-panel` hanno adesso tutt'e due le porte sulla **faccia sinistra**. Con le porte su
+  facce opposte il ritorno è **costretto** a girare attorno al pezzo, e la coppia si apre.
+  ⚠ **Supera D-163 punto 3 per questa classe di simboli e solo per questa.**
+- **D-168** — la **rotazione di una tre vie si sceglie e si scrive nel piano**: la terza via
+  guarda il pezzo che serve. La deduzione di C2 non la gira, quindi **senza la scelta di chi
+  compone finisce sempre verso il basso**.
+
+⚠ **Il costo è dichiarato e va saputo prima di misurare**: i cinque piani a mano sono composti
+per terminali passanti, e **la suite è passata da 38 rosse a 47**. Le nove nuove sono una cosa
+sola — l'impianto 5 apre un bloccante su `s8` e le prove del revisore cadono a valle. **Si
+chiudono ricomponendo i piani**, non toccando le prove.
+
 ## ⛔ E il criterio di un'autostrada non è un numero
 
 **D-164**, e viene prima di qualunque misura:
@@ -35,6 +60,35 @@ Chi giudica è l'**occhio** (D-162). **Trasformare un'osservazione in una soglia
 che rientra dalla finestra** (D-151). E **la convenzione grafica non si tocca** (**D-165**):
 è quella sviluppata fino a qui; le tavole di riferimento del PO sono riferimenti
 **sull'instradamento**, non una fonte di convenzione.
+
+> **E c'è una misura che lo conferma dall'altro lato, ed è da portare al PO.** Il 21 settembre
+> **due agenti su tre**, in camera pulita e indipendentemente, hanno **allontanato un pezzo
+> dalla macchina che serve** — il volano dalle pompe, lo scambiatore dalla caldaia — **solo per
+> spegnere `DRAWING_ALL_ON_ONE_SIDE`**, e tutt'e due hanno scritto da soli che un disegnatore
+> non lo farebbe. **Quando c'è un numero, l'agente lo insegue**: un punteggio si ottimizza, e
+> **D3 si ottimizza nel verso sbagliato**. La direzione proposta — e la decisione è del PO — è
+> che **D3 esca dal punteggio e resti una cosa che l'occhio guarda**.
+
+## ✅ Il pianificatore esiste, e in camera pulita batte il piano scritto a mano
+
+**Il punto 0 di `DRAW-016` — la prova che il PO ha chiesto — è fatto.** Agenti avviati da zero,
+che hanno ricevuto **solo** `skill/comporre/ISTRUZIONI.md` e il grafo **scheletro** (sole
+macchine e collettori, nessuna valvola), e a cui era vietato leggere qualunque piano esistente.
+
+| impianto | | a mano | agente, 1° giro | agente **con B12** |
+|---|---|---|---|---|
+| **1** | formato · piegate · incroci | A2 · 4 · 1 | **A4 · 3 · 1** | — |
+| **4** | formato · piegate · incroci | A2 · 7 · 3 | A3 · 5 · 5 | **A4 · 4 · 3** |
+| **5** | formato · piegate · incroci | A1 · 13 · 12 | A2 · 13 · 6 | **A3 · 12 · 5** |
+
+Zero cedute e zero bloccanti su tutti. **Il salto è il formato**: l'impianto 5 su un **quarto**
+di foglio. Prova, piani e tavole in
+`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/`; rapporto in
+`docs/collaudi/DRAW-016/RAPPORTO.md`.
+
+> **Le misure sono rieseguite dalla sessione, non riferite dagli agenti** (D-152). Ed è servito:
+> gli agenti hanno trovato **due cose che nessun numero dava** — un controllo mio che accusava
+> tavole giuste, e il fatto che **D3 spinge nel verso sbagliato**.
 
 ## Prodotto
 
