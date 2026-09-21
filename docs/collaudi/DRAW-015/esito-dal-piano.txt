@@ -2,4 +2,4 @@ prova-1-due-pdc-accumulo-combinato	ESCE (uscita 0)	21 tratte, 0 cedute	bloccanti
 prova-2-pdc-deviatrice-acs	ESCE (uscita 0)	23 tratte, 0 cedute	bloccanti 0	rilievi 14
 prova-3-pdc-diretta-pavimento	ESCE (uscita 2)	22 tratte, 0 cedute	bloccanti 1	rilievi 15
 prova-4-ibrido-pdc-caldaia	ESCE (uscita 0)	25 tratte, 0 cedute	bloccanti 0	rilievi 20
-prova-5-cascata-tre-pdc	ESCE (uscita 0)	54 tratte, 0 cedute	bloccanti 0	rilievi 42
+prova-5-cascata-tre-pdc	ESCE (uscita 0)	54 tratte, 0 cedute	bloccanti 0	rilievi 38

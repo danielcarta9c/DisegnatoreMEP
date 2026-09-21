@@ -69,6 +69,23 @@ caldaie**», e la cura è stata predisporli «per poter essere utilizzati come m
 facilmente assemblabili fra loro». È lo stesso punto: **le quote delle porte devono
 combaciare fra i pezzi che si uniscono**, o la linea che li unisce piega.
 
+⛔ **E c'è una cosa che il piano NON può dire, ed è la ragione di metà dei difetti.** Il
+piano dice **dove stanno i pezzi**, e **niente** su dove le autostrade devono poter passare.
+La forma della spezzata la sceglie l'instradatore sul costo: chiedergli «scendi e fai una
+curva sola» **non si può scrivere**. L'unica leva del piano è **togliere di mezzo chi occupa
+la strada**.
+
+*Il caso, misurato il 20 settembre 2026.* Il PO, sull'impianto 5: «perché dai la curva subito
+dopo la valvola a tre vie? Basta andare giù e poi girare una curva sola». Aveva ragione, e
+**l'instradatore non aveva colpa**: la colonna sotto l'uscita della deviatrice era occupata
+dal **gruppo di riempimento** — raccordo, gruppo e presa, tutti a x=307,5…317,5, cioè
+esattamente sotto la porta. Spostato il gruppo di 20 mm, la linea **scende dritta: da 3
+pieghe a 1**, e i rilievi della tavola passano da 42 a 38.
+
+**Finché `passa-per` non esiste** (`DRAW-016` punto 3) una forma di spezzata non si chiede:
+si libera il posto. Chi compone, prima di appendere un organo, guarda **quale autostrada deve
+passare di lì**.
+
 > **Quello che il piano non può raddrizzare, e va saputo.** Tre macchine in parallelo su due
 > raccordi a T vogliono **due cambi di giacitura** sul collettore: sono nel grafo, non nel
 > disegno, e ce li ha anche lo schizzo del PO del 3 settembre
