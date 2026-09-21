@@ -991,6 +991,25 @@ destra (versione del simbolo 1.0.0 → 1.1.0), portando la caldaia all'**interas
 le altre macchine. La coppia `caldaia ~ disgiuntore` dell'impianto 4 è passata da **ZIG-ZAG a
 INSIEME**.
 
+⚠ **E l'ho fatta sbagliata la prima volta, in un modo che vale la pena raccontare.** Avevo
+cambiato **il file generato a mano**, non il generatore che lo scrive. Due prove l'hanno
+fermata, e la seconda è quella che conta:
+
+1. `test_the_generator_reproduces_what_is_committed[examples/graphics/build_symbols.py-assets/symbols]`
+   — la prova esiste apposta, e il suo messaggio lo dice: «**un file generato non si modifica a
+   mano: si modifica il generatore**». Rieseguendo il generatore l'attacco tornava a y=10;
+2. `test_a_body_reaches_every_port_it_declares[gas-boiler]` — **il corpo del simbolo non
+   arrivava più alla porta che dichiara.** Avevo mosso la **porta** e non il **disegno**: il
+   manifesto diceva y=5 e l'SVG tracciava ancora il suo mozzicone a y=10. Su ogni tavola con
+   una caldaia la linea sarebbe arrivata **accanto** al segno invece che addosso.
+
+Corretta dove andava corretta — `examples/graphics/build_symbols.py::GAS_BOILER_PORTS`, da cui
+`gas_boiler_body` ricava anche il mozzicone — e rigenerata la libreria: l'SVG adesso traccia
+`<line x1="40" y1="5" x2="37.6" y2="5"/>` e le due prove sono verdi. **Le cinque tavole non
+cambiano di un rilievo** (14 · 14 · 15 · 20 · 38, gli stessi), perché l'instradamento leggeva
+già la porta dichiarata: quello che cambiava era **solo il disegno**, ed è esattamente il
+difetto che nessun numero di questa consegna avrebbe nominato.
+
 ### 13.9 Le mosse provate e scartate, perché nessuno le rifaccia
 
 1. **Ruotare il radiatore dell'impianto 1** toglie una piega e apre un rilievo **bloccante**
