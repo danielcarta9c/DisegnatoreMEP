@@ -184,7 +184,7 @@ chiusi, ed erano uno dei quattro difetti che il cold eye review aveva trovato il
   l'unico posto che la faceva valere era il solutore — e **C3 è il buco peggiore**, perché è
   l'unico difetto di **contenuto** che nasce da una scelta **grafica**.
 - **Il saldo della suite peggiora di ventuno, ed è dichiarato.** `main` 17 fallite, la
-  consegna 38 (1564 passate, 24 `skip`, 12 `xfail`; zero `skip` e zero `xfail` **nuovi**).
+  consegna 38 (**1582** passate, 24 `skip`, 12 `xfail`; zero `skip` e zero `xfail` **nuovi**) — rimisurata il 21 settembre, e **l'insieme delle 38 rosse è identico** a quello del 20.
   È la contropartita di D-151: prove che, per la via ordinaria, pretendevano la qualità che
   il solutore produceva. `DRAW-016` le prende in carico una per una, **senza `skip` e senza
   `xfail`**, e da lì in poi il saldo si misura contro **38**, non contro `main`.

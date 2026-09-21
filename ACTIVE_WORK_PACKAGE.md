@@ -336,7 +336,7 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
 8. **Le cure deterministiche non ci sono più**, e una prova lo sorveglia.
 9. **Nessun documento resta in terzo stato**, compresi i cinque dell'elenco 7.
 10. **Il saldo della suite non peggiora rispetto allo stato consegnato da `DRAW-015`** — 38
-    fallite, 1564 passate, 24 `skip`, 12 `xfail` — zero `skip` e zero `xfail` nuovi, `ruff` e
+    fallite, **1582** passate, 24 `skip`, 12 `xfail` — zero `skip` e zero `xfail` nuovi, `ruff` e
     `mypy` verdi. **Ogni prova che torna verde si dice.**
 
 ⚠ **Il criterio 10 si misura contro lo stato consegnato da `DRAW-015`, non contro `main`**:

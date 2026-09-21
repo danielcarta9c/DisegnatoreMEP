@@ -522,16 +522,25 @@ $ cd <copia pulita di origin/main> && PYTHONPATH=$PWD/src python -m pytest -q
 17 failed, 1509 passed, 24 skipped, 11 xfailed in 2320.77s (0:38:40)
 
 $ .venv/bin/python -m pytest -q
-38 failed, 1564 passed, 24 skipped, 12 xfailed in 612.31s (0:10:12)
+38 failed, 1582 passed, 24 skipped, 12 xfailed in 597.99s (0:09:57)   # 21 settembre, misura finale
 ```
 
 | | `main` | questo ramo |
 |---|---|---|
-| prove raccolte | 1561 | **1638** (+77: le prove nuove) |
-| passate | 1509 | **1564** (+55) |
+| prove raccolte | 1561 | **1656** (+95: le prove nuove) |
+| passate | 1509 | **1582** (+73) |
 | **fallite** | 17 | **38 (+21)** |
 | `skip` | 24 | **24** — nessuno nuovo |
 | `xfail` | 11 | 12 |
+
+> **Rimisurata il 21 settembre, dopo tutte le correzioni della sera e dopo il fix del
+> generatore** (§13.8). **L'insieme delle 38 rosse è identico**, confrontato per
+> identificativo: `comm` fra i due elenchi ordinati non dà **nessuna** riga da una parte né
+> dall'altra. Quello che è cambiato sono le **passate**, da 1564 a 1582, perché la sera ha
+> portato prove nuove — fra cui quelle di B8, B9, B10 e B11.
+>
+> ⚠ **Le due rosse che il fix del generatore ha chiuso non erano in questo conto**: erano
+> mie, aperte la sera stessa dall'attuazione sbagliata di D-163, e §13.8 le racconta.
 
 ⚠ **Il criterio 8 chiedeva «saldo non peggiore», e non è raggiunto: ventuno prove in più
 sono rosse.** Non lo nascondo dietro il +55 delle prove nuove.
