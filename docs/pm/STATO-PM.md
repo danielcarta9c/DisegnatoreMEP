@@ -54,7 +54,7 @@ modello da riusare.
 
 | | |
 |---|---|
-| `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR **#45**, che porta `DRAW-014`, il cambio di architettura (D-151, D-152), la prova del piano e il pacchetto `DRAW-015` |
+| `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR **#46**, che porta `DRAW-015` — il revisore, le **nove** regole misurate, l'**occhio** (`skill/rivedere/`), il piano come pezzo del prodotto, il solutore fuori dalla catena e le decisioni **D-155…D-166**. ⛔ **Fusa con le tavole esplicitamente NON approvate** (D-166) |
 | Release dichiarata | **0.3 — generalizzazione** (`docs/plans/2026-09-03-release-plan.md`) |
 | Architettura del disegno | **cambiata il 20 settembre**: pianificatore → motore → revisore (**D-151**). `docs/ARCHITETTURA-DEL-PIANO.md` è il documento che vince su ogni contrasto |
 | Pacchetto attivo | **`DRAW-016` — l'agente che scrive il piano, e l'agente che dice dove passare** (`ACTIVE_WORK_PACKAGE.md`), **ATTIVO**. `DRAW-015` è **fuso** (PR #46), e **le tavole NON sono approvate** — **D-166**. La prima prova la dichiara il PO: le tavole **senza il corredo** |
