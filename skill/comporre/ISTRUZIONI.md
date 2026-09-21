@@ -49,7 +49,7 @@ Questi sono quelli che incontri quasi sempre:
 | `buffer-two-port` | 25 × 45 | `a` sinistra +5 · `b` destra +5 |
 | `plate-heat-exchanger` | 12,5 × 25 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` destra +5 · `secondary_in` destra +20 |
 | `dhw-cylinder` | 25 × 45 | `coil_in` sinistra **+7,5** · `coil_out` sinistra **+17,5** · `dhw_out` sopra · `cold_in` sinistra +37,5 |
-| `radiator`, `fan-coil`, `ahu-coil` | 20 × 15 | `in` **sinistra +7,5** · `out` **destra +7,5** |
+| `radiator`, `fan-coil`, `ahu-coil`, `underfloor-panel` | 20 × 15 | `in` **sinistra +2,5** · `out` **sinistra +12,5** — tutt'e due **sullo stesso lato** (D-167) |
 
 **Guarda l'interasse.** Pompa di calore, caldaia, volano e scambiatore a piastre hanno tutti
 le due porte principali a **15 mm** l'una dall'altra, e alle **stesse quote +5 e +20**. Questo
@@ -65,11 +65,11 @@ linea fra loro fa **due pieghe** e te le porti dietro per tutta la tavola.
 quelle due porte dicono **dov'è la serpentina dentro l'accumulo**, e non si spostano. La
 coppia che lo serve **cambia interasse per forza**: è vero, è noto, e non si cura.
 
-⚠ **Un terminale ha le due porte alla stessa quota su facce opposte** — `in` a sinistra +7,5,
-`out` a destra +7,5 — quindi è un **passante**: la mandata entra da sinistra, il ritorno esce
-da destra e **deve tornare indietro**. Quel giro attorno al terminale non è un difetto della
-tua posa, è la forma del pezzo. Quello che **puoi** fare è posarlo alla quota giusta, così che
-il giro sia corto e su una sola piega per lato.
+⚠ **Un terminale si prende da un lato solo**: `in` e `out` stanno tutt'e due sulla **faccia
+sinistra**, a +2,5 e +12,5, con la mandata sopra. La coppia gli arriva **affiancata** e entra:
+niente giro intorno, niente fascia sprecata a destra. È **D-167**, e il PO l'ha disposto così
+dopo aver ridisegnato a mano due nostre tavole: «con uscita dall'altro lato **si spreca
+spazio**, meglio metterli sempre con **ingresso e uscita su un lato solo**».
 
 ### 2.2 Il procedimento, in quest'ordine e non in un altro
 
@@ -123,21 +123,44 @@ JSON, e solo queste chiavi:
 ```
 
 - **`formato`** — uno fra `A4`, `A3`, `A2`, `A1`. Scegli il più piccolo in cui l'impianto ci
-  sta comodo: un foglio grande mezzo vuoto è un difetto.
-- **`pezzi`** — un'**entrata per ogni pezzo posabile** del grafo. `x` sono i millimetri dal
-  bordo sinistro, `y` dal bordo alto, **origine in alto a sinistra del pezzo**. Si arrotondano
-  al passo di griglia: **usa multipli di 2,5**.
-- **`rotazione`** — **scrivila solo dove la deduzione non arriva**: una macchina con due o più
-  attacchi che ha davvero una scelta, e il gruppo di riempimento. Per un raccordo o per un
-  pezzo con un attacco solo **non scriverla**: la rotazione è una conseguenza della posa e il
-  motore la deduce dai vicini che il pezzo ha davvero. Scriverla dove si deduce è un modo di
-  sbagliarla.
+  sta comodo: un foglio grande mezzo vuoto è un difetto. **Se sbagli te lo dice il rapporto**
+  (`SHEET_BARELY_FILLED`), e si cambia riga e si rilancia.
+- **`pezzi`** — un'entrata per **ogni pezzo elencato in `components`**, e **solo** per quelli.
+  ⚠ Il grafo nomina altre decine di identificativi in `subsystems` e `rule_applications` che
+  **non sono pezzi**: ignorali. Uno che manca fa fallire tutto il piano; uno di troppo pure.
+  `x` e `y` sono in millimetri, **origine in alto a sinistra del pezzo**, e si arrotondano al
+  passo di griglia: **usa multipli di 2,5**.
+  ⚠ **Non sono coordinate sul foglio**: il motore **trasla l'intero disegno** per centrarlo, e
+  la traslazione è la stessa per tutti i pezzi. Contano **solo le posizioni relative**, e non
+  puoi collocare niente rispetto al bordo o al cartiglio. D1 e D3 si governano con la **forma**
+  della posa, non con la sua origine.
+- **`rotazione`** — in **gradi orari**. **Scrivila solo dove la deduzione non arriva**: per un
+  raccordo o per un pezzo con un attacco solo **non scriverla**, perché la rotazione è una
+  conseguenza della posa e il motore la deduce dai vicini che il pezzo ha davvero.
+  ⚠ **Su una valvola a tre vie devi scriverla** (**D-168**): la deduzione non la gira, e senza
+  la tua scelta la terza via finisce **sempre verso il basso**. Il PO l'ha detto guardando le
+  tavole: «la valvola a tre vie la metti sempre con uscita terza verso il basso, **guarda che
+  puoi ruotarla**». **La terza via guarda il pezzo che serve**, e da che parte sta quel pezzo lo
+  sai tu. Lo stesso vale per il **gruppo di riempimento**, che ha due attacchi e non è una
+  macchina.
+  ⚠ **Molti simboli non si ruotano affatto** — pompa di calore, caldaia, volano, scambiatore a
+  piastre dichiarano `allowed_rotations_deg: [0]`, e chiedere un'altra rotazione **fa abortire
+  il comando**. Guarda il manifesto prima di scriverla.
 - **`note`** e **`regola`** — **non sono decorazione.** Il piano senza di loro dice dove
   stanno i pezzi e non dice **perché**, e chi lo rivede non può correggerlo: può solo
   spostare. `note` porta la motivazione del piano intero, `regola` la stessa cosa pezzo per
   pezzo. **Ogni pezzo che hai spostato per una ragione porta quella ragione.**
 
 Niente altre chiavi: il caricatore rifiuta quello che non riconosce, e te lo dice.
+
+### I quattro numeri che ti servono, e che nessun errore dovrebbe doverti insegnare
+
+| | |
+|---|---|
+| passo di griglia | **2,5 mm** — ogni `x` e `y` è un suo multiplo |
+| stacco minimo di un organo di servizio (A4) | **10 mm** |
+| corsia libera fra due linee affiancate (B9) | **10 mm** |
+| interasse delle porte principali di una macchina | **15 mm** — pompa, caldaia, volano, scambiatore |
 
 ---
 
@@ -185,6 +208,28 @@ Sulle orizzontali, sempre. È anche il motivo per cui le porte sono a +5 e +20 e
 «Corrono sempre insieme, non esiste che una va e l'altra va zig zag accanto.» Stesso interasse
 per tutta la corsa. Se lo perdono, è perché le due macchine agli estremi hanno interassi
 diversi — e allora o le allinei, o è il caso noto del bollitore (§2.1).
+
+### B12 — La coppia è un binario, e si ramifica **a pettine**
+
+**È la regola che il PO ha disegnato invece di dirla**, riprendendo due nostre tavole:
+
+> **Mandata e ritorno sono un oggetto solo — un binario a due corsie — e si ramificano a
+> pettine.** Due colonne **adiacenti** portano il fluido, e da quelle si stacca **una coppia di
+> orizzontali per ogni utenza**: mandata sopra, ritorno sotto, **affiancate per tutta la
+> corsa**, fino al terminale, che si prende **da un lato solo**.
+
+Tre cose che questa regola vieta, e che si sbagliano sempre:
+
+1. **una colonna di ritorno lontana**, con ogni utenza che va a prendersela. Le due colonne
+   stanno **vicine**, e le utenze si servono dalla coppia;
+2. **due collettori distanti fra loro**: stanno su **una colonna stretta addosso alle
+   macchine**, non a duecento millimetri;
+3. **una coppia che si apre**: se mandata e ritorno prendono strade diverse per arrivare allo
+   stesso pezzo, la posa è sbagliata — non l'instradamento.
+
+**Come si compone un pettine**, in pratica: impila le utenze in colonna, metti le due colonne
+del binario **alla loro sinistra e vicine fra loro**, e posa ogni utenza alla quota che vuoi —
+la coppia le arriva orizzontale, affiancata, e entra da sinistra.
 
 ### D1 — Il disegno non arriva al bordo
 ### D3 — Il disegno non sta tutto da una parte
