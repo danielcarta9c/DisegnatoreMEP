@@ -16,6 +16,17 @@
 
 ## Dove siamo — 21 settembre 2026
 
+> ⛔ **`DRAW-015` è fuso su `main`, e le tavole NON sono approvate** (**D-166**). Le ha
+> separate il PO: «la PR la puoi fondere **ma le tavole non sono "approvate"**… sono ancora
+> **lontane da ciò che voglio**. Però **la direzione ora è quella giusta**». **Quello che è
+> approvato è la direzione**, e nessuna sessione può citare quella fusione come approvazione di
+> una tavola.
+>
+> ⛔ **E il criterio di un'autostrada non è un numero** (**D-164**): «non c'è un numero…
+> **un'autostrada per definizione ha poche curve e tratti rettilinei**… un criterio **grafico
+> non matematico**». Chi giudica è l'**occhio**. **La convenzione grafica non si tocca**
+> (**D-165**).
+
 **Il 20 settembre il progetto ha cambiato architettura.** Il disegno non si cerca più: lo
 **compone un agente** — pianificatore → motore → revisore (**D-151**). `layout/improve.py`,
 la fase del tronco di `layout/spine.py` e `layout/dilate.py` **restano agli atti e non
@@ -24,7 +35,7 @@ decidono più la posa**.
 | | |
 |---|---|
 | Release | **0.3 — generalizzazione** |
-| Pacchetto attivo | **`DRAW-016` — l'agente che scrive il piano, e l'agente che dice dove passare** (attivo quando `DRAW-015` è fuso) |
+| Pacchetto attivo | **`DRAW-016` — l'agente che scrive il piano, e l'agente che dice dove passare.** **ATTIVO**: `DRAW-015` è fuso. La **prima prova l'ha dichiarata il PO** — le tavole **senza il corredo**, per vedere se gli agenti sanno tracciare le autostrade «come farebbe un disegnatore umano» |
 | Chi sviluppa | **un agente solo** (D-147), con agenti paralleli **dentro** la sessione (D-152) |
 | Chi approva la fusione | **il PO, guardando le tavole** (D-146, D-147) |
 | Architettura del disegno | `docs/ARCHITETTURA-DEL-PIANO.md` — vigente, sostituisce quella del solutore |

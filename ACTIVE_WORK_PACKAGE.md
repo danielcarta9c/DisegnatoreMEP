@@ -2,18 +2,59 @@
 
 **Titolo:** L'agente che scrive il piano, e l'agente che dà i suggerimenti precisi su dove passare
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **ATTIVO** quando `DRAW-015` è fuso. Finché non lo è, l'incarico è rispondere al PO su quella consegna.
+**Stato:** **ATTIVO.** `DRAW-015` è fuso su `main` (**D-166**).
 **Release:** 0.3 — generalizzazione
 **Approvazione della fusione:** **del PO**, e si dà guardando le tavole (D-147, D-146)
 
-Il PO, chiudendo la sessione del 20 settembre 2026:
+Il PO, il 21 settembre 2026, aprendo questo pacchetto:
 
-> «Nella prossima sessione possiamo fare questo lavoro **dell'agente che scrive il piano,
-> l'agente che fa le verifiche che dà i suggerimenti precisi su dove passare**.»
+> «Serve di sviluppare gli agenti della skill **Pianificatore e verificatore** e **aggiornare
+> il solutore** in modo che il tutto funzioni. Proviamo innanzi tutto nella prossima sessione a
+> **disegnare le tavole senza le valvole in mezzo** in modo da vedere se **gli agenti riescono
+> a disegnare queste autostrade come farebbe un disegnatore umano**.»
 
-Sono i **due pezzi che mancano** di `docs/ARCHITETTURA-DEL-PIANO.md`: il **pezzo 3 —
-Comporre** e l'**occhio del pezzo 5 — Rivedere**. «Dove passare» non è un modo di dire: è la
-**leva che al piano manca**, e ha un nome — **`passa-per`** (D-161, punto 3).
+E, il 20 settembre, chiudendo `DRAW-015`:
+
+> «L'agente che scrive il piano, l'agente che fa le verifiche che dà i suggerimenti precisi su
+> dove passare.»
+
+Sono i **due pezzi che mancano** di `docs/ARCHITETTURA-DEL-PIANO.md` — il **pezzo 3 —
+Comporre** e l'**anello del pezzo 5 — Rivedere** — più il **motore** che li deve reggere.
+«Dove passare» non è un modo di dire: è la **leva che al piano manca**, e ha un nome —
+**`passa-per`** (D-161).
+
+---
+
+## ⛔ Le tavole non sono approvate, e questo pacchetto parte da lì
+
+`DRAW-015` è stato fuso, **e le tavole no** (**D-166**). Sono due cose diverse, e il PO le ha
+separate lui:
+
+> «La PR la puoi fondere **ma le tavole non sono "approvate"**. Stiamo ancora in fase di
+> sviluppo quindi le tavole sono ancora **lontane da ciò che voglio**. Però **la direzione ora
+> è quella giusta** quindi va tutto su `main` **con la registrazione che le tavole non vanno
+> bene così**.»
+
+Quello che è approvato è **la direzione**. **Nessuna sessione può citare quella fusione come
+approvazione di una tavola.**
+
+## ⛔ E il criterio non è un numero
+
+**D-164**, e va letta prima di scrivere una riga di questo pacchetto:
+
+> «Quante autostrade **non c'è un numero**… **Un'autostrada per definizione ha poche curve e
+> tratti rettilinei.** Ho provato a spiegarlo in ogni modo ma tu ogni volta cerchi un criterio
+> **matematico** ma non c'è questo criterio. **Un criterio grafico non matematico.** Nei miei
+> schizzi è piuttosto evidente.»
+
+Il conto delle colonne verticali — 2 · 2 · 3 · 6 · 12 — resta agli atti come **sintomo** e
+**non diventa una soglia**. Chi giudica se un'autostrada è un'autostrada è l'**occhio**
+(D-162). **Trasformare un'osservazione in una soglia è il solutore che rientra dalla finestra**
+(D-151), ed è l'errore che questo pacchetto ha più probabilità di rifare.
+
+**E la convenzione grafica non si tocca** (**D-165**): è quella sviluppata fino a qui. Le
+tavole di `docs/input-pm/riferimenti-grafici/` sono riferimenti **su come si instradano i
+tubi**, non una fonte di convenzione, e le loro discordanze non sono un problema da risolvere.
 
 > **Prima di tutto leggi `docs/ARCHITETTURA-DEL-PIANO.md`**, e poi l'apertura di
 > `docs/regole-del-piano.md`, «**L'ordine in cui si compone — prima le autostrade**»: è la
@@ -124,10 +165,40 @@ Misurato il 20 settembre. Sta qui perché la prossima sessione non ci perda un'a
 | **D-161** | Il piano **non può chiedere la forma di una spezzata**: può solo liberarle il posto. La leva che manca è **`passa-per`** |
 | **D-162** | L'occhio del revisore **guarda** e **non ricalcola** |
 | **D-163** | Un attacco scorre **lungo la propria faccia**, mai di faccia, mai se è di un serpentino |
+| **D-164** | **Un'autostrada si giudica a occhio: il criterio è grafico, non matematico.** Nessuna soglia, mai |
+| **D-165** | **La convenzione grafica è quella sviluppata finora, e non si tocca** |
+| **D-166** | `DRAW-015` **è fuso**, e le tavole **non sono approvate**. Quello che è approvato è la direzione |
 
 ---
 
 ## Le cose da fare
+
+### 0. La prima prova, e l'ha dichiarata il PO: **le tavole senza il corredo**
+
+> «Proviamo **innanzi tutto** nella prossima sessione a **disegnare le tavole senza le valvole
+> in mezzo** in modo da vedere se **gli agenti riescono a disegnare queste autostrade come
+> farebbe un disegnatore umano**.»
+
+**Si fa per prima, prima di tutto il resto**, e non è un esperimento diagnostico come quello
+del 20 settembre: quello serviva a capire **dove** stava il difetto, e la risposta c'è già —
+è nella fase delle autostrade. **Questo serve a vedere se gli agenti sanno disegnare.**
+
+Come si imposta, e il materiale c'è:
+
+- **l'ingresso è il grafo ridotto** — solo macchine, accumuli e collettori, **nessun organo in
+  linea, nessun confine di rete, nessuno strumento**. Il riduttore usato il 20 settembre sta in
+  `scratchpad` e va **portato nel repository**, in `docs/collaudi/DRAW-016/`, perché una prova
+  che non si riesegue non è una prova;
+- **il pianificatore compone quel grafo** seguendo il metodo di **D-159**, e nient'altro;
+- **il metro non è un numero**: si mettono le tavole **accanto agli schizzi del PO**
+  (`docs/input-pm/riferimenti-grafici/`, comprese le due segnate a penna) e si guarda se
+  **assomigliano al lavoro di un disegnatore**. È D-164, ed è il punto dell'esercizio;
+- **il punto di partenza, misurato il 20 settembre**: sul grafo ridotto restano **5 spezzate
+  piegate sull'impianto 4 e 11 sul 5**. Se l'agente fa meglio, si dice di quanto; se fa peggio,
+  pure.
+
+⚠ **Se da questa prova non esce nessuna tavola, è la prima cosa che si dice** (`CLAUDE.md`),
+non una nota in fondo al rapporto.
 
 ### 1. `skill/comporre/` — l'agente che scrive il piano
 
@@ -292,20 +363,35 @@ sono lì: la riga va scritta.
 
 ## Perimetro
 
-**Dentro:** `skill/comporre/**`, `skill/rivedere/**`; `src/disegnatore_mep/piano/formato.py` e
-`revisore.py`; `validation/regole.py` per i rilievi di A2, A3 e B5; il `passa-per` nel motore —
-`layout/route.py` — che è **l'unica cosa fuori dal motore-che-funziona che questo pacchetto
-autorizza, e va dichiarata**; `docs/regole-del-piano.md`; i cinque documenti dell'elenco 7;
-`docs/collaudi/DRAW-016/`.
+**Dentro:** `skill/comporre/**`, `skill/rivedere/**`; `src/disegnatore_mep/piano/**`;
+`validation/regole.py` per i rilievi di A2, A3 e B5; `docs/regole-del-piano.md`; i cinque
+documenti dell'elenco 7; `docs/collaudi/DRAW-016/`.
 
-**Fuori:** tutto il resto del motore — `inline.py`, `place.py`, `legend.py`, `labels.py`,
-`addresses.py`, `graphics/**`. **Fuori** `highways.py` e `turns_allowed` finché il PO non ha
-risposto alla domanda **B7**. **Fuori** qualunque decisione MEP o convenzione grafica che il
-PO non abbia dato — e ce ne sono tre in attesa, I-097.
+**E il motore, che questo pacchetto apre.** Il PO, il 21 settembre: «sviluppare gli agenti
+della skill Pianificatore e verificatore **e aggiornare il solutore in modo che il tutto
+funzioni**». `layout/**` è **dentro** — `route.py` per `passa-per`, e il resto per quello che
+la prova 0 dimostrerà necessario.
+
+> ⚠ **Una parola da chiarire prima di toccarla, e non la decide questa sessione.** Nei nostri
+> documenti «**solutore**» è la **ricerca** che **D-151** ha abolito, e il PO chiede di
+> aggiornarlo. La lettura con cui questo perimetro è stato scritto è **«il motore che instrada
+> e disegna»** — il **pezzo 4**, `layout/` — perché è la parte che disegna davvero e perché
+> far tornare la ricerca contraddirebbe D-151, che il PO stesso ha approvato. **È I-100, ed è
+> aperta:** se la lettura è sbagliata, si corregge **prima** di toccare il motore.
+>
+> E in ogni caso **il solutore non torna**: nessuna somma pesata, nessuna ricerca che sceglie
+> la posa. Se il motore va cambiato, si cambia quello che **esegue**, non quello che **decide**.
+
+**Fuori:** `highways.py` e `turns_allowed` finché il PO non ha risposto alla domanda **B7**.
+**Fuori** qualunque decisione MEP che il PO non abbia dato. **Fuori la convenzione grafica**,
+che **non si tocca** (D-165).
 
 **Gli attacchi dei simboli**: si possono far scorrere **lungo la propria faccia** (D-163), mai
-di faccia, **mai** se appartengono a un serpentino. Ogni scorrimento alza la versione del file
-del simbolo e porta la misura che lo giustifica.
+di faccia, **mai** se appartengono a un serpentino. **Si spostano nel generatore** —
+`examples/graphics/build_symbols.py` — **mai nel file generato**, perché da lì si ricava anche
+il mozzicone disegnato: cambiare solo il manifesto lascia il corpo del simbolo scollegato dalla
+porta che dichiara, ed è già successo (`DRAW-015` RAPPORTO §13.8). Ogni scorrimento alza la
+versione del manifesto e porta la misura che lo giustifica.
 
 ---
 
@@ -313,6 +399,11 @@ del simbolo e porta la misura che lo giustifica.
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
+0. **Le tavole senza il corredo, per prime** (punto 0, ed è la prova che il PO ha chiesto):
+   il pianificatore compone i **cinque grafi ridotti a sole macchine, accumuli e collettori**,
+   e le tavole escono. **Il giudizio si dà guardandole accanto agli schizzi del PO**, non
+   contando (D-164): *assomigliano al lavoro di un disegnatore?* Si scrive la risposta, e se è
+   no si scrive **che cosa** non assomiglia. Il riduttore del grafo entra nel repository.
 1. **Il pianificatore esiste e gira in camera pulita**: un agente avviato da zero, che riceve
    solo `skill/comporre/ISTRUZIONI.md` e il grafo completo, produce un piano che **si carica e
    si instrada**. Su almeno **tre** dei cinque impianti.
@@ -327,9 +418,9 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
    **14 · 14 · 15 · 20 · 38** rilievi, **1 · 2 · 1 · 3 · 12** incroci, un bloccante sul 3.
 5. **Le autostrade del 4 e del 5 si raddrizzano**, perché è la cosa che il PO ha bocciato:
    `HIGHWAY_IS_NOT_STRAIGHT` è acceso **5 volte sul 4 e 12 sul 5**, e scendere è il punto di
-   questo pacchetto.
-   *Sotto, la misura che le separa dalle tavole che il PO approva: le colonne verticali di
-   autostrada sono **2 · 2 · 3 · 6 · 12** (I-098).*
+   questo pacchetto. ⚠ **Ma il criterio non è quel numero** (D-164): il numero serve a non
+   peggiorare in silenzio, **il giudizio si dà guardando**. Un pacchetto che porta il conto a
+   zero e lascia tavole che non si leggono **non ha raggiunto questo criterio**.
 6. **Il confine di rete non si allontana**: il rilievo di A4 è acceso **24 volte** e il
    bersaglio è **zero**.
 7. **A2, A3 e B5 hanno il loro rilievo**, ciascuno con la tavola su cui si vede.
@@ -349,6 +440,10 @@ chiede.**
 
 Una PR sola verso `main`, **non fusa finché il PO non ha visto le tavole e detto di sì**.
 
+⚠ **E «fusa» non vuol dire «approvate»** (**D-166**): `DRAW-015` è stato fuso con le tavole
+esplicitamente **non approvate**. Se il PO autorizza la fusione senza approvare le tavole,
+**la registrazione di questo viaggia con la fusione**.
+
 **Le tavole, per prime** (D-146) — comprese quelle che il **pianificatore** ha composto da
 solo, che sono il punto di questo pacchetto. Rapporto in `docs/collaudi/DRAW-016/RAPPORTO.md`.
 
@@ -365,32 +460,30 @@ solo, che sono il punto di questo pacchetto. Rapporto in `docs/collaudi/DRAW-016
 
 ## Le domande aperte al PO — da portargli, non da risolvere
 
-1. **Le tre convenzioni grafiche** (I-097), e nessuna si può decidere senza di lui perché le
-   sue stesse tavole non concordano fra loro. **Gli incroci:** sul suo corpus, 4 volte niente,
-   3 volte interruzione, 1 volta salto ad arco. **Gli spigoli:** una tavola li raccorda tutti
-   con lo stesso raggio, un'altra li fa vivi. **Il tratteggio:** in una tavola vuol dire
-   «limite di fornitura», in un'altra «ritorno» — lo stesso stile con due significati non può
-   stare nella stessa grammatica. *In Italia nessuna norma prescrive come si traccia uno schema
-   funzionale: UNI 9511 dà i segni grafici, non il tracciamento. È una scelta di progetto
-   legittima, ma va dichiarata in legenda.*
-2. **Quante autostrade verticali fra due colonne** (I-098). Lui stesso ne dubitava: «in genere
-   ne è consentita una sola… ma forse non è una buona regola». **Contate: 2 · 2 · 3 · 6 · 12**,
-   e lui ha approvato le prime tre e bocciato le ultime due. **È l'unico numero che separa le
-   tavole che approva da quelle che boccia**, e le separa nettamente — ma «una sola» non regge
-   sulle sue tavole di riferimento. La soglia è sua.
-3. **B7** — `turns_allowed` vale zero per ogni catena fra macchine di spina senza guardare se
+> **Due sono state chiuse dal PO il 21 settembre, e chi le ripropone perde un giro.**
+> **Le convenzioni grafiche** (I-097): «la convenzione grafica è quella che abbiamo sviluppato
+> fino adesso e **non si tocca**», e le sue tavole sono riferimenti **sull'instradamento**, non
+> una fonte di convenzione — **D-165**. **Quante autostrade verticali** (I-098): «**non c'è un
+> numero**… il criterio è **grafico, non matematico**» — **D-164**.
+
+1. **La parola «solutore»** (I-100). Il PO chiede di «aggiornare il solutore in modo che il
+   tutto funzioni», e nei nostri documenti quella parola indica la **ricerca abolita da
+   D-151**. Il perimetro è stato scritto leggendo **«il motore che instrada e disegna»**
+   (pezzo 4, `layout/`). *Se la lettura è sbagliata va corretta prima di toccare il motore*,
+   e in ogni caso **la ricerca non torna**.
+2. **B7** — `turns_allowed` vale zero per ogni catena fra macchine di spina senza guardare se
    le facce delle porte permettono una retta. Quattro catene su tre impianti non si possono
    raddrizzare, e una è **l'unico rilievo bloccante** che resta (impianto 3). *O cambia il
    catalogo, o il bilancio diventa il minimo raggiungibile.* La prima è materia MEP.
-4. **B1 contro B3 sulla cascata** — il collettore verticale che B3 pretende fa piegare la
+3. **B1 contro B3 sulla cascata** — il collettore verticale che B3 pretende fa piegare la
    catena che B1 vuole dritta: **la tavola è giusta e il numero dice che è sbagliata.**
-5. **Dove sta la presa del ricircolo sanitario.** Sull'impianto 5 sta **all'estremo destro del
+4. **Dove sta la presa del ricircolo sanitario.** Sull'impianto 5 sta **all'estremo destro del
    foglio** e la mandata sanitaria attraversa da sola i tre secondari per arrivarci: è lì che
    stanno quasi tutti gli incroci di quella tavola. Contenuto MEP.
-6. **Il verso del ricircolo ACS non si ricava** (D-059): mandata e ritorno portano tutt'e due
+5. **Il verso del ricircolo ACS non si ricava** (D-059): mandata e ritorno portano tutt'e due
    `supply=True`, e per questo B10 non vede il ritorno che corre sopra la propria mandata.
    *Serve sapere da lui se il ricircolo è una rete con un verso, o due tratte della stessa.*
-7. **Quando si apre il pacchetto DXF** — D-023 e D-148 sono state lasciate andare **perché**
+6. **Quando si apre il pacchetto DXF** — D-023 e D-148 sono state lasciate andare **perché**
    l'elaborato esce in DXF, e quel pezzo non esiste.
 
 ---

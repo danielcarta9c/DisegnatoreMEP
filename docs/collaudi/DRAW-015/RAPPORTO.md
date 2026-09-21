@@ -1070,3 +1070,86 @@ vede non è «tutto da una parte»: è che **le autostrade non si leggono**. `HI
 è acceso **12 volte** su quella tavola, e **12 sono anche le colonne verticali di autostrada**
 contro le 2 dell'impianto 1. **Il numero che descrive quello che il PO vede non è D3: è quello
 di I-098**, e non ha ancora una soglia.
+
+---
+
+## 14. Il verdetto del PO, 21 settembre 2026
+
+### 14.1 Si fonde, e le tavole non sono approvate
+
+> «La PR la puoi fondere **ma le tavole non sono "approvate"**. Stiamo ancora in fase di
+> sviluppo quindi le tavole sono ancora **lontane da ciò che voglio**. Però **la direzione ora
+> è quella giusta** quindi va tutto su `main` **con la registrazione che le tavole non vanno
+> bene così**.»
+
+È **D-166**, e sta scritta perché `CLAUDE.md` dice «non fondere mai senza che il PO abbia visto
+le tavole e detto di sì»: una lettura frettolosa di questa fusione la farebbe passare per un sì
+sulle tavole. **Non lo è.** Quello che è approvato è **la direzione**.
+
+La registrazione viaggia con la fusione: sta in testa a `HANDOFF.md`, in testa a
+`PROJECT_STATE.md` e in testa a `ACTIVE_WORK_PACKAGE.md`.
+
+### 14.2 Le due domande che avevo portato erano mal poste
+
+**Le convenzioni grafiche (I-097) — chiusa, ed è D-165.**
+
+> «Convenzione grafica ne abbiamo già parlato in passato. Le mie tavole erano **solo
+> riferimenti generici su come si instradano i tubi**. La convenzione grafica è quella che
+> **abbiamo sviluppato fino adesso e non si tocca**.»
+
+Avevo contato sul suo corpus quattro incroci non segnati, tre interruzioni e un salto ad arco,
+e ne avevo dedotto che «lo stesso stile con due significati non può stare nella stessa
+grammatica». **La deduzione era corretta sul corpus e sbagliata sull'oggetto:** quel corpus non
+è la nostra grammatica. Le tre discordanze restano misurate e non sono un problema da risolvere.
+
+**Quante autostrade verticali (I-098) — chiusa, ed è D-164.**
+
+> «Quante autostrade **non c'è un numero**, il mio era solo un esempio relativo alla specifica
+> tavola. Va da sé che se ho 12 tratti verticali c'è qualcosa che non va. **Un'autostrada per
+> definizione ha poche curve e tratti rettilinei.** Ho provato a spiegarlo in ogni modo ma tu
+> ogni volta cerchi un criterio **matematico** ma non c'è questo criterio. **Un criterio
+> grafico non matematico.** Nei miei schizzi è piuttosto evidente.»
+
+Avevo misurato **2 · 2 · 3 · 6 · 12** colonne verticali sui cinque impianti, avevo visto che il
+numero separa nettamente le tavole che approva da quelle che boccia, e gliel'avevo portato
+**come candidato a diventare una soglia**. La risposta dice che la domanda era sbagliata, e
+nomina l'abitudine da cui nasce.
+
+**Il conto resta agli atti come sintomo e non diventa una regola:** non entra in
+`regole-del-piano.md`, non diventa un controllo, non entra nel punteggio.
+
+### 14.3 E questa è la conferma più forte di perché l'occhio esiste
+
+Il 20 settembre il PO aveva detto che il revisore «calcola» e dovrebbe invece «vedere come
+faccio io», e da lì era nata **D-162**. Il 21 ne ha dato la ragione generale: **ci sono difetti
+che nessun numero sa nominare**, perché il criterio è grafico.
+
+Ed è anche l'avvertimento su cui questo progetto è già inciampato una volta. **Trasformare ogni
+osservazione in una soglia è il solutore che rientra dalla finestra** (D-151): il solutore è
+morto perché una somma pesata non sa esprimere una gerarchia di giudizio, e una soglia sulle
+colonne verticali sarebbe stato lo stesso errore in scala ridotta — un numero che approva
+tavole illeggibili purché il conto torni.
+
+Il criterio 5 di `DRAW-016` porta adesso la conseguenza scritta: *un pacchetto che porta il
+conto a zero e lascia tavole che non si leggono non ha raggiunto quel criterio.*
+
+### 14.4 Quello che il PO ha chiesto per la prossima sessione
+
+> «Serve di sviluppare gli agenti della skill **Pianificatore e verificatore** e **aggiornare
+> il solutore** in modo che il tutto funzioni. Proviamo innanzi tutto nella prossima sessione a
+> **disegnare le tavole senza le valvole in mezzo** in modo da vedere se **gli agenti riescono
+> a disegnare queste autostrade come farebbe un disegnatore umano**.»
+
+È il punto **0** di `DRAW-016`, e si fa **per primo**. Non è l'esperimento diagnostico del 20
+settembre — quello serviva a capire **dove** stava il difetto, e la risposta c'è già: nella
+fase delle autostrade. **Questo serve a vedere se gli agenti sanno disegnare**, e il metro non
+è un numero: le tavole si mettono **accanto agli schizzi del PO** e si guarda se assomigliano
+al lavoro di un disegnatore.
+
+⚠ **Una parola da chiarire, e non la decide la sessione che l'ha ricevuta.** Nei nostri
+documenti «**solutore**» è la **ricerca** che **D-151** ha abolito, e il PO chiede di
+aggiornarlo. Il perimetro di `DRAW-016` è stato allargato leggendo **«il motore che instrada e
+disegna»** — il pezzo 4, `layout/` — perché è la parte che disegna davvero e perché far tornare
+la ricerca contraddirebbe una decisione che il PO stesso ha approvato. **È I-100, ed è aperta.**
+In ogni caso la ricerca non torna: se il motore va cambiato, si cambia quello che **esegue**,
+non quello che **decide**.

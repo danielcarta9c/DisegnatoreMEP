@@ -42,6 +42,14 @@ alto nella lista spiega quelli sotto.
 macchine. *Sono poche? Sono dritte? Si capisce da dove viene e dove va il fluido?* Se lo
 scheletro è storto, tutto il resto è conseguenza e non vale la pena guardarlo.
 
+> **Questo è il punto in cui servi più che altrove, e va detto perché non si perda** (**D-164**).
+> La definizione di autostrada è del PO e non è un numero: «**un'autostrada per definizione ha
+> poche curve e tratti rettilinei**». Non esiste una soglia sul numero di colonne verticali, e
+> **non ci sarà**: il criterio è **grafico, non matematico**. Chi guarda dodici tratti
+> verticali sa che c'è qualcosa che non va **senza contarli** — e nessun controllo lo sa dire.
+> Se ti vien voglia di contarli per giustificare il giudizio, **non farlo**: il giudizio è già
+> valido, e il conto è il solutore che rientra dalla finestra (D-151).
+
 **2 — Le coppie.** Mandata e ritorno **corrono insieme**, alla stessa distanza, per tutta la
 corsa. *Si aprono da qualche parte? Si scambiano di lato? Una va dritta e l'altra zigzaga?*
 

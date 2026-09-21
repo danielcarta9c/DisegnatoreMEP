@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-21, alla consegna di `DRAW-015` e alla sessione che l'ha rivista con il PO
+**Aggiornato:** 2026-09-21, a `DRAW-015` **fuso** e `DRAW-016` aperto
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -10,6 +10,31 @@
 > È stato riscritto il 20 settembre perché una sessione ha sbagliato lo sviluppo pur avendo
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
+
+## ⛔ `DRAW-015` è fuso, e le tavole **non sono approvate**
+
+Sono due cose diverse, e le ha separate il PO (**D-166**), il 21 settembre 2026:
+
+> «La PR la puoi fondere **ma le tavole non sono "approvate"**. Stiamo ancora in fase di
+> sviluppo quindi le tavole sono ancora **lontane da ciò che voglio**. Però **la direzione ora
+> è quella giusta** quindi va tutto su `main` **con la registrazione che le tavole non vanno
+> bene così**.»
+
+**Quello che è approvato è la direzione.** Nessuna sessione può citare quella fusione come
+approvazione di una tavola.
+
+## ⛔ E il criterio di un'autostrada non è un numero
+
+**D-164**, e viene prima di qualunque misura:
+
+> «Quante autostrade **non c'è un numero**… **Un'autostrada per definizione ha poche curve e
+> tratti rettilinei.** Ho provato a spiegarlo in ogni modo ma tu ogni volta cerchi un criterio
+> **matematico** ma non c'è questo criterio. **Un criterio grafico non matematico.**»
+
+Chi giudica è l'**occhio** (D-162). **Trasformare un'osservazione in una soglia è il solutore
+che rientra dalla finestra** (D-151). E **la convenzione grafica non si tocca** (**D-165**):
+è quella sviluppata fino a qui; le tavole di riferimento del PO sono riferimenti
+**sull'instradamento**, non una fonte di convenzione.
 
 ## Prodotto
 
@@ -233,20 +258,17 @@ chiusi, ed erano uno dei quattro difetti che il cold eye review aveva trovato il
 
 ## Domande aperte al PO — in ordine di quanto bloccano
 
-0. **Le tre convenzioni grafiche** (I-097), e nessuna si può decidere senza di lui perché le
-   sue stesse tavole non concordano fra loro. **Gli incroci:** sul suo corpus, 4 volte niente,
-   3 volte interruzione, 1 volta salto ad arco — le due tavole di mano sua interrompono
-   sempre. **Gli spigoli:** `3-vie` li raccorda tutti e quattordici con lo stesso raggio,
-   `sdp` li fa vivi. **Il tratteggio:** in `3-vie` vuol dire «limite di fornitura», in `sdp`
-   «ritorno» — lo stesso stile con due significati non può stare nella stessa grammatica.
-   *In Italia nessuna norma prescrive come si traccia uno schema funzionale: UNI 9511 dà i
-   segni grafici, non il tracciamento; il DM 37/08 impone che lo schema ci sia. È una scelta
-   di progetto legittima, ma va dichiarata in legenda.*
-0bis. **Quante autostrade verticali fra due colonne** (I-098). Lui stesso ne dubitava: «in
-   genere ne è consentita una sola… ma forse non è una buona regola». **Contate, colonne
-   lunghe almeno 20 mm: 2 · 2 · 3 · 6 · 12**, e lui ha approvato le prime tre e bocciato le
-   ultime due. **È l'unico numero che separa le tavole che approva da quelle che boccia**, e
-   le separa nettamente — ma «una sola» non regge sulle sue tavole di riferimento.
+> **Due domande che erano qui sono state chiuse dal PO il 21 settembre, e chi le ripropone
+> perde un giro.** **Le convenzioni grafiche** (I-097) → **D-165**: «la convenzione grafica è
+> quella che abbiamo sviluppato fino adesso e **non si tocca**». **Quante autostrade verticali**
+> (I-098) → **D-164**: «**non c'è un numero**… il criterio è **grafico, non matematico**».
+
+0. **La parola «solutore»** (I-100). Il PO chiede di «**aggiornare il solutore** in modo che il
+   tutto funzioni», e nei nostri documenti quella parola indica la **ricerca abolita da
+   D-151**. `DRAW-016` è stato scritto leggendo **«il motore che instrada e disegna»** (pezzo
+   4, `layout/`), perché è la parte che disegna davvero e perché far tornare la ricerca
+   contraddirebbe una decisione che il PO stesso ha approvato. *Se la lettura è sbagliata va
+   corretta prima di toccare il motore*, e in ogni caso **la ricerca non torna**.
 1. **B7 — due porte che guardano dalla stessa parte non si uniscono con un segmento.**
    `Highway.turns_allowed` vale zero per ogni catena fra macchine di spina senza guardare se
    le facce delle porte lo permettono. Quattro catene su tre impianti non si possono

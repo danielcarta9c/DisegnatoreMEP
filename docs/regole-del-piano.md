@@ -159,6 +159,13 @@ più**: D-151 ha spostato la posa dal motore al piano, e il piano sovrascrive le
 
 ### B1 — Prima le autostrade, e il più dritte possibile
 
+> **Che cos'è un'autostrada, detto dal PO** (21 settembre 2026, **D-164**): «**un'autostrada
+> per definizione ha poche curve e tratti rettilinei**». Questa è la definizione, e non ne
+> esiste una più precisa: il criterio è **grafico, non matematico**. Il controllo qui sotto
+> misura una cosa che si può contare — le pieghe contro il bilancio della catena — e **non
+> esaurisce la regola**. Quando il controllo è verde e la tavola non si legge, ha ragione la
+> tavola, e a dirlo è l'**occhio** (D-162).
+
 La struttura si tira prima del corredo, e la sua **rettilineità** viene prima
 dell'ottimizzazione degli stacchi. Il precedente che l'ha imposta: una tavola in cui curve e
 attraversamenti erano ottimizzati **sugli stacchetti** mentre l'autostrada faceva «sta curva
@@ -483,23 +490,24 @@ storto sul foglio.**
 - **La composizione a corsie** della ricerca del 4 agosto §2.2 — le dorsali di mandata e
   ritorno con i componenti appesi — è misurata su due tavole vere e **non è ancora una riga
   qui**, perché non è stata ancora composta da noi. Quando lo sarà, entra con la sua tavola.
-- **Quante autostrade verticali sono ammesse fra due colonne? — domanda del PO, 20 settembre
-  2026.** Lui l'ha posta dubitandone: «in genere fra due colonne è consentita **una sola**
-  autostrada verticale se ho poi macchine/accumuli… ma forse non è una buona regola».
-  **Misurato sulle nostre cinque tavole**, contando le colonne verticali di autostrada lunghe
-  almeno 20 mm:
+- ~~**Quante autostrade verticali sono ammesse fra due colonne?**~~ **Chiusa dal PO il 21
+  settembre 2026, e la risposta è che la domanda era sbagliata** (**D-164**):
 
-  | impianto | colonne verticali | giudizio del PO sulla tavola |
-  |---|---|---|
-  | 1 | **2** | «va quasi bene» |
-  | 2 | **2** | «va quasi bene» |
-  | 3 | **3** | «va quasi bene» |
-  | 4 | **6** | «non hai minimamente risolto» |
-  | 5 | **12** | «non hai minimamente risolto» |
+  > «Quante autostrade **non c'è un numero**, il mio era solo un esempio relativo alla specifica
+  > tavola. Va da sé che se ho 12 tratti verticali c'è qualcosa che non va. **Un'autostrada per
+  > definizione ha poche curve e tratti rettilinei.** Ho provato a spiegarlo in ogni modo ma tu
+  > ogni volta cerchi un criterio **matematico** ma non c'è questo criterio. **Un criterio
+  > grafico non matematico.** Nei miei schizzi è piuttosto evidente.»
 
-  **È l'unico numero che separa le tavole che il PO approva da quelle che boccia**, e le
-  separa nettamente. Non è codificata come regola perché **il PO stesso ne dubita** e perché
-  «una sola» non regge sulle sue tavole di riferimento — ma il numero discrimina, e la
-  domanda va riportata con questa tabella in mano.
+  **Non c'è una soglia e non ci sarà.** Il conto delle colonne verticali — **2 · 2 · 3 · 6 ·
+  12** sui cinque impianti, contro «va quasi bene» sui primi tre e «non hai minimamente
+  risolto» sugli ultimi due — resta agli atti come **sintomo**: è vero che separa le tavole che
+  il PO approva da quelle che boccia, e **proprio per questo** la tentazione di farne una
+  soglia va nominata e lasciata perdere. **Chi giudica questo è l'occhio** (D-162,
+  `skill/rivedere/`), non un controllo.
+
+  ⚠ **La regola dietro la regola, e vale oltre questo caso:** trasformare ogni osservazione in
+  una soglia è **il solutore che rientra dalla finestra** (D-151). Ci sono difetti che nessun
+  numero sa nominare, e l'occhio esiste per quelli.
 - **Il PO ha detto che l'elenco è aperto**: «le regole sono sempre le stesse, vanno solo
   aggiunte altre e migliorate» (I-085, aperta).
