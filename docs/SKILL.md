@@ -167,9 +167,9 @@ si correggono allo stesso modo.
 | 1 | **Capire** | **Agente AI**, istruito con file di testo `.md` che gli spiegano cosa deve tirare fuori dalla conversazione e cosa non deve inventare | istruzioni della skill |
 | 2 | **Completare** | **Programma deterministico** che legge **regole scritte come dato** (un file per regola) e le applica al modello | motore in codice, regole in file di dati |
 | 2bis | **Assemblare** | **Programma deterministico**: mette in fila i pezzi lungo ogni tubo secondo la posizione che ogni regola dichiara | codice + la posizione dichiarata in ogni regola |
-| 3a | **Comporre** | **Agente AI**, che segue le regole di `docs/regole-del-piano.md` e produce un **piano**: un file leggibile e correggibile a mano | istruzioni della skill + il foglio di regole |
+| 3a | **Comporre** | **Agente AI**, che segue **il metodo** di `docs/regole-del-piano.md` — *prima le autostrade, e la quota è quella della porta* (**D-159**) — e le sue regole, e produce un **piano**: un file leggibile e correggibile a mano. ⚠ **Non esiste ancora** | istruzioni della skill + il foglio di regole |
 | 3b | **Eseguire e misurare** | **Programma deterministico**: posa gli accessori appesi, orienta, instrada in griglia, interrompe, impagina, disegna, misura. Non cerca niente | codice |
-| 3c | **Rivedere** | **Agente AI**, che legge i rilievi, **guarda la tavola** e scrive **vincoli** per 3a — mai mosse (**D-157**). Insieme a lui, deterministici, i controlli e le condizioni d'arresto | istruzioni della skill + codice |
+| 3c | **Rivedere** | **Agente AI**, che legge i rilievi, **guarda la tavola** e scrive **vincoli** per 3a — mai mosse (**D-157**), e **non ricalcola** (**D-162**). Insieme a lui, deterministici, i controlli e le condizioni d'arresto. **Esiste**: `skill/rivedere/` | istruzioni della skill + codice |
 | 4 | **Libreria simboli** | **Dati**: per ogni simbolo un disegno vettoriale e una scheda che dichiara taglia, attacchi, imbocchi ammessi, rotazioni e fonte | file, uno per simbolo |
 | 5 | **Cartiglio** | **Dati**: un modello di riquadro fornito dall'azienda, riempito coi dati del progetto | file fornito dal PO |
 | 6 | **Verificare** | **Programma deterministico**: controlli di correttezza e preflight di qualità. I rilievi che produce sono l'ingresso del pezzo 3c | codice |
