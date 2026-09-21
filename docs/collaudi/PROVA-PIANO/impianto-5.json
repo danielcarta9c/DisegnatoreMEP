@@ -26,7 +26,8 @@
     "Misurato prima e dopo: incroci 14 -> 12, tratte cedute 0 -> 0, rilievi bloccanti 0 -> 0. Le pieghe che restano sul collettore sono quelle che il GRAFO impone: tre macchine in parallelo su due raccordi a T vogliono due cambi di giacitura, e sono gli stessi che ha lo schizzo del PO del 3 settembre.",
     "ORDINE DEI DUE COLLETTORI, 20 settembre 2026 — il PO: «indifferente, quello che fa meno sormonti; se indifferente scegli tu». Misurato: con il collettore del RITORNO piu' vicino alle macchine (ritorno x=165/135, mandata x=200) i sormonti restano 12 come prima, ma i rilievi scendono da 49 a 42 — B9 da 14 a 9, B10 da 3 a 1. Scelto quello, ed e' anche l'ordine dello schizzo del PO del 3 settembre.",
     "LA CURVA DOPO LA TRE VIE, 20 settembre 2026 — il PO: «perche' dai la curva subito dopo la valvola a tre vie? Basta andare giu' e poi girare una curva sola». Aveva ragione, e il colpevole non e' l'instradatore: la colonna sotto l'uscita della deviatrice era OCCUPATA dal gruppo di riempimento — il suo raccordo a y=253,5, il gruppo a y=276, la presa a y=301, tutti a x=307,5..317,5, cioe' esattamente sotto la porta. L'instradatore ha girato intorno perche' non poteva passare. Spostato il gruppo di riempimento da x=265 a x=245 (e il vaso da 235 a 220): la linea scende dritta, **da 3 pieghe a 1**, e i rilievi della tavola passano da 42 a 38 (un sormonto in piu', 12 -> 13).",
-    "LA LEZIONE, e vale per tutto il pacchetto: il piano dice DOVE STANNO I PEZZI e NON DICE NIENTE di dove devono poter passare le autostrade. L'unica leva che ha e' togliere di mezzo chi occupa la strada. Finche' non esiste `passa-per` (DRAW-016 punto 3) una forma di spezzata non si puo' chiedere: si puo' solo liberarle il posto."
+    "LA LEZIONE, e vale per tutto il pacchetto: il piano dice DOVE STANNO I PEZZI e NON DICE NIENTE di dove devono poter passare le autostrade. L'unica leva che ha e' togliere di mezzo chi occupa la strada. Finche' non esiste `passa-per` (DRAW-016 punto 3) una forma di spezzata non si puo' chiedere: si puo' solo liberarle il posto.",
+    "LE DUE COLONNE AL BOLLITORE, 20 settembre 2026 — il PO: «basta invertire la posizione di mandata e ritorno che scendono e togliamo un sormonto». Misurato, ed e' cosi': la mandata scendeva a x=312,5 e il ritorno saliva a x=370, cioe' la mandata passava sotto il tronco del ritorno. Scambiate — deviatrice da x=265 a 325, ritorno-primario da 325 a 300, il manometro da 295 a 270 — i sormonti passano da 13 a 12, a parita' di tutto il resto (38 rilievi, 0 cedute, 0 bloccanti)."
   ],
   "pezzi": {
     "pdc-1": {
@@ -108,8 +109,9 @@
       "regola": "B3 — collettore verticale, e il RITORNO sta piu' vicino alle macchine"
     },
     "deviatrice": {
-      "x": 265,
-      "y": 160
+      "x": 325,
+      "y": 160,
+      "regola": "B1 — la mandata scende a destra del punto in cui il ritorno sale: un sormonto in meno"
     },
     "volano": {
       "x": 350,
@@ -124,17 +126,17 @@
       "y": 212.5
     },
     "ritorno-primario": {
-      "x": 325,
+      "x": 300,
       "y": 177.5,
       "regola": "B1 — sull'autostrada: la quota e' quella della porta della macchina"
     },
     "tee-pressure-gauge-cascata-ritorno-a-a": {
-      "x": 295,
+      "x": 270,
       "y": 177.5,
       "regola": "B1 — sull'autostrada: la quota e' quella della porta della macchina"
     },
     "pressure-gauge-cascata-ritorno-a-a": {
-      "x": 295,
+      "x": 270,
       "y": 200
     },
     "tee-filling-unit-cascata-ritorno-a-a-b": {
