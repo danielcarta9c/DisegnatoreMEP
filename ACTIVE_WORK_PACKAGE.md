@@ -3,6 +3,8 @@
 **Titolo:** L'agente che scrive il piano, e l'agente che dà i suggerimenti precisi su dove passare
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
 **Stato:** **ATTIVO.** `DRAW-015` è fuso su `main` (**D-166**).
+**Base:** `main`. **Si riparte sempre da lì**, allineato e pulito — non da un ramo vecchio.
+**Ramo:** `claude/draw-015-reviewer-d147-b18nqg`, ricreato da `main` a ogni sessione.
 **Release:** 0.3 — generalizzazione
 **Approvazione della fusione:** **del PO**, e si dà guardando le tavole (D-147, D-146)
 
