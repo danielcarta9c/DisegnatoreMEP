@@ -49,8 +49,6 @@ from .hierarchy import (
     is_a_machine,
     machines_beyond_of,
     ports_through,
-    source_machines,
-    user_machines,
 )
 from .trunks import Trunk
 
@@ -89,19 +87,6 @@ class Highway:
 
     keys: tuple[TrunkKey, ...]
     steps: tuple[tuple[PortRef, PortRef], ...]
-    turns_allowed: int = 0
-    """Quante curve la catena puo' fare restando **nella sua forma** (**D-144**).
-
-    Zero per l'autostrada fra le macchine di spina: quella e' una retta da un
-    capo all'altro, e resta cio' che `DRAW-012` §C ha costruito.
-
-    **Uno** per la strada che porta ai terminali, ed e' la forma che il PO ha
-    dettato come best practice il 18 settembre: «serbatoio, pompa, tratto
-    dritto, curva, e giu' attacchi i terminali. Si fa sempre cosi'». Dal
-    circolatore esce una **gamba rettilinea**, poi c'e' **una** curva, e dopo la
-    curva la **dorsale** su cui i terminali si attaccano a pettine. La curva e'
-    dichiarata: non e' una cessione di `compose._order_of_surrender` e non va
-    contata fra le catene cedute."""
 
     @property
     def head(self) -> PortRef:
@@ -157,8 +142,6 @@ def highways(
     }
     order = structural_order(project)
     machines = {key for key, value in definitions.items() if is_a_machine(value)}
-    sorgenti = source_machines(project, catalog)
-    users = user_machines(project, catalog)
 
     at_port: dict[tuple[str, str], Trunk] = {}
     for trunk in autostrade:
@@ -262,23 +245,7 @@ def highways(
                     chain.insert(0, (piece[1], piece[0]))
                     keys.insert(0, following.connection_ids)
                 cursor = piece[1]
-        head, tail = chain[0][0].component_id, chain[-1][1].component_id
-        # **La strada verso i terminali ha diritto a una curva** (D-144): e'
-        # quella che va da un accumulo, un puffer o uno scambiatore a
-        # un'utenza, cioe' esattamente la «strada secondaria» che la gerarchia
-        # riconosce. Dal circolatore esce la gamba dritta, poi la curva, poi la
-        # dorsale. L'autostrada fra le macchine di spina non ne ha diritto: li'
-        # la forma e' la retta intera, e resta quella.
-        found.append(
-            Highway(
-                keys=tuple(keys),
-                steps=tuple(chain),
-                turns_allowed=int(
-                    (head in sorgenti and tail in users)
-                    or (tail in sorgenti and head in users)
-                ),
-            )
-        )
+        found.append(Highway(keys=tuple(keys), steps=tuple(chain)))
     return tuple(found)
 
 
@@ -329,20 +296,90 @@ def turns_of(highway: Highway, port_at: PortAt) -> int | None:
     return turns
 
 
+def curve_imposte_dal_crocevia(arrivo: PortFace, partenza: PortFace) -> int:
+    """Quante pieghe **la forma dei due attacchi impone** su un crocevia.
+
+    La catena arriva su un pezzo dalla porta `arrivo` e lo lascia dalla porta
+    `partenza`, e le due porte stanno **sullo stesso pezzo**. Chi vi arriva
+    viaggia nel verso **contrario** alla faccia su cui arriva; chi ne esce
+    viaggia nel verso della faccia da cui esce. Da qui i tre soli casi:
+
+    - **facce opposte** — si entra e si esce nello stesso verso: **zero**, la
+      catena passa dritta;
+    - **facce perpendicolari** — il verso gira di un quarto: **una**, e non
+      c'e' posa che la tolga;
+    - **stessa faccia** — si deve tornare indietro: **due**.
+
+    **E' invariante per giacitura, ed e' per questo che e' un pavimento e non
+    una taratura.** Ruotare o specchiare un pezzo gira **tutte** le sue porte
+    insieme: l'angolo fra due facce **dello stesso pezzo** non cambia. Quello
+    che questo conto dice non lo si puo' quindi togliere ne' girando il pezzo
+    ne' spostandolo — e' esattamente cio' che **B7** intende con «non e' la posa
+    a sbagliare: e' la forma dei due simboli».
+
+    **Fra due pezzi diversi non si conta niente**, ed e' voluto: li' l'angolo
+    dipende da come sono girati l'uno rispetto all'altro, cioe' **e' una scelta
+    di chi compone**, e una scelta non entra in un pavimento.
+    """
+    if partenza is arrivo.opposite:
+        return 0
+    if partenza is arrivo:
+        return 2
+    return 1
+
+
+def turns_forced(highway: Highway, port_at: PortAt) -> int | None:
+    """Quante curve **i simboli attraversati impongono** a questa catena.
+
+    E' il pavimento di **B1** dopo **D-171**: il PO ha detto che la regola e'
+    «piu' dritte possibili, **meno curve possibili**, meno sormonti possibili»,
+    e che **un numero massimo non c'e'** — «dicevo una curva nel caso del
+    generatore singolo e due accumuli, ma era per far capire il concetto». Un
+    massimo fisso si insegue (**D-164**); un pavimento no, perche' non si
+    guadagna niente a starci sopra e non si puo' scendere sotto.
+
+    Si somma `curve_imposte_dal_crocevia` su ogni crocevia della catena. Due
+    casi, misurati il 21 settembre e riferiti da due agenti con le stesse
+    parole — *«il numero e' irraggiungibile, non il disegno e' sbagliato»*:
+
+    - una catena che attraversa un **collettore verticale** ne ha **due**, una
+      per capo: si entra di fianco, si sale, si esce di fianco. E' la
+      contraddizione fra **B1** e **B3**, e si chiude qui;
+    - una che attraversa una **valvola a tre vie sulla terza via** ne ha
+      **una**: la terza via e' perpendicolare alla via dritta e gira insieme a
+      lei.
+
+    `None` quando la posa non colloca un pezzo della catena: non c'e' un
+    pavimento da dare, e chi chiama non deve leggerne uno.
+    """
+    imposte = 0
+    for (_, arrivo), (partenza, _) in zip(
+        highway.steps, highway.steps[1:], strict=False
+    ):
+        qui = port_at(arrivo.component_id, arrivo.port_id)
+        la = port_at(partenza.component_id, partenza.port_id)
+        if qui is None or la is None:
+            return None
+        imposte += curve_imposte_dal_crocevia(qui[1], la[1])
+    return imposte
+
+
 def lies_in_line(highway: Highway, port_at: PortAt) -> bool:
     """Vero se la catena sta **nella propria forma**, con questa posa.
 
-    Per l'autostrada fra le macchine di spina la forma e' la retta intera, ed e'
-    l'invariante che `DRAW-012` §C ha costruito: le due porte di ogni tratta si
-    guardano in faccia, la tratta va nel verso della porta da cui parte, e fra
-    una tratta e la successiva **la retta non cambia**. E' la condizione che
-    fallisce quando ogni frammento e' dritto e la catena fa un gomito sul
-    raccordo che li unisce.
+    La forma e' quella che **le facce dei pezzi attraversati consentono**: le
+    due porte di ogni tratta si guardano in faccia, la tratta va nel verso della
+    porta da cui parte, e la catena non piega **piu' di quanto i crocevia le
+    impongano** — `turns_forced`. E' la condizione che fallisce quando ogni
+    frammento e' dritto e la catena fa un gomito **in piu'** sul raccordo che li
+    unisce.
 
-    Per la strada verso i terminali la forma e' quella di **D-144**: gamba
-    rettilinea, **una** curva, dorsale. L'invariante non si applica piu' da un
-    capo all'altro — si applica **a tratti**, con una curva dichiarata fra le
-    due — e quella curva non e' una cessione: e' la forma giusta.
+    **Il confronto non e' con un numero** (**D-171**): non c'e' un massimo di
+    curve, ce n'e' un minimo imposto dai simboli, e la posa che ci sta sopra ha
+    piegato per scelta propria. Prima di D-171 il paragone era
+    `Highway.turns_allowed` — zero fra le macchine di spina, uno verso i
+    terminali — e accusava le catene che passano per un collettore verticale,
+    che di pieghe ne hanno due per forza.
 
     Una posa che non colloca uno dei pezzi non e' una catena storta: e' una
     catena che non si puo' ancora misurare, e la risposta e' `False` senza
@@ -351,7 +388,8 @@ def lies_in_line(highway: Highway, port_at: PortAt) -> bool:
     conservare.
     """
     turns = turns_of(highway, port_at)
-    return turns is not None and turns <= highway.turns_allowed
+    imposte = turns_forced(highway, port_at)
+    return turns is not None and imposte is not None and turns <= imposte
 
 
 def crooked_highways(
@@ -365,7 +403,9 @@ __all__ = [
     "Highway",
     "PortAt",
     "crooked_highways",
+    "curve_imposte_dal_crocevia",
     "highways",
     "lies_in_line",
+    "turns_forced",
     "turns_of",
 ]

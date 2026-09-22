@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-22, a `DRAW-016` punto 0 **fatto** e a **D-169** e **D-170** fuse su `main`
+**Aggiornato:** 2026-09-22, a `DRAW-016` punto 0 **fatto** e a **D-169**, **D-170** e **D-171** su `main`
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -47,6 +47,13 @@ E le due cose che ha notato nella stessa risposta sono **i due impedimenti** a q
   di una tre vie gira insieme alla via dritta: per riceverla **da destra** con ingresso dall'alto
   e uscita in basso, **fra le quattro rotazioni quella giacitura non esiste**. **Tocca il motore,
   non la libreria** — nessun manifesto lo dichiara, e **D-165 regge**.
+- **D-171** — **B1 non è una soglia, è un confronto**: «più dritte possibili, meno curve
+  possibili e meno sormonti possibili, e viaggiano in parallelo… **non c'è un numero
+  massimo**». Tolti `Highway.turns_allowed` (zero o uno, e con lui la forma numerica di D-144)
+  e `TOO_MANY_CROSSINGS` col suo cinque. Al loro posto un **pavimento**: le pieghe che le
+  **facce dei simboli attraversati impongono**, invariante per giacitura. Quello che resta
+  comparativo sta nel **punteggio** — `pieghe` e `incroci` — non fra i rilievi. **Chiude B1
+  contro B3** e la metà misurabile di **B7**.
 
 ⚠ **Il costo è dichiarato e va saputo prima di misurare**: i cinque piani a mano sono composti
 per terminali passanti, e **la suite è passata da 38 rosse a 47**. Le nove nuove sono una cosa
@@ -334,13 +341,14 @@ chiusi, ed erano uno dei quattro difetti che il cold eye review aveva trovato il
    contraddirebbe una decisione che il PO stesso ha approvato. *Se la lettura è sbagliata va
    corretta prima di toccare il motore*, e in ogni caso **la ricerca non torna**.
 1. **B7 — due porte che guardano dalla stessa parte non si uniscono con un segmento.**
-   `Highway.turns_allowed` vale zero per ogni catena fra macchine di spina senza guardare se
-   le facce delle porte lo permettono. Quattro catene su tre impianti non si possono
-   raddrizzare, e una di loro è **l'unico rilievo bloccante** che resta. *O il catalogo
-   cambia, o `turns_allowed` diventa il minimo raggiungibile.* La prima è materia MEP.
-2. **B1 e B3 si contraddicono sulla cascata.** Il collettore verticale che B3 pretende fa
-   piegare la catena che B1 vuole dritta: **la tavola è giusta e il numero dice che è
-   sbagliata.** Come si scrive «il più possibile».
+   **Metà chiusa** il 22 settembre (**D-171**): `turns_allowed` non esiste più, e il bilancio
+   è diventato **il minimo raggiungibile** date le facce — era la seconda delle due letture,
+   quella di codice. **Resta la prima, ed è materia MEP:** una macchina con due attacchi sullo
+   stesso lato è un **simbolo** o un **vincolo idraulico**? Finché il PO non lo dice, quelle
+   pieghe restano e non sono un difetto.
+2. ~~**B1 e B3 si contraddicono sulla cascata.**~~ **Chiusa dal PO il 22 settembre**
+   (**D-171**): «non c'è un numero massimo». Il collettore verticale che B3 pretende ha il
+   proprio pavimento a **due**, e B1 non lo accusa più.
 3. **Dove sta la presa del ricircolo sanitario.** Il confine ACS adesso sta addosso alla
    presa (A4, chiuso), ma sull'impianto 5 **la presa sta all'estremo destro del foglio** e la
    mandata sanitaria attraversa da sola i tre secondari per arrivarci: è lì che stanno quasi

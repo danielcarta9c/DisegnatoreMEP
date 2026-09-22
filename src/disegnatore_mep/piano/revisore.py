@@ -64,7 +64,6 @@ ha una cura» in coda all'esito e' quella:
 |---|---|---|
 | `PIECE_OUTSIDE_ITS_BAND` | **A1** | il pezzo, in orizzontale, fuori dalla fascia di un altro |
 | `HIGHWAY_IS_NOT_STRAIGHT` | **B1** | i pezzi della catena, sulla quota che la catena ha gia' |
-| `RUN_WITH_TOO_MANY_BENDS` (su un'autostrada) | **B1** | gli stessi |
 | `PARALLEL_MACHINES_WITHOUT_A_COLLECTOR` | **B3** | i raccordi del collettore, sulla stessa verticale |
 | `INLINE_ORGAN_BREAKS_THE_RUN` | **B4** | l'organo, sulla quota delle due tratte che unisce |
 
@@ -83,8 +82,13 @@ ha una cura» in coda all'esito e' quella:
   **tolto** perche' spingeva nel verso sbagliato, e **due agenti su tre**, in
   camera pulita, avevano allontanato un pezzo dalla macchina che serve solo per
   spegnerlo.
-* `TOO_MANY_CROSSINGS` non e' il difetto di un pezzo: e' l'esito dell'intera
-  composizione, e nessuno spostamento singolo lo chiude.
+* **I sormonti non hanno piu' un rilievo** (**D-171**). `TOO_MANY_CROSSINGS`
+  diceva «piu' di cinque nodi condivisi», e i cinque venivano da un modo di
+  dire del PO — «sulle dita di una mano». Il 22 settembre lo ha corretto:
+  «**meno sormonti possibili**… non c'e' un numero massimo». Un massimo si
+  insegue (**D-164**), e quello che il PO chiede e' un **confronto**: gli
+  incroci restano la voce `incroci` del punteggio qui sotto, che chi compone
+  minimizza, e non sono piu' un difetto da spegnere.
 * `SHEET_TOO_FULL` e' una **misura**, non un difetto da chiudere (**D-149**).
 
 Un rilievo senza cura non sparisce e non si abbassa di grado: finisce in
@@ -152,15 +156,11 @@ li' e arriva qui da sola. **A4** e' entrata il 20 settembre e questa lista era
 scritta a mano: per un giorno il suo rilievo e' finito fra gli **avvisi**.
 
 `RUN_WITH_TOO_MANY_BENDS` non e' qui — non e' una regola misurata, e' un avviso
-del preflight — perche' su un'autostrada dice la stessa cosa di
-`HIGHWAY_IS_NOT_STRAIGHT`, e contarli tutt'e due sarebbe contare due volte."""
+del preflight — e da **D-171** non si accende nemmeno piu' su un'autostrada: li'
+misura B1, sulla catena intera e contro le pieghe che i simboli impongono."""
 
 REGOLA_DEL_RILIEVO: dict[str, str] = {
-    **{codice: regola for regola, codice in CODICE_DELLA_REGOLA.items()},
-    # L'unico rilievo che porta il nome di una regola **senza essere il suo
-    # controllo**: non conta nel punteggio (sopra), ma la cura che lo chiude e'
-    # quella di B1, e una cura senza il nome della regola non si fa.
-    "RUN_WITH_TOO_MANY_BENDS": "B1",
+    codice: regola for regola, codice in CODICE_DELLA_REGOLA.items()
 }
 """Quale regola di `docs/regole-del-piano.md` porta il nome di quale rilievo.
 
@@ -765,26 +765,20 @@ def _cura_b4(tavolo: _Tavolo, rilievo: ValidationIssue) -> list[Correzione]:
     return [corretta] if corretta else []
 
 
-def _cura_pieghe(tavolo: _Tavolo, rilievo: ValidationIssue) -> list[Correzione]:
-    """`RUN_WITH_TOO_MANY_BENDS`, **ma solo su un'autostrada** (B1).
-
-    Su uno stacchetto la stessa piega non e' la stessa cosa — e' esattamente il
-    difetto che ha generato **D-151**, «abbiamo ottimizzato le curve sugli
-    attacchetti e abbiamo fatto sta curva senza senso» — e li' il revisore non
-    tocca niente.
-    """
-    if _autostrada_del_rilievo(tavolo, rilievo) is None:
-        return []
-    return _cura_b1(tavolo, rilievo)
-
-
 CURE = {
     "PIECE_OUTSIDE_ITS_BAND": _cura_a1,
     "HIGHWAY_IS_NOT_STRAIGHT": _cura_b1,
-    "RUN_WITH_TOO_MANY_BENDS": _cura_pieghe,
     "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR": _cura_b3,
     "INLINE_ORGAN_BREAKS_THE_RUN": _cura_b4,
 }
+"""Le cure, una per rilievo.
+
+`RUN_WITH_TOO_MANY_BENDS` **non e' piu' qui** (**D-171**): da quel giorno non si
+accende su un'autostrada, e su uno stacchetto la stessa piega non e' la stessa
+cosa — e' il difetto che ha generato **D-151**, «abbiamo ottimizzato le curve
+sugli attacchetti e abbiamo fatto sta curva senza senso». Li' il revisore non
+tocca niente, e il rilievo resta fra i non curati, che e' lavoro di chi compone.
+"""
 
 
 # --- l'anello -----------------------------------------------------------------
@@ -813,20 +807,7 @@ def _correggi(
     """
     non_curati: list[str] = []
     intoccabili = _catene_a_posto(tavolo, rilievi)
-    gia_detto = {
-        connection_id
-        for item in rilievi
-        if item.code == "HIGHWAY_IS_NOT_STRAIGHT"
-        for connection_id in item.entity_ids
-    }
     for rilievo in rilievi:
-        # **Lo stesso difetto non si cura due volte.** Su un'autostrada
-        # `RUN_WITH_TOO_MANY_BENDS` e `HIGHWAY_IS_NOT_STRAIGHT` nominano la
-        # stessa piega: la cura la fa B1, che vede la catena intera.
-        if rilievo.code == "RUN_WITH_TOO_MANY_BENDS" and (
-            gia_detto & set(rilievo.entity_ids)
-        ):
-            continue
         cura = CURE.get(rilievo.code)
         if cura is None:
             if rilievo.code not in non_curati:

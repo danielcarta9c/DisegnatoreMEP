@@ -159,26 +159,60 @@ più**: D-151 ha spostato la posa dal motore al piano, e il piano sovrascrive le
 
 ### B1 — Prima le autostrade, e il più dritte possibile
 
-> **Che cos'è un'autostrada, detto dal PO** (21 settembre 2026, **D-164**): «**un'autostrada
-> per definizione ha poche curve e tratti rettilinei**». Questa è la definizione, e non ne
-> esiste una più precisa: il criterio è **grafico, non matematico**. Il controllo qui sotto
-> misura una cosa che si può contare — le pieghe contro il bilancio della catena — e **non
-> esaurisce la regola**. Quando il controllo è verde e la tavola non si legge, ha ragione la
-> tavola, e a dirlo è l'**occhio** (D-162).
+> **La regola, detta dal PO** (22 settembre 2026, **D-171**): «**più dritte possibili, meno
+> curve possibili e meno sormonti possibili, e viaggiano in parallelo. Non mi sembra un
+> concetto difficile. Non c'è un numero massimo** — dicevo una curva nel caso del generatore
+> singolo e due accumuli, ma era per far capire il concetto, **la regola non è massimo una
+> curva o due**».
+>
+> È un **confronto**, non una soglia, e le quattro parti sono quattro: *più dritte possibili*,
+> *meno curve possibili*, *meno sormonti possibili*, *viaggiano in parallelo*. L'ultima non è
+> nuova — è **B11** e **B12** dette dal verso di B1: un'autostrada non è una linea, è una
+> **coppia**.
+>
+> Vale sempre quello che il PO aveva già detto il 21 (**D-164**): «un'autostrada per
+> definizione ha poche curve e tratti rettilinei», il criterio è **grafico, non matematico**, e
+> quando il controllo è verde e la tavola non si legge ha ragione la tavola — a dirlo è
+> l'**occhio** (D-162).
 
 La struttura si tira prima del corredo, e la sua **rettilineità** viene prima
 dell'ottimizzazione degli stacchi. Il precedente che l'ha imposta: una tavola in cui curve e
 attraversamenti erano ottimizzati **sugli stacchetti** mentre l'autostrada faceva «sta curva
 senza senso».
 
-*Fonte:* PO, 20 settembre 2026 (**D-154**); il precedente è del 19 (**D-151**).
+**Come un confronto diventa una misura, senza diventare una soglia.** Si separano le due cose
+che il PO dice in una riga:
+
+- **quand'è sbagliato** — un *pavimento*. Le pieghe che **le facce dei simboli attraversati
+  impongono**: da due facce opposte si passa dritti, da due perpendicolari si gira per forza,
+  dalla stessa faccia si torna indietro. Piegare **più** di così è una scelta di chi compone, e
+  quella è un rilievo. Un pavimento non si insegue — non si guadagna niente a starci sopra, e
+  sotto non ci si può andare;
+- **qual è meglio** — il *punteggio*. `pieghe` e `incroci` sono due voci del punteggio del
+  revisore, e sono lì che «meno curve possibili, meno sormonti possibili» si misura davvero,
+  confrontando due pose dello stesso impianto.
+
+**Il pavimento non cambia girando i pezzi**, ed è per questo che è un pavimento: ruotare o
+specchiare un pezzo gira **tutte** le sue porte insieme, quindi l'angolo fra due facce **dello
+stesso pezzo** non cambia — e un crocevia è sempre fra due porte dello stesso pezzo. Una prova
+lo verifica su tutte e otto le giaciture (D-169).
+
+*Fonte:* PO, 20 settembre 2026 (**D-154**), riscritta dal PO il 22 (**D-171**); il precedente
+è del 19 (**D-151**).
 *Controllo:* **`HIGHWAY_IS_NOT_STRAIGHT`** — `validation/regole.py::autostrade_storte`, che
-conta le pieghe **della catena intera**: quelle dentro ogni tratta più i cambi di giacitura
-**sui crocevia**, che nessuna tratta da sola vedeva. Il bilancio è `Highway.turns_allowed`
-— zero sulla spina, **una** verso i terminali (D-144). La geometria adesso sa quali tratte
-sono autostrada: `layout/autostrade.py`, e `RUN_WITH_TOO_MANY_BENDS` usa quel bilancio
-invece del metro dello stacchetto. *Tavola:* impianto 1 composto, «la tratta `s3-a, s3-b`
-piega 4 volte, e su un'autostrada le pieghe ammesse sono 1».
+conta le pieghe **della catena intera** — quelle dentro ogni tratta più i cambi di giacitura
+**sui crocevia**, che nessuna tratta da sola vedeva — e le confronta con `curve_imposte`, il
+pavimento. `RUN_WITH_TOO_MANY_BENDS` **non si accende più su un'autostrada**: lì misura B1,
+che vede la catena intera.
+*Tavola:* impianto 1 composto, «le tratte `s3-a, s3-b` piegano 4 volte, e i simboli che
+attraversano ne impongono 1: 3 di troppo».
+
+⛔ **Quello che c'era prima, e perché è caduto.** Il bilancio era `Highway.turns_allowed`:
+**zero** sulla spina, **una** verso i terminali (D-144). Accusava tavole che nessuna posa
+poteva raddrizzare — una catena che attraversa il **collettore verticale che B3 pretende** ha
+due pieghe per forza — e due agenti in camera pulita, indipendentemente, l'hanno riferito con
+le stesse parole: *«il numero è irraggiungibile, non il disegno è sbagliato»*. **Di D-144
+resta la forma grafica** — gamba dritta, curva, pettine — che è **B2**; cade il numero.
 
 ### B2 — Dal circolatore un tratto dritto, **una** curva, poi la dorsale a pettine
 
@@ -257,14 +291,16 @@ rilievo che ne esce è vero ma non azionabile da chi compone.
 | impianto 3, `volano -> … -> pdc` | 0 | `volano.b` e `pdc.water_return` guardano tutt'e due a **destra**: serve uscire, salire e tornare indietro — e quella è la **U** che `RUN_OVERSHOOTS_ITS_PORT` blocca |
 | impianto 4, `scambiatore -> commutatrice` e `scambiatore -> deviatrice` | 0 | lo scambiatore a piastre ha `primary_in` e `primary_out` tutt'e due a **sinistra**, e non ruota |
 
-*Controllo:* `da scrivere` — e va scritto **dove si assegnano le curve ammesse**, non fra i
-rilievi: `Highway.turns_allowed` oggi vale zero per ogni catena fra macchine di spina, senza
-guardare se le facce delle sue porte lo permettono. Finché non lo guarda, B1 accusa tavole
-che nessun piano può raddrizzare, e un rilievo che non si può chiudere è rumore.
+*Controllo:* **la metà misurabile è chiusa** (**D-171**). Le curve non si assegnano più con un
+numero: B1 confronta le pieghe della catena con quelle che **le facce dei simboli
+attraversati impongono**, e una catena che passa da due facce perpendicolari ha il proprio
+pavimento a uno, da due facce uguali a due. Un rilievo che non si può chiudere non si accende
+più.
 
-**Due letture, e la scelta è del PO.** O il catalogo cambia (una macchina con due attacchi
-sullo stesso lato è un simbolo, non un vincolo idraulico), o `turns_allowed` diventa **il
-minimo raggiungibile** date le facce. La prima è materia MEP, la seconda è codice.
+**Quello che resta aperto, ed è del PO.** Il pavimento dice che quella piega **c'è**; non dice
+se **ci deve essere**. Una macchina con due attacchi sullo stesso lato è un simbolo, non un
+vincolo idraulico — cambiare il catalogo è **materia MEP**, ed è l'unica delle due letture che
+restava al PO. Finché non la sceglie, la piega imposta resta e non è un difetto.
 
 ### B8 — Una linea non lascia la propria quota per poi tornarci
 
@@ -537,9 +573,10 @@ compreso** (D-143). *Tavola:* impianto 5 col pettine, che da A1 è sceso ad A3.
 ## Quello che manca, e si sa che manca
 
 - ~~**Nessun controllo sa che cos'è un'autostrada.**~~ **Chiuso il 20 settembre 2026**
-  (`DRAW-015`): `layout/autostrade.py` porta l'autostrada fino alla tavola instradata, B1 ha
-  il proprio rilievo, e `RUN_WITH_TOO_MANY_BENDS` usa il bilancio della catena invece del
-  metro dello stacchetto. Era il difetto che ha generato D-151.
+  (`DRAW-015`): `layout/autostrade.py` porta l'autostrada fino alla tavola instradata e B1 ha
+  il proprio rilievo. Era il difetto che ha generato D-151. Dal 22 settembre
+  (**D-171**) `RUN_WITH_TOO_MANY_BENDS` su un'autostrada **non si accende affatto**: lì misura
+  B1, sulla catena intera e contro il pavimento dei simboli.
 - ~~**A4 non ha un rilievo sulla tavola finita.**~~ **Chiuso il 20 settembre 2026**
   (`DRAW-015`): il vincolo era del motore, D-151 lo ha lasciato senza guardia, e adesso
   `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` lo misura dove conta, cioè sull'elaborato.
@@ -549,12 +586,13 @@ compreso** (D-143). *Tavola:* impianto 5 col pettine, che da A1 è sceso ad A3.
   solutore, che è morto con D-151; `hierarchy.py` cita D-060 per l'impilamento di A2, non per
   l'ordine di processo), e **C3** è la peggiore, perché è l'unico difetto di **contenuto**
   che nasce da una scelta **grafica**. Le apre `DRAW-016`.
-- **B1 e B3 si contraddicono sulla cascata, e la contraddizione è aperta.** Sull'impianto 5 la
-  catena che attraversa il **collettore verticale che B3 pretende** fa due pieghe, e B1 —
-  `turns_allowed` zero — la accusa. **Qui la tavola è giusta e il numero dice che è
-  sbagliata**, ed è il rilievo che questo progetto chiede di portare per primo. Il PO ha detto
-  «prima le autostrade dritte **il più possibile**», non «dritte». Come si scrive quel «il più
-  possibile» è una domanda al PO, e sta accanto a B7.
+- ~~**B1 e B3 si contraddicono sulla cascata.**~~ **Chiusa dal PO il 22 settembre 2026**
+  (**D-171**). Sull'impianto 5 la catena che attraversa il **collettore verticale che B3
+  pretende** fa due pieghe, e B1 — `turns_allowed` zero — la accusava: la tavola era giusta e
+  il numero diceva che era sbagliata. Alla domanda «come si scrive *il più possibile*» il PO
+  ha risposto che **non c'è un numero massimo**, e che l'esempio della singola curva «era per
+  far capire il concetto». Adesso il pavimento di quella catena è **due**, e il rilievo non si
+  accende.
 - **La composizione a corsie** della ricerca del 4 agosto §2.2 — le dorsali di mandata e
   ritorno con i componenti appesi — è misurata su due tavole vere e **non è ancora una riga
   qui**, perché non è stata ancora composta da noi. Quando lo sarà, entra con la sua tavola.
