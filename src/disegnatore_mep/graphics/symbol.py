@@ -24,6 +24,22 @@ TOLERANCE_MM = 1e-6
 
 ORTHOGONAL_ROTATIONS = (0, 90, 180, 270)
 
+# **Le giaciture di un simbolo sono otto, non quattro** (**D-169**, 22 settembre
+# 2026, su disposizione del PO: «lo specchio come rotazione: otto orientamenti
+# invece di quattro; tocca il motore, non il simbolo»).
+#
+# Quattro rotazioni girano il pezzo **tutto insieme**, e la terza via di una
+# valvola resta **sempre dalla stessa parte** rispetto alla via dritta. Per una
+# commutatrice che deve ricevere dall'alto, mandare in basso e prendere la terza
+# via **a destra** nessuna delle quattro basta: a 90 gradi la terza via guarda a
+# sinistra, a 270 le altre due si invertono. Misurato sull'impianto 4: la linea
+# che arriva dalla parte sbagliata **gira intorno alla valvola** con quattro
+# pieghe.
+#
+# Lo **specchio** chiude il gruppo. Si applica **prima** della rotazione, attorno
+# all'asse verticale del riquadro, e le otto combinazioni sono tutte le giaciture
+# ortogonali che un segno piano puo' avere.
+
 
 def rotate_point_mm(
     x_mm: float, y_mm: float, width_mm: float, height_mm: float, degrees: int
@@ -39,6 +55,16 @@ def rotate_point_mm(
         180: (width_mm - x_mm, height_mm - y_mm),
         270: (y_mm, width_mm - x_mm),
     }[degrees]
+
+
+def mirror_point_mm(x_mm: float, y_mm: float, width_mm: float) -> tuple[float, float]:
+    """Un punto del riquadro specchiato attorno al proprio asse verticale.
+
+    Lo specchio **non cambia le dimensioni del riquadro** e si applica sempre
+    **prima** della rotazione: e' la convenzione unica di tutto il progetto, e
+    da essa dipende che manifesto e corpo grafico coincidano.
+    """
+    return (width_mm - x_mm, y_mm)
 
 
 class StrokeWeight(StrEnum):
@@ -83,6 +109,20 @@ class PortFace(StrEnum):
             PortFace.BOTTOM: PortFace.TOP,
         }[self]
 
+    @property
+    def mirrored(self) -> "PortFace":
+        """La faccia dopo lo specchio attorno all'asse verticale del riquadro.
+
+        Sinistra e destra si scambiano, sopra e sotto restano dove sono
+        (**D-169**).
+        """
+        return {
+            PortFace.LEFT: PortFace.RIGHT,
+            PortFace.RIGHT: PortFace.LEFT,
+            PortFace.TOP: PortFace.TOP,
+            PortFace.BOTTOM: PortFace.BOTTOM,
+        }[self]
+
     def rotated(self, degrees: int) -> "PortFace":
         """La faccia dopo una rotazione oraria, con y verso il basso come in SVG.
 
@@ -121,6 +161,16 @@ class KeepOut(StrictModel):
     right_mm: FiniteFloat = Field(default=0.0, ge=0)
     top_mm: FiniteFloat = Field(default=0.0, ge=0)
     bottom_mm: FiniteFloat = Field(default=0.0, ge=0)
+
+    @property
+    def mirrored(self) -> "KeepOut":
+        """L'area di rispetto segue la faccia che protegge, anche nello specchio."""
+        return KeepOut(
+            left_mm=self.right_mm,
+            right_mm=self.left_mm,
+            top_mm=self.top_mm,
+            bottom_mm=self.bottom_mm,
+        )
 
     def rotated(self, degrees: int) -> "KeepOut":
         """L'area di rispetto segue la faccia che protegge."""
@@ -314,12 +364,66 @@ class SymbolManifest(StrictModel):
                 )
         return self
 
-    def rotated(self, degrees: int) -> "SymbolManifest":
-        """Il manifesto ruotato in senso orario, riquadro scambiato a 90 e 270.
+    def mirrored_manifest(self) -> "SymbolManifest":
+        """Il manifesto specchiato attorno al proprio asse verticale (**D-169**).
+
+        Il riquadro non cambia misura: cambiano le **facce** — sinistra e destra
+        si scambiano — e con loro le porte, gli ancoraggi, i glifi e l'area di
+        rispetto. Come `rotated`, costruisce un manifesto nuovo, che le regole di
+        questa classe rivalidano: l'invariante perimetro-faccia sopravvive allo
+        specchio invece di essere riderivato da chi lo consuma.
+        """
+
+        def moved(x_mm: float, y_mm: float) -> tuple[float, float]:
+            return mirror_point_mm(x_mm, y_mm, self.width_mm)
+
+        ports = [
+            SymbolPort(
+                id=port.id,
+                face=port.face.mirrored,
+                **dict(zip(("x_mm", "y_mm"), moved(port.x_mm, port.y_mm), strict=True)),
+            )
+            for port in self.ports
+        ]
+        anchors = [
+            anchor.model_copy(
+                update=dict(zip(("x_mm", "y_mm"), moved(anchor.x_mm, anchor.y_mm), strict=True))
+            )
+            for anchor in self.label_anchors
+        ]
+        flow = [
+            glyph.model_copy(
+                update=dict(zip(("x_mm", "y_mm"), moved(glyph.x_mm, glyph.y_mm), strict=True))
+            )
+            for glyph in self.flow_glyphs
+        ]
+        upright = [
+            glyph.model_copy(
+                update=dict(zip(("x_mm", "y_mm"), moved(glyph.x_mm, glyph.y_mm), strict=True))
+            )
+            for glyph in self.upright_glyphs
+        ]
+        return self.model_copy(
+            update={
+                "ports": ports,
+                "label_anchors": anchors,
+                "flow_glyphs": flow,
+                "upright_glyphs": upright,
+                "keep_out": self.keep_out.mirrored,
+            }
+        )
+
+    def rotated(self, degrees: int, mirrored: bool = False) -> "SymbolManifest":
+        """Il manifesto nella giacitura chiesta: **specchio prima, rotazione poi**.
 
         Costruisce un manifesto nuovo, quindi rivalidato dalle stesse regole di
         questa classe: e' cosi' che l'invariante perimetro-faccia sopravvive alla
         rotazione invece di essere riderivato da ogni consumatore.
+
+        **Le giaciture sono otto** (**D-169**): le quattro rotazioni ammesse, per
+        diritto o specchiato. Lo specchio non ha un elenco suo nel manifesto — e'
+        una facolta' del **motore**, non una dichiarazione del simbolo, ed e' la
+        forma in cui il PO l'ha chiesto: «tocca il motore, non il simbolo».
         """
         if degrees not in ORTHOGONAL_ROTATIONS:
             raise SymbolError(f"rotation must be 0, 90, 180 or 270 degrees: {degrees}")
@@ -328,6 +432,8 @@ class SymbolManifest(StrictModel):
                 f"symbol {self.id} may not be drawn rotated by {degrees} degrees: "
                 f"allowed {sorted(self.allowed_rotations_deg)} (D-049)"
             )
+        if mirrored:
+            return self.mirrored_manifest().rotated(degrees)
         if degrees == 0:
             return self
 

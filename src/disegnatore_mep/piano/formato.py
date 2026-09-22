@@ -7,7 +7,9 @@ nient'altro:
     { "formato": "A2",
       "note": ["D-041 + D-118 — i generatori a sinistra, incolonnati."],
       "pezzi": { "pdc-1": {"x": 35, "y": 60},
-                 "filling-unit-a": {"x": 195, "y": 165, "rotazione": 180} } }
+                 "filling-unit-a": {"x": 195, "y": 165, "rotazione": 180},
+                 "commutatrice": {"x": 102.5, "y": 125, "rotazione": 90,
+                                  "specchio": true} } }
 
 **Le note sono parte del piano.** Un piano senza di loro dice dove stanno i
 pezzi e non dice **perche'**: il revisore (D-153) lavora sulla traccia piano →
@@ -83,6 +85,29 @@ class PezzoNelPiano(StrictModel):
     due attacchi che non e' una macchina.
     """
 
+    specchio: bool = False
+    """Se il pezzo va **specchiato** attorno al proprio asse verticale.
+
+    **D-169**, su disposizione del PO del 22 settembre 2026: «lo specchio come
+    rotazione, otto orientamenti invece di quattro; tocca il motore, non il
+    simbolo». Lo specchio si applica **prima** della rotazione, e insieme a
+    `rotazione` da' le **otto** giaciture ortogonali di un segno piano.
+
+    **Perche' serve, misurato.** Una valvola a tre vie ha la terza via
+    **perpendicolare** alla via dritta, e ruotando si gira tutto insieme: la
+    terza via resta sempre dalla stessa parte. Per una commutatrice che deve
+    ricevere dall'alto, mandare in basso e prendere la terza via **a destra**,
+    nessuna delle quattro rotazioni basta — a 90 gradi la terza via guarda a
+    sinistra, a 270 si invertono le altre due. Sull'impianto 4 la linea che
+    arriva dalla parte sbagliata **gira intorno alla valvola** con quattro
+    pieghe; con lo specchio entra dritta, e la tavola passa da 3 spezzate
+    piegate a 3 con una piega in meno e un sormonto in meno.
+
+    Come `rotazione`, **si scrive dove la deduzione non arriva**: su una
+    valvola a tre vie e su un pezzo a due attacchi che non e' una macchina. Per
+    un raccordo la deduzione prova adesso tutte e otto le giaciture.
+    """
+
     regola: str | None = None
     """Quale regola ha messo il pezzo li'.
 
@@ -115,6 +140,7 @@ _ATTESO_PER_CAMPO: dict[str, str] = {
     "x": "un numero, i millimetri dal bordo sinistro del foglio",
     "y": "un numero, i millimetri dal bordo alto del foglio",
     "rotazione": "un numero intero di gradi (0, 90, 180, 270)",
+    "specchio": "vero o falso: se il pezzo va specchiato prima di ruotarlo (D-169)",
     "regola": "il nome della regola che ha messo il pezzo li'",
     "formato": f"uno dei formati ordinari: {', '.join(FORMATI_ORDINARI)} (D-148)",
     "note": "un elenco di righe di testo",

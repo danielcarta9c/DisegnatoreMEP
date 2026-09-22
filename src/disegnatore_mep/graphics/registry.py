@@ -26,34 +26,54 @@ class Symbol:
     body_transform: str = ""
     """Trasformazione SVG che porta il corpo nel riquadro ruotato, vuota a 0 gradi."""
 
-    def rotated(self, degrees: int) -> "Symbol":
-        """Il simbolo ruotato: manifesto trasformato e corpo avvolto nella
-        matrice equivalente.
+    def rotated(self, degrees: int, mirrored: bool = False) -> "Symbol":
+        """Il simbolo nella giacitura chiesta: manifesto trasformato e corpo
+        avvolto nella matrice equivalente.
 
         Le due trasformazioni devono coincidere, o il disegno si stacca dai
-        propri attacchi; `tests/graphics/test_rotation.py` lo verifica angolo
-        per angolo su tutta la libreria pubblicata.
+        propri attacchi; `tests/graphics/test_rotation.py` lo verifica giacitura
+        per giacitura su tutta la libreria pubblicata.
+
+        **Le giaciture sono otto** (**D-169**): le quattro rotazioni ammesse,
+        per diritto o **specchiato**. Lo specchio si applica **prima** della
+        rotazione, attorno all'asse verticale del riquadro, ed e' la stessa
+        convenzione del manifesto — se le due divergono, il corpo si stacca
+        dalle porte.
 
         **I glifi dichiarati leggibili non girano** (DRAW-005, I-033): ogni
-        gruppo `data-glyph` del corpo riceve la rotazione contraria attorno al
-        proprio centro, cosi' che la lettera segua il centro spostato e resti
-        dritta rispetto al foglio. Corpo e porte girano come sempre.
+        gruppo `data-glyph` del corpo riceve la trasformazione **contraria**
+        attorno al proprio centro, cosi' che la lettera segua il centro spostato
+        e resti dritta rispetto al foglio. Con lo specchio la contraria e' uno
+        specchio piu' una rotazione: **una lettera non si legge allo specchio**.
+        Corpo e porte girano come sempre.
         """
-        manifest = self.manifest.rotated(degrees)
-        if degrees == 0:
+        manifest = self.manifest.rotated(degrees, mirrored)
+        if degrees == 0 and not mirrored:
             return self
         width, height = self.manifest.width_mm, self.manifest.height_mm
-        transform = {
+        giro = {
+            0: "",
             90: f"translate({height:g} 0) rotate(90)",
             180: f"translate({width:g} {height:g}) rotate(180)",
             270: f"translate(0 {width:g}) rotate(270)",
         }[degrees]
+        # SVG applica le trasformazioni **da destra a sinistra**: lo specchio
+        # scritto per ultimo e' quello che agisce per primo, che e' la
+        # convenzione del manifesto.
+        specchio = f"translate({width:g} 0) scale(-1 1)" if mirrored else ""
+        transform = " ".join(part for part in (giro, specchio) if part)
         body = self.body
         for glyph in self.manifest.upright_glyphs:
+            contraria = f"rotate({-degrees:g} {glyph.x_mm:g} {glyph.y_mm:g})"
+            if mirrored:
+                # Prima si disfa la rotazione attorno al centro del glifo, poi
+                # lo specchio attorno alla verticale che ci passa: la
+                # composizione delle due con la trasformazione esterna e' una
+                # traslazione pura, e il glifo resta dritto e leggibile.
+                contraria = f"translate({2 * glyph.x_mm:g} 0) scale(-1 1) {contraria}"
             body = body.replace(
                 f'<g data-glyph="{glyph.id}"',
-                f'<g data-glyph="{glyph.id}" '
-                f'transform="rotate({-degrees:g} {glyph.x_mm:g} {glyph.y_mm:g})"',
+                f'<g data-glyph="{glyph.id}" transform="{contraria}"',
                 1,
             )
         return Symbol(

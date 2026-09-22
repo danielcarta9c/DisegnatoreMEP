@@ -290,7 +290,7 @@ def porte_in_tavola(
         if definition_id is None:
             continue
         manifesto = catalog.resolve(definition_id).symbol.manifest.rotated(
-            posato.rotation_deg
+            posato.rotation_deg, posato.specchiato
         )
         attacchi = {attacco.id: attacco for attacco in manifesto.ports}
         for porta in catalog.get(definition_id).ports:

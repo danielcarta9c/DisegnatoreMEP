@@ -200,3 +200,107 @@ def test_a_vertical_inline_symbol_is_measured_on_its_height() -> None:
         }
     )
     assert vertical.inline_gap_mm == 10.0
+
+
+# --- D-169: le giaciture sono otto, non quattro -----------------------------
+
+
+def _applica_trasformazione(transform: str, x_mm: float, y_mm: float) -> tuple[float, float]:
+    """Applica una stringa di trasformazioni SVG a un punto, **da destra a sinistra**.
+
+    E' l'ordine di SVG, ed e' il punto della prova: il corpo grafico e il
+    manifesto devono arrivare **nello stesso posto**, o il disegno si stacca
+    dai propri attacchi.
+    """
+    passi = re.findall(r"(translate|rotate|scale)\(([^)]*)\)", transform)
+    for nome, argomenti in reversed(passi):
+        valori = [float(v) for v in argomenti.replace(",", " ").split()]
+        if nome == "translate":
+            x_mm += valori[0]
+            y_mm += valori[1] if len(valori) > 1 else 0.0
+        elif nome == "scale":
+            x_mm *= valori[0]
+            y_mm *= valori[1] if len(valori) > 1 else valori[0]
+        else:
+            gradi = valori[0] % 360
+            cx, cy = (valori[1], valori[2]) if len(valori) > 2 else (0.0, 0.0)
+            dx, dy = x_mm - cx, y_mm - cy
+            seno, coseno = {0: (0.0, 1.0), 90: (1.0, 0.0), 180: (0.0, -1.0), 270: (-1.0, 0.0)}[
+                int(gradi)
+            ]
+            x_mm, y_mm = cx + dx * coseno - dy * seno, cy + dx * seno + dy * coseno
+    return x_mm, y_mm
+
+
+def test_il_corpo_raggiunge_le_porte_in_tutte_e_otto_le_giaciture() -> None:
+    """**L'invariante che regge D-169.**
+
+    Lo specchio e' una facolta' del motore, non del simbolo: nessun manifesto
+    lo dichiara, e il corpo grafico deve seguirlo da solo. Se la matrice SVG e
+    la trasformazione del manifesto divergessero anche di un millimetro, la
+    linea arriverebbe accanto al bocchello invece che dentro — ed e' il difetto
+    che il 21 settembre ha lasciato la caldaia scollegata dalla propria porta.
+
+    Si prova su **tutta la libreria pubblicata**, giacitura per giacitura.
+    """
+    provate = 0
+    for symbol in library().all():
+        for degrees in symbol.manifest.allowed_rotations_deg:
+            for specchiato in (False, True):
+                girato = symbol.rotated(degrees, specchiato)
+                provate += 1
+                for port in symbol.manifest.ports:
+                    atteso = girato.manifest.port(port.id)
+                    x_mm, y_mm = _applica_trasformazione(
+                        girato.body_transform, port.x_mm, port.y_mm
+                    )
+                    assert x_mm == pytest.approx(atteso.x_mm, abs=1e-6), (
+                        f"{symbol.manifest.id} {degrees}gradi specchio={specchiato} "
+                        f"porta {port.id}"
+                    )
+                    assert y_mm == pytest.approx(atteso.y_mm, abs=1e-6)
+    assert provate >= 2 * len(library().all()), "la prova deve toccare tutte e due le mani"
+
+
+def test_lo_specchio_e_una_involuzione() -> None:
+    """Specchiare due volte riporta il simbolo com'era."""
+    for symbol in library().all():
+        manifest = symbol.manifest
+        assert manifest.mirrored_manifest().mirrored_manifest().model_dump() == manifest.model_dump()
+
+
+def test_lo_specchio_scambia_sinistra_e_destra_e_lascia_sopra_e_sotto() -> None:
+    assert PortFace.LEFT.mirrored is PortFace.RIGHT
+    assert PortFace.RIGHT.mirrored is PortFace.LEFT
+    assert PortFace.TOP.mirrored is PortFace.TOP
+    assert PortFace.BOTTOM.mirrored is PortFace.BOTTOM
+
+
+def test_la_terza_via_a_destra_non_si_ottiene_senza_lo_specchio() -> None:
+    """**La misura che ha prodotto D-169**, e si legge come una tabella.
+
+    La commutatrice dell'impianto 4 deve ricevere **dall'alto** (la colonna del
+    ritorno), mandare **in basso** (la caldaia) e prendere la terza via **a
+    destra** (lo scambiatore). E' la giacitura che il PO ha disegnato a mano il
+    22 settembre 2026.
+
+    Fra le **quattro rotazioni** non c'e': la terza via di una tre vie e'
+    perpendicolare alla via dritta e gira insieme a lei, quindi resta sempre
+    dalla stessa parte. C'e' **una sola** delle otto giaciture, ed e'
+    specchiata.
+    """
+    valvola = library().get("switching-valve-3way").manifest
+    cercata = {"in_a": PortFace.TOP, "out": PortFace.BOTTOM, "in_b": PortFace.RIGHT}
+
+    def facce(degrees: int, specchiato: bool) -> dict[str, PortFace]:
+        girata = valvola.rotated(degrees, specchiato)
+        return {port.id: port.face for port in girata.ports}
+
+    assert all(facce(degrees, False) != cercata for degrees in (0, 90, 180, 270))
+    trovate = [
+        (degrees, specchiato)
+        for specchiato in (False, True)
+        for degrees in (0, 90, 180, 270)
+        if facce(degrees, specchiato) == cercata
+    ]
+    assert trovate == [(270, True)]
