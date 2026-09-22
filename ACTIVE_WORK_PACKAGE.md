@@ -3,6 +3,8 @@
 **Titolo:** L'agente che scrive il piano, e l'agente che dà i suggerimenti precisi su dove passare
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
 **Stato:** **ATTIVO.** `DRAW-015` è fuso su `main` (**D-166**).
+**Base:** `main`. **Si riparte sempre da lì**, allineato e pulito — non da un ramo vecchio.
+**Ramo:** `claude/draw-015-reviewer-d147-b18nqg`, ricreato da `main` a ogni sessione.
 **Release:** 0.3 — generalizzazione
 **Approvazione della fusione:** **del PO**, e si dà guardando le tavole (D-147, D-146)
 
@@ -100,10 +102,10 @@ verificate:
   B3**;
 - **B12 presuppone una ramificazione simmetrica**, e l'impianto 5 ha un ritorno invertito: o la
   terza colonna è vera, o il grafo va guardato. **Contenuto MEP**;
-- **D3 spinge nel verso sbagliato** — due agenti su tre hanno allontanato un pezzo dalla
-  macchina che serve **solo** per spegnere `DRAWING_ALL_ON_ONE_SIDE`, e tutti e due hanno
-  scritto da soli che un disegnatore non lo farebbe. *Proposta: D3 esce dal punteggio e resta
-  una cosa che l'occhio guarda.*
+- ~~**D3 spinge nel verso sbagliato**~~ — **chiuso dal PO il 22 settembre** (**D-170**): A4
+  vince sempre, si tiene il disegno stretto e si prende il foglio più piccolo che lo contiene,
+  **il vuoto non è un difetto**. `DRAWING_ALL_ON_ONE_SIDE` e `SHEET_BARELY_FILLED` sono stati
+  **tolti**; al loro posto `SHEET_LARGER_THAN_NEEDED`.
 
 ---
 
@@ -212,6 +214,7 @@ Misurato il 20 settembre. Sta qui perché la prossima sessione non ci perda un'a
 | **D-167** | **Un terminale si prende da un lato solo**: `in` e `out` tutt'e due sulla faccia sinistra |
 | **D-168** | La **rotazione di una tre vie si sceglie e si scrive nel piano**: la terza via guarda il pezzo che serve |
 | **D-169** | **Le giaciture di un simbolo sono otto, non quattro**: lo specchio entra nel motore, la libreria resta intatta |
+| **D-170** | **Il vuoto non è un difetto**: A4 vince sempre, e D3 diventa una regola sulla **scelta del foglio** |
 
 ---
 

@@ -24,7 +24,7 @@ from collections.abc import Iterable
 
 from disegnatore_mep.catalog.errors import CatalogError
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graphics.frame import Rect, SheetFrame
+from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.layout.autostrade import (
     AutostradaInTavola,
     autostrade_del_progetto,
@@ -32,9 +32,8 @@ from disegnatore_mep.layout.autostrade import (
     pieghe_della_tratta,
 )
 from disegnatore_mep.layout.geometry import (
-    QUADRANT_IMBALANCE_MAX,
     SHEET_FILL_MAX_RATIO,
-    SHEET_FILL_MIN_RATIO,
+    SHEET_MARGIN_MIN_MM,
     DrawingGeometry,
     PlacedLabel,
     Point,
@@ -310,6 +309,36 @@ def _fill_ratio(sheet: SheetGeometry, area: Rect) -> float:
     con due formule diverse).
     """
     return fill_ratio(sheet.symbols, sheet.routes, _rect(area))
+
+
+NOMI_DEI_FORMATI: tuple[str, ...] = ("A4", "A3", "A2", "A1")
+"""I nomi dei formati ordinari, nell'ordine di `graphics.frame.ORDINARY_FRAMES`.
+
+Sono gli stessi di `piano.formato.FORMATI_ORDINARI`: qui servono per **nominare**
+il foglio piu' piccolo che conterrebbe il disegno (D3, **D-170**).
+"""
+
+
+def _drawing_bounds(sheet: SheetGeometry) -> tuple[float, float, float, float] | None:
+    """L'ingombro dell'inchiostro: simboli e tubazioni, niente cornice.
+
+    `None` se la tavola e' vuota. Serve a D3 (**D-170**) per dire se il disegno
+    ci starebbe su un foglio piu' piccolo — che dal 22 settembre 2026 e' **la
+    sola cosa** che D3 misura.
+    """
+    x: list[float] = []
+    y: list[float] = []
+    for item in sheet.symbols:
+        x.extend((item.origin.x_mm, item.right_mm))
+        y.extend((item.origin.y_mm, item.bottom_mm))
+    for route in sheet.routes:
+        for parte in route.segments:
+            for punto in parte:
+                x.append(punto.x_mm)
+                y.append(punto.y_mm)
+    if not x:
+        return None
+    return (min(x), min(y), max(x), max(y))
 
 
 def _quadrants(area: Rect) -> list[Rect]:
@@ -800,32 +829,38 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
 
 
 def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
-    """A1, A3 — il foglio e' pieno in modo uniforme, il disegno non sta su un lato.
+    """**D3** — si prende il foglio piu' piccolo che contiene il disegno.
 
-    Due numeri: quanto l'ingombro dell'inchiostro copre dell'area di disegno, e
-    quanto il quadrante piu' pieno pesa piu' del piu' vuoto. Il primo dice se la
-    tavola e' una fascia; il secondo se e' appoggiata a un bordo.
+    ⛔ **Dal 22 settembre 2026 questa funzione non misura piu' dove stanno i
+    pezzi** (**D-170**). Contava l'inchiostro nei quattro quadranti e accusava la
+    tavola sbilanciata: **spingeva nel verso sbagliato**, e contraddiceva **A4**
+    — «ogni pezzo sta addosso alla macchina che serve». Due agenti su tre, in
+    camera pulita e indipendentemente, hanno allontanato un pezzo dalla macchina
+    che serve **solo per spegnere quel rilievo**.
+
+    Il PO ha sciolto il conflitto: A4 vince sempre, **si tiene il disegno stretto
+    e si prende il foglio piu' piccolo che lo contiene**, e il vuoto che resta
+    **non e' un difetto**. Quello che resta da dire e' una cosa sola, e non e'
+    sulla posa: *questo disegno ci stava su un foglio piu' piccolo*.
     """
     findings: list[ValidationIssue] = []
     area = frame.drawing_rect_mm
-    line_mm = frame.standard.line_medium_mm
     for sheet in drawing.sheets:
+        # ⛔ **`SHEET_BARELY_FILLED` non c'e' piu'** (**D-170**, 22 settembre 2026).
+        #
+        # Diceva «il foglio e' pieno al 37%, sotto la finestra 45-65%»: cioe'
+        # diceva che **il vuoto e' un difetto**. Il PO ha deciso il contrario:
+        # «si tiene il disegno stretto e si prende il foglio piu' piccolo che lo
+        # contiene — se poi resta del vuoto, **pazienza: il vuoto non e' un
+        # difetto**».
+        #
+        # Era anche un cattivo indizio della cosa che voleva dire: un disegno
+        # lungo e stretto **sul foglio piu' piccolo che lo contiene** sta sotto
+        # il 45% per costruzione, e il rilievo si accendeva su una tavola che non
+        # aveva niente da correggere. La domanda vera — *ci stava su un foglio
+        # piu' piccolo?* — la fa adesso `SHEET_LARGER_THAN_NEEDED`, qui sotto, e
+        # la fa direttamente.
         ratio = _fill_ratio(sheet, area)
-        if ratio < SHEET_FILL_MIN_RATIO:
-            findings.append(
-                _finding(
-                    "SHEET_BARELY_FILLED",
-                    IssueSeverity.WARNING,
-                    f"la tavola {sheet.sheet_id}: il foglio e' pieno al "
-                    f"{ratio * 100:.0f}%, sotto la finestra "
-                    f"{SHEET_FILL_MIN_RATIO * 100:.0f}-"
-                    f"{SHEET_FILL_MAX_RATIO * 100:.0f}% di D-140. **E' una misura, non "
-                    f"un difetto da chiudere** (D-149): la posa non insegue piu' questo "
-                    f"numero, e su un foglio piu' grande dell'A3 sta sotto per "
-                    f"costruzione",
-                    [sheet.sheet_id],
-                )
-            )
         # **E l'altra sponda della finestra** (D-140): il riempimento non e' una
         # scala, e' un intervallo. Sopra il tetto il disegno e' fitto e non ci
         # sta piu' lo spazio per le sigle dei componenti — che e' la ragione per
@@ -867,37 +902,55 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
                     [sheet.sheet_id],
                 )
             )
-        areas = [
-            _ink_area_mm2(sheet, quadrant, line_mm) for quadrant in _quadrants(area)
-        ]
-        if max(areas) <= TOLERANCE_MM:
+        # **D-170, 22 settembre 2026 — il vuoto non e' un difetto.**
+        #
+        # Qui stava `DRAWING_ALL_ON_ONE_SIDE`: contava l'inchiostro nei quattro
+        # quadranti e accusava la tavola quando il piu' pieno ne portava piu' di
+        # tre volte il piu' vuoto. **Spingeva nel verso sbagliato.** Misurato il
+        # 21 settembre: **due agenti su tre**, in camera pulita e
+        # indipendentemente, hanno **allontanato un pezzo dalla macchina che
+        # serve** — il volano dalle pompe, lo scambiatore dalla caldaia — solo
+        # per spegnerlo, e tutt'e due hanno scritto da soli che **un disegnatore
+        # non lo farebbe**. Contraddiceva **A4**, che e' una regola del PO.
+        #
+        # Il PO ha sciolto il conflitto in termini di disegno: «**ogni pezzo sta
+        # addosso alla macchina che serve**, e **si tiene il disegno stretto e si
+        # prende il foglio piu' piccolo che lo contiene — se poi resta del vuoto,
+        # pazienza: il vuoto non e' un difetto**».
+        #
+        # Quindi D3 **cambia natura**: non e' piu' una regola su **dove stanno i
+        # pezzi**, e' una regola sulla **scelta del foglio**. L'unica cosa che
+        # resta da dire e': *questo disegno ci stava su un foglio piu' piccolo*.
+        ingombro = _drawing_bounds(sheet)
+        if ingombro is None:
             continue
-        empty = [
-            name for name, value in zip(QUADRANT_NAMES, areas, strict=True)
-            if value <= TOLERANCE_MM
+        larghezza = ingombro[2] - ingombro[0]
+        altezza = ingombro[3] - ingombro[1]
+        # I formati sono in ordine crescente, e si nominano per indice: `SheetFrame`
+        # e' un modello e non sta in un dizionario.
+        # **Ci deve stare davvero, col margine.** Non basta che l'ingombro
+        # dell'inchiostro entri nell'area del foglio piu' piccolo: ci deve stare
+        # **con il margine minimo da tutt'e due i lati** (D-143), o il rilievo
+        # direbbe «usa l'A4» per un disegno che sull'A4 tocca la cornice — e un
+        # rilievo che non si puo' chiudere e' peggio di nessun rilievo.
+        respiro = 2 * SHEET_MARGIN_MIN_MM
+        piu_piccoli = [
+            indice
+            for indice, altro in enumerate(ORDINARY_FRAMES)
+            if altro.drawing_rect_mm.width_mm < area.width_mm
+            and altro.drawing_rect_mm.width_mm >= larghezza + respiro - TOLERANCE_MM
+            and altro.drawing_rect_mm.height_mm >= altezza + respiro - TOLERANCE_MM
         ]
-        if empty:
+        if piu_piccoli:
+            nome = NOMI_DEI_FORMATI[min(piu_piccoli)]
             findings.append(
                 _finding(
-                    "DRAWING_ALL_ON_ONE_SIDE",
+                    "SHEET_LARGER_THAN_NEEDED",
                     IssueSeverity.WARNING,
-                    f"la tavola {sheet.sheet_id}: il disegno e' tutto su un lato, "
-                    f"{len(empty)} quadranti su 4 non portano inchiostro "
-                    f"({', '.join(empty)}) (A1, A3)",
-                    [sheet.sheet_id],
-                )
-            )
-            continue
-        imbalance = max(areas) / min(areas)
-        if imbalance > QUADRANT_IMBALANCE_MAX:
-            findings.append(
-                _finding(
-                    "DRAWING_ALL_ON_ONE_SIDE",
-                    IssueSeverity.WARNING,
-                    f"la tavola {sheet.sheet_id}: il disegno e' tutto su un lato, il "
-                    f"quadrante piu' pieno porta {imbalance:.1f} volte l'inchiostro "
-                    f"del piu' vuoto, oltre il limite di {QUADRANT_IMBALANCE_MAX:g} "
-                    f"(A1, A3)",
+                    f"la tavola {sheet.sheet_id}: il disegno ingombra "
+                    f"{larghezza:.0f} x {altezza:.0f} mm e ci starebbe su un "
+                    f"**{nome}**: si prende il foglio piu' piccolo che lo "
+                    f"contiene, e il vuoto che resta non e' un difetto (D3, D-170)",
                     [sheet.sheet_id],
                 )
             )
