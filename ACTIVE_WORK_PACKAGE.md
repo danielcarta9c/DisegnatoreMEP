@@ -104,7 +104,11 @@ verificate:
   verticale vale due e su una tre vie sulla terza via vale una. *«Il numero è irraggiungibile,
   non il disegno è sbagliato»* — detto da due agenti su due, ed era vero;
 - **B12 presuppone una ramificazione simmetrica**, e l'impianto 5 ha un ritorno invertito: o la
-  terza colonna è vera, o il grafo va guardato. **Contenuto MEP**;
+  terza colonna è vera, o il grafo va guardato. **Contenuto MEP**. ⚠ **Il PO ha chiesto di
+  vederla disegnata** — «B12 non l'ho capita, dovrei vederla disegnata per capire» — e la
+  figura è [`docs/collaudi/DRAW-016/figure/b12-il-pettine.svg`](docs/collaudi/DRAW-016/figure/b12-il-pettine.svg):
+  il pettine accanto all'impianto 5, con la terza verticale evidenziata. **La domanda è ancora
+  aperta**;
 - ~~**D3 spinge nel verso sbagliato**~~ — **chiuso dal PO il 22 settembre** (**D-170**): A4
   vince sempre, si tiene il disegno stretto e si prende il foglio più piccolo che lo contiene,
   **il vuoto non è un difetto**. `DRAWING_ALL_ON_ONE_SIDE` e `SHEET_BARELY_FILLED` sono stati

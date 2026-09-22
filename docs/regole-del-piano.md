@@ -458,6 +458,13 @@ coppia corre insieme a interasse costante) e **B9** (le corsie libere). Quello c
 rilievo che nomina **il pettine**: una ramificazione dove due colonne adiacenti servono più
 utenze con coppie affiancate.
 *Tavola:* impianto 5, `tavola-5-come-andava-fatta.webp`.
+*Figura di spiegazione:* `docs/collaudi/DRAW-016/figure/b12-il-pettine.svg` — il pettine
+accanto al secondario dell'impianto 5, disegnata il 22 settembre 2026 perché il PO ha detto
+«**B12 non l'ho capita, dovrei vederla disegnata per capire**». Mostra anche dove l'impianto 5
+non ci sta: la mandata serve il radiante **per ultimo** e il ritorno lo raccoglie **per
+primo**, attaccato al volano, quindi il suo ritorno risale tutta la colonna su una **terza
+verticale**. **Se sia un ritorno invertito voluto o un ordine sbagliato nel grafo è una
+domanda aperta al PO**, ed è contenuto MEP.
 
 > ### I due impedimenti che il PO ha tolto nella stessa risposta
 >

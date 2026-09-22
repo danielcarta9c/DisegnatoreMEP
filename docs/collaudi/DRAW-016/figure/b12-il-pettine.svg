@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297"><rect width="420" height="297" fill="#ffffff"/>
+<text x="18" y="20" font-family="Helvetica,Arial,sans-serif" font-size="7.4" fill="#111111" font-weight="bold" font-style="normal" text-anchor="start">B12 — il pettine, e dove l&#8217;impianto 5 non ci sta</text>
+<text x="18" y="27.5" font-family="Helvetica,Arial,sans-serif" font-size="3.2" fill="#7b8a8b" font-weight="normal" font-style="normal" text-anchor="start">Figura di spiegazione. Non &#232; una tavola e non fa convenzione grafica (D-165). Rosso = mandata, blu = ritorno. Ogni utenza si prende da un lato solo (D-167).</text>
+<rect x="18" y="36" width="186" height="176" fill="none" stroke="#d5d8dc" stroke-width="0.5"/>
+<rect x="216" y="36" width="186" height="176" fill="none" stroke="#d5d8dc" stroke-width="0.5"/>
+<text x="26" y="46" font-family="Helvetica,Arial,sans-serif" font-size="4.5" fill="#111111" font-weight="bold" font-style="normal" text-anchor="start">A &#183; IL PETTINE — come l&#8217;hai disegnato tu</text>
+<text x="26" y="51.5" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#7b8a8b" font-weight="normal" font-style="italic" text-anchor="start">due colonne, e bastano</text>
+<text x="224" y="46" font-family="Helvetica,Arial,sans-serif" font-size="4.5" fill="#111111" font-weight="bold" font-style="normal" text-anchor="start">B &#183; L&#8217;IMPIANTO 5 — come &#232; nel grafo</text>
+<text x="224" y="51.5" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#7b8a8b" font-weight="normal" font-style="italic" text-anchor="start">le colonne diventano tre</text>
+<rect x="28" y="58" width="26" height="30" rx="2" fill="#ffffff" stroke="#111111" stroke-width="0.5"/>
+<text x="41" y="72" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#111111" font-weight="bold" font-style="normal" text-anchor="middle">VOLANO</text>
+<text x="41" y="77.5" font-family="Helvetica,Arial,sans-serif" font-size="2.8" fill="#7b8a8b" font-weight="normal" font-style="normal" text-anchor="middle">secondario</text>
+<path d="M54 63 L90 63 L90 174" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="90,128 88.8,125.6 91.2,125.6" fill="#c0392b"/>
+<path d="M76 180 L76 76 L54 76" fill="none" stroke="#2471a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="76,128 74.8,130.4 77.2,130.4" fill="#2471a3"/>
+<rect x="144" y="98" width="34" height="15" fill="#ffffff" stroke="#111111" stroke-width="0.4"/>
+<text x="161" y="106.6" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#111111" font-weight="bold" font-style="normal" text-anchor="middle">1&#170; utenza</text>
+<path d="M90 102 L144 102" fill="none" stroke="#c0392b" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="143.5,102 141.1,100.8 141.1,103.2" fill="#c0392b"/>
+<circle cx="90" cy="102" r="1.0" fill="#c0392b"/>
+<path d="M144 108 L76 108" fill="none" stroke="#2471a3" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="76.5,108 78.9,106.8 78.9,109.2" fill="#2471a3"/>
+<circle cx="76" cy="108" r="1.0" fill="#2471a3"/>
+<circle cx="90" cy="108" r="1.9" fill="#ffffff" stroke="none"/>
+<path d="M90 105.9 L90 110.1" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="144" y="134" width="34" height="15" fill="#ffffff" stroke="#111111" stroke-width="0.4"/>
+<text x="161" y="142.6" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#111111" font-weight="bold" font-style="normal" text-anchor="middle">2&#170; utenza</text>
+<path d="M90 138 L144 138" fill="none" stroke="#c0392b" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="143.5,138 141.1,136.8 141.1,139.2" fill="#c0392b"/>
+<circle cx="90" cy="138" r="1.0" fill="#c0392b"/>
+<path d="M144 144 L76 144" fill="none" stroke="#2471a3" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="76.5,144 78.9,142.8 78.9,145.2" fill="#2471a3"/>
+<circle cx="76" cy="144" r="1.0" fill="#2471a3"/>
+<circle cx="90" cy="144" r="1.9" fill="#ffffff" stroke="none"/>
+<path d="M90 141.9 L90 146.1" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="144" y="170" width="34" height="15" fill="#ffffff" stroke="#111111" stroke-width="0.4"/>
+<text x="161" y="178.6" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#111111" font-weight="bold" font-style="normal" text-anchor="middle">3&#170; utenza</text>
+<path d="M90 174 L144 174" fill="none" stroke="#c0392b" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="143.5,174 141.1,172.8 141.1,175.2" fill="#c0392b"/>
+<circle cx="90" cy="174" r="1.0" fill="#c0392b"/>
+<path d="M144 180 L76 180" fill="none" stroke="#2471a3" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="76.5,180 78.9,178.8 78.9,181.2" fill="#2471a3"/>
+<circle cx="76" cy="180" r="1.0" fill="#2471a3"/>
+<text x="161" y="93" font-family="Helvetica,Arial,sans-serif" font-size="2.9" fill="#7b8a8b" font-weight="normal" font-style="normal" text-anchor="middle">la coppia corre affiancata fino all&#8217;utenza</text>
+<text x="76" y="196" font-family="Helvetica,Arial,sans-serif" font-size="3.2" fill="#c0392b" font-weight="bold" font-style="normal" text-anchor="start">1 &#8594; 2 &#8594; 3 sulla mandata</text>
+<text x="76" y="202" font-family="Helvetica,Arial,sans-serif" font-size="3.2" fill="#2471a3" font-weight="bold" font-style="normal" text-anchor="start">1 &#8594; 2 &#8594; 3 sul ritorno</text>
+<text x="76" y="208.5" font-family="Helvetica,Arial,sans-serif" font-size="3.2" fill="#111111" font-weight="bold" font-style="normal" text-anchor="start">stesso ordine: due colonne bastano</text>
+<rect x="226" y="58" width="26" height="30" rx="2" fill="#ffffff" stroke="#111111" stroke-width="0.5"/>
+<text x="239" y="72" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#111111" font-weight="bold" font-style="normal" text-anchor="middle">VOLANO</text>
+<text x="239" y="77.5" font-family="Helvetica,Arial,sans-serif" font-size="2.8" fill="#7b8a8b" font-weight="normal" font-style="normal" text-anchor="middle">secondario</text>
+<path d="M252 63 L288 63 L288 174" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="288,128 286.8,125.6 289.2,125.6" fill="#c0392b"/>
+<path d="M274 144 L274 76 L252 76" fill="none" stroke="#2471a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="274,110 272.8,112.4 275.2,112.4" fill="#2471a3"/>
+<path d="M342 180 L262 180 L262 82 L274 82" fill="none" stroke="#2471a3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="262,130 260.8,132.4 263.2,132.4" fill="#2471a3"/>
+<circle cx="274" cy="82" r="1.0" fill="#2471a3"/>
+<rect x="342" y="98" width="34" height="15" fill="#ffffff" stroke="#111111" stroke-width="0.4"/>
+<text x="359" y="106.6" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#111111" font-weight="bold" font-style="normal" text-anchor="middle">batteria UTA</text>
+<text x="359" y="117.2" font-family="Helvetica,Arial,sans-serif" font-size="2.9" fill="#7b8a8b" font-weight="normal" font-style="normal" text-anchor="middle">1&#170; sulla mandata</text>
+<path d="M288 102 L342 102" fill="none" stroke="#c0392b" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="341.5,102 339.1,100.8 339.1,103.2" fill="#c0392b"/>
+<circle cx="288" cy="102" r="1.0" fill="#c0392b"/>
+<path d="M342 108 L274 108" fill="none" stroke="#2471a3" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="274.5,108 276.9,106.8 276.9,109.2" fill="#2471a3"/>
+<circle cx="274" cy="108" r="1.0" fill="#2471a3"/>
+<circle cx="288" cy="108" r="1.9" fill="#ffffff" stroke="none"/>
+<path d="M288 105.9 L288 110.1" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="342" y="134" width="34" height="15" fill="#ffffff" stroke="#111111" stroke-width="0.4"/>
+<text x="359" y="142.6" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#111111" font-weight="bold" font-style="normal" text-anchor="middle">ventilconvettori</text>
+<text x="359" y="153.2" font-family="Helvetica,Arial,sans-serif" font-size="2.9" fill="#7b8a8b" font-weight="normal" font-style="normal" text-anchor="middle">2&#170; sulla mandata</text>
+<path d="M288 138 L342 138" fill="none" stroke="#c0392b" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="341.5,138 339.1,136.8 339.1,139.2" fill="#c0392b"/>
+<circle cx="288" cy="138" r="1.0" fill="#c0392b"/>
+<path d="M342 144 L274 144" fill="none" stroke="#2471a3" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="274.5,144 276.9,142.8 276.9,145.2" fill="#2471a3"/>
+<circle cx="274" cy="144" r="1.0" fill="#2471a3"/>
+<circle cx="288" cy="144" r="1.9" fill="#ffffff" stroke="none"/>
+<path d="M288 141.9 L288 146.1" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="342" y="170" width="34" height="15" fill="#ffffff" stroke="#111111" stroke-width="0.4"/>
+<text x="359" y="178.6" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#111111" font-weight="bold" font-style="normal" text-anchor="middle">pavimento radiante</text>
+<text x="359" y="189.2" font-family="Helvetica,Arial,sans-serif" font-size="2.9" fill="#7b8a8b" font-weight="normal" font-style="normal" text-anchor="middle">3&#170; sulla mandata</text>
+<path d="M288 174 L342 174" fill="none" stroke="#c0392b" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="341.5,174 339.1,172.8 339.1,175.2" fill="#c0392b"/>
+<circle cx="288" cy="174" r="1.0" fill="#c0392b"/>
+<rect x="256.5" y="78" width="11" height="106" fill="none" stroke="#b9770e" stroke-width="0.6" stroke-dasharray="3 2" rx="3"/>
+<text x="262" y="191" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#b9770e" font-weight="bold" font-style="normal" text-anchor="middle">la terza verticale</text>
+<text x="262" y="196" font-family="Helvetica,Arial,sans-serif" font-size="2.9" fill="#b9770e" font-weight="normal" font-style="normal" text-anchor="middle">il ritorno del radiante</text>
+<text x="262" y="200.5" font-family="Helvetica,Arial,sans-serif" font-size="2.9" fill="#b9770e" font-weight="normal" font-style="normal" text-anchor="middle">risale da solo</text>
+<text x="338" y="186" font-family="Helvetica,Arial,sans-serif" font-size="2.9" fill="#b9770e" font-weight="normal" font-style="normal" text-anchor="end">e la sua coppia si apre subito</text>
+<text x="300" y="196" font-family="Helvetica,Arial,sans-serif" font-size="3.2" fill="#c0392b" font-weight="bold" font-style="normal" text-anchor="start">1 &#8594; 2 &#8594; 3 sulla mandata</text>
+<text x="300" y="202" font-family="Helvetica,Arial,sans-serif" font-size="3.2" fill="#2471a3" font-weight="bold" font-style="normal" text-anchor="start">3 &#8594; 1 &#8594; 2 sul ritorno</text>
+<text x="300" y="208.5" font-family="Helvetica,Arial,sans-serif" font-size="3.2" fill="#b9770e" font-weight="bold" font-style="normal" text-anchor="start">ordine rovesciato: una colonna in pi&#249;</text>
+<line x1="18" y1="220" x2="402" y2="220" stroke="#d5d8dc" stroke-width="0.5"/>
+<text x="18" y="228" font-family="Helvetica,Arial,sans-serif" font-size="3.9" fill="#111111" font-weight="bold" font-style="normal" text-anchor="start">La differenza, in una riga.</text>
+<text x="18" y="234.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">Nel pettine la mandata incontra le utenze nell&#8217;ordine 1-2-3 e il ritorno</text>
+<text x="18" y="239.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">le raccoglie nello stesso ordine: due colonne bastano. Nell&#8217;impianto 5 la</text>
+<text x="18" y="244.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">mandata serve il radiante per ultimo e il ritorno lo raccoglie per primo,</text>
+<text x="18" y="249.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">attaccato al volano. Il suo ritorno deve risalire tutta la colonna, e per non</text>
+<text x="18" y="254.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">passare addosso al nodo che raccoglie UTA e ventilconvettori si prende</text>
+<text x="18" y="259.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">una terza verticale.</text>
+<text x="216" y="228" font-family="Helvetica,Arial,sans-serif" font-size="3.9" fill="#111111" font-weight="bold" font-style="normal" text-anchor="start">La domanda, ed &#232; tua: &#232; contenuto MEP.</text>
+<text x="216" y="234.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">Primo sulla mandata = ultimo sul ritorno &#232; la firma di un ritorno invertito</text>
+<text x="216" y="239.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">(Tichelmann), che pareggia le lunghezze dei circuiti: &#232; una scelta vera.</text>
+<text x="216" y="244.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">Se &#232; voluta, la terza colonna &#232; giusta e B12 prende un&#8217;eccezione scritta.</text>
+<text x="216" y="249.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">Se invece il radiante va alimentato per primo — com&#8217;&#232; nella tua tavola 5,</text>
+<text x="216" y="254.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">dove sta in alto vicino al volano, con la sua miscelatrice — allora &#232; il grafo</text>
+<text x="216" y="259.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">a sbagliare l&#8217;ordine: si corregge, e il pettine si chiude con due colonne.</text>
+</svg>
