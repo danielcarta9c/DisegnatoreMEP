@@ -605,6 +605,15 @@ compreso** (D-143). *Tavola:* impianto 5 col pettine, che da A1 è sceso ad A3.
   ha risposto che **non c'è un numero massimo**, e che l'esempio della singola curva «era per
   far capire il concetto». Adesso il pavimento di quella catena è **due**, e il rilievo non si
   accende.
+- ⚠ **Il pavimento di B1 è troppo basso, ed è misurato** (22 settembre 2026,
+  `collaudi/DRAW-016/prova-camera-pulita-2026-09-22/`). Conta solo le pieghe imposte **dentro
+  un pezzo**, fra due facce dello stesso raccordo. Non vede quelle imposte **dalla
+  combinazione** di due pezzi: il **gomito in fondo a un collettore verticale** nell'ultima
+  macchina, la **L fra due pezzi** la cui giacitura è fissata dal resto, il **gradino** di una
+  coppia che passa da interasse 15 a 10. Sull'impianto 5 ricomposto escono **7 rilievi di B1 su
+  una tavola giusta**, e nessuno è una scelta di chi compone. Quindi la chiusura di B1 contro B3
+  qui sopra vale **a metà**: per la catena che attraversa il collettore sì, per quella che ci
+  finisce dentro no. **Si chiude alzando il pavimento**, non togliendo il rilievo.
 - **La composizione a corsie** della ricerca del 4 agosto §2.2 — le dorsali di mandata e
   ritorno con i componenti appesi — è misurata su due tavole vere e **non è ancora una riga
   qui**, perché non è stata ancora composta da noi. Quando lo sarà, entra con la sua tavola.

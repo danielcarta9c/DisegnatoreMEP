@@ -63,6 +63,12 @@ E le due cose che ha notato nella stessa risposta sono **i due impedimenti** a q
   portato al PO come una domanda. **Una scelta fatta dalla skill non si rigira al progettista
   come se fosse sua.**
 
+⚠ **L'impianto 5 è stato ridisegnato come il PO l'ha chiesto** — A3, zero cedute, zero bloccanti,
+il pettine nell'ordine del testo, `docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/` — **e
+porta 7 rilievi di B1 su una tavola giusta**. Il pavimento di D-171 conta solo le pieghe imposte
+dentro un pezzo, e non vede il gomito in fondo a un collettore verticale. È il primo punto da cui
+si riparte.
+
 ⚠ **Il costo è dichiarato e va saputo prima di misurare**: i cinque piani a mano sono composti
 per terminali passanti, e **la suite è passata da 38 rosse a 47**. Le nove nuove sono una cosa
 sola — l'impianto 5 apre un bloccante su `s8` e le prove del revisore cadono a valle. **Si

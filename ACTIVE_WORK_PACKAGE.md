@@ -84,8 +84,17 @@ il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAP
 | **il vuoto non è un difetto** | **D-170**: A4 vince sempre, D3 diventa la scelta del foglio, e i due rilievi che spingevano nel verso sbagliato sono tolti |
 | **B1 non è una soglia** | **D-171**: tolti `turns_allowed` e `TOO_MANY_CROSSINGS`; al loro posto il pavimento dei simboli, e il confronto sta nel punteggio |
 | **la skill non progetta la distribuzione** | **D-172**: l'ordine è del progettista e il ritorno specchia la mandata; l'impianto 5 aveva un ritorno inverso inventato su **tutt'e due** i collettori, corretto, e la regola sta in «Capire» §4.4 |
+| **l'impianto 5 ridisegnato come l'ha chiesto il PO** | pianificatore in camera pulita sul grafo corretto: **A3, zero cedute, zero bloccanti, pieghe da 16 a 9**, il pettine nell'ordine del testo — [`prova-camera-pulita-2026-09-22/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/). ⚠ **7 rilievi di B1 su una tavola giusta**: il pavimento di D-171 è troppo basso |
 
 **Da dove riparte la prossima sessione, in quest'ordine:**
+
+0. **Alzare il pavimento di B1** (D-171 l'ha lasciato troppo basso, ed è misurato): oggi conta
+   solo le pieghe imposte dentro un pezzo, e accusa il gomito in fondo a un collettore
+   verticale, le L fra pezzi a giacitura fissata e il gradino fra interasse 15 e 10. Sulla tavola
+   5 del 22 settembre sono **7 rilievi su una tavola giusta**. Finché restano, il pianificatore
+   insegue un numero che la tavola non merita. **E il motore deve traslare prima di instradare**:
+   oggi un pezzo a coordinate negative non si instrada, e le istruzioni l'hanno detto male fino al
+   22.
 
 1. **Ricomporre i cinque piani con `skill/comporre/`** — non a mano (**D-155**), e adesso con
    **B12** e con le **otto giaciture** in mano. È quello che riporta il saldo della suite da

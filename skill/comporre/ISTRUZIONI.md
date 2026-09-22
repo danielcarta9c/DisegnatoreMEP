@@ -140,10 +140,15 @@ JSON, e solo queste chiavi:
   **non sono pezzi**: ignorali. Uno che manca fa fallire tutto il piano; uno di troppo pure.
   `x` e `y` sono in millimetri, **origine in alto a sinistra del pezzo**, e si arrotondano al
   passo di griglia: **usa multipli di 2,5**.
-  ⚠ **Non sono coordinate sul foglio**: il motore **trasla l'intero disegno** per centrarlo, e
-  la traslazione è la stessa per tutti i pezzi. Contano **solo le posizioni relative**, e non
-  puoi collocare niente rispetto al bordo o al cartiglio: **D1 si governa con la forma della
-  posa, D3 con la scelta del formato**.
+  ⚠ **Non sono coordinate sul foglio, ma devono stare in positivo.** Il motore **instrada
+  prima di traslare**: un pezzo a `y` o `x` negativi lascia le sue tratte senza strada, e il
+  comando risponde «every orthogonal path is blocked» anche su una tratta sola. **Tieni tutti
+  i pezzi a coordinate positive**, con un po' di margine dall'origine. Misurato il 22 settembre
+  2026 sul piano dell'impianto 5: con `x` da 20 e `y` da 22,5 in su si instrada; lo stesso
+  piano spostato di (−20, −105) no. **Dopo** l'instradamento il motore trasla l'intero disegno
+  per centrarlo, la stessa traslazione per tutti i pezzi: per questo non puoi collocare niente
+  rispetto al bordo o al cartiglio — **D1 si governa con la forma della posa, D3 con la scelta
+  del formato**.
 - **`rotazione`** — in **gradi orari**. **Scrivila solo dove la deduzione non arriva**: per un
   raccordo o per un pezzo con un attacco solo **non scriverla**, perché la rotazione è una
   conseguenza della posa e il motore la deduce dai vicini che il pezzo ha davvero.

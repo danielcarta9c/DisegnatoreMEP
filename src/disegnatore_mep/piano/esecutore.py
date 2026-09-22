@@ -404,12 +404,20 @@ def esegui_piano(
         for component_id, dove in piano.pezzi.items()
         if dove.rotazione is not None
     )
-    prima_di_girare = {item.component_id: item.rotation_deg for item in seminata}
+    prima_di_girare = {
+        item.component_id: (item.rotation_deg, item.specchiato) for item in seminata
+    }
     seminata = orienta(seminata, modello, partizione, catalogo, fissate)
+    # **La giacitura e' rotazione piu' specchio** (D-169), e il rapporto le dice
+    # tutt'e due. Finche' diceva la sola rotazione, un pezzo che la deduzione
+    # specchiava senza girarlo non compariva affatto, e il 22 settembre 2026 un
+    # agente ne ha dedotto — leggendo questo elenco — che la deduzione provasse
+    # quattro giaciture invece di otto.
     girati = tuple(
-        f"{item.component_id} {prima_di_girare[item.component_id]}->{item.rotation_deg}"
+        f"{item.component_id} {prima_di_girare[item.component_id][0]}->{item.rotation_deg}"
+        + (" specchiato" if item.specchiato else "")
         for item in seminata
-        if prima_di_girare[item.component_id] != item.rotation_deg
+        if prima_di_girare[item.component_id] != (item.rotation_deg, item.specchiato)
     )
     posa = tuple(seminata)
 

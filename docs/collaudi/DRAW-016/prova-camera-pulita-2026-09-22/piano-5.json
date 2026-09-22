@@ -1,0 +1,138 @@
+{
+  "formato": "A3",
+  "note": [
+    "Tutte le coordinate sono traslate rigidamente di (+20, +105): con pezzi a y negativo o vicino a zero il motore dichiara ogni tratta 'bloccata' (m1, m8, m10 non si instradavano). Contano solo le posizioni relative.",
+    "Il disegno nasce dalle autostrade (§2): pdc-1, deviatrice e volano stanno allo stesso y. Mandata (+5) e ritorno (+20) corrono dritti dalla pompa capofila al volano, a 15 mm, senza una piega (D-159, B1, B11).",
+    "Per averle dritte cascata-mandata-b sta SULLA mandata di pdc-1, che lo attraversa, e la colonna di mandata gli arriva da sotto; cascata-ritorno-a sta sul ritorno di pdc-1. Se la mandata uscisse dalla testa della colonna, salirebbe 5 mm sopra pdc-1 e con l'interasse 15 del volano il ritorno farebbe un gradino (provato: 2 pieghe in piu' su m2).",
+    "Collettori della cascata su due verticali parallele a 10 mm (B3, B9), raccordi allineati: la mandata e' la piu' vicina alle pompe. Col ritorno vicino, le mandate di pdc-2 e pdc-3 attraversano la verticale del ritorno e B3 dice di scambiarli. Misurato: 5 incroci con la mandata vicina, 6 col ritorno vicino.",
+    "Bollitore sopra il volano, nella fascia degli accumuli (A1): la terza via della deviatrice sale (D-168/D-169), il ritorno della serpentina scende su ritorno-primario, 10 mm a destra, e sopra il bollitore resta libero per l'ACS. Il ritorno della serpentina scavalca la mandata: e' un incrocio obbligato (un anello attaccato alla mandata e al ritorno, fuori dalla loro striscia).",
+    "Pettine (B12): utenze impilate con passo 45, lo stesso delle pompe, cosi' i ritorni delle utenze cadono alle quote dei ritorni delle pompe (y = 125, 170, 215 nel piano). Colonna di ritorno a 15 mm dal volano, colonna di mandata 10 mm piu' in la', verso le utenze: con l'ordine opposto le mandate delle utenze attraversano la colonna di ritorno (B3). Misurato: 5 incroci e 9 pieghe contro 6 e 10.",
+    "La batteria ha il ritorno sulla quota del ritorno del volano: il ritorno e' dritto, e lo scarto di interasse fra terminale (10, D-167) e volano (15) lo prende la testa della colonna di mandata, con la sua piega.",
+    "Miscelatrice in linea in fondo alla colonna di mandata, terza via verso la colonna di ritorno: ritorno-radiante sta sulla colonna, i tre raccordi di ritorno delle utenze sono su una verticale sola (B3) e il bypass e' lungo 2.5 mm.",
+    "Coppie corte (30 mm) e passo 45: nessun ritorno corre sopra la mandata dell'utenza sotto (B10). Con passo 30 e coppie da 40 mm il rilievo RETURN_RUNS_ABOVE_ITS_SUPPLY usciva.",
+    "Rotazione scritta solo dove la deduzione non arriva: deviatrice e miscelatrice (tre vie, D-168) e secondario-mandata-a, per cui la deduzione sceglie 180 e la mandata del volano entra di lato con un gradino. Gli altri raccordi e il confine ACS li gira la deduzione.",
+    "Rilievi residui, nessuno bloccante: HIGHWAY_IS_NOT_STRAIGHT x7 e SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1. Sono le pieghe d'angolo in fondo ai collettori (m6, m9, m18+m20), le L fra porte perpendicolari del bollitore (m12, m14), l'anello del ricircolo (m28-m30), la testa della colonna di mandata (m15) e l'interasse 10/15 della batteria contro il volano. Sono pieghe fra porte perpendicolari o d'angolo di collettore; per m15 l'alternativa (batteria sulla quota di mandata del volano) sposta il gradino sul ritorno e il motore assegna male i bracci di secondario-ritorno-b (provato: peggio).",
+    "A3: su A4 il pavimento radiante non entra nell'area di disegno; il motore non segnala SHEET_LARGER_THAN_NEEDED."
+  ],
+  "pezzi": {
+    "pdc-1": {
+      "x": 20,
+      "y": 105,
+      "regola": "A2/D-159 — capofila della pila: la sua mandata (+5) e il suo ritorno (+20) danno le quote delle due autostrade"
+    },
+    "pdc-2": {
+      "x": 20,
+      "y": 150,
+      "regola": "A2 — impilata sotto pdc-1, stessa x, passo 45"
+    },
+    "pdc-3": {
+      "x": 20,
+      "y": 195,
+      "regola": "A2 — impilata sotto pdc-2, stessa x, passo 45"
+    },
+    "cascata-mandata-b": {
+      "x": 70.0,
+      "y": 107.5,
+      "regola": "B1 — sulla mandata di pdc-1, che lo attraversa dritta fino al volano; la colonna di mandata gli arriva da sotto"
+    },
+    "cascata-mandata-a": {
+      "x": 70.0,
+      "y": 152.5,
+      "regola": "B3 — stessa verticale di cascata-mandata-b, alla quota della mandata di pdc-2"
+    },
+    "cascata-ritorno-a": {
+      "x": 80.0,
+      "y": 122.5,
+      "regola": "B1 — sul ritorno di pdc-1, che lo attraversa dritto fino al volano"
+    },
+    "cascata-ritorno-b": {
+      "x": 80.0,
+      "y": 167.5,
+      "regola": "B3 — stessa verticale di cascata-ritorno-a, alla quota del ritorno di pdc-2"
+    },
+    "deviatrice": {
+      "x": 95,
+      "y": 105,
+      "rotazione": 180,
+      "specchio": true,
+      "regola": "D-168/D-169 — sull'autostrada di mandata (in e out_a a +5); terza via in alto, verso il bollitore che sta sopra"
+    },
+    "ritorno-primario": {
+      "x": 107.5,
+      "y": 122.5,
+      "regola": "B8/§6 — sull'autostrada di ritorno, 10 mm a destra della terza via della deviatrice: le due discese del bollitore corrono parallele e non si incrociano"
+    },
+    "volano": {
+      "x": 125,
+      "y": 105,
+      "regola": "D-159 — stesso y di pdc-1: primary_in e primary_out sulle quote delle due autostrade, zero pieghe"
+    },
+    "bollitore": {
+      "x": 125,
+      "y": 50,
+      "regola": "A1 — fascia degli accumuli, impilato sopra il volano; sopra di lui resta libero per l'ACS"
+    },
+    "innesto-ricircolo": {
+      "x": 130.0,
+      "y": 37.5,
+      "regola": "A4 — addosso all'uscita ACS del bollitore, sulla sua verticale"
+    },
+    "presa-ricircolo": {
+      "x": 145.0,
+      "y": 22.5,
+      "regola": "A4/B9 — 15 mm a destra e 15 mm sopra l'innesto: mandata ACS e ricircolo fanno un rettangolo, non un'asola a 2.5 mm"
+    },
+    "utenze": {
+      "x": 157.5,
+      "y": 22.5,
+      "regola": "A4 — confine ACS addosso al bollitore, in fondo alla mandata ACS"
+    },
+    "secondario-ritorno-b": {
+      "x": 162.5,
+      "y": 122.5,
+      "regola": "B1/B12 — in testa alla colonna di ritorno, sulla quota del ritorno del volano (+20)"
+    },
+    "secondario-mandata-a": {
+      "x": 172.5,
+      "y": 112.5,
+      "rotazione": 90,
+      "regola": "B12 — colonna di mandata, alla quota di mandata della batteria; bracci alto/destra/basso (con la rotazione dedotta la mandata del volano entrava di lato con un gradino)"
+    },
+    "secondario-mandata-b": {
+      "x": 172.5,
+      "y": 157.5,
+      "regola": "B12 — colonna di mandata, alla quota di mandata dei ventilconvettori"
+    },
+    "secondario-ritorno-a": {
+      "x": 162.5,
+      "y": 167.5,
+      "regola": "B12 — colonna di ritorno, alla quota di ritorno dei ventilconvettori"
+    },
+    "miscelatrice-radiante": {
+      "x": 170,
+      "y": 180,
+      "rotazione": 90,
+      "regola": "D-168 — in linea in fondo alla colonna di mandata (hot_in in alto, out in basso); terza via a sinistra, verso la colonna di ritorno"
+    },
+    "ritorno-radiante": {
+      "x": 162.5,
+      "y": 182.5,
+      "regola": "B3/B12 — sulla colonna di ritorno, di fronte alla terza via della miscelatrice: bypass di 2.5 mm e i tre raccordi di ritorno sulla stessa verticale"
+    },
+    "batteria-uta": {
+      "x": 205,
+      "y": 112.5,
+      "regola": "B12/B1 — prima utenza del pettine; il suo ritorno (+12.5) cade sulla quota del ritorno del volano e corre dritto"
+    },
+    "ventilconvettori": {
+      "x": 205,
+      "y": 157.5,
+      "regola": "B12 — impilati sotto la batteria, stessa x, passo 45: il ritorno cade alla quota del ritorno di pdc-2"
+    },
+    "pavimento-radiante": {
+      "x": 205,
+      "y": 202.5,
+      "regola": "B12 — impilato sotto i ventilconvettori, stessa x, passo 45: il ritorno cade alla quota del ritorno di pdc-3"
+    }
+  }
+}
