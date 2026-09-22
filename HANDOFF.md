@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-21, a `DRAW-015` **fuso** e al punto 0 di `DRAW-016` **fatto**
+**Aggiornato:** 2026-09-22, a `DRAW-016` punto 0 **fatto** e a **D-169** e **D-170** fuse su `main`
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**

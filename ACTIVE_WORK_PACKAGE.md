@@ -68,7 +68,7 @@ tubi**, non una fonte di convenzione, e le loro discordanze non sono un problema
 
 ---
 
-## ✅ Dove siamo arrivati il 21 settembre, e da dove si riparte
+## ✅ Dove siamo arrivati al 22 settembre, e da dove si riparte
 
 **Il punto 0 e il punto 0bis sono fatti, e misurati.** La prova sta in
 [`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/),
@@ -81,6 +81,7 @@ il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAP
 | **B12 si compone** | impianto 5 da **A1 ad A3**, impianto 4 da **A2 ad A4**, zero cedute e zero bloccanti |
 | **B10 non accusa più tavole giuste** | il difetto trovato da un agente, corretto in `_affiancamenti`, con due prove |
 | **le giaciture sono otto** | **D-169**: `specchio` nel piano, e una prova che verifica su tutta la libreria in tutte e otto che corpo e porte coincidano |
+| **il vuoto non è un difetto** | **D-170**: A4 vince sempre, D3 diventa la scelta del foglio, e i due rilievi che spingevano nel verso sbagliato sono tolti |
 
 **Da dove riparte la prossima sessione, in quest'ordine:**
 
