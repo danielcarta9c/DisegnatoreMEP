@@ -459,12 +459,17 @@ rilievo che nomina **il pettine**: una ramificazione dove due colonne adiacenti 
 utenze con coppie affiancate.
 *Tavola:* impianto 5, `tavola-5-come-andava-fatta.webp`.
 *Figura di spiegazione:* `docs/collaudi/DRAW-016/figure/b12-il-pettine.svg` — il pettine
-accanto al secondario dell'impianto 5, disegnata il 22 settembre 2026 perché il PO ha detto
-«**B12 non l'ho capita, dovrei vederla disegnata per capire**». Mostra anche dove l'impianto 5
-non ci sta: la mandata serve il radiante **per ultimo** e il ritorno lo raccoglie **per
-primo**, attaccato al volano, quindi il suo ritorno risale tutta la colonna su una **terza
-verticale**. **Se sia un ritorno invertito voluto o un ordine sbagliato nel grafo è una
-domanda aperta al PO**, ed è contenuto MEP.
+accanto al secondario dell'impianto 5 **com'era stato letto male**, disegnata il 22 settembre
+2026 perché il PO ha detto «**B12 non l'ho capita, dovrei vederla disegnata per capire**».
+
+⛔ **Il pettine presuppone che il ritorno specchi la mandata, e non è un'ipotesi: è la regola
+della distribuzione** (**D-172**). Sull'impianto 5 non ci stava perché il grafo aveva un
+**ritorno inverso che nessuno aveva chiesto**: la mandata serviva il radiante per ultimo e il
+ritorno lo raccoglieva per primo. L'aveva messo la skill, scrivendo le catene di raccordi nel
+verso del flusso, e la sessione l'ha portato al PO come una domanda — «è voluto?». **Non era
+una domanda.** Il PO: «va disegnato come te l'ho detto io… se il progettista vuole due
+dorsali distinte lo dice». Corretto nel grafo, e la regola sta nelle istruzioni di «Capire»,
+§4.4.
 
 > ### I due impedimenti che il PO ha tolto nella stessa risposta
 >

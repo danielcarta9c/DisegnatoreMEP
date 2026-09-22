@@ -83,6 +83,7 @@ il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAP
 | **le giaciture sono otto** | **D-169**: `specchio` nel piano, e una prova che verifica su tutta la libreria in tutte e otto che corpo e porte coincidano |
 | **il vuoto non è un difetto** | **D-170**: A4 vince sempre, D3 diventa la scelta del foglio, e i due rilievi che spingevano nel verso sbagliato sono tolti |
 | **B1 non è una soglia** | **D-171**: tolti `turns_allowed` e `TOO_MANY_CROSSINGS`; al loro posto il pavimento dei simboli, e il confronto sta nel punteggio |
+| **la skill non progetta la distribuzione** | **D-172**: l'ordine è del progettista e il ritorno specchia la mandata; l'impianto 5 aveva un ritorno inverso inventato su **tutt'e due** i collettori, corretto, e la regola sta in «Capire» §4.4 |
 
 **Da dove riparte la prossima sessione, in quest'ordine:**
 
@@ -103,12 +104,12 @@ verificate:
   Il bilancio non esiste più; al suo posto il **pavimento** delle facce, che su un collettore
   verticale vale due e su una tre vie sulla terza via vale una. *«Il numero è irraggiungibile,
   non il disegno è sbagliato»* — detto da due agenti su due, ed era vero;
-- **B12 presuppone una ramificazione simmetrica**, e l'impianto 5 ha un ritorno invertito: o la
-  terza colonna è vera, o il grafo va guardato. **Contenuto MEP**. ⚠ **Il PO ha chiesto di
-  vederla disegnata** — «B12 non l'ho capita, dovrei vederla disegnata per capire» — e la
-  figura è [`docs/collaudi/DRAW-016/figure/b12-il-pettine.svg`](docs/collaudi/DRAW-016/figure/b12-il-pettine.svg):
-  il pettine accanto all'impianto 5, con la terza verticale evidenziata. **La domanda è ancora
-  aperta**;
+- ~~**B12 presuppone una ramificazione simmetrica**, e l'impianto 5 ha un ritorno invertito~~ —
+  **chiusa dal PO il 22 settembre** (**D-172**), e **non doveva essere una domanda**: «va
+  disegnato come te l'ho detto io… **la skill non deve progettare** o modificare le decisioni
+  del progettista». Il ritorno inverso l'aveva inventato la skill — §4.4 di «Capire» diceva
+  quanti raccordi servono e non in che ordine — ed era **anche sul primario**. Corretti i due
+  collettori dell'impianto 5 e scritta la regola in §4.4;
 - ~~**D3 spinge nel verso sbagliato**~~ — **chiuso dal PO il 22 settembre** (**D-170**): A4
   vince sempre, si tiene il disegno stretto e si prende il foglio più piccolo che lo contiene,
   **il vuoto non è un difetto**. `DRAWING_ALL_ON_ONE_SIDE` e `SHEET_BARELY_FILLED` sono stati

@@ -9,12 +9,12 @@ rifare non si può correggere.
 
 | figura | perché esiste | stato |
 |---|---|---|
-| `b12-il-pettine` | Il PO, il 22 settembre 2026: «**B12 non l'ho capita, mi spiace, dovrei vederla disegnata per capire**». Mostra il pettine accanto all'impianto 5, e dove il secondario dell'impianto 5 non ci sta: la mandata serve il radiante **per ultimo** e il ritorno lo raccoglie **per primo**, quindi serve una terza verticale | **domanda aperta al PO** — ritorno invertito voluto, o ordine sbagliato nel grafo? |
+| `b12-il-pettine` | Il PO, il 22 settembre 2026: «**B12 non l'ho capita, mi spiace, dovrei vederla disegnata per capire**». Mostra il pettine accanto al secondario dell'impianto 5 **com'era stato letto male**: la mandata serviva il radiante **per ultimo** e il ritorno lo raccoglieva **per primo**, e serviva una terza verticale | **chiusa, D-172.** Non era una domanda da fare al PO: il ritorno inverso l'aveva inventato la skill. Il riquadro B resta come registrazione dell'errore |
 
 ## Come si rifà una figura
 
 ```sh
-python3 docs/collaudi/DRAW-016/figure/b12-il-pettine.py   # scrive l'SVG in /tmp
+python3 docs/collaudi/DRAW-016/figure/b12-il-pettine.py   # scrive l'SVG accanto a se'
 scripts/to-pdf.sh <svg> <pdf>
 ```
 

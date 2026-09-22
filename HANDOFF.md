@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-22, a `DRAW-016` punto 0 **fatto** e a **D-169**, **D-170** e **D-171** su `main`
+**Aggiornato:** 2026-09-22, a `DRAW-016` punto 0 **fatto** e a **D-169**, **D-170**, **D-171** e **D-172**
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -54,6 +54,14 @@ E le due cose che ha notato nella stessa risposta sono **i due impedimenti** a q
   **facce dei simboli attraversati impongono**, invariante per giacitura. Quello che resta
   comparativo sta nel **punteggio** — `pieghe` e `incroci` — non fra i rilievi. **Chiude B1
   contro B3** e la metà misurabile di **B7**.
+- **D-172** — ⛔ **la skill non progetta la distribuzione.** Il PO: «va disegnato come te l'ho
+  detto io… **se il progettista vuole due dorsali distinte lo dice**… questo è un **errore di
+  impostazione della skill**». L'**ordine** delle utenze e delle macchine è del progettista, e
+  **il ritorno specchia la mandata**; un ritorno inverso o due dorsali si disegnano solo se lui
+  li chiede. L'impianto 5 ne aveva uno **inventato su tutt'e due i collettori** — nato in
+  «Capire» §4.4, che diceva quanti raccordi e non in che ordine — e la sessione l'aveva
+  portato al PO come una domanda. **Una scelta fatta dalla skill non si rigira al progettista
+  come se fosse sua.**
 
 ⚠ **Il costo è dichiarato e va saputo prima di misurare**: i cinque piani a mano sono composti
 per terminali passanti, e **la suite è passata da 38 rosse a 47**. Le nove nuove sono una cosa

@@ -1,0 +1,1468 @@
+{
+  "assumptions": [
+    {
+      "id": "a1",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "Il testo dice che dal volume partono tre circuiti secondari e non nomina un collettore: si sono usate due ripartizioni in catena sulla mandata e due confluenze sul ritorno, come richiede la topologia a tre rami."
+    },
+    {
+      "id": "a2",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "Il circuito radiante e' dichiarato miscelato: la miscelatrice a tre vie ricircola una parte del ritorno radiante sul proprio ingresso freddo. Il testo non specifica il dettaglio del gruppo di miscelazione, quindi questa chiusura e' dichiarata come assunzione."
+    },
+    {
+      "id": "a3",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "Il ritorno del ricircolo e' innestato sulla mandata sanitaria: il testo dice solo che il ricircolo e' collegato al bollitore."
+    },
+    {
+      "id": "a4",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "La cascata rientra su tre ritorni distinti con due confluenze: il testo non descrive come le macchine rientrano."
+    }
+  ],
+  "components": [
+    {
+      "definition_id": "ahu-coil",
+      "evidence": [],
+      "id": "batteria-uta",
+      "properties": {},
+      "tag": "BAT-01"
+    },
+    {
+      "definition_id": "dhw-cylinder",
+      "evidence": [],
+      "id": "bollitore",
+      "properties": {},
+      "tag": "BOL-01"
+    },
+    {
+      "definition_id": "tee-junction",
+      "evidence": [],
+      "id": "cascata-mandata-a",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "tee-junction",
+      "evidence": [],
+      "id": "cascata-mandata-b",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "tee-split",
+      "evidence": [],
+      "id": "cascata-ritorno-a",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "tee-split",
+      "evidence": [],
+      "id": "cascata-ritorno-b",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "diverting-valve-3way",
+      "evidence": [],
+      "id": "deviatrice",
+      "properties": {},
+      "tag": "VD-01"
+    },
+    {
+      "definition_id": "tee-junction-dhw",
+      "evidence": [],
+      "id": "innesto-ricircolo",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "mixing-valve-3way",
+      "evidence": [],
+      "id": "miscelatrice-radiante",
+      "properties": {},
+      "tag": "VM-01"
+    },
+    {
+      "definition_id": "underfloor-panel",
+      "evidence": [],
+      "id": "pavimento-radiante",
+      "properties": {},
+      "tag": "PAV-01"
+    },
+    {
+      "definition_id": "heat-pump-air-water",
+      "evidence": [],
+      "id": "pdc-1",
+      "properties": {},
+      "tag": "PDC-01"
+    },
+    {
+      "definition_id": "heat-pump-air-water",
+      "evidence": [],
+      "id": "pdc-2",
+      "properties": {},
+      "tag": "PDC-02"
+    },
+    {
+      "definition_id": "heat-pump-air-water",
+      "evidence": [],
+      "id": "pdc-3",
+      "properties": {},
+      "tag": "PDC-03"
+    },
+    {
+      "definition_id": "tee-split-dhw",
+      "evidence": [],
+      "id": "presa-ricircolo",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "tee-junction",
+      "evidence": [],
+      "id": "ritorno-primario",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "tee-split",
+      "evidence": [],
+      "id": "ritorno-radiante",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "tee-split",
+      "evidence": [],
+      "id": "secondario-mandata-a",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "tee-split",
+      "evidence": [],
+      "id": "secondario-mandata-b",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "tee-junction",
+      "evidence": [],
+      "id": "secondario-ritorno-a",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "tee-junction",
+      "evidence": [],
+      "id": "secondario-ritorno-b",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "dhw-draw-off",
+      "evidence": [],
+      "id": "utenze",
+      "properties": {},
+      "tag": "ACS-01"
+    },
+    {
+      "definition_id": "fan-coil",
+      "evidence": [],
+      "id": "ventilconvettori",
+      "properties": {},
+      "tag": "VC-01"
+    },
+    {
+      "definition_id": "buffer-four-port",
+      "evidence": [],
+      "id": "volano",
+      "properties": {},
+      "tag": "VOL-01"
+    }
+  ],
+  "connections": [
+    {
+      "id": "m1",
+      "endpoint_a": {
+        "component_id": "pdc-1",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "cascata-mandata-b",
+        "port_id": "c"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m2",
+      "endpoint_a": {
+        "component_id": "ritorno-primario",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "cascata-ritorno-a",
+        "port_id": "a"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m3",
+      "endpoint_a": {
+        "component_id": "cascata-ritorno-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-1",
+        "port_id": "water_return"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m4",
+      "endpoint_a": {
+        "component_id": "cascata-ritorno-a",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "cascata-ritorno-b",
+        "port_id": "a"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m5",
+      "endpoint_a": {
+        "component_id": "cascata-ritorno-b",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-2",
+        "port_id": "water_return"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m6",
+      "endpoint_a": {
+        "component_id": "cascata-ritorno-b",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-3",
+        "port_id": "water_return"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m7",
+      "endpoint_a": {
+        "component_id": "pdc-2",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "cascata-mandata-a",
+        "port_id": "c"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m8",
+      "endpoint_a": {
+        "component_id": "cascata-mandata-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "cascata-mandata-b",
+        "port_id": "a"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m9",
+      "endpoint_a": {
+        "component_id": "pdc-3",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "cascata-mandata-a",
+        "port_id": "a"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m10",
+      "endpoint_a": {
+        "component_id": "cascata-mandata-b",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "deviatrice",
+        "port_id": "in"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m11",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_a"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "primary_in"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m12",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_b"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "coil_in"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m13",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno-primario",
+        "port_id": "a"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m14",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "coil_out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno-primario",
+        "port_id": "c"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m15",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "secondario-mandata-a",
+        "port_id": "a"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m16",
+      "endpoint_a": {
+        "component_id": "secondario-mandata-b",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "miscelatrice-radiante",
+        "port_id": "hot_in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m17",
+      "endpoint_a": {
+        "component_id": "miscelatrice-radiante",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "pavimento-radiante",
+        "port_id": "in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m18",
+      "endpoint_a": {
+        "component_id": "pavimento-radiante",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno-radiante",
+        "port_id": "a"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m19",
+      "endpoint_a": {
+        "component_id": "ritorno-radiante",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "miscelatrice-radiante",
+        "port_id": "cold_in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m20",
+      "endpoint_a": {
+        "component_id": "ritorno-radiante",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "secondario-ritorno-a",
+        "port_id": "a"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m21",
+      "endpoint_a": {
+        "component_id": "secondario-ritorno-b",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "secondary_in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m22",
+      "endpoint_a": {
+        "component_id": "secondario-mandata-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "batteria-uta",
+        "port_id": "in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m23",
+      "endpoint_a": {
+        "component_id": "batteria-uta",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "secondario-ritorno-b",
+        "port_id": "c"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m24",
+      "endpoint_a": {
+        "component_id": "secondario-mandata-a",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "secondario-mandata-b",
+        "port_id": "a"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m25",
+      "endpoint_a": {
+        "component_id": "secondario-mandata-b",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ventilconvettori",
+        "port_id": "in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m26",
+      "endpoint_a": {
+        "component_id": "ventilconvettori",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "secondario-ritorno-a",
+        "port_id": "c"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m27",
+      "endpoint_a": {
+        "component_id": "secondario-ritorno-a",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "secondario-ritorno-b",
+        "port_id": "a"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m28",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "innesto-ricircolo",
+        "port_id": "a"
+      },
+      "network_id": "sanitaria",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m29",
+      "endpoint_a": {
+        "component_id": "innesto-ricircolo",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "presa-ricircolo",
+        "port_id": "a"
+      },
+      "network_id": "sanitaria",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m30",
+      "endpoint_a": {
+        "component_id": "innesto-ricircolo",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "presa-ricircolo",
+        "port_id": "c"
+      },
+      "network_id": "sanitaria",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m31",
+      "endpoint_a": {
+        "component_id": "presa-ricircolo",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "utenze",
+        "port_id": "a"
+      },
+      "network_id": "sanitaria",
+      "evidence": [],
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "client": "Nove C",
+    "commission_code": "PROVA",
+    "issue_date": "2026-08-06",
+    "project_id": "prova-5-cascata-tre-pdc",
+    "project_name": "Tre pompe di calore in cascata con tre circuiti secondari e ACS",
+    "revision": "00"
+  },
+  "networks": [
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "fredda",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "fredda-filling-unit-cascata-ritorno-a-a",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "primario",
+      "medium": "heating_water",
+      "name": "Circuito primario"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "sanitaria",
+      "medium": "domestic_hot_water",
+      "name": "Acqua calda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "secondario",
+      "medium": "heating_water",
+      "name": "Circuito secondario"
+    }
+  ],
+  "plant_regime": "over_35_kw",
+  "rule_applications": [
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "air-separator-cascata-mandata-b-b",
+        "p5-a",
+        "p5-b"
+      ],
+      "id": "applied-air-separator-cascata-mandata-b-b",
+      "rule_id": "air-release-where-the-water-is-hottest",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "dhw-safety-group-bollitore-cold-in",
+        "w1-b-b-a",
+        "w1-b-b-b"
+      ],
+      "id": "applied-dhw-safety-group-bollitore-cold-in",
+      "rule_id": "safety-group-on-the-stored-volume",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "dirt-separator-cascata-ritorno-a-a",
+        "p10-a",
+        "p10-b"
+      ],
+      "id": "applied-dirt-separator-cascata-ritorno-a-a",
+      "rule_id": "dirt-separation-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "drain-connection-cold-bollitore-cold-in",
+        "tee-drain-connection-cold-bollitore-cold-in",
+        "w1-b-a",
+        "w1-b-b",
+        "stub-drain-connection-cold-bollitore-cold-in"
+      ],
+      "id": "applied-drain-connection-cold-bollitore-cold-in",
+      "rule_id": "let-what-holds-its-own-volume-empty",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "drain-connection-volano-primary-in",
+        "stub-drain-connection-volano-primary-in"
+      ],
+      "id": "applied-drain-connection-volano-primary-in",
+      "rule_id": "let-what-holds-its-own-volume-empty",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "expansion-connection-cascata-ritorno-a-a",
+        "tee-expansion-connection-cascata-ritorno-a-a",
+        "p10-b-a",
+        "p10-b-b",
+        "stub-expansion-connection-cascata-ritorno-a-a"
+      ],
+      "id": "applied-expansion-connection-cascata-ritorno-a-a",
+      "rule_id": "expansion-on-closed-circuit",
+      "rule_version": "4.1.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "filling-unit-cascata-ritorno-a-a",
+        "inlet-filling-unit-cascata-ritorno-a-a",
+        "tee-filling-unit-cascata-ritorno-a-a-b",
+        "inlet-filling-unit-cascata-ritorno-a-a-a",
+        "fredda-filling-unit-cascata-ritorno-a-a",
+        "p10-b-b-a",
+        "p10-b-b-b",
+        "stub-filling-unit-cascata-ritorno-a-a-b"
+      ],
+      "id": "applied-filling-unit-cascata-ritorno-a-a",
+      "rule_id": "filling-unit-on-return",
+      "rule_version": "5.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "mixing-valve-thermostatic-bollitore-dhw-out",
+        "w2-a",
+        "w2-b"
+      ],
+      "id": "applied-mixing-valve-thermostatic-bollitore-dhw-out",
+      "rule_id": "dhw-mixing-on-draw-off",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "pressure-gauge-cascata-ritorno-a-a",
+        "tee-pressure-gauge-cascata-ritorno-a-a",
+        "p10-b-b-b-a",
+        "p10-b-b-b-b",
+        "stub-pressure-gauge-cascata-ritorno-a-a"
+      ],
+      "id": "applied-pressure-gauge-cascata-ritorno-a-a",
+      "rule_id": "gauge-where-the-plant-is-charged",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "strainer-pdc-1-water-return",
+        "p11-a",
+        "p11-b"
+      ],
+      "id": "applied-strainer-pdc-1-water-return",
+      "rule_id": "debris-guard-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "strainer-pdc-2-water-return",
+        "p13-a",
+        "p13-b"
+      ],
+      "id": "applied-strainer-pdc-2-water-return",
+      "rule_id": "debris-guard-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "strainer-pdc-3-water-return",
+        "p14-a",
+        "p14-b"
+      ],
+      "id": "applied-strainer-pdc-3-water-return",
+      "rule_id": "debris-guard-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "thermometer-pdc-1-water-supply",
+        "tee-thermometer-pdc-1-water-supply",
+        "p1-a",
+        "p1-b",
+        "stub-thermometer-pdc-1-water-supply"
+      ],
+      "id": "applied-thermometer-pdc-1-water-supply",
+      "rule_id": "flow-temperature-where-heat-enters-the-water",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "thermometer-pdc-2-water-supply",
+        "tee-thermometer-pdc-2-water-supply",
+        "p2-a",
+        "p2-b",
+        "stub-thermometer-pdc-2-water-supply"
+      ],
+      "id": "applied-thermometer-pdc-2-water-supply",
+      "rule_id": "flow-temperature-where-heat-enters-the-water",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "thermometer-pdc-3-water-supply",
+        "tee-thermometer-pdc-3-water-supply",
+        "p4-a",
+        "p4-b",
+        "stub-thermometer-pdc-3-water-supply"
+      ],
+      "id": "applied-thermometer-pdc-3-water-supply",
+      "rule_id": "flow-temperature-where-heat-enters-the-water",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-gauge-cock-3way-pressure-gauge-cascata-ritorno-a-a-a",
+        "stub-pressure-gauge-cascata-ritorno-a-a-a",
+        "stub-pressure-gauge-cascata-ritorno-a-a-b"
+      ],
+      "id": "applied-valve-gauge-cock-3way-pressure-gauge-cascata-ritorno-a-a-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-air-separator-cascata-mandata-b-b-a",
+        "p5-a-a",
+        "p5-a-b"
+      ],
+      "id": "applied-valve-isolation-air-separator-cascata-mandata-b-b-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-air-separator-cascata-mandata-b-b-b",
+        "p5-b-a",
+        "p5-b-b"
+      ],
+      "id": "applied-valve-isolation-air-separator-cascata-mandata-b-b-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-batteria-uta-in",
+        "s3-a",
+        "s3-b"
+      ],
+      "id": "applied-valve-isolation-batteria-uta-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-batteria-uta-out",
+        "s4-a",
+        "s4-b"
+      ],
+      "id": "applied-valve-isolation-batteria-uta-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-bollitore-coil-in",
+        "p7-a",
+        "p7-b"
+      ],
+      "id": "applied-valve-isolation-bollitore-coil-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-bollitore-coil-out",
+        "p9-a",
+        "p9-b"
+      ],
+      "id": "applied-valve-isolation-bollitore-coil-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-circolatore-fancoil-a",
+        "s6-a",
+        "s6-b"
+      ],
+      "id": "applied-valve-isolation-circolatore-fancoil-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-circolatore-radiante-b",
+        "s12-a",
+        "s12-b"
+      ],
+      "id": "applied-valve-isolation-circolatore-radiante-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-circolatore-uta-a",
+        "s2-a",
+        "s2-b"
+      ],
+      "id": "applied-valve-isolation-circolatore-uta-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-acquedotto-a",
+        "w1-a",
+        "w1-b"
+      ],
+      "id": "applied-valve-isolation-dhw-acquedotto-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-bollitore-dhw-out",
+        "w2-a-a",
+        "w2-a-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-bollitore-dhw-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-mixing-valve-thermostatic-bollitore-dhw-out-b",
+        "w2-b-a",
+        "w2-b-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-mixing-valve-thermostatic-bollitore-dhw-out-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-ricircolo-a",
+        "w7-a",
+        "w7-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-ricircolo-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-ricircolo-b",
+        "w4-a",
+        "w4-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-ricircolo-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-utenze-a",
+        "w6-a",
+        "w6-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-utenze-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dirt-separator-cascata-ritorno-a-a-a",
+        "p10-a-4-a",
+        "p10-a-4-b"
+      ],
+      "id": "applied-valve-isolation-dirt-separator-cascata-ritorno-a-a-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dirt-separator-cascata-ritorno-a-a-b",
+        "p10-a-5-a",
+        "p10-a-5-b"
+      ],
+      "id": "applied-valve-isolation-dirt-separator-cascata-ritorno-a-a-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-locked-open-expansion-connection-cascata-ritorno-a-a-a",
+        "stub-expansion-connection-cascata-ritorno-a-a-a",
+        "stub-expansion-connection-cascata-ritorno-a-a-b"
+      ],
+      "id": "applied-valve-isolation-locked-open-expansion-connection-cascata-ritorno-a-a-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-miscelatrice-radiante-cold-in",
+        "s14-a",
+        "s14-b"
+      ],
+      "id": "applied-valve-isolation-miscelatrice-radiante-cold-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-miscelatrice-radiante-hot-in",
+        "s10-a",
+        "s10-b"
+      ],
+      "id": "applied-valve-isolation-miscelatrice-radiante-hot-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-miscelatrice-radiante-out",
+        "s11-a",
+        "s11-b"
+      ],
+      "id": "applied-valve-isolation-miscelatrice-radiante-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-pavimento-radiante-out",
+        "s13-a",
+        "s13-b"
+      ],
+      "id": "applied-valve-isolation-pavimento-radiante-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-pdc-1-water-supply",
+        "p1-a-a-a",
+        "p1-a-a-b"
+      ],
+      "id": "applied-valve-isolation-pdc-1-water-supply",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-pdc-2-water-supply",
+        "p2-a-a-a",
+        "p2-a-a-b"
+      ],
+      "id": "applied-valve-isolation-pdc-2-water-supply",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-pdc-3-water-supply",
+        "p4-a-a-a",
+        "p4-a-a-b"
+      ],
+      "id": "applied-valve-isolation-pdc-3-water-supply",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-strainer-pdc-1-water-return-a",
+        "p11-a-a",
+        "p11-a-b"
+      ],
+      "id": "applied-valve-isolation-strainer-pdc-1-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-strainer-pdc-2-water-return-a",
+        "p13-a-a",
+        "p13-a-b"
+      ],
+      "id": "applied-valve-isolation-strainer-pdc-2-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-strainer-pdc-3-water-return-a",
+        "p14-a-a",
+        "p14-a-b"
+      ],
+      "id": "applied-valve-isolation-strainer-pdc-3-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-ventilconvettori-in",
+        "s7-a",
+        "s7-b"
+      ],
+      "id": "applied-valve-isolation-ventilconvettori-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-ventilconvettori-out",
+        "s8-a",
+        "s8-b"
+      ],
+      "id": "applied-valve-isolation-ventilconvettori-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-volano-primary-in",
+        "p6-a",
+        "p6-b"
+      ],
+      "id": "applied-valve-isolation-volano-primary-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-volano-primary-out",
+        "p8-a",
+        "p8-b"
+      ],
+      "id": "applied-valve-isolation-volano-primary-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-volano-secondary-in",
+        "s16-a",
+        "s16-b"
+      ],
+      "id": "applied-valve-isolation-volano-secondary-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-volano-secondary-out",
+        "s1-a",
+        "s1-b"
+      ],
+      "id": "applied-valve-isolation-volano-secondary-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-safety-pdc-1-water-supply",
+        "tee-valve-safety-pdc-1-water-supply",
+        "p1-a-a",
+        "p1-a-b",
+        "stub-valve-safety-pdc-1-water-supply"
+      ],
+      "id": "applied-valve-safety-pdc-1-water-supply",
+      "rule_id": "safety-relief-where-heat-enters-the-water",
+      "rule_version": "3.1.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-safety-pdc-2-water-supply",
+        "tee-valve-safety-pdc-2-water-supply",
+        "p2-a-a",
+        "p2-a-b",
+        "stub-valve-safety-pdc-2-water-supply"
+      ],
+      "id": "applied-valve-safety-pdc-2-water-supply",
+      "rule_id": "safety-relief-where-heat-enters-the-water",
+      "rule_version": "3.1.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-safety-pdc-3-water-supply",
+        "tee-valve-safety-pdc-3-water-supply",
+        "p4-a-a",
+        "p4-a-b",
+        "stub-valve-safety-pdc-3-water-supply"
+      ],
+      "id": "applied-valve-safety-pdc-3-water-supply",
+      "rule_id": "safety-relief-where-heat-enters-the-water",
+      "rule_version": "3.1.0",
+      "status": "approved"
+    }
+  ],
+  "schema_version": "1.1.0",
+  "sheets": [],
+  "subsystems": [
+    {
+      "component_ids": [
+        "volano",
+        "bollitore",
+        "acquedotto",
+        "utenze",
+        "valve-isolation-dhw-acquedotto-a",
+        "valve-isolation-dhw-hot-utenze-a",
+        "mixing-valve-thermostatic-bollitore-dhw-out",
+        "drain-connection-cold-bollitore-cold-in",
+        "tee-drain-connection-cold-bollitore-cold-in",
+        "drain-connection-volano-primary-in",
+        "dhw-safety-group-bollitore-cold-in",
+        "valve-isolation-volano-primary-in",
+        "valve-isolation-volano-primary-out",
+        "valve-isolation-bollitore-coil-in",
+        "valve-isolation-bollitore-coil-out",
+        "valve-isolation-dhw-hot-bollitore-dhw-out",
+        "valve-isolation-dhw-hot-mixing-valve-thermostatic-bollitore-dhw-out-b",
+        "valve-isolation-volano-secondary-out",
+        "valve-isolation-volano-secondary-in"
+      ],
+      "id": "accumuli",
+      "name": "Accumuli",
+      "network_ids": [
+        "primario",
+        "fredda",
+        "sanitaria"
+      ]
+    },
+    {
+      "component_ids": [
+        "secondario-mandata-a",
+        "secondario-mandata-b",
+        "circolatore-uta",
+        "batteria-uta",
+        "circolatore-fancoil",
+        "ventilconvettori",
+        "miscelatrice-radiante",
+        "circolatore-radiante",
+        "pavimento-radiante",
+        "ritorno-radiante",
+        "secondario-ritorno-a",
+        "secondario-ritorno-b",
+        "valve-isolation-batteria-uta-in",
+        "valve-isolation-batteria-uta-out",
+        "valve-isolation-ventilconvettori-in",
+        "valve-isolation-ventilconvettori-out",
+        "valve-isolation-miscelatrice-radiante-hot-in",
+        "valve-isolation-miscelatrice-radiante-cold-in",
+        "valve-isolation-miscelatrice-radiante-out",
+        "valve-isolation-circolatore-radiante-b",
+        "valve-isolation-circolatore-uta-a",
+        "valve-isolation-circolatore-fancoil-a",
+        "valve-isolation-pavimento-radiante-out"
+      ],
+      "id": "distribuzione",
+      "name": "Circuiti secondari",
+      "network_ids": [
+        "secondario"
+      ]
+    },
+    {
+      "component_ids": [
+        "pdc-1",
+        "pdc-2",
+        "pdc-3",
+        "cascata-mandata-a",
+        "cascata-mandata-b",
+        "cascata-ritorno-a",
+        "cascata-ritorno-b",
+        "deviatrice",
+        "ritorno-primario",
+        "air-separator-cascata-mandata-b-b",
+        "strainer-pdc-1-water-return",
+        "strainer-pdc-2-water-return",
+        "strainer-pdc-3-water-return",
+        "dirt-separator-cascata-ritorno-a-a",
+        "expansion-connection-cascata-ritorno-a-a",
+        "tee-expansion-connection-cascata-ritorno-a-a",
+        "filling-unit-cascata-ritorno-a-a",
+        "inlet-filling-unit-cascata-ritorno-a-a",
+        "tee-filling-unit-cascata-ritorno-a-a-b",
+        "thermometer-pdc-1-water-supply",
+        "tee-thermometer-pdc-1-water-supply",
+        "thermometer-pdc-2-water-supply",
+        "tee-thermometer-pdc-2-water-supply",
+        "thermometer-pdc-3-water-supply",
+        "tee-thermometer-pdc-3-water-supply",
+        "pressure-gauge-cascata-ritorno-a-a",
+        "tee-pressure-gauge-cascata-ritorno-a-a",
+        "valve-safety-pdc-1-water-supply",
+        "tee-valve-safety-pdc-1-water-supply",
+        "valve-safety-pdc-2-water-supply",
+        "tee-valve-safety-pdc-2-water-supply",
+        "valve-safety-pdc-3-water-supply",
+        "tee-valve-safety-pdc-3-water-supply",
+        "valve-isolation-air-separator-cascata-mandata-b-b-a",
+        "valve-isolation-air-separator-cascata-mandata-b-b-b",
+        "valve-isolation-dirt-separator-cascata-ritorno-a-a-a",
+        "valve-isolation-dirt-separator-cascata-ritorno-a-a-b",
+        "valve-isolation-locked-open-expansion-connection-cascata-ritorno-a-a-a",
+        "valve-isolation-pdc-1-water-supply",
+        "valve-isolation-pdc-2-water-supply",
+        "valve-isolation-pdc-3-water-supply",
+        "valve-gauge-cock-3way-pressure-gauge-cascata-ritorno-a-a-a",
+        "valve-isolation-strainer-pdc-1-water-return-a",
+        "valve-isolation-strainer-pdc-2-water-return-a",
+        "valve-isolation-strainer-pdc-3-water-return-a"
+      ],
+      "id": "generazione",
+      "name": "Cascata di generazione",
+      "network_ids": [
+        "primario"
+      ]
+    },
+    {
+      "component_ids": [
+        "ricircolo",
+        "ritegno-ricircolo",
+        "innesto-ricircolo",
+        "presa-ricircolo",
+        "valve-isolation-dhw-hot-ricircolo-a",
+        "valve-isolation-dhw-hot-ricircolo-b"
+      ],
+      "id": "ricircolo",
+      "name": "Ricircolo sanitario",
+      "network_ids": [
+        "sanitaria"
+      ]
+    }
+  ]
+}

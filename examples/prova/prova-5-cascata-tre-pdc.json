@@ -220,8 +220,8 @@
         "port_id": "water_supply"
       },
       "endpoint_b": {
-        "component_id": "cascata-mandata-a",
-        "port_id": "a"
+        "component_id": "cascata-mandata-b",
+        "port_id": "c"
       },
       "properties": {}
     },
@@ -259,8 +259,8 @@
         "port_id": "water_supply"
       },
       "endpoint_b": {
-        "component_id": "cascata-mandata-b",
-        "port_id": "c"
+        "component_id": "cascata-mandata-a",
+        "port_id": "a"
       },
       "properties": {}
     },
@@ -441,8 +441,8 @@
         "port_id": "out"
       },
       "endpoint_b": {
-        "component_id": "secondario-ritorno-a",
-        "port_id": "a"
+        "component_id": "secondario-ritorno-b",
+        "port_id": "c"
       },
       "properties": {}
     },
@@ -584,8 +584,8 @@
         "port_id": "b"
       },
       "endpoint_b": {
-        "component_id": "secondario-ritorno-b",
-        "port_id": "c"
+        "component_id": "secondario-ritorno-a",
+        "port_id": "a"
       },
       "properties": {}
     },

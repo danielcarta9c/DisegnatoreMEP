@@ -67,8 +67,8 @@ for x0 in (18.0, 216.0):
 
 testo(26, 46, "A &#183; IL PETTINE — come l&#8217;hai disegnato tu", 4.5, NERO, "bold")
 testo(26, 51.5, "due colonne, e bastano", 3.1, GRIGIO, corsivo="italic")
-testo(224, 46, "B &#183; L&#8217;IMPIANTO 5 — come &#232; nel grafo", 4.5, NERO, "bold")
-testo(224, 51.5, "le colonne diventano tre", 3.1, GRIGIO, corsivo="italic")
+testo(224, 46, "B &#183; COME LA SKILL L&#8217;AVEVA LETTO — sbagliato", 4.5, NERO, "bold")
+testo(224, 51.5, "un ritorno inverso che il progettista non aveva chiesto (D-172)", 3.1, GRIGIO, corsivo="italic")
 
 
 def volano(x):
@@ -156,16 +156,17 @@ blocco(18, 234.5, [
     "passare addosso al nodo che raccoglie UTA e ventilconvettori si prende",
     "una terza verticale.",
 ])
-testo(216, 228, "La domanda, ed &#232; tua: &#232; contenuto MEP.", 3.9, NERO, "bold")
+testo(216, 228, "Non era una domanda (D-172).", 3.9, NERO, "bold")
 blocco(216, 234.5, [
-    "Primo sulla mandata = ultimo sul ritorno &#232; la firma di un ritorno invertito",
-    "(Tichelmann), che pareggia le lunghezze dei circuiti: &#232; una scelta vera.",
-    "Se &#232; voluta, la terza colonna &#232; giusta e B12 prende un&#8217;eccezione scritta.",
-    "Se invece il radiante va alimentato per primo — com&#8217;&#232; nella tua tavola 5,",
-    "dove sta in alto vicino al volano, con la sua miscelatrice — allora &#232; il grafo",
-    "a sbagliare l&#8217;ordine: si corregge, e il pettine si chiude con due colonne.",
+    "Il testo dice &#171;dal volume tecnico partono tre circuiti secondari&#187; e li elenca:",
+    "&#232; una dorsale sola, e su una dorsale sola il ritorno specchia la mandata.",
+    "Il ritorno inverso l&#8217;aveva messo la skill, scrivendo le catene di raccordi nel",
+    "verso del flusso &#8212; e c&#8217;era anche sul primario. Corretto nel grafo, e la regola",
+    "sta in &#171;Capire&#187; &#167;4.4. Il PO: &#171;se il progettista vuole due dorsali",
+    "distinte lo dice&#187;. La skill disegna, e aggiunge i componenti secondari.",
 ])
 
 A("</svg>")
-open("/tmp/claude-0/fig/b12.svg", "w", encoding="utf-8").write("\n".join(out))
+from pathlib import Path  # noqa: E402
+Path(__file__).with_suffix(".svg").write_text("\n".join(out), encoding="utf-8")
 print("scritto")

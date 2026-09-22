@@ -5,8 +5,8 @@
 <rect x="216" y="36" width="186" height="176" fill="none" stroke="#d5d8dc" stroke-width="0.5"/>
 <text x="26" y="46" font-family="Helvetica,Arial,sans-serif" font-size="4.5" fill="#111111" font-weight="bold" font-style="normal" text-anchor="start">A &#183; IL PETTINE — come l&#8217;hai disegnato tu</text>
 <text x="26" y="51.5" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#7b8a8b" font-weight="normal" font-style="italic" text-anchor="start">due colonne, e bastano</text>
-<text x="224" y="46" font-family="Helvetica,Arial,sans-serif" font-size="4.5" fill="#111111" font-weight="bold" font-style="normal" text-anchor="start">B &#183; L&#8217;IMPIANTO 5 — come &#232; nel grafo</text>
-<text x="224" y="51.5" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#7b8a8b" font-weight="normal" font-style="italic" text-anchor="start">le colonne diventano tre</text>
+<text x="224" y="46" font-family="Helvetica,Arial,sans-serif" font-size="4.5" fill="#111111" font-weight="bold" font-style="normal" text-anchor="start">B &#183; COME LA SKILL L&#8217;AVEVA LETTO — sbagliato</text>
+<text x="224" y="51.5" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#7b8a8b" font-weight="normal" font-style="italic" text-anchor="start">un ritorno inverso che il progettista non aveva chiesto (D-172)</text>
 <rect x="28" y="58" width="26" height="30" rx="2" fill="#ffffff" stroke="#111111" stroke-width="0.5"/>
 <text x="41" y="72" font-family="Helvetica,Arial,sans-serif" font-size="3.1" fill="#111111" font-weight="bold" font-style="normal" text-anchor="middle">VOLANO</text>
 <text x="41" y="77.5" font-family="Helvetica,Arial,sans-serif" font-size="2.8" fill="#7b8a8b" font-weight="normal" font-style="normal" text-anchor="middle">secondario</text>
@@ -100,11 +100,11 @@
 <text x="18" y="249.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">attaccato al volano. Il suo ritorno deve risalire tutta la colonna, e per non</text>
 <text x="18" y="254.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">passare addosso al nodo che raccoglie UTA e ventilconvettori si prende</text>
 <text x="18" y="259.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">una terza verticale.</text>
-<text x="216" y="228" font-family="Helvetica,Arial,sans-serif" font-size="3.9" fill="#111111" font-weight="bold" font-style="normal" text-anchor="start">La domanda, ed &#232; tua: &#232; contenuto MEP.</text>
-<text x="216" y="234.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">Primo sulla mandata = ultimo sul ritorno &#232; la firma di un ritorno invertito</text>
-<text x="216" y="239.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">(Tichelmann), che pareggia le lunghezze dei circuiti: &#232; una scelta vera.</text>
-<text x="216" y="244.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">Se &#232; voluta, la terza colonna &#232; giusta e B12 prende un&#8217;eccezione scritta.</text>
-<text x="216" y="249.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">Se invece il radiante va alimentato per primo — com&#8217;&#232; nella tua tavola 5,</text>
-<text x="216" y="254.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">dove sta in alto vicino al volano, con la sua miscelatrice — allora &#232; il grafo</text>
-<text x="216" y="259.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">a sbagliare l&#8217;ordine: si corregge, e il pettine si chiude con due colonne.</text>
+<text x="216" y="228" font-family="Helvetica,Arial,sans-serif" font-size="3.9" fill="#111111" font-weight="bold" font-style="normal" text-anchor="start">Non era una domanda (D-172).</text>
+<text x="216" y="234.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">Il testo dice &#171;dal volume tecnico partono tre circuiti secondari&#187; e li elenca:</text>
+<text x="216" y="239.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">&#232; una dorsale sola, e su una dorsale sola il ritorno specchia la mandata.</text>
+<text x="216" y="244.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">Il ritorno inverso l&#8217;aveva messo la skill, scrivendo le catene di raccordi nel</text>
+<text x="216" y="249.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">verso del flusso &#8212; e c&#8217;era anche sul primario. Corretto nel grafo, e la regola</text>
+<text x="216" y="254.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">sta in &#171;Capire&#187; &#167;4.4. Il PO: &#171;se il progettista vuole due dorsali</text>
+<text x="216" y="259.5" font-family="Helvetica,Arial,sans-serif" font-size="3.3" fill="#111111" font-weight="normal" font-style="normal" text-anchor="start">distinte lo dice&#187;. La skill disegna, e aggiunge i componenti secondari.</text>
 </svg>
