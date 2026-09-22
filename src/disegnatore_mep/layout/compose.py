@@ -253,7 +253,7 @@ def _reader_of(
         if item is None or component_id not in definitions:
             return None
         manifest = catalog.resolve(definitions[component_id]).symbol.manifest.rotated(
-            item.rotation_deg
+            item.rotation_deg, item.specchiato
         )
         port = manifest.port(item.physical_port(port_id))
         return (

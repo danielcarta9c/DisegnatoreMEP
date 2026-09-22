@@ -78,11 +78,13 @@ il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAP
 | **il pianificatore esiste** | `skill/comporre/`, e **in camera pulita batte il piano scritto a mano su tutti e tre gli impianti provati** |
 | **B12 si compone** | impianto 5 da **A1 ad A3**, impianto 4 da **A2 ad A4**, zero cedute e zero bloccanti |
 | **B10 non accusa più tavole giuste** | il difetto trovato da un agente, corretto in `_affiancamenti`, con due prove |
+| **le giaciture sono otto** | **D-169**: `specchio` nel piano, e una prova che verifica su tutta la libreria in tutte e otto che corpo e porte coincidano |
 
 **Da dove riparte la prossima sessione, in quest'ordine:**
 
-1. **Ricomporre i cinque piani con `skill/comporre/`** — non a mano (**D-155**). È quello che
-   riporta il saldo della suite da **47 a 38 o sotto**, perché le nove rosse nuove sono tutte
+1. **Ricomporre i cinque piani con `skill/comporre/`** — non a mano (**D-155**), e adesso con
+   **B12** e con le **otto giaciture** in mano. È quello che riporta il saldo della suite da
+   **47 a 38 o sotto**, perché le nove rosse nuove sono tutte
    il piano a mano dell'impianto 5 che, dopo D-167, apre un bloccante su `s8`. **I cinque piani
    a mano sono vecchi e il loro README lo dice in testa.**
 2. **Chiudere l'anello** — l'occhio di `skill/rivedere/` scrive **vincoli in forma di dati**, il
@@ -209,6 +211,7 @@ Misurato il 20 settembre. Sta qui perché la prossima sessione non ci perda un'a
 | **D-166** | `DRAW-015` **è fuso**, e le tavole **non sono approvate**. Quello che è approvato è la direzione |
 | **D-167** | **Un terminale si prende da un lato solo**: `in` e `out` tutt'e due sulla faccia sinistra |
 | **D-168** | La **rotazione di una tre vie si sceglie e si scrive nel piano**: la terza via guarda il pezzo che serve |
+| **D-169** | **Le giaciture di un simbolo sono otto, non quattro**: lo specchio entra nel motore, la libreria resta intatta |
 
 ---
 

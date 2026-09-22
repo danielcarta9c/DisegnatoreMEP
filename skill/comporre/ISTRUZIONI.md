@@ -143,6 +143,9 @@ JSON, e solo queste chiavi:
   puoi ruotarla**». **La terza via guarda il pezzo che serve**, e da che parte sta quel pezzo lo
   sai tu. Lo stesso vale per il **gruppo di riempimento**, che ha due attacchi e non è una
   macchina.
+- **`specchio`** — vero o falso, e si applica **prima** della rotazione, attorno all'asse
+  verticale del pezzo. **Le giaciture sono otto, non quattro** (**D-169**), e per una valvola a
+  tre vie le quattro rotazioni **non bastano**: leggi il riquadro qui sotto prima di posarne una.
   ⚠ **Molti simboli non si ruotano affatto** — pompa di calore, caldaia, volano, scambiatore a
   piastre dichiarano `allowed_rotations_deg: [0]`, e chiedere un'altra rotazione **fa abortire
   il comando**. Guarda il manifesto prima di scriverla.
@@ -152,6 +155,42 @@ JSON, e solo queste chiavi:
   pezzo. **Ogni pezzo che hai spostato per una ragione porta quella ragione.**
 
 Niente altre chiavi: il caricatore rifiuta quello che non riconosce, e te lo dice.
+
+### L'algebra di una valvola a tre vie, e perché le rotazioni non bastano
+
+Una tre vie ha la **via dritta** — `in_a`/`out` su facce opposte — e la **terza via
+perpendicolare** a quella. Ruotando, **gira tutto insieme**: la terza via resta sempre dalla
+stessa parte rispetto al verso della via dritta.
+
+`switching-valve-3way`: `in_a` **sinistra** · `out` **destra** · `in_b` **sotto**.
+`diverting-valve-3way`: `in` **sinistra** · `out_a` **destra** · `out_b` **sotto**.
+
+Le **otto** giaciture della commutatrice, e serve leggerla come una tabella:
+
+| | `in_a` | `out` | `in_b` |
+|---|---|---|---|
+| rotazione 0 | sinistra | destra | sotto |
+| rotazione 90 | **sopra** | **sotto** | sinistra |
+| rotazione 180 | destra | sinistra | sopra |
+| rotazione 270 | sotto | sopra | destra |
+| specchio + 0 | destra | sinistra | sotto |
+| specchio + 90 | sotto | sopra | sinistra |
+| specchio + 180 | sinistra | destra | sopra |
+| **specchio + 270** | **sopra** | **sotto** | **destra** |
+
+Serve ricevere dall'alto, mandare in basso e prendere la terza via **a destra**? **Nessuna
+delle quattro rotazioni ce l'ha.** La 90 ha le prime due ma la terza via a sinistra; la 270 ha
+la terza via giusta e le altre due rovesciate. La giacitura esiste, ed è **una sola**:
+`{"rotazione": 270, "specchio": true}`.
+
+⚠ **Che succede se la sbagli, misurato:** la linea che arriva dalla parte sbagliata **gira
+intorno alla valvola** — scende sotto, la scavalca, rientra dall'altra faccia — con **quattro
+pieghe**. Sull'impianto 4, mettere la giacitura giusta ha portato le spezzate piegate da 4 a 3,
+le pieghe da 5 a 4 e i sormonti da 3 a 2.
+
+**La regola che ne esce, e vale oltre le tre vie:** un organo a tre vie **non si appende a una
+linea** — si posa **nel punto dove le sue tre linee si incontrano**, e poi si sceglie la
+giacitura che fa entrare ciascuna dalla faccia da cui arriva.
 
 ### I quattro numeri che ti servono, e che nessun errore dovrebbe doverti insegnare
 

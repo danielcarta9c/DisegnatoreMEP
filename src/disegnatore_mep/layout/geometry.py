@@ -53,6 +53,22 @@ class PlacedSymbol(StrictModel):
     component_id: str
     symbol_id: str
     rotation_deg: int
+    specchiato: bool = False
+    """Se il simbolo e' **specchiato** attorno al proprio asse verticale.
+
+    **D-169**: le giaciture di un simbolo sono **otto**, non quattro — le
+    quattro rotazioni ammesse, per diritto o specchiato. Lo specchio si applica
+    **prima** della rotazione, ed e' una facolta' del **motore**: il manifesto
+    non la dichiara.
+
+    ⚠ **Chi rilegge le porte di un pezzo posato deve passare di qui.**
+    `manifest.rotated(placed.rotation_deg)` senza lo specchio da' le facce
+    sbagliate, e la linea arriva da una porta che guarda dall'altra parte.
+    Per questo il valore sta **accanto** alla rotazione e non altrove.
+
+    Assente in una geometria scritta prima del 22 settembre 2026: si legge
+    come `False`, che e' la giacitura di tutte quelle tavole.
+    """
     origin: Point
     width_mm: FiniteFloat = Field(gt=0)
     height_mm: FiniteFloat = Field(gt=0)

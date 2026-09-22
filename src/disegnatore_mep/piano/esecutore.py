@@ -221,17 +221,24 @@ def orienta(
         # un'altra faccia, con la miscelatrice che si ritrovava sulla piega
         # della propria tratta.
         raccordo = risolto.definition.is_a_fitting
-        rotazioni = (
-            sorted(base.allowed_rotations_deg)
-            if (raccordo or len(porte) < 2) and item.component_id not in fissate
-            else [item.rotation_deg]
+        #
+        # **Le giaciture provate sono otto, non quattro** (**D-169**): le
+        # rotazioni ammesse, per diritto o specchiate. Vale solo per chi non ha
+        # scelta — un raccordo, un pezzo con un attacco solo — perche' per chi
+        # ce l'ha la giacitura la decide **il piano**, specchio compreso.
+        deduce = (raccordo or len(porte) < 2) and item.component_id not in fissate
+        giaciture = (
+            [(g, s) for g in sorted(base.allowed_rotations_deg) for s in (False, True)]
+            if deduce
+            else [(item.rotation_deg, item.specchiato)]
         )
         scelta: tuple[float, PlacedSymbol, dict[str, str]] | None = None
-        for gradi in rotazioni:
-            manifesto = base.rotated(gradi)
+        for gradi, specchiato in giaciture:
+            manifesto = base.rotated(gradi, specchiato)
             provvisorio = item.model_copy(
                 update={
                     "rotation_deg": gradi,
+                    "specchiato": specchiato,
                     "width_mm": manifesto.width_mm,
                     "height_mm": manifesto.height_mm,
                 }
@@ -375,6 +382,8 @@ def esegui_piano(
         }
         if dove.rotazione is not None:
             aggiornamenti["rotation_deg"] = dove.rotazione
+        if dove.specchio:
+            aggiornamenti["specchiato"] = True
         posati.append(item.model_copy(update=aggiornamenti))
 
     # 2. Chi non e' nel piano **segue il proprio pezzo**: e' la stessa meccanica

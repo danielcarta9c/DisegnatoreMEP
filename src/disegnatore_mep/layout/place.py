@@ -2538,7 +2538,7 @@ def port_corridors(
     found: list[tuple[float, float, float, float]] = []
     for item in placed:
         manifest = catalog.resolve(definitions[item.component_id]).symbol.manifest.rotated(
-            item.rotation_deg
+            item.rotation_deg, item.specchiato
         )
         for port in manifest.ports:
             horizontal = port.face in (PortFace.LEFT, PortFace.RIGHT)

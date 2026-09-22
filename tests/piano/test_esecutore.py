@@ -14,6 +14,7 @@ cedute** — piu' le tre regole non negoziabili che il pezzo porta con se':
 """
 # categoria: difende il motore
 
+import json
 import sys
 from functools import cache
 from pathlib import Path
@@ -314,3 +315,59 @@ def test_un_piano_che_non_si_instrada_porta_comunque_la_posa() -> None:
     assert misura.errore is not None and "cannot be routed" in misura.errore
     assert len(misura.posa) == len(scritto.pezzi)
     assert {item.component_id for item in misura.posa} == set(scritto.pezzi)
+
+
+def test_il_piano_puo_chiedere_lo_specchio_e_la_valvola_gira_davvero(
+    tmp_path: Path,
+) -> None:
+    """**D-169 dal piano alla tavola**, sul caso che l'ha prodotta.
+
+    Il PO, il 22 settembre 2026, guardando la tavola 4: la commutatrice va dove
+    le sue tre linee si incontrano — ingresso dall'alto, terza via a destra,
+    uscita in basso. Fra le quattro rotazioni quella giacitura **non esiste**;
+    con lo specchio e' la **270**.
+
+    **Misurato sullo scheletro dell'impianto 4**: il piano che la chiede passa
+    da 4 spezzate piegate a **3**, da 5 pieghe a **4** e da 3 sormonti a **2**.
+    Qui si sorveglia che `specchio` arrivi **fino alla geometria**: senza, la
+    valvola resta girata come prima e la linea che le arriva da destra deve
+    girarle intorno con quattro pieghe.
+    """
+    cartella = ROOT / "docs" / "collaudi" / "DRAW-016" / "prova-camera-pulita-2026-09-21"
+    scheletro, sorgente = cartella / "scheletro-4.json", cartella / "piano-4.json"
+    if not (scheletro.exists() and sorgente.exists()):
+        pytest.skip("il collaudo in camera pulita non c'e' piu'")
+
+    piano = json.loads(sorgente.read_text(encoding="utf-8"))
+    piano["pezzi"]["commutatrice-ritorno"] = {
+        "x": 102.5,
+        "y": 125,
+        "rotazione": 270,
+        "specchio": True,
+        "regola": "D-169 — la commutatrice dove le sue tre linee si incontrano",
+    }
+    scritto = tmp_path / "piano-specchio.json"
+    scritto.write_text(json.dumps(piano, ensure_ascii=False), encoding="utf-8")
+
+    esecuzione = esegui_piano(
+        load_project(scheletro), carica_piano(scritto), catalogo(), simboli(), NAMING
+    )
+    assert esecuzione.errore is None
+    assert esecuzione.disegno is not None
+    valvola = next(
+        item for item in esecuzione.posa if item.component_id == "commutatrice-ritorno"
+    )
+    assert valvola.specchiato is True
+    assert valvola.rotation_deg == 270
+
+    # E le facce sono quelle che il PO ha disegnato.
+    manifesto = (
+        catalogo()
+        .resolve("switching-valve-3way")
+        .symbol.manifest.rotated(valvola.rotation_deg, valvola.specchiato)
+    )
+    assert {port.id: port.face.value for port in manifesto.ports} == {
+        "in_a": "top",
+        "out": "bottom",
+        "in_b": "right",
+    }

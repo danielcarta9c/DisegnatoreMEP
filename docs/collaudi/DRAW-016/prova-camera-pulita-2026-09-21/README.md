@@ -50,6 +50,43 @@ ritorno sotto, affiancate fino al terminale, che entra **da sinistra**. Sull'imp
 tratta caldaia → scambiatore corre come **due orizzontali affiancate a interasse 15**, che è
 esattamente quello che il PO aveva ridisegnato a mano.
 
+## La correzione del PO del 22 settembre, e che cosa ne è uscito
+
+Il PO ha ripreso la **tavola 4** e ha **spostato la commutatrice**: dal fondo, dov'era appesa,
+al punto dove la colonna del ritorno incontra la linea che arriva dallo scambiatore. Poi ha
+chiesto: **«perché non lo ha disegnato così?»**
+
+**Perché non poteva**, ed è misurato. La terza via di una tre vie è **perpendicolare alla via
+dritta e gira insieme a lei**: fra le **quattro** rotazioni la giacitura che serve — ricevere
+dall'alto, mandare in basso, terza via **a destra** — **non esiste**. Forzando la posizione con
+la rotazione 90, la linea che arriva dallo scambiatore **gira intorno alla valvola**:
+
+```
+m3  (135,111) → (130,111) → (130,116) → (100,116) → (100,106) → (102.5,106)
+```
+
+quattro pieghe per entrare da una porta che guarda dalla parte sbagliata.
+
+**D-169** ha portato le giaciture a **otto**, e ce n'è **una sola** che serve: **specchio +
+270**. Il piano è `piano-4-specchio.json`, la tavola `tavola-4-specchio.pdf`.
+
+| impianto 4, scheletro | a mano | agente con B12 | **con lo specchio** |
+|---|---|---|---|
+| spezzate piegate | 7 | 4 | **3** |
+| pieghe | 12 | 5 | **4** |
+| incroci | 3 | 3 | **2** |
+| formato | A2 | A4 | A4 |
+
+```
+m3  (135, 111) → (112.5, 111)              dritta, entra da destra
+m10 (107.5, 53.5) → (107.5, 106)           dritta, scende dall'alto
+m4  (107.5, 116) → (107.5, 141) → (60,141) una piega sola
+```
+
+**E i due agenti l'avevano detto**, il giorno prima e indipendentemente — «non esiste lo
+specchio, e questo decide il piano intero», «servirebbe un ribaltamento». Nessuno dei due aveva
+**misurato quanto costa**. Il PO l'ha visto guardando la tavola.
+
 ## Quello che non è venuto, e che non è colpa della posa
 
 Tre cose, riferite **indipendentemente** da più agenti e verificate:
