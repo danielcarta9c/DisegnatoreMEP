@@ -70,16 +70,22 @@ ha una cura» in coda all'esito e' quella:
 
 **Quello che non cura, e non per dimenticanza.**
 
-* `DRAWING_ALL_ON_ONE_SIDE` (**D3**) e' il primo difetto aperto del
-  pianificatore, e la cura ovvia — allargare il disegno per distribuirlo — e'
-  **la mossa che il PO ha gia' bocciato**: «ha poco senso questo stretch fatto
-  cosi' per il gusto di riempire la tavola… era meglio prima» (D-142 ritirata da
-  **D-149**). Un revisore che la rifacesse da solo rifarebbe l'errore piu' caro
-  di questo progetto. Si nomina e si lascia a chi compone.
+* `SHEET_LARGER_THAN_NEEDED` (**D3**) non e' il difetto di un pezzo: dice che
+  si e' preso **un foglio piu' grande del necessario**, e si chiude cambiando
+  una riga del piano — il formato — non spostando niente.
+
+  ⛔ **E la cura che sembra ovvia e' vietata.** Allargare il disegno per
+  riempire il foglio e' **la mossa che il PO ha gia' bocciato due volte**: «ha
+  poco senso questo stretch fatto cosi' per il gusto di riempire la tavola… era
+  meglio prima» (D-142, ritirata da **D-149**), e poi il 22 settembre 2026 —
+  «**il vuoto non e' un difetto**» (**D-170**). Fino a quel giorno qui stava
+  `DRAWING_ALL_ON_ONE_SIDE`, che contava l'inchiostro per quadranti: e' stato
+  **tolto** perche' spingeva nel verso sbagliato, e **due agenti su tre**, in
+  camera pulita, avevano allontanato un pezzo dalla macchina che serve solo per
+  spegnerlo.
 * `TOO_MANY_CROSSINGS` non e' il difetto di un pezzo: e' l'esito dell'intera
   composizione, e nessuno spostamento singolo lo chiude.
-* `SHEET_BARELY_FILLED` e `SHEET_TOO_FULL` sono **misure**, non difetti da
-  chiudere (**D-149**).
+* `SHEET_TOO_FULL` e' una **misura**, non un difetto da chiudere (**D-149**).
 
 Un rilievo senza cura non sparisce e non si abbassa di grado: finisce in
 `Revisione.non_curati`, con il proprio codice, ed e' lavoro per chi compone.

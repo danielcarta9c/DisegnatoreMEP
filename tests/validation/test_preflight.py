@@ -414,30 +414,72 @@ def test_a_drawing_without_surrendered_runs_has_no_such_finding() -> None:
     assert preflight.unresolved_runs(pulita) == []
 
 
-def test_a_sheet_filled_only_in_part_is_a_warning_with_the_percentage() -> None:
-    """L'ingombro copre un quarto dell'area di disegno: una fascia, non una tavola."""
+def test_un_foglio_mezzo_vuoto_non_e_piu_un_rilievo() -> None:
+    """**D-170** — il vuoto non e' un difetto.
+
+    Qui c'era `SHEET_BARELY_FILLED`: diceva «il foglio e' pieno al 25%, sotto la
+    finestra 45-65%», cioe' **accusava il vuoto**. Il PO, il 22 settembre 2026:
+    «si tiene il disegno stretto e si prende il foglio piu' piccolo che lo
+    contiene — se poi resta del vuoto, **pazienza: il vuoto non e' un difetto**».
+
+    Era anche un cattivo indizio della cosa che voleva dire: un disegno lungo e
+    stretto **sul foglio piu' piccolo che lo contiene** sta sotto il 45% per
+    costruzione, e il rilievo si accendeva su una tavola che non aveva niente da
+    correggere. La domanda vera — *ci stava su un foglio piu' piccolo?* — la fa
+    adesso `SHEET_LARGER_THAN_NEEDED`, e su questa fascia risponde **si'**.
+    """
     band = run("f", [at(10, 16), at(185, 16), at(185, 133.5)])
-    findings = preflight.sheet_fill(drawing(sheet(routes=[band])), FRAME)
-    trovato = only(findings, "SHEET_BARELY_FILLED")
+    codici = [
+        item.code for item in preflight.sheet_fill(drawing(sheet(routes=[band])), FRAME)
+    ]
+    assert "SHEET_BARELY_FILLED" not in codici
+    assert "SHEET_LARGER_THAN_NEEDED" in codici
+
+
+def test_un_disegno_che_ci_stava_su_un_foglio_piu_piccolo_si_dice() -> None:
+    """**D3, nella forma che gli ha dato D-170**: l'unica cosa che resta da dire.
+
+    Non dove stanno i pezzi — **quale foglio si e' preso**. Questo disegno
+    ingombra un centinaio di millimetri per settanta e sta su un A3: sull'A4 ci
+    stava, col margine, e il rilievo lo nomina.
+    """
+    pieces = [placed("a", 40, 40), placed("b", 120, 100)]
+    findings = preflight.sheet_fill(drawing(sheet(symbols=pieces)), FRAME)
+    trovato = only(findings, "SHEET_LARGER_THAN_NEEDED")
     assert trovato.severity is IssueSeverity.WARNING
-    assert "pieno al 25%" in trovato.message
-    # **D-149**: si riporta il numero, non si prescrive di alzarlo. Il rilievo
-    # dice esplicitamente che e' una misura, cosi' nessuna sessione futura lo
-    # legge come un difetto da chiudere.
-    assert "misura" in trovato.message
+    assert "A4" in trovato.message
+    assert "il vuoto che resta non e' un difetto" in trovato.message
 
 
-def test_a_drawing_pushed_into_one_corner_is_a_warning_with_the_ratio() -> None:
+def test_un_disegno_tutto_in_un_angolo_non_si_accusa_piu() -> None:
+    """**D-170** — e questa e' la prova che il difetto vero non torni.
+
+    Qui c'era `DRAWING_ALL_ON_ONE_SIDE`: contava l'inchiostro nei quattro
+    quadranti e accusava la tavola quando il piu' pieno ne portava piu' di tre
+    volte il piu' vuoto. **Spingeva nel verso sbagliato**, e contraddiceva
+    **A4** — «ogni pezzo sta addosso alla macchina che serve». Misurato il 21
+    settembre: **due agenti su tre**, in camera pulita e indipendentemente,
+    hanno allontanato un pezzo dalla macchina che serve **solo per spegnerlo**.
+
+    Questo disegno e' sbilanciatissimo — un pezzo da 100 x 80 in un angolo e tre
+    puntini negli altri — e **sullo sbilanciamento non si dice piu' niente**.
+    Quello che il preflight puo' ancora dire riguarda il **bordo** (D1) e il
+    **foglio** (D3 nella sua forma nuova), non dove stanno i pezzi.
+    """
     corner = placed("big", 20, 20, width_mm=100.0, height_mm=80.0)
     others = [
         placed("tr", 200, 20),
         placed("bl", 20, 150),
         placed("br", 200, 150),
     ]
-    findings = preflight.sheet_fill(drawing(sheet(symbols=[corner, *others])), FRAME)
-    leaning = only(findings, "DRAWING_ALL_ON_ONE_SIDE")
-    assert leaning.severity is IssueSeverity.WARNING
-    assert "160.0 volte" in leaning.message
+    codici = [
+        item.code
+        for item in preflight.sheet_fill(
+            drawing(sheet(symbols=[corner, *others])), FRAME
+        )
+    ]
+    assert "DRAWING_ALL_ON_ONE_SIDE" not in codici
+    assert "SHEET_BARELY_FILLED" not in codici
 
 
 # I quattro pezzi ai quattro angoli di un ingombro che sta **dentro la

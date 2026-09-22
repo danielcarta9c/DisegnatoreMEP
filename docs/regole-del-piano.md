@@ -489,38 +489,50 @@ ordinaria A4 → A3 → A2 → A1 (D-148, dichiarata momentanea dal PO).
 *Fonte:* **D-149**, **D-148** (PO, I-079, I-080).
 *Controllo:* `SHEET_BARELY_FILLED`, `SHEET_TOO_FULL` — **misure**, non difetti da chiudere.
 
-### D3 — Il disegno non sta tutto da una parte
+### D3 — Si prende il foglio più piccolo che contiene il disegno
 
-*Fonte:* **D-060**; il difetto è misurato sulle due tavole composte del 20 settembre — 5,2
-volte l'inchiostro fra quadrante pieno e vuoto sull'impianto 1, **9,0** sul 5.
-*Controllo:* `DRAWING_ALL_ON_ONE_SIDE`, limite **3,0**. **È il primo difetto aperto del
-pianificatore.**
+> **Il vuoto non è un difetto.** Il PO, il 22 settembre 2026, sciogliendo il conflitto fra
+> questa regola e **A4**: «**ogni pezzo sta addosso alla macchina che serve** — questo è
+> giusto — e **si tiene il disegno stretto e si prende il foglio più piccolo che lo contiene.
+> Se poi resta comunque del vuoto, pazienza: il vuoto non è un difetto.**»
 
-**La soglia è tarata dalle tavole del disegnatore del PO, e regge.** Misurato il 20 settembre
-2026 rieseguendo la stessa formula — inchiostro per quadrante, rapporto pieno/vuoto — sui
-quattro PDF di `docs/input-pm/riferimenti-grafici/2026-09-03/`:
+**Questa regola non dice dove stanno i pezzi. Dice quale foglio si prende.** Se il disegno ci
+stava su un formato più piccolo — col margine, da tutt'e due i lati — si prende quello. Il
+bianco che resta **sul foglio più piccolo possibile** non si corregge: è la forma
+dell'impianto.
 
-| tavola del PO | sul foglio | sul riquadro del disegno |
-|---|---|---|
-| `schema-tipologico.pdf` | **1,4×** | 1,4× |
-| `schema-idraulico-sdp.pdf` | **1,6×** | 1,6× |
-| `schema-tipologico-pdc-volume-integrato.pdf` | **2,5×** | 2,8× |
-| `schema-tipologico-3-vie.pdf` | *un quadrante senza inchiostro* | 9,9× |
+**A4 vince sempre su questa.** Un pezzo di servizio sta addosso alla macchina che serve, anche
+quando questo lascia un angolo del foglio vuoto.
 
-**Tre su quattro stanno fra 1,4 e 2,5 contro un limite di 3,0**: il numero non è inventato, è
-dove stanno le tavole buone. La quarta è l'eccezione, e **guardandola si capisce perché**: è
-un'**A4 verticale con il disegno nella metà alta e la metà bassa bianca**, senza cornice né
-cartiglio — l'esportazione di una regione, non un foglio finito. Misurarci D3 è misurare il
-bianco del ritaglio.
+*Fonte:* il PO, 22 settembre 2026 (**D-170**); prima era **D-060**, ed è stata superata.
+*Controllo:* **`SHEET_LARGER_THAN_NEEDED`** — `validation/preflight.py::sheet_fill`, che
+confronta l'ingombro dell'inchiostro con l'area utile dei formati più piccoli, **margine
+compreso** (D-143). *Tavola:* impianto 5 col pettine, che da A1 è sceso ad A3.
 
-⚠ **«Il disegno è una fascia» non è di per sé il difetto.** Anche le tavole del PO sono
-fasce: `schema-tipologico.pdf` ha 3,7 e 3,0 mm di margine a sinistra e a destra contro 65 e
-67 sopra e sotto. La differenza è **dove sta la fascia**: la sua attraversa il foglio per
-intero ed è centrata, quindi tutti e quattro i quadranti portano inchiostro; la nostra sta in
-alto e non arriva a destra. **Quello che D3 accusa non è la forma a nastro: è il nastro messo
-storto sul foglio.**
-
----
+> ### ⛔ Quello che questa regola era, e perché è stato tolto
+>
+> Fino al 22 settembre D3 diceva «**il disegno non sta tutto da una parte**» e il controllo
+> `DRAWING_ALL_ON_ONE_SIDE` contava l'inchiostro nei quattro quadranti, accusando la tavola
+> quando il più pieno ne portava più di **tre volte** il più vuoto. La soglia era tarata sulle
+> tavole del disegnatore del PO — 1,4 · 1,6 · 2,5 — e sembrava solida.
+>
+> **Spingeva nel verso sbagliato, ed è stato misurato.** Il 21 settembre 2026, in camera
+> pulita e **indipendentemente**, **due agenti su tre** hanno **allontanato un pezzo dalla
+> macchina che serve** solo per spegnere quel rilievo — il volano dalle pompe (85 mm di
+> autostrada vuota), lo scambiatore dalla caldaia — e **tutt'e due hanno scritto da soli** che
+> un disegnatore non lo farebbe:
+>
+> > «È retta e il criterio è soddisfatto, ma **un disegnatore quel tratto lo accorcerebbe**…
+> > è il criterio dell'inchiostro per quadranti che sta spingendo **nella direzione opposta al
+> > buon disegno**.»
+>
+> Contraddiceva **A4**, che è una regola del PO. Con `SHEET_BARELY_FILLED` è caduta anche
+> l'altra metà della stessa pressione — «il foglio è pieno al 37%, sotto la finestra» —, che
+> per di più era un cattivo indizio: un disegno lungo e stretto **sul foglio più piccolo che
+> lo contiene** sta sotto quella finestra per costruzione.
+>
+> **È D-164 vista dall'altro lato:** quando c'è un numero, chi compone lo insegue. Un punteggio
+> si ottimizza, e questo si ottimizzava nel verso sbagliato.
 
 ## Quello che manca, e si sa che manca
 

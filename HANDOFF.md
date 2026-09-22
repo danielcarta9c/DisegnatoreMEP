@@ -66,13 +66,15 @@ che rientra dalla finestra** (D-151). E **la convenzione grafica non si tocca** 
 è quella sviluppata fino a qui; le tavole di riferimento del PO sono riferimenti
 **sull'instradamento**, non una fonte di convenzione.
 
-> **E c'è una misura che lo conferma dall'altro lato, ed è da portare al PO.** Il 21 settembre
-> **due agenti su tre**, in camera pulita e indipendentemente, hanno **allontanato un pezzo
-> dalla macchina che serve** — il volano dalle pompe, lo scambiatore dalla caldaia — **solo per
-> spegnere `DRAWING_ALL_ON_ONE_SIDE`**, e tutt'e due hanno scritto da soli che un disegnatore
-> non lo farebbe. **Quando c'è un numero, l'agente lo insegue**: un punteggio si ottimizza, e
-> **D3 si ottimizza nel verso sbagliato**. La direzione proposta — e la decisione è del PO — è
-> che **D3 esca dal punteggio e resti una cosa che l'occhio guarda**.
+> **E la stessa cosa è successa dall'altro lato, ed è stata decisa** (**D-170**). Il 21
+> settembre **due agenti su tre**, in camera pulita e indipendentemente, hanno **allontanato un
+> pezzo dalla macchina che serve** — il volano dalle pompe, lo scambiatore dalla caldaia —
+> **solo per spegnere `DRAWING_ALL_ON_ONE_SIDE`**, e tutt'e due hanno scritto da soli che un
+> disegnatore non lo farebbe. Il PO ha sciolto il conflitto: **A4 vince sempre**, e «**si tiene
+> il disegno stretto e si prende il foglio più piccolo che lo contiene — se poi resta del
+> vuoto, pazienza: il vuoto non è un difetto**». `DRAWING_ALL_ON_ONE_SIDE` e
+> `SHEET_BARELY_FILLED` **non esistono più**; al loro posto `SHEET_LARGER_THAN_NEEDED`, che
+> chiede solo se il foglio poteva essere più piccolo.
 
 ## ✅ Il pianificatore esiste, e in camera pulita batte il piano scritto a mano
 

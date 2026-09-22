@@ -123,8 +123,9 @@ JSON, e solo queste chiavi:
 ```
 
 - **`formato`** — uno fra `A4`, `A3`, `A2`, `A1`. Scegli il più piccolo in cui l'impianto ci
-  sta comodo: un foglio grande mezzo vuoto è un difetto. **Se sbagli te lo dice il rapporto**
-  (`SHEET_BARELY_FILLED`), e si cambia riga e si rilancia.
+  sta comodo. ⚠ **Ma non allargare il disegno per riempirlo**: il vuoto non è un difetto
+  (**D-170**, D3). **Se hai preso un foglio più grande del necessario te lo dice il rapporto**
+  (`SHEET_LARGER_THAN_NEEDED`), e si cambia una riga e si rilancia.
 - **`pezzi`** — un'entrata per **ogni pezzo elencato in `components`**, e **solo** per quelli.
   ⚠ Il grafo nomina altre decine di identificativi in `subsystems` e `rule_applications` che
   **non sono pezzi**: ignorali. Uno che manca fa fallire tutto il piano; uno di troppo pure.
@@ -132,8 +133,8 @@ JSON, e solo queste chiavi:
   passo di griglia: **usa multipli di 2,5**.
   ⚠ **Non sono coordinate sul foglio**: il motore **trasla l'intero disegno** per centrarlo, e
   la traslazione è la stessa per tutti i pezzi. Contano **solo le posizioni relative**, e non
-  puoi collocare niente rispetto al bordo o al cartiglio. D1 e D3 si governano con la **forma**
-  della posa, non con la sua origine.
+  puoi collocare niente rispetto al bordo o al cartiglio: **D1 si governa con la forma della
+  posa, D3 con la scelta del formato**.
 - **`rotazione`** — in **gradi orari**. **Scrivila solo dove la deduzione non arriva**: per un
   raccordo o per un pezzo con un attacco solo **non scriverla**, perché la rotazione è una
   conseguenza della posa e il motore la deduce dai vicini che il pezzo ha davvero.
@@ -271,9 +272,13 @@ del binario **alla loro sinistra e vicine fra loro**, e posa ogni utenza alla qu
 la coppia le arriva orizzontale, affiancata, e entra da sinistra.
 
 ### D1 — Il disegno non arriva al bordo
-### D3 — Il disegno non sta tutto da una parte
-Un foglio con l'inchiostro tutto in una fascia e tre quarti vuoti **è un difetto**, e si vede
-a occhio prima che lo dica un numero.
+
+### D3 — Si prende il foglio più piccolo che contiene il disegno
+⚠ **Il vuoto non è un difetto** (**D-170**). Tieni il disegno **stretto** e prendi il foglio
+più piccolo che lo contiene; il bianco che resta non si corregge. **Non allargare mai il
+disegno per riempire il foglio**, e soprattutto **non allontanare un pezzo dalla macchina che
+serve**: A4 vince su questa regola, sempre. Se hai sbagliato formato te lo dice
+`SHEET_LARGER_THAN_NEEDED`, e si cambia una riga e si rilancia.
 
 ---
 
