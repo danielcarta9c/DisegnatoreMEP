@@ -19,6 +19,7 @@ import pytest
 
 from disegnatore_mep.piano.formato import (
     ErroreDelPiano,
+    PezzoNelPiano,
     PianoDiComposizione,
     carica_piano,
 )
@@ -147,7 +148,13 @@ def test_un_campo_sconosciuto_sul_pezzo_elenca_quelli_che_ci_sono(
         carica_piano(percorso)
     detto = str(errore.value)
     assert "il pezzo «volano» porta il campo sconosciuto «colore»" in detto
-    assert "x, y, rotazione, regola" in detto
+    # L'elenco e' quello dei campi veri, letto dal modello: si allunga quando il
+    # formato cresce — `specchio` e' entrato con **D-169** — e la prova non deve
+    # congelarne uno vecchio. Quello che deve restare vero e' che li **elenchi
+    # tutti**, perche' chi sbaglia un campo legga quali esistono.
+    for campo in PezzoNelPiano.model_fields:
+        assert campo in detto, f"il messaggio non nomina il campo «{campo}»"
+    assert "x, y, rotazione" in detto
 
 
 def test_un_campo_sconosciuto_sul_piano_elenca_quelli_che_ci_sono(
