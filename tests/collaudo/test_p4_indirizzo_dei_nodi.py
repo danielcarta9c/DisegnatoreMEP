@@ -384,20 +384,28 @@ def test_i_rami_prendono_la_lettera_della_base_nell_ordine_della_passeggiata(
 
 def test_nella_cascata_la_prima_sorgente_vince_e_le_lettere_restano_piatte() -> None:
     """Prova 5, tre macchine in cascata (D-098, D-105): `CP.01` parte dalla
-    prima e tira dritto; le mandate delle altre muoiono su nodi suoi; sul
-    ritorno comune `RP.01` arriva alla prima, `RP.01a` alla seconda, `RP.01b`
-    alla terza — e la `b`, pur staccandosi da un nodo di `RP.01a`, porta la
-    lettera della stessa strada, come la bis e la ter di una statale."""
+    prima e tira dritto; sul ritorno comune `RP.01` arriva alla prima, `RP.01a`
+    alla seconda, `RP.01b` alla terza — e la `b`, pur staccandosi da un nodo di
+    `RP.01a`, porta la lettera della stessa strada, come la bis e la ter di una
+    statale.
+
+    **E la mandata e' lo specchio del ritorno** (**D-172**): `CP.02` muore su un
+    nodo di `CP.01`, e `CP.03` su un nodo di `CP.02` — esattamente come sul
+    ritorno `RP.01b` si stacca da un nodo di `RP.01a`. Fino al 22 settembre 2026
+    questa prova pretendeva che le mandate della seconda e della terza morissero
+    **tutt'e due** su `CP.01`: era vero solo col collettore di mandata
+    **rovesciato**, che raccoglieva `pdc-3` per ultima mentre il ritorno serviva
+    `pdc-1` per primo. Un ritorno inverso che il testo non chiedeva."""
     done, _ = completato(PROVA[4])
     graph, lines = lettura(done)
 
     assert sigla(graph, lines.line("CP.01").node_ids[0]) == "PDC-01"
     assert lines.addresses[lines.line("CP.01").node_ids[0]] == "CP.01.N.01"
-    for name, head in (("CP.02", "PDC-02"), ("CP.03", "PDC-03")):
+    for name, head, muore_su in (("CP.02", "PDC-02", "CP.01"), ("CP.03", "PDC-03", "CP.02")):
         line = lines.line(name)
         assert sigla(graph, line.node_ids[0]) == head
         tail = line.node_ids[-1]
-        assert lines.owner[tail] == "CP.01", name
+        assert lines.owner[tail] == muore_su, name
         assert tail != lines.line("CP.01").node_ids[-1], name
 
     principale = lines.line("RP.01")
