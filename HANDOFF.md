@@ -42,6 +42,11 @@ E le due cose che ha notato nella stessa risposta sono **i due impedimenti** a q
 - **D-168** — la **rotazione di una tre vie si sceglie e si scrive nel piano**: la terza via
   guarda il pezzo che serve. La deduzione di C2 non la gira, quindi **senza la scelta di chi
   compone finisce sempre verso il basso**.
+- **D-169** — **le giaciture di un simbolo sono otto, non quattro**: al `rotazione` del piano si
+  affianca **`specchio`**, che si applica **prima** della rotazione. Serviva perché la terza via
+  di una tre vie gira insieme alla via dritta: per riceverla **da destra** con ingresso dall'alto
+  e uscita in basso, **fra le quattro rotazioni quella giacitura non esiste**. **Tocca il motore,
+  non la libreria** — nessun manifesto lo dichiara, e **D-165 regge**.
 
 ⚠ **Il costo è dichiarato e va saputo prima di misurare**: i cinque piani a mano sono composti
 per terminali passanti, e **la suite è passata da 38 rosse a 47**. Le nove nuove sono una cosa

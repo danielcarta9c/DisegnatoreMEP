@@ -218,6 +218,50 @@ saldo resta 47, e si dichiara.**
 
 ---
 
+## 4bis. Il 22 settembre: «perché non lo ha disegnato così?» — e le giaciture diventano otto
+
+Il PO ha ripreso la **tavola 4** composta dall'agente e ha **spostato la commutatrice**: dal
+fondo, dov'era appesa, al punto dove la colonna del ritorno incontra la linea che arriva dallo
+scambiatore. Poi ha chiesto perché l'agente non l'avesse fatto.
+
+**Perché non poteva**, ed è una tabella di otto righe. La terza via di una tre vie è
+**perpendicolare alla via dritta e gira insieme a lei**, quindi resta sempre dalla stessa
+parte. Per ricevere dall'alto, mandare in basso e prendere la terza via **a destra**, fra le
+**quattro rotazioni** quella giacitura **non esiste**:
+
+| | `in_a` | `out` | `in_b` |
+|---|---|---|---|
+| rotazione 90 | **sopra** | **sotto** | sinistra |
+| rotazione 270 | sotto | sopra | destra |
+| **specchio + 270** | **sopra** | **sotto** | **destra** |
+
+Forzando la 90, la linea dallo scambiatore **gira intorno alla valvola** con **quattro pieghe**.
+
+**D-169** porta le giaciture a otto — lo specchio si applica prima della rotazione — e **tocca
+il motore, non la libreria**: nessun manifesto lo dichiara, nessun simbolo nuovo esiste,
+**D-165 regge**.
+
+| impianto 4, scheletro | a mano | agente con B12 | **con lo specchio** |
+|---|---|---|---|
+| spezzate piegate | 7 | 4 | **3** |
+| pieghe | 12 | 5 | **4** |
+| incroci | 3 | 3 | **2** |
+
+**Il saldo della suite non si muove**: 47 fallite, 1580 passate, **insieme identico** a prima
+dello specchio — zero nuove, zero perse. *(L'unica caduta era una prova che teneva a mano una
+copia dell'elenco dei campi del piano: adesso lo legge dal modello.)*
+
+**E l'invariante che regge tutto ha la sua guardia:** una prova verifica su **tutta la libreria
+in tutte e otto le giaciture** che il corpo grafico e il manifesto portino ogni porta **nello
+stesso punto** — 268 giaciture, zero disallineamenti. È la guardia contro il difetto che il 21
+settembre aveva lasciato la caldaia scollegata dalla propria porta.
+
+**I due agenti l'avevano detto il giorno prima, indipendentemente** — «non esiste lo specchio, e
+questo decide il piano intero», «servirebbe un ribaltamento». Nessuno dei due aveva **misurato
+quanto costa**: il PO l'ha visto guardando la tavola.
+
+---
+
 ## 5. Quello che gli agenti hanno detto delle istruzioni, e che è stato corretto
 
 Tre agenti su tre hanno riferito le stesse mancanze. Sono entrate in `ISTRUZIONI.md`:
