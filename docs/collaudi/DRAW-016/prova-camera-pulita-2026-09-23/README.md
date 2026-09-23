@@ -1,7 +1,10 @@
 # Il pianificatore sul grafo completo — 23 settembre 2026
 
-> ⚠ **Non approvate.** Sono le tavole che il pianificatore ha composto **da solo**, sul grafo
-> **completo** — macchine, collettori e tutto il corredo — e aspettano lo sguardo del PO.
+> ✅ **Approvate dal PO il 23 settembre 2026** (**I-109**): «Si le approvo assolutamente vanno
+> benissimo! Hanno proprio l'aspetto di tavole professionali!». Sono le tavole che il
+> pianificatore ha composto **da solo**, sul grafo **completo** — macchine, collettori e tutto il
+> corredo. Il PO vede **piccoli difetti**, che apre dopo la fusione: da qui in poi si parla di
+> migliorie e piccole correzioni.
 
 **Che cos'è.** Cinque agenti avviati da zero, uno per impianto, che ricevono **soltanto**
 `skill/comporre/ISTRUZIONI.md` (versione di `1121a8c`), `CONSEGNA.md`, il grafo completo e i

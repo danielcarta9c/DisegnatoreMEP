@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-23 sera, al **pianificatore sui cinque impianti completi** — ramo `claude/handoff-work-package-s11fah`, **non fuso**, le tavole aspettano il PO
+**Aggiornato:** 2026-09-23 sera — **le tavole del pianificatore sui cinque impianti completi sono approvate dal PO** (**I-109**) e si fondono su `main` come PR milestone di `DRAW-016`
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -25,7 +25,9 @@ cedute e zero rilievi bloccanti**, e battono i piani a mano su ogni impianto.
 
 Tavole, grafi e piani in
 [`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/);
-rapporto §6–§10. ⚠ **Non approvate**, e il ramo **non è fuso**: aspetta lo sguardo del PO.
+rapporto §6–§10. ✅ **Approvate dal PO** (**I-109**): «Finalmente un vero miglioramento!!!! Si le
+approvo assolutamente vanno benissimo! Hanno proprio l'aspetto di tavole professionali! **Da qui
+in poi si parla di migliorie e piccole correzioni.** Ma questa è una PR milestone».
 
 **Fatto il 23, sullo stesso ramo:**
 
@@ -49,10 +51,11 @@ dell'impianto 5 e le prove del revisore a valle.
 
 **Da dove si riparte, in quest'ordine** — è il work package, sezione «Dove siamo arrivati»:
 
-0. **Il PO guarda le tavole** e risponde alle domande del rapporto §10: **D-173**, **B10 contro il
-   pettine** (B10 confronta una mandata con il ritorno di un'altra utenza), la miscelatrice
-   termostatica ACS a due attacchi, l'anello del ricircolo dell'impianto 5, la legenda che gli
-   costa l'A3 per 2,5 mm. **Niente si fonde prima.**
+0. **I piccoli difetti che il PO vede** sulle tavole approvate: li elenca dopo la fusione, e
+   sono il pacchetto successivo. Con loro le domande del rapporto §10 ancora aperte: **D-173**
+   (è proposta: l'approvazione è delle tavole, non della decisione), **B10 contro il pettine**,
+   la miscelatrice termostatica ACS a due attacchi, l'anello del ricircolo dell'impianto 5, la
+   legenda che gli costa l'A3 per 2,5 mm.
 1. **I piani del pianificatore al posto di quelli a mano, nelle prove** (punto 5): è la strada
    verso 38.
 2. **L'anello** — vincoli come dati dall'occhio al pianificatore — e con lui escono le cure del

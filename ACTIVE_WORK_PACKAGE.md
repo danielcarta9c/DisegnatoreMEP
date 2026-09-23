@@ -71,8 +71,10 @@ tubi**, non una fonte di convenzione, e le loro discordanze non sono un problema
 ## ✅ Dove siamo arrivati al 23 settembre, e da dove si riparte
 
 > **Aggiornato la sera del 23 settembre.** Il pianificatore compone **da solo i cinque impianti
-> completi** — tutte e cinque le tavole escono, zero cedute e zero bloccanti — e le tavole
-> aspettano il PO: [`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/),
+> completi** — tutte e cinque le tavole escono, zero cedute e zero bloccanti — e **il PO le ha
+> approvate** (**I-109**): «hanno proprio l'aspetto di tavole professionali… da qui in poi si
+> parla di migliorie e piccole correzioni». Si fondono come PR milestone:
+> [`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/),
 > rapporto §6–§10.
 
 **Il punto 0 e il punto 0bis sono fatti, e misurati.** La prova sta in
@@ -98,9 +100,10 @@ il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAP
 
 **Da dove riparte la prossima sessione, in quest'ordine:**
 
-0. **Il PO guarda le tavole del 23** e risponde alle domande del rapporto §10: **D-173**, **B10
-   contro il pettine**, la miscelatrice termostatica a due attacchi, l'anello del ricircolo, la
-   legenda che decide il formato dell'impianto 5. **Niente si fonde prima.**
+0. ✅ **Il PO ha guardato le tavole del 23 e le ha approvate** (**I-109**). Restano le sue
+   **piccole correzioni**, che elenca dopo la fusione, e le domande del rapporto §10: **D-173**
+   (proposta), **B10 contro il pettine**, la miscelatrice termostatica a due attacchi, l'anello
+   del ricircolo, la legenda che decide il formato dell'impianto 5.
 1. **I piani del pianificatore prendono il posto dei piani a mano nelle prove** (punto 5): i piani
    a mano sono vecchi, quello del 5 non esce più, e le dieci prove rosse in più rispetto ai 38 di
    partenza cadono lì (criterio 10, oggi **48**).

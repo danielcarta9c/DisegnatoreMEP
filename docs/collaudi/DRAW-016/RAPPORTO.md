@@ -2,7 +2,8 @@
 
 > **Il 23 settembre, per primo:** le tavole che il pianificatore ha composto **da solo** sui
 > cinque impianti **completi** stanno in
-> [`prova-camera-pulita-2026-09-23/`](prova-camera-pulita-2026-09-23/) — §6. Non approvate.
+> [`prova-camera-pulita-2026-09-23/`](prova-camera-pulita-2026-09-23/) — §6. **Approvate dal PO**
+> (**I-109**): «hanno proprio l'aspetto di tavole professionali».
 
 **Aperto:** 21 settembre 2026 · **Agente unico** (D-147), con agenti paralleli in sessione
 (D-152) · **Base:** `3bcf59d`, la testa di `main` dopo la fusione di `DRAW-015`
@@ -293,9 +294,10 @@ al PO.
 ## 6. Il 23 settembre: il pianificatore sul grafo completo — le tavole, per prime
 
 > **Le tavole stanno in [`prova-camera-pulita-2026-09-23/`](prova-camera-pulita-2026-09-23/)**,
-> con i grafi, i piani e il README che le misura. ⚠ **Non approvate.** Sono la prova che questo
-> pacchetto doveva dare: il pianificatore compone **da solo** i cinque impianti **completi**, con
-> tutto il corredo.
+> con i grafi, i piani e il README che le misura. ✅ **Approvate dal PO il 23 settembre 2026**
+> (**I-109**): «Si le approvo assolutamente vanno benissimo! Hanno proprio l'aspetto di tavole
+> professionali!». Sono la prova che questo pacchetto doveva dare: il pianificatore compone **da
+> solo** i cinque impianti **completi**, con tutto il corredo.
 
 Cinque agenti avviati da zero, uno per impianto, con **soltanto** le istruzioni, il grafo
 completo e i manifesti; più due sugli scheletri 2 e 3. **Tutti e sette i piani si caricano e si
