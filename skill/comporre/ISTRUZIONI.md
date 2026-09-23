@@ -55,7 +55,9 @@ Questi sono quelli che incontri quasi sempre:
 | `heat-pump-air-water` | 40 × 30 | `water_supply` **destra +5** · `water_return` **destra +20** |
 | `gas-boiler` | 40 × 30 | `water_supply` **destra +5** · `water_return` **destra +20** |
 | `buffer-four-port` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `vent` sopra e `drain` sotto, a x +12,5 |
-| `buffer-two-port` | 25 × 45 | `a` sinistra +5 · `b` destra +5 |
+| `buffer-two-port` | 25 × 45 | `a` sinistra +5 · `b` destra +5 · `vent` sopra e `drain` sotto, a x +12,5 |
+| `dhw-heat-pump` (pompa di calore per ACS) | 25 × 45 | `cold_in` sinistra +37,5 · `dhw_out` sopra, a x +12,5 |
+| `zone-manifold` (collettore di zona) | 40 × 5 | `in` sinistra +2,5 · `out_1` sotto, a x +12,5 · `out_2` sotto, a x +27,5 |
 | `buffer-combined` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `dhw_out` sopra, a x +7,5 · `cold_in` sinistra +37,5 |
 | `plate-heat-exchanger` | 12,5 × 25 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` destra +5 · `secondary_in` destra +20 |
 | `dhw-cylinder` | 25 × 45 | `coil_in` sinistra **+7,5** · `coil_out` sinistra **+17,5** · `dhw_out` sopra · `cold_in` sinistra +37,5 |
@@ -70,6 +72,10 @@ vuol dire una cosa sola, ed è la leva più potente che hai:
 Pompa a `y=60` e volano a `y=60`: la mandata corre a 65 da una porta all'altra senza una
 piega, il ritorno a 80. **Non hai speso niente.** Se invece le posi a `y=60` e `y=75`, ogni
 linea fra loro fa **due pieghe** e te le porti dietro per tutta la tavola.
+
+⚠ **Conta la quota della porta, non l'origine.** «Stesso `y`» vale per chi ha le porte alle
+stesse quote. Un volano **a due attacchi** ha `a` e `b` tutt'e due a +5: per metterlo sul
+ritorno di una pompa, che esce a +20, lo posi **15 mm più in basso** della pompa.
 
 ⚠ **Il bollitore ha l'interasse 10, non 15** — `coil_in` +7,5 e `coil_out` +17,5 — perché
 quelle due porte dicono **dov'è la serpentina dentro l'accumulo**, e non si spostano. La
@@ -115,7 +121,11 @@ simbolo lo disegna: il simbolo lo dice la voce di catalogo del pezzo
 **Chi è una macchina e chi è corredo** lo capisci dall'ingombro e dalle porte: un pezzo 40×30
 o 25×45 è una macchina, un pezzo di 5 o 7,5 mm con due porte in linea è un organo che sta
 **sopra una tubazione**. Un `tee` è un raccordo: unisce tre tubazioni e **non si posa a
-occhio**, si posa dove il collettore deve stare.
+occhio**, si posa dove il collettore deve stare. **Quale tubazione gli passa dritta lo decide
+la posa, non il grafo**: il motore gira il raccordo e gli assegna le porte guardando dove
+stanno i vicini — chi è allineato con l'uscita entra dritto, l'altro dalla derivazione.
+Misurato: scambiando di posto le due zone che un raccordo riunisce, la mappa delle porte si
+inverte con loro.
 
 ---
 
@@ -180,7 +190,9 @@ JSON, e solo queste chiavi:
   tre vie le quattro rotazioni **non bastano**: leggi il riquadro qui sotto prima di posarne una.
   ⚠ **Molti simboli non si ruotano affatto** — pompa di calore, caldaia, volano, scambiatore a
   piastre dichiarano `allowed_rotations_deg: [0]`, e chiedere un'altra rotazione **fa abortire
-  il comando**. Guarda il manifesto prima di scriverla.
+  il comando**. Guarda il manifesto prima di scriverla. **Lo specchio invece vale per tutti**,
+  anche per chi non si ruota (D-169): un volano a due attacchi specchiato ha `a` a destra e `b`
+  a sinistra, ed è il modo di farlo guardare dall'altra parte senza girarlo.
 - **`note`** e **`regola`** — **non sono decorazione.** Il piano senza di loro dice dove
   stanno i pezzi e non dice **perché**, e chi lo rivede non può correggerlo: può solo
   spostare. `note` porta la motivazione del piano intero, `regola` la stessa cosa pezzo per
@@ -200,7 +212,11 @@ di due specie, e le due si trattano in modo diverso:
   lavoro è lasciarglielo** (B5): se la tratta non ha il rettilineo che la fila chiede, il
   comando si ferma e ti dice su quale tratta e quanti millimetri servono — «run X has no
   straight stretch of N mm for …». Si cura allontanando i due pezzi che la tratta unisce, o
-  raddrizzandola; **mai** togliendo un organo, che è contenuto dell'impianto;
+  raddrizzandola; **mai** togliendo un organo, che è contenuto dell'impianto.
+  **Quanto rettilineo chiede una fila**, misurato sul motore il 23 settembre 2026 fra la porta
+  di una pompa e un raccordo: con una valvola **17,5 mm**, con due organi **20–25 mm**. Non è
+  una costante: è il punto da cui partire, e se non basta il comando ti dice la tratta —
+  allontana i due pezzi **un passo alla volta**;
 - **gli appesi li posi tu**: un manometro, un termometro, uno sfiato, uno scarico, un vaso,
   una sicurezza, un gruppo di riempimento stanno all'altro capo di uno **stacco** che parte da
   un raccordo sulla linea (`tee-branch`). Stanno **addosso** (A4), con lo stacco più corto che
@@ -284,9 +300,19 @@ cede. **Non si sommano mai**: una media pesata fra regole è il modo in cui ques
 già sbagliato una volta.
 
 ### A1 — Tre fasce verticali, da sinistra a destra
-**Generazione** (pompe, caldaie) · **accumulo** (volani, bollitori, separatori) ·
-**distribuzione e utenze** (collettori, valvole di zona, terminali). Il processo si legge da
-sinistra a destra.
+**Generazione** · **accumuli e scambiatori** · **distribuzione**: le parole sono del PO, e il
+processo si legge da sinistra a destra. Chi sta in quale fascia lo dice il catalogo, ed è la
+stessa lettura del rilievo `PIECE_OUTSIDE_ITS_BAND`:
+
+- **generazione** — chi genera: pompe di calore, caldaie, **e la pompa di calore per ACS**
+  (`dhw-heat-pump`), che il catalogo dichiara generatore anche se ha un accumulo dentro;
+- **accumuli e scambiatori** — volani, bollitori, separatori, **scambiatori a piastre**,
+  compreso quello istantaneo dell'ACS;
+- **distribuzione** — i terminali che consegnano il calore all'ambiente.
+
+**Non hanno una fascia**, e quindi non la allargano e non la violano: raccordi, organi in
+linea, appesi, collettori, valvole a tre vie, confini di rete. Stanno dove serve il pezzo a
+cui sono legati.
 
 ### A2 — Chi sta in parallelo si impila
 Due pompe, tre pompe in cascata, due caldaie: **uno sopra l'altro, stessa x**, con un passo
@@ -402,6 +428,15 @@ serve**: A4 vince su questa regola, sempre. Se hai sbagliato formato te lo dice
 della linea la sceglie l'instradatore sul costo. «Scendi e fai una curva sola» **non si può
 scrivere.**
 
+**Se il piano non si instrada**, il comando dice quale tratta, fra quali due pezzi, e dove il
+piano li ha messi. La «posa applicata» che stampa è **nel sistema del piano**, al decimo di
+millimetro. Le coppie di numeri fra parentesi nel messaggio dell'instradatore sono **celle
+della griglia del foglio**: non cercarle nel piano.
+
+**Il colore di una linea lo decide il grafo**, non il verso in cui corre: un ritorno è blu
+anche se va da sinistra a destra. Non spostare un pezzo per far uscire una linea del colore
+giusto; se una linea esce del colore sbagliato, è un difetto del motore e va scritto.
+
 **L'unica leva che hai è togliere di mezzo chi occupa la strada.** Prima di appendere un
 organo, guarda **quale autostrada deve passare di lì**: se ci metti un gruppo di riempimento
 nella colonna sotto l'uscita di una valvola, la linea gira intorno — non perché l'instradatore
@@ -447,8 +482,9 @@ Rispondi a queste, e se una risposta è «no» torna indietro:
 
 - [ ] **Ogni pezzo che posi tu ha un'entrata in `pezzi`, e nessun organo in linea ce l'ha?**
 - [ ] **Le `x` e le `y` sono multipli di 2,5?**
-- [ ] **Le macchine unite da un'autostrada hanno lo stesso `y`?** Se no, hai una ragione
-      scritta nelle note?
+- [ ] **Le porte che un'autostrada unisce stanno alla stessa quota?** Per pompa, caldaia,
+      volano a quattro attacchi e scambiatore vuol dire lo stesso `y`; per chi ha le porte ad
+      altre quote no (§2.1). Se no, hai una ragione scritta nelle note?
 - [ ] **I paralleli sono impilati alla stessa `x`, con passo costante?**
 - [ ] **I due collettori di un parallelo sono su due verticali vicine, nell'ordine che fa
       meno sormonti, e l'hai scritto nelle note?**
