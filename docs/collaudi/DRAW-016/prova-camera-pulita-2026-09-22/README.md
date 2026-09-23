@@ -4,7 +4,7 @@
 > approvata dopo D-166, e vale per questa. **È il metro del pavimento di B1**: i 7 rilievi di B1
 > che porta sono falsi, e il pavimento è giusto quando non la accusa più.
 >
-> **Chiuso lo stesso giorno** (**D-173**, proposta al PO): il pavimento conta adesso anche le
+> **Chiuso lo stesso giorno** (**D-173**, approvata dal PO il 23 settembre, I-111): il pavimento conta adesso anche le
 > pieghe **fra due pezzi** — la L fra due porte su assi perpendicolari, e il gradino di una
 > coppia con interassi diversi — e questa tavola **non porta più nessun rilievo di B1**. La
 > guardia è `tests/validation/test_il_pavimento_di_b1.py`. La tavola e il piano non sono

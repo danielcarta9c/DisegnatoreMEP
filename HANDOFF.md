@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-23 sera — `DRAW-016` **fuso con la PR #53, tavole approvate** (**I-109**); attivo **`DRAW-017`**, migliorie e piccole correzioni (**D-174 … D-177**)
+**Aggiornato:** 2026-09-23 sera — `DRAW-016` **fuso con la PR #53, tavole approvate** (**I-109**); attivo **`DRAW-017`**, migliorie e piccole correzioni (**D-174 … D-178**, e D-173 approvata)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -28,8 +28,12 @@ professionali! **Da qui in poi si parla di migliorie e piccole correzioni.**» (
   confine «ACS-R» perché preleva dalle utenze, e **dopo il circolatore torna nell'accumulo**:
   l'impianto 5 lo chiudeva dopo il bollitore, ed era un errore del grafo;
 - **D-177** — la **legenda su due colonne** quando in una non ci sta;
-- **D-173** — il pavimento di B1 fra due pezzi resta **proposta**: il PO ha chiesto di capirla
-  meglio, e la decisione è sua.
+- **D-178** — negli impianti centralizzati con **accumulo ACS da 1000 litri in su** si mette il
+  **vaso d'espansione sanitario**, sull'ingresso AF fra il ritegno e il bollitore, mai sulla
+  mandata calda. La regola c'è già e lo posa lì, ma oggi chiede sempre: serve il volume
+  dell'accumulo nel grafo;
+- **D-173** — il pavimento di B1 fra due pezzi è **approvato** (I-111), dopo la spiegazione che il
+  PO aveva chiesto.
 
 **Il PO vede anche piccoli difetti sulle tavole approvate, e non li ha ancora elencati**: quando
 lo fa vengono prima di tutto il resto (punto 0 del pacchetto).
@@ -140,7 +144,7 @@ E le due cose che ha notato nella stessa risposta sono **i due impedimenti** a q
 ⚠ **L'impianto 5 è stato ridisegnato come il PO l'ha chiesto** — A3, zero cedute, zero bloccanti,
 il pettine nell'ordine del testo, `docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/` — **e
 portava 7 rilievi di B1 su una tavola giusta**: il pavimento di D-171 contava solo le pieghe
-imposte dentro un pezzo. **Chiuso il 23 settembre** con **D-173** (*proposta*): adesso zero.
+imposte dentro un pezzo. **Chiuso il 23 settembre** con **D-173**, approvata dal PO lo stesso giorno: adesso zero.
 
 ⚠ **Il costo è dichiarato e va saputo prima di misurare**: i cinque piani a mano sono composti
 per terminali passanti, e **la suite è passata da 38 rosse a 47**. Le nove nuove sono una cosa

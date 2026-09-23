@@ -106,11 +106,25 @@ Si fanno **nell'ordine che il PO dà** quando elenca i suoi difetti, e solo se c
 - il rifiuto dell'A4 che viene dalla posa d'inventario, con un messaggio che confonde;
 - la deduzione dei raccordi sulla presa del ricircolo — probabilmente la toglie il punto 4.
 
-## Da decidere, al PO
+### 7. Il vaso d'espansione sanitario negli impianti centralizzati — **D-178**
 
-- **D-173** — il pavimento di B1 fra due pezzi. È **proposta**, e il PO ha chiesto di capirla
-  meglio: la spiegazione gli è stata data il 23 settembre. Finché non decide, il codice resta
-  com'è fuso.
+Il PO: «quando abbiamo impianti centralizzati con ACS (quindi parliamo di accumuli ACS da 1000
+litri in su) conviene mettere un vaso di espansione sanitario, ma non sulla mandata ACS calda. Va
+normalmente collegato sull'ingresso AF del bollitore, nel tratto compreso fra il dispositivo di
+non ritorno e il bollitore».
+
+- **La regola c'è già** (`rules/hydronic/expansion-on-the-stored-volume-feed.json`) e posa il
+  vaso proprio lì, ma **non scatta mai da sola**: chiede sempre al progettista se l'accumulo lo ha
+  dentro. Da 1000 litri in su, nell'impianto centralizzato, il vaso si mette.
+- **Serve il volume dell'accumulo nel grafo**, e oggi non c'è: lo legge «Capire» dal testo del
+  progettista (`skill/capire/`), e dove manca resta una domanda.
+- Sotto i 1000 litri non cambia niente. Una prova per parte: 1500 litri il vaso c'è, fra ritegno
+  e bollitore; 300 litri la regola chiede come oggi.
+
+## Deciso dal PO il 23 settembre
+
+- **D-173** — il pavimento di B1 fra due pezzi è **approvato** (I-111), dopo la spiegazione che il
+  PO aveva chiesto. Il codice fuso con #53 resta com'è.
 
 ## Quello che questo pacchetto **non** chiude, e resta aperto da `DRAW-016`
 
@@ -127,11 +141,12 @@ Non si toccano qui: il PO ha detto che adesso si parla di migliorie e correzioni
 simboli **attraverso il generatore** `examples/graphics/build_symbols.py`; `rules/hydronic/**`
 (la miscelatrice, il ricircolo se nasce da una regola); `naming/**` (la linea del ricircolo);
 `examples/prova/prova-5-cascata-tre-pdc.json` (il ricircolo); `skill/capire/**` (la regola del
-ricircolo), `skill/comporre/**`; `docs/regole-del-piano.md`; `docs/collaudi/DRAW-017/`;
+ricircolo, il volume dell'accumulo ACS), `skill/comporre/**`; `docs/regole-del-piano.md`; `docs/collaudi/DRAW-017/`;
 `tests/**`.
 
-**Fuori:** qualunque contenuto MEP che il PO non abbia dato; qualunque convenzione grafica oltre
-**D-176** e **D-177**. **Gli attacchi dei simboli** si spostano e si aggiungono solo nel
+**Fuori:** qualunque contenuto MEP che il PO non abbia dato — **D-175, D-176 e D-178 sono le sue
+disposizioni, e si implementano come sono espresse**; qualunque convenzione grafica oltre **D-176** e
+**D-177**. **Gli attacchi dei simboli** si spostano e si aggiungono solo nel
 generatore, e ogni cambiamento di manifesto ne alza la versione.
 
 ## Criteri di accettazione
@@ -148,6 +163,8 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
 4. **Il ricircolo**: verde chiaro e una riga di legenda; entra dall'«ACS-R»; dopo il circolatore
    torna nell'accumulo; il grafo dell'impianto 5 corretto; una prova sul colore e una sulla
    topologia.
+4bis. **Il vaso sanitario** (D-178): con un accumulo ACS da 1000 litri in su la regola lo posa fra
+   ritegno e bollitore senza chiedere; sotto, chiede come oggi; una prova per parte.
 5. **Nessuna tavola peggiora** rispetto al metro: zero cedute, zero bloccanti, rilievi e incroci
    non in aumento — salvo dove i pezzi nuovi lo impongono, e allora si dice dove e perché.
 6. **La suite**: nessuna rossa nuova rispetto alle 48, e verso le 38 col punto 6; zero `skip` e
