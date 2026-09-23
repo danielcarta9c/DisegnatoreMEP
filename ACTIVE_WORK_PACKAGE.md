@@ -68,7 +68,7 @@ tubi**, non una fonte di convenzione, e le loro discordanze non sono un problema
 
 ---
 
-## ✅ Dove siamo arrivati al 22 settembre, e da dove si riparte
+## ✅ Dove siamo arrivati al 23 settembre, e da dove si riparte
 
 **Il punto 0 e il punto 0bis sono fatti, e misurati.** La prova sta in
 [`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/),
@@ -85,16 +85,18 @@ il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAP
 | **B1 non è una soglia** | **D-171**: tolti `turns_allowed` e `TOO_MANY_CROSSINGS`; al loro posto il pavimento dei simboli, e il confronto sta nel punteggio |
 | **la skill non progetta la distribuzione** | **D-172**: l'ordine è del progettista e il ritorno specchia la mandata; l'impianto 5 aveva un ritorno inverso inventato su **tutt'e due** i collettori, corretto, e la regola sta in «Capire» §4.4 |
 | **l'impianto 5 ridisegnato come l'ha chiesto il PO** | pianificatore in camera pulita sul grafo corretto: **A3, zero cedute, zero bloccanti, pieghe da 16 a 9**, il pettine nell'ordine del testo — [`prova-camera-pulita-2026-09-22/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/). ⚠ **7 rilievi di B1 su una tavola giusta**: il pavimento di D-171 è troppo basso |
+| ✅ **la tavola 5 va bene** | il PO, il 23 settembre (**I-108**): «la tavola va bene». È lo **scheletro**, senza valvole — la prova che questo pacchetto ha aperto — e **diventa il metro**: il pavimento di B1 è giusto quando non la accusa più |
 
 **Da dove riparte la prossima sessione, in quest'ordine:**
 
 0. **Alzare il pavimento di B1** (D-171 l'ha lasciato troppo basso, ed è misurato): oggi conta
    solo le pieghe imposte dentro un pezzo, e accusa il gomito in fondo a un collettore
    verticale, le L fra pezzi a giacitura fissata e il gradino fra interasse 15 e 10. Sulla tavola
-   5 del 22 settembre sono **7 rilievi su una tavola giusta**. Finché restano, il pianificatore
-   insegue un numero che la tavola non merita. **E il motore deve traslare prima di instradare**:
-   oggi un pezzo a coordinate negative non si instrada, e le istruzioni l'hanno detto male fino al
-   22.
+   5 del 22 settembre sono **7 rilievi su una tavola che il PO ha dichiarato buona** (I-108).
+   **Il criterio di chiusura è quella tavola**: il pavimento è giusto quando non la accusa più,
+   e senza ammorbidire il rilievo sulle pieghe che una posa diversa toglierebbe. **E il motore
+   deve traslare prima di instradare**: oggi un pezzo a coordinate negative non si instrada, e
+   le istruzioni l'hanno detto male fino al 22.
 
 1. **Ricomporre i cinque piani con `skill/comporre/`** — non a mano (**D-155**), e adesso con
    **B12** e con le **otto giaciture** in mano. È quello che riporta il saldo della suite da

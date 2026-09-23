@@ -1,5 +1,9 @@
 # L'impianto 5 ricomposto sul grafo corretto — 22 settembre 2026
 
+> ✅ **Approvata dal PO il 23 settembre 2026: «la tavola va bene»** (**I-108**). È la prima tavola
+> approvata dopo D-166, e vale per questa. **È il metro del pavimento di B1**: i 7 rilievi di B1
+> che porta sono falsi, e il pavimento è giusto quando non la accusa più.
+
 **Che cos'è.** La tavola dell'impianto 5 **come il PO l'aveva chiesta**: dorsale unica, nell'ordine
 del suo testo, con il ritorno che specchia la mandata (**D-172**). Il grafo del 21 settembre
 aveva un ritorno inverso che la skill aveva inventato, su tutt'e due i collettori; corretto quello,

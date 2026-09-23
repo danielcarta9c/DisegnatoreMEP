@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-22, a `DRAW-016` punto 0 **fatto** e a **D-169**, **D-170**, **D-171** e **D-172**
+**Aggiornato:** 2026-09-23, alla **tavola 5 approvata dal PO** e a **D-169**, **D-170**, **D-171** e **D-172** fusi su `main`
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -10,6 +10,33 @@
 > È stato riscritto il 20 settembre perché una sessione ha sbagliato lo sviluppo pur avendo
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
+
+## ▶ Dove siamo, e da dove si riparte — 23 settembre 2026
+
+**La tavola 5 va bene.** Il PO, il 23 settembre, guardando l'impianto 5 ridisegnato sul grafo
+corretto (**D-172**): «**la tavola va bene**» (**I-108**). È lo **scheletro** — sole macchine e
+collettori, senza valvole, la prova che il PO aveva chiesto per vedere se il pianificatore sa
+tirare le autostrade come un disegnatore — ed è in
+[`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/):
+pettine nell'ordine del testo, PDC-01 dritta al volano, collettori addosso alle pompe, A3, zero
+cedute, zero bloccanti. **È la prima tavola che il PO dichiara buona dopo D-166**, e vale per
+quella: le altre restano non approvate.
+
+**E porta 7 rilievi di B1.** Il PO dice che la tavola è giusta, la sessione li aveva già
+verificati uno per uno sul disegno: **sono falsi**. Il pavimento di D-171 conta solo le pieghe
+imposte *dentro* un pezzo, e non vede il gomito in fondo a un collettore verticale, la L fra due
+pezzi a giacitura fissata, il gradino fra interasse 15 e 10. **Adesso è confermato dall'occhio
+del PO, non solo dalla sessione.**
+
+**Da dove si riparte, in quest'ordine** — è il work package, sezione «Dove siamo arrivati»:
+
+1. **Alzare il pavimento di B1**, finché la tavola 5 approvata non porta più nessun rilievo di
+   B1. **Quella tavola è adesso il metro**: un pavimento che la accusa è sbagliato.
+2. **Il motore trasla prima di instradare**: oggi un pezzo a coordinate negative non si
+   instrada.
+3. **Ricomporre i piani col pianificatore** (D-155): quello a mano dell'impianto 5 **non
+   produce più la tavola** sul grafo corretto — è l'unica prova rossa nuova, 48 contro 47.
+4. **Poi le valvole**: lo scheletro è approvato, il passo successivo è rimettere il corredo.
 
 ## ⛔ `DRAW-015` è fuso, e le tavole **non sono approvate**
 
