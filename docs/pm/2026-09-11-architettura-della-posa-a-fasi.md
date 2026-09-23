@@ -1,5 +1,15 @@
 # La posa a fasi: prima le autostrade — architettura, 11 settembre 2026
 
+> ⛔ **Storia, non vigente, dal 20 settembre 2026** (**D-151**, **D-155**, **D-156**). La posa
+> a fasi qui descritta era il modo in cui **il motore decideva dove stanno i pezzi**: la fase
+> del tronco (`layout/spine.py`) e il ciclo di miglioramento su una funzione di costo
+> (`layout/improve.py`), cioè **il solutore**. D-151 l'ha tolto dalla catena: dove stanno i
+> pezzi lo scrive il **piano**, che compone un agente (`skill/comporre/`), e il motore lo
+> esegue senza cercare niente (`piano/esecutore.py`). **Resta vigente l'idea dell'ordine** —
+> prima le autostrade, poi il resto — che è passata nel metodo del pianificatore (**D-159**,
+> in testa a `docs/regole-del-piano.md`). L'architettura vigente è
+> `docs/ARCHITETTURA-DEL-PIANO.md`.
+
 **Chi decide:** PO (Daniel Carta), dominio MEP e convenzioni di rappresentazione.
 **Chi scrive:** PM-autore (`docs/governance/OPERATING_MODEL.md` §1.2.1).
 **Input del PO:** **I-057**, **I-058**, **I-061**, **I-062**, **I-063**.
