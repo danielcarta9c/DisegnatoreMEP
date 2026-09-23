@@ -8,6 +8,11 @@ L'ha trovato un agente in camera pulita il 22 settembre, sulla tavola che il PO
 ha poi approvato (**I-108**): lo stesso piano, spostato di (−20, −105), non si
 instradava piu'. Le istruzioni del pianificatore dicevano che contano solo le
 posizioni relative, e non era vero.
+
+E la diagnostica parla nel sistema del piano. Il 23 settembre due agenti hanno
+scritto la stessa cosa: la posa stampata aveva le y un millimetro piu' in basso
+del piano, e gli errori dell'instradamento dicevano celle di una griglia che chi
+compone non vede.
 """
 
 # categoria: difende il motore — il piano dice dove stanno i pezzi gli uni rispetto agli altri, e il motore porta il disegno nell'area prima di instradarlo
@@ -116,3 +121,48 @@ def test_la_posa_resta_nel_sistema_del_piano() -> None:
             for item in esito.posa
         }
     assert posa[(-20.0, -105.0)] == posa[(0.0, 0.0)]
+
+
+def test_la_posa_e_quella_scritta_nel_piano() -> None:
+    """**Al decimo di millimetro**, non a meno di un passo. La griglia del motore
+    parte dall'angolo dell'area — su un A3 a 16 mm dal bordo — e fino al 23
+    settembre 2026 la posa riportava ogni pezzo un millimetro piu' in basso di
+    dove il piano l'aveva scritto."""
+    piano = carica_piano(PROVA / "piano-5.json")
+    esito = esegui_piano(
+        load_project(PROVA / "scheletro-5.json"),
+        piano,
+        catalogo(),
+        simboli(),
+        ROOT / "naming",
+    )
+    posa = {item.component_id: (item.origin.x_mm, item.origin.y_mm) for item in esito.posa}
+    assert {chi: posa[chi] for chi in piano.pezzi} == {
+        chi: (dove.x, dove.y) for chi, dove in piano.pezzi.items()
+    }
+
+
+def test_una_tratta_che_non_passa_si_dice_nel_sistema_del_piano() -> None:
+    """L'instradatore dice le celle della propria griglia, contate dall'angolo
+    dell'area e dopo la traslazione: chi compone non sa riportarle sul piano.
+    L'errore nomina anche i due capi della tratta, e dove il piano li ha messi.
+
+    Il piano e' quello approvato con la presa del ricircolo abbassata di 20 mm:
+    il ricircolo non trova piu' strada."""
+    piano = carica_piano(PROVA / "piano-5.json")
+    presa = piano.pezzi["presa-ricircolo"].model_copy(
+        update={"y": piano.pezzi["presa-ricircolo"].y + 20.0}
+    )
+    esito = esegui_piano(
+        load_project(PROVA / "scheletro-5.json"),
+        piano.model_copy(update={"pezzi": {**piano.pezzi, "presa-ricircolo": presa}}),
+        catalogo(),
+        simboli(),
+        ROOT / "naming",
+    )
+    assert esito.disegno is None
+    assert esito.errore is not None
+    innesto = piano.pezzi["innesto-ricircolo"]
+    assert "innesto-ricircolo." in esito.errore and "presa-ricircolo." in esito.errore
+    assert f"(il pezzo sta a {innesto.x:g}, {innesto.y:g} nel piano)" in esito.errore
+    assert f"(il pezzo sta a {presa.x:g}, {presa.y:g} nel piano)" in esito.errore

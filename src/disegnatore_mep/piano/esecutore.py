@@ -30,6 +30,7 @@ Il giro, in ordine:
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -287,7 +288,9 @@ class EsitoDelPiano:
     dalla deduzione della rotazione — **prima** dell'instradamento e della
     centratura. E' apposta: le coordinate stanno cosi' nello stesso sistema in
     cui e' scritto il piano, e chi corregge il piano legge qui senza dover
-    togliere una traslazione. La tavola finita sta in `disegno`.
+    togliere una traslazione — nemmeno il millimetro con cui la griglia del
+    motore, che parte dall'angolo dell'area, si discosta da quella del piano.
+    La tavola finita sta in `disegno`.
     """
 
     partizione: SheetPartition
@@ -325,6 +328,50 @@ class EsitoDelPiano:
             for tratta in foglio.routes
             if tratta.unresolved
         )
+
+
+def _detto_nel_piano(
+    messaggio: str, partizione: SheetPartition, posa: tuple[PlacedSymbol, ...]
+) -> str:
+    """L'errore dell'instradamento, con i due capi della tratta **nel sistema
+    del piano**.
+
+    L'instradatore dice le celle della propria griglia — «no route from (117,
+    25) to (122, 26)» — contate dall'angolo dell'area e dopo la traslazione che
+    porta il disegno al centro: chi compone non ha modo di riportarle sul
+    piano, e due agenti in camera pulita l'hanno scritto il 23 settembre 2026.
+    Qui si aggiunge quello che il piano sa leggere: quali pezzi la tratta
+    unisce, e dove il piano li ha messi.
+    """
+    trovata = re.search(r"\brun (\S+) on network", messaggio)
+    if trovata is None:
+        return messaggio
+    tratta = next(
+        (
+            trunk
+            for trunk in partizione.trunks
+            if trovata.group(1) in trunk.connection_ids
+        ),
+        None,
+    )
+    if tratta is None:
+        return messaggio
+    dove = {item.component_id: item.origin for item in posa}
+    capi = [
+        f"{ref.component_id}.{ref.port_id}"
+        + (
+            f" (il pezzo sta a {dove[ref.component_id].x_mm:g}, "
+            f"{dove[ref.component_id].y_mm:g} nel piano)"
+            if ref.component_id in dove
+            else ""
+        )
+        for ref in (tratta.start, tratta.end)
+    ]
+    return (
+        f"{messaggio} — la tratta va da {capi[0]} a {capi[1]}; le coppie fra "
+        "parentesi del messaggio sono celle della griglia del foglio, non "
+        "millimetri del piano"
+    )
 
 
 def esegui_piano(
@@ -436,7 +483,24 @@ def esegui_piano(
         for item in seminata
         if prima_di_girare[item.component_id] != (item.rotation_deg, item.specchiato)
     )
-    posa = tuple(seminata)
+    # **La posa si dice nel sistema del piano.** La griglia del motore parte
+    # dall'angolo dell'area da disegno, che su un A3 sta a 16 mm dal bordo: un
+    # piano scritto sui multipli del passo si siede un millimetro piu' in basso.
+    # Il disegno e' giusto — le posizioni relative non cambiano — ma fino al 23
+    # settembre 2026 la posa lo riportava cosi', e due agenti in camera pulita
+    # hanno letto «y spostate di +1 mm» senza poterne sapere il perche'.
+    scarto_x = area.x_mm - round(area.x_mm / frame.standard.grid_mm) * frame.standard.grid_mm
+    scarto_y = area.y_mm - round(area.y_mm / frame.standard.grid_mm) * frame.standard.grid_mm
+    posa = tuple(
+        item.model_copy(
+            update={
+                "origin": Point(
+                    x_mm=item.origin.x_mm - scarto_x, y_mm=item.origin.y_mm - scarto_y
+                )
+            }
+        )
+        for item in seminata
+    )
 
     # 3. **Il motore trasla prima di instradare.** Il piano dice dove stanno i
     #    pezzi gli uni rispetto agli altri; dove stia il disegno sul foglio non
@@ -473,7 +537,7 @@ def esegui_piano(
             rilievi=[],
             posa=posa,
             partizione=partizione,
-            errore=str(errore),
+            errore=_detto_nel_piano(str(errore), partizione, posa),
             girati=girati,
         )
 
