@@ -604,10 +604,46 @@ def _metro_5_senza_ritegno() -> Json:
     return manuale
 
 
+ATTACCHI_ROVESCIATI_PRIMA_DI_D172 = {
+    ("pdc-1", "water_supply"): ("cascata-mandata-a", "a"),
+    ("pdc-3", "water_supply"): ("cascata-mandata-b", "c"),
+    ("batteria-uta", "out"): ("secondario-ritorno-a", "a"),
+    ("ritorno-radiante", "b"): ("secondario-ritorno-b", "c"),
+}
+"""Dove il metro attaccava quattro tubi prima di **D-172**: i due collettori
+dell'impianto 5 con il ritorno **rovesciato** rispetto alla mandata."""
+
+
+def _metro_5_prima_di_d172() -> Json:
+    """Il metro senza ritegno, con i due collettori com'erano fino al 22 settembre."""
+    manuale = _metro_5_senza_ritegno()
+    manuale["archi"] = [
+        (ca, pa, *ATTACCHI_ROVESCIATI_PRIMA_DI_D172[(ca, pa)], m)
+        if (ca, pa) in ATTACCHI_ROVESCIATI_PRIMA_DI_D172
+        else (ca, pa, cb, pb, m)
+        for ca, pa, cb, pb, m in manuale["archi"]
+    ]
+    return manuale
+
+
 def test_quinto_impianto_topologia_identica_a_meno_del_ritegno() -> None:
-    """L'impianto 5 differisce dalla lettura manuale in **una cosa sola**: la valvola
-    di ritegno che il metro porta sul ricircolo sanitario, e che l'interprete non puo'
-    disegnare.
+    """L'impianto 5 differisce dalla lettura manuale in **due cose**, e sono
+    tutt'e due dichiarate.
+
+    **La valvola di ritegno** che il metro porta sul ricircolo sanitario, e che
+    l'interprete non puo' disegnare.
+
+    **L'ordine dei due collettori** (**D-172**). Fino al 22 settembre 2026 questa
+    prova pretendeva che la lettura del 7 agosto e il metro coincidessero, e
+    coincidevano — perche' **avevano tutt'e due lo stesso ritorno inverso**, che il
+    testo non chiede: sul secondario il radiante, servito per ultimo, rientrava per
+    primo; sul primario la mandata raccoglieva `pdc-3` per ultima e il ritorno
+    serviva `pdc-1` per primo. Il PO: «va disegnato come te l'ho detto io… la skill
+    non deve progettare». Il metro e' stato corretto; **la lettura del 7 agosto e'
+    un allegato di verbale e non si ritocca** — resta com'era, e questa prova dice
+    esattamente in che cosa sbagliava. §4.4 delle istruzioni di «Capire» adesso
+    chiude il difetto alla fonte: alla prossima prova in camera pulita la seconda
+    differenza deve sparire, e questa prova va riscritta.
 
     Al giro 2 le differenze erano due: c'era anche il lato secondario tagliato in
     quattro reti, tre delle quali cominciavano su un raccordo — ed era il difetto che
@@ -622,8 +658,14 @@ def test_quinto_impianto_topologia_identica_a_meno_del_ritegno() -> None:
     assert pulita["reti"] == manuale["reti"], (
         f"impianto 5: le reti non combaciano — {dict(pulita['reti'])} contro {dict(manuale['reti'])}"
     )
-    assert corrispondenza(pulita, manuale) is not None, (
-        "impianto 5: tolta la valvola di ritegno, la topologia doveva coincidere"
+    assert corrispondenza(pulita, _metro_5_prima_di_d172()) is not None, (
+        "impianto 5: tolta la valvola di ritegno e rimessi i collettori di prima di "
+        "D-172, la topologia doveva coincidere — c'e' una terza differenza"
+    )
+    assert corrispondenza(pulita, manuale) is None, (
+        "impianto 5: la lettura del 7 agosto coincide col metro corretto, quindi non "
+        "ha piu' il ritorno inverso — o il metro e' tornato indietro, o la lettura e' "
+        "stata rifatta: in tutt'e due i casi questa prova va riscritta (D-172)"
     )
 
 

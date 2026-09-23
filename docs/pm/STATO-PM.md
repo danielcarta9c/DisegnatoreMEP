@@ -1,6 +1,6 @@
 # STATO PM — il dossier di stato della sessione
 
-**Aggiornato:** 2026-09-20 (riallineamento documentale, `DRAW-015`)
+**Aggiornato:** 2026-09-22 (`DRAW-016` in corso; D-167 · D-168 · D-169 · D-170 · D-171)
 **A chi serve:** alla sessione che subentra. Leggi questo e sei operativo: non ti serve un
 prompt lungo, e chi te lo dà ti sta raccontando qualcosa che dovrebbe stare qui.
 **Regola di questo file:** ogni sessione lo aggiorna prima di chiudere. Un file di stato
@@ -160,9 +160,10 @@ In ordine di quanto pesano. I rischi numerati stanno in `PROJECT_STATE.md`.
    restano **5 spezzate piegate sul 4 e 11 sul 5**. È la fase delle autostrade, non quella
    degli organi.
 2. ~~**Nessun controllo sa che cos'è un'autostrada** (`I-068`).~~ **Chiuso da `DRAW-015`:**
-   `layout/autostrade.py` porta la catena fino alla tavola instradata, B1 ha il proprio
-   rilievo, e `RUN_WITH_TOO_MANY_BENDS` usa il bilancio della catena invece del metro dello
-   stacchetto. Era il difetto che ha generato D-151.
+   `layout/autostrade.py` porta la catena fino alla tavola instradata e B1 ha il proprio
+   rilievo. Era il difetto che ha generato D-151. Dal 22 settembre (**D-171**) il bilancio
+   della catena **non è più un numero**: `RUN_WITH_TOO_MANY_BENDS` non si accende su
+   un'autostrada, e B1 confronta le pieghe con quelle che i **simboli impongono**.
 3. ~~**Le quattro regole di D-154 non hanno ancora un controllo.**~~ **Chiuso da
    `DRAW-015`**, e sono **cinque**: A1, **A4**, B1, B3, B4 in `validation/regole.py`.
    **Quello che resta aperto è il censimento di D-158:** **A2, A3, B2, C1 e C3 non hanno un

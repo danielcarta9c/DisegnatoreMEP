@@ -276,6 +276,28 @@ Vale in tutte le direzioni, e questi sono i casi che ricorrono:
 - **N ritorni che rientrano sullo stesso attacco di una macchina**: N−1 confluenze prima
   dell'attacco. Un attacco porta una tubazione sola (§4.3), sempre.
 
+**L'ordine non lo scegli tu: è quello del progettista, ed è lo stesso sulla mandata e sul
+ritorno.** Il conto qui sopra dice *quanti* raccordi servono, non *in che ordine* le macchine
+ci si attaccano — e l'ordine è una decisione di progetto:
+
+- le utenze stanno lungo la dorsale **nell'ordine in cui il testo le elenca**; le macchine
+  numerate, nell'ordine dei numeri;
+- mandata e ritorno le incontrano **nello stesso ordine**, partendo dal capo del collettore:
+  la prima che la mandata serve uscendo dalla sorgente è la prima che il ritorno raccoglie
+  arrivando alla sorgente. Su entrambe le catene sta **sul raccordo più vicino alla
+  sorgente**;
+- **scrivi le due catene dal capo verso il fondo**, e controlla che si specchino. L'errore
+  che questa regola chiude è nato proprio così: ciascuna catena scritta nell'ordine di
+  elenco *nel verso del flusso* — la mandata dalla sorgente verso le utenze, il ritorno
+  dalle utenze verso la sorgente — e il ritorno esce **rovesciato** senza che nessuno l'abbia
+  deciso.
+
+Un **ritorno inverso** (Tichelmann), **due dorsali distinte**, un ordine diverso fra mandata
+e ritorno sono **scelte del progettista**. Si trascrivono **solo se il testo le dice**; se
+non le dice, la distribuzione è una sola e il ritorno specchia la mandata. **Non è una
+assunzione da dichiarare**: è quello che il testo dice quando non dice altro. (**D-172**, che
+precisa D-087 e D-104: la skill non progetta e non trasforma il progetto che le danno.)
+
 **Se il testo descrive come** i flussi si uniscono o si dividono — nomina un collettore,
 un separatore idraulico, un distributore — usa **quello** e cerca la voce di catalogo
 corrispondente. Se dice solo «in parallelo», «dal volume partono tre circuiti», o non

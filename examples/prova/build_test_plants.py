@@ -467,10 +467,16 @@ CINQUE = plant(
     ],
     [
         # Tre macchine in cascata: due confluenze per la mandata, due per il ritorno.
-        pipe("p1", "primario", ("pdc-1", "water_supply"), ("cascata-mandata-a", "a")),
+        # **Stesso ordine sui due collettori** (D-172): la macchina che il ritorno
+        # serve per prima uscendo dal ritorno generale — `pdc-1` — e' anche quella
+        # che la mandata raccoglie per ultima prima della deviatrice. Fino al 22
+        # settembre 2026 la mandata raccoglieva `pdc-3` per ultima: era un ritorno
+        # inverso che il testo non chiede, nato scrivendo la catena nell'ordine di
+        # elenco invece che dal capo del collettore.
+        pipe("p1", "primario", ("pdc-1", "water_supply"), ("cascata-mandata-b", "c")),
         pipe("p2", "primario", ("pdc-2", "water_supply"), ("cascata-mandata-a", "c")),
         pipe("p3", "primario", ("cascata-mandata-a", "b"), ("cascata-mandata-b", "a")),
-        pipe("p4", "primario", ("pdc-3", "water_supply"), ("cascata-mandata-b", "c")),
+        pipe("p4", "primario", ("pdc-3", "water_supply"), ("cascata-mandata-a", "a")),
         pipe("p5", "primario", ("cascata-mandata-b", "b"), ("deviatrice", "in")),
         pipe("p6", "primario", ("deviatrice", "out_a"), ("volano", "primary_in")),
         pipe("p7", "primario", ("deviatrice", "out_b"), ("bollitore", "coil_in")),
@@ -483,10 +489,18 @@ CINQUE = plant(
         pipe("p14", "primario", ("cascata-ritorno-b", "c"), ("pdc-3", "water_return")),
         # Tre circuiti secondari: N=3, quindi due ripartizioni in mandata e due
         # confluenze sul ritorno. Il testo non nomina un collettore.
+        #
+        # **Dorsale unica, nell'ordine in cui il progettista li elenca** (D-172):
+        # UTA, fan-coil, radiante. La mandata li incontra in quell'ordine uscendo dal
+        # volano, e il ritorno li raccoglie nello **stesso** ordine — l'UTA sul
+        # raccordo attaccato al volano, fan-coil e radiante su quello lontano. Fino
+        # al 22 settembre 2026 il ritorno attaccava al volano il **radiante**: un
+        # ritorno inverso che nessuno aveva chiesto, e che sulla tavola chiedeva una
+        # terza colonna.
         pipe("s1", "secondario", ("volano", "secondary_out"), ("secondario-mandata-a", "a")),
         pipe("s2", "secondario", ("secondario-mandata-a", "b"), ("circolatore-uta", "a")),
         pipe("s3", "secondario", ("circolatore-uta", "b"), ("batteria-uta", "in")),
-        pipe("s4", "secondario", ("batteria-uta", "out"), ("secondario-ritorno-a", "a")),
+        pipe("s4", "secondario", ("batteria-uta", "out"), ("secondario-ritorno-b", "c")),
         pipe("s5", "secondario", ("secondario-mandata-a", "c"), ("secondario-mandata-b", "a")),
         pipe("s6", "secondario", ("secondario-mandata-b", "b"), ("circolatore-fancoil", "a")),
         pipe("s7", "secondario", ("circolatore-fancoil", "b"), ("ventilconvettori", "in")),
@@ -497,7 +511,7 @@ CINQUE = plant(
         pipe("s12", "secondario", ("circolatore-radiante", "b"), ("pavimento-radiante", "in")),
         pipe("s13", "secondario", ("pavimento-radiante", "out"), ("ritorno-radiante", "a")),
         pipe("s14", "secondario", ("ritorno-radiante", "c"), ("miscelatrice-radiante", "cold_in")),
-        pipe("s15", "secondario", ("ritorno-radiante", "b"), ("secondario-ritorno-b", "c")),
+        pipe("s15", "secondario", ("ritorno-radiante", "b"), ("secondario-ritorno-a", "a")),
         pipe("s16", "secondario", ("secondario-ritorno-b", "b"), ("volano", "secondary_in")),
         pipe("w1", "fredda", ("acquedotto", "a"), ("bollitore", "cold_in")),
         # Ricircolo sanitario: dalle utenze torna al bollitore con la propria pompa.

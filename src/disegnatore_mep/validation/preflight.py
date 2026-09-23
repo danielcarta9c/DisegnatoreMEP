@@ -71,14 +71,6 @@ la terza la piega non la chiede il collegamento: la chiede un ostacolo, cioe'
 una posizione da correggere (D-078).
 """
 
-CROSSINGS_MAX = 5
-"""Nodi condivisi fra tratte diverse ammessi su una tavola (B3).
-
-«Su una centrale semplice devono stare sulle dita di una mano»: cinque. La
-misura e' quella della prova permanente `tests/layout/test_objective.py` — i
-nodi di griglia toccati da due tratte diverse.
-"""
-
 SHARED_EDGES_MAX = 0
 """Spigoli di griglia percorsi da due tratte diverse: divieto, non costo (D-062).
 
@@ -155,7 +147,6 @@ QUADRANT_NAMES: tuple[str, ...] = (
 MEASURE_ORDER: tuple[str, ...] = (
     "unresolved_runs",
     "bends_per_run",
-    "crossings",
     "longitudinal_overlap",
     "clearances",
     "u_turns",
@@ -205,16 +196,6 @@ def _walk(before: Point, after: Point, ratio: float) -> tuple[float, float]:
 def _steps(before: Point, after: Point, grid_mm: float) -> int:
     span = abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
     return int(round(span / grid_mm))
-
-
-def _cells(polyline: list[Point], grid_mm: float) -> set[tuple[float, float]]:
-    """I nodi di griglia toccati dalla spezzata."""
-    walked: set[tuple[float, float]] = set()
-    for before, after in _stretches(polyline):
-        steps = _steps(before, after, grid_mm)
-        for index in range(steps + 1):
-            walked.add(_walk(before, after, index / steps if steps else 0.0))
-    return walked
 
 
 def _edges(
@@ -360,71 +341,40 @@ def bends_per_run(
     Si conta per **tratta**, non per spezzata: una tratta interrotta dai propri
     accessori in linea resta una tratta sola, e le sue pieghe si sommano.
 
-    **La piega di un'autostrada non e' la piega di uno stacchetto** (**D-151**).
-    Quando chi chiama passa le autostrade della tavola, una tratta di
-    autostrada si misura sul **bilancio della sua catena** — `curve_ammesse`,
-    di norma zero, **una** per la strada verso i terminali (D-144) — invece che
-    sulle tre pieghe che bastano a unire due porte. Senza le autostrade la
-    misura resta quella di sempre per ogni tratta: e' la condizione che tiene in
-    piedi le prove che la precedono.
+    **La piega di un'autostrada non e' la piega di uno stacchetto** (**D-151**),
+    e da **D-171** non si misura affatto qui. Una tratta di autostrada si
+    giudica sulla **catena intera** e contro le pieghe che **i suoi simboli le
+    impongono**: lo fa `regole.autostrade_storte`, che e' il controllo di **B1**
+    e vede i crocevia. Contarla anche qui, per tratta e contro un numero,
+    sarebbe contarla due volte e contro il metro sbagliato — fino al 22
+    settembre 2026 il metro era `curve_ammesse`, zero o uno, che il PO ha
+    tolto: «non c'e' un numero massimo».
+
+    Resta quella di sempre per ogni **altra** tratta — le tre pieghe di **B4**,
+    che il PO non ha toccato — ed e' la condizione che tiene in piedi le prove
+    che la precedono.
     """
     findings: list[ValidationIssue] = []
     conosciute = tuple(autostrade)
     for sheet in drawing.sheets:
         for route in sheet.routes:
-            total = pieghe_della_tratta(route)
-            autostrada = e_autostrada(route, conosciute)
-            limite = (
-                BENDS_PER_RUN_MAX if autostrada is None else autostrada.curve_ammesse
-            )
-            if total <= limite:
+            if e_autostrada(route, conosciute) is not None:
                 continue
-            perche = (
-                f"oltre le {BENDS_PER_RUN_MAX} pieghe che bastano a unire due "
-                f"porte: la piega in piu' la chiede un ostacolo, e l'ostacolo si "
-                f"sposta (B4, D-078)"
-                if autostrada is None
-                else f"ed e' un'autostrada — {autostrada.nome} — a cui le pieghe "
-                f"ammesse sono {autostrada.curve_ammesse} (B1, D-154, D-144)"
-            )
+            total = pieghe_della_tratta(route)
+            if total <= BENDS_PER_RUN_MAX:
+                continue
             findings.append(
                 _finding(
                     "RUN_WITH_TOO_MANY_BENDS",
                     IssueSeverity.WARNING,
                     f"la tratta {_run_name(route)} cambia direzione {total} "
-                    f"{'volta' if total == 1 else 'volte'}, {perche}",
+                    f"{'volta' if total == 1 else 'volte'}, oltre le "
+                    f"{BENDS_PER_RUN_MAX} pieghe che bastano a unire due porte: "
+                    f"la piega in piu' la chiede un ostacolo, e l'ostacolo si "
+                    f"sposta (B4, D-078)",
                     _run_ids(sheet, route),
                 )
             )
-    return findings
-
-
-def crossings(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
-    """B3 — gli incroci sono pochi: si contano i nodi condivisi da tratte diverse."""
-    findings: list[ValidationIssue] = []
-    for sheet in drawing.sheets:
-        walked = [
-            (index, _cells(segment, frame.standard.grid_mm))
-            for index, _, segment in _run_polylines(sheet)
-        ]
-        total = sum(
-            len(walked[first][1] & walked[second][1])
-            for first in range(len(walked))
-            for second in range(first + 1, len(walked))
-            if walked[first][0] != walked[second][0]
-        )
-        if total <= CROSSINGS_MAX:
-            continue
-        findings.append(
-            _finding(
-                "TOO_MANY_CROSSINGS",
-                IssueSeverity.WARNING,
-                f"la tavola {sheet.sheet_id} porta {total} nodi condivisi fra tratte "
-                f"diverse: su una centrale semplice gli incroci stanno sulle dita di "
-                f"una mano, cioe' {CROSSINGS_MAX} (B3, D-060)",
-                [sheet.sheet_id],
-            )
-        )
     return findings
 
 
@@ -1120,7 +1070,6 @@ def preflight_drawing(
         # la tavola non e' finita, e chi legge non deve doverlo cercare.
         *unresolved_runs(drawing),
         *bends_per_run(drawing, autostrade),
-        *crossings(drawing, frame),
         *longitudinal_overlap(drawing, frame),
         *clearances(drawing, frame),
         *u_turns(drawing, frame),

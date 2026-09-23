@@ -16,10 +16,10 @@ perche' una tratta instradata e' l'immagine di una tratta del modello. Tutto
 questo modulo sta su quella chiave.
 
 **Che cosa questo modulo non decide.** Non decide che cos'e' un'autostrada —
-lo decide `hierarchy.hierarchy_of` — ne' quante curve le spettano: quello e'
-`Highway.turns_allowed`, cioe' zero per la struttura fra le macchine di spina e
-**una** per la strada che porta ai terminali (**D-144**). Qui si traduce, e
-basta.
+lo decide `hierarchy.hierarchy_of` — ne' quante curve i suoi simboli le
+impongono: quello e' `highways.turns_forced`, e qui si rilegge sulle porte
+**della tavola** perche' sulla tavola le facce sono quelle dei pezzi **posati**
+(**D-171**). Qui si traduce, e basta.
 """
 
 from collections.abc import Iterable
@@ -30,7 +30,7 @@ from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
 from .geometry import TOLERANCE_MM, Point, RoutedTrunk, SheetGeometry, moves_of
-from .highways import highways
+from .highways import curve_imposte_dal_crocevia, highways
 from .trunks import Trunk, build_trunks
 
 _TOLLERANZA_MM = TOLERANCE_MM
@@ -55,13 +55,6 @@ class AutostradaInTavola:
     """
 
     connection_ids: frozenset[str]
-    curve_ammesse: int
-    """Quante curve la catena puo' fare restando nella propria forma.
-
-    E' `Highway.turns_allowed` tale e quale: **zero** per l'autostrada fra le
-    macchine di spina, **una** per la strada verso i terminali (**D-144**).
-    Non e' una taratura e non si rivede qui: si rivede dove e' scritta.
-    """
     pezzi: tuple[str, ...]
     nome: str
     """Come l'autostrada si nomina in un rilievo: i pezzi che tocca, in fila.
@@ -113,7 +106,6 @@ def autostrade_in_tavola(
                 connection_ids=frozenset(
                     connection_id for chiave in catena.keys for connection_id in chiave
                 ),
-                curve_ammesse=catena.turns_allowed,
                 pezzi=pezzi,
                 nome=" -> ".join(pezzi),
                 catene=catena.keys,
@@ -305,6 +297,33 @@ def porte_in_tavola(
                 attacco.face,
             )
     return trovate
+
+
+def curve_imposte(
+    autostrada: AutostradaInTavola, porte: PorteInTavola
+) -> int | None:
+    """Quante pieghe **i simboli attraversati impongono** a questa catena.
+
+    E' `highways.turns_forced` riletto sulle porte della **tavola**: stesso
+    conto, stessa funzione per il singolo crocevia, ma le facce sono quelle dei
+    pezzi **come sono posati**, cioe' ruotati e specchiati (**D-169**). L'angolo
+    fra due facce dello stesso pezzo non cambia con la giacitura, quindi il
+    numero e' lo stesso — ma chi misura la tavola legge la tavola, e non deve
+    ricostruire il modello per saperlo.
+
+    `None` quando il foglio non porta una delle porte della catena: un pavimento
+    a meta' non e' un pavimento.
+    """
+    imposte = 0
+    for (_, arrivo), (partenza, _) in zip(
+        autostrada.passi, autostrada.passi[1:], strict=False
+    ):
+        qui = porte.get((arrivo.component_id, arrivo.port_id))
+        la = porte.get((partenza.component_id, partenza.port_id))
+        if qui is None or la is None:
+            return None
+        imposte += curve_imposte_dal_crocevia(qui[1], la[1])
+    return imposte
 
 
 def pieghe_dell_autostrada(

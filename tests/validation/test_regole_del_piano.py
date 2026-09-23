@@ -580,7 +580,11 @@ def test_b1_un_autostrada_che_piega_e_un_rilievo_e_dice_quante_volte() -> None:
     detto = rilievi[0].message
     assert "p1" in detto and "p3" in detto
     assert "piegano 1 volta" in detto
-    assert "le pieghe ammesse sono 0" in detto
+    # **Il rilievo dice il pavimento, non un massimo** (D-171): il raccordo si
+    # attraversa fra due facce opposte, quindi non impone niente, e la piega
+    # e' tutta di chi ha posato.
+    assert "ne impongono 0" in detto
+    assert "1 di troppo" in detto
     assert "nord" in detto and "volano" in detto
     assert "B1" not in detto.split("(")[0], "il testo dice il fatto, non la sigla"
 

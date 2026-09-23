@@ -65,6 +65,7 @@ from disegnatore_mep.layout.highways import (
     Highway,
     PortAt,
     lies_in_line,
+    turns_forced,
     turns_of,
 )
 from disegnatore_mep.layout.improve import Improver, SheetCost
@@ -344,7 +345,7 @@ def test_il_preflight_segnala_il_disegno_che_tocca_il_bordo_senza_autorizzazione
 # ---------------------------------------------------------------------------
 
 
-def _chain(*steps: tuple[str, str, str, str], turns: int) -> Highway:
+def _chain(*steps: tuple[str, str, str, str]) -> Highway:
     return Highway(
         keys=tuple((f"p{index}",) for index in range(len(steps))),
         steps=tuple(
@@ -354,7 +355,6 @@ def _chain(*steps: tuple[str, str, str, str], turns: int) -> Highway:
             )
             for here, my_port, there, peer_port in steps
         ),
-        turns_allowed=turns,
     )
 
 
@@ -378,13 +378,18 @@ def _reader(
     return at
 
 
-def test_la_distribuzione_fa_una_curva_e_una_sola() -> None:
-    """Il criterio 8 sulla forma: gamba dritta, **una** curva, dorsale.
+def test_la_curva_che_un_raccordo_impone_non_storce_la_catena() -> None:
+    """La forma e' quella che **le facce dei pezzi consentono** (**D-171**).
 
-    La prova fallisce se la gamba si piega — cioe' se la catena curva dove non
-    deve — e se le curve sono due. L'autostrada fra le macchine di spina non ha
-    diritto a nessuna curva, e la stessa posa che va bene alla distribuzione la
-    fa cadere: e' la differenza che D-144 introduce.
+    Fino al 22 settembre 2026 il confronto era `Highway.turns_allowed`: zero fra
+    le macchine di spina, **una** verso i terminali. Il PO ha tolto il massimo —
+    «piu' dritte possibili, meno curve possibili… non c'e' un numero massimo;
+    dicevo una curva nel caso del generatore singolo e due accumuli, ma era per
+    far capire il concetto» — e al suo posto c'e' un **pavimento**: quante
+    pieghe i simboli attraversati impongono.
+
+    Il gomito ha `a` a sinistra e `c` sotto, due facce **perpendicolari**: la
+    sua curva non e' una cessione, e' la sua forma. Nessuna posa la toglie.
     """
     gamba_curva_dorsale = _reader(
         {
@@ -398,12 +403,14 @@ def test_la_distribuzione_fa_una_curva_e_una_sola() -> None:
         ("circolatore", "b", "gomito", "a"),
         ("gomito", "c", "terminali", "in"),
     )
-    assert turns_of(_chain(*forma, turns=1), gamba_curva_dorsale) == 1
-    assert lies_in_line(_chain(*forma, turns=1), gamba_curva_dorsale)
-    # La stessa catena, senza il diritto alla curva, non sta nella propria forma.
-    assert not lies_in_line(_chain(*forma, turns=0), gamba_curva_dorsale)
+    assert turns_of(_chain(*forma), gamba_curva_dorsale) == 1
+    assert turns_forced(_chain(*forma), gamba_curva_dorsale) == 1
+    assert lies_in_line(_chain(*forma), gamba_curva_dorsale)
 
-    due_curve = _reader(
+    # **Due gomiti impongono due curve**, e la scala che ne esce non e' un
+    # difetto di chi ha posato: e' l'impianto che ha due gomiti. Che due siano
+    # piu' di una lo dice la voce `pieghe` del punteggio, non un rilievo.
+    due_gomiti = _reader(
         {
             ("circolatore", "b"): (100.0, 100.0, "right"),
             ("gomito", "a"): (160.0, 100.0, "left"),
@@ -413,22 +420,60 @@ def test_la_distribuzione_fa_una_curva_e_una_sola() -> None:
             ("terminali", "in"): (220.0, 160.0, "left"),
         }
     )
-    storta = (
+    scala = (
         ("circolatore", "b", "gomito", "a"),
         ("gomito", "c", "secondo", "c"),
         ("secondo", "b", "terminali", "in"),
     )
-    assert turns_of(_chain(*storta, turns=1), due_curve) == 2
-    assert not lies_in_line(_chain(*storta, turns=1), due_curve)
+    assert turns_of(_chain(*scala), due_gomiti) == 2
+    assert turns_forced(_chain(*scala), due_gomiti) == 2
+    assert lies_in_line(_chain(*scala), due_gomiti)
+
+
+def test_una_piega_che_nessun_simbolo_impone_storce_la_catena() -> None:
+    """Il difetto di **D-151**: ogni frammento e' dritto e la catena fa un gomito.
+
+    Il raccordo di mezzo ha `a` a sinistra e `b` a destra — facce **opposte**,
+    pavimento **zero**: passarci attraverso non costa nessuna piega. Se la
+    catena ne fa una lo stesso, e' perche' le due tratte corrono su **due quote
+    diverse**, e quella e' una scelta di chi ha posato — si toglie spostando un
+    pezzo, non piegando il tubo.
+    """
+    due_quote = _reader(
+        {
+            ("circolatore", "b"): (100.0, 100.0, "right"),
+            ("dritto", "a"): (160.0, 100.0, "left"),
+            ("dritto", "b"): (160.0, 140.0, "right"),
+            ("terminali", "in"): (220.0, 140.0, "left"),
+        }
+    )
+    catena = _chain(
+        ("circolatore", "b", "dritto", "a"),
+        ("dritto", "b", "terminali", "in"),
+    )
+    assert turns_of(catena, due_quote) == 1
+    assert turns_forced(catena, due_quote) == 0
+    assert not lies_in_line(catena, due_quote)
 
 
 def test_una_catena_che_non_si_misura_non_e_una_catena_storta() -> None:
     """Una posa che non colloca un pezzo non da' un numero di curve: chi chiama
     la tratta come non conservabile, non come piegata."""
     parziale = _reader({("circolatore", "b"): (100.0, 100.0, "right")})
-    catena = _chain(("circolatore", "b", "gomito", "a"), turns=1)
+    catena = _chain(("circolatore", "b", "gomito", "a"))
     assert turns_of(catena, parziale) is None
     assert not lies_in_line(catena, parziale)
+    # Una catena di una tratta sola non ha crocevia, quindi nessun simbolo le
+    # impone niente: **zero**, e non e' un'incognita.
+    assert turns_forced(catena, parziale) == 0
+
+    # Il pavimento diventa un'incognita quando manca la porta di un crocevia.
+    lunga = _chain(
+        ("circolatore", "b", "gomito", "a"),
+        ("gomito", "c", "terminali", "in"),
+    )
+    assert turns_forced(lunga, parziale) is None
+    assert not lies_in_line(lunga, parziale)
 
 
 # ---------------------------------------------------------------------------

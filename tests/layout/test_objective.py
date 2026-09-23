@@ -35,7 +35,7 @@ from disegnatore_mep.layout.compose import (
     inline_component_ids,
 )
 from disegnatore_mep.layout.geometry import Point, SheetGeometry
-from disegnatore_mep.layout.highways import highways, turns_of
+from disegnatore_mep.layout.highways import highways, turns_forced, turns_of
 from disegnatore_mep.layout.trunks import build_trunks
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -328,9 +328,12 @@ def test_la_curva_della_distribuzione_non_e_una_cessione() -> None:
     assert catene, "nessuna autostrada: la prova non misurerebbe niente"
     for catena in catene:
         curve = turns_of(catena, at)
-        if curve is None:
+        imposte = turns_forced(catena, at)
+        if curve is None or imposte is None:
             continue
-        assert curve <= catena.turns_allowed, (catena.keys, curve, catena.turns_allowed)
+        # **Non piu' di quelle che i simboli impongono** (D-171): fino al 22
+        # settembre 2026 il paragone era `turns_allowed`, zero o uno.
+        assert curve <= imposte, (catena.keys, curve, imposte)
 
 
 def test_two_zones_side_by_side_would_fail_the_stacking_test() -> None:

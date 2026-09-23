@@ -68,7 +68,7 @@ tubi**, non una fonte di convenzione, e le loro discordanze non sono un problema
 
 ---
 
-## ✅ Dove siamo arrivati al 22 settembre, e da dove si riparte
+## ✅ Dove siamo arrivati al 23 settembre, e da dove si riparte
 
 **Il punto 0 e il punto 0bis sono fatti, e misurati.** La prova sta in
 [`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/),
@@ -82,8 +82,21 @@ il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAP
 | **B10 non accusa più tavole giuste** | il difetto trovato da un agente, corretto in `_affiancamenti`, con due prove |
 | **le giaciture sono otto** | **D-169**: `specchio` nel piano, e una prova che verifica su tutta la libreria in tutte e otto che corpo e porte coincidano |
 | **il vuoto non è un difetto** | **D-170**: A4 vince sempre, D3 diventa la scelta del foglio, e i due rilievi che spingevano nel verso sbagliato sono tolti |
+| **B1 non è una soglia** | **D-171**: tolti `turns_allowed` e `TOO_MANY_CROSSINGS`; al loro posto il pavimento dei simboli, e il confronto sta nel punteggio |
+| **la skill non progetta la distribuzione** | **D-172**: l'ordine è del progettista e il ritorno specchia la mandata; l'impianto 5 aveva un ritorno inverso inventato su **tutt'e due** i collettori, corretto, e la regola sta in «Capire» §4.4 |
+| **l'impianto 5 ridisegnato come l'ha chiesto il PO** | pianificatore in camera pulita sul grafo corretto: **A3, zero cedute, zero bloccanti, pieghe da 16 a 9**, il pettine nell'ordine del testo — [`prova-camera-pulita-2026-09-22/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/). ⚠ **7 rilievi di B1 su una tavola giusta**: il pavimento di D-171 è troppo basso |
+| ✅ **la tavola 5 va bene** | il PO, il 23 settembre (**I-108**): «la tavola va bene». È lo **scheletro**, senza valvole — la prova che questo pacchetto ha aperto — e **diventa il metro**: il pavimento di B1 è giusto quando non la accusa più |
 
 **Da dove riparte la prossima sessione, in quest'ordine:**
+
+0. **Alzare il pavimento di B1** (D-171 l'ha lasciato troppo basso, ed è misurato): oggi conta
+   solo le pieghe imposte dentro un pezzo, e accusa il gomito in fondo a un collettore
+   verticale, le L fra pezzi a giacitura fissata e il gradino fra interasse 15 e 10. Sulla tavola
+   5 del 22 settembre sono **7 rilievi su una tavola che il PO ha dichiarato buona** (I-108).
+   **Il criterio di chiusura è quella tavola**: il pavimento è giusto quando non la accusa più,
+   e senza ammorbidire il rilievo sulle pieghe che una posa diversa toglierebbe. **E il motore
+   deve traslare prima di instradare**: oggi un pezzo a coordinate negative non si instrada, e
+   le istruzioni l'hanno detto male fino al 22.
 
 1. **Ricomporre i cinque piani con `skill/comporre/`** — non a mano (**D-155**), e adesso con
    **B12** e con le **otto giaciture** in mano. È quello che riporta il saldo della suite da
@@ -97,12 +110,17 @@ il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAP
 **E tre cose da portare al PO prima di toccarle**, tutte e tre riferite da agenti diversi e
 verificate:
 
-- **il bilancio di B1 è irraggiungibile dove il simbolo impone la piega** — un collettore
-  verticale ne ha due agli estremi per forza, una tre vie sulla terza via ne ha una. *«Il numero
-  è irraggiungibile, non il disegno è sbagliato.»* Stessa famiglia di **B7** e di **B1 contro
-  B3**;
-- **B12 presuppone una ramificazione simmetrica**, e l'impianto 5 ha un ritorno invertito: o la
-  terza colonna è vera, o il grafo va guardato. **Contenuto MEP**;
+- ~~**il bilancio di B1 è irraggiungibile dove il simbolo impone la piega**~~ — **chiuso dal
+  PO il 22 settembre** (**D-171**): «meno curve possibili… **non c'è un numero massimo**».
+  Il bilancio non esiste più; al suo posto il **pavimento** delle facce, che su un collettore
+  verticale vale due e su una tre vie sulla terza via vale una. *«Il numero è irraggiungibile,
+  non il disegno è sbagliato»* — detto da due agenti su due, ed era vero;
+- ~~**B12 presuppone una ramificazione simmetrica**, e l'impianto 5 ha un ritorno invertito~~ —
+  **chiusa dal PO il 22 settembre** (**D-172**), e **non doveva essere una domanda**: «va
+  disegnato come te l'ho detto io… **la skill non deve progettare** o modificare le decisioni
+  del progettista». Il ritorno inverso l'aveva inventato la skill — §4.4 di «Capire» diceva
+  quanti raccordi servono e non in che ordine — ed era **anche sul primario**. Corretti i due
+  collettori dell'impianto 5 e scritta la regola in §4.4;
 - ~~**D3 spinge nel verso sbagliato**~~ — **chiuso dal PO il 22 settembre** (**D-170**): A4
   vince sempre, si tiene il disegno stretto e si prende il foglio più piccolo che lo contiene,
   **il vuoto non è un difetto**. `DRAWING_ALL_ON_ONE_SIDE` e `SHEET_BARELY_FILLED` sono stati
@@ -430,7 +448,9 @@ la prova 0 dimostrerà necessario.
 > E in ogni caso **il solutore non torna**: nessuna somma pesata, nessuna ricerca che sceglie
 > la posa. Se il motore va cambiato, si cambia quello che **esegue**, non quello che **decide**.
 
-**Fuori:** `highways.py` e `turns_allowed` finché il PO non ha risposto alla domanda **B7**.
+**Dentro da D-171:** `highways.py`. Era fuori «finché il PO non ha risposto alla domanda
+**B7**»; il PO ha risposto il 22 settembre, `turns_allowed` non esiste più e al suo posto c'è
+`turns_forced`, il pavimento dei simboli.
 **Fuori** qualunque decisione MEP che il PO non abbia dato. **Fuori la convenzione grafica**,
 che **non si tocca** (D-165).
 
@@ -528,12 +548,15 @@ solo, che sono il punto di questo pacchetto. Rapporto in `docs/collaudi/DRAW-016
    D-151**. Il perimetro è stato scritto leggendo **«il motore che instrada e disegna»**
    (pezzo 4, `layout/`). *Se la lettura è sbagliata va corretta prima di toccare il motore*,
    e in ogni caso **la ricerca non torna**.
-2. **B7** — `turns_allowed` vale zero per ogni catena fra macchine di spina senza guardare se
-   le facce delle porte permettono una retta. Quattro catene su tre impianti non si possono
-   raddrizzare, e una è **l'unico rilievo bloccante** che resta (impianto 3). *O cambia il
-   catalogo, o il bilancio diventa il minimo raggiungibile.* La prima è materia MEP.
-3. **B1 contro B3 sulla cascata** — il collettore verticale che B3 pretende fa piegare la
-   catena che B1 vuole dritta: **la tavola è giusta e il numero dice che è sbagliata.**
+2. ~~**B7** — `turns_allowed` vale zero senza guardare le facce.~~ **Metà chiusa dal PO il 22
+   settembre** (**D-171**): il bilancio è diventato il minimo raggiungibile, cioè il pavimento
+   delle facce, ed era la seconda delle due letture — quella di codice. **Resta al PO la
+   prima, che è materia MEP:** una macchina con due attacchi sullo stesso lato è un simbolo o
+   un vincolo idraulico? Finché non lo dice, quelle pieghe restano e non sono un difetto.
+3. ~~**B1 contro B3 sulla cascata.**~~ **Chiusa dal PO il 22 settembre** (**D-171**): non c'è
+   un numero massimo di curve, e il collettore verticale che B3 pretende ha il proprio
+   pavimento a due. Era il caso in cui **la tavola era giusta e il numero diceva che era
+   sbagliata**, ed è il terzo in tre giorni (D-164, D-170, D-171).
 4. **Dove sta la presa del ricircolo sanitario.** Sull'impianto 5 sta **all'estremo destro del
    foglio** e la mandata sanitaria attraversa da sola i tre secondari per arrivarci: è lì che
    stanno quasi tutti gli incroci di quella tavola. Contenuto MEP.

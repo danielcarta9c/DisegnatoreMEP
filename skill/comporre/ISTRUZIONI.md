@@ -19,6 +19,15 @@ dove stanno i pezzi — e quella cosa decide la tavola.**
 
 > **Il metro non è il numero di pieghe.** È se la tavola **assomiglia al lavoro di un
 > disegnatore**. Un criterio grafico, non matematico.
+>
+> **E non esiste un numero massimo di curve** (**D-171**). Il committente, il 22 settembre
+> 2026: «più dritte possibili, meno curve possibili e meno sormonti possibili, e viaggiano in
+> parallelo. **Non c'è un numero massimo** — dicevo una curva nel caso del generatore singolo e
+> due accumuli, ma era per far capire il concetto». Quindi **non hai un budget da spendere**:
+> hai un confronto da vincere. Fra due pose dello stesso impianto vince quella con meno pieghe
+> e meno sormonti, e **una piega che il simbolo impone non la conti fra le tue** — un
+> collettore verticale si attraversa con due pieghe, una tre vie sulla terza via con una, e
+> quelle non sono tue.
 
 ---
 
@@ -131,10 +140,15 @@ JSON, e solo queste chiavi:
   **non sono pezzi**: ignorali. Uno che manca fa fallire tutto il piano; uno di troppo pure.
   `x` e `y` sono in millimetri, **origine in alto a sinistra del pezzo**, e si arrotondano al
   passo di griglia: **usa multipli di 2,5**.
-  ⚠ **Non sono coordinate sul foglio**: il motore **trasla l'intero disegno** per centrarlo, e
-  la traslazione è la stessa per tutti i pezzi. Contano **solo le posizioni relative**, e non
-  puoi collocare niente rispetto al bordo o al cartiglio: **D1 si governa con la forma della
-  posa, D3 con la scelta del formato**.
+  ⚠ **Non sono coordinate sul foglio, ma devono stare in positivo.** Il motore **instrada
+  prima di traslare**: un pezzo a `y` o `x` negativi lascia le sue tratte senza strada, e il
+  comando risponde «every orthogonal path is blocked» anche su una tratta sola. **Tieni tutti
+  i pezzi a coordinate positive**, con un po' di margine dall'origine. Misurato il 22 settembre
+  2026 sul piano dell'impianto 5: con `x` da 20 e `y` da 22,5 in su si instrada; lo stesso
+  piano spostato di (−20, −105) no. **Dopo** l'instradamento il motore trasla l'intero disegno
+  per centrarlo, la stessa traslazione per tutti i pezzi: per questo non puoi collocare niente
+  rispetto al bordo o al cartiglio — **D1 si governa con la forma della posa, D3 con la scelta
+  del formato**.
 - **`rotazione`** — in **gradi orari**. **Scrivila solo dove la deduzione non arriva**: per un
   raccordo o per un pezzo con un attacco solo **non scriverla**, perché la rotazione è una
   conseguenza della posa e il motore la deduce dai vicini che il pezzo ha davvero.
@@ -226,7 +240,12 @@ A1: mette il confine ACS nella fascia della distribuzione e lo fa finire **a mez
 distanza** dal bollitore che serve.
 
 ### B1 — Le autostrade dritte
-Vedi §2. **Se una piega, si sposta la macchina.**
+Vedi §2. **Se una piega, si sposta la macchina** — a meno che la piega non te la imponga un
+simbolo che la catena attraversa, e allora non è tua e non la puoi togliere spostando niente.
+**Non c'è un massimo di curve** (**D-171**): il rilievo `HIGHWAY_IS_NOT_STRAIGHT` ti dice
+quante ne hai fatte **in più** di quelle imposte, e quelle in più si tolgono spostando le
+macchine. B1 e **B3 non si contraddicono più**: il collettore verticale che B3 pretende costa
+due pieghe, e sono sue.
 
 ### B3 — Più macchine in parallelo ⇒ **collettore verticale**
 I due raccordi che uniscono un parallelo stanno su **una verticale corta accanto alle

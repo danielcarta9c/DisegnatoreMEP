@@ -54,6 +54,7 @@ from disegnatore_mep.layout.autostrade import (
     PorteInTavola,
     autostrade_del_progetto,
     autostrade_in_tavola,
+    curve_imposte,
     pieghe_dell_autostrada,
     porte_in_tavola,
     tratte_del_progetto,
@@ -618,20 +619,36 @@ def autostrade_storte(
     gli attraversamenti sugli attacchetti e abbiamo fatto sta curva senza
     senso».
 
+    **Non c'e' una soglia, e dopo D-171 non ci deve essere.** Il PO, il 22
+    settembre 2026: «piu' dritte possibili, **meno curve possibili**, meno
+    sormonti possibili, e viaggiano in parallelo… **non c'e' un numero
+    massimo** — dicevo una curva nel caso del generatore singolo e due accumuli,
+    ma era per far capire il concetto, la regola non e' massimo una curva o
+    due». Un massimo si insegue (**D-164**): prima di D-171 questo controllo
+    confrontava le pieghe con `Highway.turns_allowed`, zero o uno, e accusava
+    tavole che nessuna posa poteva raddrizzare.
+
     **La misura.** Per ogni autostrada in tavola si contano le pieghe della
     **catena intera** — quelle dentro ciascuna tratta e quelle **sui crocevia**
-    che le uniscono — e si confrontano con `curve_ammesse`, cioe'
-    `Highway.turns_allowed`: **zero** per la struttura fra le macchine di spina,
-    **una** per la strada verso i terminali (**D-144**).
+    che le uniscono — e si confrontano con `curve_imposte`, cioe' quante ne
+    impongono **le facce dei simboli attraversati**. Il rilievo si accende solo
+    sulle pieghe **in piu'**: quelle che la catena ha fatto per scelta di chi
+    compone, e che un'altra posa toglierebbe.
 
-    **La soglia non sta qui e non e' tarata**: e' `Highway.turns_allowed`, e la
-    sua fonte e' D-144 per la curva della distribuzione e `DRAW-012` §C per la
-    retta della struttura (D-083).
+    **Il pavimento non e' una taratura**, ed e' la differenza che conta: non si
+    guadagna niente a starci sopra, e sotto non ci si puo' andare. Chiude la
+    contraddizione fra **B1** e **B3** — una catena che passa per un collettore
+    verticale ha due pieghe per forza, e adesso il suo pavimento e' due — e la
+    meta' misurabile di **B7**.
+
+    **«Meno curve possibili» resta**, e non sta qui: e' la voce `pieghe` del
+    punteggio del revisore, che chi compone minimizza. Un pavimento dice
+    quand'e' **sbagliato**; il punteggio dice qual e' **meglio**.
 
     Il rilievo nomina **le tratte**, perche' e' li' che chi guarda la tavola
-    mette il dito — «la tratta `s3` piega quattro volte, e su un'autostrada le
-    pieghe ammesse sono zero» — e nomina la catena, perche' la piega puo' stare
-    sul crocevia e non dentro nessuna delle due tratte che lo toccano.
+    mette il dito — «la tratta `s3` piega quattro volte, e i simboli che
+    attraversa ne impongono una» — e nomina la catena, perche' la piega puo'
+    stare sul crocevia e non dentro nessuna delle due tratte che lo toccano.
     """
     autostrade = autostrade_del_progetto(project, catalog)
     trovati: list[ValidationIssue] = []
@@ -639,17 +656,19 @@ def autostrade_storte(
         porte = porte_in_tavola(sheet, project, catalog)
         for autostrada in autostrade:
             pieghe = pieghe_dell_autostrada(autostrada, sheet.routes, porte)
-            if pieghe is None or pieghe <= autostrada.curve_ammesse:
+            imposte = curve_imposte(autostrada, porte)
+            if pieghe is None or imposte is None or pieghe <= imposte:
                 continue
             trovati.append(
                 _rilievo(
                     "HIGHWAY_IS_NOT_STRAIGHT",
                     f"la tavola {sheet.sheet_id}: {_tratte_nominate(autostrada)} "
                     f"{'piega' if autostrada.e_una_tratta_sola else 'piegano'} "
-                    f"{pieghe} {'volta' if pieghe == 1 else 'volte'}, e su "
-                    f"un'autostrada le pieghe ammesse sono "
-                    f"{autostrada.curve_ammesse} — la catena e' {autostrada.nome} "
-                    f"(B1, D-154)",
+                    f"{pieghe} {'volta' if pieghe == 1 else 'volte'}, e i simboli "
+                    f"che {'attraversa' if autostrada.e_una_tratta_sola else 'attraversano'} "
+                    f"ne {'impone' if imposte == 1 else 'impongono'} {imposte}: "
+                    f"{pieghe - imposte} di troppo — la catena e' {autostrada.nome} "
+                    f"(B1, D-154, D-171)",
                     [sheet.sheet_id, *sorted(autostrada.connection_ids)],
                 )
             )

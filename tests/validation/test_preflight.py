@@ -166,18 +166,17 @@ def test_a_run_within_its_bend_budget_says_nothing() -> None:
     assert preflight.bends_per_run(drawing(sheet(routes=[tidy]))) == []
 
 
-def _autostrada(connection_id: str, curve_ammesse: int) -> AutostradaInTavola:
+def _autostrada(connection_id: str) -> AutostradaInTavola:
     """Un'autostrada di una tratta sola, dichiarata a mano.
 
-    Non serve un impianto: qui si prova il **bilancio** che `bends_per_run`
-    applica, non il modo in cui le catene si riconoscono — quello sta in
-    `tests/layout/test_autostrade.py`.
+    Non serve un impianto: qui si prova che `bends_per_run` **si tira da parte**
+    su un'autostrada, non il modo in cui le catene si riconoscono — quello sta
+    in `tests/layout/test_autostrade.py`.
     """
     capo = PortRef(component_id="pdc", port_id="water_supply")
     altro = PortRef(component_id="volano", port_id="primary_in")
     return AutostradaInTavola(
         connection_ids=frozenset({connection_id}),
-        curve_ammesse=curve_ammesse,
         pezzi=("pdc", "volano"),
         nome="pdc -> volano",
         catene=((connection_id,),),
@@ -185,65 +184,62 @@ def _autostrada(connection_id: str, curve_ammesse: int) -> AutostradaInTavola:
     )
 
 
-def test_a_highway_run_is_measured_against_its_own_chain_budget() -> None:
-    """Una piega su un'autostrada che ne ammette zero e' un rilievo (**D-151**).
+def test_il_preflight_non_misura_le_pieghe_di_un_autostrada() -> None:
+    """Le pieghe di un'autostrada le conta **B1**, sulla catena intera (**D-171**).
 
-    La stessa tratta, se autostrada non fosse, starebbe dentro le tre pieghe
-    che bastano a unire due porte e non direbbe niente: e' precisamente il
-    difetto che il PO ha visto — «abbiamo fatto sta curva senza senso» — e che
-    nessuna misura per tratta sapeva nominare.
+    Fino al 22 settembre 2026 le contava anche qui, per tratta, contro
+    `curve_ammesse` — zero o uno. Il PO ha tolto il massimo: «piu' dritte
+    possibili, meno curve possibili… **non c'e' un numero massimo**». Un conto
+    per tratta contro un numero e' due volte quello che non si deve fare, e
+    l'unico posto in cui una catena si giudica e' `regole.autostrade_storte`,
+    che vede anche le pieghe **sui crocevia** e le confronta con quelle che i
+    simboli impongono.
     """
-    dorsale = run("p3", [at(20, 20), at(40, 20), at(40, 40)])
+    dorsale = run("p3", [at(20, 20), at(40, 20), at(40, 40), at(60, 40), at(60, 60)])
     tavola = drawing(sheet(routes=[dorsale]))
 
+    # Senza le autostrade e' una tratta come tutte, e le sue tre pieghe stanno
+    # dentro B4: nessun rilievo.
     assert preflight.bends_per_run(tavola) == []
-
-    findings = preflight.bends_per_run(tavola, [_autostrada("p3", 0)])
-    assert codes(findings) == ["RUN_WITH_TOO_MANY_BENDS"]
-    assert findings[0].severity is IssueSeverity.WARNING
-    assert "1 volta" in findings[0].message
-    assert "autostrada" in findings[0].message
-    assert "pdc -> volano" in findings[0].message
-    assert "le pieghe ammesse sono 0" in findings[0].message
+    # E se **e'** autostrada, il preflight tace comunque: non e' piu' affar suo.
+    assert preflight.bends_per_run(tavola, [_autostrada("p3")]) == []
 
 
-def test_a_highway_that_may_turn_once_spends_its_curve_without_a_finding() -> None:
-    """La strada verso i terminali ha diritto a **una** curva (**D-144**)."""
-    dorsale = run("s1", [at(20, 20), at(40, 20), at(40, 40)])
-    assert (
-        preflight.bends_per_run(drawing(sheet(routes=[dorsale])), [_autostrada("s1", 1)])
-        == []
+def test_una_tratta_fuori_da_ogni_autostrada_tiene_il_metro_di_sempre() -> None:
+    """Uno stacchetto resta misurato da **B4**, che il PO non ha toccato."""
+    stacco = run(
+        "st", [at(20, 20), at(40, 20), at(40, 40), at(60, 40), at(60, 60), at(80, 60)]
     )
+    findings = preflight.bends_per_run(
+        drawing(sheet(routes=[stacco])), [_autostrada("p3")]
+    )
+    assert codes(findings) == ["RUN_WITH_TOO_MANY_BENDS"]
+    assert "4 volte" in findings[0].message
+    assert "B4" in findings[0].message
 
 
-def test_a_run_outside_every_highway_keeps_the_budget_of_always() -> None:
-    """Uno stacchetto non si misura col metro della dorsale, e nemmeno al contrario."""
-    stacco = run("st", [at(20, 20), at(40, 20), at(40, 40)])
-    assert preflight.bends_per_run(drawing(sheet(routes=[stacco])), [_autostrada("p3", 0)]) == []
+def test_i_sormonti_non_hanno_piu_un_rilievo() -> None:
+    """`TOO_MANY_CROSSINGS` e' stato tolto, e con lui il cinque (**D-171**).
 
+    Il cinque veniva da un modo di dire — «su una centrale semplice gli incroci
+    stanno sulle dita di una mano» — ed era diventato una soglia. Il PO, il 22
+    settembre 2026: «**meno sormonti possibili**… non c'e' un numero massimo».
+    Gli incroci restano la voce `incroci` del punteggio del revisore, che chi
+    compone minimizza: un confronto, non un massimo da spegnere.
+    """
+    assert not hasattr(preflight, "crossings")
+    assert not hasattr(preflight, "CROSSINGS_MAX")
 
-# --- 2. incroci (B3) -----------------------------------------------------------
-
-
-def crossed(legs: int) -> SheetGeometry:
-    """Una dorsale orizzontale attraversata da `legs` montanti, uno per incrocio."""
     spine = run("h", [at(120, 100), at(200, 100)])
-    verticals = [
+    montanti = [
         run(f"v{index}", [at(125 + index * 10, 80), at(125 + index * 10, 120)])
-        for index in range(legs)
+        for index in range(8)
     ]
-    return sheet(routes=[spine, *verticals])
-
-
-def test_too_many_crossings_is_a_warning_with_the_count() -> None:
-    findings = preflight.crossings(drawing(crossed(6)), FRAME)
-    assert codes(findings) == ["TOO_MANY_CROSSINGS"]
-    assert findings[0].severity is IssueSeverity.WARNING
-    assert "6 nodi condivisi" in findings[0].message
-
-
-def test_crossings_within_the_budget_say_nothing() -> None:
-    assert preflight.crossings(drawing(crossed(3)), FRAME) == []
+    tavola = drawing(sheet(routes=[spine, *montanti]))
+    registry = catalog(probe_good=GOOD_SOURCE)
+    trovati = codes(preflight.preflight_drawing(tavola, FRAME, registry))
+    assert "TOO_MANY_CROSSINGS" not in trovati
+    assert "crossings" not in preflight.MEASURE_ORDER
 
 
 # --- 3. sovrapposizione longitudinale (B2, D-062) ------------------------------
@@ -619,7 +615,6 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
     by_measure = [
         preflight.unresolved_runs(broken),
         preflight.bends_per_run(broken),
-        preflight.crossings(broken, FRAME),
         preflight.longitudinal_overlap(broken, FRAME),
         preflight.clearances(broken, FRAME),
         preflight.u_turns(broken, FRAME),

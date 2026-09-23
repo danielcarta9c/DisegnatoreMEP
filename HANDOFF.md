@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-22, a `DRAW-016` punto 0 **fatto** e a **D-169** e **D-170** fuse su `main`
+**Aggiornato:** 2026-09-23, alla **tavola 5 approvata dal PO** e a **D-169**, **D-170**, **D-171** e **D-172** fusi su `main`
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -10,6 +10,33 @@
 > È stato riscritto il 20 settembre perché una sessione ha sbagliato lo sviluppo pur avendo
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
+
+## ▶ Dove siamo, e da dove si riparte — 23 settembre 2026
+
+**La tavola 5 va bene.** Il PO, il 23 settembre, guardando l'impianto 5 ridisegnato sul grafo
+corretto (**D-172**): «**la tavola va bene**» (**I-108**). È lo **scheletro** — sole macchine e
+collettori, senza valvole, la prova che il PO aveva chiesto per vedere se il pianificatore sa
+tirare le autostrade come un disegnatore — ed è in
+[`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/):
+pettine nell'ordine del testo, PDC-01 dritta al volano, collettori addosso alle pompe, A3, zero
+cedute, zero bloccanti. **È la prima tavola che il PO dichiara buona dopo D-166**, e vale per
+quella: le altre restano non approvate.
+
+**E porta 7 rilievi di B1.** Il PO dice che la tavola è giusta, la sessione li aveva già
+verificati uno per uno sul disegno: **sono falsi**. Il pavimento di D-171 conta solo le pieghe
+imposte *dentro* un pezzo, e non vede il gomito in fondo a un collettore verticale, la L fra due
+pezzi a giacitura fissata, il gradino fra interasse 15 e 10. **Adesso è confermato dall'occhio
+del PO, non solo dalla sessione.**
+
+**Da dove si riparte, in quest'ordine** — è il work package, sezione «Dove siamo arrivati»:
+
+1. **Alzare il pavimento di B1**, finché la tavola 5 approvata non porta più nessun rilievo di
+   B1. **Quella tavola è adesso il metro**: un pavimento che la accusa è sbagliato.
+2. **Il motore trasla prima di instradare**: oggi un pezzo a coordinate negative non si
+   instrada.
+3. **Ricomporre i piani col pianificatore** (D-155): quello a mano dell'impianto 5 **non
+   produce più la tavola** sul grafo corretto — è l'unica prova rossa nuova, 48 contro 47.
+4. **Poi le valvole**: lo scheletro è approvato, il passo successivo è rimettere il corredo.
 
 ## ⛔ `DRAW-015` è fuso, e le tavole **non sono approvate**
 
@@ -47,6 +74,27 @@ E le due cose che ha notato nella stessa risposta sono **i due impedimenti** a q
   di una tre vie gira insieme alla via dritta: per riceverla **da destra** con ingresso dall'alto
   e uscita in basso, **fra le quattro rotazioni quella giacitura non esiste**. **Tocca il motore,
   non la libreria** — nessun manifesto lo dichiara, e **D-165 regge**.
+- **D-171** — **B1 non è una soglia, è un confronto**: «più dritte possibili, meno curve
+  possibili e meno sormonti possibili, e viaggiano in parallelo… **non c'è un numero
+  massimo**». Tolti `Highway.turns_allowed` (zero o uno, e con lui la forma numerica di D-144)
+  e `TOO_MANY_CROSSINGS` col suo cinque. Al loro posto un **pavimento**: le pieghe che le
+  **facce dei simboli attraversati impongono**, invariante per giacitura. Quello che resta
+  comparativo sta nel **punteggio** — `pieghe` e `incroci` — non fra i rilievi. **Chiude B1
+  contro B3** e la metà misurabile di **B7**.
+- **D-172** — ⛔ **la skill non progetta la distribuzione.** Il PO: «va disegnato come te l'ho
+  detto io… **se il progettista vuole due dorsali distinte lo dice**… questo è un **errore di
+  impostazione della skill**». L'**ordine** delle utenze e delle macchine è del progettista, e
+  **il ritorno specchia la mandata**; un ritorno inverso o due dorsali si disegnano solo se lui
+  li chiede. L'impianto 5 ne aveva uno **inventato su tutt'e due i collettori** — nato in
+  «Capire» §4.4, che diceva quanti raccordi e non in che ordine — e la sessione l'aveva
+  portato al PO come una domanda. **Una scelta fatta dalla skill non si rigira al progettista
+  come se fosse sua.**
+
+⚠ **L'impianto 5 è stato ridisegnato come il PO l'ha chiesto** — A3, zero cedute, zero bloccanti,
+il pettine nell'ordine del testo, `docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/` — **e
+porta 7 rilievi di B1 su una tavola giusta**. Il pavimento di D-171 conta solo le pieghe imposte
+dentro un pezzo, e non vede il gomito in fondo a un collettore verticale. È il primo punto da cui
+si riparte.
 
 ⚠ **Il costo è dichiarato e va saputo prima di misurare**: i cinque piani a mano sono composti
 per terminali passanti, e **la suite è passata da 38 rosse a 47**. Le nove nuove sono una cosa
@@ -334,13 +382,14 @@ chiusi, ed erano uno dei quattro difetti che il cold eye review aveva trovato il
    contraddirebbe una decisione che il PO stesso ha approvato. *Se la lettura è sbagliata va
    corretta prima di toccare il motore*, e in ogni caso **la ricerca non torna**.
 1. **B7 — due porte che guardano dalla stessa parte non si uniscono con un segmento.**
-   `Highway.turns_allowed` vale zero per ogni catena fra macchine di spina senza guardare se
-   le facce delle porte lo permettono. Quattro catene su tre impianti non si possono
-   raddrizzare, e una di loro è **l'unico rilievo bloccante** che resta. *O il catalogo
-   cambia, o `turns_allowed` diventa il minimo raggiungibile.* La prima è materia MEP.
-2. **B1 e B3 si contraddicono sulla cascata.** Il collettore verticale che B3 pretende fa
-   piegare la catena che B1 vuole dritta: **la tavola è giusta e il numero dice che è
-   sbagliata.** Come si scrive «il più possibile».
+   **Metà chiusa** il 22 settembre (**D-171**): `turns_allowed` non esiste più, e il bilancio
+   è diventato **il minimo raggiungibile** date le facce — era la seconda delle due letture,
+   quella di codice. **Resta la prima, ed è materia MEP:** una macchina con due attacchi sullo
+   stesso lato è un **simbolo** o un **vincolo idraulico**? Finché il PO non lo dice, quelle
+   pieghe restano e non sono un difetto.
+2. ~~**B1 e B3 si contraddicono sulla cascata.**~~ **Chiusa dal PO il 22 settembre**
+   (**D-171**): «non c'è un numero massimo». Il collettore verticale che B3 pretende ha il
+   proprio pavimento a **due**, e B1 non lo accusa più.
 3. **Dove sta la presa del ricircolo sanitario.** Il confine ACS adesso sta addosso alla
    presa (A4, chiuso), ma sull'impianto 5 **la presa sta all'estremo destro del foglio** e la
    mandata sanitaria attraversa da sola i tre secondari per arrivarci: è lì che stanno quasi

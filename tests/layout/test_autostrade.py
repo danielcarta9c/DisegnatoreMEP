@@ -21,6 +21,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.layout.autostrade import (
     autostrade_del_progetto,
+    curve_imposte,
     e_autostrada,
     pieghe_dell_autostrada,
     pieghe_della_tratta,
@@ -45,6 +46,7 @@ from disegnatore_mep.model.project import (
 )
 from disegnatore_mep.model.types import PlantRegime
 from disegnatore_mep.validation.preflight import bends_per_run
+from disegnatore_mep.validation.regole import autostrade_storte
 
 ROOT = Path(__file__).resolve().parents[2]
 PRIMO = "primo"
@@ -241,7 +243,9 @@ def test_una_catena_dritta_non_e_un_rilievo() -> None:
         True,
         True,
     ]
-    assert catena.curve_ammesse == 0
+    # Il raccordo si attraversa da `b` ad `a`, due facce opposte: la sua forma
+    # non impone niente, e la catena infatti non piega (D-171).
+    assert curve_imposte(catena, porte) == 0
     assert pieghe_dell_autostrada(catena, routes, porte) == 0
     assert bends_per_run(DrawingGeometry(project_id="prova", sheets=[sheet]), autostrade) == []
 
@@ -267,13 +271,22 @@ def test_una_catena_piegata_dentro_una_tratta_e_un_rilievo() -> None:
     # Una piega dentro la tratta, e una sul crocevia: uscendo dal raccordo la
     # catena scende invece di proseguire in orizzontale.
     assert pieghe_dell_autostrada(catena, routes, porte) == 2
+    # Il raccordo non ne impone nessuna: tutt'e due sono di chi ha composto.
+    assert curve_imposte(catena, porte) == 0
 
-    rilievi = bends_per_run(
-        DrawingGeometry(project_id="prova", sheets=[sheet]), autostrade
+    # **Il preflight non misura piu' le pieghe di un'autostrada** (D-171): la
+    # catena si giudica intera, e a farlo e' il controllo di B1.
+    assert (
+        bends_per_run(DrawingGeometry(project_id="prova", sheets=[sheet]), autostrade)
+        == []
     )
-    assert [item.code for item in rilievi] == ["RUN_WITH_TOO_MANY_BENDS"]
-    assert "autostrada" in rilievi[0].message
-    assert "le pieghe ammesse sono 0" in rilievi[0].message
+    rilievi = autostrade_storte(
+        DrawingGeometry(project_id="prova", sheets=[sheet]), registry, project
+    )
+    assert [item.code for item in rilievi] == ["HIGHWAY_IS_NOT_STRAIGHT"]
+    assert "piegano 2 volte" in rilievi[0].message
+    assert "ne impongono 0" in rilievi[0].message
+    assert "2 di troppo" in rilievi[0].message
 
 
 def test_la_piega_sul_crocevia_la_vede_solo_la_catena() -> None:
@@ -309,7 +322,8 @@ def test_la_piega_sul_crocevia_la_vede_solo_la_catena() -> None:
     catena = e_autostrada(routes[0], autostrade)
     assert catena is not None
     assert pieghe_dell_autostrada(catena, routes, porte) == 1
-    assert catena.curve_ammesse == 0
+    # E il raccordo non la imponeva: `b` e `a` sono facce opposte.
+    assert curve_imposte(catena, porte) == 0
 
 
 def test_una_catena_che_il_foglio_non_porta_intera_non_si_misura() -> None:
@@ -340,3 +354,43 @@ def test_senza_le_autostrade_il_preflight_conta_come_prima() -> None:
     ]
     sheet = foglio(project, registry, routes)
     assert bends_per_run(DrawingGeometry(project_id="prova", sheets=[sheet])) == []
+
+
+def test_il_pavimento_di_b1_non_cambia_con_la_giacitura() -> None:
+    """**Ruotare e specchiare un pezzo non gli fa cambiare quello che impone.**
+
+    E' l'invariante su cui **D-171** regge: `curve_imposte` e' un *pavimento* e
+    non una taratura solo se nessuna posa lo puo' abbassare. Ruotare o
+    specchiare un pezzo gira **tutte** le sue porte insieme, quindi l'angolo fra
+    due facce **dello stesso pezzo** resta quello — e il crocevia e' sempre fra
+    due porte dello stesso pezzo.
+
+    Si verifica su tutte e otto le giaciture del raccordo attraversato
+    (**D-169**): se il numero cambiasse anche una volta sola, «meno curve
+    possibili» tornerebbe a essere una soglia da inseguire.
+    """
+    project, registry = cascata(), catalogo()
+    autostrade = autostrade_del_progetto(project, registry)
+    routes = [
+        tratta(["p1"], (40.0, 5.0), (60.0, 5.0)),
+        tratta(["p3"], (65.0, 5.0), (100.0, 5.0)),
+    ]
+    catena = e_autostrada(routes[0], autostrade)
+    assert catena is not None
+
+    trovati = set()
+    for gradi in (0, 90, 180, 270):
+        for specchio in (False, True):
+            posati = [
+                item.model_copy(update={"rotation_deg": gradi, "specchiato": specchio})
+                if item.component_id == "unione"
+                else item
+                for item in posa(project, registry, ORIGINI)
+            ]
+            sheet = SheetGeometry(
+                sheet_id="t1", title="Prova", symbols=posati, routes=routes
+            )
+            porte = porte_in_tavola(sheet, project, registry)
+            trovati.add(curve_imposte(catena, porte))
+
+    assert trovati == {0}, trovati
