@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-23 (`DRAW-016` fuso con la PR #53, tavole **approvate dal PO**, I-109; attivo `DRAW-017`, migliorie e piccole correzioni)
+**Aggiornato:** 2026-09-23 notte (`DRAW-016` fuso con la PR #53, tavole **approvate dal PO**, I-109; attivo `DRAW-017`: D-174 fatto, il resto alla sessione successiva, che parte dai piccoli difetti del PO)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`

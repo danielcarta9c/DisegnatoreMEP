@@ -28,7 +28,7 @@ punto di partenza, misurato dalla sessione:
 |---|---|---|---|---|---|
 | formato | A3 | A3 | A3 | A3 | A2 |
 | cedute / bloccanti | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
-| rilievi | 1 | 1 | 2 | 2 | 3 |
+| rilievi | 1 | 1 | 1 (era 2: B10 del pettine, D-174) | 2 | 3 |
 | spezzate piegate / pieghe / incroci | 3 / 4 / 1 | 3 / 4 / 1 | 3 / 3 / 2 | 5 / 6 / 2 | 10 / 13 / 5 |
 
 Suite: **48 rosse** (lo stesso insieme della base di `DRAW-016`), 1629 passate, 24 `skip`, 12
@@ -43,14 +43,18 @@ Suite: **48 rosse** (lo stesso insieme della base di `DRAW-016`), 1629 passate, 
 Il PO, approvando: «Vedo piccoli difetti». **Non li ha ancora elencati.** Quando li elenca si
 registrano nel registro, uno per riga, e vengono **prima** di tutto il resto di questo pacchetto.
 
-### 1. B10 confronta la mandata solo con il proprio ritorno — **D-174**
+### 1. ✅ B10 confronta la mandata solo con il proprio ritorno — **D-174**, fatto il 23
 
-Oggi `RETURN_RUNS_ABOVE_ITS_SUPPLY` confronta una mandata con **qualunque** ritorno affiancato
-sulla stessa rete, e si accende sul pettine con le utenze impilate — la forma che il PO ha
-disegnato. Si restringe alla **coppia della stessa utenza**. Una prova che tace sul pettine e
-accusa ancora la coppia rovesciata; la misura sulle sedici tavole di `DRAW-016`.
+I tre rilievi del pettine sono spariti, nessun altro si è acceso; la prova tace sul pettine e
+accusa la coppia rovesciata.
 
-### 2. La legenda su due colonne, quando in una non ci sta — **D-177**
+
+Prima `RETURN_RUNS_ABOVE_ITS_SUPPLY` confrontava una mandata con **qualunque** ritorno
+affiancato sulla stessa rete, e si accendeva sul pettine con le utenze impilate — la forma che il
+PO ha disegnato. Adesso guarda la **coppia della stessa utenza**: due tratte con la stessa
+macchina a un capo.
+
+### 2. La legenda su due colonne, quando in una non ci sta — **D-177**, misurata il 23
 
 Sull'impianto 5 la legenda in colonna unica chiede 237,5 mm e la banda dell'A3 ne ha 235: il
 disegno ci starebbe, e il foglio cresce per la legenda. **Prima di prendere un foglio più grande
@@ -60,7 +64,8 @@ si prova la seconda colonna.** Il giudizio si dà sulla tavola.
 legenda sfora di **una riga** (31 righe da 7,5 mm più lo stacco fra le sezioni: 237,5 contro
 235). Una seconda colonna larga come la prima (50 mm) lascia al disegno **300 mm** di larghezza, e
 il disegno dell'impianto 5 ne occupa **337,5**: l'A3 non arriva lo stesso. L'unica leva che lo
-porterebbe in A3 è l'interlinea della legenda, che è convenzione grafica: **si porta al PO**.
+porterebbe in A3 è l'interlinea della legenda, che è convenzione grafica: portata al PO il 23, che
+non l'ha chiesta («Bah per ora basta»). **L'impianto 5 resta in A2.**
 
 ### 3. La miscelatrice termostatica ha l'ingresso dell'acqua fredda — **D-175**
 

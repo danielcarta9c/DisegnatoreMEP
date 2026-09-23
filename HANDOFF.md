@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-23 sera — `DRAW-016` **fuso con la PR #53, tavole approvate** (**I-109**); attivo **`DRAW-017`**, migliorie e piccole correzioni (**D-174 … D-178**, e D-173 approvata)
+**Aggiornato:** 2026-09-23 notte — su `main` `DRAW-016` (PR #53, **tavole approvate**, I-109) e i primi passi di **`DRAW-017`** (D-173 approvata, D-174 fatto, D-177 misurato); la sessione successiva parte dai **piccoli difetti del PO**
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,32 +11,59 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Dove siamo, e da dove si riparte — 23 settembre 2026, sera
+## ▶ Da dove riparte la prossima sessione — scritto la notte del 23 settembre 2026
 
-**`DRAW-016` è fuso su `main` (PR #53) e le tavole sono approvate.** Il PO: «Finalmente un vero
-miglioramento!!!! Si le approvo assolutamente vanno benissimo! Hanno proprio l'aspetto di tavole
-professionali! **Da qui in poi si parla di migliorie e piccole correzioni.**» (**I-109**).
+**Su `main` c'è tutto.** `DRAW-016` con la PR #53 — **le tavole del pianificatore sui cinque
+impianti completi sono approvate** (**I-109**): «hanno proprio l'aspetto di tavole
+professionali… **da qui in poi si parla di migliorie e piccole correzioni**» — e, con la PR
+successiva, i primi passi di **`DRAW-017`**, il pacchetto attivo.
 
-**Il pacchetto attivo è `DRAW-017`**, e nasce dalle risposte del PO alle domande del rapporto
-(**I-110**):
+**Fatto di `DRAW-017`:**
 
-- **D-174** — B10 confronta una mandata **solo con il proprio ritorno**: il pettine disegnato è
-  il risultato di riferimento;
-- **D-175** — la **miscelatrice termostatica ha l'ingresso AF**: libreria e regola di disegno si
-  aggiornano, e si ruota e si specchia nel piano come una tre vie;
-- **D-176** — il **ricircolo ACS** ha un colore suo (**verde chiaro**), entra in tavola da un
-  confine «ACS-R» perché preleva dalle utenze, e **dopo il circolatore torna nell'accumulo**:
-  l'impianto 5 lo chiudeva dopo il bollitore, ed era un errore del grafo;
-- **D-177** — la **legenda su due colonne** quando in una non ci sta;
-- **D-178** — negli impianti centralizzati con **accumulo ACS da 1000 litri in su** si mette il
-  **vaso d'espansione sanitario**, sull'ingresso AF fra il ritegno e il bollitore, mai sulla
-  mandata calda. La regola c'è già e lo posa lì, ma oggi chiede sempre: serve il volume
-  dell'accumulo nel grafo;
-- **D-173** — il pavimento di B1 fra due pezzi è **approvato** (I-111), dopo la spiegazione che il
-  PO aveva chiesto.
+- **D-173 approvata** (I-111): il pavimento di B1 conta anche le pieghe fra due pezzi;
+- **D-174 — B10 confronta la mandata con il proprio ritorno**: i tre rilievi del pettine sono
+  spariti, nessun altro si è acceso. Il metro delle tavole approvate è adesso **1 · 1 · 1 · 2 · 3
+  rilievi**, zero cedute e zero bloccanti;
+- **D-177 — la legenda su due colonne è misurata e non serve all'impianto 5**: sfora di una riga,
+  e la seconda colonna toglie al disegno 50 mm che non ha. L'unica leva per l'A3 è l'interlinea
+  della legenda, che è convenzione: il PO non l'ha chiesta («Bah per ora basta»), **il 5 resta
+  in A2**;
+- **gli attrezzi della camera pulita sono nel repository**: `docs/collaudi/DRAW-017/prepara-camera.sh`
+  e `docs/collaudi/DRAW-017/misura-tavole.py`.
 
-**Il PO vede anche piccoli difetti sulle tavole approvate, e non li ha ancora elencati**: quando
-lo fa vengono prima di tutto il resto (punto 0 del pacchetto).
+**Da fare, in quest'ordine:**
+
+0. **Chiedere al PO i piccoli difetti che ha visto** sulle tavole approvate. Li ha nominati il 23
+   («vedo piccoli difetti») e **non li ha mai elencati**: vengono prima di tutto il resto.
+1. **D-175 — la miscelatrice termostatica con l'ingresso AF.** La porta nel generatore dei
+   simboli (`examples/graphics/build_symbols.py`) e nel catalogo
+   (`mixing-valve-thermostatic.json`); **non più organo in linea**; la regola
+   `dhw-mixing-on-draw-off.json` porta il suo **confine AF con un tratto corto** — il motore
+   delle regole sa già dare un ingresso proprio al gruppo di riempimento (`rules/apply.py`, il
+   «ponte» di I-061), e va esteso a un pezzo che sta in linea sull'ACS; le istruzioni del
+   pianificatore: si posa, si ruota e si specchia come una tre vie.
+2. **D-176 — il ricircolo ACS.** Colore suo, **verde chiaro**, e una riga di legenda; un confine
+   **«ACS-R»** in ingresso, stesso simbolo del prelievo AF; **dopo il circolatore nell'accumulo
+   ACS**, che ha bisogno dell'attacco del ricircolo nel generatore; il grafo dell'impianto 5
+   (`examples/prova/prova-5-cascata-tre-pdc.json`) corretto, e la regola scritta in
+   `skill/capire/`, dove il ricircolo si modella.
+3. **D-178 — il vaso sanitario** negli impianti centralizzati, accumulo ACS da 1000 litri in su:
+   la regola `expansion-on-the-stored-volume-feed.json` lo posa già fra ritegno e bollitore ma
+   chiede sempre; serve **il volume dell'accumulo nel grafo**, letto da «Capire».
+4. **Le tavole ricomposte dal pianificatore**, e **mostrate al PO per prime**. Il protocollo
+   del 23 settembre, che adesso sta nel repository:
+   - i grafi completi: `disegnatore-mep rules examples/prova/prova-N-….json --apply-all --out …`;
+   - un motore fermo per gli agenti: `git worktree add --detach <scratch>/motore HEAD`;
+   - una camera per agente: `bash docs/collaudi/DRAW-017/prepara-camera.sh <grafo> <camera> <scratch>/motore`;
+   - il mandato: `docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/mandato.md`, con la
+     cartella e la descrizione dell'impianto al posto dei segnaposto;
+   - la misura della sessione, **mai quella dell'agente**:
+     `python docs/collaudi/DRAW-017/misura-tavole.py --dettaglio nome=grafo:piano …`.
+5. **I piani del pianificatore nelle prove**, al posto di quelli a mano: la suite passa da 48 a
+   38 o meno (criterio 10 rimasto aperto da `DRAW-016`).
+
+**Resta aperto da `DRAW-016`, e non è di questo pacchetto:** l'anello (vincoli come dati), le
+cure del revisore che escono, `passa-per`, i rilievi di A2, A3 e B5.
 
 ### Com'era la sera del 23, prima della fusione
 
