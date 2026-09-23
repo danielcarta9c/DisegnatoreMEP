@@ -292,6 +292,30 @@ def test_un_piano_che_nomina_pezzi_inesistenti_li_elenca() -> None:
     assert "pdc-master" not in detto
 
 
+def test_un_piano_che_posa_un_organo_in_linea_lo_dice_per_nome() -> None:
+    """Un organo in linea c'e' nel modello, e lo posa il motore sulla sua tratta.
+
+    Fino al 23 settembre 2026 il messaggio lo metteva fra i pezzi «che non
+    esistono nel modello»: falso, e chi componeva il primo grafo completo ci
+    avrebbe perso il giro cercando un pezzo che il grafo porta.
+    """
+    piano = PianoDiComposizione(
+        formato="A2",
+        pezzi={
+            "pdc-master": PezzoNelPiano(x=35, y=115),
+            "valve-isolation-accumulo-primary-in": PezzoNelPiano(x=100, y=100),
+        },
+    )
+    with pytest.raises(ErroreDelPiano) as errore:
+        esegui_piano(
+            completato(LE_DUE_TAVOLE[0][0]), piano, catalogo(), simboli(), NAMING
+        )
+    detto = str(errore.value)
+    assert "non esistono nel modello" not in detto
+    assert "organi in linea" in detto
+    assert "valve-isolation-accumulo-primary-in" in detto
+
+
 def test_un_piano_che_non_si_instrada_porta_comunque_la_posa() -> None:
     """**La diagnostica utile e' dove sono finiti i pezzi**, non il messaggio.
 

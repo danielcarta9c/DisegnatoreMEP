@@ -20,9 +20,12 @@ Il giro, in ordine:
 2. **la semina**: chi non e' nel piano segue il proprio pezzo (`carry_the_rest`);
 3. **la deduzione della rotazione** (`orienta`), che e' l'unica decisione che
    l'esecutore prende, e la prende solo dove non c'e' scelta;
-4. **l'instradamento** e gli accessori in linea (`settle_sheet`);
-5. legenda, centratura, sigle, indirizzi;
-6. il **preflight**, che misura.
+4. **la traslazione nell'area**: il disegno si porta al centro dell'area del
+   formato **prima** di instradarlo, perche' del piano contano le posizioni
+   relative e non quelle sul foglio;
+5. **l'instradamento** e gli accessori in linea (`settle_sheet`);
+6. legenda, centratura, sigle, indirizzi;
+7. il **preflight**, che misura.
 """
 
 from __future__ import annotations
@@ -362,9 +365,23 @@ def esegui_piano(
     per_id = {item.component_id: item for item in partenza}
 
     ignoti = sorted(set(piano.pezzi) - set(per_id))
-    if ignoti:
+    # **Chi e' nel modello ma non si posa col piano va detto per nome**: sono
+    # gli organi in linea, che il motore mette da solo sulla loro tratta. Fino
+    # al 23 settembre 2026 finivano fra i pezzi «che non esistono nel modello»,
+    # e chi componeva leggeva un messaggio falso su un pezzo che il grafo
+    # porta.
+    in_linea = sorted(set(ignoti) & inline)
+    inesistenti = [item for item in ignoti if item not in inline]
+    if inesistenti:
         raise ErroreDelPiano(
-            f"il piano nomina pezzi che non esistono nel modello: {', '.join(ignoti)}"
+            "il piano nomina pezzi che non esistono nel modello: "
+            f"{', '.join(inesistenti)}"
+        )
+    if in_linea:
+        raise ErroreDelPiano(
+            "il piano posa organi in linea, che il motore mette da solo sulla loro "
+            f"tratta: {', '.join(in_linea)} — toglili dal piano (il loro simbolo "
+            "dichiara `inline_gap_mm`)"
         )
 
     def in_griglia(valore: float, base: float) -> float:
@@ -421,7 +438,29 @@ def esegui_piano(
     )
     posa = tuple(seminata)
 
-    # 3. Da qui in avanti e' il motore di sempre: instradamento, accessori in
+    # 3. **Il motore trasla prima di instradare.** Il piano dice dove stanno i
+    #    pezzi gli uni rispetto agli altri; dove stia il disegno sul foglio non
+    #    lo sa, e non glielo si chiede. Si porta al centro dell'area con la
+    #    stessa centratura che lo rimette a posto a tavola finita, e lo spostamento
+    #    e' un multiplo del passo, quindi nessuna porta esce dalla griglia.
+    #    **Misurato il 22 settembre 2026**, sulla tavola che il PO ha poi
+    #    approvato: lo stesso piano spostato di (-20, -105) non si instradava —
+    #    «every orthogonal path is blocked» — perche' le tratte dei pezzi a
+    #    coordinate negative stavano fuori dalla griglia. Adesso da' la stessa
+    #    tavola, e le nove tavole agli atti non si spostano di un punto.
+    seminata = list(
+        centre_vertically(
+            SheetGeometry(
+                sheet_id=partizione.sheet_id,
+                title=partizione.title,
+                symbols=seminata,
+            ),
+            area,
+            frame.standard.grid_mm,
+        ).symbols
+    )
+
+    # 4. Da qui in avanti e' il motore di sempre: instradamento, accessori in
     #    linea, legenda, centratura, testi. **Nessuna ricerca.**
     try:
         sistemata = settle_sheet(

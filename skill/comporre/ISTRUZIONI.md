@@ -25,9 +25,9 @@ dove stanno i pezzi — e quella cosa decide la tavola.**
 > parallelo. **Non c'è un numero massimo** — dicevo una curva nel caso del generatore singolo e
 > due accumuli, ma era per far capire il concetto». Quindi **non hai un budget da spendere**:
 > hai un confronto da vincere. Fra due pose dello stesso impianto vince quella con meno pieghe
-> e meno sormonti, e **una piega che il simbolo impone non la conti fra le tue** — un
-> collettore verticale si attraversa con due pieghe, una tre vie sulla terza via con una, e
-> quelle non sono tue.
+> e meno sormonti, e **una piega che i simboli impongono non la conti fra le tue** — un
+> collettore verticale si attraversa con due pieghe, una tre vie sulla terza via con una,
+> l'ultima macchina entra in fondo al collettore con un gomito, e quelle non sono tue.
 
 ---
 
@@ -135,20 +135,27 @@ JSON, e solo queste chiavi:
   sta comodo. ⚠ **Ma non allargare il disegno per riempirlo**: il vuoto non è un difetto
   (**D-170**, D3). **Se hai preso un foglio più grande del necessario te lo dice il rapporto**
   (`SHEET_LARGER_THAN_NEEDED`), e si cambia una riga e si rilancia.
-- **`pezzi`** — un'entrata per **ogni pezzo elencato in `components`**, e **solo** per quelli.
-  ⚠ Il grafo nomina altre decine di identificativi in `subsystems` e `rule_applications` che
-  **non sono pezzi**: ignorali. Uno che manca fa fallire tutto il piano; uno di troppo pure.
+- **`pezzi`** — un'entrata per **ogni pezzo di `components` che posi tu**, e **solo** per
+  quelli. ⚠ Il grafo nomina altre decine di identificativi in `subsystems` e
+  `rule_applications` che **non sono pezzi**: ignorali.
+  **Gli organi in linea non li posi tu**: valvole d'intercettazione, filtri, defangatori,
+  separatori d'aria, circolatori, ritegni, riduttori, miscelatrici termostatiche, gruppi di
+  sicurezza sanitari. Li riconosci dal manifesto del simbolo, che dichiara `inline_gap_mm`: il
+  motore li posa **da solo, sulla loro tratta**, a partire dalla porta (§4bis). Se ne scrivi
+  uno nel piano, il comando te lo dice e si ferma.
+  **Tutti gli altri li posi tu**: macchine, raccordi (`tee-*`), valvole a tre vie, strumenti,
+  sfiati, scarichi, vasi, gruppi di riempimento, confini di rete. Uno che dimentichi il motore
+  lo mette accanto al pezzo a cui è attaccato, come può: è una rete di sicurezza, non un modo di
+  comporre — **scrivili tutti**.
   `x` e `y` sono in millimetri, **origine in alto a sinistra del pezzo**, e si arrotondano al
   passo di griglia: **usa multipli di 2,5**.
-  ⚠ **Non sono coordinate sul foglio, ma devono stare in positivo.** Il motore **instrada
-  prima di traslare**: un pezzo a `y` o `x` negativi lascia le sue tratte senza strada, e il
-  comando risponde «every orthogonal path is blocked» anche su una tratta sola. **Tieni tutti
-  i pezzi a coordinate positive**, con un po' di margine dall'origine. Misurato il 22 settembre
-  2026 sul piano dell'impianto 5: con `x` da 20 e `y` da 22,5 in su si instrada; lo stesso
-  piano spostato di (−20, −105) no. **Dopo** l'instradamento il motore trasla l'intero disegno
-  per centrarlo, la stessa traslazione per tutti i pezzi: per questo non puoi collocare niente
-  rispetto al bordo o al cartiglio — **D1 si governa con la forma della posa, D3 con la scelta
-  del formato**.
+  **Non sono coordinate sul foglio: contano solo le posizioni relative.** Prima di instradare
+  il motore porta l'intero disegno al centro dell'area del formato che hai scelto, la stessa
+  traslazione per tutti i pezzi — puoi cominciare da zero, e anche andare in negativo. Per
+  questo non puoi collocare niente rispetto al bordo o al cartiglio: **D1 si governa con la
+  forma della posa, D3 con la scelta del formato**. Quello che deve tornare è la misura: il
+  disegno deve **starci** nell'area del formato, altrimenti le tratte che escono non trovano
+  strada.
 - **`rotazione`** — in **gradi orari**. **Scrivila solo dove la deduzione non arriva**: per un
   raccordo o per un pezzo con un attacco solo **non scriverla**, perché la rotazione è una
   conseguenza della posa e il motore la deduce dai vicini che il pezzo ha davvero.
@@ -170,6 +177,29 @@ JSON, e solo queste chiavi:
   pezzo. **Ogni pezzo che hai spostato per una ragione porta quella ragione.**
 
 Niente altre chiavi: il caricatore rifiuta quello che non riconosce, e te lo dice.
+
+### 4bis. Il corredo: che cosa posa il motore, e che cosa chiede a te
+
+Il grafo completo porta il **corredo** — organi in linea, strumenti, sfiati, scarichi, vasi,
+gruppi di riempimento, confini di rete — e si mette **dopo** lo scheletro (§2.2, passo 5). È
+di due specie, e le due si trattano in modo diverso:
+
+- **gli organi in linea li posa il motore**. Si mettono in fila sulla loro tratta **a partire
+  dalla porta**, a distanza fissa, e ogni organo vuole il proprio pezzo di rettilineo. **Il tuo
+  lavoro è lasciarglielo** (B5): se la tratta non ha il rettilineo che la fila chiede, il
+  comando si ferma e ti dice su quale tratta e quanti millimetri servono — «run X has no
+  straight stretch of N mm for …». Si cura allontanando i due pezzi che la tratta unisce, o
+  raddrizzandola; **mai** togliendo un organo, che è contenuto dell'impianto;
+- **gli appesi li posi tu**: un manometro, un termometro, uno sfiato, uno scarico, un vaso,
+  una sicurezza, un gruppo di riempimento stanno all'altro capo di uno **stacco** che parte da
+  un raccordo sulla linea (`tee-branch`). Stanno **addosso** (A4), con lo stacco più corto che
+  la griglia consente: il rilievo `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` ti dice di quanti
+  millimetri sei lontano. **Il raccordo che regge lo stacco sta sulla linea, alla sua quota**
+  (B8): fuori quota, la linea va a prenderlo e torna. E **prima di appendere guarda quale
+  autostrada passa di lì** (§6): un appeso nella colonna che una linea deve percorrere la
+  costringe a girargli intorno;
+- **i confini di rete** — l'acquedotto, le utenze sanitarie — stanno **addosso al pezzo che
+  servono**, con lo stacco minimo (A4), non nella fascia della distribuzione.
 
 ### L'algebra di una valvola a tre vie, e perché le rotazioni non bastano
 
@@ -240,21 +270,41 @@ A1: mette il confine ACS nella fascia della distribuzione e lo fa finire **a mez
 distanza** dal bollitore che serve.
 
 ### B1 — Le autostrade dritte
-Vedi §2. **Se una piega, si sposta la macchina** — a meno che la piega non te la imponga un
-simbolo che la catena attraversa, e allora non è tua e non la puoi togliere spostando niente.
-**Non c'è un massimo di curve** (**D-171**): il rilievo `HIGHWAY_IS_NOT_STRAIGHT` ti dice
-quante ne hai fatte **in più** di quelle imposte, e quelle in più si tolgono spostando le
-macchine. B1 e **B3 non si contraddicono più**: il collettore verticale che B3 pretende costa
-due pieghe, e sono sue.
+Vedi §2. **Se una piega, si sposta la macchina** — a meno che la piega non te la impongano i
+simboli, e allora non è tua e non la puoi togliere spostando niente. **Non c'è un massimo di
+curve** (**D-171**): il rilievo `HIGHWAY_IS_NOT_STRAIGHT` ti dice quante ne hai fatte **in
+più** di quelle imposte, e quelle in più si tolgono spostando le macchine.
+
+**Quali pieghe ti impongono i simboli, e quali no.** Sono imposte:
+- **dentro un pezzo** che la catena attraversa: entrare da una faccia e uscire da una
+  perpendicolare è una piega — il collettore verticale che B3 pretende ne costa due, una tre
+  vie sulla terza via una;
+- **fra due pezzi** le cui porte stanno su **assi perpendicolari** — una uscita orizzontale e
+  una verticale: è una **L**, e non la toglie niente. È il gomito dell'ultima macchina in
+  fondo al collettore verticale, la terza via della deviatrice che va alla serpentina del
+  bollitore, la testa della colonna del pettine;
+- il **gradino di una coppia** fra due macchine con interassi diversi — il volano a 15, il
+  terminale a 10: una delle due linee corre dritta, l'altra scala di 5 mm, e quello è il suo
+  prezzo.
+
+**Non sono imposte**, e il rilievo te le conta:
+- una **U** fra due porte che guardano dalla stessa parte: si toglie **specchiando** uno dei due
+  pezzi (§4, `specchio`);
+- una linea che **gira intorno** a un pezzo che dovrebbe attraversare dritta — una tre vie o un
+  raccordo di traverso sulla linea: si gira il pezzo, e la linea passa;
+- il gradino fra due porte che si guardano, quando le due macchine non stanno allo stesso `y`;
+- il giro largo, quando arrivi a una porta dalla parte sbagliata.
 
 ### B3 — Più macchine in parallelo ⇒ **collettore verticale**
 I due raccordi che uniscono un parallelo stanno su **una verticale corta accanto alle
-macchine**. Due collettori — mandata e ritorno — stanno su **due verticali diverse**, e
-**quale delle due sta più vicina alle macchine conta**: mettici il **ritorno**.
+macchine**. Due collettori — mandata e ritorno — stanno su **due verticali diverse**, vicine.
 
-⚠ **E guarda che le due verticali non si incrocino.** Se la mandata di una macchina deve
-attraversare la verticale del ritorno per arrivare al proprio collettore, **hai messo i due
-collettori nell'ordine sbagliato**: scambiali.
+**Quale delle due sta più vicina alle macchine lo decidono i sormonti**, ed è il committente
+che l'ha detto: «indifferente, quello che fa **meno sormonti** direi; se indifferente scegli
+tu». Con le macchine impilate, lo stacco che va alla verticale lontana attraversa quella
+vicina: qualunque sia l'ordine, qualche sormonto c'è. **Prova i due ordini e tieni quello con
+meno sormonti**; a parità scegli, e scrivi nelle note che cosa hai misurato. Misurato sulla
+cascata di tre pompe: 5 sormonti con la mandata vicina, 6 col ritorno vicino.
 
 ### B8 — Una linea non lascia la propria quota per poi tornarci
 Il sali-scendi. Se un pezzo sta su un'autostrada, **posalo sulla quota dell'autostrada**, o la
@@ -337,7 +387,8 @@ una linea da 3 pieghe a 1.
 3. **Scegli le quote.** Per ogni catena, guarda le porte delle macchine agli estremi: se hanno
    le stesse quote relative, **posale allo stesso y** e la catena è retta.
 4. **Posa le macchine**, fascia per fascia, da sinistra a destra (A1). Impila i paralleli (A2).
-5. **Metti i collettori**: una verticale corta accanto al parallelo, ritorno più vicino (B3).
+5. **Metti i collettori**: una verticale corta accanto al parallelo, e fra mandata e ritorno
+   più vicino alle macchine quello che fa meno sormonti (B3).
 6. **Ricontrolla lo scheletro**: ogni catena fra due macchine è retta? Se no, torna al 3.
 7. **Solo adesso appendi il corredo**, guardando per ognuno **quale autostrada passa di lì**
    (§6), e tenendo i confini di rete **addosso** al pezzo che servono (A4).
@@ -349,18 +400,18 @@ una linea da 3 pieghe a 1.
 
 Rispondi a queste, e se una risposta è «no» torna indietro:
 
-- [ ] **Ogni pezzo posabile del grafo ha un'entrata in `pezzi`?** Uno che manca fa fallire
-      tutto il piano.
+- [ ] **Ogni pezzo che posi tu ha un'entrata in `pezzi`, e nessun organo in linea ce l'ha?**
 - [ ] **Le `x` e le `y` sono multipli di 2,5?**
 - [ ] **Le macchine unite da un'autostrada hanno lo stesso `y`?** Se no, hai una ragione
       scritta nelle note?
 - [ ] **I paralleli sono impilati alla stessa `x`, con passo costante?**
-- [ ] **I due collettori di un parallelo sono su due verticali vicine, con il ritorno più
-      vicino alle macchine, e non si incrociano?**
+- [ ] **I due collettori di un parallelo sono su due verticali vicine, nell'ordine che fa
+      meno sormonti, e l'hai scritto nelle note?**
 - [ ] **Ogni confine di rete sta accanto al pezzo che serve?**
 - [ ] **Nessun pezzo di corredo sta nella colonna o nella riga che un'autostrada deve
       percorrere?**
-- [ ] **Il disegno occupa il foglio, o sta tutto in una fascia?**
+- [ ] **Il foglio è il più piccolo che contiene il disegno?** Il bianco che resta non è un
+      difetto (D3).
 - [ ] **`rotazione` compare solo dove serve davvero?**
 - [ ] **Ogni pezzo spostato per una ragione porta la sua `regola`?**
 
