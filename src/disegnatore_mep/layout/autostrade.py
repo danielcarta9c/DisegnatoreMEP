@@ -17,9 +17,11 @@ questo modulo sta su quella chiave.
 
 **Che cosa questo modulo non decide.** Non decide che cos'e' un'autostrada —
 lo decide `hierarchy.hierarchy_of` — ne' quante curve i suoi simboli le
-impongono: quello e' `highways.turns_forced`, e qui si rilegge sulle porte
-**della tavola** perche' sulla tavola le facce sono quelle dei pezzi **posati**
-(**D-171**). Qui si traduce, e basta.
+impongono: quello e' `highways.pavimento_della_catena`, e qui si rilegge sulle
+porte **della tavola** perche' sulla tavola le facce sono quelle dei pezzi
+**posati** (**D-171**). L'unica cosa che si aggiunge qui e' quella che una
+catena da sola non vede — **il gradino di una coppia** (`gradini_delle_coppie`),
+che guarda due catene insieme.
 """
 
 from collections.abc import Iterable
@@ -30,7 +32,7 @@ from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
 from .geometry import TOLERANCE_MM, Point, RoutedTrunk, SheetGeometry, moves_of
-from .highways import curve_imposte_dal_crocevia, highways
+from .highways import highways, pavimento_della_catena
 from .trunks import Trunk, build_trunks
 
 _TOLLERANZA_MM = TOLERANCE_MM
@@ -302,28 +304,126 @@ def porte_in_tavola(
 def curve_imposte(
     autostrada: AutostradaInTavola, porte: PorteInTavola
 ) -> int | None:
-    """Quante pieghe **i simboli attraversati impongono** a questa catena.
+    """Quante pieghe **i simboli che la catena tocca impongono** a questa catena.
 
-    E' `highways.turns_forced` riletto sulle porte della **tavola**: stesso
-    conto, stessa funzione per il singolo crocevia, ma le facce sono quelle dei
-    pezzi **come sono posati**, cioe' ruotati e specchiati (**D-169**). L'angolo
-    fra due facce dello stesso pezzo non cambia con la giacitura, quindi il
-    numero e' lo stesso — ma chi misura la tavola legge la tavola, e non deve
-    ricostruire il modello per saperlo.
+    E' `highways.pavimento_della_catena` riletto sulle porte della **tavola**:
+    stesso conto — i crocevia, e i tratti fra due capi fissi — ma le facce sono
+    quelle dei pezzi **come sono posati**, cioe' ruotati e specchiati
+    (**D-169**). Chi misura la tavola legge la tavola, e non deve ricostruire il
+    modello per saperlo.
+
+    Non conta il gradino di una coppia, che guarda due catene insieme: quello e'
+    `gradini_delle_coppie`, e chi misura B1 li somma.
 
     `None` quando il foglio non porta una delle porte della catena: un pavimento
     a meta' non e' un pavimento.
     """
-    imposte = 0
-    for (_, arrivo), (partenza, _) in zip(
-        autostrada.passi, autostrada.passi[1:], strict=False
-    ):
-        qui = porte.get((arrivo.component_id, arrivo.port_id))
-        la = porte.get((partenza.component_id, partenza.port_id))
-        if qui is None or la is None:
-            return None
-        imposte += curve_imposte_dal_crocevia(qui[1], la[1])
-    return imposte
+
+    def faccia(ref: PortRef) -> PortFace | None:
+        trovata = porte.get((ref.component_id, ref.port_id))
+        return None if trovata is None else trovata[1]
+
+    return pavimento_della_catena(autostrada.passi, faccia)
+
+
+def _capi(autostrada: AutostradaInTavola) -> dict[str, PortRef]:
+    """I due capi della catena, per pezzo: la porta da cui comincia e quella su
+    cui finisce. Un solo pezzo se la catena torna da dove e' partita."""
+    testa, coda = autostrada.passi[0][0], autostrada.passi[-1][1]
+    return {testa.component_id: testa, coda.component_id: coda}
+
+
+def _quota_sulla_faccia(dove: Point, faccia: PortFace) -> float:
+    """Dove sta una porta **lungo** la propria faccia: la y su una faccia
+    verticale del riquadro — sinistra o destra — e la x su una orizzontale."""
+    if faccia in (PortFace.LEFT, PortFace.RIGHT):
+        return dove.y_mm
+    return dove.x_mm
+
+
+def gradini_delle_coppie(
+    autostrade: Iterable[AutostradaInTavola],
+    routes: Iterable[RoutedTrunk],
+    porte: PorteInTavola,
+) -> dict[frozenset[str], int]:
+    """Il **gradino** che una coppia deve fare quando i due capi hanno interassi
+    diversi: due pieghe, su **una** delle due catene.
+
+    **Il caso.** Mandata e ritorno corrono fra gli stessi due pezzi, dritte
+    tutt'e due possibili: le quattro porte sullo stesso asse, le due di ciascun
+    pezzo sulla stessa faccia, e le due facce che si guardano. Allora le due
+    catene sono rette insieme **solo se le porte stanno alla stessa distanza sui
+    due pezzi**. Non ci stanno quando il volano ha la coppia a **15** e il
+    terminale a **10** (**D-167**, e l'altezza del simbolo e' aperta al PO): una
+    delle due corre dritta, l'altra fa un gradino — due pieghe che nessuna posa
+    toglie, perche' la geometria delle due coppie di porte le impone.
+    Sull'impianto 1 composto a mano e' il ritorno dei radiatori: la mandata e'
+    dritta, il ritorno scende di 5 mm.
+
+    **Su quale delle due.** Su quella che piega di piu' — di solito l'unica che
+    piega; a parita', la prima in ordine di connessioni, perche' la risposta non
+    dipenda dall'ordine in cui le catene arrivano. Il gradino e' uno per la
+    coppia, non uno per catena: se piegano **tutt'e due**, una delle due pieghe
+    e' di chi compone, e il rilievo la nomina.
+
+    **Una catena che gira non entra in una coppia**: una L assorbe qualunque
+    scarto, perche' l'angolo si mette dove serve. E' la tavola 5 approvata dal
+    PO (**I-108**): lo scarto 15/10 della batteria lo prende la testa della
+    colonna di mandata, con la sua L, e la L e' gia' nel pavimento della catena.
+
+    Restituisce, per le connessioni di ogni catena che porta il gradino, le
+    pieghe da aggiungere al suo pavimento.
+    """
+    catene = [
+        autostrada
+        for autostrada in autostrade
+        if len(_capi(autostrada)) == 2 and curve_imposte(autostrada, porte) == 0
+    ]
+    tratte = list(routes)
+    gradini: dict[frozenset[str], int] = {}
+    for indice, prima in enumerate(catene):
+        for seconda in catene[indice + 1 :]:
+            capi_prima, capi_seconda = _capi(prima), _capi(seconda)
+            if set(capi_prima) != set(capi_seconda):
+                continue
+            uno, due = sorted(capi_prima)
+            facce: list[PortFace] = []
+            quote: list[float] = []
+            for pezzo in (uno, due):
+                for capi in (capi_prima, capi_seconda):
+                    trovata = porte.get(
+                        (capi[pezzo].component_id, capi[pezzo].port_id)
+                    )
+                    if trovata is None:
+                        break
+                    facce.append(trovata[1])
+                    quote.append(_quota_sulla_faccia(*trovata))
+            if len(facce) != 4:
+                continue
+            if not (
+                facce[0] is facce[1]
+                and facce[2] is facce[3]
+                and facce[2] is facce[0].opposite
+            ):
+                continue
+            scarto_uno = quote[0] - quote[1]
+            scarto_due = quote[2] - quote[3]
+            if abs(scarto_uno - scarto_due) <= _TOLLERANZA_MM:
+                continue
+            pieghe = {
+                catena.connection_ids: pieghe_dell_autostrada(catena, tratte, porte)
+                or 0
+                for catena in (prima, seconda)
+            }
+            chi = min(
+                (prima, seconda),
+                key=lambda catena: (
+                    -pieghe[catena.connection_ids],
+                    min(catena.connection_ids),
+                ),
+            )
+            gradini[chi.connection_ids] = gradini.get(chi.connection_ids, 0) + 2
+    return gradini
 
 
 def pieghe_dell_autostrada(
@@ -371,7 +471,9 @@ __all__ = [
     "PorteInTavola",
     "autostrade_del_progetto",
     "autostrade_in_tavola",
+    "curve_imposte",
     "e_autostrada",
+    "gradini_delle_coppie",
     "pieghe_della_tratta",
     "pieghe_dell_autostrada",
     "porte_in_tavola",

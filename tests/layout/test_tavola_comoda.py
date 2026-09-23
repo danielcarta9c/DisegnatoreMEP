@@ -463,9 +463,13 @@ def test_una_catena_che_non_si_misura_non_e_una_catena_storta() -> None:
     catena = _chain(("circolatore", "b", "gomito", "a"))
     assert turns_of(catena, parziale) is None
     assert not lies_in_line(catena, parziale)
-    # Una catena di una tratta sola non ha crocevia, quindi nessun simbolo le
-    # impone niente: **zero**, e non e' un'incognita.
-    assert turns_forced(catena, parziale) == 0
+    # Anche una catena di una tratta sola ha un pavimento: le due porte fra cui
+    # corre possono stare su assi perpendicolari, ed e' la L fra due pezzi che
+    # la tavola 5 approvata dal PO porta sette volte (I-108). Senza la porta del
+    # gomito quel pavimento non si conosce, e il numero e' un'incognita — fino
+    # al 22 settembre 2026 qui si leggeva **zero**, perche' il pavimento
+    # contava i soli crocevia.
+    assert turns_forced(catena, parziale) is None
 
     # Il pavimento diventa un'incognita quando manca la porta di un crocevia.
     lunga = _chain(

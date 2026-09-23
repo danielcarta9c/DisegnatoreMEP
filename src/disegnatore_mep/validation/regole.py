@@ -55,6 +55,7 @@ from disegnatore_mep.layout.autostrade import (
     autostrade_del_progetto,
     autostrade_in_tavola,
     curve_imposte,
+    gradini_delle_coppie,
     pieghe_dell_autostrada,
     porte_in_tavola,
     tratte_del_progetto,
@@ -630,16 +631,27 @@ def autostrade_storte(
 
     **La misura.** Per ogni autostrada in tavola si contano le pieghe della
     **catena intera** — quelle dentro ciascuna tratta e quelle **sui crocevia**
-    che le uniscono — e si confrontano con `curve_imposte`, cioe' quante ne
-    impongono **le facce dei simboli attraversati**. Il rilievo si accende solo
-    sulle pieghe **in piu'**: quelle che la catena ha fatto per scelta di chi
-    compone, e che un'altra posa toglierebbe.
+    che le uniscono — e si confrontano con il **pavimento**, cioe' quante ne
+    impongono **le facce dei simboli che la catena tocca**: `curve_imposte`, piu'
+    il gradino della coppia quando ce n'e' uno (`gradini_delle_coppie`). Il
+    rilievo si accende solo sulle pieghe **in piu'**: quelle che la catena ha
+    fatto per scelta di chi compone, e che un'altra posa toglierebbe.
 
     **Il pavimento non e' una taratura**, ed e' la differenza che conta: non si
     guadagna niente a starci sopra, e sotto non ci si puo' andare. Chiude la
     contraddizione fra **B1** e **B3** — una catena che passa per un collettore
     verticale ha due pieghe per forza, e adesso il suo pavimento e' due — e la
     meta' misurabile di **B7**.
+
+    **Il suo metro e' una tavola approvata** (**I-108**, 23 settembre 2026): la
+    tavola 5 del 22 settembre, che il PO ha dichiarato buona e su cui il
+    pavimento di D-171 — i soli crocevia — accendeva **sette** rilievi falsi. Le
+    sette pieghe erano tutte **fra due pezzi**: il gomito in fondo a un
+    collettore verticale, la L fra la terza via e la serpentina, la testa della
+    colonna di un pettine. Adesso contano, e la tavola non ne porta nessuno;
+    le pieghe che una posa diversa toglie — un gradino fra due porte che si
+    guardano, un giro largo, la U che un ribaltamento raddrizza — restano
+    accusate.
 
     **«Meno curve possibili» resta**, e non sta qui: e' la voce `pieghe` del
     punteggio del revisore, che chi compone minimizza. Un pavimento dice
@@ -654,10 +666,14 @@ def autostrade_storte(
     trovati: list[ValidationIssue] = []
     for sheet in drawing.sheets:
         porte = porte_in_tavola(sheet, project, catalog)
+        gradini = gradini_delle_coppie(autostrade, sheet.routes, porte)
         for autostrada in autostrade:
             pieghe = pieghe_dell_autostrada(autostrada, sheet.routes, porte)
             imposte = curve_imposte(autostrada, porte)
-            if pieghe is None or imposte is None or pieghe <= imposte:
+            if pieghe is None or imposte is None:
+                continue
+            imposte += gradini.get(autostrada.connection_ids, 0)
+            if pieghe <= imposte:
                 continue
             trovati.append(
                 _rilievo(
@@ -665,7 +681,7 @@ def autostrade_storte(
                     f"la tavola {sheet.sheet_id}: {_tratte_nominate(autostrada)} "
                     f"{'piega' if autostrada.e_una_tratta_sola else 'piegano'} "
                     f"{pieghe} {'volta' if pieghe == 1 else 'volte'}, e i simboli "
-                    f"che {'attraversa' if autostrada.e_una_tratta_sola else 'attraversano'} "
+                    f"che {'tocca' if autostrada.e_una_tratta_sola else 'toccano'} "
                     f"ne {'impone' if imposte == 1 else 'impongono'} {imposte}: "
                     f"{pieghe - imposte} di troppo — la catena e' {autostrada.nome} "
                     f"(B1, D-154, D-171)",
