@@ -8,7 +8,13 @@ from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.errors import LayoutError
-from disegnatore_mep.layout.geometry import LegendEntry, NetworkKey, PlacedSymbol
+from disegnatore_mep.layout.geometry import (
+    LegendEntry,
+    NetworkKey,
+    PlacedSymbol,
+    Point,
+    RoutedTrunk,
+)
 from disegnatore_mep.layout.inline import place_inline_accessories
 from disegnatore_mep.layout.labels import place_labels
 from disegnatore_mep.layout.legend import build_legend, style_for
@@ -157,3 +163,59 @@ def test_the_fluid_row_speaks_italian_or_falls_back_to_the_network_name() -> Non
 
     assert MEDIUM_NAMES["chilled_water"] == "Acqua refrigerata"
     assert "something_new" not in MEDIUM_NAMES
+
+
+def test_a_line_the_sheet_does_not_draw_has_no_row() -> None:
+    """**Una riga per ogni linea che la tavola disegna, e nessuna per quelle che
+    non ci sono.** Fino al 23 settembre 2026 la legenda elencava andata e
+    ritorno di ogni fluido, e sulla tavola dell'impianto 4 comparivano «Acqua
+    fredda sanitaria — ritorno» e «Acqua calda sanitaria — ritorno», che
+    quell'impianto non ha. L'ha visto un agente in camera pulita.
+
+    Le due meta' vanno lette insieme: senza le tratte la legenda resta quella
+    di chi compone, andata e ritorno; con le tratte, solo cio' che e' disegnato.
+    """
+    project, placed, networks = drawn()
+    solo_andata = [
+        RoutedTrunk(
+            network_id=networks[0],
+            medium="heating_water",
+            supply=True,
+            connection_ids=["x"],
+            segments=[[Point(x_mm=100.0, y_mm=101.0), Point(x_mm=150.0, y_mm=101.0)]],
+        )
+    ]
+    _, senza = build_legend(project, placed, networks, catalog(), NOVE_C_A3)
+    _, con = build_legend(
+        project, placed, networks, catalog(), NOVE_C_A3, routes=solo_andata
+    )
+    assert [item.name for item in senza] == [
+        "Acqua di riscaldamento — andata",
+        "Acqua di riscaldamento — ritorno",
+    ]
+    assert [item.name for item in con] == ["Acqua di riscaldamento — andata"]
+
+
+def test_the_legend_of_an_executed_plan_lists_exactly_the_drawn_lines() -> None:
+    """Sulla tavola che il PO ha approvato (I-108): ogni riga dei fluidi e' una
+    linea disegnata, e ogni linea disegnata ha la sua riga."""
+    from disegnatore_mep.piano.esecutore import esegui_piano
+    from disegnatore_mep.piano.formato import carica_piano
+
+    prova = ROOT / "docs" / "collaudi" / "DRAW-016" / "prova-camera-pulita-2026-09-22"
+    registry = catalog()
+    esito = esegui_piano(
+        load_project(prova / "scheletro-5.json"),
+        carica_piano(prova / "piano-5.json"),
+        registry,
+        SymbolRegistry.from_directory(SYMBOLS),
+        ROOT / "naming",
+    )
+    assert esito.disegno is not None
+    foglio = esito.disegno.sheets[0]
+    righe = {
+        (item.medium, item.name.endswith("andata")) for item in foglio.network_keys
+    }
+    disegnate = {(route.medium, route.supply) for route in foglio.routes}
+    assert righe == disegnate
+    assert ("cold_water", False) not in righe, "l'acqua fredda un ritorno non ce l'ha"

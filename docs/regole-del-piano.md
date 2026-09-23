@@ -183,29 +183,51 @@ senza senso».
 **Come un confronto diventa una misura, senza diventare una soglia.** Si separano le due cose
 che il PO dice in una riga:
 
-- **quand'è sbagliato** — un *pavimento*. Le pieghe che **le facce dei simboli attraversati
-  impongono**: da due facce opposte si passa dritti, da due perpendicolari si gira per forza,
-  dalla stessa faccia si torna indietro. Piegare **più** di così è una scelta di chi compone, e
-  quella è un rilievo. Un pavimento non si insegue — non si guadagna niente a starci sopra, e
-  sotto non ci si può andare;
+- **quand'è sbagliato** — un *pavimento*. Le pieghe che **le facce dei simboli che la catena
+  tocca impongono**, e sono di due specie:
+  - **dentro un pezzo** che la catena attraversa: da due facce opposte si passa dritti, da due
+    perpendicolari si gira per forza, dalla stessa faccia si torna indietro (D-171);
+  - **fra due pezzi**: una **L** quando le due porte stanno su **assi perpendicolari** — il
+    gomito in fondo a un collettore verticale, la terza via di una tre vie che va alla
+    serpentina del bollitore, la testa della colonna di un pettine — e il **gradino** di una
+    coppia quando i due capi hanno **interassi diversi**, 15 contro 10: una delle due linee lo
+    fa per forza, l'altra no.
+
+  **Una U non è imposta**: due porte che guardano dalla stessa parte le raddrizza ribaltare uno
+  dei due pezzi (lo specchio, D-169). **E nemmeno la linea che gira intorno a un pezzo che
+  passa dritta**: quel pezzo si gira sulla linea (B4). Piegare **più** di così è una scelta di
+  chi compone, e quella è un rilievo. Un pavimento non si insegue — non si guadagna niente a
+  starci sopra, e sotto non ci si può andare;
 - **qual è meglio** — il *punteggio*. `pieghe` e `incroci` sono due voci del punteggio del
   revisore, e sono lì che «meno curve possibili, meno sormonti possibili» si misura davvero,
   confrontando due pose dello stesso impianto.
 
-**Il pavimento non cambia girando i pezzi**, ed è per questo che è un pavimento: ruotare o
-specchiare un pezzo gira **tutte** le sue porte insieme, quindi l'angolo fra due facce **dello
-stesso pezzo** non cambia — e un crocevia è sempre fra due porte dello stesso pezzo. Una prova
-lo verifica su tutte e otto le giaciture (D-169).
+**Il pavimento non si abbassa con una posa diversa**, ed è per questo che è un pavimento.
+Dentro un pezzo, ruotarlo o specchiarlo gira **tutte** le sue porte insieme: l'angolo fra due
+facce dello stesso pezzo non cambia, e una prova lo verifica su tutte e otto le giaciture
+(D-169). Fra due pezzi, spostarli non gira nessuna faccia, e ribaltarli la gira **sul proprio
+asse**: quello che nessuna posa cambia è l'asse, e una L fra due assi perpendicolari non la
+toglie niente. Il quarto di giro non è una mossa di chi compone — pompe, caldaie, accumuli e
+scambiatori stanno in piedi, il terminale si prende di lato (B12), l'organo in linea ha la via
+dritta sulla linea (B4).
+
+**Il suo metro è una tavola approvata** (**I-108**). La tavola 5 del 22 settembre, che il PO
+il 23 ha dichiarato buona, col pavimento dei soli crocevia portava **sette** rilievi, e la
+sessione li aveva verificati uno per uno: erano tutti pieghe **fra due pezzi**. Adesso non ne
+porta nessuno, e quello che una posa diversa toglie resta accusato — lo stesso giorno, sulla
+tavola del 21, la mandata che attraversava il collettore con due gomiti, che la tavola del 22
+aveva raddrizzato mettendo la capofila sulla linea principale.
 
 *Fonte:* PO, 20 settembre 2026 (**D-154**), riscritta dal PO il 22 (**D-171**); il precedente
 è del 19 (**D-151**).
 *Controllo:* **`HIGHWAY_IS_NOT_STRAIGHT`** — `validation/regole.py::autostrade_storte`, che
 conta le pieghe **della catena intera** — quelle dentro ogni tratta più i cambi di giacitura
-**sui crocevia**, che nessuna tratta da sola vedeva — e le confronta con `curve_imposte`, il
-pavimento. `RUN_WITH_TOO_MANY_BENDS` **non si accende più su un'autostrada**: lì misura B1,
+**sui crocevia**, che nessuna tratta da sola vedeva — e le confronta con il pavimento:
+`layout/highways.py::pavimento_della_catena` sulle facce della tavola (`curve_imposte`), più
+il gradino della coppia (`gradini_delle_coppie`), che guarda due catene insieme. `RUN_WITH_TOO_MANY_BENDS` **non si accende più su un'autostrada**: lì misura B1,
 che vede la catena intera.
 *Tavola:* impianto 1 composto, «le tratte `s3-a, s3-b` piegano 4 volte, e i simboli che
-attraversano ne impongono 1: 3 di troppo».
+toccano ne impongono 1: 3 di troppo»; e il metro, `collaudi/DRAW-016/prova-camera-pulita-2026-09-22/`.
 
 ⛔ **Quello che c'era prima, e perché è caduto.** Il bilancio era `Highway.turns_allowed`:
 **zero** sulla spina, **una** verso i terminali (D-144). Accusava tavole che nessuna posa
@@ -291,11 +313,18 @@ rilievo che ne esce è vero ma non azionabile da chi compone.
 | impianto 3, `volano -> … -> pdc` | 0 | `volano.b` e `pdc.water_return` guardano tutt'e due a **destra**: serve uscire, salire e tornare indietro — e quella è la **U** che `RUN_OVERSHOOTS_ITS_PORT` blocca |
 | impianto 4, `scambiatore -> commutatrice` e `scambiatore -> deviatrice` | 0 | lo scambiatore a piastre ha `primary_in` e `primary_out` tutt'e due a **sinistra**, e non ruota |
 
-*Controllo:* **la metà misurabile è chiusa** (**D-171**). Le curve non si assegnano più con un
-numero: B1 confronta le pieghe della catena con quelle che **le facce dei simboli
-attraversati impongono**, e una catena che passa da due facce perpendicolari ha il proprio
-pavimento a uno, da due facce uguali a due. Un rilievo che non si può chiudere non si accende
-più.
+*Controllo:* **la metà misurabile è chiusa** (**D-171**, e il pavimento alzato il 23
+settembre). Le curve non si assegnano più con un numero: B1 confronta le pieghe della catena
+con quelle che **le facce dei simboli che tocca impongono** — dentro un pezzo, da due facce
+perpendicolari una e da due facce uguali due; fra due pezzi, una L quando le porte stanno su
+assi perpendicolari. Le righe della tabella che nascono da una L, la prima, la seconda e la
+quarta, **non accendono più rilievi**.
+
+⚠ **La riga dell'impianto 3 è cambiata di natura, e B1 adesso la accusa.** Era scritta il 20
+settembre, prima che le giaciture fossero otto: con lo **specchio** (**D-169**) il volano a due
+attacchi si ribalta, `b` passa a sinistra e guarda la pompa, e la **U** sparisce. Una U fra due
+porte che guardano dalla stessa parte la raddrizza sempre ribaltare uno dei due pezzi, quindi
+non è imposta: è una scelta di chi compone, e il rilievo è azionabile.
 
 **Quello che resta aperto, ed è del PO.** Il pavimento dice che quella piega **c'è**; non dice
 se **ci deve essere**. Una macchina con due attacchi sullo stesso lato è un simbolo, non un
@@ -373,6 +402,13 @@ tavole su cinque.
 ⚠ **Solo le orizzontali, e non è una dimenticanza.** Sulle **verticali** le tavole del PO non
 hanno una costante: la colonna di mandata sta a sinistra del ritorno in una e a destra in
 un'altra. **Una regola sul lato dei verticali non esiste, e non si inventa.**
+
+⚠ **Aperto al PO il 23 settembre 2026: B10 e il pettine.** Il controllo confronta una mandata
+con **qualunque** ritorno che le corre accanto sulla stessa rete, anche di un'altra utenza. In
+un pettine (B12) con le utenze impilate la coppia di ciascuna ha la mandata sopra, ma il ritorno
+dell'utenza alta sta per forza sopra la mandata di quella bassa, e il rilievo si accende sulla
+forma che il PO ha disegnato — l'hanno visto due agenti, sull'impianto 3 completo e sul suo
+scheletro. **Proposta, non applicata:** B10 confronta una mandata solo con il proprio ritorno.
 
 ### B11 — Mandata e ritorno corrono insieme, a interasse costante
 
@@ -605,15 +641,16 @@ compreso** (D-143). *Tavola:* impianto 5 col pettine, che da A1 è sceso ad A3.
   ha risposto che **non c'è un numero massimo**, e che l'esempio della singola curva «era per
   far capire il concetto». Adesso il pavimento di quella catena è **due**, e il rilievo non si
   accende.
-- ⚠ **Il pavimento di B1 è troppo basso, ed è misurato** (22 settembre 2026,
-  `collaudi/DRAW-016/prova-camera-pulita-2026-09-22/`). Conta solo le pieghe imposte **dentro
-  un pezzo**, fra due facce dello stesso raccordo. Non vede quelle imposte **dalla
-  combinazione** di due pezzi: il **gomito in fondo a un collettore verticale** nell'ultima
-  macchina, la **L fra due pezzi** la cui giacitura è fissata dal resto, il **gradino** di una
-  coppia che passa da interasse 15 a 10. Sull'impianto 5 ricomposto escono **7 rilievi di B1 su
-  una tavola giusta**, e nessuno è una scelta di chi compone. Quindi la chiusura di B1 contro B3
-  qui sopra vale **a metà**: per la catena che attraversa il collettore sì, per quella che ci
-  finisce dentro no. **Si chiude alzando il pavimento**, non togliendo il rilievo.
+- ~~**Il pavimento di B1 è troppo basso.**~~ **Chiuso il 23 settembre 2026, alzando il
+  pavimento e non togliendo il rilievo.** Contava solo le pieghe imposte **dentro un pezzo**, e
+  sull'impianto 5 ricomposto il 22 — la tavola che il PO ha approvato (**I-108**) — accendeva
+  **7 rilievi di B1 su una tavola giusta**: il **gomito in fondo a un collettore verticale**,
+  la **L fra due pezzi** la cui giacitura è fissata dal resto, il **gradino** di una coppia che
+  passa da interasse 15 a 10. Adesso il pavimento conta anche le pieghe **fra due pezzi** — la
+  L fra due porte su assi perpendicolari, e il gradino della coppia — e quella tavola non ne
+  porta nessuno. Resta accusato quello che una posa diversa toglie: il gradino fra due porte
+  che si guardano, il giro largo, la U che lo specchio raddrizza, la linea che gira intorno a
+  un pezzo che passa dritta. Le prove sono in `tests/validation/test_il_pavimento_di_b1.py`.
 - **La composizione a corsie** della ricerca del 4 agosto §2.2 — le dorsali di mandata e
   ritorno con i componenti appesi — è misurata su due tavole vere e **non è ancora una riga
   qui**, perché non è stata ancora composta da noi. Quando lo sarà, entra con la sua tavola.

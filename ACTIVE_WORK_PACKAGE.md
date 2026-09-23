@@ -70,6 +70,13 @@ tubi**, non una fonte di convenzione, e le loro discordanze non sono un problema
 
 ## ✅ Dove siamo arrivati al 23 settembre, e da dove si riparte
 
+> **Aggiornato la sera del 23 settembre.** Il pianificatore compone **da solo i cinque impianti
+> completi** — tutte e cinque le tavole escono, zero cedute e zero bloccanti — e **il PO le ha
+> approvate** (**I-109**): «hanno proprio l'aspetto di tavole professionali… da qui in poi si
+> parla di migliorie e piccole correzioni». Si fondono come PR milestone:
+> [`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/),
+> rapporto §6–§10.
+
 **Il punto 0 e il punto 0bis sono fatti, e misurati.** La prova sta in
 [`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-21/),
 il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAPPORTO.md).
@@ -86,8 +93,26 @@ il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAP
 | **la skill non progetta la distribuzione** | **D-172**: l'ordine è del progettista e il ritorno specchia la mandata; l'impianto 5 aveva un ritorno inverso inventato su **tutt'e due** i collettori, corretto, e la regola sta in «Capire» §4.4 |
 | **l'impianto 5 ridisegnato come l'ha chiesto il PO** | pianificatore in camera pulita sul grafo corretto: **A3, zero cedute, zero bloccanti, pieghe da 16 a 9**, il pettine nell'ordine del testo — [`prova-camera-pulita-2026-09-22/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/). ⚠ **7 rilievi di B1 su una tavola giusta**: il pavimento di D-171 è troppo basso |
 | ✅ **la tavola 5 va bene** | il PO, il 23 settembre (**I-108**): «la tavola va bene». È lo **scheletro**, senza valvole — la prova che questo pacchetto ha aperto — e **diventa il metro**: il pavimento di B1 è giusto quando non la accusa più |
+| **il pavimento di B1 fra due pezzi** | **D-173**, *proposta*: la L fra porte su assi perpendicolari e il gradino di una coppia 15/10 sono imposti. La tavola 5 approvata passa da **7 rilievi di B1 a 0** |
+| **il motore trasla prima di instradare** | lo stesso piano spostato dà la stessa tavola al decimo di millimetro |
+| **il pianificatore sul grafo completo** | **cinque impianti su cinque**, in camera pulita: A3 · A3 · A3 · A3 · A2, **zero cedute e zero bloccanti**, rilievi **1 · 1 · 2 · 2 · 3** contro 7 · 9 · 12 · 11 dei piani a mano — e il 5 a mano non esce più — [`prova-camera-pulita-2026-09-23/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/) |
+| **cinque difetti del motore** | trovati dagli agenti, verificati e corretti, ciascuno con la prova che fallisce senza: A4 esentava lo stacco per il suo stesso corridoio · la diagnostica parla nel sistema del piano · **il colore lo decide il fluido, non il verso della tratta** · **gli organi con un verso si disegnano nel verso della tratta** · la legenda elenca solo le linee disegnate |
 
 **Da dove riparte la prossima sessione, in quest'ordine:**
+
+0. ✅ **Il PO ha guardato le tavole del 23 e le ha approvate** (**I-109**). Restano le sue
+   **piccole correzioni**, che elenca dopo la fusione, e le domande del rapporto §10: **D-173**
+   (proposta), **B10 contro il pettine**, la miscelatrice termostatica a due attacchi, l'anello
+   del ricircolo, la legenda che decide il formato dell'impianto 5.
+1. **I piani del pianificatore prendono il posto dei piani a mano nelle prove** (punto 5): i piani
+   a mano sono vecchi, quello del 5 non esce più, e le dieci prove rosse in più rispetto ai 38 di
+   partenza cadono lì (criterio 10, oggi **48**).
+2. **Chiudere l'anello** — l'occhio di `skill/rivedere/` scrive **vincoli in forma di dati**, il
+   pianificatore li riceve e li rispetta (punto 2), e con lui escono le cure del revisore (punto 4).
+3. **`passa-per`** (punto 3), e i rilievi di A2, A3, B5 (punto 6).
+
+<details><summary>Com'era scritto il 23 mattina</summary>
+
 
 0. **Alzare il pavimento di B1** (D-171 l'ha lasciato troppo basso, ed è misurato): oggi conta
    solo le pieghe imposte dentro un pezzo, e accusa il gomito in fondo a un collettore
@@ -106,6 +131,8 @@ il rapporto in [`docs/collaudi/DRAW-016/RAPPORTO.md`](docs/collaudi/DRAW-016/RAP
 2. **Chiudere l'anello** — l'occhio di `skill/rivedere/` scrive **vincoli in forma di dati**, il
    pianificatore li riceve e li rispetta (punto 2).
 3. **`passa-per`** (punto 3).
+
+</details>
 
 **E tre cose da portare al PO prima di toccarle**, tutte e tre riferite da agenti diversi e
 verificate:

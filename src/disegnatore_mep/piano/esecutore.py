@@ -20,13 +20,17 @@ Il giro, in ordine:
 2. **la semina**: chi non e' nel piano segue il proprio pezzo (`carry_the_rest`);
 3. **la deduzione della rotazione** (`orienta`), che e' l'unica decisione che
    l'esecutore prende, e la prende solo dove non c'e' scelta;
-4. **l'instradamento** e gli accessori in linea (`settle_sheet`);
-5. legenda, centratura, sigle, indirizzi;
-6. il **preflight**, che misura.
+4. **la traslazione nell'area**: il disegno si porta al centro dell'area del
+   formato **prima** di instradarlo, perche' del piano contano le posizioni
+   relative e non quelle sul foglio;
+5. **l'instradamento** e gli accessori in linea (`settle_sheet`);
+6. legenda, centratura, sigle, indirizzi;
+7. il **preflight**, che misura.
 """
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -284,7 +288,9 @@ class EsitoDelPiano:
     dalla deduzione della rotazione — **prima** dell'instradamento e della
     centratura. E' apposta: le coordinate stanno cosi' nello stesso sistema in
     cui e' scritto il piano, e chi corregge il piano legge qui senza dover
-    togliere una traslazione. La tavola finita sta in `disegno`.
+    togliere una traslazione — nemmeno il millimetro con cui la griglia del
+    motore, che parte dall'angolo dell'area, si discosta da quella del piano.
+    La tavola finita sta in `disegno`.
     """
 
     partizione: SheetPartition
@@ -322,6 +328,50 @@ class EsitoDelPiano:
             for tratta in foglio.routes
             if tratta.unresolved
         )
+
+
+def _detto_nel_piano(
+    messaggio: str, partizione: SheetPartition, posa: tuple[PlacedSymbol, ...]
+) -> str:
+    """L'errore dell'instradamento, con i due capi della tratta **nel sistema
+    del piano**.
+
+    L'instradatore dice le celle della propria griglia — «no route from (117,
+    25) to (122, 26)» — contate dall'angolo dell'area e dopo la traslazione che
+    porta il disegno al centro: chi compone non ha modo di riportarle sul
+    piano, e due agenti in camera pulita l'hanno scritto il 23 settembre 2026.
+    Qui si aggiunge quello che il piano sa leggere: quali pezzi la tratta
+    unisce, e dove il piano li ha messi.
+    """
+    trovata = re.search(r"\brun (\S+) on network", messaggio)
+    if trovata is None:
+        return messaggio
+    tratta = next(
+        (
+            trunk
+            for trunk in partizione.trunks
+            if trovata.group(1) in trunk.connection_ids
+        ),
+        None,
+    )
+    if tratta is None:
+        return messaggio
+    dove = {item.component_id: item.origin for item in posa}
+    capi = [
+        f"{ref.component_id}.{ref.port_id}"
+        + (
+            f" (il pezzo sta a {dove[ref.component_id].x_mm:g}, "
+            f"{dove[ref.component_id].y_mm:g} nel piano)"
+            if ref.component_id in dove
+            else ""
+        )
+        for ref in (tratta.start, tratta.end)
+    ]
+    return (
+        f"{messaggio} — la tratta va da {capi[0]} a {capi[1]}; le coppie fra "
+        "parentesi del messaggio sono celle della griglia del foglio, non "
+        "millimetri del piano"
+    )
 
 
 def esegui_piano(
@@ -362,9 +412,23 @@ def esegui_piano(
     per_id = {item.component_id: item for item in partenza}
 
     ignoti = sorted(set(piano.pezzi) - set(per_id))
-    if ignoti:
+    # **Chi e' nel modello ma non si posa col piano va detto per nome**: sono
+    # gli organi in linea, che il motore mette da solo sulla loro tratta. Fino
+    # al 23 settembre 2026 finivano fra i pezzi «che non esistono nel modello»,
+    # e chi componeva leggeva un messaggio falso su un pezzo che il grafo
+    # porta.
+    in_linea = sorted(set(ignoti) & inline)
+    inesistenti = [item for item in ignoti if item not in inline]
+    if inesistenti:
         raise ErroreDelPiano(
-            f"il piano nomina pezzi che non esistono nel modello: {', '.join(ignoti)}"
+            "il piano nomina pezzi che non esistono nel modello: "
+            f"{', '.join(inesistenti)}"
+        )
+    if in_linea:
+        raise ErroreDelPiano(
+            "il piano posa organi in linea, che il motore mette da solo sulla loro "
+            f"tratta: {', '.join(in_linea)} — toglili dal piano (il loro simbolo "
+            "dichiara `inline_gap_mm`)"
         )
 
     def in_griglia(valore: float, base: float) -> float:
@@ -419,9 +483,48 @@ def esegui_piano(
         for item in seminata
         if prima_di_girare[item.component_id] != (item.rotation_deg, item.specchiato)
     )
-    posa = tuple(seminata)
+    # **La posa si dice nel sistema del piano.** La griglia del motore parte
+    # dall'angolo dell'area da disegno, che su un A3 sta a 16 mm dal bordo: un
+    # piano scritto sui multipli del passo si siede un millimetro piu' in basso.
+    # Il disegno e' giusto — le posizioni relative non cambiano — ma fino al 23
+    # settembre 2026 la posa lo riportava cosi', e due agenti in camera pulita
+    # hanno letto «y spostate di +1 mm» senza poterne sapere il perche'.
+    scarto_x = area.x_mm - round(area.x_mm / frame.standard.grid_mm) * frame.standard.grid_mm
+    scarto_y = area.y_mm - round(area.y_mm / frame.standard.grid_mm) * frame.standard.grid_mm
+    posa = tuple(
+        item.model_copy(
+            update={
+                "origin": Point(
+                    x_mm=item.origin.x_mm - scarto_x, y_mm=item.origin.y_mm - scarto_y
+                )
+            }
+        )
+        for item in seminata
+    )
 
-    # 3. Da qui in avanti e' il motore di sempre: instradamento, accessori in
+    # 3. **Il motore trasla prima di instradare.** Il piano dice dove stanno i
+    #    pezzi gli uni rispetto agli altri; dove stia il disegno sul foglio non
+    #    lo sa, e non glielo si chiede. Si porta al centro dell'area con la
+    #    stessa centratura che lo rimette a posto a tavola finita, e lo spostamento
+    #    e' un multiplo del passo, quindi nessuna porta esce dalla griglia.
+    #    **Misurato il 22 settembre 2026**, sulla tavola che il PO ha poi
+    #    approvato: lo stesso piano spostato di (-20, -105) non si instradava —
+    #    «every orthogonal path is blocked» — perche' le tratte dei pezzi a
+    #    coordinate negative stavano fuori dalla griglia. Adesso da' la stessa
+    #    tavola, e le nove tavole agli atti non si spostano di un punto.
+    seminata = list(
+        centre_vertically(
+            SheetGeometry(
+                sheet_id=partizione.sheet_id,
+                title=partizione.title,
+                symbols=seminata,
+            ),
+            area,
+            frame.standard.grid_mm,
+        ).symbols
+    )
+
+    # 4. Da qui in avanti e' il motore di sempre: instradamento, accessori in
     #    linea, legenda, centratura, testi. **Nessuna ricerca.**
     try:
         sistemata = settle_sheet(
@@ -434,12 +537,17 @@ def esegui_piano(
             rilievi=[],
             posa=posa,
             partizione=partizione,
-            errore=str(errore),
+            errore=_detto_nel_piano(str(errore), partizione, posa),
             girati=girati,
         )
 
     voci, chiavi = build_legend(
-        modello, sistemata.symbols, partizione.network_ids, catalogo, frame
+        modello,
+        sistemata.symbols,
+        partizione.network_ids,
+        catalogo,
+        frame,
+        routes=sistemata.routes,
     )
     foglio = SheetGeometry(
         sheet_id=partizione.sheet_id,

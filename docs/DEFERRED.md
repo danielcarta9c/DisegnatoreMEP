@@ -252,7 +252,9 @@ sbloccano nulla.
   Nel frattempo il caso di posa del layout è congelato in
   `examples/layout/centrale-pdc-quattro-fasce.json`, che è l'impianto a quattro fasce con
   cui il ciclo di miglioramento è stato misurato: le prove di layout misurano geometria, non
-  contenuto del pacchetto delle regole.
+  contenuto del pacchetto delle regole. ⛔ *Storia dal 20 settembre 2026 (**D-151**): il
+  ciclo di miglioramento è il solutore, e nessun percorso vigente lo chiama; il formato lo
+  sceglie il piano, e l'impianto si compone dal piano.*
 - **La miscelatrice e il gruppo di riempimento hanno ancora porte che dicono il falso** (§6):
   chiuderlo richiede di cambiare le porte, e le porte devono coincidere con quelle del
   simbolo. È quindi lavoro di P4, non di P2 come §6 supponeva.

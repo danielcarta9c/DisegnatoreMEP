@@ -2534,8 +2534,27 @@ def port_corridors(
     (I-046) — chi non ci sta si allontana lungo il proprio stacco, e il ciclo
     poi paga o compra quella lunghezza.
     """
+    return list(
+        port_corridors_by_port(project, catalog, trunks, placed, step_mm).values()
+    )
+
+
+def port_corridors_by_port(
+    project: ProjectModel,
+    catalog: ComponentRegistry,
+    trunks: Sequence[Trunk],
+    placed: Sequence[PlacedSymbol],
+    step_mm: float,
+) -> dict[tuple[str, str], tuple[float, float, float, float]]:
+    """Gli stessi corridoi di `port_corridors`, ciascuno col proprio attacco:
+    `(pezzo, attacco fisico)`.
+
+    Serve a chi deve sapere **di chi** e' un corridoio: il corridoio davanti
+    alla porta di un appeso sta **lungo il suo stesso stacco**, e per l'appeso
+    non e' un posto occupato — e' la strada da cui arriva (A4).
+    """
     definitions = {item.id: item.definition_id for item in project.components}
-    found: list[tuple[float, float, float, float]] = []
+    found: dict[tuple[str, str], tuple[float, float, float, float]] = {}
     for item in placed:
         manifest = catalog.resolve(definitions[item.component_id]).symbol.manifest.rotated(
             item.rotation_deg, item.specchiato
@@ -2550,14 +2569,15 @@ def port_corridors(
             # del vicino che conta come cella occupata: due passi in piu'.
             room += 2 * step_mm
             px, py = item.origin.x_mm + port.x_mm, item.origin.y_mm + port.y_mm
+            key = (item.component_id, port.id)
             if port.face is PortFace.RIGHT:
-                found.append((px, py - step_mm, px + room, py + step_mm))
+                found[key] = (px, py - step_mm, px + room, py + step_mm)
             elif port.face is PortFace.LEFT:
-                found.append((px - room, py - step_mm, px, py + step_mm))
+                found[key] = (px - room, py - step_mm, px, py + step_mm)
             elif port.face is PortFace.BOTTOM:
-                found.append((px - step_mm, py, px + step_mm, py + room))
+                found[key] = (px - step_mm, py, px + step_mm, py + room)
             else:
-                found.append((px - step_mm, py - room, px + step_mm, py))
+                found[key] = (px - step_mm, py - room, px + step_mm, py)
     return found
 
 

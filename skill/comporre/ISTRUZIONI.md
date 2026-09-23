@@ -25,9 +25,9 @@ dove stanno i pezzi — e quella cosa decide la tavola.**
 > parallelo. **Non c'è un numero massimo** — dicevo una curva nel caso del generatore singolo e
 > due accumuli, ma era per far capire il concetto». Quindi **non hai un budget da spendere**:
 > hai un confronto da vincere. Fra due pose dello stesso impianto vince quella con meno pieghe
-> e meno sormonti, e **una piega che il simbolo impone non la conti fra le tue** — un
-> collettore verticale si attraversa con due pieghe, una tre vie sulla terza via con una, e
-> quelle non sono tue.
+> e meno sormonti, e **una piega che i simboli impongono non la conti fra le tue** — un
+> collettore verticale si attraversa con due pieghe, una tre vie sulla terza via con una,
+> l'ultima macchina entra in fondo al collettore con un gomito, e quelle non sono tue.
 
 ---
 
@@ -54,8 +54,11 @@ Questi sono quelli che incontri quasi sempre:
 |---|---|---|
 | `heat-pump-air-water` | 40 × 30 | `water_supply` **destra +5** · `water_return` **destra +20** |
 | `gas-boiler` | 40 × 30 | `water_supply` **destra +5** · `water_return` **destra +20** |
-| `buffer-four-port` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** |
-| `buffer-two-port` | 25 × 45 | `a` sinistra +5 · `b` destra +5 |
+| `buffer-four-port` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `vent` sopra e `drain` sotto, a x +12,5 |
+| `buffer-two-port` | 25 × 45 | `a` sinistra +5 · `b` destra +5 · `vent` sopra e `drain` sotto, a x +12,5 |
+| `dhw-heat-pump` (pompa di calore per ACS) | 25 × 45 | `cold_in` sinistra +37,5 · `dhw_out` sopra, a x +12,5 |
+| `zone-manifold` (collettore di zona) | 40 × 5 | `in` sinistra +2,5 · `out_1` sotto, a x +12,5 · `out_2` sotto, a x +27,5 |
+| `buffer-combined` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `dhw_out` sopra, a x +7,5 · `cold_in` sinistra +37,5 |
 | `plate-heat-exchanger` | 12,5 × 25 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` destra +5 · `secondary_in` destra +20 |
 | `dhw-cylinder` | 25 × 45 | `coil_in` sinistra **+7,5** · `coil_out` sinistra **+17,5** · `dhw_out` sopra · `cold_in` sinistra +37,5 |
 | `radiator`, `fan-coil`, `ahu-coil`, `underfloor-panel` | 20 × 15 | `in` **sinistra +2,5** · `out` **sinistra +12,5** — tutt'e due **sullo stesso lato** (D-167) |
@@ -69,6 +72,10 @@ vuol dire una cosa sola, ed è la leva più potente che hai:
 Pompa a `y=60` e volano a `y=60`: la mandata corre a 65 da una porta all'altra senza una
 piega, il ritorno a 80. **Non hai speso niente.** Se invece le posi a `y=60` e `y=75`, ogni
 linea fra loro fa **due pieghe** e te le porti dietro per tutta la tavola.
+
+⚠ **Conta la quota della porta, non l'origine.** «Stesso `y`» vale per chi ha le porte alle
+stesse quote. Un volano **a due attacchi** ha `a` e `b` tutt'e due a +5: per metterlo sul
+ritorno di una pompa, che esce a +20, lo posi **15 mm più in basso** della pompa.
 
 ⚠ **Il bollitore ha l'interasse 10, non 15** — `coil_in` +7,5 e `coil_out` +17,5 — perché
 quelle due porte dicono **dov'è la serpentina dentro l'accumulo**, e non si spostano. La
@@ -104,10 +111,21 @@ Il **grafo completo** in JSON. Quello che ti serve:
 - `connections` — ogni tubazione, con le due estremità `{component_id, port_id}` e la rete;
 - `networks` — a che circuito appartiene ogni tubazione, e con che fluido.
 
+**Da un pezzo al suo simbolo.** `definition_id` dice **che cosa è** il pezzo, non quale
+simbolo lo disegna: il simbolo lo dice la voce di catalogo del pezzo
+(`examples/layout/catalog/<definition_id>.json`, campo `symbol_id`), e il manifesto è
+`assets/symbols/<symbol_id>.json`. Serve, perché i nomi non coincidono sempre: `tee-split` e
+`tee-junction-dhw` si disegnano col simbolo `tee-junction`, `cold-water-inlet` e
+`dhw-draw-off` con `network-boundary`, tutte le `valve-isolation-*` con `valve-isolation`.
+
 **Chi è una macchina e chi è corredo** lo capisci dall'ingombro e dalle porte: un pezzo 40×30
 o 25×45 è una macchina, un pezzo di 5 o 7,5 mm con due porte in linea è un organo che sta
 **sopra una tubazione**. Un `tee` è un raccordo: unisce tre tubazioni e **non si posa a
-occhio**, si posa dove il collettore deve stare.
+occhio**, si posa dove il collettore deve stare. **Quale tubazione gli passa dritta lo decide
+la posa, non il grafo**: il motore gira il raccordo e gli assegna le porte guardando dove
+stanno i vicini — chi è allineato con l'uscita entra dritto, l'altro dalla derivazione.
+Misurato: scambiando di posto le due zone che un raccordo riunisce, la mappa delle porte si
+inverte con loro.
 
 ---
 
@@ -135,20 +153,29 @@ JSON, e solo queste chiavi:
   sta comodo. ⚠ **Ma non allargare il disegno per riempirlo**: il vuoto non è un difetto
   (**D-170**, D3). **Se hai preso un foglio più grande del necessario te lo dice il rapporto**
   (`SHEET_LARGER_THAN_NEEDED`), e si cambia una riga e si rilancia.
-- **`pezzi`** — un'entrata per **ogni pezzo elencato in `components`**, e **solo** per quelli.
-  ⚠ Il grafo nomina altre decine di identificativi in `subsystems` e `rule_applications` che
-  **non sono pezzi**: ignorali. Uno che manca fa fallire tutto il piano; uno di troppo pure.
+- **`pezzi`** — un'entrata per **ogni pezzo di `components` che posi tu**, e **solo** per
+  quelli. ⚠ Il grafo nomina altre decine di identificativi in `subsystems` e
+  `rule_applications` che **non sono pezzi**: ignorali.
+  **Gli organi in linea non li posi tu**: valvole d'intercettazione, filtri, defangatori,
+  separatori d'aria, circolatori, ritegni, riduttori, miscelatrici termostatiche, gruppi di
+  sicurezza sanitari. Li riconosci dal manifesto del simbolo, che dichiara `inline_gap_mm`: il
+  motore li posa **da solo, sulla loro tratta** (§4bis). Se ne scrivi uno nel piano, il comando
+  te lo dice e si ferma. ⚠ Il **rubinetto portamanometro** si chiama «a tre vie»
+  (`valve-gauge-cock-3way`) ma è un organo in linea a due attacchi: non è una tre vie, non si
+  posa e non si ruota.
+  **Tutti gli altri li posi tu**: macchine, raccordi (`tee-*`), valvole a tre vie, strumenti,
+  sfiati, scarichi, vasi, gruppi di riempimento, confini di rete. Uno che dimentichi il motore
+  lo mette accanto al pezzo a cui è attaccato, come può: è una rete di sicurezza, non un modo di
+  comporre — **scrivili tutti**.
   `x` e `y` sono in millimetri, **origine in alto a sinistra del pezzo**, e si arrotondano al
   passo di griglia: **usa multipli di 2,5**.
-  ⚠ **Non sono coordinate sul foglio, ma devono stare in positivo.** Il motore **instrada
-  prima di traslare**: un pezzo a `y` o `x` negativi lascia le sue tratte senza strada, e il
-  comando risponde «every orthogonal path is blocked» anche su una tratta sola. **Tieni tutti
-  i pezzi a coordinate positive**, con un po' di margine dall'origine. Misurato il 22 settembre
-  2026 sul piano dell'impianto 5: con `x` da 20 e `y` da 22,5 in su si instrada; lo stesso
-  piano spostato di (−20, −105) no. **Dopo** l'instradamento il motore trasla l'intero disegno
-  per centrarlo, la stessa traslazione per tutti i pezzi: per questo non puoi collocare niente
-  rispetto al bordo o al cartiglio — **D1 si governa con la forma della posa, D3 con la scelta
-  del formato**.
+  **Non sono coordinate sul foglio: contano solo le posizioni relative.** Prima di instradare
+  il motore porta l'intero disegno al centro dell'area del formato che hai scelto, la stessa
+  traslazione per tutti i pezzi — puoi cominciare da zero, e anche andare in negativo. Per
+  questo non puoi collocare niente rispetto al bordo o al cartiglio: **D1 si governa con la
+  forma della posa, D3 con la scelta del formato**. Quello che deve tornare è la misura: il
+  disegno deve **starci** nell'area del formato, altrimenti le tratte che escono non trovano
+  strada.
 - **`rotazione`** — in **gradi orari**. **Scrivila solo dove la deduzione non arriva**: per un
   raccordo o per un pezzo con un attacco solo **non scriverla**, perché la rotazione è una
   conseguenza della posa e il motore la deduce dai vicini che il pezzo ha davvero.
@@ -163,13 +190,48 @@ JSON, e solo queste chiavi:
   tre vie le quattro rotazioni **non bastano**: leggi il riquadro qui sotto prima di posarne una.
   ⚠ **Molti simboli non si ruotano affatto** — pompa di calore, caldaia, volano, scambiatore a
   piastre dichiarano `allowed_rotations_deg: [0]`, e chiedere un'altra rotazione **fa abortire
-  il comando**. Guarda il manifesto prima di scriverla.
+  il comando**. Guarda il manifesto prima di scriverla. **Lo specchio invece vale per tutti**,
+  anche per chi non si ruota (D-169): un volano a due attacchi specchiato ha `a` a destra e `b`
+  a sinistra, ed è il modo di farlo guardare dall'altra parte senza girarlo.
 - **`note`** e **`regola`** — **non sono decorazione.** Il piano senza di loro dice dove
   stanno i pezzi e non dice **perché**, e chi lo rivede non può correggerlo: può solo
   spostare. `note` porta la motivazione del piano intero, `regola` la stessa cosa pezzo per
   pezzo. **Ogni pezzo che hai spostato per una ragione porta quella ragione.**
 
 Niente altre chiavi: il caricatore rifiuta quello che non riconosce, e te lo dice.
+
+### 4bis. Il corredo: che cosa posa il motore, e che cosa chiede a te
+
+Il grafo completo porta il **corredo** — organi in linea, strumenti, sfiati, scarichi, vasi,
+gruppi di riempimento, confini di rete — e si mette **dopo** lo scheletro (§2.2, passo 5). È
+di due specie, e le due si trattano in modo diverso:
+
+- **gli organi in linea li posa il motore**. Si mettono in fila sulla loro tratta **a partire
+  dalla porta del pezzo che isolano** — da un capo della tratta o dall'altro, secondo chi si
+  manutiene —, a distanza fissa, e ogni organo vuole il proprio pezzo di rettilineo. **Il tuo
+  lavoro è lasciarglielo** (B5): se la tratta non ha il rettilineo che la fila chiede, il
+  comando si ferma e ti dice su quale tratta e quanti millimetri servono — «run X has no
+  straight stretch of N mm for …». Si cura allontanando i due pezzi che la tratta unisce, o
+  raddrizzandola; **mai** togliendo un organo, che è contenuto dell'impianto.
+  **Quanto rettilineo chiede una fila**, misurato sul motore il 23 settembre 2026 fra la porta
+  di una pompa e un raccordo: con una valvola **17,5 mm**, con due organi **20–25 mm**. Non è
+  una costante: è il punto da cui partire, e se non basta il comando ti dice la tratta —
+  allontana i due pezzi **un passo alla volta**;
+- **gli appesi li posi tu**: un manometro, un termometro, uno sfiato, uno scarico, un vaso,
+  una sicurezza, un gruppo di riempimento stanno all'altro capo di uno **stacco** che parte da
+  un raccordo sulla linea (`tee-branch`). Stanno **addosso** (A4), con lo stacco più corto che
+  la griglia consente: il rilievo `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` ti dice di quanti
+  millimetri sei lontano. **Il raccordo che regge lo stacco sta sulla linea, alla sua quota**
+  (B8): fuori quota, la linea va a prenderlo e torna. E **prima di appendere guarda quale
+  autostrada passa di lì** (§6): un appeso nella colonna che una linea deve percorrere la
+  costringe a girargli intorno;
+- **i confini di rete** — l'acquedotto, le utenze sanitarie — stanno **addosso al pezzo che
+  servono**, con lo stacco minimo (A4), non nella fascia della distribuzione.
+
+⚠ **Lo scheletro si posa pensando al corredo.** Le porte che il corredo userà dopo devono
+restare raggiungibili: l'acqua fredda del bollitore entra da **sinistra a +37,5**, e se davanti
+ci passano le due verticali della serpentina resta murata. Prima di chiudere lo scheletro,
+guarda dove attaccherà ogni confine di rete e ogni appeso.
 
 ### L'algebra di una valvola a tre vie, e perché le rotazioni non bastano
 
@@ -193,6 +255,19 @@ Le **otto** giaciture della commutatrice, e serve leggerla come una tabella:
 | specchio + 180 | sinistra | destra | sopra |
 | **specchio + 270** | **sopra** | **sotto** | **destra** |
 
+E quelle della **deviatrice**, che ha la stessa forma con altri nomi:
+
+| | `in` | `out_a` | `out_b` |
+|---|---|---|---|
+| rotazione 0 | sinistra | destra | sotto |
+| rotazione 90 | sopra | sotto | sinistra |
+| rotazione 180 | destra | sinistra | sopra |
+| rotazione 270 | sotto | sopra | destra |
+| specchio + 0 | destra | sinistra | sotto |
+| specchio + 90 | sotto | sopra | sinistra |
+| specchio + 180 | sinistra | destra | sopra |
+| specchio + 270 | sopra | sotto | destra |
+
 Serve ricevere dall'alto, mandare in basso e prendere la terza via **a destra**? **Nessuna
 delle quattro rotazioni ce l'ha.** La 90 ha le prime due ma la terza via a sinistra; la 270 ha
 la terza via giusta e le altre due rovesciate. La giacitura esiste, ed è **una sola**:
@@ -212,7 +287,7 @@ giacitura che fa entrare ciascuna dalla faccia da cui arriva.
 | | |
 |---|---|
 | passo di griglia | **2,5 mm** — ogni `x` e `y` è un suo multiplo |
-| stacco minimo di un organo di servizio (A4) | **10 mm** |
+| stacco minimo di un organo di servizio (A4) | **10 mm** se lo stacco è vuoto; se porta organi in linea, quanto chiede la loro fila — il rilievo `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` scrive il minimo di ogni stacco. Sotto i 10 mm il motore a volte instrada, ma **due simboli più vicini di 10 mm si leggono come uno** (D-062): non ci scendere |
 | corsia libera fra due linee affiancate (B9) | **10 mm** |
 | interasse delle porte principali di una macchina | **15 mm** — pompa, caldaia, volano, scambiatore |
 
@@ -225,9 +300,19 @@ cede. **Non si sommano mai**: una media pesata fra regole è il modo in cui ques
 già sbagliato una volta.
 
 ### A1 — Tre fasce verticali, da sinistra a destra
-**Generazione** (pompe, caldaie) · **accumulo** (volani, bollitori, separatori) ·
-**distribuzione e utenze** (collettori, valvole di zona, terminali). Il processo si legge da
-sinistra a destra.
+**Generazione** · **accumuli e scambiatori** · **distribuzione**: le parole sono del PO, e il
+processo si legge da sinistra a destra. Chi sta in quale fascia lo dice il catalogo, ed è la
+stessa lettura del rilievo `PIECE_OUTSIDE_ITS_BAND`:
+
+- **generazione** — chi genera: pompe di calore, caldaie, **e la pompa di calore per ACS**
+  (`dhw-heat-pump`), che il catalogo dichiara generatore anche se ha un accumulo dentro;
+- **accumuli e scambiatori** — volani, bollitori, separatori, **scambiatori a piastre**,
+  compreso quello istantaneo dell'ACS;
+- **distribuzione** — i terminali che consegnano il calore all'ambiente.
+
+**Non hanno una fascia**, e quindi non la allargano e non la violano: raccordi, organi in
+linea, appesi, collettori, valvole a tre vie, confini di rete. Stanno dove serve il pezzo a
+cui sono legati.
 
 ### A2 — Chi sta in parallelo si impila
 Due pompe, tre pompe in cascata, due caldaie: **uno sopra l'altro, stessa x**, con un passo
@@ -240,21 +325,46 @@ A1: mette il confine ACS nella fascia della distribuzione e lo fa finire **a mez
 distanza** dal bollitore che serve.
 
 ### B1 — Le autostrade dritte
-Vedi §2. **Se una piega, si sposta la macchina** — a meno che la piega non te la imponga un
-simbolo che la catena attraversa, e allora non è tua e non la puoi togliere spostando niente.
-**Non c'è un massimo di curve** (**D-171**): il rilievo `HIGHWAY_IS_NOT_STRAIGHT` ti dice
-quante ne hai fatte **in più** di quelle imposte, e quelle in più si tolgono spostando le
-macchine. B1 e **B3 non si contraddicono più**: il collettore verticale che B3 pretende costa
-due pieghe, e sono sue.
+Vedi §2. **Se una piega, si sposta la macchina** — a meno che la piega non te la impongano i
+simboli, e allora non è tua e non la puoi togliere spostando niente. **Non c'è un massimo di
+curve** (**D-171**): il rilievo `HIGHWAY_IS_NOT_STRAIGHT` ti dice quante ne hai fatte **in
+più** di quelle imposte, e quelle in più si tolgono spostando le macchine.
+
+**Quali pieghe ti impongono i simboli, e quali no.** Sono imposte:
+- **dentro un pezzo** che la catena attraversa: entrare da una faccia e uscire da una
+  perpendicolare è una piega — il collettore verticale che B3 pretende ne costa due, una tre
+  vie sulla terza via una;
+- **fra due pezzi** le cui porte stanno su **assi perpendicolari** — una uscita orizzontale e
+  una verticale: è una **L**, e non la toglie niente. È il gomito dell'ultima macchina in
+  fondo al collettore verticale, la terza via della deviatrice che va alla serpentina del
+  bollitore, la testa della colonna del pettine;
+- il **gradino di una coppia** fra due macchine con interassi diversi — il volano a 15, il
+  terminale a 10: una delle due linee corre dritta, l'altra scala di 5 mm, e quello è il suo
+  prezzo.
+
+**E un sormonto può essere imposto anche lui.** Un pezzo che prende dalla mandata e rende al
+ritorno, e sta **fuori dalla coppia** — il bollitore appeso sotto o sopra le due linee del
+primario — con una delle due diramazioni deve scavalcare l'altra linea: un sormonto che
+nessuna posa toglie.
+
+**Non sono imposte**, e il rilievo te le conta:
+- una **U** fra due porte che guardano dalla stessa parte: si toglie **specchiando** uno dei due
+  pezzi (§4, `specchio`);
+- una linea che **gira intorno** a un pezzo che dovrebbe attraversare dritta — una tre vie o un
+  raccordo di traverso sulla linea: si gira il pezzo, e la linea passa;
+- il gradino fra due porte che si guardano, quando le due macchine non stanno allo stesso `y`;
+- il giro largo, quando arrivi a una porta dalla parte sbagliata.
 
 ### B3 — Più macchine in parallelo ⇒ **collettore verticale**
 I due raccordi che uniscono un parallelo stanno su **una verticale corta accanto alle
-macchine**. Due collettori — mandata e ritorno — stanno su **due verticali diverse**, e
-**quale delle due sta più vicina alle macchine conta**: mettici il **ritorno**.
+macchine**. Due collettori — mandata e ritorno — stanno su **due verticali diverse**, vicine.
 
-⚠ **E guarda che le due verticali non si incrocino.** Se la mandata di una macchina deve
-attraversare la verticale del ritorno per arrivare al proprio collettore, **hai messo i due
-collettori nell'ordine sbagliato**: scambiali.
+**Quale delle due sta più vicina alle macchine lo decidono i sormonti**, ed è il committente
+che l'ha detto: «indifferente, quello che fa **meno sormonti** direi; se indifferente scegli
+tu». Con le macchine impilate, lo stacco che va alla verticale lontana attraversa quella
+vicina: qualunque sia l'ordine, qualche sormonto c'è. **Prova i due ordini e tieni quello con
+meno sormonti**; a parità scegli, e scrivi nelle note che cosa hai misurato. Misurato sulla
+cascata di tre pompe: 5 sormonti con la mandata vicina, 6 col ritorno vicino.
 
 ### B8 — Una linea non lascia la propria quota per poi tornarci
 Il sali-scendi. Se un pezzo sta su un'autostrada, **posalo sulla quota dell'autostrada**, o la
@@ -266,7 +376,15 @@ Sulle orizzontali, sempre. È anche il motivo per cui le porte sono a +5 e +20 e
 ### B11 — Mandata e ritorno corrono **insieme**
 «Corrono sempre insieme, non esiste che una va e l'altra va zig zag accanto.» Stesso interasse
 per tutta la corsa. Se lo perdono, è perché le due macchine agli estremi hanno interassi
-diversi — e allora o le allinei, o è il caso noto del bollitore (§2.1).
+diversi — e allora o le allinei, o è uno dei due casi noti: la **serpentina del bollitore**
+(interasse 10, §2.1) e il **terminale** (interasse 10, D-167) contro una macchina a 15.
+
+⚠ **Nei due casi noti il rilievo `SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER` è vero e non si
+cura**: la coppia cambia interasse per forza, ed è lo stesso gradino che B1 ti dà per imposto.
+**Non inseguirlo.** Il rilievo guarda solo le corse di almeno 20 mm: avvicinare il terminale
+finché la corsa scende sotto i 20 mm lo spegne senza cambiare il disegno, ed è esattamente
+inseguire un numero. Metti il terminale dove il disegno lo vuole, e scrivi nelle note che il
+rilievo resta ed è il caso noto.
 
 ### B12 — La coppia è un binario, e si ramifica **a pettine**
 
@@ -293,6 +411,9 @@ la coppia le arriva orizzontale, affiancata, e entra da sinistra.
 ### D1 — Il disegno non arriva al bordo
 
 ### D3 — Si prende il foglio più piccolo che contiene il disegno
+**Il foglio deve contenere anche la legenda**: se il comando risponde «the legend needs … but
+its band is … tall», o «the 3 functional bands need … but the drawing area is … wide», il
+formato è troppo piccolo — si prende il successivo, non si comprime il disegno.
 ⚠ **Il vuoto non è un difetto** (**D-170**). Tieni il disegno **stretto** e prendi il foglio
 più piccolo che lo contiene; il bianco che resta non si corregge. **Non allargare mai il
 disegno per riempire il foglio**, e soprattutto **non allontanare un pezzo dalla macchina che
@@ -306,6 +427,15 @@ serve**: A4 vince su questa regola, sempre. Se hai sbagliato formato te lo dice
 **Il piano non può chiedere la forma di una spezzata.** Dice dove stanno i pezzi, e la forma
 della linea la sceglie l'instradatore sul costo. «Scendi e fai una curva sola» **non si può
 scrivere.**
+
+**Se il piano non si instrada**, il comando dice quale tratta, fra quali due pezzi, e dove il
+piano li ha messi. La «posa applicata» che stampa è **nel sistema del piano**, al decimo di
+millimetro. Le coppie di numeri fra parentesi nel messaggio dell'instradatore sono **celle
+della griglia del foglio**: non cercarle nel piano.
+
+**Il colore di una linea lo decide il grafo**, non il verso in cui corre: un ritorno è blu
+anche se va da sinistra a destra. Non spostare un pezzo per far uscire una linea del colore
+giusto; se una linea esce del colore sbagliato, è un difetto del motore e va scritto.
 
 **L'unica leva che hai è togliere di mezzo chi occupa la strada.** Prima di appendere un
 organo, guarda **quale autostrada deve passare di lì**: se ci metti un gruppo di riempimento
@@ -337,7 +467,8 @@ una linea da 3 pieghe a 1.
 3. **Scegli le quote.** Per ogni catena, guarda le porte delle macchine agli estremi: se hanno
    le stesse quote relative, **posale allo stesso y** e la catena è retta.
 4. **Posa le macchine**, fascia per fascia, da sinistra a destra (A1). Impila i paralleli (A2).
-5. **Metti i collettori**: una verticale corta accanto al parallelo, ritorno più vicino (B3).
+5. **Metti i collettori**: una verticale corta accanto al parallelo, e fra mandata e ritorno
+   più vicino alle macchine quello che fa meno sormonti (B3).
 6. **Ricontrolla lo scheletro**: ogni catena fra due macchine è retta? Se no, torna al 3.
 7. **Solo adesso appendi il corredo**, guardando per ognuno **quale autostrada passa di lì**
    (§6), e tenendo i confini di rete **addosso** al pezzo che servono (A4).
@@ -349,18 +480,19 @@ una linea da 3 pieghe a 1.
 
 Rispondi a queste, e se una risposta è «no» torna indietro:
 
-- [ ] **Ogni pezzo posabile del grafo ha un'entrata in `pezzi`?** Uno che manca fa fallire
-      tutto il piano.
+- [ ] **Ogni pezzo che posi tu ha un'entrata in `pezzi`, e nessun organo in linea ce l'ha?**
 - [ ] **Le `x` e le `y` sono multipli di 2,5?**
-- [ ] **Le macchine unite da un'autostrada hanno lo stesso `y`?** Se no, hai una ragione
-      scritta nelle note?
+- [ ] **Le porte che un'autostrada unisce stanno alla stessa quota?** Per pompa, caldaia,
+      volano a quattro attacchi e scambiatore vuol dire lo stesso `y`; per chi ha le porte ad
+      altre quote no (§2.1). Se no, hai una ragione scritta nelle note?
 - [ ] **I paralleli sono impilati alla stessa `x`, con passo costante?**
-- [ ] **I due collettori di un parallelo sono su due verticali vicine, con il ritorno più
-      vicino alle macchine, e non si incrociano?**
+- [ ] **I due collettori di un parallelo sono su due verticali vicine, nell'ordine che fa
+      meno sormonti, e l'hai scritto nelle note?**
 - [ ] **Ogni confine di rete sta accanto al pezzo che serve?**
 - [ ] **Nessun pezzo di corredo sta nella colonna o nella riga che un'autostrada deve
       percorrere?**
-- [ ] **Il disegno occupa il foglio, o sta tutto in una fascia?**
+- [ ] **Il foglio è il più piccolo che contiene il disegno?** Il bianco che resta non è un
+      difetto (D3).
 - [ ] **`rotazione` compare solo dove serve davvero?**
 - [ ] **Ogni pezzo spostato per una ragione porta la sua `regola`?**
 

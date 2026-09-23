@@ -1,5 +1,15 @@
 # Cold eye review — protocollo dell'agente terzo
 
+> ⛔ **Storia, non vigente** (**D-147**, **D-157**, **D-162**). L'agente terzo che giudicava la
+> tavola prima della consegna non esiste più: da D-147 non c'è un agente che giudica un altro
+> agente, e **il controllo è uno, il PO che guarda le tavole**. Il suo posto nella catena
+> l'ha preso **l'occhio del revisore** (`skill/rivedere/`, pezzo 5), che guarda la tavola
+> **senza ricalcolare** (D-162) e rimanda **vincoli** a chi compone, non mosse (D-157). Cade
+> anche la regola di §4 per cui «stesso modello e stesso piano danno lo stesso identico
+> file» come proprietà non negoziabile: la riproducibilità bit per bit è sospesa da D-151.
+> Il registro della passata del 5 agosto resta come storia: è da lì che sono nate D-064 e
+> D-065.
+
 > Il giudice della tavola prima della consegna (D-063 livello 2, D-077, D-086).
 > Questo file descrive **come si esegue** la revisione. Il prompt che l'agente riceve è
 > in `docs/prompts/cold-eye-review.md` ed è deliberatamente povero: più contesto gli si

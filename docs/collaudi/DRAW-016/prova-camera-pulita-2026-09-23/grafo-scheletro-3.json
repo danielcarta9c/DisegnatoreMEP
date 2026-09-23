@@ -1,0 +1,599 @@
+{
+  "assumptions": [
+    {
+      "id": "a1",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "Il testo dice «piu' circuiti ambiente con regolazione di zona» senza dirne il numero: se ne sono disegnati due."
+    },
+    {
+      "id": "a2",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "Il circolatore e' integrato nella macchina, come il testo dichiara: non compare come pezzo a se'."
+    }
+  ],
+  "components": [
+    {
+      "definition_id": "dhw-heat-pump",
+      "evidence": [],
+      "id": "boiler",
+      "properties": {},
+      "tag": "BPC-01"
+    },
+    {
+      "definition_id": "zone-manifold",
+      "evidence": [],
+      "id": "collettore",
+      "properties": {},
+      "tag": "COL-01"
+    },
+    {
+      "definition_id": "heat-pump-air-water",
+      "evidence": [],
+      "id": "pdc",
+      "properties": {},
+      "tag": "PDC-01"
+    },
+    {
+      "definition_id": "tee-junction",
+      "evidence": [],
+      "id": "ritorno-zone",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "dhw-draw-off",
+      "evidence": [],
+      "id": "utenze",
+      "properties": {},
+      "tag": "ACS-01"
+    },
+    {
+      "definition_id": "buffer-two-port",
+      "evidence": [],
+      "id": "volano",
+      "properties": {},
+      "tag": "VOL-01"
+    },
+    {
+      "definition_id": "underfloor-panel",
+      "evidence": [],
+      "id": "zona-giorno",
+      "properties": {},
+      "tag": "PAV-01"
+    },
+    {
+      "definition_id": "underfloor-panel",
+      "evidence": [],
+      "id": "zona-notte",
+      "properties": {},
+      "tag": "PAV-02"
+    }
+  ],
+  "connections": [
+    {
+      "id": "m1",
+      "endpoint_a": {
+        "component_id": "pdc",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "collettore",
+        "port_id": "in"
+      },
+      "network_id": "riscaldamento",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m2",
+      "endpoint_a": {
+        "component_id": "collettore",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "zona-giorno",
+        "port_id": "in"
+      },
+      "network_id": "riscaldamento",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m3",
+      "endpoint_a": {
+        "component_id": "collettore",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "zona-notte",
+        "port_id": "in"
+      },
+      "network_id": "riscaldamento",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m4",
+      "endpoint_a": {
+        "component_id": "zona-giorno",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno-zone",
+        "port_id": "a"
+      },
+      "network_id": "riscaldamento",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m5",
+      "endpoint_a": {
+        "component_id": "zona-notte",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno-zone",
+        "port_id": "c"
+      },
+      "network_id": "riscaldamento",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m6",
+      "endpoint_a": {
+        "component_id": "ritorno-zone",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "a"
+      },
+      "network_id": "riscaldamento",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m7",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc",
+        "port_id": "water_return"
+      },
+      "network_id": "riscaldamento",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m8",
+      "endpoint_a": {
+        "component_id": "boiler",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "utenze",
+        "port_id": "a"
+      },
+      "network_id": "sanitaria",
+      "evidence": [],
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "client": "Nove C",
+    "commission_code": "PROVA",
+    "issue_date": "2026-08-06",
+    "project_id": "prova-3-pdc-diretta-pavimento",
+    "project_name": "Pompa di calore diretta su pavimento radiante, ACS separata",
+    "revision": "00"
+  },
+  "networks": [
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "fredda",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "fredda-filling-unit-pdc-water-return",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "riscaldamento",
+      "medium": "heating_water",
+      "name": "Circuito di riscaldamento"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "sanitaria",
+      "medium": "domestic_hot_water",
+      "name": "Acqua calda sanitaria"
+    }
+  ],
+  "plant_regime": "up_to_35_kw",
+  "rule_applications": [
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "air-vent-volano-b",
+        "stub-air-vent-volano-b"
+      ],
+      "id": "applied-air-vent-volano-b",
+      "rule_id": "air-vent-on-the-stored-volume",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "dhw-safety-group-boiler-cold-in",
+        "w1-b-b-a",
+        "w1-b-b-b"
+      ],
+      "id": "applied-dhw-safety-group-boiler-cold-in",
+      "rule_id": "safety-group-on-the-stored-volume",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "dirt-separator-pdc-water-return",
+        "p7-b-a",
+        "p7-b-b"
+      ],
+      "id": "applied-dirt-separator-pdc-water-return",
+      "rule_id": "dirt-separation-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "drain-connection-cold-boiler-cold-in",
+        "tee-drain-connection-cold-boiler-cold-in",
+        "w1-b-a",
+        "w1-b-b",
+        "stub-drain-connection-cold-boiler-cold-in"
+      ],
+      "id": "applied-drain-connection-cold-boiler-cold-in",
+      "rule_id": "let-what-holds-its-own-volume-empty",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "drain-connection-volano-a",
+        "stub-drain-connection-volano-a"
+      ],
+      "id": "applied-drain-connection-volano-a",
+      "rule_id": "let-what-holds-its-own-volume-empty",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "expansion-connection-pdc-water-return",
+        "tee-expansion-connection-pdc-water-return",
+        "p7-b-b-a",
+        "p7-b-b-b",
+        "stub-expansion-connection-pdc-water-return"
+      ],
+      "id": "applied-expansion-connection-pdc-water-return",
+      "rule_id": "expansion-on-closed-circuit",
+      "rule_version": "4.1.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "filling-unit-pdc-water-return",
+        "inlet-filling-unit-pdc-water-return",
+        "tee-filling-unit-pdc-water-return-b",
+        "inlet-filling-unit-pdc-water-return-a",
+        "fredda-filling-unit-pdc-water-return",
+        "p7-b-b-b-a",
+        "p7-b-b-b-b",
+        "stub-filling-unit-pdc-water-return-b"
+      ],
+      "id": "applied-filling-unit-pdc-water-return",
+      "rule_id": "filling-unit-on-return",
+      "rule_version": "5.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "mixing-valve-thermostatic-boiler-dhw-out",
+        "w2-a-a",
+        "w2-a-b"
+      ],
+      "id": "applied-mixing-valve-thermostatic-boiler-dhw-out",
+      "rule_id": "dhw-mixing-on-draw-off",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "pressure-gauge-pdc-water-return",
+        "tee-pressure-gauge-pdc-water-return",
+        "p7-b-b-b-b-a",
+        "p7-b-b-b-b-b",
+        "stub-pressure-gauge-pdc-water-return"
+      ],
+      "id": "applied-pressure-gauge-pdc-water-return",
+      "rule_id": "gauge-where-the-plant-is-charged",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "strainer-pdc-water-return",
+        "p7-a",
+        "p7-b"
+      ],
+      "id": "applied-strainer-pdc-water-return",
+      "rule_id": "debris-guard-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a",
+        "stub-pressure-gauge-pdc-water-return-a",
+        "stub-pressure-gauge-pdc-water-return-b"
+      ],
+      "id": "applied-valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-acquedotto-a",
+        "w1-a",
+        "w1-b"
+      ],
+      "id": "applied-valve-isolation-dhw-acquedotto-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-boiler-dhw-out",
+        "w2-a-a-a",
+        "w2-a-a-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-boiler-dhw-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-utenze-a",
+        "w2-a",
+        "w2-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-utenze-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dirt-separator-pdc-water-return-b",
+        "p7-a-5-a",
+        "p7-a-5-b"
+      ],
+      "id": "applied-valve-isolation-dirt-separator-pdc-water-return-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+        "stub-expansion-connection-pdc-water-return-a",
+        "stub-expansion-connection-pdc-water-return-b"
+      ],
+      "id": "applied-valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-pdc-water-supply",
+        "p1-a-a",
+        "p1-a-b"
+      ],
+      "id": "applied-valve-isolation-pdc-water-supply",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-volano-a",
+        "p6-a",
+        "p6-b"
+      ],
+      "id": "applied-valve-isolation-volano-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-volano-b",
+        "p7-a-1-a",
+        "p7-a-1-b"
+      ],
+      "id": "applied-valve-isolation-volano-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-zona-giorno-in",
+        "p2-a",
+        "p2-b"
+      ],
+      "id": "applied-valve-isolation-zona-giorno-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-zona-giorno-out",
+        "p4-a",
+        "p4-b"
+      ],
+      "id": "applied-valve-isolation-zona-giorno-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-zona-notte-in",
+        "p3-a",
+        "p3-b"
+      ],
+      "id": "applied-valve-isolation-zona-notte-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-zona-notte-out",
+        "p5-a",
+        "p5-b"
+      ],
+      "id": "applied-valve-isolation-zona-notte-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-safety-pdc-water-supply",
+        "tee-valve-safety-pdc-water-supply",
+        "p1-a",
+        "p1-b",
+        "stub-valve-safety-pdc-water-supply"
+      ],
+      "id": "applied-valve-safety-pdc-water-supply",
+      "rule_id": "safety-relief-on-the-closed-circuit",
+      "rule_version": "2.0.0",
+      "status": "approved"
+    }
+  ],
+  "schema_version": "1.1.0",
+  "sheets": [],
+  "subsystems": [
+    {
+      "component_ids": [
+        "pdc",
+        "volano",
+        "ritorno-zone",
+        "air-vent-volano-b",
+        "strainer-pdc-water-return",
+        "dirt-separator-pdc-water-return",
+        "expansion-connection-pdc-water-return",
+        "tee-expansion-connection-pdc-water-return",
+        "filling-unit-pdc-water-return",
+        "inlet-filling-unit-pdc-water-return",
+        "tee-filling-unit-pdc-water-return-b",
+        "pressure-gauge-pdc-water-return",
+        "tee-pressure-gauge-pdc-water-return",
+        "drain-connection-volano-a",
+        "valve-safety-pdc-water-supply",
+        "tee-valve-safety-pdc-water-supply",
+        "valve-isolation-volano-a",
+        "valve-isolation-volano-b",
+        "valve-isolation-dirt-separator-pdc-water-return-b",
+        "valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+        "valve-isolation-pdc-water-supply",
+        "valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a"
+      ],
+      "id": "generazione",
+      "name": "Generazione",
+      "network_ids": [
+        "riscaldamento"
+      ]
+    },
+    {
+      "component_ids": [
+        "boiler",
+        "acquedotto",
+        "utenze",
+        "valve-isolation-dhw-acquedotto-a",
+        "valve-isolation-dhw-hot-utenze-a",
+        "mixing-valve-thermostatic-boiler-dhw-out",
+        "drain-connection-cold-boiler-cold-in",
+        "tee-drain-connection-cold-boiler-cold-in",
+        "dhw-safety-group-boiler-cold-in",
+        "valve-isolation-dhw-hot-boiler-dhw-out"
+      ],
+      "id": "sanitario",
+      "name": "Acqua calda sanitaria",
+      "network_ids": [
+        "fredda",
+        "sanitaria"
+      ]
+    },
+    {
+      "component_ids": [
+        "collettore",
+        "zona-giorno",
+        "zona-notte",
+        "valve-isolation-zona-giorno-in",
+        "valve-isolation-zona-giorno-out",
+        "valve-isolation-zona-notte-in",
+        "valve-isolation-zona-notte-out"
+      ],
+      "id": "zone",
+      "name": "Zone radianti",
+      "network_ids": [
+        "riscaldamento"
+      ]
+    }
+  ]
+}

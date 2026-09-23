@@ -3,6 +3,12 @@
 > ✅ **Approvata dal PO il 23 settembre 2026: «la tavola va bene»** (**I-108**). È la prima tavola
 > approvata dopo D-166, e vale per questa. **È il metro del pavimento di B1**: i 7 rilievi di B1
 > che porta sono falsi, e il pavimento è giusto quando non la accusa più.
+>
+> **Chiuso lo stesso giorno** (**D-173**, proposta al PO): il pavimento conta adesso anche le
+> pieghe **fra due pezzi** — la L fra due porte su assi perpendicolari, e il gradino di una
+> coppia con interassi diversi — e questa tavola **non porta più nessun rilievo di B1**. La
+> guardia è `tests/validation/test_il_pavimento_di_b1.py`. La tavola e il piano non sono
+> cambiati: è cambiato il metro con cui si misura.
 
 **Che cos'è.** La tavola dell'impianto 5 **come il PO l'aveva chiesta**: dorsale unica, nell'ordine
 del suo testo, con il ritorno che specchia la mandata (**D-172**). Il grafo del 21 settembre
@@ -58,6 +64,12 @@ pieghe imposte **dentro un pezzo** — fra due facce dello stesso raccordo. Non 
 **dalla combinazione** di due pezzi, e in particolare **il gomito in fondo a un collettore
 verticale**. «B1 contro B3 si chiude» era vero **a metà**: per una catena che attraversa il
 collettore sì, per quella che ci finisce dentro no.
+
+**Chiuso il 23 settembre 2026** (**D-173**): le sette pieghe erano tutte **fra due pezzi con le
+porte su assi perpendicolari** — anche il gradino di `m15`, che su questa tavola la testa della
+colonna prende con una L, e l'anello, le cui due L e la curva della presa sono esattamente le tre
+pieghe che fa. Contate quelle, i rilievi di B1 sono zero. Resta il rilievo di B11 sulla coppia
+della batteria, ed è vero: la coppia passa da 15 a 10 e lo fa per forza (D-167).
 
 ## Gli altri rilievi dell'agente
 

@@ -20,8 +20,9 @@ from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import SERVICE_ORGAN_FUNCTIONS, ComponentTrait
-from disegnatore_mep.graphics.symbol import SymbolManifest
+from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.model.project import PortRef, ProjectModel
+from disegnatore_mep.model.types import PortFlow
 
 from .chains import CHAIN_PORT_GAP_MM as CHAIN_PORT_GAP_MM
 from .chains import MIN_SPACING_MM as MIN_SPACING_MM
@@ -79,6 +80,9 @@ proporre e per saturare: qui se ne tiene il nome che la posa usa da D-120.
 class _Station:
     point: Point
     horizontal: bool
+    heading: PortFace = PortFace.RIGHT
+    """Verso cui la spezzata avanza in quel punto, dal capo `start` della
+    tratta al capo `end`: la faccia opposta e' quella da cui arriva."""
 
 
 def _polyline_length(points: list[Point]) -> float:
@@ -103,10 +107,22 @@ def _station_at(points: list[Point], distance_mm: float) -> _Station:
                     y_mm=before.y_mm + (after.y_mm - before.y_mm) * ratio,
                 ),
                 horizontal=before.y_mm == after.y_mm,
+                heading=_heading(before, after),
             )
         travelled += length
     last, previous = points[-1], points[-2]
-    return _Station(point=last, horizontal=previous.y_mm == last.y_mm)
+    return _Station(
+        point=last,
+        horizontal=previous.y_mm == last.y_mm,
+        heading=_heading(previous, last),
+    )
+
+
+def _heading(before: Point, after: Point) -> PortFace:
+    """La faccia verso cui si va da `before` ad `after`, con y verso il basso."""
+    if after.y_mm == before.y_mm:
+        return PortFace.RIGHT if after.x_mm > before.x_mm else PortFace.LEFT
+    return PortFace.BOTTOM if after.y_mm > before.y_mm else PortFace.TOP
 
 
 def _straight_stretches(points: list[Point]) -> list[tuple[float, float]]:
@@ -204,6 +220,24 @@ def place_inline_accessories(
     resolved = [
         catalog.resolve(definitions[component_id])
         for component_id in trunk.inline_component_ids
+    ]
+    # L'attacco di ciascun accessorio che la catena del grafo collega verso il
+    # capo `start`, e se l'accessorio ha un verso: ingresso e uscita dichiarati
+    # dal catalogo, non un nome di pezzo.
+    connections = {item.id: item for item in project.connections}
+    start_ports = [
+        (
+            connections[connection_id].endpoint_a
+            if connections[connection_id].endpoint_a.component_id == component_id
+            else connections[connection_id].endpoint_b
+        ).port_id
+        for connection_id, component_id in zip(
+            trunk.connection_ids, trunk.inline_component_ids, strict=False
+        )
+    ]
+    directional = [
+        {port.flow for port in item.definition.ports} == {PortFlow.IN, PortFlow.OUT}
+        for item in resolved
     ]
     needed = sum(
         (item.symbol.manifest.inline_gap_mm or 0.0) + MIN_SPACING_MM for item in resolved
@@ -374,6 +408,28 @@ def place_inline_accessories(
         box = (origin.x_mm, origin.y_mm, origin.x_mm + width, origin.y_mm + height)
         return not run_intrudes_on(box, others, clearance)
 
+    def clear_of_own_run(
+        origin: Point, width: float, height: float, low: float, high: float
+    ) -> bool:
+        """**Nemmeno la propria tratta gli rientra nel riquadro** (D-027).
+
+        Il taglio toglie la linea che passa **per** il simbolo; ma una spezzata
+        che piega li' accanto rientra nel riquadro da un altro lato — un simbolo
+        alto dieci millimetri, posato a due passi da una curva, si ritrova la
+        verticale che scende lungo il fianco. La tavola lo rifiuta alla fine
+        («still passes under … after breaking for it»), e fino al 23 settembre
+        2026 lo scopriva **solo** alla fine: il posto era gia' preso, e la
+        tratta cadeva invece di far avanzare l'accessorio di un passo. Adesso
+        il posto si scarta qui, con lo stesso conto — la spezzata senza i tagli
+        gia' fatti e senza il proprio — e si prova il nodo successivo.
+        """
+        box = (origin.x_mm, origin.y_mm, origin.x_mm + width, origin.y_mm + height)
+        return not any(
+            intrudes_into(box, before, after)
+            for part in _tagliata(points, [*cuts, (low, high)])
+            for before, after in moves_of(part)
+        )
+
     def turned_for(
         manifest: SymbolManifest, horizontal: bool
     ) -> tuple[int, SymbolManifest]:
@@ -396,12 +452,30 @@ def place_inline_accessories(
         index: int, station: _Station, distance: float, rotation: int, turned: SymbolManifest
     ) -> None:
         component_id = trunk.inline_component_ids[index]
+        # **Chi ha un verso si disegna nel verso della tratta.** Fra le due
+        # rotazioni che la giacitura ammette `turned_for` prende la prima, e
+        # per un pezzo simmetrico e' indifferente; per uno con ingresso e
+        # uscita no. Fino al 23 settembre 2026 una valvola di ritegno su una
+        # colonna in salita si disegnava con la freccia in giu': l'ha vista un
+        # agente in camera pulita, e stava gia' sulla tavola a mano
+        # dell'impianto 4. L'attacco che il grafo collega verso il capo `start`
+        # deve guardare da dove la spezzata arriva; se non lo fa, il simbolo si
+        # **specchia** (D-169) invece di girare di mezzo giro: lo specchio
+        # inverte solo lungo il tubo, e lo scarico del defangatore resta in
+        # basso, lo sfiato del disaeratore in alto.
+        mirrored = False
+        if directional[index]:
+            arriving = turned.port(start_ports[index]).face
+            if arriving is not station.heading.opposite:
+                turned = resolved[index].symbol.manifest.rotated(rotation, True)
+                mirrored = True
         gap = turned.inline_gap_mm or 0.0
         placed.append(
             PlacedSymbol(
                 component_id=component_id,
                 symbol_id=turned.id,
                 rotation_deg=rotation,
+                specchiato=mirrored,
                 origin=Point(
                     x_mm=station.point.x_mm - turned.width_mm / 2,
                     y_mm=station.point.y_mm - turned.height_mm / 2,
@@ -445,6 +519,13 @@ def place_inline_accessories(
                     clear_of_symbols(origin, turned.width_mm, turned.height_mm)
                     and clear_of_other_runs(origin, turned.width_mm, turned.height_mm)
                     and clear_of_port_thresholds(origin, turned.width_mm, turned.height_mm)
+                    and clear_of_own_run(
+                        origin,
+                        turned.width_mm,
+                        turned.height_mm,
+                        snapped - gap / 2,
+                        snapped + gap / 2,
+                    )
                 ):
                     seat(index, station, snapped, rotation, turned)
                     extent = turned.width_mm if station.horizontal else turned.height_mm
@@ -598,6 +679,13 @@ def place_inline_accessories(
                     and clear_of_port_thresholds(
                         origin, turned.width_mm, turned.height_mm
                     )
+                    and clear_of_own_run(
+                        origin,
+                        turned.width_mm,
+                        turned.height_mm,
+                        snapped - gap / 2,
+                        snapped + gap / 2,
+                    )
                 ):
                     found, distance = station, snapped
                     break
@@ -624,19 +712,7 @@ def place_inline_accessories(
     placed.sort(key=lambda item: order[item.component_id])
     cuts.sort()
 
-    segments = [points]
-    for low, high in cuts:
-        rebuilt: list[list[Point]] = []
-        for part in segments:
-            if _polyline_length(part) <= 0:
-                continue
-            offset = _offset_of(points, part[0])
-            local_low, local_high = low - offset, high - offset
-            if local_low < 0 or local_high > _polyline_length(part):
-                rebuilt.append(part)
-                continue
-            rebuilt.extend(_split(part, local_low, local_high))
-        segments = rebuilt
+    segments = _tagliata(points, cuts)
 
     # **E la propria tratta non deve rientrare nel riquadro di un accessorio.**
     # Il taglio toglie il pezzo di linea che passa **per** il simbolo, ma una
@@ -660,6 +736,31 @@ def place_inline_accessories(
                     f"straight length"
                 )
     return placed, trimmed
+
+
+def _tagliata(
+    points: list[Point], cuts: list[tuple[float, float]]
+) -> list[list[Point]]:
+    """La spezzata della tratta senza i pezzi che gli accessori interrompono.
+
+    E' il conto che la tavola fa alla fine, e sta qui perche' lo fa anche chi
+    **sceglie** dove posare un accessorio: se i due conti divergessero, si
+    approverebbe un posto che la tavola poi rifiuta.
+    """
+    segments = [points]
+    for low, high in sorted(cuts):
+        rebuilt: list[list[Point]] = []
+        for part in segments:
+            if _polyline_length(part) <= 0:
+                continue
+            offset = _offset_of(points, part[0])
+            local_low, local_high = low - offset, high - offset
+            if local_low < 0 or local_high > _polyline_length(part):
+                rebuilt.append(part)
+                continue
+            rebuilt.extend(_split(part, local_low, local_high))
+        segments = rebuilt
+    return segments
 
 
 def _offset_of(points: list[Point], start: Point) -> float:

@@ -1,0 +1,27 @@
+{
+  "formato": "A4",
+  "note": [
+    "Il disegno nasce dalle autostrade (par. 2): la pompa di calore ha la mandata a +5 e il ritorno a +20 sulla faccia destra, e quelle due quote (y=5 e y=20) sono le due autostrade. Tutto il resto e' posato per stare su di esse: m1 (pompa -> collettore), m7 (volano -> pompa) e m6 (raccordo -> volano) sono rette, zero pieghe (B1).",
+    "Stessa quota di porta, non stesso y: il collettore ha l'ingresso a +2,5, quindi sta a y=2,5 perche' la mandata resti a 5; il volano a due attacchi ha le porte a +5, quindi sta a y=15 perche' il ritorno resti a 20. La regola 'stesso y' di par. 2.1 vale per macchine con le porte a +5/+20, e questi due pezzi non lo sono.",
+    "Il volano e' sul ritorno e l'acqua lo attraversa da destra (dalle zone) a sinistra (verso la pompa): va specchiato, cosi' 'a' entra da destra e 'b' esce verso la pompa. Senza specchio la linea dovrebbe girargli intorno: una U che i simboli non impongono (B1).",
+    "Collettore e raccordo di ritorno sono i due collettori del binario (B3, B12): stanno sulla stessa colonna stretta, il raccordo sotto l'estremo sinistro del collettore, e la colonna di ritorno (x=92,5) corre a 10 mm dalla calata di out_1 (x=102,5), la corsia minima di B9.",
+    "B3, i due ordini misurati: colonna di ritorno a sinistra delle calate del collettore = 1 sormonto (m5 x m2); colonna di ritorno fra le calate e le zone = 2 sormonti (m4 x m2, m6 x m2). Tenuto il primo.",
+    "Pettine (B12, D-167): le due zone sono impilate alla stessa x=140, rot 0, prese da sinistra con mandata sopra e ritorno sotto, passo 25. Zona-notte (PAV-02) sta in alto perche' il grafo la attacca all'uscita di destra del collettore (out_2): se stesse in basso la sua mandata taglierebbe la calata di out_1 e i sormonti sarebbero 2. Per questo le sigle si leggono PAV-02 sopra PAV-01.",
+    "Zona-notte e' posata con il ritorno (+12,5) sulla quota del tronco di ritorno (y=20): m5 entra nel raccordo dritta. Il prezzo e' la sua mandata a y=10, 2,5 mm sotto l'uscita del collettore: e' il gradino fra interassi diversi (pompa 15, terminale 10), imposto dai simboli.",
+    "Pieghe: 3, tutte imposte dai simboli: m2 e m3 (uscita verticale del collettore -> ingresso orizzontale della zona) e m4 (uscita orizzontale della zona -> porta verticale del raccordo). Sormonti: 1, quello che B3 dice inevitabile con due utenze impilate.",
+    "Rilievo che resta: RETURN_RUNS_ABOVE_ITS_SUPPLY, il ritorno di zona-notte corre sopra la mandata di zona-giorno. E' la forma del pettine di B12 con due utenze impilate (ogni coppia ha la mandata sopra il proprio ritorno): non si toglie senza rompere il pettine.",
+    "Sanitario separato: il bollitore in pompa di calore e' un generatore (A1) e sta nella fascia di generazione, sotto la pompa di calore, fuori dalle autostrade del riscaldamento; il confine 'utenze' gli sta addosso con lo stacco minimo di 10 mm (A4).",
+    "Formato A4, il piu' piccolo che contiene il disegno (D3); il bianco a destra non si corregge.",
+    "Domanda al progettista, dichiarata: il sottosistema 'sanitario' nomina 'acquedotto', che non e' fra i components; nello scheletro l'ingresso cold_in del bollitore resta senza tubazione. Il grafo non e' stato toccato."
+  ],
+  "pezzi": {
+    "pdc": {"x": 0, "y": 0, "regola": "A1 - generazione a sinistra; le sue porte (+5, +20) fissano la quota delle autostrade (par. 2.1)"},
+    "volano": {"x": 52.5, "y": 15, "specchio": true, "regola": "B1 - porta a +5 sulla quota del ritorno della pompa (+20): m7 e m6 rette; specchiato perche' sul ritorno l'acqua va da destra a sinistra"},
+    "ritorno-zone": {"x": 90, "y": 17.5, "regola": "B8 - sul tronco di ritorno alla sua quota (y=20); B3/B12 - sotto l'estremo del collettore, colonna di ritorno a 10 mm dalla calata di out_1 (B9)"},
+    "collettore": {"x": 90, "y": 2.5, "regola": "B1 - ingresso a +2,5 sulla quota della mandata della pompa (+5): m1 retta"},
+    "zona-notte": {"x": 140, "y": 7.5, "regola": "B12 - in cima al pettine perche' servita da out_2 (uscita di destra); ritorno sulla quota del tronco: m5 dritta nel raccordo"},
+    "zona-giorno": {"x": 140, "y": 32.5, "regola": "B12 - impilata sotto zona-notte, stessa x, presa da sinistra (D-167); servita da out_1"},
+    "boiler": {"x": 7.5, "y": 55, "regola": "A1 - generatore dell'ACS nella fascia di generazione, sotto la pompa di calore, fuori dalle autostrade"},
+    "utenze": {"x": 17.5, "y": 40, "regola": "A4 - confine di rete addosso al bollitore, stacco minimo 10 mm sopra dhw_out"}
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "formato": "A3",
+  "note": [
+    "SCHELETRO (par. 2.2). Una sola catena di spina: PDC -> collettore -> due zone -> raccordo ritorno-zone -> volano -> PDC. Le quote delle autostrade le decidono le porte della PDC: mandata a y=5 (water_supply +5), ritorno a y=20 (water_return +20). Tutte le macchine della catena sono posate perche' le loro porte cadano su queste due quote (D-159).",
+    "MANDATA: PDC (0,0) -> collettore (175, 2.5). La porta in del collettore sta a +2,5, quindi y=2,5 la mette a y=5: la mandata e' una retta sola dalla PDC al collettore, zero pieghe (B1).",
+    "RITORNO: il volano e' sul ritorno (nel grafo riceve da ritorno-zone e manda alla PDC). Le sue porte a/b stanno a +5, quindi y=15 le porta a y=20, la quota del ritorno. Il volano e' SPECCHIATO: a va a destra (riceve dalle zone), b a sinistra (guarda la porta di ritorno della PDC). Senza specchio tutte e due le porte guarderebbero dalla parte sbagliata e il ritorno farebbe due giri a U (B1, 'una U si toglie specchiando'). Risultato: zona-notte -> ritorno-zone -> volano -> PDC e' UNA retta a y=20, zero pieghe.",
+    "A1: generazione (PDC e boiler in pompa di calore BPC-01, che il catalogo dichiara heat_generation) a sinistra fra x=0 e x=40; accumulo (volano) al centro x=135..160; distribuzione (collettore e zone) a destra da x=175. Con il boiler a destra delle zone (prima prova) il rapporto dava PIECE_OUTSIDE_ITS_BAND su volano e zone: la fascia generazione si allargava fino al boiler.",
+    "PETTINE (B12, B3). Le zone sono impilate in colonna a x=220, tutte e due con ingresso e uscita sul lato sinistro (D-167, rotazione 0 che la deduzione conserva). zona-notte sopra, servita dall'uscita di destra del collettore (out_2), zona-giorno sotto, servita dall'uscita di sinistra (out_1): cosi' le mandate non si incrociano fra loro. La colonna del ritorno (ritorno-zone, x=177,5) sta a 10 mm dalla calata di out_1 (x=187,5): due colonne adiacenti, una coppia orizzontale per zona, mandata sopra e ritorno sotto, 10 mm (B9, B11).",
+    "B3 misurato: colonna del ritorno a SINISTRA delle calate (questa posa) = 2 incroci e 1 RETURN_RUNS_ABOVE_ITS_SUPPLY; colonna del ritorno FRA le calate e le zone = 3 incroci e 2 RETURN_RUNS_ABOVE_ITS_SUPPLY. Tenuta la prima.",
+    "Il motore attacca sempre la porta a del grafo (ritorno di zona-giorno) alla derivazione del T e la porta c (ritorno di zona-notte) al passaggio dritto (port_map c<->a, uguale in tutte le prove, qualunque posa). Per questo e' zona-notte a stare alla quota del ritorno (y=7,5 mette la sua uscita a y=20) e zona-giorno a entrare dal basso nella derivazione.",
+    "Incroci rimasti, 2, entrambi strutturali: (1) la calata out_1 verso zona-giorno attraversa il ritorno di zona-notte a y=20 - con la mappatura fissa del T non c'e' una posa planare senza pieghe in piu'; (2) lo sfiato del volano attraversa la mandata: la cima del volano e' 10 mm sotto la mandata e sfiato piu' stacco minimo chiedono 20 mm. Con lo sfiato a y=-7,5 (stacco 12,5) l'instradatore fa girare la mandata intorno allo sfiato con 4 pieghe: tenuto y=-10, stacco 15 (SERVICE_STUB_LONGER_THAN_ITS_MINIMUM di 5 mm, e' il prezzo dell'incrocio).",
+    "RETURN_RUNS_ABOVE_ITS_SUPPLY (ritorno di zona-notte sopra la mandata di zona-giorno) e' la forma stessa del pettine a due utenze impilate: ogni coppia ha la mandata sopra, ma il ritorno dell'utenza alta sta sopra la mandata dell'utenza bassa. Lo segnalo come contrasto fra B10 misurata e B12.",
+    "Alternativa misurata e scartata: zona-giorno girata di 90 sotto la calata out_1, con il ritorno che sale dritto nel T (1 piega in tutta la tavola invece di 3, nessun B10). Il motore pero' colora quel ritorno come MANDATA (rosso, frecce in su): un ritorno che non ha nessun tratto verso ovest viene classificato mandata (prova: stessa posa con un gradino verso ovest -> torna blu). La tavola non si leggeva: ha vinto la tavola.",
+    "CORREDO (par. 2.2 passo 5, par. 6). Sul ritorno fra PDC e volano, nell'ordine del grafo: filtro, valvola, defangatore (li posa il motore dalla porta della PDC), poi i tre raccordi a quota y=17,5 (B8) ogni 15 mm: vaso, gruppo di riempimento con AF-02, manometro. Tutti APPESI SOTTO il ritorno: sopra c'e' la mandata a 15 mm, e uno stacco con organo non ci sta. Mandata: T e valvola di sicurezza sopra la mandata, subito dopo la PDC.",
+    "ACS (A1, A4): il boiler BPC-01 e' generazione e sta nella colonna della PDC, centrato sotto di lei. AF-01 a ovest di cold_in, ACS-01 dritta sopra dhw_out: tutte e due alla distanza minima che gli organi in linea consentono (20 mm per AF-01 con la valvola, 10 mm per ACS-01 dopo l'ultima valvola). Scarico sotto il T.",
+    "Formato A3: con A4 il comando si ferma ('the 3 functional bands need 295mm but the drawing area is 212mm wide'). Ingombro misurato 287,5 x 157,5 mm.",
+    "Rotazioni scritte solo dove servono: specchio del volano (la deduzione non lo fa) e rotazione 180 del gruppo di riempimento (D-168: attacco b in alto verso il T, a in basso verso AF-02). Raccordi, confini di rete, manometro, vaso, scarichi e zone li orienta la deduzione."
+  ],
+  "pezzi": {
+    "pdc": {"x": 0, "y": 0, "regola": "A1 generazione a sinistra; D-159 le sue porte fissano mandata y=5 e ritorno y=20"},
+    "tee-valve-safety-pdc-water-supply": {"x": 50, "y": 2.5, "regola": "B8 sulla quota della mandata (y=5); A4 subito dopo la PDC"},
+    "valve-safety-pdc-water-supply": {"x": 50, "y": -17.5, "regola": "A4 stacco minimo 10 mm sopra il T; sopra la mandata non c'e' nessuna autostrada"},
+    "tee-expansion-connection-pdc-water-return": {"x": 80, "y": 17.5, "regola": "B8 sulla quota del ritorno (y=20), dopo la fila filtro-valvola-defangatore che il motore posa dalla PDC"},
+    "expansion-connection-pdc-water-return": {"x": 80, "y": 42.5, "regola": "A4 appeso sotto il ritorno: sopra c'e' la mandata a 15 mm; stacco minimo con la valvola bloccabile in linea"},
+    "tee-filling-unit-pdc-water-return-b": {"x": 95, "y": 17.5, "regola": "B8 sulla quota del ritorno; passo 15 mm fra i tre raccordi (corsia B9)"},
+    "filling-unit-pdc-water-return": {"x": 95, "y": 32.5, "rotazione": 180, "regola": "D-168 rotazione scritta: b in alto verso il T, a in basso verso AF-02; A4 stacco 10 mm"},
+    "inlet-filling-unit-pdc-water-return": {"x": 95, "y": 52.5, "regola": "A4 confine di rete addosso al gruppo di riempimento, stacco 10 mm"},
+    "tee-pressure-gauge-pdc-water-return": {"x": 110, "y": 17.5, "regola": "B8 sulla quota del ritorno"},
+    "pressure-gauge-pdc-water-return": {"x": 110, "y": 42.5, "regola": "A4 appeso sotto il ritorno (sopra la mandata a 15 mm non lascia posto al rubinetto portamanometro)"},
+    "volano": {"x": 135, "y": 15, "specchio": true, "regola": "D-159 porte a +5 sulla quota del ritorno y=20; specchio: a a destra verso le zone, b a sinistra verso la PDC (B1, niente U)"},
+    "air-vent-volano-b": {"x": 145, "y": -10, "regola": "A4 sopra il volano; attraversa la mandata per forza (10 mm fra volano e mandata, ne servono 20); a y=-7,5 la mandata gira intorno"},
+    "drain-connection-volano-a": {"x": 145, "y": 70, "regola": "A4 stacco minimo 10 mm sotto il volano"},
+    "ritorno-zone": {"x": 175, "y": 17.5, "regola": "B8 sulla quota del ritorno; B12 colonna del ritorno a 10 mm dalla calata out_1; B3 ordine con meno incroci (2 contro 3)"},
+    "collettore": {"x": 175, "y": 2.5, "regola": "D-159 porta in a +2,5: y=2,5 la mette sulla mandata y=5, retta dalla PDC"},
+    "zona-notte": {"x": 220, "y": 7.5, "regola": "B12 pettine, utenza alta servita da out_2; y=7,5 mette l'uscita a y=20: ritorno retto fino alla PDC"},
+    "zona-giorno": {"x": 220, "y": 30, "regola": "B12 pettine, impilata sotto zona-notte alla stessa x; servita da out_1 senza incrociare l'altra mandata"},
+    "boiler": {"x": 7.5, "y": 80, "regola": "A1 e' generazione (heat_generation): colonna della PDC, centrato sotto di lei"},
+    "utenze": {"x": 17.5, "y": 40, "regola": "A4 dritta sopra dhw_out, 10 mm dopo l'ultima valvola della fila"},
+    "tee-drain-connection-cold-boiler-cold-in": {"x": -22.5, "y": 115, "regola": "B8 sulla quota di cold_in (y=117,5); 25 mm dal boiler per il gruppo di sicurezza in linea"},
+    "drain-connection-cold-boiler-cold-in": {"x": -22.5, "y": 130, "regola": "A4 stacco minimo 10 mm sotto il T"},
+    "acquedotto": {"x": -47.5, "y": 115, "regola": "A4 alla distanza minima dal T che la valvola in linea consente (20 mm)"}
+  }
+}

@@ -1,5 +1,12 @@
 # Piano di costruzione della skill, pezzo per pezzo
 
+> ⛔ **Storia, non vigente, dal 20 settembre 2026** (**D-151**, **D-156**). I pezzi della
+> skill non sono più quelli di questo piano: sono i **cinque** di
+> `docs/ARCHITETTURA-DEL-PIANO.md` — Capire, Completare, **Comporre**, Eseguire, Rivedere — e
+> il disegno non lo decide più l'instradamento «con la funzione di costo» (§1, «si tiene»):
+> dove stanno i pezzi lo scrive il piano, che compone un agente, e il motore lo esegue. I
+> verdetti e i collaudi registrati qui restano validi come storia.
+
 **Data:** 6 agosto 2026 — **rifatto sulla logica del grafo** su indicazione del PM
 (D-096, D-097, D-098, D-099).
 **Stato:** in corso. Un pezzo alla volta.

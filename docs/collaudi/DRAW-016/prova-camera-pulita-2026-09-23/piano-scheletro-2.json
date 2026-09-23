@@ -1,0 +1,24 @@
+{
+  "formato": "A4",
+  "note": [
+    "Autostrade prima di tutto (par. 2.2): pompa, deviatrice e volano allo stesso y=0 (D-159). La mandata corre retta a y=5 dalla pompa al volano attraverso la deviatrice, il ritorno retto a y=20 dal volano alla pompa attraverso il T 'ritorno': zero pieghe sul tronco (B1, B8, B10).",
+    "Volano e bollitore sono in parallelo sul primario, fra deviatrice e T: impilati alla stessa x=77.5, bollitore sotto (A1 fascia accumulo, A2). Deviatrice e T sono i due collettori: verticale di mandata a x=62.5, di ritorno a x=52.5, 10 mm fra loro (B9), accanto alle macchine (B3).",
+    "B3, ordine dei collettori misurato su geometria.json: mandata vicina alle macchine = 1 sormonto; ritorno vicino = 2 sormonti (la L del ritorno taglia quella della mandata). Tenuta la mandata vicina.",
+    "Il sormonto che resta, la terza via della deviatrice sul ritorno, e' il minimo: con mandata e ritorno retti l'anello pompa-volano lascia il bollitore fuori, e una delle due diramazioni verso la serpentina deve attraversarlo.",
+    "Provata anche la variante bollitore sopra il volano (deviatrice rotazione 180 + specchio, D-169): stessi numeri, 4 pieghe e 1 sormonto, verticali piu' corte. Scartata: l'attacco acqua fredda del bollitore (sinistra +37.5) resterebbe chiuso dietro le due verticali, e l'acquedotto del grafo completo le attraverserebbe tutte e due.",
+    "Deviatrice a rotazione 0 scritta (D-168): la terza via guarda in basso, verso il bollitore che serve.",
+    "Pieghe totali 4, tutte imposte dai simboli (B1, D-171): le due L verso la serpentina (terza via della deviatrice, ramo del T) e il gradino di 5 mm fra volano (interasse 15) e ventilconvettore (interasse 10).",
+    "Ventilconvettore a y=2.5: la mandata entra retta a y=5, il ritorno scala di 5 mm (B11, caso di interassi diversi). Posato a 17.5 mm dal volano, come il tratto pompa-deviatrice. Misurato: a 20 mm lo stesso identico gradino fa scattare SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER, da 10 a 17.5 mm no.",
+    "Utenze ACS 10 mm sopra l'uscita del bollitore, stacco minimo e retto (A4). Bollitore a y=70, cioe' 25 mm sotto il volano, perche' confine e targa stiano fra i due serbatoi senza puntare contro lo scarico del volano.",
+    "Formato A4, il piu' piccolo; il bianco che resta non si corregge (D3, D-170)."
+  ],
+  "pezzi": {
+    "pdc":              {"x": 0,     "y": 0,    "regola": "D-159 — quota delle porte: mandata a y=5, ritorno a y=20"},
+    "deviatrice":       {"x": 57.5,  "y": 0,    "rotazione": 0, "regola": "B8, D-168 — sulla quota della mandata, terza via in basso verso il bollitore; collettore di mandata vicino alle macchine (B3: 1 sormonto contro 2)"},
+    "ritorno":          {"x": 50,    "y": 17.5, "regola": "B8, B3 — sulla quota del ritorno, collettore di ritorno sulla verticale esterna, 10 mm dalla mandata (B9)"},
+    "volano":           {"x": 77.5,  "y": 0,    "regola": "D-159 — stesso y della pompa: mandata e ritorno retti"},
+    "bollitore":        {"x": 77.5,  "y": 70,   "regola": "A2 — in parallelo col volano, impilato alla stessa x; 25 mm sotto per far stare le utenze ACS"},
+    "utenze":           {"x": 82.5,  "y": 55,   "regola": "A4 — addosso al bollitore, stacco retto di 10 mm"},
+    "ventilconvettori": {"x": 120,   "y": 2.5,  "regola": "A1, B11 — fascia distribuzione; mandata retta a y=5, gradino di 5 mm sul ritorno imposto dagli interassi"}
+  }
+}

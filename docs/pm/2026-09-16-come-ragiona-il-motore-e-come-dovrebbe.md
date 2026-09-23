@@ -1,5 +1,14 @@
 # Come ragiona il motore, e come ragiona un disegnatore — l'analisi, 16 settembre 2026
 
+> ⛔ **Storia, non vigente, dal 20 settembre 2026** (**D-151**). Questa analisi misurava le
+> differenze fra l'ordine del disegnatore e quello del **solutore** — la fase del tronco e il
+> ciclo di miglioramento su `SheetCost` — e proponeva di correggerlo. La correzione è stata
+> un'altra: il solutore è uscito dalla catena, e l'ordine del disegnatore lo segue adesso
+> **chi compone il piano** (`skill/comporre/`, **D-159**), non il motore. Le parti su
+> `SheetCost` e sulle fasi del motore descrivono codice che nessun percorso vigente chiama
+> (`tests/layout/test_il_solutore_e_fuori.py`). L'architettura vigente è
+> `docs/ARCHITETTURA-DEL-PIANO.md`.
+
 **Chi decide:** PO (Daniel Carta), dominio MEP e convenzioni di rappresentazione.
 **Chi scrive:** il PM.
 **Perché esiste:** il PO, guardando la tavola 4: «è inutile che continuiamo a ottimizzare un

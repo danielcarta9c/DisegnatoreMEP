@@ -55,6 +55,7 @@ from disegnatore_mep.layout.autostrade import (
     autostrade_del_progetto,
     autostrade_in_tavola,
     curve_imposte,
+    gradini_delle_coppie,
     pieghe_dell_autostrada,
     porte_in_tavola,
     tratte_del_progetto,
@@ -82,7 +83,7 @@ from disegnatore_mep.layout.place import (
     ROW_GAP_MM,
     hanging_children,
     inline_room_mm,
-    port_corridors,
+    port_corridors_by_port,
     stub_minimum_mm,
 )
 from disegnatore_mep.layout.trunks import Trunk
@@ -552,7 +553,7 @@ def organi_di_servizio_lontani(
     for sheet in drawing.sheets:
         porte = porte_in_tavola(sheet, project, catalog)
         posati = {item.component_id: item for item in sheet.symbols}
-        corridoi = port_corridors(
+        corridoi_per_attacco = port_corridors_by_port(
             project, catalog, trunks, list(sheet.symbols), passo_mm
         )
         per_chiave = {tuple(route.connection_ids): route for route in sheet.routes}
@@ -578,6 +579,28 @@ def organi_di_servizio_lontani(
                 continue
             posato = posati.get(organo)
             altro = porte.get((servito, suo.port_id))
+            # **I corridoi dello stacco stesso non sono un posto occupato.** Il
+            # corridoio davanti alla porta dell'organo — e davanti a quella del
+            # pezzo che serve — corre **lungo questo stacco**: e' la strada da
+            # cui l'organo arriva, non un vicino. Fino al 23 settembre 2026 si
+            # contavano, e un manometro con la propria valvola sullo stacco
+            # risultava «col posto preso» a qualunque distanza: allontanato di
+            # 40 mm, nessun rilievo. L'ha trovato un agente in camera pulita.
+            servito_posato = posati.get(servito)
+            propri = {
+                (organo, posato.physical_port(mio.port_id) if posato else mio.port_id),
+                (
+                    servito,
+                    servito_posato.physical_port(suo.port_id)
+                    if servito_posato
+                    else suo.port_id,
+                ),
+            }
+            corridoi = [
+                area
+                for chiave, area in corridoi_per_attacco.items()
+                if chiave not in propri
+            ]
             if posato is not None and altro is not None and _il_posto_e_preso(
                 posato,
                 _verso_il_pezzo_che_serve(dove[0], altro[0], passo_mm),
@@ -630,16 +653,27 @@ def autostrade_storte(
 
     **La misura.** Per ogni autostrada in tavola si contano le pieghe della
     **catena intera** — quelle dentro ciascuna tratta e quelle **sui crocevia**
-    che le uniscono — e si confrontano con `curve_imposte`, cioe' quante ne
-    impongono **le facce dei simboli attraversati**. Il rilievo si accende solo
-    sulle pieghe **in piu'**: quelle che la catena ha fatto per scelta di chi
-    compone, e che un'altra posa toglierebbe.
+    che le uniscono — e si confrontano con il **pavimento**, cioe' quante ne
+    impongono **le facce dei simboli che la catena tocca**: `curve_imposte`, piu'
+    il gradino della coppia quando ce n'e' uno (`gradini_delle_coppie`). Il
+    rilievo si accende solo sulle pieghe **in piu'**: quelle che la catena ha
+    fatto per scelta di chi compone, e che un'altra posa toglierebbe.
 
     **Il pavimento non e' una taratura**, ed e' la differenza che conta: non si
     guadagna niente a starci sopra, e sotto non ci si puo' andare. Chiude la
     contraddizione fra **B1** e **B3** — una catena che passa per un collettore
     verticale ha due pieghe per forza, e adesso il suo pavimento e' due — e la
     meta' misurabile di **B7**.
+
+    **Il suo metro e' una tavola approvata** (**I-108**, 23 settembre 2026): la
+    tavola 5 del 22 settembre, che il PO ha dichiarato buona e su cui il
+    pavimento di D-171 — i soli crocevia — accendeva **sette** rilievi falsi. Le
+    sette pieghe erano tutte **fra due pezzi**: il gomito in fondo a un
+    collettore verticale, la L fra la terza via e la serpentina, la testa della
+    colonna di un pettine. Adesso contano, e la tavola non ne porta nessuno;
+    le pieghe che una posa diversa toglie — un gradino fra due porte che si
+    guardano, un giro largo, la U che un ribaltamento raddrizza — restano
+    accusate.
 
     **«Meno curve possibili» resta**, e non sta qui: e' la voce `pieghe` del
     punteggio del revisore, che chi compone minimizza. Un pavimento dice
@@ -654,10 +688,14 @@ def autostrade_storte(
     trovati: list[ValidationIssue] = []
     for sheet in drawing.sheets:
         porte = porte_in_tavola(sheet, project, catalog)
+        gradini = gradini_delle_coppie(autostrade, sheet.routes, porte)
         for autostrada in autostrade:
             pieghe = pieghe_dell_autostrada(autostrada, sheet.routes, porte)
             imposte = curve_imposte(autostrada, porte)
-            if pieghe is None or imposte is None or pieghe <= imposte:
+            if pieghe is None or imposte is None:
+                continue
+            imposte += gradini.get(autostrada.connection_ids, 0)
+            if pieghe <= imposte:
                 continue
             trovati.append(
                 _rilievo(
@@ -665,7 +703,7 @@ def autostrade_storte(
                     f"la tavola {sheet.sheet_id}: {_tratte_nominate(autostrada)} "
                     f"{'piega' if autostrada.e_una_tratta_sola else 'piegano'} "
                     f"{pieghe} {'volta' if pieghe == 1 else 'volte'}, e i simboli "
-                    f"che {'attraversa' if autostrada.e_una_tratta_sola else 'attraversano'} "
+                    f"che {'tocca' if autostrada.e_una_tratta_sola else 'toccano'} "
                     f"ne {'impone' if imposte == 1 else 'impongono'} {imposte}: "
                     f"{pieghe - imposte} di troppo — la catena e' {autostrada.nome} "
                     f"(B1, D-154, D-171)",
@@ -1386,8 +1424,8 @@ def coppie_che_non_corrono_insieme(
                     "SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER",
                     f"la tavola {sheet.sheet_id}: fra {' e '.join(sorted(capi))} la "
                     f"mandata e il ritorno corrono insieme per "
-                    f"{len(interassi) * 2.5:.1f} mm ma cambiano interasse "
-                    f"{len(distinti)} volte ({', '.join(f'{v:g}' for v in distinti[:6])} "
+                    f"{len(interassi) * 2.5:.1f} mm ma tengono {len(distinti)} "
+                    f"interassi diversi ({', '.join(f'{v:g}' for v in distinti[:6])} "
                     f"mm): la coppia si apre, e mandata e ritorno corrono sempre "
                     f"insieme (B11, PO 20 settembre 2026)",
                     [sheet.sheet_id, *sorted(capi)],
