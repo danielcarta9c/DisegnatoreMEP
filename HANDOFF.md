@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-23 notte — su `main` `DRAW-016` (PR #53, **tavole approvate**, I-109) e i primi passi di **`DRAW-017`** (D-173 approvata, D-174 fatto, D-177 misurato); la sessione successiva parte dai **piccoli difetti del PO**
+**Aggiornato:** 2026-09-23 notte — su `main` `DRAW-016` (PR #53, **tavole approvate**, I-109) e i primi passi di **`DRAW-017`** (PR #54: D-173 approvata, D-174 fatto, D-177 chiusa); la sessione successiva parte dalla **miscelatrice con l'ingresso AF** (D-175)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -16,7 +16,7 @@
 **Su `main` c'è tutto.** `DRAW-016` con la PR #53 — **le tavole del pianificatore sui cinque
 impianti completi sono approvate** (**I-109**): «hanno proprio l'aspetto di tavole
 professionali… **da qui in poi si parla di migliorie e piccole correzioni**» — e, con la PR
-successiva, i primi passi di **`DRAW-017`**, il pacchetto attivo.
+#54, i primi passi di **`DRAW-017`**, il pacchetto attivo.
 
 **Fatto di `DRAW-017`:**
 
@@ -26,15 +26,14 @@ successiva, i primi passi di **`DRAW-017`**, il pacchetto attivo.
   rilievi**, zero cedute e zero bloccanti;
 - **D-177 — la legenda su due colonne è misurata e non serve all'impianto 5**: sfora di una riga,
   e la seconda colonna toglie al disegno 50 mm che non ha. L'unica leva per l'A3 è l'interlinea
-  della legenda, che è convenzione: il PO non l'ha chiesta («Bah per ora basta»), **il 5 resta
-  in A2**;
+  della legenda, e il PO: «**Interlinea legenda non si tocca**» (I-112). **Il 5 resta in A2**;
 - **gli attrezzi della camera pulita sono nel repository**: `docs/collaudi/DRAW-017/prepara-camera.sh`
   e `docs/collaudi/DRAW-017/misura-tavole.py`.
 
 **Da fare, in quest'ordine:**
 
-0. **Chiedere al PO i piccoli difetti che ha visto** sulle tavole approvate. Li ha nominati il 23
-   («vedo piccoli difetti») e **non li ha mai elencati**: vengono prima di tutto il resto.
+0. ~~I piccoli difetti che il PO ha visto~~ — **lasciati da parte dal PO** (I-112): «Lasciamo
+   stare per ora va bene così». Non si chiedono.
 1. **D-175 — la miscelatrice termostatica con l'ingresso AF.** La porta nel generatore dei
    simboli (`examples/graphics/build_symbols.py`) e nel catalogo
    (`mixing-valve-thermostatic.json`); **non più organo in linea**; la regola
@@ -49,7 +48,9 @@ successiva, i primi passi di **`DRAW-017`**, il pacchetto attivo.
    `skill/capire/`, dove il ricircolo si modella.
 3. **D-178 — il vaso sanitario** negli impianti centralizzati, accumulo ACS da 1000 litri in su:
    la regola `expansion-on-the-stored-volume-feed.json` lo posa già fra ritegno e bollitore ma
-   chiede sempre; serve **il volume dell'accumulo nel grafo**, letto da «Capire».
+   chiede sempre; serve **il volume dell'accumulo nel grafo**, letto da «Capire». **Fra gli
+   impianti di prova solo il 5 ha l'accumulo da 1000 litri in su** (I-112); il volume esatto non è
+   dato, e non si inventa.
 4. **Le tavole ricomposte dal pianificatore**, e **mostrate al PO per prime**. Il protocollo
    del 23 settembre, che adesso sta nel repository:
    - i grafi completi: `disegnatore-mep rules examples/prova/prova-N-….json --apply-all --out …`;

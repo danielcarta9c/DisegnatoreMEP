@@ -38,10 +38,10 @@ Suite: **48 rosse** (lo stesso insieme della base di `DRAW-016`), 1629 passate, 
 
 ## Le cose da fare, in quest'ordine
 
-### 0. I piccoli difetti che il PO vede
+### 0. ~~I piccoli difetti che il PO vede~~ — lasciati da parte dal PO (I-112)
 
-Il PO, approvando: «Vedo piccoli difetti». **Non li ha ancora elencati.** Quando li elenca si
-registrano nel registro, uno per riga, e vengono **prima** di tutto il resto di questo pacchetto.
+Il PO, approvando, aveva detto «vedo piccoli difetti»; il 23 sera: «Lasciamo stare per ora va
+bene così». **Non sono lavoro di questo pacchetto** finché il PO non li riapre.
 
 ### 1. ✅ B10 confronta la mandata solo con il proprio ritorno — **D-174**, fatto il 23
 
@@ -64,8 +64,8 @@ si prova la seconda colonna.** Il giudizio si dà sulla tavola.
 legenda sfora di **una riga** (31 righe da 7,5 mm più lo stacco fra le sezioni: 237,5 contro
 235). Una seconda colonna larga come la prima (50 mm) lascia al disegno **300 mm** di larghezza, e
 il disegno dell'impianto 5 ne occupa **337,5**: l'A3 non arriva lo stesso. L'unica leva che lo
-porterebbe in A3 è l'interlinea della legenda, che è convenzione grafica: portata al PO il 23, che
-non l'ha chiesta («Bah per ora basta»). **L'impianto 5 resta in A2.**
+porterebbe in A3 è l'interlinea della legenda, che è convenzione grafica — e il PO: «**Interlinea
+legenda non si tocca**» (I-112). **Chiuso: l'impianto 5 resta in A2, e la legenda non cambia.**
 
 ### 3. La miscelatrice termostatica ha l'ingresso dell'acqua fredda — **D-175**
 
@@ -107,7 +107,7 @@ materiale di collaudo — e le prove del revisore che cadevano a valle si rimisu
 
 ## Piccole correzioni candidate, trovate dagli agenti
 
-Si fanno **nell'ordine che il PO dà** quando elenca i suoi difetti, e solo se ci sono:
+Restano **candidate**: il PO ha lasciato da parte i suoi piccoli difetti (I-112), e queste non si fanno senza che lui le chieda:
 
 - la freccia di verso che cade sul ponticello di un incrocio;
 - la sigla di un pezzo che cade accanto a un altro (VOL-01 sugli impianti 2 e 4);
@@ -129,8 +129,11 @@ non ritorno e il bollitore».
   dentro. Da 1000 litri in su, nell'impianto centralizzato, il vaso si mette.
 - **Serve il volume dell'accumulo nel grafo**, e oggi non c'è: lo legge «Capire» dal testo del
   progettista (`skill/capire/`), e dove manca resta una domanda.
-- Sotto i 1000 litri non cambia niente. Una prova per parte: 1500 litri il vaso c'è, fra ritegno
-  e bollitore; 300 litri la regola chiede come oggi.
+- Sotto i 1000 litri non cambia niente. Una prova per parte: da 1000 litri in su il vaso c'è, fra
+  ritegno e bollitore; sotto, la regola chiede come oggi.
+- **Fra gli impianti di prova solo il 5 ha l'accumulo ACS da 1000 litri in su** (I-112): è l'unica
+  tavola che guadagna il vaso. **Il volume esatto non è dato**, e non si inventa: nel grafo va la
+  soglia che il PO ha detto, non un numero.
 
 ## Deciso dal PO il 23 settembre
 
