@@ -403,6 +403,13 @@ tavole su cinque.
 hanno una costante: la colonna di mandata sta a sinistra del ritorno in una e a destra in
 un'altra. **Una regola sul lato dei verticali non esiste, e non si inventa.**
 
+⚠ **Aperto al PO il 23 settembre 2026: B10 e il pettine.** Il controllo confronta una mandata
+con **qualunque** ritorno che le corre accanto sulla stessa rete, anche di un'altra utenza. In
+un pettine (B12) con le utenze impilate la coppia di ciascuna ha la mandata sopra, ma il ritorno
+dell'utenza alta sta per forza sopra la mandata di quella bassa, e il rilievo si accende sulla
+forma che il PO ha disegnato — l'hanno visto due agenti, sull'impianto 3 completo e sul suo
+scheletro. **Proposta, non applicata:** B10 confronta una mandata solo con il proprio ritorno.
+
 ### B11 — Mandata e ritorno corrono insieme, a interasse costante
 
 *Fonte:* il **PO**, 20 settembre 2026: «devi ricordare di disegnarle mandata e ritorno

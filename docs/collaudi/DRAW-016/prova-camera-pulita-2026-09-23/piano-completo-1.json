@@ -1,0 +1,110 @@
+{
+  "formato": "A3",
+  "note": [
+    "Scheletro (§2.2): PdC maestra a (0,0), PdC 2 impilata sotto a (0,45) (A1 fascia di generazione a sinistra, A2); accumulo a y=0, la stessa quota della maestra: mandata primaria a y=5 e ritorno a y=20 corrono retti dalla pompa all'accumulo, zero pieghe (§2.1, B1, B10).",
+    "Collettori (B3): due verticali vicine accanto alle macchine, mandata a x=62,5 e ritorno a x=72,5 (10 mm, corsia B9). Provati i due ordini: mandata vicina 1 sormonto (il ritorno della maestra scavalca la salita di mandata), ritorno vicino 2 sormonti. Tenuta la mandata vicina.",
+    "Pieghe misurate: 4 in tutto, tutte imposte dai simboli (B1): il gomito della PdC 2 in fondo al collettore di mandata (1) e in fondo al collettore di ritorno (1), il gradino della coppia accumulo-radiatore, interasse 15 contro 10 (2). Incroci: 1, quello che B3 non evita.",
+    "Corredo primario (§4bis, §6): la sicurezza sta sopra la mandata subito dopo il collettore; vaso, gruppo di riempimento e manometro sono appesi SOTTO il ritorno, perche' fra mandata e ritorno ci sono 15 mm e sotto il ritorno non passa nessuna autostrada. L'ordine lungo il ritorno (manometro, riempimento, vaso, defangatore) e' quello del grafo; stacchi a passo 12,5, ciascuno il piu' corto che la griglia consente (misurato abbassandoli di 2,5 finche' il comando si ferma), mai sotto i 10 mm di A4.",
+    "Confini (A4): AF-01 a sinistra dell'accumulo sulla quota di cold_in, AF-02 sotto il gruppo di riempimento, ACS-01 in colonna sopra dhw_out, ciascuno con lo stacco piu' corto che la griglia consente (AF-01 15, AF-02 10, ACS-01 32,5); sfiato sopra e scarico sotto l'accumulo, stacco 10. Gli stacchi senza organi in linea restano a 10 mm (A4) anche se il comando accetterebbe 5.",
+    "Secondario (B12, D-167): il radiatore si prende da sinistra; ingresso allineato alla mandata secondaria, che resta retta con valvola-circolatore-valvola; il ritorno scala di 5 mm. Resta il rilievo SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER: provate 6 pose del radiatore (da 35 a 75 mm dall'accumulo, con l'ingresso allineato alla mandata oppure l'uscita allineata al ritorno), scatta sempre, perche' l'interasse 15 dell'accumulo e 10 del radiatore non si allineano; le istruzioni (B1) lo chiamano gradino imposto.",
+    "Formato A3 (D3): su A4 questa posa si ferma sulla legenda (chiede 192,5 mm, la sua fascia su A4 ne ha 148: 18 simboli e 6 reti), e le pose piu' larghe provate prima non si instradavano (tratta s1-a); su A3 il comando non segnala SHEET_LARGER_THAN_NEEDED. Il bianco che resta non si corregge (D-170)."
+  ],
+  "pezzi": {
+    "pdc-master": {
+      "x": 0,
+      "y": 0,
+      "regola": "§2.1/B1 — la PdC maestra fissa le quote delle autostrade primarie: mandata a y=5, ritorno a y=20"
+    },
+    "pdc-slave": {
+      "x": 0,
+      "y": 45,
+      "regola": "A2 — chi sta in parallelo si impila: stessa x della maestra, passo 45 (15 mm di luce fra le due macchine)"
+    },
+    "collettore-mandata": {
+      "x": 60,
+      "y": 2.5,
+      "regola": "B3/B8 — raccordo di testa del collettore verticale di mandata (asse x=62,5), sulla quota della mandata della maestra; e' la verticale vicina alle macchine perche' fa meno sormonti (1 contro 2, misurato)"
+    },
+    "collettore-ritorno": {
+      "x": 70,
+      "y": 17.5,
+      "regola": "B3/B8/B9 — raccordo di testa del collettore verticale di ritorno (asse x=72,5), sulla quota del ritorno, a 10 mm dalla verticale di mandata: una corsia libera"
+    },
+    "accumulo": {
+      "x": 165,
+      "y": 0,
+      "regola": "§2.1/B1 — stesso y della PdC maestra: primary_in a 5 e primary_out a 20 come le porte della pompa, mandata e ritorno primari rette senza pieghe"
+    },
+    "radiatori": {
+      "x": 225,
+      "y": 2.5,
+      "regola": "B1/B12/D-167 — ingresso a y=5 sulla quota della mandata secondaria: la mandata (valvola, circolatore, valvola) corre retta; il ritorno scala di 5 mm (interasse 15 dell'accumulo contro 10 del terminale, gradino imposto). 35 mm dall'accumulo: il minimo che i tre organi in linea chiedono (a 30 il comando si ferma, misurato)"
+    },
+    "tee-valve-safety-collettore-mandata-b": {
+      "x": 80,
+      "y": 2.5,
+      "regola": "B8 — sulla quota della mandata, subito a valle del collettore di mandata come vuole il grafo (uscita b)"
+    },
+    "valve-safety-collettore-mandata-b": {
+      "x": 80,
+      "y": -17.5,
+      "regola": "A4 — addosso al suo raccordo, stacco minimo 10 mm, verso l'alto: sopra la mandata non passa nessuna autostrada"
+    },
+    "tee-expansion-connection-collettore-ritorno-a": {
+      "x": 102.5,
+      "y": 17.5,
+      "regola": "B8/B5 — sulla quota del ritorno; a 32,5 mm dal collettore di ritorno, il rettilineo minimo che defangatore e valvola chiedono (a 30 il comando si ferma)"
+    },
+    "expansion-connection-collettore-ritorno-a": {
+      "x": 102.5,
+      "y": 37.5,
+      "regola": "A4/§6 — appeso sotto il ritorno: fra mandata e ritorno ci sono solo 15 mm, e sotto il ritorno non passa nessuna autostrada. Stacco 15, il piu' corto che la griglia consente con la valvola bloccabile in linea (a 12,5 il comando si ferma, misurato)"
+    },
+    "tee-filling-unit-collettore-ritorno-a-b": {
+      "x": 115,
+      "y": 17.5,
+      "regola": "B8/B9 — sulla quota del ritorno, 12,5 mm dopo il raccordo del vaso: gli stacchi paralleli tengono la corsia di 10 mm"
+    },
+    "filling-unit-collettore-ritorno-a": {
+      "x": 115,
+      "y": 32.5,
+      "rotazione": 180,
+      "regola": "§4 — rotazione scritta (la deduzione non gira il gruppo): 180, cosi' b guarda in alto verso il raccordo e a in basso verso l'acqua fredda; stacco minimo 10 mm (A4)"
+    },
+    "inlet-filling-unit-collettore-ritorno-a": {
+      "x": 115,
+      "y": 52.5,
+      "regola": "A4 — il confine AF-02 sta addosso al gruppo di riempimento che serve, sotto di lui, stacco minimo 10 mm"
+    },
+    "tee-pressure-gauge-collettore-ritorno-a": {
+      "x": 127.5,
+      "y": 17.5,
+      "regola": "B8/B9 — sulla quota del ritorno, 12,5 mm dopo il raccordo del riempimento"
+    },
+    "pressure-gauge-collettore-ritorno-a": {
+      "x": 127.5,
+      "y": 37.5,
+      "regola": "A4/§6 — appeso sotto il ritorno, sopra non c'e' posto (15 mm fra mandata e ritorno). Stacco 15, il piu' corto che la griglia consente col rubinetto portamanometro in linea (a 12,5 il comando si ferma, misurato)"
+    },
+    "acquedotto": {
+      "x": 145,
+      "y": 35,
+      "regola": "A4 — AF-01 addosso all'accumulo, sulla quota di cold_in (y=37,5): linea retta; stacco 15, il piu' corto che la griglia consente con la valvola in linea (a 12,5 il comando si ferma); a 12,5 mm dal manometro, fuori dalla sua colonna"
+    },
+    "air-vent-accumulo-primary-out": {
+      "x": 180,
+      "y": -20,
+      "regola": "A4 — sopra l'attacco vent dell'accumulo, stacco minimo 10 mm; a 10 mm dalla colonna ACS (corsia B9)"
+    },
+    "drain-connection-accumulo-primary-in": {
+      "x": 175,
+      "y": 55,
+      "regola": "A4 — sotto l'attacco drain dell'accumulo, stacco minimo 10 mm"
+    },
+    "utenze": {
+      "x": 170,
+      "y": -37.5,
+      "regola": "A4 — ACS-01 sopra dhw_out, in colonna retta: stacco 32,5, il piu' corto che la griglia consente con tre organi in linea (a 30 il comando si ferma, misurato; il rilievo SERVICE_STUB_LONGER_THAN_ITS_MINIMUM dichiara 40 come minimo)"
+    }
+  }
+}

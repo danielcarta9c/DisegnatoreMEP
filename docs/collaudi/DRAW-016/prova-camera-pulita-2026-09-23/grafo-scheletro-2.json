@@ -1,0 +1,640 @@
+{
+  "assumptions": [
+    {
+      "id": "a1",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "La priorita' sanitaria e' una logica di regolazione: sul grafo si vede la deviatrice, non la priorita'."
+    },
+    {
+      "id": "a2",
+      "source_message_refs": [],
+      "status": "proposed",
+      "text": "La miscelatrice sull'uscita sanitaria e' nominata dal testo e la aggiungono le regole, che gia' la prevedono."
+    }
+  ],
+  "components": [
+    {
+      "definition_id": "dhw-cylinder",
+      "evidence": [],
+      "id": "bollitore",
+      "properties": {},
+      "tag": "BOL-01"
+    },
+    {
+      "definition_id": "diverting-valve-3way",
+      "evidence": [],
+      "id": "deviatrice",
+      "properties": {},
+      "tag": "VD-01"
+    },
+    {
+      "definition_id": "heat-pump-air-water",
+      "evidence": [],
+      "id": "pdc",
+      "properties": {},
+      "tag": "PDC-01"
+    },
+    {
+      "definition_id": "tee-junction",
+      "evidence": [],
+      "id": "ritorno",
+      "properties": {},
+      "tag": null
+    },
+    {
+      "definition_id": "dhw-draw-off",
+      "evidence": [],
+      "id": "utenze",
+      "properties": {},
+      "tag": "ACS-01"
+    },
+    {
+      "definition_id": "fan-coil",
+      "evidence": [],
+      "id": "ventilconvettori",
+      "properties": {},
+      "tag": "VC-01"
+    },
+    {
+      "definition_id": "buffer-four-port",
+      "evidence": [],
+      "id": "volano",
+      "properties": {},
+      "tag": "VOL-01"
+    }
+  ],
+  "connections": [
+    {
+      "id": "m1",
+      "endpoint_a": {
+        "component_id": "pdc",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "deviatrice",
+        "port_id": "in"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m2",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_a"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "primary_in"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m3",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno",
+        "port_id": "a"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m4",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_b"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "coil_in"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m5",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "coil_out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno",
+        "port_id": "c"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m6",
+      "endpoint_a": {
+        "component_id": "ritorno",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc",
+        "port_id": "water_return"
+      },
+      "network_id": "primario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m7",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "ventilconvettori",
+        "port_id": "in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m8",
+      "endpoint_a": {
+        "component_id": "ventilconvettori",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "secondary_in"
+      },
+      "network_id": "secondario",
+      "evidence": [],
+      "properties": {}
+    },
+    {
+      "id": "m9",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "utenze",
+        "port_id": "a"
+      },
+      "network_id": "sanitaria",
+      "evidence": [],
+      "properties": {}
+    }
+  ],
+  "metadata": {
+    "client": "Nove C",
+    "commission_code": "PROVA",
+    "issue_date": "2026-08-06",
+    "project_id": "prova-2-pdc-deviatrice-acs",
+    "project_name": "Pompa di calore con deviazione fra climatizzazione e ACS",
+    "revision": "00"
+  },
+  "networks": [
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "fredda",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "fredda-filling-unit-pdc-water-return",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "primario",
+      "medium": "heating_water",
+      "name": "Circuito primario"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "sanitaria",
+      "medium": "domestic_hot_water",
+      "name": "Acqua calda sanitaria"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "secondario",
+      "medium": "heating_water",
+      "name": "Circuito secondario"
+    }
+  ],
+  "plant_regime": "up_to_35_kw",
+  "rule_applications": [
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "air-vent-volano-primary-out",
+        "stub-air-vent-volano-primary-out"
+      ],
+      "id": "applied-air-vent-volano-primary-out",
+      "rule_id": "air-vent-on-the-stored-volume",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "dhw-safety-group-bollitore-cold-in",
+        "w1-b-b-a",
+        "w1-b-b-b"
+      ],
+      "id": "applied-dhw-safety-group-bollitore-cold-in",
+      "rule_id": "safety-group-on-the-stored-volume",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "dirt-separator-pdc-water-return",
+        "p6-b-a",
+        "p6-b-b"
+      ],
+      "id": "applied-dirt-separator-pdc-water-return",
+      "rule_id": "dirt-separation-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "drain-connection-cold-bollitore-cold-in",
+        "tee-drain-connection-cold-bollitore-cold-in",
+        "w1-b-a",
+        "w1-b-b",
+        "stub-drain-connection-cold-bollitore-cold-in"
+      ],
+      "id": "applied-drain-connection-cold-bollitore-cold-in",
+      "rule_id": "let-what-holds-its-own-volume-empty",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "drain-connection-volano-primary-in",
+        "stub-drain-connection-volano-primary-in"
+      ],
+      "id": "applied-drain-connection-volano-primary-in",
+      "rule_id": "let-what-holds-its-own-volume-empty",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "expansion-connection-pdc-water-return",
+        "tee-expansion-connection-pdc-water-return",
+        "p6-b-b-a",
+        "p6-b-b-b",
+        "stub-expansion-connection-pdc-water-return"
+      ],
+      "id": "applied-expansion-connection-pdc-water-return",
+      "rule_id": "expansion-on-closed-circuit",
+      "rule_version": "4.1.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "filling-unit-pdc-water-return",
+        "inlet-filling-unit-pdc-water-return",
+        "tee-filling-unit-pdc-water-return-b",
+        "inlet-filling-unit-pdc-water-return-a",
+        "fredda-filling-unit-pdc-water-return",
+        "p6-b-b-b-a",
+        "p6-b-b-b-b",
+        "stub-filling-unit-pdc-water-return-b"
+      ],
+      "id": "applied-filling-unit-pdc-water-return",
+      "rule_id": "filling-unit-on-return",
+      "rule_version": "5.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "mixing-valve-thermostatic-bollitore-dhw-out",
+        "w2-a-a",
+        "w2-a-b"
+      ],
+      "id": "applied-mixing-valve-thermostatic-bollitore-dhw-out",
+      "rule_id": "dhw-mixing-on-draw-off",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "pressure-gauge-pdc-water-return",
+        "tee-pressure-gauge-pdc-water-return",
+        "p6-b-b-b-b-a",
+        "p6-b-b-b-b-b",
+        "stub-pressure-gauge-pdc-water-return"
+      ],
+      "id": "applied-pressure-gauge-pdc-water-return",
+      "rule_id": "gauge-where-the-plant-is-charged",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "strainer-pdc-water-return",
+        "p6-a",
+        "p6-b"
+      ],
+      "id": "applied-strainer-pdc-water-return",
+      "rule_id": "debris-guard-before-what-it-would-ruin",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a",
+        "stub-pressure-gauge-pdc-water-return-a",
+        "stub-pressure-gauge-pdc-water-return-b"
+      ],
+      "id": "applied-valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-bollitore-coil-in",
+        "p4-a",
+        "p4-b"
+      ],
+      "id": "applied-valve-isolation-bollitore-coil-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-bollitore-coil-out",
+        "p5-a",
+        "p5-b"
+      ],
+      "id": "applied-valve-isolation-bollitore-coil-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-deviatrice-in",
+        "p1-b-a",
+        "p1-b-b"
+      ],
+      "id": "applied-valve-isolation-deviatrice-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-acquedotto-a",
+        "w1-a",
+        "w1-b"
+      ],
+      "id": "applied-valve-isolation-dhw-acquedotto-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-bollitore-dhw-out",
+        "w2-a-a-a",
+        "w2-a-a-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-bollitore-dhw-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dhw-hot-utenze-a",
+        "w2-a",
+        "w2-b"
+      ],
+      "id": "applied-valve-isolation-dhw-hot-utenze-a",
+      "rule_id": "boundary-shutoff-at-the-edge-of-the-plant",
+      "rule_version": "1.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dirt-separator-pdc-water-return-a",
+        "p6-a-4-a",
+        "p6-a-4-b"
+      ],
+      "id": "applied-valve-isolation-dirt-separator-pdc-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-dirt-separator-pdc-water-return-b",
+        "p6-a-5-a",
+        "p6-a-5-b"
+      ],
+      "id": "applied-valve-isolation-dirt-separator-pdc-water-return-b",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+        "stub-expansion-connection-pdc-water-return-a",
+        "stub-expansion-connection-pdc-water-return-b"
+      ],
+      "id": "applied-valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-ventilconvettori-in",
+        "s2-a",
+        "s2-b"
+      ],
+      "id": "applied-valve-isolation-ventilconvettori-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-volano-primary-in",
+        "p2-a",
+        "p2-b"
+      ],
+      "id": "applied-valve-isolation-volano-primary-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-volano-primary-out",
+        "p3-a",
+        "p3-b"
+      ],
+      "id": "applied-valve-isolation-volano-primary-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-volano-secondary-in",
+        "s3-a",
+        "s3-b"
+      ],
+      "id": "applied-valve-isolation-volano-secondary-in",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "recommended",
+      "entity_ids": [
+        "valve-isolation-volano-secondary-out",
+        "s1-a",
+        "s1-b"
+      ],
+      "id": "applied-valve-isolation-volano-secondary-out",
+      "rule_id": "isolate-what-is-serviced",
+      "rule_version": "3.0.0",
+      "status": "approved"
+    },
+    {
+      "category": "necessary",
+      "entity_ids": [
+        "valve-safety-pdc-water-supply",
+        "tee-valve-safety-pdc-water-supply",
+        "p1-a",
+        "p1-b",
+        "stub-valve-safety-pdc-water-supply"
+      ],
+      "id": "applied-valve-safety-pdc-water-supply",
+      "rule_id": "safety-relief-on-the-closed-circuit",
+      "rule_version": "2.0.0",
+      "status": "approved"
+    }
+  ],
+  "schema_version": "1.1.0",
+  "sheets": [],
+  "subsystems": [
+    {
+      "component_ids": [
+        "volano",
+        "bollitore",
+        "acquedotto",
+        "utenze",
+        "air-vent-volano-primary-out",
+        "valve-isolation-dhw-acquedotto-a",
+        "valve-isolation-dhw-hot-utenze-a",
+        "mixing-valve-thermostatic-bollitore-dhw-out",
+        "drain-connection-cold-bollitore-cold-in",
+        "tee-drain-connection-cold-bollitore-cold-in",
+        "drain-connection-volano-primary-in",
+        "dhw-safety-group-bollitore-cold-in",
+        "valve-isolation-volano-primary-in",
+        "valve-isolation-volano-primary-out",
+        "valve-isolation-bollitore-coil-in",
+        "valve-isolation-bollitore-coil-out",
+        "valve-isolation-dhw-hot-bollitore-dhw-out",
+        "valve-isolation-volano-secondary-out",
+        "valve-isolation-volano-secondary-in"
+      ],
+      "id": "accumuli",
+      "name": "Accumuli",
+      "network_ids": [
+        "primario",
+        "fredda",
+        "sanitaria"
+      ]
+    },
+    {
+      "component_ids": [
+        "circolatore",
+        "ventilconvettori",
+        "valve-isolation-ventilconvettori-in"
+      ],
+      "id": "distribuzione",
+      "name": "Distribuzione",
+      "network_ids": [
+        "secondario"
+      ]
+    },
+    {
+      "component_ids": [
+        "pdc",
+        "deviatrice",
+        "ritorno",
+        "strainer-pdc-water-return",
+        "dirt-separator-pdc-water-return",
+        "expansion-connection-pdc-water-return",
+        "tee-expansion-connection-pdc-water-return",
+        "filling-unit-pdc-water-return",
+        "inlet-filling-unit-pdc-water-return",
+        "tee-filling-unit-pdc-water-return-b",
+        "pressure-gauge-pdc-water-return",
+        "tee-pressure-gauge-pdc-water-return",
+        "valve-safety-pdc-water-supply",
+        "tee-valve-safety-pdc-water-supply",
+        "valve-isolation-dirt-separator-pdc-water-return-a",
+        "valve-isolation-dirt-separator-pdc-water-return-b",
+        "valve-isolation-deviatrice-in",
+        "valve-isolation-locked-open-expansion-connection-pdc-water-return-a",
+        "valve-gauge-cock-3way-pressure-gauge-pdc-water-return-a"
+      ],
+      "id": "generazione",
+      "name": "Generazione",
+      "network_ids": [
+        "primario"
+      ]
+    }
+  ]
+}

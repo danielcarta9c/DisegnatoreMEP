@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-23, alla **tavola 5 approvata dal PO** e a **D-169**, **D-170**, **D-171** e **D-172** fusi su `main`
+**Aggiornato:** 2026-09-23 sera, al **pianificatore sui cinque impianti completi** — ramo `claude/handoff-work-package-s11fah`, **non fuso**, le tavole aspettano il PO
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,32 +11,53 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Dove siamo, e da dove si riparte — 23 settembre 2026
+## ▶ Dove siamo, e da dove si riparte — 23 settembre 2026, sera
 
-**La tavola 5 va bene.** Il PO, il 23 settembre, guardando l'impianto 5 ridisegnato sul grafo
-corretto (**D-172**): «**la tavola va bene**» (**I-108**). È lo **scheletro** — sole macchine e
-collettori, senza valvole, la prova che il PO aveva chiesto per vedere se il pianificatore sa
-tirare le autostrade come un disegnatore — ed è in
-[`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/):
-pettine nell'ordine del testo, PDC-01 dritta al volano, collettori addosso alle pompe, A3, zero
-cedute, zero bloccanti. **È la prima tavola che il PO dichiara buona dopo D-166**, e vale per
-quella: le altre restano non approvate.
+**Il pianificatore compone da solo i cinque impianti completi.** Cinque agenti in camera pulita,
+uno per impianto, con **solo** le istruzioni di `skill/comporre/`, il grafo completo — macchine,
+collettori e tutto il corredo — e i manifesti: **tutte e cinque le tavole escono, zero tratte
+cedute e zero rilievi bloccanti**, e battono i piani a mano su ogni impianto.
 
-**E porta 7 rilievi di B1.** Il PO dice che la tavola è giusta, la sessione li aveva già
-verificati uno per uno sul disegno: **sono falsi**. Il pavimento di D-171 conta solo le pieghe
-imposte *dentro* un pezzo, e non vede il gomito in fondo a un collettore verticale, la L fra due
-pezzi a giacitura fissata, il gradino fra interasse 15 e 10. **Adesso è confermato dall'occhio
-del PO, non solo dalla sessione.**
+| impianto | 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|
+| **agente** — formato · rilievi · incroci | A3 · **1** · 1 | A3 · **1** · 1 | A3 · **2** · 2 | A3 · **2** · 2 | A2 · **3** · 5 |
+| a mano | A2 · 7 · 1 | A2 · 9 · 2 | A2 · 12, di cui **2 bloccanti** · 1 | A2 · 11 · 3 | **non esce** |
+
+Tavole, grafi e piani in
+[`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/);
+rapporto §6–§10. ⚠ **Non approvate**, e il ramo **non è fuso**: aspetta lo sguardo del PO.
+
+**Fatto il 23, sullo stesso ramo:**
+
+- **il pavimento di B1 conta anche le pieghe fra due pezzi** (**D-173**, *proposta*): la tavola 5
+  approvata passa da **7 rilievi di B1 a 0**, e la ragione scritta in D-171 punto 3 cambia —
+  per questo è una proposta;
+- **il motore trasla prima di instradare**: il piano dice le posizioni relative, e adesso è vero;
+- **cinque difetti del motore trovati dagli agenti**, verificati e corretti, ognuno con la prova
+  che fallisce senza: A4 esentava uno stacco per il suo stesso corridoio; posa ed errori non
+  parlavano nel sistema del piano; **il colore di mandata e ritorno lo decideva il verso della
+  tratta** dove le camminate si fermano; **una ritegno e un circolatore si disegnavano contro il
+  flusso**; la legenda elencava linee che la tavola non ha. Sulla tavola 5 approvata cambiano
+  **2,5 mm di colore** (il by-pass della miscelatrice, adesso blu) e **tre righe di legenda** (tolte,
+  perché quelle linee non ci sono);
+- **le istruzioni del pianificatore** portano quello che sette agenti hanno trovato, verificato;
+- i **cinque documenti del motore** dichiarano in testa che sono storia.
+
+**La suite: 48 rosse, lo stesso insieme della base**, 1627 passate, nessuno `skip` né `xfail`
+nuovo. Il criterio 10 (38 o sotto) **non è raggiunto**: le dieci in più sono il piano a mano
+dell'impianto 5 e le prove del revisore a valle.
 
 **Da dove si riparte, in quest'ordine** — è il work package, sezione «Dove siamo arrivati»:
 
-1. **Alzare il pavimento di B1**, finché la tavola 5 approvata non porta più nessun rilievo di
-   B1. **Quella tavola è adesso il metro**: un pavimento che la accusa è sbagliato.
-2. **Il motore trasla prima di instradare**: oggi un pezzo a coordinate negative non si
-   instrada.
-3. **Ricomporre i piani col pianificatore** (D-155): quello a mano dell'impianto 5 **non
-   produce più la tavola** sul grafo corretto — è l'unica prova rossa nuova, 48 contro 47.
-4. **Poi le valvole**: lo scheletro è approvato, il passo successivo è rimettere il corredo.
+0. **Il PO guarda le tavole** e risponde alle domande del rapporto §10: **D-173**, **B10 contro il
+   pettine** (B10 confronta una mandata con il ritorno di un'altra utenza), la miscelatrice
+   termostatica ACS a due attacchi, l'anello del ricircolo dell'impianto 5, la legenda che gli
+   costa l'A3 per 2,5 mm. **Niente si fonde prima.**
+1. **I piani del pianificatore al posto di quelli a mano, nelle prove** (punto 5): è la strada
+   verso 38.
+2. **L'anello** — vincoli come dati dall'occhio al pianificatore — e con lui escono le cure del
+   revisore (punti 2 e 4).
+3. **`passa-per`**, e i rilievi di A2, A3, B5 (punti 3 e 6).
 
 ## ⛔ `DRAW-015` è fuso, e le tavole **non sono approvate**
 
@@ -92,9 +113,8 @@ E le due cose che ha notato nella stessa risposta sono **i due impedimenti** a q
 
 ⚠ **L'impianto 5 è stato ridisegnato come il PO l'ha chiesto** — A3, zero cedute, zero bloccanti,
 il pettine nell'ordine del testo, `docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-22/` — **e
-porta 7 rilievi di B1 su una tavola giusta**. Il pavimento di D-171 conta solo le pieghe imposte
-dentro un pezzo, e non vede il gomito in fondo a un collettore verticale. È il primo punto da cui
-si riparte.
+portava 7 rilievi di B1 su una tavola giusta**: il pavimento di D-171 contava solo le pieghe
+imposte dentro un pezzo. **Chiuso il 23 settembre** con **D-173** (*proposta*): adesso zero.
 
 ⚠ **Il costo è dichiarato e va saputo prima di misurare**: i cinque piani a mano sono composti
 per terminali passanti, e **la suite è passata da 38 rosse a 47**. Le nove nuove sono una cosa
@@ -342,7 +362,7 @@ chiusi, ed erano uno dei quattro difetti che il cold eye review aveva trovato il
   `docs/fonti/2026-08-04-come-si-disegna-uno-schema-funzionale.md`.
 - **Chi tocca il motore** (non il piano): `docs/pm/2026-09-11-architettura-della-posa-a-fasi.md`
   e `docs/pm/2026-09-16-come-ragiona-il-motore-e-come-dovrebbe.md`, sapendo che le parti sul
-  **solutore** sono storia — e che quei due documenti **non lo dichiarano ancora in testa**.
+  **solutore** sono storia — e dal 23 settembre quei due documenti **lo dichiarano in testa**.
 - Stato e rischi: `PROJECT_STATE.md`. Roadmap: `docs/plans/2026-09-03-release-plan.md`.
   Architettura della skill: `docs/SKILL.md`. Input del PO: `docs/input-pm/REGISTRO.md`.
 

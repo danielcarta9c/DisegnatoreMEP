@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-21 (`DRAW-015` fuso con la PR #46, tavole non approvate — D-166)
+**Aggiornato:** 2026-09-23 (`DRAW-016` in corso sul ramo `claude/handoff-work-package-s11fah`, non fuso — le tavole aspettano il PO)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -13,6 +13,25 @@
 > ci siamo arrivati, non per sapere come funziona la skill.
 
 ---
+
+## Dove siamo — 23 settembre 2026
+
+**`DRAW-016` in corso, non fuso.** Il pianificatore (`skill/comporre/`) compone **da solo i
+cinque impianti completi**, in camera pulita: tutte e cinque le tavole escono con **zero tratte
+cedute e zero rilievi bloccanti**, rilievi **1 · 1 · 2 · 2 · 3** contro 7 · 9 · 12 · 11 dei piani a
+mano, e il piano a mano dell'impianto 5 non esce più. Le tavole sono in
+`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/` e **aspettano il PO**.
+
+- **La tavola 5 (scheletro) è approvata** (**I-108**), ed è il metro del pavimento di B1, che
+  adesso conta anche le pieghe fra due pezzi (**D-173**, *proposta*): 7 rilievi di B1 → 0.
+- **Il motore trasla prima di instradare**, e **cinque suoi difetti** trovati dagli agenti sono
+  corretti — fra questi il colore di mandata e ritorno che dipendeva dal verso della tratta, e
+  gli organi con un verso disegnati contro il flusso.
+- **Suite: 48 rosse** (lo stesso insieme della base del pacchetto), 1627 passate, nessuno
+  `skip` né `xfail` nuovo. Il bersaglio del pacchetto è 38.
+- **Domande al PO**: `docs/collaudi/DRAW-016/RAPPORTO.md` §10.
+
+Il dettaglio sta in `HANDOFF.md` e nel rapporto; quello che segue è lo stato al 21.
 
 ## Dove siamo — 21 settembre 2026
 

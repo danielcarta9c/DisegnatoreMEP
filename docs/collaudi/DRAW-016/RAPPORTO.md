@@ -1,5 +1,9 @@
 # DRAW-016 — rapporto in corso
 
+> **Il 23 settembre, per primo:** le tavole che il pianificatore ha composto **da solo** sui
+> cinque impianti **completi** stanno in
+> [`prova-camera-pulita-2026-09-23/`](prova-camera-pulita-2026-09-23/) — §6. Non approvate.
+
 **Aperto:** 21 settembre 2026 · **Agente unico** (D-147), con agenti paralleli in sessione
 (D-152) · **Base:** `3bcf59d`, la testa di `main` dopo la fusione di `DRAW-015`
 
@@ -283,3 +287,152 @@ agenti hanno segnalato che per una macchina impilata quelle due pieghe (una per 
 rientrare) sono **strutturalmente non togliibili**, e che A2 e B1 si contendono lo stesso pezzo
 senza che nessuna ceda. È la stessa famiglia della contraddizione **B1 contro B3**, già aperta
 al PO.
+
+---
+
+## 6. Il 23 settembre: il pianificatore sul grafo completo — le tavole, per prime
+
+> **Le tavole stanno in [`prova-camera-pulita-2026-09-23/`](prova-camera-pulita-2026-09-23/)**,
+> con i grafi, i piani e il README che le misura. ⚠ **Non approvate.** Sono la prova che questo
+> pacchetto doveva dare: il pianificatore compone **da solo** i cinque impianti **completi**, con
+> tutto il corredo.
+
+Cinque agenti avviati da zero, uno per impianto, con **soltanto** le istruzioni, il grafo
+completo e i manifesti; più due sugli scheletri 2 e 3. **Tutti e sette i piani si caricano e si
+instradano**, con **zero tratte cedute e zero rilievi bloccanti**.
+
+| impianto | formato | rilievi | spezzate piegate / pieghe / incroci | contro il piano a mano |
+|---|---|---|---|---|
+| 1 | A3 | 1 | 3 / 4 / 1 | A2, 7 rilievi, 3 / 4 / 1 |
+| 2 | A3 | 1 | 3 / 4 / 1 | A2, 9 rilievi, 6 / 10 / 2 |
+| 3 | A3 | 2 | 3 / 3 / 2 | A2, **2 bloccanti**, 10 rilievi, 5 / 10 / 1 |
+| 4 | A3 | 2 | 5 / 6 / 2 | A2, 11 rilievi, 8 / 14 / 3 |
+| 5 | A2 | 3 | 10 / 13 / 5 | **non esce** |
+
+Misura della sessione, con il motore corretto (§7). **Il piano dell'agente non perde niente su
+nessun impianto**; l'unica voce peggiore è un incrocio in più sul 3, dichiarato dall'agente.
+
+**Che cosa si vede.** L'impianto **4 assomiglia alla tavola che il PO ha ridisegnato il 21
+settembre**: pompa sopra, caldaia sotto alla stessa `x`, le tre vie **sulle orizzontali della
+caldaia**, lo scambiatore sotto — e l'agente non l'ha mai vista. L'1, il 3 e il 5 si leggono. Il
+**2 ha un difetto che i numeri non vedono**: le discese verso il bollitore sono lunghe un
+centinaio di millimetri e la colonna ACS sta stretta fra i due serbatoi, e la sigla del volano
+cade accanto a una valvola.
+
+**Criteri del pacchetto che questa prova misura:**
+
+- **1** — il pianificatore gira in camera pulita e il piano si instrada: **cinque impianti su
+  cinque**, sul grafo completo (ne servivano tre);
+- **2** — il confronto impianto per impianto: la tabella qui sopra, e il README;
+- **4** — nessuna tavola perde: cedute zero ovunque, bloccanti **zero** (erano uno sul 3). Il
+  punto di partenza del pacchetto era 14 · 14 · 15 · 20 · 38 rilievi e 1 · 2 · 1 · 3 · 12
+  incroci; adesso **1 · 1 · 2 · 2 · 3** e **1 · 1 · 2 · 2 · 5**. ⚠ Non è un confronto pulito:
+  fra le due misure sono cambiati anche i rilievi (D-170, D-171, D-173);
+- **5** — `HIGHWAY_IS_NOT_STRAIGHT` sul 4 e sul 5: da 5 e 12 a **0 e 1**. Il rilievo rimasto è
+  l'anello del ricircolo, contato come autostrada: è la domanda di classificazione del 22
+  settembre. **Il giudizio si dà guardando** (D-164), ed è sopra;
+- **6** — A4 da 24 a **1**: lo sfiato del volano dell'impianto 3, 5 mm oltre il minimo, perché la
+  mandata gli passa 10 mm sopra.
+
+## 7. Cinque difetti del motore, trovati dagli agenti e verificati dalla sessione
+
+Gli agenti hanno lavorato con il motore congelato a `1121a8c`. Ogni segnalazione qui sotto è
+stata **rieseguita dalla sessione** prima di toccare il codice (D-152), e ogni correzione porta
+una prova che **fallisce senza** e la misura prima/dopo su sedici tavole: la 5 approvata, le
+quattro del 21 settembre, i cinque piani a mano, i quattro piani completi degli agenti e i due
+scheletri.
+
+| difetto | chi l'ha visto | che cosa cambia sulle tavole |
+|---|---|---|
+| **A4 non accusava un manometro lontano.** Il corridoio che la catena riserva davanti al suo attacco corre lungo il suo stesso stacco, e il controllo lo contava come un vicino: il posto «era preso» a qualunque distanza. Allontanato di 40 mm, nessun rilievo | agente dell'impianto 2 | nessun cambiamento sui piani degli agenti; **8 rilievi A4 in più** sui piani a mano 1–4, tutti vasi e manometri a 22,5 o 27,5 mm contro un minimo di 20 |
+| **La posa stampata era 1 mm più in basso del piano**, e gli errori dell'instradatore davano celle della griglia del foglio | agenti degli impianti 3 e 4 | nessuno sul disegno; la posa è quella del piano, e l'errore nomina i due capi della tratta con le coordinate del piano |
+| **Il colore di mandata e ritorno lo decideva la geometria** dove le camminate dai generatori si fermano: mandata se la tratta va verso destra. Il ritorno delle zone verso il volano **in serie sul ritorno** usciva rosso, e l'agente ha scartato una posa migliore per questo | agenti dell'impianto 3, completo e scheletro — sullo scheletro, girando un terminale, mandata e ritorno si scambiavano | geometria identica ovunque; cambiano colore **due** tratte: il ritorno raccordo→volano del piano a mano 3, e **2,5 mm della tavola 5 approvata** — il by-pass della miscelatrice, da rosso a blu |
+| **Una valvola di ritegno in salita puntava in giù.** La rotazione degli organi in linea la dava la sola giacitura del tratto | agente dell'impianto 4 | nessun tubo si sposta; adesso puntano con il flusso la ritegno della caldaia sul piano a mano 4 e **il circolatore del ricircolo sull'impianto 5 dell'agente**, che era disegnato contro le frecce della propria linea; defangatori e miscelatori termostatici si specchiano, simboli simmetrici e quindi identici a vista |
+| **La legenda elencava linee che la tavola non disegna** — «acqua fredda — ritorno», «acqua calda — ritorno» | agente dell'impianto 4 | ogni legenda perde le righe delle linee assenti: da 6 a 4 sui grafi completi, da 6 a 3 sugli scheletri — **anche sulla tavola 5 approvata**, che perde acqua fredda andata e ritorno e ACS ritorno, nessuna delle tre disegnata |
+
+### Riferito dagli agenti, verificato, e non vero
+
+- **«La mappa del raccordo a T è fissa: la porta `a` finisce sempre nella derivazione.»** Non è
+  così: scambiando di posto le due zone che il raccordo riunisce, la mappa si inverte. Il
+  raccordo segue la posa (C2); l'agente aveva provato pose in cui la stessa zona restava quella
+  allineata. Scritto nelle istruzioni.
+- **«Il motore rifiuta l'A4 per le fasce.»** Il messaggio viene dalla posa d'inventario, ma nel
+  merito è giusto: le quattro tavole degli agenti sono larghe 240–288 mm, e l'area di un A4 ne
+  ha 227.
+
+## 8. Il pavimento di B1, la traslazione, e il posatore degli organi
+
+- **Il pavimento di B1** (**D-173**, proposta al PO): conta anche le pieghe **fra due pezzi** —
+  la L fra porte su assi perpendicolari, e il gradino di una coppia con interassi diversi. Sulla
+  tavola 5 approvata i rilievi di B1 passano **da 7 a 0**; sulle nove tavole misurate da
+  7·4·4·3·9·3·4·3·6 a **0·1·0·0·3·0·1·3·3**, e ogni rilievo rimasto è una piega che una posa
+  diversa toglie. Guardia: `tests/validation/test_il_pavimento_di_b1.py`.
+- **Il motore trasla prima di instradare.** Lo stesso piano spostato di (−20, −105), o lontano
+  dall'origine, dà **la stessa tavola al decimo di millimetro**; le nove tavole agli atti non si
+  spostano di un punto. Le istruzioni dicevano che contano solo le posizioni relative, e adesso è
+  vero.
+- **Il posatore degli organi scarta subito il posto dove la propria tratta rientra nel simbolo**,
+  invece di scoprirlo a tratta finita. Le nove tavole non cambiano. ⚠ **Non ha fatto tornare
+  verde nessuna delle prove rosse che fermava**: sotto c'era un secondo ostacolo, l'instradamento
+  di `p4-a-4`, ed è ancora lì (punto 8 del pacchetto).
+- **I cinque documenti del motore dichiarano in testa che sono storia** (punto 7, criterio 9).
+
+## 9. Le istruzioni, dopo sette agenti
+
+Entrato in `skill/comporre/ISTRUZIONI.md`, **dopo averlo verificato** sul codice o misurato:
+
+- **chi sta in quale fascia**, come la legge il rilievo di A1 — la pompa di calore per ACS è
+  generazione, lo scambiatore a piastre (anche istantaneo) è accumuli e scambiatori; raccordi,
+  organi, appesi, collettori e confini di rete **non hanno fascia**;
+- **le porte che mancavano**: collettore di zona, pompa di calore per ACS, sfiato e scarico del
+  volano a due attacchi;
+- **conta la quota della porta, non l'origine** — e il controllo finale lo chiede così;
+- **lo specchio vale anche per chi non si ruota** (D-169): è il modo di voltare un volano;
+- **il raccordo a T segue la posa**: il motore gli assegna le porte guardando i vicini;
+- **quanto rettilineo chiede una fila di organi**, misurato sul motore: 17,5 mm per una valvola
+  fra la porta di una pompa e un raccordo, 20–25 per due organi;
+- **gli errori parlano nel sistema del piano**, e **il colore lo decide il grafo**;
+- dal giro precedente (`39e8aad`): gli organi in linea non si posano, la tabella delle otto
+  giaciture della deviatrice, il minimo di A4 per gli stacchi con organi, i casi noti di B11.
+
+## 10. Che cosa resta, e che cosa va al PO
+
+**Domande al PO** — nessuna è del pianificatore, e nessuna l'ho decisa:
+
+1. **D-173**, il pavimento di B1 fra due pezzi: è una **proposta**, e cambia la ragione scritta
+   in D-171 punto 3.
+2. **B10 contro il pettine.** B10 confronta una mandata con **qualunque** ritorno affiancato,
+   anche di un'altra utenza: in un pettine con le utenze impilate il ritorno della prima sta per
+   forza sopra la mandata della seconda, e B10 si accende sulla forma che il PO ha disegnato
+   (impianto 3, e lo scheletro 3). **Proposta:** B10 confronta una mandata solo con il proprio
+   ritorno.
+3. **La miscelatrice termostatica ACS ha due attacchi** nel catalogo, senza l'ingresso
+   dell'acqua fredda (impianti 1, 2, 3, 5). Contenuto MEP.
+4. **L'anello del ricircolo dell'impianto 5** si chiude subito dopo il bollitore e non raggiunge
+   le utenze (assunzione a3 del grafo); e tutto il ricircolo esce **da andata**, perché il suo
+   verso non si ricava (D-059, domanda 5 già aperta).
+5. **La legenda decide il formato dell'impianto 5**: con la legenda corretta manca l'A3 per
+   **2,5 mm** — 26 simboli in una colonna sola — e il disegno ci starebbe. L'impaginazione della
+   legenda è convenzione grafica.
+6. **Il ritorno ACS ha lo stesso colore dell'andata dell'acqua fredda** (`#5dade2`), e le due si
+   distinguono solo dal tratteggio. Convenzione grafica.
+7. **Sfiato e scarico di un volano in serie sul ritorno escono rossi**: uno stacco che pende da
+   una macchina prende il colore base del fluido (I-042). Un agente l'ha letto come un errore.
+
+**Fuori perimetro, scritto e non toccato:**
+
+- la **freccia di verso** cade a metà del tratto più lungo, e due volte è caduta sul ponticello
+  di un incrocio (`graphics/sheet.py`);
+- la **sigla di un pezzo** a volte cade accanto a un altro (VOL-01 sugli impianti 2 e 4);
+- la **ritegno sull'acqua calda** (`valve-check-dhw-hot`) è dichiarata senza verso nel catalogo,
+  e il suo simbolo ha la freccia: il motore non sa in che verso disegnarla;
+- il **minimo di A4 per uno stacco con rubinetto** è 20 mm, e il motore ne sa fare 15: A4
+  tollera 5 mm;
+- il **rifiuto dell'A4** arriva dalla posa d'inventario, che conta quattro fasce invece di tre:
+  giusto nel merito, confuso nel messaggio;
+- la **deduzione C2 dei raccordi** sceglie le porte per direzione verso il centro del vicino, e
+  sulla presa del ricircolo dell'impianto 5 l'agente ha dovuto scrivere la rotazione a mano.
+
+**Del pacchetto restano aperti** i punti 2 (vincoli come dati, l'anello), 3 (`passa-per`), 4 (le
+cure del revisore), 5 (i piani a mano cambiano di posto e di nome), 6 (i rilievi di A2, A3, B5), 8
+e il criterio 10 (la suite): **48 rosse, lo stesso insieme della base del pacchetto** — nessuna nuova, nessuna tornata verde — **1627 passate** (erano 1580: sono le prove nuove), 24 `skip` e 12 `xfail`, **nessuno nuovo**; `ruff` e `mypy` verdi. Il criterio 10 chiede **38 o sotto**, e non è raggiunto: le dieci in più sono il piano a mano dell'impianto 5 che non esce più e le prove del revisore a valle, e si chiudono portando nelle prove i piani del pianificatore al posto di quelli a mano (punto 5).
