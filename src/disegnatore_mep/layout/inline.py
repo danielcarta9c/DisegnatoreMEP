@@ -374,6 +374,28 @@ def place_inline_accessories(
         box = (origin.x_mm, origin.y_mm, origin.x_mm + width, origin.y_mm + height)
         return not run_intrudes_on(box, others, clearance)
 
+    def clear_of_own_run(
+        origin: Point, width: float, height: float, low: float, high: float
+    ) -> bool:
+        """**Nemmeno la propria tratta gli rientra nel riquadro** (D-027).
+
+        Il taglio toglie la linea che passa **per** il simbolo; ma una spezzata
+        che piega li' accanto rientra nel riquadro da un altro lato — un simbolo
+        alto dieci millimetri, posato a due passi da una curva, si ritrova la
+        verticale che scende lungo il fianco. La tavola lo rifiuta alla fine
+        («still passes under … after breaking for it»), e fino al 23 settembre
+        2026 lo scopriva **solo** alla fine: il posto era gia' preso, e la
+        tratta cadeva invece di far avanzare l'accessorio di un passo. Adesso
+        il posto si scarta qui, con lo stesso conto — la spezzata senza i tagli
+        gia' fatti e senza il proprio — e si prova il nodo successivo.
+        """
+        box = (origin.x_mm, origin.y_mm, origin.x_mm + width, origin.y_mm + height)
+        return not any(
+            intrudes_into(box, before, after)
+            for part in _tagliata(points, [*cuts, (low, high)])
+            for before, after in moves_of(part)
+        )
+
     def turned_for(
         manifest: SymbolManifest, horizontal: bool
     ) -> tuple[int, SymbolManifest]:
@@ -445,6 +467,13 @@ def place_inline_accessories(
                     clear_of_symbols(origin, turned.width_mm, turned.height_mm)
                     and clear_of_other_runs(origin, turned.width_mm, turned.height_mm)
                     and clear_of_port_thresholds(origin, turned.width_mm, turned.height_mm)
+                    and clear_of_own_run(
+                        origin,
+                        turned.width_mm,
+                        turned.height_mm,
+                        snapped - gap / 2,
+                        snapped + gap / 2,
+                    )
                 ):
                     seat(index, station, snapped, rotation, turned)
                     extent = turned.width_mm if station.horizontal else turned.height_mm
@@ -598,6 +627,13 @@ def place_inline_accessories(
                     and clear_of_port_thresholds(
                         origin, turned.width_mm, turned.height_mm
                     )
+                    and clear_of_own_run(
+                        origin,
+                        turned.width_mm,
+                        turned.height_mm,
+                        snapped - gap / 2,
+                        snapped + gap / 2,
+                    )
                 ):
                     found, distance = station, snapped
                     break
@@ -624,19 +660,7 @@ def place_inline_accessories(
     placed.sort(key=lambda item: order[item.component_id])
     cuts.sort()
 
-    segments = [points]
-    for low, high in cuts:
-        rebuilt: list[list[Point]] = []
-        for part in segments:
-            if _polyline_length(part) <= 0:
-                continue
-            offset = _offset_of(points, part[0])
-            local_low, local_high = low - offset, high - offset
-            if local_low < 0 or local_high > _polyline_length(part):
-                rebuilt.append(part)
-                continue
-            rebuilt.extend(_split(part, local_low, local_high))
-        segments = rebuilt
+    segments = _tagliata(points, cuts)
 
     # **E la propria tratta non deve rientrare nel riquadro di un accessorio.**
     # Il taglio toglie il pezzo di linea che passa **per** il simbolo, ma una
@@ -660,6 +684,31 @@ def place_inline_accessories(
                     f"straight length"
                 )
     return placed, trimmed
+
+
+def _tagliata(
+    points: list[Point], cuts: list[tuple[float, float]]
+) -> list[list[Point]]:
+    """La spezzata della tratta senza i pezzi che gli accessori interrompono.
+
+    E' il conto che la tavola fa alla fine, e sta qui perche' lo fa anche chi
+    **sceglie** dove posare un accessorio: se i due conti divergessero, si
+    approverebbe un posto che la tavola poi rifiuta.
+    """
+    segments = [points]
+    for low, high in sorted(cuts):
+        rebuilt: list[list[Point]] = []
+        for part in segments:
+            if _polyline_length(part) <= 0:
+                continue
+            offset = _offset_of(points, part[0])
+            local_low, local_high = low - offset, high - offset
+            if local_low < 0 or local_high > _polyline_length(part):
+                rebuilt.append(part)
+                continue
+            rebuilt.extend(_split(part, local_low, local_high))
+        segments = rebuilt
+    return segments
 
 
 def _offset_of(points: list[Point], start: Point) -> float:

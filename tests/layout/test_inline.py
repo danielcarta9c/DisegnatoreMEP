@@ -13,6 +13,8 @@ from disegnatore_mep.layout.geometry import (
     Point,
     RoutedTrunk,
     box_of,
+    intrudes_into,
+    moves_of,
     run_intrudes_on,
 )
 from disegnatore_mep.layout.grid import GridSpace
@@ -255,3 +257,62 @@ def test_the_accessory_keeps_its_tag() -> None:
     }
     assert tags["strainer"] == "FIL-01"
     assert tags["pump-secondary"] == "CIR-02"
+
+
+def test_an_accessory_moves_on_when_its_own_run_bends_back_into_it() -> None:
+    """D-027 sulla propria tratta: il posto dove la linea gli rientra nel
+    riquadro si scarta subito, e l'accessorio avanza di un passo.
+
+    E' la geometria vera della mandata sanitaria dell'impianto 1 composto dalla
+    via ordinaria: la linea sale dall'uscita ACS, corre a sinistra per 62,5 mm,
+    scende e rientra. Il miscelatore termostatico e' alto dieci millimetri, e
+    posato a due passi dalla curva si ritrovava la discesa lungo il fianco. Fino
+    al 23 settembre 2026 il posto si scopriva sbagliato solo a tratta finita —
+    «still passes under mixing-valve-thermostatic after breaking for it» — e la
+    tavola cadeva; diciannove prove rosse della suite si fermavano li'.
+    """
+    from disegnatore_mep.io.canonical import canonical_json
+    from disegnatore_mep.rules.apply import saturate
+    from disegnatore_mep.rules.registry import RuleRegistry
+
+    registry = catalog()
+    regole = RuleRegistry.from_directory(ROOT / "rules" / "hydronic")
+    regole.cross_check(registry)
+    completo, _, _ = saturate(
+        load_project(ROOT / "examples" / "prova" / "prova-1-due-pdc-accumulo-combinato.json"),
+        registry,
+        regole,
+    )
+    project = ProjectModel.model_validate_json(canonical_json(completo))
+    inline = frozenset(
+        item.id
+        for item in project.components
+        if registry.resolve(item.definition_id).is_inline
+    )
+    trunk = next(
+        item for item in build_trunks(project, inline) if "w2-a-a-a" in item.connection_ids
+    )
+    assert "mixing-valve-thermostatic-accumulo-dhw-out" in trunk.inline_component_ids
+    routed = RoutedTrunk(
+        network_id=trunk.network_id,
+        connection_ids=list(trunk.connection_ids),
+        segments=[
+            [
+                Point(x_mm=260.0, y_mm=151.0),
+                Point(x_mm=260.0, y_mm=138.5),
+                Point(x_mm=197.5, y_mm=138.5),
+                Point(x_mm=197.5, y_mm=163.5),
+                Point(x_mm=192.5, y_mm=163.5),
+            ]
+        ],
+    )
+    accessories, broken = place_inline_accessories(
+        project, trunk, routed, registry, grid()
+    )
+    assert len(accessories) == len(trunk.inline_component_ids)
+    for accessory in accessories:
+        for part in broken.segments:
+            assert not any(
+                intrudes_into(box_of(accessory), before, after)
+                for before, after in moves_of(part)
+            ), accessory.component_id
