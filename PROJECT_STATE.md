@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-23 (`DRAW-016`: le tavole sui grafi completi sono **approvate dal PO**, I-109, e si fondono come PR milestone)
+**Aggiornato:** 2026-09-23 notte (`DRAW-016` fuso con la PR #53, tavole **approvate dal PO**, I-109; attivo `DRAW-017`: D-174 fatto, il resto alla sessione successiva, che parte dai piccoli difetti del PO)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -24,13 +24,15 @@ mano, e il piano a mano dell'impianto 5 non esce più. Le tavole sono in
 proprio l'aspetto di tavole professionali». Da qui in poi, migliorie e piccole correzioni.
 
 - **La tavola 5 (scheletro) è approvata** (**I-108**), ed è il metro del pavimento di B1, che
-  adesso conta anche le pieghe fra due pezzi (**D-173**, *proposta*): 7 rilievi di B1 → 0.
+  adesso conta anche le pieghe fra due pezzi (**D-173**, approvata il 23 settembre): 7 rilievi di B1 → 0.
 - **Il motore trasla prima di instradare**, e **cinque suoi difetti** trovati dagli agenti sono
   corretti — fra questi il colore di mandata e ritorno che dipendeva dal verso della tratta, e
   gli organi con un verso disegnati contro il flusso.
 - **Suite: 48 rosse** (lo stesso insieme della base del pacchetto), 1627 passate, nessuno
   `skip` né `xfail` nuovo. Il bersaglio del pacchetto è 38.
 - **Domande al PO**: `docs/collaudi/DRAW-016/RAPPORTO.md` §10.
+
+**Fuso su `main` con la PR #53.** Il pacchetto attivo è **`DRAW-017`**: le risposte del PO alle domande del rapporto (I-110) — **D-174** B10 sulla coppia, **D-175** la miscelatrice termostatica con l'ingresso AF, **D-176** il ricircolo ACS verde chiaro che torna nell'accumulo, **D-177** la legenda su due colonne, **D-178** il vaso sanitario negli impianti centralizzati — e i piccoli difetti che il PO elencherà.
 
 Il dettaglio sta in `HANDOFF.md` e nel rapporto; quello che segue è lo stato al 21.
 

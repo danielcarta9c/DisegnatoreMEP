@@ -1238,6 +1238,8 @@ def linee_parallele_senza_corsie(
 
 def ritorni_sopra_la_mandata(
     drawing: DrawingGeometry,
+    catalog: ComponentRegistry | None = None,
+    project: ProjectModel | None = None,
 ) -> list[ValidationIssue]:
     """**B10** — mandata sopra, ritorno sotto. Sulle orizzontali, sempre.
 
@@ -1265,7 +1267,31 @@ def ritorni_sopra_la_mandata(
 
     **Quando due tratte si affiancano davvero**: stessa lettura di **B9** — il
     fianco a fianco e' almeno lungo quanto la distanza che le separa.
+
+    **Si confronta la coppia, non due utenze diverse** (**D-174**, PO, 23
+    settembre 2026). «Mandata sopra, ritorno sotto» vale per la mandata che
+    alimenta un pezzo e il ritorno che ne esce. In un pettine (B12) con le
+    utenze impilate il ritorno dell'utenza alta sta per forza sopra la mandata
+    di quella bassa: e' la forma che il PO ha disegnato, e il controllo la
+    accusava — l'hanno visto due agenti in camera pulita, sull'impianto 3
+    completo e sul suo scheletro. Due tratte sono una coppia quando hanno in
+    comune, a un capo, **la stessa macchina** — il terminale che servono, o le
+    due macchine che uniscono. Senza il modello la coppia non si riconosce, e
+    ogni mandata e ogni ritorno della stessa rete si confrontano come prima:
+    e' la lettura delle prove fatte di sola geometria.
     """
+    macchine_ai_capi: dict[tuple[str, ...], frozenset[str]] | None = None
+    if catalog is not None and project is not None:
+        definizioni = _definizioni(project, catalog)
+        macchine_ai_capi = {
+            trunk.connection_ids: frozenset(
+                ref.component_id
+                for ref in (trunk.start, trunk.end)
+                if ref.component_id in definizioni
+                and is_a_machine(definizioni[ref.component_id])
+            )
+            for trunk in tratte_del_progetto(project, catalog)
+        }
     trovati: list[ValidationIssue] = []
     visti: set[tuple[str, str]] = set()
     for sheet in drawing.sheets:
@@ -1286,6 +1312,11 @@ def ritorni_sopra_la_mandata(
             # 1 in camera pulita: «la tavola mi sembra giusta e i numeri dicono
             # che e' sbagliata», ed era vero.
             mandata, ritorno = (uno, altro) if uno.supply else (altro, uno)
+            if macchine_ai_capi is not None and not (
+                macchine_ai_capi.get(tuple(mandata.connection_ids), frozenset())
+                & macchine_ai_capi.get(tuple(ritorno.connection_ids), frozenset())
+            ):
+                continue
             quota_m, quota_r = (quota, quota2) if uno.supply else (quota2, quota)
             if quota_m < quota_r:
                 continue
@@ -1606,7 +1637,7 @@ def rilievi_delle_regole(
         *organi_che_spezzano_il_tratto(drawing, catalog, project),
         *scostamenti_che_tornano_indietro(drawing),
         *linee_parallele_senza_corsie(drawing),
-        *ritorni_sopra_la_mandata(drawing),
+        *ritorni_sopra_la_mandata(drawing, catalog, project),
         *coppie_che_non_corrono_insieme(drawing, catalog, project),
     ]
 
