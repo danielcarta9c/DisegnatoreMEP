@@ -1402,8 +1402,8 @@ def coppie_che_non_corrono_insieme(
                     "SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER",
                     f"la tavola {sheet.sheet_id}: fra {' e '.join(sorted(capi))} la "
                     f"mandata e il ritorno corrono insieme per "
-                    f"{len(interassi) * 2.5:.1f} mm ma cambiano interasse "
-                    f"{len(distinti)} volte ({', '.join(f'{v:g}' for v in distinti[:6])} "
+                    f"{len(interassi) * 2.5:.1f} mm ma tengono {len(distinti)} "
+                    f"interassi diversi ({', '.join(f'{v:g}' for v in distinti[:6])} "
                     f"mm): la coppia si apre, e mandata e ritorno corrono sempre "
                     f"insieme (B11, PO 20 settembre 2026)",
                     [sheet.sheet_id, *sorted(capi)],

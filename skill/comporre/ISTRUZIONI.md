@@ -54,8 +54,9 @@ Questi sono quelli che incontri quasi sempre:
 |---|---|---|
 | `heat-pump-air-water` | 40 × 30 | `water_supply` **destra +5** · `water_return` **destra +20** |
 | `gas-boiler` | 40 × 30 | `water_supply` **destra +5** · `water_return` **destra +20** |
-| `buffer-four-port` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** |
+| `buffer-four-port` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `vent` sopra e `drain` sotto, a x +12,5 |
 | `buffer-two-port` | 25 × 45 | `a` sinistra +5 · `b` destra +5 |
+| `buffer-combined` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `dhw_out` sopra, a x +7,5 · `cold_in` sinistra +37,5 |
 | `plate-heat-exchanger` | 12,5 × 25 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` destra +5 · `secondary_in` destra +20 |
 | `dhw-cylinder` | 25 × 45 | `coil_in` sinistra **+7,5** · `coil_out` sinistra **+17,5** · `dhw_out` sopra · `cold_in` sinistra +37,5 |
 | `radiator`, `fan-coil`, `ahu-coil`, `underfloor-panel` | 20 × 15 | `in` **sinistra +2,5** · `out` **sinistra +12,5** — tutt'e due **sullo stesso lato** (D-167) |
@@ -104,6 +105,13 @@ Il **grafo completo** in JSON. Quello che ti serve:
 - `connections` — ogni tubazione, con le due estremità `{component_id, port_id}` e la rete;
 - `networks` — a che circuito appartiene ogni tubazione, e con che fluido.
 
+**Da un pezzo al suo simbolo.** `definition_id` dice **che cosa è** il pezzo, non quale
+simbolo lo disegna: il simbolo lo dice la voce di catalogo del pezzo
+(`examples/layout/catalog/<definition_id>.json`, campo `symbol_id`), e il manifesto è
+`assets/symbols/<symbol_id>.json`. Serve, perché i nomi non coincidono sempre: `tee-split` e
+`tee-junction-dhw` si disegnano col simbolo `tee-junction`, `cold-water-inlet` e
+`dhw-draw-off` con `network-boundary`, tutte le `valve-isolation-*` con `valve-isolation`.
+
 **Chi è una macchina e chi è corredo** lo capisci dall'ingombro e dalle porte: un pezzo 40×30
 o 25×45 è una macchina, un pezzo di 5 o 7,5 mm con due porte in linea è un organo che sta
 **sopra una tubazione**. Un `tee` è un raccordo: unisce tre tubazioni e **non si posa a
@@ -141,8 +149,10 @@ JSON, e solo queste chiavi:
   **Gli organi in linea non li posi tu**: valvole d'intercettazione, filtri, defangatori,
   separatori d'aria, circolatori, ritegni, riduttori, miscelatrici termostatiche, gruppi di
   sicurezza sanitari. Li riconosci dal manifesto del simbolo, che dichiara `inline_gap_mm`: il
-  motore li posa **da solo, sulla loro tratta**, a partire dalla porta (§4bis). Se ne scrivi
-  uno nel piano, il comando te lo dice e si ferma.
+  motore li posa **da solo, sulla loro tratta** (§4bis). Se ne scrivi uno nel piano, il comando
+  te lo dice e si ferma. ⚠ Il **rubinetto portamanometro** si chiama «a tre vie»
+  (`valve-gauge-cock-3way`) ma è un organo in linea a due attacchi: non è una tre vie, non si
+  posa e non si ruota.
   **Tutti gli altri li posi tu**: macchine, raccordi (`tee-*`), valvole a tre vie, strumenti,
   sfiati, scarichi, vasi, gruppi di riempimento, confini di rete. Uno che dimentichi il motore
   lo mette accanto al pezzo a cui è attaccato, come può: è una rete di sicurezza, non un modo di
@@ -185,7 +195,8 @@ gruppi di riempimento, confini di rete — e si mette **dopo** lo scheletro (§2
 di due specie, e le due si trattano in modo diverso:
 
 - **gli organi in linea li posa il motore**. Si mettono in fila sulla loro tratta **a partire
-  dalla porta**, a distanza fissa, e ogni organo vuole il proprio pezzo di rettilineo. **Il tuo
+  dalla porta del pezzo che isolano** — da un capo della tratta o dall'altro, secondo chi si
+  manutiene —, a distanza fissa, e ogni organo vuole il proprio pezzo di rettilineo. **Il tuo
   lavoro è lasciarglielo** (B5): se la tratta non ha il rettilineo che la fila chiede, il
   comando si ferma e ti dice su quale tratta e quanti millimetri servono — «run X has no
   straight stretch of N mm for …». Si cura allontanando i due pezzi che la tratta unisce, o
@@ -200,6 +211,11 @@ di due specie, e le due si trattano in modo diverso:
   costringe a girargli intorno;
 - **i confini di rete** — l'acquedotto, le utenze sanitarie — stanno **addosso al pezzo che
   servono**, con lo stacco minimo (A4), non nella fascia della distribuzione.
+
+⚠ **Lo scheletro si posa pensando al corredo.** Le porte che il corredo userà dopo devono
+restare raggiungibili: l'acqua fredda del bollitore entra da **sinistra a +37,5**, e se davanti
+ci passano le due verticali della serpentina resta murata. Prima di chiudere lo scheletro,
+guarda dove attaccherà ogni confine di rete e ogni appeso.
 
 ### L'algebra di una valvola a tre vie, e perché le rotazioni non bastano
 
@@ -223,6 +239,19 @@ Le **otto** giaciture della commutatrice, e serve leggerla come una tabella:
 | specchio + 180 | sinistra | destra | sopra |
 | **specchio + 270** | **sopra** | **sotto** | **destra** |
 
+E quelle della **deviatrice**, che ha la stessa forma con altri nomi:
+
+| | `in` | `out_a` | `out_b` |
+|---|---|---|---|
+| rotazione 0 | sinistra | destra | sotto |
+| rotazione 90 | sopra | sotto | sinistra |
+| rotazione 180 | destra | sinistra | sopra |
+| rotazione 270 | sotto | sopra | destra |
+| specchio + 0 | destra | sinistra | sotto |
+| specchio + 90 | sotto | sopra | sinistra |
+| specchio + 180 | sinistra | destra | sopra |
+| specchio + 270 | sopra | sotto | destra |
+
 Serve ricevere dall'alto, mandare in basso e prendere la terza via **a destra**? **Nessuna
 delle quattro rotazioni ce l'ha.** La 90 ha le prime due ma la terza via a sinistra; la 270 ha
 la terza via giusta e le altre due rovesciate. La giacitura esiste, ed è **una sola**:
@@ -242,7 +271,7 @@ giacitura che fa entrare ciascuna dalla faccia da cui arriva.
 | | |
 |---|---|
 | passo di griglia | **2,5 mm** — ogni `x` e `y` è un suo multiplo |
-| stacco minimo di un organo di servizio (A4) | **10 mm** |
+| stacco minimo di un organo di servizio (A4) | **10 mm** se lo stacco è vuoto; se porta organi in linea, quanto chiede la loro fila — il rilievo `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` scrive il minimo di ogni stacco. Sotto i 10 mm il motore a volte instrada, ma **due simboli più vicini di 10 mm si leggono come uno** (D-062): non ci scendere |
 | corsia libera fra due linee affiancate (B9) | **10 mm** |
 | interasse delle porte principali di una macchina | **15 mm** — pompa, caldaia, volano, scambiatore |
 
@@ -287,6 +316,11 @@ più** di quelle imposte, e quelle in più si tolgono spostando le macchine.
   terminale a 10: una delle due linee corre dritta, l'altra scala di 5 mm, e quello è il suo
   prezzo.
 
+**E un sormonto può essere imposto anche lui.** Un pezzo che prende dalla mandata e rende al
+ritorno, e sta **fuori dalla coppia** — il bollitore appeso sotto o sopra le due linee del
+primario — con una delle due diramazioni deve scavalcare l'altra linea: un sormonto che
+nessuna posa toglie.
+
 **Non sono imposte**, e il rilievo te le conta:
 - una **U** fra due porte che guardano dalla stessa parte: si toglie **specchiando** uno dei due
   pezzi (§4, `specchio`);
@@ -316,7 +350,15 @@ Sulle orizzontali, sempre. È anche il motivo per cui le porte sono a +5 e +20 e
 ### B11 — Mandata e ritorno corrono **insieme**
 «Corrono sempre insieme, non esiste che una va e l'altra va zig zag accanto.» Stesso interasse
 per tutta la corsa. Se lo perdono, è perché le due macchine agli estremi hanno interassi
-diversi — e allora o le allinei, o è il caso noto del bollitore (§2.1).
+diversi — e allora o le allinei, o è uno dei due casi noti: la **serpentina del bollitore**
+(interasse 10, §2.1) e il **terminale** (interasse 10, D-167) contro una macchina a 15.
+
+⚠ **Nei due casi noti il rilievo `SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER` è vero e non si
+cura**: la coppia cambia interasse per forza, ed è lo stesso gradino che B1 ti dà per imposto.
+**Non inseguirlo.** Il rilievo guarda solo le corse di almeno 20 mm: avvicinare il terminale
+finché la corsa scende sotto i 20 mm lo spegne senza cambiare il disegno, ed è esattamente
+inseguire un numero. Metti il terminale dove il disegno lo vuole, e scrivi nelle note che il
+rilievo resta ed è il caso noto.
 
 ### B12 — La coppia è un binario, e si ramifica **a pettine**
 
@@ -343,6 +385,9 @@ la coppia le arriva orizzontale, affiancata, e entra da sinistra.
 ### D1 — Il disegno non arriva al bordo
 
 ### D3 — Si prende il foglio più piccolo che contiene il disegno
+**Il foglio deve contenere anche la legenda**: se il comando risponde «the legend needs … but
+its band is … tall», o «the 3 functional bands need … but the drawing area is … wide», il
+formato è troppo piccolo — si prende il successivo, non si comprime il disegno.
 ⚠ **Il vuoto non è un difetto** (**D-170**). Tieni il disegno **stretto** e prendi il foglio
 più piccolo che lo contiene; il bianco che resta non si corregge. **Non allargare mai il
 disegno per riempire il foglio**, e soprattutto **non allontanare un pezzo dalla macchina che
