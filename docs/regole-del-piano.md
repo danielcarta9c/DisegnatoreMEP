@@ -403,12 +403,13 @@ tavole su cinque.
 hanno una costante: la colonna di mandata sta a sinistra del ritorno in una e a destra in
 un'altra. **Una regola sul lato dei verticali non esiste, e non si inventa.**
 
-⚠ **Aperto al PO il 23 settembre 2026: B10 e il pettine.** Il controllo confronta una mandata
-con **qualunque** ritorno che le corre accanto sulla stessa rete, anche di un'altra utenza. In
-un pettine (B12) con le utenze impilate la coppia di ciascuna ha la mandata sopra, ma il ritorno
-dell'utenza alta sta per forza sopra la mandata di quella bassa, e il rilievo si accende sulla
-forma che il PO ha disegnato — l'hanno visto due agenti, sull'impianto 3 completo e sul suo
-scheletro. **Proposta, non applicata:** B10 confronta una mandata solo con il proprio ritorno.
+**Si confronta la coppia, non due utenze diverse** (**D-174**, PO, 23 settembre 2026). La
+mandata si confronta **con il proprio ritorno**: due tratte sono una coppia quando hanno in
+comune, a un capo, la stessa macchina — il terminale che servono, o le due macchine che
+uniscono. In un pettine (B12) con le utenze impilate il ritorno dell'utenza alta sta per forza
+sopra la mandata di quella bassa, ed è la forma che il PO ha disegnato: il controllo la
+accusava, e l'hanno visto due agenti. Misurato sulle tavole: i tre rilievi di B10 erano tutti
+di questo genere, e sono spariti; nessun altro si è acceso.
 
 ### B11 — Mandata e ritorno corrono insieme, a interasse costante
 

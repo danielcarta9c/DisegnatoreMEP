@@ -1053,6 +1053,72 @@ def test_b10_sulle_verticali_non_si_pretende_niente() -> None:
     assert ritorni_sopra_la_mandata(tavola([], [mandata, ritorno])) == []
 
 
+def un_pettine_di_due_utenze() -> ProjectModel:
+    """Un volano che alimenta due radiatori impilati, a pettine (B12).
+
+    La mandata si divide in un raccordo e arriva a `alto` e a `basso`; i due
+    ritorni si riuniscono in un altro raccordo e tornano al volano. Ogni tubo
+    e' una tratta: nessun organo in linea.
+    """
+    return impianto(
+        [
+            ("volano", "buffer-four-port"),
+            ("divide", "tee-split"),
+            ("riunisce", "tee-junction"),
+            ("alto", "radiator"),
+            ("basso", "radiator"),
+        ],
+        [
+            tubo("m0", ("volano", "secondary_out"), ("divide", "a")),
+            tubo("m-alto", ("divide", "b"), ("alto", "in")),
+            tubo("m-basso", ("divide", "c"), ("basso", "in")),
+            tubo("r-alto", ("alto", "out"), ("riunisce", "a")),
+            tubo("r-basso", ("basso", "out"), ("riunisce", "c")),
+            tubo("r0", ("riunisce", "b"), ("volano", "secondary_in")),
+        ],
+    )
+
+
+def _orizzontale(connessione: str, mandata: bool, y: float) -> RoutedTrunk:
+    return RoutedTrunk(
+        network_id=RETE,
+        medium="heating_water",
+        supply=mandata,
+        connection_ids=[connessione],
+        segments=[_punti((10, y), (200, y))],
+    )
+
+
+def test_b10_il_pettine_non_si_accusa_la_coppia_rovesciata_si() -> None:
+    """**D-174** (PO, 23 settembre 2026): B10 confronta la mandata **con il
+    proprio ritorno**. Nel pettine le coppie sono impilate — mandata e ritorno
+    dell'utenza alta, poi mandata e ritorno di quella bassa — e il ritorno
+    dell'utenza alta sta sopra la mandata di quella bassa: e' la forma che il
+    PO ha disegnato, e il controllo la accusava. Le due meta' vanno lette
+    insieme: la stessa tavola con la coppia bassa rovesciata si accende."""
+    registry = catalogo()
+    project = un_pettine_di_due_utenze()
+    pettine = [
+        _orizzontale("m-alto", True, 100),
+        _orizzontale("r-alto", False, 110),
+        _orizzontale("m-basso", True, 120),
+        _orizzontale("r-basso", False, 130),
+    ]
+    assert ritorni_sopra_la_mandata(tavola([], pettine), registry, project) == []
+    assert ritorni_sopra_la_mandata(tavola([], pettine)) != [], (
+        "senza il modello la coppia non si riconosce, e il pettine si accusava"
+    )
+
+    rovesciata = [
+        _orizzontale("m-alto", True, 100),
+        _orizzontale("r-alto", False, 110),
+        _orizzontale("r-basso", False, 120),
+        _orizzontale("m-basso", True, 130),
+    ]
+    rilievi = ritorni_sopra_la_mandata(tavola([], rovesciata), registry, project)
+    assert [set(item.entity_ids) >= {"m-basso", "r-basso"} for item in rilievi] == [True]
+
+
 def test_b10_il_giro_attorno_a_un_terminale_non_accusa_il_ritorno() -> None:
     """Il difetto del 21 settembre 2026, e la tavola su cui si e' visto.
 
