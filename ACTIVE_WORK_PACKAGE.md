@@ -56,6 +56,12 @@ Sull'impianto 5 la legenda in colonna unica chiede 237,5 mm e la banda dell'A3 n
 disegno ci starebbe, e il foglio cresce per la legenda. **Prima di prendere un foglio più grande
 si prova la seconda colonna.** Il giudizio si dà sulla tavola.
 
+⚠ **Provata sui numeri il 23 settembre, prima di scrivere codice: sull'impianto 5 non basta.** La
+legenda sfora di **una riga** (31 righe da 7,5 mm più lo stacco fra le sezioni: 237,5 contro
+235). Una seconda colonna larga come la prima (50 mm) lascia al disegno **300 mm** di larghezza, e
+il disegno dell'impianto 5 ne occupa **337,5**: l'A3 non arriva lo stesso. L'unica leva che lo
+porterebbe in A3 è l'interlinea della legenda, che è convenzione grafica: **si porta al PO**.
+
 ### 3. La miscelatrice termostatica ha l'ingresso dell'acqua fredda — **D-175**
 
 - **Libreria**: la definizione ha un terzo attacco, l'acqua fredda in ingresso; il simbolo ha già
@@ -137,7 +143,9 @@ Non si toccano qui: il PO ha detto che adesso si parla di migliorie e correzioni
 ## Perimetro
 
 **Dentro:** `src/disegnatore_mep/layout/**`, `graphics/**` (legenda, colore del ricircolo),
-`validation/regole.py` (B10), `piano/**`; la libreria — `examples/layout/catalog/**` e i
+`validation/regole.py` (B10), `piano/**`, **`rules/**`** — il motore delle regole, perché la
+miscelatrice è un pezzo in linea sull'ACS con un ingresso AF suo, e oggi il motore sa fare o
+l'uno o l'altro; la libreria — `examples/layout/catalog/**` e i
 simboli **attraverso il generatore** `examples/graphics/build_symbols.py`; `rules/hydronic/**`
 (la miscelatrice, il ricircolo se nasce da una regola); `naming/**` (la linea del ricircolo);
 `examples/prova/prova-5-cascata-tre-pdc.json` (il ricircolo); `skill/capire/**` (la regola del
