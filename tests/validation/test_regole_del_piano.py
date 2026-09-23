@@ -246,26 +246,32 @@ def girato_verso(
     raise AssertionError(f"{definition_id} non sa guardare {faccia}")
 
 
-def uno_sfiato_su_uno_stacco(con_la_valvola: bool) -> ProjectModel:
+def uno_sfiato_su_uno_stacco(
+    con_la_valvola: bool,
+    organo: str = "air-vent",
+    valvola: str = "valve-isolation",
+) -> ProjectModel:
     """Una pompa, un T sulla mandata, e uno sfiato appeso allo stacco del T.
 
     Lo sfiato ha **un attacco solo** e pende da `branch`, che il catalogo
     dichiara fuori dal percorso del fluido (`stub`): e' la stessa lettura con
     cui il motore riconosce un accessorio appeso. Con la valvola, lo stesso
     stacco porta **un accessorio in linea**, e il minimo cresce di conseguenza.
+    Con `organo` e `valvola` sullo stesso stacco pende un altro organo col suo
+    organo di chiusura: il manometro col suo rubinetto, che ha la stessa sagoma.
     """
     pezzi = [
         ("nord", "heat-pump-air-water"),
         ("stacco", "tee-branch"),
         ("volano", "buffer-four-port"),
-        ("sfiato", "air-vent"),
+        ("sfiato", organo),
     ]
     tubi = [
         tubo("p1", ("nord", "water_supply"), ("stacco", "a")),
         tubo("p2", ("stacco", "b"), ("volano", "primary_in")),
     ]
     if con_la_valvola:
-        pezzi.append(("valvola", "valve-isolation"))
+        pezzi.append(("valvola", valvola))
         tubi.append(tubo("s1", ("stacco", "branch"), ("valvola", "a")))
         tubi.append(tubo("s2", ("valvola", "b"), ("sfiato", "a")))
     else:
@@ -278,6 +284,8 @@ def _stacco_dello_sfiato(
     lungo_mm: float,
     con_la_valvola: bool,
     nord_a: tuple[float, float] = (100.0, 100.0),
+    organo: str = "air-vent",
+    valvola: str = "valve-isolation",
 ) -> tuple[ProjectModel, list[PlacedSymbol], list[RoutedTrunk]]:
     """La tavola con lo sfiato a `lungo_mm` dal proprio T, valvola o no.
 
@@ -285,7 +293,7 @@ def _stacco_dello_sfiato(
     posati, e con la valvola la spezzata si interrompe sotto di lei come la
     interrompe il motore (D-027).
     """
-    project = uno_sfiato_su_uno_stacco(con_la_valvola)
+    project = uno_sfiato_su_uno_stacco(con_la_valvola, organo, valvola)
     origini = {
         "nord": nord_a,
         "stacco": (200.0, 102.5),
@@ -298,9 +306,7 @@ def _stacco_dello_sfiato(
     if con_la_valvola:
         # La valvola sta **sullo** stacco, girata come il motore la girerebbe:
         # i suoi due attacchi in fila lungo la derivazione, non di traverso.
-        gradi["valvola"] = girato_verso(
-            catalog, "valve-isolation", "a", PortFace.BOTTOM
-        )
+        gradi["valvola"] = girato_verso(catalog, valvola, "a", PortFace.BOTTOM)
         origini["valvola"] = (200.0, 87.5)
     symbols = posa(project, catalog, origini, rotazioni=gradi)
     porte = porte_di(project, catalog, symbols)
@@ -409,6 +415,37 @@ def test_a4_uno_stacco_lungo_perche_il_posto_e_preso_non_e_una_violazione() -> N
         organi_di_servizio_lontani(tavola(symbols, routes), FRAME, registry, project)
         == []
     )
+
+
+def test_a4_un_manometro_lontano_col_suo_rubinetto_e_un_rilievo() -> None:
+    """**Il difetto che un agente ha trovato in camera pulita il 23 settembre 2026.**
+
+    Il manometro e\' un pezzo che si manutiene, e il rubinetto sul suo stacco lo
+    chiude: davanti al suo attacco il motore riserva il rettilineo della catena
+    (**I-044**, `place.port_corridors`) — che corre **lungo lo stacco stesso**.
+    Il controllo lo contava come un posto occupato: un passo piu\' vicino, il
+    manometro «entrava nel corridoio», e lo stacco risultava lungo per
+    necessita\' a qualunque distanza. Sul piano dell\'agente, lo stesso
+    manometro allontanato di 40 mm dal proprio T non accendeva niente.
+
+    Le due meta\' vanno lette insieme: al minimo tace, lontano si accende.
+    """
+    registry = catalogo()
+    manometro = {"organo": "pressure-gauge", "valvola": "valve-gauge-cock-3way"}
+
+    project, symbols, routes = _stacco_dello_sfiato(registry, 20.0, True, **manometro)
+    assert (
+        organi_di_servizio_lontani(tavola(symbols, routes), FRAME, registry, project)
+        == []
+    ), "il manometro al minimo del suo stacco"
+
+    project, symbols, routes = _stacco_dello_sfiato(registry, 60.0, True, **manometro)
+    rilievi = organi_di_servizio_lontani(
+        tavola(symbols, routes), FRAME, registry, project
+    )
+    assert [item.code for item in rilievi] == ["SERVICE_STUB_LONGER_THAN_ITS_MINIMUM"]
+    assert "lungo 60.0 mm" in rilievi[0].message
+    assert "40.0 mm di tubo in piu\'" in rilievi[0].message
 
 
 def un_bollitore_e_il_suo_prelievo() -> ProjectModel:

@@ -83,7 +83,7 @@ from disegnatore_mep.layout.place import (
     ROW_GAP_MM,
     hanging_children,
     inline_room_mm,
-    port_corridors,
+    port_corridors_by_port,
     stub_minimum_mm,
 )
 from disegnatore_mep.layout.trunks import Trunk
@@ -553,7 +553,7 @@ def organi_di_servizio_lontani(
     for sheet in drawing.sheets:
         porte = porte_in_tavola(sheet, project, catalog)
         posati = {item.component_id: item for item in sheet.symbols}
-        corridoi = port_corridors(
+        corridoi_per_attacco = port_corridors_by_port(
             project, catalog, trunks, list(sheet.symbols), passo_mm
         )
         per_chiave = {tuple(route.connection_ids): route for route in sheet.routes}
@@ -579,6 +579,28 @@ def organi_di_servizio_lontani(
                 continue
             posato = posati.get(organo)
             altro = porte.get((servito, suo.port_id))
+            # **I corridoi dello stacco stesso non sono un posto occupato.** Il
+            # corridoio davanti alla porta dell'organo — e davanti a quella del
+            # pezzo che serve — corre **lungo questo stacco**: e' la strada da
+            # cui l'organo arriva, non un vicino. Fino al 23 settembre 2026 si
+            # contavano, e un manometro con la propria valvola sullo stacco
+            # risultava «col posto preso» a qualunque distanza: allontanato di
+            # 40 mm, nessun rilievo. L'ha trovato un agente in camera pulita.
+            servito_posato = posati.get(servito)
+            propri = {
+                (organo, posato.physical_port(mio.port_id) if posato else mio.port_id),
+                (
+                    servito,
+                    servito_posato.physical_port(suo.port_id)
+                    if servito_posato
+                    else suo.port_id,
+                ),
+            }
+            corridoi = [
+                area
+                for chiave, area in corridoi_per_attacco.items()
+                if chiave not in propri
+            ]
             if posato is not None and altro is not None and _il_posto_e_preso(
                 posato,
                 _verso_il_pezzo_che_serve(dove[0], altro[0], passo_mm),
