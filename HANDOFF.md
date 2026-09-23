@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-23 sera — **le tavole del pianificatore sui cinque impianti completi sono approvate dal PO** (**I-109**) e si fondono su `main` come PR milestone di `DRAW-016`
+**Aggiornato:** 2026-09-23 sera — `DRAW-016` **fuso con la PR #53, tavole approvate** (**I-109**); attivo **`DRAW-017`**, migliorie e piccole correzioni (**D-174 … D-177**)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -12,6 +12,29 @@
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
 ## ▶ Dove siamo, e da dove si riparte — 23 settembre 2026, sera
+
+**`DRAW-016` è fuso su `main` (PR #53) e le tavole sono approvate.** Il PO: «Finalmente un vero
+miglioramento!!!! Si le approvo assolutamente vanno benissimo! Hanno proprio l'aspetto di tavole
+professionali! **Da qui in poi si parla di migliorie e piccole correzioni.**» (**I-109**).
+
+**Il pacchetto attivo è `DRAW-017`**, e nasce dalle risposte del PO alle domande del rapporto
+(**I-110**):
+
+- **D-174** — B10 confronta una mandata **solo con il proprio ritorno**: il pettine disegnato è
+  il risultato di riferimento;
+- **D-175** — la **miscelatrice termostatica ha l'ingresso AF**: libreria e regola di disegno si
+  aggiornano, e si ruota e si specchia nel piano come una tre vie;
+- **D-176** — il **ricircolo ACS** ha un colore suo (**verde chiaro**), entra in tavola da un
+  confine «ACS-R» perché preleva dalle utenze, e **dopo il circolatore torna nell'accumulo**:
+  l'impianto 5 lo chiudeva dopo il bollitore, ed era un errore del grafo;
+- **D-177** — la **legenda su due colonne** quando in una non ci sta;
+- **D-173** — il pavimento di B1 fra due pezzi resta **proposta**: il PO ha chiesto di capirla
+  meglio, e la decisione è sua.
+
+**Il PO vede anche piccoli difetti sulle tavole approvate, e non li ha ancora elencati**: quando
+lo fa vengono prima di tutto il resto (punto 0 del pacchetto).
+
+### Com'era la sera del 23, prima della fusione
 
 **Il pianificatore compone da solo i cinque impianti completi.** Cinque agenti in camera pulita,
 uno per impianto, con **solo** le istruzioni di `skill/comporre/`, il grafo completo — macchine,
@@ -420,7 +443,9 @@ chiusi, ed erano uno dei quattro difetti che il cold eye review aveva trovato il
    linea lunga è vera, o è un nodo che il disegno può avvicinare al bollitore.* Contenuto MEP.
    — *La domanda precedente, «dove sta un confine di rete», l'ha chiusa il PO il 20 settembre:
    «si fa lì accanto facendo un tratto piccolo di tubazione». È A4, ed è un controllo.*
-3bis. **Il verso del ricircolo ACS non si ricava** (D-059): la mandata e il ritorno del
+3bis. ~~**Il verso del ricircolo ACS non si ricava**~~ — **risposto dal PO il 23 settembre**
+   (**D-176**): il ricircolo è una linea sua, entra dalle utenze e torna nell'accumulo dopo il
+   circolatore. Il testo di prima: la mandata e il ritorno del
    ricircolo portano **tutt'e due `supply=True`**, e per questo **B10 non vede** il ritorno
    che corre sopra la propria mandata per 265 mm sull'impianto 5. L'ha trovato l'occhio del
    revisore, non un controllo. *Serve sapere se il ricircolo è una rete con un verso, o due

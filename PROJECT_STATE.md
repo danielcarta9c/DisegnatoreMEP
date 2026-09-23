@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-23 (`DRAW-016`: le tavole sui grafi completi sono **approvate dal PO**, I-109, e si fondono come PR milestone)
+**Aggiornato:** 2026-09-23 (`DRAW-016` fuso con la PR #53, tavole **approvate dal PO**, I-109; attivo `DRAW-017`, migliorie e piccole correzioni)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -31,6 +31,8 @@ proprio l'aspetto di tavole professionali». Da qui in poi, migliorie e piccole 
 - **Suite: 48 rosse** (lo stesso insieme della base del pacchetto), 1627 passate, nessuno
   `skip` né `xfail` nuovo. Il bersaglio del pacchetto è 38.
 - **Domande al PO**: `docs/collaudi/DRAW-016/RAPPORTO.md` §10.
+
+**Fuso su `main` con la PR #53.** Il pacchetto attivo è **`DRAW-017`**: le risposte del PO alle domande del rapporto (I-110) — **D-174** B10 sulla coppia, **D-175** la miscelatrice termostatica con l'ingresso AF, **D-176** il ricircolo ACS verde chiaro che torna nell'accumulo, **D-177** la legenda su due colonne — e i piccoli difetti che il PO elencherà.
 
 Il dettaglio sta in `HANDOFF.md` e nel rapporto; quello che segue è lo stato al 21.
 
