@@ -13,12 +13,14 @@ dall'intera libreria: una tavola che elencasse venti simboli per usarne sette
 sarebbe piu' lunga da leggere, non piu' chiara.
 """
 
+from collections.abc import Sequence
+
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 
 from .errors import LayoutError
-from .geometry import LegendEntry, NetworkKey, PlacedSymbol, Point
+from .geometry import LegendEntry, NetworkKey, PlacedSymbol, Point, RoutedTrunk
 
 ROW_HEIGHT_MM = 7.5
 """Passo verticale fra due voci: tre passi di griglia."""
@@ -98,8 +100,15 @@ def build_legend(
     network_ids: tuple[str, ...],
     catalog: ComponentRegistry,
     frame: SheetFrame,
+    routes: Sequence[RoutedTrunk] | None = None,
 ) -> tuple[list[LegendEntry], list[NetworkKey]]:
-    """Le due sezioni della legenda: i simboli usati, poi i fluidi."""
+    """Le due sezioni della legenda: i simboli usati, poi i fluidi.
+
+    Con `routes` — le tratte che la tavola disegna davvero — le righe dei fluidi
+    sono **quelle delle linee disegnate**, e nessun'altra. Senza, restano andata e
+    ritorno per ogni fluido presente, come le legge chi compone prima di
+    instradare.
+    """
     band = frame.legend_rect_mm
     definitions = {item.id: item.definition_id for item in project.components}
 
@@ -127,6 +136,15 @@ def build_legend(
         for medium, name in sorted(by_medium.items())
         for supply in (True, False)
     ]
+    # **Una riga per ogni linea che la tavola disegna, e nessuna per quelle che
+    # non ci sono.** Fino al 23 settembre 2026 la legenda elencava andata e
+    # ritorno di ogni fluido, e sulla tavola di una pompa di calore con la
+    # caldaia comparivano «Acqua fredda sanitaria — ritorno» e «Acqua calda
+    # sanitaria — ritorno»: l'acqua fredda un ritorno non ce l'ha, e quel
+    # ricircolo l'impianto non lo aveva. L'ha visto un agente in camera pulita.
+    if routes is not None:
+        disegnate = {(route.medium, route.supply) for route in routes}
+        keys = [key for key in keys if (key[0], key[2]) in disegnate]
 
     rows = len(names) + (1 if keys else 0) + len(keys)
     needed = rows * ROW_HEIGHT_MM + (SECTION_GAP_MM if keys else 0.0)

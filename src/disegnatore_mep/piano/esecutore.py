@@ -542,7 +542,12 @@ def esegui_piano(
         )
 
     voci, chiavi = build_legend(
-        modello, sistemata.symbols, partizione.network_ids, catalogo, frame
+        modello,
+        sistemata.symbols,
+        partizione.network_ids,
+        catalogo,
+        frame,
+        routes=sistemata.routes,
     )
     foglio = SheetGeometry(
         sheet_id=partizione.sheet_id,
