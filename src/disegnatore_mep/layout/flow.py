@@ -390,7 +390,55 @@ def _oriented_for_colour(
             key = trunk.connection_ids
             in_supply, in_return = key in supply, key in returns
             oriented[key] = None if in_supply == in_return else in_supply
+        _eredita_da_monte(outgoing, incoming, functions_of, oriented)
     return oriented
+
+
+def _eredita_da_monte(
+    outgoing: dict[str, list[tuple[Trunk, str]]],
+    incoming: dict[str, list[tuple[Trunk, str]]],
+    functions_of: dict[str, frozenset[str]],
+    oriented: dict[TrunkKey, bool | None],
+) -> None:
+    """**Dove le camminate non decidono, il fluido tiene il ruolo che ha a
+    monte**, finche' non attraversa un terminale.
+
+    Le camminate si fermano a ogni utilizzatore, accumuli compresi, e cosi'
+    restano indecise le tratte che nessuna delle due raggiunge. Fino al 23
+    settembre 2026 il loro colore lo decideva la geometria — mandata se la
+    tratta va verso destra (`route.py`) — e un agente in camera pulita ha
+    visto il ritorno delle zone dipinto da mandata sull'impianto 3, dove il
+    volano sta **in serie sul ritorno** e ferma la camminata che risale dalla
+    pompa di calore: ha dovuto scartare una posa migliore perche' la tavola non
+    si leggeva. Lo stesso sull'impianto 5, sul by-pass della miscelatrice.
+
+    La lettura e' quella del fluido: chi esce da un terminale e' ritorno, e un
+    pezzo che non e' un terminale non cambia il ruolo di quello che lo
+    attraversa — la tratta prende il ruolo di tutte quelle che entrano nel suo
+    capo a monte, se e' uno solo. Si legge **solo a monte**: dove due fluidi
+    si mescolano — il by-pass che entra nella miscelatrice — il ruolo lo porta
+    chi arriva, non chi riparte. Le tratte che le camminate hanno deciso non
+    si toccano; quelle che restano indecise tornano al ripiego geometrico.
+    """
+    cambiato = True
+    while cambiato:
+        cambiato = False
+        for testa, uscenti in outgoing.items():
+            for trunk, _ in uscenti:
+                if oriented.get(trunk.connection_ids) is not None:
+                    continue
+                if functions_of.get(testa, frozenset()) & TERMINAL_FUNCTIONS:
+                    ruolo: bool | None = False
+                else:
+                    entranti = {
+                        oriented.get(altra.connection_ids)
+                        for altra, _ in incoming.get(testa, ())
+                    }
+                    ruolo = entranti.pop() if len(entranti) == 1 else None
+                if ruolo is None:
+                    continue
+                oriented[trunk.connection_ids] = ruolo
+                cambiato = True
 
 
 def classify_trunks(
