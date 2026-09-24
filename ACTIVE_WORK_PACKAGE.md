@@ -1,115 +1,121 @@
-# DRAW-018 — Le valvole di sicurezza, una per generatore (la strada A)
+# REL-001 — La skill vera e propria: l'ingresso che cuce i pezzi, e il PDF fatto dalla skill
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **ATTIVO.** `DRAW-017` è fuso su `main` con la PR **#56**, e **le tavole sono approvate**
-(**I-117**).
-**Base:** `main` dopo la fusione di #56.
-**Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main` dopo la fusione.
-**Release:** 0.3 — generalizzazione
-**Approvazione della fusione:** **del PO**, e si dà guardando le tavole (D-146, D-147)
+**Stato:** **ATTIVO.** `DRAW-018` è fuso su `main` con la PR **#57**, e le tavole sono approvate
+(**I-119**).
+**Base:** `main` dopo la fusione di #57.
+**Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
+**Release:** la prima release — il primo dei cinque pacchetti (`docs/plans/2026-09-03-release-plan.md`,
+sezione «La prima release», **D-183**).
+**Approvazione della fusione:** **del PO**, e si dà guardando la tavola che la skill ha prodotto
+(D-146, D-147).
 
-Il PO, il 24 settembre 2026, guardando le tavole 1 e 4 di `DRAW-017`: «forse di valvole di
-sicurezza ne vanno 2 no ? uno per ogni macchina e senza valvole di interruzione in mezzo» (I-114).
-Poi ha chiesto la ricerca su norme e prassi dei produttori (I-115), e fra le quattro strade che la
-ricerca ha portato ha scelto la prima (I-116):
+Il PO, il 24 settembre 2026 (**I-121**, **I-122**):
 
-> «Strada A»
-
-cioè **una valvola per macchina, sull'uscita e prima dei suoi rubinetti, senza valvola comune** —
-e vale anche quando la macchina ne porta una a bordo. È **D-182**. La ricerca:
-`docs/fonti/ricerche/reports/Valvole di sicurezza e simbolo ritegno.md`.
+> «Ricordiamoci che lo scopo è creare una skill che usa il progettista per disegnare impianto.
+> Quindi in Claude durante una sessione spiega l'impianto, lancia la skill ed eventualmente la skill
+> mentre fa la parte di capire può fare delle domande chiarificatrici. Ora vorrei andare verso la
+> prima release della skill. […] la skill vera e propria (il file skill.md) che orchestra i vari
+> pezzi, […] il motore pdf che dicevi»
 
 ---
 
-## Che cosa cambia — misurato prima di scrivere il pacchetto
+## Dove siamo — misurato il 24 settembre 2026
 
-Su una copia delle regole, con la regola «per generatore» estesa a ogni potenza e le due regole
-della sicurezza comune tolte, i cinque grafi completi rigenerati con
-`disegnatore-mep rules … --rules <copia> --apply-all` e confrontati con quelli di `DRAW-017`
-(che la testa di `main` rigenera identici):
-
-| impianto | che cosa cambia nel grafo | la tavola |
-|---|---|---|
-| **1** — due PDC | esce la sicurezza sulla mandata comune; ne entra una su ciascuna PDC, fra la macchina e il suo rubinetto | **si ricompone** |
-| **4** — PDC e caldaia | lo stesso, sulla PDC e sulla caldaia | **si ricompone** |
-| **2**, **3** — una PDC | stessi pezzi e stessi collegamenti: cambia solo la motivazione scritta nel grafo | si riesegue col suo piano |
-| **5** — tre PDC, sopra i 35 kW | identico | non cambia |
+- **I cinque pezzi esistono, e li cuce a mano la sessione di sviluppo.** Capire
+  (`skill/capire/ISTRUZIONI.md`, un agente); Completare (`disegnatore-mep rules`); Comporre
+  (`skill/comporre/ISTRUZIONI.md`, un agente); Eseguire (`disegnatore-mep piano`); Rivedere (i
+  controlli, e l'occhio di `skill/rivedere/ISTRUZIONI.md`). Le tavole dei cinque impianti di prova
+  escono così, e il PO le ha approvate (I-109, I-117, I-119).
+- **Non c'è l'ingresso della skill.** `docs/SKILL.md` è il documento d'architettura, non il file che
+  una sessione di Claude carica quando il progettista lancia la skill.
+- **Il PDF lo fa uno strumento dell'ambiente di sviluppo** (`scripts/to-pdf.sh`), con il browser.
+  Il pacchetto scrive solo l'SVG, e dipende soltanto da `pydantic`.
+- **Le skill di Nove C** (per esempio quella dei computi, `cme-mep-pdc`) sono una cartella con
+  `SKILL.md`, `scripts/` e `references/`, e girano nell'ambiente d'esecuzione di Claude: lì non si
+  può contare su un browser. Le skill di Claude per i PDF usano `reportlab` e `pypdf` — un indizio di
+  che cosa c'è, **da verificare**, non un dato.
+- **Capire sa già dichiarare le domande**: ogni cosa che il testo non dice e che serve diventa una
+  voce di `assumptions` con `status: "proposed"` (`skill/capire/ISTRUZIONI.md` §6). Manca chi le
+  porta al progettista e aspetta la risposta.
 
 ---
 
 ## Le cose da fare, in quest'ordine
 
-### 1. Le regole
+### 1. L'ambiente in cui la skill gira
 
-- `rules/hydronic/safety-relief-where-heat-enters-the-water.json` vale **a qualunque potenza**, sul
-  circuito chiuso dell'acqua tecnica (i generatori che dichiarano di aver bisogno di protezione
-  dalla sovrapressione): una sicurezza per generatore, **attaccata all'uscita e prima di ogni organo
-  che si possa chiudere**. Motivazione e fonte si riscrivono per D-182: UNI EN 12828:2003
-  § 4.6.2.2.1; la Raccolta R, R.3.B.2.4–2.5, per i generatori a combustione sopra i 35 kW; Caleffi
-  dp 01253/26, p. 5. **Versione maggiore.**
-- **Escono** `safety-relief-on-the-closed-circuit.json` — la sicurezza comune che D-182 toglie — e
-  `safety-relief-on-an-isolable-generator.json`, che proteggeva un generatore separabile dalla
-  sicurezza comune: senza sicurezza comune non ha più niente da proteggere, e la sua domanda
-  («la macchina la porta a bordo?») D-182 l'ha già risposta.
-- La riserva sanitaria che si scalda da sé **non cambia**: ha il proprio gruppo sull'alimentazione
-  fredda (EN 1487).
+Che cosa offre l'ambiente d'esecuzione di una skill di Claude: la versione di Python, le librerie
+presenti (`pydantic`, `reportlab`, `pypdf`…), se si possono installare pacchetti, se c'è la rete.
+Da qui non si vede: si prepara **una skill di prova di poche righe**, che stampa versione e
+librerie, e il PO la carica e la lancia — oppure la sessione trova una fonte ufficiale che lo dica.
+**Finché il dato non c'è, la skill si scrive perché non ne abbia bisogno**: nessuna rete, nessun
+browser, dipendenze pure Python portate nella cartella.
 
-### 2. Le fonti
+### 2. Il PDF fatto dalla skill (I-122)
 
-In `docs/fonti/SOURCE_REGISTER.md`: **SRC-027** passa all'edizione dp 01253/26, p. 5 (quella che
-oggi sta all'indirizzo registrato); la **ricerca del 24 settembre** entra come fonte, con quello
-che ha letto e quello che non ha potuto leggere (EN 12828:2014, UNI 10412). Il repository è
-pubblico: nessuna pagina intera di un documento protetto, nessun collegamento a copie non
-ufficiali di una norma.
+La tavola esce in PDF **a misura reale** — la pagina è il foglio, e un simbolo stampato misura
+quello che il modello dice (ADR 0003, `scripts/to-pdf.sh`) — **senza browser**. La strada si sceglie
+dopo il punto 1: scrivere il PDF dalla geometria della tavola, o convertire l'SVG con una libreria
+che l'ambiente ha. Si misura contro il PDF di oggi: sulle cinque tavole approvate (le 1 e 4 in
+`docs/collaudi/DRAW-018/`, le 2, 3 e 5 in `docs/collaudi/DRAW-017/`), rasterizzate tutte e due, le
+differenze stanno solo nei caratteri.
 
-### 3. Le prove
+### 3. La forma della skill
 
-Quelle che tenevano ferma I-046 — una sola sicurezza per dominio sotto i 35 kW, la domanda sulla
-valvola a bordo — **si riscrivono per D-182**, dicendolo nel file:
-`tests/rules/test_regime_and_common_return.py`, `tests/rules/test_stati_idraulici_e_domini.py`,
-`tests/rules/test_sicurezza_dominio_idraulico.py`, `tests/rules/test_gate.py`,
-`tests/collaudo/test_p5_regime_e_tratto_comune.py`, e quelle che la suite trova in più. Una prova
-nuova: **sotto e sopra i 35 kW**, ogni generatore del circuito chiuso ha la sua sicurezza sull'uscita,
-prima di ogni organo che si chiude, e **nessuna sicurezza sta sulla mandata comune**.
+Una **cartella installabile**, costruita **da uno script del repository** e mai copiata a mano — come
+i generatori della libreria —, che la ricostruisce identica:
 
-### 4. Grafi e documenti rigenerati
+- `SKILL.md`, l'ingresso (punto 4);
+- gli **script**: un comando solo per il lavoro deterministico — completare il grafo, eseguire il
+  piano, misurare, scrivere il PDF — sul motore di `src/`;
+- la **libreria**: simboli, catalogo, regole, naming;
+- le **istruzioni** di Capire, Comporre e Rivedere, come riferimenti che `SKILL.md` richiama.
 
-I cinque grafi completi; `examples/rules/centrale-pdc-completa.json`;
-`docs/prodotto/GRAFO_IMPIANTO.md` e `docs/prodotto/grafi-di-prova/`; le fixture che portano le
-regole tolte, **dal loro generatore** quando ne hanno uno.
+La forma la suggerisce la skill di Claude che crea le skill (`skill-creator`): si legge prima.
 
-### 5. Le tavole
+### 4. L'ingresso — `SKILL.md` (I-121)
 
-Le **1 e 4 si ricompongono in camera pulita** (D-155: un piano non si corregge a mano), col
-protocollo di `DRAW-017` — `docs/collaudi/DRAW-017/prepara-camera.sh`, il mandato di
-`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/mandato.md`, la misura della sessione con
-`docs/collaudi/DRAW-017/misura-tavole.py`. Le 2 e 3 si rieseguono col loro piano e si confrontano
-con quelle approvate; la 5 non si tocca. **Le tavole al PO per prime.**
+Il flusso, com'è deciso (D-012, D-013, D-155, D-183):
+
+1. il progettista **descrive l'impianto** nella conversazione e **lancia la skill**;
+2. **Capire** scrive il grafo di prima stesura; le cose che il testo non dice diventano **domande
+   chiarificatrici**, che la skill fa al progettista — in un passaggio solo, con la sua prima
+   interpretazione (D-006, D-013) — e aspetta;
+3. **Completare** aggiunge il corredo; i suoi punti aperti diventano domande nello stesso modo;
+4. **il progettista approva il grafo completo**: è l'unico cancello umano della catena;
+5. **Comporre** scrive il piano, con le istruzioni del pianificatore; **Eseguire** disegna e misura;
+   **Rivedere** guarda la tavola e rimanda al piano, mai al disegno;
+6. la skill **consegna il PDF**, e dice che cosa è rimasto aperto.
+
+E le cose che la skill non fa mai, dette in testa: non progetta (D-104, D-172), non inventa dati
+(D-087), non cambia lo schema che ha ricevuto.
+
+### 5. La prova vera: la skill intera in camera pulita
+
+Un agente con **la sola cartella della skill** e il testo di **un impianto che non è fra i cinque** —
+scritto dalla sessione nello stile di `examples/prova/input/`, o dato dal PO se preferisce; niente
+dati di clienti, il repository è pubblico. La sessione fa la parte del progettista: risponde alle
+domande con i dati del testo, e approva il grafo. Si misura con gli strumenti della sessione (D-152):
+la tavola esce, in PDF prodotto dalla skill, con zero tratte cedute e zero rilievi bloccanti.
+
+### 6. Lo ZIP per il PO
+
+La cartella impacchettata, con due righe su come caricarla in Claude. **Il PO la prova su un impianto
+suo**: è il cancello verticale del piano (`PROJECT_STATE.md`, rischio 4), e il suo esito si registra.
 
 ---
 
 ## Perimetro
 
-**Dentro:** `rules/hydronic/safety-relief-*.json`; `docs/fonti/SOURCE_REGISTER.md` e
-`docs/fonti/ricerche/`; `tests/**`; `examples/rules/centrale-pdc-completa.json`,
-`docs/prodotto/**` e le fixture che contengono le regole tolte, rigenerati; `docs/collaudi/DRAW-018/`.
+**Dentro:** la cartella della skill e lo script che la costruisce (`skill/`, `scripts/`); il comando
+unico e il modulo del PDF in `src/disegnatore_mep/`; `pyproject.toml`, se serve una dipendenza;
+`docs/SKILL.md`, per il rimando all'ingresso; `tests/**`; `docs/collaudi/REL-001/`.
 
-**Fuori:** il motore (`src/disegnatore_mep/layout/`, `piano/`), la libreria dei simboli, ogni altra
-regola. **Il regime dei 35 kW (D-108) resta** per le regole che lo usano: che sommi anche le
-pompe di calore, mentre per la Raccolta R contano i soli generatori a combustione, è un rilievo
-della ricerca e non lavoro di qui — si porta al PO se una tavola lo mostra.
-
-### Deviazioni dichiarate — 24 settembre 2026
-
-- **Il motore delle regole** (`src/disegnatore_mep/rules/schema.py`, `engine.py`), fuori dal
-  perimetro scritto: il criterio di soddisfazione di una regola dichiara adesso se **il bordo
-  macchina basta** (`on_board_counts`, vero di norma). Senza, una macchina che il catalogo dà con
-  la sicurezza a bordo non l'avrebbe ricevuta, e D-182 dice che la riceve comunque. Nessun
-  impianto di prova cambia per questo: nessuna macchina del catalogo dichiara la sicurezza a bordo.
-- **Il documento delle regole per l'ingegnere** (`docs/prodotto/REGOLE_ACCESSORI.md`): la scheda
-  della sicurezza riscritta per D-182, via le due schede della sicurezza comune, sedici schede.
-- **La proposta per la prima release** (`docs/plans/2026-09-24-verso-la-prima-release.md`, I-118):
-  è una proposta, non una decisione, e sta qui perché la sessione successiva la trovi.
+**Fuori:** le regole, la libreria dei simboli, il motore del disegno (`layout/`, `piano/`); le
+istruzioni di Capire, Comporre e Rivedere nel contenuto — si toccano solo i percorsi, se nella
+cartella della skill cambiano; il cartiglio (`REL-002`), i simboli nuovi (`REL-003`), il DXF
+(`REL-004`).
 
 ---
 
@@ -117,25 +123,25 @@ della ricerca e non lavoro di qui — si porta al PO se una tavola lo mostra.
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-0. **Le tavole, per prime**: le 1 e 4 ricomposte, in PDF, al PO, accanto a quelle di `DRAW-017`.
-1. **La regola**: una prova — sotto e sopra i 35 kW ogni generatore del circuito chiuso ha la sua
-   sicurezza attaccata all'uscita, prima dei rubinetti; nessuna sicurezza sulla mandata comune.
-2. **I grafi**: l'1 e il 4 cambiano soltanto nelle sicurezze; il 2 e il 3 soltanto nella
-   motivazione; il 5 è identico — col confronto eseguito.
-3. **Nessuna tavola peggiora** rispetto a quelle approvate il 24 settembre: zero cedute, zero
-   bloccanti, rilievi e incroci non in aumento — salvo dove i pezzi nuovi lo impongono, e allora si
-   dice dove e perché.
-4. **La suite**: nessuna rossa nuova rispetto alle 45 di `DRAW-017`; zero `skip` e zero `xfail`
-   nuovi; `ruff` e `mypy` verdi.
+0. **Le tavole, per prime**: la tavola dell'impianto nuovo, uscita dalla skill in camera pulita, nel
+   PDF che la skill ha scritto, al PO.
+1. **Il PDF senza browser**: pagina della misura del foglio; sulle cinque tavole approvate, il
+   confronto a pixel con `scripts/to-pdf.sh` differisce solo nei caratteri.
+2. **La cartella della skill** si costruisce con un comando e si rigenera identica — una prova, come
+   quella dei generatori della libreria.
+3. **L'ingresso** dice il flusso, le domande e l'approvazione del grafo; nella prova **nessun pezzo lo
+   cuce la sessione a mano**.
+4. **La prova in camera pulita**: dal testo al PDF, zero cedute e zero bloccanti; il rapporto dice dove
+   la skill si è fermata a chiedere, e che cosa ha chiesto.
+5. **La suite**: nessuna rossa nuova rispetto alle 46 di `DRAW-018`; zero `skip` e zero `xfail` nuovi;
+   `ruff` e `mypy` verdi.
 
-## Dopo `DRAW-018`: la prima release (I-118)
+## Dopo `REL-001`
 
-Il PO, il 24 settembre: «Alla fine parliamo di quali sono i prossimi step per arrivare alla prima
-release della skill». La sessione porta una proposta — `docs/plans/2026-09-24-verso-la-prima-release.md` —; **che cosa viene dopo la 0.3 lo sceglie il
-PO**, e con la sua scelta si aggiornano `docs/plans/2026-09-03-release-plan.md` e il pacchetto
-successivo.
+`REL-002` il cartiglio, `REL-003` i simboli nuovi, `REL-004` il DXF, `REL-005` il pacchetto della
+release — l'ordine è una proposta (D-183, punto 3), in `docs/plans/2026-09-03-release-plan.md`.
 
 ## Consegna
 
-Una PR verso `main`, **fusa solo dopo che il PO ha visto le tavole 1 e 4 e ha detto di sì**.
-Rapporto in `docs/collaudi/DRAW-018/RAPPORTO.md`, con le tavole in testa.
+Una PR verso `main`, **fusa solo dopo che il PO ha visto la tavola e ha detto di sì**. Rapporto in
+`docs/collaudi/REL-001/RAPPORTO.md`, con la tavola in testa.

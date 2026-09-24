@@ -1,8 +1,13 @@
 # Verso la prima release — proposta del 24 settembre 2026
 
-**Stato: PROPOSTA della sessione** (I-118). **Che cosa viene dopo la 0.3 lo sceglie il PO**; con la
-sua scelta si aggiornano `docs/plans/2026-09-03-release-plan.md` e il pacchetto successivo. Qui non
-c'è nessuna decisione: c'è quello che manca, misurato, e una strada per chiuderlo.
+**Stato: il PO ha scelto, il 24 settembre 2026** (I-121 … I-125, **D-183**). Il piano vigente è la
+sezione «La prima release» di `docs/plans/2026-09-03-release-plan.md`: il DXF ci sta dentro, e il
+PO ha aggiunto il cartiglio e i simboli nuovi. Questa pagina resta com'era, come l'analisi da cui
+quella scelta è partita.
+
+*Com'era scritto:* proposta della sessione (I-118). Che cosa viene dopo la 0.3 lo sceglie il PO;
+con la sua scelta si aggiornano `docs/plans/2026-09-03-release-plan.md` e il pacchetto successivo.
+Qui non c'è nessuna decisione: c'è quello che manca, misurato, e una strada per chiuderlo.
 
 Il PO, il 24 settembre 2026: «Alla fine parliamo di quali sono i prossimi step per arrivare alla
 prima release della skill».

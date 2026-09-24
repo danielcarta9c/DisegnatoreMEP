@@ -3,7 +3,8 @@
 > **Le tavole, per prime:** le 1 e 4 ricomposte il 24 settembre 2026, sera, stanno in
 > [`prova-camera-pulita-2026-09-24/`](prova-camera-pulita-2026-09-24/), accanto a quelle approvate
 > la mattina ([`../DRAW-017/prova-camera-pulita-2026-09-24/`](../DRAW-017/prova-camera-pulita-2026-09-24/)).
-> ⏳ **Da guardare al PO.** La fusione aspetta il suo sì (D-146, D-147).
+> ✅ **Approvate dal PO il 24 settembre 2026** (I-119): «Si vanno bene le tavole». Fuse su
+> `main` con la PR #57 — §6.
 
 **Aperto:** 24 settembre 2026 · **Agente unico** (D-147), con agenti paralleli in sessione
 (D-152) · **Base:** `6d6ecc6`, la testa di `main` dopo la fusione di `DRAW-017` · **Ramo:**
@@ -134,3 +135,16 @@ macchina); le schede delle regole per l'ingegnere; la proposta per la prima rele
   sanitario del serpentino; nell'ibrido, il vaso che nella produzione sanitaria non vede più
   l'anello caldaia–scambiatore, e chi fa circolare quell'anello.
 - **La prima release** (I-118): la proposta, e la domanda sul DXF.
+
+---
+
+## 6. Il verdetto del PO — 24 settembre 2026
+
+> «Si vanno bene le tavole. Per ora le domande da progettista non servono. Ricordiamoci che lo
+> scopo è creare una skill che usa il progettista per disegnare impianto.»
+
+- **Le tavole 1 e 4 sono approvate** (**I-119**): si chiudono I-116 e I-114.
+- **Le domande degli agenti per il progettista non si portano** (**I-120**): restano scritte nel
+  README della prova.
+- **La prima release** (**I-121 … I-125**, **D-183**): la skill vera e propria e il PDF, il
+  cartiglio, i simboli nuovi, il DXF. Il pacchetto successivo è **`REL-001`**.

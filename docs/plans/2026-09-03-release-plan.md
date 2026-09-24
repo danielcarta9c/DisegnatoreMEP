@@ -2,8 +2,9 @@
 
 **Scritto il 3 settembre 2026. Annotato il 20 settembre 2026** (`DRAW-015`).
 
-**La release in corso è la 0.3 — generalizzazione.** Il numero di versione Python resta
-`0.1.0`: non ha mai seguito le release dichiarate, ed è un asse diverso.
+**La release in corso è la 0.3 — generalizzazione**, e dal 24 settembre 2026 il lavoro va verso **la
+prima release**, col perimetro che il PO ha dato (D-183, sezione qui sotto). Il numero di versione
+Python resta `0.1.0`: non ha mai seguito le release dichiarate, ed è un asse diverso.
 
 > ⚠ **Due punti di questo piano sono storia, e lo dicono qui in testa.**
 >
@@ -16,6 +17,28 @@
 > Le righe superate portano la loro nota, con la decisione che le ha superate. Il piano non
 > è stato riscritto oltre a questo: **che cosa viene dopo la 0.3 è una scelta del PO**, e
 > non si decide in una passata di riallineamento documentale.
+
+## ▶ La prima release — il perimetro del PO, 24 settembre 2026 (D-183)
+
+**Come si usa** (I-121): in una sessione di Claude il progettista spiega l'impianto e lancia la
+skill; mentre «Capire» lavora, la skill può fare **domande chiarificatrici**; poi il corredo,
+l'approvazione del grafo da parte del progettista, la composizione e la tavola.
+
+**Che cosa ci deve essere**, in cinque pacchetti. L'elenco è del PO; **l'ordine è una proposta
+della sessione** (D-183, punto 3), e il PO lo può cambiare:
+
+| pacchetto | che cosa | perché in quest'ordine |
+|---|---|---|
+| **`REL-001`** | **la skill vera e propria** — l'ingresso che cuce i cinque pezzi, la cartella installabile — **e il PDF fatto dalla skill** (I-121, I-122) | è il rischio più vecchio del progetto: la skill non è mai girata nel suo ambiente. E senza il PDF la skill non consegna niente |
+| **`REL-002`** | **il cartiglio Nove C compilato** (I-123) | i dati del cartiglio li raccoglie «Capire»: si aggiungono alle domande della skill che `REL-001` ha messo in piedi |
+| **`REL-003`** | **i simboli nuovi**: pompa di calore di alta potenza, caldaia modulare a condensazione, solare termico, fan-coil canalizzato (I-124) | forme dalle fonti, approvate dal PO guardandole; per ciascuna la voce di catalogo, e le regole solo dove il PO le dà |
+| **`REL-004`** | **il DXF** (I-125) | prima si definisce con il PO **come** si esporta — livelli, blocchi, testi, scala —, poi si scrive |
+| **`REL-005`** | **il pacchetto della release** | il numero di versione, `releases/latest/` e lo ZIP numerato (D-009), la guida d'installazione, la suite verde e il collaudo sui casi di accettazione |
+
+**Restano da decidere con il PO**, e non fermano `REL-001`: il collaudo su impianti veri (la
+proposta del 24 settembre chiedeva due o tre testi di Nove C); il via libera a togliere dal
+pacchetto il percorso del solutore e le sue prove rosse, che D-151 teneva agli atti. L'analisi da cui
+nasce questo elenco sta in `docs/plans/2026-09-24-verso-la-prima-release.md`.
 
 ## 0.2 — Prima tavola approvata — **eseguita**
 

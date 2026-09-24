@@ -1,6 +1,7 @@
 # Le sicurezze una per generatore — 24 settembre 2026, sera
 
-> ⏳ **Da guardare al PO**: le tavole 1 e 4, accanto a quelle approvate la mattina
+> ✅ **Approvate dal PO il 24 settembre 2026** (I-119): «Si vanno bene le tavole» — le 1 e 4,
+> accanto a quelle approvate la mattina
 > ([`../../DRAW-017/prova-camera-pulita-2026-09-24/`](../../DRAW-017/prova-camera-pulita-2026-09-24/)).
 
 **Che cos'è.** Le tavole dopo **D-182**, la strada A del PO: una valvola di sicurezza per ogni
@@ -81,7 +82,8 @@ comune.
 
 ## Domande per il progettista
 
-Il grafo gli agenti non l'hanno toccato; le hanno scritte come domande. Sono contenuto MEP: al PO.
+Il grafo gli agenti non l'hanno toccato; le hanno scritte come domande. **Il PO: «Per ora le
+domande da progettista non servono»** (I-120): restano qui come memoria, e non si portano.
 
 - **Impianto 1**: due pompe di calore in parallelo sui collettori comuni, **senza un ritegno su
   ciascun ramo** — è previsto, o sta dentro le macchine? (due agenti)
