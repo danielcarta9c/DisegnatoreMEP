@@ -111,8 +111,8 @@ Restano **candidate**: il PO ha lasciato da parte i suoi piccoli difetti (I-112)
 
 - la freccia di verso che cade sul ponticello di un incrocio;
 - la sigla di un pezzo che cade accanto a un altro (VOL-01 sugli impianti 2 e 4);
-- la ritegno sull'acqua calda (`valve-check-dhw-hot`) senza verso nel catalogo, col simbolo che
-  ha la freccia;
+- ~~la ritegno sull'acqua calda (`valve-check-dhw-hot`) senza verso nel catalogo, col simbolo che
+  ha la freccia~~ — **chiesta dal PO il 24 settembre e fatta** (I-114, D-180, punto 8);
 - il minimo di A4 per uno stacco con rubinetto, che tollera 5 mm;
 - il rifiuto dell'A4 che viene dalla posa d'inventario, con un messaggio che confonde;
 - la deduzione dei raccordi sulla presa del ricircolo — probabilmente la toglie il punto 4.
@@ -134,6 +134,21 @@ non ritorno e il bollitore».
 - **Fra gli impianti di prova solo il 5 ha l'accumulo ACS da 1000 litri in su** (I-112): è l'unica
   tavola che guadagna il vaso. **Il volume esatto non è dato**, e non si inventa: nel grafo va la
   soglia che il PO ha detto, non un numero.
+
+### 8. Le correzioni del PO sulle tavole del 24 settembre — **I-114**
+
+Il PO, sul confronto delle tavole: «le integrazioni che hai fatto per AF e ricircolo sono
+perfette», e due correzioni — «Fai le verifiche e in caso le correzioni».
+
+- ✅ **La freccia della ritegno nel verso del flusso — D-180.** Verificato sulle cinque tavole:
+  dieci organi con la freccia, uno solo contro il flusso, la ritegno del ricircolo del 5; era
+  l'unica voce del catalogo con la freccia e le porte senza verso. Il verso nasce nel generatore
+  del catalogo; due prove (catalogo, cinque tavole). La tavola 5 si ridisegna con lo stesso piano.
+- ⏳ **Le valvole di sicurezza, una per macchina, senza intercettazioni in mezzo** (impianti 1 e
+  4). Le tavole fanno quello che dispone **I-046** (8 settembre: «spostare la sicurezza, non
+  moltiplicarla»), che le regole applicano sotto i 35 kW; sopra i 35 kW è già una per macchina.
+  **Domanda al PO** prima di toccare le regole. Se conferma, cambiano i grafi 1 e 4, e le due
+  tavole si ricompongono in camera pulita.
 
 ## Deciso dal PO il 23 settembre
 

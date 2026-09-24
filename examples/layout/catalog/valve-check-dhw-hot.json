@@ -16,14 +16,14 @@
       "id": "a",
       "domain": "hydronic",
       "medium": "domestic_hot_water",
-      "flow": "bidirectional",
+      "flow": "in",
       "required": true
     },
     {
       "id": "b",
       "domain": "hydronic",
       "medium": "domestic_hot_water",
-      "flow": "bidirectional",
+      "flow": "out",
       "required": true
     }
   ],

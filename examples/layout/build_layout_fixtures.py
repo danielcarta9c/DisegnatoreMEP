@@ -456,13 +456,18 @@ DEFINITIONS: list[dict[str, Any]] = [
         symbol_id="pump-circulator",
     ),
     definition(
+        # **Ha un verso, come ogni ritegno** (I-114): il simbolo porta la
+        # freccia del flusso, e il motore la gira nel verso della tratta solo se
+        # il catalogo dichiara ingresso e uscita. Fino al 24 settembre 2026 le
+        # due porte erano «bidirezionali», e sul ricircolo dell'impianto 5 la
+        # freccia puntava contro il flusso: l'ha visto il PO sulla tavola.
         "valve-check-dhw-hot",
         "Valvola di ritegno sull'acqua calda",
         ["non_return"],
         [SHUTOFF_ORDINARY, INLINE],
         [
-            hydronic_port("a", "bidirectional", DHW),
-            hydronic_port("b", "bidirectional", DHW),
+            hydronic_port("a", "in", DHW),
+            hydronic_port("b", "out", DHW),
         ],
         symbol_id="valve-check",
     ),

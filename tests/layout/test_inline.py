@@ -33,7 +33,7 @@ from disegnatore_mep.model.project import (
     ProjectModel,
     SubsystemModel,
 )
-from disegnatore_mep.model.types import PlantRegime
+from disegnatore_mep.model.types import PlantRegime, PortFlow
 
 ROOT = Path(__file__).resolve().parents[2]
 PROJECT = ROOT / "examples" / "layout" / "heat-pump-dhw-buffer-two-zones.json"
@@ -426,6 +426,32 @@ def test_una_valvola_di_ritegno_si_disegna_nel_verso_del_flusso(
         return abs(punto.x_mm - partenza.x_mm) + abs(punto.y_mm - partenza.y_mm)
 
     assert lontano(ingresso) < lontano(uscita), (verso, valvola)
+
+
+SIMBOLI_CON_LA_FRECCIA = frozenset({"valve-check", "pump-circulator"})
+"""I simboli che portano disegnato il verso del flusso: la ritegno (la freccia
+sopra la z) e il circolatore (il triangolo). Il manifesto non lo dice — la
+freccia e' nel disegno —, e per questo l'elenco sta qui."""
+
+
+def test_ogni_voce_disegnata_con_una_freccia_dichiara_ingresso_e_uscita() -> None:
+    """**La freccia della ritegno si mette nella direzione del flusso** (PO, 24
+    settembre 2026, I-114). Il motore gira nel verso della tratta solo chi ha
+    ingresso e uscita dichiarati; una voce che usa un simbolo con la freccia e ha
+    le porte «bidirezionali» si disegna come capita. Era la ritegno sull'acqua
+    calda (`valve-check-dhw-hot`): sul ricircolo dell'impianto 5 la freccia
+    puntava contro il flusso, e l'ha visto il PO sulla tavola. Nessuna voce del
+    catalogo lo puo' piu' fare."""
+    controllate = 0
+    for definition in catalog().all():
+        if definition.symbol_id not in SIMBOLI_CON_LA_FRECCIA:
+            continue
+        controllate += 1
+        assert sorted(port.flow for port in definition.ports) == [
+            PortFlow.IN,
+            PortFlow.OUT,
+        ], definition.id
+    assert controllate >= 5, "l'elenco dei simboli con la freccia non trova le voci"
 
 
 def test_una_valvola_simmetrica_non_si_specchia() -> None:

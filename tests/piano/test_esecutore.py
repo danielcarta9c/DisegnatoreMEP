@@ -37,7 +37,7 @@ from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout import compose, improve, spine
 from disegnatore_mep.layout.compose import inline_component_ids
-from disegnatore_mep.layout.geometry import PlacedSymbol
+from disegnatore_mep.layout.geometry import PlacedSymbol, RoutedTrunk
 from disegnatore_mep.layout.partition import SheetPartition, partition_project
 from disegnatore_mep.layout.place import place_sheet
 from disegnatore_mep.layout.trunks import build_trunks
@@ -214,6 +214,79 @@ def test_la_rotazione_scritta_nel_piano_non_si_tocca() -> None:
     )
     assert gruppo.rotation_deg == 180
     assert not any(riga.startswith("filling-unit-") for riga in misura.girati)
+
+
+SIMBOLI_CON_LA_FRECCIA = frozenset({"valve-check", "pump-circulator"})
+"""La ritegno (la freccia sopra la z) e il circolatore (il triangolo): il simbolo
+punta dall'attacco `a` all'attacco `b`."""
+
+
+def _lungo_la_tratta(tratta: RoutedTrunk, x: float, y: float) -> float:
+    """Dove cade un attacco lungo la spezzata, nel verso dei suoi punti.
+
+    Un organo in linea sta in un'interruzione: i suoi due attacchi sono i capi
+    di due tronconi consecutivi. Si prende il vertice piu' vicino — a meno di un
+    millimetro, o l'attacco non sta su questa tratta."""
+    percorso, trovato = 0.0, None
+    for troncone in tratta.segments:
+        for indice, punto in enumerate(troncone):
+            if indice:
+                prima = troncone[indice - 1]
+                percorso += abs(punto.x_mm - prima.x_mm) + abs(punto.y_mm - prima.y_mm)
+            scarto = abs(punto.x_mm - x) + abs(punto.y_mm - y)
+            if trovato is None or scarto < trovato[0]:
+                trovato = (scarto, percorso)
+        percorso += 1.0
+    assert trovato is not None and trovato[0] < 1.0, (tratta.connection_ids, x, y)
+    return trovato[1]
+
+
+def test_la_freccia_di_ritegne_e_circolatori_sta_nel_verso_del_flusso() -> None:
+    """**La freccia della valvola di non ritorno si mette nella direzione del
+    flusso** — il PO, 24 settembre 2026 (I-114), guardando la tavola 5: sul
+    ricircolo la ritegno VR-02 puntava contro l'acqua, perche' nel catalogo le
+    sue porte non avevano verso e il motore non sapeva girarla. Si misura su
+    tutte e cinque le tavole agli atti, ritegne e circolatori: l'attacco `a`
+    viene prima di `b` nel verso in cui l'acqua percorre la tratta. (La 3 non ne
+    ha: la pompa di calore ha il circolatore dentro, e le zone non ne hanno.)"""
+    controllati: list[str] = []
+    for impianto, _, _ in LE_TAVOLE:
+        controllati.extend(_frecce_nel_verso(impianto))
+    assert "ritegno-ricircolo" in controllati, controllati
+    assert len(controllati) >= 8, controllati
+
+
+def _frecce_nel_verso(impianto: int) -> list[str]:
+    """Gli organi con la freccia di una tavola, dopo aver asserito il loro verso."""
+    misura = esito(impianto)
+    assert misura.disegno is not None
+    foglio = misura.disegno.sheets[0]
+    modello = completato(impianto)
+    controllati: list[str] = []
+    for simbolo in foglio.symbols:
+        if simbolo.symbol_id not in SIMBOLI_CON_LA_FRECCIA:
+            continue
+        suoi = {
+            item.id
+            for item in modello.connections
+            if simbolo.component_id
+            in (item.endpoint_a.component_id, item.endpoint_b.component_id)
+        }
+        (tratta,) = [item for item in foglio.routes if suoi & set(item.connection_ids)]
+        manifesto = (
+            simboli()
+            .get(simbolo.symbol_id)
+            .manifest.rotated(simbolo.rotation_deg, simbolo.specchiato)
+        )
+        a, b = manifesto.port("a"), manifesto.port("b")
+        da_a = _lungo_la_tratta(tratta, simbolo.origin.x_mm + a.x_mm, simbolo.origin.y_mm + a.y_mm)
+        da_b = _lungo_la_tratta(tratta, simbolo.origin.x_mm + b.x_mm, simbolo.origin.y_mm + b.y_mm)
+        assert (da_a < da_b) == tratta.flow_from_start, (
+            f"impianto {impianto}: {simbolo.component_id} punta contro il flusso "
+            f"della tratta {tratta.connection_ids}"
+        )
+        controllati.append(simbolo.component_id)
+    return controllati
 
 
 def test_il_tee_del_manometro_si_gira_verso_il_manometro() -> None:

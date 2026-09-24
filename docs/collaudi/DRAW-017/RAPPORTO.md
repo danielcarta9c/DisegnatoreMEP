@@ -25,9 +25,9 @@ La misura completa, i rilievi uno per uno e quello che gli agenti hanno visto st
 
 **Quello che a guardarle salta all'occhio, e i numeri non dicono:**
 
-- **la ritegno del ricircolo, sulla 5, ha la freccia contro il flusso.** Nel catalogo la ritegno
-  sull'acqua calda non ha il verso, e il motore non sa girarla. È fra le piccole correzioni
-  candidate del pacchetto, che non si fanno senza che il PO le chieda (I-112);
+- **la ritegno del ricircolo, sulla 5, aveva la freccia contro il flusso.** Nel catalogo la
+  ritegno sull'acqua calda non aveva il verso, e il motore non sapeva girarla. **Il PO l'ha vista
+  e l'ha chiesta** (I-114): è corretta, §7;
 - **sul bollitore delle tavole 2 e 3 c'è un moncone in più**, a destra: è l'attacco del ricircolo
   che D-176 dà a ogni accumulo ACS, tappato dove il ricircolo non c'è;
 - **sfiato e scarico escono rossi** anche sul ritorno: lo dicono quattro agenti su cinque, ed era
@@ -253,12 +253,65 @@ vuole, e non ferma niente.
   `DRAW-016`: la miscelatrice con l'ingresso AF e il ricircolo sono fatti), **I-111** (D-173
   approvata e il vaso sanitario: fatto, con D-179), **I-113** (conta «centralizzata»: fatto). La
   chiusura è del PO.
-- **Una piccola correzione candidata che adesso si vede**: la ritegno del ricircolo con la freccia
-  contro il flusso (tavola 5). Si corregge dando il verso ai due attacchi della ritegno
-  sull'acqua calda nel catalogo. Non l'ho fatta: I-112 le lascia da parte finché il PO non le
-  chiede.
+- **Le sicurezze, una per macchina** (I-114, §7): la domanda è lì.
 - **Le domande che gli agenti hanno scritto per il progettista**, nel README della prova: lo
   scarico del bollitore a monte del gruppo di sicurezza con il ritegno (2, 3, 5 — ed era così
   anche nei grafi approvati il 23), il ritorno delle zone del pavimento su un raccordo a T invece
   che su un collettore (3), nessun ritegno sulle mandate della cascata (5), il posto del raccordo
   del bypass nel circuito miscelato (5).
+
+---
+
+## 7. Il 24 settembre: le correzioni del PO sulle tavole (I-114)
+
+Il PO, sul confronto delle tavole: «**le integrazioni che hai fatto per AF e ricircolo sono
+perfette**», e due correzioni — «Fai le verifiche e in caso le correzioni».
+
+### La freccia della ritegno sta nel verso del flusso — ✅ D-180
+
+> «Impianto 5 VR-02 ha la freccia del simbolo che è opposta al verso del flusso. è un errore di
+> convenzione grafica. la freccia della valvola di non ritorno si mette nella direzione del
+> flusso, quindi va specchiata. l'ho trovato anche da altre parti in passato, quindi immagino che
+> manchi prorpio la regola e/o la possibilità di specchiare quella valvola.»
+
+**La verifica.** La possibilità di specchiare c'è (D-169), e la regola c'è: dal 23 settembre il
+motore gira nel verso della tratta ogni organo che il catalogo dichiara con ingresso e uscita —
+era la ritegno su una colonna in salita, «le altre parti» che il PO ricorda. Sulle cinque tavole,
+**dieci organi con la freccia**, fra ritegne e circolatori: **nove nel verso, uno contro**, la
+ritegno del ricircolo. Era l'unica voce del catalogo disegnata con una freccia e con le porte
+«bidirezionali».
+
+**La correzione.** Il verso alla voce, nel generatore del catalogo (ingresso `a`, uscita `b`);
+i cinque grafi non cambiano. Due prove, tutte e due **rosse col catalogo di prima** e verdi dopo:
+
+```
+$ python -m pytest tests/layout/test_inline.py -k ogni_voce tests/piano/test_esecutore.py -k freccia
+test_ogni_voce_disegnata_con_una_freccia_dichiara_ingresso_e_uscita PASSED
+test_la_freccia_di_ritegne_e_circolatori_sta_nel_verso_del_flusso PASSED
+# col catalogo di prima:
+AssertionError: impianto 5: ritegno-ricircolo punta contro il flusso della tratta
+['w5-b', 'w5-a', 'w4', 'w7-b', 'w7-a']
+```
+
+La tavola 5 è ridisegnata **con lo stesso piano**: la ritegno è specchiata e punta al bollitore;
+la misura non cambia (A2, 56 tratte, 0 / 0, 1 rilievo, 8 / 9 / 5).
+
+### Le valvole di sicurezza, una per macchina — ⏳ domanda al PO
+
+> «tavola impianto 1. forse di valvole di sicurezza ne vanno 2 no ? uno per ogni macchina e senza
+> valvole di interruzione in mezzo. stesso errore nell'impianto 4.»
+
+**La verifica.** Le tavole 1 e 4 fanno quello che le regole dicono, e le regole dicono quello che
+il PO ha disposto l'8 settembre (**I-046**): «le due sicurezze sulle PDC e quella conservata
+sull'accumulo derivano da una traduzione sbagliata: il PO aveva chiesto di **spostare** la
+sicurezza, **non di moltiplicarla**». Da allora, **sotto i 35 kW**, la regola
+`safety-relief-on-the-closed-circuit` mette **una** sicurezza per dominio di protezione, sulla
+mandata comune vicino ai generatori: una sicurezza comune vale finché fra la macchina e lei «non
+c'è nulla di chiudibile **che non sia suo**» — e la valvola della macchina è sua. **Sopra i 35 kW**
+(Raccolta R) la sicurezza è già una per generatore, attaccata alla macchina e prima della sua
+valvola: è la tavola 5. Con una macchina sola (2, 3) le due regole danno lo stesso disegno.
+
+La disposizione di oggi rovescia quella dell'8 settembre sotto i 35 kW. È contenuto MEP e tocca
+al PO: **non si cambia la regola prima della sua conferma.** Se la conferma, cambiano i grafi 1 e
+4 — una sicurezza per macchina, nessuna sulla mandata comune —, e le due tavole si ricompongono
+in camera pulita, perché i piani non si correggono a mano (D-155).

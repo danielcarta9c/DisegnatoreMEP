@@ -132,11 +132,12 @@ ricircolo cambia strada e non cambia il conto.
 
 Il metro del progetto: se una tavola sembra sbagliata e i numeri dicono che va bene, si scrive.
 
-- **La ritegno del ricircolo punta contro il flusso** (5) — *visto dalla sessione*. L'acqua va
-  dall'ACS-R al bollitore, da destra a sinistra, e la freccia del simbolo punta a destra. Nel
-  catalogo la ritegno sull'acqua calda (`valve-check-dhw-hot`) ha i due attacchi senza verso, e
-  il motore non sa girarla sul flusso: è una delle piccole correzioni candidate del pacchetto,
-  che non si fanno senza che il PO le chieda (I-112).
+- **La ritegno del ricircolo puntava contro il flusso** (5) — *vista dalla sessione, e poi dal
+  PO*. L'acqua va dall'ACS-R al bollitore, da destra a sinistra, e la freccia del simbolo puntava
+  a destra: nel catalogo la ritegno sull'acqua calda (`valve-check-dhw-hot`) aveva i due attacchi
+  senza verso, e il motore non sapeva girarla. **Corretta il 24 settembre su disposizione del PO**
+  (I-114, D-180): la voce ha ingresso e uscita, e **la tavola 5 di questa cartella è ridisegnata
+  con lo stesso piano** — la ritegno è specchiata, e la misura non cambia.
 - **Sfiato e scarico escono rossi** anche quando il pezzo sta sul ritorno (1, 2, 3 e il secondo
   tentativo sul 3 — quattro agenti su cinque, e sulla 3 il volano è in serie sul ritorno). Era
   così anche il 23.
