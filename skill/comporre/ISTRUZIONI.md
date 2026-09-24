@@ -60,7 +60,7 @@ Questi sono quelli che incontri quasi sempre:
 | `zone-manifold` (collettore di zona) | 40 × 5 | `in` sinistra +2,5 · `out_1` sotto, a x +12,5 · `out_2` sotto, a x +27,5 |
 | `buffer-combined` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `dhw_out` sopra, a x +7,5 · `cold_in` sinistra +37,5 |
 | `plate-heat-exchanger` | 12,5 × 25 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` destra +5 · `secondary_in` destra +20 |
-| `dhw-cylinder` | 25 × 45 | `coil_in` sinistra **+7,5** · `coil_out` sinistra **+17,5** · `dhw_out` sopra · `cold_in` sinistra +37,5 |
+| `dhw-cylinder` | 25 × 45 | `coil_in` sinistra **+7,5** · `coil_out` sinistra **+17,5** · `dhw_out` sopra · `cold_in` sinistra +37,5 · `recirculation_in` **destra +12,5**, il ricircolo (D-176) |
 | `radiator`, `fan-coil`, `ahu-coil`, `underfloor-panel` | 20 × 15 | `in` **sinistra +2,5** · `out` **sinistra +12,5** — tutt'e due **sullo stesso lato** (D-167) |
 | `mixing-valve-thermostatic` (miscelatrice termostatica ACS) | 5 × 10 | `hot_in` sinistra +5 · `out` destra +5 · `cold_in` **sotto, a x +2,5** — è una tre vie (D-175): la posi tu, e la giri |
 
@@ -236,6 +236,12 @@ di due specie, e le due si trattano in modo diverso:
   ciascun pezzo che la usa: il gruppo di riempimento e la **miscelatrice termostatica**, che
   riceve il suo «pezzetto di AF in ingresso» (D-175) sulla terza via, `cold_in`. Il suo
   confine sta **sotto la terza via**, o dove l'hai girata, con la valvola di confine in mezzo.
+- **il ricircolo sanitario**, dove c'è, **entra dal proprio confine** — sigla «ACS-R», lo
+  stesso simbolo dell'ingresso dell'acqua fredda — e **torna nel bollitore** dal suo
+  attacco destro, `recirculation_in` (D-176). Sulla sua tratta il motore mette in fila il
+  circolatore, il ritegno e le valvole: è una tratta lunga, e vuole il suo rettilineo (B5).
+  **Si disegna verde chiaro**, ed è giusto: è il colore che il committente usa per il
+  ricircolo.
 
 ⚠ **Lo scheletro si posa pensando al corredo.** Le porte che il corredo userà dopo devono
 restare raggiungibili: l'acqua fredda del bollitore entra da **sinistra a +37,5**, e se davanti
