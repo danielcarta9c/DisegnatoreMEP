@@ -145,7 +145,9 @@ impianto-5               A2          56      0     0      1      1       8      
 cinque rosse della base tornate verdi; ma **due rosse nuove**, dichiarate e non corrette:
 
 ```
-$ python -m pytest -q          # sulla testa aebd7cd, in una copia congelata
+$ python -m pytest -q          # sul commit 2ca9ef6, la N, in una copia congelata
+45 failed, 1663 passed, 24 skipped, 12 xfailed in 612.42s
+$ python -m pytest -q          # prima, sulla testa aebd7cd
 45 failed, 1656 passed, 24 skipped, 12 xfailed in 666.12s
 $ python -m ruff check src tests examples scripts
 All checks passed!
@@ -156,9 +158,11 @@ Success: no issues found in 77 source files
 | | base | oggi |
 |---|---|---|
 | rosse | 48 | **45** |
-| passate | 1630 | 1656 |
+| passate | 1630 | 1663 |
 | `skip` / `xfail` | 24 / 12 | 24 / 12 |
 
+- **Le rosse sono le stesse 45** nelle due corse, nome per nome; le 7 passate in più sono la
+  prova della N (§7).
 - **Tornate verdi (5)**: le due dell'esecutore sulla cascata, che il piano a mano del 5 non
   instradava più da D-167, e le tre dell'anello del revisore, il cui guasto sul piano a mano del
   4 non produceva più nessuna violazione di A1.
