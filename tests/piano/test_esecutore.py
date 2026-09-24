@@ -60,6 +60,7 @@ LE_TAVOLE = (
     (1, "A3", 23),
     (2, "A3", 25),
     (4, "A3", 25),
+    (5, "A2", 56),
 )
 """Impianto, formato e tratte della tavola, come le ha misurate la sessione il
 24 settembre 2026 (`README.md` della prova)."""
