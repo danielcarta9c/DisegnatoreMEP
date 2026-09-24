@@ -38,6 +38,8 @@ FAMIGLIE: list[tuple[str, str | None, str]] = [
 NOMI_DEGLI_ATTACCHI: dict[str, str] = {
     "water_supply": "mandata",
     "water_return": "ritorno",
+    "supply": "mandata",
+    "return": "ritorno",
     "in": "ingresso",
     "out": "uscita",
     "coil_in": "serpentino integrazione — ingresso",
