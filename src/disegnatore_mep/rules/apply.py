@@ -407,7 +407,10 @@ def apply_proposals(
                 ],
             }
         )
-    return current
+    # Le sigle dei confini si danno qui, dove nascono, e non nella catena: chi
+    # applica le proposte a mano — le prove della catena lo fanno — deve
+    # ottenere le stesse sigle di `saturate`.
+    return _series_in_identifier_order(current)
 
 
 def _network_of_port(project: ProjectModel, anchor: PortRef) -> str:
@@ -628,9 +631,7 @@ def saturate(
         sul tubo (D-093). Senza questo passo l'ordine e' quello in cui le regole
         sono state valutate, cioe' l'ordine alfabetico dei loro file.
         """
-        return _series_in_identifier_order(
-            assemble(model, catalog, {item.id: item for item in rules.all()})
-        )
+        return assemble(model, catalog, {item.id: item for item in rules.all()})
 
     current = project
     applied: list[RuleProposal] = []

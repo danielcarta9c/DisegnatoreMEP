@@ -165,6 +165,42 @@ disposizioni, e si implementano come sono espresse**; qualunque convenzione graf
 **D-177**. **Gli attacchi dei simboli** si spostano e si aggiungono solo nel
 generatore, e ogni cambiamento di manifesto ne alza la versione.
 
+### Deviazioni dichiarate — 24 settembre 2026
+
+Quello che la sessione ha toccato fuori dal perimetro scritto, e perché:
+
+- **Il ramo** è `claude/kind-dijkstra-lqc2zl`, non `claude/handoff-work-package-s11fah`: è quello
+  che l'ambiente della sessione assegna.
+- **Codice fuori da `layout/`, `graphics/`, `piano/` e `rules/`:**
+  - `src/disegnatore_mep/graph/lines.py` — senza, il ricircolo restava una derivazione della
+    mandata (`ACS.01a`) e non la linea sua che `naming/` gli dà (`ACSR.01`);
+  - `src/disegnatore_mep/graph/plant.py` e `src/disegnatore_mep/catalog/schema.py` — l'attacco
+    del ricircolo è **tappato quando non serve**: senza, ogni accumulo ACS senza ricircolo
+    (impianti 2 e 3) accusava un attacco libero.
+- **Generatori e dati che contengono i pezzi cambiati:**
+  - `examples/prova/build_test_plants.py` — genera il JSON dell'impianto 5 che il perimetro
+    nomina: il file generato non si scrive a mano;
+  - `examples/layout/build_layout_fixtures.py` — genera le voci di catalogo dell'accumulo ACS e
+    della pompa di calore sanitaria: l'attacco del ricircolo nasce lì, e la prova dei generatori
+    ribalta qualunque voce scritta a mano;
+  - `examples/layout/centrale-pdc-quattro-fasce.json` e `examples/rules/centrale-pdc-completa.json`
+    — fixture di prove che contengono una miscelatrice: le porte hanno cambiato nome, e il confine
+    AF con la sua tubazione è aggiunto **in coda, senza riordinare**;
+  - `docs/prodotto/grafi-di-prova/*.md` e `docs/prodotto/GRAFO_IMPIANTO.md` — rigenerati dai
+    grafi, come le prove di collaudo pretendono; in `CONFRONTO-2026-08-07.md` il conteggio dei
+    pezzi e i punti aperti dell'impianto 5.
+- **Regole oltre la miscelatrice e il vaso:** l'ordinamento di `dhw-check-on-cold-inlet.json` e
+  `safety-group-on-the-stored-volume.json`. Senza, il vaso finiva dal lato dell'acquedotto
+  rispetto al gruppo di sicurezza sanitario — che porta dentro il non ritorno —, cioè fuori dal
+  tratto che D-178 indica.
+- **Il criterio 4bis e il punto 7** parlano di «1000 litri in su» e del volume nel grafo. Il PO,
+  il 24 (I-113, **D-179**): «Sì, conta "centralizzata"». Nel grafo va `"produzione":
+  "centralizzata"`, non un volume; le prove restano una per parte.
+- **`docs/DEFERRED.md` non è toccato**, ed è fuori perimetro: due sue voci — la miscelatrice «con
+  due porte sullo stesso fluido» (§6) e le sue «porte che dicono il falso» (§8) — sono chiuse nei
+  fatti da D-175, e lo dice il rapporto. La parte della seconda voce sul gruppo di riempimento
+  resta aperta.
+
 ## Criteri di accettazione
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
