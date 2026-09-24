@@ -127,12 +127,12 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | Indirizzo | Sigla | Che cos'e' | Su quale fluido |
 |---|---|---|---|
 | CP.01.N.01 | **CAL-01** | Caldaia a condensazione | acqua di riscaldamento |
-| CP.01.N.02 | **VI-01** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.03 | **VD-01** | Valvola deviatrice a tre vie | acqua di riscaldamento |
-| CP.01.N.04 | **VI-02** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.05 | **VR-02** | Valvola di ritegno | acqua di riscaldamento |
-| CP.01.N.06 | **RC-01** | Raccordo a T | acqua di riscaldamento |
-| CP.01.N.07 | **DER-01** | Derivazione a T | acqua di riscaldamento |
+| CP.01.N.02 | **DER-01** | Derivazione a T | acqua di riscaldamento |
+| CP.01.N.03 | **VI-01** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.01.N.04 | **VD-01** | Valvola deviatrice a tre vie | acqua di riscaldamento |
+| CP.01.N.05 | **VI-02** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.01.N.06 | **VR-02** | Valvola di ritegno | acqua di riscaldamento |
+| CP.01.N.07 | **RC-01** | Raccordo a T | acqua di riscaldamento |
 | CP.01.N.08 | **VI-03** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.01.N.09 | **VOL-01** | Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento | acqua di riscaldamento |
 | RP.01.N.01 | **VI-04** | Valvola di intercettazione | acqua di riscaldamento |
@@ -145,8 +145,10 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | RP.01a.N.01 | **VI-06** | Valvola di intercettazione | acqua di riscaldamento |
 | RP.01a.N.02 | **FIL-01** | Filtro a Y | acqua di riscaldamento |
 | RP.01a.N.03 | **PDC-01** | Pompa di calore aria-acqua | acqua di riscaldamento |
-| CP.02.N.01 | **VI-07** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.02.N.02 | **VR-01** | Valvola di ritegno | acqua di riscaldamento |
+| CP.02.N.01 | **DER-05** | Derivazione a T | acqua di riscaldamento |
+| CP.02.N.02 | **VI-07** | Valvola di intercettazione | acqua di riscaldamento |
+| CP.02.N.03 | **VR-01** | Valvola di ritegno | acqua di riscaldamento |
+| CP.02.N.01.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | RP.01.N.08 | **VI-08** | Valvola di intercettazione | acqua di riscaldamento |
 | RP.01.N.09 | **VCR-01** | Valvola commutatrice a tre vie | acqua di riscaldamento |
 | RP.01.N.10 | **VI-09** | Valvola di intercettazione | acqua di riscaldamento |
@@ -166,7 +168,7 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | RS.01.N.01 | **VI-14** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.01.N.09.1 | **SF-01** | Valvola di sfogo aria · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | CP.01.N.09.2 | **SC-01** | Attacco di scarico · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| CP.01.N.07.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.01.N.02.1 | **VS-02** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-15** | Valvola di intercettazione | acqua fredda sanitaria |
 | AF.02.N.01 | **AF-02** | Alimentazione acqua fredda | acqua fredda sanitaria |
@@ -196,15 +198,15 @@ Da **CAL-01** a **VOL-01**, circuito primario.
 
 1. **CP.01.N.01 · CAL-01** Caldaia a condensazione · la linea parte dal suo braccio 1
     - qui arriva **RP.01**, da **VOL-01**, entrando dal braccio 2
-2. **CP.01.N.02 · VI-01** Valvola di intercettazione
-3. **CP.01.N.03 · VD-01** Valvola deviatrice a tre vie
+2. **CP.01.N.02 · DER-01** Derivazione a T
+    - **CP.01.N.02.1 · VS-02** Valvola di sicurezza · pende dallo stacco
+3. **CP.01.N.03 · VI-01** Valvola di intercettazione
+4. **CP.01.N.04 · VD-01** Valvola deviatrice a tre vie
     - qui si stacca **CP.01a**, verso **SCA-01**, dal braccio 3
-4. **CP.01.N.04 · VI-02** Valvola di intercettazione
-5. **CP.01.N.05 · VR-02** Valvola di ritegno
-6. **CP.01.N.06 · RC-01** Raccordo a T
+5. **CP.01.N.05 · VI-02** Valvola di intercettazione
+6. **CP.01.N.06 · VR-02** Valvola di ritegno
+7. **CP.01.N.07 · RC-01** Raccordo a T
     - qui arriva **CP.02**, da **PDC-01**, entrando dal braccio 1
-7. **CP.01.N.07 · DER-01** Derivazione a T
-    - **CP.01.N.07.1 · VS-01** Valvola di sicurezza · pende dallo stacco
 8. **CP.01.N.08 · VI-03** Valvola di intercettazione
 9. **CP.01.N.09 · VOL-01** Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento
     - **CP.01.N.09.1 · SF-01** Valvola di sfogo aria · pende dallo stacco
@@ -216,7 +218,7 @@ Da **CAL-01** a **VOL-01**, circuito primario.
 Da **VD-01** a **SCA-01**, circuito primario.
 Si stacca da **CP.01**.
 
-1. **VD-01** Valvola deviatrice a tre vie · gia' numerato, indirizzo CP.01.N.03 · la linea parte dal suo braccio 3
+1. **VD-01** Valvola deviatrice a tre vie · gia' numerato, indirizzo CP.01.N.04 · la linea parte dal suo braccio 3
 2. **CP.01a.N.01 · VI-11** Valvola di intercettazione
 3. **CP.01a.N.02 · SCA-01** Scambiatore a piastre
     - qui arriva **AF.01**, da **AF-01**, entrando dal braccio 3
@@ -261,9 +263,11 @@ Si stacca da **RP.01**.
 Da **PDC-01** a **RC-01**, circuito primario.
 
 1. **PDC-01** Pompa di calore aria-acqua · gia' numerato, indirizzo RP.01a.N.03 · la linea parte dal suo braccio 1
-2. **CP.02.N.01 · VI-07** Valvola di intercettazione
-3. **CP.02.N.02 · VR-01** Valvola di ritegno
-4. **RC-01** Raccordo a T · **qui il giro si richiude su RC-01**, entrando dal suo braccio 1 (CP.01.N.06)
+2. **CP.02.N.01 · DER-05** Derivazione a T
+    - **CP.02.N.01.1 · VS-01** Valvola di sicurezza · pende dallo stacco
+3. **CP.02.N.02 · VI-07** Valvola di intercettazione
+4. **CP.02.N.03 · VR-01** Valvola di ritegno
+5. **RC-01** Raccordo a T · **qui il giro si richiude su RC-01**, entrando dal suo braccio 1 (CP.01.N.07)
 
 ### RP.02 — ritorno primario
 
@@ -328,11 +332,8 @@ arriva a ogni pezzo dell'impianto.
 
 **Tubazioni non lette:** nessuna. Ogni tubazione compare nella passeggiata.
 
-**Punti aperti: qui una regola si applicava e non c'era dove o con cosa
-servirla.** Non e' una dimenticanza del disegno: e' una scelta che torna al
-progettista.
-
-- **manca valvola di sicurezza** su **CAL-01** Caldaia a condensazione: servirebbe, e in catalogo non c'e' nessun pezzo che lo faccia sull'acqua di riscaldamento. Va deciso dal progettista.
+**Punti aperti:** nessuno. Per ogni accessorio che le regole hanno chiesto,
+c'era il pezzo adatto al fluido e il posto dove metterlo.
 
 ---
 

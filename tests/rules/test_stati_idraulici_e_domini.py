@@ -1,5 +1,12 @@
 """Le prove generali del blocco C di DRAW-006, scritte prima del codice.
 
+**Aggiornate il 24 settembre 2026 per D-182** (la strada A, I-116): ogni
+generatore del circuito chiuso ha la propria sicurezza, attaccata all'uscita e
+prima di ogni organo, e non si chiede piu' il bordo macchina. I punti 4 e 6 qui
+sotto sono la storia di I-046; restano provati gli stati idraulici del catalogo
+(1, 2) e la capacita' del motore di dire chi una multivia puo' separare da una
+sicurezza (3), su un impianto costruito a mano con una sicurezza sola.
+
 Il Work Package e la traduzione PM del 2026-09-09:
 
 1. il catalogo dichiara gli **stati idraulici ammessi** di un componente
@@ -261,10 +268,9 @@ def deviatrice_fra_due_macchine(machine: str) -> ProjectModel:
     )
 
 
-SAFETY_RULES = ("safety-relief-on-the-closed-circuit", "safety-relief-on-an-isolable-generator")
-"""Le due regole della sicurezza: quella del circuito e quella del generatore
-isolabile. Le altre regole di rete hanno una cardinalita' diversa e un'altra
-prova: qui si guarda cosa succede alla protezione."""
+SAFETY_RULES = ("safety-relief-where-heat-enters-the-water",)
+"""La regola della sicurezza: una per generatore (D-182). Fino al 24 settembre
+2026 erano due — quella del circuito e quella del generatore isolabile (I-046)."""
 
 
 def completato(
@@ -432,16 +438,44 @@ def test_la_nomenclatura_attraversa_chi_dichiara_gli_stati() -> None:
 # ---------------------------------------------------------------------------
 
 
+def _con_una_sicurezza_comune(project: ProjectModel) -> ProjectModel:
+    """L'impianto con **una** sicurezza sulla mandata comune, messa a mano: un
+    raccordo a stacco fra la confluenza e il volano, e la valvola sul suo stacco.
+
+    Nessuna regola la mette piu' (D-182). Serve a provare cio' che il motore sa
+    dire da se': chi una multivia puo' separare da una sicurezza. Si completa con
+    tutte le regole tranne quella della sicurezza, perche' gli organi che separano
+    sono quelli che le altre regole posano."""
+    pipes = [item for item in project.connections if item.id != "p4"]
+    return project.model_copy(
+        update={
+            "components": [
+                *project.components,
+                ComponentInstance(id="stacco", definition_id="tee-branch"),
+                ComponentInstance(id="sicurezza", definition_id="valve-safety"),
+            ],
+            "connections": [
+                *pipes,
+                _pipe("p4a", "rete", ("unione", "b"), ("stacco", "a")),
+                _pipe("p4b", "rete", ("stacco", "b"), ("volano", "primary_in")),
+                _pipe("p4c", "rete", ("stacco", "branch"), ("sicurezza", "a")),
+            ],
+        }
+    )
+
+
 def test_un_generatore_e_protetto_solo_in_ogni_stato_ammesso() -> None:
     """Chi la deviatrice puo' separare dalla sicurezza e' un dominio a se'.
 
-    La macchina sul circuito tecnico raggiunge la sicurezza comune comunque
-    stia la deviatrice; quella dietro la deviatrice la raggiunge in uno stato
-    solo, e in un solo stato non basta.
+    Con una sicurezza sola sulla mandata comune, la macchina sul circuito
+    tecnico la raggiunge comunque stia la deviatrice; quella dietro la
+    deviatrice la raggiunge in uno stato solo, e in un solo stato non basta.
     """
-    model, _ = completato(deviatrice_fra_due_macchine(GENERIC))
+    senza = RuleRegistry(rules=tuple(item for item in rules().all() if item.id not in SAFETY_RULES))
+    project = _con_una_sicurezza_comune(deviatrice_fra_due_macchine(GENERIC))
+    model, _, _ = saturate(project, catalog(), senza)
     context = RuleContext.build(model, catalog())
-    assert pezzi_con(model, SAFETY), "nessuna sicurezza posata: la prova non direbbe nulla"
+    assert pezzi_con(model, SAFETY) == ["sicurezza"]
     assert not context.cut_off_from("sul-circuito", SAFETY, "rete"), (
         "la macchina sul circuito tecnico risulta separata dalla sicurezza "
         "comune: la deviatrice non sta fra lei e il circuito"
@@ -450,6 +484,18 @@ def test_un_generatore_e_protetto_solo_in_ogni_stato_ammesso() -> None:
         "la macchina dietro la deviatrice risulta protetta: in uno degli stati "
         "ammessi la deviatrice la manda dove la sicurezza non arriva"
     )
+
+
+def test_con_d182_nessun_generatore_e_separato_dalla_propria_sicurezza() -> None:
+    """Dopo D-182 la domanda sopra non si pone piu' sugli impianti completati:
+    ogni generatore ha la sua sicurezza prima di ogni organo, anche quello che
+    sta dietro la deviatrice."""
+    model, gaps = completato(deviatrice_fra_due_macchine(GENERIC))
+    context = RuleContext.build(model, catalog())
+    assert len(pezzi_con(model, SAFETY)) == 2
+    for generator in ("sul-circuito", "dietro-la-deviatrice"):
+        assert not context.cut_off_from(generator, SAFETY, "rete"), generator
+    assert not punti(gaps, GapReason.ON_BOARD_UNKNOWN)
 
 
 def test_senza_deviatrice_le_due_macchine_sono_un_dominio_solo() -> None:
@@ -466,12 +512,13 @@ def test_senza_deviatrice_le_due_macchine_sono_un_dominio_solo() -> None:
 
 
 @pytest.mark.parametrize("quante", [1, 2, 3])
-def test_un_dominio_una_sicurezza_qualunque_sia_il_numero_delle_macchine(
+def test_una_sicurezza_per_generatore_qualunque_sia_il_numero_delle_macchine(
     quante: int,
 ) -> None:
-    """La cardinalita' non si deduce dal numero dei generatori."""
+    """D-182: tante sicurezze quanti generatori — fino al 24 settembre era una
+    per dominio, qualunque fosse il numero delle macchine (I-046)."""
     model, gaps = completato(macchine_in_parallelo(GENERIC, quante))
-    assert len(pezzi_con(model, SAFETY)) == 1
+    assert len(pezzi_con(model, SAFETY)) == quante
     assert not punti(gaps, GapReason.NO_COMMON_RUN)
 
 
@@ -517,19 +564,18 @@ def domande_di_bordo(gaps: list[RuleGap]) -> list[str]:
     return punti(gaps, GapReason.ON_BOARD_UNKNOWN)
 
 
-def test_il_generatore_isolabile_con_dato_ignoto_apre_una_domanda() -> None:
-    """Ignoto non e' assente: si chiede, non si disegna."""
+def test_il_generatore_dietro_la_deviatrice_riceve_la_sua_senza_domande() -> None:
+    """D-182: il dato ignoto non si chiede piu' — la sicurezza si mette comunque.
+    Fino al 24 settembre era una domanda al progettista (I-046)."""
     model, gaps = completato(deviatrice_fra_due_macchine(GENERIC))
-    assert domande_di_bordo(gaps) == [
-        f"{GapReason.ON_BOARD_UNKNOWN.value}:dietro-la-deviatrice"
-    ], f"le domande aperte sono {domande_di_bordo(gaps)}"
-    assert len(pezzi_con(model, SAFETY)) == 1, (
-        "e' comparsa una sicurezza in piu': su un dato ignoto non si disegna niente"
-    )
+    assert domande_di_bordo(gaps) == []
+    assert len(pezzi_con(model, SAFETY)) == 2
 
 
-def test_il_generatore_isolabile_con_sicurezza_a_bordo_non_riceve_niente() -> None:
-    """Il dato c'e' e dice «presente»: nessun pezzo, nessuna domanda."""
+def test_il_generatore_con_la_sicurezza_a_bordo_riceve_la_sua_lo_stesso() -> None:
+    """D-182: la sicurezza del generatore si mette anche quando il catalogo dice
+    che la macchina ne porta una a bordo. Fino al 24 settembre il dato «presente»
+    bastava (I-046)."""
     project = deviatrice_fra_due_macchine(GENERIC)
     project = project.model_copy(
         update={
@@ -543,7 +589,7 @@ def test_il_generatore_isolabile_con_sicurezza_a_bordo_non_riceve_niente() -> No
     )
     model, gaps = completato(project)
     assert domande_di_bordo(gaps) == []
-    assert len(pezzi_con(model, SAFETY)) == 1
+    assert len(pezzi_con(model, SAFETY)) == 2
 
 
 def test_il_generatore_isolabile_senza_sicurezza_a_bordo_ne_riceve_una_propria() -> None:
@@ -575,8 +621,9 @@ def test_il_generatore_isolabile_senza_sicurezza_a_bordo_ne_riceve_una_propria()
 
 
 def test_l_impianto_4_non_produce_un_no_common_run_globale() -> None:
-    """La fixture dell'ibrido: nessun tratto comune negato, nessuna protezione
-    inventata, e solo le domande dovute al dato realmente ignoto.
+    """La fixture dell'ibrido: nessun tratto comune negato, nessun punto aperto,
+    e dopo D-182 ogni generatore protetto dalla propria sicurezza — anche la
+    caldaia, che la deviatrice manda allo scambiatore.
 
     E' l'unica prova di questo file che legge una fixture: verifica il
     comportamento e non decide nulla. Non produce artefatti grafici.
@@ -584,27 +631,13 @@ def test_l_impianto_4_non_produce_un_no_common_run_globale() -> None:
     registry = ComponentRegistry.from_directory(CATALOG, symbols=symbols())
     model, _, gaps = saturate(load_project(IBRIDO), registry, rules())
     reasons = sorted(f"{item.reason.value}:{item.anchor.component_id}" for item in gaps)
-    assert not [
-        item for item in reasons if item.startswith(GapReason.NO_COMMON_RUN.value)
-    ], f"la rete dell'ibrido e' ancora senza tratto comune: {reasons}"
-    assert all(
-        item.startswith(GapReason.ON_BOARD_UNKNOWN.value) for item in reasons
-    ), f"restano punti aperti che non sono domande di catalogo: {reasons}"
+    assert not reasons, f"restano punti aperti: {reasons}"
     context = RuleContext.build(model, registry)
     generatori = pezzi_con(model, HEAT_GENERATION, registry)
     assert len(generatori) == 2
-    protetti = [
-        item for item in generatori if not context.cut_off_from(item, SAFETY, "primario")
-    ]
-    assert len(protetti) == 1, (
-        f"i generatori protetti dal dominio comune sono {protetti}: la macchina "
-        f"sul circuito tecnico conserva la protezione del proprio dominio, "
-        f"l'altra e' dietro la deviatrice"
-    )
-    assert len(reasons) == 1, (
-        f"le domande aperte sono {reasons}: resta soltanto quella del generatore "
-        f"che la deviatrice puo' isolare e il cui bordo il catalogo non dichiara"
-    )
+    for item in generatori:
+        assert not context.cut_off_from(item, SAFETY, "primario"), item
+    assert len(pezzi_con(model, SAFETY, registry)) == 2
 
 
 def test_gli_stati_sono_un_dato_e_non_una_riga_di_programma() -> None:

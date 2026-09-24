@@ -449,6 +449,13 @@ class SatisfactionCriterion(StrictModel):
     """Come si riconosce che quello che la regola propone c'e' gia' (D-070)."""
 
     scope: SatisfactionScope
+    on_board_counts: bool = True
+    """Se cio' che l'ancoraggio porta a bordo soddisfa la regola.
+
+    Vale quasi sempre (D-106, criterio 4): il filtro integrato della macchina
+    **e'** il filtro di quella macchina. Non vale dove il PO ha disposto che il
+    pezzo ci sia comunque — la sicurezza di ogni generatore, che si mette anche
+    quando la macchina ne porta una a bordo (D-182)."""
 
 
 class RuleDefinition(StrictModel):

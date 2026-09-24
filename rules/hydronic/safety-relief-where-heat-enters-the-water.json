@@ -17,9 +17,10 @@
     "outlet_port": "b"
   },
   "satisfied_by": {
-    "scope": "on_the_attachment"
+    "scope": "on_the_attachment",
+    "on_board_counts": false
   },
-  "rationale": "Dove il calore entra nell'acqua la pressione puo' salire piu' in fretta di quanto il circuito riesca ad assorbire, e serve una via che si apra da sola prima del limite ammesso. Ogni generatore del circuito chiuso ha la sua, a qualunque potenza: sulla tubazione che esce, attaccata alla macchina, e fra lei e cio' che protegge non c'e' nulla che si possa chiudere — nemmeno i rubinetti della macchina, che vengono dopo di lei. Si disegna anche quando la macchina ne porta una a bordo, e non ce n'e' una comune sulla mandata (D-182). La soglia dei 35 kW non cambia ne' quante sicurezze ci vanno ne' dove: decide il regime INAIL dei generatori a combustione. La riserva sanitaria che si scalda da se' ha il proprio gruppo sull'alimentazione fredda: e' un'altra regola.",
+  "rationale": "Dove il calore entra nell'acqua la pressione puo' salire piu' in fretta di quanto il circuito riesca ad assorbire, e serve una via che si apra da sola prima del limite ammesso. Ogni generatore del circuito chiuso ha la sua, a qualunque potenza: sulla tubazione che esce, attaccata alla macchina, e fra lei e cio' che protegge non c'e' nulla che si possa chiudere — nemmeno i rubinetti della macchina, che vengono dopo di lei. Si mette anche quando la macchina ne porta una a bordo, e non ce n'e' una comune sulla mandata (D-182). La soglia dei 35 kW non cambia ne' quante sicurezze ci vanno ne' dove: decide il regime INAIL dei generatori a combustione. La riserva sanitaria che si scalda da se' ha il proprio gruppo sull'alimentazione fredda: e' un'altra regola.",
   "source": "UNI EN 12828:2003, § 4.6.2.2.1: ogni generatore e' servito da almeno una valvola di sicurezza, e fra il generatore e la valvola non c'e' nessun organo di intercettazione — letta il 24 settembre 2026 nella ricerca SRC-029; l'edizione vigente, 2014, non e' stata letta (SRC-028); Raccolta R ed. 2009, R.3.B.2.4–2.5, per i generatori a combustione sopra i 35 kW (SRC-012); Caleffi, valvole di sicurezza dp 01253/26, p. 5: sulla sommita' del generatore o sulla mandata il piu' vicino possibile, con tubazione di collegamento non intercettabile (SRC-027); disposizione del PO del 2026-09-24, la strada A (I-116, D-182)",
   "ordering": {
     "before": [
