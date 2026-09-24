@@ -58,6 +58,7 @@ NAMING = ROOT / "naming"
 
 LE_TAVOLE = (
     (1, "A3", 23),
+    (2, "A3", 25),
     (4, "A3", 25),
 )
 """Impianto, formato e tratte della tavola, come le ha misurate la sessione il
