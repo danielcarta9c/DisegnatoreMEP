@@ -1,6 +1,6 @@
 {
   "id": "dhw-heat-pump",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "name": "Boiler in pompa di calore",
   "functions": [
     "heat_generation",
@@ -51,7 +51,6 @@
     }
   ],
   "sources": [
-    "CONV-FOUNDATION",
-    "D-176: il ricircolo, dopo il circolatore, torna nell'accumulo ACS (il PO, 23 settembre 2026)"
+    "CONV-FOUNDATION"
   ]
 }

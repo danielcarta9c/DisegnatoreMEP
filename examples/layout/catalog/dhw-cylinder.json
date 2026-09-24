@@ -1,6 +1,6 @@
 {
   "id": "dhw-cylinder",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "name": "Bollitore ACS",
   "functions": [
     "dhw_storage"
@@ -64,7 +64,6 @@
     }
   ],
   "sources": [
-    "CONV-FOUNDATION",
-    "D-176: il ricircolo, dopo il circolatore, torna nell'accumulo ACS (il PO, 23 settembre 2026)"
+    "CONV-FOUNDATION"
   ]
 }

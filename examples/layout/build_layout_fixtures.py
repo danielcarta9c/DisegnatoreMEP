@@ -83,6 +83,19 @@ def branch_port(medium: str = HEATING) -> dict[str, Any]:
     }
 
 
+def recirculation_port() -> dict[str, Any]:
+    """L'attacco del ricircolo di un accumulo di acqua calda sanitaria (**D-176**).
+
+    Il PO, il 23 settembre 2026: «ACS-ritorno dopo il Circolatore va
+    nell'accumulo ACS (se ho accumulo) altrimenti idraulicamente e termicamente
+    non ha senso». E' un attacco del **flusso** — il ricircolo ci entra come una
+    linea vera — e l'accumulo lo ha anche dove l'impianto il ricircolo non lo
+    ha: li' e' **tappato**, e libero non e' un difetto."""
+    port = hydronic_port("recirculation_in", "in", DHW, required=False)
+    port["plugged_when_unused"] = True
+    return port
+
+
 def hydronic_port(
     port_id: str,
     flow: str,
@@ -418,6 +431,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("cold_in", "in", COLD),
             hydronic_port("dhw_out", "out", DHW),
             service_port("probe", "temperature_measurement", DHW),
+            recirculation_port(),
         ],
         stored_medium=DHW,
         fills_from="cold_in",
@@ -541,6 +555,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             # sicurezza e vaso li preveda l'installazione, sulla tubazione
             # (SRC-018). Lo si svuota con una derivazione.
             service_port("probe", "temperature_measurement", DHW),
+            recirculation_port(),
         ],
         stored_medium=DHW,
         # La riserva si riempie dall'ingresso dell'acqua fredda (SRC-018,
