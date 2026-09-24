@@ -28,6 +28,9 @@ La misura completa, i rilievi uno per uno e quello che gli agenti hanno visto st
 - **la ritegno del ricircolo, sulla 5, aveva la freccia contro il flusso.** Nel catalogo la
   ritegno sull'acqua calda non aveva il verso, e il motore non sapeva girarla. **Il PO l'ha vista
   e l'ha chiesta** (I-114): è corretta, §7;
+- **la ritegno era disegnata come una Z.** Il PO: «invece è come una "N"» (I-115). Adesso è la N
+  di UNI 9511, §7: le tavole 2, 3, 4 e 5 sono ridisegnate **con gli stessi piani**, e la misura
+  non cambia;
 - **sul bollitore delle tavole 2 e 3 c'è un moncone in più**, a destra: è l'attacco del ricircolo
   che D-176 dà a ogni accumulo ACS, tappato dove il ricircolo non c'è;
 - **sfiato e scarico escono rossi** anche sul ritorno: lo dicono quattro agenti su cinque, ed era
@@ -238,7 +241,9 @@ Sono scritte nel pacchetto, alla sezione **«Deviazioni dichiarate — 24 settem
 breve: il ramo è quello che l'ambiente assegna; tre file di codice fuori da `layout/`, `piano/` e
 `rules/` (`graph/lines.py`, `graph/plant.py`, `catalog/schema.py`); i generatori e le fixture che
 contengono i pezzi cambiati; l'ordinamento di due regole dell'acqua fredda del bollitore; il
-criterio 4bis letto come il PO l'ha risolto (D-179); `docs/DEFERRED.md` non toccato.
+criterio 4bis letto come il PO l'ha risolto (D-179); due convenzioni grafiche oltre D-176 e
+D-177, disposte dal PO sulle tavole di questo pacchetto — la freccia nel verso del flusso
+(D-180) e il segno della ritegno (D-181); `docs/DEFERRED.md` non toccato.
 
 ---
 
@@ -253,7 +258,9 @@ vuole, e non ferma niente.
   `DRAW-016`: la miscelatrice con l'ingresso AF e il ricircolo sono fatti), **I-111** (D-173
   approvata e il vaso sanitario: fatto, con D-179), **I-113** (conta «centralizzata»: fatto). La
   chiusura è del PO.
-- **Le sicurezze, una per macchina** (I-114, §7): la domanda è lì.
+- **Le sicurezze, una per macchina** (I-114, §7): la domanda è lì, con quello che la ricerca ha
+  trovato e le quattro strade.
+- **La ritegno a N** (I-115, §7): da guardare sulle tavole.
 - **Le domande che gli agenti hanno scritto per il progettista**, nel README della prova: lo
   scarico del bollitore a monte del gruppo di sicurezza con il ritegno (2, 3, 5 — ed era così
   anche nei grafi approvati il 23), il ritorno delle zone del pavimento su un raccordo a T invece
@@ -315,3 +322,80 @@ La disposizione di oggi rovescia quella dell'8 settembre sotto i 35 kW. È conte
 al PO: **non si cambia la regola prima della sua conferma.** Se la conferma, cambiano i grafi 1 e
 4 — una sicurezza per macchina, nessuna sulla mandata comune —, e le due tavole si ricompongono
 in camera pulita, perché i piani non si correggono a mano (D-155).
+
+**La ricerca** (I-115). Il PO, subito dopo: «sulle valvole di sicurezza non sono sicuro … facciamo
+una ricerca normativa e di best practice dei produttori. Se c'è davvero questa distinzione o meno».
+Il rapporto è in
+[`docs/fonti/ricerche/reports/`](../../fonti/ricerche/reports/Valvole%20di%20sicurezza%20e%20simbolo%20ritegno.md),
+con le note e i ritagli delle fonti accanto. In breve:
+
+- **la distinzione dei 35 kW esiste, ma non è quella.** Accende il regime INAIL della Raccolta R —
+  denuncia, dispositivi qualificati — e **solo per i generatori a combustione**: le pompe di
+  calore elettriche non ci entrano, e non si sommano alla caldaia;
+- **il principio è lo stesso sopra e sotto**: ogni generatore è servito da una valvola vicina,
+  **dalla quale non può essere separato**. EN 12828:2003, § 4.6.2.2.1, letto: «There shall be no
+  isolation valve between the heat generator and the safety valve(s)»; Raccolta R, R.3.B.2.5:
+  il collegamento «non deve essere intercettabile». Il testo vigente di EN 12828, l'edizione
+  2014, **non è stato letto**: è a pagamento, e fonti tedesche secondarie dicono che la frase è
+  rimasta;
+- **i costruttori** mettono la valvola dentro la macchina — le monoblocco e le murali esaminate
+  — e i rubinetti fuori; nessuno la sostituisce con una comune. I kit di cascata delle caldaie
+  aggiungono la valvola comune e isolano ogni caldaia con una **tre vie** verso l'atmosfera.
+
+Il punto d'attrito con la regola di oggi è uno solo: **i rubinetti della macchina**, che la regola
+ammette fra la macchina e la sicurezza comune («nulla di chiudibile che non sia suo»). I testi
+degli impianti 1 e 4 non nominano i modelli, quindi non si sa se le macchine la valvola la portano
+a bordo. Le strade:
+
+| | negli impianti 1 e 4 | poggia su |
+|---|---|---|
+| **A** | una valvola per macchina, sull'uscita, prima dei suoi rubinetti — la lettera di I-114 | EN 12828:2003; la Raccolta R per analogia; Caleffi; lo schema Vaillant per monoblocco |
+| **B** | la comune di oggi, più la valvola propria di ogni macchina: a bordo se il catalogo lo dice, altrimenti disegnata; se il dato manca, una domanda | EN 12828:2003, che ammette la valvola del costruttore; Daikin, Baxi, Mitsubishi |
+| **C** | la sola comune, con una tre vie verso l'atmosfera al posto del rubinetto di ogni macchina | la prassi delle cascate di caldaie; nessun esempio trovato per le pompe di calore |
+| **D** | come oggi | nessuna fonte, se le macchine non hanno la valvola a bordo |
+
+Un rilievo a margine, che oggi non chiede niente: per decidere il regime il progetto somma anche
+le pompe di calore (D-108) — l'impianto 4 fa 34 kW —, mentre per la Raccolta R conta la sola
+caldaia; sul 4 il risultato non cambia.
+
+### La ritegno è una N — ✅ D-181 (I-115)
+
+> «il simbolo giusto è cosi' oppure la freccia si mette sopra. invece noi lo stiamo disegnando
+> come una "Z" invece è come una "N"»
+
+**La verifica.** La tavola di UNI 9511 pubblicata da Oppo (SRC-016), misurata sui vettori: due
+barre **di traverso al tubo**, la diagonale dall'alto della prima al basso della seconda, il tubo
+nel **punto medio** delle barre, la freccia **sopra**, lunga quanto il segno. La z compare solo sui
+tubi verticali (Caleffi, *Idraulica* 25): è la N ruotata con il tubo. Nessuna fonte vista ha la z
+di D-122 sul tubo orizzontale — e i monconi di quella z non toccavano il segno.
+
+**La correzione.** Nel generatore dei simboli: la N con la freccia **sopra** — delle due forme che
+il PO ammette, la sola che la norma disegna —, e la stessa N dentro il gruppo di sicurezza
+sanitario (`valve-check` 4.0.0, `dhw-safety-group` 2.0.0). Il segno è stato guardato disegnato,
+da solo, specchiato, ruotato e sulle tavole, prima di scriverlo qui. Una prova, rossa col segno di
+prima:
+
+```
+$ python -m pytest tests/graphics/test_la_ritegno_e_una_n.py
+7 passed
+# col segno di prima:
+AssertionError: valve-check: le barre di traverso al tubo sono 0, non due
+AssertionError: dhw-safety-group: le barre di traverso al tubo sono 0, non due
+```
+
+**Le tavole** 2, 3, 4 e 5 — e il primo tentativo sul 3 — sono ridisegnate **con gli stessi piani**;
+la 1 non ha ritegni, e non cambia. La misura è la stessa, riga per riga:
+
+```
+$ python docs/collaudi/DRAW-017/misura-tavole.py impianto-N=grafo-completo-N.json:piano-completo-N.json …
+tavola                   formato tratte cedute blocc regole avvisi piegate pieghe incroci
+impianto-1               A3          23      0     0      1      1       3      4       1
+impianto-2               A3          25      0     0      1      1       4      5       1
+impianto-3               A3          24      0     0      1      1       3      3       2
+impianto-4               A3          25      0     0      2      2       5      6       2
+impianto-5               A2          56      0     0      1      1       8      9       5
+3-primo-tentativo        A3          24      0     0      2      2       3      4       1
+```
+
+Confrontate a pixel con quelle di prima, le tavole cambiano soltanto nei punti dei ritegni, dei
+gruppi di sicurezza e della legenda.

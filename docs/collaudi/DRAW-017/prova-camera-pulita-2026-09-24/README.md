@@ -138,6 +138,11 @@ Il metro del progetto: se una tavola sembra sbagliata e i numeri dicono che va b
   senza verso, e il motore non sapeva girarla. **Corretta il 24 settembre su disposizione del PO**
   (I-114, D-180): la voce ha ingresso e uscita, e **la tavola 5 di questa cartella è ridisegnata
   con lo stesso piano** — la ritegno è specchiata, e la misura non cambia.
+- **La ritegno era disegnata come una Z** (2, 3, 4, 5, anche dentro il gruppo di sicurezza
+  sanitario) — *visto dal PO*: «invece è come una "N"». **Corretta il 24 settembre** (I-115,
+  D-181): è la N di UNI 9511, con la freccia sopra, e **le tavole 2, 3, 4 e 5 e il primo tentativo
+  sul 3 sono ridisegnate con gli stessi piani**; la misura non cambia, e a pixel cambiano soltanto
+  i ritegni, i gruppi e la legenda. La 1 non ha ritegni.
 - **Sfiato e scarico escono rossi** anche quando il pezzo sta sul ritorno (1, 2, 3 e il secondo
   tentativo sul 3 — quattro agenti su cinque, e sulla 3 il volano è in serie sul ritorno). Era
   così anche il 23.
