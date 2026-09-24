@@ -30,7 +30,7 @@ La misura completa, i rilievi uno per uno e quello che gli agenti hanno visto st
   candidate del pacchetto, che non si fanno senza che il PO le chieda (I-112);
 - **sul bollitore delle tavole 2 e 3 c'è un moncone in più**, a destra: è l'attacco del ricircolo
   che D-176 dà a ogni accumulo ACS, tappato dove il ricircolo non c'è;
-- **sfiato e scarico escono rossi** anche sul ritorno: lo dicono tre agenti su quattro, ed era
+- **sfiato e scarico escono rossi** anche sul ritorno: lo dicono quattro agenti su cinque, ed era
   così anche il 23.
 
 ---

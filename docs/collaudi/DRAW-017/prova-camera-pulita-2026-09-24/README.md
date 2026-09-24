@@ -137,8 +137,9 @@ Il metro del progetto: se una tavola sembra sbagliata e i numeri dicono che va b
   catalogo la ritegno sull'acqua calda (`valve-check-dhw-hot`) ha i due attacchi senza verso, e
   il motore non sa girarla sul flusso: è una delle piccole correzioni candidate del pacchetto,
   che non si fanno senza che il PO le chieda (I-112).
-- **Sfiato e scarico escono rossi** anche quando il pezzo sta sul ritorno (1, 2, 3 — tre agenti
-  su quattro, e sulla 3 il volano è in serie sul ritorno). Era così anche il 23.
+- **Sfiato e scarico escono rossi** anche quando il pezzo sta sul ritorno (1, 2, 3 e il secondo
+  tentativo sul 3 — quattro agenti su cinque, e sulla 3 il volano è in serie sul ritorno). Era
+  così anche il 23.
 - **Il motore mette in fila gli organi in linea da un capo della tratta che il piano non
   sceglie** (2, 3, 5): il gruppo di sicurezza sanitario lontano dal bollitore che protegge, la
   valvola d'uscita del bollitore accanto alla miscelatrice, la valvola della pompa attaccata al
