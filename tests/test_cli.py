@@ -131,7 +131,7 @@ def test_rules_on_a_complete_model_says_so_and_opens_no_point(
 
 
 PROVA = ROOT / "examples" / "prova"
-COLLAUDO = ROOT / "docs" / "collaudi" / "DRAW-017" / "prova-camera-pulita-2026-09-24"
+COLLAUDO = ROOT / "docs" / "collaudi" / "DRAW-018" / "prova-camera-pulita-2026-09-24"
 IMPIANTO_1 = "prova-1-due-pdc-accumulo-combinato.json"
 
 
@@ -191,7 +191,7 @@ def test_piano_compone_la_tavola_dell_impianto_1(
     deduzione ha girato — il tee del manometro compreso, che e' la misura del
     20 settembre.
 
-    Il piano e' quello del pianificatore, agli atti di `DRAW-017`; il grafo e'
+    Il piano e' quello del pianificatore, agli atti di `DRAW-018`; il grafo e'
     quello che `rules --apply-all` scrive **oggi**, e la prova pretende che
     sia ancora quello su cui il piano e' nato: se le regole cambiano l'impianto
     1, il piano va ricomposto, e questa prova lo dice.
@@ -215,7 +215,9 @@ def test_piano_compone_la_tavola_dell_impianto_1(
     assert len(tavole) == 1
     assert "<svg" in tavole[0].read_text(encoding="utf-8")
     geometria = json.loads((tmp_path / "uscita" / "geometria.json").read_text("utf-8"))
-    assert len(geometria["sheets"][0]["routes"]) == 23
+    # 25 da D-182: le due sicurezze, una per pompa di calore, portano ciascuna
+    # la tratta del proprio stacco.
+    assert len(geometria["sheets"][0]["routes"]) == 25
     assert not [r for r in geometria["sheets"][0]["routes"] if r["unresolved"]]
 
 
