@@ -1,0 +1,50 @@
+{
+  "formato": "A3",
+  "note": [
+    "Scheletro (§2.2): una sola macchina di generazione per il riscaldamento. PdC all'origine: mandata a y=5, ritorno a y=20. Le due autostrade sono quelle due quote, e nessun pezzo le lascia (B1, B8).",
+    "Mandata: dalla PdC al collettore, dritta a y=5. Il collettore ha l'ingresso a +2,5, quindi sta a y=2,5 (D-159, quota della porta).",
+    "Ritorno: raccordo delle zone -> volano -> PdC, dritto a y=20. Il volano a due attacchi ha a e b tutt'e due a +5, quindi sta 15 mm sotto la PdC (y=15, §2.1). E' specchiato (D-169): a (ingresso) guarda il ritorno che arriva da destra, b (uscita) guarda la PdC. Senza lo specchio il ritorno lo attraverserebbe contro verso.",
+    "Tre fasce (A1): PdC e boiler in pompa di calore (entrambi generatori) nella colonna di sinistra, volano al centro, le due zone radianti a destra. Collettore e raccordi non hanno fascia: stanno dove le autostrade li vogliono.",
+    "Pettine delle zone (B12): la zona notte (alimentata da out_2, a destra) sta in cima con l'uscita a +12,5 = y 20, cosi' il suo ritorno entra dritto nel raccordo sulla quota del ritorno; la zona giorno sta sotto (10 mm di corsia) e il suo ritorno sale per la colonna nella derivazione del raccordo. Colonna di ritorno (x=175) a sinistra della discesa di out_1 (x=190), 15 mm fra loro. La discesa di out_2 e' di 2,5 mm: e' la conseguenza della zona notte alla quota del ritorno, non una scelta.",
+    "Misurato sull'ordine del pettine (B3: prova gli ordini, tieni quello con meno sormonti): questa posa 3 pieghe e 2 incroci; raccordo fra le due discese 3 pieghe, 3 incroci e PARALLEL_RUNS_WITHOUT_A_FREE_LANE; zona giorno in cima 5 pieghe, 3 incroci e lo stesso rilievo. Tengo questa.",
+    "I due incroci che restano sono imposti. (1) Il ritorno della zona notte scavalca la discesa di out_1: out_2 sta a destra di out_1, e l'anello PdC -> collettore -> out_1 -> zona giorno -> raccordo -> volano -> PdC lascia fuori la zona notte e dentro la porta libera del raccordo. (2) Lo sfiato del volano scavalca la mandata: la mandata passa 10 mm sopra il tetto del volano, e sfiato (10 mm) piu' stacco minimo (10 mm) non ci stanno.",
+    "Lo sfiato sta quindi sopra la mandata, con la porta 5 mm oltre la linea: lo stacco e' 15 mm e il rilievo SERVICE_STUB_LONGER_THAN_ITS_MINIMUM (5 mm) resta e non si cura, perche' il minimo di 10 mm metterebbe lo sfiato sulla mandata. Misurato l'altro modo di liberarlo, il volano abbassato fuori dal ritorno: 8 pieghe, due HIGHWAY_IS_NOT_STRAIGHT e tre PARALLEL_RUNS_WITHOUT_A_FREE_LANE. Un incrocio costa meno.",
+    "Le 3 pieghe sono tutte imposte (B1): out_1 -> zona giorno e out_2 -> zona notte (porta verticale contro porta orizzontale, una L ciascuna) e ritorno della zona giorno -> derivazione del raccordo (idem). Nessun HIGHWAY_IS_NOT_STRAIGHT.",
+    "Corredo del ritorno (§4bis): i tre raccordi di vaso, riempimento e manometro stanno sulla quota del ritorno (B8), nell'ordine del grafo, a 15 mm l'uno dall'altro, e i loro appesi pendono sotto: sopra c'e' la mandata a 15 mm e non c'e' posto. Gli appesi restano a 10 mm fra loro (D-062). Il gruppo di riempimento e' girato di 180 (b sale al raccordo, a scende all'AF-02, che gli sta addosso). Organi in linea lasciati al motore; la tratta fra raccordo del vaso e PdC ha 35 mm per defangatore, valvola e filtro.",
+    "Mandata: la sicurezza sta sul raccordo a 10 mm dalla PdC e pende sopra (sotto c'e' il ritorno), con lo stacco minimo (A4).",
+    "ACS (sottosistema separato): il boiler in pompa di calore sta sotto la PdC, stessa colonna e centrato (A1). La sua uscita e' in alto, quindi la catena calda e' una colonna verticale dritta: valvola, miscelatrice, valvola, confine ACS-01 in cima (A4). La miscelatrice e' posata dove le tre linee si incontrano (D-175, D-168) con specchio + 90: calda da sotto, uscita in alto, fredda da sinistra. L'AF-03 le sta addosso sulla terza via, dalla stessa parte dell'acquedotto: l'acqua fredda arriva tutta da sinistra.",
+    "L'acqua fredda del boiler entra a sinistra a +37,5: acquedotto AF-01 e raccordo dello scarico alla stessa quota, linea dritta; lo scarico pende sotto il raccordo con lo stacco minimo. Davanti a cold_in non passa nient'altro.",
+    "Formato A3: il disegno misura circa 295 x 163 mm di simboli piu' la legenda, in A4 non entra. Il bianco in basso a destra non e' un difetto (D-170, D3): non allargo niente per riempirlo.",
+    "Rotazioni scritte solo dove la deduzione non arriva: miscelatrice (tre vie, D-168/D-175) e gruppo di riempimento. Specchio sul volano e sulla miscelatrice. Tutto il resto lo gira il motore."
+  ],
+  "pezzi": {
+    "pdc": {"x": 0, "y": 0, "regola": "D-159 — origine dello scheletro: mandata a y=5, ritorno a y=20"},
+    "tee-valve-safety-pdc-water-supply": {"x": 50, "y": 2.5, "regola": "B8 — sulla quota della mandata, 10 mm dalla PdC"},
+    "valve-safety-pdc-water-supply": {"x": 50, "y": -17.5, "regola": "A4 — addosso, stacco minimo 10 mm; sopra perche' sotto passa il ritorno"},
+    "collettore": {"x": 177.5, "y": 2.5, "regola": "D-159/B1 — ingresso a +2,5: y=2,5 porta la mandata dritta a y=5"},
+
+    "tee-expansion-connection-pdc-water-return": {"x": 75, "y": 17.5, "regola": "B8 — sulla quota del ritorno; 35 mm dalla PdC per la fila defangatore, valvola, filtro (B5)"},
+    "expansion-connection-pdc-water-return": {"x": 75, "y": 40, "regola": "A4 — appeso sotto il ritorno, stacco minimo con la valvola bloccabile"},
+    "tee-filling-unit-pdc-water-return-b": {"x": 90, "y": 17.5, "regola": "B8 — sulla quota del ritorno, 15 mm dal vicino: appesi a 10 mm (D-062)"},
+    "filling-unit-pdc-water-return": {"x": 90, "y": 32.5, "rotazione": 180, "regola": "A4 + §4 — appeso sotto il ritorno, girato: b sale al raccordo, a scende all'AF-02"},
+    "inlet-filling-unit-pdc-water-return": {"x": 90, "y": 52.5, "regola": "A4 — addosso al gruppo di riempimento, stacco minimo"},
+    "tee-pressure-gauge-pdc-water-return": {"x": 105, "y": 17.5, "regola": "B8 — sulla quota del ritorno, 15 mm dal vicino (D-062)"},
+    "pressure-gauge-pdc-water-return": {"x": 105, "y": 40, "regola": "A4 — appeso sotto il ritorno, stacco minimo con il rubinetto portamanometro"},
+
+    "volano": {"x": 127.5, "y": 15, "specchio": true, "regola": "§2.1/B1 — porte a +5: 15 mm sotto la PdC, ritorno dritto a y=20; specchio (D-169) per il verso del ritorno"},
+    "air-vent-volano-b": {"x": 137.5, "y": -10, "regola": "A4 cede a B1 — sopra la mandata, porta 5 mm oltre la linea: stacco 15 mm, incrocio imposto"},
+    "drain-connection-volano-a": {"x": 137.5, "y": 70, "regola": "A4 — addosso sotto il volano, stacco minimo"},
+
+    "ritorno-zone": {"x": 172.5, "y": 17.5, "regola": "B8/B12 — sulla quota del ritorno, a sinistra della discesa di out_1: un solo incrocio (misurato)"},
+    "zona-notte": {"x": 230, "y": 7.5, "regola": "B12/B1 — in cima al pettine: uscita a y=20, il ritorno entra dritto nel raccordo"},
+    "zona-giorno": {"x": 230, "y": 32.5, "regola": "B12 — sotto la zona notte, 10 mm di corsia; coppia affiancata a 35/45 (D-167)"},
+
+    "boiler": {"x": 7.5, "y": 85, "regola": "A1 — fascia di generazione: sotto la PdC, stessa colonna, centrato"},
+    "mixing-valve-thermostatic-boiler-dhw-out": {"x": 15, "y": 62.5, "rotazione": 90, "specchio": true, "regola": "D-175/D-168 — nel punto delle tre linee: calda da sotto, uscita sopra, fredda da sinistra"},
+    "utenze": {"x": 17.5, "y": 40, "regola": "A4 — addosso alla miscelatrice, in cima alla colonna dritta"},
+    "inlet-mixing-valve-thermostatic-boiler-dhw-out": {"x": -7.5, "y": 62.5, "regola": "A4/D-175 — sulla terza via della miscelatrice, dal lato dell'acquedotto"},
+    "tee-drain-connection-cold-boiler-cold-in": {"x": -22.5, "y": 120, "regola": "B8 — sulla quota di cold_in (+37,5)"},
+    "drain-connection-cold-boiler-cold-in": {"x": -22.5, "y": 135, "regola": "A4 — addosso sotto il raccordo, stacco minimo"},
+    "acquedotto": {"x": -45, "y": 120, "regola": "A4/B1 — alla quota di cold_in: linea dritta nel boiler"}
+  }
+}
