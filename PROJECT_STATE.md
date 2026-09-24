@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-24 (`DRAW-017` fuso con la PR #56, tavole **approvate dal PO**, I-117; attivo `DRAW-018`, le valvole di sicurezza una per generatore — la strada A, D-182; poi i passi verso la prima release, I-118)
+**Aggiornato:** 2026-09-24 notte (`DRAW-017` e `DRAW-018` fusi con le PR #56 e #57, tavole **approvate dal PO**, I-117 e I-119; il PO ha dato il perimetro della **prima release**, D-183; attivo `REL-001`, la skill vera e propria e il PDF)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -13,6 +13,22 @@
 > ci siamo arrivati, non per sapere come funziona la skill.
 
 ---
+
+## Dove siamo — 24 settembre 2026, notte
+
+**`DRAW-018` fuso con la PR #57, tavole approvate (I-119)**: una valvola di sicurezza per
+generatore, attaccata alla sua uscita e prima dei rubinetti, a qualunque potenza (la strada A,
+D-182). Il metro delle tavole approvate è 1 · 1 · 1 · 2 · 1 rilievi, zero cedute e zero bloccanti;
+la suite è a **46 rosse**, tutte del percorso senza piano.
+
+**Il PO ha aperto la fase della prima release** (I-121 … I-125, **D-183**): la skill che il
+progettista usa in una sessione di Claude — spiega l'impianto, lancia la skill, e «Capire» può fare
+domande chiarificatrici. Il perimetro è suo: **la skill vera e propria e il PDF** (`REL-001`,
+attivo), **il cartiglio** (`REL-002`), **i simboli nuovi** (`REL-003`), **il DXF** (`REL-004`), **il
+pacchetto della release** (`REL-005`). Il piano sta in `docs/plans/2026-09-03-release-plan.md`.
+
+**Il rischio più vecchio è adesso il lavoro attivo**: la skill non è mai stata eseguita nel suo
+ambiente. `REL-001` la costruisce, la prova in camera pulita e la consegna al PO da provare in Claude.
 
 ## Dove siamo — 24 settembre 2026
 

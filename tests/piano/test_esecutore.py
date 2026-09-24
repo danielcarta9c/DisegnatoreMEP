@@ -1,9 +1,11 @@
 """L'esecutore del piano, sulle tavole che il pianificatore ha composto da solo.
 
-Sono i documenti agli atti di `docs/collaudi/DRAW-017/prova-camera-pulita-2026-09-24/`:
+Sono i documenti agli atti di `docs/collaudi/DRAW-018/prova-camera-pulita-2026-09-24/`:
 per ciascuno dei cinque impianti **il grafo completo e il piano composto su di
-lui** — quattro ricomposti il 24 settembre 2026 sulla libreria di `DRAW-017`, e
-il 4 com'era stato approvato il 23, perche' il suo grafo non e' cambiato. Fino a
+lui** — l'1 e il 4 ricomposti il 24 settembre 2026 dopo D-182, che ha dato a
+ogni generatore la propria sicurezza; il 2, il 3 e il 5 quelli di `DRAW-017`, che
+sui grafi nuovi — cambia solo la motivazione della sicurezza — danno tavole
+identiche. Fino a
 `DRAW-017` erano i due piani scritti a mano il 19/20 settembre, che hanno
 deciso D-151 (`docs/collaudi/PROVA-PIANO/`): da D-167 quello della cascata non
 si instradava piu', e da D-175 nemmeno quello dell'impianto 1 — la miscelatrice
@@ -51,16 +53,16 @@ from disegnatore_mep.piano.formato import (
 )
 
 ROOT = Path(__file__).resolve().parents[2]
-COLLAUDO = ROOT / "docs" / "collaudi" / "DRAW-017" / "prova-camera-pulita-2026-09-24"
+COLLAUDO = ROOT / "docs" / "collaudi" / "DRAW-018" / "prova-camera-pulita-2026-09-24"
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
 NAMING = ROOT / "naming"
 
 LE_TAVOLE = (
-    (1, "A3", 23),
+    (1, "A3", 25),
     (2, "A3", 25),
     (3, "A3", 24),
-    (4, "A3", 25),
+    (4, "A3", 27),
     (5, "A2", 56),
 )
 """Impianto, formato e tratte della tavola, come le ha misurate la sessione il

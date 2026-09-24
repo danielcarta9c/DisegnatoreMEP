@@ -1,0 +1,269 @@
+{
+  "formato": "A2",
+  "note": [
+    "Scheletro prima del corredo (par. 2.2). Cascata PDC-01/02/03 impilata a x=0 con passo 50 (A2): sopra ogni mandata stanno sicurezza e termometro (stacco 10 + simbolo 10), e 50 lascia 12,5 mm dal ritorno della macchina sopra (B9).",
+    "Il primario nasce sulla quota della PDC-01: mandata a 5, ritorno a 20. Il volano e' allo stesso y della PDC-01 (D-159), quindi mandata e ritorno corrono retti dai collettori al volano: zero pieghe sull'autostrada.",
+    "B3 misurato sulla cascata: collettore di mandata vicino alle macchine = 5 incroci in tavola, ritorno vicino = 6 (pieghe 9 in tutt'e due). Tenuto mandata vicina (x=85), ritorno a 10 mm (x=95).",
+    "Bollitore sotto il volano, stessa x (A1, fascia accumuli): la terza via della deviatrice scende alla serpentina. La deviatrice sta a destra di ritorno-primario, cosi' le due gambe della serpentina non si incrociano; l'unico sormonto e' la terza via che scavalca il ritorno primario, imposto (B1). L'acqua fredda entra a +37,5 sotto la fine delle gambe e resta libera.",
+    "Il bollitore e' a y=95 e non piu' su: la linea calda sanitaria esce dall'alto e deve passare sotto lo scarico del volano (55-65) prima di andare a destra.",
+    "Appesi del ritorno primario (vaso, gruppo di riempimento con AF-02, manometro) sotto la linea a passo 15 mm (D-062): sopra, a 15 mm, c'e' la mandata. A sinistra resta il rettilineo del defangatore con le sue valvole (B5).",
+    "Sanitario fra volano e pettine: miscelatrice termostatica dove si incontrano calda, fredda e miscelata (D-175), terza via in alto (specchio+180) verso AF-03 perche' sotto c'e' il ricircolo; ACS-01 e ACS-R sulla stessa verticale, la coppia che va alle utenze; ricircolo sul suo minimo di 55 mm (D-176).",
+    "Pettine verso il basso a destra (B12): colonna di ritorno lato volano (x=320), colonna di mandata lato utenze (x=345), cosi' le mandate con iso e circolatori escono libere e sono i ritorni ad attraversare. B3 misurato anche qui: questo ordine 5 incroci e 9 pieghe, colonne scambiate 6 incroci e 10 pieghe con HIGHWAY_IS_NOT_STRAIGHT sul ritorno radiante.",
+    "UTA in linea col tronco secondario: la mandata va dritta dal volano alla batteria. Il ritorno scala di 5 mm accanto alla batteria: e' il caso noto del terminale (interasse 10) contro il volano (15), e SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER resta e non si insegue (B11).",
+    "Circuito miscelato: miscelatrice sulla colonna di mandata (rotazione 90: calda da sopra, miscelata in basso, fredda da sinistra) e ritorno-radiante sulla colonna di ritorno alla stessa quota, cosi' i tre raccordi di ritorno sono su una verticale (B3) e il bypass e' un tratto orizzontale con la sua valvola. Le colonne distano 25 mm proprio per quella valvola; sotto la miscelatrice 30 mm di colonna per iso e circolatore prima della piega verso il pannello.",
+    "Formato A2: A3 e' rifiutato dalla legenda (serve 245 mm, la fascia ne ha 235: 26 simboli e 5 reti). Il bianco che resta non si corregge (D-170).",
+    "Misurato sull'ultima tavola: 56 tratte, 0 cedute, 0 bloccanti, 9 pieghe (7 imposte dai simboli + 2 del gradino UTA), 5 incroci (2 cascata, 2 pettine, 1 terza via verso il bollitore)."
+  ],
+  "pezzi": {
+    "pdc-1": {
+      "x": 0,
+      "y": 0.0,
+      "regola": "D-159 — la pompa maestra fissa la quota del primario: mandata a +5, ritorno a +20"
+    },
+    "tee-valve-safety-pdc-1-water-supply": {
+      "x": 45.0,
+      "y": 2.5,
+      "regola": "B8 — sulla mandata della macchina, alla sua quota"
+    },
+    "tee-thermometer-pdc-1-water-supply": {
+      "x": 60.0,
+      "y": 2.5,
+      "regola": "B8 — sulla mandata della macchina, alla sua quota; 15 mm dal raccordo della sicurezza (D-062)"
+    },
+    "valve-safety-pdc-1-water-supply": {
+      "x": 45,
+      "y": -17.5,
+      "regola": "A4 — addosso, stacco minimo di 10 mm verso l'alto: sotto c'e' il ritorno"
+    },
+    "thermometer-pdc-1-water-supply": {
+      "x": 60,
+      "y": -17.5,
+      "regola": "A4 — addosso, stacco minimo di 10 mm verso l'alto"
+    },
+    "pdc-2": {
+      "x": 0,
+      "y": 50.0,
+      "regola": "A2 — chi sta in parallelo si impila: stessa x, passo costante di 50 mm"
+    },
+    "tee-valve-safety-pdc-2-water-supply": {
+      "x": 45.0,
+      "y": 52.5,
+      "regola": "B8 — sulla mandata della macchina, alla sua quota"
+    },
+    "tee-thermometer-pdc-2-water-supply": {
+      "x": 60.0,
+      "y": 52.5,
+      "regola": "B8 — sulla mandata della macchina, alla sua quota; 15 mm dal raccordo della sicurezza (D-062)"
+    },
+    "valve-safety-pdc-2-water-supply": {
+      "x": 45,
+      "y": 32.5,
+      "regola": "A4 — addosso, stacco minimo di 10 mm verso l'alto: sotto c'e' il ritorno"
+    },
+    "thermometer-pdc-2-water-supply": {
+      "x": 60,
+      "y": 32.5,
+      "regola": "A4 — addosso, stacco minimo di 10 mm verso l'alto"
+    },
+    "pdc-3": {
+      "x": 0,
+      "y": 100.0,
+      "regola": "A2 — chi sta in parallelo si impila: stessa x, passo costante di 50 mm"
+    },
+    "tee-valve-safety-pdc-3-water-supply": {
+      "x": 45.0,
+      "y": 102.5,
+      "regola": "B8 — sulla mandata della macchina, alla sua quota"
+    },
+    "tee-thermometer-pdc-3-water-supply": {
+      "x": 60.0,
+      "y": 102.5,
+      "regola": "B8 — sulla mandata della macchina, alla sua quota; 15 mm dal raccordo della sicurezza (D-062)"
+    },
+    "valve-safety-pdc-3-water-supply": {
+      "x": 45,
+      "y": 82.5,
+      "regola": "A4 — addosso, stacco minimo di 10 mm verso l'alto: sotto c'e' il ritorno"
+    },
+    "thermometer-pdc-3-water-supply": {
+      "x": 60,
+      "y": 82.5,
+      "regola": "A4 — addosso, stacco minimo di 10 mm verso l'alto"
+    },
+    "cascata-mandata-b": {
+      "x": 82.5,
+      "y": 2.5,
+      "regola": "B3 — collettore di mandata: verticale corta accanto alle macchine, sulla quota della PDC-01"
+    },
+    "cascata-mandata-a": {
+      "x": 82.5,
+      "y": 52.5,
+      "regola": "B3 — collettore di mandata, sulla quota della PDC-02"
+    },
+    "cascata-ritorno-a": {
+      "x": 92.5,
+      "y": 17.5,
+      "regola": "B3 — collettore di ritorno, 10 mm oltre quello di mandata, quota della PDC-01"
+    },
+    "cascata-ritorno-b": {
+      "x": 92.5,
+      "y": 67.5,
+      "regola": "B3 — collettore di ritorno, quota della PDC-02"
+    },
+    "ritorno-primario": {
+      "x": 180.0,
+      "y": 17.5,
+      "regola": "B8 — sulla quota del ritorno primario; a sinistra della terza via: le due gambe del bollitore non si incrociano"
+    },
+    "tee-pressure-gauge-cascata-ritorno-a-a": {
+      "x": 165.0,
+      "y": 17.5,
+      "regola": "B8 — sulla quota del ritorno primario"
+    },
+    "tee-filling-unit-cascata-ritorno-a-a-b": {
+      "x": 150.0,
+      "y": 17.5,
+      "regola": "B8 — sulla quota del ritorno primario"
+    },
+    "tee-expansion-connection-cascata-ritorno-a-a": {
+      "x": 135.0,
+      "y": 17.5,
+      "regola": "B8 — sulla quota del ritorno primario; a sinistra resta il rettilineo del defangatore (B5)"
+    },
+    "pressure-gauge-cascata-ritorno-a-a": {
+      "x": 165.0,
+      "y": 40,
+      "regola": "A4 — appeso sotto il ritorno (sopra passa la mandata a 15 mm): stacco col rubinetto portamanometro"
+    },
+    "filling-unit-cascata-ritorno-a-a": {
+      "x": 150.0,
+      "y": 32.5,
+      "rotazione": 180,
+      "regola": "A4 — appeso sotto il ritorno, stacco minimo; girato perche' l'attacco b guardi il raccordo"
+    },
+    "inlet-filling-unit-cascata-ritorno-a-a": {
+      "x": 150.0,
+      "y": 52.5,
+      "regola": "A4 — l'acqua fredda AF-02 addosso al gruppo di riempimento che serve"
+    },
+    "expansion-connection-cascata-ritorno-a-a": {
+      "x": 135.0,
+      "y": 40,
+      "regola": "A4 — vaso appeso sotto il ritorno, stacco con la valvola bloccata aperta"
+    },
+    "deviatrice": {
+      "x": 187.5,
+      "y": 0,
+      "rotazione": 0,
+      "regola": "D-168 — sulla quota della mandata (via dritta al volano), terza via in basso verso il bollitore"
+    },
+    "volano": {
+      "x": 215.0,
+      "y": 0,
+      "regola": "D-159 — stesso y della PDC-01: mandata a 5 e ritorno a 20, rette dalla cascata al volano"
+    },
+    "drain-connection-volano-primary-in": {
+      "x": 225.0,
+      "y": 55,
+      "regola": "A4 — scarico addosso al volano, stacco minimo sotto"
+    },
+    "bollitore": {
+      "x": 215.0,
+      "y": 95.0,
+      "regola": "A1 — fascia degli accumuli, sotto il volano: la terza via scende e la serpentina si prende da sinistra; y=95 perche' la calda passi sotto lo scarico del volano"
+    },
+    "mixing-valve-thermostatic-bollitore-dhw-out": {
+      "x": 272.5,
+      "y": 72.5,
+      "rotazione": 180,
+      "specchio": true,
+      "regola": "D-175 — nel punto dove calda, miscelata e fredda si incontrano; terza via in alto verso AF-03"
+    },
+    "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
+      "x": 272.5,
+      "y": 50.0,
+      "regola": "A4 — AF-03 addosso alla terza via della miscelatrice"
+    },
+    "utenze": {
+      "x": 295.0,
+      "y": 75.0,
+      "regola": "A4 — confine ACS addosso alla miscelatrice, sulla stessa verticale di ACS-R: la coppia sanitaria esce insieme"
+    },
+    "ricircolo-utenze": {
+      "x": 295.0,
+      "y": 105.0,
+      "regola": "D-176 — ACS-R sul proprio rettilineo, entra nel bollitore da destra"
+    },
+    "tee-expansion-connection-dhw-bollitore-cold-in": {
+      "x": 202.5,
+      "y": 130.0,
+      "regola": "B8 — sulla quota dell'ingresso freddo del bollitore"
+    },
+    "expansion-connection-dhw-bollitore-cold-in": {
+      "x": 202.5,
+      "y": 152.5,
+      "regola": "A4 — vaso sanitario appeso sotto, stacco con la valvola bloccata aperta"
+    },
+    "tee-drain-connection-cold-bollitore-cold-in": {
+      "x": 172.5,
+      "y": 130.0,
+      "regola": "B8 — sulla quota dell'ingresso freddo; 25 mm per il gruppo di sicurezza (B5)"
+    },
+    "drain-connection-cold-bollitore-cold-in": {
+      "x": 172.5,
+      "y": 145.0,
+      "regola": "A4 — scarico addosso, stacco minimo"
+    },
+    "acquedotto": {
+      "x": 150.0,
+      "y": 130.0,
+      "regola": "A4 — AF-01 addosso alla linea fredda del bollitore"
+    },
+    "secondario-mandata-a": {
+      "x": 342.5,
+      "y": 2.5,
+      "regola": "B12 — testa del pettine sulla quota della mandata del volano: la mandata corre dritta alla UTA"
+    },
+    "secondario-ritorno-b": {
+      "x": 317.5,
+      "y": 17.5,
+      "regola": "B12 — testa della colonna di ritorno sulla quota del ritorno del volano"
+    },
+    "secondario-mandata-b": {
+      "x": 342.5,
+      "y": 27.5,
+      "regola": "B12 — colonna di mandata, quota dei ventilconvettori"
+    },
+    "secondario-ritorno-a": {
+      "x": 317.5,
+      "y": 37.5,
+      "regola": "B12 — colonna di ritorno, quota dei ventilconvettori"
+    },
+    "batteria-uta": {
+      "x": 392.5,
+      "y": 2.5,
+      "regola": "B12/D-167 — prima utenza in linea col tronco: mandata dritta dal volano"
+    },
+    "ventilconvettori": {
+      "x": 392.5,
+      "y": 27.5,
+      "regola": "B12/D-167 — utenze impilate in colonna, coppia da sinistra"
+    },
+    "pavimento-radiante": {
+      "x": 392.5,
+      "y": 100.0,
+      "regola": "B12/D-167 — ultima utenza in fondo alla colonna"
+    },
+    "miscelatrice-radiante": {
+      "x": 340.0,
+      "y": 62.5,
+      "rotazione": 90,
+      "regola": "D-168 — sulla colonna di mandata: calda da sopra, miscelata verso il basso, terza via a sinistra verso il ritorno"
+    },
+    "ritorno-radiante": {
+      "x": 317.5,
+      "y": 65.0,
+      "regola": "B3/B12 — sulla colonna di ritorno con gli altri due raccordi, alla quota della terza via della miscelatrice: bypass orizzontale"
+    }
+  }
+}

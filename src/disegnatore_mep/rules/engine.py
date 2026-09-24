@@ -279,8 +279,10 @@ def _already_there(
     function = _function_at(context, rule, anchor)
     # Cio' che l'ancoraggio porta a bordo non si aggiunge (D-106, criterio 4):
     # il filtro integrato della macchina E' il filtro di quella macchina, e
-    # vale in ogni ambito — per attacco come per rete.
-    if context.carries(anchor.component_id, function):
+    # vale in ogni ambito — per attacco come per rete. Salvo dove la regola
+    # dichiara che il bordo non basta: la sicurezza di ogni generatore (D-182).
+    on_board_counts = rule.satisfied_by.on_board_counts
+    if on_board_counts and context.carries(anchor.component_id, function):
         return True
     if rule.satisfied_by.scope is SatisfactionScope.ON_THE_NETWORK:
         # Su un tratto comune l'ambito e' il **dominio** che quel tratto serve,
@@ -291,7 +293,9 @@ def _already_there(
             if domain is not None
             else context.network_has(network_id, function)
         )
-        return present or _carried_by_every_anchor(context, rule, network_id, function)
+        return present or (
+            on_board_counts and _carried_by_every_anchor(context, rule, network_id, function)
+        )
     # Un accessorio posato sull'attacco di servizio non sta sulla tubazione
     # principale: camminando lungo quella non lo si troverebbe, e lo si
     # riproporrebbe a ogni passata.

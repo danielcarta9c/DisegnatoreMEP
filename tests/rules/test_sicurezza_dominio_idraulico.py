@@ -1,4 +1,18 @@
-"""Le prove del grafo di DRAW-005-R1, blocco A nella correzione PM (I-046),
+"""Le sicurezze del circuito chiuso: **una per generatore** (D-182, la strada A).
+
+**Riscritte il 24 settembre 2026 per D-182** (I-116). Il PO, guardando le tavole
+1 e 4: «uno per ogni macchina e senza valvole di interruzione in mezzo»; poi, fra
+le strade che la ricerca gli ha portato, «Strada A». Ogni generatore del circuito
+chiuso ha la sua sicurezza, attaccata all'uscita e prima di ogni organo che si
+possa chiudere, a qualunque potenza e anche quando la macchina ne porta una a
+bordo; nessuna sicurezza comune sulla mandata, nessuna sulla riserva.
+
+Quello che segue, fino alla prima prova, e' la storia: la regola di I-046 — una
+per dominio, sulla mandata comune, con la domanda sul bordo macchina — che D-182
+supera. Restano vere le parti che D-182 non tocca: il bordo macchina tri-stato
+del catalogo, lo sfogo aria, la stabilita'.
+
+Le prove del grafo di DRAW-005-R1, blocco A nella correzione PM (I-046),
 scritte prima del codice.
 
 Il PM (`docs/pm/2026-09-08-rilievi-po-draw005-r1.md`, correzione dopo il
@@ -654,218 +668,95 @@ def test_una_funzione_non_puo_essere_dichiarata_insieme_presente_e_assente() -> 
 
 
 # ---------------------------------------------------------------------------
-# A1, A2, A4 — un dominio: una sicurezza di circuito, sulla mandata comune
+# D-182 — una per generatore, attaccata all'uscita, prima di ogni organo
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("build", DOMINIO_UNICO, ids=DOMINIO_UNICO_IDS)
-@pytest.mark.parametrize("machine", (GENERIC, WITHOUT_SAFETY))
-def test_un_dominio_riceve_una_sicurezza_sola_qualunque_sia_il_numero_delle_macchine(
-    build: Callable[[str], ProjectModel], machine: str
-) -> None:
-    """Una per dominio, non una per generatore: con una o due macchine che non
-    dichiarano la sicurezza a bordo (ignota o assente) la rete di
-    riscaldamento ne ha esattamente una."""
-    walk = _walk(build, machine)
-    for network_id in _heating_networks(walk.model):
-        found = _safeties_on(walk, network_id)
-        expected = 1 if any(
-            walk.at_port.get((generator, walk.port_with_flow(generator, PortFlow.OUT)))
-            and walk.at_port[(generator, walk.port_with_flow(generator, PortFlow.OUT))].network_id
-            == network_id
-            for generator in walk.generators()
-        ) else 0
-        assert len(found) == expected, (network_id, found)
+TUTTI: list[Callable[[str], ProjectModel]] = [
+    *DOMINIO_UNICO,
+    tre_macchine_con_un_organo_di_rete,
+    due_reti_con_una_macchina_ciascuna,
+]
+TUTTI_IDS = [item.__name__ for item in TUTTI]
+REGIMI = (PlantRegime.UP_TO_35_KW, PlantRegime.OVER_35_KW)
+PER_GENERATORE = "safety-relief-where-heat-enters-the-water"
 
 
-@pytest.mark.parametrize("build", DOMINIO_UNICO, ids=DOMINIO_UNICO_IDS)
-@pytest.mark.parametrize("machine", (GENERIC, WITHOUT_SAFETY))
-def test_la_sicurezza_di_circuito_sta_sulla_mandata_comune_vicino_al_gruppo_e_prima_di_ogni_organo(
-    build: Callable[[str], ProjectModel], machine: str
-) -> None:
-    """Sul tratto in cui le mandate sono gia' una, attaccata a cio' che le
-    unisce — o alla macchina, se e' una sola — e prima di qualunque organo di
-    chiusura di quel tratto."""
-    walk = _walk(build, machine)
-    generators = walk.generators()
-    for safety in walk.with_function(SAFETY):
-        holder = walk.holder_of(safety)
-        assert holder is not None, safety
-        # Chi regge la sicurezza sta sul tratto della mandata comune: dalla
-        # mandata di ogni generatore, seguendo il fluido attraverso i soli
-        # pezzi in linea, lo si incontra.
-        for generator in generators:
-            outlet = walk.port_with_flow(generator, PortFlow.OUT)
-            downstream = walk.stretch_through_inline(generator, outlet)
-            assert holder in downstream, (generator, holder, downstream)
-            # E prima di qualunque organo di chiusura sul tratto comune: fra
-            # l'ultima confluenza e la sicurezza non c'e' nulla che chiuda.
-            joins = [
-                item
-                for item in downstream
-                if item in walk.inline and len(walk.run_pipes_of.get(item, [])) > 2
-            ]
-            start = downstream.index(joins[-1]) + 1 if joins else 0
-            between = downstream[start : downstream.index(holder)]
-            assert not any(walk.closes(item) for item in between), (generator, between)
-        # Attaccata a cio' che unisce le mandate, o alla macchina sola.
-        if len(generators) == 1:
-            outlet = walk.port_with_flow(generators[0], PortFlow.OUT)
-            assert walk.stretch_from(generators[0], outlet)[0] == holder, holder
-        else:
-            outlet = walk.port_with_flow(generators[0], PortFlow.OUT)
-            downstream = walk.stretch_through_inline(generators[0], outlet)
-            join = downstream[downstream.index(holder) - 1]
-            assert len(walk.run_pipes_of.get(join, [])) > 2, (holder, join)
-        # E l'ha posata la regola del circuito, non quella per macchina.
-        assert walk.rule_of(safety) == "safety-relief-on-the-closed-circuit", safety
+def _completed(
+    build: Callable[[str], ProjectModel], machine: str, regime: PlantRegime
+) -> Walk:
+    walk, gaps = _saturated(build(machine).model_copy(update={"plant_regime": regime}))
+    assert not gaps, [(gap.rule_id, gap.reason.value, gap.anchor) for gap in gaps]
+    return walk
 
 
-@pytest.mark.parametrize("build", DOMINIO_UNICO, ids=DOMINIO_UNICO_IDS)
+@pytest.mark.parametrize("regime", REGIMI)
 @pytest.mark.parametrize("machine", MACCHINE)
-def test_nessuna_sicurezza_per_macchina_ne_sulla_riserva_in_un_dominio_unico(
-    build: Callable[[str], ProjectModel], machine: str
+@pytest.mark.parametrize("build", TUTTI, ids=TUTTI_IDS)
+def test_ogni_generatore_ha_la_sua_sicurezza_sull_uscita_prima_di_ogni_organo(
+    build: Callable[[str], ProjectModel], machine: str, regime: PlantRegime
 ) -> None:
-    """Nessuna sicurezza ancorata a un generatore o alla riserva: la sola
-    protezione e' quella del circuito, qualunque cosa dica il bordo macchina."""
-    walk = _walk(build, machine)
-    for safety in walk.with_function(SAFETY):
-        assert walk.rule_of(safety) == "safety-relief-on-the-closed-circuit", safety
+    """Una per macchina, sotto e sopra i 35 kW, e qualunque cosa dica il bordo
+    macchina — presente, assente o ignoto: sulla tubazione che esce, fra la
+    macchina e il suo primo organo che chiude. Fra lei e la sicurezza non c'e'
+    niente che si possa chiudere, nemmeno i rubinetti della macchina."""
+    walk = _completed(build, machine, regime)
+    assert walk.generators()
+    for generator in walk.generators():
+        own = walk.anchored_to(generator, SAFETY)
+        assert len(own) == 1, (generator, own)
+        outlet = walk.port_with_flow(generator, PortFlow.OUT)
+        assert walk.hung_before_the_first_closer(generator, outlet, SAFETY) == own, (
+            generator,
+            walk.stretch_from(generator, outlet),
+        )
+        assert walk.rule_of(own[0]) == PER_GENERATORE, own
+
+
+@pytest.mark.parametrize("regime", REGIMI)
+@pytest.mark.parametrize("machine", MACCHINE)
+@pytest.mark.parametrize("build", TUTTI, ids=TUTTI_IDS)
+def test_nessuna_sicurezza_comune_ne_sulla_riserva(
+    build: Callable[[str], ProjectModel], machine: str, regime: PlantRegime
+) -> None:
+    """Ogni sicurezza del circuito chiuso e' quella di un generatore: nessuna sulla
+    mandata comune, nessuna sulla riserva — il numero delle sicurezze e' il numero
+    dei generatori."""
+    walk = _completed(build, machine, regime)
+    own = {item for generator in walk.generators() for item in walk.anchored_to(generator, SAFETY)}
+    on_the_circuit = {
+        item for network_id in _heating_networks(walk.model) for item in _safeties_on(walk, network_id)
+    }
+    assert on_the_circuit == own, sorted(on_the_circuit - own)
+    assert len(own) == len(walk.generators())
     for reserve in walk.reserves():
         assert not walk.anchored_to(reserve, SAFETY), reserve
 
 
-@pytest.mark.parametrize("build", DOMINIO_UNICO, ids=DOMINIO_UNICO_IDS)
-@pytest.mark.parametrize("machine", (GENERIC, WITHOUT_SAFETY))
-def test_ogni_generatore_resta_comunicante_con_la_sicurezza_attraverso_i_soli_organi_propri(
-    build: Callable[[str], ProjectModel], machine: str
-) -> None:
-    """La configurazione ammessa: la macchina in esercizio ha i propri organi
-    aperti, e da li' raggiunge la sicurezza senza attraversare organi altrui."""
-    walk = _walk(build, machine)
+def test_il_bordo_macchina_non_si_chiede_piu_per_la_sicurezza() -> None:
+    """D-182 ha gia' risposto alla domanda che I-046 faceva al progettista — «la
+    macchina la porta a bordo?»: la sicurezza si mette comunque. Nessun punto
+    aperto sul bordo macchina, su nessun impianto e con nessuna macchina."""
+    for build in TUTTI:
+        for machine in MACCHINE:
+            _, gaps = _saturated(build(machine))
+            asked = [gap for gap in gaps if gap.reason is GapReason.ON_BOARD_UNKNOWN]
+            assert not asked, (build.__name__, machine, [(gap.rule_id, gap.anchor) for gap in asked])
+
+
+def test_il_rubinetto_della_macchina_sta_dopo_la_sua_sicurezza() -> None:
+    """La lettera di I-114: «senza valvole di interruzione in mezzo». Sulla
+    mandata di ogni macchina, il primo organo che chiude viene dopo la
+    sicurezza — e c'e', perche' la macchina resta isolabile per la manutenzione."""
+    walk = _completed(due_macchine_con_accumulo_combinato, GENERIC, PlantRegime.UP_TO_35_KW)
     for generator in walk.generators():
         outlet = walk.port_with_flow(generator, PortFlow.OUT)
-        network_id = walk.at_port[(generator, outlet)].network_id
-        assert walk.reaches(generator, SAFETY, network_id), generator
-
-
-@pytest.mark.parametrize("build", DOMINIO_UNICO, ids=DOMINIO_UNICO_IDS)
-def test_con_la_sicurezza_a_bordo_di_ogni_macchina_il_circuito_non_ne_riceve_una_esterna(
-    build: Callable[[str], ProjectModel],
-) -> None:
-    walk = _walk(build, WITH_SAFETY)
-    for network_id in _heating_networks(walk.model):
-        assert not _safeties_on(walk, network_id), network_id
-
-
-def test_con_la_sicurezza_a_bordo_di_una_macchina_sola_il_circuito_la_vuole_lo_stesso() -> None:
-    """Il bordo di un membro non protegge l'altro: la sicurezza di circuito
-    resta, una, sulla mandata comune."""
-    model = due_macchine_con_accumulo_combinato(GENERIC)
-    model = model.model_copy(
-        update={
-            "components": [
-                item.model_copy(update={"definition_id": WITH_SAFETY})
-                if item.id == "nord"
-                else item
-                for item in model.components
-            ]
-        }
-    )
-    walk, gaps = _saturated(model)
-    assert not gaps
-    assert len(_safeties_on(walk, "primo")) == 1
-    assert not walk.anchored_to("nord", SAFETY)
-    assert not walk.anchored_to("sud", SAFETY)
-
-
-# ---------------------------------------------------------------------------
-# A2, A5 — un dominio isolabile: dato di catalogo, o domanda aperta
-# ---------------------------------------------------------------------------
-
-
-def test_nel_dominio_isolabile_la_sicurezza_di_circuito_sta_dopo_l_ultima_confluenza() -> None:
-    """La terza macchina, che confluisce dopo l'organo di rete, raggiunge la
-    sicurezza di circuito attraverso i soli organi propri; le prime due no, e
-    per loro parla il dato di catalogo (prove sotto)."""
-    walk, gaps = _saturated(tre_macchine_con_un_organo_di_rete(GENERIC))
-    assert walk.reaches("sud", SAFETY, "primo")
-    assert not walk.reaches("nord", SAFETY, "primo")
-    assert not walk.reaches("centro", SAFETY, "primo")
-    circuit = [item for item in walk.with_function(SAFETY)]
-    assert len(circuit) == 1, circuit
-    holder = walk.holder_of(circuit[0])
-    downstream = walk.stretch_through_inline("sud", walk.port_with_flow("sud", PortFlow.OUT))
-    assert holder in downstream and "organo-di-rete" not in downstream[downstream.index(holder) :]
-    del gaps
-
-
-def test_con_il_dato_assente_ogni_macchina_isolabile_riceve_la_propria_sicurezza() -> None:
-    """Il catalogo dice che la macchina non porta la sicurezza a bordo, e un
-    organo non suo puo' separarla da quella di circuito: la riceve, sulla
-    mandata, attaccata a lei e prima del proprio organo."""
-    walk, gaps = _saturated(tre_macchine_con_un_organo_di_rete(WITHOUT_SAFETY))
-    assert not gaps, gaps
-    for generator in ("nord", "centro"):
-        own = walk.anchored_to(generator, SAFETY)
-        assert len(own) == 1, (generator, own)
-        outlet = walk.port_with_flow(generator, PortFlow.OUT)
-        hung = walk.hung_before_the_first_closer(generator, outlet, SAFETY)
-        assert hung == own, (generator, hung, own)
-        assert walk.reaches(generator, SAFETY, "primo")
-    assert not walk.anchored_to("sud", SAFETY)
-    # E la sicurezza di circuito resta, una, oltre l'organo di rete.
-    circuit = [
-        item
-        for item in walk.with_function(SAFETY)
-        if not any(item in walk.anchored_to(generator, SAFETY) for generator in walk.generators())
-    ]
-    assert len(circuit) == 1, circuit
-
-
-def test_con_il_dato_ignoto_la_macchina_isolabile_e_una_domanda_aperta_non_un_pezzo() -> None:
-    """Il campo mancante e' ignoto, non assente: il motore non aggiunge, chiede."""
-    walk, gaps = _saturated(tre_macchine_con_un_organo_di_rete(GENERIC))
-    for generator in walk.generators():
-        assert not walk.anchored_to(generator, SAFETY), generator
-    asked = sorted(
-        gap.anchor.component_id for gap in gaps if gap.reason is GapReason.ON_BOARD_UNKNOWN
-    )
-    assert asked == ["centro", "nord"], [(gap.rule_id, gap.reason.value, gap.anchor) for gap in gaps]
-    for gap in gaps:
-        assert gap.missing_function == SAFETY
-        assert gap.network_id == "primo"
-    # Nessun altro punto aperto: la sicurezza di circuito c'e'.
-    assert all(gap.reason is GapReason.ON_BOARD_UNKNOWN for gap in gaps), gaps
-    assert len([item for item in walk.with_function(SAFETY)]) == 1
-
-
-def test_con_il_dato_presente_la_macchina_isolabile_non_chiede_e_non_riceve() -> None:
-    walk, gaps = _saturated(tre_macchine_con_un_organo_di_rete(WITH_SAFETY))
-    assert not gaps, gaps
-    for generator in walk.generators():
-        assert not walk.anchored_to(generator, SAFETY), generator
-    # E la sicurezza di circuito non serve: ogni macchina la porta a bordo.
-    assert not walk.with_function(SAFETY)
-
-
-def test_la_domanda_aperta_si_conta_per_macchina_e_dice_di_che_dato_si_tratta() -> None:
-    _, gaps = _saturated(tre_macchine_con_un_organo_di_rete(GENERIC))
-    keys = {gap.key for gap in gaps}
-    assert len(keys) == len(gaps) == 2
-    for gap in gaps:
-        assert gap.reason is GapReason.ON_BOARD_UNKNOWN
-        assert gap.anchor.component_id in {"nord", "centro"}
-
-
-def test_due_reti_sono_due_domini_e_ogni_dominio_ha_la_propria_sicurezza() -> None:
-    walk = _walk(due_reti_con_una_macchina_ciascuna, GENERIC)
-    assert len(_safeties_on(walk, "est")) == 1
-    assert len(_safeties_on(walk, "ovest")) == 1
-    # Ciascuna e' la sicurezza del proprio circuito — che con una macchina sola
-    # comincia sulla sua mandata — non una protezione per macchina.
-    for safety in walk.with_function(SAFETY):
-        assert walk.rule_of(safety) == "safety-relief-on-the-closed-circuit", safety
+        run = walk.stretch_through_inline(generator, outlet)
+        closers = [item for item in run if walk.closes(item)]
+        assert closers, (generator, run)
+        own = walk.anchored_to(generator, SAFETY)[0]
+        holder = walk.holder_of(own)
+        assert holder in run and run.index(holder) < run.index(closers[0]), (generator, run)
 
 
 # ---------------------------------------------------------------------------
@@ -941,11 +832,11 @@ def test_permutare_componenti_e_connessioni_non_sposta_la_sicurezza() -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_la_tavola_1_ha_una_sola_sicurezza_di_circuito_sulla_mandata_vicino_al_gruppo() -> None:
-    """Regressione sulla fixture: una sola sicurezza sulla rete di
-    riscaldamento, appesa al raccordo attaccato alla confluenza delle mandate e
-    prima della valvola della riserva; niente sulla riserva, niente per
-    macchina; uno sfogo aria; nessuna domanda aperta."""
+def test_la_tavola_1_ha_una_sicurezza_per_pompa_di_calore_sulla_sua_uscita() -> None:
+    """Regressione sulla fixture, dopo D-182: sulla rete di riscaldamento una
+    sicurezza per pompa di calore, appesa al raccordo attaccato alla sua mandata e
+    prima del suo rubinetto; niente sulla mandata comune, niente sulla riserva; uno
+    sfogo aria; nessuna domanda aperta."""
     done, _, gaps = saturate(load_project(PROVA_1), catalog(), rules())
     assert not gaps, [(gap.rule_id, gap.reason.value) for gap in gaps]
     walk = Walk(done)
@@ -953,18 +844,14 @@ def test_la_tavola_1_ha_una_sola_sicurezza_di_circuito_sulla_mandata_vicino_al_g
     safeties = sorted(
         {item for network_id in heating for item in _safeties_on(walk, network_id)}
     )
-    assert len(safeties) == 1, safeties
-    assert walk.rule_of(safeties[0]) == "safety-relief-on-the-closed-circuit"
+    assert len(walk.generators()) == 2
+    assert len(safeties) == 2, safeties
     for generator in walk.generators():
-        assert not walk.anchored_to(generator, SAFETY), generator
+        own = walk.anchored_to(generator, SAFETY)
+        assert len(own) == 1 and own[0] in safeties, (generator, own)
+        assert walk.rule_of(own[0]) == PER_GENERATORE
         outlet = walk.port_with_flow(generator, PortFlow.OUT)
-        assert walk.reaches(generator, SAFETY, walk.at_port[(generator, outlet)].network_id)
+        assert walk.hung_before_the_first_closer(generator, outlet, SAFETY) == own
     for reserve in walk.reserves():
         assert not walk.anchored_to(reserve, SAFETY), reserve
-    holder = walk.holder_of(safeties[0])
-    assert holder is not None
-    outlet = walk.port_with_flow(walk.generators()[0], PortFlow.OUT)
-    downstream = walk.stretch_through_inline(walk.generators()[0], outlet)
-    join = downstream[downstream.index(holder) - 1]
-    assert len(walk.run_pipes_of.get(join, [])) > 2, (holder, join)
     assert len(walk.with_function(AIR_RELEASE)) == 1

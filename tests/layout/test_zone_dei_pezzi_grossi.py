@@ -276,7 +276,7 @@ def test_il_primo_impianto_esce_dal_proprio_piano() -> None:
     il motore esegue e misura.
 
     Il piano agli atti e' quello che il pianificatore ha composto il 24
-    settembre 2026 sul grafo di `DRAW-017`, e si esegue sul grafo su cui e'
+    settembre 2026 sul grafo di `DRAW-018`, e si esegue sul grafo su cui e'
     nato: fino a quel giorno era il piano scritto a mano del 19 settembre, che
     dopo D-175 non nominava piu' la miscelatrice — diventata un pezzo del piano.
     """
@@ -284,7 +284,7 @@ def test_il_primo_impianto_esce_dal_proprio_piano() -> None:
     from disegnatore_mep.piano.formato import carica_piano
 
     radice = Path(__file__).resolve().parents[2]
-    collaudo = radice / "docs/collaudi/DRAW-017/prova-camera-pulita-2026-09-24"
+    collaudo = radice / "docs/collaudi/DRAW-018/prova-camera-pulita-2026-09-24"
     esito = esegui_piano(
         load_project(collaudo / "grafo-completo-1.json"),
         carica_piano(collaudo / "piano-completo-1.json"),

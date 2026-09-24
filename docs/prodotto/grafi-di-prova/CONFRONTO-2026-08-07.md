@@ -66,6 +66,16 @@
 > allora e 41 oggi; impianto 2, 41 e 43; impianto 3, 39 e 41; impianto 4, 46 e 46;
 > impianto 5, 93 e 96.
 
+> **Aggiornamento del 24 settembre 2026, sera (DRAW-018, D-182).** Hai scelto la
+> strada A: **una sicurezza per ogni generatore**, attaccata alla sua mandata e prima del
+> suo rubinetto, a qualunque potenza, e **nessuna sulla mandata comune**. Sull'1 e sul 4
+> esce la sicurezza comune ed entra una per macchina — due pezzi in più per impianto,
+> la valvola e il suo raccordo —; sul 2 e sul 3, una macchina sola, la sicurezza resta
+> dov'era; sul 5, sopra i 35 kW, era già così. E l'ibrido non chiede più niente: la
+> caldaia ha la sua sicurezza come la pompa di calore. Rispetto a stamattina: impianto 1,
+> 41 pezzi allora e 43 oggi; impianto 2, 43 e 43; impianto 3, 41 e 41; impianto 4, 46 e
+> 48; impianto 5, 96 e 96.
+
 ---
 
 ## Perché sono cambiati
@@ -91,7 +101,7 @@ scrivere le regole:
 
 ## Impianto per impianto
 
-**1 — Due pompe di calore e accumulo combinato: da 59 a 41 pezzi.**
+**1 — Due pompe di calore e accumulo combinato: da 59 a 43 pezzi.**
 Escono i due separatori d'aria, i due termometri e una delle due sicurezze; il
 defangatore passa da tre a uno, sul ritorno generale prima della ripartizione verso le
 due macchine; i filtri a Y restano due, uno per macchina, e il circolatore perde il suo;
@@ -108,7 +118,7 @@ all'ingresso dell'acqua fredda.
 Stesse uscite del regime piccolo (separatore, termometro), sfogo e sicurezza sul volano
 in linea, e lo scarico del boiler sull'ingresso freddo.
 
-**4 — Ibrido pompa di calore e caldaia: da 68 a 46 pezzi.**
+**4 — Ibrido pompa di calore e caldaia: da 68 a 48 pezzi.**
 Il ritorno generale è il tratto fra il volume tecnico e il punto in cui il ritorno si
 divide verso le due macchine: lì stanno vaso, riempimento, manometro e l'unico
 defangatore. Ogni generatore tiene il suo filtro a Y; sfogo e sicurezza sul volano;
@@ -137,10 +147,11 @@ supporre un pezzo che non hai nominato. Di qui i pezzi in più rispetto a ieri, 
 irrigidimento delle regole.
 
 **Ogni punto aperto è una domanda su un dato che non abbiamo, mai un pezzo perso.**
-Due dei cinque non ne hanno nessuno — l'1 e, dal 24 settembre, il 5 —; gli altri tre ne
-hanno **uno a testa**, e ciascuno chiede una cosa sola.
+Tre dei cinque non ne hanno nessuno — l'1, il 5 e, dal 24 settembre sera, il 4 —; gli
+altri due ne hanno **uno a testa**, e ciascuno chiede una cosa sola.
 
-L'ibrido (impianto 4) chiede della **sicurezza**. Dal 9 settembre 2026 (DRAW-006) la
+*Fino al 24 settembre* l'ibrido (impianto 4) chiedeva della **sicurezza**; da D-182 ogni
+generatore ha la sua, e la domanda non c'è più. Com'era: Dal 9 settembre 2026 (DRAW-006) la
 deviatrice dichiara i propri stati idraulici: l'ingresso va su un ramo oppure sull'altro,
 mai su tutti e due. La pompa di calore, che alla mandata comune ci arriva comunque stia la
 deviatrice, **riceve** la sicurezza di circuito del proprio dominio; la caldaia, che in

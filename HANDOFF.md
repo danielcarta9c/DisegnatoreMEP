@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-24 — su `main` `DRAW-017` (PR #56, **tavole approvate**, I-117); attivo **`DRAW-018`**, le valvole di sicurezza una per generatore (la strada A, D-182); poi i passi verso la prima release (I-118)
+**Aggiornato:** 2026-09-24 notte — su `main` `DRAW-017` (PR #56) e `DRAW-018` (PR #57), **tavole approvate** (I-117, I-119); il PO ha dato il perimetro della **prima release** (D-183), e il pacchetto attivo è **`REL-001`**: la skill vera e propria e il PDF
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,50 +11,63 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 24 settembre 2026
+## ▶ Da dove riparte la prossima sessione — scritto la notte del 24 settembre 2026
 
-**Su `main` c'è `DRAW-017`**, fuso con la PR #56, e **le tavole sono approvate** (**I-117**): «Strada
-A e le tavole vanno benissimo». Tavole, grafi e piani in
-`docs/collaudi/DRAW-017/prova-camera-pulita-2026-09-24/`; rapporto in
-`docs/collaudi/DRAW-017/RAPPORTO.md`.
+**Su `main` c'è tutto**, e le tavole sono approvate: `DRAW-017` (PR #56, I-117) e `DRAW-018` (PR
+#57, I-119). **Si parte con `REL-001`**, il primo pacchetto della prima release.
 
-**Che cosa ha portato `DRAW-017`**, sulle cinque tavole ricomposte dal pianificatore in camera
-pulita:
+**Il PO ha cambiato fase** (I-121, D-183): «Ricordiamoci che lo scopo è creare una skill che usa il
+progettista per disegnare impianto. Quindi in Claude durante una sessione spiega l'impianto, lancia
+la skill ed eventualmente la skill mentre fa la parte di capire può fare delle domande
+chiarificatrici. Ora vorrei andare verso la prima release della skill». **Il perimetro è suo**:
 
-- **la miscelatrice termostatica con l'ingresso AF** (D-175): tre attacchi, un confine AF con un
-  tratto corto, e il posto lo sceglie il piano, che la ruota e la specchia;
-- **il ricircolo ACS** (D-176): una linea sua, verde chiaro, che entra dall'«ACS-R» e dopo il
-  circolatore torna nell'accumulo;
-- **il vaso sanitario dove l'ACS è centralizzata** (D-178, precisata da D-179: conta
-  «centralizzata», non i litri);
-- **la freccia di ritegne e circolatori nel verso del flusso** (D-180), e **la ritegno disegnata
-  come la N di UNI 9511**, con la freccia sopra (D-181, supera D-122), anche dentro il gruppo di
-  sicurezza sanitario;
-- **i piani del pianificatore nelle prove** al posto di quelli a mano: la suite è a **45 rosse**
-  (erano 48), 1663 passate, nessuno `skip` né `xfail` nuovo. Le 45 non leggono un piano: compongono
-  per il percorso che D-151 ha tolto dalla decisione della posa;
-- **la ricerca su valvole di sicurezza e segno della ritegno**, chiesta dal PO:
-  `docs/fonti/ricerche/reports/Valvole di sicurezza e simbolo ritegno.md`.
+| pacchetto | che cosa |
+|---|---|
+| **`REL-001`** — attivo | **la skill vera e propria** — l'ingresso `SKILL.md` che cuce i cinque pezzi, la cartella installabile — **e il PDF fatto dalla skill**, senza browser |
+| `REL-002` | il **cartiglio** Nove C compilato (`assets/cartigli/Cartiglio_NoveC_A3.pdf`, D-091) |
+| `REL-003` | i **simboli nuovi**: pompa di calore di alta potenza, caldaia modulare a condensazione, solare termico, fan-coil canalizzato — forme dalle fonti, approvate dal PO guardandole |
+| `REL-004` | il **DXF**: prima si definisce con il PO come si esporta, poi si scrive |
+| `REL-005` | il **pacchetto della release**: versione, `releases/latest/` e ZIP, guida d'installazione, suite verde, collaudo |
 
-**Il metro — le tavole approvate il 24 settembre**, zero tratte cedute e zero rilievi bloccanti:
+L'elenco è del PO; **l'ordine è una proposta della sessione** (D-183, punto 3), in
+`docs/plans/2026-09-03-release-plan.md`, sezione «La prima release».
+
+**Che cosa sa `REL-001` prima di cominciare** (il pacchetto lo scrive per intero):
+
+- **i cinque pezzi esistono e li cuce a mano la sessione di sviluppo**: Capire e Comporre sono
+  agenti con le loro istruzioni in `skill/`; Completare, Eseguire e i controlli di Rivedere sono
+  comandi (`disegnatore-mep rules`, `piano`, `revisiona`);
+- **non c'è l'ingresso**: `docs/SKILL.md` è l'architettura, non il file che Claude carica;
+- **il PDF lo fa `scripts/to-pdf.sh` col browser**, che nell'ambiente di una skill non c'è; il
+  pacchetto dipende solo da `pydantic`;
+- **le skill di Nove C** sono una cartella con `SKILL.md`, `scripts/`, `references/` — si guardi quella
+  dei computi, `cme-mep-pdc` —, e la skill che crea le skill (`skill-creator`) ne dà la forma;
+- **Capire sa già dichiarare le domande** (`assumptions` con `status: "proposed"`,
+  `skill/capire/ISTRUZIONI.md` §6): manca chi le porta al progettista.
+
+**Il metro delle tavole approvate**, zero cedute e zero bloccanti su tutte:
 
 | impianto | 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
-| formato · tratte | A3 · 23 | A3 · 25 | A3 · 24 | A3 · 25 | A2 · 56 |
+| formato · tratte | A3 · 25 | A3 · 25 | A3 · 24 | A3 · 27 | A2 · 56 |
 | rilievi · incroci | 1 · 1 | 1 · 1 | 1 · 2 | 2 · 2 | 1 · 5 |
 
-**Il pacchetto attivo è `DRAW-018` — le valvole di sicurezza, una per generatore** (la strada A,
-**D-182**, I-116): una per macchina, attaccata all'uscita e prima dei suoi rubinetti, a qualunque
-potenza, e niente sicurezza comune sulla mandata. **Misurato prima di scriverlo**: cambiano i
-grafi e le tavole **1 e 4**, che si ricompongono in camera pulita; il 2 e il 3 cambiano solo nella
-motivazione scritta nel grafo; il 5 è identico. Le tavole 1 e 4 vanno al PO **prima** della
-fusione: non le ha ancora viste.
+Le 1 e 4 in `docs/collaudi/DRAW-018/prova-camera-pulita-2026-09-24/`, le 2, 3 e 5 in
+`docs/collaudi/DRAW-017/prova-camera-pulita-2026-09-24/`; nella cartella di `DRAW-018` ci sono i
+cinque grafi e i cinque piani di oggi, ed è da lì che leggono le prove.
 
-**Poi la prima release** (**I-118**): il PO ha chiesto di parlare dei prossimi passi. La proposta
-della sessione e la sua scelta aggiornano `docs/plans/2026-09-03-release-plan.md` e il pacchetto
-successivo.
+**La suite: 46 rosse**, 1690 passate. Tutte compongono **senza piano** — la posa di partenza del
+motore o le fasi del solutore, cioè il percorso che D-151 ha tolto dalla decisione della posa: 43
+della base, 2 della posa a fasi (`DRAW-017`), 1 della posa di partenza con la sicurezza per macchina
+(`DRAW-018`). Toglierle è in `REL-005`, e aspetta il via libera del PO sul solutore.
 
-**Il protocollo della camera pulita**, che sta nel repository:
+**Che cosa è successo il 24 settembre**, in una riga ciascuno: la miscelatrice con l'ingresso AF
+(D-175), il ricircolo (D-176), il vaso sanitario (D-178, D-179), la freccia nel verso del flusso
+(D-180), **la ritegno a N** di UNI 9511 (D-181), **una valvola di sicurezza per generatore** a
+qualunque potenza (la strada A, D-182) — con la ricerca su norme e costruttori che il PO ha chiesto
+(`docs/fonti/ricerche/reports/Valvole di sicurezza e simbolo ritegno.md`, SRC-029).
+
+**Il protocollo della camera pulita**, che resta valido per ogni tavola nuova:
 
 - i grafi completi: `disegnatore-mep rules examples/prova/prova-N-….json --catalog
   examples/layout/catalog --symbols assets/symbols --rules rules/hydronic --naming naming
@@ -67,14 +80,15 @@ successivo.
 - la misura della sessione, **mai quella dell'agente**:
   `python docs/collaudi/DRAW-017/misura-tavole.py --dettaglio nome=grafo:piano …`;
 - i PDF con `scripts/to-pdf.sh`, e si guardano i PDF: i PNG di `scripts/rasterize.sh` tagliano il
-  fondo del foglio.
+  fondo del foglio (un agente di `DRAW-018` ha trovato la finestra giusta: `--window-size=1588,1400`
+  sull'A3).
 
-**Resta aperto, e non è di `DRAW-018`:** l'**anello** (i vincoli dell'occhio come dati per il
-pianificatore), le cure del revisore che escono, **`passa-per`**, i rilievi di A2, A3 e B5; le
-**domande per il progettista** del README della prova del 24 (lo scarico del bollitore a monte del
-gruppo di sicurezza, il ritorno delle zone su un raccordo a T, nessun ritegno sulle mandate della
-cascata, il raccordo del bypass nel circuito miscelato); le **due rosse nuove della posa a fasi**,
-dichiarate; il regime dei 35 kW che somma anche le pompe di calore (D-108), rilievo della ricerca.
+**Resta aperto, e non è di `REL-001`:** l'**anello** (i vincoli dell'occhio come dati per il
+pianificatore), le cure del revisore che escono, **`passa-per`**, i rilievi di A2, A3 e B5 — migliorie,
+non cancelli della release; **quello che gli agenti chiedono alle istruzioni del pianificatore**
+(README delle prove di `DRAW-017` e `DRAW-018`); il regime dei 35 kW che somma anche le pompe di
+calore (D-108), rilievo della ricerca. **Le domande degli agenti per il progettista non si portano**
+(I-120).
 
 ## ⛔ `DRAW-015` è fuso, e le tavole **non sono approvate**
 
@@ -445,8 +459,9 @@ chiusi, ed erano uno dei quattro difetti che il cold eye review aveva trovato il
    (D-148) sono stati lasciati andare **perché** l'elaborato esce in DXF e si rifinisce in
    CAD. Quel pezzo non esiste.
 5. **Il formato definitivo** (D-148 è dichiarata momentanea dal PO stesso).
-6. **Che cosa viene dopo la 0.3, verso la prima release** (**I-118**): la sessione porta una
-   proposta, il PO sceglie.
+6. ~~**Che cosa viene dopo la 0.3, verso la prima release**~~ — **scelto dal PO il 24 settembre**
+   (**D-183**): la skill e il PDF, il cartiglio, i simboli nuovi, il DXF. Restano da decidere il
+   collaudo su impianti veri e il via libera a togliere il solutore (`REL-005`).
 
 ## Quello che è cambiato di prezzo, e va saputo
 

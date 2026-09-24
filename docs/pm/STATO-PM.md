@@ -1,6 +1,6 @@
 # STATO PM — il dossier di stato della sessione
 
-**Aggiornato:** 2026-09-24 (`DRAW-017` fuso con la PR #56, tavole approvate — I-117; attivo `DRAW-018`, la strada A — D-182; poi la prima release — I-118)
+**Aggiornato:** 2026-09-24 notte (`DRAW-017` e `DRAW-018` fusi, tavole approvate — I-117, I-119; la prima release — D-183; attivo `REL-001`)
 **A chi serve:** alla sessione che subentra. Leggi questo e sei operativo: non ti serve un
 prompt lungo, e chi te lo dà ti sta raccontando qualcosa che dovrebbe stare qui.
 **Regola di questo file:** ogni sessione lo aggiorna prima di chiudere. Un file di stato
@@ -54,10 +54,10 @@ modello da riusare.
 
 | | |
 |---|---|
-| `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR **#56**, che porta `DRAW-017` — la miscelatrice con l'ingresso AF, il ricircolo, il vaso sanitario, la freccia nel verso del flusso, la ritegno a N, i piani del pianificatore nelle prove e la ricerca sulle valvole di sicurezza. ✅ **Fusa con le tavole approvate dal PO** (I-117), come la PR #53 di `DRAW-016` (I-109) |
-| Release dichiarata | **0.3 — generalizzazione** (`docs/plans/2026-09-03-release-plan.md`) |
+| `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR **#57**, che porta `DRAW-018` — una valvola di sicurezza per generatore (D-182) —, dopo la **#56** di `DRAW-017`. ✅ **Tutte e due fuse con le tavole approvate dal PO** (I-117, I-119) |
+| Release dichiarata | **0.3 — generalizzazione**, e dal 24 settembre il lavoro va verso **la prima release** col perimetro del PO (D-183; `docs/plans/2026-09-03-release-plan.md`, sezione «La prima release») |
 | Architettura del disegno | **cambiata il 20 settembre**: pianificatore → motore → revisore (**D-151**). `docs/ARCHITETTURA-DEL-PIANO.md` è il documento che vince su ogni contrasto |
-| Pacchetto attivo | **`DRAW-018`** (`ACTIVE_WORK_PACKAGE.md`), **ATTIVO**: le valvole di sicurezza **una per generatore**, attaccate all'uscita e prima dei rubinetti, a qualunque potenza (la strada A, **D-182**). Cambiano le tavole 1 e 4, che il PO vede prima della fusione. **Dopo**: i passi verso la prima release (**I-118**), che sceglie il PO |
+| Pacchetto attivo | **`REL-001`** (`ACTIVE_WORK_PACKAGE.md`), **ATTIVO**: **la skill vera e propria** — l'ingresso `SKILL.md` che cuce i cinque pezzi, la cartella installabile — **e il PDF fatto dalla skill**. È il primo dei cinque pacchetti della prima release (D-183): poi il cartiglio, i simboli nuovi, il DXF, il pacchetto della release |
 | Il criterio di un'autostrada | **non è un numero** (**D-164**): «un'autostrada per definizione ha poche curve e tratti rettilinei… un criterio **grafico non matematico**». Chi giudica è l'**occhio**. Trasformare un'osservazione in una soglia è **il solutore che rientra dalla finestra** |
 | La convenzione grafica | **è quella sviluppata finora e non si tocca** (**D-165**). Le tavole di `input-pm/riferimenti-grafici/` sono riferimenti **sull'instradamento**, non una fonte di convenzione |
 | Il metodo con cui si compone | **`D-159`, e viene prima delle regole**: la quota di un'autostrada **non si sceglie**, è quella della **porta** della macchina che la genera. Per intero in testa a `docs/regole-del-piano.md` |
@@ -69,8 +69,8 @@ modello da riusare.
 | PR #32 (DRAW-010) | **verificata e respinta** il 15 settembre. Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`. **Il suo lavoro non è su `main`**: la testa del ramo, `df66709`, non è antenata di `main` |
 | Le tavole del pianificatore | i cinque impianti completi, composti **da solo** dal pianificatore (`skill/comporre/`) in camera pulita e **approvati dal PO** due volte: il 23 settembre (I-109, «hanno proprio l'aspetto di tavole professionali») e il 24 (I-117). I piani a mano di `docs/collaudi/PROVA-PIANO/` sono storia: materiale di collaudo del pezzo 3 (D-155) |
 | Che cosa quelle tavole non dimostrano | **che la skill funzioni nella chat di lavoro.** Ogni tavola esce da un agente in camera pulita e dalla CLI, con la sessione che cuce i pezzi a mano. Il percorso intero — testo dell'ingegnere, grafo, domande, approvazione, piano, tavola — non è mai stato eseguito come lo userà l'ingegnere |
-| I cinque impianti | **misurati il 24 settembre**, dalla sessione: formato · rilievi · incroci — 1: A3 · 1 · 1; 2: A3 · 1 · 1; 3: A3 · 1 · 2; 4: A3 · 2 · 2; 5: A2 · 1 · 5. Zero cedute, zero bloccanti. La suite: **45 rosse**, 1663 passate |
-| Registro degli input | **96 righe, 30 aperte**, più le regole permanenti (il conto in testa a `docs/input-pm/REGISTRO.md`). **I-085 è aperta per dichiarazione del PO**: «le regole vanno solo aggiunte altre e migliorate» |
+| I cinque impianti | **misurati il 24 settembre**, dalla sessione: formato · rilievi · incroci — 1: A3 · 1 · 1; 2: A3 · 1 · 1; 3: A3 · 1 · 2; 4: A3 · 2 · 2; 5: A2 · 1 · 5. Zero cedute, zero bloccanti. La suite: **46 rosse**, 1690 passate, tutte del percorso senza piano |
+| Registro degli input | **103 righe, 32 aperte**, più le regole permanenti (il conto in testa a `docs/input-pm/REGISTRO.md`). **I-085 è aperta per dichiarazione del PO**: «le regole vanno solo aggiunte altre e migliorate» |
 | Prodotto in chat | **mai eseguito nel suo ambiente finale.** È il rischio più vecchio |
 | Export DXF | **non costruito.** `I-072` è aperta, e non esiste codice di export in `src/` |
 
@@ -132,9 +132,9 @@ per giudicare il solutore, e le loro voci di costo non descrivono più il percor
 > **Nota del 24 settembre 2026.** Questo elenco è quello del 21 e resta com'era, perché dice
 > come si ragionava. **I punti 0 e 1 sono chiusi nei fatti**: il pianificatore esiste, e le
 > tavole che compone da solo il PO le ha approvate due volte (I-109, I-117). **I fili aperti di
-> oggi** stanno in testa a `HANDOFF.md`, sezione «Da dove riparte»: `DRAW-018` (la strada A), poi
-> la prima release (I-118); l'anello, `passa-per`, i rilievi di A2, A3 e B5; il DXF (I-072); la
-> skill mai eseguita nella chat di lavoro.
+> oggi** stanno in testa a `HANDOFF.md`, sezione «Da dove riparte»: la prima release (D-183) —
+> `REL-001` la skill e il PDF, poi il cartiglio, i simboli nuovi, il DXF (I-072, I-125), il pacchetto
+> della release —; e, come migliorie, l'anello, `passa-per`, i rilievi di A2, A3 e B5.
 
 In ordine di quanto pesano. I rischi numerati stanno in `PROJECT_STATE.md`.
 

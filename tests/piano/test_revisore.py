@@ -47,6 +47,10 @@ from disegnatore_mep.validation.regole import ORDINE_DELLE_REGOLE
 
 ROOT = Path(__file__).resolve().parents[2]
 COLLAUDO = ROOT / "docs" / "collaudi" / "DRAW-017" / "prova-camera-pulita-2026-09-24"
+"""Il banco resta quello di `DRAW-017` anche dopo D-182: e' un banco, non la tavola
+di oggi, e il guasto qui sotto e' scritto per quella posa. Sul piano ricomposto il
+24 settembre sera il radiatore a quelle coordinate non cade nella fascia degli
+accumuli."""
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
 NAMING = ROOT / "naming"

@@ -36,16 +36,19 @@ PROVA = ROOT / "examples" / "prova"
 LARGE_ONLY = {
     "flow-temperature-where-heat-enters-the-water",
     "air-release-where-the-water-is-hottest",
-    "safety-relief-where-heat-enters-the-water",
 }
 """Le regole del solo regime grande: sopra i 35 kW la Raccolta R vuole i
-dispositivi su ogni generatore."""
+dispositivi su ogni generatore. La sicurezza non e' piu' fra queste: dal 24
+settembre 2026 e' una per generatore a qualunque potenza (D-182)."""
 SMALL_ONLY = {
     "air-vent-on-the-stored-volume",
-    "safety-relief-on-the-closed-circuit",
 }
-"""Le regole del solo regime piccolo: lo sfogo sul serbatoio, e la sicurezza
-di circuito sulla mandata generale vicino al gruppo dei generatori (I-046)."""
+"""Le regole del solo regime piccolo: lo sfogo sul serbatoio. La sicurezza di
+circuito sulla mandata generale (I-046) non c'e' piu': la supera D-182."""
+BOTH_REGIMES = {
+    "safety-relief-where-heat-enters-the-water",
+}
+"""La sicurezza per generatore, che D-182 vuole sotto e sopra i 35 kW."""
 
 
 def catalog() -> ComponentRegistry:
@@ -80,7 +83,7 @@ def test_without_a_declaration_the_minimal_kit_applies() -> None:
     _, applied, _ = saturate(model, catalog(), rules())
     fired = {item.rule_id for item in applied}
     assert not fired & LARGE_ONLY
-    assert fired >= SMALL_ONLY
+    assert fired >= SMALL_ONLY | BOTH_REGIMES
 
 
 def test_declaring_the_large_regime_swaps_the_kit() -> None:
@@ -90,7 +93,7 @@ def test_declaring_the_large_regime_swaps_the_kit() -> None:
     )
     _, applied, _ = saturate(model, catalog(), rules())
     fired = {item.rule_id for item in applied}
-    assert fired >= LARGE_ONLY
+    assert fired >= LARGE_ONLY | BOTH_REGIMES
     assert not fired & SMALL_ONLY
 
 
