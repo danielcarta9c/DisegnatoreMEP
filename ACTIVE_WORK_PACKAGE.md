@@ -99,6 +99,18 @@ regola. **Il regime dei 35 kW (D-108) resta** per le regole che lo usano: che so
 pompe di calore, mentre per la Raccolta R contano i soli generatori a combustione, è un rilievo
 della ricerca e non lavoro di qui — si porta al PO se una tavola lo mostra.
 
+### Deviazioni dichiarate — 24 settembre 2026
+
+- **Il motore delle regole** (`src/disegnatore_mep/rules/schema.py`, `engine.py`), fuori dal
+  perimetro scritto: il criterio di soddisfazione di una regola dichiara adesso se **il bordo
+  macchina basta** (`on_board_counts`, vero di norma). Senza, una macchina che il catalogo dà con
+  la sicurezza a bordo non l'avrebbe ricevuta, e D-182 dice che la riceve comunque. Nessun
+  impianto di prova cambia per questo: nessuna macchina del catalogo dichiara la sicurezza a bordo.
+- **Il documento delle regole per l'ingegnere** (`docs/prodotto/REGOLE_ACCESSORI.md`): la scheda
+  della sicurezza riscritta per D-182, via le due schede della sicurezza comune, sedici schede.
+- **La proposta per la prima release** (`docs/plans/2026-09-24-verso-la-prima-release.md`, I-118):
+  è una proposta, non una decisione, e sta qui perché la sessione successiva la trovi.
+
 ---
 
 ## Criteri di accettazione
@@ -119,7 +131,7 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
 ## Dopo `DRAW-018`: la prima release (I-118)
 
 Il PO, il 24 settembre: «Alla fine parliamo di quali sono i prossimi step per arrivare alla prima
-release della skill». La sessione porta una proposta; **che cosa viene dopo la 0.3 lo sceglie il
+release della skill». La sessione porta una proposta — `docs/plans/2026-09-24-verso-la-prima-release.md` —; **che cosa viene dopo la 0.3 lo sceglie il
 PO**, e con la sua scelta si aggiornano `docs/plans/2026-09-03-release-plan.md` e il pacchetto
 successivo.
 
