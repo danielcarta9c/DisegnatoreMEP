@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-23 notte (`DRAW-016` fuso con la PR #53, tavole **approvate dal PO**, I-109; attivo `DRAW-017`: D-174 fatto con la PR #54, il resto alla sessione successiva, che parte dalla miscelatrice con l'ingresso AF)
+**Aggiornato:** 2026-09-24 (`DRAW-017` fuso con la PR #56, tavole **approvate dal PO**, I-117; attivo `DRAW-018`, le valvole di sicurezza una per generatore — la strada A, D-182; poi i passi verso la prima release, I-118)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -13,6 +13,31 @@
 > ci siamo arrivati, non per sapere come funziona la skill.
 
 ---
+
+## Dove siamo — 24 settembre 2026
+
+**`DRAW-017`, tavole approvate (I-117):** «Strada A e le tavole vanno benissimo». Sulle cinque
+tavole ricomposte dal pianificatore in camera pulita
+(`docs/collaudi/DRAW-017/prova-camera-pulita-2026-09-24/`) ci sono adesso **la miscelatrice
+termostatica con l'ingresso AF** (D-175), **il ricircolo ACS** verde chiaro che torna
+nell'accumulo (D-176), **il vaso sanitario** dove l'ACS è centralizzata (D-178, D-179), **la freccia
+di ritegne e circolatori nel verso del flusso** (D-180) e **la ritegno a N** di UNI 9511 (D-181).
+
+- **Il metro**: formato · rilievi · incroci — 1: A3 · 1 · 1; 2: A3 · 1 · 1; 3: A3 · 1 · 2; 4: A3 ·
+  2 · 2; 5: A2 · 1 · 5. Zero cedute e zero bloccanti su tutte.
+- **Suite: 45 rosse** (erano 48), 1663 passate, nessuno `skip` né `xfail` nuovo. Le cinque tornate
+  verdi sono le prove che leggevano un piano, ora quello del pianificatore; le 45 restanti
+  compongono senza piano, per il percorso che D-151 ha tolto dalla decisione della posa.
+- **La ricerca su valvole di sicurezza e segno della ritegno**, chiesta dal PO (I-115):
+  `docs/fonti/ricerche/reports/Valvole di sicurezza e simbolo ritegno.md`. Ne è nata **D-182**.
+
+**Il pacchetto attivo è `DRAW-018`** — le valvole di sicurezza **una per generatore**, attaccate
+all'uscita e prima dei rubinetti, a qualunque potenza (la strada A, **D-182**, I-116). Cambiano le
+tavole 1 e 4, che il PO vede prima della fusione. **Poi la prima release** (**I-118**): che cosa
+viene dopo la 0.3 lo sceglie il PO, su una proposta della sessione.
+
+**Il rischio più vecchio resta aperto**: la skill **non è mai stata eseguita nel suo ambiente
+finale**, la chat di lavoro, con i cinque pezzi cuciti insieme.
 
 ## Dove siamo — 23 settembre 2026
 

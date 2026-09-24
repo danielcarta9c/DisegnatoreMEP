@@ -1,6 +1,6 @@
 {
   "id": "valve-check",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "name": "Valvola di ritegno",
   "width_mm": 5.0,
   "height_mm": 5.0,
@@ -32,5 +32,5 @@
     "bottom_mm": 0.0
   },
   "stroke_weight": "medium",
-  "source": "UNI 9511 Tab. 3 «valvola di non ritorno», tramite SRC-016, e la parola del PM che l'ha respinta due volte: «una sorta di z di fianco con freccia sopra». Il segno e' una **z** — barra alta, diagonale, barra bassa — con la freccia del senso del flusso sopra. La versione precedente provava a farla con due barrette VERTICALI unite da una diagonale: sulla carta non legge come una z, legge come una N storta, ed e' quella che il PM ha visto e respinto. Il segno e' stato guardato rasterizzato prima di scriverlo, non descritto a memoria: e' la stessa lezione di I-004, applicata anche al proprio disegno e non solo alle fonti altrui"
+  "source": "UNI 9511 Tab. 3 «Valvola di non ritorno. La freccia indica il senso del flusso.», tramite SRC-016 (la tavola pubblicata da Oppo) e SRC-015, guardate e misurate il 24 settembre 2026: due barre di traverso al tubo, unite dalla diagonale che scende dall'alto della prima al basso della seconda — una **N** sul tubo orizzontale — con il tubo nel punto medio delle barre e la freccia sopra, lunga quanto il segno, nel verso del flusso (D-180). Il PO l'ha chiesta il 24 settembre 2026 (I-115, D-181): la z a barre orizzontali di D-122 non sta in nessuna fonte sul tubo orizzontale; sul tubo verticale la N, ruotata con il tubo, e' la z che disegna Caleffi (Idraulica 25, 2003)"
 }

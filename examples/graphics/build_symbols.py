@@ -223,17 +223,17 @@ SOURCE_UNI_TAB1_FITTING = (
 """La fonte dei raccordi, con la decisione che ne ha ridotto il rispetto."""
 
 SOURCE_UNI_CHECK_VALVE = (
-    "UNI 9511 Tab. 3 «valvola di non ritorno», tramite SRC-016, e la parola del PM "
-    "che l'ha respinta due volte: «una sorta di z di fianco con freccia sopra». Il "
-    "segno e' una **z** — barra alta, diagonale, barra bassa — con la freccia del "
-    "senso del flusso sopra. La versione precedente provava a farla con due "
-    "barrette VERTICALI unite da una diagonale: sulla carta non legge come una z, "
-    "legge come una N storta, ed e' quella che il PM ha visto e respinto. Il segno "
-    "e' stato guardato rasterizzato prima di scriverlo, non descritto a memoria: e' "
-    "la stessa lezione di I-004, applicata anche al proprio disegno e non solo alle "
-    "fonti altrui"
+    "UNI 9511 Tab. 3 «Valvola di non ritorno. La freccia indica il senso del "
+    "flusso.», tramite SRC-016 (la tavola pubblicata da Oppo) e SRC-015, guardate "
+    "e misurate il 24 settembre 2026: due barre di traverso al tubo, unite dalla "
+    "diagonale che scende dall'alto della prima al basso della seconda — una "
+    "**N** sul tubo orizzontale — con il tubo nel punto medio delle barre e la "
+    "freccia sopra, lunga quanto il segno, nel verso del flusso (D-180). Il PO "
+    "l'ha chiesta il 24 settembre 2026 (I-115, D-181): la z a barre orizzontali "
+    "di D-122 non sta in nessuna fonte sul tubo orizzontale; sul tubo verticale "
+    "la N, ruotata con il tubo, e' la z che disegna Caleffi (Idraulica 25, 2003)"
 )
-"""La fonte del ritegno, con la decisione che ne ha rifatto il segno (D-122)."""
+"""La fonte del ritegno, con la decisione che ne ha rifatto il segno (D-181)."""
 
 
 # ---------------------------------------------------------------------------
@@ -290,29 +290,39 @@ def gauge_cock_body(w: float, h: float) -> str:
     )
 
 
-def valve_check_body(w: float, h: float) -> str:
-    """Valvola di non ritorno (UNI 9511 Tab. 3, D-122): una **z** — barra alta,
-    diagonale, barra bassa — con la freccia del senso del flusso sopra.
+CHECK_VALVE_INSET = 0.17
+"""Dove stanno le barre della N, come frazione della larghezza dal capo: i
+monconi del tubo le raggiungono nel punto medio."""
+CHECK_VALVE_BAR_RATIO = 0.6
+"""Altezza delle barre sulla distanza fra loro: 0,57 nella tavola della norma
+pubblicata da Oppo e in Caleffi, misurata sui vettori (I-115)."""
 
-    E' il segno che il PM ha approvato dopo averlo visto rasterizzato; il
-    generatore lo riproduce dal manifesto committato, che era stato corretto a
-    mano (DRAW-005)."""
-    inset = w / 5
+
+def valve_check_body(w: float, h: float) -> str:
+    """Valvola di non ritorno (UNI 9511 Tab. 3, D-181): una **N** — due barre di
+    traverso al tubo, unite dalla diagonale che scende dall'alto della prima al
+    basso della seconda — con la freccia del senso del flusso sopra.
+
+    Le proporzioni sono quelle della tavola della norma, misurate: le barre alte
+    sei decimi della distanza fra loro, il tubo che arriva nel loro punto medio,
+    la freccia lunga quanto il segno. Il segno si specchia nel verso della tratta
+    (D-180) e sul tubo verticale ruota con lui, diventando la z di Caleffi."""
+    inset = w * CHECK_VALVE_INSET
     left, right = inset, w - inset
-    top, bottom = h * 0.24, h * 0.76
-    arrow_y = h * 0.06
-    tail, head = w * 0.28, w * 0.72
+    half = (right - left) * CHECK_VALVE_BAR_RATIO / 2
+    top, bottom = h / 2 - half, h / 2 + half
+    arrow_y = h * 0.12
     barb = w * 0.12
     return (
         stubs_horizontal(w, h, inset)
-        + f'<line x1="{n(left)}" y1="{n(top)}" x2="{n(right)}" y2="{n(top)}"/>'
-        f'<line x1="{n(right)}" y1="{n(top)}" x2="{n(left)}" y2="{n(bottom)}"/>'
-        f'<line x1="{n(left)}" y1="{n(bottom)}" x2="{n(right)}" y2="{n(bottom)}"/>'
-        f'<line x1="{n(tail)}" y1="{n(arrow_y)}" x2="{n(head)}" y2="{n(arrow_y)}"/>'
-        f'<line x1="{n(head)}" y1="{n(arrow_y)}" '
-        f'x2="{n(head - barb)}" y2="{n(arrow_y - barb / 2)}"/>'
-        f'<line x1="{n(head)}" y1="{n(arrow_y)}" '
-        f'x2="{n(head - barb)}" y2="{n(arrow_y + barb / 2)}"/>'
+        + f'<line x1="{n(left)}" y1="{n(top)}" x2="{n(left)}" y2="{n(bottom)}"/>'
+        f'<line x1="{n(left)}" y1="{n(top)}" x2="{n(right)}" y2="{n(bottom)}"/>'
+        f'<line x1="{n(right)}" y1="{n(top)}" x2="{n(right)}" y2="{n(bottom)}"/>'
+        f'<line x1="{n(left)}" y1="{n(arrow_y)}" x2="{n(right)}" y2="{n(arrow_y)}"/>'
+        f'<line x1="{n(right)}" y1="{n(arrow_y)}" '
+        f'x2="{n(right - barb)}" y2="{n(arrow_y - barb / 2)}"/>'
+        f'<line x1="{n(right)}" y1="{n(arrow_y)}" '
+        f'x2="{n(right - barb)}" y2="{n(arrow_y + barb / 2)}"/>'
     )
 
 
@@ -961,7 +971,7 @@ def dhw_safety_group_body(w: float, h: float) -> str:
 
     Tre organi in serie lungo l'asse, come il gruppo li porta dentro: la
     valvola di intercettazione (due triangoli convergenti), il ritegno
-    controllabile (la **z** del non ritorno) e la sicurezza, che sta sul ramo
+    controllabile (la **N** del non ritorno, D-181) e la sicurezza, che sta sul ramo
     di scarico e per questo si stacca dall'asse — un triangolo con la molla. Il
     segno non nasconde cio' che c'e' dentro: e' la ragione per cui le regole
     non aggiungono i pezzi che il gruppo dichiara.
@@ -974,8 +984,9 @@ def dhw_safety_group_body(w: float, h: float) -> str:
     cx = w * 0.16
     d = w * 0.07
     s = h * 0.28
-    check_left, check_right = w * 0.4, w * 0.58
-    top, bottom = axis - h * 0.26, axis + h * 0.26
+    check_left, check_right = w * 0.35, w * 0.63
+    half_bar = (check_right - check_left) * CHECK_VALVE_BAR_RATIO / 2
+    top, bottom = axis - half_bar, axis + half_bar
     relief_x = w * 0.82
     base_y, apex_y = axis - h * 0.16, axis - h * 0.44
     half = w * 0.07
@@ -984,14 +995,15 @@ def dhw_safety_group_body(w: float, h: float) -> str:
         for index, y in enumerate((h * 0.16, h * 0.1, h * 0.04))
     )
     return (
-        f'<line x1="0" y1="{n(axis)}" x2="{n(w)}" y2="{n(axis)}"/>'
+        f'<line x1="0" y1="{n(axis)}" x2="{n(check_left)}" y2="{n(axis)}"/>'
+        f'<line x1="{n(check_right)}" y1="{n(axis)}" x2="{n(w)}" y2="{n(axis)}"/>'
         f'<path d="M{n(cx - d)} {n(axis - s)} L{n(cx - d)} {n(axis + s)} '
         f'L{n(cx)} {n(axis)} Z"/>'
         f'<path d="M{n(cx + d)} {n(axis - s)} L{n(cx + d)} {n(axis + s)} '
         f'L{n(cx)} {n(axis)} Z"/>'
-        f'<line x1="{n(check_left)}" y1="{n(top)}" x2="{n(check_right)}" y2="{n(top)}"/>'
-        f'<line x1="{n(check_right)}" y1="{n(top)}" x2="{n(check_left)}" y2="{n(bottom)}"/>'
-        f'<line x1="{n(check_left)}" y1="{n(bottom)}" x2="{n(check_right)}" y2="{n(bottom)}"/>'
+        f'<line x1="{n(check_left)}" y1="{n(top)}" x2="{n(check_left)}" y2="{n(bottom)}"/>'
+        f'<line x1="{n(check_left)}" y1="{n(top)}" x2="{n(check_right)}" y2="{n(bottom)}"/>'
+        f'<line x1="{n(check_right)}" y1="{n(top)}" x2="{n(check_right)}" y2="{n(bottom)}"/>'
         f'<line x1="{n(relief_x)}" y1="{n(axis)}" x2="{n(relief_x)}" y2="{n(base_y)}"/>'
         f'<path d="M{n(relief_x - half)} {n(base_y)} L{n(relief_x + half)} {n(base_y)} '
         f'L{n(relief_x)} {n(apex_y)} Z"/>'
@@ -1077,7 +1089,12 @@ def pressure_gauge_body(w: float, h: float) -> str:
 
 def mixing_valve_body(w: float, h: float) -> str:
     """Valvola a tre vie di UNI 9511 Tab. 3 — tre triangoli chiusi al centro,
-    ingresso freddo dal basso — con lo stelo a T della testa termostatica."""
+    ingresso freddo dal basso — con lo stelo a T della testa termostatica.
+
+    La gamba dell'ingresso freddo arriva **fino alla porta** `cold_in`, sul
+    bordo inferiore del riquadro (**D-175**): prima si fermava a 8,5 mm, perche'
+    l'attacco non esisteva e la terza via era disegnata senza niente da
+    raggiungere."""
     cx, cy = w / 2, h / 2
     d = w * 0.33
     s = d * 0.8
@@ -1089,7 +1106,7 @@ def mixing_valve_body(w: float, h: float) -> str:
         f'<path d="M{n(cx - d)} {n(cy - s)} L{n(cx - d)} {n(cy + s)} L{n(cx)} {n(cy)} Z"/>'
         f'<path d="M{n(cx + d)} {n(cy - s)} L{n(cx + d)} {n(cy + s)} L{n(cx)} {n(cy)} Z"/>'
         f'<path d="M{n(cx - s)} {n(cy + d)} L{n(cx + s)} {n(cy + d)} L{n(cx)} {n(cy)} Z"/>'
-        f'<line x1="{n(cx)}" y1="{n(cy + d)}" x2="{n(cx)}" y2="{n(h * 0.85)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(cy + d)}" x2="{n(cx)}" y2="{n(h)}"/>'
         f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx)}" y2="{n(stem_top)}"/>'
         f'<line x1="{n(cx - cap)}" y1="{n(stem_top)}" x2="{n(cx + cap)}" y2="{n(stem_top)}"/>'
     )
@@ -1345,6 +1362,17 @@ HEAT_PUMP_PORTS = [
     port_at("water_supply", "right", 5.0, HEAT_PUMP_W, HEAT_PUMP_H),
     port_at("water_return", "right", 20.0, HEAT_PUMP_W, HEAT_PUMP_H),
 ]
+RECIRCULATION_PORT = [port_at("recirculation_in", "right", 12.5, STORAGE_W, STORAGE_H)]
+"""L'attacco del ricircolo di un **accumulo di acqua calda sanitaria** (**D-176**).
+
+Il PO, il 23 settembre 2026: «ACS-ritorno dopo il Circolatore va nell'accumulo
+ACS (se ho accumulo) altrimenti idraulicamente e termicamente non ha senso».
+Il ricircolo torna dalle utenze, quindi entra dal **fianco della distribuzione**
+— il destro, che sui fogli sta verso le utenze (A1) —, nella parte alta del
+volume e **sotto** l'uscita calda, dove il costruttore lo mette. La quota,
++12,5, e' una scelta di questa sessione sopra la sonda (+20): si sposta lungo la
+faccia (D-163), non di faccia."""
+
 CYLINDER_PORTS = [
     port_at("coil_in", "left", 7.5, STORAGE_W, STORAGE_H),
     port_at("coil_out", "left", 17.5, STORAGE_W, STORAGE_H),
@@ -1356,6 +1384,7 @@ CYLINDER_PORTS = [
     # La sede della sonda: attacco di servizio dichiarato in legenda dal
     # costruttore (SRC-018), a meta' altezza sul fianco libero.
     port_at("probe", "right", 20.0, STORAGE_W, STORAGE_H),
+    *RECIRCULATION_PORT,
 ]
 BUFFER_PORTS = [
     port_at("primary_in", "left", 5.0, STORAGE_W, STORAGE_H),
@@ -1417,6 +1446,9 @@ DHW_HEAT_PUMP_PORTS = [
     port_at("cold_in", "left", 37.5, STORAGE_W, STORAGE_H),
     port_at("dhw_out", "top", 12.5, STORAGE_W, STORAGE_H),
     port_at("probe", "right", 20.0, STORAGE_W, STORAGE_H),
+    # Anche il boiler in pompa di calore e' un accumulo di acqua calda
+    # sanitaria, e D-176 vale per lui come per il bollitore.
+    *RECIRCULATION_PORT,
 ]
 
 SYMBOLS: list[SymbolSpec] = [
@@ -1441,7 +1473,7 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     inline_symbol(
         "dhw-safety-group", "Gruppo di sicurezza sanitario", WIDE_INLINE_ACCESSORY,
-        dhw_safety_group_body, SOURCE_EN_1487,
+        dhw_safety_group_body, SOURCE_EN_1487, version="2.0.0",
     ),
     single_port_symbol(
         "drain-connection", "Attacco di scarico", BRANCHED_ACCESSORY, "top",
@@ -1457,7 +1489,31 @@ SYMBOLS: list[SymbolSpec] = [
         pressure_gauge_body, SOURCE_UNI_TAB10, upright_glyphs=dial_glyph(BRANCHED_ACCESSORY),
         version="2.0.0",
     ),
-    inline_symbol("mixing-valve-thermostatic", "Valvola miscelatrice termostatica", BRANCHED_ACCESSORY, mixing_valve_body, SOURCE_UNI_TAB3),
+    # **D-175, 23 settembre 2026, su disposizione del PO**: «la miscelatrice
+    # termostatica ha necessita' di ingresso AF e quindi la libreria va
+    # aggiornata… anche lei e' una di quelle valvole che deve poter ruotare e
+    # specchiare per evitare sormonti o curve non necessarie». Non e' piu' un
+    # organo in linea a due attacchi: ha la via dritta dell'acqua calda —
+    # `hot_in` a sinistra, `out` a destra — e la terza via dell'acqua fredda,
+    # `cold_in`, in basso, dove il corpo la disegnava gia'. Senza
+    # `inline_gap_mm` il motore non la posa piu' da solo sulla tratta: la posa
+    # il piano, e la gira e la specchia come le altre tre vie (D-168, D-169).
+    # Porte e forma cambiano: il manifesto sale di maggiore.
+    SymbolSpec(
+        id="mixing-valve-thermostatic",
+        name="Valvola miscelatrice termostatica",
+        width_mm=BRANCHED_ACCESSORY[0],
+        height_mm=BRANCHED_ACCESSORY[1],
+        inline=False,
+        ports=[
+            port("hot_in", "left", *BRANCHED_ACCESSORY),
+            port("out", "right", *BRANCHED_ACCESSORY),
+            port("cold_in", "bottom", *BRANCHED_ACCESSORY),
+        ],
+        body=mixing_valve_body(*BRANCHED_ACCESSORY),
+        source=SOURCE_UNI_TAB3,
+        version="2.0.0",
+    ),
     inline_symbol("pressure-reducer", "Riduttore di pressione", BRANCHED_ACCESSORY, pressure_reducer_body, SOURCE_PRACTICE_HYDRONIC),
     single_port_symbol(
         "network-boundary", "Confine di rete", INLINE_ACCESSORY, "right", network_boundary_body,
@@ -1548,7 +1604,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=reserve_body(STORAGE_W, STORAGE_H, DHW_HEAT_PUMP_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="1.1.0",
+        # Una porta in piu', l'attacco del ricircolo (D-176): sale di minore.
+        version="1.2.0",
     ),
     SymbolSpec(
         id="mixing-valve-3way",
@@ -1610,7 +1667,7 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     inline_symbol(
         "valve-check", "Valvola di ritegno", INLINE_ACCESSORY, valve_check_body,
-        SOURCE_UNI_CHECK_VALVE, version="3.0.0",
+        SOURCE_UNI_CHECK_VALVE, version="4.0.0",
     ),
     inline_symbol(
         "strainer", "Filtro a Y", INLINE_ACCESSORY, strainer_body, SOURCE_PRACTICE_HYDRONIC,
@@ -1647,7 +1704,8 @@ SYMBOLS: list[SymbolSpec] = [
         ),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="2.0.0",
+        # Una porta in piu', l'attacco del ricircolo (D-176): sale di minore.
+        version="2.1.0",
     ),
     SymbolSpec(
         id="buffer-four-port",

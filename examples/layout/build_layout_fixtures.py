@@ -83,6 +83,19 @@ def branch_port(medium: str = HEATING) -> dict[str, Any]:
     }
 
 
+def recirculation_port() -> dict[str, Any]:
+    """L'attacco del ricircolo di un accumulo di acqua calda sanitaria (**D-176**).
+
+    Il PO, il 23 settembre 2026: «ACS-ritorno dopo il Circolatore va
+    nell'accumulo ACS (se ho accumulo) altrimenti idraulicamente e termicamente
+    non ha senso». E' un attacco del **flusso** — il ricircolo ci entra come una
+    linea vera — e l'accumulo lo ha anche dove l'impianto il ricircolo non lo
+    ha: li' e' **tappato**, e libero non e' un difetto."""
+    port = hydronic_port("recirculation_in", "in", DHW, required=False)
+    port["plugged_when_unused"] = True
+    return port
+
+
 def hydronic_port(
     port_id: str,
     flow: str,
@@ -418,6 +431,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("cold_in", "in", COLD),
             hydronic_port("dhw_out", "out", DHW),
             service_port("probe", "temperature_measurement", DHW),
+            recirculation_port(),
         ],
         stored_medium=DHW,
         fills_from="cold_in",
@@ -442,13 +456,18 @@ DEFINITIONS: list[dict[str, Any]] = [
         symbol_id="pump-circulator",
     ),
     definition(
+        # **Ha un verso, come ogni ritegno** (I-114): il simbolo porta la
+        # freccia del flusso, e il motore la gira nel verso della tratta solo se
+        # il catalogo dichiara ingresso e uscita. Fino al 24 settembre 2026 le
+        # due porte erano «bidirezionali», e sul ricircolo dell'impianto 5 la
+        # freccia puntava contro il flusso: l'ha visto il PO sulla tavola.
         "valve-check-dhw-hot",
         "Valvola di ritegno sull'acqua calda",
         ["non_return"],
         [SHUTOFF_ORDINARY, INLINE],
         [
-            hydronic_port("a", "bidirectional", DHW),
-            hydronic_port("b", "bidirectional", DHW),
+            hydronic_port("a", "in", DHW),
+            hydronic_port("b", "out", DHW),
         ],
         symbol_id="valve-check",
     ),
@@ -541,6 +560,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             # sicurezza e vaso li preveda l'installazione, sulla tubazione
             # (SRC-018). Lo si svuota con una derivazione.
             service_port("probe", "temperature_measurement", DHW),
+            recirculation_port(),
         ],
         stored_medium=DHW,
         # La riserva si riempie dall'ingresso dell'acqua fredda (SRC-018,

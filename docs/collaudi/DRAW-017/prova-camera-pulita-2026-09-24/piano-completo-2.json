@@ -1,0 +1,43 @@
+{
+  "formato": "A3",
+  "note": [
+    "Scheletro prima di tutto (par. 2.2). Pompa di calore e volano a y=0: le loro porte principali stanno tutte e due a +5 e +20, quindi la mandata corre retta a y=5 e il ritorno a y=20 da porta a porta, zero pieghe (par. 2.1, D-159, B1, B10).",
+    "Il bollitore e' appeso sotto il volano, alla stessa x=165: e' la colonna degli accumuli (A1), e volano e bollitore sono i due rami della deviatrice, impilati come un parallelo (A2). La terza via della deviatrice scende ed entra nella serpentina con una L; il ritorno della serpentina risale al raccordo 'ritorno' con un'altra L. Tutte e due sono imposte dai simboli (porta verticale contro porta orizzontale, B1).",
+    "Il bollitore prende dalla mandata e sta sotto la coppia del primario: la sua mandata scavalca il ritorno primario. E' il sormonto imposto di B1 (pezzo fuori dalla coppia), ed e' l'unico sormonto della tavola.",
+    "B3 misurato sul motore: la verticale della deviatrice (x=140) vicina alle macchine e quella del raccordo di ritorno (x=130) piu' lontana danno 1 sormonto; l'ordine inverso (deviatrice a x=125, raccordo a x=142.5) ne da' 2, piu' un rilievo PARALLEL_RUNS_WITHOUT_A_FREE_LANE. Tenuto il primo ordine.",
+    "Le due verticali della serpentina stanno a 10 mm, lo stesso interasse con cui la coppia entra nel bollitore (+7.5 e +17.5): il binario gira l'angolo senza aprirsi e le due valvole stanno una sopra l'altra (B11, B12).",
+    "Perche' il bollitore sta basso (y=85): lo scarico del volano pende fino a y=65, e la linea ACS che esce dal cielo del bollitore deve andare a destra passandogli sotto con una corsia libera (linea a y=75, 10 mm sotto il simbolo). Piu' in alto taglierebbe lo stacco dello scarico. In cambio l'acqua fredda del bollitore entra da sinistra a +37.5 sotto la fine delle due verticali della serpentina e non resta murata (par. 4bis).",
+    "Ventilconvettore a y=7.5: la sua uscita (+12.5) e' alla quota di secondary_in del volano (+20), cosi' il ritorno secondario e' retto e la mandata, col circolatore, scala di 5 mm accanto al terminale. Provato anche y=2.5 (mandata retta): il gradino finiva sul ritorno appena fuori dal volano e si leggeva peggio.",
+    "SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER fra ventilconvettore e volano resta: e' il caso noto del terminale (interasse 10 contro 15, B11, D-167). Non l'ho inseguito avvicinando il terminale.",
+    "Corredo del primario (par. 4bis, A4): valvola di sicurezza sopra la mandata a 10 mm dalla pompa, stacco 10 mm; sfiato sopra e scarico sotto il volano, stacchi 10 mm. Vaso, gruppo di riempimento (con AF-02 sotto) e manometro pendono SOTTO il ritorno: sopra, a 15 mm, c'e' la mandata e i loro stacchi la taglierebbero. L'ordine lungo il ritorno e' quello del grafo, a passo 15 mm (10 mm liberi fra i simboli, D-062). Tutti i raccordi stanno alla quota della loro linea (B8).",
+    "La fila filtro-valvola-defangatore-valvola fra la pompa e il primo raccordo aveva 12.5 mm di gioco: tutto quello che sta a destra della pompa e' stato portato 10 mm a sinistra, senza rilievi (D3, disegno stretto).",
+    "ACS (D-175): la miscelatrice sta sulla linea ACS con rotazione 0: la via dritta porta l'acqua calda verso destra e la terza via guarda in basso, dove sta AF-03 con la sua valvola. ACS-01 subito dopo, allo stacco minimo che chiede la valvola di confine (20 mm, A4).",
+    "Acqua fredda del bollitore: AF-01 a sinistra, sulla linea che entra a +37.5, allo stacco minimo (20 mm, A4). Il raccordo dello scarico sta a x=117.5 e non sotto la verticale di ritorno (x=130): a 2.5 mm di distanza la colonna dello scarico sembrava la continuazione storta di quella verticale.",
+    "Formato A3: A4 e' rifiutato dal comando ('the 3 functional bands need 295mm but the drawing area is 212mm wide') e con A3 il rapporto non segnala SHEET_LARGER_THAN_NEEDED (D3)."
+  ],
+  "pezzi": {
+    "pdc": {"x": 0, "y": 0, "regola": "D-159, A1 — generazione a sinistra; fissa le quote delle autostrade (mandata +5, ritorno +20)"},
+    "volano": {"x": 165, "y": 0, "regola": "D-159, B1 — stesso y della pompa: mandata e ritorno primari retti"},
+    "deviatrice": {"x": 135, "y": 0, "rotazione": 0, "regola": "D-168, B3 — sulla mandata alla sua quota; in da sinistra, out_a dritta al volano, terza via in basso verso il bollitore; verticale vicina alle macchine = 1 sormonto invece di 2"},
+    "ritorno": {"x": 127.5, "y": 17.5, "regola": "B8, B3 — sulla quota del ritorno; verticale a 10 mm da quella della deviatrice, lato lontano dalle macchine"},
+    "bollitore": {"x": 165, "y": 85, "regola": "A1, A2 — sotto il volano nella colonna degli accumuli; y fissato dallo scarico del volano e dalla linea ACS che gli passa sotto"},
+    "ventilconvettori": {"x": 255, "y": 7.5, "regola": "D-167, B12 — si prende da sinistra; uscita alla quota di secondary_in: ritorno retto, gradino di 5 mm sulla mandata accanto al terminale"},
+    "tee-valve-safety-pdc-water-supply": {"x": 50, "y": 2.5, "regola": "B8, A4 — sulla mandata alla sua quota, a 10 mm dalla pompa che protegge"},
+    "valve-safety-pdc-water-supply": {"x": 50, "y": -17.5, "regola": "A4 — sopra la mandata, stacco minimo 10 mm"},
+    "tee-pressure-gauge-pdc-water-return": {"x": 110, "y": 17.5, "regola": "B8 — sul ritorno alla sua quota, primo dopo il raccordo 'ritorno' come nel grafo"},
+    "pressure-gauge-pdc-water-return": {"x": 110, "y": 40, "regola": "A4, par. 6 — sotto il ritorno (sopra c'e' la mandata), stacco con il rubinetto portamanometro"},
+    "tee-filling-unit-pdc-water-return-b": {"x": 95, "y": 17.5, "regola": "B8 — sul ritorno alla sua quota, passo 15 mm"},
+    "filling-unit-pdc-water-return": {"x": 95, "y": 32.5, "rotazione": 180, "regola": "D-168, A4 — b verso il raccordo in alto, a verso AF-02 in basso; stacco minimo 10 mm"},
+    "inlet-filling-unit-pdc-water-return": {"x": 95, "y": 52.5, "regola": "A4 — confine addosso al gruppo di riempimento, stacco 10 mm"},
+    "tee-expansion-connection-pdc-water-return": {"x": 80, "y": 17.5, "regola": "B8, B5 — sul ritorno alla sua quota; lascia alla fila filtro-defangatore il suo rettilineo verso la pompa"},
+    "expansion-connection-pdc-water-return": {"x": 80, "y": 40, "regola": "A4, par. 6 — sotto il ritorno, stacco con la valvola bloccabile"},
+    "air-vent-volano-primary-out": {"x": 175, "y": -20, "regola": "A4 — sopra il volano, stacco minimo 10 mm"},
+    "drain-connection-volano-primary-in": {"x": 175, "y": 55, "regola": "A4 — sotto il volano, stacco minimo 10 mm"},
+    "mixing-valve-thermostatic-bollitore-dhw-out": {"x": 205, "y": 70, "rotazione": 0, "regola": "D-175, D-168 — sulla linea ACS a y=75; via dritta verso destra, terza via in basso verso AF-03"},
+    "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {"x": 205, "y": 97.5, "regola": "A4, D-175 — sotto la terza via della miscelatrice, con la sua valvola"},
+    "utenze": {"x": 230, "y": 72.5, "regola": "A4 — confine ACS addosso alla miscelatrice, stacco minimo 20 mm"},
+    "acquedotto": {"x": 92.5, "y": 120, "regola": "A4 — confine AF-01 sulla linea dell'acqua fredda del bollitore, stacco minimo 20 mm"},
+    "tee-drain-connection-cold-bollitore-cold-in": {"x": 117.5, "y": 120, "regola": "B8 — sulla linea dell'acqua fredda alla sua quota; 10 mm a sinistra della verticale di ritorno, non sotto"},
+    "drain-connection-cold-bollitore-cold-in": {"x": 117.5, "y": 135, "regola": "A4 — sotto il raccordo, stacco minimo 10 mm"}
+  }
+}

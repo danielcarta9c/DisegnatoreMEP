@@ -1,0 +1,127 @@
+{
+  "formato": "A3",
+  "note": [
+    "Scheletro prima di tutto (par. 2.2): la spina e' pompa maestra -> accumulo -> radiatori. PDC-01 (pdc-master) a y=0 e accumulo a y=0: le due macchine hanno le porte primarie alle stesse quote +5 e +20, quindi la mandata corre retta a 5 e il ritorno retto a 20 dalla pompa all'accumulo, zero pieghe (par. 2.1, B1, B10).",
+    "PDC-02 (pdc-slave) impilata sotto la maestra alla stessa x=0, passo 40: 10 mm liberi fra le due macchine, spazio sufficiente per la sigla (A2).",
+    "Collettori su due verticali vicine accanto alle pompe (B3, B12): mandata a x=75 (centro del raccordo), ritorno a x=85, 10 mm di corsia (B9), 35 mm dalla faccia delle pompe: lasciano il rettilineo a valvola e filtro (B5). Ordine misurato col comando: mandata vicina alle macchine = 1 sormonto; ritorno vicino = 2 sormonti (il ritorno dall'accumulo taglia anche la colonna di mandata). Tenuta la mandata vicina. Perche' 35 e non 30: il motore mette la freccia di flusso a meta' del tratto, e con le colonne a 30 mm la freccia del ritorno della PDC-01 cadeva a 2,5 mm dal ponticello del sormonto; a 35 mm sta a 5 mm e si legge.",
+    "Pieghe misurate sulla geometria: 4 in tutto, tutte imposte dai simboli (B1): il gomito della seconda pompa in fondo a ciascun collettore (2) e il gradino di 5 mm sul ritorno del radiatore (2). Un solo sormonto, quello che il parallelo impone (B3).",
+    "Secondario: il radiatore ha l'interasse 10 contro il 15 dell'accumulo (D-167). Ho allineato la sua mandata (in a +2,5, radiatore a y=2,5) con secondary_out: la mandata, che porta valvola-circolatore-valvola, corre retta; il ritorno scala di 5 mm. Provato anche il contrario (ritorno retto): la mandata scala subito dopo il circolatore con una freccia sul gradino, peggio. Il rilievo SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER resta ed e' il caso noto del terminale (B11): non l'ho inseguito avvicinando il radiatore.",
+    "Radiatore a 40 mm dall'accumulo (B5). Misurato: a 30 mm il comando si ferma ('run s1-a has no straight stretch of 12.5mm for pump-circulator'); a 35 mm instrada ma la seconda valvola si schiaccia contro il circolatore; a 50 mm il gruppo valvola-circolatore-valvola si sfilaccia. 40 mm tiene il gruppo leggibile e il disegno stretto (D3).",
+    "Corredo del ritorno: i tre raccordi di manometro, riempimento e vaso stanno sulla quota del ritorno (B8), nell'ordine del grafo, a passo 15 mm (10 mm liberi fra i simboli, D-062). Appesi sotto: sopra c'e' la mandata a soli 15 mm. Stacchi al minimo (A4): 10 mm il gruppo di riempimento, 17,5 mm manometro e vaso che portano il rubinetto e la valvola bloccabile.",
+    "Corsa fra il raccordo del vaso e il collettore di ritorno: 30 mm per defangatore e valvola. Misurato: con 25 mm il comando si ferma ('run p4-a-4 has no straight stretch of 7.5mm for valve-isolation').",
+    "Valvola di sicurezza sul raccordo subito a valle del collettore di mandata, appesa sopra la linea con lo stacco minimo di 10 mm (A4): sopra la mandata non passa niente.",
+    "ACS: colonna verticale da dhw_out (x +7,5): valvola, miscelatrice, valvola, ACS-01 in cima, zero pieghe. La miscelatrice e' una tre vie posata dove le sue tre linee si incontrano, con specchio + 90 (hot_in sotto, out sopra, cold_in a sinistra, D-168/D-169/D-175): l'acqua fredda AF-03 arriva da sinistra, dove non passa niente; a destra avrebbe scavalcato lo sfiato. La miscelatrice sta 10 mm sopra la testa dello sfiato perche' i due simboli non si leggano come uno (D-062).",
+    "Confini di rete addosso al pezzo che servono (A4), stacco 17,5 mm con la valvola di confine: AF-01 all'ingresso cold_in dell'accumulo (sinistra +37,5), a 10 mm dal manometro; AF-03 sulla terza via della miscelatrice; ACS-01 sull'uscita della miscelatrice; AF-02 sotto il gruppo di riempimento con 10 mm.",
+    "Formato A3: A4 rifiutato dal comando ('the 3 functional bands need 220mm but the drawing area is 212mm wide'), quindi A3 e' il piu' piccolo (D3). Il bianco che resta non si corregge (D-170)."
+  ],
+  "pezzi": {
+    "pdc-master": {
+      "x": 0,
+      "y": 0,
+      "regola": "par. 2.1/B1 - stesso y dell'accumulo: porte a +5 e +20, mandata e ritorno retti"
+    },
+    "pdc-slave": {
+      "x": 0,
+      "y": 40,
+      "regola": "A2 - impilata sotto la maestra, stessa x, passo 40"
+    },
+    "collettore-mandata": {
+      "x": 72.5,
+      "y": 2.5,
+      "regola": "B3 - verticale di mandata accanto alle pompe (35 mm), sulla quota della mandata (B8); la piu' vicina alle macchine: 1 sormonto contro 2"
+    },
+    "collettore-ritorno": {
+      "x": 82.5,
+      "y": 17.5,
+      "regola": "B3/B9 - verticale di ritorno a 10 mm dalla mandata, sulla quota del ritorno (B8)"
+    },
+    "tee-valve-safety-collettore-mandata-b": {
+      "x": 97.5,
+      "y": 2.5,
+      "regola": "B8 - sulla quota della mandata, subito a valle del collettore"
+    },
+    "valve-safety-collettore-mandata-b": {
+      "x": 97.5,
+      "y": -17.5,
+      "regola": "A4 - addosso al raccordo, stacco minimo 10 mm, sopra la mandata dove non passa niente"
+    },
+    "accumulo": {
+      "x": 185,
+      "y": 0,
+      "regola": "par. 2.1/B1 - stesso y della pompa maestra: autostrade rette; A1 fascia degli accumuli"
+    },
+    "tee-pressure-gauge-collettore-ritorno-a": {
+      "x": 147.5,
+      "y": 17.5,
+      "regola": "B8 - sulla quota del ritorno, passo 15 dal raccordo precedente (D-062)"
+    },
+    "pressure-gauge-collettore-ritorno-a": {
+      "x": 147.5,
+      "y": 40,
+      "regola": "A4 - appeso sotto il ritorno, stacco 17,5 con il rubinetto portamanometro"
+    },
+    "tee-filling-unit-collettore-ritorno-a-b": {
+      "x": 132.5,
+      "y": 17.5,
+      "regola": "B8 - sulla quota del ritorno, passo 15 (D-062)"
+    },
+    "filling-unit-collettore-ritorno-a": {
+      "x": 132.5,
+      "y": 32.5,
+      "rotazione": 180,
+      "regola": "A4 - appeso sotto il ritorno, stacco 10; ruotato 180 (b sopra verso il raccordo, a sotto verso AF-02)"
+    },
+    "inlet-filling-unit-collettore-ritorno-a": {
+      "x": 132.5,
+      "y": 52.5,
+      "regola": "A4 - AF-02 addosso al gruppo di riempimento, stacco 10"
+    },
+    "tee-expansion-connection-collettore-ritorno-a": {
+      "x": 117.5,
+      "y": 17.5,
+      "regola": "B8 - sulla quota del ritorno; B5 - 30 mm di rettilineo verso il collettore per defangatore e valvola"
+    },
+    "expansion-connection-collettore-ritorno-a": {
+      "x": 117.5,
+      "y": 40,
+      "regola": "A4 - appeso sotto il ritorno, stacco 17,5 con la valvola bloccabile"
+    },
+    "air-vent-accumulo-primary-out": {
+      "x": 200,
+      "y": -20,
+      "regola": "A4 - sulla porta vent dell'accumulo, stacco 10"
+    },
+    "drain-connection-accumulo-primary-in": {
+      "x": 195,
+      "y": 55,
+      "regola": "A4 - sulla porta drain dell'accumulo, stacco 10"
+    },
+    "acquedotto": {
+      "x": 162.5,
+      "y": 35,
+      "regola": "A4 - AF-01 addosso a cold_in dell'accumulo, stacco 17,5 con la valvola; 10 mm dal manometro (D-062)"
+    },
+    "mixing-valve-thermostatic-accumulo-dhw-out": {
+      "x": 187.5,
+      "y": -35,
+      "rotazione": 90,
+      "specchio": true,
+      "regola": "D-168/D-169/D-175 - tre vie sulla colonna di dhw_out: hot_in sotto, out sopra, cold_in a sinistra; 10 mm sopra lo sfiato (D-062)"
+    },
+    "inlet-mixing-valve-thermostatic-accumulo-dhw-out": {
+      "x": 165,
+      "y": -35,
+      "regola": "A4/D-175 - AF-03 sulla terza via, a sinistra, stacco 17,5 con la valvola"
+    },
+    "utenze": {
+      "x": 190,
+      "y": -57.5,
+      "regola": "A4 - ACS-01 in cima alla colonna, sull'uscita della miscelatrice, stacco 17,5 con la valvola"
+    },
+    "radiatori": {
+      "x": 250,
+      "y": 2.5,
+      "regola": "A1 fascia distribuzione; in a +2,5 allineato con secondary_out: mandata retta, il ritorno scala 5 mm (B11, caso noto del terminale)"
+    }
+  }
+}

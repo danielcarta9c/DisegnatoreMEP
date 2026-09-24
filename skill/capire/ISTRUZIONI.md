@@ -249,6 +249,25 @@ stessa affermazione topologica, e disegnare il ritorno è trascrizione, non inve
 I circuiti sanitari invece sono aperti: entrano dall'acquedotto, escono alle utenze.
 Per acquedotto e utenze il catalogo ha le voci di confine (mestiere `boundary`).
 
+**Il ricircolo dell'acqua calda preleva dalle utenze e torna nell'accumulo** (**D-176**).
+Quando il testo dice che c'è un ricircolo sanitario, si scrive così, e in nessun altro
+modo:
+
+- entra nel grafo da un **confine di rete suo**, la voce `dhw-recirculation-inlet`: è
+  l'acqua che torna dalle utenze. La sigla segue la regola di tutte le sigle (§3); sulle
+  tavole del committente questo confine si legge «ACS-R»;
+- attraversa **il proprio circolatore** — e quello che il testo gli dà;
+- **rientra nell'accumulo di acqua calda** dal suo attacco del ricircolo,
+  `recirculation_in`: il committente, «dopo il circolatore va nell'accumulo ACS (se ho
+  accumulo) altrimenti idraulicamente e termicamente non ha senso».
+
+Sta sulla **stessa rete** della mandata sanitaria: è la stessa acqua, che va alle utenze e
+ne torna. **Non si chiude mai sulla mandata sanitaria** subito dopo l'accumulo, con una
+ripartizione e una confluenza sullo stesso tubo: quell'anello non raggiunge le utenze, ed
+è l'errore che ha prodotto la prima lettura di uno dei testi di prova. Se l'impianto **non
+ha un accumulo** di acqua calda, dove il ricircolo rientri non lo dice nessuna regola: è
+una domanda al progettista (§6).
+
 Dopo aver collegato, controlla gli attacchi `required: true` delle macchine scelte: uno
 rimasto libero vuol dire che hai perso un collegamento descritto — o che il testo
 davvero non lo dà, e allora è una domanda (§6).
@@ -308,17 +327,23 @@ detto con che pezzo.
 il testo descrive qualcosa che si stacca da un tubo**. Mai metterne una per comodità o
 per previdenza.
 
-**Un anello che rientra su una macchina senza l'attacco per riceverlo** (per esempio un
-ricircolo «collegato» a un bollitore che, a catalogo, l'attacco del ricircolo non ce
-l'ha): l'attacco non si inventa — comanda il catalogo. L'anello si chiude sul tubo, con
-una ripartizione dove esce e una confluenza dove rientra, e **il punto scelto si
-dichiara come assunzione**, perché il testo non l'ha detto.
+**Un anello che rientra su una macchina senza l'attacco per riceverlo**: l'attacco non si
+inventa — comanda il catalogo. L'anello si chiude sul tubo, con una ripartizione dove esce
+e una confluenza dove rientra, e **il punto scelto si dichiara come assunzione**, perché il
+testo non l'ha detto. ⚠ **Non vale per il ricircolo sanitario**, che ha la sua regola
+(§4.3) e gli accumuli di acqua calda l'attacco per riceverlo ce l'hanno.
 
 ### 4.5 I dati detti, e la regolazione
 
 - Potenze, volumi, temperature: **si trascrivono solo se il testo li dà**, in
   `properties` del componente, testuali e con l'unità. Se il testo non li dà, non
   compaiono e non si deducono.
+- **Come è prodotta l'acqua calda.** Se il testo dice che la produzione di acqua calda
+  sanitaria è **centralizzata**, scrivilo nell'accumulo di acqua calda:
+  `"produzione": "centralizzata"`. Non è un aggettivo da buttare: il pezzo che completa
+  il grafo lo legge, e dove l'acqua calda è centralizzata mette il vaso di espansione
+  sanitario senza chiederlo (**D-178**). Se il testo non lo dice, non lo scrivi e non lo
+  deduci — né dai litri, né dalle potenze: resterà una domanda.
 - La **logica di regolazione** — priorità sanitaria, master e slave, «la caldaia
   interviene quando…» — non è topologia: non produce nodi né tubi. Non la perdere:
   scrivi una voce in `assumptions` che dice cosa il grafo mostra e cosa no («la

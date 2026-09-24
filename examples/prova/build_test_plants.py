@@ -55,6 +55,7 @@ def plant(
     subsystems: list[dict[str, Any]],
     assumptions: list[str],
     regime: str,
+    properties: dict[str, dict[str, str]] | None = None,
 ) -> dict[str, Any]:
     """Un impianto letto dal testo, col suo regime.
 
@@ -64,6 +65,9 @@ def plant(
     ha radice normativa (SRC-012, R.1.A.1), e il conto e' aritmetica. Se il
     testo le potenze non le desse, allora si', il regime resterebbe non
     dichiarato e sarebbe una domanda.
+
+    `properties` porta i dati che il testo dice di un pezzo, trascritti come
+    stanno: e' il posto dove «Capire» li scrive (§3 delle sue istruzioni).
     """
     return {
         "schema_version": SCHEMA_VERSION,
@@ -78,7 +82,12 @@ def plant(
         "plant_regime": regime,
         "networks": networks,
         "components": [
-            {"id": cid, "definition_id": did, "tag": tag, "properties": {}}
+            {
+                "id": cid,
+                "definition_id": did,
+                "tag": tag,
+                "properties": dict((properties or {}).get(cid, {})),
+            }
             for cid, did, tag in components
         ],
         "connections": pipes,
@@ -454,10 +463,12 @@ CINQUE = plant(
         ("secondario-ritorno-b", "tee-junction", None),
         ("acquedotto", "cold-water-inlet", "AF-01"),
         ("utenze", "dhw-draw-off", "ACS-01"),
+        # Il ricircolo preleva dalle utenze (D-176): entra in tavola dal proprio
+        # confine, «ACS-R», con lo stesso simbolo dell'ingresso dell'acqua
+        # fredda, passa per il suo circolatore e torna nel bollitore.
+        ("ricircolo-utenze", "dhw-recirculation-inlet", "ACS-R"),
         ("ricircolo", "pump-circulator-dhw", "CIR-04"),
         ("ritegno-ricircolo", "valve-check-dhw-hot", "VR-02"),
-        ("innesto-ricircolo", "tee-junction-dhw", None),
-        ("presa-ricircolo", "tee-split-dhw", None),
     ],
     [
         network("primario", "Circuito primario", HEATING),
@@ -514,13 +525,16 @@ CINQUE = plant(
         pipe("s15", "secondario", ("ritorno-radiante", "b"), ("secondario-ritorno-a", "a")),
         pipe("s16", "secondario", ("secondario-ritorno-b", "b"), ("volano", "secondary_in")),
         pipe("w1", "fredda", ("acquedotto", "a"), ("bollitore", "cold_in")),
-        # Ricircolo sanitario: dalle utenze torna al bollitore con la propria pompa.
-        pipe("w2", "sanitaria", ("bollitore", "dhw_out"), ("innesto-ricircolo", "a")),
-        pipe("w3", "sanitaria", ("innesto-ricircolo", "b"), ("presa-ricircolo", "a")),
-        pipe("w6", "sanitaria", ("presa-ricircolo", "b"), ("utenze", "a")),
-        pipe("w7", "sanitaria", ("presa-ricircolo", "c"), ("ricircolo", "a")),
+        # La mandata sanitaria va dal bollitore alle utenze, e il ricircolo torna
+        # dalle utenze al bollitore con la propria pompa (D-176). Fino al 23
+        # settembre 2026 l'anello si chiudeva subito dopo il bollitore — una
+        # presa e un innesto sulla stessa mandata — ed era un errore di lettura:
+        # «ACS-ritorno dopo il Circolatore va nell'accumulo ACS (se ho accumulo)
+        # altrimenti idraulicamente e termicamente non ha senso».
+        pipe("w2", "sanitaria", ("bollitore", "dhw_out"), ("utenze", "a")),
+        pipe("w7", "sanitaria", ("ricircolo-utenze", "a"), ("ricircolo", "a")),
         pipe("w4", "sanitaria", ("ricircolo", "b"), ("ritegno-ricircolo", "a")),
-        pipe("w5", "sanitaria", ("ritegno-ricircolo", "b"), ("innesto-ricircolo", "c")),
+        pipe("w5", "sanitaria", ("ritegno-ricircolo", "b"), ("bollitore", "recirculation_in")),
     ],
     [
         {
@@ -567,7 +581,7 @@ CINQUE = plant(
         {
             "id": "ricircolo",
             "name": "Ricircolo sanitario",
-            "component_ids": ["ricircolo", "ritegno-ricircolo", "innesto-ricircolo", "presa-ricircolo"],
+            "component_ids": ["ricircolo-utenze", "ricircolo", "ritegno-ricircolo"],
             "network_ids": ["sanitaria"],
         },
     ],
@@ -579,14 +593,20 @@ CINQUE = plant(
         "ricircola una parte del ritorno radiante sul proprio ingresso freddo. Il "
         "testo non specifica il dettaglio del gruppo di miscelazione, quindi questa "
         "chiusura e' dichiarata come assunzione.",
-        "Il ritorno del ricircolo e' innestato sulla mandata sanitaria: il testo "
-        "dice solo che il ricircolo e' collegato al bollitore.",
+        "Il ricircolo e' disegnato dalle utenze al bollitore: entra dal proprio "
+        "confine e rientra nell'attacco del ricircolo del bollitore, come il PO ha "
+        "disposto il 23 settembre (D-176). Il testo dice solo che e' collegato al "
+        "bollitore e che ha il proprio circolatore.",
         "La cascata rientra su tre ritorni distinti con due confluenze: il testo "
         "non descrive come le macchine rientrano.",
     ],
     # Tre macchine da 35 kW: 105 kW, sopra la soglia — e non e' una centrale
     # domestica, per cui la prassi delle piccole non le si applica.
     regime="over_35_kw",
+    # I dati che il testo da' del bollitore, trascritti come stanno: «La
+    # produzione di ACS e' centralizzata mediante un bollitore da 500 litri».
+    # «Centralizzata» e' il dato che il vaso sanitario legge (D-178, I-113).
+    properties={"bollitore": {"volume": "500 litri", "produzione": "centralizzata"}},
 )
 
 

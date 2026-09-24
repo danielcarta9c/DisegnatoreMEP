@@ -1,6 +1,6 @@
 # STATO PM — il dossier di stato della sessione
 
-**Aggiornato:** 2026-09-22 (`DRAW-016` in corso; D-167 · D-168 · D-169 · D-170 · D-171)
+**Aggiornato:** 2026-09-24 (`DRAW-017` fuso con la PR #56, tavole approvate — I-117; attivo `DRAW-018`, la strada A — D-182; poi la prima release — I-118)
 **A chi serve:** alla sessione che subentra. Leggi questo e sei operativo: non ti serve un
 prompt lungo, e chi te lo dà ti sta raccontando qualcosa che dovrebbe stare qui.
 **Regola di questo file:** ogni sessione lo aggiorna prima di chiudere. Un file di stato
@@ -50,14 +50,14 @@ Le sigle servono a noi per ritrovare la riga e restano di qua. La versione buona
 domanda detta guardando il disegno — sta in `2026-09-15-triage-input-aperti.md` §11, ed è il
 modello da riusare.
 
-## 2. Dove siamo, al 21 settembre 2026
+## 2. Dove siamo, al 24 settembre 2026
 
 | | |
 |---|---|
-| `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR **#46**, che porta `DRAW-015` — il revisore, le **nove** regole misurate, l'**occhio** (`skill/rivedere/`), il piano come pezzo del prodotto, il solutore fuori dalla catena e le decisioni **D-155…D-166**. ⛔ **Fusa con le tavole esplicitamente NON approvate** (D-166) |
+| `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR **#56**, che porta `DRAW-017` — la miscelatrice con l'ingresso AF, il ricircolo, il vaso sanitario, la freccia nel verso del flusso, la ritegno a N, i piani del pianificatore nelle prove e la ricerca sulle valvole di sicurezza. ✅ **Fusa con le tavole approvate dal PO** (I-117), come la PR #53 di `DRAW-016` (I-109) |
 | Release dichiarata | **0.3 — generalizzazione** (`docs/plans/2026-09-03-release-plan.md`) |
 | Architettura del disegno | **cambiata il 20 settembre**: pianificatore → motore → revisore (**D-151**). `docs/ARCHITETTURA-DEL-PIANO.md` è il documento che vince su ogni contrasto |
-| Pacchetto attivo | **`DRAW-016`** (`ACTIVE_WORK_PACKAGE.md`), **ATTIVO**, **punto 0 fatto**. `DRAW-015` è **fuso** (PR #46) e **le tavole NON sono approvate** (D-166). Il pianificatore esiste e **batte il piano a mano**; si riparte **ricomponendo i cinque piani**, vecchi dopo D-167 |
+| Pacchetto attivo | **`DRAW-018`** (`ACTIVE_WORK_PACKAGE.md`), **ATTIVO**: le valvole di sicurezza **una per generatore**, attaccate all'uscita e prima dei rubinetti, a qualunque potenza (la strada A, **D-182**). Cambiano le tavole 1 e 4, che il PO vede prima della fusione. **Dopo**: i passi verso la prima release (**I-118**), che sceglie il PO |
 | Il criterio di un'autostrada | **non è un numero** (**D-164**): «un'autostrada per definizione ha poche curve e tratti rettilinei… un criterio **grafico non matematico**». Chi giudica è l'**occhio**. Trasformare un'osservazione in una soglia è **il solutore che rientra dalla finestra** |
 | La convenzione grafica | **è quella sviluppata finora e non si tocca** (**D-165**). Le tavole di `input-pm/riferimenti-grafici/` sono riferimenti **sull'instradamento**, non una fonte di convenzione |
 | Il metodo con cui si compone | **`D-159`, e viene prima delle regole**: la quota di un'autostrada **non si sceglie**, è quella della **porta** della macchina che la genera. Per intero in testa a `docs/regole-del-piano.md` |
@@ -67,10 +67,10 @@ modello da riusare.
 | `DRAW-014` | **superato in corsa da D-151**, non chiuso come previsto. Ha fatto uscire le cinque tavole (D-148, D-150) ed è guardandole che il PO ha fermato la linea del solutore. **Quello che ne resta vivo è su `main`** |
 | PR #41 (DRAW-012) | **verificata e respinta** il 18 settembre. Tredici criteri su sedici, nessuno barato, rapporto onesto — ma il PO ha guardato le tavole e ha detto «era meglio prima». Verdetto in `docs/pm/2026-09-18-review-pr41-draw012.md`. **Quella PR non è stata fusa.** ⚠ Ma il suo **contenuto** è su `main`: `DRAW-013` è ripartito da quel ramo ed è entrato con la **PR #44** (`a835006`), il commit dove compaiono `layout/highways.py` e `layout/dilate.py`. Non va rifatto |
 | PR #32 (DRAW-010) | **verificata e respinta** il 15 settembre. Verdetto in `docs/pm/2026-09-15-review-pr32-draw010.md`. **Il suo lavoro non è su `main`**: la testa del ramo, `df66709`, non è antenata di `main` |
-| Tavole composte a mano | impianto **1** e impianto **5**, in `docs/collaudi/PROVA-PIANO/`: **zero rilievi bloccanti, zero tratte cedute**, un giro da ~30 secondi contro i 10–40 minuti del solutore. È la misura che ha deciso D-151 |
-| Che cosa quelle tavole non dimostrano | **che siano belle.** Il PO (I-082): «c'è molto da migliorare ancora, non assomiglia a come dovrebbe essere un disegno». Misurato: il disegno è una **fascia nella metà alta**, l'impianto 5 ha **quattordici incroci** |
-| I cinque impianti | **da rimisurare.** D-148 (A4→A1) e D-150 (ripiego dichiarato) ne hanno cambiato le condizioni; il **criterio 6** di `DRAW-015` chiede formato e tratte cedute impianto per impianto. Finché quella misura non c'è, qui non si scrive un esito |
-| Registro degli input | **12 righe aperte + 4 regole permanenti**, su 68 al 18 settembre, più gli input del 19–20 settembre che hanno generato D-147…D-154. **I-085 è aperta per dichiarazione del PO**: «le regole vanno solo aggiunte altre e migliorate» |
+| Le tavole del pianificatore | i cinque impianti completi, composti **da solo** dal pianificatore (`skill/comporre/`) in camera pulita e **approvati dal PO** due volte: il 23 settembre (I-109, «hanno proprio l'aspetto di tavole professionali») e il 24 (I-117). I piani a mano di `docs/collaudi/PROVA-PIANO/` sono storia: materiale di collaudo del pezzo 3 (D-155) |
+| Che cosa quelle tavole non dimostrano | **che la skill funzioni nella chat di lavoro.** Ogni tavola esce da un agente in camera pulita e dalla CLI, con la sessione che cuce i pezzi a mano. Il percorso intero — testo dell'ingegnere, grafo, domande, approvazione, piano, tavola — non è mai stato eseguito come lo userà l'ingegnere |
+| I cinque impianti | **misurati il 24 settembre**, dalla sessione: formato · rilievi · incroci — 1: A3 · 1 · 1; 2: A3 · 1 · 1; 3: A3 · 1 · 2; 4: A3 · 2 · 2; 5: A2 · 1 · 5. Zero cedute, zero bloccanti. La suite: **45 rosse**, 1663 passate |
+| Registro degli input | **96 righe, 30 aperte**, più le regole permanenti (il conto in testa a `docs/input-pm/REGISTRO.md`). **I-085 è aperta per dichiarazione del PO**: «le regole vanno solo aggiunte altre e migliorate» |
 | Prodotto in chat | **mai eseguito nel suo ambiente finale.** È il rischio più vecchio |
 | Export DXF | **non costruito.** `I-072` è aperta, e non esiste codice di export in `src/` |
 
@@ -128,6 +128,13 @@ Gli strumenti di misura esistono e non vanno riscritti: `docs/collaudi/DRAW-008/
 per giudicare il solutore, e le loro voci di costo non descrivono più il percorso vigente.
 
 ## 4. I fili aperti, al 21 settembre 2026
+
+> **Nota del 24 settembre 2026.** Questo elenco è quello del 21 e resta com'era, perché dice
+> come si ragionava. **I punti 0 e 1 sono chiusi nei fatti**: il pianificatore esiste, e le
+> tavole che compone da solo il PO le ha approvate due volte (I-109, I-117). **I fili aperti di
+> oggi** stanno in testa a `HANDOFF.md`, sezione «Da dove riparte»: `DRAW-018` (la strada A), poi
+> la prima release (I-118); l'anello, `passa-per`, i rilievi di A2, A3 e B5; il DXF (I-072); la
+> skill mai eseguita nella chat di lavoro.
 
 In ordine di quanto pesano. I rischi numerati stanno in `PROJECT_STATE.md`.
 

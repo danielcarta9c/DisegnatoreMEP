@@ -1,6 +1,6 @@
 {
   "id": "mixing-valve-thermostatic",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Valvola miscelatrice termostatica",
   "functions": [
     "dhw_mixing"
@@ -14,14 +14,21 @@
   "composite": false,
   "ports": [
     {
-      "id": "a",
+      "id": "hot_in",
       "domain": "hydronic",
       "medium": "domestic_hot_water",
       "flow": "in",
       "required": true
     },
     {
-      "id": "b",
+      "id": "cold_in",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "out",
       "domain": "hydronic",
       "medium": "domestic_hot_water",
       "flow": "out",
@@ -29,6 +36,7 @@
     }
   ],
   "sources": [
-    "CONV-FOUNDATION"
+    "CONV-FOUNDATION",
+    "D-175: la miscelatrice termostatica ha l'ingresso dell'acqua fredda (il PO, 23 settembre 2026)"
   ]
 }

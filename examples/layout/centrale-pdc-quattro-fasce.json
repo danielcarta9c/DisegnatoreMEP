@@ -754,6 +754,19 @@
       "id": "valve-safety-hp-water-supply",
       "properties": {},
       "tag": null
+    },
+    {
+      "definition_id": "cold-water-inlet",
+      "evidence": [
+        {
+          "kind": "rule",
+          "note": "Una riserva d'acqua calda si tiene a temperatura alta per non far proliferare la legionella, ma a quella temperatura scotta. La miscelatrice sta sulla tubazione che esce verso le utenze, subito dopo la riserva: cosi' l'accumulo resta caldo e cio' che arriva ai rubinetti e' a temperatura di utilizzo.",
+          "reference": "dhw-mixing-on-draw-off@2.0.0"
+        }
+      ],
+      "id": "inlet-mixing-valve-thermostatic-cylinder-dhw-out",
+      "properties": {},
+      "tag": "AF-02"
     }
   ],
   "connections": [
@@ -1660,7 +1673,7 @@
       },
       "endpoint_b": {
         "component_id": "mixing-valve-thermostatic-cylinder-dhw-out",
-        "port_id": "a"
+        "port_id": "hot_in"
       },
       "evidence": [],
       "id": "w2-a-a-b",
@@ -1670,7 +1683,7 @@
     {
       "endpoint_a": {
         "component_id": "mixing-valve-thermostatic-cylinder-dhw-out",
-        "port_id": "b"
+        "port_id": "out"
       },
       "endpoint_b": {
         "component_id": "valve-isolation-dhw-hot-draw-off-a",
@@ -1693,6 +1706,20 @@
       "evidence": [],
       "id": "w2-b",
       "network_id": "dhw",
+      "properties": {}
+    },
+    {
+      "endpoint_a": {
+        "component_id": "inlet-mixing-valve-thermostatic-cylinder-dhw-out",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "mixing-valve-thermostatic-cylinder-dhw-out",
+        "port_id": "cold_in"
+      },
+      "evidence": [],
+      "id": "inlet-mixing-valve-thermostatic-cylinder-dhw-out-cold_in",
+      "network_id": "cold-mixing-valve-thermostatic-cylinder-dhw-out",
       "properties": {}
     }
   ],
@@ -1732,6 +1759,13 @@
       "id": "secondary",
       "medium": "heating_water",
       "name": "Circuito secondario"
+    },
+    {
+      "domain": "hydronic",
+      "evidence": [],
+      "id": "cold-mixing-valve-thermostatic-cylinder-dhw-out",
+      "medium": "cold_water",
+      "name": "Acqua fredda sanitaria"
     }
   ],
   "rule_applications": [
@@ -2378,14 +2412,16 @@
         "drain-connection-dhw-cylinder-dhw-out",
         "tee-drain-connection-dhw-cylinder-dhw-out",
         "dhw-safety-group-cylinder-cold-in",
-        "valve-isolation-locked-open-dhw-expansion-connection-dhw-cylinder-cold-in-a"
+        "valve-isolation-locked-open-dhw-expansion-connection-dhw-cylinder-cold-in-a",
+        "inlet-mixing-valve-thermostatic-cylinder-dhw-out"
       ],
       "id": "storage",
       "name": "Accumuli e primario",
       "network_ids": [
         "primary",
         "cold",
-        "dhw"
+        "dhw",
+        "cold-mixing-valve-thermostatic-cylinder-dhw-out"
       ]
     },
     {

@@ -40,6 +40,14 @@
       "required": false,
       "stub": true,
       "serves": "temperature_measurement"
+    },
+    {
+      "id": "recirculation_in",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "in",
+      "required": false,
+      "plugged_when_unused": true
     }
   ],
   "sources": [

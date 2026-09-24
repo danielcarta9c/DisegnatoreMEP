@@ -859,8 +859,8 @@ def test_il_confronto_per_il_pm_dice_il_vero_sui_documenti() -> None:
             line for line in doc.splitlines() if re.match(r"^\| [A-Z]+\.[0-9]", line)
         ]
         assert len(rows) == expected, f"{name}: il documento non ha {expected} nodi"
-    # La frase sui punti aperti dev'essere vera: uno solo dei cinque non ne ha,
-    # e gli altri quattro ne hanno **uno a testa**, sempre su un dato di bordo
+    # La frase sui punti aperti dev'essere vera: due dei cinque non ne hanno,
+    # e gli altri tre ne hanno **uno a testa**, sempre su un dato di bordo
     # che il catalogo non dichiara — la sicurezza della macchina che la
     # deviatrice puo' isolare (impianto 4), il vaso sanitario dove un accumulo
     # si riempie dalla rete fredda (DRAW-006-R1, blocco C.2). Il documento lo
@@ -874,7 +874,9 @@ def test_il_confronto_per_il_pm_dice_il_vero_sui_documenti() -> None:
             continue
         assert len(found) == 1, (name, [(g.rule_id, g.reason.value) for g in found])
         assert found[0].reason is GapReason.ON_BOARD_UNKNOWN, name
-    assert senza_domande == 1
+    # Due senza domande dal 24 settembre 2026: il 5 ha l'acqua calda
+    # centralizzata, e li' il vaso sanitario si mette senza chiederlo (D-178).
+    assert senza_domande == 2
     # Il regime che il confronto dichiara per ciascun impianto dev'essere
     # quello scritto nel modello: la tabella del documento e i cinque file
     # non possono divergere.

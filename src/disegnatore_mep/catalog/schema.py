@@ -222,6 +222,17 @@ class PortDefinition(StrictModel):
     attacca. La regola continua a non nominare nessun componente.
     """
 
+    plugged_when_unused: bool = False
+    """Un attacco del flusso che il pezzo ha **sempre**, e che l'impianto usa solo se
+    ha la funzione per cui esiste: quando non la ha, l'attacco e' **tappato**.
+
+    E' l'attacco del ricircolo di un accumulo di acqua calda sanitaria (**D-176**): il
+    bollitore ce l'ha anche nell'impianto senza ricircolo. Non e' un attacco di
+    servizio — quando c'e', il ricircolo ci entra e ci finisce come una linea vera,
+    non come uno stacco — ma libero non e' un difetto, e il documento del grafo non lo
+    elenca fra gli attacchi su cui non arriva niente. Un attacco obbligatorio non puo'
+    esserlo: quello, libero, e' sempre un collegamento perso."""
+
     @property
     def is_service(self) -> bool:
         """Attacco di servizio: esiste per una funzione dichiarata."""
@@ -231,6 +242,15 @@ class PortDefinition(StrictModel):
     def off_the_run(self) -> bool:
         """Non e' sul percorso del fluido: e' uno stacco, di qualunque specie."""
         return self.stub or self.is_service
+
+    @model_validator(mode="after")
+    def a_plugged_port_is_not_required(self) -> "PortDefinition":
+        if self.plugged_when_unused and self.required:
+            raise ValueError(
+                f"port {self.id} is plugged when unused and required at once: a "
+                f"required port left free is always a lost connection"
+            )
+        return self
 
 
 class HydraulicState(StrictModel):

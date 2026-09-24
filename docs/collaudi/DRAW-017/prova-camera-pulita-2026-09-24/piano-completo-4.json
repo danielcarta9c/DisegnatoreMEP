@@ -1,0 +1,134 @@
+{
+  "formato": "A3",
+  "note": [
+    "Scheletro (par. 2.2): pompa di calore e caldaia impilate a x=0 (A2), PDC a y=0 e caldaia a y=40; il volano a y=0 come la PDC, cosi' mandata (quota 5) e ritorno (quota 20) PDC-volano corrono rette da una porta all'altra senza pieghe (D-159, B1).",
+    "Collettori (B3): due verticali corte a x=115 (mandata) e x=125 (ritorno), 10 mm di corsia (B9), 2.5 mm dopo il ritegno VR-02. Ordine misurato (stesso piano, collettori scambiati e rilanciato): mandata vicina alle macchine = 2 sormonti; ritorno vicino = 3 sormonti. Tenuta la mandata vicina.",
+    "Tre vie (par. 4, algebra delle tre vie): le due valvole stanno SULLE orizzontali della caldaia, nel punto dove le loro tre linee si incontrano. Deviatrice rot. 0: in da sinistra (caldaia), out_a a destra (collettore), out_b in basso (scambiatore). Commutatrice specchio+0: out a sinistra (caldaia), in_a da destra (collettore di ritorno), in_b dal basso (scambiatore).",
+    "Scambiatore sotto la coppia della caldaia, a destra della deviatrice che lo alimenta: il suo circuito primario e' un binario a L annidato (mandata interna, ritorno esterno, B12). Le due pieghe sono imposte (terze vie verticali contro porte orizzontali dello scambiatore). Il sormonto della terza via della deviatrice sul ritorno caldaia e' l'unico sormonto del sanitario: con lo scambiatore collegato alle terze vie di due valvole che stanno su mandata e ritorno della stessa macchina, ogni posa che ho analizzato ne costa almeno uno.",
+    "Commutatrice a SINISTRA della deviatrice, di 20 mm: se stesse a destra, la risalita dallo scambiatore alla sua terza via taglierebbe l'andata allo scambiatore. 20 mm e non meno perche' la valvola d'intercettazione di p9 ha posto fisso a 5 mm dall'ingresso in_a, e la terza via della deviatrice deve scavalcare il ritorno oltre quella valvola (misurato: a 17.5 mm la terza via fa un giro in piu', 8 pieghe invece di 6, HIGHWAY_IS_NOT_STRAIGHT su p10).",
+    "Distanze lungo la caldaia dettate dalle catene degli organi in linea (il motore li ancora alla porta): filtro+valvola del ritorno caldaia occupano la caldaia fino a x=57.5, commutatrice a x=62.5 (misurato: a x=60 il motore rifiuta la catena della caldaia). Valvola+ritegno dopo la deviatrice finiscono a x=112.5: colonna di mandata a 115 (misurato: a filo, x=112.5, il motore porta il ritegno sulla colonna in salita e lo disegna con la freccia contro il flusso).",
+    "Scambiatore a y=75 e non piu' su: con la gamba verticale dell'andata piu' corta, la freccia di flusso cadeva esattamente sul ponticello del sormonto (visto sulla tavola, poi corretto allungando la gamba).",
+    "Prima posa provata e scartata: tre vie sulle colonne verticali e scambiatore fra le colonne e gli attacchi di servizio. Stessi sormonti (2) e stesse pieghe (6), ma 2 pieghe NON imposte: un gradino di 5 mm sul ritorno dello scambiatore, obbligato perche' la valvola di p9 occupa proprio il punto dove l'andata allo scambiatore attraversa la colonna di ritorno (HIGHWAY_IS_NOT_STRAIGHT). Questa posa ha 0 pieghe proprie.",
+    "Corredo (par. 4bis, passo 5): attacchi di servizio appesi SOTTO il ritorno primario fra collettore e volano, perche' sopra ci sono solo 15 mm fino alla mandata. Ordine quello del grafo (manometro, riempimento, vaso andando verso il collettore), passo 10 mm; stacchi al minimo (15 mm dove sullo stacco c'e' un organo in linea, 10 mm altrimenti: SERVICE_STUB non rileva nulla). Valvola di sicurezza sopra la mandata, subito dopo il collettore; sfiato sopra e scarico sotto il volano.",
+    "Confini di rete addosso al pezzo che servono (A4): ACS-01 e AF-01 a destra dello scambiatore alle quote delle sue porte, AF-02 sotto il gruppo di riempimento.",
+    "Radiatori a y=2.5: l'ingresso a quota 5 come l'uscita secondaria del volano, la mandata col circolatore corre retta; il ritorno scala di 5 mm (interasse 10 del terminale contro 15 del volano): gradino imposto (B1).",
+    "Formato A3: A4 rifiutato dal motore (le fasce chiedono 257.5 mm, l'area A4 ne ha 212). Il bianco che resta non si corregge (D3).",
+    "Rilievi che restano e perche': SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER caldaia-volano nasce dai due collettori su due verticali diverse (fra x=115 e 125 la mandata e' gia' salita a quota 5 e il ritorno e' ancora a quota 60): con l'ordine opposto dei collettori il rilievo resta (-25, 15) e costa un sormonto in piu'. SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER volano-radiatori (10, 15 mm) e' il gradino d'interasse del terminale, che B1 dice imposto."
+  ],
+  "pezzi": {
+    "pdc": {
+      "x": 0,
+      "y": 0,
+      "regola": "A1/A2 — generazione a sinistra, macchina maestra in alto; D-159 — stessa y del volano: autostrade rette"
+    },
+    "caldaia": {
+      "x": 0,
+      "y": 40,
+      "regola": "A2 — in parallelo con la PDC: impilata alla stessa x, 10 mm sotto"
+    },
+    "commutatrice-ritorno": {
+      "x": 62.5,
+      "y": 55,
+      "rotazione": 0,
+      "specchio": true,
+      "regola": "B8 — sulla quota del ritorno caldaia (60); D-169 specchio+0: out verso la caldaia, in_a dal collettore, in_b dal basso; a 22.5 mm dalla porta per filtro+valvola"
+    },
+    "deviatrice-caldaia": {
+      "x": 82.5,
+      "y": 40,
+      "rotazione": 0,
+      "regola": "B8 — sulla quota della mandata caldaia (45); D-168 rot. 0: terza via in basso verso lo scambiatore; 20 mm a destra della commutatrice perche' la terza via scavalchi il ritorno oltre la valvola di p9"
+    },
+    "collettore-mandata": {
+      "x": 112.5,
+      "y": 2.5,
+      "regola": "B3 — verticale di mandata a x=115, la piu' vicina alle macchine (2 sormonti contro 3, misurati); sulla quota 5 della mandata PDC (B8)"
+    },
+    "collettore-ritorno": {
+      "x": 122.5,
+      "y": 17.5,
+      "regola": "B3/B9 — verticale di ritorno a x=125, 10 mm dalla mandata; sulla quota 20 del ritorno PDC (B8)"
+    },
+    "scambiatore": {
+      "x": 102.5,
+      "y": 75,
+      "regola": "Sotto la coppia caldaia, a valle della deviatrice (A1 letto da sinistra a destra); binario a L annidato con le terze vie (B12); y=75 perche' la freccia non cada sul ponticello del sormonto"
+    },
+    "utenze": {
+      "x": 130,
+      "y": 77.5,
+      "regola": "A4 — confine ACS addosso allo scambiatore, alla quota di secondary_out, stacco minimo con la valvola"
+    },
+    "acquedotto": {
+      "x": 130,
+      "y": 92.5,
+      "regola": "A4 — confine acqua fredda addosso allo scambiatore, alla quota di secondary_in, stacco minimo con la valvola"
+    },
+    "tee-valve-safety-collettore-mandata-b": {
+      "x": 127.5,
+      "y": 2.5,
+      "regola": "B8 — sulla quota della mandata, subito a valle del collettore (la sicurezza protegge i generatori); oltre la colonna di ritorno per non sembrarne il prolungamento"
+    },
+    "valve-safety-collettore-mandata-b": {
+      "x": 127.5,
+      "y": -17.5,
+      "regola": "A4 — sopra la mandata, stacco minimo 10 mm; sopra non passa nessuna autostrada"
+    },
+    "tee-expansion-connection-collettore-ritorno-a": {
+      "x": 157.5,
+      "y": 17.5,
+      "regola": "B8 — sulla quota del ritorno; 30 mm dal collettore per il rettilineo di defangatore e valvola (con 25 mm il motore rifiuta)"
+    },
+    "expansion-connection-collettore-ritorno-a": {
+      "x": 157.5,
+      "y": 37.5,
+      "regola": "A4 — appeso sotto il ritorno, stacco 15 mm: il minimo con la valvola bloccabile sullo stacco (12.5 mm rifiutato)"
+    },
+    "tee-filling-unit-collettore-ritorno-a-b": {
+      "x": 167.5,
+      "y": 17.5,
+      "regola": "B8 — sulla quota del ritorno, passo 10 mm fra gli attacchi di servizio"
+    },
+    "filling-unit-collettore-ritorno-a": {
+      "x": 167.5,
+      "y": 32.5,
+      "rotazione": 180,
+      "regola": "A4 — appeso sotto il ritorno, stacco minimo 10 mm; rot. 180 (par. 4): lato impianto in alto verso il raccordo, acqua fredda in basso"
+    },
+    "inlet-filling-unit-collettore-ritorno-a": {
+      "x": 167.5,
+      "y": 52.5,
+      "regola": "A4 — confine AF-02 addosso al gruppo di riempimento, stacco minimo 10 mm"
+    },
+    "tee-pressure-gauge-collettore-ritorno-a": {
+      "x": 177.5,
+      "y": 17.5,
+      "regola": "B8 — sulla quota del ritorno, passo 10 mm; 15 mm dal volano per la valvola d'intercettazione della sua catena"
+    },
+    "pressure-gauge-collettore-ritorno-a": {
+      "x": 177.5,
+      "y": 37.5,
+      "regola": "A4 — appeso sotto il ritorno, stacco 15 mm: il minimo col rubinetto portamanometro sullo stacco"
+    },
+    "disgiuntore": {
+      "x": 197.5,
+      "y": 0,
+      "regola": "D-159 — stessa y della PDC: mandata e ritorno primari rette; A1 — fascia dell'accumulo, dopo gli attacchi di servizio"
+    },
+    "air-vent-disgiuntore-primary-out": {
+      "x": 207.5,
+      "y": -20,
+      "regola": "A4 — sfiato sopra il volano, stacco minimo 10 mm"
+    },
+    "drain-connection-disgiuntore-primary-in": {
+      "x": 207.5,
+      "y": 55,
+      "regola": "A4 — scarico sotto il volano, stacco minimo 10 mm"
+    },
+    "radiatori": {
+      "x": 262.5,
+      "y": 2.5,
+      "regola": "A1 — utenze a destra; ingresso a quota 5 come secondary_out: mandata col circolatore retta, il ritorno scala di 5 mm (interasse 10 contro 15, imposto)"
+    }
+  }
+}

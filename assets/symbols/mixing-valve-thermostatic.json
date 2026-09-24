@@ -1,6 +1,6 @@
 {
   "id": "mixing-valve-thermostatic",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "name": "Valvola miscelatrice termostatica",
   "width_mm": 5.0,
   "height_mm": 10.0,
@@ -10,26 +10,31 @@
     180,
     270
   ],
-  "inline_gap_mm": 5.0,
   "ports": [
     {
-      "id": "a",
+      "id": "hot_in",
       "face": "left",
       "x_mm": 0.0,
       "y_mm": 5.0
     },
     {
-      "id": "b",
+      "id": "out",
       "face": "right",
       "x_mm": 5.0,
       "y_mm": 5.0
+    },
+    {
+      "id": "cold_in",
+      "face": "bottom",
+      "x_mm": 2.5,
+      "y_mm": 10.0
     }
   ],
   "keep_out": {
     "left_mm": 2.0,
     "right_mm": 2.0,
     "top_mm": 0.0,
-    "bottom_mm": 0.0
+    "bottom_mm": 2.0
   },
   "stroke_weight": "medium",
   "source": "UNI 9511 Tab. 3, tramite SRC-016"

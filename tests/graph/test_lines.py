@@ -199,18 +199,28 @@ def test_what_hangs_from_a_stub_is_a_civic_number_of_the_node() -> None:
     assert lines.addresses[vessel] == f"{root}.2"
 
 
-def test_the_ricircolo_is_a_lettered_branch_that_closes_its_ring() -> None:
-    """Nel quinto impianto il ricircolo si stacca dalla mandata sanitaria e vi
-    si richiude: e' `ACS.01a`, e le utenze restano sulla principale."""
+def test_the_ricircolo_is_its_own_line_from_the_users_back_to_the_store() -> None:
+    """Nel quinto impianto il ricircolo e' una linea sua, `ACSR.01`: parte dal
+    confine «ACS-R» — l'acqua che torna dalle utenze — e finisce nel bollitore
+    (**D-176**). La mandata sanitaria resta `ACS.01`, dal bollitore alle utenze.
+
+    Fino al 23 settembre 2026 il ricircolo si staccava dalla mandata sanitaria e
+    vi si richiudeva subito dopo il bollitore: era `ACS.01a`, e il PO l'ha
+    chiamato un errore del grafo — «dopo il Circolatore va nell'accumulo ACS…
+    altrimenti idraulicamente e termicamente non ha senso»."""
     registry = catalog()
     project = completed(str(PLANTS[4]))
     graph = read_plant(project, registry, naming())
     lines = lines_of(project, registry)
     principal = lines.line("ACS.01")
+    assert graph.node(principal.node_ids[0]).sigla == "BOL-01"
     assert graph.node(principal.node_ids[-1]).sigla == "ACS-01"
-    branch = lines.line("ACS.01a")
-    assert branch.branch_of == "ACS.01"
-    assert lines.owner[branch.node_ids[-1]] == "ACS.01"
+    ricircolo = lines.line("ACSR.01")
+    assert ricircolo.direction == "return"
+    assert ricircolo.branch_of is None
+    assert graph.node(ricircolo.node_ids[0]).sigla == "ACS-R"
+    assert graph.node(ricircolo.node_ids[-1]).sigla == "BOL-01"
+    assert not any(line.name.startswith("ACS.01a") for line in lines.lines)
 
 
 @EVERY_PLANT

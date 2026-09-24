@@ -54,6 +54,18 @@
 > ai due nuovi organi. Gli altri quattro impianti non cambiano di un pezzo. La tavola
 > dell'ibrido **non esce ancora**, e il rapporto di consegna dice dove si ferma.
 
+> **Aggiornamento del 24 settembre 2026 (DRAW-017).** I conteggi «a N pezzi» qui sotto
+> sono quelli di oggi, dopo tre tue disposizioni del 23 settembre. **La miscelatrice
+> termostatica** ha l'ingresso dell'acqua fredda (D-175): le arriva dal proprio
+> ingresso, con la sua valvola — due pezzi in più su ogni impianto che la porta, l'1,
+> il 2, il 3 e il 5. **Il ricircolo** dell'impianto 5 parte dalle utenze e torna nel
+> bollitore (D-176): escono i due raccordi che lo chiudevano sulla mandata sanitaria,
+> entra il suo ingresso «ACS-R». **Il vaso sanitario** si mette dove l'acqua calda è
+> centralizzata (D-178), e l'impianto 5 lo è: vaso, valvola bloccabile e raccordo, fra
+> il gruppo di sicurezza e il bollitore. Rispetto al 17 settembre: impianto 1, 39 pezzi
+> allora e 41 oggi; impianto 2, 41 e 43; impianto 3, 39 e 41; impianto 4, 46 e 46;
+> impianto 5, 93 e 96.
+
 ---
 
 ## Perché sono cambiati
@@ -79,7 +91,7 @@ scrivere le regole:
 
 ## Impianto per impianto
 
-**1 — Due pompe di calore e accumulo combinato: da 59 a 39 pezzi.**
+**1 — Due pompe di calore e accumulo combinato: da 59 a 41 pezzi.**
 Escono i due separatori d'aria, i due termometri e una delle due sicurezze; il
 defangatore passa da tre a uno, sul ritorno generale prima della ripartizione verso le
 due macchine; i filtri a Y restano due, uno per macchina, e il circolatore perde il suo;
@@ -87,12 +99,12 @@ entra lo sfogo aria sull'attacco dedicato dell'accumulo, e la sicurezza supersti
 sull'accumulo. Vaso, riempimento e manometro stanno adesso sul tratto comune, non più
 sul ramo della prima macchina.
 
-**2 — Pompa di calore con deviatrice e bollitore: da 58 a 41 pezzi.**
+**2 — Pompa di calore con deviatrice e bollitore: da 58 a 43 pezzi.**
 Escono separatore, termometro e il defangatore doppio; entra lo sfogo sul volano; la
 sicurezza sta sul volano. Lo scarico del bollitore si sposta dall'uscita calda
 all'ingresso dell'acqua fredda.
 
-**3 — Pompa di calore diretta su pavimento: da 55 a 39 pezzi.**
+**3 — Pompa di calore diretta su pavimento: da 55 a 41 pezzi.**
 Stesse uscite del regime piccolo (separatore, termometro), sfogo e sicurezza sul volano
 in linea, e lo scarico del boiler sull'ingresso freddo.
 
@@ -105,7 +117,7 @@ c'è filtro**, come è giusto in un impianto domestico. *(Dal 17 settembre il gr
 quello nuovo: un ritegno per generatore e la commutatrice sul ritorno della caldaia —
 vedi l'aggiornamento in testa.)*
 
-**5 — Cascata di tre pompe di calore: da 105 a 93 pezzi.**
+**5 — Cascata di tre pompe di calore: da 105 a 96 pezzi.**
 È l'unico dei cinque **sopra i 35 kW** — tre macchine da 35, e non è una centrale
 domestica — quindi tiene il corredo da grande centrale: sicurezza e termometro per ogni
 macchina, e il separatore d'aria sulla mandata generale. I cinque defangatori diventano
@@ -125,8 +137,8 @@ supporre un pezzo che non hai nominato. Di qui i pezzi in più rispetto a ieri, 
 irrigidimento delle regole.
 
 **Ogni punto aperto è una domanda su un dato che non abbiamo, mai un pezzo perso.**
-Uno solo dei cinque non ne ha nessuno; gli altri quattro ne hanno **uno a testa**, e
-ciascuno chiede una cosa sola.
+Due dei cinque non ne hanno nessuno — l'1 e, dal 24 settembre, il 5 —; gli altri tre ne
+hanno **uno a testa**, e ciascuno chiede una cosa sola.
 
 L'ibrido (impianto 4) chiede della **sicurezza**. Dal 9 settembre 2026 (DRAW-006) la
 deviatrice dichiara i propri stati idraulici: l'ingresso va su un ramo oppure sull'altro,
@@ -135,10 +147,11 @@ deviatrice, **riceve** la sicurezza di circuito del proprio dominio; la caldaia,
 uno degli stati ammessi la deviatrice manda allo scambiatore sanitario, è un dominio a sé,
 e per lei il catalogo non dice se la sicurezza sta dentro il mantello.
 
-Gli impianti 2, 3 e 5 chiedono del **vaso di espansione sanitario**. Dal 10 settembre 2026
+Gli impianti 2 e 3 chiedono del **vaso di espansione sanitario**. Dal 10 settembre 2026
 (DRAW-006-R1) non lo aggiungiamo al buio: molti accumuli sanitari lo portano già dentro il
 mantello, e il catalogo del tuo può tacere. Dove tace, la domanda è per te — una riga, e
-il vaso si posa o si lascia stare.
+il vaso si posa o si lascia stare. **Il 5 non lo chiede più**: il tuo testo dice che
+l'acqua calda è centralizzata, e lì il vaso si mette (D-178, 24 settembre 2026).
 
 ---
 

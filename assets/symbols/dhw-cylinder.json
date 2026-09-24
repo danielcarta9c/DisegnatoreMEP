@@ -1,6 +1,6 @@
 {
   "id": "dhw-cylinder",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "name": "Bollitore ACS",
   "width_mm": 25.0,
   "height_mm": 45.0,
@@ -37,6 +37,12 @@
       "face": "right",
       "x_mm": 25.0,
       "y_mm": 20.0
+    },
+    {
+      "id": "recirculation_in",
+      "face": "right",
+      "x_mm": 25.0,
+      "y_mm": 12.5
     }
   ],
   "keep_out": {

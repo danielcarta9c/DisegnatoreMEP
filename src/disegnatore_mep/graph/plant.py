@@ -106,6 +106,9 @@ class Arm:
     serves: str | None = None
     """La funzione per cui questo attacco esiste, se e' di servizio (D-101)."""
 
+    plugged_when_unused: bool = False
+    """Il catalogo dice che, se non si usa, l'attacco e' tappato (D-176)."""
+
     @property
     def is_a_crossing(self) -> bool:
         """Piu' di una tubazione su un attacco solo: e' un incrocio."""
@@ -118,9 +121,11 @@ class Arm:
         Gli attacchi di servizio non contano. Un volano ha lo sfiato e la sede
         della sonda anche in un impianto in cui nessuno li collega, ed elencarli
         come attacchi liberi vorrebbe dire riempire di rumore proprio la sezione
-        che esiste per far notare quello che non va.
+        che esiste per far notare quello che non va. Per la stessa ragione non
+        conta l'attacco che il catalogo dichiara tappato quando non si usa: il
+        ricircolo di un bollitore in un impianto senza ricircolo (D-176).
         """
-        return not self.pipes and self.serves is None
+        return not self.pipes and self.serves is None and not self.plugged_when_unused
 
 
 @dataclass(frozen=True)
@@ -363,6 +368,7 @@ class _Reader:
                     flow=port.flow,
                     pipes=tuple(self._at_arm.get((component.id, port.id), ())),
                     serves=port.serves,
+                    plugged_when_unused=port.plugged_when_unused,
                 )
                 for index, port in enumerate(definition.ports)
             )

@@ -614,9 +614,53 @@ ATTACCHI_ROVESCIATI_PRIMA_DI_D172 = {
 dell'impianto 5 con il ritorno **rovesciato** rispetto alla mandata."""
 
 
+def _metro_5_prima_di_d176() -> Json:
+    """Il metro senza ritegno, con il ricircolo com'era fino al 23 settembre.
+
+    **D-176**: il ricircolo preleva dalle utenze — entra dal proprio confine,
+    l'«ACS-R» — e dopo il circolatore torna nel bollitore. Il metro lo chiudeva
+    invece subito dopo il bollitore, con una ripartizione e una confluenza sulla
+    mandata sanitaria: l'assunzione a3, la stessa che la lettura del 7 agosto
+    aveva fatto da sola, e che il PO ha chiamato un errore del grafo. Il metro e'
+    stato corretto; la lettura del 7 agosto no, ed e' qui che l'anello di prima si
+    ricostruisce per confrontarle."""
+    return _ricircolo_di_prima(_metro_5_senza_ritegno())
+
+
+def _ricircolo_di_prima(manuale: Json) -> Json:
+    """Il ricircolo del quinto impianto riportato alla forma di prima di D-176:
+    una presa e un innesto sulla mandata sanitaria al posto del confine «ACS-R»
+    e dell'attacco del ricircolo del bollitore. Vale con o senza il ritegno."""
+    confine = next(
+        nodo for nodo, voce in manuale["nodi"].items() if voce == "dhw-recirculation-inlet"
+    )
+    archi: list[Arco] = []
+    for ca, pa, cb, pb, m in manuale["archi"]:
+        if (ca, pa) == ("bollitore", "dhw_out"):
+            archi += [
+                ("bollitore", "dhw_out", "innesto-ricircolo", "a", m),
+                ("innesto-ricircolo", "b", "presa-ricircolo", "a", m),
+                ("presa-ricircolo", "b", cb, pb, m),
+            ]
+        elif ca == confine:
+            archi.append(("presa-ricircolo", "c", cb, pb, m))
+        elif (cb, pb) == ("bollitore", "recirculation_in"):
+            archi.append((ca, pa, "innesto-ricircolo", "c", m))
+        else:
+            archi.append((ca, pa, cb, pb, m))
+    manuale["archi"] = archi
+    manuale["nodi"].pop(confine)
+    manuale["nodi"]["innesto-ricircolo"] = "tee-junction-dhw"
+    manuale["nodi"]["presa-ricircolo"] = "tee-split-dhw"
+    manuale["componenti"] = Counter(manuale["nodi"].values())
+    return manuale
+
+
 def _metro_5_prima_di_d172() -> Json:
-    """Il metro senza ritegno, con i due collettori com'erano fino al 22 settembre."""
-    manuale = _metro_5_senza_ritegno()
+    """Il metro senza ritegno, col ricircolo di prima di D-176 e i due collettori
+    com'erano fino al 22 settembre: e' il metro che la lettura del 7 agosto
+    doveva pareggiare."""
+    manuale = _metro_5_prima_di_d176()
     manuale["archi"] = [
         (ca, pa, *ATTACCHI_ROVESCIATI_PRIMA_DI_D172[(ca, pa)], m)
         if (ca, pa) in ATTACCHI_ROVESCIATI_PRIMA_DI_D172
@@ -649,18 +693,29 @@ def test_quinto_impianto_topologia_identica_a_meno_del_ritegno() -> None:
     quattro reti, tre delle quali cominciavano su un raccordo — ed era il difetto che
     rompeva la catena. Corretto il §4.2, quella differenza non c'e' piu': il confronto
     qui si fa **sulle reti**, con la loro molteplicita' (`per_fluido=False`), non piu'
-    sui soli fluidi. E' la forma piu' stretta del confronto che il contratto ammette."""
+    sui soli fluidi. E' la forma piu' stretta del confronto che il contratto ammette.
+
+    **Dal 24 settembre 2026 le differenze dichiarate sono tre.** La terza e' il
+    **ricircolo** (**D-176**): il metro lo porta dal confine «ACS-R» al bollitore,
+    la lettura del 7 agosto lo chiude sulla mandata sanitaria con due raccordi — lo
+    stesso errore che aveva il metro, e che il PO ha visto sulla tavola. Le
+    istruzioni di «Capire» adesso lo dicono (§4.3)."""
     pulita, manuale = profilo(grafo(5)), _metro_5_senza_ritegno()
     assert dict(profilo(metro(5))["componenti"] - pulita["componenti"]) == {
-        "valve-check-dhw-hot": 1
+        "valve-check-dhw-hot": 1,
+        "dhw-recirculation-inlet": 1,
     }
-    assert not (pulita["componenti"] - profilo(metro(5))["componenti"])
+    assert dict(pulita["componenti"] - profilo(metro(5))["componenti"]) == {
+        "tee-junction-dhw": 1,
+        "tee-split-dhw": 1,
+    }
     assert pulita["reti"] == manuale["reti"], (
         f"impianto 5: le reti non combaciano — {dict(pulita['reti'])} contro {dict(manuale['reti'])}"
     )
     assert corrispondenza(pulita, _metro_5_prima_di_d172()) is not None, (
-        "impianto 5: tolta la valvola di ritegno e rimessi i collettori di prima di "
-        "D-172, la topologia doveva coincidere — c'e' una terza differenza"
+        "impianto 5: tolta la valvola di ritegno, rimesso il ricircolo di prima di "
+        "D-176 e i collettori di prima di D-172, la topologia doveva coincidere — c'e' "
+        "una quarta differenza"
     )
     assert corrispondenza(pulita, manuale) is None, (
         "impianto 5: la lettura del 7 agosto coincide col metro corretto, quindi non "
@@ -1002,6 +1057,12 @@ def test_dal_metro_manca_solo_la_ferramenta_che_il_metro_ha_messo(n: int) -> Non
     secondo esito (inventato). Le uniche differenze sono del terzo esito, a carico del
     metro, che il contratto vieta di correggere."""
     pulita, manuale = profilo(grafo(n)), profilo(metro(n))
+    if n == 5:
+        # Il ricircolo del metro e' la disposizione del PO (D-176), non una
+        # differenza da classificare: si classifica sul ricircolo di prima, come
+        # il quarto sta fuori per D-137. La prova che lo inchioda e'
+        # `test_quinto_impianto_topologia_identica_a_meno_del_ritegno`.
+        manuale = _ricircolo_di_prima(manuale)
     solo_metro = manuale["componenti"] - pulita["componenti"]
     non_ferramenta = sorted(k for k in solo_metro if not (mestieri(k) & FERRAMENTA))
     assert non_ferramenta == [], (
@@ -1023,10 +1084,26 @@ def test_i_dati_dell_ingegnere_stanno_nel_grafo_e_non_nel_metro(n: int) -> None:
     volumi e il nome commerciale che l'ingegnere ha scritto, a mano si erano persi. I
     grafi della camera pulita li trascrivono tutti, come vuole §4.5. Non e' una
     differenza da classificare: e' il pezzo 1 che lavora meglio della lettura a mano, e
-    va registrato perche' non si perda di nuovo."""
-    assert not any(c["properties"] for c in metro(n)["components"]), (
-        "la lettura manuale ha guadagnato delle properties: rifare la classificazione"
-    )
+    va registrato perche' non si perda di nuovo.
+
+    **Classificazione rifatta il 24 settembre 2026 (D-178).** La quinta lettura
+    manuale porta adesso i due dati del bollitore — «un bollitore da 500 litri», la
+    produzione «centralizzata» — perche' il vaso sanitario legge il secondo. Sono
+    trascritti **come la camera pulita li aveva trascritti il 7 agosto**, parola per
+    parola: il metro ha raggiunto il pezzo 1 su quel pezzo, e su nessun altro."""
+    con_dati = {c["id"]: c["properties"] for c in metro(n)["components"] if c["properties"]}
+    if n == 5:
+        assert con_dati == {
+            "bollitore": {"volume": "500 litri", "produzione": "centralizzata"}
+        }, con_dati
+        dalla_camera = next(
+            c["properties"] for c in grafo(n)["components"] if c["id"] == "bollitore"
+        )
+        assert dalla_camera == con_dati["bollitore"], dalla_camera
+    else:
+        assert not con_dati, (
+            "la lettura manuale ha guadagnato delle properties: rifare la classificazione"
+        )
     assert sum(len(c["properties"]) for c in grafo(n)["components"]) >= 2
 
 

@@ -1,9 +1,19 @@
-"""L'esecutore del piano, sui due piani che hanno deciso D-151.
+"""L'esecutore del piano, sulle tavole che il pianificatore ha composto da solo.
 
-Sono i documenti agli atti di `docs/collaudi/PROVA-PIANO/`: l'impianto 1 e la
-cascata di tre pompe, composti a mano il 19/20 settembre. Quello che si misura
-qui e' il criterio 5 di DRAW-015 — **zero rilievi bloccanti e zero tratte
-cedute** — piu' le tre regole non negoziabili che il pezzo porta con se':
+Sono i documenti agli atti di `docs/collaudi/DRAW-017/prova-camera-pulita-2026-09-24/`:
+per ciascuno dei cinque impianti **il grafo completo e il piano composto su di
+lui** — quattro ricomposti il 24 settembre 2026 sulla libreria di `DRAW-017`, e
+il 4 com'era stato approvato il 23, perche' il suo grafo non e' cambiato. Fino a
+`DRAW-017` erano i due piani scritti a mano il 19/20 settembre, che hanno
+deciso D-151 (`docs/collaudi/PROVA-PIANO/`): da D-167 quello della cascata non
+si instradava piu', e da D-175 nemmeno quello dell'impianto 1 — la miscelatrice
+e' diventata un pezzo del piano, e un piano che non la nomina non compone il
+grafo di oggi. **I piani a mano erano il bersaglio del pianificatore, non il
+prodotto**: le prove leggono quelli che il pianificatore scrive (`DRAW-017` §6).
+
+Quello che si misura qui e' il criterio 5 di DRAW-015 — **zero rilievi
+bloccanti e zero tratte cedute** — piu' le tre regole non negoziabili che il
+pezzo porta con se':
 
 * **non gira nessuna ricerca**, ne' la fase del tronco ne' il ciclo di
   miglioramento (D-151);
@@ -24,11 +34,10 @@ import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.registry import SymbolRegistry
-from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout import compose, improve, spine
 from disegnatore_mep.layout.compose import inline_component_ids
-from disegnatore_mep.layout.geometry import PlacedSymbol
+from disegnatore_mep.layout.geometry import PlacedSymbol, RoutedTrunk
 from disegnatore_mep.layout.partition import SheetPartition, partition_project
 from disegnatore_mep.layout.place import place_sheet
 from disegnatore_mep.layout.trunks import build_trunks
@@ -40,25 +49,27 @@ from disegnatore_mep.piano.formato import (
     PianoDiComposizione,
     carica_piano,
 )
-from disegnatore_mep.rules.apply import saturate
-from disegnatore_mep.rules.registry import RuleRegistry
 
 ROOT = Path(__file__).resolve().parents[2]
-PROVA = ROOT / "examples" / "prova"
-PIANI = ROOT / "docs" / "collaudi" / "PROVA-PIANO"
+COLLAUDO = ROOT / "docs" / "collaudi" / "DRAW-017" / "prova-camera-pulita-2026-09-24"
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
-RULES = ROOT / "rules" / "hydronic"
 NAMING = ROOT / "naming"
 
-LE_DUE_TAVOLE = (
-    ("prova-1-due-pdc-accumulo-combinato.json", "impianto-1.json", "A2", 21),
-    ("prova-5-cascata-tre-pdc.json", "impianto-5.json", "A1", 54),
+LE_TAVOLE = (
+    (1, "A3", 23),
+    (2, "A3", 25),
+    (3, "A3", 24),
+    (4, "A3", 25),
+    (5, "A2", 56),
 )
-"""Impianto, piano, formato chiesto e tratte attese, dal README della prova."""
+"""Impianto, formato e tratte della tavola, come le ha misurate la sessione il
+24 settembre 2026 (`README.md` della prova)."""
 
-PIANO_DI = {impianto: piano for impianto, piano, _, _ in LE_DUE_TAVOLE}
-"""Quale piano compone quale impianto."""
+PRIMO, QUARTO = 1, 4
+"""L'impianto 1 porta l'accumulo combinato — l'acqua fredda del 20 settembre —;
+il piano del 4 porta il gruppo di riempimento girato **dal pianificatore** e il
+tee del manometro girato **dalla deduzione**."""
 
 
 @cache
@@ -72,57 +83,50 @@ def simboli() -> SymbolRegistry:
 
 
 @cache
-def completato(impianto: str) -> ProjectModel:
-    """Il progetto completo, **in forma canonica**: la catena di `rules --apply-all`.
+def completato(impianto: int) -> ProjectModel:
+    """Il grafo completo **su cui il piano e' stato composto**, agli atti con lui.
 
-    Il passaggio per `canonical_json` non e' un vezzo, ed e' una cosa misurata
-    scrivendo questa prova: **la forma canonica riordina i componenti per
-    identificativo**, la posa di partenza e' greedy e legge quell'ordine
-    (`place.py::_file_order`), e sull'impianto 5 il piano scritto a mano si
-    instrada sull'ordine canonico e **non** si instrada sull'ordine di
-    dichiarazione. I due piani agli atti sono stati composti contro il file che
-    `rules --apply-all --out` scrive, quindi si eseguono contro quello: qui si
-    rifa' lo stesso giro, senza passare dal disco.
+    E' il file che `rules --apply-all --out` ha scritto per il pianificatore, e
+    si legge com'e': la posa di partenza e' greedy e legge l'ordine del file
+    (`place.py::_file_order`), e un piano vale per il grafo su cui e' nato
+    (D-155). Rifarlo dalle regole di oggi misurerebbe le regole, non
+    l'esecutore.
     """
-    regole = RuleRegistry.from_directory(RULES)
-    regole.cross_check(catalogo())
-    completo, _, _ = saturate(load_project(PROVA / impianto), catalogo(), regole)
-    return ProjectModel.model_validate_json(canonical_json(completo))
+    return load_project(COLLAUDO / f"grafo-completo-{impianto}.json")
 
 
 @cache
-def esito(impianto: str, piano: str) -> EsitoDelPiano:
+def piano_di(impianto: int) -> PianoDiComposizione:
+    return carica_piano(COLLAUDO / f"piano-completo-{impianto}.json")
+
+
+@cache
+def esito(impianto: int) -> EsitoDelPiano:
     return esegui_piano(
-        completato(impianto),
-        carica_piano(PIANI / piano),
-        catalogo(),
-        simboli(),
-        NAMING,
+        completato(impianto), piano_di(impianto), catalogo(), simboli(), NAMING
     )
 
 
 @cache
-def partenza(impianto: str) -> tuple[list[PlacedSymbol], SheetPartition]:
+def partenza(impianto: int) -> tuple[list[PlacedSymbol], SheetPartition]:
     """La posa di partenza e la partizione, per interrogare `orienta` da solo."""
     modello = completato(impianto)
     inline = inline_component_ids(modello, catalogo())
     partizione = partition_project(modello, build_trunks(modello, inline))[0]
-    frame = esito(impianto, PIANO_DI[impianto]).frame
+    frame = esito(impianto).frame
     return place_sheet(modello, partizione, catalogo(), frame, inline), partizione
 
 
-@pytest.mark.parametrize(("impianto", "piano", "formato", "tratte"), LE_DUE_TAVOLE)
-def test_la_tavola_composta_esce_a_zero(
-    impianto: str, piano: str, formato: str, tratte: int
-) -> None:
+@pytest.mark.parametrize(("impianto", "formato", "tratte"), LE_TAVOLE)
+def test_la_tavola_composta_esce_a_zero(impianto: int, formato: str, tratte: int) -> None:
     """**Criterio 5**: zero rilievi bloccanti e zero tratte cedute.
 
-    E' la misura che ha deciso D-151, e qui si rifa' dal percorso nuovo. Le
-    tratte si contano perche' un conto che cambia vuol dire che e' cambiato
-    l'impianto, non il disegno: 21 sull'impianto 1 e 54 sull'impianto 5, come
-    nel README della prova.
+    E' la misura che ha deciso D-151, e qui si rifa' dal percorso nuovo, su
+    tutte e cinque le tavole. Le tratte si contano perche' un conto che cambia
+    vuol dire che e' cambiato l'impianto, non il disegno; il formato, perche'
+    e' il piano a sceglierlo.
     """
-    misura = esito(impianto, piano)
+    misura = esito(impianto)
     assert misura.errore is None
     assert misura.disegno is not None
     foglio = misura.disegno.sheets[0]
@@ -137,20 +141,20 @@ def test_la_tavola_composta_esce_a_zero(
     }[formato]
 
 
-@pytest.mark.parametrize(("impianto", "piano", "formato", "tratte"), LE_DUE_TAVOLE)
+@pytest.mark.parametrize(("impianto", "formato", "tratte"), LE_TAVOLE)
 def test_la_tavola_composta_ha_simboli_linee_e_legenda(
-    impianto: str, piano: str, formato: str, tratte: int
+    impianto: int, formato: str, tratte: int
 ) -> None:
     """Una tavola che non porta niente non e' una tavola (D-146)."""
-    foglio = esito(impianto, piano).disegno
+    foglio = esito(impianto).disegno
     assert foglio is not None
     sheet = foglio.sheets[0]
     assert sheet.symbols and sheet.routes and sheet.legend and sheet.labels
 
 
-@pytest.mark.parametrize(("impianto", "piano", "formato", "tratte"), LE_DUE_TAVOLE)
+@pytest.mark.parametrize(("impianto", "formato", "tratte"), LE_TAVOLE)
 def test_la_mappa_delle_porte_non_si_rifa_sulle_macchine(
-    impianto: str, piano: str, formato: str, tratte: int
+    impianto: int, formato: str, tratte: int
 ) -> None:
     """**C3**, e il 20 settembre e' il precedente.
 
@@ -184,7 +188,7 @@ def test_l_acqua_fredda_resta_sull_ingresso_freddo_dell_accumulo() -> None:
     giusto e il disegno era sbagliato, e l'ha visto il PO guardando la tavola,
     non una misura. Adesso c'e' la misura.
     """
-    disegno = esito(*LE_DUE_TAVOLE[0][:2]).disegno
+    disegno = esito(PRIMO).disegno
     assert disegno is not None
     accumulo = next(
         item for item in disegno.sheets[0].symbols if item.component_id == "accumulo"
@@ -193,14 +197,16 @@ def test_l_acqua_fredda_resta_sull_ingresso_freddo_dell_accumulo() -> None:
     assert accumulo.physical_port("primary_out") == "primary_out"
 
 
-def test_la_rotazione_scritta_a_mano_non_si_tocca() -> None:
+def test_la_rotazione_scritta_nel_piano_non_si_tocca() -> None:
     """Il **buco noto** (§4): due attacchi e non e' una macchina.
 
     Il gruppo di riempimento non rientra in nessuno dei due casi della
     deduzione, e la sua rotazione la scrive il piano. Dove il piano l'ha
-    scritta, l'esecutore non la cambia.
+    scritta, l'esecutore non la cambia. Sul piano del 4 l'ha scritta il
+    pianificatore, e il PO ha approvato la tavola.
     """
-    misura = esito(*LE_DUE_TAVOLE[0][:2])
+    assert piano_di(QUARTO).pezzi["filling-unit-collettore-ritorno-a"].rotazione == 180
+    misura = esito(QUARTO)
     gruppo = next(
         item
         for item in misura.posa
@@ -210,6 +216,79 @@ def test_la_rotazione_scritta_a_mano_non_si_tocca() -> None:
     assert not any(riga.startswith("filling-unit-") for riga in misura.girati)
 
 
+SIMBOLI_CON_LA_FRECCIA = frozenset({"valve-check", "pump-circulator"})
+"""La ritegno (la freccia sopra la N) e il circolatore (il triangolo): il simbolo
+punta dall'attacco `a` all'attacco `b`."""
+
+
+def _lungo_la_tratta(tratta: RoutedTrunk, x: float, y: float) -> float:
+    """Dove cade un attacco lungo la spezzata, nel verso dei suoi punti.
+
+    Un organo in linea sta in un'interruzione: i suoi due attacchi sono i capi
+    di due tronconi consecutivi. Si prende il vertice piu' vicino — a meno di un
+    millimetro, o l'attacco non sta su questa tratta."""
+    percorso, trovato = 0.0, None
+    for troncone in tratta.segments:
+        for indice, punto in enumerate(troncone):
+            if indice:
+                prima = troncone[indice - 1]
+                percorso += abs(punto.x_mm - prima.x_mm) + abs(punto.y_mm - prima.y_mm)
+            scarto = abs(punto.x_mm - x) + abs(punto.y_mm - y)
+            if trovato is None or scarto < trovato[0]:
+                trovato = (scarto, percorso)
+        percorso += 1.0
+    assert trovato is not None and trovato[0] < 1.0, (tratta.connection_ids, x, y)
+    return trovato[1]
+
+
+def test_la_freccia_di_ritegne_e_circolatori_sta_nel_verso_del_flusso() -> None:
+    """**La freccia della valvola di non ritorno si mette nella direzione del
+    flusso** — il PO, 24 settembre 2026 (I-114), guardando la tavola 5: sul
+    ricircolo la ritegno VR-02 puntava contro l'acqua, perche' nel catalogo le
+    sue porte non avevano verso e il motore non sapeva girarla. Si misura su
+    tutte e cinque le tavole agli atti, ritegne e circolatori: l'attacco `a`
+    viene prima di `b` nel verso in cui l'acqua percorre la tratta. (La 3 non ne
+    ha: la pompa di calore ha il circolatore dentro, e le zone non ne hanno.)"""
+    controllati: list[str] = []
+    for impianto, _, _ in LE_TAVOLE:
+        controllati.extend(_frecce_nel_verso(impianto))
+    assert "ritegno-ricircolo" in controllati, controllati
+    assert len(controllati) >= 8, controllati
+
+
+def _frecce_nel_verso(impianto: int) -> list[str]:
+    """Gli organi con la freccia di una tavola, dopo aver asserito il loro verso."""
+    misura = esito(impianto)
+    assert misura.disegno is not None
+    foglio = misura.disegno.sheets[0]
+    modello = completato(impianto)
+    controllati: list[str] = []
+    for simbolo in foglio.symbols:
+        if simbolo.symbol_id not in SIMBOLI_CON_LA_FRECCIA:
+            continue
+        suoi = {
+            item.id
+            for item in modello.connections
+            if simbolo.component_id
+            in (item.endpoint_a.component_id, item.endpoint_b.component_id)
+        }
+        (tratta,) = [item for item in foglio.routes if suoi & set(item.connection_ids)]
+        manifesto = (
+            simboli()
+            .get(simbolo.symbol_id)
+            .manifest.rotated(simbolo.rotation_deg, simbolo.specchiato)
+        )
+        a, b = manifesto.port("a"), manifesto.port("b")
+        da_a = _lungo_la_tratta(tratta, simbolo.origin.x_mm + a.x_mm, simbolo.origin.y_mm + a.y_mm)
+        da_b = _lungo_la_tratta(tratta, simbolo.origin.x_mm + b.x_mm, simbolo.origin.y_mm + b.y_mm)
+        assert (da_a < da_b) == tratta.flow_from_start, (
+            f"impianto {impianto}: {simbolo.component_id} punta contro il flusso "
+            f"della tratta {tratta.connection_ids}"
+        )
+        controllati.append(simbolo.component_id)
+    return controllati
+
+
 def test_il_tee_del_manometro_si_gira_verso_il_manometro() -> None:
     """La misura del 20 settembre che ha fatto nascere `orienta`.
 
@@ -217,9 +296,11 @@ def test_il_tee_del_manometro_si_gira_verso_il_manometro() -> None:
     aveva messo il manometro **sotto**: la linea usciva in alto, girava a
     destra, scendeva per sessanta millimetri, tornava indietro e risaliva. E'
     il rettangolo che il PO ha cerchiato chiedendo «perche' non sei andato
-    dritto?».
+    dritto?». Sul piano del 4 il pianificatore mette il manometro sotto il
+    ritorno e non scrive la rotazione del tee: la deduce l'esecutore.
     """
-    girati = esito(*LE_DUE_TAVOLE[0][:2]).girati
+    assert piano_di(QUARTO).pezzi["tee-pressure-gauge-collettore-ritorno-a"].rotazione is None
+    girati = esito(QUARTO).girati
     assert "tee-pressure-gauge-collettore-ritorno-a 0->180" in girati
     assert "pressure-gauge-collettore-ritorno-a 0->180" in girati
 
@@ -261,11 +342,7 @@ def test_l_esecutore_non_gira_nessuna_ricerca(monkeypatch: pytest.MonkeyPatch) -
     assert _vieta(monkeypatch, "lay_the_spine") >= 1
 
     misura = esegui_piano(
-        completato(LE_DUE_TAVOLE[0][0]),
-        carica_piano(PIANI / LE_DUE_TAVOLE[0][1]),
-        catalogo(),
-        simboli(),
-        NAMING,
+        completato(PRIMO), piano_di(PRIMO), catalogo(), simboli(), NAMING
     )
     assert misura.disegno is not None
     assert misura.bloccanti == []
@@ -283,7 +360,7 @@ def test_un_piano_che_nomina_pezzi_inesistenti_li_elenca() -> None:
     )
     with pytest.raises(ErroreDelPiano) as errore:
         esegui_piano(
-            completato(LE_DUE_TAVOLE[0][0]), piano, catalogo(), simboli(), NAMING
+            completato(PRIMO), piano, catalogo(), simboli(), NAMING
         )
     detto = str(errore.value)
     assert "non esistono nel modello" in detto
@@ -308,7 +385,7 @@ def test_un_piano_che_posa_un_organo_in_linea_lo_dice_per_nome() -> None:
     )
     with pytest.raises(ErroreDelPiano) as errore:
         esegui_piano(
-            completato(LE_DUE_TAVOLE[0][0]), piano, catalogo(), simboli(), NAMING
+            completato(PRIMO), piano, catalogo(), simboli(), NAMING
         )
     detto = str(errore.value)
     assert "non esistono nel modello" not in detto
@@ -324,14 +401,14 @@ def test_un_piano_che_non_si_instrada_porta_comunque_la_posa() -> None:
     dell'impianto 1 nello stesso punto: non si instrada, e l'esito porta lo
     stesso la posa applicata e il motivo.
     """
-    scritto = carica_piano(PIANI / "impianto-1.json")
+    scritto = piano_di(PRIMO)
     ammucchiato = PianoDiComposizione(
         formato=scritto.formato,
         note=["ammucchiati apposta: questo piano non si deve instradare"],
         pezzi={nome: PezzoNelPiano(x=60, y=60) for nome in scritto.pezzi},
     )
     misura = esegui_piano(
-        completato(LE_DUE_TAVOLE[0][0]), ammucchiato, catalogo(), simboli(), NAMING
+        completato(PRIMO), ammucchiato, catalogo(), simboli(), NAMING
     )
     assert misura.disegno is None
     assert misura.rilievi == []

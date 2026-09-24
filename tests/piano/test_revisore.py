@@ -10,12 +10,19 @@ Quello che si difende qui sono i **criteri 1, 2 e 3** di `DRAW-015`:
 3. **non peggiora in silenzio**: se un giro peggiora l'ordine, si ferma, nomina
    le misure peggiorate e consegna il giro precedente.
 
-Il banco e' l'impianto 4 composto (`docs/collaudi/PROVA-PIANO/impianto-4.json`)
-— l'ibrido pompa di calore + caldaia, il piu' largo dei cinque, quindi quello
-in cui un pezzo si puo' spostare senza che il piano smetta di instradarsi. Si
-guasta apposta: **il radiatore dentro la fascia dello scambiatore** e' una
+Il banco e' l'impianto 4 **come il pianificatore l'ha composto** e il PO l'ha
+approvato il 23 settembre 2026 (I-109): grafo e piano stanno agli atti in
+`docs/collaudi/DRAW-017/prova-camera-pulita-2026-09-24/`. E' l'ibrido pompa di
+calore + caldaia, e ha sotto i collettori un campo libero in cui un pezzo si
+puo' spostare senza che il piano smetta di instradarsi. Si guasta apposta: **il
+radiatore dentro la fascia degli accumuli e degli scambiatori** e' una
 violazione di **A1** che il revisore sa curare, ed e' il modo di misurare che
 l'anello **gira**, non solo che si ferma.
+
+Fino a `DRAW-017` il banco era il piano scritto a mano del 19 settembre
+(`docs/collaudi/PROVA-PIANO/impianto-4.json`), e da `DRAW-016` il suo guasto non
+produceva piu' nessuna violazione di A1: le tre prove dell'anello erano rosse
+per il banco, non per il revisore (`DRAW-017` §6).
 """
 
 from functools import cache
@@ -25,7 +32,6 @@ import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.registry import SymbolRegistry
-from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.piano.formato import PezzoNelPiano, PianoDiComposizione, carica_piano
@@ -37,20 +43,16 @@ from disegnatore_mep.piano.revisore import (
     Revisione,
     revisiona,
 )
-from disegnatore_mep.rules.apply import saturate
-from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.validation.regole import ORDINE_DELLE_REGOLE
 
 ROOT = Path(__file__).resolve().parents[2]
-PROVA = ROOT / "examples" / "prova"
-PIANI = ROOT / "docs" / "collaudi" / "PROVA-PIANO"
+COLLAUDO = ROOT / "docs" / "collaudi" / "DRAW-017" / "prova-camera-pulita-2026-09-24"
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
-RULES = ROOT / "rules" / "hydronic"
 NAMING = ROOT / "naming"
 
-IMPIANTO = "prova-4-ibrido-pdc-caldaia.json"
-PIANO = "impianto-4.json"
+GRAFO = COLLAUDO / "grafo-completo-4.json"
+PIANO = COLLAUDO / "piano-completo-4.json"
 
 
 @cache
@@ -65,16 +67,13 @@ def _catalogo() -> ComponentRegistry:
 
 @cache
 def _modello() -> ProjectModel:
-    """Il progetto completo **in forma canonica**: la catena di `rules --apply-all`.
+    """Il grafo completo **su cui il piano e' stato composto**, agli atti con lui.
 
-    Il perche' del passaggio canonico sta in `test_esecutore.py`: la posa di
-    partenza legge l'ordine del file, e i piani agli atti sono stati composti
-    contro quello che `rules --apply-all --out` scrive.
+    Un piano e' materiale di collaudo e vale per il suo grafo (D-155): si legge
+    quello che `rules --apply-all --out` ha scritto per il pianificatore, non lo
+    si rifa' dalle regole di oggi.
     """
-    regole = RuleRegistry.from_directory(RULES)
-    regole.cross_check(_catalogo())
-    completo, _, _ = saturate(load_project(PROVA / IMPIANTO), _catalogo(), regole)
-    return ProjectModel.model_validate_json(canonical_json(completo))
+    return load_project(GRAFO)
 
 
 def _revisiona(piano: PianoDiComposizione, tetto: int = 3) -> Revisione:
@@ -83,28 +82,31 @@ def _revisiona(piano: PianoDiComposizione, tetto: int = 3) -> Revisione:
 
 @cache
 def _sul_piano_agli_atti() -> Revisione:
-    return _revisiona(carica_piano(PIANI / PIANO))
+    return _revisiona(carica_piano(PIANO))
 
 
 def _guastato() -> PianoDiComposizione:
-    """Il piano agli atti con **il radiatore dentro la fascia dello scambiatore**.
+    """Il piano agli atti con **il radiatore dentro la fascia degli accumuli**.
 
     `radiatori` e' un terminale, quindi **distribuzione**, e nel piano sta a
-    x=420, oltre lo scambiatore (x=300..312,5). Portandolo a x=310 le due fasce
-    si accavallano in orizzontale: e' una violazione di **A1** netta, su un
-    pezzo che ha davvero una fascia propria, e il piano continua a instradarsi
-    — cosa che a x=305 non fa piu' (misurato: «la tratta s1-a non ha un
-    rettilineo di 12,5 mm per il circolatore»).
+    x=262,5, oltre il disgiuntore; la fascia degli accumuli e degli scambiatori
+    va dallo scambiatore (x=102,5) al disgiuntore. Portandolo a (150, 100) —
+    sotto i collettori, dove il campo e' libero — le due fasce si accavallano in
+    orizzontale: e' una violazione di **A1** netta, su un pezzo che ha davvero
+    una fascia propria, e il piano continua a instradarsi. Misurato il 24
+    settembre 2026: il giro zero esce con un rilievo di A1, la cura porta il
+    radiatore a x=225 e il rilievo si spegne. Lasciato alla quota del piano
+    (x=180, y=2,5), invece, il guasto non si instrada piu': la tratta `p6-b-a`
+    non trova strada.
 
     Non si usa `utenze` per guastare, e il perche' e' una misura: un **confine
     di rete** non ha una posizione propria — «va accanto all'utente che serve»
     (`flow.BOUNDARY_FUNCTION`, I-061) — e per questo `fascia_del_pezzo` non lo
     classifica. Un pezzo che non sceglie dove stare non puo' violare una fascia.
     """
-    piano = carica_piano(PIANI / PIANO)
+    piano = carica_piano(PIANO)
     pezzi = dict(piano.pezzi)
-    vecchio = pezzi["radiatori"]
-    pezzi["radiatori"] = PezzoNelPiano(x=310.0, y=vecchio.y)
+    pezzi["radiatori"] = PezzoNelPiano(x=150.0, y=100.0)
     return piano.model_copy(update={"pezzi": pezzi})
 
 

@@ -94,7 +94,10 @@
       "id": "bollitore",
       "definition_id": "dhw-cylinder",
       "tag": "BOL-01",
-      "properties": {}
+      "properties": {
+        "volume": "500 litri",
+        "produzione": "centralizzata"
+      }
     },
     {
       "id": "ritorno-primario",
@@ -187,6 +190,12 @@
       "properties": {}
     },
     {
+      "id": "ricircolo-utenze",
+      "definition_id": "dhw-recirculation-inlet",
+      "tag": "ACS-R",
+      "properties": {}
+    },
+    {
       "id": "ricircolo",
       "definition_id": "pump-circulator-dhw",
       "tag": "CIR-04",
@@ -196,18 +205,6 @@
       "id": "ritegno-ricircolo",
       "definition_id": "valve-check-dhw-hot",
       "tag": "VR-02",
-      "properties": {}
-    },
-    {
-      "id": "innesto-ricircolo",
-      "definition_id": "tee-junction-dhw",
-      "tag": null,
-      "properties": {}
-    },
-    {
-      "id": "presa-ricircolo",
-      "definition_id": "tee-split-dhw",
-      "tag": null,
       "properties": {}
     }
   ],
@@ -623,32 +620,6 @@
         "port_id": "dhw_out"
       },
       "endpoint_b": {
-        "component_id": "innesto-ricircolo",
-        "port_id": "a"
-      },
-      "properties": {}
-    },
-    {
-      "id": "w3",
-      "network_id": "sanitaria",
-      "endpoint_a": {
-        "component_id": "innesto-ricircolo",
-        "port_id": "b"
-      },
-      "endpoint_b": {
-        "component_id": "presa-ricircolo",
-        "port_id": "a"
-      },
-      "properties": {}
-    },
-    {
-      "id": "w6",
-      "network_id": "sanitaria",
-      "endpoint_a": {
-        "component_id": "presa-ricircolo",
-        "port_id": "b"
-      },
-      "endpoint_b": {
         "component_id": "utenze",
         "port_id": "a"
       },
@@ -658,8 +629,8 @@
       "id": "w7",
       "network_id": "sanitaria",
       "endpoint_a": {
-        "component_id": "presa-ricircolo",
-        "port_id": "c"
+        "component_id": "ricircolo-utenze",
+        "port_id": "a"
       },
       "endpoint_b": {
         "component_id": "ricircolo",
@@ -688,8 +659,8 @@
         "port_id": "b"
       },
       "endpoint_b": {
-        "component_id": "innesto-ricircolo",
-        "port_id": "c"
+        "component_id": "bollitore",
+        "port_id": "recirculation_in"
       },
       "properties": {}
     }
@@ -707,7 +678,7 @@
     },
     {
       "id": "a3",
-      "text": "Il ritorno del ricircolo e' innestato sulla mandata sanitaria: il testo dice solo che il ricircolo e' collegato al bollitore.",
+      "text": "Il ricircolo e' disegnato dalle utenze al bollitore: entra dal proprio confine e rientra nell'attacco del ricircolo del bollitore, come il PO ha disposto il 23 settembre (D-176). Il testo dice solo che e' collegato al bollitore e che ha il proprio circolatore.",
       "status": "proposed"
     },
     {
@@ -776,10 +747,9 @@
       "id": "ricircolo",
       "name": "Ricircolo sanitario",
       "component_ids": [
+        "ricircolo-utenze",
         "ricircolo",
-        "ritegno-ricircolo",
-        "innesto-ricircolo",
-        "presa-ricircolo"
+        "ritegno-ricircolo"
       ],
       "network_ids": [
         "sanitaria"

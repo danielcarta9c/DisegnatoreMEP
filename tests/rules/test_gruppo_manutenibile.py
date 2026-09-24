@@ -636,11 +636,19 @@ def test_l_acqua_fredda_entra_nel_serpentino_e_la_calda_ne_esce_verso_le_utenze(
     assert walk.medium_of[walk.network_of[walk.at_port[(tank, "dhw_out")].id]] == DHW
     reached = hot_stretch
     # Il miscelatore e' manutenibile e ferma la camminata: oltre lui si prosegue.
-    while reached and reached[-1] in walk.inline and "boundary" not in walk.functions(reached[-1]):
+    # Da D-175 non e' piu' un organo in linea — ha il terzo attacco, da cui entra
+    # l'acqua fredda — e oltre lui si prosegue **sulla sanitaria**: la strada
+    # verso le utenze non e' quella del suo ingresso freddo.
+    while (
+        reached
+        and (reached[-1] in walk.inline or "dhw_mixing" in walk.functions(reached[-1]))
+        and "boundary" not in walk.functions(reached[-1])
+    ):
         last = reached[-1]
         away = next(
             port_id for port_id in walk.run_ports(last)
             if walk.stretch_from(last, port_id)[:1] != [reached[-2] if len(reached) > 1 else tank]
+            and walk.medium_of[walk.network_of[walk.at_port[(last, port_id)].id]] == DHW
         )
         reached = reached + walk.stretch_from(last, away)
     assert "boundary" in walk.functions(reached[-1]), reached
