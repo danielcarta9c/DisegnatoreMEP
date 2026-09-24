@@ -142,8 +142,8 @@ impianto-5               A2          56      0     0      1      1       8      
 cinque rosse della base tornate verdi; ma **due rosse nuove**, dichiarate e non corrette:
 
 ```
-$ python -m pytest -q          # sulla testa 1da89d1, in una copia congelata
-45 failed, 1654 passed, 24 skipped, 12 xfailed in 691.35s
+$ python -m pytest -q          # sulla testa aebd7cd, in una copia congelata
+45 failed, 1656 passed, 24 skipped, 12 xfailed in 666.12s
 $ python -m ruff check src tests examples scripts
 All checks passed!
 $ python -m mypy
@@ -153,7 +153,7 @@ Success: no issues found in 77 source files
 | | base | oggi |
 |---|---|---|
 | rosse | 48 | **45** |
-| passate | 1630 | 1654 |
+| passate | 1630 | 1656 |
 | `skip` / `xfail` | 24 / 12 | 24 / 12 |
 
 - **Tornate verdi (5)**: le due dell'esecutore sulla cascata, che il piano a mano del 5 non
