@@ -430,7 +430,7 @@ def test_una_valvola_di_ritegno_si_disegna_nel_verso_del_flusso(
 
 SIMBOLI_CON_LA_FRECCIA = frozenset({"valve-check", "pump-circulator"})
 """I simboli che portano disegnato il verso del flusso: la ritegno (la freccia
-sopra la z) e il circolatore (il triangolo). Il manifesto non lo dice — la
+sopra la N) e il circolatore (il triangolo). Il manifesto non lo dice — la
 freccia e' nel disegno —, e per questo l'elenco sta qui."""
 
 

@@ -150,6 +150,15 @@ perfette», e due correzioni — «Fai le verifiche e in caso le correzioni».
   **Domanda al PO** prima di toccare le regole. Se conferma, cambiano i grafi 1 e 4, e le due
   tavole si ricompongono in camera pulita.
 
+Poi, sulle stesse tavole (**I-115**): «noi lo stiamo disegnando come una "Z" invece è come una
+"N"», e sulle sicurezze «facciamo una ricerca normativa e di best practice dei produttori».
+
+- ✅ **La ritegno è la N di UNI 9511, con la freccia sopra — D-181**, che supera D-122. Il segno
+  cambia nel generatore dei simboli, anche dentro il gruppo di sicurezza sanitario; una prova lo
+  tiene fermo (rossa col segno di prima). Le tavole si ridisegnano con gli stessi piani.
+- ✅ **La ricerca** — `docs/fonti/ricerche/reports/Valvole di sicurezza e simbolo ritegno.md`. Le
+  scelte sulle sicurezze degli impianti 1 e 4 restano del PO: la domanda di sopra.
+
 ## Deciso dal PO il 23 settembre
 
 - **D-173** — il pavimento di B1 fra due pezzi è **approvato** (I-111), dopo la spiegazione che il
@@ -211,6 +220,10 @@ Quello che la sessione ha toccato fuori dal perimetro scritto, e perché:
 - **Il criterio 4bis e il punto 7** parlano di «1000 litri in su» e del volume nel grafo. Il PO,
   il 24 (I-113, **D-179**): «Sì, conta "centralizzata"». Nel grafo va `"produzione":
   "centralizzata"`, non un volume; le prove restano una per parte.
+- **Due convenzioni grafiche oltre D-176 e D-177**, entrate dal §8 perché le ha disposte il PO
+  sulle tavole di questo pacchetto: la freccia nel verso del flusso (I-114, **D-180**) e il segno
+  della ritegno (I-115, **D-181**). Il segno cambia nel generatore, e i due manifesti toccati
+  salgono di versione (`valve-check` 4.0.0, `dhw-safety-group` 2.0.0).
 - **`docs/DEFERRED.md` non è toccato**, ed è fuori perimetro: due sue voci — la miscelatrice «con
   due porte sullo stesso fluido» (§6) e le sue «porte che dicono il falso» (§8) — sono chiuse nei
   fatti da D-175, e lo dice il rapporto. La parte della seconda voce sul gruppo di riempimento

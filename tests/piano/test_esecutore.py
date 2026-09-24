@@ -217,7 +217,7 @@ def test_la_rotazione_scritta_nel_piano_non_si_tocca() -> None:
 
 
 SIMBOLI_CON_LA_FRECCIA = frozenset({"valve-check", "pump-circulator"})
-"""La ritegno (la freccia sopra la z) e il circolatore (il triangolo): il simbolo
+"""La ritegno (la freccia sopra la N) e il circolatore (il triangolo): il simbolo
 punta dall'attacco `a` all'attacco `b`."""
 
 
