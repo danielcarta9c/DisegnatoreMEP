@@ -62,6 +62,7 @@ Questi sono quelli che incontri quasi sempre:
 | `plate-heat-exchanger` | 12,5 × 25 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` destra +5 · `secondary_in` destra +20 |
 | `dhw-cylinder` | 25 × 45 | `coil_in` sinistra **+7,5** · `coil_out` sinistra **+17,5** · `dhw_out` sopra · `cold_in` sinistra +37,5 |
 | `radiator`, `fan-coil`, `ahu-coil`, `underfloor-panel` | 20 × 15 | `in` **sinistra +2,5** · `out` **sinistra +12,5** — tutt'e due **sullo stesso lato** (D-167) |
+| `mixing-valve-thermostatic` (miscelatrice termostatica ACS) | 5 × 10 | `hot_in` sinistra +5 · `out` destra +5 · `cold_in` **sotto, a x +2,5** — è una tre vie (D-175): la posi tu, e la giri |
 
 **Guarda l'interasse.** Pompa di calore, caldaia, volano e scambiatore a piastre hanno tutti
 le due porte principali a **15 mm** l'una dall'altra, e alle **stesse quote +5 e +20**. Questo
@@ -157,14 +158,16 @@ JSON, e solo queste chiavi:
   quelli. ⚠ Il grafo nomina altre decine di identificativi in `subsystems` e
   `rule_applications` che **non sono pezzi**: ignorali.
   **Gli organi in linea non li posi tu**: valvole d'intercettazione, filtri, defangatori,
-  separatori d'aria, circolatori, ritegni, riduttori, miscelatrici termostatiche, gruppi di
-  sicurezza sanitari. Li riconosci dal manifesto del simbolo, che dichiara `inline_gap_mm`: il
-  motore li posa **da solo, sulla loro tratta** (§4bis). Se ne scrivi uno nel piano, il comando
-  te lo dice e si ferma. ⚠ Il **rubinetto portamanometro** si chiama «a tre vie»
-  (`valve-gauge-cock-3way`) ma è un organo in linea a due attacchi: non è una tre vie, non si
-  posa e non si ruota.
-  **Tutti gli altri li posi tu**: macchine, raccordi (`tee-*`), valvole a tre vie, strumenti,
-  sfiati, scarichi, vasi, gruppi di riempimento, confini di rete. Uno che dimentichi il motore
+  separatori d'aria, circolatori, ritegni, riduttori, gruppi di sicurezza sanitari. Li
+  riconosci dal manifesto del simbolo, che dichiara `inline_gap_mm`: il motore li posa **da
+  solo, sulla loro tratta** (§4bis). Se ne scrivi uno nel piano, il comando te lo dice e si
+  ferma. ⚠ Il **rubinetto portamanometro** si chiama «a tre vie» (`valve-gauge-cock-3way`) ma
+  è un organo in linea a due attacchi: non è una tre vie, non si posa e non si ruota.
+  ⚠ **La miscelatrice termostatica dell'ACS non è più un organo in linea** (**D-175**): ha il
+  terzo attacco, da cui entra l'acqua fredda, e **la posi tu** come ogni tre vie.
+  **Tutti gli altri li posi tu**: macchine, raccordi (`tee-*`), valvole a tre vie — compresa
+  la miscelatrice termostatica —, strumenti, sfiati, scarichi, vasi, gruppi di riempimento,
+  confini di rete. Uno che dimentichi il motore
   lo mette accanto al pezzo a cui è attaccato, come può: è una rete di sicurezza, non un modo di
   comporre — **scrivili tutti**.
   `x` e `y` sono in millimetri, **origine in alto a sinistra del pezzo**, e si arrotondano al
@@ -184,7 +187,9 @@ JSON, e solo queste chiavi:
   tavole: «la valvola a tre vie la metti sempre con uscita terza verso il basso, **guarda che
   puoi ruotarla**». **La terza via guarda il pezzo che serve**, e da che parte sta quel pezzo lo
   sai tu. Lo stesso vale per il **gruppo di riempimento**, che ha due attacchi e non è una
-  macchina.
+  macchina, e per la **miscelatrice termostatica**: il PO, il 23 settembre 2026, «anche lei è
+  una di quelle valvole che deve poter ruotare e specchiare per evitare sormonti o curve non
+  necessarie» (**D-175**).
 - **`specchio`** — vero o falso, e si applica **prima** della rotazione, attorno all'asse
   verticale del pezzo. **Le giaciture sono otto, non quattro** (**D-169**), e per una valvola a
   tre vie le quattro rotazioni **non bastano**: leggi il riquadro qui sotto prima di posarne una.
@@ -226,7 +231,11 @@ di due specie, e le due si trattano in modo diverso:
   autostrada passa di lì** (§6): un appeso nella colonna che una linea deve percorrere la
   costringe a girargli intorno;
 - **i confini di rete** — l'acquedotto, le utenze sanitarie — stanno **addosso al pezzo che
-  servono**, con lo stacco minimo (A4), non nella fascia della distribuzione.
+  servono**, con lo stacco minimo (A4), non nella fascia della distribuzione. Vale anche per
+  gli ingressi dell'acqua fredda che il completamento aggiunge — `AF-02`, `AF-03`… —, uno per
+  ciascun pezzo che la usa: il gruppo di riempimento e la **miscelatrice termostatica**, che
+  riceve il suo «pezzetto di AF in ingresso» (D-175) sulla terza via, `cold_in`. Il suo
+  confine sta **sotto la terza via**, o dove l'hai girata, con la valvola di confine in mezzo.
 
 ⚠ **Lo scheletro si posa pensando al corredo.** Le porte che il corredo userà dopo devono
 restare raggiungibili: l'acqua fredda del bollitore entra da **sinistra a +37,5**, e se davanti
@@ -241,6 +250,11 @@ stessa parte rispetto al verso della via dritta.
 
 `switching-valve-3way`: `in_a` **sinistra** · `out` **destra** · `in_b` **sotto**.
 `diverting-valve-3way`: `in` **sinistra** · `out_a` **destra** · `out_b` **sotto**.
+`mixing-valve-thermostatic`: `hot_in` **sinistra** · `out` **destra** · `cold_in` **sotto** —
+la via dritta è quella dell'acqua calda, dall'accumulo alle utenze, e la terza via è l'acqua
+fredda che la miscela (D-175). Ha le giaciture della deviatrice, con `hot_in`, `out` e
+`cold_in` al posto di `in`, `out_a` e `out_b`; è larga 5 e alta 10, quindi la terza via sta a
+**x +2,5**, e ruotata di 90 o 270 diventa larga 10 e alta 5.
 
 Le **otto** giaciture della commutatrice, e serve leggerla come una tabella:
 

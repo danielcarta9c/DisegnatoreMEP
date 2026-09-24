@@ -1,6 +1,6 @@
 {
   "id": "dhw-mixing-on-draw-off",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "name": "Valvola miscelatrice termostatica",
   "category": "necessary",
   "cardinality": "per_network",
@@ -12,14 +12,16 @@
   "then": {
     "provides_function": "dhw_mixing",
     "placement": "on_outlet",
-    "inlet_port": "a",
-    "outlet_port": "b"
+    "inlet_port": "hot_in",
+    "outlet_port": "out",
+    "bridges_from_medium": "cold_water",
+    "bridge_port": "cold_in"
   },
   "satisfied_by": {
     "scope": "on_the_network"
   },
-  "rationale": "Una riserva d'acqua calda si tiene a temperatura alta per non far proliferare la legionella, ma a quella temperatura scotta. La miscelatrice sta sulla tubazione che esce verso le utenze, subito dopo la riserva: cosi' l'accumulo resta caldo e cio' che arriva ai rubinetti e' a temperatura di utilizzo.",
-  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)",
+  "rationale": "Una riserva d'acqua calda si tiene a temperatura alta per non far proliferare la legionella, ma a quella temperatura scotta. La miscelatrice sta sulla tubazione che esce verso le utenze, subito dopo la riserva: cosi' l'accumulo resta caldo e cio' che arriva ai rubinetti e' a temperatura di utilizzo. Per miscelare le serve l'acqua fredda, che entra dal suo terzo attacco: le arriva dal proprio ingresso di acqua fredda, con un tratto corto di tubazione, come al gruppo di riempimento — non da una derivazione sulla linea che alimenta un altro utente.",
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008); D-175, il PO il 23 settembre 2026: «la miscelatrice termostatica ha necessita' di ingresso AF… serve il pezzetto di af in ingresso»; I-061, un ingresso per ciascun utente dell'acqua fredda",
   "ordering": {
     "after": [
       "isolation",

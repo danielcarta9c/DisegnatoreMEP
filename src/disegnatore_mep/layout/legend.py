@@ -73,9 +73,21 @@ MEDIUM_NAMES: dict[str, str] = {
 """Denominazione italiana del fluido, per la legenda (D-051)."""
 
 
+RECIRCULATION_COLOUR = "#58d68d"
+"""Il verde chiaro del **ricircolo** dell'acqua calda sanitaria (**D-176**).
+
+Il PO, il 23 settembre 2026: «la linea di ricircolo ha un colore a se' (io
+generalmente uso il verde chiaro)». E' una modifica della convenzione grafica, e
+l'ha decisa lui (D-165). Il ricircolo e' il **ritorno** della rete sanitaria —
+l'acqua che le utenze non hanno preso e che torna all'accumulo — quindi il
+colore sta dove sta il colore di ogni ritorno. La tonalita' e' una scelta di
+questa sessione, fra i verdi chiari che non sono gia' della tavola: l'aria di
+mandata e' un verde acqua scuro, e un verde piu' chiaro di questo su carta
+bianca non si legge."""
+
 SUPPLY_SHIFT = {
     "#c0392b": "#2471a3",
-    "#d68910": "#5dade2",
+    "#d68910": RECIRCULATION_COLOUR,
     "#148f77": "#117a65",
     "#6c3483": "#5b2c6f",
 }
@@ -84,7 +96,17 @@ SUPPLY_SHIFT = {
 Su una tavola vera mandata e ritorno sono **due linee diverse**: la legenda
 tubazioni le elenca separate, «riscaldamento andata» e «riscaldamento ritorno».
 Associare lo stile al solo fluido le rendeva indistinguibili.
+
+Il ritorno dell'acqua calda sanitaria era l'azzurro dell'acqua fredda, a tratto
+pieno: finche' nessun impianto lo disegnava non se ne accorgeva nessuno. Da
+**D-176** e' il verde chiaro del ricircolo.
 """
+
+RETURN_NAMES: dict[str, str] = {"domestic_hot_water": "ricircolo"}
+"""Come si chiama in legenda il ritorno di un fluido, dove non si chiama ritorno.
+
+Il ritorno dell'acqua calda sanitaria e' il **ricircolo**, e il PO lo chiama
+cosi' (D-176): una rete aperta non ha altro ritorno che quello."""
 
 
 def style_for(medium: str, supply: bool = True) -> tuple[str, str]:
@@ -132,7 +154,11 @@ def build_legend(
         )
     # Una riga per fluido e per servizio: andata e ritorno sono due linee.
     keys = [
-        (medium, f"{name} — {'andata' if supply else 'ritorno'}", supply)
+        (
+            medium,
+            f"{name} — {'andata' if supply else RETURN_NAMES.get(medium, 'ritorno')}",
+            supply,
+        )
         for medium, name in sorted(by_medium.items())
         for supply in (True, False)
     ]

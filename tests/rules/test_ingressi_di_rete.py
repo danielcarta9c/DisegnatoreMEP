@@ -89,6 +89,11 @@ def due_utenti_di_acqua_fredda() -> ProjectModel:
     bollitore — il secondo nasce dal completamento: il circuito chiuso vuole un
     gruppo di riempimento, e il gruppo pesca dall'acqua fredda. Sono due utenti
     lontani, ed e' il caso che il PO ha in mente.
+
+    **Da D-175 gli utenti che il completamento porta sono tre**: la riserva
+    sanitaria vuole la miscelatrice termostatica, e la miscelatrice prende
+    l'acqua fredda dal proprio terzo attacco. Il nome della prova resta quello
+    dei due utenti che il PO aveva in mente l'11 settembre.
     """
     return ProjectModel(
         metadata=ProjectMetadata(
@@ -172,18 +177,20 @@ def _users_of(project: ProjectModel, inlet_id: str) -> set[str]:
     return touched
 
 
-def test_due_utenti_di_acqua_fredda_fanno_due_ingressi() -> None:
+def test_ogni_utente_di_acqua_fredda_ha_il_proprio_ingresso() -> None:
     """La prova generale del criterio 2.
 
-    Dati due utenti di acqua fredda, il completamento produce **due ingressi**
-    e non una rete che si dirama; ciascun ingresso sta su una rete propria.
+    Dati piu' utenti di acqua fredda, il completamento produce **un ingresso per
+    ciascuno** e non una rete che si dirama; ciascun ingresso sta su una rete
+    propria. Gli utenti sono tre — il bollitore, il gruppo di riempimento e, da
+    D-175, la miscelatrice termostatica — e gli ingressi tre.
     """
     completo = completato(due_utenti_di_acqua_fredda())
     inlets = _inlets(completo, COLD)
-    assert len(inlets) == 2, [item.id for item in inlets]
+    assert len(inlets) == 3, [item.id for item in inlets]
 
     cold = [item for item in completo.networks if item.medium == COLD]
-    assert len(cold) == 2, [item.id for item in cold]
+    assert len(cold) == 3, [item.id for item in cold]
 
     reti = {
         item.id: {
@@ -196,7 +203,7 @@ def test_due_utenti_di_acqua_fredda_fanno_due_ingressi() -> None:
     }
     unite = [rete for rete in reti.values() if len(rete) != 1]
     assert not unite, reti
-    assert len({next(iter(rete)) for rete in reti.values()}) == 2, reti
+    assert len({next(iter(rete)) for rete in reti.values()}) == 3, reti
 
 
 def test_nessuna_rete_di_acqua_fredda_serve_due_utenti_in_serie() -> None:
@@ -249,14 +256,16 @@ def test_l_unione_a_t_non_compare_se_non_e_dichiarata() -> None:
 def test_sulla_tavola_2_la_rete_fredda_non_e_piu_una_linea_sola() -> None:
     """Il criterio 1, sull'impianto vero.
 
-    Sulla tavola 2 il grafo completato porta due confini di rete distinti, con
-    due reti distinte, e nessuna tratta di acqua fredda serve due utenti in
-    serie. Prima ce n'era uno solo, e la sua linea attraversava il foglio.
+    Sulla tavola 2 il grafo completato porta un confine di rete per utente,
+    ciascuno con la propria rete, e nessuna tratta di acqua fredda serve due
+    utenti in serie. Prima ce n'era uno solo, e la sua linea attraversava il
+    foglio. Gli utenti sono tre: il bollitore, il gruppo di riempimento e, da
+    D-175, la miscelatrice termostatica.
     """
     completo = completato(load_project(TAVOLA_2))
     inlets = _inlets(completo, COLD)
-    assert len(inlets) == 2, [item.id for item in inlets]
-    assert len({item.tag for item in inlets}) == 2, [item.tag for item in inlets]
-    assert len([item for item in completo.networks if item.medium == COLD]) == 2
+    assert len(inlets) == 3, [item.id for item in inlets]
+    assert len({item.tag for item in inlets}) == 3, [item.tag for item in inlets]
+    assert len([item for item in completo.networks if item.medium == COLD]) == 3
     for inlet in inlets:
         assert len(_users_of(completo, inlet.id)) == 1, inlet.id

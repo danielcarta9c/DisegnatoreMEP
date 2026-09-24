@@ -13,6 +13,7 @@ from pathlib import Path
 
 from disegnatore_mep.catalog.errors import CatalogError
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.catalog.schema import ComponentDefinition
 
 from .errors import RuleError
 from .schema import RuleDefinition
@@ -97,9 +98,10 @@ class RuleRegistry:
             if not catalog.bridging(rule.then.provides_function, source, medium):
                 continue
             try:
-                catalog.bridge(rule.then.provides_function, source, medium)
+                definition = catalog.bridge(rule.then.provides_function, source, medium)
             except CatalogError as exc:
                 raise RuleError(f"rule {rule.id} proposes a bridge: {exc}") from exc
+            RuleRegistry._bridge_ports(rule, definition, source, medium)
             resolved += 1
         if resolved == 0:
             raise RuleError(
@@ -107,6 +109,35 @@ class RuleRegistry:
                 f"{rule.then.provides_function!r} from {source!r}, and no "
                 f"catalogue definition does"
             )
+
+    @staticmethod
+    def _bridge_ports(
+        rule: RuleDefinition, definition: ComponentDefinition, source: str, target: str
+    ) -> None:
+        """Gli attacchi che la regola nomina esistono, e ciascuno sul suo fluido.
+
+        Il ponte ordinario pesca da `inlet_port` e rende su `outlet_port`; quello
+        **in linea** (D-175) sta dentro la tubazione della rete della regola, fra
+        `inlet_port` e `outlet_port`, e prende l'altro fluido da `bridge_port`.
+        Un nome sbagliato qui produrrebbe una tubazione su un attacco che il
+        pezzo non ha, e lo si scoprirebbe solo a meta' catena.
+        """
+        if rule.then.bridge_port is None:
+            wanted = {rule.then.inlet_port: source, rule.then.outlet_port: target}
+        else:
+            wanted = {
+                rule.then.inlet_port: target,
+                rule.then.outlet_port: target,
+                rule.then.bridge_port: source,
+            }
+        media_of = {port.id: port.medium for port in definition.ports}
+        for port_id, medium in wanted.items():
+            if media_of.get(port_id) != medium:
+                raise RuleError(
+                    f"rule {rule.id} connects {definition.id}.{port_id} on "
+                    f"{medium!r}, and the catalogue declares "
+                    f"{media_of.get(port_id, 'no such port')!r} there"
+                )
 
     @staticmethod
     def _resolves_everywhere(

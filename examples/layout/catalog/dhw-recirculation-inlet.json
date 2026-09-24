@@ -1,0 +1,27 @@
+{
+  "id": "dhw-recirculation-inlet",
+  "version": "1.0.0",
+  "name": "Ricircolo sanitario dalle utenze",
+  "functions": [
+    "boundary"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "network-boundary",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-176: il ricircolo preleva dalle utenze, e in tavola entra da un confine di rete «ACS-R», lo stesso simbolo del prelievo AF (il PO, 23 settembre 2026)"
+  ]
+}

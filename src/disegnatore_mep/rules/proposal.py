@@ -109,6 +109,12 @@ class RuleProposal(StrictModel):
     progettista ha gia' dichiarato. Chi applica apre una derivazione da
     ciascuna parte."""
 
+    bridge_port: str | None = Field(default=None, pattern=ID_PATTERN)
+    """Il terzo attacco di un ponte **in linea** (D-175): il pezzo spezza la
+    tubazione su cui la regola parla, fra `inlet_port` e `outlet_port`, e da
+    qui riceve l'altro fluido dal proprio confine di rete. Vuoto per il ponte
+    ordinario."""
+
     service_port: str | None = Field(default=None, pattern=ID_PATTERN)
     """L'attacco di servizio dell'ancoraggio su cui questo accessorio si appende.
 

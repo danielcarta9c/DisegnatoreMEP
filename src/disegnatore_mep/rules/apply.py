@@ -255,6 +255,9 @@ def apply_proposals(
             )
             declared = _component(current, proposal.source_anchor.component_id)
             boundary_id = f"inlet-{proposal.component_id}"
+            # L'attacco che il confine alimenta: l'ingresso del ponte ordinario,
+            # o il terzo attacco di quello in linea (D-175).
+            fed_port = proposal.bridge_port or proposal.inlet_port
             own_network = NetworkModel(
                 id=f"{source_network.id}-{proposal.component_id}",
                 name=source_network.name,
@@ -275,54 +278,65 @@ def apply_proposals(
                 )
             )
             feed = ConnectionModel(
-                id=f"inlet-{proposal.component_id}-{proposal.inlet_port}",
+                id=f"inlet-{proposal.component_id}-{fed_port}",
                 network_id=own_network.id,
                 endpoint_a=PortRef(
                     component_id=boundary_id, port_id=proposal.source_anchor.port_id
                 ),
                 endpoint_b=PortRef(
-                    component_id=proposal.component_id, port_id=proposal.inlet_port
+                    component_id=proposal.component_id, port_id=fed_port
                 ),
             )
             connections = [*current.connections, feed]
             pipes = [feed.id, own_network.id]
-            # Il capo di valle resta una derivazione sulla tubazione che la
-            # regola nomina: li' il ponte si innesta su una rete che c'e' gia' e
-            # che non e' sua.
             connection = _connection_touching(
                 current.model_copy(update={"connections": connections}), proposal.anchor
             )
-            junction_id = f"tee-{proposal.component_id}-{proposal.outlet_port}"
-            added.append(
-                (
-                    _instance(
-                        junction_id,
-                        catalog.providing(BRANCH_OFF, _medium_of(current, network_id)).id,
-                        proposal,
-                    ),
-                    proposal.anchor.component_id,
+            if proposal.bridge_port is not None:
+                # Il ponte **in linea** (D-175): la miscelatrice termostatica sta
+                # dentro la tubazione dell'acqua calda come ogni organo in linea,
+                # e l'acqua fredda le arriva dal proprio confine. Nessuna
+                # derivazione: la tubazione della regola si spezza, e basta.
+                pieces = _split(connection, proposal)
+                extra: list[ConnectionModel] = []
+            else:
+                # Il capo di valle resta una derivazione sulla tubazione che la
+                # regola nomina: li' il ponte si innesta su una rete che c'e'
+                # gia' e che non e' sua.
+                junction_id = f"tee-{proposal.component_id}-{proposal.outlet_port}"
+                added.append(
+                    (
+                        _instance(
+                            junction_id,
+                            catalog.providing(BRANCH_OFF, _medium_of(current, network_id)).id,
+                            proposal,
+                        ),
+                        proposal.anchor.component_id,
+                    )
                 )
-            )
-            pieces = _derivation(connection, proposal, junction_id)
-            # Il verso di una tubazione va da chi esce a chi entra: qui il ponte
-            # **esce**, quindi parte dal gruppo e arriva al braccio del raccordo.
-            stub = ConnectionModel(
-                id=f"stub-{proposal.component_id}-{proposal.outlet_port}",
-                network_id=network_id,
-                endpoint_a=PortRef(
-                    component_id=proposal.component_id, port_id=proposal.outlet_port
-                ),
-                endpoint_b=PortRef(component_id=junction_id, port_id=BRANCH_PORT),
-            )
+                pieces = _derivation(connection, proposal, junction_id)
+                # Il verso di una tubazione va da chi esce a chi entra: qui il
+                # ponte **esce**, quindi parte dal gruppo e arriva al braccio del
+                # raccordo.
+                extra = [
+                    ConnectionModel(
+                        id=f"stub-{proposal.component_id}-{proposal.outlet_port}",
+                        network_id=network_id,
+                        endpoint_a=PortRef(
+                            component_id=proposal.component_id, port_id=proposal.outlet_port
+                        ),
+                        endpoint_b=PortRef(component_id=junction_id, port_id=BRANCH_PORT),
+                    )
+                ]
             connections = [
                 *(
                     item
                     for existing in connections
                     for item in (pieces if existing.id == connection.id else [existing])
                 ),
-                stub,
+                *extra,
             ]
-            pipes.extend(item.id for item in (*pieces, stub))
+            pipes.extend(item.id for item in (*pieces, *extra))
         elif proposal.service_port is not None:
             # La macchina l'attacco ce l'ha: nessuna tubazione viene spezzata.
             stub = _stub(
@@ -444,6 +458,64 @@ def _next_in_the_series(project: ProjectModel, like: ComponentInstance) -> str |
     return f"{prefix}{separator}{highest + 1:0{len(digits)}d}"
 
 
+def _series_in_identifier_order(project: ProjectModel) -> ProjectModel:
+    """Le sigle dei confini che i ponti portano con se', date **in ordine di
+    identificativo** e non nell'ordine in cui le regole hanno parlato.
+
+    Finche' un solo ponte pescava dall'acqua fredda — il gruppo di riempimento
+    — la serie aveva un numero solo da dare. Da **D-175** ce ne sono due, la
+    miscelatrice e il riempimento, e `_next_in_the_series` dava il numero a chi
+    veniva applicato prima: cioe' all'ordine alfabetico dei **file** delle
+    regole. Rinominare un file cambiava le sigle, ed e' esattamente cio' che
+    l'assemblatore vieta alla fila (D-093). L'identificativo viene dai dati —
+    il pezzo e l'attacco su cui il ponte si ancora — e l'ordine che ne esce e'
+    lo stesso comunque le regole si chiamino.
+
+    Tocca soltanto i confini nati da una regola: le sigle del progettista non
+    si rinumerano mai.
+    """
+    added = [
+        item
+        for item in project.components
+        if item.id.startswith("inlet-")
+        and item.tag is not None
+        and any(evidence.kind == "rule" for evidence in item.evidence)
+    ]
+    if len(added) < 2:
+        return project
+    cleared = {item.id for item in added}
+    current = project.model_copy(
+        update={
+            "components": [
+                item.model_copy(update={"tag": None}) if item.id in cleared else item
+                for item in project.components
+            ]
+        }
+    )
+    for item in sorted(added, key=lambda entry: entry.id):
+        like = next(
+            (
+                other
+                for other in current.components
+                if other.definition_id == item.definition_id
+                and other.tag is not None
+                and other.id not in cleared
+            ),
+            item,
+        )
+        tag = _next_in_the_series(current, like) or item.tag
+        current = current.model_copy(
+            update={
+                "components": [
+                    other.model_copy(update={"tag": tag}) if other.id == item.id else other
+                    for other in current.components
+                ]
+            }
+        )
+        cleared.discard(item.id)
+    return current
+
+
 def _medium_of(project: ProjectModel, network_id: str) -> str:
     """Il fluido di una rete. Il raccordo si sceglie su quello, come ogni pezzo."""
     for network in project.networks:
@@ -556,7 +628,9 @@ def saturate(
         sul tubo (D-093). Senza questo passo l'ordine e' quello in cui le regole
         sono state valutate, cioe' l'ordine alfabetico dei loro file.
         """
-        return assemble(model, catalog, {item.id: item for item in rules.all()})
+        return _series_in_identifier_order(
+            assemble(model, catalog, {item.id: item for item in rules.all()})
+        )
 
     current = project
     applied: list[RuleProposal] = []

@@ -23,10 +23,11 @@ percio' un **punto aperto** accanto alle proposte, con la categoria della regola
 che lo ha generato.
 """
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import OnBoard
+from disegnatore_mep.catalog.schema import ComponentDefinition, OnBoard
 from disegnatore_mep.model.project import NetworkModel, PortRef, ProjectModel
 from disegnatore_mep.model.types import PlantRegime
 
@@ -344,6 +345,36 @@ def _catalogue_has(
     return bool(catalog.serving(function, medium))
 
 
+def _declares(properties: Mapping[str, object], wanted: Mapping[str, str]) -> bool:
+    """Il pezzo dichiara tutti quei dati, con quei valori (D-178).
+
+    Vuoto non dichiara mai niente: una regola senza la clausola chiede come ha
+    sempre chiesto. Il confronto ignora maiuscole e spazi ai bordi, perche' il
+    valore e' la parola del progettista trascritta com'e'."""
+    if not wanted:
+        return False
+    return all(
+        key in properties
+        and str(properties[key]).strip().lower() == value.strip().lower()
+        for key, value in wanted.items()
+    )
+
+
+def _definition_for(
+    catalog: ComponentRegistry, rule: RuleDefinition, function: str, medium: str
+) -> ComponentDefinition:
+    """La voce che la regola propone su quella rete: un ponte si cerca fra due
+    fluidi, tutto il resto sul fluido della rete.
+
+    Una sola domanda, fatta in un posto solo: la miscelatrice termostatica ha
+    un attacco sull'acqua fredda (D-175), e chiederla come organo della sola
+    acqua calda sanitaria — dove C2 guarda come si attacca il pezzo — non la
+    trovava piu'."""
+    if rule.then.bridges_from_medium is not None:
+        return catalog.bridge(function, rule.then.bridges_from_medium, medium)
+    return catalog.providing(function, medium)
+
+
 def _source_for(
     context: RuleContext, project: ProjectModel, medium: str
 ) -> PortRef | None:
@@ -390,6 +421,7 @@ def evaluate(
     e i punti in cui una regola si applica ma il catalogo non ha il pezzo."""
     context = RuleContext.build(project, catalog, {item.id: item for item in rules.all()})
     taken = {item.id for item in project.components}
+    declared = {item.id: item.properties for item in project.components}
     proposals: list[RuleProposal] = []
     gaps: dict[tuple[str, str, str, str], RuleGap] = {}
     # Un tratto, un organo (I-034). Due attacchi affacciati sullo stesso tratto
@@ -464,8 +496,8 @@ def evaluate(
                 # verra' servito quando si valuta la sua rete.
                 fill = context.fill_port_of(anchor.component_id)
                 if fill is not None and anchor.port_id != fill:
-                    definition = catalog.providing(
-                        _function_at(context, rule, anchor), network.medium
+                    definition = _definition_for(
+                        catalog, rule, _function_at(context, rule, anchor), network.medium
                     )
                     if definition.attaches_on_a_branch and (
                         context.service_port_for(
@@ -540,20 +572,20 @@ def evaluate(
                 # presume: se il catalogo non dice se la funzione sta dentro
                 # il mantello, il dato e' ignoto, e un dato ignoto e' una
                 # domanda al progettista, non un pezzo in piu' (I-046).
+                # Tranne dove il progettista ha gia' detto il dato che toglie la
+                # domanda (D-178): l'ACS centralizzata vuole il vaso sanitario.
                 if (
                     rule.then.if_on_board_is_unknown is OnBoardPolicy.ASK
                     and context.on_board(anchor.component_id, function) is OnBoard.UNKNOWN
+                    and not _declares(
+                        declared.get(anchor.component_id, {}),
+                        rule.then.unless_the_anchor_declares,
+                    )
                 ):
                     missing = _gap(context, rule, network, anchor, GapReason.ON_BOARD_UNKNOWN)
                     gaps.setdefault(missing.key, missing)
                     continue
-                definition = (
-                    catalog.bridge(
-                        function, rule.then.bridges_from_medium, network.medium
-                    )
-                    if rule.then.bridges_from_medium is not None
-                    else catalog.providing(function, network.medium)
-                )
+                definition = _definition_for(catalog, rule, function, network.medium)
                 component_id = proposed_component_id(definition.id, anchor)
                 if component_id in taken:
                     continue
@@ -603,6 +635,7 @@ def evaluate(
                         outlet_port=rule.then.outlet_port,
                         service_port=service_port,
                         source_anchor=source,
+                        bridge_port=rule.then.bridge_port,
                         rationale=rule.rationale,
                         source=rule.source,
                     )

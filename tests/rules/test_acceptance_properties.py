@@ -456,10 +456,12 @@ def test_a_safety_device_is_never_given_a_valve_of_its_own() -> None:
     organo di chiusura ancorandolo a cio' che non si chiude mai."""
     registry = catalog()
     project = load_project(ESSENTIAL)
-    _, proposals, _ = saturate(project, registry, rules())
-    definitions = {item.id: item.definition_id for item in project.components}
-    for proposal in proposals:
-        definitions[proposal.component_id] = proposal.definition_id
+    completed, proposals, _ = saturate(project, registry, rules())
+    # I pezzi del modello completato, e non solo quelli proposti: il confine di
+    # acqua fredda che un ponte porta con se' — quello della miscelatrice, da
+    # D-175 — nasce insieme alla proposta senza esserlo, e la sua valvola di
+    # confine vi si ancora.
+    definitions = {item.id: item.definition_id for item in completed.components}
     for proposal in proposals:
         if not set(registry.get(proposal.definition_id).functions) & CLOSES:
             continue
@@ -500,10 +502,10 @@ def test_the_rule_proposes_the_lockable_organ_wherever_the_regime_asks_it() -> N
     chiudersi solo con organo bloccabile, l'organo proposto deve esserlo."""
     registry = catalog()
     project = load_project(ESSENTIAL)
-    _, proposals, _ = saturate(project, registry, rules())
-    definitions = {item.id: item.definition_id for item in project.components}
-    for proposal in proposals:
-        definitions[proposal.component_id] = proposal.definition_id
+    completed, proposals, _ = saturate(project, registry, rules())
+    # Tutti i pezzi del modello completato: anche il confine che nasce con un
+    # ponte (D-175) senza essere una proposta.
+    definitions = {item.id: item.definition_id for item in completed.components}
     checked = 0
     for proposal in proposals:
         anchor = registry.get(definitions[proposal.anchor.component_id])

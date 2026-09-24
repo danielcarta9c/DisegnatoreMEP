@@ -53,6 +53,7 @@ Qui si parte da:
 - **PDC-02** Pompa di calore aria-acqua, sull'acqua di riscaldamento
 - **AF-01** Alimentazione acqua fredda, sull'acqua fredda sanitaria
 - **AF-02** Alimentazione acqua fredda, sull'acqua fredda sanitaria
+- **AF-03** Alimentazione acqua fredda, sull'acqua fredda sanitaria
 
 **Costo di questa scelta, detto subito:** se domani si aggiunge un pezzo vicino a
 una sorgente, i numeri della sua famiglia a valle scalano tutti di uno. E' normale
@@ -110,6 +111,7 @@ dice che acqua porta e da che parte va.
 | **RS.01** | ritorno secondario | RAD-01 | ACC-01 |
 | **AF.01** | acqua fredda sanitaria | AF-01 | ACC-01 |
 | **AF.02** | acqua fredda sanitaria | AF-02 | GR-01 |
+| **AF.03** | acqua fredda sanitaria | AF-03 | VM-01 |
 
 ---
 
@@ -155,9 +157,11 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.01.N.02 | **VI-11** | Valvola di intercettazione | acqua fredda sanitaria |
 | AF.02.N.01 | **AF-02** | Alimentazione acqua fredda | acqua fredda sanitaria |
-| ACS.01.N.01 | **VI-12** | Valvola di intercettazione | acqua calda sanitaria |
-| ACS.01.N.02 | **VM-01** | Valvola miscelatrice termostatica | acqua calda sanitaria |
-| ACS.01.N.03 | **VI-13** | Valvola di intercettazione | acqua calda sanitaria |
+| AF.03.N.01 | **AF-03** | Alimentazione acqua fredda | acqua fredda sanitaria |
+| AF.03.N.02 | **VI-12** | Valvola di intercettazione | acqua fredda sanitaria |
+| ACS.01.N.02 | **VM-01** | Valvola miscelatrice termostatica | acqua fredda sanitaria, acqua calda sanitaria |
+| ACS.01.N.01 | **VI-13** | Valvola di intercettazione | acqua calda sanitaria |
+| ACS.01.N.03 | **VI-14** | Valvola di intercettazione | acqua calda sanitaria |
 | ACS.01.N.04 | **ACS-01** | Utenze sanitarie | acqua calda sanitaria |
 
 ---
@@ -240,9 +244,10 @@ Da **PDC-02** a **RC-01**, circuito primario.
 Da **ACC-01** a **ACS-01**, acqua calda sanitaria.
 
 1. **ACC-01** Accumulo combinato · gia' numerato, indirizzo CP.01.N.06 · la linea parte dal suo braccio 6
-2. **ACS.01.N.01 · VI-12** Valvola di intercettazione
+2. **ACS.01.N.01 · VI-13** Valvola di intercettazione
 3. **ACS.01.N.02 · VM-01** Valvola miscelatrice termostatica
-4. **ACS.01.N.03 · VI-13** Valvola di intercettazione
+    - qui arriva **AF.03**, da **AF-03**, entrando dal braccio 2
+4. **ACS.01.N.03 · VI-14** Valvola di intercettazione
 5. **ACS.01.N.04 · ACS-01** Utenze sanitarie
 
 ### CS.01 — mandata secondaria
@@ -277,6 +282,14 @@ Da **AF-02** a **GR-01**, acqua fredda sanitaria.
 
 1. **AF.02.N.01 · AF-02** Alimentazione acqua fredda · la linea parte dal suo braccio 1
 2. **GR-01** Gruppo di riempimento · **qui ci si innesta su GR-01**, che si e' gia' letto, entrando dal suo braccio 1 (RP.01.N.03.1)
+
+### AF.03 — acqua fredda sanitaria
+
+Da **AF-03** a **VM-01**, acqua fredda sanitaria.
+
+1. **AF.03.N.01 · AF-03** Alimentazione acqua fredda · la linea parte dal suo braccio 1
+2. **AF.03.N.02 · VI-12** Valvola di intercettazione
+3. **VM-01** Valvola miscelatrice termostatica · **qui ci si innesta su VM-01**, che si e' gia' letto, entrando dal suo braccio 2 (ACS.01.N.02)
 
 ---
 

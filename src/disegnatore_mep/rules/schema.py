@@ -247,6 +247,25 @@ class RuleProposalTemplate(StrictModel):
     `outlet_port`. La sorgente dev'essere **gia' approvata** dal progettista:
     dove non c'e', la regola non propone un pezzo appeso a nulla ma un punto
     aperto.
+
+    Con `bridge_port` il ponte e' dell'altra specie, quella **in linea**: vedi
+    li'.
+    """
+    bridge_port: str | None = Field(default=None, pattern=ID_PATTERN)
+    """L'attacco da cui un pezzo **in linea** prende l'altro fluido (**D-175**).
+
+    La miscelatrice termostatica sta **dentro** la tubazione dell'acqua calda
+    sanitaria — ci entra da `inlet_port`, ne esce da `outlet_port`, come ogni
+    organo in linea — e **in piu'** ha un terzo attacco da cui entra l'acqua
+    fredda. Il PO, il 23 settembre 2026: «serve il pezzetto di af in
+    ingresso». Quel terzo attacco e' questo campo, ed e' alimentato come il
+    capo di monte del gruppo di riempimento: dal **proprio confine** di acqua
+    fredda, con la propria rete e una tubazione corta (I-061), non da una
+    derivazione sulla linea di un altro utente.
+
+    Vuoto per il ponte ordinario, che non sta dentro nessuna tubazione e
+    pesca da `inlet_port`. Si dichiara solo insieme a `bridges_from_medium`,
+    che dice quale fluido arriva qui.
     """
     if_on_board_is_unknown: OnBoardPolicy = OnBoardPolicy.ASSUME_ABSENT
     """Cosa fare quando il catalogo non dice se l'ancoraggio porta a bordo la
@@ -258,6 +277,21 @@ class RuleProposalTemplate(StrictModel):
     esistono **solo** in forza di quel dato: un dispositivo che si aggiunge
     perche' la macchina non lo ha e' un dispositivo che, se non si sa, non si
     aggiunge — si chiede."""
+
+    unless_the_anchor_declares: dict[str, str] = Field(default_factory=dict)
+    """Dove l'ancoraggio **dichiara** questi dati, la domanda sul bordo non si fa:
+    il pezzo si posa (**D-178**).
+
+    Il vaso sanitario si chiede, perche' molti accumuli lo portano dentro. Ma il
+    PO, il 23 settembre 2026: «quando abbiamo impianti centralizzati con ACS…
+    conviene mettere un vaso di espansione sanitario», e il 24, fra la soglia dei
+    1000 litri e la produzione centralizzata, ha scelto la seconda (I-113). Il
+    dato non e' del catalogo: e' del progettista, e «Capire» lo trascrive dal
+    testo nelle proprieta' del pezzo — `"produzione": "centralizzata"`. Dove il
+    testo non lo dice, il campo non c'e' e la domanda resta.
+
+    Si confronta ogni coppia, senza badare a maiuscole e spazi: e' una parola
+    del progettista trascritta com'e', non un codice."""
 
     def function_for(self, regime: ComponentTrait) -> str:
         """La funzione da proporre a un ancoraggio con quel regime."""
@@ -286,6 +320,33 @@ class RuleProposalTemplate(StrictModel):
             raise ValueError(
                 "an inline accessory needs two distinct ports: the run enters one "
                 "and leaves the other"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def only_a_question_can_be_skipped(self) -> "RuleProposalTemplate":
+        """Il dato dichiarato toglie una domanda: senza domanda non toglie niente."""
+        if self.unless_the_anchor_declares and self.if_on_board_is_unknown is not OnBoardPolicy.ASK:
+            raise ValueError(
+                "unless_the_anchor_declares says when the on-board question is not "
+                "asked, and this rule asks nothing: if_on_board_is_unknown must be ask"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def a_bridge_port_takes_another_fluid(self) -> "RuleProposalTemplate":
+        """Il terzo attacco esiste solo per un ponte, ed e' un attacco suo."""
+        if self.bridge_port is None:
+            return self
+        if self.bridges_from_medium is None:
+            raise ValueError(
+                "bridge_port names the port through which the other fluid enters, "
+                "and bridges_from_medium must say which fluid that is"
+            )
+        if self.bridge_port in (self.inlet_port, self.outlet_port):
+            raise ValueError(
+                "bridge_port is the third port of an inline piece: the run already "
+                "enters and leaves through inlet_port and outlet_port"
             )
         return self
 

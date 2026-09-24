@@ -1,6 +1,6 @@
 {
   "id": "dhw-cylinder",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "Bollitore ACS",
   "functions": [
     "dhw_storage"
@@ -53,9 +53,18 @@
       "required": false,
       "stub": true,
       "serves": "temperature_measurement"
+    },
+    {
+      "id": "recirculation_in",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "flow": "in",
+      "required": false,
+      "plugged_when_unused": true
     }
   ],
   "sources": [
-    "CONV-FOUNDATION"
+    "CONV-FOUNDATION",
+    "D-176: il ricircolo, dopo il circolatore, torna nell'accumulo ACS (il PO, 23 settembre 2026)"
   ]
 }

@@ -1,6 +1,6 @@
 {
   "id": "dhw-check-on-cold-inlet",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "name": "Valvola di ritegno sanitaria",
   "category": "necessary",
   "cardinality": "per_network",
@@ -20,10 +20,9 @@
     "scope": "on_the_attachment"
   },
   "rationale": "Un volume d'acqua che si scalda spinge indietro verso la rete che lo alimenta, e l'acqua gia' scaldata non deve tornare nella rete dell'acqua potabile fredda. Il ritegno sta sull'alimentazione, cioe' sulla sola via da cui quel ritorno potrebbe avvenire; uno solo basta, perche' la via e' una. Vale su quella tubazione e non sulla rete intera: se il gruppo di sicurezza dell'accumulo lo porta gia' dentro il proprio mantello, il ritegno c'e' e non se ne aggiunge un secondo fuori.",
-  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008)",
+  "source": "Buona pratica tecnica documentata — Caleffi, Quaderni e Tabelle (SRC-008); D-178, il PO il 23 settembre 2026: il vaso sanitario sta fra il dispositivo di non ritorno e il bollitore, quindi dal lato del serbatoio rispetto al ritegno",
   "ordering": {
     "before": [
-      "expansion",
       "safety"
     ]
   }

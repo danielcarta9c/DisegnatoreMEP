@@ -297,7 +297,10 @@ def test_il_riempimento_porta_il_proprio_ingresso_di_acqua_fredda() -> None:
     )
 
     fredde = {item.id for item in model.networks if item.medium == COLD}
-    assert len(fredde) == 2, f"le reti di acqua fredda sono {sorted(fredde)}"
+    # Tre reti fredde, una per utente: l'adduzione dichiarata, quella del
+    # riempimento e — da D-175 — quella della miscelatrice termostatica, che la
+    # riserva sanitaria di questo circuito vuole sulla propria uscita.
+    assert len(fredde) == 3, f"le reti di acqua fredda sono {sorted(fredde)}"
     sua = reti_di(model, presa) & fredde
     assert len(sua) == 1, f"l'ingresso del riempimento sta su {sorted(sua)}"
     assert sua.isdisjoint(reti_di(model, "acquedotto")), (

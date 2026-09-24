@@ -314,6 +314,18 @@ class _Liner:
             and pipe in self._run_pipes.get(network_id, [])
         ]
 
+    def _entering(self, component_id: str, network_id: str) -> list[Pipe]:
+        """Le tubazioni che entrano nel pezzo su quella rete, in ordine di braccio."""
+        return [
+            pipe
+            for arm in self._graph.node(component_id).arms
+            for connection_id in arm.pipes
+            if (pipe := self._by_id[connection_id]).network_id == network_id
+            and pipe.enters.component_id == component_id
+            and pipe.enters.port_id == arm.port_id
+            and pipe in self._run_pipes.get(network_id, [])
+        ]
+
     # --- il verso: mandata o ritorno -------------------------------------------
 
     def _source_of(self, network_id: str) -> str:
@@ -358,6 +370,28 @@ class _Liner:
                 target = pipe.enters.component_id
                 onward = crossed or bool(self._functions(target) & LOAD_FUNCTIONS)
                 frontier.append((self._rank[target], target, onward))
+        # **Il ricircolo** (D-176): la rete sanitaria esce dalla tavola verso le
+        # utenze e ci rientra dal confine «ACS-R», cioe' l'anello si chiude
+        # fuori dal disegno, e la camminata in avanti dall'accumulo non arriva
+        # mai alla tubazione che torna. Quella si legge all'indietro, come la
+        # legge chi colora (`layout/flow.py`): cio' che rientra nella sorgente,
+        # risalito contro il fluido fino al primo utilizzatore, e' ritorno.
+        # Dove la camminata in avanti ha gia' deciso non cambia niente.
+        visited = {source}
+        behind = [source]
+        while behind:
+            current = behind.pop(0)
+            for pipe in self._entering(current, network_id):
+                if pipe.connection_id in directions:
+                    continue
+                directions[pipe.connection_id] = "return"
+                upstream = pipe.leaves.component_id
+                if upstream in visited or self._functions(upstream) & (
+                    LOAD_FUNCTIONS | GENERATOR_FUNCTIONS
+                ):
+                    continue
+                visited.add(upstream)
+                behind.append(upstream)
         # Una tubazione che la camminata dal fluido non raggiunge e' gia'
         # denunciata dal grafo fra i silenzi: qui prende il verso di mandata
         # per non restare senza nome, e la si vede comunque.

@@ -1,5 +1,5 @@
 {
-  "note": "Le famiglie delle linee idrauliche (D-105): che acqua porta una linea e da che parte va. La riga si legge dal fluido della rete, dal mestiere della sorgente da cui la rete parte (un generatore fa un circuito primario, una riserva un secondario) e dal verso; i campi assenti valgono qualunque. L'ordine conta: vince la prima riga che combacia. Le sigle sono quelle che il PM ha dato il 6 agosto 2026: CP/RP il primario, CS/RS il secondario, AF/ACS il sanitario.",
+  "note": "Le famiglie delle linee idrauliche (D-105): che acqua porta una linea e da che parte va. La riga si legge dal fluido della rete, dal mestiere della sorgente da cui la rete parte (un generatore fa un circuito primario, una riserva un secondario) e dal verso; i campi assenti valgono qualunque. L'ordine conta: vince la prima riga che combacia. Le sigle sono quelle che il PM ha dato il 6 agosto 2026: CP/RP il primario, CS/RS il secondario, AF/ACS il sanitario. Il ritorno dell'acqua calda sanitaria e' il ricircolo, ACSR, e si legge prima della riga generale dell'ACS (D-176, il PO il 23 settembre 2026: la linea di ricircolo ha un colore e un nome suoi).",
   "families": [
     {
       "medium": "heating_water",
@@ -33,6 +33,12 @@
       "medium": "cold_water",
       "prefix": "AF",
       "name": "acqua fredda sanitaria"
+    },
+    {
+      "medium": "domestic_hot_water",
+      "direction": "return",
+      "prefix": "ACSR",
+      "name": "ricircolo acqua calda sanitaria"
     },
     {
       "medium": "domestic_hot_water",

@@ -373,8 +373,26 @@ def _oriented_for_colour(
             continue
         # Le sorgenti: chi immette e non riceve; altrimenti tutti quelli del
         # mestiere piu' alto — i generatori, o gli accumuli — e non uno solo.
+        #
+        # **Ma una riserva o un generatore che manda acqua su questa rete ne e'
+        # la sorgente anche se un confine immette** (**D-176**). Il ricircolo
+        # sanitario rientra dalle utenze per il proprio confine, l'«ACS-R»: quel
+        # confine immette e non riceve, ma l'acqua che porta e' quella che
+        # l'accumulo ha mandato fuori e che torna a lui — e' il **ritorno**
+        # dell'acqua calda, non la sua sorgente. L'acquedotto resta la sorgente
+        # dell'acqua fredda: il bollitore quella rete la riceve e basta.
+        emitters = [
+            item
+            for item in members
+            if outgoing.get(item) and _rank(functions_of.get(item, frozenset())) > 0
+        ]
         feeders = [item for item in members if not incoming.get(item)]
-        if feeders:
+        if emitters:
+            top = max(_rank(functions_of.get(item, frozenset())) for item in emitters)
+            sources = [
+                item for item in emitters if _rank(functions_of.get(item, frozenset())) == top
+            ]
+        elif feeders:
             sources = feeders
         else:
             top = max(_rank(functions_of.get(item, frozenset())) for item in members)

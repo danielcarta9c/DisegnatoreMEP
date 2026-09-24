@@ -532,6 +532,11 @@ dorsali distinte lo dice». Corretto nel grafo, e la regola sta nelle istruzioni
 La miscelatrice del radiante ha `hot_in` a sinistra, `out` a destra e `cold_in` sotto: presa
 dall'alto non si instrada niente. Il piano deve avvicinarsi dal lato giusto.
 
+Dal 23 settembre 2026 vale anche per la **miscelatrice termostatica dell'ACS** (**D-175**):
+ha la stessa forma — `hot_in`, `out`, e la terza via `cold_in` da cui entra l'acqua fredda
+dal proprio confine di rete —, non è più un organo in linea che il motore posa da solo, e la
+sua giacitura la sceglie il piano come per ogni tre vie (D-168, D-169).
+
 *Fonte:* **nata componendo**, 20 settembre 2026. *Tavola:* impianto 5 composto.
 *Controllo:* l'errore lo dà l'instradamento; `da scrivere` come rilievo che lo nomina prima.
 

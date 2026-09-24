@@ -50,6 +50,7 @@ comincia esattamente allo stesso modo.
 Qui si parte da:
 
 - **PDC-01** Pompa di calore aria-acqua, sull'acqua di riscaldamento
+- **AF-03** Alimentazione acqua fredda, sull'acqua fredda sanitaria
 - **AF-02** Alimentazione acqua fredda, sull'acqua fredda sanitaria
 - **AF-01** Alimentazione acqua fredda, sull'acqua fredda sanitaria
 - **BOL-01** Bollitore ACS, dove nasce l'acqua calda sanitaria
@@ -115,8 +116,9 @@ dice che acqua porta e da che parte va.
 | **RS.01** | ritorno secondario | RAD-01 | VOL-01 |
 | **RS.02** | ritorno secondario | PAV-01 | RC-02 |
 | **ACS.01** | acqua calda sanitaria | BOL-01 | ACS-01 |
-| **AF.01** | acqua fredda sanitaria | AF-02 | GR-01 |
-| **AF.02** | acqua fredda sanitaria | AF-01 | BOL-01 |
+| **AF.01** | acqua fredda sanitaria | AF-03 | GR-01 |
+| **AF.02** | acqua fredda sanitaria | AF-02 | VM-01 |
+| **AF.03** | acqua fredda sanitaria | AF-01 | BOL-01 |
 
 ---
 
@@ -168,15 +170,17 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | CP.01.N.08.1 | **SF-01** | Valvola di sfogo aria · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | CP.01.N.08.2 | **SC-01** | Attacco di scarico · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | CP.01.N.02.1 | **VS-01** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| AF.01.N.01 | **AF-02** | Alimentazione acqua fredda | acqua fredda sanitaria |
-| AF.02.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
+| AF.01.N.01 | **AF-03** | Alimentazione acqua fredda | acqua fredda sanitaria |
+| AF.02.N.01 | **AF-02** | Alimentazione acqua fredda | acqua fredda sanitaria |
 | AF.02.N.02 | **VI-17** | Valvola di intercettazione | acqua fredda sanitaria |
-| AF.02.N.03 | **DER-05** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
-| AF.02.N.04 | **VS-02** | Gruppo di sicurezza sanitario | acqua fredda sanitaria |
-| AF.02.N.03.1 | **SC-02** | Attacco di scarico sull'acqua fredda · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
-| ACS.01.N.01 | **VI-18** | Valvola di intercettazione | acqua calda sanitaria |
-| ACS.01.N.02 | **VM-01** | Valvola miscelatrice termostatica | acqua calda sanitaria |
-| ACS.01.N.03 | **VI-19** | Valvola di intercettazione | acqua calda sanitaria |
+| ACS.01.N.02 | **VM-01** | Valvola miscelatrice termostatica | acqua fredda sanitaria, acqua calda sanitaria |
+| AF.03.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
+| AF.03.N.02 | **VI-18** | Valvola di intercettazione | acqua fredda sanitaria |
+| AF.03.N.03 | **DER-05** | Derivazione a T sull'acqua fredda | acqua fredda sanitaria |
+| AF.03.N.04 | **VS-02** | Gruppo di sicurezza sanitario | acqua fredda sanitaria |
+| AF.03.N.03.1 | **SC-02** | Attacco di scarico sull'acqua fredda · pende dal tubo con una propria derivazione | acqua fredda sanitaria |
+| ACS.01.N.01 | **VI-19** | Valvola di intercettazione | acqua calda sanitaria |
+| ACS.01.N.03 | **VI-20** | Valvola di intercettazione | acqua calda sanitaria |
 | ACS.01.N.04 | **ACS-01** | Utenze sanitarie | acqua calda sanitaria |
 
 ---
@@ -223,7 +227,7 @@ Si stacca da **CP.01**.
 1. **VD-01** Valvola deviatrice a tre vie · gia' numerato, indirizzo CP.01.N.04 · la linea parte dal suo braccio 3
 2. **CP.01a.N.01 · VI-09** Valvola di intercettazione
 3. **CP.01a.N.02 · BOL-01** Bollitore ACS · tiene in serbo acqua calda sanitaria
-    - qui arriva **AF.02**, da **AF-01**, entrando dal braccio 4
+    - qui arriva **AF.03**, da **AF-01**, entrando dal braccio 4
 
 ### RP.01 — ritorno primario
 
@@ -306,27 +310,36 @@ Da **PAV-01** a **RC-02**, circuito secondario.
 Da **BOL-01** a **ACS-01**, acqua calda sanitaria.
 
 1. **BOL-01** Bollitore ACS · gia' numerato, indirizzo CP.01a.N.02 · la linea parte dal suo braccio 3
-2. **ACS.01.N.01 · VI-18** Valvola di intercettazione
+2. **ACS.01.N.01 · VI-19** Valvola di intercettazione
 3. **ACS.01.N.02 · VM-01** Valvola miscelatrice termostatica
-4. **ACS.01.N.03 · VI-19** Valvola di intercettazione
+    - qui arriva **AF.02**, da **AF-02**, entrando dal braccio 2
+4. **ACS.01.N.03 · VI-20** Valvola di intercettazione
 5. **ACS.01.N.04 · ACS-01** Utenze sanitarie
 
 ### AF.01 — acqua fredda sanitaria
 
-Da **AF-02** a **GR-01**, acqua fredda sanitaria.
+Da **AF-03** a **GR-01**, acqua fredda sanitaria.
 
-1. **AF.01.N.01 · AF-02** Alimentazione acqua fredda · la linea parte dal suo braccio 1
+1. **AF.01.N.01 · AF-03** Alimentazione acqua fredda · la linea parte dal suo braccio 1
 2. **GR-01** Gruppo di riempimento · **qui ci si innesta su GR-01**, che si e' gia' letto, entrando dal suo braccio 1 (RP.01.N.06.1)
 
 ### AF.02 — acqua fredda sanitaria
 
+Da **AF-02** a **VM-01**, acqua fredda sanitaria.
+
+1. **AF.02.N.01 · AF-02** Alimentazione acqua fredda · la linea parte dal suo braccio 1
+2. **AF.02.N.02 · VI-17** Valvola di intercettazione
+3. **VM-01** Valvola miscelatrice termostatica · **qui ci si innesta su VM-01**, che si e' gia' letto, entrando dal suo braccio 2 (ACS.01.N.02)
+
+### AF.03 — acqua fredda sanitaria
+
 Da **AF-01** a **BOL-01**, acqua fredda sanitaria.
 
-1. **AF.02.N.01 · AF-01** Alimentazione acqua fredda · la linea parte dal suo braccio 1
-2. **AF.02.N.02 · VI-17** Valvola di intercettazione
-3. **AF.02.N.03 · DER-05** Derivazione a T sull'acqua fredda
-    - **AF.02.N.03.1 · SC-02** Attacco di scarico sull'acqua fredda · pende dallo stacco
-4. **AF.02.N.04 · VS-02** Gruppo di sicurezza sanitario
+1. **AF.03.N.01 · AF-01** Alimentazione acqua fredda · la linea parte dal suo braccio 1
+2. **AF.03.N.02 · VI-18** Valvola di intercettazione
+3. **AF.03.N.03 · DER-05** Derivazione a T sull'acqua fredda
+    - **AF.03.N.03.1 · SC-02** Attacco di scarico sull'acqua fredda · pende dallo stacco
+4. **AF.03.N.04 · VS-02** Gruppo di sicurezza sanitario
 5. **BOL-01** Bollitore ACS · **qui ci si innesta su BOL-01**, che si e' gia' letto, entrando dal suo braccio 4 (CP.01a.N.02)
 
 ---
