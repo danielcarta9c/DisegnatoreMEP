@@ -72,7 +72,26 @@ impianto-5               A2          56      0     0      1      1       8      
 Uguale al metro della mattina riga per riga; le tratte crescono di due sull'1 e sul 4, gli stacchi
 delle sicurezze nuove. Le 2, 3 e 5 rieseguite coi loro piani sui grafi nuovi: **SVG identici**.
 
-**4. La suite** — {SUITE}
+**4. La suite** — ❌ **in parte**: una rossa nuova, dichiarata e non corretta.
+
+```
+$ python -m pytest -q          # sul commit a579fc3, in una copia congelata
+46 failed, 1690 passed, 24 skipped, 12 xfailed in 591.14s
+$ python -m ruff check src tests examples scripts
+All checks passed!
+$ python -m mypy
+Success: no issues found in 77 source files
+```
+
+- **Le 45 rosse di `DRAW-017` sono le stesse**, nome per nome; nessuna è guarita.
+- **Una nuova**: `test_zone_dei_pezzi_grossi.py::test_i_raccordi_non_prendono_una_colonna_a_testa`.
+  Non legge un piano: prova la **posa di partenza del motore**, quella che D-151 ha tolto dalla
+  decisione della posa. Con D-182 l'impianto 1 ha un raccordo sull'uscita di ogni pompa di calore,
+  e la posa di partenza mette quello della seconda **nella colonna delle macchine**, sopra di lei.
+  Il pianificatore non lo fa (tavola 1). Correggere la posa di partenza è lavoro del motore, fuori
+  dal perimetro; non si marca `xfail` (è vietato): resta rossa, e lo si dice. Sta con le altre 45,
+  che compongono tutte senza piano.
+- Nessuno `skip` e nessuno `xfail` nuovo; le passate crescono di 27 — le prove di D-182.
 
 ---
 
