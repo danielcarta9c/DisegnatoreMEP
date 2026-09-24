@@ -274,14 +274,20 @@ def test_il_primo_impianto_esce_dal_proprio_piano() -> None:
     esca **dal proprio piano di composizione**, quello agli atti, con **zero
     rilievi bloccanti e zero tratte cedute**. Il disegno lo compone un agente;
     il motore esegue e misura.
+
+    Il piano agli atti e' quello che il pianificatore ha composto il 24
+    settembre 2026 sul grafo di `DRAW-017`, e si esegue sul grafo su cui e'
+    nato: fino a quel giorno era il piano scritto a mano del 19 settembre, che
+    dopo D-175 non nominava piu' la miscelatrice — diventata un pezzo del piano.
     """
     from disegnatore_mep.piano.esecutore import esegui_piano
     from disegnatore_mep.piano.formato import carica_piano
 
     radice = Path(__file__).resolve().parents[2]
+    collaudo = radice / "docs/collaudi/DRAW-017/prova-camera-pulita-2026-09-24"
     esito = esegui_piano(
-        completato(PRIMO),
-        carica_piano(radice / "docs/collaudi/PROVA-PIANO/impianto-1.json"),
+        load_project(collaudo / "grafo-completo-1.json"),
+        carica_piano(collaudo / "piano-completo-1.json"),
         catalog(),
         SymbolRegistry.from_directory(radice / "assets/symbols"),
         radice / "naming",

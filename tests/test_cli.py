@@ -131,7 +131,7 @@ def test_rules_on_a_complete_model_says_so_and_opens_no_point(
 
 
 PROVA = ROOT / "examples" / "prova"
-PIANI = ROOT / "docs" / "collaudi" / "PROVA-PIANO"
+COLLAUDO = ROOT / "docs" / "collaudi" / "DRAW-017" / "prova-camera-pulita-2026-09-24"
 IMPIANTO_1 = "prova-1-due-pdc-accumulo-combinato.json"
 
 
@@ -190,11 +190,19 @@ def test_piano_compone_la_tavola_dell_impianto_1(
     Zero rilievi bloccanti e zero tratte cedute, e in testa i pezzi che la
     deduzione ha girato — il tee del manometro compreso, che e' la misura del
     20 settembre.
+
+    Il piano e' quello del pianificatore, agli atti di `DRAW-017`; il grafo e'
+    quello che `rules --apply-all` scrive **oggi**, e la prova pretende che
+    sia ancora quello su cui il piano e' nato: se le regole cambiano l'impianto
+    1, il piano va ricomposto, e questa prova lo dice.
     """
     completo = _completa(IMPIANTO_1, tmp_path)
+    assert completo.read_text(encoding="utf-8") == (
+        COLLAUDO / "grafo-completo-1.json"
+    ).read_text(encoding="utf-8"), "le regole hanno cambiato l'impianto 1: il piano va ricomposto"
     capsys.readouterr()
 
-    esito = _piano(completo, PIANI / "impianto-1.json", tmp_path)
+    esito = _piano(completo, COLLAUDO / "piano-completo-1.json", tmp_path)
     stampato = capsys.readouterr().out
 
     assert esito == 0
@@ -207,7 +215,7 @@ def test_piano_compone_la_tavola_dell_impianto_1(
     assert len(tavole) == 1
     assert "<svg" in tavole[0].read_text(encoding="utf-8")
     geometria = json.loads((tmp_path / "uscita" / "geometria.json").read_text("utf-8"))
-    assert len(geometria["sheets"][0]["routes"]) == 21
+    assert len(geometria["sheets"][0]["routes"]) == 23
     assert not [r for r in geometria["sheets"][0]["routes"] if r["unresolved"]]
 
 
@@ -257,7 +265,7 @@ def test_piano_che_non_si_instrada_esce_con_due_e_stampa_la_posa(
 ) -> None:
     """Chi compone deve vedere **dove sono finiti i pezzi**, non solo il motivo."""
     completo = _completa(IMPIANTO_1, tmp_path)
-    scritto = json.loads((PIANI / "impianto-1.json").read_text(encoding="utf-8"))
+    scritto = json.loads((COLLAUDO / "piano-completo-1.json").read_text(encoding="utf-8"))
     ammucchiato = tmp_path / "ammucchiato.json"
     ammucchiato.write_text(
         json.dumps(
