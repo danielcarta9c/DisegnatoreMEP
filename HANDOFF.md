@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-23 notte — su `main` `DRAW-016` (PR #53, **tavole approvate**, I-109) e i primi passi di **`DRAW-017`** (PR #54: D-173 approvata, D-174 fatto, D-177 chiusa); la sessione successiva parte dalla **miscelatrice con l'ingresso AF** (D-175)
+**Aggiornato:** 2026-09-24 — su `main` `DRAW-017` (PR #56, **tavole approvate**, I-117); attivo **`DRAW-018`**, le valvole di sicurezza una per generatore (la strada A, D-182); poi i passi verso la prima release (I-118)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,111 +11,70 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto la notte del 23 settembre 2026
+## ▶ Da dove riparte la prossima sessione — scritto il 24 settembre 2026
 
-**Su `main` c'è tutto.** `DRAW-016` con la PR #53 — **le tavole del pianificatore sui cinque
-impianti completi sono approvate** (**I-109**): «hanno proprio l'aspetto di tavole
-professionali… **da qui in poi si parla di migliorie e piccole correzioni**» — e, con la PR
-#54, i primi passi di **`DRAW-017`**, il pacchetto attivo.
+**Su `main` c'è `DRAW-017`**, fuso con la PR #56, e **le tavole sono approvate** (**I-117**): «Strada
+A e le tavole vanno benissimo». Tavole, grafi e piani in
+`docs/collaudi/DRAW-017/prova-camera-pulita-2026-09-24/`; rapporto in
+`docs/collaudi/DRAW-017/RAPPORTO.md`.
 
-**Fatto di `DRAW-017`:**
+**Che cosa ha portato `DRAW-017`**, sulle cinque tavole ricomposte dal pianificatore in camera
+pulita:
 
-- **D-173 approvata** (I-111): il pavimento di B1 conta anche le pieghe fra due pezzi;
-- **D-174 — B10 confronta la mandata con il proprio ritorno**: i tre rilievi del pettine sono
-  spariti, nessun altro si è acceso. Il metro delle tavole approvate è adesso **1 · 1 · 1 · 2 · 3
-  rilievi**, zero cedute e zero bloccanti;
-- **D-177 — la legenda su due colonne è misurata e non serve all'impianto 5**: sfora di una riga,
-  e la seconda colonna toglie al disegno 50 mm che non ha. L'unica leva per l'A3 è l'interlinea
-  della legenda, e il PO: «**Interlinea legenda non si tocca**» (I-112). **Il 5 resta in A2**;
-- **gli attrezzi della camera pulita sono nel repository**: `docs/collaudi/DRAW-017/prepara-camera.sh`
-  e `docs/collaudi/DRAW-017/misura-tavole.py`.
+- **la miscelatrice termostatica con l'ingresso AF** (D-175): tre attacchi, un confine AF con un
+  tratto corto, e il posto lo sceglie il piano, che la ruota e la specchia;
+- **il ricircolo ACS** (D-176): una linea sua, verde chiaro, che entra dall'«ACS-R» e dopo il
+  circolatore torna nell'accumulo;
+- **il vaso sanitario dove l'ACS è centralizzata** (D-178, precisata da D-179: conta
+  «centralizzata», non i litri);
+- **la freccia di ritegne e circolatori nel verso del flusso** (D-180), e **la ritegno disegnata
+  come la N di UNI 9511**, con la freccia sopra (D-181, supera D-122), anche dentro il gruppo di
+  sicurezza sanitario;
+- **i piani del pianificatore nelle prove** al posto di quelli a mano: la suite è a **45 rosse**
+  (erano 48), 1663 passate, nessuno `skip` né `xfail` nuovo. Le 45 non leggono un piano: compongono
+  per il percorso che D-151 ha tolto dalla decisione della posa;
+- **la ricerca su valvole di sicurezza e segno della ritegno**, chiesta dal PO:
+  `docs/fonti/ricerche/reports/Valvole di sicurezza e simbolo ritegno.md`.
 
-**Da fare, in quest'ordine:**
-
-0. ~~I piccoli difetti che il PO ha visto~~ — **lasciati da parte dal PO** (I-112): «Lasciamo
-   stare per ora va bene così». Non si chiedono.
-1. **D-175 — la miscelatrice termostatica con l'ingresso AF.** La porta nel generatore dei
-   simboli (`examples/graphics/build_symbols.py`) e nel catalogo
-   (`mixing-valve-thermostatic.json`); **non più organo in linea**; la regola
-   `dhw-mixing-on-draw-off.json` porta il suo **confine AF con un tratto corto** — il motore
-   delle regole sa già dare un ingresso proprio al gruppo di riempimento (`rules/apply.py`, il
-   «ponte» di I-061), e va esteso a un pezzo che sta in linea sull'ACS; le istruzioni del
-   pianificatore: si posa, si ruota e si specchia come una tre vie.
-2. **D-176 — il ricircolo ACS.** Colore suo, **verde chiaro**, e una riga di legenda; un confine
-   **«ACS-R»** in ingresso, stesso simbolo del prelievo AF; **dopo il circolatore nell'accumulo
-   ACS**, che ha bisogno dell'attacco del ricircolo nel generatore; il grafo dell'impianto 5
-   (`examples/prova/prova-5-cascata-tre-pdc.json`) corretto, e la regola scritta in
-   `skill/capire/`, dove il ricircolo si modella.
-3. **D-178 — il vaso sanitario** negli impianti centralizzati, accumulo ACS da 1000 litri in su:
-   la regola `expansion-on-the-stored-volume-feed.json` lo posa già fra ritegno e bollitore ma
-   chiede sempre; serve **il volume dell'accumulo nel grafo**, letto da «Capire». **Fra gli
-   impianti di prova solo il 5 ha l'accumulo da 1000 litri in su** (I-112); il volume esatto non è
-   dato, e non si inventa.
-4. **Le tavole ricomposte dal pianificatore**, e **mostrate al PO per prime**. Il protocollo
-   del 23 settembre, che adesso sta nel repository:
-   - i grafi completi: `disegnatore-mep rules examples/prova/prova-N-….json --apply-all --out …`;
-   - un motore fermo per gli agenti: `git worktree add --detach <scratch>/motore HEAD`;
-   - una camera per agente: `bash docs/collaudi/DRAW-017/prepara-camera.sh <grafo> <camera> <scratch>/motore`;
-   - il mandato: `docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/mandato.md`, con la
-     cartella e la descrizione dell'impianto al posto dei segnaposto;
-   - la misura della sessione, **mai quella dell'agente**:
-     `python docs/collaudi/DRAW-017/misura-tavole.py --dettaglio nome=grafo:piano …`.
-5. **I piani del pianificatore nelle prove**, al posto di quelli a mano: la suite passa da 48 a
-   38 o meno (criterio 10 rimasto aperto da `DRAW-016`).
-
-**Resta aperto da `DRAW-016`, e non è di questo pacchetto:** l'anello (vincoli come dati), le
-cure del revisore che escono, `passa-per`, i rilievi di A2, A3 e B5.
-
-### Com'era la sera del 23, prima della fusione
-
-**Il pianificatore compone da solo i cinque impianti completi.** Cinque agenti in camera pulita,
-uno per impianto, con **solo** le istruzioni di `skill/comporre/`, il grafo completo — macchine,
-collettori e tutto il corredo — e i manifesti: **tutte e cinque le tavole escono, zero tratte
-cedute e zero rilievi bloccanti**, e battono i piani a mano su ogni impianto.
+**Il metro — le tavole approvate il 24 settembre**, zero tratte cedute e zero rilievi bloccanti:
 
 | impianto | 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
-| **agente** — formato · rilievi · incroci | A3 · **1** · 1 | A3 · **1** · 1 | A3 · **2** · 2 | A3 · **2** · 2 | A2 · **3** · 5 |
-| a mano | A2 · 7 · 1 | A2 · 9 · 2 | A2 · 12, di cui **2 bloccanti** · 1 | A2 · 11 · 3 | **non esce** |
+| formato · tratte | A3 · 23 | A3 · 25 | A3 · 24 | A3 · 25 | A2 · 56 |
+| rilievi · incroci | 1 · 1 | 1 · 1 | 1 · 2 | 2 · 2 | 1 · 5 |
 
-Tavole, grafi e piani in
-[`docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/`](docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/);
-rapporto §6–§10. ✅ **Approvate dal PO** (**I-109**): «Finalmente un vero miglioramento!!!! Si le
-approvo assolutamente vanno benissimo! Hanno proprio l'aspetto di tavole professionali! **Da qui
-in poi si parla di migliorie e piccole correzioni.** Ma questa è una PR milestone».
+**Il pacchetto attivo è `DRAW-018` — le valvole di sicurezza, una per generatore** (la strada A,
+**D-182**, I-116): una per macchina, attaccata all'uscita e prima dei suoi rubinetti, a qualunque
+potenza, e niente sicurezza comune sulla mandata. **Misurato prima di scriverlo**: cambiano i
+grafi e le tavole **1 e 4**, che si ricompongono in camera pulita; il 2 e il 3 cambiano solo nella
+motivazione scritta nel grafo; il 5 è identico. Le tavole 1 e 4 vanno al PO **prima** della
+fusione: non le ha ancora viste.
 
-**Fatto il 23, sullo stesso ramo:**
+**Poi la prima release** (**I-118**): il PO ha chiesto di parlare dei prossimi passi. La proposta
+della sessione e la sua scelta aggiornano `docs/plans/2026-09-03-release-plan.md` e il pacchetto
+successivo.
 
-- **il pavimento di B1 conta anche le pieghe fra due pezzi** (**D-173**, *proposta*): la tavola 5
-  approvata passa da **7 rilievi di B1 a 0**, e la ragione scritta in D-171 punto 3 cambia —
-  per questo è una proposta;
-- **il motore trasla prima di instradare**: il piano dice le posizioni relative, e adesso è vero;
-- **cinque difetti del motore trovati dagli agenti**, verificati e corretti, ognuno con la prova
-  che fallisce senza: A4 esentava uno stacco per il suo stesso corridoio; posa ed errori non
-  parlavano nel sistema del piano; **il colore di mandata e ritorno lo decideva il verso della
-  tratta** dove le camminate si fermano; **una ritegno e un circolatore si disegnavano contro il
-  flusso**; la legenda elencava linee che la tavola non ha. Sulla tavola 5 approvata cambiano
-  **2,5 mm di colore** (il by-pass della miscelatrice, adesso blu) e **tre righe di legenda** (tolte,
-  perché quelle linee non ci sono);
-- **le istruzioni del pianificatore** portano quello che sette agenti hanno trovato, verificato;
-- i **cinque documenti del motore** dichiarano in testa che sono storia.
+**Il protocollo della camera pulita**, che sta nel repository:
 
-**La suite: 48 rosse, lo stesso insieme della base**, 1627 passate, nessuno `skip` né `xfail`
-nuovo. Il criterio 10 (38 o sotto) **non è raggiunto**: le dieci in più sono il piano a mano
-dell'impianto 5 e le prove del revisore a valle.
+- i grafi completi: `disegnatore-mep rules examples/prova/prova-N-….json --catalog
+  examples/layout/catalog --symbols assets/symbols --rules rules/hydronic --naming naming
+  --apply-all --out …` — ⚠ `--rules rules/hydronic`, non `rules`: con la cartella sopra le regole
+  non si caricano e il comando scrive «Nessuna integrazione da proporre» senza errore;
+- un motore fermo per gli agenti: `git worktree add --detach <scratch>/motore HEAD`;
+- una camera per agente: `bash docs/collaudi/DRAW-017/prepara-camera.sh <grafo> <camera> <scratch>/motore`;
+- il mandato: `docs/collaudi/DRAW-016/prova-camera-pulita-2026-09-23/mandato.md`, con la cartella
+  e la descrizione dell'impianto al posto dei segnaposto;
+- la misura della sessione, **mai quella dell'agente**:
+  `python docs/collaudi/DRAW-017/misura-tavole.py --dettaglio nome=grafo:piano …`;
+- i PDF con `scripts/to-pdf.sh`, e si guardano i PDF: i PNG di `scripts/rasterize.sh` tagliano il
+  fondo del foglio.
 
-**Da dove si riparte, in quest'ordine** — è il work package, sezione «Dove siamo arrivati»:
-
-0. **I piccoli difetti che il PO vede** sulle tavole approvate: li elenca dopo la fusione, e
-   sono il pacchetto successivo. Con loro le domande del rapporto §10 ancora aperte: **D-173**
-   (è proposta: l'approvazione è delle tavole, non della decisione), **B10 contro il pettine**,
-   la miscelatrice termostatica ACS a due attacchi, l'anello del ricircolo dell'impianto 5, la
-   legenda che gli costa l'A3 per 2,5 mm.
-1. **I piani del pianificatore al posto di quelli a mano, nelle prove** (punto 5): è la strada
-   verso 38.
-2. **L'anello** — vincoli come dati dall'occhio al pianificatore — e con lui escono le cure del
-   revisore (punti 2 e 4).
-3. **`passa-per`**, e i rilievi di A2, A3, B5 (punti 3 e 6).
+**Resta aperto, e non è di `DRAW-018`:** l'**anello** (i vincoli dell'occhio come dati per il
+pianificatore), le cure del revisore che escono, **`passa-per`**, i rilievi di A2, A3 e B5; le
+**domande per il progettista** del README della prova del 24 (lo scarico del bollitore a monte del
+gruppo di sicurezza, il ritorno delle zone su un raccordo a T, nessun ritegno sulle mandate della
+cascata, il raccordo del bypass nel circuito miscelato); le **due rosse nuove della posa a fasi**,
+dichiarate; il regime dei 35 kW che somma anche le pompe di calore (D-108), rilievo della ricerca.
 
 ## ⛔ `DRAW-015` è fuso, e le tavole **non sono approvate**
 
@@ -241,7 +200,7 @@ disegno lo **compone un agente**.
 |---|---|---|---|
 | **1** | **Capire** — dal testo dell'ingegnere al grafo di prima stesura | **agente AI** | **sì** — `skill/capire/` |
 | **2** | **Completare** — accessori, ordine, domande all'ingegnere | **deterministico** | **sì** — `rules/` |
-| **3** | **Comporre** — dal grafo completo al **piano** | **agente AI** | **no, ed è il buco** |
+| **3** | **Comporre** — dal grafo completo al **piano** | **agente AI** | **sì** — `skill/comporre/`, il pianificatore: in camera pulita compone da solo i cinque impianti completi, e le tavole sono approvate (I-109, I-117) |
 | **4** | **Eseguire** — dal piano alla tavola e ai rilievi | **deterministico** | **sì** — `piano/esecutore.py`, `layout/` |
 | **5** | **Rivedere** — dalla tavola ai **vincoli** per il pezzo 3 | **AI + controlli** | **sì** — i controlli in `validation/regole.py`, l'**occhio** in `skill/rivedere/`. Manca l'anello: i vincoli non sono ancora dati |
 
@@ -258,7 +217,7 @@ valle tocca la connettività approvata.
 > tavola è uscita. **Non esiste «il piano dell'impianto N»**, e i cinque piani scritti a mano
 > sono **materiale di collaudo del pezzo 3** — il bersaglio che deve pareggiare.
 
-Quello che oggi si può guidare dalla CLI è il **4**, e il **3** lo fa un umano a mano:
+Dalla CLI si guidano il **2** (`rules`), il **4** (`piano`) e i controlli del **5** (`revisiona`); il **3** lo fa il pianificatore, un agente con le istruzioni di `skill/comporre/` — **nessun pezzo è ancora cucito agli altri nella chat di lavoro**, ed è il rischio più vecchio del progetto:
 
 ```
 disegnatore-mep rules     <progetto.json>  … --apply-all --out <completo.json>
@@ -295,7 +254,7 @@ senza approvazione non si fonde.
 
 ## Stato corrente
 
-- Release in corso: **0.3 — generalizzazione**.
+- Release in corso: **0.3 — generalizzazione**. **Lo stato di oggi è in testa a questa pagina**; quello che segue è lo stato al 21 settembre, e resta come storia.
 - **`DRAW-015` fuso su `main`** con la PR **#46** — **e le tavole non approvate** (D-166, il
   cartello in testa a questa pagina). Rapporto in `docs/collaudi/DRAW-015/RAPPORTO.md`, col
   verdetto del PO in **§14**. Che cosa porta, in quattro righe:
@@ -468,7 +427,7 @@ chiusi, ed erano uno dei quattro difetti che il cold eye review aveva trovato il
 2. ~~**B1 e B3 si contraddicono sulla cascata.**~~ **Chiusa dal PO il 22 settembre**
    (**D-171**): «non c'è un numero massimo». Il collettore verticale che B3 pretende ha il
    proprio pavimento a **due**, e B1 non lo accusa più.
-3. **Dove sta la presa del ricircolo sanitario.** Il confine ACS adesso sta addosso alla
+3. ~~**Dove sta la presa del ricircolo sanitario.**~~ — **risposto dal PO il 23 settembre** (**D-176**): il ricircolo preleva dalle utenze, entra dall'«ACS-R» e torna nell'accumulo dopo il circolatore. Il testo di prima: Il confine ACS adesso sta addosso alla
    presa (A4, chiuso), ma sull'impianto 5 **la presa sta all'estremo destro del foglio** e la
    mandata sanitaria attraversa da sola i tre secondari per arrivarci: è lì che stanno quasi
    tutti i quattordici incroci di quella tavola. *O la presa sta in fondo all'anello e la
@@ -486,6 +445,8 @@ chiusi, ed erano uno dei quattro difetti che il cold eye review aveva trovato il
    (D-148) sono stati lasciati andare **perché** l'elaborato esce in DXF e si rifinisce in
    CAD. Quel pezzo non esiste.
 5. **Il formato definitivo** (D-148 è dichiarata momentanea dal PO stesso).
+6. **Che cosa viene dopo la 0.3, verso la prima release** (**I-118**): la sessione porta una
+   proposta, il PO sceglie.
 
 ## Quello che è cambiato di prezzo, e va saputo
 

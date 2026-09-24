@@ -3,7 +3,8 @@
 > **Le tavole, per prime:** le cinque ricomposte il 24 settembre 2026 stanno in
 > [`prova-camera-pulita-2026-09-24/`](prova-camera-pulita-2026-09-24/), accanto a quelle
 > approvate il 23 ([`../DRAW-016/prova-camera-pulita-2026-09-23/`](../DRAW-016/prova-camera-pulita-2026-09-23/)).
-> ⏳ **Da guardare al PO.** La fusione aspetta il suo sì (D-146, D-147).
+> ✅ **Approvate dal PO il 24 settembre 2026** (I-117): «Strada A e le tavole vanno benissimo».
+> Fuse su `main` con la PR #56 — §8.
 
 **Aperto:** 24 settembre 2026 · **Agente unico** (D-147), con agenti paralleli in sessione
 (D-152) · **Base:** `732fa70`, la testa di `main` · **Ramo:** `claude/kind-dijkstra-lqc2zl`
@@ -403,3 +404,21 @@ impianto-5               A2          56      0     0      1      1       8      
 
 Confrontate a pixel con quelle di prima, le tavole cambiano soltanto nei punti dei ritegni, dei
 gruppi di sicurezza e della legenda.
+
+---
+
+## 8. Il verdetto del PO — 24 settembre 2026
+
+> «Strada A e le tavole vanno benissimo. Aggiorna tutto documentazione di pm compresa e spingi
+> tutto su main. Alla fine parliamo di quali sono i prossimi step per arrivare alla prima release
+> della skill»
+
+- **Le tavole di `DRAW-017` sono approvate** (**I-117**): le cinque di questa cartella, con la
+  freccia della ritegno nel verso del flusso (D-180) e la ritegno a N (D-181). Si chiudono I-110,
+  I-111, I-113, I-115 e la parte (1) di I-114.
+- **Le sicurezze: la strada A** (**I-116**, **D-182**) — una per generatore, attaccata all'uscita e
+  prima dei suoi rubinetti, a qualunque potenza, e niente sicurezza comune. **Cambia le tavole 1 e
+  4**, che il PO non ha ancora visto: è il pacchetto successivo, **`DRAW-018`**, e quelle tavole
+  vanno al PO prima della sua fusione.
+- **I prossimi passi per la prima release** (**I-118**): la sessione porta una proposta; la scelta
+  è del PO.
