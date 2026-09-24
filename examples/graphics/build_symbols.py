@@ -721,6 +721,7 @@ def reserve_body(
     coil: tuple[str, str] | None = None,
     rows: int = 5,
     smooth: bool = False,
+    second_coil: tuple[str, str] | None = None,
 ) -> str:
     """Una riserva: il mantello, gli attacchi che entrano nel volume e, se un
     fluido la attraversa senza mescolarsi, il suo serpentino.
@@ -733,6 +734,11 @@ def reserve_body(
     dell'acqua calda. Quale coppia di attacchi sia il serpentino lo dice il
     catalogo — i fluidi diversi da quello tenuto in serbo — e qui si scrive per
     nome soltanto perche' questo generatore non legge il catalogo.
+
+    Il **secondo serpentino** e' quello del bollitore a due serpentini
+    (`REL-003`, D-184): si traccia come il primo, dal proprio ingresso alla
+    propria uscita, sotto di lui. E' lo stesso segno ripetuto, non un segno
+    nuovo.
     """
     x, y, bw, bh = _shell_of(w, h)
     shell = (
@@ -740,12 +746,17 @@ def reserve_body(
         f'rx="{n(bw * 0.18)}"/>'
     )
     by_id = {item["id"]: item for item in ports}
-    through = set(coil or ())
+    through = set(coil or ()) | set(second_coil or ())
     stubs = stubs_into_the_shell([item for item in ports if item["id"] not in through], w, h)
     if coil is None:
         return shell + stubs
     drawn = smooth_coil_between if smooth else coil_between
-    return shell + drawn(by_id[coil[0]], by_id[coil[1]], w, h, rows) + stubs
+    second = (
+        drawn(by_id[second_coil[0]], by_id[second_coil[1]], w, h, rows)
+        if second_coil is not None
+        else ""
+    )
+    return shell + drawn(by_id[coil[0]], by_id[coil[1]], w, h, rows) + second + stubs
 
 
 def diverting_valve_body(w: float, h: float) -> str:
