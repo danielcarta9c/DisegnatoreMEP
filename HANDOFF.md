@@ -11,6 +11,12 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
+> **⚠ 24 settembre 2026, sessione successiva — il pacchetto attivo è `REL-003`, i simboli nuovi.**
+> Il PO ha chiesto di partire dai simboli (**I-126**) e ha confermato che cosa disegnano (**I-127**,
+> **D-184**). Il pacchetto è in `ACTIVE_WORK_PACKAGE.md`; quello di `REL-001` aspetta, com'era
+> scritto, in `docs/plans/pacchetti/REL-001.md`. La sezione qui sotto descrive lo stato con cui
+> questa sessione è partita, e resta vera per tutto il resto.
+
 ## ▶ Da dove riparte la prossima sessione — scritto la notte del 24 settembre 2026
 
 **Su `main` c'è tutto**, e le tavole sono approvate: `DRAW-017` (PR #56, I-117) e `DRAW-018` (PR

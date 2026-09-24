@@ -25,7 +25,13 @@ skill; mentre «Capire» lavora, la skill può fare **domande chiarificatrici**;
 l'approvazione del grafo da parte del progettista, la composizione e la tavola.
 
 **Che cosa ci deve essere**, in cinque pacchetti. L'elenco è del PO; **l'ordine è una proposta
-della sessione** (D-183, punto 3), e il PO lo può cambiare:
+della sessione** (D-183, punto 3), e il PO lo può cambiare.
+
+> **Il PO l'ha cambiato il 24 settembre 2026** (I-126): «Io vorrei partire prima dalle cose facili
+> i simboli che mancano». **`REL-003` è il primo**, con il contenuto che il PO ha confermato
+> (I-127, D-184); `REL-001` viene subito dopo, e il suo pacchetto aspetta scritto in
+> `docs/plans/pacchetti/REL-001.md`. La tabella qui sotto resta com'era, con le ragioni
+> dell'ordine proposto.
 
 | pacchetto | che cosa | perché in quest'ordine |
 |---|---|---|
