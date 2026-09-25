@@ -1,147 +1,101 @@
-# REL-001 — La skill vera e propria: l'ingresso che cuce i pezzi, e il PDF fatto dalla skill
+# REL-002 — Il cartiglio Nove C, compilato, sulla tavola
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **ATTIVO.** `DRAW-018` è fuso su `main` con la PR **#57**, e le tavole sono approvate
-(**I-119**).
-**Base:** `main` dopo la fusione di #57.
-**Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
-**Release:** la prima release — il primo dei cinque pacchetti (`docs/plans/2026-09-03-release-plan.md`,
-sezione «La prima release», **D-183**).
-**Approvazione della fusione:** **del PO**, e si dà guardando la tavola che la skill ha prodotto
-(D-146, D-147).
+**Stato:** **ATTIVO** dal 25 settembre 2026. Il PO ha anteposto questo pacchetto a `REL-001`
+(**I-126**): «in questa sessione ci dedichiamo esclusivamente al cartiglio». `REL-001` è
+**rinviato, non consegnato**: il suo testo è in `docs/pm/2026-09-24-rel001-pacchetto.md`.
+**Base:** `main` a `130be28` (PR #57).
+**Ramo:** quello che l'ambiente della sessione assegna — `claude/epic-newton-r94e4l`.
+**Release:** la prima release, secondo dei cinque pacchetti (**D-183**), anteposto al primo.
+**Approvazione della fusione:** **del PO**, guardando le tavole col cartiglio (D-146, D-147).
 
-Il PO, il 24 settembre 2026 (**I-121**, **I-122**):
-
-> «Ricordiamoci che lo scopo è creare una skill che usa il progettista per disegnare impianto.
-> Quindi in Claude durante una sessione spiega l'impianto, lancia la skill ed eventualmente la skill
-> mentre fa la parte di capire può fare delle domande chiarificatrici. Ora vorrei andare verso la
-> prima release della skill. […] la skill vera e propria (il file skill.md) che orchestra i vari
-> pezzi, […] il motore pdf che dicevi»
+Gli input: **I-123** («manca il cartiglio»), **I-127** — il file del 25 settembre, «questo è il
+cartiglio che usiamo per i fogli A3» — e **I-128**, la risposta sui formati, che è **D-184**.
 
 ---
 
-## Dove siamo — misurato il 24 settembre 2026
+## Dove siamo — misurato il 25 settembre 2026
 
-- **I cinque pezzi esistono, e li cuce a mano la sessione di sviluppo.** Capire
-  (`skill/capire/ISTRUZIONI.md`, un agente); Completare (`disegnatore-mep rules`); Comporre
-  (`skill/comporre/ISTRUZIONI.md`, un agente); Eseguire (`disegnatore-mep piano`); Rivedere (i
-  controlli, e l'occhio di `skill/rivedere/ISTRUZIONI.md`). Le tavole dei cinque impianti di prova
-  escono così, e il PO le ha approvate (I-109, I-117, I-119).
-- **Non c'è l'ingresso della skill.** `docs/SKILL.md` è il documento d'architettura, non il file che
-  una sessione di Claude carica quando il progettista lancia la skill.
-- **Il PDF lo fa uno strumento dell'ambiente di sviluppo** (`scripts/to-pdf.sh`), con il browser.
-  Il pacchetto scrive solo l'SVG, e dipende soltanto da `pydantic`.
-- **Le skill di Nove C** (per esempio quella dei computi, `cme-mep-pdc`) sono una cartella con
-  `SKILL.md`, `scripts/` e `references/`, e girano nell'ambiente d'esecuzione di Claude: lì non si
-  può contare su un browser. Le skill di Claude per i PDF usano `reportlab` e `pypdf` — un indizio di
-  che cosa c'è, **da verificare**, non un dato.
-- **Capire sa già dichiarare le domande**: ogni cosa che il testo non dice e che serve diventa una
-  voce di `assumptions` con `status: "proposed"` (`skill/capire/ISTRUZIONI.md` §6). Manca chi le
-  porta al progettista e aspetta la risposta.
-
----
+- **La tavola ha la squadratura del cartiglio, ma non il cartiglio** (D-053, D-091). La fascia in
+  basso è un rettangolo vuoto con la scritta «BOZZA — cartiglio non compilato»; in testata c'è il
+  nome del progetto. Suite di partenza: **46 rosse**, 1690 passate, 24 `skip`, 12 `xfail`.
+- **Il file del PO** (`assets/cartigli/Cartiglio_NoveC_A3.pdf`, I-127) ha **la stessa geometria**
+  di quello del 1 agosto — ventuno tracciati identici, il logo identico al byte —; **i valori sono
+  diventati segnaposto**. È un PDF di ReportLab ritoccato in un editor: i segnaposto ritoccati sono
+  in Arial, il resto in Helvetica, stesse misure. La scritta «TAVOLA» è bianca al 50 %.
+- **I dati che il progetto già possiede**: committente, progetto, commessa, revisione, data
+  (`ProjectMetadata`). **Mancano**: indirizzo, titolo della tavola, numero della tavola, i tre nomi
+  delle firme, la dicitura in testata. «Capire» scrive `ND` quando committente o commessa mancano
+  (`skill/capire/ISTRUZIONI.md`).
 
 ## Le cose da fare, in quest'ordine
 
-### 1. L'ambiente in cui la skill gira
+### 1. Il modello del cartiglio, ricavato dal PDF
 
-Che cosa offre l'ambiente d'esecuzione di una skill di Claude: la versione di Python, le librerie
-presenti (`pydantic`, `reportlab`, `pypdf`…), se si possono installare pacchetti, se c'è la rete.
-Da qui non si vede: si prepara **una skill di prova di poche righe**, che stampa versione e
-librerie, e il PO la carica e la lancia — oppure la sessione trova una fonte ufficiale che lo dica.
-**Finché il dato non c'è, la skill si scrive perché non ne abbia bisogno**: nessuna rete, nessun
-browser, dipendenze pure Python portate nella cartella.
+Un generatore **di sola libreria standard** legge il PDF del PO e scrive il modello: tracciati,
+etichette, **campi** — dove sta ciascun valore, con che carattere, in che casella — e il **logo**,
+estratto **byte per byte** dal PDF. Come i generatori della libreria, una prova lo riesegue e
+pretende lo stesso risultato: il modello non si corregge a mano, si rigenera.
 
-### 2. Il PDF fatto dalla skill (I-122)
+### 2. I dati del cartiglio
 
-La tavola esce in PDF **a misura reale** — la pagina è il foglio, e un simbolo stampato misura
-quello che il modello dice (ADR 0003, `scripts/to-pdf.sh`) — **senza browser**. La strada si sceglie
-dopo il punto 1: scrivere il PDF dalla geometria della tavola, o convertire l'SVG con una libreria
-che l'ambiente ha. Si misura contro il PDF di oggi: sulle cinque tavole approvate (le 1 e 4 in
-`docs/collaudi/DRAW-018/`, le 2, 3 e 5 in `docs/collaudi/DRAW-017/`), rasterizzate tutte e due, le
-differenze stanno solo nei caratteri.
+Campi **facoltativi e additivi** in `ProjectMetadata` — come `plant_regime`, la versione dello
+schema non cambia —, lo schema JSON rigenerato, e le istruzioni di «Capire» che dicono **che cosa
+chiedere** al progettista. **Un dato che manca non si inventa** (D-087): nella casella compare «DA
+DEFINIRE», e la tavola esce **marcata come bozza** (D-025).
 
-### 3. La forma della skill
+### 3. Il cartiglio sulla tavola
 
-Una **cartella installabile**, costruita **da uno script del repository** e mai copiata a mano — come
-i generatori della libreria —, che la ricostruisce identica:
+`render_sheet` disegna il cartiglio del modello e lo compila. Un testo troppo lungo **entra nella
+sua casella**: si riduce fino alla misura più piccola che il cartiglio stesso usa per un valore
+(7 pt), poi va su due righe; se non entra nemmeno così, la tavola è una bozza e lo dice. Su A2 e A1
+il cartiglio sta **a misura, in basso a destra**, e l'A4 esce dai formati ordinari (**D-184**).
+Il comando prende il modello con `--cartiglio`; senza, la tavola esce come oggi, in bozza.
 
-- `SKILL.md`, l'ingresso (punto 4);
-- gli **script**: un comando solo per il lavoro deterministico — completare il grafo, eseguire il
-  piano, misurare, scrivere il PDF — sul motore di `src/`;
-- la **libreria**: simboli, catalogo, regole, naming;
-- le **istruzioni** di Capire, Comporre e Rivedere, come riferimenti che `SKILL.md` richiama.
+### 4. La prova: le cinque tavole approvate, col cartiglio
 
-La forma la suggerisce la skill di Claude che crea le skill (`skill-creator`): si legge prima.
-
-### 4. L'ingresso — `SKILL.md` (I-121)
-
-Il flusso, com'è deciso (D-012, D-013, D-155, D-183):
-
-1. il progettista **descrive l'impianto** nella conversazione e **lancia la skill**;
-2. **Capire** scrive il grafo di prima stesura; le cose che il testo non dice diventano **domande
-   chiarificatrici**, che la skill fa al progettista — in un passaggio solo, con la sua prima
-   interpretazione (D-006, D-013) — e aspetta;
-3. **Completare** aggiunge il corredo; i suoi punti aperti diventano domande nello stesso modo;
-4. **il progettista approva il grafo completo**: è l'unico cancello umano della catena;
-5. **Comporre** scrive il piano, con le istruzioni del pianificatore; **Eseguire** disegna e misura;
-   **Rivedere** guarda la tavola e rimanda al piano, mai al disegno;
-6. la skill **consegna il PDF**, e dice che cosa è rimasto aperto.
-
-E le cose che la skill non fa mai, dette in testa: non progetta (D-104, D-172), non inventa dati
-(D-087), non cambia lo schema che ha ricevuto.
-
-### 5. La prova vera: la skill intera in camera pulita
-
-Un agente con **la sola cartella della skill** e il testo di **un impianto che non è fra i cinque** —
-scritto dalla sessione nello stile di `examples/prova/input/`, o dato dal PO se preferisce; niente
-dati di clienti, il repository è pubblico. La sessione fa la parte del progettista: risponde alle
-domande con i dati del testo, e approva il grafo. Si misura con gli strumenti della sessione (D-152):
-la tavola esce, in PDF prodotto dalla skill, con zero tratte cedute e zero rilievi bloccanti.
-
-### 6. Lo ZIP per il PO
-
-La cartella impacchettata, con due righe su come caricarla in Claude. **Il PO la prova su un impianto
-suo**: è il cancello verticale del piano (`PROJECT_STATE.md`, rischio 4), e il suo esito si registra.
+Si rieseguono i cinque grafi e i cinque piani approvati (`docs/collaudi/DRAW-018/`) con il
+cartiglio compilato — dati di prova dichiarati come tali, il repository è pubblico (D-038) — più
+**una tavola in bozza**, con i campi mancanti. Il disegno non deve muoversi di un pixel.
 
 ---
 
 ## Perimetro
 
-**Dentro:** la cartella della skill e lo script che la costruisce (`skill/`, `scripts/`); il comando
-unico e il modulo del PDF in `src/disegnatore_mep/`; `pyproject.toml`, se serve una dipendenza;
-`docs/SKILL.md`, per il rimando all'ingresso; `tests/**`; `docs/collaudi/REL-001/`.
+**Dentro:** `assets/cartigli/`; il generatore in `examples/cartigli/`; `src/disegnatore_mep/graphics/`
+(il cartiglio, il telaio, il renderer); `src/disegnatore_mep/model/project.py` e
+`schemas/project.schema.json`; `cli.py`, per `--cartiglio`; la **lista dei formati** in `frame.py`,
+`piano/formato.py`, `piano/esecutore.py`, `validation/preflight.py` (D-184); in
+`skill/capire/ISTRUZIONI.md` la sezione dei **metadati**, e in `skill/comporre/ISTRUZIONI.md` **solo**
+la lista dei formati; `tests/**`; `docs/collaudi/REL-002/`; i documenti di stato.
 
-**Fuori:** le regole, la libreria dei simboli, il motore del disegno (`layout/`, `piano/`); le
-istruzioni di Capire, Comporre e Rivedere nel contenuto — si toccano solo i percorsi, se nella
-cartella della skill cambiano; il cartiglio (`REL-002`), i simboli nuovi (`REL-003`), il DXF
-(`REL-004`).
-
----
+**Fuori:** la posa e l'instradamento (`layout/`), le regole, la libreria dei simboli, il resto delle
+istruzioni dei tre agenti, il **motore PDF** (`REL-001`), il **DXF** (`REL-004`).
 
 ## Criteri di accettazione
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-0. **Le tavole, per prime**: la tavola dell'impianto nuovo, uscita dalla skill in camera pulita, nel
-   PDF che la skill ha scritto, al PO.
-1. **Il PDF senza browser**: pagina della misura del foglio; sulle cinque tavole approvate, il
-   confronto a pixel con `scripts/to-pdf.sh` differisce solo nei caratteri.
-2. **La cartella della skill** si costruisce con un comando e si rigenera identica — una prova, come
-   quella dei generatori della libreria.
-3. **L'ingresso** dice il flusso, le domande e l'approvazione del grafo; nella prova **nessun pezzo lo
-   cuce la sessione a mano**.
-4. **La prova in camera pulita**: dal testo al PDF, zero cedute e zero bloccanti; il rapporto dice dove
-   la skill si è fermata a chiedere, e che cosa ha chiesto.
-5. **La suite**: nessuna rossa nuova rispetto alle 46 di `DRAW-018`; zero `skip` e zero `xfail` nuovi;
-   `ruff` e `mypy` verdi.
+0. **Le tavole, per prime**: le cinque tavole approvate col cartiglio compilato, in PDF, al PO — e
+   la tavola in bozza.
+1. **Il cartiglio è quello del PO**: la fascia disegnata con i segnaposto del file, rasterizzata
+   accanto al PDF del PO, differisce **solo nei caratteri**.
+2. **Il disegno non cambia**: sulle cinque tavole, fra la testata e il cartiglio, i pixel sono
+   quelli delle tavole approvate.
+3. **Il modello si rigenera identico** dal PDF, e **il logo è byte per byte** quello del PDF.
+4. **I dati**: un campo che manca dà «DA DEFINIRE» e la bozza; un testo lungo resta nella sua
+   casella — prove.
+5. **I formati** (D-184): A3 esatto; A2 e A1 in basso a destra; l'A4 non è più ordinario.
+6. **La suite**: nessuna rossa nuova rispetto alle 46; zero `skip` e zero `xfail` nuovi; `ruff` e
+   `mypy` verdi.
 
-## Dopo `REL-001`
+## Dopo `REL-002`
 
-`REL-002` il cartiglio, `REL-003` i simboli nuovi, `REL-004` il DXF, `REL-005` il pacchetto della
-release — l'ordine è una proposta (D-183, punto 3), in `docs/plans/2026-09-03-release-plan.md`.
+Si torna a `REL-001` — la skill e il PDF —, poi `REL-003` i simboli nuovi, `REL-004` il DXF,
+`REL-005` il pacchetto della release. Il PDF di `REL-001` dovrà scrivere anche il cartiglio: il logo
+è un'immagine JPEG, e la scritta «TAVOLA» è trasparente al 50 %.
 
 ## Consegna
 
-Una PR verso `main`, **fusa solo dopo che il PO ha visto la tavola e ha detto di sì**. Rapporto in
-`docs/collaudi/REL-001/RAPPORTO.md`, con la tavola in testa.
+Una PR verso `main`, **fusa solo dopo che il PO ha visto le tavole e ha detto di sì**. Rapporto in
+`docs/collaudi/REL-002/RAPPORTO.md`, con le tavole in testa.

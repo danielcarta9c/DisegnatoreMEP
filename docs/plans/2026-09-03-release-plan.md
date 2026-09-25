@@ -27,6 +27,11 @@ l'approvazione del grafo da parte del progettista, la composizione e la tavola.
 **Che cosa ci deve essere**, in cinque pacchetti. L'elenco è del PO; **l'ordine è una proposta
 della sessione** (D-183, punto 3), e il PO lo può cambiare:
 
+> **E il PO l'ha cambiato, il 25 settembre 2026** (I-126): «in questa sessione ci dedichiamo
+> esclusivamente al cartiglio». `REL-002` è venuto prima di `REL-001`, che è rinviato e non
+> consegnato (`docs/pm/2026-09-24-rel001-pacchetto.md`). Il cartiglio non aspetta le domande della
+> skill: «Capire» sa già dichiarare quello che manca, e le sue istruzioni dicono che cosa chiedere.
+
 | pacchetto | che cosa | perché in quest'ordine |
 |---|---|---|
 | **`REL-001`** | **la skill vera e propria** — l'ingresso che cuce i cinque pezzi, la cartella installabile — **e il PDF fatto dalla skill** (I-121, I-122) | è il rischio più vecchio del progetto: la skill non è mai girata nel suo ambiente. E senza il PDF la skill non consegna niente |
