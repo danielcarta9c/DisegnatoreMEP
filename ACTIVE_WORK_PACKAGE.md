@@ -86,8 +86,10 @@ Ogni criterio si chiude con **il comando eseguito e il suo output**.
 4. **I dati**: un campo che manca dà «DA DEFINIRE» e la bozza; un testo lungo resta nella sua
    casella — prove.
 5. **I formati** (D-184): A3 esatto; A2 e A1 in basso a destra; l'A4 non è più ordinario.
-6. **La suite**: nessuna rossa nuova rispetto alle 46; zero `skip` e zero `xfail` nuovi; `ruff` e
-   `mypy` verdi.
+6. **La suite**: nessuna rossa nuova rispetto alle 46; zero `skip` e zero `xfail` nuovi; `ruff`
+   verde; `mypy` **senza errori nuovi** — su `main` ce ne sono già 4, in due file di prova
+   (`tests/layout/test_posa_a_fasi.py`, `tests/validation/test_regole_del_piano.py`), misurati il 25
+   settembre sul `main` a `130be28`.
 
 ## Dopo `REL-002`
 

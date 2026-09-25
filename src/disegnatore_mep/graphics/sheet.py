@@ -7,22 +7,26 @@ senza fattori di scala nascosti.
 `render_symbol_sheet` resta com'e': e' un banco di prova della libreria, non la
 tavola, e generalizzarlo avrebbe mescolato due cose diverse.
 
-Questo modulo **non compila il cartiglio**: ne disegna soltanto la riserva. Il
-template vettoriale e il blocco della tavola finale incompleta sono del piano
-di rendering; finche' non esistono, il foglio esce marcato come bozza (D-025).
+**Il cartiglio lo disegna chi lo riceve** (REL-002): con il cartiglio della
+tavola — il modello ricavato dal file del PO e i valori del progetto,
+`cartiglio.py` — la squadratura, la testata e la fascia sono quelle Nove C,
+compilate. Senza, il foglio esce come prima: la riserva vuota e la scritta di
+bozza (D-025).
 """
 
 from dataclasses import dataclass
 
+from disegnatore_mep.layout.addresses import VERIFY_MARK
 from disegnatore_mep.layout.geometry import FlowKind, Point, RoutedTrunk, SheetGeometry
 from disegnatore_mep.layout.legend import style_for
 
+from .cartiglio import CartiglioDellaTavola, disegna_cartiglio
 from .frame import Rect, SheetFrame
 from .glyphs import flow_glyph_path
 from .registry import SymbolRegistry
 
 DRAFT_MARK = "BOZZA — cartiglio non compilato"
-"""Marcatura della bozza: una tavola finale richiede il cartiglio completo."""
+"""Marcatura della bozza senza cartiglio: una tavola finale lo richiede completo."""
 
 ARROW_LENGTH_MM = 2.0
 """Lunghezza della freccia di verso sulle tubazioni."""
@@ -330,32 +334,55 @@ def _rect(rect: Rect, width_mm: float, dash: str = "none") -> str:
     )
 
 
+def stati_della_tavola(sheet: SheetGeometry) -> tuple[str, ...]:
+    """I segni che una tavola porta in testata accanto al cartiglio.
+
+    La modalita' di verifica si scriveva nell'intestazione insieme al titolo
+    (D-110); con il cartiglio l'intestazione e' quella Nove C, e il segno passa
+    in testata, a destra, dove il progettista lo vede prima del disegno."""
+    return (VERIFY_MARK,) if sheet.title.endswith(VERIFY_MARK) else ()
+
+
 def render_sheet(
-    sheet: SheetGeometry, frame: SheetFrame, symbols: SymbolRegistry
+    sheet: SheetGeometry,
+    frame: SheetFrame,
+    symbols: SymbolRegistry,
+    cartiglio: CartiglioDellaTavola | None = None,
 ) -> str:
-    """Una tavola A3 a misura reale, deterministica byte per byte."""
+    """Una tavola a misura reale, deterministica byte per byte.
+
+    Con `cartiglio` la tavola porta il cartiglio Nove C compilato; senza, la
+    riserva vuota e la scritta di bozza, come prima di REL-002."""
     standard = frame.standard
     parts: list[str] = [
         f'<svg xmlns="http://www.w3.org/2000/svg" '
         f'width="{standard.sheet_width_mm:g}mm" height="{standard.sheet_height_mm:g}mm" '
         f'viewBox="0 0 {standard.sheet_width_mm:g} {standard.sheet_height_mm:g}">',
-        _rect(frame.border_rect_mm, standard.line_medium_mm),
-        _rect(frame.title_block_rect_mm, standard.line_thin_mm),
-        _rect(frame.legend_rect_mm, standard.line_thin_mm),
     ]
+    if cartiglio is None:
+        parts.extend(
+            [
+                _rect(frame.border_rect_mm, standard.line_medium_mm),
+                _rect(frame.title_block_rect_mm, standard.line_thin_mm),
+            ]
+        )
+    parts.append(_rect(frame.legend_rect_mm, standard.line_thin_mm))
 
-    parts.append(
-        f'<text x="{frame.header_rect_mm.x_mm + 2:g}" '
-        f'y="{frame.header_rect_mm.bottom_mm - 1:g}" '
-        f'font-size="{standard.text_small_mm:g}" fill="black">'
-        f"{_escape(sheet.title)}</text>"
-    )
-    parts.append(
-        f'<text x="{frame.title_block_rect_mm.x_mm + 2:g}" '
-        f'y="{frame.title_block_rect_mm.y_mm + standard.text_normal_mm + 1:g}" '
-        f'font-size="{standard.text_normal_mm:g}" fill="black">'
-        f"{_escape(DRAFT_MARK)}</text>"
-    )
+    if cartiglio is None:
+        parts.append(
+            f'<text x="{frame.header_rect_mm.x_mm + 2:g}" '
+            f'y="{frame.header_rect_mm.bottom_mm - 1:g}" '
+            f'font-size="{standard.text_small_mm:g}" fill="black">'
+            f"{_escape(sheet.title)}</text>"
+        )
+        parts.append(
+            f'<text x="{frame.title_block_rect_mm.x_mm + 2:g}" '
+            f'y="{frame.title_block_rect_mm.y_mm + standard.text_normal_mm + 1:g}" '
+            f'font-size="{standard.text_normal_mm:g}" fill="black">'
+            f"{_escape(DRAFT_MARK)}</text>"
+        )
+    else:
+        parts.append(disegna_cartiglio(cartiglio, frame, stati_della_tavola(sheet)).svg)
 
     # **Nessuna linea di terra** (D-121, I-024). Nella centrale non esiste una
     # linea che attraversa il foglio: la quota su cui le macchine si allineano
