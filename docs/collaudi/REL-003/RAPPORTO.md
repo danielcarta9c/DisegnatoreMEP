@@ -55,13 +55,38 @@ mettono i due collettori sotto i moduli; qui la mandata corre sopra, per tenere 
   per ogni simbolo e quindi per i cinque nuovi: il corpo sta nel proprio riquadro e tocca ogni attacco
   che dichiara, il manifesto è coerente, e **rieseguire il generatore riproduce la libreria committata**.
   Il conto dei simboli pubblicati passa da 50 a 55, e la prova lo dice.
-- **La suite completa** sul commit `247e932`, il codice definitivo — dopo, solo documenti: vedi §3.1.
+- **La suite completa**, due volte: vedi §3.1.
 - `python -m ruff check src tests examples scripts` — `All checks passed!`
 - `python -m mypy` — `Success: no issues found in 77 source files`
 
 ### 3.1 La suite
 
-SUITE_DA_RIEMPIRE
+**Due giri, e il primo ha trovato una cosa.**
+
+1. **Sul commit `247e932`**, subito dopo i simboli: `47 failed, 1699 passed, 24 skipped, 12 xfailed`
+   in 851 s. Delle 47 rosse, 46 sono le stesse di `main` e **una era nuova**:
+   `tests/acceptance/test_symbol_sheet.py::test_every_other_shipped_symbol_admits_all_four_rotations`.
+   La prova elenca per nome i simboli che si disegnano solo diritti — macchine e accumuli — e le
+   quattro macchine nuove non c'erano. Corretto nel commit `a7cb395`: aggiunte a quell'elenco e alla
+   prova che pretende che restino diritte. Il ventilconvettore canalizzato gira come il
+   ventilconvettore, e non ci sta.
+2. **Sul commit `a7cb395`**, il codice finale — dopo, solo documenti —, in tre parti parallele, ciascuna
+   in una copia del repository allo stesso commit perché i generatori che riscrivono la libreria non
+   si pestassero:
+
+```
+gruppo A  tests/layout                                    41 failed, 368 passed, 15 skipped,  3 xfailed
+gruppo B  rules, collaudo, piano, graph, model, io, ...    1 failed, 821 passed,              9 xfailed
+gruppo C  graphics, catalog, acceptance, validation, cli   4 failed, 511 passed,  9 skipped
+totale                                                    46 failed, 1700 passed, 24 skipped, 12 xfailed
+```
+
+   **Le 46 rosse sono le stesse di `main` (`130be28`), nome per nome**; nessuna nuova, nessuna tornata
+   verde. `skip` e `xfail` sono **identici** a `main`, voce per voce. Le 10 passate in più sono le prove
+   del corpo dei cinque simboli nuovi. Nelle due copie la libreria rigenerata dalla prova dei
+   generatori è rimasta identica (`git status` pulito).
+3. **Dopo i documenti** si è rieseguita la sola prova che legge la cartella `docs/`
+   (`test_nessun_documento_dice_piu_che_il_regime_non_si_ricava_dalle_potenze`): passata.
 
 ## 4. Criteri di accettazione
 
@@ -77,7 +102,7 @@ Dal pacchetto, uno per uno, senza riscriverli.
   4 del pacchetto.
 - [ ] **4. Capire sceglie la variante giusta** — **non fatto**: il resto del pacchetto.
 - [ ] **5. La tavola di prova** — **non fatta**: il resto del pacchetto.
-- [x] **6. La suite** — vedi §3.1.
+- [x] **6. La suite** — nessuna rossa nuova rispetto alle 46 di `130be28`, zero `skip` e zero `xfail` nuovi, `ruff` e `mypy` verdi (§3, §3.1).
 
 ## 5. Che cosa resta, ed è il resto di `REL-003`
 

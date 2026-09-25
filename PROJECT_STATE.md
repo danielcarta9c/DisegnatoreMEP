@@ -27,7 +27,7 @@
 - **La skill non li può ancora usare**: mancano le voci di catalogo, e Capire, che sceglie per
   mestiere e attacchi, non avrebbe come distinguere tre di loro dal fratello. È il resto di
   `REL-003`, con la tavola di prova e il circuito solare da decidere con il PO (D-184, punto 5).
-- **Suite:** SUITE_PS
+- **Suite:** **46 rosse**, le stesse di `main` nome per nome; 1700 passate, 24 `skip` e 12 `xfail` identici a `main`. Il primo giro ne aveva trovata una nuova — la prova che elenca per nome i simboli che stanno diritti non conosceva le quattro macchine nuove —, corretta nella prova.
 
 **Rischio 5 — la libreria certificata** — un passo avanti: i cinque simboli nuovi hanno la loro
 fonte scritta nel manifesto e nel registro. Il foglio della libreria intera, però, non si stampa
