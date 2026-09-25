@@ -83,6 +83,15 @@ def test_upright_symbols_declare_only_their_own_orientation() -> None:
     registry = SymbolRegistry.from_directory(SYMBOLS)
     for symbol_id in ("heat-pump-air-water", "dhw-cylinder", "buffer-four-port", "zone-manifold"):
         assert registry.get(symbol_id).manifest.allowed_rotations_deg == [0]
+    # I simboli nuovi della prima release (`REL-003`, D-185): tre macchine e un
+    # accumulo, nel proprio verso come i loro fratelli.
+    for symbol_id in (
+        "heat-pump-air-water-large",
+        "gas-boiler-modular",
+        "solar-collector",
+        "dhw-cylinder-twin-coil",
+    ):
+        assert registry.get(symbol_id).manifest.allowed_rotations_deg == [0]
 
 
 def test_every_other_shipped_symbol_admits_all_four_rotations() -> None:
@@ -100,6 +109,13 @@ def test_every_other_shipped_symbol_admits_all_four_rotations() -> None:
         "dhw-heat-pump",
         "gas-boiler",
         "plate-heat-exchanger",
+        # I simboli nuovi della prima release (`REL-003`, D-185): macchine e
+        # accumuli, nel proprio verso. Il ventilconvettore canalizzato no: e' un
+        # terminale, e gira come il ventilconvettore.
+        "heat-pump-air-water-large",
+        "gas-boiler-modular",
+        "solar-collector",
+        "dhw-cylinder-twin-coil",
         # Il filtro a Y (DRAW-005, I-031): il gambo non punta mai in su, quindi
         # su una verticale gira di 270 gradi e non di 90. La prova del contratto
         # sta in tests/graphics/test_contratti_simboli_tavola1.py.
