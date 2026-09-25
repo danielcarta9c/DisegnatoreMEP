@@ -442,6 +442,11 @@ def test_il_piano_puo_chiedere_lo_specchio_e_la_valvola_gira_davvero(
         pytest.skip("il collaudo in camera pulita non c'e' piu'")
 
     piano = json.loads(sorgente.read_text(encoding="utf-8"))
+    # Quel piano l'agente l'aveva composto su un A4, che dal 25 settembre 2026 non
+    # e' piu' un formato ordinario (D-184: non contiene il cartiglio). Si esegue
+    # sull'A3: il motore porta il disegno al centro dell'area, e la valvola e' la
+    # stessa.
+    piano["formato"] = "A3"
     piano["pezzi"]["commutatrice-ritorno"] = {
         "x": 102.5,
         "y": 125,

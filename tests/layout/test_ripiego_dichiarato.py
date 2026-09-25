@@ -25,7 +25,6 @@ from disegnatore_mep.graphics.frame import (
     NOVE_C_A1,
     NOVE_C_A2,
     NOVE_C_A3,
-    NOVE_C_A4,
     ORDINARY_FRAMES,
     SheetFrame,
 )
@@ -124,15 +123,16 @@ def falsa(monkeypatch: pytest.MonkeyPatch):  # type: ignore[no-untyped-def]
 def test_un_impianto_che_entra_esce_sul_primo_foglio_che_lo_regge(falsa) -> None:  # type: ignore[no-untyped-def]
     """Il criterio 3: il ripiego **non anticipa la scala**.
 
-    L'impianto entra su A2. Deve uscire su A2, non su A4 col ripiego — e il
-    ripiego non deve essere nemmeno provato.
+    L'impianto entra su A2. Deve uscire su A2, non su A3 col ripiego — e il
+    ripiego non deve essere nemmeno provato. La scala comincia dall'A3 dal 25
+    settembre 2026 (**D-184**): prima provava anche l'A4.
     """
     doppio = falsa(entra_da_mm=594.0)
 
     frame, _ = compose_on_ordinary_frame(NESSUN_MODELLO, NESSUN_CATALOGO)
 
     assert frame is NOVE_C_A2
-    assert doppio.chiamate == [(297.0, False), (420.0, False), (594.0, False)]
+    assert doppio.chiamate == [(420.0, False), (594.0, False)]
     assert not any(ripiego for _, ripiego in doppio.chiamate)
 
 
@@ -144,9 +144,9 @@ def test_il_ripiego_scatta_solo_a_formati_finiti_e_sul_piu_grande(falsa) -> None
     frame, _ = compose_on_ordinary_frame(NESSUN_MODELLO, NESSUN_CATALOGO)
 
     assert frame is NOVE_C_A1
-    # Tutti i formati provati sul serio, in ordine, e **poi** il ripiego.
+    # Tutti i formati provati sul serio, in ordine, e **poi** il ripiego. L'A4
+    # non c'e' piu' (D-184).
     assert doppio.chiamate == [
-        (297.0, False),
         (420.0, False),
         (594.0, False),
         (841.0, False),
@@ -163,8 +163,11 @@ def test_senza_nessun_formato_da_provare_si_alza_le_mani(falsa) -> None:  # type
 
 
 def test_la_scala_dei_formati_arriva_all_a1(falsa) -> None:  # type: ignore[no-untyped-def]
-    """D-148, letto da chi sceglie: quattro formati, dal piu' piccolo in su."""
-    assert ORDINARY_FRAMES == (NOVE_C_A4, NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
+    """D-148, letto da chi sceglie: tre formati, dal piu' piccolo in su.
+
+    Erano quattro fino al 25 settembre 2026: **D-184** ha tolto l'A4, che non
+    contiene il cartiglio Nove C."""
+    assert ORDINARY_FRAMES == (NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
 
 
 # ---------------------------------------------------------------------------

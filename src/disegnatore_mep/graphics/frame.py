@@ -171,14 +171,17 @@ class SheetFrame(StrictModel):
 NOVE_C_A3 = SheetFrame(standard=A3_LANDSCAPE)
 
 NOVE_C_A4 = SheetFrame(standard=A4_LANDSCAPE)
-"""L'A4 orizzontale, per i disegni piccoli (D-058).
+"""L'A4 orizzontale — **non piu' un formato ordinario** (D-184, 25 settembre 2026).
 
-Il cartiglio A4 **non e' fra gli input del progetto**: c'e' solo
-`Cartiglio_NoveC_A3.pdf`. Le bande sono quelle misurate sull'A3 — 36 mm di
-cartiglio, 6 di intestazione, 50 di legenda — riportate tali e quali, perche'
-un cartiglio non si rimpicciolisce col foglio: contiene le stesse righe di
-testo alla stessa altezza. Quando il cartiglio A4 arrivera', queste tre quote
-vanno rimisurate su quello, non ricalcolate da qui.
+Il cartiglio Nove C e' largo 400 mm e l'A4 ne ha 277 utili: non lo contiene, e
+il PO ha deciso che il cartiglio resta a misura su ogni foglio. Il telaio resta
+definito perche' le prove della posa lo usano come foglio piccolo; una tavola
+**col cartiglio** su questo telaio non si disegna (`cartiglio.disegna_cartiglio`
+lo rifiuta).
+
+Le bande sono quelle misurate sull'A3 — 36 mm di cartiglio, 6 di intestazione,
+50 di legenda — riportate tali e quali, perche' un cartiglio non si
+rimpicciolisce col foglio.
 """
 
 NOVE_C_A2 = SheetFrame(standard=A2_LANDSCAPE)
@@ -188,10 +191,15 @@ non cresce col foglio, contiene le stesse righe di testo alla stessa altezza."""
 NOVE_C_A1 = SheetFrame(standard=A1_LANDSCAPE)
 """L'A1 orizzontale (D-148), per l'impianto che non entra nemmeno su A2."""
 
-ORDINARY_FRAMES: tuple[SheetFrame, ...] = (NOVE_C_A4, NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
-"""I formati ordinari, dal piu' piccolo al piu' grande (D-058, esteso da D-148).
+ORDINARY_FRAMES: tuple[SheetFrame, ...] = (NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
+"""I formati ordinari, dal piu' piccolo al piu' grande (D-058, esteso da D-148,
+ristretto da D-184).
 
 L'ordine **e'** la regola di scelta: si prende il primo su cui il disegno entra.
+
+**L'A4 non c'e' piu'** (D-184, 25 settembre 2026): il cartiglio Nove C e' largo
+400 mm, resta a misura su ogni foglio, e l'A4 ne ha 277 utili. Per una centrale
+l'A3 era gia' il primo tentativo (D-135).
 
 **Oltre l'A3 adesso si va** (D-148): il divieto di D-058 e la preferenza di D-019
 per piu' A3 coordinate sono sospesi. Un elaborato che esce su A2 e' un elaborato

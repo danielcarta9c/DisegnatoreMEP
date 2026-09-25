@@ -117,8 +117,8 @@ def test_a_rect_knows_its_own_edges() -> None:
     assert not rect.overlaps(Rect(x_mm=40.0, y_mm=20.0, width_mm=5.0, height_mm=5.0))
 
 
-def test_the_ordinary_formats_go_up_to_a1_in_growing_order() -> None:
-    """D-148: oltre l'A3 si va — A4, A3, A2, A1 — e la scala resta l'ordine.
+def test_the_ordinary_formats_go_from_a3_up_to_a1_in_growing_order() -> None:
+    """D-148 e D-184: oltre l'A3 si va — A3, A2, A1 — e la scala resta l'ordine.
 
     Fino al 19 settembre 2026 questa prova si chiamava
     `..._are_a4_then_a3_and_stop_there` e difendeva la clausola di D-058 «ne'
@@ -126,6 +126,10 @@ def test_the_ordinary_formats_go_up_to_a1_in_growing_order() -> None:
     difendeva e' stata sospesa dal PO**, e la ragione e' misurata — le tre
     tavole di prova che non uscivano fallivano tutte contro il bordo destro
     dell'area A3, e l'impianto 4 esce su A2 senza toccare nient'altro.
+
+    **Il 25 settembre 2026 l'A4 e' uscito dalla scala** (D-184): il cartiglio Nove
+    C e' largo 400 mm, resta a misura su ogni foglio, e l'A4 ne ha 277 utili. Si
+    chiamava `test_the_ordinary_formats_go_up_to_a1_in_growing_order`.
     """
     from disegnatore_mep.graphics.frame import (
         NOVE_C_A1,
@@ -134,12 +138,13 @@ def test_the_ordinary_formats_go_up_to_a1_in_growing_order() -> None:
         ORDINARY_FRAMES,
     )
 
-    assert ORDINARY_FRAMES == (NOVE_C_A4, NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
+    assert ORDINARY_FRAMES == (NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
+    assert NOVE_C_A4 not in ORDINARY_FRAMES
     sizes = [
         (item.standard.sheet_width_mm, item.standard.sheet_height_mm)
         for item in ORDINARY_FRAMES
     ]
-    assert sizes == [(297.0, 210.0), (420.0, 297.0), (594.0, 420.0), (841.0, 594.0)]
+    assert sizes == [(420.0, 297.0), (594.0, 420.0), (841.0, 594.0)]
     # In ordine crescente: la scelta prende il primo su cui il disegno entra,
     # quindi un foglio piu' grande non si prende mai per comodita'.
     assert sizes == sorted(sizes)

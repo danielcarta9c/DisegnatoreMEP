@@ -12,7 +12,7 @@ from disegnatore_mep.catalog.schema import (
     ComponentTrait,
     PortDefinition,
 )
-from disegnatore_mep.graphics.frame import NOVE_C_A3
+from disegnatore_mep.graphics.frame import NOVE_C_A2, NOVE_C_A3
 from disegnatore_mep.graphics.registry import Symbol, SymbolRegistry
 from disegnatore_mep.graphics.symbol import KeepOut, PortFace, SymbolManifest, SymbolPort
 from disegnatore_mep.layout.autostrade import AutostradaInTavola
@@ -422,11 +422,18 @@ def test_un_foglio_mezzo_vuoto_non_e_piu_un_rilievo() -> None:
     stretto **sul foglio piu' piccolo che lo contiene** sta sotto il 45% per
     costruzione, e il rilievo si accendeva su una tavola che non aveva niente da
     correggere. La domanda vera — *ci stava su un foglio piu' piccolo?* — la fa
-    adesso `SHEET_LARGER_THAN_NEEDED`, e su questa fascia risponde **si'**.
+    adesso `SHEET_LARGER_THAN_NEEDED`, e su questa fascia, **su un A2**, risponde
+    **si'**: ci stava su un A3.
+
+    Fino al 25 settembre 2026 la prova si faceva su un A3, e la risposta era
+    «ci stava su un A4». **D-184 ha tolto l'A4 dai formati ordinari** — non
+    contiene il cartiglio Nove C —, e l'A3 e' diventato il foglio piu' piccolo:
+    su un A3 la domanda non ha piu' una risposta, e la prova sale di un foglio.
     """
     band = run("f", [at(10, 16), at(185, 16), at(185, 133.5)])
     codici = [
-        item.code for item in preflight.sheet_fill(drawing(sheet(routes=[band])), FRAME)
+        item.code
+        for item in preflight.sheet_fill(drawing(sheet(routes=[band])), NOVE_C_A2)
     ]
     assert "SHEET_BARELY_FILLED" not in codici
     assert "SHEET_LARGER_THAN_NEEDED" in codici
@@ -436,15 +443,28 @@ def test_un_disegno_che_ci_stava_su_un_foglio_piu_piccolo_si_dice() -> None:
     """**D3, nella forma che gli ha dato D-170**: l'unica cosa che resta da dire.
 
     Non dove stanno i pezzi — **quale foglio si e' preso**. Questo disegno
-    ingombra un centinaio di millimetri per settanta e sta su un A3: sull'A4 ci
+    ingombra un centinaio di millimetri per settanta e sta su un A2: sull'A3 ci
     stava, col margine, e il rilievo lo nomina.
+
+    Fino al 25 settembre 2026 stava su un A3 e il rilievo nominava l'A4: **D-184**
+    ha tolto l'A4 dai formati ordinari, perche' non contiene il cartiglio.
     """
     pieces = [placed("a", 40, 40), placed("b", 120, 100)]
-    findings = preflight.sheet_fill(drawing(sheet(symbols=pieces)), FRAME)
+    findings = preflight.sheet_fill(drawing(sheet(symbols=pieces)), NOVE_C_A2)
     trovato = only(findings, "SHEET_LARGER_THAN_NEEDED")
     assert trovato.severity is IssueSeverity.WARNING
-    assert "A4" in trovato.message
+    assert "A3" in trovato.message
     assert "il vuoto che resta non e' un difetto" in trovato.message
+
+
+def test_su_un_a3_non_c_e_un_foglio_piu_piccolo() -> None:
+    """**D-184**: l'A3 e' il formato ordinario piu' piccolo. Lo stesso disegno
+    della prova qui sopra, su un A3, non ha un foglio piu' piccolo da nominare."""
+    pieces = [placed("a", 40, 40), placed("b", 120, 100)]
+    codici = [
+        item.code for item in preflight.sheet_fill(drawing(sheet(symbols=pieces)), FRAME)
+    ]
+    assert "SHEET_LARGER_THAN_NEEDED" not in codici
 
 
 def test_un_disegno_tutto_in_un_angolo_non_si_accusa_piu() -> None:

@@ -149,11 +149,22 @@ Regole di forma:
 - **`plant_regime`**: il regime della centrale, `up_to_35_kw` oppure `over_35_kw`. Si
   ricava dalle potenze che il testo dà (§4.6). Se il testo non le dà, **ometti il
   campo** e scrivi la domanda in `assumptions`.
-- **`metadata`**: identifica il documento, non l'impianto. Committente e codice di
+- **`metadata`**: identifica il documento, non l'impianto, ed è quello che il
+  **cartiglio** della tavola scrive. Committente e codice di
   commessa te li dice chi lancia il lavoro; se mancano, scrivi `ND` e dillo nella
   risposta. `issue_date` è la data di oggi, `revision` è `00`. Il `project_id` lo
   costruisci dal titolo dell'impianto, minuscolo e con i trattini
   (`caldaia-radiatori-esistenti`): identifica il documento, non è una sigla di commessa.
+  Il cartiglio chiede altri tre dati, e li scrivi **solo se il testo o chi ti lancia li
+  dà**: `address`, l'indirizzo dell'intervento — via, comune e provincia —;
+  `sheet_title`, il titolo della tavola; `sheet_number`, il numero della tavola
+  nell'elenco degli elaborati, come «T3». Se ne manca qualcuno **ometti il campo** e
+  scrivi **una sola** voce in `assumptions` che chiede quelli che mancano, e ripetila
+  nella risposta. Senza, la tavola esce in bozza con «DA DEFINIRE» nella casella, ed è
+  giusto così: **non inventarli**, nemmeno il titolo. Facoltativi, e solo se dati:
+  `drawn_by`, `checked_by`, `approved_by` — chi ha disegnato, verificato e approvato — e
+  `header_note`, la dicitura che il cartiglio porta in testata a destra (per esempio
+  «Conto Termico con sconto in fattura»). Senza, restano vuoti, e non si chiedono.
 - Il campo `evidence` che lo schema prevede puoi lasciarlo vuoto: la tracciabilità la
   dai con la tabella di rilettura (§8, passo 6). Nelle assunzioni puoi usare
   `source_message_refs` per citare la frase del testo da cui nasce la voce.

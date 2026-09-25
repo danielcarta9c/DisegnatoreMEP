@@ -170,17 +170,22 @@ def test_un_campo_sconosciuto_sul_piano_elenca_quelli_che_ci_sono(
     assert "formato, note, pezzi" in detto
 
 
-def test_un_formato_fuori_dai_quattro_ordinari_li_elenca(tmp_path: Path) -> None:
-    """D-148: i formati ordinari sono quattro, e chi ne chiede un altro li legge."""
+@pytest.mark.parametrize("formato", ["A5", "A4"])
+def test_un_formato_fuori_dai_tre_ordinari_li_elenca(tmp_path: Path, formato: str) -> None:
+    """D-148 e D-184: i formati ordinari sono tre, e chi ne chiede un altro li legge.
+
+    Erano quattro fino al 25 settembre 2026: l'A4 e' uscito perche' non contiene
+    il cartiglio Nove C, e un piano che lo chiede adesso si ferma qui, con la
+    lista davanti. Si chiamava `test_un_formato_fuori_dai_quattro_ordinari_li_elenca`."""
     percorso = _scrivi(
-        tmp_path, '{"formato": "A5", "pezzi": {"volano": {"x": 1, "y": 2}}}'
+        tmp_path, f'{{"formato": "{formato}", "pezzi": {{"volano": {{"x": 1, "y": 2}}}}}}'
     )
     with pytest.raises(ErroreDelPiano) as errore:
         carica_piano(percorso)
     detto = str(errore.value)
     assert "il campo «formato» non e' valido" in detto
-    assert "'A5'" in detto
-    assert "A4, A3, A2, A1" in detto
+    assert f"'{formato}'" in detto
+    assert "A3, A2, A1" in detto
 
 
 def test_un_pezzo_che_non_e_un_oggetto_lo_dice(tmp_path: Path) -> None:

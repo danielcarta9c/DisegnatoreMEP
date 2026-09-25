@@ -496,6 +496,12 @@ def disegna_cartiglio(
     fascia = modello.fascia.ingombro
     dx = bordo.right_mm - fascia.destra_mm
     dy = bordo.bottom_mm - fascia.fondo_mm
+    if fascia.x_mm + dx < bordo.x_mm - 1e-6:
+        raise ValueError(
+            f"il cartiglio e' largo {fascia.larghezza_mm:g} mm e la squadratura di questo "
+            f"foglio {bordo.width_mm:g}: non lo contiene, e il cartiglio non si "
+            f"rimpicciolisce (D-184)"
+        )
 
     # 1. Si misura.
     fuori: list[NomeCampo] = []

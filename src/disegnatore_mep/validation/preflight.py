@@ -292,11 +292,13 @@ def _fill_ratio(sheet: SheetGeometry, area: Rect) -> float:
     return fill_ratio(sheet.symbols, sheet.routes, _rect(area))
 
 
-NOMI_DEI_FORMATI: tuple[str, ...] = ("A4", "A3", "A2", "A1")
+NOMI_DEI_FORMATI: tuple[str, ...] = ("A3", "A2", "A1")
 """I nomi dei formati ordinari, nell'ordine di `graphics.frame.ORDINARY_FRAMES`.
 
 Sono gli stessi di `piano.formato.FORMATI_ORDINARI`: qui servono per **nominare**
-il foglio piu' piccolo che conterrebbe il disegno (D3, **D-170**).
+il foglio piu' piccolo che conterrebbe il disegno (D3, **D-170**). Dal 25
+settembre 2026 il piu' piccolo e' l'A3 (**D-184**): su un A3 questo rilievo non
+si accende piu'.
 """
 
 
@@ -881,7 +883,7 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
         # **Ci deve stare davvero, col margine.** Non basta che l'ingombro
         # dell'inchiostro entri nell'area del foglio piu' piccolo: ci deve stare
         # **con il margine minimo da tutt'e due i lati** (D-143), o il rilievo
-        # direbbe «usa l'A4» per un disegno che sull'A4 tocca la cornice — e un
+        # direbbe «usa l'A3» per un disegno che sull'A3 tocca la cornice — e un
         # rilievo che non si puo' chiudere e' peggio di nessun rilievo.
         respiro = 2 * SHEET_MARGIN_MIN_MM
         piu_piccoli = [

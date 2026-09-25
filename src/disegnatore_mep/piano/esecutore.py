@@ -62,7 +62,7 @@ from disegnatore_mep.piano.formato import ErroreDelPiano, PianoDiComposizione
 from disegnatore_mep.validation.issues import ValidationIssue
 from disegnatore_mep.validation.preflight import preflight_drawing
 
-_LARGHEZZE_MM: dict[str, float] = {"A4": 297.0, "A3": 420.0, "A2": 594.0, "A1": 841.0}
+_LARGHEZZE_MM: dict[str, float] = {"A3": 420.0, "A2": 594.0, "A1": 841.0}
 """La larghezza di ciascun formato ordinario, che e' come lo si riconosce."""
 
 _VERSO: dict[PortFace, tuple[float, float]] = {
