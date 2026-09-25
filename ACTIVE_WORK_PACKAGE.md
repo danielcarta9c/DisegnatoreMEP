@@ -72,6 +72,11 @@ la lista dei formati; `tests/**`; `docs/collaudi/REL-002/`; i documenti di stato
 **Fuori:** la posa e l'instradamento (`layout/`), le regole, la libreria dei simboli, il resto delle
 istruzioni dei tre agenti, il **motore PDF** (`REL-001`), il **DXF** (`REL-004`).
 
+> **Una riga di `layout/place.py` è entrata, ed è dichiarata** (25 settembre, a lavoro in corso). La
+> posa di partenza impilava prima di salire di formato «tranne sul foglio più piccolo»: era l'A4, e
+> con D-184 sarebbe diventato l'A3, che smetteva di impilare — la suite l'ha trovato. La riga adesso
+> nomina l'A4, e la posa fa quello che faceva prima su A3, A2 e A1.
+
 ## Criteri di accettazione
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.

@@ -16,6 +16,7 @@ scorciatoia.**
 # categoria: difende il motore — la spezzata di ripiego di route.py e la scala dei formati (D-150); una prova difendeva il solutore: elencata nel rapporto
 
 import inspect
+from pathlib import Path
 from typing import cast
 
 import pytest
@@ -25,13 +26,19 @@ from disegnatore_mep.graphics.frame import (
     NOVE_C_A1,
     NOVE_C_A2,
     NOVE_C_A3,
+    NOVE_C_A4,
     ORDINARY_FRAMES,
     SheetFrame,
 )
+from disegnatore_mep.graphics.registry import SymbolRegistry
+from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout import compose as compose_module
-from disegnatore_mep.layout.compose import compose_on_ordinary_frame
+from disegnatore_mep.layout.compose import compose_on_ordinary_frame, inline_component_ids
 from disegnatore_mep.layout.errors import LayoutError
+from disegnatore_mep.layout.partition import partition_project
+from disegnatore_mep.layout.place import place_sheet
 from disegnatore_mep.layout.route import _last_resort
+from disegnatore_mep.layout.trunks import build_trunks
 from disegnatore_mep.model.project import ProjectModel
 
 # Il doppio di `compose_drawing` non guarda ne' il modello ne' il catalogo:
@@ -225,3 +232,24 @@ def test_il_motore_ordinario_non_tollera_una_tratta_persa() -> None:
     from disegnatore_mep.layout.route import route_sheet
 
     assert inspect.signature(route_sheet).parameters["tolerant"].default is False
+
+
+def test_sull_a3_si_impila_ancora_prima_di_salire_di_formato() -> None:
+    """**D-184 non tocca la posa.** L'A4 e' uscito dalla scala dei formati, e la
+    posa di partenza — quella che anche l'esecutore del piano usa — impila prima di
+    salire di foglio **tranne sull'A4** (D-058). Con la formula «tranne sul foglio
+    piu' piccolo» l'A3 sarebbe diventato quel foglio, e avrebbe smesso di impilare:
+    misurato il 25 settembre 2026, la centrale a quattro fasce su A3 non si posava
+    piu', e su `main` si'."""
+    radice = Path(__file__).resolve().parents[2]
+    simboli = SymbolRegistry.from_directory(radice / "assets" / "symbols")
+    catalogo = ComponentRegistry.from_directory(
+        radice / "examples" / "layout" / "catalog", symbols=simboli
+    )
+    progetto = load_project(radice / "examples" / "layout" / "centrale-pdc-quattro-fasce.json")
+    in_linea = inline_component_ids(progetto, catalogo)
+    partizione = partition_project(progetto, build_trunks(progetto, in_linea))[0]
+
+    assert place_sheet(progetto, partizione, catalogo, NOVE_C_A3, in_linea)
+    with pytest.raises(LayoutError, match="functional bands need"):
+        place_sheet(progetto, partizione, catalogo, NOVE_C_A4, in_linea)

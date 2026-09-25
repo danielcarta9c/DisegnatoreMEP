@@ -53,6 +53,9 @@ SCALA_DELLO_SCHEMA = "—"
 BOZZA = "BOZZA — cartiglio incompleto"
 """Il segno di una tavola con un campo da definire: sta in testata, a destra."""
 
+SEPARATORE = " · "
+"""Fra due segni di stato in testata, e fra i segni e la dicitura."""
+
 FAMIGLIA = "Helvetica, Arial, Liberation Sans, sans-serif"
 """Il cartiglio e' in Helvetica; Arial e Liberation Sans hanno le stesse
 larghezze (`examples/cartigli/build_metriche.py`)."""
@@ -619,10 +622,6 @@ def disegna_cartiglio(
     return CartiglioDisegnato(
         svg="".join(parti), fuori_misura=tuple(fuori), bozza=BOZZA in marchi
     )
-
-
-SEPARATORE = " · "
-"""Fra due segni di stato in testata, e fra i segni e la dicitura."""
 
 
 def rilievi_del_cartiglio(
