@@ -3,6 +3,16 @@
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
 **Stato:** **ATTIVO** dal 24 settembre 2026. Il PO ha chiesto di partire dai simboli (**I-126**):
 `REL-001` viene dopo, com'era scritto, in `docs/plans/pacchetti/REL-001.md`.
+
+> **▶ 25 settembre 2026 — la prima parte è su `main`.** I cinque simboli ci sono, dalle fonti
+> (SRC-030 … SRC-041), e **le forme sono approvate dal PO** (I-128, D-185): «si i simboli che hai fatto
+> vanno bene. fai i test e se va tutto bene al termine push su main». Sono andati su `main` con la PR
+> di `REL-003`, prima delle voci di catalogo, perché il PO l'ha chiesto. Il rapporto è
+> `docs/collaudi/REL-003/RAPPORTO.md`.
+>
+> **Il pacchetto continua dal punto 4**: le voci di catalogo e il dato che distingue le varianti, il
+> circuito solare da decidere con il PO, la tavola di prova. Sono aperti i criteri **4** e **5**, e il
+> criterio **0** vale per la tavola di prova. Il ramo riparte da `main` dopo la fusione.
 **Base:** `main` a `130be28` — `DRAW-018` fuso con la PR **#57**, tavole approvate (**I-119**).
 **Ramo:** `claude/missing-symbols-uuzbhb`, quello che l'ambiente della sessione assegna.
 **Release:** la prima release (**D-183**, `docs/plans/2026-09-03-release-plan.md`).

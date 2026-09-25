@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-24 notte (`DRAW-017` e `DRAW-018` fusi con le PR #56 e #57, tavole **approvate dal PO**, I-117 e I-119; il PO ha dato il perimetro della **prima release**, D-183; attivo `REL-001`, la skill vera e propria e il PDF)
+**Aggiornato:** 2026-09-25 (`REL-003`, prima parte: **i cinque simboli nuovi**, forme **approvate dal PO**, I-128 e D-185, su `main` con la PR di `REL-003`; il pacchetto continua con le voci di catalogo e la tavola di prova, poi `REL-001`)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -13,6 +13,25 @@
 > ci siamo arrivati, non per sapere come funziona la skill.
 
 ---
+
+## Dove siamo — 25 settembre 2026
+
+**Il PO ha messo i simboli davanti alla skill** (I-126): il pacchetto attivo è `REL-003`, e
+`REL-001` aspetta scritto in `docs/plans/pacchetti/REL-001.md`.
+
+- **I cinque simboli nuovi ci sono**, e **le forme sono approvate** (I-128, D-185): la pompa di
+  calore aria-acqua di alta potenza, la caldaia modulare a condensazione, il collettore solare, il
+  bollitore a due serpentini, il ventilconvettore canalizzato. **UNI 9511 non ne ha nessuno**: le
+  forme vengono dagli schemi dei costruttori e dei progetti pubblici (SRC-030 … SRC-041), e il
+  foglio che il PO ha guardato è `docs/collaudi/REL-003/REL-003-simboli-nuovi.pdf`.
+- **La skill non li può ancora usare**: mancano le voci di catalogo, e Capire, che sceglie per
+  mestiere e attacchi, non avrebbe come distinguere tre di loro dal fratello. È il resto di
+  `REL-003`, con la tavola di prova e il circuito solare da decidere con il PO (D-184, punto 5).
+- **Suite:** SUITE_PS
+
+**Rischio 5 — la libreria certificata** — un passo avanti: i cinque simboli nuovi hanno la loro
+fonte scritta nel manifesto e nel registro. Il foglio della libreria intera, però, non si stampa
+più con `symbols-sheet`, che su un A3 ne accetta 32 e adesso sono 47.
 
 ## Dove siamo — 24 settembre 2026, notte
 
