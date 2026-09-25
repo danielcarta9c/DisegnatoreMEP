@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-24 notte — su `main` `DRAW-017` (PR #56) e `DRAW-018` (PR #57), **tavole approvate** (I-117, I-119); il PO ha dato il perimetro della **prima release** (D-183), e il pacchetto attivo è **`REL-001`**: la skill vera e propria e il PDF
+**Aggiornato:** 2026-09-25 — su `main` i **cinque simboli nuovi** di `REL-003`, forme **approvate dal PO** (I-128, D-185); il pacchetto attivo è ancora **`REL-003`**: le voci di catalogo e la tavola di prova. Dopo, `REL-001`
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,34 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto la notte del 24 settembre 2026
+## ▶ Da dove riparte la prossima sessione — scritto il 25 settembre 2026
+
+**Il pacchetto attivo è `REL-003`, i simboli nuovi, e la sua prima parte è su `main`.** Il PO ha
+chiesto di partire dai simboli (**I-126**), ha confermato che cosa disegnano (**I-127**, **D-184**) e,
+guardando il foglio, ha approvato le forme (**I-128**, **D-185**): «si i simboli che hai fatto vanno
+bene. fai i test e se va tutto bene al termine push su main».
+
+- **I cinque simboli**: la pompa di calore aria-acqua di alta potenza (60 × 30), la caldaia modulare
+  a condensazione (60 × 25), il collettore solare (40 × 25), il bollitore a due serpentini (25 × 55),
+  il ventilconvettore canalizzato (20 × 15). Le macchine tengono mandata e ritorno a **+5 e +20** come
+  tutte le altre. Il foglio: `docs/collaudi/REL-003/REL-003-simboli-nuovi.pdf`; il rapporto:
+  `docs/collaudi/REL-003/RAPPORTO.md`.
+- **Le fonti**: **UNI 9511 non ha nessuno dei cinque segni**; le forme vengono dagli schemi dei
+  costruttori e dei progetti pubblici, SRC-030 … SRC-041, e la ricerca è
+  `docs/fonti/ricerche/reports/Simboli nuovi della prima release.md`.
+- **Da dove si riparte: il punto 4 del pacchetto.** Le voci di catalogo dei cinque simboli, e il dato
+  che distingue le varianti — **Capire sceglie per mestiere e per attacchi, mai per nome**, e tre dei
+  simboli nuovi hanno mestiere e attacchi uguali a quelli del fratello: senza quel dato non verrebbero
+  mai scelti. Poi il **circuito solare**, che è del PO (D-184, punto 5: fluido, colore, corredo; la
+  ricerca porta che cosa fanno le legende), e la **tavola di prova** su un impianto che non è fra i
+  cinque.
+- **Dopo `REL-003`** viene `REL-001`, la skill vera e propria e il PDF, scritto in
+  `docs/plans/pacchetti/REL-001.md`: la tavola di prova di `REL-003` può fargli da impianto nuovo.
+
+La sezione qui sotto è lo stato con cui la sessione del 25 settembre è partita, e resta vera per tutto
+il resto.
+
+## Lo stato della notte del 24 settembre 2026
 
 **Su `main` c'è tutto**, e le tavole sono approvate: `DRAW-017` (PR #56, I-117) e `DRAW-018` (PR
 #57, I-119). **Si parte con `REL-001`**, il primo pacchetto della prima release.

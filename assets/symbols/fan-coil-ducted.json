@@ -1,0 +1,35 @@
+{
+  "id": "fan-coil-ducted",
+  "version": "1.0.0",
+  "name": "Ventilconvettore canalizzato",
+  "width_mm": 20.0,
+  "height_mm": 15.0,
+  "allowed_rotations_deg": [
+    0,
+    90,
+    180,
+    270
+  ],
+  "ports": [
+    {
+      "id": "in",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 2.5
+    },
+    {
+      "id": "out",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 12.5
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 0.0,
+    "top_mm": 0.0,
+    "bottom_mm": 0.0
+  },
+  "stroke_weight": "medium",
+  "source": "il ventilconvettore della libreria (pratica di settore, cfr. SRC-008) con i collari dei canali: Sabiana, catalogo Maestro MTL (04/2026), PDF pp. 26 e 89, plenum con codoli e aria che entra ed esce da due facce opposte (SRC-039); Palermo, Stazione Politeama, schema funzionale dell'impianto HVAC, ventilconvettori canalizzabili (SRC-040)"
+}

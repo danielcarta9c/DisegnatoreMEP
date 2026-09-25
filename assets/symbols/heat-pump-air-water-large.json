@@ -1,0 +1,32 @@
+{
+  "id": "heat-pump-air-water-large",
+  "version": "1.0.0",
+  "name": "Pompa di calore aria-acqua di alta potenza",
+  "width_mm": 60.0,
+  "height_mm": 30.0,
+  "allowed_rotations_deg": [
+    0
+  ],
+  "ports": [
+    {
+      "id": "water_supply",
+      "face": "right",
+      "x_mm": 60.0,
+      "y_mm": 5.0
+    },
+    {
+      "id": "water_return",
+      "face": "right",
+      "x_mm": 60.0,
+      "y_mm": 20.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 0.0,
+    "right_mm": 2.0,
+    "top_mm": 0.0,
+    "bottom_mm": 0.0
+  },
+  "stroke_weight": "medium",
+  "source": "pratica di settore: Caleffi, Idraulica 65 (gennaio 2024), figg. 4, 47 e 48, PDF pp. 8, 40 e 42 (SRC-030); schemi funzionali pubblici di Padova, tav. M.02 (SRC-031), e di Carrara, tav. PD.IM.03.00 (SRC-032) — batteria alettata sulla faccia, vano tecnico con gli attacchi sul fianco, mandata sopra, ventilatori sul lato superiore; la domestica ha invece il ventilatore a disco sul fronte. UNI 9511 non ha il segno"
+}

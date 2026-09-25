@@ -96,7 +96,11 @@ def test_the_libraries_are_not_empty() -> None:
     # conto e si aggiorna quando il catalogo cresce per una disposizione del
     # PO; cio' che la prova difende — che le librerie non siano vuote e che
     # nessun segno compaia per sbaglio — non cambia.
-    assert len(published()) == 50
+    #
+    # 55 dal 24 settembre 2026, `REL-003` (I-124, D-184): la pompa di calore di
+    # alta potenza, la caldaia modulare, il collettore solare, il bollitore a
+    # due serpentini e il ventilconvettore canalizzato.
+    assert len(published()) == 55
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)

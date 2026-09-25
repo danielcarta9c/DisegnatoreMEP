@@ -165,6 +165,46 @@ comune ma nessuna fonte acquisita la documenta ancora. La stringa lo dice,
 il rinvio e' registrato: vietato inventare vale anche per le citazioni
 (D-083), e un puntatore a un documento non verificato sarebbe inventato."""
 
+SOURCE_REL003_LARGE_HEAT_PUMP = (
+    "pratica di settore: Caleffi, Idraulica 65 (gennaio 2024), figg. 4, 47 e 48, PDF pp. 8, 40 "
+    "e 42 (SRC-030); schemi funzionali pubblici di Padova, tav. M.02 (SRC-031), e di Carrara, "
+    "tav. PD.IM.03.00 (SRC-032) — batteria alettata sulla faccia, vano tecnico con gli attacchi "
+    "sul fianco, mandata sopra, ventilatori sul lato superiore; la domestica ha invece il "
+    "ventilatore a disco sul fronte. UNI 9511 non ha il segno"
+)
+"""La pompa di calore aria-acqua di alta potenza (`REL-003`, D-184)."""
+SOURCE_REL003_MODULAR_BOILER = (
+    "pratica di settore: Caleffi, schema 1.103, due moduli termici in un involucro, PDF p. 1 "
+    "(SRC-033); Division Energia, generatore modulare «GM» della centrale Tower House (SRC-009) — "
+    "moduli affiancati nell'involucro, divisoria e triangolo piatto su ciascuno, collettori "
+    "comuni, mandata e ritorno sul fianco destro con la mandata piu' in alto. Nelle fonti i "
+    "collettori corrono sotto i moduli; qui la mandata corre sopra, per tenere le quote +5 e +20 "
+    "di ogni macchina. UNI 9511 non ha il segno"
+)
+"""La caldaia modulare a condensazione (`REL-003`, D-184)."""
+SOURCE_REL003_SOLAR_COLLECTOR = (
+    "pratica di settore: Wolf, schema idraulico 32-52-006-305, PDF p. 1 (SRC-034); Caleffi, "
+    "Idraulica 32 (giugno 2007), PDF p. 22 (SRC-035) — pannello lungo e stretto inclinato, mandata "
+    "dall'estremo alto e ritorno da quello basso; il sole e' quello di Wolf. UNI 9511 non ha il "
+    "segno"
+)
+"""Il collettore solare termico (`REL-003`, D-184)."""
+SOURCE_REL003_TWIN_COIL = (
+    "pratica di settore: Cordivari, Sistema termico solare B2 (luglio 2022), PDF p. 3 (SRC-036); "
+    "Vaillant, specifica tecnica solare termico 2017, PDF pp. 19 e 79 (SRC-037) — serpentino "
+    "solare sotto e di integrazione sopra, ciascuno con l'ingresso in alto, attacchi dei "
+    "serpentini dallo stesso lato; mantello, acqua calda, acqua fredda, sonda e ricircolo come il "
+    "bollitore della libreria. UNI 9511 ha il solo scambiatore ad accumulo a un serpentino"
+)
+"""Il bollitore a due serpentini (`REL-003`, D-184)."""
+SOURCE_REL003_DUCTED_FAN_COIL = (
+    "il ventilconvettore della libreria (pratica di settore, cfr. SRC-008) con i collari dei "
+    "canali: Sabiana, catalogo Maestro MTL (04/2026), PDF pp. 26 e 89, plenum con codoli e aria "
+    "che entra ed esce da due facce opposte (SRC-039); Palermo, Stazione Politeama, schema "
+    "funzionale dell'impianto HVAC, ventilconvettori canalizzabili (SRC-040)"
+)
+"""Il ventilconvettore canalizzato (`REL-003`, D-184)."""
+
 
 def n(value: float) -> str:
     """Numero stabile nel testo SVG: nessuna coda in virgola mobile."""
@@ -721,6 +761,7 @@ def reserve_body(
     coil: tuple[str, str] | None = None,
     rows: int = 5,
     smooth: bool = False,
+    second_coil: tuple[str, str] | None = None,
 ) -> str:
     """Una riserva: il mantello, gli attacchi che entrano nel volume e, se un
     fluido la attraversa senza mescolarsi, il suo serpentino.
@@ -733,6 +774,11 @@ def reserve_body(
     dell'acqua calda. Quale coppia di attacchi sia il serpentino lo dice il
     catalogo — i fluidi diversi da quello tenuto in serbo — e qui si scrive per
     nome soltanto perche' questo generatore non legge il catalogo.
+
+    Il **secondo serpentino** e' quello del bollitore a due serpentini
+    (`REL-003`, D-184): si traccia come il primo, dal proprio ingresso alla
+    propria uscita, sotto di lui. E' lo stesso segno ripetuto, non un segno
+    nuovo.
     """
     x, y, bw, bh = _shell_of(w, h)
     shell = (
@@ -740,12 +786,17 @@ def reserve_body(
         f'rx="{n(bw * 0.18)}"/>'
     )
     by_id = {item["id"]: item for item in ports}
-    through = set(coil or ())
+    through = set(coil or ()) | set(second_coil or ())
     stubs = stubs_into_the_shell([item for item in ports if item["id"] not in through], w, h)
     if coil is None:
         return shell + stubs
     drawn = smooth_coil_between if smooth else coil_between
-    return shell + drawn(by_id[coil[0]], by_id[coil[1]], w, h, rows) + stubs
+    second = (
+        drawn(by_id[second_coil[0]], by_id[second_coil[1]], w, h, rows)
+        if second_coil is not None
+        else ""
+    )
+    return shell + drawn(by_id[coil[0]], by_id[coil[1]], w, h, rows) + second + stubs
 
 
 def diverting_valve_body(w: float, h: float) -> str:
@@ -807,6 +858,168 @@ def underfloor_body(w: float, h: float) -> str:
     )
 
 
+def large_heat_pump_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Pompa di calore aria-acqua di alta potenza (`REL-003`, D-184), in prospetto.
+
+    E' la forma che le fonti danno alla macchina grande, e che la distingue da
+    quella domestica (SRC-030, SRC-031, SRC-032): la faccia e' occupata dalla
+    **batteria alettata**, disegnata come un pannello a lamelle orizzontali; a
+    un'estremita' c'e' il **vano tecnico**, dal cui fianco escono mandata e
+    ritorno; e i **ventilatori stanno sopra**, come profili bassi che sporgono
+    dal lato superiore. La domestica ha invece il ventilatore a disco sul
+    fronte: e' la differenza che Caleffi mette sulla stessa pagina, con due
+    casse di proporzioni quasi uguali.
+
+    Due ventilatori, come nello schema pubblico di Padova: quanti ne abbia la
+    macchina vera lo dice la scheda, non il segno.
+    """
+    inset = 2.4
+    top, bottom = 3.0, h - 3.0
+    divider = inset + (w - 2 * inset) * 0.69
+    panel_x0, panel_x1 = inset + 2.5, divider - 2.5
+    panel_y0, panel_y1 = top + 2.5, bottom - 2.5
+    # Le lamelle fitte come in una batteria vera (Padova, Carrara): rade, il
+    # pannello si leggeva come una scaffalatura.
+    lamellae = 10
+    lines = "".join(
+        f'<line x1="{n(panel_x0)}" y1="{n(panel_y0 + (panel_y1 - panel_y0) * i / lamellae)}" '
+        f'x2="{n(panel_x1)}" y2="{n(panel_y0 + (panel_y1 - panel_y0) * i / lamellae)}"/>'
+        for i in range(1, lamellae)
+    )
+    fans = []
+    for centre in (inset + (divider - inset) * 0.27, inset + (divider - inset) * 0.73):
+        half = (divider - inset) * 0.18
+        x0, x1 = centre - half, centre + half
+        # Il profilo di un ventilatore visto di fianco: una base larga e bassa
+        # con il mozzo in mezzo, che sporge sopra la cassa.
+        fans.append(
+            f'<path d="M{n(x0)} {n(top)} L{n(x0)} {n(top - 1.2)} L{n(centre - half * 0.35)} '
+            f'{n(top - 1.2)} L{n(centre - half * 0.35)} {n(top - 2.2)} L{n(centre + half * 0.35)} '
+            f'{n(top - 2.2)} L{n(centre + half * 0.35)} {n(top - 1.2)} L{n(x1)} {n(top - 1.2)} '
+            f'L{n(x1)} {n(top)}"/>'
+        )
+    return (
+        f'<rect x="{n(inset)}" y="{n(top)}" width="{n(w - 2 * inset)}" height="{n(bottom - top)}"/>'
+        f'<line x1="{n(divider)}" y1="{n(top)}" x2="{n(divider)}" y2="{n(bottom)}"/>'
+        f'<rect x="{n(panel_x0)}" y="{n(panel_y0)}" width="{n(panel_x1 - panel_x0)}" '
+        f'height="{n(panel_y1 - panel_y0)}"/>'
+        + lines
+        + "".join(fans)
+        + stubs_to_ports(ports, w, h, inset)
+    )
+
+
+MODULE_COUNT = 3
+"""Quanti moduli disegna la caldaia modulare: un numero di segno, non di prodotto.
+
+Le fonti ne disegnano due (Caleffi), tre (Ancona), quattro (Division Energia):
+tre dicono «piu' moduli» senza affollare il riquadro. Quanti ne abbia la
+caldaia vera lo scrive la sua sigla, non il simbolo."""
+
+
+def modular_boiler_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Caldaia modulare a condensazione (`REL-003`, D-184): i moduli nell'involucro.
+
+    **Un generatore solo, con i moduli disegnati dentro.** Le fonti schematiche
+    (SRC-033, e il generatore «GM» di SRC-009) disegnano moduli uguali
+    affiancati dentro un involucro comune, collegati a due collettori da cui
+    escono **una** mandata e **un** ritorno, sul fianco destro, la mandata piu'
+    in alto. Su ciascun modulo il segno di Caleffi e di Division Energia, uguale
+    al centesimo nelle due fonti: una **divisoria** a 0,69 dell'altezza e, subito
+    sopra, un **triangolo piatto** col vertice in alto, base 0,67 della
+    larghezza e altezza 0,27 della base. Nessuna fiamma.
+
+    ⚠ **Dove le fonti e questo segno si scostano, e perche'.** Nelle fonti i due
+    collettori corrono entrambi **sotto** i moduli. Qui la mandata corre
+    **sopra** e il ritorno **sotto**, come due collettori fra cui i moduli
+    stanno in parallelo: e' il solo modo di tenere mandata e ritorno alle quote
+    **+5 e +20** di tutte le altre macchine, che e' cio' che tiene dritte le
+    autostrade (D-159). E' una scelta di questa sessione, da far vedere al PO.
+    """
+    inset = 2.4
+    top, bottom = 2.0, h - 2.0
+    supply_y = next(item["y_mm"] for item in ports if item["id"] == "water_supply")
+    return_y = next(item["y_mm"] for item in ports if item["id"] == "water_return")
+    module_w = 11.0
+    module_top, module_bottom = supply_y + 2.5, return_y - 2.5
+    module_h = module_bottom - module_top
+    pitch = 14.0
+    first = inset + 10.6
+    centres = [first + pitch * index for index in range(MODULE_COUNT)]
+    parts = [
+        f'<rect x="{n(inset)}" y="{n(top)}" width="{n(w - 2 * inset)}" height="{n(bottom - top)}" '
+        f'rx="{n(1.5)}"/>'
+    ]
+    for centre in centres:
+        x0 = centre - module_w / 2
+        divider = module_top + module_h * 0.69
+        base = module_w * 0.67
+        apex = divider - base * 0.27
+        parts.append(
+            f'<rect x="{n(x0)}" y="{n(module_top)}" width="{n(module_w)}" height="{n(module_h)}" '
+            f'rx="{n(0.6)}"/>'
+            f'<line x1="{n(x0)}" y1="{n(divider)}" x2="{n(x0 + module_w)}" y2="{n(divider)}"/>'
+            f'<path d="M{n(centre - base / 2)} {n(divider)} L{n(centre)} {n(apex)} '
+            f'L{n(centre + base / 2)} {n(divider)}"/>'
+            f'<line x1="{n(centre)}" y1="{n(module_top)}" x2="{n(centre)}" y2="{n(supply_y)}"/>'
+            f'<line x1="{n(centre)}" y1="{n(module_bottom)}" x2="{n(centre)}" y2="{n(return_y)}"/>'
+        )
+    # I due collettori: dal primo modulo fino all'attacco, fuori dall'involucro.
+    parts.append(
+        f'<line x1="{n(w)}" y1="{n(supply_y)}" x2="{n(centres[0])}" y2="{n(supply_y)}"/>'
+        f'<line x1="{n(w)}" y1="{n(return_y)}" x2="{n(centres[0])}" y2="{n(return_y)}"/>'
+    )
+    return "".join(parts)
+
+
+def solar_collector_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Collettore solare termico (`REL-003`, D-184): il pannello inclinato e il sole.
+
+    La forma ricorrente negli schemi (SRC-034, SRC-035): un **rettangolo lungo e
+    stretto, inclinato**, senza tubi disegnati dentro; la **mandata esce
+    dall'estremo alto**, il **ritorno entra da quello basso**. Il sole e' quello
+    dello schema Wolf; Caleffi disegna i raggi come frecce sul pannello. Un
+    simbolo solo vale per il campo intero, come per ogni altra macchina: quanti
+    collettori ci siano lo scrive la sigla.
+
+    Il pannello sale verso destra, cosi' l'estremo alto sta accanto alla
+    mandata, che esce diritta, e il ritorno arriva dal basso passando sotto il
+    pannello: nessuna linea attraversa il corpo.
+    """
+    supply = next(item for item in ports if item["id"] == "supply")
+    ret = next(item for item in ports if item["id"] == "return")
+    upper = (w * 0.75, supply["y_mm"])
+    lower = (w * 0.3125, ret["y_mm"] - 2.5)
+    dx, dy = upper[0] - lower[0], upper[1] - lower[1]
+    length = (dx * dx + dy * dy) ** 0.5
+    # La normale al pannello, e il suo spessore.
+    nx, ny = -dy / length, dx / length
+    half = 1.5
+    corners = [
+        (lower[0] - nx * half, lower[1] - ny * half),
+        (lower[0] + nx * half, lower[1] + ny * half),
+        (upper[0] + nx * half, upper[1] + ny * half),
+        (upper[0] - nx * half, upper[1] - ny * half),
+    ]
+    panel = "M" + " L".join(f"{n(x)} {n(y)}" for x, y in corners) + " Z"
+    sun_x, sun_y, sun_r = w * 0.19, h * 0.3, 2.0
+    rays = "".join(
+        f'<line x1="{n(sun_x + (sun_r + 0.8) * c)}" y1="{n(sun_y + (sun_r + 0.8) * s)}" '
+        f'x2="{n(sun_x + (sun_r + 2.0) * c)}" y2="{n(sun_y + (sun_r + 2.0) * s)}"/>'
+        for c, s in (
+            (1.0, 0.0), (0.7071, 0.7071), (0.0, 1.0), (-0.7071, 0.7071),
+            (-1.0, 0.0), (-0.7071, -0.7071), (0.0, -1.0), (0.7071, -0.7071),
+        )
+    )
+    return (
+        f'<path d="{panel}"/>'
+        f'<line x1="{n(supply["x_mm"])}" y1="{n(supply["y_mm"])}" x2="{n(upper[0])}" y2="{n(upper[1])}"/>'
+        f'<path d="M{n(ret["x_mm"])} {n(ret["y_mm"])} L{n(lower[0])} {n(ret["y_mm"])} '
+        f'L{n(lower[0])} {n(lower[1])}"/>'
+        f'<circle cx="{n(sun_x)}" cy="{n(sun_y)}" r="{n(sun_r)}"/>' + rays
+    )
+
+
 def fan_coil_body(w: float, h: float) -> str:
     """Ventilconvettore: batteria alettata piu' ventilatore."""
     x, y = w * 0.1, h * 0.15
@@ -825,6 +1038,39 @@ def fan_coil_body(w: float, h: float) -> str:
         f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx - r * 0.65)}" y2="{n(cy + r * 0.38)}"/>'
         f'<line x1="{n(cx)}" y1="{n(cy)}" x2="{n(cx + r * 0.65)}" y2="{n(cy + r * 0.38)}"/>'
     )
+
+
+def ducted_fan_coil_body(w: float, h: float) -> str:
+    """Ventilconvettore canalizzato (`REL-003`, D-184): il ventilconvettore e i collari.
+
+    Il corpo e' **quello del ventilconvettore della libreria** — batteria alettata
+    e ventilatore —, perche' la convenzione grafica non si tocca (D-165) e un
+    canalizzato e' un ventilconvettore. Cio' che lo distingue sono i **collari
+    dei canali**, sulle due facce opposte da cui l'aria entra ed esce: i codoli
+    che il costruttore mette sul plenum (SRC-039), e l'aria che attraversa la
+    macchina da una faccia all'opposta, che e' la costante delle fonti
+    (SRC-039, SRC-040). Con l'acqua sulla faccia sinistra (D-167) le due facce
+    libere e opposte sono quella di sopra e quella di sotto, ed e' dove il
+    costruttore le mette: gli attacchi idraulici stanno sul fianco,
+    «guardando la direzione dell'aria».
+
+    Nessuna porta d'aria e nessuna tubazione d'aria (D-184): il collare e'
+    disegno, non attacco.
+    """
+    x, y = w * 0.1, h * 0.15
+    bw, bh = w * 0.8, h * 0.7
+    # Larghi e sporgenti quanto basta a leggersi a misura di stampa: il simbolo
+    # e' alto quindici millimetri, e un collare di un millimetro e mezzo non si
+    # vedeva.
+    left, right = x + bw * 0.2, x + bw * 0.8
+    depth = y * 0.9
+    collars = (
+        f'<path d="M{n(left)} {n(y)} L{n(left)} {n(y - depth)} L{n(right)} {n(y - depth)} '
+        f'L{n(right)} {n(y)}"/>'
+        f'<path d="M{n(left)} {n(y + bh)} L{n(left)} {n(y + bh + depth)} L{n(right)} '
+        f'{n(y + bh + depth)} L{n(right)} {n(y + bh)}"/>'
+    )
+    return fan_coil_body(w, h) + collars
 
 
 # --- accessori con derivazione disegnata nel corpo ------------------------
@@ -1304,7 +1550,9 @@ non si sposta comunque**.
 """
 
 
-def two_port_terminal(symbol_id: str, name: str, body_of: Any, source: str) -> SymbolSpec:
+def two_port_terminal(
+    symbol_id: str, name: str, body_of: Any, source: str, version: str = "1.1.0"
+) -> SymbolSpec:
     """Terminale d'impianto: ingresso e uscita **tutt'e due sulla faccia sinistra**.
 
     Non e' un componente in linea: la tubazione ci finisce dentro, non ci passa
@@ -1333,8 +1581,9 @@ def two_port_terminal(symbol_id: str, name: str, body_of: Any, source: str) -> S
         ports=porte,
         body=body_of(w, h) + stubs_to_ports(porte, w, h, w * 0.1),
         source=source,
-        # Una porta ha cambiato faccia: il manifesto sale di minore.
-        version="1.1.0",
+        # Una porta ha cambiato faccia: il manifesto dei quattro terminali di
+        # allora e' salito di minore. Un terminale nato dopo parte da 1.0.0.
+        version=version,
     )
 
 
@@ -1449,6 +1698,56 @@ DHW_HEAT_PUMP_PORTS = [
     # Anche il boiler in pompa di calore e' un accumulo di acqua calda
     # sanitaria, e D-176 vale per lui come per il bollitore.
     *RECIRCULATION_PORT,
+]
+
+# --- i simboli nuovi della prima release (`REL-003`, I-124, D-184) -----------
+# Le taglie seguono la gerarchia (D-055): una macchina di alta potenza e' larga
+# una volta e mezza quella domestica, alla stessa altezza. Gli attacchi seguono
+# le convenzioni in vigore: le macchine con mandata e ritorno sul fianco destro
+# a **+5 e +20**, come tutte le altre (D-159); i serpentini con gli attacchi che
+# dicono dove sta il serpentino, e che non scorrono (D-163).
+LARGE_MACHINE = (60.0, 30.0)
+MODULAR_BOILER = (60.0, 25.0)
+"""Alta cinque millimetri meno di una macchina: i moduli stanno fra la mandata
+a +5 e il ritorno a +20, e sotto il ritorno non c'e' niente da disegnare."""
+SOLAR_COLLECTOR = (40.0, 25.0)
+TWIN_COIL_STORAGE = (25.0, 55.0)
+"""Dieci millimetri piu' alto del bollitore a un serpentino: il secondo
+serpentino ha lo stesso interasse del primo, dieci, e sotto di lui l'acqua
+fredda."""
+
+LARGE_HEAT_PUMP_PORTS = [
+    port_at("water_supply", "right", 5.0, *LARGE_MACHINE),
+    port_at("water_return", "right", 20.0, *LARGE_MACHINE),
+]
+MODULAR_BOILER_PORTS = [
+    port_at("water_supply", "right", 5.0, *MODULAR_BOILER),
+    port_at("water_return", "right", 20.0, *MODULAR_BOILER),
+]
+SOLAR_COLLECTOR_PORTS = [
+    # Il fluido del circuito solare non e' acqua di riscaldamento, e il suo nome
+    # nel catalogo lo decide il PO (D-184, punto 5): gli attacchi si chiamano
+    # soltanto mandata e ritorno.
+    port_at("supply", "right", 5.0, *SOLAR_COLLECTOR),
+    port_at("return", "right", 20.0, *SOLAR_COLLECTOR),
+]
+TWIN_COIL_PORTS = [
+    # Il serpentino di integrazione, dove sta quello del bollitore a un
+    # serpentino: chi lo alimenta si collega alle stesse quote.
+    port_at("coil_in", "left", 7.5, *TWIN_COIL_STORAGE),
+    port_at("coil_out", "left", 17.5, *TWIN_COIL_STORAGE),
+    # Il serpentino solare, sotto: e' l'ordine del bollitore vero (SRC-037) —
+    # dal basso fredda, ritorno solare, mandata solare, ritorno e mandata
+    # dell'integrazione, calda.
+    port_at("solar_coil_in", "left", 27.5, *TWIN_COIL_STORAGE),
+    port_at("solar_coil_out", "left", 37.5, *TWIN_COIL_STORAGE),
+    port_at("dhw_out", "top", 7.5, *TWIN_COIL_STORAGE),
+    port_at("cold_in", "left", 47.5, *TWIN_COIL_STORAGE),
+    port_at("probe", "right", 20.0, *TWIN_COIL_STORAGE),
+    # Il ricircolo sul fianco della distribuzione, come ogni accumulo di acqua
+    # calda sanitaria (D-176). Vaillant e Cordivari lo mettono dal lato dei
+    # serpentini: e' annotato nel rapporto, e la decisione resta quella del PO.
+    port_at("recirculation_in", "right", 12.5, *TWIN_COIL_STORAGE),
 ]
 
 SYMBOLS: list[SymbolSpec] = [
@@ -1774,6 +2073,63 @@ SYMBOLS: list[SymbolSpec] = [
     two_port_terminal("radiator", "Radiatore", radiator_body, SOURCE_PRACTICE_HYDRONIC),
     two_port_terminal("underfloor-panel", "Pannello radiante", underfloor_body, SOURCE_PRACTICE_HYDRONIC),
     two_port_terminal("fan-coil", "Ventilconvettore", fan_coil_body, SOURCE_PRACTICE_HYDRONIC),
+    # --- i simboli nuovi della prima release (`REL-003`, I-124, D-184) -------
+    SymbolSpec(
+        id="heat-pump-air-water-large",
+        name="Pompa di calore aria-acqua di alta potenza",
+        width_mm=LARGE_MACHINE[0],
+        height_mm=LARGE_MACHINE[1],
+        inline=False,
+        ports=LARGE_HEAT_PUMP_PORTS,
+        body=large_heat_pump_body(*LARGE_MACHINE, LARGE_HEAT_PUMP_PORTS),
+        source=SOURCE_REL003_LARGE_HEAT_PUMP,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="gas-boiler-modular",
+        name="Caldaia modulare a condensazione",
+        width_mm=MODULAR_BOILER[0],
+        height_mm=MODULAR_BOILER[1],
+        inline=False,
+        ports=MODULAR_BOILER_PORTS,
+        body=modular_boiler_body(*MODULAR_BOILER, MODULAR_BOILER_PORTS),
+        source=SOURCE_REL003_MODULAR_BOILER,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="solar-collector",
+        name="Collettore solare",
+        width_mm=SOLAR_COLLECTOR[0],
+        height_mm=SOLAR_COLLECTOR[1],
+        inline=False,
+        ports=SOLAR_COLLECTOR_PORTS,
+        body=solar_collector_body(*SOLAR_COLLECTOR, SOLAR_COLLECTOR_PORTS),
+        source=SOURCE_REL003_SOLAR_COLLECTOR,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="dhw-cylinder-twin-coil",
+        name="Bollitore ACS a due serpentini",
+        width_mm=TWIN_COIL_STORAGE[0],
+        height_mm=TWIN_COIL_STORAGE[1],
+        inline=False,
+        ports=TWIN_COIL_PORTS,
+        # I due serpentini, ciascuno continuo dal proprio ingresso alla propria
+        # uscita, tracciati come quello del bollitore a un serpentino.
+        body=reserve_body(
+            *TWIN_COIL_STORAGE,
+            TWIN_COIL_PORTS,
+            coil=("coil_in", "coil_out"),
+            rows=4,
+            second_coil=("solar_coil_in", "solar_coil_out"),
+        ),
+        source=SOURCE_REL003_TWIN_COIL,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    two_port_terminal(
+        "fan-coil-ducted", "Ventilconvettore canalizzato", ducted_fan_coil_body,
+        SOURCE_REL003_DUCTED_FAN_COIL, version=VERSION,
+    ),
     # --- aeraulico ----------------------------------------------------------
     inline_symbol("duct-damper", "Serranda", INLINE_ACCESSORY, duct_damper_body, SOURCE_PRACTICE_PENDING),
     single_port_symbol("air-diffuser", "Diffusore d'aria", DEVICE, "left", air_diffuser_body, SOURCE_PRACTICE_PENDING),
