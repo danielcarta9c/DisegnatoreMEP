@@ -308,6 +308,7 @@ def _draw(args: argparse.Namespace) -> int:
     project = load_project(args.project)
     symbols = SymbolRegistry.from_directory(args.symbols)
     catalog = ComponentRegistry.from_directory(args.catalog, symbols=symbols)
+    cartiglio = _carica_cartiglio(args)
     if args.verifica and args.naming is None:
         print(
             "--verifica richiede --naming: l'indirizzo di un nodo si scrive con "
@@ -365,7 +366,6 @@ def _draw(args: argparse.Namespace) -> int:
         drawing = with_addresses(drawing, project, catalog, frame, args.naming)
 
     args.out.mkdir(parents=True, exist_ok=True)
-    cartiglio = _carica_cartiglio(args)
     for sheet in drawing.sheets:
         target = args.out / f"{project.metadata.project_id}-{sheet.sheet_id}.svg"
         tavola = _cartiglio(project, cartiglio, sheet, frame)
@@ -411,6 +411,7 @@ def _piano(args: argparse.Namespace) -> int:
     simboli = SymbolRegistry.from_directory(args.symbols)
     catalogo = ComponentRegistry.from_directory(args.catalog, symbols=simboli)
     piano = carica_piano(args.piano)
+    cartiglio = _carica_cartiglio(args)
 
     esito = esegui_piano(
         modello, piano, catalogo, simboli, args.naming, verifica=args.verifica
@@ -440,7 +441,6 @@ def _piano(args: argparse.Namespace) -> int:
     _print_regole(rilievi_delle_regole(esito.disegno, esito.frame, catalogo, modello))
 
     args.out.mkdir(parents=True, exist_ok=True)
-    cartiglio = _carica_cartiglio(args)
     for foglio in esito.disegno.sheets:
         target = args.out / f"{modello.metadata.project_id}-{foglio.sheet_id}.svg"
         tavola = _cartiglio(modello, cartiglio, foglio, esito.frame)
@@ -488,12 +488,12 @@ def _revisiona(args: argparse.Namespace) -> int:
     simboli = SymbolRegistry.from_directory(args.symbols)
     catalogo = ComponentRegistry.from_directory(args.catalog, symbols=simboli)
     piano = carica_piano(args.piano)
+    cartiglio = _carica_cartiglio(args)
 
     esito = revisiona(
         modello, piano, catalogo, simboli, args.naming, tetto=args.tetto
     )
     args.out.mkdir(parents=True, exist_ok=True)
-    cartiglio = _carica_cartiglio(args)
 
     for giro in esito.giri:
         print(f"\n— giro {giro.numero}: {giro.punteggio.racconto()}")
