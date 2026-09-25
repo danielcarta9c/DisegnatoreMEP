@@ -91,7 +91,24 @@ contro l'angolo in basso a destra, e la testata corre per tutta la squadratura; 
 L'A4 è uscito dai formati ordinari: `frame.ORDINARY_FRAMES`, `piano/formato.py`, l'esecutore, il
 preflight, le istruzioni di «Comporre» e `docs/regole-del-piano.md`.
 
-**6. La suite** — *(in corso)*
+**6. La suite** — `pytest -q`, sul commit `106bc18` e su `main` a `130be28`, ciascuno in una copia
+ferma del repository:
+
+```
+main   130be28   46 failed, 1690 passed, 24 skipped, 12 xfailed
+ramo   106bc18   46 failed, 1743 passed, 24 skipped, 12 xfailed
+                 rosse nuove: 0 · rosse sparite: 0
+```
+
+Le 46 rosse sono **le stesse**, una per una. Zero `skip` e zero `xfail` nuovi. `ruff check src tests`:
+verde. `mypy src tests`: 4 errori, **gli stessi 4 di `main`**, in due file che questo pacchetto non
+tocca.
+
+La suite ha trovato **una cosa vera** a metà lavoro, ed è rimasta: togliendo l'A4 dalla scala, la
+posa di partenza — che anche l'esecutore del piano usa — smetteva di impilare sull'A3, perché la sua
+regola diceva «tranne sul foglio più piccolo» e il più piccolo era diventato l'A3. Sui cinque piani
+approvati non cambiava niente, su altri impianti sì. **La riga adesso nomina l'A4** (`layout/place.py`,
+fuori dal perimetro dichiarato, e il pacchetto lo dice), e una prova la tiene.
 
 ## Le scelte della sessione, da guardare
 
