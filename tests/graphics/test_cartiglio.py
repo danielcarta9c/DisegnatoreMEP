@@ -416,3 +416,24 @@ def test_il_comando_disegna_il_cartiglio(tmp_path: Path, capsys: pytest.CaptureF
     assert len(tavole) == 1
     svg = tavole[0].read_text(encoding="utf-8")
     assert 'class="cartiglio"' in svg and BOZZA in svg
+
+
+def test_un_dato_che_non_c_e_non_si_scrive_e_l_impronta_non_cambia() -> None:
+    """L'aggiunta e' davvero additiva: un documento senza i dati del cartiglio si
+    riscrive senza chiavi nuove — nemmeno `null` —, quindi `rules --apply-all`
+    scrive gli stessi byte di prima e l'impronta del progetto non cambia. Con un
+    dato, il dato si scrive."""
+    from disegnatore_mep.io.canonical import canonical_json
+
+    vecchio = progetto(address=None, sheet_title=None, sheet_number=None)
+    scritto = vecchio.model_dump(mode="json")["metadata"]
+    assert set(scritto) == {
+        "project_id", "client", "project_name", "commission_code", "revision", "issue_date",
+    }
+    assert '"address"' not in vecchio.model_dump_json()
+    assert '"address"' not in canonical_json(vecchio)
+    nuovo = progetto(address="Via di Prova 1")
+    assert nuovo.model_dump(mode="json")["metadata"]["address"] == "Via di Prova 1"
+    assert canonical_json(nuovo) != canonical_json(vecchio)
+    tavola_dichiarata = SheetIntentModel(id="t1", title="Distribuzione")
+    assert "number" not in tavola_dichiarata.model_dump()
