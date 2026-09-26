@@ -180,6 +180,18 @@ così:
 4. Mai scegliere per somiglianza di nome. Il nome può ingannare; i mestieri e gli
    attacchi no.
 
+**Le varianti: la stessa macchina con un altro simbolo** (D-187). Alcune voci dichiarano
+`variant`: fanno quello che fa la voce `variant.of`, hanno i suoi stessi attacchi, e si
+disegnano con un altro simbolo — la pompa di calore di **alta potenza**, la caldaia
+**modulare**, il ventilconvettore **canalizzato**. Mestieri e attacchi qui non ti aiutano,
+e il nome non deve farlo. **Scegli la variante solo se il testo la nomina**, con una delle
+espressioni di `variant.named_as` — «alta potenza», «grande taglia», «modulare», «a
+moduli», «canalizzato», «canalizzabile» — o con la stessa parola declinata
+(«modulari», «canalizzabili»). Se il testo non la nomina, la voce base, **anche per una
+macchina di grande potenza**: nessuna soglia di kW decide al posto del testo. E segui
+quello che la voce scelta porta a bordo: la pompa di calore di alta potenza e la
+caldaia modulare hanno il **circolatore integrato** (§6, tipo A).
+
 **Un aggettivo che dice cosa la macchina fa, cambia la voce.** «Caldaia **combinata**»,
 «boiler **in pompa di calore**», «pompa di calore **reversibile**»: prima di sceglierne
 una, chiediti se quell'aggettivo aggiunge un mestiere. Una macchina che produce anche
@@ -219,6 +231,17 @@ l'altra cosa.
 
 Il fluido resta il secondo criterio, e vale sempre: dove il fluido cambia, la rete
 cambia, anche a valle della stessa macchina.
+
+**Il circuito solare è una rete a sé, con il suo fluido**, `solar_fluid` (D-187): va dal
+collettore al serpentino solare del bollitore e torna. Il collettore è un generatore;
+il bollitore a due serpentini lo riconosci dagli attacchi `solar_coil_in` e
+`solar_coil_out`, che solo lui ha. **Su quella rete le regole non aggiungono niente**: il
+gruppo di circolazione solare — circolatore, ritegno, valvola di sicurezza, vaso,
+manometro, termometri, intercettazioni — lo trascrivi tu, come il testo lo descrive,
+con le voci di catalogo il cui fluido è `solar_fluid`. **Se il testo non lo descrive, non
+inventarlo**: una voce in `assumptions` dice che il circuito solare è disegnato senza, e
+chiede se va aggiunto. E nessun gruppo di riempimento dall'acquedotto: il circuito
+solare si riempie di fluido antigelo.
 
 **Il raffrescamento non ha un fluido suo** nella tabella: una macchina reversibile
 d'estate manda acqua fredda negli stessi tubi, e il circuito resta uno. Dichiaralo
@@ -543,6 +566,9 @@ Rispondi a queste domande. Se una risposta è «no», il lavoro non è finito.
 - Ogni cosa che il testo non dice — e che hai dovuto chiudere o lasciare fuori — è una
   voce di `assumptions`, leggibile dall'ingegnere?
 - `subsystems`, `rule_applications` e `sheets` sono liste vuote?
+- Ogni variante che hai scelto — alta potenza, modulare, canalizzato — il testo la
+  nomina davvero (§4.1)? E il gruppo di circolazione solare, se c'è un solare, è quello
+  del testo, o una domanda (§4.2)?
 
 **E le quattro cose da cui dipende tutto il resto della catena** — se una ti è rimasta
 oscura, quella è la domanda da fare (tipo C):

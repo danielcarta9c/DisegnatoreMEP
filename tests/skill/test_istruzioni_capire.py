@@ -101,3 +101,24 @@ def test_nessun_esempio_ricalca_una_soluzione_dei_testi_di_prova() -> None:
         (f"{ratio:.0%}", esempio[:70], reale[:70])
         for esempio, reale, ratio in troppo_simili
     ]
+
+
+def test_le_istruzioni_dicono_quando_si_sceglie_una_variante() -> None:
+    """D-187: la variante si sceglie solo quando il testo la nomina, e mai per
+    potenza. Il dato sta nel catalogo; la regola che dice di leggerlo sta qui, e
+    senza di lei il dato resterebbe muto."""
+    testo = ISTRUZIONI.read_text(encoding="utf-8")
+    assert "**Scegli la variante solo se il testo la nomina**" in testo
+    assert "`variant.named_as`" in testo
+    assert "nessuna soglia di kW decide al posto del testo" in testo
+    for parola in ("alta potenza", "modulare", "canalizzato"):
+        assert f"«{parola}»" in testo, parola
+
+
+def test_le_istruzioni_dicono_che_il_gruppo_solare_lo_trascrive_capire() -> None:
+    """D-187, punto 3: sulla rete solare le regole non aggiungono niente, quindi il
+    gruppo di circolazione o lo descrive il testo o diventa una domanda."""
+    testo = ISTRUZIONI.read_text(encoding="utf-8")
+    assert "`solar_fluid`" in testo
+    assert "**Su quella rete le regole non aggiungono niente**" in testo
+    assert "**Se il testo non lo descrive, non\ninventarlo**" in testo
