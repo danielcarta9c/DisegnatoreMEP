@@ -122,3 +122,10 @@ def test_le_istruzioni_dicono_che_il_gruppo_solare_lo_trascrive_capire() -> None
     assert "`solar_fluid`" in testo
     assert "**Su quella rete le regole non aggiungono niente**" in testo
     assert "**Se il testo non lo descrive, non\ninventarlo**" in testo
+    # Il primo giro in camera pulita (REL-003) ha trovato che senza queste due
+    # eccezioni il gruppo solare non si poteva trascrivere, e che senza la
+    # posizione il circolatore finiva sulla mandata, contro tutte le fonti.
+    assert "**la lista della ferramenta (§5) non vale**" in testo
+    assert "`tee-branch-solar`" in testo
+    assert "sul ritorno ai collettori" in testo
+    assert "**Non vale sul circuito solare**" in testo

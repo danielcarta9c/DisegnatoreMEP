@@ -243,6 +243,22 @@ inventarlo**: una voce in `assumptions` dice che il circuito solare è disegnato
 chiede se va aggiunto. E nessun gruppo di riempimento dall'acquedotto: il circuito
 solare si riempie di fluido antigelo.
 
+Per trascriverlo valgono **due eccezioni**, e solo sulla rete solare:
+
+- **la lista della ferramenta (§5) non vale**: ritegno, sicurezza, vaso, manometro,
+  termometri, intercettazioni, sfogo dell'aria del gruppo solare entrano nel grafo, se
+  il testo li nomina — nessun pezzo successivo li aggiungerebbe;
+- **i pezzi che pendono da uno stacco** — sicurezza, vaso, manometro, termometro, sfogo —
+  **si appendono al braccio `branch` di una derivazione a T solare** (`tee-branch-solar`),
+  una derivazione per pezzo: è l'unico caso in cui colleghi un attacco di servizio (§4.3).
+
+**Dove sta il gruppo, quando il testo non lo dice: sul ritorno ai collettori**, il lato
+freddo, fra l'uscita del serpentino solare e l'ingresso del collettore. È dove lo mettono
+gli schemi dei costruttori e dei progetti: circolatore e ritegno in linea, sicurezza,
+manometro e vaso appesi a quella tubazione. **Sul solare la convenzione del circolatore
+sulla mandata (§7) non vale.** Come ogni posizione che il testo non dice, va dichiarata
+come assunzione.
+
 **Il raffrescamento non ha un fluido suo** nella tabella: una macchina reversibile
 d'estate manda acqua fredda negli stessi tubi, e il circuito resta uno. Dichiaralo
 `heating_water` come il resto del circuito, e metti in `assumptions` che la macchina è
@@ -508,7 +524,8 @@ qualunque cosa il testo abbia già scritto — a partire dalle potenze.
   pezzo a sé («un circuito con circolatore dedicato») ma non dice su quale ramo, mettilo
   sulla **mandata** del circuito che serve: è la posizione convenzionale, e va
   dichiarata come assunzione. Non è una regola dell'impianto, è una convenzione di
-  disegno: perciò si dichiara.
+  disegno: perciò si dichiara. **Non vale sul circuito solare**, dove il gruppo sta sul
+  ritorno ai collettori (§4.2).
 - **Master, slave, cascata, priorità** sono regolazione (§4.5), non pezzi.
 - Il testo può nominare un accessorio per dire **dove** sta un attacco («sul volume
   tecnico sono previsti il carico e lo scarico»): resta ferramenta, resta fuori, la
@@ -556,9 +573,10 @@ Rispondi a queste domande. Se una risposta è «no», il lavoro non è finito.
 
 - Il JSON carica con lo strumento di validazione?
 - Ogni `definition_id` esiste nel catalogo, e nessuno ha un mestiere della lista
-  «ferramenta» (§5)?
+  «ferramenta» (§5) — salvo i pezzi del gruppo solare, sulla rete solare (§4.2)?
 - Ogni attacco usato esiste nel catalogo del suo pezzo, nessun attacco porta due
-  tubazioni, nessuna tubazione tocca un attacco `stub`?
+  tubazioni, nessuna tubazione tocca un attacco `stub` — salvo il braccio delle
+  derivazioni solari, da cui pendono i pezzi del gruppo (§4.2)?
 - Ogni tubazione va da una porta `out` a una porta `in`, sullo stesso fluido?
 - I `tag` sono solo quelli scritti dall'ingegnere, e tutti gli altri sono `null`?
 - Ogni componente e ogni tubazione compare nella tabella di rilettura, agganciato a una
