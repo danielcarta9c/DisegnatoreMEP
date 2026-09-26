@@ -126,6 +126,73 @@ def test_supply_and_return_of_one_fluid_are_told_apart() -> None:
     )
 
 
+def test_the_solar_circuit_is_magenta_both_ways() -> None:
+    """D-187: il PO, «magenta sia mandata che ritorno». E' l'unico fluido il cui
+    ritorno non cambia colore, e deve restare distinto dal riscaldamento e dal
+    refrigerante, che sulla stessa tavola possono esserci."""
+    andata, ritorno = style_for("solar_fluid"), style_for("solar_fluid", supply=False)
+    assert andata == ritorno
+    assert andata[0] not in {
+        style_for(medium, supply=verso)[0]
+        for medium in ("heating_water", "refrigerant_liquid", "refrigerant_gas", "domestic_hot_water")
+        for verso in (True, False)
+    }
+
+
+def test_the_solar_fluid_has_its_italian_name() -> None:
+    """D-188: il fluido del circuito solare si chiama «fluido solare», in legenda
+    e in ogni documento che lo nomina."""
+    import json
+
+    from disegnatore_mep.layout.legend import MEDIUM_NAMES
+
+    assert MEDIUM_NAMES["solar_fluid"] == "Fluido solare"
+    media = json.loads((ROOT / "naming" / "media.json").read_text(encoding="utf-8"))["media"]
+    assert {"medium": "solar_fluid", "name": "fluido solare"} in media
+
+
+def test_the_solar_pair_is_one_row_when_both_are_drawn() -> None:
+    """D-187 in legenda. Il solare va e torna dello stesso magenta, e due righe
+    uguali non distinguono niente — e' la ragione per cui primario e secondario
+    ne hanno una sola. La coppia si scrive una volta, «andata e ritorno»; se la
+    tavola ne disegna una sola, la riga dice quale. Il riscaldamento, che torna
+    di un altro colore, resta su due righe. L'ha visto un agente in camera
+    pulita, sulla tavola dell'impianto 6."""
+    from disegnatore_mep.model.project import NetworkModel
+
+    project, placed, networks = drawn()
+    solare = NetworkModel(id="solare", name="solare", domain="hydronic", medium="solar_fluid")
+    project = project.model_copy(update={"networks": [*project.networks, solare]})
+
+    def tratta(medium: str, supply: bool) -> RoutedTrunk:
+        return RoutedTrunk(
+            network_id="solare" if medium == "solar_fluid" else networks[0],
+            medium=medium,
+            supply=supply,
+            connection_ids=["x"],
+            segments=[[Point(x_mm=100.0, y_mm=101.0), Point(x_mm=150.0, y_mm=101.0)]],
+        )
+
+    def righe(*tratte: RoutedTrunk) -> list[str]:
+        _, keys = build_legend(
+            project, placed, (*networks, "solare"), catalog(), NOVE_C_A3, routes=list(tratte)
+        )
+        return [item.name for item in keys]
+
+    assert righe(
+        tratta("heating_water", True),
+        tratta("heating_water", False),
+        tratta("solar_fluid", True),
+        tratta("solar_fluid", False),
+    ) == [
+        "Acqua di riscaldamento — andata",
+        "Acqua di riscaldamento — ritorno",
+        "Fluido solare — andata e ritorno",
+    ]
+    assert righe(tratta("solar_fluid", True)) == ["Fluido solare — andata"]
+    assert righe(tratta("solar_fluid", False)) == ["Fluido solare — ritorno"]
+
+
 def test_an_unknown_medium_falls_back_to_black() -> None:
     assert style_for("something_new") == ("#111111", "none")
     assert style_for("something_new", supply=False)[0] == "#5d6d7e"

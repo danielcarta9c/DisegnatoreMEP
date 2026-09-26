@@ -1,0 +1,37 @@
+{
+  "id": "solar-collector",
+  "version": "1.0.0",
+  "name": "Collettore solare",
+  "functions": [
+    "heat_generation"
+  ],
+  "traits": [
+    "maintainable",
+    "produces_air",
+    "needs_overpressure_protection",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "solar-collector",
+  "composite": false,
+  "ports": [
+    {
+      "id": "supply",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "return",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "in",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-188: il PO, 26 settembre 2026 (I-135)"
+  ]
+}

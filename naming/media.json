@@ -28,6 +28,10 @@
     {
       "medium": "refrigerant_gas",
       "name": "fluido frigorigeno in fase gassosa"
+    },
+    {
+      "medium": "solar_fluid",
+      "name": "fluido solare"
     }
   ]
 }

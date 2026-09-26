@@ -310,6 +310,32 @@ class HydraulicState(StrictModel):
         return self
 
 
+class Variant(StrictModel):
+    """La stessa macchina di un'altra voce, disegnata con un altro simbolo (D-188).
+
+    La pompa di calore di alta potenza fa quello che fa la domestica e ha gli
+    stessi attacchi; lo stesso la caldaia modulare con la murale e il
+    ventilconvettore canalizzato con quello a vista. Mestieri e attacchi non le
+    distinguono, e il nome non deve farlo: chi legge il testo dell'ingegnere
+    sceglie la variante **solo quando il testo la nomina** con una delle
+    espressioni di `named_as` — «alta potenza», «modulare», «canalizzato» —, e
+    altrimenti la voce base. Nessuna soglia di potenza: e' la decisione del PO.
+    """
+
+    of: str = Field(pattern=ID_PATTERN)
+    """La voce base: quella che si sceglie quando il testo non nomina la variante."""
+
+    named_as: list[str] = Field(min_length=1)
+    """Le espressioni con cui il testo nomina la variante, come le ha date il PO."""
+
+    @model_validator(mode="after")
+    def names_are_words(self) -> "Variant":
+        empty = [item for item in self.named_as if not item.strip()]
+        if empty:
+            raise ValueError("una variante si nomina con parole, non con stringhe vuote")
+        return self
+
+
 class OnBoard(StrEnum):
     """Cosa il catalogo dice di una funzione **dentro il mantello** (I-046).
 
@@ -408,6 +434,12 @@ class ComponentDefinition(StrictModel):
     """
 
     symbol_id: str = Field(pattern=ID_PATTERN)
+    variant: Variant | None = None
+    """Questa voce e' la **variante** di un'altra: la stessa macchina, un altro
+    simbolo, e si sceglie solo quando il testo la nomina (D-188). Che mestieri e
+    attacchi coincidano con quelli della voce base lo controlla il registro, che
+    le vede tutte e due."""
+
     composite: bool = False
     """Il pezzo pubblicato e' un **gruppo**: dentro il suo mantello ci sono piu'
     organi.

@@ -1,0 +1,27 @@
+{
+  "id": "thermometer-solar",
+  "version": "1.0.0",
+  "name": "Termometro solare",
+  "functions": [
+    "temperature_measurement"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_branch"
+  ],
+  "symbol_id": "thermometer",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-188: il PO, 26 settembre 2026 (I-135)"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "id": "pump-circulator-solar",
+  "version": "1.0.0",
+  "name": "Pompa di circolazione solare",
+  "functions": [
+    "circulation"
+  ],
+  "traits": [
+    "maintainable",
+    "needs_debris_protection",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "pump-circulator",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-188: il PO, 26 settembre 2026 (I-135)"
+  ]
+}

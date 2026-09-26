@@ -308,9 +308,24 @@ def _already_there(
     return context.port_carries(anchor, function)
 
 
+MEDIA_WITHOUT_ACCESSORIES = frozenset({"solar_fluid"})
+"""I fluidi sulle cui reti **nessuna regola aggiunge niente** (D-188).
+
+Il PO, 26 settembre 2026: sul circuito solare il gruppo di circolazione lo
+descrive il progettista e lo trascrive chi legge il testo, e le regole non
+aggiungono niente — in particolare nessun gruppo di riempimento
+dall'acquedotto, perche' il circuito si riempie di fluido antigelo. Si decide
+qui, nel punto in cui il motore sceglie di quali reti una regola parla: le
+regole restano come sono, e un pezzo che sta su due reti — il bollitore a due
+serpentini — riceve il suo corredo sulla rete di riscaldamento e niente su
+quella solare."""
+
+
 def _matches(context: RuleContext, rule: RuleDefinition, network: NetworkModel) -> bool:
     """La rete e' una di quelle di cui la regola parla."""
     if network.domain != rule.when.network_domain:
+        return False
+    if network.medium in MEDIA_WITHOUT_ACCESSORIES:
         return False
     if rule.when.network_medium is not None and network.medium != rule.when.network_medium:
         return False

@@ -36,6 +36,10 @@ NEEDS_OVERPRESSURE_PROTECTION = "needs_overpressure_protection"
 HOLDS_ITS_OWN_VOLUME = "holds_its_own_volume"
 SHUTOFF_ORDINARY = "shutoff_ordinary"
 INLINE = "attachment_inline"
+BRANCH = "attachment_branch"
+SHUTOFF_NEVER = "shutoff_never"
+SHUTOFF_LOCKABLE_ONLY = "shutoff_lockable_only"
+SHUTOFF_INSTRUMENT_TAP = "shutoff_instrument_tap"
 
 HEATING = "heating_water"
 DHW = "domestic_hot_water"
@@ -45,6 +49,11 @@ DHW = "domestic_hot_water"
 # non veniva piu' rieseguito, e rigenerare il catalogo cambiava in silenzio il
 # fluido del bollitore.
 COLD = "cold_water"
+SOLAR = "solar_fluid"
+"""Il fluido del circuito solare (`REL-003`, D-188): si chiama «fluido solare», si
+disegna magenta sia in mandata sia in ritorno (D-187), e **le regole non
+aggiungono niente** sulle sue reti — il gruppo di circolazione lo descrive il
+progettista. Il circuito si riempie di fluido antigelo, non dall'acquedotto."""
 
 
 def service_port(port_id: str, serves: str, medium: str = HEATING) -> dict[str, Any]:
@@ -139,6 +148,8 @@ def definition(
     fills_from: str | None = None,
     hydraulic_states: list[dict[str, Any]] | None = None,
     composite: bool = False,
+    variant: dict[str, Any] | None = None,
+    sources: list[str] | None = None,
 ) -> dict[str, Any]:
     """Una voce di catalogo. `traits` non ha default **per scelta**: un
     componente che non dichiara come si isola non deve poter nascere da qui piu'
@@ -172,16 +183,234 @@ def definition(
     # dichiara, e chi tace resta com'e' sempre stato.
     if hydraulic_states is not None:
         entry["hydraulic_states"] = hydraulic_states
+    entry["symbol_id"] = symbol_id or definition_id
+    # La stessa macchina di un'altra voce, con un altro simbolo: si sceglie solo
+    # quando il testo la nomina (D-188). Chi la dichiara la scrive qui, e il
+    # registro controlla che mestieri e attacchi siano quelli della voce base.
+    if variant is not None:
+        entry["variant"] = variant
     entry.update(
         {
-            "symbol_id": symbol_id or definition_id,
             "composite": composite,
             "ports": ports,
-            "sources": [SOURCE],
+            "sources": [SOURCE, *(sources or [])],
         }
     )
     return entry
 
+
+GENERATOR_TRAITS = [
+    MAINTAINABLE,
+    NEEDS_DEBRIS_PROTECTION,
+    PRODUCES_AIR,
+    NEEDS_OVERPRESSURE_PROTECTION,
+    SHUTOFF_ORDINARY,
+    INLINE,
+]
+"""I caratteri della pompa di calore e della caldaia: le varianti li hanno uguali."""
+
+D188 = "D-188: il PO, 26 settembre 2026 (I-135)"
+
+
+def solar_accessory(
+    definition_id: str,
+    name: str,
+    functions: list[str],
+    traits: list[str],
+    ports: list[dict[str, Any]],
+    symbol_id: str,
+) -> dict[str, Any]:
+    """Un accessorio del circuito solare: lo stesso pezzo, con il fluido solare.
+
+    Ogni voce dichiara il fluido dei propri attacchi, come fanno i pezzi
+    sanitari: il circolatore del solare e' il circolatore, disegnato con lo
+    stesso simbolo, e cambia soltanto cio' che ci scorre dentro (D-184)."""
+    return definition(
+        definition_id, name, functions, traits, ports, symbol_id=symbol_id, sources=[D188]
+    )
+
+
+REL_003: list[dict[str, Any]] = [
+    # --- i simboli nuovi della prima release (`REL-003`, D-184, D-188) -------
+    # **Tre varianti**: la stessa macchina del fratello — stessi mestieri, stessi
+    # attacchi —, un altro simbolo. Si sceglie solo quando il testo la nomina con
+    # le parole del PO, e mai per potenza.
+    definition(
+        "heat-pump-air-water-large",
+        "Pompa di calore aria-acqua di alta potenza",
+        ["heat_generation"],
+        GENERATOR_TRAITS,
+        [
+            hydronic_port("water_supply", "out"),
+            hydronic_port("water_return", "in"),
+        ],
+        # Il circolatore a bordo, come la monoblocco domestica: cosi' la
+        # disegnano Caleffi (SRC-030, fig. 47) e il progetto di Padova (SRC-031),
+        # e cosi' l'ha confermato il PO (D-188).
+        carries_on_board=["circulation"],
+        variant={"of": "heat-pump-air-water", "named_as": ["alta potenza", "grande taglia"]},
+        sources=[D188],
+    ),
+    definition(
+        "gas-boiler-modular",
+        "Caldaia modulare a condensazione",
+        ["heat_generation"],
+        GENERATOR_TRAITS,
+        [
+            hydronic_port("water_supply", "out"),
+            hydronic_port("water_return", "in"),
+        ],
+        # Il PO, 26 settembre 2026: «anche loro le danno sempre con circolatore
+        # integrato» (D-188). E' la differenza di contenuto con la murale, che
+        # non dichiara niente a bordo.
+        carries_on_board=["circulation"],
+        variant={"of": "gas-boiler", "named_as": ["modulare", "a moduli"]},
+        sources=[D188],
+    ),
+    definition(
+        "fan-coil-ducted",
+        "Ventilconvettore canalizzato",
+        ["emission"],
+        [MAINTAINABLE, FOULS_CIRCUIT, SHUTOFF_ORDINARY, INLINE],
+        [hydronic_port("in", "in"), hydronic_port("out", "out")],
+        variant={"of": "fan-coil", "named_as": ["canalizzato", "canalizzabile"]},
+        sources=[D188],
+    ),
+    # **Il solare.** Il collettore e' un generatore (D-188), sigla GT; i suoi
+    # attacchi portano il fluido solare, e sulle reti di quel fluido le regole
+    # non aggiungono niente: i caratteri dicono che cosa e' vero del pezzo, non
+    # accendono corredo.
+    definition(
+        "solar-collector",
+        "Collettore solare",
+        ["heat_generation"],
+        [MAINTAINABLE, PRODUCES_AIR, NEEDS_OVERPRESSURE_PROTECTION, SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("supply", "out", SOLAR),
+            hydronic_port("return", "in", SOLAR),
+        ],
+        sources=[D188],
+    ),
+    definition(
+        # Il bollitore a due serpentini: il serpentino di integrazione dove sta
+        # quello del bollitore a un serpentino, il solare sotto. Non e' una
+        # variante: ha attacchi che nessun'altra voce ha, ed e' da quelli che lo
+        # si sceglie (D-188).
+        "dhw-cylinder-twin-coil",
+        "Bollitore ACS a due serpentini",
+        ["dhw_storage"],
+        [
+            MAINTAINABLE,
+            NEEDS_OVERPRESSURE_PROTECTION,
+            HOLDS_ITS_OWN_VOLUME,
+            SHUTOFF_ORDINARY,
+            INLINE,
+        ],
+        [
+            hydronic_port("coil_in", "in"),
+            hydronic_port("coil_out", "out"),
+            hydronic_port("solar_coil_in", "in", SOLAR),
+            hydronic_port("solar_coil_out", "out", SOLAR),
+            hydronic_port("dhw_out", "out", DHW, required=False),
+            hydronic_port("cold_in", "in", COLD, required=False),
+            service_port("probe", "temperature_measurement", DHW),
+            recirculation_port(),
+        ],
+        stored_medium=DHW,
+        fills_from="cold_in",
+        sources=[D188],
+    ),
+    # Gli accessori del circuito solare: quelli del gruppo di circolazione
+    # (D-184) — circolatore, ritegno, sicurezza, vaso, manometro, termometro,
+    # intercettazione — piu' lo sfogo dell'aria, lo scarico e i raccordi.
+    solar_accessory(
+        "pump-circulator-solar", "Pompa di circolazione solare", ["circulation"],
+        [MAINTAINABLE, NEEDS_DEBRIS_PROTECTION, SHUTOFF_ORDINARY, INLINE],
+        [hydronic_port("a", "in", SOLAR), hydronic_port("b", "out", SOLAR)],
+        "pump-circulator",
+    ),
+    solar_accessory(
+        "valve-check-solar", "Valvola di ritegno solare", ["non_return"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [hydronic_port("a", "in", SOLAR), hydronic_port("b", "out", SOLAR)],
+        "valve-check",
+    ),
+    solar_accessory(
+        "valve-isolation-solar", "Valvola di intercettazione solare", ["isolation"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "bidirectional", SOLAR),
+            hydronic_port("b", "bidirectional", SOLAR),
+        ],
+        "valve-isolation",
+    ),
+    solar_accessory(
+        "valve-safety-solar", "Valvola di sicurezza solare", ["safety"],
+        [SHUTOFF_NEVER, BRANCH],
+        [hydronic_port("a", "bidirectional", SOLAR)],
+        "valve-safety",
+    ),
+    solar_accessory(
+        "expansion-connection-solar", "Vaso di espansione solare", ["expansion"],
+        [MAINTAINABLE, SHUTOFF_LOCKABLE_ONLY, BRANCH],
+        [hydronic_port("a", "bidirectional", SOLAR)],
+        "expansion-connection",
+    ),
+    solar_accessory(
+        "pressure-gauge-solar", "Manometro solare", ["pressure_measurement"],
+        [MAINTAINABLE, SHUTOFF_INSTRUMENT_TAP, BRANCH],
+        [hydronic_port("a", "bidirectional", SOLAR)],
+        "pressure-gauge",
+    ),
+    solar_accessory(
+        "thermometer-solar", "Termometro solare", ["temperature_measurement"],
+        [SHUTOFF_ORDINARY, BRANCH],
+        [hydronic_port("a", "bidirectional", SOLAR)],
+        "thermometer",
+    ),
+    solar_accessory(
+        "air-vent-solar", "Valvola di sfogo aria solare", ["air_release"],
+        [SHUTOFF_ORDINARY, BRANCH],
+        [hydronic_port("a", "bidirectional", SOLAR)],
+        "air-vent",
+    ),
+    solar_accessory(
+        "drain-connection-solar", "Attacco di carico e scarico solare", ["drain"],
+        [SHUTOFF_ORDINARY, BRANCH],
+        [hydronic_port("a", "bidirectional", SOLAR)],
+        "drain-connection",
+    ),
+    solar_accessory(
+        "tee-junction-solar", "Raccordo a T solare", ["junction"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in", SOLAR),
+            hydronic_port("c", "in", SOLAR),
+            hydronic_port("b", "out", SOLAR),
+        ],
+        "tee-junction",
+    ),
+    solar_accessory(
+        "tee-split-solar", "Ripartizione a T solare", ["junction"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in", SOLAR),
+            hydronic_port("b", "out", SOLAR),
+            hydronic_port("c", "out", SOLAR),
+        ],
+        "tee-junction",
+    ),
+    solar_accessory(
+        "tee-branch-solar", "Derivazione a T solare", ["branch_off"],
+        [SHUTOFF_ORDINARY, INLINE],
+        [
+            hydronic_port("a", "in", SOLAR),
+            hydronic_port("b", "out", SOLAR),
+            branch_port(SOLAR),
+        ],
+        "tee-branch",
+    ),
+]
 
 DEFINITIONS: list[dict[str, Any]] = [
     definition(
@@ -619,6 +848,7 @@ DEFINITIONS: list[dict[str, Any]] = [
             hydronic_port("b", "bidirectional"),
         ],
     ),
+    *REL_003,
 ]
 
 NETWORKS = [

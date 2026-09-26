@@ -28,6 +28,45 @@ class ComponentRegistry:
             if symbols is not None:
                 self._check_symbol(definition, symbols)
             self._definitions[definition.id] = definition
+        for definition in self._definitions.values():
+            self._check_variant(definition)
+
+    def _check_variant(self, definition: ComponentDefinition) -> None:
+        """Una variante e' la stessa macchina della sua voce base (D-188).
+
+        Stessi mestieri e stessi attacchi — e' quello che rende la scelta una
+        questione di parole del testo e non di collegamenti —, un simbolo
+        diverso, e una base che non sia a sua volta una variante: altrimenti
+        chi sceglie non saprebbe da quale voce partire."""
+        variant = definition.variant
+        if variant is None:
+            return
+        base = self._definitions.get(variant.of)
+        if base is None:
+            raise CatalogError(
+                f"{definition.id} e' variante di {variant.of}, che non e' nel catalogo"
+            )
+        if base.variant is not None:
+            raise CatalogError(
+                f"{definition.id} e' variante di {variant.of}, che e' a sua volta una "
+                f"variante: la voce base dev'essere una sola"
+            )
+        if set(base.functions) != set(definition.functions):
+            raise CatalogError(
+                f"{definition.id} e' variante di {variant.of} ma non fa gli stessi "
+                f"mestieri: {sorted(definition.functions)} contro {sorted(base.functions)}"
+            )
+        ports = sorted(definition.ports, key=lambda item: item.id)
+        if ports != sorted(base.ports, key=lambda item: item.id):
+            raise CatalogError(
+                f"{definition.id} e' variante di {variant.of} ma non ha gli stessi "
+                f"attacchi: una variante si collega come la sua voce base"
+            )
+        if base.symbol_id == definition.symbol_id:
+            raise CatalogError(
+                f"{definition.id} e' variante di {variant.of} con lo stesso simbolo: "
+                f"una variante esiste per disegnarsi diversa"
+            )
 
     @staticmethod
     def _check_symbol(definition: ComponentDefinition, symbols: SymbolRegistry) -> None:

@@ -1,0 +1,531 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "prova-6-centrale-ibrida-solare",
+    "client": "Nove C — prova",
+    "project_name": "Centrale ibrida condominiale con pompa di calore di alta potenza, caldaia modulare e solare termico",
+    "commission_code": "PROVA-REL-003",
+    "revision": "00",
+    "issue_date": "2026-09-26"
+  },
+  "plant_regime": "over_35_kw",
+  "networks": [
+    {
+      "id": "circuito-primario",
+      "name": "Circuito primario dei generatori (volume tecnico e serpentino superiore del bollitore)",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "circuito-secondario",
+      "name": "Circuito secondario dal volume tecnico (radiatori e fan-coil canalizzati)",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "circuito-solare",
+      "name": "Circuito solare (collettori e serpentino inferiore del bollitore)",
+      "domain": "hydronic",
+      "medium": "solar_fluid"
+    },
+    {
+      "id": "rete-acqua-fredda",
+      "name": "Acqua fredda sanitaria al bollitore",
+      "domain": "hydronic",
+      "medium": "cold_water"
+    },
+    {
+      "id": "rete-acs",
+      "name": "Acqua calda sanitaria alle utenze",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "pdc",
+      "definition_id": "heat-pump-air-water-large",
+      "tag": null,
+      "properties": {
+        "potenza": "120 kW",
+        "tipo": "aria-acqua",
+        "taglia": "alta potenza"
+      }
+    },
+    {
+      "id": "caldaia",
+      "definition_id": "gas-boiler-modular",
+      "tag": null,
+      "properties": {
+        "potenza": "150 kW",
+        "tipo": "a condensazione",
+        "configurazione": "modulare"
+      }
+    },
+    {
+      "id": "rc-mandata-generatori",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-deviatrice",
+      "definition_id": "diverting-valve-3way",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "volume-tecnico",
+      "definition_id": "buffer-four-port",
+      "tag": null,
+      "properties": {
+        "volume": "1000 litri",
+        "configurazione": "a quattro tubi"
+      }
+    },
+    {
+      "id": "bollitore",
+      "definition_id": "dhw-cylinder-twin-coil",
+      "tag": null,
+      "properties": {
+        "volume": "1500 litri",
+        "configurazione": "a doppio serpentino",
+        "produzione": "centralizzata"
+      }
+    },
+    {
+      "id": "rc-ritorno-primario",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "rip-ritorno-generatori",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "rip-mandata-secondario",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "circolatore-radiatori",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "radiatori",
+      "definition_id": "radiator",
+      "tag": null,
+      "properties": {
+        "zona": "appartamenti"
+      }
+    },
+    {
+      "id": "circolatore-fancoil",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "fancoil",
+      "definition_id": "fan-coil-ducted",
+      "tag": null,
+      "properties": {
+        "tipo": "canalizzati",
+        "zona": "spazi comuni al piano terra"
+      }
+    },
+    {
+      "id": "rc-ritorno-secondario",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "collettore-solare",
+      "definition_id": "solar-collector",
+      "tag": null,
+      "properties": {
+        "descrizione": "campo di collettori solari termici"
+      }
+    },
+    {
+      "id": "circolatore-solare",
+      "definition_id": "pump-circulator-solar",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ritegno-solare",
+      "definition_id": "valve-check-solar",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "der-sicurezza-solare",
+      "definition_id": "tee-branch-solar",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "sicurezza-solare",
+      "definition_id": "valve-safety-solar",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "der-manometro-solare",
+      "definition_id": "tee-branch-solar",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "manometro-solare",
+      "definition_id": "pressure-gauge-solar",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "der-vaso-solare",
+      "definition_id": "tee-branch-solar",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "vaso-solare",
+      "definition_id": "expansion-connection-solar",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "alimentazione-af",
+      "definition_id": "cold-water-inlet",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "utenze-acs",
+      "definition_id": "dhw-draw-off",
+      "tag": null,
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "pr-1",
+      "network_id": "circuito-primario",
+      "endpoint_a": { "component_id": "pdc", "port_id": "water_supply" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori", "port_id": "c" },
+      "properties": {}
+    },
+    {
+      "id": "pr-2",
+      "network_id": "circuito-primario",
+      "endpoint_a": { "component_id": "caldaia", "port_id": "water_supply" },
+      "endpoint_b": { "component_id": "rc-mandata-generatori", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "pr-3",
+      "network_id": "circuito-primario",
+      "endpoint_a": { "component_id": "rc-mandata-generatori", "port_id": "b" },
+      "endpoint_b": { "component_id": "valvola-deviatrice", "port_id": "in" },
+      "properties": {}
+    },
+    {
+      "id": "pr-4",
+      "network_id": "circuito-primario",
+      "endpoint_a": { "component_id": "valvola-deviatrice", "port_id": "out_a" },
+      "endpoint_b": { "component_id": "volume-tecnico", "port_id": "primary_in" },
+      "properties": {}
+    },
+    {
+      "id": "pr-5",
+      "network_id": "circuito-primario",
+      "endpoint_a": { "component_id": "valvola-deviatrice", "port_id": "out_b" },
+      "endpoint_b": { "component_id": "bollitore", "port_id": "coil_in" },
+      "properties": {}
+    },
+    {
+      "id": "pr-6",
+      "network_id": "circuito-primario",
+      "endpoint_a": { "component_id": "volume-tecnico", "port_id": "primary_out" },
+      "endpoint_b": { "component_id": "rc-ritorno-primario", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "pr-7",
+      "network_id": "circuito-primario",
+      "endpoint_a": { "component_id": "bollitore", "port_id": "coil_out" },
+      "endpoint_b": { "component_id": "rc-ritorno-primario", "port_id": "c" },
+      "properties": {}
+    },
+    {
+      "id": "pr-8",
+      "network_id": "circuito-primario",
+      "endpoint_a": { "component_id": "rc-ritorno-primario", "port_id": "b" },
+      "endpoint_b": { "component_id": "rip-ritorno-generatori", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "pr-9",
+      "network_id": "circuito-primario",
+      "endpoint_a": { "component_id": "rip-ritorno-generatori", "port_id": "c" },
+      "endpoint_b": { "component_id": "pdc", "port_id": "water_return" },
+      "properties": {}
+    },
+    {
+      "id": "pr-10",
+      "network_id": "circuito-primario",
+      "endpoint_a": { "component_id": "rip-ritorno-generatori", "port_id": "b" },
+      "endpoint_b": { "component_id": "caldaia", "port_id": "water_return" },
+      "properties": {}
+    },
+    {
+      "id": "se-1",
+      "network_id": "circuito-secondario",
+      "endpoint_a": { "component_id": "volume-tecnico", "port_id": "secondary_out" },
+      "endpoint_b": { "component_id": "rip-mandata-secondario", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "se-2",
+      "network_id": "circuito-secondario",
+      "endpoint_a": { "component_id": "rip-mandata-secondario", "port_id": "c" },
+      "endpoint_b": { "component_id": "circolatore-radiatori", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "se-3",
+      "network_id": "circuito-secondario",
+      "endpoint_a": { "component_id": "circolatore-radiatori", "port_id": "b" },
+      "endpoint_b": { "component_id": "radiatori", "port_id": "in" },
+      "properties": {}
+    },
+    {
+      "id": "se-4",
+      "network_id": "circuito-secondario",
+      "endpoint_a": { "component_id": "radiatori", "port_id": "out" },
+      "endpoint_b": { "component_id": "rc-ritorno-secondario", "port_id": "c" },
+      "properties": {}
+    },
+    {
+      "id": "se-5",
+      "network_id": "circuito-secondario",
+      "endpoint_a": { "component_id": "rip-mandata-secondario", "port_id": "b" },
+      "endpoint_b": { "component_id": "circolatore-fancoil", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "se-6",
+      "network_id": "circuito-secondario",
+      "endpoint_a": { "component_id": "circolatore-fancoil", "port_id": "b" },
+      "endpoint_b": { "component_id": "fancoil", "port_id": "in" },
+      "properties": {}
+    },
+    {
+      "id": "se-7",
+      "network_id": "circuito-secondario",
+      "endpoint_a": { "component_id": "fancoil", "port_id": "out" },
+      "endpoint_b": { "component_id": "rc-ritorno-secondario", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "se-8",
+      "network_id": "circuito-secondario",
+      "endpoint_a": { "component_id": "rc-ritorno-secondario", "port_id": "b" },
+      "endpoint_b": { "component_id": "volume-tecnico", "port_id": "secondary_in" },
+      "properties": {}
+    },
+    {
+      "id": "so-1",
+      "network_id": "circuito-solare",
+      "endpoint_a": { "component_id": "collettore-solare", "port_id": "supply" },
+      "endpoint_b": { "component_id": "bollitore", "port_id": "solar_coil_in" },
+      "properties": {}
+    },
+    {
+      "id": "so-2",
+      "network_id": "circuito-solare",
+      "endpoint_a": { "component_id": "bollitore", "port_id": "solar_coil_out" },
+      "endpoint_b": { "component_id": "circolatore-solare", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "so-3",
+      "network_id": "circuito-solare",
+      "endpoint_a": { "component_id": "circolatore-solare", "port_id": "b" },
+      "endpoint_b": { "component_id": "ritegno-solare", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "so-4",
+      "network_id": "circuito-solare",
+      "endpoint_a": { "component_id": "ritegno-solare", "port_id": "b" },
+      "endpoint_b": { "component_id": "der-sicurezza-solare", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "so-5",
+      "network_id": "circuito-solare",
+      "endpoint_a": { "component_id": "der-sicurezza-solare", "port_id": "b" },
+      "endpoint_b": { "component_id": "der-manometro-solare", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "so-6",
+      "network_id": "circuito-solare",
+      "endpoint_a": { "component_id": "der-manometro-solare", "port_id": "b" },
+      "endpoint_b": { "component_id": "der-vaso-solare", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "so-7",
+      "network_id": "circuito-solare",
+      "endpoint_a": { "component_id": "der-vaso-solare", "port_id": "b" },
+      "endpoint_b": { "component_id": "collettore-solare", "port_id": "return" },
+      "properties": {}
+    },
+    {
+      "id": "so-8",
+      "network_id": "circuito-solare",
+      "endpoint_a": { "component_id": "der-sicurezza-solare", "port_id": "branch" },
+      "endpoint_b": { "component_id": "sicurezza-solare", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "so-9",
+      "network_id": "circuito-solare",
+      "endpoint_a": { "component_id": "der-manometro-solare", "port_id": "branch" },
+      "endpoint_b": { "component_id": "manometro-solare", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "so-10",
+      "network_id": "circuito-solare",
+      "endpoint_a": { "component_id": "der-vaso-solare", "port_id": "branch" },
+      "endpoint_b": { "component_id": "vaso-solare", "port_id": "a" },
+      "properties": {}
+    },
+    {
+      "id": "af-1",
+      "network_id": "rete-acqua-fredda",
+      "endpoint_a": { "component_id": "alimentazione-af", "port_id": "a" },
+      "endpoint_b": { "component_id": "bollitore", "port_id": "cold_in" },
+      "properties": {}
+    },
+    {
+      "id": "acs-1",
+      "network_id": "rete-acs",
+      "endpoint_a": { "component_id": "bollitore", "port_id": "dhw_out" },
+      "endpoint_b": { "component_id": "utenze-acs", "port_id": "a" },
+      "properties": {}
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a-regime",
+      "text": "Regime della centrale ricavato dalle potenze che il testo dà: pompa di calore 120 kW + caldaia modulare 150 kW = 270 kW, oltre i 35 kW, quindi «over_35_kw». Si sono sommate le due potenze così come il testo le scrive («da 120 kW», «da 150 kW»), senza sapere se sono nominali, rese o al focolare. Anche il campo di collettori solari genera calore, ma il testo non ne dà la potenza e non è stato sommato: nessuna delle due precisazioni può riportare la somma sotto i 35 kW.",
+      "status": "proposed",
+      "source_message_refs": ["F1: «una pompa di calore aria-acqua di alta potenza da 120 kW e da una caldaia modulare a condensazione da 150 kW»", "F10: «un campo di collettori solari termici»"]
+    },
+    {
+      "id": "a-circolatori-generatori",
+      "text": "Il testo non dice se i due generatori hanno il circolatore a bordo: si sono seguite le voci di catalogo scelte (pompa di calore di alta potenza e caldaia modulare), che lo portano integrato. Sul circuito primario dei generatori non è disegnato nessun circolatore a sé. È così?",
+      "status": "proposed",
+      "source_message_refs": ["F1: «pompa di calore aria-acqua di alta potenza», «caldaia modulare a condensazione»"]
+    },
+    {
+      "id": "a-parallelo",
+      "text": "«Collegate in parallelo» non dice con che pezzo i flussi dei due generatori si uniscono e si dividono (non è nominato né un collettore né un separatore): si sono usati un raccordo a T sulla mandata comune e una ripartizione a T sul ritorno comune. La pompa di calore, nominata per prima, sta sul braccio laterale di entrambi, la caldaia sul passante: mandata e ritorno si specchiano.",
+      "status": "proposed",
+      "source_message_refs": ["F1: «collegate in parallelo»"]
+    },
+    {
+      "id": "a-regolazione-generatori",
+      "text": "La pompa di calore come generatore principale e la caldaia che interviene per integrazione (quando serve più potenza oppure una temperatura di mandata più alta) sono una logica di regolazione: il grafo mostra i due generatori in parallelo, non la precedenza fra loro né le condizioni in cui la caldaia interviene.",
+      "status": "proposed",
+      "source_message_refs": ["F2: «La pompa di calore lavora come generatore principale, mentre la caldaia interviene come integrazione»"]
+    },
+    {
+      "id": "a-carico-scarico-volume",
+      "text": "Il testo prevede sul volume tecnico il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico: sono ferramenta (gruppo di riempimento, attacco di scarico) e li aggiunge il pezzo che completa il grafo, non questo grafo. Per la stessa ragione qui non è disegnata l'acqua di acquedotto che alimenta il carico.",
+      "status": "proposed",
+      "source_message_refs": ["F4: «Sul volume tecnico sono previsti il collegamento per il carico automatico dell’impianto da acquedotto e lo scarico»"]
+    },
+    {
+      "id": "a-circuiti-secondari",
+      "text": "«Dal volume tecnico partono due circuiti secondari» non dice con che pezzo si dividono (non è nominato un collettore): si sono usate una ripartizione a T sulla mandata e un raccordo a T sul ritorno. I due circuiti sono due rami della stessa rete, che nasce dal volume tecnico. I radiatori, elencati per primi, stanno sul braccio laterale di entrambi i raccordi, i fan-coil sul passante: mandata e ritorno si specchiano.",
+      "status": "proposed",
+      "source_message_refs": ["F5: «Dal volume tecnico partono due circuiti secondari»"]
+    },
+    {
+      "id": "a-circolatori-secondari",
+      "text": "Il testo dà a ciascun circuito secondario il proprio circolatore senza dire su quale tubo: ciascuno è disegnato sulla mandata del proprio ramo, fra la ripartizione e i terminali. È la posizione convenzionale di disegno, non un dato del testo.",
+      "status": "proposed",
+      "source_message_refs": ["F5: «ciascuno con il proprio circolatore»"]
+    },
+    {
+      "id": "a-radiatori",
+      "text": "«I radiatori degli appartamenti»: il testo non dice quanti sono. È disegnato un solo radiatore, rappresentativo dell'insieme.",
+      "status": "proposed",
+      "source_message_refs": ["F6: «un circuito che alimenta i radiatori degli appartamenti»"]
+    },
+    {
+      "id": "a-fancoil",
+      "text": "«I fan-coil canalizzati degli spazi comuni al piano terra»: il testo non dice quanti sono. È disegnato un solo ventilconvettore canalizzato, rappresentativo dell'insieme.",
+      "status": "proposed",
+      "source_message_refs": ["F7: «un circuito che alimenta i fan-coil canalizzati degli spazi comuni al piano terra»"]
+    },
+    {
+      "id": "a-priorita-acs",
+      "text": "La priorità all'ACS è una logica di regolazione: sul grafo si vede la valvola deviatrice a tre vie sulla mandata comune dei generatori, con una via verso il volume tecnico («out_a») e l'altra verso il serpentino superiore del bollitore («out_b»), non la priorità. Quale via vada al volume e quale al bollitore il testo non lo dice: è un dettaglio di disegno.",
+      "status": "proposed",
+      "source_message_refs": ["F9: «una valvola a tre vie sulla mandata devia il flusso verso il bollitore quando è richiesta la produzione sanitaria, dando priorità all’ACS»"]
+    },
+    {
+      "id": "a-ritorno-serpentino",
+      "text": "Il testo dice dove il circuito del serpentino superiore si stacca (la valvola deviatrice sulla mandata), non dove il suo ritorno rientra. I generatori non hanno un secondo attacco di ritorno e il volume tecnico non ha attacchi liberi: il ritorno del serpentino si unisce con un raccordo a T al ritorno del volume verso i generatori, prima della ripartizione sui due generatori. È il punto giusto?",
+      "status": "proposed",
+      "source_message_refs": ["F9: «Il serpentino superiore è alimentato dai generatori»"]
+    },
+    {
+      "id": "a-collettori-solari",
+      "text": "«Un campo di collettori solari termici»: il testo non dice quanti collettori sono né come sono collegati fra loro. È disegnato un solo collettore, rappresentativo del campo.",
+      "status": "proposed",
+      "source_message_refs": ["F10: «Il serpentino inferiore è alimentato da un campo di collettori solari termici»"]
+    },
+    {
+      "id": "a-gruppo-solare-posizione",
+      "text": "Il testo elenca i pezzi del gruppo di circolazione solare ma non dice su quale tubo stanno né in che ordine: sono disegnati sul ritorno ai collettori (dall'uscita del serpentino inferiore all'ingresso del collettore), nell'ordine in cui il testo li nomina e nel verso del flusso: circolatore e valvola di ritegno in linea, poi valvola di sicurezza, manometro e vaso di espansione solare, ciascuno appeso a una propria derivazione a T. Con quest'ordine sicurezza e vaso stanno dal lato dei collettori rispetto al ritegno.",
+      "status": "proposed",
+      "source_message_refs": ["F11: «Il circuito solare ha un gruppo di circolazione con circolatore, valvola di ritegno, valvola di sicurezza, manometro e vaso di espansione solare»"]
+    },
+    {
+      "id": "a-gruppo-solare-mancanti",
+      "text": "Del gruppo di circolazione solare sono disegnati solo i pezzi che il testo nomina. Termometri, valvole di intercettazione, sfogo dell'aria e attacchi di carico e scarico del circuito solare non sono nominati e non sono disegnati; sul circuito solare nessun pezzo successivo li aggiunge. Vanno aggiunti?",
+      "status": "proposed",
+      "source_message_refs": ["F11: «un gruppo di circolazione con circolatore, valvola di ritegno, valvola di sicurezza, manometro e vaso di espansione solare»"]
+    },
+    {
+      "id": "a-miscelatrice",
+      "text": "Il testo prevede una valvola miscelatrice termostatica sull'uscita dell'ACS: è ferramenta sanitaria e la aggiunge il pezzo che completa il grafo, non questo grafo. In questo grafo l'uscita dell'ACS va dal bollitore direttamente alle utenze.",
+      "status": "proposed",
+      "source_message_refs": ["F13: «Sull’uscita è prevista una valvola miscelatrice termostatica»"]
+    },
+    {
+      "id": "a-no-ricircolo",
+      "text": "Il testo esclude il circuito di ricircolo ACS: non è disegnato perché non c'è, non perché sia stato perso. L'attacco del ricircolo del bollitore resta inutilizzato.",
+      "status": "proposed",
+      "source_message_refs": ["F14: «Non è previsto il circuito di ricircolo ACS»"]
+    }
+  ],
+  "rule_applications": [],
+  "subsystems": [],
+  "sheets": []
+}

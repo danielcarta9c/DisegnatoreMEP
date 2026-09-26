@@ -1,0 +1,28 @@
+{
+  "id": "pressure-gauge-solar",
+  "version": "1.0.0",
+  "name": "Manometro solare",
+  "functions": [
+    "pressure_measurement"
+  ],
+  "traits": [
+    "maintainable",
+    "shutoff_instrument_tap",
+    "attachment_branch"
+  ],
+  "symbol_id": "pressure-gauge",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-188: il PO, 26 settembre 2026 (I-135)"
+  ]
+}

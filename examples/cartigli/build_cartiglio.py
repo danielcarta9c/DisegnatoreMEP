@@ -604,17 +604,6 @@ def main() -> None:
         raise SystemExit(f"elementi fuori da testata e fascia: {[item.kind for item in stray]}")
 
     # Le caselle: i montanti della fascia, scuri e chiari.
-    verticals = sorted(
-        {
-            item.data["points"][0][0]
-            for item in band
-            if item.kind == "stroke"
-            and item.data["forma"] == "linea"
-            and item.data["points"][0][0] == item.data["points"][1][0]
-        }
-        | {left, right}
-    )
-
     def span(item: Painted, x: float, y: float) -> tuple[float, float]:
         """La casella che contiene il punto: i montanti a sinistra e a destra che
         passano alla sua altezza."""

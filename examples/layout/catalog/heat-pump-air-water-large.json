@@ -1,0 +1,48 @@
+{
+  "id": "heat-pump-air-water-large",
+  "version": "1.0.0",
+  "name": "Pompa di calore aria-acqua di alta potenza",
+  "functions": [
+    "heat_generation"
+  ],
+  "traits": [
+    "maintainable",
+    "needs_debris_protection",
+    "produces_air",
+    "needs_overpressure_protection",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "carries_on_board": [
+    "circulation"
+  ],
+  "symbol_id": "heat-pump-air-water-large",
+  "variant": {
+    "of": "heat-pump-air-water",
+    "named_as": [
+      "alta potenza",
+      "grande taglia"
+    ]
+  },
+  "composite": false,
+  "ports": [
+    {
+      "id": "water_supply",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "water_return",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-188: il PO, 26 settembre 2026 (I-135)"
+  ]
+}

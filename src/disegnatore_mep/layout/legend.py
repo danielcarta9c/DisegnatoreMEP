@@ -49,6 +49,10 @@ MEDIUM_STYLES: dict[str, tuple[str, str]] = {
     "refrigerant_liquid": ("#6c3483", "none"),
     "refrigerant_gas": ("#6c3483", "6 2"),
     "condensate": ("#616a6b", "2 2"),
+    # Il circuito solare (D-187): magenta, a tratto pieno come l'acqua di
+    # riscaldamento. La tonalita' e' una scelta di questa sessione: lontana dal
+    # viola del refrigerante e dal rosso del riscaldamento.
+    "solar_fluid": ("#c71585", "none"),
 }
 """Colore e tratto per fluido (D-057).
 
@@ -69,6 +73,7 @@ MEDIUM_NAMES: dict[str, str] = {
     "refrigerant_liquid": "Refrigerante liquido",
     "refrigerant_gas": "Refrigerante gas",
     "condensate": "Condensa",
+    "solar_fluid": "Fluido solare",
 }
 """Denominazione italiana del fluido, per la legenda (D-051)."""
 
@@ -90,6 +95,9 @@ SUPPLY_SHIFT = {
     "#d68910": RECIRCULATION_COLOUR,
     "#148f77": "#117a65",
     "#6c3483": "#5b2c6f",
+    # Il solare torna dello stesso magenta con cui va (D-187): il PO, «magenta
+    # sia mandata che ritorno».
+    "#c71585": "#c71585",
 }
 """Il colore del ritorno, dato quello della mandata.
 
@@ -171,6 +179,24 @@ def build_legend(
     if routes is not None:
         disegnate = {(route.medium, route.supply) for route in routes}
         keys = [key for key in keys if (key[0], key[2]) in disegnate]
+    # Il solare va e torna dello stesso magenta (D-187): due righe uguali non
+    # distinguono niente, per la stessa ragione per cui primario e secondario ne
+    # hanno una sola. Dove andata e ritorno si disegnano uguali, la coppia si
+    # scrive una volta: «andata e ritorno».
+    andata = {key[0] for key in keys if key[2]}
+    ritorno = {key[0] for key in keys if not key[2]}
+    uguali = {
+        medium
+        for medium in andata & ritorno
+        if style_for(medium, supply=True) == style_for(medium, supply=False)
+    }
+    keys = [
+        (medium, f"{by_medium[medium]} — andata e ritorno", supply)
+        if medium in uguali
+        else (medium, name, supply)
+        for medium, name, supply in keys
+        if medium not in uguali or supply
+    ]
 
     rows = len(names) + (1 if keys else 0) + len(keys)
     needed = rows * ROW_HEIGHT_MM + (SECTION_GAP_MM if keys else 0.0)

@@ -54,6 +54,9 @@ Questi sono quelli che incontri quasi sempre:
 |---|---|---|
 | `heat-pump-air-water` | 40 × 30 | `water_supply` **destra +5** · `water_return` **destra +20** |
 | `gas-boiler` | 40 × 30 | `water_supply` **destra +5** · `water_return` **destra +20** |
+| `heat-pump-air-water-large` (pompa di calore di alta potenza) | 60 × 30 | `water_supply` **destra +5** · `water_return` **destra +20** |
+| `gas-boiler-modular` (caldaia modulare) | 60 × 25 | `water_supply` **destra +5** · `water_return` **destra +20** |
+| `solar-collector` (collettore solare) | 40 × 25 | `supply` **destra +5** · `return` **destra +20** — sul fluido solare |
 | `buffer-four-port` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `vent` sopra e `drain` sotto, a x +12,5 |
 | `buffer-two-port` | 25 × 45 | `a` sinistra +5 · `b` destra +5 · `vent` sopra e `drain` sotto, a x +12,5 |
 | `dhw-heat-pump` (pompa di calore per ACS) | 25 × 45 | `cold_in` sinistra +37,5 · `dhw_out` sopra, a x +12,5 |
@@ -61,11 +64,13 @@ Questi sono quelli che incontri quasi sempre:
 | `buffer-combined` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `dhw_out` sopra, a x +7,5 · `cold_in` sinistra +37,5 |
 | `plate-heat-exchanger` | 12,5 × 25 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` destra +5 · `secondary_in` destra +20 |
 | `dhw-cylinder` | 25 × 45 | `coil_in` sinistra **+7,5** · `coil_out` sinistra **+17,5** · `dhw_out` sopra · `cold_in` sinistra +37,5 · `recirculation_in` **destra +12,5**, il ricircolo (D-176) |
-| `radiator`, `fan-coil`, `ahu-coil`, `underfloor-panel` | 20 × 15 | `in` **sinistra +2,5** · `out` **sinistra +12,5** — tutt'e due **sullo stesso lato** (D-167) |
+| `radiator`, `fan-coil`, `fan-coil-ducted`, `ahu-coil`, `underfloor-panel` | 20 × 15 | `in` **sinistra +2,5** · `out` **sinistra +12,5** — tutt'e due **sullo stesso lato** (D-167) |
+| `dhw-cylinder-twin-coil` (bollitore a due serpentini) | 25 × 55 | `coil_in` sinistra **+7,5** · `coil_out` sinistra **+17,5** · `solar_coil_in` sinistra **+27,5** · `solar_coil_out` sinistra **+37,5** · `cold_in` sinistra +47,5 · `dhw_out` sopra, a x +7,5 · `recirculation_in` destra +12,5 |
 | `mixing-valve-thermostatic` (miscelatrice termostatica ACS) | 5 × 10 | `hot_in` sinistra +5 · `out` destra +5 · `cold_in` **sotto, a x +2,5** — è una tre vie (D-175): la posi tu, e la giri |
 
 **Guarda l'interasse.** Pompa di calore, caldaia, volano e scambiatore a piastre hanno tutti
-le due porte principali a **15 mm** l'una dall'altra, e alle **stesse quote +5 e +20**. Questo
+le due porte principali a **15 mm** l'una dall'altra, e alle **stesse quote +5 e +20** — e
+così la pompa di calore di alta potenza, la caldaia modulare e il collettore solare. Questo
 vuol dire una cosa sola, ed è la leva più potente che hai:
 
 > ## Due macchine posate allo **stesso y** danno **due autostrade perfettamente rette**, gratis.

@@ -1,0 +1,43 @@
+{
+  "id": "fan-coil-ducted",
+  "version": "1.0.0",
+  "name": "Ventilconvettore canalizzato",
+  "functions": [
+    "emission"
+  ],
+  "traits": [
+    "maintainable",
+    "fouls_circuit",
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "fan-coil-ducted",
+  "variant": {
+    "of": "fan-coil",
+    "named_as": [
+      "canalizzato",
+      "canalizzabile"
+    ]
+  },
+  "composite": false,
+  "ports": [
+    {
+      "id": "in",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "out",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-188: il PO, 26 settembre 2026 (I-135)"
+  ]
+}
