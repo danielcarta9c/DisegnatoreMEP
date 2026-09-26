@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-26 (`REL-003`, **i simboli nuovi**, fuso con la PR #60, tavola **approvata dal PO** — I-136; prima il cartiglio, `REL-002`, I-132; **attivo `REL-001`**)
+**Aggiornato:** 2026-09-26 (`REL-003`, **i simboli nuovi**, fuso con la PR #60, tavola **approvata dal PO** — I-136; prima il cartiglio, `REL-002`, I-132; **attivo `REL-004`, il DXF**, e la skill per ultima — I-137)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -18,7 +18,7 @@
 
 **I simboli nuovi sono su `main`, e la tavola di prova è approvata** (I-136, PR #60): «La tavola va
 benissimo. Ottimo lavoro. Fondi». Rapporto `docs/collaudi/REL-003/RAPPORTO.md`. **Il pacchetto attivo è
-`REL-001`**, la skill vera e propria e il PDF.
+`REL-004`, il DXF** (I-137): prima i pezzi che mancano, la skill per ultima.
 
 - **Catalogo**: le voci dei cinque simboli, dodici accessori del circuito solare, e il dato delle
   **varianti**, che «Capire» sceglie solo quando il testo le nomina (D-188). 73 voci.

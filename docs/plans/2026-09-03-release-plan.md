@@ -35,16 +35,21 @@ della sessione** (D-183, punto 3), e il PO lo può cambiare.
 
 > **E il 25 settembre 2026, in una seconda sessione, il cartiglio** (I-129): «in questa sessione ci
 > dedichiamo esclusivamente al cartiglio». **`REL-002` è fatto e approvato** (I-132, il 26 settembre),
-> mentre `REL-003` continuava sull'altro ramo. **`REL-003` è fatto il 26 settembre** (I-136), e
-> **`REL-001` è il pacchetto attivo**, in `ACTIVE_WORK_PACKAGE.md`. Il cartiglio non ha aspettato le domande della skill: «Capire»
+> mentre `REL-003` continuava sull'altro ramo. **`REL-003` è fatto il 26 settembre** (I-136).
+
+> **E il 26 settembre 2026, finito `REL-003`, il PO ha cambiato ancora l'ordine** (I-137): «Io pensavo
+> di chiedere prima la chiusura dei pezzi che mancano, in particolare manca ancora esportazione dxf. La
+> composizione della skill vera e propria con il file skill.md che orchestra il tutto l'avrei tenuto per
+> ultimo». **`REL-004`, il DXF, è il pacchetto attivo**; poi il PDF senza browser, come pezzo a sé
+> (assunzione della sessione); poi **`REL-001`**, la skill; per ultimo `REL-005`. Il cartiglio non ha aspettato le domande della skill: «Capire»
 > sa già dichiarare quello che manca, e le sue istruzioni dicono che cosa chiedere.
 
 | pacchetto | che cosa | perché in quest'ordine |
 |---|---|---|
-| **`REL-001`** — **attivo** (26 settembre) | **la skill vera e propria** — l'ingresso che cuce i cinque pezzi, la cartella installabile — **e il PDF fatto dalla skill** (I-121, I-122) | è il rischio più vecchio del progetto: la skill non è mai girata nel suo ambiente. E senza il PDF la skill non consegna niente |
+| **`REL-001`** — **per ultimo** (I-137) | **la skill vera e propria** — l'ingresso che cuce i cinque pezzi, la cartella installabile — **e il PDF fatto dalla skill** (I-121, I-122) | è il rischio più vecchio del progetto: la skill non è mai girata nel suo ambiente. E senza il PDF la skill non consegna niente |
 | **`REL-002`** — **fatto** (I-132) | **il cartiglio Nove C compilato** (I-123) | i dati del cartiglio li raccoglie «Capire»: si aggiungono alle domande della skill che `REL-001` ha messo in piedi |
 | **`REL-003`** — **fatto** (I-136) | **i simboli nuovi**: pompa di calore di alta potenza, caldaia modulare a condensazione, solare termico, fan-coil canalizzato (I-124) | forme dalle fonti, approvate dal PO guardandole; per ciascuna la voce di catalogo, e le regole solo dove il PO le dà |
-| **`REL-004`** | **il DXF** (I-125) | prima si definisce con il PO **come** si esporta — livelli, blocchi, testi, scala —, poi si scrive |
+| **`REL-004`** — **attivo** (26 settembre, I-137) | **il DXF** (I-125) | prima si definisce con il PO **come** si esporta — livelli, blocchi, testi, scala —, poi si scrive |
 | **`REL-005`** | **il pacchetto della release** | il numero di versione, `releases/latest/` e lo ZIP numerato (D-009), la guida d'installazione, la suite verde e il collaudo sui casi di accettazione |
 
 **Restano da decidere con il PO**, e non fermano `REL-001`: il collaudo su impianti veri (la
