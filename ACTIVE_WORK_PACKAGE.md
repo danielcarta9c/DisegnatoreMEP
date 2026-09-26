@@ -1,6 +1,6 @@
 # REL-001 — La skill vera e propria: l'ingresso che cuce i pezzi, e il PDF fatto dalla skill
 
-> **▶ Attivo dal 26 settembre 2026.** `REL-003` è fuso su `main` (PR #@@, I-136) e il PO ha detto
+> **▶ Attivo dal 26 settembre 2026.** `REL-003` è fuso su `main` (PR #60, I-136) e il PO ha detto
 > «Fondi»: questo pacchetto si riattiva com'era stato scritto la notte del 24 settembre, e cambiano
 > soltanto la base — `main` dopo la fusione di `REL-003` — e il metro della suite, che si rimisura: le
 > 46 rosse sono ancora **le stesse di `DRAW-018`**, nome per nome, dopo `REL-002` e dopo `REL-003`.
@@ -31,7 +31,7 @@
 **Stato:** **ATTIVO** dal 26 settembre 2026, dopo la fusione di `REL-003` (I-136). Era stato attivo
 la notte del 24 settembre, dopo `DRAW-018` (PR **#57**, **I-119**), e rinviato per i simboli (I-126)
 e per il cartiglio (I-129).
-**Base:** `main` dopo la fusione di `REL-003` (PR #@@).
+**Base:** `main` dopo la fusione di `REL-003` (PR #60).
 **Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
 **Release:** la prima release — il primo dei cinque pacchetti (`docs/plans/2026-09-03-release-plan.md`,
 sezione «La prima release», **D-183**).

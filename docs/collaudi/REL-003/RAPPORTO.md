@@ -1,7 +1,7 @@
 # REL-003 — i simboli nuovi: rapporto
 
 **Pacchetto:** `REL-003` (`ACTIVE_WORK_PACKAGE.md`) · **Ramo:** `claude/missing-symbols-uuzbhb` ·
-**Prima parte** su `main` con la PR #58 (SHA iniziale `130be28`) · **Seconda parte** con la PR #@@,
+**Prima parte** su `main` con la PR #58 (SHA iniziale `130be28`) · **Seconda parte** con la PR #60,
 dopo aver portato nel ramo `main` con `REL-002` (PR #59)
 
 > **Le tavole, per prime**

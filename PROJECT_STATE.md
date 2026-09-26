@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-26 (`REL-003`, **i simboli nuovi**, fuso con la PR #@@, tavola **approvata dal PO** — I-136; prima il cartiglio, `REL-002`, I-132; **attivo `REL-001`**)
+**Aggiornato:** 2026-09-26 (`REL-003`, **i simboli nuovi**, fuso con la PR #60, tavola **approvata dal PO** — I-136; prima il cartiglio, `REL-002`, I-132; **attivo `REL-001`**)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -16,7 +16,7 @@
 
 ## Dove siamo — 26 settembre 2026, `REL-003`
 
-**I simboli nuovi sono su `main`, e la tavola di prova è approvata** (I-136, PR #@@): «La tavola va
+**I simboli nuovi sono su `main`, e la tavola di prova è approvata** (I-136, PR #60): «La tavola va
 benissimo. Ottimo lavoro. Fondi». Rapporto `docs/collaudi/REL-003/RAPPORTO.md`. **Il pacchetto attivo è
 `REL-001`**, la skill vera e propria e il PDF.
 

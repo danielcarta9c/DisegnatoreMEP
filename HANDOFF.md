@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-26 — **`REL-003` è fuso** (PR #@@, tavola approvata dal PO, I-136), dopo il cartiglio (`REL-002`, PR #59, I-132). **Il pacchetto attivo è `REL-001`**, la skill vera e propria e il PDF
+**Aggiornato:** 2026-09-26 — **`REL-003` è fuso** (PR #60, tavola approvata dal PO, I-136), dopo il cartiglio (`REL-002`, PR #59, I-132). **Il pacchetto attivo è `REL-001`**, la skill vera e propria e il PDF
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -17,7 +17,7 @@
 `SKILL.md` che cuce i cinque pezzi, la cartella installabile — e il PDF fatto dalla skill, senza
 browser. Si parte dal punto 1, **l'ambiente in cui la skill gira**, che da qui non si vede.
 
-**`REL-003` è fuso** (PR #@@): il PO, sulla tavola di prova, «La tavola va benissimo. Ottimo lavoro.
+**`REL-003` è fuso** (PR #60): il PO, sulla tavola di prova, «La tavola va benissimo. Ottimo lavoro.
 Fondi» (I-136). Rapporto: `docs/collaudi/REL-003/RAPPORTO.md`; il pacchetto com'era:
 `docs/plans/pacchetti/REL-003.md`.
 
