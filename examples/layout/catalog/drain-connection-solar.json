@@ -1,0 +1,27 @@
+{
+  "id": "drain-connection-solar",
+  "version": "1.0.0",
+  "name": "Attacco di carico e scarico solare",
+  "functions": [
+    "drain"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_branch"
+  ],
+  "symbol_id": "drain-connection",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-187: il PO, 26 settembre 2026 (I-130)"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "id": "tee-branch-solar",
+  "version": "1.0.0",
+  "name": "Derivazione a T solare",
+  "functions": [
+    "branch_off"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "tee-branch",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "branch",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "bidirectional",
+      "required": false,
+      "stub": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-187: il PO, 26 settembre 2026 (I-130)"
+  ]
+}

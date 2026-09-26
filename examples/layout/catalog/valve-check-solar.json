@@ -1,0 +1,34 @@
+{
+  "id": "valve-check-solar",
+  "version": "1.0.0",
+  "name": "Valvola di ritegno solare",
+  "functions": [
+    "non_return"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "valve-check",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-187: il PO, 26 settembre 2026 (I-130)"
+  ]
+}

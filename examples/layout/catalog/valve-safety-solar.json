@@ -1,0 +1,27 @@
+{
+  "id": "valve-safety-solar",
+  "version": "1.0.0",
+  "name": "Valvola di sicurezza solare",
+  "functions": [
+    "safety"
+  ],
+  "traits": [
+    "shutoff_never",
+    "attachment_branch"
+  ],
+  "symbol_id": "valve-safety",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-187: il PO, 26 settembre 2026 (I-130)"
+  ]
+}

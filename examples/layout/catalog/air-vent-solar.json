@@ -1,0 +1,27 @@
+{
+  "id": "air-vent-solar",
+  "version": "1.0.0",
+  "name": "Valvola di sfogo aria solare",
+  "functions": [
+    "air_release"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_branch"
+  ],
+  "symbol_id": "air-vent",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "D-187: il PO, 26 settembre 2026 (I-130)"
+  ]
+}
