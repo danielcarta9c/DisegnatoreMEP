@@ -1,8 +1,16 @@
 # REL-002 — Il cartiglio Nove C, compilato, sulla tavola — rapporto
 
 **Consegna del 25 settembre 2026** · ramo `claude/epic-newton-r94e4l` · base `main` a `130be28`
-**Input:** I-123 («manca il cartiglio»), I-126 (la sessione è solo per il cartiglio), I-127 (il file A3
-del 25 settembre), I-128 → **D-184** (gli altri formati).
+**Input:** I-123 («manca il cartiglio»), I-129 (la sessione è solo per il cartiglio), I-130 (il file A3
+del 25 settembre), I-131 → **D-186** (gli altri formati).
+**Verdetto del PO** (I-132, 26 settembre 2026): «Si tutto perfetto» — tavole approvate, fusione su
+`main`.
+
+> **I numeri sono cambiati alla fusione** (I-133). Mentre questa sessione faceva il cartiglio, un'altra
+> faceva i simboli (`REL-003`), partita dallo stesso `main`, ed era già fusa: aveva preso I-126, I-127,
+> I-128 e D-184. Quelli del cartiglio sono diventati **I-129, I-130, I-131 e D-186**; nei messaggi dei
+> commit sul ramo si leggono ancora i vecchi. Prima di fondere, `main` — con i cinque simboli nuovi — è
+> stato portato nel ramo, e la suite e il collaudo sono stati rimisurati sul risultato (§ 6).
 
 ## Le tavole, per prime (D-146)
 
@@ -15,7 +23,7 @@ cartiglio compilato; più una tavola in bozza.
 | [`tavola-2.pdf`](tavole/tavola-2.pdf) | A3 | impianto 2 |
 | [`tavola-3.pdf`](tavole/tavola-3.pdf) | A3 | impianto 3, **con i nomi sulle tre righe delle firme** |
 | [`tavola-4.pdf`](tavole/tavola-4.pdf) | A3 | impianto 4 |
-| [`tavola-5.pdf`](tavole/tavola-5.pdf) | **A2** | impianto 5: il cartiglio **a misura A3, contro l'angolo in basso a destra** (D-184) |
+| [`tavola-5.pdf`](tavole/tavola-5.pdf) | **A2** | impianto 5: il cartiglio **a misura A3, contro l'angolo in basso a destra** (D-186) |
 | [`tavola-1-bozza.pdf`](tavole/tavola-1-bozza.pdf) | A3 | impianto 1 dal grafo com'è agli atti: indirizzo, titolo e numero mancano → «DA DEFINIRE» e «BOZZA — cartiglio incompleto» in testata |
 
 **I dati del cartiglio sono di prova, e inventati** (`dati-di-prova.json`): il repository è pubblico
@@ -86,7 +94,7 @@ obbligatorie; un testo resta nella sua casella — scende di corpo fino a 7 pt, 
 senza toccare l'etichetta — e se non entra nemmeno così si scrive **intero** e la tavola è una bozza;
 i doppi spazi della testata restano due.
 
-**5. I formati (D-184)** — il cartiglio sull'A3 sta dove sta nel file; su A2 e A1 si sposta intero
+**5. I formati (D-186)** — il cartiglio sull'A3 sta dove sta nel file; su A2 e A1 si sposta intero
 contro l'angolo in basso a destra, e la testata corre per tutta la squadratura; sull'A4 si rifiuta.
 L'A4 è uscito dai formati ordinari: `frame.ORDINARY_FRAMES`, `piano/formato.py`, l'esecutore, il
 preflight, le istruzioni di «Comporre» e `docs/regole-del-piano.md`.
@@ -121,9 +129,9 @@ Il file non le dice, e le ho fatte io; sono tutte sulle tavole:
 - **un testo lungo** scende di mezzo punto alla volta fino a 7 pt — il corpo più piccolo che il file
   usa per un valore — e poi va su due righe, con interlinea 1,2;
 - **su A2 e A1 la testata corre per tutta la squadratura**, perché nel file sta sul bordo superiore e
-  non dentro il cartiglio (D-184, nota della sessione);
+  non dentro il cartiglio (D-186, nota della sessione);
 - in testata il file ha ancora **«MI.223»** e **«Conto Termico con sconto in fattura»**: li ho letti
-  come la commessa e una dicitura da compilare (I-127);
+  come la commessa e una dicitura da compilare (I-130);
 - **la scala è «—»** fissa, come nel file: lo schema non è in scala.
 
 ## Rilievi per il PO
@@ -156,9 +164,9 @@ Il file non le dice, e le ho fatte io; sono tutte sulle tavole:
 | `src/disegnatore_mep/graphics/sheet.py` | `render_sheet` disegna il cartiglio quando lo riceve |
 | `src/disegnatore_mep/cli.py` | `--cartiglio` su `draw`, `piano`, `revisiona` |
 | `src/disegnatore_mep/model/project.py`, `schemas/project.schema.json` | i dati del cartiglio: sette campi facoltativi nei metadati e il numero della tavola; **un dato che manca non si scrive**, quindi i documenti di prima si riscrivono identici e la loro impronta non cambia |
-| `frame.py`, `piano/`, `validation/preflight.py` | l'A4 fuori dai formati ordinari (D-184) |
+| `frame.py`, `piano/`, `validation/preflight.py` | l'A4 fuori dai formati ordinari (D-186) |
 | `skill/capire/ISTRUZIONI.md` | che cosa chiedere per il cartiglio, in una voce sola, e che cosa non inventare |
-| `tests/` | `tests/graphics/test_cartiglio.py`; le prove che nominavano l'A4 salgono di un foglio, con D-184 scritta accanto |
+| `tests/` | `tests/graphics/test_cartiglio.py`; le prove che nominavano l'A4 salgono di un foglio, con D-186 scritta accanto |
 
 ## Dopo
 

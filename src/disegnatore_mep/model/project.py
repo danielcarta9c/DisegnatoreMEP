@@ -44,7 +44,7 @@ def _senza_i_vuoti(dati: dict[str, Any], nomi: tuple[str, ...]) -> dict[str, Any
 class ProjectMetadata(StrictModel):
     """Il documento, non l'impianto: sono i dati che il cartiglio scrive.
 
-    I campi dopo `issue_date` sono **facoltativi e additivi** (REL-002, I-127),
+    I campi dopo `issue_date` sono **facoltativi e additivi** (REL-002, I-130),
     come `plant_regime`: un documento 1.1.0 senza di loro resta valido, e la
     versione dello schema non cambia. **Assente vuol dire non dato**: il
     cartiglio scrive «DA DEFINIRE» dove il dato serve, e la tavola esce in

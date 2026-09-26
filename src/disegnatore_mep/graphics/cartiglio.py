@@ -2,7 +2,7 @@
 
 **Il cartiglio non si inventa: e' un ingresso del progetto** (D-091). Il file e'
 `assets/cartigli/Cartiglio_NoveC_A3.pdf`, nella versione che il PO ha dato il 25
-settembre 2026 — «questo e' il cartiglio che usiamo per i fogli A3» (I-127) —, e
+settembre 2026 — «questo e' il cartiglio che usiamo per i fogli A3» (I-130) —, e
 il **modello** accanto, `Cartiglio_NoveC_A3.json`, e' quel file letto: ogni
 tratto, campitura e testo nel suo ordine, con il logo estratto byte per byte.
 Lo scrive `examples/cartigli/build_cartiglio.py`, e una prova pretende che
@@ -18,7 +18,7 @@ Tre cose questo modulo aggiunge al file, e sono le sole:
   righe; se non entra nemmeno cosi', la tavola e' una bozza e lo dice;
 - **il foglio**: su ogni formato il cartiglio e' quello dell'A3, a misura,
   contro l'angolo in basso a destra, e la testata corre per tutta la
-  squadratura (D-184).
+  squadratura (D-186).
 """
 
 import base64
@@ -109,7 +109,7 @@ Allineamento = Literal["sinistra", "centro", "destra"]
 
 Ancora = Literal["sinistra", "destra", "entrambe"]
 """A quale bordo della squadratura si tiene un elemento della **testata** su un
-foglio piu' largo dell'A3 (D-184). Nella fascia del cartiglio non serve: la
+foglio piu' largo dell'A3 (D-186). Nella fascia del cartiglio non serve: la
 fascia si sposta tutta insieme, contro l'angolo in basso a destra."""
 
 Colore = Annotated[str, Field(pattern=r"^#[0-9a-f]{6}$")]
@@ -503,7 +503,7 @@ def disegna_cartiglio(
         raise ValueError(
             f"il cartiglio e' largo {fascia.larghezza_mm:g} mm e la squadratura di questo "
             f"foglio {bordo.width_mm:g}: non lo contiene, e il cartiglio non si "
-            f"rimpicciolisce (D-184)"
+            f"rimpicciolisce (D-186)"
         )
 
     # 1. Si misura.
@@ -538,7 +538,7 @@ def disegna_cartiglio(
         '<g class="testata">',
     ]
 
-    # 2. La testata: ogni elemento si tiene al proprio bordo (D-184).
+    # 2. La testata: ogni elemento si tiene al proprio bordo (D-186).
     def x_in_testata(x: float, ancora: Ancora) -> float:
         return x + (a_destra if ancora == "destra" else a_sinistra)
 
@@ -580,7 +580,7 @@ def disegna_cartiglio(
                 )
     parti.append("</g>")
 
-    # 3. La fascia: tutta insieme, contro l'angolo in basso a destra (D-184).
+    # 3. La fascia: tutta insieme, contro l'angolo in basso a destra (D-186).
     parti.append(f'<g class="fascia" transform="translate({dx:g} {dy:g})">')
     scritti = dict((id(item), impaginato) for item, impaginato in impaginati)
     for item in modello.fascia.elementi:

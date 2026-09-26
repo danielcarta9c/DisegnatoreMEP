@@ -172,7 +172,7 @@ def test_un_campo_sconosciuto_sul_piano_elenca_quelli_che_ci_sono(
 
 @pytest.mark.parametrize("formato", ["A5", "A4"])
 def test_un_formato_fuori_dai_tre_ordinari_li_elenca(tmp_path: Path, formato: str) -> None:
-    """D-148 e D-184: i formati ordinari sono tre, e chi ne chiede un altro li legge.
+    """D-148 e D-186: i formati ordinari sono tre, e chi ne chiede un altro li legge.
 
     Erano quattro fino al 25 settembre 2026: l'A4 e' uscito perche' non contiene
     il cartiglio Nove C, e un piano che lo chiede adesso si ferma qui, con la

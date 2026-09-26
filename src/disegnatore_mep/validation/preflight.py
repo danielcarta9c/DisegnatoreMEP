@@ -297,7 +297,7 @@ NOMI_DEI_FORMATI: tuple[str, ...] = ("A3", "A2", "A1")
 
 Sono gli stessi di `piano.formato.FORMATI_ORDINARI`: qui servono per **nominare**
 il foglio piu' piccolo che conterrebbe il disegno (D3, **D-170**). Dal 25
-settembre 2026 il piu' piccolo e' l'A3 (**D-184**): su un A3 questo rilievo non
+settembre 2026 il piu' piccolo e' l'A3 (**D-186**): su un A3 questo rilievo non
 si accende piu'.
 """
 

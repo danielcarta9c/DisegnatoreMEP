@@ -1,0 +1,32 @@
+{
+  "id": "solar-collector",
+  "version": "1.0.0",
+  "name": "Collettore solare",
+  "width_mm": 40.0,
+  "height_mm": 25.0,
+  "allowed_rotations_deg": [
+    0
+  ],
+  "ports": [
+    {
+      "id": "supply",
+      "face": "right",
+      "x_mm": 40.0,
+      "y_mm": 5.0
+    },
+    {
+      "id": "return",
+      "face": "right",
+      "x_mm": 40.0,
+      "y_mm": 20.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 0.0,
+    "right_mm": 2.0,
+    "top_mm": 0.0,
+    "bottom_mm": 0.0
+  },
+  "stroke_weight": "medium",
+  "source": "pratica di settore: Wolf, schema idraulico 32-52-006-305, PDF p. 1 (SRC-034); Caleffi, Idraulica 32 (giugno 2007), PDF p. 22 (SRC-035) — pannello lungo e stretto inclinato, mandata dall'estremo alto e ritorno da quello basso; il sole e' quello di Wolf. UNI 9511 non ha il segno"
+}

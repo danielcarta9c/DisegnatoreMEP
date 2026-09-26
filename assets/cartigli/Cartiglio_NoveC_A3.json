@@ -2,7 +2,7 @@
   "fonte": {
     "file": "Cartiglio_NoveC_A3.pdf",
     "sha256": "5a78f62800e4c602155bde77c2f0106e6f3a04503c2129f05dd023c14d51f64c",
-    "input": "I-127",
+    "input": "I-130",
     "generatore": "examples/cartigli/build_cartiglio.py"
   },
   "foglio_larghezza_mm": 420.0,

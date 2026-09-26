@@ -1,0 +1,32 @@
+{
+  "id": "gas-boiler-modular",
+  "version": "1.0.0",
+  "name": "Caldaia modulare a condensazione",
+  "width_mm": 60.0,
+  "height_mm": 25.0,
+  "allowed_rotations_deg": [
+    0
+  ],
+  "ports": [
+    {
+      "id": "water_supply",
+      "face": "right",
+      "x_mm": 60.0,
+      "y_mm": 5.0
+    },
+    {
+      "id": "water_return",
+      "face": "right",
+      "x_mm": 60.0,
+      "y_mm": 20.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 0.0,
+    "right_mm": 2.0,
+    "top_mm": 0.0,
+    "bottom_mm": 0.0
+  },
+  "stroke_weight": "medium",
+  "source": "pratica di settore: Caleffi, schema 1.103, due moduli termici in un involucro, PDF p. 1 (SRC-033); Division Energia, generatore modulare «GM» della centrale Tower House (SRC-009) — moduli affiancati nell'involucro, divisoria e triangolo piatto su ciascuno, collettori comuni, mandata e ritorno sul fianco destro con la mandata piu' in alto. Nelle fonti i collettori corrono sotto i moduli; qui la mandata corre sopra, per tenere le quote +5 e +20 di ogni macchina. UNI 9511 non ha il segno"
+}

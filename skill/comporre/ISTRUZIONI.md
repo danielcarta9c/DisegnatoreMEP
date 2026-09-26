@@ -150,7 +150,7 @@ JSON, e solo queste chiavi:
 }
 ```
 
-- **`formato`** — uno fra `A3`, `A2`, `A1` (l'A4 non c'è più: non contiene il cartiglio, **D-184**).
+- **`formato`** — uno fra `A3`, `A2`, `A1` (l'A4 non c'è più: non contiene il cartiglio, **D-186**).
   Scegli il più piccolo in cui l'impianto ci sta comodo. ⚠ **Ma non allargare il disegno per riempirlo**: il vuoto non è un difetto
   (**D-170**, D3). **Se hai preso un foglio più grande del necessario te lo dice il rapporto**
   (`SHEET_LARGER_THAN_NEEDED`), e si cambia una riga e si rilancia.

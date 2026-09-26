@@ -1,4 +1,4 @@
-"""Il cartiglio Nove C sulla tavola (REL-002, I-127, D-091, D-025, D-184).
+"""Il cartiglio Nove C sulla tavola (REL-002, I-130, D-091, D-025, D-186).
 
 Le prove sono su **proprieta'** del cartiglio (D-092), non su una tavola:
 
@@ -122,10 +122,10 @@ def simboli() -> SymbolRegistry:
 
 def test_il_modello_dichiara_il_file_da_cui_viene() -> None:
     """Chi sostituisce il PDF senza rigenerare il modello lo scopre qui: il
-    modello porta l'impronta del file che ha letto (I-127)."""
+    modello porta l'impronta del file che ha letto (I-130)."""
     assert modello().fonte.file == FILE_DEL_PO.name
     assert modello().fonte.sha256 == hashlib.sha256(FILE_DEL_PO.read_bytes()).hexdigest()
-    assert modello().fonte.input == "I-127"
+    assert modello().fonte.input == "I-130"
 
 
 def test_il_logo_e_byte_per_byte_quello_del_file_del_po() -> None:
@@ -306,7 +306,7 @@ def test_i_doppi_spazi_della_testata_restano_due() -> None:
     assert "INGEGNERIA  |  Documento" in svg
 
 
-# --- 4. Il foglio (D-184) ---------------------------------------------------
+# --- 4. Il foglio (D-186) ---------------------------------------------------
 
 
 def _fascia(svg: str) -> tuple[float, float]:
@@ -327,7 +327,7 @@ def test_sull_a3_il_cartiglio_sta_dove_sta_nel_file() -> None:
 
 @pytest.mark.parametrize("telaio", [NOVE_C_A2, NOVE_C_A1], ids=["A2", "A1"])
 def test_sugli_altri_formati_il_cartiglio_e_a_misura_in_basso_a_destra(telaio) -> None:  # type: ignore[no-untyped-def]
-    """D-184: il cartiglio non si allarga e non si ridisegna. La fascia si sposta
+    """D-186: il cartiglio non si allarga e non si ridisegna. La fascia si sposta
     tutta insieme contro l'angolo in basso a destra della squadratura; la testata
     corre per tutta la squadratura."""
     svg = disegna_cartiglio(tavola(header_note=None), telaio).svg
@@ -346,7 +346,7 @@ def test_la_dicitura_si_tiene_al_bordo_destro() -> None:
 
 
 def test_l_a4_non_contiene_il_cartiglio() -> None:
-    with pytest.raises(ValueError, match="D-184"):
+    with pytest.raises(ValueError, match="D-186"):
         disegna_cartiglio(tavola(), NOVE_C_A4)
 
 

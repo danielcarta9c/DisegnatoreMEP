@@ -1687,7 +1687,7 @@ def place_sheet(
         #
         # L'A4 resta escluso, ed e' la ragione originale: impilare li'
         # comprimerebbe su una A4 un disegno che D-058 manda in A3. **E' l'A4,
-        # non «il foglio piu' piccolo»**: il 25 settembre 2026 D-184 ha tolto
+        # non «il foglio piu' piccolo»**: il 25 settembre 2026 D-186 ha tolto
         # l'A4 dalla scala, e con la formula di prima il piu' piccolo sarebbe
         # diventato l'A3 — che smetteva di impilare. Misurato: la posa della
         # centrale a quattro fasce su A3 falliva, e su `main` impilava.

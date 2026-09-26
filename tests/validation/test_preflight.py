@@ -426,7 +426,7 @@ def test_un_foglio_mezzo_vuoto_non_e_piu_un_rilievo() -> None:
     **si'**: ci stava su un A3.
 
     Fino al 25 settembre 2026 la prova si faceva su un A3, e la risposta era
-    «ci stava su un A4». **D-184 ha tolto l'A4 dai formati ordinari** — non
+    «ci stava su un A4». **D-186 ha tolto l'A4 dai formati ordinari** — non
     contiene il cartiglio Nove C —, e l'A3 e' diventato il foglio piu' piccolo:
     su un A3 la domanda non ha piu' una risposta, e la prova sale di un foglio.
     """
@@ -446,7 +446,7 @@ def test_un_disegno_che_ci_stava_su_un_foglio_piu_piccolo_si_dice() -> None:
     ingombra un centinaio di millimetri per settanta e sta su un A2: sull'A3 ci
     stava, col margine, e il rilievo lo nomina.
 
-    Fino al 25 settembre 2026 stava su un A3 e il rilievo nominava l'A4: **D-184**
+    Fino al 25 settembre 2026 stava su un A3 e il rilievo nominava l'A4: **D-186**
     ha tolto l'A4 dai formati ordinari, perche' non contiene il cartiglio.
     """
     pieces = [placed("a", 40, 40), placed("b", 120, 100)]
@@ -458,7 +458,7 @@ def test_un_disegno_che_ci_stava_su_un_foglio_piu_piccolo_si_dice() -> None:
 
 
 def test_su_un_a3_non_c_e_un_foglio_piu_piccolo() -> None:
-    """**D-184**: l'A3 e' il formato ordinario piu' piccolo. Lo stesso disegno
+    """**D-186**: l'A3 e' il formato ordinario piu' piccolo. Lo stesso disegno
     della prova qui sopra, su un A3, non ha un foglio piu' piccolo da nominare."""
     pieces = [placed("a", 40, 40), placed("b", 120, 100)]
     codici = [

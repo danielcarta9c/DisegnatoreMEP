@@ -171,7 +171,7 @@ class SheetFrame(StrictModel):
 NOVE_C_A3 = SheetFrame(standard=A3_LANDSCAPE)
 
 NOVE_C_A4 = SheetFrame(standard=A4_LANDSCAPE)
-"""L'A4 orizzontale — **non piu' un formato ordinario** (D-184, 25 settembre 2026).
+"""L'A4 orizzontale — **non piu' un formato ordinario** (D-186, 25 settembre 2026).
 
 Il cartiglio Nove C e' largo 400 mm e l'A4 ne ha 277 utili: non lo contiene, e
 il PO ha deciso che il cartiglio resta a misura su ogni foglio. Il telaio resta
@@ -193,11 +193,11 @@ NOVE_C_A1 = SheetFrame(standard=A1_LANDSCAPE)
 
 ORDINARY_FRAMES: tuple[SheetFrame, ...] = (NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
 """I formati ordinari, dal piu' piccolo al piu' grande (D-058, esteso da D-148,
-ristretto da D-184).
+ristretto da D-186).
 
 L'ordine **e'** la regola di scelta: si prende il primo su cui il disegno entra.
 
-**L'A4 non c'e' piu'** (D-184, 25 settembre 2026): il cartiglio Nove C e' largo
+**L'A4 non c'e' piu'** (D-186, 25 settembre 2026): il cartiglio Nove C e' largo
 400 mm, resta a misura su ogni foglio, e l'A4 ne ha 277 utili. Per una centrale
 l'A3 era gia' il primo tentativo (D-135).
 

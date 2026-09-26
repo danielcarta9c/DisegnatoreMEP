@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-24 notte — su `main` `DRAW-017` (PR #56) e `DRAW-018` (PR #57), **tavole approvate** (I-117, I-119); il PO ha dato il perimetro della **prima release** (D-183), e il pacchetto attivo è **`REL-001`**: la skill vera e propria e il PDF
+**Aggiornato:** 2026-09-26 — su `main` anche **il cartiglio Nove C** (`REL-002`, tavole **approvate dal PO**, I-132), fatto in una seconda sessione mentre la prima faceva i simboli; il pacchetto attivo resta **`REL-003`**: le voci di catalogo e la tavola di prova. Dopo, `REL-001`
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,61 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto la notte del 24 settembre 2026
+## ▶ Il cartiglio è su `main` — scritto il 26 settembre 2026
+
+**`REL-002` è fatto, e le tavole sono approvate** (I-132): «Si tutto perfetto». L'ha svolto una
+seconda sessione, che il PO ha dedicato al cartiglio (I-129) mentre la prima faceva i simboli.
+Rapporto: `docs/collaudi/REL-002/RAPPORTO.md`; il pacchetto com'era: `docs/plans/pacchetti/REL-002.md`.
+
+- **Il cartiglio è quello del file del PO** (`assets/cartigli/Cartiglio_NoveC_A3.pdf`, versione del
+  25 settembre, I-130): un generatore di sola libreria standard ne scrive il **modello** accanto, e il
+  logo byte per byte. Una prova pretende che rigenerarlo dia lo stesso modello.
+- **La tavola lo porta con `--cartiglio assets/cartigli/Cartiglio_NoveC_A3.json`** su `draw`, `piano` e
+  `revisiona`. Senza, esce come prima, in bozza. **Da qui in avanti le tavole per il PO si fanno con
+  `--cartiglio`.**
+- **I dati** sono sette campi facoltativi nei metadati — indirizzo, titolo e numero della tavola,
+  tre firme, la dicitura in testata — e il numero sulle tavole dichiarate. «Capire» li chiede in una
+  voce sola; **un dato che manca si scrive «DA DEFINIRE» e la tavola esce in bozza** (D-025). Un dato
+  che manca **non si scrive nel JSON**: i grafi agli atti restano identici byte per byte.
+- **Su ogni formato il cartiglio resta a misura A3**, contro l'angolo in basso a destra, e **l'A4
+  non è più un formato ordinario** (D-186): i formati sono A3, A2, A1.
+- **Due cose trovate misurando**: `scripts/to-pdf.sh` **non stampa a misura esatta** (−0,025 % in
+  orizzontale, +0,043 % in verticale: è di `REL-001`); e togliere l'A4 faceva smettere di impilare la
+  posa sull'A3, corretto in `layout/place.py` con una prova.
+
+⚠ **Due sessioni in parallelo prendono gli stessi numeri** (I-133). Tutt'e due erano partite dallo
+stesso `main` e avevano usato I-126, I-127, I-128 e D-184: chi è arrivata seconda — il cartiglio —
+ha rinumerato i suoi in **I-129 … I-131 e D-186**. **Chi fonde, prende i numeri guardando `main` in
+quel momento**: il prossimo input è **I-134**, la prossima decisione **D-187**.
+
+## ▶ Da dove riparte la prossima sessione — scritto il 25 settembre 2026
+
+**Il pacchetto attivo è `REL-003`, i simboli nuovi, e la sua prima parte è su `main`.** Il PO ha
+chiesto di partire dai simboli (**I-126**), ha confermato che cosa disegnano (**I-127**, **D-184**) e,
+guardando il foglio, ha approvato le forme (**I-128**, **D-185**): «si i simboli che hai fatto vanno
+bene. fai i test e se va tutto bene al termine push su main».
+
+- **I cinque simboli**: la pompa di calore aria-acqua di alta potenza (60 × 30), la caldaia modulare
+  a condensazione (60 × 25), il collettore solare (40 × 25), il bollitore a due serpentini (25 × 55),
+  il ventilconvettore canalizzato (20 × 15). Le macchine tengono mandata e ritorno a **+5 e +20** come
+  tutte le altre. Il foglio: `docs/collaudi/REL-003/REL-003-simboli-nuovi.pdf`; il rapporto:
+  `docs/collaudi/REL-003/RAPPORTO.md`.
+- **Le fonti**: **UNI 9511 non ha nessuno dei cinque segni**; le forme vengono dagli schemi dei
+  costruttori e dei progetti pubblici, SRC-030 … SRC-041, e la ricerca è
+  `docs/fonti/ricerche/reports/Simboli nuovi della prima release.md`.
+- **Da dove si riparte: il punto 4 del pacchetto.** Le voci di catalogo dei cinque simboli, e il dato
+  che distingue le varianti — **Capire sceglie per mestiere e per attacchi, mai per nome**, e tre dei
+  simboli nuovi hanno mestiere e attacchi uguali a quelli del fratello: senza quel dato non verrebbero
+  mai scelti. Poi il **circuito solare**, che è del PO (D-184, punto 5: fluido, colore, corredo; la
+  ricerca porta che cosa fanno le legende), e la **tavola di prova** su un impianto che non è fra i
+  cinque.
+- **Dopo `REL-003`** viene `REL-001`, la skill vera e propria e il PDF, scritto in
+  `docs/plans/pacchetti/REL-001.md`: la tavola di prova di `REL-003` può fargli da impianto nuovo.
+
+La sezione qui sotto è lo stato con cui la sessione del 25 settembre è partita, e resta vera per tutto
+il resto.
+
+## Lo stato della notte del 24 settembre 2026
 
 **Su `main` c'è tutto**, e le tavole sono approvate: `DRAW-017` (PR #56, I-117) e `DRAW-018` (PR
 #57, I-119). **Si parte con `REL-001`**, il primo pacchetto della prima release.
@@ -79,9 +133,12 @@ qualunque potenza (la strada A, D-182) — con la ricerca su norme e costruttori
   e la descrizione dell'impianto al posto dei segnaposto;
 - la misura della sessione, **mai quella dell'agente**:
   `python docs/collaudi/DRAW-017/misura-tavole.py --dettaglio nome=grafo:piano …`;
+- la tavola **col cartiglio**: `piano … --cartiglio assets/cartigli/Cartiglio_NoveC_A3.json` (dal 26
+  settembre, `REL-002`);
 - i PDF con `scripts/to-pdf.sh`, e si guardano i PDF: i PNG di `scripts/rasterize.sh` tagliano il
   fondo del foglio (un agente di `DRAW-018` ha trovato la finestra giusta: `--window-size=1588,1400`
-  sull'A3).
+  sull'A3). ⚠ Il PDF del browser **non è a misura esatta** (−0,025 % / +0,043 %, `REL-002`): per
+  confronti al pixel si rasterizza l'SVG con MuPDF, come fa `docs/collaudi/REL-002/fedelta.py`.
 
 **Resta aperto, e non è di `REL-001`:** l'**anello** (i vincoli dell'occhio come dati per il
 pianificatore), le cure del revisore che escono, **`passa-per`**, i rilievi di A2, A3 e B5 — migliorie,

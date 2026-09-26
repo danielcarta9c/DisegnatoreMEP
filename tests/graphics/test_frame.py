@@ -118,7 +118,7 @@ def test_a_rect_knows_its_own_edges() -> None:
 
 
 def test_the_ordinary_formats_go_from_a3_up_to_a1_in_growing_order() -> None:
-    """D-148 e D-184: oltre l'A3 si va — A3, A2, A1 — e la scala resta l'ordine.
+    """D-148 e D-186: oltre l'A3 si va — A3, A2, A1 — e la scala resta l'ordine.
 
     Fino al 19 settembre 2026 questa prova si chiamava
     `..._are_a4_then_a3_and_stop_there` e difendeva la clausola di D-058 «ne'
@@ -127,7 +127,7 @@ def test_the_ordinary_formats_go_from_a3_up_to_a1_in_growing_order() -> None:
     tavole di prova che non uscivano fallivano tutte contro il bordo destro
     dell'area A3, e l'impianto 4 esce su A2 senza toccare nient'altro.
 
-    **Il 25 settembre 2026 l'A4 e' uscito dalla scala** (D-184): il cartiglio Nove
+    **Il 25 settembre 2026 l'A4 e' uscito dalla scala** (D-186): il cartiglio Nove
     C e' largo 400 mm, resta a misura su ogni foglio, e l'A4 ne ha 277 utili. Si
     chiamava `test_the_ordinary_formats_go_up_to_a1_in_growing_order`.
     """

@@ -329,7 +329,7 @@
     },
     "ProjectMetadata": {
       "additionalProperties": false,
-      "description": "Il documento, non l'impianto: sono i dati che il cartiglio scrive.\n\nI campi dopo `issue_date` sono **facoltativi e additivi** (REL-002, I-127),\ncome `plant_regime`: un documento 1.1.0 senza di loro resta valido, e la\nversione dello schema non cambia. **Assente vuol dire non dato**: il\ncartiglio scrive «DA DEFINIRE» dove il dato serve, e la tavola esce in\nbozza (D-025). Nessuno li inventa (D-087).",
+      "description": "Il documento, non l'impianto: sono i dati che il cartiglio scrive.\n\nI campi dopo `issue_date` sono **facoltativi e additivi** (REL-002, I-130),\ncome `plant_regime`: un documento 1.1.0 senza di loro resta valido, e la\nversione dello schema non cambia. **Assente vuol dire non dato**: il\ncartiglio scrive «DA DEFINIRE» dove il dato serve, e la tavola esce in\nbozza (D-025). Nessuno li inventa (D-087).",
       "properties": {
         "project_id": {
           "pattern": "^[a-z][a-z0-9_-]*$",

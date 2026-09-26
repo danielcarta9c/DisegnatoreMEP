@@ -1,108 +1,174 @@
-# REL-002 — Il cartiglio Nove C, compilato, sulla tavola
+# REL-003 — I simboli nuovi: pompa di calore di alta potenza, caldaia modulare, solare termico, fan-coil canalizzato
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **ATTIVO** dal 25 settembre 2026. Il PO ha anteposto questo pacchetto a `REL-001`
-(**I-126**): «in questa sessione ci dedichiamo esclusivamente al cartiglio». `REL-001` è
-**rinviato, non consegnato**: il suo testo è in `docs/pm/2026-09-24-rel001-pacchetto.md`.
-**Base:** `main` a `130be28` (PR #57).
-**Ramo:** quello che l'ambiente della sessione assegna — `claude/epic-newton-r94e4l`.
-**Release:** la prima release, secondo dei cinque pacchetti (**D-183**), anteposto al primo.
-**Approvazione della fusione:** **del PO**, guardando le tavole col cartiglio (D-146, D-147).
+**Stato:** **ATTIVO** dal 24 settembre 2026. Il PO ha chiesto di partire dai simboli (**I-126**):
+`REL-001` viene dopo, com'era scritto, in `docs/plans/pacchetti/REL-001.md`.
 
-Gli input: **I-123** («manca il cartiglio»), **I-127** — il file del 25 settembre, «questo è il
-cartiglio che usiamo per i fogli A3» — e **I-128**, la risposta sui formati, che è **D-184**.
+> **▶ 25 settembre 2026 — la prima parte è su `main`.** I cinque simboli ci sono, dalle fonti
+> (SRC-030 … SRC-041), e **le forme sono approvate dal PO** (I-128, D-185): «si i simboli che hai fatto
+> vanno bene. fai i test e se va tutto bene al termine push su main». Sono andati su `main` con la PR
+> di `REL-003`, prima delle voci di catalogo, perché il PO l'ha chiesto. Il rapporto è
+> `docs/collaudi/REL-003/RAPPORTO.md`.
+>
+> **Il pacchetto continua dal punto 4**: le voci di catalogo e il dato che distingue le varianti, il
+> circuito solare da decidere con il PO, la tavola di prova. Sono aperti i criteri **4** e **5**, e il
+> criterio **0** vale per la tavola di prova. Il ramo riparte da `main` dopo la fusione.
+**Base:** `main` a `130be28` — `DRAW-018` fuso con la PR **#57**, tavole approvate (**I-119**).
+**Ramo:** `claude/missing-symbols-uuzbhb`, quello che l'ambiente della sessione assegna.
+**Release:** la prima release (**D-183**, `docs/plans/2026-09-03-release-plan.md`).
+**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147): prima il foglio dei
+simboli, poi la tavola di prova.
+
+Il PO, il 24 settembre 2026 (**I-124**, **I-126**, **I-127**):
+
+> «forse vale la pena aggiungere qualche simbolo nella libreria (altrimenti la prima release è un po
+> scarna). Mancano simboli per pdc di alta potenza (non possiamo usare lo stesso simbolo), lo stesso
+> vale per le caldaie ad alta potenza (quelle fatte a moduli a condensazione), i simboli per il
+> solare termico, forse qualcosa per la parte aria, niente di esagerato ma un simbolo per fancoil
+> canalizzato ci fa comodo»
+>
+> «Io vorrei partire prima dalle cose facili i simboli che mancano»
+>
+> «Le assunzioni sono tutte corrette puoi procedere»
 
 ---
 
-## Dove siamo — misurato il 25 settembre 2026
+## Che cosa si disegna — **D-184**, confermata dal PO
 
-- **La tavola ha la squadratura del cartiglio, ma non il cartiglio** (D-053, D-091). La fascia in
-  basso è un rettangolo vuoto con la scritta «BOZZA — cartiglio non compilato»; in testata c'è il
-  nome del progetto. Suite di partenza: **46 rosse**, 1690 passate, 24 `skip`, 12 `xfail`.
-- **Il file del PO** (`assets/cartigli/Cartiglio_NoveC_A3.pdf`, I-127) ha **la stessa geometria**
-  di quello del 1 agosto — ventuno tracciati identici, il logo identico al byte —; **i valori sono
-  diventati segnaposto**. È un PDF di ReportLab ritoccato in un editor: i segnaposto ritoccati sono
-  in Arial, il resto in Helvetica, stesse misure. La scritta «TAVOLA» è bianca al 50 %.
-- **I dati che il progetto già possiede**: committente, progetto, commessa, revisione, data
-  (`ProjectMetadata`). **Mancano**: indirizzo, titolo della tavola, numero della tavola, i tre nomi
-  delle firme, la dicitura in testata. «Capire» scrive `ND` quando committente o commessa mancano
-  (`skill/capire/ISTRUZIONI.md`).
+| famiglia | simboli | attacchi |
+|---|---|---|
+| **pompa di calore aria-acqua di alta potenza** | uno, distinto da quello della macchina domestica | mandata e ritorno, come la domestica. L'acqua-acqua **no** |
+| **caldaia modulare a condensazione** | uno: un involucro con **i moduli disegnati dentro** | **una sola coppia** mandata/ritorno: è un generatore solo, non una cascata |
+| **solare termico** | due: il **collettore** e il **bollitore a due serpentini** | il collettore mandata e ritorno; il bollitore i due serpentini, acqua fredda, acqua calda, sonda e ricircolo come il bollitore di oggi |
+| **ventilconvettore canalizzato** | uno, con **i collari dei canali** disegnati nel simbolo | le due porte dell'acqua **su un lato solo** (D-167); **nessuna porta d'aria** |
+
+Il **gruppo di circolazione solare non è un simbolo**: si disegna con i pezzi della libreria —
+circolatore, ritegno, valvola di sicurezza, vaso, manometro.
+
+---
+
+## Dove siamo — misurato il 24 settembre 2026
+
+- **La libreria ha 42 simboli** e la scrive un generatore, `examples/graphics/build_symbols.py`; una
+  prova (`tests/catalog/test_generated_fixtures.py`) pretende che rieseguirlo la riproduca identica.
+  Un simbolo non si scrive a mano.
+- **UNI 9511**, nella tavola che il progetto ha già (SRC-015, pagina «Apparecchiatura per la
+  distribuzione di acqua, gas e vapore»), ha il **ventilconvettore** (riquadro con una X), il
+  ventilconvettore **con presa d'aria esterna** (la X con una freccia) e il **generatore di calore a
+  combustibile gassoso** (triangolo in un rettangolo). **Non ha** né la pompa di calore né il
+  collettore solare: per quelli le fonti sono gli schemi dei costruttori e dei progetti pubblici.
+  Guardata dalla sessione il 24 settembre 2026.
+- **Il foglio della libreria intera non si stampa più**: `disegnatore-mep symbols-sheet` rifiuta 42
+  simboli, perché su un A3 a scala fissa ne stanno 32. Il foglio per il PO si stampa sui soli simboli
+  che servono.
+- **Capire sceglie una voce di catalogo per mestiere e per attacchi, mai per nome**
+  (`skill/capire/ISTRUZIONI.md` §4.1). Tre dei simboli nuovi — pompa di calore di alta potenza,
+  caldaia modulare, fan-coil canalizzato — hanno **lo stesso mestiere e gli stessi attacchi** del
+  fratello che c'è già: con le regole di oggi Capire non avrebbe niente con cui distinguerli, e i
+  simboli nuovi non verrebbero mai scelti. **Serve un dato nel catalogo che Capire possa leggere, e la
+  riga che gli dice di leggerlo.** È lavoro di questo pacchetto (punto 4).
+- **La suite su `main`** (`130be28`): **46 rosse**, 1690 passate, 24 `skip`, 12 `xfail`, 837 s.
+  L'insieme delle 46 è salvato e il saldo si misura contro quello.
+
+---
 
 ## Le cose da fare, in quest'ordine
 
-### 1. Il modello del cartiglio, ricavato dal PDF
+### 1. Le fonti
 
-Un generatore **di sola libreria standard** legge il PDF del PO e scrive il modello: tracciati,
-etichette, **campi** — dove sta ciascun valore, con che carattere, in che casella — e il **logo**,
-estratto **byte per byte** dal PDF. Come i generatori della libreria, una prova lo riesegue e
-pretende lo stesso risultato: il modello non si corregge a mano, si rigenera.
+Per ogni famiglia: UNI 9511 (SRC-015, SRC-016), gli schemi funzionali di progetti pubblici con
+legenda, gli schemi dei costruttori — come la ricerca del 24 settembre sulle sicurezze (SRC-029).
+Quattro agenti di ricerca in parallelo (D-152), uno per famiglia, **ciascuno in una sua cartella fuori
+dal repository**; quello che riferiscono **non è una fonte finché la sessione non ha aperto il ritaglio
+e la pagina**. Il rapporto va in `docs/fonti/ricerche/reports/`, note e ritagli dei soli segni in
+`docs/fonti/ricerche/research_notes/`, le fonti nel registro da **SRC-030** in poi.
 
-### 2. I dati del cartiglio
+### 2. Le forme, nel generatore
 
-Campi **facoltativi e additivi** in `ProjectMetadata` — come `plant_regime`, la versione dello
-schema non cambia —, lo schema JSON rigenerato, e le istruzioni di «Capire» che dicono **che cosa
-chiedere** al progettista. **Un dato che manca non si inventa** (D-087): nella casella compare «DA
-DEFINIRE», e la tavola esce **marcata come bozza** (D-025).
+I simboli nuovi entrano in `examples/graphics/build_symbols.py`, con le convenzioni in vigore
+(**D-165**: la convenzione grafica non si tocca):
 
-### 3. Il cartiglio sulla tavola
+- ogni coordinata di porta su un nodo della griglia da 2,5 mm (D-054);
+- **macchine**: mandata e ritorno sulla faccia destra, a **+5** e **+20** — le stesse quote di tutte
+  le altre macchine, che è ciò che tiene dritte le autostrade (D-159);
+- **terminali**: `in` e `out` sulla faccia sinistra, a +2,5 e +12,5 (D-167);
+- **bollitore**: gli attacchi di un serpentino dicono dove sta il serpentino, e **non scorrono**
+  (D-163);
+- la **gerarchia dimensionale** (D-055): una macchina di alta potenza può essere più grande di una
+  domestica. È una scelta grafica, e la misura la approva il PO guardandola;
+- un corpo non dichiara mai il proprio tratto; un riempimento solo dove la parte è piena davvero.
 
-`render_sheet` disegna il cartiglio del modello e lo compila. Un testo troppo lungo **entra nella
-sua casella**: si riduce fino alla misura più piccola che il cartiglio stesso usa per un valore
-(7 pt), poi va su due righe; se non entra nemmeno così, la tavola è una bozza e lo dice. Su A2 e A1
-il cartiglio sta **a misura, in basso a destra**, e l'A4 esce dai formati ordinari (**D-184**).
-Il comando prende il modello con `--cartiglio`; senza, la tavola esce come oggi, in bozza.
+Ogni manifesto dice la sua fonte nel campo `source`.
 
-### 4. La prova: le cinque tavole approvate, col cartiglio
+### 3. Il foglio al PO
 
-Si rieseguono i cinque grafi e i cinque piani approvati (`docs/collaudi/DRAW-018/`) con il
-cartiglio compilato — dati di prova dichiarati come tali, il repository è pubblico (D-038) — più
-**una tavola in bozza**, con i campi mancanti. Il disegno non deve muoversi di un pixel.
+Un foglio **in PDF a misura reale**, con i simboli nuovi accanto a quelli di oggi che somigliano loro
+(pompa di calore, caldaia, bollitore, ventilconvettore). **Il PO approva le forme guardandole.**
+Niente di quello che segue comincia prima del suo sì.
+
+### 4. Le voci di catalogo
+
+Nel generatore del catalogo, `examples/layout/build_layout_fixtures.py`: mestieri, caratteri
+(`traits`), attacchi con fluido e verso.
+
+- Per le tre famiglie che hanno un fratello, **i caratteri del fratello**: sono loro a decidere quali
+  regole si accendono, e **le regole non si toccano** — «le regole solo dove il PO le dà» (D-183).
+- Per il **solare**, fluido, colore della linea e caratteri **li decide il PO** (D-184, punto 5): la
+  sessione porta una proposta dalle fonti, e aspetta.
+- **Il dato che distingue le varianti** (vedi *Dove siamo*): un campo del catalogo, e una riga in
+  `skill/capire/ISTRUZIONI.md` §4.1 che dice di sceglierlo quando il testo nomina la variante. È la
+  sola riga delle istruzioni di Capire che questo pacchetto tocca.
+
+### 5. La tavola di prova
+
+Un impianto **che non è fra i cinque**, scritto dalla sessione nello stile di `examples/prova/input/`
+— niente dati di clienti, il repository è pubblico —, che usa **i cinque simboli**. Si compone con il
+protocollo della camera pulita (`HANDOFF.md`) e si misura con gli strumenti della sessione. Il solare
+entra quando il PO ha deciso il suo circuito. Può fare da impianto nuovo per la prova della skill
+(`REL-001`, punto 5).
 
 ---
 
 ## Perimetro
 
-**Dentro:** `assets/cartigli/`; il generatore in `examples/cartigli/`; `src/disegnatore_mep/graphics/`
-(il cartiglio, il telaio, il renderer); `src/disegnatore_mep/model/project.py` e
-`schemas/project.schema.json`; `cli.py`, per `--cartiglio`; la **lista dei formati** in `frame.py`,
-`piano/formato.py`, `piano/esecutore.py`, `validation/preflight.py` (D-184); in
-`skill/capire/ISTRUZIONI.md` la sezione dei **metadati**, e in `skill/comporre/ISTRUZIONI.md` **solo**
-la lista dei formati; `tests/**`; `docs/collaudi/REL-002/`; i documenti di stato.
+**Dentro:** `examples/graphics/build_symbols.py` e la libreria che genera (`assets/symbols/`);
+`examples/layout/build_layout_fixtures.py` e il catalogo che genera (`examples/layout/catalog/`);
+`src/disegnatore_mep/catalog/` per il dato che distingue le varianti; `naming/`, se una famiglia
+nuova lo chiede; `src/disegnatore_mep/layout/legend.py` **solo** per il colore del fluido solare, se
+il PO lo decide; `skill/capire/ISTRUZIONI.md` §4.1, la sola riga delle varianti;
+`skill/comporre/ISTRUZIONI.md` §2.1, le sole righe della tabella delle porte per i simboli nuovi;
+`examples/prova/` per l'impianto nuovo; `tests/**`; `docs/fonti/**`; `docs/collaudi/REL-003/`; i
+documenti di stato (`REGISTRO`, `DECISION_LOG`, piano di release, `HANDOFF.md`, `PROJECT_STATE.md`).
 
-**Fuori:** la posa e l'instradamento (`layout/`), le regole, la libreria dei simboli, il resto delle
-istruzioni dei tre agenti, il **motore PDF** (`REL-001`), il **DXF** (`REL-004`).
+**Fuori:** il motore del disegno (`layout/` tranne la riga del colore, `piano/`); le regole
+(`rules/`); le istruzioni di Capire, Comporre e Rivedere oltre alle due righe dette sopra; i simboli
+che ci sono già; il cartiglio (`REL-002`), la skill e il PDF (`REL-001`), il DXF (`REL-004`).
 
-> **Una riga di `layout/place.py` è entrata, ed è dichiarata** (25 settembre, a lavoro in corso). La
-> posa di partenza impilava prima di salire di formato «tranne sul foglio più piccolo»: era l'A4, e
-> con D-184 sarebbe diventato l'A3, che smetteva di impilare — la suite l'ha trovato. La riga adesso
-> nomina l'A4, e la posa fa quello che faceva prima su A3, A2 e A1.
+---
 
 ## Criteri di accettazione
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-0. **Le tavole, per prime**: le cinque tavole approvate col cartiglio compilato, in PDF, al PO — e
-   la tavola in bozza.
-1. **Il cartiglio è quello del PO**: la fascia disegnata con i segnaposto del file, rasterizzata
-   accanto al PDF del PO, differisce **solo nei caratteri**.
-2. **Il disegno non cambia**: sulle cinque tavole, fra la testata e il cartiglio, i pixel sono
-   quelli delle tavole approvate.
-3. **Il modello si rigenera identico** dal PDF, e **il logo è byte per byte** quello del PDF.
-4. **I dati**: un campo che manca dà «DA DEFINIRE» e la bozza; un testo lungo resta nella sua
-   casella — prove.
-5. **I formati** (D-184): A3 esatto; A2 e A1 in basso a destra; l'A4 non è più ordinario.
-6. **La suite**: nessuna rossa nuova rispetto alle 46; zero `skip` e zero `xfail` nuovi; `ruff`
-   verde; `mypy` **senza errori nuovi** — su `main` ce ne sono già 4, in due file di prova
-   (`tests/layout/test_posa_a_fasi.py`, `tests/validation/test_regole_del_piano.py`), misurati il 25
-   settembre sul `main` a `130be28`.
+0. **Le tavole, per prime**: al PO il foglio dei simboli nuovi in PDF, poi la tavola di prova in PDF.
+1. **Le fonti**: ogni simbolo nuovo dichiara la sua fonte nel manifesto, e la fonte è nel registro con
+   il ritaglio del segno nelle note. Nessuna forma senza fonte.
+2. **Le forme le ha approvate il PO**, guardando il foglio; il suo giudizio è una riga del registro.
+3. **La libreria e il catalogo si rigenerano identici** (`tests/catalog/test_generated_fixtures.py`),
+   e i simboli nuovi passano le prove che valgono per tutti i simboli.
+4. **Capire sceglie la variante giusta**: una prova sul catalogo dice che le varianti si distinguono
+   per un dato che non è il nome.
+5. **La tavola di prova** usa i cinque simboli ed esce in PDF con **zero tratte cedute e zero rilievi
+   bloccanti**.
+6. **La suite**: nessuna rossa nuova rispetto alle 46 di `130be28`; zero `skip` e zero `xfail` nuovi;
+   `ruff check src tests examples scripts` e `mypy` verdi.
 
-## Dopo `REL-002`
+## Dopo `REL-003`
 
-Si torna a `REL-001` — la skill e il PDF —, poi `REL-003` i simboli nuovi, `REL-004` il DXF,
-`REL-005` il pacchetto della release. Il PDF di `REL-001` dovrà scrivere anche il cartiglio: il logo
-è un'immagine JPEG, e la scritta «TAVOLA» è trasparente al 50 %.
+`REL-001` la skill e il PDF (`docs/plans/pacchetti/REL-001.md`), poi `REL-002` il cartiglio,
+`REL-004` il DXF, `REL-005` il pacchetto della release.
 
 ## Consegna
 
 Una PR verso `main`, **fusa solo dopo che il PO ha visto le tavole e ha detto di sì**. Rapporto in
-`docs/collaudi/REL-002/RAPPORTO.md`, con le tavole in testa.
+`docs/collaudi/REL-003/RAPPORTO.md`, con le tavole in testa.

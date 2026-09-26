@@ -1,7 +1,7 @@
 """Genera il modello del cartiglio Nove C dal file che il PO ha dato.
 
 La fonte e' `assets/cartigli/Cartiglio_NoveC_A3.pdf`, la versione del 25 settembre
-2026 (I-127): «questo e' il cartiglio che usiamo per i fogli A3». Lo script lo
+2026 (I-130): «questo e' il cartiglio che usiamo per i fogli A3». Lo script lo
 legge **con la sola libreria standard** — tabella dei riferimenti, oggetti,
 flussi, il disegno della pagina interpretato operatore per operatore — e
 scrive accanto:
@@ -51,7 +51,7 @@ FOLDER = ROOT / "assets" / "cartigli"
 SOURCE = FOLDER / "Cartiglio_NoveC_A3.pdf"
 MODEL = FOLDER / "Cartiglio_NoveC_A3.json"
 LOGO = FOLDER / "Cartiglio_NoveC_A3-logo.jpg"
-INPUT = "I-127"
+INPUT = "I-130"
 
 PT = 25.4 / 72
 DECIMALS = 3
@@ -77,7 +77,7 @@ CAMPI: dict[str, tuple[str, str]] = {
 }
 """Quale segnaposto e' quale dato. Il file del 25 settembre ha i valori in
 segnaposto, tranne la testata, dove restano la commessa e la dicitura di una
-commessa vera: si leggono come la commessa e la dicitura da compilare (I-127)."""
+commessa vera: si leggono come la commessa e la dicitura da compilare (I-130)."""
 
 COMMESSA_IN_TESTATA = "MI.223"
 """La commessa scritta nella testata del file, che nel modello diventa `{commessa}`."""

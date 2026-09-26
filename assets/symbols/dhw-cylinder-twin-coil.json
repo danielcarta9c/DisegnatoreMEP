@@ -1,0 +1,68 @@
+{
+  "id": "dhw-cylinder-twin-coil",
+  "version": "1.0.0",
+  "name": "Bollitore ACS a due serpentini",
+  "width_mm": 25.0,
+  "height_mm": 55.0,
+  "allowed_rotations_deg": [
+    0
+  ],
+  "ports": [
+    {
+      "id": "coil_in",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 7.5
+    },
+    {
+      "id": "coil_out",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 17.5
+    },
+    {
+      "id": "solar_coil_in",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 27.5
+    },
+    {
+      "id": "solar_coil_out",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 37.5
+    },
+    {
+      "id": "dhw_out",
+      "face": "top",
+      "x_mm": 7.5,
+      "y_mm": 0.0
+    },
+    {
+      "id": "cold_in",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 47.5
+    },
+    {
+      "id": "probe",
+      "face": "right",
+      "x_mm": 25.0,
+      "y_mm": 20.0
+    },
+    {
+      "id": "recirculation_in",
+      "face": "right",
+      "x_mm": 25.0,
+      "y_mm": 12.5
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 2.0,
+    "top_mm": 2.0,
+    "bottom_mm": 0.0
+  },
+  "stroke_weight": "medium",
+  "source": "pratica di settore: Cordivari, Sistema termico solare B2 (luglio 2022), PDF p. 3 (SRC-036); Vaillant, specifica tecnica solare termico 2017, PDF pp. 19 e 79 (SRC-037) — serpentino solare sotto e di integrazione sopra, ciascuno con l'ingresso in alto, attacchi dei serpentini dallo stesso lato; mantello, acqua calda, acqua fredda, sonda e ricircolo come il bollitore della libreria. UNI 9511 ha il solo scambiatore ad accumulo a un serpentino"
+}

@@ -132,7 +132,7 @@ def test_un_impianto_che_entra_esce_sul_primo_foglio_che_lo_regge(falsa) -> None
 
     L'impianto entra su A2. Deve uscire su A2, non su A3 col ripiego — e il
     ripiego non deve essere nemmeno provato. La scala comincia dall'A3 dal 25
-    settembre 2026 (**D-184**): prima provava anche l'A4.
+    settembre 2026 (**D-186**): prima provava anche l'A4.
     """
     doppio = falsa(entra_da_mm=594.0)
 
@@ -152,7 +152,7 @@ def test_il_ripiego_scatta_solo_a_formati_finiti_e_sul_piu_grande(falsa) -> None
 
     assert frame is NOVE_C_A1
     # Tutti i formati provati sul serio, in ordine, e **poi** il ripiego. L'A4
-    # non c'e' piu' (D-184).
+    # non c'e' piu' (D-186).
     assert doppio.chiamate == [
         (420.0, False),
         (594.0, False),
@@ -172,7 +172,7 @@ def test_senza_nessun_formato_da_provare_si_alza_le_mani(falsa) -> None:  # type
 def test_la_scala_dei_formati_arriva_all_a1(falsa) -> None:  # type: ignore[no-untyped-def]
     """D-148, letto da chi sceglie: tre formati, dal piu' piccolo in su.
 
-    Erano quattro fino al 25 settembre 2026: **D-184** ha tolto l'A4, che non
+    Erano quattro fino al 25 settembre 2026: **D-186** ha tolto l'A4, che non
     contiene il cartiglio Nove C."""
     assert ORDINARY_FRAMES == (NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
 
@@ -235,7 +235,7 @@ def test_il_motore_ordinario_non_tollera_una_tratta_persa() -> None:
 
 
 def test_sull_a3_si_impila_ancora_prima_di_salire_di_formato() -> None:
-    """**D-184 non tocca la posa.** L'A4 e' uscito dalla scala dei formati, e la
+    """**D-186 non tocca la posa.** L'A4 e' uscito dalla scala dei formati, e la
     posa di partenza — quella che anche l'esecutore del piano usa — impila prima di
     salire di foglio **tranne sull'A4** (D-058). Con la formula «tranne sul foglio
     piu' piccolo» l'A3 sarebbe diventato quel foglio, e avrebbe smesso di impilare:

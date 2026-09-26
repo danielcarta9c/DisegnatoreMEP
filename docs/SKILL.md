@@ -405,7 +405,7 @@ giri — e in tutti e tre i casi **dice perché si è fermato**.
 la **lunghezza** (D-139) e il **riempimento del foglio** (D-149), che si riportano come
 misure. La vicinanza di un organo di servizio al pezzo che serve è un **vincolo**, non un
 costo (D-145). I formati ordinari sono **A3, A2, A1** (D-148, dichiarata momentanea dal
-PO; l'A4 ne è uscito con D-184, perché non contiene il cartiglio), e una tratta che non si instrada non uccide più la tavola: prende un ripiego
+PO; l'A4 ne è uscito con D-186, perché non contiene il cartiglio), e una tratta che non si instrada non uccide più la tavola: prende un ripiego
 dichiarato, si marca `unresolved` e il preflight la nomina con un rilievo bloccante
 (D-150).
 
@@ -446,13 +446,13 @@ firme, più la squadratura del foglio.
 repository dal primo giorno (`assets/cartigli/`), e fino a `REL-002` se ne usavano solo i
 margini (D-091).
 
-**Com'è fatto, da `REL-002`** (I-127). Il file del PO — `Cartiglio_NoveC_A3.pdf`, versione
+**Com'è fatto, da `REL-002`** (I-130). Il file del PO — `Cartiglio_NoveC_A3.pdf`, versione
 del 25 settembre 2026 — è letto da un generatore che ne scrive il **modello** accanto: ogni
 tratto, campitura, testo e segnaposto nell'ordine in cui il file li dipinge, e il logo byte
 per byte. `graphics/cartiglio.py` lo compila con i dati del progetto — sette campi
 facoltativi nei metadati, che «Capire» chiede — e il comando lo disegna con `--cartiglio`.
 Un dato obbligatorio che manca si scrive «DA DEFINIRE» e la tavola esce in bozza (D-025);
-su ogni formato il cartiglio resta a misura A3, contro l'angolo in basso a destra (D-184).
+su ogni formato il cartiglio resta a misura A3, contro l'angolo in basso a destra (D-186).
 
 **È finito quando** la tavola esce con il cartiglio compilato coi dati che il progetto
 possiede, la cornice chiusa sui quattro lati, e nessun campo obbligatorio vuoto su una

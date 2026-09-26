@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-24 notte (`DRAW-017` e `DRAW-018` fusi con le PR #56 e #57, tavole **approvate dal PO**, I-117 e I-119; il PO ha dato il perimetro della **prima release**, D-183; attivo `REL-001`, la skill vera e propria e il PDF)
+**Aggiornato:** 2026-09-26 (`REL-002`, **il cartiglio Nove C**, tavole **approvate dal PO** — I-132 —, su `main`; `REL-003` resta il pacchetto attivo, con le voci di catalogo e la tavola di prova, poi `REL-001`)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -13,6 +13,42 @@
 > ci siamo arrivati, non per sapere come funziona la skill.
 
 ---
+
+## Dove siamo — 26 settembre 2026
+
+**Il cartiglio Nove C è sulla tavola** (`REL-002`, I-132): «Si tutto perfetto». L'ha fatto una
+seconda sessione che il PO ha dedicato al cartiglio (I-129), mentre la prima faceva i simboli.
+
+- **Il cartiglio è il file del PO** (I-130), letto da un generatore che ne scrive il modello e il
+  logo; la tavola lo porta con `--cartiglio`, compilato con i dati del progetto. Un dato che manca è
+  «DA DEFINIRE», e la tavola esce in bozza (D-025).
+- **L'A4 non è più un formato ordinario** (D-186): il cartiglio è largo 400 mm e resta a misura su
+  ogni foglio, contro l'angolo in basso a destra.
+- **Il disegno delle cinque tavole approvate non si è mosso di un pixel**, e il cartiglio disegnato
+  coincide col file del PO fuori dai testi.
+- **Suite:** le stesse 46 rosse di `main`; zero `skip` e zero `xfail` nuovi. Rapporto:
+  `docs/collaudi/REL-002/RAPPORTO.md`.
+- **Le due sessioni avevano preso gli stessi numeri** (I-133): quelli del cartiglio sono diventati
+  I-129 … I-131 e D-186.
+
+## Dove siamo — 25 settembre 2026
+
+**Il PO ha messo i simboli davanti alla skill** (I-126): il pacchetto attivo è `REL-003`, e
+`REL-001` aspetta scritto in `docs/plans/pacchetti/REL-001.md`.
+
+- **I cinque simboli nuovi ci sono**, e **le forme sono approvate** (I-128, D-185): la pompa di
+  calore aria-acqua di alta potenza, la caldaia modulare a condensazione, il collettore solare, il
+  bollitore a due serpentini, il ventilconvettore canalizzato. **UNI 9511 non ne ha nessuno**: le
+  forme vengono dagli schemi dei costruttori e dei progetti pubblici (SRC-030 … SRC-041), e il
+  foglio che il PO ha guardato è `docs/collaudi/REL-003/REL-003-simboli-nuovi.pdf`.
+- **La skill non li può ancora usare**: mancano le voci di catalogo, e Capire, che sceglie per
+  mestiere e attacchi, non avrebbe come distinguere tre di loro dal fratello. È il resto di
+  `REL-003`, con la tavola di prova e il circuito solare da decidere con il PO (D-184, punto 5).
+- **Suite:** **46 rosse**, le stesse di `main` nome per nome; 1700 passate, 24 `skip` e 12 `xfail` identici a `main`. Il primo giro ne aveva trovata una nuova — la prova che elenca per nome i simboli che stanno diritti non conosceva le quattro macchine nuove —, corretta nella prova.
+
+**Rischio 5 — la libreria certificata** — un passo avanti: i cinque simboli nuovi hanno la loro
+fonte scritta nel manifesto e nel registro. Il foglio della libreria intera, però, non si stampa
+più con `symbols-sheet`, che su un A3 ne accetta 32 e adesso sono 47.
 
 ## Dove siamo — 24 settembre 2026, notte
 
