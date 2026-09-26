@@ -1,8 +1,8 @@
 # REL-003 — i simboli nuovi: rapporto
 
 **Pacchetto:** `REL-003` (`ACTIVE_WORK_PACKAGE.md`) · **Ramo:** `claude/missing-symbols-uuzbhb` ·
-**Prima parte** su `main` con la PR #58 (SHA iniziale `130be28`) · **Seconda parte** su questo ramo,
-con `main` portato dentro dopo `REL-002` (PR #59)
+**Prima parte** su `main` con la PR #58 (SHA iniziale `130be28`) · **Seconda parte** con la PR #@@,
+dopo aver portato nel ramo `main` con `REL-002` (PR #59)
 
 > **Le tavole, per prime**
 >
@@ -12,7 +12,8 @@ con `main` portato dentro dopo `REL-002` (PR #59)
 >    canalizzato. Dal testo dell'ingegnere al PDF **senza toccare niente a mano**: «Capire» ha scritto
 >    il grafo, le regole l'hanno completato, un compositore in camera pulita ha scritto il piano.
 >    **A2, 48 tratte, zero cedute, zero rilievi bloccanti**, col cartiglio compilato come in `REL-002`
->    (dati di prova, tavola T6). ⏳ **Da guardare al PO.**
+>    (dati di prova, tavola T6). ✅ **Approvata dal PO il 26 settembre 2026** (I-136): «La tavola va
+>    benissimo. Ottimo lavoro. Fondi».
 > 2. **Il foglio dei simboli** — [`REL-003-simboli-nuovi.pdf`](REL-003-simboli-nuovi.pdf): ✅
 >    **approvato il 25 settembre** (I-128, D-185).
 >
@@ -225,7 +226,7 @@ totale                                           46 failed, 1789 passed, 24 skip
 Dal pacchetto, uno per uno.
 
 - [x] **0. Le tavole, per prime** — il foglio dei simboli è andato al PO per primo ed è approvato
-  (I-128); la tavola di prova va al PO prima di ogni numero, con questo rapporto dietro.
+  (I-128); la tavola di prova è andata al PO prima di ogni numero, ed è approvata (I-136).
 - [x] **1. Le fonti** — ogni simbolo nuovo dichiara la sua fonte nel campo `source` del manifesto; le
   fonti sono nel registro (SRC-030 … SRC-041), con i ritagli dei segni nelle note della ricerca.
 - [x] **2. Le forme le ha approvate il PO**, guardando il foglio: I-128, D-185.
@@ -239,16 +240,17 @@ Dal pacchetto, uno per uno.
 - [x] **5. La tavola di prova** usa i cinque simboli ed esce in PDF con zero tratte cedute e zero
   rilievi bloccanti — `disegnatore-mep piano … --piano piano-6-a.json …` → `Tratte cedute: 0 · rilievi
   bloccanti: 0`; sulla tavola, dalla geometria: `heat-pump-air-water-large`, `gas-boiler-modular`,
-  `solar-collector`, `dhw-cylinder-twin-coil`, `fan-coil-ducted`, tutti presenti. **Il giudizio è
-  del PO.**
+  `solar-collector`, `dhw-cylinder-twin-coil`, `fan-coil-ducted`, tutti presenti. **Approvata dal PO**
+  (I-136).
 - [x] **6. La suite** — nessuna rossa nuova rispetto alle 46 di `130be28`, zero `skip` e zero `xfail`
   nuovi, `ruff` e `mypy` verdi (§4).
 
 ## 6. Quello che hanno trovato gli agenti, e non è di questo pacchetto
 
-Le istruzioni di «Comporre» oltre al §2.1 e il motore del disegno sono fuori dal perimetro. Quello che i
-due compositori e «Capire» hanno trovato, **per `REL-001`** — la skill vera e propria —, che le
-istruzioni le riprende:
+Le istruzioni di «Comporre» oltre al §2.1 e il motore del disegno sono fuori dal perimetro, e lo sono
+anche per `REL-001`, che tocca le istruzioni solo nei percorsi. Quello che i due compositori e
+«Capire» hanno trovato resta qui, **per il pacchetto che rimetterà mano alle istruzioni e al motore**
+— quando il PO lo vorrà:
 
 - **Visti da tutt'e due i compositori**: la seconda valvola di un organo che sta in mezzo alla tratta
   (il separatore d'aria) finisce all'altro capo; l'elenco «Girati dalla deduzione» che il comando stampa
@@ -284,13 +286,12 @@ istruzioni le riprende:
   istruzioni, nel catalogo e nei registri. **I rapporti degli agenti in `capire-giro-1/` restano come li
   hanno scritti**, e lì «D-187» è quella che oggi è D-188.
 
-## 8. Che cosa va al PO
+## 8. Il verdetto del PO, e dopo
 
-**La decisione che serve per fondere è una: la tavola va bene?**
+**La tavola è approvata** (I-136): «La tavola va benissimo. Ottimo lavoro. Fondi» — con la riga unica
+del solare in legenda e la prima delle due composizioni. `REL-003` si fonde su `main` con la PR della
+seconda parte; il sì chiude **I-124** (i simboli nuovi), **I-126** (prima i simboli), **I-127** (le
+assunzioni), **I-134** (il solare magenta) e **I-135** (che cosa serve a «Capire»).
 
-- **La tavola** (§3): la fusione aspetta il sì del PO. Due cose su cui il PO può dire di no senza
-  toccare il resto: **la riga unica del solare in legenda**, e **quale delle due composizioni**.
-- **Da chiudere, se il PO è d'accordo dopo averla vista**: **I-124** (i simboli nuovi), **I-127** (le
-  assunzioni), **I-134** (il solare magenta), **I-135** (che cosa serve a «Capire»).
-- **Dopo**: `REL-001`, la skill vera e propria e il PDF (`docs/plans/pacchetti/REL-001.md`); l'impianto
-  6 può fargli da impianto nuovo, e il §6 da elenco di partenza per le istruzioni.
+**Dopo**: `REL-001`, la skill vera e propria e il PDF, è il pacchetto attivo (`ACTIVE_WORK_PACKAGE.md`);
+l'impianto 6 può fargli da impianto nuovo per la prova in camera pulita.

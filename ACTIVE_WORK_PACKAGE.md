@@ -1,185 +1,149 @@
-# REL-003 — I simboli nuovi: pompa di calore di alta potenza, caldaia modulare, solare termico, fan-coil canalizzato
+# REL-001 — La skill vera e propria: l'ingresso che cuce i pezzi, e il PDF fatto dalla skill
+
+> **▶ Attivo dal 26 settembre 2026.** `REL-003` è fuso su `main` (PR #@@, I-136) e il PO ha detto
+> «Fondi»: questo pacchetto si riattiva com'era stato scritto la notte del 24 settembre, e cambiano
+> soltanto la base — `main` dopo la fusione di `REL-003` — e il metro della suite, che si rimisura: le
+> 46 rosse sono ancora **le stesse di `DRAW-018`**, nome per nome, dopo `REL-002` e dopo `REL-003`.
+>
+> **Quello che `REL-003` gli lascia** (i simboli nuovi, fusi il 26 settembre 2026, I-136):
+> - **l'impianto 6** — `examples/prova/input/2026-09-26-impianto-6-simboli-nuovi.txt` —, un impianto
+>   che non è fra i cinque, con la sua tavola approvata (`docs/collaudi/REL-003/`): può fare da impianto
+>   nuovo al punto 5, **a patto che l'agente in camera pulita non veda niente della cartella del
+>   collaudo**;
+> - la libreria ha **47 simboli** e il catalogo **73 voci**, con il fluido solare e il dato delle
+>   varianti (D-187, D-188): la cartella della skill li porta tutti;
+> - le istruzioni di «Capire» e «Comporre» sono cambiate per i simboli nuovi (§4.1, §4.2, §7, §9;
+>   §2.1): la cartella le prende come sono;
+> - il §6 del rapporto di `REL-003` elenca quello che gli agenti hanno trovato nelle istruzioni e nel
+>   motore: **non è lavoro di questo pacchetto**, che le istruzioni le tocca solo nei percorsi.
+>
+> **Quello che `REL-002` gli lascia** (il cartiglio, fuso il 26 settembre 2026, I-132):
+> - il comando della skill **passa `--cartiglio assets/cartigli/Cartiglio_NoveC_A3.json`**, e la
+>   cartella della skill porta con sé il modello e il logo;
+> - il PDF senza browser deve saper scrivere **un'immagine JPEG** — il logo — e **un testo
+>   trasparente al 50 %** — «TAVOLA» —, e si misura contro il file del PO con
+>   `docs/collaudi/REL-002/fedelta.py`;
+> - **`scripts/to-pdf.sh` non stampa a misura esatta** (−0,025 % in orizzontale, +0,043 % in
+>   verticale, misurato in `REL-002`): il criterio 1 qui sotto va letto sapendolo;
+> - **l'A4 non è più un formato ordinario** (D-186).
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **ATTIVO** dal 24 settembre 2026. Il PO ha chiesto di partire dai simboli (**I-126**):
-`REL-001` viene dopo, com'era scritto, in `docs/plans/pacchetti/REL-001.md`.
+**Stato:** **ATTIVO** dal 26 settembre 2026, dopo la fusione di `REL-003` (I-136). Era stato attivo
+la notte del 24 settembre, dopo `DRAW-018` (PR **#57**, **I-119**), e rinviato per i simboli (I-126)
+e per il cartiglio (I-129).
+**Base:** `main` dopo la fusione di `REL-003` (PR #@@).
+**Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
+**Release:** la prima release — il primo dei cinque pacchetti (`docs/plans/2026-09-03-release-plan.md`,
+sezione «La prima release», **D-183**).
+**Approvazione della fusione:** **del PO**, e si dà guardando la tavola che la skill ha prodotto
+(D-146, D-147).
 
-> **▶ 25 settembre 2026 — la prima parte è su `main`.** I cinque simboli ci sono, dalle fonti
-> (SRC-030 … SRC-041), e **le forme sono approvate dal PO** (I-128, D-185): «si i simboli che hai fatto
-> vanno bene. fai i test e se va tutto bene al termine push su main». Sono andati su `main` con la PR
-> di `REL-003`, prima delle voci di catalogo, perché il PO l'ha chiesto. Il rapporto è
-> `docs/collaudi/REL-003/RAPPORTO.md`.
->
-> **Il pacchetto continua dal punto 4**: le voci di catalogo e il dato che distingue le varianti, il
-> circuito solare da decidere con il PO, la tavola di prova. Sono aperti i criteri **4** e **5**, e il
-> criterio **0** vale per la tavola di prova. Il ramo riparte da `main` dopo la fusione.
->
-> **▶ 26 settembre 2026 — il PO ha deciso quello che mancava** (I-134, I-135): il circuito solare è
-> **magenta**, mandata e ritorno (**D-187**); le varianti si scelgono **solo quando il testo le
-> nomina**, la pompa di calore grande e la caldaia modulare hanno **il circolatore a bordo**, sul
-> circuito solare **le regole non aggiungono niente**, il collettore è un generatore (GT), il fluido
-> si chiama «fluido solare» (**D-188**).
->
-> **Tre estensioni del perimetro, dichiarate prima di eseguirle**, perché D-188 le chiede:
-> 1. **`src/disegnatore_mep/rules/engine.py`**, una condizione sola: una regola non riguarda una rete
->    del fluido solare. È il punto in cui il motore decide se una regola parla di una rete; così le
->    sedici regole restano come sono e il serpentino di integrazione del bollitore, che sta sulla rete
->    di riscaldamento, continua a ricevere il suo corredo. Senza, sette regole che non guardano il
->    fluido — l'intercettazione, il filtro, il termometro, il separatore d'aria… — porterebbero pezzi
->    sul circuito solare;
-> 2. **`skill/capire/ISTRUZIONI.md`** oltre la riga delle varianti: il fluido solare fra i fluidi che
->    «Capire» può dichiarare, e la riga che gli dice di trascrivere il gruppo di circolazione solare e
->    di chiedere se il testo non lo descrive — le regole non lo aggiungeranno;
-> 3. **`naming/media.json`**, il nome del fluido solare.
->
-> E una cosa che il pacchetto non diceva: **il circuito solare ha bisogno dei suoi accessori in
-> catalogo** — circolatore, ritegno, sicurezza, vaso, manometro, termometro, intercettazione, raccordi
-> —, perché ogni voce di catalogo dichiara il fluido dei suoi attacchi, come già succede per l'acqua
-> sanitaria. Sono gli stessi simboli, con il fluido solare.
->
-> **▶ 26 settembre 2026 — la tavola di prova è al PO.** L'impianto 6, dal testo al PDF senza
-> toccare niente a mano: `docs/collaudi/REL-003/tavola-impianto-6.pdf`, A2, zero cedute e zero
-> bloccanti, i cinque simboli sulla stessa tavola. Il rapporto è `docs/collaudi/REL-003/RAPPORTO.md`.
-> **La fusione aspetta il sì del PO.** Tre cose fatte strada facendo, dette qui come deviazioni:
-> 1. **la legenda del solare su una riga sola**, «Fluido solare — andata e ritorno»
->    (`layout/legend.py`): le due righe identiche le hanno viste tutt'e due i compositori, ed è la
->    conseguenza di D-187; va al PO con la tavola;
-> 2. **`examples/cartigli/build_cartiglio.py`**, fuori perimetro: una variabile mai letta che rendeva
->    rosso `ruff` su `main` dopo `REL-002`; tolta, e il generatore rigenera lo stesso modello;
-> 3. **i numeri**: `REL-002` è arrivato su `main` prima e ha preso I-129 … I-133 e D-186 (I-133).
->    Quelli di questo ramo sono diventati **I-134, I-135, D-187, D-188**, e `main` è stato portato
->    nel ramo prima delle misure finali.
+Il PO, il 24 settembre 2026 (**I-121**, **I-122**):
 
-**Base:** `main` a `130be28` — `DRAW-018` fuso con la PR **#57**, tavole approvate (**I-119**).
-**Ramo:** `claude/missing-symbols-uuzbhb`, quello che l'ambiente della sessione assegna.
-**Release:** la prima release (**D-183**, `docs/plans/2026-09-03-release-plan.md`).
-**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147): prima il foglio dei
-simboli, poi la tavola di prova.
-
-Il PO, il 24 settembre 2026 (**I-124**, **I-126**, **I-127**):
-
-> «forse vale la pena aggiungere qualche simbolo nella libreria (altrimenti la prima release è un po
-> scarna). Mancano simboli per pdc di alta potenza (non possiamo usare lo stesso simbolo), lo stesso
-> vale per le caldaie ad alta potenza (quelle fatte a moduli a condensazione), i simboli per il
-> solare termico, forse qualcosa per la parte aria, niente di esagerato ma un simbolo per fancoil
-> canalizzato ci fa comodo»
->
-> «Io vorrei partire prima dalle cose facili i simboli che mancano»
->
-> «Le assunzioni sono tutte corrette puoi procedere»
-
----
-
-## Che cosa si disegna — **D-184**, confermata dal PO
-
-| famiglia | simboli | attacchi |
-|---|---|---|
-| **pompa di calore aria-acqua di alta potenza** | uno, distinto da quello della macchina domestica | mandata e ritorno, come la domestica. L'acqua-acqua **no** |
-| **caldaia modulare a condensazione** | uno: un involucro con **i moduli disegnati dentro** | **una sola coppia** mandata/ritorno: è un generatore solo, non una cascata |
-| **solare termico** | due: il **collettore** e il **bollitore a due serpentini** | il collettore mandata e ritorno; il bollitore i due serpentini, acqua fredda, acqua calda, sonda e ricircolo come il bollitore di oggi |
-| **ventilconvettore canalizzato** | uno, con **i collari dei canali** disegnati nel simbolo | le due porte dell'acqua **su un lato solo** (D-167); **nessuna porta d'aria** |
-
-Il **gruppo di circolazione solare non è un simbolo**: si disegna con i pezzi della libreria —
-circolatore, ritegno, valvola di sicurezza, vaso, manometro.
+> «Ricordiamoci che lo scopo è creare una skill che usa il progettista per disegnare impianto.
+> Quindi in Claude durante una sessione spiega l'impianto, lancia la skill ed eventualmente la skill
+> mentre fa la parte di capire può fare delle domande chiarificatrici. Ora vorrei andare verso la
+> prima release della skill. […] la skill vera e propria (il file skill.md) che orchestra i vari
+> pezzi, […] il motore pdf che dicevi»
 
 ---
 
 ## Dove siamo — misurato il 24 settembre 2026
 
-- **La libreria ha 42 simboli** e la scrive un generatore, `examples/graphics/build_symbols.py`; una
-  prova (`tests/catalog/test_generated_fixtures.py`) pretende che rieseguirlo la riproduca identica.
-  Un simbolo non si scrive a mano.
-- **UNI 9511**, nella tavola che il progetto ha già (SRC-015, pagina «Apparecchiatura per la
-  distribuzione di acqua, gas e vapore»), ha il **ventilconvettore** (riquadro con una X), il
-  ventilconvettore **con presa d'aria esterna** (la X con una freccia) e il **generatore di calore a
-  combustibile gassoso** (triangolo in un rettangolo). **Non ha** né la pompa di calore né il
-  collettore solare: per quelli le fonti sono gli schemi dei costruttori e dei progetti pubblici.
-  Guardata dalla sessione il 24 settembre 2026.
-- **Il foglio della libreria intera non si stampa più**: `disegnatore-mep symbols-sheet` rifiuta 42
-  simboli, perché su un A3 a scala fissa ne stanno 32. Il foglio per il PO si stampa sui soli simboli
-  che servono.
-- **Capire sceglie una voce di catalogo per mestiere e per attacchi, mai per nome**
-  (`skill/capire/ISTRUZIONI.md` §4.1). Tre dei simboli nuovi — pompa di calore di alta potenza,
-  caldaia modulare, fan-coil canalizzato — hanno **lo stesso mestiere e gli stessi attacchi** del
-  fratello che c'è già: con le regole di oggi Capire non avrebbe niente con cui distinguerli, e i
-  simboli nuovi non verrebbero mai scelti. **Serve un dato nel catalogo che Capire possa leggere, e la
-  riga che gli dice di leggerlo.** È lavoro di questo pacchetto (punto 4).
-- **La suite su `main`** (`130be28`): **46 rosse**, 1690 passate, 24 `skip`, 12 `xfail`, 837 s.
-  L'insieme delle 46 è salvato e il saldo si misura contro quello.
+- **I cinque pezzi esistono, e li cuce a mano la sessione di sviluppo.** Capire
+  (`skill/capire/ISTRUZIONI.md`, un agente); Completare (`disegnatore-mep rules`); Comporre
+  (`skill/comporre/ISTRUZIONI.md`, un agente); Eseguire (`disegnatore-mep piano`); Rivedere (i
+  controlli, e l'occhio di `skill/rivedere/ISTRUZIONI.md`). Le tavole dei cinque impianti di prova
+  escono così, e il PO le ha approvate (I-109, I-117, I-119).
+- **Non c'è l'ingresso della skill.** `docs/SKILL.md` è il documento d'architettura, non il file che
+  una sessione di Claude carica quando il progettista lancia la skill.
+- **Il PDF lo fa uno strumento dell'ambiente di sviluppo** (`scripts/to-pdf.sh`), con il browser.
+  Il pacchetto scrive solo l'SVG, e dipende soltanto da `pydantic`.
+- **Le skill di Nove C** (per esempio quella dei computi, `cme-mep-pdc`) sono una cartella con
+  `SKILL.md`, `scripts/` e `references/`, e girano nell'ambiente d'esecuzione di Claude: lì non si
+  può contare su un browser. Le skill di Claude per i PDF usano `reportlab` e `pypdf` — un indizio di
+  che cosa c'è, **da verificare**, non un dato.
+- **Capire sa già dichiarare le domande**: ogni cosa che il testo non dice e che serve diventa una
+  voce di `assumptions` con `status: "proposed"` (`skill/capire/ISTRUZIONI.md` §6). Manca chi le
+  porta al progettista e aspetta la risposta.
 
 ---
 
 ## Le cose da fare, in quest'ordine
 
-### 1. Le fonti
+### 1. L'ambiente in cui la skill gira
 
-Per ogni famiglia: UNI 9511 (SRC-015, SRC-016), gli schemi funzionali di progetti pubblici con
-legenda, gli schemi dei costruttori — come la ricerca del 24 settembre sulle sicurezze (SRC-029).
-Quattro agenti di ricerca in parallelo (D-152), uno per famiglia, **ciascuno in una sua cartella fuori
-dal repository**; quello che riferiscono **non è una fonte finché la sessione non ha aperto il ritaglio
-e la pagina**. Il rapporto va in `docs/fonti/ricerche/reports/`, note e ritagli dei soli segni in
-`docs/fonti/ricerche/research_notes/`, le fonti nel registro da **SRC-030** in poi.
+Che cosa offre l'ambiente d'esecuzione di una skill di Claude: la versione di Python, le librerie
+presenti (`pydantic`, `reportlab`, `pypdf`…), se si possono installare pacchetti, se c'è la rete.
+Da qui non si vede: si prepara **una skill di prova di poche righe**, che stampa versione e
+librerie, e il PO la carica e la lancia — oppure la sessione trova una fonte ufficiale che lo dica.
+**Finché il dato non c'è, la skill si scrive perché non ne abbia bisogno**: nessuna rete, nessun
+browser, dipendenze pure Python portate nella cartella.
 
-### 2. Le forme, nel generatore
+### 2. Il PDF fatto dalla skill (I-122)
 
-I simboli nuovi entrano in `examples/graphics/build_symbols.py`, con le convenzioni in vigore
-(**D-165**: la convenzione grafica non si tocca):
+La tavola esce in PDF **a misura reale** — la pagina è il foglio, e un simbolo stampato misura
+quello che il modello dice (ADR 0003, `scripts/to-pdf.sh`) — **senza browser**. La strada si sceglie
+dopo il punto 1: scrivere il PDF dalla geometria della tavola, o convertire l'SVG con una libreria
+che l'ambiente ha. Si misura contro il PDF di oggi: sulle cinque tavole approvate (le 1 e 4 in
+`docs/collaudi/DRAW-018/`, le 2, 3 e 5 in `docs/collaudi/DRAW-017/`), rasterizzate tutte e due, le
+differenze stanno solo nei caratteri.
 
-- ogni coordinata di porta su un nodo della griglia da 2,5 mm (D-054);
-- **macchine**: mandata e ritorno sulla faccia destra, a **+5** e **+20** — le stesse quote di tutte
-  le altre macchine, che è ciò che tiene dritte le autostrade (D-159);
-- **terminali**: `in` e `out` sulla faccia sinistra, a +2,5 e +12,5 (D-167);
-- **bollitore**: gli attacchi di un serpentino dicono dove sta il serpentino, e **non scorrono**
-  (D-163);
-- la **gerarchia dimensionale** (D-055): una macchina di alta potenza può essere più grande di una
-  domestica. È una scelta grafica, e la misura la approva il PO guardandola;
-- un corpo non dichiara mai il proprio tratto; un riempimento solo dove la parte è piena davvero.
+### 3. La forma della skill
 
-Ogni manifesto dice la sua fonte nel campo `source`.
+Una **cartella installabile**, costruita **da uno script del repository** e mai copiata a mano — come
+i generatori della libreria —, che la ricostruisce identica:
 
-### 3. Il foglio al PO
+- `SKILL.md`, l'ingresso (punto 4);
+- gli **script**: un comando solo per il lavoro deterministico — completare il grafo, eseguire il
+  piano, misurare, scrivere il PDF — sul motore di `src/`;
+- la **libreria**: simboli, catalogo, regole, naming;
+- le **istruzioni** di Capire, Comporre e Rivedere, come riferimenti che `SKILL.md` richiama.
 
-Un foglio **in PDF a misura reale**, con i simboli nuovi accanto a quelli di oggi che somigliano loro
-(pompa di calore, caldaia, bollitore, ventilconvettore). **Il PO approva le forme guardandole.**
-Niente di quello che segue comincia prima del suo sì.
+La forma la suggerisce la skill di Claude che crea le skill (`skill-creator`): si legge prima.
 
-### 4. Le voci di catalogo
+### 4. L'ingresso — `SKILL.md` (I-121)
 
-Nel generatore del catalogo, `examples/layout/build_layout_fixtures.py`: mestieri, caratteri
-(`traits`), attacchi con fluido e verso.
+Il flusso, com'è deciso (D-012, D-013, D-155, D-183):
 
-- Per le tre famiglie che hanno un fratello, **i caratteri del fratello**: sono loro a decidere quali
-  regole si accendono, e **le regole non si toccano** — «le regole solo dove il PO le dà» (D-183).
-- Per il **solare**, fluido, colore della linea e caratteri **li decide il PO** (D-184, punto 5): la
-  sessione porta una proposta dalle fonti, e aspetta.
-- **Il dato che distingue le varianti** (vedi *Dove siamo*): un campo del catalogo, e una riga in
-  `skill/capire/ISTRUZIONI.md` §4.1 che dice di sceglierlo quando il testo nomina la variante. È la
-  sola riga delle istruzioni di Capire che questo pacchetto tocca.
+1. il progettista **descrive l'impianto** nella conversazione e **lancia la skill**;
+2. **Capire** scrive il grafo di prima stesura; le cose che il testo non dice diventano **domande
+   chiarificatrici**, che la skill fa al progettista — in un passaggio solo, con la sua prima
+   interpretazione (D-006, D-013) — e aspetta;
+3. **Completare** aggiunge il corredo; i suoi punti aperti diventano domande nello stesso modo;
+4. **il progettista approva il grafo completo**: è l'unico cancello umano della catena;
+5. **Comporre** scrive il piano, con le istruzioni del pianificatore; **Eseguire** disegna e misura;
+   **Rivedere** guarda la tavola e rimanda al piano, mai al disegno;
+6. la skill **consegna il PDF**, e dice che cosa è rimasto aperto.
 
-### 5. La tavola di prova
+E le cose che la skill non fa mai, dette in testa: non progetta (D-104, D-172), non inventa dati
+(D-087), non cambia lo schema che ha ricevuto.
 
-Un impianto **che non è fra i cinque**, scritto dalla sessione nello stile di `examples/prova/input/`
-— niente dati di clienti, il repository è pubblico —, che usa **i cinque simboli**. Si compone con il
-protocollo della camera pulita (`HANDOFF.md`) e si misura con gli strumenti della sessione. Il solare
-entra quando il PO ha deciso il suo circuito. Può fare da impianto nuovo per la prova della skill
-(`REL-001`, punto 5).
+### 5. La prova vera: la skill intera in camera pulita
+
+Un agente con **la sola cartella della skill** e il testo di **un impianto che non è fra i cinque** —
+scritto dalla sessione nello stile di `examples/prova/input/`, o dato dal PO se preferisce; niente
+dati di clienti, il repository è pubblico. La sessione fa la parte del progettista: risponde alle
+domande con i dati del testo, e approva il grafo. Si misura con gli strumenti della sessione (D-152):
+la tavola esce, in PDF prodotto dalla skill, con zero tratte cedute e zero rilievi bloccanti.
+
+### 6. Lo ZIP per il PO
+
+La cartella impacchettata, con due righe su come caricarla in Claude. **Il PO la prova su un impianto
+suo**: è il cancello verticale del piano (`PROJECT_STATE.md`, rischio 4), e il suo esito si registra.
 
 ---
 
 ## Perimetro
 
-**Dentro:** `examples/graphics/build_symbols.py` e la libreria che genera (`assets/symbols/`);
-`examples/layout/build_layout_fixtures.py` e il catalogo che genera (`examples/layout/catalog/`);
-`src/disegnatore_mep/catalog/` per il dato che distingue le varianti; `naming/`, se una famiglia
-nuova lo chiede; `src/disegnatore_mep/layout/legend.py` **solo** per il colore del fluido solare, se
-il PO lo decide; `skill/capire/ISTRUZIONI.md` §4.1, la sola riga delle varianti;
-`skill/comporre/ISTRUZIONI.md` §2.1, le sole righe della tabella delle porte per i simboli nuovi;
-`examples/prova/` per l'impianto nuovo; `tests/**`; `docs/fonti/**`; `docs/collaudi/REL-003/`; i
-documenti di stato (`REGISTRO`, `DECISION_LOG`, piano di release, `HANDOFF.md`, `PROJECT_STATE.md`).
+**Dentro:** la cartella della skill e lo script che la costruisce (`skill/`, `scripts/`); il comando
+unico e il modulo del PDF in `src/disegnatore_mep/`; `pyproject.toml`, se serve una dipendenza;
+`docs/SKILL.md`, per il rimando all'ingresso; `tests/**`; `docs/collaudi/REL-001/`.
 
-**Fuori:** il motore del disegno (`layout/` tranne la riga del colore, `piano/`); le regole
-(`rules/`); le istruzioni di Capire, Comporre e Rivedere oltre alle due righe dette sopra; i simboli
-che ci sono già; il cartiglio (`REL-002`), la skill e il PDF (`REL-001`), il DXF (`REL-004`).
+**Fuori:** le regole, la libreria dei simboli, il motore del disegno (`layout/`, `piano/`); le
+istruzioni di Capire, Comporre e Rivedere nel contenuto — si toccano solo i percorsi, se nella
+cartella della skill cambiano; il cartiglio (`REL-002`), i simboli nuovi (`REL-003`), il DXF
+(`REL-004`).
 
 ---
 
@@ -187,25 +151,26 @@ che ci sono già; il cartiglio (`REL-002`), la skill e il PDF (`REL-001`), il DX
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-0. **Le tavole, per prime**: al PO il foglio dei simboli nuovi in PDF, poi la tavola di prova in PDF.
-1. **Le fonti**: ogni simbolo nuovo dichiara la sua fonte nel manifesto, e la fonte è nel registro con
-   il ritaglio del segno nelle note. Nessuna forma senza fonte.
-2. **Le forme le ha approvate il PO**, guardando il foglio; il suo giudizio è una riga del registro.
-3. **La libreria e il catalogo si rigenerano identici** (`tests/catalog/test_generated_fixtures.py`),
-   e i simboli nuovi passano le prove che valgono per tutti i simboli.
-4. **Capire sceglie la variante giusta**: una prova sul catalogo dice che le varianti si distinguono
-   per un dato che non è il nome.
-5. **La tavola di prova** usa i cinque simboli ed esce in PDF con **zero tratte cedute e zero rilievi
-   bloccanti**.
-6. **La suite**: nessuna rossa nuova rispetto alle 46 di `130be28`; zero `skip` e zero `xfail` nuovi;
-   `ruff check src tests examples scripts` e `mypy` verdi.
+0. **Le tavole, per prime**: la tavola dell'impianto nuovo, uscita dalla skill in camera pulita, nel
+   PDF che la skill ha scritto, al PO.
+1. **Il PDF senza browser**: pagina della misura del foglio; sulle cinque tavole approvate, il
+   confronto a pixel con `scripts/to-pdf.sh` differisce solo nei caratteri.
+2. **La cartella della skill** si costruisce con un comando e si rigenera identica — una prova, come
+   quella dei generatori della libreria.
+3. **L'ingresso** dice il flusso, le domande e l'approvazione del grafo; nella prova **nessun pezzo lo
+   cuce la sessione a mano**.
+4. **La prova in camera pulita**: dal testo al PDF, zero cedute e zero bloccanti; il rapporto dice dove
+   la skill si è fermata a chiedere, e che cosa ha chiesto.
+5. **La suite**: nessuna rossa nuova rispetto alle 46 di `DRAW-018`; zero `skip` e zero `xfail` nuovi;
+   `ruff` e `mypy` verdi.
 
-## Dopo `REL-003`
+## Dopo `REL-001`
 
-`REL-001` la skill e il PDF (`docs/plans/pacchetti/REL-001.md`), poi `REL-002` il cartiglio,
-`REL-004` il DXF, `REL-005` il pacchetto della release.
+`REL-002` il cartiglio (I-132) e `REL-003` i simboli nuovi (I-136) sono fatti; restano `REL-004` il
+DXF e `REL-005` il pacchetto della release — l'ordine è una proposta (D-183, punto 3), in
+`docs/plans/2026-09-03-release-plan.md`.
 
 ## Consegna
 
-Una PR verso `main`, **fusa solo dopo che il PO ha visto le tavole e ha detto di sì**. Rapporto in
-`docs/collaudi/REL-003/RAPPORTO.md`, con le tavole in testa.
+Una PR verso `main`, **fusa solo dopo che il PO ha visto la tavola e ha detto di sì**. Rapporto in
+`docs/collaudi/REL-001/RAPPORTO.md`, con la tavola in testa.
