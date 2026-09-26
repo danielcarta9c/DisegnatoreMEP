@@ -49,6 +49,7 @@ SYMBOLS = ROOT / "assets" / "symbols"
 HEATING = "heating_water"
 COLD = "cold_water"
 DHW = "domestic_hot_water"
+SOLAR = "solar_fluid"
 TOLERANCE_MM = 1e-6
 Pt = tuple[float, float]
 Segment = tuple[Pt, Pt]
@@ -728,7 +729,11 @@ def test_l_accumulo_combinato_e_il_bollitore_hanno_serpentini_diversi_e_il_puffe
         assert set(through) == {"cold_in", "dhw_out"}
     for item in cylinders:
         through, volume = _through_and_volume_ports(item)
-        assert {p for p in through} == {p.id for p in item.ports if p.medium == HEATING and not p.off_the_run}
+        # Il bollitore a due serpentini ne ha uno anche sul fluido solare (D-184):
+        # attraversano la riserva i due serpentini, e nient'altro.
+        assert {p for p in through} == {
+            p.id for p in item.ports if p.medium in {HEATING, SOLAR} and not p.off_the_run
+        }
         assert "cold_in" in volume and "dhw_out" in volume
     for item in puffers:
         through, _ = _through_and_volume_ports(item)
