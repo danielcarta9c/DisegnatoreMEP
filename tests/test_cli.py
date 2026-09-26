@@ -315,6 +315,6 @@ def test_piano_con_dxf_scrive_accanto_all_svg_il_dxf_e_il_logo(
     (dxf,) = sorted((tmp_path / "uscita").glob("*.dxf"))
     assert dxf.with_suffix(".svg").exists()
     doc = ezdxf.readfile(dxf)
-    (immagine,) = doc.modelspace().query("IMAGE")
+    (immagine,) = doc.layouts.active_layout().query("IMAGE")  # il cartiglio sta in carta
     assert (dxf.parent / immagine.image_def.dxf.filename).exists()
     assert not doc.audit().has_errors

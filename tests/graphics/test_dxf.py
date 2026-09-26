@@ -26,6 +26,7 @@ from disegnatore_mep.graphics.dxf import (
     ALTEZZA_MAIUSCOLE_EM,
     DXF_VERSION,
     Polilinea,
+    aci_vicino,
     corpo_del_simbolo,
     inserimento_del_simbolo,
     layer_della_rete,
@@ -224,6 +225,7 @@ def test_i_layer_delle_reti_portano_colore_e_tratteggio_della_tavola(dxf_6: Scri
         layer = doc.layers.get(layer_della_rete(route.medium, route.supply))
         atteso = tuple(int(colore[i : i + 2], 16) for i in (1, 3, 5))
         assert tuple(layer.rgb) == atteso, layer.dxf.name
+        assert layer.dxf.color == aci_vicino(atteso), "l'ACI di ripiego, non il 7"
         assert layer.dxf.lineweight == lineweight(0.35)
         if tratto == "none":
             assert layer.dxf.linetype == "Continuous"
@@ -260,14 +262,21 @@ def test_i_testi_sono_tarati_sulle_maiuscole(dxf_6: Scritto) -> None:
     assert {entry.name for entry in foglio.legend} <= nomi
 
 
-def test_il_cartiglio_ha_i_suoi_testi_e_il_logo_accanto(dxf_6: Scritto) -> None:
+def test_il_cartiglio_sta_in_spazio_carta_con_i_suoi_testi_e_il_logo_accanto(
+    dxf_6: Scritto,
+) -> None:
+    """Nello spazio modello resta lo schema: si copia in un altro disegno senza
+    portarsi dietro squadratura e cartiglio."""
     doc = ezdxf.readfile(dxf_6.target)
     target = dxf_6.target
-    testi = {t.dxf.text: t for t in doc.modelspace().query("TEXT") if t.dxf.layer == "G-ANNO-TTLB"}
+    carta = doc.paperspace("A2")
+    assert not [e for e in doc.modelspace() if e.dxf.layer == "G-ANNO-TTLB"]
+    testi = {t.dxf.text: t for t in carta.query("TEXT") if t.dxf.layer == "G-ANNO-TTLB"}
     assert "Condominio di prova" in testi
     assert testi["Condominio di prova"].dxf.style == "NOVEC_ARIAL_GRASSETTO"
     assert "T6" in testi
-    immagini = doc.modelspace().query("IMAGE")
+    assert not doc.modelspace().query("IMAGE")
+    immagini = carta.query("IMAGE")
     assert len(immagini) == 1
     nome = immagini[0].image_def.dxf.filename
     assert "/" not in nome and "\\" not in nome, "il logo si cerca accanto al DXF"
@@ -288,6 +297,41 @@ def test_il_file_e_valido_in_millimetri_con_la_presentazione_1_a_1(dxf_6: Scritt
     assert finestra.dxf.view_height == pytest.approx(finestra.dxf.height)  # 1:1
     assert finestra.dxf.flags & 16384, "la finestra ha lo zoom bloccato"
     assert doc.layers.get(finestra.dxf.layer).dxf.plot == 0
+    assert doc.header["$TILEMODE"] == 0, "il file si apre sulla presentazione"
+    assert doc.layouts.active_layout().name == "A2"
+
+
+def test_ogni_entita_sta_su_un_layer_definito(dxf_6: Scritto) -> None:
+    """ezdxf mette la finestra principale su un layer `VIEWPORTS` che non
+    definisce; l'audit non lo vede, il giro con l'ODA File Converter si'."""
+    doc = ezdxf.readfile(dxf_6.target)
+    definiti = {layer.dxf.name for layer in doc.layers}
+    usati = {
+        e.dxf.layer
+        for spazio in (doc.modelspace(), doc.paperspace("A2"), *doc.blocks)
+        for e in spazio
+        if e.dxf.hasattr("layer")
+    }
+    assert usati <= definiti, usati - definiti
+
+
+def test_ogni_colore_esatto_ha_il_suo_ripiego(dxf_6: Scritto) -> None:
+    """Chi non legge il colore esatto (420) legge l'indice (62): accanto a ogni
+    RGB c'e' il colore d'indice piu' vicino, mai il 7 ne' «DaLayer»."""
+    doc = ezdxf.readfile(dxf_6.target)
+    colorati = [
+        e for spazio in (doc.modelspace(), doc.paperspace("A2")) for e in spazio if e.rgb is not None
+    ] + [layer for layer in doc.layers if layer.rgb is not None]
+    assert colorati
+    for oggetto in colorati:
+        assert oggetto.dxf.color == aci_vicino(tuple(oggetto.rgb)), oggetto
+
+
+def test_l_aci_di_ripiego_e_il_piu_vicino_e_non_e_il_7() -> None:
+    assert aci_vicino((255, 0, 0)) == 1
+    assert aci_vicino((0, 0, 255)) == 5
+    assert aci_vicino((255, 255, 255)) == 255, "il 7 e' nero su fondo bianco"
+    assert aci_vicino((192, 57, 43)) == 22, "come l'ODA File Converter"
 
 
 def test_il_dxf_esce_uguale_byte_per_byte(
@@ -301,6 +345,23 @@ def test_il_dxf_esce_uguale_byte_per_byte(
     assert primo.read_bytes() == secondo.read_bytes()
 
 
+def test_le_classi_del_file_sono_in_ordine_di_nome(dxf_6: Scritto) -> None:
+    """ezdxf registra le classi scorrendo un insieme: senza riordinarle, la
+    sezione CLASSES cambiava da un processo all'altro (`PYTHONHASHSEED`) e lo
+    stesso piano dava due file diversi. La prova byte per byte qui sopra, che
+    scrive due volte nello stesso processo, non lo vede."""
+    testo = dxf_6.target.read_text(encoding="utf-8")
+    sezione = testo.split("CLASSES", 1)[1].split("ENDSEC", 1)[0]
+    righe = [riga.strip() for riga in sezione.splitlines()]
+    classi = [
+        (righe[i + 2], righe[i + 4])
+        for i in range(len(righe) - 4)
+        if righe[i] == "CLASS" and righe[i + 1] == "1"
+    ]
+    assert len(classi) > 5
+    assert classi == sorted(classi)
+
+
 def test_senza_cartiglio_la_riserva_e_la_bozza_come_nell_svg(
     simboli: SymbolRegistry, tmp_path: Path
 ) -> None:
@@ -311,8 +372,9 @@ def test_senza_cartiglio_la_riserva_e_la_bozza_come_nell_svg(
     scritti = write_dxf(esito.disegno.sheets[0], esito.frame, simboli, tmp_path / "t1.dxf")
     assert [p.name for p in scritti] == ["t1.dxf"], "senza cartiglio non c'e' logo"
     doc = ezdxf.readfile(scritti[0])
-    testi = {t.dxf.text for t in doc.modelspace().query("TEXT")}
+    testi = {t.dxf.text for t in doc.paperspace("A3").query("TEXT")}
     assert "BOZZA — cartiglio non compilato" in testi
+    assert not [e for e in doc.modelspace() if e.dxf.layer == "G-ANNO-TTLB"]
     assert not doc.audit().has_errors
 
 

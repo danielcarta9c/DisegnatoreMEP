@@ -22,9 +22,12 @@ non sa dire e AutoCAD si', con le scelte del PO (I-138, I-139) e delle fonti
 - **i tratteggi** sono definiti nel file in millimetri, e le polilinee li
   generano di continuo sui vertici (PLINEGEN): si vedono giusti appena aperto.
 
-Il disegno sta nello **spazio modello, a 1:1 in millimetri di carta**, con
-l'origine nell'angolo in basso a sinistra del foglio; una **presentazione**
-del formato della tavola ha una finestra 1:1 bloccata, pronta per la stampa.
+Lo schema sta nello **spazio modello, a 1:1 in millimetri di carta**, con
+l'origine nell'angolo in basso a sinistra del foglio; squadratura e cartiglio
+stanno nello **spazio carta** della **presentazione** del formato, che ha una
+finestra 1:1 bloccata ed e' pronta per la stampa. Il file si apre su quella.
+I colori RGB portano accanto un colore d'indice di ripiego, per chi il colore
+esatto non lo legge.
 Il formato e' **AutoCAD 2013** (AC1027): lo apre ogni AutoCAD e AutoCAD LT dal
 2013 in poi, e lo studio ha il 2020 (I-139).
 
@@ -69,7 +72,11 @@ from .sheet import (
 from .symbol import FlowGlyph, PortFace, StrokeWeight
 
 if TYPE_CHECKING:
+    from ezdxf.document import Drawing
+    from ezdxf.entities.dxfgfx import DXFGraphic
+    from ezdxf.entities.layer import Layer
     from ezdxf.layouts.base import BaseLayout
+    from ezdxf.layouts.layout import Paperspace
 
 DXF_VERSION = "R2013"
 """AutoCAD 2013 (AC1027): lo aprono AutoCAD e AutoCAD LT dal 2013 al 2027
@@ -83,8 +90,8 @@ AutoCAD misura l'altezza di un testo **sulle maiuscole**, l'SVG sul corpo
 (`font-size`): scrivere nel DXF il corpo darebbe testi del 45 % piu' grandi
 della tavola. La misura e' quella di Liberation Sans, che ha le larghezze di
 Arial e di Helvetica (`cartiglio.py`): 1409 unita' su 2048 (fontTools, sul file
-del sistema; `docs/fonti/ricerche/`, nota sui layer). Cosi' un testo occupa nel
-DXF lo spazio che occupa nella tavola."""
+del sistema; `docs/fonti/ricerche/research_notes/DXF per AutoCAD/layer-spessori-testi.md`,
+§4.4). Cosi' un testo occupa nel DXF lo spazio che occupa nella tavola."""
 
 STILE_TESTO = "NOVEC_ARIAL"
 STILE_TESTO_GRASSETTO = "NOVEC_ARIAL_GRASSETTO"
@@ -169,6 +176,36 @@ def rgb(colore: str) -> tuple[int, int, int]:
         int(esadecimale[2:4], 16),
         int(esadecimale[4:6], 16),
     )
+
+
+def aci_vicino(colore: tuple[int, int, int]) -> int:
+    """Il colore d'indice (ACI) piu' vicino a un RGB, per distanza nello spazio
+    RGB sulla tavolozza con cui ezdxf descrive i colori d'indice di AutoCAD.
+
+    Accanto al colore esatto (codice 420) il DXF scrive un ACI di ripiego
+    (codice 62) per chi il 420 non lo legge. AutoCAD tiene il colore esatto,
+    che vince (ezdxf, *True Color*): il ripiego non si vede e non si stampa.
+    Anche l'ODA File Converter, quando riscrive il file, mette un ripiego
+    accanto al colore esatto; il suo criterio non e' documentato e a volte
+    sceglie un indice diverso da questo (misurato, `docs/collaudi/REL-004/`).
+    Il 7 non e' un candidato: non e' un colore, e' nero su fondo bianco e
+    bianco su fondo nero."""
+    from ezdxf.colors import DXF_DEFAULT_COLORS, int2rgb
+
+    rosso, verde, blu = colore
+
+    def distanza(indice: int) -> int:
+        candidato = int2rgb(DXF_DEFAULT_COLORS[indice])
+        return (candidato.r - rosso) ** 2 + (candidato.g - verde) ** 2 + (candidato.b - blu) ** 2
+
+    return min((i for i in range(1, 256) if i != NERO), key=lambda i: (distanza(i), i))
+
+
+def colora(oggetto: "DXFGraphic | Layer", colore: str) -> None:
+    """Il colore esatto della tavola, con il suo ACI di ripiego."""
+    valore = rgb(colore)
+    oggetto.rgb = valore
+    oggetto.dxf.color = aci_vicino(valore)
 
 
 def _testo(testo: str) -> str:
@@ -534,6 +571,22 @@ def _metadati_fissi() -> Iterator[None]:
         options.write_fixed_meta_data_for_testing = prima
 
 
+def _classi_in_ordine(doc: "Drawing") -> None:
+    """Le classi del file (sezione CLASSES) in ordine di nome.
+
+    ezdxf le registra scorrendo un insieme dei tipi in uso, e l'ordine di un
+    insieme di stringhe cambia da un processo all'altro (`PYTHONHASHSEED`):
+    senza riordinarle, lo stesso piano dava due file diversi in due esecuzioni
+    (misurato, `docs/collaudi/REL-004/`). Si registrano tutte prima di salvare
+    — al salvataggio ezdxf non ne aggiunge altre — e si mettono in fila. Il
+    DXF le nomina per nome, non per posizione: l'ordine non cambia il disegno."""
+    doc.commit_pending_changes()
+    doc.classes.add_required_classes(doc.dxfversion)
+    ordinate = sorted(doc.classes.classes.items())
+    doc.classes.classes.clear()
+    doc.classes.classes.update(ordinate)
+
+
 def _nome_del_tipo_di_linea(tratto: str) -> str:
     return "NOVEC_TRATTO_" + "_".join(
         parte.replace(".", "P") for parte in re.split(r"[ ,]+", tratto.strip())
@@ -558,6 +611,7 @@ class _Tavola:
         self.blocchi: set[str] = set()
         self._intestazione()
         self._stili()
+        self.carta = self._presentazione()
 
     # -- impianto del documento --
 
@@ -605,7 +659,7 @@ class _Tavola:
         if colore is None:
             layer.color = NERO
         else:
-            layer.rgb = rgb(colore)
+            colora(layer, colore)
         layer.dxf.linetype = self.tipo_di_linea(tratto)
         layer.dxf.lineweight = lineweight(
             self.standard.line_thin_mm if spessore_mm is None else spessore_mm
@@ -739,7 +793,7 @@ class _Tavola:
     def testo(
         self, testo: str, x: float, y: float, corpo_mm: float, layer: str,
         allineamento: str = "start", grassetto: bool = False, colore: str | None = None,
-        opacita: float = 1.0,
+        opacita: float = 1.0, dove: "BaseLayout | None" = None,
     ) -> None:
         from ezdxf.enums import TextEntityAlignment
 
@@ -750,9 +804,10 @@ class _Tavola:
             "height": round(corpo_mm * ALTEZZA_MAIUSCOLE_EM, 4),
             "style": STILE_TESTO_GRASSETTO if grassetto else STILE_TESTO,
         }
-        entita = self.msp.add_text(_testo(testo), dxfattribs=attributi)
+        spazio = self.msp if dove is None else dove
+        entita = spazio.add_text(_testo(testo), dxfattribs=attributi)
         if colore is not None:
-            entita.rgb = rgb(colore)
+            colora(entita, colore)
         if opacita < 1:
             entita.transparency = 1 - opacita
         allinea = {
@@ -764,18 +819,19 @@ class _Tavola:
 
     def rettangolo(
         self, rect: Rect, layer: str, spessore_mm: float | None = None,
-        colore: str | None = None,
+        colore: str | None = None, dove: "BaseLayout | None" = None,
     ) -> None:
         x0, y0 = self.p(rect.x_mm, rect.y_mm)
         x1, y1 = self.p(rect.right_mm, rect.bottom_mm)
         attributi: dict[str, object] = {"layer": layer}
         if spessore_mm is not None:
             attributi["lineweight"] = lineweight(spessore_mm)
-        entita = self.msp.add_lwpolyline(
+        spazio = self.msp if dove is None else dove
+        entita = spazio.add_lwpolyline(
             [(x0, y0), (x1, y0), (x1, y1), (x0, y1)], close=True, dxfattribs=attributi
         )
         if colore is not None:
-            entita.rgb = rgb(colore)
+            colora(entita, colore)
 
     def reti(self) -> None:
         from ezdxf import const
@@ -947,7 +1003,7 @@ class _Tavola:
                     "lineweight": lineweight(self.standard.line_medium_mm),
                 },
             )
-            linea.rgb = rgb(key.colour)
+            colora(linea, key.colour)
             self.testo(
                 key.name, key.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM,
                 key.anchor.y_mm, self.standard.text_small_mm, LAYER_LEGENDA,
@@ -965,23 +1021,31 @@ class _Tavola:
             )
 
     def riserva_senza_cartiglio(self) -> None:
-        self.rettangolo(self.frame.border_rect_mm, LAYER_CARTIGLIO, self.standard.line_medium_mm)
-        self.rettangolo(self.frame.title_block_rect_mm, LAYER_CARTIGLIO)
+        """La squadratura e la riserva del cartiglio, in spazio carta come il
+        cartiglio."""
+        self.rettangolo(
+            self.frame.border_rect_mm, LAYER_CARTIGLIO, self.standard.line_medium_mm,
+            dove=self.carta,
+        )
+        self.rettangolo(self.frame.title_block_rect_mm, LAYER_CARTIGLIO, dove=self.carta)
         self.testo(
             self.sheet.title, self.frame.header_rect_mm.x_mm + 2,
             self.frame.header_rect_mm.bottom_mm - 1, self.standard.text_small_mm,
-            LAYER_CARTIGLIO,
+            LAYER_CARTIGLIO, dove=self.carta,
         )
         self.testo(
             DRAFT_MARK, self.frame.title_block_rect_mm.x_mm + 2,
             self.frame.title_block_rect_mm.y_mm + self.standard.text_normal_mm + 1,
-            self.standard.text_normal_mm, LAYER_CARTIGLIO,
+            self.standard.text_normal_mm, LAYER_CARTIGLIO, dove=self.carta,
         )
 
     def cartiglio(self, tavola: CartiglioDellaTavola) -> str:
         """Il cartiglio, riletto dal frammento SVG che `cartiglio.py` disegna:
         cosi' e' lo stesso della tavola, misurato e impaginato una volta sola.
-        Torna il nome del file del logo, che va scritto accanto al DXF."""
+        Sta in **spazio carta**, con la squadratura: nello spazio modello resta
+        lo schema, che si copia in un altro disegno senza portarsi dietro il
+        cartiglio. Torna il nome del file del logo, che va scritto accanto al
+        DXF."""
         from ezdxf.colors import RGB
 
         disegnato = disegna_cartiglio(tavola, self.frame, stati_della_tavola(self.sheet))
@@ -1013,8 +1077,10 @@ class _Tavola:
                     if riempimento != "none":
                         x0, y0 = self.p(rect.x_mm, rect.y_mm)
                         x1, y1 = self.p(rect.right_mm, rect.bottom_mm)
-                        campitura = self.msp.add_hatch(dxfattribs={"layer": LAYER_CARTIGLIO})
-                        campitura.set_solid_fill(rgb=RGB(*rgb(riempimento)))
+                        campitura = self.carta.add_hatch(dxfattribs={"layer": LAYER_CARTIGLIO})
+                        campitura.set_solid_fill(
+                            color=aci_vicino(rgb(riempimento)), rgb=RGB(*rgb(riempimento))
+                        )
                         campitura.paths.add_polyline_path(
                             [(x0, y0), (x1, y0), (x1, y1), (x0, y1)], is_closed=True
                         )
@@ -1024,10 +1090,10 @@ class _Tavola:
                     if elemento.get("stroke", "none") != "none":
                         self.rettangolo(
                             rect, LAYER_CARTIGLIO, float(elemento.get("stroke-width", 0)),
-                            elemento.get("stroke"),
+                            elemento.get("stroke"), dove=self.carta,
                         )
                 elif tag == "line":
-                    linea = self.msp.add_line(
+                    linea = self.carta.add_line(
                         self.p(float(elemento.get("x1", 0)) + dx, float(elemento.get("y1", 0)) + dy),
                         self.p(float(elemento.get("x2", 0)) + dx, float(elemento.get("y2", 0)) + dy),
                         dxfattribs={
@@ -1035,7 +1101,7 @@ class _Tavola:
                             "lineweight": lineweight(float(elemento.get("stroke-width", 0))),
                         },
                     )
-                    linea.rgb = rgb(elemento.get("stroke", "#000000"))
+                    colora(linea, elemento.get("stroke", "#000000"))
                 elif tag == "text":
                     self.testo(
                         elemento.text or "",
@@ -1044,6 +1110,7 @@ class _Tavola:
                         elemento.get("text-anchor", "start"),
                         elemento.get("font-weight") == "bold",
                         elemento.get("fill"), float(elemento.get("fill-opacity", 1)),
+                        dove=self.carta,
                     )
                 elif tag == "image":
                     x = float(elemento.get("x", 0)) + dx
@@ -1053,7 +1120,7 @@ class _Tavola:
                     definizione = self.doc.add_image_def(
                         logo.file, (logo.pixel_larghezza, logo.pixel_altezza)
                     )
-                    self.msp.add_image(
+                    self.carta.add_image(
                         definizione, self.p(x, y + altezza), (larghezza, altezza),
                         dxfattribs={"layer": LAYER_CARTIGLIO},
                     )
@@ -1066,17 +1133,25 @@ class _Tavola:
 
     # -- la presentazione --
 
-    def presentazione(self) -> None:
+    def _presentazione(self) -> "Paperspace":
         """Il foglio pronto per la stampa: la presentazione del formato, a
         margini zero, 1:1, con una finestra bloccata su tutto il foglio e il
         suo bordo su un layer che non si stampa (Autodesk: «create all viewport
-        objects on a separate layer»)."""
+        objects on a separate layer»). Il file **si apre su questa**
+        (`$TILEMODE` a 0): si vede la tavola come nel PDF.
+
+        La finestra principale — quella che ogni presentazione ha, e che non si
+        vede — ezdxf la mette su un layer `VIEWPORTS` che non definisce: sta
+        sul layer 0, come la rimette l'ODA File Converter."""
         formato = _formato(self.larghezza, self.altezza)
         layout = self.doc.layouts.new(formato)
         layout.page_setup(
             size=(self.larghezza, self.altezza), margins=(0, 0, 0, 0), units="mm",
             scale=16, name=f"ISO_full_bleed_{formato}", device="DWG To PDF.pc3",
         )
+        principale = layout.main_viewport()
+        if principale is not None:
+            principale.dxf.layer = "0"
         finestra = layout.add_viewport(
             center=(self.larghezza / 2, self.altezza / 2),
             size=(self.larghezza, self.altezza),
@@ -1087,9 +1162,12 @@ class _Tavola:
         finestra.dxf.flags = finestra.dxf.flags | 16384
         if "Layout1" in self.doc.layouts.names():
             self.doc.layouts.delete("Layout1")
+        self.doc.layouts.set_active_layout(formato)
+        self.doc.header["$TILEMODE"] = 0
         self.doc.set_modelspace_vport(
             height=self.altezza, center=(self.larghezza / 2, self.altezza / 2)
         )
+        return layout
 
 
 def _formato(larghezza: float, altezza: float) -> str:
@@ -1128,7 +1206,7 @@ def write_dxf(
         tavola.sigle()
         tavola.legenda()
         tavola.rimandi()
-        tavola.presentazione()
+        _classi_in_ordine(tavola.doc)
         tavola.doc.saveas(target)
     return tuple(scritti)
 
@@ -1137,6 +1215,7 @@ __all__ = [
     "ALTEZZA_MAIUSCOLE_EM",
     "DXF_VERSION",
     "Inserimento",
+    "aci_vicino",
     "corpo_del_simbolo",
     "inserimento_del_simbolo",
     "layer_della_rete",

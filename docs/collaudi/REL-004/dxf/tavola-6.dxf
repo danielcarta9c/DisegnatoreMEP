@@ -1,0 +1,20810 @@
+  0
+SECTION
+  2
+HEADER
+  9
+$ACADVER
+  1
+AC1027
+  9
+$ACADMAINTVER
+ 70
+105
+  9
+$DWGCODEPAGE
+  3
+ANSI_1252
+  9
+$LASTSAVEDBY
+  1
+ezdxf
+  9
+$REQUIREDVERSIONS
+160
+0
+  9
+$INSBASE
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$EXTMIN
+ 10
+1e+20
+ 20
+1e+20
+ 30
+1e+20
+  9
+$EXTMAX
+ 10
+-1e+20
+ 20
+-1e+20
+ 30
+-1e+20
+  9
+$LIMMIN
+ 10
+0.0
+ 20
+0.0
+  9
+$LIMMAX
+ 10
+420.0
+ 20
+297.0
+  9
+$ORTHOMODE
+ 70
+0
+  9
+$REGENMODE
+ 70
+1
+  9
+$FILLMODE
+ 70
+1
+  9
+$QTEXTMODE
+ 70
+0
+  9
+$MIRRTEXT
+ 70
+1
+  9
+$LTSCALE
+ 40
+1.0
+  9
+$ATTMODE
+ 70
+1
+  9
+$TEXTSIZE
+ 40
+2.5
+  9
+$TRACEWID
+ 40
+1.0
+  9
+$TEXTSTYLE
+  7
+NOVEC_ARIAL
+  9
+$CLAYER
+  8
+0
+  9
+$CELTYPE
+  6
+ByLayer
+  9
+$CECOLOR
+ 62
+256
+  9
+$CELTSCALE
+ 40
+1.0
+  9
+$DISPSILH
+ 70
+0
+  9
+$DIMSCALE
+ 40
+1.0
+  9
+$DIMASZ
+ 40
+2.5
+  9
+$DIMEXO
+ 40
+0.625
+  9
+$DIMDLI
+ 40
+3.75
+  9
+$DIMRND
+ 40
+0.0
+  9
+$DIMDLE
+ 40
+0.0
+  9
+$DIMEXE
+ 40
+1.25
+  9
+$DIMTP
+ 40
+0.0
+  9
+$DIMTM
+ 40
+0.0
+  9
+$DIMTXT
+ 40
+2.5
+  9
+$DIMCEN
+ 40
+2.5
+  9
+$DIMTSZ
+ 40
+0.0
+  9
+$DIMTOL
+ 70
+0
+  9
+$DIMLIM
+ 70
+0
+  9
+$DIMTIH
+ 70
+0
+  9
+$DIMTOH
+ 70
+0
+  9
+$DIMSE1
+ 70
+0
+  9
+$DIMSE2
+ 70
+0
+  9
+$DIMTAD
+ 70
+1
+  9
+$DIMZIN
+ 70
+8
+  9
+$DIMBLK
+  1
+
+  9
+$DIMASO
+ 70
+1
+  9
+$DIMSHO
+ 70
+1
+  9
+$DIMPOST
+  1
+
+  9
+$DIMAPOST
+  1
+
+  9
+$DIMALT
+ 70
+0
+  9
+$DIMALTD
+ 70
+3
+  9
+$DIMALTF
+ 40
+0.03937007874
+  9
+$DIMLFAC
+ 40
+1.0
+  9
+$DIMTOFL
+ 70
+1
+  9
+$DIMTVP
+ 40
+0.0
+  9
+$DIMTIX
+ 70
+0
+  9
+$DIMSOXD
+ 70
+0
+  9
+$DIMSAH
+ 70
+0
+  9
+$DIMBLK1
+  1
+
+  9
+$DIMBLK2
+  1
+
+  9
+$DIMSTYLE
+  2
+ISO-25
+  9
+$DIMCLRD
+ 70
+0
+  9
+$DIMCLRE
+ 70
+0
+  9
+$DIMCLRT
+ 70
+0
+  9
+$DIMTFAC
+ 40
+1.0
+  9
+$DIMGAP
+ 40
+0.625
+  9
+$DIMJUST
+ 70
+0
+  9
+$DIMSD1
+ 70
+0
+  9
+$DIMSD2
+ 70
+0
+  9
+$DIMTOLJ
+ 70
+0
+  9
+$DIMTZIN
+ 70
+8
+  9
+$DIMALTZ
+ 70
+0
+  9
+$DIMALTTZ
+ 70
+0
+  9
+$DIMUPT
+ 70
+0
+  9
+$DIMDEC
+ 70
+2
+  9
+$DIMTDEC
+ 70
+2
+  9
+$DIMALTU
+ 70
+2
+  9
+$DIMALTTD
+ 70
+3
+  9
+$DIMTXSTY
+  7
+Standard
+  9
+$DIMAUNIT
+ 70
+0
+  9
+$DIMADEC
+ 70
+0
+  9
+$DIMALTRND
+ 40
+0.0
+  9
+$DIMAZIN
+ 70
+0
+  9
+$DIMDSEP
+ 70
+44
+  9
+$DIMATFIT
+ 70
+3
+  9
+$DIMFRAC
+ 70
+0
+  9
+$DIMLDRBLK
+  1
+
+  9
+$DIMLUNIT
+ 70
+2
+  9
+$DIMLWD
+ 70
+-2
+  9
+$DIMLWE
+ 70
+-2
+  9
+$DIMTMOVE
+ 70
+0
+  9
+$DIMFXL
+ 40
+1.0
+  9
+$DIMFXLON
+ 70
+0
+  9
+$DIMJOGANG
+ 40
+0.785398163397
+  9
+$DIMTFILL
+ 70
+0
+  9
+$DIMTFILLCLR
+ 70
+0
+  9
+$DIMARCSYM
+ 70
+0
+  9
+$DIMLTYPE
+  6
+
+  9
+$DIMLTEX1
+  6
+
+  9
+$DIMLTEX2
+  6
+
+  9
+$DIMTXTDIRECTION
+ 70
+0
+  9
+$LUNITS
+ 70
+2
+  9
+$LUPREC
+ 70
+4
+  9
+$SKETCHINC
+ 40
+1.0
+  9
+$FILLETRAD
+ 40
+10.0
+  9
+$AUNITS
+ 70
+0
+  9
+$AUPREC
+ 70
+2
+  9
+$MENU
+  1
+.
+  9
+$ELEVATION
+ 40
+0.0
+  9
+$PELEVATION
+ 40
+0.0
+  9
+$THICKNESS
+ 40
+0.0
+  9
+$LIMCHECK
+ 70
+0
+  9
+$CHAMFERA
+ 40
+0.0
+  9
+$CHAMFERB
+ 40
+0.0
+  9
+$CHAMFERC
+ 40
+0.0
+  9
+$CHAMFERD
+ 40
+0.0
+  9
+$SKPOLY
+ 70
+0
+  9
+$TDCREATE
+ 40
+2451545.0
+  9
+$TDUCREATE
+ 40
+2451545.0
+  9
+$TDUPDATE
+ 40
+2451545.0
+  9
+$TDUUPDATE
+ 40
+2451545.0
+  9
+$TDINDWG
+ 40
+0.0
+  9
+$TDUSRTIMER
+ 40
+0.0
+  9
+$USRTIMER
+ 70
+1
+  9
+$ANGBASE
+ 50
+0.0
+  9
+$ANGDIR
+ 70
+0
+  9
+$PDMODE
+ 70
+0
+  9
+$PDSIZE
+ 40
+0.0
+  9
+$PLINEWID
+ 40
+0.0
+  9
+$SPLFRAME
+ 70
+0
+  9
+$SPLINETYPE
+ 70
+6
+  9
+$SPLINESEGS
+ 70
+8
+  9
+$HANDSEED
+  5
+36C
+  9
+$SURFTAB1
+ 70
+6
+  9
+$SURFTAB2
+ 70
+6
+  9
+$SURFTYPE
+ 70
+6
+  9
+$SURFU
+ 70
+6
+  9
+$SURFV
+ 70
+6
+  9
+$UCSBASE
+  2
+
+  9
+$UCSNAME
+  2
+
+  9
+$UCSORG
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSXDIR
+ 10
+1.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSYDIR
+ 10
+0.0
+ 20
+1.0
+ 30
+0.0
+  9
+$UCSORTHOREF
+  2
+
+  9
+$UCSORTHOVIEW
+ 70
+0
+  9
+$UCSORGTOP
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGBOTTOM
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGLEFT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGRIGHT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGFRONT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$UCSORGBACK
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSBASE
+  2
+
+  9
+$PUCSNAME
+  2
+
+  9
+$PUCSORG
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSXDIR
+ 10
+1.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSYDIR
+ 10
+0.0
+ 20
+1.0
+ 30
+0.0
+  9
+$PUCSORTHOREF
+  2
+
+  9
+$PUCSORTHOVIEW
+ 70
+0
+  9
+$PUCSORGTOP
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGBOTTOM
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGLEFT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGRIGHT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGFRONT
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PUCSORGBACK
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$USERI1
+ 70
+0
+  9
+$USERI2
+ 70
+0
+  9
+$USERI3
+ 70
+0
+  9
+$USERI4
+ 70
+0
+  9
+$USERI5
+ 70
+0
+  9
+$USERR1
+ 40
+0.0
+  9
+$USERR2
+ 40
+0.0
+  9
+$USERR3
+ 40
+0.0
+  9
+$USERR4
+ 40
+0.0
+  9
+$USERR5
+ 40
+0.0
+  9
+$WORLDVIEW
+ 70
+1
+  9
+$SHADEDGE
+ 70
+3
+  9
+$SHADEDIF
+ 70
+70
+  9
+$TILEMODE
+ 70
+0
+  9
+$MAXACTVP
+ 70
+64
+  9
+$PINSBASE
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  9
+$PLIMCHECK
+ 70
+0
+  9
+$PEXTMIN
+ 10
+1e+20
+ 20
+1e+20
+ 30
+1e+20
+  9
+$PEXTMAX
+ 10
+-1e+20
+ 20
+-1e+20
+ 30
+-1e+20
+  9
+$PLIMMIN
+ 10
+-0.0
+ 20
+-0.0
+  9
+$PLIMMAX
+ 10
+594.0
+ 20
+420.0
+  9
+$UNITMODE
+ 70
+0
+  9
+$VISRETAIN
+ 70
+1
+  9
+$PLINEGEN
+ 70
+0
+  9
+$PSLTSCALE
+ 70
+1
+  9
+$TREEDEPTH
+ 70
+3020
+  9
+$CMLSTYLE
+  2
+Standard
+  9
+$CMLJUST
+ 70
+0
+  9
+$CMLSCALE
+ 40
+20.0
+  9
+$PROXYGRAPHICS
+ 70
+1
+  9
+$MEASUREMENT
+ 70
+1
+  9
+$CELWEIGHT
+370
+-1
+  9
+$ENDCAPS
+280
+0
+  9
+$JOINSTYLE
+280
+0
+  9
+$LWDISPLAY
+290
+1
+  9
+$INSUNITS
+ 70
+4
+  9
+$HYPERLINKBASE
+  1
+
+  9
+$STYLESHEET
+  1
+
+  9
+$XEDIT
+290
+1
+  9
+$CEPSNTYPE
+380
+0
+  9
+$PSTYLEMODE
+290
+1
+  9
+$FINGERPRINTGUID
+  2
+{00000000-0000-0000-0000-000000000000}
+  9
+$VERSIONGUID
+  2
+{00000000-0000-0000-0000-000000000000}
+  9
+$EXTNAMES
+290
+1
+  9
+$PSVPSCALE
+ 40
+0.0
+  9
+$OLESTARTUP
+290
+0
+  9
+$SORTENTS
+280
+127
+  9
+$INDEXCTL
+280
+0
+  9
+$HIDETEXT
+280
+1
+  9
+$XCLIPFRAME
+280
+1
+  9
+$HALOGAP
+280
+0
+  9
+$OBSCOLOR
+ 70
+257
+  9
+$OBSLTYPE
+280
+0
+  9
+$INTERSECTIONDISPLAY
+280
+0
+  9
+$INTERSECTIONCOLOR
+ 70
+257
+  9
+$DIMASSOC
+280
+2
+  9
+$PROJECTNAME
+  1
+
+  9
+$CAMERADISPLAY
+290
+0
+  9
+$LENSLENGTH
+ 40
+50.0
+  9
+$CAMERAHEIGHT
+ 40
+0.0
+  9
+$STEPSPERSEC
+ 40
+24.0
+  9
+$STEPSIZE
+ 40
+100.0
+  9
+$3DDWFPREC
+ 40
+2.0
+  9
+$PSOLWIDTH
+ 40
+0.005
+  9
+$PSOLHEIGHT
+ 40
+0.08
+  9
+$LOFTANG1
+ 40
+1.570796326795
+  9
+$LOFTANG2
+ 40
+1.570796326795
+  9
+$LOFTMAG1
+ 40
+0.0
+  9
+$LOFTMAG2
+ 40
+0.0
+  9
+$LOFTPARAM
+ 70
+7
+  9
+$LOFTNORMALS
+280
+1
+  9
+$LATITUDE
+ 40
+37.795
+  9
+$LONGITUDE
+ 40
+-122.394
+  9
+$NORTHDIRECTION
+ 40
+0.0
+  9
+$TIMEZONE
+ 70
+-8000
+  9
+$LIGHTGLYPHDISPLAY
+280
+1
+  9
+$TILEMODELIGHTSYNCH
+280
+1
+  9
+$CMATERIAL
+347
+20
+  9
+$SOLIDHIST
+280
+0
+  9
+$SHOWHIST
+280
+1
+  9
+$DWFFRAME
+280
+2
+  9
+$DGNFRAME
+280
+2
+  9
+$REALWORLDSCALE
+290
+1
+  9
+$INTERFERECOLOR
+ 62
+256
+  9
+$CSHADOW
+280
+0
+  9
+$SHADOWPLANELOCATION
+ 40
+0.0
+  0
+ENDSEC
+  0
+SECTION
+  2
+CLASSES
+  0
+CLASS
+  1
+ACDBDETAILVIEWSTYLE
+  2
+AcDbDetailViewStyle
+  3
+ObjectDBX Classes
+ 90
+1025
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+ACDBDICTIONARYWDFLT
+  2
+AcDbDictionaryWithDefault
+  3
+ObjectDBX Classes
+ 90
+0
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+ACDBPLACEHOLDER
+  2
+AcDbPlaceHolder
+  3
+ObjectDBX Classes
+ 90
+0
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+ACDBSECTIONVIEWSTYLE
+  2
+AcDbSectionViewStyle
+  3
+ObjectDBX Classes
+ 90
+1025
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+CELLSTYLEMAP
+  2
+AcDbCellStyleMap
+  3
+ObjectDBX Classes
+ 90
+1152
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+DICTIONARYVAR
+  2
+AcDbDictionaryVar
+  3
+ObjectDBX Classes
+ 90
+0
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+IMAGE
+  2
+AcDbRasterImage
+  3
+ISM
+ 90
+2175
+ 91
+0
+280
+0
+281
+1
+  0
+CLASS
+  1
+IMAGEDEF
+  2
+AcDbRasterImageDef
+  3
+ISM
+ 90
+0
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+IMAGEDEF_REACTOR
+  2
+AcDbRasterImageDefReactor
+  3
+ISM
+ 90
+1
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+LAYOUT
+  2
+AcDbLayout
+  3
+ObjectDBX Classes
+ 90
+0
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+MATERIAL
+  2
+AcDbMaterial
+  3
+ObjectDBX Classes
+ 90
+1153
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+MENTALRAYRENDERSETTINGS
+  2
+AcDbMentalRayRenderSettings
+  3
+SCENEOE
+ 90
+1024
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+MLEADERSTYLE
+  2
+AcDbMLeaderStyle
+  3
+ACDB_MLEADERSTYLE_CLASS
+ 90
+4095
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+RASTERVARIABLES
+  2
+AcDbRasterVariables
+  3
+ISM
+ 90
+0
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+SCALE
+  2
+AcDbScale
+  3
+ObjectDBX Classes
+ 90
+1153
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+SUN
+  2
+AcDbSun
+  3
+SCENEOE
+ 90
+1153
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+TABLESTYLE
+  2
+AcDbTableStyle
+  3
+ObjectDBX Classes
+ 90
+4095
+ 91
+0
+280
+0
+281
+0
+  0
+CLASS
+  1
+VISUALSTYLE
+  2
+AcDbVisualStyle
+  3
+ObjectDBX Classes
+ 90
+4095
+ 91
+0
+280
+0
+281
+0
+  0
+ENDSEC
+  0
+SECTION
+  2
+TABLES
+  0
+TABLE
+  2
+VPORT
+  5
+8
+330
+0
+100
+AcDbSymbolTable
+ 70
+1
+  0
+VPORT
+  5
+37
+330
+8
+100
+AcDbSymbolTableRecord
+100
+AcDbViewportTableRecord
+  2
+*Active
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 11
+1.0
+ 21
+1.0
+ 12
+297.0
+ 22
+210.0
+ 13
+0.0
+ 23
+0.0
+ 14
+0.5
+ 24
+0.5
+ 15
+0.5
+ 25
+0.5
+ 16
+0.0
+ 26
+0.0
+ 36
+1.0
+ 17
+0.0
+ 27
+0.0
+ 37
+0.0
+ 40
+420.0
+ 41
+1.34
+ 42
+50.0
+ 43
+0.0
+ 44
+0.0
+ 50
+0.0
+ 51
+0.0
+ 71
+0
+ 72
+1000
+ 73
+1
+ 74
+3
+ 75
+0
+ 76
+0
+ 77
+0
+ 78
+0
+281
+0
+ 65
+1
+110
+0.0
+120
+0.0
+130
+0.0
+111
+1.0
+121
+0.0
+131
+0.0
+112
+0.0
+122
+1.0
+132
+0.0
+ 79
+0
+146
+0.0
+  0
+ENDTAB
+  0
+TABLE
+  2
+LTYPE
+  5
+2
+330
+0
+100
+AcDbSymbolTable
+ 70
+4
+  0
+LTYPE
+  5
+24
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+ByBlock
+ 70
+0
+  3
+
+ 72
+65
+ 73
+0
+ 40
+0.0
+  0
+LTYPE
+  5
+25
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+ByLayer
+ 70
+0
+  3
+
+ 72
+65
+ 73
+0
+ 40
+0.0
+  0
+LTYPE
+  5
+26
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+Continuous
+ 70
+0
+  3
+
+ 72
+65
+ 73
+0
+ 40
+0.0
+  0
+LTYPE
+  5
+83
+330
+2
+100
+AcDbSymbolTableRecord
+100
+AcDbLinetypeTableRecord
+  2
+NOVEC_TRATTO_3_2
+ 70
+0
+  3
+Tratteggio della tavola: 3 / 2 mm
+ 72
+65
+ 73
+2
+ 40
+5.0
+ 49
+3.0
+ 74
+0
+ 49
+-2.0
+ 74
+0
+  0
+ENDTAB
+  0
+TABLE
+  2
+LAYER
+  5
+1
+330
+0
+100
+AcDbSymbolTable
+ 70
+14
+  0
+LAYER
+  5
+27
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+0
+ 70
+0
+ 62
+7
+  6
+Continuous
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+28
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+Defpoints
+ 70
+0
+ 62
+7
+  6
+Continuous
+290
+0
+370
+-3
+390
+13
+347
+21
+  0
+LAYER
+  5
+38
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+M-DIAG-EQPM
+ 70
+0
+ 62
+7
+  6
+Continuous
+370
+35
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Simboli dei componenti
+  0
+LAYER
+  5
+3A
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+M-ANNO-IDEN
+ 70
+0
+ 62
+7
+  6
+Continuous
+370
+18
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Sigle e richiami
+  0
+LAYER
+  5
+3B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+M-ANNO-TEXT
+ 70
+0
+ 62
+7
+  6
+Continuous
+370
+18
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Testi e rimandi
+  0
+LAYER
+  5
+3C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+M-ANNO-LEGN
+ 70
+0
+ 62
+7
+  6
+Continuous
+370
+18
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Legenda
+  0
+LAYER
+  5
+3D
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+G-ANNO-TTLB
+ 70
+0
+ 62
+7
+  6
+Continuous
+370
+18
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Squadratura e cartiglio
+  0
+LAYER
+  5
+3E
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+G-ANNO-NPLT
+ 70
+0
+ 62
+7
+  6
+Continuous
+290
+0
+370
+18
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Finestra della presentazione (non si stampa)
+  0
+LAYER
+  5
+71
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+P-DOMW-HPIP
+ 70
+0
+ 62
+30
+420
+14059792
+  6
+Continuous
+370
+35
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Acqua calda sanitaria — andata
+  0
+LAYER
+  5
+82
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+P-DOMW-CPIP
+ 70
+0
+ 62
+161
+420
+6139362
+  6
+NOVEC_TRATTO_3_2
+370
+35
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Acqua fredda sanitaria — andata
+  0
+LAYER
+  5
+9C
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+M-HWTR-SPLY
+ 70
+0
+ 62
+22
+420
+12597547
+  6
+Continuous
+370
+35
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Acqua di riscaldamento — andata
+  0
+LAYER
+  5
+A9
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+M-HWTR-RETN
+ 70
+0
+ 62
+142
+420
+2388387
+  6
+Continuous
+370
+35
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Acqua di riscaldamento — ritorno
+  0
+LAYER
+  5
+12B
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+M-SOLR-SPLY
+ 70
+0
+ 62
+222
+420
+13047173
+  6
+Continuous
+370
+35
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Fluido solare — andata
+  0
+LAYER
+  5
+12F
+330
+1
+100
+AcDbSymbolTableRecord
+100
+AcDbLayerTableRecord
+  2
+M-SOLR-RETN
+ 70
+0
+ 62
+222
+420
+13047173
+  6
+Continuous
+370
+35
+390
+13
+347
+21
+1001
+AcAecLayerStandard
+1000
+
+1000
+Fluido solare — ritorno
+  0
+ENDTAB
+  0
+TABLE
+  2
+STYLE
+  5
+5
+330
+0
+100
+AcDbSymbolTable
+ 70
+3
+  0
+STYLE
+  5
+29
+330
+5
+100
+AcDbSymbolTableRecord
+100
+AcDbTextStyleTableRecord
+  2
+Standard
+ 70
+0
+ 40
+0.0
+ 41
+1.0
+ 50
+0.0
+ 71
+0
+ 42
+2.5
+  3
+txt
+  4
+
+  0
+STYLE
+  5
+2F
+330
+5
+100
+AcDbSymbolTableRecord
+100
+AcDbTextStyleTableRecord
+  2
+NOVEC_ARIAL
+ 70
+0
+ 40
+0.0
+ 41
+1.0
+ 50
+0.0
+ 71
+0
+ 42
+2.5
+  3
+arial.ttf
+  4
+
+1001
+ACAD
+1000
+Arial
+1071
+34
+  0
+STYLE
+  5
+30
+330
+5
+100
+AcDbSymbolTableRecord
+100
+AcDbTextStyleTableRecord
+  2
+NOVEC_ARIAL_GRASSETTO
+ 70
+0
+ 40
+0.0
+ 41
+1.0
+ 50
+0.0
+ 71
+0
+ 42
+2.5
+  3
+arialbd.ttf
+  4
+
+1001
+ACAD
+1000
+Arial
+1071
+33554466
+  0
+ENDTAB
+  0
+TABLE
+  2
+VIEW
+  5
+7
+330
+0
+100
+AcDbSymbolTable
+ 70
+0
+  0
+ENDTAB
+  0
+TABLE
+  2
+UCS
+  5
+6
+330
+0
+100
+AcDbSymbolTable
+ 70
+0
+  0
+ENDTAB
+  0
+TABLE
+  2
+APPID
+  5
+3
+330
+0
+100
+AcDbSymbolTable
+ 70
+4
+  0
+APPID
+  5
+2A
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+ACAD
+ 70
+0
+  0
+APPID
+  5
+39
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+AcAecLayerStandard
+ 70
+0
+  0
+APPID
+  5
+369
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+HATCHBACKGROUNDCOLOR
+ 70
+0
+  0
+APPID
+  5
+36A
+330
+3
+100
+AcDbSymbolTableRecord
+100
+AcDbRegAppTableRecord
+  2
+EZDXF
+ 70
+0
+  0
+ENDTAB
+  0
+TABLE
+  2
+DIMSTYLE
+  5
+4
+330
+0
+100
+AcDbSymbolTable
+ 70
+1
+100
+AcDbDimStyleTable
+  0
+DIMSTYLE
+105
+2B
+330
+4
+100
+AcDbSymbolTableRecord
+100
+AcDbDimStyleTableRecord
+  2
+Standard
+ 70
+0
+ 40
+1.0
+ 41
+2.5
+ 42
+0.625
+ 43
+3.75
+ 44
+1.25
+ 45
+0.0
+ 46
+0.0
+ 47
+0.0
+ 48
+0.0
+ 49
+2.5
+140
+2.5
+141
+2.5
+142
+0.0
+143
+0.03937007874
+144
+1.0
+145
+0.0
+146
+1.0
+147
+0.625
+148
+0.0
+ 69
+0
+ 70
+0
+ 71
+0
+ 72
+0
+ 73
+0
+ 74
+0
+ 75
+0
+ 76
+0
+ 77
+1
+ 78
+8
+ 79
+3
+170
+0
+171
+3
+172
+1
+173
+0
+174
+0
+175
+0
+176
+0
+177
+0
+178
+0
+179
+2
+271
+2
+272
+2
+273
+2
+274
+3
+275
+0
+276
+0
+277
+2
+278
+44
+279
+0
+280
+0
+281
+0
+282
+0
+283
+0
+284
+8
+285
+0
+286
+0
+288
+0
+289
+3
+290
+0
+371
+-2
+372
+-2
+  0
+ENDTAB
+  0
+TABLE
+  2
+BLOCK_RECORD
+  5
+9
+330
+0
+100
+AcDbSymbolTable
+ 70
+31
+  0
+BLOCK_RECORD
+  5
+17
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+*Model_Space
+340
+1A
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+31
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+*Paper_Space
+340
+34
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+73
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_FlowArrow
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+158
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_SolarCollector
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+169
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_TeeBranch
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+172
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_NetworkBoundary
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+17A
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_DrainConnection
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+186
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_ExpansionConnection
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+18E
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_GasBoilerModular
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+1A5
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_HeatPumpAirWaterLarge
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+1BA
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_DhwCylinderTwinCoil
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+1C6
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_BufferFourPort
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+1D5
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_MixingValveThermostatic
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+1EA
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_FanCoilDucted
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+1FB
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_Radiator
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+209
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_ValveSafety
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+217
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_Thermometer
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+21C
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_Thermometer_Lettera
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+22B
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_TeeJunction
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+234
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_DivertingValve3way
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+247
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_FillingUnit
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+258
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_PressureGauge
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+25D
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_PressureGauge_Lettera
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+27A
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_ValveIsolation
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+287
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_DhwSafetyGroup
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+29C
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_Strainer
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+2AA
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_AirSeparator
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+2BF
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_DirtSeparator
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+2D3
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_PumpCirculator
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+2ED
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_ValveCheck
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+BLOCK_RECORD
+  5
+2FE
+330
+9
+100
+AcDbSymbolTableRecord
+100
+AcDbBlockTableRecord
+  2
+NoveC_ValveGaugeCock3way
+340
+0
+ 70
+0
+280
+1
+281
+0
+  0
+ENDTAB
+  0
+ENDSEC
+  0
+SECTION
+  2
+BLOCKS
+  0
+BLOCK
+  5
+18
+330
+17
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+*Model_Space
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+*Model_Space
+  1
+
+  0
+ENDBLK
+  5
+19
+330
+17
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+32
+330
+31
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+*Paper_Space
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+*Paper_Space
+  1
+
+  0
+ENDBLK
+  5
+33
+330
+31
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+74
+330
+73
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_FlowArrow
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_FlowArrow
+  1
+
+  4
+Freccia del verso del flusso
+  0
+HATCH
+  5
+76
+330
+73
+100
+AcDbEntity
+  8
+0
+ 62
+0
+100
+AcDbHatch
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+210
+0.0
+220
+0.0
+230
+1.0
+  2
+SOLID
+ 70
+1
+ 71
+0
+ 91
+1
+ 92
+3
+ 72
+0
+ 73
+1
+ 93
+3
+ 10
+0.0
+ 20
+0.0
+ 10
+-2.0
+ 20
+1.0
+ 10
+-2.0
+ 20
+-1.0
+ 97
+0
+ 75
+1
+ 76
+1
+ 98
+0
+  0
+ENDBLK
+  5
+75
+330
+73
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+159
+330
+158
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_SolarCollector
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_SolarCollector
+  1
+
+  4
+Collettore solare
+  0
+LWPOLYLINE
+  5
+15B
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+11.6281
+ 20
+-16.2794
+ 10
+13.3719
+ 20
+-18.7206
+ 10
+30.8719
+ 20
+-6.2206
+ 10
+29.1281
+ 20
+-3.7794
+  0
+LINE
+  5
+15C
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+40.0
+ 20
+-5.0
+ 30
+0.0
+ 11
+30.0
+ 21
+-5.0
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+15D
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+0
+ 10
+40.0
+ 20
+-20.0
+ 10
+12.5
+ 20
+-20.0
+ 10
+12.5
+ 20
+-17.5
+  0
+CIRCLE
+  5
+15E
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbCircle
+ 10
+7.6
+ 20
+-7.5
+ 30
+0.0
+ 40
+2.0
+  0
+LINE
+  5
+15F
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+10.4
+ 20
+-7.5
+ 30
+0.0
+ 11
+11.6
+ 21
+-7.5
+ 31
+0.0
+  0
+LINE
+  5
+160
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+9.5799
+ 20
+-9.4799
+ 30
+0.0
+ 11
+10.4284
+ 21
+-10.3284
+ 31
+0.0
+  0
+LINE
+  5
+161
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+7.6
+ 20
+-10.3
+ 30
+0.0
+ 11
+7.6
+ 21
+-11.5
+ 31
+0.0
+  0
+LINE
+  5
+162
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+5.6201
+ 20
+-9.4799
+ 30
+0.0
+ 11
+4.7716
+ 21
+-10.3284
+ 31
+0.0
+  0
+LINE
+  5
+163
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.8
+ 20
+-7.5
+ 30
+0.0
+ 11
+3.6
+ 21
+-7.5
+ 31
+0.0
+  0
+LINE
+  5
+164
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+5.6201
+ 20
+-5.5201
+ 30
+0.0
+ 11
+4.7716
+ 21
+-4.6716
+ 31
+0.0
+  0
+LINE
+  5
+165
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+7.6
+ 20
+-4.7
+ 30
+0.0
+ 11
+7.6
+ 21
+-3.5
+ 31
+0.0
+  0
+LINE
+  5
+166
+330
+158
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+9.5799
+ 20
+-5.5201
+ 30
+0.0
+ 11
+10.4284
+ 21
+-4.6716
+ 31
+0.0
+  0
+ENDBLK
+  5
+15A
+330
+158
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+16A
+330
+169
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_TeeBranch
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_TeeBranch
+  1
+
+  4
+Derivazione a T
+  0
+LINE
+  5
+16C
+330
+169
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-2.5
+ 30
+0.0
+ 11
+5.0
+ 21
+-2.5
+ 31
+0.0
+  0
+LINE
+  5
+16D
+330
+169
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+0.0
+ 30
+0.0
+ 11
+2.5
+ 21
+-2.5
+ 31
+0.0
+  0
+HATCH
+  5
+16E
+330
+169
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbHatch
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+210
+0.0
+220
+0.0
+230
+1.0
+  2
+SOLID
+ 70
+1
+ 71
+0
+ 91
+1
+ 92
+3
+ 72
+1
+ 73
+1
+ 93
+2
+ 10
+1.8
+ 20
+-2.5
+ 42
+1.0
+ 10
+3.2
+ 20
+-2.5
+ 42
+1.0
+ 97
+0
+ 75
+1
+ 76
+1
+ 98
+0
+  0
+CIRCLE
+  5
+16F
+330
+169
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbCircle
+ 10
+2.5
+ 20
+-2.5
+ 30
+0.0
+ 40
+0.7
+  0
+ENDBLK
+  5
+16B
+330
+169
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+173
+330
+172
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_NetworkBoundary
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_NetworkBoundary
+  1
+
+  4
+Confine di rete
+  0
+LINE
+  5
+175
+330
+172
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-2.5
+ 30
+0.0
+ 11
+5.0
+ 21
+-2.5
+ 31
+0.0
+  0
+ENDBLK
+  5
+174
+330
+172
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+17B
+330
+17A
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_DrainConnection
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_DrainConnection
+  1
+
+  4
+Attacco di scarico
+  0
+LINE
+  5
+17D
+330
+17A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+0.0
+ 30
+0.0
+ 11
+2.5
+ 21
+-3.0
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+17E
+330
+17A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+1.3
+ 20
+-3.0
+ 10
+3.7
+ 20
+-3.0
+ 10
+2.5
+ 20
+-4.8
+  0
+LWPOLYLINE
+  5
+17F
+330
+17A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+1.3
+ 20
+-6.6
+ 10
+3.7
+ 20
+-6.6
+ 10
+2.5
+ 20
+-4.8
+  0
+LINE
+  5
+180
+330
+17A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-6.6
+ 30
+0.0
+ 11
+2.5
+ 21
+-8.8
+ 31
+0.0
+  0
+LINE
+  5
+181
+330
+17A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+1.3
+ 20
+-8.8
+ 30
+0.0
+ 11
+3.7
+ 21
+-8.8
+ 31
+0.0
+  0
+ENDBLK
+  5
+17C
+330
+17A
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+187
+330
+186
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_ExpansionConnection
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_ExpansionConnection
+  1
+
+  4
+Vaso di espansione
+  0
+LINE
+  5
+189
+330
+186
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+0.0
+ 30
+0.0
+ 11
+2.5
+ 21
+-3.0
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+18A
+330
+186
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+8
+ 70
+1
+ 10
+1.7
+ 20
+-3.0
+ 10
+3.3
+ 20
+-3.0
+ 42
+-0.41421356237309515
+ 10
+4.5
+ 20
+-4.2
+ 10
+4.5
+ 20
+-7.8
+ 42
+-0.41421356237309515
+ 10
+3.3
+ 20
+-9.0
+ 10
+1.7
+ 20
+-9.0
+ 42
+-0.4142135623730951
+ 10
+0.5
+ 20
+-7.8
+ 10
+0.5
+ 20
+-4.2
+ 42
+-0.4142135623730951
+  0
+LINE
+  5
+18B
+330
+186
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.5
+ 20
+-6.0
+ 30
+0.0
+ 11
+4.5
+ 21
+-6.0
+ 31
+0.0
+  0
+ENDBLK
+  5
+188
+330
+186
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+18F
+330
+18E
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_GasBoilerModular
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_GasBoilerModular
+  1
+
+  4
+Caldaia modulare a condensazione
+  0
+LWPOLYLINE
+  5
+191
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+8
+ 70
+1
+ 10
+3.9
+ 20
+-2.0
+ 10
+56.1
+ 20
+-2.0
+ 42
+-0.41421356237309503
+ 10
+57.6
+ 20
+-3.5
+ 10
+57.6
+ 20
+-21.5
+ 42
+-0.41421356237309503
+ 10
+56.1
+ 20
+-23.0
+ 10
+3.9
+ 20
+-23.0
+ 42
+-0.41421356237309503
+ 10
+2.4
+ 20
+-21.5
+ 10
+2.4
+ 20
+-3.5
+ 42
+-0.41421356237309503
+  0
+LWPOLYLINE
+  5
+192
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+8
+ 70
+1
+ 10
+8.1
+ 20
+-7.5
+ 10
+17.9
+ 20
+-7.5
+ 42
+-0.4142135623730956
+ 10
+18.5
+ 20
+-8.1
+ 10
+18.5
+ 20
+-16.9
+ 42
+-0.4142135623730965
+ 10
+17.9
+ 20
+-17.5
+ 10
+8.1
+ 20
+-17.5
+ 42
+-0.4142135623730956
+ 10
+7.5
+ 20
+-16.9
+ 10
+7.5
+ 20
+-8.1
+ 42
+-0.41421356237309465
+  0
+LINE
+  5
+193
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+7.5
+ 20
+-14.4
+ 30
+0.0
+ 11
+18.5
+ 21
+-14.4
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+194
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+0
+ 10
+9.315
+ 20
+-14.4
+ 10
+13.0
+ 20
+-12.4101
+ 10
+16.685
+ 20
+-14.4
+  0
+LINE
+  5
+195
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+13.0
+ 20
+-7.5
+ 30
+0.0
+ 11
+13.0
+ 21
+-5.0
+ 31
+0.0
+  0
+LINE
+  5
+196
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+13.0
+ 20
+-17.5
+ 30
+0.0
+ 11
+13.0
+ 21
+-20.0
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+197
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+8
+ 70
+1
+ 10
+22.1
+ 20
+-7.5
+ 10
+31.9
+ 20
+-7.5
+ 42
+-0.4142135623730956
+ 10
+32.5
+ 20
+-8.1
+ 10
+32.5
+ 20
+-16.9
+ 42
+-0.4142135623730965
+ 10
+31.9
+ 20
+-17.5
+ 10
+22.1
+ 20
+-17.5
+ 42
+-0.4142135623730965
+ 10
+21.5
+ 20
+-16.9
+ 10
+21.5
+ 20
+-8.1
+ 42
+-0.4142135623730956
+  0
+LINE
+  5
+198
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+21.5
+ 20
+-14.4
+ 30
+0.0
+ 11
+32.5
+ 21
+-14.4
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+199
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+0
+ 10
+23.315
+ 20
+-14.4
+ 10
+27.0
+ 20
+-12.4101
+ 10
+30.685
+ 20
+-14.4
+  0
+LINE
+  5
+19A
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+27.0
+ 20
+-7.5
+ 30
+0.0
+ 11
+27.0
+ 21
+-5.0
+ 31
+0.0
+  0
+LINE
+  5
+19B
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+27.0
+ 20
+-17.5
+ 30
+0.0
+ 11
+27.0
+ 21
+-20.0
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+19C
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+8
+ 70
+1
+ 10
+36.1
+ 20
+-7.5
+ 10
+45.9
+ 20
+-7.5
+ 42
+-0.4142135623730956
+ 10
+46.5
+ 20
+-8.1
+ 10
+46.5
+ 20
+-16.9
+ 42
+-0.4142135623730965
+ 10
+45.9
+ 20
+-17.5
+ 10
+36.1
+ 20
+-17.5
+ 42
+-0.4142135623730965
+ 10
+35.5
+ 20
+-16.9
+ 10
+35.5
+ 20
+-8.1
+ 42
+-0.4142135623730956
+  0
+LINE
+  5
+19D
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+35.5
+ 20
+-14.4
+ 30
+0.0
+ 11
+46.5
+ 21
+-14.4
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+19E
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+0
+ 10
+37.315
+ 20
+-14.4
+ 10
+41.0
+ 20
+-12.4101
+ 10
+44.685
+ 20
+-14.4
+  0
+LINE
+  5
+19F
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+41.0
+ 20
+-7.5
+ 30
+0.0
+ 11
+41.0
+ 21
+-5.0
+ 31
+0.0
+  0
+LINE
+  5
+1A0
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+41.0
+ 20
+-17.5
+ 30
+0.0
+ 11
+41.0
+ 21
+-20.0
+ 31
+0.0
+  0
+LINE
+  5
+1A1
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+60.0
+ 20
+-5.0
+ 30
+0.0
+ 11
+13.0
+ 21
+-5.0
+ 31
+0.0
+  0
+LINE
+  5
+1A2
+330
+18E
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+60.0
+ 20
+-20.0
+ 30
+0.0
+ 11
+13.0
+ 21
+-20.0
+ 31
+0.0
+  0
+ENDBLK
+  5
+190
+330
+18E
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+1A6
+330
+1A5
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_HeatPumpAirWaterLarge
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_HeatPumpAirWaterLarge
+  1
+
+  4
+Pompa di calore aria-acqua di alta potenza
+  0
+LWPOLYLINE
+  5
+1A8
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+2.4
+ 20
+-3.0
+ 10
+57.6
+ 20
+-3.0
+ 10
+57.6
+ 20
+-27.0
+ 10
+2.4
+ 20
+-27.0
+  0
+LINE
+  5
+1A9
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+40.488
+ 20
+-3.0
+ 30
+0.0
+ 11
+40.488
+ 21
+-27.0
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+1AA
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+4.9
+ 20
+-5.5
+ 10
+37.988
+ 20
+-5.5
+ 10
+37.988
+ 20
+-24.5
+ 10
+4.9
+ 20
+-24.5
+  0
+LINE
+  5
+1AB
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.9
+ 20
+-7.4
+ 30
+0.0
+ 11
+37.988
+ 21
+-7.4
+ 31
+0.0
+  0
+LINE
+  5
+1AC
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.9
+ 20
+-9.3
+ 30
+0.0
+ 11
+37.988
+ 21
+-9.3
+ 31
+0.0
+  0
+LINE
+  5
+1AD
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.9
+ 20
+-11.2
+ 30
+0.0
+ 11
+37.988
+ 21
+-11.2
+ 31
+0.0
+  0
+LINE
+  5
+1AE
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.9
+ 20
+-13.1
+ 30
+0.0
+ 11
+37.988
+ 21
+-13.1
+ 31
+0.0
+  0
+LINE
+  5
+1AF
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.9
+ 20
+-15.0
+ 30
+0.0
+ 11
+37.988
+ 21
+-15.0
+ 31
+0.0
+  0
+LINE
+  5
+1B0
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.9
+ 20
+-16.9
+ 30
+0.0
+ 11
+37.988
+ 21
+-16.9
+ 31
+0.0
+  0
+LINE
+  5
+1B1
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.9
+ 20
+-18.8
+ 30
+0.0
+ 11
+37.988
+ 21
+-18.8
+ 31
+0.0
+  0
+LINE
+  5
+1B2
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.9
+ 20
+-20.7
+ 30
+0.0
+ 11
+37.988
+ 21
+-20.7
+ 31
+0.0
+  0
+LINE
+  5
+1B3
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.9
+ 20
+-22.6
+ 30
+0.0
+ 11
+37.988
+ 21
+-22.6
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+1B4
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+8
+ 70
+0
+ 10
+5.8279
+ 20
+-3.0
+ 10
+5.8279
+ 20
+-1.8
+ 10
+10.2842
+ 20
+-1.8
+ 10
+10.2842
+ 20
+-0.8
+ 10
+15.0833
+ 20
+-0.8
+ 10
+15.0833
+ 20
+-1.8
+ 10
+19.5396
+ 20
+-1.8
+ 10
+19.5396
+ 20
+-3.0
+  0
+LWPOLYLINE
+  5
+1B5
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+8
+ 70
+0
+ 10
+23.3484
+ 20
+-3.0
+ 10
+23.3484
+ 20
+-1.8
+ 10
+27.8047
+ 20
+-1.8
+ 10
+27.8047
+ 20
+-0.8
+ 10
+32.6038
+ 20
+-0.8
+ 10
+32.6038
+ 20
+-1.8
+ 10
+37.0601
+ 20
+-1.8
+ 10
+37.0601
+ 20
+-3.0
+  0
+LINE
+  5
+1B6
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+60.0
+ 20
+-5.0
+ 30
+0.0
+ 11
+57.6
+ 21
+-5.0
+ 31
+0.0
+  0
+LINE
+  5
+1B7
+330
+1A5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+60.0
+ 20
+-20.0
+ 30
+0.0
+ 11
+57.6
+ 21
+-20.0
+ 31
+0.0
+  0
+ENDBLK
+  5
+1A7
+330
+1A5
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+1BB
+330
+1BA
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_DhwCylinderTwinCoil
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_DhwCylinderTwinCoil
+  1
+
+  4
+Bollitore ACS a due serpentini
+  0
+LWPOLYLINE
+  5
+1BD
+330
+1BA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+8
+ 70
+1
+ 10
+6.74
+ 20
+-3.3
+ 10
+18.259999999999998
+ 20
+-3.3
+ 42
+-0.4142135623730952
+ 10
+21.5
+ 20
+-6.54
+ 10
+21.5
+ 20
+-48.459999999999994
+ 42
+-0.41421356237309537
+ 10
+18.259999999999998
+ 20
+-51.699999999999996
+ 10
+6.74
+ 20
+-51.699999999999996
+ 42
+-0.4142135623730952
+ 10
+3.5
+ 20
+-48.459999999999994
+ 10
+3.5
+ 20
+-6.54
+ 42
+-0.4142135623730951
+  0
+LWPOLYLINE
+  5
+1BE
+330
+1BA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+11
+ 70
+0
+ 10
+0.0
+ 20
+-7.5
+ 10
+7.1
+ 20
+-7.5
+ 10
+17.9
+ 20
+-7.5
+ 10
+17.9
+ 20
+-10.0
+ 10
+7.1
+ 20
+-10.0
+ 10
+7.1
+ 20
+-12.5
+ 10
+17.9
+ 20
+-12.5
+ 10
+17.9
+ 20
+-15.0
+ 10
+7.1
+ 20
+-15.0
+ 10
+7.1
+ 20
+-17.5
+ 10
+0.0
+ 20
+-17.5
+  0
+LWPOLYLINE
+  5
+1BF
+330
+1BA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+11
+ 70
+0
+ 10
+0.0
+ 20
+-27.5
+ 10
+7.1
+ 20
+-27.5
+ 10
+17.9
+ 20
+-27.5
+ 10
+17.9
+ 20
+-30.0
+ 10
+7.1
+ 20
+-30.0
+ 10
+7.1
+ 20
+-32.5
+ 10
+17.9
+ 20
+-32.5
+ 10
+17.9
+ 20
+-35.0
+ 10
+7.1
+ 20
+-35.0
+ 10
+7.1
+ 20
+-37.5
+ 10
+0.0
+ 20
+-37.5
+  0
+LINE
+  5
+1C0
+330
+1BA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+7.5
+ 20
+0.0
+ 30
+0.0
+ 11
+7.5
+ 21
+-3.3
+ 31
+0.0
+  0
+LINE
+  5
+1C1
+330
+1BA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-47.5
+ 30
+0.0
+ 11
+3.5
+ 21
+-47.5
+ 31
+0.0
+  0
+LINE
+  5
+1C2
+330
+1BA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+25.0
+ 20
+-20.0
+ 30
+0.0
+ 11
+21.5
+ 21
+-20.0
+ 31
+0.0
+  0
+LINE
+  5
+1C3
+330
+1BA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+25.0
+ 20
+-12.5
+ 30
+0.0
+ 11
+21.5
+ 21
+-12.5
+ 31
+0.0
+  0
+ENDBLK
+  5
+1BC
+330
+1BA
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+1C7
+330
+1C6
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_BufferFourPort
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_BufferFourPort
+  1
+
+  4
+Volano termico a quattro attacchi
+  0
+LWPOLYLINE
+  5
+1C9
+330
+1C6
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+8
+ 70
+1
+ 10
+6.74
+ 20
+-2.7
+ 10
+18.259999999999998
+ 20
+-2.7
+ 42
+-0.4142135623730952
+ 10
+21.5
+ 20
+-5.94
+ 10
+21.5
+ 20
+-39.06
+ 42
+-0.41421356237309537
+ 10
+18.259999999999998
+ 20
+-42.300000000000004
+ 10
+6.74
+ 20
+-42.300000000000004
+ 42
+-0.4142135623730952
+ 10
+3.5
+ 20
+-39.06
+ 10
+3.5
+ 20
+-5.94
+ 42
+-0.4142135623730951
+  0
+LINE
+  5
+1CA
+330
+1C6
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-5.0
+ 30
+0.0
+ 11
+3.5
+ 21
+-5.0
+ 31
+0.0
+  0
+LINE
+  5
+1CB
+330
+1C6
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-20.0
+ 30
+0.0
+ 11
+3.5
+ 21
+-20.0
+ 31
+0.0
+  0
+LINE
+  5
+1CC
+330
+1C6
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+25.0
+ 20
+-5.0
+ 30
+0.0
+ 11
+21.5
+ 21
+-5.0
+ 31
+0.0
+  0
+LINE
+  5
+1CD
+330
+1C6
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+25.0
+ 20
+-20.0
+ 30
+0.0
+ 11
+21.5
+ 21
+-20.0
+ 31
+0.0
+  0
+LINE
+  5
+1CE
+330
+1C6
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+12.5
+ 20
+0.0
+ 30
+0.0
+ 11
+12.5
+ 21
+-2.7
+ 31
+0.0
+  0
+LINE
+  5
+1CF
+330
+1C6
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+12.5
+ 20
+-45.0
+ 30
+0.0
+ 11
+12.5
+ 21
+-42.3
+ 31
+0.0
+  0
+LINE
+  5
+1D0
+330
+1C6
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-32.5
+ 30
+0.0
+ 11
+3.5
+ 21
+-32.5
+ 31
+0.0
+  0
+ENDBLK
+  5
+1C8
+330
+1C6
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+1D6
+330
+1D5
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_MixingValveThermostatic
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_MixingValveThermostatic
+  1
+
+  4
+Valvola miscelatrice termostatica
+  0
+LINE
+  5
+1D8
+330
+1D5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-5.0
+ 30
+0.0
+ 11
+0.85
+ 21
+-5.0
+ 31
+0.0
+  0
+LINE
+  5
+1D9
+330
+1D5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.15
+ 20
+-5.0
+ 30
+0.0
+ 11
+5.0
+ 21
+-5.0
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+1DA
+330
+1D5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+0.85
+ 20
+-3.68
+ 10
+0.85
+ 20
+-6.32
+ 10
+2.5
+ 20
+-5.0
+  0
+LWPOLYLINE
+  5
+1DB
+330
+1D5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+4.15
+ 20
+-3.68
+ 10
+4.15
+ 20
+-6.32
+ 10
+2.5
+ 20
+-5.0
+  0
+LWPOLYLINE
+  5
+1DC
+330
+1D5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+1.18
+ 20
+-6.65
+ 10
+3.82
+ 20
+-6.65
+ 10
+2.5
+ 20
+-5.0
+  0
+LINE
+  5
+1DD
+330
+1D5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-6.65
+ 30
+0.0
+ 11
+2.5
+ 21
+-10.0
+ 31
+0.0
+  0
+LINE
+  5
+1DE
+330
+1D5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-5.0
+ 30
+0.0
+ 11
+2.5
+ 21
+-3.0
+ 31
+0.0
+  0
+LINE
+  5
+1DF
+330
+1D5
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+1.7
+ 20
+-3.0
+ 30
+0.0
+ 11
+3.3
+ 21
+-3.0
+ 31
+0.0
+  0
+ENDBLK
+  5
+1D7
+330
+1D5
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+1EB
+330
+1EA
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_FanCoilDucted
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_FanCoilDucted
+  1
+
+  4
+Ventilconvettore canalizzato
+  0
+LWPOLYLINE
+  5
+1ED
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+2.0
+ 20
+-2.25
+ 10
+18.0
+ 20
+-2.25
+ 10
+18.0
+ 20
+-12.75
+ 10
+2.0
+ 20
+-12.75
+  0
+LINE
+  5
+1EE
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.4
+ 20
+-2.25
+ 30
+0.0
+ 11
+4.4
+ 21
+-12.75
+ 31
+0.0
+  0
+LINE
+  5
+1EF
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+6.8
+ 20
+-2.25
+ 30
+0.0
+ 11
+6.8
+ 21
+-12.75
+ 31
+0.0
+  0
+LINE
+  5
+1F0
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+9.2
+ 20
+-2.25
+ 30
+0.0
+ 11
+9.2
+ 21
+-12.75
+ 31
+0.0
+  0
+CIRCLE
+  5
+1F1
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbCircle
+ 10
+14.0
+ 20
+-7.5
+ 30
+0.0
+ 40
+3.15
+  0
+LINE
+  5
+1F2
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+14.0
+ 20
+-7.5
+ 30
+0.0
+ 11
+14.0
+ 21
+-5.1375
+ 31
+0.0
+  0
+LINE
+  5
+1F3
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+14.0
+ 20
+-7.5
+ 30
+0.0
+ 11
+11.9525
+ 21
+-8.697
+ 31
+0.0
+  0
+LINE
+  5
+1F4
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+14.0
+ 20
+-7.5
+ 30
+0.0
+ 11
+16.0475
+ 21
+-8.697
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+1F5
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+4
+ 70
+0
+ 10
+5.2
+ 20
+-2.25
+ 10
+5.2
+ 20
+-0.225
+ 10
+14.8
+ 20
+-0.225
+ 10
+14.8
+ 20
+-2.25
+  0
+LWPOLYLINE
+  5
+1F6
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+4
+ 70
+0
+ 10
+5.2
+ 20
+-12.75
+ 10
+5.2
+ 20
+-14.775
+ 10
+14.8
+ 20
+-14.775
+ 10
+14.8
+ 20
+-12.75
+  0
+LINE
+  5
+1F7
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-2.5
+ 30
+0.0
+ 11
+2.0
+ 21
+-2.5
+ 31
+0.0
+  0
+LINE
+  5
+1F8
+330
+1EA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-12.5
+ 30
+0.0
+ 11
+2.0
+ 21
+-12.5
+ 31
+0.0
+  0
+ENDBLK
+  5
+1EC
+330
+1EA
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+1FC
+330
+1FB
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_Radiator
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_Radiator
+  1
+
+  4
+Radiatore
+  0
+LWPOLYLINE
+  5
+1FE
+330
+1FB
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+2.0
+ 20
+-2.25
+ 10
+18.0
+ 20
+-2.25
+ 10
+18.0
+ 20
+-12.75
+ 10
+2.0
+ 20
+-12.75
+  0
+LINE
+  5
+1FF
+330
+1FB
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+5.2
+ 20
+-2.25
+ 30
+0.0
+ 11
+5.2
+ 21
+-12.75
+ 31
+0.0
+  0
+LINE
+  5
+200
+330
+1FB
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+8.4
+ 20
+-2.25
+ 30
+0.0
+ 11
+8.4
+ 21
+-12.75
+ 31
+0.0
+  0
+LINE
+  5
+201
+330
+1FB
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+11.6
+ 20
+-2.25
+ 30
+0.0
+ 11
+11.6
+ 21
+-12.75
+ 31
+0.0
+  0
+LINE
+  5
+202
+330
+1FB
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+14.8
+ 20
+-2.25
+ 30
+0.0
+ 11
+14.8
+ 21
+-12.75
+ 31
+0.0
+  0
+LINE
+  5
+203
+330
+1FB
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-2.5
+ 30
+0.0
+ 11
+2.0
+ 21
+-2.5
+ 31
+0.0
+  0
+LINE
+  5
+204
+330
+1FB
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-12.5
+ 30
+0.0
+ 11
+2.0
+ 21
+-12.5
+ 31
+0.0
+  0
+ENDBLK
+  5
+1FD
+330
+1FB
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+20A
+330
+209
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_ValveSafety
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_ValveSafety
+  1
+
+  4
+Valvola di sicurezza
+  0
+LINE
+  5
+20C
+330
+209
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-10.0
+ 30
+0.0
+ 11
+2.5
+ 21
+-6.2
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+20D
+330
+209
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+0.9
+ 20
+-4.2
+ 10
+4.1
+ 20
+-4.2
+ 10
+2.5
+ 20
+-6.2
+  0
+LWPOLYLINE
+  5
+20E
+330
+209
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+5
+ 70
+0
+ 10
+2.5
+ 20
+-4.2
+ 10
+1.1
+ 20
+-3.4
+ 10
+3.9
+ 20
+-2.6
+ 10
+1.1
+ 20
+-1.8
+ 10
+3.9
+ 20
+-1.0
+  0
+ENDBLK
+  5
+20B
+330
+209
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+218
+330
+217
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_Thermometer
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_Thermometer
+  1
+
+  4
+Termometro
+  0
+LINE
+  5
+21A
+330
+217
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-10.0
+ 30
+0.0
+ 11
+2.5
+ 21
+-5.0
+ 31
+0.0
+  0
+CIRCLE
+  5
+21B
+330
+217
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbCircle
+ 10
+2.5
+ 20
+-3.0
+ 30
+0.0
+ 40
+2.0
+  0
+ENDBLK
+  5
+219
+330
+217
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+21D
+330
+21C
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_Thermometer_Lettera
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_Thermometer_Lettera
+  1
+
+  4
+Termometro: lettera, sempre diritta
+  0
+LINE
+  5
+21F
+330
+21C
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+-0.8999999999999999
+ 20
+0.8999999999999999
+ 30
+0.0
+ 11
+0.8999999999999999
+ 21
+0.8999999999999999
+ 31
+0.0
+  0
+LINE
+  5
+220
+330
+21C
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+0.8999999999999999
+ 30
+0.0
+ 11
+0.0
+ 21
+-1.0
+ 31
+0.0
+  0
+ENDBLK
+  5
+21E
+330
+21C
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+22C
+330
+22B
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_TeeJunction
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_TeeJunction
+  1
+
+  4
+Raccordo a T
+  0
+LINE
+  5
+22E
+330
+22B
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-2.5
+ 30
+0.0
+ 11
+5.0
+ 21
+-2.5
+ 31
+0.0
+  0
+LINE
+  5
+22F
+330
+22B
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+0.0
+ 30
+0.0
+ 11
+2.5
+ 21
+-2.5
+ 31
+0.0
+  0
+HATCH
+  5
+230
+330
+22B
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbHatch
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+210
+0.0
+220
+0.0
+230
+1.0
+  2
+SOLID
+ 70
+1
+ 71
+0
+ 91
+1
+ 92
+3
+ 72
+1
+ 73
+1
+ 93
+2
+ 10
+1.8
+ 20
+-2.5
+ 42
+1.0
+ 10
+3.2
+ 20
+-2.5
+ 42
+1.0
+ 97
+0
+ 75
+1
+ 76
+1
+ 98
+0
+  0
+CIRCLE
+  5
+231
+330
+22B
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbCircle
+ 10
+2.5
+ 20
+-2.5
+ 30
+0.0
+ 40
+0.7
+  0
+ENDBLK
+  5
+22D
+330
+22B
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+235
+330
+234
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_DivertingValve3way
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_DivertingValve3way
+  1
+
+  4
+Valvola deviatrice a tre vie
+  0
+LINE
+  5
+237
+330
+234
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-5.0
+ 30
+0.0
+ 11
+2.2
+ 21
+-5.0
+ 31
+0.0
+  0
+LINE
+  5
+238
+330
+234
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+7.8
+ 20
+-5.0
+ 30
+0.0
+ 11
+10.0
+ 21
+-5.0
+ 31
+0.0
+  0
+LINE
+  5
+239
+330
+234
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+5.0
+ 20
+-7.8
+ 30
+0.0
+ 11
+5.0
+ 21
+-10.0
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+23A
+330
+234
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+2.2
+ 20
+-2.76
+ 10
+2.2
+ 20
+-7.24
+ 10
+5.0
+ 20
+-5.0
+  0
+LWPOLYLINE
+  5
+23B
+330
+234
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+7.8
+ 20
+-2.76
+ 10
+7.8
+ 20
+-7.24
+ 10
+5.0
+ 20
+-5.0
+  0
+LWPOLYLINE
+  5
+23C
+330
+234
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+2.76
+ 20
+-7.8
+ 10
+7.24
+ 20
+-7.8
+ 10
+5.0
+ 20
+-5.0
+  0
+ENDBLK
+  5
+236
+330
+234
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+248
+330
+247
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_FillingUnit
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_FillingUnit
+  1
+
+  4
+Gruppo di riempimento
+  0
+LINE
+  5
+24A
+330
+247
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+0.0
+ 30
+0.0
+ 11
+2.5
+ 21
+-2.4
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+24B
+330
+247
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+1.3
+ 20
+-2.4
+ 10
+3.7
+ 20
+-2.4
+ 10
+2.5
+ 20
+-4.0
+  0
+LWPOLYLINE
+  5
+24C
+330
+247
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+1.3
+ 20
+-5.6
+ 10
+3.7
+ 20
+-5.6
+ 10
+2.5
+ 20
+-4.0
+  0
+LINE
+  5
+24D
+330
+247
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-5.6
+ 30
+0.0
+ 11
+2.5
+ 21
+-6.8
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+24E
+330
+247
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+1.3
+ 20
+-6.8
+ 10
+3.7
+ 20
+-6.8
+ 10
+2.5
+ 20
+-9.2
+  0
+LINE
+  5
+24F
+330
+247
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-9.2
+ 30
+0.0
+ 11
+2.5
+ 21
+-10.0
+ 31
+0.0
+  0
+ENDBLK
+  5
+249
+330
+247
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+259
+330
+258
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_PressureGauge
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_PressureGauge
+  1
+
+  4
+Manometro
+  0
+LINE
+  5
+25B
+330
+258
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-10.0
+ 30
+0.0
+ 11
+2.5
+ 21
+-5.0
+ 31
+0.0
+  0
+CIRCLE
+  5
+25C
+330
+258
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbCircle
+ 10
+2.5
+ 20
+-3.0
+ 30
+0.0
+ 40
+2.0
+  0
+ENDBLK
+  5
+25A
+330
+258
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+25E
+330
+25D
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_PressureGauge_Lettera
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_PressureGauge_Lettera
+  1
+
+  4
+Manometro: lettera, sempre diritta
+  0
+LINE
+  5
+260
+330
+25D
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+-0.5
+ 20
+1.0
+ 30
+0.0
+ 11
+-0.5
+ 21
+-1.0999999999999996
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+261
+330
+25D
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+13
+ 70
+0
+ 10
+-0.5
+ 20
+1.0
+ 10
+-0.24027777777777803
+ 20
+0.9166666666666665
+ 10
+-0.02777777777777768
+ 20
+0.833333333333333
+ 10
+0.13750000000000018
+ 20
+0.75
+ 10
+0.255555555555556
+ 20
+0.6666666666666665
+ 10
+0.3263888888888884
+ 20
+0.5833333333333335
+ 10
+0.3500000000000001
+ 20
+0.5
+ 10
+0.3263888888888893
+ 20
+0.41666666666666696
+ 10
+0.25555555555555554
+ 20
+0.33333333333333304
+ 10
+0.13750000000000018
+ 20
+0.25
+ 10
+-0.02777777777777768
+ 20
+0.16666666666666652
+ 10
+-0.2402777777777776
+ 20
+0.08333333333333348
+ 10
+-0.5
+ 20
+0.0
+  0
+ENDBLK
+  5
+25F
+330
+25D
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+27B
+330
+27A
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_ValveIsolation
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_ValveIsolation
+  1
+
+  4
+Valvola di intercettazione
+  0
+LINE
+  5
+27D
+330
+27A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-2.5
+ 30
+0.0
+ 11
+0.8333
+ 21
+-2.5
+ 31
+0.0
+  0
+LINE
+  5
+27E
+330
+27A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.1667
+ 20
+-2.5
+ 30
+0.0
+ 11
+5.0
+ 21
+-2.5
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+27F
+330
+27A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+0.8333
+ 20
+-0.5
+ 10
+0.8333
+ 20
+-4.5
+ 10
+2.5
+ 20
+-2.5
+  0
+LWPOLYLINE
+  5
+280
+330
+27A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+4.1667
+ 20
+-0.5
+ 10
+4.1667
+ 20
+-4.5
+ 10
+2.5
+ 20
+-2.5
+  0
+ENDBLK
+  5
+27C
+330
+27A
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+288
+330
+287
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_DhwSafetyGroup
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_DhwSafetyGroup
+  1
+
+  4
+Gruppo di sicurezza sanitario
+  0
+LINE
+  5
+28A
+330
+287
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-2.5
+ 30
+0.0
+ 11
+3.5
+ 21
+-2.5
+ 31
+0.0
+  0
+LINE
+  5
+28B
+330
+287
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+6.3
+ 20
+-2.5
+ 30
+0.0
+ 11
+10.0
+ 21
+-2.5
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+28C
+330
+287
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+0.9
+ 20
+-1.1
+ 10
+0.9
+ 20
+-3.9
+ 10
+1.6
+ 20
+-2.5
+  0
+LWPOLYLINE
+  5
+28D
+330
+287
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+2.3
+ 20
+-1.1
+ 10
+2.3
+ 20
+-3.9
+ 10
+1.6
+ 20
+-2.5
+  0
+LINE
+  5
+28E
+330
+287
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+3.5
+ 20
+-1.66
+ 30
+0.0
+ 11
+3.5
+ 21
+-3.34
+ 31
+0.0
+  0
+LINE
+  5
+28F
+330
+287
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+3.5
+ 20
+-1.66
+ 30
+0.0
+ 11
+6.3
+ 21
+-3.34
+ 31
+0.0
+  0
+LINE
+  5
+290
+330
+287
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+6.3
+ 20
+-1.66
+ 30
+0.0
+ 11
+6.3
+ 21
+-3.34
+ 31
+0.0
+  0
+LINE
+  5
+291
+330
+287
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+8.2
+ 20
+-2.5
+ 30
+0.0
+ 11
+8.2
+ 21
+-1.7
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+292
+330
+287
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+7.5
+ 20
+-1.7
+ 10
+8.9
+ 20
+-1.7
+ 10
+8.2
+ 20
+-0.3
+  0
+LWPOLYLINE
+  5
+293
+330
+287
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+4
+ 70
+0
+ 10
+8.2
+ 20
+-0.3
+ 10
+7.5
+ 20
+-0.8
+ 10
+8.9
+ 20
+-0.5
+ 10
+7.5
+ 20
+-0.2
+  0
+ENDBLK
+  5
+289
+330
+287
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+29D
+330
+29C
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_Strainer
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_Strainer
+  1
+
+  4
+Filtro a Y
+  0
+LINE
+  5
+29F
+330
+29C
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-2.5
+ 30
+0.0
+ 11
+5.0
+ 21
+-2.5
+ 31
+0.0
+  0
+LINE
+  5
+2A0
+330
+29C
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.5
+ 20
+-1.25
+ 30
+0.0
+ 11
+0.5
+ 21
+-3.75
+ 31
+0.0
+  0
+LINE
+  5
+2A1
+330
+29C
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.5
+ 20
+-1.25
+ 30
+0.0
+ 11
+4.5
+ 21
+-3.75
+ 31
+0.0
+  0
+LINE
+  5
+2A2
+330
+29C
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-2.5
+ 30
+0.0
+ 11
+0.9
+ 21
+-4.1
+ 31
+0.0
+  0
+LINE
+  5
+2A3
+330
+29C
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.5464
+ 20
+-3.7464
+ 30
+0.0
+ 11
+1.2536
+ 21
+-4.4536
+ 31
+0.0
+  0
+ENDBLK
+  5
+29E
+330
+29C
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+2AB
+330
+2AA
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_AirSeparator
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_AirSeparator
+  1
+
+  4
+Separatore d'aria
+  0
+LINE
+  5
+2AD
+330
+2AA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-5.0
+ 30
+0.0
+ 11
+5.0
+ 21
+-5.0
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+2AE
+330
+2AA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+1.0
+ 20
+-4.1
+ 10
+4.0
+ 20
+-4.1
+ 10
+4.0
+ 20
+-5.8999999999999995
+ 10
+1.0
+ 20
+-5.8999999999999995
+  0
+LINE
+  5
+2AF
+330
+2AA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-5.0
+ 30
+0.0
+ 11
+2.5
+ 21
+-2.4
+ 31
+0.0
+  0
+CIRCLE
+  5
+2B0
+330
+2AA
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbCircle
+ 10
+2.5
+ 20
+-1.8
+ 30
+0.0
+ 40
+0.6
+  0
+ENDBLK
+  5
+2AC
+330
+2AA
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+2C0
+330
+2BF
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_DirtSeparator
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_DirtSeparator
+  1
+
+  4
+Defangatore
+  0
+LINE
+  5
+2C2
+330
+2BF
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-5.0
+ 30
+0.0
+ 11
+5.0
+ 21
+-5.0
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+2C3
+330
+2BF
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+1.0
+ 20
+-4.1
+ 10
+4.0
+ 20
+-4.1
+ 10
+4.0
+ 20
+-5.8999999999999995
+ 10
+1.0
+ 20
+-5.8999999999999995
+  0
+LINE
+  5
+2C4
+330
+2BF
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-5.0
+ 30
+0.0
+ 11
+2.5
+ 21
+-7.6
+ 31
+0.0
+  0
+HATCH
+  5
+2C5
+330
+2BF
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbHatch
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+210
+0.0
+220
+0.0
+230
+1.0
+  2
+SOLID
+ 70
+1
+ 71
+0
+ 91
+1
+ 92
+3
+ 72
+0
+ 73
+1
+ 93
+3
+ 10
+1.25
+ 20
+-6.6
+ 10
+3.75
+ 20
+-6.6
+ 10
+2.5
+ 20
+-7.6
+ 97
+0
+ 75
+1
+ 76
+1
+ 98
+0
+  0
+LWPOLYLINE
+  5
+2C6
+330
+2BF
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+1.25
+ 20
+-6.6
+ 10
+3.75
+ 20
+-6.6
+ 10
+2.5
+ 20
+-7.6
+  0
+ENDBLK
+  5
+2C1
+330
+2BF
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+2D4
+330
+2D3
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_PumpCirculator
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_PumpCirculator
+  1
+
+  4
+Pompa di circolazione
+  0
+LINE
+  5
+2D6
+330
+2D3
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-5.0
+ 30
+0.0
+ 11
+2.0
+ 21
+-5.0
+ 31
+0.0
+  0
+LINE
+  5
+2D7
+330
+2D3
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+8.0
+ 20
+-5.0
+ 30
+0.0
+ 11
+10.0
+ 21
+-5.0
+ 31
+0.0
+  0
+CIRCLE
+  5
+2D8
+330
+2D3
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbCircle
+ 10
+5.0
+ 20
+-5.0
+ 30
+0.0
+ 40
+3.0
+  0
+HATCH
+  5
+2D9
+330
+2D3
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbHatch
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+210
+0.0
+220
+0.0
+230
+1.0
+  2
+SOLID
+ 70
+1
+ 71
+0
+ 91
+1
+ 92
+3
+ 72
+0
+ 73
+1
+ 93
+3
+ 10
+3.5
+ 20
+-2.402
+ 10
+3.5
+ 20
+-7.598
+ 10
+8.0
+ 20
+-5.0
+ 97
+0
+ 75
+1
+ 76
+1
+ 98
+0
+  0
+LWPOLYLINE
+  5
+2DA
+330
+2D3
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+3.5
+ 20
+-2.402
+ 10
+3.5
+ 20
+-7.598
+ 10
+8.0
+ 20
+-5.0
+  0
+ENDBLK
+  5
+2D5
+330
+2D3
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+2EE
+330
+2ED
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_ValveCheck
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_ValveCheck
+  1
+
+  4
+Valvola di ritegno
+  0
+LINE
+  5
+2F0
+330
+2ED
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-2.5
+ 30
+0.0
+ 11
+0.85
+ 21
+-2.5
+ 31
+0.0
+  0
+LINE
+  5
+2F1
+330
+2ED
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.15
+ 20
+-2.5
+ 30
+0.0
+ 11
+5.0
+ 21
+-2.5
+ 31
+0.0
+  0
+LINE
+  5
+2F2
+330
+2ED
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.85
+ 20
+-1.51
+ 30
+0.0
+ 11
+0.85
+ 21
+-3.49
+ 31
+0.0
+  0
+LINE
+  5
+2F3
+330
+2ED
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.85
+ 20
+-1.51
+ 30
+0.0
+ 11
+4.15
+ 21
+-3.49
+ 31
+0.0
+  0
+LINE
+  5
+2F4
+330
+2ED
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.15
+ 20
+-1.51
+ 30
+0.0
+ 11
+4.15
+ 21
+-3.49
+ 31
+0.0
+  0
+LINE
+  5
+2F5
+330
+2ED
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.85
+ 20
+-0.6
+ 30
+0.0
+ 11
+4.15
+ 21
+-0.6
+ 31
+0.0
+  0
+LINE
+  5
+2F6
+330
+2ED
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.15
+ 20
+-0.6
+ 30
+0.0
+ 11
+3.55
+ 21
+-0.3
+ 31
+0.0
+  0
+LINE
+  5
+2F7
+330
+2ED
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+4.15
+ 20
+-0.6
+ 30
+0.0
+ 11
+3.55
+ 21
+-0.9
+ 31
+0.0
+  0
+ENDBLK
+  5
+2EF
+330
+2ED
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+BLOCK
+  5
+2FF
+330
+2FE
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockBegin
+  2
+NoveC_ValveGaugeCock3way
+ 70
+0
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+  3
+NoveC_ValveGaugeCock3way
+  1
+
+  4
+Rubinetto portamanometro a tre vie
+  0
+LINE
+  5
+301
+330
+2FE
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+0.0
+ 20
+-2.5
+ 30
+0.0
+ 11
+1.1
+ 21
+-2.5
+ 31
+0.0
+  0
+LINE
+  5
+302
+330
+2FE
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+3.9
+ 20
+-2.5
+ 30
+0.0
+ 11
+5.0
+ 21
+-2.5
+ 31
+0.0
+  0
+LINE
+  5
+303
+330
+2FE
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-1.1
+ 30
+0.0
+ 11
+2.5
+ 21
+-0.6
+ 31
+0.0
+  0
+LINE
+  5
+304
+330
+2FE
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+1.38
+ 20
+-0.6
+ 30
+0.0
+ 11
+3.62
+ 21
+-0.6
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+305
+330
+2FE
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+1.1
+ 20
+-1.38
+ 10
+1.1
+ 20
+-3.62
+ 10
+2.5
+ 20
+-2.5
+  0
+LWPOLYLINE
+  5
+306
+330
+2FE
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+3.9
+ 20
+-1.38
+ 10
+3.9
+ 20
+-3.62
+ 10
+2.5
+ 20
+-2.5
+  0
+LWPOLYLINE
+  5
+307
+330
+2FE
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+1.38
+ 20
+-1.1
+ 10
+3.62
+ 20
+-1.1
+ 10
+2.5
+ 20
+-2.5
+  0
+ENDBLK
+  5
+300
+330
+2FE
+100
+AcDbEntity
+  8
+0
+100
+AcDbBlockEnd
+  0
+ENDSEC
+  0
+SECTION
+  2
+ENTITIES
+  0
+LWPOLYLINE
+  5
+72
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-HPIP
+100
+AcDbPolyline
+ 90
+3
+ 70
+128
+ 10
+355.0
+ 20
+219.0
+ 10
+355.0
+ 20
+231.5
+ 10
+372.5
+ 20
+231.5
+  0
+INSERT
+  5
+77
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-HPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+363.75
+ 20
+231.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+79
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-HPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+377.5
+ 20
+231.5
+ 10
+382.5
+ 20
+231.5
+  0
+INSERT
+  5
+7A
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-HPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+380.0
+ 20
+231.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+7C
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-HPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+387.5
+ 20
+231.5
+ 10
+392.5
+ 20
+231.5
+  0
+INSERT
+  5
+7D
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-HPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+390.0
+ 20
+231.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+7F
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-HPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+397.5
+ 20
+231.5
+ 10
+407.5
+ 20
+231.5
+  0
+INSERT
+  5
+80
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-HPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+402.5
+ 20
+231.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+84
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+277.5
+ 20
+171.5
+ 10
+287.5
+ 20
+171.5
+  0
+INSERT
+  5
+85
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+282.5
+ 20
+171.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+87
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+292.5
+ 20
+171.5
+ 10
+297.5
+ 20
+171.5
+  0
+INSERT
+  5
+88
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+295.0
+ 20
+171.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+8A
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+302.5
+ 20
+171.5
+ 10
+310.0
+ 20
+171.5
+  0
+INSERT
+  5
+8B
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+306.25
+ 20
+171.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+8D
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+320.0
+ 20
+171.5
+ 10
+332.5
+ 20
+171.5
+  0
+INSERT
+  5
+8E
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+326.25
+ 20
+171.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+90
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+337.5
+ 20
+171.5
+ 10
+347.5
+ 20
+171.5
+  0
+INSERT
+  5
+91
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+342.5
+ 20
+171.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+93
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+265.0
+ 20
+236.5
+ 10
+265.0
+ 20
+246.5
+  0
+INSERT
+  5
+94
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+265.0
+ 20
+241.5
+ 30
+0.0
+ 50
+90.0
+  0
+LWPOLYLINE
+  5
+96
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+385.0
+ 20
+209.0
+ 10
+385.0
+ 20
+216.5
+  0
+INSERT
+  5
+97
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+385.0
+ 20
+212.75
+ 30
+0.0
+ 50
+90.0
+  0
+LWPOLYLINE
+  5
+99
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+385.0
+ 20
+221.5
+ 10
+385.0
+ 20
+226.5
+  0
+INSERT
+  5
+9A
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+385.0
+ 20
+224.0
+ 30
+0.0
+ 50
+90.0
+  0
+LWPOLYLINE
+  5
+9D
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+152.5
+ 20
+284.0
+ 10
+160.0
+ 20
+284.0
+  0
+INSERT
+  5
+9E
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+156.25
+ 20
+284.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+A0
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+165.0
+ 20
+284.0
+ 10
+172.5
+ 20
+284.0
+  0
+INSERT
+  5
+A1
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+168.75
+ 20
+284.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+A3
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+177.5
+ 20
+284.0
+ 10
+182.5
+ 20
+284.0
+  0
+INSERT
+  5
+A4
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+180.0
+ 20
+284.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+A6
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+187.5
+ 20
+284.0
+ 10
+197.5
+ 20
+284.0
+  0
+INSERT
+  5
+A7
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+192.5
+ 20
+284.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+AA
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+3
+ 70
+128
+ 10
+210.0
+ 20
+266.5
+ 10
+210.0
+ 20
+219.0
+ 10
+170.0
+ 20
+219.0
+  0
+INSERT
+  5
+AB
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+210.0
+ 20
+242.75
+ 30
+0.0
+ 50
+270.0
+  0
+LWPOLYLINE
+  5
+AD
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+165.0
+ 20
+219.0
+ 10
+162.5
+ 20
+219.0
+  0
+LWPOLYLINE
+  5
+AE
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+157.5
+ 20
+219.0
+ 10
+152.5
+ 20
+219.0
+  0
+INSERT
+  5
+AF
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+155.0
+ 20
+219.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+B1
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+152.5
+ 20
+234.0
+ 10
+160.0
+ 20
+234.0
+  0
+INSERT
+  5
+B2
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+156.25
+ 20
+234.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+B4
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+165.0
+ 20
+234.0
+ 10
+172.5
+ 20
+234.0
+  0
+INSERT
+  5
+B5
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+168.75
+ 20
+234.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+B7
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+177.5
+ 20
+234.0
+ 10
+182.5
+ 20
+234.0
+  0
+INSERT
+  5
+B8
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+180.0
+ 20
+234.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+BA
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+3
+ 70
+128
+ 10
+187.5
+ 20
+234.0
+ 10
+200.0
+ 20
+234.0
+ 10
+200.0
+ 20
+267.75
+  0
+LWPOLYLINE
+  5
+BB
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+200.0
+ 20
+270.25
+ 10
+200.0
+ 20
+281.5
+  0
+ARC
+  5
+BC
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+  6
+Continuous
+100
+AcDbCircle
+ 10
+200.0
+ 20
+269.0
+ 30
+0.0
+ 40
+1.25
+100
+AcDbArc
+ 50
+270.0
+ 51
+90.0
+  0
+INSERT
+  5
+BD
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+200.0
+ 20
+257.75
+ 30
+0.0
+ 50
+90.0
+  0
+LWPOLYLINE
+  5
+BF
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+202.5
+ 20
+284.0
+ 10
+210.0
+ 20
+284.0
+  0
+INSERT
+  5
+C0
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+206.25
+ 20
+284.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+C2
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+215.0
+ 20
+284.0
+ 10
+217.5
+ 20
+284.0
+  0
+LWPOLYLINE
+  5
+C3
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+222.5
+ 20
+284.0
+ 10
+290.0
+ 20
+284.0
+  0
+INSERT
+  5
+C4
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+256.25
+ 20
+284.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+C6
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+295.0
+ 20
+284.0
+ 10
+300.0
+ 20
+284.0
+  0
+INSERT
+  5
+C7
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+297.5
+ 20
+284.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+C9
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+310.0
+ 20
+284.0
+ 10
+320.0
+ 20
+284.0
+  0
+INSERT
+  5
+CA
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+315.0
+ 20
+284.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+CC
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+325.0
+ 20
+284.0
+ 10
+330.0
+ 20
+284.0
+  0
+INSERT
+  5
+CD
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+327.5
+ 20
+284.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+CF
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+305.0
+ 20
+279.0
+ 10
+305.0
+ 20
+270.25
+  0
+LWPOLYLINE
+  5
+D0
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+3
+ 70
+128
+ 10
+305.0
+ 20
+267.75
+ 10
+305.0
+ 20
+211.5
+ 10
+337.5
+ 20
+211.5
+  0
+ARC
+  5
+D1
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+  6
+Continuous
+100
+AcDbCircle
+ 10
+305.0
+ 20
+269.0
+ 30
+0.0
+ 40
+1.25
+100
+AcDbArc
+ 50
+270.0
+ 51
+90.0
+  0
+INSERT
+  5
+D2
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+305.0
+ 20
+245.25
+ 30
+0.0
+ 50
+270.0
+  0
+LWPOLYLINE
+  5
+D4
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+342.5
+ 20
+211.5
+ 10
+347.5
+ 20
+211.5
+  0
+INSERT
+  5
+D5
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+345.0
+ 20
+211.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+D7
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+330.0
+ 20
+269.0
+ 10
+325.0
+ 20
+269.0
+  0
+INSERT
+  5
+D8
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+327.5
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+DA
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+320.0
+ 20
+269.0
+ 10
+297.5
+ 20
+269.0
+  0
+INSERT
+  5
+DB
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+308.75
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+DD
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+347.5
+ 20
+201.5
+ 10
+342.5
+ 20
+201.5
+  0
+INSERT
+  5
+DE
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+345.0
+ 20
+201.5
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+E0
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+3
+ 70
+128
+ 10
+337.5
+ 20
+201.5
+ 10
+295.0
+ 20
+201.5
+ 10
+295.0
+ 20
+266.5
+  0
+INSERT
+  5
+E1
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+295.0
+ 20
+234.0
+ 30
+0.0
+ 50
+90.0
+  0
+LWPOLYLINE
+  5
+E3
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+292.5
+ 20
+269.0
+ 10
+282.5
+ 20
+269.0
+  0
+INSERT
+  5
+E4
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+287.5
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+E6
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+277.5
+ 20
+269.0
+ 10
+267.5
+ 20
+269.0
+  0
+INSERT
+  5
+E7
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+272.5
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+E9
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+262.5
+ 20
+269.0
+ 10
+252.5
+ 20
+269.0
+  0
+INSERT
+  5
+EA
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+257.5
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+EC
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+247.5
+ 20
+269.0
+ 10
+240.0
+ 20
+269.0
+  0
+INSERT
+  5
+ED
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+243.75
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+EF
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+235.0
+ 20
+269.0
+ 10
+232.5
+ 20
+269.0
+  0
+LWPOLYLINE
+  5
+F0
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+227.5
+ 20
+269.0
+ 10
+225.0
+ 20
+269.0
+  0
+LWPOLYLINE
+  5
+F1
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+220.0
+ 20
+269.0
+ 10
+212.5
+ 20
+269.0
+  0
+INSERT
+  5
+F2
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+216.25
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+F4
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+207.5
+ 20
+269.0
+ 10
+170.0
+ 20
+269.0
+  0
+INSERT
+  5
+F5
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+188.75
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+F7
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+165.0
+ 20
+269.0
+ 10
+162.5
+ 20
+269.0
+  0
+LWPOLYLINE
+  5
+F8
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+157.5
+ 20
+269.0
+ 10
+152.5
+ 20
+269.0
+  0
+INSERT
+  5
+F9
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+155.0
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+FB
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+355.0
+ 20
+284.0
+ 10
+360.0
+ 20
+284.0
+  0
+INSERT
+  5
+FC
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+357.5
+ 20
+284.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+FE
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+3
+ 70
+128
+ 10
+365.0
+ 20
+284.0
+ 10
+387.5
+ 20
+284.0
+ 10
+387.5
+ 20
+281.5
+  0
+INSERT
+  5
+FF
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+376.25
+ 20
+284.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+101
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+390.0
+ 20
+279.0
+ 10
+397.5
+ 20
+279.0
+  0
+INSERT
+  5
+102
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+393.75
+ 20
+279.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+104
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+402.5
+ 20
+279.0
+ 10
+405.0
+ 20
+279.0
+  0
+LWPOLYLINE
+  5
+105
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+415.0
+ 20
+279.0
+ 10
+422.5
+ 20
+279.0
+  0
+INSERT
+  5
+106
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+418.75
+ 20
+279.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+108
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+427.5
+ 20
+279.0
+ 10
+432.5
+ 20
+279.0
+  0
+INSERT
+  5
+109
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+430.0
+ 20
+279.0
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+10B
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+432.5
+ 20
+269.0
+ 10
+427.5
+ 20
+269.0
+  0
+INSERT
+  5
+10C
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+430.0
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+10E
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+422.5
+ 20
+269.0
+ 10
+380.0
+ 20
+269.0
+  0
+INSERT
+  5
+10F
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+401.25
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+111
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+387.5
+ 20
+276.5
+ 10
+387.5
+ 20
+270.25
+  0
+LWPOLYLINE
+  5
+112
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+387.5
+ 20
+267.75
+ 10
+387.5
+ 20
+266.5
+  0
+ARC
+  5
+113
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+  6
+Continuous
+100
+AcDbCircle
+ 10
+387.5
+ 20
+269.0
+ 30
+0.0
+ 40
+1.25
+100
+AcDbArc
+ 50
+270.0
+ 51
+90.0
+  0
+INSERT
+  5
+114
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+387.5
+ 20
+271.5
+ 30
+0.0
+ 50
+270.0
+  0
+LWPOLYLINE
+  5
+116
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+3
+ 70
+128
+ 10
+387.5
+ 20
+261.5
+ 10
+387.5
+ 20
+256.5
+ 10
+390.0
+ 20
+256.5
+  0
+INSERT
+  5
+117
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+387.5
+ 20
+259.0
+ 30
+0.0
+ 50
+270.0
+  0
+LWPOLYLINE
+  5
+119
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+400.0
+ 20
+256.5
+ 10
+422.5
+ 20
+256.5
+  0
+INSERT
+  5
+11A
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+411.25
+ 20
+256.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+11C
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+427.5
+ 20
+256.5
+ 10
+432.5
+ 20
+256.5
+  0
+INSERT
+  5
+11D
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+430.0
+ 20
+256.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+11F
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+432.5
+ 20
+246.5
+ 10
+427.5
+ 20
+246.5
+  0
+INSERT
+  5
+120
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+430.0
+ 20
+246.5
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+122
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+3
+ 70
+128
+ 10
+422.5
+ 20
+246.5
+ 10
+377.5
+ 20
+246.5
+ 10
+377.5
+ 20
+266.5
+  0
+INSERT
+  5
+123
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+400.0
+ 20
+246.5
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+125
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+375.0
+ 20
+269.0
+ 10
+365.0
+ 20
+269.0
+  0
+INSERT
+  5
+126
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+370.0
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+128
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+360.0
+ 20
+269.0
+ 10
+355.0
+ 20
+269.0
+  0
+INSERT
+  5
+129
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+357.5
+ 20
+269.0
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+12C
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+152.5
+ 20
+191.5
+ 10
+347.5
+ 20
+191.5
+  0
+INSERT
+  5
+12D
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+250.0
+ 20
+191.5
+ 30
+0.0
+  0
+LWPOLYLINE
+  5
+130
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+170.0
+ 20
+179.0
+ 10
+170.0
+ 20
+169.0
+  0
+LWPOLYLINE
+  5
+131
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+347.5
+ 20
+181.5
+ 10
+340.0
+ 20
+181.5
+  0
+INSERT
+  5
+132
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+343.75
+ 20
+181.5
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+134
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+330.0
+ 20
+181.5
+ 10
+325.0
+ 20
+181.5
+  0
+INSERT
+  5
+135
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+327.5
+ 20
+181.5
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+137
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+320.0
+ 20
+181.5
+ 10
+202.5
+ 20
+181.5
+  0
+INSERT
+  5
+138
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+261.25
+ 20
+181.5
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+13A
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+197.5
+ 20
+181.5
+ 10
+187.5
+ 20
+181.5
+  0
+INSERT
+  5
+13B
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+192.5
+ 20
+181.5
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+13D
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+182.5
+ 20
+181.5
+ 10
+172.5
+ 20
+181.5
+  0
+INSERT
+  5
+13E
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+177.5
+ 20
+181.5
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+140
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbPolyline
+ 90
+4
+ 70
+128
+ 10
+167.5
+ 20
+181.5
+ 10
+162.5
+ 20
+181.5
+ 10
+162.5
+ 20
+176.5
+ 10
+152.5
+ 20
+176.5
+  0
+INSERT
+  5
+141
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+157.5
+ 20
+176.5
+ 30
+0.0
+ 50
+180.0
+  0
+LWPOLYLINE
+  5
+143
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+200.0
+ 20
+179.0
+ 10
+200.0
+ 20
+169.0
+  0
+LWPOLYLINE
+  5
+144
+330
+17
+100
+AcDbEntity
+  8
+M-SOLR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+185.0
+ 20
+179.0
+ 10
+185.0
+ 20
+169.0
+  0
+LWPOLYLINE
+  5
+145
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+300.0
+ 20
+169.0
+ 10
+300.0
+ 20
+159.0
+  0
+INSERT
+  5
+146
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+300.0
+ 20
+164.0
+ 30
+0.0
+ 50
+270.0
+  0
+LWPOLYLINE
+  5
+148
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+342.5
+ 20
+244.0
+ 10
+342.5
+ 20
+234.0
+  0
+INSERT
+  5
+149
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+342.5
+ 20
+239.0
+ 30
+0.0
+ 50
+270.0
+  0
+LWPOLYLINE
+  5
+14B
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+335.0
+ 20
+169.0
+ 10
+335.0
+ 20
+161.5
+  0
+LWPOLYLINE
+  5
+14C
+330
+17
+100
+AcDbEntity
+  8
+P-DOMW-CPIP
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+335.0
+ 20
+156.5
+ 10
+335.0
+ 20
+151.5
+  0
+LWPOLYLINE
+  5
+14D
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+250.0
+ 20
+266.5
+ 10
+250.0
+ 20
+259.0
+  0
+LWPOLYLINE
+  5
+14E
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+250.0
+ 20
+254.0
+ 10
+250.0
+ 20
+249.0
+  0
+LWPOLYLINE
+  5
+14F
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+265.0
+ 20
+256.5
+ 10
+265.0
+ 20
+266.5
+  0
+INSERT
+  5
+150
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+265.0
+ 20
+261.5
+ 30
+0.0
+ 50
+90.0
+  0
+LWPOLYLINE
+  5
+152
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+280.0
+ 20
+266.5
+ 10
+280.0
+ 20
+259.0
+  0
+LWPOLYLINE
+  5
+153
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-RETN
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+280.0
+ 20
+254.0
+ 10
+280.0
+ 20
+249.0
+  0
+LWPOLYLINE
+  5
+154
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+175.0
+ 20
+236.5
+ 10
+175.0
+ 20
+246.5
+  0
+LWPOLYLINE
+  5
+155
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+175.0
+ 20
+286.5
+ 10
+175.0
+ 20
+296.5
+  0
+LWPOLYLINE
+  5
+156
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+162.5
+ 20
+236.5
+ 10
+162.5
+ 20
+246.5
+  0
+LWPOLYLINE
+  5
+157
+330
+17
+100
+AcDbEntity
+  8
+M-HWTR-SPLY
+100
+AcDbPolyline
+ 90
+2
+ 70
+128
+ 10
+162.5
+ 20
+286.5
+ 10
+162.5
+ 20
+296.5
+  0
+INSERT
+  5
+167
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_SolarCollector
+ 10
+112.5
+ 20
+196.5
+ 30
+0.0
+  0
+INSERT
+  5
+170
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+302.5
+ 20
+169.0
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+176
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_NetworkBoundary
+ 10
+272.5
+ 20
+174.0
+ 30
+0.0
+  0
+INSERT
+  5
+178
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+277.5
+ 20
+171.5
+ 30
+0.0
+ 41
+1.375
+  0
+INSERT
+  5
+182
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_DrainConnection
+ 10
+297.5
+ 20
+159.0
+ 30
+0.0
+  0
+INSERT
+  5
+184
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+337.5
+ 20
+169.0
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+18C
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ExpansionConnection
+ 10
+332.5
+ 20
+151.5
+ 30
+0.0
+  0
+INSERT
+  5
+1A3
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_GasBoilerModular
+ 10
+92.5
+ 20
+239.0
+ 30
+0.0
+  0
+INSERT
+  5
+1B8
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_HeatPumpAirWaterLarge
+ 10
+92.5
+ 20
+289.0
+ 30
+0.0
+  0
+INSERT
+  5
+1C4
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_DhwCylinderTwinCoil
+ 10
+347.5
+ 20
+219.0
+ 30
+0.0
+  0
+INSERT
+  5
+1D1
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_BufferFourPort
+ 10
+330.0
+ 20
+289.0
+ 30
+0.0
+  0
+INSERT
+  5
+1D3
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_DrainConnection
+ 10
+340.0
+ 20
+234.0
+ 30
+0.0
+  0
+INSERT
+  5
+1E0
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_MixingValveThermostatic
+ 10
+382.5
+ 20
+236.5
+ 30
+0.0
+  0
+INSERT
+  5
+1E2
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_NetworkBoundary
+ 10
+387.5
+ 20
+204.0
+ 30
+0.0
+ 41
+-1.0
+ 50
+270.0
+  0
+INSERT
+  5
+1E4
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+385.0
+ 20
+209.0
+ 30
+0.0
+ 41
+1.375
+ 50
+90.0
+  0
+INSERT
+  5
+1E6
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_NetworkBoundary
+ 10
+412.5
+ 20
+234.0
+ 30
+0.0
+ 41
+-1.0
+  0
+INSERT
+  5
+1E8
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+410.25
+ 20
+231.5
+ 30
+0.0
+ 41
+1.375
+  0
+INSERT
+  5
+1F9
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_FanCoilDucted
+ 10
+432.5
+ 20
+259.0
+ 30
+0.0
+  0
+INSERT
+  5
+205
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_Radiator
+ 10
+432.5
+ 20
+281.5
+ 30
+0.0
+  0
+INSERT
+  5
+207
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+160.0
+ 20
+236.5
+ 30
+0.0
+  0
+INSERT
+  5
+20F
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveSafety
+ 10
+160.0
+ 20
+256.5
+ 30
+0.0
+  0
+INSERT
+  5
+211
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+160.0
+ 20
+286.5
+ 30
+0.0
+  0
+INSERT
+  5
+213
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveSafety
+ 10
+160.0
+ 20
+306.5
+ 30
+0.0
+  0
+INSERT
+  5
+215
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+172.5
+ 20
+236.5
+ 30
+0.0
+  0
+INSERT
+  5
+221
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_Thermometer
+ 10
+172.5
+ 20
+256.5
+ 30
+0.0
+  0
+INSERT
+  5
+223
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_Thermometer_Lettera
+ 10
+175.0
+ 20
+253.5
+ 30
+0.0
+  0
+INSERT
+  5
+225
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+172.5
+ 20
+286.5
+ 30
+0.0
+  0
+INSERT
+  5
+227
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_Thermometer
+ 10
+172.5
+ 20
+306.5
+ 30
+0.0
+  0
+INSERT
+  5
+229
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_Thermometer_Lettera
+ 10
+175.0
+ 20
+303.5
+ 30
+0.0
+  0
+INSERT
+  5
+232
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeJunction
+ 10
+202.5
+ 20
+281.5
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+23D
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_DivertingValve3way
+ 10
+300.0
+ 20
+289.0
+ 30
+0.0
+  0
+INSERT
+  5
+23F
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeJunction
+ 10
+212.5
+ 20
+266.5
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+241
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+252.5
+ 20
+266.5
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+243
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ExpansionConnection
+ 10
+247.5
+ 20
+249.0
+ 30
+0.0
+  0
+INSERT
+  5
+245
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+267.5
+ 20
+266.5
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+250
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_FillingUnit
+ 10
+267.5
+ 20
+246.5
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+252
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_NetworkBoundary
+ 10
+267.5
+ 20
+231.5
+ 30
+0.0
+ 41
+-1.0
+ 50
+270.0
+  0
+INSERT
+  5
+254
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+265.0
+ 20
+236.5
+ 30
+0.0
+ 41
+1.375
+ 50
+90.0
+  0
+INSERT
+  5
+256
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+282.5
+ 20
+266.5
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+262
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_PressureGauge
+ 10
+282.5
+ 20
+239.0
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+264
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_PressureGauge_Lettera
+ 10
+280.0
+ 20
+242.0
+ 30
+0.0
+  0
+INSERT
+  5
+266
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeJunction
+ 10
+297.5
+ 20
+266.5
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+268
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+172.5
+ 20
+179.0
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+26A
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ExpansionConnection
+ 10
+167.5
+ 20
+169.0
+ 30
+0.0
+  0
+INSERT
+  5
+26C
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+187.5
+ 20
+179.0
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+26E
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_PressureGauge
+ 10
+187.5
+ 20
+159.0
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+270
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_PressureGauge_Lettera
+ 10
+185.0
+ 20
+162.0
+ 30
+0.0
+  0
+INSERT
+  5
+272
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+202.5
+ 20
+179.0
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+274
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveSafety
+ 10
+202.5
+ 20
+159.0
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+276
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeJunction
+ 10
+380.0
+ 20
+266.5
+ 30
+0.0
+ 50
+180.0
+  0
+INSERT
+  5
+278
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_TeeJunction
+ 10
+390.0
+ 20
+281.5
+ 30
+0.0
+ 50
+270.0
+  0
+INSERT
+  5
+281
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+372.5
+ 20
+234.0
+ 30
+0.0
+  0
+INSERT
+  5
+283
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+392.5
+ 20
+234.0
+ 30
+0.0
+  0
+INSERT
+  5
+285
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+287.5
+ 20
+174.0
+ 30
+0.0
+  0
+INSERT
+  5
+294
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_DhwSafetyGroup
+ 10
+310.0
+ 20
+174.0
+ 30
+0.0
+  0
+INSERT
+  5
+296
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+387.5
+ 20
+221.5
+ 30
+0.0
+ 50
+270.0
+  0
+INSERT
+  5
+298
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+182.5
+ 20
+286.5
+ 30
+0.0
+  0
+INSERT
+  5
+29A
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+165.0
+ 20
+221.5
+ 30
+0.0
+  0
+INSERT
+  5
+2A4
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+370
+50
+100
+AcDbBlockReference
+  2
+NoveC_Strainer
+ 10
+157.5
+ 20
+221.5
+ 30
+0.0
+  0
+INSERT
+  5
+2A6
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+182.5
+ 20
+236.5
+ 30
+0.0
+  0
+INSERT
+  5
+2A8
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+210.0
+ 20
+286.5
+ 30
+0.0
+  0
+INSERT
+  5
+2B1
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_AirSeparator
+ 10
+217.5
+ 20
+289.0
+ 30
+0.0
+  0
+INSERT
+  5
+2B3
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+290.0
+ 20
+286.5
+ 30
+0.0
+  0
+INSERT
+  5
+2B5
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+320.0
+ 20
+286.5
+ 30
+0.0
+  0
+INSERT
+  5
+2B7
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+337.5
+ 20
+214.0
+ 30
+0.0
+  0
+INSERT
+  5
+2B9
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+320.0
+ 20
+271.5
+ 30
+0.0
+  0
+INSERT
+  5
+2BB
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+337.5
+ 20
+204.0
+ 30
+0.0
+  0
+INSERT
+  5
+2BD
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+235.0
+ 20
+271.5
+ 30
+0.0
+  0
+INSERT
+  5
+2C7
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_DirtSeparator
+ 10
+232.5
+ 20
+274.0
+ 30
+0.0
+ 41
+-1.0
+  0
+INSERT
+  5
+2C9
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+220.0
+ 20
+271.5
+ 30
+0.0
+  0
+INSERT
+  5
+2CB
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+165.0
+ 20
+271.5
+ 30
+0.0
+  0
+INSERT
+  5
+2CD
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+370
+50
+100
+AcDbBlockReference
+  2
+NoveC_Strainer
+ 10
+157.5
+ 20
+271.5
+ 30
+0.0
+  0
+INSERT
+  5
+2CF
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+360.0
+ 20
+286.5
+ 30
+0.0
+  0
+INSERT
+  5
+2D1
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+397.5
+ 20
+281.5
+ 30
+0.0
+  0
+INSERT
+  5
+2DB
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_PumpCirculator
+ 10
+405.0
+ 20
+284.0
+ 30
+0.0
+  0
+INSERT
+  5
+2DD
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+422.5
+ 20
+281.5
+ 30
+0.0
+  0
+INSERT
+  5
+2DF
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+422.5
+ 20
+271.5
+ 30
+0.0
+  0
+INSERT
+  5
+2E1
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+390.0
+ 20
+266.5
+ 30
+0.0
+ 50
+270.0
+  0
+INSERT
+  5
+2E3
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_PumpCirculator
+ 10
+390.0
+ 20
+261.5
+ 30
+0.0
+  0
+INSERT
+  5
+2E5
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+422.5
+ 20
+259.0
+ 30
+0.0
+  0
+INSERT
+  5
+2E7
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+422.5
+ 20
+249.0
+ 30
+0.0
+  0
+INSERT
+  5
+2E9
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+360.0
+ 20
+271.5
+ 30
+0.0
+  0
+INSERT
+  5
+2EB
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_PumpCirculator
+ 10
+340.0
+ 20
+186.5
+ 30
+0.0
+ 41
+-1.0
+  0
+INSERT
+  5
+2F8
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveCheck
+ 10
+325.0
+ 20
+184.0
+ 30
+0.0
+ 41
+-1.0
+  0
+INSERT
+  5
+2FA
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+337.5
+ 20
+161.5
+ 30
+0.0
+ 50
+270.0
+  0
+INSERT
+  5
+2FC
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+252.5
+ 20
+259.0
+ 30
+0.0
+ 50
+270.0
+  0
+INSERT
+  5
+308
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_ValveGaugeCock3way
+ 10
+282.5
+ 20
+259.0
+ 30
+0.0
+ 50
+270.0
+  0
+LWPOLYLINE
+  5
+30A
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+534.0
+ 20
+404.0
+ 10
+584.0
+ 20
+404.0
+ 10
+584.0
+ 20
+46.0
+ 10
+534.0
+ 20
+46.0
+  0
+INSERT
+  5
+30B
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_AirSeparator
+ 10
+538.5
+ 20
+404.5
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+30D
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+399.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Separatore d'aria
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+399.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+30E
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_BufferFourPort
+ 10
+538.2777777777778
+ 20
+397.0
+ 30
+0.0
+ 41
+0.17777777777777778
+ 42
+0.17777777777777778
+  0
+TEXT
+  5
+310
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+392.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Volano termico a quattro attacchi
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+392.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+311
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_DhwCylinderTwinCoil
+ 10
+538.6818181818181
+ 20
+389.5
+ 30
+0.0
+ 41
+0.14545454545454545
+ 42
+0.14545454545454545
+  0
+TEXT
+  5
+313
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+384.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Bollitore ACS a due serpentini
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+384.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+314
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_DhwSafetyGroup
+ 10
+536.5
+ 20
+380.0
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+316
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+377.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Gruppo di sicurezza sanitario
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+377.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+317
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_DirtSeparator
+ 10
+538.5
+ 20
+374.5
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+319
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+369.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Defangatore
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+369.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+31A
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_DivertingValve3way
+ 10
+536.5
+ 20
+367.0
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+31C
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+362.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Valvola deviatrice a tre vie
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+362.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+31D
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_DrainConnection
+ 10
+538.5
+ 20
+359.5
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+31F
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+354.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Attacco di scarico
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+354.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+320
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_ExpansionConnection
+ 10
+538.5
+ 20
+352.0
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+322
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+347.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Vaso di espansione
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+347.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+323
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_FanCoilDucted
+ 10
+536.5
+ 20
+343.5
+ 30
+0.0
+ 41
+0.4
+ 42
+0.4
+  0
+TEXT
+  5
+325
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+339.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Ventilconvettore canalizzato
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+339.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+326
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_FillingUnit
+ 10
+538.5
+ 20
+337.0
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+328
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+332.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Gruppo di riempimento
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+332.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+329
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_GasBoilerModular
+ 10
+536.5
+ 20
+327.1666666666667
+ 30
+0.0
+ 41
+0.13333333333333333
+ 42
+0.13333333333333333
+  0
+TEXT
+  5
+32B
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+324.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Caldaia modulare a condensazione
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+324.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+32C
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_HeatPumpAirWaterLarge
+ 10
+536.5
+ 20
+320.0
+ 30
+0.0
+ 41
+0.13333333333333333
+ 42
+0.13333333333333333
+  0
+TEXT
+  5
+32E
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+317.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Pompa di calore aria-acqua di alta potenza
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+317.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+32F
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_MixingValveThermostatic
+ 10
+538.5
+ 20
+314.5
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+331
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+309.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Valvola miscelatrice termostatica
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+309.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+332
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_NetworkBoundary
+ 10
+538.0
+ 20
+305.5
+ 30
+0.0
+  0
+INSERT
+  5
+334
+330
+17
+100
+AcDbEntity
+  8
+M-DIAG-EQPM
+100
+AcDbBlockReference
+  2
+NoveC_FlowArrow
+ 10
+543.0
+ 20
+303.0
+ 30
+0.0
+ 41
+1.375
+  0
+TEXT
+  5
+336
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+302.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Confine di rete
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+302.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+337
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_PressureGauge
+ 10
+538.5
+ 20
+299.5
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+INSERT
+  5
+339
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_PressureGauge_Lettera
+ 10
+540.5
+ 20
+297.1
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+33B
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+294.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Manometro
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+294.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+33C
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_PumpCirculator
+ 10
+536.5
+ 20
+292.0
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+33E
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+287.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Pompa di circolazione
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+287.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+33F
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_Radiator
+ 10
+536.5
+ 20
+283.5
+ 30
+0.0
+ 41
+0.4
+ 42
+0.4
+  0
+TEXT
+  5
+341
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+279.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Radiatore
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+279.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+342
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_SolarCollector
+ 10
+536.5
+ 20
+275.5
+ 30
+0.0
+ 41
+0.2
+ 42
+0.2
+  0
+TEXT
+  5
+344
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+272.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Collettore solare
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+272.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+345
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+50
+100
+AcDbBlockReference
+  2
+NoveC_Strainer
+ 10
+538.0
+ 20
+268.0
+ 30
+0.0
+  0
+TEXT
+  5
+347
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+264.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Filtro a Y
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+264.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+348
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_TeeBranch
+ 10
+538.0
+ 20
+260.5
+ 30
+0.0
+  0
+TEXT
+  5
+34A
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+257.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Derivazione a T
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+257.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+34B
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_TeeJunction
+ 10
+538.0
+ 20
+253.0
+ 30
+0.0
+  0
+TEXT
+  5
+34D
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+249.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Raccordo a T
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+249.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+34E
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_Thermometer
+ 10
+538.5
+ 20
+247.0
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+INSERT
+  5
+350
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_Thermometer_Lettera
+ 10
+540.5
+ 20
+244.6
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+352
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+242.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Termometro
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+242.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+353
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_ValveCheck
+ 10
+538.0
+ 20
+238.0
+ 30
+0.0
+  0
+TEXT
+  5
+355
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+234.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Valvola di ritegno
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+234.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+356
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_ValveGaugeCock3way
+ 10
+538.0
+ 20
+230.5
+ 30
+0.0
+  0
+TEXT
+  5
+358
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+227.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Rubinetto portamanometro a tre vie
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+227.1
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+359
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_ValveIsolation
+ 10
+538.0
+ 20
+223.0
+ 30
+0.0
+  0
+TEXT
+  5
+35B
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+219.6
+ 30
+0.0
+ 40
+1.2384
+  1
+Valvola di intercettazione
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+219.6
+ 31
+0.0
+100
+AcDbText
+  0
+INSERT
+  5
+35C
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+370
+18
+100
+AcDbBlockReference
+  2
+NoveC_ValveSafety
+ 10
+538.5
+ 20
+217.0
+ 30
+0.0
+ 41
+0.8
+ 42
+0.8
+  0
+TEXT
+  5
+35E
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+212.1
+ 30
+0.0
+ 40
+1.2384
+  1
+Valvola di sicurezza
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+212.1
+ 31
+0.0
+100
+AcDbText
+  0
+LINE
+  5
+35F
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+  6
+NOVEC_TRATTO_3_2
+ 62
+161
+370
+35
+420
+6139362
+100
+AcDbLine
+ 10
+536.5
+ 20
+197.5
+ 30
+0.0
+ 11
+544.5
+ 21
+197.5
+ 31
+0.0
+  0
+TEXT
+  5
+360
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+196.5
+ 30
+0.0
+ 40
+1.2384
+  1
+Acqua fredda sanitaria — andata
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+196.5
+ 31
+0.0
+100
+AcDbText
+  0
+LINE
+  5
+361
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+  6
+Continuous
+ 62
+30
+370
+35
+420
+14059792
+100
+AcDbLine
+ 10
+536.5
+ 20
+190.0
+ 30
+0.0
+ 11
+544.5
+ 21
+190.0
+ 31
+0.0
+  0
+TEXT
+  5
+362
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+189.0
+ 30
+0.0
+ 40
+1.2384
+  1
+Acqua calda sanitaria — andata
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+189.0
+ 31
+0.0
+100
+AcDbText
+  0
+LINE
+  5
+363
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+  6
+Continuous
+ 62
+22
+370
+35
+420
+12597547
+100
+AcDbLine
+ 10
+536.5
+ 20
+182.5
+ 30
+0.0
+ 11
+544.5
+ 21
+182.5
+ 31
+0.0
+  0
+TEXT
+  5
+364
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+181.5
+ 30
+0.0
+ 40
+1.2384
+  1
+Acqua di riscaldamento — andata
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+181.5
+ 31
+0.0
+100
+AcDbText
+  0
+LINE
+  5
+365
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+  6
+Continuous
+ 62
+142
+370
+35
+420
+2388387
+100
+AcDbLine
+ 10
+536.5
+ 20
+175.0
+ 30
+0.0
+ 11
+544.5
+ 21
+175.0
+ 31
+0.0
+  0
+TEXT
+  5
+366
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+174.0
+ 30
+0.0
+ 40
+1.2384
+  1
+Acqua di riscaldamento — ritorno
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+174.0
+ 31
+0.0
+100
+AcDbText
+  0
+LINE
+  5
+367
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+  6
+Continuous
+ 62
+222
+370
+35
+420
+13047173
+100
+AcDbLine
+ 10
+536.5
+ 20
+167.5
+ 30
+0.0
+ 11
+544.5
+ 21
+167.5
+ 31
+0.0
+  0
+TEXT
+  5
+368
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+166.5
+ 30
+0.0
+ 40
+1.2384
+  1
+Fluido solare — andata e ritorno
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+166.5
+ 31
+0.0
+100
+AcDbText
+  0
+VIEWPORT
+  5
+35
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+0
+100
+AcDbViewport
+ 10
+297.0
+ 20
+210.0
+ 30
+0.0
+ 40
+653.4000000000001
+ 41
+462.00000000000006
+ 68
+1
+ 69
+1
+ 12
+297.0
+ 22
+210.0
+ 13
+0.0
+ 23
+0.0
+ 14
+10.0
+ 24
+10.0
+ 15
+10.0
+ 25
+10.0
+ 16
+0.0
+ 26
+0.0
+ 36
+1.0
+ 17
+0.0
+ 27
+0.0
+ 37
+0.0
+ 42
+50.0
+ 43
+0.0
+ 44
+0.0
+ 45
+462.00000000000006
+ 50
+0.0
+ 51
+0.0
+ 72
+100
+ 90
+557088
+  1
+
+281
+0
+ 71
+0
+ 74
+0
+110
+0.0
+120
+0.0
+130
+0.0
+111
+1.0
+121
+0.0
+131
+0.0
+112
+0.0
+122
+1.0
+132
+0.0
+ 79
+0
+146
+0.0
+282
+0
+  0
+VIEWPORT
+  5
+36
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-NPLT
+100
+AcDbViewport
+ 10
+297.0
+ 20
+210.0
+ 30
+0.0
+ 40
+594.0
+ 41
+420.0
+ 68
+2
+ 69
+3
+ 12
+297.0
+ 22
+210.0
+ 13
+0.0
+ 23
+0.0
+ 14
+10.0
+ 24
+10.0
+ 15
+10.0
+ 25
+10.0
+ 16
+0.0
+ 26
+0.0
+ 36
+1.0
+ 17
+0.0
+ 27
+0.0
+ 37
+0.0
+ 42
+50.0
+ 43
+0.0
+ 44
+0.0
+ 45
+420.0
+ 50
+0.0
+ 51
+0.0
+ 72
+100
+ 90
+16384
+  1
+
+281
+0
+ 71
+0
+ 74
+0
+110
+0.0
+120
+0.0
+130
+0.0
+111
+1.0
+121
+0.0
+131
+0.0
+112
+0.0
+122
+1.0
+132
+0.0
+ 79
+0
+146
+0.0
+282
+0
+  0
+LWPOLYLINE
+  5
+3F
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+159
+370
+18
+420
+1846858
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+10.0
+ 20
+410.0
+ 10
+584.0
+ 20
+410.0
+ 10
+584.0
+ 20
+10.0
+ 10
+10.0
+ 20
+10.0
+  0
+LINE
+  5
+40
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+254
+370
+9
+420
+14737632
+100
+AcDbLine
+ 10
+14.0
+ 20
+404.0
+ 30
+0.0
+ 11
+580.0
+ 21
+404.0
+ 31
+0.0
+  0
+TEXT
+  5
+41
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+15.0
+ 20
+405.5
+ 30
+0.0
+ 40
+1.3349
+  1
+NOVE C INGEGNERIA  |  Documento confidenziale  |  PROVA-REL-003 – Elaborati Grafici
+  7
+NOVEC_ARIAL
+ 11
+15.0
+ 21
+405.5
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+42
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+579.0
+ 20
+405.5
+ 30
+0.0
+ 40
+1.3349
+  1
+Conto Termico con sconto in fattura
+  7
+NOVEC_ARIAL
+ 72
+2
+ 11
+579.0
+ 21
+405.5
+ 31
+0.0
+100
+AcDbText
+  0
+LWPOLYLINE
+  5
+43
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+159
+370
+30
+420
+1846858
+100
+AcDbPolyline
+ 90
+4
+ 70
+1
+ 10
+184.0
+ 20
+44.0
+ 10
+584.0
+ 20
+44.0
+ 10
+584.0
+ 20
+10.0
+ 10
+184.0
+ 20
+10.0
+  0
+LINE
+  5
+44
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+254
+370
+15
+420
+14737632
+100
+AcDbLine
+ 10
+184.0
+ 20
+26.0
+ 30
+0.0
+ 11
+584.0
+ 21
+26.0
+ 31
+0.0
+  0
+LINE
+  5
+45
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+159
+370
+15
+420
+1846858
+100
+AcDbLine
+ 10
+253.0
+ 20
+10.0
+ 30
+0.0
+ 11
+253.0
+ 21
+44.0
+ 31
+0.0
+  0
+LINE
+  5
+46
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+159
+370
+15
+420
+1846858
+100
+AcDbLine
+ 10
+331.0
+ 20
+10.0
+ 30
+0.0
+ 11
+331.0
+ 21
+44.0
+ 31
+0.0
+  0
+LINE
+  5
+47
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+159
+370
+15
+420
+1846858
+100
+AcDbLine
+ 10
+431.0
+ 20
+10.0
+ 30
+0.0
+ 11
+431.0
+ 21
+44.0
+ 31
+0.0
+  0
+LINE
+  5
+48
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+159
+370
+15
+420
+1846858
+100
+AcDbLine
+ 10
+486.0
+ 20
+10.0
+ 30
+0.0
+ 11
+486.0
+ 21
+44.0
+ 31
+0.0
+  0
+LINE
+  5
+49
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+159
+370
+15
+420
+1846858
+100
+AcDbLine
+ 10
+536.0
+ 20
+10.0
+ 30
+0.0
+ 11
+536.0
+ 21
+44.0
+ 31
+0.0
+  0
+LINE
+  5
+4A
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+254
+370
+9
+420
+14737632
+100
+AcDbLine
+ 10
+253.0
+ 20
+10.0
+ 30
+0.0
+ 11
+253.0
+ 21
+44.0
+ 31
+0.0
+  0
+HATCH
+  5
+4B
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+159
+420
+1846858
+100
+AcDbHatch
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+210
+0.0
+220
+0.0
+230
+1.0
+  2
+SOLID
+ 70
+1
+ 71
+0
+ 91
+1
+ 92
+3
+ 72
+0
+ 73
+1
+ 93
+4
+ 10
+184.0
+ 20
+44.0
+ 10
+188.0
+ 20
+44.0
+ 10
+188.0
+ 20
+10.0
+ 10
+184.0
+ 20
+10.0
+ 97
+0
+ 75
+1
+ 76
+1
+ 98
+0
+  0
+HATCH
+  5
+4C
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+133
+420
+2801599
+100
+AcDbHatch
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+210
+0.0
+220
+0.0
+230
+1.0
+  2
+SOLID
+ 70
+1
+ 71
+0
+ 91
+1
+ 92
+3
+ 72
+0
+ 73
+1
+ 93
+4
+ 10
+184.0
+ 20
+46.0
+ 10
+584.0
+ 20
+46.0
+ 10
+584.0
+ 20
+44.0
+ 10
+184.0
+ 20
+44.0
+ 97
+0
+ 75
+1
+ 76
+1
+ 98
+0
+  0
+HATCH
+  5
+4D
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+159
+420
+1846858
+100
+AcDbHatch
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+210
+0.0
+220
+0.0
+230
+1.0
+  2
+SOLID
+ 70
+1
+ 71
+0
+ 91
+1
+ 92
+3
+ 72
+0
+ 73
+1
+ 93
+4
+ 10
+536.0
+ 20
+44.0
+ 10
+584.0
+ 20
+44.0
+ 10
+584.0
+ 20
+10.0
+ 10
+536.0
+ 20
+10.0
+ 97
+0
+ 75
+1
+ 76
+1
+ 98
+0
+  0
+HATCH
+  5
+4E
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+133
+420
+2801599
+100
+AcDbHatch
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+210
+0.0
+220
+0.0
+230
+1.0
+  2
+SOLID
+ 70
+1
+ 71
+0
+ 91
+1
+ 92
+3
+ 72
+0
+ 73
+1
+ 93
+4
+ 10
+536.0
+ 20
+46.0
+ 10
+584.0
+ 20
+46.0
+ 10
+584.0
+ 20
+44.0
+ 10
+536.0
+ 20
+44.0
+ 97
+0
+ 75
+1
+ 76
+1
+ 98
+0
+  0
+IMAGE
+  5
+52
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+100
+AcDbRasterImage
+ 90
+0
+ 10
+191.552
+ 20
+28.0
+ 30
+0.0
+ 11
+0.019552853765619722
+ 21
+0.0
+ 31
+0.0
+ 12
+1.1972803902278592e-18
+ 22
+0.019553072625698324
+ 32
+0.0
+ 13
+2961.0
+ 23
+716.0
+340
+51
+ 70
+3
+280
+0
+281
+50
+282
+50
+283
+0
+360
+53
+ 71
+1
+ 91
+2
+ 14
+-0.5
+ 24
+-0.5
+ 14
+2960.5
+ 24
+715.5
+290
+0
+  0
+TEXT
+  5
+54
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+256.5
+ 20
+38.0
+ 30
+0.0
+ 40
+1.3349
+  1
+COMMITTENTE
+  7
+NOVEC_ARIAL
+ 11
+256.5
+ 21
+38.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+55
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+59
+420
+2960685
+100
+AcDbText
+ 10
+256.5
+ 20
+29.5
+ 30
+0.0
+ 40
+2.1844
+  1
+Condominio di prova
+  7
+NOVEC_ARIAL_GRASSETTO
+ 11
+256.5
+ 21
+29.5
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+56
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+256.5
+ 20
+20.5
+ 30
+0.0
+ 40
+1.3349
+  1
+INDIRIZZO
+  7
+NOVEC_ARIAL
+ 11
+256.5
+ 21
+20.5
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+57
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+59
+420
+2960685
+100
+AcDbText
+ 10
+256.5
+ 20
+13.0
+ 30
+0.0
+ 40
+1.6989
+  1
+Via di Prova 1, 00000 Comune di Prova (XX)
+  7
+NOVEC_ARIAL
+ 11
+256.5
+ 21
+13.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+58
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+334.5
+ 20
+38.0
+ 30
+0.0
+ 40
+1.3349
+  1
+PROGETTO
+  7
+NOVEC_ARIAL
+ 11
+334.5
+ 21
+38.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+59
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+59
+420
+2960685
+100
+AcDbText
+ 10
+334.5
+ 20
+32.46300000000002
+ 30
+0.0
+ 40
+1.6989
+  1
+Centrale ibrida condominiale con pompa di calore di alta potenza, caldaia
+  7
+NOVEC_ARIAL_GRASSETTO
+ 11
+334.5
+ 21
+32.46300000000002
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+5A
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+59
+420
+2960685
+100
+AcDbText
+ 10
+334.5
+ 20
+29.5
+ 30
+0.0
+ 40
+1.6989
+  1
+modulare e solare termico
+  7
+NOVEC_ARIAL_GRASSETTO
+ 11
+334.5
+ 21
+29.5
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+5B
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+334.5
+ 20
+20.5
+ 30
+0.0
+ 40
+1.3349
+  1
+TITOLO TAVOLA
+  7
+NOVEC_ARIAL
+ 11
+334.5
+ 21
+20.5
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+5C
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+59
+420
+2960685
+100
+AcDbText
+ 10
+334.5
+ 20
+13.0
+ 30
+0.0
+ 40
+1.9417
+  1
+Schema funzionale della centrale termica
+  7
+NOVEC_ARIAL_GRASSETTO
+ 11
+334.5
+ 21
+13.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+5D
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+434.5
+ 20
+38.0
+ 30
+0.0
+ 40
+1.3349
+  1
+SCALA
+  7
+NOVEC_ARIAL
+ 11
+434.5
+ 21
+38.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+5E
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+59
+420
+2960685
+100
+AcDbText
+ 10
+434.5
+ 20
+29.5
+ 30
+0.0
+ 40
+2.1844
+  1
+—
+  7
+NOVEC_ARIAL_GRASSETTO
+ 11
+434.5
+ 21
+29.5
+ 31
+0.0
+100
+AcDbText
+  0
+LINE
+  5
+5F
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+254
+370
+9
+420
+14737632
+100
+AcDbLine
+ 10
+458.5
+ 20
+27.5
+ 30
+0.0
+ 11
+458.5
+ 21
+42.5
+ 31
+0.0
+  0
+TEXT
+  5
+60
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+462.0
+ 20
+38.0
+ 30
+0.0
+ 40
+1.3349
+  1
+DATA
+  7
+NOVEC_ARIAL
+ 11
+462.0
+ 21
+38.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+61
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+59
+420
+2960685
+100
+AcDbText
+ 10
+462.0
+ 20
+29.5
+ 30
+0.0
+ 40
+1.9417
+  1
+26.09.2026
+  7
+NOVEC_ARIAL_GRASSETTO
+ 11
+462.0
+ 21
+29.5
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+62
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+434.5
+ 20
+20.5
+ 30
+0.0
+ 40
+1.3349
+  1
+REVISIONE
+  7
+NOVEC_ARIAL
+ 11
+434.5
+ 21
+20.5
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+63
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+59
+420
+2960685
+100
+AcDbText
+ 10
+434.5
+ 20
+13.0
+ 30
+0.0
+ 40
+1.6989
+  1
+Rev. 00
+  7
+NOVEC_ARIAL_GRASSETTO
+ 11
+434.5
+ 21
+13.0
+ 31
+0.0
+100
+AcDbText
+  0
+LINE
+  5
+64
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+254
+370
+9
+420
+14737632
+100
+AcDbLine
+ 10
+458.5
+ 20
+11.5
+ 30
+0.0
+ 11
+458.5
+ 21
+24.5
+ 31
+0.0
+  0
+TEXT
+  5
+65
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+462.0
+ 20
+20.5
+ 30
+0.0
+ 40
+1.3349
+  1
+COMMESSA
+  7
+NOVEC_ARIAL
+ 11
+462.0
+ 21
+20.5
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+66
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+59
+420
+2960685
+100
+AcDbText
+ 10
+462.0
+ 20
+13.0
+ 30
+0.0
+ 40
+1.6989
+  1
+PROVA-REL-003
+  7
+NOVEC_ARIAL_GRASSETTO
+ 11
+462.0
+ 21
+13.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+67
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+489.5
+ 20
+16.333000000000027
+ 30
+0.0
+ 40
+1.2136
+  1
+DISEGNATO
+  7
+NOVEC_ARIAL
+ 11
+489.5
+ 21
+16.333000000000027
+ 31
+0.0
+100
+AcDbText
+  0
+LINE
+  5
+68
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+254
+370
+9
+420
+14737632
+100
+AcDbLine
+ 10
+489.5
+ 20
+12.5
+ 30
+0.0
+ 11
+532.5
+ 21
+12.5
+ 31
+0.0
+  0
+LINE
+  5
+69
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+254
+370
+9
+420
+14737632
+100
+AcDbLine
+ 10
+486.0
+ 20
+21.333000000000027
+ 30
+0.0
+ 11
+536.0
+ 21
+21.333000000000027
+ 31
+0.0
+  0
+TEXT
+  5
+6A
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+489.5
+ 20
+27.666999999999973
+ 30
+0.0
+ 40
+1.2136
+  1
+VERIFICATO
+  7
+NOVEC_ARIAL
+ 11
+489.5
+ 21
+27.666999999999973
+ 31
+0.0
+100
+AcDbText
+  0
+LINE
+  5
+6B
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+254
+370
+9
+420
+14737632
+100
+AcDbLine
+ 10
+489.5
+ 20
+23.833000000000027
+ 30
+0.0
+ 11
+532.5
+ 21
+23.833000000000027
+ 31
+0.0
+  0
+LINE
+  5
+6C
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+254
+370
+9
+420
+14737632
+100
+AcDbLine
+ 10
+486.0
+ 20
+32.66699999999997
+ 30
+0.0
+ 11
+536.0
+ 21
+32.66699999999997
+ 31
+0.0
+  0
+TEXT
+  5
+6D
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+253
+420
+10066329
+100
+AcDbText
+ 10
+489.5
+ 20
+39.0
+ 30
+0.0
+ 40
+1.2136
+  1
+APPROVATO
+  7
+NOVEC_ARIAL
+ 11
+489.5
+ 21
+39.0
+ 31
+0.0
+100
+AcDbText
+  0
+LINE
+  5
+6E
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+254
+370
+9
+420
+14737632
+100
+AcDbLine
+ 10
+489.5
+ 20
+35.16699999999997
+ 30
+0.0
+ 11
+532.5
+ 21
+35.16699999999997
+ 31
+0.0
+  0
+TEXT
+  5
+6F
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+255
+420
+16777215
+440
+33554559
+100
+AcDbText
+ 10
+560.0
+ 20
+36.0
+ 30
+0.0
+ 40
+1.5777
+  1
+TAVOLA
+  7
+NOVEC_ARIAL
+ 72
+1
+ 11
+560.0
+ 21
+36.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+70
+330
+31
+100
+AcDbEntity
+ 67
+1
+  8
+G-ANNO-TTLB
+ 62
+255
+420
+16777215
+100
+AcDbText
+ 10
+560.0
+ 20
+14.0
+ 30
+0.0
+ 40
+8.2521
+  1
+T6
+  7
+NOVEC_ARIAL_GRASSETTO
+ 72
+1
+ 11
+560.0
+ 21
+14.0
+ 31
+0.0
+100
+AcDbText
+  0
+ENDSEC
+  0
+SECTION
+  2
+OBJECTS
+  0
+DICTIONARY
+  5
+A
+330
+0
+100
+AcDbDictionary
+281
+1
+  3
+ACAD_COLOR
+350
+B
+  3
+ACAD_GROUP
+350
+C
+  3
+ACAD_LAYOUT
+350
+D
+  3
+ACAD_MATERIAL
+350
+E
+  3
+ACAD_MLEADERSTYLE
+350
+F
+  3
+ACAD_MLINESTYLE
+350
+10
+  3
+ACAD_PLOTSETTINGS
+350
+11
+  3
+ACAD_PLOTSTYLENAME
+350
+12
+  3
+ACAD_SCALELIST
+350
+14
+  3
+ACAD_TABLESTYLE
+350
+15
+  3
+ACAD_VISUALSTYLE
+350
+16
+  3
+EZDXF_META
+350
+2D
+  3
+ACAD_IMAGE_VARS
+350
+4F
+  3
+ACAD_IMAGE_DICT
+350
+50
+  0
+DICTIONARY
+  5
+B
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+C
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+D
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Model
+350
+1A
+  3
+A2
+350
+34
+  0
+DICTIONARY
+  5
+E
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+ByBlock
+350
+1F
+  3
+ByLayer
+350
+20
+  3
+Global
+350
+21
+  0
+DICTIONARY
+  5
+F
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Standard
+350
+2C
+  0
+DICTIONARY
+  5
+10
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Standard
+350
+22
+  0
+DICTIONARY
+  5
+11
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+ACDBDICTIONARYWDFLT
+  5
+12
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Normal
+350
+13
+100
+AcDbDictionaryWithDefault
+340
+13
+  0
+ACDBPLACEHOLDER
+  5
+13
+330
+12
+  0
+DICTIONARY
+  5
+14
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+15
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+DICTIONARY
+  5
+16
+330
+A
+100
+AcDbDictionary
+281
+1
+  0
+LAYOUT
+  5
+1A
+330
+D
+100
+AcDbPlotSettings
+  1
+
+  4
+A3
+  6
+
+ 40
+7.5
+ 41
+20.0
+ 42
+7.5
+ 43
+20.0
+ 44
+420.0
+ 45
+297.0
+ 46
+0.0
+ 47
+0.0
+ 48
+0.0
+ 49
+0.0
+140
+0.0
+141
+0.0
+142
+1.0
+143
+1.0
+ 70
+1024
+ 72
+1
+ 73
+0
+ 74
+5
+  7
+
+ 75
+16
+ 76
+0
+ 77
+2
+ 78
+300
+147
+1.0
+148
+0.0
+149
+0.0
+100
+AcDbLayout
+  1
+Model
+ 70
+1
+ 71
+0
+ 10
+0.0
+ 20
+0.0
+ 11
+420.0
+ 21
+297.0
+ 12
+0.0
+ 22
+0.0
+ 32
+0.0
+ 14
+1e+20
+ 24
+1e+20
+ 34
+1e+20
+ 15
+-1e+20
+ 25
+-1e+20
+ 35
+-1e+20
+146
+0.0
+ 13
+0.0
+ 23
+0.0
+ 33
+0.0
+ 16
+1.0
+ 26
+0.0
+ 36
+0.0
+ 17
+0.0
+ 27
+1.0
+ 37
+0.0
+ 76
+1
+330
+17
+  0
+MATERIAL
+  5
+1F
+102
+{ACAD_REACTORS
+330
+E
+102
+}
+330
+E
+100
+AcDbMaterial
+  1
+ByBlock
+  2
+
+ 70
+0
+ 40
+1.0
+ 71
+1
+ 41
+1.0
+ 91
+-1023410177
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 44
+0.5
+ 73
+0
+ 45
+1.0
+ 46
+1.0
+ 77
+1
+  4
+
+ 78
+1
+ 79
+1
+170
+1
+ 48
+1.0
+171
+1
+  6
+
+172
+1
+173
+1
+174
+1
+140
+1.0
+141
+1.0
+175
+1
+  7
+
+176
+1
+177
+1
+178
+1
+143
+1.0
+179
+1
+  8
+
+270
+1
+271
+1
+272
+1
+145
+1.0
+146
+1.0
+273
+1
+  9
+
+274
+1
+275
+1
+276
+1
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 94
+63
+  0
+MATERIAL
+  5
+20
+102
+{ACAD_REACTORS
+330
+E
+102
+}
+330
+E
+100
+AcDbMaterial
+  1
+ByLayer
+  2
+
+ 70
+0
+ 40
+1.0
+ 71
+1
+ 41
+1.0
+ 91
+-1023410177
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 44
+0.5
+ 73
+0
+ 45
+1.0
+ 46
+1.0
+ 77
+1
+  4
+
+ 78
+1
+ 79
+1
+170
+1
+ 48
+1.0
+171
+1
+  6
+
+172
+1
+173
+1
+174
+1
+140
+1.0
+141
+1.0
+175
+1
+  7
+
+176
+1
+177
+1
+178
+1
+143
+1.0
+179
+1
+  8
+
+270
+1
+271
+1
+272
+1
+145
+1.0
+146
+1.0
+273
+1
+  9
+
+274
+1
+275
+1
+276
+1
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 94
+63
+  0
+MATERIAL
+  5
+21
+102
+{ACAD_REACTORS
+330
+E
+102
+}
+330
+E
+100
+AcDbMaterial
+  1
+Global
+  2
+
+ 70
+0
+ 40
+1.0
+ 71
+1
+ 41
+1.0
+ 91
+-1023410177
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 44
+0.5
+ 73
+0
+ 45
+1.0
+ 46
+1.0
+ 77
+1
+  4
+
+ 78
+1
+ 79
+1
+170
+1
+ 48
+1.0
+171
+1
+  6
+
+172
+1
+173
+1
+174
+1
+140
+1.0
+141
+1.0
+175
+1
+  7
+
+176
+1
+177
+1
+178
+1
+143
+1.0
+179
+1
+  8
+
+270
+1
+271
+1
+272
+1
+145
+1.0
+146
+1.0
+273
+1
+  9
+
+274
+1
+275
+1
+276
+1
+ 42
+1.0
+ 72
+1
+  3
+
+ 73
+1
+ 74
+1
+ 75
+1
+ 94
+63
+  0
+MLINESTYLE
+  5
+22
+102
+{ACAD_REACTORS
+330
+10
+102
+}
+330
+10
+100
+AcDbMlineStyle
+  2
+Standard
+ 70
+0
+  3
+
+ 62
+256
+ 51
+90.0
+ 52
+90.0
+ 71
+2
+ 49
+0.5
+ 62
+256
+  6
+BYLAYER
+ 49
+-0.5
+ 62
+256
+  6
+BYLAYER
+  0
+MLEADERSTYLE
+  5
+2C
+102
+{ACAD_REACTORS
+330
+F
+102
+}
+330
+F
+100
+AcDbMLeaderStyle
+179
+2
+170
+2
+171
+1
+172
+0
+ 90
+2
+ 40
+0.0
+ 41
+0.0
+173
+1
+ 91
+-1056964608
+ 92
+-2
+290
+1
+ 42
+2.0
+291
+1
+ 43
+8.0
+  3
+Standard
+ 44
+4.0
+300
+
+342
+29
+174
+1
+175
+1
+176
+0
+178
+1
+ 93
+-1056964608
+ 45
+4.0
+292
+0
+297
+0
+ 46
+4.0
+ 94
+-1056964608
+ 47
+1.0
+ 49
+1.0
+140
+1.0
+294
+1
+141
+0.0
+177
+0
+142
+1.0
+295
+0
+296
+0
+143
+3.75
+271
+0
+272
+9
+273
+9
+  0
+DICTIONARY
+  5
+2D
+330
+A
+100
+AcDbDictionary
+280
+1
+281
+1
+  3
+CREATED_BY_EZDXF
+350
+2E
+  3
+WRITTEN_BY_EZDXF
+350
+36B
+  0
+DICTIONARYVAR
+  5
+2E
+330
+2D
+100
+DictionaryVariables
+280
+0
+  1
+0.0 @ 2000-01-01T00:00:00.000000+00:00
+  0
+LAYOUT
+  5
+34
+330
+D
+100
+AcDbPlotSettings
+  1
+
+  2
+DWG To PDF.pc3
+  4
+ISO_full_bleed_A2_(594.00_x_420.00_MM)
+  6
+
+ 40
+0.0
+ 41
+0.0
+ 42
+0.0
+ 43
+0.0
+ 44
+594.0
+ 45
+420.0
+ 46
+0.0
+ 47
+0.0
+ 48
+0.0
+ 49
+0.0
+140
+0.0
+141
+0.0
+142
+1.0
+143
+1.0
+ 70
+672
+ 72
+1
+ 73
+0
+ 74
+5
+  7
+
+ 75
+16
+ 76
+0
+ 77
+2
+ 78
+300
+147
+1.0
+148
+0.0
+149
+0.0
+100
+AcDbLayout
+  1
+A2
+ 70
+1
+ 71
+3
+ 10
+-0.0
+ 20
+-0.0
+ 11
+594.0
+ 21
+420.0
+ 12
+0.0
+ 22
+0.0
+ 32
+0.0
+ 14
+1e+20
+ 24
+1e+20
+ 34
+1e+20
+ 15
+-1e+20
+ 25
+-1e+20
+ 35
+-1e+20
+146
+0.0
+ 13
+0.0
+ 23
+0.0
+ 33
+0.0
+ 16
+1.0
+ 26
+0.0
+ 36
+0.0
+ 17
+0.0
+ 27
+1.0
+ 37
+0.0
+ 76
+1
+330
+31
+331
+35
+  0
+RASTERVARIABLES
+  5
+4F
+102
+{ACAD_REACTORS
+330
+A
+102
+}
+330
+A
+100
+AcDbRasterVariables
+ 90
+0
+ 70
+0
+ 71
+1
+ 72
+1
+  0
+DICTIONARY
+  5
+50
+330
+A
+100
+AcDbDictionary
+281
+1
+  3
+Cartiglio_NoveC_A3-logo.jpg
+350
+51
+  0
+IMAGEDEF
+  5
+51
+102
+{ACAD_REACTORS
+330
+50
+330
+53
+102
+}
+330
+50
+100
+AcDbRasterImageDef
+ 90
+0
+  1
+Cartiglio_NoveC_A3-logo.jpg
+ 10
+2961.0
+ 20
+716.0
+ 11
+0.01
+ 21
+0.01
+280
+1
+281
+0
+  0
+IMAGEDEF_REACTOR
+  5
+53
+330
+52
+100
+AcDbRasterImageDefReactor
+ 90
+2
+330
+52
+  0
+DICTIONARYVAR
+  5
+36B
+330
+2D
+100
+DictionaryVariables
+280
+0
+  1
+0.0 @ 2000-01-01T00:00:00.000000+00:00
+  0
+ENDSEC
+  0
+EOF

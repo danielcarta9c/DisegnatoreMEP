@@ -80,6 +80,13 @@ Le **sei tavole approvate** — i cinque impianti e l'impianto 6 — in DXF. La 
 un secondo strumento e le confronta con la geometria dell'SVG; poi **il PO le apre in AutoCAD**, che
 è il metro vero.
 
+> **▶ 26 settembre 2026 — i DXF sono al PO** (`docs/collaudi/REL-004/RAPPORTO.md`): geometria riletta
+> uguale alla tavola entro 10⁻⁶ mm sulle sei tavole, giro DXF → DWG → DXF con l'ODA File Converter
+> identico, file uguale byte per byte fra processi diversi, suite con le stesse 46 rosse di `main`.
+> Prima dell'invio la sessione ha confrontato lo scrittore con la proposta della ricerca e ha aggiunto
+> i tre punti che mancavano (cartiglio in spazio carta, file che si apre sulla presentazione, colore di
+> ripiego), e ha corretto due difetti trovati col giro ODA e col collaudo. **Si aspetta il PO.**
+
 ---
 
 ## Perimetro

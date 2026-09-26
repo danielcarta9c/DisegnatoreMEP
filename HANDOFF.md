@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-26 — **`REL-003` è fuso** (PR #60, tavola approvata dal PO, I-136), dopo il cartiglio (`REL-002`, PR #59, I-132). **Il pacchetto attivo è `REL-004`, il DXF** (I-137): prima i pezzi che mancano, la skill per ultima
+**Aggiornato:** 2026-09-26 — **`REL-003` è fuso** (PR #60, tavola approvata dal PO, I-136), dopo il cartiglio (`REL-002`, PR #59, I-132). **Il pacchetto attivo è `REL-004`, il DXF** (I-137): **i DXF delle sei tavole sono al PO**, la fusione aspetta che li apra in AutoCAD
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -16,10 +16,12 @@
 **Il pacchetto attivo è `REL-004`, il DXF** (`ACTIVE_WORK_PACKAGE.md`). Il PO, finito `REL-003`
 (I-137): «Io pensavo di chiedere prima la chiusura dei pezzi che mancano, in particolare manca ancora
 esportazione dxf. La composizione della skill vera e propria con il file skill.md che orchestra il tutto
-l'avrei tenuto per ultimo». **Si parte dal punto 1: come si esporta lo decide il PO** — layer, blocchi,
-testi, scala —, e la sessione gli ha chiesto se c'è un file CAD di Nove C da cui partire. Dopo il DXF,
-il PDF senza browser (assunzione della sessione), poi `REL-001`, la skill, in
-`docs/plans/pacchetti/REL-001.md`, poi `REL-005`.
+l'avrei tenuto per ultimo». Lo studio **non ha un riferimento CAD** e le scelte le fanno le buone
+pratiche documentate (I-138); **stampa a colori, AutoCAD 2020** (I-139). **I DXF delle sei tavole
+approvate sono al PO** (`docs/collaudi/REL-004/RAPPORTO.md`, tavole in testa): scrittore, comando
+`--dxf` e prove sono sul ramo; **la fusione aspetta che il PO li apra in AutoCAD e dica di sì**, poi
+la decisione (D-189) e la PR. Dopo il DXF, il PDF senza browser (assunzione della sessione), poi
+`REL-001`, la skill, in `docs/plans/pacchetti/REL-001.md`, poi `REL-005`.
 
 **`REL-003` è fuso** (PR #60): il PO, sulla tavola di prova, «La tavola va benissimo. Ottimo lavoro.
 Fondi» (I-136). Rapporto: `docs/collaudi/REL-003/RAPPORTO.md`; il pacchetto com'era:
@@ -39,7 +41,7 @@ Fondi» (I-136). Rapporto: `docs/collaudi/REL-003/RAPPORTO.md`; il pacchetto com
   istruzioni e nel motore: resta agli atti, non è lavoro di `REL-001`.
 - **La suite**: le stesse 46 rosse di `DRAW-018`, nome per nome; zero `skip` e zero `xfail` nuovi;
   `ruff check src tests examples scripts` e `mypy` verdi.
-- **I numeri**: il prossimo input è **I-138**, la prossima decisione **D-189**. Due sessioni in
+- **I numeri**: il prossimo input è **I-140**, la prossima decisione **D-189**. Due sessioni in
   parallelo avevano preso gli stessi (I-133): **chi fonde per secondo sposta i suoi**, guardando
   `main` nel momento in cui fonde.
 - **Nel contenitore di questa sessione il `python3` di sistema non aveva le dipendenze**: le camere
