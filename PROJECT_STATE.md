@@ -16,7 +16,7 @@
 
 ## Dove siamo — 26 settembre 2026
 
-**Il cartiglio Nove C è sulla tavola** (`REL-002`, I-132): «Si tutto perfetto». L'ha fatto una
+**Il cartiglio Nove C è sulla tavola** (`REL-002`, I-132, PR #59): «Si tutto perfetto». L'ha fatto una
 seconda sessione che il PO ha dedicato al cartiglio (I-129), mentre la prima faceva i simboli.
 
 - **Il cartiglio è il file del PO** (I-130), letto da un generatore che ne scrive il modello e il

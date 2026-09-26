@@ -13,7 +13,7 @@
 
 ## ▶ Il cartiglio è su `main` — scritto il 26 settembre 2026
 
-**`REL-002` è fatto, e le tavole sono approvate** (I-132): «Si tutto perfetto». L'ha svolto una
+**`REL-002` è fatto, le tavole sono approvate** (I-132): «Si tutto perfetto» — **fuso con la PR #59**. L'ha svolto una
 seconda sessione, che il PO ha dedicato al cartiglio (I-129) mentre la prima faceva i simboli.
 Rapporto: `docs/collaudi/REL-002/RAPPORTO.md`; il pacchetto com'era: `docs/plans/pacchetti/REL-002.md`.
 

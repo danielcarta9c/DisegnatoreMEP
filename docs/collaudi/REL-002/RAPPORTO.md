@@ -4,7 +4,7 @@
 **Input:** I-123 («manca il cartiglio»), I-129 (la sessione è solo per il cartiglio), I-130 (il file A3
 del 25 settembre), I-131 → **D-186** (gli altri formati).
 **Verdetto del PO** (I-132, 26 settembre 2026): «Si tutto perfetto» — tavole approvate, fusione su
-`main`.
+`main` con la PR #59.
 
 > **I numeri sono cambiati alla fusione** (I-133). Mentre questa sessione faceva il cartiglio, un'altra
 > faceva i simboli (`REL-003`), partita dallo stesso `main`, ed era già fusa: aveva preso I-126, I-127,
