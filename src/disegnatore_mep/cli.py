@@ -57,6 +57,42 @@ CARTIGLIO_HELP = (
 )
 
 
+DXF_HELP = (
+    "scrive anche la tavola in DXF, accanto all'SVG, per aprirla in AutoCAD "
+    "(REL-004): formato AutoCAD 2013, simboli come blocchi, un layer per rete coi "
+    "colori della tavola. Con il cartiglio scrive accanto anche il logo, che il DXF "
+    "collega e non contiene. Vuole ezdxf: pip install 'disegnatore-mep[dxf]'"
+)
+
+
+def _manca_ezdxf() -> bool:
+    """Vero, e lo dice, se il DXF e' chiesto ma ezdxf non c'e': si sa prima di
+    disegnare, non dopo aver scritto meta' dei file."""
+    try:
+        import ezdxf  # noqa: F401
+    except ImportError:
+        print(
+            "Il DXF vuole la libreria ezdxf, che non e' installata: "
+            "pip install 'disegnatore-mep[dxf]'",
+            file=sys.stderr,
+        )
+        return True
+    return False
+
+
+def _scrivi_dxf(
+    sheet: SheetGeometry,
+    frame: SheetFrame,
+    symbols: SymbolRegistry,
+    svg: Path,
+    tavola: CartiglioDellaTavola | None,
+) -> None:
+    from disegnatore_mep.graphics.dxf import write_dxf
+
+    for scritto in write_dxf(sheet, frame, symbols, svg.with_suffix(".dxf"), tavola):
+        print(f"DXF scritto: {scritto}" if scritto.suffix == ".dxf" else f"Logo del DXF: {scritto}")
+
+
 def _cartiglio(
     project: ProjectModel,
     cartiglio: Cartiglio | None,
@@ -132,6 +168,7 @@ def build_parser() -> argparse.ArgumentParser:
     draw.add_argument("--out", type=Path, required=True)
     draw.add_argument("--geometry", type=Path)
     draw.add_argument("--cartiglio", type=Path, help=CARTIGLIO_HELP)
+    draw.add_argument("--dxf", action="store_true", help=DXF_HELP)
     # Le tabelle dei nomi servono solo alla modalita' verifica, che stampa gli
     # indirizzi dei nodi: senza indirizzi la tavola e' quella di consegna e le
     # tabelle non le legge nessuno.
@@ -163,6 +200,7 @@ def build_parser() -> argparse.ArgumentParser:
     piano.add_argument("--out", type=Path, required=True)
     piano.add_argument("--geometry", type=Path)
     piano.add_argument("--cartiglio", type=Path, help=CARTIGLIO_HELP)
+    piano.add_argument("--dxf", action="store_true", help=DXF_HELP)
     piano.add_argument(
         "--verifica",
         action="store_true",
@@ -305,6 +343,8 @@ def _draw(args: argparse.Namespace) -> int:
     ne ha, altrimenti gli errori nessuno li vede. Il foglio esce marcato, e i
     rilievi restano stampati per intero.
     """
+    if args.dxf and _manca_ezdxf():
+        return 1
     project = load_project(args.project)
     symbols = SymbolRegistry.from_directory(args.symbols)
     catalog = ComponentRegistry.from_directory(args.catalog, symbols=symbols)
@@ -370,6 +410,8 @@ def _draw(args: argparse.Namespace) -> int:
         target = args.out / f"{project.metadata.project_id}-{sheet.sheet_id}.svg"
         tavola = _cartiglio(project, cartiglio, sheet, frame)
         target.write_text(render_sheet(sheet, frame, symbols, tavola), encoding="utf-8")
+        if args.dxf:
+            _scrivi_dxf(sheet, frame, symbols, target, tavola)
     if args.geometry:
         args.geometry.write_text(
             drawing.model_dump_json(indent=2) + "\n", encoding="utf-8"
@@ -407,6 +449,8 @@ def _piano(args: argparse.Namespace) -> int:
     tavola di verifica. Una tavola difettosa che non esce non si puo' correggere,
     ed e' il difetto che D-150 e D-146 esistono per non ripetere.
     """
+    if args.dxf and _manca_ezdxf():
+        return 1
     modello = load_project(args.project)
     simboli = SymbolRegistry.from_directory(args.symbols)
     catalogo = ComponentRegistry.from_directory(args.catalog, symbols=simboli)
@@ -448,6 +492,8 @@ def _piano(args: argparse.Namespace) -> int:
             render_sheet(foglio, esito.frame, simboli, tavola), encoding="utf-8"
         )
         print(f"\nTavola scritta: {target}")
+        if args.dxf:
+            _scrivi_dxf(foglio, esito.frame, simboli, target, tavola)
     if args.geometry:
         args.geometry.parent.mkdir(parents=True, exist_ok=True)
         args.geometry.write_text(

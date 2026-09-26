@@ -53,6 +53,11 @@ Il PO:
 > fonte nel registro (come per i simboli), e **il PO lo giudica aprendo il DXF in AutoCAD**: la
 > decisione si scrive dopo il suo sì, non prima.
 
+> **▶ E la seconda risposta** (I-139): «Stampiamo sempre a colori e dxf 2013 in poi va benissimo
+> (usiamo il 2020). Procedi». Quindi **colori RGB esatti** — gli stessi della tavola — e **formato
+> AutoCAD 2013**. Le due ricerche della sessione (buone pratiche AutoCAD e DXF; layer, spessori e
+> testi dalle norme) sono in `docs/fonti/ricerche/` con le loro fonti.
+
 Le scelte da fare, con le fonti:
 
 - **i layer**: per fluido, e per mandata e ritorno? simboli, testi, legenda e cartiglio separati?

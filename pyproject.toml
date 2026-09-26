@@ -12,7 +12,13 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Il DXF (REL-004): ezdxf, MIT, scrive un DXF che AutoCAD apre. E' facoltativo
+# perche' porta con se' numpy e fonttools, e il nucleo non ne ha bisogno.
+dxf = [
+  "ezdxf==1.4.4",
+]
 dev = [
+  "ezdxf==1.4.4",
   "mypy==2.3.0",
   "pytest==9.1.1",
   "ruff==0.15.22",

@@ -288,3 +288,33 @@ def test_piano_che_non_si_instrada_esce_con_due_e_stampa_la_posa(
     assert "Posa applicata (i pezzi del piano sono marcati con *)" in stampato
     assert "* accumulo" in stampato
     assert not (tmp_path / "uscita").exists()
+
+
+def test_piano_con_dxf_scrive_accanto_all_svg_il_dxf_e_il_logo(
+    tmp_path: Path, capsys: CaptureFixture[str]
+) -> None:
+    """REL-004: `--dxf` scrive la tavola anche in DXF, accanto all'SVG, e con il
+    cartiglio il logo, che il DXF collega senza percorso. La tavola e' quella
+    dell'impianto 6, approvata (I-136)."""
+    import ezdxf
+
+    radice = Path(__file__).resolve().parents[1]
+    impianto = radice / "docs" / "collaudi" / "REL-003" / "impianto-6"
+    esito = main(
+        [
+            "piano", str(impianto / "grafo-completo-6.json"),
+            "--piano", str(impianto / "piano-6-a.json"),
+            "--catalog", str(CATALOG), "--symbols", str(SYMBOLS), "--naming", str(NAMING),
+            "--cartiglio", str(radice / "assets" / "cartigli" / "Cartiglio_NoveC_A3.json"),
+            "--out", str(tmp_path / "uscita"), "--dxf",
+        ]
+    )
+    stampato = capsys.readouterr().out
+    assert esito == 0
+    assert "DXF scritto:" in stampato and "Logo del DXF:" in stampato
+    (dxf,) = sorted((tmp_path / "uscita").glob("*.dxf"))
+    assert dxf.with_suffix(".svg").exists()
+    doc = ezdxf.readfile(dxf)
+    (immagine,) = doc.modelspace().query("IMAGE")
+    assert (dxf.parent / immagine.image_def.dxf.filename).exists()
+    assert not doc.audit().has_errors
