@@ -50,8 +50,8 @@ DHW = "domestic_hot_water"
 # fluido del bollitore.
 COLD = "cold_water"
 SOLAR = "solar_fluid"
-"""Il fluido del circuito solare (`REL-003`, D-187): si chiama «fluido solare», si
-disegna magenta sia in mandata sia in ritorno (D-186), e **le regole non
+"""Il fluido del circuito solare (`REL-003`, D-188): si chiama «fluido solare», si
+disegna magenta sia in mandata sia in ritorno (D-187), e **le regole non
 aggiungono niente** sulle sue reti — il gruppo di circolazione lo descrive il
 progettista. Il circuito si riempie di fluido antigelo, non dall'acquedotto."""
 
@@ -185,7 +185,7 @@ def definition(
         entry["hydraulic_states"] = hydraulic_states
     entry["symbol_id"] = symbol_id or definition_id
     # La stessa macchina di un'altra voce, con un altro simbolo: si sceglie solo
-    # quando il testo la nomina (D-187). Chi la dichiara la scrive qui, e il
+    # quando il testo la nomina (D-188). Chi la dichiara la scrive qui, e il
     # registro controlla che mestieri e attacchi siano quelli della voce base.
     if variant is not None:
         entry["variant"] = variant
@@ -209,7 +209,7 @@ GENERATOR_TRAITS = [
 ]
 """I caratteri della pompa di calore e della caldaia: le varianti li hanno uguali."""
 
-D187 = "D-187: il PO, 26 settembre 2026 (I-130)"
+D188 = "D-188: il PO, 26 settembre 2026 (I-135)"
 
 
 def solar_accessory(
@@ -226,12 +226,12 @@ def solar_accessory(
     sanitari: il circolatore del solare e' il circolatore, disegnato con lo
     stesso simbolo, e cambia soltanto cio' che ci scorre dentro (D-184)."""
     return definition(
-        definition_id, name, functions, traits, ports, symbol_id=symbol_id, sources=[D187]
+        definition_id, name, functions, traits, ports, symbol_id=symbol_id, sources=[D188]
     )
 
 
 REL_003: list[dict[str, Any]] = [
-    # --- i simboli nuovi della prima release (`REL-003`, D-184, D-187) -------
+    # --- i simboli nuovi della prima release (`REL-003`, D-184, D-188) -------
     # **Tre varianti**: la stessa macchina del fratello — stessi mestieri, stessi
     # attacchi —, un altro simbolo. Si sceglie solo quando il testo la nomina con
     # le parole del PO, e mai per potenza.
@@ -246,10 +246,10 @@ REL_003: list[dict[str, Any]] = [
         ],
         # Il circolatore a bordo, come la monoblocco domestica: cosi' la
         # disegnano Caleffi (SRC-030, fig. 47) e il progetto di Padova (SRC-031),
-        # e cosi' l'ha confermato il PO (D-187).
+        # e cosi' l'ha confermato il PO (D-188).
         carries_on_board=["circulation"],
         variant={"of": "heat-pump-air-water", "named_as": ["alta potenza", "grande taglia"]},
-        sources=[D187],
+        sources=[D188],
     ),
     definition(
         "gas-boiler-modular",
@@ -261,11 +261,11 @@ REL_003: list[dict[str, Any]] = [
             hydronic_port("water_return", "in"),
         ],
         # Il PO, 26 settembre 2026: «anche loro le danno sempre con circolatore
-        # integrato» (D-187). E' la differenza di contenuto con la murale, che
+        # integrato» (D-188). E' la differenza di contenuto con la murale, che
         # non dichiara niente a bordo.
         carries_on_board=["circulation"],
         variant={"of": "gas-boiler", "named_as": ["modulare", "a moduli"]},
-        sources=[D187],
+        sources=[D188],
     ),
     definition(
         "fan-coil-ducted",
@@ -274,9 +274,9 @@ REL_003: list[dict[str, Any]] = [
         [MAINTAINABLE, FOULS_CIRCUIT, SHUTOFF_ORDINARY, INLINE],
         [hydronic_port("in", "in"), hydronic_port("out", "out")],
         variant={"of": "fan-coil", "named_as": ["canalizzato", "canalizzabile"]},
-        sources=[D187],
+        sources=[D188],
     ),
-    # **Il solare.** Il collettore e' un generatore (D-187), sigla GT; i suoi
+    # **Il solare.** Il collettore e' un generatore (D-188), sigla GT; i suoi
     # attacchi portano il fluido solare, e sulle reti di quel fluido le regole
     # non aggiungono niente: i caratteri dicono che cosa e' vero del pezzo, non
     # accendono corredo.
@@ -289,13 +289,13 @@ REL_003: list[dict[str, Any]] = [
             hydronic_port("supply", "out", SOLAR),
             hydronic_port("return", "in", SOLAR),
         ],
-        sources=[D187],
+        sources=[D188],
     ),
     definition(
         # Il bollitore a due serpentini: il serpentino di integrazione dove sta
         # quello del bollitore a un serpentino, il solare sotto. Non e' una
         # variante: ha attacchi che nessun'altra voce ha, ed e' da quelli che lo
-        # si sceglie (D-187).
+        # si sceglie (D-188).
         "dhw-cylinder-twin-coil",
         "Bollitore ACS a due serpentini",
         ["dhw_storage"],
@@ -318,7 +318,7 @@ REL_003: list[dict[str, Any]] = [
         ],
         stored_medium=DHW,
         fills_from="cold_in",
-        sources=[D187],
+        sources=[D188],
     ),
     # Gli accessori del circuito solare: quelli del gruppo di circolazione
     # (D-184) — circolatore, ritegno, sicurezza, vaso, manometro, termometro,

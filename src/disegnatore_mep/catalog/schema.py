@@ -311,7 +311,7 @@ class HydraulicState(StrictModel):
 
 
 class Variant(StrictModel):
-    """La stessa macchina di un'altra voce, disegnata con un altro simbolo (D-187).
+    """La stessa macchina di un'altra voce, disegnata con un altro simbolo (D-188).
 
     La pompa di calore di alta potenza fa quello che fa la domestica e ha gli
     stessi attacchi; lo stesso la caldaia modulare con la murale e il
@@ -436,7 +436,7 @@ class ComponentDefinition(StrictModel):
     symbol_id: str = Field(pattern=ID_PATTERN)
     variant: Variant | None = None
     """Questa voce e' la **variante** di un'altra: la stessa macchina, un altro
-    simbolo, e si sceglie solo quando il testo la nomina (D-187). Che mestieri e
+    simbolo, e si sceglie solo quando il testo la nomina (D-188). Che mestieri e
     attacchi coincidano con quelli della voce base lo controlla il registro, che
     le vede tutte e due."""
 

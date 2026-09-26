@@ -1,4 +1,4 @@
-"""Sul circuito solare le regole non aggiungono niente (D-187, punto 3).
+"""Sul circuito solare le regole non aggiungono niente (D-188, punto 3).
 
 Il PO, 26 settembre 2026: il gruppo di circolazione solare lo descrive il
 progettista e lo trascrive chi legge il testo; le regole non ci mettono niente,
@@ -125,7 +125,7 @@ def test_e_l_esclusione_a_tenere_fuori_il_solare(
     """Senza l'esclusione le regole che non guardano il fluido — intercettare
     cio' che si manutiene, il termometro sull'uscita del generatore sopra i 35
     kW, il separatore d'aria... — porterebbero pezzi sul circuito solare. E'
-    quello che D-187 vieta, e la ragione per cui l'esclusione esiste."""
+    quello che D-188 vieta, e la ragione per cui l'esclusione esiste."""
     monkeypatch.setattr(engine, "MEDIA_WITHOUT_ACCESSORIES", frozenset())
     esito = engine.evaluate(impianto(), catalogo, regole)
     sul_solare = {item.rule_id for item in esito.proposals if item.network_id == "solare"}

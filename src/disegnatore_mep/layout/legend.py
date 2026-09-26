@@ -49,7 +49,7 @@ MEDIUM_STYLES: dict[str, tuple[str, str]] = {
     "refrigerant_liquid": ("#6c3483", "none"),
     "refrigerant_gas": ("#6c3483", "6 2"),
     "condensate": ("#616a6b", "2 2"),
-    # Il circuito solare (D-186): magenta, a tratto pieno come l'acqua di
+    # Il circuito solare (D-187): magenta, a tratto pieno come l'acqua di
     # riscaldamento. La tonalita' e' una scelta di questa sessione: lontana dal
     # viola del refrigerante e dal rosso del riscaldamento.
     "solar_fluid": ("#c71585", "none"),
@@ -95,7 +95,7 @@ SUPPLY_SHIFT = {
     "#d68910": RECIRCULATION_COLOUR,
     "#148f77": "#117a65",
     "#6c3483": "#5b2c6f",
-    # Il solare torna dello stesso magenta con cui va (D-186): il PO, «magenta
+    # Il solare torna dello stesso magenta con cui va (D-187): il PO, «magenta
     # sia mandata che ritorno».
     "#c71585": "#c71585",
 }
@@ -179,7 +179,7 @@ def build_legend(
     if routes is not None:
         disegnate = {(route.medium, route.supply) for route in routes}
         keys = [key for key in keys if (key[0], key[2]) in disegnate]
-    # Il solare va e torna dello stesso magenta (D-186): due righe uguali non
+    # Il solare va e torna dello stesso magenta (D-187): due righe uguali non
     # distinguono niente, per la stessa ragione per cui primario e secondario ne
     # hanno una sola. Dove andata e ritorno si disegnano uguali, la coppia si
     # scrive una volta: «andata e ritorno».

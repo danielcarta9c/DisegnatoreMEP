@@ -309,7 +309,7 @@ def _already_there(
 
 
 MEDIA_WITHOUT_ACCESSORIES = frozenset({"solar_fluid"})
-"""I fluidi sulle cui reti **nessuna regola aggiunge niente** (D-187).
+"""I fluidi sulle cui reti **nessuna regola aggiunge niente** (D-188).
 
 Il PO, 26 settembre 2026: sul circuito solare il gruppo di circolazione lo
 descrive il progettista e lo trascrive chi legge il testo, e le regole non

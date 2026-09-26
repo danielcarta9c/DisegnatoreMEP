@@ -180,7 +180,7 @@ così:
 4. Mai scegliere per somiglianza di nome. Il nome può ingannare; i mestieri e gli
    attacchi no.
 
-**Le varianti: la stessa macchina con un altro simbolo** (D-187). Alcune voci dichiarano
+**Le varianti: la stessa macchina con un altro simbolo** (D-188). Alcune voci dichiarano
 `variant`: fanno quello che fa la voce `variant.of`, hanno i suoi stessi attacchi, e si
 disegnano con un altro simbolo — la pompa di calore di **alta potenza**, la caldaia
 **modulare**, il ventilconvettore **canalizzato**. Mestieri e attacchi qui non ti aiutano,
@@ -232,7 +232,7 @@ l'altra cosa.
 Il fluido resta il secondo criterio, e vale sempre: dove il fluido cambia, la rete
 cambia, anche a valle della stessa macchina.
 
-**Il circuito solare è una rete a sé, con il suo fluido**, `solar_fluid` (D-187): va dal
+**Il circuito solare è una rete a sé, con il suo fluido**, `solar_fluid` (D-188): va dal
 collettore al serpentino solare del bollitore e torna. Il collettore è un generatore;
 il bollitore a due serpentini lo riconosci dagli attacchi `solar_coil_in` e
 `solar_coil_out`, che solo lui ha. **Su quella rete le regole non aggiungono niente**: il

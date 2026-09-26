@@ -14,13 +14,13 @@
 > circuito solare da decidere con il PO, la tavola di prova. Sono aperti i criteri **4** e **5**, e il
 > criterio **0** vale per la tavola di prova. Il ramo riparte da `main` dopo la fusione.
 >
-> **▶ 26 settembre 2026 — il PO ha deciso quello che mancava** (I-129, I-130): il circuito solare è
-> **magenta**, mandata e ritorno (**D-186**); le varianti si scelgono **solo quando il testo le
+> **▶ 26 settembre 2026 — il PO ha deciso quello che mancava** (I-134, I-135): il circuito solare è
+> **magenta**, mandata e ritorno (**D-187**); le varianti si scelgono **solo quando il testo le
 > nomina**, la pompa di calore grande e la caldaia modulare hanno **il circolatore a bordo**, sul
 > circuito solare **le regole non aggiungono niente**, il collettore è un generatore (GT), il fluido
-> si chiama «fluido solare» (**D-187**).
+> si chiama «fluido solare» (**D-188**).
 >
-> **Tre estensioni del perimetro, dichiarate prima di eseguirle**, perché D-187 le chiede:
+> **Tre estensioni del perimetro, dichiarate prima di eseguirle**, perché D-188 le chiede:
 > 1. **`src/disegnatore_mep/rules/engine.py`**, una condizione sola: una regola non riguarda una rete
 >    del fluido solare. È il punto in cui il motore decide se una regola parla di una rete; così le
 >    sedici regole restano come sono e il serpentino di integrazione del bollitore, che sta sulla rete

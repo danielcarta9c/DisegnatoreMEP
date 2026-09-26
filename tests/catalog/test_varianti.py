@@ -1,4 +1,4 @@
-"""Le varianti del catalogo si scelgono per un dato che non e' il nome (D-187).
+"""Le varianti del catalogo si scelgono per un dato che non e' il nome (D-188).
 
 La pompa di calore di alta potenza, la caldaia modulare e il ventilconvettore
 canalizzato fanno quello che fa il loro fratello e hanno gli stessi attacchi.
@@ -6,7 +6,7 @@ Chi legge il testo dell'ingegnere — «Capire» — sceglie per mestiere e per
 attacchi, mai per somiglianza di nome: fra due voci cosi' non avrebbe niente con
 cui decidere. Il PO ha deciso come si decide: **la variante si sceglie solo
 quando il testo la nomina**, con le sue parole, e mai per potenza. Queste prove
-tengono su il dato che lo rende possibile, e i due fatti che D-187 aggiunge:
+tengono su il dato che lo rende possibile, e i due fatti che D-188 aggiunge:
 il circolatore a bordo e il circuito solare con i suoi pezzi.
 """
 
@@ -67,7 +67,7 @@ def test_le_varianti_sono_tutte_e_sole_quelle_di_d187(catalogo: ComponentRegistr
 def test_la_macchina_grande_porta_il_circolatore_a_bordo(
     catalogo: ComponentRegistry, voce: str
 ) -> None:
-    """D-187: la pompa di calore grande come la domestica, e la caldaia modulare
+    """D-188: la pompa di calore grande come la domestica, e la caldaia modulare
     per correzione del PO — «anche loro le danno sempre con circolatore
     integrato». La caldaia murale, che e' la sua voce base, non dichiara niente."""
     assert "circulation" in catalogo.get(voce).carries_on_board
@@ -113,7 +113,7 @@ def test_il_collettore_e_un_generatore_sul_fluido_solare(catalogo: ComponentRegi
 )
 def test_il_gruppo_solare_ha_i_suoi_pezzi(catalogo: ComponentRegistry, mestiere: str) -> None:
     """Il gruppo di circolazione solare lo descrive il progettista e «Capire» lo
-    trascrive con i pezzi della libreria (D-184, D-187): per ogni pezzo serve una
+    trascrive con i pezzi della libreria (D-184, D-188): per ogni pezzo serve una
     voce i cui attacchi portino il fluido solare, come per l'acqua sanitaria."""
     assert any(
         mestiere in item.functions

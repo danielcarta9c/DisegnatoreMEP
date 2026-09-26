@@ -32,7 +32,7 @@ class ComponentRegistry:
             self._check_variant(definition)
 
     def _check_variant(self, definition: ComponentDefinition) -> None:
-        """Una variante e' la stessa macchina della sua voce base (D-187).
+        """Una variante e' la stessa macchina della sua voce base (D-188).
 
         Stessi mestieri e stessi attacchi — e' quello che rende la scelta una
         questione di parole del testo e non di collegamenti —, un simbolo

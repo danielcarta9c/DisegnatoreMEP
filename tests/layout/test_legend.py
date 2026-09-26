@@ -127,7 +127,7 @@ def test_supply_and_return_of_one_fluid_are_told_apart() -> None:
 
 
 def test_the_solar_circuit_is_magenta_both_ways() -> None:
-    """D-186: il PO, «magenta sia mandata che ritorno». E' l'unico fluido il cui
+    """D-187: il PO, «magenta sia mandata che ritorno». E' l'unico fluido il cui
     ritorno non cambia colore, e deve restare distinto dal riscaldamento e dal
     refrigerante, che sulla stessa tavola possono esserci."""
     andata, ritorno = style_for("solar_fluid"), style_for("solar_fluid", supply=False)
@@ -140,7 +140,7 @@ def test_the_solar_circuit_is_magenta_both_ways() -> None:
 
 
 def test_the_solar_fluid_has_its_italian_name() -> None:
-    """D-187: il fluido del circuito solare si chiama «fluido solare», in legenda
+    """D-188: il fluido del circuito solare si chiama «fluido solare», in legenda
     e in ogni documento che lo nomina."""
     import json
 
@@ -152,7 +152,7 @@ def test_the_solar_fluid_has_its_italian_name() -> None:
 
 
 def test_the_solar_pair_is_one_row_when_both_are_drawn() -> None:
-    """D-186 in legenda. Il solare va e torna dello stesso magenta, e due righe
+    """D-187 in legenda. Il solare va e torna dello stesso magenta, e due righe
     uguali non distinguono niente — e' la ragione per cui primario e secondario
     ne hanno una sola. La coppia si scrive una volta, «andata e ritorno»; se la
     tavola ne disegna una sola, la riga dice quale. Il riscaldamento, che torna
