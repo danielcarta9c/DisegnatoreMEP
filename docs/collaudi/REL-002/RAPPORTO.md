@@ -112,6 +112,18 @@ Le 46 rosse sono **le stesse**, una per una. Zero `skip` e zero `xfail` nuovi. `
 verde. `mypy src tests`: 4 errori, **gli stessi 4 di `main`**, in due file che questo pacchetto non
 tocca.
 
+**E dopo aver portato nel ramo il `main` dei simboli** (`REL-003`, prima parte, PR #58), sul commit
+di fusione `7a5d8e8` contro `main` a `6d8d82e`:
+
+```
+main   6d8d82e   46 failed, 1700 passed, 24 skipped, 12 xfailed
+fuso   7a5d8e8   46 failed, 1753 passed, 24 skipped, 12 xfailed
+                 rosse nuove: 0 · rosse sparite: 0
+```
+
+Le sei tavole, rifatte sul risultato della fusione, sono **identiche al pixel** — pagina intera, 150
+dpi — a quelle che il PO ha approvato; `ruff` verde, `mypy` con gli stessi 4 errori.
+
 La suite ha trovato **una cosa vera** a metà lavoro, ed è rimasta: togliendo l'A4 dalla scala, la
 posa di partenza — che anche l'esecutore del piano usa — smetteva di impilare sull'A3, perché la sua
 regola diceva «tranne sul foglio più piccolo» e il più piccolo era diventato l'A3. Sui cinque piani
