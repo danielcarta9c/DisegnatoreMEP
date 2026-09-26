@@ -13,6 +13,29 @@
 > **Il pacchetto continua dal punto 4**: le voci di catalogo e il dato che distingue le varianti, il
 > circuito solare da decidere con il PO, la tavola di prova. Sono aperti i criteri **4** e **5**, e il
 > criterio **0** vale per la tavola di prova. Il ramo riparte da `main` dopo la fusione.
+>
+> **▶ 26 settembre 2026 — il PO ha deciso quello che mancava** (I-129, I-130): il circuito solare è
+> **magenta**, mandata e ritorno (**D-186**); le varianti si scelgono **solo quando il testo le
+> nomina**, la pompa di calore grande e la caldaia modulare hanno **il circolatore a bordo**, sul
+> circuito solare **le regole non aggiungono niente**, il collettore è un generatore (GT), il fluido
+> si chiama «fluido solare» (**D-187**).
+>
+> **Tre estensioni del perimetro, dichiarate prima di eseguirle**, perché D-187 le chiede:
+> 1. **`src/disegnatore_mep/rules/engine.py`**, una condizione sola: una regola non riguarda una rete
+>    del fluido solare. È il punto in cui il motore decide se una regola parla di una rete; così le
+>    sedici regole restano come sono e il serpentino di integrazione del bollitore, che sta sulla rete
+>    di riscaldamento, continua a ricevere il suo corredo. Senza, sette regole che non guardano il
+>    fluido — l'intercettazione, il filtro, il termometro, il separatore d'aria… — porterebbero pezzi
+>    sul circuito solare;
+> 2. **`skill/capire/ISTRUZIONI.md`** oltre la riga delle varianti: il fluido solare fra i fluidi che
+>    «Capire» può dichiarare, e la riga che gli dice di trascrivere il gruppo di circolazione solare e
+>    di chiedere se il testo non lo descrive — le regole non lo aggiungeranno;
+> 3. **`naming/media.json`**, il nome del fluido solare.
+>
+> E una cosa che il pacchetto non diceva: **il circuito solare ha bisogno dei suoi accessori in
+> catalogo** — circolatore, ritegno, sicurezza, vaso, manometro, termometro, intercettazione, raccordi
+> —, perché ogni voce di catalogo dichiara il fluido dei suoi attacchi, come già succede per l'acqua
+> sanitaria. Sono gli stessi simboli, con il fluido solare.
 **Base:** `main` a `130be28` — `DRAW-018` fuso con la PR **#57**, tavole approvate (**I-119**).
 **Ramo:** `claude/missing-symbols-uuzbhb`, quello che l'ambiente della sessione assegna.
 **Release:** la prima release (**D-183**, `docs/plans/2026-09-03-release-plan.md`).
