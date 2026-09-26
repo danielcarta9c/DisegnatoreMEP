@@ -126,6 +126,31 @@ def test_supply_and_return_of_one_fluid_are_told_apart() -> None:
     )
 
 
+def test_the_solar_circuit_is_magenta_both_ways() -> None:
+    """D-186: il PO, «magenta sia mandata che ritorno». E' l'unico fluido il cui
+    ritorno non cambia colore, e deve restare distinto dal riscaldamento e dal
+    refrigerante, che sulla stessa tavola possono esserci."""
+    andata, ritorno = style_for("solar_fluid"), style_for("solar_fluid", supply=False)
+    assert andata == ritorno
+    assert andata[0] not in {
+        style_for(medium, supply=verso)[0]
+        for medium in ("heating_water", "refrigerant_liquid", "refrigerant_gas", "domestic_hot_water")
+        for verso in (True, False)
+    }
+
+
+def test_the_solar_fluid_has_its_italian_name() -> None:
+    """D-187: il fluido del circuito solare si chiama «fluido solare», in legenda
+    e in ogni documento che lo nomina."""
+    import json
+
+    from disegnatore_mep.layout.legend import MEDIUM_NAMES
+
+    assert MEDIUM_NAMES["solar_fluid"] == "Fluido solare"
+    media = json.loads((ROOT / "naming" / "media.json").read_text(encoding="utf-8"))["media"]
+    assert {"medium": "solar_fluid", "name": "fluido solare"} in media
+
+
 def test_an_unknown_medium_falls_back_to_black() -> None:
     assert style_for("something_new") == ("#111111", "none")
     assert style_for("something_new", supply=False)[0] == "#5d6d7e"

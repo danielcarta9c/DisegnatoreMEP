@@ -49,6 +49,10 @@ MEDIUM_STYLES: dict[str, tuple[str, str]] = {
     "refrigerant_liquid": ("#6c3483", "none"),
     "refrigerant_gas": ("#6c3483", "6 2"),
     "condensate": ("#616a6b", "2 2"),
+    # Il circuito solare (D-186): magenta, a tratto pieno come l'acqua di
+    # riscaldamento. La tonalita' e' una scelta di questa sessione: lontana dal
+    # viola del refrigerante e dal rosso del riscaldamento.
+    "solar_fluid": ("#c71585", "none"),
 }
 """Colore e tratto per fluido (D-057).
 
@@ -69,6 +73,7 @@ MEDIUM_NAMES: dict[str, str] = {
     "refrigerant_liquid": "Refrigerante liquido",
     "refrigerant_gas": "Refrigerante gas",
     "condensate": "Condensa",
+    "solar_fluid": "Fluido solare",
 }
 """Denominazione italiana del fluido, per la legenda (D-051)."""
 
@@ -90,6 +95,9 @@ SUPPLY_SHIFT = {
     "#d68910": RECIRCULATION_COLOUR,
     "#148f77": "#117a65",
     "#6c3483": "#5b2c6f",
+    # Il solare torna dello stesso magenta con cui va (D-186): il PO, «magenta
+    # sia mandata che ritorno».
+    "#c71585": "#c71585",
 }
 """Il colore del ritorno, dato quello della mandata.
 
