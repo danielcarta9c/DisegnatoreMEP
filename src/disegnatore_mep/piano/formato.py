@@ -43,8 +43,9 @@ from pydantic_core import ErrorDetails
 
 from disegnatore_mep.model.base import FiniteFloat, StrictModel
 
-FORMATI_ORDINARI: tuple[str, ...] = ("A4", "A3", "A2", "A1")
-"""I formati ordinari, dal piu' piccolo al piu' grande (D-058, esteso da D-148).
+FORMATI_ORDINARI: tuple[str, ...] = ("A3", "A2", "A1")
+"""I formati ordinari, dal piu' piccolo al piu' grande (D-058, esteso da D-148,
+ristretto da D-186: l'A4 non contiene il cartiglio Nove C).
 
 Sono gli stessi di `graphics.frame.ORDINARY_FRAMES`, e l'ordine e' quello: qui
 servono per **nominarli** quando un piano ne chiede un altro. D-148 e'
@@ -52,8 +53,8 @@ dichiarata momentanea dal PO stesso, e il giorno che si riapre questa tupla e
 quella si spostano insieme.
 """
 
-FormatoOrdinario = Literal["A4", "A3", "A2", "A1"]
-"""Il tipo di `PianoDiComposizione.formato`: uno dei quattro, e basta."""
+FormatoOrdinario = Literal["A3", "A2", "A1"]
+"""Il tipo di `PianoDiComposizione.formato`: uno dei tre, e basta (D-186)."""
 
 
 class ErroreDelPiano(ValueError):
@@ -142,7 +143,7 @@ _ATTESO_PER_CAMPO: dict[str, str] = {
     "rotazione": "un numero intero di gradi (0, 90, 180, 270)",
     "specchio": "vero o falso: se il pezzo va specchiato prima di ruotarlo (D-169)",
     "regola": "il nome della regola che ha messo il pezzo li'",
-    "formato": f"uno dei formati ordinari: {', '.join(FORMATI_ORDINARI)} (D-148)",
+    "formato": f"uno dei formati ordinari: {', '.join(FORMATI_ORDINARI)} (D-148, D-186)",
     "note": "un elenco di righe di testo",
     "pezzi": 'l\'elenco dei pezzi con il loro posto: {"id": {"x": …, "y": …}}',
 }

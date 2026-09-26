@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-25 — su `main` i **cinque simboli nuovi** di `REL-003`, forme **approvate dal PO** (I-128, D-185); il pacchetto attivo è ancora **`REL-003`**: le voci di catalogo e la tavola di prova. Dopo, `REL-001`
+**Aggiornato:** 2026-09-26 — su `main` anche **il cartiglio Nove C** (`REL-002`, tavole **approvate dal PO**, I-132), fatto in una seconda sessione mentre la prima faceva i simboli; il pacchetto attivo resta **`REL-003`**: le voci di catalogo e la tavola di prova. Dopo, `REL-001`
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -10,6 +10,33 @@
 > È stato riscritto il 20 settembre perché una sessione ha sbagliato lo sviluppo pur avendo
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
+
+## ▶ Il cartiglio è su `main` — scritto il 26 settembre 2026
+
+**`REL-002` è fatto, le tavole sono approvate** (I-132): «Si tutto perfetto» — **fuso con la PR #59**. L'ha svolto una
+seconda sessione, che il PO ha dedicato al cartiglio (I-129) mentre la prima faceva i simboli.
+Rapporto: `docs/collaudi/REL-002/RAPPORTO.md`; il pacchetto com'era: `docs/plans/pacchetti/REL-002.md`.
+
+- **Il cartiglio è quello del file del PO** (`assets/cartigli/Cartiglio_NoveC_A3.pdf`, versione del
+  25 settembre, I-130): un generatore di sola libreria standard ne scrive il **modello** accanto, e il
+  logo byte per byte. Una prova pretende che rigenerarlo dia lo stesso modello.
+- **La tavola lo porta con `--cartiglio assets/cartigli/Cartiglio_NoveC_A3.json`** su `draw`, `piano` e
+  `revisiona`. Senza, esce come prima, in bozza. **Da qui in avanti le tavole per il PO si fanno con
+  `--cartiglio`.**
+- **I dati** sono sette campi facoltativi nei metadati — indirizzo, titolo e numero della tavola,
+  tre firme, la dicitura in testata — e il numero sulle tavole dichiarate. «Capire» li chiede in una
+  voce sola; **un dato che manca si scrive «DA DEFINIRE» e la tavola esce in bozza** (D-025). Un dato
+  che manca **non si scrive nel JSON**: i grafi agli atti restano identici byte per byte.
+- **Su ogni formato il cartiglio resta a misura A3**, contro l'angolo in basso a destra, e **l'A4
+  non è più un formato ordinario** (D-186): i formati sono A3, A2, A1.
+- **Due cose trovate misurando**: `scripts/to-pdf.sh` **non stampa a misura esatta** (−0,025 % in
+  orizzontale, +0,043 % in verticale: è di `REL-001`); e togliere l'A4 faceva smettere di impilare la
+  posa sull'A3, corretto in `layout/place.py` con una prova.
+
+⚠ **Due sessioni in parallelo prendono gli stessi numeri** (I-133). Tutt'e due erano partite dallo
+stesso `main` e avevano usato I-126, I-127, I-128 e D-184: chi è arrivata seconda — il cartiglio —
+ha rinumerato i suoi in **I-129 … I-131 e D-186**. **Chi fonde, prende i numeri guardando `main` in
+quel momento**: il prossimo input è **I-134**, la prossima decisione **D-187**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 25 settembre 2026
 
@@ -106,9 +133,12 @@ qualunque potenza (la strada A, D-182) — con la ricerca su norme e costruttori
   e la descrizione dell'impianto al posto dei segnaposto;
 - la misura della sessione, **mai quella dell'agente**:
   `python docs/collaudi/DRAW-017/misura-tavole.py --dettaglio nome=grafo:piano …`;
+- la tavola **col cartiglio**: `piano … --cartiglio assets/cartigli/Cartiglio_NoveC_A3.json` (dal 26
+  settembre, `REL-002`);
 - i PDF con `scripts/to-pdf.sh`, e si guardano i PDF: i PNG di `scripts/rasterize.sh` tagliano il
   fondo del foglio (un agente di `DRAW-018` ha trovato la finestra giusta: `--window-size=1588,1400`
-  sull'A3).
+  sull'A3). ⚠ Il PDF del browser **non è a misura esatta** (−0,025 % / +0,043 %, `REL-002`): per
+  confronti al pixel si rasterizza l'SVG con MuPDF, come fa `docs/collaudi/REL-002/fedelta.py`.
 
 **Resta aperto, e non è di `REL-001`:** l'**anello** (i vincoli dell'occhio come dati per il
 pianificatore), le cure del revisore che escono, **`passa-per`**, i rilievi di A2, A3 e B5 — migliorie,

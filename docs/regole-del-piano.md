@@ -574,7 +574,8 @@ disegno è davvero pieno.
 ### D2 — Il riempimento del foglio **non è un obiettivo**
 
 Si riporta come misura, come la lunghezza (D-139). Il formato si sceglie sulla scala
-ordinaria A4 → A3 → A2 → A1 (D-148, dichiarata momentanea dal PO).
+ordinaria A3 → A2 → A1 (D-148, dichiarata momentanea dal PO; l'A4 ne è uscito con **D-186**,
+perché non contiene il cartiglio Nove C).
 
 *Fonte:* **D-149**, **D-148** (PO, I-079, I-080).
 *Controllo:* `SHEET_BARELY_FILLED`, `SHEET_TOO_FULL` — **misure**, non difetti da chiudere.

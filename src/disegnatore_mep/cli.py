@@ -8,14 +8,21 @@ from pydantic import ValidationError
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graph.naming import Naming
+from disegnatore_mep.graphics.cartiglio import (
+    Cartiglio,
+    CartiglioDellaTavola,
+    rilievi_del_cartiglio,
+    valori_del_cartiglio,
+)
+from disegnatore_mep.graphics.frame import SheetFrame
 from disegnatore_mep.graphics.registry import SymbolRegistry
-from disegnatore_mep.graphics.sheet import render_sheet
+from disegnatore_mep.graphics.sheet import render_sheet, stati_della_tavola
 from disegnatore_mep.graphics.svg import render_symbol_sheet
 from disegnatore_mep.io.canonical import canonical_json, project_fingerprint
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.addresses import VERIFY_MARK, with_addresses
 from disegnatore_mep.layout.compose import compose_on_ordinary_frame
-from disegnatore_mep.layout.geometry import drawing_fingerprint
+from disegnatore_mep.layout.geometry import SheetGeometry, drawing_fingerprint
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import IssueSeverity
 from disegnatore_mep.piano.esecutore import esegui_piano
@@ -42,6 +49,37 @@ _with_addresses = with_addresses
 """Il velo degli indirizzi vive in `layout.addresses` (DRAW-005, I-030): e' la
 sola opzione esplicita che porta gli indirizzi in tavola, e nessuna modalita'
 tocca posa o routing. Il nome di prima resta per chi lo importava da qui."""
+
+CARTIGLIO_HELP = (
+    "il modello del cartiglio Nove C, assets/cartigli/Cartiglio_NoveC_A3.json "
+    "(REL-002): la tavola esce con il cartiglio compilato coi dati del progetto. "
+    "Senza, esce con la riserva vuota e la scritta di bozza (D-025)"
+)
+
+
+def _cartiglio(
+    project: ProjectModel,
+    cartiglio: Cartiglio | None,
+    sheet: SheetGeometry,
+    frame: SheetFrame,
+) -> CartiglioDellaTavola | None:
+    """Il cartiglio di una tavola, e quello che c'e' da dirne.
+
+    Un campo da definire o un testo che non entra non fermano la tavola: la
+    tavola esce **in bozza**, marcata in testata, e il comando lo dice (D-025)."""
+    if cartiglio is None:
+        return None
+    tavola = CartiglioDellaTavola(
+        cartiglio=cartiglio, valori=valori_del_cartiglio(project, sheet.sheet_id)
+    )
+    for rilievo in rilievi_del_cartiglio(tavola, frame, stati_della_tavola(sheet)):
+        print(f"Cartiglio della tavola {sheet.sheet_id}: {rilievo}")
+    return tavola
+
+
+def _carica_cartiglio(args: argparse.Namespace) -> Cartiglio | None:
+    path: Path | None = getattr(args, "cartiglio", None)
+    return None if path is None else Cartiglio.da_file(path)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -93,6 +131,7 @@ def build_parser() -> argparse.ArgumentParser:
     draw.add_argument("--symbols", type=Path, required=True)
     draw.add_argument("--out", type=Path, required=True)
     draw.add_argument("--geometry", type=Path)
+    draw.add_argument("--cartiglio", type=Path, help=CARTIGLIO_HELP)
     # Le tabelle dei nomi servono solo alla modalita' verifica, che stampa gli
     # indirizzi dei nodi: senza indirizzi la tavola e' quella di consegna e le
     # tabelle non le legge nessuno.
@@ -123,6 +162,7 @@ def build_parser() -> argparse.ArgumentParser:
     piano.add_argument("--naming", type=Path, required=True)
     piano.add_argument("--out", type=Path, required=True)
     piano.add_argument("--geometry", type=Path)
+    piano.add_argument("--cartiglio", type=Path, help=CARTIGLIO_HELP)
     piano.add_argument(
         "--verifica",
         action="store_true",
@@ -144,6 +184,7 @@ def build_parser() -> argparse.ArgumentParser:
     revisore.add_argument("--symbols", type=Path, required=True)
     revisore.add_argument("--naming", type=Path, required=True)
     revisore.add_argument("--out", type=Path, required=True)
+    revisore.add_argument("--cartiglio", type=Path, help=CARTIGLIO_HELP)
     revisore.add_argument(
         "--tetto",
         type=int,
@@ -267,6 +308,7 @@ def _draw(args: argparse.Namespace) -> int:
     project = load_project(args.project)
     symbols = SymbolRegistry.from_directory(args.symbols)
     catalog = ComponentRegistry.from_directory(args.catalog, symbols=symbols)
+    cartiglio = _carica_cartiglio(args)
     if args.verifica and args.naming is None:
         print(
             "--verifica richiede --naming: l'indirizzo di un nodo si scrive con "
@@ -326,7 +368,8 @@ def _draw(args: argparse.Namespace) -> int:
     args.out.mkdir(parents=True, exist_ok=True)
     for sheet in drawing.sheets:
         target = args.out / f"{project.metadata.project_id}-{sheet.sheet_id}.svg"
-        target.write_text(render_sheet(sheet, frame, symbols), encoding="utf-8")
+        tavola = _cartiglio(project, cartiglio, sheet, frame)
+        target.write_text(render_sheet(sheet, frame, symbols, tavola), encoding="utf-8")
     if args.geometry:
         args.geometry.write_text(
             drawing.model_dump_json(indent=2) + "\n", encoding="utf-8"
@@ -368,6 +411,7 @@ def _piano(args: argparse.Namespace) -> int:
     simboli = SymbolRegistry.from_directory(args.symbols)
     catalogo = ComponentRegistry.from_directory(args.catalog, symbols=simboli)
     piano = carica_piano(args.piano)
+    cartiglio = _carica_cartiglio(args)
 
     esito = esegui_piano(
         modello, piano, catalogo, simboli, args.naming, verifica=args.verifica
@@ -399,7 +443,10 @@ def _piano(args: argparse.Namespace) -> int:
     args.out.mkdir(parents=True, exist_ok=True)
     for foglio in esito.disegno.sheets:
         target = args.out / f"{modello.metadata.project_id}-{foglio.sheet_id}.svg"
-        target.write_text(render_sheet(foglio, esito.frame, simboli), encoding="utf-8")
+        tavola = _cartiglio(modello, cartiglio, foglio, esito.frame)
+        target.write_text(
+            render_sheet(foglio, esito.frame, simboli, tavola), encoding="utf-8"
+        )
         print(f"\nTavola scritta: {target}")
     if args.geometry:
         args.geometry.parent.mkdir(parents=True, exist_ok=True)
@@ -441,6 +488,7 @@ def _revisiona(args: argparse.Namespace) -> int:
     simboli = SymbolRegistry.from_directory(args.symbols)
     catalogo = ComponentRegistry.from_directory(args.catalog, symbols=simboli)
     piano = carica_piano(args.piano)
+    cartiglio = _carica_cartiglio(args)
 
     esito = revisiona(
         modello, piano, catalogo, simboli, args.naming, tetto=args.tetto
@@ -466,8 +514,9 @@ def _revisiona(args: argparse.Namespace) -> int:
                 args.out
                 / f"{modello.metadata.project_id}-{foglio.sheet_id}-giro{giro.numero}.svg"
             )
+            tavola = _cartiglio(modello, cartiglio, foglio, giro.esito.frame)
             target.write_text(
-                render_sheet(foglio, giro.esito.frame, simboli), encoding="utf-8"
+                render_sheet(foglio, giro.esito.frame, simboli, tavola), encoding="utf-8"
             )
             print(f"  tavola: {target}")
 
