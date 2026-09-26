@@ -36,19 +36,25 @@ Il PO:
 - **Il DXF dà due cose che l'SVG non ha**: i **layer** e i **blocchi** — un simbolo definito una volta
   e inserito dove serve, così il disegnatore lo cambia in un colpo solo.
 - **Il cartiglio** (`REL-002`) porta testi, tracciati e un'immagine JPEG, il logo.
+- **La libreria candidata**, `ezdxf` 1.4.4, è MIT e richiede `pyparsing`, `typing_extensions`, **`numpy`**
+  e **`fonttools`** (metadati del pacchetto, `pip download ezdxf`, 26 settembre 2026): `numpy` non è pura
+  Python, e per la skill di `REL-001` va verificato che l'ambiente lo abbia.
 
 ---
 
 ## Le cose da fare, in quest'ordine
 
-### 1. Come si esporta — lo decide il PO (I-125)
+### 1. Come si esporta — lo decide il PO (I-125), guardando il DXF (I-138)
 
-Prima di scrivere una riga. La sessione porta una proposta, dal riferimento che il PO dà o, se non
-c'è, da quello che fanno le tavole CAD pubbliche; **il PO decide guardandola**, perché è convenzione
-grafica (D-165):
+> **▶ 26 settembre 2026 — il PO ha risposto** (I-138): **nessun riferimento di studio**, se ne crea uno
+> nuovo. Fissa quattro cose: **blocchi per i simboli**, **linee col loro tratteggio**, **frecce già
+> sulle linee**, un DXF **che si apre in AutoCAD senza lavoro** — e il PDF resta quello delle tavole
+> approvate. **Il resto lo propone la sessione dalle buone pratiche documentate**, ogni scelta con la sua
+> fonte nel registro (come per i simboli), e **il PO lo giudica aprendo il DXF in AutoCAD**: la
+> decisione si scrive dopo il suo sì, non prima.
 
-- **il riferimento**: un file CAD di Nove C — un template o una tavola — da cui prendere layer, stili
-  di testo e blocchi; oppure la proposta della sessione;
+Le scelte da fare, con le fonti:
+
 - **i layer**: per fluido, e per mandata e ritorno? simboli, testi, legenda e cartiglio separati?
 - **i blocchi**: un blocco per simbolo, con che nome, e con gli attacchi segnati o no;
 - **i testi**: lo stile e il carattere — AutoCAD non ha i caratteri del browser;
