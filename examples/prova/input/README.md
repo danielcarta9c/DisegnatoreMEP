@@ -14,6 +14,7 @@ elencate impianto per impianto nel generatore delle letture, qui accanto.
 | File | Cosa contiene |
 |---|---|
 | `2026-08-06-impianti-di-prova.txt` | Cinque impianti descritti a parole, consegnati il 6 agosto 2026 |
+| `2026-09-26-impianto-6-simboli-nuovi.txt` | Un sesto impianto, **scritto dalla sessione** di `REL-003` nello stile dei cinque, perché usi i cinque simboli nuovi: la pompa di calore di alta potenza, la caldaia modulare, il collettore solare, il bollitore a due serpentini, il ventilconvettore canalizzato. **Non viene dal committente** e non contiene dati di clienti; la regola «non si modifica» vale anche per lui |
 
 ## La catena, da qui in poi
 

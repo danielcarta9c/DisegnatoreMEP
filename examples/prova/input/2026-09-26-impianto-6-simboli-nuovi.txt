@@ -1,0 +1,18 @@
+# Impianto di prova per i simboli nuovi — scritto dalla sessione il 26 settembre 2026 (REL-003)
+
+## Esempio 6 – Centrale ibrida condominiale con pompa di calore di alta potenza, caldaia modulare e solare termico
+
+La centrale termica di un condominio è composta da una pompa di calore aria-acqua di alta potenza da 120 kW e da una caldaia modulare a condensazione da 150 kW, collegate in parallelo. La pompa di calore lavora come generatore principale, mentre la caldaia interviene come integrazione quando serve maggiore potenza oppure temperature di mandata più alte.
+
+I due generatori alimentano un volume tecnico da 1000 litri a quattro tubi. Sul volume tecnico sono previsti il collegamento per il carico automatico dell’impianto da acquedotto e lo scarico.
+
+Dal volume tecnico partono due circuiti secondari, ciascuno con il proprio circolatore:
+
+- un circuito che alimenta i radiatori degli appartamenti;
+- un circuito che alimenta i fan-coil canalizzati degli spazi comuni al piano terra.
+
+La produzione di ACS è centralizzata con un bollitore a doppio serpentino da 1500 litri. Il serpentino superiore è alimentato dai generatori: una valvola a tre vie sulla mandata devia il flusso verso il bollitore quando è richiesta la produzione sanitaria, dando priorità all’ACS. Il serpentino inferiore è alimentato da un campo di collettori solari termici.
+
+Il circuito solare ha un gruppo di circolazione con circolatore, valvola di ritegno, valvola di sicurezza, manometro e vaso di espansione solare.
+
+L’acqua fredda sanitaria entra nella parte bassa del bollitore e l’ACS viene prelevata dalla parte alta. Sull’uscita è prevista una valvola miscelatrice termostatica. Non è previsto il circuito di ricircolo ACS.
