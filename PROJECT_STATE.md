@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-25 (`REL-003`, prima parte: **i cinque simboli nuovi**, forme **approvate dal PO**, I-128 e D-185, su `main` con la PR di `REL-003`; il pacchetto continua con le voci di catalogo e la tavola di prova, poi `REL-001`)
+**Aggiornato:** 2026-09-26 (`REL-002`, **il cartiglio Nove C**, tavole **approvate dal PO** — I-132 —, su `main`; `REL-003` resta il pacchetto attivo, con le voci di catalogo e la tavola di prova, poi `REL-001`)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -13,6 +13,23 @@
 > ci siamo arrivati, non per sapere come funziona la skill.
 
 ---
+
+## Dove siamo — 26 settembre 2026
+
+**Il cartiglio Nove C è sulla tavola** (`REL-002`, I-132, PR #59): «Si tutto perfetto». L'ha fatto una
+seconda sessione che il PO ha dedicato al cartiglio (I-129), mentre la prima faceva i simboli.
+
+- **Il cartiglio è il file del PO** (I-130), letto da un generatore che ne scrive il modello e il
+  logo; la tavola lo porta con `--cartiglio`, compilato con i dati del progetto. Un dato che manca è
+  «DA DEFINIRE», e la tavola esce in bozza (D-025).
+- **L'A4 non è più un formato ordinario** (D-186): il cartiglio è largo 400 mm e resta a misura su
+  ogni foglio, contro l'angolo in basso a destra.
+- **Il disegno delle cinque tavole approvate non si è mosso di un pixel**, e il cartiglio disegnato
+  coincide col file del PO fuori dai testi.
+- **Suite:** le stesse 46 rosse di `main`; zero `skip` e zero `xfail` nuovi. Rapporto:
+  `docs/collaudi/REL-002/RAPPORTO.md`.
+- **Le due sessioni avevano preso gli stessi numeri** (I-133): quelli del cartiglio sono diventati
+  I-129 … I-131 e D-186.
 
 ## Dove siamo — 25 settembre 2026
 

@@ -31,6 +31,9 @@ GENERATORS: list[tuple[str, str]] = [
     # riportati indietro alla prima rigenerazione. DRAW-005 li ha portati nel
     # generatore, e da qui la libreria pubblicata e' la sua rigenerazione.
     ("examples/graphics/build_symbols.py", "assets/symbols"),
+    # Il modello del cartiglio Nove C, letto dal file del PO (REL-002, I-130): chi
+    # lo corregge a mano fa fallire questa prova, e il file del PO resta la fonte.
+    ("examples/cartigli/build_cartiglio.py", "assets/cartigli"),
 ]
 
 

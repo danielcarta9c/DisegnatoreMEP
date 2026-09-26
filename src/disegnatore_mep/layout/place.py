@@ -37,7 +37,7 @@ from dataclasses import dataclass
 from math import ceil
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
+from disegnatore_mep.graphics.frame import NOVE_C_A4, Rect, SheetFrame
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.model.order import structural_order
 from disegnatore_mep.model.project import PortRef, ProjectModel
@@ -1685,15 +1685,18 @@ def place_sheet(
         # disegno perso dentro un foglio grande — che e' esattamente cio' che
         # il PO ha bocciato il 19 settembre guardando la cascata su A1.
         #
-        # Il foglio piu' piccolo resta escluso, ed e' la ragione originale:
-        # impilare li' comprimerebbe su una A4 un disegno che D-058 manda in A3.
+        # L'A4 resta escluso, ed e' la ragione originale: impilare li'
+        # comprimerebbe su una A4 un disegno che D-058 manda in A3. **E' l'A4,
+        # non «il foglio piu' piccolo»**: il 25 settembre 2026 D-186 ha tolto
+        # l'A4 dalla scala, e con la formula di prima il piu' piccolo sarebbe
+        # diventato l'A3 — che smetteva di impilare. Misurato: la posa della
+        # centrale a quattro fasce su A3 falliva, e su `main` impilava.
         overflow = LayoutError(
             f"the {len(used_roles)} functional bands need {total:g}mm but the drawing "
             f"area is {area.width_mm:g}mm wide: symbols are never shrunk to fit, "
             f"split the plant across more sheets"
         )
-        smallest = min(item.standard.usable_width_mm for item in ORDINARY_FRAMES)
-        if frame.standard.usable_width_mm <= smallest + 1e-9:
+        if frame.standard.usable_width_mm <= NOVE_C_A4.standard.usable_width_mm + 1e-9:
             raise overflow
         ground_ids = frozenset(
             item for item in placeable if standings[item] is Standing.GROUND

@@ -16,6 +16,7 @@ scorciatoia.**
 # categoria: difende il motore — la spezzata di ripiego di route.py e la scala dei formati (D-150); una prova difendeva il solutore: elencata nel rapporto
 
 import inspect
+from pathlib import Path
 from typing import cast
 
 import pytest
@@ -29,10 +30,15 @@ from disegnatore_mep.graphics.frame import (
     ORDINARY_FRAMES,
     SheetFrame,
 )
+from disegnatore_mep.graphics.registry import SymbolRegistry
+from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout import compose as compose_module
-from disegnatore_mep.layout.compose import compose_on_ordinary_frame
+from disegnatore_mep.layout.compose import compose_on_ordinary_frame, inline_component_ids
 from disegnatore_mep.layout.errors import LayoutError
+from disegnatore_mep.layout.partition import partition_project
+from disegnatore_mep.layout.place import place_sheet
 from disegnatore_mep.layout.route import _last_resort
+from disegnatore_mep.layout.trunks import build_trunks
 from disegnatore_mep.model.project import ProjectModel
 
 # Il doppio di `compose_drawing` non guarda ne' il modello ne' il catalogo:
@@ -124,15 +130,16 @@ def falsa(monkeypatch: pytest.MonkeyPatch):  # type: ignore[no-untyped-def]
 def test_un_impianto_che_entra_esce_sul_primo_foglio_che_lo_regge(falsa) -> None:  # type: ignore[no-untyped-def]
     """Il criterio 3: il ripiego **non anticipa la scala**.
 
-    L'impianto entra su A2. Deve uscire su A2, non su A4 col ripiego — e il
-    ripiego non deve essere nemmeno provato.
+    L'impianto entra su A2. Deve uscire su A2, non su A3 col ripiego — e il
+    ripiego non deve essere nemmeno provato. La scala comincia dall'A3 dal 25
+    settembre 2026 (**D-186**): prima provava anche l'A4.
     """
     doppio = falsa(entra_da_mm=594.0)
 
     frame, _ = compose_on_ordinary_frame(NESSUN_MODELLO, NESSUN_CATALOGO)
 
     assert frame is NOVE_C_A2
-    assert doppio.chiamate == [(297.0, False), (420.0, False), (594.0, False)]
+    assert doppio.chiamate == [(420.0, False), (594.0, False)]
     assert not any(ripiego for _, ripiego in doppio.chiamate)
 
 
@@ -144,9 +151,9 @@ def test_il_ripiego_scatta_solo_a_formati_finiti_e_sul_piu_grande(falsa) -> None
     frame, _ = compose_on_ordinary_frame(NESSUN_MODELLO, NESSUN_CATALOGO)
 
     assert frame is NOVE_C_A1
-    # Tutti i formati provati sul serio, in ordine, e **poi** il ripiego.
+    # Tutti i formati provati sul serio, in ordine, e **poi** il ripiego. L'A4
+    # non c'e' piu' (D-186).
     assert doppio.chiamate == [
-        (297.0, False),
         (420.0, False),
         (594.0, False),
         (841.0, False),
@@ -163,8 +170,11 @@ def test_senza_nessun_formato_da_provare_si_alza_le_mani(falsa) -> None:  # type
 
 
 def test_la_scala_dei_formati_arriva_all_a1(falsa) -> None:  # type: ignore[no-untyped-def]
-    """D-148, letto da chi sceglie: quattro formati, dal piu' piccolo in su."""
-    assert ORDINARY_FRAMES == (NOVE_C_A4, NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
+    """D-148, letto da chi sceglie: tre formati, dal piu' piccolo in su.
+
+    Erano quattro fino al 25 settembre 2026: **D-186** ha tolto l'A4, che non
+    contiene il cartiglio Nove C."""
+    assert ORDINARY_FRAMES == (NOVE_C_A3, NOVE_C_A2, NOVE_C_A1)
 
 
 # ---------------------------------------------------------------------------
@@ -222,3 +232,24 @@ def test_il_motore_ordinario_non_tollera_una_tratta_persa() -> None:
     from disegnatore_mep.layout.route import route_sheet
 
     assert inspect.signature(route_sheet).parameters["tolerant"].default is False
+
+
+def test_sull_a3_si_impila_ancora_prima_di_salire_di_formato() -> None:
+    """**D-186 non tocca la posa.** L'A4 e' uscito dalla scala dei formati, e la
+    posa di partenza — quella che anche l'esecutore del piano usa — impila prima di
+    salire di foglio **tranne sull'A4** (D-058). Con la formula «tranne sul foglio
+    piu' piccolo» l'A3 sarebbe diventato quel foglio, e avrebbe smesso di impilare:
+    misurato il 25 settembre 2026, la centrale a quattro fasce su A3 non si posava
+    piu', e su `main` si'."""
+    radice = Path(__file__).resolve().parents[2]
+    simboli = SymbolRegistry.from_directory(radice / "assets" / "symbols")
+    catalogo = ComponentRegistry.from_directory(
+        radice / "examples" / "layout" / "catalog", symbols=simboli
+    )
+    progetto = load_project(radice / "examples" / "layout" / "centrale-pdc-quattro-fasce.json")
+    in_linea = inline_component_ids(progetto, catalogo)
+    partizione = partition_project(progetto, build_trunks(progetto, in_linea))[0]
+
+    assert place_sheet(progetto, partizione, catalogo, NOVE_C_A3, in_linea)
+    with pytest.raises(LayoutError, match="functional bands need"):
+        place_sheet(progetto, partizione, catalogo, NOVE_C_A4, in_linea)

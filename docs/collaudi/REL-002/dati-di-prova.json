@@ -1,0 +1,21 @@
+{
+  "_nota": "Dati di prova del cartiglio, inventati: il repository e' pubblico (D-038). Si aggiungono ai metadati dei grafi approvati di DRAW-018 solo per vedere il cartiglio compilato; il disegno non li legge.",
+  "tutti": {
+    "client": "Condominio di prova",
+    "address": "Via di Prova 1, 00000 Comune di Prova (XX)",
+    "sheet_title": "Schema funzionale della centrale termica",
+    "header_note": "Conto Termico con sconto in fattura"
+  },
+  "impianti": {
+    "1": {"sheet_number": "T1"},
+    "2": {"sheet_number": "T2"},
+    "3": {
+      "sheet_number": "T3",
+      "drawn_by": "Ing. Nome Cognome",
+      "checked_by": "Ing. Nome Cognome",
+      "approved_by": "Ing. Nome Cognome"
+    },
+    "4": {"sheet_number": "T4"},
+    "5": {"sheet_number": "T5"}
+  }
+}

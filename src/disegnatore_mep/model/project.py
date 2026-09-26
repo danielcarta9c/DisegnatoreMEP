@@ -1,8 +1,8 @@
 from collections.abc import Sequence
 from datetime import date
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import Field, model_validator
+from pydantic import Field, SerializerFunctionWrapHandler, model_serializer, model_validator
 
 from .base import ID_PATTERN, IdentifiedModel, StrictModel
 from .types import (
@@ -22,13 +22,71 @@ il modello non porta rami condizionali sulla versione.
 """
 
 
+DEL_CARTIGLIO: tuple[str, ...] = (
+    "address",
+    "sheet_title",
+    "sheet_number",
+    "drawn_by",
+    "checked_by",
+    "approved_by",
+    "header_note",
+)
+"""I dati del cartiglio che i metadati possono non avere (REL-002)."""
+
+
+def _senza_i_vuoti(dati: dict[str, Any], nomi: tuple[str, ...]) -> dict[str, Any]:
+    for nome in nomi:
+        if dati.get(nome) is None:
+            dati.pop(nome, None)
+    return dati
+
+
 class ProjectMetadata(StrictModel):
+    """Il documento, non l'impianto: sono i dati che il cartiglio scrive.
+
+    I campi dopo `issue_date` sono **facoltativi e additivi** (REL-002, I-130),
+    come `plant_regime`: un documento 1.1.0 senza di loro resta valido, e la
+    versione dello schema non cambia. **Assente vuol dire non dato**: il
+    cartiglio scrive «DA DEFINIRE» dove il dato serve, e la tavola esce in
+    bozza (D-025). Nessuno li inventa (D-087).
+    """
+
     project_id: str = Field(pattern=ID_PATTERN)
     client: str = Field(min_length=1)
     project_name: str = Field(min_length=1)
     commission_code: str = Field(min_length=1)
     revision: str = Field(min_length=1)
     issue_date: date
+    address: str | None = Field(default=None, min_length=1)
+    """L'indirizzo dell'intervento, come la casella del cartiglio lo chiede:
+    via, comune e provincia."""
+    sheet_title: str | None = Field(default=None, min_length=1)
+    """Il titolo della tavola, per un progetto su una tavola sola. Quando il
+    progetto dichiara le proprie tavole vale il titolo di ciascuna
+    (`SheetIntentModel.title`)."""
+    sheet_number: str | None = Field(default=None, min_length=1)
+    """Il numero della tavola nell'elenco degli elaborati della commessa, come
+    il cartiglio lo stampa: «T3». Per un progetto su piu' tavole vale quello di
+    ciascuna (`SheetIntentModel.number`)."""
+    drawn_by: str | None = Field(default=None, min_length=1)
+    """Chi ha disegnato. Senza, la riga della firma resta vuota."""
+    checked_by: str | None = Field(default=None, min_length=1)
+    """Chi ha verificato. Senza, la riga della firma resta vuota."""
+    approved_by: str | None = Field(default=None, min_length=1)
+    """Chi ha approvato. Senza, la riga della firma resta vuota."""
+    header_note: str | None = Field(default=None, min_length=1)
+    """La dicitura che il cartiglio Nove C porta in testata, a destra: nel file
+    del PO e' «Conto Termico con sconto in fattura». Senza, resta vuota."""
+
+    @model_serializer(mode="wrap")
+    def _senza_i_dati_non_dati(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        """Un dato del cartiglio che manca **non si scrive**, nemmeno come `null`.
+
+        E' cio' che tiene l'aggiunta davvero additiva: un documento scritto prima
+        di REL-002 esce da `rules --apply-all` **identico byte per byte**, e la
+        sua impronta (`io.canonical`) non cambia. I grafi agli atti restano
+        quelli su cui i loro piani sono nati."""
+        return _senza_i_vuoti(handler(self), DEL_CARTIGLIO)
 
 
 class EvidenceRef(StrictModel):
@@ -104,8 +162,16 @@ class BandAssignment(StrictModel):
 
 class SheetIntentModel(IdentifiedModel):
     title: str = Field(min_length=1)
+    number: str | None = Field(default=None, min_length=1)
+    """Il numero di questa tavola nel cartiglio, «T3» (REL-002). Facoltativo e
+    additivo; senza, il cartiglio scrive «DA DEFINIRE»."""
     subsystem_ids: list[str] = Field(default_factory=list)
     band_assignments: list[BandAssignment] = Field(default_factory=list)
+
+    @model_serializer(mode="wrap")
+    def _senza_il_numero_non_dato(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        """Come per i metadati: un numero che non c'e' non si scrive."""
+        return _senza_i_vuoti(handler(self), ("number",))
 
     @model_validator(mode="after")
     def band_assignments_are_coherent(self) -> "SheetIntentModel":
