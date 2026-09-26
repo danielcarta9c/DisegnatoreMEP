@@ -1,0 +1,240 @@
+{
+ "formato": "A2",
+ "note": [
+  "Scheletro (§2.2): PdC a (0;0) e volume tecnico a (237,5;0), stesso y: mandata a +5 e ritorno a +20 corrono retti dalle porte della PdC a quelle del volume, deviatrice compresa (D-159, B1). La caldaia modulare e' impilata sotto la PdC alla stessa x (A2).",
+  "Collettori dei generatori su due verticali a 10 mm accanto alle macchine (B3): mandata vicina (x 107,5), ritorno lontano (x 117,5). Misurato sulla posa consegnata: mandata vicina 3 sormonti sulla tavola, ritorno vicino 4. Il solo sormonto dei collettori e' il ritorno PdC che scavalca la verticale di mandata.",
+  "Deviatrice sulla mandata con la terza via in basso (rotazione 0 scritta, D-168) verso la serpentina superiore del bollitore; il ritorno della serpentina sale al raccordo rc-ritorno-primario, 10 mm a sinistra della terza via. Un solo sormonto (la terza via scavalca il ritorno del volume), quello imposto dal bollitore fuori dalla coppia (B1); le due verticali della serpentina corrono appaiate a 10 mm (B11).",
+  "Bollitore sotto il primario e sotto il volume, 17,5 mm a destra: dhw_out sale fuori dallo scarico del volume. Le porte del corredo restano libere (§4bis): serpentina superiore dall'alto, solare e AF da sinistra, ACS in alto.",
+  "Collettore solare in fascia generazione (A1), faccia destra allineata ai generatori, alla quota che porta la mandata dritta in solar_coil_in. Gli interassi sono 15 contro 10: il gradino di 5 mm lo paga il ritorno subito dopo il collettore (caso noto B11). Con il ritorno dritto (prima prova) la mandata scalava accanto al bollitore e correva a 5 mm dal ritorno della serpentina (PARALLEL_RUNS_WITHOUT_A_FREE_LANE).",
+  "Solare: vaso, manometro e sicurezza appesi sotto il ritorno, addosso al collettore che proteggono (A4); circolatore e ritegno li posa il motore dalla porta del bollitore. L'AF entra in cold_in 10 mm sotto il ritorno solare, e gli appesi solari restano a sinistra del suo confine per non attraversarla.",
+  "Ritorno primario: vaso, gruppo di riempimento (girato di 180: b al raccordo, a all'acquedotto) e manometro appesi SOTTO la linea, perche' sopra, a 15 mm, corre la mandata; 15 mm fra i raccordi (D-062). Confine AF del riempimento addosso al gruppo (A4).",
+  "Pettine (B12): colonna di ritorno vicina al volume (x 285), mandata a 10 mm (x 295). Misurato: ritorno vicino 10 pieghe e 3 sormonti, mandata vicina 16 e 4 con tre rilievi in piu'. I radiatori hanno out alla quota di secondary_in: il ritorno principale corre dritto dai radiatori al volume e la mandata paga il gradino 15/10 alla testa della colonna. Fancoil impilato sotto, stessa x, con la colonna corta quanto basta perche' il circolatore stia sull'orizzontale (a +25 cadeva sulla piega: INLINE_ORGAN_BREAKS_THE_RUN).",
+  "Raccordo di mandata del pettine: giacitura scritta (rotazione 90) contro l'indicazione di §4 per i raccordi. La dedotta (0->180) mette la corsa in orizzontale e la mandata fa una Z: 11 pieghe invece di 10 sulla tavola, 4 invece di 2 sulla catena volume-fancoil (misurato). Il raccordo di ritorno e' lasciato alla deduzione.",
+  "ACS: sale dal dhw_out e gira a destra sotto il pettine; miscelatrice con hot_in da sinistra, out a destra e cold_in in basso (rotazione 0 scritta, D-175) con il suo confine AF sotto; confine utenze addosso alla miscelatrice (A4).",
+  "Rilievi che restano, e perche' non si inseguono: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER bollitore-collettore solare (serpentina a 10 contro 15) e fancoil-volume (terminale a 10 contro 15) sono i due casi noti di B11. HIGHWAY_IS_NOT_STRAIGHT sulla catena volume -> rip-mandata-secondario -> fancoil conta come 2 di troppo le due L del pettine (testa e piede della colonna), che B1 da' per imposte; con le colonne a posto non si tolgono, si spostano soltanto (ritorno o mandata).",
+  "Formato A2: in A3 la legenda chiede 252,5 mm e la sua fascia ne ha 235 (misurato). Il disegno misura 360 x 165 mm; il bianco che resta non si corregge (D-170).",
+  "Domande dichiarate al progettista (§7; il piano non le presuppone e compone lo stesso): il bollitore ha recirculation_in libero e il grafo non ha ricircolo ACS; il circuito solare non ha sfiato ne' intercettazioni (il catalogo ha air-vent-solar e valve-isolation-solar); il volume tecnico ha vent libero. Voluto, o manca?",
+  "Misura della tavola consegnata (geometria.json): 48 tratte, 10 pieghe, 3 sormonti, tutti topologicamente inevitabili (collettori dei generatori, serpentina del bollitore, pettine); 0 tratte cedute, 0 rilievi bloccanti."
+ ],
+ "pezzi": {
+  "pdc": {
+   "x": 0.0,
+   "y": 0.0,
+   "regola": "D-159/B1 — stesso y del volume tecnico: mandata +5 e ritorno +20 corrono retti fino al volume"
+  },
+  "caldaia": {
+   "x": 0.0,
+   "y": 50.0,
+   "regola": "A2 — in parallelo alla PdC: impilata alla stessa x, sotto, passo 50: fra le due resta la fascia per sicurezza e termometro della caldaia, appesi sopra la sua mandata"
+  },
+  "volume-tecnico": {
+   "x": 237.5,
+   "y": 0.0,
+   "regola": "D-159/B1 — stesso y della PdC: primario retto; A1 fascia accumuli"
+  },
+  "bollitore": {
+   "x": 255.0,
+   "y": 70.0,
+   "regola": "A1/B1 — fascia accumuli, sotto il primario: la serpentina superiore scende dalla terza via con una L imposta; 17,5 mm a destra del volume perche' dhw_out salga fuori dal suo scarico; lati liberi per solare e AF (§4bis)"
+  },
+  "collettore-solare": {
+   "x": 20.0,
+   "y": 92.5,
+   "regola": "A1 fascia generazione, faccia destra allineata ai generatori; B1 — mandata alla quota di solar_coil_in, retta; il ritorno paga il gradino 15/10 subito dopo il collettore (caso noto B11)"
+  },
+  "radiatori": {
+   "x": 340.0,
+   "y": 7.5,
+   "regola": "B12 — prima utenza del pettine: out a +12,5 alla quota di secondary_in, il ritorno corre dritto fino al volume; in dalla derivazione della colonna di mandata; D-167 entra da sinistra"
+  },
+  "fancoil": {
+   "x": 340.0,
+   "y": 30.0,
+   "regola": "B12/A2 — seconda utenza impilata sotto i radiatori, stessa x, 10 mm fra i corpi; colonna corta quanto basta perche' il circolatore cada sull'orizzontale (a +25 cade sulla piega, misurato)"
+  },
+  "rc-mandata-generatori": {
+   "x": 105.0,
+   "y": 2.5,
+   "regola": "B3 — collettore di mandata sulla verticale vicina alle macchine, alla quota della mandata PdC; misurato: mandata vicina 3 sormonti sulla tavola, ritorno vicino 4"
+  },
+  "rip-ritorno-generatori": {
+   "x": 115.0,
+   "y": 17.5,
+   "regola": "B3 — collettore di ritorno sulla seconda verticale, 10 mm dalla prima (B9), alla quota del ritorno PdC"
+  },
+  "tee-valve-safety-pdc-water-supply": {
+   "x": 67.5,
+   "y": 2.5,
+   "regola": "B8 — sulla mandata del generatore, alla sua quota"
+  },
+  "tee-thermometer-pdc-water-supply": {
+   "x": 80.0,
+   "y": 2.5,
+   "regola": "B8 — sulla mandata del generatore, alla sua quota"
+  },
+  "valve-safety-pdc-water-supply": {
+   "x": 67.5,
+   "y": -17.5,
+   "regola": "A4 — sopra il raccordo, stacco minimo 10 mm"
+  },
+  "thermometer-pdc-water-supply": {
+   "x": 80.0,
+   "y": -17.5,
+   "regola": "A4 — sopra il raccordo, stacco minimo 10 mm"
+  },
+  "tee-valve-safety-caldaia-water-supply": {
+   "x": 67.5,
+   "y": 52.5,
+   "regola": "B8 — sulla mandata del generatore, alla sua quota"
+  },
+  "tee-thermometer-caldaia-water-supply": {
+   "x": 80.0,
+   "y": 52.5,
+   "regola": "B8 — sulla mandata del generatore, alla sua quota"
+  },
+  "valve-safety-caldaia-water-supply": {
+   "x": 67.5,
+   "y": 32.5,
+   "regola": "A4 — sopra il raccordo, stacco minimo 10 mm"
+  },
+  "thermometer-caldaia-water-supply": {
+   "x": 80.0,
+   "y": 32.5,
+   "regola": "A4 — sopra il raccordo, stacco minimo 10 mm"
+  },
+  "tee-expansion-connection-rip-ritorno-generatori-a": {
+   "x": 155.0,
+   "y": 17.5,
+   "regola": "B8 — sul ritorno primario, alla sua quota; 15 mm fra i raccordi, cosi' gli appesi non si leggono come uno (D-062)"
+  },
+  "tee-filling-unit-rip-ritorno-generatori-a-b": {
+   "x": 170.0,
+   "y": 17.5,
+   "regola": "B8 — sul ritorno primario, alla sua quota; 15 mm fra i raccordi, cosi' gli appesi non si leggono come uno (D-062)"
+  },
+  "tee-pressure-gauge-rip-ritorno-generatori-a": {
+   "x": 185.0,
+   "y": 17.5,
+   "regola": "B8 — sul ritorno primario, alla sua quota; 15 mm fra i raccordi, cosi' gli appesi non si leggono come uno (D-062)"
+  },
+  "expansion-connection-rip-ritorno-generatori-a": {
+   "x": 155.0,
+   "y": 40.0,
+   "regola": "A4 — appeso sotto il ritorno (sopra passa la mandata); stacco con la valvola bloccata aperta"
+  },
+  "filling-unit-rip-ritorno-generatori-a": {
+   "x": 170.0,
+   "y": 32.5,
+   "rotazione": 180,
+   "regola": "A4 — appeso sotto il ritorno; D-168 girato di 180: b verso il raccordo, a verso l'acquedotto"
+  },
+  "inlet-filling-unit-rip-ritorno-generatori-a": {
+   "x": 170.0,
+   "y": 52.5,
+   "regola": "A4 — confine AF addosso al gruppo di riempimento"
+  },
+  "pressure-gauge-rip-ritorno-generatori-a": {
+   "x": 185.0,
+   "y": 40.0,
+   "regola": "A4 — appeso sotto il ritorno, stacco col rubinetto portamanometro"
+  },
+  "rc-ritorno-primario": {
+   "x": 200.0,
+   "y": 17.5,
+   "regola": "B8 — sul ritorno, 10 mm a sinistra della terza via: la serpentina ha un solo sormonto, quello imposto dal bollitore fuori dalla coppia (B1); a destra ne farebbe due"
+  },
+  "valvola-deviatrice": {
+   "x": 207.5,
+   "y": 0.0,
+   "rotazione": 0,
+   "regola": "D-168 — sulla mandata, dove si incontrano le sue tre linee; rotazione 0 scritta: in da sinistra, out_a a destra verso il volume, out_b in basso verso il serpentino superiore del bollitore"
+  },
+  "drain-connection-volume-tecnico-primary-in": {
+   "x": 247.5,
+   "y": 55.0,
+   "regola": "A4 — sotto il volume tecnico, stacco minimo"
+  },
+  "rc-ritorno-secondario": {
+   "x": 282.5,
+   "y": 17.5,
+   "regola": "B12/B8 — sul ritorno principale, alla quota di secondary_in: il ritorno dei radiatori entra dritto, la colonna del fancoil sale dalla derivazione (giacitura dedotta). Colonna di ritorno vicina al volume: misurato 10 pieghe e 3 sormonti, con la mandata vicina 16 e 4"
+  },
+  "rip-mandata-secondario": {
+   "x": 292.5,
+   "y": 7.5,
+   "rotazione": 90,
+   "regola": "B12 — testa della colonna di mandata, alla quota della mandata radiatori: qui la coppia paga il gradino 15/10. Giacitura scritta (90): corsa verticale sulla colonna, derivazione a destra ai radiatori (misurato: la dedotta 0->180 da' 11 pieghe sulla tavola invece di 10, e 4 invece di 2 sulla catena volume-fancoil)"
+  },
+  "mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 290.0,
+   "y": 52.5,
+   "rotazione": 0,
+   "regola": "D-175/D-168 — rotazione 0 scritta: hot_in da sinistra (l'ACS sale dal dhw_out e gira), out a destra verso le utenze, cold_in in basso verso il suo confine AF"
+  },
+  "utenze-acs": {
+   "x": 315.0,
+   "y": 55.0,
+   "regola": "A4 — confine ACS addosso alla miscelatrice"
+  },
+  "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 290.0,
+   "y": 80.0,
+   "regola": "A4/D-175 — AF sotto la terza via della miscelatrice"
+  },
+  "alimentazione-af": {
+   "x": 180.0,
+   "y": 115.0,
+   "regola": "A4 — acquedotto addosso al bollitore, alla quota di cold_in"
+  },
+  "tee-drain-connection-cold-bollitore-cold-in": {
+   "x": 205.0,
+   "y": 115.0,
+   "regola": "B8 — sulla linea AF, alla sua quota"
+  },
+  "drain-connection-cold-bollitore-cold-in": {
+   "x": 205.0,
+   "y": 130.0,
+   "regola": "A4 — appeso sotto la linea AF, stacco minimo"
+  },
+  "tee-expansion-connection-dhw-bollitore-cold-in": {
+   "x": 240.0,
+   "y": 115.0,
+   "regola": "B8 — sulla linea AF, alla sua quota"
+  },
+  "expansion-connection-dhw-bollitore-cold-in": {
+   "x": 240.0,
+   "y": 137.5,
+   "regola": "A4 — appeso sotto la linea AF, stacco con la valvola bloccata aperta"
+  },
+  "der-vaso-solare": {
+   "x": 75.0,
+   "y": 105.0,
+   "regola": "B8 — sul ritorno solare, alla quota di solar_coil_out"
+  },
+  "vaso-solare": {
+   "x": 75.0,
+   "y": 120.0,
+   "regola": "A4 — appeso sotto il ritorno solare, addosso al collettore che protegge; stacco minimo"
+  },
+  "der-manometro-solare": {
+   "x": 90.0,
+   "y": 105.0,
+   "regola": "B8 — sul ritorno solare, alla quota di solar_coil_out"
+  },
+  "manometro-solare": {
+   "x": 90.0,
+   "y": 120.0,
+   "regola": "A4 — appeso sotto il ritorno solare, addosso al collettore che protegge; stacco minimo"
+  },
+  "der-sicurezza-solare": {
+   "x": 105.0,
+   "y": 105.0,
+   "regola": "B8 — sul ritorno solare, alla quota di solar_coil_out"
+  },
+  "sicurezza-solare": {
+   "x": 105.0,
+   "y": 120.0,
+   "regola": "A4 — appeso sotto il ritorno solare, addosso al collettore che protegge; stacco minimo"
+  }
+ }
+}

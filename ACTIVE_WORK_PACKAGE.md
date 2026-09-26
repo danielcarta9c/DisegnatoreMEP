@@ -36,6 +36,20 @@
 > catalogo** — circolatore, ritegno, sicurezza, vaso, manometro, termometro, intercettazione, raccordi
 > —, perché ogni voce di catalogo dichiara il fluido dei suoi attacchi, come già succede per l'acqua
 > sanitaria. Sono gli stessi simboli, con il fluido solare.
+>
+> **▶ 26 settembre 2026 — la tavola di prova è al PO.** L'impianto 6, dal testo al PDF senza
+> toccare niente a mano: `docs/collaudi/REL-003/tavola-impianto-6.pdf`, A2, zero cedute e zero
+> bloccanti, i cinque simboli sulla stessa tavola. Il rapporto è `docs/collaudi/REL-003/RAPPORTO.md`.
+> **La fusione aspetta il sì del PO.** Tre cose fatte strada facendo, dette qui come deviazioni:
+> 1. **la legenda del solare su una riga sola**, «Fluido solare — andata e ritorno»
+>    (`layout/legend.py`): le due righe identiche le hanno viste tutt'e due i compositori, ed è la
+>    conseguenza di D-187; va al PO con la tavola;
+> 2. **`examples/cartigli/build_cartiglio.py`**, fuori perimetro: una variabile mai letta che rendeva
+>    rosso `ruff` su `main` dopo `REL-002`; tolta, e il generatore rigenera lo stesso modello;
+> 3. **i numeri**: `REL-002` è arrivato su `main` prima e ha preso I-129 … I-133 e D-186 (I-133).
+>    Quelli di questo ramo sono diventati **I-134, I-135, D-187, D-188**, e `main` è stato portato
+>    nel ramo prima delle misure finali.
+
 **Base:** `main` a `130be28` — `DRAW-018` fuso con la PR **#57**, tavole approvate (**I-119**).
 **Ramo:** `claude/missing-symbols-uuzbhb`, quello che l'ambiente della sessione assegna.
 **Release:** la prima release (**D-183**, `docs/plans/2026-09-03-release-plan.md`).

@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-26 — su `main` anche **il cartiglio Nove C** (`REL-002`, tavole **approvate dal PO**, I-132), fatto in una seconda sessione mentre la prima faceva i simboli; il pacchetto attivo resta **`REL-003`**: le voci di catalogo e la tavola di prova. Dopo, `REL-001`
+**Aggiornato:** 2026-09-26 — **`REL-003` è finito sul ramo `claude/missing-symbols-uuzbhb`, e la tavola di prova è al PO**: la fusione aspetta il suo sì. Su `main` c'è già il cartiglio (`REL-002`, I-132). Dopo, `REL-001`
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -10,6 +10,24 @@
 > È stato riscritto il 20 settembre perché una sessione ha sbagliato lo sviluppo pur avendo
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
+
+## ▶ La seconda parte di `REL-003`: la tavola è al PO — scritto il 26 settembre 2026
+
+**Tutto il pacchetto è fatto sul ramo `claude/missing-symbols-uuzbhb`**, con `main` (e il cartiglio) già
+dentro. **La fusione aspetta il sì del PO sulla tavola** — `docs/collaudi/REL-003/tavola-impianto-6.pdf` —,
+e si fa con una PR. Rapporto: `docs/collaudi/REL-003/RAPPORTO.md`, con le tavole in testa.
+
+- **Il catalogo** ha le voci dei cinque simboli e dodici accessori del circuito solare (73 voci). Le
+  tre varianti — pompa di calore di alta potenza, caldaia modulare, ventilconvettore canalizzato —
+  portano il dato `variant`, e **«Capire» le sceglie solo quando il testo le nomina** (D-188).
+- **Il fluido solare** è magenta nei due versi (D-187), su una riga sola in legenda; **sul circuito
+  solare le regole non aggiungono niente** (D-188): il gruppo lo descrive il progettista.
+- **L'impianto 6** (`examples/prova/input/2026-09-26-impianto-6-simboli-nuovi.txt`) è passato per
+  la catena intera, «Capire» e due compositori in camera pulita: grafo, piani e tavole sono in
+  `docs/collaudi/REL-003/`. Può fare da impianto nuovo per `REL-001`, e il §6 del rapporto è l'elenco
+  di quello che gli agenti hanno trovato nelle istruzioni.
+- **I numeri**: il prossimo input è **I-136**, la prossima decisione **D-189**. Due sessioni in
+  parallelo avevano preso gli stessi (I-133): chi fonde per secondo sposta i suoi.
 
 ## ▶ Il cartiglio è su `main` — scritto il 26 settembre 2026
 

@@ -43,7 +43,7 @@ della sessione** (D-183, punto 3), e il PO lo può cambiare.
 |---|---|---|
 | **`REL-001`** | **la skill vera e propria** — l'ingresso che cuce i cinque pezzi, la cartella installabile — **e il PDF fatto dalla skill** (I-121, I-122) | è il rischio più vecchio del progetto: la skill non è mai girata nel suo ambiente. E senza il PDF la skill non consegna niente |
 | **`REL-002`** — **fatto** (I-132) | **il cartiglio Nove C compilato** (I-123) | i dati del cartiglio li raccoglie «Capire»: si aggiungono alle domande della skill che `REL-001` ha messo in piedi |
-| **`REL-003`** | **i simboli nuovi**: pompa di calore di alta potenza, caldaia modulare a condensazione, solare termico, fan-coil canalizzato (I-124) | forme dalle fonti, approvate dal PO guardandole; per ciascuna la voce di catalogo, e le regole solo dove il PO le dà |
+| **`REL-003`** — **finito sul ramo, la tavola è al PO** (26 settembre) | **i simboli nuovi**: pompa di calore di alta potenza, caldaia modulare a condensazione, solare termico, fan-coil canalizzato (I-124) | forme dalle fonti, approvate dal PO guardandole; per ciascuna la voce di catalogo, e le regole solo dove il PO le dà |
 | **`REL-004`** | **il DXF** (I-125) | prima si definisce con il PO **come** si esporta — livelli, blocchi, testi, scala —, poi si scrive |
 | **`REL-005`** | **il pacchetto della release** | il numero di versione, `releases/latest/` e lo ZIP numerato (D-009), la guida d'installazione, la suite verde e il collaudo sui casi di accettazione |
 

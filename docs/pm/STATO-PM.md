@@ -1,6 +1,6 @@
 # STATO PM — il dossier di stato della sessione
 
-**Aggiornato:** 2026-09-26 (`REL-002` fuso, tavole approvate — I-132; `REL-003` attivo nell'altra sessione, prima parte su `main`; i numeri delle due sessioni rinumerati alla fusione — I-133)
+**Aggiornato:** 2026-09-26 (`REL-003` finito sul ramo, **la tavola di prova è al PO**; `REL-002` fuso, tavole approvate — I-132; i numeri delle due sessioni rinumerati alla fusione — I-133)
 **A chi serve:** alla sessione che subentra. Leggi questo e sei operativo: non ti serve un
 prompt lungo, e chi te lo dà ti sta raccontando qualcosa che dovrebbe stare qui.
 **Regola di questo file:** ogni sessione lo aggiorna prima di chiudere. Un file di stato
@@ -57,7 +57,7 @@ modello da riusare.
 | `main` | **la testa che leggi adesso.** Non si scrive uno SHA qui: questo file vive su `main` e ogni suo ritocco sposta la testa, quindi il numero nasce vecchio — è già successo due volte. La base si dice per contenuto: l'ultima fusione è la PR **#57**, che porta `DRAW-018` — una valvola di sicurezza per generatore (D-182) —, dopo la **#56** di `DRAW-017`. ✅ **Tutte e due fuse con le tavole approvate dal PO** (I-117, I-119) |
 | Release dichiarata | **0.3 — generalizzazione**, e dal 24 settembre il lavoro va verso **la prima release** col perimetro del PO (D-183; `docs/plans/2026-09-03-release-plan.md`, sezione «La prima release») |
 | Architettura del disegno | **cambiata il 20 settembre**: pianificatore → motore → revisore (**D-151**). `docs/ARCHITETTURA-DEL-PIANO.md` è il documento che vince su ogni contrasto |
-| Pacchetto attivo | **`REL-003`** (`ACTIVE_WORK_PACKAGE.md`), **ATTIVO** in un'altra sessione: i simboli nuovi — la prima parte, le forme, è su `main` (I-128, D-185); restano le voci di catalogo e la tavola di prova. **`REL-002`, il cartiglio, è fatto** (I-132, 26 settembre 2026). Poi `REL-001`, la skill e il PDF (`docs/plans/pacchetti/REL-001.md`), `REL-004` il DXF, `REL-005` il pacchetto della release |
+| Pacchetto attivo | **`REL-003`** (`ACTIVE_WORK_PACKAGE.md`), **ATTIVO**: i simboli nuovi — la prima parte, le forme, è su `main` (I-128, D-185); **la seconda — catalogo, varianti, fluido solare, tavola di prova — è finita sul ramo `claude/missing-symbols-uuzbhb`, e la tavola è al PO** (26 settembre 2026). **`REL-002`, il cartiglio, è fatto** (I-132, 26 settembre 2026). Poi `REL-001`, la skill e il PDF (`docs/plans/pacchetti/REL-001.md`), `REL-004` il DXF, `REL-005` il pacchetto della release |
 | Il criterio di un'autostrada | **non è un numero** (**D-164**): «un'autostrada per definizione ha poche curve e tratti rettilinei… un criterio **grafico non matematico**». Chi giudica è l'**occhio**. Trasformare un'osservazione in una soglia è **il solutore che rientra dalla finestra** |
 | La convenzione grafica | **è quella sviluppata finora e non si tocca** (**D-165**). Le tavole di `input-pm/riferimenti-grafici/` sono riferimenti **sull'instradamento**, non una fonte di convenzione |
 | Il metodo con cui si compone | **`D-159`, e viene prima delle regole**: la quota di un'autostrada **non si sceglie**, è quella della **porta** della macchina che la genera. Per intero in testa a `docs/regole-del-piano.md` |
