@@ -38,6 +38,7 @@ Tutto cio' che si legge e' in italiano (D-051): le sigle vengono dal modello,
 le unita' da questa tabella.
 """
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from math import ceil, sqrt
 
@@ -264,12 +265,20 @@ def segments_cross(first: Segment, second: Segment) -> bool:
 
 
 def _texts_of(
-    item: PlacedSymbol, properties: dict[str, dict[str, JsonPrimitive]]
+    item: PlacedSymbol,
+    properties: dict[str, dict[str, JsonPrimitive]],
+    senza_valori: frozenset[str] = frozenset(),
 ) -> list[tuple[str, str, str]]:
-    """Sigla e valori di un componente, nell'ordine in cui si scrivono."""
+    """Sigla e valori di un componente, nell'ordine in cui si scrivono.
+
+    Un pezzo in `senza_valori` porta la sola sigla: i suoi dati stanno nella
+    tabella delle apparecchiature (REL-006), e ripeterli accanto al pezzo non
+    aggiungerebbe niente (D-052)."""
     texts: list[tuple[str, str, str]] = []
     if item.tag:
         texts.append((f"{item.component_id}-tag", item.tag, "tag"))
+    if item.component_id in senza_valori:
+        return texts
     for key in sorted(properties.get(item.component_id, {})):
         value = format_value(key, properties[item.component_id][key])
         if value is not None:
@@ -428,13 +437,18 @@ def _canvas(
     routes: list[RoutedTrunk] | None,
     standard: GraphicStandard,
     area: Rect | None,
+    ostacoli: Sequence[Box] = (),
 ) -> _Canvas:
     """L'area di disegno e' quella del formato, se chi chiama non la passa:
-    il margine e' un conflitto come gli altri, e un testo non lo scavalca."""
+    il margine e' un conflitto come gli altri, e un testo non lo scavalca.
+
+    `ostacoli` sono riquadri che un testo rispetta come un simbolo — la tabella
+    delle apparecchiature (REL-006): un testo non ci entra e un richiamo non
+    l'attraversa."""
     rect = area if area is not None else SheetFrame(standard=standard).drawing_rect_mm
     return _Canvas(
         area=(rect.x_mm, rect.y_mm, rect.right_mm, rect.bottom_mm),
-        symbols=[_symbol_box(item) for item in placed],
+        symbols=[*(_symbol_box(item) for item in placed), *ostacoli],
         lines=_line_boxes(routes),
         line_segments=_line_segments(routes),
     )
@@ -482,6 +496,7 @@ def place_addresses(
     already: list[PlacedLabel] | None = None,
     floor_y_mm: float | None = None,
     area: Rect | None = None,
+    ostacoli: Sequence[Box] = (),
 ) -> list[PlacedLabel]:
     """L'indirizzo del nodo scritto accanto al proprio pezzo (D-110, D-111).
 
@@ -502,7 +517,7 @@ def place_addresses(
     del floor_y_mm
     height = standard.text_small_mm
     step = standard.grid_mm
-    canvas = _canvas(placed, routes, standard, area)
+    canvas = _canvas(placed, routes, standard, area, ostacoli)
     for written in already or ():
         canvas.take(
             _text_box(written.anchor, text_width_mm(written.text, height), height),
@@ -536,6 +551,8 @@ def place_labels(
     floor_y_mm: float | None = None,
     *,
     area: Rect | None = None,
+    ostacoli: Sequence[Box] = (),
+    senza_valori: frozenset[str] = frozenset(),
 ) -> list[PlacedLabel]:
     """Sigle e valori, scritti piccoli accanto al proprio componente (D-075).
 
@@ -558,11 +575,11 @@ def place_labels(
     properties = {item.id: item.properties for item in project.components}
     height = standard.text_small_mm
     step = standard.grid_mm
-    canvas = _canvas(placed, routes, standard, area)
+    canvas = _canvas(placed, routes, standard, area, ostacoli)
     labels: list[PlacedLabel] = []
     for item in placed:
         slots = {"tag": 0, "data": 0}
-        for label_id, text, role in _texts_of(item, properties):
+        for label_id, text, role in _texts_of(item, properties, senza_valori):
             settled = _settle(
                 item,
                 label_id,

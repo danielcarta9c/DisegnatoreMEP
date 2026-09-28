@@ -1,0 +1,59 @@
+{
+  "_nota": "Dati di prova della tabella delle apparecchiature, inventati: il repository e' pubblico (D-038), e marche e modelli non sono di nessun costruttore. Si aggiungono alle proprieta' dei pezzi dei grafi approvati solo per vedere la tabella piena; il disegno non li legge. Vengono dal testo degli impianti solo la potenza della pompa di calore e della caldaia e i volumi di bollitore e volume tecnico dell'impianto 6, e il volume del bollitore dell'impianto 5: nei grafi sono scritti come testo libero ('120 kW'), qui con le chiavi fisse. Qualche cella resta vuota apposta: lo scambiatore dell'impianto 4 senza marca e modello, il collettore solare dell'impianto 6 senza potenza.",
+  "impianti": {
+    "1": {
+      "pdc-master": {"power_kw": 15, "marca": "Marca di prova", "modello": "PRV-PDC-15"},
+      "pdc-slave": {"power_kw": 15, "marca": "Marca di prova", "modello": "PRV-PDC-15"},
+      "accumulo": {"volume_l": 800, "marca": "Marca di prova", "modello": "PRV-ACC-800"},
+      "circolatore": {"flow_rate_m3h": 2.5, "head_kpa": 60, "marca": "Marca di prova", "modello": "PRV-CIR-25"},
+      "expansion-connection-collettore-ritorno-a": {"volume_l": 24, "marca": "Marca di prova", "modello": "PRV-VE-24"}
+    },
+    "2": {
+      "pdc": {"power_kw": 12, "marca": "Marca di prova", "modello": "PRV-PDC-12"},
+      "volano": {"volume_l": 300, "marca": "Marca di prova", "modello": "PRV-VOL-300"},
+      "bollitore": {"volume_l": 300, "marca": "Marca di prova", "modello": "PRV-BOL-300"},
+      "circolatore": {"flow_rate_m3h": 2, "head_kpa": 50, "marca": "Marca di prova", "modello": "PRV-CIR-20"},
+      "expansion-connection-pdc-water-return": {"volume_l": 18, "marca": "Marca di prova", "modello": "PRV-VE-18"}
+    },
+    "3": {
+      "pdc": {"power_kw": 9, "marca": "Marca di prova", "modello": "PRV-PDC-9"},
+      "boiler": {"power_kw": 1.9, "volume_l": 200, "marca": "Marca di prova", "modello": "PRV-BPC-200"},
+      "volano": {"volume_l": 100, "marca": "Marca di prova", "modello": "PRV-VOL-100"},
+      "expansion-connection-pdc-water-return": {"volume_l": 12, "marca": "Marca di prova", "modello": "PRV-VE-12"}
+    },
+    "4": {
+      "pdc": {"power_kw": 16, "marca": "Marca di prova", "modello": "PRV-PDC-16"},
+      "caldaia": {"power_kw": 25, "marca": "Marca di prova", "modello": "PRV-CAL-25"},
+      "disgiuntore": {"volume_l": 200, "marca": "Marca di prova", "modello": "PRV-VOL-200"},
+      "scambiatore": {"power_kw": 30},
+      "circolatore": {"flow_rate_m3h": 3, "head_kpa": 60, "marca": "Marca di prova", "modello": "PRV-CIR-30"},
+      "expansion-connection-collettore-ritorno-a": {"volume_l": 24, "marca": "Marca di prova", "modello": "PRV-VE-24"}
+    },
+    "5": {
+      "pdc-1": {"power_kw": 40, "marca": "Marca di prova", "modello": "PRV-PDC-40"},
+      "pdc-2": {"power_kw": 40, "marca": "Marca di prova", "modello": "PRV-PDC-40"},
+      "pdc-3": {"power_kw": 40, "marca": "Marca di prova", "modello": "PRV-PDC-40"},
+      "volano": {"volume_l": 1000, "marca": "Marca di prova", "modello": "PRV-VOL-1000"},
+      "bollitore": {"volume_l": 500, "marca": "Marca di prova", "modello": "PRV-BOL-500"},
+      "circolatore-uta": {"flow_rate_m3h": 4.5, "head_kpa": 70, "marca": "Marca di prova", "modello": "PRV-CIR-45"},
+      "circolatore-fancoil": {"flow_rate_m3h": 3.2, "head_m": 6, "marca": "Marca di prova", "modello": "PRV-CIR-32"},
+      "circolatore-radiante": {"flow_rate_m3h": 5, "head_kpa": 55, "marca": "Marca di prova", "modello": "PRV-CIR-50"},
+      "ricircolo": {"flow_rate_m3h": 0.8, "head_m": 3, "marca": "Marca di prova", "modello": "PRV-RIC-08"},
+      "expansion-connection-cascata-ritorno-a-a": {"volume_l": 80, "marca": "Marca di prova", "modello": "PRV-VE-80"},
+      "expansion-connection-dhw-bollitore-cold-in": {"volume_l": 35, "marca": "Marca di prova", "modello": "PRV-VES-35"}
+    },
+    "6": {
+      "pdc": {"power_kw": 120, "marca": "Marca di prova", "modello": "PRV-PDC-120"},
+      "caldaia": {"power_kw": 150, "marca": "Marca di prova", "modello": "PRV-CAL-150"},
+      "collettore-solare": {"marca": "Marca di prova", "modello": "PRV-SOL-10"},
+      "bollitore": {"volume_l": 1500, "marca": "Marca di prova", "modello": "PRV-BOL-1500"},
+      "volume-tecnico": {"volume_l": 1000, "marca": "Marca di prova", "modello": "PRV-VOL-1000"},
+      "circolatore-radiatori": {"flow_rate_m3h": 6, "head_kpa": 60, "marca": "Marca di prova", "modello": "PRV-CIR-60"},
+      "circolatore-fancoil": {"flow_rate_m3h": 4, "head_kpa": 50, "marca": "Marca di prova", "modello": "PRV-CIR-40"},
+      "circolatore-solare": {"flow_rate_m3h": 1.2, "head_m": 5, "marca": "Marca di prova", "modello": "PRV-CSO-12"},
+      "expansion-connection-rip-ritorno-generatori-a": {"volume_l": 105, "marca": "Marca di prova", "modello": "PRV-VE-105"},
+      "vaso-solare": {"volume_l": 25, "marca": "Marca di prova", "modello": "PRV-VSO-25"},
+      "expansion-connection-dhw-bollitore-cold-in": {"volume_l": 35, "marca": "Marca di prova", "modello": "PRV-VES-35"}
+    }
+  }
+}

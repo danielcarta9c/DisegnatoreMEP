@@ -24,7 +24,8 @@ Il giro, in ordine:
    formato **prima** di instradarlo, perche' del piano contano le posizioni
    relative e non quelle sul foglio;
 5. **l'instradamento** e gli accessori in linea (`settle_sheet`);
-6. legenda, centratura, sigle, indirizzi;
+6. legenda, centratura, **la tabella delle apparecchiature** — e il disegno
+   che le fa spazio (REL-006) —, sigle, indirizzi;
 7. il **preflight**, che misura.
 """
 
@@ -38,15 +39,22 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, SheetFrame
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
+from disegnatore_mep.graphics.tabella import tabella_della_tavola
 from disegnatore_mep.layout.addresses import with_addresses
-from disegnatore_mep.layout.compose import centre_vertically, inline_component_ids
+from disegnatore_mep.layout.compose import (
+    centre_vertically,
+    inline_component_ids,
+    sgombra_la_tabella,
+)
 from disegnatore_mep.layout.errors import LayoutError
 from disegnatore_mep.layout.geometry import (
+    SHEET_MARGIN_MIN_MM,
     DrawingGeometry,
     PlacedSymbol,
     Point,
     RoutedTrunk,
     SheetGeometry,
+    zona_della_tabella,
 )
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.inline import settle_sheet
@@ -558,6 +566,35 @@ def esegui_piano(
         network_keys=chiavi,
     )
     foglio = centre_vertically(foglio, area, frame.standard.grid_mm)
+
+    # **La tabella delle apparecchiature, in alto a sinistra** (REL-006, I-141).
+    # Si compone qui perche' elenca i pezzi di questa tavola, e il disegno le fa
+    # spazio **prima** dei testi: si sposta tutto insieme, e solo se centrato ci
+    # entrerebbe. Le apparecchiature della tabella portano la loro sigla anche
+    # sul disegno — quella che l'ingegnere ha scritto, o quella della famiglia
+    # (D-097) — e i loro dati stanno nella tabella, non accanto al pezzo.
+    ostacoli: tuple[tuple[float, float, float, float], ...] = ()
+    in_tabella: frozenset[str] = frozenset()
+    tabella = tabella_della_tavola(modello, catalogo, naming, foglio, frame)
+    if tabella is not None:
+        foglio = sgombra_la_tabella(
+            foglio, area, tabella.riquadro, frame.standard.grid_mm, SHEET_MARGIN_MIN_MM
+        )
+        codici = {riga.component_id: riga.codice for riga in tabella.righe if riga.codice}
+        foglio = foglio.model_copy(
+            update={
+                "tabella": tabella,
+                "symbols": [
+                    item.model_copy(update={"tag": codici[item.component_id]})
+                    if item.tag is None and item.component_id in codici
+                    else item
+                    for item in foglio.symbols
+                ],
+            }
+        )
+        ostacoli = (zona_della_tabella(tabella.riquadro),)
+        in_tabella = frozenset(riga.component_id for riga in tabella.righe)
+
     foglio = foglio.model_copy(
         update={
             "labels": place_labels(
@@ -566,6 +603,8 @@ def esegui_piano(
                 frame.standard,
                 routes=foglio.routes,
                 area=area,
+                ostacoli=ostacoli,
+                senza_valori=in_tabella,
             )
         }
     )

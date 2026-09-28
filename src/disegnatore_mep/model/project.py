@@ -102,11 +102,63 @@ class NetworkModel(IdentifiedModel):
     evidence: list[EvidenceRef] = Field(default_factory=list)
 
 
+CHIAVI_DEI_DATI_NUMERICI: dict[str, str] = {
+    "power_kw": "kW",
+    "volume_l": "l",
+    "flow_rate_m3h": "m³/h",
+    "head_kpa": "kPa",
+    "head_m": "m c.a.",
+}
+"""I dati tecnici con un nome fisso, e l'unita' in cui si scrivono (REL-006).
+
+Potenza, volume, portata e prevalenza di un pezzo, **come il progettista li ha
+dati**: un numero, nell'unita' che il nome dichiara. Le prime quattro sono le
+chiavi che la tavola sapeva gia' scrivere accanto a un pezzo
+(`layout/labels.py`, D-052); `head_m` e' la prevalenza in metri di colonna
+d'acqua, che il progettista da' spesso cosi' e che non si converte in kPa per
+non cambiargli il numero. Le legge la tabella delle apparecchiature
+(`graphics/tabella.py`), e la potenza servira' ai diametri (`REL-007`)."""
+
+MARCA = "marca"
+"""La marca di un pezzo, come il progettista l'ha data (I-144): un testo."""
+
+MODELLO = "modello"
+"""Il modello di un pezzo, come il progettista l'ha dato (I-144): un testo. E'
+la chiave che «Capire» usava gia' per il nome commerciale."""
+
+
 class ComponentInstance(IdentifiedModel):
     definition_id: str = Field(pattern=ID_PATTERN)
     tag: str | None = None
     properties: dict[str, JsonPrimitive] = Field(default_factory=dict)
     evidence: list[EvidenceRef] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def i_dati_con_nome_fisso_hanno_la_loro_forma(self) -> "ComponentInstance":
+        """Un dato con un nome fisso ha la forma che il nome promette.
+
+        Un numero positivo per le chiavi con l'unita' — «15 kW» scritto in
+        `power_kw` e' un difetto di chi l'ha scritto, e la tabella non deve
+        indovinarlo —, un testo non vuoto per marca e modello. Le altre
+        proprieta' restano libere, come sono sempre state."""
+        for chiave in CHIAVI_DEI_DATI_NUMERICI:
+            if chiave not in self.properties:
+                continue
+            valore = self.properties[chiave]
+            if isinstance(valore, bool) or not isinstance(valore, int | float) or valore <= 0:
+                raise ValueError(
+                    f"component {self.id}: {chiave} must be a positive number in "
+                    f"{CHIAVI_DEI_DATI_NUMERICI[chiave]}, not {valore!r}"
+                )
+        for chiave in (MARCA, MODELLO):
+            if chiave not in self.properties:
+                continue
+            valore = self.properties[chiave]
+            if not isinstance(valore, str) or not valore.strip():
+                raise ValueError(
+                    f"component {self.id}: {chiave} must be a non-empty text, not {valore!r}"
+                )
+        return self
 
 
 class PortRef(StrictModel):

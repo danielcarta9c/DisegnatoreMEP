@@ -21,8 +21,10 @@ from disegnatore_mep.layout.geometry import (
     PlacedLabel,
     PlacedSymbol,
     Point,
+    RigaDellaTabella,
     RoutedTrunk,
     SheetGeometry,
+    TabellaDelleApparecchiature,
 )
 from disegnatore_mep.model.project import PortRef
 from disegnatore_mep.model.types import Domain, IssueSeverity, PortFlow
@@ -625,7 +627,27 @@ def everything_wrong() -> DrawingGeometry:
             label("l4", anchor=at(320, 210), leader_from=at(330, 200)),
         ],
     )
-    scrap = sheet("t2", symbols=[placed("scrap", 20, 20)])
+    # Un pezzo dentro la tabella delle apparecchiature (REL-006).
+    scrap = sheet("t2", symbols=[placed("scrap", 20, 20)]).model_copy(
+        update={
+            "tabella": TabellaDelleApparecchiature(
+                x_mm=10,
+                y_mm=16,
+                colonne_mm=[20.0],
+                riga_mm=5.0,
+                righe=[
+                    RigaDellaTabella(
+                        component_id="scrap",
+                        codice="GT-01",
+                        descrizione="Generatore di prova",
+                        caratteristiche=None,
+                        marca=None,
+                        modello=None,
+                    )
+                ],
+            )
+        }
+    )
     return drawing(first, scrap)
 
 
@@ -642,6 +664,7 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
         preflight.labels_on_runs(broken, FRAME),
         preflight.leader_crossings(broken),
         preflight.omitted_tags(broken),
+        preflight.equipment_table(broken, FRAME),
         preflight.sheet_fill(broken, FRAME),
         preflight.next_sheet_fill(broken, FRAME),
         preflight.symbol_sources(broken, registry),

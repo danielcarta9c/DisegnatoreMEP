@@ -24,6 +24,7 @@ from .cartiglio import CartiglioDellaTavola, disegna_cartiglio
 from .frame import Rect, SheetFrame
 from .glyphs import flow_glyph_path
 from .registry import SymbolRegistry
+from .tabella import svg_della_tabella
 
 DRAFT_MARK = "BOZZA — cartiglio non compilato"
 """Marcatura della bozza senza cartiglio: una tavola finale lo richiede completo."""
@@ -394,6 +395,11 @@ def render_sheet(
         )
     else:
         parts.append(disegna_cartiglio(cartiglio, frame, stati_della_tavola(sheet)).svg)
+
+    # **La tabella delle apparecchiature**, in alto a sinistra (REL-006): la
+    # compone e la impagina l'esecutore del piano, qui si disegna e basta.
+    if sheet.tabella is not None:
+        parts.append(svg_della_tabella(sheet.tabella, standard))
 
     # **Nessuna linea di terra** (D-121, I-024). Nella centrale non esiste una
     # linea che attraversa il foglio: la quota su cui le macchine si allineano

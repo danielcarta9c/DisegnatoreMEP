@@ -1,108 +1,115 @@
-# REL-006 — La tabella delle apparecchiature, in alto a sinistra
+# REL-007 — I diametri delle tubazioni in DN: il calcolatore, e il DN lungo il tratto
 
-> **▶ Attivo dal 28 settembre 2026** (I-141). Approvati i DXF e fuso `REL-004` (I-140), il PO ha
-> registrato due cose da mettere **prima della release**: questa tabella, e i diametri delle tubazioni
-> in DN (I-142, I-143), che sono `REL-007` in `docs/plans/pacchetti/REL-007.md`. *Assunzione della
-> sessione, detta al PO:* prima la tabella, poi i diametri — l'ordine del suo messaggio —, poi il PDF
-> senza browser, poi `REL-001`, la skill, poi `REL-005`.
+> **▶ Attivo dal 28 settembre 2026** (I-149). Fuso `REL-006`, la tabella delle apparecchiature, con le
+> tavole approvate dal PO — «Tutto perfetto, procedi» —, viene il secondo dei due pezzi che il PO ha
+> chiesto prima della release: i diametri (I-142, I-143, D-191). L'ordine dopo è quello detto al PO: il
+> PDF senza browser, `REL-001` la skill, per ultimo `REL-005`.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **ATTIVO** dal 28 settembre 2026 (I-141).
-**Base:** `main` dopo la fusione di `REL-004` (I-140).
+**Stato:** **ATTIVO** dal 28 settembre 2026 (I-149), in attesa dal 28 settembre (I-142, I-143).
+**Base:** `main` dopo la fusione di `REL-006`.
 **Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
-**Release:** la prima release (**D-183**), aggiunto dal PO il 28 settembre (**D-190**).
+**Release:** la prima release (**D-183**), aggiunto dal PO il 28 settembre (**D-191**).
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).
 
 Il PO:
 
-> «Inserire una tabella in alto a sinistra del foglio con codice, descrizione, caratteristiche, marca,
-> modello. Esempio pdc.01 pompa di calore aria acqua nr 1 - 15 kw - Shenling - HPM150WR3. Mettiamo
-> dentro solo le apparecchiature principali, e vaso espansione, no valvole» (I-141, 28 settembre 2026)
+> «E un'altra cosa vorrei inserire i diametri delle tubazioni in DN (quindi serve sia un calcolatore
+> che in funzione di potenza termica e velocità massima, esempio 2,5 m/s, definisce il diametro delle
+> tubazioni) e poi lo riportiamo lungo il tratto. Ovviamente serve un solo tag per ogni tratto (anche
+> se ci sono valvole in mezzo o valvole a tre vie)» (I-142, I-143, 28 settembre 2026)
 >
-> «marca e modello non deve essere nella skill, è qualcosa che definisce il progettista nella chat con
-> con l'ai o lo ha definito lui a priorio. quindi è un dato i ningresso» (I-144, lo stesso giorno)
+> «Il calcolo dei diametri invece è una cosa che potremmo definire opzionale. Se il progettista la vuole
+> si mette dentro (e la skill ovviament deve chiedere i dati che potrebbero essere mancanti ) o
+> addirittura potremmo avere che solo una porzione di impianto sia interessata al calcolo dei diametri
+> (un caso esemplare e ricorrente è il retrofitting degli impianti esistenti in cui dal Accumulo-Puffer
+> e/o ACS combinato o meno la parte di distribuzione dagli accumuli in poi è impianto Esistente pertanto
+> non è di itneresse calcolare le tubazioni essendo queste esistenti e non modificabili. mentre la parte
+> di Centrale (circuito primario) è oggetto di progettazione ed intervento.» (I-145, lo stesso giorno)
 
 ---
 
 ## Dove siamo — 28 settembre 2026
 
-- **Le sigle ci sono.** Ogni pezzo ha la sua: quella che l'ingegnere ha scritto nel testo, oppure quella
-  che il programma assegna dalla famiglia del pezzo (`naming/families.json`: `GT` generatore, `VOL`
-  accumulo, `BOL` bollitore, `CIR` circolatore, `VE` vaso di espansione…). Le tavole di prova scrivono
-  sigle come `PDC-01`, `ACC-01`, `CIR-01`.
-- **I dati tecnici no, o quasi.** Il grafo tiene le proprietà di un pezzo come testo libero —
-  `"potenza": "150 kW"`, `"volume": "500 litri"` — e solo per i pezzi di cui l'ingegnere le ha dette.
-  **Marca e modello non ci sono mai stati.** «Capire» scrive un dato solo se il testo lo dice: la skill
-  non inventa potenze, volumi né altro (**D-087**) e non sceglie le apparecchiature (**D-002**).
-- **Il foglio** ha l'intestazione in alto, la fascia della legenda a destra, il cartiglio in basso a
-  destra e, in mezzo, **l'area del disegno**, che esecutore, revisore e composizione leggono come **un
-  rettangolo** (`SheetFrame.drawing_rect_mm`). **In alto a sinistra oggi c'è disegno.**
-- **Il DXF** (`REL-004`, D-189) ha un layer per ogni cosa della tavola: la tabella avrà il suo.
+- **La skill oggi non dimensiona.** Due decisioni approvate lo dicono: **D-002** («La prima versione non
+  effettua dimensionamenti») e **D-087** («Non inventa potenze, temperature di progetto, prevalenze,
+  tarature, volumi né diametri … se non lo fornisce, sulla tavola non compare e non viene dedotto»).
+  **La disposizione del PO le cambia per i diametri** (D-191): il calcolatore non inventa, **calcola dai
+  dati del progettista**, e **la skill chiede quelli che mancano** (I-145). **Il PO ha segnato D-002 e
+  D-087 superate da D-191, per i soli diametri** (I-146): per tutto il resto valgono come prima.
+- **Il calcolo è facoltativo, e può riguardare una parte sola dell'impianto** (I-145): si fa se il
+  progettista lo vuole; nel retrofit — il caso ricorrente — la centrale, il circuito primario, si
+  progetta, e **la distribuzione esistente dagli accumuli in poi no**: le sue tubazioni ci sono e non si
+  toccano. Nel grafo oggi non c'è modo di dire che una parte è esistente.
+- **La potenza ha una chiave fissa** da `REL-006` (D-192): `power_kw`, un numero in kW, che «Capire» scrive
+  solo quando il testo la dà e chiede quando manca; accanto ci sono `volume_l`, `flow_rate_m3h`,
+  `head_kpa`/`head_m`, `marca`, `modello`. I grafi agli atti la portano ancora come testo libero
+  (`"potenza": "150 kW"`, impianto 6), che nessuno legge: i dati di prova di `REL-006`
+  (`docs/collaudi/REL-006/dati-di-prova.json`) la scrivono con la chiave fissa.
+- **Il salto termico non c'è nel grafo, e nemmeno la serie dei tubi**: senza, dalla potenza non si
+  arriva al diametro. Il salto termico lo dà il progettista, e se manca la skill lo chiede (I-145).
+- **Il tratto del PO non è la linea fra due pezzi disegnati**: valvole e valvole a tre vie non lo
+  spezzano (I-143). Nel grafo una valvola è un pezzo con due attacchi, e una valvola a tre vie un pezzo
+  con tre.
 
 ---
 
 ## Le cose da fare, in quest'ordine
 
-### 1. Che cosa dice la tabella — lo propone la sessione, lo giudica il PO sulla tavola
+### 1. Su che cosa si calcola
 
-Il PO ha fissato le colonne e il perimetro (D-190). Il resto è una proposta, da giudicare guardando le
-tavole (D-146):
+**Lo ha fissato il PO** (I-145): **potenze e salti termici li dà il progettista**, e se mancano la skill
+li chiede; **il calcolo si fa se il progettista lo vuole**, e **sulla parte dell'impianto che dice lui**.
+Restano da fissare con il PO, perché sono dominio MEP e si chiedono:
 
-- **le righe**: i pezzi il cui mestiere è di un'apparecchiatura principale — generatori, accumuli e
-  bollitori, separatori idraulici, scambiatori, circolatori — e **i vasi di espansione**; **niente
-  valvole**, e nemmeno filtri, strumenti, raccordi e attacchi. *Da dire al PO:* i **terminali**
-  (radiatori, ventilconvettori) la proposta li lascia fuori, perché nello schema di centrale sono le
-  utenze e non macchine della centrale;
-- **il codice** è la sigla che il disegno già scrive accanto al pezzo: una sola numerazione. L'esempio
-  del PO scrive «pdc.01», le tavole «PDC-01»: si propone quella delle tavole;
-- **la descrizione** è il nome della voce di catalogo, con «nr 1», «nr 2» quando ce n'è più d'una;
-- **le caratteristiche**, per famiglia: la **potenza** dei generatori e degli scambiatori, il
-  **volume** di accumuli, bollitori e vasi, **portata e prevalenza** dei circolatori;
-- **una cella senza dato resta vuota**, con un trattino: il dato lo dà il progettista, e se non lo dà
-  sulla tavola non compare (D-087).
+- **la serie dei tubi**, da cui si leggono i diametri interni — «in DN» fa pensare all'acciaio —, con la
+  sua fonte nel registro;
+- **il criterio delle reti sanitarie**: le reti del riscaldamento e del raffrescamento si dimensionano
+  con la potenza; acqua fredda, calda e ricircolo si dimensionano di solito sulle portate delle utenze,
+  e il solare ha il suo criterio;
+- **la velocità massima**: 2,5 m/s è l'esempio del PO; se è un valore unico o dipende dal diametro, e se
+  serve anche un limite di perdita di carico.
 
-### 2. I dati — li dà il progettista, li riporta «Capire», con chiavi fisse
+### 1 bis. Che cosa si dimensiona — lo dice il progettista
 
-**Marca e modello sono un dato in ingresso** (I-144): li definisce il progettista, nella conversazione con
-l'AI o prima; **la skill non ha un elenco di marche e modelli e non ne propone**. Potenza, volume, portata,
-prevalenza, marca e modello diventano **proprietà con un nome fisso**, che «Capire» compila **solo con
-quello che il progettista dice** (le sue istruzioni, `skill/capire/ISTRUZIONI.md`); quelli che mancano li
-mette fra le cose da chiedere, e se il progettista non li dà la cella resta vuota. Servono anche a
-`REL-007`: il calcolatore dei diametri parte dalla potenza.
+Il progettista dice se vuole i diametri e **su quale parte** — per esempio «la centrale sì, la
+distribuzione esistente no». «Capire» lo scrive nel grafo, e il grafo impara a dire che una parte
+dell'impianto è **esistente**: quella parte si disegna come oggi, senza DN.
 
-### 3. Il posto sul foglio
+### 2. Il calcolatore
 
-La tabella sta **in alto a sinistra dell'area del disegno**, e **il disegno non ci passa sopra**.
-Come le si fa spazio — una zona che esecutore e revisore evitano, o un'area del disegno che si
-restringe — si decide misurando, sulle sei tavole approvate, quanto spazio libero c'è oggi in alto a
-sinistra e quanto è alta la tabella di ciascuna. **Prima misura, del 28 settembre**: per una tabella larga
-160 mm, con 2 mm di rispetto, restano liberi in altezza **35–85 mm sulle A3** (35,5 la tavola 2) e **88–95
-mm sulle A2**: sulle A3 più piene il disegno deve fare spazio.
+Una funzione pura, provata su casi calcolati a mano: dalla potenza e dal salto termico la portata, dalla
+portata **il DN più piccolo della serie con la velocità sotto il massimo**. Le proprietà del fluido dalle
+fonti, non dalla memoria.
 
-### 4. Il disegno della tabella
+### 3. La potenza di ogni tratto
 
-Nell'SVG, e quindi nel PDF, e nel DXF, sul suo layer. Righe, corpo dei testi e spessori dalla grafica
-che c'è: quella del cartiglio e della legenda.
+Dal grafo: un tratto porta la potenza di ciò che alimenta — il generatore, il collettore la somma dei
+generatori, un circuito la sua utenza. **Dove i dati del progettista non bastano, «Capire» li chiede**
+(I-145); se il progettista non li dà, il DN non compare (D-087).
+
+### 4. Il tratto, e il DN scritto lungo il tratto
+
+Il tratto come lo intende il PO: da un pezzo che cambia la portata al successivo, **attraverso** valvole,
+filtri e valvole a tre vie. **Un'etichetta sola per tratto**, lungo la linea, dove non tocca simboli,
+sigle e altre linee. La forma — per esempio «DN 32» —, il posto rispetto alla linea, il colore e il layer
+del DXF li propone la sessione e li giudica il PO sulla tavola (D-146).
 
 ### 5. La prova, e le tavole al PO
 
-**Le sei tavole approvate** — i cinque impianti e l'impianto 6 — con la tabella, in PDF e in DXF. Le
-tavole di prova non hanno marca e modello: **dati di prova dichiarati**, come quelli del cartiglio di
-`REL-002`, perché il PO veda la tabella piena; e una tavola senza, perché veda le celle vuote.
+**Le sei tavole approvate** con i diametri, in PDF e in DXF, e **il foglio dei calcoli**: per ogni
+tratto la potenza, la portata, la velocità e il DN, perché il PO controlli i numeri oltre al disegno.
 
 ---
 
 ## Perimetro
 
-**Dentro:** il disegno della tabella in `src/disegnatore_mep/graphics/` (SVG e DXF) e il suo posto nel
-foglio (`graphics/frame.py`); dove esecutore, revisore e composizione leggono l'area del disegno
-(`src/disegnatore_mep/piano/`, `src/disegnatore_mep/layout/`), **solo per farle spazio**; le chiavi dei
-dati tecnici nel modello, se servono; le istruzioni di «Capire» per quei dati; `tests/**`;
-`docs/collaudi/REL-006/`; i documenti di stato (`REGISTRO`, `DECISION_LOG`, piano di release,
-`HANDOFF.md`, `PROJECT_STATE.md`).
+**Dentro:** il calcolatore, un modulo nuovo in `src/disegnatore_mep/`; l'etichetta del DN nel disegno —
+SVG e DXF — e il suo posto; le istruzioni di «Capire» per i dati che servono; `tests/**`;
+`docs/collaudi/REL-007/`; i documenti di stato.
 
-**Fuori:** posa e instradamento oltre al fare spazio alla tabella; le regole; la libreria dei simboli e
-il catalogo; i diametri (`REL-007`); il PDF senza browser.
+**Fuori:** posa e instradamento; le regole; la libreria dei simboli e il catalogo; la tabella
+(`REL-006`); il PDF senza browser.
 
 ---
 
@@ -110,23 +117,19 @@ il catalogo; i diametri (`REL-007`); il PDF senza browser.
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-0. **Le tavole, per prime**: le sei tavole con la tabella al PO, in PDF e in DXF.
-1. **La tabella dice quello che il PO ha approvato**: le righe, le colonne e le celle vuote come le ha
-   giudicate sulla tavola; una decisione le mette per iscritto.
-2. **Niente dati inventati**: una prova pretende che una cella senza dato nel grafo resti vuota.
-3. **Il disegno non passa sulla tabella**: misurato sulle sei tavole, nessun simbolo, tratta o testo
-   dentro il suo riquadro.
-4. **Nel DXF la tabella c'è**, sul suo layer, uguale a quella del PDF.
-5. **Deterministico**: lo stesso piano dà la stessa tavola, SVG e DXF.
-6. **La suite**: nessuna rossa nuova rispetto alle 46 di `main`; zero `skip` e zero `xfail` nuovi;
-   `ruff check src tests examples scripts` e `mypy` verdi.
-
-## Dopo `REL-006`
-
-`REL-007`, i diametri in DN (I-142, I-143), in `docs/plans/pacchetti/REL-007.md`; poi il PDF senza
-browser; poi `REL-001`, la skill; per ultimo `REL-005`, il pacchetto della release.
+0. **Le tavole, per prime**: le sei tavole con i diametri al PO, in PDF e in DXF, con il foglio dei
+   calcoli.
+1. **Le basi del calcolo le ha fissate il PO** (punto 1): una riga del registro e una decisione. Lo
+   stato di D-002 e D-087 lo ha già cambiato (I-146).
+2. **Il calcolatore è giusto**: prove su casi calcolati a mano, ai bordi fra un DN e il successivo.
+3. **Un'etichetta per tratto**: una prova pretende che valvole e valvole a tre vie non spezzino il
+   tratto, e che ogni tratto con un DN abbia **una** etichetta.
+4. **Niente dati inventati, e solo dove il progettista lo vuole**: senza la sua potenza il DN non
+   compare; senza la sua richiesta nessun tratto ha il DN; una parte esistente si disegna senza DN.
+5. **Deterministico**, e **la suite**: nessuna rossa nuova rispetto a `main`; zero `skip` e zero
+   `xfail` nuovi; `ruff` e `mypy` verdi.
 
 ## Consegna
 
 Una PR verso `main`, **fusa solo dopo che il PO ha visto le tavole e ha detto di sì**. Rapporto in
-`docs/collaudi/REL-006/RAPPORTO.md`, con le tavole in testa.
+`docs/collaudi/REL-007/RAPPORTO.md`, con le tavole in testa.

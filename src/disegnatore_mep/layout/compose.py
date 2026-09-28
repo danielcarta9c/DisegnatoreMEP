@@ -32,6 +32,7 @@ from .geometry import (
     Point,
     RoutedTrunk,
     SheetGeometry,
+    zona_della_tabella,
 )
 from .grid import GridSpace
 from .hierarchy import hierarchy_of
@@ -193,7 +194,12 @@ def centre_vertically(
 
     if delta == 0 and across == 0:
         return sheet
+    return _translated(sheet, delta, across)
 
+
+def _translated(sheet: SheetGeometry, delta: float, across: float) -> SheetGeometry:
+    """Il blocco disegnato spostato tutto insieme: simboli, tubazioni, testi,
+    rimandi. Non cambia una distanza fra due pezzi."""
     return sheet.model_copy(
         update={
             "symbols": [
@@ -233,6 +239,88 @@ def centre_vertically(
             ],
         }
     )
+
+
+Box = tuple[float, float, float, float]
+
+
+def _ingombri_del_disegno(sheet: SheetGeometry) -> list[Box]:
+    """Simboli e tratti delle tubazioni, ciascuno col proprio riquadro. I testi
+    no: si posano dopo, e la tabella la evitano da soli (`place_labels`)."""
+    boxes: list[Box] = [
+        (item.origin.x_mm, item.origin.y_mm, item.right_mm, item.bottom_mm)
+        for item in sheet.symbols
+    ]
+    for route in sheet.routes:
+        for segment in route.segments:
+            for before, after in zip(segment, segment[1:], strict=False):
+                boxes.append(
+                    (
+                        min(before.x_mm, after.x_mm),
+                        min(before.y_mm, after.y_mm),
+                        max(before.x_mm, after.x_mm),
+                        max(before.y_mm, after.y_mm),
+                    )
+                )
+    return boxes
+
+
+def _dentro(box: Box, zona: Box) -> bool:
+    """Vero se il riquadro entra nella zona; toccarne il bordo non conta. Un
+    tratto di tubo e' un riquadro senza spessore, e conta come gli altri."""
+    return (
+        box[0] < zona[2] - 1e-6
+        and zona[0] < box[2] - 1e-6
+        and box[1] < zona[3] - 1e-6
+        and zona[1] < box[3] - 1e-6
+    )
+
+
+def sgombra_la_tabella(
+    sheet: SheetGeometry,
+    drawing: Rect,
+    riquadro: Box,
+    step_mm: float,
+    margine_mm: float,
+) -> SheetGeometry:
+    """Il disegno fa spazio alla tabella delle apparecchiature (REL-006).
+
+    La tabella sta nell'angolo in alto a sinistra dell'area del disegno. **Se il
+    disegno, centrato, non ci entra, resta dov'e'**: e' il caso delle sei tavole
+    approvate, misurato il 28 settembre. Se ci entra, **si sposta il meno
+    possibile** — verso destra, verso il basso o tutt'e due, di passi di
+    griglia — fino a non toccare piu' la tabella allargata dello stacco. Si
+    sposta **tutto insieme**, come la centratura: nessuna distanza fra due pezzi
+    cambia, e le tratte restano quelle instradate.
+
+    Prima si cerca uno spostamento che lasci al disegno `margine_mm` dal bordo
+    dell'area; se non c'e', uno che lo tenga almeno dentro. **Se nemmeno cosi' il
+    disegno esce dalla tabella, resta centrato**: la tabella si disegna lo
+    stesso, e il preflight lo dice come rilievo bloccante — il foglio e'
+    troppo piccolo, e il formato lo sceglie il piano (D-151)."""
+    zona = zona_della_tabella(riquadro)
+    boxes = _ingombri_del_disegno(sheet)
+    if not any(_dentro(box, zona) for box in boxes):
+        return sheet
+    # Spostandosi verso destra e verso il basso, un riquadro che sta gia' tutto a
+    # destra o tutto sotto la zona non ci entra piu': si guardano solo gli altri.
+    vicini = [box for box in boxes if box[0] < zona[2] and box[1] < zona[3]]
+    destra = max(box[2] for box in boxes)
+    basso = max(box[3] for box in boxes)
+    for margine in (margine_mm, 0.0):
+        passi_x = max(0, int((drawing.right_mm - margine - destra + 1e-6) // step_mm))
+        passi_y = max(0, int((drawing.bottom_mm - margine - basso + 1e-6) // step_mm))
+        candidati = sorted(
+            ((i * step_mm, j * step_mm) for i in range(passi_x + 1) for j in range(passi_y + 1)),
+            key=lambda item: (item[0] ** 2 + item[1] ** 2, item[0], item[1]),
+        )
+        for across, delta in candidati:
+            if not any(
+                _dentro((box[0] + across, box[1] + delta, box[2] + across, box[3] + delta), zona)
+                for box in vicini
+            ):
+                return _translated(sheet, delta, across)
+    return sheet
 
 
 def _reader_of(

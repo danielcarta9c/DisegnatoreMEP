@@ -70,6 +70,7 @@ from .sheet import (
     stati_della_tavola,
 )
 from .symbol import FlowGlyph, PortFace, StrokeWeight
+from .tabella import tratti_della_tabella
 
 if TYPE_CHECKING:
     from ezdxf.document import Drawing
@@ -100,6 +101,11 @@ LAYER_SIMBOLI = "M-DIAG-EQPM"
 LAYER_SIGLE = "M-ANNO-IDEN"
 LAYER_TESTI = "M-ANNO-TEXT"
 LAYER_LEGENDA = "M-ANNO-LEGN"
+LAYER_TABELLA = "M-ANNO-SCHD"
+"""La tabella delle apparecchiature (REL-006): `SCHD`, «Schedules», e' il gruppo
+che le linee guida AIA danno alle tabelle, accanto a `LEGN`, «Legends, symbol
+keys» (AIA CAD Layer Guidelines, §3, codici delle annotazioni:
+https://facilities.duke.edu/sites/default/files/AIA%20CAD%20Layer%20Guidelines.pdf)."""
 LAYER_CARTIGLIO = "G-ANNO-TTLB"
 LAYER_FINESTRA = "G-ANNO-NPLT"
 
@@ -684,6 +690,8 @@ class _Tavola:
         self.layer(LAYER_SIGLE, "Sigle e richiami", None, "none", thin)
         self.layer(LAYER_TESTI, "Testi e rimandi", None, "none", thin)
         self.layer(LAYER_LEGENDA, "Legenda", None, "none", thin)
+        if self.sheet.tabella is not None:
+            self.layer(LAYER_TABELLA, "Tabella delle apparecchiature", None, "none", thin)
         self.layer(LAYER_CARTIGLIO, "Squadratura e cartiglio", None, "none", thin)
         self.layer(
             LAYER_FINESTRA, "Finestra della presentazione (non si stampa)", None, "none",
@@ -1009,6 +1017,21 @@ class _Tavola:
                 key.anchor.y_mm, self.standard.text_small_mm, LAYER_LEGENDA,
             )
 
+    def tabella(self) -> None:
+        """La tabella delle apparecchiature, dalle stesse linee e dagli stessi
+        testi dell'SVG (`tabella.tratti_della_tabella`), sul suo layer: nello
+        spazio modello come la legenda, perche' e' parte dello schema."""
+        if self.sheet.tabella is None:
+            return
+        tratti = tratti_della_tabella(self.sheet.tabella, self.standard)
+        for x1, y1, x2, y2 in tratti.linee:
+            self.msp.add_line(self.p(x1, y1), self.p(x2, y2), dxfattribs={"layer": LAYER_TABELLA})
+        for item in tratti.testi:
+            self.testo(
+                item.testo, item.x_mm, item.y_mm, tratti.corpo_mm, LAYER_TABELLA,
+                grassetto=item.grassetto,
+            )
+
     def rimandi(self) -> None:
         for reference in self.sheet.cross_references:
             self.msp.add_circle(
@@ -1205,6 +1228,7 @@ def write_dxf(
         tavola.pallini()
         tavola.sigle()
         tavola.legenda()
+        tavola.tabella()
         tavola.rimandi()
         _classi_in_ordine(tavola.doc)
         tavola.doc.saveas(target)

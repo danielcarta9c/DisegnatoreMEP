@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-28 (`REL-004`, **il DXF**, fuso, DXF **approvati dal PO** — I-140; prima i simboli nuovi, `REL-003`, I-136, e il cartiglio, `REL-002`, I-132; **attivo `REL-006`, la tabella delle apparecchiature**, poi i diametri in DN, `REL-007` — I-141 … I-143)
+**Aggiornato:** 2026-09-28 (`REL-006`, **la tabella delle apparecchiature**, fuso, tavole **approvate dal PO** — I-149, D-192; prima il DXF, `REL-004`, I-140, i simboli nuovi, `REL-003`, I-136, e il cartiglio, `REL-002`, I-132; **attivo `REL-007`, i diametri delle tubazioni in DN** — I-142, I-143, I-145, D-191)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -14,17 +14,32 @@
 
 ---
 
-## Dove siamo — 28 settembre 2026, `REL-004`
+## Dove siamo — 28 settembre 2026, `REL-006`
+
+**La tabella delle apparecchiature è su `main`, e il PO ha approvato le tavole** (I-149): «Tutto perfetto,
+procedi». Le scelte sono **D-192**; rapporto `docs/collaudi/REL-006/RAPPORTO.md`. In alto a sinistra del
+foglio, **codice, descrizione, caratteristiche, marca, modello** di generatori, accumuli e bollitori,
+separatori, scambiatori, circolatori e vasi di espansione; un trattino dove il progettista non ha dato il
+dato. I dati tecnici hanno **chiavi fisse** (`power_kw`, `volume_l`, `flow_rate_m3h`, `head_kpa`/`head_m`,
+`marca`, `modello`), che «Capire» scrive solo dal testo e chiede quando mancano. Il codice è la sigla della
+lettura dell'impianto, scritta anche sul disegno; il disegno non passa sulla tabella, e sulle sei tavole
+approvate non si è mosso. Nel DXF la tabella è sul layer `M-ANNO-SCHD`. Suite: le stesse 46 rosse di
+`main`.
+
+**Il pacchetto attivo è `REL-007`, i diametri delle tubazioni in DN**, calcolati dalla potenza — la chiave
+`power_kw` — e scritti lungo il tratto (I-142, I-143, I-145, D-191); poi il PDF senza browser, `REL-001` la
+skill, `REL-005` la release.
+
+## Dove si era — 28 settembre 2026, `REL-004`
 
 **Il DXF è su `main`, e il PO l'ha approvato** aprendolo in AutoCAD 2020 (I-140): «Disegni perfetti anche
 esportazione perfetta». Le scelte sono **D-189**; rapporto `docs/collaudi/REL-004/RAPPORTO.md`.
 `disegnatore-mep draw|piano … --dxf` scrive la tavola anche in DXF (AutoCAD 2013), con layer per rete,
 blocchi per i simboli, frecce e tratteggi, cartiglio in spazio carta e logo accanto.
 
-**Il pacchetto attivo è `REL-006`, la tabella delle apparecchiature** in alto a sinistra (I-141, D-190);
-dopo, `REL-007`, **i diametri delle tubazioni in DN**, calcolati e scritti lungo il tratto (I-142, I-143,
-D-191) — che superano D-002 e D-087, la skill che non dimensiona, per i soli diametri (I-146).
-Poi il PDF senza browser, `REL-001` la skill, `REL-005` la release.
+Il pacchetto attivo diventava `REL-006`, la tabella delle apparecchiature in alto a sinistra (I-141,
+D-190); dopo, `REL-007`, i diametri delle tubazioni in DN (I-142, I-143, D-191) — che superano D-002 e
+D-087, la skill che non dimensiona, per i soli diametri (I-146).
 
 ## Dove si era — 26 settembre 2026, `REL-003`
 

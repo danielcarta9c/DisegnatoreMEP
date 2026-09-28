@@ -20,7 +20,7 @@ from disegnatore_mep.graph.plant import read_plant
 from disegnatore_mep.graphics.frame import SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 
-from .geometry import DrawingGeometry
+from .geometry import DrawingGeometry, zona_della_tabella
 from .labels import place_addresses
 
 VERIFY_MARK = "MODALITÀ VERIFICA"
@@ -66,6 +66,13 @@ def with_addresses(
                             routes=sheet.routes,
                             already=sheet.labels,
                             area=frame.drawing_rect_mm,
+                            # Nemmeno il velo della verifica entra nella
+                            # tabella delle apparecchiature (REL-006).
+                            ostacoli=(
+                                ()
+                                if sheet.tabella is None
+                                else (zona_della_tabella(sheet.tabella.riquadro),)
+                            ),
                         ),
                     ],
                 }
