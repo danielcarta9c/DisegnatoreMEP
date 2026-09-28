@@ -17,6 +17,7 @@ from disegnatore_mep.graphics.registry import Symbol, SymbolRegistry
 from disegnatore_mep.graphics.symbol import KeepOut, PortFace, SymbolManifest, SymbolPort
 from disegnatore_mep.layout.autostrade import AutostradaInTavola
 from disegnatore_mep.layout.geometry import (
+    DiametroSullaTavola,
     DrawingGeometry,
     PlacedLabel,
     PlacedSymbol,
@@ -626,6 +627,13 @@ def everything_wrong() -> DrawingGeometry:
             label("l3", anchor=at(330, 210), leader_from=at(320, 200)),
             label("l4", anchor=at(320, 210), leader_from=at(330, 200)),
         ],
+    ).model_copy(
+        update={
+            # Un DN che nomina una tratta che la tavola non disegna (REL-007).
+            "diametri": [
+                DiametroSullaTavola(testo="Øi 32", ancora=at(60, 250), connection_ids=["fantasma"])
+            ]
+        }
     )
     # Un pezzo dentro la tabella delle apparecchiature (REL-006).
     scrap = sheet("t2", symbols=[placed("scrap", 20, 20)]).model_copy(
@@ -664,6 +672,7 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
         preflight.labels_on_runs(broken, FRAME),
         preflight.leader_crossings(broken),
         preflight.omitted_tags(broken),
+        preflight.diameter_tags(broken, registry),
         preflight.equipment_table(broken, FRAME),
         preflight.sheet_fill(broken, FRAME),
         preflight.next_sheet_fill(broken, FRAME),

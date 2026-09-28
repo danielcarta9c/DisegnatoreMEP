@@ -736,68 +736,69 @@ def omitted_tags(drawing: DrawingGeometry) -> list[ValidationIssue]:
 
 
 def diameter_tags(
-    drawing: DrawingGeometry, catalog: ComponentRegistry, project: ProjectModel | None
+    drawing: DrawingGeometry, catalog: ComponentRegistry, project: ProjectModel | None = None
 ) -> list[ValidationIssue]:
     """REL-007 — **un'etichetta per tratto** (I-143; D-193, punti 6-8).
 
-    Ogni tratto che porta il DN — chiesto dal progettista, con la portata dai
-    suoi dati — deve avere sulla tavola che lo disegna **una** etichetta: se
-    non ha trovato posto e' un avviso, come una sigla omessa (DRAW-003-R1);
-    due etichette sullo stesso tratto, o un'etichetta che non nomina un tratto
-    da etichettare, sono un difetto del disegnatore e bloccano. Senza il
-    modello non si misura: e' il modello a dire quali tratti portano il DN."""
-    if project is None or project.diametri is None:
-        return []
-    tratti = tratti_da_etichettare(project, catalog)
+    Dalla sola tavola si vedono due difetti del disegnatore, e bloccano:
+    un'etichetta che nomina connessioni che la tavola non disegna
+    (`DIAMETER_TAG_WITHOUT_RUN`) e due etichette sullo stesso tratto
+    (`DIAMETER_TAG_REPEATED`). **Col modello** si vede anche il terzo: un tratto
+    che porta il DN — chiesto dal progettista, con la portata dai suoi dati — e
+    l'etichetta non l'ha trovata (`DIAMETER_TAG_MISSING`): e' un avviso, come
+    una sigla omessa (DRAW-003-R1), e la tavola esce lo stesso."""
+    tratti = (
+        tratti_da_etichettare(project, catalog)
+        if project is not None and project.diametri is not None
+        else ()
+    )
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
         disegnate = {
             connection_id for route in sheet.routes for connection_id in route.connection_ids
         }
-        contate: dict[int, int] = {}
+        per_tratto: dict[frozenset[str], list[str]] = {}
         for etichetta in sheet.diametri:
-            proprie = [
-                indice
-                for indice, tratto in enumerate(tratti)
-                if frozenset(etichetta.connection_ids) == tratto.connection_ids
-            ]
-            if not proprie:
+            nominate = frozenset(etichetta.connection_ids)
+            fuori = not nominate or not nominate <= disegnate
+            estranea = bool(tratti) and all(nominate != item.connection_ids for item in tratti)
+            if fuori or estranea:
                 findings.append(
                     _finding(
                         "DIAMETER_TAG_WITHOUT_RUN",
                         IssueSeverity.BLOCKING,
-                        f"l'etichetta {etichetta.testo} non nomina un tratto che porta il DN",
-                        [sheet.sheet_id, *etichetta.connection_ids[:1]],
+                        f"l'etichetta {etichetta.testo} non nomina un tratto di questa tavola "
+                        f"che porti il DN (REL-007)",
+                        [sheet.sheet_id, *sorted(nominate)[:1]],
                     )
                 )
                 continue
-            contate[proprie[0]] = contate.get(proprie[0], 0) + 1
-        for indice, tratto in enumerate(tratti):
-            if not tratto.connection_ids <= disegnate:
-                continue
-            quante = contate.get(indice, 0)
-            capo, fine = tratto.capi
-            nome = f"{capo.component_id} -> {fine.component_id}"
-            if quante == 0:
-                findings.append(
-                    _finding(
-                        "DIAMETER_TAG_MISSING",
-                        IssueSeverity.WARNING,
-                        f"il tratto {nome} porta {tratto.scritta} e l'etichetta non e' "
-                        f"scritta: nessun rettilineo con un lato libero (REL-007)",
-                        [sheet.sheet_id, capo.component_id, fine.component_id],
-                    )
-                )
-            elif quante > 1:
+            per_tratto.setdefault(nominate, []).append(etichetta.testo)
+        for nominate, testi in per_tratto.items():
+            if len(testi) > 1:
                 findings.append(
                     _finding(
                         "DIAMETER_TAG_REPEATED",
                         IssueSeverity.BLOCKING,
-                        f"il tratto {nome} porta {quante} etichette del DN: ne porta una "
-                        f"sola (I-143)",
-                        [sheet.sheet_id, capo.component_id, fine.component_id],
+                        f"lo stesso tratto porta {len(testi)} etichette del DN "
+                        f"({', '.join(testi)}): ne porta una sola (I-143)",
+                        [sheet.sheet_id, *sorted(nominate)[:1]],
                     )
                 )
+        for tratto in tratti:
+            if not tratto.connection_ids <= disegnate or tratto.connection_ids in per_tratto:
+                continue
+            capo, fine = tratto.capi
+            findings.append(
+                _finding(
+                    "DIAMETER_TAG_MISSING",
+                    IssueSeverity.WARNING,
+                    f"il tratto {capo.component_id} -> {fine.component_id} porta "
+                    f"{tratto.scritta} e l'etichetta non e' scritta: nessun rettilineo con "
+                    f"un lato libero (REL-007)",
+                    [sheet.sheet_id, capo.component_id, fine.component_id],
+                )
+            )
     return findings
 
 
