@@ -20,6 +20,7 @@ from disegnatore_mep.graph.plant import read_plant
 from disegnatore_mep.graphics.frame import SheetFrame
 from disegnatore_mep.model.project import ProjectModel
 
+from .diametri import riquadro_del_diametro
 from .geometry import DrawingGeometry, zona_della_tabella
 from .labels import place_addresses
 
@@ -67,11 +68,18 @@ def with_addresses(
                             already=sheet.labels,
                             area=frame.drawing_rect_mm,
                             # Nemmeno il velo della verifica entra nella
-                            # tabella delle apparecchiature (REL-006).
+                            # tabella delle apparecchiature (REL-006), ne' sulle
+                            # etichette del DN (REL-007).
                             ostacoli=(
-                                ()
-                                if sheet.tabella is None
-                                else (zona_della_tabella(sheet.tabella.riquadro),)
+                                *(
+                                    ()
+                                    if sheet.tabella is None
+                                    else (zona_della_tabella(sheet.tabella.riquadro),)
+                                ),
+                                *(
+                                    riquadro_del_diametro(item, frame.standard.text_small_mm)
+                                    for item in sheet.diametri
+                                ),
                             ),
                         ),
                     ],

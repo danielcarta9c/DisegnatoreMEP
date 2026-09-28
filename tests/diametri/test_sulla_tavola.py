@@ -235,3 +235,29 @@ def test_deterministico(
         assert esito.disegno is not None
         uscite.append(render_sheet(esito.disegno.sheets[0], esito.frame, simboli))
     assert uscite[0] == uscite[1]
+
+
+@pytest.mark.parametrize("impianto", ("1", "5"))
+def test_il_velo_della_verifica_non_copre_il_dn(
+    impianto: str,
+    modello: Callable[..., ProjectModel],
+    catalogo: ComponentRegistry,
+    simboli: SymbolRegistry,
+) -> None:
+    """Gli indirizzi della modalita' verifica (D-110) si posano dopo tutto il resto,
+    e il DN fa parte del resto: non ci vanno sopra."""
+    _, piano = grafo_e_piano(impianto)
+    esito = esegui_piano(modello(impianto), carica_piano(piano), catalogo, simboli, NAMING, verifica=True)
+    assert esito.disegno is not None
+    foglio = esito.disegno.sheets[0]
+    corpo = esito.frame.standard.text_small_mm
+    assert foglio.diametri
+    indirizzi = [
+        (x.anchor.x_mm, x.anchor.y_mm - corpo, x.anchor.x_mm + text_width_mm(x.text, corpo), x.anchor.y_mm)
+        for x in foglio.labels
+        if x.role == "address"
+    ]
+    assert indirizzi
+    for etichetta in foglio.diametri:
+        box = riquadro_del_diametro(etichetta, corpo)
+        assert not any(_sovrapposti(box, altro) for altro in indirizzi), etichetta.testo
