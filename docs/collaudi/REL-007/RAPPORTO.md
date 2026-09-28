@@ -295,8 +295,20 @@ test_richiesta_e_rete_esistente_si_rileggono_come_sono_scritte PASSED [100%]
 esecuzioni separate, e `test_deterministico`. La suite, sul ramo e su `main`, e le rosse nome per nome:
 
 ```
-La suite gira sulla testa del codice, 725f256: l'esito si scrive qui appena finisce.
+$ python -m pytest -q -rfEsx        # sul ramo a 725f256, e su main a 2616a92
+main : 46 failed, 1845 passed, 24 skipped, 12 xfailed in 817.65s (0:13:37)
+ramo : 46 failed, 1932 passed, 24 skipped, 12 xfailed in 808.58s (0:13:28)
+rosse main 46 ramo 46 errori 0 0
+nuove nel ramo: []
+guarite nel ramo: []
+uguali nome per nome: True
+skip main 24 ramo 24 nuovi: []
+xfail main 12 ramo 12 nuovi: []
 ```
+
+Le 46 rosse sono **le stesse di `main`**, nome per nome; `skip` e `xfail` invariati, nessuno nuovo; le 87
+passate in più sono le 86 prove di `tests/diametri/` e quella di §4.7 in `tests/skill/`. `ruff check src
+tests examples scripts` e `mypy`: verdi.
 
 ## 5. Che cosa ho toccato fuori dall'elenco del perimetro, e perché
 
