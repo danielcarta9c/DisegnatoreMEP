@@ -23,7 +23,7 @@ blocchi per i simboli, frecce e tratteggi, cartiglio in spazio carta e logo acca
 
 **Il pacchetto attivo è `REL-006`, la tabella delle apparecchiature** in alto a sinistra (I-141, D-190);
 dopo, `REL-007`, **i diametri delle tubazioni in DN**, calcolati e scritti lungo il tratto (I-142, I-143,
-D-191) — che toccano D-002 e D-087, la skill che non dimensiona: lo stato di quelle due lo cambia il PO.
+D-191) — che superano D-002 e D-087, la skill che non dimensiona, per i soli diametri (I-146).
 Poi il PDF senza browser, `REL-001` la skill, `REL-005` la release.
 
 ## Dove si era — 26 settembre 2026, `REL-003`

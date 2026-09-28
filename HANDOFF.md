@@ -22,9 +22,10 @@ sulla tavola**. Dopo, **`REL-007`, i diametri delle tubazioni in DN** (`docs/pla
 I-142, I-143, D-191): un calcolatore dalla potenza e dalla velocità massima, e il DN una volta per tratto;
 **facoltativo, e anche solo su una parte dell'impianto** — nel retrofit la centrale sì, la distribuzione
 esistente no —, con **la skill che chiede i dati che mancano** (I-145).
-**Tocca D-002 e D-087** — la skill che non dimensiona —, e il loro stato lo cambia il PO; prima di
-scriverlo si fissano con lui la serie dei tubi e il criterio delle reti sanitarie. Poi il PDF senza browser — con i testi
-dello schema in Arial, non con le grazie (I-122) —, poi `REL-001`, la skill, poi `REL-005`.
+**D-002 e D-087** — la skill che non dimensiona — **sono superate da D-191 per i soli diametri** (I-146);
+prima di scriverlo si fissano con il PO la serie dei tubi e il criterio delle reti sanitarie. Poi il PDF
+senza browser — con i testi dello schema in Arial, non con le grazie (I-122) —, poi `REL-001`, la skill,
+poi `REL-005`.
 
 **`REL-004`, il DXF, è fuso** (PR #61): il PO l'ha aperto in AutoCAD 2020, «Disegni perfetti anche
 esportazione perfetta» (I-140). Le scelte sono **D-189**; rapporto `docs/collaudi/REL-004/RAPPORTO.md`,
@@ -40,7 +41,18 @@ fonti nel rapporto della ricerca `docs/fonti/ricerche/reports/DXF per AutoCAD.md
   rese) e `giro_oda.py` (DXF → DWG → DXF con l'ODA File Converter, che la sessione scarica ed estrae).
 - **La suite**: le stesse 46 rosse di `main`, nome per nome; zero `skip` e zero `xfail` nuovi; `ruff` e
   `mypy` verdi.
-- **I numeri**: il prossimo input è **I-146**, la prossima decisione **D-192**.
+- **I numeri**: il prossimo input è **I-148**, la prossima decisione **D-192**.
+- **La sessione del 28 settembre si è chiusa su richiesta del PO** (I-147), con tutto su `main`: si
+  riparte con un agente fresco da `REL-006`. Le proposte sulla tabella — righe, codice uguale alla sigla
+  del disegno (`PDC-01`, non `pdc.01`), descrizione con «nr», caratteristiche per famiglia, celle vuote
+  con un trattino, terminali fuori — **sono state dette al PO**, che nella risposta non le ha corrette:
+  restano proposte, e **le giudica sulla tavola**. Il punto 3 del pacchetto ha già una prima misura dello
+  spazio libero in alto a sinistra.
+- **L'ambiente**: nei contenitori delle sessioni il `python3` di sistema non ha avuto le dipendenze; si
+  crea un ambiente — `python3 -m venv .venv && .venv/bin/pip install -e ".[dev]"`, che porta anche
+  `ezdxf` — e si lavora con `.venv/bin/python`. Per le rese dei collaudi DXF serve anche PyMuPDF, che
+  non è una dipendenza del progetto; per `giro_oda.py` l'ODA File Converter, che la sessione scarica ed
+  estrae (`--appimage-extract`) e lancia con `xvfb-run`.
 
 ## ▶ `REL-003` è fuso — scritto il 26 settembre 2026
 
