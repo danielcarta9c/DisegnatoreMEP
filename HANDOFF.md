@@ -15,12 +15,15 @@
 
 **Il pacchetto attivo è `REL-006`, la tabella delle apparecchiature** (`ACTIVE_WORK_PACKAGE.md`; I-141,
 D-190): in alto a sinistra del foglio, **codice, descrizione, caratteristiche, marca, modello**, solo le
-apparecchiature principali e il vaso di espansione, niente valvole. Si parte dal punto 1: che cosa dice la
+apparecchiature principali e il vaso di espansione, niente valvole; **marca e modello sono un dato in
+ingresso del progettista**, la skill non ne propone (I-144). Si parte dal punto 1: che cosa dice la
 tabella lo propone la sessione — righe, caratteristiche per famiglia, celle vuote — e **il PO lo giudica
 sulla tavola**. Dopo, **`REL-007`, i diametri delle tubazioni in DN** (`docs/plans/pacchetti/REL-007.md`;
-I-142, I-143, D-191): un calcolatore dalla potenza e dalla velocità massima, e il DN una volta per tratto.
+I-142, I-143, D-191): un calcolatore dalla potenza e dalla velocità massima, e il DN una volta per tratto;
+**facoltativo, e anche solo su una parte dell'impianto** — nel retrofit la centrale sì, la distribuzione
+esistente no —, con **la skill che chiede i dati che mancano** (I-145).
 **Tocca D-002 e D-087** — la skill che non dimensiona —, e il loro stato lo cambia il PO; prima di
-scriverlo si fissano con lui salto termico, serie dei tubi e reti. Poi il PDF senza browser — con i testi
+scriverlo si fissano con lui la serie dei tubi e il criterio delle reti sanitarie. Poi il PDF senza browser — con i testi
 dello schema in Arial, non con le grazie (I-122) —, poi `REL-001`, la skill, poi `REL-005`.
 
 **`REL-004`, il DXF, è fuso** (PR #61): il PO l'ha aperto in AutoCAD 2020, «Disegni perfetti anche
@@ -37,7 +40,7 @@ fonti nel rapporto della ricerca `docs/fonti/ricerche/reports/DXF per AutoCAD.md
   rese) e `giro_oda.py` (DXF → DWG → DXF con l'ODA File Converter, che la sessione scarica ed estrae).
 - **La suite**: le stesse 46 rosse di `main`, nome per nome; zero `skip` e zero `xfail` nuovi; `ruff` e
   `mypy` verdi.
-- **I numeri**: il prossimo input è **I-144**, la prossima decisione **D-192**.
+- **I numeri**: il prossimo input è **I-146**, la prossima decisione **D-192**.
 
 ## ▶ `REL-003` è fuso — scritto il 26 settembre 2026
 

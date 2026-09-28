@@ -18,6 +18,9 @@ Il PO:
 > «Inserire una tabella in alto a sinistra del foglio con codice, descrizione, caratteristiche, marca,
 > modello. Esempio pdc.01 pompa di calore aria acqua nr 1 - 15 kw - Shenling - HPM150WR3. Mettiamo
 > dentro solo le apparecchiature principali, e vaso espansione, no valvole» (I-141, 28 settembre 2026)
+>
+> «marca e modello non deve essere nella skill, è qualcosa che definisce il progettista nella chat con
+> con l'ai o lo ha definito lui a priorio. quindi è un dato i ningresso» (I-144, lo stesso giorno)
 
 ---
 
@@ -58,18 +61,23 @@ tavole (D-146):
 - **una cella senza dato resta vuota**, con un trattino: il dato lo dà il progettista, e se non lo dà
   sulla tavola non compare (D-087).
 
-### 2. I dati — li raccoglie «Capire», con chiavi fisse
+### 2. I dati — li dà il progettista, li riporta «Capire», con chiavi fisse
 
-Potenza, volume, portata, prevalenza, marca e modello diventano **proprietà con un nome fisso**, che
-«Capire» compila **solo quando il testo li dice** (le sue istruzioni, `skill/capire/ISTRUZIONI.md`).
-Servono anche a `REL-007`: il calcolatore dei diametri parte dalla potenza.
+**Marca e modello sono un dato in ingresso** (I-144): li definisce il progettista, nella conversazione con
+l'AI o prima; **la skill non ha un elenco di marche e modelli e non ne propone**. Potenza, volume, portata,
+prevalenza, marca e modello diventano **proprietà con un nome fisso**, che «Capire» compila **solo con
+quello che il progettista dice** (le sue istruzioni, `skill/capire/ISTRUZIONI.md`); quelli che mancano li
+mette fra le cose da chiedere, e se il progettista non li dà la cella resta vuota. Servono anche a
+`REL-007`: il calcolatore dei diametri parte dalla potenza.
 
 ### 3. Il posto sul foglio
 
 La tabella sta **in alto a sinistra dell'area del disegno**, e **il disegno non ci passa sopra**.
 Come le si fa spazio — una zona che esecutore e revisore evitano, o un'area del disegno che si
 restringe — si decide misurando, sulle sei tavole approvate, quanto spazio libero c'è oggi in alto a
-sinistra e quanto è alta la tabella di ciascuna.
+sinistra e quanto è alta la tabella di ciascuna. **Prima misura, del 28 settembre**: per una tabella larga
+160 mm, con 2 mm di rispetto, restano liberi in altezza **35–85 mm sulle A3** (35,5 la tavola 2) e **88–95
+mm sulle A2**: sulle A3 più piene il disegno deve fare spazio.
 
 ### 4. Il disegno della tabella
 
