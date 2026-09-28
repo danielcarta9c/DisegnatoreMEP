@@ -24,6 +24,7 @@ from collections.abc import Iterable
 
 from disegnatore_mep.catalog.errors import CatalogError
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.diametri.tratti import tratti_da_etichettare
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.layout.autostrade import (
     AutostradaInTavola,
@@ -156,6 +157,7 @@ MEASURE_ORDER: tuple[str, ...] = (
     "labels_on_runs",
     "leader_crossings",
     "omitted_tags",
+    "diameter_tags",
     "equipment_table",
     "sheet_fill",
     "next_sheet_fill",
@@ -733,6 +735,72 @@ def omitted_tags(drawing: DrawingGeometry) -> list[ValidationIssue]:
     return findings
 
 
+def diameter_tags(
+    drawing: DrawingGeometry, catalog: ComponentRegistry, project: ProjectModel | None
+) -> list[ValidationIssue]:
+    """REL-007 — **un'etichetta per tratto** (I-143; D-193, punti 6-8).
+
+    Ogni tratto che porta il DN — chiesto dal progettista, con la portata dai
+    suoi dati — deve avere sulla tavola che lo disegna **una** etichetta: se
+    non ha trovato posto e' un avviso, come una sigla omessa (DRAW-003-R1);
+    due etichette sullo stesso tratto, o un'etichetta che non nomina un tratto
+    da etichettare, sono un difetto del disegnatore e bloccano. Senza il
+    modello non si misura: e' il modello a dire quali tratti portano il DN."""
+    if project is None or project.diametri is None:
+        return []
+    tratti = tratti_da_etichettare(project, catalog)
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        disegnate = {
+            connection_id for route in sheet.routes for connection_id in route.connection_ids
+        }
+        contate: dict[int, int] = {}
+        for etichetta in sheet.diametri:
+            proprie = [
+                indice
+                for indice, tratto in enumerate(tratti)
+                if frozenset(etichetta.connection_ids) == tratto.connection_ids
+            ]
+            if not proprie:
+                findings.append(
+                    _finding(
+                        "DIAMETER_TAG_WITHOUT_RUN",
+                        IssueSeverity.BLOCKING,
+                        f"l'etichetta {etichetta.testo} non nomina un tratto che porta il DN",
+                        [sheet.sheet_id, *etichetta.connection_ids[:1]],
+                    )
+                )
+                continue
+            contate[proprie[0]] = contate.get(proprie[0], 0) + 1
+        for indice, tratto in enumerate(tratti):
+            if not tratto.connection_ids <= disegnate:
+                continue
+            quante = contate.get(indice, 0)
+            capo, fine = tratto.capi
+            nome = f"{capo.component_id} -> {fine.component_id}"
+            if quante == 0:
+                findings.append(
+                    _finding(
+                        "DIAMETER_TAG_MISSING",
+                        IssueSeverity.WARNING,
+                        f"il tratto {nome} porta {tratto.scritta} e l'etichetta non e' "
+                        f"scritta: nessun rettilineo con un lato libero (REL-007)",
+                        [sheet.sheet_id, capo.component_id, fine.component_id],
+                    )
+                )
+            elif quante > 1:
+                findings.append(
+                    _finding(
+                        "DIAMETER_TAG_REPEATED",
+                        IssueSeverity.BLOCKING,
+                        f"il tratto {nome} porta {quante} etichette del DN: ne porta una "
+                        f"sola (I-143)",
+                        [sheet.sheet_id, capo.component_id, fine.component_id],
+                    )
+                )
+    return findings
+
+
 def _leader_enters(
     leader: tuple[Point, Point], box: tuple[float, float, float, float]
 ) -> bool:
@@ -1237,6 +1305,7 @@ def preflight_drawing(
         *labels_on_runs(drawing, frame),
         *leader_crossings(drawing),
         *omitted_tags(drawing),
+        *diameter_tags(drawing, catalog, project),
         *equipment_table(drawing, frame),
         *sheet_fill(drawing, frame),
         *next_sheet_fill(drawing, frame),

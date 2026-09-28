@@ -497,6 +497,23 @@ def render_sheet(
             f"{_escape(label.text)}</text>"
         )
 
+    # **Il DN in linea con la tubazione** (REL-007, D-193): una scritta per
+    # tratto, subito sopra o sotto la linea, e sui verticali girata per leggersi
+    # dal basso verso l'alto (I-152). Dichiara Arial come la tabella: e' il
+    # carattere delle tavole, e il DXF lo scrive uguale.
+    for etichetta in sheet.diametri:
+        girata = (
+            f' transform="rotate(-90 {etichetta.ancora.x_mm:g} {etichetta.ancora.y_mm:g})"'
+            if etichetta.verticale
+            else ""
+        )
+        parts.append(
+            f'<text class="diameter" x="{etichetta.ancora.x_mm:g}" '
+            f'y="{etichetta.ancora.y_mm:g}" font-size="{standard.text_small_mm:g}" '
+            f'font-family="Arial, Helvetica, sans-serif" fill="black"{girata}>'
+            f"{_escape(etichetta.testo)}</text>"
+        )
+
     # Simbolo e denominazione si centrano l'uno sull'altra dentro il riquadro
     # campione. Prima il simbolo pendeva in alto a sinistra e il testo appoggiava
     # sul fondo: un collettore, largo otto volte la propria altezza, finiva un
@@ -542,6 +559,23 @@ def render_sheet(
             f'y="{key.anchor.y_mm:g}" font-size="{standard.text_small_mm:g}" '
             f'fill="black">{_escape(key.name)}</text>'
         )
+
+    # Le righe che spiegano una scritta (I-155): il campione dove le altre righe
+    # hanno il simbolo o il tratto, la spiegazione dove hanno il nome.
+    for nota in sheet.note_della_legenda:
+        parts.append(
+            f'<text class="legend-note-sample" x="{nota.anchor.x_mm:g}" '
+            f'y="{nota.anchor.y_mm:g}" font-size="{standard.text_small_mm:g}" '
+            f'font-family="Arial, Helvetica, sans-serif" fill="black">'
+            f"{_escape(nota.campione)}</text>"
+        )
+        for indice, riga in enumerate(nota.righe):
+            parts.append(
+                f'<text class="legend-note" '
+                f'x="{nota.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '
+                f'y="{nota.anchor.y_mm + indice * standard.grid_mm:g}" '
+                f'font-size="{standard.text_small_mm:g}" fill="black">{_escape(riga)}</text>'
+            )
 
     for reference in sheet.cross_references:
         parts.append(

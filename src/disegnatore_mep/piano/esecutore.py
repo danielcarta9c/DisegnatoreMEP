@@ -36,6 +36,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.diametri.tratti import tratti_da_etichettare
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, SheetFrame
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
@@ -46,6 +47,7 @@ from disegnatore_mep.layout.compose import (
     inline_component_ids,
     sgombra_la_tabella,
 )
+from disegnatore_mep.layout.diametri import nota_della_legenda, posa_i_diametri
 from disegnatore_mep.layout.errors import LayoutError
 from disegnatore_mep.layout.geometry import (
     SHEET_MARGIN_MIN_MM,
@@ -608,6 +610,18 @@ def esegui_piano(
             )
         }
     )
+
+    # **Il DN dei tratti, in linea con la tubazione** (REL-007, D-193). Solo se
+    # il progettista l'ha chiesto, e sulle reti che ha detto; dopo le sigle,
+    # perche' e' l'ultimo testo che si scrive e non sposta niente. La legenda
+    # spiega la scritta con una riga sua (I-155), se almeno un tratto la porta.
+    tratti = tratti_da_etichettare(modello, catalogo)
+    if tratti:
+        diametri, _ = posa_i_diametri(tratti, foglio, frame.standard, area, ostacoli)
+        foglio = foglio.model_copy(update={"diametri": diametri})
+        nota = nota_della_legenda(foglio, frame) if diametri else None
+        if nota is not None:
+            foglio = foglio.model_copy(update={"note_della_legenda": [nota]})
     disegno = DrawingGeometry(project_id=modello.metadata.project_id, sheets=[foglio])
     # **Gli indirizzi dei nodi si chiedono, non si subiscono** (D-110). Fino al
     # 20 settembre il piano li metteva sempre, e la conseguenza si vedeva a
