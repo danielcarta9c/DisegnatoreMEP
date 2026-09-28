@@ -1,12 +1,14 @@
 # REL-007 — I diametri delle tubazioni in DN: il calcolatore, e il DN lungo il tratto
 
+> **▶ Consegnato il 28 settembre 2026**: le sei tavole con i diametri, la variante retrofit e il foglio dei calcoli sono al PO (`docs/collaudi/REL-007/RAPPORTO.md`). Si fonde solo dopo il suo sì.
+>
 > **▶ Attivo dal 28 settembre 2026** (I-149). Fuso `REL-006`, la tabella delle apparecchiature, con le
 > tavole approvate dal PO — «Tutto perfetto, procedi» —, viene il secondo dei due pezzi che il PO ha
 > chiesto prima della release: i diametri (I-142, I-143, D-191). L'ordine dopo è quello detto al PO: il
 > PDF senza browser, `REL-001` la skill, per ultimo `REL-005`.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **ATTIVO** dal 28 settembre 2026 (I-149), in attesa dal 28 settembre (I-142, I-143).
+**Stato:** **CONSEGNATO AL PO** il 28 settembre 2026, in attesa del suo giudizio sulle tavole — rapporto `docs/collaudi/REL-007/RAPPORTO.md`, tavole in `docs/collaudi/REL-007/tavole/`. ATTIVO dal 28 settembre 2026 (I-149); le basi del calcolo le ha fissate il PO lo stesso giorno (I-150 … I-157, **D-193**).
 **Base:** `main` dopo la fusione di `REL-006`.
 **Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
 **Release:** la prima release (**D-183**), aggiunto dal PO il 28 settembre (**D-191**).

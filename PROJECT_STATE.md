@@ -14,6 +14,18 @@
 
 ---
 
+## Dove siamo — 28 settembre 2026, `REL-007` consegnato
+
+**I diametri delle tubazioni sono sul ramo `claude/pack-attivo-rel-007-0uotnp`, e le tavole sono al PO.**
+Il PO ha fissato le basi del calcolo (I-150 … I-157, **D-193**): il DN è il **diametro interno netto**, si
+scrive **«Øi 32»**, la velocità massima **cresce col diametro** (tab. 9 del Quaderno Caleffi n. 5) e si
+prende il DN standard subito più grande; il tag sta **in linea con la tubazione**, sopra la mandata e
+sotto il ritorno, sui verticali letto dal basso; **uno per tratto**, attraverso valvole e tre vie, e uno
+per ramo fino al raccordo e uno dopo; il sanitario e il solare **dalla portata** del progettista. Il
+calcolo è **facoltativo e solo dove chiesto**: il grafo porta la richiesta (`diametri`), le reti
+**esistenti** e il salto termico (`delta_t_k`). Rapporto `docs/collaudi/REL-007/RAPPORTO.md`. Si fonde solo
+dopo il sì del PO sulle tavole.
+
 ## Dove siamo — 28 settembre 2026, `REL-006`
 
 **La tabella delle apparecchiature è su `main`, e il PO ha approvato le tavole** (I-149): «Tutto perfetto,

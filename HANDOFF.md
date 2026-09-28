@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-28 — **`REL-006`, la tabella delle apparecchiature, è fuso**: il PO, viste le tavole, «Tutto perfetto, procedi» (I-149, D-192). **Il pacchetto attivo è `REL-007`, i diametri delle tubazioni in DN** (I-142, I-143, I-145, D-191)
+**Aggiornato:** 2026-09-28 — **`REL-007`, i diametri, è consegnato e aspetta il giudizio del PO sulle tavole** (D-193). Prima: **`REL-006`, la tabella delle apparecchiature, è fuso**: il PO, viste le tavole, «Tutto perfetto, procedi» (I-149, D-192). **Il pacchetto attivo è `REL-007`, i diametri delle tubazioni in DN** (I-142, I-143, I-145, D-191)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -10,6 +10,29 @@
 > È stato riscritto il 20 settembre perché una sessione ha sbagliato lo sviluppo pur avendo
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
+
+## ▶ `REL-007` è consegnato, e aspetta il PO — scritto il 28 settembre 2026
+
+**I diametri delle tubazioni sono sul ramo `claude/pack-attivo-rel-007-0uotnp`**, e **le tavole sono al
+PO**: le sei approvate con i diametri, la variante retrofit dell'impianto 1 e il foglio dei calcoli
+(`docs/collaudi/REL-007/RAPPORTO.md`). **Non si fonde prima del suo sì**: la PR verso `main` si apre e si
+fonde dopo, come per `REL-006` (#63).
+
+- **Le basi del calcolo le ha fissate il PO** (I-150 … I-157, **D-193**): DN = diametro interno netto,
+  scritto «Øi 32»; velocità massima per diametro (Caleffi, Quaderno n. 5, tab. 9), DN standard subito più
+  grande; tag in linea, sopra la mandata e sotto il ritorno, verticali dal basso; uno per tratto, anche
+  attraverso valvole e tre vie, e uno per ramo fino al raccordo e uno dopo; sanitario e solare dalla
+  portata del progettista.
+- **Il codice**: `src/disegnatore_mep/diametri/` (calcolatore, portate per conservazione con le tre vie
+  provate in ogni posizione, tratti, foglio dei calcoli), `layout/diametri.py` (la posa), il layer DXF
+  `M-ANNO-DIAM`, il preflight `DIAMETER_TAG_*`; nel grafo `diametri`, `esistente`, `delta_t_k`; «Capire»
+  §4.7.
+- **Da dire al PO se chiede**: il tag va su ogni linea che porta acqua, non sulle sole «autostrade» del
+  motore (rapporto §3.1); la skill dei computi PdC usa 2,0 m/s (§3.2). **Domanda aperta al PO**: il
+  raccordo dove rientra il bollitore spezza il tratto anche a portata uguale, e lascia due tag uguali
+  sul ritorno (§3.6): se dice di attraversarlo, è un passo in `diametri/tratti.py` prima della fusione.
+- **Dopo il sì**: fondere, poi scrivere qui e il pacchetto successivo — il PDF senza browser, poi
+  `REL-001`, poi `REL-005`. I numeri: il prossimo input è **I-158**, la prossima decisione **D-194**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 28 settembre 2026, a `REL-006` fuso
 
