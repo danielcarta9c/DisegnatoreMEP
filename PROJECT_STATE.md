@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-26 (`REL-003`, **i simboli nuovi**, fuso con la PR #60, tavola **approvata dal PO** — I-136; prima il cartiglio, `REL-002`, I-132; **attivo `REL-004`, il DXF**, e la skill per ultima — I-137)
+**Aggiornato:** 2026-09-28 (`REL-004`, **il DXF**, fuso, DXF **approvati dal PO** — I-140; prima i simboli nuovi, `REL-003`, I-136, e il cartiglio, `REL-002`, I-132; **attivo `REL-006`, la tabella delle apparecchiature**, poi i diametri in DN, `REL-007` — I-141 … I-143)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -14,11 +14,23 @@
 
 ---
 
-## Dove siamo — 26 settembre 2026, `REL-003`
+## Dove siamo — 28 settembre 2026, `REL-004`
+
+**Il DXF è su `main`, e il PO l'ha approvato** aprendolo in AutoCAD 2020 (I-140): «Disegni perfetti anche
+esportazione perfetta». Le scelte sono **D-189**; rapporto `docs/collaudi/REL-004/RAPPORTO.md`.
+`disegnatore-mep draw|piano … --dxf` scrive la tavola anche in DXF (AutoCAD 2013), con layer per rete,
+blocchi per i simboli, frecce e tratteggi, cartiglio in spazio carta e logo accanto.
+
+**Il pacchetto attivo è `REL-006`, la tabella delle apparecchiature** in alto a sinistra (I-141, D-190);
+dopo, `REL-007`, **i diametri delle tubazioni in DN**, calcolati e scritti lungo il tratto (I-142, I-143,
+D-191) — che toccano D-002 e D-087, la skill che non dimensiona: lo stato di quelle due lo cambia il PO.
+Poi il PDF senza browser, `REL-001` la skill, `REL-005` la release.
+
+## Dove si era — 26 settembre 2026, `REL-003`
 
 **I simboli nuovi sono su `main`, e la tavola di prova è approvata** (I-136, PR #60): «La tavola va
-benissimo. Ottimo lavoro. Fondi». Rapporto `docs/collaudi/REL-003/RAPPORTO.md`. **Il pacchetto attivo è
-`REL-004`, il DXF** (I-137): prima i pezzi che mancano, la skill per ultima.
+benissimo. Ottimo lavoro. Fondi». Rapporto `docs/collaudi/REL-003/RAPPORTO.md`. Il pacchetto attivo
+diventava `REL-004`, il DXF (I-137): prima i pezzi che mancano, la skill per ultima.
 
 - **Catalogo**: le voci dei cinque simboli, dodici accessori del circuito solare, e il dato delle
   **varianti**, che «Capire» sceglie solo quando il testo le nomina (D-188). 73 voci.

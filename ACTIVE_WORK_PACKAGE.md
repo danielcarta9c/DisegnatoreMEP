@@ -1,102 +1,100 @@
-# REL-004 — Il DXF: la tavola che il disegnatore apre in AutoCAD
+# REL-006 — La tabella delle apparecchiature, in alto a sinistra
 
-> **▶ Attivo dal 26 settembre 2026** (I-137). Finito `REL-003`, il PO ha messo prima **i pezzi che
-> mancano** e per ultima la skill: «Io pensavo di chiedere prima la chiusura dei pezzi che mancano,
-> in particolare manca ancora esportazione dxf. La composizione della skill vera e propria con il
-> file skill.md che orchestra il tutto l'avrei tenuto per ultimo». `REL-001` torna in attesa, com'è
-> scritto in `docs/plans/pacchetti/REL-001.md`.
+> **▶ Attivo dal 28 settembre 2026** (I-141). Approvati i DXF e fuso `REL-004` (I-140), il PO ha
+> registrato due cose da mettere **prima della release**: questa tabella, e i diametri delle tubazioni
+> in DN (I-142, I-143), che sono `REL-007` in `docs/plans/pacchetti/REL-007.md`. *Assunzione della
+> sessione, detta al PO:* prima la tabella, poi i diametri — l'ordine del suo messaggio —, poi il PDF
+> senza browser, poi `REL-001`, la skill, poi `REL-005`.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **ATTIVO** dal 26 settembre 2026 (I-137).
-**Base:** `main` a `32da9df` — `REL-003` fuso con la PR #60, tavola approvata (**I-136**).
+**Stato:** **ATTIVO** dal 28 settembre 2026 (I-141).
+**Base:** `main` dopo la fusione di `REL-004` (I-140).
 **Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
-**Release:** la prima release (**D-183**), il quarto dei cinque pacchetti, anteposto alla skill.
-**Approvazione della fusione:** **del PO**, aprendo i DXF in AutoCAD (D-146, D-147).
+**Release:** la prima release (**D-183**), aggiunto dal PO il 28 settembre (**D-190**).
+**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).
 
 Il PO:
 
-> «Invece del file SVG è possibile avere il file in DXF? Perché DXF o meglio DWG AutoCAD lo legge,
-> quindi il nostro disegnatore umano potrebbe aprire il file e fare un editing finale, se il PDF non è
-> perfetto» (I-072, 17 settembre 2026)
->
-> «il motore dxf da definire come esportare» (I-125, 24 settembre 2026)
+> «Inserire una tabella in alto a sinistra del foglio con codice, descrizione, caratteristiche, marca,
+> modello. Esempio pdc.01 pompa di calore aria acqua nr 1 - 15 kw - Shenling - HPM150WR3. Mettiamo
+> dentro solo le apparecchiature principali, e vaso espansione, no valvole» (I-141, 28 settembre 2026)
 
 ---
 
-## Dove siamo — 26 settembre 2026
+## Dove siamo — 28 settembre 2026
 
-- **Il DXF non esiste.** La tavola esce in SVG; il PDF lo fa uno strumento dell'ambiente
-  (`scripts/to-pdf.sh`), e il PDF senza browser è di `REL-001`.
-- **La valutazione del 17 settembre** (I-072) regge, e va rimisurata sui 47 simboli di oggi (allora
-  erano 41): **DXF, non DWG** — il DWG è proprietario e non si scrive senza le librerie di Autodesk;
-  AutoCAD apre il DXF e lo salva in DWG. I simboli sono segmenti, rettangoli, cerchi, pochi archi e
-  nessuna curva di Bézier cubica: primitive che il DXF ha. L'esportazione legge **la stessa geometria**
-  che alimenta l'SVG (`disegnatore-mep piano … --geometry`), quindi **non tocca posa né
-  instradamento**: è un consumatore in più, accanto all'SVG.
-- **Il DXF dà due cose che l'SVG non ha**: i **layer** e i **blocchi** — un simbolo definito una volta
-  e inserito dove serve, così il disegnatore lo cambia in un colpo solo.
-- **Il cartiglio** (`REL-002`) porta testi, tracciati e un'immagine JPEG, il logo.
-- **La libreria candidata**, `ezdxf` 1.4.4, è MIT e richiede `pyparsing`, `typing_extensions`, **`numpy`**
-  e **`fonttools`** (metadati del pacchetto, `pip download ezdxf`, 26 settembre 2026): `numpy` non è pura
-  Python, e per la skill di `REL-001` va verificato che l'ambiente lo abbia.
+- **Le sigle ci sono.** Ogni pezzo ha la sua: quella che l'ingegnere ha scritto nel testo, oppure quella
+  che il programma assegna dalla famiglia del pezzo (`naming/families.json`: `GT` generatore, `VOL`
+  accumulo, `BOL` bollitore, `CIR` circolatore, `VE` vaso di espansione…). Le tavole di prova scrivono
+  sigle come `PDC-01`, `ACC-01`, `CIR-01`.
+- **I dati tecnici no, o quasi.** Il grafo tiene le proprietà di un pezzo come testo libero —
+  `"potenza": "150 kW"`, `"volume": "500 litri"` — e solo per i pezzi di cui l'ingegnere le ha dette.
+  **Marca e modello non ci sono mai stati.** «Capire» scrive un dato solo se il testo lo dice: la skill
+  non inventa potenze, volumi né altro (**D-087**) e non sceglie le apparecchiature (**D-002**).
+- **Il foglio** ha l'intestazione in alto, la fascia della legenda a destra, il cartiglio in basso a
+  destra e, in mezzo, **l'area del disegno**, che esecutore, revisore e composizione leggono come **un
+  rettangolo** (`SheetFrame.drawing_rect_mm`). **In alto a sinistra oggi c'è disegno.**
+- **Il DXF** (`REL-004`, D-189) ha un layer per ogni cosa della tavola: la tabella avrà il suo.
 
 ---
 
 ## Le cose da fare, in quest'ordine
 
-### 1. Come si esporta — lo decide il PO (I-125), guardando il DXF (I-138)
+### 1. Che cosa dice la tabella — lo propone la sessione, lo giudica il PO sulla tavola
 
-> **▶ 26 settembre 2026 — il PO ha risposto** (I-138): **nessun riferimento di studio**, se ne crea uno
-> nuovo. Fissa quattro cose: **blocchi per i simboli**, **linee col loro tratteggio**, **frecce già
-> sulle linee**, un DXF **che si apre in AutoCAD senza lavoro** — e il PDF resta quello delle tavole
-> approvate. **Il resto lo propone la sessione dalle buone pratiche documentate**, ogni scelta con la sua
-> fonte nel registro (come per i simboli), e **il PO lo giudica aprendo il DXF in AutoCAD**: la
-> decisione si scrive dopo il suo sì, non prima.
+Il PO ha fissato le colonne e il perimetro (D-190). Il resto è una proposta, da giudicare guardando le
+tavole (D-146):
 
-> **▶ E la seconda risposta** (I-139): «Stampiamo sempre a colori e dxf 2013 in poi va benissimo
-> (usiamo il 2020). Procedi». Quindi **colori RGB esatti** — gli stessi della tavola — e **formato
-> AutoCAD 2013**. Le due ricerche della sessione (buone pratiche AutoCAD e DXF; layer, spessori e
-> testi dalle norme) sono in `docs/fonti/ricerche/` con le loro fonti.
+- **le righe**: i pezzi il cui mestiere è di un'apparecchiatura principale — generatori, accumuli e
+  bollitori, separatori idraulici, scambiatori, circolatori — e **i vasi di espansione**; **niente
+  valvole**, e nemmeno filtri, strumenti, raccordi e attacchi. *Da dire al PO:* i **terminali**
+  (radiatori, ventilconvettori) la proposta li lascia fuori, perché nello schema di centrale sono le
+  utenze e non macchine della centrale;
+- **il codice** è la sigla che il disegno già scrive accanto al pezzo: una sola numerazione. L'esempio
+  del PO scrive «pdc.01», le tavole «PDC-01»: si propone quella delle tavole;
+- **la descrizione** è il nome della voce di catalogo, con «nr 1», «nr 2» quando ce n'è più d'una;
+- **le caratteristiche**, per famiglia: la **potenza** dei generatori e degli scambiatori, il
+  **volume** di accumuli, bollitori e vasi, **portata e prevalenza** dei circolatori;
+- **una cella senza dato resta vuota**, con un trattino: il dato lo dà il progettista, e se non lo dà
+  sulla tavola non compare (D-087).
 
-Le scelte da fare, con le fonti:
+### 2. I dati — li raccoglie «Capire», con chiavi fisse
 
-- **i layer**: per fluido, e per mandata e ritorno? simboli, testi, legenda e cartiglio separati?
-- **i blocchi**: un blocco per simbolo, con che nome, e con gli attacchi segnati o no;
-- **i testi**: lo stile e il carattere — AutoCAD non ha i caratteri del browser;
-- **la scala e le unità**: millimetri di carta, 1:1 nello spazio modello, o una presentazione;
-- **i colori e i tipi di linea**: quelli della tavola, compreso il tratteggio dell'acqua fredda;
-- **il cartiglio**: dentro il DXF, come blocco, con il logo o no;
-- **la versione del DXF** che l'AutoCAD dello studio apre.
+Potenza, volume, portata, prevalenza, marca e modello diventano **proprietà con un nome fisso**, che
+«Capire» compila **solo quando il testo li dice** (le sue istruzioni, `skill/capire/ISTRUZIONI.md`).
+Servono anche a `REL-007`: il calcolatore dei diametri parte dalla potenza.
 
-### 2. Lo scrittore del DXF
+### 3. Il posto sul foglio
 
-Un modulo che dalla geometria della tavola scrive il DXF, **deterministico**: lo stesso piano, lo
-stesso file, byte per byte. La libreria si sceglie qui, e **pura Python**, perché la skill di
-`REL-001` la dovrà portare con sé.
+La tabella sta **in alto a sinistra dell'area del disegno**, e **il disegno non ci passa sopra**.
+Come le si fa spazio — una zona che esecutore e revisore evitano, o un'area del disegno che si
+restringe — si decide misurando, sulle sei tavole approvate, quanto spazio libero c'è oggi in alto a
+sinistra e quanto è alta la tabella di ciascuna.
 
-### 3. La prova, e le tavole al PO
+### 4. Il disegno della tabella
 
-Le **sei tavole approvate** — i cinque impianti e l'impianto 6 — in DXF. La sessione le rilegge con
-un secondo strumento e le confronta con la geometria dell'SVG; poi **il PO le apre in AutoCAD**, che
-è il metro vero.
+Nell'SVG, e quindi nel PDF, e nel DXF, sul suo layer. Righe, corpo dei testi e spessori dalla grafica
+che c'è: quella del cartiglio e della legenda.
 
-> **▶ 26 settembre 2026 — i DXF sono al PO** (`docs/collaudi/REL-004/RAPPORTO.md`): geometria riletta
-> uguale alla tavola entro 10⁻⁶ mm sulle sei tavole, giro DXF → DWG → DXF con l'ODA File Converter
-> identico, file uguale byte per byte fra processi diversi, suite con le stesse 46 rosse di `main`.
-> Prima dell'invio la sessione ha confrontato lo scrittore con la proposta della ricerca e ha aggiunto
-> i tre punti che mancavano (cartiglio in spazio carta, file che si apre sulla presentazione, colore di
-> ripiego), e ha corretto due difetti trovati col giro ODA e col collaudo. **Si aspetta il PO.**
+### 5. La prova, e le tavole al PO
+
+**Le sei tavole approvate** — i cinque impianti e l'impianto 6 — con la tabella, in PDF e in DXF. Le
+tavole di prova non hanno marca e modello: **dati di prova dichiarati**, come quelli del cartiglio di
+`REL-002`, perché il PO veda la tabella piena; e una tavola senza, perché veda le celle vuote.
 
 ---
 
 ## Perimetro
 
-**Dentro:** un modulo nuovo in `src/disegnatore_mep/` per il DXF, e il suo comando nella CLI;
-`pyproject.toml`, se serve una libreria; `tests/**`; `docs/collaudi/REL-004/`; i documenti di stato
-(`REGISTRO`, `DECISION_LOG`, piano di release, `HANDOFF.md`, `PROJECT_STATE.md`).
+**Dentro:** il disegno della tabella in `src/disegnatore_mep/graphics/` (SVG e DXF) e il suo posto nel
+foglio (`graphics/frame.py`); dove esecutore, revisore e composizione leggono l'area del disegno
+(`src/disegnatore_mep/piano/`, `src/disegnatore_mep/layout/`), **solo per farle spazio**; le chiavi dei
+dati tecnici nel modello, se servono; le istruzioni di «Capire» per quei dati; `tests/**`;
+`docs/collaudi/REL-006/`; i documenti di stato (`REGISTRO`, `DECISION_LOG`, piano di release,
+`HANDOFF.md`, `PROJECT_STATE.md`).
 
-**Fuori:** posa e instradamento (`layout/`, `piano/`), le regole, la libreria dei simboli e il
-catalogo, le istruzioni della skill, il cartiglio nel suo disegno, il PDF (`REL-001`).
+**Fuori:** posa e instradamento oltre al fare spazio alla tabella; le regole; la libreria dei simboli e
+il catalogo; i diametri (`REL-007`); il PDF senza browser.
 
 ---
 
@@ -104,22 +102,23 @@ catalogo, le istruzioni della skill, il cartiglio nel suo disegno, il PDF (`REL-
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-0. **Le tavole, per prime**: i DXF delle tavole approvate al PO, che li apre in AutoCAD.
-1. **Come si esporta l'ha deciso il PO** (punto 1): una riga del registro, e una decisione.
-2. **Il DXF è la tavola**: la geometria riletta dal DXF coincide con quella dell'SVG, entro una
-   tolleranza misurata.
-3. **Layer, blocchi, testi e scala** come deciso al punto 1.
-4. **Deterministico**: una prova pretende che lo stesso piano dia lo stesso DXF.
-5. **La suite**: nessuna rossa nuova rispetto alle 46 di `main`; zero `skip` e zero `xfail` nuovi;
+0. **Le tavole, per prime**: le sei tavole con la tabella al PO, in PDF e in DXF.
+1. **La tabella dice quello che il PO ha approvato**: le righe, le colonne e le celle vuote come le ha
+   giudicate sulla tavola; una decisione le mette per iscritto.
+2. **Niente dati inventati**: una prova pretende che una cella senza dato nel grafo resti vuota.
+3. **Il disegno non passa sulla tabella**: misurato sulle sei tavole, nessun simbolo, tratta o testo
+   dentro il suo riquadro.
+4. **Nel DXF la tabella c'è**, sul suo layer, uguale a quella del PDF.
+5. **Deterministico**: lo stesso piano dà la stessa tavola, SVG e DXF.
+6. **La suite**: nessuna rossa nuova rispetto alle 46 di `main`; zero `skip` e zero `xfail` nuovi;
    `ruff check src tests examples scripts` e `mypy` verdi.
 
-## Dopo `REL-004`
+## Dopo `REL-006`
 
-Gli altri pezzi che mancano, poi la skill (I-137): **il PDF senza browser** — oggi dentro `REL-001`,
-e per l'assunzione della sessione su I-137 viene prima della skill, come pezzo a sé —; poi **`REL-001`
-la skill**, con il suo `SKILL.md`; per ultimo **`REL-005`**, il pacchetto della release.
+`REL-007`, i diametri in DN (I-142, I-143), in `docs/plans/pacchetti/REL-007.md`; poi il PDF senza
+browser; poi `REL-001`, la skill; per ultimo `REL-005`, il pacchetto della release.
 
 ## Consegna
 
-Una PR verso `main`, **fusa solo dopo che il PO ha aperto i DXF e ha detto di sì**. Rapporto in
-`docs/collaudi/REL-004/RAPPORTO.md`, con le tavole in testa.
+Una PR verso `main`, **fusa solo dopo che il PO ha visto le tavole e ha detto di sì**. Rapporto in
+`docs/collaudi/REL-006/RAPPORTO.md`, con le tavole in testa.

@@ -14,7 +14,8 @@
 > l'ha sottomano, in [`rese/`](rese/) c'è la presentazione di ciascun DXF resa da ezdxf a foglio intero:
 > la geometria è quella, i testi no — qui non c'è Arial.
 >
-> ⏳ **In attesa del PO**: la fusione aspetta che le abbia aperte e abbia detto di sì.
+> ✅ **Approvate dal PO il 28 settembre 2026** (I-140), aperte in AutoCAD 2020: «Disegni perfetti anche
+> esportazione perfetta». Le scelte sono **D-189**.
 
 | tavola | formato | file | resa |
 |---|---|---|---|
@@ -123,9 +124,9 @@ Quello che nessuna misura qui può dire:
 
 | # | criterio | stato |
 |---|---|---|
-| 0 | le tavole al PO, che le apre in AutoCAD | ⏳ DXF inviati; **in attesa del PO** |
-| 1 | come si esporta l'ha deciso il PO | ⏳ registro e decisione **dopo il suo sì** (I-138) |
+| 0 | le tavole al PO, che le apre in AutoCAD | ✅ aperte in AutoCAD 2020 e approvate (I-140) |
+| 1 | come si esporta l'ha deciso il PO | ✅ I-140 nel registro, **D-189** |
 | 2 | il DXF è la tavola, entro una tolleranza misurata | ✅ §2: tratte e simboli uguali entro 10⁻⁶ mm, sei tavole su sei |
-| 3 | layer, blocchi, testi e scala come deciso | ⏳ come proposto in SRC-047; decisi con il sì del PO |
+| 3 | layer, blocchi, testi e scala come deciso | ✅ come proposti in SRC-047, approvati con i DXF (D-189) |
 | 4 | deterministico | ✅ §2, e due prove: stesso processo, e classi in ordine |
 | 5 | la suite, ruff e mypy | ✅ §2 |
