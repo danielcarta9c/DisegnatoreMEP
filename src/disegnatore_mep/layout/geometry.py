@@ -11,8 +11,9 @@ import hashlib
 import json
 import math
 from enum import StrEnum
+from typing import Any
 
-from pydantic import Field
+from pydantic import Field, SerializerFunctionWrapHandler, model_serializer
 
 from disegnatore_mep.model.base import FiniteFloat, StrictModel
 
@@ -191,6 +192,53 @@ class CrossReference(StrictModel):
     anchor: Point
 
 
+class RigaDellaTabella(StrictModel):
+    """Un'apparecchiatura nella tabella in alto a sinistra (REL-006, I-141).
+
+    Un campo `None` e' un dato che il progettista non ha dato: sulla tavola la
+    cella resta vuota, con un trattino, e nessuno lo inventa (D-087, I-144)."""
+
+    component_id: str
+    codice: str | None
+    """La sigla del pezzo: la stessa che il disegno scrive accanto al pezzo."""
+    descrizione: str
+    caratteristiche: str | None
+    marca: str | None
+    modello: str | None
+
+
+class TabellaDelleApparecchiature(StrictModel):
+    """La tabella delle apparecchiature, gia' impaginata: dove sta e quanto e' grande.
+
+    La compone `graphics/tabella.py`; l'SVG e il DXF la disegnano dalle stesse
+    misure, cosi' e' la stessa nei due."""
+
+    x_mm: FiniteFloat
+    y_mm: FiniteFloat
+    colonne_mm: list[FiniteFloat] = Field(min_length=1)
+    riga_mm: FiniteFloat = Field(gt=0)
+    righe: list[RigaDellaTabella] = Field(min_length=1)
+
+    @property
+    def larghezza_mm(self) -> float:
+        return sum(self.colonne_mm)
+
+    @property
+    def altezza_mm(self) -> float:
+        """L'intestazione piu' una riga per apparecchiatura."""
+        return self.riga_mm * (len(self.righe) + 1)
+
+    @property
+    def riquadro(self) -> tuple[float, float, float, float]:
+        """`(sinistra, alto, destra, basso)`, in millimetri di carta."""
+        return (
+            self.x_mm,
+            self.y_mm,
+            self.x_mm + self.larghezza_mm,
+            self.y_mm + self.altezza_mm,
+        )
+
+
 class SheetGeometry(StrictModel):
     sheet_id: str
     title: str
@@ -206,6 +254,20 @@ class SheetGeometry(StrictModel):
     leggere le geometrie gia' agli atti e per la catena che ancora lo nomina;
     la quota su cui le macchine si allineano e' un riferimento interno della
     posa, non un elemento della tavola."""
+    tabella: TabellaDelleApparecchiature | None = None
+    """La tabella delle apparecchiature in alto a sinistra (REL-006). Facoltativa
+    e additiva: una tavola che non la porta si scrive come prima, senza il campo."""
+
+    @model_serializer(mode="wrap")
+    def _senza_la_tabella_che_non_c_e(
+        self, handler: SerializerFunctionWrapHandler
+    ) -> dict[str, Any]:
+        """Una tabella che non c'e' non si scrive, nemmeno come `null`: le
+        geometrie scritte prima di REL-006 restano identiche byte per byte."""
+        dati: dict[str, Any] = handler(self)
+        if dati.get("tabella") is None:
+            dati.pop("tabella", None)
+        return dati
 
 
 class DrawingGeometry(StrictModel):
@@ -489,6 +551,26 @@ Si stringe **solo per far entrare un disegno** che altrimenti non ci starebbe,
 mai per far salire il riempimento: quella e' la dilatazione di D-142, che il
 margine limita invece di assecondare.
 """
+
+STACCO_DALLA_TABELLA_MM = 5.0
+"""Quanto il disegno sta lontano dalla tabella delle apparecchiature (REL-006):
+due passi di griglia. Niente del disegno — simboli, tubazioni, sigle — entra
+nella tabella allargata di questo stacco. *Taratura della sessione*, da
+giudicare sulla tavola."""
+
+
+def zona_della_tabella(
+    riquadro: tuple[float, float, float, float],
+    stacco_mm: float = STACCO_DALLA_TABELLA_MM,
+) -> tuple[float, float, float, float]:
+    """La tabella delle apparecchiature allargata dello stacco: dove il disegno
+    non entra, e nemmeno le sue scritte."""
+    return (
+        riquadro[0] - stacco_mm,
+        riquadro[1] - stacco_mm,
+        riquadro[2] + stacco_mm,
+        riquadro[3] + stacco_mm,
+    )
 
 
 def border_margin_mm(

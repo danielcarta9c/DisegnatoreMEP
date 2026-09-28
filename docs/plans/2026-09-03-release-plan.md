@@ -56,7 +56,7 @@ della sessione** (D-183, punto 3), e il PO lo può cambiare.
 | **`REL-002`** — **fatto** (I-132) | **il cartiglio Nove C compilato** (I-123) | i dati del cartiglio li raccoglie «Capire»: si aggiungono alle domande della skill che `REL-001` ha messo in piedi |
 | **`REL-003`** — **fatto** (I-136) | **i simboli nuovi**: pompa di calore di alta potenza, caldaia modulare a condensazione, solare termico, fan-coil canalizzato (I-124) | forme dalle fonti, approvate dal PO guardandole; per ciascuna la voce di catalogo, e le regole solo dove il PO le dà |
 | **`REL-004`** — **fatto** (I-140) | **il DXF** (I-125) | prima si definisce con il PO **come** si esporta — livelli, blocchi, testi, scala —, poi si scrive |
-| **`REL-006`** — **attivo** (28 settembre, I-141) | **la tabella delle apparecchiature**, in alto a sinistra: codice, descrizione, caratteristiche, marca, modello (D-190) | la chiede il PO prima della release; i dati li dà il progettista, e «Capire» li raccoglie |
+| **`REL-006`** — **consegnato** il 28 settembre (I-148), in attesa del giudizio del PO sulle tavole | **la tabella delle apparecchiature**, in alto a sinistra: codice, descrizione, caratteristiche, marca, modello (D-190) | la chiede il PO prima della release; i dati li dà il progettista, e «Capire» li raccoglie |
 | **`REL-007`** — dopo `REL-006` | **i diametri delle tubazioni in DN**: il calcolatore, e il DN lungo il tratto (D-191) | parte dalla potenza che `REL-006` mette in una chiave fissa; prima si fissano col PO salto termico, serie dei tubi e reti |
 | **`REL-005`** | **il pacchetto della release** | il numero di versione, `releases/latest/` e lo ZIP numerato (D-009), la guida d'installazione, la suite verde e il collaudo sui casi di accettazione |
 

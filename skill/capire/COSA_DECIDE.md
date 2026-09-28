@@ -44,7 +44,9 @@ macchine che sembrano simili cambia l'esito, e sono differenze che il testo dice
   mantello. Ciò che è a bordo non si disegna.
 
 **Se il testo non lo dice:** è una domanda. «La caldaia produce anche il sanitario o
-solo il riscaldamento?» è una domanda legittima; «che marca è» non lo è.
+solo il riscaldamento?» è una domanda legittima; «che marca è» non lo è — non per le
+regole. *Marca e modello* li chiede la tabella delle apparecchiature, in una voce sola e
+senza proporne (`ISTRUZIONI.md` §4.5, REL-006): alle regole non cambiano niente.
 
 ## 2 · Che acqua porta ogni circuito
 

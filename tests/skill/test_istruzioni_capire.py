@@ -60,15 +60,18 @@ def test_l_esempio_ricava_il_regime_dalla_potenza_che_dichiara() -> None:
     """L'esempio dichiara una potenza: allora deve mostrare anche il regime.
 
     Se l'esempio trascrivesse la potenza e lasciasse fuori il regime,
-    contraddirebbe il §4.6 — e un agente segue l'esempio prima della regola."""
+    contraddirebbe il §4.6 — e un agente segue l'esempio prima della regola.
+    Dal 28 settembre 2026 la potenza sta nella chiave fissa `power_kw`, un
+    numero in kW (REL-006, §3): prima era il testo libero `"potenza"`."""
     block = re.search(r"```json\n(.*?)\n```", istruzioni(), re.S)
     assert block is not None
     payload = json.loads(block.group(1))
     potenze = [
-        item["properties"]["potenza"]
+        item["properties"]["power_kw"]
         for item in payload["components"]
-        if "potenza" in item.get("properties", {})
+        if "power_kw" in item.get("properties", {})
     ]
+    assert all(isinstance(item, int | float) for item in potenze)
     assert potenze, "l'esempio non dichiara piu' nessuna potenza"
     assert payload.get("plant_regime") is not None, (
         "l'esempio dichiara una potenza e non il regime: contraddice il §4.6"

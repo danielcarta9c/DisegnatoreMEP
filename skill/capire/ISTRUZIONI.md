@@ -80,7 +80,7 @@ Guarda come la potenza detta dal testo compare in due posti: trascritta in
       "id": "caldaia",
       "definition_id": "gas-boiler",
       "tag": null,
-      "properties": { "potenza": "24 kW" }
+      "properties": { "power_kw": 24 }
     },
     {
       "id": "circolatore",
@@ -141,11 +141,30 @@ Regole di forma:
 - **`tag`** è la sigla del pezzo, e la compili **solo se l'ingegnere l'ha scritta nel
   testo**. Se non l'ha scritta, `tag` è `null`: le sigle le assegna dopo, in automatico,
   chi battezza il grafo. Non inventare numerazioni.
-- **`properties`** dei componenti: solo i dati che il testo dà, trascritti come stanno
-  (`"potenza": "12 kW"`, `"volume": "200 litri"`). Nessun dato dedotto. Ci vanno anche
-  il **nome commerciale** (`"modello": "ECOcombi"`) e le **qualifiche** che il testo usa
-  (`"tipo": "aria-acqua reversibile"`, `"configurazione": "a quattro tubi"`): sono
-  parole dell'ingegnere, e trascriverle non costa nulla — dedurne qualcosa sì.
+- **`properties`** dei componenti: solo i dati che il testo dà. Nessun dato dedotto.
+  **Sei dati hanno un nome fisso**, perché li legge la tabella delle apparecchiature che
+  la tavola porta in alto a sinistra (§4.5) — e la potenza, domani, il calcolo dei
+  diametri:
+
+  | dato | chiave | come si scrive |
+  |---|---|---|
+  | potenza termica | `power_kw` | un numero, in kW: `"power_kw": 12` |
+  | volume | `volume_l` | un numero, in litri: `"volume_l": 500` |
+  | portata | `flow_rate_m3h` | un numero, in m³/h: `"flow_rate_m3h": 2.5` |
+  | prevalenza | `head_kpa` oppure `head_m` | un numero, in kPa o in metri di colonna d'acqua, **nell'unità del testo** |
+  | marca | `marca` | il testo com'è scritto |
+  | modello | `modello` | il testo com'è scritto: `"modello": "ECOcombi"` |
+
+  Il numero va col punto decimale (`2.5`) e senza unità: l'unità è nel nome, e il file
+  non carica se in `power_kw` scrivi `"12 kW"`. Si cambia unità solo quando il cambio è
+  **esatto** — «1,5 m³» di accumulo sono `"volume_l": 1500`, «800 l/h» sono
+  `"flow_rate_m3h": 0.8` —, mai con un coefficiente: per questo la prevalenza ha due
+  chiavi, e si usa quella dell'unità che il testo dà. **Marca e modello non si scelgono e
+  non si propongono**: sono un dato del progettista, e se il testo non li dà non ci sono.
+  Tutto il resto che il testo dice di un pezzo si trascrive com'è, a parole: le
+  **qualifiche** (`"tipo": "aria-acqua reversibile"`, `"configurazione": "a quattro
+  tubi"`), le temperature, una potenza che non è quella termica (§4.6) — sono parole
+  dell'ingegnere, e trascriverle non costa nulla, dedurne qualcosa sì.
 - **`plant_regime`**: il regime della centrale, `up_to_35_kw` oppure `over_35_kw`. Si
   ricava dalle potenze che il testo dà (§4.6). Se il testo non le dà, **ometti il
   campo** e scrivi la domanda in `assumptions`.
@@ -385,9 +404,25 @@ testo non l'ha detto. ⚠ **Non vale per il ricircolo sanitario**, che ha la sua
 
 ### 4.5 I dati detti, e la regolazione
 
-- Potenze, volumi, temperature: **si trascrivono solo se il testo li dà**, in
-  `properties` del componente, testuali e con l'unità. Se il testo non li dà, non
-  compaiono e non si deducono.
+- Potenze, volumi, portate, prevalenze, temperature: **si trascrivono solo se il testo
+  li dà**, in `properties` del componente — con le chiavi fisse di §3 quelli che le
+  hanno, a parole e con l'unità gli altri. Se il testo non li dà, non compaiono e non si
+  deducono.
+- **La tabella delle apparecchiature.** La tavola porta in alto a sinistra una tabella
+  di generatori, accumuli e bollitori, separatori, scambiatori, circolatori e vasi di
+  espansione, con le loro caratteristiche, la marca e il modello. I dati vengono **solo
+  dal progettista**. Per le macchine che disegni, quelli che il testo non dà — la
+  potenza di generatori e scambiatori, il volume di accumuli e bollitori, portata e
+  prevalenza dei circolatori, marca e modello di tutte — li chiedi in **una sola voce**
+  di `assumptions`, pezzo per pezzo, e la ripeti nella risposta: *«Per la tabella delle
+  apparecchiature mancano: la marca e il modello della pompa di calore; portata e
+  prevalenza del circolatore. Se non li dai, sulla tavola quelle celle restano
+  vuote.»* Non servono a disegnare: senza risposta la tavola esce lo stesso, con un
+  trattino. **Non proporre marche né modelli**, nemmeno come esempio.
+- **I vasi di espansione non li disegni tu** (§5): li aggiunge il pezzo successivo. Se il
+  testo dà i dati di un vaso — volume, marca, modello —, scrivili in un'assunzione,
+  vaso per vaso, perché non vadano persi: sul vaso li riporta chi completa il grafo,
+  quando il progettista lo approva.
 - **Come è prodotta l'acqua calda.** Se il testo dice che la produzione di acqua calda
   sanitaria è **centralizzata**, scrivilo nell'accumulo di acqua calda:
   `"produzione": "centralizzata"`. Non è un aggettivo da buttare: il pezzo che completa
@@ -408,8 +443,8 @@ testo non l'ha detto. ⚠ **Non vale per il ricircolo sanitario**, che ha la sua
 
 Sotto e sopra i **35 kW** le regole del pezzo successivo cambiano, quindi il regime è un
 dato del modello. **Si ricava, non si chiede:** somma le potenze delle macchine che
-**generano calore** e confronta con la soglia. Il dato è dell'ingegnere, la soglia è
-fissa: il conto è aritmetica, non dimensionamento.
+**generano calore** — i loro `power_kw` — e confronta con la soglia. Il dato è
+dell'ingegnere, la soglia è fissa: il conto è aritmetica, non dimensionamento.
 
 - somma ≤ 35 kW → `"plant_regime": "up_to_35_kw"`;
 - somma > 35 kW → `"plant_regime": "over_35_kw"`;
@@ -418,8 +453,11 @@ fissa: il conto è aritmetica, non dimensionamento.
   sopra i 35 kW?»*
 
 Contano solo i generatori: accumuli, circolatori e terminali non hanno potenza di
-generazione. Se il testo dà una potenza in una forma diversa (potenza resa, potenza
-assorbita) trascrivila come sta e dichiara nell'assunzione quale hai sommato.
+generazione. `power_kw` è la **potenza termica** della macchina. Se il testo le distingue
+— potenza resa e potenza assorbita — in `power_kw` va la resa, e l'altra si trascrive a
+parole; se il testo dà soltanto una potenza che termica non è, o non si capisce quale
+sia, trascrivila a parole, non scrivere `power_kw`, e dichiara nell'assunzione che cosa
+hai sommato e che cosa no.
 
 ---
 
@@ -468,7 +506,8 @@ una linea frigorifera…), trattalo come voce di catalogo mancante: §6, tipo B.
 - quantità e taglie non dette (quanti terminali, che diametri, che potenze);
 - collegamenti che il testo non descrive;
 - attacchi che il catalogo non dichiara;
-- potenze, temperature, volumi, prevalenze, tarature.
+- potenze, temperature, volumi, portate, prevalenze, tarature;
+- **marche e modelli**: sono un dato del progettista, e la skill non ne ha un elenco.
 
 **Una prescrizione non è un permesso.** Se il testo dice «l'impianto dovrebbe avere X»
 o una norma lo richiederebbe, questo **non** ti autorizza ad aggiungere X: dice cosa
@@ -519,7 +558,9 @@ stesso grafo a meno di un dettaglio; nel tipo C due letture ragionevoli producon
 
 **Quello che non si chiede mai:** dove va un accessorio (lo sa il pezzo delle regole),
 quante taglie o diametri (sono dell'ingegnere, e se non li ha detti non compaiono), e
-qualunque cosa il testo abbia già scritto — a partire dalle potenze.
+qualunque cosa il testo abbia già scritto — a partire dalle potenze. **L'unica
+eccezione sono i dati della tabella delle apparecchiature** (§4.5): si chiedono, tutti
+in una voce sola, perché la tabella li scrive; chiederli non vuol dire proporli.
 
 ---
 
@@ -590,6 +631,9 @@ Rispondi a queste domande. Se una risposta è «no», il lavoro non è finito.
   derivazioni solari, da cui pendono i pezzi del gruppo (§4.2)?
 - Ogni tubazione va da una porta `out` a una porta `in`, sullo stesso fluido?
 - I `tag` sono solo quelli scritti dall'ingegnere, e tutti gli altri sono `null`?
+- I dati con un nome fisso (§3) sono numeri nell'unità del nome, e ogni marca e ogni
+  modello è scritto nel testo? I dati della tabella che il testo non dà sono chiesti in
+  una voce sola (§4.5)?
 - Ogni componente e ogni tubazione compare nella tabella di rilettura, agganciato a una
   frase del testo?
 - Ogni cosa che il testo non dice — e che hai dovuto chiudere o lasciare fuori — è una

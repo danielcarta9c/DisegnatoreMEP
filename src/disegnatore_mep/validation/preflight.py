@@ -34,11 +34,13 @@ from disegnatore_mep.layout.autostrade import (
 from disegnatore_mep.layout.geometry import (
     SHEET_FILL_MAX_RATIO,
     SHEET_MARGIN_MIN_MM,
+    STACCO_DALLA_TABELLA_MM,
     DrawingGeometry,
     PlacedLabel,
     Point,
     RoutedTrunk,
     SheetGeometry,
+    TabellaDelleApparecchiature,
     attaches_to,
     border_margin_mm,
     box_of,
@@ -154,6 +156,7 @@ MEASURE_ORDER: tuple[str, ...] = (
     "labels_on_runs",
     "leader_crossings",
     "omitted_tags",
+    "equipment_table",
     "sheet_fill",
     "next_sheet_fill",
     "symbol_sources",
@@ -614,6 +617,95 @@ def labels_on_runs(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validati
     return findings
 
 
+def _segment_crosses_box(
+    before: Point, after: Point, box: tuple[float, float, float, float]
+) -> bool:
+    """Vero se il segmento passa per l'interno del riquadro (Liang-Barsky): un
+    richiamo e' obliquo, e il suo riquadro d'ingombro non dice dove passa."""
+    origin = (before.x_mm, before.y_mm)
+    delta = (after.x_mm - before.x_mm, after.y_mm - before.y_mm)
+    low, high = 0.0, 1.0
+    for axis, (lower, upper) in enumerate(((box[0], box[2]), (box[1], box[3]))):
+        if abs(delta[axis]) <= TOLERANCE_MM:
+            if not lower + TOLERANCE_MM < origin[axis] < upper - TOLERANCE_MM:
+                return False
+            continue
+        first = (lower - origin[axis]) / delta[axis]
+        second = (upper - origin[axis]) / delta[axis]
+        low = max(low, min(first, second))
+        high = min(high, max(first, second))
+    return low < high - TOLERANCE_MM
+
+
+def equipment_table(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
+    """REL-006 — il disegno non passa sulla tabella delle apparecchiature.
+
+    La tabella sta in alto a sinistra (I-141), e l'esecutore le fa spazio
+    spostando il disegno quando serve (`layout.compose.sgombra_la_tabella`).
+    E' un vincolo della posa, e un vincolo della posa ha un rilievo sulla
+    tavola finita (**D-158**): un simbolo, un tratto di tubazione, una sigla o
+    un richiamo dentro la tabella e' un **bloccante** — la tabella non si
+    legge, e il disegno ha bisogno di un foglio piu' grande, che il piano sceglie."""
+    findings: list[ValidationIssue] = []
+    height = frame.standard.text_small_mm
+    for sheet in drawing.sheets:
+        if sheet.tabella is None:
+            continue
+        zona = sheet.tabella.riquadro
+        dentro: list[str] = [
+            item.component_id
+            for item in sheet.symbols
+            if _boxes_overlap((item.origin.x_mm, item.origin.y_mm, item.right_mm, item.bottom_mm), zona)
+        ]
+        for _, route, segment in _run_polylines(sheet):
+            if any(
+                _boxes_overlap(
+                    (
+                        min(before.x_mm, after.x_mm),
+                        min(before.y_mm, after.y_mm),
+                        max(before.x_mm, after.x_mm),
+                        max(before.y_mm, after.y_mm),
+                    ),
+                    zona,
+                )
+                or _segment_crosses_box(before, after, zona)
+                for before, after in moves_of(segment)
+            ):
+                dentro.append(_run_name(route))
+        for label in sheet.labels:
+            if _boxes_overlap(_label_box(label, height), zona) or (
+                label.leader_from is not None
+                and _segment_crosses_box(label.leader_from, label.anchor, zona)
+            ):
+                dentro.append(label.id)
+        for reference in sheet.cross_references:
+            if _boxes_overlap(
+                (
+                    reference.anchor.x_mm,
+                    reference.anchor.y_mm - height,
+                    reference.anchor.x_mm + text_width_mm(reference.text, height),
+                    reference.anchor.y_mm,
+                ),
+                zona,
+            ):
+                dentro.append(reference.id)
+        if not dentro:
+            continue
+        unici = list(dict.fromkeys(dentro))
+        findings.append(
+            _finding(
+                "DRAWING_OVER_THE_EQUIPMENT_TABLE",
+                IssueSeverity.BLOCKING,
+                f"la tavola {sheet.sheet_id}: il disegno passa sulla tabella delle "
+                f"apparecchiature — {', '.join(unici)}. La tabella sta in alto a "
+                f"sinistra (I-141) e il disegno le fa spazio: se non ci riesce, il "
+                f"foglio e' troppo piccolo per questo disegno",
+                [sheet.sheet_id, *unici],
+            )
+        )
+    return findings
+
+
 def omitted_tags(drawing: DrawingGeometry) -> list[ValidationIssue]:
     """DRAW-003-R1 — una sigla di macchina che non ha trovato posto.
 
@@ -780,6 +872,61 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
     return findings
 
 
+def _ci_sta(
+    larghezza: float, altezza: float, area: Rect, respiro: float, sheet: SheetGeometry
+) -> bool:
+    """Se un disegno di quell'ingombro sta in quell'area, col margine minimo.
+
+    **Con la tabella delle apparecchiature** (REL-006) ci deve stare accanto a
+    lei: sotto — l'altezza della tabella e lo stacco in piu' — oppure a destra.
+    E' una condizione sufficiente, misurata sull'ingombro: un disegno che ci
+    starebbe solo grazie a un angolo vuoto non la passa, e il rilievo tace. Un
+    rilievo che dice «ci sta» deve essere vero, o non si puo' chiudere."""
+    if sheet.tabella is None:
+        return (
+            area.width_mm >= larghezza + respiro - TOLERANCE_MM
+            and area.height_mm >= altezza + respiro - TOLERANCE_MM
+        )
+    tabella = sheet.tabella
+    stacco = STACCO_DALLA_TABELLA_MM
+    sotto = (
+        area.width_mm >= larghezza + respiro - TOLERANCE_MM
+        and area.height_mm
+        >= altezza + tabella.altezza_mm + stacco + respiro / 2 - TOLERANCE_MM
+    )
+    a_destra = (
+        area.width_mm
+        >= larghezza + tabella.larghezza_mm + stacco + respiro / 2 - TOLERANCE_MM
+        and area.height_mm >= altezza + respiro - TOLERANCE_MM
+    )
+    return sotto or a_destra
+
+
+def _margin_beside_the_table(
+    sheet: SheetGeometry, tabella: TabellaDelleApparecchiature, area: Rect, step_mm: float
+) -> float:
+    """Il margine che il disegno puo' permettersi nel posto che la tabella lascia
+    libero: lo stesso conto di `margin_allowed_mm`, sull'area che resta sotto la
+    tabella e su quella che resta alla sua destra, e vale la piu' generosa."""
+    stacco = STACCO_DALLA_TABELLA_MM
+    sotto = (
+        area.x_mm,
+        area.y_mm + tabella.altezza_mm + stacco,
+        area.right_mm,
+        area.bottom_mm,
+    )
+    a_destra = (
+        area.x_mm + tabella.larghezza_mm + stacco,
+        area.y_mm,
+        area.right_mm,
+        area.bottom_mm,
+    )
+    return max(
+        margin_allowed_mm(sheet.symbols, sheet.routes, sotto, step_mm),
+        margin_allowed_mm(sheet.symbols, sheet.routes, a_destra, step_mm),
+    )
+
+
 def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
     """**D3** — si prende il foglio piu' piccolo che contiene il disegno.
 
@@ -842,6 +989,16 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
         allowed = margin_allowed_mm(
             sheet.symbols, sheet.routes, rect, frame.standard.grid_mm
         )
+        # **La tabella delle apparecchiature si prende il suo spazio** (REL-006):
+        # un disegno che si e' spostato per lasciarglielo e' piu' vicino al bordo
+        # di quanto la sua sola misura gli consentirebbe, ed e' autorizzato. Il
+        # margine che poteva permettersi si misura sul posto che la tabella lascia
+        # — sotto di lei o alla sua destra, il piu' largo dei due.
+        if sheet.tabella is not None:
+            allowed = min(
+                allowed,
+                _margin_beside_the_table(sheet, sheet.tabella, area, frame.standard.grid_mm),
+            )
         if margin is not None and margin < allowed - TOLERANCE_MM:
             findings.append(
                 _finding(
@@ -890,8 +1047,9 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
             indice
             for indice, altro in enumerate(ORDINARY_FRAMES)
             if altro.drawing_rect_mm.width_mm < area.width_mm
-            and altro.drawing_rect_mm.width_mm >= larghezza + respiro - TOLERANCE_MM
-            and altro.drawing_rect_mm.height_mm >= altezza + respiro - TOLERANCE_MM
+            and _ci_sta(
+                larghezza, altezza, altro.drawing_rect_mm, respiro, sheet
+            )
         ]
         if piu_piccoli:
             nome = NOMI_DEI_FORMATI[min(piu_piccoli)]
@@ -1079,6 +1237,7 @@ def preflight_drawing(
         *labels_on_runs(drawing, frame),
         *leader_crossings(drawing),
         *omitted_tags(drawing),
+        *equipment_table(drawing, frame),
         *sheet_fill(drawing, frame),
         *next_sheet_fill(drawing, frame),
         *symbol_sources(drawing, catalog),
