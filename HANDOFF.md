@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-26 — **`REL-003` è fuso** (PR #60, tavola approvata dal PO, I-136), dopo il cartiglio (`REL-002`, PR #59, I-132). **Il pacchetto attivo è `REL-001`**, la skill vera e propria e il PDF
+**Aggiornato:** 2026-09-28 — **`REL-004`, il DXF, è fuso**: il PO l'ha aperto in AutoCAD, «Disegni perfetti anche esportazione perfetta» (I-140, D-189). **Il pacchetto attivo è `REL-006`, la tabella delle apparecchiature** (I-141); dopo, `REL-007`, i diametri in DN (I-142, I-143)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,11 +11,38 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 26 settembre 2026
+## ▶ Da dove riparte la prossima sessione — scritto il 28 settembre 2026
 
-**Il pacchetto attivo è `REL-001`** (`ACTIVE_WORK_PACKAGE.md`): la skill vera e propria — l'ingresso
-`SKILL.md` che cuce i cinque pezzi, la cartella installabile — e il PDF fatto dalla skill, senza
-browser. Si parte dal punto 1, **l'ambiente in cui la skill gira**, che da qui non si vede.
+**Il pacchetto attivo è `REL-006`, la tabella delle apparecchiature** (`ACTIVE_WORK_PACKAGE.md`; I-141,
+D-190): in alto a sinistra del foglio, **codice, descrizione, caratteristiche, marca, modello**, solo le
+apparecchiature principali e il vaso di espansione, niente valvole; **marca e modello sono un dato in
+ingresso del progettista**, la skill non ne propone (I-144). Si parte dal punto 1: che cosa dice la
+tabella lo propone la sessione — righe, caratteristiche per famiglia, celle vuote — e **il PO lo giudica
+sulla tavola**. Dopo, **`REL-007`, i diametri delle tubazioni in DN** (`docs/plans/pacchetti/REL-007.md`;
+I-142, I-143, D-191): un calcolatore dalla potenza e dalla velocità massima, e il DN una volta per tratto;
+**facoltativo, e anche solo su una parte dell'impianto** — nel retrofit la centrale sì, la distribuzione
+esistente no —, con **la skill che chiede i dati che mancano** (I-145).
+**Tocca D-002 e D-087** — la skill che non dimensiona —, e il loro stato lo cambia il PO; prima di
+scriverlo si fissano con lui la serie dei tubi e il criterio delle reti sanitarie. Poi il PDF senza browser — con i testi
+dello schema in Arial, non con le grazie (I-122) —, poi `REL-001`, la skill, poi `REL-005`.
+
+**`REL-004`, il DXF, è fuso** (PR #61): il PO l'ha aperto in AutoCAD 2020, «Disegni perfetti anche
+esportazione perfetta» (I-140). Le scelte sono **D-189**; rapporto `docs/collaudi/REL-004/RAPPORTO.md`,
+fonti nel rapporto della ricerca `docs/fonti/ricerche/reports/DXF per AutoCAD.md` (SRC-042 … SRC-047).
+
+- **`disegnatore-mep draw|piano … --dxf`** scrive la tavola anche in DXF, accanto all'SVG, e con il
+  cartiglio il logo, che il DXF collega senza percorso. La libreria è `ezdxf` 1.4.4, nel gruppo
+  facoltativo `dxf` di `pyproject.toml`.
+- **Il DXF**: AutoCAD 2013, lo schema in spazio modello a 1:1, squadratura e cartiglio in spazio carta,
+  una presentazione per formato che si apre per prima; un layer per rete col colore esatto; un blocco per
+  simbolo; le frecce come blocco; i tratteggi in millimetri; testi Arial tarati sulle maiuscole.
+- **Come si verifica senza AutoCAD**: `docs/collaudi/REL-004/collaudo.py` (audit, geometria riletta,
+  rese) e `giro_oda.py` (DXF → DWG → DXF con l'ODA File Converter, che la sessione scarica ed estrae).
+- **La suite**: le stesse 46 rosse di `main`, nome per nome; zero `skip` e zero `xfail` nuovi; `ruff` e
+  `mypy` verdi.
+- **I numeri**: il prossimo input è **I-146**, la prossima decisione **D-192**.
+
+## ▶ `REL-003` è fuso — scritto il 26 settembre 2026
 
 **`REL-003` è fuso** (PR #60): il PO, sulla tavola di prova, «La tavola va benissimo. Ottimo lavoro.
 Fondi» (I-136). Rapporto: `docs/collaudi/REL-003/RAPPORTO.md`; il pacchetto com'era:
@@ -35,7 +62,7 @@ Fondi» (I-136). Rapporto: `docs/collaudi/REL-003/RAPPORTO.md`; il pacchetto com
   istruzioni e nel motore: resta agli atti, non è lavoro di `REL-001`.
 - **La suite**: le stesse 46 rosse di `DRAW-018`, nome per nome; zero `skip` e zero `xfail` nuovi;
   `ruff check src tests examples scripts` e `mypy` verdi.
-- **I numeri**: il prossimo input è **I-137**, la prossima decisione **D-189**. Due sessioni in
+- **I numeri** (erano, al 26 settembre): il prossimo input era **I-140**, la prossima decisione **D-189**. Due sessioni in
   parallelo avevano preso gli stessi (I-133): **chi fonde per secondo sposta i suoi**, guardando
   `main` nel momento in cui fonde.
 - **Nel contenitore di questa sessione il `python3` di sistema non aveva le dipendenze**: le camere

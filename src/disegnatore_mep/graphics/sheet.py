@@ -79,14 +79,18 @@ def _escape(text: str) -> str:
     )
 
 
-def _flow_arrow(segment: list[Point], colour: str, forward: bool = True) -> str:
-    """Una freccia a meta' del tratto piu' lungo, nel verso del flusso.
+def flow_arrow_at(
+    segment: list[Point], forward: bool = True
+) -> tuple[float, float, float, float] | None:
+    """Dove sta la freccia di verso su una spezzata: la punta e la direzione.
 
-    Il verso lo porta la geometria, decisa sul modello (DRAW-005-R1, I-042):
-    lungo la spezzata, o contro di essa. Chi la disegna non lo deduce da come
-    la spezzata e' scritta."""
+    A meta' del tratto piu' lungo, nel verso del flusso; `None` se il tratto e'
+    troppo corto per portarla. Il verso lo porta la geometria, decisa sul
+    modello (DRAW-005-R1, I-042): lungo la spezzata, o contro di essa. Chi la
+    disegna non lo deduce da come la spezzata e' scritta. La leggono l'SVG e il
+    DXF (`dxf.py`), cosi' la freccia e' la stessa nei due."""
     if len(segment) < 2:
-        return ""
+        return None
     if not forward:
         segment = list(reversed(segment))
     best = max(
@@ -97,11 +101,18 @@ def _flow_arrow(segment: list[Point], colour: str, forward: bool = True) -> str:
     before, after = best
     length = abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
     if length < 2 * ARROW_LENGTH_MM:
-        return ""
+        return None
     dx = (after.x_mm - before.x_mm) / length
     dy = (after.y_mm - before.y_mm) / length
-    tip_x = before.x_mm + dx * length / 2
-    tip_y = before.y_mm + dy * length / 2
+    return before.x_mm + dx * length / 2, before.y_mm + dy * length / 2, dx, dy
+
+
+def _flow_arrow(segment: list[Point], colour: str, forward: bool = True) -> str:
+    """Una freccia a meta' del tratto piu' lungo, nel verso del flusso."""
+    found = flow_arrow_at(segment, forward)
+    if found is None:
+        return ""
+    tip_x, tip_y, dx, dy = found
     back_x, back_y = tip_x - dx * ARROW_LENGTH_MM, tip_y - dy * ARROW_LENGTH_MM
     left_x, left_y = back_x - dy * ARROW_HALF_WIDTH_MM, back_y + dx * ARROW_HALF_WIDTH_MM
     right_x, right_y = back_x + dy * ARROW_HALF_WIDTH_MM, back_y - dx * ARROW_HALF_WIDTH_MM
