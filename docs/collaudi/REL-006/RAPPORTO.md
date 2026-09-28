@@ -277,7 +277,27 @@ separate; la prova `test_lo_stesso_piano_da_la_stessa_tavola_svg_e_dxf`.
 
 **Criterio 6 — la suite**:
 
-@@SUITE@@
+`python -m pytest -q`, sul commit `2509636` e su `main` a `e0cefea` (un albero di lavoro a parte),
+e il confronto delle rosse nome per nome:
+
+```
+main : 46 failed, 1810 passed, 24 skipped, 12 xfailed in 681.24s (0:11:21)
+ramo : 46 failed, 1845 passed, 24 skipped, 12 xfailed in 718.35s (0:11:58)
+rosse main 46 ramo 46 errori 0 0
+nuove nel ramo: []
+guarite nel ramo: []
+uguali nome per nome: True
+```
+
+Le 46 rosse sono **le stesse di `main`**, nome per nome; `skip` e `xfail` invariati; le 35 passate in
+più sono le prove di `tests/graphics/test_tabella.py`. `ruff check src tests examples scripts` e
+`mypy`: verdi.
+
+*Una rossa nuova c'è stata, ed è chiusa:* alla prima esecuzione
+`tests/skill/test_istruzioni_capire.py::test_l_esempio_ricava_il_regime_dalla_potenza_che_dichiara`
+cercava nell'esempio di «Capire» la potenza sotto la vecchia chiave `"potenza"`, che adesso è
+`power_kw`. La prova legge la chiave nuova, e chiede in più che sia un numero; quello che pretende —
+l'esempio che dichiara una potenza mostra anche il regime — non cambia.
 
 ## 5. Che cosa ho toccato fuori dal perimetro scritto, e perché
 
