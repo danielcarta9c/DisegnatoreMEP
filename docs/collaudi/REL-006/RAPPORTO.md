@@ -19,6 +19,10 @@
 >
 > **E una tavola senza dati**, la 1 col suo grafo com'è agli atti: tutte le celle dei dati con il
 > trattino.
+>
+> ✅ **Approvate dal PO il 28 settembre 2026** (I-149): «Tutto perfetto, procedi». Le scelte di §1 sono
+> **D-192**, approvata con le tavole; e alla seconda domanda di §6 la risposta si legge così: le sigle dei
+> generatori restano quelle di oggi (GT, quando il testo non ne dà una).
 
 | tavola | formato | PDF | DXF | che cosa mostra |
 |---|---|---|---|---|

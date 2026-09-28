@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-28 — **`REL-004`, il DXF, è fuso**: il PO l'ha aperto in AutoCAD, «Disegni perfetti anche esportazione perfetta» (I-140, D-189). **Il pacchetto attivo è `REL-006`, la tabella delle apparecchiature** (I-141); dopo, `REL-007`, i diametri in DN (I-142, I-143)
+**Aggiornato:** 2026-09-28 — **`REL-006`, la tabella delle apparecchiature, è fuso**: il PO, viste le tavole, «Tutto perfetto, procedi» (I-149, D-192). **Il pacchetto attivo è `REL-007`, i diametri delle tubazioni in DN** (I-142, I-143, I-145, D-191)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,49 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 28 settembre 2026
+## ▶ Da dove riparte la prossima sessione — scritto il 28 settembre 2026, a `REL-006` fuso
+
+**Il pacchetto attivo è `REL-007`, i diametri delle tubazioni in DN** (`ACTIVE_WORK_PACKAGE.md`; I-142,
+I-143, I-145, D-191): un calcolatore dalla potenza e dalla velocità massima, e il DN una volta per tratto;
+**facoltativo, e anche solo su una parte dell'impianto**, con la skill che chiede i dati che mancano.
+**Si parte dal punto 1**: prima di scrivere il calcolatore si fissano col PO la serie dei tubi, il
+criterio delle reti sanitarie e la velocità massima — sono dominio MEP, e si chiedono.
+
+**`REL-006`, la tabella delle apparecchiature, è fuso** (PR #63): il PO, viste le sei tavole con la
+tabella e la tavola senza dati, «Tutto perfetto, procedi» (I-149). Le scelte sono **D-192**; rapporto
+`docs/collaudi/REL-006/RAPPORTO.md`, tavole in `docs/collaudi/REL-006/tavole/`.
+
+- **La tabella** (`graphics/tabella.py`) sta nell'angolo in alto a sinistra dell'area del disegno:
+  generatori, accumuli e bollitori, separatori, scambiatori, circolatori e vasi — niente valvole, niente
+  terminali —; codice, descrizione con «nr» per i doppioni, caratteristiche per mestiere, marca, modello;
+  un trattino dove il dato manca. SVG e DXF la disegnano dalle stesse misure; nel DXF è sul layer
+  `M-ANNO-SCHD`. La porta `SheetGeometry.tabella`, e la compone l'esecutore del piano: **la via senza
+  piano, `draw`, non la porta**.
+- **Il codice è la sigla della lettura dell'impianto** (D-097), e **i pezzi della tabella la scrivono anche
+  sul disegno**: prima il disegno scriveva solo le sigle dell'ingegnere, e il vaso di espansione — o
+  tutta la tavola 6 — non ne aveva. Un generatore senza sigla nel testo è `GT-nn`: la risposta del PO
+  si è letta così (I-149).
+- **I dati hanno chiavi fisse** nelle proprietà del pezzo, e il modello le controlla: `power_kw`,
+  `volume_l`, `flow_rate_m3h`, `head_kpa` o `head_m`, `marca`, `modello`. «Capire» le scrive solo dal
+  testo e chiede quelle che mancano in una voce sola (`skill/capire/ISTRUZIONI.md` §3, §4.5, §4.6).
+  **`power_kw` è la potenza da cui parte il calcolatore di `REL-007`.**
+- **Il disegno non passa sulla tabella**: niente entra nella tabella allargata di 5 mm. Sulle sei
+  tavole approvate il disegno non si è mosso — simboli e tratte identici a quelli di prima —; se servisse,
+  si sposterebbe tutto insieme del meno possibile (`layout/compose.py::sgombra_la_tabella`). Se non può,
+  il preflight lo dice come bloccante, `DRAWING_OVER_THE_EQUIPMENT_TABLE`: il foglio è troppo piccolo.
+- **La suite**: le stesse 46 rosse di `main`, nome per nome; 1845 passate; zero `skip` e zero `xfail`
+  nuovi; `ruff` e `mypy` verdi.
+- **I numeri**: il prossimo input è **I-150**, la prossima decisione **D-193**.
+- **Resta aperto, e non è di `REL-007`**: i dati di un vaso di espansione dati dal progettista arrivano
+  sul vaso solo con la skill cucita (`REL-001`) — oggi «Capire» li scrive in un'assunzione —; le
+  istruzioni del pianificatore (`skill/comporre/`) non nominano ancora la tabella, e basta una riga
+  accanto a quella sulla legenda (§D3); il collettore solare non ha una caratteristica sua (la superficie,
+  se il PO la vuole); i testi dello schema escono ancora con le grazie (I-122, il PDF senza browser).
+- **L'ambiente**: come sotto — `python3 -m venv .venv && .venv/bin/pip install -e ".[dev]"`; per le rese
+  dei collaudi servono anche PyMuPDF e Pillow. Il collaudo di `REL-006` confronta la geometria con quella
+  di `main` scritta da `docs/collaudi/REL-006/geometria_di_main.py` su un albero di lavoro a parte.
+
+## ▶ `REL-004` fuso, attivo `REL-006` — scritto il 28 settembre 2026, prima della tabella
 
 **Il pacchetto attivo è `REL-006`, la tabella delle apparecchiature** (`ACTIVE_WORK_PACKAGE.md`; I-141,
 D-190): in alto a sinistra del foglio, **codice, descrizione, caratteristiche, marca, modello**, solo le
