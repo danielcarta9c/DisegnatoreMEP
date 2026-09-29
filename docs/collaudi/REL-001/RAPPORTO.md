@@ -188,8 +188,19 @@ altri modelli, e le valutazioni, in §5.
 ### Criterio 5 — la suite: **raggiunto**
 
 ```
-⟦SUITE⟧
+main (6412016):  46 failed, 1989 passed, 24 skipped, 12 xfailed in 827.49s (0:13:47)
+ramo (a139a43):  46 failed, 2035 passed, 24 skipped, 12 xfailed in 877.12s (0:14:37)
+$ comm -13 <rosse di main> <rosse del ramo>      # nuove
+(nessuna)
+$ comm -23 <rosse di main> <rosse del ramo>      # guarite
+(nessuna)
+$ diff <skip e xfail di main> <skip e xfail del ramo>
+(nessuna differenza)
 ```
+
+Le 46 rosse sono **le stesse di `main`, nome per nome**; `skip` e `xfail` sono gli stessi, nome per nome;
+le 46 passate in più sono le prove nuove (25 del PDF, 14 del comando, 7 della costruzione). La suite è
+`python -m pytest -q -p no:cacheprovider -rfEsx`, nello stesso ambiente per `main` e per il ramo.
 
 ```
 $ ruff check src tests examples scripts skill docs/collaudi/REL-001
