@@ -132,3 +132,19 @@ def test_le_istruzioni_dicono_che_il_gruppo_solare_lo_trascrive_capire() -> None
     assert "`tee-branch-solar`" in testo
     assert "sul ritorno ai collettori" in testo
     assert "**Non vale sul circuito solare**" in testo
+
+
+def test_le_istruzioni_dicono_quando_e_con_che_cosa_si_chiedono_i_diametri() -> None:
+    """REL-007 (I-145, D-193): il calcolo dei diametri e' facoltativo, si fa solo
+    dove il progettista lo chiede, e i dati che mancano si chiedono. Il modello
+    sa portare la richiesta, la rete esistente e il salto termico; senza queste
+    righe «Capire» non saprebbe di doverli scrivere, e il DN non comparirebbe
+    mai — oppure comparirebbe su dati inventati."""
+    testo = istruzioni()
+    assert "### 4.7 I diametri, se il progettista li chiede" in testo
+    assert "**solo se il progettista lo chiede**" in testo
+    assert '`"diametri": {"reti": [...]}`' in testo
+    assert '`"esistente": true`' in testo
+    assert "`delta_t_k`" in testo
+    assert "**Non scriverne uno «tipico»**" in testo
+    assert "**Quelli che mancano li chiedi in una voce sola**" in testo

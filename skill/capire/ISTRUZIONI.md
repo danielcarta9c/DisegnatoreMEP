@@ -142,9 +142,8 @@ Regole di forma:
   testo**. Se non l'ha scritta, `tag` è `null`: le sigle le assegna dopo, in automatico,
   chi battezza il grafo. Non inventare numerazioni.
 - **`properties`** dei componenti: solo i dati che il testo dà. Nessun dato dedotto.
-  **Sei dati hanno un nome fisso**, perché li legge la tabella delle apparecchiature che
-  la tavola porta in alto a sinistra (§4.5) — e la potenza, domani, il calcolo dei
-  diametri:
+  **Sette dati hanno un nome fisso**, perché li legge la tabella delle apparecchiature
+  che la tavola porta in alto a sinistra (§4.5) e il calcolo dei diametri (§4.7):
 
   | dato | chiave | come si scrive |
   |---|---|---|
@@ -152,6 +151,7 @@ Regole di forma:
   | volume | `volume_l` | un numero, in litri: `"volume_l": 500` |
   | portata | `flow_rate_m3h` | un numero, in m³/h: `"flow_rate_m3h": 2.5` |
   | prevalenza | `head_kpa` oppure `head_m` | un numero, in kPa o in metri di colonna d'acqua, **nell'unità del testo** |
+  | salto termico di progetto | `delta_t_k` | un numero, in kelvin: `"delta_t_k": 5` (§4.7) |
   | marca | `marca` | il testo com'è scritto |
   | modello | `modello` | il testo com'è scritto: `"modello": "ECOcombi"` |
 
@@ -168,6 +168,11 @@ Regole di forma:
 - **`plant_regime`**: il regime della centrale, `up_to_35_kw` oppure `over_35_kw`. Si
   ricava dalle potenze che il testo dà (§4.6). Se il testo non le dà, **ometti il
   campo** e scrivi la domanda in `assumptions`.
+- **`diametri`**: la richiesta dei diametri delle tubazioni, **solo se il progettista li
+  chiede** (§4.7): `"diametri": {"reti": ["primario"]}`, le reti su cui calcolarli. Se non
+  li chiede, **ometti il campo**. Una rete che il testo dice **esistente** — «la
+  distribuzione dagli accumuli in poi è esistente» — porta `"esistente": true` fra i suoi
+  campi, e non sta mai fra le reti dei diametri.
 - **`metadata`**: identifica il documento, non l'impianto, ed è quello che il
   **cartiglio** della tavola scrive. Committente e codice di
   commessa te li dice chi lancia il lavoro; se mancano, scrivi `ND` e dillo nella
@@ -459,6 +464,44 @@ parole; se il testo dà soltanto una potenza che termica non è, o non si capisc
 sia, trascrivila a parole, non scrivere `power_kw`, e dichiara nell'assunzione che cosa
 hai sommato e che cosa no.
 
+### 4.7 I diametri, se il progettista li chiede
+
+La tavola può portare il **diametro di ogni tratto**, calcolato — «Øi 32» lungo la linea,
+il diametro interno netto minimo in millimetri (D-191, D-193). **Il calcolo è
+facoltativo**: si fa **solo se il progettista lo chiede** («calcola i diametri», «metti i
+DN», «dimensiona le tubazioni della centrale»), e **solo sulla parte che dice lui**. Se il
+testo non lo chiede non scrivi niente, e non lo proponi.
+
+**Dove.** Scrivi `"diametri": {"reti": [...]}` con le reti su cui il progettista vuole il
+DN. Il caso ricorrente è il **retrofit**: «la centrale è nuova, la distribuzione dagli
+accumuli in poi è esistente» — il DN va sul circuito dei generatori, e le reti della
+distribuzione esistente portano `"esistente": true`. Una rete esistente non si
+dimensiona mai. Se il testo chiede i diametri senza dire dove, le reti sono tutte quelle
+non esistenti; se non si capisce che cosa è esistente, è una domanda.
+
+**Con quali dati.** Il calcolo non inventa niente: la portata di ogni tratto viene dai
+dati del progettista, e senza quei dati quel tratto resta senza DN.
+
+- **riscaldamento e raffrescamento**: la potenza e il salto termico di progetto del
+  circuito — `power_kw` e `delta_t_k` sul **generatore**, e per un circuito di utenza sul
+  **terminale** (i radiatori, i ventilconvettori, la zona a pavimento); oppure la portata
+  del **circolatore** del circuito, `flow_rate_m3h`, se il testo la dà;
+- **acqua fredda, acqua calda sanitaria, ricircolo e solare**: la **portata di progetto**,
+  `flow_rate_m3h` — sui confini, l'acquedotto e le utenze, o sul circolatore del ricircolo
+  e del solare. Qui la potenza non basta: il sanitario si dimensiona sulle utenze, e il
+  fluido solare non è acqua.
+
+Il salto termico, se il testo dà le **temperature di mandata e di ritorno** di quel
+circuito, è la loro differenza: «45/40 °C» è `"delta_t_k": 5`. È aritmetica sui dati del
+progettista, come il regime (§4.6). **Non scriverne uno «tipico»**: 5 K per una pompa di
+calore è un'abitudine, non un dato del testo.
+
+**Quelli che mancano li chiedi in una voce sola** di `assumptions`, pezzo per pezzo, e la
+ripeti nella risposta: *«Per i diametri mancano: il salto termico della pompa di calore;
+la portata di progetto dell'acqua calda sanitaria. Se non li dai, quei tratti restano
+senza DN.»* Senza risposta la tavola esce lo stesso, e quei tratti non portano il
+diametro.
+
 ---
 
 ## 5. Cosa entra nel grafo e cosa no: le due liste
@@ -634,6 +677,9 @@ Rispondi a queste domande. Se una risposta è «no», il lavoro non è finito.
 - I dati con un nome fisso (§3) sono numeri nell'unità del nome, e ogni marca e ogni
   modello è scritto nel testo? I dati della tabella che il testo non dà sono chiesti in
   una voce sola (§4.5)?
+- I diametri: il campo `diametri` c'è **solo se** il progettista li ha chiesti, con le reti
+  che ha detto, e nessuna è `esistente`? I dati che mancano al calcolo — salti termici,
+  portate di progetto — sono chiesti in una voce sola (§4.7)?
 - Ogni componente e ogni tubazione compare nella tabella di rilettura, agganciato a una
   frase del testo?
 - Ogni cosa che il testo non dice — e che hai dovuto chiudere o lasciare fuori — è una

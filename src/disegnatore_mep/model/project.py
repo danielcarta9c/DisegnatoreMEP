@@ -100,6 +100,25 @@ class NetworkModel(IdentifiedModel):
     domain: Domain
     medium: str = Field(pattern=ID_PATTERN)
     evidence: list[EvidenceRef] = Field(default_factory=list)
+    esistente: bool = False
+    """La rete **c'e' gia'**, e l'intervento non la tocca (REL-007, I-145).
+
+    E' il retrofit che il PO ha descritto: la centrale si progetta, la
+    distribuzione dagli accumuli in poi esiste e le sue tubazioni non si
+    cambiano. Una rete esistente si disegna come le altre e **non porta il DN**
+    (D-193, punto 8). Facoltativo e additivo: assente vuol dire nuova, e un
+    documento scritto prima non cambia di un byte."""
+
+    @model_serializer(mode="wrap")
+    def _senza_l_esistente_non_detto(
+        self, handler: SerializerFunctionWrapHandler
+    ) -> dict[str, Any]:
+        """Una rete nuova non scrive `esistente`: i grafi agli atti restano
+        identici byte per byte, e cosi' la loro impronta (`io.canonical`)."""
+        dati: dict[str, Any] = handler(self)
+        if not dati.get("esistente"):
+            dati.pop("esistente", None)
+        return dati
 
 
 CHIAVI_DEI_DATI_NUMERICI: dict[str, str] = {
@@ -108,6 +127,7 @@ CHIAVI_DEI_DATI_NUMERICI: dict[str, str] = {
     "flow_rate_m3h": "m³/h",
     "head_kpa": "kPa",
     "head_m": "m c.a.",
+    "delta_t_k": "K",
 }
 """I dati tecnici con un nome fisso, e l'unita' in cui si scrivono (REL-006).
 
@@ -117,7 +137,13 @@ chiavi che la tavola sapeva gia' scrivere accanto a un pezzo
 (`layout/labels.py`, D-052); `head_m` e' la prevalenza in metri di colonna
 d'acqua, che il progettista da' spesso cosi' e che non si converte in kPa per
 non cambiargli il numero. Le legge la tabella delle apparecchiature
-(`graphics/tabella.py`), e la potenza servira' ai diametri (`REL-007`)."""
+(`graphics/tabella.py`).
+
+`delta_t_k` e' il **salto termico di progetto** del circuito di un generatore o
+di un'utenza, in kelvin: con `power_kw` da' la portata da cui il calcolatore dei
+diametri sceglie il DN (REL-007, D-193). Lo da' il progettista, e se manca
+«Capire» lo chiede (I-145): la tavola non lo scrive, perche' il dato che si legge
+e' il DN."""
 
 MARCA = "marca"
 """La marca di un pezzo, come il progettista l'ha data (I-144): un testo."""
@@ -243,6 +269,27 @@ class SheetIntentModel(IdentifiedModel):
         return self
 
 
+class RichiestaDeiDiametri(StrictModel):
+    """Il progettista vuole i diametri, e dice **dove** (REL-007, I-145).
+
+    Il calcolo e' facoltativo: senza questa richiesta nessun tratto porta il DN
+    (D-193, punto 8). Con la richiesta, lo portano i tratti delle reti elencate —
+    nel retrofit, per esempio, il circuito primario e non la distribuzione
+    esistente. Le reti si nominano per identificativo, come le scrive il grafo."""
+
+    reti: list[str] = Field(min_length=1)
+    """Le reti su cui calcolare il DN: nessuna e' esistente, nessuna due volte."""
+
+    @model_validator(mode="after")
+    def reti_senza_doppioni(self) -> "RichiestaDeiDiametri":
+        visti: set[str] = set()
+        for rete in self.reti:
+            if rete in visti:
+                raise ValueError(f"la rete {rete} e' chiesta due volte per i diametri")
+            visti.add(rete)
+        return self
+
+
 class ProjectModel(StrictModel):
     schema_version: str = Field(pattern=r"^\d+\.\d+\.\d+$", default=SCHEMA_VERSION)
     metadata: ProjectMetadata
@@ -253,6 +300,10 @@ class ProjectModel(StrictModel):
     minimo. Campo facoltativo e additivo: un documento 1.1.0 senza questo
     campo resta valido cosi' com'e', e la versione dello schema non cambia.
     """
+    diametri: RichiestaDeiDiametri | None = None
+    """La richiesta dei diametri delle tubazioni, se il progettista l'ha fatta
+    (REL-007). Facoltativa e additiva come `plant_regime`: assente vuol dire che
+    il DN non si calcola, e un documento scritto prima non cambia di un byte."""
     subsystems: list[SubsystemModel] = Field(default_factory=list)
     networks: list[NetworkModel] = Field(default_factory=list)
     components: list[ComponentInstance] = Field(default_factory=list)
@@ -296,3 +347,34 @@ class ProjectModel(StrictModel):
                 raise ValueError(f"duplicate component tag: {component.tag}")
             seen_tags.add(component.tag)
         return self
+
+    @model_validator(mode="after")
+    def i_diametri_si_chiedono_su_reti_nuove(self) -> "ProjectModel":
+        """La richiesta dei diametri nomina reti che esistono, e nessuna esistente.
+
+        Una rete esistente non si dimensiona (I-145): chiederne il DN e'
+        contraddittorio, e va detto a chi ha scritto il grafo invece di
+        scegliere per lui una delle due cose."""
+        if self.diametri is None:
+            return self
+        reti = {item.id: item for item in self.networks}
+        for rete in self.diametri.reti:
+            if rete not in reti:
+                raise ValueError(f"i diametri sono chiesti sulla rete {rete}, che il grafo non ha")
+            if reti[rete].esistente:
+                raise ValueError(
+                    f"i diametri sono chiesti sulla rete {rete}, che e' esistente: una rete "
+                    f"esistente non si dimensiona"
+                )
+        return self
+
+    @model_serializer(mode="wrap")
+    def _senza_la_richiesta_che_non_c_e(
+        self, handler: SerializerFunctionWrapHandler
+    ) -> dict[str, Any]:
+        """Senza richiesta dei diametri il campo non si scrive, nemmeno come
+        `null`: i grafi agli atti restano identici byte per byte."""
+        dati: dict[str, Any] = handler(self)
+        if dati.get("diametri") is None:
+            dati.pop("diametri", None)
+        return dati

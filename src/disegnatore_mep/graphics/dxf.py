@@ -106,6 +106,12 @@ LAYER_TABELLA = "M-ANNO-SCHD"
 che le linee guida AIA danno alle tabelle, accanto a `LEGN`, «Legends, symbol
 keys» (AIA CAD Layer Guidelines, §3, codici delle annotazioni:
 https://facilities.duke.edu/sites/default/files/AIA%20CAD%20Layer%20Guidelines.pdf)."""
+LAYER_DIAMETRI = "M-ANNO-DIAM"
+"""I diametri delle tubazioni (REL-007): «Øi 32» lungo le linee. `DIAM` e' un
+codice del progetto, di quattro caratteri come le linee guida AIA ammettono per i
+codici dell'utente, e il layer lo spiega nella sua descrizione (SRC-044): le linee
+guida non hanno un gruppo per le dimensioni delle tubazioni scritte in testo, e
+`DIMS` e' quello delle quote."""
 LAYER_CARTIGLIO = "G-ANNO-TTLB"
 LAYER_FINESTRA = "G-ANNO-NPLT"
 
@@ -692,6 +698,12 @@ class _Tavola:
         self.layer(LAYER_LEGENDA, "Legenda", None, "none", thin)
         if self.sheet.tabella is not None:
             self.layer(LAYER_TABELLA, "Tabella delle apparecchiature", None, "none", thin)
+        if self.sheet.diametri:
+            self.layer(
+                LAYER_DIAMETRI,
+                "Diametri delle tubazioni: Øi, diametro interno netto minimo in mm",
+                None, "none", thin,
+            )
         self.layer(LAYER_CARTIGLIO, "Squadratura e cartiglio", None, "none", thin)
         self.layer(
             LAYER_FINESTRA, "Finestra della presentazione (non si stampa)", None, "none",
@@ -801,7 +813,7 @@ class _Tavola:
     def testo(
         self, testo: str, x: float, y: float, corpo_mm: float, layer: str,
         allineamento: str = "start", grassetto: bool = False, colore: str | None = None,
-        opacita: float = 1.0, dove: "BaseLayout | None" = None,
+        opacita: float = 1.0, dove: "BaseLayout | None" = None, rotazione: float = 0.0,
     ) -> None:
         from ezdxf.enums import TextEntityAlignment
 
@@ -812,6 +824,8 @@ class _Tavola:
             "height": round(corpo_mm * ALTEZZA_MAIUSCOLE_EM, 4),
             "style": STILE_TESTO_GRASSETTO if grassetto else STILE_TESTO,
         }
+        if rotazione:
+            attributi["rotation"] = rotazione
         spazio = self.msp if dove is None else dove
         entita = spazio.add_text(_testo(testo), dxfattribs=attributi)
         if colore is not None:
@@ -1015,6 +1029,28 @@ class _Tavola:
             self.testo(
                 key.name, key.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM,
                 key.anchor.y_mm, self.standard.text_small_mm, LAYER_LEGENDA,
+            )
+        for nota in self.sheet.note_della_legenda:
+            self.testo(
+                nota.campione, nota.anchor.x_mm, nota.anchor.y_mm,
+                self.standard.text_small_mm, LAYER_LEGENDA,
+            )
+            for indice, riga in enumerate(nota.righe):
+                self.testo(
+                    riga, nota.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM,
+                    nota.anchor.y_mm + indice * self.standard.grid_mm,
+                    self.standard.text_small_mm, LAYER_LEGENDA,
+                )
+
+    def diametri(self) -> None:
+        """Il DN dei tratti (REL-007), dalla stessa ancora dell'SVG: sul verticale
+        la scritta sale, e nello spazio modello — y in alto — e' una rotazione di
+        novanta gradi in senso antiorario."""
+        for etichetta in self.sheet.diametri:
+            self.testo(
+                etichetta.testo, etichetta.ancora.x_mm, etichetta.ancora.y_mm,
+                self.standard.text_small_mm, LAYER_DIAMETRI,
+                rotazione=90.0 if etichetta.verticale else 0.0,
             )
 
     def tabella(self) -> None:
@@ -1227,6 +1263,7 @@ def write_dxf(
         tavola.simboli()
         tavola.pallini()
         tavola.sigle()
+        tavola.diametri()
         tavola.legenda()
         tavola.tabella()
         tavola.rimandi()

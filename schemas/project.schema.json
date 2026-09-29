@@ -286,6 +286,11 @@
           },
           "title": "Evidence",
           "type": "array"
+        },
+        "esistente": {
+          "default": false,
+          "title": "Esistente",
+          "type": "boolean"
         }
       },
       "required": [
@@ -464,6 +469,25 @@
       "title": "ProjectMetadata",
       "type": "object"
     },
+    "RichiestaDeiDiametri": {
+      "additionalProperties": false,
+      "description": "Il progettista vuole i diametri, e dice **dove** (REL-007, I-145).\n\nIl calcolo e' facoltativo: senza questa richiesta nessun tratto porta il DN\n(D-193, punto 8). Con la richiesta, lo portano i tratti delle reti elencate —\nnel retrofit, per esempio, il circuito primario e non la distribuzione\nesistente. Le reti si nominano per identificativo, come le scrive il grafo.",
+      "properties": {
+        "reti": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Reti",
+          "type": "array"
+        }
+      },
+      "required": [
+        "reti"
+      ],
+      "title": "RichiestaDeiDiametri",
+      "type": "object"
+    },
     "RuleApplicationModel": {
       "additionalProperties": false,
       "properties": {
@@ -605,6 +629,17 @@
       "anyOf": [
         {
           "$ref": "#/$defs/PlantRegime"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "diametri": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RichiestaDeiDiametri"
         },
         {
           "type": "null"

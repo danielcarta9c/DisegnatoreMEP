@@ -164,6 +164,32 @@ class PlacedLabel(StrictModel):
     """Da dove parte la linea di richiamo, quando il testo sta fuori dal corpo."""
 
 
+class DiametroSullaTavola(StrictModel):
+    """Il DN di un tratto, scritto in linea con la tubazione (REL-007, D-193).
+
+    Un'etichetta sola per tratto (I-143). `ancora` e' la base della scritta: per
+    un'etichetta orizzontale l'angolo in basso a sinistra, come un `<text>` SVG;
+    per una **verticale**, che si legge dal basso verso l'alto (I-152), il punto
+    da cui la scritta sale, ed e' li' che si gira di novanta gradi."""
+
+    testo: str = Field(min_length=1)
+    ancora: Point
+    verticale: bool = False
+    connection_ids: list[str] = Field(default_factory=list)
+    """Le connessioni del tratto che l'etichetta nomina: e' cosi' che il preflight
+    verifica che ogni tratto ne abbia una, e una sola."""
+
+
+class NotaDellaLegenda(StrictModel):
+    """Una riga della legenda che spiega una scritta, non un simbolo: «Øi» (I-155)."""
+
+    campione: str = Field(min_length=1)
+    righe: list[str] = Field(min_length=1)
+    """La spiegazione, gia' andata a capo sulla larghezza della fascia: la prima
+    riga sta in quota con il campione, le altre sotto, a un passo di griglia."""
+    anchor: Point
+
+
 class LegendEntry(StrictModel):
     symbol_id: str
     name: str
@@ -257,16 +283,26 @@ class SheetGeometry(StrictModel):
     tabella: TabellaDelleApparecchiature | None = None
     """La tabella delle apparecchiature in alto a sinistra (REL-006). Facoltativa
     e additiva: una tavola che non la porta si scrive come prima, senza il campo."""
+    diametri: list[DiametroSullaTavola] = Field(default_factory=list)
+    """Le etichette del DN, una per tratto (REL-007). Facoltative e additive come
+    la tabella."""
+    note_della_legenda: list[NotaDellaLegenda] = Field(default_factory=list)
+    """Le righe della legenda che spiegano una scritta: «Øi» (REL-007, I-155)."""
 
     @model_serializer(mode="wrap")
     def _senza_la_tabella_che_non_c_e(
         self, handler: SerializerFunctionWrapHandler
     ) -> dict[str, Any]:
-        """Una tabella che non c'e' non si scrive, nemmeno come `null`: le
-        geometrie scritte prima di REL-006 restano identiche byte per byte."""
+        """Una tabella che non c'e' non si scrive, nemmeno come `null`, e cosi' le
+        etichette del DN e le note della legenda quando non ce ne sono: le
+        geometrie scritte prima di REL-006 e di REL-007 restano identiche byte
+        per byte."""
         dati: dict[str, Any] = handler(self)
         if dati.get("tabella") is None:
             dati.pop("tabella", None)
+        for campo in ("diametri", "note_della_legenda"):
+            if not dati.get(campo):
+                dati.pop(campo, None)
         return dati
 
 

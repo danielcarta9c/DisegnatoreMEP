@@ -24,6 +24,7 @@ from collections.abc import Iterable
 
 from disegnatore_mep.catalog.errors import CatalogError
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.diametri.tratti import tratti_da_etichettare
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
 from disegnatore_mep.layout.autostrade import (
     AutostradaInTavola,
@@ -156,6 +157,7 @@ MEASURE_ORDER: tuple[str, ...] = (
     "labels_on_runs",
     "leader_crossings",
     "omitted_tags",
+    "diameter_tags",
     "equipment_table",
     "sheet_fill",
     "next_sheet_fill",
@@ -733,6 +735,73 @@ def omitted_tags(drawing: DrawingGeometry) -> list[ValidationIssue]:
     return findings
 
 
+def diameter_tags(
+    drawing: DrawingGeometry, catalog: ComponentRegistry, project: ProjectModel | None = None
+) -> list[ValidationIssue]:
+    """REL-007 — **un'etichetta per tratto** (I-143; D-193, punti 6-8).
+
+    Dalla sola tavola si vedono due difetti del disegnatore, e bloccano:
+    un'etichetta che nomina connessioni che la tavola non disegna
+    (`DIAMETER_TAG_WITHOUT_RUN`) e due etichette sullo stesso tratto
+    (`DIAMETER_TAG_REPEATED`). **Col modello** si vede anche il terzo: un tratto
+    che porta il DN — chiesto dal progettista, con la portata dai suoi dati — e
+    l'etichetta non l'ha trovata (`DIAMETER_TAG_MISSING`): e' un avviso, come
+    una sigla omessa (DRAW-003-R1), e la tavola esce lo stesso."""
+    tratti = (
+        tratti_da_etichettare(project, catalog)
+        if project is not None and project.diametri is not None
+        else ()
+    )
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        disegnate = {
+            connection_id for route in sheet.routes for connection_id in route.connection_ids
+        }
+        per_tratto: dict[frozenset[str], list[str]] = {}
+        for etichetta in sheet.diametri:
+            nominate = frozenset(etichetta.connection_ids)
+            fuori = not nominate or not nominate <= disegnate
+            estranea = bool(tratti) and all(nominate != item.connection_ids for item in tratti)
+            if fuori or estranea:
+                findings.append(
+                    _finding(
+                        "DIAMETER_TAG_WITHOUT_RUN",
+                        IssueSeverity.BLOCKING,
+                        f"l'etichetta {etichetta.testo} non nomina un tratto di questa tavola "
+                        f"che porti il DN (REL-007)",
+                        [sheet.sheet_id, *sorted(nominate)[:1]],
+                    )
+                )
+                continue
+            per_tratto.setdefault(nominate, []).append(etichetta.testo)
+        for nominate, testi in per_tratto.items():
+            if len(testi) > 1:
+                findings.append(
+                    _finding(
+                        "DIAMETER_TAG_REPEATED",
+                        IssueSeverity.BLOCKING,
+                        f"lo stesso tratto porta {len(testi)} etichette del DN "
+                        f"({', '.join(testi)}): ne porta una sola (I-143)",
+                        [sheet.sheet_id, *sorted(nominate)[:1]],
+                    )
+                )
+        for tratto in tratti:
+            if not tratto.connection_ids <= disegnate or tratto.connection_ids in per_tratto:
+                continue
+            capo, fine = tratto.capi
+            findings.append(
+                _finding(
+                    "DIAMETER_TAG_MISSING",
+                    IssueSeverity.WARNING,
+                    f"il tratto {capo.component_id} -> {fine.component_id} porta "
+                    f"{tratto.scritta} e l'etichetta non e' scritta: nessun rettilineo con "
+                    f"un lato libero (REL-007)",
+                    [sheet.sheet_id, capo.component_id, fine.component_id],
+                )
+            )
+    return findings
+
+
 def _leader_enters(
     leader: tuple[Point, Point], box: tuple[float, float, float, float]
 ) -> bool:
@@ -1237,6 +1306,7 @@ def preflight_drawing(
         *labels_on_runs(drawing, frame),
         *leader_crossings(drawing),
         *omitted_tags(drawing),
+        *diameter_tags(drawing, catalog, project),
         *equipment_table(drawing, frame),
         *sheet_fill(drawing, frame),
         *next_sheet_fill(drawing, frame),
