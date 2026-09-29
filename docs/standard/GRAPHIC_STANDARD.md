@@ -20,10 +20,12 @@ Questo documento descrive come vive, in codice, lo standard grafico costruito pe
 | `line_thin_mm` | 0.18 | Spessore del tratto sottile: contorni secondari, riquadro dell'area utile |
 | `line_medium_mm` | 0.35 | Spessore del tratto medio: corpo dei simboli, barra di scala |
 | `line_thick_mm` | 0.50 | Spessore del tratto spesso, riservato ai tracciati da enfatizzare |
-| `text_small_mm` | 1.8 | Altezza minima di testo leggibile in stampa: etichette, quota della barra di scala |
-| `text_normal_mm` | 2.5 | Altezza di testo corrente |
-| `text_title_mm` | 3.5 | Altezza di testo dei titoli |
+| `text_small_mm` | 3.175 | Il corpo delle scritte del disegno: 9 punti (`CORPO_DELLE_SCRITTE_PT`, I-159, `REL-008`). Sigle, dati, DN, legenda, tabella, intestazione, barra di scala. Era 1,8 mm; il minimo è 8 punti (`CORPO_MINIMO_PT`), dove 9 non entra |
+| `text_normal_mm` | 3.5 | Altezza di testo corrente: la scritta di bozza senza cartiglio |
+| `text_title_mm` | 5.0 | Altezza di testo dei titoli |
 | `min_clearance_mm` | 2.0 | Distanza minima libera intorno a una porta (area di rispetto, `keep_out`) |
+
+Le altezze di testo sono **corpi**, come il `font-size` dell'SVG: il DXF scrive l'altezza delle maiuscole, 0,688 corpi. Tutte le scritte della tavola sono in **Arial** (`FAMIGLIA_DELLE_SCRITTE`, dichiarata alla radice dell'SVG); il cartiglio ha i suoi corpi, dal modello dello studio.
 
 `usable_width_mm` e `usable_height_mm` sono proprietà derivate (foglio meno margini), non campi propri: `400.0` e `277.0` con i valori sopra. `GraphicStandard.geometry_is_coherent` verifica ad ogni costruzione che l'area utile sia positiva su entrambi gli assi e che le soglie di spessore e di testo crescano in ordine (sottile < medio < spesso, piccolo < normale < titolo).
 
