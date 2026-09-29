@@ -288,10 +288,18 @@ prova, non la tavola. Sulla tavola della prova-1 composta su un foglio qualunque
 sigla **AF-02** in seconda fila stava a 5,18 mm dal suo confine e a 2,68 mm dal defangatore, e per la regola
 di §3.5 si leggerebbe come sua: va sul richiamo, l'ultima spiaggia. La prova riconosceva il richiamo solo nella
 forma di prima (`leader_from`); ora legge `richiamo`, e controlla che sia a 45 gradi e non attraversi niente:
-il modulo passa, 15 su 15. La suite sulla testa finale:
+il modulo passa, 15 su 15. La suite sulla testa finale, `5c0cee8` — le stesse 46 rosse di `main`, nome per
+nome:
 
 ```
-La suite gira sulla testa finale: l'esito si scrive qui appena finisce.
+main : 46 failed, 1932 passed, 24 skipped, 12 xfailed in 808.58s (0:13:28)
+ramo : 46 failed, 1980 passed, 24 skipped, 12 xfailed in 866.31s (0:14:26)
+rosse main 46 ramo 46 errori 0 0
+nuove nel ramo: []
+guarite nel ramo: []
+uguali nome per nome: True
+skip main 24 ramo 24 nuovi: []
+xfail main 12 ramo 12 nuovi: []
 ```
 
 ## 5. Che cosa ho toccato fuori dall'elenco del perimetro, e perché
