@@ -4,7 +4,7 @@
 ripartito da `main` · **Base:** `main` a `7f2bee8` (PR #64, `REL-007`) · **Avviato dal PO:** il 29 settembre
 2026 · **Le regole:** **D-194**, dalle disposizioni del PO I-159 … I-163
 
-> **Esito — 29 settembre 2026: approvato dal PO** (I-164): «le tavole vanno bene», il richiamo va bene, le
+> **Esito — 29 settembre 2026: approvato dal PO** (I-164), fuso con la PR #65: «le tavole vanno bene», il richiamo va bene, le
 > distanze vanno bene; la legenda resta com'è (I-165). D-194 è approvata per intero. Prima di fondere, alla
 > domanda del PO su dove stanno nella skill il motore che tagga e i suoi controlli (I-166), le quattro regole
 > delle distanze hanno avuto il loro rilievo nel preflight: §3.7.

@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-29 — **`REL-008`, le scritte a 9 punti, è fuso** (I-164, D-194 approvata); **il pacchetto attivo è `REL-001`, l'orchestratore della skill** (I-167). Prima: **`REL-007`, i diametri, è fuso** (PR #64, I-158)
+**Aggiornato:** 2026-09-29 — **`REL-008`, le scritte a 9 punti, è fuso** (PR #65; I-164, D-194 approvata); **il pacchetto attivo è `REL-001`, l'orchestratore della skill** (I-167). Prima: **`REL-007`, i diametri, è fuso** (PR #64, I-158)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -30,7 +30,7 @@ dominio». **Prima di scrivere una riga** si leggono:
 sono pezzi della skill. La skill esegue il motore e il preflight su ogni tavola e consegna i rilievi; niente
 di ciò che controlla una tavola vive solo nella sessione o in `docs/collaudi/`. È il criterio 6 del pacchetto.
 
-**`REL-008`, le scritte a 9 punti, è fuso** (la PR è nel rapporto): il PO ha visto le sette tavole — «le
+**`REL-008`, le scritte a 9 punti, è fuso** (PR #65): il PO ha visto le sette tavole — «le
 tavole vanno bene», il richiamo e le distanze anche — e la legenda resta com'è (I-164, I-165). **D-194 è
 approvata per intero**; rapporto `docs/collaudi/REL-008/RAPPORTO.md`, tavole in `docs/collaudi/REL-008/tavole/`.
 
