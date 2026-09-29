@@ -30,8 +30,11 @@ calcolo è **facoltativo e solo dove chiesto**: il grafo porta la richiesta (`di
 stesse 46 rosse di `main`.
 
 **Il pacchetto attivo è `REL-008`, le scritte della tavola più grandi** (I-159): il PO le legge male a
-5 punti — il corpo di oggi, 1,8 mm — e le vuole «almeno 8 o meglio 9». Poi, per assunzione della
-sessione, il PDF senza browser, `REL-001` la skill, `REL-005` la release.
+5 punti — il corpo di prima, 1,8 mm — e le vuole «almeno 8 o meglio 9». **Consegnato il 29 settembre**:
+tutte le scritte del disegno e della tabella a 9 punti, in Arial; la sigla di un pezzo in tabella non si
+omette, il DN di una strada secondaria si sacrifica, quello di una principale va su un'etichetta staccata
+con freccia (I-160 … I-162, D-194 proposta). Si fonde dopo il sì del PO sulle tavole. Poi, per assunzione
+della sessione, il PDF senza browser, `REL-001` la skill, `REL-005` la release.
 
 ## Dove si era — 28 settembre 2026, `REL-006`
 

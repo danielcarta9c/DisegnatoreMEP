@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-29 — **`REL-007`, i diametri, è fuso**: il PO, viste le tavole, «Approvato tutto, pr e metti su main» (I-158, D-193). **Il pacchetto attivo è `REL-008`, le scritte della tavola a 9 punti** (I-159)
+**Aggiornato:** 2026-09-29 — **`REL-008`, le scritte a 9 punti, è consegnato e aspetta il giudizio del PO sulle tavole** (D-194, proposta; I-159 … I-162). Prima: **`REL-007`, i diametri, è fuso** (PR #64, I-158)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -10,6 +10,22 @@
 > È stato riscritto il 20 settembre perché una sessione ha sbagliato lo sviluppo pur avendo
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
+
+## ▶ `REL-008` è consegnato, e aspetta il PO — scritto il 29 settembre 2026
+
+**Le scritte della tavola a 9 punti sono sul ramo `claude/pack-attivo-rel-007-0uotnp`**, e **le tavole sono al
+PO**: le sei approvate e la retrofit (`docs/collaudi/REL-008/RAPPORTO.md`). **Non si fonde prima del suo sì**:
+la PR verso `main` si apre e si fonde dopo.
+
+- **Il corpo**: 9 punti in un posto solo (`graphics/standard.py`), 8 il minimo; tutte le scritte in Arial; il
+  cartiglio com'è. Legenda a capo dentro i suoi 50 mm, tabella con righe dal corpo (6,25 mm).
+- **Quello che accanto non entra** (il PO, I-160 … I-162): la sigla di un pezzo in tabella non si omette
+  (scende a 8 punti; se mancasse, `TABLE_EQUIPMENT_TAG_OMITTED` blocca); il DN di una strada secondaria si
+  sacrifica; quello di una strada principale va, per ultima spiaggia, su un'etichetta staccata con freccia.
+- **Domanda aperta al PO**: il richiamo è la diagonale di D-075 con la freccia, **senza** la spalla orizzontale
+  del suo esempio (rapporto §3.1); se la vuole, cambia D-075.
+- **Dopo il sì**: fondere, poi il pacchetto successivo — per assunzione della sessione il PDF senza browser,
+  poi `REL-001`, poi `REL-005`. I numeri: il prossimo input è **I-163**, la prossima decisione **D-195**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 29 settembre 2026, a `REL-007` fuso
 
@@ -36,7 +52,7 @@ intero**; rapporto `docs/collaudi/REL-007/RAPPORTO.md`, tavole in `docs/collaudi
   `DIAMETER_TAG_*`; «Capire» §4.7 dice che cosa chiedere.
 - **La suite**: le stesse 46 rosse di `main`, nome per nome; 1932 passate; zero `skip` e zero `xfail`
   nuovi; `ruff` e `mypy` verdi.
-- **I numeri**: il prossimo input è **I-160**, la prossima decisione **D-194**.
+- **I numeri** (a `REL-007` fuso): il prossimo input era **I-160**, la prossima decisione **D-194**.
 - **Resta aperto, e non è di `REL-008`**: la skill dei computi PdC usa 2,0 m/s fisso (rapporto di
   `REL-007` §3.2), da dire a chi la cura; la via senza piano, `draw`, non posa il DN.
 

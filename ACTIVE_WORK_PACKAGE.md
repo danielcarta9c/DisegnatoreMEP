@@ -1,12 +1,14 @@
 # REL-008 — Le scritte della tavola più grandi: 9 punti, mai sotto 8
 
+> **▶ Consegnato il 29 settembre 2026**: le sette tavole a 9 punti sono al PO (`docs/collaudi/REL-008/RAPPORTO.md`). Si fonde solo dopo il suo sì.
+>
 > **▶ Attivo dal 29 settembre 2026** (I-159). Fuso `REL-007`, i diametri, con le tavole approvate dal PO —
 > «Approvato tutto, pr e metti su main» (I-158) —, il PO ha chiesto nello stesso messaggio una REL nuova,
 > prima delle altre. *Assunzione della sessione:* dopo, l'ordine di prima — il PDF senza browser, `REL-001`
 > la skill, per ultimo `REL-005`.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **ATTIVO** dal 29 settembre 2026 (I-159).
+**Stato:** **CONSEGNATO AL PO** il 29 settembre 2026, in attesa del suo giudizio sulle tavole — rapporto `docs/collaudi/REL-008/RAPPORTO.md`, tavole in `docs/collaudi/REL-008/tavole/`, regole in **D-194** (proposta). ATTIVO dal 29 settembre 2026 (I-159); il PO ha deciso lo stesso giorno che cosa si sacrifica e che cosa no (I-160 … I-162).
 **Base:** `main` dopo la fusione di `REL-007`.
 **Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
 **Release:** la prima release (**D-183**), aggiunto dal PO il 29 settembre (I-159).
