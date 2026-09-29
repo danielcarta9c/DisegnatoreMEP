@@ -17,9 +17,15 @@ Per ogni tavola SVG della cartella data:
 Scrive, per ogni tavola, un'immagine delle differenze nel disegno che restano: in rosso,
 sopra la tavola schiarita, perche' si guardino.
 
+**Il controllo negativo**: con `--controllo`, il PDF nuovo si scrive da una copia della
+tavola con un difetto messo apposta — una valvola spostata di qualche decimo di millimetro —
+e il browser rende l'originale. Il confronto deve trovarlo, nel disegno e nel posto giusto:
+se non lo trova, i numeri delle tavole vere non dicono niente.
+
 E' uno strumento di sessione: vuole PyMuPDF, numpy e il browser, che il progetto non porta.
 
     python docs/collaudi/REL-001/confronto_pdf.py <cartella-degli-svg> <cartella-di-uscita>
+    python docs/collaudi/REL-001/confronto_pdf.py --controllo <tavola.svg> <tavola-con-un-difetto.svg> <uscita>
 """
 
 import subprocess
@@ -173,15 +179,17 @@ def immagine_delle_differenze(nuovo: Matrice, nel_disegno: Matrice, percorso: Pa
     campioni.save(percorso)
 
 
-def confronta(svg: Path, uscita: Path) -> dict[str, object]:
+def confronta(svg: Path, uscita: Path, disegnata: Path | None = None) -> dict[str, object]:
+    """Il browser rende `svg`; il PDF nuovo si scrive da `disegnata`, se c'e' — il
+    controllo negativo —, se no dallo stesso `svg`."""
     browser = uscita / f"{svg.stem}-browser.pdf"
-    nuovo = uscita / f"{svg.stem}.pdf"
+    nuovo = uscita / f"{(disegnata or svg).stem}.pdf"
     subprocess.run(
         ["bash", str(ROOT / "scripts" / "to-pdf.sh"), str(svg), str(browser)],
         check=True,
         capture_output=True,
     )
-    esito = scrivi_pdf(svg, nuovo, svg.stem)
+    esito = scrivi_pdf(disegnata or svg, nuovo, svg.stem)
     misure = {
         nome: (p.rect.width * 25.4 / 72, p.rect.height * 25.4 / 72)
         for nome, p in (("browser", fitz.open(browser)[0]), ("nuovo", fitz.open(nuovo)[0]))
@@ -196,7 +204,7 @@ def confronta(svg: Path, uscita: Path) -> dict[str, object]:
     k = DPI / 72
     riportata = resa(browser, fitz.Matrix(k / (1 + ex), 0, 0, k / (1 + ey), -ox / (1 + ex), -oy / (1 + ey)))
     caratteri, disegno, dove = differenze(resa_nuova, riportata, maschera)
-    immagine_delle_differenze(resa_nuova, dove, uscita / f"{svg.stem}-differenze.png")
+    immagine_delle_differenze(resa_nuova, dove, uscita / f"{(disegnata or svg).stem}-differenze.png")
     ys, xs = numpy.nonzero(dove)
     return {
         "tavola": svg.stem,
@@ -213,10 +221,15 @@ def confronta(svg: Path, uscita: Path) -> dict[str, object]:
 
 
 def main() -> None:
-    cartella, uscita = Path(sys.argv[1]), Path(sys.argv[2])
+    if sys.argv[1] == "--controllo":
+        coppie = [(Path(sys.argv[2]), Path(sys.argv[3]))]
+        uscita = Path(sys.argv[4])
+    else:
+        coppie = [(svg, None) for svg in sorted(Path(sys.argv[1]).glob("*.svg"))]
+        uscita = Path(sys.argv[2])
     uscita.mkdir(parents=True, exist_ok=True)
-    for svg in sorted(cartella.glob("*.svg")):
-        r = confronta(svg, uscita)
+    for svg, disegnata in coppie:
+        r = confronta(svg, uscita, disegnata)
         fw, fh = r["foglio_mm"]  # type: ignore[misc]
         bw, bh = r["pagina_browser_mm"]  # type: ignore[misc]
         nw, nh = r["pagina_nuova_mm"]  # type: ignore[misc]

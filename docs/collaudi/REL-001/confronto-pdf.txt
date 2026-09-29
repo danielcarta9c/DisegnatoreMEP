@@ -1,5 +1,6 @@
 # Il PDF senza browser contro scripts/to-pdf.sh — le sette tavole approvate di REL-008
 # eseguito il 2026-09-29 sul commit 704bb77:
+#   python docs/collaudi/REL-001/tavole_approvate.py <svg delle tavole>
 #   python docs/collaudi/REL-001/confronto_pdf.py <svg delle tavole> <uscita>
 
 tavola-1-retrofit
@@ -30,3 +31,14 @@ tavola-6
   pagina: foglio 594x420 mm · nuova 594.000x420.000 · browser 594.106x420.201 (+0.018 %, +0.048 %)
   disegno del browser: scala +0.0024 % in orizzontale, -0.0182 % in verticale
   pixel diversi su 15474824: col browser com'e' — caratteri 11574, disegno 0; col browser a misura — caratteri 17765, disegno 0
+
+# Il controllo negativo — eseguito il 2026-09-29 sul commit 6bd3404: la tavola 1 con la valvola
+# d'intercettazione dell'acqua fredda della miscelatrice spostata di 0,3 mm (x da 227,5 a 227,8 mm)
+#   python docs/collaudi/REL-001/confronto_pdf.py --controllo <svg delle tavole>/tavola-1.svg \
+#       docs/collaudi/REL-001/pdf-senza-browser/controllo-tavola-1-valvola-spostata.svg <uscita>
+
+tavola-1
+  pagina: foglio 420x297 mm · nuova 420.000x297.000 · browser 420.201x297.011 (+0.048 %, +0.004 %)
+  disegno del browser: scala -0.0303 % in orizzontale, +0.0500 % in verticale
+  pixel diversi su 7737412: col browser com'e' — caratteri 9592, disegno 362; col browser a misura — caratteri 2295, disegno 1
+  dove resta una differenza nel disegno (mm, arrotondati): [(228, 88)]
