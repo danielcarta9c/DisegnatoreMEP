@@ -61,17 +61,22 @@ della sessione** (D-183, punto 3), e il PO lo può cambiare.
 > aggredire a questo punto proprio REL.001 per creare l'orchestratore della skill. dovremo usare le best
 > practice di Anthropic oltre che lo skill creatore di dominio» (I-167). Il PDF senza browser sta dentro
 > `REL-001`; dopo resta `REL-005`.
+>
+> **29 settembre, `REL-001` è fuso** (PR #66) con la tavola approvata dal PO — «sì, approvo la fusione»
+> (I-169, D-195): la skill è girata da sola in camera pulita, dal testo dell'impianto 7 al PDF. Resta la
+> prova del PO su claude.ai, su un impianto suo (I-170). **`REL-005` è il prossimo**, e parte da quattro
+> cose che servono dal PO (`docs/plans/pacchetti/REL-005.md`, punto 0).
 
 | pacchetto | che cosa | perché in quest'ordine |
 |---|---|---|
-| **`REL-001`** — **attivo** (29 settembre, I-167; era «per ultimo», I-137) | **la skill vera e propria** — l'ingresso che cuce i cinque pezzi, la cartella installabile — **e il PDF fatto dalla skill** (I-121, I-122) | è il rischio più vecchio del progetto: la skill non è mai girata nel suo ambiente. E senza il PDF la skill non consegna niente |
+| **`REL-001`** — **fatto** (I-169; attivo dal 29 settembre, I-167; era «per ultimo», I-137) | **la skill vera e propria** — l'ingresso che cuce i cinque pezzi, la cartella installabile — **e il PDF fatto dalla skill** (I-121, I-122) | è il rischio più vecchio del progetto: la skill non è mai girata nel suo ambiente. E senza il PDF la skill non consegna niente |
 | **`REL-002`** — **fatto** (I-132) | **il cartiglio Nove C compilato** (I-123) | i dati del cartiglio li raccoglie «Capire»: si aggiungono alle domande della skill che `REL-001` ha messo in piedi |
 | **`REL-003`** — **fatto** (I-136) | **i simboli nuovi**: pompa di calore di alta potenza, caldaia modulare a condensazione, solare termico, fan-coil canalizzato (I-124) | forme dalle fonti, approvate dal PO guardandole; per ciascuna la voce di catalogo, e le regole solo dove il PO le dà |
 | **`REL-004`** — **fatto** (I-140) | **il DXF** (I-125) | prima si definisce con il PO **come** si esporta — livelli, blocchi, testi, scala —, poi si scrive |
 | **`REL-006`** — **fatto** (I-149) | **la tabella delle apparecchiature**, in alto a sinistra: codice, descrizione, caratteristiche, marca, modello (D-190) | la chiede il PO prima della release; i dati li dà il progettista, e «Capire» li raccoglie |
 | **`REL-007`** — **fatto** (I-158) | **i diametri delle tubazioni in DN**: il calcolatore, e il DN lungo il tratto (D-191, D-193) | parte dalla potenza che `REL-006` mette in una chiave fissa; prima si fissano col PO salto termico, serie dei tubi e reti |
 | **`REL-008`** — **fatto** (I-164) | **le scritte più grandi**: tutte le scritte della tavola da 5 a 9 punti, mai sotto 8 | la chiede il PO appena visti i diametri: la tavola si legge male. Tocca tutto quello che si posa accanto a un testo — sigle, DN, legenda, tabella —, quindi viene prima del PDF e della skill |
-| **`REL-005`** | **il pacchetto della release** | il numero di versione, `releases/latest/` e lo ZIP numerato (D-009), la guida d'installazione, la suite verde e il collaudo sui casi di accettazione |
+| **`REL-005`** — **il prossimo** (`docs/plans/pacchetti/REL-005.md`) | **il pacchetto della release** | il numero di versione, `releases/latest/` e lo ZIP numerato (D-009), la guida d'installazione, la suite verde e il collaudo sui casi di accettazione |
 
 **Restano da decidere con il PO**, e non fermano `REL-001`: il collaudo su impianti veri (la
 proposta del 24 settembre chiedeva due o tre testi di Nove C); il via libera a togliere dal

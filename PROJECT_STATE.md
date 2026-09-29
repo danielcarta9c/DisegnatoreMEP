@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-29 (`REL-008`, **le scritte a 9 punti**, fuso, tavole **approvate dal PO** — I-164, D-194; attivo `REL-001`, l'orchestratore della skill — I-167; prima `REL-007`, **i diametri delle tubazioni**, fuso — I-158, D-193; prima la tabella delle apparecchiature, `REL-006`, I-149, il DXF, `REL-004`, I-140, i simboli nuovi, `REL-003`, I-136, e il cartiglio, `REL-002`, I-132; **attivo `REL-008`, le scritte a 9 punti** — I-159)
+**Aggiornato:** 2026-09-29 (`REL-001`, **la skill vera e propria**, fuso, tavola **approvata dal PO** — I-169, D-195; il prossimo è `REL-005`, il pacchetto della release; prima `REL-008`, **le scritte a 9 punti**, fuso, tavole **approvate dal PO** — I-164, D-194; attivo `REL-001`, l'orchestratore della skill — I-167; prima `REL-007`, **i diametri delle tubazioni**, fuso — I-158, D-193; prima la tabella delle apparecchiature, `REL-006`, I-149, il DXF, `REL-004`, I-140, i simboli nuovi, `REL-003`, I-136, e il cartiglio, `REL-002`, I-132; **attivo `REL-008`, le scritte a 9 punti** — I-159)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -14,7 +14,31 @@
 
 ---
 
-## Dove siamo — 29 settembre 2026, `REL-007` fuso
+## Dove siamo — 29 settembre 2026, `REL-001` fuso
+
+**La skill vera e propria è su `main`, e il PO ha approvato la tavola** (I-169): «sì, approvo la fusione».
+Le scelte sono **D-195**; rapporto `docs/collaudi/REL-001/RAPPORTO.md`.
+
+- **L'ingresso** è `skill/SKILL.md`: che cosa la skill non fa mai, e il flusso in otto passi — le domande in
+  un messaggio solo, l'approvazione del grafo completo come unico cancello, la consegna con quello che resta
+  aperto. **Un comando solo** per il lavoro deterministico (`scripts/mep.py`, `disegnatore_mep.skill`), con il
+  motore e il preflight dentro: la skill consegna col PDF i rilievi della tavola (I-166).
+- **Il PDF senza browser** (`graphics/pdf.py`): la pagina è il foglio; sulle sette tavole approvate le
+  differenze con `scripts/to-pdf.sh` stanno solo nei caratteri.
+- **La cartella della skill** la costruisce `scripts/costruisci-skill.py`, identica a ogni costruzione; lo ZIP
+  per il PO è `docs/collaudi/REL-001/disegnatore-mep.zip`.
+- **La prova vera**: un agente con la sola cartella e un Python senza librerie ha portato l'impianto 7, mai
+  visto, dal testo al PDF — zero cedute, zero bloccanti —, fermandosi a chiedere dove `SKILL.md` lo dice. Con
+  Opus e Sonnet la tavola esce; **con Haiku no**, il piano non si compone.
+- **Resta la prova su claude.ai**, che fa il PO su un impianto suo (I-170): la sessione non può caricare la
+  skill nel suo account. Al primo uso la skill installa pydantic dalla rete.
+- Suite: le stesse 46 rosse di `main`, nome per nome.
+
+**Il prossimo è `REL-005`, il pacchetto della release** (`ACTIVE_WORK_PACKAGE.md`): parte da quattro cose del
+PO — l'esito della sua prova, due o tre impianti veri, il via libera a togliere il solutore, il numero della
+release.
+
+## Dove si era — 29 settembre 2026, `REL-007` e `REL-008` fusi
 
 **I diametri delle tubazioni sono su `main`, e il PO ha approvato le tavole** (I-158): «Approvato tutto,
 pr e metti su main». Le tavole restano come sono: il tag su ogni linea che porta acqua, e il raccordo
@@ -313,6 +337,10 @@ distribuisce in verticale; l'impianto 5 ha **quattordici incroci**.
 4. **Prodotto mai eseguito nel suo ambiente finale.** Nuova chat, input naturale,
    approvazione del grafo, generazione, restituzione del PDF: mai fatto. È il rischio più
    vecchio del progetto e il meno toccato. La 0.3 non si dichiara finita senza.
+   **In parte chiuso da `REL-001`** (29 settembre 2026, I-169): la skill è girata da sola in
+   camera pulita — la sola cartella, un Python senza librerie, dal testo al PDF, con le domande e
+   l'approvazione in mezzo (`docs/collaudi/REL-001/RAPPORTO.md`). **Resta la chat vera**, su
+   claude.ai: la prova del PO su un impianto suo (I-170).
 5. **Libreria simboli non interamente certificata.** La matrice fonti/forma/porte/ingombri
    va completata e **approvata dal PO** prima di dichiarare completa la 0.3.
 6. ~~**Le prove non dicono più che cosa difendono.**~~ **Chiuso da `DRAW-015`:** i 36 file

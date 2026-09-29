@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-29 — **`REL-008`, le scritte a 9 punti, è fuso** (PR #65; I-164, D-194 approvata); **il pacchetto attivo è `REL-001`, l'orchestratore della skill** (I-167). Prima: **`REL-007`, i diametri, è fuso** (PR #64, I-158)
+**Aggiornato:** 2026-09-29 — **`REL-001`, la skill vera e propria, è fuso** (PR #66; I-169, D-195 approvata); **il prossimo è `REL-005`, il pacchetto della release**. Prima: **`REL-008`, le scritte a 9 punti, è fuso** (PR #65; I-164, D-194). Prima: **`REL-007`, i diametri, è fuso** (PR #64, I-158)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,39 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 29 settembre 2026, a `REL-008` fuso
+## ▶ Da dove riparte la prossima sessione — scritto il 29 settembre 2026, a `REL-001` fuso
+
+**Il prossimo è `REL-005`, il pacchetto della prima release** (`ACTIVE_WORK_PACKAGE.md`). **Parte dal punto 0**:
+quattro cose che servono dal PO — l'esito della sua prova della skill su claude.ai (I-170), due o tre testi di
+impianti veri, il via libera a togliere il percorso del solutore e le sue 46 prove rosse, il numero della
+release (proposta: `1.0.0`). Se non le hai, chiedile tutte in un messaggio solo, con la tua proposta per
+ciascuna, e aspetta.
+
+**`REL-001`, la skill vera e propria, è fuso** (PR #66): il PO ha visto la tavola dell'impianto 7 disegnata
+dalla skill in camera pulita e ha detto «sì, approvo la fusione» (I-169). **D-195 è approvata**; rapporto
+`docs/collaudi/REL-001/RAPPORTO.md`, tavole in `docs/collaudi/REL-001/tavole/`.
+
+- **Com'è fatta la skill**: l'ingresso `skill/SKILL.md` (il flusso in otto passi, le domande in un messaggio
+  solo, l'approvazione del grafo completo come unico cancello); il comando unico `skill/scripts/mep.py`, che
+  chiama `src/disegnatore_mep/skill.py` — `ambiente`, `catalogo`, `valida`, `completa`, `pezzi`, `disegna`,
+  `anteprima`, `consegna` —; il motore e il preflight girano dentro `disegna`, che scrive accanto al PDF i
+  rilievi (I-166). Il PDF lo scrive `graphics/pdf.py`, senza browser.
+- **La cartella non si tocca a mano**: la costruisce `python scripts/costruisci-skill.py` in `outputs/skill/`,
+  con lo ZIP, identica a ogni costruzione; le istruzioni di Capire, Comporre e Rivedere ci arrivano cambiate
+  nei soli percorsi (`tests/skill/test_costruzione_della_skill.py`).
+- **Come si prova in camera pulita**: una cartella con lo ZIP scompattato, una cartella di lavoro e un Python
+  appena installato; un agente con il mandato di `docs/collaudi/REL-001/mandato-camera.md` e la sessione che
+  fa il progettista. Quello che l'agente consegna si rimisura con `docs/collaudi/REL-001/rimisura.py`, e la
+  camera si controlla con `comandi_della_camera.py`: nel primo giro un agente Haiku è uscito dalla camera e
+  ha committato nel repository (annullato, `f1e18d2`). **Guarda prima di spingere.**
+- **Con Haiku il piano non si compone**: la skill va usata con Opus o Sonnet.
+- **Il PO la carica da sé** (I-170): la sessione non può caricare una skill nel suo account.
+- **Due elenchi aperti** nel rapporto: sette domande di contenuto per il PO (§6.1) e nove cose per il
+  prossimo giro della skill (§6.2).
+- **La suite**: le stesse 46 rosse di `main`, nome per nome; `ruff` e `mypy` verdi.
+- **I numeri**: il prossimo input è **I-171**, la prossima decisione **D-196**.
+
+## Da dove ripartiva — scritto il 29 settembre 2026, a `REL-008` fuso
 
 **Il pacchetto attivo è `REL-001`, l'orchestratore della skill** (`ACTIVE_WORK_PACKAGE.md`; I-167): il
 `SKILL.md` che cuce i cinque pezzi, la cartella installabile costruita da uno script, il PDF senza browser, la

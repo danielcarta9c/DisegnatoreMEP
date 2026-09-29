@@ -1,0 +1,15 @@
+# Impianto di prova per la skill — scritto dalla sessione il 29 settembre 2026 (REL-001)
+
+## Esempio 7 – Riqualificazione di una centrale condominiale con pompe di calore in cascata e caldaia esistente
+
+La centrale termica di un condominio viene riqualificata con due pompe di calore aria-acqua da 45 kW ciascuna, installate in parallelo e gestite in cascata. La caldaia a condensazione esistente da 100 kW resta in centrale come generatore di integrazione, collegata in parallelo alle pompe di calore.
+
+I tre generatori alimentano un volume tecnico da 800 litri a quattro tubi. Sul volume tecnico sono previsti il collegamento per il carico automatico dell’impianto da acquedotto e lo scarico.
+
+Dal volume tecnico parte un circuito secondario con circolatore dedicato che alimenta la distribuzione esistente a radiatori degli appartamenti.
+
+La produzione di ACS è centralizzata con un bollitore da 500 litri con serpentino. Una valvola a tre vie sulla mandata dei generatori devia il flusso verso il serpentino del bollitore quando è richiesta la produzione sanitaria, dando priorità all’ACS.
+
+L’acqua fredda sanitaria entra nella parte bassa del bollitore e l’ACS viene prelevata dalla parte alta. Sull’uscita è prevista una valvola miscelatrice termostatica. È presente un circuito di ricircolo ACS con circolatore dedicato.
+
+Per la parte nuova della centrale servono anche i diametri delle tubazioni, con un salto termico di progetto di 5 °C lato generatori. La distribuzione a radiatori è esistente.

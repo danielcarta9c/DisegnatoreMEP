@@ -1,0 +1,58 @@
+{
+  "skill_name": "disegnatore-mep",
+  "note": "Le valutazioni della skill (REL-001, criterio 7): la guida di Anthropic ne vuole almeno tre, e la forma e' quella di skill-creator (evals/evals.json). Non entrano nello ZIP: package_skill di skill-creator esclude evals/ alla radice, e cosi' costruisci-skill.py, che non copia skill/evals/. Gli esiti sono nel rapporto di REL-001, docs/collaudi/REL-001/RAPPORTO.md.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "impianto-7-dal-testo-al-pdf",
+      "prompt": "Ciao, ti descrivo la centrale. [il testo di docs/collaudi/REL-001/impianto-7.txt, senza la riga d'intestazione] Mi fai lo schema funzionale della centrale?",
+      "expected_output": "La skill legge l'impianto, fa le domande in un messaggio solo con la sua prima interpretazione, completa il grafo, chiede l'approvazione e la aspetta, compone, disegna e consegna la tavola in PDF e DXF con i rilievi, dicendo che cosa resta aperto.",
+      "files": ["docs/collaudi/REL-001/impianto-7.txt"],
+      "assertions": [
+        "Prima di comporre la tavola chiede al progettista l'approvazione del grafo completo, e la aspetta",
+        "Le domande al progettista arrivano in un messaggio solo per passo, ciascuna con la sua proposta",
+        "Non inventa marca, modello, portate o altri dati che il testo non da'",
+        "La tavola consegnata esce in PDF prodotto dalla skill, con zero tratte cedute e zero rilievi bloccanti",
+        "Con il PDF consegna i rilievi della tavola, prodotti dal comando della skill",
+        "La consegna dice che cosa resta aperto: assunzioni, punti aperti, campi del cartiglio da definire"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "testo-che-non-dice-abbastanza",
+      "prompt": "Mi serve lo schema della centrale di una palazzina: una caldaia e una pompa di calore che lavorano insieme, un accumulo, i radiatori e un bollitore per l'acqua calda. Riesci a farmelo?",
+      "expected_output": "La skill non disegna e non completa: si ferma dopo Capire e chiede, in un messaggio solo e con la sua prima interpretazione, come sono collegati i generatori, le potenze (da cui il regime della centrale) e come il bollitore e' alimentato. Non inventa potenze, volumi o collegamenti.",
+      "files": [],
+      "assertions": [
+        "Si ferma prima di completare e comporre, e chiede",
+        "Le domande stanno in un messaggio solo, ciascuna con la sua prima interpretazione",
+        "Chiede le potenze, o il regime della centrale, invece di assumerle",
+        "Il grafo di prima stesura, se c'e', non porta potenze o volumi che il testo non da'"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "richiesta-di-progettare",
+      "prompt": "Ho un condominio di 24 appartamenti in classe G a Milano. Dimensionami la pompa di calore e il volume tecnico e fammi lo schema della centrale.",
+      "expected_output": "La skill dice che non dimensiona: disegna l'impianto che il progettista ha gia' deciso. Chiede le macchine e i dati che lui ha scelto — o propone di disegnare quando li avra' — senza proporre taglie, potenze o volumi.",
+      "files": [],
+      "assertions": [
+        "Dice che la skill non dimensiona e non sceglie le macchine",
+        "Non propone nessuna potenza, taglia o volume",
+        "Chiede al progettista l'impianto che ha deciso, o come procedere"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "un-pezzo-che-il-catalogo-non-ha",
+      "prompt": "La centrale ha un cogeneratore da 50 kW elettrici e 80 kW termici in parallelo a una caldaia a condensazione da 120 kW; i due alimentano un volume tecnico da 1000 litri a quattro tubi, da cui parte un circuito a radiatori con circolatore. Mi fai lo schema?",
+      "expected_output": "La skill riconosce che il catalogo non ha un cogeneratore: non lo disegna con il simbolo di un'altra macchina e non inventa un simbolo; lo dice al progettista (assunzione di tipo B) e chiede come procedere, mentre il resto dell'impianto si legge.",
+      "files": [],
+      "assertions": [
+        "Non rappresenta il cogeneratore con la voce di un'altra macchina",
+        "Dice al progettista che il catalogo non ha il cogeneratore",
+        "Non inventa un simbolo o una voce di catalogo"
+      ]
+    }
+  ]
+}
