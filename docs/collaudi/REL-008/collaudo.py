@@ -177,7 +177,7 @@ def collaudo(lavoro: Path, cartella_base: Path) -> None:
         dn_prima = {frozenset(x.connection_ids) for x in prima.diametri}
         dn_ora = {frozenset(x.connection_ids) for x in foglio.diametri}
         a_otto_sigle = sorted(x.text for x in foglio.labels if getattr(x, "corpo_mm", None))
-        con_richiamo = sorted(x.text for x in foglio.labels if x.leader_from is not None)
+        con_richiamo = sorted(x.text for x in foglio.labels if x.leader_from is not None or getattr(x, "richiamo", None))
         print(
             f"   scritte accanto ai pezzi: main {per_ruolo(prima)} · ora {per_ruolo(foglio)} · "
             f"mancano {sorted(t for _, t in sigle_prima - sigle_ora) or 'nessuna'} · "
@@ -186,7 +186,7 @@ def collaudo(lavoro: Path, cartella_base: Path) -> None:
         from disegnatore_mep.diametri.tratti import tratti_da_etichettare
 
         a_otto = sum(1 for x in foglio.diametri if getattr(x, "corpo_mm", None))
-        staccati = sorted(x.testo for x in foglio.diametri if getattr(x, "richiamo_da", None))
+        staccati = sorted(x.testo for x in foglio.diametri if getattr(x, "richiamo", None))
         tratti = tratti_da_etichettare(modello, catalogo)
         mancanti = [x for x in tratti if x.connection_ids not in dn_ora]
         principali = [x.scritta for x in mancanti if x.strada_principale]

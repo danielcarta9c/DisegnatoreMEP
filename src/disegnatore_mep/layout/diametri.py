@@ -39,7 +39,9 @@ from .labels import (
     LEADER_MAX_STEPS,
     LEADER_MIN_LENGTH_MM,
     _crosses,
+    richiamo_verso,
     riquadro_della_scritta,
+    segmenti_del_richiamo,
     segments_cross,
 )
 from .legend import (
@@ -234,6 +236,12 @@ def _posizioni(rettilineo: _Rettilineo, larghezza: float) -> list[float]:
     return trovate
 
 
+def _riquadro_della_linea(rettilineo: _Rettilineo) -> Box:
+    if rettilineo.orizzontale:
+        return (rettilineo.da, rettilineo.fisso, rettilineo.a, rettilineo.fisso)
+    return (rettilineo.fisso, rettilineo.da, rettilineo.fisso, rettilineo.a)
+
+
 def _punte(rettilineo: _Rettilineo) -> list[float]:
     """Dove la freccia di un'etichetta staccata tocca il rettilineo: al centro,
     poi a passi verso i capi, alternando, restando dentro di `RIENTRO_DAI_CAPI_MM`."""
@@ -276,8 +284,8 @@ def posa_i_diametri(
     **Quando accanto alla linea non c'e' posto** (I-161, I-162): il DN di una
     strada secondaria si sacrifica; quello di una strada principale va, per
     ultima spiaggia, su un'etichetta staccata con freccia — la freccia sulla
-    linea, una diagonale a 45 gradi fino alla base della scritta, il richiamo
-    piu' corto che non attraversa niente."""
+    linea, un tratto a 45 gradi e la spalla orizzontale fino alla scritta
+    (I-163), il richiamo piu' corto che non attraversa niente."""
     corpo = standard.text_small_mm
     minimo = CORPO_MINIMO_PT * PT_MM
     tentativi = [(corpo, False)]
@@ -301,7 +309,7 @@ def posa_i_diametri(
         for item in tutti
     ]
     richiami: list[tuple[Point, Point]] = [
-        (label.leader_from, label.anchor) for label in foglio.labels if label.leader_from is not None
+        segmento for label in foglio.labels for segmento in segmenti_del_richiamo(label)
     ]
 
     def libero(box: Box, proprio: _Rettilineo | None) -> bool:
@@ -346,24 +354,37 @@ def posa_i_diametri(
                         else Point(x_mm=rettilineo.fisso, y_mm=lungo)
                     )
                     for verso in DIAGONALS:
-                        ancora = Point(
-                            x_mm=punta.x_mm + verso[0] * campata, y_mm=punta.y_mm + verso[1] * campata
-                        )
-                        box: Box = (ancora.x_mm, ancora.y_mm - corpo, ancora.x_mm + larghezza, ancora.y_mm)
-                        if not libero(box, None) or _crosses(punta, ancora, box):
+                        richiamo, ancora, box = richiamo_verso(punta, verso, campata, larghezza, corpo)
+                        if not libero(box, None):
                             continue
-                        if any(_crosses(punta, ancora, altro) for altro in (*simboli, *testi)):
+                        segmenti = richiamo.segmenti
+                        if any(
+                            _crosses(*segmento, altro)
+                            for segmento in segmenti
+                            for altro in (box, *simboli, *testi)
+                        ):
                             continue
-                        diagonale = (punta, ancora)
-                        if any(segments_cross(diagonale, altra) for altra in (*linee, *richiami)):
+                        if any(
+                            segments_cross(segmento, altra)
+                            for segmento in segmenti
+                            for altra in (*linee, *richiami)
+                        ):
+                            continue
+                        # La spalla e' orizzontale: non corre lungo un tubo, dentro il
+                        # suo franco (I-163).
+                        spalla = segmenti[1]
+                        if any(
+                            _crosses(*spalla, _allargato(_riquadro_della_linea(altro), FRANCO_MM))
+                            for altro in tutti
+                        ):
                             continue
                         testi.append(box)
-                        richiami.append(diagonale)
+                        richiami.extend(segmenti)
                         return DiametroSullaTavola(
                             testo=testo,
                             ancora=ancora,
                             connection_ids=sorted(tratto.connection_ids),
-                            richiamo_da=punta,
+                            richiamo=richiamo,
                         )
         return None
 

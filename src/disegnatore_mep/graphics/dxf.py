@@ -45,7 +45,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from xml.etree import ElementTree
 
-from disegnatore_mep.layout.geometry import FlowKind, Point, RoutedTrunk, SheetGeometry
+from disegnatore_mep.layout.geometry import FlowKind, Point, Richiamo, RoutedTrunk, SheetGeometry
 from disegnatore_mep.layout.legend import (
     INTERLINEA_EM,
     MEDIUM_NAMES,
@@ -970,6 +970,8 @@ class _Tavola:
 
     def sigle(self) -> None:
         for label in self.sheet.labels:
+            if label.richiamo is not None:
+                self.richiamo(label.richiamo, LAYER_SIGLE)
             if label.leader_from is not None:
                 self.msp.add_line(
                     self.p(label.leader_from.x_mm, label.leader_from.y_mm),
@@ -1058,6 +1060,13 @@ class _Tavola:
                     self.standard.text_small_mm, LAYER_LEGENDA,
                 )
 
+    def richiamo(self, richiamo: Richiamo, layer: str) -> None:
+        """Il richiamo con la spalla (I-163): i due tratti e la freccia piena, dagli
+        stessi punti dell'SVG."""
+        for da, a in richiamo.segmenti:
+            self.msp.add_line(self.p(da.x_mm, da.y_mm), self.p(a.x_mm, a.y_mm), dxfattribs={"layer": layer})
+        self.freccia_del_richiamo(richiamo.punta, richiamo.gomito, layer)
+
     def freccia_del_richiamo(self, punta: Point, da: Point, layer: str) -> None:
         """La freccia piena di un richiamo (I-162), dagli stessi tre vertici dell'SVG."""
         a, b, c = freccia_del_richiamo(punta, da)
@@ -1071,13 +1080,8 @@ class _Tavola:
         la scritta sale, e nello spazio modello — y in alto — e' una rotazione di
         novanta gradi in senso antiorario."""
         for etichetta in self.sheet.diametri:
-            if etichetta.richiamo_da is not None:
-                self.msp.add_line(
-                    self.p(etichetta.richiamo_da.x_mm, etichetta.richiamo_da.y_mm),
-                    self.p(etichetta.ancora.x_mm, etichetta.ancora.y_mm),
-                    dxfattribs={"layer": LAYER_DIAMETRI},
-                )
-                self.freccia_del_richiamo(etichetta.richiamo_da, etichetta.ancora, LAYER_DIAMETRI)
+            if etichetta.richiamo is not None:
+                self.richiamo(etichetta.richiamo, LAYER_DIAMETRI)
             self.testo(
                 etichetta.testo, etichetta.ancora.x_mm, etichetta.ancora.y_mm,
                 etichetta.corpo_mm or self.standard.text_small_mm, LAYER_DIAMETRI,

@@ -20,6 +20,8 @@ from disegnatore_mep.layout.geometry import (
 from disegnatore_mep.layout.labels import (
     LEADER_MIN_LENGTH_MM,
     LINE_CLEARANCE_MM,
+    MEZZE_MAIUSCOLE_EM,
+    SPALLA_DEL_RICHIAMO_MM,
     TAG_GAP_MM,
     VALUE_GAP_MM,
     format_value,
@@ -344,22 +346,28 @@ def test_a_label_walled_in_on_every_side_is_omitted_not_written_over_something()
 
 
 def test_a_label_with_no_free_side_gets_a_45_degree_leader() -> None:
+    """Il richiamo (I-163): la freccia sul pezzo, un tratto a 45 gradi, poi la
+    spalla orizzontale fino al testo, a meta' delle sue maiuscole."""
     placed, routes = hugged()
     written = place_labels(load_project(PROJECT), placed, NOVE_C_A3.standard, routes=routes)
     assert len(written) == 1
-    leader = written[0].leader_from
-    assert leader is not None
-    span_x = abs(written[0].anchor.x_mm - leader.x_mm)
-    span_y = abs(written[0].anchor.y_mm - leader.y_mm)
+    richiamo = written[0].richiamo
+    assert richiamo is not None and written[0].leader_from is None
+    span_x = abs(richiamo.gomito.x_mm - richiamo.punta.x_mm)
+    span_y = abs(richiamo.gomito.y_mm - richiamo.punta.y_mm)
     assert span_x == span_y
     assert hypot(span_x, span_y) >= LEADER_MIN_LENGTH_MM
+    assert richiamo.spalla.y_mm == richiamo.gomito.y_mm
+    assert abs(richiamo.spalla.x_mm - richiamo.gomito.x_mm) == SPALLA_DEL_RICHIAMO_MM
+    corpo = written[0].corpo_mm or HEIGHT_MM
+    assert written[0].anchor.y_mm == pytest.approx(richiamo.gomito.y_mm + MEZZE_MAIUSCOLE_EM * corpo)
 
 
 def test_the_leader_starts_on_a_corner_of_its_own_component() -> None:
     placed, routes = hugged()
     written = place_labels(load_project(PROJECT), placed, NOVE_C_A3.standard, routes=routes)
-    leader = written[0].leader_from
-    assert leader is not None
+    assert written[0].richiamo is not None
+    leader = written[0].richiamo.punta
     box = symbol_box(placed[0])
     assert (leader.x_mm, leader.y_mm) in {
         (box[0], box[1]),
@@ -378,10 +386,16 @@ def test_no_leader_is_orthogonal_or_askew() -> None:
     placed, routes = hugged()
     written = place_labels(load_project(PROJECT), placed, NOVE_C_A3.standard, routes=routes)
     for item in (*written, *fixture_labels()):
-        if item.leader_from is None:
+        # Del richiamo con la spalla (I-163) si misura il tratto obliquo: la spalla
+        # e' orizzontale per scelta del PO.
+        if item.richiamo is not None:
+            da, a = item.richiamo.punta, item.richiamo.gomito
+        elif item.leader_from is not None:
+            da, a = item.leader_from, item.anchor
+        else:
             continue
-        span_x = abs(item.anchor.x_mm - item.leader_from.x_mm)
-        span_y = abs(item.anchor.y_mm - item.leader_from.y_mm)
+        span_x = abs(a.x_mm - da.x_mm)
+        span_y = abs(a.y_mm - da.y_mm)
         assert span_x > 0.0 and span_y > 0.0, (item.id, "ortogonale")
         assert span_x == span_y, (item.id, span_x, span_y)
 

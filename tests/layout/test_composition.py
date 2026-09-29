@@ -225,7 +225,7 @@ def test_labels_sit_beside_their_component_without_a_leader() -> None:
         # non c'e' nessun pavimento, e il divieto non era mai stato deciso da
         # nessuno. Cio' che si chiede resta che stia **accanto al proprio
         # pezzo**, ed e' la riga qui sotto.
-        if label.leader_from is not None:
+        if label.leader_from is not None or label.richiamo is not None:
             continue
         symbol = placed.get(label.id.rsplit("-", 1)[0])
         if symbol is None:
@@ -239,15 +239,19 @@ def test_a_leader_starts_on_the_component_it_names() -> None:
     drawn = sheet()
     placed = {item.component_id: item for item in drawn.symbols}
     for label in drawn.labels:
-        if label.leader_from is None:
+        if label.richiamo is not None:
+            partenza = label.richiamo.punta
+        elif label.leader_from is not None:
+            partenza = label.leader_from
+        else:
             continue
         component_id = label.id.rsplit("-", 1)[0]
         symbol = placed.get(component_id)
         if symbol is None:
             continue
         # Da uno spigolo del proprio pezzo, quello verso cui la diagonale punta.
-        assert label.leader_from.x_mm in (symbol.origin.x_mm, symbol.right_mm)
-        assert label.leader_from.y_mm in (symbol.origin.y_mm, symbol.bottom_mm)
+        assert partenza.x_mm in (symbol.origin.x_mm, symbol.right_mm)
+        assert partenza.y_mm in (symbol.origin.y_mm, symbol.bottom_mm)
 
 
 def test_standing_is_decided_by_size_and_function_not_by_name() -> None:

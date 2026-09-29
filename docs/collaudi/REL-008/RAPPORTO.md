@@ -32,8 +32,9 @@ ripartito da `main` · **Base:** `main` a `7f2bee8` (PR #64, `REL-007`) · **Avv
    **sulle strade principali** — le autostrade del motore — **un'etichetta staccata con freccia** (I-162):
    quattro, sulle tavole 1, 4 e 6; **sulle strade secondarie il DN si sacrifica** (I-161): sette, sulle
    tavole 1, 4, 5 e 6, tutti su acque fredde in ingresso, bipassi e rami alle utenze.
-4. **Il richiamo.** Una diagonale a 45 gradi dalla linea alla base della scritta, sottile e nera, con **una
-   freccia piena** di 2 mm sulla linea. **Senza la spalla orizzontale** dell'esempio del PO: §3.1.
+4. **Il richiamo**, come il tuo esempio (I-162, I-163): **la freccia piena** di 2 mm sul pezzo o sulla
+   linea, **un tratto obliquo a 45 gradi**, e **la spalla orizzontale** di 5 mm che arriva alla scritta a metà
+   delle sue maiuscole. Sottile e nero, per le sigle e per i DN. **D-075 è superata** su questo punto: §3.1.
 5. **La legenda** resta larga 50 mm: i nomi lunghi vanno a capo, a righe più uguali possibile («Valvola
    deviatrice / a tre vie»). La nota «Øi» sta su tre righe.
 6. **La tabella** ha righe di 6,25 mm, ed è più larga: sulla tavola 1 da 92,5 a 152,5 mm.
@@ -51,21 +52,24 @@ ripartito da `main` · **Base:** `main` a `7f2bee8` (PR #64, `REL-007`) · **Avv
   della sigla nella geometria (`PlacedLabel.corpo_mm`), letto da SVG, DXF, preflight, DN e velo della verifica.
 - **I DN**, `layout/diametri.py` e `diametri/tratti.py`: il ripiego a 8 punti, lo spazio dai capi di 1,0 mm, la
   strada principale o secondaria di ogni tratto, l'etichetta staccata con freccia (`richiamo_da`).
-- **Il richiamo con freccia**, `graphics/sheet.py` e `graphics/dxf.py`: la freccia piena (nel DXF un `SOLID`)
-  sul richiamo delle sigle e su quello dei DN.
+- **Il richiamo con freccia e spalla** (I-162, I-163): la geometria in `layout/geometry.py` (`Richiamo`: punta,
+  gomito, spalla), costruita da `layout/labels.py` per le sigle e per i DN; SVG e DXF lo disegnano uguale, la
+  freccia piena come `SOLID` nel DXF.
 - **Il preflight**: `TABLE_EQUIPMENT_TAG_OMITTED`, bloccante (I-160); `DIAMETER_TAG_MISSING` solo sulle strade
   principali (I-161); i controlli sui richiami — incroci, 45 gradi — anche per i DN staccati.
 - **Le prove**: `tests/scritte/` (33), e le prove dei diametri, delle etichette e del DXF alla regola nuova.
 
 ## 3. Che cosa ho trovato, e va detto
 
-### 3.1 La spalla del richiamo
+### 3.1 Il richiamo supera D-075
 
-L'esempio del PO (`docs/input-pm/2026-09-29-richiamo-con-freccia.jpg`) ha una **spalla orizzontale** fra la
-scritta e la linea obliqua. **D-075**, approvata, la vieta: «la codina orizzontale … deliberatamente non c'è»,
-perché un tratto orizzontale accanto alle tubazioni si legge come un tubo; il richiamo è una sola diagonale a
-45 gradi, e il preflight lo misura. Il richiamo delle tavole è quindi la diagonale di D-075 **con la freccia
-piena** della richiesta. **Se il PO vuole la spalla, si aggiunge**: è una decisione sua, e cambia D-075.
+**D-075**, approvata ad agosto, voleva il richiamo come una sola diagonale a 45 gradi fino al testo, senza
+tratti orizzontali, perché un tratto orizzontale accanto alle tubazioni si leggeva come un tubo. La sessione
+l'aveva proposto così; il PO ha scelto il suo esempio: «a me pero' non piacciono 45 gardi dirette le preferisco
+con la spalla come ti ho detto. quindi sovrascriviamo D-075 con questa mia istruzione» (I-163). Il richiamo ha
+quindi la spalla; resta a 45 gradi il tratto obliquo, che la distingue da una tubazione, e il preflight lo
+misura ancora. La spalla è sottile e nera, lunga 5 mm, e finisce a 0,75 mm dalla scritta: i tubi sono colorati
+e più spessi.
 
 ### 3.2 Che cosa resta piccolo
 
@@ -220,4 +224,4 @@ cartiglio, il PDF.
 
 1. **Le tavole vanno bene?** Il corpo, le sigle a 8 dove servono, i DN staccati e quelli sacrificati, la
    legenda, la tabella (§1).
-2. **La spalla del richiamo** (§3.1): come nelle tavole, senza — D-075 —, o con, come nel tuo esempio?
+2. **Il richiamo** (§3.1): la spalla come nel tuo esempio, il tratto obliquo a 45 gradi. Va bene così?

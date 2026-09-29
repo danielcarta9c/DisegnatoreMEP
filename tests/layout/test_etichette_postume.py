@@ -94,10 +94,12 @@ def run(*points: tuple[float, float]) -> RoutedTrunk:
 
 
 def label_box(item: PlacedLabel) -> Box:
-    width = text_width_mm(item.text, HEIGHT_MM)
+    """Il riquadro della sigla al suo corpo: 9 punti, o 8 dove e' scesa (REL-008)."""
+    corpo = item.corpo_mm if item.corpo_mm is not None else HEIGHT_MM
+    width = text_width_mm(item.text, corpo)
     return (
         item.anchor.x_mm,
-        item.anchor.y_mm - HEIGHT_MM,
+        item.anchor.y_mm - corpo,
         item.anchor.x_mm + width,
         item.anchor.y_mm,
     )
@@ -152,10 +154,27 @@ def segments_cross(a: Point, b: Point, c: Point, d: Point) -> bool:
 
 
 def leader_is_oblique(item: PlacedLabel) -> bool:
-    assert item.leader_from is not None
-    span_x = abs(item.anchor.x_mm - item.leader_from.x_mm)
-    span_y = abs(item.anchor.y_mm - item.leader_from.y_mm)
-    return span_x > 0 and span_y > 0 and abs(span_x - span_y) <= 1e-9
+    """Il richiamo (I-163): un tratto a 45 gradi dallo spigolo al gomito, e la spalla
+    orizzontale dal gomito verso il testo."""
+    assert item.richiamo is not None
+    punta, gomito, spalla = item.richiamo.punta, item.richiamo.gomito, item.richiamo.spalla
+    span_x = abs(gomito.x_mm - punta.x_mm)
+    span_y = abs(gomito.y_mm - punta.y_mm)
+    return (
+        span_x > 0
+        and span_y > 0
+        and abs(span_x - span_y) <= 1e-9
+        and spalla.y_mm == gomito.y_mm
+        and spalla.x_mm != gomito.x_mm
+    )
+
+
+def _segmenti(item: PlacedLabel) -> list[tuple[Point, Point]]:
+    if item.richiamo is not None:
+        return list(item.richiamo.segmenti)
+    if item.leader_from is not None:
+        return [(item.leader_from, item.anchor)]
+    return []
 
 
 def leader_crosses_nothing(
@@ -165,22 +184,25 @@ def leader_crosses_nothing(
     others: list[PlacedLabel],
 ) -> bool:
     """Il richiamo non attraversa tubi, simboli, testi ne' altri richiami."""
-    assert item.leader_from is not None
-    start, end = item.leader_from, item.anchor
-    for route in routes:
-        for segment in route.segments:
-            for first, second in zip(segment, segment[1:], strict=False):
-                if segments_cross(start, end, first, second):
+    assert item.richiamo is not None
+    for start, end in item.richiamo.segmenti:
+        for route in routes:
+            for segment in route.segments:
+                for first, second in zip(segment, segment[1:], strict=False):
+                    if segments_cross(start, end, first, second):
+                        return False
+        for other in others:
+            if other is item:
+                continue
+            for a, b in _segmenti(other):
+                if segments_cross(start, end, a, b):
                     return False
-    for other in others:
-        if other is item or other.leader_from is None:
-            continue
-        if segments_cross(start, end, other.leader_from, other.anchor):
+        boxes = [symbol_box(one) for one in symbols] + [
+            label_box(one) for one in others if one is not item
+        ]
+        if any(_enters(start, end, box) for box in boxes):
             return False
-    boxes = [symbol_box(one) for one in symbols] + [
-        label_box(one) for one in others if one is not item
-    ]
-    return not any(_enters(start, end, box) for box in boxes)
+    return True
 
 
 def _enters(before: Point, after: Point, box: Box) -> bool:
@@ -346,15 +368,15 @@ def test_una_sigla_murata_prende_un_richiamo_corto_che_non_attraversa_niente() -
     written = place_labels(project, placed, NOVE_C_A3.standard, routes=routes)
     assert len(written) == 1
     tag = written[0]
-    assert tag.leader_from is not None, "nessun posto adiacente: serve il richiamo"
+    assert tag.richiamo is not None, "nessun posto adiacente: serve il richiamo"
     assert leader_is_oblique(tag)
     assert leader_crosses_nothing(tag, placed, routes, written)
     corners = {(100.0, 100.0), (110.0, 100.0), (100.0, 110.0), (110.0, 110.0)}
-    assert (tag.leader_from.x_mm, tag.leader_from.y_mm) in corners
+    assert (tag.richiamo.punta.x_mm, tag.richiamo.punta.y_mm) in corners
     boxes = [symbol_box(placed[0])] + line_boxes(routes)
     assert all(apart(label_box(tag), other) for other in boxes)
     # Corto: il primo posto libero lungo la diagonale.
-    assert abs(tag.anchor.x_mm - tag.leader_from.x_mm) <= 10.0
+    assert abs(tag.richiamo.gomito.x_mm - tag.richiamo.punta.x_mm) <= 10.0
 
 
 def test_una_sigla_senza_nessun_posto_pulito_si_omette_e_la_tavola_esce() -> None:
@@ -380,7 +402,7 @@ def test_un_richiamo_non_attraversa_un_altro_richiamo_ne_un_altra_sigla() -> Non
     for item in written:
         assert all(apart(label_box(item), other) for other in boxes), item.id
         boxes.append(label_box(item))
-        if item.leader_from is not None:
+        if item.richiamo is not None:
             assert leader_is_oblique(item)
             assert leader_crosses_nothing(item, placed, routes, written), item.id
 

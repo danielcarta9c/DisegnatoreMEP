@@ -110,7 +110,7 @@ def test_un_etichetta_per_tratto(impianto: str, tavola: Callable[[str], Tavola])
     for item in t.tratti:
         quante = per_tratto[item.connection_ids]
         assert quante == 1 if item.strada_principale else quante <= 1, (item.capi, quante)
-    staccate = [e for e in t.foglio.diametri if e.richiamo_da is not None]
+    staccate = [e for e in t.foglio.diametri if e.richiamo is not None]
     principali = {item.connection_ids for item in t.tratti if item.strada_principale}
     assert all(frozenset(e.connection_ids) in principali for e in staccate)
     scritte = {item.connection_ids: item.scritta for item in t.tratti}
@@ -125,7 +125,7 @@ def test_in_linea_con_la_tubazione_e_addosso(impianto: str, tavola: Callable[[st
     t = tavola(impianto)
     corpo = t.esito.frame.standard.text_small_mm
     for etichetta in t.foglio.diametri:
-        if etichetta.richiamo_da is not None:
+        if etichetta.richiamo is not None:
             continue  # staccata con freccia (I-162): la misura e' in tests/scritte
         box = riquadro_del_diametro(etichetta, corpo)
         propri = _segmenti(t.foglio, frozenset(etichetta.connection_ids))
@@ -152,7 +152,7 @@ def test_sulla_tavola_1_la_mandata_sopra_e_il_ritorno_sotto(tavola: Callable[[st
     versi = {frozenset(route.connection_ids): route.supply for route in t.foglio.routes}
     corpo = t.esito.frame.standard.text_small_mm
     for etichetta in t.foglio.diametri:
-        if etichetta.verticale or etichetta.richiamo_da is not None:
+        if etichetta.verticale or etichetta.richiamo is not None:
             continue
         box = riquadro_del_diametro(etichetta, corpo)
         mandata = next(
@@ -223,10 +223,10 @@ def test_il_dxf_porta_le_stesse_etichette(
         for e in sul_layer
         if e.dxftype() == "TEXT"
     )
-    # Un'etichetta staccata (I-162) porta anche il suo richiamo: una linea e una
-    # freccia piena.
-    staccate = sum(1 for e in t.foglio.diametri if e.richiamo_da is not None)
-    assert sum(1 for e in sul_layer if e.dxftype() == "LINE") == staccate
+    # Un'etichetta staccata (I-162, I-163) porta anche il suo richiamo: il tratto
+    # obliquo e la spalla, due linee, e una freccia piena.
+    staccate = sum(1 for e in t.foglio.diametri if e.richiamo is not None)
+    assert sum(1 for e in sul_layer if e.dxftype() == "LINE") == 2 * staccate
     assert sum(1 for e in sul_layer if e.dxftype() == "SOLID") == staccate
     attesi = sorted(
         (e.testo, round(e.ancora.x_mm, 6), round(altezza - e.ancora.y_mm, 6), 90.0 if e.verticale else 0.0)

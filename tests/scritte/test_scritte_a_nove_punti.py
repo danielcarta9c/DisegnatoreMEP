@@ -31,6 +31,7 @@ from disegnatore_mep.graphics.standard import (
 from disegnatore_mep.graphics.tabella import altezza_della_riga_mm
 from disegnatore_mep.layout import diametri
 from disegnatore_mep.layout.geometry import DiametroSullaTavola, Point
+from disegnatore_mep.layout.labels import MEZZE_MAIUSCOLE_EM, SPALLA_DEL_RICHIAMO_MM
 from disegnatore_mep.layout.legend import (
     INSET_MM,
     INTERLINEA_EM,
@@ -244,18 +245,24 @@ def test_il_preflight_blocca_se_manca_la_sigla_di_un_apparecchiatura_in_tabella(
 def test_il_dn_di_una_strada_principale_senza_posto_va_staccato_con_freccia(
     impianto: str, tavola: Callable[[str], Tavola], simboli: SymbolRegistry, tmp_path: Path
 ) -> None:
-    """I-162: la freccia tocca una linea del proprio tratto, e il richiamo e' una sola
-    diagonale a 45 gradi fino alla base della scritta (D-075); la scritta e'
-    orizzontale e non tocca niente. SVG e DXF disegnano linea e freccia."""
+    """I-162, I-163: la freccia tocca una linea del proprio tratto; un tratto a 45
+    gradi arriva al gomito, e la spalla orizzontale arriva alla scritta a meta'
+    delle sue maiuscole. La scritta e' orizzontale e non tocca niente. SVG e DXF
+    disegnano il richiamo e la freccia."""
     t = tavola(impianto)
-    staccate = [e for e in t.foglio.diametri if e.richiamo_da is not None]
+    staccate = [e for e in t.foglio.diametri if e.richiamo is not None]
     assert staccate
+    corpo = t.esito.frame.standard.text_small_mm
     for etichetta in staccate:
-        assert etichetta.richiamo_da is not None and not etichetta.verticale
-        dx = abs(etichetta.ancora.x_mm - etichetta.richiamo_da.x_mm)
-        dy = abs(etichetta.ancora.y_mm - etichetta.richiamo_da.y_mm)
+        richiamo = etichetta.richiamo
+        assert richiamo is not None and not etichetta.verticale
+        dx = abs(richiamo.gomito.x_mm - richiamo.punta.x_mm)
+        dy = abs(richiamo.gomito.y_mm - richiamo.punta.y_mm)
         assert dx == pytest.approx(dy) and dx >= 3.5
-        punta = etichetta.richiamo_da
+        assert richiamo.spalla.y_mm == richiamo.gomito.y_mm
+        assert abs(richiamo.spalla.x_mm - richiamo.gomito.x_mm) == pytest.approx(SPALLA_DEL_RICHIAMO_MM)
+        assert etichetta.ancora.y_mm == pytest.approx(richiamo.gomito.y_mm + MEZZE_MAIUSCOLE_EM * corpo)
+        punta = richiamo.punta
         proprie = [r for r in t.foglio.routes if set(r.connection_ids) <= set(etichetta.connection_ids)]
         assert any(
             min(a.x_mm, b.x_mm) - 1e-6 <= punta.x_mm <= max(a.x_mm, b.x_mm) + 1e-6
@@ -282,7 +289,7 @@ def test_il_dn_di_una_strada_secondaria_si_sacrifica_senza_rilievo(tavola: Calla
     posati = {frozenset(e.connection_ids) for e in t.foglio.diametri}
     sacrificati = [item for item in tratti if item.connection_ids not in posati]
     assert sacrificati and all(not item.strada_principale for item in sacrificati)
-    assert all(e.richiamo_da is None for e in t.foglio.diametri)
+    assert all(e.richiamo is None for e in t.foglio.diametri)
     assert "DIAMETER_TAG_MISSING" not in {r.code for r in t.esito.rilievi}
 
 

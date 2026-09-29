@@ -17,7 +17,7 @@ bozza (D-025).
 from dataclasses import dataclass
 
 from disegnatore_mep.layout.addresses import VERIFY_MARK
-from disegnatore_mep.layout.geometry import FlowKind, Point, RoutedTrunk, SheetGeometry
+from disegnatore_mep.layout.geometry import FlowKind, Point, Richiamo, RoutedTrunk, SheetGeometry
 from disegnatore_mep.layout.legend import (
     INTERLINEA_EM,
     basi_delle_righe,
@@ -29,7 +29,7 @@ from .cartiglio import CartiglioDellaTavola, disegna_cartiglio
 from .frame import Rect, SheetFrame
 from .glyphs import flow_glyph_path
 from .registry import SymbolRegistry
-from .standard import FAMIGLIA_DELLE_SCRITTE
+from .standard import FAMIGLIA_DELLE_SCRITTE, GraphicStandard
 from .tabella import svg_della_tabella
 
 DRAFT_MARK = "BOZZA — cartiglio non compilato"
@@ -69,6 +69,17 @@ def _freccia_svg(punta: Point, da: Point, classe: str) -> str:
     return (
         f'<path class="{classe}" d="M{a.x_mm:g},{a.y_mm:g} L{b.x_mm:g},{b.y_mm:g} '
         f'L{c.x_mm:g},{c.y_mm:g} Z" fill="black" stroke="none"/>'
+    )
+
+
+def _richiamo_svg(richiamo: Richiamo, standard: GraphicStandard, classe: str) -> str:
+    """Il richiamo con la spalla (I-163): la spezzata sottile e nera dalla punta al
+    gomito alla spalla, e la freccia piena sulla punta."""
+    punti = " ".join(f"{p.x_mm:g},{p.y_mm:g}" for p in (richiamo.punta, richiamo.gomito, richiamo.spalla))
+    return (
+        f'<polyline class="{classe}" points="{punti}" fill="none" stroke="black" '
+        f'stroke-width="{standard.line_thin_mm:g}"/>'
+        + _freccia_svg(richiamo.punta, richiamo.gomito, f"{classe}-arrow")
     )
 
 
@@ -518,6 +529,8 @@ def render_sheet(
         )
 
     for label in sheet.labels:
+        if label.richiamo is not None:
+            parts.append(_richiamo_svg(label.richiamo, standard, "leader"))
         if label.leader_from is not None:
             # Il richiamo e' **quello che il layout ha deciso**: i due capi si
             # uniscono come stanno. Prima il renderer ci ricavava una spezzata
@@ -543,16 +556,10 @@ def render_sheet(
     # dal basso verso l'alto (I-152). Dichiara Arial come la tabella: e' il
     # carattere delle tavole, e il DXF lo scrive uguale.
     for etichetta in sheet.diametri:
-        if etichetta.richiamo_da is not None:
-            # L'etichetta staccata (I-162): la diagonale dalla linea alla base
-            # della scritta, e la freccia piena sulla linea.
-            parts.append(
-                f'<polyline class="diameter-leader" points="'
-                f"{etichetta.richiamo_da.x_mm:g},{etichetta.richiamo_da.y_mm:g} "
-                f'{etichetta.ancora.x_mm:g},{etichetta.ancora.y_mm:g}" fill="none" '
-                f'stroke="black" stroke-width="{standard.line_thin_mm:g}"/>'
-            )
-            parts.append(_freccia_svg(etichetta.richiamo_da, etichetta.ancora, "diameter-leader-arrow"))
+        if etichetta.richiamo is not None:
+            # L'etichetta staccata (I-162, I-163): la freccia piena sulla linea, il
+            # tratto obliquo, la spalla fino alla scritta.
+            parts.append(_richiamo_svg(etichetta.richiamo, standard, "diameter-leader"))
         girata = (
             f' transform="rotate(-90 {etichetta.ancora.x_mm:g} {etichetta.ancora.y_mm:g})"'
             if etichetta.verticale

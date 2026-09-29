@@ -21,7 +21,6 @@ no (D-083: vietato inventare, e vietato far passare una taratura per una norma).
 
 import math
 from collections.abc import Iterable
-from dataclasses import dataclass
 
 from disegnatore_mep.catalog.errors import CatalogError
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -57,6 +56,7 @@ from disegnatore_mep.layout.geometry import (
 from disegnatore_mep.layout.labels import (
     LINE_CLEARANCE_MM,
     riquadro_della_scritta,
+    segmenti_del_richiamo,
     segments_cross,
     text_width_mm,
 )
@@ -672,9 +672,8 @@ def equipment_table(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validat
             ):
                 dentro.append(_run_name(route))
         for label in sheet.labels:
-            if _boxes_overlap(_label_box(label, height), zona) or (
-                label.leader_from is not None
-                and _segment_crosses_box(label.leader_from, label.anchor, zona)
+            if _boxes_overlap(_label_box(label, height), zona) or any(
+                _segment_crosses_box(*segmento, zona) for segmento in segmenti_del_richiamo(label)
             ):
                 dentro.append(label.id)
         for reference in sheet.cross_references:
@@ -841,11 +840,21 @@ def _leader_enters(
     return low < high - TOLERANCE_MM
 
 
-@dataclass(frozen=True)
-class _Richiamato:
-    """Il nome di chi porta un richiamo che non e' una sigla: un DN staccato (I-162)."""
-
-    id: str
+def _segmenti_dei_richiami(sheet: SheetGeometry) -> list[tuple[str, tuple[Point, Point]]]:
+    """Ogni segmento di ogni richiamo della tavola, col nome di chi lo porta: la
+    diagonale di prima delle sigle (`leader_from`), il tratto obliquo e la spalla
+    del richiamo nuovo — delle sigle e dei DN staccati (I-162, I-163)."""
+    segmenti: list[tuple[str, tuple[Point, Point]]] = []
+    for label in sheet.labels:
+        if label.leader_from is not None:
+            segmenti.append((label.id, (label.leader_from, label.anchor)))
+        if label.richiamo is not None:
+            segmenti.extend((label.id, segmento) for segmento in label.richiamo.segmenti)
+    for etichetta in sheet.diametri:
+        if etichetta.richiamo is not None:
+            nome = f"DN {etichetta.testo} ({', '.join(etichetta.connection_ids[:1])})"
+            segmenti.extend((nome, segmento) for segmento in etichetta.richiamo.segmenti)
+    return segmenti
 
 
 def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
@@ -859,31 +868,23 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
     """
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
-        leaders = [
-            (label, (label.leader_from, label.anchor))
-            for label in sheet.labels
-            if label.leader_from is not None
-        ] + [
-            (_Richiamato(id=f"DN {etichetta.testo}"), (etichetta.richiamo_da, etichetta.ancora))
-            for etichetta in sheet.diametri
-            if etichetta.richiamo_da is not None
-        ]
+        leaders = _segmenti_dei_richiami(sheet)
         runs = [
             (route, (before, after))
             for _, route, segment in _run_polylines(sheet)
             for before, after in moves_of(segment)
         ]
-        for index, (label, leader) in enumerate(leaders):
-            for other, other_leader in leaders[index + 1 :]:
-                if segments_cross(leader, other_leader):
+        for index, (label_id, leader) in enumerate(leaders):
+            for other_id, other_leader in leaders[index + 1 :]:
+                if other_id != label_id and segments_cross(leader, other_leader):
                     findings.append(
                         _finding(
                             "LEADERS_CROSS",
                             IssueSeverity.WARNING,
-                            f"i richiami delle etichette {label.id} e {other.id} si "
+                            f"i richiami delle etichette {label_id} e {other_id} si "
                             f"incrociano: due richiami che si attraversano non dicono "
                             f"piu' chi parla di chi (D2, DRAW-003)",
-                            sorted({sheet.sheet_id, label.id, other.id}),
+                            sorted({sheet.sheet_id, label_id, other_id}),
                         )
                     )
             covered = next(
@@ -899,10 +900,10 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
                     _finding(
                         "LEADER_CROSSES_A_SYMBOL",
                         IssueSeverity.WARNING,
-                        f"il richiamo dell'etichetta {label.id} passa sopra il simbolo "
+                        f"il richiamo dell'etichetta {label_id} passa sopra il simbolo "
                         f"{covered.component_id}: un richiamo che confonde non si "
                         f"disegna, il testo si omette (D2, DRAW-003-R1)",
-                        sorted({sheet.sheet_id, label.id, covered.component_id}),
+                        sorted({sheet.sheet_id, label_id, covered.component_id}),
                     )
                 )
             crossed = next((route for route, run in runs if segments_cross(leader, run)), None)
@@ -911,10 +912,10 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
                     _finding(
                         "LEADER_CROSSES_A_RUN",
                         IssueSeverity.WARNING,
-                        f"il richiamo dell'etichetta {label.id} attraversa la tratta "
+                        f"il richiamo dell'etichetta {label_id} attraversa la tratta "
                         f"{_run_name(crossed)}: un richiamo che confonde non si "
                         f"disegna, il testo si omette (D2, DRAW-003-R1)",
-                        sorted({sheet.sheet_id, label.id, *crossed.connection_ids}),
+                        sorted({sheet.sheet_id, label_id, *crossed.connection_ids}),
                     )
                 )
     return findings
@@ -939,15 +940,21 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
     """
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
-        capi = [
-            (label.id, label.leader_from, label.anchor)
-            for label in sheet.labels
-            if label.leader_from is not None
-        ] + [
-            (f"DN {etichetta.testo}", etichetta.richiamo_da, etichetta.ancora)
-            for etichetta in sheet.diametri
-            if etichetta.richiamo_da is not None
-        ]
+        # Del richiamo nuovo si misura il tratto obliquo: la spalla e' orizzontale
+        # per scelta del PO (I-163).
+        capi = (
+            [(label.id, label.leader_from, label.anchor) for label in sheet.labels if label.leader_from is not None]
+            + [
+                (label.id, label.richiamo.punta, label.richiamo.gomito)
+                for label in sheet.labels
+                if label.richiamo is not None
+            ]
+            + [
+                (f"DN {etichetta.testo}", etichetta.richiamo.punta, etichetta.richiamo.gomito)
+                for etichetta in sheet.diametri
+                if etichetta.richiamo is not None
+            ]
+        )
         for label_id, da, a in capi:
             span_x = abs(a.x_mm - da.x_mm)
             span_y = abs(a.y_mm - da.y_mm)
