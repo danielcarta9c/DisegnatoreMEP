@@ -3,6 +3,8 @@ from functools import cache
 from math import hypot
 from pathlib import Path
 
+import pytest
+
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
@@ -16,7 +18,6 @@ from disegnatore_mep.layout.geometry import (
     SheetGeometry,
 )
 from disegnatore_mep.layout.labels import (
-    CHAR_WIDTH_RATIO,
     LEADER_MIN_LENGTH_MM,
     LINE_CLEARANCE_MM,
     TAG_GAP_MM,
@@ -188,8 +189,11 @@ def test_no_label_collides_with_a_symbol_or_another_label() -> None:
         boxes.append(box)
 
 
-def test_the_width_estimate_is_the_declared_one() -> None:
-    assert text_width_mm("PDC-01", HEIGHT_MM) == 6 * HEIGHT_MM * CHAR_WIDTH_RATIO
+def test_the_width_is_measured_with_arial() -> None:
+    """REL-008: la tavola dichiara Arial, e la larghezza di una sigla e' quella dei
+    suoi caratteri, non una media: «PDC-01» e' 3,556 em, «iiii» meno di «MMMM»."""
+    assert text_width_mm("PDC-01", HEIGHT_MM) == pytest.approx(3.556 * HEIGHT_MM)
+    assert text_width_mm("iiii", HEIGHT_MM) < text_width_mm("MMMM", HEIGHT_MM)
 
 
 def test_the_labels_are_deterministic() -> None:

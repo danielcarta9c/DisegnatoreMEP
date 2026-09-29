@@ -18,12 +18,18 @@ from dataclasses import dataclass
 
 from disegnatore_mep.layout.addresses import VERIFY_MARK
 from disegnatore_mep.layout.geometry import FlowKind, Point, RoutedTrunk, SheetGeometry
-from disegnatore_mep.layout.legend import style_for
+from disegnatore_mep.layout.legend import (
+    INTERLINEA_EM,
+    basi_delle_righe,
+    righe_del_nome,
+    style_for,
+)
 
 from .cartiglio import CartiglioDellaTavola, disegna_cartiglio
 from .frame import Rect, SheetFrame
 from .glyphs import flow_glyph_path
 from .registry import SymbolRegistry
+from .standard import FAMIGLIA_DELLE_SCRITTE
 from .tabella import svg_della_tabella
 
 DRAFT_MARK = "BOZZA — cartiglio non compilato"
@@ -369,7 +375,8 @@ def render_sheet(
     parts: list[str] = [
         f'<svg xmlns="http://www.w3.org/2000/svg" '
         f'width="{standard.sheet_width_mm:g}mm" height="{standard.sheet_height_mm:g}mm" '
-        f'viewBox="0 0 {standard.sheet_width_mm:g} {standard.sheet_height_mm:g}">',
+        f'viewBox="0 0 {standard.sheet_width_mm:g} {standard.sheet_height_mm:g}" '
+        f'font-family="{FAMIGLIA_DELLE_SCRITTE}">',
     ]
     if cartiglio is None:
         parts.extend(
@@ -509,8 +516,9 @@ def render_sheet(
         )
         parts.append(
             f'<text class="diameter" x="{etichetta.ancora.x_mm:g}" '
-            f'y="{etichetta.ancora.y_mm:g}" font-size="{standard.text_small_mm:g}" '
-            f'font-family="Arial, Helvetica, sans-serif" fill="black"{girata}>'
+            f'y="{etichetta.ancora.y_mm:g}" '
+            f'font-size="{etichetta.corpo_mm or standard.text_small_mm:g}" '
+            f'font-family="{FAMIGLIA_DELLE_SCRITTE}" fill="black"{girata}>'
             f"{_escape(etichetta.testo)}</text>"
         )
 
@@ -539,11 +547,17 @@ def render_sheet(
             f'stroke-width="{standard.legend_line_mm(symbol.manifest.stroke_weight) / scale:g}" '
             f'fill="none">'
             f"{symbol.body}{arrows}</g>"
+        )
+        righe = righe_del_nome(entry.name, frame)
+        basi = basi_delle_righe(
+            top + LEGEND_SWATCH_MM / 2 + standard.text_small_mm / 2, len(righe), standard.text_small_mm
+        )
+        parts.extend(
             f'<text class="legend-name" '
             f'x="{entry.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '
-            f'y="{top + LEGEND_SWATCH_MM / 2 + standard.text_small_mm / 2:g}" '
-            f'font-size="{standard.text_small_mm:g}" '
-            f'fill="black">{_escape(entry.name)}</text>'
+            f'y="{base:g}" font-size="{standard.text_small_mm:g}" '
+            f'fill="black">{_escape(riga)}</text>'
+            for riga, base in zip(righe, basi, strict=True)
         )
 
     for key in sheet.network_keys:
@@ -554,10 +568,15 @@ def render_sheet(
             f'x2="{key.anchor.x_mm + LEGEND_SWATCH_MM:g}" y2="{key.anchor.y_mm - 1:g}" '
             f'stroke="{key.colour}" stroke-width="{standard.line_medium_mm:g}"'
             f"{dash_attribute}/>"
+        )
+        righe = righe_del_nome(key.name, frame)
+        basi = basi_delle_righe(key.anchor.y_mm, len(righe), standard.text_small_mm)
+        parts.extend(
             f'<text class="legend-network-name" '
             f'x="{key.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '
-            f'y="{key.anchor.y_mm:g}" font-size="{standard.text_small_mm:g}" '
-            f'fill="black">{_escape(key.name)}</text>'
+            f'y="{base:g}" font-size="{standard.text_small_mm:g}" '
+            f'fill="black">{_escape(riga)}</text>'
+            for riga, base in zip(righe, basi, strict=True)
         )
 
     # Le righe che spiegano una scritta (I-155): il campione dove le altre righe
@@ -566,14 +585,14 @@ def render_sheet(
         parts.append(
             f'<text class="legend-note-sample" x="{nota.anchor.x_mm:g}" '
             f'y="{nota.anchor.y_mm:g}" font-size="{standard.text_small_mm:g}" '
-            f'font-family="Arial, Helvetica, sans-serif" fill="black">'
+            f'font-family="{FAMIGLIA_DELLE_SCRITTE}" fill="black">'
             f"{_escape(nota.campione)}</text>"
         )
         for indice, riga in enumerate(nota.righe):
             parts.append(
                 f'<text class="legend-note" '
                 f'x="{nota.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '
-                f'y="{nota.anchor.y_mm + indice * standard.grid_mm:g}" '
+                f'y="{nota.anchor.y_mm + indice * INTERLINEA_EM * standard.text_small_mm:g}" '
                 f'font-size="{standard.text_small_mm:g}" fill="black">{_escape(riga)}</text>'
             )
 

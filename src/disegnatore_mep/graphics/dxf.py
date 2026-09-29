@@ -46,7 +46,14 @@ from typing import TYPE_CHECKING
 from xml.etree import ElementTree
 
 from disegnatore_mep.layout.geometry import FlowKind, Point, RoutedTrunk, SheetGeometry
-from disegnatore_mep.layout.legend import MEDIUM_NAMES, RETURN_NAMES, style_for
+from disegnatore_mep.layout.legend import (
+    INTERLINEA_EM,
+    MEDIUM_NAMES,
+    RETURN_NAMES,
+    basi_delle_righe,
+    righe_del_nome,
+    style_for,
+)
 from disegnatore_mep.model.types import PortFlow
 
 from .cartiglio import CartiglioDellaTavola, disegna_cartiglio
@@ -1007,12 +1014,16 @@ class _Tavola:
                 self._freccia_del_glifo(
                     glyph, manifest.port(glyph.port).face, None, left, middle, scala
                 )
-            self.testo(
-                entry.name,
-                entry.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM,
+            righe = righe_del_nome(entry.name, self.frame)
+            basi = basi_delle_righe(
                 top + LEGEND_SWATCH_MM / 2 + self.standard.text_small_mm / 2,
-                self.standard.text_small_mm, LAYER_LEGENDA,
+                len(righe), self.standard.text_small_mm,
             )
+            for riga, base in zip(righe, basi, strict=True):
+                self.testo(
+                    riga, entry.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM, base,
+                    self.standard.text_small_mm, LAYER_LEGENDA,
+                )
         for key in self.sheet.network_keys:
             # Il campione porta colore, tratteggio e spessore sull'oggetto: la
             # legenda resta intera anche con il layer della rete spento.
@@ -1026,10 +1037,13 @@ class _Tavola:
                 },
             )
             colora(linea, key.colour)
-            self.testo(
-                key.name, key.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM,
-                key.anchor.y_mm, self.standard.text_small_mm, LAYER_LEGENDA,
-            )
+            righe = righe_del_nome(key.name, self.frame)
+            basi = basi_delle_righe(key.anchor.y_mm, len(righe), self.standard.text_small_mm)
+            for riga, base in zip(righe, basi, strict=True):
+                self.testo(
+                    riga, key.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM, base,
+                    self.standard.text_small_mm, LAYER_LEGENDA,
+                )
         for nota in self.sheet.note_della_legenda:
             self.testo(
                 nota.campione, nota.anchor.x_mm, nota.anchor.y_mm,
@@ -1038,7 +1052,7 @@ class _Tavola:
             for indice, riga in enumerate(nota.righe):
                 self.testo(
                     riga, nota.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM,
-                    nota.anchor.y_mm + indice * self.standard.grid_mm,
+                    nota.anchor.y_mm + indice * INTERLINEA_EM * self.standard.text_small_mm,
                     self.standard.text_small_mm, LAYER_LEGENDA,
                 )
 
@@ -1049,7 +1063,7 @@ class _Tavola:
         for etichetta in self.sheet.diametri:
             self.testo(
                 etichetta.testo, etichetta.ancora.x_mm, etichetta.ancora.y_mm,
-                self.standard.text_small_mm, LAYER_DIAMETRI,
+                etichetta.corpo_mm or self.standard.text_small_mm, LAYER_DIAMETRI,
                 rotazione=90.0 if etichetta.verticale else 0.0,
             )
 

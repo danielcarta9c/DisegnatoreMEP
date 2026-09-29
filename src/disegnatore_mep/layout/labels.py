@@ -42,8 +42,9 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from math import ceil, sqrt
 
+from disegnatore_mep.graphics.cartiglio import larghezza_mm
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
-from disegnatore_mep.graphics.standard import GraphicStandard
+from disegnatore_mep.graphics.standard import PT_MM, GraphicStandard
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import JsonPrimitive
 
@@ -92,10 +93,10 @@ rivede sulle tavole reali.
 """
 
 CHAR_WIDTH_RATIO = 0.6
-"""Larghezza media di un carattere rispetto al corpo, per un sans-serif.
-
-Stima: la tavola non incorpora metriche di font. Serve a capire se due testi si
-sovrappongono, quindi un errore in eccesso e' innocuo.
+"""Larghezza media di un carattere rispetto al corpo, per un sans-serif: la stima
+che valeva finche' le scritte non dichiaravano un carattere. Resta per il foglio
+dei simboli; le scritte della tavola si misurano con le larghezze di Arial
+(`text_width_mm`, REL-008).
 """
 
 TOLERANCE_MM = 1e-6
@@ -166,7 +167,12 @@ def format_value(key: str, value: JsonPrimitive) -> str | None:
 
 
 def text_width_mm(text: str, height_mm: float) -> float:
-    return len(text) * height_mm * CHAR_WIDTH_RATIO
+    """Quanto e' lunga una scritta della tavola, con le larghezze di Arial — il
+    carattere che la tavola dichiara da `REL-008` (`graphics.metriche`, Liberation
+    Sans, che ha le larghezze di Arial). A 9 punti la stima di prima, 0,6 corpi a
+    carattere, dava a una sigla un riquadro fino a un quarto piu' largo del vero,
+    e con il riquadro largo una sigla che ci stava non trovava posto."""
+    return larghezza_mm(text, height_mm / PT_MM, False)
 
 
 def _overlap(first: Box, second: Box) -> bool:

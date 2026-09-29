@@ -10,7 +10,7 @@ import math
 
 from .glyphs import flow_glyph_path
 from .registry import SymbolRegistry
-from .standard import A3_LANDSCAPE, GraphicStandard
+from .standard import A3_LANDSCAPE, FAMIGLIA_DELLE_SCRITTE, GraphicStandard
 
 SCALE_BAR_MM = 100.0
 COLUMN_GAP_MM = 10.0
@@ -125,7 +125,8 @@ def render_symbol_sheet(
     parts: list[str] = [
         f'<svg xmlns="http://www.w3.org/2000/svg" '
         f'width="{standard.sheet_width_mm:g}mm" height="{standard.sheet_height_mm:g}mm" '
-        f'viewBox="0 0 {standard.sheet_width_mm:g} {standard.sheet_height_mm:g}">',
+        f'viewBox="0 0 {standard.sheet_width_mm:g} {standard.sheet_height_mm:g}" '
+        f'font-family="{FAMIGLIA_DELLE_SCRITTE}">',
         f'<rect x="{standard.margin_left_mm}" y="{standard.margin_top_mm}" '
         f'width="{standard.usable_width_mm}" height="{standard.usable_height_mm}" '
         f'fill="none" stroke="black" stroke-width="{standard.line_thin_mm}"/>',

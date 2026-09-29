@@ -31,11 +31,18 @@ from dataclasses import dataclass
 from disegnatore_mep.diametri.tratti import TrattoDelDiametro
 from disegnatore_mep.graphics.cartiglio import PT_MM, larghezza_mm
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
-from disegnatore_mep.graphics.standard import GraphicStandard
+from disegnatore_mep.graphics.standard import CORPO_MINIMO_PT, GraphicStandard
 
 from .geometry import DiametroSullaTavola, NotaDellaLegenda, Point, RoutedTrunk, SheetGeometry
 from .labels import text_width_mm
-from .legend import INSET_MM, ROW_HEIGHT_MM, SECTION_GAP_MM
+from .legend import (
+    INSET_MM,
+    INTERLINEA_EM,
+    ROW_HEIGHT_MM,
+    SECTION_GAP_MM,
+    a_capo,
+    larghezza_del_nome_mm,
+)
 
 Box = tuple[float, float, float, float]
 
@@ -52,9 +59,11 @@ testi e le altre linee, che per le sigle sono gia' allargate di mezzo millimetro
 (`labels.LINE_CLEARANCE_MM`). Un millimetro in tutto da un'altra tubazione:
 abbastanza perche' la scritta non si legga come sua."""
 
-RIENTRO_DAI_CAPI_MM = 1.5
+RIENTRO_DAI_CAPI_MM = 1.0
 """Quanto l'etichetta resta dentro il rettilineo, dai suoi due capi: non arriva
-sulla curva, sull'attacco o sull'organo in linea che lo chiude."""
+sulla curva, sull'attacco o sull'organo in linea che lo chiude. Era 1,5 mm con
+le scritte a 1,8 mm; a 9 punti (REL-008) con 1,5 mm tredici DN delle sette
+tavole di prova non entravano che a 8 punti, con 1,0 mm entrano tutti a 9."""
 
 DISTANZA_DELLA_COPPIA_MM = 10.0
 """Entro questa distanza una linea parallela dello stesso fluido e del verso
@@ -70,10 +79,6 @@ CAMPIONE_DELLA_LEGENDA = "Øi"
 TESTO_DELLA_LEGENDA = "diametro interno netto minimo in mm, materiale a scelta"
 """La riga della legenda che spiega la scritta (I-155): la frase e' quella che il
 PO ha scelto con la proposta."""
-
-RIENTRO_DEL_NOME_NELLA_LEGENDA_MM = 10.0
-"""Dove comincia, nella fascia, il testo di una riga di legenda: il campione e lo
-stacco dal nome (`graphics.sheet.LEGEND_SWATCH_MM`, `LEGEND_TEXT_GAP_MM`)."""
 
 
 def larghezza_del_testo_mm(testo: str, corpo_mm: float) -> float:
@@ -233,8 +238,19 @@ def posa_i_diametri(
 
     Si posano **dopo** simboli, linee, sigle e tabella, e non spostano niente.
     Deterministico: i tratti nell'ordine in cui arrivano, i rettilinei e le
-    posizioni sempre nello stesso ordine."""
+    posizioni sempre nello stesso ordine.
+
+    **Il corpo** (REL-008): prima quello delle scritte della tavola, 9 punti; dove
+    non entra, il minimo del PO, 8 punti (I-159) — prima di mettere la scritta fra
+    le due corsie di una coppia, che la renderebbe ambigua."""
     corpo = standard.text_small_mm
+    minimo = CORPO_MINIMO_PT * PT_MM
+    tentativi = [(corpo, False)]
+    if minimo < corpo - 1e-9:
+        tentativi.append((minimo, False))
+    tentativi.append((corpo, True))
+    if minimo < corpo - 1e-9:
+        tentativi.append((minimo, True))
     limite: Box = (area.x_mm, area.y_mm, area.right_mm, area.bottom_mm)
     simboli: list[Box] = [
         (item.origin.x_mm, item.origin.y_mm, item.right_mm, item.bottom_mm) for item in foglio.symbols
@@ -282,13 +298,13 @@ def posa_i_diametri(
         if not propri:
             continue
         propri.sort(key=lambda item: (not item.orizzontale, -item.lunghezza, item.fisso, item.da))
-        larghezza = larghezza_del_testo_mm(testo, corpo)
         trovato: DiametroSullaTavola | None = None
-        for anche_fra_le_corsie in (False, True):
+        for corpo_della_scritta, anche_fra_le_corsie in tentativi:
+            larghezza = larghezza_del_testo_mm(testo, corpo_della_scritta)
             for rettilineo in propri:
                 for inizio in _posizioni(rettilineo, larghezza):
                     for lato in _lati(rettilineo):
-                        box = _riquadro(rettilineo, lato, inizio, larghezza, corpo)
+                        box = _riquadro(rettilineo, lato, inizio, larghezza, corpo_della_scritta)
                         da, a = (box[0], box[2]) if rettilineo.orizzontale else (box[1], box[3])
                         if not anche_fra_le_corsie and _fra_le_corsie(rettilineo, lato, da, a, tutti):
                             continue
@@ -299,6 +315,7 @@ def posa_i_diametri(
                             ancora=_ancora(rettilineo, lato, box),
                             verticale=not rettilineo.orizzontale,
                             connection_ids=sorted(tratto.connection_ids),
+                            corpo_mm=None if corpo_della_scritta == corpo else corpo_della_scritta,
                         )
                         testi.append(box)
                         break
@@ -317,7 +334,10 @@ def posa_i_diametri(
 
 def riquadro_del_diametro(etichetta: DiametroSullaTavola, corpo: float) -> Box:
     """Il riquadro che l'etichetta occupa sulla tavola: lo leggono il preflight e
-    il collaudo, e deve essere quello della posa."""
+    il collaudo, e deve essere quello della posa. `corpo` e' quello delle scritte
+    della tavola; un'etichetta scesa al minimo porta il suo."""
+    if etichetta.corpo_mm is not None:
+        corpo = etichetta.corpo_mm
     larghezza = larghezza_del_testo_mm(etichetta.testo, corpo)
     if etichetta.verticale:
         return (
@@ -332,23 +352,6 @@ def riquadro_del_diametro(etichetta: DiametroSullaTavola, corpo: float) -> Box:
         etichetta.ancora.x_mm + larghezza,
         etichetta.ancora.y_mm,
     )
-
-
-def _a_capo(testo: str, larghezza_mm_massima: float, corpo_mm: float) -> list[str]:
-    """Le righe di un testo che va a capo fra le parole, senza superare la
-    larghezza data. Una parola da sola piu' larga resta intera su una riga."""
-    righe: list[str] = []
-    corrente = ""
-    for parola in testo.split():
-        prova = f"{corrente} {parola}" if corrente else parola
-        if corrente and larghezza_del_testo_mm(prova, corpo_mm) > larghezza_mm_massima:
-            righe.append(corrente)
-            corrente = parola
-        else:
-            corrente = prova
-    if corrente:
-        righe.append(corrente)
-    return righe
 
 
 def nota_della_legenda(foglio: SheetGeometry, frame: SheetFrame) -> NotaDellaLegenda | None:
@@ -366,9 +369,8 @@ def nota_della_legenda(foglio: SheetGeometry, frame: SheetFrame) -> NotaDellaLeg
     y = (max(righe_occupate) if righe_occupate else fascia.y_mm) + ROW_HEIGHT_MM
     if not foglio.network_keys:
         y += SECTION_GAP_MM
-    disponibile = fascia.width_mm - INSET_MM - RIENTRO_DEL_NOME_NELLA_LEGENDA_MM - INSET_MM
-    righe = _a_capo(TESTO_DELLA_LEGENDA, disponibile, corpo)
-    ultima = y + (len(righe) - 1) * frame.standard.grid_mm
+    righe = list(a_capo(TESTO_DELLA_LEGENDA, larghezza_del_nome_mm(frame), corpo))
+    ultima = y + (len(righe) - 1) * INTERLINEA_EM * corpo
     if ultima > fascia.bottom_mm - INSET_MM:
         return None
     return NotaDellaLegenda(

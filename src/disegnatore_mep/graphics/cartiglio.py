@@ -36,9 +36,7 @@ from disegnatore_mep.model.project import ProjectModel
 
 from . import metriche
 from .frame import SheetFrame
-
-PT_MM = 25.4 / 72
-"""Un punto tipografico in millimetri: i corpi del cartiglio sono in punti."""
+from .standard import PT_MM as PT_MM
 
 DA_DEFINIRE = "DA DEFINIRE"
 """Il valore di un campo obbligatorio che il progetto non ha (D-025)."""

@@ -12,6 +12,25 @@ from disegnatore_mep.model.base import FiniteFloat, StrictModel
 
 from .symbol import StrokeWeight
 
+PT_MM = 25.4 / 72
+"""Un punto tipografico in millimetri di carta: i corpi dei testi si dicono in punti."""
+
+CORPO_DELLE_SCRITTE_PT = 9.0
+"""Il corpo delle scritte del disegno, in punti (I-159, 29 settembre 2026).
+
+Il PO: «Adesso mi sembra che sta a circa 5, dovrebbe essere almeno 8 o meglio
+9». Il «circa 5» era misurato: 1,8 mm, 5,1 pt, per sigle, dati, DN, legenda,
+tabella e intestazione. Nove punti sono 3,175 mm."""
+
+CORPO_MINIMO_PT = 8.0
+"""Il corpo sotto cui nessuna scritta del disegno scende (I-159): «almeno 8»."""
+
+FAMIGLIA_DELLE_SCRITTE = "Arial, Helvetica, sans-serif"
+"""Il carattere di tutte le scritte della tavola e del foglio dei simboli
+(REL-008): lo dichiara la radice dell'SVG, e ogni testo lo eredita. Prima lo
+dichiaravano solo il DN, la tabella e il cartiglio, e sigle, legenda e rimandi
+uscivano nel PDF con le grazie (I-122). Il DXF e' in Arial da `REL-004`."""
+
 
 class GraphicStandard(StrictModel):
     sheet_width_mm: FiniteFloat = Field(gt=0)
@@ -90,9 +109,9 @@ A3_LANDSCAPE = GraphicStandard(
     line_thin_mm=0.18,
     line_medium_mm=0.35,
     line_thick_mm=0.50,
-    text_small_mm=1.8,
-    text_normal_mm=2.5,
-    text_title_mm=3.5,
+    text_small_mm=CORPO_DELLE_SCRITTE_PT * PT_MM,
+    text_normal_mm=3.5,
+    text_title_mm=5.0,
     min_clearance_mm=2.0,
 )
 

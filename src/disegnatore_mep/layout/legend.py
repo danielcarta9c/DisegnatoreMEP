@@ -16,7 +16,9 @@ sarebbe piu' lunga da leggere, non piu' chiara.
 from collections.abc import Sequence
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.graphics.cartiglio import larghezza_mm
 from disegnatore_mep.graphics.frame import SheetFrame
+from disegnatore_mep.graphics.standard import PT_MM
 from disegnatore_mep.model.project import ProjectModel
 
 from .errors import LayoutError
@@ -30,6 +32,69 @@ SECTION_GAP_MM = 5.0
 
 INSET_MM = 2.5
 """Rientro delle voci dal bordo della fascia."""
+
+RIENTRO_DEL_NOME_MM = 10.0
+"""Da dove parte il nome di una voce, rispetto al suo campione: gli otto
+millimetri del campione e i due di stacco (`graphics.sheet.LEGEND_SWATCH_MM`,
+`LEGEND_TEXT_GAP_MM`)."""
+
+MARGINE_A_DESTRA_MM = 1.0
+"""Quanto il nome resta lontano dal bordo destro della fascia."""
+
+INTERLINEA_EM = 1.15
+"""Il passo fra due righe dello stesso nome, in corpi (REL-008)."""
+
+RIGHE_NEL_PASSO = 2
+"""Quante righe di un nome stanno nel passo di una voce: a 9 punti due righe
+occupano 6,6 mm dei 7,5. Una voce con piu' righe prende piu' spazio, non un
+corpo piu' piccolo."""
+
+
+def a_capo(testo: str, larghezza_mm_massima: float, corpo_mm: float) -> tuple[str, ...]:
+    """Le righe di un testo che va a capo fra le parole senza superare la
+    larghezza data, misurata con le larghezze di Arial — il carattere delle
+    scritte (REL-008). Una parola da sola piu' larga resta intera su una riga."""
+    corpo_pt = corpo_mm / PT_MM
+    righe: list[str] = []
+    corrente = ""
+    for parola in testo.split():
+        prova = f"{corrente} {parola}" if corrente else parola
+        if corrente and larghezza_mm(prova, corpo_pt, False) > larghezza_mm_massima:
+            righe.append(corrente)
+            corrente = parola
+        else:
+            corrente = prova
+    if corrente:
+        righe.append(corrente)
+    return tuple(righe)
+
+
+def larghezza_del_nome_mm(frame: SheetFrame) -> float:
+    """Quanto e' largo il nome di una voce: la fascia meno il rientro, il
+    campione e il margine a destra."""
+    return frame.legend_rect_mm.width_mm - INSET_MM - RIENTRO_DEL_NOME_MM - MARGINE_A_DESTRA_MM
+
+
+def righe_del_nome(nome: str, frame: SheetFrame) -> tuple[str, ...]:
+    """Il nome di una voce della legenda, a capo dove non entra nella fascia.
+
+    A 9 punti la meta' dei nomi non sta in una riga dei 50 mm della fascia
+    (REL-008): va a capo, e la fascia — e con lei il disegno — non cambia. SVG e
+    DXF chiamano questa stessa funzione, e vanno a capo nello stesso punto."""
+    return a_capo(nome, larghezza_del_nome_mm(frame), frame.standard.text_small_mm)
+
+
+def basi_delle_righe(base_mm: float, righe: int, corpo_mm: float) -> tuple[float, ...]:
+    """Le linee di base di `righe` righe centrate dove starebbe la riga sola."""
+    passo = INTERLINEA_EM * corpo_mm
+    prima = base_mm - (righe - 1) * passo / 2
+    return tuple(round(prima + indice * passo, 4) for indice in range(righe))
+
+
+def passo_della_voce_mm(righe: int, corpo_mm: float) -> float:
+    """Il passo verticale di una voce: quello di sempre fino a due righe, e una
+    riga in piu' per ogni riga oltre."""
+    return ROW_HEIGHT_MM + max(0, righe - RIGHE_NEL_PASSO) * INTERLINEA_EM * corpo_mm
 
 DEFAULT_STYLE = ("#111111", "none")
 """Nero continuo: cio' che una rete senza codifica dichiarata riceve."""
@@ -198,8 +263,18 @@ def build_legend(
         if medium not in uguali or supply
     ]
 
-    rows = len(names) + (1 if keys else 0) + len(keys)
-    needed = rows * ROW_HEIGHT_MM + (SECTION_GAP_MM if keys else 0.0)
+    corpo = frame.standard.text_small_mm
+    passi_dei_nomi = {
+        symbol_id: passo_della_voce_mm(len(righe_del_nome(name, frame)), corpo)
+        for symbol_id, name in names.items()
+    }
+    passi_dei_fluidi = [passo_della_voce_mm(len(righe_del_nome(name, frame)), corpo) for _, name, _ in keys]
+    needed = (
+        sum(passi_dei_nomi.values())
+        + (ROW_HEIGHT_MM if keys else 0.0)
+        + sum(passi_dei_fluidi)
+        + (SECTION_GAP_MM if keys else 0.0)
+    )
     if needed > band.height_mm:
         raise LayoutError(
             f"the legend needs {needed:g}mm but its band is {band.height_mm:g}mm tall: "
@@ -207,22 +282,26 @@ def build_legend(
             f"fit; split the plant across more sheets)"
         )
 
+    # Ogni voce ha il suo passo: quello di sempre, e piu' lungo per un nome che
+    # va a capo oltre due righe. L'ancora sta dove stava, a meta' del passo piu'
+    # mezza riga: con il passo di sempre, lo stesso punto di prima.
     entries: list[LegendEntry] = []
-    y_mm = band.y_mm + ROW_HEIGHT_MM
+    y_mm = band.y_mm
     for symbol_id in sorted(names):
+        passo = passi_dei_nomi[symbol_id]
         entries.append(
             LegendEntry(
                 symbol_id=symbol_id,
                 name=names[symbol_id],
-                anchor=Point(x_mm=band.x_mm + INSET_MM, y_mm=y_mm),
+                anchor=Point(x_mm=band.x_mm + INSET_MM, y_mm=round(y_mm + passo / 2 + ROW_HEIGHT_MM / 2, 6)),
             )
         )
-        y_mm += ROW_HEIGHT_MM
+        y_mm += passo
 
     network_keys: list[NetworkKey] = []
     if keys:
         y_mm += SECTION_GAP_MM
-        for medium, name, supply in keys:
+        for (medium, name, supply), passo in zip(keys, passi_dei_fluidi, strict=True):
             colour, dash = style_for(medium, supply)
             network_keys.append(
                 NetworkKey(
@@ -230,9 +309,12 @@ def build_legend(
                     name=name,
                     colour=colour,
                     dash=dash,
-                    anchor=Point(x_mm=band.x_mm + INSET_MM, y_mm=y_mm),
+                    anchor=Point(
+                        x_mm=band.x_mm + INSET_MM,
+                        y_mm=round(y_mm + passo / 2 + ROW_HEIGHT_MM / 2, 6),
+                    ),
                 )
             )
-            y_mm += ROW_HEIGHT_MM
+            y_mm += passo
 
     return entries, network_keys

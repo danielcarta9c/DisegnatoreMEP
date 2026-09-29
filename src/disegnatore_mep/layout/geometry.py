@@ -178,6 +178,17 @@ class DiametroSullaTavola(StrictModel):
     connection_ids: list[str] = Field(default_factory=list)
     """Le connessioni del tratto che l'etichetta nomina: e' cosi' che il preflight
     verifica che ogni tratto ne abbia una, e una sola."""
+    corpo_mm: FiniteFloat | None = Field(default=None, gt=0)
+    """Il corpo della scritta, se non e' quello delle scritte della tavola: il DN che
+    a 9 punti non trova posto scende a 8, il minimo del PO (I-159). `None` e' il
+    corpo di sempre, e non si scrive."""
+
+    @model_serializer(mode="wrap")
+    def _senza_il_corpo_di_sempre(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        dati: dict[str, Any] = handler(self)
+        if dati.get("corpo_mm") is None:
+            dati.pop("corpo_mm", None)
+        return dati
 
 
 class NotaDellaLegenda(StrictModel):
