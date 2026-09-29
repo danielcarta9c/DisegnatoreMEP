@@ -52,6 +52,11 @@ della sessione** (D-183, punto 3), e il PO lo può cambiare.
 > Il PO ha confermato l'ordine partendo dalla tabella (I-148), e **la tabella è fatta lo stesso giorno**
 > (I-149, D-192): «Tutto perfetto, procedi». **`REL-007`, i diametri, è il pacchetto attivo.**
 
+> **Il 29 settembre 2026 i diametri sono fatti** (I-158, D-193): «Approvato tutto, pr e metti su main».
+> Nello stesso messaggio il PO ha chiesto **una REL nuova, prima delle altre**: le scritte della tavola più
+> grandi, «almeno 8 o meglio 9» punti contro i 5 di oggi (I-159). È `REL-008`, il pacchetto attivo.
+> *Assunzione della sessione:* dopo, l'ordine di prima — il PDF senza browser, `REL-001`, `REL-005`.
+
 | pacchetto | che cosa | perché in quest'ordine |
 |---|---|---|
 | **`REL-001`** — **per ultimo** (I-137) | **la skill vera e propria** — l'ingresso che cuce i cinque pezzi, la cartella installabile — **e il PDF fatto dalla skill** (I-121, I-122) | è il rischio più vecchio del progetto: la skill non è mai girata nel suo ambiente. E senza il PDF la skill non consegna niente |
@@ -59,7 +64,8 @@ della sessione** (D-183, punto 3), e il PO lo può cambiare.
 | **`REL-003`** — **fatto** (I-136) | **i simboli nuovi**: pompa di calore di alta potenza, caldaia modulare a condensazione, solare termico, fan-coil canalizzato (I-124) | forme dalle fonti, approvate dal PO guardandole; per ciascuna la voce di catalogo, e le regole solo dove il PO le dà |
 | **`REL-004`** — **fatto** (I-140) | **il DXF** (I-125) | prima si definisce con il PO **come** si esporta — livelli, blocchi, testi, scala —, poi si scrive |
 | **`REL-006`** — **fatto** (I-149) | **la tabella delle apparecchiature**, in alto a sinistra: codice, descrizione, caratteristiche, marca, modello (D-190) | la chiede il PO prima della release; i dati li dà il progettista, e «Capire» li raccoglie |
-| **`REL-007`** — **attivo** (28 settembre, I-149) | **i diametri delle tubazioni in DN**: il calcolatore, e il DN lungo il tratto (D-191) | parte dalla potenza che `REL-006` mette in una chiave fissa; prima si fissano col PO salto termico, serie dei tubi e reti |
+| **`REL-007`** — **fatto** (I-158) | **i diametri delle tubazioni in DN**: il calcolatore, e il DN lungo il tratto (D-191, D-193) | parte dalla potenza che `REL-006` mette in una chiave fissa; prima si fissano col PO salto termico, serie dei tubi e reti |
+| **`REL-008`** — **attivo** (29 settembre, I-159) | **le scritte più grandi**: tutte le scritte della tavola da 5 a 9 punti, mai sotto 8 | la chiede il PO appena visti i diametri: la tavola si legge male. Tocca tutto quello che si posa accanto a un testo — sigle, DN, legenda, tabella —, quindi viene prima del PDF e della skill |
 | **`REL-005`** | **il pacchetto della release** | il numero di versione, `releases/latest/` e lo ZIP numerato (D-009), la guida d'installazione, la suite verde e il collaudo sui casi di accettazione |
 
 **Restano da decidere con il PO**, e non fermano `REL-001`: il collaudo su impianti veri (la

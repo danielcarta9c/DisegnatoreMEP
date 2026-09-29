@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-28 (`REL-006`, **la tabella delle apparecchiature**, fuso, tavole **approvate dal PO** — I-149, D-192; prima il DXF, `REL-004`, I-140, i simboli nuovi, `REL-003`, I-136, e il cartiglio, `REL-002`, I-132; **attivo `REL-007`, i diametri delle tubazioni in DN** — I-142, I-143, I-145, D-191)
+**Aggiornato:** 2026-09-29 (`REL-007`, **i diametri delle tubazioni**, fuso, tavole **approvate dal PO** — I-158, D-193; prima la tabella delle apparecchiature, `REL-006`, I-149, il DXF, `REL-004`, I-140, i simboli nuovi, `REL-003`, I-136, e il cartiglio, `REL-002`, I-132; **attivo `REL-008`, le scritte a 9 punti** — I-159)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -14,19 +14,26 @@
 
 ---
 
-## Dove siamo — 28 settembre 2026, `REL-007` consegnato
+## Dove siamo — 29 settembre 2026, `REL-007` fuso
 
-**I diametri delle tubazioni sono sul ramo `claude/pack-attivo-rel-007-0uotnp`, e le tavole sono al PO.**
+**I diametri delle tubazioni sono su `main`, e il PO ha approvato le tavole** (I-158): «Approvato tutto,
+pr e metti su main». Le tavole restano come sono: il tag su ogni linea che porta acqua, e il raccordo
+dove rientra il bollitore che spezza il tratto anche a portata uguale.
+
 Il PO ha fissato le basi del calcolo (I-150 … I-157, **D-193**): il DN è il **diametro interno netto**, si
 scrive **«Øi 32»**, la velocità massima **cresce col diametro** (tab. 9 del Quaderno Caleffi n. 5) e si
 prende il DN standard subito più grande; il tag sta **in linea con la tubazione**, sopra la mandata e
 sotto il ritorno, sui verticali letto dal basso; **uno per tratto**, attraverso valvole e tre vie, e uno
 per ramo fino al raccordo e uno dopo; il sanitario e il solare **dalla portata** del progettista. Il
 calcolo è **facoltativo e solo dove chiesto**: il grafo porta la richiesta (`diametri`), le reti
-**esistenti** e il salto termico (`delta_t_k`). Rapporto `docs/collaudi/REL-007/RAPPORTO.md`. Si fonde solo
-dopo il sì del PO sulle tavole.
+**esistenti** e il salto termico (`delta_t_k`). Rapporto `docs/collaudi/REL-007/RAPPORTO.md`. Suite: le
+stesse 46 rosse di `main`.
 
-## Dove siamo — 28 settembre 2026, `REL-006`
+**Il pacchetto attivo è `REL-008`, le scritte della tavola più grandi** (I-159): il PO le legge male a
+5 punti — il corpo di oggi, 1,8 mm — e le vuole «almeno 8 o meglio 9». Poi, per assunzione della
+sessione, il PDF senza browser, `REL-001` la skill, `REL-005` la release.
+
+## Dove si era — 28 settembre 2026, `REL-006`
 
 **La tabella delle apparecchiature è su `main`, e il PO ha approvato le tavole** (I-149): «Tutto perfetto,
 procedi». Le scelte sono **D-192**; rapporto `docs/collaudi/REL-006/RAPPORTO.md`. In alto a sinistra del

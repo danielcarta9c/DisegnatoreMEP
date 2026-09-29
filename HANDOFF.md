@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-28 — **`REL-007`, i diametri, è consegnato e aspetta il giudizio del PO sulle tavole** (D-193). Prima: **`REL-006`, la tabella delle apparecchiature, è fuso**: il PO, viste le tavole, «Tutto perfetto, procedi» (I-149, D-192). **Il pacchetto attivo è `REL-007`, i diametri delle tubazioni in DN** (I-142, I-143, I-145, D-191)
+**Aggiornato:** 2026-09-29 — **`REL-007`, i diametri, è fuso**: il PO, viste le tavole, «Approvato tutto, pr e metti su main» (I-158, D-193). **Il pacchetto attivo è `REL-008`, le scritte della tavola a 9 punti** (I-159)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,28 +11,34 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ `REL-007` è consegnato, e aspetta il PO — scritto il 28 settembre 2026
+## ▶ Da dove riparte la prossima sessione — scritto il 29 settembre 2026, a `REL-007` fuso
 
-**I diametri delle tubazioni sono sul ramo `claude/pack-attivo-rel-007-0uotnp`**, e **le tavole sono al
-PO**: le sei approvate con i diametri, la variante retrofit dell'impianto 1 e il foglio dei calcoli
-(`docs/collaudi/REL-007/RAPPORTO.md`). **Non si fonde prima del suo sì**: la PR verso `main` si apre e si
-fonde dopo, come per `REL-006` (#63).
+**Il pacchetto attivo è `REL-008`, le scritte della tavola più grandi** (`ACTIVE_WORK_PACKAGE.md`; I-159): il
+PO le legge male e le vuole «almeno 8 o meglio 9» punti. Oggi sono 5: **tutte le scritte del disegno hanno
+un corpo solo, `GraphicStandard.text_small_mm` = 1,8 mm** (`graphics/standard.py`), condiviso da A4, A3 e A2.
+Il corpo decide lo spazio di sigle, DN, legenda e tabella: **si parte dal punto 1** del pacchetto, e le
+tavole si guardano presto.
 
-- **Le basi del calcolo le ha fissate il PO** (I-150 … I-157, **D-193**): DN = diametro interno netto,
-  scritto «Øi 32»; velocità massima per diametro (Caleffi, Quaderno n. 5, tab. 9), DN standard subito più
-  grande; tag in linea, sopra la mandata e sotto il ritorno, verticali dal basso; uno per tratto, anche
-  attraverso valvole e tre vie, e uno per ramo fino al raccordo e uno dopo; sanitario e solare dalla
-  portata del progettista.
-- **Il codice**: `src/disegnatore_mep/diametri/` (calcolatore, portate per conservazione con le tre vie
-  provate in ogni posizione, tratti, foglio dei calcoli), `layout/diametri.py` (la posa), il layer DXF
-  `M-ANNO-DIAM`, il preflight `DIAMETER_TAG_*`; nel grafo `diametri`, `esistente`, `delta_t_k`; «Capire»
-  §4.7.
-- **Da dire al PO se chiede**: il tag va su ogni linea che porta acqua, non sulle sole «autostrade» del
-  motore (rapporto §3.1); la skill dei computi PdC usa 2,0 m/s (§3.2). **Domanda aperta al PO**: il
-  raccordo dove rientra il bollitore spezza il tratto anche a portata uguale, e lascia due tag uguali
-  sul ritorno (§3.6): se dice di attraversarlo, è un passo in `diametri/tratti.py` prima della fusione.
-- **Dopo il sì**: fondere, poi scrivere qui e il pacchetto successivo — il PDF senza browser, poi
-  `REL-001`, poi `REL-005`. I numeri: il prossimo input è **I-158**, la prossima decisione **D-194**.
+**`REL-007`, i diametri, è fuso** (PR #NUMERO_PR): il PO, viste le sei tavole con i diametri, la tavola in
+retrofit e il foglio dei calcoli, «Approvato tutto, pr e metti su main» (I-158). **D-193 è approvata per
+intero**; rapporto `docs/collaudi/REL-007/RAPPORTO.md`, tavole in `docs/collaudi/REL-007/tavole/`.
+
+- **Il calcolo** (`src/disegnatore_mep/diametri/`): il DN è il diametro interno netto, scritto «Øi 32»; la
+  velocità massima cresce col diametro (Caleffi, Quaderno n. 5, tab. 9) e si prende il DN standard subito
+  più grande; la portata viene solo dai dati del progettista — potenza e salto termico, oppure la portata
+  di progetto per sanitario e solare — e si propaga per conservazione, con le tre vie provate in ogni
+  posizione. Facoltativo: il grafo porta la richiesta `diametri`, le reti `esistente` non lo portano mai.
+- **Il tag** (`layout/diametri.py`): uno per tratto, attraverso valvole e tre vie, diviso ai raccordi che
+  uniscono o dividono due linee; sopra la mandata e sotto il ritorno, sui verticali letto dal basso; su
+  ogni linea che porta acqua, mai sui rami di servizio. **Le tavole restano come sono**: il raccordo dove
+  rientra il bollitore spezza il tratto anche a portata uguale, e sul ritorno ci sono due tag uguali
+  (rapporto §3.6) — il PO ha approvato così. Nel DXF il layer è `M-ANNO-DIAM`; il preflight ha
+  `DIAMETER_TAG_*`; «Capire» §4.7 dice che cosa chiedere.
+- **La suite**: le stesse 46 rosse di `main`, nome per nome; 1932 passate; zero `skip` e zero `xfail`
+  nuovi; `ruff` e `mypy` verdi.
+- **I numeri**: il prossimo input è **I-160**, la prossima decisione **D-194**.
+- **Resta aperto, e non è di `REL-008`**: la skill dei computi PdC usa 2,0 m/s fisso (rapporto di
+  `REL-007` §3.2), da dire a chi la cura; la via senza piano, `draw`, non posa il DN.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 28 settembre 2026, a `REL-006` fuso
 
