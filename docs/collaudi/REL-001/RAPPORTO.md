@@ -4,7 +4,10 @@
 ripartito da `main` · **Base:** `main` a `6412016` (PR #65, `REL-008`) · **Avviato dal PO:** il 29 settembre
 2026 (I-168) · **Codice finale:** `a139a43`; il rapporto e lo ZIP stanno nei commit dopo
 
-> **Esito — in attesa del PO.** La fusione aspetta che il PO guardi la tavola e dica di sì (D-146, D-147).
+> **Esito — 29 settembre 2026: approvato dal PO** (I-169), fuso con la PR #66: «sì, approvo la fusione».
+> Le scelte del pacchetto sono **D-195**. Nello stesso messaggio il PO ha chiesto se la sessione può
+> installare la skill in chat e in Cowork (I-170): non può — dal suo ambiente vede le skill dell'account ma
+> non ne carica di nuove —, e lo ZIP lo carica il PO dalle impostazioni (§7).
 
 > **Le tavole, per prime**
 >
@@ -78,7 +81,8 @@ e nessun «DA DEFINIRE» (F2, F5). Sul foglio pieno (A1) vale D-170, e l'ho dett
   `tests/skill/test_costruzione_della_skill.py` (7).
 - **Gli strumenti della sessione**, qui: [`confronto_pdf.py`](confronto_pdf.py) e
   [`tavole_approvate.py`](tavole_approvate.py) per il criterio 1; [`rimisura.py`](rimisura.py) e
-  [`comandi_della_camera.py`](comandi_della_camera.py) per i criteri 0, 4 e 6; la
+  [`comandi_della_camera.py`](comandi_della_camera.py) per i criteri 0, 4 e 6, con il
+  [mandato dell'agente in camera pulita](mandato-camera.md); la
   [skill di prova dell'ambiente](prova-ambiente/) per il punto 1.
 - **Lo ZIP per il PO**: [`disegnatore-mep.zip`](disegnatore-mep.zip) (§7).
 
