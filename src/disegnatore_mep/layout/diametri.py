@@ -33,7 +33,14 @@ from disegnatore_mep.graphics.cartiglio import PT_MM, larghezza_mm
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
 from disegnatore_mep.graphics.standard import CORPO_MINIMO_PT, GraphicStandard
 
-from .geometry import DiametroSullaTavola, NotaDellaLegenda, Point, RoutedTrunk, SheetGeometry
+from .geometry import (
+    DiametroSullaTavola,
+    FlowKind,
+    NotaDellaLegenda,
+    Point,
+    RoutedTrunk,
+    SheetGeometry,
+)
 from .labels import (
     DIAGONALS,
     LEADER_MAX_STEPS,
@@ -41,6 +48,7 @@ from .labels import (
     _crosses,
     richiamo_verso,
     riquadro_della_scritta,
+    riquadro_di_rispetto,
     segmenti_del_richiamo,
     segments_cross,
 )
@@ -83,6 +91,15 @@ motore affianca mandata e ritorno."""
 PASSO_LUNGO_LA_LINEA_MM = 1.25
 """Di quanto l'etichetta si sposta lungo il rettilineo cercando posto: mezzo
 passo di griglia."""
+
+FRANCO_DELLA_STACCATA_EM = 1.0
+"""Quanto la scritta di un'etichetta staccata sta lontana dalle altre scritte, dai
+simboli e dalle linee degli altri tratti, in corpi: un corpo intero, non il mezzo
+millimetro dell'etichetta in linea. La scritta staccata non ha una linea addosso
+che dica di chi e': a un millimetro e mezzo da una sigla si legge insieme a lei
+(«Øi 32  RAD-01», tavole 1 e 4 del collaudo del richiamo con la spalla), accanto a
+un'altra linea si legge come il suo DN. **Taratura** della sessione, da giudicare
+sulla tavola."""
 
 CAMPIONE_DELLA_LEGENDA = "Øi"
 TESTO_DELLA_LEGENDA = "diametro interno netto minimo in mm, materiale a scelta"
@@ -264,6 +281,39 @@ def _punte(rettilineo: _Rettilineo) -> list[float]:
     return trovate
 
 
+def _rispetta_le_scritte(box: Box, orizzontale: bool, testi: Sequence[Box], corpo: float) -> bool:
+    """Le altre scritte fuori dal riquadro di rispetto dell'etichetta
+    (`labels.riquadro_di_rispetto`): un corpo lungo la riga, che corre lungo la
+    linea, mezzo fra le righe. Sono tutte di altri: sigle e dati dei pezzi, DN
+    degli altri tratti."""
+    rispetto = riquadro_di_rispetto(box, corpo, verticale=not orizzontale)
+    return not any(_overlap(rispetto, altro) for altro in testi)
+
+
+def _riquadri_delle_frecce(foglio: SheetGeometry) -> list[Box]:
+    """Le frecce di verso delle tubazioni, dove le disegnano SVG e DXF: la punta
+    di un richiamo non ci cade sopra. Il centro del rettilineo, da cui le punte
+    cominciano, e' spesso proprio il posto della freccia."""
+    # Qui e non in testa: `graphics.sheet` importa `layout.addresses`, che
+    # importa questo modulo.
+    from disegnatore_mep.graphics.sheet import ARROW_HALF_WIDTH_MM, ARROW_LENGTH_MM, flow_arrow_at
+
+    riquadri: list[Box] = []
+    for route in foglio.routes:
+        if route.flow_kind is FlowKind.STATIC:
+            continue
+        for segmento in route.segments:
+            freccia = flow_arrow_at(segmento, route.flow_from_start)
+            if freccia is None:
+                continue
+            x, y, dx, dy = freccia
+            coda_x, coda_y = x - dx * ARROW_LENGTH_MM, y - dy * ARROW_LENGTH_MM
+            xs = (x, coda_x - dy * ARROW_HALF_WIDTH_MM, coda_x + dy * ARROW_HALF_WIDTH_MM)
+            ys = (y, coda_y + dx * ARROW_HALF_WIDTH_MM, coda_y - dx * ARROW_HALF_WIDTH_MM)
+            riquadri.append((min(xs), min(ys), max(xs), max(ys)))
+    return riquadri
+
+
 def posa_i_diametri(
     tratti: Sequence[TrattoDelDiametro],
     foglio: SheetGeometry,
@@ -311,6 +361,7 @@ def posa_i_diametri(
     richiami: list[tuple[Point, Point]] = [
         segmento for label in foglio.labels for segmento in segmenti_del_richiamo(label)
     ]
+    frecce = [_allargato(freccia, FRANCO_MM) for freccia in _riquadri_delle_frecce(foglio)]
 
     def libero(box: Box, proprio: _Rettilineo | None) -> bool:
         if not (
@@ -339,9 +390,16 @@ def posa_i_diametri(
     ) -> DiametroSullaTavola | None:
         """L'etichetta staccata con freccia (I-162): il richiamo piu' corto — anello
         per anello, dal centro del rettilineo piu' lungo verso i capi — il cui testo
-        e' libero e la cui diagonale non attraversa linee, simboli, scritte o altri
-        richiami."""
+        e' libero, a un corpo da scritte, simboli e linee degli altri tratti
+        (`FRANCO_DELLA_STACCATA_EM`), e il cui richiamo non attraversa linee,
+        simboli, scritte, altri richiami o le frecce di verso."""
         larghezza = larghezza_del_testo_mm(testo, corpo)
+        franco = FRANCO_DELLA_STACCATA_EM * corpo
+        vicini = [
+            _allargato(_riquadro_della_linea(altro), FRANCO_MM)
+            for altro in tutti
+            if not any(altro is proprio for proprio in propri)
+        ]
         passo = standard.grid_mm
         primo = -(-LEADER_MIN_LENGTH_MM / 2**0.5 // passo) * passo
         for anello in range(LEADER_MAX_STEPS):
@@ -357,11 +415,14 @@ def posa_i_diametri(
                         richiamo, ancora, box = richiamo_verso(punta, verso, campata, larghezza, corpo)
                         if not libero(box, None):
                             continue
+                        largo = _allargato(box, franco)
+                        if any(_overlap(largo, altro) for altro in (*simboli, *testi, *vicini)):
+                            continue
                         segmenti = richiamo.segmenti
                         if any(
                             _crosses(*segmento, altro)
                             for segmento in segmenti
-                            for altro in (box, *simboli, *testi)
+                            for altro in (box, *simboli, *testi, *frecce)
                         ):
                             continue
                         if any(
@@ -413,6 +474,8 @@ def posa_i_diametri(
                         if not anche_fra_le_corsie and _fra_le_corsie(rettilineo, lato, da, a, tutti):
                             continue
                         if not libero(box, rettilineo):
+                            continue
+                        if not _rispetta_le_scritte(box, rettilineo.orizzontale, testi, corpo_della_scritta):
                             continue
                         trovato = DiametroSullaTavola(
                             testo=testo,

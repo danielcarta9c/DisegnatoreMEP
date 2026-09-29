@@ -12,12 +12,12 @@ ripartito da `main` · **Base:** `main` a `7f2bee8` (PR #64, `REL-007`) · **Avv
 
 | tavola | formato | PDF | DXF | che cosa mostra |
 |---|---|---|---|---|
-| 1 — due pompe di calore in parallelo, accumulo combinato | A3 | [`tavola-1.pdf`](tavole/tavola-1.pdf) | [`tavola-1.dxf`](tavole/tavola-1.dxf) | un DN staccato con freccia (accumulo → radiatori); due DN sacrificati sulle acque fredde |
+| 1 — due pompe di calore in parallelo, accumulo combinato | A3 | [`tavola-1.pdf`](tavole/tavola-1.pdf) | [`tavola-1.dxf`](tavole/tavola-1.dxf) | un DN staccato con freccia (accumulo → radiatori), staccato anche da RAD-01; due DN sacrificati sulle acque fredde |
 | 2 — pompa di calore con deviazione fra climatizzazione e ACS | A3 | [`tavola-2.pdf`](tavole/tavola-2.pdf) | [`tavola-2.dxf`](tavole/tavola-2.dxf) | **il disegno scende di 5 mm**, tutto insieme, per la tabella più alta |
-| 3 — pompa di calore diretta su pavimento radiante | A3 | [`tavola-3.pdf`](tavole/tavola-3.pdf) | [`tavola-3.dxf`](tavole/tavola-3.dxf) | tutto entra accanto al pezzo |
-| 4 — ibrido pompa di calore e caldaia | A3 | [`tavola-4.pdf`](tavole/tavola-4.pdf) | [`tavola-4.dxf`](tavole/tavola-4.dxf) | due DN staccati con freccia (radiatori, acqua calda dello scambiatore); uno sacrificato |
+| 3 — pompa di calore diretta su pavimento radiante | A3 | [`tavola-3.pdf`](tavole/tavola-3.pdf) | [`tavola-3.dxf`](tavole/tavola-3.dxf) | tutto entra accanto al pezzo; «4 kW» di PAV-02 a destra del pannello, non sopra «PAV-01» |
+| 4 — ibrido pompa di calore e caldaia | A3 | [`tavola-4.pdf`](tavole/tavola-4.pdf) | [`tavola-4.dxf`](tavole/tavola-4.dxf) | due DN staccati con freccia (radiatori, acqua calda dello scambiatore); uno sacrificato; «0,7 m³/h» di ACS-01 accanto al suo confine, non sopra «AF-01» |
 | 5 — tre pompe di calore in cascata, tre secondari e ACS | A2 | [`tavola-5.pdf`](tavole/tavola-5.pdf) | [`tavola-5.dxf`](tavole/tavola-5.dxf) | **CIR-02 a 8 punti** accanto al circolatore; tre DN sacrificati sulle strade secondarie |
-| 6 — centrale ibrida con PdC di alta potenza, caldaia modulare e solare | A2 | [`tavola-6.pdf`](tavole/tavola-6.pdf) | [`tavola-6.dxf`](tavole/tavola-6.dxf) | **CIR-03 a 8 punti**; un DN staccato con freccia; uno sacrificato |
+| 6 — centrale ibrida con PdC di alta potenza, caldaia modulare e solare | A2 | [`tavola-6.pdf`](tavole/tavola-6.pdf) | [`tavola-6.dxf`](tavole/tavola-6.dxf) | **CIR-03 a 8 punti**; **CIR-01 sotto la sua pompa**, lontana dalla valvola; un DN staccato con freccia; uno sacrificato |
 | 1 — retrofit | A3 | [`tavola-1-retrofit.pdf`](tavole/tavola-1-retrofit.pdf) | [`tavola-1-retrofit.dxf`](tavole/tavola-1-retrofit.dxf) | tutto entra accanto al pezzo |
 
 ## 1. Che cosa guardare sulle tavole
@@ -40,6 +40,10 @@ ripartito da `main` · **Base:** `main` a `7f2bee8` (PR #64, `REL-007`) · **Avv
 6. **La tabella** ha righe di 6,25 mm, ed è più larga: sulla tavola 1 da 92,5 a 152,5 mm.
 7. **Il disegno** non si è mosso — simboli e linee uguali a quelli di `main` — tranne sulla tavola 2, che
    scende di 5 mm tutta insieme per far posto alla tabella più alta (il meccanismo di `REL-006`).
+8. **Le distanze fra le scritte** (§3.5): fra scritte di pezzi diversi un corpo lungo la riga e mezzo fra le
+   righe; una sigla non sta più vicina a un altro pezzo che al suo; il DN staccato sta a un corpo da tutto, e
+   la sua freccia non cade sulla freccia del flusso. Le ho aggiunte dopo aver guardato le tavole: sono
+   tarature mie, da giudicare.
 
 ## 2. Che cosa c'è
 
@@ -57,7 +61,10 @@ ripartito da `main` · **Base:** `main` a `7f2bee8` (PR #64, `REL-007`) · **Avv
   freccia piena come `SOLID` nel DXF.
 - **Il preflight**: `TABLE_EQUIPMENT_TAG_OMITTED`, bloccante (I-160); `DIAMETER_TAG_MISSING` solo sulle strade
   principali (I-161); i controlli sui richiami — incroci, 45 gradi — anche per i DN staccati.
-- **Le prove**: `tests/scritte/` (33), e le prove dei diametri, delle etichette e del DXF alla regola nuova.
+- **Le distanze fra le scritte** (§3.5): `layout/labels.py` — `riquadro_di_rispetto` (`STACCO_SULLA_RIGA_EM`,
+  `STACCO_FRA_LE_RIGHE_EM`), che vale per sigle, dati e DN, e `vicina_al_suo`; `layout/diametri.py` —
+  `FRANCO_DELLA_STACCATA_EM` e le frecce del flusso, lette dove le disegnano SVG e DXF.
+- **Le prove**: `tests/scritte/` (48), e le prove dei diametri, delle etichette e del DXF alla regola nuova.
 
 ## 3. Che cosa ho trovato, e va detto
 
@@ -93,6 +100,28 @@ sacrificherebbe e il ritorno no.
 - Le **sigle si misurano in Arial** e non più a 0,6 corpi per carattere: il riquadro di una sigla è quello
   vero, e dove prima non entrava ora può entrare.
 
+### 3.5 Quattro difetti che i numeri davano per buoni
+
+Guardando le tavole prima di mandartele ho trovato quattro cose sbagliate che il collaudo non vedeva — niente
+si toccava, il preflight era pulito —, tutte figlie del corpo più grande:
+
+1. **Il DN staccato si incollava alla sigla accanto**: sulle tavole 1 e 4 «Øi 32» finiva sulla riga di
+   «RAD-01», a 1,3 mm, e si leggeva «Øi 32 RAD-01». Ora la scritta staccata sta **a un corpo** (3,2 mm) da
+   scritte, simboli e linee degli altri tratti: sulle tavole la cosa più vicina è a 3,85–4,21 mm.
+2. **La freccia del richiamo cadeva sulla freccia del flusso**: la punta partiva dal centro del rettilineo,
+   che è proprio dove sta la freccia di verso. Ora ne sta fuori, a 1,25 mm.
+3. **Scritte di pezzi diversi che si leggevano come una sola**: «CIR-01» e il DN «Øi 40» sulla stessa riga a
+   1,15 mm (tavola 6); «4 kW» di PAV-02 sopra «PAV-01» (tavola 3) e «0,7 m³/h» di ACS-01 sopra «AF-01»
+   (tavola 4), a 0,65 mm, come due righe dello stesso blocco. Su `main`, a 5 punti, non succedeva. Ora fra
+   scritte di pezzi diversi c'è **un corpo lungo la riga e mezzo corpo fra le righe**.
+4. **CIR-01 toccava la valvola** (tavola 6): centrata sopra la sua pompa, a 9 punti arrivava sul riquadro
+   della valvola del ramo accanto, a 0,00 mm, e si leggeva come sua. Ora una sigla o un dato **non sta più
+   vicino a un altro pezzo che al suo**: CIR-01 è scesa sotto la pompa.
+
+Rispetto alle tavole di prima di queste correzioni si sono spostate **tre scritte accanto ai pezzi** («4 kW»,
+«0,7 m³/h», «CIR-01») **e cinque DN**, quattro dei quali staccati; nessuna scritta è sparita o comparsa, simboli
+e linee sono identici. Sono tarature della sessione, scritte in **D-194, punto 9**.
+
 ## 4. Le misure
 
 **Le tavole e le misure sul disegno** — il collaudo, dalla radice. Prima la geometria di `main` (`REL-007`),
@@ -113,7 +142,9 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 11 · ora 9 (a 8 pt 0, staccati con freccia ['Øi 32']) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 2 ['Øi 25 inlet-mixing-valve-thermostatic-accumulo-dhw-out→mixing-valve-thermostatic-accumulo-dhw-out', 'Øi 25 acquedotto→accumulo']
    rispetto a main: simboli uguali, tratte uguali · tabella 92.5x30.0 → 152.5x37.5 mm · voci della legenda 18 + 4 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 32 da simbolo collettore-mandata a 1.21 mm
-   deterministico: SVG uguale (d72d8f07a1df809b), DXF uguale (5b8a3d967414f066)
+   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   staccate (un corpo = 3.17 mm): Øi 32: la cosa piu' vicina tag RAD-01 a 4.21 mm, la punta a 1.25 mm dalla freccia di verso piu' vicina
+   deterministico: SVG uguale (a65bef4bdfb934b8), DXF uguale (5e690034b07b1664)
    preflight: nessun rilievo
 
 == tavola-2 — grafo-completo-2.json, formato A3
@@ -124,6 +155,8 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 7 · ora 7 (a 8 pt 0, staccati con freccia nessuno) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 0 
    rispetto a main: simboli DIVERSI, tratte DIVERSI · tabella 92.5x30.0 → 152.5x37.5 mm · voci della legenda 21 + 4 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 25 da linea p4-a a 1.21 mm
+   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   staccate: nessuna
    deterministico: SVG uguale (8e79a30fa713e8c6), DXF uguale (483b3dbb15b04162)
    preflight: nessun rilievo
 
@@ -135,7 +168,9 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 7 · ora 7 (a 8 pt 0, staccati con freccia nessuno) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 0 
    rispetto a main: simboli uguali, tratte uguali · tabella 90.0x25.0 → 147.5x31.2 mm · voci della legenda 20 + 4 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 25 da simbolo valve-isolation-volano-a a 1.21 mm
-   deterministico: SVG uguale (bfd8a91dfe56da6f), DXF uguale (db226d8d469633f1)
+   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   staccate: nessuna
+   deterministico: SVG uguale (8ff2a1fa4dd1140a), DXF uguale (552dd056ebf36013)
    preflight: nessun rilievo
 
 == tavola-4 — grafo-completo-4.json, formato A3
@@ -145,8 +180,10 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    scritte accanto ai pezzi: main {'tag': 14, 'data': 2} · ora {'tag': 14, 'data': 2} · mancano nessuna · a 8 pt nessuna · con richiamo nessuna
    DN: main 12 · ora 11 (a 8 pt 0, staccati con freccia ['Øi 20', 'Øi 32']) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 1 ['Øi 20 acquedotto→scambiatore']
    rispetto a main: simboli uguali, tratte uguali · tabella 92.5x35.0 → 152.5x43.8 mm · voci della legenda 22 + 4 · riga «Øi»: si
-   i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 20 da sigla ACS-01 a 1.16 mm
-   deterministico: SVG uguale (dd9cc4eda352d9c6), DXF uguale (9db59a0ea2aec278)
+   i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 40 da simbolo tee-expansion-connection-collettore-ritorno-a a 1.21 mm
+   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   staccate (un corpo = 3.17 mm): Øi 32: la cosa piu' vicina tag RAD-01 a 4.21 mm, la punta a 1.25 mm dalla freccia di verso piu' vicina · Øi 20: la cosa piu' vicina data 0,7 m³/h a 3.85 mm, la punta a 1.25 mm dalla freccia di verso piu' vicina
+   deterministico: SVG uguale (36a6b3a3cd018d5f), DXF uguale (2c9f5e4bdb65634d)
    preflight: nessun rilievo
 
 == tavola-5 — grafo-completo-5.json, formato A2
@@ -157,6 +194,8 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 29 · ora 26 (a 8 pt 0, staccati con freccia nessuno) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 3 ['Øi 25 inlet-mixing-valve-thermostatic-bollitore-dhw-out→mixing-valve-thermostatic-bollitore-dhw-out', 'Øi 40 ritorno-radiante→miscelatrice-radiante', 'Øi 25 acquedotto→bollitore']
    rispetto a main: simboli uguali, tratte uguali · tabella 95.0x60.0 → 155.0x75.0 mm · voci della legenda 26 + 5 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 40 da simbolo tee-thermometer-pdc-1-water-supply a 1.21 mm
+   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   staccate: nessuna
    deterministico: SVG uguale (05e3fabbb77f0398), DXF uguale (f74d8255ad2d9ac3)
    preflight: nessun rilievo
 
@@ -168,7 +207,9 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 20 · ora 19 (a 8 pt 0, staccati con freccia ['Øi 40']) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 1 ['Øi 32 inlet-mixing-valve-thermostatic-bollitore-dhw-out→mixing-valve-thermostatic-bollitore-dhw-out']
    rispetto a main: simboli uguali, tratte uguali · tabella 102.5x60.0 → 170.0x75.0 mm · voci della legenda 26 + 5 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 32 da simbolo circolatore-solare a 0.57 mm
-   deterministico: SVG uguale (fe4c3cd8cf27ec25), DXF uguale (69d7aee2c62aefab)
+   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   staccate (un corpo = 3.17 mm): Øi 40: la cosa piu' vicina simbolo radiatori a 3.89 mm, la punta a 1.25 mm dalla freccia di verso piu' vicina
+   deterministico: SVG uguale (415afb20944d96bd), DXF uguale (8aa3fc741a677234)
    preflight: nessun rilievo
 
 == tavola-1-retrofit — grafo-completo-1.json, formato A3
@@ -179,6 +220,8 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 6 · ora 6 (a 8 pt 0, staccati con freccia nessuno) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 0 
    rispetto a main: simboli uguali, tratte uguali · tabella 92.5x30.0 → 152.5x37.5 mm · voci della legenda 18 + 4 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 32 da simbolo collettore-mandata a 1.21 mm
+   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   staccate: nessuna
    deterministico: SVG uguale (228f2ffbd82fdd5b), DXF uguale (13cfdaa8b2403cca)
    preflight: nessun rilievo
 ```
@@ -195,7 +238,10 @@ pretende su tutte le tavole, nell'SVG e nel DXF.
 **Criterio 3 — niente si tocca; sigle e DN contati contro `REL-007`**: «scritte accanto ai pezzi» (nessuna
 manca), «DN» (nessuno manca sulle strade principali; i sacrificati sono tutti su strade secondarie, uno per
 uno), «i DN toccano qualcosa: 0», e il preflight senza rilievi — compresi quelli sulle sigle che si toccano e
-sui richiami.
+sui richiami. Per le distanze di §3.5: «DN con un'altra scritta sulla stessa riga a meno di un corpo: 0» su
+tutte; «staccate»: la cosa più vicina a 3,85 mm o più, la punta a 1,25 mm dalla freccia del flusso; e in
+`tests/scritte/` le prove che lo pretendono su tutte le tavole, insieme a «nessuna sigla più vicina a un altro
+pezzo che al suo».
 
 **Criterio 4 — il disegno non si muove, o si dice dove**: «rispetto a main»: simboli e tratte uguali su sei
 tavole; sulla tavola 2 il disegno scende di 5,0 mm tutto insieme, per la tabella più alta.
@@ -225,3 +271,5 @@ cartiglio, il PDF.
 1. **Le tavole vanno bene?** Il corpo, le sigle a 8 dove servono, i DN staccati e quelli sacrificati, la
    legenda, la tabella (§1).
 2. **Il richiamo** (§3.1): la spalla come nel tuo esempio, il tratto obliquo a 45 gradi. Va bene così?
+3. **Le distanze fra le scritte** (§3.5): un corpo lungo la riga, mezzo fra le righe, la sigla più vicina al
+   suo pezzo che agli altri. Vanno bene, o le vuoi più larghe o più strette?

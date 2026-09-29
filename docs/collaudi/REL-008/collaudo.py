@@ -132,6 +132,115 @@ def _intervallo(valori: list[float]) -> str:
     return f"{len(valori)} scritte, {min(valori):.1f}–{max(valori):.1f} pt"
 
 
+def _scritte(foglio, corpo: float):  # type: ignore[no-untyped-def]
+    """Sigle, dati e DN della tavola: nome, padrone, riquadro, verticale. Il padrone
+    di una sigla o di un dato e' il suo pezzo; quello di un DN, il suo tratto."""
+    from disegnatore_mep.layout.diametri import riquadro_del_diametro
+    from disegnatore_mep.layout.labels import riquadro_della_scritta
+
+    pezzi = sorted((s.component_id for s in foglio.symbols), key=len, reverse=True)
+    scritte = [
+        (
+            f"{x.role} {x.text}",
+            next((c for c in pezzi if x.id.startswith(c + "-")), x.id),
+            riquadro_della_scritta(x, corpo),
+            False,
+        )
+        for x in foglio.labels
+        if x.role in ("tag", "data")
+    ]
+    scritte += [
+        (f"DN {x.testo}", "DN " + "/".join(x.connection_ids), riquadro_del_diametro(x, corpo), x.verticale)
+        for x in foglio.diametri
+    ]
+    return scritte
+
+
+def _rispetto(foglio, corpo: float) -> str:  # type: ignore[no-untyped-def]
+    """Le coppie di scritte di pezzi diversi piu' vicine di un corpo lungo la riga e
+    di mezzo corpo fra le righe: si leggerebbero come una scritta sola («CIR-01 Øi
+    40») o come le righe di un blocco solo («4 kW» di PAV-02 su «PAV-01»)."""
+    scritte = _scritte(foglio, corpo)
+    coppie = []
+    for i, (primo, suo, a, verticale) in enumerate(scritte):
+        for secondo, altro, b, altro_verso in scritte[i + 1 :]:
+            if suo == altro:
+                continue
+            dx = max(b[0] - a[2], a[0] - b[2], 0.0)
+            dy = max(b[1] - a[3], a[1] - b[3], 0.0)
+            for verso in {verticale, altro_verso}:
+                lungo, attraverso = (dy, dx) if verso else (dx, dy)
+                if lungo < corpo - 1e-6 and attraverso < corpo / 2 - 1e-6:
+                    coppie.append(f"{primo} / {secondo} ({dx:.2f}, {dy:.2f} mm)")
+                    break
+    return (
+        "scritte di pezzi diversi a meno di un corpo lungo la riga e mezzo fra le righe: "
+        f"{len(coppie)} {coppie if coppie else ''}"
+    )
+
+
+def _sigle_vicine_ad_altri(foglio, corpo: float) -> str:  # type: ignore[no-untyped-def]
+    """Le sigle accanto al pezzo piu' vicine a un altro pezzo che al loro."""
+    pezzi = {s.component_id: (s.origin.x_mm, s.origin.y_mm, s.right_mm, s.bottom_mm) for s in foglio.symbols}
+    trovate = []
+    for nome, suo, box, _ in _scritte(foglio, corpo):
+        if not nome.startswith("tag ") or suo not in pezzi:
+            continue
+        mio = _distanza_fra(box, pezzi[suo])
+        altri = [(_distanza_fra(box, riquadro), c) for c, riquadro in pezzi.items() if c != suo]
+        if altri and min(altri)[0] < mio - 1e-6:
+            trovate.append(f"{nome}: dal suo {mio:.2f} mm, da {min(altri)[1]} {min(altri)[0]:.2f} mm")
+    return f"sigle piu' vicine a un altro pezzo che al loro: {len(trovate)} {trovate if trovate else ''}"
+
+
+def _distanza_fra(a, b) -> float:  # type: ignore[no-untyped-def]
+    return math.hypot(max(b[0] - a[2], a[0] - b[2], 0.0), max(b[1] - a[3], a[1] - b[3], 0.0))
+
+
+def _staccate(foglio, corpo: float, cose, r7) -> str:  # type: ignore[no-untyped-def]
+    """Le etichette staccate: quanto la scritta sta da cio' che non e' il suo tratto
+    (scritte, simboli, linee, tabella), e se la punta cade su una freccia di verso."""
+    from disegnatore_mep.graphics.sheet import ARROW_HALF_WIDTH_MM, ARROW_LENGTH_MM, flow_arrow_at
+    from disegnatore_mep.layout.diametri import riquadro_del_diametro
+    from disegnatore_mep.layout.geometry import FlowKind
+
+    staccate = [x for x in foglio.diametri if x.richiamo is not None]
+    if not staccate:
+        return "staccate: nessuna"
+    frecce = []
+    for route in foglio.routes:
+        if route.flow_kind is FlowKind.STATIC:
+            continue
+        for segmento in route.segments:
+            freccia = flow_arrow_at(segmento, route.flow_from_start)
+            if freccia is not None:
+                x, y, dx, dy = freccia
+                cx, cy = x - dx * ARROW_LENGTH_MM, y - dy * ARROW_LENGTH_MM
+                xs = (x, cx - dy * ARROW_HALF_WIDTH_MM, cx + dy * ARROW_HALF_WIDTH_MM)
+                ys = (y, cy + dx * ARROW_HALF_WIDTH_MM, cy - dx * ARROW_HALF_WIDTH_MM)
+                frecce.append((min(xs), min(ys), max(xs), max(ys)))
+    scritte = _scritte(foglio, corpo)
+    righe = []
+    for etichetta in staccate:
+        assert etichetta.richiamo is not None
+        box = riquadro_del_diametro(etichetta, corpo)
+        proprie = frozenset(etichetta.connection_ids)
+        vicine = [
+            (r7._distanza(box, riquadro), nome)
+            for nome, connessioni, riquadro in cose
+            if not nome.startswith("sigla") and not (connessioni and connessioni <= proprie)
+        ]
+        vicine += [(r7._distanza(box, riquadro), nome) for nome, _, riquadro, _ in scritte if riquadro != box]
+        distanza, nome = min(vicine)
+        punta = etichetta.richiamo.punta
+        dalla_freccia = min(r7._distanza((punta.x_mm, punta.y_mm, punta.x_mm, punta.y_mm), f) for f in frecce)
+        righe.append(
+            f"{etichetta.testo}: la cosa piu' vicina {nome} a {distanza:.2f} mm, "
+            f"la punta a {dalla_freccia:.2f} mm dalla freccia di verso piu' vicina"
+        )
+    return "staccate (un corpo = " + f"{corpo:.2f} mm): " + " · ".join(righe)
+
+
 def collaudo(lavoro: Path, cartella_base: Path) -> None:
     from disegnatore_mep.layout.geometry import SheetGeometry
 
@@ -238,6 +347,9 @@ def collaudo(lavoro: Path, cartella_base: Path) -> None:
             f"   i DN toccano qualcosa: {len(toccate)} {toccate if toccate else ''}— la cosa piu' vicina: "
             f"{piu_vicina[1]} a {piu_vicina[0]:.2f} mm"
         )
+        print(f"   {_rispetto(foglio, corpo)}")
+        print(f"   {_sigle_vicine_ad_altri(foglio, corpo)}")
+        print(f"   {_staccate(foglio, corpo, cose, r7)}")
         print(
             f"   deterministico: SVG {'uguale' if svg.read_bytes() == svg2.read_bytes() else 'DIVERSO'} "
             f"({r7.impronta(svg)}), DXF {'uguale' if dxf.read_bytes() == dxf2.read_bytes() else 'DIVERSO'} "

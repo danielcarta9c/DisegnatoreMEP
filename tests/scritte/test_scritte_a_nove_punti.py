@@ -18,7 +18,12 @@ import pytest
 from disegnatore_mep.graphics.cartiglio import larghezza_mm
 from disegnatore_mep.graphics.dxf import ALTEZZA_MAIUSCOLE_EM, write_dxf
 from disegnatore_mep.graphics.registry import SymbolRegistry
-from disegnatore_mep.graphics.sheet import render_sheet
+from disegnatore_mep.graphics.sheet import (
+    ARROW_HALF_WIDTH_MM,
+    ARROW_LENGTH_MM,
+    flow_arrow_at,
+    render_sheet,
+)
 from disegnatore_mep.graphics.standard import (
     A2_LANDSCAPE,
     A3_LANDSCAPE,
@@ -30,8 +35,12 @@ from disegnatore_mep.graphics.standard import (
 )
 from disegnatore_mep.graphics.tabella import altezza_della_riga_mm
 from disegnatore_mep.layout import diametri
-from disegnatore_mep.layout.geometry import DiametroSullaTavola, Point
-from disegnatore_mep.layout.labels import MEZZE_MAIUSCOLE_EM, SPALLA_DEL_RICHIAMO_MM
+from disegnatore_mep.layout.geometry import DiametroSullaTavola, FlowKind, Point
+from disegnatore_mep.layout.labels import (
+    MEZZE_MAIUSCOLE_EM,
+    SPALLA_DEL_RICHIAMO_MM,
+    riquadro_della_scritta,
+)
 from disegnatore_mep.layout.legend import (
     INSET_MM,
     INTERLINEA_EM,
@@ -277,6 +286,109 @@ def test_il_dn_di_una_strada_principale_senza_posto_va_staccato_con_freccia(
     assert classi.count("diameter-leader") == len(staccate)
     assert classi.count("diameter-leader-arrow") == len(staccate)
     assert not [r.code for r in t.esito.rilievi if r.code.startswith(("DIAMETER_", "LEADER", "ORTHOGONAL"))]
+
+
+@pytest.mark.parametrize("impianto", ("1", "4", "6"))
+def test_la_scritta_staccata_sta_a_un_corpo_da_tutto_e_la_punta_fuori_dalle_frecce(
+    impianto: str, tavola: Callable[[str], Tavola]
+) -> None:
+    """La scritta staccata sta a un corpo dalle altre scritte, dai simboli e dalle
+    linee degli altri tratti: a un millimetro e mezzo da una sigla si leggeva con
+    lei («Øi 32  RAD-01», tavole 1 e 4). La punta non cade sulla freccia di verso."""
+    t = tavola(impianto)
+    corpo = t.esito.frame.standard.text_small_mm
+    staccate = [e for e in t.foglio.diametri if e.richiamo is not None]
+    assert staccate
+    frecce = []
+    for route in t.foglio.routes:
+        if route.flow_kind is FlowKind.STATIC:
+            continue
+        for segmento in route.segments:
+            freccia = flow_arrow_at(segmento, route.flow_from_start)
+            if freccia is not None:
+                x, y, dx, dy = freccia
+                coda_x, coda_y = x - dx * ARROW_LENGTH_MM, y - dy * ARROW_LENGTH_MM
+                xs = (x, coda_x - dy * ARROW_HALF_WIDTH_MM, coda_x + dy * ARROW_HALF_WIDTH_MM)
+                ys = (y, coda_y + dx * ARROW_HALF_WIDTH_MM, coda_y - dx * ARROW_HALF_WIDTH_MM)
+                frecce.append((min(xs), min(ys), max(xs), max(ys)))
+    assert frecce
+
+    def distacco(a: tuple[float, ...], b: tuple[float, ...]) -> float:
+        return max(b[0] - a[2], a[0] - b[2], b[1] - a[3], a[1] - b[3])
+
+    for etichetta in staccate:
+        assert etichetta.richiamo is not None
+        punta = etichetta.richiamo.punta
+        assert all(
+            distacco((punta.x_mm, punta.y_mm, punta.x_mm, punta.y_mm), f) >= diametri.FRANCO_MM - 1e-6
+            for f in frecce
+        ), etichetta.testo
+        scritta = diametri.riquadro_del_diametro(etichetta, corpo)
+        altri = [riquadro_della_scritta(label, corpo) for label in t.foglio.labels]
+        altri += [diametri.riquadro_del_diametro(e, corpo) for e in t.foglio.diametri if e is not etichetta]
+        altri += [(s.origin.x_mm, s.origin.y_mm, s.right_mm, s.bottom_mm) for s in t.foglio.symbols]
+        altri += [
+            (min(a.x_mm, b.x_mm), min(a.y_mm, b.y_mm), max(a.x_mm, b.x_mm), max(a.y_mm, b.y_mm))
+            for r in t.foglio.routes
+            if not (r.connection_ids and set(r.connection_ids) <= set(etichetta.connection_ids))
+            for segmento in r.segments
+            for a, b in zip(segmento, segmento[1:], strict=False)
+        ]
+        assert min(distacco(scritta, altro) for altro in altri) >= corpo - 1e-6, etichetta.testo
+
+
+@pytest.mark.parametrize("impianto", IMPIANTI)
+def test_nessuna_sigla_sta_piu_vicina_a_un_altro_pezzo_che_al_suo(
+    impianto: str, tavola: Callable[[str], Tavola]
+) -> None:
+    """A 9 punti «CIR-01» della tavola 6 arrivava a toccare la valvola sopra la sua
+    pompa, e si leggeva come la sigla della valvola."""
+    t = tavola(impianto)
+    corpo = t.esito.frame.standard.text_small_mm
+    pezzi = {s.component_id: (s.origin.x_mm, s.origin.y_mm, s.right_mm, s.bottom_mm) for s in t.foglio.symbols}
+
+    def distanza(a: tuple[float, ...], b: tuple[float, ...]) -> float:
+        return math.hypot(max(b[0] - a[2], a[0] - b[2], 0.0), max(b[1] - a[3], a[1] - b[3], 0.0))
+
+    for label in t.foglio.labels:
+        pezzo = label.id.removesuffix("-tag")
+        if label.role != "tag" or label.richiamo is not None or pezzo not in pezzi:
+            continue
+        box = riquadro_della_scritta(label, corpo)
+        suo = distanza(box, pezzi[pezzo])
+        for altro, riquadro in pezzi.items():
+            if altro != pezzo:
+                assert distanza(box, riquadro) >= suo - 1e-6, (label.text, altro)
+
+
+@pytest.mark.parametrize("impianto", IMPIANTI)
+def test_scritte_di_pezzi_diversi_un_corpo_lungo_la_riga_e_mezzo_fra_le_righe(
+    impianto: str, tavola: Callable[[str], Tavola]
+) -> None:
+    """A 9 punti «Øi 40» era finito a un millimetro da «CIR-01», sulla stessa riga
+    (tavola 6), e «4 kW» di PAV-02 a 0,65 mm sopra «PAV-01» (tavola 3): si leggevano
+    come una scritta sola, o come due righe dello stesso blocco."""
+    t = tavola(impianto)
+    corpo = t.esito.frame.standard.text_small_mm
+    pezzi = sorted((s.component_id for s in t.foglio.symbols), key=len, reverse=True)
+    scritte = [
+        (next(c for c in pezzi if label.id.startswith(c + "-")), riquadro_della_scritta(label, corpo), False)
+        for label in t.foglio.labels
+        if label.role in ("tag", "data")
+    ]
+    scritte += [
+        ("DN " + "/".join(e.connection_ids), diametri.riquadro_del_diametro(e, corpo), e.verticale)
+        for e in t.foglio.diametri
+    ]
+    for i, (suo, a, verticale) in enumerate(scritte):
+        for altro, b, altro_verso in scritte[i + 1 :]:
+            if suo == altro:
+                continue
+            dx = max(b[0] - a[2], a[0] - b[2], 0.0)
+            dy = max(b[1] - a[3], a[1] - b[3], 0.0)
+            for verso in {verticale, altro_verso}:
+                lungo, attraverso = (dy, dx) if verso else (dx, dy)
+                assert lungo >= corpo - 1e-6 or attraverso >= corpo / 2 - 1e-6, (suo, altro, dx, dy)
 
 
 def test_il_dn_di_una_strada_secondaria_si_sacrifica_senza_rilievo(tavola: Callable[[str], Tavola]) -> None:
