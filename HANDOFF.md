@@ -19,7 +19,7 @@ un corpo solo, `GraphicStandard.text_small_mm` = 1,8 mm** (`graphics/standard.py
 Il corpo decide lo spazio di sigle, DN, legenda e tabella: **si parte dal punto 1** del pacchetto, e le
 tavole si guardano presto.
 
-**`REL-007`, i diametri, è fuso** (PR #NUMERO_PR): il PO, viste le sei tavole con i diametri, la tavola in
+**`REL-007`, i diametri, è fuso** (PR #64): il PO, viste le sei tavole con i diametri, la tavola in
 retrofit e il foglio dei calcoli, «Approvato tutto, pr e metti su main» (I-158). **D-193 è approvata per
 intero**; rapporto `docs/collaudi/REL-007/RAPPORTO.md`, tavole in `docs/collaudi/REL-007/tavole/`.
 
