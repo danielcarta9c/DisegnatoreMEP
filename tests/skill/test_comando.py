@@ -162,6 +162,17 @@ def test_il_catalogo_e_una_riga_per_voce(cartelle: Cartelle, capsys: pytest.Capt
     assert generatori and all("heat_generation" in r for r in generatori)
 
 
+def test_il_catalogo_dice_quando_un_pezzo_non_c_e(cartelle: Cartelle, capsys: pytest.CaptureFixture[str]) -> None:
+    """Un cogeneratore non e' una caldaia: la voce che manca si dice, e non se ne sceglie una
+    che somiglia (Capire, tipo B; la valutazione 4 di REL-001)."""
+    assert main(["catalogo", "--cerca", "cogeneratore"], cartelle) == 0
+    assert "Nessuna voce del catalogo per «cogeneratore»" in capsys.readouterr().out
+    assert main(["catalogo", "--cerca", "caldaia"], cartelle) == 0
+    trovate = [r for r in capsys.readouterr().out.splitlines() if r and not r.startswith(" ")]
+    assert {r.split(" — ")[0] for r in trovate} == {"gas-boiler", "gas-boiler-modular"}
+    assert any("a bordo: circulation" in r for r in trovate), "la caldaia modulare porta il circolatore"
+
+
 def test_il_png_dell_anteprima_e_un_png_che_si_legge() -> None:
     dati = _png(2, 1, [bytes([255, 0, 0, 0, 0, 255])])
     assert dati.startswith(b"\x89PNG\r\n\x1a\n")

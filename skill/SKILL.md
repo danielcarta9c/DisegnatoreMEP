@@ -27,6 +27,10 @@ python3 scripts/mep.py <comando> ...     # dalla cartella di questa skill
   DEFINIRE», o niente.
 - **Non cambi lo schema che hai ricevuto.** Dopo l'approvazione il grafo non si tocca: il
   disegno sposta i pezzi, non li collega. Se ti sembra che manchi qualcosa, è una domanda.
+- **Non sostituisci un pezzo che il catalogo non ha**, nemmeno con una voce che fa lo stesso
+  mestiere con gli stessi attacchi: un cogeneratore non è una caldaia. E non aggiungi voci al
+  catalogo né simboli alla libreria. Il pezzo manca dal grafo, e lo dici (Capire, «tipo B»):
+  `python3 scripts/mep.py catalogo --cerca <parola>` ti dice subito se c'è.
 - **Non consegni una tavola con rilievi bloccanti o tratte cedute**, e non la presenti come
   finita: la mostri per quello che è, e dici che cosa la ferma.
 
@@ -35,9 +39,18 @@ python3 scripts/mep.py <comando> ...     # dalla cartella di questa skill
 1. `python3 scripts/mep.py ambiente` — dice se il comando è pronto: la versione di Python, le
    librerie, i dati della skill. Se manca una libreria prova a installarla da sé; se non ci
    riesce lo dice, e tu lo dici al progettista con le sue parole.
+   Se dice che l'anteprima non c'è, la tavola non la potrai guardare prima di consegnarla:
+   diglielo già nel primo messaggio.
 2. **Una cartella di lavoro fuori dalla skill**, per l'impianto: `mkdir -p /tmp/mep/<progetto>`.
    La cartella della skill può essere di sola lettura, e i file dell'impianto non ci vanno.
    Qui sotto la chiamo `$L`; i percorsi dei file che passi al comando scrivili per esteso.
+
+## Se il testo non descrive un impianto deciso
+
+Se il progettista ti chiede di dimensionare o di scegliere le macchine, o nomina due pezzi e
+chiede la centrale, digli subito che la skill disegna l'impianto che lui ha deciso e non lo
+progetta, e chiedigli le macchine, i circuiti e come si collegano. Non chiudere un grafo fatto
+quasi tutto di tue assunzioni: lì la risposta è una domanda, non un grafo.
 
 ## Il flusso
 
@@ -45,14 +58,14 @@ Copia questa lista nella risposta e spuntala man mano:
 
 ```
 Avanzamento:
-- [ ] 1. Capire: il grafo di prima stesura, validato
-- [ ] 2. Le domande al progettista, in un messaggio solo
-- [ ] 3. Completare: il corredo, e i punti aperti
-- [ ] 4. Il progettista approva il grafo completo
-- [ ] 5. Comporre il piano
-- [ ] 6. Eseguire: la tavola, il PDF, i rilievi
-- [ ] 7. Rivedere: guardare la tavola, e tornare al piano
-- [ ] 8. Consegnare, e dire che cosa resta aperto
+- [ ] 1. Leggo l'impianto e ne scrivo il grafo
+- [ ] 2. Ti faccio le domande, in un messaggio solo
+- [ ] 3. Aggiungo il corredo d'obbligo
+- [ ] 4. Approvi il grafo completo
+- [ ] 5. Compongo la tavola
+- [ ] 6. La disegno e la misuro
+- [ ] 7. La guardo e la correggo
+- [ ] 8. Te la consegno, con quello che resta aperto
 ```
 
 ### 1. Capire — dal testo al grafo di prima stesura
@@ -67,12 +80,23 @@ conversazione.
 - Scrivi `$L/grafo.json`, e validalo finché regge:
   `python3 scripts/mep.py valida $L/grafo.json`. L'uscita elenca anche le assunzioni che hai
   dichiarato: sono le domande del passo 2.
+- `capire.md` è scritto per un agente che lavora da solo: dove dice «chi ti ha lanciato» o «chi
+  lancia il lavoro», quello sei tu, e le domande al progettista le porti tu. La tabella di
+  rilettura (§8) è una verifica tua: non si manda.
 
 ### 2. Le domande — in un passaggio solo
 
-Il grafo porta in `assumptions` quello che il testo non dice. Se c'è anche **una sola domanda
-che cambia il disegno** — due letture corrette e diverse, il «tipo C» di Capire —, o manca un
-dato che il grafo non può non avere, **fermati e chiedi**, in **un messaggio solo**:
+Il grafo porta in `assumptions` quello che il testo non dice. Prima di scrivere al progettista
+lancia anche `completa` (passo 3): i punti aperti che trova sono domande dello stesso messaggio.
+
+**Fermati e chiedi**, in **un messaggio solo**, se c'è anche una sola di queste:
+
+- una domanda che cambia il disegno — due letture corrette e diverse, il «tipo C» di Capire;
+- un pezzo principale che il catalogo non ha: chiedi se procedere senza, o fermarsi;
+- le potenze dei generatori, se il testo non le dà: senza, il regime della centrale non si
+  ricava, e le regole mettono il corredo di una centrale fino a 35 kW — diglielo.
+
+Il messaggio porta:
 
 - che cosa hai capito, in poche righe: le macchine, i circuiti, come si collegano;
 - le domande che cambiano il disegno, **ciascuna con la tua prima interpretazione**, così che
@@ -86,8 +110,8 @@ Poi **aspetta la risposta**. Riporta le risposte nel grafo — un dato dato si t
 lettura corretta si ridisegna, un'assunzione confermata passa a `"status": "approved"` — e
 rivalida.
 
-Se non c'è nessuna domanda che cambia il disegno, non fermarti qui: le assunzioni e i dati che
-mancano li porti al passo 4, insieme al grafo completo.
+Se non ce n'è nessuna, non fermarti qui: le assunzioni e i dati che mancano li porti al
+passo 4, insieme al grafo completo.
 
 ### 3. Completare — il corredo
 

@@ -24,7 +24,7 @@ PYDANTIC = "pydantic==2.13.4"
 """La versione con cui il motore e' provato: quella del `pyproject.toml` del repository."""
 
 FACOLTATIVE: dict[str, dict[str, str]] = {
-    "ambiente": {"ezdxf": "ezdxf==1.4.4"},
+    "ambiente": {"ezdxf": "ezdxf==1.4.4", "pypdfium2": "pypdfium2==5.13.0"},
     "disegna": {"ezdxf": "ezdxf==1.4.4"},
     "anteprima": {"pypdfium2": "pypdfium2==5.13.0"},
 }
@@ -40,6 +40,13 @@ megabyte, e tre minuti bastano anche su una rete lenta."""
 
 def _installa(modulo: str, pacchetto: str, perche: str) -> bool:
     print(f"Manca la libreria {modulo}, {perche}: provo a installare {pacchetto}.", file=sys.stderr)
+    riuscita = _pip(pacchetto)
+    if riuscita:
+        print(f"Installata: {pacchetto}.", file=sys.stderr)
+    return riuscita and importlib.util.find_spec(modulo) is not None
+
+
+def _pip(pacchetto: str) -> bool:
     try:
         esito = subprocess.run(
             [sys.executable, "-m", "pip", "install", "--quiet", pacchetto],
@@ -55,7 +62,7 @@ def _installa(modulo: str, pacchetto: str, perche: str) -> bool:
         print(f"L'installazione non e' riuscita: {ultima[0]}", file=sys.stderr)
         return False
     importlib.invalidate_caches()
-    return importlib.util.find_spec(modulo) is not None
+    return True
 
 
 def main() -> int:
@@ -82,7 +89,8 @@ def main() -> int:
         return 1
 
     comando_chiesto = next((a for a in sys.argv[1:] if not a.startswith("-")), "")
-    for modulo, pacchetto in FACOLTATIVE.get(comando_chiesto, {}).items():
+    chiede_aiuto = any(a in ("-h", "--help") for a in sys.argv[1:])
+    for modulo, pacchetto in ({} if chiede_aiuto else FACOLTATIVE.get(comando_chiesto, {})).items():
         if importlib.util.find_spec(modulo) is None:
             _installa(modulo, pacchetto, "senza la quale il comando fa meno")
 

@@ -405,20 +405,51 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
 # --- catalogo, anteprima, ambiente ---------------------------------------------
 
 
+def _riga_del_catalogo(voce: dict[str, object]) -> str:
+    """Una voce del catalogo in una riga e mezza: quello su cui Capire sceglie."""
+    mestieri = ", ".join(str(m) for m in voce.get("functions", []))  # type: ignore[attr-defined]
+    extra = []
+    variante = voce.get("variant")
+    if isinstance(variante, dict):
+        extra.append(f"variante di {variante.get('of')}, se il testo dice: {', '.join(variante.get('named_as', []))}")
+    if voce.get("carries_on_board"):
+        extra.append("a bordo: " + ", ".join(str(m) for m in voce["carries_on_board"]))  # type: ignore[attr-defined]
+    if voce.get("stored_medium"):
+        extra.append(f"tiene in serbo: {voce['stored_medium']}")
+    if voce.get("fills_from"):
+        extra.append(f"si riempie da: {voce['fills_from']}")
+    attacchi = []
+    for porta in voce.get("ports", []):  # type: ignore[attr-defined]
+        segni = [str(porta.get("flow", "?")), str(porta.get("medium", porta.get("domain", "?")))]
+        if porta.get("stub"):
+            segni.append("di servizio")
+        if porta.get("required") is False:
+            segni.append("facoltativo")
+        attacchi.append(f"{porta['id']} ({', '.join(segni)})")
+    righe = f"{voce['id']} — {voce.get('name', '')} · mestieri: {mestieri}"
+    if extra:
+        righe += " · " + " · ".join(extra)
+    return righe + f"\n    attacchi: {', '.join(attacchi)}"
+
+
 def _catalogo(args: argparse.Namespace, cartelle: Cartelle) -> int:
     """Le voci del catalogo, una riga ciascuna: id, nome, mestieri, attacchi."""
+    trovate = 0
     for percorso in sorted(cartelle.catalogo.glob("*.json")):
         voce = json.loads(percorso.read_text(encoding="utf-8"))
-        mestieri = ", ".join(voce.get("functions", []))
         if args.mestiere and args.mestiere not in voce.get("functions", []):
             continue
-        attacchi = ", ".join(
-            f"{p['id']} ({p.get('flow', '?')}, {p.get('medium', p.get('domain', '?'))})"
-            for p in voce.get("ports", [])
-        )
-        variante = f" · variante: {voce['variant']}" if voce.get("variant") else ""
-        print(f"{voce['id']} — {voce.get('name', '')} · mestieri: {mestieri}{variante}")
-        print(f"    attacchi: {attacchi}")
+        if args.cerca and not any(
+            args.cerca.lower() in str(campo).lower() for campo in (voce["id"], voce.get("name", ""))
+        ):
+            continue
+        trovate += 1
+        print(_riga_del_catalogo(voce))
+    if not trovate:
+        # Una voce che manca e' un pezzo che non si disegna (Capire, tipo B): dirlo
+        # subito evita di sceglierne una che somiglia.
+        cercata = " e ".join(f"«{v}»" for v in (args.cerca, args.mestiere) if v)
+        print(f"Nessuna voce del catalogo per {cercata}: quel pezzo il catalogo non ce l'ha.")
     return 0
 
 
@@ -499,7 +530,10 @@ def _ambiente(args: argparse.Namespace, cartelle: Cartelle) -> int:
     rasterizzatori = [
         nome for nome in ("fitz", "pypdfium2") if importlib.util.find_spec(nome) is not None
     ] + (["pdftoppm"] if shutil.which("pdftoppm") else [])
-    print(f"Anteprima PNG: {', '.join(rasterizzatori) if rasterizzatori else 'no'}")
+    print(
+        "Anteprima PNG: "
+        + (", ".join(rasterizzatori) if rasterizzatori else "no — manca un lettore di PDF (pypdfium2 o PyMuPDF)")
+    )
     dati = _Dati(cartelle)
     regole = RuleRegistry.from_directory(cartelle.regole)
     print(
@@ -542,6 +576,7 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
 
     catalogo = comandi.add_parser("catalogo", help="le voci del catalogo, una riga ciascuna")
     catalogo.add_argument("--mestiere", help="solo le voci che fanno questo mestiere")
+    catalogo.add_argument("--cerca", help="solo le voci con questa parola nell'id o nel nome")
 
     valida = comandi.add_parser("valida", help="il grafo di Capire carica e regge?")
     valida.add_argument("grafo", type=Path)
