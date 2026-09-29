@@ -117,6 +117,9 @@ def test_disegna_scrive_la_tavola_in_pdf_dxf_e_svg_con_i_rilievi_accanto(
     uscita = capsys.readouterr().out
     assert "tratte cedute 0 · rilievi bloccanti 0" in uscita
     assert re.search(r"pieghe \d+ · sormonti \d+", uscita), "le misure con cui si confrontano due pose"
+    assert re.search(
+        r"con la tabella delle apparecchiature in alto a sinistra \([0-9.]+ x [0-9.]+ mm\)", uscita
+    ), "chi compone sa quanto posto prende la tabella (camera Opus di REL-001)"
     nome = "prova-6-centrale-ibrida-solare-t1"
     for estensione in (".svg", ".pdf", ".dxf"):
         assert (tmp_path / f"{nome}{estensione}").exists(), estensione

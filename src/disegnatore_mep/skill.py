@@ -361,9 +361,16 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
             print(f"  - {riga}")
     area = esito.frame.drawing_rect_mm
     larghezza, altezza = _ingombro_della_posa(esito)
+    # Chi compone deve sapere quanto posto prende la tabella, per giudicare se una posa
+    # piu' stretta le passa sotto o accanto nello stesso formato: la camera Opus di
+    # REL-001 e' salita all'A2, e lo stesso disegno stava nell'A3.
+    tabelle = [f.tabella for f in esito.disegno.sheets if f.tabella] if esito.disegno else []
+    tabella = (
+        f" ({tabelle[0].larghezza_mm:g} x {tabelle[0].altezza_mm:g} mm)" if len(tabelle) == 1 else ""
+    )
     print(
         f"Area del disegno dell'{piano.formato}: {area.width_mm:g} x {area.height_mm:g} mm, "
-        f"con la tabella delle apparecchiature in alto a sinistra; la posa ne occupa "
+        f"con la tabella delle apparecchiature in alto a sinistra{tabella}; la posa ne occupa "
         f"{larghezza:g} x {altezza:g}."
     )
     if esito.disegno is None:
