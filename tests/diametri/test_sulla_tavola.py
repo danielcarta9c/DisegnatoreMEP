@@ -104,7 +104,15 @@ def test_un_etichetta_per_tratto(impianto: str, tavola: Callable[[str], Tavola])
         chiave = frozenset(etichetta.connection_ids)
         assert chiave in per_tratto, etichetta
         per_tratto[chiave] += 1
-    assert all(quante == 1 for quante in per_tratto.values()), per_tratto
+    # REL-008 (I-161, I-162): un tratto di strada principale ha la sua etichetta,
+    # accanto alla linea o — ultima spiaggia — staccata con freccia; quello di una
+    # strada secondaria ne ha al piu' una, e dove non c'e' posto si sacrifica.
+    for item in t.tratti:
+        quante = per_tratto[item.connection_ids]
+        assert quante == 1 if item.strada_principale else quante <= 1, (item.capi, quante)
+    staccate = [e for e in t.foglio.diametri if e.richiamo_da is not None]
+    principali = {item.connection_ids for item in t.tratti if item.strada_principale}
+    assert all(frozenset(e.connection_ids) in principali for e in staccate)
     scritte = {item.connection_ids: item.scritta for item in t.tratti}
     assert all(e.testo == scritte[frozenset(e.connection_ids)] for e in t.foglio.diametri)
     assert not [r.code for r in t.esito.rilievi if r.code.startswith("DIAMETER_")]
@@ -117,6 +125,8 @@ def test_in_linea_con_la_tubazione_e_addosso(impianto: str, tavola: Callable[[st
     t = tavola(impianto)
     corpo = t.esito.frame.standard.text_small_mm
     for etichetta in t.foglio.diametri:
+        if etichetta.richiamo_da is not None:
+            continue  # staccata con freccia (I-162): la misura e' in tests/scritte
         box = riquadro_del_diametro(etichetta, corpo)
         propri = _segmenti(t.foglio, frozenset(etichetta.connection_ids))
         trovato = False
@@ -142,7 +152,7 @@ def test_sulla_tavola_1_la_mandata_sopra_e_il_ritorno_sotto(tavola: Callable[[st
     versi = {frozenset(route.connection_ids): route.supply for route in t.foglio.routes}
     corpo = t.esito.frame.standard.text_small_mm
     for etichetta in t.foglio.diametri:
-        if etichetta.verticale:
+        if etichetta.verticale or etichetta.richiamo_da is not None:
             continue
         box = riquadro_del_diametro(etichetta, corpo)
         mandata = next(
@@ -207,11 +217,17 @@ def test_il_dxf_porta_le_stesse_etichette(
     altezza = t.esito.frame.standard.sheet_height_mm
     dxf = tmp_path / "tavola.dxf"
     write_dxf(t.foglio, t.esito.frame, simboli, dxf)
+    sul_layer = [e for e in ezdxf.readfile(dxf).modelspace() if e.dxf.layer == LAYER_DIAMETRI]
     letti = sorted(
         (e.dxf.text, round(e.dxf.insert.x, 6), round(e.dxf.insert.y, 6), round(e.dxf.rotation, 6))
-        for e in ezdxf.readfile(dxf).modelspace()
-        if e.dxf.layer == LAYER_DIAMETRI
+        for e in sul_layer
+        if e.dxftype() == "TEXT"
     )
+    # Un'etichetta staccata (I-162) porta anche il suo richiamo: una linea e una
+    # freccia piena.
+    staccate = sum(1 for e in t.foglio.diametri if e.richiamo_da is not None)
+    assert sum(1 for e in sul_layer if e.dxftype() == "LINE") == staccate
+    assert sum(1 for e in sul_layer if e.dxftype() == "SOLID") == staccate
     attesi = sorted(
         (e.testo, round(e.ancora.x_mm, 6), round(altezza - e.ancora.y_mm, 6), 90.0 if e.verticale else 0.0)
         for e in t.foglio.diametri

@@ -176,16 +176,27 @@ def collaudo(lavoro: Path, cartella_base: Path) -> None:
         sigle_ora = {(x.role, x.text) for x in foglio.labels}
         dn_prima = {frozenset(x.connection_ids) for x in prima.diametri}
         dn_ora = {frozenset(x.connection_ids) for x in foglio.diametri}
+        a_otto_sigle = sorted(x.text for x in foglio.labels if getattr(x, "corpo_mm", None))
+        con_richiamo = sorted(x.text for x in foglio.labels if x.leader_from is not None)
         print(
             f"   scritte accanto ai pezzi: main {per_ruolo(prima)} · ora {per_ruolo(foglio)} · "
-            f"mancano {sorted(t for _, t in sigle_prima - sigle_ora) or 'nessuna'}"
+            f"mancano {sorted(t for _, t in sigle_prima - sigle_ora) or 'nessuna'} · "
+            f"a 8 pt {a_otto_sigle or 'nessuna'} · con richiamo {con_richiamo or 'nessuna'}"
         )
+        from disegnatore_mep.diametri.tratti import tratti_da_etichettare
+
         a_otto = sum(1 for x in foglio.diametri if getattr(x, "corpo_mm", None))
+        staccati = sorted(x.testo for x in foglio.diametri if getattr(x, "richiamo_da", None))
+        tratti = tratti_da_etichettare(modello, catalogo)
+        mancanti = [x for x in tratti if x.connection_ids not in dn_ora]
+        principali = [x.scritta for x in mancanti if x.strada_principale]
+        secondari = [f"{x.scritta} {x.capi[0].component_id}→{x.capi[1].component_id}" for x in mancanti if not x.strada_principale]
         print(
-            f"   DN: main {len(prima.diametri)} · ora {len(foglio.diametri)} (al minimo di 8 pt: {a_otto})"
-            f" · mancano {len(dn_prima - dn_ora)}"
-            f"{' ' + str(sorted(x.testo for x in prima.diametri if frozenset(x.connection_ids) in dn_prima - dn_ora)) if dn_prima - dn_ora else ''}"
+            f"   DN: main {len(prima.diametri)} · ora {len(foglio.diametri)} (a 8 pt {a_otto}, staccati con "
+            f"freccia {staccati or 'nessuno'}) · mancano sulle strade principali {principali or 'nessuno'} · "
+            f"sacrificati sulle secondarie {len(secondari)} {secondari if secondari else ''}"
         )
+        del dn_prima
 
         # Il disegno non si muove.
         uguali = {

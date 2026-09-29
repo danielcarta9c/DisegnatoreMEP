@@ -7,6 +7,7 @@ la legenda e la tabella le contengano, e che il DN che a 9 non entra scenda a 8 
 dica.
 """
 
+import math
 import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from pathlib import Path
@@ -69,8 +70,9 @@ def test_nessuna_scritta_sotto_otto_punti_ne_nell_svg_ne_nel_dxf(
     frame = t.esito.frame
     corpi = [float(testo.get("font-size", "0")) / PT_MM for testo in _testi(render_sheet(t.foglio, frame, simboli))]
     assert corpi
-    assert min(corpi) >= CORPO_MINIMO_PT - 1e-6
-    nove = {round(c, 6) for c in corpi if c < 9.5}
+    # L'SVG scrive il corpo con sei cifre significative: 8 punti sono 2,82222 mm.
+    assert min(corpi) >= CORPO_MINIMO_PT - 1e-4
+    nove = {round(c, 3) for c in corpi if c < 9.5}
     assert nove <= {9.0, 8.0}, nove
     dxf = tmp_path / "tavola.dxf"
     write_dxf(t.foglio, frame, simboli, dxf)
@@ -189,3 +191,119 @@ def test_il_corpo_di_sempre_non_si_scrive_nella_geometria() -> None:
     assert "corpo_mm" not in sempre.model_dump(mode="json")
     sceso = sempre.model_copy(update={"corpo_mm": 8 * PT_MM})
     assert sceso.model_dump(mode="json")["corpo_mm"] == pytest.approx(8 * PT_MM)
+
+
+# --- quello che a 9 punti non entra accanto (I-160, I-161, I-162) --------------------
+
+
+@pytest.mark.parametrize("impianto", IMPIANTI)
+def test_la_sigla_di_un_apparecchiatura_in_tabella_c_e_sempre(
+    impianto: str, tavola: Callable[[str], Tavola]
+) -> None:
+    """I-160: la sigla di un pezzo che sta in tabella non si omette. Sulle tavole 5 e
+    6 il circolatore non ha 5,2 mm sopra di se', e la sigla scende a 8 punti."""
+    t = tavola(impianto)
+    assert t.foglio.tabella is not None
+    scritte = {label.id for label in t.foglio.labels}
+    for riga in t.foglio.tabella.righe:
+        simbolo = next(s for s in t.foglio.symbols if s.component_id == riga.component_id)
+        if simbolo.tag:
+            assert f"{riga.component_id}-tag" in scritte, simbolo.tag
+    codici = {r.code for r in t.esito.rilievi}
+    assert not codici & {"TAG_OMITTED", "TABLE_EQUIPMENT_TAG_OMITTED"}
+    if impianto in ("5", "6"):
+        scese = [label for label in t.foglio.labels if label.corpo_mm is not None]
+        assert scese and all(label.corpo_mm == pytest.approx(CORPO_MINIMO_PT * PT_MM) for label in scese)
+
+
+def test_il_preflight_blocca_se_manca_la_sigla_di_un_apparecchiatura_in_tabella(
+    tavola: Callable[[str], Tavola]
+) -> None:
+    from disegnatore_mep.layout.geometry import DrawingGeometry
+    from disegnatore_mep.model.types import IssueSeverity
+    from disegnatore_mep.validation.preflight import omitted_tags
+
+    t = tavola("5")
+    assert t.foglio.tabella is not None
+    in_tabella = {riga.component_id for riga in t.foglio.tabella.righe}
+    della_tabella = next(label for label in t.foglio.labels if label.id.removesuffix("-tag") in in_tabella)
+    fuori = next(
+        (s for s in t.foglio.symbols if s.tag and s.component_id not in in_tabella),
+        None,
+    )
+    via = {della_tabella.id} | ({f"{fuori.component_id}-tag"} if fuori is not None else set())
+    foglio = t.foglio.model_copy(update={"labels": [x for x in t.foglio.labels if x.id not in via]})
+    rilievi = omitted_tags(DrawingGeometry(project_id="p", sheets=[foglio]))
+    bloccanti = [r for r in rilievi if r.code == "TABLE_EQUIPMENT_TAG_OMITTED"]
+    assert len(bloccanti) == 1 and bloccanti[0].severity is IssueSeverity.BLOCKING
+    if fuori is not None:
+        assert [r.severity for r in rilievi if r.code == "TAG_OMITTED"] == [IssueSeverity.WARNING]
+
+
+@pytest.mark.parametrize("impianto", ("1", "4", "6"))
+def test_il_dn_di_una_strada_principale_senza_posto_va_staccato_con_freccia(
+    impianto: str, tavola: Callable[[str], Tavola], simboli: SymbolRegistry, tmp_path: Path
+) -> None:
+    """I-162: la freccia tocca una linea del proprio tratto, e il richiamo e' una sola
+    diagonale a 45 gradi fino alla base della scritta (D-075); la scritta e'
+    orizzontale e non tocca niente. SVG e DXF disegnano linea e freccia."""
+    t = tavola(impianto)
+    staccate = [e for e in t.foglio.diametri if e.richiamo_da is not None]
+    assert staccate
+    for etichetta in staccate:
+        assert etichetta.richiamo_da is not None and not etichetta.verticale
+        dx = abs(etichetta.ancora.x_mm - etichetta.richiamo_da.x_mm)
+        dy = abs(etichetta.ancora.y_mm - etichetta.richiamo_da.y_mm)
+        assert dx == pytest.approx(dy) and dx >= 3.5
+        punta = etichetta.richiamo_da
+        proprie = [r for r in t.foglio.routes if set(r.connection_ids) <= set(etichetta.connection_ids)]
+        assert any(
+            min(a.x_mm, b.x_mm) - 1e-6 <= punta.x_mm <= max(a.x_mm, b.x_mm) + 1e-6
+            and min(a.y_mm, b.y_mm) - 1e-6 <= punta.y_mm <= max(a.y_mm, b.y_mm) + 1e-6
+            for r in proprie
+            for segmento in r.segments
+            for a, b in zip(segmento, segmento[1:], strict=False)
+        ), etichetta.testo
+    svg = render_sheet(t.foglio, t.esito.frame, simboli)
+    radice = ET.fromstring(svg)
+    classi = [e.get("class") for e in radice.iter()]
+    assert classi.count("diameter-leader") == len(staccate)
+    assert classi.count("diameter-leader-arrow") == len(staccate)
+    assert not [r.code for r in t.esito.rilievi if r.code.startswith(("DIAMETER_", "LEADER", "ORTHOGONAL"))]
+
+
+def test_il_dn_di_una_strada_secondaria_si_sacrifica_senza_rilievo(tavola: Callable[[str], Tavola]) -> None:
+    """I-161: sulla tavola 5 tre DN di strade secondarie non trovano posto accanto
+    alla linea. Mancano, non hanno richiamo, e il preflight non lo segnala."""
+    t = tavola("5")
+    from disegnatore_mep.diametri.tratti import tratti_da_etichettare
+
+    tratti = tratti_da_etichettare(t.modello, _catalogo_della_tavola())
+    posati = {frozenset(e.connection_ids) for e in t.foglio.diametri}
+    sacrificati = [item for item in tratti if item.connection_ids not in posati]
+    assert sacrificati and all(not item.strada_principale for item in sacrificati)
+    assert all(e.richiamo_da is None for e in t.foglio.diametri)
+    assert "DIAMETER_TAG_MISSING" not in {r.code for r in t.esito.rilievi}
+
+
+def _catalogo_della_tavola():  # type: ignore[no-untyped-def]
+    from disegnatore_mep.catalog.registry import ComponentRegistry
+    from disegnatore_mep.graphics.registry import SymbolRegistry
+
+    simboli = SymbolRegistry.from_directory(DIAMETRI.ROOT / "assets" / "symbols")
+    return ComponentRegistry.from_directory(DIAMETRI.ROOT / "examples" / "layout" / "catalog", symbols=simboli)
+
+
+def test_la_freccia_del_richiamo_e_stretta_e_punta_sul_pezzo() -> None:
+    from disegnatore_mep.graphics.sheet import (
+        FRECCIA_DEL_RICHIAMO_MM,
+        MEZZA_FRECCIA_DEL_RICHIAMO_MM,
+        freccia_del_richiamo,
+    )
+
+    punta, b, c = freccia_del_richiamo(Point(x_mm=10, y_mm=10), Point(x_mm=20, y_mm=0))
+    assert punta == Point(x_mm=10, y_mm=10)
+    base = ((b.x_mm + c.x_mm) / 2, (b.y_mm + c.y_mm) / 2)
+    assert math.hypot(base[0] - 10, base[1] - 10) == pytest.approx(FRECCIA_DEL_RICHIAMO_MM, abs=1e-3)
+    assert math.hypot(b.x_mm - c.x_mm, b.y_mm - c.y_mm) == pytest.approx(2 * MEZZA_FRECCIA_DEL_RICHIAMO_MM, abs=1e-3)
+    assert base[0] > 10 and base[1] < 10, "la base sta verso l'altro capo del richiamo"

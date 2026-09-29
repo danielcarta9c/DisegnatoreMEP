@@ -44,7 +44,7 @@ from math import ceil, sqrt
 
 from disegnatore_mep.graphics.cartiglio import larghezza_mm
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
-from disegnatore_mep.graphics.standard import PT_MM, GraphicStandard
+from disegnatore_mep.graphics.standard import CORPO_MINIMO_PT, PT_MM, GraphicStandard
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import JsonPrimitive
 
@@ -187,6 +187,15 @@ def _overlap(first: Box, second: Box) -> bool:
 
 def _symbol_box(item: PlacedSymbol) -> Box:
     return (item.origin.x_mm, item.origin.y_mm, item.right_mm, item.bottom_mm)
+
+
+def riquadro_della_scritta(label: PlacedLabel, height_mm: float) -> Box:
+    """Il riquadro di un testo gia' posato: al suo corpo, se e' sceso al minimo
+    (REL-008), altrimenti a quello delle scritte della tavola, `height_mm`. Lo
+    leggono tutti quelli che misurano una sigla — la posa di chi viene dopo, il
+    preflight, i DN —, e deve essere quello della posa."""
+    corpo = label.corpo_mm if label.corpo_mm is not None else height_mm
+    return _text_box(label.anchor, text_width_mm(label.text, corpo), corpo)
 
 
 def _text_box(anchor: Point, width_mm: float, height_mm: float) -> Box:
@@ -472,17 +481,28 @@ def _settle(
     canvas: _Canvas,
 ) -> PlacedLabel | None:
     """Un testo sul primo lato libero, prima fila poi seconda; per le sigle
-    delle macchine, poi, un richiamo corto e pulito; altrimenti niente."""
+    delle macchine e i loro dati, poi, lo stesso al corpo minimo del PO, 8 punti
+    (REL-008, I-159); poi un richiamo corto e pulito; altrimenti niente."""
+    corpi = [height_mm]
+    minimo = CORPO_MINIMO_PT * PT_MM
+    if role in LEADER_ROLES and minimo < height_mm - TOLERANCE_MM:
+        corpi.append(minimo)
+    for corpo in corpi:
+        largo = text_width_mm(text, corpo)
+        for row in range(ADJACENT_ROWS):
+            for side in SIDES_BY_ROLE[role]:
+                spot = anchor_beside(item, side, slot + row, largo, height_mm=corpo, step_mm=step_mm)
+                box = _text_box(spot, largo, corpo)
+                if canvas.free(box):
+                    canvas.take(box, None)
+                    return PlacedLabel(
+                        id=label_id,
+                        text=text,
+                        role=role,
+                        anchor=spot,
+                        corpo_mm=None if corpo == height_mm else corpo,
+                    )
     width = text_width_mm(text, height_mm)
-    for row in range(ADJACENT_ROWS):
-        for side in SIDES_BY_ROLE[role]:
-            spot = anchor_beside(
-                item, side, slot + row, width, height_mm=height_mm, step_mm=step_mm
-            )
-            box = _text_box(spot, width, height_mm)
-            if canvas.free(box):
-                canvas.take(box, None)
-                return PlacedLabel(id=label_id, text=text, role=role, anchor=spot)
     if role not in LEADER_ROLES:
         return None
     found = _leader(item, width, height_mm=height_mm, step_mm=step_mm, canvas=canvas)
@@ -526,7 +546,7 @@ def place_addresses(
     canvas = _canvas(placed, routes, standard, area, ostacoli)
     for written in already or ():
         canvas.take(
-            _text_box(written.anchor, text_width_mm(written.text, height), height),
+            riquadro_della_scritta(written, height),
             None if written.leader_from is None else (written.leader_from, written.anchor),
         )
     labels: list[PlacedLabel] = []

@@ -34,7 +34,14 @@ from disegnatore_mep.graphics.frame import Rect, SheetFrame
 from disegnatore_mep.graphics.standard import CORPO_MINIMO_PT, GraphicStandard
 
 from .geometry import DiametroSullaTavola, NotaDellaLegenda, Point, RoutedTrunk, SheetGeometry
-from .labels import text_width_mm
+from .labels import (
+    DIAGONALS,
+    LEADER_MAX_STEPS,
+    LEADER_MIN_LENGTH_MM,
+    _crosses,
+    riquadro_della_scritta,
+    segments_cross,
+)
 from .legend import (
     INSET_MM,
     INTERLINEA_EM,
@@ -227,6 +234,28 @@ def _posizioni(rettilineo: _Rettilineo, larghezza: float) -> list[float]:
     return trovate
 
 
+def _punte(rettilineo: _Rettilineo) -> list[float]:
+    """Dove la freccia di un'etichetta staccata tocca il rettilineo: al centro,
+    poi a passi verso i capi, alternando, restando dentro di `RIENTRO_DAI_CAPI_MM`."""
+    primo = rettilineo.da + RIENTRO_DAI_CAPI_MM
+    ultimo = rettilineo.a - RIENTRO_DAI_CAPI_MM
+    if ultimo < primo - 1e-6:
+        return []
+    centro = (rettilineo.da + rettilineo.a) / 2
+    trovate = [centro]
+    passo = 1
+    while True:
+        aggiunte = 0
+        for candidato in (centro + passo * PASSO_LUNGO_LA_LINEA_MM, centro - passo * PASSO_LUNGO_LA_LINEA_MM):
+            if primo - 1e-6 <= candidato <= ultimo + 1e-6:
+                trovate.append(candidato)
+                aggiunte += 1
+        if not aggiunte:
+            break
+        passo += 1
+    return trovate
+
+
 def posa_i_diametri(
     tratti: Sequence[TrattoDelDiametro],
     foglio: SheetGeometry,
@@ -242,7 +271,13 @@ def posa_i_diametri(
 
     **Il corpo** (REL-008): prima quello delle scritte della tavola, 9 punti; dove
     non entra, il minimo del PO, 8 punti (I-159) — prima di mettere la scritta fra
-    le due corsie di una coppia, che la renderebbe ambigua."""
+    le due corsie di una coppia, che la renderebbe ambigua.
+
+    **Quando accanto alla linea non c'e' posto** (I-161, I-162): il DN di una
+    strada secondaria si sacrifica; quello di una strada principale va, per
+    ultima spiaggia, su un'etichetta staccata con freccia — la freccia sulla
+    linea, una diagonale a 45 gradi fino alla base della scritta, il richiamo
+    piu' corto che non attraversa niente."""
     corpo = standard.text_small_mm
     minimo = CORPO_MINIMO_PT * PT_MM
     tentativi = [(corpo, False)]
@@ -257,12 +292,19 @@ def posa_i_diametri(
     ]
     simboli.extend(ostacoli)
     testi: list[Box] = []
-    for label in foglio.labels:
-        larghezza = text_width_mm(label.text, corpo)
-        testi.append((label.anchor.x_mm, label.anchor.y_mm - corpo, label.anchor.x_mm + larghezza, label.anchor.y_mm))
+    testi.extend(riquadro_della_scritta(label, corpo) for label in foglio.labels)
     tutti = [item for route in foglio.routes for item in _rettilinei(route)]
+    linee: list[tuple[Point, Point]] = [
+        (Point(x_mm=item.da, y_mm=item.fisso), Point(x_mm=item.a, y_mm=item.fisso))
+        if item.orizzontale
+        else (Point(x_mm=item.fisso, y_mm=item.da), Point(x_mm=item.fisso, y_mm=item.a))
+        for item in tutti
+    ]
+    richiami: list[tuple[Point, Point]] = [
+        (label.leader_from, label.anchor) for label in foglio.labels if label.leader_from is not None
+    ]
 
-    def libero(box: Box, proprio: _Rettilineo) -> bool:
+    def libero(box: Box, proprio: _Rettilineo | None) -> bool:
         if not (
             box[0] >= limite[0] - 1e-6
             and box[1] >= limite[1] - 1e-6
@@ -283,6 +325,47 @@ def posa_i_diametri(
             if _overlap(largo, _allargato(linea, FRANCO_MM)):
                 return False
         return True
+
+    def staccata(
+        tratto: TrattoDelDiametro, testo: str, propri: list[_Rettilineo]
+    ) -> DiametroSullaTavola | None:
+        """L'etichetta staccata con freccia (I-162): il richiamo piu' corto — anello
+        per anello, dal centro del rettilineo piu' lungo verso i capi — il cui testo
+        e' libero e la cui diagonale non attraversa linee, simboli, scritte o altri
+        richiami."""
+        larghezza = larghezza_del_testo_mm(testo, corpo)
+        passo = standard.grid_mm
+        primo = -(-LEADER_MIN_LENGTH_MM / 2**0.5 // passo) * passo
+        for anello in range(LEADER_MAX_STEPS):
+            campata = primo + anello * passo
+            for rettilineo in propri:
+                for lungo in _punte(rettilineo):
+                    punta = (
+                        Point(x_mm=lungo, y_mm=rettilineo.fisso)
+                        if rettilineo.orizzontale
+                        else Point(x_mm=rettilineo.fisso, y_mm=lungo)
+                    )
+                    for verso in DIAGONALS:
+                        ancora = Point(
+                            x_mm=punta.x_mm + verso[0] * campata, y_mm=punta.y_mm + verso[1] * campata
+                        )
+                        box: Box = (ancora.x_mm, ancora.y_mm - corpo, ancora.x_mm + larghezza, ancora.y_mm)
+                        if not libero(box, None) or _crosses(punta, ancora, box):
+                            continue
+                        if any(_crosses(punta, ancora, altro) for altro in (*simboli, *testi)):
+                            continue
+                        diagonale = (punta, ancora)
+                        if any(segments_cross(diagonale, altra) for altra in (*linee, *richiami)):
+                            continue
+                        testi.append(box)
+                        richiami.append(diagonale)
+                        return DiametroSullaTavola(
+                            testo=testo,
+                            ancora=ancora,
+                            connection_ids=sorted(tratto.connection_ids),
+                            richiamo_da=punta,
+                        )
+        return None
 
     posati: list[DiametroSullaTavola] = []
     mancanti: list[TrattoDelDiametro] = []
@@ -325,6 +408,8 @@ def posa_i_diametri(
                     break
             if trovato is not None:
                 break
+        if trovato is None and tratto.strada_principale:
+            trovato = staccata(tratto, testo, propri)
         if trovato is None:
             mancanti.append(tratto)
         else:

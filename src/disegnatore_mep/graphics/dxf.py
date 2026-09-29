@@ -73,6 +73,7 @@ from .sheet import (
     _hoppable,
     _interrupted,
     flow_arrow_at,
+    freccia_del_richiamo,
     sheet_marks,
     stati_della_tavola,
 )
@@ -975,9 +976,10 @@ class _Tavola:
                     self.p(label.anchor.x_mm, label.anchor.y_mm),
                     dxfattribs={"layer": LAYER_SIGLE},
                 )
+                self.freccia_del_richiamo(label.leader_from, label.anchor, LAYER_SIGLE)
             self.testo(
                 label.text, label.anchor.x_mm, label.anchor.y_mm,
-                self.standard.text_small_mm, LAYER_SIGLE,
+                label.corpo_mm or self.standard.text_small_mm, LAYER_SIGLE,
             )
 
     def legenda(self) -> None:
@@ -1056,11 +1058,26 @@ class _Tavola:
                     self.standard.text_small_mm, LAYER_LEGENDA,
                 )
 
+    def freccia_del_richiamo(self, punta: Point, da: Point, layer: str) -> None:
+        """La freccia piena di un richiamo (I-162), dagli stessi tre vertici dell'SVG."""
+        a, b, c = freccia_del_richiamo(punta, da)
+        self.msp.add_solid(
+            [self.p(a.x_mm, a.y_mm), self.p(b.x_mm, b.y_mm), self.p(c.x_mm, c.y_mm)],
+            dxfattribs={"layer": layer},
+        )
+
     def diametri(self) -> None:
         """Il DN dei tratti (REL-007), dalla stessa ancora dell'SVG: sul verticale
         la scritta sale, e nello spazio modello — y in alto — e' una rotazione di
         novanta gradi in senso antiorario."""
         for etichetta in self.sheet.diametri:
+            if etichetta.richiamo_da is not None:
+                self.msp.add_line(
+                    self.p(etichetta.richiamo_da.x_mm, etichetta.richiamo_da.y_mm),
+                    self.p(etichetta.ancora.x_mm, etichetta.ancora.y_mm),
+                    dxfattribs={"layer": LAYER_DIAMETRI},
+                )
+                self.freccia_del_richiamo(etichetta.richiamo_da, etichetta.ancora, LAYER_DIAMETRI)
             self.testo(
                 etichetta.testo, etichetta.ancora.x_mm, etichetta.ancora.y_mm,
                 etichetta.corpo_mm or self.standard.text_small_mm, LAYER_DIAMETRI,

@@ -108,10 +108,13 @@ def run(*points: tuple[float, float]) -> RoutedTrunk:
 
 
 def label_box(item: PlacedLabel) -> Box:
-    width = text_width_mm(item.text, HEIGHT_MM)
+    """Il riquadro di una sigla al suo corpo: quello di sempre, o il minimo di 8
+    punti a cui scende dove a 9 non entra (REL-008)."""
+    corpo = item.corpo_mm if item.corpo_mm is not None else HEIGHT_MM
+    width = text_width_mm(item.text, corpo)
     return (
         item.anchor.x_mm,
-        item.anchor.y_mm - HEIGHT_MM,
+        item.anchor.y_mm - corpo,
         item.anchor.x_mm + width,
         item.anchor.y_mm,
     )

@@ -162,6 +162,17 @@ class PlacedLabel(StrictModel):
     anchor: Point
     leader_from: Point | None = None
     """Da dove parte la linea di richiamo, quando il testo sta fuori dal corpo."""
+    corpo_mm: FiniteFloat | None = Field(default=None, gt=0)
+    """Il corpo del testo, se non e' quello delle scritte della tavola: una sigla che
+    a 9 punti non trova posto accanto al pezzo scende a 8, il minimo del PO
+    (I-159, I-160). `None` e' il corpo di sempre, e non si scrive."""
+
+    @model_serializer(mode="wrap")
+    def _senza_il_corpo_di_sempre(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        dati: dict[str, Any] = handler(self)
+        if dati.get("corpo_mm") is None:
+            dati.pop("corpo_mm", None)
+        return dati
 
 
 class DiametroSullaTavola(StrictModel):
@@ -182,12 +193,19 @@ class DiametroSullaTavola(StrictModel):
     """Il corpo della scritta, se non e' quello delle scritte della tavola: il DN che
     a 9 punti non trova posto scende a 8, il minimo del PO (I-159). `None` e' il
     corpo di sempre, e non si scrive."""
+    richiamo_da: Point | None = None
+    """La punta della freccia, sulla linea del tratto, quando l'etichetta sta
+    staccata: e' l'ultima spiaggia per il DN di una strada principale che accanto
+    alla linea non entra (I-162). L'etichetta e' allora orizzontale, e il richiamo
+    e' una diagonale a 45 gradi dalla punta alla base della scritta (D-075), come
+    quello delle sigle. `None` — il caso di sempre — non si scrive."""
 
     @model_serializer(mode="wrap")
     def _senza_il_corpo_di_sempre(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
         dati: dict[str, Any] = handler(self)
-        if dati.get("corpo_mm") is None:
-            dati.pop("corpo_mm", None)
+        for campo in ("corpo_mm", "richiamo_da"):
+            if dati.get(campo) is None:
+                dati.pop(campo, None)
         return dati
 
 

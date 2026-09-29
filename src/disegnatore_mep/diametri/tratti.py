@@ -31,6 +31,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import ComponentDefinition
 from disegnatore_mep.graphics.symbol import PortFace
 from disegnatore_mep.layout.autostrade import tratte_del_progetto
+from disegnatore_mep.layout.hierarchy import Level, hierarchy_of
 from disegnatore_mep.layout.trunks import Trunk
 from disegnatore_mep.model.project import PortRef, ProjectModel
 
@@ -73,6 +74,13 @@ class TrattoDelDiametro:
     salto_termico_k: float | None = None
     perche_senza_dn: str | None = None
     """Perche' il tratto non porta il DN, detto per il foglio dei calcoli."""
+    strada_principale: bool = True
+    """Il tratto corre su un'autostrada del motore — dai generatori agli accumuli,
+    agli scambiatori e ai collettori, e fra loro. Gli altri sono le «strade
+    secondarie» del PO (I-161): acque fredde in ingresso, bipassi, rami alle
+    utenze. Il loro DN si sacrifica quando accanto alla linea non c'e' posto; quello
+    di una strada principale, come ultima spiaggia, va su un'etichetta staccata
+    con freccia (I-162)."""
 
     @property
     def connection_ids(self) -> frozenset[str]:
@@ -209,6 +217,7 @@ def tratti_del_diametro(
     richieste = frozenset(project.diametri.reti) if project.diametri is not None else frozenset()
     esistenti = frozenset(item.id for item in project.networks if item.esistente)
     legami = _passaggi(project, catalog, tratte)
+    livelli = hierarchy_of(project, catalog, tutte)
 
     tratti: list[TrattoDelDiametro] = []
     for catena in _catene(len(tratte), legami):
@@ -260,6 +269,9 @@ def tratti_del_diametro(
                 potenza_kw=potenza,
                 salto_termico_k=salto,
                 perche_senza_dn=perche,
+                strada_principale=any(
+                    livelli.get(tratte[indice].connection_ids) is Level.AUTOSTRADA for indice in catena
+                ),
             )
         )
     return tuple(tratti)

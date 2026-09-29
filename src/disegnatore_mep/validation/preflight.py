@@ -21,6 +21,7 @@ no (D-083: vietato inventare, e vietato far passare una taratura per una norma).
 
 import math
 from collections.abc import Iterable
+from dataclasses import dataclass
 
 from disegnatore_mep.catalog.errors import CatalogError
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -55,6 +56,7 @@ from disegnatore_mep.layout.geometry import (
 )
 from disegnatore_mep.layout.labels import (
     LINE_CLEARANCE_MM,
+    riquadro_della_scritta,
     segments_cross,
     text_width_mm,
 )
@@ -556,13 +558,8 @@ def u_turns(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue
 def _label_box(
     label: PlacedLabel, height_mm: float
 ) -> tuple[float, float, float, float]:
-    width = text_width_mm(label.text, height_mm)
-    return (
-        label.anchor.x_mm,
-        label.anchor.y_mm - height_mm,
-        label.anchor.x_mm + width,
-        label.anchor.y_mm,
-    )
+    """Il riquadro della sigla al suo corpo (REL-008): quello della posa."""
+    return riquadro_della_scritta(label, height_mm)
 
 
 def _boxes_overlap(
@@ -720,8 +717,26 @@ def omitted_tags(drawing: DrawingGeometry) -> list[ValidationIssue]:
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
         written = {label.id for label in sheet.labels if label.role == "tag"}
+        in_tabella = (
+            {riga.component_id for riga in sheet.tabella.righe} if sheet.tabella is not None else set()
+        )
         for symbol in sheet.symbols:
             if not symbol.tag or f"{symbol.component_id}-tag" in written:
+                continue
+            if symbol.component_id in in_tabella:
+                # **La sigla di un'apparecchiatura che sta in tabella non si puo'
+                # omettere** (I-160): il codice della tabella la nomina, e sul
+                # disegno deve esserci il pezzo che nomina.
+                findings.append(
+                    _finding(
+                        "TABLE_EQUIPMENT_TAG_OMITTED",
+                        IssueSeverity.BLOCKING,
+                        f"la sigla {symbol.tag} di {symbol.component_id} non e' scritta, e il "
+                        f"pezzo sta nella tabella delle apparecchiature: la sua sigla non si "
+                        f"omette (I-160)",
+                        [sheet.sheet_id, symbol.component_id],
+                    )
+                )
                 continue
             findings.append(
                 _finding(
@@ -788,6 +803,10 @@ def diameter_tags(
         for tratto in tratti:
             if not tratto.connection_ids <= disegnate or tratto.connection_ids in per_tratto:
                 continue
+            if not tratto.strada_principale:
+                # Il DN di una strada secondaria si sacrifica quando non c'e' posto
+                # (I-161): non e' un difetto della tavola.
+                continue
             capo, fine = tratto.capi
             findings.append(
                 _finding(
@@ -822,6 +841,13 @@ def _leader_enters(
     return low < high - TOLERANCE_MM
 
 
+@dataclass(frozen=True)
+class _Richiamato:
+    """Il nome di chi porta un richiamo che non e' una sigla: un DN staccato (I-162)."""
+
+    id: str
+
+
 def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
     """DRAW-003 — i richiami non si incrociano fra loro, non attraversano tubi
     e non passano sopra simboli.
@@ -837,6 +863,10 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
             (label, (label.leader_from, label.anchor))
             for label in sheet.labels
             if label.leader_from is not None
+        ] + [
+            (_Richiamato(id=f"DN {etichetta.testo}"), (etichetta.richiamo_da, etichetta.ancora))
+            for etichetta in sheet.diametri
+            if etichetta.richiamo_da is not None
         ]
         runs = [
             (route, (before, after))
@@ -909,11 +939,18 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
     """
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
-        for label in sheet.labels:
-            if label.leader_from is None:
-                continue
-            span_x = abs(label.anchor.x_mm - label.leader_from.x_mm)
-            span_y = abs(label.anchor.y_mm - label.leader_from.y_mm)
+        capi = [
+            (label.id, label.leader_from, label.anchor)
+            for label in sheet.labels
+            if label.leader_from is not None
+        ] + [
+            (f"DN {etichetta.testo}", etichetta.richiamo_da, etichetta.ancora)
+            for etichetta in sheet.diametri
+            if etichetta.richiamo_da is not None
+        ]
+        for label_id, da, a in capi:
+            span_x = abs(a.x_mm - da.x_mm)
+            span_y = abs(a.y_mm - da.y_mm)
             if span_x <= TOLERANCE_MM and span_y <= TOLERANCE_MM:
                 continue
             if abs(span_x - span_y) <= TOLERANCE_MM:
@@ -922,7 +959,7 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
             if span_x <= TOLERANCE_MM or span_y <= TOLERANCE_MM:
                 code = "ORTHOGONAL_LABEL_LEADER"
                 message = (
-                    f"il richiamo dell'etichetta {label.id} e' ortogonale "
+                    f"il richiamo dell'etichetta {label_id} e' ortogonale "
                     f"({angle:.0f} gradi): ha la giacitura di una tubazione e si legge "
                     f"come un altro tubo, mentre un richiamo si disegna obliquo a "
                     f"{LEADER_ANGLE_DEG} gradi (D2, D3, D-075)"
@@ -930,13 +967,13 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
             else:
                 code = "LEADER_NOT_AT_45_DEGREES"
                 message = (
-                    f"il richiamo dell'etichetta {label.id} unisce due capi a "
+                    f"il richiamo dell'etichetta {label_id} unisce due capi a "
                     f"{angle:.0f} gradi invece che a {LEADER_ANGLE_DEG}: fra quei due "
                     f"punti una sola diagonale non ci sta e chi disegna deve piegare ad "
                     f"angolo retto, cioe' disegnare un altro tubo (D2, D3, D-075)"
                 )
             findings.append(
-                _finding(code, IssueSeverity.BLOCKING, message, [sheet.sheet_id, label.id])
+                _finding(code, IssueSeverity.BLOCKING, message, [sheet.sheet_id, label_id])
             )
     return findings
 

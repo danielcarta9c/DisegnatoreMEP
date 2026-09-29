@@ -40,6 +40,38 @@ ARROW_LENGTH_MM = 2.0
 
 ARROW_HALF_WIDTH_MM = 1.0
 
+FRECCIA_DEL_RICHIAMO_MM = 2.0
+"""Lunghezza della freccia piena con cui un richiamo tocca il pezzo o la linea
+(I-162: «una label staccata con freccia»)."""
+
+MEZZA_FRECCIA_DEL_RICHIAMO_MM = 0.5
+"""Meta' della base della freccia del richiamo: stretta, come quella dell'esempio
+del PO, e piu' sottile della freccia di verso delle tubazioni."""
+
+
+def freccia_del_richiamo(punta: Point, da: Point) -> tuple[Point, Point, Point]:
+    """I tre vertici della freccia piena di un richiamo: la punta dove il richiamo
+    tocca, la base verso `da`, l'altro capo del richiamo."""
+    dx, dy = punta.x_mm - da.x_mm, punta.y_mm - da.y_mm
+    lunghezza = (dx * dx + dy * dy) ** 0.5
+    ux, uy = dx / lunghezza, dy / lunghezza
+    base = (punta.x_mm - ux * FRECCIA_DEL_RICHIAMO_MM, punta.y_mm - uy * FRECCIA_DEL_RICHIAMO_MM)
+    nx, ny = -uy * MEZZA_FRECCIA_DEL_RICHIAMO_MM, ux * MEZZA_FRECCIA_DEL_RICHIAMO_MM
+    return (
+        punta,
+        Point(x_mm=round(base[0] + nx, 4), y_mm=round(base[1] + ny, 4)),
+        Point(x_mm=round(base[0] - nx, 4), y_mm=round(base[1] - ny, 4)),
+    )
+
+
+def _freccia_svg(punta: Point, da: Point, classe: str) -> str:
+    a, b, c = freccia_del_richiamo(punta, da)
+    return (
+        f'<path class="{classe}" d="M{a.x_mm:g},{a.y_mm:g} L{b.x_mm:g},{b.y_mm:g} '
+        f'L{c.x_mm:g},{c.y_mm:g} Z" fill="black" stroke="none"/>'
+    )
+
+
 LEGEND_SWATCH_MM = 8.0
 """Lunghezza del tratto campione accanto a una voce di legenda."""
 
@@ -497,10 +529,12 @@ def render_sheet(
                 f'{label.anchor.x_mm:g},{label.anchor.y_mm:g}" fill="none" '
                 f'stroke="black" stroke-width="{standard.line_thin_mm:g}"/>'
             )
+            # La freccia sul pezzo (I-162): il richiamo dice di chi parla.
+            parts.append(_freccia_svg(label.leader_from, label.anchor, "leader-arrow"))
         parts.append(
             f'<text class="label" data-role="{_escape(label.role)}" '
             f'x="{label.anchor.x_mm:g}" y="{label.anchor.y_mm:g}" '
-            f'font-size="{standard.text_small_mm:g}" fill="black">'
+            f'font-size="{label.corpo_mm or standard.text_small_mm:g}" fill="black">'
             f"{_escape(label.text)}</text>"
         )
 
@@ -509,6 +543,16 @@ def render_sheet(
     # dal basso verso l'alto (I-152). Dichiara Arial come la tabella: e' il
     # carattere delle tavole, e il DXF lo scrive uguale.
     for etichetta in sheet.diametri:
+        if etichetta.richiamo_da is not None:
+            # L'etichetta staccata (I-162): la diagonale dalla linea alla base
+            # della scritta, e la freccia piena sulla linea.
+            parts.append(
+                f'<polyline class="diameter-leader" points="'
+                f"{etichetta.richiamo_da.x_mm:g},{etichetta.richiamo_da.y_mm:g} "
+                f'{etichetta.ancora.x_mm:g},{etichetta.ancora.y_mm:g}" fill="none" '
+                f'stroke="black" stroke-width="{standard.line_thin_mm:g}"/>'
+            )
+            parts.append(_freccia_svg(etichetta.richiamo_da, etichetta.ancora, "diameter-leader-arrow"))
         girata = (
             f' transform="rotate(-90 {etichetta.ancora.x_mm:g} {etichetta.ancora.y_mm:g})"'
             if etichetta.verticale
