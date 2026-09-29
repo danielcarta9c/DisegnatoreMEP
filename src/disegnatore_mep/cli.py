@@ -65,6 +65,26 @@ DXF_HELP = (
 )
 
 
+PDF_HELP = (
+    "scrive anche la tavola in PDF, accanto all'SVG, della misura esatta del foglio e "
+    "senza browser (REL-001): le scritte in Helvetica, che ha le larghezze di Arial"
+)
+
+
+def _scrivi_pdf(svg: Path, titolo: str) -> None:
+    from disegnatore_mep.graphics.pdf import scrivi_pdf
+
+    esito = scrivi_pdf(svg, titolo=titolo)
+    print(f"PDF scritto: {svg.with_suffix('.pdf')}")
+    for sostituzione in esito.sostituzioni:
+        # Un carattere che il PDF non sa scrivere non sparisce in silenzio: si dice
+        # quale, e in quale scritta, perche' il progettista lo corregga o lo accetti.
+        print(
+            f"Nel PDF il carattere {sostituzione.carattere!r} non c'e': in "
+            f"{sostituzione.scritta!r} e' scritto «?»"
+        )
+
+
 def _manca_ezdxf() -> bool:
     """Vero, e lo dice, se il DXF e' chiesto ma ezdxf non c'e': si sa prima di
     disegnare, non dopo aver scritto meta' dei file."""
@@ -169,6 +189,7 @@ def build_parser() -> argparse.ArgumentParser:
     draw.add_argument("--geometry", type=Path)
     draw.add_argument("--cartiglio", type=Path, help=CARTIGLIO_HELP)
     draw.add_argument("--dxf", action="store_true", help=DXF_HELP)
+    draw.add_argument("--pdf", action="store_true", help=PDF_HELP)
     # Le tabelle dei nomi servono solo alla modalita' verifica, che stampa gli
     # indirizzi dei nodi: senza indirizzi la tavola e' quella di consegna e le
     # tabelle non le legge nessuno.
@@ -201,6 +222,7 @@ def build_parser() -> argparse.ArgumentParser:
     piano.add_argument("--geometry", type=Path)
     piano.add_argument("--cartiglio", type=Path, help=CARTIGLIO_HELP)
     piano.add_argument("--dxf", action="store_true", help=DXF_HELP)
+    piano.add_argument("--pdf", action="store_true", help=PDF_HELP)
     piano.add_argument(
         "--verifica",
         action="store_true",
@@ -410,6 +432,8 @@ def _draw(args: argparse.Namespace) -> int:
         target = args.out / f"{project.metadata.project_id}-{sheet.sheet_id}.svg"
         tavola = _cartiglio(project, cartiglio, sheet, frame)
         target.write_text(render_sheet(sheet, frame, symbols, tavola), encoding="utf-8")
+        if args.pdf:
+            _scrivi_pdf(target, sheet.title)
         if args.dxf:
             _scrivi_dxf(sheet, frame, symbols, target, tavola)
     if args.geometry:
@@ -492,6 +516,8 @@ def _piano(args: argparse.Namespace) -> int:
             render_sheet(foglio, esito.frame, simboli, tavola), encoding="utf-8"
         )
         print(f"\nTavola scritta: {target}")
+        if args.pdf:
+            _scrivi_pdf(target, foglio.title)
         if args.dxf:
             _scrivi_dxf(foglio, esito.frame, simboli, target, tavola)
     if args.geometry:
