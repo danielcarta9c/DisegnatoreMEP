@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-29 (`REL-007`, **i diametri delle tubazioni**, fuso, tavole **approvate dal PO** — I-158, D-193; prima la tabella delle apparecchiature, `REL-006`, I-149, il DXF, `REL-004`, I-140, i simboli nuovi, `REL-003`, I-136, e il cartiglio, `REL-002`, I-132; **attivo `REL-008`, le scritte a 9 punti** — I-159)
+**Aggiornato:** 2026-09-29 (`REL-008`, **le scritte a 9 punti**, fuso, tavole **approvate dal PO** — I-164, D-194; attivo `REL-001`, l'orchestratore della skill — I-167; prima `REL-007`, **i diametri delle tubazioni**, fuso — I-158, D-193; prima la tabella delle apparecchiature, `REL-006`, I-149, il DXF, `REL-004`, I-140, i simboli nuovi, `REL-003`, I-136, e il cartiglio, `REL-002`, I-132; **attivo `REL-008`, le scritte a 9 punti** — I-159)
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
@@ -29,13 +29,16 @@ calcolo è **facoltativo e solo dove chiesto**: il grafo porta la richiesta (`di
 **esistenti** e il salto termico (`delta_t_k`). Rapporto `docs/collaudi/REL-007/RAPPORTO.md`. Suite: le
 stesse 46 rosse di `main`.
 
-**Il pacchetto attivo è `REL-008`, le scritte della tavola più grandi** (I-159): il PO le legge male a
-5 punti — il corpo di prima, 1,8 mm — e le vuole «almeno 8 o meglio 9». **Consegnato il 29 settembre**:
-tutte le scritte del disegno e della tabella a 9 punti, in Arial; la sigla di un pezzo in tabella non si
-omette, il DN di una strada secondaria si sacrifica, quello di una principale va su un'etichetta staccata
-con freccia, e il richiamo ha la spalla del suo esempio (I-160 … I-163, D-194 proposta); fra scritte di
-pezzi diversi, un corpo lungo la riga e mezzo fra le righe. Si fonde dopo il sì del PO sulle tavole. Poi, per assunzione
-della sessione, il PDF senza browser, `REL-001` la skill, `REL-005` la release.
+**Il pacchetto attivo è `REL-001`, l'orchestratore della skill** (I-167): il `SKILL.md` che cuce i cinque
+pezzi, la cartella installabile, il PDF senza browser, la prova in camera pulita; con la guida di Anthropic
+«Skill authoring best practices» e la skill `skill-creator`. Il motore e i suoi controlli sono pezzi della
+skill, e la skill ne consegna i rilievi (I-166). Resta poi `REL-005`, il pacchetto della release.
+
+**`REL-008`, le scritte della tavola a 9 punti, è fuso** (I-164): tutte le scritte del disegno e della
+tabella a 9 punti, 8 il minimo, in Arial; la sigla di un pezzo in tabella non si omette, il DN di una strada
+secondaria si sacrifica, quello di una principale va su un'etichetta staccata con freccia e spalla (I-160 …
+I-163); fra scritte di pezzi diversi un corpo lungo la riga e mezzo fra le righe, con il loro rilievo nel
+preflight. **D-194 approvata**; la suite ha le stesse 46 rosse di `main`.
 
 ## Dove si era — 28 settembre 2026, `REL-006`
 

@@ -2,7 +2,12 @@
 
 **Pacchetto:** `REL-008` (`ACTIVE_WORK_PACKAGE.md`; I-159) · **Ramo:** `claude/pack-attivo-rel-007-0uotnp`,
 ripartito da `main` · **Base:** `main` a `7f2bee8` (PR #64, `REL-007`) · **Avviato dal PO:** il 29 settembre
-2026 · **Le regole:** **D-194**, proposta, dalle disposizioni del PO I-159 … I-163
+2026 · **Le regole:** **D-194**, dalle disposizioni del PO I-159 … I-163
+
+> **Esito — 29 settembre 2026: approvato dal PO** (I-164): «le tavole vanno bene», il richiamo va bene, le
+> distanze vanno bene; la legenda resta com'è (I-165). D-194 è approvata per intero. Prima di fondere, alla
+> domanda del PO su dove stanno nella skill il motore che tagga e i suoi controlli (I-166), le quattro regole
+> delle distanze hanno avuto il loro rilievo nel preflight: §3.7.
 
 > **Le tavole, per prime**
 >
@@ -64,7 +69,9 @@ ripartito da `main` · **Base:** `main` a `7f2bee8` (PR #64, `REL-007`) · **Avv
 - **Le distanze fra le scritte** (§3.5): `layout/labels.py` — `riquadro_di_rispetto` (`STACCO_SULLA_RIGA_EM`,
   `STACCO_FRA_LE_RIGHE_EM`), che vale per sigle, dati e DN, e `vicina_al_suo`; `layout/diametri.py` —
   `FRANCO_DELLA_STACCATA_EM` e le frecce del flusso, lette dove le disegnano SVG e DXF.
-- **Le prove**: `tests/scritte/` (48), e le prove dei diametri, delle etichette e del DXF alla regola nuova.
+- **Il rilievo delle distanze** (§3.7): `validation/preflight.py`, `text_spacing`, fra le misure dichiarate.
+- **Le prove**: `tests/scritte/` (54), le prove del preflight per ciascun codice nuovo, e le prove dei diametri,
+  delle etichette e del DXF alla regola nuova.
 
 ## 3. Che cosa ho trovato, e va detto
 
@@ -135,6 +142,28 @@ la proposta è **mezzo passo di griglia in più (1,25 mm) per le voci di due rig
 due voci a 2,9 mm. Provato in memoria: la legenda entra ancora su tutte le tavole, e sotto la nota «Øi» della
 tavola 4, la A3 più piena, restano 8,9 mm di fascia invece di 20,2; su una A3 più piena di questa la legenda
 non entrerebbe, ed è un errore che ferma la tavola.
+
+### 3.7 Il motore che tagga e i suoi controlli sono pezzi della skill (I-166)
+
+Il PO, approvando: «tutto quello che hai fatto taggare e verificare i tag deve essere parte della skill che
+faremo. […] Non è che i controlli li fai tu in questa sessione e poi spariscono». Dove sta ciascuna cosa,
+nell'architettura (`docs/ARCHITETTURA-DEL-PIANO.md`, §1 e §3):
+
+| che cosa | dove | pezzo della skill |
+|---|---|---|
+| **la posa delle scritte** — sigle e dati accanto al pezzo, 9 poi 8 punti, il richiamo; il DN in linea, staccato o sacrificato; le distanze | `layout/labels.py`, `layout/diametri.py`, chiamati da `piano/esecutore.py` | **4, Eseguire** — deterministico |
+| **i controlli sulla tavola finita** — la sigla in tabella omessa (bloccante), il DN mancante su una strada principale, i richiami che incrociano o non sono a 45 gradi, e ora le distanze | `validation/preflight.py` | l'uscita del **4**, e la metà deterministica del **5**, Rivedere: gli avvisi entrano nel punteggio del revisore |
+| **le prove** | `tests/` | sorvegliano il codice, non le tavole del progettista |
+| **il collaudo** | `docs/collaudi/REL-008/collaudo.py` | **nessuno**: è lo strumento della sessione per mostrare le tavole al PO |
+
+**Il buco, trovato rispondendo.** Le quattro regole di §3.5 vivevano nella posa, nelle prove e nel collaudo, ma
+**non nel preflight**: su un impianto nuovo la skill le avrebbe rispettate senza poterlo dire. È l'avvertenza di
+§7 dell'architettura — «una regola che vive solo nella posa del motore è una regola che il piano può rompere:
+scrivi il rilievo, non solo il vincolo» (D-158). Adesso ce l'hanno: `text_spacing`, con `TEXTS_READ_AS_ONE`,
+`TAG_NEARER_ANOTHER_PIECE`, `DETACHED_DIAMETER_CROWDED` e `LEADER_ON_A_FLOW_ARROW`, avvisi come ogni rilievo sui
+testi. Sulle geometrie di prima delle correzioni trova **i quattordici difetti** (tavole 1, 3, 4 e 6); sulle
+sette tavole approvate **nessuno**, e le tavole non cambiano. Per `REL-001` resta la seconda metà di I-166: la
+skill esegue il motore e il preflight su ogni tavola e ne consegna i rilievi.
 
 ## 4. Le misure
 
@@ -323,3 +352,6 @@ cartiglio, il PDF.
 3. **Le distanze fra le scritte** (§3.5): un corpo lungo la riga, mezzo fra le righe, la sigla più vicina al
    suo pezzo che agli altri. Vanno bene, o le vuoi più larghe o più strette?
 4. **La legenda** (§3.6): le voci di due righe con 1,25 mm in più di passo, o com'è?
+
+**Le risposte del PO, il 29 settembre** (I-164, I-165): «1. le tavole vanno bene. 2. il riciamo va bene 3. le
+distanze vanno bene. 4. lascia cosi' va bene come sta. apri PR e fondi.»
