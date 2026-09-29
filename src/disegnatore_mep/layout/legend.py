@@ -53,20 +53,40 @@ corpo piu' piccolo."""
 def a_capo(testo: str, larghezza_mm_massima: float, corpo_mm: float) -> tuple[str, ...]:
     """Le righe di un testo che va a capo fra le parole senza superare la
     larghezza data, misurata con le larghezze di Arial — il carattere delle
-    scritte (REL-008). Una parola da sola piu' larga resta intera su una riga."""
-    corpo_pt = corpo_mm / PT_MM
-    righe: list[str] = []
-    corrente = ""
+    scritte (REL-008).
+
+    **Il minor numero di righe, e fra questi le righe piu' uguali**: «Valvola
+    deviatrice / a tre vie», non «Valvola deviatrice a tre / vie», che e' quello
+    che darebbe riempire ogni riga fin dove entra. Una parola da sola piu' larga
+    resta intera su una riga. La lineetta resta con la parola che la precede: una
+    riga non comincia con «—»."""
+    parole: list[str] = []
     for parola in testo.split():
-        prova = f"{corrente} {parola}" if corrente else parola
-        if corrente and larghezza_mm(prova, corpo_pt, False) > larghezza_mm_massima:
-            righe.append(corrente)
-            corrente = parola
+        if parola in ("—", "–") and parole:
+            parole[-1] = f"{parole[-1]} {parola}"
         else:
-            corrente = prova
-    if corrente:
-        righe.append(corrente)
-    return tuple(righe)
+            parole.append(parola)
+    if not parole:
+        return ()
+    corpo_pt = corpo_mm / PT_MM
+
+    def larga(da: int, a: int) -> float:
+        return larghezza_mm(" ".join(parole[da:a]), corpo_pt, False)
+
+    # migliore[i]: (righe, riga piu' larga, tagli) per le parole da i alla fine.
+    migliore: dict[int, tuple[int, float, tuple[int, ...]]] = {len(parole): (0, 0.0, ())}
+    for da in range(len(parole) - 1, -1, -1):
+        scelte = []
+        for a in range(da + 1, len(parole) + 1):
+            larghezza = larga(da, a)
+            if larghezza > larghezza_mm_massima + 1e-9 and a > da + 1:
+                break
+            righe, piu_larga, tagli = migliore[a]
+            scelte.append((righe + 1, round(max(piu_larga, larghezza), 6), (a, *tagli)))
+        migliore[da] = min(scelte)
+    _, _, tagli = migliore[0]
+    inizi = (0, *tagli[:-1])
+    return tuple(" ".join(parole[da:a]) for da, a in zip(inizi, tagli, strict=True))
 
 
 def larghezza_del_nome_mm(frame: SheetFrame) -> float:
