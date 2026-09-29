@@ -426,3 +426,19 @@ def test_la_freccia_del_richiamo_e_stretta_e_punta_sul_pezzo() -> None:
     assert math.hypot(base[0] - 10, base[1] - 10) == pytest.approx(FRECCIA_DEL_RICHIAMO_MM, abs=1e-3)
     assert math.hypot(b.x_mm - c.x_mm, b.y_mm - c.y_mm) == pytest.approx(2 * MEZZA_FRECCIA_DEL_RICHIAMO_MM, abs=1e-3)
     assert base[0] > 10 and base[1] < 10, "la base sta verso l'altro capo del richiamo"
+
+
+@pytest.mark.parametrize("impianto", IMPIANTI)
+def test_il_preflight_non_ha_niente_da_dire_sulle_distanze_fra_le_scritte(
+    impianto: str, tavola: Callable[[str], Tavola]
+) -> None:
+    """Le regole di D-194 punto 9 hanno il loro rilievo nel preflight (I-166, D-158):
+    sulle tavole approvate non scatta. Che scatti sui difetti, lo dicono le prove del
+    preflight (`tests/validation/test_preflight.py`)."""
+    codici = {r.code for r in tavola(impianto).esito.rilievi}
+    assert not codici & {
+        "TEXTS_READ_AS_ONE",
+        "TAG_NEARER_ANOTHER_PIECE",
+        "DETACHED_DIAMETER_CROWDED",
+        "LEADER_ON_A_FLOW_ARROW",
+    }

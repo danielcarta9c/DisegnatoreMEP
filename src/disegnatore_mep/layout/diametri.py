@@ -290,10 +290,11 @@ def _rispetta_le_scritte(box: Box, orizzontale: bool, testi: Sequence[Box], corp
     return not any(_overlap(rispetto, altro) for altro in testi)
 
 
-def _riquadri_delle_frecce(foglio: SheetGeometry) -> list[Box]:
+def riquadri_delle_frecce(foglio: SheetGeometry) -> list[Box]:
     """Le frecce di verso delle tubazioni, dove le disegnano SVG e DXF: la punta
     di un richiamo non ci cade sopra. Il centro del rettilineo, da cui le punte
-    cominciano, e' spesso proprio il posto della freccia."""
+    cominciano, e' spesso proprio il posto della freccia. La leggono la posa e il
+    preflight (`LEADER_ON_A_FLOW_ARROW`)."""
     # Qui e non in testa: `graphics.sheet` importa `layout.addresses`, che
     # importa questo modulo.
     from disegnatore_mep.graphics.sheet import ARROW_HALF_WIDTH_MM, ARROW_LENGTH_MM, flow_arrow_at
@@ -361,7 +362,7 @@ def posa_i_diametri(
     richiami: list[tuple[Point, Point]] = [
         segmento for label in foglio.labels for segmento in segmenti_del_richiamo(label)
     ]
-    frecce = [_allargato(freccia, FRANCO_MM) for freccia in _riquadri_delle_frecce(foglio)]
+    frecce = [_allargato(freccia, FRANCO_MM) for freccia in riquadri_delle_frecce(foglio)]
 
     def libero(box: Box, proprio: _Rettilineo | None) -> bool:
         if not (
@@ -551,9 +552,12 @@ def nota_della_legenda(foglio: SheetGeometry, frame: SheetFrame) -> NotaDellaLeg
 
 __all__ = [
     "CAMPIONE_DELLA_LEGENDA",
+    "FRANCO_DELLA_STACCATA_EM",
+    "FRANCO_MM",
     "STACCO_DALLA_LINEA_MM",
     "TESTO_DELLA_LEGENDA",
     "nota_della_legenda",
     "posa_i_diametri",
+    "riquadri_delle_frecce",
     "riquadro_del_diametro",
 ]
