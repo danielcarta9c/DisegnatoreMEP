@@ -13,6 +13,7 @@ cartella non si copia e non si ritocca a mano, e le prove qui lo tengono su.
 """
 
 import importlib.util
+import os
 import subprocess
 import sys
 import zipfile
@@ -116,8 +117,15 @@ def test_la_skill_costruita_disegna_da_sola(costruita: tuple[Path, Path], tmp_pa
     skill, _ = costruita
     comando = [sys.executable, str(skill / "scripts" / "mep.py")]
 
+    # La prova non installa niente nell'ambiente di chi la lancia: le librerie facoltative
+    # che mancano restano mancanti, e il comando lavora senza.
+    ambiente_della_prova = {**os.environ, "MEP_SENZA_INSTALLAZIONI": "1"}
+
     def esegui(*argomenti: str) -> subprocess.CompletedProcess[str]:
-        return subprocess.run([*comando, *argomenti], capture_output=True, text=True, cwd=skill, timeout=300)
+        return subprocess.run(
+            [*comando, *argomenti], capture_output=True, text=True, cwd=skill, timeout=300,
+            env=ambiente_della_prova,
+        )
 
     ambiente = esegui("ambiente")
     assert ambiente.returncode == 0, ambiente.stderr

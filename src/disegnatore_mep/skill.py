@@ -26,6 +26,7 @@ import argparse
 import importlib
 import importlib.util
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -52,8 +53,9 @@ from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import ApprovalStatus, IssueSeverity
-from disegnatore_mep.piano.esecutore import esegui_piano
-from disegnatore_mep.piano.formato import carica_piano
+from disegnatore_mep.piano.esecutore import EsitoDelPiano, esegui_piano
+from disegnatore_mep.piano.formato import PianoDiComposizione, carica_piano
+from disegnatore_mep.piano.revisore import misura
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.errors import RuleError
 from disegnatore_mep.rules.proposal import RuleGap
@@ -187,7 +189,12 @@ def _completa(
     completo, proposte, lacune = saturate(modello, dati.catalogo, regole)
     rapporto = build_report(proposte, lacune, dati.naming)
 
-    print(f"Le regole hanno aggiunto {len(proposte)} pezzi.")
+    in_piu = len(completo.components) - len(modello.components)
+    print(
+        f"Le regole hanno aggiunto {len(proposte)} accessori; con i raccordi e i confini che li "
+        f"reggono, il grafo passa da {len(modello.components)} a {len(completo.components)} pezzi "
+        f"(+{in_piu})."
+    )
     for categoria, etichetta in CATEGORY_LABELS.items():
         voci = rapporto.of(categoria)
         if not voci:
@@ -205,7 +212,9 @@ def _completa(
                 print(f"      {posto}")
             print(f"    perche': {voce.rationale}")
             print(f"    fonte: {voce.source} · regola: {regola}")
-    if rapporto.open_points:
+    if not rapporto.open_points:
+        print("\nPunti aperti: nessuno.")
+    else:
         # Un accessorio che servirebbe e che non si puo' proporre e' una domanda
         # al progettista: si stampa sempre, anche quando il resto e' a posto.
         print("\nPunti aperti — accessori che servirebbero e che non si possono proporre")
@@ -307,6 +316,37 @@ def _ha_ezdxf() -> bool:
     return True
 
 
+def _capi_delle_tratte(errore: str, esito: EsitoDelPiano, piano: PianoDiComposizione) -> list[str]:
+    """Per ogni tratta che il messaggio dell'instradamento nomina, i due pezzi che unisce
+    e dove il piano li ha messi: il messaggio dice la tratta, chi compone vuole i pezzi."""
+    dove = {item.component_id: item.origin for item in esito.posa}
+    righe = []
+    for tratta in esito.partizione.trunks:
+        if not any(re.search(rf"(?<![\w-]){re.escape(c)}(?![\w-])", errore) for c in tratta.connection_ids):
+            continue
+        capi = []
+        for ref in (tratta.start, tratta.end):
+            posto = dove.get(ref.component_id)
+            nel_piano = "nel piano" if ref.component_id in piano.pezzi else "posato dal motore"
+            capi.append(
+                f"{ref.component_id}.{ref.port_id}"
+                + (f" ({nel_piano} a {posto.x_mm:g}, {posto.y_mm:g})" if posto else "")
+            )
+        righe.append(f"la tratta {', '.join(tratta.connection_ids)} va da {capi[0]} a {capi[1]}")
+    return righe
+
+
+def _ingombro_della_posa(esito: EsitoDelPiano) -> tuple[float, float]:
+    """Larghezza e altezza della posa, in millimetri: dal primo pezzo all'ultimo."""
+    if not esito.posa:
+        return 0.0, 0.0
+    x0 = min(p.origin.x_mm for p in esito.posa)
+    y0 = min(p.origin.y_mm for p in esito.posa)
+    x1 = max(p.origin.x_mm + p.width_mm for p in esito.posa)
+    y1 = max(p.origin.y_mm + p.height_mm for p in esito.posa)
+    return x1 - x0, y1 - y0
+
+
 def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
     """Esegue il piano, misura la tavola e la scrive, con i rilievi accanto."""
     dati = _Dati(cartelle)
@@ -319,8 +359,25 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
         print("Girati dalla deduzione:")
         for riga in esito.girati:
             print(f"  - {riga}")
+    area = esito.frame.drawing_rect_mm
+    larghezza, altezza = _ingombro_della_posa(esito)
+    print(
+        f"Area del disegno dell'{piano.formato}: {area.width_mm:g} x {area.height_mm:g} mm, "
+        f"con la tabella delle apparecchiature in alto a sinistra; la posa ne occupa "
+        f"{larghezza:g} x {altezza:g}."
+    )
     if esito.disegno is None:
         print(f"\nIl piano non si instrada: {esito.errore}")
+        for riga in _capi_delle_tratte(esito.errore or "", esito, piano):
+            print(f"  - {riga}")
+        if larghezza > area.width_mm or altezza > area.height_mm:
+            # Il motore porta il disegno al centro dell'area: se non ci sta, le tratte che
+            # escono non trovano strada, e il messaggio accusa una tratta innocente.
+            print(
+                f"  - Probabile causa: la posa ({larghezza:g} x {altezza:g} mm) non sta nell'area "
+                f"dell'{piano.formato} ({area.width_mm:g} x {area.height_mm:g}). Stringi la posa o prendi "
+                "il formato successivo, prima di spostare la tratta."
+            )
         print("\nPosa applicata (i pezzi del piano sono marcati con *):")
         for posato in sorted(esito.posa, key=lambda i: (i.origin.x_mm, i.origin.y_mm)):
             segno = "*" if posato.component_id in piano.pezzi else " "
@@ -391,9 +448,11 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
             + ")"
         )
     codici = Counter(item.code for item in [*esito.rilievi, *regole])
+    punti = misura(esito, [*esito.rilievi, *regole])
     print(
         f"\nFormato {piano.formato} · tratte {sum(len(f.routes) for f in esito.disegno.sheets)} · "
         f"tratte cedute {len(esito.cedute)} · rilievi bloccanti {len(esito.bloccanti)} · "
+        f"pieghe {punti.pieghe} · sormonti {punti.incroci} · "
         f"avvisi e regole: {', '.join(f'{c} x{n}' for c, n in sorted(codici.items())) or 'nessuno'}"
     )
     if esito.bloccanti or esito.cedute:
@@ -403,6 +462,30 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
 
 
 # --- catalogo, anteprima, ambiente ---------------------------------------------
+
+
+def _pezzi(args: argparse.Namespace, cartelle: Cartelle) -> int:
+    """I pezzi del grafo completo, divisi come li divide Comporre: quelli che il piano posa,
+    con ingombro, rotazioni ammesse e porte; e quelli in linea, che posa il motore."""
+    dati = _Dati(cartelle)
+    modello = load_project(args.grafo)
+    da_posare: list[str] = []
+    in_linea: list[str] = []
+    for pezzo in modello.components:
+        voce = dati.catalogo.get(pezzo.definition_id)
+        simbolo = dati.simboli.get(voce.symbol_id).manifest
+        porte = ", ".join(f"{p.id} {p.face} ({p.x_mm:g}, {p.y_mm:g})" for p in simbolo.ports)
+        riga = (
+            f"{pezzo.id} — {voce.name} · simbolo {simbolo.id} {simbolo.width_mm:g} x "
+            f"{simbolo.height_mm:g} · rotazioni {', '.join(str(r) for r in simbolo.allowed_rotations_deg)}"
+            f"\n    porte: {porte}"
+        )
+        (in_linea if simbolo.inline_gap_mm is not None else da_posare).append(riga)
+    print(f"Da posare nel piano ({len(da_posare)}):")
+    print("\n".join(f"  {r}" for r in da_posare))
+    print(f"\nIn linea, li posa il motore sulla loro tratta ({len(in_linea)}): non vanno nel piano.")
+    print("\n".join(f"  {r.splitlines()[0]}" for r in in_linea))
+    return 0
 
 
 def _riga_del_catalogo(voce: dict[str, object]) -> str:
@@ -470,21 +553,35 @@ def _png(larghezza: int, altezza: int, righe: Sequence[bytes]) -> bytes:
     )
 
 
-def anteprima(sorgente: Path, destinazione: Path, dpi: int) -> str | None:
+def anteprima(
+    sorgente: Path, destinazione: Path, dpi: int, zona: tuple[float, float, float, float] | None = None
+) -> str | None:
     """La tavola come immagine PNG, con quello che l'ambiente ha. Dice con che cosa
-    l'ha fatta, o `None` se non ha niente con cui farla."""
+    l'ha fatta, o `None` se non ha niente con cui farla.
+
+    `zona` e' un riquadro in millimetri del foglio — da sinistra, dall'alto —: un A2 intero
+    a 110 dpi non fa leggere una valvola, un suo pezzo a 300 si'."""
     pdf = sorgente if sorgente.suffix == ".pdf" else sorgente.with_suffix(".pdf")
     if not pdf.exists():
         scrivi_pdf(sorgente, pdf)
+    punti = None if zona is None else tuple(v * 72 / 25.4 for v in zona)
     try:
         fitz = importlib.import_module("fitz")
-        fitz.open(pdf)[0].get_pixmap(dpi=dpi).save(destinazione)
+        pagina = fitz.open(pdf)[0]
+        ritaglio = fitz.Rect(*punti) if punti else None
+        pagina.get_pixmap(dpi=dpi, clip=ritaglio).save(destinazione)
         return "PyMuPDF"
     except ImportError:
         pass
     try:
         pdfium = importlib.import_module("pypdfium2")
-        immagine = pdfium.PdfDocument(str(pdf))[0].render(scale=dpi / 72, rev_byteorder=True)
+        pagina = pdfium.PdfDocument(str(pdf))[0]
+        taglio = (0.0, 0.0, 0.0, 0.0)
+        if punti:
+            larghezza, altezza = pagina.get_size()
+            # pypdfium2 vuole quanto togliere da sinistra, sotto, destra e sopra.
+            taglio = (punti[0], altezza - punti[3], larghezza - punti[2], punti[1])
+        immagine = pagina.render(scale=dpi / 72, rev_byteorder=True, crop=taglio)
         dati = bytes(immagine.buffer)
         passo, riga = immagine.stride, immagine.width * immagine.n_channels
         if immagine.n_channels != 3:
@@ -499,8 +596,12 @@ def anteprima(sorgente: Path, destinazione: Path, dpi: int) -> str | None:
     programma = shutil.which("pdftoppm")
     if programma:
         radice = destinazione.with_suffix("")
+        riquadro: list[str] = []
+        if punti:
+            px = [round(v * dpi / 72) for v in punti]
+            riquadro = ["-x", str(px[0]), "-y", str(px[1]), "-W", str(px[2] - px[0]), "-H", str(px[3] - px[1])]
         subprocess.run(
-            [programma, "-png", "-r", str(dpi), "-singlefile", str(pdf), str(radice)],
+            [programma, "-png", "-r", str(dpi), "-singlefile", *riquadro, str(pdf), str(radice)],
             check=True,
             capture_output=True,
         )
@@ -509,8 +610,14 @@ def anteprima(sorgente: Path, destinazione: Path, dpi: int) -> str | None:
 
 
 def _anteprima(args: argparse.Namespace, cartelle: Cartelle) -> int:
-    destinazione = args.out or args.tavola.with_suffix(".png")
-    con = anteprima(args.tavola, destinazione, args.dpi)
+    zona = None
+    if args.zona:
+        valori = [float(v) for v in args.zona.split(",")]
+        if len(valori) != 4 or valori[0] >= valori[2] or valori[1] >= valori[3]:
+            raise ValueError(f"--zona vuole x0,y0,x1,y1 in millimetri, con x0 < x1 e y0 < y1: {args.zona}")
+        zona = (valori[0], valori[1], valori[2], valori[3])
+    destinazione = args.out or args.tavola.with_suffix(".png" if zona is None else ".zona.png")
+    con = anteprima(args.tavola, destinazione, args.dpi, zona)
     if con is None:
         print(
             "Nessun programma per fare della tavola un'immagine (ne' PyMuPDF, ne' "
@@ -578,6 +685,9 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
     catalogo.add_argument("--mestiere", help="solo le voci che fanno questo mestiere")
     catalogo.add_argument("--cerca", help="solo le voci con questa parola nell'id o nel nome")
 
+    pezzi = comandi.add_parser("pezzi", help="i pezzi da posare nel piano, e quelli che posa il motore")
+    pezzi.add_argument("grafo", type=Path, help="il grafo completo")
+
     valida = comandi.add_parser("valida", help="il grafo di Capire carica e regge?")
     valida.add_argument("grafo", type=Path)
 
@@ -601,6 +711,9 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
     vista.add_argument("tavola", type=Path, help="il PDF o l'SVG della tavola")
     vista.add_argument("--out", type=Path)
     vista.add_argument("--dpi", type=int, default=110)
+    vista.add_argument(
+        "--zona", help="solo un riquadro del foglio, x0,y0,x1,y1 in millimetri dall'alto a sinistra"
+    )
 
     finale = comandi.add_parser("consegna", help="copia PDF, DXF, SVG e rilievi nella cartella data")
     finale.add_argument("cartella", type=Path)
@@ -622,6 +735,7 @@ def main(
         comando: dict[str, Callable[[argparse.Namespace, Cartelle], int]] = {
             "ambiente": _ambiente,
             "catalogo": _catalogo,
+            "pezzi": _pezzi,
             "valida": _valida,
             "disegna": _disegna,
             "anteprima": _anteprima,

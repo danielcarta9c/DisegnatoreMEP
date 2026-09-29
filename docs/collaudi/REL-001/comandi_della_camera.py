@@ -64,9 +64,13 @@ def main() -> None:
         numero += 1
         esito = risultati.get(str(chiamata["id"]), {"testo": "", "errore": False})
         testo = str(esito["testo"]).strip()
-        codice = re.search(r"Exit code (\d+)", testo)
+        # Gli agenti spesso stampano da se' il codice (`; echo EXIT=$?`): se c'e', vale quello.
+        codice = re.search(r"EXIT[=: ]+(\d+)", testo) or re.search(r"Exit code (\d+)", testo)
         uscita = codice.group(1) if codice else ("?" if esito["errore"] else "0")
-        righe = [r for r in testo.splitlines() if r.strip() and not r.startswith("Exit code")]
+        righe = [
+            r for r in testo.splitlines()
+            if r.strip() and not r.startswith("Exit code") and not re.fullmatch(r"\s*EXIT[=: ]+\d+\s*", r)
+        ]
         sottocomando = re.search(r"mep\.py\s+(\w+)", str(comando))
         print(
             f"{numero}. `{sottocomando.group(1) if sottocomando else '?'}` — uscita {uscita} — "

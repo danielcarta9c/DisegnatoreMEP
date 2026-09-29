@@ -16,9 +16,11 @@ progettista, e che I-166 vuole della skill e non della sessione:
 import importlib.util
 import json
 import re
+import sys
 import zlib
 from collections.abc import Callable
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -114,6 +116,7 @@ def test_disegna_scrive_la_tavola_in_pdf_dxf_e_svg_con_i_rilievi_accanto(
     assert codice == 0
     uscita = capsys.readouterr().out
     assert "tratte cedute 0 · rilievi bloccanti 0" in uscita
+    assert re.search(r"pieghe \d+ · sormonti \d+", uscita), "le misure con cui si confrontano due pose"
     nome = "prova-6-centrale-ibrida-solare-t1"
     for estensione in (".svg", ".pdf", ".dxf"):
         assert (tmp_path / f"{nome}{estensione}").exists(), estensione
@@ -146,6 +149,42 @@ def test_un_piano_che_non_si_instrada_ferma_la_consegna_e_dice_dove(
     assert "Il piano non si instrada" in uscita
     assert "nel piano" in uscita, "il messaggio dice dove il piano ha messo i due capi"
     assert not (tmp_path / "tavola").exists(), "niente tavola, niente cartella"
+
+
+def test_una_posa_piu_larga_del_foglio_si_dice_come_causa(
+    cartelle: Cartelle, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """Il motore porta il disegno al centro dell'area: se la posa non ci sta, l'instradamento
+    accusa una tratta innocente. Il comando dice l'area e la causa (camera Sonnet di REL-001)."""
+    piano = json.loads((IMPIANTO_6 / "piano-6-a.json").read_text(encoding="utf-8"))
+    piano["formato"] = "A3"
+    for pezzo in piano["pezzi"].values():
+        pezzo["x"] = pezzo["x"] * 2
+    (tmp_path / "piano.json").write_text(json.dumps(piano), encoding="utf-8")
+    codice = main(
+        [
+            "disegna", str(IMPIANTO_6 / "grafo-completo-6.json"),
+            "--piano", str(tmp_path / "piano.json"), "--out", str(tmp_path / "tavola"),
+        ],
+        cartelle,
+    )
+    uscita = capsys.readouterr().out
+    assert codice == 2
+    assert "Area del disegno dell'A3: 350 x 235 mm" in uscita
+    assert "Probabile causa: la posa" in uscita and "non sta nell'area dell'A3" in uscita
+
+
+def test_pezzi_divide_quelli_del_piano_da_quelli_del_motore(
+    cartelle: Cartelle, capsys: pytest.CaptureFixture[str]
+) -> None:
+    assert main(["pezzi", str(IMPIANTO_6 / "grafo-completo-6.json")], cartelle) == 0
+    uscita = capsys.readouterr().out
+    posare, motore = uscita.split("In linea, li posa il motore")
+    assert "volume-tecnico — " in posare and "porte: primary_in left (0, 5)" in posare
+    assert "valve-isolation" in motore and "valve-isolation" not in posare.split("porte:")[0]
+    totale = len(json.loads((IMPIANTO_6 / "grafo-completo-6.json").read_text(encoding="utf-8"))["components"])
+    contati = [int(n) for n in re.findall(r"\((\d+)\)", uscita)[:2]]
+    assert sum(contati) == totale, "ogni pezzo del grafo sta in una delle due liste"
 
 
 def test_un_file_che_non_c_e_esce_con_uno(cartelle: Cartelle, tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
@@ -181,6 +220,51 @@ def test_il_png_dell_anteprima_e_un_png_che_si_legge() -> None:
     idat = dati.index(b"IDAT")
     lunghezza = int.from_bytes(dati[idat - 4 : idat], "big")
     assert zlib.decompress(dati[idat + 4 : idat + 4 + lunghezza]) == bytes([0, 255, 0, 0, 0, 0, 255])
+
+
+class _PaginaFinta:
+    """Il lettore di PDF della skill su claude.ai, pypdfium2, ridotto a quello che l'anteprima
+    usa: la prova non dipende da che cosa l'ambiente di sviluppo ha installato."""
+
+    tagli: list[tuple[float, float, float, float]] = []
+
+    def get_size(self) -> tuple[float, float]:
+        return 420 * PUNTI_PER_MM, 297 * PUNTI_PER_MM
+
+    def render(self, scale: float, rev_byteorder: bool, crop: tuple[float, float, float, float]) -> object:
+        _PaginaFinta.tagli.append(crop)
+        larghezza = round((420 * PUNTI_PER_MM - crop[0] - crop[2]) * scale)
+        altezza = round((297 * PUNTI_PER_MM - crop[1] - crop[3]) * scale)
+
+        class Immagine:
+            width, height, n_channels, stride = larghezza, altezza, 3, 3 * larghezza
+            buffer = bytes(3 * larghezza * altezza)
+
+        return Immagine()
+
+
+def test_l_anteprima_di_una_zona_e_il_riquadro_chiesto(
+    cartelle: Cartelle, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Un A2 intero non fa leggere una valvola: `--zona` ne ingrandisce un riquadro, in mm dal
+    foglio in alto a sinistra — e pypdfium2 vuole invece quanto togliere da ogni lato, in punti."""
+    monkeypatch.setitem(sys.modules, "fitz", None)
+    monkeypatch.setitem(
+        sys.modules, "pypdfium2", SimpleNamespace(PdfDocument=lambda _: [_PaginaFinta()])
+    )
+    svg = tmp_path / "t.svg"
+    svg.write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297"/>',
+        encoding="utf-8",
+    )
+    assert main(["anteprima", str(svg), "--zona", "100,100,120,110", "--dpi", "254"], cartelle) == 0
+    sinistra, sotto, destra, sopra = _PaginaFinta.tagli[-1]
+    assert sinistra == pytest.approx(100 * PUNTI_PER_MM) and sopra == pytest.approx(100 * PUNTI_PER_MM)
+    assert destra == pytest.approx(300 * PUNTI_PER_MM) and sotto == pytest.approx(187 * PUNTI_PER_MM)
+    png = (tmp_path / "t.zona.png").read_bytes()
+    larghezza, altezza = int.from_bytes(png[16:20], "big"), int.from_bytes(png[20:24], "big")
+    assert (larghezza, altezza) == (200, 100), "20 x 10 mm a 254 dpi sono 200 x 100 pixel"
+    assert main(["anteprima", str(svg), "--zona", "120,100,100,110"], cartelle) == 1
 
 
 def test_consegna_copia_i_file_per_il_progettista(cartelle: Cartelle, tmp_path: Path) -> None:

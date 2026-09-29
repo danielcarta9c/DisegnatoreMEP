@@ -146,8 +146,9 @@ scrivi fra le cose aperte — o fermarsi.
 ### 5. Comporre — il piano
 
 Leggi **per intero** [riferimenti/comporre.md](riferimenti/comporre.md). Scrivi `$L/piano.json`:
-dice dove sta ogni pezzo sul foglio, e niente altro. I manifesti dei simboli — ingombro, porte,
-rotazioni ammesse — sono in `dati/simboli/<id>.json`.
+dice dove sta ogni pezzo sul foglio, e niente altro. `python3 scripts/mep.py pezzi
+$L/grafo-completo.json` elenca i pezzi che il piano posa — ingombro, rotazioni ammesse, porte — e
+quelli in linea, che posa il motore; i manifesti completi sono in `dati/simboli/<id>.json`.
 
 ### 6. Eseguire — la tavola e i rilievi
 
@@ -155,12 +156,17 @@ rotazioni ammesse — sono in `dati/simboli/<id>.json`.
 python3 scripts/mep.py disegna $L/grafo-completo.json --piano $L/piano.json --out $L/tavola
 ```
 
-Il comando esegue il piano, disegna, misura e scrive in `$L/tavola/` l'SVG, **il PDF**, il DXF e
+Il comando dice per prima cosa l'area del disegno del formato e quanto ne occupa la posa; poi
+esegue il piano, disegna, misura e scrive in `$L/tavola/` l'SVG, **il PDF**, il DXF e
 **i rilievi della tavola** (`*-rilievi.md`): il preflight di qualità, le regole del piano, il
-cartiglio. In fondo stampa formato, tratte, tratte cedute e rilievi bloccanti.
+cartiglio. In fondo stampa formato, tratte, tratte cedute, rilievi bloccanti, pieghe e sormonti:
+sono i numeri con cui confronti due pose (per esempio i due ordini dei collettori, B3).
 
-- **Il piano non si instrada**: il messaggio dice quale tratta, fra quali due pezzi, e dove il
-  piano li ha messi. Si corregge il piano ([riferimenti/comporre.md](riferimenti/comporre.md) §6).
+- **Il piano non si instrada**: il messaggio dice quale tratta non trova strada, e sotto quali
+  pezzi unisce e dove stanno; poi la posa applicata, pezzo per pezzo. Se la posa non sta
+  nell'area del formato lo dice come probabile causa: allora la tratta è innocente, e si stringe
+  la posa o si prende il formato successivo. Si corregge il piano
+  ([riferimenti/comporre.md](riferimenti/comporre.md) §6).
 - **Rilievi bloccanti o tratte cedute**: si corregge il piano, e si rilancia.
 
 ### 7. Rivedere — si guarda la tavola, e si torna al piano
@@ -169,14 +175,17 @@ cartiglio. In fondo stampa formato, tratte, tratte cedute e rilievi bloccanti.
 python3 scripts/mep.py anteprima $L/tavola/<progetto>-t1.pdf
 ```
 
-Scrive un PNG della tavola. **Guardalo**, se l'ambiente ti lascia vedere le immagini, con
+Scrive un PNG della tavola; `--zona x0,y0,x1,y1 --dpi 300` ne ingrandisce un riquadro, in
+millimetri dall'alto a sinistra — su un A2 intero le valvole non si leggono. **Guardalo**, se
+l'ambiente ti lascia vedere le immagini, con
 [riferimenti/rivedere.md](riferimenti/rivedere.md): non ricalcolare quello che i rilievi hanno
 già misurato; guarda quello che i numeri non dicono. Scrivi i **vincoli** in `$L/vincoli.md` —
 mai mosse —, torna al passo 5 e ricomponi rispettandoli.
 
 Ti fermi quando la tavola esce con **zero tratte cedute e zero rilievi bloccanti** e l'occhio non
-ha più un vincolo che la migliori; oppure quando due giri di fila non migliorano: allora tieni la
-tavola migliore e dici perché ti sei fermato. **Se non puoi vedere le immagini**, lavora sui
+ha più un vincolo che la migliori — se la prima tavola è già così, il giro è finito —; oppure
+quando due giri di fila non migliorano: allora tieni la tavola migliore e dici perché ti sei
+fermato. **Se non puoi vedere le immagini**, lavora sui
 rilievi e dillo al progettista: la tavola non l'ha guardata nessuno prima di lui.
 
 `regole-del-piano.md` ([riferimenti/regole-del-piano.md](riferimenti/regole-del-piano.md)) è
@@ -201,6 +210,11 @@ Poi, in poche righe:
   allora è una **bozza**), un carattere che il PDF ha dovuto sostituire;
 - le domande sul contenuto che ti sono venute componendo o rivedendo: come domande, non come
   decisioni prese.
+
+Se chiede come sono calcolati i diametri: il diametro interno netto minimo, dalla portata — che
+viene dalla potenza e dal salto termico che ha dato lui, o dalla portata di progetto — e da una
+velocità massima che cresce col diametro (Caleffi, Quaderno n. 5, tab. 9), prendendo il diametro
+standard subito più grande.
 
 ## Come si parla al progettista
 

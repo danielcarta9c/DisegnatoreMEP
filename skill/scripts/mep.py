@@ -13,6 +13,7 @@ installarla, e se non ci riesce lo dice.
 """
 
 import importlib.util
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -89,8 +90,10 @@ def main() -> int:
         return 1
 
     comando_chiesto = next((a for a in sys.argv[1:] if not a.startswith("-")), "")
-    chiede_aiuto = any(a in ("-h", "--help") for a in sys.argv[1:])
-    for modulo, pacchetto in ({} if chiede_aiuto else FACOLTATIVE.get(comando_chiesto, {})).items():
+    # Con --help non si installa niente; e chi prova la skill senza toccare l'ambiente
+    # — le prove del repository — lo dice con MEP_SENZA_INSTALLAZIONI.
+    senza = any(a in ("-h", "--help") for a in sys.argv[1:]) or os.environ.get("MEP_SENZA_INSTALLAZIONI")
+    for modulo, pacchetto in ({} if senza else FACOLTATIVE.get(comando_chiesto, {})).items():
         if importlib.util.find_spec(modulo) is None:
             _installa(modulo, pacchetto, "senza la quale il comando fa meno")
 
