@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-29 — **`REL-007`, i diametri, è fuso**: il PO, viste le tavole, «Approvato tutto, pr e metti su main» (I-158, D-193). **Il pacchetto attivo è `REL-008`, le scritte della tavola a 9 punti** (I-159)
+**Aggiornato:** 2026-09-29 — **`REL-008`, le scritte a 9 punti, è fuso** (PR #65; I-164, D-194 approvata); **il pacchetto attivo è `REL-001`, l'orchestratore della skill** (I-167). Prima: **`REL-007`, i diametri, è fuso** (PR #64, I-158)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,43 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 29 settembre 2026, a `REL-007` fuso
+## ▶ Da dove riparte la prossima sessione — scritto il 29 settembre 2026, a `REL-008` fuso
+
+**Il pacchetto attivo è `REL-001`, l'orchestratore della skill** (`ACTIVE_WORK_PACKAGE.md`; I-167): il
+`SKILL.md` che cuce i cinque pezzi, la cartella installabile costruita da uno script, il PDF senza browser, la
+prova in camera pulita. Il PO: «dovremo usare le best practice di Anthropic oltre che lo skill creatore di
+dominio». **Prima di scrivere una riga** si leggono:
+
+1. la guida di Anthropic **«Skill authoring best practices»**,
+   <https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices> — letta il 29 settembre;
+   si rilegge, può essere cambiata;
+2. la skill **`skill-creator`** — nell'ambiente di questa sessione `anthropic-skills:skill-creator`, dal tool
+   Skill —, che il pacchetto già indicava per la forma. *Da confermare col PO all'avvio* che sia il suo «skill
+   creatore di dominio»;
+3. `docs/ARCHITETTURA-DEL-PIANO.md` e `docs/SKILL.md`: i cinque pezzi, e che cosa passa fra l'uno e l'altro.
+
+**Il requisito che il PO ha messo approvando `REL-008`** (I-166): il motore che tagga **e i suoi controlli**
+sono pezzi della skill. La skill esegue il motore e il preflight su ogni tavola e consegna i rilievi; niente
+di ciò che controlla una tavola vive solo nella sessione o in `docs/collaudi/`. È il criterio 6 del pacchetto.
+
+**`REL-008`, le scritte a 9 punti, è fuso** (PR #65): il PO ha visto le sette tavole — «le
+tavole vanno bene», il richiamo e le distanze anche — e la legenda resta com'è (I-164, I-165). **D-194 è
+approvata per intero**; rapporto `docs/collaudi/REL-008/RAPPORTO.md`, tavole in `docs/collaudi/REL-008/tavole/`.
+
+- **Il corpo**: 9 punti in un posto solo (`graphics/standard.py`), 8 il minimo, tutto in Arial; il cartiglio
+  com'è. Legenda a capo nei suoi 50 mm, tabella con righe dal corpo (6,25 mm).
+- **Quello che accanto non entra** (I-160 … I-162): la sigla di un pezzo in tabella non si omette —
+  `TABLE_EQUIPMENT_TAG_OMITTED` blocca —; il DN di una strada secondaria si sacrifica; quello di una strada
+  principale va su un'etichetta staccata con freccia. **Il richiamo ha la spalla** (I-163, supera D-075).
+- **Le distanze fra le scritte** (D-194 punto 9): un corpo lungo la riga e mezzo fra le righe fra scritte di
+  pezzi diversi; una sigla non più vicina a un altro pezzo che al suo; il DN staccato a un corpo da tutto, la
+  sua freccia fuori da quella del flusso. **Hanno il loro rilievo nel preflight** (`text_spacing`), aggiunto
+  prima di fondere per I-166.
+- **La suite**: le stesse 46 rosse di `main`, nome per nome; zero `skip` e zero `xfail` nuovi; `ruff` e `mypy`
+  verdi.
+- **I numeri**: il prossimo input è **I-168**, la prossima decisione **D-195**.
+
+## Da dove ripartiva — scritto il 29 settembre 2026, a `REL-007` fuso
 
 **Il pacchetto attivo è `REL-008`, le scritte della tavola più grandi** (`ACTIVE_WORK_PACKAGE.md`; I-159): il
 PO le legge male e le vuole «almeno 8 o meglio 9» punti. Oggi sono 5: **tutte le scritte del disegno hanno
@@ -36,7 +72,7 @@ intero**; rapporto `docs/collaudi/REL-007/RAPPORTO.md`, tavole in `docs/collaudi
   `DIAMETER_TAG_*`; «Capire» §4.7 dice che cosa chiedere.
 - **La suite**: le stesse 46 rosse di `main`, nome per nome; 1932 passate; zero `skip` e zero `xfail`
   nuovi; `ruff` e `mypy` verdi.
-- **I numeri**: il prossimo input è **I-160**, la prossima decisione **D-194**.
+- **I numeri** (a `REL-007` fuso): il prossimo input era **I-160**, la prossima decisione **D-194**.
 - **Resta aperto, e non è di `REL-008`**: la skill dei computi PdC usa 2,0 m/s fisso (rapporto di
   `REL-007` §3.2), da dire a chi la cura; la via senza piano, `draw`, non posa il DN.
 

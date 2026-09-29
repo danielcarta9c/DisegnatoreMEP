@@ -32,6 +32,11 @@ from disegnatore_mep.layout.autostrade import (
     e_autostrada,
     pieghe_della_tratta,
 )
+from disegnatore_mep.layout.diametri import (
+    FRANCO_DELLA_STACCATA_EM,
+    riquadri_delle_frecce,
+    riquadro_del_diametro,
+)
 from disegnatore_mep.layout.geometry import (
     SHEET_FILL_MAX_RATIO,
     SHEET_MARGIN_MIN_MM,
@@ -55,6 +60,9 @@ from disegnatore_mep.layout.geometry import (
 )
 from disegnatore_mep.layout.labels import (
     LINE_CLEARANCE_MM,
+    riquadro_della_scritta,
+    riquadro_di_rispetto,
+    segmenti_del_richiamo,
     segments_cross,
     text_width_mm,
 )
@@ -158,6 +166,7 @@ MEASURE_ORDER: tuple[str, ...] = (
     "leader_crossings",
     "omitted_tags",
     "diameter_tags",
+    "text_spacing",
     "equipment_table",
     "sheet_fill",
     "next_sheet_fill",
@@ -556,13 +565,8 @@ def u_turns(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue
 def _label_box(
     label: PlacedLabel, height_mm: float
 ) -> tuple[float, float, float, float]:
-    width = text_width_mm(label.text, height_mm)
-    return (
-        label.anchor.x_mm,
-        label.anchor.y_mm - height_mm,
-        label.anchor.x_mm + width,
-        label.anchor.y_mm,
-    )
+    """Il riquadro della sigla al suo corpo (REL-008): quello della posa."""
+    return riquadro_della_scritta(label, height_mm)
 
 
 def _boxes_overlap(
@@ -675,9 +679,8 @@ def equipment_table(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validat
             ):
                 dentro.append(_run_name(route))
         for label in sheet.labels:
-            if _boxes_overlap(_label_box(label, height), zona) or (
-                label.leader_from is not None
-                and _segment_crosses_box(label.leader_from, label.anchor, zona)
+            if _boxes_overlap(_label_box(label, height), zona) or any(
+                _segment_crosses_box(*segmento, zona) for segmento in segmenti_del_richiamo(label)
             ):
                 dentro.append(label.id)
         for reference in sheet.cross_references:
@@ -720,8 +723,26 @@ def omitted_tags(drawing: DrawingGeometry) -> list[ValidationIssue]:
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
         written = {label.id for label in sheet.labels if label.role == "tag"}
+        in_tabella = (
+            {riga.component_id for riga in sheet.tabella.righe} if sheet.tabella is not None else set()
+        )
         for symbol in sheet.symbols:
             if not symbol.tag or f"{symbol.component_id}-tag" in written:
+                continue
+            if symbol.component_id in in_tabella:
+                # **La sigla di un'apparecchiatura che sta in tabella non si puo'
+                # omettere** (I-160): il codice della tabella la nomina, e sul
+                # disegno deve esserci il pezzo che nomina.
+                findings.append(
+                    _finding(
+                        "TABLE_EQUIPMENT_TAG_OMITTED",
+                        IssueSeverity.BLOCKING,
+                        f"la sigla {symbol.tag} di {symbol.component_id} non e' scritta, e il "
+                        f"pezzo sta nella tabella delle apparecchiature: la sua sigla non si "
+                        f"omette (I-160)",
+                        [sheet.sheet_id, symbol.component_id],
+                    )
+                )
                 continue
             findings.append(
                 _finding(
@@ -788,6 +809,10 @@ def diameter_tags(
         for tratto in tratti:
             if not tratto.connection_ids <= disegnate or tratto.connection_ids in per_tratto:
                 continue
+            if not tratto.strada_principale:
+                # Il DN di una strada secondaria si sacrifica quando non c'e' posto
+                # (I-161): non e' un difetto della tavola.
+                continue
             capo, fine = tratto.capi
             findings.append(
                 _finding(
@@ -799,6 +824,164 @@ def diameter_tags(
                     [sheet.sheet_id, capo.component_id, fine.component_id],
                 )
             )
+    return findings
+
+
+def _padrone(label: PlacedLabel, pezzi: list[str]) -> str:
+    """Il pezzo di una sigla o di un dato: l'identificativo della scritta e' quello
+    del pezzo, piu' `-tag` o `-` e il nome del dato (`layout.labels`)."""
+    return next((pezzo for pezzo in pezzi if label.id.startswith(pezzo + "-")), label.id)
+
+
+def _distanza_fra_riquadri(
+    first: tuple[float, float, float, float], second: tuple[float, float, float, float]
+) -> float:
+    dx = max(second[0] - first[2], first[0] - second[2], 0.0)
+    dy = max(second[1] - first[3], first[1] - second[3], 0.0)
+    return math.hypot(dx, dy)
+
+
+def text_spacing(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
+    """REL-008 — le distanze fra le scritte (D-194, punto 9): **il rilievo delle
+    regole della posa** (D-158, `docs/ARCHITETTURA-DEL-PIANO.md` §7).
+
+    A 9 punti le scritte si leggevano male senza toccarsi, e nessun rilievo lo
+    diceva: la sessione l'ha visto sulle tavole. La posa ora le tiene lontane, e
+    qui si misura la tavola finita:
+
+    - `TEXTS_READ_AS_ONE` — due scritte di pezzi diversi (sigle e dati accanto al
+      pezzo, DN) piu' vicine di un corpo lungo la riga e di mezzo corpo fra le righe
+      (`labels.riquadro_di_rispetto`), misurato dall'una e dall'altra: la posa ne fa
+      rispettare almeno uno, e il rilievo scatta quando nessuno dei due e' rispettato;
+    - `TAG_NEARER_ANOTHER_PIECE` — una sigla o un dato accanto al pezzo che sta piu'
+      vicino a un altro pezzo che al suo (`labels._Canvas.vicina_al_suo`);
+    - `DETACHED_DIAMETER_CROWDED` — la scritta di un DN staccato a meno di un corpo da
+      scritte, simboli e linee degli altri tratti (`diametri.FRANCO_DELLA_STACCATA_EM`);
+    - `LEADER_ON_A_FLOW_ARROW` — la freccia del richiamo di un DN sulla freccia di
+      verso della linea (`diametri.riquadri_delle_frecce`).
+
+    Sono **avvisi**: un testo non ferma la tavola (DRAW-003-R1)."""
+    findings: list[ValidationIssue] = []
+    corpo = frame.standard.text_small_mm
+    for sheet in drawing.sheets:
+        pezzi = sorted((item.component_id for item in sheet.symbols), key=len, reverse=True)
+        riquadri_dei_pezzi = {
+            item.component_id: (item.origin.x_mm, item.origin.y_mm, item.right_mm, item.bottom_mm)
+            for item in sheet.symbols
+        }
+        # Le scritte accanto al pezzo e i DN: il richiamo di una sigla dice lui di
+        # chi e' la scritta, e la posa non le chiede il rispetto degli altri.
+        scritte: list[tuple[str, str, tuple[float, float, float, float], float, bool]] = []
+        for label in sheet.labels:
+            if label.role not in ("tag", "data") or segmenti_del_richiamo(label):
+                continue
+            scritte.append(
+                (
+                    label.id,
+                    _padrone(label, pezzi),
+                    _label_box(label, corpo),
+                    label.corpo_mm if label.corpo_mm is not None else corpo,
+                    False,
+                )
+            )
+        for etichetta in sheet.diametri:
+            scritte.append(
+                (
+                    f"DN {etichetta.testo}",
+                    "DN " + "/".join(etichetta.connection_ids),
+                    riquadro_del_diametro(etichetta, corpo),
+                    etichetta.corpo_mm if etichetta.corpo_mm is not None else corpo,
+                    etichetta.verticale,
+                )
+            )
+        for indice, (nome, suo, box, corpo_suo, verticale) in enumerate(scritte):
+            for altro_nome, altro, altro_box, corpo_altro, altro_verso in scritte[indice + 1 :]:
+                if suo == altro:
+                    continue
+                if _boxes_overlap(riquadro_di_rispetto(box, corpo_suo, verticale), altro_box) and (
+                    _boxes_overlap(riquadro_di_rispetto(altro_box, corpo_altro, altro_verso), box)
+                ):
+                    findings.append(
+                        _finding(
+                            "TEXTS_READ_AS_ONE",
+                            IssueSeverity.WARNING,
+                            f"{nome} e {altro_nome} sono di pezzi diversi e stanno a meno di un "
+                            f"corpo sulla riga, o di mezzo fra le righe: si leggono come una "
+                            f"scritta sola (D-194, punto 9)",
+                            [sheet.sheet_id, nome, altro_nome],
+                        )
+                    )
+        for nome, suo, box, _, _ in scritte:
+            if suo not in riquadri_dei_pezzi:
+                continue
+            vicinanza = _distanza_fra_riquadri(box, riquadri_dei_pezzi[suo])
+            altri = [
+                (_distanza_fra_riquadri(box, riquadro), pezzo)
+                for pezzo, riquadro in riquadri_dei_pezzi.items()
+                if pezzo != suo
+            ]
+            if altri and min(altri)[0] < vicinanza - TOLERANCE_MM:
+                findings.append(
+                    _finding(
+                        "TAG_NEARER_ANOTHER_PIECE",
+                        IssueSeverity.WARNING,
+                        f"{nome} sta a {min(altri)[0]:.2f} mm da {min(altri)[1]} e a "
+                        f"{vicinanza:.2f} mm dal suo pezzo: si legge come la scritta dell'altro "
+                        f"(D-194, punto 9)",
+                        [sheet.sheet_id, nome, min(altri)[1]],
+                    )
+                )
+        frecce = riquadri_delle_frecce(sheet)
+        for etichetta in sheet.diametri:
+            if etichetta.richiamo is None:
+                continue
+            nome = f"DN {etichetta.testo}"
+            box = riquadro_del_diametro(etichetta, corpo)
+            proprie = set(etichetta.connection_ids)
+            # Simboli, sigle e linee sono posati prima dei DN, e la staccata ne sta a un
+            # corpo; un DN posato dopo ne rispetta solo il riquadro di rispetto, che
+            # misura `TEXTS_READ_AS_ONE`.
+            vicini = list(riquadri_dei_pezzi.values())
+            vicini += [altro for _, suo, altro, _, _ in scritte if not suo.startswith("DN ")]
+            vicini += [
+                (
+                    min(before.x_mm, after.x_mm),
+                    min(before.y_mm, after.y_mm),
+                    max(before.x_mm, after.x_mm),
+                    max(before.y_mm, after.y_mm),
+                )
+                for _, route, segment in _run_polylines(sheet)
+                if not (route.connection_ids and set(route.connection_ids) <= proprie)
+                for before, after in moves_of(segment)
+            ]
+            franco = FRANCO_DELLA_STACCATA_EM * corpo
+            piu_vicino = min((_distanza_fra_riquadri(box, altro) for altro in vicini), default=math.inf)
+            if piu_vicino < franco - TOLERANCE_MM:
+                findings.append(
+                    _finding(
+                        "DETACHED_DIAMETER_CROWDED",
+                        IssueSeverity.WARNING,
+                        f"la scritta staccata {nome} sta a {piu_vicino:.2f} mm da cio' che non e' "
+                        f"il suo tratto, meno di un corpo ({franco:.2f} mm): si legge con il "
+                        f"vicino (D-194, punto 9)",
+                        [sheet.sheet_id, nome, *sorted(proprie)[:1]],
+                    )
+                )
+            punta = etichetta.richiamo.punta
+            if any(
+                freccia[0] - TOLERANCE_MM <= punta.x_mm <= freccia[2] + TOLERANCE_MM
+                and freccia[1] - TOLERANCE_MM <= punta.y_mm <= freccia[3] + TOLERANCE_MM
+                for freccia in frecce
+            ):
+                findings.append(
+                    _finding(
+                        "LEADER_ON_A_FLOW_ARROW",
+                        IssueSeverity.WARNING,
+                        f"la freccia del richiamo di {nome} cade sulla freccia di verso della "
+                        f"linea (D-194, punto 9)",
+                        [sheet.sheet_id, nome, *sorted(proprie)[:1]],
+                    )
+                )
     return findings
 
 
@@ -822,6 +1005,23 @@ def _leader_enters(
     return low < high - TOLERANCE_MM
 
 
+def _segmenti_dei_richiami(sheet: SheetGeometry) -> list[tuple[str, tuple[Point, Point]]]:
+    """Ogni segmento di ogni richiamo della tavola, col nome di chi lo porta: la
+    diagonale di prima delle sigle (`leader_from`), il tratto obliquo e la spalla
+    del richiamo nuovo — delle sigle e dei DN staccati (I-162, I-163)."""
+    segmenti: list[tuple[str, tuple[Point, Point]]] = []
+    for label in sheet.labels:
+        if label.leader_from is not None:
+            segmenti.append((label.id, (label.leader_from, label.anchor)))
+        if label.richiamo is not None:
+            segmenti.extend((label.id, segmento) for segmento in label.richiamo.segmenti)
+    for etichetta in sheet.diametri:
+        if etichetta.richiamo is not None:
+            nome = f"DN {etichetta.testo} ({', '.join(etichetta.connection_ids[:1])})"
+            segmenti.extend((nome, segmento) for segmento in etichetta.richiamo.segmenti)
+    return segmenti
+
+
 def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
     """DRAW-003 — i richiami non si incrociano fra loro, non attraversano tubi
     e non passano sopra simboli.
@@ -833,27 +1033,23 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
     """
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
-        leaders = [
-            (label, (label.leader_from, label.anchor))
-            for label in sheet.labels
-            if label.leader_from is not None
-        ]
+        leaders = _segmenti_dei_richiami(sheet)
         runs = [
             (route, (before, after))
             for _, route, segment in _run_polylines(sheet)
             for before, after in moves_of(segment)
         ]
-        for index, (label, leader) in enumerate(leaders):
-            for other, other_leader in leaders[index + 1 :]:
-                if segments_cross(leader, other_leader):
+        for index, (label_id, leader) in enumerate(leaders):
+            for other_id, other_leader in leaders[index + 1 :]:
+                if other_id != label_id and segments_cross(leader, other_leader):
                     findings.append(
                         _finding(
                             "LEADERS_CROSS",
                             IssueSeverity.WARNING,
-                            f"i richiami delle etichette {label.id} e {other.id} si "
+                            f"i richiami delle etichette {label_id} e {other_id} si "
                             f"incrociano: due richiami che si attraversano non dicono "
                             f"piu' chi parla di chi (D2, DRAW-003)",
-                            sorted({sheet.sheet_id, label.id, other.id}),
+                            sorted({sheet.sheet_id, label_id, other_id}),
                         )
                     )
             covered = next(
@@ -869,10 +1065,10 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
                     _finding(
                         "LEADER_CROSSES_A_SYMBOL",
                         IssueSeverity.WARNING,
-                        f"il richiamo dell'etichetta {label.id} passa sopra il simbolo "
+                        f"il richiamo dell'etichetta {label_id} passa sopra il simbolo "
                         f"{covered.component_id}: un richiamo che confonde non si "
                         f"disegna, il testo si omette (D2, DRAW-003-R1)",
-                        sorted({sheet.sheet_id, label.id, covered.component_id}),
+                        sorted({sheet.sheet_id, label_id, covered.component_id}),
                     )
                 )
             crossed = next((route for route, run in runs if segments_cross(leader, run)), None)
@@ -881,10 +1077,10 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
                     _finding(
                         "LEADER_CROSSES_A_RUN",
                         IssueSeverity.WARNING,
-                        f"il richiamo dell'etichetta {label.id} attraversa la tratta "
+                        f"il richiamo dell'etichetta {label_id} attraversa la tratta "
                         f"{_run_name(crossed)}: un richiamo che confonde non si "
                         f"disegna, il testo si omette (D2, DRAW-003-R1)",
-                        sorted({sheet.sheet_id, label.id, *crossed.connection_ids}),
+                        sorted({sheet.sheet_id, label_id, *crossed.connection_ids}),
                     )
                 )
     return findings
@@ -909,11 +1105,24 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
     """
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
-        for label in sheet.labels:
-            if label.leader_from is None:
-                continue
-            span_x = abs(label.anchor.x_mm - label.leader_from.x_mm)
-            span_y = abs(label.anchor.y_mm - label.leader_from.y_mm)
+        # Del richiamo nuovo si misura il tratto obliquo: la spalla e' orizzontale
+        # per scelta del PO (I-163).
+        capi = (
+            [(label.id, label.leader_from, label.anchor) for label in sheet.labels if label.leader_from is not None]
+            + [
+                (label.id, label.richiamo.punta, label.richiamo.gomito)
+                for label in sheet.labels
+                if label.richiamo is not None
+            ]
+            + [
+                (f"DN {etichetta.testo}", etichetta.richiamo.punta, etichetta.richiamo.gomito)
+                for etichetta in sheet.diametri
+                if etichetta.richiamo is not None
+            ]
+        )
+        for label_id, da, a in capi:
+            span_x = abs(a.x_mm - da.x_mm)
+            span_y = abs(a.y_mm - da.y_mm)
             if span_x <= TOLERANCE_MM and span_y <= TOLERANCE_MM:
                 continue
             if abs(span_x - span_y) <= TOLERANCE_MM:
@@ -922,7 +1131,7 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
             if span_x <= TOLERANCE_MM or span_y <= TOLERANCE_MM:
                 code = "ORTHOGONAL_LABEL_LEADER"
                 message = (
-                    f"il richiamo dell'etichetta {label.id} e' ortogonale "
+                    f"il richiamo dell'etichetta {label_id} e' ortogonale "
                     f"({angle:.0f} gradi): ha la giacitura di una tubazione e si legge "
                     f"come un altro tubo, mentre un richiamo si disegna obliquo a "
                     f"{LEADER_ANGLE_DEG} gradi (D2, D3, D-075)"
@@ -930,13 +1139,13 @@ def orthogonality_of_leaders(drawing: DrawingGeometry) -> list[ValidationIssue]:
             else:
                 code = "LEADER_NOT_AT_45_DEGREES"
                 message = (
-                    f"il richiamo dell'etichetta {label.id} unisce due capi a "
+                    f"il richiamo dell'etichetta {label_id} unisce due capi a "
                     f"{angle:.0f} gradi invece che a {LEADER_ANGLE_DEG}: fra quei due "
                     f"punti una sola diagonale non ci sta e chi disegna deve piegare ad "
                     f"angolo retto, cioe' disegnare un altro tubo (D2, D3, D-075)"
                 )
             findings.append(
-                _finding(code, IssueSeverity.BLOCKING, message, [sheet.sheet_id, label.id])
+                _finding(code, IssueSeverity.BLOCKING, message, [sheet.sheet_id, label_id])
             )
     return findings
 
@@ -1307,6 +1516,7 @@ def preflight_drawing(
         *leader_crossings(drawing),
         *omitted_tags(drawing),
         *diameter_tags(drawing, catalog, project),
+        *text_spacing(drawing, frame),
         *equipment_table(drawing, frame),
         *sheet_fill(drawing, frame),
         *next_sheet_fill(drawing, frame),

@@ -229,6 +229,16 @@ def _translated(sheet: SheetGeometry, delta: float, across: float) -> SheetGeome
                             if item.leader_from is None
                             else _shifted(item.leader_from, delta, across)
                         ),
+                        "richiamo": (
+                            None
+                            if item.richiamo is None
+                            else item.richiamo.model_copy(
+                                update={
+                                    campo: _shifted(getattr(item.richiamo, campo), delta, across)
+                                    for campo in ("punta", "gomito", "spalla")
+                                }
+                            )
+                        ),
                     }
                 )
                 for item in sheet.labels

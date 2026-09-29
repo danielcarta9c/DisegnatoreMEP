@@ -42,12 +42,13 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 from math import ceil, sqrt
 
+from disegnatore_mep.graphics.cartiglio import larghezza_mm
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
-from disegnatore_mep.graphics.standard import GraphicStandard
+from disegnatore_mep.graphics.standard import CORPO_MINIMO_PT, PT_MM, GraphicStandard
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import JsonPrimitive
 
-from .geometry import PlacedLabel, PlacedSymbol, Point, RoutedTrunk
+from .geometry import PlacedLabel, PlacedSymbol, Point, Richiamo, RoutedTrunk
 
 TAG_GAP_MM = 1.5
 """Stacco fra il riquadro del simbolo e la sigla scritta sopra."""
@@ -91,11 +92,33 @@ un richiamo si disegna solo quando chiarisce. **Taratura**, non norma: si
 rivede sulle tavole reali.
 """
 
-CHAR_WIDTH_RATIO = 0.6
-"""Larghezza media di un carattere rispetto al corpo, per un sans-serif.
+SPALLA_DEL_RICHIAMO_MM = 5.0
+"""La spalla orizzontale del richiamo (I-163): due passi di griglia, dal gomito
+fino quasi alla scritta. Il PO ha voluto il richiamo come nel suo esempio, con la
+spalla, al posto della sola diagonale di D-075."""
 
-Stima: la tavola non incorpora metriche di font. Serve a capire se due testi si
-sovrappongono, quindi un errore in eccesso e' innocuo.
+STACCO_DELLA_SPALLA_MM = 0.75
+"""Fra la fine della spalla e la scritta."""
+
+MEZZE_MAIUSCOLE_EM = 0.35
+"""Mezza altezza delle maiuscole, in corpi: la spalla arriva alla scritta li'."""
+
+STACCO_SULLA_RIGA_EM = 1.0
+"""Fra due scritte di padroni diversi sulla stessa riga, in corpi: piu' vicine si
+leggono come una scritta sola («CIR-01 Øi 40», tavola 6 del collaudo a 9 punti, a
+un millimetro). **Taratura** della sessione, da giudicare sulla tavola."""
+
+STACCO_FRA_LE_RIGHE_EM = 0.5
+"""Fra due scritte di padroni diversi una sopra l'altra, in corpi: piu' vicine si
+leggono come le righe di un blocco solo — il dato di un pezzo sopra la sigla del
+vicino («4 kW» di PAV-02 su «PAV-01», tavola 3 del collaudo a 9 punti, a 0,65 mm).
+Due righe dello stesso testo stanno a 0,15. **Taratura** della sessione."""
+
+CHAR_WIDTH_RATIO = 0.6
+"""Larghezza media di un carattere rispetto al corpo, per un sans-serif: la stima
+che valeva finche' le scritte non dichiaravano un carattere. Resta per il foglio
+dei simboli; le scritte della tavola si misurano con le larghezze di Arial
+(`text_width_mm`, REL-008).
 """
 
 TOLERANCE_MM = 1e-6
@@ -166,7 +189,12 @@ def format_value(key: str, value: JsonPrimitive) -> str | None:
 
 
 def text_width_mm(text: str, height_mm: float) -> float:
-    return len(text) * height_mm * CHAR_WIDTH_RATIO
+    """Quanto e' lunga una scritta della tavola, con le larghezze di Arial — il
+    carattere che la tavola dichiara da `REL-008` (`graphics.metriche`, Liberation
+    Sans, che ha le larghezze di Arial). A 9 punti la stima di prima, 0,6 corpi a
+    carattere, dava a una sigla un riquadro fino a un quarto piu' largo del vero,
+    e con il riquadro largo una sigla che ci stava non trovava posto."""
+    return larghezza_mm(text, height_mm / PT_MM, False)
 
 
 def _overlap(first: Box, second: Box) -> bool:
@@ -179,8 +207,45 @@ def _overlap(first: Box, second: Box) -> bool:
     )
 
 
+def _distanza(first: Box, second: Box) -> float:
+    """Quanto distano due riquadri: zero se si toccano o si sovrappongono."""
+    dx = max(second[0] - first[2], first[0] - second[2], 0.0)
+    dy = max(second[1] - first[3], first[1] - second[3], 0.0)
+    return sqrt(dx * dx + dy * dy)
+
+
+def riquadro_di_rispetto(box: Box, corpo_mm: float, verticale: bool = False) -> Box:
+    """Dove le scritte degli altri non entrano: un corpo lungo la riga, mezzo fra
+    le righe (`STACCO_SULLA_RIGA_EM`, `STACCO_FRA_LE_RIGHE_EM`). Lo usano le sigle,
+    i dati e i DN."""
+    lungo = STACCO_SULLA_RIGA_EM * corpo_mm
+    attraverso = STACCO_FRA_LE_RIGHE_EM * corpo_mm
+    dx, dy = (attraverso, lungo) if verticale else (lungo, attraverso)
+    return (box[0] - dx, box[1] - dy, box[2] + dx, box[3] + dy)
+
+
 def _symbol_box(item: PlacedSymbol) -> Box:
     return (item.origin.x_mm, item.origin.y_mm, item.right_mm, item.bottom_mm)
+
+
+def segmenti_del_richiamo(label: PlacedLabel) -> list[Segment]:
+    """I segmenti del richiamo di una sigla: la diagonale di prima (`leader_from`),
+    o il tratto obliquo e la spalla del richiamo nuovo (I-163); niente, se il testo
+    sta accanto al pezzo."""
+    if label.richiamo is not None:
+        return list(label.richiamo.segmenti)
+    if label.leader_from is not None:
+        return [(label.leader_from, label.anchor)]
+    return []
+
+
+def riquadro_della_scritta(label: PlacedLabel, height_mm: float) -> Box:
+    """Il riquadro di un testo gia' posato: al suo corpo, se e' sceso al minimo
+    (REL-008), altrimenti a quello delle scritte della tavola, `height_mm`. Lo
+    leggono tutti quelli che misurano una sigla — la posa di chi viene dopo, il
+    preflight, i DN —, e deve essere quello della posa."""
+    corpo = label.corpo_mm if label.corpo_mm is not None else height_mm
+    return _text_box(label.anchor, text_width_mm(label.text, corpo), corpo)
 
 
 def _text_box(anchor: Point, width_mm: float, height_mm: float) -> Box:
@@ -336,6 +401,27 @@ def preferred_anchor(
     )
 
 
+def richiamo_verso(
+    punta: Point, verso: tuple[int, int], campata_mm: float, larghezza_mm: float, corpo_mm: float
+) -> tuple[Richiamo, Point, Box]:
+    """Il richiamo che parte da `punta` lungo la diagonale `verso` per `campata_mm`
+    per asse, la spalla che prosegue orizzontale dalla stessa parte, e la scritta
+    che comincia — o finisce — dopo la spalla: il richiamo, la base della scritta,
+    il suo riquadro (I-163)."""
+    gomito = Point(x_mm=punta.x_mm + verso[0] * campata_mm, y_mm=punta.y_mm + verso[1] * campata_mm)
+    spalla = Point(x_mm=gomito.x_mm + verso[0] * SPALLA_DEL_RICHIAMO_MM, y_mm=gomito.y_mm)
+    base = gomito.y_mm + MEZZE_MAIUSCOLE_EM * corpo_mm
+    if verso[0] > 0:
+        ancora = Point(x_mm=spalla.x_mm + STACCO_DELLA_SPALLA_MM, y_mm=base)
+    else:
+        ancora = Point(x_mm=spalla.x_mm - STACCO_DELLA_SPALLA_MM - larghezza_mm, y_mm=base)
+    return (
+        Richiamo(punta=punta, gomito=gomito, spalla=spalla),
+        ancora,
+        _text_box(ancora, larghezza_mm, corpo_mm),
+    )
+
+
 def _leader_corner(item: PlacedSymbol, way: tuple[int, int]) -> Point:
     """Lo spigolo da cui parte la diagonale: quello verso cui essa punta."""
     return Point(
@@ -359,6 +445,11 @@ class _Canvas:
     line_segments: list[Segment]
     texts: list[Box] = field(default_factory=list)
     leaders: list[Segment] = field(default_factory=list)
+    pezzi: dict[str, Box] = field(default_factory=dict)
+    """I riquadri dei simboli, per pezzo, senza gli altri ostacoli: dicono di chi
+    sembra una scritta."""
+    padroni: list[str | None] = field(default_factory=list)
+    """Di quale pezzo e' ciascuna scritta di `texts`; `None` se non si sa."""
 
     def inside(self, box: Box) -> bool:
         return (
@@ -376,6 +467,30 @@ class _Canvas:
             _overlap(box, other) for other in (*self.symbols, *self.texts, *self.lines)
         )
 
+    def vicina_al_suo(self, box: Box, component_id: str) -> bool:
+        """La scritta non sta piu' vicina a un altro pezzo che al suo: accanto a un
+        altro simbolo si leggerebbe come sua. A 9 punti (REL-008) «CIR-01» della
+        tavola 6 arrivava a toccare la valvola sopra la sua pompa."""
+        proprio = self.pezzi.get(component_id)
+        if proprio is None:
+            return True
+        vicinanza = _distanza(box, proprio)
+        return all(
+            _distanza(box, altro) >= vicinanza - TOLERANCE_MM
+            for altro_id, altro in self.pezzi.items()
+            if altro_id != component_id
+        )
+
+    def lontana_dagli_altri(self, box: Box, component_id: str, corpo_mm: float) -> bool:
+        """Le scritte degli altri pezzi fuori dal riquadro di rispetto: un corpo
+        lungo la riga, mezzo fra le righe."""
+        rispetto = riquadro_di_rispetto(box, corpo_mm)
+        return not any(
+            _overlap(rispetto, altro)
+            for altro, padrone in zip(self.texts, self.padroni, strict=True)
+            if padrone != component_id
+        )
+
     def leader_fits(self, start: Point, end: Point, box: Box) -> bool:
         """La diagonale non passa sopra simboli o testi — il proprio compreso —
         e non attraversa tubazioni ne' altri richiami. Un solo grado di rigore:
@@ -389,10 +504,26 @@ class _Canvas:
             return False
         return not any(segments_cross(leader, other) for other in self.leaders)
 
-    def take(self, box: Box, leader: Segment | None) -> None:
+    def richiamo_fits(self, richiamo: Richiamo, box: Box) -> bool:
+        """Il tratto obliquo e la spalla non passano sopra simboli o testi e non
+        attraversano tubazioni ne' altri richiami; la spalla, orizzontale, non corre
+        nemmeno lungo un tubo, dentro il suo franco."""
+        obliquo, spalla = richiamo.segmenti
+        if not self.leader_fits(*obliquo, box) or not self.leader_fits(*spalla, box):
+            return False
+        return not any(_crosses(*spalla, line) for line in self.lines)
+
+    def take(
+        self, box: Box, leader: Segment | Sequence[Segment] | None, padrone: str | None = None
+    ) -> None:
         self.texts.append(box)
-        if leader is not None:
-            self.leaders.append(leader)
+        self.padroni.append(padrone)
+        if not leader:
+            return
+        if isinstance(leader[0], Point):
+            self.leaders.append(leader)  # type: ignore[arg-type]
+        else:
+            self.leaders.extend(leader)  # type: ignore[arg-type]
 
 
 def _leader(
@@ -402,8 +533,10 @@ def _leader(
     height_mm: float,
     step_mm: float,
     canvas: _Canvas,
-) -> tuple[Point, Point] | None:
-    """Il primo posto pulito raggiungibile con una diagonale corta a 45 gradi.
+) -> tuple[Richiamo, Point] | None:
+    """Il primo posto pulito raggiungibile con un richiamo corto: la freccia sullo
+    spigolo del simbolo, un tratto a 45 gradi, la spalla orizzontale fino al testo
+    (I-163, che supera la sola diagonale di D-075).
 
     La diagonale parte da uno spigolo del simbolo e finisce **sulla base del
     testo**: un solo segmento obliquo, nessuna piega. La codina orizzontale
@@ -422,13 +555,11 @@ def _leader(
     for ring in range(LEADER_MAX_STEPS):
         span = reach + ring * step_mm
         for way in DIAGONALS:
-            start = _leader_corner(item, way)
-            anchor = Point(
-                x_mm=start.x_mm + way[0] * span, y_mm=start.y_mm + way[1] * span
+            richiamo, anchor, box = richiamo_verso(
+                _leader_corner(item, way), way, span, width_mm, height_mm
             )
-            box = _text_box(anchor, width_mm, height_mm)
-            if canvas.free(box) and canvas.leader_fits(start, anchor, box):
-                return start, anchor
+            if canvas.free(box) and canvas.richiamo_fits(richiamo, box):
+                return richiamo, anchor
     return None
 
 
@@ -451,6 +582,7 @@ def _canvas(
         symbols=[*(_symbol_box(item) for item in placed), *ostacoli],
         lines=_line_boxes(routes),
         line_segments=_line_segments(routes),
+        pezzi={item.component_id: _symbol_box(item) for item in placed},
     )
 
 
@@ -466,25 +598,44 @@ def _settle(
     canvas: _Canvas,
 ) -> PlacedLabel | None:
     """Un testo sul primo lato libero, prima fila poi seconda; per le sigle
-    delle macchine, poi, un richiamo corto e pulito; altrimenti niente."""
+    delle macchine e i loro dati, un lato che non stia piu' vicino a un altro pezzo
+    che al suo e che lasci alle scritte degli altri pezzi il loro rispetto
+    (`riquadro_di_rispetto`), poi lo stesso al corpo minimo del PO, 8 punti
+    (REL-008, I-159); poi un richiamo corto e pulito; altrimenti niente."""
+    corpi = [height_mm]
+    minimo = CORPO_MINIMO_PT * PT_MM
+    if role in LEADER_ROLES and minimo < height_mm - TOLERANCE_MM:
+        corpi.append(minimo)
+    for corpo in corpi:
+        largo = text_width_mm(text, corpo)
+        for row in range(ADJACENT_ROWS):
+            for side in SIDES_BY_ROLE[role]:
+                spot = anchor_beside(item, side, slot + row, largo, height_mm=corpo, step_mm=step_mm)
+                box = _text_box(spot, largo, corpo)
+                if not canvas.free(box):
+                    continue
+                if role in LEADER_ROLES and not (
+                    canvas.vicina_al_suo(box, item.component_id)
+                    and canvas.lontana_dagli_altri(box, item.component_id, corpo)
+                ):
+                    continue
+                canvas.take(box, None, item.component_id)
+                return PlacedLabel(
+                    id=label_id,
+                    text=text,
+                    role=role,
+                    anchor=spot,
+                    corpo_mm=None if corpo == height_mm else corpo,
+                )
     width = text_width_mm(text, height_mm)
-    for row in range(ADJACENT_ROWS):
-        for side in SIDES_BY_ROLE[role]:
-            spot = anchor_beside(
-                item, side, slot + row, width, height_mm=height_mm, step_mm=step_mm
-            )
-            box = _text_box(spot, width, height_mm)
-            if canvas.free(box):
-                canvas.take(box, None)
-                return PlacedLabel(id=label_id, text=text, role=role, anchor=spot)
     if role not in LEADER_ROLES:
         return None
     found = _leader(item, width, height_mm=height_mm, step_mm=step_mm, canvas=canvas)
     if found is None:
         return None
-    start, spot = found
-    canvas.take(_text_box(spot, width, height_mm), (start, spot))
-    return PlacedLabel(id=label_id, text=text, role=role, anchor=spot, leader_from=start)
+    richiamo, spot = found
+    canvas.take(_text_box(spot, width, height_mm), richiamo.segmenti, item.component_id)
+    return PlacedLabel(id=label_id, text=text, role=role, anchor=spot, richiamo=richiamo)
 
 
 def place_addresses(
@@ -519,10 +670,7 @@ def place_addresses(
     step = standard.grid_mm
     canvas = _canvas(placed, routes, standard, area, ostacoli)
     for written in already or ():
-        canvas.take(
-            _text_box(written.anchor, text_width_mm(written.text, height), height),
-            None if written.leader_from is None else (written.leader_from, written.anchor),
-        )
+        canvas.take(riquadro_della_scritta(written, height), segmenti_del_richiamo(written))
     labels: list[PlacedLabel] = []
     for item in placed:
         text = addresses.get(item.component_id)

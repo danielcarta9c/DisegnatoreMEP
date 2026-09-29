@@ -17,13 +17,19 @@ bozza (D-025).
 from dataclasses import dataclass
 
 from disegnatore_mep.layout.addresses import VERIFY_MARK
-from disegnatore_mep.layout.geometry import FlowKind, Point, RoutedTrunk, SheetGeometry
-from disegnatore_mep.layout.legend import style_for
+from disegnatore_mep.layout.geometry import FlowKind, Point, Richiamo, RoutedTrunk, SheetGeometry
+from disegnatore_mep.layout.legend import (
+    INTERLINEA_EM,
+    basi_delle_righe,
+    righe_del_nome,
+    style_for,
+)
 
 from .cartiglio import CartiglioDellaTavola, disegna_cartiglio
 from .frame import Rect, SheetFrame
 from .glyphs import flow_glyph_path
 from .registry import SymbolRegistry
+from .standard import FAMIGLIA_DELLE_SCRITTE, GraphicStandard
 from .tabella import svg_della_tabella
 
 DRAFT_MARK = "BOZZA — cartiglio non compilato"
@@ -33,6 +39,49 @@ ARROW_LENGTH_MM = 2.0
 """Lunghezza della freccia di verso sulle tubazioni."""
 
 ARROW_HALF_WIDTH_MM = 1.0
+
+FRECCIA_DEL_RICHIAMO_MM = 2.0
+"""Lunghezza della freccia piena con cui un richiamo tocca il pezzo o la linea
+(I-162: «una label staccata con freccia»)."""
+
+MEZZA_FRECCIA_DEL_RICHIAMO_MM = 0.5
+"""Meta' della base della freccia del richiamo: stretta, come quella dell'esempio
+del PO, e piu' sottile della freccia di verso delle tubazioni."""
+
+
+def freccia_del_richiamo(punta: Point, da: Point) -> tuple[Point, Point, Point]:
+    """I tre vertici della freccia piena di un richiamo: la punta dove il richiamo
+    tocca, la base verso `da`, l'altro capo del richiamo."""
+    dx, dy = punta.x_mm - da.x_mm, punta.y_mm - da.y_mm
+    lunghezza = (dx * dx + dy * dy) ** 0.5
+    ux, uy = dx / lunghezza, dy / lunghezza
+    base = (punta.x_mm - ux * FRECCIA_DEL_RICHIAMO_MM, punta.y_mm - uy * FRECCIA_DEL_RICHIAMO_MM)
+    nx, ny = -uy * MEZZA_FRECCIA_DEL_RICHIAMO_MM, ux * MEZZA_FRECCIA_DEL_RICHIAMO_MM
+    return (
+        punta,
+        Point(x_mm=round(base[0] + nx, 4), y_mm=round(base[1] + ny, 4)),
+        Point(x_mm=round(base[0] - nx, 4), y_mm=round(base[1] - ny, 4)),
+    )
+
+
+def _freccia_svg(punta: Point, da: Point, classe: str) -> str:
+    a, b, c = freccia_del_richiamo(punta, da)
+    return (
+        f'<path class="{classe}" d="M{a.x_mm:g},{a.y_mm:g} L{b.x_mm:g},{b.y_mm:g} '
+        f'L{c.x_mm:g},{c.y_mm:g} Z" fill="black" stroke="none"/>'
+    )
+
+
+def _richiamo_svg(richiamo: Richiamo, standard: GraphicStandard, classe: str) -> str:
+    """Il richiamo con la spalla (I-163): la spezzata sottile e nera dalla punta al
+    gomito alla spalla, e la freccia piena sulla punta."""
+    punti = " ".join(f"{p.x_mm:g},{p.y_mm:g}" for p in (richiamo.punta, richiamo.gomito, richiamo.spalla))
+    return (
+        f'<polyline class="{classe}" points="{punti}" fill="none" stroke="black" '
+        f'stroke-width="{standard.line_thin_mm:g}"/>'
+        + _freccia_svg(richiamo.punta, richiamo.gomito, f"{classe}-arrow")
+    )
+
 
 LEGEND_SWATCH_MM = 8.0
 """Lunghezza del tratto campione accanto a una voce di legenda."""
@@ -369,7 +418,8 @@ def render_sheet(
     parts: list[str] = [
         f'<svg xmlns="http://www.w3.org/2000/svg" '
         f'width="{standard.sheet_width_mm:g}mm" height="{standard.sheet_height_mm:g}mm" '
-        f'viewBox="0 0 {standard.sheet_width_mm:g} {standard.sheet_height_mm:g}">',
+        f'viewBox="0 0 {standard.sheet_width_mm:g} {standard.sheet_height_mm:g}" '
+        f'font-family="{FAMIGLIA_DELLE_SCRITTE}">',
     ]
     if cartiglio is None:
         parts.extend(
@@ -479,6 +529,8 @@ def render_sheet(
         )
 
     for label in sheet.labels:
+        if label.richiamo is not None:
+            parts.append(_richiamo_svg(label.richiamo, standard, "leader"))
         if label.leader_from is not None:
             # Il richiamo e' **quello che il layout ha deciso**: i due capi si
             # uniscono come stanno. Prima il renderer ci ricavava una spezzata
@@ -490,10 +542,12 @@ def render_sheet(
                 f'{label.anchor.x_mm:g},{label.anchor.y_mm:g}" fill="none" '
                 f'stroke="black" stroke-width="{standard.line_thin_mm:g}"/>'
             )
+            # La freccia sul pezzo (I-162): il richiamo dice di chi parla.
+            parts.append(_freccia_svg(label.leader_from, label.anchor, "leader-arrow"))
         parts.append(
             f'<text class="label" data-role="{_escape(label.role)}" '
             f'x="{label.anchor.x_mm:g}" y="{label.anchor.y_mm:g}" '
-            f'font-size="{standard.text_small_mm:g}" fill="black">'
+            f'font-size="{label.corpo_mm or standard.text_small_mm:g}" fill="black">'
             f"{_escape(label.text)}</text>"
         )
 
@@ -502,6 +556,10 @@ def render_sheet(
     # dal basso verso l'alto (I-152). Dichiara Arial come la tabella: e' il
     # carattere delle tavole, e il DXF lo scrive uguale.
     for etichetta in sheet.diametri:
+        if etichetta.richiamo is not None:
+            # L'etichetta staccata (I-162, I-163): la freccia piena sulla linea, il
+            # tratto obliquo, la spalla fino alla scritta.
+            parts.append(_richiamo_svg(etichetta.richiamo, standard, "diameter-leader"))
         girata = (
             f' transform="rotate(-90 {etichetta.ancora.x_mm:g} {etichetta.ancora.y_mm:g})"'
             if etichetta.verticale
@@ -509,8 +567,9 @@ def render_sheet(
         )
         parts.append(
             f'<text class="diameter" x="{etichetta.ancora.x_mm:g}" '
-            f'y="{etichetta.ancora.y_mm:g}" font-size="{standard.text_small_mm:g}" '
-            f'font-family="Arial, Helvetica, sans-serif" fill="black"{girata}>'
+            f'y="{etichetta.ancora.y_mm:g}" '
+            f'font-size="{etichetta.corpo_mm or standard.text_small_mm:g}" '
+            f'font-family="{FAMIGLIA_DELLE_SCRITTE}" fill="black"{girata}>'
             f"{_escape(etichetta.testo)}</text>"
         )
 
@@ -539,11 +598,17 @@ def render_sheet(
             f'stroke-width="{standard.legend_line_mm(symbol.manifest.stroke_weight) / scale:g}" '
             f'fill="none">'
             f"{symbol.body}{arrows}</g>"
+        )
+        righe = righe_del_nome(entry.name, frame)
+        basi = basi_delle_righe(
+            top + LEGEND_SWATCH_MM / 2 + standard.text_small_mm / 2, len(righe), standard.text_small_mm
+        )
+        parts.extend(
             f'<text class="legend-name" '
             f'x="{entry.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '
-            f'y="{top + LEGEND_SWATCH_MM / 2 + standard.text_small_mm / 2:g}" '
-            f'font-size="{standard.text_small_mm:g}" '
-            f'fill="black">{_escape(entry.name)}</text>'
+            f'y="{base:g}" font-size="{standard.text_small_mm:g}" '
+            f'fill="black">{_escape(riga)}</text>'
+            for riga, base in zip(righe, basi, strict=True)
         )
 
     for key in sheet.network_keys:
@@ -554,10 +619,15 @@ def render_sheet(
             f'x2="{key.anchor.x_mm + LEGEND_SWATCH_MM:g}" y2="{key.anchor.y_mm - 1:g}" '
             f'stroke="{key.colour}" stroke-width="{standard.line_medium_mm:g}"'
             f"{dash_attribute}/>"
+        )
+        righe = righe_del_nome(key.name, frame)
+        basi = basi_delle_righe(key.anchor.y_mm, len(righe), standard.text_small_mm)
+        parts.extend(
             f'<text class="legend-network-name" '
             f'x="{key.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '
-            f'y="{key.anchor.y_mm:g}" font-size="{standard.text_small_mm:g}" '
-            f'fill="black">{_escape(key.name)}</text>'
+            f'y="{base:g}" font-size="{standard.text_small_mm:g}" '
+            f'fill="black">{_escape(riga)}</text>'
+            for riga, base in zip(righe, basi, strict=True)
         )
 
     # Le righe che spiegano una scritta (I-155): il campione dove le altre righe
@@ -566,14 +636,14 @@ def render_sheet(
         parts.append(
             f'<text class="legend-note-sample" x="{nota.anchor.x_mm:g}" '
             f'y="{nota.anchor.y_mm:g}" font-size="{standard.text_small_mm:g}" '
-            f'font-family="Arial, Helvetica, sans-serif" fill="black">'
+            f'font-family="{FAMIGLIA_DELLE_SCRITTE}" fill="black">'
             f"{_escape(nota.campione)}</text>"
         )
         for indice, riga in enumerate(nota.righe):
             parts.append(
                 f'<text class="legend-note" '
                 f'x="{nota.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '
-                f'y="{nota.anchor.y_mm + indice * standard.grid_mm:g}" '
+                f'y="{nota.anchor.y_mm + indice * INTERLINEA_EM * standard.text_small_mm:g}" '
                 f'font-size="{standard.text_small_mm:g}" fill="black">{_escape(riga)}</text>'
             )
 

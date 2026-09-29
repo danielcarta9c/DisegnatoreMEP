@@ -153,6 +153,24 @@ class RoutedTrunk(StrictModel):
     che e' cio' che ogni tratta era prima che il ripiego esistesse."""
 
 
+class Richiamo(StrictModel):
+    """Il richiamo di un'etichetta staccata dal proprio pezzo o dalla propria linea
+    (I-162, I-163): **la freccia piena** tocca il pezzo o la linea in `punta`; **un
+    tratto obliquo a 45 gradi** arriva al `gomito`; da li' **la spalla orizzontale**
+    arriva in `spalla`, accanto alla scritta, a meta' delle sue maiuscole. E' la
+    forma dell'esempio del PO, che supera D-075: il richiamo non entra piu' nella
+    scritta con la sola diagonale."""
+
+    punta: Point
+    gomito: Point
+    spalla: Point
+
+    @property
+    def segmenti(self) -> tuple[tuple[Point, Point], tuple[Point, Point]]:
+        """Il tratto obliquo e la spalla, nell'ordine in cui si disegnano."""
+        return ((self.punta, self.gomito), (self.gomito, self.spalla))
+
+
 class PlacedLabel(StrictModel):
     """Un testo sulla tavola: mai una denominazione, solo valore o sigla (D-052)."""
 
@@ -162,6 +180,23 @@ class PlacedLabel(StrictModel):
     anchor: Point
     leader_from: Point | None = None
     """Da dove parte la linea di richiamo, quando il testo sta fuori dal corpo."""
+    corpo_mm: FiniteFloat | None = Field(default=None, gt=0)
+    """Il corpo del testo, se non e' quello delle scritte della tavola: una sigla che
+    a 9 punti non trova posto accanto al pezzo scende a 8, il minimo del PO
+    (I-159, I-160). `None` e' il corpo di sempre, e non si scrive."""
+    richiamo: Richiamo | None = None
+    """Il richiamo con freccia e spalla (I-162, I-163), quando il testo sta lontano
+    dal pezzo. `leader_from` e' il richiamo di prima — una sola diagonale fino alla
+    base del testo —: le geometrie scritte prima lo portano ancora, e si
+    disegnano come allora."""
+
+    @model_serializer(mode="wrap")
+    def _senza_il_corpo_di_sempre(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        dati: dict[str, Any] = handler(self)
+        for campo in ("corpo_mm", "richiamo"):
+            if dati.get(campo) is None:
+                dati.pop(campo, None)
+        return dati
 
 
 class DiametroSullaTavola(StrictModel):
@@ -178,6 +213,23 @@ class DiametroSullaTavola(StrictModel):
     connection_ids: list[str] = Field(default_factory=list)
     """Le connessioni del tratto che l'etichetta nomina: e' cosi' che il preflight
     verifica che ogni tratto ne abbia una, e una sola."""
+    corpo_mm: FiniteFloat | None = Field(default=None, gt=0)
+    """Il corpo della scritta, se non e' quello delle scritte della tavola: il DN che
+    a 9 punti non trova posto scende a 8, il minimo del PO (I-159). `None` e' il
+    corpo di sempre, e non si scrive."""
+    richiamo: Richiamo | None = None
+    """Il richiamo, quando l'etichetta sta staccata dalla linea: e' l'ultima spiaggia
+    per il DN di una strada principale che accanto alla linea non entra (I-162). La
+    freccia tocca la linea del tratto, e l'etichetta e' orizzontale. `None` — il
+    caso di sempre — non si scrive."""
+
+    @model_serializer(mode="wrap")
+    def _senza_il_corpo_di_sempre(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        dati: dict[str, Any] = handler(self)
+        for campo in ("corpo_mm", "richiamo"):
+            if dati.get(campo) is None:
+                dati.pop(campo, None)
+        return dati
 
 
 class NotaDellaLegenda(StrictModel):

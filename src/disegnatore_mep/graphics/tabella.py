@@ -103,9 +103,12 @@ CELLA_VUOTA = "–"
 tavola non compare (D-087). Un trattino e non il vuoto, perche' il vuoto si
 legge come una dimenticanza del disegno."""
 
-ALTEZZA_RIGA_MM = 5.0
-"""Due passi di griglia per riga: il testo della legenda, alto 1,8 mm, ci sta
-con piu' di un millimetro e mezzo sopra e sotto."""
+MARGINE_DELLA_RIGA_MM = 1.85
+"""Lo spazio sopra e sotto le maiuscole di una riga: quello che la riga di 5 mm
+di `REL-006` lasciava al testo di 1,8 mm (D-192, punto 8)."""
+
+PASSO_DELLE_RIGHE_MM = 1.25
+"""L'altezza di una riga si arrotonda a mezzo passo di griglia."""
 
 RIENTRO_MM = 1.5
 """Lo spazio fra il testo e le linee della cella, a sinistra e a destra: lo
@@ -115,6 +118,14 @@ MEZZE_MAIUSCOLE_EM = 0.35
 """Mezza altezza delle maiuscole, in corpi: serve a mettere il testo a meta'
 della riga. Le maiuscole di Arial e di Helvetica sono alte 0,688–0,716 em
 (`dxf.ALTEZZA_MAIUSCOLE_EM`, il cartiglio)."""
+
+
+def altezza_della_riga_mm(corpo_mm: float) -> float:
+    """L'altezza di una riga della tabella per il corpo dei suoi testi (REL-008): le
+    maiuscole, alte 0,7 corpi, piu' lo stesso margine sopra e sotto, arrotondate a
+    mezzo passo di griglia. A 1,8 mm fa i 5 mm di `REL-006`; a 9 punti 6,25."""
+    grezza = 2 * MEZZE_MAIUSCOLE_EM * corpo_mm + 2 * MARGINE_DELLA_RIGA_MM
+    return -(-round(grezza, 6) // PASSO_DELLE_RIGHE_MM) * PASSO_DELLE_RIGHE_MM
 
 
 def formatta_il_dato(chiave: str, valore: JsonPrimitive) -> str | None:
@@ -256,7 +267,7 @@ def impagina_la_tabella(
         x_mm=area.x_mm,
         y_mm=area.y_mm,
         colonne_mm=colonne,
-        riga_mm=ALTEZZA_RIGA_MM,
+        riga_mm=altezza_della_riga_mm(standard.text_small_mm),
         righe=righe,
     )
 

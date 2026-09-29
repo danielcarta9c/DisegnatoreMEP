@@ -22,6 +22,7 @@ from disegnatore_mep.layout.geometry import (
     PlacedLabel,
     PlacedSymbol,
     Point,
+    Richiamo,
     RigaDellaTabella,
     RoutedTrunk,
     SheetGeometry,
@@ -626,6 +627,8 @@ def everything_wrong() -> DrawingGeometry:
             label("l2", anchor=at(150, 101)),
             label("l3", anchor=at(330, 210), leader_from=at(320, 200)),
             label("l4", anchor=at(320, 210), leader_from=at(330, 200)),
+            # La sigla di `good` scritta addosso a `near`: si legge come sua (REL-008).
+            label("good-tag", anchor=at(262, 48)),
         ],
     ).model_copy(
         update={
@@ -673,6 +676,7 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
         preflight.leader_crossings(broken),
         preflight.omitted_tags(broken),
         preflight.diameter_tags(broken, registry),
+        preflight.text_spacing(broken, FRAME),
         preflight.equipment_table(broken, FRAME),
         preflight.sheet_fill(broken, FRAME),
         preflight.next_sheet_fill(broken, FRAME),
@@ -702,3 +706,59 @@ def test_a_clean_drawing_produces_nothing() -> None:
     tidy = sheet("t1", symbols=quarters, routes=[joining], labels=[label("l1", at(150, 53.5))])
     registry = catalog(probe_good=GOOD_SOURCE)
     assert preflight.preflight_drawing(drawing(tidy), FRAME, registry) == []
+
+
+# --- le distanze fra le scritte (REL-008, D-194 punto 9) ----------------------
+
+
+def _distanze(geometria: DrawingGeometry) -> list[str]:
+    return [item.code for item in preflight.text_spacing(geometria, FRAME)]
+
+
+def test_il_dato_di_un_pezzo_sopra_la_sigla_del_vicino_si_legge_con_lei() -> None:
+    """«4 kW» di PAV-02 a 0,65 mm sopra «PAV-01» (tavola 3 del collaudo di
+    REL-008): due righe dello stesso blocco. A mezzo corpo, due scritte."""
+    corpo = FRAME.standard.text_small_mm
+    pezzi = [placed("pav-02", 100, 50), placed("pav-01", 100, 70)]
+    dato = PlacedLabel(id="pav-02-potenza", text="4 kW", role="data", anchor=at(100, 62))
+    sigla = PlacedLabel(id="pav-01-tag", text="PAV-01", role="tag", anchor=at(100, 62.65 + corpo))
+    assert _distanze(drawing(sheet(symbols=pezzi, labels=[dato, sigla]))) == ["TEXTS_READ_AS_ONE"]
+    staccata = sigla.model_copy(update={"anchor": at(100, 62 + corpo / 2 + 0.1 + corpo)})
+    assert _distanze(drawing(sheet(symbols=pezzi, labels=[dato, staccata]))) == []
+
+
+def test_una_sigla_piu_vicina_a_un_altro_pezzo_si_legge_come_sua() -> None:
+    """«CIR-01», centrata sulla sua pompa, a 9 punti arrivava sulla valvola
+    accanto (tavola 6 del collaudo di REL-008)."""
+    pezzi = [placed("pompa", 0, 0), placed("valvola", 20, 0)]
+    addosso = PlacedLabel(id="pompa-tag", text="CIR-01", role="tag", anchor=at(31, 4))
+    assert _distanze(drawing(sheet(symbols=pezzi, labels=[addosso]))) == [
+        "TAG_NEARER_ANOTHER_PIECE"
+    ]
+    sopra = addosso.model_copy(update={"anchor": at(0, -1.5)})
+    assert _distanze(drawing(sheet(symbols=pezzi, labels=[sopra]))) == []
+
+
+def test_il_dn_staccato_addosso_a_un_pezzo_e_con_la_freccia_sul_flusso() -> None:
+    """«Øi 32» a 1,66 mm da «RAD-01» e la freccia del richiamo sulla freccia di
+    verso (tavole 1 e 4 del collaudo di REL-008). La tratta va da sinistra a
+    destra: la freccia di verso ha la punta a meta', in (50, 50)."""
+    tratta = run("r", [at(0, 50), at(100, 50)])
+    radiatore = placed("radiatore", 70, 38)
+    dn = DiametroSullaTavola(
+        testo="Øi 32",
+        ancora=at(60.75, 45.1),
+        connection_ids=["r"],
+        richiamo=Richiamo(punta=at(49.5, 50), gomito=at(55, 44.5), spalla=at(60, 44.5)),
+    )
+    foglio = sheet(symbols=[radiatore], routes=[tratta]).model_copy(update={"diametri": [dn]})
+    assert _distanze(drawing(foglio)) == ["DETACHED_DIAMETER_CROWDED", "LEADER_ON_A_FLOW_ARROW"]
+    pulito = dn.model_copy(
+        update={
+            "ancora": at(50.75, 35.1),
+            "richiamo": Richiamo(punta=at(40, 50), gomito=at(45, 34.5), spalla=at(50, 34.5)),
+        }
+    )
+    lontano = radiatore.model_copy(update={"origin": at(90, 20)})
+    foglio = sheet(symbols=[lontano], routes=[tratta]).model_copy(update={"diametri": [pulito]})
+    assert _distanze(drawing(foglio)) == []

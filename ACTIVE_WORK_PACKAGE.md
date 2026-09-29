@@ -1,94 +1,161 @@
-# REL-008 — Le scritte della tavola più grandi: 9 punti, mai sotto 8
+# REL-001 — La skill vera e propria: l'orchestratore che cuce i pezzi, e il PDF fatto dalla skill
 
-> **▶ Attivo dal 29 settembre 2026** (I-159). Fuso `REL-007`, i diametri, con le tavole approvate dal PO —
-> «Approvato tutto, pr e metti su main» (I-158) —, il PO ha chiesto nello stesso messaggio una REL nuova,
-> prima delle altre. *Assunzione della sessione:* dopo, l'ordine di prima — il PDF senza browser, `REL-001`
-> la skill, per ultimo `REL-005`.
+> **▶ Attivo dal 29 settembre 2026** (I-167). Fuso `REL-008`, le scritte a 9 punti, con le tavole approvate
+> dal PO — «le tavole vanno bene» (I-164) —, il PO ha scelto il pacchetto dopo: «Prossima sessione vorrei
+> aggredire a questo punto proprio REL.001 per creare l'orchestratore della skill. dovremo usare le best
+> practice di Anthropic oltre che lo skill creatore di dominio.» Cambia l'ordine che la sessione aveva
+> assunto (prima il PDF senza browser, poi la skill): il PDF senza browser resta qui dentro, al punto 2.
+>
+> **Due disposizioni nuove, che valgono per tutto il pacchetto:**
+>
+> - **I-166 — il motore e i suoi controlli sono pezzi della skill.** «tutto quello che hai fatto taggare e
+>   verificare i tag deve essere parte della skill che faremo. […] Non è che i controlli li fai tu in questa
+>   sessione e poi spariscono». La skill **esegue** il motore (Completare, Eseguire) **e il preflight** su ogni
+>   tavola e **consegna i rilievi** al progettista; niente di ciò che controlla una tavola vive solo nella
+>   sessione di sviluppo o in `docs/collaudi/`. È il criterio 6.
+> - **I-167 — le best practice di Anthropic e lo «skill creatore».** *Lettura della sessione, da confermare
+>   col PO all'avvio:* lo «skill creatore di dominio» è la skill **`skill-creator`** (nell'ambiente della
+>   sessione si chiama `anthropic-skills:skill-creator`: «Create new skills, modify and improve existing
+>   skills, and measure skill performance… run evals… optimize a skill's description»); le best practice
+>   sono la guida ufficiale **«Skill authoring best practices»**,
+>   <https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices>, letta il 29 settembre
+>   2026. Si rilegge all'avvio: può essere cambiata.
+>
+> **Quello che i pacchetti dopo il 24 settembre gli lasciano:** il cartiglio (`REL-002`), i simboli nuovi
+> (`REL-003`), il DXF (`REL-004`), la tabella delle apparecchiature (`REL-006`), i diametri in DN (`REL-007`), le
+> scritte a 9 punti con i loro rilievi nel preflight (`REL-008`, `text_spacing`). La cartella della skill li
+> porta tutti. Il testo sotto è il pacchetto del 24–26 settembre, aggiornato dove i fatti sono cambiati.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **ATTIVO** dal 29 settembre 2026 (I-159).
-**Base:** `main` dopo la fusione di `REL-007`.
+**Stato:** **ATTIVO** dal 29 settembre 2026 (I-167). Era stato attivo la notte del 24 settembre, dopo
+`DRAW-018` (PR **#57**, **I-119**), e il 26 settembre dopo `REL-003`; rinviato per i simboli (I-126), per il
+cartiglio (I-129) e per i pezzi che mancano (I-137): il DXF, la tabella, i diametri, le scritte.
+**Base:** `main` dopo la fusione di `REL-008`.
 **Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
-**Release:** la prima release (**D-183**), aggiunto dal PO il 29 settembre (I-159).
-**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).
+**Release:** la prima release — il primo dei cinque pacchetti (`docs/plans/2026-09-03-release-plan.md`,
+sezione «La prima release», **D-183**).
+**Approvazione della fusione:** **del PO**, e si dà guardando la tavola che la skill ha prodotto
+(D-146, D-147).
 
-Il PO:
+Il PO, il 24 settembre 2026 (**I-121**, **I-122**):
 
-> «Poi facciamo una nuova REL. vorrei provare ad aumentare il font utilizzato per tutte le scritte. Al
-> momento mi sembra poco leggibile. Adesso mi sembra che sta a circa 5, dovrebbe essere almeno 8 o meglio
-> 9.» (I-159, 29 settembre 2026)
+> «Ricordiamoci che lo scopo è creare una skill che usa il progettista per disegnare impianto.
+> Quindi in Claude durante una sessione spiega l'impianto, lancia la skill ed eventualmente la skill
+> mentre fa la parte di capire può fare delle domande chiarificatrici. Ora vorrei andare verso la
+> prima release della skill. […] la skill vera e propria (il file skill.md) che orchestra i vari
+> pezzi, […] il motore pdf che dicevi»
 
 ---
 
-## Dove siamo — 29 settembre 2026
+## Dove siamo — misurato il 24 settembre 2026
 
-- **Il «circa 5» del PO è misurato.** Le scritte del disegno — le sigle, i dati del progettista accanto ai
-  pezzi, i DN, la legenda e la sua nota, la tabella delle apparecchiature, la riga d'intestazione, gli
-  indirizzi della verifica — hanno **un corpo solo**: `GraphicStandard.text_small_mm`, **1,8 mm**, cioè
-  **5,1 pt** (`src/disegnatore_mep/graphics/standard.py`). A4, A3 e A2 lo condividono: la scala di stampa
-  è invariante (ADR 0003). **9 pt sono 3,18 mm, 8 pt 2,82 mm**: le scritte crescono di 1,76 volte.
-- **Il corpo è anche in una decisione approvata**: la tabella delle apparecchiature ha «testi di 1,8 mm come
-  legenda e sigle, in Arial» e «righe di 5 mm» (**D-192**, punto 8). La disposizione del PO la cambia per il
-  corpo: una decisione nuova, al punto 1.
-- **Il cartiglio Nove C** (`REL-002`) ha i suoi corpi, in punti, dal modello dello studio, e li riduce da
-  sé quando un testo non entra nel suo campo (`graphics/cartiglio.py`). Quali siano sotto gli 8 pt si
-  misura al punto 1.
-- **Il corpo decide lo spazio.** La posa delle sigle e dei DN misura il riquadro di ogni scritta
-  (`layout/labels.py`, `layout/diametri.py`); la legenda sta in una fascia di 50 mm (`graphics/frame.py`,
-  `LEGEND_WIDTH_MM`); la tabella è larga quanto i suoi testi e alta cinque millimetri a riga; il preflight
-  misura le scritte per le sovrapposizioni e i margini; il DXF scrive l'altezza delle maiuscole. **A 9 pt
-  ogni scritta occupa quasi il doppio**: sigle e DN che oggi entrano possono non entrare, la tabella si
-  allarga verso il disegno, la legenda va a capo più spesso, e il foglio può non bastare.
-- **Il carattere.** Il DN e la tabella dichiarano Arial; sigle, legenda e rimandi non dichiarano niente, e
-  il PDF li stampa con le grazie (I-122). Che il carattere voluto sia l'Arial è un'assunzione detta al PO
-  il 26 settembre, senza obiezioni.
+- **I cinque pezzi esistono, e li cuce a mano la sessione di sviluppo.** Capire
+  (`skill/capire/ISTRUZIONI.md`, un agente); Completare (`disegnatore-mep rules`); Comporre
+  (`skill/comporre/ISTRUZIONI.md`, un agente); Eseguire (`disegnatore-mep piano`); Rivedere (i
+  controlli, e l'occhio di `skill/rivedere/ISTRUZIONI.md`). Le tavole dei cinque impianti di prova
+  escono così, e il PO le ha approvate (I-109, I-117, I-119).
+- **Non c'è l'ingresso della skill.** `docs/SKILL.md` è il documento d'architettura, non il file che
+  una sessione di Claude carica quando il progettista lancia la skill.
+- **Il PDF lo fa uno strumento dell'ambiente di sviluppo** (`scripts/to-pdf.sh`), con il browser.
+  Il pacchetto scrive solo l'SVG, e dipende soltanto da `pydantic`.
+- **Le skill di Nove C** (per esempio quella dei computi, `cme-mep-pdc`) sono una cartella con
+  `SKILL.md`, `scripts/` e `references/`, e girano nell'ambiente d'esecuzione di Claude: lì non si
+  può contare su un browser. Le skill di Claude per i PDF usano `reportlab` e `pypdf` — un indizio di
+  che cosa c'è, **da verificare**, non un dato.
+- **Capire sa già dichiarare le domande**: ogni cosa che il testo non dice e che serve diventa una
+  voce di `assumptions` con `status: "proposed"` (`skill/capire/ISTRUZIONI.md` §6). Manca chi le
+  porta al progettista e aspetta la risposta.
 
 ---
 
 ## Le cose da fare, in quest'ordine
 
-### 1. Che cosa cresce, e quanto — con il PO
+### 1. L'ambiente in cui la skill gira
 
-Il PO ha detto «tutte le scritte», «almeno 8 o meglio 9». Restano da fissare con lui, perché sono
-convenzione grafica:
+Che cosa offre l'ambiente d'esecuzione di una skill di Claude: la versione di Python, le librerie
+presenti (`pydantic`, `reportlab`, `pypdf`…), se si possono installare pacchetti, se c'è la rete.
+Da qui non si vede: si prepara **una skill di prova di poche righe**, che stampa versione e
+librerie, e il PO la carica e la lancia — oppure la sessione trova una fonte ufficiale che lo dica.
+**Finché il dato non c'è, la skill si scrive perché non ne abbia bisogno**: nessuna rete, nessun
+browser, dipendenze pure Python portate nella cartella.
 
-- **il corpo**: 9 pt per tutte le scritte del disegno, e 8 pt come minimo dove 9 non entra — o 9 pt e
-  basta;
-- **il cartiglio**: se i suoi testi sotto gli 8 pt crescono anche loro, o se il modello dello studio resta
-  com'è;
-- **il carattere**: Arial per tutte le scritte, come il DN, la tabella, il cartiglio e il DXF.
+### 2. Il PDF fatto dalla skill (I-122)
 
-Le risposte vanno nel registro, e il corpo in una decisione che supera D-192 per il punto 8.
+La tavola esce in PDF **a misura reale** — la pagina è il foglio, e un simbolo stampato misura
+quello che il modello dice (ADR 0003, `scripts/to-pdf.sh`) — **senza browser**. La strada si sceglie
+dopo il punto 1: scrivere il PDF dalla geometria della tavola, o convertire l'SVG con una libreria
+che l'ambiente ha. Si misura contro il PDF di oggi: sulle cinque tavole approvate (le 1 e 4 in
+`docs/collaudi/DRAW-018/`, le 2, 3 e 5 in `docs/collaudi/DRAW-017/`), rasterizzate tutte e due, le
+differenze stanno solo nei caratteri.
 
-### 2. Il corpo nuovo, in un punto solo
+### 3. La forma della skill
 
-`text_small_mm` al corpo deciso, e tutto ciò che ne dipende lo legge da lì: i testi più grandi
-(`text_normal_mm`, `text_title_mm`) restano più grandi; nessun numero nuovo anonimo nel codice.
+Una **cartella installabile**, costruita **da uno script del repository** e mai copiata a mano — come
+i generatori della libreria —, che la ricostruisce identica:
 
-### 3. Lo spazio che serve alle scritte
+- `SKILL.md`, l'ingresso (punto 4);
+- gli **script**: un comando solo per il lavoro deterministico — completare il grafo, eseguire il
+  piano, misurare, scrivere il PDF — sul motore di `src/`;
+- la **libreria**: simboli, catalogo, regole, naming;
+- le **istruzioni** di Capire, Comporre e Rivedere, come riferimenti che `SKILL.md` richiama.
 
-Sigle, DN, legenda, tabella, intestazione, velo della verifica: ognuno trova posto col corpo nuovo, oppure
-lo dice. Lo stacco del DN dalla linea, i margini delle etichette, la fascia della legenda e le righe della
-tabella si ricavano dal corpo, non restano quelli tarati a 1,8 mm. Nel DXF gli stessi testi, con le altezze
-nuove.
+La forma la danno **la guida di Anthropic e `skill-creator`** (I-167), e si leggono prima di scrivere una riga.
+Dalla guida, letta il 29 settembre 2026 (si rilegge all'avvio):
 
-### 4. La prova sulle tavole approvate
+- `SKILL.md` ha nel frontespizio `name` — minuscole, cifre e trattini, al massimo 64 caratteri, senza
+  «anthropic» e «claude» — e `description` — che cosa fa e quando usarla, in terza persona, al massimo 1024
+  caratteri; il corpo sta **sotto le 500 righe**, e il resto va in file richiamati **a un livello solo**;
+- **il lavoro deterministico si fa con gli script**, eseguiti e non letti, che risolvono gli errori invece di
+  rimandarli all'agente, e senza costanti senza ragione;
+- **i flussi lunghi hanno una lista di passi**, e **un anello di verifica** — il validatore, la correzione, di
+  nuovo il validatore —: da noi è il preflight e il revisore;
+- **le valutazioni prima delle istruzioni**: almeno tre scenari, e la skill provata con i modelli con cui
+  girerà;
+- **le dipendenze**: su claude.ai l'ambiente installa da PyPI; dall'API non c'è rete. Si dichiarano, e si
+  verificano (è il punto 1).
 
-Le sei tavole approvate e la tavola in retrofit, rieseguite dai loro grafi e piani con i dati di prova di
-`REL-002`, `REL-006` e `REL-007`, **accanto a quelle di `REL-007`**, perché il PO veda la differenza.
+### 4. L'ingresso — `SKILL.md` (I-121)
+
+Il flusso, com'è deciso (D-012, D-013, D-155, D-183):
+
+1. il progettista **descrive l'impianto** nella conversazione e **lancia la skill**;
+2. **Capire** scrive il grafo di prima stesura; le cose che il testo non dice diventano **domande
+   chiarificatrici**, che la skill fa al progettista — in un passaggio solo, con la sua prima
+   interpretazione (D-006, D-013) — e aspetta;
+3. **Completare** aggiunge il corredo; i suoi punti aperti diventano domande nello stesso modo;
+4. **il progettista approva il grafo completo**: è l'unico cancello umano della catena;
+5. **Comporre** scrive il piano, con le istruzioni del pianificatore; **Eseguire** disegna e misura;
+   **Rivedere** guarda la tavola e rimanda al piano, mai al disegno;
+6. la skill **consegna il PDF**, e dice che cosa è rimasto aperto.
+
+E le cose che la skill non fa mai, dette in testa: non progetta (D-104, D-172), non inventa dati
+(D-087), non cambia lo schema che ha ricevuto.
+
+### 5. La prova vera: la skill intera in camera pulita
+
+Un agente con **la sola cartella della skill** e il testo di **un impianto che non è fra i cinque** —
+scritto dalla sessione nello stile di `examples/prova/input/`, o dato dal PO se preferisce; niente
+dati di clienti, il repository è pubblico. La sessione fa la parte del progettista: risponde alle
+domande con i dati del testo, e approva il grafo. Si misura con gli strumenti della sessione (D-152):
+la tavola esce, in PDF prodotto dalla skill, con zero tratte cedute e zero rilievi bloccanti.
+
+### 6. Lo ZIP per il PO
+
+La cartella impacchettata, con due righe su come caricarla in Claude. **Il PO la prova su un impianto
+suo**: è il cancello verticale del piano (`PROJECT_STATE.md`, rischio 4), e il suo esito si registra.
 
 ---
 
 ## Perimetro
 
-**Dentro:** il corpo del testo e tutto ciò che si impagina col testo — `graphics/` (standard, tavola, DXF,
-tabella, legenda), la posa delle scritte (`layout/labels.py`, `layout/diametri.py`, `layout/addresses.py`),
-il preflight che misura le scritte; il cartiglio solo se il PO lo decide al punto 1; `tests/**`;
-`docs/collaudi/REL-008/`; i documenti di stato.
+**Dentro:** la cartella della skill e lo script che la costruisce (`skill/`, `scripts/`); il comando
+unico e il modulo del PDF in `src/disegnatore_mep/`; `pyproject.toml`, se serve una dipendenza;
+`docs/SKILL.md`, per il rimando all'ingresso; `tests/**`; `docs/collaudi/REL-001/`.
 
-**Fuori:** la posa dei simboli e l'instradamento delle linee; le regole; la libreria dei simboli e il
-catalogo; il PDF senza browser. Se le scritte nuove non entrano senza spostare il disegno, **lo si dice al
-PO con le tavole**, non si sposta il disegno di nascosto.
+**Fuori:** le regole, la libreria dei simboli, il motore del disegno (`layout/`, `piano/`); le
+istruzioni di Capire, Comporre e Rivedere nel contenuto — si toccano solo i percorsi, se nella
+cartella della skill cambiano; il cartiglio (`REL-002`), i simboli nuovi (`REL-003`), il DXF
+(`REL-004`).
 
 ---
 
@@ -96,18 +163,31 @@ PO con le tavole**, non si sposta il disegno di nascosto.
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-0. **Le tavole, per prime**: le sei tavole approvate e la retrofit con le scritte nuove, in PDF e in DXF,
-   accanto a quelle di `REL-007`.
-1. **Il corpo lo ha fissato il PO** (punto 1): una riga del registro e una decisione.
-2. **Nessuna scritta sotto il minimo**: su ogni tavola, nell'SVG e nel DXF, ogni testo misurato.
-3. **Niente si tocca**: scritte contro simboli, linee, altre scritte, tabella e cartiglio; nessuna sigla e
-   nessun DN persi rispetto a `REL-007`, o detti uno per uno.
-4. **Il disegno non si muove**, o si dice dove e perché: simboli e tratte confrontati con le tavole di
-   `REL-007`, e il formato del foglio.
-5. **Deterministico**, e **la suite**: nessuna rossa nuova rispetto a `main`; zero `skip` e zero `xfail`
+0. **Le tavole, per prime**: la tavola dell'impianto nuovo, uscita dalla skill in camera pulita, nel
+   PDF che la skill ha scritto, al PO.
+1. **Il PDF senza browser**: pagina della misura del foglio; sulle cinque tavole approvate, il
+   confronto a pixel con `scripts/to-pdf.sh` differisce solo nei caratteri.
+2. **La cartella della skill** si costruisce con un comando e si rigenera identica — una prova, come
+   quella dei generatori della libreria.
+3. **L'ingresso** dice il flusso, le domande e l'approvazione del grafo; nella prova **nessun pezzo lo
+   cuce la sessione a mano**.
+4. **La prova in camera pulita**: dal testo al PDF, zero cedute e zero bloccanti; il rapporto dice dove
+   la skill si è fermata a chiedere, e che cosa ha chiesto.
+5. **La suite**: nessuna rossa nuova rispetto alle 46 di `main` a `REL-008` fuso; zero `skip` e zero `xfail`
    nuovi; `ruff` e `mypy` verdi.
+6. **Il motore e i controlli sono della skill** (I-166): nella prova in camera pulita la skill esegue da sé
+   Completare, Eseguire **e il preflight**, e consegna col PDF i rilievi della tavola; si mostra che nessun
+   controllo è rimasto nella sessione — l'elenco dei comandi che la skill lancia, e il loro output.
+7. **La guida di Anthropic** (I-167): la lista di controllo della guida («Checklist for effective Skills»)
+   spuntata voce per voce nel rapporto, con la prova di ciascuna.
+
+## Dopo `REL-001`
+
+Il cartiglio (`REL-002`), i simboli nuovi (`REL-003`), il DXF (`REL-004`), la tabella (`REL-006`), i
+diametri (`REL-007`) e le scritte (`REL-008`) sono fatti; resta `REL-005`, il pacchetto della release
+(D-183, punto 3; `docs/plans/2026-09-03-release-plan.md`).
 
 ## Consegna
 
-Una PR verso `main`, **fusa solo dopo che il PO ha visto le tavole e ha detto di sì**. Rapporto in
-`docs/collaudi/REL-008/RAPPORTO.md`, con le tavole in testa.
+Una PR verso `main`, **fusa solo dopo che il PO ha visto la tavola e ha detto di sì**. Rapporto in
+`docs/collaudi/REL-001/RAPPORTO.md`, con la tavola in testa.

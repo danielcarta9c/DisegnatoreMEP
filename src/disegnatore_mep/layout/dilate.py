@@ -251,6 +251,16 @@ def dilate_sheet(sheet: SheetGeometry, factor: float, step_mm: float) -> SheetGe
                         "leader_from": (
                             None if item.leader_from is None else moved(item.leader_from)
                         ),
+                        "richiamo": (
+                            None
+                            if item.richiamo is None
+                            else item.richiamo.model_copy(
+                                update={
+                                    campo: moved(getattr(item.richiamo, campo))
+                                    for campo in ("punta", "gomito", "spalla")
+                                }
+                            )
+                        ),
                     }
                 )
                 for item in sheet.labels

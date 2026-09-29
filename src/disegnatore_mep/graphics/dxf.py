@@ -45,8 +45,15 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from xml.etree import ElementTree
 
-from disegnatore_mep.layout.geometry import FlowKind, Point, RoutedTrunk, SheetGeometry
-from disegnatore_mep.layout.legend import MEDIUM_NAMES, RETURN_NAMES, style_for
+from disegnatore_mep.layout.geometry import FlowKind, Point, Richiamo, RoutedTrunk, SheetGeometry
+from disegnatore_mep.layout.legend import (
+    INTERLINEA_EM,
+    MEDIUM_NAMES,
+    RETURN_NAMES,
+    basi_delle_righe,
+    righe_del_nome,
+    style_for,
+)
 from disegnatore_mep.model.types import PortFlow
 
 from .cartiglio import CartiglioDellaTavola, disegna_cartiglio
@@ -66,6 +73,7 @@ from .sheet import (
     _hoppable,
     _interrupted,
     flow_arrow_at,
+    freccia_del_richiamo,
     sheet_marks,
     stati_della_tavola,
 )
@@ -962,15 +970,18 @@ class _Tavola:
 
     def sigle(self) -> None:
         for label in self.sheet.labels:
+            if label.richiamo is not None:
+                self.richiamo(label.richiamo, LAYER_SIGLE)
             if label.leader_from is not None:
                 self.msp.add_line(
                     self.p(label.leader_from.x_mm, label.leader_from.y_mm),
                     self.p(label.anchor.x_mm, label.anchor.y_mm),
                     dxfattribs={"layer": LAYER_SIGLE},
                 )
+                self.freccia_del_richiamo(label.leader_from, label.anchor, LAYER_SIGLE)
             self.testo(
                 label.text, label.anchor.x_mm, label.anchor.y_mm,
-                self.standard.text_small_mm, LAYER_SIGLE,
+                label.corpo_mm or self.standard.text_small_mm, LAYER_SIGLE,
             )
 
     def legenda(self) -> None:
@@ -1007,12 +1018,16 @@ class _Tavola:
                 self._freccia_del_glifo(
                     glyph, manifest.port(glyph.port).face, None, left, middle, scala
                 )
-            self.testo(
-                entry.name,
-                entry.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM,
+            righe = righe_del_nome(entry.name, self.frame)
+            basi = basi_delle_righe(
                 top + LEGEND_SWATCH_MM / 2 + self.standard.text_small_mm / 2,
-                self.standard.text_small_mm, LAYER_LEGENDA,
+                len(righe), self.standard.text_small_mm,
             )
+            for riga, base in zip(righe, basi, strict=True):
+                self.testo(
+                    riga, entry.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM, base,
+                    self.standard.text_small_mm, LAYER_LEGENDA,
+                )
         for key in self.sheet.network_keys:
             # Il campione porta colore, tratteggio e spessore sull'oggetto: la
             # legenda resta intera anche con il layer della rete spento.
@@ -1026,10 +1041,13 @@ class _Tavola:
                 },
             )
             colora(linea, key.colour)
-            self.testo(
-                key.name, key.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM,
-                key.anchor.y_mm, self.standard.text_small_mm, LAYER_LEGENDA,
-            )
+            righe = righe_del_nome(key.name, self.frame)
+            basi = basi_delle_righe(key.anchor.y_mm, len(righe), self.standard.text_small_mm)
+            for riga, base in zip(righe, basi, strict=True):
+                self.testo(
+                    riga, key.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM, base,
+                    self.standard.text_small_mm, LAYER_LEGENDA,
+                )
         for nota in self.sheet.note_della_legenda:
             self.testo(
                 nota.campione, nota.anchor.x_mm, nota.anchor.y_mm,
@@ -1038,18 +1056,35 @@ class _Tavola:
             for indice, riga in enumerate(nota.righe):
                 self.testo(
                     riga, nota.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM,
-                    nota.anchor.y_mm + indice * self.standard.grid_mm,
+                    nota.anchor.y_mm + indice * INTERLINEA_EM * self.standard.text_small_mm,
                     self.standard.text_small_mm, LAYER_LEGENDA,
                 )
+
+    def richiamo(self, richiamo: Richiamo, layer: str) -> None:
+        """Il richiamo con la spalla (I-163): i due tratti e la freccia piena, dagli
+        stessi punti dell'SVG."""
+        for da, a in richiamo.segmenti:
+            self.msp.add_line(self.p(da.x_mm, da.y_mm), self.p(a.x_mm, a.y_mm), dxfattribs={"layer": layer})
+        self.freccia_del_richiamo(richiamo.punta, richiamo.gomito, layer)
+
+    def freccia_del_richiamo(self, punta: Point, da: Point, layer: str) -> None:
+        """La freccia piena di un richiamo (I-162), dagli stessi tre vertici dell'SVG."""
+        a, b, c = freccia_del_richiamo(punta, da)
+        self.msp.add_solid(
+            [self.p(a.x_mm, a.y_mm), self.p(b.x_mm, b.y_mm), self.p(c.x_mm, c.y_mm)],
+            dxfattribs={"layer": layer},
+        )
 
     def diametri(self) -> None:
         """Il DN dei tratti (REL-007), dalla stessa ancora dell'SVG: sul verticale
         la scritta sale, e nello spazio modello — y in alto — e' una rotazione di
         novanta gradi in senso antiorario."""
         for etichetta in self.sheet.diametri:
+            if etichetta.richiamo is not None:
+                self.richiamo(etichetta.richiamo, LAYER_DIAMETRI)
             self.testo(
                 etichetta.testo, etichetta.ancora.x_mm, etichetta.ancora.y_mm,
-                self.standard.text_small_mm, LAYER_DIAMETRI,
+                etichetta.corpo_mm or self.standard.text_small_mm, LAYER_DIAMETRI,
                 rotazione=90.0 if etichetta.verticale else 0.0,
             )
 

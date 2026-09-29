@@ -36,8 +36,9 @@ from disegnatore_mep.graphics.dxf import (
 )
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import _interrupted, sheet_marks
+from disegnatore_mep.graphics.standard import CORPO_DELLE_SCRITTE_PT, PT_MM
 from disegnatore_mep.layout.geometry import Point, SheetGeometry
-from disegnatore_mep.layout.legend import style_for
+from disegnatore_mep.layout.legend import righe_del_nome, style_for
 from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.piano.esecutore import EsitoDelPiano, esegui_piano
 from disegnatore_mep.piano.formato import carica_piano
@@ -248,18 +249,26 @@ def test_le_frecce_sono_blocchi_sul_layer_della_rete(dxf_6: Scritto) -> None:
 # --- testi, cartiglio, presentazione -------------------------------------------------------
 
 
-def test_i_testi_sono_tarati_sulle_maiuscole(dxf_6: Scritto) -> None:
+def test_i_testi_sono_tarati_sulle_maiuscole(
+    dxf_6: Scritto, impianto_6: tuple[ProjectModel, EsitoDelPiano]
+) -> None:
     """AutoCAD misura l'altezza sulle maiuscole, l'SVG sul corpo: un testo della
-    legenda da 1,8 mm di corpo e' alto 1,8 × 0,688 nel DXF."""
+    legenda di 9 punti di corpo (REL-008), 3,175 mm, e' alto 3,175 × 0,688 nel DXF.
+    E un nome che va a capo ha nel DXF le stesse righe dell'SVG."""
     doc = ezdxf.readfile(dxf_6.target)
     foglio = dxf_6.foglio
+    frame = impianto_6[1].frame
     legenda = [t for t in doc.modelspace().query("TEXT") if t.dxf.layer == "M-ANNO-LEGN"]
     assert legenda
     for testo in legenda:
-        assert testo.dxf.height == pytest.approx(round(1.8 * ALTEZZA_MAIUSCOLE_EM, 4))
+        assert testo.dxf.height == pytest.approx(
+            round(CORPO_DELLE_SCRITTE_PT * PT_MM * ALTEZZA_MAIUSCOLE_EM, 4)
+        )
         assert testo.dxf.style == "NOVEC_ARIAL"
     nomi = {t.dxf.text for t in legenda}
-    assert {entry.name for entry in foglio.legend} <= nomi
+    righe = {riga for entry in foglio.legend for riga in righe_del_nome(entry.name, frame)}
+    assert righe <= nomi
+    assert any(len(righe_del_nome(entry.name, frame)) > 1 for entry in foglio.legend)
 
 
 def test_il_cartiglio_sta_in_spazio_carta_con_i_suoi_testi_e_il_logo_accanto(

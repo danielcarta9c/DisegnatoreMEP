@@ -12,7 +12,7 @@ from disegnatore_mep.layout.geometry import (
     SheetGeometry,
     intrudes_into,
 )
-from disegnatore_mep.layout.labels import CHAR_WIDTH_RATIO
+from disegnatore_mep.layout.labels import riquadro_della_scritta
 from disegnatore_mep.model.types import IssueSeverity
 
 from .issues import ValidationIssue, ValidationReport
@@ -118,13 +118,7 @@ def validate_sheet_geometry(
     height = frame.standard.text_small_mm
     boxes = [_box(symbol) for symbol in sheet.symbols]
     for label in sheet.labels:
-        width = len(label.text) * height * CHAR_WIDTH_RATIO
-        box = (
-            label.anchor.x_mm,
-            label.anchor.y_mm - height,
-            label.anchor.x_mm + width,
-            label.anchor.y_mm,
-        )
+        box = riquadro_della_scritta(label, height)
         # Il margine e' un conflitto come gli altri (DRAW-003): un testo che
         # esce dall'area di disegno finisce sulla legenda o sul cartiglio.
         if not (
