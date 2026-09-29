@@ -37,8 +37,11 @@ python3 scripts/mep.py <comando> ...     # dalla cartella di questa skill
 ## Prima di cominciare
 
 1. `python3 scripts/mep.py ambiente` — dice se il comando è pronto: la versione di Python, le
-   librerie, i dati della skill. Se manca una libreria prova a installarla da sé; se non ci
-   riesce lo dice, e tu lo dici al progettista con le sue parole.
+   librerie, i dati della skill. Il comando vuole **Python 3.11** o più recente e **pydantic 2**;
+   il DXF vuole **ezdxf**, l'anteprima **pypdfium2** o PyMuPDF. Se una libreria manca prova a
+   installarla da sé, e per questo serve la rete; se non ci riesce lo dice, e tu lo dici al
+   progettista con le sue parole: senza pydantic non si disegna, senza le altre la tavola esce
+   senza DXF o non la puoi guardare.
    Se dice che l'anteprima non c'è, la tavola non la potrai guardare prima di consegnarla:
    diglielo già nel primo messaggio.
 2. **Una cartella di lavoro fuori dalla skill**, per l'impianto: `mkdir -p /tmp/mep/<progetto>`.
