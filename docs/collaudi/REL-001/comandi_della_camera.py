@@ -65,16 +65,30 @@ def main() -> None:
         esito = risultati.get(str(chiamata["id"]), {"testo": "", "errore": False})
         testo = str(esito["testo"]).strip()
         # Gli agenti spesso stampano da se' il codice (`; echo EXIT=$?`): se c'e', vale quello.
+        # Dietro una pipe (`| tail`) il codice e' quello dell'ultimo programma, non del comando:
+        # allora non si sa, e si scrive «?».
         codice = re.search(r"EXIT[=: ]+(\d+)", testo) or re.search(r"Exit code (\d+)", testo)
-        uscita = codice.group(1) if codice else ("?" if esito["errore"] else "0")
+        dopo = str(comando).split("mep.py", 1)[1]
+        separatore = re.search(r"\|\||&&|;|\|", dopo)
+        if codice:
+            uscita = codice.group(1)
+        elif esito["errore"] or (separatore and separatore.group() == "|"):
+            uscita = "?"
+        else:
+            uscita = "0"
         righe = [
             r for r in testo.splitlines()
             if r.strip() and not r.startswith("Exit code") and not re.fullmatch(r"\s*EXIT[=: ]+\d+\s*", r)
         ]
+        # La riga che dice l'esito: il riepilogo di `disegna`, il motivo di un arresto; se no l'ultima.
+        esito_detto = next(
+            (r for r in righe if re.match(r"\s*(Formato |Il piano non si instrada|Errore|Pronto\.)", r)),
+            righe[-1] if righe else "",
+        )
         sottocomando = re.search(r"mep\.py\s+(\w+)", str(comando))
         print(
             f"{numero}. `{sottocomando.group(1) if sottocomando else '?'}` — uscita {uscita} — "
-            f"{(righe[-1] if righe else '').strip()[:160]}"
+            f"{esito_detto.strip()[:160]}"
         )
     print("\n## I file aperti\n")
     fuori = []
