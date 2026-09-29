@@ -22,6 +22,13 @@ miglioramento (`layout/improve.py`), la fase del tronco di `layout/spine.py` e
 > Non contiene stato («a che punto siamo» sta in `PROJECT_STATE.md`), non contiene storia
 > («perché abbiamo deciso così» sta in `docs/DECISION_LOG.md`), non contiene numeri di
 > stampa (stanno in `docs/standard/GRAPHIC_STANDARD.md`).
+>
+> **Questo non è il file che Claude carica quando il progettista lancia la skill** (`REL-001`).
+> Quello è **`skill/SKILL.md`**, l'ingresso: cuce i cinque pezzi — Capire, Comporre e Rivedere
+> con le loro istruzioni, Completare ed Eseguire con il comando unico
+> `src/disegnatore_mep/skill.py` — e dice il flusso, le domande e l'approvazione del grafo. La
+> cartella installabile non si scrive a mano: si costruisce con
+> `python3 scripts/costruisci-skill.py`, che scrive anche lo ZIP da caricare in Claude.
 
 ---
 
