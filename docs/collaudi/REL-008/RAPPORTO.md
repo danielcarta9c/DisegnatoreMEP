@@ -2,7 +2,7 @@
 
 **Pacchetto:** `REL-008` (`ACTIVE_WORK_PACKAGE.md`; I-159) · **Ramo:** `claude/pack-attivo-rel-007-0uotnp`,
 ripartito da `main` · **Base:** `main` a `7f2bee8` (PR #64, `REL-007`) · **Avviato dal PO:** il 29 settembre
-2026 · **Le regole:** **D-194**, proposta, dalle disposizioni del PO I-159 … I-162
+2026 · **Le regole:** **D-194**, proposta, dalle disposizioni del PO I-159 … I-163
 
 > **Le tavole, per prime**
 >
@@ -55,7 +55,7 @@ ripartito da `main` · **Base:** `main` a `7f2bee8` (PR #64, `REL-007`) · **Avv
 - **Le sigle**, `layout/labels.py`: la larghezza con le metriche di Arial; il ripiego a 8 punti; il corpo
   della sigla nella geometria (`PlacedLabel.corpo_mm`), letto da SVG, DXF, preflight, DN e velo della verifica.
 - **I DN**, `layout/diametri.py` e `diametri/tratti.py`: il ripiego a 8 punti, lo spazio dai capi di 1,0 mm, la
-  strada principale o secondaria di ogni tratto, l'etichetta staccata con freccia (`richiamo_da`).
+  strada principale o secondaria di ogni tratto, l'etichetta staccata con freccia (`labels.richiamo_verso`).
 - **Il richiamo con freccia e spalla** (I-162, I-163): la geometria in `layout/geometry.py` (`Richiamo`: punta,
   gomito, spalla), costruita da `layout/labels.py` per le sigle e per i DN; SVG e DXF lo disegnano uguale, la
   freccia piena come `SOLID` nel DXF.
@@ -106,10 +106,11 @@ Guardando le tavole prima di mandartele ho trovato quattro cose sbagliate che il
 si toccava, il preflight era pulito —, tutte figlie del corpo più grande:
 
 1. **Il DN staccato si incollava alla sigla accanto**: sulle tavole 1 e 4 «Øi 32» finiva sulla riga di
-   «RAD-01», a 1,3 mm, e si leggeva «Øi 32 RAD-01». Ora la scritta staccata sta **a un corpo** (3,2 mm) da
+   «RAD-01», a 1,66 mm, e si leggeva «Øi 32 RAD-01». Ora la scritta staccata sta **a un corpo** (3,2 mm) da
    scritte, simboli e linee degli altri tratti: sulle tavole la cosa più vicina è a 3,85–4,21 mm.
 2. **La freccia del richiamo cadeva sulla freccia del flusso**: la punta partiva dal centro del rettilineo,
-   che è proprio dove sta la freccia di verso. Ora ne sta fuori, a 1,25 mm.
+   che è proprio dove sta la freccia di verso: tutte e quattro le punte ci cadevano sopra. Ora ne stanno
+   fuori, a 1,25 mm.
 3. **Scritte di pezzi diversi che si leggevano come una sola**: «CIR-01» e il DN «Øi 40» sulla stessa riga a
    1,15 mm (tavola 6); «4 kW» di PAV-02 sopra «PAV-01» (tavola 3) e «0,7 m³/h» di ACS-01 sopra «AF-01»
    (tavola 4), a 0,65 mm, come due righe dello stesso blocco. Su `main`, a 5 punti, non succedeva. Ora fra
@@ -120,7 +121,20 @@ si toccava, il preflight era pulito —, tutte figlie del corpo più grande:
 
 Rispetto alle tavole di prima di queste correzioni si sono spostate **tre scritte accanto ai pezzi** («4 kW»,
 «0,7 m³/h», «CIR-01») **e cinque DN**, quattro dei quali staccati; nessuna scritta è sparita o comparsa, simboli
-e linee sono identici. Sono tarature della sessione, scritte in **D-194, punto 9**.
+e linee sono identici. Sono tarature della sessione, scritte in **D-194, punto 9**. Fuori dalle sette
+tavole, sulla prova-1 della suite, la regola della sigla più vicina al suo pezzo manda AF-02 sul richiamo
+(§4, criterio 5): accanto, in seconda fila, si leggeva come la sigla del defangatore.
+
+### 3.6 Nella legenda, due voci di due righe di fila si leggono come una
+
+A 9 punti molti nomi vanno su due righe, e il passo di una voce è rimasto quello di sempre, **7,5 mm** («tre
+passi di griglia», `legend.ROW_HEIGHT_MM`). Fra due voci di due righe di fila restano 1,7 mm di bianco, quasi
+quanto fra le due righe della stessa voce (1,5): nei fluidi otto righe di fila fanno un blocco solo, e le voci
+si distinguono dal campione accanto e dalla maiuscola. **Non l'ho cambiato**, perché il passo è una convenzione:
+la proposta è **mezzo passo di griglia in più (1,25 mm) per le voci di due righe**, che porta il bianco fra
+due voci a 2,9 mm. Provato in memoria: la legenda entra ancora su tutte le tavole, e sotto la nota «Øi» della
+tavola 4, la A3 più piena, restano 8,9 mm di fascia invece di 20,2; su una A3 più piena di questa la legenda
+non entrerebbe, ed è un errore che ferma la tavola.
 
 ## 4. Le misure
 
@@ -142,7 +156,8 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 11 · ora 9 (a 8 pt 0, staccati con freccia ['Øi 32']) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 2 ['Øi 25 inlet-mixing-valve-thermostatic-accumulo-dhw-out→mixing-valve-thermostatic-accumulo-dhw-out', 'Øi 25 acquedotto→accumulo']
    rispetto a main: simboli uguali, tratte uguali · tabella 92.5x30.0 → 152.5x37.5 mm · voci della legenda 18 + 4 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 32 da simbolo collettore-mandata a 1.21 mm
-   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   scritte di pezzi diversi a meno di un corpo lungo la riga e mezzo fra le righe: 0 
+   sigle piu' vicine a un altro pezzo che al loro: 0 
    staccate (un corpo = 3.17 mm): Øi 32: la cosa piu' vicina tag RAD-01 a 4.21 mm, la punta a 1.25 mm dalla freccia di verso piu' vicina
    deterministico: SVG uguale (a65bef4bdfb934b8), DXF uguale (5e690034b07b1664)
    preflight: nessun rilievo
@@ -155,7 +170,8 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 7 · ora 7 (a 8 pt 0, staccati con freccia nessuno) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 0 
    rispetto a main: simboli DIVERSI, tratte DIVERSI · tabella 92.5x30.0 → 152.5x37.5 mm · voci della legenda 21 + 4 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 25 da linea p4-a a 1.21 mm
-   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   scritte di pezzi diversi a meno di un corpo lungo la riga e mezzo fra le righe: 0 
+   sigle piu' vicine a un altro pezzo che al loro: 0 
    staccate: nessuna
    deterministico: SVG uguale (8e79a30fa713e8c6), DXF uguale (483b3dbb15b04162)
    preflight: nessun rilievo
@@ -168,7 +184,8 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 7 · ora 7 (a 8 pt 0, staccati con freccia nessuno) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 0 
    rispetto a main: simboli uguali, tratte uguali · tabella 90.0x25.0 → 147.5x31.2 mm · voci della legenda 20 + 4 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 25 da simbolo valve-isolation-volano-a a 1.21 mm
-   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   scritte di pezzi diversi a meno di un corpo lungo la riga e mezzo fra le righe: 0 
+   sigle piu' vicine a un altro pezzo che al loro: 0 
    staccate: nessuna
    deterministico: SVG uguale (8ff2a1fa4dd1140a), DXF uguale (552dd056ebf36013)
    preflight: nessun rilievo
@@ -181,7 +198,8 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 12 · ora 11 (a 8 pt 0, staccati con freccia ['Øi 20', 'Øi 32']) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 1 ['Øi 20 acquedotto→scambiatore']
    rispetto a main: simboli uguali, tratte uguali · tabella 92.5x35.0 → 152.5x43.8 mm · voci della legenda 22 + 4 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 40 da simbolo tee-expansion-connection-collettore-ritorno-a a 1.21 mm
-   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   scritte di pezzi diversi a meno di un corpo lungo la riga e mezzo fra le righe: 0 
+   sigle piu' vicine a un altro pezzo che al loro: 0 
    staccate (un corpo = 3.17 mm): Øi 32: la cosa piu' vicina tag RAD-01 a 4.21 mm, la punta a 1.25 mm dalla freccia di verso piu' vicina · Øi 20: la cosa piu' vicina data 0,7 m³/h a 3.85 mm, la punta a 1.25 mm dalla freccia di verso piu' vicina
    deterministico: SVG uguale (36a6b3a3cd018d5f), DXF uguale (2c9f5e4bdb65634d)
    preflight: nessun rilievo
@@ -194,7 +212,8 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 29 · ora 26 (a 8 pt 0, staccati con freccia nessuno) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 3 ['Øi 25 inlet-mixing-valve-thermostatic-bollitore-dhw-out→mixing-valve-thermostatic-bollitore-dhw-out', 'Øi 40 ritorno-radiante→miscelatrice-radiante', 'Øi 25 acquedotto→bollitore']
    rispetto a main: simboli uguali, tratte uguali · tabella 95.0x60.0 → 155.0x75.0 mm · voci della legenda 26 + 5 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 40 da simbolo tee-thermometer-pdc-1-water-supply a 1.21 mm
-   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   scritte di pezzi diversi a meno di un corpo lungo la riga e mezzo fra le righe: 0 
+   sigle piu' vicine a un altro pezzo che al loro: 0 
    staccate: nessuna
    deterministico: SVG uguale (05e3fabbb77f0398), DXF uguale (f74d8255ad2d9ac3)
    preflight: nessun rilievo
@@ -207,7 +226,8 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 20 · ora 19 (a 8 pt 0, staccati con freccia ['Øi 40']) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 1 ['Øi 32 inlet-mixing-valve-thermostatic-bollitore-dhw-out→mixing-valve-thermostatic-bollitore-dhw-out']
    rispetto a main: simboli uguali, tratte uguali · tabella 102.5x60.0 → 170.0x75.0 mm · voci della legenda 26 + 5 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 32 da simbolo circolatore-solare a 0.57 mm
-   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   scritte di pezzi diversi a meno di un corpo lungo la riga e mezzo fra le righe: 0 
+   sigle piu' vicine a un altro pezzo che al loro: 0 
    staccate (un corpo = 3.17 mm): Øi 40: la cosa piu' vicina simbolo radiatori a 3.89 mm, la punta a 1.25 mm dalla freccia di verso piu' vicina
    deterministico: SVG uguale (415afb20944d96bd), DXF uguale (8aa3fc741a677234)
    preflight: nessun rilievo
@@ -220,7 +240,8 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
    DN: main 6 · ora 6 (a 8 pt 0, staccati con freccia nessuno) · mancano sulle strade principali nessuno · sacrificati sulle secondarie 0 
    rispetto a main: simboli uguali, tratte uguali · tabella 92.5x30.0 → 152.5x37.5 mm · voci della legenda 18 + 4 · riga «Øi»: si
    i DN toccano qualcosa: 0 — la cosa piu' vicina: Øi 32 da simbolo collettore-mandata a 1.21 mm
-   DN con un'altra scritta sulla stessa riga a meno di un corpo: 0 
+   scritte di pezzi diversi a meno di un corpo lungo la riga e mezzo fra le righe: 0 
+   sigle piu' vicine a un altro pezzo che al loro: 0 
    staccate: nessuna
    deterministico: SVG uguale (228f2ffbd82fdd5b), DXF uguale (13cfdaa8b2403cca)
    preflight: nessun rilievo
@@ -229,7 +250,8 @@ PYTHONPATH=src python3 docs/collaudi/REL-008/collaudo.py <cartella-di-lavoro> <g
 **Criterio 0 — le tavole, per prime**: in testa a questo rapporto, sei più la retrofit, in PDF e in DXF.
 
 **Criterio 1 — il corpo lo ha fissato il PO**: I-159 (9 punti, mai sotto 8), e le sue disposizioni su che
-cosa si sacrifica e che cosa no, I-160 … I-162; le regole sono **D-194**, proposta, da approvare con le tavole.
+cosa si sacrifica e che cosa no, I-160 … I-162, e sulla forma del richiamo, I-163; le regole sono **D-194**,
+proposta, da approvare con le tavole.
 
 **Criterio 2 — nessuna scritta sotto il minimo**: nel collaudo, «SVG» e «DXF» di ogni tavola — il disegno e la
 tabella fra 8,0 e 9,0 punti, il cartiglio com'è —; e `tests/scritte/test_scritte_a_nove_punti.py`, che lo
@@ -238,10 +260,11 @@ pretende su tutte le tavole, nell'SVG e nel DXF.
 **Criterio 3 — niente si tocca; sigle e DN contati contro `REL-007`**: «scritte accanto ai pezzi» (nessuna
 manca), «DN» (nessuno manca sulle strade principali; i sacrificati sono tutti su strade secondarie, uno per
 uno), «i DN toccano qualcosa: 0», e il preflight senza rilievi — compresi quelli sulle sigle che si toccano e
-sui richiami. Per le distanze di §3.5: «DN con un'altra scritta sulla stessa riga a meno di un corpo: 0» su
-tutte; «staccate»: la cosa più vicina a 3,85 mm o più, la punta a 1,25 mm dalla freccia del flusso; e in
-`tests/scritte/` le prove che lo pretendono su tutte le tavole, insieme a «nessuna sigla più vicina a un altro
-pezzo che al suo».
+sui richiami. Per le distanze di §3.5: «scritte di pezzi diversi a meno di un corpo lungo la riga e mezzo fra
+le righe: 0» e «sigle più vicine a un altro pezzo che al loro: 0» su tutte (prima delle correzioni: cinque
+coppie sulle tavole 1, 3, 4 e 6, e CIR-01); «staccate»: la cosa più vicina a 3,85 mm o più, la punta a 1,25
+mm dalla freccia del flusso. In `tests/scritte/` le prove che lo pretendono su tutte le tavole: sul codice di
+prima falliscono in otto casi, i quattro difetti.
 
 **Criterio 4 — il disegno non si muove, o si dice dove**: «rispetto a main»: simboli e tratte uguali su sei
 tavole; sulla tavola 2 il disegno scende di 5,0 mm tutto insieme, per la tabella più alta.
@@ -250,7 +273,25 @@ tavole; sulla tavola 2 il disegno scende di 5,0 mm tutto insieme, per la tabella
 separate. La suite, sul ramo e su `main`, e le rosse nome per nome:
 
 ```
-La suite gira sulla testa del codice, c1faecd: l'esito si scrive qui appena finisce.
+main : 46 failed, 1932 passed, 24 skipped, 12 xfailed in 808.58s (0:13:28)
+ramo : 47 failed, 1979 passed, 24 skipped, 12 xfailed in 883.96s (0:14:43)
+rosse main 46 ramo 47 errori 0 0
+nuove nel ramo: ['tests/layout/test_etichette_postume.py::test_la_tavola_di_consegna_porta_solo_le_sigle_delle_macchine']
+guarite nel ramo: []
+uguali nome per nome: False
+skip main 24 ramo 24 nuovi: []
+xfail main 12 ramo 12 nuovi: []
+```
+
+Sul codice di `cbc9af7` una rossa nuova, `test_la_tavola_di_consegna_porta_solo_le_sigle_delle_macchine`: è la
+prova, non la tavola. Sulla tavola della prova-1 composta su un foglio qualunque — non una delle sette — la
+sigla **AF-02** in seconda fila stava a 5,18 mm dal suo confine e a 2,68 mm dal defangatore, e per la regola
+di §3.5 si leggerebbe come sua: va sul richiamo, l'ultima spiaggia. La prova riconosceva il richiamo solo nella
+forma di prima (`leader_from`); ora legge `richiamo`, e controlla che sia a 45 gradi e non attraversi niente:
+il modulo passa, 15 su 15. La suite sulla testa finale:
+
+```
+La suite gira sulla testa finale: l'esito si scrive qui appena finisce.
 ```
 
 ## 5. Che cosa ho toccato fuori dall'elenco del perimetro, e perché
@@ -273,3 +314,4 @@ cartiglio, il PDF.
 2. **Il richiamo** (§3.1): la spalla come nel tuo esempio, il tratto obliquo a 45 gradi. Va bene così?
 3. **Le distanze fra le scritte** (§3.5): un corpo lungo la riga, mezzo fra le righe, la sigla più vicina al
    suo pezzo che agli altri. Vanno bene, o le vuoi più larghe o più strette?
+4. **La legenda** (§3.6): le voci di due righe con 1,25 mm in più di passo, o com'è?

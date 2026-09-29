@@ -519,7 +519,10 @@ def test_la_tavola_di_consegna_porta_solo_le_sigle_delle_macchine() -> None:
     assert {item.id.rsplit("-", 1)[0] for item in sheet.labels} <= tagged
     placed = {item.component_id: item for item in sheet.symbols}
     for item in sheet.labels:
-        if item.leader_from is None:
+        # Il richiamo e' `richiamo` (I-163); `leader_from` resta alle geometrie
+        # scritte prima, e la posa non lo scrive piu'.
+        assert item.leader_from is None, item.id
+        if item.richiamo is None:
             assert adjacent(item, placed[item.id.rsplit("-", 1)[0]]), item.id
         else:
             assert leader_is_oblique(item), item.id

@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-29 — **`REL-008`, le scritte a 9 punti, è consegnato e aspetta il giudizio del PO sulle tavole** (D-194, proposta; I-159 … I-162). Prima: **`REL-007`, i diametri, è fuso** (PR #64, I-158)
+**Aggiornato:** 2026-09-29 — **`REL-008`, le scritte a 9 punti, è consegnato e aspetta il giudizio del PO sulle tavole** (D-194, proposta; I-159 … I-163). Prima: **`REL-007`, i diametri, è fuso** (PR #64, I-158)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -22,10 +22,16 @@ la PR verso `main` si apre e si fonde dopo.
 - **Quello che accanto non entra** (il PO, I-160 … I-162): la sigla di un pezzo in tabella non si omette
   (scende a 8 punti; se mancasse, `TABLE_EQUIPMENT_TAG_OMITTED` blocca); il DN di una strada secondaria si
   sacrifica; quello di una strada principale va, per ultima spiaggia, su un'etichetta staccata con freccia.
-- **Domanda aperta al PO**: il richiamo è la diagonale di D-075 con la freccia, **senza** la spalla orizzontale
-  del suo esempio (rapporto §3.1); se la vuole, cambia D-075.
+- **Il richiamo ha la spalla** (I-163, che supera D-075 per la forma): freccia piena di 2 mm sul pezzo o sulla
+  linea, tratto a 45 gradi, spalla orizzontale di 5 mm fino alla scritta (rapporto §3.1).
+- **Le distanze fra le scritte** (D-194 punto 9, tarature della sessione, rapporto §3.5): fra scritte di pezzi
+  diversi un corpo lungo la riga e mezzo fra le righe; una sigla non sta più vicina a un altro pezzo che al
+  suo; il DN staccato a un corpo da tutto, la sua freccia fuori da quella del flusso. Nate da quattro difetti
+  visti sulle tavole che il collaudo dava per buoni.
+- **Domande aperte al PO** (rapporto §6): le tavole; il richiamo con la spalla; le distanze fra le scritte; il
+  passo delle voci di due righe della legenda (§3.6: proposti 1,25 mm in più, non applicati — è una convenzione).
 - **Dopo il sì**: fondere, poi il pacchetto successivo — per assunzione della sessione il PDF senza browser,
-  poi `REL-001`, poi `REL-005`. I numeri: il prossimo input è **I-163**, la prossima decisione **D-195**.
+  poi `REL-001`, poi `REL-005`. I numeri: il prossimo input è **I-164**, la prossima decisione **D-195**.
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 29 settembre 2026, a `REL-007` fuso
 

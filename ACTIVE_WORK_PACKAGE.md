@@ -8,7 +8,7 @@
 > la skill, per ultimo `REL-005`.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **CONSEGNATO AL PO** il 29 settembre 2026, in attesa del suo giudizio sulle tavole — rapporto `docs/collaudi/REL-008/RAPPORTO.md`, tavole in `docs/collaudi/REL-008/tavole/`, regole in **D-194** (proposta). ATTIVO dal 29 settembre 2026 (I-159); il PO ha deciso lo stesso giorno che cosa si sacrifica e che cosa no (I-160 … I-162).
+**Stato:** **CONSEGNATO AL PO** il 29 settembre 2026, in attesa del suo giudizio sulle tavole — rapporto `docs/collaudi/REL-008/RAPPORTO.md`, tavole in `docs/collaudi/REL-008/tavole/`, regole in **D-194** (proposta). ATTIVO dal 29 settembre 2026 (I-159); il PO ha deciso lo stesso giorno che cosa si sacrifica e che cosa no (I-160 … I-162) e la forma del richiamo, con la spalla (I-163).
 **Base:** `main` dopo la fusione di `REL-007`.
 **Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
 **Release:** la prima release (**D-183**), aggiunto dal PO il 29 settembre (I-159).

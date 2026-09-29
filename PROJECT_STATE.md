@@ -33,7 +33,8 @@ stesse 46 rosse di `main`.
 5 punti — il corpo di prima, 1,8 mm — e le vuole «almeno 8 o meglio 9». **Consegnato il 29 settembre**:
 tutte le scritte del disegno e della tabella a 9 punti, in Arial; la sigla di un pezzo in tabella non si
 omette, il DN di una strada secondaria si sacrifica, quello di una principale va su un'etichetta staccata
-con freccia (I-160 … I-162, D-194 proposta). Si fonde dopo il sì del PO sulle tavole. Poi, per assunzione
+con freccia, e il richiamo ha la spalla del suo esempio (I-160 … I-163, D-194 proposta); fra scritte di
+pezzi diversi, un corpo lungo la riga e mezzo fra le righe. Si fonde dopo il sì del PO sulle tavole. Poi, per assunzione
 della sessione, il PDF senza browser, `REL-001` la skill, `REL-005` la release.
 
 ## Dove si era — 28 settembre 2026, `REL-006`
