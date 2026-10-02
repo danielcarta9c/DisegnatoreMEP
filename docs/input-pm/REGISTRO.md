@@ -41,7 +41,7 @@
 
 ## Righe aperte
 
-Centosei righe in tutto: **trentaquattro aperte**, **cinque regole permanenti** che vincolano ogni
+Centosette righe in tutto: **trentacinque aperte**, **cinque regole permanenti** che vincolano ogni
 pacchetto ma non sono lavoro che qualcuno finirà, e le restanti chiuse o ritirate — fra queste, le
 quarantaquattro del triage del 15 settembre 2026 e delle sei disposizioni che ne sono seguite
 (D-131 … D-136): `docs/pm/2026-09-15-triage-input-aperti.md`. Le righe chiuse restano qui, con
@@ -49,6 +49,7 @@ accanto **che cosa** le ha chiuse, perché il PO possa verificarlo.
 
 | # | Data | Cosa ha chiesto o dato | Dove vive | Stato |
 |---|---|---|---|---|
+| I-171 | 2026-10-02 | **La skill non si carica: dev'essere perfettamente funzionante e facilmente installabile, con tutte le linee guida di Anthropic.** Il PO, caricando lo ZIP di `REL-001` su claude.ai — «Zip contains too many files (maximum 200)» —: «la skill nn si riesce a caricare. La skill deve essere perfettametne funzionante e perfettamente e facilmente installabile. devi seguire tutte le linee guida di anthropic sia quelle obbligatorie sia le best practice.» | Conversazione del 2 ottobre 2026; lo schermo del caricamento in `docs/input-pm/2026-10-02-caricamento-skill-troppi-file.png` | **APERTA** — è `REL-001`, seconda parte (`ACTIVE_WORK_PACKAGE.md`), prima di `REL-005`. La chiude il PO, quando la skill si carica e funziona. |
 | I-170 | 2026-09-29 | **Installare la skill in chat e in Cowork: meglio se lo fa la sessione.** Il PO, nello stesso messaggio dell'approvazione (I-169): «Puoi anche installare tu la skil per uso anche in chat/cowork o devo farlo io ? Perché sono al cellulare e ora non riesco. Meglio se puoi farlo tu.» | Conversazione del 29 settembre 2026 | **APERTA** — la sessione non può: dal suo ambiente vede le skill dell'account ma non ne carica di nuove; una skill personale si carica dalle impostazioni di Claude («Settings › Features», lo ZIP). Detto al PO. Lo ZIP è `docs/collaudi/REL-001/disegnatore-mep.zip`; con la prova su un impianto suo è il cancello verticale (`PROJECT_STATE.md`, rischio 4). La chiude il PO, quando l'ha caricata e provata. |
 | I-169 | 2026-09-29 | **`REL-001` approvato: la fusione.** Viste la tavola dell'impianto 7 disegnata dalla skill in camera pulita e quella del primo giro in A3, il PO: «sì, approvo la fusione». | Conversazione del 29 settembre 2026 | **CHIUSA** — `REL-001` fuso su `main` (PR #66); **D-195 approvata**. I sette punti di contenuto del rapporto (`docs/collaudi/REL-001/RAPPORTO.md` §6.1) restano domande per il PO: non li chiude questa riga. |
 | I-168 | 2026-09-29 | **Si parte da `REL-001`; verbosità al minimo, ma chiaro quando chiede o riporta.** Il PO, aprendo la sessione: «parti dal pacchetto attivo (REL.001) limita al minimo la verbosità non mi serve che descrivi ogni passaggio. Viceversa quando hai bisogno di chiarimenti e mi riporti un risultato per il PO scrivi in modo che io possa capire.» | Conversazione del 29 settembre 2026 | **APERTA** — vale per la sessione di `REL-001`: messaggi brevi durante il lavoro; le domande e il rapporto per il PO scritti per essere capiti senza il gergo del codice. La chiude il PO. |
