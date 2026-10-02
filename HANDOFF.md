@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-02 — **la prima prova del PO su claude.ai è chiusa e fusa** (PR #67; I-171 … I-179, D-196 approvata): volano a due attacchi coricato, sfiato 5 × 5, uscite della deviatrice, colore della serpentina; **la skill è alla versione 1.2**. Il pacchetto resta **`REL-005`**. Prima: **`REL-001`, la skill vera e propria, è fuso** (PR #66; I-169, D-195 approvata)
+**Aggiornato:** 2026-10-02, sera — **la pulizia del solutore è fusa** (PR #68; I-183, D-197 approvata): suite a **zero rosse**, uscite di prova identiche. **Il pacchetto attivo è `BETA-001`, la beta della 1.2** (I-181): il debug sulle tavole dei collaboratori del PO; `REL-005` è sospeso. Prima, lo stesso giorno: la prima prova del PO su claude.ai curata e fusa (PR #67, D-196), la skill alla versione 1.2
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,34 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 2 ottobre 2026, a PR #67 fusa
+## ▶ Da dove riparte la prossima sessione — scritto il 2 ottobre 2026, sera, a PR #68 fusa
+
+**Il pacchetto è `BETA-001`** (`ACTIVE_WORK_PACKAGE.md`): **si parte dal punto 0**, in un messaggio solo al PO —
+le tavole dei collaboratori, la numerazione delle consegne in beta (proposta: `1.2.1`, `1.2.2`…), le domande di
+contenuto aperte con la proposta per ciascuna. Poi, in ordine: I-182 (le valvole di D-120), il modulo della
+segnalazione per i collaboratori, il ciclo della prova del PO su ogni tavola che arriva. `REL-005` è sospeso, e
+il suo stato è in `docs/plans/pacchetti/REL-005.md`.
+
+**Le note qui sotto, scritte prima della fusione, valgono ancora.**
+
+
+**Si è in beta** (I-181): il PO ha distribuito la skill 1.2 ai suoi collaboratori. Il lavoro è il punto 1 di
+`REL-005` sulle loro tavole: ogni tavola che arriva si ricostruisce **anonima** (il DXF porta i dati del
+cliente, e il repository è pubblico: vedi `docs/collaudi/REL-005/prova-po-1/`), si misura, e ogni rottura
+diventa una regola, un simbolo o una riga delle istruzioni — dove è contenuto, una domanda al PO.
+
+- **Il solutore non c'è più** (D-197, rapporto `docs/collaudi/REL-005/pulizia-del-solutore/RAPPORTO.md`):
+  `improve.py` e `dilate.py` tolti, `spine.py` ridotto alla semina. **La suite è verde**: 0 rosse, 1967
+  passate, 15 `skip`, 10 `xfail`, in meno di 5 minuti. Da qui in avanti **una rossa è un difetto**, non
+  rumore di fondo.
+- **Il primo punto del debug** è già scritto (I-182): sulla tavola 1 dal piano due valvole che isolano stanno a
+  10 mm dall'attacco, contro i 2,5–5 di D-120. Curarlo cambia le tavole approvate: si fa con le tavole al PO.
+- **Le prove del motore leggono un piano**: i piani approvati di `DRAW-018`, o quelli tradotti in
+  `tests/layout/piani/`. Una prova nuova del motore fa lo stesso: la via senza piano (`draw`) resta nel
+  codice, ma la sua qualità non la garantisce nessuno (D-151).
+- **I numeri**: il prossimo input è **I-184**, la prossima decisione **D-198**.
+
+## Da dove ripartiva — scritto il 2 ottobre 2026, a PR #67 fusa
 
 **Il pacchetto è ancora `REL-005`** (`ACTIVE_WORK_PACKAGE.md`). **Il punto 0.1 è fatto**: il PO ha caricato la
 skill su claude.ai e l'ha provata su un impianto suo (I-170 chiusa, I-171). Restano **i punti 0.2 … 0.4** — due o

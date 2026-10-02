@@ -34,7 +34,7 @@ from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import ARROW_LENGTH_MM, render_sheet
 from disegnatore_mep.layout import flow as flow_module
-from disegnatore_mep.layout.compose import compose_drawing, inline_component_ids
+from disegnatore_mep.layout.compose import inline_component_ids
 from disegnatore_mep.layout.flow import classify_trunks
 from disegnatore_mep.layout.geometry import (
     DrawingGeometry,
@@ -56,6 +56,8 @@ from disegnatore_mep.model.project import (
     SubsystemModel,
 )
 from disegnatore_mep.model.types import PlantRegime, PortFlow
+from disegnatore_mep.piano.esecutore import esegui_piano
+from disegnatore_mep.piano.formato import carica_piano
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.registry import RuleRegistry
 
@@ -63,6 +65,8 @@ ROOT = Path(__file__).resolve().parents[2]
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
 RULES = ROOT / "rules" / "hydronic"
+NAMING = ROOT / "naming"
+PIANI = Path(__file__).resolve().parent / "piani"
 
 HEATING = "heating_water"
 COLD = "cold_water"
@@ -209,7 +213,23 @@ def _trunks(project: ProjectModel) -> list[Trunk]:
 
 @cache
 def _drawing(index: int) -> DrawingGeometry:
-    return compose_drawing(_done(index), catalog(), NOVE_C_A3)
+    """La tavola **dal piano**, come la compone la skill (D-151).
+
+    Fino al 2 ottobre 2026 si componeva senza piano; da D-167 quella via non
+    instrada piu' il ritorno di un terminale con i due attacchi sullo stesso lato,
+    e queste prove — che misurano il motore, non la composizione — erano rosse
+    per una ragione che non era la loro. Il piano e' quello dell'impianto di prova
+    1 tradotto sui nomi della configurazione (`piani/`, I-180).
+    """
+    esito = esegui_piano(
+        _done(index),
+        carica_piano(PIANI / f"{CASI[index].__name__}.json"),
+        catalog(),
+        symbols(),
+        NAMING,
+    )
+    assert esito.disegno is not None, esito.errore
+    return esito.disegno
 
 
 # ---------------------------------------------------------------------------

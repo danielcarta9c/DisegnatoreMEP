@@ -35,10 +35,8 @@ from disegnatore_mep.catalog.schema import (
     SERVICE_ORGAN_FUNCTIONS,
     ComponentDefinition,
 )
-from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.canonical import canonical_json
-from disegnatore_mep.layout.compose import compose_drawing
 from disegnatore_mep.model.project import (
     ComponentInstance,
     ConnectionModel,
@@ -59,7 +57,6 @@ RULES = ROOT / "rules" / "hydronic"
 
 FILLING = "filling"
 PRESSURE_MEASUREMENT = "pressure_measurement"
-EXPANSION = "expansion"
 
 
 @cache
@@ -145,26 +142,6 @@ def circuito_chiuso() -> ProjectModel:
     )
 
 
-def anello_semplice() -> ProjectModel:
-    """Il solo circuito chiuso: generatore, terminale, andata e ritorno.
-
-    Serve alla prova sul **costo**, che deve confrontare due tavole e non la
-    completezza del corredo: meno pezzi ci sono, piu' la prova e' veloce e piu'
-    chiaro e' cosa sta misurando.
-    """
-    base = circuito_chiuso()
-    tenuti = {"generatore", "terminale"}
-    return base.model_copy(
-        update={
-            "networks": [item for item in base.networks if item.id == "anello"],
-            "components": [item for item in base.components if item.id in tenuti],
-            "connections": [
-                item
-                for item in base.connections
-                if {item.endpoint_a.component_id, item.endpoint_b.component_id} <= tenuti
-            ],
-        }
-    )
 
 
 def completato(project: ProjectModel) -> ProjectModel:
@@ -525,31 +502,5 @@ def test_l_ordine_funzionale_non_cambia_mescolando_le_connessioni() -> None:
         assert fila_di_mestieri(completato(mescolato(circuito_chiuso(), seed))) == base
 
 
-def test_il_costo_della_tavola_non_cambia_rinominando_gli_identificativi() -> None:
-    """Anche la geometria e' invariante: stesso impianto, stesso costo.
-
-    E' il seguito naturale della prova precedente. Se un nome entrasse nella
-    posa, due impianti identici darebbero due tavole diverse — e nessuna delle
-    due sarebbe spiegabile.
-    """
-    prima = compose_drawing(completato(anello_semplice()), catalog(), NOVE_C_A3)
-    dopo = compose_drawing(
-        completato(rinominato(anello_semplice(), "zz", invert=True)), catalog(), NOVE_C_A3
-    )
-    assert _costo(prima) == _costo(dopo)
 
 
-def _costo(drawing: object) -> tuple[int, int, float]:
-    """Pieghe, incroci e millimetri della tavola: il costo, senza i nomi."""
-    sheet = drawing.sheets[0]  # type: ignore[attr-defined]
-    bends = sum(
-        max(len(segment) - 2, 0) for route in sheet.routes for segment in route.segments
-    )
-    crossings = sum(len(route.crossings) for route in sheet.routes)
-    length = sum(
-        abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
-        for route in sheet.routes
-        for segment in route.segments
-        for before, after in zip(segment, segment[1:], strict=False)
-    )
-    return bends, crossings, round(length, 3)

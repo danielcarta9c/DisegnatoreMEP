@@ -44,7 +44,6 @@ from disegnatore_mep.layout.hierarchy import (
     user_machines,
 )
 from disegnatore_mep.layout.highways import Highway, highways, lies_in_line
-from disegnatore_mep.layout.improve import FILL_WINDOW, SheetCost
 from disegnatore_mep.layout.trunks import Trunk, build_trunks
 from disegnatore_mep.model.project import (
     ComponentInstance,
@@ -372,115 +371,16 @@ def test_l_autostrada_intera_esiste_e_attraversa_i_propri_crocevia() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _cost(**overrides: float) -> SheetCost:
-    base: dict[str, float] = dict(
-        violations=0,
-        turnback_runs=0,
-        turnback_mm=0.0,
-        long_runs=0,
-        bends=4,
-        crossings=1,
-        margin_gap=0.0,
-        fill=0.55,
-        coverage=0.80,
-        imbalance=2.0,
-        length_mm=500.0,
-    )
-    base.update(overrides)
-    return SheetCost(**base)  # type: ignore[arg-type]
 
 
-def test_la_lunghezza_non_entra_piu_nel_confronto() -> None:
-    """Criterio 5 — due pose che differiscono **solo** per la lunghezza sono
-    indifferenti. Il PO (D-139): «i mm non sono un vero parametro»."""
-    corta = _cost(length_mm=100.0)
-    lunga = _cost(length_mm=900.0)
-    assert not corta.beats(lunga)
-    assert not lunga.beats(corta)
-    assert corta.key() == lunga.key()
-    # E resta nella tupla: si riporta come misura, non come giudizio.
-    assert "length_mm" in SheetCost._fields
-    assert corta.length_mm == 100.0
 
 
-def test_il_riempimento_non_entra_piu_nel_confronto() -> None:
-    """**D-149** — due pose che differiscono solo per il riempimento sono
-    indifferenti, esattamente come per la lunghezza con D-139.
-
-    Fino al 19 settembre 2026 questa prova si chiamava
-    `test_il_riempimento_e_una_finestra_non_una_scala` e pretendeva l'opposto:
-    dentro la finestra si vinceva. **Non e' stata allentata — la disposizione
-    che difendeva e' stata revocata dal PO**, che ha guardato le tavole: «ha
-    dato solo risultati peggiori. Prima il disegno era meglio.»
-    """
-    basso, alto = FILL_WINDOW
-    dentro = _cost(fill=(basso + alto) / 2)
-    vuota = _cost(fill=basso - 0.15)
-    stretta = _cost(fill=alto + 0.15)
-    assert not dentro.beats(vuota)
-    assert not vuota.beats(dentro)
-    assert not dentro.beats(stretta)
-    assert not stretta.beats(dentro)
-    assert dentro.key() == vuota.key() == stretta.key()
-    # E resta nella tupla: si riporta come misura, non come giudizio.
-    assert "fill" in SheetCost._fields
-    assert dentro.fill == (basso + alto) / 2
 
 
-def test_la_copertura_esce_con_il_riempimento_che_sorvegliava() -> None:
-    """**D-149** — la copertura dell'ingombro era la guardia del riempimento
-    (D-141) e non ha senso da sola: sorvegliava un obiettivo che non c'e' piu'.
-
-    Il trucco che D-141 nominava — spingere un pezzo in un angolo perche' il
-    rettangolo dell'inchiostro cresca — **non ha piu' niente da comprare**:
-    non c'e' nessuna voce che quel gonfiore faccia migliorare.
-    """
-    onesta = _cost(fill=0.30, coverage=0.80)
-    trucco = _cost(fill=0.50, coverage=0.45)
-    assert not trucco.beats(onesta)
-    assert not onesta.beats(trucco)
-    assert onesta.key() == trucco.key()
-    # Resta come misura, e la voce che la calcolava e' ancora leggibile.
-    assert "coverage" in SheetCost._fields
-    assert trucco.coverage == 0.45
 
 
-def test_il_margine_dal_bordo_resta_e_decide() -> None:
-    """**D-143 non e' toccata da D-149**, ed e' la differenza fra le due.
-
-    Il riempimento era un numero che il PO non aveva mai chiesto di inseguire;
-    il margine gliel'ha chiesto lui guardando la tavola — «non si mettono gli
-    oggetti cosi' vicini al bordo del foglio». Quindi esce l'uno e resta
-    l'altro, e la chiave lo dimostra.
-    """
-    comoda = _cost(margin_gap=0.0, fill=0.05)
-    al_bordo = _cost(margin_gap=12.0, fill=0.55)
-    assert comoda.beats(al_bordo)
-    assert not al_bordo.beats(comoda)
 
 
-def test_l_ordine_delle_voci_e_quello_di_D_139_e_D_149() -> None:
-    """Prima le curve, poi gli attraversamenti, poi il margine. E **ne' la
-    lunghezza ne' il riempimento** entrano nella chiave."""
-    assert SheetCost._fields[:6] == (
-        "violations",
-        "turnback_runs",
-        "turnback_mm",
-        "long_runs",
-        "bends",
-        "crossings",
-    )
-    # Una tavola con una curva in meno vince, per lunga e vuota che sia.
-    assert _cost(bends=3, fill=0.05, coverage=0.2, length_mm=9999.0).beats(
-        _cost(bends=4, fill=0.55, coverage=1.0, length_mm=1.0)
-    )
-    # A parita' di curve, un attraversamento in meno vince.
-    assert _cost(crossings=0, fill=0.05, coverage=0.2).beats(
-        _cost(crossings=1, fill=0.55, coverage=1.0)
-    )
-    # La chiave ha otto voci: le sei sopra, il margine, lo spareggio. Nove
-    # erano prima di D-149, e la nona era il riempimento.
-    assert len(_cost().key()) == 8
 
 
 # ---------------------------------------------------------------------------

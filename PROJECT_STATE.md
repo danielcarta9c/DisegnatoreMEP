@@ -1,9 +1,9 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-10-02 (la prima prova del PO su claude.ai, curata e fusa — PR #67, D-196; la skill è alla **versione 1.2**; il pacchetto resta `REL-005`). Prima: 2026-09-29 (`REL-001`, **la skill vera e propria**, fuso, tavola **approvata dal PO** — I-169, D-195; prima `REL-008`, **le scritte a 9 punti**, fuso, tavole **approvate dal PO**
+**Aggiornato:** 2026-10-02, sera (la pulizia del solutore fusa — PR #68, D-197; la suite a zero rosse; il pacchetto attivo è `BETA-001`, la beta della 1.2 coi collaboratori del PO — I-181; `REL-005` sospeso). Prima, lo stesso giorno: la prima prova del PO su claude.ai, curata e fusa — PR #67, D-196; la skill è alla **versione 1.2**
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
-**Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
+**Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` (`BETA-001`) · **Dossier di stato:** `docs/pm/STATO-PM.md`
 **Release corrente:** **0.3 — generalizzazione**; la skill consegnata al PO è la **1.2** (I-178), e il
 numero di versione Python è `1.2.0`
 
@@ -35,7 +35,7 @@ Le scelte sono **D-195**; rapporto `docs/collaudi/REL-001/RAPPORTO.md`.
   le uscite della deviatrice, il colore della serpentina —, curate e fuse con la PR #67 (D-196). La skill è
   alla **versione 1.2**; lo ZIP è `docs/collaudi/REL-005/disegnatore-mep-1.2.zip`. Al primo uso la skill
   installa pydantic dalla rete.
-- Suite: le stesse 46 rosse di `main`, nome per nome.
+- Suite: **zero rosse** dal 2 ottobre 2026 (D-197): il solutore e le sue prove sono usciti, le prove del motore leggono un piano.
 
 **Il prossimo è `REL-005`, il pacchetto della release** (`ACTIVE_WORK_PACKAGE.md`): parte da quattro cose del
 PO — l'esito della sua prova, due o tre impianti veri, il via libera a togliere il solutore, il numero della

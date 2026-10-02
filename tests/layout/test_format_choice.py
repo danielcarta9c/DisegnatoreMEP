@@ -73,7 +73,10 @@ def test_entering_means_respecting_the_minimum_distances() -> None:
     with pytest.raises(LayoutError) as raised:
         compose_on_ordinary_frame(load_project(PROJECT), catalog(), (minuscolo,))
     # Non si rimpicciolisce per farcelo stare (ADR 0003): si dice quanto manca.
-    assert "does not fit on any ordinary sheet format" in str(raised.value)
+    # Fino al 2 ottobre 2026 qui si chiedeva anche la frase «does not fit on any
+    # ordinary sheet format»: da D-150 la scala dei formati, finita a vuoto,
+    # ricompone il piu' grande col ripiego, e il rifiuto arriva da li', con la
+    # misura e senza quella frase. La prova era rossa da allora (I-180).
     assert any(
         measured in str(raised.value)
         for measured in ("functional bands need", "cannot be routed", "no straight")

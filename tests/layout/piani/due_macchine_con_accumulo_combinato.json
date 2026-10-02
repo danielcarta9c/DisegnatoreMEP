@@ -1,0 +1,105 @@
+{
+  "formato": "A3",
+  "note": [
+    "Il piano dell'impianto di prova 1 composto dal pianificatore in camera pulita (docs/collaudi/DRAW-018/prova-camera-pulita-2026-09-24/piano-completo-1.json), tradotto sui nomi dei pezzi di questa configurazione di prova: e' lo stesso impianto con altri nomi.",
+    "Serve alle prove del motore che fino al 2 ottobre 2026 componevano senza piano (I-180): da D-167 la via senza piano non instrada piu' un terminale con i due attacchi sullo stesso lato, e la composizione e' del piano (D-151).",
+    "Lo sfiato sta 5 mm piu' in basso che nel piano approvato: e' alto 5 invece di 10 (I-176), e il suo attacco resta dov'era, a 10 mm dall'accumulo come vuole A4 (D-145, D-062)."
+  ],
+  "pezzi": {
+    "nord": {
+      "x": 0,
+      "y": 0
+    },
+    "sud": {
+      "x": 0,
+      "y": 50
+    },
+    "tee-valve-safety-nord-water-supply": {
+      "x": 47.5,
+      "y": 2.5
+    },
+    "valve-safety-nord-water-supply": {
+      "x": 47.5,
+      "y": -17.5
+    },
+    "tee-valve-safety-sud-water-supply": {
+      "x": 47.5,
+      "y": 52.5
+    },
+    "valve-safety-sud-water-supply": {
+      "x": 47.5,
+      "y": 32.5
+    },
+    "unione": {
+      "x": 72.5,
+      "y": 2.5
+    },
+    "ripartizione": {
+      "x": 82.5,
+      "y": 17.5
+    },
+    "tee-expansion-connection-ripartizione-a": {
+      "x": 115,
+      "y": 17.5
+    },
+    "expansion-connection-ripartizione-a": {
+      "x": 115,
+      "y": 40
+    },
+    "tee-filling-unit-ripartizione-a-b": {
+      "x": 130,
+      "y": 17.5
+    },
+    "filling-unit-ripartizione-a": {
+      "x": 130,
+      "y": 32.5,
+      "rotazione": 180
+    },
+    "inlet-filling-unit-ripartizione-a": {
+      "x": 130,
+      "y": 52.5
+    },
+    "tee-pressure-gauge-ripartizione-a": {
+      "x": 145,
+      "y": 17.5
+    },
+    "pressure-gauge-ripartizione-a": {
+      "x": 145,
+      "y": 40
+    },
+    "serbatoio": {
+      "x": 185,
+      "y": 0
+    },
+    "rete-idrica": {
+      "x": 162.5,
+      "y": 35
+    },
+    "air-vent-serbatoio-primary-out": {
+      "x": 200,
+      "y": -15
+    },
+    "drain-connection-serbatoio-primary-in": {
+      "x": 195,
+      "y": 55
+    },
+    "mixing-valve-thermostatic-serbatoio-dhw-out": {
+      "x": 187.5,
+      "y": -35,
+      "rotazione": 90,
+      "specchio": true
+    },
+    "inlet-mixing-valve-thermostatic-serbatoio-dhw-out": {
+      "x": 165,
+      "y": -35
+    },
+    "rubinetti": {
+      "x": 190,
+      "y": -57.5
+    },
+    "corpo": {
+      "x": 250,
+      "y": 2.5
+    }
+  }
+}

@@ -28,24 +28,18 @@ from pathlib import Path
 import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
-from disegnatore_mep.layout.compose import compose_drawing, inline_component_ids
+from disegnatore_mep.layout.compose import inline_component_ids
 from disegnatore_mep.layout.geometry import RoutedTrunk, SheetGeometry
-from disegnatore_mep.layout.improve import Improver
-from disegnatore_mep.layout.partition import partition_project
-from disegnatore_mep.layout.place import place_sheet
-from disegnatore_mep.layout.spine import carry_the_rest, lay_the_spine
 from disegnatore_mep.layout.trunks import Trunk, build_trunks
 from disegnatore_mep.model.project import ProjectModel
-from disegnatore_mep.rules.apply import saturate
-from disegnatore_mep.rules.registry import RuleRegistry
+from disegnatore_mep.piano.esecutore import esegui_piano
+from disegnatore_mep.piano.formato import carica_piano
 
 ROOT = Path(__file__).resolve().parents[2]
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
-RULES = ROOT / "rules" / "hydronic"
 PROVE = ROOT / "examples" / "prova"
 
 TAVOLE = {
@@ -62,22 +56,37 @@ def catalog() -> ComponentRegistry:
     )
 
 
-@cache
-def rules() -> RuleRegistry:
-    registry = RuleRegistry.from_directory(RULES)
-    registry.cross_check(catalog())
-    return registry
+
+
+APPROVATI = ROOT / "docs" / "collaudi" / "DRAW-018" / "prova-camera-pulita-2026-09-24"
+"""I grafi completi e i piani che il pianificatore ha composto in camera pulita."""
 
 
 @cache
+def _esito(name: str) -> tuple[ProjectModel, SheetGeometry]:
+    """La tavola **dal piano**, come la compone la skill (D-151): il grafo completo
+    e il piano approvati dell'impianto (`DRAW-018`). Fino al 2 ottobre 2026 si
+    componeva senza piano, e da D-167 quella via non instradava piu' i due
+    impianti; il solutore che le dava le sue qualita' e' stato tolto (I-180)."""
+    numero = name.split("-")[1]
+    model = load_project(APPROVATI / f"grafo-completo-{numero}.json")
+    esito = esegui_piano(
+        model,
+        carica_piano(APPROVATI / f"piano-completo-{numero}.json"),
+        catalog(),
+        SymbolRegistry.from_directory(SYMBOLS),
+        ROOT / "naming",
+    )
+    assert esito.disegno is not None, esito.errore
+    return model, esito.disegno.sheets[0]
+
+
 def _completo(name: str) -> ProjectModel:
-    done, _, _ = saturate(load_project(TAVOLE[name]), catalog(), rules())
-    return done
+    return _esito(name)[0]
 
 
-@cache
 def _tavola(name: str) -> SheetGeometry:
-    return compose_drawing(_completo(name), catalog(), NOVE_C_A3).sheets[0]
+    return _esito(name)[1]
 
 
 def _nodi(route: RoutedTrunk) -> set[tuple[float, float]]:
@@ -208,68 +217,5 @@ def test_l_ordine_invertito_produce_un_incrocio_che_non_si_toglie() -> None:
     assert invertito, "l'ordine invertito deve incrociare, e per costruzione"
 
 
-@pytest.mark.parametrize("name", sorted(TAVOLE))
-def test_il_bollitore_non_ruota_e_non_ruotano_i_suoi_attacchi(name: str) -> None:
-    """§C: nessuna posa candidata cambia la giacitura di un accumulo sanitario.
-
-    Non si prova guardando la tavola consegnata — li' potrebbe essere un caso —
-    ma **tutte** le candidate che il ciclo sa generare per quel pezzo: se
-    nessuna lo gira, nessuna tavola puo' uscirne girata. Il pezzo si riconosce
-    dal mestiere dichiarato dal catalogo, non dal nome.
-    """
-    project = _completo(name)
-    inline = inline_component_ids(project, catalog())
-    partition = partition_project(project, build_trunks(project, inline))[0]
-    first = place_sheet(project, partition, catalog(), NOVE_C_A3, inline)
-    spine = lay_the_spine(project, partition, catalog(), NOVE_C_A3, first)
-    seeded = carry_the_rest(project, partition, catalog(), first, spine, NOVE_C_A3)
-    improver = Improver(project, partition, catalog(), NOVE_C_A3, seeded, inline, spine)
-
-    accumuli = [
-        item.id
-        for item in project.components
-        if "dhw_storage" in catalog().get(item.definition_id).functions
-    ]
-    if not accumuli:
-        pytest.skip("questa tavola non ha un accumulo sanitario a se'")
-    for component_id in accumuli:
-        if component_id not in improver.best:
-            continue
-        posa = improver.best[component_id]
-        for refining in (False, True):
-            improver.refining = refining
-            for _, move in improver.candidates_by_kind(component_id):
-                if component_id not in move:
-                    continue
-                assert move[component_id].rotation_deg == posa.rotation_deg, (
-                    component_id,
-                    move[component_id].rotation_deg,
-                )
-                assert move[component_id].port_map == posa.port_map, (
-                    component_id,
-                    move[component_id].port_map,
-                )
-        improver.refining = False
 
 
-@pytest.mark.parametrize("name", sorted(TAVOLE))
-def test_la_fase_del_tronco_non_gira_l_accumulo_sanitario(name: str) -> None:
-    """La stessa cosa per la fase del tronco, che sceglie le pose per prima."""
-    project = _completo(name)
-    inline = inline_component_ids(project, catalog())
-    partition = partition_project(project, build_trunks(project, inline))[0]
-    first = place_sheet(project, partition, catalog(), NOVE_C_A3, inline)
-    spine = lay_the_spine(project, partition, catalog(), NOVE_C_A3, first)
-    prima = {item.component_id: item for item in first}
-    accumuli = {
-        item.id
-        for item in project.components
-        if "dhw_storage" in catalog().get(item.definition_id).functions
-    }
-    if not accumuli:
-        pytest.skip("questa tavola non ha un accumulo sanitario a se'")
-    for item in spine.symbols:
-        if item.component_id not in accumuli:
-            continue
-        assert item.rotation_deg == prima[item.component_id].rotation_deg
-        assert item.port_map == prima[item.component_id].port_map

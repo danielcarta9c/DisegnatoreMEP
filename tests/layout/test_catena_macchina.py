@@ -57,6 +57,8 @@ from disegnatore_mep.model.project import (
     SubsystemModel,
 )
 from disegnatore_mep.model.types import PlantRegime, PortFlow
+from disegnatore_mep.piano.esecutore import esegui_piano
+from disegnatore_mep.piano.formato import carica_piano
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.proposal import GapReason
 from disegnatore_mep.rules.registry import RuleRegistry
@@ -454,6 +456,22 @@ CASI = (due_macchine_con_accumulo_combinato, due_macchine_in_parallelo_su_volano
 CASI_IDS = [item.__name__ for item in CASI]
 
 
+
+def _dal_piano(project: ProjectModel, nome: str) -> DrawingGeometry:
+    """La tavola **dal piano**, come la compone la skill (D-151): il piano
+    dell'impianto di prova 1 tradotto sui nomi della configurazione (`piani/`,
+    I-180). Fino al 2 ottobre 2026 si componeva senza piano, e da D-167 quella
+    via non instradava piu' il ritorno del radiatore."""
+    esito = esegui_piano(
+        project,
+        carica_piano(Path(__file__).resolve().parent / "piani" / f"{nome}.json"),
+        catalog(),
+        SymbolRegistry.from_directory(SYMBOLS),
+        ROOT / "naming",
+    )
+    assert esito.disegno is not None, esito.errore
+    return esito.disegno
+
 @cache
 def _composed(index: int) -> tuple[ProjectModel, DrawingGeometry]:
     """Gli impianti di questo file sono costruiti per misurare **le catene di
@@ -468,6 +486,8 @@ def _composed(index: int) -> tuple[ProjectModel, DrawingGeometry]:
     done, _, gaps = saturate(CASI[index](), catalog(), rules())
     altri = [gap for gap in gaps if gap.reason is not GapReason.NO_SOURCE_NETWORK]
     assert not altri, [(gap.rule_id, gap.reason.value) for gap in altri]
+    if CASI[index] is due_macchine_con_accumulo_combinato:
+        return done, _dal_piano(done, "due_macchine_con_accumulo_combinato")
     return done, compose_drawing(done, catalog(), NOVE_C_A3)
 
 

@@ -196,9 +196,7 @@ Una piega dell'autostrada e una piega di uno stacco pesavano quasi uguale, e **u
 compra sempre**. E nessun peso dice «un collettore è **una** linea dritta»: quella è una
 figura, non un punteggio.
 
-I tre moduli **restano agli atti** e lo dichiarano in testa, ciascuno con quando è morto,
-perché, e dove è finito il suo lavoro. Nessun percorso vigente li chiama, e una prova lo
-sorveglia (`tests/layout/test_il_solutore_e_fuori.py`).
+**Il 2 ottobre 2026, col via libera del PO (I-180, D-197), il solutore è stato tolto**: `improve.py` e `dilate.py` non esistono più, e di `spine.py` resta la semina (`carry_the_rest`), che l'esecutore del piano usa. Il codice resta nella storia di git — l'ultimo `main` che lo porta è `3365228` —, e una prova sorveglia che non torni (`tests/layout/test_il_solutore_e_fuori.py`). Le prove che lo difendevano sono uscite con lui; quelle che difendevano il motore passandoci sono state portate sui piani (`docs/collaudi/REL-005/pulizia-del-solutore/RAPPORTO.md`).
 
 ### Il revisore a mosse
 

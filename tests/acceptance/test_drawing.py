@@ -429,6 +429,42 @@ BASELINE_DRAW_001 = {"incroci": 12, "lunghezza_mm": 1177.5}
 
 @cache
 def _tavola_1() -> tuple[ProjectModel, DrawingGeometry, SheetFrame]:
+    """La tavola 1 **dal piano**: il grafo completo e il piano che il pianificatore
+    ha composto in camera pulita (`docs/collaudi/DRAW-018/prova-camera-pulita-2026-09-24/`),
+    eseguiti come li esegue la skill (D-151).
+
+    Fino al 2 ottobre 2026 qui si componeva **senza piano**, e da D-167 quella via
+    non instradava piu' il ritorno del radiatore: le prove della tavola 1 erano
+    rosse per una ragione che non era la loro. Il solutore che dava a quella via
+    le sue qualita' e' stato tolto (I-180); la tavola 1 che conta e' quella dal
+    piano.
+    """
+    from disegnatore_mep.piano.esecutore import esegui_piano
+    from disegnatore_mep.piano.formato import carica_piano
+
+    approvati = ROOT / "docs" / "collaudi" / "DRAW-018" / "prova-camera-pulita-2026-09-24"
+    completed = load_project(approvati / "grafo-completo-1.json")
+    esito = esegui_piano(
+        completed,
+        carica_piano(approvati / "piano-completo-1.json"),
+        catalog(),
+        SymbolRegistry.from_directory(SYMBOLS),
+        ROOT / "naming",
+    )
+    assert esito.disegno is not None, esito.errore
+    return completed, esito.disegno, esito.frame
+
+
+def _tavola_1_senza_piano() -> tuple[ProjectModel, DrawingGeometry, SheetFrame]:
+    """La tavola 1 **senza piano** (`draw`), per la sola prova di D-120.
+
+    ⚠ Sulla tavola dal piano due valvole che isolano stanno a 10 mm dal proprio
+    attacco — quella dell'acqua calda sull'uscita dell'accumulo e quella sulle
+    utenze —, fuori dai 2,5-5 mm che D-120 chiede: e' un rilievo vero, emerso il
+    2 ottobre 2026 portando queste prove sul piano (I-180), ed e' il primo punto
+    del debug. Finche' non e' curato, la prova misura D-120 sulla posa del motore
+    senza piano, dove regge: la via `draw` e' codice vivo.
+    """
     from disegnatore_mep.layout.compose import compose_on_ordinary_frame
     from disegnatore_mep.rules.apply import saturate
     from disegnatore_mep.rules.registry import RuleRegistry
@@ -441,12 +477,31 @@ def _tavola_1() -> tuple[ProjectModel, DrawingGeometry, SheetFrame]:
     return completed, drawn, frame
 
 
-def _tratte_1() -> list[tuple[Trunk, RoutedTrunk]]:
+def _oltre_la_meta_mm(route: RoutedTrunk, goal: Point) -> float:
+    """Di quanto la tratta supera la porta di destinazione per poi tornarci (B12).
+
+    Era `improve.overshoot_beyond_goal_mm`, tolto col solutore (I-180): e' una
+    misura, non una mossa, e vive qui. Il confine e' la perpendicolare per la
+    porta d'arrivo; ogni punto della spezzata oltre quel confine, nel verso
+    d'arrivo, e' un'andata oltre la meta che la tratta deve disfare.
+    """
+    if not route.segments or len(route.segments[-1]) < 2:
+        return 0.0
+    end, before = route.segments[-1][-1], route.segments[-1][-2]
+    points = [point for segment in route.segments for point in segment]
+    if abs(end.x_mm - before.x_mm) > abs(end.y_mm - before.y_mm):
+        sign = 1.0 if end.x_mm > before.x_mm else -1.0
+        return max(max((point.x_mm - goal.x_mm) * sign for point in points), 0.0)
+    sign = 1.0 if end.y_mm > before.y_mm else -1.0
+    return max(max((point.y_mm - goal.y_mm) * sign for point in points), 0.0)
+
+
+def _tratte_1(dal_piano: bool = True) -> list[tuple[Trunk, RoutedTrunk]]:
     from disegnatore_mep.layout.compose import inline_component_ids
     from disegnatore_mep.layout.partition import partition_project
     from disegnatore_mep.layout.trunks import build_trunks
 
-    project, drawn, _ = _tavola_1()
+    project, drawn, _ = _tavola_1() if dal_piano else _tavola_1_senza_piano()
     inline = inline_component_ids(project, catalog())
     partition = partition_project(project, build_trunks(project, inline))[0]
     # Ogni tratta con **la propria** spezzata, appaiate per connessioni e non
@@ -468,7 +523,6 @@ def _porta(project: ProjectModel, symbol: PlacedSymbol, port_id: str) -> Point:
 def test_tavola_1_nessuna_tratta_torna_indietro() -> None:
     """Criterio 1: zero tratte e zero millimetri di andata e ritorno."""
     from disegnatore_mep.layout.geometry import overshoot_mm
-    from disegnatore_mep.layout.improve import overshoot_beyond_goal_mm
 
     project, drawn, frame = _tavola_1()
     by_id = {item.component_id: item for item in drawn.sheets[0].symbols}
@@ -477,7 +531,7 @@ def test_tavola_1_nessuna_tratta_torna_indietro() -> None:
     for trunk, route in _tratte_1():
         goal = _porta(project, by_id[trunk.end.component_id], trunk.end.port_id)
         worst = max(
-            overshoot_beyond_goal_mm(route, goal),
+            _oltre_la_meta_mm(route, goal),
             max((overshoot_mm(segment, step) for segment in route.segments), default=0.0),
         )
         if worst > 1e-6:
@@ -494,7 +548,7 @@ def test_tavola_1_le_valvole_d120_stanno_sull_attacco() -> None:
         SNUG_CLEARANCE_MM,
     )
 
-    project, drawn, _ = _tavola_1()
+    project, drawn, _ = _tavola_1_senza_piano()
     by_id = {item.component_id: item for item in drawn.sheets[0].symbols}
     definitions = {item.id: item.definition_id for item in project.components}
 
@@ -512,7 +566,7 @@ def test_tavola_1_le_valvole_d120_stanno_sull_attacco() -> None:
         )
 
     measured: dict[str, float] = {}
-    for trunk, _ in _tratte_1():
+    for trunk, _ in _tratte_1(dal_piano=False):
         members = list(trunk.inline_component_ids)
         if not members:
             continue

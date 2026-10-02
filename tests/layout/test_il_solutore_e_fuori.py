@@ -5,8 +5,9 @@
 Non e' una prova di comportamento: e' la prova che **un file morto resta morto**.
 Fino al 20 settembre 2026 la posa la decidevano `layout/improve.py` (il ciclo di
 miglioramento) e la fase del tronco di `layout/spine.py`; `layout/dilate.py`
-inseguiva il riempimento. D-151 e D-149 li hanno tolti dalla decisione, e i tre
-moduli **restano agli atti**.
+inseguiva il riempimento. D-151 e D-149 li hanno tolti dalla decisione; il
+2 ottobre 2026, col via libera del PO (I-180), il codice e' stato tolto, e resta
+nella storia di git.
 
 Il rischio che questa prova chiude e' preciso, e ha un precedente: un file che
 nessuno chiama e non lo dichiara e' una trappola — e' cosi' che la ricerca del
@@ -21,7 +22,8 @@ from pathlib import Path
 RADICE = Path(__file__).resolve().parents[2]
 
 MORTI = ("disegnatore_mep.layout.improve", "disegnatore_mep.layout.dilate")
-"""I due moduli che il percorso vigente non deve piu' nemmeno importare."""
+"""I due moduli del solutore, tolti il 2 ottobre 2026 (I-180): nessun percorso deve
+importarli, nemmeno se qualcuno li riportasse."""
 
 
 def _moduli_dopo(codice: str) -> set[str]:
@@ -76,20 +78,19 @@ def test_la_composizione_non_chiama_piu_la_fase_del_tronco() -> None:
     assert "improve_sheet" not in sorgente
 
 
-def test_i_tre_moduli_dichiarano_di_essere_morti() -> None:
-    """La dichiarazione in testa **e'** il contratto: senza, sono una trappola."""
-    for nome in ("improve", "spine", "dilate"):
-        # Gli a capo si tolgono: la dichiarazione e' prosa, e una frase che va
-        # a capo in mezzo e' la stessa frase.
-        testa = " ".join(
-            (RADICE / f"src/disegnatore_mep/layout/{nome}.py")
-            .read_text(encoding="utf-8")[:1400]
-            .split()
-        )
-        # Le tre cose che il pacchetto chiede a una riga di morte: **quando**,
-        # **perche'** (la decisione), e **dove e' finito il suo lavoro**. Senza
-        # la terza, la dichiarazione dice che il file e' morto e non dice a chi
-        # rivolgersi: e' meta' trappola.
-        assert "2026" in testa, nome
-        assert "D-15" in testa or "D-149" in testa, nome
-        assert "Dove e' finito il suo lavoro" in testa, nome
+def test_i_moduli_del_solutore_non_ci_sono_piu() -> None:
+    """Il 2 ottobre 2026, col via libera del PO (I-180), il solutore e' stato tolto:
+    `improve.py` e `dilate.py` non esistono piu', e di `spine.py` resta la semina.
+
+    Fino ad allora questa prova sorvegliava che i tre moduli **dichiarassero** di
+    essere morti, perche' un file morto che non lo dice e' una trappola. Tolti, la
+    trappola non c'e' piu'; resta da sorvegliare che non tornino, e che `spine.py`
+    dica che cosa ospitava e dove e' finito: la storia di git.
+    """
+    layout = RADICE / "src/disegnatore_mep/layout"
+    assert not (layout / "improve.py").exists()
+    assert not (layout / "dilate.py").exists()
+    spine = (layout / "spine.py").read_text(encoding="utf-8")
+    assert "def lay_the_spine" not in spine
+    testa = " ".join(spine[:1600].split())
+    assert "D-151" in testa and "I-180" in testa and "storia di git" in testa
