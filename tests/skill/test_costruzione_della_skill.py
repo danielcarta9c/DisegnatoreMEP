@@ -9,11 +9,16 @@ cartella non si copia e non si ritocca a mano, e le prove qui lo tengono su.
 - le istruzioni dei tre pezzi arrivano nella skill **cambiate nei soli percorsi**, e una
   sostituzione che non trova il suo posto ferma la costruzione;
 - **la skill costruita disegna da sola**: dal grafo di prima stesura alla tavola in PDF,
-  con il suo comando e il suo motore, fuori dal repository.
+  con il suo comando e il suo motore, fuori dal repository;
+- **lo ZIP si carica su claude.ai**: al massimo 200 file, sotto i 30 MB, un solo
+  `SKILL.md`, il frontespizio nei limiti (I-171); e la skill costruita rifa' la tavola
+  dell'impianto 7 identica, byte per byte.
 """
 
 import importlib.util
+import json
 import os
+import shutil
 import subprocess
 import sys
 import zipfile
@@ -24,6 +29,8 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 IMPIANTO_6 = ROOT / "docs" / "collaudi" / "REL-003" / "impianto-6"
+IMPIANTO_7 = ROOT / "docs" / "collaudi" / "REL-001" / "impianto-7"
+TAVOLA_7 = ROOT / "docs" / "collaudi" / "REL-001" / "tavole" / "impianto-7-finale-opus-A2.pdf"
 BOZZA_6 = ROOT / "docs" / "collaudi" / "REL-003" / "capire-giro-2" / "grafo.json"
 
 
@@ -68,13 +75,41 @@ def test_lo_zip_e_la_cartella_con_la_skill_alla_radice(costruita: tuple[Path, Pa
     assert not [n for n in nomi if "__pycache__" in n or n.endswith(".pyc")]
 
 
+def test_lo_zip_sta_nei_limiti_del_caricamento(costruttore: ModuleType, costruita: tuple[Path, Path]) -> None:
+    """Il 2 ottobre lo ZIP di REL-001 si e' fermato al caricamento su claude.ai: 287 file, e
+    il limite e' 200 (I-171). Simboli, catalogo e regole stanno adesso in un file ciascuno."""
+    _, archivio = costruita
+    with zipfile.ZipFile(archivio) as zip_:
+        voci = zip_.infolist()
+    assert len(voci) <= costruttore.FILE_NELLO_ZIP
+    assert not [v.filename for v in voci if v.is_dir()], "nessuna voce di cartella"
+    assert [v.filename for v in voci if v.filename.endswith("SKILL.md")] == ["disegnatore-mep/SKILL.md"]
+    assert sum(v.file_size for v in voci) < costruttore.BYTE_DELLA_SKILL
+    nomi = {v.filename for v in voci}
+    assert {f"disegnatore-mep/dati/{f}.json" for f in ("simboli", "catalogo", "regole")} <= nomi
+    assert not [n for n in nomi if n.startswith(("disegnatore-mep/dati/simboli/", "disegnatore-mep/dati/catalogo/"))]
+
+
+def test_troppi_file_fermano_la_costruzione(
+    costruttore: ModuleType, costruita: tuple[Path, Path], tmp_path: Path
+) -> None:
+    skill, _ = costruita
+    copia = tmp_path / skill.name
+    shutil.copytree(skill, copia)
+    for numero in range(costruttore.FILE_NELLO_ZIP):
+        (copia / "dati" / f"in-piu-{numero}.json").write_text("{}", encoding="utf-8")
+    assert any("il caricamento su claude.ai" in d for d in costruttore.controlla(copia))
+
+
 def test_la_skill_passa_i_controlli_della_guida(costruttore: ModuleType, costruita: tuple[Path, Path]) -> None:
     skill, _ = costruita
     assert costruttore.controlla(skill) == []
     testo = (skill / "SKILL.md").read_text(encoding="utf-8")
     campi = costruttore._frontespizio(testo)
     assert campi["name"] == "disegnatore-mep"
-    assert 0 < len(campi["description"]) <= 1024
+    assert 0 < len(campi["description"]) <= costruttore.CARATTERI_DELLA_DESCRIZIONE <= 1024
+    assert set(campi) <= costruttore.CHIAVI_AMMESSE
+    assert campi["license"] and 0 < len(campi["compatibility"]) <= costruttore.CARATTERI_DELLA_COMPATIBILITA
     assert len(testo.split("\n---\n", 1)[1].splitlines()) < 500
     assert [p.relative_to(skill).as_posix() for p in skill.rglob("SKILL.md")] == ["SKILL.md"]
 
@@ -140,3 +175,20 @@ def test_la_skill_costruita_disegna_da_sola(costruita: tuple[Path, Path], tmp_pa
     assert "tratte cedute 0 · rilievi bloccanti 0" in disegna.stdout
     assert (tmp_path / "tavola" / "prova-6-centrale-ibrida-solare-t1.pdf").read_bytes().startswith(b"%PDF-1.4")
     assert (tmp_path / "tavola" / "prova-6-centrale-ibrida-solare-t1-rilievi.md").exists()
+
+    # La tavola dell'impianto 7, che la prova in camera pulita di REL-001 ha consegnato:
+    # dalla skill costruita esce identica, byte per byte, con i dati riaperti dai fasci.
+    sette = esegui(
+        "disegna", str(IMPIANTO_7 / "grafo-completo.json"),
+        "--piano", str(IMPIANTO_7 / "piano.json"), "--out", str(tmp_path / "tavola-7"),
+    )
+    assert sette.returncode == 0, sette.stdout + sette.stderr
+    pdf = tmp_path / "tavola-7" / "riqualificazione-centrale-pdc-cascata-caldaia-t1.pdf"
+    assert pdf.read_bytes() == TAVOLA_7.read_bytes()
+
+    voce = esegui("catalogo", "buffer-four-port")
+    assert voce.returncode == 0 and json.loads(voce.stdout)["symbol_id"]
+    simbolo = esegui("simbolo", json.loads(voce.stdout)["symbol_id"])
+    assert simbolo.returncode == 0 and json.loads(simbolo.stdout)["ports"]
+    pezzi = esegui("pezzi", str(IMPIANTO_7 / "grafo-completo.json"))
+    assert pezzi.returncode == 0 and "Da posare nel piano" in pezzi.stdout

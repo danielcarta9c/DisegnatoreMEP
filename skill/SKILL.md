@@ -1,6 +1,8 @@
 ---
 name: disegnatore-mep
-description: Disegna lo schema funzionale di un impianto termotecnico idronico — centrale termica con pompe di calore, caldaie, volani e accumuli, bollitori ACS, solare termico, circuiti di distribuzione — a partire dalla descrizione a parole del progettista, e lo consegna in PDF e DXF con il cartiglio Nove C, la tabella delle apparecchiature e i rilievi di qualità della tavola. Legge l'impianto, fa in un messaggio solo le domande che servono, aggiunge gli accessori che un esecutivo porta (intercettazioni, sicurezze, vasi, filtri, strumenti) citando la fonte, fa approvare il grafo al progettista e poi compone, disegna e controlla la tavola. Da usare quando il progettista descrive un impianto e chiede lo schema, lo schema di centrale, lo schema di principio o funzionale, la tavola o il disegno dell'impianto, anche senza nominare la skill. Non progetta e non dimensiona, disegna l'impianto che il progettista ha già deciso.
+description: Disegna in PDF e DXF lo schema funzionale di una centrale termica (pompe di calore, caldaie, accumuli, ACS) descritta dal progettista. Da usare quando chiede lo schema o la tavola dell'impianto.
+license: MIT, il testo completo in LICENSE.txt
+compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Claude Code) con Python 3.11 o più recente. Al primo uso il comando installa pydantic 2 da PyPI se manca, e per questo serve la rete verso PyPI; ezdxf per il DXF e pypdfium2 per l'anteprima sono facoltative. Da usare con Opus o Sonnet.
 ---
 
 # Disegnatore MEP
@@ -47,6 +49,9 @@ python3 scripts/mep.py <comando> ...     # dalla cartella di questa skill
 2. **Una cartella di lavoro fuori dalla skill**, per l'impianto: `mkdir -p /tmp/mep/<progetto>`.
    La cartella della skill può essere di sola lettura, e i file dell'impianto non ci vanno.
    Qui sotto la chiamo `$L`; i percorsi dei file che passi al comando scrivili per esteso.
+3. **Il modello.** Il piano del passo 5 lo compongono Opus e Sonnet; con Haiku, nelle prove, non
+   si è mai instradato. Se sei Haiku, dillo al progettista nel primo messaggio: può cambiare
+   modello prima di cominciare.
 
 ## Se il testo non descrive un impianto deciso
 
@@ -78,8 +83,9 @@ formato del file e il controllo finale. Il testo è la descrizione del progettis
 conversazione.
 
 - Le voci del catalogo, una riga ciascuna — id, nome, mestieri, attacchi:
-  `python3 scripts/mep.py catalogo` (oppure `--mestiere heat_generation`, e così via). I file
-  completi stanno in `dati/catalogo/`, i nomi dei mestieri e dei fluidi in `dati/naming/`.
+  `python3 scripts/mep.py catalogo` (oppure `--mestiere heat_generation`, e così via); una voce
+  intera con `python3 scripts/mep.py catalogo <id>`. I nomi dei mestieri e dei fluidi stanno in
+  `dati/naming/`.
 - Scrivi `$L/grafo.json`, e validalo finché regge:
   `python3 scripts/mep.py valida $L/grafo.json`. L'uscita elenca anche le assunzioni che hai
   dichiarato: sono le domande del passo 2.
@@ -151,7 +157,8 @@ scrivi fra le cose aperte — o fermarsi.
 Leggi **per intero** [riferimenti/comporre.md](riferimenti/comporre.md). Scrivi `$L/piano.json`:
 dice dove sta ogni pezzo sul foglio, e niente altro. `python3 scripts/mep.py pezzi
 $L/grafo-completo.json` elenca i pezzi che il piano posa — ingombro, rotazioni ammesse, porte — e
-quelli in linea, che posa il motore; i manifesti completi sono in `dati/simboli/<id>.json`.
+quelli in linea, che posa il motore; il manifesto intero di un simbolo lo stampa
+`python3 scripts/mep.py simbolo <id>`.
 
 ### 6. Eseguire — la tavola e i rilievi
 
@@ -233,7 +240,7 @@ così basta un sì. Un messaggio per passo, non uno per domanda.
 | [riferimenti/comporre.md](riferimenti/comporre.md) | le istruzioni di Comporre: dal grafo al piano | al passo 5, per intero |
 | [riferimenti/rivedere.md](riferimenti/rivedere.md) | le istruzioni di Rivedere: dalla tavola ai vincoli | al passo 7 |
 | [riferimenti/regole-del-piano.md](riferimenti/regole-del-piano.md) | le regole del disegno, con le fonti | quando un rilievo cita una regola |
-| `dati/` | simboli, catalogo, regole degli accessori, nomi, cartiglio | li legge il comando; i manifesti dei simboli anche Comporre |
+| `dati/` | simboli, catalogo e regole degli accessori — un file ciascuno —, nomi, cartiglio | li legge il comando; una voce e un manifesto si leggono con `catalogo <id>` e `simbolo <id>` |
 | `scripts/mep.py` | il comando | si esegue, non si legge |
 
 ## Quando il comando si ferma

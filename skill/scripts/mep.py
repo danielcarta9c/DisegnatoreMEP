@@ -3,13 +3,15 @@
 
     python3 scripts/mep.py <comando> [...]
 
-Comandi: ambiente, catalogo, valida, completa, disegna, anteprima, consegna.
+Comandi: ambiente, catalogo, simbolo, valida, completa, pezzi, disegna, anteprima,
+consegna.
 `python3 scripts/mep.py <comando> --help` dice che cosa vuole ciascuno.
 
 Il motore sta qui accanto, in `disegnatore_mep/`, ed e' la copia di quello del
-repository che ha costruito questa cartella. Ha bisogno di una libreria sola che la
-libreria standard non ha, pydantic: se l'ambiente non ce l'ha, il comando prova a
-installarla, e se non ci riesce lo dice.
+repository che ha costruito questa cartella; simboli, catalogo e regole stanno in
+`dati/`, in un file ciascuno, e il comando li riapre in una cartella temporanea.
+Ha bisogno di una libreria sola che la libreria standard non ha, pydantic: se
+l'ambiente non ce l'ha, il comando prova a installarla, e se non ci riesce lo dice.
 """
 
 import importlib.util
@@ -103,7 +105,16 @@ def main() -> int:
     from disegnatore_mep.skill import cartelle_della_skill
     from disegnatore_mep.skill import main as comando
 
-    return comando(sys.argv[1:], cartelle_della_skill(RADICE), grafo_leggibile.build)
+    try:
+        cartelle = cartelle_della_skill(RADICE)
+    except (OSError, ValueError) as errore:
+        print(
+            f"I dati della skill non si aprono: {errore}. Il comando li riapre in una cartella "
+            "temporanea, e deve poterci scrivere.",
+            file=sys.stderr,
+        )
+        return 1
+    return comando(sys.argv[1:], cartelle, grafo_leggibile.build)
 
 
 if __name__ == "__main__":

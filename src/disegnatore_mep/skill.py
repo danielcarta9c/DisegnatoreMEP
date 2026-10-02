@@ -12,24 +12,30 @@ Capire, Comporre, Rivedere — e il resto e' questo comando
   preflight e le regole del piano —, e la scrive in SVG, **PDF** e DXF, **con i
   rilievi accanto**, per il progettista. I controlli sono della skill, non della
   sessione che la sviluppa (**I-166**);
-- `catalogo` stampa le voci fra cui Capire sceglie, una riga per voce;
-- `anteprima` fa della tavola un'immagine, per guardarla;
+- `catalogo` stampa le voci fra cui Capire sceglie, una riga per voce, o una voce
+  intera; `simbolo` il manifesto di un simbolo; `pezzi` i pezzi che il piano posa;
+- `anteprima` fa della tavola un'immagine, per guardarla; `consegna` copia i file
+  per il progettista;
 - `ambiente` dice che cosa l'ambiente ha e che cosa no.
 
 **Non chiede niente e non decide niente**: dove serve una scelta, la dice. Le
 cartelle dei dati — simboli, catalogo, regole, nomi, cartiglio — le riceve da chi
-lo lancia: nella skill sono quelle della cartella della skill, nel repository
-quelle del repository.
+lo lancia: nella skill vengono dalla cartella della skill, dove simboli, catalogo e
+regole stanno in un file ciascuno (`FASCI`), nel repository sono quelle del
+repository.
 """
 
 import argparse
+import hashlib
 import importlib
 import importlib.util
 import json
+import os
 import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import zlib
 from collections import Counter
 from collections.abc import Callable, Sequence
@@ -90,13 +96,66 @@ class Cartelle:
     """Il modello del cartiglio Nove C, con il logo accanto (REL-002)."""
 
 
+FASCI = ("simboli", "catalogo", "regole")
+"""I dati che legge solo il comando. Nella skill ognuno sta **in un file solo**,
+`dati/<nome>.json`: il caricamento su claude.ai accetta al massimo 200 file, e questi
+tre da soli ne erano 183 (I-171). Il comando li riapre da se' (`apri_i_fasci`)."""
+
+
+def fascio_della_cartella(cartella: Path, nome: str) -> str:
+    """Una cartella di dati in un file solo, leggibile: ogni JSON come il suo oggetto, ogni
+    altro file — i disegni dei simboli — come il suo testo, esatto. Lo scrive la
+    costruzione della skill (`scripts/costruisci-skill.py`)."""
+    file: dict[str, object] = {}
+    for percorso in sorted(cartella.iterdir()):
+        if not percorso.is_file():
+            raise ValueError(f"{percorso}: un fascio raccoglie solo file, non cartelle")
+        testo = percorso.read_text(encoding="utf-8")
+        file[percorso.name] = json.loads(testo) if percorso.suffix == ".json" else testo
+    return json.dumps({"fascio": nome, "file": file}, ensure_ascii=False, indent=1) + "\n"
+
+
+def apri_i_fasci(dati: Path) -> Path:
+    """I fasci della skill riaperti in una cartella temporanea — una cartella per
+    sottocartella del fascio —, una volta sola per contenuto: l'impronta dei fasci e'
+    nel nome della cartella. La cartella della skill puo' essere di sola lettura, quella
+    temporanea no."""
+    fasci = [dati / f"{nome}.json" for nome in FASCI]
+    impronta = hashlib.sha256(b"".join(f.read_bytes() for f in fasci)).hexdigest()[:16]
+    aperti = Path(tempfile.gettempdir()) / "disegnatore-mep" / f"dati-{impronta}"
+    if aperti.is_dir():
+        return aperti
+    provvisoria = aperti.with_name(f"{aperti.name}.{os.getpid()}")
+    shutil.rmtree(provvisoria, ignore_errors=True)
+    try:
+        for fascio in fasci:
+            contenuto = json.loads(fascio.read_text(encoding="utf-8"))
+            cartella = provvisoria / contenuto["fascio"]
+            cartella.mkdir(parents=True)
+            for nome, valore in contenuto["file"].items():
+                if Path(nome).name != nome or nome.startswith("."):
+                    raise ValueError(f"{fascio}: nome di file non ammesso in un fascio: {nome!r}")
+                testo = valore if isinstance(valore, str) else json.dumps(valore, ensure_ascii=False, indent=2) + "\n"
+                (cartella / nome).write_text(testo, encoding="utf-8")
+    except BaseException:
+        shutil.rmtree(provvisoria, ignore_errors=True)
+        raise
+    try:
+        provvisoria.rename(aperti)
+    except OSError:
+        # Un'altra chiamata l'ha riaperta nello stesso momento: vale la sua, che e' uguale.
+        shutil.rmtree(provvisoria, ignore_errors=True)
+    return aperti
+
+
 def cartelle_della_skill(radice: Path) -> Cartelle:
-    """Le cartelle dei dati dentro la cartella della skill."""
+    """Le cartelle dei dati della skill: i fasci riaperti, e i file che stanno da soli."""
     dati = radice / "dati"
+    aperti = apri_i_fasci(dati)
     return Cartelle(
-        simboli=dati / "simboli",
-        catalogo=dati / "catalogo",
-        regole=dati / "regole",
+        simboli=aperti / "simboli",
+        catalogo=aperti / "catalogo",
+        regole=aperti / "regole",
         naming=dati / "naming",
         cartiglio=dati / "cartiglio" / "Cartiglio_NoveC_A3.json",
     )
@@ -522,8 +581,32 @@ def _riga_del_catalogo(voce: dict[str, object]) -> str:
     return righe + f"\n    attacchi: {', '.join(attacchi)}"
 
 
+def _voce_intera(cartella: Path, ident: str, che_cosa: str, come_cercarla: str) -> int:
+    """Il file intero di una voce — del catalogo o dei simboli —, come lo legge il motore."""
+    percorso = cartella / f"{ident}.json"
+    if Path(ident).name != ident or not percorso.is_file():
+        print(f"Nessun{che_cosa} «{ident}»: {come_cercarla}.")
+        return 1
+    print(percorso.read_text(encoding="utf-8"), end="")
+    return 0
+
+
+def _simbolo(args: argparse.Namespace, cartelle: Cartelle) -> int:
+    """Il manifesto di un simbolo: ingombro, porte con le loro quote, rotazioni ammesse."""
+    return _voce_intera(
+        cartelle.simboli, args.simbolo, " simbolo",
+        "il simbolo di un pezzo e' il campo symbol_id della sua voce, `mep.py catalogo <id>`",
+    )
+
+
 def _catalogo(args: argparse.Namespace, cartelle: Cartelle) -> int:
-    """Le voci del catalogo, una riga ciascuna: id, nome, mestieri, attacchi."""
+    """Le voci del catalogo, una riga ciascuna: id, nome, mestieri, attacchi. Con l'id di
+    una voce, la voce intera."""
+    if args.voce:
+        return _voce_intera(
+            cartelle.catalogo, args.voce, "a voce del catalogo",
+            "le voci si cercano con `mep.py catalogo --cerca <parola>`",
+        )
     trovate = 0
     for percorso in sorted(cartelle.catalogo.glob("*.json")):
         voce = json.loads(percorso.read_text(encoding="utf-8"))
@@ -688,9 +771,13 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
 
     comandi.add_parser("ambiente", help="che cosa l'ambiente ha, e se il comando e' pronto")
 
-    catalogo = comandi.add_parser("catalogo", help="le voci del catalogo, una riga ciascuna")
+    catalogo = comandi.add_parser("catalogo", help="le voci del catalogo, una riga ciascuna; con un id, la voce intera")
+    catalogo.add_argument("voce", nargs="?", help="l'id di una voce: la stampa intera")
     catalogo.add_argument("--mestiere", help="solo le voci che fanno questo mestiere")
     catalogo.add_argument("--cerca", help="solo le voci con questa parola nell'id o nel nome")
+
+    simbolo = comandi.add_parser("simbolo", help="il manifesto di un simbolo: ingombro, porte, rotazioni")
+    simbolo.add_argument("simbolo", help="l'id del simbolo (il symbol_id della voce di catalogo)")
 
     pezzi = comandi.add_parser("pezzi", help="i pezzi da posare nel piano, e quelli che posa il motore")
     pezzi.add_argument("grafo", type=Path, help="il grafo completo")
@@ -742,6 +829,7 @@ def main(
         comando: dict[str, Callable[[argparse.Namespace, Cartelle], int]] = {
             "ambiente": _ambiente,
             "catalogo": _catalogo,
+            "simbolo": _simbolo,
             "pezzi": _pezzi,
             "valida": _valida,
             "disegna": _disegna,
