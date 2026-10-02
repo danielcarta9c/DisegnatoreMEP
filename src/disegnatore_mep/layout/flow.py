@@ -345,12 +345,16 @@ def _oriented_for_colour(
         item.id: tuple(catalog.get(item.definition_id).ports) for item in project.components
     }
     position = {item.id: index for index, item in enumerate(project.components)}
+    stored = {
+        item.id: catalog.get(item.definition_id).stored_medium for item in project.components
+    }
+    medium_of = {network.id: network.medium for network in project.networks}
     by_network: dict[str, list[Trunk]] = defaultdict(list)
     for trunk in trunks:
         by_network[trunk.network_id].append(trunk)
 
     oriented: dict[TrunkKey, bool | None] = {}
-    for group in by_network.values():
+    for network_id, group in by_network.items():
         outgoing: dict[str, list[tuple[Trunk, str]]] = defaultdict(list)
         incoming: dict[str, list[tuple[Trunk, str]]] = defaultdict(list)
         members: list[str] = []
@@ -408,7 +412,14 @@ def _oriented_for_colour(
             key = trunk.connection_ids
             in_supply, in_return = key in supply, key in returns
             oriented[key] = None if in_supply == in_return else in_supply
-        _eredita_da_monte(outgoing, incoming, functions_of, oriented)
+        # Chi questa rete attraversa scambiando calore con un fluido che non e'
+        # il suo — la serpentina di un bollitore — la restituisce come ritorno.
+        scambiano = frozenset(
+            item
+            for item in members
+            if stored.get(item) is not None and stored[item] != medium_of.get(network_id)
+        )
+        _eredita_da_monte(outgoing, incoming, functions_of, oriented, scambiano)
     return oriented
 
 
@@ -417,9 +428,10 @@ def _eredita_da_monte(
     incoming: dict[str, list[tuple[Trunk, str]]],
     functions_of: dict[str, frozenset[str]],
     oriented: dict[TrunkKey, bool | None],
+    scambiano: frozenset[str] = frozenset(),
 ) -> None:
     """**Dove le camminate non decidono, il fluido tiene il ruolo che ha a
-    monte**, finche' non attraversa un terminale.
+    monte**, finche' non attraversa un terminale o una serpentina.
 
     Le camminate si fermano a ogni utilizzatore, accumuli compresi, e cosi'
     restano indecise le tratte che nessuna delle due raggiunge. Fino al 23
@@ -437,6 +449,16 @@ def _eredita_da_monte(
     si mescolano — il by-pass che entra nella miscelatrice — il ruolo lo porta
     chi arriva, non chi riparte. Le tratte che le camminate hanno deciso non
     si toccano; quelle che restano indecise tornano al ripiego geometrico.
+
+    **Una serpentina cambia il ruolo come un terminale** (`scambiano`): il
+    bollitore tiene in serbo acqua sanitaria, e l'acqua di riscaldamento che
+    lo attraversa gli cede calore ed esce ritorno. Fino al 2 ottobre 2026 qui
+    contavano i soli terminali, e sulla prima tavola del PO uscita da
+    claude.ai — volano a due attacchi in serie sul ritorno, che ferma la
+    camminata dalla pompa di calore — il ritorno della serpentina ereditava la
+    mandata che entra nel bollitore ed era disegnato rosso. Un volano a due
+    attacchi tiene in serbo lo stesso fluido della rete: non scambia, e chi lo
+    attraversa tiene il proprio ruolo.
     """
     cambiato = True
     while cambiato:
@@ -445,7 +467,7 @@ def _eredita_da_monte(
             for trunk, _ in uscenti:
                 if oriented.get(trunk.connection_ids) is not None:
                     continue
-                if functions_of.get(testa, frozenset()) & TERMINAL_FUNCTIONS:
+                if testa in scambiano or functions_of.get(testa, frozenset()) & TERMINAL_FUNCTIONS:
                     ruolo: bool | None = False
                 else:
                     entranti = {

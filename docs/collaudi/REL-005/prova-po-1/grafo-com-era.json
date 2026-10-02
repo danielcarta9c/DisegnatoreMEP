@@ -1,0 +1,212 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "prova-po-1",
+    "client": "Nove C",
+    "project_name": "Prova del PO 1 — come l'ha letta la skill: la via dritta della deviatrice all'ACS",
+    "commission_code": "PROVA",
+    "revision": "00",
+    "issue_date": "2026-10-02"
+  },
+  "plant_regime": "up_to_35_kw",
+  "networks": [
+    {
+      "id": "primario",
+      "name": "Circuito primario",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "fredda",
+      "name": "Acqua fredda sanitaria",
+      "domain": "hydronic",
+      "medium": "cold_water"
+    },
+    {
+      "id": "sanitaria",
+      "name": "Acqua calda sanitaria",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "pdc",
+      "definition_id": "heat-pump-air-water",
+      "properties": {
+        "power_kw": 15
+      },
+      "tag": "GT-01"
+    },
+    {
+      "id": "deviatrice",
+      "definition_id": "diverting-valve-3way",
+      "properties": {}
+    },
+    {
+      "id": "pavimento",
+      "definition_id": "underfloor-panel",
+      "properties": {}
+    },
+    {
+      "id": "bollitore",
+      "definition_id": "dhw-cylinder",
+      "properties": {
+        "volume_l": 120
+      },
+      "tag": "BOL-01"
+    },
+    {
+      "id": "ritorno",
+      "definition_id": "tee-junction",
+      "properties": {}
+    },
+    {
+      "id": "volano",
+      "definition_id": "buffer-two-port",
+      "properties": {
+        "volume_l": 80
+      },
+      "tag": "VOL-01"
+    },
+    {
+      "id": "acquedotto",
+      "definition_id": "cold-water-inlet",
+      "properties": {}
+    },
+    {
+      "id": "utenze",
+      "definition_id": "dhw-draw-off",
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "p1",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "pdc",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "deviatrice",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p2",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_a"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "coil_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p3",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_b"
+      },
+      "endpoint_b": {
+        "component_id": "pavimento",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p4",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "coil_out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p5",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "pavimento",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "ritorno",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p6",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "ritorno",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "p7",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "w1",
+      "network_id": "fredda",
+      "endpoint_a": {
+        "component_id": "acquedotto",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "cold_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "w2",
+      "network_id": "sanitaria",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "utenze",
+        "port_id": "a"
+      },
+      "properties": {}
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a1",
+      "text": "Ricostruito dal DXF della prova del PO su claude.ai del 2 ottobre 2026 (I-171): stessi pezzi e stesse connessioni, senza i dati del cliente.",
+      "status": "proposed"
+    }
+  ],
+  "rule_applications": [],
+  "subsystems": [],
+  "sheets": []
+}
