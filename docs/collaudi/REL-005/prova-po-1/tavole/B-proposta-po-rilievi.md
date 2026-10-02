@@ -1,0 +1,28 @@
+# Rilievi della tavola — Prova del PO 1 — proposta del PO: la via dritta della deviatrice al pavimento, la terza all'ACS
+
+Formato **A3** · tratte **24** · tratte cedute **0** · rilievi bloccanti **0**.
+
+Li misurano i controlli della skill sulla tavola finita: il preflight di qualita' e le regole del piano. Non sono un giudizio sull'impianto: dicono come e' disegnato.
+
+## Bloccanti — la tavola non si consegna
+
+- nessuno
+
+## Da approvare — il progettista decide
+
+- nessuno
+
+## Avvisi — la tavola si consegna, e si sa
+
+- la tavola t1: il disegno arriva a 0.0 mm dal bordo dell'area, e con il suo ingombro poteva starne 10.0: un disegno comodo non si disegna dal bordo a bordo (D-143) (`DRAWING_TOUCHES_THE_BORDER` · t1)
+
+## Le regole del piano
+
+- la tavola t1: lo stacco che porta acquedotto da tee-drain-connection-cold-bollitore-cold-in e' lungo 30.0 mm e il suo minimo su griglia e' 20.0, che e' quanto pretendono gli accessori in linea (valve-isolation-dhw-acquedotto-a), cioe' 10.0 mm di tubo in piu': un organo di servizio sta addosso al pezzo che serve (A4, D-145) (`SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` · t1, acquedotto, tee-drain-connection-cold-bollitore-cold-in)
+- la tavola t1: le tratte p2-a, p2-b + p1-b-a, p1-b-b + p1-a piegano 6 volte, e i simboli che toccano ne impongono 2: 4 di troppo — la catena e' bollitore -> deviatrice -> tee-valve-safety-pdc-water-supply -> pdc (B1, D-154, D-171) (`HIGHWAY_IS_NOT_STRAIGHT` · t1, p1-a, p1-b-a, p1-b-b, p2-a, p2-b)
+- la tavola t1: la tratta p5-a, p5-b piega 2 volte, e i simboli che tocca ne impongono 0: 2 di troppo — la catena e' pavimento -> ritorno (B1, D-154, D-171) (`HIGHWAY_IS_NOT_STRAIGHT` · t1, p5-a, p5-b)
+- la tavola t1: la tratta p1-b-a, p1-b-b lascia la propria quota orizzontale 96.0, se ne scosta di 2.5 mm per 137.5 mm e ci torna: e' un sali-scendi, e si toglie spostando l'oggetto che occupa la quota, non piegando il tubo (B8, D-065) (`RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK` · t1, p1-b-a, p1-b-b)
+
+## Il cartiglio
+
+- campi da definire: INDIRIZZO, TITOLO TAVOLA, TAVOLA — nella casella c'e' «DA DEFINIRE» e la tavola esce in bozza (D-025)

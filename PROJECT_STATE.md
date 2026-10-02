@@ -1,11 +1,11 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-09-29 (`REL-001`, **la skill vera e propria**, fuso, tavola **approvata dal PO** — I-169, D-195; il prossimo è `REL-005`, il pacchetto della release; prima `REL-008`, **le scritte a 9 punti**, fuso, tavole **approvate dal PO** — I-164, D-194; attivo `REL-001`, l'orchestratore della skill — I-167; prima `REL-007`, **i diametri delle tubazioni**, fuso — I-158, D-193; prima la tabella delle apparecchiature, `REL-006`, I-149, il DXF, `REL-004`, I-140, i simboli nuovi, `REL-003`, I-136, e il cartiglio, `REL-002`, I-132; **attivo `REL-008`, le scritte a 9 punti** — I-159)
+**Aggiornato:** 2026-10-02 (la prima prova del PO su claude.ai, curata e fusa — PR #67, D-196; la skill è alla **versione 1.2**; il pacchetto resta `REL-005`). Prima: 2026-09-29 (`REL-001`, **la skill vera e propria**, fuso, tavola **approvata dal PO** — I-169, D-195; prima `REL-008`, **le scritte a 9 punti**, fuso, tavole **approvate dal PO**
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
-**Release corrente:** **0.3 — generalizzazione** (il numero di versione Python resta
-`0.1.0`: non ha mai seguito le release dichiarate)
+**Release corrente:** **0.3 — generalizzazione**; la skill consegnata al PO è la **1.2** (I-178), e il
+numero di versione Python è `1.2.0`
 
 > **Come è fatto questo file.** In testa c'è **lo stato al 20 settembre 2026**, e sotto la
 > riga `# Storia di esecuzione` c'è il racconto dei pacchetti precedenti, ciascuno con la
@@ -30,8 +30,11 @@ Le scelte sono **D-195**; rapporto `docs/collaudi/REL-001/RAPPORTO.md`.
 - **La prova vera**: un agente con la sola cartella e un Python senza librerie ha portato l'impianto 7, mai
   visto, dal testo al PDF — zero cedute, zero bloccanti —, fermandosi a chiedere dove `SKILL.md` lo dice. Con
   Opus e Sonnet la tavola esce; **con Haiku no**, il piano non si compone.
-- **Resta la prova su claude.ai**, che fa il PO su un impianto suo (I-170): la sessione non può caricare la
-  skill nel suo account. Al primo uso la skill installa pydantic dalla rete.
+- **La prova su claude.ai l'ha fatta il PO** su un impianto suo (I-170, I-171, 2 ottobre 2026): la tavola si è
+  composta e disegnata, e lui l'ha respinta per tre cose — lo sfiato del volano sulla quota della mandata,
+  le uscite della deviatrice, il colore della serpentina —, curate e fuse con la PR #67 (D-196). La skill è
+  alla **versione 1.2**; lo ZIP è `docs/collaudi/REL-005/disegnatore-mep-1.2.zip`. Al primo uso la skill
+  installa pydantic dalla rete.
 - Suite: le stesse 46 rosse di `main`, nome per nome.
 
 **Il prossimo è `REL-005`, il pacchetto della release** (`ACTIVE_WORK_PACKAGE.md`): parte da quattro cose del
@@ -340,7 +343,8 @@ distribuisce in verticale; l'impianto 5 ha **quattordici incroci**.
    **In parte chiuso da `REL-001`** (29 settembre 2026, I-169): la skill è girata da sola in
    camera pulita — la sola cartella, un Python senza librerie, dal testo al PDF, con le domande e
    l'approvazione in mezzo (`docs/collaudi/REL-001/RAPPORTO.md`). **Resta la chat vera**, su
-   claude.ai: la prova del PO su un impianto suo (I-170).
+   claude.ai: la prova del PO su un impianto suo (I-170). **Fatta il 2 ottobre 2026** (I-171): la chat vera
+   ha prodotto la tavola; i difetti che il PO ci ha visto sono curati in D-196.
 5. **Libreria simboli non interamente certificata.** La matrice fonti/forma/porte/ingombri
    va completata e **approvata dal PO** prima di dichiarare completa la 0.3.
 6. ~~**Le prove non dicono più che cosa difendono.**~~ **Chiuso da `DRAW-015`:** i 36 file

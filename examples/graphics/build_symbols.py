@@ -135,6 +135,25 @@ VESSEL = (10.0, 15.0)
 SEPARATOR = (12.5, 25.0)
 MACHINE = (40.0, 30.0)
 STORAGE = (25.0, 45.0)
+LYING_BUFFER = (25.0, 10.0)
+"""Il volano a due attacchi, **coricato e in linea** (I-177, D-196).
+
+Il PO, il 2 ottobre 2026, guardando la prima tavola uscita dalla skill su un
+impianto suo: «per un volano termico a 2 tubi secondo me potremmo usare un
+simbolo diverso, con sfiato piu' piccolo e volano termico messo in linea in
+orizzontale, con una dimensione che sia la meta' di quello che abbiamo usato
+adesso». Ritto, 25 x 45 con gli attacchi a +5, sul ritorno di una pompa di
+calore aveva il cielo 10 mm sotto la mandata, e lo sfiato alto 10 mm arrivava
+esattamente sulla quota della mandata: la mandata non poteva passargli sopra.
+
+La meta' esatta, 22,5 x 12,5, non sta sulla griglia: un lato con una porta
+centrata vuole un numero pari di passi. **25 x 10** tiene la larghezza di
+prima — i piani gia' scritti non cambiano in x — e porta gli attacchi in asse,
+a +5: il ritorno gli passa dentro dritto, come in una valvola."""
+SMALL_AIR_VENT = (5.0, 5.0)
+"""Lo sfiato, alto la meta' di prima (I-176, D-196): «dobbiamo fare lo sfiato piu'
+piccolo». Su un volano coricato sul ritorno di una pompa di calore il cielo
+dello sfiato resta 5 mm sotto la mandata."""
 
 # Le fonti dichiarate nel campo `source` di ogni manifesto (D-067, D-081).
 # La UNI 9511 si cita sempre tramite la fonte secondaria verificata, mai da sola.
@@ -473,14 +492,44 @@ def air_diffuser_body(w: float, h: float) -> str:
 
 
 def air_vent_body(w: float, h: float) -> str:
-    """Bulbo su stelo con il tappo di sfiato sopra. La porta e' in basso."""
+    """Bulbo su stelo con il tappo di sfiato sopra. La porta e' in basso.
+
+    Lo stesso segno di prima in un riquadro alto la meta' (I-176): il bulbo si
+    misura sul lato corto, cosi' resta un cerchio e non tocca il tappo."""
     cx = w / 2
+    r = min(w, h) * 0.24
+    cy = h * 0.5
     return (
-        f'<line x1="{n(cx)}" y1="{n(h)}" x2="{n(cx)}" y2="{n(h * 0.62)}"/>'
-        f'<circle cx="{n(cx)}" cy="{n(h * 0.42)}" r="{n(w * 0.34)}"/>'
-        f'<line x1="{n(cx - w * 0.3)}" y1="{n(h * 0.14)}" '
-        f'x2="{n(cx + w * 0.3)}" y2="{n(h * 0.14)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(h)}" x2="{n(cx)}" y2="{n(cy + r)}"/>'
+        f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>'
+        f'<line x1="{n(cx - w * 0.3)}" y1="{n(h * 0.12)}" '
+        f'x2="{n(cx + w * 0.3)}" y2="{n(h * 0.12)}"/>'
     )
+
+
+def lying_buffer_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Il volano coricato (I-177): un mantello orizzontale con le testate
+    arrotondate, e gli attacchi che entrano nel volume come nelle riserve
+    ritte (DRAW-005, I-036) — i due di linea dai fianchi, in asse, lo sfiato
+    dal cielo, lo scarico e il pozzetto dal fondo."""
+    x, y, bw, bh = w * 0.14, h * 0.15, w * 0.72, h * 0.7
+    shell = (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}" '
+        f'rx="{n(bh * 0.45)}"/>'
+    )
+    segments = []
+    for item in ports:
+        px, py = item["x_mm"], item["y_mm"]
+        target = {
+            "left": (x, py),
+            "right": (x + bw, py),
+            "top": (px, y),
+            "bottom": (px, y + bh),
+        }[item["face"]]
+        segments.append(
+            f'<line x1="{n(px)}" y1="{n(py)}" x2="{n(target[0])}" y2="{n(target[1])}"/>'
+        )
+    return shell + "".join(segments)
 
 
 def expansion_vessel_body(w: float, h: float) -> str:
@@ -1674,11 +1723,13 @@ EXCHANGER_PORTS = [
     port_at("secondary_in", "right", 20.0, *SEPARATOR),
 ]
 BUFFER_TWO_PORTS = [
-    port_at("a", "left", 5.0, STORAGE_W, STORAGE_H),
-    port_at("b", "right", 5.0, STORAGE_W, STORAGE_H),
-    port_at("vent", "top", 12.5, STORAGE_W, STORAGE_H),
-    port_at("drain", "bottom", 12.5, STORAGE_W, STORAGE_H),
-    port_at("probe", "left", 32.5, STORAGE_W, STORAGE_H),
+    port_at("a", "left", 5.0, *LYING_BUFFER),
+    port_at("b", "right", 5.0, *LYING_BUFFER),
+    port_at("vent", "top", 12.5, *LYING_BUFFER),
+    port_at("drain", "bottom", 12.5, *LYING_BUFFER),
+    # Il pozzetto della sonda scende dal fondo, accanto allo scarico: il cielo
+    # guarda la mandata, e resta allo sfiato.
+    port_at("probe", "bottom", 17.5, *LYING_BUFFER),
 ]
 BUFFER_COMBINED_PORTS = [
     port_at("primary_in", "left", 5.0, STORAGE_W, STORAGE_H),
@@ -1862,14 +1913,14 @@ SYMBOLS: list[SymbolSpec] = [
     SymbolSpec(
         id="buffer-two-port",
         name="Volano termico a due attacchi",
-        width_mm=STORAGE[0],
-        height_mm=STORAGE[1],
+        width_mm=LYING_BUFFER[0],
+        height_mm=LYING_BUFFER[1],
         inline=False,
         ports=BUFFER_TWO_PORTS,
-        body=reserve_body(STORAGE_W, STORAGE_H, BUFFER_TWO_PORTS),
-        source=SOURCE_PRACTICE_HYDRONIC,
+        body=lying_buffer_body(*LYING_BUFFER, BUFFER_TWO_PORTS),
+        source=SOURCE_PRACTICE_HYDRONIC + "; coricato e in linea per disposizione del PO (I-177, D-196)",
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="1.1.0",
+        version="2.0.0",
     ),
     SymbolSpec(
         id="buffer-combined",
@@ -1974,8 +2025,9 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     inline_symbol("pump-circulator", "Pompa di circolazione", DEVICE, pump_body, SOURCE_PRACTICE_HYDRONIC),
     single_port_symbol(
-        "air-vent", "Valvola di sfiato aria", TERMINAL_ACCESSORY, "bottom",
+        "air-vent", "Valvola di sfiato aria", SMALL_AIR_VENT, "bottom",
         air_vent_body, SOURCE_PRACTICE_HYDRONIC, AIR_VENT_ROTATIONS_DEG,
+        version="2.0.0",
     ),
     SymbolSpec(
         id="heat-pump-air-water",
