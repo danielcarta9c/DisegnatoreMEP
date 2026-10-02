@@ -50,22 +50,24 @@ def _installa(modulo: str, pacchetto: str, perche: str) -> bool:
 
 
 def _pip(pacchetto: str) -> bool:
-    try:
-        esito = subprocess.run(
-            [sys.executable, "-m", "pip", "install", "--quiet", pacchetto],
-            capture_output=True,
-            text=True,
-            timeout=ATTESA_PIP_S,
-        )
-    except (OSError, subprocess.TimeoutExpired) as errore:
-        print(f"L'installazione non e' riuscita: {errore}", file=sys.stderr)
-        return False
-    if esito.returncode != 0:
-        ultima = (esito.stderr or esito.stdout).strip().splitlines()[-1:] or ["?"]
-        print(f"L'installazione non e' riuscita: {ultima[0]}", file=sys.stderr)
-        return False
-    importlib.invalidate_caches()
-    return True
+    comando = [sys.executable, "-m", "pip", "install", "--quiet", pacchetto]
+    for tentativo in (comando, [*comando, "--break-system-packages"]):
+        try:
+            esito = subprocess.run(tentativo, capture_output=True, text=True, timeout=ATTESA_PIP_S)
+        except (OSError, subprocess.TimeoutExpired) as errore:
+            print(f"L'installazione non e' riuscita: {errore}", file=sys.stderr)
+            return False
+        if esito.returncode == 0:
+            importlib.invalidate_caches()
+            return True
+        # Sui sistemi che proteggono il Python di sistema (PEP 668: Ubuntu 24.04, Debian 12)
+        # pip rifiuta di installare fuori da un ambiente virtuale: nella macchina usa e getta
+        # in cui gira la skill si installa lo stesso, e lo si dice a pip.
+        if "externally-managed-environment" not in esito.stderr + esito.stdout:
+            break
+    ultima = (esito.stderr or esito.stdout).strip().splitlines()[-1:] or ["?"]
+    print(f"L'installazione non e' riuscita: {ultima[0]}", file=sys.stderr)
+    return False
 
 
 def main() -> int:
