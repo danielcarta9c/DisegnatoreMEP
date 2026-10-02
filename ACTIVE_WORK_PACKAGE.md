@@ -12,6 +12,12 @@
 **`REL-005` è chiuso con la 1.2** (D-198): la release è `releases/archive/DisegnatoreMEP-v1.2.0.zip`. La storia del
 pacchetto è in `docs/plans/pacchetti/REL-005.md`.
 
+> **Aggiornato il 2 ottobre 2026, a PR #70 fusa.** La prima consegna della beta è fatta: la **1.2.1** (I-187,
+> D-199), in `releases/latest/` — la skill chiede all'inizio se servono i diametri (I-185) e non manda più il
+> grafo da leggere (I-186); le tavole sono quelle della 1.2.0. Rapporto: `docs/collaudi/BETA-001/RAPPORTO.md` §1.
+> Del punto 0 resta da chiedere: le tavole dei collaboratori, la regola per le consegne successive, le domande
+> di contenuto.
+
 ---
 
 ## Dove siamo — misurato il 2 ottobre 2026
@@ -42,7 +48,8 @@ pacchetto è in `docs/plans/pacchetti/REL-005.md`.
    punto 3 resta fermo e la sessione lavora sul punto 1.
 2. **La numerazione delle consegne in beta.** *Proposta della sessione:* `1.2.1`, `1.2.2`… a ogni gruppo di
    correzioni fuso e consegnato ai collaboratori; `1.3` se cambia il comportamento visibile in modo che il
-   collaboratore debba saperlo, come un simbolo nuovo. Lo decide il PO.
+   collaboratore debba saperlo, come un simbolo nuovo. Lo decide il PO. *La prima, la 1.2.1, l'ha approvata
+   (I-187); la regola per le successive resta questa proposta.*
 3. **Le domande di contenuto aperte**, con la proposta della sessione per ciascuna:
    - **lo scarico del volano a due attacchi** in serie sul ritorno esce rosso (colore base del fluido). *Proposta:*
      prende il ritorno, perché il volume è acqua di ritorno;

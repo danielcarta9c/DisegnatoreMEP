@@ -148,3 +148,18 @@ def test_le_istruzioni_dicono_quando_e_con_che_cosa_si_chiedono_i_diametri() -> 
     assert "`delta_t_k`" in testo
     assert "**Non scriverne uno «tipico»**" in testo
     assert "**Quelli che mancano li chiedi in una voce sola**" in testo
+
+
+def test_se_il_testo_non_parla_dei_diametri_capire_chiede_se_li_vuole() -> None:
+    """I-185: il PO vuole che la skill, nelle domande dell'inizio, chieda se il progettista
+    vuole anche il dimensionamento dei tubi. Il calcolo resta facoltativo — senza un sì il
+    campo non c'e' —, ma non e' piu' una cosa che la skill tace. La domanda la scrive Capire
+    in `assumptions`, e il passo 2 della skill la mette fra quelle che fermano."""
+    testo = istruzioni()
+    assert "non lo proponi" not in testo
+    assert "**Se il testo non ne parla, lo chiedi**" in testo
+    assert "la tavola esce senza\ndiametri" in testo, "la prima interpretazione e' no"
+    skill = (ROOT / "skill" / "SKILL.md").read_text(encoding="utf-8")
+    domande = skill.split("### 2. Le domande", 1)[1].split("### 3.", 1)[0]
+    fermano = domande.split("**Fermati e chiedi**", 1)[1].split("Il messaggio porta:", 1)[0]
+    assert "**i diametri delle tubazioni, se il testo non dice se li vuole**" in fermano

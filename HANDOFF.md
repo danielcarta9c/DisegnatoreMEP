@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-02, sera — **la pulizia del solutore è fusa** (PR #68; I-183, D-197 approvata): suite a **zero rosse**, uscite di prova identiche. **Il pacchetto attivo è `BETA-001`, la beta della 1.2** (I-181): il debug sulle tavole dei collaboratori del PO; `REL-005` è **chiuso con la release 1.2.0** (D-198), in `releases/`. Prima, lo stesso giorno: la prima prova del PO su claude.ai curata e fusa (PR #67, D-196), la skill alla versione 1.2
+**Aggiornato:** 2026-10-02, notte — **la 1.2.1 è consegnata** (PR #70; I-187, D-199 approvata): la skill chiede all'inizio se servono i diametri, e non manda più il grafo da leggere; tavole identiche alla 1.2.0. Il pacchetto attivo resta `BETA-001`. Prima, lo stesso giorno: la pulizia del solutore (PR #68, D-197), `REL-005` chiuso con la release 1.2.0 (D-198), la prima prova del PO curata (PR #67, D-196).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,23 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 2 ottobre 2026, sera, a PR #68 fusa
+## ▶ Da dove riparte la prossima sessione — scritto il 2 ottobre 2026, notte, a PR #70 fusa
+
+**Il pacchetto è sempre `BETA-001`.** La prima consegna della beta è fatta:
+- **la 1.2.1** (I-187, D-199), in `releases/latest/DisegnatoreMEP-v1.2.1.zip`, con la copia in `releases/archive/`;
+  lo ZIP è al PO;
+- se il testo non dice se il progettista vuole i diametri, **la skill glielo chiede** al passo 2, ed è una domanda
+  che ferma (I-185; Capire §4.7);
+- **il grafo da leggere non c'è più** (I-186): `completa` scrive solo il grafo completo, e l'approvazione si fa sul
+  riepilogo;
+- le tavole sono quelle della 1.2.0, byte per byte; la suite è a 0 rosse (rapporto `docs/collaudi/BETA-001/RAPPORTO.md`).
+
+**Da qui `SKILL.md` porta il numero per intero** («Versione 1.2.1»), e `tests/test_le_release.py` lo confronta così.
+La regola per le consegne successive (1.2.2…, 1.3 per un cambio visibile) è ancora la proposta del pacchetto.
+Il resto del punto 0 e i punti 1–3 sono come scritti qui sotto. **I numeri**: il prossimo input è **I-188**, la
+prossima decisione **D-200**.
+
+## Da dove ripartiva — scritto il 2 ottobre 2026, sera, a PR #68 fusa
 
 **Il pacchetto è `BETA-001`** (`ACTIVE_WORK_PACKAGE.md`): **si parte dal punto 0**, in un messaggio solo al PO —
 le tavole dei collaboratori, la numerazione delle consegne in beta (proposta: `1.2.1`, `1.2.2`…), le domande di

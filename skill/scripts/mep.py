@@ -97,13 +97,10 @@ def main() -> int:
         if importlib.util.find_spec(modulo) is None:
             _installa(modulo, pacchetto, "senza la quale il comando fa meno")
 
-    # Nel repository e' examples/graph/build_plant_graph.py: la costruzione lo copia qui accanto.
-    import grafo_leggibile  # type: ignore[import-not-found]
-
     from disegnatore_mep.skill import cartelle_della_skill
     from disegnatore_mep.skill import main as comando
 
-    return comando(sys.argv[1:], cartelle_della_skill(RADICE), grafo_leggibile.build)
+    return comando(sys.argv[1:], cartelle_della_skill(RADICE))
 
 
 if __name__ == "__main__":

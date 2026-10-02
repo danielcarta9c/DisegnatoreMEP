@@ -170,9 +170,10 @@ Regole di forma:
   campo** e scrivi la domanda in `assumptions`.
 - **`diametri`**: la richiesta dei diametri delle tubazioni, **solo se il progettista li
   chiede** (§4.7): `"diametri": {"reti": ["primario"]}`, le reti su cui calcolarli. Se non
-  li chiede, **ometti il campo**. Una rete che il testo dice **esistente** — «la
-  distribuzione dagli accumuli in poi è esistente» — porta `"esistente": true` fra i suoi
-  campi, e non sta mai fra le reti dei diametri.
+  li chiede, **ometti il campo**; se il testo non ne parla, glielo domandi in `assumptions`.
+  Una rete che il testo dice **esistente** — «la distribuzione dagli accumuli in poi è
+  esistente» — porta `"esistente": true` fra i suoi campi, e non sta mai fra le reti dei
+  diametri.
 - **`metadata`**: identifica il documento, non l'impianto, ed è quello che il
   **cartiglio** della tavola scrive. Committente e codice di
   commessa te li dice chi lancia il lavoro; se mancano, scrivi `ND` e dillo nella
@@ -469,8 +470,15 @@ hai sommato e che cosa no.
 La tavola può portare il **diametro di ogni tratto**, calcolato — «Øi 32» lungo la linea,
 il diametro interno netto minimo in millimetri (D-191, D-193). **Il calcolo è
 facoltativo**: si fa **solo se il progettista lo chiede** («calcola i diametri», «metti i
-DN», «dimensiona le tubazioni della centrale»), e **solo sulla parte che dice lui**. Se il
-testo non lo chiede non scrivi niente, e non lo proponi.
+DN», «dimensiona le tubazioni della centrale»), e **solo sulla parte che dice lui**.
+
+**Se il testo non ne parla, lo chiedi** (I-185): ometti il campo e scrivi una voce di
+`assumptions` che glielo domanda, con la tua prima interpretazione — la tavola esce senza
+diametri — e quello che servirebbe se li vuole, così che una risposta basti: *«Diametri delle
+tubazioni: il testo non li chiede, e la tavola esce senza. Se li vuoi, li calcolo su tutte le
+reti nuove, e mi servono il salto termico della pompa di calore e la portata di progetto
+dell'acqua calda sanitaria.»* Se risponde sì, scrivi il campo e i dati che ti dà; se risponde
+no, la voce passa ad approvata. Se il testo li esclude («senza diametri»), non chiedi niente.
 
 **Dove.** Scrivi `"diametri": {"reti": [...]}` con le reti su cui il progettista vuole il
 DN. Il caso ricorrente è il **retrofit**: «la centrale è nuova, la distribuzione dagli
@@ -688,7 +696,8 @@ Rispondi a queste domande. Se una risposta è «no», il lavoro non è finito.
   una voce sola (§4.5)?
 - I diametri: il campo `diametri` c'è **solo se** il progettista li ha chiesti, con le reti
   che ha detto, e nessuna è `esistente`? I dati che mancano al calcolo — salti termici,
-  portate di progetto — sono chiesti in una voce sola (§4.7)?
+  portate di progetto — sono chiesti in una voce sola (§4.7)? Se il testo non ne parla, c'è
+  la voce che gli chiede se li vuole?
 - Ogni componente e ogni tubazione compare nella tabella di rilettura, agganciato a una
   frase del testo?
 - Ogni cosa che il testo non dice — e che hai dovuto chiudere o lasciare fuori — è una

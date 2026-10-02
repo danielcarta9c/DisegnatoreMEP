@@ -5,9 +5,8 @@ Capire, Comporre, Rivedere — e il resto e' questo comando
 (`docs/ARCHITETTURA-DEL-PIANO.md` §1):
 
 - `valida` il grafo di prima stesura che Capire scrive, e ne elenca le domande;
-- `completa` il grafo con le regole degli accessori, dice che cosa ha aggiunto e
-  perche', e che cosa non ha potuto aggiungere, e scrive il **grafo da leggere**
-  che il progettista approva;
+- `completa` il grafo con le regole degli accessori, e dice che cosa ha aggiunto e
+  perche', e che cosa non ha potuto aggiungere: il progettista approva su questo;
 - `disegna` la tavola dal piano che Comporre scrive: la esegue, la misura — il
   preflight e le regole del piano —, e la scrive in SVG, **PDF** e DXF, **con i
   rilievi accanto**, per il progettista. I controlli sono della skill, non della
@@ -39,7 +38,7 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.graph.naming import LineNaming, Naming
+from disegnatore_mep.graph.naming import Naming
 from disegnatore_mep.graphics.cartiglio import (
     Cartiglio,
     CartiglioDellaTavola,
@@ -58,16 +57,11 @@ from disegnatore_mep.piano.formato import PianoDiComposizione, carica_piano
 from disegnatore_mep.piano.revisore import misura
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.errors import RuleError
-from disegnatore_mep.rules.proposal import RuleGap
 from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.rules.report import CATEGORY_LABELS, build_report
 from disegnatore_mep.validation.issues import ValidationIssue
 from disegnatore_mep.validation.regole import rilievi_delle_regole
 from disegnatore_mep.validation.topology import validate_project
-
-DocumentoDelGrafo = Callable[..., str]
-"""Chi scrive il grafo da leggere: `build` del generatore di `GRAFO_IMPIANTO.md`
-(`examples/graph/build_plant_graph.py`), che la skill porta con se'."""
 
 GRAVITA: dict[IssueSeverity, str] = {
     IssueSeverity.BLOCKING: "Bloccanti — la tavola non si consegna",
@@ -173,9 +167,7 @@ def _valida(args: argparse.Namespace, cartelle: Cartelle) -> int:
 # --- completa ---------------------------------------------------------------
 
 
-def _completa(
-    args: argparse.Namespace, cartelle: Cartelle, documento: DocumentoDelGrafo | None
-) -> int:
+def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
     """Le regole degli accessori sul grafo: che cosa aggiungono, e perche'."""
     dati = _Dati(cartelle)
     modello = load_project(args.grafo)
@@ -231,36 +223,15 @@ def _completa(
         return 2
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(canonical_json(completo), encoding="utf-8")
+    # Il grafo da leggere accanto non si scrive piu': il progettista non lo leggeva, e
+    # approva sull'elenco qui sopra (I-186).
     print(f"\nGrafo completo: {args.out}")
-    if documento is not None:
-        da_leggere = args.out.with_name(f"{args.out.stem}-da-leggere.md")
-        try:
-            da_leggere.write_text(
-                _grafo_da_leggere(documento, completo, dati, lacune), encoding="utf-8"
-            )
-            print(f"Grafo da leggere, per l'approvazione del progettista: {da_leggere}")
-        except ValueError as errore:
-            # Il grafo completo c'e' ed e' giusto: manca solo il documento che lo
-            # racconta. Si dice perche', e l'approvazione si fa sull'elenco qui sopra.
-            print(f"Il grafo da leggere non si e' potuto scrivere: {errore}")
     domande = _domande(completo)
     if domande:
         print(f"\nAssunzioni ancora da confermare ({len(domande)}):")
         for domanda in domande:
             print(f"  - {domanda}")
     return 0
-
-
-def _grafo_da_leggere(
-    documento: DocumentoDelGrafo, modello: ProjectModel, dati: _Dati, lacune: Sequence[RuleGap]
-) -> str:
-    return documento(
-        modello,
-        dati.catalogo,
-        dati.naming,
-        lacune,
-        line_naming=LineNaming.from_directory(dati.cartelle.naming),
-    )
 
 
 # --- disegna ----------------------------------------------------------------
@@ -728,19 +699,14 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main(
-    argv: Sequence[str] | None,
-    cartelle: Cartelle,
-    documento: DocumentoDelGrafo | None = None,
-) -> int:
+def main(argv: Sequence[str] | None, cartelle: Cartelle) -> int:
     """Codici di uscita: `0` fatto, `2` fatto ma c'e' qualcosa che ferma la consegna,
     `1` non si e' potuto fare — un file che non si legge, un dato che manca."""
     args = costruisci_il_parser().parse_args(argv)
     try:
-        if args.comando == "completa":
-            return _completa(args, cartelle, documento)
         comando: dict[str, Callable[[argparse.Namespace, Cartelle], int]] = {
             "ambiente": _ambiente,
+            "completa": _completa,
             "catalogo": _catalogo,
             "pezzi": _pezzi,
             "valida": _valida,
