@@ -299,8 +299,13 @@ def _stacco_dello_sfiato(
         "stacco": (200.0, 102.5),
         "volano": (260.0, 100.0),
         # Lo sfiato pende **sopra** il T: il suo attacco guarda in giu\' e sta
-        # `lungo_mm` piu\' in alto di quello del T.
-        "sfiato": (200.0, 92.5 - lungo_mm),
+        # `lungo_mm` piu\' in alto di quello del T. L'altezza del riquadro si
+        # legge dal manifesto: lo sfiato e' passato da 10 a 5 mm (I-176), e
+        # uno stacco scritto a 92,5 era diventato piu' lungo di quello detto.
+        "sfiato": (
+            200.0,
+            102.5 - lungo_mm - catalog.resolve(organo).symbol.manifest.height_mm,
+        ),
     }
     gradi: dict[str, int] = {}
     if con_la_valvola:

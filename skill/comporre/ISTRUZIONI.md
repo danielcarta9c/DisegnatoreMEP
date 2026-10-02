@@ -58,7 +58,7 @@ Questi sono quelli che incontri quasi sempre:
 | `gas-boiler-modular` (caldaia modulare) | 60 × 25 | `water_supply` **destra +5** · `water_return` **destra +20** |
 | `solar-collector` (collettore solare) | 40 × 25 | `supply` **destra +5** · `return` **destra +20** — sul fluido solare |
 | `buffer-four-port` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `vent` sopra e `drain` sotto, a x +12,5 |
-| `buffer-two-port` | 25 × 45 | `a` sinistra +5 · `b` destra +5 · `vent` sopra e `drain` sotto, a x +12,5 |
+| `buffer-two-port` | **25 × 10, coricato** | `a` sinistra +5 · `b` destra +5 — **in asse** · `vent` sopra e `drain` sotto, a x +12,5 · `probe` sotto, a x +17,5 |
 | `dhw-heat-pump` (pompa di calore per ACS) | 25 × 45 | `cold_in` sinistra +37,5 · `dhw_out` sopra, a x +12,5 |
 | `zone-manifold` (collettore di zona) | 40 × 5 | `in` sinistra +2,5 · `out_1` sotto, a x +12,5 · `out_2` sotto, a x +27,5 |
 | `buffer-combined` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `dhw_out` sopra, a x +7,5 · `cold_in` sinistra +37,5 |
@@ -80,8 +80,14 @@ piega, il ritorno a 80. **Non hai speso niente.** Se invece le posi a `y=60` e `
 linea fra loro fa **due pieghe** e te le porti dietro per tutta la tavola.
 
 ⚠ **Conta la quota della porta, non l'origine.** «Stesso `y`» vale per chi ha le porte alle
-stesse quote. Un volano **a due attacchi** ha `a` e `b` tutt'e due a +5: per metterlo sul
-ritorno di una pompa, che esce a +20, lo posi **15 mm più in basso** della pompa.
+stesse quote. Un volano **a due attacchi** è **coricato e in linea** (**D-196**): alto 10, con `a`
+e `b` in asse a +5. Per metterlo sul ritorno di una pompa, che esce a +20, lo posi **15 mm più
+in basso** della pompa, e il ritorno gli passa dentro dritto, come in una valvola. Lo
+**sfiato** (5 × 5) sta sul suo cielo, addosso all'attacco `vent` — `x` +10, `y` −5 rispetto al
+volano —, e resta 5 mm sotto la mandata, che gli passa sopra dritta. Lo **scarico** sta sotto,
+addosso a `drain`. Fino al 2 ottobre 2026 il volano a due attacchi era ritto, 25 × 45, e il
+suo sfiato arrivava esattamente sulla quota della mandata: la mandata non poteva passargli
+sopra (I-172).
 
 ⚠ **Il bollitore ha l'interasse 10, non 15** — `coil_in` +7,5 e `coil_out` +17,5 — perché
 quelle due porte dicono **dov'è la serpentina dentro l'accumulo**, e non si spostano. La

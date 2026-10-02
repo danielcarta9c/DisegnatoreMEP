@@ -621,6 +621,15 @@ in una voce sola, perché la tabella li scrive; chiederli non vuol dire proporli
   dichiarata come assunzione. Non è una regola dell'impianto, è una convenzione di
   disegno: perciò si dichiara. **Non vale sul circuito solare**, dove il gruppo sta sul
   ritorno ai collettori (§4.2).
+- **Le due uscite di una deviatrice fra riscaldamento e ACS** (**D-196**). La valvola
+  deviatrice a tre vie ha la **via dritta** — `in` → `out_a` — e la **terza via**,
+  `out_b`. La via dritta va al **riscaldamento** — il volano, l'accumulo, la
+  distribuzione —; la terza via va all'**ACS**, la serpentina del bollitore. Il testo di
+  solito non lo dice, ed è questa la lettura, senza domanda: è quella dell'impianto di
+  prova 2 e dello schema a tre vie del disegnatore del committente, e il committente l'ha
+  confermata guardando una tavola che la rovesciava («prova 2 è quello corretto», I-175).
+  Rovesciata, la tavola non si compone bene: la via dritta porta all'ACS, e la deviatrice
+  non può più stare dritta sulla mandata con la terza via in basso verso il bollitore.
 - **Master, slave, cascata, priorità** sono regolazione (§4.5), non pezzi.
 - Il testo può nominare un accessorio per dire **dove** sta un attacco («sul volume
   tecnico sono previsti il carico e lo scarico»): resta ferramenta, resta fuori, la

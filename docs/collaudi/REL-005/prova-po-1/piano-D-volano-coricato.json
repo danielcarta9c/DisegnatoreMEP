@@ -1,0 +1,104 @@
+{
+  "formato": "A3",
+  "note": [
+    "D — la disposizione del PO con i simboli nuovi (D-196): volano a due attacchi coricato e in linea sul ritorno, sfiato 5 x 5 addosso al suo cielo; deviatrice dritta sulla mandata, terza via in basso verso il bollitore."
+  ],
+  "pezzi": {
+    "pdc": {
+      "x": 15,
+      "y": 160
+    },
+    "tee-valve-safety-pdc-water-supply": {
+      "x": 62.5,
+      "y": 162.5
+    },
+    "valve-safety-pdc-water-supply": {
+      "x": 62.5,
+      "y": 142.5
+    },
+    "tee-expansion-connection-pdc-water-return": {
+      "x": 95,
+      "y": 177.5
+    },
+    "expansion-connection-pdc-water-return": {
+      "x": 95,
+      "y": 200
+    },
+    "tee-filling-unit-pdc-water-return-b": {
+      "x": 112.5,
+      "y": 177.5
+    },
+    "filling-unit-pdc-water-return": {
+      "x": 112.5,
+      "y": 192.5,
+      "rotazione": 180
+    },
+    "inlet-filling-unit-pdc-water-return": {
+      "x": 112.5,
+      "y": 212.5
+    },
+    "tee-pressure-gauge-pdc-water-return": {
+      "x": 130,
+      "y": 177.5
+    },
+    "pressure-gauge-pdc-water-return": {
+      "x": 130,
+      "y": 200,
+      "rotazione": 180
+    },
+    "volano": {
+      "x": 155,
+      "y": 175,
+      "specchio": true
+    },
+    "air-vent-volano-b": {
+      "x": 165,
+      "y": 170
+    },
+    "drain-connection-volano-a": {
+      "x": 165,
+      "y": 185
+    },
+    "ritorno": {
+      "x": 200,
+      "y": 177.5
+    },
+    "deviatrice": {
+      "x": 225,
+      "y": 160,
+      "rotazione": 0
+    },
+    "pavimento": {
+      "x": 345,
+      "y": 162.5
+    },
+    "bollitore": {
+      "x": 265,
+      "y": 205
+    },
+    "acquedotto": {
+      "x": 180,
+      "y": 240
+    },
+    "tee-drain-connection-cold-bollitore-cold-in": {
+      "x": 215,
+      "y": 240
+    },
+    "drain-connection-cold-bollitore-cold-in": {
+      "x": 215,
+      "y": 255
+    },
+    "mixing-valve-thermostatic-bollitore-dhw-out": {
+      "x": 300,
+      "y": 192.5
+    },
+    "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
+      "x": 300,
+      "y": 217.5
+    },
+    "utenze": {
+      "x": 325,
+      "y": 195
+    }
+  }
+}

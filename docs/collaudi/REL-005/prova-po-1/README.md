@@ -17,6 +17,10 @@ coordinata, senza i dati del cliente; la tavola A rifà la sua.
 | **A** | `grafo-com-era.json` | `piano-A-com-era.json` | la tavola del PO, rifatta, con il colore della serpentina corretto |
 | **B** | `grafo-proposta-po.json` | `piano-B-proposta-po.json` | la disposizione del PO: deviatrice dritta sulla mandata, terza via in basso verso il bollitore |
 | **C** | `grafo-proposta-po.json` | `piano-C-volano-abbassato.json` | come B, con il volano 10 mm più in basso |
+| **D** | `grafo-proposta-po.json` | `piano-D-volano-coricato.json` | **la cura scelta dal PO** (D-196): la disposizione di B con il volano a due attacchi coricato e lo sfiato piccolo |
+
+A, B e C sono disegnate con i simboli **di prima** — sono le tavole che il PO ha visto
+rispondendo —; D con quelli nuovi.
 
 Si rifanno così, dalla cartella della skill costruita (`python scripts/costruisci-skill.py`):
 
@@ -30,6 +34,7 @@ python3 scripts/mep.py disegna /tmp/po1/grafo-completo.json --piano <piano> --ou
 | A | 0 | 0 | 6 | 1 | autostrada non dritta ×2 |
 | B | 0 | 0 | 9 | 1 | autostrada non dritta ×2, **sali-scendi della mandata** |
 | C | 0 | 0 | 9 | 1 | autostrada non dritta ×3 — la mandata no |
+| **D** | 0 | 0 | **5** | 1 | autostrada non dritta ×1: il ritorno del pannello, che ha interasse 10 contro il 15 della pompa |
 
 ## Che cosa è successo, misurato
 
@@ -56,11 +61,25 @@ ereditava la mandata che entra nel bollitore. Corretto in `layout/flow.py`: chi 
 un fluido che non è quello della rete — la serpentina — restituisce ritorno. La prova
 `test_il_ritorno_della_serpentina_e_ritorno_anche_col_volano_in_serie` è rossa senza la correzione.
 
+## La cura, scelta dal PO (I-175 … I-178, D-196)
+
+- **«Prova 2 è quello corretto»**: su una deviatrice fra riscaldamento e ACS la via dritta va al
+  riscaldamento e la terza all'ACS — una riga di Capire (§7).
+- **Lo sfiato più piccolo**: `air-vent` 5 × 5 invece di 5 × 10, lo stesso segno, su tutte le tavole.
+- **Il volano a due attacchi coricato e in linea, alto la metà**: `buffer-two-port` 25 × 10, attacchi
+  in asse a +5. La metà esatta, 22,5 × 12,5, non sta sulla griglia da 2,5 mm (un lato con una porta
+  centrata vuole un numero pari di passi); 25 × 10 tiene la larghezza di prima. Sul ritorno della
+  pompa di calore il cielo dello sfiato resta 5 mm sotto la mandata: la tavola D ha mandata e
+  ritorno dritti.
+- **Le sette tavole di prova approvate**, rifatte con i simboli nuovi, sono in `tavole-di-prova/`,
+  con i piani adattati agli appesi (`tavole_di_prova.py`): lo sfiato sale di 5 mm, così il suo
+  attacco resta dov'era; sull'impianto 3 sfiato e scarico tornano addosso al volano coricato. Il
+  piano dell'impianto 3 aveva messo lo sfiato **sopra la mandata**, con lo stacco che la
+  attraversava («A4 cede a B1 … incrocio imposto»): era lo stesso difetto della prova del PO, e con
+  il volano coricato l'incrocio sparisce.
+
 ## Quello che resta al PO
 
-- quale regola cura lo sfiato — C, o un'altra;
-- la riga di Capire sulle uscite della deviatrice fra riscaldamento e ACS (via dritta al
-  riscaldamento, terza all'ACS): è contenuto;
-- lo scarico del volano resta rosso su tutte e tre le tavole: è la regola vigente — uno stacco che
+- lo scarico del volano resta rosso su tutte le tavole: è la regola vigente — uno stacco che
   pende da una macchina prende il colore base del fluido —, ma su un volano in serie sul ritorno
   il volume è ritorno.

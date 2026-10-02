@@ -1,9 +1,9 @@
 {
   "id": "buffer-two-port",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "name": "Volano termico a due attacchi",
   "width_mm": 25.0,
-  "height_mm": 45.0,
+  "height_mm": 10.0,
   "allowed_rotations_deg": [
     0
   ],
@@ -30,13 +30,13 @@
       "id": "drain",
       "face": "bottom",
       "x_mm": 12.5,
-      "y_mm": 45.0
+      "y_mm": 10.0
     },
     {
       "id": "probe",
-      "face": "left",
-      "x_mm": 0.0,
-      "y_mm": 32.5
+      "face": "bottom",
+      "x_mm": 17.5,
+      "y_mm": 10.0
     }
   ],
   "keep_out": {
@@ -46,5 +46,5 @@
     "bottom_mm": 2.0
   },
   "stroke_weight": "medium",
-  "source": "pratica di settore, cfr. SRC-008"
+  "source": "pratica di settore, cfr. SRC-008; coricato e in linea per disposizione del PO (I-177, D-196)"
 }
