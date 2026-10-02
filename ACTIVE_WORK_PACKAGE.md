@@ -14,6 +14,15 @@
 
 ---
 
+## Aggiornamento del 2 ottobre 2026 — il punto 0.1 è fatto
+
+- **La prova del PO su claude.ai c'è** (I-170 chiusa, I-171 … I-179): un impianto suo, la tavola respinta per tre
+  cose, tutte e tre curate e fuse con la PR #67 (D-196). Rapporto: `docs/collaudi/REL-005/prova-po-1/README.md`.
+- **Il numero**: il PO ha chiamato la skill «Rev 1.2» (I-178); la versione è **1.2.0** in `pyproject.toml`, nel
+  pacchetto e in `SKILL.md`. La proposta `1.0.0` del punto 0.4 è superata dai fatti: il numero della release
+  si chiede al PO come seguito di questa.
+- **Restano i punti 0.2 e 0.3**: i testi di impianti veri, e il via libera a togliere il solutore.
+
 ## Dove siamo — misurato il 29 settembre 2026, a `REL-001` fuso
 
 - **La skill c'è** (**D-195**): l'ingresso `skill/SKILL.md`, il comando unico `scripts/mep.py`, il PDF senza

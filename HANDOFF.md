@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-09-29 — **`REL-001`, la skill vera e propria, è fuso** (PR #66; I-169, D-195 approvata); **il prossimo è `REL-005`, il pacchetto della release**. Prima: **`REL-008`, le scritte a 9 punti, è fuso** (PR #65; I-164, D-194). Prima: **`REL-007`, i diametri, è fuso** (PR #64, I-158)
+**Aggiornato:** 2026-10-02 — **la prima prova del PO su claude.ai è chiusa e fusa** (PR #67; I-171 … I-179, D-196 approvata): volano a due attacchi coricato, sfiato 5 × 5, uscite della deviatrice, colore della serpentina; **la skill è alla versione 1.2**. Il pacchetto resta **`REL-005`**. Prima: **`REL-001`, la skill vera e propria, è fuso** (PR #66; I-169, D-195 approvata)
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,34 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 29 settembre 2026, a `REL-001` fuso
+## ▶ Da dove riparte la prossima sessione — scritto il 2 ottobre 2026, a PR #67 fusa
+
+**Il pacchetto è ancora `REL-005`** (`ACTIVE_WORK_PACKAGE.md`). **Il punto 0.1 è fatto**: il PO ha caricato la
+skill su claude.ai e l'ha provata su un impianto suo (I-170 chiusa, I-171). Restano **i punti 0.2 … 0.4** — due o
+tre testi di impianti veri, il via libera a togliere il percorso del solutore e le sue prove rosse, il numero
+della release — e il PO, per l'interim, ha chiamato la skill **«Rev 1.2»** (I-178): la versione è **1.2.0**, e
+la proposta `1.0.0` del pacchetto non vale più. Chiedi le altre tre cose in un messaggio solo.
+
+**Che cosa ha portato la prova del PO** (rapporto `docs/collaudi/REL-005/prova-po-1/README.md`):
+
+- **Il volano a due attacchi è coricato e in linea** (D-196): `buffer-two-port` 2.0.0, 25 × 10, attacchi in asse a
+  +5. Ritto, sul ritorno della pompa di calore il suo sfiato arrivava sulla quota della mandata e la mandata non
+  passava. **Lo sfiato è 5 × 5**, su tutte le tavole. Comporre §2.1 dice dove si posano.
+- **Capire §7**: su una deviatrice fra riscaldamento e ACS la via dritta va al riscaldamento, la terza all'ACS
+  («prova 2 è quello corretto», I-175).
+- **Il motore** (`layout/flow.py`): chi scambia calore con un fluido che non è quello della rete restituisce
+  ritorno — il ritorno della serpentina col volano in serie sul ritorno usciva rosso.
+- **Il DXF del PO non è nel repository**: porta nome e indirizzo del cliente. Grafo e posa sono ricostruiti, anonimi.
+- **Lo ZIP della 1.2** è `docs/collaudi/REL-005/disegnatore-mep-1.2.zip`, costruito da `scripts/costruisci-skill.py`.
+  `releases/` resta alla release di `REL-005`, che vuole la suite verde.
+- **Domanda aperta al PO**: lo scarico del volano prende il colore base del fluido, rosso, anche su un volano in
+  serie sul ritorno.
+- **La suite**: 46 rosse, tutte del solutore; rispetto a `main` prima della PR una cambia nome dentro
+  `tests/layout/test_assi_dorsali_tee.py` (`test_un_allineamento_gratuito_…` rossa, `test_l_allineamento_non_si_accetta_…`
+  verde): col volano nuovo la posa del solutore non ha più il dente da cui la prima parte. `ruff` e `mypy` verdi.
+- **I numeri**: il prossimo input è **I-180**, la prossima decisione **D-197**.
+
+## Da dove ripartiva — scritto il 29 settembre 2026, a `REL-001` fuso
 
 **Il prossimo è `REL-005`, il pacchetto della prima release** (`ACTIVE_WORK_PACKAGE.md`). **Parte dal punto 0**:
 quattro cose che servono dal PO — l'esito della sua prova della skill su claude.ai (I-170), due o tre testi di
