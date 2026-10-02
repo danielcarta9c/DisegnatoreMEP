@@ -1,5 +1,8 @@
 # BETA-001 — La beta della 1.2: il debug sulle tavole dei collaboratori
 
+> **Copia del pacchetto com'era scritto**, il 2 ottobre 2026 a PR #68 fusa: il testo vigente è in
+> `ACTIVE_WORK_PACKAGE.md`.
+
 > **▶ Il prossimo, per l'ordine del PO** — «distribuisco la release 1.2 ai miei collaboratori ed entriamo nella
 > fase di beta testing e debug» (I-181); «prepara il workpack per la prossima sessione» (I-183). Scritto il
 > 2 ottobre 2026, a PR #68 fusa. **Si parte dal punto 0**, in un messaggio solo al PO.

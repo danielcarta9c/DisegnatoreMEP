@@ -1,9 +1,9 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-10-02, sera (il solutore tolto, la suite a zero rosse — D-197; la 1.2 ai collaboratori del PO, fase di beta e debug — I-181). Prima, lo stesso giorno: la prima prova del PO su claude.ai, curata e fusa — PR #67, D-196; la skill è alla **versione 1.2**
+**Aggiornato:** 2026-10-02, sera (la pulizia del solutore fusa — PR #68, D-197; la suite a zero rosse; il pacchetto attivo è `BETA-001`, la beta della 1.2 coi collaboratori del PO — I-181; `REL-005` sospeso). Prima, lo stesso giorno: la prima prova del PO su claude.ai, curata e fusa — PR #67, D-196; la skill è alla **versione 1.2**
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
-**Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` · **Dossier di stato:** `docs/pm/STATO-PM.md`
+**Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` (`BETA-001`) · **Dossier di stato:** `docs/pm/STATO-PM.md`
 **Release corrente:** **0.3 — generalizzazione**; la skill consegnata al PO è la **1.2** (I-178), e il
 numero di versione Python è `1.2.0`
 
