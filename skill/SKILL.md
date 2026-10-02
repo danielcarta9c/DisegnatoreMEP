@@ -99,7 +99,11 @@ lancia anche `completa` (passo 3): i punti aperti che trova sono domande dello s
 - una domanda che cambia il disegno — due letture corrette e diverse, il «tipo C» di Capire;
 - un pezzo principale che il catalogo non ha: chiedi se procedere senza, o fermarsi;
 - le potenze dei generatori, se il testo non le dà: senza, il regime della centrale non si
-  ricava, e le regole mettono il corredo di una centrale fino a 35 kW — diglielo.
+  ricava, e le regole mettono il corredo di una centrale fino a 35 kW — diglielo;
+- **i diametri delle tubazioni, se il testo non dice se li vuole**: chiedigli se vuole anche il
+  dimensionamento. La tua prima interpretazione è no, e la tavola esce senza; per il sì gli dici
+  su quali reti li calcoli e quali dati ti servono — i salti termici, le portate di progetto
+  che il testo non dà —, così che risponda una volta sola (`capire.md` §4.7).
 
 Il messaggio porta:
 
@@ -109,7 +113,7 @@ Il messaggio porta:
 - le assunzioni che hai fatto per chiudere il grafo, da confermare tutte insieme;
 - i dati che la tavola scrive e che il testo non dà, in una riga ciascuno: committente e
   commessa, indirizzo, titolo e numero della tavola; marca e modello delle apparecchiature;
-  i salti termici, se ha chiesto i diametri.
+  i salti termici e le portate, se ha chiesto i diametri.
 
 Poi **aspetta la risposta**. Riporta le risposte nel grafo — un dato dato si trascrive, una
 lettura corretta si ridisegna, un'assunzione confermata passa a `"status": "approved"` — e
@@ -126,10 +130,8 @@ python3 scripts/mep.py completa $L/grafo.json --out $L/grafo-completo.json
 
 Le regole aggiungono gli accessori che un esecutivo porta, ciascuno con il perché e la fonte, e
 dicono quelli che servirebbero e non si possono proporre: i **punti aperti**, che sono domande
-al progettista. Il comando scrive il grafo completo e, accanto, **il grafo da leggere**
-(`grafo-completo-da-leggere.md`): l'impianto scritto invece che disegnato, ogni pezzo con la sua
-sigla, ogni linea dalla sorgente in avanti. Se il comando esce con un errore, il grafo di
-prima stesura non regge: si corregge al passo 1.
+al progettista. Il comando scrive il grafo completo. Se esce con un errore, il grafo di prima
+stesura non regge: si corregge al passo 1.
 
 ### 4. L'approvazione — l'unico cancello
 
@@ -139,9 +141,10 @@ solo gli porti:
 - che cosa le regole hanno aggiunto, per famiglia — «12 valvole di intercettazione, 2 valvole
   di sicurezza, una per generatore…» —, e il perché solo se lo chiede;
 - i punti aperti, come domande;
-- le assunzioni ancora da confermare e i dati che mancano;
-- il grafo da leggere, come file, perché lo scorra: su ogni pezzo può dire «questo è nel punto
-  sbagliato» citando la sigla.
+- le assunzioni ancora da confermare e i dati che mancano.
+
+Il grafo completo non si manda come file: il progettista lo approva su questo messaggio, e lo
+vede disegnato al passo 6.
 
 Chiedi l'approvazione esplicita, e **aspettala**. Se corregge la lettura, torni al passo 1 e poi
 al 3 e al 4. Se rifiuta un accessorio che le regole hanno aggiunto, la skill non sa ancora

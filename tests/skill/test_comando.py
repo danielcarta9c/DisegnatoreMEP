@@ -5,20 +5,18 @@ Le prove girano con i dati del repository; quelle sulla cartella costruita stann
 progettista, e che I-166 vuole della skill e non della sessione:
 
 - `valida` dice se il grafo di Capire regge, e quali domande porta;
-- `completa` scrive il grafo completo e il grafo da leggere, e dice una volta sola
-  il perche' di ogni regola;
+- `completa` scrive il grafo completo, e nient'altro accanto (I-186), e dice una
+  volta sola il perche' di ogni regola;
 - `disegna` esegue il piano e **misura**: SVG, PDF, DXF e i rilievi della tavola,
   scritti accanto per il progettista, e un codice d'uscita che ferma la consegna
   quando la tavola non si consegna;
 - `catalogo`, `anteprima`, `consegna` fanno quello che dicono.
 """
 
-import importlib.util
 import json
 import re
 import sys
 import zlib
-from collections.abc import Callable
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -36,17 +34,6 @@ PROVA_1 = ROOT / "examples" / "prova" / "prova-1-due-pdc-accumulo-combinato.json
 @pytest.fixture(scope="module")
 def cartelle() -> Cartelle:
     return cartelle_del_repository(ROOT)
-
-
-@pytest.fixture(scope="module")
-def documento() -> Callable[..., str]:
-    spec = importlib.util.spec_from_file_location(
-        "grafo_leggibile", ROOT / "examples" / "graph" / "build_plant_graph.py"
-    )
-    assert spec is not None and spec.loader is not None
-    modulo = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(modulo)
-    return modulo.build  # type: ignore[no-any-return]
 
 
 def test_valida_dice_se_il_grafo_regge_e_quali_domande_porta(
@@ -68,38 +55,33 @@ def test_valida_ferma_un_grafo_che_nomina_una_voce_che_non_c_e(
     assert "UNKNOWN_COMPONENT_DEFINITION" in capsys.readouterr().out
 
 
-def test_completa_scrive_il_grafo_completo_e_il_grafo_da_leggere(
-    cartelle: Cartelle,
-    documento: Callable[..., str],
-    tmp_path: Path,
-    capsys: pytest.CaptureFixture[str],
+def test_completa_scrive_il_grafo_completo_e_nessun_grafo_da_leggere(
+    cartelle: Cartelle, tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
+    """I-186: il grafo da leggere accanto al grafo completo il progettista non lo leggeva
+    («non è leggibile ... token sprecati»). Si approva sull'elenco che il comando stampa."""
     completo = tmp_path / "grafo-completo.json"
-    assert main(["completa", str(PROVA_1), "--out", str(completo)], cartelle, documento) == 0
+    assert main(["completa", str(PROVA_1), "--out", str(completo)], cartelle) == 0
     uscita = capsys.readouterr().out
     assert json.loads(completo.read_text(encoding="utf-8"))["components"]
-    da_leggere = tmp_path / "grafo-completo-da-leggere.md"
-    assert da_leggere.read_text(encoding="utf-8").startswith("# Il grafo dell'impianto")
+    assert sorted(item.name for item in tmp_path.iterdir()) == ["grafo-completo.json"]
+    assert "da leggere" not in uscita
     # Una regola che mette piu' pezzi ha una ragione sola, detta una volta.
     regole = re.findall(r"· regola: (\S+)", uscita)
     assert len(regole) == len(set(regole)), "il perche' di una regola si stampa una volta sola"
     assert re.search(r"Valvola di intercettazione — \d+ pezzi", uscita)
 
 
-def test_completa_dice_quando_il_grafo_da_leggere_non_si_scrive(
-    cartelle: Cartelle,
-    documento: Callable[..., str],
-    tmp_path: Path,
-    capsys: pytest.CaptureFixture[str],
+def test_completa_scrive_il_grafo_completo_della_catena_di_rel_003(
+    cartelle: Cartelle, tmp_path: Path
 ) -> None:
-    """Il circuito solare non ha ancora una famiglia di linea (`naming/lines.json`): il grafo
-    completo esce lo stesso, e il documento che manca si dice invece di fermare tutto."""
+    """Con il circuito solare, che non ha ancora una famiglia di linea (`naming/lines.json`),
+    il grafo completo esce uguale a quello che la catena di REL-003 ha scritto."""
     completo = tmp_path / "grafo-completo.json"
-    assert main(["completa", str(BOZZA_6), "--out", str(completo)], cartelle, documento) == 0
+    assert main(["completa", str(BOZZA_6), "--out", str(completo)], cartelle) == 0
     assert json.loads(completo.read_text(encoding="utf-8")) == json.loads(
         (IMPIANTO_6 / "grafo-completo-6.json").read_text(encoding="utf-8")
     ), "il grafo completo e' quello che la catena di REL-003 ha scritto"
-    assert "Il grafo da leggere non si e' potuto scrivere" in capsys.readouterr().out
 
 
 def test_disegna_scrive_la_tavola_in_pdf_dxf_e_svg_con_i_rilievi_accanto(

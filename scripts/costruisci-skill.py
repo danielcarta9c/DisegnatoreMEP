@@ -18,7 +18,6 @@ Che cosa ci mette, e da dove:
 | `riferimenti/regole-del-piano.md` | `docs/regole-del-piano.md` |
 | `scripts/mep.py` | `skill/scripts/mep.py` — il comando |
 | `scripts/disegnatore_mep/` | `src/disegnatore_mep/` — il motore, tutto |
-| `scripts/grafo_leggibile.py` | `examples/graph/build_plant_graph.py` — chi scrive il grafo da leggere |
 | `dati/simboli/` | `assets/symbols/` |
 | `dati/catalogo/` | `examples/layout/catalog/` |
 | `dati/regole/` | `rules/hydronic/` |
@@ -278,7 +277,6 @@ def costruisci(uscita: Path) -> tuple[Path, Path]:
 
     scripts = skill / "scripts"
     _copia(ROOT / "skill" / "scripts" / "mep.py", scripts / "mep.py")
-    _copia(ROOT / "examples" / "graph" / "build_plant_graph.py", scripts / "grafo_leggibile.py")
     _copia_cartella(ROOT / "src" / "disegnatore_mep", scripts / "disegnatore_mep")
 
     dati = skill / "dati"

@@ -79,6 +79,16 @@ def test_la_skill_passa_i_controlli_della_guida(costruttore: ModuleType, costrui
     assert [p.relative_to(skill).as_posix() for p in skill.rglob("SKILL.md")] == ["SKILL.md"]
 
 
+def test_la_skill_non_porta_e_non_propone_il_grafo_da_leggere(costruita: tuple[Path, Path]) -> None:
+    """I-186: il grafo da leggere il progettista non lo leggeva («non è leggibile ... token
+    sprecati»). Non si scrive, non si manda, e il suo generatore non viaggia nello ZIP."""
+    skill, archivio = costruita
+    with zipfile.ZipFile(archivio) as zip_:
+        assert "disegnatore-mep/scripts/grafo_leggibile.py" not in zip_.namelist()
+    testo = (skill / "SKILL.md").read_text(encoding="utf-8")
+    assert "da leggere" not in testo and "da-leggere" not in testo
+
+
 def test_un_frontespizio_che_yaml_non_legge_ferma_la_costruzione(costruttore: ModuleType) -> None:
     """Il 29 settembre la descrizione diceva «dimensiona: disegna», e YAML non la leggeva."""
     with pytest.raises(costruttore.ErroreDiCostruzione, match="YAML"):
