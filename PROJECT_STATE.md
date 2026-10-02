@@ -1,11 +1,11 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-10-02, sera (la pulizia del solutore fusa — PR #68, D-197; la suite a zero rosse; il pacchetto attivo è `BETA-001`, la beta della 1.2 coi collaboratori del PO — I-181; `REL-005` sospeso). Prima, lo stesso giorno: la prima prova del PO su claude.ai, curata e fusa — PR #67, D-196; la skill è alla **versione 1.2**
+**Aggiornato:** 2026-10-02, sera (la pulizia del solutore fusa — PR #68, D-197; la suite a zero rosse; il pacchetto attivo è `BETA-001`, la beta della 1.2 coi collaboratori del PO — I-181; `REL-005` chiuso con la release 1.2.0 — D-198). Prima, lo stesso giorno: la prima prova del PO su claude.ai, curata e fusa — PR #67, D-196; la skill è alla **versione 1.2**
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` (`BETA-001`) · **Dossier di stato:** `docs/pm/STATO-PM.md`
-**Release corrente:** **0.3 — generalizzazione**; la skill consegnata al PO è la **1.2** (I-178), e il
-numero di versione Python è `1.2.0`
+**Release corrente:** **1.2.0** (`releases/`, D-198): la prima, con cui si chiude `REL-005`; il numero di
+versione Python è lo stesso
 
 > **Come è fatto questo file.** In testa c'è **lo stato al 20 settembre 2026**, e sotto la
 > riga `# Storia di esecuzione` c'è il racconto dei pacchetti precedenti, ciascuno con la
@@ -33,7 +33,7 @@ Le scelte sono **D-195**; rapporto `docs/collaudi/REL-001/RAPPORTO.md`.
 - **La prova su claude.ai l'ha fatta il PO** su un impianto suo (I-170, I-171, 2 ottobre 2026): la tavola si è
   composta e disegnata, e lui l'ha respinta per tre cose — lo sfiato del volano sulla quota della mandata,
   le uscite della deviatrice, il colore della serpentina —, curate e fuse con la PR #67 (D-196). La skill è
-  alla **versione 1.2**; lo ZIP è `docs/collaudi/REL-005/disegnatore-mep-1.2.zip`. Al primo uso la skill
+  alla **versione 1.2**; lo ZIP è la release 1.2.0, `releases/latest/DisegnatoreMEP-v1.2.0.zip` (D-198). Al primo uso la skill
   installa pydantic dalla rete.
 - Suite: **zero rosse** dal 2 ottobre 2026 (D-197): il solutore e le sue prove sono usciti, le prove del motore leggono un piano.
 

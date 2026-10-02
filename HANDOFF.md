@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-02, sera — **la pulizia del solutore è fusa** (PR #68; I-183, D-197 approvata): suite a **zero rosse**, uscite di prova identiche. **Il pacchetto attivo è `BETA-001`, la beta della 1.2** (I-181): il debug sulle tavole dei collaboratori del PO; `REL-005` è sospeso. Prima, lo stesso giorno: la prima prova del PO su claude.ai curata e fusa (PR #67, D-196), la skill alla versione 1.2
+**Aggiornato:** 2026-10-02, sera — **la pulizia del solutore è fusa** (PR #68; I-183, D-197 approvata): suite a **zero rosse**, uscite di prova identiche. **Il pacchetto attivo è `BETA-001`, la beta della 1.2** (I-181): il debug sulle tavole dei collaboratori del PO; `REL-005` è **chiuso con la release 1.2.0** (D-198), in `releases/`. Prima, lo stesso giorno: la prima prova del PO su claude.ai curata e fusa (PR #67, D-196), la skill alla versione 1.2
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -16,8 +16,9 @@
 **Il pacchetto è `BETA-001`** (`ACTIVE_WORK_PACKAGE.md`): **si parte dal punto 0**, in un messaggio solo al PO —
 le tavole dei collaboratori, la numerazione delle consegne in beta (proposta: `1.2.1`, `1.2.2`…), le domande di
 contenuto aperte con la proposta per ciascuna. Poi, in ordine: I-182 (le valvole di D-120), il modulo della
-segnalazione per i collaboratori, il ciclo della prova del PO su ogni tavola che arriva. `REL-005` è sospeso, e
-il suo stato è in `docs/plans/pacchetti/REL-005.md`.
+segnalazione per i collaboratori, il ciclo della prova del PO su ogni tavola che arriva. **`REL-005` è chiuso**:
+la release 1.2.0 è in `releases/latest/` e `releases/archive/` (D-198); la guida d'installazione non si fa, i
+collaboratori sanno caricare una skill (I-184).
 
 **Le note qui sotto, scritte prima della fusione, valgono ancora.**
 
@@ -36,7 +37,7 @@ diventa una regola, un simbolo o una riga delle istruzioni — dove è contenuto
 - **Le prove del motore leggono un piano**: i piani approvati di `DRAW-018`, o quelli tradotti in
   `tests/layout/piani/`. Una prova nuova del motore fa lo stesso: la via senza piano (`draw`) resta nel
   codice, ma la sua qualità non la garantisce nessuno (D-151).
-- **I numeri**: il prossimo input è **I-184**, la prossima decisione **D-198**.
+- **I numeri**: il prossimo input è **I-185**, la prossima decisione **D-199**.
 
 ## Da dove ripartiva — scritto il 2 ottobre 2026, a PR #67 fusa
 
@@ -56,7 +57,7 @@ la proposta `1.0.0` del pacchetto non vale più. Chiedi le altre tre cose in un 
 - **Il motore** (`layout/flow.py`): chi scambia calore con un fluido che non è quello della rete restituisce
   ritorno — il ritorno della serpentina col volano in serie sul ritorno usciva rosso.
 - **Il DXF del PO non è nel repository**: porta nome e indirizzo del cliente. Grafo e posa sono ricostruiti, anonimi.
-- **Lo ZIP della 1.2** è `docs/collaudi/REL-005/disegnatore-mep-1.2.zip`, costruito da `scripts/costruisci-skill.py`.
+- **Lo ZIP della 1.2** è `releases/archive/DisegnatoreMEP-v1.2.0.zip` (era in `docs/collaudi/REL-005/`), costruito da `scripts/costruisci-skill.py`.
   `releases/` resta alla release di `REL-005`, che vuole la suite verde.
 - **Domanda aperta al PO**: lo scarico del volano prende il colore base del fluido, rosso, anche su un volano in
   serie sul ritorno.

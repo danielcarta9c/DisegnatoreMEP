@@ -9,14 +9,15 @@
 **Base:** `main` dopo la fusione della PR #68.
 **Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
 **Approvazione della fusione:** **del PO**, e si dà guardando le tavole (D-146, D-147).
-**`REL-005` è sospeso**: riprende a beta chiusa. Che cosa resta di lui sta in `docs/plans/pacchetti/REL-005.md`.
+**`REL-005` è chiuso con la 1.2** (D-198): la release è `releases/archive/DisegnatoreMEP-v1.2.0.zip`. La storia del
+pacchetto è in `docs/plans/pacchetti/REL-005.md`.
 
 ---
 
 ## Dove siamo — misurato il 2 ottobre 2026
 
-- **La skill 1.2 è dai collaboratori del PO.** Lo ZIP distribuito è
-  `docs/collaudi/REL-005/disegnatore-mep-1.2.zip` (sha256 `fa9e410a7e994f66`). È stato costruito prima della
+- **La skill 1.2 è dai collaboratori del PO.** Lo ZIP distribuito è la release 1.2.0,
+  `releases/latest/DisegnatoreMEP-v1.2.0.zip` (sha256 `fa9e410a7e994f66`), con la copia numerata in `releases/archive/`. È stato costruito prima della
   pulizia: lo ZIP che `main` costruisce oggi è più leggero (760 kB contro 822) ma **disegna le stesse tavole**,
   byte per byte. Non c'è niente da ridistribuire finché non arriva una correzione.
 - **La suite è verde**: `1967 passed, 15 skipped, 10 xfailed`, in 4 minuti e mezzo; `ruff` e `mypy` verdi.
@@ -92,9 +93,9 @@ Per ciascuna, come in `docs/collaudi/REL-005/prova-po-1/`:
 Quando un gruppo di correzioni è fuso:
 - la skill si costruisce da `main` (`scripts/costruisci-skill.py`);
 - la versione sale come il PO ha deciso (punto 0.2), in `pyproject.toml`, nel pacchetto e in `SKILL.md`;
-- lo ZIP va in `docs/collaudi/BETA-001/disegnatore-mep-<versione>.zip`, e al PO.
-
-`releases/` resta a `REL-005`.
+- lo ZIP va in `releases/latest/DisegnatoreMEP-v<versione>.zip`, che sostituisce il precedente, e in
+  `releases/archive/`, dove resta; poi al PO. `tests/test_le_release.py` tiene insieme il numero del pacchetto,
+  quello in `SKILL.md` e il nome dello ZIP.
 
 ## Perimetro
 
@@ -104,11 +105,12 @@ Quando un gruppo di correzioni è fuso:
 - la libreria (`examples/graphics/build_symbols.py` → `assets/symbols/`), con la forma approvata dal PO sulle
   tavole;
 - `tests/**`; `docs/collaudi/BETA-001/`; `docs/beta/`;
-- `pyproject.toml` e la versione;
+- `pyproject.toml`, la versione e `releases/`;
 - il registro, il registro delle decisioni (come proposte), `HANDOFF.md`, questo file.
 
 **Fuori:**
-- `releases/`, la libreria certificata e la guida d'installazione completa (`REL-005`);
+- la libreria certificata — la matrice fonti, forma, porte e ingombri — che si fa quando la beta smette di
+  toccare i simboli;
 - **i dati dei clienti, in qualunque file**;
 - un contenuto MEP deciso dalla sessione.
 
