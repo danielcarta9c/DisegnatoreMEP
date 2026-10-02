@@ -4,7 +4,7 @@ Una sezione per ogni gruppo di correzioni, la più recente in alto.
 
 ## 1. Le domande dell'inizio chiedono i diametri; il grafo da leggere non si manda più
 
-**2 ottobre 2026** · input **I-185**, **I-186** · decisione **D-199** (proposta)
+**2 ottobre 2026** · input **I-185**, **I-186** · decisione **D-199**, approvata (I-187) · consegnata nella **1.2.1**
 
 Il PO, dopo la sua prova su claude.ai (I-171): «sarebbe carino che la skill all inizio fa come
 domanda … se il progettista vuole anche il dimensionamento dei tubi o no. Trovo invece molto

@@ -8,8 +8,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def test_package_version() -> None:
     """La versione del pacchetto e' una sola: quella del `pyproject.toml`, e la skill
-    la scrive in testa a `SKILL.md` (I-178: la skill «in Rev 1.2»)."""
+    la scrive per intera in testa a `SKILL.md` (I-178, I-187: dalla 1.2.1 il numero ha
+    tre cifre, perche' le consegne della beta cambiano solo la terza)."""
     dichiarata = tomllib.loads((ROOT / "pyproject.toml").read_text("utf-8"))["project"]["version"]
-    assert __version__ == dichiarata == "1.2.0"
-    principale, minore, _ = dichiarata.split(".")
-    assert f"**Versione {principale}.{minore}**" in (ROOT / "skill" / "SKILL.md").read_text("utf-8")
+    assert __version__ == dichiarata == "1.2.1"
+    assert f"**Versione {dichiarata}**" in (ROOT / "skill" / "SKILL.md").read_text("utf-8")

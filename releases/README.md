@@ -12,3 +12,5 @@ Convenzione prevista: `DisegnatoreMEP-vMAJOR.MINOR.PATCH.zip`.
 - **1.2.0** — 2 ottobre 2026: la prima, con cui si chiude `REL-005` (D-198). La versione del pacchetto Python, la
   riga in testa a `SKILL.md` e il nome dello ZIP dicono lo stesso numero, e una prova lo tiene su
   (`tests/test_le_release.py`).
+- **1.2.1** — 2 ottobre 2026: la prima consegna della beta (I-187, D-199). Da qui la riga in testa a `SKILL.md`
+  porta il numero per intero.
