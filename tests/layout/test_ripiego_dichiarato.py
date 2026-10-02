@@ -201,29 +201,6 @@ def test_i_due_interruttori_restano_separati() -> None:
     assert parametri["last_resort"].default is False
 
 
-def test_il_ciclo_di_miglioramento_non_accende_il_ripiego() -> None:
-    """Chi misura una posa non deve poterla vedere riuscire per finta."""
-    import ast
-    import pathlib
-
-    sorgente = pathlib.Path(
-        compose_module.__file__
-    ).parent.joinpath("improve.py").read_text(encoding="utf-8")
-    albero = ast.parse(sorgente)
-    chiamate = [
-        nodo
-        for nodo in ast.walk(albero)
-        if isinstance(nodo, ast.Call)
-        and isinstance(nodo.func, ast.Name)
-        and nodo.func.id == "settle_sheet"
-    ]
-    assert chiamate, "il ciclo non chiama piu' settle_sheet: questa prova va riscritta"
-    for chiamata in chiamate:
-        passati = {parola.arg for parola in chiamata.keywords}
-        assert "last_resort" not in passati, (
-            "il ciclo di miglioramento accende il ripiego: cosi' accetta come "
-            "buona una posa che non si instrada (D-150)"
-        )
 
 
 def test_il_motore_ordinario_non_tollera_una_tratta_persa() -> None:

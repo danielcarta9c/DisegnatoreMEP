@@ -14,6 +14,19 @@
 
 ---
 
+## Aggiornamento del 2 ottobre 2026, sera — il punto 0.3 è fatto, e si entra in beta
+
+- **Il solutore è tolto** (I-180, D-197; rapporto `docs/collaudi/REL-005/pulizia-del-solutore/RAPPORTO.md`): la
+  suite ha **zero rosse**, gira in meno di 5 minuti, e le 55 uscite di prova sono identiche byte per byte.
+  Primo punto del debug, emerso dalla pulizia: due valvole che isolano a 10 mm dall'attacco sulla tavola 1 dal
+  piano (I-182, D-120).
+- **La 1.2 è ai collaboratori del PO, ed è la fase di beta e debug** (I-181). Il punto 0.2 — i testi di impianti
+  veri — lo fanno i collaboratori usando la skill: le loro tavole arrivano come è arrivata la prova del PO
+  (I-171), e il punto 1 di questo pacchetto si lavora su di loro. **Niente dati dei clienti nel repository**:
+  grafo e posa si ricostruiscono anonimi, come in `docs/collaudi/REL-005/prova-po-1/`.
+- **Restano**: il numero della release vera (punto 0.4), la libreria certificata, `releases/` e la guida
+  d'installazione (punti 2 e 3).
+
 ## Aggiornamento del 2 ottobre 2026 — il punto 0.1 è fatto
 
 - **La prova del PO su claude.ai c'è** (I-170 chiusa, I-171 … I-179): un impianto suo, la tavola respinta per tre

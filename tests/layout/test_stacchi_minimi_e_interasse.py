@@ -20,7 +20,6 @@ coda: la rete a flusso ordinario non deve costare piu' di DRAW-005 — 4 curve,
 """
 # categoria: difende il motore — lo stacco lungo il proprio minimo su griglia e i corridoi davanti alle porte (I-046); due prove difendevano il solutore: elencate nel rapporto
 
-import json
 import math
 from datetime import date
 from functools import cache
@@ -29,28 +28,17 @@ from pathlib import Path
 import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.catalog.schema import ComponentDefinition, ComponentTrait
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
-from disegnatore_mep.io.canonical import canonical_json
-from disegnatore_mep.io.project_json import load_project
 from disegnatore_mep.layout.chains import CHAIN_PORT_GAP_MM, MIN_SPACING_MM
-from disegnatore_mep.layout.compose import compose_drawing, inline_component_ids
+from disegnatore_mep.layout.compose import inline_component_ids
 from disegnatore_mep.layout.geometry import (
     DrawingGeometry,
-    FlowKind,
     PlacedSymbol,
-    RoutedTrunk,
-    SheetGeometry,
-    moves_of,
 )
 from disegnatore_mep.layout.grid import GridSpace
-from disegnatore_mep.layout.improve import LIFT_STEPS, Improver
-from disegnatore_mep.layout.partition import partition_project
 from disegnatore_mep.layout.place import (
     ROW_GAP_MM,
-    place_sheet,
-    port_corridors,
     stub_minimum_mm,
 )
 from disegnatore_mep.layout.trunks import Trunk, build_trunks
@@ -62,17 +50,19 @@ from disegnatore_mep.model.project import (
     ProjectMetadata,
     ProjectModel,
 )
-from disegnatore_mep.model.types import PlantRegime, PortFlow
+from disegnatore_mep.model.types import PlantRegime
+from disegnatore_mep.piano.esecutore import esegui_piano
+from disegnatore_mep.piano.formato import carica_piano
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.registry import RuleRegistry
-from disegnatore_mep.validation.geometry import validate_drawing_geometry
-from disegnatore_mep.validation.preflight import preflight_drawing
+from disegnatore_mep.validation.regole import organi_di_servizio_lontani
 
 ROOT = Path(__file__).resolve().parents[2]
 CATALOG = ROOT / "examples" / "layout" / "catalog"
 SYMBOLS = ROOT / "assets" / "symbols"
 RULES = ROOT / "rules" / "hydronic"
-PROVA_1 = ROOT / "examples" / "prova" / "prova-1-due-pdc-accumulo-combinato.json"
+NAMING = ROOT / "naming"
+PIANI = Path(__file__).resolve().parent / "piani"
 HEATING = "heating_water"
 COLD = "cold_water"
 DHW = "domestic_hot_water"
@@ -80,10 +70,13 @@ TOLERANCE_MM = 1e-6
 
 
 @cache
+def symbols() -> SymbolRegistry:
+    return SymbolRegistry.from_directory(SYMBOLS)
+
+
+@cache
 def catalog() -> ComponentRegistry:
-    return ComponentRegistry.from_directory(
-        CATALOG, symbols=SymbolRegistry.from_directory(SYMBOLS)
-    )
+    return ComponentRegistry.from_directory(CATALOG, symbols=symbols())
 
 
 @cache
@@ -202,7 +195,19 @@ def completato(index: int) -> ProjectModel:
 
 @cache
 def composto(index: int) -> DrawingGeometry:
-    return compose_drawing(completato(index), catalog(), NOVE_C_A3)
+    """La tavola **dal piano**, come la compone la skill (D-151): il piano
+    dell'impianto di prova 1 tradotto sui nomi della configurazione (`piani/`,
+    I-180). Fino al 2 ottobre 2026 si componeva senza piano, e da D-167 quella
+    via non instradava piu' il ritorno del radiatore."""
+    esito = esegui_piano(
+        completato(index),
+        carica_piano(PIANI / f"{CASI[index].__name__}.json"),
+        catalog(),
+        symbols(),
+        NAMING,
+    )
+    assert esito.disegno is not None, esito.errore
+    return esito.disegno
 
 
 def _trunks(project: ProjectModel) -> list[Trunk]:
@@ -223,23 +228,10 @@ def _stubs(project: ProjectModel) -> list[Trunk]:
     return [trunk for trunk in _trunks(project) if off_the_run(trunk.start) or off_the_run(trunk.end)]
 
 
-def _length(route: RoutedTrunk) -> float:
-    """Il tubo disegnato: i tratti, senza le interruzioni dei pezzi in linea."""
-    return sum(
-        abs(after.x_mm - before.x_mm) + abs(after.y_mm - before.y_mm)
-        for segment in route.segments
-        for before, after in moves_of(segment)
-    )
 
 
-def _span(route: RoutedTrunk) -> float:
-    """Da porta a porta, pezzi in linea compresi: la lunghezza dello stacco."""
-    first, last = route.segments[0][0], route.segments[-1][-1]
-    return abs(last.x_mm - first.x_mm) + abs(last.y_mm - first.y_mm)
 
 
-def _bends(route: RoutedTrunk) -> int:
-    return sum(max(len(segment) - 2, 0) for segment in route.segments)
 
 
 # ---------------------------------------------------------------------------
@@ -281,84 +273,6 @@ def test_uno_stacco_vuoto_e_lungo_un_passo_e_uno_con_la_sua_catena_quanto_la_cat
     assert seen_empty and seen_chained
 
 
-@pytest.mark.parametrize("index", range(len(CASI)), ids=CASI_IDS)
-def test_nella_posa_iniziale_ogni_stacco_e_lungo_il_proprio_minimo(index: int) -> None:
-    """Il posatore siede ogni appeso al minimo dal proprio raccordo; se e'
-    piu' lontano e' perche' **il posto era preso** — da un simbolo, o dal
-    rettilineo che una catena pretende davanti a una porta — e lo si deve
-    vedere: un passo piu' vicino, l'appeso toccherebbe qualcuno."""
-    project = completato(index)
-    inline = inline_component_ids(project, catalog())
-    partition = partition_project(project, build_trunks(project, inline))[0]
-    laid = place_sheet(project, partition, catalog(), NOVE_C_A3, inline)
-    placed = {item.component_id: item for item in laid}
-    step = grid().step_mm
-    corridors = port_corridors(project, catalog(), partition.trunks, laid, step)
-
-    def taken(item: PlacedSymbol, dx: float, dy: float) -> bool:
-        """Spostato di `(dx, dy)`, il riquadro tocca un altro simbolo — a meno
-        di un passo — o un corridoio davanti a una porta."""
-        left, top = item.origin.x_mm + dx, item.origin.y_mm + dy
-        right, bottom = left + item.width_mm, top + item.height_mm
-        if any(
-            left < x1 - TOLERANCE_MM
-            and x0 < right - TOLERANCE_MM
-            and top < y1 - TOLERANCE_MM
-            and y0 < bottom - TOLERANCE_MM
-            for x0, y0, x1, y1 in corridors
-        ):
-            return True
-        return any(
-            other.component_id != item.component_id
-            and left < other.origin.x_mm + other.width_mm + step
-            and other.origin.x_mm - step < right
-            and top < other.origin.y_mm + other.height_mm + step
-            and other.origin.y_mm - step < bottom
-            for other in laid
-        )
-
-    checked = 0
-    for trunk in _stubs(project):
-        parent, child = (
-            (trunk.start, trunk.end) if trunk.end.component_id in placed and trunk.start.component_id in placed else (None, None)
-        )
-        if parent is None or child is None:
-            continue
-        holder, hung = placed[parent.component_id], placed[child.component_id]
-        # Chi pende lo dice il **catalogo**, non il numero delle porte. Da
-        # DRAW-006-R1 il gruppo di riempimento e' un ponte a due porte che
-        # pende lo stesso: contando le porte, questa lettura scambiava il
-        # raccordo con l'accessorio e misurava lo stacco al contrario.
-        if not _definition(project, hung.component_id).attaches_on_a_branch:
-            holder, hung = hung, holder
-            parent, child = child, parent
-        appeso = _definition(project, hung.component_id)
-        if len({port.medium for port in appeso.ports}) > 1:
-            # Un ponte ha i due capi su due linee diverse: stringerlo al minimo
-            # su tutt'e due e' un vincolo che nessuna posa puo' rispettare. Lo
-            # stacco che si misura e' quello del capo su cui e' montato, e
-            # l'altro — quello con cui pesca dall'altra rete — non e' uno
-            # stacco statico: e' la tubazione che unisce le due reti.
-            porta = next(item for item in appeso.ports if item.id == child.port_id)
-            if porta.flow is PortFlow.IN:
-                continue
-        stub = _port(project, holder, parent.port_id)
-        own = _port(project, hung, child.port_id)
-        gap = max(abs(own[0] - stub[0]), abs(own[1] - stub[1]))
-        horizontal = abs(own[1] - stub[1]) <= TOLERANCE_MM
-        minimum = stub_minimum_mm(project, catalog(), trunk, horizontal, step)
-        assert gap >= minimum - TOLERANCE_MM, (child.component_id, gap, minimum)
-        if gap > minimum + TOLERANCE_MM:
-            # Un passo piu' vicino al raccordo il posto e' preso: lo stacco
-            # e' lungo per necessita', non per una costante.
-            towards = (
-                (-step if own[0] > stub[0] else step, 0.0)
-                if horizontal
-                else (0.0, -step if own[1] > stub[1] else step)
-            )
-            assert taken(hung, *towards), (child.component_id, gap, minimum)
-        checked += 1
-    assert checked >= 4
 
 
 def _port(project: ProjectModel, item: PlacedSymbol, port_id: str) -> tuple[float, float]:
@@ -374,95 +288,28 @@ def _port(project: ProjectModel, item: PlacedSymbol, port_id: str) -> tuple[floa
 def test_sulla_tavola_composta_nessuno_stacco_e_piu_lungo_del_minimo_senza_una_ragione(
     index: int,
 ) -> None:
-    """Dopo il ciclo, uno stacco piu' lungo del minimo e' uno stacco che il
-    ciclo ha allungato per liberare una riga, e lo si vede: e' una retta con
-    una curva o un incrocio in meno altrove. Qui si pretende il minimo per
-    ogni stacco dritto e senza incroci: allungarlo non avrebbe comprato
-    niente."""
+    """Sulla tavola dal piano ogni organo di servizio sta **addosso** al pezzo che
+    serve: lo misura il controllo **A4** del motore (`organi_di_servizio_lontani`,
+    D-145), con il minimo vigente — dieci millimetri per uno stacco vuoto (D-062).
+
+    Fino al 2 ottobre 2026 questa prova misurava a mano il minimo di I-046, due
+    passi, e pretendeva che il **ciclo di miglioramento** non allungasse uno
+    stacco senza comprare niente. Il ciclo non c'e' piu' (I-180); il minimo di
+    due passi l'ha superato D-145; la misura sulla tavola finita e' A4, e la
+    prova chiede quella. Perche' non passi a vuoto, conta gli organi misurati.
+    """
     project = completato(index)
     drawing = composto(index)
-    sheet = drawing.sheets[0]
-    by_key = {tuple(route.connection_ids): route for route in sheet.routes}
-    step = grid().step_mm
-    checked = 0
-    for trunk in _stubs(project):
-        route = by_key.get(tuple(trunk.connection_ids))
-        if route is None:
-            continue
-        assert route.flow_kind is not FlowKind.ORDINARY, trunk.connection_ids
-        minimum = stub_minimum_mm(
-            project,
-            catalog(),
-            trunk,
-            all(
-                abs(after.y_mm - before.y_mm) <= TOLERANCE_MM
-                for segment in route.segments
-                for before, after in moves_of(segment)
-            ),
-            step,
-        )
-        if _bends(route) == 0 and not route.crossings:
-            assert _span(route) >= minimum - TOLERANCE_MM, (
-                trunk.connection_ids,
-                _span(route),
-                minimum,
-            )
-            if _span(route) > minimum + TOLERANCE_MM:
-                # Piu' lungo del minimo solo se un passo piu' vicino il posto
-                # e' preso: da un simbolo, o dal rettilineo che una catena
-                # pretende davanti a una porta.
-                assert _taken_one_step_closer(project, sheet, trunk, step), (
-                    trunk.connection_ids,
-                    _span(route),
-                    minimum,
-                )
-            checked += 1
-    assert checked >= 3
+    assert organi_di_servizio_lontani(drawing, NOVE_C_A3, catalog(), project) == []
+    misurati = [
+        trunk
+        for trunk in _stubs(project)
+        if tuple(trunk.connection_ids)
+        in {tuple(route.connection_ids) for route in drawing.sheets[0].routes}
+    ]
+    assert len(misurati) >= 5, [trunk.connection_ids for trunk in misurati]
 
 
-def _taken_one_step_closer(
-    project: ProjectModel, sheet: SheetGeometry, trunk: Trunk, step: float
-) -> bool:
-    """Vero se, avvicinando di un passo al proprio raccordo l'accessorio che
-    pende da questo stacco, il suo riquadro toccherebbe qualcuno o entrerebbe
-    nel rettilineo che una catena pretende davanti a una porta."""
-    definitions = {item.id: catalog().get(item.definition_id) for item in project.components}
-    placed = {item.component_id: item for item in sheet.symbols}
-    child_id = (
-        trunk.end.component_id
-        if len(definitions[trunk.start.component_id].ports) != 1
-        else trunk.start.component_id
-    )
-    parent_id = (
-        trunk.start.component_id if child_id == trunk.end.component_id else trunk.end.component_id
-    )
-    child, parent = placed[child_id], placed[parent_id]
-    towards = (
-        (step if parent.origin.x_mm > child.origin.x_mm else -step, 0.0)
-        if abs(parent.origin.y_mm - child.origin.y_mm) <= TOLERANCE_MM
-        else (0.0, step if parent.origin.y_mm > child.origin.y_mm else -step)
-    )
-    left, top = child.origin.x_mm + towards[0], child.origin.y_mm + towards[1]
-    right, bottom = left + child.width_mm, top + child.height_mm
-    corridors = port_corridors(
-        project, catalog(), _trunks(project), list(sheet.symbols), step
-    )
-    if any(
-        left < x1 - TOLERANCE_MM
-        and x0 < right - TOLERANCE_MM
-        and top < y1 - TOLERANCE_MM
-        and y0 < bottom - TOLERANCE_MM
-        for x0, y0, x1, y1 in corridors
-    ):
-        return True
-    return any(
-        other.component_id not in (child_id, parent_id)
-        and left < other.origin.x_mm + other.width_mm + step
-        and other.origin.x_mm - step < right
-        and top < other.origin.y_mm + other.height_mm + step
-        and other.origin.y_mm - step < bottom
-        for other in sheet.symbols
-    )
 
 
 # ---------------------------------------------------------------------------
@@ -470,61 +317,8 @@ def _taken_one_step_closer(
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("index", range(len(CASI)), ids=CASI_IDS)
-def test_il_ciclo_prova_per_prima_la_traslazione_verticale_di_una_macchina(index: int) -> None:
-    project = completato(index)
-    inline = inline_component_ids(project, catalog())
-    partition = partition_project(project, build_trunks(project, inline))[0]
-    placed = place_sheet(project, partition, catalog(), NOVE_C_A3, inline)
-    improver = Improver(project, partition, catalog(), NOVE_C_A3, placed, inline)
-    generators = [
-        item.id
-        for item in project.components
-        if "heat_generation" in catalog().get(item.definition_id).functions
-    ]
-    for generator in generators:
-        kinds = improver.candidates_by_kind(generator)
-        assert kinds, generator
-        first_kind, first_move = kinds[0]
-        assert first_kind == "interasse", first_kind
-        before = improver.best[generator]
-        after = first_move[generator]
-        assert after.origin.x_mm == before.origin.x_mm
-        assert abs(abs(after.origin.y_mm - before.origin.y_mm) - LIFT_STEPS[0] * grid().step_mm) <= TOLERANCE_MM
-        # In tutte e due le direzioni, vicino prima che lontano, e tutte valide
-        # finche' restano dentro l'area: la quota di chi sta a terra e' libera.
-        lifts = [move for kind, move in kinds if kind == "interasse"]
-        assert len(lifts) == 2 * len(LIFT_STEPS)
-        inside = [
-            move
-            for move in lifts
-            if move[generator].origin.y_mm >= NOVE_C_A3.drawing_rect_mm.y_mm
-            and move[generator].bottom_mm <= improver.levels.ground_mm + TOLERANCE_MM
-        ]
-        assert inside
-        assert all(improver.is_valid(move) for move in inside), generator
 
 
-def test_traslare_una_macchina_non_cambia_il_suo_riquadro_ne_stacca_cio_che_le_pende() -> None:
-    project = completato(0)
-    inline = inline_component_ids(project, catalog())
-    partition = partition_project(project, build_trunks(project, inline))[0]
-    placed = place_sheet(project, partition, catalog(), NOVE_C_A3, inline)
-    improver = Improver(project, partition, catalog(), NOVE_C_A3, placed, inline)
-    reserve = next(
-        item.id
-        for item in project.components
-        if catalog().get(item.definition_id).has_trait(ComponentTrait.HOLDS_ITS_OWN_VOLUME)
-    )
-    lifts = [move for kind, move in improver.candidates_by_kind(reserve) if kind == "interasse"]
-    assert lifts
-    for move in lifts:
-        dy = move[reserve].origin.y_mm - improver.best[reserve].origin.y_mm
-        assert move[reserve].width_mm == improver.best[reserve].width_mm
-        assert move[reserve].height_mm == improver.best[reserve].height_mm
-        for child, _port_id in improver.children.get(reserve, ()):
-            assert child in move, child
-            assert abs((move[child].origin.y_mm - improver.best[child].origin.y_mm) - dy) <= TOLERANCE_MM
 
 
 # ---------------------------------------------------------------------------
@@ -533,34 +327,8 @@ def test_traslare_una_macchina_non_cambia_il_suo_riquadro_ne_stacca_cio_che_le_p
 # ---------------------------------------------------------------------------
 
 
-def _definition(project: ProjectModel, component_id: str) -> ComponentDefinition:
-    """La voce di catalogo di un pezzo dell'impianto."""
-    return catalog().get(
-        next(item.definition_id for item in project.components if item.id == component_id)
-    )
 
 
-def _ordinary_and_static(drawing: DrawingGeometry) -> tuple[dict[str, float], dict[str, float]]:
-    sheet = drawing.sheets[0]
-    stub_points = {
-        (round(point.x_mm, 3), round(point.y_mm, 3))
-        for route in sheet.routes
-        if route.flow_kind is not FlowKind.ORDINARY
-        for point in route.crossings
-    }
-    ordinary = {"curve": 0.0, "incroci": 0.0, "mm": 0.0}
-    static = {"curve": 0.0, "incroci": 0.0, "mm": 0.0}
-    for route in sheet.routes:
-        is_stub = route.flow_kind is not FlowKind.ORDINARY
-        bucket = static if is_stub else ordinary
-        bucket["curve"] += _bends(route)
-        bucket["mm"] += _length(route)
-        bucket["incroci"] += sum(
-            1
-            for point in route.crossings
-            if is_stub or (round(point.x_mm, 3), round(point.y_mm, 3)) not in stub_points
-        )
-    return ordinary, static
 
 
 @pytest.mark.parametrize("index", range(len(CASI)), ids=CASI_IDS)
@@ -605,43 +373,3 @@ def test_il_raccordo_che_regge_uno_stacco_sta_stretto_al_raccordo_a_cui_e_attacc
     assert checked >= 1
 
 
-def test_la_tavola_1_non_costa_piu_di_draw_005_sulla_rete_ordinaria() -> None:
-    """Regressione sulla fixture della tavola 1 (DRAW-006, §E.4).
-
-    La tavola 1 non si riconsegna piu' come elaborato: resta una **regressione
-    automatica**, e le soglie sono quelle della consegna approvata di
-    DRAW-005-R1, non piu' quelle piu' larghe di DRAW-005. Rete ordinaria: non
-    oltre 4 curve, 1 incrocio e 425 mm. Stacchi statici: non oltre 0 curve,
-    0 incroci e 45 mm. E le tre qualita' che non hanno numero — zero
-    backtracking, zero tubo sotto un simbolo, nessuna tratta oltre tre curve —
-    lette dai validatori invece che ricontate qui.
-    """
-    done, _, gaps = saturate(load_project(PROVA_1), catalog(), rules())
-    assert not gaps
-    # Il modello passa dal JSON canonico, come nella catena della CLI: la
-    # geometria dipende ancora dall'ordine delle connessioni (fuori perimetro,
-    # DRAW-005 §8), e la tavola che si giudica e' quella che la CLI scrive.
-    canonical = ProjectModel.model_validate(json.loads(canonical_json(done)))
-    drawing = compose_drawing(canonical, catalog(), NOVE_C_A3)
-    ordinary, static = _ordinary_and_static(drawing)
-    assert ordinary["curve"] <= 4, ordinary
-    assert ordinary["incroci"] <= 1, ordinary
-    assert ordinary["mm"] <= 425.0 + TOLERANCE_MM, ordinary
-    assert static["curve"] <= 0, static
-    assert static["incroci"] <= 0, static
-    assert static["mm"] <= 45.0 + TOLERANCE_MM, static
-    assert static["mm"] > 0
-    # E gli stacchi sono tubo nuovo, contato a parte: nessuno oltre tre curve,
-    # e nessuno che rientri su se stesso.
-    for route in drawing.sheets[0].routes:
-        if route.flow_kind is not FlowKind.ORDINARY:
-            assert _bends(route) <= 3, route.connection_ids
-    codes = {
-        item.code
-        for item in (
-            *validate_drawing_geometry(drawing, NOVE_C_A3).issues,
-            *preflight_drawing(drawing, NOVE_C_A3, catalog()),
-        )
-    }
-    for code in ("LINE_UNDER_SYMBOL", "RUN_OVERSHOOTS_ITS_PORT", "RUN_WITH_TOO_MANY_BENDS"):
-        assert code not in codes, sorted(codes)

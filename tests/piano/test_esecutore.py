@@ -27,17 +27,14 @@ pezzo porta con se':
 # categoria: difende il motore
 
 import json
-import sys
 from functools import cache
 from pathlib import Path
-from types import ModuleType
 
 import pytest
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
-from disegnatore_mep.layout import compose, improve, spine
 from disegnatore_mep.layout.compose import inline_component_ids
 from disegnatore_mep.layout.geometry import PlacedSymbol, RoutedTrunk
 from disegnatore_mep.layout.partition import SheetPartition, partition_project
@@ -307,47 +304,8 @@ def test_il_tee_del_manometro_si_gira_verso_il_manometro() -> None:
     assert "pressure-gauge-collettore-ritorno-a 0->180" in girati
 
 
-def _vieta(monkeypatch: pytest.MonkeyPatch, nome: str) -> int:
-    """Fa esplodere `nome` ovunque il pacchetto lo tenga in mano."""
-
-    def urla(*args: object, **kwargs: object) -> object:
-        raise AssertionError(f"{nome} e' stata chiamata: qui non si cerca (D-151)")
-
-    trovate = 0
-    for modulo in list(sys.modules.values()):
-        if not isinstance(modulo, ModuleType):
-            continue
-        if not getattr(modulo, "__name__", "").startswith("disegnatore_mep"):
-            continue
-        if hasattr(modulo, nome):
-            monkeypatch.setattr(modulo, nome, urla)
-            trovate += 1
-    return trovate
 
 
-def test_l_esecutore_non_gira_nessuna_ricerca(monkeypatch: pytest.MonkeyPatch) -> None:
-    """**Non gira nessuna ricerca**: ne' `lay_the_spine` ne' `improve_sheet`.
-
-    E' il punto di D-151, e una regola che nessuno misura e' un'intenzione. Le
-    due funzioni si fanno esplodere in **ogni** modulo che le tiene in mano —
-    `spine`, `improve` e `compose`, che le importa per nome — e poi si esegue il
-    piano: se una delle due parte, la prova e' rossa.
-    """
-    assert improve.improve_sheet is not None and spine.lay_the_spine is not None
-    # **`compose` non le tiene piu' nemmeno in mano** (DRAW-015 §4): dal 20
-    # settembre non le importa affatto, che e' una garanzia piu' forte di
-    # «non le chiama». Qui si asserisce proprio quello, e le due funzioni si
-    # fanno esplodere dove ancora vivono — `improve` e `spine`.
-    assert not hasattr(compose, "improve_sheet")
-    assert not hasattr(compose, "lay_the_spine")
-    assert _vieta(monkeypatch, "improve_sheet") >= 1
-    assert _vieta(monkeypatch, "lay_the_spine") >= 1
-
-    misura = esegui_piano(
-        completato(PRIMO), piano_di(PRIMO), catalogo(), simboli(), NAMING
-    )
-    assert misura.disegno is not None
-    assert misura.bloccanti == []
 
 
 def test_un_piano_che_nomina_pezzi_inesistenti_li_elenca() -> None:

@@ -21,7 +21,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.graphics.frame import NOVE_C_A3
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.io.project_json import load_project
-from disegnatore_mep.layout.compose import compose_drawing, inline_component_ids
+from disegnatore_mep.layout.compose import inline_component_ids
 from disegnatore_mep.layout.geometry import PlacedSymbol, SheetGeometry
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.partition import SheetPartition, partition_project
@@ -29,6 +29,8 @@ from disegnatore_mep.layout.place import place_sheet
 from disegnatore_mep.layout.route import port_aprons
 from disegnatore_mep.layout.trunks import build_trunks
 from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.piano.esecutore import esegui_piano
+from disegnatore_mep.piano.formato import carica_piano
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.registry import RuleRegistry
 
@@ -39,37 +41,38 @@ RULES = ROOT / "rules" / "hydronic"
 PROVA = ROOT / "examples" / "prova"
 
 COMPONIBILI = ("prova-1-due-pdc-accumulo-combinato.json",)
-"""L'impianto che entra in una A3 oggi.
+"""L'impianto su cui si misura: l'1, eseguito **dal piano** approvato (`dal_piano`).
 
-⛔ **Il 9 agosto erano tre, e sono tornati uno. Non e' un ammorbidimento: e' un
-prezzo, ed e' misurato.** Il verso del fluido era sbagliato — sulla rete di
-acqua fredda il disegnatore prendeva il bollitore come sorgente invece
-dell'acquedotto, e disegnava **tutta l'adduzione come un ritorno**. Correggerlo
-cambia l'ordine con cui il collocatore legge il processo, e la disposizione non
-regge il cambiamento: il terzo impianto chiede 420 mm contro i 335 di una A3, e
-il secondo non trova piu' il rettilineo per una valvola.
+Fino al 2 ottobre 2026 qui si componeva senza piano, e il file teneva il conto
+degli impianti che quella via non componeva piu' (`NON_COMPONGONO`,
+`TORNATO_A_COMPORRE`, due `xfail` che aspettavano «che la composizione
+compatti»). La composizione e' del piano da D-151, e il solutore che l'avrebbe
+compattata e' stato tolto (I-180): quelle attese non avevano piu' chi le
+soddisfacesse, e sono uscite con lui."""
 
-Un disegno che sbaglia il verso dell'acqua e' peggio di un disegno che non
-esce: il committente non puo' verificarci niente, e infatti se n'e' accorto in
-pochi minuti. La correzione resta; a rientrare devono essere gli impianti,
-quando la composizione compatta. Il conto e' in `NON_COMPONGONO`."""
 
-NON_COMPONGONO = ("prova-2-pdc-deviatrice-acs.json",)
-"""Gli impianti che componevano il 9 agosto e oggi no, con il motivo misurato."""
 
-TORNATO_A_COMPORRE = ("prova-3-pdc-diretta-pavimento.json",)
-"""Chi era in `NON_COMPONGONO` e ha ricominciato a comporre (DRAW-001).
 
-Il terzo impianto chiedeva 420 mm contro i 335 di una A3 e non entrava. Da
-quando il collocatore **distende** invece di limitarsi a stringere (D-111) —
-e la posa che ne esce e' un'altra — la sua fila rientra e la tavola si compone
-in un foglio solo.
+APPROVATI = ROOT / "docs" / "collaudi" / "DRAW-018" / "prova-camera-pulita-2026-09-24"
+"""I grafi completi e i piani che il pianificatore ha composto in camera pulita."""
 
-⚠ **Che componga e' un fatto, che sia bella non lo dice nessuno.** Qui si
-verifica solo che la catena arrivi in fondo: la **qualita'** delle altre quattro
-tavole non si guarda e non si consegna finche' il PO non ha approvato la prima
-(D-116). La riga esiste perche' un guadagno misurato non vada perso, non per
-aprire un cantiere sul terzo impianto."""
+
+def dal_piano(name: str) -> tuple[ProjectModel, SheetGeometry]:
+    """La tavola **dal piano**, come la compone la skill (D-151): il grafo completo
+    e il piano approvati dell'impianto (`DRAW-018`). Fino al 2 ottobre 2026 qui si
+    componeva senza piano, e da D-167 quella via non instradava piu' l'impianto 1;
+    il solutore che le dava le sue qualita' e' stato tolto (I-180)."""
+    numero = name.split("-")[1]
+    model = load_project(APPROVATI / f"grafo-completo-{numero}.json")
+    esito = esegui_piano(
+        model,
+        carica_piano(APPROVATI / f"piano-completo-{numero}.json"),
+        catalog(),
+        SymbolRegistry.from_directory(SYMBOLS),
+        ROOT / "naming",
+    )
+    assert esito.disegno is not None, esito.errore
+    return model, esito.disegno.sheets[0]
 
 
 def catalog() -> ComponentRegistry:
@@ -110,9 +113,7 @@ def test_l_impianto_si_compone_su_una_a3(name: str) -> None:
     stessero accanto al proprio pezzo, questi tre impianti non si componevano
     **su nessun formato**, A0 compresa.
     """
-    drawing = compose_drawing(completato(name), catalog(), NOVE_C_A3)
-    assert len(drawing.sheets) == 1
-    sheet = drawing.sheets[0]
+    _, sheet = dal_piano(name)
     assert sheet.symbols
     assert sheet.routes
 
@@ -121,7 +122,7 @@ def test_l_impianto_si_compone_su_una_a3(name: str) -> None:
 def test_nessun_simbolo_si_sovrappone_a_un_altro(name: str) -> None:
     """Nemmeno cio' che pende: uno sfogo sta fuori dal riquadro del proprio
     serbatoio, e chi gli sale sopra deve saperlo."""
-    sheet = compose_drawing(completato(name), catalog(), NOVE_C_A3).sheets[0]
+    _, sheet = dal_piano(name)
     boxes = [(item.component_id, box(item)) for item in sheet.symbols]
     for index, (first_id, first) in enumerate(boxes):
         for second_id, second in boxes[index + 1 :]:
@@ -203,9 +204,8 @@ def test_nessuno_si_siede_sulla_soglia_di_un_attacco(name: str) -> None:
     occupa quella cella lo mura, e nessun formato piu' grande lo salva — l'unico
     modo per accorgersene e' guardare la cella, non la larghezza del foglio.
     """
-    model = completato(name)
+    model, sheet = dal_piano(name)
     registry = catalog()
-    sheet: SheetGeometry = compose_drawing(model, registry, NOVE_C_A3).sheets[0]
     inline = inline_component_ids(model, registry)
     partition = partition_project(model, build_trunks(model, inline))[0]
     grid = GridSpace(origin=NOVE_C_A3.drawing_rect_mm, standard=NOVE_C_A3.standard)
@@ -274,41 +274,5 @@ def test_chi_genera_sta_a_sinistra_di_chi_utilizza(name: str) -> None:
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="APERTO, e misurato. Questi due impianti componevano il 9 agosto e "
-    "hanno smesso quando il verso del fluido e' stato corretto: sulla rete di "
-    "acqua fredda la sorgente era il bollitore invece dell'acquedotto, e tutta "
-    "l'adduzione veniva disegnata come un ritorno. Il verso giusto cambia "
-    "l'ordine del processo, e la disposizione non lo regge: il terzo impianto "
-    "chiede 420 mm contro i 335 di una A3, il secondo non trova il rettilineo "
-    "per una valvola di intercettazione. Torna verde quando la composizione "
-    "compatta davvero — non abbassando i minimi grafici.",
-)
-@pytest.mark.parametrize("name", NON_COMPONGONO)
-def test_tornano_a_comporre_quando_la_composizione_compatta(name: str) -> None:
-    drawing = compose_drawing(completato(name), catalog(), NOVE_C_A3)
-    assert len(drawing.sheets) == 1
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="APERTO, e misurato (DRAW-005, 2026-09-07). Con l'intercettazione "
-    "per gruppo il terzo impianto ha meno organi e la posa iniziale cambia: "
-    "in ordine canonico delle tratte il ritorno rientra sotto il defangatore "
-    "dopo il taglio, in ordine del file la linea sanitaria dallo scaldacqua "
-    "non trova il rettilineo di 7,5 mm per la miscelatrice. Sul commit "
-    "dc3dad5 componeva in entrambi gli ordini. Il campo di lavoro e' il solo "
-    "impianto 1 (D-116): la riga esiste perche' il difetto non sia scoperto "
-    "due volte, e torna verde quando la posa regge il grafo nuovo, non "
-    "allentando la regola ne' i minimi grafici.",
-)
-@pytest.mark.parametrize("name", TORNATO_A_COMPORRE)
-def test_chi_e_tornato_a_comporre_compone_in_un_foglio_solo(name: str) -> None:
-    """Il terzo impianto rientra in una A3 da quando il collocatore distende.
-
-    Solo che compone, e nient'altro: le altre quattro tavole non si guardano
-    finche' la prima non e' approvata (D-116).
-    """
-    drawing = compose_drawing(completato(name), catalog(), NOVE_C_A3)
-    assert len(drawing.sheets) == 1

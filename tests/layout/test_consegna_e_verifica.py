@@ -41,6 +41,8 @@ from disegnatore_mep.model.project import (
     SubsystemModel,
 )
 from disegnatore_mep.model.types import PlantRegime
+from disegnatore_mep.piano.esecutore import esegui_piano
+from disegnatore_mep.piano.formato import carica_piano
 from disegnatore_mep.rules.apply import saturate
 from disegnatore_mep.rules.registry import RuleRegistry
 
@@ -167,6 +169,22 @@ def con_accumulo_combinato() -> ProjectModel:
         ],
     )
 
+
+
+def _dal_piano(project: ProjectModel, nome: str) -> DrawingGeometry:
+    """La tavola **dal piano**, come la compone la skill (D-151): il piano
+    dell'impianto di prova 1 tradotto sui nomi della configurazione (`piani/`,
+    I-180). Fino al 2 ottobre 2026 si componeva senza piano, e da D-167 quella
+    via non instradava piu' il ritorno del radiatore."""
+    esito = esegui_piano(
+        project,
+        carica_piano(Path(__file__).resolve().parent / "piani" / f"{nome}.json"),
+        catalog(),
+        SymbolRegistry.from_directory(SYMBOLS),
+        ROOT / "naming",
+    )
+    assert esito.disegno is not None, esito.errore
+    return esito.disegno
 
 def due_macchine_con_accumulo_combinato() -> ProjectModel:
     """Due pompe di calore in parallelo su un accumulo combinato: la stessa
@@ -380,7 +398,7 @@ def test_la_valvola_che_isola_oltre_un_raccordo_passante_si_stringe_al_raccordo(
     percio' contro il raccordo, non a mezza strada."""
     project, _, _ = saturate(due_macchine_con_accumulo_combinato(), catalog(), rules())
     registry = catalog()
-    drawing = compose_drawing(project, registry, NOVE_C_A3)
+    drawing = _dal_piano(project, "due_macchine_con_accumulo_combinato")
     sheet = drawing.sheets[0]
     placed = {item.component_id: item for item in sheet.symbols}
     definitions = {item.id: item.definition_id for item in project.components}
