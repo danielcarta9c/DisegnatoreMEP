@@ -4,6 +4,72 @@ Una sezione per ogni gruppo di punti, la più recente in alto. Il caso è il pri
 ricostruito anonimo in `caso-reale-1/`: il documento della sessione di disegno porta i dati del cliente e non è
 nel repository.
 
+## 5. Quello che il caso ha riportato (I-201 … I-205)
+
+**3 ottobre 2026** · decisioni **D-206**, **D-207**, **D-208** (proposte) · la tavola al PO
+
+Il PO ha rifatto la tavola del caso con la 1.3.0 nella sua sessione di lavoro e ne ha riportato i difetti. La sua
+tavola porta i dati del cliente e non è nel repository; il grafo è ricostruito anonimo da quello che vi è disegnato,
+in `caso-reale-2/` (`costruisci_grafo.py`), e il piano lo compone `componi_piano.py` come Comporre deve adesso.
+
+### La tavola, per prima
+
+`caso-reale-2/tavola/` — la tavola del caso rifatta:
+
+```
+Formato A1 · tratte 137 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 13 · sormonti 14
+```
+
+Ci sono **le valvole di sicurezza delle sei pompe di calore**, che sulla tavola del PO mancano: D-202 dice che si
+disegnano sempre.
+
+### Che cosa non andava, e perché
+
+- **L'autostrada scavalcava la valvola dello sfiato** (I-201, I-203). Il motore instradava nell'ordine dei nomi
+  delle tubazioni: lo stacco dello sfiato, passato prima della mandata, ci aveva posato la sua valvola sopra. Con la
+  1.3 gli stacchi dichiarati li scrive Capire, con nomi suoi; prima erano delle regole, `stub-…`. Ora si instradano
+  le autostrade, poi la distribuzione, poi gli stacchi (D-206): la valvola va oltre l'incrocio.
+- **Le pompe di zona una orizzontale e una verticale** (I-204). Il motore posa la fila di una pompa sul primo
+  rettilineo che la contiene, e una delle due tratte partiva in verticale. Ora la fila di una pompa in parallelo va
+  sul primo orizzontale, e il controllo A2 lo misura (D-208).
+- **I colori sbagliati nella distribuzione** (I-202). Due difetti, trovati sul caso ricostruito: la camminata del
+  colore attraversava il collettore con ritorno dall'ingresso all'uscita del ritorno — la colonna di ritorno usciva
+  rossa —, e sul circuito di carico il bollitore era preso per sorgente — la mandata della pompa di carico usciva blu.
+  Il catalogo dichiara ora i passaggi interni del collettore, e chi scambia sulla serpentina non è una sorgente.
+- **Nessuna autostrada nella distribuzione** (I-205). Le dorsali erano già autostrade per il motore; mancava il
+  piano. La coppia del secondario resta sulle quote del volano fino alla zona lontana, e ogni zona ha le sue due
+  colonne affiancate (Comporre, «La distribuzione di una centrale grande»).
+- **Il collettore con ritorno pagava quattro pieghe per terminale** (I-205): coppie a 5 mm, mandate e ritorni
+  alternati, contro i terminali a 10. Ora è 40 × 15, a coppie di 10, e il terminale sotto la coppia si raccorda dritto.
+
+### Le tavole di regressione
+
+```
+$ confronta.sh <main> <ramo>
+file: 54 prima, 54 dopo
+<   ./tp/tavola-6.dxf, ./tp/tavola-6.svg
+```
+
+Cambia la sola tavola di prova 6, che ha due pompe in parallelo: la valvola della seconda passa dalla discesa
+all'orizzontale, accanto alla sua pompa, come la prima. Le altre sono identiche byte per byte.
+
+### Due cose che la sessione ha visto
+
+- ⚠ **I cinque impianti di prova sulla via del piano non producono tavola già su `main`**: i loro piani nominano
+  pezzi rinominati da D-182. La regressione copre le tavole di prova, la via senza piano e la tavola D.
+- ⚠ **Il controllo B1 conta 2 pieghe di troppo sul ritorno della zona lontana**, che sono la discesa in colonna e
+  l'ultimo collettore preso a gomito: la stessa geometria della mandata, che il controllo accetta. È il raccordo
+  girato e specchiato che il pavimento del controllo non legge; la tavola mi sembra giusta.
+- **Il tempo** (punto 7): disegnare il caso una volta richiede 107 secondi. Con i giri di Rivedere è probabilmente lì
+  che vanno i 30 minuti.
+
+### Le prove
+
+`tests/acceptance/test_prima_le_autostrade.py` (la tavola D con lo sfiato, due nomi per lo stacco);
+`tests/layout/test_la_distribuzione_del_caso_reale.py` (la fila della pompa in parallelo, i colori del collettore
+e del circuito di carico, le coppie del collettore); `tests/validation/test_regole_del_piano.py` (A2). Rosse sul
+codice di partenza, verdi adesso.
+
 ## 4. La 1.3.0
 
 **3 ottobre 2026** · input **I-199** · decisione **D-205**, approvata

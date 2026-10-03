@@ -1,0 +1,3021 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "centrale-pdc-condominio-caso-reale-2",
+    "client": "Condominio (caso reale, anonimo)",
+    "project_name": "Sostituzione generatori di calore - centrale termica centralizzata a pompe di calore",
+    "commission_code": "ND",
+    "revision": "00",
+    "issue_date": "2026-10-03"
+  },
+  "plant_regime": "over_35_kw",
+  "networks": [
+    {
+      "id": "primario-risc",
+      "name": "Circuito primario riscaldamento e raffrescamento (PdC - volano)",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "secondario-risc",
+      "name": "Circuito secondario riscaldamento e raffrescamento (volano - macrozone - appartamenti)",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "primario-acs",
+      "name": "Circuito primario ACS (PdC ACS - volano ACS)",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "secondario-acs",
+      "name": "Circuito di carico bollitore (volano ACS - serpentino)",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "acqua-fredda",
+      "name": "Acqua fredda di acquedotto",
+      "domain": "hydronic",
+      "medium": "cold_water",
+      "esistente": true
+    },
+    {
+      "id": "acs",
+      "name": "Acqua calda sanitaria e ricircolo",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water",
+      "esistente": true
+    },
+    {
+      "id": "predisposizione",
+      "name": "Attacchi predisposti per il solare termico",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "pdc-r1",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "power_kw": 15,
+        "marca": "Shenling",
+        "modello": "HPM-V150W/R3",
+        "tipo": "aria-acqua monoblocco R290",
+        "servizio": "riscaldamento e raffrescamento, reversibile",
+        "delta_t_k": 5,
+        "temperature_esercizio": "45/40 °C"
+      }
+    },
+    {
+      "id": "pdc-r2",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "power_kw": 15,
+        "marca": "Shenling",
+        "modello": "HPM-V150W/R3",
+        "tipo": "aria-acqua monoblocco R290",
+        "servizio": "riscaldamento e raffrescamento, reversibile",
+        "delta_t_k": 5,
+        "temperature_esercizio": "45/40 °C"
+      }
+    },
+    {
+      "id": "pdc-r3",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "power_kw": 15,
+        "marca": "Shenling",
+        "modello": "HPM-V150W/R3",
+        "tipo": "aria-acqua monoblocco R290",
+        "servizio": "riscaldamento e raffrescamento, reversibile",
+        "delta_t_k": 5,
+        "temperature_esercizio": "45/40 °C"
+      }
+    },
+    {
+      "id": "pdc-r4",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "power_kw": 15,
+        "marca": "Shenling",
+        "modello": "HPM-V150W/R3",
+        "tipo": "aria-acqua monoblocco R290",
+        "servizio": "riscaldamento e raffrescamento, reversibile",
+        "delta_t_k": 5,
+        "temperature_esercizio": "45/40 °C"
+      }
+    },
+    {
+      "id": "volano-risc",
+      "definition_id": "buffer-four-port",
+      "tag": null,
+      "properties": {
+        "volume_l": 1000,
+        "marca": "Cordivari",
+        "modello": "Volano BS GBL 1000",
+        "configurazione": "a quattro attacchi"
+      }
+    },
+    {
+      "id": "tj-pr-1",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ts-pr-1",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tj-pr-2",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ts-pr-2",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tj-pr-3",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ts-pr-3",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ts-mz",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tj-mz",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "pompa-mz1",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {
+        "servizio": "macrozona 1 (3 appartamenti)",
+        "marca": "Grundfos",
+        "modello": "MAGNA (sigla da completare)"
+      }
+    },
+    {
+      "id": "pompa-mz2",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {
+        "servizio": "macrozona 2 (5 appartamenti)",
+        "marca": "Grundfos",
+        "modello": "MAGNA (sigla da completare)"
+      }
+    },
+    {
+      "id": "coll-mz1-1",
+      "definition_id": "zone-manifold-pair",
+      "tag": null,
+      "properties": {
+        "servizio": "collettore appartamento 1, macrozona 1",
+        "stato": "esistente",
+        "uscite": "due, con valvole manuali, verso fancoil e pavimento radiante"
+      },
+      "esistente": true
+    },
+    {
+      "id": "fc-mz1-1",
+      "definition_id": "fan-coil",
+      "tag": null,
+      "properties": {
+        "servizio": "ventilconvettori appartamento 1, macrozona 1"
+      }
+    },
+    {
+      "id": "rad-mz1-1",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "servizio": "pannelli radianti appartamento 1, macrozona 1"
+      }
+    },
+    {
+      "id": "coll-mz1-2",
+      "definition_id": "zone-manifold-pair",
+      "tag": null,
+      "properties": {
+        "servizio": "collettore appartamento 2, macrozona 1",
+        "stato": "esistente",
+        "uscite": "due, con valvole manuali, verso fancoil e pavimento radiante"
+      },
+      "esistente": true
+    },
+    {
+      "id": "fc-mz1-2",
+      "definition_id": "fan-coil",
+      "tag": null,
+      "properties": {
+        "servizio": "ventilconvettori appartamento 2, macrozona 1"
+      }
+    },
+    {
+      "id": "rad-mz1-2",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "servizio": "pannelli radianti appartamento 2, macrozona 1"
+      }
+    },
+    {
+      "id": "coll-mz1-3",
+      "definition_id": "zone-manifold-pair",
+      "tag": null,
+      "properties": {
+        "servizio": "collettore appartamento 3, macrozona 1",
+        "stato": "esistente",
+        "uscite": "due, con valvole manuali, verso fancoil e pavimento radiante"
+      },
+      "esistente": true
+    },
+    {
+      "id": "fc-mz1-3",
+      "definition_id": "fan-coil",
+      "tag": null,
+      "properties": {
+        "servizio": "ventilconvettori appartamento 3, macrozona 1"
+      }
+    },
+    {
+      "id": "rad-mz1-3",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "servizio": "pannelli radianti appartamento 3, macrozona 1"
+      }
+    },
+    {
+      "id": "ts-mz1-1",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tj-mz1-1",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ts-mz1-2",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tj-mz1-2",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "coll-mz2-1",
+      "definition_id": "zone-manifold-pair",
+      "tag": null,
+      "properties": {
+        "servizio": "collettore appartamento 1, macrozona 2",
+        "stato": "esistente",
+        "uscite": "due, con valvole manuali, verso fancoil e pavimento radiante"
+      },
+      "esistente": true
+    },
+    {
+      "id": "fc-mz2-1",
+      "definition_id": "fan-coil",
+      "tag": null,
+      "properties": {
+        "servizio": "ventilconvettori appartamento 1, macrozona 2"
+      }
+    },
+    {
+      "id": "rad-mz2-1",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "servizio": "pannelli radianti appartamento 1, macrozona 2"
+      }
+    },
+    {
+      "id": "coll-mz2-2",
+      "definition_id": "zone-manifold-pair",
+      "tag": null,
+      "properties": {
+        "servizio": "collettore appartamento 2, macrozona 2",
+        "stato": "esistente",
+        "uscite": "due, con valvole manuali, verso fancoil e pavimento radiante"
+      },
+      "esistente": true
+    },
+    {
+      "id": "fc-mz2-2",
+      "definition_id": "fan-coil",
+      "tag": null,
+      "properties": {
+        "servizio": "ventilconvettori appartamento 2, macrozona 2"
+      }
+    },
+    {
+      "id": "rad-mz2-2",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "servizio": "pannelli radianti appartamento 2, macrozona 2"
+      }
+    },
+    {
+      "id": "coll-mz2-3",
+      "definition_id": "zone-manifold-pair",
+      "tag": null,
+      "properties": {
+        "servizio": "collettore appartamento 3, macrozona 2",
+        "stato": "esistente",
+        "uscite": "due, con valvole manuali, verso fancoil e pavimento radiante"
+      },
+      "esistente": true
+    },
+    {
+      "id": "fc-mz2-3",
+      "definition_id": "fan-coil",
+      "tag": null,
+      "properties": {
+        "servizio": "ventilconvettori appartamento 3, macrozona 2"
+      }
+    },
+    {
+      "id": "rad-mz2-3",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "servizio": "pannelli radianti appartamento 3, macrozona 2"
+      }
+    },
+    {
+      "id": "coll-mz2-4",
+      "definition_id": "zone-manifold-pair",
+      "tag": null,
+      "properties": {
+        "servizio": "collettore appartamento 4, macrozona 2",
+        "stato": "esistente",
+        "uscite": "due, con valvole manuali, verso fancoil e pavimento radiante"
+      },
+      "esistente": true
+    },
+    {
+      "id": "fc-mz2-4",
+      "definition_id": "fan-coil",
+      "tag": null,
+      "properties": {
+        "servizio": "ventilconvettori appartamento 4, macrozona 2"
+      }
+    },
+    {
+      "id": "rad-mz2-4",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "servizio": "pannelli radianti appartamento 4, macrozona 2"
+      }
+    },
+    {
+      "id": "coll-mz2-5",
+      "definition_id": "zone-manifold-pair",
+      "tag": null,
+      "properties": {
+        "servizio": "collettore appartamento 5, macrozona 2",
+        "stato": "esistente",
+        "uscite": "due, con valvole manuali, verso fancoil e pavimento radiante"
+      },
+      "esistente": true
+    },
+    {
+      "id": "fc-mz2-5",
+      "definition_id": "fan-coil",
+      "tag": null,
+      "properties": {
+        "servizio": "ventilconvettori appartamento 5, macrozona 2"
+      }
+    },
+    {
+      "id": "rad-mz2-5",
+      "definition_id": "underfloor-panel",
+      "tag": null,
+      "properties": {
+        "servizio": "pannelli radianti appartamento 5, macrozona 2"
+      }
+    },
+    {
+      "id": "ts-mz2-1",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tj-mz2-1",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ts-mz2-2",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tj-mz2-2",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ts-mz2-3",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tj-mz2-3",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ts-mz2-4",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tj-mz2-4",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "pdc-a1",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "power_kw": 15,
+        "marca": "Shenling",
+        "modello": "HPM-V150W/R3",
+        "tipo": "aria-acqua monoblocco R290",
+        "servizio": "produzione ACS"
+      }
+    },
+    {
+      "id": "pdc-a2",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "power_kw": 15,
+        "marca": "Shenling",
+        "modello": "HPM-V150W/R3",
+        "tipo": "aria-acqua monoblocco R290",
+        "servizio": "produzione ACS"
+      }
+    },
+    {
+      "id": "volano-acs",
+      "definition_id": "buffer-six-port",
+      "tag": null,
+      "properties": {
+        "volume_l": 200,
+        "marca": "Cordivari",
+        "modello": "Volano BS GBF 200",
+        "configurazione": "a quattro tubi, con due attacchi predisposti per il solare termico futuro"
+      }
+    },
+    {
+      "id": "tj-pa",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ts-pa",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "pompa-carico-acs",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {
+        "servizio": "carico serpentino bollitore",
+        "marca": "DAB",
+        "modello": "EVOSTA3 80/130",
+        "salto_termico": "circa 10 K, 60/50 o 65/55 °C (da verificare)"
+      }
+    },
+    {
+      "id": "bollitore",
+      "definition_id": "dhw-cylinder",
+      "tag": null,
+      "properties": {
+        "volume_l": 1000,
+        "tipo": "bollitore a un serpentino",
+        "produzione": "centralizzata",
+        "stato": "esistente, in centrale interrata"
+      },
+      "esistente": true
+    },
+    {
+      "id": "acquedotto",
+      "definition_id": "cold-water-inlet",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "utenze-acs",
+      "definition_id": "dhw-draw-off",
+      "tag": null,
+      "properties": {
+        "servizio": "rete di distribuzione ACS"
+      }
+    },
+    {
+      "id": "ricircolo-utenze",
+      "definition_id": "dhw-recirculation-inlet",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "pompa-ricircolo",
+      "definition_id": "pump-circulator-dhw",
+      "tag": null,
+      "properties": {
+        "stato": "esistente, in centrale interrata"
+      },
+      "esistente": true
+    },
+    {
+      "id": "ritegno-r1",
+      "definition_id": "valve-check",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-mandata-r1",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-ritorno-r1",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tee-sfiato-r1",
+      "definition_id": "tee-branch",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-sfiato-r1",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "sfiato-r1",
+      "definition_id": "air-vent",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ritegno-r2",
+      "definition_id": "valve-check",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-mandata-r2",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-ritorno-r2",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tee-sfiato-r2",
+      "definition_id": "tee-branch",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-sfiato-r2",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "sfiato-r2",
+      "definition_id": "air-vent",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ritegno-r3",
+      "definition_id": "valve-check",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-mandata-r3",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-ritorno-r3",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tee-sfiato-r3",
+      "definition_id": "tee-branch",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-sfiato-r3",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "sfiato-r3",
+      "definition_id": "air-vent",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ritegno-r4",
+      "definition_id": "valve-check",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-mandata-r4",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-ritorno-r4",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tee-sfiato-r4",
+      "definition_id": "tee-branch",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-sfiato-r4",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "sfiato-r4",
+      "definition_id": "air-vent",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ritegno-a1",
+      "definition_id": "valve-check",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-mandata-a1",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-ritorno-a1",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tee-sfiato-a1",
+      "definition_id": "tee-branch",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-sfiato-a1",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "sfiato-a1",
+      "definition_id": "air-vent",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ritegno-a2",
+      "definition_id": "valve-check",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-mandata-a2",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "giunto-ritorno-a2",
+      "definition_id": "flexible-joint",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "tee-sfiato-a2",
+      "definition_id": "tee-branch",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-sfiato-a2",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "sfiato-a2",
+      "definition_id": "air-vent",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-sfiato-volano-risc",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "sfiato-volano-risc",
+      "definition_id": "air-vent",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-sfiato-volano-acs",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "sfiato-volano-acs",
+      "definition_id": "air-vent",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "contatore",
+      "definition_id": "heat-meter",
+      "tag": null,
+      "properties": {
+        "servizio": "contabilizzatore sul ritorno del primario"
+      }
+    },
+    {
+      "id": "valvola-out1-mz1-1",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out2-mz1-1",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out1-mz1-2",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out2-mz1-2",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out1-mz1-3",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out2-mz1-3",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out1-mz2-1",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out2-mz2-1",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out1-mz2-2",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out2-mz2-2",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out1-mz2-3",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out2-mz2-3",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out1-mz2-4",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out2-mz2-4",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out1-mz2-5",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-out2-mz2-5",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "solare-mandata",
+      "definition_id": "capped-connection",
+      "tag": null,
+      "properties": {
+        "etichetta": "al solare termico"
+      }
+    },
+    {
+      "id": "solare-ritorno",
+      "definition_id": "capped-connection",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "riduttore",
+      "definition_id": "pressure-reducer",
+      "tag": null,
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "t003",
+      "network_id": "primario-risc",
+      "endpoint_a": {
+        "component_id": "tj-pr-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-pr-2",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t005",
+      "network_id": "primario-risc",
+      "endpoint_a": {
+        "component_id": "tj-pr-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-pr-3",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t007",
+      "network_id": "primario-risc",
+      "endpoint_a": {
+        "component_id": "tj-pr-3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "volano-risc",
+        "port_id": "primary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t010",
+      "network_id": "primario-risc",
+      "endpoint_a": {
+        "component_id": "ts-pr-3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ts-pr-2",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t012",
+      "network_id": "primario-risc",
+      "endpoint_a": {
+        "component_id": "ts-pr-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ts-pr-1",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t015",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "volano-risc",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "ts-mz",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t016",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "pompa-mz1",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t017",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pompa-mz2",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t018",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "tj-mz",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "volano-risc",
+        "port_id": "secondary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t031",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "pompa-mz1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ts-mz1-1",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t032",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz1-1",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz1-1",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t033",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz1-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ts-mz1-2",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t034",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz1-2",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz1-2",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t035",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz1-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz1-3",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t038",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "tj-mz1-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz1-1",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t040",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "tj-mz1-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t061",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "pompa-mz2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ts-mz2-1",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t062",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz2-1",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-1",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t063",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz2-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ts-mz2-2",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t064",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz2-2",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-2",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t065",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz2-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ts-mz2-3",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t066",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz2-3",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-3",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t067",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz2-3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ts-mz2-4",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t068",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz2-4",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-4",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t069",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "ts-mz2-4",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-5",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t072",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "tj-mz2-4",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz2-3",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t074",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "tj-mz2-3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz2-2",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t076",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "tj-mz2-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz2-1",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t078",
+      "network_id": "secondario-risc",
+      "endpoint_a": {
+        "component_id": "tj-mz2-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t081",
+      "network_id": "primario-acs",
+      "endpoint_a": {
+        "component_id": "tj-pa",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "volano-acs",
+        "port_id": "primary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t082",
+      "network_id": "primario-acs",
+      "endpoint_a": {
+        "component_id": "volano-acs",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "ts-pa",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t085",
+      "network_id": "secondario-acs",
+      "endpoint_a": {
+        "component_id": "volano-acs",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "pompa-carico-acs",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t086",
+      "network_id": "secondario-acs",
+      "endpoint_a": {
+        "component_id": "pompa-carico-acs",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "coil_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t087",
+      "network_id": "secondario-acs",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "coil_out"
+      },
+      "endpoint_b": {
+        "component_id": "volano-acs",
+        "port_id": "secondary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t089",
+      "network_id": "acs",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "utenze-acs",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t090",
+      "network_id": "acs",
+      "endpoint_a": {
+        "component_id": "ricircolo-utenze",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "pompa-ricircolo",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t091",
+      "network_id": "acs",
+      "endpoint_a": {
+        "component_id": "pompa-ricircolo",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "recirculation_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t100",
+      "endpoint_a": {
+        "component_id": "pdc-r1",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "ritegno-r1",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t101",
+      "endpoint_a": {
+        "component_id": "ritegno-r1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-mandata-r1",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t102",
+      "endpoint_a": {
+        "component_id": "giunto-mandata-r1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-pr-3",
+        "port_id": "c"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t103",
+      "endpoint_a": {
+        "component_id": "ts-pr-3",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-ritorno-r1",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t104",
+      "endpoint_a": {
+        "component_id": "giunto-ritorno-r1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-sfiato-r1",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t105",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-r1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-r1",
+        "port_id": "water_return"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t106",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-r1",
+        "port_id": "branch"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-sfiato-r1",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t107",
+      "endpoint_a": {
+        "component_id": "valvola-sfiato-r1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "sfiato-r1",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t108",
+      "endpoint_a": {
+        "component_id": "pdc-r2",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "ritegno-r2",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t109",
+      "endpoint_a": {
+        "component_id": "ritegno-r2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-mandata-r2",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t110",
+      "endpoint_a": {
+        "component_id": "giunto-mandata-r2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-pr-2",
+        "port_id": "c"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t111",
+      "endpoint_a": {
+        "component_id": "ts-pr-2",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-ritorno-r2",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t112",
+      "endpoint_a": {
+        "component_id": "giunto-ritorno-r2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-sfiato-r2",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t113",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-r2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-r2",
+        "port_id": "water_return"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t114",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-r2",
+        "port_id": "branch"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-sfiato-r2",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t115",
+      "endpoint_a": {
+        "component_id": "valvola-sfiato-r2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "sfiato-r2",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t116",
+      "endpoint_a": {
+        "component_id": "pdc-r3",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "ritegno-r3",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t117",
+      "endpoint_a": {
+        "component_id": "ritegno-r3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-mandata-r3",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t118",
+      "endpoint_a": {
+        "component_id": "giunto-mandata-r3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-pr-1",
+        "port_id": "c"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t119",
+      "endpoint_a": {
+        "component_id": "ts-pr-1",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-ritorno-r3",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t120",
+      "endpoint_a": {
+        "component_id": "giunto-ritorno-r3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-sfiato-r3",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t121",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-r3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-r3",
+        "port_id": "water_return"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t122",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-r3",
+        "port_id": "branch"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-sfiato-r3",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t123",
+      "endpoint_a": {
+        "component_id": "valvola-sfiato-r3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "sfiato-r3",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t124",
+      "endpoint_a": {
+        "component_id": "pdc-r4",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "ritegno-r4",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t125",
+      "endpoint_a": {
+        "component_id": "ritegno-r4",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-mandata-r4",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t126",
+      "endpoint_a": {
+        "component_id": "giunto-mandata-r4",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-pr-1",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t127",
+      "endpoint_a": {
+        "component_id": "ts-pr-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-ritorno-r4",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t128",
+      "endpoint_a": {
+        "component_id": "giunto-ritorno-r4",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-sfiato-r4",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t129",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-r4",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-r4",
+        "port_id": "water_return"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t130",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-r4",
+        "port_id": "branch"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-sfiato-r4",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t131",
+      "endpoint_a": {
+        "component_id": "valvola-sfiato-r4",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "sfiato-r4",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t132",
+      "endpoint_a": {
+        "component_id": "pdc-a1",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "ritegno-a1",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t133",
+      "endpoint_a": {
+        "component_id": "ritegno-a1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-mandata-a1",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t134",
+      "endpoint_a": {
+        "component_id": "giunto-mandata-a1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-pa",
+        "port_id": "c"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t135",
+      "endpoint_a": {
+        "component_id": "ts-pa",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-ritorno-a1",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t136",
+      "endpoint_a": {
+        "component_id": "giunto-ritorno-a1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-sfiato-a1",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t137",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-a1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-a1",
+        "port_id": "water_return"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t138",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-a1",
+        "port_id": "branch"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-sfiato-a1",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t139",
+      "endpoint_a": {
+        "component_id": "valvola-sfiato-a1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "sfiato-a1",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t140",
+      "endpoint_a": {
+        "component_id": "pdc-a2",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "ritegno-a2",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t141",
+      "endpoint_a": {
+        "component_id": "ritegno-a2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-mandata-a2",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t142",
+      "endpoint_a": {
+        "component_id": "giunto-mandata-a2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tj-pa",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t143",
+      "endpoint_a": {
+        "component_id": "ts-pa",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "giunto-ritorno-a2",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t144",
+      "endpoint_a": {
+        "component_id": "giunto-ritorno-a2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "tee-sfiato-a2",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t145",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-a2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-a2",
+        "port_id": "water_return"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t146",
+      "endpoint_a": {
+        "component_id": "tee-sfiato-a2",
+        "port_id": "branch"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-sfiato-a2",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t147",
+      "endpoint_a": {
+        "component_id": "valvola-sfiato-a2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "sfiato-a2",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t148",
+      "endpoint_a": {
+        "component_id": "volano-risc",
+        "port_id": "vent"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-sfiato-volano-risc",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t149",
+      "endpoint_a": {
+        "component_id": "valvola-sfiato-volano-risc",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "sfiato-volano-risc",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t150",
+      "endpoint_a": {
+        "component_id": "volano-acs",
+        "port_id": "vent"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-sfiato-volano-acs",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t151",
+      "endpoint_a": {
+        "component_id": "valvola-sfiato-volano-acs",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "sfiato-volano-acs",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t152",
+      "endpoint_a": {
+        "component_id": "volano-risc",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "contatore",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t153",
+      "endpoint_a": {
+        "component_id": "contatore",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ts-pr-3",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t154",
+      "endpoint_a": {
+        "component_id": "coll-mz1-1",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out1-mz1-1",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t155",
+      "endpoint_a": {
+        "component_id": "valvola-out1-mz1-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "fc-mz1-1",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t156",
+      "endpoint_a": {
+        "component_id": "fc-mz1-1",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz1-1",
+        "port_id": "ret_1"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t157",
+      "endpoint_a": {
+        "component_id": "coll-mz1-1",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out2-mz1-1",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t158",
+      "endpoint_a": {
+        "component_id": "valvola-out2-mz1-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "rad-mz1-1",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t159",
+      "endpoint_a": {
+        "component_id": "rad-mz1-1",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz1-1",
+        "port_id": "ret_2"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t160",
+      "endpoint_a": {
+        "component_id": "coll-mz1-1",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz1-1",
+        "port_id": "c"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t161",
+      "endpoint_a": {
+        "component_id": "coll-mz1-2",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out1-mz1-2",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t162",
+      "endpoint_a": {
+        "component_id": "valvola-out1-mz1-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "fc-mz1-2",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t163",
+      "endpoint_a": {
+        "component_id": "fc-mz1-2",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz1-2",
+        "port_id": "ret_1"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t164",
+      "endpoint_a": {
+        "component_id": "coll-mz1-2",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out2-mz1-2",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t165",
+      "endpoint_a": {
+        "component_id": "valvola-out2-mz1-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "rad-mz1-2",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t166",
+      "endpoint_a": {
+        "component_id": "rad-mz1-2",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz1-2",
+        "port_id": "ret_2"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t167",
+      "endpoint_a": {
+        "component_id": "coll-mz1-2",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz1-2",
+        "port_id": "c"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t168",
+      "endpoint_a": {
+        "component_id": "coll-mz1-3",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out1-mz1-3",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t169",
+      "endpoint_a": {
+        "component_id": "valvola-out1-mz1-3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "fc-mz1-3",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t170",
+      "endpoint_a": {
+        "component_id": "fc-mz1-3",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz1-3",
+        "port_id": "ret_1"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t171",
+      "endpoint_a": {
+        "component_id": "coll-mz1-3",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out2-mz1-3",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t172",
+      "endpoint_a": {
+        "component_id": "valvola-out2-mz1-3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "rad-mz1-3",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t173",
+      "endpoint_a": {
+        "component_id": "rad-mz1-3",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz1-3",
+        "port_id": "ret_2"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t174",
+      "endpoint_a": {
+        "component_id": "coll-mz1-3",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz1-2",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t175",
+      "endpoint_a": {
+        "component_id": "coll-mz2-1",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out1-mz2-1",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t176",
+      "endpoint_a": {
+        "component_id": "valvola-out1-mz2-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "fc-mz2-1",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t177",
+      "endpoint_a": {
+        "component_id": "fc-mz2-1",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-1",
+        "port_id": "ret_1"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t178",
+      "endpoint_a": {
+        "component_id": "coll-mz2-1",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out2-mz2-1",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t179",
+      "endpoint_a": {
+        "component_id": "valvola-out2-mz2-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "rad-mz2-1",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t180",
+      "endpoint_a": {
+        "component_id": "rad-mz2-1",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-1",
+        "port_id": "ret_2"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t181",
+      "endpoint_a": {
+        "component_id": "coll-mz2-1",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz2-1",
+        "port_id": "c"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t182",
+      "endpoint_a": {
+        "component_id": "coll-mz2-2",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out1-mz2-2",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t183",
+      "endpoint_a": {
+        "component_id": "valvola-out1-mz2-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "fc-mz2-2",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t184",
+      "endpoint_a": {
+        "component_id": "fc-mz2-2",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-2",
+        "port_id": "ret_1"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t185",
+      "endpoint_a": {
+        "component_id": "coll-mz2-2",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out2-mz2-2",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t186",
+      "endpoint_a": {
+        "component_id": "valvola-out2-mz2-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "rad-mz2-2",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t187",
+      "endpoint_a": {
+        "component_id": "rad-mz2-2",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-2",
+        "port_id": "ret_2"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t188",
+      "endpoint_a": {
+        "component_id": "coll-mz2-2",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz2-2",
+        "port_id": "c"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t189",
+      "endpoint_a": {
+        "component_id": "coll-mz2-3",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out1-mz2-3",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t190",
+      "endpoint_a": {
+        "component_id": "valvola-out1-mz2-3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "fc-mz2-3",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t191",
+      "endpoint_a": {
+        "component_id": "fc-mz2-3",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-3",
+        "port_id": "ret_1"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t192",
+      "endpoint_a": {
+        "component_id": "coll-mz2-3",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out2-mz2-3",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t193",
+      "endpoint_a": {
+        "component_id": "valvola-out2-mz2-3",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "rad-mz2-3",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t194",
+      "endpoint_a": {
+        "component_id": "rad-mz2-3",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-3",
+        "port_id": "ret_2"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t195",
+      "endpoint_a": {
+        "component_id": "coll-mz2-3",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz2-3",
+        "port_id": "c"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t196",
+      "endpoint_a": {
+        "component_id": "coll-mz2-4",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out1-mz2-4",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t197",
+      "endpoint_a": {
+        "component_id": "valvola-out1-mz2-4",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "fc-mz2-4",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t198",
+      "endpoint_a": {
+        "component_id": "fc-mz2-4",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-4",
+        "port_id": "ret_1"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t199",
+      "endpoint_a": {
+        "component_id": "coll-mz2-4",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out2-mz2-4",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t200",
+      "endpoint_a": {
+        "component_id": "valvola-out2-mz2-4",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "rad-mz2-4",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t201",
+      "endpoint_a": {
+        "component_id": "rad-mz2-4",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-4",
+        "port_id": "ret_2"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t202",
+      "endpoint_a": {
+        "component_id": "coll-mz2-4",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz2-4",
+        "port_id": "c"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t203",
+      "endpoint_a": {
+        "component_id": "coll-mz2-5",
+        "port_id": "out_1"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out1-mz2-5",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t204",
+      "endpoint_a": {
+        "component_id": "valvola-out1-mz2-5",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "fc-mz2-5",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t205",
+      "endpoint_a": {
+        "component_id": "fc-mz2-5",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-5",
+        "port_id": "ret_1"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t206",
+      "endpoint_a": {
+        "component_id": "coll-mz2-5",
+        "port_id": "out_2"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-out2-mz2-5",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t207",
+      "endpoint_a": {
+        "component_id": "valvola-out2-mz2-5",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "rad-mz2-5",
+        "port_id": "in"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t208",
+      "endpoint_a": {
+        "component_id": "rad-mz2-5",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "coll-mz2-5",
+        "port_id": "ret_2"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t209",
+      "endpoint_a": {
+        "component_id": "coll-mz2-5",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "tj-mz2-4",
+        "port_id": "a"
+      },
+      "network_id": "secondario-risc"
+    },
+    {
+      "id": "t210",
+      "endpoint_a": {
+        "component_id": "solare-mandata",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "volano-acs",
+        "port_id": "aux_in"
+      },
+      "network_id": "predisposizione"
+    },
+    {
+      "id": "t211",
+      "endpoint_a": {
+        "component_id": "volano-acs",
+        "port_id": "aux_out"
+      },
+      "endpoint_b": {
+        "component_id": "solare-ritorno",
+        "port_id": "a"
+      },
+      "network_id": "predisposizione"
+    },
+    {
+      "id": "t212",
+      "endpoint_a": {
+        "component_id": "acquedotto",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "riduttore",
+        "port_id": "a"
+      },
+      "network_id": "acqua-fredda"
+    },
+    {
+      "id": "t213",
+      "endpoint_a": {
+        "component_id": "riduttore",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "cold_in"
+      },
+      "network_id": "acqua-fredda"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a-reversibile",
+      "text": "Le 4 PdC del riscaldamento sono reversibili: primario e secondario portano d'estate acqua refrigerata negli stessi tubi, per cui le reti sono disegnate come acqua di riscaldamento.",
+      "status": "approved"
+    },
+    {
+      "id": "a-circolatori-pdc",
+      "text": "Le PdC hanno il circolatore a bordo: sul primario non si disegnano pompe esterne (confermato).",
+      "status": "approved"
+    },
+    {
+      "id": "a-collettori-copertura",
+      "text": "Il parallelo delle PdC (collettore DN50 per le 4 del riscaldamento, DN32 per le 2 dell'ACS, tavola T3) e' disegnato con raccordi a T in catena, ritorno speculare. Il progettista lascia libera la forma dei collettori purche' la tavola sia ordinata con il principio delle autostrade.",
+      "status": "approved"
+    },
+    {
+      "id": "a-collettore-ct",
+      "text": "Le due pompe di macrozona partono dal collettore esistente in centrale alta: disegnato come una ripartizione a T sulla mandata e una confluenza a T sul ritorno verso il volano.",
+      "status": "approved"
+    },
+    {
+      "id": "a-macrozone",
+      "text": "Collettori d'appartamento in derivazione lungo la dorsale di ciascuna macrozona (3 sulla macrozona 1, 5 sulla macrozona 2), ritorno speculare.",
+      "status": "approved"
+    },
+    {
+      "id": "a-terminali",
+      "text": "Ogni collettore d'appartamento ha due uscite con valvole manuali, una verso i fancoil e una verso il pavimento radiante: si disegna un fancoil e un pannello radiante rappresentativi per collettore (confermato). Le valvole stanno sulle uscite del collettore, non su ingresso e uscita dei terminali.",
+      "status": "approved"
+    },
+    {
+      "id": "a-volume-volano-acs",
+      "text": "Volano ACS Cordivari Volano BS GBF 200, 200 l (ordine e targa): confermato.",
+      "status": "approved"
+    },
+    {
+      "id": "a-centralizzata",
+      "text": "Produzione di ACS centralizzata (confermato): il vaso sanitario va sull'ingresso acqua fredda del bollitore, fra il non ritorno e il bollitore.",
+      "status": "approved"
+    },
+    {
+      "id": "a-bollitore",
+      "text": "Bollitore da 1000 l a un solo serpentino, esistente, in centrale interrata, caricato dal volano ACS tramite il circolatore sulla mandata del secondario (confermato).",
+      "status": "approved"
+    },
+    {
+      "id": "a-limite-intervento",
+      "text": "Limite dell'intervento: il retrofit si ferma in centrale alta; il circuito di carico si e' riattaccato alle tubazioni esistenti che scendono al serpentino del bollitore. Bollitore, acqua fredda, ACS, ricircolo (con le sue pompe) sono esistenti in centrale interrata; collettori d'appartamento e terminali sono esistenti. Le reti acqua-fredda e acs sono marcate esistenti; per tutto il resto la skill non sa ancora marcare come esistenti singoli pezzi o tratti, ne' disegnare il limite d'intervento.",
+      "status": "proposed"
+    },
+    {
+      "id": "a-ricircolo",
+      "text": "Il ricircolo ACS torna dalle utenze e rientra nel bollitore dal suo attacco di ricircolo, con la propria pompa (esistente, in centrale interrata).",
+      "status": "approved"
+    },
+    {
+      "id": "a-regolazione",
+      "text": "Logica di regolazione non disegnata: cascata delle 4 PdC del riscaldamento, coppia master/slave delle 2 PdC ACS.",
+      "status": "approved"
+    },
+    {
+      "id": "a-potenze",
+      "text": "6 PdC Shenling HPM-V150W/R3 da 15 kW (targa, resa nominale EN 14511) = 90 kW, regime oltre 35 kW. Marche e modelli confermati dal progettista.",
+      "status": "approved"
+    },
+    {
+      "id": "a-tabella",
+      "text": "Per la tabella delle apparecchiature mancano: marca e modello del bollitore 1000 l; sigla delle due Grundfos MAGNA di macrozona; marca e modello della pompa di ricircolo; portata e prevalenza di tutti i circolatori. Se non arrivano, quelle celle restano vuote.",
+      "status": "proposed"
+    },
+    {
+      "id": "a-diametri",
+      "text": "Diametri: non ancora chiesti esplicitamente. Dati disponibili: riscaldamento 45/40 °C (delta T 5 K, scritto sulle PdC del riscaldamento); circuito di carico del bollitore circa 10 K (60/50 o 65/55 °C, da verificare, scritto a parole sul circolatore). Mancano il salto termico del primario ACS e la potenza o portata del circuito di carico.",
+      "status": "proposed"
+    },
+    {
+      "id": "a-cartiglio",
+      "text": "Tavola da lasciare in centrale e da allegare alla dichiarazione di conformita'. Mancano titolo e numero della tavola (proposta: 'Schema funzionale centrale termica', T4).",
+      "status": "proposed"
+    },
+    {
+      "id": "a-ricostruzione",
+      "text": "Ricostruito dalla tavola del caso fatta con la 1.3.0 nella sessione di lavoro del PO (3 ottobre 2026, I-200 … I-205): stessi pezzi e stesse scelte, nomi nostri, senza i dati del cliente.",
+      "status": "approved"
+    }
+  ],
+  "rule_applications": [],
+  "subsystems": [],
+  "sheets": [],
+  "accessori_tolti": [
+    {
+      "pezzo": "thermometer-pdc-r1-water-supply",
+      "motivo": "sul costruito non c'e'"
+    },
+    {
+      "pezzo": "thermometer-pdc-r2-water-supply",
+      "motivo": "sul costruito non c'e'"
+    },
+    {
+      "pezzo": "thermometer-pdc-r3-water-supply",
+      "motivo": "sul costruito non c'e'"
+    },
+    {
+      "pezzo": "thermometer-pdc-r4-water-supply",
+      "motivo": "sul costruito non c'e'"
+    },
+    {
+      "pezzo": "thermometer-pdc-a1-water-supply",
+      "motivo": "sul costruito non c'e'"
+    },
+    {
+      "pezzo": "thermometer-pdc-a2-water-supply",
+      "motivo": "sul costruito non c'e'"
+    },
+    {
+      "pezzo": "air-separator-tj-pr-3-b",
+      "motivo": "T3: sul costruito non c'e'"
+    },
+    {
+      "pezzo": "air-separator-tj-pa-b",
+      "motivo": "T3: sul costruito non c'e'"
+    },
+    {
+      "pezzo": "dirt-separator-ts-pr-3-a",
+      "motivo": "T4: sul costruito non c'e'"
+    },
+    {
+      "pezzo": "dirt-separator-ts-pa-a",
+      "motivo": "T4: sul costruito non c'e'"
+    },
+    {
+      "pezzo": "expansion-connection-ts-pr-3-a",
+      "motivo": "T5: sta sul ritorno del secondario",
+      "altrove": "tj-mz.b"
+    },
+    {
+      "pezzo": "expansion-connection-ts-pa-a",
+      "motivo": "T5: sta sul ritorno del secondario",
+      "altrove": "volano-acs.secondary_in"
+    },
+    {
+      "pezzo": "pressure-gauge-ts-pr-3-a",
+      "motivo": "T5: sta sul ritorno del secondario",
+      "altrove": "tj-mz.b"
+    },
+    {
+      "pezzo": "pressure-gauge-ts-pa-a",
+      "motivo": "T5: sta sul ritorno del secondario",
+      "altrove": "volano-acs.secondary_in"
+    },
+    {
+      "pezzo": "valve-isolation-fc-mz1-1-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-rad-mz1-1-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-fc-mz1-2-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-rad-mz1-2-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-fc-mz1-3-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-rad-mz1-3-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-fc-mz2-1-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-rad-mz2-1-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-fc-mz2-2-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-rad-mz2-2-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-fc-mz2-3-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-rad-mz2-3-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-fc-mz2-4-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-rad-mz2-4-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-fc-mz2-5-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-rad-mz2-5-out",
+      "motivo": "T1: le valvole stanno sulle uscite del collettore"
+    },
+    {
+      "pezzo": "valve-isolation-volano-acs-aux-in",
+      "motivo": "sul costruito non c'e'"
+    },
+    {
+      "pezzo": "valve-isolation-volano-acs-aux-out",
+      "motivo": "sul costruito non c'e'"
+    }
+  ]
+}

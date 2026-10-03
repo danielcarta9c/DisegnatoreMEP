@@ -433,6 +433,20 @@ class ComponentDefinition(StrictModel):
     un proprio elenco dei mestieri che «si attraversano» (DRAW-006, blocco C).
     """
 
+    passaggi: list[list[str]] = Field(default_factory=list)
+    """I passaggi **interni** di un pezzo che ne ha piu' d'uno, sempre aperti: ogni
+    gruppo e' un insieme di porte che comunicano fra loro, e due gruppi non
+    comunicano mai (REL-009, I-202).
+
+    Vuoto per quasi tutti. Lo dichiara il collettore con mandata e ritorno: dentro
+    di lui l'ingresso comunica con le uscite verso i terminali, e i rientri dai
+    terminali con l'uscita del ritorno — ma la mandata non passa nel ritorno. Chi
+    colora la rete lo attraversa solo dentro un gruppo; senza, la camminata che
+    parte dal volano entrava dalla mandata e usciva dal ritorno, e la colonna di
+    ritorno delle zone si disegnava rossa. Non e' un multivia: niente stati, niente
+    scelta, i passaggi sono quelli e basta.
+    """
+
     symbol_id: str = Field(pattern=ID_PATTERN)
     variant: Variant | None = None
     """Questa voce e' la **variante** di un'altra: la stessa macchina, un altro
@@ -470,6 +484,14 @@ class ComponentDefinition(StrictModel):
         for item in self.hydraulic_states:
             found |= item.linked(port_id)
         return frozenset(found)
+
+    def passaggio(self, port_id: str) -> frozenset[str] | None:
+        """Le porte che comunicano con questa dentro il pezzo, se il pezzo dichiara i
+        propri passaggi; altrimenti niente, e il pezzo si attraversa come sempre."""
+        for gruppo in self.passaggi:
+            if port_id in gruppo:
+                return frozenset(gruppo)
+        return None
 
     def on_board(self, function: str) -> OnBoard:
         """Cosa il catalogo dice di quella funzione dentro il mantello: presente,
@@ -525,6 +547,18 @@ class ComponentDefinition(StrictModel):
         ids = [port.id for port in self.ports]
         if len(ids) != len(set(ids)):
             raise ValueError("duplicate port id")
+        return self
+
+    @model_validator(mode="after")
+    def passages_name_own_ports_once(self) -> "ComponentDefinition":
+        nominate = [porta for gruppo in self.passaggi for porta in gruppo]
+        ignote = sorted(set(nominate) - self.port_ids)
+        if ignote:
+            raise ValueError(f"{self.id}: i passaggi nominano porte che il pezzo non ha: {', '.join(ignote)}")
+        if len(nominate) != len(set(nominate)):
+            raise ValueError(f"{self.id}: una porta sta in due passaggi")
+        if any(len(gruppo) < 2 for gruppo in self.passaggi):
+            raise ValueError(f"{self.id}: un passaggio unisce almeno due porte")
         return self
 
     @model_validator(mode="after")

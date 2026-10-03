@@ -38,6 +38,7 @@ from .geometry import (
     run_intrudes_on,
 )
 from .grid import Cell, GridSpace
+from .hierarchy import Level, hierarchy_of
 from .route import port_aprons, route_sheet
 from .trunks import Trunk
 
@@ -61,6 +62,10 @@ il PM sta guardando — da un accessorio qualunque in mezzo a una tratta.
 **Questo stacco resta quello ordinario**; chi isola l'apparecchio che si
 manutiene usa invece `SNUG_CLEARANCE_MM` (D-120).
 """
+
+PUMP_FUNCTIONS = frozenset({"circulation"})
+"""Chi fa girare l'acqua: la pompa di circolazione, che si disegna su un orizzontale
+quando la tratta ne ha uno (I-204)."""
 
 ISOLATING_FUNCTIONS = SERVICE_ORGAN_FUNCTIONS
 """Chi isola, secondo il catalogo e mai secondo il nome (D-090, D-120).
@@ -631,6 +636,46 @@ def place_inline_accessories(
     # passo di testa, si appoggiava al fianco dell'organo della catena.
     cursor = head_reach + MIN_SPACING_MM if head_reach is not None else 0.0
 
+    # **Una pompa si disegna su un tratto orizzontale, se la sua tratta ne ha uno
+    # che la contiene** (REL-009, I-204). Il PO: «le pompe in parallelo si
+    # disegnano in parallelo, o entrambe verso destra o su o giu', ma non una da
+    # una parte e una dall'altra». La fila si posa avanzando dal capo, sul primo
+    # rettilineo che la contiene: due pompe di zona che partono dallo stesso
+    # raccordo, una sul ramo dritto e una su quello che scende, venivano una
+    # orizzontale e una verticale. Ora la fila che porta una pompa **in parallelo**
+    # — un'altra tratta con una pompa parte o arriva allo stesso pezzo, come in A2 —
+    # comincia sul primo rettilineo orizzontale abbastanza lungo per tutta la fila;
+    # se non ce n'e', o la pompa e' sola, si posa come prima.
+    def has_a_pump(item: Trunk) -> bool:
+        return any(
+            PUMP_FUNCTIONS & set(catalog.get(definitions[component_id]).functions)
+            for component_id in item.inline_component_ids
+        )
+
+    capi = {trunk.start.component_id, trunk.end.component_id}
+    in_parallelo = any(
+        other.connection_ids != trunk.connection_ids
+        and has_a_pump(other)
+        and capi & {other.start.component_id, other.end.component_id}
+        for other in (trunks or [])
+    )
+    if in_parallelo and any(
+        PUMP_FUNCTIONS & set(resolved[index].definition.functions) for index in remaining
+    ):
+        fila = sum(
+            (resolved[index].symbol.manifest.inline_gap_mm or 0.0) + leads[index] + MIN_SPACING_MM
+            for index in remaining
+        )
+        for low, high in stretches(head_mm, tail_mm):
+            # Dopo una curva la fila si stacca di quanto si stacca da un pezzo: la
+            # pompa non si siede sulla piega (B4).
+            inizio = max(low + (END_CLEARANCE_MM if low > head_mm + 1e-9 else 0.0), cursor)
+            if high - inizio < fila - 1e-9:
+                continue
+            if _station_at(points, (inizio + high) / 2).horizontal:
+                cursor = inizio
+                break
+
     for index in remaining:
         component = resolved[index]
         manifest = component.symbol.manifest
@@ -833,15 +878,31 @@ def settle_sheet(
     vie hanno fallito.
     """
     symbols = list(placed)
-    accessories: list[PlacedSymbol] = []
     drawn: list[RoutedTrunk] = []
-    unfit: list[int] = []
+    # **Prima le autostrade** (I-201, I-203). L'ordine in cui le tratte si
+    # instradano decide chi scansa chi: quello che e' gia' disegnato e' un
+    # ostacolo per quello che viene dopo, e gli accessori di una tratta si
+    # posano appena la tratta e' pronta. Fino al 3 ottobre 2026 l'ordine era
+    # quello dei nomi delle tubazioni, e sulla tavola del caso reale uno stacco
+    # di sfiato passato prima della mandata ci aveva posato la sua valvola sopra:
+    # la mandata la scavalcava. Il PO: «disegnata l'autostrada non andrebbe
+    # toccata». Si instradano le autostrade, poi la distribuzione, poi gli
+    # stacchi; a parita' di livello resta l'ordine di prima.
+    levels = hierarchy_of(project, catalog, list(trunks))
+    in_order = sorted(
+        trunks, key=lambda trunk: -int(levels.get(trunk.connection_ids, Level.SERVIZIO))
+    )
+    place_of = {trunk.connection_ids: index for index, trunk in enumerate(trunks)}
+    settled: dict[int, RoutedTrunk] = {}
+    found_by: dict[int, list[PlacedSymbol]] = {}
+    unfit_places: list[int] = []
 
     reserved = frozenset(
         port_aprons(project, list(trunks), placed, catalog, grid).values()
     )
 
     def settle(trunk: Trunk, route: RoutedTrunk) -> list[PlacedSymbol]:
+        place = place_of[trunk.connection_ids]
         try:
             found, pieces = place_inline_accessories(
                 project, trunk, route, catalog, grid, symbols, drawn, reserved, list(trunks)
@@ -849,17 +910,27 @@ def settle_sheet(
         except LayoutError:
             if not tolerant:
                 raise
-            unfit.append(len(drawn))
+            unfit_places.append(place)
             drawn.append(route)
+            settled[place] = route
             return []
         symbols.extend(found)
-        accessories.extend(found)
+        found_by[place] = list(found)
         drawn.append(pieces)
+        settled[place] = pieces
         return found
 
     route_sheet(
-        project, list(trunks), symbols, catalog, grid, settle, tolerant=last_resort
+        project, in_order, symbols, catalog, grid, settle, tolerant=last_resort
     )
+    # Le tratte e gli accessori tornano nell'ordine delle tratte: chi legge la
+    # tavola li trova dove li trovava, e una tavola in cui l'ordine non cambia
+    # niente esce identica byte per byte.
+    places = sorted(settled)
+    accessories = [item for place in places for item in found_by.get(place, [])]
     return SettledSheet(
-        symbols=symbols, accessories=accessories, routes=drawn, unfit=tuple(unfit)
+        symbols=list(placed) + accessories,
+        accessories=accessories,
+        routes=[settled[place] for place in places],
+        unfit=tuple(places.index(place) for place in sorted(unfit_places)),
     )

@@ -4,7 +4,7 @@
 > importanti da fare. merita una release 1.3» (I-191). Scritto il 3 ottobre 2026, sulla 1.2.2.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN ATTESA DEL PO** — i punti 1–4 sono su `main` con la PR #72 e sono usciti nella **1.3.0** (I-199, D-205). **Il punto 5, il caso rifatto, lo fa il PO nella sua sessione di lavoro** con la 1.3.0 (I-200): questa è una sessione di sviluppo della skill. Il lavoro che resta parte da **quello che il PO riporta dal caso**; il limite d'intervento facoltativo (I-195) viene dopo. Se all'avvio il PO non ha portato niente, **si chiede**.
+**Stato:** **IN CORSO** — i punti 1–4 sono nella **1.3.0** (I-199, D-205). Il PO ha rifatto la tavola del caso con la 1.3.0 (I-200) e ne ha riportato i difetti (I-201 … I-205): sono il **punto 6**, e la tavola rifatta torna a lui.
 **Base:** `main` dopo la PR #71 (la 1.2.2).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). Una PR per punto, o per gruppo
@@ -87,6 +87,24 @@ Il grafo anonimo con le scelte del progettista — quello che toglie, sposta, di
 tavola: **al PO**. Restano aperte con il progettista le voci della §6 del documento (titolo e numero della tavola,
 dati della tabella, temperature del secondario ACS, diametri sì o no, pompe di macrozona nuove o esistenti,
 posizione del contabilizzatore).
+
+### 6. Quello che il caso ha riportato (I-201 … I-205) — la 1.3.1
+
+Il PO, sulla tavola del caso fatta con la 1.3.0 nella sua sessione di lavoro. La tavola porta i dati del cliente e **non
+entra nel repository**; il grafo per le prove si ricostruisce anonimo in `docs/collaudi/REL-009/caso-reale-2/`.
+
+1. **Prima le autostrade, e disegnata l'autostrada non si tocca** (I-201, I-203). Il motore instrada nell'ordine dei nomi
+   delle tubazioni: uno stacco che passa prima posa la valvola sulla quota dell'autostrada, e l'autostrada la scavalca.
+2. **Le pompe in parallelo con lo stesso verso** (I-204): A2 lo dice per l'incolonnamento, non per il verso, e non ha un
+   controllo sulla tavola.
+3. **Le dorsali della distribuzione sono autostrade** (I-202, I-205): mandata e ritorno dopo le pompe secondarie corrono
+   insieme, a colonne affiancate, fino ai collettori; i colori giusti.
+4. **Il collettore con ritorno si raccorda ai terminali senza curve inutili** (I-205): gli attacchi del simbolo.
+5. **La tavola del caso rifatta**, al PO.
+
+### 7. Il tempo della skill (I-205)
+
+«La skill gira in 30 minuti buoni»: si misura dove va il tempo, dopo il punto 6.
 
 ### Note di controllo, dal documento
 

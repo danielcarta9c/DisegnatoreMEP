@@ -1,6 +1,6 @@
 {
   "id": "zone-manifold-pair",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "Collettore di zona con ritorno",
   "functions": [
     "distribution"
@@ -9,6 +9,18 @@
     "maintainable",
     "shutoff_ordinary",
     "attachment_inline"
+  ],
+  "passaggi": [
+    [
+      "in",
+      "out_1",
+      "out_2"
+    ],
+    [
+      "ret_1",
+      "ret_2",
+      "out"
+    ]
   ],
   "symbol_id": "zone-manifold-pair",
   "composite": false,

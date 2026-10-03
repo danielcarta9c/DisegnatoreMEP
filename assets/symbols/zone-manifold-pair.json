@@ -2,7 +2,7 @@
   "id": "zone-manifold-pair",
   "version": "1.0.0",
   "name": "Collettore di zona con ritorno",
-  "width_mm": 20.0,
+  "width_mm": 40.0,
   "height_mm": 15.0,
   "allowed_rotations_deg": [
     0
@@ -23,25 +23,25 @@
     {
       "id": "out_1",
       "face": "bottom",
-      "x_mm": 2.5,
+      "x_mm": 7.5,
       "y_mm": 15.0
     },
     {
       "id": "out_2",
       "face": "bottom",
-      "x_mm": 12.5,
+      "x_mm": 27.5,
       "y_mm": 15.0
     },
     {
       "id": "ret_1",
       "face": "bottom",
-      "x_mm": 7.5,
+      "x_mm": 17.5,
       "y_mm": 15.0
     },
     {
       "id": "ret_2",
       "face": "bottom",
-      "x_mm": 17.5,
+      "x_mm": 37.5,
       "y_mm": 15.0
     }
   ],

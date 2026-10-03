@@ -88,7 +88,7 @@ from disegnatore_mep.layout.place import (
 )
 from disegnatore_mep.layout.trunks import Trunk
 from disegnatore_mep.model.project import ProjectModel
-from disegnatore_mep.model.types import IssueSeverity
+from disegnatore_mep.model.types import IssueSeverity, PortFlow
 
 from .issues import ValidationIssue
 
@@ -1464,8 +1464,82 @@ def coppie_che_non_corrono_insieme(
             )
     return trovati
 
+POMPE = frozenset({"circulation"})
+"""Il mestiere della pompa di circolazione, come lo dice il catalogo."""
+
+
+def pompe_in_parallelo_storte(
+    drawing: DrawingGeometry, catalog: ComponentRegistry, project: ProjectModel
+) -> list[ValidationIssue]:
+    """**A2** — le pompe in parallelo si disegnano in parallelo, con lo stesso verso.
+
+    *Fonte:* il PO sulla tavola del primo caso reale (REL-009, **I-204**): «le pompe in
+    parallelo si disegnano in parallelo, o entrambe verso destra o su o giu', ma non una
+    da una parte e una dall'altra». Era la meta' non scritta di A2 (D-118), che diceva
+    di incolonnarle e non da che parte guardano.
+
+    **Chi e' in parallelo** lo dice il grafo, non la geometria: due pompe le cui tratte
+    partono dallo stesso raccordo, o arrivano allo stesso. **Il verso** e' la faccia da
+    cui esce l'acqua, sul simbolo posato: girato e specchiato com'e'.
+    """
+    pompe = {
+        item.id
+        for item in project.components
+        if POMPE & set(catalog.get(item.definition_id).functions)
+    }
+    if len(pompe) < 2:
+        return []
+    porta_d_uscita = {
+        item.id: next(
+            porta.id
+            for porta in catalog.get(item.definition_id).ports
+            if porta.flow is PortFlow.OUT
+        )
+        for item in project.components
+        if item.id in pompe
+    }
+    definizioni = {item.id: item.definition_id for item in project.components}
+    trovati: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        posate = {item.component_id: item for item in sheet.symbols if item.component_id in pompe}
+        verso: dict[str, PortFace] = {}
+        for pompa, simbolo in posate.items():
+            manifesto = catalog.resolve(definizioni[pompa]).symbol.manifest.rotated(
+                simbolo.rotation_deg, simbolo.specchiato
+            )
+            verso[pompa] = manifesto.port(porta_d_uscita[pompa]).face
+        gruppi: dict[tuple[str, str], set[str]] = {}
+        for trunk in tratte_del_progetto(project, catalog):
+            dentro = [item for item in trunk.inline_component_ids if item in verso]
+            for capo in (trunk.start.component_id, trunk.end.component_id):
+                for pompa in dentro:
+                    gruppi.setdefault((trunk.network_id, capo), set()).add(pompa)
+        visti: set[frozenset[str]] = set()
+        for (_, capo), insieme in sorted(gruppi.items()):
+            if len(insieme) < 2 or len({verso[item] for item in insieme}) < 2:
+                continue
+            chiave = frozenset(insieme)
+            if chiave in visti:
+                continue
+            visti.add(chiave)
+            detto = ", ".join(f"{item} verso {verso[item].value}" for item in sorted(insieme))
+            trovati.append(
+                _rilievo(
+                    "PARALLEL_PUMPS_FACE_DIFFERENT_WAYS",
+                    f"la tavola {sheet.sheet_id}: le pompe in parallelo da {capo} guardano da "
+                    f"parti diverse ({detto}): si disegnano in parallelo, con lo stesso verso. "
+                    f"Il motore posa una pompa sul primo rettilineo orizzontale della sua tratta "
+                    f"che la contiene con le sue valvole: dai a ogni tratta quel rettilineo "
+                    f"(A2, I-204)",
+                    [sheet.sheet_id, *sorted(insieme)],
+                )
+            )
+    return trovati
+
+
 CODICE_DELLA_REGOLA: dict[str, str] = {
     "A1": "PIECE_OUTSIDE_ITS_BAND",
+    "A2": "PARALLEL_PUMPS_FACE_DIFFERENT_WAYS",
     "A4": "SERVICE_STUB_LONGER_THAN_ITS_MINIMUM",
     "B1": "HIGHWAY_IS_NOT_STRAIGHT",
     "B3": "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",
@@ -1631,6 +1705,7 @@ def rilievi_delle_regole(
     """
     return [
         *pezzi_fuori_fascia(drawing, catalog, project),
+        *pompe_in_parallelo_storte(drawing, catalog, project),
         *organi_di_servizio_lontani(drawing, frame, catalog, project),
         *autostrade_storte(drawing, catalog, project),
         *macchine_in_parallelo_senza_collettore(drawing, frame, catalog, project),
@@ -1657,6 +1732,7 @@ __all__ = [
     "organi_che_spezzano_il_tratto",
     "organi_di_servizio_lontani",
     "pezzi_fuori_fascia",
+    "pompe_in_parallelo_storte",
     "rilievi_delle_regole",
     "ritorni_sopra_la_mandata",
     "scostamenti_che_tornano_indietro",
