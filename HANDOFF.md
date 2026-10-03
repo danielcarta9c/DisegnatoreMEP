@@ -28,7 +28,8 @@ volano a sei attacchi, collettore con ritorno, confini con l'esistente, giunto a
 - Il documento della sessione di disegno porta i dati del cliente e **non è nel repository**; il grafo anonimo è in
   `docs/collaudi/REL-009/caso-reale-1/`, il rapporto in `docs/collaudi/REL-009/RAPPORTO.md`.
 - **Obsidian**: questa sessione non lo raggiungeva; la nota di allineamento l'ha avuta il PO (I-200).
-- **I numeri**: il prossimo input è **I-201**, la prossima decisione **D-206**.
+- **I-201, aperta**: sulla tavola del caso l'autostrada scavalca le valvole degli stacchi. Causa misurata: il motore instrada nell'ordine alfabetico dei nomi delle tubazioni, non «prima le autostrade» (riproduzione in I-201). La correzione è del motore e cambia le tavole: aspetta il sì del PO.
+- **I numeri**: il prossimo input è **I-202**, la prossima decisione **D-206**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026
 
