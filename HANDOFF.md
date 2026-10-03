@@ -29,7 +29,8 @@ volano a sei attacchi, collettore con ritorno, confini con l'esistente, giunto a
   `docs/collaudi/REL-009/caso-reale-1/`, il rapporto in `docs/collaudi/REL-009/RAPPORTO.md`.
 - **Obsidian**: questa sessione non lo raggiungeva; la nota di allineamento l'ha avuta il PO (I-200).
 - **I-201, aperta**: sulla tavola del caso l'autostrada scavalca le valvole degli stacchi. Causa misurata: il motore instrada nell'ordine alfabetico dei nomi delle tubazioni, non «prima le autostrade» (riproduzione in I-201). La correzione è del motore e cambia le tavole: aspetta il sì del PO.
-- **I numeri**: il prossimo input è **I-202**, la prossima decisione **D-206**.
+- **I-202, aperta**: si aspetta dal PO la tavola completa del caso. Con tavola, rilievi, grafo completo e piano (dati del cliente: solo in sessione, mai nel repository) si fa **l'elenco intero dei difetti con la causa**, prima di toccare il codice. Già segnalati: I-201; nella distribuzione colori sbagliati e niente colonne affiancate a pettine (B11, B12).
+- **I numeri**: il prossimo input è **I-203**, la prossima decisione **D-206**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026
 
