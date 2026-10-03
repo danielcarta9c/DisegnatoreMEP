@@ -11,5 +11,5 @@ def test_package_version() -> None:
     la scrive per intera in testa a `SKILL.md` (I-178, I-187: dalla 1.2.1 il numero ha
     tre cifre, perche' le consegne della beta cambiano solo la terza)."""
     dichiarata = tomllib.loads((ROOT / "pyproject.toml").read_text("utf-8"))["project"]["version"]
-    assert __version__ == dichiarata == "1.3.0"
+    assert __version__ == dichiarata == "1.4.0"
     assert f"**Versione {dichiarata}**" in (ROOT / "skill" / "SKILL.md").read_text("utf-8")

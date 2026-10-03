@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-03, chiusura della sessione — **il pacchetto attivo è `REL-009`, in attesa del PO** (I-200): i punti 1–4 sono su `main` e nella **1.3.0** (PR #72, I-199, D-201 … D-205); la tavola del caso reale la rifà il PO nella sua sessione di lavoro. Prima, lo stesso giorno: la 1.2.2, la prima che si carica (PR #71, D-200).
+**Aggiornato:** 2026-10-03, sera — **la 1.4.0** (`REL-009` punti 6 e 7, I-206, D-206 … D-209): la tavola del caso reale rifatta, approvata dal PO (PR #74), e il disegna sul caso da 107 a 3,4 secondi con le stesse tavole. Il pacchetto attivo resta `REL-009`. Prima, lo stesso giorno: la 1.3.0 (PR #72) e la 1.2.2, la prima che si carica (PR #71).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,30 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 3 ottobre 2026, alla chiusura
+## ▶ Da dove riparte la prossima sessione — scritto il 3 ottobre 2026, sera, alla 1.4.0
+
+**Il pacchetto è `REL-009`** (`ACTIVE_WORK_PACKAGE.md`). La **1.4.0** porta i punti 6 e 7: prima le autostrade
+(D-206), il collettore con ritorno a coppie di 10 e i colori della distribuzione (D-207), le pompe in parallelo con
+lo stesso verso e il controllo A2 (D-208), e il tempo del disegna (D-209). La tavola del caso rifatta è in
+`docs/collaudi/REL-009/caso-reale-2/`, le misure in `docs/collaudi/REL-009/RAPPORTO.md` §6.
+
+- **All'avvio guarda le PR aperte**: la PR della 1.4.0 si fonde solo col sì del PO (D-209 è proposta). Se è ancora
+  aperta, è la prima cosa.
+- **Il tempo**: la posa d'inventario rileggeva tutte le tratte per ogni attacco (74 milioni di confronti sul caso);
+  ora un indice, e la catena di ogni attacco si conta una volta. `disegna` sul caso 3,4 s, sulle tavole agli atti
+  sotto i due secondi. **I 30 minuti del PO non stanno nel motore della 1.3.0**: per sapere dove vanno serve il
+  registro di una sessione vera, e si chiede al PO.
+- **Le misure si rifanno con `docs/collaudi/REL-009/la-1.4-sulle-tavole-agli-atti/banco.py`**, e un confronto fra
+  due copie del codice si lancia **con `PYTHONPATH` sul `src/` di ciascuna**: il pacchetto è installato in modo
+  modificabile, e una copia di `main` senza `PYTHONPATH` importa il codice del ramo — è successo in questa sessione,
+  e il primo «54 su 54 identici» non valeva.
+- Restano nel pacchetto: il **limite d'intervento** facoltativo (I-195, D-202); la tavola di consegna del caso, che
+  fa il PO nella sua sessione di lavoro (I-200); due cose viste e non toccate (RAPPORTO §5 e §6) — il controllo B1
+  che conta due pieghe in più sul ritorno della zona lontana, e i cinque piani di `PROVA-PIANO` fermi a D-182.
+- **Obsidian**: non raggiungibile da questa sessione (I-200 resta aperta).
+- **I numeri**: il prossimo input è **I-207**, la prossima decisione **D-210**.
+
+## Da dove ripartiva — scritto il 3 ottobre 2026, alla chiusura della 1.3.0
 
 **Il pacchetto è `REL-009`** (`ACTIVE_WORK_PACKAGE.md`), **in attesa del PO**. La 1.3.0 è su `main` e in
 `releases/latest/` (PR #72): togliere e spostare gli accessori delle regole (`accessori_tolti`, `altrove`), il bordo
