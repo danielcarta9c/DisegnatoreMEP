@@ -50,6 +50,7 @@ from disegnatore_mep.validation.regole import (
     organi_che_spezzano_il_tratto,
     organi_di_servizio_lontani,
     pezzi_fuori_fascia,
+    pompe_in_parallelo_storte,
     rilievi_delle_regole,
     ritorni_sopra_la_mandata,
     scostamenti_che_tornano_indietro,
@@ -817,6 +818,7 @@ def test_b4_un_organo_sulla_piega_e_un_rilievo() -> None:
 
 CODICI = {
     "A1": "PIECE_OUTSIDE_ITS_BAND",
+    "A2": "PARALLEL_PUMPS_FACE_DIFFERENT_WAYS",
     "A4": "SERVICE_STUB_LONGER_THAN_ITS_MINIMUM",
     "B1": "HIGHWAY_IS_NOT_STRAIGHT",
     "B3": "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",
@@ -1182,3 +1184,54 @@ def test_b10_uno_spigolo_non_e_una_corsia() -> None:
     mandata, ritorno = _coppia(115, 100)
     mandata = mandata.model_copy(update={"segments": [_punti((10, 115), (15, 115))]})
     assert ritorni_sopra_la_mandata(tavola([], [mandata, ritorno])) == []
+
+
+# --- A2: le pompe in parallelo, con lo stesso verso (REL-009, I-204) ----------
+
+
+def _due_zone(rotazione_della_seconda: int) -> tuple[ProjectModel, DrawingGeometry]:
+    """Un volano, un raccordo che divide, due pompe sui due rami: le pompe sono in linea,
+    e sulla tavola stanno con la rotazione data."""
+    project = impianto(
+        [
+            ("volano", "buffer-four-port"),
+            ("divide", "tee-split"),
+            ("pompa-1", "pump-circulator"),
+            ("pompa-2", "pump-circulator"),
+            ("zona-1", "fan-coil"),
+            ("zona-2", "fan-coil"),
+            ("unisce", "tee-junction"),
+        ],
+        [
+            tubo("m0", ("volano", "secondary_out"), ("divide", "a")),
+            tubo("m1", ("divide", "b"), ("pompa-1", "a")),
+            tubo("m2", ("pompa-1", "b"), ("zona-1", "in")),
+            tubo("m3", ("divide", "c"), ("pompa-2", "a")),
+            tubo("m4", ("pompa-2", "b"), ("zona-2", "in")),
+            tubo("r1", ("zona-1", "out"), ("unisce", "a")),
+            tubo("r2", ("zona-2", "out"), ("unisce", "c")),
+            tubo("r0", ("unisce", "b"), ("volano", "secondary_in")),
+            tubo("pv", ("volano", "primary_out"), ("volano", "primary_in")),
+        ],
+    )
+    registry = catalogo()
+    symbols = posa(
+        project,
+        registry,
+        {"pompa-1": (60.0, 0.0), "pompa-2": (60.0, 30.0)},
+        {"pompa-2": rotazione_della_seconda},
+    )
+    return project, tavola(symbols, [])
+
+
+def test_le_pompe_in_parallelo_con_lo_stesso_verso_non_si_accusano() -> None:
+    project, drawing = _due_zone(0)
+    assert pompe_in_parallelo_storte(drawing, catalogo(), project) == []
+
+
+def test_una_pompa_girata_rispetto_alla_sua_parallela_si_accusa() -> None:
+    """La tavola del caso reale: una pompa di zona verso destra, l'altra verso l'alto."""
+    project, drawing = _due_zone(270)
+    rilievi = pompe_in_parallelo_storte(drawing, catalogo(), project)
+    assert [item.code for item in rilievi] == ["PARALLEL_PUMPS_FACE_DIFFERENT_WAYS"]
+    assert {"pompa-1", "pompa-2"} <= set(rilievi[0].entity_ids)

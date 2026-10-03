@@ -1503,11 +1503,18 @@ def capped_connection_body(w: float, h: float) -> str:
     )
 
 
-MANIFOLD_PAIR = (20.0, 15.0)
-MANIFOLD_PAIR_SUPPLY = (2.5, 12.5)
+MANIFOLD_PAIR = (40.0, 15.0)
+MANIFOLD_PAIR_SUPPLY = (7.5, 27.5)
 """Le uscite di mandata, sulla faccia di sotto."""
-MANIFOLD_PAIR_RETURN = (7.5, 17.5)
-"""I rientri del ritorno, sulla faccia di sotto, ciascuno accanto alla sua mandata."""
+MANIFOLD_PAIR_RETURN = (17.5, 37.5)
+"""I rientri del ritorno, sulla faccia di sotto, ciascuno 10 mm a destra della sua mandata.
+
+**Come gli attacchi dei terminali** (REL-009, I-205). Ventilconvettore e pannello hanno
+mandata e ritorno a 10 mm sulla stessa faccia: posati sotto la loro coppia con gli attacchi
+in alto, si raccordano con due linee dritte. Con le coppie a 5 mm, mandate e ritorni
+alternati, ogni terminale pagava quattro pieghe — il PO: «paghiamo inutilmente un sacco di
+curve inutili a causa di una cattiva impostazione su quei simboli». Fra un terminale e
+l'altro, larghi 15 mm, restano 5 mm."""
 
 
 def manifold_pair_body(w: float, h: float) -> str:
@@ -1519,27 +1526,22 @@ def manifold_pair_body(w: float, h: float) -> str:
     che ne scavalca un altro."""
     mandata_y, ritorno_y, mezza = 2.5, h - 2.5, 1.0
     varco = 1.0
-    x0 = w * 0.05
+    inizio = 2.0
     corpo = (
-        f'<line x1="0" y1="{n(mandata_y)}" x2="{n(x0)}" y2="{n(mandata_y)}"/>'
-        f'<line x1="0" y1="{n(ritorno_y)}" x2="{n(x0)}" y2="{n(ritorno_y)}"/>'
-        f'<rect x="{n(x0)}" y="{n(mandata_y - mezza)}" width="{n(w - x0)}" height="{n(2 * mezza)}"/>'
+        f'<line x1="0" y1="{n(mandata_y)}" x2="{n(inizio)}" y2="{n(mandata_y)}"/>'
+        f'<line x1="0" y1="{n(ritorno_y)}" x2="{n(inizio)}" y2="{n(ritorno_y)}"/>'
+        f'<rect x="{n(inizio)}" y="{n(mandata_y - mezza)}" width="{n(w - inizio)}" height="{n(2 * mezza)}"/>'
     )
     # La barra del ritorno, a tratti fra una discesa di mandata e l'altra.
-    bordi = [x0]
+    bordi = [inizio]
     for x in MANIFOLD_PAIR_SUPPLY:
         bordi += [x - varco, x + varco]
     bordi.append(w)
-    for x0, x1 in zip(bordi[::2], bordi[1::2], strict=True):
-        if x1 > x0:
+    for da, a in zip(bordi[::2], bordi[1::2], strict=True):
+        if a > da:
             corpo += (
-                f'<line x1="{n(x0)}" y1="{n(ritorno_y - mezza)}" x2="{n(x1)}" y2="{n(ritorno_y - mezza)}"/>'
-                f'<line x1="{n(x0)}" y1="{n(ritorno_y + mezza)}" x2="{n(x1)}" y2="{n(ritorno_y + mezza)}"/>'
+                f'<rect x="{n(da)}" y="{n(ritorno_y - mezza)}" width="{n(a - da)}" height="{n(2 * mezza)}"/>'
             )
-    corpo += (
-        f'<line x1="{n(x0)}" y1="{n(ritorno_y - mezza)}" x2="{n(x0)}" y2="{n(ritorno_y + mezza)}"/>'
-        f'<line x1="{n(w)}" y1="{n(ritorno_y - mezza)}" x2="{n(w)}" y2="{n(ritorno_y + mezza)}"/>'
-    )
     for x in MANIFOLD_PAIR_SUPPLY:
         corpo += f'<line x1="{n(x)}" y1="{n(mandata_y + mezza)}" x2="{n(x)}" y2="{n(h)}"/>'
     for x in MANIFOLD_PAIR_RETURN:

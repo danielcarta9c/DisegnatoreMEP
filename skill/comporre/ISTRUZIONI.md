@@ -61,7 +61,7 @@ Questi sono quelli che incontri quasi sempre:
 | `buffer-two-port` | **25 × 10, coricato** | `a` sinistra +5 · `b` destra +5 — **in asse** · `vent` sopra e `drain` sotto, a x +12,5 · `probe` sotto, a x +17,5 |
 | `dhw-heat-pump` (pompa di calore per ACS) | 25 × 45 | `cold_in` sinistra +37,5 · `dhw_out` sopra, a x +12,5 |
 | `zone-manifold` (collettore di zona) | 40 × 5 | `in` sinistra +2,5 · `out_1` sotto, a x +12,5 · `out_2` sotto, a x +27,5 |
-| `zone-manifold-pair` (collettore con ritorno) | 20 × 15 | `in` sinistra +2,5 · `out` sinistra +12,5 · sotto: `out_1` a x +2,5, `ret_1` a x +7,5, `out_2` a x +12,5, `ret_2` a x +17,5 |
+| `zone-manifold-pair` (collettore con ritorno) | **40 × 15** | `in` sinistra +2,5 · `out` sinistra +12,5 · sotto, **a coppie a 10 mm come i terminali**: `out_1` a x +7,5 e `ret_1` a x +17,5, `out_2` a x +27,5 e `ret_2` a x +37,5 |
 | `buffer-six-port` (volano a sei attacchi) | 25 × 45 | come `buffer-four-port` · in più `aux_in` destra +27,5 e `aux_out` destra +37,5, gli attacchi predisposti |
 | `capped-connection` (attacco predisposto) | 5 × 5 | `a` destra +2,5: il tappo è dall'altra parte |
 | `buffer-combined` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `dhw_out` sopra, a x +7,5 · `cold_in` sinistra +37,5 |
@@ -448,6 +448,43 @@ Tre cose che questa regola vieta, e che si sbagliano sempre:
 **Come si compone un pettine**, in pratica: impila le utenze in colonna, metti le due colonne
 del binario **alla loro sinistra e vicine fra loro**, e posa ogni utenza alla quota che vuoi —
 la coppia le arriva orizzontale, affiancata, e entra da sinistra.
+
+### La distribuzione di una centrale grande (I-204, I-205)
+
+Il PO, sul primo caso reale: «in una centrale grande dove disegniamo la distribuzione anche le
+dorsali mandata-ritorno della distribuzione dopo le pompe secondarie **sono delle autostrade e
+come tali vanno trattate**». E: «le pompe in parallelo si disegnano in parallelo, o entrambe
+verso destra o su o giù, ma non una da una parte e una dall'altra».
+
+1. **La coppia del secondario resta sulle quote del volano** (`secondary_out` +5, `secondary_in`
+   +20) fino alla zona più lontana: è la sua autostrada, dritta. Vaso e manometro che le
+   regole o il progettista mettono sul ritorno pendono **in giù** da lì.
+2. **Le pompe di zona le posa il motore**, sulla loro tratta, e le mette sul **primo rettilineo
+   orizzontale** che contiene valvola, pompa e valvola (circa 35 mm). Dai a ogni tratta di pompa
+   quel rettilineo, e le pompe escono parallele e con lo stesso verso. La zona lontana prende la
+   pompa sulla coppia dritta; quella vicina parte da un raccordo sulla mandata, **scende sotto il
+   ritorno** — lo incrocia una volta — e corre orizzontale con la sua pompa fino alla sua colonna.
+3. **Ogni zona ha le sue due colonne affiancate, a 10 mm** (B12), e i collettori alla loro
+   destra, uno sotto l'altro. Le colonne si ordinano così la coppia gira senza incrociarsi:
+   - la coppia che arriva da sinistra con la mandata sopra scende con **il ritorno dentro e la
+     mandata fuori** (la mandata, che sta sopra, gira più in là);
+   - la zona che arriva con la sola mandata, da sotto il ritorno, ha **la mandata dentro**: il
+     ritorno sale fuori fino alla dorsale.
+   Il ramo verso ogni collettore attraversa l'altra colonna una volta: è il pettine, e va bene.
+4. **Il primo raccordo di una colonna si gira a mano** (C2): dedotto, guarda il raccordo delle
+   pompe che sta a sinistra e prende la coppia di lato — due pieghe in più per linea. Sulla
+   colonna di mandata `"rotazione": 90` (ingresso in alto, prosecuzione in basso, collettore a
+   destra); su quella di ritorno `"rotazione": 90, "specchio": true` (uscita in alto, ingresso
+   dal basso, collettore a destra).
+5. **Il collettore con ritorno prende i terminali sotto la sua coppia**: ventilconvettore e
+   pannello con `"rotazione": 270, "specchio": true` — gli attacchi in alto, la mandata a
+   sinistra —, a x **+5** e **+25** dal collettore, **35 mm più in basso** (la discesa tiene la
+   valvola dell'uscita). Due linee dritte per terminale; collettori uno ogni **60 mm**.
+
+**Prima le autostrade**, anche per il motore (I-201, I-203): instrada le autostrade, poi la
+distribuzione, per ultimi gli stacchi, e un'autostrada disegnata non si sposta più. Uno sfiato
+sul ritorno di una pompa di calore che sale attraverso la mandata posa la sua valvola **oltre**
+l'incrocio: lasciagli sopra la mandata almeno 20 mm per valvola e sfiato.
 
 ### D1 — Il disegno non arriva al bordo
 

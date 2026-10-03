@@ -795,6 +795,30 @@
       "properties": {}
     },
     {
+      "id": "valvola-sfiato-volano-risc",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "sfiato-volano-risc",
+      "definition_id": "air-vent",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "valvola-sfiato-volano-acs",
+      "definition_id": "valve-isolation",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "sfiato-volano-acs",
+      "definition_id": "air-vent",
+      "tag": null,
+      "properties": {}
+    },
+    {
       "id": "contatore",
       "definition_id": "heat-meter",
       "tag": null,
@@ -1981,6 +2005,54 @@
       "id": "t148",
       "endpoint_a": {
         "component_id": "volano-risc",
+        "port_id": "vent"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-sfiato-volano-risc",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t149",
+      "endpoint_a": {
+        "component_id": "valvola-sfiato-volano-risc",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "sfiato-volano-risc",
+        "port_id": "a"
+      },
+      "network_id": "primario-risc"
+    },
+    {
+      "id": "t150",
+      "endpoint_a": {
+        "component_id": "volano-acs",
+        "port_id": "vent"
+      },
+      "endpoint_b": {
+        "component_id": "valvola-sfiato-volano-acs",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t151",
+      "endpoint_a": {
+        "component_id": "valvola-sfiato-volano-acs",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "sfiato-volano-acs",
+        "port_id": "a"
+      },
+      "network_id": "primario-acs"
+    },
+    {
+      "id": "t152",
+      "endpoint_a": {
+        "component_id": "volano-risc",
         "port_id": "primary_out"
       },
       "endpoint_b": {
@@ -1990,7 +2062,7 @@
       "network_id": "primario-risc"
     },
     {
-      "id": "t149",
+      "id": "t153",
       "endpoint_a": {
         "component_id": "contatore",
         "port_id": "b"
@@ -2002,7 +2074,7 @@
       "network_id": "primario-risc"
     },
     {
-      "id": "t150",
+      "id": "t154",
       "endpoint_a": {
         "component_id": "coll-mz1-1",
         "port_id": "out_1"
@@ -2014,7 +2086,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t151",
+      "id": "t155",
       "endpoint_a": {
         "component_id": "valvola-out1-mz1-1",
         "port_id": "b"
@@ -2026,7 +2098,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t152",
+      "id": "t156",
       "endpoint_a": {
         "component_id": "fc-mz1-1",
         "port_id": "out"
@@ -2038,7 +2110,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t153",
+      "id": "t157",
       "endpoint_a": {
         "component_id": "coll-mz1-1",
         "port_id": "out_2"
@@ -2050,7 +2122,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t154",
+      "id": "t158",
       "endpoint_a": {
         "component_id": "valvola-out2-mz1-1",
         "port_id": "b"
@@ -2062,7 +2134,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t155",
+      "id": "t159",
       "endpoint_a": {
         "component_id": "rad-mz1-1",
         "port_id": "out"
@@ -2074,7 +2146,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t156",
+      "id": "t160",
       "endpoint_a": {
         "component_id": "coll-mz1-1",
         "port_id": "out"
@@ -2086,7 +2158,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t157",
+      "id": "t161",
       "endpoint_a": {
         "component_id": "coll-mz1-2",
         "port_id": "out_1"
@@ -2098,7 +2170,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t158",
+      "id": "t162",
       "endpoint_a": {
         "component_id": "valvola-out1-mz1-2",
         "port_id": "b"
@@ -2110,7 +2182,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t159",
+      "id": "t163",
       "endpoint_a": {
         "component_id": "fc-mz1-2",
         "port_id": "out"
@@ -2122,7 +2194,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t160",
+      "id": "t164",
       "endpoint_a": {
         "component_id": "coll-mz1-2",
         "port_id": "out_2"
@@ -2134,7 +2206,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t161",
+      "id": "t165",
       "endpoint_a": {
         "component_id": "valvola-out2-mz1-2",
         "port_id": "b"
@@ -2146,7 +2218,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t162",
+      "id": "t166",
       "endpoint_a": {
         "component_id": "rad-mz1-2",
         "port_id": "out"
@@ -2158,7 +2230,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t163",
+      "id": "t167",
       "endpoint_a": {
         "component_id": "coll-mz1-2",
         "port_id": "out"
@@ -2170,7 +2242,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t164",
+      "id": "t168",
       "endpoint_a": {
         "component_id": "coll-mz1-3",
         "port_id": "out_1"
@@ -2182,7 +2254,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t165",
+      "id": "t169",
       "endpoint_a": {
         "component_id": "valvola-out1-mz1-3",
         "port_id": "b"
@@ -2194,7 +2266,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t166",
+      "id": "t170",
       "endpoint_a": {
         "component_id": "fc-mz1-3",
         "port_id": "out"
@@ -2206,7 +2278,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t167",
+      "id": "t171",
       "endpoint_a": {
         "component_id": "coll-mz1-3",
         "port_id": "out_2"
@@ -2218,7 +2290,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t168",
+      "id": "t172",
       "endpoint_a": {
         "component_id": "valvola-out2-mz1-3",
         "port_id": "b"
@@ -2230,7 +2302,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t169",
+      "id": "t173",
       "endpoint_a": {
         "component_id": "rad-mz1-3",
         "port_id": "out"
@@ -2242,7 +2314,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t170",
+      "id": "t174",
       "endpoint_a": {
         "component_id": "coll-mz1-3",
         "port_id": "out"
@@ -2254,7 +2326,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t171",
+      "id": "t175",
       "endpoint_a": {
         "component_id": "coll-mz2-1",
         "port_id": "out_1"
@@ -2266,7 +2338,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t172",
+      "id": "t176",
       "endpoint_a": {
         "component_id": "valvola-out1-mz2-1",
         "port_id": "b"
@@ -2278,7 +2350,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t173",
+      "id": "t177",
       "endpoint_a": {
         "component_id": "fc-mz2-1",
         "port_id": "out"
@@ -2290,7 +2362,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t174",
+      "id": "t178",
       "endpoint_a": {
         "component_id": "coll-mz2-1",
         "port_id": "out_2"
@@ -2302,7 +2374,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t175",
+      "id": "t179",
       "endpoint_a": {
         "component_id": "valvola-out2-mz2-1",
         "port_id": "b"
@@ -2314,7 +2386,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t176",
+      "id": "t180",
       "endpoint_a": {
         "component_id": "rad-mz2-1",
         "port_id": "out"
@@ -2326,7 +2398,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t177",
+      "id": "t181",
       "endpoint_a": {
         "component_id": "coll-mz2-1",
         "port_id": "out"
@@ -2338,7 +2410,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t178",
+      "id": "t182",
       "endpoint_a": {
         "component_id": "coll-mz2-2",
         "port_id": "out_1"
@@ -2350,7 +2422,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t179",
+      "id": "t183",
       "endpoint_a": {
         "component_id": "valvola-out1-mz2-2",
         "port_id": "b"
@@ -2362,7 +2434,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t180",
+      "id": "t184",
       "endpoint_a": {
         "component_id": "fc-mz2-2",
         "port_id": "out"
@@ -2374,7 +2446,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t181",
+      "id": "t185",
       "endpoint_a": {
         "component_id": "coll-mz2-2",
         "port_id": "out_2"
@@ -2386,7 +2458,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t182",
+      "id": "t186",
       "endpoint_a": {
         "component_id": "valvola-out2-mz2-2",
         "port_id": "b"
@@ -2398,7 +2470,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t183",
+      "id": "t187",
       "endpoint_a": {
         "component_id": "rad-mz2-2",
         "port_id": "out"
@@ -2410,7 +2482,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t184",
+      "id": "t188",
       "endpoint_a": {
         "component_id": "coll-mz2-2",
         "port_id": "out"
@@ -2422,7 +2494,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t185",
+      "id": "t189",
       "endpoint_a": {
         "component_id": "coll-mz2-3",
         "port_id": "out_1"
@@ -2434,7 +2506,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t186",
+      "id": "t190",
       "endpoint_a": {
         "component_id": "valvola-out1-mz2-3",
         "port_id": "b"
@@ -2446,7 +2518,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t187",
+      "id": "t191",
       "endpoint_a": {
         "component_id": "fc-mz2-3",
         "port_id": "out"
@@ -2458,7 +2530,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t188",
+      "id": "t192",
       "endpoint_a": {
         "component_id": "coll-mz2-3",
         "port_id": "out_2"
@@ -2470,7 +2542,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t189",
+      "id": "t193",
       "endpoint_a": {
         "component_id": "valvola-out2-mz2-3",
         "port_id": "b"
@@ -2482,7 +2554,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t190",
+      "id": "t194",
       "endpoint_a": {
         "component_id": "rad-mz2-3",
         "port_id": "out"
@@ -2494,7 +2566,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t191",
+      "id": "t195",
       "endpoint_a": {
         "component_id": "coll-mz2-3",
         "port_id": "out"
@@ -2506,7 +2578,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t192",
+      "id": "t196",
       "endpoint_a": {
         "component_id": "coll-mz2-4",
         "port_id": "out_1"
@@ -2518,7 +2590,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t193",
+      "id": "t197",
       "endpoint_a": {
         "component_id": "valvola-out1-mz2-4",
         "port_id": "b"
@@ -2530,7 +2602,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t194",
+      "id": "t198",
       "endpoint_a": {
         "component_id": "fc-mz2-4",
         "port_id": "out"
@@ -2542,7 +2614,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t195",
+      "id": "t199",
       "endpoint_a": {
         "component_id": "coll-mz2-4",
         "port_id": "out_2"
@@ -2554,7 +2626,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t196",
+      "id": "t200",
       "endpoint_a": {
         "component_id": "valvola-out2-mz2-4",
         "port_id": "b"
@@ -2566,7 +2638,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t197",
+      "id": "t201",
       "endpoint_a": {
         "component_id": "rad-mz2-4",
         "port_id": "out"
@@ -2578,7 +2650,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t198",
+      "id": "t202",
       "endpoint_a": {
         "component_id": "coll-mz2-4",
         "port_id": "out"
@@ -2590,7 +2662,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t199",
+      "id": "t203",
       "endpoint_a": {
         "component_id": "coll-mz2-5",
         "port_id": "out_1"
@@ -2602,7 +2674,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t200",
+      "id": "t204",
       "endpoint_a": {
         "component_id": "valvola-out1-mz2-5",
         "port_id": "b"
@@ -2614,7 +2686,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t201",
+      "id": "t205",
       "endpoint_a": {
         "component_id": "fc-mz2-5",
         "port_id": "out"
@@ -2626,7 +2698,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t202",
+      "id": "t206",
       "endpoint_a": {
         "component_id": "coll-mz2-5",
         "port_id": "out_2"
@@ -2638,7 +2710,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t203",
+      "id": "t207",
       "endpoint_a": {
         "component_id": "valvola-out2-mz2-5",
         "port_id": "b"
@@ -2650,7 +2722,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t204",
+      "id": "t208",
       "endpoint_a": {
         "component_id": "rad-mz2-5",
         "port_id": "out"
@@ -2662,7 +2734,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t205",
+      "id": "t209",
       "endpoint_a": {
         "component_id": "coll-mz2-5",
         "port_id": "out"
@@ -2674,7 +2746,7 @@
       "network_id": "secondario-risc"
     },
     {
-      "id": "t206",
+      "id": "t210",
       "endpoint_a": {
         "component_id": "solare-mandata",
         "port_id": "a"
@@ -2686,7 +2758,7 @@
       "network_id": "predisposizione"
     },
     {
-      "id": "t207",
+      "id": "t211",
       "endpoint_a": {
         "component_id": "volano-acs",
         "port_id": "aux_out"
@@ -2698,7 +2770,7 @@
       "network_id": "predisposizione"
     },
     {
-      "id": "t208",
+      "id": "t212",
       "endpoint_a": {
         "component_id": "acquedotto",
         "port_id": "a"
@@ -2710,7 +2782,7 @@
       "network_id": "acqua-fredda"
     },
     {
-      "id": "t209",
+      "id": "t213",
       "endpoint_a": {
         "component_id": "riduttore",
         "port_id": "b"
@@ -2938,11 +3010,11 @@
       "motivo": "T1: le valvole stanno sulle uscite del collettore"
     },
     {
-      "pezzo": "valve-isolation-solare-mandata-a",
+      "pezzo": "valve-isolation-volano-acs-aux-in",
       "motivo": "sul costruito non c'e'"
     },
     {
-      "pezzo": "valve-isolation-solare-ritorno-a",
+      "pezzo": "valve-isolation-volano-acs-aux-out",
       "motivo": "sul costruito non c'e'"
     }
   ]

@@ -33,7 +33,8 @@ volano a sei attacchi, collettore con ritorno, confini con l'esistente, giunto a
 - **I-203, aperta**: il PO ha mandato la tavola completa (non nel repository) e detta i difetti uno per uno; il primo è I-201, con il principio «disegnata l'autostrada non andrebbe toccata».
 - **I-204, aperta**: le pompe in parallelo con lo stesso verso (A2 non ha un controllo sulla tavola).
 - **I-205**: le dorsali della distribuzione sono autostrade; il collettore si raccorda male ai terminali; «procediamo», e la tavola rifatta al PO. Il tempo della skill (30 minuti) dopo. È `REL-009` punti 6 e 7.
-- **I numeri**: il prossimo input è **I-206**, la prossima decisione **D-206**.
+- **Punto 6 sul ramo, in PR #74** (D-206 … D-208 proposte): prima le autostrade, pompe in parallelo, colori della distribuzione, collettore 40 × 15, la tavola del caso rifatta in `docs/collaudi/REL-009/caso-reale-2/`. Aspetta il sì del PO. Poi il punto 7, il tempo (107 s per disegnare il caso una volta), e la 1.3.1.
+- **I numeri**: il prossimo input è **I-206**, la prossima decisione **D-209**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026
 

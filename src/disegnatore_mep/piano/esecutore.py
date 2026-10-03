@@ -84,6 +84,15 @@ _VERSO: dict[PortFace, tuple[float, float]] = {
 """Da che parte guarda ciascuna faccia, con y verso il basso come in SVG."""
 
 
+_FOGLIO_DELL_INVENTARIO = SheetFrame(
+    standard=ORDINARY_FRAMES[-1].standard.model_copy(
+        update={"sheet_width_mm": 4000.0, "sheet_height_mm": 3000.0}
+    )
+)
+"""Il foglio su cui si rifa' la posa d'inventario quando quella sul formato del piano non
+entra: grande abbastanza per qualunque centrale, e mai disegnato."""
+
+
 def _frame(nome: str) -> SheetFrame:
     """La squadratura del formato che il piano ha chiesto."""
     voluta = _LARGHEZZE_MM[nome]
@@ -418,7 +427,16 @@ def esegui_piano(
     # 1. La posa di partenza serve solo come **inventario**: da lei si prendono
     #    i simboli, le rotazioni e la mappa delle porte di ogni pezzo. Le
     #    coordinate che calcola le sovrascrive il piano.
-    partenza = place_sheet(modello, partizione, catalogo, frame, inline)
+    try:
+        partenza = place_sheet(modello, partizione, catalogo, frame, inline)
+    except LayoutError:
+        # **L'inventario non e' la tavola** (REL-009, I-205). Se la posa
+        # automatica non entra nel formato del piano lo si rifa' su un foglio
+        # grande: da lei servono simboli, rotazioni e porte, non le coordinate.
+        # Il 3 ottobre 2026 il caso reale, col collettore largo 40, si fermava
+        # qui su A1 — «the 1 functional bands need 1317.5mm» — con un piano che
+        # posava ogni pezzo dentro l'A1.
+        partenza = place_sheet(modello, partizione, catalogo, _FOGLIO_DELL_INVENTARIO, inline)
     per_id = {item.component_id: item for item in partenza}
 
     ignoti = sorted(set(piano.pezzi) - set(per_id))

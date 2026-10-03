@@ -257,6 +257,7 @@ def test_ogni_regola_misurata_conta_come_violazione() -> None:
     """
     attese = {
         "PIECE_OUTSIDE_ITS_BAND",
+        "PARALLEL_PUMPS_FACE_DIFFERENT_WAYS",
         "SERVICE_STUB_LONGER_THAN_ITS_MINIMUM",
         "HIGHWAY_IS_NOT_STRAIGHT",
         "PARALLEL_MACHINES_WITHOUT_A_COLLECTOR",

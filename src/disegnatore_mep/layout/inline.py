@@ -63,6 +63,10 @@ il PM sta guardando — da un accessorio qualunque in mezzo a una tratta.
 manutiene usa invece `SNUG_CLEARANCE_MM` (D-120).
 """
 
+PUMP_FUNCTIONS = frozenset({"circulation"})
+"""Chi fa girare l'acqua: la pompa di circolazione, che si disegna su un orizzontale
+quando la tratta ne ha uno (I-204)."""
+
 ISOLATING_FUNCTIONS = SERVICE_ORGAN_FUNCTIONS
 """Chi isola, secondo il catalogo e mai secondo il nome (D-090, D-120).
 
@@ -631,6 +635,46 @@ def place_inline_accessories(
     # altri. Senza il passo la coppia di D-120, che rinuncia al proprio
     # passo di testa, si appoggiava al fianco dell'organo della catena.
     cursor = head_reach + MIN_SPACING_MM if head_reach is not None else 0.0
+
+    # **Una pompa si disegna su un tratto orizzontale, se la sua tratta ne ha uno
+    # che la contiene** (REL-009, I-204). Il PO: «le pompe in parallelo si
+    # disegnano in parallelo, o entrambe verso destra o su o giu', ma non una da
+    # una parte e una dall'altra». La fila si posa avanzando dal capo, sul primo
+    # rettilineo che la contiene: due pompe di zona che partono dallo stesso
+    # raccordo, una sul ramo dritto e una su quello che scende, venivano una
+    # orizzontale e una verticale. Ora la fila che porta una pompa **in parallelo**
+    # — un'altra tratta con una pompa parte o arriva allo stesso pezzo, come in A2 —
+    # comincia sul primo rettilineo orizzontale abbastanza lungo per tutta la fila;
+    # se non ce n'e', o la pompa e' sola, si posa come prima.
+    def has_a_pump(item: Trunk) -> bool:
+        return any(
+            PUMP_FUNCTIONS & set(catalog.get(definitions[component_id]).functions)
+            for component_id in item.inline_component_ids
+        )
+
+    capi = {trunk.start.component_id, trunk.end.component_id}
+    in_parallelo = any(
+        other.connection_ids != trunk.connection_ids
+        and has_a_pump(other)
+        and capi & {other.start.component_id, other.end.component_id}
+        for other in (trunks or [])
+    )
+    if in_parallelo and any(
+        PUMP_FUNCTIONS & set(resolved[index].definition.functions) for index in remaining
+    ):
+        fila = sum(
+            (resolved[index].symbol.manifest.inline_gap_mm or 0.0) + leads[index] + MIN_SPACING_MM
+            for index in remaining
+        )
+        for low, high in stretches(head_mm, tail_mm):
+            # Dopo una curva la fila si stacca di quanto si stacca da un pezzo: la
+            # pompa non si siede sulla piega (B4).
+            inizio = max(low + (END_CLEARANCE_MM if low > head_mm + 1e-9 else 0.0), cursor)
+            if high - inizio < fila - 1e-9:
+                continue
+            if _station_at(points, (inizio + high) / 2).horizontal:
+                cursor = inizio
+                break
 
     for index in remaining:
         component = resolved[index]

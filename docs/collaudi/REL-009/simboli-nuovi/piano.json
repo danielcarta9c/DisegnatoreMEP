@@ -78,16 +78,18 @@
       "regola": "mandata del collettore sulla quota del secondario"
     },
     "fancoil": {
-      "x": 275,
-      "y": 40,
+      "x": 325,
+      "y": 37.5,
+      "rotazione": 270,
       "specchio": true,
-      "regola": "attacchi a destra, a sinistra delle discese del primo circuito: mandata e ritorno non si incrociano, e c'e' posto per le intercettazioni"
+      "regola": "sotto la prima coppia del collettore, attacchi in alto: due linee dritte (I-205)"
     },
     "pannello": {
-      "x": 285,
-      "y": 70,
+      "x": 345,
+      "y": 37.5,
+      "rotazione": 270,
       "specchio": true,
-      "regola": "come il ventilconvettore, piu' in basso: il secondo circuito scende accanto al primo"
+      "regola": "sotto la seconda coppia, come il ventilconvettore"
     },
     "tee-filling-unit-pdc-water-return-b": {
       "x": 115,

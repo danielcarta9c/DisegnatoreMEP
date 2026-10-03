@@ -27,6 +27,7 @@ l'altra meta' del circuito.
 """
 
 from collections import defaultdict
+from collections.abc import Callable
 from typing import NamedTuple
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -300,26 +301,48 @@ def _forward_of(
     return not (at_start is PortFlow.IN or at_end is PortFlow.OUT)
 
 
+Arco = tuple[Trunk, str, str, str]
+"""Un arco orientato della camminata del colore: la tratta, il pezzo oltre, l'attacco da
+cui si esce dal pezzo di qua e quello da cui si entra nel pezzo di la'."""
+
+Passaggio = Callable[[str, str], frozenset[str] | None]
+"""Le porte che comunicano con quella data dentro un pezzo che dichiara i propri
+passaggi (`ComponentDefinition.passaggi`); niente per tutti gli altri."""
+
+
+def _nessun_passaggio(component_id: str, port_id: str) -> frozenset[str] | None:
+    return None
+
+
 def _walk_edges(
-    edges: dict[str, list[tuple[Trunk, str]]],
+    edges: dict[str, list[Arco]],
     source: str,
     functions_of: dict[str, frozenset[str]],
+    passaggio: Passaggio = _nessun_passaggio,
 ) -> set[TrunkKey]:
-    """Come `_walk`, su archi gia' orientati: ogni arco porta il pezzo oltre."""
+    """Come `_walk`, su archi gia' orientati: ogni arco porta il pezzo oltre.
+
+    **Dentro un pezzo che dichiara i propri passaggi** si prosegue solo per le porte
+    del passaggio da cui si e' entrati (REL-009, I-202): nel collettore con ritorno la
+    mandata va alle uscite verso i terminali, e non esce dal ritorno."""
     reached: set[TrunkKey] = set()
-    frontier = [source]
-    visited = {source}
+    frontier: list[tuple[str, str | None]] = [(source, None)]
+    visited: set[tuple[str, frozenset[str] | None]] = {(source, None)}
     while frontier:
-        following: list[str] = []
-        for component_id in frontier:
-            for trunk, beyond in edges.get(component_id, ()):
-                reached.add(trunk.connection_ids)
-                if beyond in visited:
+        following: list[tuple[str, str | None]] = []
+        for component_id, entrata in frontier:
+            gruppo = passaggio(component_id, entrata) if entrata is not None else None
+            for trunk, beyond, da, a in edges.get(component_id, ()):
+                if gruppo is not None and da not in gruppo:
                     continue
-                visited.add(beyond)
+                reached.add(trunk.connection_ids)
+                chiave = (beyond, passaggio(beyond, a))
+                if chiave in visited:
+                    continue
+                visited.add(chiave)
                 if functions_of.get(beyond, frozenset()) & LOAD_FUNCTIONS:
                     continue
-                following.append(beyond)
+                following.append((beyond, a))
         frontier = following
     return reached
 
@@ -357,10 +380,16 @@ def _oriented_for_colour(
     for trunk in trunks:
         by_network[trunk.network_id].append(trunk)
 
+    definizioni = {item.id: catalog.get(item.definition_id) for item in project.components}
+
+    def passaggio(component_id: str, port_id: str) -> frozenset[str] | None:
+        definizione = definizioni.get(component_id)
+        return definizione.passaggio(port_id) if definizione is not None else None
+
     oriented: dict[TrunkKey, bool | None] = {}
     for network_id, group in by_network.items():
-        outgoing: dict[str, list[tuple[Trunk, str]]] = defaultdict(list)
-        incoming: dict[str, list[tuple[Trunk, str]]] = defaultdict(list)
+        outgoing: dict[str, list[Arco]] = defaultdict(list)
+        incoming: dict[str, list[Arco]] = defaultdict(list)
         members: list[str] = []
         for trunk in group:
             # Uno stacco non e' strada: chi cammina lungo il percorso non ci
@@ -372,8 +401,8 @@ def _oriented_for_colour(
                 if _forward_of(trunk, ports_of)
                 else (trunk.end, trunk.start)
             )
-            outgoing[head.component_id].append((trunk, tail.component_id))
-            incoming[tail.component_id].append((trunk, head.component_id))
+            outgoing[head.component_id].append((trunk, tail.component_id, head.port_id, tail.port_id))
+            incoming[tail.component_id].append((trunk, head.component_id, tail.port_id, head.port_id))
             for component_id in (head.component_id, tail.component_id):
                 if component_id not in members:
                     members.append(component_id)
@@ -389,10 +418,24 @@ def _oriented_for_colour(
         # l'accumulo ha mandato fuori e che torna a lui — e' il **ritorno**
         # dell'acqua calda, non la sua sorgente. L'acquedotto resta la sorgente
         # dell'acqua fredda: il bollitore quella rete la riceve e basta.
+        # Chi questa rete attraversa scambiando calore con un fluido che non e'
+        # il suo — la serpentina di un bollitore — la restituisce come ritorno.
+        scambiano = frozenset(
+            item
+            for item in members
+            if stored.get(item) is not None and stored[item] != medium_of.get(network_id)
+        )
+        # **E non ne e' una sorgente** (REL-009, I-202). Il bollitore e' un accumulo,
+        # ma della serpentina e' l'utilizzatore: sul circuito di carico, volano e
+        # bollitore erano tutti e due sorgenti, le due camminate si contraddicevano, e
+        # la mandata della pompa di carico ereditava il ritorno che entra nel volano —
+        # blu, sulla tavola del caso reale ricostruito.
         emitters = [
             item
             for item in members
-            if outgoing.get(item) and _rank(functions_of.get(item, frozenset())) > 0
+            if outgoing.get(item)
+            and _rank(functions_of.get(item, frozenset())) > 0
+            and item not in scambiano
         ]
         feeders = [item for item in members if not incoming.get(item)]
         # **Un attacco predisposto sta per la macchina che verra'** (REL-009, I-197):
@@ -421,34 +464,28 @@ def _oriented_for_colour(
         supply: set[TrunkKey] = set()
         returns: set[TrunkKey] = set()
         for source in sources:
-            supply |= _walk_edges(outgoing, source, functions_of)
-            returns |= _walk_edges(incoming, source, functions_of)
+            supply |= _walk_edges(outgoing, source, functions_of, passaggio)
+            returns |= _walk_edges(incoming, source, functions_of, passaggio)
         if sources == feeders and feeders and all(
             PROVISION_FUNCTION in functions_of.get(item, frozenset()) for item in feeders
         ):
             for pozzo in predisposti_che_ricevono:
-                returns |= _walk_edges(incoming, pozzo, functions_of)
+                returns |= _walk_edges(incoming, pozzo, functions_of, passaggio)
         for trunk in group:
             key = trunk.connection_ids
             in_supply, in_return = key in supply, key in returns
             oriented[key] = None if in_supply == in_return else in_supply
-        # Chi questa rete attraversa scambiando calore con un fluido che non e'
-        # il suo — la serpentina di un bollitore — la restituisce come ritorno.
-        scambiano = frozenset(
-            item
-            for item in members
-            if stored.get(item) is not None and stored[item] != medium_of.get(network_id)
-        )
-        _eredita_da_monte(outgoing, incoming, functions_of, oriented, scambiano)
+        _eredita_da_monte(outgoing, incoming, functions_of, oriented, scambiano, passaggio)
     return oriented
 
 
 def _eredita_da_monte(
-    outgoing: dict[str, list[tuple[Trunk, str]]],
-    incoming: dict[str, list[tuple[Trunk, str]]],
+    outgoing: dict[str, list[Arco]],
+    incoming: dict[str, list[Arco]],
     functions_of: dict[str, frozenset[str]],
     oriented: dict[TrunkKey, bool | None],
     scambiano: frozenset[str] = frozenset(),
+    passaggio: Passaggio = _nessun_passaggio,
 ) -> None:
     """**Dove le camminate non decidono, il fluido tiene il ruolo che ha a
     monte**, finche' non attraversa un terminale o una serpentina.
@@ -484,15 +521,19 @@ def _eredita_da_monte(
     while cambiato:
         cambiato = False
         for testa, uscenti in outgoing.items():
-            for trunk, _ in uscenti:
+            for trunk, _, da, _ in uscenti:
                 if oriented.get(trunk.connection_ids) is not None:
                     continue
                 if testa in scambiano or functions_of.get(testa, frozenset()) & TERMINAL_FUNCTIONS:
                     ruolo: bool | None = False
                 else:
+                    # Dentro un pezzo coi passaggi dichiarati il ruolo viene solo da chi
+                    # entra nello stesso passaggio (I-202).
+                    gruppo = passaggio(testa, da)
                     entranti = {
                         oriented.get(altra.connection_ids)
-                        for altra, _ in incoming.get(testa, ())
+                        for altra, _, dove, _ in incoming.get(testa, ())
+                        if gruppo is None or dove in gruppo
                     }
                     ruolo = entranti.pop() if len(entranti) == 1 else None
                 if ruolo is None:
