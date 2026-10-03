@@ -1728,10 +1728,14 @@ def place_sheet(
     placed: list[PlacedSymbol] = []
     boxes: list[tuple[float, float, float, float]] = []
 
+    stanze_delle_catene: StanzeDelleCatene = {}
+
     def corridors() -> list[tuple[float, float, float, float]]:
         """Il rettilineo che la catena della macchina pretende davanti a ogni
         attacco gia' posato (I-044), come area da lasciare libera."""
-        return port_corridors(project, catalog, partition.trunks, placed, step)
+        return port_corridors(
+            project, catalog, partition.trunks, placed, step, stanze_delle_catene
+        )
 
     def off_the_corridors(left: float, top: float, width: float, height: float) -> bool:
         return not any(
@@ -2499,24 +2503,55 @@ def stub_minimum_mm(
     return ceil(wanted / step_mm - 1e-9) * step_mm
 
 
+CapiDelleTratte = dict[tuple[str, str], tuple[Trunk, bool]]
+"""Ogni attacco che fa da capo a una tratta: la tratta e se ne e' l'inizio."""
+
+
+def capi_delle_tratte(trunks: Sequence[Trunk]) -> CapiDelleTratte:
+    """Gli attacchi che fanno da capo alle tratte, ciascuno con la **prima** tratta che
+    lo tocca, e con l'inizio prima della fine: lo stesso ordine in cui
+    `chain_room_of_port_mm` le scorreva una per una.
+
+    **Misurato il 3 ottobre 2026** (REL-009, punto 7): sul caso reale — 137 tratte — la
+    posa d'inventario chiedeva la catena di un attacco 460 mila volte, e ogni domanda
+    rileggeva tutte le tratte confrontando gli attacchi come modelli: 74 milioni di
+    confronti, quasi tutto il minuto e mezzo del disegna. Letti una volta in un indice,
+    la risposta e' la stessa.
+    """
+    found: CapiDelleTratte = {}
+    for trunk in trunks:
+        found.setdefault((trunk.start.component_id, trunk.start.port_id), (trunk, True))
+        found.setdefault((trunk.end.component_id, trunk.end.port_id), (trunk, False))
+    return found
+
+
 def chain_room_of_port_mm(
     project: ProjectModel,
     catalog: ComponentRegistry,
     trunks: Sequence[Trunk],
     ref: PortRef,
     horizontal: bool,
+    capi: CapiDelleTratte | None = None,
 ) -> float:
     """Il rettilineo che la catena della macchina occupa da quell'attacco
     (I-044): lo stesso che l'instradatore imporra' uscendo dalla porta. Zero
-    dove l'attacco non regge una catena."""
-    for trunk in trunks:
-        if trunk.start == ref:
-            head, _ = machine_chains(project, catalog, trunk)
-            return chain_room_mm(project, catalog, head, horizontal)
-        if trunk.end == ref:
-            _, tail = machine_chains(project, catalog, trunk)
-            return chain_room_mm(project, catalog, tail, horizontal)
-    return 0.0
+    dove l'attacco non regge una catena.
+
+    `capi` e' l'indice di `capi_delle_tratte` per quelle stesse tratte, per chi lo
+    chiede per molti attacchi di fila."""
+    capo = (capi if capi is not None else capi_delle_tratte(trunks)).get(
+        (ref.component_id, ref.port_id)
+    )
+    if capo is None:
+        return 0.0
+    trunk, inizio = capo
+    head, tail = machine_chains(project, catalog, trunk)
+    return chain_room_mm(project, catalog, head if inizio else tail, horizontal)
+
+
+StanzeDelleCatene = dict[tuple[str, str, bool], float]
+"""Il rettilineo della catena di ogni attacco gia' chiesto — `(pezzo, attacco,
+orizzontale)` —, per chi chiede i corridoi molte volte con le stesse tratte."""
 
 
 def port_corridors(
@@ -2525,6 +2560,7 @@ def port_corridors(
     trunks: Sequence[Trunk],
     placed: Sequence[PlacedSymbol],
     step_mm: float,
+    stanze: StanzeDelleCatene | None = None,
 ) -> list[tuple[float, float, float, float]]:
     """Il rettilineo che la catena della macchina pretende davanti a ogni
     attacco gia' posato (I-044), come aree `(x0, y0, x1, y1)` da lasciare libere.
@@ -2538,7 +2574,7 @@ def port_corridors(
     poi paga o compra quella lunghezza.
     """
     return list(
-        port_corridors_by_port(project, catalog, trunks, placed, step_mm).values()
+        port_corridors_by_port(project, catalog, trunks, placed, step_mm, stanze).values()
     )
 
 
@@ -2548,6 +2584,7 @@ def port_corridors_by_port(
     trunks: Sequence[Trunk],
     placed: Sequence[PlacedSymbol],
     step_mm: float,
+    stanze: StanzeDelleCatene | None = None,
 ) -> dict[tuple[str, str], tuple[float, float, float, float]]:
     """Gli stessi corridoi di `port_corridors`, ciascuno col proprio attacco:
     `(pezzo, attacco fisico)`.
@@ -2555,8 +2592,13 @@ def port_corridors_by_port(
     Serve a chi deve sapere **di chi** e' un corridoio: il corridoio davanti
     alla porta di un appeso sta **lungo il suo stesso stacco**, e per l'appeso
     non e' un posto occupato — e' la strada da cui arriva (A4).
+
+    `stanze` lo passa chi chiede i corridoi molte volte con lo stesso modello e
+    le stesse tratte — la posa, a ogni posto che prova —: la catena di un attacco
+    non cambia da una domanda all'altra, e si conta una volta (REL-009, punto 7).
     """
     definitions = {item.id: item.definition_id for item in project.components}
+    capi = capi_delle_tratte(trunks)
     found: dict[tuple[str, str], tuple[float, float, float, float]] = {}
     for item in placed:
         manifest = catalog.resolve(definitions[item.component_id]).symbol.manifest.rotated(
@@ -2564,8 +2606,13 @@ def port_corridors_by_port(
         )
         for port in manifest.ports:
             horizontal = port.face in (PortFace.LEFT, PortFace.RIGHT)
-            ref = PortRef(component_id=item.component_id, port_id=port.id)
-            room = chain_room_of_port_mm(project, catalog, trunks, ref, horizontal)
+            chiave = (item.component_id, port.id, horizontal)
+            room = stanze.get(chiave) if stanze is not None else None
+            if room is None:
+                ref = PortRef(component_id=item.component_id, port_id=port.id)
+                room = chain_room_of_port_mm(project, catalog, trunks, ref, horizontal, capi)
+                if stanze is not None:
+                    stanze[chiave] = room
             if room <= 0:
                 continue
             # Le celle obbligate, la cella in cui la tratta gira, e il bordo

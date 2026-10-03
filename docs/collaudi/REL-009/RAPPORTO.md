@@ -4,6 +4,81 @@ Una sezione per ogni gruppo di punti, la più recente in alto. Il caso è il pri
 ricostruito anonimo in `caso-reale-1/`: il documento della sessione di disegno porta i dati del cliente e non è
 nel repository.
 
+## 6. La 1.4.0 sulle tavole agli atti, e il tempo (punto 7)
+
+**3 ottobre 2026** · input **I-206** · decisione **D-209** (proposta)
+
+Il PO: «Crea la nuova skill V 1.4 e testala sulle vecchie tavole sia come risultato che come velocità e cerca di
+capire se ci sono problemi sia su uno che sull'altro e in caso perché». Le misure sono in
+`la-1.4-sulle-tavole-agli-atti/`: `banco.py` disegna ogni tavola in un processo nuovo, col suo grafo e il suo
+piano, e scrive `esiti-*.json`.
+
+### Le tavole, per prime
+
+Fra la 1.3.0 e la 1.4.0, su quattordici tavole agli atti, ne cambiano tre, e per le ragioni che il PO ha approvato:
+
+| tavola | che cosa cambia | perché |
+|---|---|---|
+| `REL-003/impianto-6`, piano A | la valvola del circolatore dei fancoil passa dalla discesa all'orizzontale, accanto alla sua pompa (`impianto-6a-1.3.0-e-1.4.0.png`); stessi numeri, 10 pieghe e 3 sormonti | le pompe in parallelo con lo stesso verso (D-208) |
+| la tavola di prova 6 | la stessa cosa | D-208, già nella PR #74 |
+| `simboli-nuovi` | il collettore con ritorno | 40 × 15, a coppie di 10 (D-207) |
+
+Le altre undici — i cinque impianti di `DRAW-018`, l'impianto 6 col piano B, l'impianto 7, le quattro della prova
+del PO — sono **identiche byte per byte**. La correzione del tempo non cambia niente: le quattordici tavole della
+1.4.0 sono quelle di `main` prima della correzione, e dallo ZIP pubblicato escono le stesse; la regressione di
+progetto è identica, 54 file su 54.
+
+### Il tempo
+
+`disegna`, in secondi, nel processo:
+
+| tavola | 1.3.0 | 1.4 prima della correzione | **1.4.0** |
+|---|---:|---:|---:|
+| `DRAW-018`, impianti 1 … 4 | 0,8 – 1,2 | 1,0 – 4,2 | **0,4 – 0,6** |
+| `DRAW-018`, impianto 5 | 4,4 | 5,3 | **1,1** |
+| impianto 6, piani A e B | 5,9 – 6,0 | 7,0 – 7,3 | **0,9 – 1,7** |
+| impianto 7 | 4,9 | 4,2 | **0,7** |
+| prova del PO, A … D | 1,2 – 1,3 | 1,2 – 1,4 | **0,5 – 0,6** |
+| simboli nuovi | 0,8 | 0,7 | **0,6** |
+| **il caso reale** (137 tratte, A1) | si ferma in 0,2: la posa d'inventario non entra nell'A1 | **106,8** | **3,4** |
+| le sette tavole di prova, insieme | 14,3 | 14,5 | **3,3** |
+
+Con lo ZIP della 1.4.0, ogni comando in un processo nuovo come su claude.ai, sul caso: `valida` 0,5 s, `completa`
+0,9, `pezzi` 0,6, **`disegna` 4,4** (con PDF e DXF), `anteprima` 0,9. Le altre tredici tavole: `disegna` fra 1,1 e
+1,5 s.
+
+### Perché la 1.4 era lenta, e perché lo erano già le tavole piccole
+
+Il profilo del caso, prima della correzione: 271 s, e **269 nella posa d'inventario** (`place_sheet`), che
+dell'esecuzione del piano dà solo simboli, rotazioni e porte — le coordinate le sovrascrive il piano. Dentro, a ogni
+posto che prova per un pezzo, la posa rifà i corridoi davanti a tutti gli attacchi già posati (I-044), e per ogni
+attacco cercava la sua tratta **rileggendole tutte**, confrontando gli attacchi come modelli: 460 mila domande, **74
+milioni di confronti**, 200 s. Il routing vero, `settle_sheet`, sta sotto il secondo.
+
+- **Il caso a 107 s l'ha introdotto la PR #74.** Con il collettore largo 40 la posa d'inventario non entrava più
+  nell'A1, e la si rifà su un foglio di 4 × 3 m (I-205): lì i posti da provare sono molti di più. La 1.3.0, sullo
+  stesso grafo, si fermava subito con un errore.
+- **Sulle tavole piccole lo stesso conto valeva tre quarti del tempo** (14,3 s contro 3,3 sulle sette tavole di
+  prova).
+
+La correzione (D-209): un indice degli attacchi delle tratte, letto una volta, e la catena di ogni attacco contata
+una volta per posa. La risposta è la stessa. `tests/layout/test_il_tempo_della_posa_d_inventario.py` conta le catene
+che la posa chiede sul caso: **453 045 su `main`, rossa; al più due per attacco adesso, verde in 3,4 s.**
+
+### Quello che non so, e correggo
+
+- ⚠ **Al §5 avevo scritto che i 30 minuti erano probabilmente nei 107 s di un disegna.** Non regge: quei 107 s sono
+  della 1.4 prima della correzione, e la sessione del PO girava con la 1.3.0, che sul caso ricostruito non arriva
+  nemmeno a disegnare. Con la 1.3.0 un `disegna` sulle tavole agli atti costa da 1 a 7 secondi, e i 30 minuti non
+  stanno nel motore. **Dove vadano non lo posso misurare da qui**: la sessione del PO non è nel repository. Il
+  sospetto è il lavoro del modello — scrivere un grafo e un piano di 150 pezzi, rileggere le istruzioni, guardare le
+  anteprime, ritentare dopo un errore come quello dell'inventario —, e per saperlo serve il registro di una sessione
+  vera.
+- ⚠ **Due esiti non nulli nella regressione di progetto, uguali dalla 1.2.0:** i cinque piani di `PROVA-PIANO`
+  nominano pezzi che D-182 ha rinominato, e la via senza piano (`draw`), che la skill non usa, ferma gli impianti
+  3, 4 e 5 con un rilievo bloccante (`RUN_OVERSHOOTS_ITS_PORT`). `confronta.sh` li confronta byte per byte,
+  errori compresi.
+
 ## 5. Quello che il caso ha riportato (I-201 … I-205)
 
 **3 ottobre 2026** · decisioni **D-206**, **D-207**, **D-208** (proposte) · la tavola al PO
