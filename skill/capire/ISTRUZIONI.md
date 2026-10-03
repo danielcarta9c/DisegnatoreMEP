@@ -181,6 +181,13 @@ Regole di forma:
   comunque, come la valvola di sicurezza di ogni generatore: lo dice `completa`. Se il
   testo non lo dice, ometti il campo: quello che il modello porta dentro lo sa già il
   catalogo.
+- **`esistente`**, su un pezzo o su una tubazione: c'era già, e l'intervento non lo tocca
+  — «il bollitore esistente», «i collettori d'appartamento e i terminali sono esistenti»,
+  «il circuito di carico si riattacca alle tubazioni esistenti che scendono al
+  serpentino»: `"esistente": true`. Se una rete intera è esistente, il campo va sulla
+  rete (§4.7). Si disegna come il nuovo, e la tabella non cambia: serve alle regole —
+  `completa` chiede del corredo che vi posano — e ai diametri, che sull'esistente non si
+  calcolano. Se il testo non lo dice, ometti il campo.
 - **`accessori_tolti`**: gli accessori che le regole aggiungerebbero e che il
   progettista dice che **non ci sono** — l'impianto è costruito, o lui ha deciso così.
   Li conosci dopo `completa`, che scrive accanto a ogni accessorio il suo nome:

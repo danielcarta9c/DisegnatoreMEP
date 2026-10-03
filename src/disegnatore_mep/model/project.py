@@ -177,12 +177,21 @@ class ComponentInstance(IdentifiedModel):
             )
         return self
 
+    esistente: bool = False
+    """Il pezzo **c'era gia'**, e l'intervento non lo tocca (REL-009, I-195): il
+    bollitore rimasto nel suo locale, i collettori d'appartamento. Si disegna come il
+    nuovo e la tabella non cambia (D-202): e' un dato per le regole — `completa`
+    chiede del corredo che vi posano — e per i diametri. Vuoto non si scrive."""
+
     @model_serializer(mode="wrap")
     def _senza_il_bordo_non_detto(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
-        """Un pezzo senza bordo dichiarato non scrive `a_bordo`."""
+        """Un pezzo senza bordo dichiarato non scrive `a_bordo`, e un pezzo nuovo
+        non scrive `esistente`."""
         dati: dict[str, Any] = handler(self)
         if not dati.get("a_bordo"):
             dati.pop("a_bordo", None)
+        if not dati.get("esistente"):
+            dati.pop("esistente", None)
         return dati
 
     @model_validator(mode="after")
@@ -224,6 +233,19 @@ class ConnectionModel(IdentifiedModel):
     endpoint_b: PortRef
     properties: dict[str, JsonPrimitive] = Field(default_factory=dict)
     evidence: list[EvidenceRef] = Field(default_factory=list)
+    esistente: bool = False
+    """Il tratto **c'era gia'** (REL-009, I-195): il circuito di carico nuovo fino al
+    riattacco, e poi le tubazioni esistenti che scendono al serpentino. Come per il
+    pezzo, e' un dato per le regole e per i diametri, non per il disegno (D-202). Un
+    accessorio posato su un tratto esistente lo spezza, e le due meta' restano
+    esistenti. Vuoto non si scrive."""
+
+    @model_serializer(mode="wrap")
+    def _senza_l_esistente_non_detto(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        dati: dict[str, Any] = handler(self)
+        if not dati.get("esistente"):
+            dati.pop("esistente", None)
+        return dati
 
     @model_validator(mode="after")
     def endpoints_must_differ(self) -> "ConnectionModel":

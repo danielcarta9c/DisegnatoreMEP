@@ -346,3 +346,21 @@ def test_completa_dice_che_cosa_il_progettista_ha_tolto_e_che_cosa_resta(
     assert "Dichiarati a bordo, e posati lo stesso (1)" in uscita
     assert "— valve-safety-pdc-r1-water-supply · regola:" in uscita
     assert "su pdc-r2.water_return, rete primario-risc — strainer-pdc-r2-water-return" in uscita
+
+
+def test_completa_chiede_del_corredo_sulle_parti_esistenti(
+    cartelle: Cartelle, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """REL-009, I-195: sul bollitore esistente e sulle reti esistenti le regole posano come
+    su un impianto nuovo, e `completa` lo dice come domanda."""
+    caso = ROOT / "docs" / "collaudi" / "REL-009" / "caso-reale-1" / "grafo-prima-stesura.json"
+    grafo = json.loads(caso.read_text(encoding="utf-8"))
+    for pezzo in grafo["components"]:
+        if pezzo["id"] == "bollitore":
+            pezzo["esistente"] = True
+    (tmp_path / "grafo.json").write_text(json.dumps(grafo), encoding="utf-8")
+    assert main(["completa", str(tmp_path / "grafo.json"), "--out", str(tmp_path / "completo.json")], cartelle) == 0
+    uscita = capsys.readouterr().out
+    domanda = uscita.split("Sulle parti esistenti (", 1)[1].split("\nGrafo completo", 1)[0]
+    assert "  - Gruppo di sicurezza sanitario — 1 pezzo" in domanda
+    assert "su bollitore.coil_in, rete secondario-acs" in domanda, "il serpentino del bollitore esistente"

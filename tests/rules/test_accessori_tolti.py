@@ -216,3 +216,27 @@ def test_si_sposta_solo_su_un_attacco_collegato() -> None:
     spostato = [{"pezzo": "expansion-connection-ts-pr-3-a", "motivo": "altrove", "altrove": "volano-risc.drain"}]
     esito = validate_project(_caso(accessori_tolti=spostato), catalog())
     assert [item.code for item in esito.issues] == ["UNKNOWN_RELOCATION_PORT"]
+
+
+def test_l_esistente_per_pezzo_e_per_tratto_non_cambia_il_grafo_e_non_porta_il_dn() -> None:
+    """I-195, D-202: l'esistente si disegna come il nuovo. Il dato non cambia quello che
+    le regole posano; i diametri non si calcolano su un tratto esistente."""
+    from disegnatore_mep.diametri.tratti import tratti_del_diametro
+
+    documento = json.loads(CASO.read_text(encoding="utf-8"))
+    for pezzo in documento["components"]:
+        if pezzo["id"] in ("bollitore", "pompa-ricircolo"):
+            pezzo["esistente"] = True
+    for tubo in documento["connections"]:
+        if tubo["id"] in ("t086", "t087"):
+            tubo["esistente"] = True
+    documento["diametri"] = {"reti": ["secondario-acs"]}
+    risultato = saturation(ProjectModel.model_validate(documento), catalog(), rules())
+    assert len(risultato.model.components) == 207
+    secondario = [
+        item
+        for item in tratti_del_diametro(risultato.model, catalog())
+        if "secondario-acs" in item.reti
+    ]
+    assert secondario and all(item.diametro is None for item in secondario)
+    assert "tratto esistente" in {item.perche_senza_dn for item in secondario}

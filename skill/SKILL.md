@@ -147,8 +147,10 @@ solo gli porti:
 - che cosa le regole hanno aggiunto, per famiglia — «12 valvole di intercettazione, 2 valvole
   di sicurezza, una per generatore…» —, e il perché solo se lo chiede;
 - i punti aperti, come domande;
-- quello che il progettista ha tolto o dichiarato a bordo, se c'è, e le voci che `completa`
-  segnala come senza effetto;
+- quello che il progettista ha tolto, spostato o dichiarato a bordo, se c'è, e le voci che
+  `completa` segnala come senza effetto;
+- il corredo che le regole posano **sulle parti esistenti**, come domanda: c'è davvero? Quello
+  che non c'è si toglie;
 - le assunzioni ancora da confermare e i dati che mancano.
 
 Il grafo completo non si manda come file: il progettista lo approva su questo messaggio, e lo

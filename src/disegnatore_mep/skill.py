@@ -56,7 +56,7 @@ from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import render_sheet, stati_della_tavola
 from disegnatore_mep.io.canonical import canonical_json
 from disegnatore_mep.io.project_json import load_project
-from disegnatore_mep.model.project import ProjectModel
+from disegnatore_mep.model.project import ConnectionModel, ProjectModel
 from disegnatore_mep.model.types import ApprovalStatus, IssueSeverity
 from disegnatore_mep.piano.esecutore import EsitoDelPiano, esegui_piano
 from disegnatore_mep.piano.formato import PianoDiComposizione, carica_piano
@@ -283,6 +283,7 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
             print(f"    fonte: {punto.source} · regola: {punto.rule}")
 
     _stampa_le_scelte_del_progettista(modello, risultato.withheld, proposte, dati)
+    _stampa_il_corredo_sull_esistente(completo, proposte)
 
     verdetto = validate_project(completo, dati.catalogo)
     if not verdetto.ok:
@@ -368,6 +369,46 @@ def _stampa_le_scelte_del_progettista(
                 f"  - {item.name} su {item.anchor.component_id}.{item.anchor.port_id} — "
                 f"{item.component_id} · regola: {item.rule_id}@{item.rule_version}"
             )
+
+
+def _stampa_il_corredo_sull_esistente(completo: ProjectModel, applicate: Sequence[RuleProposal]) -> None:
+    """Il corredo che le regole posano su una parte esistente, detto come domanda
+    (REL-009, I-195): le regole lo mettono come su un impianto nuovo, e sull'esistente
+    il progettista sa se c'e'. Quello che non c'e' si toglie con il suo nome."""
+    pezzi = {item.id: item for item in completo.components}
+    reti = {item.id: item for item in completo.networks}
+    tubo: dict[tuple[str, str], ConnectionModel] = {
+        (ref.component_id, ref.port_id): connessione
+        for connessione in completo.connections
+        for ref in (connessione.endpoint_a, connessione.endpoint_b)
+    }
+
+    def sull_esistente(proposta: RuleProposal) -> bool:
+        ancora = proposta.anchor
+        if (pezzo := pezzi.get(ancora.component_id)) is not None and pezzo.esistente:
+            return True
+        connessione = tubo.get((ancora.component_id, ancora.port_id))
+        return connessione is not None and (
+            connessione.esistente or reti[connessione.network_id].esistente
+        )
+
+    queste = sorted((item for item in applicate if sull_esistente(item)), key=lambda item: item.component_id)
+    if not queste:
+        return
+    print(
+        f"\nSulle parti esistenti ({len(queste)}) — le regole li mettono come su un impianto nuovo: "
+        "si chiede al progettista se ci sono, e quelli che non ci sono si tolgono con il loro nome"
+    )
+    gruppi: dict[str, list[str]] = {}
+    for proposta in queste:
+        gruppi.setdefault(proposta.name, []).append(
+            f"su {proposta.anchor.component_id}.{proposta.anchor.port_id}, rete "
+            f"{proposta.network_id} — {proposta.component_id}"
+        )
+    for nome, dove in gruppi.items():
+        print(f"  - {nome} — {len(dove)} {'pezzo' if len(dove) == 1 else 'pezzi'}")
+        for posto in dove:
+            print(f"      {posto}")
 
 
 # --- disegna ----------------------------------------------------------------
