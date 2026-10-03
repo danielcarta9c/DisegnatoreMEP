@@ -18,8 +18,7 @@
 lo stesso verso e il controllo A2 (D-208), e il tempo del disegna (D-209). La tavola del caso rifatta è in
 `docs/collaudi/REL-009/caso-reale-2/`, le misure in `docs/collaudi/REL-009/RAPPORTO.md` §6.
 
-- **All'avvio guarda le PR aperte**: la PR #75, la 1.4.0, si fonde solo col sì del PO (D-209 è proposta). Se è ancora
-  aperta, è la prima cosa.
+- **La PR #75, la 1.4.0, è fusa** col sì del PO (I-207, D-209 approvata). All'avvio guarda comunque le PR aperte.
 - **Il tempo**: la posa d'inventario rileggeva tutte le tratte per ogni attacco (74 milioni di confronti sul caso);
   ora un indice, e la catena di ogni attacco si conta una volta. `disegna` sul caso 3,4 s, sulle tavole agli atti
   sotto i due secondi. **I 30 minuti del PO non stanno nel motore della 1.3.0**: per sapere dove vanno serve il
@@ -32,7 +31,7 @@ lo stesso verso e il controllo A2 (D-208), e il tempo del disegna (D-209). La ta
   fa il PO nella sua sessione di lavoro (I-200); due cose viste e non toccate (RAPPORTO §5 e §6) — il controllo B1
   che conta due pieghe in più sul ritorno della zona lontana, e i cinque piani di `PROVA-PIANO` fermi a D-182.
 - **Obsidian**: non raggiungibile da questa sessione (I-200 resta aperta).
-- **I numeri**: il prossimo input è **I-207**, la prossima decisione **D-210**.
+- **I numeri**: il prossimo input è **I-208**, la prossima decisione **D-210**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026, alla chiusura della 1.3.0
 

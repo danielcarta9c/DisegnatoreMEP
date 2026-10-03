@@ -6,7 +6,7 @@ nel repository.
 
 ## 6. La 1.4.0 sulle tavole agli atti, e il tempo (punto 7)
 
-**3 ottobre 2026** · input **I-206** · decisione **D-209** (proposta)
+**3 ottobre 2026** · input **I-206**, **I-207** · decisione **D-209**, approvata (I-207: «Si fondi»)
 
 Il PO: «Crea la nuova skill V 1.4 e testala sulle vecchie tavole sia come risultato che come velocità e cerca di
 capire se ci sono problemi sia su uno che sull'altro e in caso perché». Le misure sono in

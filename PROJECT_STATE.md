@@ -4,7 +4,7 @@
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` (`REL-009`) · **Dossier di stato:** `docs/pm/STATO-PM.md`
-**Release corrente:** **1.4.0** (`releases/`, I-206, D-209): la tavola del caso reale rifatta, 104 file. La 1.3.0 (D-205) e la 1.2.2 (D-200) restano in `releases/archive/`; la 1.2.0 (D-198) e la 1.2.1 (D-199) anche, e non si caricano: 287 e 284 file. Il numero di
+**Release corrente:** **1.4.0** (`releases/`, PR #75, I-207, D-209): la tavola del caso reale rifatta, 104 file. La 1.3.0 (D-205) e la 1.2.2 (D-200) restano in `releases/archive/`; la 1.2.0 (D-198) e la 1.2.1 (D-199) anche, e non si caricano: 287 e 284 file. Il numero di
 versione Python è lo stesso
 
 > **Come è fatto questo file.** In testa c'è **lo stato al 20 settembre 2026**, e sotto la

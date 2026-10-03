@@ -4,7 +4,7 @@
 > importanti da fare. merita una release 1.3» (I-191). Scritto il 3 ottobre 2026, sulla 1.2.2.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — i punti 1–4 sono nella **1.3.0** (I-199, D-205); i punti **6 e 7** nella **1.4.0** (I-206, D-206 … D-209): la tavola del caso rifatta, approvata dal PO, e il tempo del disegna. Restano il limite d'intervento facoltativo (I-195) e la tavola di consegna del caso, che fa il PO (I-200).
+**Stato:** **IN CORSO** — i punti 1–4 sono nella **1.3.0** (I-199, D-205); i punti **6 e 7** nella **1.4.0** (PR #74 e #75, I-206, I-207, D-206 … D-209): la tavola del caso rifatta, approvata dal PO, e il tempo del disegna. Restano il limite d'intervento facoltativo (I-195) e la tavola di consegna del caso, che fa il PO (I-200).
 **Base:** `main` dopo la PR #71 (la 1.2.2).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). Una PR per punto, o per gruppo
