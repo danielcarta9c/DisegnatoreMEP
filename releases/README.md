@@ -38,3 +38,6 @@ Il comando della skill li riapre da sé.
 - **1.3.0** — 3 ottobre 2026: **la tavola del costruito**, dal primo caso reale (`REL-009`, D-205): togliere,
   spostare e collocare gli accessori, il bordo della singola macchina, l'esistente, le voci del costruito con il
   simbolo. 104 file.
+- **1.4.0** — 3 ottobre 2026: **la tavola del caso reale rifatta** (`REL-009`, punti 6 e 7; D-206 … D-209): prima
+  le autostrade, il collettore che si raccorda dritto, i colori della distribuzione, le pompe in parallelo con lo
+  stesso verso, e il disegna più veloce con le stesse tavole. 104 file.

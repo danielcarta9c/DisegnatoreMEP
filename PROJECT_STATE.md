@@ -1,10 +1,10 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-10-03, notte (la **1.3.0**, la tavola del costruito — I-191 … I-199, D-201 … D-205: il progettista toglie, sposta e colloca gli accessori, dichiara il bordo della singola macchina e l'esistente, e il catalogo ha le voci del costruito; il pacchetto attivo è `REL-009`, in attesa del PO: il caso lo rifà lui nella sessione di lavoro, I-200). Prima: la 1.2.2, la prima che si carica su claude.ai — PR #71, D-200 —, la 1.2.1 — PR #70, D-199 —, la pulizia del solutore — PR #68, D-197 —, `REL-005` chiuso con la release 1.2.0 — D-198
+**Aggiornato:** 2026-10-03, sera (la **1.4.0**, la tavola del caso reale rifatta — I-201 … I-206, D-206 … D-209: prima le autostrade, il collettore che si raccorda dritto, i colori della distribuzione, le pompe in parallelo con lo stesso verso, e il disegna sul caso da 107 a 3,4 secondi con le stesse tavole). Prima: la **1.3.0**, la tavola del costruito — I-191 … I-199, D-201 … D-205: il progettista toglie, sposta e colloca gli accessori, dichiara il bordo della singola macchina e l'esistente, e il catalogo ha le voci del costruito; il pacchetto attivo è `REL-009`, in attesa del PO: il caso lo rifà lui nella sessione di lavoro, I-200). Prima: la 1.2.2, la prima che si carica su claude.ai — PR #71, D-200 —, la 1.2.1 — PR #70, D-199 —, la pulizia del solutore — PR #68, D-197 —, `REL-005` chiuso con la release 1.2.0 — D-198
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` (`REL-009`) · **Dossier di stato:** `docs/pm/STATO-PM.md`
-**Release corrente:** **1.3.0** (`releases/`, I-199, D-205): la tavola del costruito, 104 file. La 1.2.2 (D-200) resta in `releases/archive/`; la 1.2.0 (D-198) e la 1.2.1 (D-199) anche, e non si caricano: 287 e 284 file. Il numero di
+**Release corrente:** **1.4.0** (`releases/`, PR #75, I-207, D-209): la tavola del caso reale rifatta, 104 file. La 1.3.0 (D-205) e la 1.2.2 (D-200) restano in `releases/archive/`; la 1.2.0 (D-198) e la 1.2.1 (D-199) anche, e non si caricano: 287 e 284 file. Il numero di
 versione Python è lo stesso
 
 > **Come è fatto questo file.** In testa c'è **lo stato al 20 settembre 2026**, e sotto la
@@ -33,7 +33,7 @@ Le scelte sono **D-195**; rapporto `docs/collaudi/REL-001/RAPPORTO.md`.
 - **La prova su claude.ai l'ha fatta il PO** su un impianto suo (I-170, I-171, 2 ottobre 2026): la tavola si è
   composta e disegnata, e lui l'ha respinta per tre cose — lo sfiato del volano sulla quota della mandata,
   le uscite della deviatrice, il colore della serpentina —, curate e fuse con la PR #67 (D-196). La skill è
-  alla **versione 1.2**; lo ZIP è la release 1.2.0 (D-198), poi la 1.2.1 (D-199), il 3 ottobre la **1.2.2**, la prima che si carica (D-200), e la sera stessa la **1.3.0**, `releases/latest/DisegnatoreMEP-v1.3.0.zip`, la tavola del costruito (D-205). Al primo uso la skill
+  alla **versione 1.2**; lo ZIP è la release 1.2.0 (D-198), poi la 1.2.1 (D-199), il 3 ottobre la **1.2.2**, la prima che si carica (D-200), e la sera stessa la **1.3.0**, la tavola del costruito (D-205), e la **1.4.0**, `releases/latest/DisegnatoreMEP-v1.4.0.zip`, la tavola del caso reale rifatta (D-209). Al primo uso la skill
   installa pydantic dalla rete.
 - Suite: **zero rosse** dal 2 ottobre 2026 (D-197): il solutore e le sue prove sono usciti, le prove del motore leggono un piano.
 

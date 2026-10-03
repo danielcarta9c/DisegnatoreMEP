@@ -4,12 +4,12 @@
 > importanti da fare. merita una release 1.3» (I-191). Scritto il 3 ottobre 2026, sulla 1.2.2.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — i punti 1–4 sono nella **1.3.0** (I-199, D-205). Il PO ha rifatto la tavola del caso con la 1.3.0 (I-200) e ne ha riportato i difetti (I-201 … I-205): sono il **punto 6**, e la tavola rifatta torna a lui.
+**Stato:** **IN CORSO** — i punti 1–4 sono nella **1.3.0** (I-199, D-205); i punti **6 e 7** nella **1.4.0** (PR #74 e #75, I-206, I-207, D-206 … D-209): la tavola del caso rifatta, approvata dal PO, e il tempo del disegna. Restano il limite d'intervento facoltativo (I-195) e la tavola di consegna del caso, che fa il PO (I-200).
 **Base:** `main` dopo la PR #71 (la 1.2.2).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). Una PR per punto, o per gruppo
-di punti. La 1.3.0 è uscita alla fusione dei punti 1–4, per disposizione del PO (D-205); il caso rifatto va in una
-PR sua, con la sua tavola, e poi nella 1.3.1.
+di punti. La 1.3.0 è uscita alla fusione dei punti 1–4, per disposizione del PO (D-205); il caso rifatto è la PR
+#74, e con il tempo del disegna è uscito nella **1.4.0**, col numero che il PO ha chiesto (I-206, D-209).
 
 ---
 
@@ -88,7 +88,7 @@ tavola: **al PO**. Restano aperte con il progettista le voci della §6 del docum
 dati della tabella, temperature del secondario ACS, diametri sì o no, pompe di macrozona nuove o esistenti,
 posizione del contabilizzatore).
 
-### 6. Quello che il caso ha riportato (I-201 … I-205) — la 1.3.1
+### 6. Quello che il caso ha riportato (I-201 … I-205) — fatto, nella 1.4.0 (PR #74, D-206 … D-208)
 
 Il PO, sulla tavola del caso fatta con la 1.3.0 nella sua sessione di lavoro. La tavola porta i dati del cliente e **non
 entra nel repository**; il grafo per le prove si ricostruisce anonimo in `docs/collaudi/REL-009/caso-reale-2/`.
@@ -102,9 +102,12 @@ entra nel repository**; il grafo per le prove si ricostruisce anonimo in `docs/c
 4. **Il collettore con ritorno si raccorda ai terminali senza curve inutili** (I-205): gli attacchi del simbolo.
 5. **La tavola del caso rifatta**, al PO.
 
-### 7. Il tempo della skill (I-205)
+### 7. Il tempo della skill (I-205) — fatto, nella 1.4.0 (D-209)
 
-«La skill gira in 30 minuti buoni»: si misura dove va il tempo, dopo il punto 6.
+«La skill gira in 30 minuti buoni»: si misura dove va il tempo, dopo il punto 6. **Misurato** (`docs/collaudi/REL-009/RAPPORTO.md` §6): la posa d'inventario rileggeva tutte le tratte per ogni attacco; con un
+indice, `disegna` sul caso passa da 107 a 3,4 s e sulle tavole agli atti scende sotto i due secondi, con le stesse
+tavole. **I 30 minuti non stanno nel motore della 1.3.0** (da 1 a 7 s per tavola): per sapere dove vanno serve il
+registro di una sessione vera, che è del PO.
 
 ### Note di controllo, dal documento
 

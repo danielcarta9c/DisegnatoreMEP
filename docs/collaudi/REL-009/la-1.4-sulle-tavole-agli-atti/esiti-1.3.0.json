@@ -1,0 +1,142 @@
+[
+ {
+  "tavola": "impianto-1",
+  "processo_s": 1.5,
+  "completa_s": 0.0,
+  "disegna_s": 0.93,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 25 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 4 · sormonti 1 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "a13cf88a37eb3122"
+ },
+ {
+  "tavola": "impianto-2",
+  "processo_s": 1.6,
+  "completa_s": 0.0,
+  "disegna_s": 1.07,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 25 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 1 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "8db3cf2b6c3ff8cf"
+ },
+ {
+  "tavola": "impianto-3",
+  "processo_s": 1.2,
+  "completa_s": 0.0,
+  "disegna_s": 0.81,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 3 · sormonti 2 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x2",
+  "errore": null,
+  "svg": "edf6c4f0546f7da4"
+ },
+ {
+  "tavola": "impianto-4",
+  "processo_s": 1.6,
+  "completa_s": 0.0,
+  "disegna_s": 1.16,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 27 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 6 · sormonti 2 · avvisi e regole: SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x2",
+  "errore": null,
+  "svg": "4d34d27c7e620507"
+ },
+ {
+  "tavola": "impianto-5",
+  "processo_s": 4.8,
+  "completa_s": 0.0,
+  "disegna_s": 4.43,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 56 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 5 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "19db4f8a99c7c05f"
+ },
+ {
+  "tavola": "impianto-6a",
+  "processo_s": 6.3,
+  "completa_s": 0.0,
+  "disegna_s": 5.93,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 10 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x2",
+  "errore": null,
+  "svg": "b7814d0f007e7f19"
+ },
+ {
+  "tavola": "impianto-6b",
+  "processo_s": 6.4,
+  "completa_s": 0.0,
+  "disegna_s": 6.04,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 48 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 3 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "62f5699e24e6ec8e"
+ },
+ {
+  "tavola": "impianto-7",
+  "processo_s": 5.4,
+  "completa_s": 0.0,
+  "disegna_s": 4.89,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 45 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 7 · sormonti 3 · avvisi e regole: SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "ac13ad5769198f53"
+ },
+ {
+  "tavola": "prova-po-A",
+  "processo_s": 1.8,
+  "completa_s": 0.05,
+  "disegna_s": 1.31,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 10 · sormonti 5 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x2, PARALLEL_RUNS_WITHOUT_A_FREE_LANE x1, RETURN_RUNS_ABOVE_ITS_SUPPLY x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1, SHEET_TOO_FULL x1",
+  "errore": null,
+  "svg": "e919e04c69d87496"
+ },
+ {
+  "tavola": "prova-po-B",
+  "processo_s": 1.7,
+  "completa_s": 0.04,
+  "disegna_s": 1.2,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 1 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x2, RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x2",
+  "errore": null,
+  "svg": "573e4aac2bd44f30"
+ },
+ {
+  "tavola": "prova-po-C",
+  "processo_s": 1.7,
+  "completa_s": 0.06,
+  "disegna_s": 1.25,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 9 · sormonti 1 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x3, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x2",
+  "errore": null,
+  "svg": "95e740e634443fa2"
+ },
+ {
+  "tavola": "prova-po-D",
+  "processo_s": 1.7,
+  "completa_s": 0.05,
+  "disegna_s": 1.27,
+  "rc": 0,
+  "sintesi": "Formato A3 · tratte 24 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 5 · sormonti 1 · avvisi e regole: DRAWING_TOUCHES_THE_BORDER x1, HIGHWAY_IS_NOT_STRAIGHT x1, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x1",
+  "errore": null,
+  "svg": "b3a2fe80b003a425"
+ },
+ {
+  "tavola": "simboli-rel009",
+  "processo_s": 1.3,
+  "completa_s": 0.08,
+  "disegna_s": 0.77,
+  "rc": 0,
+  "sintesi": "Formato A2 · tratte 31 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 7 · sormonti 0 · avvisi e regole: PARALLEL_RUNS_WITHOUT_A_FREE_LANE x4, SERVICE_STUB_LONGER_THAN_ITS_MINIMUM x6, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x1",
+  "errore": null,
+  "svg": "3547d92411193cf7"
+ },
+ {
+  "tavola": "caso-reale-2",
+  "processo_s": 1.0,
+  "completa_s": 0.39,
+  "disegna_s": 0.16,
+  "rc": 1,
+  "sintesi": null,
+  "errore": "la posa d'inventario non entra nell'A1: the 1 functional bands need 1157.5mm but the drawing area is 756mm wide",
+  "svg": null
+ }
+]
