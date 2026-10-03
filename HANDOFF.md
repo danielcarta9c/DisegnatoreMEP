@@ -18,7 +18,7 @@
 lo stesso verso e il controllo A2 (D-208), e il tempo del disegna (D-209). La tavola del caso rifatta è in
 `docs/collaudi/REL-009/caso-reale-2/`, le misure in `docs/collaudi/REL-009/RAPPORTO.md` §6.
 
-- **All'avvio guarda le PR aperte**: la PR della 1.4.0 si fonde solo col sì del PO (D-209 è proposta). Se è ancora
+- **All'avvio guarda le PR aperte**: la PR #75, la 1.4.0, si fonde solo col sì del PO (D-209 è proposta). Se è ancora
   aperta, è la prima cosa.
 - **Il tempo**: la posa d'inventario rileggeva tutte le tratte per ogni attacco (74 milioni di confronti sul caso);
   ora un indice, e la catena di ogni attacco si conta una volta. `disegna` sul caso 3,4 s, sulle tavole agli atti
