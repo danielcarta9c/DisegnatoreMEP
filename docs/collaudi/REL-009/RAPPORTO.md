@@ -4,6 +4,57 @@ Una sezione per ogni gruppo di punti, la più recente in alto. Il caso è il pri
 ricostruito anonimo in `caso-reale-1/`: il documento della sessione di disegno porta i dati del cliente e non è
 nel repository.
 
+## 7. La 1.4.0 in una sessione pulita (I-208)
+
+**3 ottobre 2026, sera** · input **I-208**
+
+Il PO ha usato la 1.4.0 **nella stessa chat in cui aveva lavorato con la 1.3.0**, e la tavola è uscita «sporca»,
+molto peggio di quella del §5. Ha chiesto perché, e una prova della 1.4 in una sessione pulita. La sua tavola porta i
+dati del cliente e non è nel repository.
+
+### Le tavole, per prime
+
+`prova-pulita-1.4/tavola-A/` e `tavola-B/`: due sessioni nuove e indipendenti, ciascuna con il solo ZIP della 1.4.0 e
+il grafo anonimo del caso (`caso-reale-2/grafo-prima-stesura.json`), senza codice, piano e istruzioni di sviluppo.
+Partono dal grafo approvato e seguono la skill: Comporre, `disegna`, Rivedere. I piani sono `piano-A.json` e
+`piano-B.json`; le tavole qui sono rifatte con lo ZIP da quei piani, e i numeri coincidono con quelli che le due sessioni
+hanno riportato.
+
+| | minuti | `disegna` lanciati | il più lento | pieghe | sormonti | bloccanti |
+|---|---:|---:|---:|---:|---:|---:|
+| A | 8 | 13 | 3,3 s | 15 | 20 | 0 |
+| B | 11 | 7 | 3,1 s | 18 | 14 | 0 |
+| il piano del §5, scritto dallo sviluppo | — | — | — | 13 | 14 | 0 |
+
+Tutte e due tengono la distribuzione a colonne affiancate, le pompe di zona sullo stesso verso e i terminali sotto la
+coppia del collettore. Il difetto che resta in B l'ha detto la sessione stessa: la linea della pompa della zona vicina
+corre fra la mandata e il ritorno della dorsale (avviso B9).
+
+### Perché la tavola della chat del PO è peggiore
+
+- **Il piano è quello della 1.3.0.** La tavola del PO fatta con la 1.4 ha la stessa disposizione di quella fatta con la
+  1.3.0 nella stessa chat: macchine, volani e zone negli stessi posti. Cambia quello che decide il motore — le pompe in
+  parallelo, il collettore, i colori — e non quello che decide il piano — la distribuzione, i terminali sotto la
+  coppia (I-205). La chat ha ridisegnato il piano che aveva, invece di ricomporlo con le istruzioni nuove.
+- **La tavola del §5 non è della skill.** Il suo piano l'ha scritto lo sviluppo con `componi_piano.py`, sapendo che cosa
+  correggere. Il metro della skill è la sessione pulita: A e B ci arrivano vicino da sole.
+
+### Che cosa delle istruzioni di Comporre le due sessioni hanno trovato difficile
+
+- la giacitura dei pezzi è scritta caso per caso (miscelatrice, gruppo di riempimento, raccordi del pettine): manca una
+  regola sola su quale faccia guarda il vicino; e non è detto se il primo raccordo girato a mano valga anche per una
+  colonna in cui la mandata arriva di lato (A);
+- B3 chiede l'ordine dei collettori con meno sormonti, ma l'altro ordine dava meno pieghe e nessuna corsa senza corsia:
+  A ha scelto contro la lettera di B3 (A);
+- l'ordine e l'ingombro degli organi in linea, e le porte di raccordi e appesi, si sono trovati per tentativi (A, B);
+- la forma della zona vicina «sotto il ritorno» il piano non la impone, e le istruzioni non dicono che cosa fare quando
+  il motore porta la pompa fra mandata e ritorno (B);
+- che lo sfiato di una pompa di calore vada oltre la colonna di mandata, perché incrociarla piega la mandata della
+  macchina sotto, non è scritto (B);
+- l'ingombro della tabella delle apparecchiature nella scelta del formato non è detto (B).
+
+Restano da decidere: sono il lavoro possibile su Comporre.
+
 ## 6. La 1.4.0 sulle tavole agli atti, e il tempo (punto 7)
 
 **3 ottobre 2026** · input **I-206**, **I-207** · decisione **D-209**, approvata (I-207: «Si fondi»)

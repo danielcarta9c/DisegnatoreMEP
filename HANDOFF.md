@@ -31,7 +31,10 @@ lo stesso verso e il controllo A2 (D-208), e il tempo del disegna (D-209). La ta
   fa il PO nella sua sessione di lavoro (I-200); due cose viste e non toccate (RAPPORTO §5 e §6) — il controllo B1
   che conta due pieghe in più sul ritorno della zona lontana, e i cinque piani di `PROVA-PIANO` fermi a D-182.
 - **Obsidian**: non raggiungibile da questa sessione (I-200 resta aperta).
-- **I numeri**: il prossimo input è **I-208**, la prossima decisione **D-210**.
+- **La 1.4.0 in una sessione pulita** (I-208, RAPPORTO §7): due sessioni nuove con il solo ZIP fanno tavole pulite in
+  8 e 11 minuti; la chat del PO aveva ridisegnato il piano della 1.3.0. Le difficoltà trovate in Comporre sono il
+  lavoro possibile, da decidere col PO.
+- **I numeri**: il prossimo input è **I-209**, la prossima decisione **D-210**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026, alla chiusura della 1.3.0
 
