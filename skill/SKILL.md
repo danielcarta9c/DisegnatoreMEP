@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 1.2.2** — 3 ottobre 2026.
+**Versione 1.3.0** — 3 ottobre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -147,15 +147,23 @@ solo gli porti:
 - che cosa le regole hanno aggiunto, per famiglia — «12 valvole di intercettazione, 2 valvole
   di sicurezza, una per generatore…» —, e il perché solo se lo chiede;
 - i punti aperti, come domande;
+- quello che il progettista ha tolto, spostato o dichiarato a bordo, se c'è, e le voci che
+  `completa` segnala come senza effetto;
+- il corredo che le regole posano **sulle parti esistenti**, come domanda: c'è davvero? Quello
+  che non c'è si toglie;
 - le assunzioni ancora da confermare e i dati che mancano.
 
 Il grafo completo non si manda come file: il progettista lo approva su questo messaggio, e lo
 vede disegnato al passo 6.
 
 Chiedi l'approvazione esplicita, e **aspettala**. Se corregge la lettura, torni al passo 1 e poi
-al 3 e al 4. Se rifiuta un accessorio che le regole hanno aggiunto, la skill non sa ancora
-toglierlo da sé: diglielo, e chiedi se procedere col grafo com'è — l'accessorio resta, e lo
-scrivi fra le cose aperte — o fermarsi.
+al 3 e al 4. **Se toglie un accessorio** — «questo non c'è», «la pompa lo porta dentro» — lo
+scrivi nel grafo di prima stesura: in `accessori_tolti`, con il nome che `completa` gli dà e il
+motivo del progettista, o in `a_bordo` sulla macchina (`capire.md` §3). **Se lo vuole altrove**,
+la stessa voce dice dove (`altrove`). **Se ne aggiunge uno** che le regole non mettono, in un
+posto preciso, lo scrivi nel grafo dove lui dice (`capire.md` §5). Poi rilanci `completa` e gli
+riporti che cosa è cambiato. Le scelte restano nel grafo e valgono a ogni rilancio. Lo stesso
+vale prima del passo 4, se le dice già nel testo o nelle risposte del passo 2.
 
 ### 5. Comporre — il piano
 

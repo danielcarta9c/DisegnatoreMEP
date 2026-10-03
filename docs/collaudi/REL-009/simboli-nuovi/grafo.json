@@ -1,0 +1,453 @@
+{
+ "schema_version": "1.1.0",
+ "metadata": {
+  "project_id": "prova-simboli-nuovi-rel-009",
+  "client": "Prova",
+  "project_name": "REL-009 - i simboli nuovi del primo caso reale",
+  "commission_code": "PROVA",
+  "revision": "00",
+  "issue_date": "2026-10-03",
+  "sheet_title": "Simboli nuovi, proposta",
+  "sheet_number": "P1"
+ },
+ "plant_regime": "up_to_35_kw",
+ "networks": [
+  {
+   "id": "primario",
+   "name": "Circuito primario",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "secondario",
+   "name": "Circuito secondario",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "predisposizione",
+   "name": "Attacchi predisposti per il solare",
+   "domain": "hydronic",
+   "medium": "heating_water"
+  },
+  {
+   "id": "acqua-fredda",
+   "name": "Acqua fredda",
+   "domain": "hydronic",
+   "medium": "cold_water"
+  },
+  {
+   "id": "acs",
+   "name": "Acqua calda sanitaria",
+   "domain": "hydronic",
+   "medium": "domestic_hot_water"
+  }
+ ],
+ "components": [
+  {
+   "id": "pdc",
+   "definition_id": "heat-pump-air-water",
+   "tag": null,
+   "properties": {
+    "power_kw": 15
+   }
+  },
+  {
+   "id": "volano",
+   "definition_id": "buffer-six-port",
+   "tag": null,
+   "properties": {
+    "volume_l": 200
+   }
+  },
+  {
+   "id": "contatore",
+   "definition_id": "heat-meter",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "pompa",
+   "definition_id": "pump-circulator",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "ts-sec",
+   "definition_id": "tee-split",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "tj-sec",
+   "definition_id": "tee-junction",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "collettore",
+   "definition_id": "zone-manifold-pair",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "fancoil",
+   "definition_id": "fan-coil",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "pannello",
+   "definition_id": "underfloor-panel",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "verso-esistente",
+   "definition_id": "existing-plant-outlet",
+   "tag": null,
+   "properties": {
+    "etichetta": "verso impianto esistente"
+   }
+  },
+  {
+   "id": "da-esistente",
+   "definition_id": "existing-plant-inlet",
+   "tag": null,
+   "properties": {
+    "etichetta": "da impianto esistente"
+   }
+  },
+  {
+   "id": "solare-mandata",
+   "definition_id": "capped-connection",
+   "tag": null,
+   "properties": {
+    "etichetta": "al solare termico"
+   }
+  },
+  {
+   "id": "solare-ritorno",
+   "definition_id": "capped-connection",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "giunto-mandata",
+   "definition_id": "flexible-joint",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "giunto-ritorno",
+   "definition_id": "flexible-joint",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "acquedotto",
+   "definition_id": "cold-water-inlet",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "dosatore",
+   "definition_id": "polyphosphate-doser",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "pdc-acs",
+   "definition_id": "dhw-heat-pump",
+   "tag": null,
+   "properties": {
+    "volume_l": 200
+   }
+  },
+  {
+   "id": "utenze",
+   "definition_id": "dhw-draw-off",
+   "tag": null,
+   "properties": {}
+  }
+ ],
+ "connections": [
+  {
+   "id": "p1",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "giunto-mandata",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "volano",
+    "port_id": "primary_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "p2",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "primary_out"
+   },
+   "endpoint_b": {
+    "component_id": "contatore",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "p3",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "contatore",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "giunto-ritorno",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s1",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "secondary_out"
+   },
+   "endpoint_b": {
+    "component_id": "pompa",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s2",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "pompa",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "ts-sec",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s3",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "ts-sec",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "collettore",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s4",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "ts-sec",
+    "port_id": "c"
+   },
+   "endpoint_b": {
+    "component_id": "verso-esistente",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s5",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "collettore",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "fancoil",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s6",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "fancoil",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "collettore",
+    "port_id": "ret_1"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s7",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "collettore",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "pannello",
+    "port_id": "in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s8",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "pannello",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "collettore",
+    "port_id": "ret_2"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s9",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "collettore",
+    "port_id": "out"
+   },
+   "endpoint_b": {
+    "component_id": "tj-sec",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s10",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "da-esistente",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "tj-sec",
+    "port_id": "c"
+   },
+   "properties": {}
+  },
+  {
+   "id": "s11",
+   "network_id": "secondario",
+   "endpoint_a": {
+    "component_id": "tj-sec",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "volano",
+    "port_id": "secondary_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "x1",
+   "network_id": "predisposizione",
+   "endpoint_a": {
+    "component_id": "solare-mandata",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "volano",
+    "port_id": "aux_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "x2",
+   "network_id": "predisposizione",
+   "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "aux_out"
+   },
+   "endpoint_b": {
+    "component_id": "solare-ritorno",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "p0",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "water_supply"
+   },
+   "endpoint_b": {
+    "component_id": "giunto-mandata",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "p4",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "giunto-ritorno",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "water_return"
+   },
+   "properties": {}
+  },
+  {
+   "id": "f1",
+   "network_id": "acqua-fredda",
+   "endpoint_a": {
+    "component_id": "acquedotto",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "dosatore",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "f2",
+   "network_id": "acqua-fredda",
+   "endpoint_a": {
+    "component_id": "dosatore",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pdc-acs",
+    "port_id": "cold_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "h1",
+   "network_id": "acs",
+   "endpoint_a": {
+    "component_id": "pdc-acs",
+    "port_id": "dhw_out"
+   },
+   "endpoint_b": {
+    "component_id": "utenze",
+    "port_id": "a"
+   },
+   "properties": {}
+  }
+ ],
+ "assumptions": [],
+ "rule_applications": [],
+ "subsystems": [],
+ "sheets": []
+}

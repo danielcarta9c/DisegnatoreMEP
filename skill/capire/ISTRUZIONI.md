@@ -174,6 +174,29 @@ Regole di forma:
   Una rete che il testo dice **esistente** — «la distribuzione dagli accumuli in poi è
   esistente» — porta `"esistente": true` fra i suoi campi, e non sta mai fra le reti dei
   diametri.
+- **`a_bordo`**, su un pezzo: le funzioni che **quella** macchina porta dentro il
+  mantello, **solo se il testo lo dice** («le pompe di calore hanno il circolatore e il
+  vaso a bordo»): `"a_bordo": ["expansion"]`, con i nomi dei mestieri della ferramenta
+  (§5). Le regole allora non lo aggiungono fuori da quel pezzo — salvo dove lo vogliono
+  comunque, come la valvola di sicurezza di ogni generatore: lo dice `completa`. Se il
+  testo non lo dice, ometti il campo: quello che il modello porta dentro lo sa già il
+  catalogo.
+- **`esistente`**, su un pezzo o su una tubazione: c'era già, e l'intervento non lo tocca
+  — «il bollitore esistente», «i collettori d'appartamento e i terminali sono esistenti»,
+  «il circuito di carico si riattacca alle tubazioni esistenti che scendono al
+  serpentino»: `"esistente": true`. Se una rete intera è esistente, il campo va sulla
+  rete (§4.7). Si disegna come il nuovo, e la tabella non cambia: serve alle regole —
+  `completa` chiede del corredo che vi posano — e ai diametri, che sull'esistente non si
+  calcolano. Se il testo non lo dice, ometti il campo.
+- **`accessori_tolti`**: gli accessori che le regole aggiungerebbero e che il
+  progettista dice che **non ci sono** — l'impianto è costruito, o lui ha deciso così.
+  Li conosci dopo `completa`, che scrive accanto a ogni accessorio il suo nome:
+  `"accessori_tolti": [{"pezzo": "air-separator-tj-pr-3-b", "motivo": "non installato:
+  lo sfiato è sul volano"}]`. Il motivo è suo, con le sue parole. Se il pezzo **sta
+  altrove** — il vaso è sul secondario, non sul primario —, la voce dice dove con
+  `"altrove": "pezzo.attacco"`, un attacco collegato della rete giusta: la regola lo posa
+  lì, con quello che ne pende. Stanno nel grafo di prima stesura, e `completa` li rispetta
+  a ogni rilancio (I-192).
 - **`metadata`**: identifica il documento, non l'impianto, ed è quello che il
   **cartiglio** della tavola scrive. Committente e codice di
   commessa te li dice chi lancia il lavoro; se mancano, scrivi `ND` e dillo nella
@@ -522,27 +545,80 @@ dell'impianto — i mestieri:
 
 > `heat_generation`, `thermal_storage`, `dhw_storage`, `hydraulic_separation`,
 > `heat_exchange`, `circulation`, `distribution`, `emission`, `diversion`,
-> `circuit_mixing`, `junction`, `branch_off`, `boundary`.
+> `circuit_mixing`, `junction`, `branch_off`, `boundary`, `heat_metering`.
 
 Cioè: generatori, accumuli e bollitori, separatori, scambiatori, circolatori,
 collettori, terminali (radiatori, ventilconvettori, batterie, pannelli), valvole
 deviatrici e miscelatrici **di circuito** a tre vie (decidono dove va il flusso: sono
-topologia), i raccordi del §4.4, i confini (acquedotto, utenze).
+topologia), i raccordi del §4.4, i confini (acquedotto, utenze), il contatore di calore.
 
-**Non entra mai**, nemmeno se il testo lo nomina, la ferramenta di servizio — i
-mestieri:
+Le voci per **il costruito** (I-194), quando il testo le dice:
+
+- il **contatore di calore** (`heat-meter`), in linea dove il progettista lo mette — di
+  solito sul ritorno: le regole gli mettono le intercettazioni prima e dopo;
+- il **collettore d'appartamento con mandata e ritorno** (`zone-manifold-pair`): ogni
+  circuito esce da `out_n` e rientra in `ret_n`, e il ritorno esce da `out` — senza
+  raccordi a T per richiudere i ritorni;
+- il **volano a sei attacchi** (`buffer-six-port`), quando ne ha due predisposti in più
+  (`aux_in`, `aux_out`);
+- l'**attacco predisposto** (`capped-connection`): un tubo corto tappato su un attacco che
+  oggi non serve, con la scritta che il progettista gli dà in `etichetta` («al solare
+  termico»), su una rete sua;
+- il **confine con l'impianto esistente** su acqua di riscaldamento
+  (`existing-plant-inlet`, `existing-plant-outlet`), con la sua `etichetta` («al serpentino
+  del bollitore esistente»).
+
+`etichetta`, fra le `properties` di un pezzo, è **la scritta che la tavola porta accanto al
+pezzo**, com'è scritta: solo se il progettista la dice.
+
+**Non entra**, se il testo non la mette in un posto preciso, la ferramenta di servizio —
+i mestieri:
 
 > `isolation`, `isolation_locked_open`, `non_return`, `safety`, `expansion`,
 > `filtration`, `sludge_separation`, `air_release`, `filling`, `drain`,
-> `pressure_control`, `pressure_measurement`, `temperature_measurement`, `dhw_mixing`.
+> `pressure_control`, `pressure_measurement`, `temperature_measurement`, `dhw_mixing`,
+> `vibration_isolation`, `water_treatment`.
 
 Cioè: intercettazioni, ritegni, sicurezze, vasi, filtri, defangatori, sfiati, gruppi di
-riempimento, scarichi, riduttori, manometri, termometri, e la miscelatrice
-**sanitaria** sull'uscita dell'acqua calda. Li aggiunge il pezzo delle regole, che sa
-dove vanno e perché. **Se il testo li nomina, la nomina non si perde:** scrivi una voce
-in `assumptions` che lo dice («il testo prevede il carico automatico da acquedotto e lo
-scarico sul volume: li aggiunge il pezzo che completa, non questo grafo»). Così
-l'ingegnere e il pezzo successivo possono verificare che nulla è andato perso.
+riempimento, scarichi, riduttori, manometri, termometri, la miscelatrice
+**sanitaria** sull'uscita dell'acqua calda, i giunti antivibranti (`flexible-joint`) e il
+dosatore di polifosfati sull'acqua fredda (`polyphosphate-doser`).
+
+⚠ **Il dosatore di polifosfati sta solo sull'acqua fredda sanitaria che entra
+nell'accumulo dell'ACS** — bollitore, accumulo combinato, pompa di calore per ACS —, e a
+valle della derivazione che alimenta il riempimento (I-198). **Mai nell'acqua tecnica**:
+il circuito di riscaldamento è chiuso, e lì il trattamento è chimico al primo riempimento
+(inibitori di corrosione, antincrostanti) più il defangatore, che mettono le regole. Se il
+testo lo nomina su un circuito di riscaldamento, è una domanda al progettista, non un
+pezzo. La validazione ferma un dosatore che non alimenta un accumulo dell'ACS
+(`DOSER_NOT_ON_THE_DHW_FEED`) o che alimenta un riempimento
+(`DOSER_FEEDS_THE_TECHNICAL_WATER`). Li aggiunge il pezzo delle regole, che sa
+dove vanno e perché. **Se il testo li nomina senza dire dove, la nomina non si perde:**
+scrivi una voce in `assumptions` che lo dice («il testo prevede il carico automatico da
+acquedotto e lo scarico sul volume: li aggiunge il pezzo che completa, non questo
+grafo»). Così l'ingegnere e il pezzo successivo possono verificare che nulla è andato
+perso.
+
+**Entra, se il progettista la mette in un posto preciso** (I-193): «sfiato automatico con
+valvola a sfera sul ritorno di ogni pompa di calore», «ritegno sull'uscita delle pompe»,
+«riduttore di pressione sull'acqua fredda», «valvole manuali sulle due uscite del
+collettore». È il caso dell'impianto costruito, la cui tavola deve dire che cosa c'è. Lo
+scrivi dove lui dice, con la voce del catalogo che fa quel mestiere su quel fluido:
+
+- **in linea**, se l'acqua ci passa dentro — intercettazione, ritegno, filtro, riduttore:
+  la tubazione si spezza in due, la prima entra nell'attacco `a` del pezzo e la seconda
+  riparte dal suo attacco `b`, sulla stessa rete;
+- **appeso**, se sta su uno stacco — sfiato, manometro, termometro, scarico: un raccordo
+  di derivazione in linea (`tee-branch`, o la voce del suo fluido: `tee-branch-cold`,
+  `tee-branch-dhw`), e dal suo braccio `branch` una tubazione corta al pezzo; una valvola
+  sullo stacco («con valvola a sfera») sta fra il braccio e il pezzo;
+- **sull'attacco di servizio** della macchina, se ce l'ha (`vent`, `drain`, `probe` di un
+  volano): la tubazione corta parte da lì.
+
+Le regole **non lo duplicano**: dove una regola vuole quel mestiere su quel tratto, lo
+trova. Se ne mettono uno dove sul costruito non c'è, si toglie; se lo mettono in un posto
+diverso, si sposta (`accessori_tolti`, §3). Quello che il testo nomina senza un posto
+resta alle regole.
 
 Se il testo nomina un mestiere che non sta in nessuna delle due liste (un ventilatore,
 una linea frigorifera…), trattalo come voce di catalogo mancante: §6, tipo B.

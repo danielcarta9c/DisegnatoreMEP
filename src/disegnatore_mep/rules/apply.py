@@ -17,6 +17,7 @@ non proponeva zero.
 """
 
 import re
+from dataclasses import dataclass
 
 from disegnatore_mep.assembly import assemble
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -77,6 +78,38 @@ def _connection_touching(project: ProjectModel, anchor: PortRef) -> ConnectionMo
         f"no connection touches {anchor.component_id}.{anchor.port_id}: an inline "
         f"accessory needs a pipe to sit on"
     )
+
+
+VIBRATION_ISOLATION = "vibration_isolation"
+"""Il mestiere del giunto antivibrante (REL-009, I-197)."""
+
+
+def _connection_to_split(
+    project: ProjectModel, catalog: ComponentRegistry, anchor: PortRef
+) -> ConnectionModel:
+    """La tubazione su cui si posa un pezzo ancorato a quell'attacco.
+
+    E' quella che tocca l'attacco, **tranne quando sull'attacco c'e' un giunto
+    antivibrante** (REL-009, I-197): il giunto sta attaccato alla macchina, che vibra,
+    e fra loro non ci va niente. Il pezzo della regola si posa oltre il giunto."""
+    connection = _connection_touching(project, anchor)
+    visti: set[str] = set()
+    while True:
+        lontano = connection.endpoint_b if connection.endpoint_a == anchor else connection.endpoint_a
+        giunto = _component(project, lontano.component_id)
+        if giunto.id in visti or VIBRATION_ISOLATION not in catalog.get(giunto.definition_id).functions:
+            return connection
+        visti.add(giunto.id)
+        oltre = [
+            item
+            for item in project.connections
+            if item.id != connection.id
+            and giunto.id in (item.endpoint_a.component_id, item.endpoint_b.component_id)
+        ]
+        if len(oltre) != 1:
+            return connection
+        connection = oltre[0]
+        anchor = connection.endpoint_a if connection.endpoint_a.component_id == giunto.id else connection.endpoint_b
 
 
 def _split(connection: ConnectionModel, proposal: RuleProposal) -> list[ConnectionModel]:
@@ -289,8 +322,8 @@ def apply_proposals(
             )
             connections = [*current.connections, feed]
             pipes = [feed.id, own_network.id]
-            connection = _connection_touching(
-                current.model_copy(update={"connections": connections}), proposal.anchor
+            connection = _connection_to_split(
+                current.model_copy(update={"connections": connections}), catalog, proposal.anchor
             )
             if proposal.bridge_port is not None:
                 # Il ponte **in linea** (D-175): la miscelatrice termostatica sta
@@ -350,7 +383,7 @@ def apply_proposals(
             connections = [*current.connections, stub]
             pipes.append(stub.id)
         else:
-            connection = _connection_touching(current, proposal.anchor)
+            connection = _connection_to_split(current, catalog, proposal.anchor)
             if catalog.get(proposal.definition_id).attaches_on_a_branch:
                 junction_id = f"tee-{proposal.component_id}"
                 added.append(
@@ -564,7 +597,11 @@ def evaluate_in_phases(
     if not first.is_empty or not closers.rules:
         return first
     second = evaluate(project, catalog, rules)
-    return Evaluation(proposals=second.proposals, gaps=[*first.gaps, *second.gaps])
+    return Evaluation(
+        proposals=second.proposals,
+        gaps=[*first.gaps, *second.gaps],
+        withheld=[*first.withheld, *second.withheld],
+    )
 
 
 def _a_group_may_satisfy(
@@ -609,10 +646,32 @@ def _a_group_may_satisfy(
     return False
 
 
+@dataclass(frozen=True)
+class Saturation:
+    """Quello che la saturazione restituisce, per intero."""
+
+    model: ProjectModel
+    applied: list[RuleProposal]
+    gaps: list[RuleGap]
+    withheld: list[RuleProposal]
+    """Le proposte che il progettista ha tolto (REL-009, I-192), una volta
+    ciascuna: le regole le farebbero, e il modello non le porta."""
+
+
 def saturate(
     project: ProjectModel, catalog: ComponentRegistry, rules: RuleRegistry
 ) -> tuple[ProjectModel, list[RuleProposal], list[RuleGap]]:
     """Il modello completo, le integrazioni che ci sono volute, i punti aperti.
+    E' `saturation` senza l'elenco di cio' che il progettista ha tolto."""
+    result = saturation(project, catalog, rules)
+    return result.model, result.applied, result.gaps
+
+
+def saturation(
+    project: ProjectModel, catalog: ComponentRegistry, rules: RuleRegistry
+) -> Saturation:
+    """Il modello completo, le integrazioni che ci sono volute, i punti aperti, e
+    le proposte che il progettista ha tolto.
 
     «Completo» ha un significato preciso: **rieseguire le regole non propone
     piu' niente**. Ci vuole piu' di una passata perche' un accessorio proposto
@@ -636,12 +695,19 @@ def saturate(
     current = project
     applied: list[RuleProposal] = []
     gaps: dict[tuple[str, str, str, str], RuleGap] = {}
+    withheld: dict[str, RuleProposal] = {}
+
+    def result(model: ProjectModel) -> Saturation:
+        return Saturation(assembled(model), applied, list(gaps.values()), list(withheld.values()))
+
     found = evaluate_in_phases(current, catalog, rules)
     for _ in range(ROUNDS):
         for gap in found.gaps:
             gaps.setdefault(gap.key, gap)
+        for tolta in found.withheld:
+            withheld.setdefault(tolta.component_id, tolta)
         if found.is_empty:
-            return assembled(current), applied, list(gaps.values())
+            return result(current)
         # Si assembla **dentro** il ciclo: rimettere in fila puo' scoprire un
         # attacco che era coperto solo perche' un pezzo stava dove non doveva.
         current = assembled(apply_proposals(current, found.proposals, catalog))
@@ -649,8 +715,10 @@ def saturate(
         found = evaluate_in_phases(current, catalog, rules)
     for gap in found.gaps:
         gaps.setdefault(gap.key, gap)
+    for tolta in found.withheld:
+        withheld.setdefault(tolta.component_id, tolta)
     if found.is_empty:
-        return assembled(current), applied, list(gaps.values())
+        return result(current)
     # `found` e' la valutazione che ha ancora qualcosa da proporre: il messaggio
     # nomina quelle regole, e non puo' uscire vuoto.
     asking = sorted({item.rule_id for item in found.proposals})
@@ -661,4 +729,4 @@ def saturate(
     )
 
 
-__all__ = ["ROUNDS", "apply_proposals", "evaluate_in_phases", "saturate"]
+__all__ = ["ROUNDS", "Saturation", "apply_proposals", "evaluate_in_phases", "saturate", "saturation"]

@@ -100,7 +100,10 @@ def test_the_libraries_are_not_empty() -> None:
     # 55 dal 24 settembre 2026, `REL-003` (I-124, D-184): la pompa di calore di
     # alta potenza, la caldaia modulare, il collettore solare, il bollitore a
     # due serpentini e il ventilconvettore canalizzato.
-    assert len(published()) == 55
+    # 61 dal 3 ottobre 2026, `REL-009` (I-194, I-197): il contatore di calore, l'attacco
+    # predisposto, il volano a sei attacchi, il collettore con ritorno, il giunto
+    # antivibrante e il dosatore di polifosfati.
+    assert len(published()) == 61
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)

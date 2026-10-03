@@ -59,6 +59,7 @@ from disegnatore_mep.layout.geometry import (
     quadrants_of,
 )
 from disegnatore_mep.layout.labels import (
+    ETICHETTA,
     LINE_CLEARANCE_MM,
     riquadro_della_scritta,
     riquadro_di_rispetto,
@@ -165,6 +166,7 @@ MEASURE_ORDER: tuple[str, ...] = (
     "labels_on_runs",
     "leader_crossings",
     "omitted_tags",
+    "omitted_free_labels",
     "diameter_tags",
     "text_spacing",
     "equipment_table",
@@ -750,6 +752,41 @@ def omitted_tags(drawing: DrawingGeometry) -> list[ValidationIssue]:
                     IssueSeverity.WARNING,
                     f"la sigla {symbol.tag} di {symbol.component_id} non e' scritta: "
                     f"nessun lato libero e nessun richiamo pulito (DRAW-003-R1)",
+                    [sheet.sheet_id, symbol.component_id],
+                )
+            )
+    return findings
+
+
+def omitted_free_labels(drawing: DrawingGeometry, project: ProjectModel | None) -> list[ValidationIssue]:
+    """REL-009, I-194 — la scritta libera che il progettista da' a un pezzo, e che non
+    ha trovato posto.
+
+    «al solare termico» su un attacco tappato dice a che cosa serve l'attacco: senza,
+    sulla tavola resta un tubo che finisce contro un tappo, e non si sa perche'. Non e'
+    una sigla che la tabella o il disegno ripetono altrove: **blocca**, e si cura nella
+    posa, lasciando un lato libero accanto al pezzo. Senza il modello non si misura."""
+    if project is None:
+        return []
+    scritte = {
+        item.id: str(item.properties[ETICHETTA]).strip()
+        for item in project.components
+        if isinstance(item.properties.get(ETICHETTA), str) and str(item.properties[ETICHETTA]).strip()
+    }
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        scritte_qui = {label.id for label in sheet.labels}
+        for symbol in sheet.symbols:
+            testo = scritte.get(symbol.component_id)
+            if testo is None or f"{symbol.component_id}-{ETICHETTA}" in scritte_qui:
+                continue
+            findings.append(
+                _finding(
+                    "FREE_LABEL_OMITTED",
+                    IssueSeverity.BLOCKING,
+                    f"la scritta «{testo}» di {symbol.component_id} non e' scritta: nessun lato "
+                    f"libero e nessun richiamo pulito. La scritta l'ha data il progettista, e "
+                    f"la tavola non esce senza: si lascia posto accanto al pezzo (I-194)",
                     [sheet.sheet_id, symbol.component_id],
                 )
             )
@@ -1515,6 +1552,7 @@ def preflight_drawing(
         *labels_on_runs(drawing, frame),
         *leader_crossings(drawing),
         *omitted_tags(drawing),
+        *omitted_free_labels(drawing, project),
         *diameter_tags(drawing, catalog, project),
         *text_spacing(drawing, frame),
         *equipment_table(drawing, frame),

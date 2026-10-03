@@ -32,6 +32,7 @@ from disegnatore_mep.model.project import NetworkModel, PortRef, ProjectModel
 from disegnatore_mep.model.types import PlantRegime
 
 from .context import RuleContext
+from .errors import RuleError
 from .proposal import GapReason, RuleGap, RuleProposal, proposed_component_id
 from .registry import RuleRegistry
 from .schema import (
@@ -52,6 +53,9 @@ class Evaluation:
 
     proposals: list[RuleProposal] = field(default_factory=list)
     gaps: list[RuleGap] = field(default_factory=list)
+    withheld: list[RuleProposal] = field(default_factory=list)
+    """Le proposte che il progettista ha tolto (`accessori_tolti`, REL-009): la
+    regola le farebbe, e non si applicano. Non sono punti aperti."""
 
     @property
     def is_empty(self) -> bool:
@@ -659,7 +663,63 @@ def evaluate(
                         source=rule.source,
                     )
                 )
-    return Evaluation(proposals=proposals, gaps=list(gaps.values()))
+    # Il progettista toglie dopo che la regola ha parlato (REL-009, I-192): il
+    # tratto resta reclamato dalla proposta tolta, e l'organo non si riaffaccia
+    # dall'altro capo dello stesso tratto. Se dice dove sta invece, la stessa
+    # proposta si posa la'.
+    tolti = {item.pezzo: item for item in project.accessori_tolti}
+    tenute = [item for item in proposals if item.component_id not in tolti]
+    tolte = [item for item in proposals if item.component_id in tolti]
+    for tolta in tolte:
+        altrove = tolti[tolta.component_id].altrove
+        if altrove is None:
+            continue
+        spostata = _spostata(context, catalog, tolta, altrove)
+        if spostata.component_id not in taken and all(
+            item.component_id != spostata.component_id for item in tenute
+        ):
+            tenute.append(spostata)
+    return Evaluation(proposals=tenute, gaps=list(gaps.values()), withheld=tolte)
+
+
+def _spostata(
+    context: RuleContext, catalog: ComponentRegistry, proposta: RuleProposal, altrove: str
+) -> RuleProposal:
+    """La stessa proposta, sull'attacco che il progettista indica (REL-009, I-192).
+
+    Il pezzo, la regola e il perche' non cambiano: cambiano l'attacco, la rete che
+    ci passa e il nome, che si deriva dal nuovo attacco come ogni altro. L'attacco
+    di servizio si rilegge sul pezzo nuovo: un vaso spostato su un raccordo pende da
+    uno stacco, non dall'attacco della macchina da cui la regola partiva."""
+    pezzo, attacco = altrove.split(".", 1)
+    anchor = PortRef(component_id=pezzo, port_id=attacco)
+    connection_id = context.connection_of_port.get((pezzo, attacco))
+    if connection_id is None:
+        raise RuleError(
+            f"{proposta.component_id} e' spostato su {altrove}, e nessuna tubazione tocca "
+            f"quell'attacco: si sposta su un attacco collegato"
+        )
+    definition = catalog.resolve(proposta.definition_id).definition
+    service_port = (
+        next(
+            (
+                porta
+                for funzione in definition.functions
+                if (porta := context.service_port_for(pezzo, funzione)) is not None
+            ),
+            None,
+        )
+        if definition.attaches_on_a_branch
+        else None
+    )
+    return proposta.model_copy(
+        update={
+            "component_id": proposed_component_id(definition.id, anchor),
+            "network_id": context.network_of_connection[connection_id],
+            "anchor": anchor,
+            "service_port": service_port,
+        }
+    )
 
 
 __all__ = ["BRANCH_OFF", "Evaluation", "evaluate"]

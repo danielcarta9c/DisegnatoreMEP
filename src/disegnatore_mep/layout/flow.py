@@ -99,6 +99,10 @@ BOUNDARY_FUNCTION = "boundary"
 ne va. La posa lo legge per sapere che quel pezzo **non ha una posizione
 propria** e va accanto all'utente che serve (I-061, DRAW-009 §A.2)."""
 
+PROVISION_FUNCTION = "provision"
+"""Il mestiere dell'attacco predisposto (REL-009, I-197): un tubo tappato che oggi non
+porta niente, e che sta per la macchina che verra' — il solare termico."""
+
 LOAD_FUNCTIONS = frozenset(
     {
         "emission",
@@ -391,7 +395,18 @@ def _oriented_for_colour(
             if outgoing.get(item) and _rank(functions_of.get(item, frozenset())) > 0
         ]
         feeders = [item for item in members if not incoming.get(item)]
-        if emitters:
+        # **Un attacco predisposto sta per la macchina che verra'** (REL-009, I-197):
+        # il collettore solare dietro il tappo. Quello che immette ne e' la mandata,
+        # quello che riceve il ritorno — non il volano che li ha tutti e due: la
+        # mandata entra dall'alto, e «la mandata e' sempre sopra il suo ritorno».
+        predisposti_che_ricevono = [
+            item
+            for item in members
+            if not outgoing.get(item) and PROVISION_FUNCTION in functions_of.get(item, frozenset())
+        ]
+        if feeders and all(PROVISION_FUNCTION in functions_of.get(item, frozenset()) for item in feeders):
+            sources = feeders
+        elif emitters:
             top = max(_rank(functions_of.get(item, frozenset())) for item in emitters)
             sources = [
                 item for item in emitters if _rank(functions_of.get(item, frozenset())) == top
@@ -408,6 +423,11 @@ def _oriented_for_colour(
         for source in sources:
             supply |= _walk_edges(outgoing, source, functions_of)
             returns |= _walk_edges(incoming, source, functions_of)
+        if sources == feeders and feeders and all(
+            PROVISION_FUNCTION in functions_of.get(item, frozenset()) for item in feeders
+        ):
+            for pozzo in predisposti_che_ricevono:
+                returns |= _walk_edges(incoming, pozzo, functions_of)
         for trunk in group:
             key = trunk.connection_ids
             in_supply, in_return = key in supply, key in returns

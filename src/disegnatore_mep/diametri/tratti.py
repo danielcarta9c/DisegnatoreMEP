@@ -216,6 +216,7 @@ def tratti_del_diametro(
     tratte = [item for item in tutte if item.connection_ids in portate.tratte]
     richieste = frozenset(project.diametri.reti) if project.diametri is not None else frozenset()
     esistenti = frozenset(item.id for item in project.networks if item.esistente)
+    tubi_esistenti = frozenset(item.id for item in project.connections if item.esistente)
     legami = _passaggi(project, catalog, tratte)
     livelli = hierarchy_of(project, catalog, tutte)
 
@@ -235,6 +236,8 @@ def tratti_del_diametro(
         perche: str | None = None
         if any(rete in esistenti for rete in reti):
             perche = "rete esistente"
+        elif any(tubo in tubi_esistenti for chiave in chiavi for tubo in chiave):
+            perche = "tratto esistente"
         elif not richiesto:
             perche = "diametri non chiesti su questa rete"
         elif portata is None:

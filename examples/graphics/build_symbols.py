@@ -1451,6 +1451,141 @@ def boundary_flow_glyph(w: float, h: float) -> dict[str, Any]:
 
 
 
+# --- REL-009, il primo caso reale (I-194) ------------------------------------
+
+SOURCE_REL009_HEAT_METER = (
+    "contatore di calore con la sigla «CC»: Comune di Vinci, schema funzionale della "
+    "centrale termica, 2021 (research note «Simboli nuovi della prima release»); "
+    "posizione sul ritorno, sonda sulla mandata: Caleffi CAL1913, SRC-021"
+)
+SOURCE_REL009_PROPOSAL = "proposta della sessione, REL-009 (I-194): la forma la approva il PO sulla tavola"
+
+HEAT_METER = (10.0, 5.0)
+HEAT_METER_GLYPH_ID = "sigla"
+
+
+def heat_meter_body(w: float, h: float) -> str:
+    """Contatore di calore: il corpo del misuratore in linea, con la sigla «CC» dentro.
+
+    Le due C sono archi, senza font, in un gruppo dichiarato leggibile: a contatore
+    girato su un montante la sigla resta dritta. Le sonde di mandata e di ritorno
+    fanno parte del contatore (UNI EN 1434) e non si disegnano a parte."""
+    inset = w * 0.15
+    body = (
+        f'<line x1="0" y1="{n(h / 2)}" x2="{n(inset)}" y2="{n(h / 2)}"/>'
+        f'<line x1="{n(w - inset)}" y1="{n(h / 2)}" x2="{n(w)}" y2="{n(h / 2)}"/>'
+        f'<rect x="{n(inset)}" y="{n(h * 0.1)}" width="{n(w - 2 * inset)}" height="{n(h * 0.8)}"/>'
+    )
+    r = h * 0.28
+    lettere = ""
+    for cx in (w / 2 - r * 1.05, w / 2 + r * 1.05):
+        x0 = cx + r * 0.7
+        lettere += (
+            f'<path d="M{n(x0)} {n(h / 2 - r * 0.7)} A{n(r)} {n(r)} 0 1 0 '
+            f'{n(x0)} {n(h / 2 + r * 0.7)}"/>'
+        )
+    return body + f'<g data-glyph="{HEAT_METER_GLYPH_ID}">{lettere}</g>'
+
+
+def capped_connection_body(w: float, h: float) -> str:
+    """Attacco predisposto: il tubo che arriva dalla porta e finisce contro un tappo.
+
+    Il tappo e' una flangia cieca, due tratti affiancati e perpendicolari al tubo:
+    l'attacco c'e', e oggi non porta niente. Che cosa ci si attacchera' lo dice la
+    scritta che il progettista gli da' («al solare termico»)."""
+    cy = h / 2
+    x_tappo = w * 0.3
+    return (
+        f'<line x1="{n(x_tappo)}" y1="{n(cy)}" x2="{n(w)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(x_tappo)}" y1="{n(cy - h * 0.35)}" x2="{n(x_tappo)}" y2="{n(cy + h * 0.35)}"/>'
+        f'<line x1="{n(x_tappo - w * 0.15)}" y1="{n(cy - h * 0.35)}" '
+        f'x2="{n(x_tappo - w * 0.15)}" y2="{n(cy + h * 0.35)}"/>'
+    )
+
+
+MANIFOLD_PAIR = (20.0, 15.0)
+MANIFOLD_PAIR_SUPPLY = (2.5, 12.5)
+"""Le uscite di mandata, sulla faccia di sotto."""
+MANIFOLD_PAIR_RETURN = (7.5, 17.5)
+"""I rientri del ritorno, sulla faccia di sotto, ciascuno accanto alla sua mandata."""
+
+
+def manifold_pair_body(w: float, h: float) -> str:
+    """Collettore d'appartamento con mandata e ritorno: due barre, la mandata sopra e il
+    ritorno sotto, e per ogni circuito la sua coppia di attacchi in basso.
+
+    Le discese della mandata passano davanti alla barra del ritorno senza toccarla:
+    la barra del ritorno si interrompe dove una discesa la attraversa, come un tubo
+    che ne scavalca un altro."""
+    mandata_y, ritorno_y, mezza = 2.5, h - 2.5, 1.0
+    varco = 1.0
+    x0 = w * 0.05
+    corpo = (
+        f'<line x1="0" y1="{n(mandata_y)}" x2="{n(x0)}" y2="{n(mandata_y)}"/>'
+        f'<line x1="0" y1="{n(ritorno_y)}" x2="{n(x0)}" y2="{n(ritorno_y)}"/>'
+        f'<rect x="{n(x0)}" y="{n(mandata_y - mezza)}" width="{n(w - x0)}" height="{n(2 * mezza)}"/>'
+    )
+    # La barra del ritorno, a tratti fra una discesa di mandata e l'altra.
+    bordi = [x0]
+    for x in MANIFOLD_PAIR_SUPPLY:
+        bordi += [x - varco, x + varco]
+    bordi.append(w)
+    for x0, x1 in zip(bordi[::2], bordi[1::2], strict=True):
+        if x1 > x0:
+            corpo += (
+                f'<line x1="{n(x0)}" y1="{n(ritorno_y - mezza)}" x2="{n(x1)}" y2="{n(ritorno_y - mezza)}"/>'
+                f'<line x1="{n(x0)}" y1="{n(ritorno_y + mezza)}" x2="{n(x1)}" y2="{n(ritorno_y + mezza)}"/>'
+            )
+    corpo += (
+        f'<line x1="{n(x0)}" y1="{n(ritorno_y - mezza)}" x2="{n(x0)}" y2="{n(ritorno_y + mezza)}"/>'
+        f'<line x1="{n(w)}" y1="{n(ritorno_y - mezza)}" x2="{n(w)}" y2="{n(ritorno_y + mezza)}"/>'
+    )
+    for x in MANIFOLD_PAIR_SUPPLY:
+        corpo += f'<line x1="{n(x)}" y1="{n(mandata_y + mezza)}" x2="{n(x)}" y2="{n(h)}"/>'
+    for x in MANIFOLD_PAIR_RETURN:
+        corpo += f'<line x1="{n(x)}" y1="{n(ritorno_y + mezza)}" x2="{n(x)}" y2="{n(h)}"/>'
+    return corpo
+
+
+def flexible_joint_body(w: float, h: float) -> str:
+    """Giunto antivibrante: due flange affacciate, e fra loro il soffietto a onde che
+    assorbe le vibrazioni della macchina. Le flange dicono che e' un pezzo che si
+    monta fra due attacchi; l'onda, che cede."""
+    cy = h / 2
+    x1, x2 = w * 0.2, w * 0.8
+    alto, basso = cy - h * 0.3, cy + h * 0.3
+    onde = 3
+    passo = (x2 - x1) / onde
+    percorso = f"M{n(x1)} {n(cy)}"
+    for indice in range(onde):
+        xa = x1 + passo * indice
+        percorso += (
+            f" Q{n(xa + passo / 4)} {n(cy - h * 0.22)} {n(xa + passo / 2)} {n(cy)}"
+            f" Q{n(xa + passo * 3 / 4)} {n(cy + h * 0.22)} {n(xa + passo)} {n(cy)}"
+        )
+    return (
+        f'<line x1="0" y1="{n(cy)}" x2="{n(x1)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(x2)}" y1="{n(cy)}" x2="{n(w)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(x1)}" y1="{n(alto)}" x2="{n(x1)}" y2="{n(basso)}"/>'
+        f'<line x1="{n(x2)}" y1="{n(alto)}" x2="{n(x2)}" y2="{n(basso)}"/>'
+        f'<path d="{percorso}"/>'
+    )
+
+
+def polyphosphate_doser_body(w: float, h: float) -> str:
+    """Dosatore di polifosfati: la testa in linea, dove l'acqua passa, e sotto la
+    cartuccia dei sali che si consuma e si cambia."""
+    cy = h / 2
+    testa_x, testa_w = w * 0.3, w * 0.4
+    return (
+        f'<line x1="0" y1="{n(cy)}" x2="{n(testa_x)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(testa_x + testa_w)}" y1="{n(cy)}" x2="{n(w)}" y2="{n(cy)}"/>'
+        f'<rect x="{n(testa_x)}" y="{n(cy - h * 0.12)}" width="{n(testa_w)}" height="{n(h * 0.24)}"/>'
+        f'<rect x="{n(testa_x + testa_w * 0.15)}" y="{n(cy + h * 0.12)}" width="{n(testa_w * 0.7)}" '
+        f'height="{n(h * 0.33)}" rx="{n(testa_w * 0.2)}"/>'
+    )
+
+
 @dataclass(frozen=True)
 class SymbolSpec:
     id: str
@@ -1712,6 +1847,15 @@ BUFFER_PORTS = [
 # ⚠ **Non vale per un serpentino:** gli attacchi di uno scambiatore interno
 # dicono dov'e' la serpentina dentro l'accumulo, e non si spostano. Sono
 # `coil_in` e `coil_out` di `dhw-cylinder`, e restano a 10 mm l'uno dall'altro.
+BUFFER_SIX_PORTS = [
+    *BUFFER_PORTS,
+    # REL-009 (I-194): i due attacchi in piu' del volano del caso reale, predisposti
+    # per un solare futuro. Sulla faccia del secondario, sotto i suoi, a 10 mm
+    # l'uno dall'altro: una proposta, che il PO giudica sulla tavola.
+    port_at("aux_in", "right", 27.5, STORAGE_W, STORAGE_H),
+    port_at("aux_out", "right", 37.5, STORAGE_W, STORAGE_H),
+]
+
 GAS_BOILER_PORTS = [
     port_at("water_supply", "right", 5.0, *MACHINE),
     port_at("water_return", "right", 20.0, *MACHINE),
@@ -2206,6 +2350,66 @@ SYMBOLS: list[SymbolSpec] = [
     # fluido, non una forma diversa: stesso corpo della intercettazione.
     inline_symbol("gas-valve", "Valvola gas", INLINE_ACCESSORY, valve_isolation_body, SOURCE_UNI_TAB3),
     inline_symbol("gas-meter", "Contatore gas", DEVICE, gas_meter_body, SOURCE_PRACTICE_PENDING),
+    # --- REL-009, il primo caso reale (I-194): proposte, la forma la approva il PO ---
+    SymbolSpec(
+        id="heat-meter",
+        name="Contatore di calore",
+        width_mm=HEAT_METER[0],
+        height_mm=HEAT_METER[1],
+        inline=True,
+        ports=[port("a", "left", *HEAT_METER), port("b", "right", *HEAT_METER)],
+        body=heat_meter_body(*HEAT_METER),
+        source=SOURCE_REL009_HEAT_METER,
+        upright_glyphs=[{"id": HEAT_METER_GLYPH_ID, "x_mm": HEAT_METER[0] / 2, "y_mm": HEAT_METER[1] / 2}],
+    ),
+    single_port_symbol(
+        "capped-connection", "Attacco predisposto", INLINE_ACCESSORY, "right",
+        capped_connection_body, SOURCE_REL009_PROPOSAL,
+    ),
+    SymbolSpec(
+        id="buffer-six-port",
+        name="Volano termico a sei attacchi",
+        width_mm=STORAGE_W,
+        height_mm=STORAGE_H,
+        inline=False,
+        ports=BUFFER_SIX_PORTS,
+        body=reserve_body(STORAGE_W, STORAGE_H, BUFFER_SIX_PORTS),
+        source=SOURCE_REL009_PROPOSAL,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    # REL-009, I-197: «se servono e il progettista puo' chiederli vanno messi».
+    inline_symbol(
+        "flexible-joint", "Giunto antivibrante", INLINE_ACCESSORY, flexible_joint_body,
+        SOURCE_REL009_PROPOSAL,
+    ),
+    inline_symbol(
+        "polyphosphate-doser", "Dosatore di polifosfati", DEVICE, polyphosphate_doser_body,
+        SOURCE_REL009_PROPOSAL,
+    ),
+    SymbolSpec(
+        id="zone-manifold-pair",
+        name="Collettore di zona con ritorno",
+        width_mm=MANIFOLD_PAIR[0],
+        height_mm=MANIFOLD_PAIR[1],
+        inline=False,
+        ports=[
+            # Mandata e ritorno a 10 mm, come i terminali (D-167): le due
+            # intercettazioni che le regole ci posano non si toccano.
+            port_at("in", "left", 2.5, *MANIFOLD_PAIR),
+            port_at("out", "left", MANIFOLD_PAIR[1] - 2.5, *MANIFOLD_PAIR),
+            *(
+                port_at(f"out_{indice + 1}", "bottom", x, *MANIFOLD_PAIR)
+                for indice, x in enumerate(MANIFOLD_PAIR_SUPPLY)
+            ),
+            *(
+                port_at(f"ret_{indice + 1}", "bottom", x, *MANIFOLD_PAIR)
+                for indice, x in enumerate(MANIFOLD_PAIR_RETURN)
+            ),
+        ],
+        body=manifold_pair_body(*MANIFOLD_PAIR),
+        source=SOURCE_REL009_PROPOSAL,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
 ]
 
 

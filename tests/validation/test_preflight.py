@@ -6,6 +6,8 @@ che si dimostra solo sul caso di accettazione smette di dimostrare qualcosa il
 giorno in cui quel caso cambia, ed e' esattamente il giorno in cui serve.
 """
 
+from datetime import date
+
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import (
     ComponentDefinition,
@@ -28,7 +30,7 @@ from disegnatore_mep.layout.geometry import (
     SheetGeometry,
     TabellaDelleApparecchiature,
 )
-from disegnatore_mep.model.project import PortRef
+from disegnatore_mep.model.project import ComponentInstance, PortRef, ProjectMetadata, ProjectModel
 from disegnatore_mep.model.types import Domain, IssueSeverity, PortFlow
 from disegnatore_mep.validation import preflight
 from disegnatore_mep.validation.issues import ValidationIssue
@@ -662,9 +664,28 @@ def everything_wrong() -> DrawingGeometry:
     return drawing(first, scrap)
 
 
+def _con_una_scritta_libera() -> ProjectModel:
+    """Il modello di `everything_wrong`, quanto basta: il pezzo «good» porta una
+    scritta libera (REL-009, I-194), e la tavola non l'ha scritta."""
+    return ProjectModel(
+        metadata=ProjectMetadata(
+            project_id="prova-preflight",
+            client="prova",
+            project_name="prova",
+            commission_code="PROVA",
+            revision="00",
+            issue_date=date(2026, 10, 3),
+        ),
+        components=[
+            ComponentInstance(id="good", definition_id="probe_good", properties={"etichetta": "al solare termico"})
+        ],
+    )
+
+
 def test_preflight_runs_every_measure_in_the_declared_order() -> None:
     broken = everything_wrong()
     registry = catalog(probe_good=GOOD_SOURCE, probe_bad=preflight.INVENTED_SOURCE)
+    progetto = _con_una_scritta_libera()
     by_measure = [
         preflight.unresolved_runs(broken),
         preflight.bends_per_run(broken),
@@ -675,7 +696,8 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
         preflight.labels_on_runs(broken, FRAME),
         preflight.leader_crossings(broken),
         preflight.omitted_tags(broken),
-        preflight.diameter_tags(broken, registry),
+        preflight.omitted_free_labels(broken, progetto),
+        preflight.diameter_tags(broken, registry, progetto),
         preflight.text_spacing(broken, FRAME),
         preflight.equipment_table(broken, FRAME),
         preflight.sheet_fill(broken, FRAME),
@@ -687,7 +709,15 @@ def test_preflight_runs_every_measure_in_the_declared_order() -> None:
         name for name, found in zip(preflight.MEASURE_ORDER, by_measure, strict=True) if not found
     ]
     expected = [item for found in by_measure for item in found]
-    assert preflight.preflight_drawing(broken, FRAME, registry) == expected
+    assert preflight.preflight_drawing(broken, FRAME, registry, progetto) == expected
+
+
+def test_una_scritta_libera_che_non_trova_posto_blocca() -> None:
+    """REL-009, I-194: la scritta l'ha data il progettista, e la tavola non esce senza."""
+    trovato = only(preflight.omitted_free_labels(everything_wrong(), _con_una_scritta_libera()), "FREE_LABEL_OMITTED")
+    assert trovato.severity is IssueSeverity.BLOCKING
+    assert "«al solare termico»" in trovato.message
+    assert preflight.omitted_free_labels(everything_wrong(), None) == []
 
 
 def test_every_declared_measure_is_a_function_of_this_module() -> None:
