@@ -18,27 +18,34 @@ Che cosa ci mette, e da dove:
 | `riferimenti/regole-del-piano.md` | `docs/regole-del-piano.md` |
 | `scripts/mep.py` | `skill/scripts/mep.py` — il comando |
 | `scripts/disegnatore_mep/` | `src/disegnatore_mep/` — il motore, tutto |
-| `dati/simboli/` | `assets/symbols/` |
-| `dati/catalogo/` | `examples/layout/catalog/` |
-| `dati/regole/` | `rules/hydronic/` |
+| `dati/simboli.json` | `assets/symbols/`, in un file solo |
+| `dati/catalogo.json` | `examples/layout/catalog/`, in un file solo |
+| `dati/regole.json` | `rules/hydronic/`, in un file solo |
 | `dati/naming/` | `naming/` |
 | `dati/cartiglio/` | `assets/cartigli/Cartiglio_NoveC_A3.json` e il suo logo |
 | `dati/schema/project.schema.json` | `schemas/project.schema.json` |
 | `LICENSE.txt` | `LICENSE` |
 
+**Simboli, catalogo e regole stanno in un file ciascuno** (`disegnatore_mep.skill.FASCI`):
+il caricamento su claude.ai accetta al massimo 200 file, e quelle tre cartelle da sole
+ne erano 183 (I-188). Il comando li riapre da se', e una voce o un manifesto si
+leggono con `mep.py catalogo <id>` e `mep.py simbolo <id>`.
+
 **Le istruzioni dei tre pezzi si copiano come sono**, e cambiano solo **i percorsi** —
-nel repository il catalogo sta in `examples/layout/catalog`, nella skill in
-`dati/catalogo` — e **il comando di validazione** di Capire, che nel repository chiama
-l'interprete di sviluppo e nella skill `scripts/mep.py`. Ogni sostituzione dichiara
+nel repository una voce del catalogo e' un file di `examples/layout/catalog`, nella
+skill la stampa `mep.py catalogo <id>` — e **il comando di validazione** di Capire, che
+nel repository chiama l'interprete di sviluppo e nella skill `scripts/mep.py`. Ogni sostituzione dichiara
 quante volte deve applicarsi: se il testo di partenza cambia e una sostituzione non
 trova piu' il suo posto, la costruzione si ferma e lo dice, invece di lasciare nella
 skill un percorso che li' non esiste. Ai file lunghi piu' di cento righe si mette in
 testa l'indice dei capitoli, come la guida di Anthropic chiede.
 
-**I controlli della guida** «Skill authoring best practices» e del validatore di
-`skill-creator` girano qui, a ogni costruzione: il nome e la descrizione nei loro
-limiti, un solo `SKILL.md`, il corpo sotto le 500 righe, ogni file che `SKILL.md` nomina
-presente, nessun percorso del repository rimasto nei riferimenti.
+**I controlli della guida** «Skill authoring best practices», del validatore di
+`skill-creator` e del caricamento su claude.ai girano qui, a ogni costruzione: il nome e
+la descrizione nei loro limiti, i soli campi ammessi nel frontespizio, un solo
+`SKILL.md`, il corpo sotto le 500 righe, ogni file che `SKILL.md` nomina presente, nessun
+percorso del repository rimasto nei riferimenti; e lo ZIP con al massimo 200 file, sotto
+i 30 MB, la skill in una cartella sola alla radice e nessuna voce di cartella.
 """
 
 import argparse
@@ -47,11 +54,16 @@ import re
 import shutil
 import stat
 import sys
+import tempfile
 import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from disegnatore_mep.skill import FASCI, fascio_della_cartella  # noqa: E402
+
 NOME = "disegnatore-mep"
 USCITA = ROOT / "outputs" / "skill"
 
@@ -69,6 +81,22 @@ RIGHE_MASSIME_DI_SKILL_MD = 500
 CHIAVI_AMMESSE = {"name", "description", "license", "allowed-tools", "metadata", "compatibility"}
 """Le chiavi del frontespizio che il validatore di `skill-creator` accetta."""
 
+CARATTERI_DELLA_DESCRIZIONE = 200
+"""La descrizione per claude.ai: «200 characters maximum» (centro d'aiuto di Anthropic,
+«Creating custom Skills», 22 luglio 2026). La specifica ne ammette 1024, e anche quelli si
+controllano; si tiene la misura piu' stretta."""
+
+CARATTERI_DELLA_COMPATIBILITA = 500
+"""Il campo `compatibility`: al massimo 500 caratteri (validatore di `skill-creator`)."""
+
+FILE_NELLO_ZIP = 200
+"""Il caricamento su claude.ai: «Zip contains too many files (maximum 200)» — lo ZIP di
+`REL-001`, con 287 file, si e' fermato li' (I-188)."""
+
+BYTE_DELLA_SKILL = 30 * 1024 * 1024
+"""«Total upload size must be under 30 MB (uncompressed)» (Anthropic, guida delle Skills
+per l'API); su claude.ai 30 MB e' anche il limite di ogni file."""
+
 FUORI_DAL_PACCHETTO = {"__pycache__", ".mypy_cache", ".pytest_cache", ".ruff_cache"}
 
 
@@ -84,7 +112,9 @@ PERCORSI_DI_CAPIRE = (
     Sostituzione("| Cosa | Dove sta nel repository | A cosa serve |",
                  "| Cosa | Dove sta nella skill | A cosa serve |", 1,
                  "la tabella dice dove stanno i file"),
-    Sostituzione("`examples/layout/catalog/*.json`", "`dati/catalogo/*.json`", 1, "il catalogo"),
+    Sostituzione("`examples/layout/catalog/*.json` (un file per pezzo)",
+                 "`python3 scripts/mep.py catalogo` (una riga per voce), `catalogo <id>` (la voce intera)",
+                 1, "il catalogo sta in un file solo, e una voce la stampa il comando"),
     Sostituzione("`naming/families.json`", "`dati/naming/families.json`", 2, "i mestieri"),
     Sostituzione("`naming/media.json`", "`dati/naming/media.json`", 2, "i fluidi"),
     Sostituzione("`schemas/project.schema.json`", "`dati/schema/project.schema.json`", 1,
@@ -109,10 +139,13 @@ PERCORSI_DI_CAPIRE = (
 )
 
 PERCORSI_DI_COMPORRE = (
-    Sostituzione("(`assets/symbols/<id>.json`)", "(`dati/simboli/<id>.json`)", 1, "i manifesti"),
-    Sostituzione("`examples/layout/catalog/<definition_id>.json`", "`dati/catalogo/<definition_id>.json`",
-                 1, "il catalogo"),
-    Sostituzione("`assets/symbols/<symbol_id>.json`", "`dati/simboli/<symbol_id>.json`", 1, "i manifesti"),
+    Sostituzione("(`assets/symbols/<id>.json`)", "(`python3 scripts/mep.py simbolo <id>`)", 1,
+                 "i manifesti stanno in un file solo, e uno lo stampa il comando"),
+    Sostituzione("`examples/layout/catalog/<definition_id>.json`",
+                 "`python3 scripts/mep.py catalogo <definition_id>`", 1,
+                 "il catalogo sta in un file solo, e una voce la stampa il comando"),
+    Sostituzione("`assets/symbols/<symbol_id>.json`", "`python3 scripts/mep.py simbolo <symbol_id>`", 1,
+                 "i manifesti stanno in un file solo, e uno lo stampa il comando"),
 )
 
 PERCORSI_DI_RIVEDERE = (
@@ -223,6 +256,13 @@ def controlla(skill: Path) -> list[str]:
         difetti.append(f"il nome {nome!r} non e' quello della cartella {skill.name!r}")
     if not descrizione or len(descrizione) > 1024:
         difetti.append(f"la descrizione ha {len(descrizione)} caratteri: vuota o oltre 1024")
+    if len(descrizione) > CARATTERI_DELLA_DESCRIZIONE:
+        difetti.append(
+            f"la descrizione ha {len(descrizione)} caratteri: claude.ai ne vuole al massimo "
+            f"{CARATTERI_DELLA_DESCRIZIONE}"
+        )
+    if len(campi.get("compatibility", "")) > CARATTERI_DELLA_COMPATIBILITA:
+        difetti.append(f"il campo compatibility supera {CARATTERI_DELLA_COMPATIBILITA} caratteri")
     if "<" in descrizione or ">" in descrizione:
         difetti.append("la descrizione contiene parentesi angolari")
     corpo = testo.split("\n---\n", 1)[1]
@@ -246,6 +286,11 @@ def controlla(skill: Path) -> list[str]:
             difetti.append(f"{riferimento.name}: oltre {RIGHE_PER_L_INDICE} righe senza indice")
         if f"riferimenti/{riferimento.name}" not in corpo:
             difetti.append(f"{riferimento.name}: SKILL.md non lo nomina (i riferimenti stanno a un livello)")
+    file = [p for p in skill.rglob("*") if p.is_file()]
+    if len(file) > FILE_NELLO_ZIP:
+        difetti.append(f"la skill ha {len(file)} file: il caricamento su claude.ai ne accetta {FILE_NELLO_ZIP}")
+    if sum(p.stat().st_size for p in file) >= BYTE_DELLA_SKILL:
+        difetti.append("la skill supera i 30 MB")
     for percorso in sorted(skill.rglob("*")):
         relativo = percorso.relative_to(skill)
         if percorso.suffix == ".md" and re.search(r"[\w.-]\\[\w.-]", percorso.read_text(encoding="utf-8")):
@@ -280,9 +325,11 @@ def costruisci(uscita: Path) -> tuple[Path, Path]:
     _copia_cartella(ROOT / "src" / "disegnatore_mep", scripts / "disegnatore_mep")
 
     dati = skill / "dati"
-    _copia_cartella(ROOT / "assets" / "symbols", dati / "simboli", (".json", ".svg"))
-    _copia_cartella(ROOT / "examples" / "layout" / "catalog", dati / "catalogo", (".json",))
-    _copia_cartella(ROOT / "rules" / "hydronic", dati / "regole", (".json",))
+    for nome, sorgente in zip(
+        FASCI, (ROOT / "assets" / "symbols", ROOT / "examples" / "layout" / "catalog", ROOT / "rules" / "hydronic"),
+        strict=True,
+    ):
+        _scrivi(dati / f"{nome}.json", fascio_della_cartella(sorgente, nome))
     _copia_cartella(ROOT / "naming", dati / "naming", (".json",))
     for nome in ("Cartiglio_NoveC_A3.json", "Cartiglio_NoveC_A3-logo.jpg"):
         _copia(ROOT / "assets" / "cartigli" / nome, dati / "cartiglio" / nome)
@@ -303,7 +350,39 @@ def costruisci(uscita: Path) -> tuple[Path, Path]:
             voce.compress_type = zipfile.ZIP_DEFLATED
             voce.external_attr = (stat.S_IFREG | 0o644) << 16
             zip_.writestr(voce, percorso.read_bytes(), compresslevel=9)
+    difetti = controlla_lo_zip(archivio)
+    if difetti:
+        archivio.unlink()
+        raise ErroreDiCostruzione("lo ZIP non si carica su claude.ai:\n  - " + "\n  - ".join(difetti))
     return skill, archivio
+
+
+def controlla_lo_zip(archivio: Path) -> list[str]:
+    """Lo ZIP come lo legge il caricamento su claude.ai — le voci, non i file della
+    cartella —, e la skill che contiene ripassata da `controlla`: la lista di quello che non
+    va, vuota se si carica. La usa la costruzione, e `tests/test_le_release.py` su ogni ZIP
+    pubblicato in `releases/` (I-189): uno ZIP che non passa non si pubblica."""
+    difetti: list[str] = []
+    with zipfile.ZipFile(archivio) as zip_:
+        voci = zip_.infolist()
+        if len(voci) > FILE_NELLO_ZIP:
+            difetti.append(
+                f"lo ZIP ha {len(voci)} file: il caricamento su claude.ai ne accetta {FILE_NELLO_ZIP} "
+                "(«Zip contains too many files (maximum 200)»)"
+            )
+        fuori = [v.filename for v in voci if not v.filename.startswith(f"{NOME}/") or "\\" in v.filename]
+        if fuori:
+            difetti.append(f"voci fuori dalla cartella {NOME}/: {fuori[:3]}")
+        if any(v.is_dir() for v in voci):
+            difetti.append("lo ZIP ha voci di cartella")
+        if sum(v.file_size for v in voci) >= BYTE_DELLA_SKILL:
+            difetti.append("la skill, decompressa, supera i 30 MB")
+        if difetti:
+            return difetti
+        with tempfile.TemporaryDirectory() as cartella:
+            zip_.extractall(cartella)
+            difetti += controlla(Path(cartella) / NOME)
+    return difetti
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -319,7 +398,8 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Skill: {skill} ({len(file)} file, {sum(p.stat().st_size for p in file) // 1024} kB)")
     print(f"ZIP:   {archivio} ({archivio.stat().st_size // 1024} kB, "
           f"sha256 {hashlib.sha256(archivio.read_bytes()).hexdigest()[:16]})")
-    print("Controlli della guida di Anthropic e di skill-creator: passati.")
+    print(f"Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai "
+          f"(al massimo {FILE_NELLO_ZIP} file): passati.")
     return 0
 
 

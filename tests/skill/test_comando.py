@@ -16,6 +16,7 @@ progettista, e che I-166 vuole della skill e non della sessione:
 import json
 import re
 import sys
+import tempfile
 import zlib
 from pathlib import Path
 from types import SimpleNamespace
@@ -23,7 +24,15 @@ from types import SimpleNamespace
 import pytest
 
 from disegnatore_mep.graphics.pdf import PUNTI_PER_MM
-from disegnatore_mep.skill import Cartelle, _png, cartelle_del_repository, main
+from disegnatore_mep.skill import (
+    FASCI,
+    Cartelle,
+    _png,
+    apri_i_fasci,
+    cartelle_del_repository,
+    fascio_della_cartella,
+    main,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 IMPIANTO_6 = ROOT / "docs" / "collaudi" / "REL-003" / "impianto-6"
@@ -195,6 +204,55 @@ def test_il_catalogo_dice_quando_un_pezzo_non_c_e(cartelle: Cartelle, capsys: py
     trovate = [r for r in capsys.readouterr().out.splitlines() if r and not r.startswith(" ")]
     assert {r.split(" — ")[0] for r in trovate} == {"gas-boiler", "gas-boiler-modular"}
     assert any("a bordo: circulation" in r for r in trovate), "la caldaia modulare porta il circolatore"
+
+
+def test_una_voce_e_un_simbolo_si_leggono_interi(cartelle: Cartelle, capsys: pytest.CaptureFixture[str]) -> None:
+    """Nella skill catalogo e simboli stanno in un file ciascuno (I-188): una voce e un
+    manifesto li stampa il comando, uguali al file che legge il motore."""
+    assert main(["catalogo", "gas-boiler"], cartelle) == 0
+    assert json.loads(capsys.readouterr().out) == json.loads(
+        (cartelle.catalogo / "gas-boiler.json").read_text(encoding="utf-8")
+    )
+    assert main(["simbolo", "valve-isolation"], cartelle) == 0
+    manifesto = json.loads(capsys.readouterr().out)
+    assert manifesto["id"] == "valve-isolation" and manifesto["ports"], "le porte, con le loro quote"
+    assert main(["simbolo", "cogeneratore"], cartelle) == 1
+    assert "Nessun simbolo «cogeneratore»" in capsys.readouterr().out
+    assert main(["catalogo", "../gas-boiler"], cartelle) == 1, "solo un id, non un percorso"
+
+
+def test_i_fasci_si_riaprono_uguali_e_non_escono_dalla_loro_cartella(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Un fascio riaperto da' gli stessi dati della cartella da cui e' nato; un nome che
+    esce dalla cartella ferma tutto."""
+    monkeypatch.setattr(tempfile, "tempdir", str(tmp_path / "tmp"))
+    dati = tmp_path / "dati"
+    dati.mkdir()
+    sorgenti = {
+        "simboli": ROOT / "assets" / "symbols",
+        "catalogo": ROOT / "examples" / "layout" / "catalog",
+        "regole": ROOT / "rules" / "hydronic",
+    }
+    for nome in FASCI:
+        (dati / f"{nome}.json").write_text(fascio_della_cartella(sorgenti[nome], nome), encoding="utf-8")
+    aperti = apri_i_fasci(dati)
+    assert apri_i_fasci(dati) == aperti, "si riaprono una volta sola per contenuto"
+    for nome, sorgente in sorgenti.items():
+        originali = sorted(p.name for p in sorgente.iterdir())
+        assert sorted(p.name for p in (aperti / nome).iterdir()) == originali
+        for file in originali:
+            prima = (sorgente / file).read_text(encoding="utf-8")
+            dopo = (aperti / nome / file).read_text(encoding="utf-8")
+            assert (json.loads(dopo) == json.loads(prima)) if file.endswith(".json") else dopo == prima, file
+
+    (dati / "regole.json").write_text(
+        json.dumps({"fascio": "regole", "file": {"../fuori.json": {}}}), encoding="utf-8"
+    )
+    with pytest.raises(ValueError, match="nome di file non ammesso"):
+        apri_i_fasci(dati)
+    assert not list((tmp_path / "tmp").rglob("fuori.json"))
+    assert len(list(aperti.parent.iterdir())) == 1, "un fascio che non si apre non lascia cartelle a meta'"
 
 
 def test_il_png_dell_anteprima_e_un_png_che_si_legge() -> None:

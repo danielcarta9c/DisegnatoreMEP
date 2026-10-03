@@ -50,6 +50,20 @@ Adesso che nessuno verifica al posto tuo, queste valgono di più, non di meno:
   più utile che puoi portare, ed è due volte su due il modo in cui i difetti veri sono stati
   trovati in questo progetto.
 
+## La skill si carica, o non è una release
+
+Dal 3 ottobre 2026 (**I-189**, **D-200**): una release si costruisce **solo** con
+`scripts/costruisci-skill.py`, e va in `releases/` **solo** se `tests/test_le_release.py` passa.
+La costruzione e quella prova controllano i limiti del caricamento su claude.ai — **al massimo
+200 file nello ZIP**, la skill in una cartella sola, sotto i 30 MB — e le linee guida di
+Anthropic sulla skill (frontespizio, descrizione entro 200 caratteri, `SKILL.md` sotto le 500
+righe, riferimenti a un livello). L'elenco con le fonti è in `releases/README.md`. Un controllo
+non si toglie e non si allenta per far passare una release.
+
+**Il lavoro di una sessione esiste quando è su `main`.** La correzione dei 200 file era stata
+fatta il 2 ottobre su un ramo mai fuso, e due release sono uscite senza (I-188). Una sessione
+non si chiude con lavoro su un ramo senza PR; e all'avvio si guardano le PR aperte.
+
 ## Quello che resta del PO, e non è tuo
 
 Una disposizione del PO si implementa **come è espressa** (`OPERATING_MODEL.md` §1.1.1), anche
