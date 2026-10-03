@@ -4,7 +4,7 @@ Una sezione per ogni gruppo di correzioni, la più recente in alto.
 
 ## 2. La skill si carica: 104 file, e il limite è nel progetto
 
-**3 ottobre 2026** · input **I-188**, **I-189** · decisione **D-200** (proposta) · release **1.2.2**
+**3 ottobre 2026** · input **I-188**, **I-189** · decisione **D-200**, approvata (I-190) · release **1.2.2**
 
 Il PO, caricando la 1.2.1 su claude.ai: «di nuovo lo steso errore... Zip contains too many files (maximum 200).
 problema già affrontato nella vecchia sessione … questa cosa deve essere nel progetto».

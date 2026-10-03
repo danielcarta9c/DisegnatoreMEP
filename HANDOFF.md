@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-03 — **la 1.2.2, la prima che si carica su claude.ai** (I-188, I-189, D-200 proposta, PR da fondere col sì del PO): il ramo del 2 ottobre con la skill in 107 file, mai fuso, è fuso; i limiti del caricamento sono controllati dalla costruzione e da `tests/test_le_release.py`; la regola è in `CLAUDE.md`. Prima: la 1.2.1 (PR #70, D-199), la pulizia del solutore (PR #68), `REL-005` chiuso con la 1.2.0 (D-198).
+**Aggiornato:** 2026-10-03 — **la 1.2.2, la prima che si carica su claude.ai** (I-188, I-189, PR #71 fusa col sì del PO — I-190, D-200 approvata): il ramo del 2 ottobre con la skill in 107 file, mai fuso, è fuso; i limiti del caricamento sono controllati dalla costruzione e da `tests/test_le_release.py`; la regola è in `CLAUDE.md`. Prima: la 1.2.1 (PR #70, D-199), la pulizia del solutore (PR #68), `REL-005` chiuso con la 1.2.0 (D-198).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -23,7 +23,7 @@ non chiudere una sessione con lavoro su un ramo senza PR.
 - **La 1.2.2** ha 104 file; le tavole sono quelle della 1.2.1. Rapporto: `docs/collaudi/BETA-001/RAPPORTO.md` §2.
 - **Nella skill simboli, catalogo e regole stanno in un file ciascuno** (`dati/<nome>.json`): il comando li riapre
   da sé; una voce si legge con `mep.py catalogo <id>`, un manifesto con `mep.py simbolo <id>`.
-- Il pacchetto resta `BETA-001`. **I numeri**: il prossimo input è **I-190**, la prossima decisione **D-201**.
+- Il pacchetto resta `BETA-001`. **I numeri**: il prossimo input è **I-191**, la prossima decisione **D-201**.
 
 ## Da dove ripartiva — scritto il 2 ottobre 2026, notte, a PR #70 fusa
 
