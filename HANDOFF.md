@@ -31,7 +31,8 @@ volano a sei attacchi, collettore con ritorno, confini con l'esistente, giunto a
 - **I-201, aperta**: sulla tavola del caso l'autostrada scavalca le valvole degli stacchi. Causa misurata: il motore instrada nell'ordine alfabetico dei nomi delle tubazioni, non «prima le autostrade» (riproduzione in I-201). La correzione è del motore e cambia le tavole: aspetta il sì del PO.
 - **I-202, aperta**: si aspetta dal PO la tavola completa del caso. Con tavola, rilievi, grafo completo e piano (dati del cliente: solo in sessione, mai nel repository) si fa **l'elenco intero dei difetti con la causa**, prima di toccare il codice. Già segnalati: I-201; nella distribuzione colori sbagliati e niente colonne affiancate a pettine (B11, B12).
 - **I-203, aperta**: il PO ha mandato la tavola completa (non nel repository) e detta i difetti uno per uno; il primo è I-201, con il principio «disegnata l'autostrada non andrebbe toccata».
-- **I numeri**: il prossimo input è **I-204**, la prossima decisione **D-206**.
+- **I-204, aperta**: le pompe in parallelo con lo stesso verso (A2 non ha un controllo sulla tavola).
+- **I numeri**: il prossimo input è **I-205**, la prossima decisione **D-206**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026
 
