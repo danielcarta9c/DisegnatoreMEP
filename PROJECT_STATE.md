@@ -1,11 +1,12 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-10-02, notte (la 1.2.1 consegnata — PR #70, D-199: la domanda sui diametri all'inizio, niente grafo da leggere; il pacchetto attivo è `BETA-001`, la beta coi collaboratori del PO — I-181). Prima, lo stesso giorno: la pulizia del solutore — PR #68, D-197 —, `REL-005` chiuso con la release 1.2.0 — D-198 —, la prima prova del PO su claude.ai curata — PR #67, D-196
+**Aggiornato:** 2026-10-03 (la 1.2.2, la prima che si carica su claude.ai — I-188, I-189, D-200: il ramo del 2 ottobre con la skill in 107 file è fuso, i limiti del caricamento sono controllati dalla costruzione e dalla prova delle release; il pacchetto attivo è `BETA-001`). Prima: la 1.2.1 — PR #70, D-199 —, la pulizia del solutore — PR #68, D-197 —, `REL-005` chiuso con la release 1.2.0 — D-198
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` (`BETA-001`) · **Dossier di stato:** `docs/pm/STATO-PM.md`
-**Release corrente:** **1.2.1** (`releases/`, I-187, D-199): la prima consegna della beta; la 1.2.0, con cui si
-chiude `REL-005` (D-198), resta in `releases/archive/`. Il numero di versione Python è lo stesso
+**Release corrente:** **1.2.2** (`releases/`, I-189, D-200): la prima che si carica su claude.ai, 104 file. La
+1.2.0 (D-198) e la 1.2.1 (D-199) restano in `releases/archive/`, e non si caricano: 287 e 284 file. Il numero di
+versione Python è lo stesso
 
 > **Come è fatto questo file.** In testa c'è **lo stato al 20 settembre 2026**, e sotto la
 > riga `# Storia di esecuzione` c'è il racconto dei pacchetti precedenti, ciascuno con la
@@ -33,7 +34,7 @@ Le scelte sono **D-195**; rapporto `docs/collaudi/REL-001/RAPPORTO.md`.
 - **La prova su claude.ai l'ha fatta il PO** su un impianto suo (I-170, I-171, 2 ottobre 2026): la tavola si è
   composta e disegnata, e lui l'ha respinta per tre cose — lo sfiato del volano sulla quota della mandata,
   le uscite della deviatrice, il colore della serpentina —, curate e fuse con la PR #67 (D-196). La skill è
-  alla **versione 1.2**; lo ZIP è la release 1.2.0 (D-198), e dal 2 ottobre la **1.2.1**, `releases/latest/DisegnatoreMEP-v1.2.1.zip` (D-199). Al primo uso la skill
+  alla **versione 1.2**; lo ZIP è la release 1.2.0 (D-198), poi la 1.2.1 (D-199), e dal 3 ottobre la **1.2.2**, `releases/latest/DisegnatoreMEP-v1.2.2.zip`, la prima che si carica (D-200). Al primo uso la skill
   installa pydantic dalla rete.
 - Suite: **zero rosse** dal 2 ottobre 2026 (D-197): il solutore e le sue prove sono usciti, le prove del motore leggono un piano.
 

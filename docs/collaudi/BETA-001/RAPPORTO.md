@@ -2,6 +2,69 @@
 
 Una sezione per ogni gruppo di correzioni, la più recente in alto.
 
+## 2. La skill si carica: 104 file, e il limite è nel progetto
+
+**3 ottobre 2026** · input **I-188**, **I-189** · decisione **D-200**, approvata (I-190) · release **1.2.2**
+
+Il PO, caricando la 1.2.1 su claude.ai: «di nuovo lo steso errore... Zip contains too many files (maximum 200).
+problema già affrontato nella vecchia sessione … questa cosa deve essere nel progetto».
+
+### Le tavole, per prime: non cambia niente
+
+```
+$ docs/collaudi/REL-005/pulizia-del-solutore/confronta.sh <main 2bbab6b> <ramo>
+file: 54 prima, 54 dopo
+IDENTICI
+```
+
+Compresa la tavola D della prova del PO, che esce dalla skill costruita: la skill legge adesso i dati dai file
+unici, e disegna gli stessi byte.
+
+### Perché è successo di nuovo
+
+La correzione c'era: l'aveva fatta il 2 ottobre mattina un'altra sessione, sul ramo
+`claude/admiring-allen-u00wec` — la skill in 107 file, i controlli del caricamento nella costruzione, la prova in
+camera pulita con Opus e Sonnet. **Quel ramo non è mai stato fuso.** Questa sessione è ripartita da `main` (PR
+#66) senza saperlo, e la 1.2.0 e la 1.2.1 sono uscite con 287 e 284 file. La copia della skill sincronizzata
+dall'account del PO è quella del ramo, a 107 file: è quella che si era caricata.
+
+### Che cosa cambia
+
+- **Il ramo è fuso**, con i suoi sette commit: la storia c'è tutta. Due conflitti di sostanza, risolti tenendo il
+  lavoro dei due rami: il comando della skill senza il grafo da leggere (D-199), e il numero dell'input, I-171 sul
+  ramo e già usato su `main`, che diventa **I-188**.
+- **Lo ZIP ha 104 file** e 683 kB: simboli, catalogo e regole stanno in un file ciascuno, `dati/<nome>.json`, e
+  il comando li riapre da sé; una voce si legge con `catalogo <id>`, un manifesto con `simbolo <id>`.
+- **Il limite è nel progetto, in due posti con la stessa funzione** (`controlla_lo_zip`):
+  - la costruzione si ferma se lo ZIP supera i 200 file, se esce dalla sua cartella, se passa i 30 MB, o se la
+    skill dentro non rispetta le linee guida;
+  - `tests/test_le_release.py` passa lo stesso controllo **su ogni ZIP pubblicato**: rossa sulla 1.2.1, verde sulla
+    1.2.2. La 1.2.0 e la 1.2.1 restano nell'archivio, segnate come non caricabili, in un elenco chiuso.
+- **La regola è scritta** in `CLAUDE.md`, che ogni sessione legge per primo, e i limiti con le fonti in
+  `releases/README.md`. In `CLAUDE.md` c'è anche la causa vera: il lavoro di una sessione esiste quando è su
+  `main`, e una sessione non si chiude con lavoro su un ramo senza PR.
+
+### Le prove
+
+```
+$ python3 -m pytest -q
+1981 passed, 15 skipped, 10 xfailed in 249.85s
+$ ruff check src tests scripts skill/scripts
+All checks passed!
+$ python3 -m mypy src; python3 -m mypy scripts/costruisci-skill.py skill/scripts/mep.py
+Success: no issues found in 87 source files
+Success: no issues found in 2 source files
+$ python3 scripts/costruisci-skill.py
+ZIP:   outputs/skill/disegnatore-mep.zip (683 kB, sha256 fa922e80d8109a85)
+Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai (al massimo 200 file): passati.
+```
+
+⚠ **Un mio errore, preso in tempo**: uno `git stash` di controllo, a fusione in corso, ha cancellato lo stato della
+fusione. I file erano tutti al loro posto; il commit di fusione l'ho ricostruito con i suoi due genitori.
+
+**Che si carichi davvero lo dice soltanto il caricamento su claude.ai**: i controlli sono quelli del messaggio che
+il caricamento ha dato, e delle fonti di Anthropic, ma da qui non posso caricare.
+
 ## 1. Le domande dell'inizio chiedono i diametri; il grafo da leggere non si manda più
 
 **2 ottobre 2026** · input **I-185**, **I-186** · decisione **D-199**, approvata (I-187) · consegnata nella **1.2.1**

@@ -12,6 +12,10 @@
 **`REL-005` è chiuso con la 1.2** (D-198): la release è `releases/archive/DisegnatoreMEP-v1.2.0.zip`. La storia del
 pacchetto è in `docs/plans/pacchetti/REL-005.md`.
 
+> **Aggiornato il 3 ottobre 2026.** La **1.2.2** è la prima che si carica su claude.ai (I-188, I-189, D-200): la 1.2.0 e
+> la 1.2.1 avevano 287 e 284 file, oltre i 200 ammessi. **Una release si pubblica solo se `tests/test_le_release.py`
+> passa** (`CLAUDE.md`). Rapporto: `docs/collaudi/BETA-001/RAPPORTO.md` §2.
+>
 > **Aggiornato il 2 ottobre 2026, a PR #70 fusa.** La prima consegna della beta è fatta: la **1.2.1** (I-187,
 > D-199), in `releases/latest/` — la skill chiede all'inizio se servono i diametri (I-185) e non manda più il
 > grafo da leggere (I-186); le tavole sono quelle della 1.2.0. Rapporto: `docs/collaudi/BETA-001/RAPPORTO.md` §1.
@@ -26,7 +30,7 @@ pacchetto è in `docs/plans/pacchetti/REL-005.md`.
   `releases/latest/DisegnatoreMEP-v1.2.0.zip` (sha256 `fa9e410a7e994f66`), con la copia numerata in `releases/archive/`. È stato costruito prima della
   pulizia: lo ZIP che `main` costruisce oggi è più leggero (760 kB contro 822) ma **disegna le stesse tavole**,
   byte per byte. Non c'è niente da ridistribuire finché non arriva una correzione.
-- **La suite è verde**: `1967 passed, 15 skipped, 10 xfailed`, in 4 minuti e mezzo; `ruff` e `mypy` verdi.
+- **La suite è verde** (al 3 ottobre `1981 passed, 15 skipped, 10 xfailed`; al 2 ottobre `1967 passed, 15 skipped, 10 xfailed`), in 4 minuti e mezzo; `ruff` e `mypy` verdi.
   **Da qui una rossa è un difetto**, non rumore di fondo.
 - **Il solutore non c'è più** (D-197). Le prove del motore leggono un piano: quelli approvati di
   `docs/collaudi/DRAW-018/prova-camera-pulita-2026-09-24/`, o quelli tradotti in `tests/layout/piani/`. La via
@@ -102,7 +106,8 @@ Quando un gruppo di correzioni è fuso:
 - la versione sale come il PO ha deciso (punto 0.2), in `pyproject.toml`, nel pacchetto e in `SKILL.md`;
 - lo ZIP va in `releases/latest/DisegnatoreMEP-v<versione>.zip`, che sostituisce il precedente, e in
   `releases/archive/`, dove resta; poi al PO. `tests/test_le_release.py` tiene insieme il numero del pacchetto,
-  quello in `SKILL.md` e il nome dello ZIP.
+  quello in `SKILL.md` e il nome dello ZIP, e **controlla che lo ZIP si carichi su claude.ai** — al massimo 200
+  file, le linee guida di Anthropic (I-189, D-200): se cade, lo ZIP non si pubblica.
 
 ## Perimetro
 

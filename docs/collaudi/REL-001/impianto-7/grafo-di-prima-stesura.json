@@ -1,0 +1,568 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "riqualificazione-centrale-pdc-cascata-caldaia",
+    "client": "Condominio di prova",
+    "project_name": "Riqualificazione di una centrale condominiale con pompe di calore in cascata e caldaia esistente",
+    "commission_code": "PROVA-REL-001",
+    "revision": "00",
+    "issue_date": "2026-09-29",
+    "address": "Via di Prova 7, 00000 Comune di Prova (XX)",
+    "sheet_title": "Schema funzionale della centrale termica",
+    "sheet_number": "T1"
+  },
+  "plant_regime": "over_35_kw",
+  "diametri": {
+    "reti": [
+      "primario"
+    ]
+  },
+  "networks": [
+    {
+      "id": "primario",
+      "name": "Circuito dei generatori",
+      "domain": "hydronic",
+      "medium": "heating_water"
+    },
+    {
+      "id": "secondario",
+      "name": "Circuito secondario radiatori",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "esistente": true
+    },
+    {
+      "id": "acqua-fredda",
+      "name": "Acqua fredda sanitaria",
+      "domain": "hydronic",
+      "medium": "cold_water"
+    },
+    {
+      "id": "acs",
+      "name": "Acqua calda sanitaria e ricircolo",
+      "domain": "hydronic",
+      "medium": "domestic_hot_water"
+    }
+  ],
+  "components": [
+    {
+      "id": "pdc-1",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "power_kw": 45,
+        "delta_t_k": 5,
+        "tipo": "aria-acqua"
+      }
+    },
+    {
+      "id": "pdc-2",
+      "definition_id": "heat-pump-air-water",
+      "tag": null,
+      "properties": {
+        "power_kw": 45,
+        "delta_t_k": 5,
+        "tipo": "aria-acqua"
+      }
+    },
+    {
+      "id": "caldaia",
+      "definition_id": "gas-boiler",
+      "tag": null,
+      "properties": {
+        "power_kw": 100,
+        "delta_t_k": 5,
+        "tipo": "a condensazione",
+        "stato": "esistente",
+        "ruolo": "generatore di integrazione",
+        "circolatore": "a bordo"
+      }
+    },
+    {
+      "id": "raccordo-mandata-1",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "raccordo-mandata-2",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "deviatrice",
+      "definition_id": "diverting-valve-3way",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "volano",
+      "definition_id": "buffer-four-port",
+      "tag": null,
+      "properties": {
+        "volume_l": 800,
+        "denominazione": "volume tecnico",
+        "configurazione": "a quattro tubi"
+      }
+    },
+    {
+      "id": "bollitore",
+      "definition_id": "dhw-cylinder",
+      "tag": null,
+      "properties": {
+        "volume_l": 500,
+        "tipo": "con serpentino",
+        "produzione": "centralizzata"
+      }
+    },
+    {
+      "id": "raccordo-ritorno-bollitore",
+      "definition_id": "tee-junction",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ripartizione-ritorno-1",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ripartizione-ritorno-2",
+      "definition_id": "tee-split",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "circolatore-secondario",
+      "definition_id": "pump-circulator",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "radiatori",
+      "definition_id": "radiator",
+      "tag": null,
+      "properties": {
+        "stato": "esistente"
+      }
+    },
+    {
+      "id": "acquedotto",
+      "definition_id": "cold-water-inlet",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "utenze-acs",
+      "definition_id": "dhw-draw-off",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "ricircolo-utenze",
+      "definition_id": "dhw-recirculation-inlet",
+      "tag": null,
+      "properties": {}
+    },
+    {
+      "id": "circolatore-ricircolo",
+      "definition_id": "pump-circulator-dhw",
+      "tag": null,
+      "properties": {}
+    }
+  ],
+  "connections": [
+    {
+      "id": "t01",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "pdc-1",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "raccordo-mandata-1",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t02",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "pdc-2",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "raccordo-mandata-2",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t03",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "caldaia",
+        "port_id": "water_supply"
+      },
+      "endpoint_b": {
+        "component_id": "raccordo-mandata-2",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t04",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "raccordo-mandata-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "raccordo-mandata-1",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t05",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "raccordo-mandata-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "deviatrice",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t06",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_a"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "primary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t07",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "deviatrice",
+        "port_id": "out_b"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "coil_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t08",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "primary_out"
+      },
+      "endpoint_b": {
+        "component_id": "raccordo-ritorno-bollitore",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t09",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "coil_out"
+      },
+      "endpoint_b": {
+        "component_id": "raccordo-ritorno-bollitore",
+        "port_id": "c"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t10",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "raccordo-ritorno-bollitore",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ripartizione-ritorno-1",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t11",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "ripartizione-ritorno-1",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-1",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t12",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "ripartizione-ritorno-1",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "ripartizione-ritorno-2",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t13",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "ripartizione-ritorno-2",
+        "port_id": "c"
+      },
+      "endpoint_b": {
+        "component_id": "pdc-2",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t14",
+      "network_id": "primario",
+      "endpoint_a": {
+        "component_id": "ripartizione-ritorno-2",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "caldaia",
+        "port_id": "water_return"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t15",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "volano",
+        "port_id": "secondary_out"
+      },
+      "endpoint_b": {
+        "component_id": "circolatore-secondario",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t16",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "circolatore-secondario",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "radiatori",
+        "port_id": "in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t17",
+      "network_id": "secondario",
+      "endpoint_a": {
+        "component_id": "radiatori",
+        "port_id": "out"
+      },
+      "endpoint_b": {
+        "component_id": "volano",
+        "port_id": "secondary_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t18",
+      "network_id": "acqua-fredda",
+      "endpoint_a": {
+        "component_id": "acquedotto",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "cold_in"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t19",
+      "network_id": "acs",
+      "endpoint_a": {
+        "component_id": "bollitore",
+        "port_id": "dhw_out"
+      },
+      "endpoint_b": {
+        "component_id": "utenze-acs",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t20",
+      "network_id": "acs",
+      "endpoint_a": {
+        "component_id": "ricircolo-utenze",
+        "port_id": "a"
+      },
+      "endpoint_b": {
+        "component_id": "circolatore-ricircolo",
+        "port_id": "a"
+      },
+      "properties": {}
+    },
+    {
+      "id": "t21",
+      "network_id": "acs",
+      "endpoint_a": {
+        "component_id": "circolatore-ricircolo",
+        "port_id": "b"
+      },
+      "endpoint_b": {
+        "component_id": "bollitore",
+        "port_id": "recirculation_in"
+      },
+      "properties": {}
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "a-cartiglio",
+      "text": "Dati del cartiglio dati dal progettista: committente Condominio di prova, commessa PROVA-REL-001, indirizzo Via di Prova 7, 00000 Comune di Prova (XX), titolo Schema funzionale della centrale termica, tavola T1.",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    },
+    {
+      "id": "a-tabella",
+      "text": "Tabella delle apparecchiature: marche, modelli, portate e prevalenze dei circolatori non sono ancora scelti; il progettista chiede di lasciare le celle vuote.",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    },
+    {
+      "id": "a-diametri",
+      "text": "Diametri solo sul circuito dei generatori, ramo del serpentino compreso, dalle potenze e dal salto termico di 5 K. Niente diametri sul secondario dei radiatori (esistente) e sul sanitario (acqua fredda, ACS e ricircolo: portate non disponibili).",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    },
+    {
+      "id": "a-dt-caldaia",
+      "text": "Il salto termico di 5 K lato generatori vale per tutti e tre i generatori, caldaia compresa: il ramo della caldaia si dimensiona su 100 kW con 5 K.",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    },
+    {
+      "id": "a-secondario-esistente",
+      "text": "Il circuito secondario dei radiatori, dal volume tecnico con il suo circolatore fino alla distribuzione, e' esistente (precisazione del progettista): niente diametri.",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    },
+    {
+      "id": "a-circolatore-caldaia",
+      "text": "La caldaia ha il circolatore a bordo (il progettista): sul suo ramo non c'e' un circolatore dedicato. La voce di catalogo della caldaia non lo dichiara a bordo: il dato e' trascritto fra le sue proprieta'.",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    },
+    {
+      "id": "a-circolatori-pdc",
+      "text": "Le pompe di calore hanno il circolatore a bordo, come la macchina di catalogo: sui loro rami non c'e' un circolatore a se'.",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    },
+    {
+      "id": "a-parallelo",
+      "text": "I tre generatori in parallelo si uniscono sulla mandata con due raccordi a T e si dividono sul ritorno con due ripartizioni a T. L'ordine, partendo dal volume tecnico, e' quello del testo: le due pompe di calore, poi la caldaia in fondo, uguale su mandata e ritorno.",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    },
+    {
+      "id": "a-ritorno-serpentino",
+      "text": "Il ritorno del serpentino del bollitore si unisce con un raccordo a T al ritorno dal volume tecnico, prima delle ripartizioni verso i generatori.",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    },
+    {
+      "id": "a-regolazione",
+      "text": "La cascata delle pompe di calore, l'integrazione della caldaia e la priorita' all'ACS sono logiche di regolazione: sul grafo si vedono i tre generatori in parallelo e la valvola deviatrice sulla mandata comune, non la logica.",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    },
+    {
+      "id": "a-carico-scarico",
+      "text": "Il testo prevede sul volume tecnico il carico automatico dell'impianto da acquedotto e lo scarico: li aggiunge il pezzo che completa il grafo, non questo grafo.",
+      "status": "approved",
+      "source_message_refs": [
+        "Sul volume tecnico sono previsti il collegamento per il carico automatico dell'impianto da acquedotto e lo scarico."
+      ]
+    },
+    {
+      "id": "a-miscelatrice",
+      "text": "Il testo prevede la valvola miscelatrice termostatica sull'uscita dell'ACS: la aggiunge il pezzo che completa il grafo, non questo grafo.",
+      "status": "approved",
+      "source_message_refs": [
+        "Sull'uscita è prevista una valvola miscelatrice termostatica."
+      ]
+    },
+    {
+      "id": "a-circolatore-secondario",
+      "text": "Il circolatore del secondario e' sulla mandata, la posizione convenzionale.",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    },
+    {
+      "id": "a-radiatori",
+      "text": "La distribuzione esistente a radiatori degli appartamenti e' rappresentata da un radiatore solo.",
+      "status": "approved",
+      "source_message_refs": [
+        "Risposta del progettista, 29 settembre 2026"
+      ]
+    }
+  ],
+  "rule_applications": [],
+  "subsystems": [],
+  "sheets": []
+}

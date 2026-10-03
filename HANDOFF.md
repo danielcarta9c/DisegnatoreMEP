@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-02, notte — **la 1.2.1 è consegnata** (PR #70; I-187, D-199 approvata): la skill chiede all'inizio se servono i diametri, e non manda più il grafo da leggere; tavole identiche alla 1.2.0. Il pacchetto attivo resta `BETA-001`. Prima, lo stesso giorno: la pulizia del solutore (PR #68, D-197), `REL-005` chiuso con la release 1.2.0 (D-198), la prima prova del PO curata (PR #67, D-196).
+**Aggiornato:** 2026-10-03 — **la 1.2.2, la prima che si carica su claude.ai** (I-188, I-189, PR #71 fusa col sì del PO — I-190, D-200 approvata): il ramo del 2 ottobre con la skill in 107 file, mai fuso, è fuso; i limiti del caricamento sono controllati dalla costruzione e da `tests/test_le_release.py`; la regola è in `CLAUDE.md`. Prima: la 1.2.1 (PR #70, D-199), la pulizia del solutore (PR #68), `REL-005` chiuso con la 1.2.0 (D-198).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,21 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 2 ottobre 2026, notte, a PR #70 fusa
+## ▶ Da dove riparte la prossima sessione — scritto il 3 ottobre 2026
+
+**Prima di tutto, la regola nuova di `CLAUDE.md`** (I-189, D-200): una release si costruisce solo con
+`scripts/costruisci-skill.py` e si pubblica solo se `tests/test_le_release.py` passa — al massimo 200 file nello
+ZIP, e le linee guida di Anthropic; i limiti con le fonti sono in `releases/README.md`. E **il lavoro di una
+sessione esiste quando è su `main`**: la correzione dei 200 file era stata fatta il 2 ottobre su un ramo mai fuso
+(`claude/admiring-allen-u00wec`, I-188), e la 1.2.0 e la 1.2.1 sono uscite senza. All'avvio guarda le PR aperte;
+non chiudere una sessione con lavoro su un ramo senza PR.
+
+- **La 1.2.2** ha 104 file; le tavole sono quelle della 1.2.1. Rapporto: `docs/collaudi/BETA-001/RAPPORTO.md` §2.
+- **Nella skill simboli, catalogo e regole stanno in un file ciascuno** (`dati/<nome>.json`): il comando li riapre
+  da sé; una voce si legge con `mep.py catalogo <id>`, un manifesto con `mep.py simbolo <id>`.
+- Il pacchetto resta `BETA-001`. **I numeri**: il prossimo input è **I-191**, la prossima decisione **D-201**.
+
+## Da dove ripartiva — scritto il 2 ottobre 2026, notte, a PR #70 fusa
 
 **Il pacchetto è sempre `BETA-001`.** La prima consegna della beta è fatta:
 - **la 1.2.1** (I-187, D-199), in `releases/latest/DisegnatoreMEP-v1.2.1.zip`, con la copia in `releases/archive/`;
@@ -24,8 +38,7 @@
 
 **Da qui `SKILL.md` porta il numero per intero** («Versione 1.2.1»), e `tests/test_le_release.py` lo confronta così.
 La regola per le consegne successive (1.2.2…, 1.3 per un cambio visibile) è ancora la proposta del pacchetto.
-Il resto del punto 0 e i punti 1–3 sono come scritti qui sotto. **I numeri**: il prossimo input è **I-188**, la
-prossima decisione **D-200**.
+Il resto del punto 0 e i punti 1–3 sono come scritti qui sotto.
 
 ## Da dove ripartiva — scritto il 2 ottobre 2026, sera, a PR #68 fusa
 
