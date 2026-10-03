@@ -1,6 +1,6 @@
 # STATO PM — il dossier di stato della sessione
 
-**Aggiornato:** 2026-09-29 (**`REL-001` fuso, la skill vera e propria** — I-169, D-195; **il prossimo è `REL-005`, la release**; `REL-008` fuso, tavole approvate — I-164; `REL-007` fuso, tavole approvate — I-158; `REL-006` fuso, tavole approvate — I-149; `REL-004` fuso, DXF approvati — I-140; `REL-003` fuso — I-136; `REL-002` fuso — I-132)
+**Aggiornato:** 2026-10-03 (**la 1.3.0 è su `main` e in `releases/latest/`** — `REL-009` punti 1–4, PR #72, I-199, D-201 … D-205; il pacchetto attivo è `REL-009`, **in attesa del PO**, che rifà la tavola del caso reale nella sua sessione di lavoro — I-200). Il §2 del 24 settembre resta sotto, come storia.
 **A chi serve:** alla sessione che subentra. Leggi questo e sei operativo: non ti serve un
 prompt lungo, e chi te lo dà ti sta raccontando qualcosa che dovrebbe stare qui.
 **Regola di questo file:** ogni sessione lo aggiorna prima di chiudere. Un file di stato
@@ -50,7 +50,26 @@ Le sigle servono a noi per ritrovare la riga e restano di qua. La versione buona
 domanda detta guardando il disegno — sta in `2026-09-15-triage-input-aperti.md` §11, ed è il
 modello da riusare.
 
-## 2. Dove siamo, al 24 settembre 2026
+## 2. Dove siamo, al 3 ottobre 2026
+
+| | |
+|---|---|
+| `main` | **la testa che leggi adesso** (non si scrive uno SHA: §7, trappola 2). L'ultima fusione è la PR **#72**, la **1.3.0** — `REL-009`, punti 1–4 —, dopo la **#71** (la 1.2.2, la prima che si carica su claude.ai, D-200), la **#70** (la 1.2.1, D-199), la **#69** e la **#68** (`REL-005`, la 1.2.0 e la pulizia del solutore, D-197, D-198) |
+| Release | **1.3.0**, `releases/latest/DisegnatoreMEP-v1.3.0.zip`, 104 file: la costruisce solo `scripts/costruisci-skill.py` e la pubblica solo `tests/test_le_release.py` verde (D-200, `CLAUDE.md`). La 1.2.0 e la 1.2.1 sono nell'archivio e non si caricano |
+| Pacchetto attivo | **`REL-009`, la tavola del costruito, in attesa del PO** (I-200): i punti 1–4 sono nella 1.3.0; la tavola del caso reale la fa il PO nella sua sessione di lavoro, e lo sviluppo riparte da quello che ne riporta. Resta il limite d'intervento facoltativo (I-195) |
+| Il prodotto in chat | **la skill gira su claude.ai**: il PO l'ha usata su un impianto vero (I-191) e la usa adesso per il caso. Il percorso è testo → grafo → `completa` → approvazione → piano → tavola PDF e DXF, con i rilievi |
+| Export DXF | **costruito e approvato** (`REL-004`, I-140, D-189): AutoCAD 2013, millimetri |
+| La suite | **zero rosse** dal 2 ottobre (D-197): 2027 passate, 15 saltate, 10 attese rosse, alla 1.3.0 |
+| La regressione | `docs/collaudi/REL-005/pulizia-del-solutore/uscite.sh` e `confronta.sh`: 54 uscite, identiche dalla 1.2.0 alla 1.3.0 |
+| Chi sviluppa, chi fonde | **un agente solo** (D-147), agenti paralleli dentro la sessione (D-152). **La fusione la approva il PO guardando le tavole** (D-146) |
+| Dati dei clienti | **mai nel repository**, che è pubblico: un caso reale si ricostruisce anonimo, e prima di ogni commit si cerca nel diff quello che lo identifica (`REL-009`) |
+| Registro degli input | **196 righe**, al 3 ottobre; il prossimo è **I-201**, la prossima decisione **D-206** |
+
+## 2-bis. Com'era al 24 settembre 2026 — storia
+
+> **Non è lo stato di oggi**: lo supera il §2 qui sopra. Resta perché dice come si ragionava; il riquadro sul DXF
+> che manca è chiuso da `REL-004` (I-140, D-189).
+
 
 | | |
 |---|---|
@@ -327,7 +346,7 @@ Tre, ciascuna già pagata almeno una volta.
 
 1. Legge `ACTIVE_WORK_PACKAGE.md`, `HANDOFF.md`, `docs/ARCHITETTURA-DEL-PIANO.md` e questo
    file — l'ordine sta in `CLAUDE.md`.
-2. Esegue **soltanto** il pacchetto attivo, `DRAW-015`. Se il pacchetto è assente, già
+2. Esegue **soltanto** il pacchetto attivo — oggi `REL-009`, in attesa del PO (I-200). Se il pacchetto è assente, già
    consegnato, ambiguo o incompatibile con lo stato del repository, **si ferma e chiede al
    PO**.
 3. Prima di proporre la fusione: **guarda le tavole**, le mette accanto a quelle del
@@ -335,8 +354,8 @@ Tre, ciascuna già pagata almeno una volta.
    (D-146). Se da un impianto non ne esce nessuna, lo dice per primo.
 4. Quello che aspetta ancora solo il PO: la **lista dei rami da cancellare** (§6), il
    **formato definitivo** (D-148 è momentanea), la **riproducibilità** (D-023, sospesa), il
-   **collettore di zona in verticale** (D-049 contro D-144), le **due autostrade storte
-   della tavola 2**, e **quando aprire l'export DXF** (`I-072`). Il triage degli input del
+   **collettore di zona in verticale** (D-049 contro D-144), e le **due autostrade storte
+   della tavola 2**. L'export DXF è fatto (`I-072` chiusa da I-140). Il triage degli input del
    15 settembre è fatto: dossier in `docs/pm/2026-09-15-triage-input-aperti.md`, esito in
    D-131 … D-136.
 5. Prima di chiudere la sessione, **aggiorna questo file**, `HANDOFF.md` e il pacchetto

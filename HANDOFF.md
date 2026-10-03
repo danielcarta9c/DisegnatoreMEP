@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-03, notte — **il pacchetto attivo è `REL-009`** (I-191): i punti 1–4 sono su `main` (PR #72, D-201 … D-204 approvate) e sono usciti nella **1.3.0** (I-199, D-205). Resta il punto 5, il caso reale rifatto. Prima, lo stesso giorno: la 1.2.2, la prima che si carica (PR #71, D-200).
+**Aggiornato:** 2026-10-03, chiusura della sessione — **il pacchetto attivo è `REL-009`, in attesa del PO** (I-200): i punti 1–4 sono su `main` e nella **1.3.0** (PR #72, I-199, D-201 … D-205); la tavola del caso reale la rifà il PO nella sua sessione di lavoro. Prima, lo stesso giorno: la 1.2.2, la prima che si carica (PR #71, D-200).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,24 +11,24 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 3 ottobre 2026, notte
+## ▶ Da dove riparte la prossima sessione — scritto il 3 ottobre 2026, alla chiusura
 
-**Il pacchetto è `REL-009`** (`ACTIVE_WORK_PACKAGE.md`), dal primo caso reale (I-191 … I-199). Il documento della
-sessione di disegno porta i dati del cliente e **non è nel repository**: il grafo è ricostruito anonimo in
-`docs/collaudi/REL-009/caso-reale-1/`, e il rapporto è `docs/collaudi/REL-009/RAPPORTO.md`.
+**Il pacchetto è `REL-009`** (`ACTIVE_WORK_PACKAGE.md`), **in attesa del PO**. La 1.3.0 è su `main` e in
+`releases/latest/` (PR #72): togliere e spostare gli accessori delle regole (`accessori_tolti`, `altrove`), il bordo
+della singola macchina (`a_bordo`), gli accessori che il progettista colloca, l'esistente per pezzo e per tratto
+(D-202: si disegna come il nuovo), le voci del costruito con il simbolo (D-203) — contatore, attacco predisposto,
+volano a sei attacchi, collettore con ritorno, confini con l'esistente, giunto antivibrante, dosatore di polifosfati
+(D-204: solo sull'acqua fredda dell'accumulo ACS).
 
-- **Su `main`, nella 1.3.0** (PR #72, `releases/latest/DisegnatoreMEP-v1.3.0.zip`): togliere e spostare
-  (`accessori_tolti`, `altrove`), il bordo della singola macchina (`a_bordo`), gli accessori che il progettista
-  colloca, l'esistente per pezzo e per tratto (D-202: si disegna come il nuovo), le voci del costruito con il simbolo
-  (D-203) — contatore, attacco predisposto, volano a sei attacchi, collettore con ritorno, confini con l'esistente,
-  giunto antivibrante, dosatore di polifosfati (D-204: solo sull'acqua fredda dell'accumulo ACS).
-- **Il prossimo è il punto 5**: il caso rifatto — grafo anonimo con le scelte del progettista, piano, tavola, al PO;
-  senza limite d'intervento (D-202). Restano da chiedere al PO le voci della §6 del documento (titolo e numero
-  della tavola, dati della tabella, temperature del secondario ACS, diametri sì o no, pompe di macrozona nuove o
-  esistenti, posizione del contabilizzatore), e se il contatore entra in tabella (D-203, punto 7).
-- **Poi** il limite d'intervento facoltativo (I-195) e la **1.3.1**, con `scripts/costruisci-skill.py` e
-  `tests/test_le_release.py` (D-200).
-- **I numeri**: il prossimo input è **I-200**, la prossima decisione **D-206**.
+- **La tavola del caso reale la fa il PO**, nella sua sessione di lavoro con la 1.3.0 (I-200). Questa è la sessione
+  di sviluppo della skill: **si riparte da quello che il PO riporta dal caso**. Se all'avvio non ha portato niente,
+  si chiede — non si sceglie il lavoro da soli.
+- Nel pacchetto resta il **limite d'intervento** a tratto e punto, facoltativo (I-195, D-202), e poi la **1.3.1**
+  (`scripts/costruisci-skill.py`, `tests/test_le_release.py`, D-200).
+- Il documento della sessione di disegno porta i dati del cliente e **non è nel repository**; il grafo anonimo è in
+  `docs/collaudi/REL-009/caso-reale-1/`, il rapporto in `docs/collaudi/REL-009/RAPPORTO.md`.
+- **Obsidian**: questa sessione non lo raggiungeva; la nota di allineamento l'ha avuta il PO (I-200).
+- **I numeri**: il prossimo input è **I-201**, la prossima decisione **D-206**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026
 
