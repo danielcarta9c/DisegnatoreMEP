@@ -1,6 +1,6 @@
 # PROJECT STATE — Disegnatore MEP
 
-**Aggiornato:** 2026-10-03, notte (la **1.3.0**, la tavola del costruito — I-191 … I-199, D-201 … D-205: il progettista toglie, sposta e colloca gli accessori, dichiara il bordo della singola macchina e l'esistente, e il catalogo ha le voci del costruito; il pacchetto attivo è `REL-009`, che continua col caso rifatto). Prima: la 1.2.2, la prima che si carica su claude.ai — PR #71, D-200 —, la 1.2.1 — PR #70, D-199 —, la pulizia del solutore — PR #68, D-197 —, `REL-005` chiuso con la release 1.2.0 — D-198
+**Aggiornato:** 2026-10-03, notte (la **1.3.0**, la tavola del costruito — I-191 … I-199, D-201 … D-205: il progettista toglie, sposta e colloca gli accessori, dichiara il bordo della singola macchina e l'esistente, e il catalogo ha le voci del costruito; il pacchetto attivo è `REL-009`, in attesa del PO: il caso lo rifà lui nella sessione di lavoro, I-200). Prima: la 1.2.2, la prima che si carica su claude.ai — PR #71, D-200 —, la 1.2.1 — PR #70, D-199 —, la pulizia del solutore — PR #68, D-197 —, `REL-005` chiuso con la release 1.2.0 — D-198
 **Ingresso breve:** `HANDOFF.md` · **Architettura del disegno:**
 `docs/ARCHITETTURA-DEL-PIANO.md` · **Regole:** `docs/regole-del-piano.md`
 **Fonte operativa:** `ACTIVE_WORK_PACKAGE.md` (`REL-009`) · **Dossier di stato:** `docs/pm/STATO-PM.md`

@@ -4,7 +4,7 @@
 > importanti da fare. merita una release 1.3» (I-191). Scritto il 3 ottobre 2026, sulla 1.2.2.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — i punti 1–4 sono su `main` con la PR #72 e sono usciti nella **1.3.0** (I-199, D-205: il PO ha chiesto la release alla fusione). Resta il **punto 5**, il caso rifatto, e il limite d'intervento facoltativo; escono nella consegna successiva, la 1.3.1.
+**Stato:** **IN ATTESA DEL PO** — i punti 1–4 sono su `main` con la PR #72 e sono usciti nella **1.3.0** (I-199, D-205). **Il punto 5, il caso rifatto, lo fa il PO nella sua sessione di lavoro** con la 1.3.0 (I-200): questa è una sessione di sviluppo della skill. Il lavoro che resta parte da **quello che il PO riporta dal caso**; il limite d'intervento facoltativo (I-195) viene dopo. Se all'avvio il PO non ha portato niente, **si chiede**.
 **Base:** `main` dopo la PR #71 (la 1.2.2).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). Una PR per punto, o per gruppo
@@ -81,7 +81,7 @@ Con il simbolo, che il PO approva **sulle tavole**:
 - **Il limite d'intervento**: una linea a tratto e punto con la scritta, **facoltativa**. La tavola del caso non la
   porta: si fa dopo il punto 5.
 
-### 5. Il caso, rifatto
+### 5. Il caso, rifatto — **lo fa il PO**, nella sua sessione di lavoro con la 1.3.0 (I-200)
 
 Il grafo anonimo con le scelte del progettista — quello che toglie, sposta, dichiara, l'esistente —, il piano, la
 tavola: **al PO**. Restano aperte con il progettista le voci della §6 del documento (titolo e numero della tavola,
