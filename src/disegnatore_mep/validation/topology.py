@@ -78,6 +78,27 @@ def validate_project(
                 )
             )
 
+    # Lo spostamento indica un attacco che c'e' e che una tubazione tocca (REL-009):
+    # un nome sbagliato fermerebbe le regole a meta' catena.
+    collegati = {
+        (ref.component_id, ref.port_id)
+        for connection in project.connections
+        for ref in (connection.endpoint_a, connection.endpoint_b)
+    }
+    for voce in project.accessori_tolti:
+        if voce.altrove is None:
+            continue
+        pezzo, attacco = voce.altrove.split(".", 1)
+        if (pezzo, attacco) not in collegati:
+            issues.append(
+                _issue(
+                    "UNKNOWN_RELOCATION_PORT",
+                    f"{voce.pezzo} is moved to {voce.altrove}, and no connection touches that "
+                    f"port: name a connected port as component.port",
+                    [voce.pezzo, pezzo],
+                )
+            )
+
     # Il bordo dichiarato dal progettista nomina funzioni che il catalogo conosce
     # (REL-009, I-192): un nome sbagliato non toglierebbe niente, in silenzio.
     funzioni = {function for definition in catalog.all() for function in definition.functions}

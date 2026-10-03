@@ -71,13 +71,14 @@ Con il simbolo, che il PO approva **sulle tavole**:
 5. il giunto antivibrante, se il PO lo vuole disegnato;
 6. il dosatore di polifosfati, a bassa priorità.
 
-### 4. R4 — esistente e nuovo, e il limite d'intervento (I-195)
+### 4. R4 — esistente e nuovo, e il limite d'intervento (I-195, I-196, D-202)
 
-- `esistente` **per pezzo e per tratto**, oltre che per rete.
-- **La resa grafica la decide il PO.** *Proposta:* il tratto esistente tratteggiato, nello stesso colore; «(E)»
-  accanto alla sigla in tabella; il limite d'intervento come linea a tratto e punto con la scritta.
+- `esistente` **per pezzo e per tratto**, oltre che per rete: è un dato **per le regole e per i diametri**, non per
+  il disegno. **L'esistente si disegna come il nuovo**, e la tabella non cambia (D-202).
 - **Le regole non aggiungono corredo sulle parti esistenti**, e `completa` lo dice una volta. *Proposta* — il
-  documento dice «non applicare, o chiedere».
+  documento dice «non applicare, o chiedere». La valvola di sicurezza di ogni generatore si disegna sempre.
+- **Il limite d'intervento**: una linea a tratto e punto con la scritta, **facoltativa**. La tavola del caso non la
+  porta: si fa dopo il punto 5.
 
 ### 5. Il caso, rifatto
 

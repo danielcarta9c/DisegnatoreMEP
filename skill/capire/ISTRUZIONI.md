@@ -185,8 +185,11 @@ Regole di forma:
   progettista dice che **non ci sono** — l'impianto è costruito, o lui ha deciso così.
   Li conosci dopo `completa`, che scrive accanto a ogni accessorio il suo nome:
   `"accessori_tolti": [{"pezzo": "air-separator-tj-pr-3-b", "motivo": "non installato:
-  lo sfiato è sul volano"}]`. Il motivo è suo, con le sue parole. Stanno nel grafo di
-  prima stesura, e `completa` li rispetta a ogni rilancio (I-192).
+  lo sfiato è sul volano"}]`. Il motivo è suo, con le sue parole. Se il pezzo **sta
+  altrove** — il vaso è sul secondario, non sul primario —, la voce dice dove con
+  `"altrove": "pezzo.attacco"`, un attacco collegato della rete giusta: la regola lo posa
+  lì, con quello che ne pende. Stanno nel grafo di prima stesura, e `completa` li rispetta
+  a ogni rilancio (I-192).
 - **`metadata`**: identifica il documento, non l'impianto, ed è quello che il
   **cartiglio** della tavola scrive. Committente e codice di
   commessa te li dice chi lancia il lavoro; se mancano, scrivi `ND` e dillo nella
@@ -542,8 +545,8 @@ collettori, terminali (radiatori, ventilconvettori, batterie, pannelli), valvole
 deviatrici e miscelatrici **di circuito** a tre vie (decidono dove va il flusso: sono
 topologia), i raccordi del §4.4, i confini (acquedotto, utenze).
 
-**Non entra mai**, nemmeno se il testo lo nomina, la ferramenta di servizio — i
-mestieri:
+**Non entra**, se il testo non la mette in un posto preciso, la ferramenta di servizio —
+i mestieri:
 
 > `isolation`, `isolation_locked_open`, `non_return`, `safety`, `expansion`,
 > `filtration`, `sludge_separation`, `air_release`, `filling`, `drain`,
@@ -552,10 +555,32 @@ mestieri:
 Cioè: intercettazioni, ritegni, sicurezze, vasi, filtri, defangatori, sfiati, gruppi di
 riempimento, scarichi, riduttori, manometri, termometri, e la miscelatrice
 **sanitaria** sull'uscita dell'acqua calda. Li aggiunge il pezzo delle regole, che sa
-dove vanno e perché. **Se il testo li nomina, la nomina non si perde:** scrivi una voce
-in `assumptions` che lo dice («il testo prevede il carico automatico da acquedotto e lo
-scarico sul volume: li aggiunge il pezzo che completa, non questo grafo»). Così
-l'ingegnere e il pezzo successivo possono verificare che nulla è andato perso.
+dove vanno e perché. **Se il testo li nomina senza dire dove, la nomina non si perde:**
+scrivi una voce in `assumptions` che lo dice («il testo prevede il carico automatico da
+acquedotto e lo scarico sul volume: li aggiunge il pezzo che completa, non questo
+grafo»). Così l'ingegnere e il pezzo successivo possono verificare che nulla è andato
+perso.
+
+**Entra, se il progettista la mette in un posto preciso** (I-193): «sfiato automatico con
+valvola a sfera sul ritorno di ogni pompa di calore», «ritegno sull'uscita delle pompe»,
+«riduttore di pressione sull'acqua fredda», «valvole manuali sulle due uscite del
+collettore». È il caso dell'impianto costruito, la cui tavola deve dire che cosa c'è. Lo
+scrivi dove lui dice, con la voce del catalogo che fa quel mestiere su quel fluido:
+
+- **in linea**, se l'acqua ci passa dentro — intercettazione, ritegno, filtro, riduttore:
+  la tubazione si spezza in due, la prima entra nell'attacco `a` del pezzo e la seconda
+  riparte dal suo attacco `b`, sulla stessa rete;
+- **appeso**, se sta su uno stacco — sfiato, manometro, termometro, scarico: un raccordo
+  di derivazione in linea (`tee-branch`, o la voce del suo fluido: `tee-branch-cold`,
+  `tee-branch-dhw`), e dal suo braccio `branch` una tubazione corta al pezzo; una valvola
+  sullo stacco («con valvola a sfera») sta fra il braccio e il pezzo;
+- **sull'attacco di servizio** della macchina, se ce l'ha (`vent`, `drain`, `probe` di un
+  volano): la tubazione corta parte da lì.
+
+Le regole **non lo duplicano**: dove una regola vuole quel mestiere su quel tratto, lo
+trova. Se ne mettono uno dove sul costruito non c'è, si toglie; se lo mettono in un posto
+diverso, si sposta (`accessori_tolti`, §3). Quello che il testo nomina senza un posto
+resta alle regole.
 
 Se il testo nomina un mestiere che non sta in nessuna delle due liste (un ventilatore,
 una linea frigorifera…), trattalo come voce di catalogo mancante: §6, tipo B.

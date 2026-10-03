@@ -157,9 +157,11 @@ vede disegnato al passo 6.
 Chiedi l'approvazione esplicita, e **aspettala**. Se corregge la lettura, torni al passo 1 e poi
 al 3 e al 4. **Se toglie un accessorio** — «questo non c'è», «la pompa lo porta dentro» — lo
 scrivi nel grafo di prima stesura: in `accessori_tolti`, con il nome che `completa` gli dà e il
-motivo del progettista, o in `a_bordo` sulla macchina (`capire.md` §3); poi rilanci `completa` e
-gli riporti l'elenco «Tolti dal progettista». La scelta resta nel grafo e vale a ogni rilancio.
-Lo stesso vale prima del passo 4, se lo dice già nel testo o nelle risposte del passo 2.
+motivo del progettista, o in `a_bordo` sulla macchina (`capire.md` §3). **Se lo vuole altrove**,
+la stessa voce dice dove (`altrove`). **Se ne aggiunge uno** che le regole non mettono, in un
+posto preciso, lo scrivi nel grafo dove lui dice (`capire.md` §5). Poi rilanci `completa` e gli
+riporti che cosa è cambiato. Le scelte restano nel grafo e valgono a ogni rilancio. Lo stesso
+vale prima del passo 4, se le dice già nel testo o nelle risposte del passo 2.
 
 ### 5. Comporre — il piano
 

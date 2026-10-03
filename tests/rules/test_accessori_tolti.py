@@ -183,3 +183,36 @@ def test_senza_scelte_il_grafo_non_scrive_i_campi_nuovi() -> None:
     scritto = canonical_json(load_project(CASO))
     assert "accessori_tolti" not in scritto
     assert "a_bordo" not in scritto
+
+
+def test_spostare_e_togliere_da_un_posto_e_posare_nell_altro() -> None:
+    """T5: vaso, riempimento e manometro del primario stanno sul secondario, in
+    centrale. La regola li posa sull'attacco indicato, con quello che ne pende: la
+    valvola bloccata aperta del vaso, il rubinetto del manometro, il ponte del
+    riempimento con il suo confine d'acquedotto."""
+    spostati = [
+        {"pezzo": f"{pezzo}-ts-pr-3-a", "motivo": "sta sul secondario, in centrale", "altrove": "tj-mz.b"}
+        for pezzo in ("expansion-connection", "filling-unit", "pressure-gauge")
+    ]
+    risultato = saturation(_caso(accessori_tolti=spostati), catalog(), rules())
+    pezzi = {item.id: item for item in risultato.model.components}
+    reti = {
+        ref.component_id: connessione.network_id
+        for connessione in risultato.model.connections
+        for ref in (connessione.endpoint_a, connessione.endpoint_b)
+    }
+    for pezzo in ("expansion-connection", "filling-unit", "pressure-gauge"):
+        assert f"{pezzo}-ts-pr-3-a" not in pezzi
+        assert reti[f"{pezzo}-tj-mz-b"] == "secondario-risc"
+    assert "valve-isolation-locked-open-expansion-connection-tj-mz-b-a" in pezzi
+    assert "valve-gauge-cock-3way-pressure-gauge-tj-mz-b-a" in pezzi
+    assert "inlet-filling-unit-tj-mz-b" in pezzi
+    assert len(pezzi) == 207, "spostati, non tolti"
+    secondo = saturation(risultato.model, catalog(), rules())
+    assert secondo.applied == []
+
+
+def test_si_sposta_solo_su_un_attacco_collegato() -> None:
+    spostato = [{"pezzo": "expansion-connection-ts-pr-3-a", "motivo": "altrove", "altrove": "volano-risc.drain"}]
+    esito = validate_project(_caso(accessori_tolti=spostato), catalog())
+    assert [item.code for item in esito.issues] == ["UNKNOWN_RELOCATION_PORT"]

@@ -307,20 +307,35 @@ def _stampa_le_scelte_del_progettista(
 ) -> None:
     """Quello che il progettista ha tolto o dichiarato a bordo, detto a ogni rilancio
     (REL-009, I-192): per famiglia, con il motivo; e le sue voci che non hanno effetto."""
-    motivi = {item.pezzo: item.motivo for item in modello.accessori_tolti}
-    if motivi:
-        print(f"\nTolti dal progettista ({len(tolte)}) — le regole li metterebbero, il grafo non li porta")
-        gruppi: dict[tuple[str, str], list[str]] = {}
-        for proposta in tolte:
-            gruppi.setdefault((proposta.name, motivi[proposta.component_id]), []).append(
-                f"su {proposta.anchor.component_id}.{proposta.anchor.port_id}, rete "
-                f"{proposta.network_id} — {proposta.component_id}"
+    voci = {item.pezzo: item for item in modello.accessori_tolti}
+    if voci:
+        for titolo, spostate in (
+            ("Tolti dal progettista", False),
+            ("Spostati dal progettista", True),
+        ):
+            queste = [item for item in tolte if (voci[item.component_id].altrove is not None) == spostate]
+            if not queste:
+                continue
+            spiegazione = (
+                "la regola li posa dove il progettista dice" if spostate
+                else "le regole li metterebbero, il grafo non li porta"
             )
-        for (nome, motivo), dove in gruppi.items():
-            print(f"  - {nome} — {len(dove)} {'pezzo' if len(dove) == 1 else 'pezzi'}")
-            for posto in dove:
-                print(f"      {posto}")
-            print(f"    motivo: {motivo}")
+            print(f"\n{titolo} ({len(queste)}) — {spiegazione}")
+            gruppi: dict[tuple[str, str], list[str]] = {}
+            for proposta in queste:
+                voce = voci[proposta.component_id]
+                posto = (
+                    f"su {proposta.anchor.component_id}.{proposta.anchor.port_id}, rete "
+                    f"{proposta.network_id} — {proposta.component_id}"
+                )
+                if voce.altrove is not None:
+                    posto += f" → su {voce.altrove}"
+                gruppi.setdefault((proposta.name, voce.motivo), []).append(posto)
+            for (nome, motivo), dove in gruppi.items():
+                print(f"  - {nome} — {len(dove)} {'pezzo' if len(dove) == 1 else 'pezzi'}")
+                for posto in dove:
+                    print(f"      {posto}")
+                print(f"    motivo: {motivo}")
         trovati = {item.component_id for item in tolte}
         a_vuoto = [voce.pezzo for voce in modello.accessori_tolti if voce.pezzo not in trovati]
         if a_vuoto:

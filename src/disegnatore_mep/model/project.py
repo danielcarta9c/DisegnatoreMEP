@@ -262,6 +262,17 @@ class AccessorioTolto(StrictModel):
     lo stesso nome a ogni rilancio (`rules.proposal.proposed_component_id`)."""
     motivo: str = Field(min_length=1)
     """Perche' il progettista lo toglie, con le sue parole."""
+    altrove: str | None = Field(default=None, pattern=r"^[a-z][a-z0-9_-]*\.[a-z][a-z0-9_-]*$")
+    """Dove sta invece, se sta altrove: l'attacco `pezzo.attacco` su cui la regola lo
+    posa (`tj-mz.b`), con tutto quello che ne pende — la valvola del vaso, il ponte
+    del riempimento. Vuoto, l'accessorio e' tolto e basta."""
+
+    @model_serializer(mode="wrap")
+    def _senza_altrove_non_detto(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        dati: dict[str, Any] = handler(self)
+        if dati.get("altrove") is None:
+            dati.pop("altrove", None)
+        return dati
 
 
 class SubsystemModel(IdentifiedModel):
