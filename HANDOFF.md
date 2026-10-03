@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-03, notte — **il pacchetto attivo è `REL-009`, la 1.3** (I-191): il primo caso reale si è fermato al passo 4 perché la skill non sapeva togliere accessori, dichiarare il costruito, disegnare le voci del costruito. I punti 1–4 sono in PR #72 (D-201, D-203 proposte; D-202, D-204 approvate); la tavola dei simboli nuovi aspetta il sì del PO. Prima, lo stesso giorno: la 1.2.2, la prima che si carica (PR #71, D-200).
+**Aggiornato:** 2026-10-03, notte — **il pacchetto attivo è `REL-009`** (I-191): i punti 1–4 sono su `main` (PR #72, D-201 … D-204 approvate) e sono usciti nella **1.3.0** (I-199, D-205). Resta il punto 5, il caso reale rifatto. Prima, lo stesso giorno: la 1.2.2, la prima che si carica (PR #71, D-200).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -13,23 +13,22 @@
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 3 ottobre 2026, notte
 
-**Il pacchetto è `REL-009`** (`ACTIVE_WORK_PACKAGE.md`), la 1.3, dal primo caso reale (I-191 … I-198). Il
-documento della sessione di disegno porta i dati del cliente e **non è nel repository**: il grafo è ricostruito
-anonimo in `docs/collaudi/REL-009/caso-reale-1/`, e il rapporto è `docs/collaudi/REL-009/RAPPORTO.md`.
+**Il pacchetto è `REL-009`** (`ACTIVE_WORK_PACKAGE.md`), dal primo caso reale (I-191 … I-199). Il documento della
+sessione di disegno porta i dati del cliente e **non è nel repository**: il grafo è ricostruito anonimo in
+`docs/collaudi/REL-009/caso-reale-1/`, e il rapporto è `docs/collaudi/REL-009/RAPPORTO.md`.
 
-- **Punti 1–4, in PR #72, non fusa**: togliere e spostare (`accessori_tolti`, `altrove`), il bordo della singola
-  macchina (`a_bordo`), gli accessori che il progettista colloca, l'esistente per pezzo e per tratto (D-202: si
-  disegna come il nuovo), le voci del costruito con il simbolo (D-203) — contatore, attacco predisposto, volano a
-  sei attacchi, collettore con ritorno, confini con l'esistente, giunto antivibrante, dosatore di polifosfati
-  (D-204: solo sull'acqua fredda dell'accumulo ACS).
-- **Aspetta il PO**: la tavola `docs/collaudi/REL-009/simboli-nuovi/tavola/` rifatta dopo I-197 (mandata del
-  predisposto sopra, giunto, dosatore). Il contatore è già approvato. **Non si fonde senza il suo sì.**
+- **Su `main`, nella 1.3.0** (PR #72, `releases/latest/DisegnatoreMEP-v1.3.0.zip`): togliere e spostare
+  (`accessori_tolti`, `altrove`), il bordo della singola macchina (`a_bordo`), gli accessori che il progettista
+  colloca, l'esistente per pezzo e per tratto (D-202: si disegna come il nuovo), le voci del costruito con il simbolo
+  (D-203) — contatore, attacco predisposto, volano a sei attacchi, collettore con ritorno, confini con l'esistente,
+  giunto antivibrante, dosatore di polifosfati (D-204: solo sull'acqua fredda dell'accumulo ACS).
 - **Il prossimo è il punto 5**: il caso rifatto — grafo anonimo con le scelte del progettista, piano, tavola, al PO;
   senza limite d'intervento (D-202). Restano da chiedere al PO le voci della §6 del documento (titolo e numero
   della tavola, dati della tabella, temperature del secondario ACS, diametri sì o no, pompe di macrozona nuove o
   esistenti, posizione del contabilizzatore), e se il contatore entra in tabella (D-203, punto 7).
-- **Poi la 1.3**: versione in `SKILL.md`, costruzione con `scripts/costruisci-skill.py`, `tests/test_le_release.py`.
-- **I numeri**: il prossimo input è **I-199**, la prossima decisione **D-205**.
+- **Poi** il limite d'intervento facoltativo (I-195) e la **1.3.1**, con `scripts/costruisci-skill.py` e
+  `tests/test_le_release.py` (D-200).
+- **I numeri**: il prossimo input è **I-200**, la prossima decisione **D-206**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026
 

@@ -4,6 +4,25 @@ Una sezione per ogni gruppo di punti, la più recente in alto. Il caso è il pri
 ricostruito anonimo in `caso-reale-1/`: il documento della sessione di disegno porta i dati del cliente e non è
 nel repository.
 
+## 4. La 1.3.0
+
+**3 ottobre 2026** · input **I-199** · decisione **D-205**, approvata
+
+Il PO, sulla tavola dei simboli nuovi rifatta: «pr approvata fondi su main. dammi anche la skill v 1.3 da
+scaricare.» Il pacchetto voleva la release dopo la tavola del caso; la 1.3.0 esce con i punti 1–4, e il caso rifatto
+resta il punto 5.
+
+```
+$ python3 scripts/costruisci-skill.py
+ZIP:   outputs/skill/disegnatore-mep.zip (694 kB, sha256 2d2870e738fb2495)
+Controlli della guida di Anthropic, di skill-creator e del caricamento su claude.ai (al massimo 200 file): passati.
+$ python3 -m pytest -q tests/test_le_release.py tests/test_package.py
+7 passed
+```
+
+Lo ZIP ha 104 file; dentro ci sono le voci nuove del catalogo e della libreria, le famiglie CC, GA e DP, e lo schema
+con `accessori_tolti`, `a_bordo`, `esistente`, `altrove`. Le tavole di regressione sono quelle della 1.2.2.
+
 ## 3. R3 — le voci del costruito, con il simbolo (I-194, I-197, I-198)
 
 **3 ottobre 2026** · decisioni **D-203** (proposta; il contatore approvato) e **D-204** (approvata) · la forma la

@@ -4,11 +4,12 @@
 > importanti da fare. merita una release 1.3» (I-191). Scritto il 3 ottobre 2026, sulla 1.2.2.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO**
+**Stato:** **IN CORSO** — i punti 1–4 sono su `main` con la PR #72 e sono usciti nella **1.3.0** (I-199, D-205: il PO ha chiesto la release alla fusione). Resta il **punto 5**, il caso rifatto, e il limite d'intervento facoltativo; escono nella consegna successiva, la 1.3.1.
 **Base:** `main` dopo la PR #71 (la 1.2.2).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). Una PR per punto, o per gruppo
-di punti; la release 1.3 si costruisce quando i punti 1–4 sono su `main` e la tavola del caso è approvata.
+di punti. La 1.3.0 è uscita alla fusione dei punti 1–4, per disposizione del PO (D-205); il caso rifatto va in una
+PR sua, con la sua tavola, e poi nella 1.3.1.
 
 ---
 

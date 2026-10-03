@@ -35,3 +35,6 @@ Il comando della skill li riapre da sé.
   porta il numero per intero.
 - **1.2.2** — 3 ottobre 2026: **la prima che si carica su claude.ai** (104 file). La 1.2.0 e la 1.2.1, con 287 e 284
   file, si fermavano al caricamento (I-188, I-189, D-200).
+- **1.3.0** — 3 ottobre 2026: **la tavola del costruito**, dal primo caso reale (`REL-009`, D-205): togliere,
+  spostare e collocare gli accessori, il bordo della singola macchina, l'esistente, le voci del costruito con il
+  simbolo. 104 file.
