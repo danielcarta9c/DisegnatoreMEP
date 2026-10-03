@@ -32,7 +32,8 @@ volano a sei attacchi, collettore con ritorno, confini con l'esistente, giunto a
 - **I-202, aperta**: si aspetta dal PO la tavola completa del caso. Con tavola, rilievi, grafo completo e piano (dati del cliente: solo in sessione, mai nel repository) si fa **l'elenco intero dei difetti con la causa**, prima di toccare il codice. Già segnalati: I-201; nella distribuzione colori sbagliati e niente colonne affiancate a pettine (B11, B12).
 - **I-203, aperta**: il PO ha mandato la tavola completa (non nel repository) e detta i difetti uno per uno; il primo è I-201, con il principio «disegnata l'autostrada non andrebbe toccata».
 - **I-204, aperta**: le pompe in parallelo con lo stesso verso (A2 non ha un controllo sulla tavola).
-- **I numeri**: il prossimo input è **I-205**, la prossima decisione **D-206**.
+- **I-205**: le dorsali della distribuzione sono autostrade; il collettore si raccorda male ai terminali; «procediamo», e la tavola rifatta al PO. Il tempo della skill (30 minuti) dopo. È `REL-009` punti 6 e 7.
+- **I numeri**: il prossimo input è **I-206**, la prossima decisione **D-206**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026
 
