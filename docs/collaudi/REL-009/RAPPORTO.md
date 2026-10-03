@@ -6,7 +6,7 @@ nel repository.
 
 ## 7. La 1.4.0 in una sessione pulita (I-208)
 
-**3 ottobre 2026, sera** · input **I-208**
+**3 ottobre 2026, sera** · input **I-208**, **I-209**
 
 Il PO ha usato la 1.4.0 **nella stessa chat in cui aveva lavorato con la 1.3.0**, e la tavola è uscita «sporca»,
 molto peggio di quella del §5. Ha chiesto perché, e una prova della 1.4 in una sessione pulita. La sua tavola porta i
