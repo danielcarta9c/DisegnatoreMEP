@@ -545,12 +545,31 @@ dell'impianto — i mestieri:
 
 > `heat_generation`, `thermal_storage`, `dhw_storage`, `hydraulic_separation`,
 > `heat_exchange`, `circulation`, `distribution`, `emission`, `diversion`,
-> `circuit_mixing`, `junction`, `branch_off`, `boundary`.
+> `circuit_mixing`, `junction`, `branch_off`, `boundary`, `heat_metering`.
 
 Cioè: generatori, accumuli e bollitori, separatori, scambiatori, circolatori,
 collettori, terminali (radiatori, ventilconvettori, batterie, pannelli), valvole
 deviatrici e miscelatrici **di circuito** a tre vie (decidono dove va il flusso: sono
-topologia), i raccordi del §4.4, i confini (acquedotto, utenze).
+topologia), i raccordi del §4.4, i confini (acquedotto, utenze), il contatore di calore.
+
+Le voci per **il costruito** (I-194), quando il testo le dice:
+
+- il **contatore di calore** (`heat-meter`), in linea dove il progettista lo mette — di
+  solito sul ritorno: le regole gli mettono le intercettazioni prima e dopo;
+- il **collettore d'appartamento con mandata e ritorno** (`zone-manifold-pair`): ogni
+  circuito esce da `out_n` e rientra in `ret_n`, e il ritorno esce da `out` — senza
+  raccordi a T per richiudere i ritorni;
+- il **volano a sei attacchi** (`buffer-six-port`), quando ne ha due predisposti in più
+  (`aux_in`, `aux_out`);
+- l'**attacco predisposto** (`capped-connection`): un tubo corto tappato su un attacco che
+  oggi non serve, con la scritta che il progettista gli dà in `etichetta` («al solare
+  termico»), su una rete sua;
+- il **confine con l'impianto esistente** su acqua di riscaldamento
+  (`existing-plant-inlet`, `existing-plant-outlet`), con la sua `etichetta` («al serpentino
+  del bollitore esistente»).
+
+`etichetta`, fra le `properties` di un pezzo, è **la scritta che la tavola porta accanto al
+pezzo**, com'è scritta: solo se il progettista la dice.
 
 **Non entra**, se il testo non la mette in un posto preciso, la ferramenta di servizio —
 i mestieri:

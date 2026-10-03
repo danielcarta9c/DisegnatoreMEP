@@ -4,6 +4,53 @@ Una sezione per ogni gruppo di punti, la più recente in alto. Il caso è il pri
 ricostruito anonimo in `caso-reale-1/`: il documento della sessione di disegno porta i dati del cliente e non è
 nel repository.
 
+## 3. R3 — le voci del costruito, con il simbolo (I-194)
+
+**3 ottobre 2026** · decisione **D-203** (proposta) · la forma la approva il PO
+
+### La tavola, per prima
+
+`simboli-nuovi/tavola/` — un impianto piccolo che mette insieme le voci nuove: pompa di calore con il
+**contatore di calore «CC»** sul ritorno del primario; **volano a sei attacchi** con i due **predisposti**,
+tappati, «al solare termico»; **collettore d'appartamento con mandata e ritorno** verso un ventilconvettore e un
+pannello; una derivazione **verso e da un impianto esistente**.
+
+```
+Formato A3 · tratte 22 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 6 · sormonti 0
+```
+
+Le tavole di regressione non cambiano (`confronta.sh`: 54 e 54, IDENTICI).
+
+### Che cosa la tavola ha insegnato
+
+- **Una scritta del progettista si perdeva in silenzio.** Alla prima posa «dal solare termico» non aveva un
+  lato libero — accanto c'era la verticale del confine —, e il motore l'ha omessa senza dirlo. Ora è un rilievo
+  **bloccante**, `FREE_LABEL_OMITTED`: la scritta l'ha data il progettista. Per la coppia di attacchi predisposti
+  basta una scritta, come dice il documento del caso.
+- **Il collettore con ritorno era alto 10**, con mandata e ritorno a 5 mm: le due intercettazioni che le regole
+  ci posano si toccavano. Ora è 20 × 15, a 10 mm come i terminali.
+- **Lo scarico e lo sfiato del volano** pendono già dai loro attacchi di servizio: il loro nome cita l'attacco da
+  cui la regola parte, non quello a cui sono appesi. Lo spostamento su un attacco di servizio, scritto e poi
+  tolto, non serviva.
+
+### Le prove
+
+`tests/acceptance/test_simboli_rel009.py` disegna la tavola di prova col comando della skill: zero bloccanti,
+i quattro simboli, le tre scritte. `test_preflight.py` prova `FREE_LABEL_OMITTED`. I conteggi della libreria
+salgono da 55 a 59 simboli.
+
+## 2. R2 — gli accessori del costruito, e lo spostare (I-193)
+
+**3 ottobre 2026** · decisione **D-201** (proposta, punto «altrove»)
+
+- **Dichiarati**: sfiati con valvola a sfera sul ritorno di ogni pompa e sui volani, ritegni sulle mandate,
+  manometro sui montanti, riduttore sull'acqua fredda, valvole sulle uscite dei collettori. Nessuno si raddoppia;
+  le valvole sulle uscite dei collettori bastano già alla regola sull'ingresso dei terminali (16 in meno).
+- **Spostati**: vaso, riempimento e manometro del primario sul secondario in centrale (T5), con quello che ne
+  pende.
+- **L'esistente** per pezzo e per tratto (I-195, D-202): un dato per le regole e i diametri; `completa` chiede
+  del corredo che le regole posano sull'esistente (T6).
+
 ## 1. R1 — togliere, e «a bordo» per singola macchina (I-192)
 
 **3 ottobre 2026** · decisione **D-201** (proposta)

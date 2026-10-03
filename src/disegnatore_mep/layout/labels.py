@@ -177,7 +177,15 @@ Box = tuple[float, float, float, float]
 Segment = tuple[Point, Point]
 
 
+ETICHETTA = "etichetta"
+"""La scritta libera che il progettista da' a un pezzo (REL-009, I-194): «al solare
+termico» su un attacco predisposto, «verso impianto esistente» su un confine. Si
+scrive com'e', accanto al pezzo, come un valore."""
+
+
 def format_value(key: str, value: JsonPrimitive) -> str | None:
+    if key == ETICHETTA:
+        return value.strip() if isinstance(value, str) and value.strip() else None
     unit = UNITS.get(key)
     if unit is None or value is None or isinstance(value, bool):
         return None

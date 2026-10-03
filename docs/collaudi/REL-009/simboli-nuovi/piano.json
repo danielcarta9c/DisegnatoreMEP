@@ -1,0 +1,92 @@
+{
+  "formato": "A3",
+  "note": [
+    "La tavola di prova dei quattro simboli nuovi di REL-009 (I-194): pompa di calore con il contatore di calore sul ritorno del primario, volano a sei attacchi con i due predisposti tappati, collettore d'appartamento con mandata e ritorno, e una derivazione verso e da un impianto esistente.",
+    "Pompa e volano sulla stessa quota: mandata a y=5, ritorno a y=20 (D-159). Il secondario esce dal volano a y=5 e torna a y=20."
+  ],
+  "pezzi": {
+    "pdc": {
+      "x": 0,
+      "y": 0,
+      "regola": "D-159 — mandata e ritorno sulle quote del volano"
+    },
+    "tee-valve-safety-pdc-water-supply": {
+      "x": 55,
+      "y": 2.5
+    },
+    "valve-safety-pdc-water-supply": {
+      "x": 55,
+      "y": -17.5
+    },
+    "tee-expansion-connection-pdc-water-return": {
+      "x": 100,
+      "y": 17.5
+    },
+    "expansion-connection-pdc-water-return": {
+      "x": 100,
+      "y": 40
+    },
+    "tee-pressure-gauge-pdc-water-return": {
+      "x": 115,
+      "y": 17.5
+    },
+    "pressure-gauge-pdc-water-return": {
+      "x": 115,
+      "y": 40,
+      "rotazione": 180
+    },
+    "volano": {
+      "x": 195,
+      "y": 0
+    },
+    "air-vent-volano-primary-out": {
+      "x": 205,
+      "y": -5
+    },
+    "drain-connection-volano-aux-in": {
+      "x": 205,
+      "y": 55
+    },
+    "solare-ritorno": {
+      "x": 255,
+      "y": 25
+    },
+    "solare-mandata": {
+      "x": 255,
+      "y": 35
+    },
+    "ts-sec": {
+      "x": 275,
+      "y": 2.5
+    },
+    "verso-esistente": {
+      "x": 275,
+      "y": -25
+    },
+    "tj-sec": {
+      "x": 265,
+      "y": 17.5
+    },
+    "da-esistente": {
+      "x": 265,
+      "y": 50
+    },
+    "collettore": {
+      "x": 320,
+      "y": 2.5,
+      "regola": "mandata del collettore sulla quota del secondario"
+    },
+    "fancoil": {
+      "x": 275,
+      "y": 40,
+      "specchio": true,
+      "regola": "attacchi a destra, a sinistra delle discese del primo circuito: mandata e ritorno non si incrociano, e c'e' posto per le intercettazioni"
+    },
+    "pannello": {
+      "x": 285,
+      "y": 70,
+      "specchio": true,
+      "regola": "come il ventilconvettore, piu' in basso: il secondo circuito scende accanto al primo"
+    }
+  }
+}

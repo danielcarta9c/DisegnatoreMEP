@@ -116,6 +116,10 @@ def test_every_other_shipped_symbol_admits_all_four_rotations() -> None:
         "gas-boiler-modular",
         "solar-collector",
         "dhw-cylinder-twin-coil",
+        # I simboli nuovi di `REL-009` (I-194): il volano a sei attacchi e il
+        # collettore con ritorno, nel proprio verso come i loro fratelli.
+        "buffer-six-port",
+        "zone-manifold-pair",
         # Il filtro a Y (DRAW-005, I-031): il gambo non punta mai in su, quindi
         # su una verticale gira di 270 gradi e non di 90. La prova del contratto
         # sta in tests/graphics/test_contratti_simboli_tavola1.py.

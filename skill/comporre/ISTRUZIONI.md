@@ -61,6 +61,9 @@ Questi sono quelli che incontri quasi sempre:
 | `buffer-two-port` | **25 × 10, coricato** | `a` sinistra +5 · `b` destra +5 — **in asse** · `vent` sopra e `drain` sotto, a x +12,5 · `probe` sotto, a x +17,5 |
 | `dhw-heat-pump` (pompa di calore per ACS) | 25 × 45 | `cold_in` sinistra +37,5 · `dhw_out` sopra, a x +12,5 |
 | `zone-manifold` (collettore di zona) | 40 × 5 | `in` sinistra +2,5 · `out_1` sotto, a x +12,5 · `out_2` sotto, a x +27,5 |
+| `zone-manifold-pair` (collettore con ritorno) | 20 × 15 | `in` sinistra +2,5 · `out` sinistra +12,5 · sotto: `out_1` a x +2,5, `ret_1` a x +7,5, `out_2` a x +12,5, `ret_2` a x +17,5 |
+| `buffer-six-port` (volano a sei attacchi) | 25 × 45 | come `buffer-four-port` · in più `aux_in` destra +27,5 e `aux_out` destra +37,5, gli attacchi predisposti |
+| `capped-connection` (attacco predisposto) | 5 × 5 | `a` destra +2,5: il tappo è dall'altra parte |
 | `buffer-combined` | 25 × 45 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` **destra +5** · `secondary_in` **destra +20** · `dhw_out` sopra, a x +7,5 · `cold_in` sinistra +37,5 |
 | `plate-heat-exchanger` | 12,5 × 25 | `primary_in` **sinistra +5** · `primary_out` **sinistra +20** · `secondary_out` destra +5 · `secondary_in` destra +20 |
 | `dhw-cylinder` | 25 × 45 | `coil_in` sinistra **+7,5** · `coil_out` sinistra **+17,5** · `dhw_out` sopra · `cold_in` sinistra +37,5 · `recirculation_in` **destra +12,5**, il ricircolo (D-176) |
@@ -127,8 +130,15 @@ Il **grafo completo** in JSON. Quello che ti serve:
 simbolo lo disegna: il simbolo lo dice la voce di catalogo del pezzo
 (`examples/layout/catalog/<definition_id>.json`, campo `symbol_id`), e il manifesto è
 `assets/symbols/<symbol_id>.json`. Serve, perché i nomi non coincidono sempre: `tee-split` e
-`tee-junction-dhw` si disegnano col simbolo `tee-junction`, `cold-water-inlet` e
-`dhw-draw-off` con `network-boundary`, tutte le `valve-isolation-*` con `valve-isolation`.
+`tee-junction-dhw` si disegnano col simbolo `tee-junction`, `cold-water-inlet`,
+`dhw-draw-off`, `existing-plant-inlet` e `existing-plant-outlet` con `network-boundary`, tutte le
+`valve-isolation-*` con `valve-isolation`.
+
+**Un pezzo con una scritta** — `etichetta` fra le sue proprietà, «al solare termico» su un
+attacco predisposto, «verso impianto esistente» su un confine — vuole **un lato libero accanto**,
+largo quanto la scritta: il motore la posa lì, o con un richiamo corto. Se non trova posto la
+tavola **non esce** (`FREE_LABEL_OMITTED`, I-194): la scritta l'ha data il progettista. Non
+mettere quel pezzo fra due tubazioni vicine.
 
 **Chi è una macchina e chi è corredo** lo capisci dall'ingombro e dalle porte: un pezzo 40×30
 o 25×45 è una macchina, un pezzo di 5 o 7,5 mm con due porte in linea è un organo che sta

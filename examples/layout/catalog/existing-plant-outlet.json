@@ -1,0 +1,26 @@
+{
+  "id": "existing-plant-outlet",
+  "version": "1.0.0",
+  "name": "Verso impianto esistente",
+  "functions": [
+    "boundary"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "network-boundary",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "in",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION"
+  ]
+}
