@@ -174,6 +174,19 @@ Regole di forma:
   Una rete che il testo dice **esistente** — «la distribuzione dagli accumuli in poi è
   esistente» — porta `"esistente": true` fra i suoi campi, e non sta mai fra le reti dei
   diametri.
+- **`a_bordo`**, su un pezzo: le funzioni che **quella** macchina porta dentro il
+  mantello, **solo se il testo lo dice** («le pompe di calore hanno il circolatore e il
+  vaso a bordo»): `"a_bordo": ["expansion"]`, con i nomi dei mestieri della ferramenta
+  (§5). Le regole allora non lo aggiungono fuori da quel pezzo — salvo dove lo vogliono
+  comunque, come la valvola di sicurezza di ogni generatore: lo dice `completa`. Se il
+  testo non lo dice, ometti il campo: quello che il modello porta dentro lo sa già il
+  catalogo.
+- **`accessori_tolti`**: gli accessori che le regole aggiungerebbero e che il
+  progettista dice che **non ci sono** — l'impianto è costruito, o lui ha deciso così.
+  Li conosci dopo `completa`, che scrive accanto a ogni accessorio il suo nome:
+  `"accessori_tolti": [{"pezzo": "air-separator-tj-pr-3-b", "motivo": "non installato:
+  lo sfiato è sul volano"}]`. Il motivo è suo, con le sue parole. Stanno nel grafo di
+  prima stesura, e `completa` li rispetta a ogni rilancio (I-192).
 - **`metadata`**: identifica il documento, non l'impianto, ed è quello che il
   **cartiglio** della tavola scrive. Committente e codice di
   commessa te li dice chi lancia il lavoro; se mancano, scrivi `ND` e dillo nella

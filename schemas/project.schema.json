@@ -1,5 +1,27 @@
 {
   "$defs": {
+    "AccessorioTolto": {
+      "additionalProperties": false,
+      "description": "Un accessorio che una regola poserebbe e che il progettista toglie\n(REL-009, I-192).\n\nLa tavola di un impianto costruito dice che cosa c'e', e il progettista sa\nche cosa non c'e': la valvola di sicurezza integrata nella macchina, il\nseparatore d'aria che non e' stato montato. La scelta resta scritta nel\ngrafo con il suo motivo, e `completa` la rispetta a ogni rilancio.",
+      "properties": {
+        "pezzo": {
+          "pattern": "^[a-z][a-z0-9_-]*$",
+          "title": "Pezzo",
+          "type": "string"
+        },
+        "motivo": {
+          "minLength": 1,
+          "title": "Motivo",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pezzo",
+        "motivo"
+      ],
+      "title": "AccessorioTolto",
+      "type": "object"
+    },
     "ApprovalStatus": {
       "enum": [
         "proposed",
@@ -131,6 +153,13 @@
             "$ref": "#/$defs/EvidenceRef"
           },
           "title": "Evidence",
+          "type": "array"
+        },
+        "a_bordo": {
+          "items": {
+            "type": "string"
+          },
+          "title": "A Bordo",
           "type": "array"
         }
       },
@@ -694,6 +723,13 @@
         "$ref": "#/$defs/SheetIntentModel"
       },
       "title": "Sheets",
+      "type": "array"
+    },
+    "accessori_tolti": {
+      "items": {
+        "$ref": "#/$defs/AccessorioTolto"
+      },
+      "title": "Accessori Tolti",
       "type": "array"
     }
   },

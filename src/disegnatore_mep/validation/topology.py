@@ -78,6 +78,21 @@ def validate_project(
                 )
             )
 
+    # Il bordo dichiarato dal progettista nomina funzioni che il catalogo conosce
+    # (REL-009, I-192): un nome sbagliato non toglierebbe niente, in silenzio.
+    funzioni = {function for definition in catalog.all() for function in definition.functions}
+    for component in project.components:
+        for function in component.a_bordo:
+            if function not in funzioni:
+                issues.append(
+                    _issue(
+                        "UNKNOWN_ON_BOARD_FUNCTION",
+                        f"component {component.id}: a_bordo names {function}, which no catalog "
+                        f"entry does; the functions are the `functions` of the catalog entries",
+                        [component.id, function],
+                    )
+                )
+
     for subsystem in project.subsystems:
         for component_id in subsystem.component_ids:
             if component_id not in components:

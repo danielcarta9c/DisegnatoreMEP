@@ -17,6 +17,7 @@ non proponeva zero.
 """
 
 import re
+from dataclasses import dataclass
 
 from disegnatore_mep.assembly import assemble
 from disegnatore_mep.catalog.registry import ComponentRegistry
@@ -564,7 +565,11 @@ def evaluate_in_phases(
     if not first.is_empty or not closers.rules:
         return first
     second = evaluate(project, catalog, rules)
-    return Evaluation(proposals=second.proposals, gaps=[*first.gaps, *second.gaps])
+    return Evaluation(
+        proposals=second.proposals,
+        gaps=[*first.gaps, *second.gaps],
+        withheld=[*first.withheld, *second.withheld],
+    )
 
 
 def _a_group_may_satisfy(
@@ -609,10 +614,32 @@ def _a_group_may_satisfy(
     return False
 
 
+@dataclass(frozen=True)
+class Saturation:
+    """Quello che la saturazione restituisce, per intero."""
+
+    model: ProjectModel
+    applied: list[RuleProposal]
+    gaps: list[RuleGap]
+    withheld: list[RuleProposal]
+    """Le proposte che il progettista ha tolto (REL-009, I-192), una volta
+    ciascuna: le regole le farebbero, e il modello non le porta."""
+
+
 def saturate(
     project: ProjectModel, catalog: ComponentRegistry, rules: RuleRegistry
 ) -> tuple[ProjectModel, list[RuleProposal], list[RuleGap]]:
     """Il modello completo, le integrazioni che ci sono volute, i punti aperti.
+    E' `saturation` senza l'elenco di cio' che il progettista ha tolto."""
+    result = saturation(project, catalog, rules)
+    return result.model, result.applied, result.gaps
+
+
+def saturation(
+    project: ProjectModel, catalog: ComponentRegistry, rules: RuleRegistry
+) -> Saturation:
+    """Il modello completo, le integrazioni che ci sono volute, i punti aperti, e
+    le proposte che il progettista ha tolto.
 
     «Completo» ha un significato preciso: **rieseguire le regole non propone
     piu' niente**. Ci vuole piu' di una passata perche' un accessorio proposto
@@ -636,12 +663,19 @@ def saturate(
     current = project
     applied: list[RuleProposal] = []
     gaps: dict[tuple[str, str, str, str], RuleGap] = {}
+    withheld: dict[str, RuleProposal] = {}
+
+    def result(model: ProjectModel) -> Saturation:
+        return Saturation(assembled(model), applied, list(gaps.values()), list(withheld.values()))
+
     found = evaluate_in_phases(current, catalog, rules)
     for _ in range(ROUNDS):
         for gap in found.gaps:
             gaps.setdefault(gap.key, gap)
+        for tolta in found.withheld:
+            withheld.setdefault(tolta.component_id, tolta)
         if found.is_empty:
-            return assembled(current), applied, list(gaps.values())
+            return result(current)
         # Si assembla **dentro** il ciclo: rimettere in fila puo' scoprire un
         # attacco che era coperto solo perche' un pezzo stava dove non doveva.
         current = assembled(apply_proposals(current, found.proposals, catalog))
@@ -649,8 +683,10 @@ def saturate(
         found = evaluate_in_phases(current, catalog, rules)
     for gap in found.gaps:
         gaps.setdefault(gap.key, gap)
+    for tolta in found.withheld:
+        withheld.setdefault(tolta.component_id, tolta)
     if found.is_empty:
-        return assembled(current), applied, list(gaps.values())
+        return result(current)
     # `found` e' la valutazione che ha ancora qualcosa da proporre: il messaggio
     # nomina quelle regole, e non puo' uscire vuoto.
     asking = sorted({item.rule_id for item in found.proposals})
@@ -661,4 +697,4 @@ def saturate(
     )
 
 
-__all__ = ["ROUNDS", "apply_proposals", "evaluate_in_phases", "saturate"]
+__all__ = ["ROUNDS", "Saturation", "apply_proposals", "evaluate_in_phases", "saturate", "saturation"]

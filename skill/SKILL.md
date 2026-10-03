@@ -147,15 +147,19 @@ solo gli porti:
 - che cosa le regole hanno aggiunto, per famiglia — «12 valvole di intercettazione, 2 valvole
   di sicurezza, una per generatore…» —, e il perché solo se lo chiede;
 - i punti aperti, come domande;
+- quello che il progettista ha tolto o dichiarato a bordo, se c'è, e le voci che `completa`
+  segnala come senza effetto;
 - le assunzioni ancora da confermare e i dati che mancano.
 
 Il grafo completo non si manda come file: il progettista lo approva su questo messaggio, e lo
 vede disegnato al passo 6.
 
 Chiedi l'approvazione esplicita, e **aspettala**. Se corregge la lettura, torni al passo 1 e poi
-al 3 e al 4. Se rifiuta un accessorio che le regole hanno aggiunto, la skill non sa ancora
-toglierlo da sé: diglielo, e chiedi se procedere col grafo com'è — l'accessorio resta, e lo
-scrivi fra le cose aperte — o fermarsi.
+al 3 e al 4. **Se toglie un accessorio** — «questo non c'è», «la pompa lo porta dentro» — lo
+scrivi nel grafo di prima stesura: in `accessori_tolti`, con il nome che `completa` gli dà e il
+motivo del progettista, o in `a_bordo` sulla macchina (`capire.md` §3); poi rilanci `completa` e
+gli riporti l'elenco «Tolti dal progettista». La scelta resta nel grafo e vale a ogni rilancio.
+Lo stesso vale prima del passo 4, se lo dice già nel testo o nelle risposte del passo 2.
 
 ### 5. Comporre — il piano
 

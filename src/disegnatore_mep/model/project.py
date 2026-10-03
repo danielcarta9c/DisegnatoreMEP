@@ -158,6 +158,32 @@ class ComponentInstance(IdentifiedModel):
     tag: str | None = None
     properties: dict[str, JsonPrimitive] = Field(default_factory=dict)
     evidence: list[EvidenceRef] = Field(default_factory=list)
+    a_bordo: list[str] = Field(default_factory=list)
+    """Le funzioni che **questa** macchina porta dentro il mantello, dette dal
+    progettista (REL-009, I-192): la valvola di sicurezza, il vaso, il ritegno
+    integrati in quella pompa di calore. Le regole le leggono come leggono il
+    catalogo (`carries_on_board`), che lo dice per il modello e non per la singola
+    macchina. Facoltativo e additivo: vuoto non si scrive, e i grafi agli atti
+    restano identici byte per byte."""
+
+    @model_validator(mode="after")
+    def il_bordo_si_dice_una_volta(self) -> "ComponentInstance":
+        vuote = [item for item in self.a_bordo if not item.strip()]
+        doppie = sorted({item for item in self.a_bordo if self.a_bordo.count(item) > 1})
+        if vuote or doppie:
+            raise ValueError(
+                f"component {self.id}: a_bordo lists each function once, by name "
+                f"(empty: {len(vuote)}, repeated: {doppie})"
+            )
+        return self
+
+    @model_serializer(mode="wrap")
+    def _senza_il_bordo_non_detto(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        """Un pezzo senza bordo dichiarato non scrive `a_bordo`."""
+        dati: dict[str, Any] = handler(self)
+        if not dati.get("a_bordo"):
+            dati.pop("a_bordo", None)
+        return dati
 
     @model_validator(mode="after")
     def i_dati_con_nome_fisso_hanno_la_loro_forma(self) -> "ComponentInstance":
@@ -218,6 +244,24 @@ class RuleApplicationModel(IdentifiedModel):
     category: IntegrationCategory
     status: ApprovalStatus = ApprovalStatus.PROPOSED
     entity_ids: list[str] = Field(default_factory=list)
+
+
+class AccessorioTolto(StrictModel):
+    """Un accessorio che una regola poserebbe e che il progettista toglie
+    (REL-009, I-192).
+
+    La tavola di un impianto costruito dice che cosa c'e', e il progettista sa
+    che cosa non c'e': la valvola di sicurezza integrata nella macchina, il
+    separatore d'aria che non e' stato montato. La scelta resta scritta nel
+    grafo con il suo motivo, e `completa` la rispetta a ogni rilancio."""
+
+    pezzo: str = Field(pattern=ID_PATTERN)
+    """L'identificativo che l'accessorio ha nel grafo completo: la voce, il pezzo
+    e l'attacco su cui si posa (`safety-valve-pdc-1-water-supply`). E' derivato
+    dai dati, non da un contatore: lo stesso accessorio sullo stesso attacco ha
+    lo stesso nome a ogni rilancio (`rules.proposal.proposed_component_id`)."""
+    motivo: str = Field(min_length=1)
+    """Perche' il progettista lo toglie, con le sue parole."""
 
 
 class SubsystemModel(IdentifiedModel):
@@ -311,6 +355,9 @@ class ProjectModel(StrictModel):
     assumptions: list[AssumptionModel] = Field(default_factory=list)
     rule_applications: list[RuleApplicationModel] = Field(default_factory=list)
     sheets: list[SheetIntentModel] = Field(default_factory=list)
+    accessori_tolti: list[AccessorioTolto] = Field(default_factory=list)
+    """Gli accessori delle regole che il progettista toglie (REL-009, I-192).
+    Facoltativo e additivo come `diametri`: vuoto non si scrive."""
 
     @model_validator(mode="after")
     def schema_version_is_the_current_one(self) -> "ProjectModel":
@@ -368,13 +415,36 @@ class ProjectModel(StrictModel):
                 )
         return self
 
+    @model_validator(mode="after")
+    def un_accessorio_tolto_non_e_nel_grafo(self) -> "ProjectModel":
+        """Si toglie una volta, e si toglie quello che il grafo non ha gia'.
+
+        Un pezzo che il grafo porta e insieme dichiara tolto e' una
+        contraddizione: o l'ha scritto il progettista, e allora c'e', o lo
+        poserebbe una regola, e allora si toglie dal grafo di prima stesura."""
+        visti: set[str] = set()
+        presenti = {item.id for item in self.components}
+        for voce in self.accessori_tolti:
+            if voce.pezzo in visti:
+                raise ValueError(f"l'accessorio {voce.pezzo} e' tolto due volte")
+            if voce.pezzo in presenti:
+                raise ValueError(
+                    f"l'accessorio {voce.pezzo} e' nel grafo e fra quelli tolti: si toglie dal "
+                    f"grafo di prima stesura, prima di completare"
+                )
+            visti.add(voce.pezzo)
+        return self
+
     @model_serializer(mode="wrap")
     def _senza_la_richiesta_che_non_c_e(
         self, handler: SerializerFunctionWrapHandler
     ) -> dict[str, Any]:
         """Senza richiesta dei diametri il campo non si scrive, nemmeno come
-        `null`: i grafi agli atti restano identici byte per byte."""
+        `null`: i grafi agli atti restano identici byte per byte. Lo stesso per gli
+        accessori tolti, quando non ce ne sono."""
         dati: dict[str, Any] = handler(self)
         if dati.get("diametri") is None:
             dati.pop("diametri", None)
+        if not dati.get("accessori_tolti"):
+            dati.pop("accessori_tolti", None)
         return dati

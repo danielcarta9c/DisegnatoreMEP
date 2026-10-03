@@ -61,8 +61,9 @@ from disegnatore_mep.model.types import ApprovalStatus, IssueSeverity
 from disegnatore_mep.piano.esecutore import EsitoDelPiano, esegui_piano
 from disegnatore_mep.piano.formato import PianoDiComposizione, carica_piano
 from disegnatore_mep.piano.revisore import misura
-from disegnatore_mep.rules.apply import saturate
+from disegnatore_mep.rules.apply import saturation
 from disegnatore_mep.rules.errors import RuleError
+from disegnatore_mep.rules.proposal import RuleProposal
 from disegnatore_mep.rules.registry import RuleRegistry
 from disegnatore_mep.rules.report import CATEGORY_LABELS, build_report
 from disegnatore_mep.validation.issues import ValidationIssue
@@ -237,7 +238,8 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
         return 2
     regole = RuleRegistry.from_directory(cartelle.regole)
     regole.cross_check(dati.catalogo)
-    completo, proposte, lacune = saturate(modello, dati.catalogo, regole)
+    risultato = saturation(modello, dati.catalogo, regole)
+    completo, proposte, lacune = risultato.model, risultato.applied, risultato.gaps
     rapporto = build_report(proposte, lacune, dati.naming)
 
     in_piu = len(completo.components) - len(modello.components)
@@ -253,9 +255,14 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
         print(f"\n{etichetta} ({len(voci)})")
         # Una regola che mette dodici valvole ha una ragione sola: si dice una volta,
         # e sotto i dodici posti. Ripeterla dodici volte non la rende piu' vera.
+        # Accanto a ogni posto il nome del pezzo nel grafo completo: e' quello con
+        # cui il progettista lo toglie (`accessori_tolti`, I-192).
+        della_categoria = [item for item in proposte if item.category == categoria]
         gruppi: dict[tuple[str, str], list[str]] = {}
-        for voce in voci:
-            gruppi.setdefault((voce.name, voce.rule), []).append(voce.where)
+        for voce, proposta in zip(voci, della_categoria, strict=True):
+            gruppi.setdefault((voce.name, voce.rule), []).append(
+                f"{voce.where} — {proposta.component_id}"
+            )
         for (nome, regola), dove in gruppi.items():
             voce = next(v for v in voci if (v.name, v.rule) == (nome, regola))
             print(f"  - {nome} — {len(dove)} {'pezzo' if len(dove) == 1 else 'pezzi'}")
@@ -275,6 +282,8 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
             print(f"    perche' servirebbe: {punto.rationale}")
             print(f"    fonte: {punto.source} · regola: {punto.rule}")
 
+    _stampa_le_scelte_del_progettista(modello, risultato.withheld, proposte, dati)
+
     verdetto = validate_project(completo, dati.catalogo)
     if not verdetto.ok:
         print("\nIl grafo completato non regge: e' un difetto delle regole, non del grafo.")
@@ -291,6 +300,59 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
         for domanda in domande:
             print(f"  - {domanda}")
     return 0
+
+
+def _stampa_le_scelte_del_progettista(
+    modello: ProjectModel, tolte: Sequence[RuleProposal], applicate: Sequence[RuleProposal], dati: _Dati
+) -> None:
+    """Quello che il progettista ha tolto o dichiarato a bordo, detto a ogni rilancio
+    (REL-009, I-192): per famiglia, con il motivo; e le sue voci che non hanno effetto."""
+    motivi = {item.pezzo: item.motivo for item in modello.accessori_tolti}
+    if motivi:
+        print(f"\nTolti dal progettista ({len(tolte)}) — le regole li metterebbero, il grafo non li porta")
+        gruppi: dict[tuple[str, str], list[str]] = {}
+        for proposta in tolte:
+            gruppi.setdefault((proposta.name, motivi[proposta.component_id]), []).append(
+                f"su {proposta.anchor.component_id}.{proposta.anchor.port_id}, rete "
+                f"{proposta.network_id} — {proposta.component_id}"
+            )
+        for (nome, motivo), dove in gruppi.items():
+            print(f"  - {nome} — {len(dove)} {'pezzo' if len(dove) == 1 else 'pezzi'}")
+            for posto in dove:
+                print(f"      {posto}")
+            print(f"    motivo: {motivo}")
+        trovati = {item.component_id for item in tolte}
+        a_vuoto = [voce.pezzo for voce in modello.accessori_tolti if voce.pezzo not in trovati]
+        if a_vuoto:
+            print(
+                f"\nAccessori tolti che non tolgono niente ({len(a_vuoto)}) — nessuna regola posa "
+                "un pezzo con questo nome: si correggono con il nome che il pezzo ha nel grafo completo"
+            )
+            for pezzo in a_vuoto:
+                print(f"  - {pezzo}")
+    # Dove una regola vuole il pezzo anche se la macchina lo porta dentro — la
+    # sicurezza di ogni generatore, D-182 —, il bordo dichiarato non basta: si dice,
+    # e il progettista sceglie se toglierlo.
+    bordo = {item.id: set(item.a_bordo) for item in modello.components if item.a_bordo}
+    comunque = sorted(
+        (
+            item
+            for item in applicate
+            if bordo.get(item.anchor.component_id, set())
+            & set(dati.catalogo.resolve(item.definition_id).definition.functions)
+        ),
+        key=lambda item: item.component_id,
+    )
+    if comunque:
+        print(
+            f"\nDichiarati a bordo, e posati lo stesso ({len(comunque)}) — la regola li vuole anche "
+            "dentro la macchina; se sul costruito non ci sono, si tolgono con il loro nome"
+        )
+        for item in comunque:
+            print(
+                f"  - {item.name} su {item.anchor.component_id}.{item.anchor.port_id} — "
+                f"{item.component_id} · regola: {item.rule_id}@{item.rule_version}"
+            )
 
 
 # --- disegna ----------------------------------------------------------------

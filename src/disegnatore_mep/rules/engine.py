@@ -52,6 +52,9 @@ class Evaluation:
 
     proposals: list[RuleProposal] = field(default_factory=list)
     gaps: list[RuleGap] = field(default_factory=list)
+    withheld: list[RuleProposal] = field(default_factory=list)
+    """Le proposte che il progettista ha tolto (`accessori_tolti`, REL-009): la
+    regola le farebbe, e non si applicano. Non sono punti aperti."""
 
     @property
     def is_empty(self) -> bool:
@@ -659,7 +662,15 @@ def evaluate(
                         source=rule.source,
                     )
                 )
-    return Evaluation(proposals=proposals, gaps=list(gaps.values()))
+    # Il progettista toglie dopo che la regola ha parlato (REL-009, I-192): il
+    # tratto resta reclamato dalla proposta tolta, e l'organo non si riaffaccia
+    # dall'altro capo dello stesso tratto.
+    tolti = {item.pezzo for item in project.accessori_tolti}
+    return Evaluation(
+        proposals=[item for item in proposals if item.component_id not in tolti],
+        gaps=list(gaps.values()),
+        withheld=[item for item in proposals if item.component_id in tolti],
+    )
 
 
 __all__ = ["BRANCH_OFF", "Evaluation", "evaluate"]

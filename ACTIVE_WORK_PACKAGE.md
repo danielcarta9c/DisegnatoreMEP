@@ -1,155 +1,120 @@
-# BETA-001 — La beta della 1.2: il debug sulle tavole dei collaboratori
+# REL-009 — La 1.3: la tavola del costruito
 
-> **▶ Il prossimo, per l'ordine del PO** — «distribuisco la release 1.2 ai miei collaboratori ed entriamo nella
-> fase di beta testing e debug» (I-181); «prepara il workpack per la prossima sessione» (I-183). Scritto il
-> 2 ottobre 2026, a PR #68 fusa. **Si parte dal punto 0**, in un messaggio solo al PO.
+> **▶ Il pacchetto attivo, per l'ordine del PO** — «ho usato la skil su un caso reale. e abbiamo delle modifiche
+> importanti da fare. merita una release 1.3» (I-191). Scritto il 3 ottobre 2026, sulla 1.2.2.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **PROSSIMO** — si avvia quando il PO apre la sessione.
-**Base:** `main` dopo la fusione della PR #68.
-**Ramo:** quello che l'ambiente della sessione assegna, ripartito da `main`.
-**Approvazione della fusione:** **del PO**, e si dà guardando le tavole (D-146, D-147).
-**`REL-005` è chiuso con la 1.2** (D-198): la release è `releases/archive/DisegnatoreMEP-v1.2.0.zip`. La storia del
-pacchetto è in `docs/plans/pacchetti/REL-005.md`.
-
-> **Aggiornato il 3 ottobre 2026.** La **1.2.2** è la prima che si carica su claude.ai (I-188, I-189, D-200): la 1.2.0 e
-> la 1.2.1 avevano 287 e 284 file, oltre i 200 ammessi. **Una release si pubblica solo se `tests/test_le_release.py`
-> passa** (`CLAUDE.md`). Rapporto: `docs/collaudi/BETA-001/RAPPORTO.md` §2.
->
-> **Aggiornato il 2 ottobre 2026, a PR #70 fusa.** La prima consegna della beta è fatta: la **1.2.1** (I-187,
-> D-199), in `releases/latest/` — la skill chiede all'inizio se servono i diametri (I-185) e non manda più il
-> grafo da leggere (I-186); le tavole sono quelle della 1.2.0. Rapporto: `docs/collaudi/BETA-001/RAPPORTO.md` §1.
-> Del punto 0 resta da chiedere: le tavole dei collaboratori, la regola per le consegne successive, le domande
-> di contenuto.
+**Stato:** **IN CORSO**
+**Base:** `main` dopo la PR #71 (la 1.2.2).
+**Ramo:** quello che l'ambiente della sessione assegna.
+**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). Una PR per punto, o per gruppo
+di punti; la release 1.3 si costruisce quando i punti 1–4 sono su `main` e la tavola del caso è approvata.
 
 ---
 
-## Dove siamo — misurato il 2 ottobre 2026
+## Perché
 
-- **La skill 1.2 è dai collaboratori del PO.** Lo ZIP distribuito è la release 1.2.0,
-  `releases/latest/DisegnatoreMEP-v1.2.0.zip` (sha256 `fa9e410a7e994f66`), con la copia numerata in `releases/archive/`. È stato costruito prima della
-  pulizia: lo ZIP che `main` costruisce oggi è più leggero (760 kB contro 822) ma **disegna le stesse tavole**,
-  byte per byte. Non c'è niente da ridistribuire finché non arriva una correzione.
-- **La suite è verde** (al 3 ottobre `1981 passed, 15 skipped, 10 xfailed`; al 2 ottobre `1967 passed, 15 skipped, 10 xfailed`), in 4 minuti e mezzo; `ruff` e `mypy` verdi.
-  **Da qui una rossa è un difetto**, non rumore di fondo.
-- **Il solutore non c'è più** (D-197). Le prove del motore leggono un piano: quelli approvati di
-  `docs/collaudi/DRAW-018/prova-camera-pulita-2026-09-24/`, o quelli tradotti in `tests/layout/piani/`. La via
-  senza piano (`draw`) resta nel codice, ma la sua qualità non la garantisce nessuno (D-151).
-- **Gli strumenti per lavorare** ci sono già, provati sulla prova del PO:
-  - `docs/collaudi/REL-005/prova-po-1/` — come si ricostruisce **anonima** una tavola vera (grafo e piano dal
-    DXF), e come si mostrano al PO le alternative;
-  - `docs/collaudi/REL-005/prova-po-1/tavole_di_prova.py` — le sette tavole di prova approvate, rifatte col codice
-    corrente;
-  - `docs/collaudi/REL-005/pulizia-del-solutore/uscite.sh` e `confronta.sh` — **la misura di regressione**: 55
-    uscite generate prima e dopo, confrontate byte per byte.
-- **Il primo difetto è già noto** (I-182): sulla tavola 1 dal piano due valvole che isolano stanno a 10 mm dal
-  proprio attacco, contro i 2,5–5 di D-120.
+Il primo caso reale (I-191) è un retrofit condominiale: sei pompe di calore al posto di caldaia e chiller, due
+volani, due macrozone con otto collettori d'appartamento, un bollitore esistente in un altro locale. La tavola
+**si lascia in centrale e si allega alla dichiarazione di conformità**: deve dire **che cosa è stato installato**
+e **dove finisce l'intervento**. La 1.2.2 si è fermata al passo 4, per tre cose che non sa fare:
 
-## 0. Quello che serve dal PO, in un messaggio solo
+1. **togliere** un accessorio che una regola aggiunge e che sul costruito non c'è;
+2. **disegnare** un accessorio installato che le regole non mettono, anche se il progettista lo nomina;
+3. **distinguere** l'esistente dal nuovo, e il limite dell'intervento; e nel catalogo mancano dei pezzi.
 
-1. **Le tavole dei collaboratori**, man mano che arrivano: il DXF, **il testo esatto** che hanno scritto alla
-   skill, le risposte che hanno dato alle sue domande, e che cosa non va, con parole loro. Senza almeno una, il
-   punto 3 resta fermo e la sessione lavora sul punto 1.
-2. **La numerazione delle consegne in beta.** *Proposta della sessione:* `1.2.1`, `1.2.2`… a ogni gruppo di
-   correzioni fuso e consegnato ai collaboratori; `1.3` se cambia il comportamento visibile in modo che il
-   collaboratore debba saperlo, come un simbolo nuovo. Lo decide il PO. *La prima, la 1.2.1, l'ha approvata
-   (I-187); la regola per le successive resta questa proposta.*
-3. **Le domande di contenuto aperte**, con la proposta della sessione per ciascuna:
-   - **lo scarico del volano a due attacchi** in serie sul ritorno esce rosso (colore base del fluido). *Proposta:*
-     prende il ritorno, perché il volume è acqua di ritorno;
-   - **le sette domande** del rapporto di `REL-001` §6.1.
+Il documento della sessione di disegno porta i dati del cliente e **non entra nel repository**. Il grafo è
+ricostruito anonimo: `docs/collaudi/REL-009/caso-reale-1/grafo-prima-stesura.json`.
+
+## Dove siamo — misurato il 3 ottobre 2026, con la 1.2.2
+
+```
+$ python3 scripts/mep.py valida   .../caso-reale-1/grafo-prima-stesura.json
+Il grafo si legge: 70 pezzi, 91 tubazioni, 6 reti; regime della centrale: over_35_kw.
+$ python3 scripts/mep.py completa .../caso-reale-1/grafo-prima-stesura.json --out grafo-completo.json
+Le regole hanno aggiunto 114 accessori; ... il grafo passa da 70 a 207 pezzi (+137).
+Punti aperti: nessuno.
+```
 
 ## Le cose da fare, in quest'ordine
 
-### 1. I-182 — le valvole di D-120 fuori misura sulla tavola dal piano
+### 1. R1 — togliere, spostare, «a bordo» (I-192): fondamentale
 
-- **Misurare prima di toccare**: su tutte le sette tavole di prova e sulla tavola D, l'elenco di ogni valvola che
-  isola un pezzo manutenibile e sta fuori dai 2,5–5 mm dal suo attacco.
-- **Classificare** (architettura §6): difetto del motore (la posa degli organi in linea) o del piano.
-- **Se è del motore, si cura nel motore**, con una prova che fallisce senza la correzione. Le tavole cambiano,
-  ed è il punto: prima e dopo, al PO.
-- **La prova di accettazione torna sul piano**: `test_tavola_1_le_valvole_d120_stanno_sull_attacco` legge di
-  nuovo `_tavola_1()`, e `_tavola_1_senza_piano` esce se non serve più a nessuno.
-- **D-158**: ogni vincolo di posa ha un rilievo sulla tavola consegnata. Se D-120 non ce l'ha nel preflight, si
-  scrive.
+- **Togliere.** Il grafo porta l'elenco degli accessori che il progettista toglie, ciascuno con il suo motivo.
+  Un accessorio si nomina con l'identificativo che ha nel grafo completo, che è stabile: lo stesso pezzo sullo
+  stesso attacco ha sempre lo stesso nome. `completa` non lo posa, a ogni rilancio; non lo riporta come punto
+  aperto; e lo elenca a parte, «tolti dal progettista», con il motivo. Una voce che non toglie niente si dice.
+- **«A bordo», per singola macchina.** Il grafo dice, sul pezzo, le funzioni che quella macchina porta dentro; le
+  regole lo leggono come leggono il catalogo. Dove una regola vuole il pezzo anche col bordo (la sicurezza di
+  ogni generatore, D-182) `completa` lo dice, e per toglierlo si usa «togli» con il motivo.
+- **Spostare** è togliere da un posto e dichiarare nell'altro (punto 2).
+- Capire e `SKILL.md` dicono come si scrive, prima di `completa` e dopo, al passo 4.
+- **Prove**: sul caso reale, i casi T1–T5 del documento — le 32 intercettazioni dei terminali, le valvole di
+  sicurezza delle sei pompe, i separatori d'aria, i defangatori, il corredo del primario da portare sul
+  secondario.
 
-### 2. Il modulo della segnalazione, per i collaboratori
+### 2. R2 — gli accessori dichiarati, com'è costruito (I-193)
 
-Una pagina, `docs/beta/SEGNALAZIONE.md`, che il PO inoltra ai collaboratori:
-- che cosa mandare: il DXF o il PDF, il testo scritto alla skill, le risposte alle sue domande, che cosa non va;
-- con che modello hanno usato la skill: con Haiku il piano non si compone (`REL-001`);
-- che i dati del cliente restano nella conversazione, e nel repository non entrano.
+- Capire §5: un accessorio **che il progettista nomina in un posto preciso** entra nel grafo di prima stesura; la
+  lista della ferramenta resta per tutto il resto.
+- Le regole **non lo duplicano**: si misura su ciascuno dei casi del documento — sfiato con valvola a sfera sul
+  ritorno di ogni pompa, ritegno sull'uscita, sfiati sui volani, manometri e termometri sui montanti, riduttore di
+  pressione.
 
-È corta, ed è la prima cosa che il PO può usare subito.
+### 3. R3 — le voci di catalogo che mancano (I-194)
 
-### 3. Ogni tavola dei collaboratori: il ciclo della prova del PO
+Con il simbolo, che il PO approva **sulle tavole**:
+1. il contabilizzatore di calore in linea, con le due sonde;
+2. l'attacco predisposto, coppia mandata-ritorno tappata con un'etichetta libera («al solare termico»);
+3. il confine di rete su acqua di riscaldamento, «da/verso impianto esistente», con etichetta;
+4. il collettore d'appartamento con mandata e ritorno;
+5. il giunto antivibrante, se il PO lo vuole disegnato;
+6. il dosatore di polifosfati, a bassa priorità.
 
-Per ciascuna, come in `docs/collaudi/REL-005/prova-po-1/`:
+### 4. R4 — esistente e nuovo, e il limite d'intervento (I-195)
 
-- **si registra il giorno stesso** (I-nnn, una riga per rilievo, rule 3 del registro);
-- **si legge il DXF e non si copia**: grafo e piano si ricostruiscono **anonimi**, in
-  `docs/collaudi/BETA-001/<nn>-<parola>/`, e la tavola si rifà identica prima di toccare niente;
-- **ogni difetto si classifica**:
-  - Capire (il grafo);
-  - Comporre (le istruzioni del piano);
-  - il motore;
-  - la libreria dei simboli;
-  - il contenuto MEP, che è una domanda al PO con la proposta;
-- **si cura con una prova** che fallisce senza la correzione;
-- **le tavole al PO**: quella com'era, quella dopo, e le alternative quando la cura è una scelta, come A, B, C e D
-  della prova del PO.
+- `esistente` **per pezzo e per tratto**, oltre che per rete.
+- **La resa grafica la decide il PO.** *Proposta:* il tratto esistente tratteggiato, nello stesso colore; «(E)»
+  accanto alla sigla in tabella; il limite d'intervento come linea a tratto e punto con la scritta.
+- **Le regole non aggiungono corredo sulle parti esistenti**, e `completa` lo dice una volta. *Proposta* — il
+  documento dice «non applicare, o chiedere».
 
-### 4. Le consegne in beta
+### 5. Il caso, rifatto
 
-Quando un gruppo di correzioni è fuso:
-- la skill si costruisce da `main` (`scripts/costruisci-skill.py`);
-- la versione sale come il PO ha deciso (punto 0.2), in `pyproject.toml`, nel pacchetto e in `SKILL.md`;
-- lo ZIP va in `releases/latest/DisegnatoreMEP-v<versione>.zip`, che sostituisce il precedente, e in
-  `releases/archive/`, dove resta; poi al PO. `tests/test_le_release.py` tiene insieme il numero del pacchetto,
-  quello in `SKILL.md` e il nome dello ZIP, e **controlla che lo ZIP si carichi su claude.ai** — al massimo 200
-  file, le linee guida di Anthropic (I-189, D-200): se cade, lo ZIP non si pubblica.
+Il grafo anonimo con le scelte del progettista — quello che toglie, sposta, dichiara, l'esistente —, il piano, la
+tavola: **al PO**. Restano aperte con il progettista le voci della §6 del documento (titolo e numero della tavola,
+dati della tabella, temperature del secondario ACS, diametri sì o no, pompe di macrozona nuove o esistenti,
+posizione del contabilizzatore).
+
+### Note di controllo, dal documento
+
+- I diametri del secondario ACS non si calcolano: c'è il salto termico ma non la potenza né la portata.
+- Il grafo completo della 1.2.2 ha 207 pezzi e 228 tubazioni, per una tavola probabilmente in A1: con il punto 1
+  se ne tolgono una trentina.
+
+## Quello che resta di `BETA-001`
+
+La copia è in `docs/plans/pacchetti/BETA-001.md`. Restano aperti, e si fanno dentro questo pacchetto quando
+toccano: I-182 (le valvole di D-120 a 10 mm sulla tavola 1 dal piano); il modulo della segnalazione per i
+collaboratori (`docs/beta/SEGNALAZIONE.md`); le tavole dei collaboratori, con il ciclo della prova del PO.
 
 ## Perimetro
 
-**Dentro:**
-- le istruzioni della skill (`skill/**`), per una rottura misurata, con la parola del PO dove è contenuto;
-- il motore (`src/**`), per un difetto misurato;
-- la libreria (`examples/graphics/build_symbols.py` → `assets/symbols/`), con la forma approvata dal PO sulle
-  tavole;
-- `tests/**`; `docs/collaudi/BETA-001/`; `docs/beta/`;
-- `pyproject.toml`, la versione e `releases/`;
-- il registro, il registro delle decisioni (come proposte), `HANDOFF.md`, questo file.
+**Dentro:** `skill/**`, `src/**`, `schemas/**`, il catalogo (`examples/layout/catalog/`), le regole
+(`rules/hydronic/`), la libreria (`examples/graphics/build_symbols.py` → `assets/symbols/`), `tests/**`,
+`docs/collaudi/REL-009/`, `releases/`, il registro, il registro delle decisioni (come proposte), `HANDOFF.md`,
+questo file.
 
-**Fuori:**
-- la libreria certificata — la matrice fonti, forma, porte e ingombri — che si fa quando la beta smette di
-  toccare i simboli;
-- **i dati dei clienti, in qualunque file**;
-- un contenuto MEP deciso dalla sessione.
+**Fuori:** i dati del cliente, in qualunque file; un contenuto MEP o una convenzione grafica decisi dalla sessione.
 
-## Le regole che in beta valgono di più
-
-- **Il repository è pubblico.** Un DXF di un collaboratore porta nome e indirizzo del cliente: si legge nella
-  conversazione, non si committa, non si cita. Prima di ogni commit si cerca nel diff il nome e l'indirizzo
-  ricevuti.
-- **Una rossa è un difetto.** La suite resta a zero rosse a ogni PR; niente `skip`, niente `xfail` nuovi.
-- **Ogni PR dice quali tavole cambia.** `uscite.sh` su `main` e sul ramo, poi `confronta.sh`: ogni file che
-  cambia ha la sua ragione nel rapporto, e le tavole che cambiano vanno al PO.
-
-## Criteri di accettazione — per ogni PR della beta
+## Criteri di accettazione — per ogni PR
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-0. **Le tavole, per prime**: quelle che la PR cambia, prima e dopo, al PO. Se una tavola di un collaboratore
-   non si rifà, è la prima cosa che si dice.
-1. **La suite**: `0 failed`; nessuno `skip` e nessuno `xfail` nuovi; `ruff check src tests` e `mypy src` verdi.
-2. **La regressione**: l'output di `confronta.sh` fra `main` e il ramo, con ogni file cambiato spiegato.
-3. **Ogni correzione ha la sua prova**, rossa sul commit di partenza e verde sul ramo.
-4. **Ogni input del PO è nel registro** il giorno in cui arriva.
+0. **Le tavole, per prime**: quelle che la PR cambia, prima e dopo, al PO.
+1. **La suite**: `0 failed`; nessuno `skip` e nessuno `xfail` nuovi; `ruff` e `mypy` verdi.
+2. **La regressione**: `confronta.sh` fra `main` e il ramo, ogni file cambiato spiegato.
+3. **Ogni correzione ha la sua prova**, rossa sul commit di partenza.
+4. **Gli input del PO nel registro** il giorno in cui arrivano.
 5. **Nessun dato di cliente nel diff**: il comando di ricerca e il suo output vuoto.
-
-## Consegna
-
-Una PR verso `main` per ogni gruppo di correzioni, **fusa solo dopo che il PO ha visto le tavole e ha detto di
-sì**. Rapporto in `docs/collaudi/BETA-001/RAPPORTO.md`, con le tavole in testa. A ogni fusione:
-- `HANDOFF.md` aggiornato;
-- se il PO lo vuole, la consegna `1.2.x` del punto 4.
+6. **La release**: `tests/test_le_release.py` verde — la skill si carica (D-200).
