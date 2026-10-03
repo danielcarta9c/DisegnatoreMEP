@@ -29,6 +29,18 @@
    "name": "Attacchi predisposti per il solare",
    "domain": "hydronic",
    "medium": "heating_water"
+  },
+  {
+   "id": "acqua-fredda",
+   "name": "Acqua fredda",
+   "domain": "hydronic",
+   "medium": "cold_water"
+  },
+  {
+   "id": "acs",
+   "name": "Acqua calda sanitaria",
+   "domain": "hydronic",
+   "medium": "domestic_hot_water"
   }
  ],
  "components": [
@@ -119,6 +131,44 @@
    "definition_id": "capped-connection",
    "tag": null,
    "properties": {}
+  },
+  {
+   "id": "giunto-mandata",
+   "definition_id": "flexible-joint",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "giunto-ritorno",
+   "definition_id": "flexible-joint",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "acquedotto",
+   "definition_id": "cold-water-inlet",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "dosatore",
+   "definition_id": "polyphosphate-doser",
+   "tag": null,
+   "properties": {}
+  },
+  {
+   "id": "pdc-acs",
+   "definition_id": "dhw-heat-pump",
+   "tag": null,
+   "properties": {
+    "volume_l": 200
+   }
+  },
+  {
+   "id": "utenze",
+   "definition_id": "dhw-draw-off",
+   "tag": null,
+   "properties": {}
   }
  ],
  "connections": [
@@ -126,8 +176,8 @@
    "id": "p1",
    "network_id": "primario",
    "endpoint_a": {
-    "component_id": "pdc",
-    "port_id": "water_supply"
+    "component_id": "giunto-mandata",
+    "port_id": "b"
    },
    "endpoint_b": {
     "component_id": "volano",
@@ -156,8 +206,8 @@
     "port_id": "b"
    },
    "endpoint_b": {
-    "component_id": "pdc",
-    "port_id": "water_return"
+    "component_id": "giunto-ritorno",
+    "port_id": "a"
    },
    "properties": {}
   },
@@ -308,12 +358,12 @@
    "id": "x1",
    "network_id": "predisposizione",
    "endpoint_a": {
-    "component_id": "volano",
-    "port_id": "aux_out"
-   },
-   "endpoint_b": {
     "component_id": "solare-mandata",
     "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "volano",
+    "port_id": "aux_in"
    },
    "properties": {}
   },
@@ -321,12 +371,77 @@
    "id": "x2",
    "network_id": "predisposizione",
    "endpoint_a": {
+    "component_id": "volano",
+    "port_id": "aux_out"
+   },
+   "endpoint_b": {
     "component_id": "solare-ritorno",
     "port_id": "a"
    },
+   "properties": {}
+  },
+  {
+   "id": "p0",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "pdc",
+    "port_id": "water_supply"
+   },
    "endpoint_b": {
-    "component_id": "volano",
-    "port_id": "aux_in"
+    "component_id": "giunto-mandata",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "p4",
+   "network_id": "primario",
+   "endpoint_a": {
+    "component_id": "giunto-ritorno",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pdc",
+    "port_id": "water_return"
+   },
+   "properties": {}
+  },
+  {
+   "id": "f1",
+   "network_id": "acqua-fredda",
+   "endpoint_a": {
+    "component_id": "acquedotto",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "dosatore",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "f2",
+   "network_id": "acqua-fredda",
+   "endpoint_a": {
+    "component_id": "dosatore",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "pdc-acs",
+    "port_id": "cold_in"
+   },
+   "properties": {}
+  },
+  {
+   "id": "h1",
+   "network_id": "acs",
+   "endpoint_a": {
+    "component_id": "pdc-acs",
+    "port_id": "dhw_out"
+   },
+   "endpoint_b": {
+    "component_id": "utenze",
+    "port_id": "a"
    },
    "properties": {}
   }

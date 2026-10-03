@@ -1,20 +1,26 @@
 {
-  "id": "capped-connection",
+  "id": "flexible-joint",
   "version": "1.0.0",
-  "name": "Attacco predisposto",
+  "name": "Giunto antivibrante",
   "functions": [
-    "boundary",
-    "provision"
+    "vibration_isolation"
   ],
   "traits": [
     "shutoff_ordinary",
     "attachment_inline"
   ],
-  "symbol_id": "capped-connection",
+  "symbol_id": "flexible-joint",
   "composite": false,
   "ports": [
     {
       "id": "a",
+      "domain": "hydronic",
+      "medium": "heating_water",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "b",
       "domain": "hydronic",
       "medium": "heating_water",
       "flow": "bidirectional",

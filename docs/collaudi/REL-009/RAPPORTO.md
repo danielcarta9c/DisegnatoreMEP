@@ -4,22 +4,55 @@ Una sezione per ogni gruppo di punti, la più recente in alto. Il caso è il pri
 ricostruito anonimo in `caso-reale-1/`: il documento della sessione di disegno porta i dati del cliente e non è
 nel repository.
 
-## 3. R3 — le voci del costruito, con il simbolo (I-194)
+## 3. R3 — le voci del costruito, con il simbolo (I-194, I-197, I-198)
 
-**3 ottobre 2026** · decisione **D-203** (proposta) · la forma la approva il PO
+**3 ottobre 2026** · decisioni **D-203** (proposta; il contatore approvato) e **D-204** (approvata) · la forma la
+approva il PO
 
 ### La tavola, per prima
 
-`simboli-nuovi/tavola/` — un impianto piccolo che mette insieme le voci nuove: pompa di calore con il
-**contatore di calore «CC»** sul ritorno del primario; **volano a sei attacchi** con i due **predisposti**,
-tappati, «al solare termico»; **collettore d'appartamento con mandata e ritorno** verso un ventilconvettore e un
-pannello; una derivazione **verso e da un impianto esistente**.
+`simboli-nuovi/tavola/` — un impianto piccolo che mette insieme le voci nuove: pompa di calore con i **giunti
+antivibranti** sui due attacchi e il **contatore di calore «CC»** sul ritorno del primario; **volano a sei
+attacchi** con i due **predisposti**, tappati, «al solare termico», la mandata sopra; **collettore d'appartamento
+con mandata e ritorno** verso un ventilconvettore e un pannello; una derivazione **verso e da un impianto
+esistente**; e, sotto, l'acqua fredda dall'acquedotto al **dosatore di polifosfati** e al bollitore in pompa di
+calore.
 
 ```
-Formato A3 · tratte 22 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 6 · sormonti 0
+Formato A2 · tratte 31 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 7 · sormonti 0
 ```
 
 Le tavole di regressione non cambiano (`confronta.sh`: 54 e 54, IDENTICI).
+
+### Dopo la prima tavola: il PO (I-197, I-198)
+
+«il contabilizzatore va bene. il volano a 6 tubi hai invertito mandata e ritorno sull'attacco del solare termico.
+la mandata è sempre sopra il suo ritorno non viceversa. giunto antivibrante e dosatore polifosfati perche' non li
+hai fatti? se servono e il progettista puo chiederli vanno messi.»
+
+- **La mandata del predisposto sopra il ritorno.** Il motore colora una rete partendo da chi la alimenta; la coppia
+  predisposta, senza nessuno a monte, era colorata al contrario, e il piano aveva seguito i colori. Ora un attacco
+  predisposto che immette sta per la macchina che verrà ed è la **sorgente della sua rete**: la mandata esce da
+  lui ed entra nel volano dall'attacco alto, il ritorno esce dal basso (`flow.py`, funzione `provision`).
+  La prova lo misura sulle tratte classificate, non sul disegno.
+- **Il giunto antivibrante** (`flexible-joint`, GA). Il progettista lo mette sull'attacco della macchina. Due cose
+  non andavano, e le ha mostrate la tavola:
+  - le regole posavano il loro corredo **fra il giunto e la pompa di calore**: ora tagliano il tubo oltre il giunto
+    (`apply.py`, `_connection_to_split`);
+  - così però la fila dei pezzi della pompa si contava dal giunto, e il filtro e il defangatore della macchina
+    finivano dall'altra parte del contatore: il ritorno faceva un giro. Ora la fila si conta **dalla macchina dietro
+    il giunto** (`runs.py`, `head_anchor`/`tail_anchor`), e il ritorno è quello di prima più il giunto:
+    pompa ← giunto ← filtro ← defangatore ← vaso, riempimento, manometro ← contatore ← volano.
+- **Il dosatore di polifosfati** (`polyphosphate-doser`, DP) e la nota del PO: «va installato esclusivamente sulla
+  linea di ingresso dell'acqua fredda sanitaria che alimenta il boiler di accumulo dell'ACS … Non deve
+  assolutamente essere inserito nell'acqua tecnica». Gli attacchi sono di acqua fredda; la validazione segue
+  l'acqua dall'uscita del dosatore e ferma il grafo se non arriva a chi scalda l'ACS (`DOSER_NOT_ON_THE_DHW_FEED`) o
+  se arriva a un riempimento (`DOSER_FEEDS_THE_TECHNICAL_WATER`). Capire §5 lo dice prima.
+
+⚠ **Un mio errore, preso dalla suite**: il controllo del dosatore chiedeva al catalogo la geometria dei pezzi, che la
+validazione topologica non deve pretendere — 17 prove di topologia rosse. E seguiva l'acqua da `endpoint_a` a
+`endpoint_b`, un verso che il grafo non garantisce. Ora legge solo le definizioni e parte dall'attacco d'uscita del
+dosatore; la prova nuova scrive i tubi al contrario e carica il catalogo senza simboli.
 
 ### Che cosa la tavola ha insegnato
 
@@ -36,8 +69,10 @@ Le tavole di regressione non cambiano (`confronta.sh`: 54 e 54, IDENTICI).
 ### Le prove
 
 `tests/acceptance/test_simboli_rel009.py` disegna la tavola di prova col comando della skill: zero bloccanti,
-i quattro simboli, le tre scritte. `test_preflight.py` prova `FREE_LABEL_OMITTED`. I conteggi della libreria
-salgono da 55 a 59 simboli.
+i simboli nuovi, le tre scritte; la mandata del predisposto entra dall'alto; il giunto sta attaccato alla pompa e
+oltre di lui c'è il filtro della pompa. `tests/validation/test_dosatore_di_polifosfati.py` prova i due rilievi del
+dosatore e il verso dei tubi. `test_preflight.py` prova `FREE_LABEL_OMITTED`. I conteggi della libreria salgono da
+55 a 61 simboli.
 
 ## 2. R2 — gli accessori del costruito, e lo spostare (I-193)
 

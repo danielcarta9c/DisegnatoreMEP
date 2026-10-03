@@ -4,7 +4,7 @@ from disegnatore_mep.catalog.registry import CatalogError, ComponentRegistry
 from disegnatore_mep.catalog.schema import PortDefinition
 from disegnatore_mep.domains.registry import DomainRegistry, default_domain_registry
 from disegnatore_mep.model.project import ComponentInstance, PortRef, ProjectModel
-from disegnatore_mep.model.types import IssueSeverity
+from disegnatore_mep.model.types import IssueSeverity, PortFlow
 
 from .issues import ValidationIssue, ValidationReport
 
@@ -98,6 +98,8 @@ def validate_project(
                     [voce.pezzo, pezzo],
                 )
             )
+
+    issues.extend(_dosatori_fuori_posto(project, catalog))
 
     # Il bordo dichiarato dal progettista nomina funzioni che il catalogo conosce
     # (REL-009, I-192): un nome sbagliato non toglierebbe niente, in silenzio.
@@ -266,3 +268,91 @@ def validate_project(
     }
     ordered = sorted(unique.values(), key=lambda item: (item.code, item.entity_ids, item.message))
     return ValidationReport(issues=ordered)
+
+
+TRATTAMENTO_DELL_ACQUA = "water_treatment"
+"""Il mestiere del dosatore di polifosfati (REL-009, I-198)."""
+
+
+def _dosatori_fuori_posto(project: ProjectModel, catalog: ComponentRegistry) -> list[ValidationIssue]:
+    """Il dosatore di polifosfati sta **solo** sull'acqua fredda che entra nell'accumulo
+    dell'acqua calda sanitaria (I-198, D-204).
+
+    Il PO: «va installato esclusivamente sulla linea di ingresso dell'acqua fredda
+    sanitaria che alimenta il boiler di accumulo dell'ACS. Non deve assolutamente essere
+    inserito nell'acqua tecnica». Nell'ACS entra sempre acqua nuova, e il calcare si
+    deposita scaldandosi; l'acqua tecnica e' un circuito chiuso, e i polifosfati ci
+    farebbero fanghi. Gli attacchi del dosatore sono di acqua fredda, quindi su un
+    circuito di riscaldamento il grafo gia' non regge; qui si guarda **dove va l'acqua
+    dopo il dosatore**: deve arrivare a chi scalda l'acqua sanitaria — un bollitore, un
+    accumulo combinato, una pompa di calore per ACS —, e non deve arrivare a un gruppo di
+    riempimento, che la porterebbe nell'acqua tecnica."""
+    pezzi = {item.id: item for item in project.components}
+
+    def mestieri(component_id: str) -> frozenset[str]:
+        pezzo = pezzi.get(component_id)
+        if pezzo is None or not catalog.contains(pezzo.definition_id):
+            return frozenset()
+        return frozenset(catalog.get(pezzo.definition_id).functions)
+
+    def scalda_l_acs(component_id: str) -> bool:
+        pezzo = pezzi[component_id]
+        if not catalog.contains(pezzo.definition_id) or "dhw_mixing" in mestieri(component_id):
+            return False
+        return any(port.medium == "domestic_hot_water" for port in catalog.get(pezzo.definition_id).ports)
+
+    # Il verso di una tubazione nel grafo non dice da che parte va l'acqua: si parte
+    # dall'attacco d'uscita del dosatore e si va avanti senza ripassare da lui.
+    vicini: dict[str, list[str]] = {}
+    uscite: dict[str, list[str]] = {}
+    for connessione in project.connections:
+        a, b = connessione.endpoint_a, connessione.endpoint_b
+        vicini.setdefault(a.component_id, []).append(b.component_id)
+        vicini.setdefault(b.component_id, []).append(a.component_id)
+        for ref, altro in ((a, b), (b, a)):
+            istanza = pezzi.get(ref.component_id)
+            if istanza is None or not catalog.contains(istanza.definition_id):
+                continue
+            porte = {port.id: port for port in catalog.get(istanza.definition_id).ports}
+            if ref.port_id in porte and porte[ref.port_id].flow == PortFlow.OUT:
+                uscite.setdefault(ref.component_id, []).append(altro.component_id)
+
+    issues: list[ValidationIssue] = []
+    for dosatore in sorted(item.id for item in project.components if TRATTAMENTO_DELL_ACQUA in mestieri(item.id)):
+        raggiunti: list[str] = []
+        visti = {dosatore}
+        frontiera = list(uscite.get(dosatore, []))
+        while frontiera:
+            pezzo = frontiera.pop(0)
+            if pezzo in visti or pezzo not in pezzi:
+                continue
+            visti.add(pezzo)
+            raggiunti.append(pezzo)
+            if scalda_l_acs(pezzo) or "filling" in mestieri(pezzo):
+                continue
+            frontiera.extend(vicini.get(pezzo, []))
+        riempimenti = [item for item in raggiunti if "filling" in mestieri(item)]
+        accumuli = [item for item in raggiunti if scalda_l_acs(item)]
+        if riempimenti:
+            issues.append(
+                _issue(
+                    "DOSER_FEEDS_THE_TECHNICAL_WATER",
+                    f"il dosatore di polifosfati {dosatore} alimenta il riempimento "
+                    f"{', '.join(riempimenti)}: i polifosfati andrebbero nell'acqua tecnica, che e' un "
+                    f"circuito chiuso. Il dosatore sta solo sull'acqua fredda che entra nell'accumulo "
+                    f"dell'ACS, a valle della derivazione del riempimento (I-198)",
+                    [dosatore, *riempimenti],
+                )
+            )
+        if not accumuli:
+            issues.append(
+                _issue(
+                    "DOSER_NOT_ON_THE_DHW_FEED",
+                    f"il dosatore di polifosfati {dosatore} non alimenta nessun accumulo di acqua "
+                    f"calda sanitaria: sta solo sull'acqua fredda che entra nel bollitore o "
+                    f"nell'accumulo dell'ACS (I-198)",
+                    [dosatore],
+                )
+            )
+    return issues
+

@@ -80,6 +80,38 @@ def _connection_touching(project: ProjectModel, anchor: PortRef) -> ConnectionMo
     )
 
 
+VIBRATION_ISOLATION = "vibration_isolation"
+"""Il mestiere del giunto antivibrante (REL-009, I-197)."""
+
+
+def _connection_to_split(
+    project: ProjectModel, catalog: ComponentRegistry, anchor: PortRef
+) -> ConnectionModel:
+    """La tubazione su cui si posa un pezzo ancorato a quell'attacco.
+
+    E' quella che tocca l'attacco, **tranne quando sull'attacco c'e' un giunto
+    antivibrante** (REL-009, I-197): il giunto sta attaccato alla macchina, che vibra,
+    e fra loro non ci va niente. Il pezzo della regola si posa oltre il giunto."""
+    connection = _connection_touching(project, anchor)
+    visti: set[str] = set()
+    while True:
+        lontano = connection.endpoint_b if connection.endpoint_a == anchor else connection.endpoint_a
+        giunto = _component(project, lontano.component_id)
+        if giunto.id in visti or VIBRATION_ISOLATION not in catalog.get(giunto.definition_id).functions:
+            return connection
+        visti.add(giunto.id)
+        oltre = [
+            item
+            for item in project.connections
+            if item.id != connection.id
+            and giunto.id in (item.endpoint_a.component_id, item.endpoint_b.component_id)
+        ]
+        if len(oltre) != 1:
+            return connection
+        connection = oltre[0]
+        anchor = connection.endpoint_a if connection.endpoint_a.component_id == giunto.id else connection.endpoint_b
+
+
 def _split(connection: ConnectionModel, proposal: RuleProposal) -> list[ConnectionModel]:
     """Spezza la connessione e mette l'accessorio in mezzo.
 
@@ -290,8 +322,8 @@ def apply_proposals(
             )
             connections = [*current.connections, feed]
             pipes = [feed.id, own_network.id]
-            connection = _connection_touching(
-                current.model_copy(update={"connections": connections}), proposal.anchor
+            connection = _connection_to_split(
+                current.model_copy(update={"connections": connections}), catalog, proposal.anchor
             )
             if proposal.bridge_port is not None:
                 # Il ponte **in linea** (D-175): la miscelatrice termostatica sta
@@ -351,7 +383,7 @@ def apply_proposals(
             connections = [*current.connections, stub]
             pipes.append(stub.id)
         else:
-            connection = _connection_touching(current, proposal.anchor)
+            connection = _connection_to_split(current, catalog, proposal.anchor)
             if catalog.get(proposal.definition_id).attaches_on_a_branch:
                 junction_id = f"tee-{proposal.component_id}"
                 added.append(

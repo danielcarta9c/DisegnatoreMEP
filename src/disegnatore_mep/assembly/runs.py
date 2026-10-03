@@ -23,6 +23,9 @@ from disegnatore_mep.model.project import ConnectionModel, PortRef, ProjectModel
 from disegnatore_mep.model.types import PortFlow
 from disegnatore_mep.rules.schema import RuleCardinality, RuleDefinition
 
+VIBRATION_ISOLATION = "vibration_isolation"
+"""Il mestiere del giunto antivibrante (REL-009, I-197)."""
+
 
 class AssemblyError(ValueError):
     """Due vincoli che non possono stare insieme, o una tratta che non si legge."""
@@ -71,6 +74,18 @@ class Run:
     pieces: tuple[Piece, ...]
     pipes: tuple[str, ...]
     network_id: str
+    head_anchor: str = ""
+    tail_anchor: str = ""
+    """Da chi si contano i pezzi ancorati ai due capi. Di norma il pezzo del capo; se
+    il capo e' un **giunto antivibrante** attaccato a una macchina (REL-009, I-197),
+    la macchina dietro di lui: il giunto le sta addosso, e il suo corredo si conta
+    da lei come se il giunto non ci fosse."""
+
+    def __post_init__(self) -> None:
+        if not self.head_anchor:
+            object.__setattr__(self, "head_anchor", self.head.component_id)
+        if not self.tail_anchor:
+            object.__setattr__(self, "tail_anchor", self.tail.component_id)
 
     @property
     def component_ids(self) -> tuple[str, ...]:
@@ -193,7 +208,24 @@ class _Assembler:
             pieces=tuple(self._piece(item) for item in pieces),
             pipes=tuple([*reversed(pipes_back), seed.id, *pipes_forward]),
             network_id=self._network_of[seed.id],
+            head_anchor=self._behind_the_joint(head),
+            tail_anchor=self._behind_the_joint(tail),
         )
+
+    def _behind_the_joint(self, end: PortRef) -> str:
+        """Il pezzo del capo, o la macchina dietro di lui se il capo e' un giunto
+        antivibrante (REL-009, I-197)."""
+        if VIBRATION_ISOLATION not in self._definitions[end.component_id].functions:
+            return end.component_id
+        oltre = [
+            ref.component_id
+            for port_id in self.run_ports(end.component_id)
+            if port_id != end.port_id
+            for connection in self._pipes_at[(end.component_id, port_id)]
+            for ref in (connection.endpoint_a, connection.endpoint_b)
+            if ref.component_id != end.component_id
+        ]
+        return oltre[0] if len(oltre) == 1 else end.component_id
 
     def _walk(
         self, seed: ConnectionModel, towards: PortRef
@@ -354,7 +386,7 @@ def ordered(run: Run) -> tuple[Piece, ...]:
     vincoli: lasciarlo com'e' vorrebbe dire lasciare all'ordine dei file delle
     regole una fila che i file non devono decidere (D-093).
     """
-    head, tail = run.head.component_id, run.tail.component_id
+    head, tail = run.head_anchor, run.tail_anchor
     blocks = _blocks(run)
     at_head = [block for block in blocks if block[0].anchor == head]
     at_tail = [block for block in blocks if block[0].anchor == tail]

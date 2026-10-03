@@ -169,6 +169,16 @@
       "name": "Contatore di calore"
     },
     {
+      "function": "vibration_isolation",
+      "prefix": "GA",
+      "name": "Giunto antivibrante"
+    },
+    {
+      "function": "water_treatment",
+      "prefix": "DP",
+      "name": "Dosatore di polifosfati"
+    },
+    {
       "function": "junction",
       "prefix": "RC",
       "name": "Raccordo"

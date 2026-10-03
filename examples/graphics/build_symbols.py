@@ -1547,6 +1547,45 @@ def manifold_pair_body(w: float, h: float) -> str:
     return corpo
 
 
+def flexible_joint_body(w: float, h: float) -> str:
+    """Giunto antivibrante: due flange affacciate, e fra loro il soffietto a onde che
+    assorbe le vibrazioni della macchina. Le flange dicono che e' un pezzo che si
+    monta fra due attacchi; l'onda, che cede."""
+    cy = h / 2
+    x1, x2 = w * 0.2, w * 0.8
+    alto, basso = cy - h * 0.3, cy + h * 0.3
+    onde = 3
+    passo = (x2 - x1) / onde
+    percorso = f"M{n(x1)} {n(cy)}"
+    for indice in range(onde):
+        xa = x1 + passo * indice
+        percorso += (
+            f" Q{n(xa + passo / 4)} {n(cy - h * 0.22)} {n(xa + passo / 2)} {n(cy)}"
+            f" Q{n(xa + passo * 3 / 4)} {n(cy + h * 0.22)} {n(xa + passo)} {n(cy)}"
+        )
+    return (
+        f'<line x1="0" y1="{n(cy)}" x2="{n(x1)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(x2)}" y1="{n(cy)}" x2="{n(w)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(x1)}" y1="{n(alto)}" x2="{n(x1)}" y2="{n(basso)}"/>'
+        f'<line x1="{n(x2)}" y1="{n(alto)}" x2="{n(x2)}" y2="{n(basso)}"/>'
+        f'<path d="{percorso}"/>'
+    )
+
+
+def polyphosphate_doser_body(w: float, h: float) -> str:
+    """Dosatore di polifosfati: la testa in linea, dove l'acqua passa, e sotto la
+    cartuccia dei sali che si consuma e si cambia."""
+    cy = h / 2
+    testa_x, testa_w = w * 0.3, w * 0.4
+    return (
+        f'<line x1="0" y1="{n(cy)}" x2="{n(testa_x)}" y2="{n(cy)}"/>'
+        f'<line x1="{n(testa_x + testa_w)}" y1="{n(cy)}" x2="{n(w)}" y2="{n(cy)}"/>'
+        f'<rect x="{n(testa_x)}" y="{n(cy - h * 0.12)}" width="{n(testa_w)}" height="{n(h * 0.24)}"/>'
+        f'<rect x="{n(testa_x + testa_w * 0.15)}" y="{n(cy + h * 0.12)}" width="{n(testa_w * 0.7)}" '
+        f'height="{n(h * 0.33)}" rx="{n(testa_w * 0.2)}"/>'
+    )
+
+
 @dataclass(frozen=True)
 class SymbolSpec:
     id: str
@@ -2337,6 +2376,15 @@ SYMBOLS: list[SymbolSpec] = [
         body=reserve_body(STORAGE_W, STORAGE_H, BUFFER_SIX_PORTS),
         source=SOURCE_REL009_PROPOSAL,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    # REL-009, I-197: «se servono e il progettista puo' chiederli vanno messi».
+    inline_symbol(
+        "flexible-joint", "Giunto antivibrante", INLINE_ACCESSORY, flexible_joint_body,
+        SOURCE_REL009_PROPOSAL,
+    ),
+    inline_symbol(
+        "polyphosphate-doser", "Dosatore di polifosfati", DEVICE, polyphosphate_doser_body,
+        SOURCE_REL009_PROPOSAL,
     ),
     SymbolSpec(
         id="zone-manifold-pair",

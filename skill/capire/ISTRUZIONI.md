@@ -576,11 +576,23 @@ i mestieri:
 
 > `isolation`, `isolation_locked_open`, `non_return`, `safety`, `expansion`,
 > `filtration`, `sludge_separation`, `air_release`, `filling`, `drain`,
-> `pressure_control`, `pressure_measurement`, `temperature_measurement`, `dhw_mixing`.
+> `pressure_control`, `pressure_measurement`, `temperature_measurement`, `dhw_mixing`,
+> `vibration_isolation`, `water_treatment`.
 
 Cioè: intercettazioni, ritegni, sicurezze, vasi, filtri, defangatori, sfiati, gruppi di
-riempimento, scarichi, riduttori, manometri, termometri, e la miscelatrice
-**sanitaria** sull'uscita dell'acqua calda. Li aggiunge il pezzo delle regole, che sa
+riempimento, scarichi, riduttori, manometri, termometri, la miscelatrice
+**sanitaria** sull'uscita dell'acqua calda, i giunti antivibranti (`flexible-joint`) e il
+dosatore di polifosfati sull'acqua fredda (`polyphosphate-doser`).
+
+⚠ **Il dosatore di polifosfati sta solo sull'acqua fredda sanitaria che entra
+nell'accumulo dell'ACS** — bollitore, accumulo combinato, pompa di calore per ACS —, e a
+valle della derivazione che alimenta il riempimento (I-198). **Mai nell'acqua tecnica**:
+il circuito di riscaldamento è chiuso, e lì il trattamento è chimico al primo riempimento
+(inibitori di corrosione, antincrostanti) più il defangatore, che mettono le regole. Se il
+testo lo nomina su un circuito di riscaldamento, è una domanda al progettista, non un
+pezzo. La validazione ferma un dosatore che non alimenta un accumulo dell'ACS
+(`DOSER_NOT_ON_THE_DHW_FEED`) o che alimenta un riempimento
+(`DOSER_FEEDS_THE_TECHNICAL_WATER`). Li aggiunge il pezzo delle regole, che sa
 dove vanno e perché. **Se il testo li nomina senza dire dove, la nomina non si perde:**
 scrivi una voce in `assumptions` che lo dice («il testo prevede il carico automatico da
 acquedotto e lo scarico sul volume: li aggiunge il pezzo che completa, non questo
