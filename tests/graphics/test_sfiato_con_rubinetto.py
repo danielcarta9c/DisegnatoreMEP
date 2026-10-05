@@ -88,3 +88,38 @@ def test_sul_volano_coricato_lo_sfiato_resta_sotto_la_mandata(tmp_path: Path) ->
                 if a["y_mm"] <= alto:
                     sopra.append(a["y_mm"])
     assert sopra, "la mandata passa sopra lo sfiato"
+
+
+def test_sul_caso_reale_lo_sfiato_pende_addosso_al_raccordo_e_non_scavalca(tmp_path: Path) -> None:
+    """Il PO: «vorrei che fosse ridotto al minimo quel pezzetto di tubo in modo da non fare quel
+    problema di scavallo» (I-212). Sul caso reale ricostruito ogni sfiato sta addosso al suo
+    raccordo o al cielo del volano — tubo zero — e nessuno incrocia una linea: sul ritorno di una
+    pompa di calore sta sotto la mandata, anche dove la mandata e' l'autostrada."""
+    caso = ROOT / "docs" / "collaudi" / "REL-009" / "caso-reale-2"
+    cartelle = cartelle_del_repository(ROOT)
+    with contextlib.redirect_stdout(io.StringIO()):
+        assert main(["completa", str(caso / "grafo-prima-stesura.json"), "--out", str(tmp_path / "gc.json")], cartelle) == 0
+        main(
+            [
+                "disegna", str(tmp_path / "gc.json"), "--piano", str(caso / "piano.json"),
+                "--out", str(tmp_path / "t"), "--geometria", str(tmp_path / "g.json"),
+            ],
+            cartelle,
+        )
+    grafo = json.loads((tmp_path / "gc.json").read_text(encoding="utf-8"))
+    capi = {
+        item["id"]: (item["endpoint_a"]["component_id"], item["endpoint_b"]["component_id"])
+        for item in grafo["connections"]
+    }
+    foglio = json.loads((tmp_path / "g.json").read_text(encoding="utf-8"))["sheets"][0]
+    stacchi = [
+        rotta
+        for rotta in foglio["routes"]
+        if any(pezzo.startswith("sfiato-") for cid in rotta["connection_ids"] for pezzo in capi[cid])
+        and not any(pezzo.startswith("giunto-") for cid in rotta["connection_ids"] for pezzo in capi[cid])
+    ]
+    assert len(stacchi) == 8, "sei pompe di calore e due volani"
+    for rotta in stacchi:
+        punti = [punto for tratto in rotta["segments"] for punto in tratto]
+        assert {(punto["x_mm"], punto["y_mm"]) for punto in punti} == {(punti[0]["x_mm"], punti[0]["y_mm"])}, rotta
+        assert rotta["crossings"] == [], rotta["connection_ids"]

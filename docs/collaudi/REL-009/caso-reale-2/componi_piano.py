@@ -59,18 +59,17 @@ def componi() -> dict[str, Any]:
             pezzi[f"tee-valve-safety-{pdc}-water-supply"] = _tee(50, y + 5)
             pezzi[f"valve-safety-{pdc}-water-supply"] = {"x": 47.5, "y": y - 17.5}
             pezzi[f"tee-sfiato-{n}"] = _tee(X_SFIATO, y + 20)
-            # Lo sfiato col suo rubinetto (5 x 7,5, I-211) pende a due passi dal raccordo.
-            # Oltre la colonna di mandata la mandata della macchina non passa piu', e lo
-            # sfiato sta fra il ritorno e la quota della mandata; la prima macchina ha la
-            # mandata che prosegue, l'autostrada, e lo sfiato la scavalca.
-            pezzi[f"sfiato-{n}"] = {"x": X_SFIATO - 2.5, "y": y - 10 if indice == 0 else y + 5}
+            # Lo sfiato col suo rubinetto (5 x 7,5, I-211) pende addosso al raccordo, senza
+            # tubo in mezzo (I-212): sale 10 mm dal ritorno e resta 5 mm sotto la mandata,
+            # anche sulla prima macchina, la cui mandata e' l'autostrada.
+            pezzi[f"sfiato-{n}"] = {"x": X_SFIATO - 2.5, "y": y + 10}
         # Le unioni della mandata e le divisioni del ritorno, dalla prima macchina in giu'.
         for indice, tee in enumerate(unioni):
             pezzi[tee] = _tee(X_MANDATA, y0 + 5 + indice * PASSO_PDC)
         for indice, tee in enumerate(divisioni):
             pezzi[tee] = _tee(X_RITORNO, y0 + 20 + indice * PASSO_PDC)
         pezzi[volano] = {"x": X_VOLANO, "y": y0, "regola": "D-159 — sulle quote della prima pompa di calore"}
-        pezzi[f"sfiato-{volano}"] = {"x": X_VOLANO + 10, "y": y0 - 12.5}
+        pezzi[f"sfiato-{volano}"] = {"x": X_VOLANO + 10, "y": y0 - 7.5}
         pezzi[f"tee-filling-unit-{riempimento}-b"] = _tee(152.5, y0 + 20)
         pezzi[f"filling-unit-{riempimento}"] = {"x": 150, "y": y0 + 32.5, "rotazione": 180}
         pezzi[f"inlet-filling-unit-{riempimento}"] = {"x": 150, "y": y0 + 52.5}

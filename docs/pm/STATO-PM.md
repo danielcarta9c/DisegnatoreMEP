@@ -59,11 +59,11 @@ modello da riusare.
 | Pacchetto attivo | **`REL-009`, la tavola del costruito**: i punti 1–4 nella 1.3.0, i punti 6 e 7 nella 1.4.0 (la tavola del caso rifatta, approvata dal PO — I-206 —, e il tempo: `disegna` sul caso da 107 a 3,4 s, `docs/collaudi/REL-009/RAPPORTO.md` §6). Restano il limite d'intervento facoltativo (I-195) e la tavola di consegna del caso, che fa il PO nella sua sessione di lavoro (I-200) |
 | Il prodotto in chat | **la skill gira su claude.ai**: il PO l'ha usata su un impianto vero (I-191) e la usa adesso per il caso. Il percorso è testo → grafo → `completa` → approvazione → piano → tavola PDF e DXF, con i rilievi |
 | Export DXF | **costruito e approvato** (`REL-004`, I-140, D-189): AutoCAD 2013, millimetri |
-| La suite | **zero rosse** dal 2 ottobre (D-197): 2042 passate, 15 saltate, 10 attese rosse, alla 1.4.1 |
+| La suite | **zero rosse** dal 2 ottobre (D-197): 2044 passate, 15 saltate, 10 attese rosse, alla 1.4.1 |
 | La regressione | `docs/collaudi/REL-005/pulizia-del-solutore/uscite.sh` e `confronta.sh`: 54 uscite, identiche dalla 1.2.0 alla 1.3.0; nella 1.4.0 cambia la sola tavola di prova 6 (D-208). **Il confronto si lancia con `PYTHONPATH` sul codice di ciascuna copia**: il pacchetto è installato in modo modificabile e una copia di `main` importerebbe il codice del ramo. Le quattordici tavole agli atti, nel risultato e nel tempo: `docs/collaudi/REL-009/la-1.4-sulle-tavole-agli-atti/banco.py` |
 | Chi sviluppa, chi fonde | **un agente solo** (D-147), agenti paralleli dentro la sessione (D-152). **La fusione la approva il PO guardando le tavole** (D-146) |
 | Dati dei clienti | **mai nel repository**, che è pubblico: un caso reale si ricostruisce anonimo, e prima di ogni commit si cerca nel diff quello che lo identifica (`REL-009`) |
-| Registro degli input | **211 righe**, al 5 ottobre; il prossimo è **I-212**, la prossima decisione **D-211** |
+| Registro degli input | **212 righe**, al 5 ottobre; il prossimo è **I-213**, la prossima decisione **D-211** |
 
 ## 2-bis. Com'era al 24 settembre 2026 — storia
 

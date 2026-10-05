@@ -83,6 +83,7 @@ from disegnatore_mep.layout.place import (
     ROW_GAP_MM,
     hanging_children,
     inline_room_mm,
+    pende_addosso,
     port_corridors_by_port,
     stub_minimum_mm,
 )
@@ -382,7 +383,13 @@ def _minimo_dello_stacco(
     accende su un termometro attaccato al proprio T non dice piu' niente su un
     prelievo che sta cinquecento millimetri piu' in la'. **La correzione non e'
     una soglia**: il minimo del motore non e' mai stato il solo punto 1.
+
+    **Lo sfiato col suo rubinetto pende addosso al raccordo** (I-212): il suo simbolo
+    disegna da se' lo stelo e il rubinetto, e il suo minimo e' zero. Ogni millimetro di
+    tubo in piu' e' il pezzo che il PO non vuole.
     """
+    if pende_addosso(project, catalog, trunk):
+        return 0.0
     return max(
         stub_minimum_mm(project, catalog, trunk, orizzontale, passo_mm),
         ceil(

@@ -39,6 +39,7 @@ from disegnatore_mep.layout.geometry import (
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.place import (
     ROW_GAP_MM,
+    pende_addosso,
     stub_minimum_mm,
 )
 from disegnatore_mep.layout.trunks import Trunk, build_trunks
@@ -250,7 +251,11 @@ def test_uno_stacco_vuoto_e_lungo_un_passo_e_uno_con_la_sua_catena_quanto_la_cat
     for trunk in _stubs(project):
         minimum = stub_minimum_mm(project, catalog(), trunk, False, step)
         assert abs(minimum / step - round(minimum / step)) <= 1e-9, (trunk.connection_ids, minimum)
-        if not trunk.inline_component_ids:
+        if pende_addosso(project, catalog(), trunk):
+            # Lo sfiato col suo rubinetto pende addosso al raccordo, senza tubo in
+            # mezzo: il suo simbolo lo stelo lo disegna da se' (I-212).
+            assert minimum == 0.0, trunk.connection_ids
+        elif not trunk.inline_component_ids:
             # Due celle: la soglia dell'attacco del raccordo e quella
             # dell'attacco di chi pende (D-113), una per ciascuno.
             assert abs(minimum - 2 * step) <= TOLERANCE_MM, trunk.connection_ids

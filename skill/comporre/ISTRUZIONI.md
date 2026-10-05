@@ -486,14 +486,12 @@ verso destra o su o giù, ma non una da una parte e una dall'altra».
 **Prima le autostrade**, anche per il motore (I-201, I-203): instrada le autostrade, poi la
 distribuzione, per ultimi gli stacchi, e un'autostrada disegnata non si sposta più.
 
-**Lo sfiato è un pezzo solo, 5 × 7,5, con il suo rubinetto** (I-210, I-211), e pende come il
-manometro: il raccordo sulla linea e lo sfiato **due passi** sopra il braccio — l'origine dello
-sfiato a `y` del raccordo −12,5. Sulla pompa di calore mandata e ritorno sono a 15 mm, e lì,
-fra le due, lo sfiato **non ci sta**: toccherebbe la mandata. Mettilo sul ritorno **oltre la
-colonna di mandata del parallelo**, dove la mandata della macchina non passa più: pende nel
-vuoto e non incrocia niente. Sulla macchina la cui mandata prosegue — la prima, quella
-dell'autostrada — lo sfiato la scavalca: la porta almeno 7,5 mm sopra la mandata (origine a `y`
-della pompa −10), e niente di più.
+**Lo sfiato è un pezzo solo, 5 × 7,5, con il suo rubinetto** (I-210, I-211), e pende **addosso al
+suo raccordo, senza tubo in mezzo** (I-212): l'origine dello sfiato alla `x` del raccordo e alla sua `y`
+−7,5, così che la porta dello sfiato stia sul braccio del raccordo. Sale 10 mm dalla linea: sul ritorno
+di una pompa di calore, con la mandata 15 mm sopra, resta 5 mm sotto la mandata e **non la scavalca
+mai**, neppure sulla macchina la cui mandata prosegue come autostrada. Sul cielo di un volano sta
+addosso all'attacco `vent`, a `y` −7,5. Ogni millimetro di stacco in più lo segnala A4.
 
 ### D1 — Il disegno non arriva al bordo
 

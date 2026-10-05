@@ -22,7 +22,9 @@ ferma la valvola doppia sullo stacco (`AIR_VENT_ISOLATED_TWICE`). Rapporto: `doc
   valvola dallo stacco. Lo dice il messaggio stesso.
 - Visto e non toccato (RAPPORTO §8): togliere la valvola dallo sfiato del volano ha cambiato il nome che le regole danno
   alle valvole degli attacchi predisposti. `completa` lo segnala; il nome però dipende da un cambiamento altrove.
-- **I numeri**: il prossimo input è **I-212**, la prossima decisione **D-211**.
+- **Lo sfiato col rubinetto pende addosso al raccordo** (I-212): stacco minimo zero per lui (`place.pende_addosso`);
+  gli altri appesi restano a due passi.
+- **I numeri**: il prossimo input è **I-213**, la prossima decisione **D-211**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026, sera, alla 1.4.0
 
