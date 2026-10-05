@@ -109,10 +109,20 @@ indice, `disegna` sul caso passa da 107 a 3,4 s e sulle tavole agli atti scende 
 tavole. **I 30 minuti non stanno nel motore della 1.3.0** (da 1 a 7 s per tavola): per sapere dove vanno serve il
 registro di una sessione vera, che è del PO.
 
-### 8. Lo sfiato con il suo rubinetto (I-210, I-211) — nella 1.4.1 (D-210)
+### 8. Lo sfiato con il suo rubinetto (I-210 … I-215) — fatto, nella 1.4.1 (PR #77, D-210)
 
 Il PO: sfiato e rubinetto in un simbolo solo, «ovunque». Il simbolo 5 × 7,5; la variante senza rubinetto; la valvola
-doppia fermata dalla validazione; Capire e Comporre aggiornati. RAPPORTO §8.
+doppia fermata dalla validazione; lo sfiato addosso al raccordo, stacco zero (I-212); Capire e Comporre aggiornati.
+La prova pulita C lo fa da sola (RAPPORTO §9). RAPPORTO §8 e §9.
+
+### 9. Quello che le prove pulite hanno riportato — **da decidere col PO**, non da scegliere da soli
+
+- la distanza della valvola di sicurezza appesa sopra il suo raccordo: due passi (oggi 10 mm, A4) o addosso come lo
+  sfiato. È una convenzione grafica (RAPPORTO §9);
+- B3 (meno sormonti) contro B1 (autostrade dritte) nell'ordine dei collettori primari: due prove su tre hanno dovuto
+  scegliere (§7, §9);
+- la quota del primo raccordo della zona vicina, perché la sua pompa non finisca fra mandata e ritorno (§7, §9);
+- da dove far arrivare l'acqua fredda del bollitore quando a sinistra pende il corredo del ritorno di carico (§9).
 
 ### Note di controllo, dal documento
 

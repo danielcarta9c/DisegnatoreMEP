@@ -6,7 +6,7 @@ nel repository.
 
 ## 9. La 1.4.1 in una sessione pulita (I-213)
 
-**5 ottobre 2026** · input **I-213**
+**5 ottobre 2026** · input **I-213**, **I-214**, **I-215** · la tavola al PO: «tavola perfetta»; la 1.4.1 fusa (PR #77)
 
 Alla tavola del caso con lo sfiato addosso, il PO: «perché però il motore non ha spostato la valvola di sfiato e
 rifatto bene i tubi? non lo hai proprio fatto? vuoi provare a rigenerare la tavola con una sessione pulita?».
@@ -63,7 +63,7 @@ Il disegna più lento di C è il primo, 6,6 s, nell'ambiente della sessione. Lo 
 
 ## 8. Lo sfiato con il suo rubinetto (I-210, I-211)
 
-**5 ottobre 2026** · input **I-210**, **I-211**, **I-212** · decisione **D-210** (proposta) · la tavola al PO
+**5 ottobre 2026** · input **I-210**, **I-211**, **I-212** · decisione **D-210** (approvata, I-215) · la tavola al PO
 
 Il PO, con uno schizzo: lo sfiato e il suo rubinetto in un simbolo solo, «cosi' riusciamo a disegnarlo piccolo e il
 disegno si compatta e abbiamo meno sormonti e meno lunghezze»; e poi «sostituiamo il simbolo ovunque».

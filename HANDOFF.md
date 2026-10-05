@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-05 — **la 1.4.1, lo sfiato col suo rubinetto** (I-210, I-211, D-210 proposta): un simbolo solo, 5 × 7,5, ovunque. Prima: la 1.4.0 (PR #75), la tavola del caso reale rifatta e il disegna veloce; la prova in sessione pulita (PR #76, I-208).
+**Aggiornato:** 2026-10-05 — **la 1.4.1 è su `main`** (PR #77, I-215, D-210 approvata): lo sfiato col suo rubinetto, un simbolo solo, 5 × 7,5, ovunque, addosso al raccordo. Prima: la 1.4.0 (PR #75), la tavola del caso reale rifatta e il disegna veloce; la prova in sessione pulita (PR #76, I-208).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,13 +11,14 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 5 ottobre 2026, alla 1.4.1
+## ▶ Da dove riparte la prossima sessione — scritto il 5 ottobre 2026, alla fusione della 1.4.1
 
 **Il pacchetto è `REL-009`.** La 1.4.1 porta **lo sfiato col suo rubinetto** (I-210, I-211, D-210): il simbolo
 `air-vent-with-valve`, 5 × 7,5, per `air-vent` e `air-vent-solar`; la variante `air-vent-plain` senza; la validazione
 ferma la valvola doppia sullo stacco (`AIR_VENT_ISOLATED_TWICE`). Rapporto: `docs/collaudi/REL-009/RAPPORTO.md` §8.
 
-- **All'avvio guarda le PR aperte**: la PR della 1.4.1 si fonde solo col sì del PO sulle tavole (D-210 è proposta).
+- **La 1.4.1 è fusa** (PR #77): il PO ha visto la tavola della prova pulita C, «tavola perfetta» (I-214), e «si fondi
+  su main» (I-215). D-210 approvata; I-210 … I-215 chiusi. All'avvio guarda comunque le PR aperte.
 - **Un grafo scritto prima del 5 ottobre** con «sfiato con valvola a sfera» non passa più la validazione: si toglie la
   valvola dallo stacco. Lo dice il messaggio stesso.
 - Visto e non toccato (RAPPORTO §8): togliere la valvola dallo sfiato del volano ha cambiato il nome che le regole danno
@@ -27,7 +28,9 @@ ferma la valvola doppia sullo stacco (`AIR_VENT_ISOLATED_TWICE`). Rapporto: `doc
 - **La prova pulita C** (RAPPORTO §9, I-213): con il solo ZIP 1.4.1 una sessione nuova mette gli otto sfiati addosso
   da sola — tubo zero, nessun incrocio, 14 pieghe e 14 sormonti in 9 minuti. Resta del PO la distanza della valvola di
   sicurezza sopra il suo raccordo (10 mm oggi, come gli altri appesi).
-- **I numeri**: il prossimo input è **I-214**, la prossima decisione **D-211**.
+- **Da decidere col PO, e non da scegliere da soli** (`ACTIVE_WORK_PACKAGE.md` punto 9): la distanza della valvola di
+  sicurezza, e le ambiguità di Comporre che le tre prove pulite hanno trovato.
+- **I numeri**: il prossimo input è **I-216**, la prossima decisione **D-211**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026, sera, alla 1.4.0
 
