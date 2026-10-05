@@ -184,8 +184,13 @@ class ComponentRegistry:
         con quale pezzo si ottiene sull'acqua di riscaldamento, sulla fredda o
         sulla sanitaria. Se le voci sono zero o piu' d'una la scelta sarebbe
         del programma, e allora si ferma invece di sceglierne una.
+
+        **Una variante non la propone mai una regola** (D-188): si sceglie solo
+        quando il testo la nomina. Lo sfiato senza rubinetto fa il mestiere dello
+        sfiato con il rubinetto, e la regola che vuole uno sfogo d'aria propone il
+        secondo (I-211).
         """
-        found = self.serving(function, medium)
+        found = tuple(item for item in self.serving(function, medium) if item.variant is None)
         if not found:
             raise CatalogError(
                 f"no catalogue definition provides {function!r} on {medium!r}: a "

@@ -150,7 +150,7 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | RP.02.N.03.1 | **GR-01** | Gruppo di riempimento · pende dal tubo con una propria derivazione | acqua di riscaldamento, acqua fredda sanitaria |
 | RP.02.N.02.1 | **RM-01** | Rubinetto portamanometro a tre vie | acqua di riscaldamento |
 | RP.02.N.02.2 | **MN-01** | Manometro · pende dal tubo con una propria derivazione | acqua di riscaldamento |
-| RP.01.N.04.1 | **SF-01** | Valvola di sfogo aria · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| RP.01.N.04.1 | **SF-01** | Valvola di sfogo aria con rubinetto di intercettazione · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | RP.01.N.04.2 | **SC-01** | Attacco di scarico · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | RP.03.N.01 | **VI-09** | Valvola di intercettazione | acqua di riscaldamento |
 | CP.03.N.02 | **PAV-02** | Pannello radiante | acqua di riscaldamento |
@@ -231,7 +231,7 @@ Da **PAV-01** a **VOL-01**, circuito di riscaldamento.
     - qui arriva **RP.03**, da **PAV-02**, entrando dal braccio 2
 4. **RP.01.N.03 · VI-06** Valvola di intercettazione
 5. **RP.01.N.04 · VOL-01** Volano termico a due attacchi · tiene in serbo acqua di riscaldamento
-    - **RP.01.N.04.1 · SF-01** Valvola di sfogo aria · pende dallo stacco
+    - **RP.01.N.04.1 · SF-01** Valvola di sfogo aria con rubinetto di intercettazione · pende dallo stacco
     - **RP.01.N.04.2 · SC-01** Attacco di scarico · pende dallo stacco
 
 ### RP.02 — ritorno primario

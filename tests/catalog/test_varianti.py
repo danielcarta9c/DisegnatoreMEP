@@ -28,6 +28,8 @@ VARIANTI = {
     "heat-pump-air-water-large": ("heat-pump-air-water", {"alta potenza", "grande taglia"}),
     "gas-boiler-modular": ("gas-boiler", {"modulare", "a moduli"}),
     "fan-coil-ducted": ("fan-coil", {"canalizzato", "canalizzabile"}),
+    # Lo sfiato si disegna con il suo rubinetto (I-211); senza, solo se il testo lo dice.
+    "air-vent-plain": ("air-vent", {"senza rubinetto", "senza valvola"}),
 }
 
 

@@ -1,7 +1,8 @@
 {
   "formato": "A3",
   "note": [
-    "D — la disposizione del PO con i simboli nuovi (D-196): volano a due attacchi coricato e in linea sul ritorno, sfiato 5 x 5 addosso al suo cielo; deviatrice dritta sulla mandata, terza via in basso verso il bollitore."
+    "D — la disposizione del PO con i simboli nuovi (D-196): volano a due attacchi coricato e in linea sul ritorno, sfiato 5 x 5 addosso al suo cielo; deviatrice dritta sulla mandata, terza via in basso verso il bollitore.",
+    "Il 5 ottobre 2026 lo sfiato e' diventato lo sfiato col suo rubinetto, alto 7,5 invece di 5 (I-211): addosso al volano sta 2,5 mm piu' in alto, e il suo attacco resta dov'era."
   ],
   "pezzi": {
     "pdc": {
@@ -53,7 +54,7 @@
     },
     "air-vent-volano-b": {
       "x": 165,
-      "y": 170
+      "y": 167.5
     },
     "drain-connection-volano-a": {
       "x": 165,

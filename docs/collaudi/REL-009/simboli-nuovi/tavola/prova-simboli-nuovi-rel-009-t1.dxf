@@ -553,7 +553,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-322
+326
   9
 $SURFTAB1
  70
@@ -2225,7 +2225,7 @@ AcAecLayerStandard
   0
 APPID
   5
-31F
+323
 330
 3
 100
@@ -2239,7 +2239,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-320
+324
 330
 3
 100
@@ -2707,7 +2707,7 @@ AcDbSymbolTableRecord
 100
 AcDbBlockTableRecord
   2
-NoveC_AirVent
+NoveC_AirVentWithValve
 340
 0
  70
@@ -2719,7 +2719,7 @@ NoveC_AirVent
   0
 BLOCK_RECORD
   5
-1B3
+1B6
 330
 9
 100
@@ -2739,7 +2739,7 @@ NoveC_ValveSafety
   0
 BLOCK_RECORD
   5
-1BD
+1C0
 330
 9
 100
@@ -2759,7 +2759,7 @@ NoveC_ExpansionConnection
   0
 BLOCK_RECORD
   5
-1C7
+1CA
 330
 9
 100
@@ -2779,7 +2779,7 @@ NoveC_FillingUnit
   0
 BLOCK_RECORD
   5
-1D8
+1DB
 330
 9
 100
@@ -2799,7 +2799,7 @@ NoveC_PressureGauge
   0
 BLOCK_RECORD
   5
-1DD
+1E0
 330
 9
 100
@@ -2819,7 +2819,7 @@ NoveC_PressureGauge_Lettera
   0
 BLOCK_RECORD
   5
-1E6
+1E9
 330
 9
 100
@@ -2839,7 +2839,7 @@ NoveC_TeeJunction
   0
 BLOCK_RECORD
   5
-1F5
+1F8
 330
 9
 100
@@ -2859,7 +2859,7 @@ NoveC_ValveIsolation
   0
 BLOCK_RECORD
   5
-1FE
+201
 330
 9
 100
@@ -2879,7 +2879,7 @@ NoveC_PolyphosphateDoser
   0
 BLOCK_RECORD
   5
-207
+20A
 330
 9
 100
@@ -2899,7 +2899,7 @@ NoveC_DhwSafetyGroup
   0
 BLOCK_RECORD
   5
-21C
+21F
 330
 9
 100
@@ -2919,7 +2919,7 @@ NoveC_FlexibleJoint
   0
 BLOCK_RECORD
   5
-22A
+22D
 330
 9
 100
@@ -2939,7 +2939,7 @@ NoveC_HeatMeter
   0
 BLOCK_RECORD
   5
-230
+233
 330
 9
 100
@@ -2959,7 +2959,7 @@ NoveC_HeatMeter_Sigla
   0
 BLOCK_RECORD
   5
-23B
+23E
 330
 9
 100
@@ -2979,7 +2979,7 @@ NoveC_DirtSeparator
   0
 BLOCK_RECORD
   5
-247
+24A
 330
 9
 100
@@ -2999,7 +2999,7 @@ NoveC_Strainer
   0
 BLOCK_RECORD
   5
-255
+258
 330
 9
 100
@@ -3019,7 +3019,7 @@ NoveC_PumpCirculator
   0
 BLOCK_RECORD
   5
-275
+278
 330
 9
 100
@@ -6013,7 +6013,7 @@ AcDbEntity
 100
 AcDbBlockBegin
   2
-NoveC_AirVent
+NoveC_AirVentWithValve
  70
 0
  10
@@ -6023,11 +6023,11 @@ NoveC_AirVent
  30
 0.0
   3
-NoveC_AirVent
+NoveC_AirVentWithValve
   1
 
   4
-Valvola di sfiato aria
+Valvola di sfiato aria con rubinetto
   0
 LINE
   5
@@ -6047,15 +6047,15 @@ Continuous
 100
 AcDbLine
  10
-2.5
+1.0
  20
--5.0
+-0.525
  30
 0.0
  11
-2.5
+4.0
  21
--3.7
+-0.525
  31
 0.0
   0
@@ -6079,11 +6079,11 @@ AcDbCircle
  10
 2.5
  20
--2.5
+-2.05
  30
 0.0
  40
-1.2
+1.0
   0
 LINE
   5
@@ -6103,15 +6103,113 @@ Continuous
 100
 AcDbLine
  10
-1.0
+2.5
  20
--0.6
+-3.05
  30
 0.0
  11
-4.0
+2.5
  21
--0.6
+-3.525
+ 31
+0.0
+  0
+LWPOLYLINE
+  5
+1AD
+330
+1A7
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+0.8333
+ 20
+-3.525
+ 10
+4.1667
+ 20
+-3.525
+ 10
+2.5
+ 20
+-5.25
+  0
+LWPOLYLINE
+  5
+1AE
+330
+1A7
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbPolyline
+ 90
+3
+ 70
+1
+ 10
+0.8333
+ 20
+-6.975
+ 10
+4.1667
+ 20
+-6.975
+ 10
+2.5
+ 20
+-5.25
+  0
+LINE
+  5
+1AF
+330
+1A7
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+2.5
+ 20
+-6.975
+ 30
+0.0
+ 11
+2.5
+ 21
+-7.5
  31
 0.0
   0
@@ -6129,9 +6227,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-1B4
+1B7
 330
-1B3
+1B6
 100
 AcDbEntity
   8
@@ -6157,9 +6255,9 @@ Valvola di sicurezza
   0
 LINE
   5
-1B6
+1B9
 330
-1B3
+1B6
 100
 AcDbEntity
   8
@@ -6187,9 +6285,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-1B7
+1BA
 330
-1B3
+1B6
 100
 AcDbEntity
   8
@@ -6221,9 +6319,9 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-1B8
+1BB
 330
-1B3
+1B6
 100
 AcDbEntity
   8
@@ -6263,9 +6361,9 @@ AcDbPolyline
   0
 ENDBLK
   5
-1B5
+1B8
 330
-1B3
+1B6
 100
 AcDbEntity
   8
@@ -6275,9 +6373,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-1BE
+1C1
 330
-1BD
+1C0
 100
 AcDbEntity
   8
@@ -6303,9 +6401,9 @@ Vaso di espansione
   0
 LINE
   5
-1C0
+1C3
 330
-1BD
+1C0
 100
 AcDbEntity
   8
@@ -6333,9 +6431,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-1C1
+1C4
 330
-1BD
+1C0
 100
 AcDbEntity
   8
@@ -6395,9 +6493,9 @@ AcDbPolyline
   0
 LINE
   5
-1C2
+1C5
 330
-1BD
+1C0
 100
 AcDbEntity
   8
@@ -6425,9 +6523,9 @@ AcDbLine
   0
 ENDBLK
   5
-1BF
+1C2
 330
-1BD
+1C0
 100
 AcDbEntity
   8
@@ -6437,9 +6535,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-1C8
+1CB
 330
-1C7
+1CA
 100
 AcDbEntity
   8
@@ -6465,9 +6563,9 @@ Gruppo di riempimento
   0
 LINE
   5
-1CA
+1CD
 330
-1C7
+1CA
 100
 AcDbEntity
   8
@@ -6495,9 +6593,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-1CB
+1CE
 330
-1C7
+1CA
 100
 AcDbEntity
   8
@@ -6529,9 +6627,9 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-1CC
+1CF
 330
-1C7
+1CA
 100
 AcDbEntity
   8
@@ -6563,9 +6661,9 @@ AcDbPolyline
   0
 LINE
   5
-1CD
+1D0
 330
-1C7
+1CA
 100
 AcDbEntity
   8
@@ -6593,9 +6691,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-1CE
+1D1
 330
-1C7
+1CA
 100
 AcDbEntity
   8
@@ -6627,9 +6725,9 @@ AcDbPolyline
   0
 LINE
   5
-1CF
+1D2
 330
-1C7
+1CA
 100
 AcDbEntity
   8
@@ -6657,9 +6755,9 @@ AcDbLine
   0
 ENDBLK
   5
-1C9
+1CC
 330
-1C7
+1CA
 100
 AcDbEntity
   8
@@ -6669,9 +6767,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-1D9
+1DC
 330
-1D8
+1DB
 100
 AcDbEntity
   8
@@ -6697,9 +6795,9 @@ Manometro
   0
 LINE
   5
-1DB
+1DE
 330
-1D8
+1DB
 100
 AcDbEntity
   8
@@ -6727,9 +6825,9 @@ AcDbLine
   0
 CIRCLE
   5
-1DC
+1DF
 330
-1D8
+1DB
 100
 AcDbEntity
   8
@@ -6753,9 +6851,9 @@ AcDbCircle
   0
 ENDBLK
   5
-1DA
+1DD
 330
-1D8
+1DB
 100
 AcDbEntity
   8
@@ -6765,9 +6863,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-1DE
+1E1
 330
-1DD
+1E0
 100
 AcDbEntity
   8
@@ -6793,9 +6891,9 @@ Manometro: lettera, sempre diritta
   0
 LINE
   5
-1E0
+1E3
 330
-1DD
+1E0
 100
 AcDbEntity
   8
@@ -6823,9 +6921,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-1E1
+1E4
 330
-1DD
+1E0
 100
 AcDbEntity
   8
@@ -6897,9 +6995,9 @@ AcDbPolyline
   0
 ENDBLK
   5
-1DF
+1E2
 330
-1DD
+1E0
 100
 AcDbEntity
   8
@@ -6909,9 +7007,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-1E7
+1EA
 330
-1E6
+1E9
 100
 AcDbEntity
   8
@@ -6937,9 +7035,9 @@ Raccordo a T
   0
 LINE
   5
-1E9
+1EC
 330
-1E6
+1E9
 100
 AcDbEntity
   8
@@ -6967,9 +7065,9 @@ AcDbLine
   0
 LINE
   5
-1EA
+1ED
 330
-1E6
+1E9
 100
 AcDbEntity
   8
@@ -6997,9 +7095,9 @@ AcDbLine
   0
 HATCH
   5
-1EB
+1EE
 330
-1E6
+1E9
 100
 AcDbEntity
   8
@@ -7063,9 +7161,9 @@ SOLID
   0
 CIRCLE
   5
-1EC
+1EF
 330
-1E6
+1E9
 100
 AcDbEntity
   8
@@ -7089,9 +7187,9 @@ AcDbCircle
   0
 ENDBLK
   5
-1E8
+1EB
 330
-1E6
+1E9
 100
 AcDbEntity
   8
@@ -7101,9 +7199,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-1F6
+1F9
 330
-1F5
+1F8
 100
 AcDbEntity
   8
@@ -7129,9 +7227,9 @@ Valvola di intercettazione
   0
 LINE
   5
-1F8
+1FB
 330
-1F5
+1F8
 100
 AcDbEntity
   8
@@ -7159,9 +7257,9 @@ AcDbLine
   0
 LINE
   5
-1F9
+1FC
 330
-1F5
+1F8
 100
 AcDbEntity
   8
@@ -7189,9 +7287,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-1FA
+1FD
 330
-1F5
+1F8
 100
 AcDbEntity
   8
@@ -7223,9 +7321,9 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-1FB
+1FE
 330
-1F5
+1F8
 100
 AcDbEntity
   8
@@ -7257,9 +7355,9 @@ AcDbPolyline
   0
 ENDBLK
   5
-1F7
+1FA
 330
-1F5
+1F8
 100
 AcDbEntity
   8
@@ -7269,9 +7367,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-1FF
+202
 330
-1FE
+201
 100
 AcDbEntity
   8
@@ -7297,9 +7395,9 @@ Dosatore di polifosfati
   0
 LINE
   5
-201
+204
 330
-1FE
+201
 100
 AcDbEntity
   8
@@ -7327,9 +7425,9 @@ AcDbLine
   0
 LINE
   5
-202
+205
 330
-1FE
+201
 100
 AcDbEntity
   8
@@ -7357,9 +7455,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-203
+206
 330
-1FE
+201
 100
 AcDbEntity
   8
@@ -7395,9 +7493,9 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-204
+207
 330
-1FE
+201
 100
 AcDbEntity
   8
@@ -7457,9 +7555,9 @@ AcDbPolyline
   0
 ENDBLK
   5
-200
+203
 330
-1FE
+201
 100
 AcDbEntity
   8
@@ -7469,9 +7567,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-208
+20B
 330
-207
+20A
 100
 AcDbEntity
   8
@@ -7497,9 +7595,9 @@ Gruppo di sicurezza sanitario
   0
 LINE
   5
-20A
+20D
 330
-207
+20A
 100
 AcDbEntity
   8
@@ -7527,9 +7625,9 @@ AcDbLine
   0
 LINE
   5
-20B
+20E
 330
-207
+20A
 100
 AcDbEntity
   8
@@ -7557,9 +7655,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-20C
+20F
 330
-207
+20A
 100
 AcDbEntity
   8
@@ -7591,9 +7689,9 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-20D
+210
 330
-207
+20A
 100
 AcDbEntity
   8
@@ -7625,99 +7723,99 @@ AcDbPolyline
   0
 LINE
   5
-20E
-330
-207
-100
-AcDbEntity
-  8
-0
-  6
-Continuous
- 62
-0
-370
--2
-100
-AcDbLine
- 10
-3.5
- 20
--1.66
- 30
-0.0
- 11
-3.5
- 21
--3.34
- 31
-0.0
-  0
-LINE
-  5
-20F
-330
-207
-100
-AcDbEntity
-  8
-0
-  6
-Continuous
- 62
-0
-370
--2
-100
-AcDbLine
- 10
-3.5
- 20
--1.66
- 30
-0.0
- 11
-6.3
- 21
--3.34
- 31
-0.0
-  0
-LINE
-  5
-210
-330
-207
-100
-AcDbEntity
-  8
-0
-  6
-Continuous
- 62
-0
-370
--2
-100
-AcDbLine
- 10
-6.3
- 20
--1.66
- 30
-0.0
- 11
-6.3
- 21
--3.34
- 31
-0.0
-  0
-LINE
-  5
 211
 330
-207
+20A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+3.5
+ 20
+-1.66
+ 30
+0.0
+ 11
+3.5
+ 21
+-3.34
+ 31
+0.0
+  0
+LINE
+  5
+212
+330
+20A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+3.5
+ 20
+-1.66
+ 30
+0.0
+ 11
+6.3
+ 21
+-3.34
+ 31
+0.0
+  0
+LINE
+  5
+213
+330
+20A
+100
+AcDbEntity
+  8
+0
+  6
+Continuous
+ 62
+0
+370
+-2
+100
+AcDbLine
+ 10
+6.3
+ 20
+-1.66
+ 30
+0.0
+ 11
+6.3
+ 21
+-3.34
+ 31
+0.0
+  0
+LINE
+  5
+214
+330
+20A
 100
 AcDbEntity
   8
@@ -7745,9 +7843,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-212
+215
 330
-207
+20A
 100
 AcDbEntity
   8
@@ -7779,9 +7877,9 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-213
+216
 330
-207
+20A
 100
 AcDbEntity
   8
@@ -7817,9 +7915,9 @@ AcDbPolyline
   0
 ENDBLK
   5
-209
+20C
 330
-207
+20A
 100
 AcDbEntity
   8
@@ -7829,9 +7927,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-21D
+220
 330
-21C
+21F
 100
 AcDbEntity
   8
@@ -7857,9 +7955,9 @@ Giunto antivibrante
   0
 LINE
   5
-21F
+222
 330
-21C
+21F
 100
 AcDbEntity
   8
@@ -7887,9 +7985,9 @@ AcDbLine
   0
 LINE
   5
-220
+223
 330
-21C
+21F
 100
 AcDbEntity
   8
@@ -7917,9 +8015,9 @@ AcDbLine
   0
 LINE
   5
-221
+224
 330
-21C
+21F
 100
 AcDbEntity
   8
@@ -7947,9 +8045,9 @@ AcDbLine
   0
 LINE
   5
-222
+225
 330
-21C
+21F
 100
 AcDbEntity
   8
@@ -7977,9 +8075,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-223
+226
 330
-21C
+21F
 100
 AcDbEntity
   8
@@ -8291,9 +8389,9 @@ AcDbPolyline
   0
 ENDBLK
   5
-21E
+221
 330
-21C
+21F
 100
 AcDbEntity
   8
@@ -8303,9 +8401,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-22B
+22E
 330
-22A
+22D
 100
 AcDbEntity
   8
@@ -8331,9 +8429,9 @@ Contatore di calore
   0
 LINE
   5
-22D
+230
 330
-22A
+22D
 100
 AcDbEntity
   8
@@ -8361,9 +8459,9 @@ AcDbLine
   0
 LINE
   5
-22E
+231
 330
-22A
+22D
 100
 AcDbEntity
   8
@@ -8391,9 +8489,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-22F
+232
 330
-22A
+22D
 100
 AcDbEntity
   8
@@ -8429,9 +8527,9 @@ AcDbPolyline
   0
 ENDBLK
   5
-22C
+22F
 330
-22A
+22D
 100
 AcDbEntity
   8
@@ -8441,9 +8539,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-231
+234
 330
-230
+233
 100
 AcDbEntity
   8
@@ -8469,9 +8567,9 @@ Contatore di calore: lettera, sempre diritta
   0
 LWPOLYLINE
   5
-233
+236
 330
-230
+233
 100
 AcDbEntity
   8
@@ -8501,9 +8599,9 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-234
+237
 330
-230
+233
 100
 AcDbEntity
   8
@@ -8533,9 +8631,9 @@ AcDbPolyline
   0
 ENDBLK
   5
-232
+235
 330
-230
+233
 100
 AcDbEntity
   8
@@ -8545,9 +8643,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-23C
+23F
 330
-23B
+23E
 100
 AcDbEntity
   8
@@ -8573,9 +8671,9 @@ Defangatore
   0
 LINE
   5
-23E
+241
 330
-23B
+23E
 100
 AcDbEntity
   8
@@ -8603,9 +8701,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-23F
+242
 330
-23B
+23E
 100
 AcDbEntity
   8
@@ -8641,9 +8739,9 @@ AcDbPolyline
   0
 LINE
   5
-240
+243
 330
-23B
+23E
 100
 AcDbEntity
   8
@@ -8671,9 +8769,9 @@ AcDbLine
   0
 HATCH
   5
-241
+244
 330
-23B
+23E
 100
 AcDbEntity
   8
@@ -8737,9 +8835,9 @@ SOLID
   0
 LWPOLYLINE
   5
-242
+245
 330
-23B
+23E
 100
 AcDbEntity
   8
@@ -8771,9 +8869,9 @@ AcDbPolyline
   0
 ENDBLK
   5
-23D
+240
 330
-23B
+23E
 100
 AcDbEntity
   8
@@ -8783,9 +8881,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-248
+24B
 330
-247
+24A
 100
 AcDbEntity
   8
@@ -8811,9 +8909,9 @@ Filtro a Y
   0
 LINE
   5
-24A
+24D
 330
-247
+24A
 100
 AcDbEntity
   8
@@ -8841,9 +8939,9 @@ AcDbLine
   0
 LINE
   5
-24B
+24E
 330
-247
+24A
 100
 AcDbEntity
   8
@@ -8871,9 +8969,9 @@ AcDbLine
   0
 LINE
   5
-24C
+24F
 330
-247
+24A
 100
 AcDbEntity
   8
@@ -8901,9 +8999,9 @@ AcDbLine
   0
 LINE
   5
-24D
+250
 330
-247
+24A
 100
 AcDbEntity
   8
@@ -8931,9 +9029,9 @@ AcDbLine
   0
 LINE
   5
-24E
+251
 330
-247
+24A
 100
 AcDbEntity
   8
@@ -8961,9 +9059,9 @@ AcDbLine
   0
 ENDBLK
   5
-249
+24C
 330
-247
+24A
 100
 AcDbEntity
   8
@@ -8973,9 +9071,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-256
+259
 330
-255
+258
 100
 AcDbEntity
   8
@@ -9001,9 +9099,9 @@ Pompa di circolazione
   0
 LINE
   5
-258
+25B
 330
-255
+258
 100
 AcDbEntity
   8
@@ -9031,9 +9129,9 @@ AcDbLine
   0
 LINE
   5
-259
+25C
 330
-255
+258
 100
 AcDbEntity
   8
@@ -9061,9 +9159,9 @@ AcDbLine
   0
 CIRCLE
   5
-25A
+25D
 330
-255
+258
 100
 AcDbEntity
   8
@@ -9087,9 +9185,9 @@ AcDbCircle
   0
 HATCH
   5
-25B
+25E
 330
-255
+258
 100
 AcDbEntity
   8
@@ -9153,9 +9251,9 @@ SOLID
   0
 LWPOLYLINE
   5
-25C
+25F
 330
-255
+258
 100
 AcDbEntity
   8
@@ -9187,9 +9285,9 @@ AcDbPolyline
   0
 ENDBLK
   5
-257
+25A
 330
-255
+258
 100
 AcDbEntity
   8
@@ -9199,9 +9297,9 @@ AcDbBlockEnd
   0
 BLOCK
   5
-276
+279
 330
-275
+278
 100
 AcDbEntity
   8
@@ -9227,9 +9325,9 @@ Rubinetto portamanometro a tre vie
   0
 LINE
   5
-278
+27B
 330
-275
+278
 100
 AcDbEntity
   8
@@ -9257,9 +9355,9 @@ AcDbLine
   0
 LINE
   5
-279
+27C
 330
-275
+278
 100
 AcDbEntity
   8
@@ -9287,9 +9385,9 @@ AcDbLine
   0
 LINE
   5
-27A
+27D
 330
-275
+278
 100
 AcDbEntity
   8
@@ -9317,9 +9415,9 @@ AcDbLine
   0
 LINE
   5
-27B
+27E
 330
-275
+278
 100
 AcDbEntity
   8
@@ -9347,9 +9445,9 @@ AcDbLine
   0
 LWPOLYLINE
   5
-27C
+27F
 330
-275
+278
 100
 AcDbEntity
   8
@@ -9381,9 +9479,9 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-27D
+280
 330
-275
+278
 100
 AcDbEntity
   8
@@ -9415,9 +9513,9 @@ AcDbPolyline
   0
 LWPOLYLINE
   5
-27E
+281
 330
-275
+278
 100
 AcDbEntity
   8
@@ -9449,9 +9547,9 @@ AcDbPolyline
   0
 ENDBLK
   5
-277
+27A
 330
-275
+278
 100
 AcDbEntity
   8
@@ -12401,7 +12499,7 @@ NoveC_BufferSixPort
   0
 INSERT
   5
-1AD
+1B0
 330
 17
 100
@@ -12411,17 +12509,17 @@ M-DIAG-EQPM
 100
 AcDbBlockReference
   2
-NoveC_AirVent
+NoveC_AirVentWithValve
  10
 297.5
  20
-294.0
+296.5
  30
 0.0
   0
 INSERT
   5
-1AF
+1B2
 330
 17
 100
@@ -12441,7 +12539,7 @@ NoveC_DrainConnection
   0
 INSERT
   5
-1B1
+1B4
 330
 17
 100
@@ -12461,7 +12559,7 @@ NoveC_TeeBranch
   0
 INSERT
   5
-1B9
+1BC
 330
 17
 100
@@ -12481,7 +12579,7 @@ NoveC_ValveSafety
   0
 INSERT
   5
-1BB
+1BE
 330
 17
 100
@@ -12503,7 +12601,7 @@ NoveC_TeeBranch
   0
 INSERT
   5
-1C3
+1C6
 330
 17
 100
@@ -12523,7 +12621,7 @@ NoveC_ExpansionConnection
   0
 INSERT
   5
-1C5
+1C8
 330
 17
 100
@@ -12545,7 +12643,7 @@ NoveC_TeeBranch
   0
 INSERT
   5
-1D0
+1D3
 330
 17
 100
@@ -12567,7 +12665,7 @@ NoveC_FillingUnit
   0
 INSERT
   5
-1D2
+1D5
 330
 17
 100
@@ -12591,7 +12689,7 @@ NoveC_NetworkBoundary
   0
 INSERT
   5
-1D4
+1D7
 330
 17
 100
@@ -12615,7 +12713,7 @@ NoveC_FlowArrow
   0
 INSERT
   5
-1D6
+1D9
 330
 17
 100
@@ -12637,7 +12735,7 @@ NoveC_TeeBranch
   0
 INSERT
   5
-1E2
+1E5
 330
 17
 100
@@ -12659,7 +12757,7 @@ NoveC_PressureGauge
   0
 INSERT
   5
-1E4
+1E7
 330
 17
 100
@@ -12679,7 +12777,7 @@ NoveC_PressureGauge_Lettera
   0
 INSERT
   5
-1ED
+1F0
 330
 17
 100
@@ -12701,7 +12799,7 @@ NoveC_TeeJunction
   0
 INSERT
   5
-1EF
+1F2
 330
 17
 100
@@ -12725,7 +12823,7 @@ NoveC_NetworkBoundary
   0
 INSERT
   5
-1F1
+1F4
 330
 17
 100
@@ -12749,7 +12847,7 @@ NoveC_FlowArrow
   0
 INSERT
   5
-1F3
+1F6
 330
 17
 100
@@ -12769,7 +12867,7 @@ NoveC_TeeJunction
   0
 INSERT
   5
-1FC
+1FF
 330
 17
 100
@@ -12789,7 +12887,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-205
+208
 330
 17
 100
@@ -12809,7 +12907,7 @@ NoveC_PolyphosphateDoser
   0
 INSERT
   5
-214
+217
 330
 17
 100
@@ -12829,7 +12927,7 @@ NoveC_DhwSafetyGroup
   0
 INSERT
   5
-216
+219
 330
 17
 100
@@ -12849,7 +12947,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-218
+21B
 330
 17
 100
@@ -12869,7 +12967,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-21A
+21D
 330
 17
 100
@@ -12891,7 +12989,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-224
+227
 330
 17
 100
@@ -12911,7 +13009,7 @@ NoveC_FlexibleJoint
   0
 INSERT
   5
-226
+229
 330
 17
 100
@@ -12931,7 +13029,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-228
+22B
 330
 17
 100
@@ -12951,7 +13049,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-235
+238
 330
 17
 100
@@ -12973,7 +13071,7 @@ NoveC_HeatMeter
   0
 INSERT
   5
-237
+23A
 330
 17
 100
@@ -12993,7 +13091,7 @@ NoveC_HeatMeter_Sigla
   0
 INSERT
   5
-239
+23C
 330
 17
 100
@@ -13013,7 +13111,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-243
+246
 330
 17
 100
@@ -13035,7 +13133,7 @@ NoveC_DirtSeparator
   0
 INSERT
   5
-245
+248
 330
 17
 100
@@ -13055,7 +13153,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-24F
+252
 330
 17
 100
@@ -13077,7 +13175,7 @@ NoveC_Strainer
   0
 INSERT
   5
-251
+254
 330
 17
 100
@@ -13097,7 +13195,7 @@ NoveC_FlexibleJoint
   0
 INSERT
   5
-253
+256
 330
 17
 100
@@ -13117,7 +13215,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-25D
+260
 330
 17
 100
@@ -13137,7 +13235,7 @@ NoveC_PumpCirculator
   0
 INSERT
   5
-25F
+262
 330
 17
 100
@@ -13157,7 +13255,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-261
+264
 330
 17
 100
@@ -13179,7 +13277,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-263
+266
 330
 17
 100
@@ -13199,7 +13297,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-265
+268
 330
 17
 100
@@ -13219,7 +13317,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-267
+26A
 330
 17
 100
@@ -13241,7 +13339,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-269
+26C
 330
 17
 100
@@ -13263,7 +13361,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-26B
+26E
 330
 17
 100
@@ -13285,7 +13383,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-26D
+270
 330
 17
 100
@@ -13307,7 +13405,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-26F
+272
 330
 17
 100
@@ -13329,7 +13427,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-271
+274
 330
 17
 100
@@ -13349,7 +13447,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-273
+276
 330
 17
 100
@@ -13371,7 +13469,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-27F
+282
 330
 17
 100
@@ -13393,7 +13491,7 @@ NoveC_ValveGaugeCock3way
   0
 INSERT
   5
-281
+284
 330
 17
 100
@@ -13413,7 +13511,7 @@ NoveC_ValveIsolation
   0
 INSERT
   5
-283
+286
 330
 17
 100
@@ -13433,7 +13531,7 @@ NoveC_ValveIsolation
   0
 TEXT
   5
-285
+288
 330
 17
 100
@@ -13465,7 +13563,7 @@ AcDbText
   0
 TEXT
   5
-286
+289
 330
 17
 100
@@ -13497,7 +13595,7 @@ AcDbText
   0
 TEXT
   5
-287
+28A
 330
 17
 100
@@ -13529,7 +13627,7 @@ AcDbText
   0
 TEXT
   5
-288
+28B
 330
 17
 100
@@ -13561,7 +13659,7 @@ AcDbText
   0
 TEXT
   5
-289
+28C
 330
 17
 100
@@ -13593,7 +13691,7 @@ AcDbText
   0
 TEXT
   5
-28A
+28D
 330
 17
 100
@@ -13625,7 +13723,7 @@ AcDbText
   0
 TEXT
   5
-28B
+28E
 330
 17
 100
@@ -13657,7 +13755,7 @@ AcDbText
   0
 TEXT
   5
-28C
+28F
 330
 17
 100
@@ -13689,7 +13787,7 @@ AcDbText
   0
 LWPOLYLINE
   5
-28D
+290
 330
 17
 100
@@ -13721,7 +13819,7 @@ AcDbPolyline
   0
 INSERT
   5
-28E
+291
 330
 17
 100
@@ -13733,17 +13831,17 @@ M-ANNO-LEGN
 100
 AcDbBlockReference
   2
-NoveC_AirVent
+NoveC_AirVentWithValve
  10
 538.0
  20
-403.0
+404.25
  30
 0.0
   0
 TEXT
   5
-290
+293
 330
 17
 100
@@ -13755,19 +13853,51 @@ AcDbText
  10
 546.5
  20
-398.9125
+400.7381
  30
 0.0
  40
 2.1844
   1
-Valvola di sfiato aria
+Valvola di sfiato
   7
 NOVEC_ARIAL
  11
 546.5
  21
-398.9125
+400.7381
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+294
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-LEGN
+100
+AcDbText
+ 10
+546.5
+ 20
+397.0869
+ 30
+0.0
+ 40
+2.1844
+  1
+aria con rubinetto
+  7
+NOVEC_ARIAL
+ 11
+546.5
+ 21
+397.0869
  31
 0.0
 100
@@ -13775,7 +13905,7 @@ AcDbText
   0
 INSERT
   5
-291
+295
 330
 17
 100
@@ -13801,7 +13931,7 @@ NoveC_BufferSixPort
   0
 TEXT
   5
-293
+297
 330
 17
 100
@@ -13833,7 +13963,7 @@ AcDbText
   0
 TEXT
   5
-294
+298
 330
 17
 100
@@ -13865,7 +13995,7 @@ AcDbText
   0
 INSERT
   5
-295
+299
 330
 17
 100
@@ -13887,7 +14017,7 @@ NoveC_CappedConnection
   0
 TEXT
   5
-297
+29B
 330
 17
 100
@@ -13919,7 +14049,7 @@ AcDbText
   0
 INSERT
   5
-298
+29C
 330
 17
 100
@@ -13945,7 +14075,7 @@ NoveC_DhwHeatPump
   0
 TEXT
   5
-29A
+29E
 330
 17
 100
@@ -13977,7 +14107,7 @@ AcDbText
   0
 INSERT
   5
-29B
+29F
 330
 17
 100
@@ -14003,7 +14133,7 @@ NoveC_DhwSafetyGroup
   0
 TEXT
   5
-29D
+2A1
 330
 17
 100
@@ -14035,7 +14165,7 @@ AcDbText
   0
 TEXT
   5
-29E
+2A2
 330
 17
 100
@@ -14067,7 +14197,7 @@ AcDbText
   0
 INSERT
   5
-29F
+2A3
 330
 17
 100
@@ -14093,7 +14223,7 @@ NoveC_DirtSeparator
   0
 TEXT
   5
-2A1
+2A5
 330
 17
 100
@@ -14125,7 +14255,7 @@ AcDbText
   0
 INSERT
   5
-2A2
+2A6
 330
 17
 100
@@ -14151,7 +14281,7 @@ NoveC_DrainConnection
   0
 TEXT
   5
-2A4
+2A8
 330
 17
 100
@@ -14183,7 +14313,7 @@ AcDbText
   0
 INSERT
   5
-2A5
+2A9
 330
 17
 100
@@ -14209,7 +14339,7 @@ NoveC_ExpansionConnection
   0
 TEXT
   5
-2A7
+2AB
 330
 17
 100
@@ -14241,7 +14371,7 @@ AcDbText
   0
 INSERT
   5
-2A8
+2AC
 330
 17
 100
@@ -14267,7 +14397,7 @@ NoveC_FanCoil
   0
 TEXT
   5
-2AA
+2AE
 330
 17
 100
@@ -14299,7 +14429,7 @@ AcDbText
   0
 INSERT
   5
-2AB
+2AF
 330
 17
 100
@@ -14325,7 +14455,7 @@ NoveC_FillingUnit
   0
 TEXT
   5
-2AD
+2B1
 330
 17
 100
@@ -14357,7 +14487,7 @@ AcDbText
   0
 INSERT
   5
-2AE
+2B2
 330
 17
 100
@@ -14379,7 +14509,7 @@ NoveC_FlexibleJoint
   0
 TEXT
   5
-2B0
+2B4
 330
 17
 100
@@ -14411,7 +14541,7 @@ AcDbText
   0
 INSERT
   5
-2B1
+2B5
 330
 17
 100
@@ -14437,7 +14567,7 @@ NoveC_HeatMeter
   0
 INSERT
   5
-2B3
+2B7
 330
 17
 100
@@ -14463,7 +14593,7 @@ NoveC_HeatMeter_Sigla
   0
 TEXT
   5
-2B5
+2B9
 330
 17
 100
@@ -14495,7 +14625,7 @@ AcDbText
   0
 INSERT
   5
-2B6
+2BA
 330
 17
 100
@@ -14521,7 +14651,7 @@ NoveC_HeatPumpAirWater
   0
 TEXT
   5
-2B8
+2BC
 330
 17
 100
@@ -14553,7 +14683,7 @@ AcDbText
   0
 TEXT
   5
-2B9
+2BD
 330
 17
 100
@@ -14585,7 +14715,7 @@ AcDbText
   0
 INSERT
   5
-2BA
+2BE
 330
 17
 100
@@ -14611,7 +14741,7 @@ NoveC_MixingValveThermostatic
   0
 TEXT
   5
-2BC
+2C0
 330
 17
 100
@@ -14643,7 +14773,7 @@ AcDbText
   0
 TEXT
   5
-2BD
+2C1
 330
 17
 100
@@ -14675,7 +14805,7 @@ AcDbText
   0
 INSERT
   5
-2BE
+2C2
 330
 17
 100
@@ -14697,7 +14827,7 @@ NoveC_NetworkBoundary
   0
 INSERT
   5
-2C0
+2C4
 330
 17
 100
@@ -14719,7 +14849,7 @@ NoveC_FlowArrow
   0
 TEXT
   5
-2C2
+2C6
 330
 17
 100
@@ -14751,7 +14881,7 @@ AcDbText
   0
 INSERT
   5
-2C3
+2C7
 330
 17
 100
@@ -14777,7 +14907,7 @@ NoveC_PolyphosphateDoser
   0
 TEXT
   5
-2C5
+2C9
 330
 17
 100
@@ -14809,7 +14939,7 @@ AcDbText
   0
 INSERT
   5
-2C6
+2CA
 330
 17
 100
@@ -14835,7 +14965,7 @@ NoveC_PressureGauge
   0
 INSERT
   5
-2C8
+2CC
 330
 17
 100
@@ -14861,7 +14991,7 @@ NoveC_PressureGauge_Lettera
   0
 TEXT
   5
-2CA
+2CE
 330
 17
 100
@@ -14893,7 +15023,7 @@ AcDbText
   0
 INSERT
   5
-2CB
+2CF
 330
 17
 100
@@ -14919,7 +15049,7 @@ NoveC_PumpCirculator
   0
 TEXT
   5
-2CD
+2D1
 330
 17
 100
@@ -14951,7 +15081,7 @@ AcDbText
   0
 INSERT
   5
-2CE
+2D2
 330
 17
 100
@@ -14973,7 +15103,7 @@ NoveC_Strainer
   0
 TEXT
   5
-2D0
+2D4
 330
 17
 100
@@ -15005,7 +15135,7 @@ AcDbText
   0
 INSERT
   5
-2D1
+2D5
 330
 17
 100
@@ -15027,7 +15157,7 @@ NoveC_TeeBranch
   0
 TEXT
   5
-2D3
+2D7
 330
 17
 100
@@ -15059,7 +15189,7 @@ AcDbText
   0
 INSERT
   5
-2D4
+2D8
 330
 17
 100
@@ -15081,7 +15211,7 @@ NoveC_TeeJunction
   0
 TEXT
   5
-2D6
+2DA
 330
 17
 100
@@ -15113,7 +15243,7 @@ AcDbText
   0
 INSERT
   5
-2D7
+2DB
 330
 17
 100
@@ -15139,7 +15269,7 @@ NoveC_UnderfloorPanel
   0
 TEXT
   5
-2D9
+2DD
 330
 17
 100
@@ -15171,7 +15301,7 @@ AcDbText
   0
 INSERT
   5
-2DA
+2DE
 330
 17
 100
@@ -15193,7 +15323,7 @@ NoveC_ValveGaugeCock3way
   0
 TEXT
   5
-2DC
+2E0
 330
 17
 100
@@ -15225,7 +15355,7 @@ AcDbText
   0
 TEXT
   5
-2DD
+2E1
 330
 17
 100
@@ -15257,7 +15387,7 @@ AcDbText
   0
 INSERT
   5
-2DE
+2E2
 330
 17
 100
@@ -15279,7 +15409,7 @@ NoveC_ValveIsolation
   0
 TEXT
   5
-2E0
+2E4
 330
 17
 100
@@ -15311,7 +15441,7 @@ AcDbText
   0
 INSERT
   5
-2E1
+2E5
 330
 17
 100
@@ -15337,7 +15467,7 @@ NoveC_ValveSafety
   0
 TEXT
   5
-2E3
+2E7
 330
 17
 100
@@ -15369,7 +15499,7 @@ AcDbText
   0
 INSERT
   5
-2E4
+2E8
 330
 17
 100
@@ -15395,7 +15525,7 @@ NoveC_ZoneManifoldPair
   0
 TEXT
   5
-2E6
+2EA
 330
 17
 100
@@ -15427,7 +15557,7 @@ AcDbText
   0
 TEXT
   5
-2E7
+2EB
 330
 17
 100
@@ -15459,7 +15589,7 @@ AcDbText
   0
 LINE
   5
-2E8
+2EC
 330
 17
 100
@@ -15491,7 +15621,7 @@ AcDbLine
   0
 TEXT
   5
-2E9
+2ED
 330
 17
 100
@@ -15523,7 +15653,7 @@ AcDbText
   0
 TEXT
   5
-2EA
+2EE
 330
 17
 100
@@ -15555,7 +15685,7 @@ AcDbText
   0
 LINE
   5
-2EB
+2EF
 330
 17
 100
@@ -15587,7 +15717,7 @@ AcDbLine
   0
 TEXT
   5
-2EC
+2F0
 330
 17
 100
@@ -15619,7 +15749,7 @@ AcDbText
   0
 TEXT
   5
-2ED
+2F1
 330
 17
 100
@@ -15651,7 +15781,7 @@ AcDbText
   0
 LINE
   5
-2EE
+2F2
 330
 17
 100
@@ -15683,7 +15813,7 @@ AcDbLine
   0
 TEXT
   5
-2EF
+2F3
 330
 17
 100
@@ -15715,7 +15845,7 @@ AcDbText
   0
 TEXT
   5
-2F0
+2F4
 330
 17
 100
@@ -15747,7 +15877,7 @@ AcDbText
   0
 LINE
   5
-2F1
+2F5
 330
 17
 100
@@ -15779,7 +15909,7 @@ AcDbLine
   0
 TEXT
   5
-2F2
+2F6
 330
 17
 100
@@ -15811,7 +15941,7 @@ AcDbText
   0
 TEXT
   5
-2F3
+2F7
 330
 17
 100
@@ -15843,102 +15973,6 @@ AcDbText
   0
 LINE
   5
-2F4
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbLine
- 10
-10.0
- 20
-404.0
- 30
-0.0
- 11
-142.5
- 21
-404.0
- 31
-0.0
-  0
-LINE
-  5
-2F5
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbLine
- 10
-10.0
- 20
-397.75
- 30
-0.0
- 11
-142.5
- 21
-397.75
- 31
-0.0
-  0
-LINE
-  5
-2F6
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbLine
- 10
-10.0
- 20
-391.5
- 30
-0.0
- 11
-142.5
- 21
-391.5
- 31
-0.0
-  0
-LINE
-  5
-2F7
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbLine
- 10
-10.0
- 20
-385.25
- 30
-0.0
- 11
-142.5
- 21
-385.25
- 31
-0.0
-  0
-LINE
-  5
 2F8
 330
 17
@@ -15951,13 +15985,13 @@ AcDbLine
  10
 10.0
  20
-379.0
+404.0
  30
 0.0
  11
 142.5
  21
-379.0
+404.0
  31
 0.0
   0
@@ -15975,13 +16009,13 @@ AcDbLine
  10
 10.0
  20
-372.75
+397.75
  30
 0.0
  11
 142.5
  21
-372.75
+397.75
  31
 0.0
   0
@@ -15999,13 +16033,13 @@ AcDbLine
  10
 10.0
  20
-366.5
+391.5
  30
 0.0
  11
 142.5
  21
-366.5
+391.5
  31
 0.0
   0
@@ -16023,13 +16057,13 @@ AcDbLine
  10
 10.0
  20
-404.0
+385.25
  30
 0.0
  11
-10.0
+142.5
  21
-366.5
+385.25
  31
 0.0
   0
@@ -16045,15 +16079,15 @@ M-ANNO-SCHD
 100
 AcDbLine
  10
-27.5
+10.0
  20
-404.0
+379.0
  30
 0.0
  11
-27.5
+142.5
  21
-366.5
+379.0
  31
 0.0
   0
@@ -16069,15 +16103,15 @@ M-ANNO-SCHD
 100
 AcDbLine
  10
-72.5
+10.0
  20
-404.0
+372.75
  30
 0.0
  11
-72.5
+142.5
  21
-366.5
+372.75
  31
 0.0
   0
@@ -16093,13 +16127,13 @@ M-ANNO-SCHD
 100
 AcDbLine
  10
-107.5
+10.0
  20
-404.0
+366.5
  30
 0.0
  11
-107.5
+142.5
  21
 366.5
  31
@@ -16117,6 +16151,102 @@ M-ANNO-SCHD
 100
 AcDbLine
  10
+10.0
+ 20
+404.0
+ 30
+0.0
+ 11
+10.0
+ 21
+366.5
+ 31
+0.0
+  0
+LINE
+  5
+300
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbLine
+ 10
+27.5
+ 20
+404.0
+ 30
+0.0
+ 11
+27.5
+ 21
+366.5
+ 31
+0.0
+  0
+LINE
+  5
+301
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbLine
+ 10
+72.5
+ 20
+404.0
+ 30
+0.0
+ 11
+72.5
+ 21
+366.5
+ 31
+0.0
+  0
+LINE
+  5
+302
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbLine
+ 10
+107.5
+ 20
+404.0
+ 30
+0.0
+ 11
+107.5
+ 21
+366.5
+ 31
+0.0
+  0
+LINE
+  5
+303
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbLine
+ 10
 122.5
  20
 404.0
@@ -16131,7 +16261,7 @@ AcDbLine
   0
 LINE
   5
-300
+304
 330
 17
 100
@@ -16155,7 +16285,7 @@ AcDbLine
   0
 TEXT
   5
-301
+305
 330
 17
 100
@@ -16187,7 +16317,7 @@ AcDbText
   0
 TEXT
   5
-302
+306
 330
 17
 100
@@ -16219,7 +16349,7 @@ AcDbText
   0
 TEXT
   5
-303
+307
 330
 17
 100
@@ -16251,7 +16381,7 @@ AcDbText
   0
 TEXT
   5
-304
+308
 330
 17
 100
@@ -16283,7 +16413,7 @@ AcDbText
   0
 TEXT
   5
-305
+309
 330
 17
 100
@@ -16315,7 +16445,7 @@ AcDbText
   0
 TEXT
   5
-306
+30A
 330
 17
 100
@@ -16347,7 +16477,7 @@ AcDbText
   0
 TEXT
   5
-307
+30B
 330
 17
 100
@@ -16379,7 +16509,7 @@ AcDbText
   0
 TEXT
   5
-308
+30C
 330
 17
 100
@@ -16411,7 +16541,7 @@ AcDbText
   0
 TEXT
   5
-309
+30D
 330
 17
 100
@@ -16443,7 +16573,7 @@ AcDbText
   0
 TEXT
   5
-30A
+30E
 330
 17
 100
@@ -16475,7 +16605,7 @@ AcDbText
   0
 TEXT
   5
-30B
+30F
 330
 17
 100
@@ -16507,7 +16637,7 @@ AcDbText
   0
 TEXT
   5
-30C
+310
 330
 17
 100
@@ -16539,7 +16669,7 @@ AcDbText
   0
 TEXT
   5
-30D
+311
 330
 17
 100
@@ -16571,7 +16701,7 @@ AcDbText
   0
 TEXT
   5
-30E
+312
 330
 17
 100
@@ -16603,7 +16733,7 @@ AcDbText
   0
 TEXT
   5
-30F
+313
 330
 17
 100
@@ -16635,7 +16765,7 @@ AcDbText
   0
 TEXT
   5
-310
+314
 330
 17
 100
@@ -16667,7 +16797,7 @@ AcDbText
   0
 TEXT
   5
-311
+315
 330
 17
 100
@@ -16699,7 +16829,7 @@ AcDbText
   0
 TEXT
   5
-312
+316
 330
 17
 100
@@ -16731,7 +16861,7 @@ AcDbText
   0
 TEXT
   5
-313
+317
 330
 17
 100
@@ -16763,7 +16893,7 @@ AcDbText
   0
 TEXT
   5
-314
+318
 330
 17
 100
@@ -16795,7 +16925,7 @@ AcDbText
   0
 TEXT
   5
-315
+319
 330
 17
 100
@@ -16827,7 +16957,7 @@ AcDbText
   0
 TEXT
   5
-316
+31A
 330
 17
 100
@@ -16859,7 +16989,7 @@ AcDbText
   0
 TEXT
   5
-317
+31B
 330
 17
 100
@@ -16891,7 +17021,7 @@ AcDbText
   0
 TEXT
   5
-318
+31C
 330
 17
 100
@@ -16923,7 +17053,7 @@ AcDbText
   0
 TEXT
   5
-319
+31D
 330
 17
 100
@@ -16955,7 +17085,7 @@ AcDbText
   0
 TEXT
   5
-31A
+31E
 330
 17
 100
@@ -16987,7 +17117,7 @@ AcDbText
   0
 TEXT
   5
-31B
+31F
 330
 17
 100
@@ -17019,7 +17149,7 @@ AcDbText
   0
 TEXT
   5
-31C
+320
 330
 17
 100
@@ -17051,7 +17181,7 @@ AcDbText
   0
 TEXT
   5
-31D
+321
 330
 17
 100
@@ -17083,7 +17213,7 @@ AcDbText
   0
 TEXT
   5
-31E
+322
 330
 17
 100
@@ -19983,7 +20113,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-321
+325
   0
 DICTIONARYVAR
   5
@@ -20207,7 +20337,7 @@ AcDbRasterImageDefReactor
   0
 DICTIONARYVAR
   5
-321
+325
 330
 2D
 100

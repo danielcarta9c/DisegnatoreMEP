@@ -1,7 +1,7 @@
 {
   "id": "air-vent-solar",
   "version": "1.0.0",
-  "name": "Valvola di sfogo aria solare",
+  "name": "Valvola di sfogo aria solare con rubinetto di intercettazione",
   "functions": [
     "air_release"
   ],
@@ -9,7 +9,7 @@
     "shutoff_ordinary",
     "attachment_branch"
   ],
-  "symbol_id": "air-vent",
+  "symbol_id": "air-vent-with-valve",
   "composite": false,
   "ports": [
     {

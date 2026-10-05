@@ -100,6 +100,7 @@ def validate_project(
             )
 
     issues.extend(_dosatori_fuori_posto(project, catalog))
+    issues.extend(_sfiati_con_due_rubinetti(project, catalog))
 
     # Il bordo dichiarato dal progettista nomina funzioni che il catalogo conosce
     # (REL-009, I-192): un nome sbagliato non toglierebbe niente, in silenzio.
@@ -271,6 +272,43 @@ def validate_project(
 
 
 TRATTAMENTO_DELL_ACQUA = "water_treatment"
+
+
+SFIATI_CON_RUBINETTO = frozenset({"air-vent", "air-vent-solar"})
+"""Le voci dello sfiato che si disegnano con il loro rubinetto (I-210, I-211)."""
+
+
+def _sfiati_con_due_rubinetti(project: ProjectModel, catalog: ComponentRegistry) -> list[ValidationIssue]:
+    """Lo sfiato porta il suo rubinetto di intercettazione (I-210, I-211).
+
+    Dal 5 ottobre 2026 sfiato e rubinetto sono un pezzo solo, con un simbolo solo: il
+    PO, «sostituiamo il simbolo ovunque». Un grafo scritto prima dichiarava la
+    valvola sullo stacco e lo sfiato dopo — «sfiato con valvola a sfera» (I-193) —, e
+    disegnato oggi avrebbe due rubinetti uno sopra l'altro. Si toglie la valvola; e se
+    il progettista vuole lo sfiato senza rubinetto, la voce e' `air-vent-plain`."""
+    pezzi = {item.id: item.definition_id for item in project.components}
+    issues: list[ValidationIssue] = []
+    for connessione in project.connections:
+        for sfiato, altro in (
+            (connessione.endpoint_a.component_id, connessione.endpoint_b.component_id),
+            (connessione.endpoint_b.component_id, connessione.endpoint_a.component_id),
+        ):
+            if pezzi.get(sfiato) not in SFIATI_CON_RUBINETTO:
+                continue
+            voce = pezzi.get(altro)
+            if voce is None or not catalog.contains(voce) or "isolation" not in catalog.get(voce).functions:
+                continue
+            issues.append(
+                _issue(
+                    "AIR_VENT_ISOLATED_TWICE",
+                    f"lo sfiato {sfiato} ha gia' il suo rubinetto, e la valvola {altro} sullo "
+                    f"stacco ne disegnerebbe un secondo: togli {altro} e collega lo sfiato "
+                    f"dov'era la valvola. Se lo sfiato e' senza rubinetto, la voce e' "
+                    f"air-vent-plain (I-211)",
+                    [sfiato, altro],
+                )
+            )
+    return issues
 """Il mestiere del dosatore di polifosfati (REL-009, I-198)."""
 
 

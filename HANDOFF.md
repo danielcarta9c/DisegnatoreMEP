@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-03, sera — **la 1.4.0** (`REL-009` punti 6 e 7, I-206, D-206 … D-209): la tavola del caso reale rifatta, approvata dal PO (PR #74), e il disegna sul caso da 107 a 3,4 secondi con le stesse tavole. Il pacchetto attivo resta `REL-009`. Prima, lo stesso giorno: la 1.3.0 (PR #72) e la 1.2.2, la prima che si carica (PR #71).
+**Aggiornato:** 2026-10-05 — **la 1.4.1, lo sfiato col suo rubinetto** (I-210, I-211, D-210 proposta): un simbolo solo, 5 × 7,5, ovunque. Prima: la 1.4.0 (PR #75), la tavola del caso reale rifatta e il disegna veloce; la prova in sessione pulita (PR #76, I-208).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,20 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 3 ottobre 2026, sera, alla 1.4.0
+## ▶ Da dove riparte la prossima sessione — scritto il 5 ottobre 2026, alla 1.4.1
+
+**Il pacchetto è `REL-009`.** La 1.4.1 porta **lo sfiato col suo rubinetto** (I-210, I-211, D-210): il simbolo
+`air-vent-with-valve`, 5 × 7,5, per `air-vent` e `air-vent-solar`; la variante `air-vent-plain` senza; la validazione
+ferma la valvola doppia sullo stacco (`AIR_VENT_ISOLATED_TWICE`). Rapporto: `docs/collaudi/REL-009/RAPPORTO.md` §8.
+
+- **All'avvio guarda le PR aperte**: la PR della 1.4.1 si fonde solo col sì del PO sulle tavole (D-210 è proposta).
+- **Un grafo scritto prima del 5 ottobre** con «sfiato con valvola a sfera» non passa più la validazione: si toglie la
+  valvola dallo stacco. Lo dice il messaggio stesso.
+- Visto e non toccato (RAPPORTO §8): togliere la valvola dallo sfiato del volano ha cambiato il nome che le regole danno
+  alle valvole degli attacchi predisposti. `completa` lo segnala; il nome però dipende da un cambiamento altrove.
+- **I numeri**: il prossimo input è **I-212**, la prossima decisione **D-211**.
+
+## Da dove ripartiva — scritto il 3 ottobre 2026, sera, alla 1.4.0
 
 **Il pacchetto è `REL-009`** (`ACTIVE_WORK_PACKAGE.md`). La **1.4.0** porta i punti 6 e 7: prima le autostrade
 (D-206), il collettore con ritorno a coppie di 10 e i colori della distribuzione (D-207), le pompe in parallelo con
@@ -34,7 +47,7 @@ lo stesso verso e il controllo A2 (D-208), e il tempo del disegna (D-209). La ta
 - **La 1.4.0 in una sessione pulita** (I-208, RAPPORTO §7): due sessioni nuove con il solo ZIP fanno tavole pulite in
   8 e 11 minuti; la chat del PO aveva ridisegnato il piano della 1.3.0. Le difficoltà trovate in Comporre sono il
   lavoro possibile, da decidere col PO.
-- **I numeri**: il prossimo input è **I-210**, la prossima decisione **D-210**.
+- I numeri, allora: I-210 e D-210.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026, alla chiusura della 1.3.0
 

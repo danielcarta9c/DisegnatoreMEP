@@ -611,7 +611,11 @@ scrivi dove lui dice, con la voce del catalogo che fa quel mestiere su quel flui
 - **appeso**, se sta su uno stacco — sfiato, manometro, termometro, scarico: un raccordo
   di derivazione in linea (`tee-branch`, o la voce del suo fluido: `tee-branch-cold`,
   `tee-branch-dhw`), e dal suo braccio `branch` una tubazione corta al pezzo; una valvola
-  sullo stacco («con valvola a sfera») sta fra il braccio e il pezzo;
+  sullo stacco («con valvola a sfera») sta fra il braccio e il pezzo. **Lo sfiato no**: la
+  voce `air-vent` è lo sfiato **con il suo rubinetto**, un pezzo solo (I-211). «Sfiato con
+  valvola a sfera» si scrive con il solo `air-vent`, collegato al braccio; la valvola in più
+  la validazione la ferma (`AIR_VENT_ISOLATED_TWICE`). Se il progettista dice lo sfiato
+  **senza** rubinetto, la voce è la variante `air-vent-plain`;
 - **sull'attacco di servizio** della macchina, se ce l'ha (`vent`, `drain`, `probe` di un
   volano): la tubazione corta parte da lì.
 

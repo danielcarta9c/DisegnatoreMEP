@@ -109,6 +109,11 @@ indice, `disegna` sul caso passa da 107 a 3,4 s e sulle tavole agli atti scende 
 tavole. **I 30 minuti non stanno nel motore della 1.3.0** (da 1 a 7 s per tavola): per sapere dove vanno serve il
 registro di una sessione vera, che è del PO.
 
+### 8. Lo sfiato con il suo rubinetto (I-210, I-211) — nella 1.4.1 (D-210)
+
+Il PO: sfiato e rubinetto in un simbolo solo, «ovunque». Il simbolo 5 × 7,5; la variante senza rubinetto; la valvola
+doppia fermata dalla validazione; Capire e Comporre aggiornati. RAPPORTO §8.
+
 ### Note di controllo, dal documento
 
 - I diametri del secondario ACS non si calcolano: c'è il salto termico ma non la potenza né la portata.

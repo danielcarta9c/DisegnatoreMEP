@@ -368,11 +368,12 @@ REL_003: list[dict[str, Any]] = [
         [hydronic_port("a", "bidirectional", SOLAR)],
         "thermometer",
     ),
+    # Lo sfiato si disegna con il suo rubinetto, ovunque (I-210, I-211).
     solar_accessory(
-        "air-vent-solar", "Valvola di sfogo aria solare", ["air_release"],
+        "air-vent-solar", "Valvola di sfogo aria solare con rubinetto di intercettazione", ["air_release"],
         [SHUTOFF_ORDINARY, BRANCH],
         [hydronic_port("a", "bidirectional", SOLAR)],
-        "air-vent",
+        "air-vent-with-valve",
     ),
     solar_accessory(
         "drain-connection-solar", "Attacco di carico e scarico solare", ["drain"],

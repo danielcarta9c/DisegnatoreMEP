@@ -11,7 +11,7 @@ Le scelte:
 
 - su ogni pompa di calore il ritegno sull'uscita, il giunto antivibrante sui due attacchi, lo
   sfiato con valvola a sfera sul ritorno (I-193, I-197); lo sfiato con la sua valvola sui due
-  volani;
+  volani. Dal 5 ottobre 2026 sfiato e rubinetto sono un pezzo solo, `air-vent` (I-211);
 - i collettori d'appartamento con il ritorno (`zone-manifold-pair`), con le valvole manuali
   sulle due uscite verso i terminali; i ritorni dei terminali entrano nel collettore;
 - il volano dell'ACS a sei attacchi, con i due attacchi predisposti «al solare termico»;
@@ -54,7 +54,11 @@ def _tolti() -> list[dict[str, str]]:
         for zona, k in APPARTAMENTI
         for terminale in ("fc", "rad")
     ]
-    voci += [(f"valve-isolation-volano-acs-aux-{lato}", costruito, None) for lato in ("in", "out")]
+    # Le valvole sugli attacchi predisposti le mette la regola del confine, e prendono il
+    # nome dal confine. Finche' lo sfiato del volano aveva la sua valvola le metteva la
+    # regola del volano, col nome del volano: con lo sfiato col rubinetto (I-211)
+    # `completa` le ha dette «tolti che non tolgono niente», e i nomi sono questi.
+    voci += [(f"valve-isolation-solare-{lato}-a", costruito, None) for lato in ("mandata", "ritorno")]
     return [
         {"pezzo": pezzo, "motivo": motivo} | ({"altrove": altrove} if altrove else {})
         for pezzo, motivo, altrove in voci
@@ -106,7 +110,8 @@ def costruisci() -> dict[str, Any]:
             if ref["component_id"] == pezzo and ref["port_id"] == porta
         )
 
-    # Le pompe di calore: ritegno e giunto sulla mandata, giunto e sfiato sul ritorno.
+    # Le pompe di calore: ritegno e giunto sulla mandata, giunto e sfiato sul ritorno. Lo
+    # sfiato porta il suo rubinetto (I-211): la valvola sullo stacco non si scrive.
     for pdc in GENERATORI:
         rete = RETE_DEL_GENERATORE[pdc]
         n = pdc.removeprefix("pdc-")
@@ -114,21 +119,17 @@ def costruisci() -> dict[str, Any]:
         pezzi[f"giunto-mandata-{n}"] = _pezzo(f"giunto-mandata-{n}", "flexible-joint")
         pezzi[f"giunto-ritorno-{n}"] = _pezzo(f"giunto-ritorno-{n}", "flexible-joint")
         pezzi[f"tee-sfiato-{n}"] = _pezzo(f"tee-sfiato-{n}", "tee-branch")
-        pezzi[f"valvola-sfiato-{n}"] = _pezzo(f"valvola-sfiato-{n}", "valve-isolation")
         pezzi[f"sfiato-{n}"] = _pezzo(f"sfiato-{n}", "air-vent")
         mandata = tubo_che_tocca(pdc, "water_supply")
         spezza(mandata, (f"ritegno-{n}", "a", "b"), (f"giunto-mandata-{n}", "a", "b"))
         ritorno = tubo_che_tocca(pdc, "water_return")
         spezza(ritorno, (f"giunto-ritorno-{n}", "a", "b"), (f"tee-sfiato-{n}", "a", "b"))
-        tubo(f"tee-sfiato-{n}.branch", f"valvola-sfiato-{n}.a", rete)
-        tubo(f"valvola-sfiato-{n}.b", f"sfiato-{n}.a", rete)
+        tubo(f"tee-sfiato-{n}.branch", f"sfiato-{n}.a", rete)
 
-    # Lo sfiato con la sua valvola sull'attacco di sfiato dei due volani.
+    # Lo sfiato, col suo rubinetto, sull'attacco di sfiato dei due volani.
     for volano, rete in (("volano-risc", "primario-risc"), ("volano-acs", "primario-acs")):
-        pezzi[f"valvola-sfiato-{volano}"] = _pezzo(f"valvola-sfiato-{volano}", "valve-isolation")
         pezzi[f"sfiato-{volano}"] = _pezzo(f"sfiato-{volano}", "air-vent")
-        tubo(f"{volano}.vent", f"valvola-sfiato-{volano}.a", rete)
-        tubo(f"valvola-sfiato-{volano}.b", f"sfiato-{volano}.a", rete)
+        tubo(f"{volano}.vent", f"sfiato-{volano}.a", rete)
 
     # Il contatore di calore sul ritorno del primario, al piede del volano grande.
     pezzi["contatore"] = _pezzo("contatore", "heat-meter", servizio="contabilizzatore sul ritorno del primario")

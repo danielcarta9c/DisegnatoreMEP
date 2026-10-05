@@ -87,7 +87,9 @@ stesse quote. Un volano **a due attacchi** è **coricato e in linea** (**D-196**
 e `b` in asse a +5. Per metterlo sul ritorno di una pompa, che esce a +20, lo posi **15 mm più
 in basso** della pompa, e il ritorno gli passa dentro dritto, come in una valvola. Lo
 **sfiato** (5 × 5) sta sul suo cielo, addosso all'attacco `vent` — `x` +10, `y` −5 rispetto al
-volano —, e resta 5 mm sotto la mandata, che gli passa sopra dritta. Lo **scarico** sta sotto,
+volano —, e resta 5 mm sotto la mandata, che gli passa sopra dritta. Dal 5 ottobre 2026 lo
+sfiato porta il suo rubinetto ed è alto **7,5** (I-211): sul cielo del volano sta a `y` **−7,5**, e
+dalla mandata ne resta 2,5. Lo **scarico** sta sotto,
 addosso a `drain`. Fino al 2 ottobre 2026 il volano a due attacchi era ritto, 25 × 45, e il
 suo sfiato arrivava esattamente sulla quota della mandata: la mandata non poteva passargli
 sopra (I-172).
@@ -482,9 +484,16 @@ verso destra o su o giù, ma non una da una parte e una dall'altra».
    valvola dell'uscita). Due linee dritte per terminale; collettori uno ogni **60 mm**.
 
 **Prima le autostrade**, anche per il motore (I-201, I-203): instrada le autostrade, poi la
-distribuzione, per ultimi gli stacchi, e un'autostrada disegnata non si sposta più. Uno sfiato
-sul ritorno di una pompa di calore che sale attraverso la mandata posa la sua valvola **oltre**
-l'incrocio: lasciagli sopra la mandata almeno 20 mm per valvola e sfiato.
+distribuzione, per ultimi gli stacchi, e un'autostrada disegnata non si sposta più.
+
+**Lo sfiato è un pezzo solo, 5 × 7,5, con il suo rubinetto** (I-210, I-211), e pende come il
+manometro: il raccordo sulla linea e lo sfiato **due passi** sopra il braccio — l'origine dello
+sfiato a `y` del raccordo −12,5. Sulla pompa di calore mandata e ritorno sono a 15 mm, e lì,
+fra le due, lo sfiato **non ci sta**: toccherebbe la mandata. Mettilo sul ritorno **oltre la
+colonna di mandata del parallelo**, dove la mandata della macchina non passa più: pende nel
+vuoto e non incrocia niente. Sulla macchina la cui mandata prosegue — la prima, quella
+dell'autostrada — lo sfiato la scavalca: la porta almeno 7,5 mm sopra la mandata (origine a `y`
+della pompa −10), e niente di più.
 
 ### D1 — Il disegno non arriva al bordo
 

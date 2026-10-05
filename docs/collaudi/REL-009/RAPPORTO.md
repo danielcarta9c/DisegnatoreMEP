@@ -4,6 +4,67 @@ Una sezione per ogni gruppo di punti, la più recente in alto. Il caso è il pri
 ricostruito anonimo in `caso-reale-1/`: il documento della sessione di disegno porta i dati del cliente e non è
 nel repository.
 
+## 8. Lo sfiato con il suo rubinetto (I-210, I-211)
+
+**5 ottobre 2026** · input **I-210**, **I-211** · decisione **D-210** (proposta) · la tavola al PO
+
+Il PO, con uno schizzo: lo sfiato e il suo rubinetto in un simbolo solo, «cosi' riusciamo a disegnarlo piccolo e il
+disegno si compatta e abbiamo meno sormonti e meno lunghezze»; e poi «sostituiamo il simbolo ovunque».
+
+### Le tavole, per prime
+
+- **Il caso reale** (`caso-reale-2/tavola/`): sulle pompe di calore 2–4 lo sfiato col rubinetto pende due passi sopra il
+  ritorno, oltre la colonna di mandata, e non incrocia niente; sulla prima, la cui mandata è l'autostrada, la scavalca
+  con 15 mm di stacco invece di 35. Sui due volani sta addosso al cielo.
+- **La tavola D della prova del PO**: lo sfiato sul cielo del volano coricato, e la mandata gli passa sopra.
+- Le altre tavole agli atti cambiano solo nel simbolo dello sfiato.
+
+### Le misure
+
+| | prima (1.4.0) | dopo |
+|---|---:|---:|
+| caso reale: pieghe · sormonti | 13 · 14 | 13 · 14 |
+| caso reale: tubo degli stacchi degli sfiati | 175 mm | **70 mm** |
+| caso reale: pezzi sulla tavola | 216 | **208** — otto valvole in meno |
+| le 14 tavole agli atti: pieghe e sormonti | — | gli stessi, tavola per tavola |
+
+Sulla prova pulita A (§7), composta per lo sfiato di prima, 8 dei 20 sormonti e i 6 stacchi più lunghi del minimo
+erano degli sfiati: è il guadagno che resta a chi compone il piano con le istruzioni nuove.
+
+### Il vincolo, e perché il simbolo è alto 7,5
+
+Il motore vuole fra un raccordo e il pezzo che ne pende **due passi**, 5 mm (D-113), e il raccordo sporge di 2,5 sulla
+linea. Sulla pompa di calore mandata e ritorno sono a 15 mm: dal ritorno alla mandata restano 7,5 mm, e lì lo sfiato
+non ci sta, né alto 10 né alto 7,5. Sul volano coricato sul ritorno (D-196), dove lo sfiato sta addosso al cielo senza
+stacco, alto 10 toccherebbe la mandata e alto 7,5 ne resta a 2,5: per questo 7,5. Il rubinetto è grande quanto il segno
+della valvola in linea.
+
+### Che cosa è cambiato, oltre al simbolo
+
+- **Il catalogo**: `air-vent` e `air-vent-solar` si disegnano col simbolo nuovo; `air-vent-plain` è la variante senza
+  rubinetto. Le regole non propongono mai una variante: il catalogo lo dice in `providing`.
+- **La validazione** ferma una valvola d'intercettazione sullo stacco di uno sfiato col rubinetto
+  (`AIR_VENT_ISOLATED_TWICE`): un grafo scritto prima la dichiarava, e disegnerebbe due rubinetti.
+- **I piani agli atti** posavano lo sfiato alto 5: quelli che lo mettevano addosso a un volano (la tavola D, la tavola dei
+  simboli nuovi) lo alzano di 2,5, e la porta resta dov'era; `tavole_di_prova.py` sposta gli sfiati della differenza fra
+  10 — l'altezza con cui quei piani furono scritti — e quella di oggi.
+- **Capire e Comporre**: lo sfiato si scrive senza valvola; si pende a due passi dal raccordo, oltre la colonna di
+  mandata.
+
+### Una cosa vista
+
+- ⚠ **Sul caso, togliendo la valvola dallo sfiato del volano dell'ACS, le valvole sugli attacchi predisposti hanno cambiato
+  nome**: prima le metteva la regola del volano, col nome del volano; ora la regola del confine, col nome del confine.
+  `completa` l'ha detto — «accessori tolti che non tolgono niente» — e l'elenco dei tolti si è corretto con i nomi nuovi.
+  È il meccanismo di D-201 che funziona; ma lo stesso pezzo sullo stesso attacco ha preso un altro nome per un cambiamento
+  altrove nel grafo.
+
+### Le prove
+
+`tests/graphics/test_sfiato_con_rubinetto.py` (il simbolo, la regola che non propone la variante, lo sfiato sotto la
+mandata sulla tavola D) e `tests/rules/test_accessori_dichiarati.py` (la valvola doppia): **rosse su `main`, verdi
+adesso**. Suite: 2042 passate, 15 saltate, 10 attese rosse.
+
 ## 7. La 1.4.0 in una sessione pulita (I-208)
 
 **3 ottobre 2026, sera** · input **I-208**, **I-209**

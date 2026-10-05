@@ -97,6 +97,7 @@ def test_upright_symbols_declare_only_their_own_orientation() -> None:
 def test_every_other_shipped_symbol_admits_all_four_rotations() -> None:
     restricted = {
         "air-vent",
+        "air-vent-with-valve",
         "expansion-connection",
         "heat-pump-air-water",
         "dhw-cylinder",
