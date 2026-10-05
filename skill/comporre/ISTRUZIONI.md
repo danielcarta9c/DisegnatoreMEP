@@ -86,10 +86,9 @@ linea fra loro fa **due pieghe** e te le porti dietro per tutta la tavola.
 stesse quote. Un volano **a due attacchi** è **coricato e in linea** (**D-196**): alto 10, con `a`
 e `b` in asse a +5. Per metterlo sul ritorno di una pompa, che esce a +20, lo posi **15 mm più
 in basso** della pompa, e il ritorno gli passa dentro dritto, come in una valvola. Lo
-**sfiato** (5 × 5) sta sul suo cielo, addosso all'attacco `vent` — `x` +10, `y` −5 rispetto al
-volano —, e resta 5 mm sotto la mandata, che gli passa sopra dritta. Dal 5 ottobre 2026 lo
-sfiato porta il suo rubinetto ed è alto **7,5** (I-211): sul cielo del volano sta a `y` **−7,5**, e
-dalla mandata ne resta 2,5. Lo **scarico** sta sotto,
+**sfiato** — un pezzo solo col suo rubinetto, 5 × 7,5 (I-211) — sta sul suo cielo, addosso
+all'attacco `vent`: `x` +10, `y` **−7,5** rispetto al volano. Resta 2,5 mm sotto la mandata,
+che gli passa sopra dritta. Lo **scarico** sta sotto,
 addosso a `drain`. Fino al 2 ottobre 2026 il volano a due attacchi era ritto, 25 × 45, e il
 suo sfiato arrivava esattamente sulla quota della mandata: la mandata non poteva passargli
 sopra (I-172).

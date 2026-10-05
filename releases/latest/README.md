@@ -1,6 +1,6 @@
 # L'ultima release: 1.4.1
 
-`DisegnatoreMEP-v1.4.1.zip` — sha256 `338263144c7dd6df…`, 104 file — è **lo sfiato col suo rubinetto** (I-210, I-211,
+`DisegnatoreMEP-v1.4.1.zip` — sha256 `9179799118e2fbba…`, 104 file — è **lo sfiato col suo rubinetto** (I-210, I-211,
 D-210). Si carica come ogni skill personale, dallo ZIP così com'è.
 
 Rispetto alla 1.4.0:
