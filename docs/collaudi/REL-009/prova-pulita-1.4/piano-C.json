@@ -1,0 +1,570 @@
+{
+  "formato": "A1",
+  "note": [
+    "Gruppo riscaldamento sopra (r1..r4 impilate, passo 50), gruppo ACS sotto (a1, a2): ordine delle macchine del grafo.",
+    "Collettori primari: ritorno piu' vicino alle PdC. Misurato (B3): mandata vicina 21 pieghe e 12 sormonti con 2 autostrade primarie piegate oltre l'imposto; ritorno vicino 17 pieghe e 14 sormonti, autostrade primarie rette. Tenuto il ritorno vicino perche' B1 sta sopra B3.",
+    "Volani alla quota della PdC di testa: autostrade primarie rette (D-159).",
+    "Distribuzione I-204/I-205: coppia del secondario sulle quote del volano fino a MZ2 (zona lontana, 5 collettori); MZ1 (zona vicina) scende dalla mandata sotto il ritorno.",
+    "Bollitore a destra del volano ACS, coil_in alla quota di secondary_out; AF dal basso, con la risalita a x 325 fuori dalla colonna di vaso e manometro del ritorno di carico (che pendono fino a +50 sotto il ritorno)."
+  ],
+  "pezzi": {
+    "pdc-r1": {
+      "x": 0,
+      "y": 0,
+      "regola": "A2 — PdC risc impilate, passo costante; r1 alla quota del volano (D-159)"
+    },
+    "tee-valve-safety-pdc-r1-water-supply": {
+      "x": 45,
+      "y": 2.5
+    },
+    "valve-safety-pdc-r1-water-supply": {
+      "x": 45,
+      "y": -17.5,
+      "regola": "A4 — sicurezza addosso alla mandata, stacco minimo"
+    },
+    "tee-sfiato-r1": {
+      "x": 70,
+      "y": 17.5
+    },
+    "sfiato-r1": {
+      "x": 70,
+      "y": 10,
+      "regola": "I-212 — sfiato addosso al raccordo"
+    },
+    "pdc-r2": {
+      "x": 0,
+      "y": 50,
+      "regola": "A2 — PdC risc impilate, passo costante; r1 alla quota del volano (D-159)"
+    },
+    "tee-valve-safety-pdc-r2-water-supply": {
+      "x": 45,
+      "y": 52.5
+    },
+    "valve-safety-pdc-r2-water-supply": {
+      "x": 45,
+      "y": 32.5,
+      "regola": "A4 — sicurezza addosso alla mandata, stacco minimo"
+    },
+    "tee-sfiato-r2": {
+      "x": 70,
+      "y": 67.5
+    },
+    "sfiato-r2": {
+      "x": 70,
+      "y": 60,
+      "regola": "I-212 — sfiato addosso al raccordo"
+    },
+    "pdc-r3": {
+      "x": 0,
+      "y": 100,
+      "regola": "A2 — PdC risc impilate, passo costante; r1 alla quota del volano (D-159)"
+    },
+    "tee-valve-safety-pdc-r3-water-supply": {
+      "x": 45,
+      "y": 102.5
+    },
+    "valve-safety-pdc-r3-water-supply": {
+      "x": 45,
+      "y": 82.5,
+      "regola": "A4 — sicurezza addosso alla mandata, stacco minimo"
+    },
+    "tee-sfiato-r3": {
+      "x": 70,
+      "y": 117.5
+    },
+    "sfiato-r3": {
+      "x": 70,
+      "y": 110,
+      "regola": "I-212 — sfiato addosso al raccordo"
+    },
+    "pdc-r4": {
+      "x": 0,
+      "y": 150,
+      "regola": "A2 — PdC risc impilate, passo costante; r1 alla quota del volano (D-159)"
+    },
+    "tee-valve-safety-pdc-r4-water-supply": {
+      "x": 45,
+      "y": 152.5
+    },
+    "valve-safety-pdc-r4-water-supply": {
+      "x": 45,
+      "y": 132.5,
+      "regola": "A4 — sicurezza addosso alla mandata, stacco minimo"
+    },
+    "tee-sfiato-r4": {
+      "x": 70,
+      "y": 167.5
+    },
+    "sfiato-r4": {
+      "x": 70,
+      "y": 160,
+      "regola": "I-212 — sfiato addosso al raccordo"
+    },
+    "tj-pr-3": {
+      "x": 117.5,
+      "y": 2.5,
+      "regola": "B3 — collettore di mandata verticale accanto alle PdC"
+    },
+    "tj-pr-2": {
+      "x": 117.5,
+      "y": 52.5,
+      "regola": "B3 — collettore di mandata verticale accanto alle PdC"
+    },
+    "tj-pr-1": {
+      "x": 117.5,
+      "y": 102.5,
+      "regola": "B3 — collettore di mandata verticale accanto alle PdC"
+    },
+    "ts-pr-3": {
+      "x": 107.5,
+      "y": 17.5,
+      "regola": "B3 — collettore di ritorno verticale accanto alle PdC"
+    },
+    "ts-pr-2": {
+      "x": 107.5,
+      "y": 67.5,
+      "regola": "B3 — collettore di ritorno verticale accanto alle PdC"
+    },
+    "ts-pr-1": {
+      "x": 107.5,
+      "y": 117.5,
+      "regola": "B3 — collettore di ritorno verticale accanto alle PdC"
+    },
+    "tee-filling-unit-ts-pr-3-a-b": {
+      "x": 137.5,
+      "y": 17.5,
+      "regola": "B8 — sul ritorno generale, alla sua quota"
+    },
+    "filling-unit-ts-pr-3-a": {
+      "x": 137.5,
+      "y": 32.5,
+      "regola": "A4 — appeso sotto il ritorno generale",
+      "rotazione": 180
+    },
+    "inlet-filling-unit-ts-pr-3-a": {
+      "x": 137.5,
+      "y": 52.5,
+      "regola": "A4 — AF addosso al gruppo di riempimento"
+    },
+    "volano-risc": {
+      "x": 200,
+      "y": 0,
+      "regola": "D-159 — stessa y di pdc-r1: mandata e ritorno primari retti"
+    },
+    "sfiato-volano-risc": {
+      "x": 210,
+      "y": -7.5,
+      "regola": "sul cielo del volano"
+    },
+    "drain-connection-volano-risc-primary-in": {
+      "x": 210,
+      "y": 55,
+      "regola": "A4 — scarico addosso al volano"
+    },
+    "tee-pressure-gauge-tj-mz-b": {
+      "x": 245,
+      "y": 17.5,
+      "regola": "B8 — sul ritorno secondario, alla sua quota"
+    },
+    "pressure-gauge-tj-mz-b": {
+      "x": 245,
+      "y": 37.5,
+      "regola": "I-205 — pende in giu' dal ritorno"
+    },
+    "tee-expansion-connection-tj-mz-b": {
+      "x": 262.5,
+      "y": 17.5,
+      "regola": "B8"
+    },
+    "expansion-connection-tj-mz-b": {
+      "x": 262.5,
+      "y": 37.5,
+      "regola": "I-205 — pende in giu' dal ritorno"
+    },
+    "ts-mz": {
+      "x": 285,
+      "y": 2.5,
+      "regola": "I-205 — ripartizione sulla mandata; la zona vicina MZ1 scende sotto il ritorno"
+    },
+    "tj-mz": {
+      "x": 337.5,
+      "y": 17.5,
+      "regola": "I-205 — la colonna di ritorno MZ1 sale fino alla dorsale"
+    },
+    "coll-mz1-1": {
+      "x": 365,
+      "y": 40,
+      "regola": "B12 — collettori a destra delle colonne, passo 60"
+    },
+    "fc-mz1-1": {
+      "x": 370,
+      "y": 75,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz1-1": {
+      "x": 390,
+      "y": 75,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "coll-mz1-2": {
+      "x": 365,
+      "y": 100,
+      "regola": "B12 — collettori a destra delle colonne, passo 60"
+    },
+    "fc-mz1-2": {
+      "x": 370,
+      "y": 135,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz1-2": {
+      "x": 390,
+      "y": 135,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "coll-mz1-3": {
+      "x": 365,
+      "y": 160,
+      "regola": "B12 — collettori a destra delle colonne, passo 60"
+    },
+    "fc-mz1-3": {
+      "x": 370,
+      "y": 195,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz1-3": {
+      "x": 390,
+      "y": 195,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "ts-mz1-1": {
+      "x": 327.5,
+      "y": 40,
+      "regola": "B12 — testa colonna mandata MZ1"
+    },
+    "ts-mz1-2": {
+      "x": 327.5,
+      "y": 100
+    },
+    "tj-mz1-1": {
+      "x": 337.5,
+      "y": 50,
+      "regola": "B12 — colonna ritorno MZ1",
+      "rotazione": 90,
+      "specchio": true
+    },
+    "tj-mz1-2": {
+      "x": 337.5,
+      "y": 110
+    },
+    "coll-mz2-1": {
+      "x": 455,
+      "y": 40,
+      "regola": "B12 — collettori a destra delle colonne, passo 60"
+    },
+    "fc-mz2-1": {
+      "x": 460,
+      "y": 75,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz2-1": {
+      "x": 480,
+      "y": 75,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "coll-mz2-2": {
+      "x": 455,
+      "y": 100,
+      "regola": "B12 — collettori a destra delle colonne, passo 60"
+    },
+    "fc-mz2-2": {
+      "x": 460,
+      "y": 135,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz2-2": {
+      "x": 480,
+      "y": 135,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "coll-mz2-3": {
+      "x": 455,
+      "y": 160,
+      "regola": "B12 — collettori a destra delle colonne, passo 60"
+    },
+    "fc-mz2-3": {
+      "x": 460,
+      "y": 195,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz2-3": {
+      "x": 480,
+      "y": 195,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "coll-mz2-4": {
+      "x": 455,
+      "y": 220,
+      "regola": "B12 — collettori a destra delle colonne, passo 60"
+    },
+    "fc-mz2-4": {
+      "x": 460,
+      "y": 255,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz2-4": {
+      "x": 480,
+      "y": 255,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "coll-mz2-5": {
+      "x": 455,
+      "y": 280,
+      "regola": "B12 — collettori a destra delle colonne, passo 60"
+    },
+    "fc-mz2-5": {
+      "x": 460,
+      "y": 315,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz2-5": {
+      "x": 480,
+      "y": 315,
+      "regola": "I-205 p.5",
+      "rotazione": 270,
+      "specchio": true
+    },
+    "ts-mz2-1": {
+      "x": 427.5,
+      "y": 40,
+      "regola": "I-205 p.4 — colonna mandata MZ2",
+      "rotazione": 90
+    },
+    "tj-mz2-1": {
+      "x": 417.5,
+      "y": 50,
+      "regola": "I-205 p.4 — colonna ritorno MZ2",
+      "rotazione": 90,
+      "specchio": true
+    },
+    "ts-mz2-2": {
+      "x": 427.5,
+      "y": 100
+    },
+    "tj-mz2-2": {
+      "x": 417.5,
+      "y": 110
+    },
+    "ts-mz2-3": {
+      "x": 427.5,
+      "y": 160
+    },
+    "tj-mz2-3": {
+      "x": 417.5,
+      "y": 170
+    },
+    "ts-mz2-4": {
+      "x": 427.5,
+      "y": 220
+    },
+    "tj-mz2-4": {
+      "x": 417.5,
+      "y": 230
+    },
+    "pdc-a1": {
+      "x": 0,
+      "y": 320,
+      "regola": "A2 — PdC ACS impilate; a1 alla quota del volano ACS"
+    },
+    "tee-valve-safety-pdc-a1-water-supply": {
+      "x": 45,
+      "y": 322.5
+    },
+    "valve-safety-pdc-a1-water-supply": {
+      "x": 45,
+      "y": 302.5,
+      "regola": "A4"
+    },
+    "tee-sfiato-a1": {
+      "x": 70,
+      "y": 337.5
+    },
+    "sfiato-a1": {
+      "x": 70,
+      "y": 330,
+      "regola": "I-212"
+    },
+    "pdc-a2": {
+      "x": 0,
+      "y": 370,
+      "regola": "A2 — PdC ACS impilate; a1 alla quota del volano ACS"
+    },
+    "tee-valve-safety-pdc-a2-water-supply": {
+      "x": 45,
+      "y": 372.5
+    },
+    "valve-safety-pdc-a2-water-supply": {
+      "x": 45,
+      "y": 352.5,
+      "regola": "A4"
+    },
+    "tee-sfiato-a2": {
+      "x": 70,
+      "y": 387.5
+    },
+    "sfiato-a2": {
+      "x": 70,
+      "y": 380,
+      "regola": "I-212"
+    },
+    "tj-pa": {
+      "x": 117.5,
+      "y": 322.5,
+      "regola": "B3 — collettore mandata ACS"
+    },
+    "ts-pa": {
+      "x": 107.5,
+      "y": 337.5,
+      "regola": "B3 — collettore ritorno ACS"
+    },
+    "tee-filling-unit-ts-pa-a-b": {
+      "x": 137.5,
+      "y": 337.5,
+      "regola": "B8"
+    },
+    "filling-unit-ts-pa-a": {
+      "x": 137.5,
+      "y": 352.5,
+      "regola": "A4",
+      "rotazione": 180
+    },
+    "inlet-filling-unit-ts-pa-a": {
+      "x": 137.5,
+      "y": 372.5,
+      "regola": "A4"
+    },
+    "volano-acs": {
+      "x": 200,
+      "y": 320,
+      "regola": "D-159 — stessa y di pdc-a1"
+    },
+    "sfiato-volano-acs": {
+      "x": 210,
+      "y": 312.5
+    },
+    "drain-connection-volano-acs-aux-in": {
+      "x": 210,
+      "y": 375,
+      "regola": "A4"
+    },
+    "solare-mandata": {
+      "x": 235,
+      "y": 345,
+      "regola": "A4 — attacchi predisposti addosso al volano"
+    },
+    "solare-ritorno": {
+      "x": 235,
+      "y": 355,
+      "regola": "A4"
+    },
+    "bollitore": {
+      "x": 340,
+      "y": 317.5,
+      "regola": "D-159 — coil_in alla quota di secondary_out: mandata di carico retta; il ritorno scala di 5 (interasse 10, caso noto)"
+    },
+    "tee-expansion-connection-volano-acs-secondary-in": {
+      "x": 285,
+      "y": 337.5,
+      "regola": "B8"
+    },
+    "expansion-connection-volano-acs-secondary-in": {
+      "x": 285,
+      "y": 360,
+      "regola": "pende in giu' dal ritorno di carico"
+    },
+    "tee-pressure-gauge-volano-acs-secondary-in": {
+      "x": 305,
+      "y": 337.5,
+      "regola": "B8"
+    },
+    "pressure-gauge-volano-acs-secondary-in": {
+      "x": 305,
+      "y": 360
+    },
+    "mixing-valve-thermostatic-bollitore-dhw-out": {
+      "x": 342.5,
+      "y": 295.0,
+      "regola": "D-175 — sopra dhw_out: calda da sotto, uscita in alto, AF a destra",
+      "rotazione": 270
+    },
+    "utenze-acs": {
+      "x": 345,
+      "y": 270.0,
+      "regola": "A4 — addosso alla miscelatrice"
+    },
+    "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
+      "x": 370,
+      "y": 295.0,
+      "regola": "A4 — AF sulla terza via"
+    },
+    "ricircolo-utenze": {
+      "x": 410,
+      "y": 327.5,
+      "regola": "A4/D-176 — ricircolo sul lato destro del bollitore"
+    },
+    "tee-expansion-connection-dhw-bollitore-cold-in": {
+      "x": 322.5,
+      "y": 397.5,
+      "regola": "B8 — sulla linea AF"
+    },
+    "expansion-connection-dhw-bollitore-cold-in": {
+      "x": 322.5,
+      "y": 417.5,
+      "regola": "A4 — vaso sanitario sotto la linea AF"
+    },
+    "tee-drain-connection-cold-bollitore-cold-in": {
+      "x": 275,
+      "y": 397.5,
+      "regola": "B8"
+    },
+    "drain-connection-cold-bollitore-cold-in": {
+      "x": 275,
+      "y": 410,
+      "regola": "A4"
+    },
+    "acquedotto": {
+      "x": 240,
+      "y": 397.5,
+      "regola": "A4 — AF addosso alla catena del bollitore"
+    }
+  }
+}

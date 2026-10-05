@@ -24,7 +24,10 @@ ferma la valvola doppia sullo stacco (`AIR_VENT_ISOLATED_TWICE`). Rapporto: `doc
   alle valvole degli attacchi predisposti. `completa` lo segnala; il nome però dipende da un cambiamento altrove.
 - **Lo sfiato col rubinetto pende addosso al raccordo** (I-212): stacco minimo zero per lui (`place.pende_addosso`);
   gli altri appesi restano a due passi.
-- **I numeri**: il prossimo input è **I-213**, la prossima decisione **D-211**.
+- **La prova pulita C** (RAPPORTO §9, I-213): con il solo ZIP 1.4.1 una sessione nuova mette gli otto sfiati addosso
+  da sola — tubo zero, nessun incrocio, 14 pieghe e 14 sormonti in 9 minuti. Resta del PO la distanza della valvola di
+  sicurezza sopra il suo raccordo (10 mm oggi, come gli altri appesi).
+- **I numeri**: il prossimo input è **I-214**, la prossima decisione **D-211**.
 
 ## Da dove ripartiva — scritto il 3 ottobre 2026, sera, alla 1.4.0
 
