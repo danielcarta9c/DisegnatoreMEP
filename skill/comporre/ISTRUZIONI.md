@@ -86,8 +86,9 @@ linea fra loro fa **due pieghe** e te le porti dietro per tutta la tavola.
 stesse quote. Un volano **a due attacchi** è **coricato e in linea** (**D-196**): alto 10, con `a`
 e `b` in asse a +5. Per metterlo sul ritorno di una pompa, che esce a +20, lo posi **15 mm più
 in basso** della pompa, e il ritorno gli passa dentro dritto, come in una valvola. Lo
-**sfiato** (5 × 5) sta sul suo cielo, addosso all'attacco `vent` — `x` +10, `y` −5 rispetto al
-volano —, e resta 5 mm sotto la mandata, che gli passa sopra dritta. Lo **scarico** sta sotto,
+**sfiato** — un pezzo solo col suo rubinetto, 5 × 7,5 (I-211) — sta sul suo cielo, addosso
+all'attacco `vent`: `x` +10, `y` **−7,5** rispetto al volano. Resta 2,5 mm sotto la mandata,
+che gli passa sopra dritta. Lo **scarico** sta sotto,
 addosso a `drain`. Fino al 2 ottobre 2026 il volano a due attacchi era ritto, 25 × 45, e il
 suo sfiato arrivava esattamente sulla quota della mandata: la mandata non poteva passargli
 sopra (I-172).
@@ -482,9 +483,14 @@ verso destra o su o giù, ma non una da una parte e una dall'altra».
    valvola dell'uscita). Due linee dritte per terminale; collettori uno ogni **60 mm**.
 
 **Prima le autostrade**, anche per il motore (I-201, I-203): instrada le autostrade, poi la
-distribuzione, per ultimi gli stacchi, e un'autostrada disegnata non si sposta più. Uno sfiato
-sul ritorno di una pompa di calore che sale attraverso la mandata posa la sua valvola **oltre**
-l'incrocio: lasciagli sopra la mandata almeno 20 mm per valvola e sfiato.
+distribuzione, per ultimi gli stacchi, e un'autostrada disegnata non si sposta più.
+
+**Lo sfiato è un pezzo solo, 5 × 7,5, con il suo rubinetto** (I-210, I-211), e pende **addosso al
+suo raccordo, senza tubo in mezzo** (I-212): l'origine dello sfiato alla `x` del raccordo e alla sua `y`
+−7,5, così che la porta dello sfiato stia sul braccio del raccordo. Sale 10 mm dalla linea: sul ritorno
+di una pompa di calore, con la mandata 15 mm sopra, resta 5 mm sotto la mandata e **non la scavalca
+mai**, neppure sulla macchina la cui mandata prosegue come autostrada. Sul cielo di un volano sta
+addosso all'attacco `vent`, a `y` −7,5. Ogni millimetro di stacco in più lo segnala A4.
 
 ### D1 — Il disegno non arriva al bordo
 

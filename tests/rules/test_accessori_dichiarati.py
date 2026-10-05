@@ -95,10 +95,10 @@ def _dichiarato() -> ProjectModel:
         _in_linea(grafo, _uscente(grafo, pompa, "water_supply"), f"rit-{pompa}", "valve-check")
         ritorno = _entrante(grafo, pompa, "water_return")
         _in_linea(grafo, ritorno, f"t-sfiato-{pompa}", "tee-branch")
-        _stacco(grafo, ritorno["network_id"], (f"t-sfiato-{pompa}", "branch"),
-                [(f"vs-sfiato-{pompa}", "valve-isolation"), (f"sfiato-{pompa}", "air-vent")])
+        # Lo sfiato porta il suo rubinetto (I-211): la valvola sullo stacco non si scrive.
+        _stacco(grafo, ritorno["network_id"], (f"t-sfiato-{pompa}", "branch"), [(f"sfiato-{pompa}", "air-vent")])
     for volano, rete in (("volano-risc", "primario-risc"), ("volano-acs", "primario-acs")):
-        _stacco(grafo, rete, (volano, "vent"), [(f"vs-sfiato-{volano}", "valve-isolation"), (f"sfiato-{volano}", "air-vent")])
+        _stacco(grafo, rete, (volano, "vent"), [(f"sfiato-{volano}", "air-vent")])
     for zona in ("mz1", "mz2"):
         mandata = _uscente(grafo, f"pompa-{zona}", "b")
         _in_linea(grafo, mandata, f"t-man-{zona}", "tee-branch")
@@ -172,3 +172,22 @@ def test_le_istruzioni_dicono_quando_la_ferramenta_entra_nel_grafo() -> None:
     assert "**Entra, se il progettista la mette in un posto preciso** (I-193)" in testo
     assert "Le regole **non lo duplicano**" in testo
     assert "`\"altrove\": \"pezzo.attacco\"`" in testo
+
+
+def test_lo_sfiato_col_rubinetto_non_vuole_una_seconda_valvola_sullo_stacco() -> None:
+    """Dal 5 ottobre 2026 lo sfiato si disegna con il suo rubinetto (I-210, I-211). Un
+    grafo scritto prima — «sfiato con valvola a sfera» (I-193), la valvola sullo stacco e
+    lo sfiato dopo — disegnerebbe due rubinetti: la validazione lo ferma e dice come si
+    corregge. Lo sfiato senza rubinetto, la variante, la valvola la tiene."""
+    def con_la_valvola(voce: str) -> ProjectModel:
+        grafo = json.loads(CASO.read_text(encoding="utf-8"))
+        ritorno = _entrante(grafo, "pdc-r1", "water_return")
+        _in_linea(grafo, ritorno, "t-sfiato", "tee-branch")
+        _stacco(grafo, ritorno["network_id"], ("t-sfiato", "branch"), [("vs-sfiato", "valve-isolation"), ("sfiato", voce)])
+        return ProjectModel.model_validate(grafo)
+
+    rilievi = validate_project(con_la_valvola("air-vent"), catalog()).issues
+    doppi = [item for item in rilievi if item.code == "AIR_VENT_ISOLATED_TWICE"]
+    assert len(doppi) == 1 and doppi[0].entity_ids == ["sfiato", "vs-sfiato"]
+    assert "air-vent-plain" in doppi[0].message
+    assert validate_project(con_la_valvola("air-vent-plain"), catalog()).ok

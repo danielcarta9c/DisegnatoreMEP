@@ -55,15 +55,15 @@ modello da riusare.
 | | |
 |---|---|
 | `main` | **la testa che leggi adesso** (non si scrive uno SHA: §7, trappola 2). L'ultima fusione è la PR **#75**, la **1.4.0** — `REL-009`, punti 6 e 7 —, dopo la **#74** (il punto 6, la tavola del caso rifatta, D-206 … D-208), la **#73** (la chiusura della sessione della 1.3.0), la **#72** (la 1.3.0, punti 1–4), la **#71** (la 1.2.2, la prima che si carica su claude.ai, D-200), la **#70** (la 1.2.1, D-199), la **#69** e la **#68** (`REL-005`, la 1.2.0 e la pulizia del solutore, D-197, D-198) |
-| Release | **1.4.0**, `releases/latest/DisegnatoreMEP-v1.4.0.zip`, 104 file (D-209): la costruisce solo `scripts/costruisci-skill.py` e la pubblica solo `tests/test_le_release.py` verde (D-200, `CLAUDE.md`). La 1.2.0 e la 1.2.1 sono nell'archivio e non si caricano |
+| Release | **1.4.1**, `releases/latest/DisegnatoreMEP-v1.4.1.zip` — lo sfiato col suo rubinetto (D-210) —; prima la **1.4.0** (D-209): la costruisce solo `scripts/costruisci-skill.py` e la pubblica solo `tests/test_le_release.py` verde (D-200, `CLAUDE.md`). La 1.2.0 e la 1.2.1 sono nell'archivio e non si caricano |
 | Pacchetto attivo | **`REL-009`, la tavola del costruito**: i punti 1–4 nella 1.3.0, i punti 6 e 7 nella 1.4.0 (la tavola del caso rifatta, approvata dal PO — I-206 —, e il tempo: `disegna` sul caso da 107 a 3,4 s, `docs/collaudi/REL-009/RAPPORTO.md` §6). Restano il limite d'intervento facoltativo (I-195) e la tavola di consegna del caso, che fa il PO nella sua sessione di lavoro (I-200) |
 | Il prodotto in chat | **la skill gira su claude.ai**: il PO l'ha usata su un impianto vero (I-191) e la usa adesso per il caso. Il percorso è testo → grafo → `completa` → approvazione → piano → tavola PDF e DXF, con i rilievi |
 | Export DXF | **costruito e approvato** (`REL-004`, I-140, D-189): AutoCAD 2013, millimetri |
-| La suite | **zero rosse** dal 2 ottobre (D-197): 2035 passate, 15 saltate, 10 attese rosse, alla 1.4.0 |
+| La suite | **zero rosse** dal 2 ottobre (D-197): 2044 passate, 15 saltate, 10 attese rosse, alla 1.4.1 |
 | La regressione | `docs/collaudi/REL-005/pulizia-del-solutore/uscite.sh` e `confronta.sh`: 54 uscite, identiche dalla 1.2.0 alla 1.3.0; nella 1.4.0 cambia la sola tavola di prova 6 (D-208). **Il confronto si lancia con `PYTHONPATH` sul codice di ciascuna copia**: il pacchetto è installato in modo modificabile e una copia di `main` importerebbe il codice del ramo. Le quattordici tavole agli atti, nel risultato e nel tempo: `docs/collaudi/REL-009/la-1.4-sulle-tavole-agli-atti/banco.py` |
 | Chi sviluppa, chi fonde | **un agente solo** (D-147), agenti paralleli dentro la sessione (D-152). **La fusione la approva il PO guardando le tavole** (D-146) |
 | Dati dei clienti | **mai nel repository**, che è pubblico: un caso reale si ricostruisce anonimo, e prima di ogni commit si cerca nel diff quello che lo identifica (`REL-009`) |
-| Registro degli input | **209 righe**, al 3 ottobre; il prossimo è **I-210**, la prossima decisione **D-210** |
+| Registro degli input | **215 righe**, al 5 ottobre; il prossimo è **I-216**, la prossima decisione **D-211** |
 
 ## 2-bis. Com'era al 24 settembre 2026 — storia
 

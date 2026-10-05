@@ -166,7 +166,7 @@ numerati. L'indirizzo dice dove sta il pezzo; la sigla che cos'e'.
 | CS.01.N.03 | **VI-13** | Valvola di intercettazione | acqua di riscaldamento |
 | CS.01.N.04 | **RAD-01** | Radiatore | acqua di riscaldamento |
 | RS.01.N.01 | **VI-14** | Valvola di intercettazione | acqua di riscaldamento |
-| CP.01.N.09.1 | **SF-01** | Valvola di sfogo aria · pende dal tubo con una propria derivazione | acqua di riscaldamento |
+| CP.01.N.09.1 | **SF-01** | Valvola di sfogo aria con rubinetto di intercettazione · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | CP.01.N.09.2 | **SC-01** | Attacco di scarico · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | CP.01.N.02.1 | **VS-02** | Valvola di sicurezza · pende dal tubo con una propria derivazione | acqua di riscaldamento |
 | AF.01.N.01 | **AF-01** | Alimentazione acqua fredda | acqua fredda sanitaria |
@@ -209,7 +209,7 @@ Da **CAL-01** a **VOL-01**, circuito primario.
     - qui arriva **CP.02**, da **PDC-01**, entrando dal braccio 1
 8. **CP.01.N.08 · VI-03** Valvola di intercettazione
 9. **CP.01.N.09 · VOL-01** Volano termico a quattro attacchi · tiene in serbo acqua di riscaldamento
-    - **CP.01.N.09.1 · SF-01** Valvola di sfogo aria · pende dallo stacco
+    - **CP.01.N.09.1 · SF-01** Valvola di sfogo aria con rubinetto di intercettazione · pende dallo stacco
     - **CP.01.N.09.2 · SC-01** Attacco di scarico · pende dallo stacco
     - qui arriva **RS.01**, da **RAD-01**, entrando dal braccio 4
 

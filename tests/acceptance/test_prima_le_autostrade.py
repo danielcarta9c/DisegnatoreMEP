@@ -43,7 +43,10 @@ def _tavola(cartella: Path, nomi_dello_stacco: tuple[str, str]) -> tuple[str, st
     grafo["components"] += [
         {"id": "tee-sfiato", "definition_id": "tee-branch", "tag": None, "properties": {}},
         {"id": "valvola-sfiato", "definition_id": "valve-isolation", "tag": None, "properties": {}},
-        {"id": "sfiato-pdc", "definition_id": "air-vent", "tag": None, "properties": {}},
+        # Lo sfiato senza rubinetto con la valvola sullo stacco: dal 5 ottobre 2026 lo
+        # sfiato di norma porta il suo rubinetto (I-211), ma qui serve uno stacco con un
+        # organo in mezzo, ed e' la stessa geometria della prova del 3 ottobre.
+        {"id": "sfiato-pdc", "definition_id": "air-vent-plain", "tag": None, "properties": {}},
     ]
     grafo["connections"] = [item for item in grafo["connections"] if item["id"] != "p7"] + [
         _linea("p7a", "volano.b", "tee-sfiato.a"),

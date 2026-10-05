@@ -2463,6 +2463,31 @@ def place_sheet(
 # ---------------------------------------------------------------------------
 
 
+SIMBOLI_ADDOSSO_AL_RACCORDO = frozenset({"air-vent-with-valve"})
+"""Gli appesi che pendono **addosso** al loro raccordo, senza tubo in mezzo (I-212).
+
+Lo sfiato col suo rubinetto (I-211) porta nel simbolo lo stelo e il rubinetto: il tubo
+fino al raccordo e' gia' disegnato. Il PO, sui due passi di stacco: «non mi va bene il
+pezzo di tubo cosi' lungo che va al simbolo, quella e' una regola e si puo' cambiare.
+vorrei che fosse ridotto al minimo». Addosso al raccordo sul ritorno di una pompa di
+calore lo sfiato sale 10 mm, e sotto la mandata, a 15, resta aria."""
+
+
+def pende_addosso(project: ProjectModel, catalog: ComponentRegistry, trunk: Trunk) -> bool:
+    """Lo stacco porta un appeso che pende addosso al suo raccordo (I-212): niente organi
+    in mezzo, e a un capo un simbolo che il proprio tubo lo disegna da se'."""
+    if trunk.inline_component_ids:
+        return False
+    definizioni = {item.id: item.definition_id for item in project.components}
+    voci = [definizioni.get(capo.component_id) for capo in (trunk.start, trunk.end)]
+    return any(
+        voce is not None
+        and catalog.contains(voce)
+        and catalog.resolve(voce).symbol.manifest.id in SIMBOLI_ADDOSSO_AL_RACCORDO
+        for voce in voci
+    )
+
+
 def stub_minimum_mm(
     project: ProjectModel,
     catalog: ComponentRegistry,
@@ -2489,6 +2514,8 @@ def stub_minimum_mm(
     lunghezza di tubo, e la lunghezza costa: e' il ciclo che decide se
     allungarlo, non una costante.
     """
+    if pende_addosso(project, catalog, trunk):
+        return 0.0
     if trunk.inline_component_ids:
         # La fila dalla porta di chi pende, passo di coda compreso; al posto
         # del passo di coda, la soglia piu' un passo dell'altra porta.

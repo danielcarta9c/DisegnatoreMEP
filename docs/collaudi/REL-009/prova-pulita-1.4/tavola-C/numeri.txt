@@ -1,0 +1,1 @@
+Formato A1 · tratte 137 · tratte cedute 0 · rilievi bloccanti 0 · pieghe 14 · sormonti 14 · avvisi e regole: HIGHWAY_IS_NOT_STRAIGHT x1, SUPPLY_AND_RETURN_DO_NOT_RUN_TOGETHER x4

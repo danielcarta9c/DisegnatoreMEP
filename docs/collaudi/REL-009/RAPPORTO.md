@@ -4,6 +4,129 @@ Una sezione per ogni gruppo di punti, la più recente in alto. Il caso è il pri
 ricostruito anonimo in `caso-reale-1/`: il documento della sessione di disegno porta i dati del cliente e non è
 nel repository.
 
+## 9. La 1.4.1 in una sessione pulita (I-213)
+
+**5 ottobre 2026** · input **I-213**, **I-214**, **I-215** · la tavola al PO: «tavola perfetta»; la 1.4.1 fusa (PR #77)
+
+Alla tavola del caso con lo sfiato addosso, il PO: «perché però il motore non ha spostato la valvola di sfiato e
+rifatto bene i tubi? non lo hai proprio fatto? vuoi provare a rigenerare la tavola con una sessione pulita?».
+
+Il motore non sposta i pezzi (D-151): li disegna dove dice il piano. Il piano del caso (§8) l'ha riscritto lo sviluppo
+con `componi_piano.py`. Il metro della skill è una sessione che il piano lo scrive da sola.
+
+### Le tavole, per prime
+
+`prova-pulita-1.4/tavola-C/`: una sessione nuova, con il solo ZIP della 1.4.1 (commit 8930c84) e il grafo anonimo
+del caso, come A e B (§7). Il piano è `piano-C.json`. La tavola qui è rifatta con lo ZIP da quel piano, e la riga dei
+numeri coincide con quella che la sessione ha riportato.
+
+- **Tutti gli otto sfiati stanno addosso**: i sei delle pompe di calore pendono dal raccordo del ritorno, sotto la
+  mandata, e i due dei volani stanno sul cielo del volano. La sessione li ha posati da sola, citando I-212.
+- Nella prova A, con la 1.4.0, gli sfiati delle pompe di calore salivano oltre la mandata e la scavalcavano.
+
+### Le misure
+
+| | minuti | `disegna` lanciati | il più lento | pieghe | sormonti | tubo degli stacchi degli sfiati | sfiati che incrociano una linea |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| A, 1.4.0 (§7) | 8 | 13 | 3,3 s | 15 | 20 | 225 mm¹ | 6¹ |
+| B, 1.4.0 (§7) | 11 | 7 | 3,1 s | 18 | 14 | 225 mm¹ | 2¹ |
+| **C, 1.4.1** | **9** | 8 | 6,6 s | **14** | **14** | **zero** | **0** |
+| il piano del §8, scritto dallo sviluppo | — | — | — | 13 | 12 | zero | 0 |
+
+¹ I piani A e B, ridisegnati con lo ZIP della 1.4.1 e misurati come C, hanno sei sfiati a 32,5 mm e due a 15 mm.
+A4 li segnala tutti: `SERVICE_STUB_LONGER_THAN_ITS_MINIMUM` 8 volte su A e 10 su B. Su C quel controllo non segnala
+niente.
+
+Il disegna più lento di C è il primo, 6,6 s, nell'ambiente della sessione. Lo stesso piano qui si disegna in 4,5 s.
+
+### Una correzione prima della prova
+
+`comporre.md` dava ancora, sul volano coricato, lo sfiato «5 × 5 … `y` −5», e due righe sotto la correzione a
+−7,5: due quote per lo stesso pezzo. Ora la frase dice una quota sola, −7,5. Lo ZIP 1.4.1 è stato ricostruito con
+`costruisci-skill.py`, e `test_le_release.py` passa.
+
+### Che cosa delle istruzioni di Comporre la sessione ha trovato difficile
+
+- B3 chiede l'ordine dei collettori primari con meno sormonti, e §5 fa vincere B1. Qui andavano in direzioni opposte:
+  - mandata vicina: 21 pieghe, 12 sormonti, due autostrade piegate;
+  - ritorno vicino: 17 pieghe, 14 sormonti.
+
+  La sessione ha tenuto B1. È la stessa ambiguità della prova A.
+- La quota del primo raccordo della zona vicina non è scritta. Con la colonna bassa la pompa della zona finiva fra
+  mandata e ritorno; alzando i collettori l'avviso è sparito, ma l'ha capito provando. È lo stesso difetto della
+  prova B.
+- L'acqua fredda del bollitore entra da sinistra, ma lì pende il corredo del ritorno di carico, e non è detto da dove
+  farla arrivare.
+- **La distanza della valvola di sicurezza appesa sopra il suo raccordo non è scritta**: due passi come gli altri
+  appesi, o addosso come lo sfiato? La sessione l'ha posata a 10 mm, come chiede A4. Sulla tavola è il tubo più lungo
+  fra quelli verso un simbolo. È una convenzione grafica: decide il PO.
+
+## 8. Lo sfiato con il suo rubinetto (I-210, I-211)
+
+**5 ottobre 2026** · input **I-210**, **I-211**, **I-212** · decisione **D-210** (approvata, I-215) · la tavola al PO
+
+Il PO, con uno schizzo: lo sfiato e il suo rubinetto in un simbolo solo, «cosi' riusciamo a disegnarlo piccolo e il
+disegno si compatta e abbiamo meno sormonti e meno lunghezze»; e poi «sostituiamo il simbolo ovunque».
+
+### Le tavole, per prime
+
+- **Il caso reale** (`caso-reale-2/tavola/`): su tutte le pompe di calore lo sfiato col rubinetto pende **addosso al
+  raccordo** del ritorno, senza tubo in mezzo (I-212), e sta sotto la mandata: nessuno sfiato la scavalca più, nemmeno
+  sulla prima macchina, la cui mandata è l'autostrada. Sui due volani sta addosso al cielo.
+- Al primo giro lo sfiato pendeva a due passi dal raccordo, come ogni appeso (D-113): il PO, «non mi va bene il pezzo di
+  tubo così lungo che va al simbolo, quella è una regola e si può cambiare» (I-212).
+- **La tavola D della prova del PO**: lo sfiato sul cielo del volano coricato, e la mandata gli passa sopra.
+- Le altre tavole agli atti cambiano solo nel simbolo dello sfiato.
+
+### Le misure
+
+| | prima (1.4.0) | dopo |
+|---|---:|---:|
+| caso reale: pieghe · sormonti | 13 · 14 | 13 · **12** |
+| caso reale: tubo degli stacchi degli sfiati | 175 mm | **zero** |
+| caso reale: pezzi sulla tavola | 216 | **208** — otto valvole in meno |
+| le altre 13 tavole agli atti e le 7 tavole di prova: pieghe e sormonti | — | gli stessi, tavola per tavola |
+
+Sulla prova pulita A (§7), composta per lo sfiato di prima, 8 dei 20 sormonti e i 6 stacchi più lunghi del minimo
+erano degli sfiati: è il guadagno che resta a chi compone il piano con le istruzioni nuove.
+
+### Il vincolo, e perché il simbolo è alto 7,5 e pende addosso
+
+Il motore voleva fra un raccordo e il pezzo che ne pende **due passi**, 5 mm (D-113), e il raccordo sporge di 2,5 sulla
+linea. Sulla pompa di calore mandata e ritorno sono a 15 mm: con due passi lo sfiato non ci stava, né alto 10 né alto
+7,5. **Addosso al raccordo** (I-212) sale 10 mm dalla linea e resta 5 mm sotto la mandata: per lui il minimo della posa
+e di A4 è zero (`place.pende_addosso`), perché il simbolo disegna da sé stelo e rubinetto. Sul volano coricato sul ritorno (D-196), dove lo sfiato sta addosso al cielo senza
+stacco, alto 10 toccherebbe la mandata e alto 7,5 ne resta a 2,5: per questo 7,5. Il rubinetto è grande quanto il segno
+della valvola in linea.
+
+### Che cosa è cambiato, oltre al simbolo
+
+- **Il catalogo**: `air-vent` e `air-vent-solar` si disegnano col simbolo nuovo; `air-vent-plain` è la variante senza
+  rubinetto. Le regole non propongono mai una variante: il catalogo lo dice in `providing`.
+- **La validazione** ferma una valvola d'intercettazione sullo stacco di uno sfiato col rubinetto
+  (`AIR_VENT_ISOLATED_TWICE`): un grafo scritto prima la dichiarava, e disegnerebbe due rubinetti.
+- **I piani agli atti** posavano lo sfiato alto 5: quelli che lo mettevano addosso a un volano (la tavola D, la tavola dei
+  simboli nuovi) lo alzano di 2,5, e la porta resta dov'era; `tavole_di_prova.py` sposta gli sfiati della differenza fra
+  10 — l'altezza con cui quei piani furono scritti — e quella di oggi.
+- **Capire e Comporre**: lo sfiato si scrive senza valvola; pende addosso al raccordo, a `y` del raccordo −7,5.
+- **A4 e la posa**: per lo sfiato col rubinetto lo stacco minimo è zero, e ogni millimetro in più è un rilievo; gli altri
+  appesi restano a due passi. I due impianti di prova del layout lo posano addosso al serbatoio.
+
+### Una cosa vista
+
+- ⚠ **Sul caso, togliendo la valvola dallo sfiato del volano dell'ACS, le valvole sugli attacchi predisposti hanno cambiato
+  nome**: prima le metteva la regola del volano, col nome del volano; ora la regola del confine, col nome del confine.
+  `completa` l'ha detto — «accessori tolti che non tolgono niente» — e l'elenco dei tolti si è corretto con i nomi nuovi.
+  È il meccanismo di D-201 che funziona; ma lo stesso pezzo sullo stesso attacco ha preso un altro nome per un cambiamento
+  altrove nel grafo.
+
+### Le prove
+
+`tests/graphics/test_sfiato_con_rubinetto.py` (il simbolo, la regola che non propone la variante, lo sfiato sotto la
+mandata sulla tavola D), `tests/rules/test_accessori_dichiarati.py` (la valvola doppia) e
+`tests/validation/test_regole_del_piano.py` (A4: lo sfiato addosso, zero di minimo): **rosse su `main`, verdi adesso**.
+Suite: 2044 passate, 15 saltate, 10 attese rosse.
+
 ## 7. La 1.4.0 in una sessione pulita (I-208)
 
 **3 ottobre 2026, sera** · input **I-208**, **I-209**

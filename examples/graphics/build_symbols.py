@@ -154,6 +154,17 @@ SMALL_AIR_VENT = (5.0, 5.0)
 """Lo sfiato, alto la meta' di prima (I-176, D-196): «dobbiamo fare lo sfiato piu'
 piccolo». Su un volano coricato sul ritorno di una pompa di calore il cielo
 dello sfiato resta 5 mm sotto la mandata."""
+AIR_VENT_WITH_VALVE = (5.0, 7.5)
+"""Lo sfiato con il suo rubinetto, in un simbolo solo (I-210, I-211): il PO, con
+uno schizzo, «modificare il simbolo dello sfiato, facendo sfiato e rubinetto
+insieme. cosi' riusciamo a disegnarlo piccolo e il disegno si compatta». Due pezzi
+su uno stacco volevano 20 mm di tubo dritto per la valvola; il simbolo unico
+pende come un manometro, a due passi dal raccordo.
+
+**Alto 7,5, non 10.** Sul volano coricato sul ritorno di una pompa di calore il
+cielo dello sfiato, addosso all'attacco `vent`, sta 7,5 mm sotto la mandata: alto
+10 la toccherebbe, alto 7,5 ne resta a 2,5. Il rubinetto e' grande quanto il segno
+della valvola in linea (3,3 x 3,5)."""
 
 # Le fonti dichiarate nel campo `source` di ogni manifesto (D-067, D-081).
 # La UNI 9511 si cita sempre tramite la fonte secondaria verificata, mai da sola.
@@ -504,6 +515,30 @@ def air_vent_body(w: float, h: float) -> str:
         f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>'
         f'<line x1="{n(cx - w * 0.3)}" y1="{n(h * 0.12)}" '
         f'x2="{n(cx + w * 0.3)}" y2="{n(h * 0.12)}"/>'
+    )
+
+
+def air_vent_with_valve_body(w: float, h: float) -> str:
+    """Lo sfiato sopra il suo rubinetto (I-210, I-211): il tappo, il bulbo, e sotto il
+    segno del valvolame (UNI 9511 Tab. 3) girato in verticale — i due triangoli con le
+    basi in orizzontale e il vertice comune —, poi lo stelo fino alla porta in basso.
+
+    La meta' alta e' lo sfiato di sempre; la valvola ha la larghezza di quella in linea
+    (due terzi del lato), cosi' sulla tavola si legge come la stessa valvola."""
+    cx = w / 2
+    r = w * 0.2
+    cap = h * 0.07
+    bulb = cap + r + h * 0.07
+    top, bottom = h * 0.47, h * 0.93
+    apex = (top + bottom) / 2
+    left, right = w / 6, w - w / 6
+    return (
+        f'<line x1="{n(cx - w * 0.3)}" y1="{n(cap)}" x2="{n(cx + w * 0.3)}" y2="{n(cap)}"/>'
+        f'<circle cx="{n(cx)}" cy="{n(bulb)}" r="{n(r)}"/>'
+        f'<line x1="{n(cx)}" y1="{n(bulb + r)}" x2="{n(cx)}" y2="{n(top)}"/>'
+        f'<path d="M{n(left)} {n(top)} L{n(right)} {n(top)} L{n(cx)} {n(apex)} Z"/>'
+        f'<path d="M{n(left)} {n(bottom)} L{n(right)} {n(bottom)} L{n(cx)} {n(apex)} Z"/>'
+        f'<line x1="{n(cx)}" y1="{n(bottom)}" x2="{n(cx)}" y2="{n(h)}"/>'
     )
 
 
@@ -2174,6 +2209,10 @@ SYMBOLS: list[SymbolSpec] = [
         "air-vent", "Valvola di sfiato aria", SMALL_AIR_VENT, "bottom",
         air_vent_body, SOURCE_PRACTICE_HYDRONIC, AIR_VENT_ROTATIONS_DEG,
         version="2.0.0",
+    ),
+    single_port_symbol(
+        "air-vent-with-valve", "Valvola di sfiato aria con rubinetto", AIR_VENT_WITH_VALVE, "bottom",
+        air_vent_with_valve_body, SOURCE_PRACTICE_HYDRONIC, AIR_VENT_ROTATIONS_DEG,
     ),
     SymbolSpec(
         id="heat-pump-air-water",

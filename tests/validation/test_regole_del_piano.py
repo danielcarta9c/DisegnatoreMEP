@@ -339,7 +339,9 @@ def test_a4_uno_stacco_al_proprio_minimo_non_da_rilievi() -> None:
     qualunque sul foglio (D-062), che su uno stacco vuoto e\' la voce che vince.
     """
     registry = catalogo()
-    project, symbols, routes = _stacco_dello_sfiato(registry, 10.0, False)
+    # Lo sfiato senza rubinetto: quello col rubinetto pende addosso al raccordo, e ha
+    # una prova sua (I-212).
+    project, symbols, routes = _stacco_dello_sfiato(registry, 10.0, False, organo="air-vent-plain")
     assert (
         organi_di_servizio_lontani(tavola(symbols, routes), FRAME, registry, project)
         == []
@@ -354,7 +356,7 @@ def test_a4_uno_stacco_piu_lungo_del_minimo_e_un_rilievo() -> None:
     di troppo.
     """
     registry = catalogo()
-    project, symbols, routes = _stacco_dello_sfiato(registry, 20.0, False)
+    project, symbols, routes = _stacco_dello_sfiato(registry, 20.0, False, organo="air-vent-plain")
     rilievi = organi_di_servizio_lontani(
         tavola(symbols, routes), FRAME, registry, project
     )
@@ -367,6 +369,21 @@ def test_a4_uno_stacco_piu_lungo_del_minimo_e_un_rilievo() -> None:
     assert "minimo su griglia e\' 10.0" in detto
     assert "10.0 mm di tubo in piu\'" in detto
     assert "A4" not in detto.split("(")[0], "il testo dice il fatto, non la sigla"
+
+
+def test_a4_lo_sfiato_col_rubinetto_pende_addosso_al_raccordo() -> None:
+    """Il PO, sullo sfiato col rubinetto: «non mi va bene il pezzo di tubo cosi' lungo che va
+    al simbolo, quella e' una regola e si puo' cambiare. vorrei che fosse ridotto al minimo»
+    (I-212). Il suo simbolo disegna da se' stelo e rubinetto: il minimo e' zero, e i dieci
+    millimetri che bastano a ogni altro stacco vuoto sono dieci di troppo."""
+    registry = catalogo()
+    addosso = _stacco_dello_sfiato(registry, 0.0, False)
+    assert organi_di_servizio_lontani(tavola(addosso[1], addosso[2]), FRAME, registry, addosso[0]) == []
+    project, symbols, routes = _stacco_dello_sfiato(registry, 10.0, False)
+    rilievi = organi_di_servizio_lontani(tavola(symbols, routes), FRAME, registry, project)
+    assert [item.code for item in rilievi] == ["SERVICE_STUB_LONGER_THAN_ITS_MINIMUM"]
+    assert "minimo su griglia e\' 0.0" in rilievi[0].message
+    assert "10.0 mm di tubo in piu\'" in rilievi[0].message
 
 
 def test_a4_uno_stacco_lungo_per_i_suoi_accessori_non_e_una_violazione() -> None:

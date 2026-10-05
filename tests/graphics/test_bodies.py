@@ -103,7 +103,9 @@ def test_the_libraries_are_not_empty() -> None:
     # 61 dal 3 ottobre 2026, `REL-009` (I-194, I-197): il contatore di calore, l'attacco
     # predisposto, il volano a sei attacchi, il collettore con ritorno, il giunto
     # antivibrante e il dosatore di polifosfati.
-    assert len(published()) == 61
+    # 62 dal 5 ottobre 2026 (I-210, I-211): lo sfiato con il suo rubinetto, in un
+    # simbolo solo.
+    assert len(published()) == 62
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)
