@@ -41,3 +41,5 @@ Il comando della skill li riapre da sé.
 - **1.4.0** — 3 ottobre 2026: **la tavola del caso reale rifatta** (`REL-009`, punti 6 e 7; D-206 … D-209): prima
   le autostrade, il collettore che si raccorda dritto, i colori della distribuzione, le pompe in parallelo con lo
   stesso verso, e il disegna più veloce con le stesse tavole. 104 file.
+- **1.4.1** — 5 ottobre 2026: **lo sfiato col suo rubinetto**, un simbolo solo, ovunque (I-210, I-211, D-210); lo sfiato
+  senza rubinetto solo se il progettista lo dice. 104 file.
