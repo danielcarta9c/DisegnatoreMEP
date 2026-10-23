@@ -192,3 +192,20 @@ la prova A, solo implicitamente). Il revisore aggiunge in fondo una riga di verd
 passo 7, tre cose: **la soglia** — distinguere quello che ferma la consegna da quello che la migliora, tarato sulle
 tavole che il PO ha approvato con i loro difetti residui —, **le convenzioni** in `rivedere.md`, e la risposta del PO sui
 difetti ricorrenti qui sopra.
+
+### Il giudizio del PO (I-220)
+
+Il PO ha detto di non riuscire a giudicare senza vedere tavola e verdetto insieme (I-219). La sessione gli ha preparato
+una pagina con, per ogni tavola, il foglio, il suo giudizio di allora, il verdetto del revisore e i ritagli dei punti
+segnalati; il PO ha scelto per ciascuno. Le scelte, testuali, sono in `taratura-1/GIUDIZI-PO.md`.
+
+- **Il verdetto del revisore è giusto sette volte su sette.** Anche sulle quattro tavole che il PO aveva approvato: «Non
+  avevo visto lo scambio delle colonne che concordo con il revisore» (t1); i collettori del caso rifatto «le avevo
+  disegnate a mano alla buona. Devono stare più vicine ha ragione il revisore» (t2). **Il revisore non era troppo
+  severo: vedeva cose che il PO non aveva visto.**
+- **Dei tredici punti nuovi, otto sono difetti e cinque si tollerano**; uno è rimasto senza scelta. Delle cinque
+  convenzioni, quattro si tollerano e una è un difetto: lo scarico rosso del volano.
+- **Quello che il revisore deve ancora imparare** non è a essere meno severo: è che cosa non ferma la consegna (la
+  soglia) e a guardare dentro i simboli — la serpentina «doveva vederla».
+- I difetti che la taratura ha trovato nel prodotto sono in `ACTIVE_WORK_PACKAGE.md`, «Quello che la taratura ha
+  riportato sul prodotto».

@@ -53,6 +53,20 @@ qualcosa non fa scattare la regola d'arresto. Le tavole della taratura non sono 
 riconosce invece di giudicare). Si misura con e senza gli esempi del punto 2. **Se non vede quello che vede il PO, il
 revisore esterno non si costruisce**, e lo si dice.
 
+**Primo giro fatto** (RAPPORTO §3, I-220): sette tavole già giudicate, sette revisori alla cieca. Il PO, vista ogni
+tavola accanto al verdetto, lo dà **giusto sette volte su sette**, anche sulle quattro che aveva approvato: il revisore ha
+visto difetti che il PO non aveva visto. Il revisore separato si costruisce. Quello che manca lo dice il PO punto per
+punto (`docs/collaudi/REL-010/taratura-1/GIUDIZI-PO.md`):
+
+- **la soglia**: le cose che il PO tollera — l'ordine delle due colonne di una cascata quando invertirle sposta solo gli
+  scavalcamenti, la mandata di una zona sotto il ritorno comune, il bollitore fuori dalla sua fascia, un circuito lungo
+  che si può accorciare, i pozzetti delle sonde senza tappo, derivazione e raccordo a T con lo stesso segno, l'ordine
+  delle macchine nella pila, il cartiglio «DA DEFINIRE» — si dicono come miglioramenti, e non fermano la consegna;
+- **guardare dentro i simboli**: la serpentina del pannello fuori dal riquadro «doveva vederla» (il PO, t1).
+
+Il secondo giro, dopo che `rivedere.md` porta la soglia, sulle stesse sette tavole: il revisore deve dare lo stesso
+verdetto e classificare i punti come il PO.
+
 ### 4. La rilettura a freddo — in `rivedere.md`
 
 Prima di giudicare, il revisore racconta l'impianto leggendolo dalla sola tavola: i generatori, dove va l'acqua, quale
@@ -87,6 +101,25 @@ migliora** (`skill/rivedere/CONSEGNA.md` punto 4) e **il PO lo vede sulle tavole
 
 Con `scripts/costruisci-skill.py`, e `tests/test_le_release.py` verde (D-200). La nota di `SKILL.md` al passo 1 su
 `capire.md` resta com'è.
+
+## Quello che la taratura ha riportato sul prodotto — dopo il revisore
+
+Il PO li ha chiamati **difetti** (I-220). Non sono del revisore: sono della composizione, del motore o dei controlli, e
+vanno nel pacchetto che segue `REL-010` («una cosa alla volta», I-218).
+
+| difetto | dove si vede | di chi è |
+|---|---|---|
+| andata ACS, ricircolo e acqua fredda arrivano al bollitore da tre parti | t1, t3 | Comporre |
+| i due collettori di una cascata lontani fra loro | t2 (il piano scritto dallo sviluppo) | Comporre (B3, B12); la tavola del caso va ricomposta |
+| le pompe in parallelo non incolonnate | t2, t7 | il controllo di A2 che manca (D-158) |
+| l'acqua fredda che entra nel bollitore con un gradino | t3 | Comporre |
+| la coppia che si apre quando i capi sono raccordi (radiante, serpentina) | t5, t6 | il controllo di B11/B12 (D-174 non riconosce la coppia) |
+| il gruppo di sicurezza sanitario lontano dal bollitore | t6 | il controllo di A4 misura solo gli stacchi |
+| il disegno che tocca il bordo | t6 | il rilievo c'è (`DRAWING_TOUCHES_THE_BORDER`): Comporre |
+| lo scarico in fondo al volano, rosso con la freccia | t1, t5, t7 | il motore: come si disegna è una convenzione, la decide il PO |
+
+E una domanda di contenuto: «ho anche un dubbio sul vaso di espansione» (il PO, sul caso rifatto), che va con il
+manuale Shenling e le regole del vaso (I-218).
 
 ## Da decidere col PO — non da scegliere da soli
 

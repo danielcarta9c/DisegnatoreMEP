@@ -30,7 +30,9 @@ giudizio del PO. `REL-009` è sospeso con due residui (`docs/plans/pacchetti/REL
   contenuto che portano sono in `REL-010`, «Da decidere col PO».
 - `mypy` si ferma sugli stub di numpy anche sul `main`: è l'ambiente. `ruff check .` dalla radice trova 40 errori nei
   vecchi `metriche.py` dei collaudi: il controllo del progetto è `ruff check src tests`.
-- **I numeri**: il prossimo input è **I-220**, la prossima decisione **D-212**.
+- **La taratura** (RAPPORTO §3): il PO dà giusto il verdetto del revisore 7 su 7 (I-220); prossimo passo, la soglia
+  in `rivedere.md` e il secondo giro sulle stesse tavole.
+- **I numeri**: il prossimo input è **I-221**, la prossima decisione **D-212**.
 
 ## Da dove ripartiva — scritto il 5 ottobre 2026, alla fusione della 1.4.1
 
