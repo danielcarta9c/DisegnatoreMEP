@@ -617,35 +617,7 @@ def place_inline_accessories(
     head_mm = head_reach if head_reach is not None else END_CLEARANCE_MM
     tail_mm = tail_reach if tail_reach is not None else END_CLEARANCE_MM
     remaining = [index for index in range(len(resolved)) if index not in chained]
-    if remaining and not stretches(head_mm, tail_mm):
-        raise LayoutError(
-            f"run {trunk.connection_ids[0]} has no straight stretch to sit an "
-            f"accessory on"
-        )
 
-    # Gli accessori si posano **nell'ordine della catena**, avanzando lungo la
-    # tratta: sulla tavola compaiono nell'ordine topologico in cui il fluido
-    # li attraversa, che e' l'unico ordine vero. Prima ciascuno prendeva il
-    # centro del rettilineo piu' lungo: l'ordine ne usciva rimescolato, e ogni
-    # taglio dimezzava la capacita' del rettilineo — su una tratta da quattro
-    # accessori di dieci millimetri il quarto non entrava piu' (D-074 ne mette
-    # quattro in fila davvero, e li vuole in fila davvero).
-    # Il cursore e' **il riquadro piu' il passo**: e' cosi' che riparte dopo
-    # ogni pezzo posato, e la catena di testa e' un pezzo posato come gli
-    # altri. Senza il passo la coppia di D-120, che rinuncia al proprio
-    # passo di testa, si appoggiava al fianco dell'organo della catena.
-    cursor = head_reach + MIN_SPACING_MM if head_reach is not None else 0.0
-
-    # **Una pompa si disegna su un tratto orizzontale, se la sua tratta ne ha uno
-    # che la contiene** (REL-009, I-204). Il PO: «le pompe in parallelo si
-    # disegnano in parallelo, o entrambe verso destra o su o giu', ma non una da
-    # una parte e una dall'altra». La fila si posa avanzando dal capo, sul primo
-    # rettilineo che la contiene: due pompe di zona che partono dallo stesso
-    # raccordo, una sul ramo dritto e una su quello che scende, venivano una
-    # orizzontale e una verticale. Ora la fila che porta una pompa **in parallelo**
-    # — un'altra tratta con una pompa parte o arriva allo stesso pezzo, come in A2 —
-    # comincia sul primo rettilineo orizzontale abbastanza lungo per tutta la fila;
-    # se non ce n'e', o la pompa e' sola, si posa come prima.
     def has_a_pump(item: Trunk) -> bool:
         return any(
             PUMP_FUNCTIONS & set(catalog.get(definitions[component_id]).functions)
@@ -659,98 +631,208 @@ def place_inline_accessories(
         and capi & {other.start.component_id, other.end.component_id}
         for other in (trunks or [])
     )
-    if in_parallelo and any(
+    pompa_in_parallelo = in_parallelo and any(
         PUMP_FUNCTIONS & set(resolved[index].definition.functions) for index in remaining
-    ):
-        fila = sum(
-            (resolved[index].symbol.manifest.inline_gap_mm or 0.0) + leads[index] + MIN_SPACING_MM
-            for index in remaining
-        )
-        for low, high in stretches(head_mm, tail_mm):
-            # Dopo una curva la fila si stacca di quanto si stacca da un pezzo: la
-            # pompa non si siede sulla piega (B4).
-            inizio = max(low + (END_CLEARANCE_MM if low > head_mm + 1e-9 else 0.0), cursor)
-            if high - inizio < fila - 1e-9:
-                continue
-            if _station_at(points, (inizio + high) / 2).horizontal:
-                cursor = inizio
-                break
+    )
 
-    for index in remaining:
-        component = resolved[index]
-        manifest = component.symbol.manifest
-        gap = manifest.inline_gap_mm or 0.0
-        lead, trail = leads[index], MIN_SPACING_MM
-        needed = gap + lead + trail
-        window = stretches(head_mm, tail_mm)
-        found: _Station | None = None
-        turned = manifest
-        rotation = 0
-        distance = 0.0
-
-        for low, high in window:
-            # Il primo nodo di griglia da cui l'accessorio sta nel rettilineo,
-            # oltre l'accessorio precedente: avanzare invece di spezzare tiene
-            # l'ordine e non spreca nemmeno un passo. Se il riquadro casca su
-            # un simbolo posato, si avanza di un passo e si riprova.
-            first = ceil((max(low, cursor) + lead + gap / 2 - 1e-9) / step) * step
-            stop = high - trail - gap / 2
-            nodes: list[float] = []
-            here = first
-            while here <= stop + 1e-9:
-                nodes.append(here)
-                here += step
-            for snapped in nodes:
-                station = _station_at(points, snapped)
-                rotation, turned = turned_for(manifest, station.horizontal)
-                origin = Point(
-                    x_mm=station.point.x_mm - turned.width_mm / 2,
-                    y_mm=station.point.y_mm - turned.height_mm / 2,
-                )
-                # **Lo stacco si misura sul riquadro.** La stazione si sceglie
-                # sulla lunghezza del taglio, ma il simbolo e' largo il proprio
-                # riquadro, che puo' sporgere oltre il taglio da tutt'e due i
-                # lati: chi arriva dopo si ritrovava appoggiato al fianco di
-                # chi lo precede, e con la coppia di D-120 — che rinuncia al
-                # proprio passo di testa — i due arrivavano a toccarsi. Si
-                # guarda dove il **riquadro** comincia, non dove comincia
-                # l'interruzione.
-                extent_here = turned.width_mm if station.horizontal else turned.height_mm
-                if snapped - extent_here / 2 < cursor + lead - 1e-9:
-                    continue
-                if (
-                    clear_of_symbols(origin, turned.width_mm, turned.height_mm)
-                    and clear_of_other_runs(origin, turned.width_mm, turned.height_mm)
-                    and clear_of_port_thresholds(
-                        origin, turned.width_mm, turned.height_mm
-                    )
-                    and clear_of_own_run(
-                        origin,
-                        turned.width_mm,
-                        turned.height_mm,
-                        snapped - gap / 2,
-                        snapped + gap / 2,
-                    )
-                ):
-                    found, distance = station, snapped
-                    break
-            if found is not None:
-                break
-        if found is None:
+    def posa_il_resto(head_mm: float, tail_mm: float) -> None:
+        """Gli accessori fuori dalle catene, fra `head_mm` dal capo e `tail_mm` dalla coda."""
+        if remaining and not stretches(head_mm, tail_mm):
             raise LayoutError(
-                f"run {trunk.connection_ids[0]} has no straight stretch of "
-                f"{needed:g}mm for {component.symbol.manifest.id} that keeps "
-                f"{clearance:g}mm clear of the other symbols and runs: symbols are "
-                f"never shrunk to fit, give the run a longer straight length"
+                f"run {trunk.connection_ids[0]} has no straight stretch to sit an "
+                f"accessory on"
             )
-        # Il cursore riparte dal **riquadro**, non dall'interruzione: un
-        # simbolo piu' largo del proprio taglio sporge oltre di esso, e chi
-        # viene dopo gli si appoggiava al fianco. Con la coppia di D-120, che
-        # chiede un passo secco, i due si toccavano e sulla carta si leggevano
-        # come un pezzo solo.
-        extent = turned.width_mm if found.horizontal else turned.height_mm
-        cursor = distance + max(gap, extent) / 2 + trail
-        seat(index, found, distance, rotation, turned)
+
+        # Gli accessori si posano **nell'ordine della catena**, avanzando lungo la
+        # tratta: sulla tavola compaiono nell'ordine topologico in cui il fluido
+        # li attraversa, che e' l'unico ordine vero. Prima ciascuno prendeva il
+        # centro del rettilineo piu' lungo: l'ordine ne usciva rimescolato, e ogni
+        # taglio dimezzava la capacita' del rettilineo — su una tratta da quattro
+        # accessori di dieci millimetri il quarto non entrava piu' (D-074 ne mette
+        # quattro in fila davvero, e li vuole in fila davvero).
+        # Il cursore e' **il riquadro piu' il passo**: e' cosi' che riparte dopo
+        # ogni pezzo posato, e la catena di testa e' un pezzo posato come gli
+        # altri. Senza il passo la coppia di D-120, che rinuncia al proprio
+        # passo di testa, si appoggiava al fianco dell'organo della catena.
+        cursor = head_reach + MIN_SPACING_MM if head_reach is not None else 0.0
+
+        # **Una pompa si disegna su un tratto orizzontale, se la sua tratta ne ha uno
+        # che la contiene** (REL-009, I-204). Il PO: «le pompe in parallelo si
+        # disegnano in parallelo, o entrambe verso destra o su o giu', ma non una da
+        # una parte e una dall'altra». La fila si posa avanzando dal capo, sul primo
+        # rettilineo che la contiene: due pompe di zona che partono dallo stesso
+        # raccordo, una sul ramo dritto e una su quello che scende, venivano una
+        # orizzontale e una verticale. Ora la fila che porta una pompa **in parallelo**
+        # — un'altra tratta con una pompa parte o arriva allo stesso pezzo, come in A2 —
+        # comincia sul primo rettilineo orizzontale abbastanza lungo per tutta la fila;
+        # se non ce n'e', o la pompa e' sola, si posa come prima.
+        if pompa_in_parallelo:
+            fila = sum(
+                (resolved[index].symbol.manifest.inline_gap_mm or 0.0) + leads[index] + MIN_SPACING_MM
+                for index in remaining
+            )
+            for low, high in stretches(head_mm, tail_mm):
+                # Dopo una curva la fila si stacca di quanto si stacca da un pezzo: la
+                # pompa non si siede sulla piega (B4).
+                inizio = max(low + (END_CLEARANCE_MM if low > head_mm + 1e-9 else 0.0), cursor)
+                if high - inizio < fila - 1e-9:
+                    continue
+                if _station_at(points, (inizio + high) / 2).horizontal:
+                    cursor = inizio
+                    break
+
+        for index in remaining:
+            component = resolved[index]
+            manifest = component.symbol.manifest
+            gap = manifest.inline_gap_mm or 0.0
+            lead, trail = leads[index], MIN_SPACING_MM
+            needed = gap + lead + trail
+            window = stretches(head_mm, tail_mm)
+            found: _Station | None = None
+            turned = manifest
+            rotation = 0
+            distance = 0.0
+
+            for low, high in window:
+                # Il primo nodo di griglia da cui l'accessorio sta nel rettilineo,
+                # oltre l'accessorio precedente: avanzare invece di spezzare tiene
+                # l'ordine e non spreca nemmeno un passo. Se il riquadro casca su
+                # un simbolo posato, si avanza di un passo e si riprova.
+                first = ceil((max(low, cursor) + lead + gap / 2 - 1e-9) / step) * step
+                stop = high - trail - gap / 2
+                nodes: list[float] = []
+                here = first
+                while here <= stop + 1e-9:
+                    nodes.append(here)
+                    here += step
+                for snapped in nodes:
+                    station = _station_at(points, snapped)
+                    rotation, turned = turned_for(manifest, station.horizontal)
+                    origin = Point(
+                        x_mm=station.point.x_mm - turned.width_mm / 2,
+                        y_mm=station.point.y_mm - turned.height_mm / 2,
+                    )
+                    # **Lo stacco si misura sul riquadro.** La stazione si sceglie
+                    # sulla lunghezza del taglio, ma il simbolo e' largo il proprio
+                    # riquadro, che puo' sporgere oltre il taglio da tutt'e due i
+                    # lati: chi arriva dopo si ritrovava appoggiato al fianco di
+                    # chi lo precede, e con la coppia di D-120 — che rinuncia al
+                    # proprio passo di testa — i due arrivavano a toccarsi. Si
+                    # guarda dove il **riquadro** comincia, non dove comincia
+                    # l'interruzione.
+                    extent_here = turned.width_mm if station.horizontal else turned.height_mm
+                    if snapped - extent_here / 2 < cursor + lead - 1e-9:
+                        continue
+                    if (
+                        clear_of_symbols(origin, turned.width_mm, turned.height_mm)
+                        and clear_of_other_runs(origin, turned.width_mm, turned.height_mm)
+                        and clear_of_port_thresholds(
+                            origin, turned.width_mm, turned.height_mm
+                        )
+                        and clear_of_own_run(
+                            origin,
+                            turned.width_mm,
+                            turned.height_mm,
+                            snapped - gap / 2,
+                            snapped + gap / 2,
+                        )
+                    ):
+                        found, distance = station, snapped
+                        break
+                if found is not None:
+                    break
+            if found is None:
+                raise LayoutError(
+                    f"run {trunk.connection_ids[0]} has no straight stretch of "
+                    f"{needed:g}mm for {component.symbol.manifest.id} that keeps "
+                    f"{clearance:g}mm clear of the other symbols and runs: symbols are "
+                    f"never shrunk to fit, give the run a longer straight length"
+                )
+            # Il cursore riparte dal **riquadro**, non dall'interruzione: un
+            # simbolo piu' largo del proprio taglio sporge oltre di esso, e chi
+            # viene dopo gli si appoggiava al fianco. Con la coppia di D-120, che
+            # chiede un passo secco, i due si toccavano e sulla carta si leggevano
+            # come un pezzo solo.
+            extent = turned.width_mm if found.horizontal else turned.height_mm
+            cursor = distance + max(gap, extent) / 2 + trail
+            seat(index, found, distance, rotation, turned)
+
+    # **Un accessorio non si posa sul prolungamento del tubo da cui la sua tratta
+    # si stacca** (I-217). Una tratta che esce da un raccordo che divide o unisce le
+    # correnti, dalla parte opposta a un altro suo attacco, continua sulla tavola la
+    # linea che attraversa il raccordo: l'ultima pompa di una cascata scende lungo la
+    # verticale del collettore e solo dopo piega verso la macchina, e il giunto del
+    # suo ritorno finiva sulla verticale, dove a chi legge sembra del collettore
+    # comune. Se la tratta poi piega, gli accessori che non sono la catena di una
+    # macchina saltano quel primo rettilineo e ripartono dalla piega con lo stacco da
+    # un pezzo, piu' quanto l'attacco di fianco del raccordo sta fuori dal suo asse:
+    # cosi' il pezzo cade alla stessa distanza dal collettore di quello dei fratelli,
+    # che partono da li'. Se il resto della tratta non li contiene, si posano come
+    # prima. Lo stesso dal capo di arrivo.
+    # Solo il raccordo che **divide o unisce** (`junction`), e solo se di fronte alla
+    # tratta c'e' il suo **attacco comune** — l'ingresso unico di chi divide, l'uscita
+    # unica di chi unisce: allora la tratta e' uno dei rami, e quel rettilineo e' il
+    # tubo comune che continua. Una tratta che finisce *nell'*attacco comune e' lei il
+    # tubo comune, e il suo ultimo rettilineo e' suo: la fila della pompa di zona che
+    # arriva al raccordo della colonna ci resta (la prima stesura della regola la
+    # mandava sulla verticale, e la pompa sorella restava orizzontale). E il T da cui
+    # pende uno sfiato o uno strumento (`branch_off`) e' lo stesso tubo che prosegue:
+    # il suo prolungamento e' proprio lo stacco della macchina.
+    # **Una fila con una pompa in parallelo la governa I-204**, che e' del PO e viene
+    # prima di questa: la pompa di zona che prosegue dritta dal raccordo sull'autostrada
+    # ci resta, orizzontale come la sorella. Su un prolungamento verticale, come quello
+    # dell'ultima macchina di una cascata, I-204 la porta gia' sull'orizzontale.
+    def prolungamento(ref: PortRef) -> float | None:
+        """Se la tratta e' un ramo che esce dal raccordo in linea col tubo comune, quanto
+        l'attacco di fianco sta fuori dall'asse; altrimenti niente."""
+        definition_id = definitions.get(ref.component_id)
+        if definition_id is None:
+            return None
+        voce = catalog.resolve(definition_id)
+        if "junction" not in voce.definition.functions:
+            return None
+        entrate = [item.id for item in voce.definition.ports if item.flow is PortFlow.IN]
+        uscite = [item.id for item in voce.definition.ports if item.flow is PortFlow.OUT]
+        if len(entrate) == 1 and len(uscite) > 1:
+            comune = entrate[0]
+        elif len(uscite) == 1 and len(entrate) > 1:
+            comune = uscite[0]
+        else:
+            return None
+        manifest = voce.symbol.manifest
+        porta = manifest.port(ref.port_id)
+        faccia = porta.face
+        if comune == ref.port_id or manifest.port(comune).face is not faccia.opposite:
+            return None
+        orizzontale = faccia in (PortFace.LEFT, PortFace.RIGHT)
+        return max(
+            (
+                abs(item.y_mm - porta.y_mm) if orizzontale else abs(item.x_mm - porta.x_mm)
+                for item in manifest.ports
+                if item.face not in (faccia, faccia.opposite)
+            ),
+            default=0.0,
+        )
+
+    piegata = len(raw_straights) > 1 and not pompa_in_parallelo
+    head_dopo = head_mm
+    scarto = prolungamento(trunk.start) if head_reach is None and piegata else None
+    if scarto is not None:
+        head_dopo = raw_straights[0][1] + scarto + END_CLEARANCE_MM
+    tail_dopo = tail_mm
+    scarto = prolungamento(trunk.end) if tail_reach is None and piegata else None
+    if scarto is not None:
+        tail_dopo = total - raw_straights[-1][0] + scarto + END_CLEARANCE_MM
+    if (head_dopo, tail_dopo) == (head_mm, tail_mm):
+        posa_il_resto(head_mm, tail_mm)
+    else:
+        gia_posati, gia_tagliati = len(placed), len(cuts)
+        try:
+            posa_il_resto(head_dopo, tail_dopo)
+        except LayoutError:
+            del placed[gia_posati:]
+            del cuts[gia_tagliati:]
+            posa_il_resto(head_mm, tail_mm)
 
     # I simboli escono nell'ordine della tratta, comunque siano stati posati.
     order = {component_id: index for index, component_id in enumerate(trunk.inline_component_ids)}

@@ -1,157 +1,123 @@
-# REL-009 — La 1.3: la tavola del costruito
+# REL-010 — Il revisore esterno, e il metro con cui guarda
 
-> **▶ Il pacchetto attivo, per l'ordine del PO** — «ho usato la skil su un caso reale. e abbiamo delle modifiche
-> importanti da fare. merita una release 1.3» (I-191). Scritto il 3 ottobre 2026, sulla 1.2.2.
+> **▶ Il pacchetto attivo, dal brief del PO** — *Brief_disegnatore-mep_revisore_rev01* (I-216): il passo 7 «Rivedere»
+> delegabile, quando serve, a un sub-agente che non ha composto la tavola; versione **1.5.0**. E la sua
+> preoccupazione: «l'agente esterno forse non ha un benchmark per capire se una tavola è disegnata bene o meno. questa
+> è la parte che mi preoccupa di piu'». Scritto il 23 ottobre 2026, sulla 1.4.1.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — i punti 1–4 sono nella **1.3.0** (I-199, D-205); i punti **6 e 7** nella **1.4.0** (PR #74 e #75, I-206, I-207, D-206 … D-209): la tavola del caso rifatta, approvata dal PO, e il tempo del disegna. Restano il limite d'intervento facoltativo (I-195) e la tavola di consegna del caso, che fa il PO (I-200).
-**Base:** `main` dopo la PR #71 (la 1.2.2).
+**Stato:** **IN CORSO** — il punto 1 è sul ramo `claude/nifty-archimedes-4hnzcu`, con la tavola al PO (D-211 proposta).
+**Base:** `main` dopo la PR #77 (la 1.4.1).
 **Ramo:** quello che l'ambiente della sessione assegna.
-**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). Una PR per punto, o per gruppo
-di punti. La 1.3.0 è uscita alla fusione dei punti 1–4, per disposizione del PO (D-205); il caso rifatto è la PR
-#74, e con il tempo del disegna è uscito nella **1.4.0**, col numero che il PO ha chiesto (I-206, D-209).
+**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). Una PR per punto, o per gruppo di punti.
 
 ---
 
 ## Perché
 
-Il primo caso reale (I-191) è un retrofit condominiale: sei pompe di calore al posto di caldaia e chiller, due
-volani, due macrozone con otto collettori d'appartamento, un bollitore esistente in un altro locale. La tavola
-**si lascia in centrale e si allega alla dichiarazione di conformità**: deve dire **che cosa è stato installato**
-e **dove finisce l'intervento**. La 1.2.2 si è fermata al passo 4, per tre cose che non sa fare:
+Oggi la tavola la guarda lo stesso agente che ha scritto il piano, e tende a vedere la posa che aveva in mente. Il
+brief vuole un revisore separato **solo quando serve**. Torna con l'architettura: l'occhio era nato separato (D-162,
+`docs/ARCHITETTURA-DEL-PIANO.md` §3), e la prova in camera pulita del 20 settembre (`skill/rivedere/prova-2026-09-20/`)
+l'ha fatto così — tavola, rilievi, istruzioni, tavole di riferimento; niente piano.
 
-1. **togliere** un accessorio che una regola aggiunge e che sul costruito non c'è;
-2. **disegnare** un accessorio installato che le regole non mettono, anche se il progettista lo nomina;
-3. **distinguere** l'esistente dal nuovo, e il limite dell'intervento; e nel catalogo mancano dei pezzi.
-
-Il documento della sessione di disegno porta i dati del cliente e **non entra nel repository**. Il grafo è
-ricostruito anonimo: `docs/collaudi/REL-009/caso-reale-1/grafo-prima-stesura.json`.
-
-## Dove siamo — misurato il 3 ottobre 2026, con la 1.2.2
-
-```
-$ python3 scripts/mep.py valida   .../caso-reale-1/grafo-prima-stesura.json
-Il grafo si legge: 70 pezzi, 91 tubazioni, 6 reti; regime della centrale: over_35_kw.
-$ python3 scripts/mep.py completa .../caso-reale-1/grafo-prima-stesura.json --out grafo-completo.json
-Le regole hanno aggiunto 114 accessori; ... il grafo passa da 70 a 207 pezzi (+137).
-Punti aperti: nessuno.
-```
+Il PO ha messo il dito sul punto debole: **un revisore senza metro dà il giudizio di un modello generalista**. Il metro
+si costruisce in tre pezzi, ed è questo l'ordine del pacchetto: la **rilettura a freddo** contro il grafo, gli
+**esempi** fatti dal PO o approvati da lui, la **taratura** del revisore sul giudizio del PO — prima di scrivere il
+passo 7.
 
 ## Le cose da fare, in quest'ordine
 
-### 1. R1 — togliere, spostare, «a bordo» (I-192): fondamentale
+### 1. La tavola d'esempio — fatto sul ramo, aspetta il PO (I-217, D-211)
 
-- **Togliere.** Il grafo porta l'elenco degli accessori che il progettista toglie, ciascuno con il suo motivo.
-  Un accessorio si nomina con l'identificativo che ha nel grafo completo, che è stabile: lo stesso pezzo sullo
-  stesso attacco ha sempre lo stesso nome. `completa` non lo posa, a ogni rilancio; non lo riporta come punto
-  aperto; e lo elenca a parte, «tolti dal progettista», con il motivo. Una voce che non toglie niente si dice.
-- **«A bordo», per singola macchina.** Il grafo dice, sul pezzo, le funzioni che quella macchina porta dentro; le
-  regole lo leggono come leggono il catalogo. Dove una regola vuole il pezzo anche col bordo (la sicurezza di
-  ogni generatore, D-182) `completa` lo dice, e per toglierlo si usa «togli» con il motivo.
-- **Spostare** è togliere da un posto e dichiarare nell'altro (punto 2).
-- Capire e `SKILL.md` dicono come si scrive, prima di `completa` e dopo, al passo 4.
-- **Prove**: sul caso reale, i casi T1–T5 del documento — le 32 intercettazioni dei terminali, le valvole di
-  sicurezza delle sei pompe, i separatori d'aria, i defangatori, il corredo del primario da portare sul
-  secondario.
+La tavola C (`REL-009`, «tavola perfetta», I-214), guardata ingrandita, aveva due difetti che nessun numero vedeva: la
+serpentina del pannello radiante fuori dal riquadro, e il giunto antivibrante dell'ultima pompa di ogni cascata sulla
+verticale del collettore. Corretti (il simbolo, e una regola del motore); la tavola corretta è al PO, che decide se è
+l'esempio. `docs/collaudi/REL-010/RAPPORTO.md` §1.
 
-### 2. R2 — gli accessori dichiarati, com'è costruito (I-193)
+### 2. Gli esempi del revisore — da decidere col PO
 
-- Capire §5: un accessorio **che il progettista nomina in un posto preciso** entra nel grafo di prima stesura; la
-  lista della ferramenta resta per tutto il resto.
-- Le regole **non lo duplicano**: si misura su ciascuno dei casi del documento — sfiato con valvola a sfera sul
-  ritorno di ogni pompa, ritegno sull'uscita, sfiati sui volani, manometri e termometri sui montanti, riduttore di
-  pressione.
+- **Il buono**: la tavola C corretta, se il PO la approva. Per le tavole piccole, gli schemi tipologici A, B, C della
+  *Specifica tecnica di installazione* Nove C, che sono fatti con questa skill (RAPPORTO §2) — se il PO li vuole nella
+  skill.
+- **Le coppie peggio / meglio**, con i simboli di oggi: la tavola del caso rifatta (`caso-reale-2`, I-207, collettore di
+  ritorno lontano) e la C, sullo stesso impianto. Le tavole 4 e 5 di settembre **no** come immagini: foto del telefono e
+  segni su un motore vecchio; il loro criterio è già scritto (B12, D-159).
+- **Niente immagini dal web nella skill**: sono di terzi, il repository è pubblico, e hanno altre convenzioni (D-165).
+- Dove stanno nella skill e quanti: lo ZIP ha 104 file su 200 (D-200); ogni immagine costa contesto. Si tengono quelli che
+  la taratura (punto 3) dice utili.
 
-### 3. R3 — le voci di catalogo che mancano (I-194)
+### 3. La taratura del revisore — prima di toccare `SKILL.md`
 
-Con il simbolo, che il PO approva **sulle tavole**:
-1. il contabilizzatore di calore in linea, con le due sonde;
-2. l'attacco predisposto, coppia mandata-ritorno tappata con un'etichetta libera («al solare termico»);
-3. il confine di rete su acqua di riscaldamento, «da/verso impianto esistente», con etichetta;
-4. il collettore d'appartamento con mandata e ritorno;
-5. il giunto antivibrante, se il PO lo vuole disegnato;
-6. il dosatore di polifosfati, a bassa priorità.
+Un agente avviato da zero riceve alla cieca tavole che il PO ha già giudicato e si guarda: **trova quello che il PO ha
+cerchiato? lascia passare quello che ha approvato?** La seconda conta quanto la prima: un revisore che trova sempre
+qualcosa non fa scattare la regola d'arresto. Le tavole della taratura non sono quelle date come esempio (altrimenti
+riconosce invece di giudicare). Si misura con e senza gli esempi del punto 2. **Se non vede quello che vede il PO, il
+revisore esterno non si costruisce**, e lo si dice.
 
-### 4. R4 — esistente e nuovo, e il limite d'intervento (I-195, I-196, D-202)
+### 4. La rilettura a freddo — in `rivedere.md`
 
-- `esistente` **per pezzo e per tratto**, oltre che per rete: è un dato **per le regole e per i diametri**, non per
-  il disegno. **L'esistente si disegna come il nuovo**, e la tabella non cambia (D-202).
-- **Le regole non aggiungono corredo sulle parti esistenti**, e `completa` lo dice una volta. *Proposta* — il
-  documento dice «non applicare, o chiedere». La valvola di sicurezza di ogni generatore si disegna sempre.
-- **Il limite d'intervento**: una linea a tratto e punto con la scritta, **facoltativa**. La tavola del caso non la
-  porta: si fa dopo il punto 5.
+Prima di giudicare, il revisore racconta l'impianto leggendolo dalla sola tavola: i generatori, dove va l'acqua, quale
+circuito serve quale utenza, mandata e ritorno di ciascuno. Chi lo ha lanciato confronta il racconto con il grafo: dove
+non torna, è un difetto di leggibilità — il metro è il grafo, che il revisore non vede. Racconta, non misura (D-162).
 
-### 5. Il caso, rifatto — **lo fa il PO**, nella sua sessione di lavoro con la 1.3.0 (I-200)
+### 5. Il passo 7 in due modalità — il brief, con le correzioni della sessione
 
-Il grafo anonimo con le scelte del progettista — quello che toglie, sposta, dichiara, l'esistente —, il piano, la
-tavola: **al PO**. Restano aperte con il progettista le voci della §6 del documento (titolo e numero della tavola,
-dati della tabella, temperature del secondario ACS, diametri sì o no, pompe di macrozona nuove o esistenti,
-posizione del contabilizzatore).
+- **`rivedere.md` §2 va toccato**: elenca il piano, che il revisore separato non riceve, e le tavole di riferimento, che
+  nella skill non ci sono; «il PO» per il sub-agente è il progettista. E deve dire dei pozzetti delle sonde e delle
+  altre convenzioni che un lettore a freddo scambia per difetti.
+- **I nomi**: sulla tavola ci sono solo le sigle delle macchine; il revisore nomina il resto descrivendolo, e la
+  traduzione negli identificativi la fa chi compone.
+- **`passa-per` non si applica** (D-161, il piano non ha il campo): un vincolo che non si può applicare cede, e lo si dice.
+- **Il tetto ai giri** (architettura §5, regola 3): proposta 2 leggeri + 2 col revisore. Il secondo criterio d'attivazione
+  del brief cambia la regola d'arresto di oggi: va scritto.
+- **L'indipendenza nei fatti**: il testo dell'incarico è fisso, in `SKILL.md`; il revisore sceglie lui gli ingrandimenti
+  (gli si dà il comando `anteprima` e una cartella con il solo PDF e i rilievi); gira con lo stesso modello di chi compone.
+- I criteri d'attivazione del brief; «più generatori e più collettori» vale per quasi ogni centrale: proposta di
+  toglierlo e tenere «A2 o più».
+- Dove i sub-agenti non ci sono, la modalità leggera, detta nella consegna. Nella consegna una riga: chi ha guardato la
+  tavola.
 
-### 6. Quello che il caso ha riportato (I-201 … I-205) — fatto, nella 1.4.0 (PR #74, D-206 … D-208)
+### 6. La prova del brief — sulla stessa tavola, in sessione pulita
 
-Il PO, sulla tavola del caso fatta con la 1.3.0 nella sua sessione di lavoro. La tavola porta i dati del cliente e **non
-entra nel repository**; il grafo per le prove si ricostruisce anonimo in `docs/collaudi/REL-009/caso-reale-2/`.
+Il passo 7 nelle due modalità **partendo dalla stessa tavola** (D-023 è sospesa: due composizioni non danno la stessa
+tavola), in una sessione nuova con il solo ZIP, sul `caso-reale-2`. Il metro non è «un vincolo in più»: è **il giro dopo
+migliora** (`skill/rivedere/CONSEGNA.md` punto 4) e **il PO lo vede sulle tavole**. Con il tempo di ciascuna (I-205).
 
-1. **Prima le autostrade, e disegnata l'autostrada non si tocca** (I-201, I-203). Il motore instrada nell'ordine dei nomi
-   delle tubazioni: uno stacco che passa prima posa la valvola sulla quota dell'autostrada, e l'autostrada la scavalca.
-2. **Le pompe in parallelo con lo stesso verso** (I-204): A2 lo dice per l'incolonnamento, non per il verso, e non ha un
-   controllo sulla tavola.
-3. **Le dorsali della distribuzione sono autostrade** (I-202, I-205): mandata e ritorno dopo le pompe secondarie corrono
-   insieme, a colonne affiancate, fino ai collettori; i colori giusti.
-4. **Il collettore con ritorno si raccorda ai terminali senza curve inutili** (I-205): gli attacchi del simbolo.
-5. **La tavola del caso rifatta**, al PO.
+### 7. La release 1.5.0
 
-### 7. Il tempo della skill (I-205) — fatto, nella 1.4.0 (D-209)
+Con `scripts/costruisci-skill.py`, e `tests/test_le_release.py` verde (D-200). La nota di `SKILL.md` al passo 1 su
+`capire.md` resta com'è.
 
-«La skill gira in 30 minuti buoni»: si misura dove va il tempo, dopo il punto 6. **Misurato** (`docs/collaudi/REL-009/RAPPORTO.md` §6): la posa d'inventario rileggeva tutte le tratte per ogni attacco; con un
-indice, `disegna` sul caso passa da 107 a 3,4 s e sulle tavole agli atti scende sotto i due secondi, con le stesse
-tavole. **I 30 minuti non stanno nel motore della 1.3.0** (da 1 a 7 s per tavola): per sapere dove vanno serve il
-registro di una sessione vera, che è del PO.
+## Da decidere col PO — non da scegliere da soli
 
-### 8. Lo sfiato con il suo rubinetto (I-210 … I-215) — fatto, nella 1.4.1 (PR #77, D-210)
-
-Il PO: sfiato e rubinetto in un simbolo solo, «ovunque». Il simbolo 5 × 7,5; la variante senza rubinetto; la valvola
-doppia fermata dalla validazione; lo sfiato addosso al raccordo, stacco zero (I-212); Capire e Comporre aggiornati.
-La prova pulita C lo fa da sola (RAPPORTO §9). RAPPORTO §8 e §9.
-
-### 9. Quello che le prove pulite hanno riportato — **da decidere col PO**, non da scegliere da soli
-
-- la distanza della valvola di sicurezza appesa sopra il suo raccordo: due passi (oggi 10 mm, A4) o addosso come lo
-  sfiato. È una convenzione grafica (RAPPORTO §9);
-- B3 (meno sormonti) contro B1 (autostrade dritte) nell'ordine dei collettori primari: due prove su tre hanno dovuto
-  scegliere (§7, §9);
-- la quota del primo raccordo della zona vicina, perché la sua pompa non finisca fra mandata e ritorno (§7, §9);
-- da dove far arrivare l'acqua fredda del bollitore quando a sinistra pende il corredo del ritorno di carico (§9).
-
-### Note di controllo, dal documento
-
-- I diametri del secondario ACS non si calcolano: c'è il salto termico ma non la potenza né la portata.
-- Il grafo completo della 1.2.2 ha 207 pezzi e 228 tubazioni, per una tavola probabilmente in A1: con il punto 1
-  se ne tolgono una trentina.
-
-## Quello che resta di `BETA-001`
-
-La copia è in `docs/plans/pacchetti/BETA-001.md`. Restano aperti, e si fanno dentro questo pacchetto quando
-toccano: I-182 (le valvole di D-120 a 10 mm sulla tavola 1 dal piano); il modulo della segnalazione per i
-collaboratori (`docs/beta/SEGNALAZIONE.md`); le tavole dei collaboratori, con il ciclo della prova del PO.
+- quali esempi entrano nella skill (punto 2), e se la tavola C corretta è l'esempio (D-211);
+- **il manuale Shenling** (RAPPORTO §2, ricontrollato): la macchina ha **a bordo** valvola di sicurezza a 3 bar, sfiato
+  automatico, flussostato e pompa; non il vaso; vuole almeno 40 l d'impianto a valvole chiuse, e in cascata una valvola
+  di non ritorno sull'uscita di ogni unità. La tavola del caso disegna fuori da ogni macchina la valvola di sicurezza
+  (D-182 la vuole sempre) e lo sfiato. Si tengono così, o la Shenling li porta `a_bordo`? È D-015: il manuale cambia gli
+  accessori rappresentati;
+- **la §2.4 della specifica tecnica** contro le regole di Completare: il corredo del primario che il progettista vuole;
+- da `REL-009`, punto 9: la distanza della valvola di sicurezza sopra il suo raccordo; B3 contro B1 nell'ordine dei
+  collettori primari; la quota del primo raccordo della zona vicina; da dove arriva la fredda del bollitore. E il
+  **limite d'intervento** facoltativo (I-195, D-202).
 
 ## Perimetro
 
-**Dentro:** `skill/**`, `src/**`, `schemas/**`, il catalogo (`examples/layout/catalog/`), le regole
-(`rules/hydronic/`), la libreria (`examples/graphics/build_symbols.py` → `assets/symbols/`), `tests/**`,
-`docs/collaudi/REL-009/`, `releases/`, il registro, il registro delle decisioni (come proposte), `HANDOFF.md`,
-questo file.
+**Dentro:** `skill/**`, `src/**`, la libreria (`examples/graphics/build_symbols.py` → `assets/symbols/`), `tests/**`,
+`docs/collaudi/REL-010/`, `releases/`, il registro, il registro delle decisioni (come proposte), `HANDOFF.md`, questo file.
 
-**Fuori:** i dati del cliente, in qualunque file; un contenuto MEP o una convenzione grafica decisi dalla sessione.
+**Fuori:** i dati del cliente, in qualunque file; i manuali dei costruttori, la specifica tecnica Nove C e le immagini
+di terzi (il repository è pubblico); un contenuto MEP o una convenzione grafica decisi dalla sessione.
 
 ## Criteri di accettazione — per ogni PR
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
 0. **Le tavole, per prime**: quelle che la PR cambia, prima e dopo, al PO.
-1. **La suite**: `0 failed`; nessuno `skip` e nessuno `xfail` nuovi; `ruff` e `mypy` verdi.
-2. **La regressione**: `confronta.sh` fra `main` e il ramo, ogni file cambiato spiegato.
+1. **La suite**: `0 failed`; nessuno `skip` e nessuno `xfail` nuovi; `ruff check src tests` verde; `mypy` verde dove
+   l'ambiente lo lascia girare (sul `main` del 23 ottobre si ferma sugli stub di numpy).
+2. **La regressione**: il banco di `REL-009` (`docs/collaudi/REL-009/la-1.4-sulle-tavole-agli-atti/banco.py`, più le
+   tre prove pulite) fra `main` e il ramo, ogni tavola cambiata spiegata.
 3. **Ogni correzione ha la sua prova**, rossa sul commit di partenza.
 4. **Gli input del PO nel registro** il giorno in cui arrivano.
 5. **Nessun dato di cliente nel diff**: il comando di ricerca e il suo output vuoto.

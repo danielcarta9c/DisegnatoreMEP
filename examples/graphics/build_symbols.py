@@ -926,14 +926,21 @@ def radiator_body(w: float, h: float) -> str:
 
 
 def underfloor_body(w: float, h: float) -> str:
-    """Pannello radiante: la serpentina dentro il proprio riquadro."""
+    """Pannello radiante: la serpentina dentro il proprio riquadro.
+
+    Quattro anse larghe 0,14 del riquadro, con lo stesso margine ai due lati: il
+    passo fra un'ansa e la successiva e' quello che porta l'ultima a finire a 0,92.
+    Con il passo di 0,28 l'ultima ansa finiva a 1,06, fuori dal riquadro, ed e'
+    rimasta cosi' su ogni tavola dal 21 settembre al 23 ottobre 2026 (I-217).
+    """
     x, y = w * 0.1, h * 0.15
     bw, bh = w * 0.8, h * 0.7
+    passo = (0.92 - 0.14 - 0.08) / 3
     path = [f"M{n(x + bw * 0.08)} {n(y + bh * 0.9)}"]
     for i in range(4):
         top = y + bh * 0.1
         bottom = y + bh * 0.9
-        left = x + bw * (0.08 + i * 0.28)
+        left = x + bw * (0.08 + i * passo)
         path.append(f"L{n(left)} {n(top)} L{n(left + bw * 0.14)} {n(top)} "
                     f"L{n(left + bw * 0.14)} {n(bottom)}")
     return (
@@ -2308,7 +2315,9 @@ SYMBOLS: list[SymbolSpec] = [
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
     ),
     two_port_terminal("radiator", "Radiatore", radiator_body, SOURCE_PRACTICE_HYDRONIC),
-    two_port_terminal("underfloor-panel", "Pannello radiante", underfloor_body, SOURCE_PRACTICE_HYDRONIC),
+    two_port_terminal(
+        "underfloor-panel", "Pannello radiante", underfloor_body, SOURCE_PRACTICE_HYDRONIC, "1.2.0"
+    ),
     two_port_terminal("fan-coil", "Ventilconvettore", fan_coil_body, SOURCE_PRACTICE_HYDRONIC),
     # --- i simboli nuovi della prima release (`REL-003`, I-124, D-184) -------
     SymbolSpec(
