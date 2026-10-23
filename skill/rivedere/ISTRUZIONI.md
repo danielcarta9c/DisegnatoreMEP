@@ -66,6 +66,11 @@ servono? Sono allineati fra loro? Qualcuno è finito lontano da tutto?*
 **6 — Il foglio.** Guardalo da lontano, socchiudendo gli occhi. *L'inchiostro è distribuito o
 tutto da una parte? Ci sono zone fitte e zone vuote? La tavola si legge da due metri?*
 
+**7 — Dentro i simboli.** Ingrandisci i pezzi, non solo le linee: i terminali, i serbatoi, le
+valvole. *Un segno esce dal proprio riquadro? Due simboli stanno uno dentro l'altro?* Un simbolo
+disegnato male è un difetto che nessun controllo vede. Il PO, su una tavola dove il revisore non
+aveva visto la serpentina di un pannello uscire dal riquadro: «doveva vederla».
+
 ---
 
 ## 4. Cosa restituisci: **vincoli**, mai mosse
@@ -125,5 +130,45 @@ In italiano, corto, e in quest'ordine:
    motiva**, e **dove si vede sulla tavola**.
 4. **Quello che hai proposto invece di imporre** — i nodi del grafo, le domande al PO.
 5. **Quello che hai guardato e ti è sembrato a posto.** Serve a chi legge quanto il resto.
+6. **Il verdetto**, in una riga: la tavola si consegna così, oppure va ricomposta, e perché.
 
 **Un vincolo senza il nome della regola non si scrive.** Sarebbe il solutore travestito.
+
+### Che cosa ferma la consegna, e che cosa no
+
+Il verdetto è tuo. Quando il PO l'ha visto accanto alla tavola l'ha trovato giusto: un revisore
+che non ha composto la tavola vede cose che chi l'ha composta, e anche il PO, non vedono. Ma non
+tutto quello che vedi ferma la consegna. Il criterio è del PO: **ferma la consegna quello che fa
+leggere la tavola male o sbagliata; non la ferma quello che si potrebbe disegnare meglio ma non
+cambia la lettura.** Il secondo lo scrivi lo stesso, fra i vincoli o le proposte, e dici che non
+ferma la consegna.
+
+Il PO ha chiamato **difetti**, anche su tavole che aveva già approvato:
+
+- i due collettori di una cascata lontani fra loro, invece di una colonna stretta accanto alle
+  macchine;
+- le pompe in parallelo non incolonnate;
+- mandata e ritorno che non corrono insieme, anche dove i capi della coppia sono raccordi e non
+  macchine;
+- un organo lontano dal pezzo che serve, come un gruppo di sicurezza a tre centimetri dal
+  bollitore;
+- linee che arrivano allo stesso pezzo da tre parti senza un motivo;
+- un gradino in una linea che si toglie liberando la sua corsia;
+- il disegno che tocca il bordo del foglio;
+- un simbolo disegnato male, e uno scarico colorato come la mandata, con la freccia.
+
+Ha **tollerato** — si dicono, non fermano la consegna:
+
+- l'ordine delle due colonne di una cascata, quando invertirle sposta soltanto gli
+  scavalcamenti sulle linee singole;
+- la mandata di una zona che passa sotto il ritorno comune per raggiungere il suo pettine;
+- un pezzo fuori dalla sua fascia, quando la tavola si legge lo stesso;
+- un circuito lungo che si potrebbe accorciare.
+
+E queste sono **convenzioni della skill**, che si tollerano: gli attacchi liberi di volani e
+bollitori senza tappo, che sono i pozzetti delle sonde; derivazione a T e raccordo a T con lo
+stesso segno; l'ordine delle macchine nella pila diverso da quello della distinta; il cartiglio
+«DA DEFINIRE», che fa della tavola una bozza — i dati li dà il progettista.
+
+Un difetto che la composizione non può togliere — un simbolo, un colore — non è un vincolo: lo
+scrivi fra le proposte, come difetto del disegno.
