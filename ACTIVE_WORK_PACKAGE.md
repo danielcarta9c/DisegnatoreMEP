@@ -6,7 +6,7 @@
 > è la parte che mi preoccupa di piu'». Scritto il 23 ottobre 2026, sulla 1.4.1.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO** — il punto 1 è sul ramo `claude/nifty-archimedes-4hnzcu`, con la tavola al PO (D-211 proposta).
+**Stato:** **IN CORSO** — il punto 1 è su `main` (PR #78): la tavola C corretta, approvata dal PO, è l'esempio (I-218, D-211).
 **Base:** `main` dopo la PR #77 (la 1.4.1).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). Una PR per punto, o per gruppo di punti.
@@ -27,16 +27,15 @@ passo 7.
 
 ## Le cose da fare, in quest'ordine
 
-### 1. La tavola d'esempio — fatto sul ramo, aspetta il PO (I-217, D-211)
+### 1. La tavola d'esempio — fatto, PR #78 (I-217, I-218, D-211)
 
 La tavola C (`REL-009`, «tavola perfetta», I-214), guardata ingrandita, aveva due difetti che nessun numero vedeva: la
 serpentina del pannello radiante fuori dal riquadro, e il giunto antivibrante dell'ultima pompa di ogni cascata sulla
-verticale del collettore. Corretti (il simbolo, e una regola del motore); la tavola corretta è al PO, che decide se è
-l'esempio. `docs/collaudi/REL-010/RAPPORTO.md` §1.
+verticale del collettore. Corretti (il simbolo, e una regola del motore); il PO: «la tavola C vabene» — è l'esempio. `docs/collaudi/REL-010/RAPPORTO.md` §1.
 
 ### 2. Gli esempi del revisore — da decidere col PO
 
-- **Il buono**: la tavola C corretta, se il PO la approva. Per le tavole piccole, gli schemi tipologici A, B, C della
+- **Il buono**: la tavola C corretta (`docs/collaudi/REL-010/tavola-esempio/`), approvata (I-218). Per le tavole piccole, gli schemi tipologici A, B, C della
   *Specifica tecnica di installazione* Nove C, che sono fatti con questa skill (RAPPORTO §2) — se il PO li vuole nella
   skill.
 - **Le coppie peggio / meglio**, con i simboli di oggi: la tavola del caso rifatta (`caso-reale-2`, I-207, collettore di
@@ -90,13 +89,11 @@ Con `scripts/costruisci-skill.py`, e `tests/test_le_release.py` verde (D-200). L
 
 ## Da decidere col PO — non da scegliere da soli
 
-- quali esempi entrano nella skill (punto 2), e se la tavola C corretta è l'esempio (D-211);
-- **il manuale Shenling** (RAPPORTO §2, ricontrollato): la macchina ha **a bordo** valvola di sicurezza a 3 bar, sfiato
-  automatico, flussostato e pompa; non il vaso; vuole almeno 40 l d'impianto a valvole chiuse, e in cascata una valvola
-  di non ritorno sull'uscita di ogni unità. La tavola del caso disegna fuori da ogni macchina la valvola di sicurezza
-  (D-182 la vuole sempre) e lo sfiato. Si tengono così, o la Shenling li porta `a_bordo`? È D-015: il manuale cambia gli
-  accessori rappresentati;
-- **la §2.4 della specifica tecnica** contro le regole di Completare: il corredo del primario che il progettista vuole;
+- quali altri esempi entrano nella skill (punto 2): gli schemi A, B, C della specifica tecnica;
+- **dopo il revisore, per ordine del PO** (I-218): **il manuale Shenling e la §2.4 della specifica tecnica contro le
+  regole** di Completare — il vaso d'espansione (`rules/hydronic/expansion-on-closed-circuit.json`,
+  `expansion-on-the-stored-volume-feed.json`), il volume minimo, la valvola di non ritorno su ogni unità in cascata. La
+  valvola di sicurezza fuori da ogni pompa resta (I-218, D-182); lo sfiato, che la Shenling ha a bordo, per ora pure;
 - da `REL-009`, punto 9: la distanza della valvola di sicurezza sopra il suo raccordo; B3 contro B1 nell'ordine dei
   collettori primari; la quota del primo raccordo della zona vicina; da dove arriva la fredda del bollitore. E il
   **limite d'intervento** facoltativo (I-195, D-202).

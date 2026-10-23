@@ -1,8 +1,8 @@
 # REL-010 — Il revisore esterno e la sua tavola d'esempio · rapporto
 
-## 1. La tavola d'esempio (I-217, D-211 proposta)
+## 1. La tavola d'esempio (I-217, D-211)
 
-**23 ottobre 2026** · input **I-216**, **I-217** · la tavola al PO, che decide se diventa l'esempio
+**23 ottobre 2026** · input **I-216**, **I-217**, **I-218** · la tavola al PO: «la tavola C vabene»; D-211 approvata, PR #78
 
 ### Le tavole, per prime
 

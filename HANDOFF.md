@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-23 — **il pacchetto è `REL-010`**, il revisore esterno (I-216). Il punto 1 è sul ramo `claude/nifty-archimedes-4hnzcu` e aspetta il PO: la tavola C corretta, che deve diventare l'esempio (I-217, D-211 proposta). Prima: la 1.4.1 su `main` (PR #77).
+**Aggiornato:** 2026-10-23 — **il pacchetto è `REL-010`**, il revisore esterno (I-216). Il punto 1 è su `main` (PR #78): la tavola C corretta è l'esempio, approvata dal PO (I-218, D-211). Prima: la 1.4.1 (PR #77).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -17,10 +17,12 @@
 tavola (il brief del PO, I-216), e prima il **metro** con cui guarda — la rilettura a freddo, gli esempi, la taratura sul
 giudizio del PO. `REL-009` è sospeso con due residui (`docs/plans/pacchetti/REL-009.md`).
 
-- **Il punto 1 è sul ramo `claude/nifty-archimedes-4hnzcu`, e aspetta il PO**: la tavola C con due difetti in meno — la
-  serpentina del pannello radiante nel suo riquadro (`underfloor-panel` 1.2.0) e il giunto dell'ultima pompa di ogni
-  cascata fuori dal prolungamento del collettore (`inline.py`). D-211 proposta; `docs/collaudi/REL-010/RAPPORTO.md` §1.
-  Se il PO dice sì: PR, fusione, D-211 approvata, I-217 aggiornata. **All'avvio guarda le PR aperte e lo stato del ramo.**
+- **Il punto 1 è su `main` (PR #78)**: la tavola C con due difetti in meno — la serpentina del pannello radiante nel suo
+  riquadro (`underfloor-panel` 1.2.0) e il giunto dell'ultima pompa di ogni cascata fuori dal prolungamento del
+  collettore (`inline.py`). Il PO: «la tavola C vabene» (I-218); D-211 approvata. È **l'esempio del revisore**:
+  `docs/collaudi/REL-010/tavola-esempio/`. **All'avvio guarda le PR aperte.**
+- **Il PO: «una cosa alla volta. prima l'agente revisore esterno»** (I-218). Il manuale Shenling serve **dopo**, per
+  verificare le regole di Completare (il vaso d'espansione, il volume minimo), non per il revisore.
 - **Il banco di regressione** è quello di `REL-009` più le tre prove pulite; il `main` in un worktree, con `PYTHONPATH` sul
   suo `src/`. La prima stesura della regola del punto 1 l'ha fermata due volte: la regressione serve.
 - **I manuali** (Shenling ThermaX R290, Vaillant 2020) stanno sul OneDrive del PO e si leggono col connettore Microsoft
@@ -28,7 +30,7 @@ giudizio del PO. `REL-009` è sospeso con due residui (`docs/plans/pacchetti/REL
   contenuto che portano sono in `REL-010`, «Da decidere col PO».
 - `mypy` si ferma sugli stub di numpy anche sul `main`: è l'ambiente. `ruff check .` dalla radice trova 40 errori nei
   vecchi `metriche.py` dei collaudi: il controllo del progetto è `ruff check src tests`.
-- **I numeri**: il prossimo input è **I-218**, la prossima decisione **D-212**.
+- **I numeri**: il prossimo input è **I-219**, la prossima decisione **D-212**.
 
 ## Da dove ripartiva — scritto il 5 ottobre 2026, alla fusione della 1.4.1
 
