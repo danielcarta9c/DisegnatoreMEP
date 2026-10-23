@@ -138,3 +138,57 @@ sono in `REL-010`, «Da decidere col PO».
 È la *Specifica tecnica pompe di calore 2020*; la parte aria-acqua riguarda aroTHERM monoblocco R410A, non R290. Letto
 da un agente e **non ricontrollato**: volume minimo per taglia, disaccoppiatore MPS 40, vaso e sicurezza nei moduli
 interni. Si apre quando un caso reale porta una Vaillant.
+
+## 3. La taratura del revisore, primo giro (REL-010 punto 3)
+
+**23 ottobre 2026** · sette agenti avviati da zero, uno per tavola, in parallelo nella sessione (D-152). Ciascuno riceve
+**solo** il testo fisso dell'incarico (`taratura-1/INCARICO.md`), una cartella con `rivedere.md` e
+`regole-del-piano.md` come li porta la skill, la tavola (PNG del foglio e PDF da ingrandire da sé) e i rilievi. Niente
+grafo, niente piano, niente esempi. I nomi delle cartelle sono neutri (`t1` … `t7`); la chiave è in
+`taratura-1/CHIAVE.txt`, e i riassunti dei rapporti, tavola per tavola, in `taratura-1/ESITI.md`.
+
+Le tavole sono sette, **tutte già giudicate dal PO**, cercate nel registro: due respinte, cinque approvate (una di queste,
+la prova A, solo implicitamente). Il revisore aggiunge in fondo una riga di verdetto: si consegna, o va ricomposta.
+
+| | tavola | il PO | il revisore | il verdetto coincide | ha visto quello che ha visto il PO |
+|---|---|---|---|---|---|
+| t4 | tavola 5 del 20 settembre | «fanno schifo» (I-095) | va ricomposta | **sì** | **sì**: «solo la mandata è un'autostrada»; il ritorno primario sotto la quota del volano; i terminali con le porte opposte che fanno girare il ritorno (il PO il 21/9). Non i collettori |
+| t5 | prima tavola sull'impianto del PO | «non va bene» (I-171) | va ricomposta | **sì** | **in parte**: lo sfiato del volano sulla corsia della mandata (I-172) sì, ma lo giudica imposto; della tre vie (I-173) vede il sintomo, non il rimedio |
+| t7 | impianto 6 | «va benissimo» (I-136) | si consegna | **sì** | — |
+| t1 | tavola C prima di D-211 | «tavola perfetta» (I-214) | va ricomposta | no | il giunto dell'ultima pompa **sì**; il pannello no |
+| t2 | tavola del caso rifatta | «Si approvo» (I-206) | va ricomposta | no | il giunto **sì**; i collettori di mandata e ritorno lontani (I-103) **sì** |
+| t3 | prova pulita A, 1.4.0 | presa per il progetto (I-209) | va ricomposta | no | gli sfiati che scavalcano la mandata (I-210, I-212) **sì**; il giunto **sì** |
+| t6 | stesso impianto di t5, volano coricato | «si va bene» (I-179) | va ricomposta | no | — |
+
+**Che cosa dice.**
+
+- **L'occhio separato vede.** Sulle due tavole respinte dà il giudizio del PO con le sue ragioni — le autostrade, lo
+  sfiato che intruppa la mandata —, e su t4 ritrova da solo quello che il PO aveva detto ridisegnando la tavola il 21
+  settembre. **I due difetti di D-211 li trova alla cieca**: il giunto sulla colonna del collettore tre volte su tre
+  tavole che ce l'hanno, la serpentina del pannello una volta (t5, anche in legenda).
+- **Il verdetto non è tarato: è più severo del PO.** Delle cinque tavole approvate ne lascia passare una. Le ragioni non
+  sono inventate, e ricorrono su revisori indipendenti:
+  - la mandata della pompa di zona che scende dal raccordo e corre **sotto il ritorno comune** (t1, t2, t3): contro B10,
+    e nessun controllo la vede — la coppia non si riconosce quando i capi sono raccordi (D-174). La sessione l'ha
+    verificata sulla tavola C;
+  - attorno al bollitore **andata ACS, ricircolo e acqua fredda arrivano da tre parti** (t1, t3), o la fredda arriva da
+    lontano (t1, t3, t5, t6);
+  - **la coppia della serpentina che si apre** (t6);
+  - **i due collettori di una cascata lontani** (t2) — è il criterio del PO del 21 settembre;
+  - **le pompe di zona non incolonnate** (t2, t7): A2 non ha un rilievo.
+
+  O il PO le tollera, e il revisore deve imparare la sua soglia; o sono difetti che nessuno aveva ancora visto. È una
+  domanda al PO.
+- **Le convenzioni le scambia per difetti, sempre le stesse**: gli attacchi liberi senza tappo (i pozzetti delle sonde),
+  su sei tavole su sette; derivazione e raccordo a T con lo stesso segno; lo scarico del volano rosso con la freccia;
+  l'ordine delle macchine nella pila diverso dalla distinta; il cartiglio «DA DEFINIRE». Vanno dette in `rivedere.md`.
+- **Dei controlli dice che sbagliano, in tre posti, e su tavole diverse**: `HIGHWAY_IS_NOT_STRAIGHT` sul ritorno del
+  pettine della zona 2 (t1, t2) e sul gradino imposto dagli interassi (t6); il B11 a 287,5 e 297,5 mm sulla zona 2 (t1,
+  t2). Da verificare: sono rilievi sui controlli, non sulla tavola.
+- **Quanto costa**: da 7 a 13 minuti e da 145 000 a 188 000 token per tavola, ingrandimenti compresi (da 7 a 13 per
+  tavola).
+
+**Che cosa ne viene per `REL-010`.** Il revisore separato si costruisce: vede, e vede quello che il PO vede. Prima del
+passo 7, tre cose: **la soglia** — distinguere quello che ferma la consegna da quello che la migliora, tarato sulle
+tavole che il PO ha approvato con i loro difetti residui —, **le convenzioni** in `rivedere.md`, e la risposta del PO sui
+difetti ricorrenti qui sopra.

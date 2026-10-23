@@ -1,0 +1,7 @@
+t1 = tavola C prima della correzione (D-211)
+t2 = caso-reale-2, tavola del caso rifatta (I-207)
+t3 = prova pulita A, 1.4.0 (I-209, I-210, I-212)
+t4 = PROVA-PIANO tavola 5 del 20/9, modalità verifica (I-095 «fanno schifo»)
+t5 = REL-005 prova-po-1 A com'era (I-171 «non va bene»; I-172, I-173, I-174)
+t6 = REL-005 prova-po-1 D volano coricato (I-179 «si va bene»)
+t7 = REL-003 impianto 6 (I-136 «va benissimo»)
