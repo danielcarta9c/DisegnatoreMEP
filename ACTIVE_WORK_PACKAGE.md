@@ -102,16 +102,26 @@ in `SKILL.md` con la cartella da preparare, il tetto è di due giri con un revis
 ha guardato; `rivedere.md` ha il §2 corretto e dice chi è «il PO». La skill si costruisce (104 file) e
 `tests/test_le_release.py` passa.
 
-### 6. La prova del brief — sulla stessa tavola, in sessione pulita
+### 6. La prova del brief — fatta il 24 ottobre (RAPPORTO §5); le tavole al PO
 
 Il passo 7 nelle due modalità **partendo dalla stessa tavola** (D-023 è sospesa: due composizioni non danno la stessa
 tavola), in una sessione nuova con il solo ZIP, sul `caso-reale-2`. Il metro non è «un vincolo in più»: è **il giro dopo
 migliora** (`skill/rivedere/CONSEGNA.md` punto 4) e **il PO lo vede sulle tavole**. Con il tempo di ciascuna (I-205).
 
-### 7. La release 1.5.0
+**Fatta** (RAPPORTO §5, `docs/collaudi/REL-010/prova-passo7/`): due compositori da zero, con la sola skill, dalla tavola
+del caso rifatta. Ordinaria: un giro, 10 minuti, le colonne della cascata da 45 a 35 mm. Revisore esterno: due giri, 32
+minuti, le colonne a 10 mm accanto alle macchine — il revisore ha visto che a tenerle lontane erano sfiato e giunto del
+ritorno, che il compositore da solo aveva preso per contenuto. La prova ha trovato un'ambiguità nel punto 5 del revisore
+esterno, corretta. **E una domanda per il PO**: con la soglia, tre revisori su tre dicono «si consegna» sulla tavola di
+partenza, che al primo giro andava ricomposta.
+
+### 7. La release 1.5.0 — costruita sul ramo, si pubblica con la fusione
 
 Con `scripts/costruisci-skill.py`, e `tests/test_le_release.py` verde (D-200). La nota di `SKILL.md` al passo 1 su
 `capire.md` resta com'è.
+
+**Costruita** il 24 ottobre: `releases/latest/DisegnatoreMEP-v1.5.0.zip`, 104 file, i controlli del caricamento passati;
+suite 2050 passate, 15 saltate, 10 attese rosse. Va su `main` con la PR, dopo che il PO ha visto le tavole.
 
 ## Quello che la taratura ha riportato sul prodotto — dopo il revisore
 
@@ -134,6 +144,19 @@ vanno nel pacchetto che segue `REL-010` («una cosa alla volta», I-218).
 | la coppia verso uno scambiatore che si apre nelle verticali | u3 | il controllo di B11/B12, come sopra |
 | la sigla di una macchina lontana dalla macchina, sotto un altro pezzo («se possibile spostare le tag») | u1, u3 | il motore: nessuna regola dice dove sta una sigla |
 | deviatrice e commutatrice con lo stesso segno | u3 | la libreria; **il segno lo sceglie il PO**: una «c» sopra o un simbolo leggermente diverso (I-221) |
+
+Dalla prova del passo 7 (RAPPORTO §5), visti dai revisori esterni e da nessun controllo:
+
+| difetto | dove si vede | di chi è |
+|---|---|---|
+| sfiato e giunto del ritorno di una pompa di calore oltre la colonna di mandata, lontani dalla macchina | caso rifatto, tutte e sei le pompe | il motore (`inline.py`): li posa dalla parte del raccordo; il controllo di A4 non guarda gli organi in linea |
+| il gruppo di sicurezza sanitario e un vaso appeso a metà linea, lontani dal pezzo che servono | caso rifatto | il controllo di A4, come sopra |
+| andata ACS e ricircolo che lasciano il foglio in due direzioni | caso rifatto | il controllo di B11: non guarda le coppie che finiscono su un confine di rete |
+| i tre simboli in testa alla legenda che si toccano | caso rifatto | la legenda |
+| la miscelatrice termostatica e il rubinetto portamanometro quasi uguali | caso rifatto | la libreria; il segno lo sceglie il PO |
+| la barra di ritorno del collettore di zona spezzata dove passano le discese | caso rifatto | il simbolo; come si disegna l'incrocio lo decide il PO |
+| la freccia sullo scarico dell'acqua fredda | caso rifatto | il motore, con lo scarico rosso |
+| le zone senza sigla | caso rifatto | Capire: è una domanda al progettista |
 
 E tre cose che il PO tollera ma preferirebbe altrimenti (I-221): il tratteggio dell'acqua fredda che parte pieno
 sull'attacco, le valvole di mandata e ritorno di una macchina allineate, e gli attacchi dei terminali che oggi corrono a

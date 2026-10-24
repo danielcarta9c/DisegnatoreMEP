@@ -35,8 +35,12 @@ giudizio del PO. `REL-009` è sospeso con due residui (`docs/plans/pacchetti/REL
 - **La taratura, punto 3, è fatta** (RAPPORTO §3 e §4): due giri alla cieca, sette e sei tavole già giudicate dal PO;
   il PO, vista ogni tavola accanto al verdetto, lo dà giusto **tredici volte su tredici**, e la sua soglia — che cosa
   ferma la consegna e che cosa no — è in `skill/rivedere/ISTRUZIONI.md`. Il lavoro è sul ramo, **non ancora su `main`**:
-  va nella PR del pacchetto, che il PO approva guardando le tavole. Il prossimo è il punto 4, la rilettura a freddo, poi
-  il passo 7.
+  va nella PR del pacchetto, che il PO approva guardando le tavole.
+- **I punti 4–7 sono fatti sul ramo, il 24 ottobre**: la rilettura a freddo e il passo 7 in due modalità (D-212,
+  proposta), la domanda a scelta sulla revisione (I-222), la prova nelle due modalità dalla stessa tavola (RAPPORTO §5) e
+  la **release 1.5.0** in `releases/`. **Niente è fuso**: il PO vede le tavole della prova e decide. Gli resta anche una
+  domanda sulla soglia: con la soglia, tre revisori su tre consegnano la tavola del caso rifatto, che al primo giro
+  andava ricomposta (RAPPORTO §5).
 - **I numeri**: il prossimo input è **I-223**, la prossima decisione **D-213** (D-212 è proposta, sul ramo).
 
 ## Da dove ripartiva — scritto il 5 ottobre 2026, alla fusione della 1.4.1

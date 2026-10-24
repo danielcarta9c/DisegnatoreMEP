@@ -267,3 +267,74 @@ Sulla pagina del secondo giro, come al primo (I-219); le scelte, testuali, sono 
 **Che cosa ne viene per `REL-010`.** Il revisore separato vede quello che vede il PO, e il suo verdetto il PO lo dà giusto
 sulle tredici tavole di due giri. Le scelte di questo giro entrano nella soglia di `rivedere.md`; i difetti del prodotto,
 nel pacchetto che segue. Il punto 3 è chiuso; il prossimo è il 4, la rilettura a freddo, e poi il passo 7.
+
+## 5. La prova del passo 7, nelle due modalità (REL-010 punto 6)
+
+**24 ottobre 2026, 21:26–21:58 UTC** · la skill costruita dal ramo (1.5.0 senza il numero), due compositori avviati da
+zero **nello stesso momento e dalla stessa tavola**: la tavola del caso rifatta (`REL-009`, I-207; t2 del primo giro di
+taratura), rieseguita con il grafo completo e il piano agli atti. Ciascuno riceve soltanto la cartella della skill e
+quella di lavoro, e il testo: «i passi 1–6 sono fatti». Al primo il progettista non chiede niente; al secondo scrive
+«fammela rivedere da un agente esterno». Le tavole, i piani, i vincoli, i messaggi al progettista e i rapporti dei
+revisori sono in `prova-passo7/`.
+
+**Una cosa dell'ambiente, e come è stata aggirata.** Un sub-agente qui non può lanciarne un altro. Il compositore del
+revisore esterno ha preparato la cartella e il testo dell'incarico come dice `SKILL.md`, e si è fermato; la sessione ha
+lanciato il revisore **con quel testo e nient'altro**, e gli ha rimandato il rapporto. Il compositore non ha mai parlato
+con il revisore. In Claude Code e in Cowork il compositore è la sessione principale e il revisore lo lancia lui.
+
+| | partenza | modalità ordinaria | revisore esterno |
+|---|---|---|---|
+| chi ha guardato | — | il compositore, un giro | due revisori esterni, uno per giro |
+| tempo | — | 10 min | 32 min (i due revisori 9 e 9,5 min) |
+| token, come li conta l'ambiente | — | 213 000 | 230 000 il compositore, 186 000 e 189 000 i revisori |
+| verdetto | — | — | «si consegna», tutti e due |
+| formato · tratte · cedute · bloccanti | A1 · 137 · 0 · 0 | A1 · 137 · 0 · 0 | A1 · 137 · 0 · 0 |
+| pieghe · sormonti | 13 · 12 | 13 · 12 | 13 · **14** |
+| stacchi più lunghi del minimo | 4 | **0** | 2 |
+| pezzi fuori fascia · coppie che non corrono insieme | 7 · 4 | 7 · 4 | 7 · 4 |
+
+**Le tavole.** La differenza non sta nei numeri, sta nelle cascate:
+
+- **in modalità ordinaria** il compositore vede le due colonne della cascata staccate — il difetto che il PO ha chiamato
+  per nome — e le avvicina da 45 a **35 mm**. Più vicine no: «fra loro il ritorno porta lo sfiato e il giunto
+  antivibrante», e li prende per contenuto;
+- **il revisore esterno** vede **perché** le colonne stanno lontane: sfiato e giunto del ritorno di ogni pompa di calore
+  stanno oltre la colonna di mandata, lontani dalla macchina che servono, e nessun rilievo li vede (A4 misura gli
+  stacchi, non gli organi in linea). Il suo vincolo — sfiato e giunto addosso alla macchina, e le colonne una addosso
+  all'altra — porta le colonne a **10 mm**, accanto alle macchine. Il prezzo: per tenere il giunto dalla parte della
+  macchina il motore vuole la colonna di ritorno vicino alle pompe, e i sormonti salgono da 12 a 14. Il PO ha già
+  tollerato l'ordine delle colonne (I-220).
+- Sul gruppo ACS, il revisore esterno avvicina il gruppo di sicurezza sanitario e il vaso al bollitore; quello ordinario
+  accorcia gli stacchi.
+
+**La rilettura a freddo.** I due revisori esterni, e il terzo di controllo, raccontano l'impianto giusto: i due impianti
+separati, le cascate, i volani, i due pettini, il circuito della serpentina, l'acqua fredda, il ricircolo. Il compositore
+ha trovato una lettura imprecisa — l'intercettazione a valle di CIR-01 c'è, ma il motore la mette addosso al bollitore —
+e un vuoto vero: **le zone non hanno sigla**, e nessuno sa dire quale collettore sia quale.
+
+**Quello che l'occhio esterno vede e i numeri no**, oltre alle cascate: il gruppo di sicurezza sanitario a metà della
+linea fredda; VE-01 e il manometro a metà del ritorno fra i due accumuli, staccati dal volano; andata ACS e ricircolo che
+lasciano il foglio in due direzioni (B11 non guarda le coppie che finiscono su un confine di rete); CIR-02 e CIR-03 non
+incolonnati; e quattro difetti del disegno — i tre simboli in testa alla legenda che si toccano, la miscelatrice
+termostatica e il rubinetto portamanometro quasi uguali, la barra di ritorno del collettore di zona spezzata dove passano
+le discese, la freccia sullo scarico dell'acqua fredda.
+
+**Quello che la prova ha corretto in `SKILL.md`.** Il compositore l'ha detto da sé: il primo revisore ha dato «si
+consegna» **e** tre vincoli, e il passo 7 non diceva se fermarsi o applicarli. Li ha applicati, ed è da lì che vengono le
+colonne a 10 mm. La regola adesso è scritta (D-212 punto 6): i vincoli si applicano anche quando il verdetto è «si
+consegna»; al più due revisori; i vincoli del secondo, se consegna, si dicono al progettista come miglioramenti.
+
+**Se una tavola mi sembra sbagliata e i numeri dicono che va bene — e qui è il verdetto.** La tavola di partenza è la
+stessa su cui, al primo giro di taratura, il revisore aveva detto «va ricomposta» e il PO aveva dato **giusto** (I-220).
+Adesso, con la soglia del PO in `rivedere.md`, il primo revisore esterno dice «**si consegna**». Per sapere se era un caso
+la sessione ha lanciato un terzo revisore cieco sulla stessa tavola (`rapporti/controllo-partenza.md`): dice **anche lui
+«si consegna»**, con gli stessi difetti — le colonne lontane, gli organi del ritorno staccati, il gruppo di sicurezza
+lontano — tutti come vincoli che non fermano. **La soglia ha spostato il verdetto su questa tavola**, e in modo stabile.
+Le due letture si reggono tutte e due sulle parole del PO: «ferma la consegna quello che fa leggere la tavola male» (e la
+tavola si legge giusta), contro «i due collettori di una cascata lontani» nell'elenco dei difetti (e il «giusto» del primo
+giro). **Quale delle due vale lo decide il PO**; la sessione non tocca la soglia.
+
+**Per `REL-010`.** Il revisore esterno funziona come lo descrive `SKILL.md`: la cartella, l'incarico fisso, il racconto,
+la traduzione dei vincoli, il tetto. Sulla stessa tavola **il giro col revisore esterno migliora la tavola dove il
+compositore da solo si era fermato**, e costa tre volte il tempo. Resta al PO: le tavole, D-212, e la domanda sulla
+soglia.
