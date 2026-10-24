@@ -38,7 +38,7 @@ giudizio del PO. `REL-009` è sospeso con due residui (`docs/plans/pacchetti/REL
   va nella PR del pacchetto, che il PO approva guardando le tavole.
 - **I punti 4–7 sono fatti sul ramo, il 24 ottobre**: la rilettura a freddo e il passo 7 in due modalità (D-212,
   proposta), la domanda a scelta sulla revisione (I-222), la prova nelle due modalità dalla stessa tavola (RAPPORTO §5) e
-  la **release 1.5.0** in `releases/`. **Niente è fuso**: il PO vede le tavole della prova e decide. Gli resta anche una
+  la **release 1.5.0** in `releases/`, tutto nella **PR #79**. **Niente è fuso**: il PO vede le tavole della prova (la pagina in testa alla PR) e decide. Gli resta anche una
   domanda sulla soglia: con la soglia, tre revisori su tre consegnano la tavola del caso rifatto, che al primo giro
   andava ricomposta (RAPPORTO §5).
 - **I numeri**: il prossimo input è **I-223**, la prossima decisione **D-213** (D-212 è proposta, sul ramo).
