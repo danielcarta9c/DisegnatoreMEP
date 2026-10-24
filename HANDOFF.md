@@ -37,7 +37,7 @@ giudizio del PO. `REL-009` è sospeso con due residui (`docs/plans/pacchetti/REL
   ferma la consegna e che cosa no — è in `skill/rivedere/ISTRUZIONI.md`. Il lavoro è sul ramo, **non ancora su `main`**:
   va nella PR del pacchetto, che il PO approva guardando le tavole. Il prossimo è il punto 4, la rilettura a freddo, poi
   il passo 7.
-- **I numeri**: il prossimo input è **I-222**, la prossima decisione **D-212**.
+- **I numeri**: il prossimo input è **I-223**, la prossima decisione **D-213** (D-212 è proposta, sul ramo).
 
 ## Da dove ripartiva — scritto il 5 ottobre 2026, alla fusione della 1.4.1
 
