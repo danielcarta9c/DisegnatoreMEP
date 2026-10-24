@@ -90,7 +90,8 @@ non torna, è un difetto di leggibilità — il metro è il grafo, che il reviso
   del brief cambia la regola d'arresto di oggi: va scritto.
 - **L'indipendenza nei fatti**: il testo dell'incarico è fisso, in `SKILL.md`; il revisore sceglie lui gli ingrandimenti
   (gli si dà il comando `anteprima` e una cartella con il solo PDF e i rilievi); gira con lo stesso modello di chi compone.
-- **Quando si attiva: solo se il progettista chiede un agente esterno per la revisione** (I-219, il PO). I criteri
+- **Quando si attiva: solo se il progettista lo sceglie** (I-219), e la skill glielo chiede con una domanda a scelta al
+  passo 2, solo dove i sub-agenti ci sono, senza un «io» ambiguo (I-222). I criteri
   automatici del brief — A2 o più, due giri leggeri senza miglioramento, tavola definitiva — cadono; tempo e token non
   sono un vincolo. Il giro ordinario resta la modalità leggera.
 - Dove i sub-agenti non ci sono, la modalità leggera, detta nella consegna. Nella consegna una riga: chi ha guardato la

@@ -119,7 +119,20 @@ Il messaggio porta:
 - le assunzioni che hai fatto per chiudere il grafo, da confermare tutte insieme;
 - i dati che la tavola scrive e che il testo non dà, in una riga ciascuno: committente e
   commessa, indirizzo, titolo e numero della tavola; marca e modello delle apparecchiature;
-  i salti termici e le portate, se ha chiesto i diametri.
+  i salti termici e le portate, se ha chiesto i diametri;
+- **come si rivede la tavola**, se l'ambiente lancia sub-agenti, come Claude Code o Cowork; su
+  claude.ai la scelta non c'è, e non la fai. Con la prima come proposta, in queste parole — con
+  lo strumento delle domande a scelta, se l'ambiente ne ha uno:
+
+  > Come vuoi che sia rivista la tavola, prima della consegna?
+  > 1. **In questa conversazione**: la guarda Claude, lo stesso agente che l'ha composta. Più
+  >    veloce, meno token.
+  > 2. **Da un revisore esterno**: un altro agente Claude, che non conosce l'impianto, la
+  >    guarda a occhio fresco. Più lento e più token: circa 10 minuti e 200 mila token a giro,
+  >    al più due giri.
+
+  Questa domanda da sola non ti ferma: se al passo 2 non c'è altro da chiedere, la porti al
+  passo 4 con il grafo.
 
 Poi **aspetta la risposta**. Riporta le risposte nel grafo — un dato dato si trascrive, una
 lettura corretta si ridisegna, un'assunzione confermata passa a `"status": "approved"` — e
@@ -195,9 +208,9 @@ sono i numeri con cui confronti due pose (per esempio i due ordini dei collettor
 ### 7. Rivedere — si guarda la tavola, e si torna al piano
 
 La tavola la guardi tu. **Un revisore esterno** — un altro agente, che non l'ha composta e non
-sa niente dell'impianto — la guarda **solo se il progettista lo chiede** («fammela rivedere da
-un agente esterno», «voglio un revisore separato»): non lo proponi e non lo attivi da te. Come
-si fa è sotto, in «Il revisore esterno».
+sa niente dell'impianto — la guarda **se il progettista l'ha scelto** alla domanda del passo 2 o
+del passo 4, o se lo chiede dopo; non lo attivi da te. Come si fa è sotto, in «Il revisore
+esterno».
 
 ```bash
 python3 scripts/mep.py anteprima $L/tavola/<progetto>-t1.pdf
