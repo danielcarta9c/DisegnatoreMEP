@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 1.4.1** — 5 ottobre 2026.
+**Versione 1.5.0** — 24 ottobre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -278,10 +278,18 @@ guardi tu e lo dici nella consegna.
    identificativi del piano, li scrivi in `$L/vincoli.md` e ricomponi (passo 5). Un vincolo
    che il piano non sa esprimere cede, e lo dici. Le domande sul contenuto non sono vincoli:
    vanno al progettista.
-5. **Sulla tavola nuova, un revisore nuovo**, con una cartella nuova (`revisione-2`). **Al
-   più due giri col revisore esterno**: ti fermi quando dice «si consegna» e la tavola non ha
-   rilievi bloccanti né tratte cedute, o dopo il secondo giro; allora tieni la tavola
-   migliore e dici perché ti sei fermato.
+5. **I vincoli si applicano anche quando il verdetto è «si consegna»**: il verdetto dice se
+   la tavola si legge giusta, i vincoli la migliorano. Sulla tavola nuova, **un revisore
+   nuovo**, con una cartella nuova (`revisione-2`). **Al più due revisori**:
+   - ti fermi quando un revisore dice «si consegna» e non ha vincoli, e la tavola non ha
+     rilievi bloccanti né tratte cedute;
+   - se il secondo dice «si consegna» con dei vincoli, **non li applichi**: consegni la
+     tavola che ha visto, e i suoi vincoli li dici al progettista come miglioramenti;
+   - se il secondo dice «va ricomposta», applichi i suoi vincoli, guardi tu la tavola nuova
+     e dici al progettista che l'ultima l'ha guardata chi l'ha composta.
+
+   Se una tavola ricomposta ha più rilievi bloccanti o tratte cedute di quella prima, tieni
+   quella prima, e dici perché.
 
 ### 8. Consegnare
 

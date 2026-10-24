@@ -43,3 +43,6 @@ Il comando della skill li riapre da sé.
   stesso verso, e il disegna più veloce con le stesse tavole. 104 file.
 - **1.4.1** — 5 ottobre 2026: **lo sfiato col suo rubinetto**, un simbolo solo, ovunque (I-210, I-211, D-210); lo sfiato
   senza rubinetto solo se il progettista lo dice. 104 file.
+- **1.5.0** — 24 ottobre 2026: **il revisore esterno** (`REL-010`, D-212): la tavola la può guardare un altro agente
+  che non conosce l'impianto, se il progettista lo sceglie alla domanda del passo 2; la soglia del PO in Rivedere; il
+  pannello e il giunto di D-211. 104 file.
