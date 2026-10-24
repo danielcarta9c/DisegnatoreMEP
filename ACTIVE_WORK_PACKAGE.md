@@ -72,13 +72,13 @@ nella soglia di `rivedere.md`, con la sfumatura che mancava: **un difetto da cor
 Tutti e due i giri sono **senza gli esempi** del punto 2: il verdetto è giusto anche senza. Se entrano nella skill resta
 da decidere col PO. **Il punto 3 è chiuso.**
 
-### 4. La rilettura a freddo — in `rivedere.md`
+### 4. La rilettura a freddo — scritta in `rivedere.md` (D-212), da provare al punto 6
 
 Prima di giudicare, il revisore racconta l'impianto leggendolo dalla sola tavola: i generatori, dove va l'acqua, quale
 circuito serve quale utenza, mandata e ritorno di ciascuno. Chi lo ha lanciato confronta il racconto con il grafo: dove
 non torna, è un difetto di leggibilità — il metro è il grafo, che il revisore non vede. Racconta, non misura (D-162).
 
-### 5. Il passo 7 in due modalità — il brief, con le correzioni della sessione
+### 5. Il passo 7 in due modalità — scritto in `SKILL.md` (D-212, proposta), da provare al punto 6
 
 - **`rivedere.md` §2 va toccato**: elenca il piano, che il revisore separato non riceve, e le tavole di riferimento, che
   nella skill non ci sono; «il PO» per il sub-agente è il progettista. E deve dire dei pozzetti delle sonde e delle
@@ -95,6 +95,11 @@ non torna, è un difetto di leggibilità — il metro è il grafo, che il reviso
   sono un vincolo. Il giro ordinario resta la modalità leggera.
 - Dove i sub-agenti non ci sono, la modalità leggera, detta nella consegna. Nella consegna una riga: chi ha guardato la
   tavola.
+
+Fatto il 24 ottobre: il passo 7 ha le due modalità, il revisore esterno si attiva solo su richiesta, l'incarico è fisso
+in `SKILL.md` con la cartella da preparare, il tetto è di due giri con un revisore nuovo per giro, la consegna dice chi
+ha guardato; `rivedere.md` ha il §2 corretto e dice chi è «il PO». La skill si costruisce (104 file) e
+`tests/test_le_release.py` passa.
 
 ### 6. La prova del brief — sulla stessa tavola, in sessione pulita
 

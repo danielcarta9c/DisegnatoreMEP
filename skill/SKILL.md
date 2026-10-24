@@ -194,6 +194,11 @@ sono i numeri con cui confronti due pose (per esempio i due ordini dei collettor
 
 ### 7. Rivedere — si guarda la tavola, e si torna al piano
 
+La tavola la guardi tu. **Un revisore esterno** — un altro agente, che non l'ha composta e non
+sa niente dell'impianto — la guarda **solo se il progettista lo chiede** («fammela rivedere da
+un agente esterno», «voglio un revisore separato»): non lo proponi e non lo attivi da te. Come
+si fa è sotto, in «Il revisore esterno».
+
 ```bash
 python3 scripts/mep.py anteprima $L/tavola/<progetto>-t1.pdf
 ```
@@ -215,6 +220,56 @@ rilievi e dillo al progettista: la tavola non l'ha guardata nessuno prima di lui
 l'elenco delle regole del disegno con la fonte di ciascuna: si apre quando un rilievo cita una
 regola e serve sapere da dove viene.
 
+#### Il revisore esterno
+
+Vuole un ambiente che lanci sub-agenti, come Claude Code o Cowork. Se non c'è, la tavola la
+guardi tu e lo dici nella consegna.
+
+1. **Una cartella con la sola tavola**, i rilievi e le istruzioni; niente grafo, niente piano:
+
+   ```bash
+   R=$L/revisione-1 && mkdir -p $R
+   cp $L/tavola/<progetto>-t1.pdf $R/tavola.pdf
+   cp $L/tavola/<progetto>-t1-rilievi.md $R/rilievi.md
+   cp riferimenti/rivedere.md riferimenti/regole-del-piano.md $R/
+   python3 scripts/mep.py anteprima $R/tavola.pdf --out $R/tavola.png
+   ```
+
+2. **Lancia un sub-agente** con il tuo stesso modello e dagli **questo testo e nient'altro**,
+   con `{CARTELLA}` e `{SKILL}` al posto dei percorsi completi della cartella e della skill.
+   Non aggiungere niente sull'impianto: il revisore serve perché non lo conosce.
+
+   > Sei il revisore di una tavola di schema funzionale idronico (centrale termica). Non l'hai
+   > composta tu, e non sai niente dell'impianto oltre a quello che la tavola mostra.
+   > Lavori solo con i file della cartella {CARTELLA}: non aprire, non cercare e non elencare
+   > altri file. Tutto quello che ti serve è lì, più il comando per ingrandire.
+   > 1. Leggi per intero {CARTELLA}/rivedere.md: sono le tue istruzioni, e bastano da sole.
+   > 2. La tavola è {CARTELLA}/tavola.png (il foglio intero) e {CARTELLA}/tavola.pdf.
+   > Guardala. Per ingrandire una zona: python3 {SKILL}/scripts/mep.py anteprima
+   > {CARTELLA}/tavola.pdf --zona x0,y0,x1,y1 --dpi 300 --out {CARTELLA}/zoom-N.png, con
+   > x0,y0,x1,y1 in millimetri dall'alto a sinistra del foglio; poi guarda zoom-N.png.
+   > Scegli tu le zone.
+   > 3. I rilievi già misurati sono in {CARTELLA}/rilievi.md: sono dati, non il tuo lavoro.
+   > 4. {CARTELLA}/regole-del-piano.md si apre quando un rilievo o un tuo vincolo cita una
+   > regola.
+   > Restituisci il rapporto nella forma di rivedere.md §6, in italiano. In fondo aggiungi
+   > una riga sola, che comincia con «VERDETTO:», con una di queste due frasi: «la tavola si
+   > può consegnare così» oppure «la tavola va ricomposta prima di consegnarla», e il perché
+   > in una frase.
+
+3. **Il rapporto comincia con l'impianto come il revisore lo legge.** Confrontalo con il
+   grafo: dove il racconto sbaglia — un circuito dato all'utenza sbagliata, un ritorno che
+   non si capisce dove va —, la tavola si legge male anche se nessun rilievo lo dice. È un
+   vincolo da scrivere.
+4. **I vincoli nominano i pezzi con le sigle**, o li descrivono: li traduci negli
+   identificativi del piano, li scrivi in `$L/vincoli.md` e ricomponi (passo 5). Un vincolo
+   che il piano non sa esprimere cede, e lo dici. Le domande sul contenuto non sono vincoli:
+   vanno al progettista.
+5. **Sulla tavola nuova, un revisore nuovo**, con una cartella nuova (`revisione-2`). **Al
+   più due giri col revisore esterno**: ti fermi quando dice «si consegna» e la tavola non ha
+   rilievi bloccanti né tratte cedute, o dopo il secondo giro; allora tieni la tavola
+   migliore e dici perché ti sei fermato.
+
 ### 8. Consegnare
 
 La tavola da consegnare è l'ultima eseguita, senza `--verifica`. Copiala dove il progettista la
@@ -232,7 +287,9 @@ Poi, in poche righe:
   — detti con parole sue, non con i codici —, i campi del cartiglio «DA DEFINIRE» (la tavola
   allora è una **bozza**), un carattere che il PDF ha dovuto sostituire;
 - le domande sul contenuto che ti sono venute componendo o rivedendo: come domande, non come
-  decisioni prese.
+  decisioni prese;
+- **chi ha guardato la tavola**: tu, oppure il revisore esterno, con il suo verdetto e i giri
+  fatti; o nessuno, se l'ambiente non ti lascia vedere le immagini.
 
 Se chiede come sono calcolati i diametri: il diametro interno netto minimo, dalla portata — che
 viene dalla potenza e dal salto termico che ha dato lui, o dalla portata di progetto — e da una
