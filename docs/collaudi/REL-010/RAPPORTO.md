@@ -209,3 +209,61 @@ segnalati; il PO ha scelto per ciascuno. Le scelte, testuali, sono in `taratura-
   soglia) e a guardare dentro i simboli — la serpentina «doveva vederla».
 - I difetti che la taratura ha trovato nel prodotto sono in `ACTIVE_WORK_PACKAGE.md`, «Quello che la taratura ha
   riportato sul prodotto».
+
+## 4. La taratura del revisore, secondo giro (REL-010 punto 3)
+
+**23 ottobre 2026** · sei agenti avviati da zero, come al primo giro (`taratura-2/INCARICO.md`), con il `rivedere.md` che
+porta **la soglia del PO** — che cosa ferma la consegna e che cosa no (I-220) — e **il settimo sguardo**, dentro i
+simboli. Le tavole sono **diverse dalle sette del primo giro**, perché il revisore non le riconosca, e sono tutte già
+giudicate dal PO a settembre: quattro approvate, due respinte. Per queste tavole i rilievi misurati non c'erano: i
+revisori hanno guardato solo il disegno. Chiave in `taratura-2/CHIAVE.txt`, riassunti in `taratura-2/ESITI.md`,
+rapporti integrali in `taratura-2/rapporti/`.
+
+| | tavola | il PO a settembre | il revisore | il verdetto coincide | ha visto quello che ha visto il PO |
+|---|---|---|---|---|---|
+| u2 | DRAW-001, impianto 1 | «un vero schifo totale» (I-022) | va ricomposta | **sì** | **sì**: il ritorno dal serbatoio che va avanti e torna indietro, «passando sopra sé stesso» |
+| u4 | DRAW-005-R1, impianto 1 | «netto peggioramento» (I-046) | va ricomposta | **sì**, per altre ragioni | **no**: gli stacchi degli accessori troppo lunghi li dice a posto; le sicurezze moltiplicate sono contenuto, e non le giudica |
+| u6 | DRAW-018, tavola 1 (stesso impianto di u4) | «si vanno bene» (I-119) | si consegna | **sì** | — |
+| u3 | DRAW-018, tavola 4 | «si vanno bene» (I-119) | si consegna | **sì** | — |
+| u1 | DRAW-016, tavola 2 | «vanno benissimo» (I-109) | va ricomposta | no | la miscelatrice senza acqua fredda (I-110 punto 3) **in parte**: la chiede come contenuto |
+| u5 | DRAW-016, tavola 5 | approvata (I-109) | va ricomposta | no | la miscelatrice senza acqua fredda (I-110) **sì**; la freccia di VR-02 contro il flusso (I-114) **sì**; il ricircolo che torna sulla mandata ACS (I-110 punto 4) **in parte**, come domanda |
+
+**Che cosa dice.**
+
+- **La soglia ha funzionato**: le due tavole approvate del 24 settembre passano, con i difetti di disegno scritti come
+  proposte che non fermano la consegna; i tollerati del primo giro (l'ordine delle colonne, il circuito lungo, i pozzetti,
+  il cartiglio) li riconosce da sé. Il verdetto coincide in 4 tavole su 6, contro 3 su 7 al primo giro.
+- **Il settimo sguardo ha funzionato**: la serpentina del pannello fuori dal riquadro, che al primo giro «doveva
+  vederla», qui la vede (u5), anche in legenda; vede gli attacchi del ventilconvettore a filo degli spigoli (u1) e il
+  triangolo della pompa che sporge dal cerchio (u6, a 1200 dpi).
+- **Le due tavole approvate che respinge** hanno difetti veri, e su u5 sono **i tre che il PO stesso ha segnalato** dopo
+  averla approvata (I-110, I-114), oggi corretti (D-175, D-176, D-180).
+- **Quello che non vede**: gli stacchi lunghi di u4, che erano la ragione del PO. È l'unico difetto del PO, in questo
+  giro, che il revisore manca.
+- **Due domande che il revisore ha fatto erano già risolte** nella skill di oggi, e non sono andate al PO: la legenda con
+  linee non disegnate (23 settembre, commit `eca89ea`) e le sigle troppo piccole (D-194, 9 punti).
+- **Una cosa vista dalla sessione controllando un punto del revisore**: gli attacchi a filo degli spigoli non sono del
+  solo ventilconvettore. Nella libreria di oggi radiatore, pannello, ventilconvettore e ventilconvettore canalizzato hanno
+  il riquadro da 2,25 a 12,75 mm e le porte a 2,5 e 12,5: la mandata e il ritorno corrono un quarto di millimetro dentro
+  il lato superiore e quello inferiore. Il PO lo tollera (I-221).
+
+### Il giudizio del PO (I-221)
+
+Sulla pagina del secondo giro, come al primo (I-219); le scelte, testuali, sono in `taratura-2/GIUDIZI-PO.md`.
+
+- **Il verdetto del revisore è giusto sei volte su sei**, anche su u1 e u5, che il PO aveva approvato a settembre. Con il
+  primo giro, **tredici su tredici**.
+- **Dei sei punti nuovi, quattro sono difetti e due si tollerano.** I due tollerati sono quelli che il revisore aveva
+  detto non fermare la consegna; dei quattro difetti, tre il revisore li aveva detti fermare.
+- **Il quarto difetto è la sfumatura che la soglia non diceva**: su u3 il PO chiama difetto la coppia che si apre verso
+  lo scambiatore — il revisore l'aveva scritta come vincolo che non ferma — e dà giusto il verdetto «si consegna». Un
+  difetto da correggere non ferma per forza la consegna.
+- **Le domande**: gli stacchi di servizio che prendono il colore della linea sono una **convenzione**; la sigla del
+  volano sotto una valvola e deviatrice e commutatrice con lo stesso segno sono **difetti** («Se possibile spostare le
+  tag»; «Magari sulla commutatrice mettiamo una lettera c sopra oppure usiamo un simbolo leggermente diverso»); il
+  tratteggio che parte con un vuoto e le valvole di una pompa di calore non in colonna si **tollerano**, con una
+  preferenza («Partire pieni meglio.»; «Allinearle però è meglio più elegante»).
+
+**Che cosa ne viene per `REL-010`.** Il revisore separato vede quello che vede il PO, e il suo verdetto il PO lo dà giusto
+sulle tredici tavole di due giri. Le scelte di questo giro entrano nella soglia di `rivedere.md`; i difetti del prodotto,
+nel pacchetto che segue. Il punto 3 è chiuso; il prossimo è il 4, la rilettura a freddo, e poi il passo 7.

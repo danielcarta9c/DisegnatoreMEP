@@ -45,7 +45,7 @@ verticale del collettore. Corretti (il simbolo, e una regola del motore); il PO:
 - Dove stanno nella skill e quanti: lo ZIP ha 104 file su 200 (D-200); ogni immagine costa contesto. Si tengono quelli che
   la taratura (punto 3) dice utili.
 
-### 3. La taratura del revisore — prima di toccare `SKILL.md`
+### 3. La taratura del revisore — fatta, due giri (I-220, I-221)
 
 Un agente avviato da zero riceve alla cieca tavole che il PO ha già giudicato e si guarda: **trova quello che il PO ha
 cerchiato? lascia passare quello che ha approvato?** La seconda conta quanto la prima: un revisore che trova sempre
@@ -64,8 +64,13 @@ punto (`docs/collaudi/REL-010/taratura-1/GIUDIZI-PO.md`):
   delle macchine nella pila, il cartiglio «DA DEFINIRE» — si dicono come miglioramenti, e non fermano la consegna;
 - **guardare dentro i simboli**: la serpentina del pannello fuori dal riquadro «doveva vederla» (il PO, t1).
 
-Il secondo giro, dopo che `rivedere.md` porta la soglia, sulle stesse sette tavole: il revisore deve dare lo stesso
-verdetto e classificare i punti come il PO.
+**Secondo giro fatto** (RAPPORTO §4, I-221), con la soglia e il settimo sguardo in `rivedere.md`, su **sei tavole
+diverse** dalle sette — perché non le riconosca —, giudicate dal PO a settembre. Il PO dà il verdetto **giusto sei volte
+su sei**, anche sulle due tavole del 23 settembre che aveva approvato e che il revisore respinge: **tredici su tredici**
+nei due giri. Il revisore manca un solo difetto del PO, gli stacchi lunghi di DRAW-005-R1. Le scelte del PO sono entrate
+nella soglia di `rivedere.md`, con la sfumatura che mancava: **un difetto da correggere non ferma per forza la consegna**.
+Tutti e due i giri sono **senza gli esempi** del punto 2: il verdetto è giusto anche senza. Se entrano nella skill resta
+da decidere col PO. **Il punto 3 è chiuso.**
 
 ### 4. La rilettura a freddo — in `rivedere.md`
 
@@ -104,7 +109,7 @@ Con `scripts/costruisci-skill.py`, e `tests/test_le_release.py` verde (D-200). L
 
 ## Quello che la taratura ha riportato sul prodotto — dopo il revisore
 
-Il PO li ha chiamati **difetti** (I-220). Non sono del revisore: sono della composizione, del motore o dei controlli, e
+Il PO li ha chiamati **difetti** (I-220, I-221). Non sono del revisore: sono della composizione, del motore o dei controlli, e
 vanno nel pacchetto che segue `REL-010` («una cosa alla volta», I-218).
 
 | difetto | dove si vede | di chi è |
@@ -116,7 +121,18 @@ vanno nel pacchetto che segue `REL-010` («una cosa alla volta», I-218).
 | la coppia che si apre quando i capi sono raccordi (radiante, serpentina) | t5, t6 | il controllo di B11/B12 (D-174 non riconosce la coppia) |
 | il gruppo di sicurezza sanitario lontano dal bollitore | t6 | il controllo di A4 misura solo gli stacchi |
 | il disegno che tocca il bordo | t6 | il rilievo c'è (`DRAWING_TOUCHES_THE_BORDER`): Comporre |
-| lo scarico in fondo al volano, rosso con la freccia | t1, t5, t7 | il motore: come si disegna è una convenzione, la decide il PO |
+| lo scarico in fondo al volano, rosso con la freccia | t1, t5, t7; tutte e sei del secondo giro | il motore: come si disegna è una convenzione, la decide il PO |
+| due tratti in fila sulla stessa verticale che si leggono come un tubo solo (lo scarico del volano sopra la colonna ACS) | u1 | Comporre; B9 guarda solo i tratti affiancati |
+| CIR-03 non incolonnato, con la miscelatrice del pannello sulla colonna del pettine | u5 | Comporre; il controllo di A2 che manca (D-158) |
+| un gradino sulla mandata ACS prima del confine, con la corsia libera | u5 | Comporre (B1) |
+| la coppia verso uno scambiatore che si apre nelle verticali | u3 | il controllo di B11/B12, come sopra |
+| la sigla di una macchina lontana dalla macchina, sotto un altro pezzo («se possibile spostare le tag») | u1, u3 | il motore: nessuna regola dice dove sta una sigla |
+| deviatrice e commutatrice con lo stesso segno | u3 | la libreria; **il segno lo sceglie il PO**: una «c» sopra o un simbolo leggermente diverso (I-221) |
+
+E tre cose che il PO tollera ma preferirebbe altrimenti (I-221): il tratteggio dell'acqua fredda che parte pieno
+sull'attacco, le valvole di mandata e ritorno di una macchina allineate, e gli attacchi dei terminali che oggi corrono a
+filo degli spigoli del riquadro (radiatore, pannello, ventilconvettore, ventilconvettore canalizzato) — quest'ultimo
+tollerato senza preferenza.
 
 E una domanda di contenuto: «ho anche un dubbio sul vaso di espansione» (il PO, sul caso rifatto), che va con il
 manuale Shenling e le regole del vaso (I-218).

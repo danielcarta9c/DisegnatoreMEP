@@ -136,8 +136,9 @@ In italiano, corto, e in quest'ordine:
 
 ### Che cosa ferma la consegna, e che cosa no
 
-Il verdetto è tuo. Quando il PO l'ha visto accanto alla tavola l'ha trovato giusto: un revisore
-che non ha composto la tavola vede cose che chi l'ha composta, e anche il PO, non vedono. Ma non
+Il verdetto è tuo. Quando il PO l'ha visto accanto alla tavola l'ha trovato giusto tredici volte
+su tredici, anche su tavole che aveva approvato: un revisore che non ha composto la tavola vede
+cose che chi l'ha composta, e anche il PO, non vedono. Ma non
 tutto quello che vedi ferma la consegna. Il criterio è del PO: **ferma la consegna quello che fa
 leggere la tavola male o sbagliata; non la ferma quello che si potrebbe disegnare meglio ma non
 cambia la lettura.** Il secondo lo scrivi lo stesso, fra i vincoli o le proposte, e dici che non
@@ -155,7 +156,17 @@ Il PO ha chiamato **difetti**, anche su tavole che aveva già approvato:
 - linee che arrivano allo stesso pezzo da tre parti senza un motivo;
 - un gradino in una linea che si toglie liberando la sua corsia;
 - il disegno che tocca il bordo del foglio;
-- un simbolo disegnato male, e uno scarico colorato come la mandata, con la freccia.
+- due tratti in fila, quasi sulla stessa verticale, che da lontano si leggono come un tubo solo
+  fra due pezzi che non sono collegati — lo scarico di un volano sopra la colonna ACS di un
+  bollitore;
+- la sigla di una macchina lontana dalla sua macchina, sotto un altro pezzo;
+- un simbolo disegnato male; due organi diversi con lo stesso segno, come la deviatrice e la
+  commutatrice; uno scarico colorato come la mandata, con la freccia.
+
+**Un difetto non ferma per forza la consegna.** Su una tavola il PO ha chiamato difetto la
+coppia che si apre per un tratto verso uno scambiatore, e ha dato giusto il verdetto «si
+consegna» del revisore, che l'aveva scritta come vincolo che non ferma. Il difetto si scrive, e
+chi compone lo corregge; il verdetto dice se la tavola, intanto, si legge giusta.
 
 Ha **tollerato** — si dicono, non fermano la consegna:
 
@@ -163,12 +174,21 @@ Ha **tollerato** — si dicono, non fermano la consegna:
   scavalcamenti sulle linee singole;
 - la mandata di una zona che passa sotto il ritorno comune per raggiungere il suo pettine;
 - un pezzo fuori dalla sua fascia, quando la tavola si legge lo stesso;
-- un circuito lungo che si potrebbe accorciare.
+- un circuito lungo che si potrebbe accorciare;
+- gli attacchi di un terminale a filo degli spigoli del suo riquadro;
+- un confine di rete un po' staccato dall'ultima valvola della sua linea;
+- il tratteggio dell'acqua fredda che comincia con un vuoto all'attacco — «partire pieni
+  meglio»;
+- le valvole di mandata e di ritorno di una macchina sfalsate di pochi millimetri —
+  «allinearle però è meglio, più elegante».
 
 E queste sono **convenzioni della skill**, che si tollerano: gli attacchi liberi di volani e
 bollitori senza tappo, che sono i pozzetti delle sonde; derivazione a T e raccordo a T con lo
 stesso segno; l'ordine delle macchine nella pila diverso da quello della distinta; il cartiglio
-«DA DEFINIRE», che fa della tavola una bozza — i dati li dà il progettista.
+«DA DEFINIRE», che fa della tavola una bozza — i dati li dà il progettista; gli stacchi degli
+organi di servizio con il colore della linea da cui partono — sfiato e sicurezza rossi sulla
+mandata, vaso, riempimento e manometro blu sul ritorno. Lo scarico rosso con la freccia resta un
+difetto.
 
 Un difetto che la composizione non può togliere — un simbolo, un colore — non è un vincolo: lo
 scrivi fra le proposte, come difetto del disegno.

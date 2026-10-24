@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-23 — **il pacchetto è `REL-010`**, il revisore esterno (I-216). Il punto 1 è su `main` (PR #78): la tavola C corretta è l'esempio, approvata dal PO (I-218, D-211). Prima: la 1.4.1 (PR #77).
+**Aggiornato:** 2026-10-24 — **il pacchetto è `REL-010`**, il revisore esterno (I-216). Il punto 1 è su `main` (PR #78): la tavola C corretta è l'esempio, approvata dal PO (I-218, D-211). Il punto 3, la taratura, è fatto in due giri sul ramo `claude/nifty-archimedes-4hnzcu`: il PO dà giusto il verdetto del revisore 13 volte su 13 (I-220, I-221). Prima: la 1.4.1 (PR #77).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -32,7 +32,12 @@ giudizio del PO. `REL-009` è sospeso con due residui (`docs/plans/pacchetti/REL
   vecchi `metriche.py` dei collaudi: il controllo del progetto è `ruff check src tests`.
 - **La taratura** (RAPPORTO §3): il PO dà giusto il verdetto del revisore 7 su 7 (I-220); prossimo passo, la soglia
   in `rivedere.md` e il secondo giro sulle stesse tavole.
-- **I numeri**: il prossimo input è **I-221**, la prossima decisione **D-212**.
+- **La taratura, punto 3, è fatta** (RAPPORTO §3 e §4): due giri alla cieca, sette e sei tavole già giudicate dal PO;
+  il PO, vista ogni tavola accanto al verdetto, lo dà giusto **tredici volte su tredici**, e la sua soglia — che cosa
+  ferma la consegna e che cosa no — è in `skill/rivedere/ISTRUZIONI.md`. Il lavoro è sul ramo, **non ancora su `main`**:
+  va nella PR del pacchetto, che il PO approva guardando le tavole. Il prossimo è il punto 4, la rilettura a freddo, poi
+  il passo 7.
+- **I numeri**: il prossimo input è **I-222**, la prossima decisione **D-212**.
 
 ## Da dove ripartiva — scritto il 5 ottobre 2026, alla fusione della 1.4.1
 
