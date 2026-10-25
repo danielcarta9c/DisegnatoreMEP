@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-23 — **il pacchetto è `REL-010`**, il revisore esterno (I-216). Il punto 1 è su `main` (PR #78): la tavola C corretta è l'esempio, approvata dal PO (I-218, D-211). Prima: la 1.4.1 (PR #77).
+**Aggiornato:** 2026-10-25 — **il pacchetto è `REL-011`**, le regole del corredo contro il manuale Shenling (I-218). `REL-010`, il revisore esterno, è su `main` con la **1.5.0** (PR #79, I-223, D-212). Prima: la 1.4.1 (PR #77) e la tavola d'esempio (PR #78).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,7 +11,28 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 23 ottobre 2026
+## ▶ Da dove riparte la prossima sessione — scritto il 25 ottobre 2026
+
+**Il pacchetto è `REL-011`** (`ACTIVE_WORK_PACKAGE.md`): le regole che dicono se un accessorio ci va — il vaso, la
+sicurezza, lo sfiato, il ritegno — confrontate con il manuale Shenling e con la §2.4 della specifica tecnica Nove C.
+Il contenuto MEP è del PO: la sessione mostra il confronto e propone.
+
+- **`REL-010` è consegnato** (`docs/plans/pacchetti/REL-010.md`): la **1.5.0** ha il revisore esterno — la skill chiede
+  al progettista, dove ci sono i sub-agenti, se la tavola la guarda Claude che l'ha composta o un altro agente Claude che
+  non conosce l'impianto (I-222) —, la rilettura a freddo, la soglia del PO tarata su tredici tavole (I-220, I-221), e
+  il pannello e il giunto di D-211. Il PO: «Il revisore va bene» (I-223).
+- **Restano al PO**, senza risposta: la soglia sulla tavola del caso rifatto (tre revisori su tre la consegnano, al primo
+  giro andava ricomposta), quattro difetti del disegno, il segno della commutatrice. Sono in `REL-011`, «Da decidere col
+  PO», e sulla pagina della prova del passo 7.
+- **I manuali** (Shenling ThermaX R290, Vaillant 2020) stanno sul OneDrive del PO e si leggono col connettore Microsoft
+  365; **non entrano nel repository**. Le pagine del manuale Shenling già ricontrollate sono in
+  `docs/collaudi/REL-010/RAPPORTO.md` §2.
+- **Un sub-agente non può lanciarne un altro**, in questo ambiente: per provare il revisore esterno la sessione fa da
+  tramite con il testo esatto dell'incarico (RAPPORTO di `REL-010` §5).
+- **All'avvio guarda le PR aperte.**
+- **I numeri**: il prossimo input è **I-224**, la prossima decisione **D-213**.
+
+## Com'era il 23–24 ottobre — `REL-010`
 
 **Il pacchetto è `REL-010`** (`ACTIVE_WORK_PACKAGE.md`): il passo 7 delegabile a un revisore che non ha composto la
 tavola (il brief del PO, I-216), e prima il **metro** con cui guarda — la rilettura a freddo, gli esempi, la taratura sul
@@ -30,7 +51,18 @@ giudizio del PO. `REL-009` è sospeso con due residui (`docs/plans/pacchetti/REL
   contenuto che portano sono in `REL-010`, «Da decidere col PO».
 - `mypy` si ferma sugli stub di numpy anche sul `main`: è l'ambiente. `ruff check .` dalla radice trova 40 errori nei
   vecchi `metriche.py` dei collaudi: il controllo del progetto è `ruff check src tests`.
-- **I numeri**: il prossimo input è **I-219**, la prossima decisione **D-212**.
+- **La taratura** (RAPPORTO §3): il PO dà giusto il verdetto del revisore 7 su 7 (I-220); prossimo passo, la soglia
+  in `rivedere.md` e il secondo giro sulle stesse tavole.
+- **La taratura, punto 3, è fatta** (RAPPORTO §3 e §4): due giri alla cieca, sette e sei tavole già giudicate dal PO;
+  il PO, vista ogni tavola accanto al verdetto, lo dà giusto **tredici volte su tredici**, e la sua soglia — che cosa
+  ferma la consegna e che cosa no — è in `skill/rivedere/ISTRUZIONI.md`. Il lavoro è sul ramo, **non ancora su `main`**:
+  va nella PR del pacchetto, che il PO approva guardando le tavole.
+- **I punti 4–7 sono fatti sul ramo, il 24 ottobre**: la rilettura a freddo e il passo 7 in due modalità (D-212,
+  proposta), la domanda a scelta sulla revisione (I-222), la prova nelle due modalità dalla stessa tavola (RAPPORTO §5) e
+  la **release 1.5.0** in `releases/`, tutto nella **PR #79**. **Niente è fuso**: il PO vede le tavole della prova (la pagina in testa alla PR) e decide. Gli resta anche una
+  domanda sulla soglia: con la soglia, tre revisori su tre consegnano la tavola del caso rifatto, che al primo giro
+  andava ricomposta (RAPPORTO §5).
+- **I numeri**: il prossimo input è **I-223**, la prossima decisione **D-213** (D-212 è proposta, sul ramo).
 
 ## Da dove ripartiva — scritto il 5 ottobre 2026, alla fusione della 1.4.1
 

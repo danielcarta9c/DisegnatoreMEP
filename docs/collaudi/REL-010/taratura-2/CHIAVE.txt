@@ -1,0 +1,6 @@
+u1 = DRAW-016 tavola-completo-2, 23/9 (I-109 «vanno benissimo», approvata; «vedo piccoli difetti»)
+u2 = DRAW-001 impianto1 (I-022 «un vero schifo totale», respinta)
+u3 = DRAW-018 tavola-completo-4, 24/9 (I-119 «si vanno bene», approvata)
+u4 = DRAW-005-R1 impianto1 (I-046 «netto peggioramento», respinta)
+u5 = DRAW-016 tavola-completo-5, 23/9 (I-109, approvata)
+u6 = DRAW-018 tavola-completo-1, 24/9 (I-119, approvata)

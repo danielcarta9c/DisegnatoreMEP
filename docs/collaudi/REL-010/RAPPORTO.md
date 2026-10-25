@@ -138,3 +138,203 @@ sono in `REL-010`, «Da decidere col PO».
 È la *Specifica tecnica pompe di calore 2020*; la parte aria-acqua riguarda aroTHERM monoblocco R410A, non R290. Letto
 da un agente e **non ricontrollato**: volume minimo per taglia, disaccoppiatore MPS 40, vaso e sicurezza nei moduli
 interni. Si apre quando un caso reale porta una Vaillant.
+
+## 3. La taratura del revisore, primo giro (REL-010 punto 3)
+
+**23 ottobre 2026** · sette agenti avviati da zero, uno per tavola, in parallelo nella sessione (D-152). Ciascuno riceve
+**solo** il testo fisso dell'incarico (`taratura-1/INCARICO.md`), una cartella con `rivedere.md` e
+`regole-del-piano.md` come li porta la skill, la tavola (PNG del foglio e PDF da ingrandire da sé) e i rilievi. Niente
+grafo, niente piano, niente esempi. I nomi delle cartelle sono neutri (`t1` … `t7`); la chiave è in
+`taratura-1/CHIAVE.txt`, e i riassunti dei rapporti, tavola per tavola, in `taratura-1/ESITI.md`.
+
+Le tavole sono sette, **tutte già giudicate dal PO**, cercate nel registro: due respinte, cinque approvate (una di queste,
+la prova A, solo implicitamente). Il revisore aggiunge in fondo una riga di verdetto: si consegna, o va ricomposta.
+
+| | tavola | il PO | il revisore | il verdetto coincide | ha visto quello che ha visto il PO |
+|---|---|---|---|---|---|
+| t4 | tavola 5 del 20 settembre | «fanno schifo» (I-095) | va ricomposta | **sì** | **sì**: «solo la mandata è un'autostrada»; il ritorno primario sotto la quota del volano; i terminali con le porte opposte che fanno girare il ritorno (il PO il 21/9). Non i collettori |
+| t5 | prima tavola sull'impianto del PO | «non va bene» (I-171) | va ricomposta | **sì** | **in parte**: lo sfiato del volano sulla corsia della mandata (I-172) sì, ma lo giudica imposto; della tre vie (I-173) vede il sintomo, non il rimedio |
+| t7 | impianto 6 | «va benissimo» (I-136) | si consegna | **sì** | — |
+| t1 | tavola C prima di D-211 | «tavola perfetta» (I-214) | va ricomposta | no | il giunto dell'ultima pompa **sì**; il pannello no |
+| t2 | tavola del caso rifatta | «Si approvo» (I-206) | va ricomposta | no | il giunto **sì**; i collettori di mandata e ritorno lontani (I-103) **sì** |
+| t3 | prova pulita A, 1.4.0 | presa per il progetto (I-209) | va ricomposta | no | gli sfiati che scavalcano la mandata (I-210, I-212) **sì**; il giunto **sì** |
+| t6 | stesso impianto di t5, volano coricato | «si va bene» (I-179) | va ricomposta | no | — |
+
+**Che cosa dice.**
+
+- **L'occhio separato vede.** Sulle due tavole respinte dà il giudizio del PO con le sue ragioni — le autostrade, lo
+  sfiato che intruppa la mandata —, e su t4 ritrova da solo quello che il PO aveva detto ridisegnando la tavola il 21
+  settembre. **I due difetti di D-211 li trova alla cieca**: il giunto sulla colonna del collettore tre volte su tre
+  tavole che ce l'hanno, la serpentina del pannello una volta (t5, anche in legenda).
+- **Il verdetto non è tarato: è più severo del PO.** Delle cinque tavole approvate ne lascia passare una. Le ragioni non
+  sono inventate, e ricorrono su revisori indipendenti:
+  - la mandata della pompa di zona che scende dal raccordo e corre **sotto il ritorno comune** (t1, t2, t3): contro B10,
+    e nessun controllo la vede — la coppia non si riconosce quando i capi sono raccordi (D-174). La sessione l'ha
+    verificata sulla tavola C;
+  - attorno al bollitore **andata ACS, ricircolo e acqua fredda arrivano da tre parti** (t1, t3), o la fredda arriva da
+    lontano (t1, t3, t5, t6);
+  - **la coppia della serpentina che si apre** (t6);
+  - **i due collettori di una cascata lontani** (t2) — è il criterio del PO del 21 settembre;
+  - **le pompe di zona non incolonnate** (t2, t7): A2 non ha un rilievo.
+
+  O il PO le tollera, e il revisore deve imparare la sua soglia; o sono difetti che nessuno aveva ancora visto. È una
+  domanda al PO.
+- **Le convenzioni le scambia per difetti, sempre le stesse**: gli attacchi liberi senza tappo (i pozzetti delle sonde),
+  su sei tavole su sette; derivazione e raccordo a T con lo stesso segno; lo scarico del volano rosso con la freccia;
+  l'ordine delle macchine nella pila diverso dalla distinta; il cartiglio «DA DEFINIRE». Vanno dette in `rivedere.md`.
+- **Dei controlli dice che sbagliano, in tre posti, e su tavole diverse**: `HIGHWAY_IS_NOT_STRAIGHT` sul ritorno del
+  pettine della zona 2 (t1, t2) e sul gradino imposto dagli interassi (t6); il B11 a 287,5 e 297,5 mm sulla zona 2 (t1,
+  t2). Da verificare: sono rilievi sui controlli, non sulla tavola.
+- **Quanto costa**: da 7 a 13 minuti e da 145 000 a 188 000 token per tavola, ingrandimenti compresi (da 7 a 13 per
+  tavola).
+
+**Che cosa ne viene per `REL-010`.** Il revisore separato si costruisce: vede, e vede quello che il PO vede. Prima del
+passo 7, tre cose: **la soglia** — distinguere quello che ferma la consegna da quello che la migliora, tarato sulle
+tavole che il PO ha approvato con i loro difetti residui —, **le convenzioni** in `rivedere.md`, e la risposta del PO sui
+difetti ricorrenti qui sopra.
+
+### Il giudizio del PO (I-220)
+
+Il PO ha detto di non riuscire a giudicare senza vedere tavola e verdetto insieme (I-219). La sessione gli ha preparato
+una pagina con, per ogni tavola, il foglio, il suo giudizio di allora, il verdetto del revisore e i ritagli dei punti
+segnalati; il PO ha scelto per ciascuno. Le scelte, testuali, sono in `taratura-1/GIUDIZI-PO.md`.
+
+- **Il verdetto del revisore è giusto sette volte su sette.** Anche sulle quattro tavole che il PO aveva approvato: «Non
+  avevo visto lo scambio delle colonne che concordo con il revisore» (t1); i collettori del caso rifatto «le avevo
+  disegnate a mano alla buona. Devono stare più vicine ha ragione il revisore» (t2). **Il revisore non era troppo
+  severo: vedeva cose che il PO non aveva visto.**
+- **Dei tredici punti nuovi, otto sono difetti e cinque si tollerano**; uno è rimasto senza scelta. Delle cinque
+  convenzioni, quattro si tollerano e una è un difetto: lo scarico rosso del volano.
+- **Quello che il revisore deve ancora imparare** non è a essere meno severo: è che cosa non ferma la consegna (la
+  soglia) e a guardare dentro i simboli — la serpentina «doveva vederla».
+- I difetti che la taratura ha trovato nel prodotto sono in `ACTIVE_WORK_PACKAGE.md`, «Quello che la taratura ha
+  riportato sul prodotto».
+
+## 4. La taratura del revisore, secondo giro (REL-010 punto 3)
+
+**23 ottobre 2026** · sei agenti avviati da zero, come al primo giro (`taratura-2/INCARICO.md`), con il `rivedere.md` che
+porta **la soglia del PO** — che cosa ferma la consegna e che cosa no (I-220) — e **il settimo sguardo**, dentro i
+simboli. Le tavole sono **diverse dalle sette del primo giro**, perché il revisore non le riconosca, e sono tutte già
+giudicate dal PO a settembre: quattro approvate, due respinte. Per queste tavole i rilievi misurati non c'erano: i
+revisori hanno guardato solo il disegno. Chiave in `taratura-2/CHIAVE.txt`, riassunti in `taratura-2/ESITI.md`,
+rapporti integrali in `taratura-2/rapporti/`.
+
+| | tavola | il PO a settembre | il revisore | il verdetto coincide | ha visto quello che ha visto il PO |
+|---|---|---|---|---|---|
+| u2 | DRAW-001, impianto 1 | «un vero schifo totale» (I-022) | va ricomposta | **sì** | **sì**: il ritorno dal serbatoio che va avanti e torna indietro, «passando sopra sé stesso» |
+| u4 | DRAW-005-R1, impianto 1 | «netto peggioramento» (I-046) | va ricomposta | **sì**, per altre ragioni | **no**: gli stacchi degli accessori troppo lunghi li dice a posto; le sicurezze moltiplicate sono contenuto, e non le giudica |
+| u6 | DRAW-018, tavola 1 (stesso impianto di u4) | «si vanno bene» (I-119) | si consegna | **sì** | — |
+| u3 | DRAW-018, tavola 4 | «si vanno bene» (I-119) | si consegna | **sì** | — |
+| u1 | DRAW-016, tavola 2 | «vanno benissimo» (I-109) | va ricomposta | no | la miscelatrice senza acqua fredda (I-110 punto 3) **in parte**: la chiede come contenuto |
+| u5 | DRAW-016, tavola 5 | approvata (I-109) | va ricomposta | no | la miscelatrice senza acqua fredda (I-110) **sì**; la freccia di VR-02 contro il flusso (I-114) **sì**; il ricircolo che torna sulla mandata ACS (I-110 punto 4) **in parte**, come domanda |
+
+**Che cosa dice.**
+
+- **La soglia ha funzionato**: le due tavole approvate del 24 settembre passano, con i difetti di disegno scritti come
+  proposte che non fermano la consegna; i tollerati del primo giro (l'ordine delle colonne, il circuito lungo, i pozzetti,
+  il cartiglio) li riconosce da sé. Il verdetto coincide in 4 tavole su 6, contro 3 su 7 al primo giro.
+- **Il settimo sguardo ha funzionato**: la serpentina del pannello fuori dal riquadro, che al primo giro «doveva
+  vederla», qui la vede (u5), anche in legenda; vede gli attacchi del ventilconvettore a filo degli spigoli (u1) e il
+  triangolo della pompa che sporge dal cerchio (u6, a 1200 dpi).
+- **Le due tavole approvate che respinge** hanno difetti veri, e su u5 sono **i tre che il PO stesso ha segnalato** dopo
+  averla approvata (I-110, I-114), oggi corretti (D-175, D-176, D-180).
+- **Quello che non vede**: gli stacchi lunghi di u4, che erano la ragione del PO. È l'unico difetto del PO, in questo
+  giro, che il revisore manca.
+- **Due domande che il revisore ha fatto erano già risolte** nella skill di oggi, e non sono andate al PO: la legenda con
+  linee non disegnate (23 settembre, commit `eca89ea`) e le sigle troppo piccole (D-194, 9 punti).
+- **Una cosa vista dalla sessione controllando un punto del revisore**: gli attacchi a filo degli spigoli non sono del
+  solo ventilconvettore. Nella libreria di oggi radiatore, pannello, ventilconvettore e ventilconvettore canalizzato hanno
+  il riquadro da 2,25 a 12,75 mm e le porte a 2,5 e 12,5: la mandata e il ritorno corrono un quarto di millimetro dentro
+  il lato superiore e quello inferiore. Il PO lo tollera (I-221).
+
+### Il giudizio del PO (I-221)
+
+Sulla pagina del secondo giro, come al primo (I-219); le scelte, testuali, sono in `taratura-2/GIUDIZI-PO.md`.
+
+- **Il verdetto del revisore è giusto sei volte su sei**, anche su u1 e u5, che il PO aveva approvato a settembre. Con il
+  primo giro, **tredici su tredici**.
+- **Dei sei punti nuovi, quattro sono difetti e due si tollerano.** I due tollerati sono quelli che il revisore aveva
+  detto non fermare la consegna; dei quattro difetti, tre il revisore li aveva detti fermare.
+- **Il quarto difetto è la sfumatura che la soglia non diceva**: su u3 il PO chiama difetto la coppia che si apre verso
+  lo scambiatore — il revisore l'aveva scritta come vincolo che non ferma — e dà giusto il verdetto «si consegna». Un
+  difetto da correggere non ferma per forza la consegna.
+- **Le domande**: gli stacchi di servizio che prendono il colore della linea sono una **convenzione**; la sigla del
+  volano sotto una valvola e deviatrice e commutatrice con lo stesso segno sono **difetti** («Se possibile spostare le
+  tag»; «Magari sulla commutatrice mettiamo una lettera c sopra oppure usiamo un simbolo leggermente diverso»); il
+  tratteggio che parte con un vuoto e le valvole di una pompa di calore non in colonna si **tollerano**, con una
+  preferenza («Partire pieni meglio.»; «Allinearle però è meglio più elegante»).
+
+**Che cosa ne viene per `REL-010`.** Il revisore separato vede quello che vede il PO, e il suo verdetto il PO lo dà giusto
+sulle tredici tavole di due giri. Le scelte di questo giro entrano nella soglia di `rivedere.md`; i difetti del prodotto,
+nel pacchetto che segue. Il punto 3 è chiuso; il prossimo è il 4, la rilettura a freddo, e poi il passo 7.
+
+## 5. La prova del passo 7, nelle due modalità (REL-010 punto 6)
+
+**24 ottobre 2026, 21:26–21:58 UTC** · la skill costruita dal ramo (1.5.0 senza il numero), due compositori avviati da
+zero **nello stesso momento e dalla stessa tavola**: la tavola del caso rifatta (`REL-009`, I-207; t2 del primo giro di
+taratura), rieseguita con il grafo completo e il piano agli atti. Ciascuno riceve soltanto la cartella della skill e
+quella di lavoro, e il testo: «i passi 1–6 sono fatti». Al primo il progettista non chiede niente; al secondo scrive
+«fammela rivedere da un agente esterno». Le tavole, i piani, i vincoli, i messaggi al progettista e i rapporti dei
+revisori sono in `prova-passo7/`.
+
+**Una cosa dell'ambiente, e come è stata aggirata.** Un sub-agente qui non può lanciarne un altro. Il compositore del
+revisore esterno ha preparato la cartella e il testo dell'incarico come dice `SKILL.md`, e si è fermato; la sessione ha
+lanciato il revisore **con quel testo e nient'altro**, e gli ha rimandato il rapporto. Il compositore non ha mai parlato
+con il revisore. In Claude Code e in Cowork il compositore è la sessione principale e il revisore lo lancia lui.
+
+| | partenza | modalità ordinaria | revisore esterno |
+|---|---|---|---|
+| chi ha guardato | — | il compositore, un giro | due revisori esterni, uno per giro |
+| tempo | — | 10 min | 32 min (i due revisori 9 e 9,5 min) |
+| token, come li conta l'ambiente | — | 213 000 | 230 000 il compositore, 186 000 e 189 000 i revisori |
+| verdetto | — | — | «si consegna», tutti e due |
+| formato · tratte · cedute · bloccanti | A1 · 137 · 0 · 0 | A1 · 137 · 0 · 0 | A1 · 137 · 0 · 0 |
+| pieghe · sormonti | 13 · 12 | 13 · 12 | 13 · **14** |
+| stacchi più lunghi del minimo | 4 | **0** | 2 |
+| pezzi fuori fascia · coppie che non corrono insieme | 7 · 4 | 7 · 4 | 7 · 4 |
+
+**Le tavole.** La differenza non sta nei numeri, sta nelle cascate:
+
+- **in modalità ordinaria** il compositore vede le due colonne della cascata staccate — il difetto che il PO ha chiamato
+  per nome — e le avvicina da 45 a **35 mm**. Più vicine no: «fra loro il ritorno porta lo sfiato e il giunto
+  antivibrante», e li prende per contenuto;
+- **il revisore esterno** vede **perché** le colonne stanno lontane: sfiato e giunto del ritorno di ogni pompa di calore
+  stanno oltre la colonna di mandata, lontani dalla macchina che servono, e nessun rilievo li vede (A4 misura gli
+  stacchi, non gli organi in linea). Il suo vincolo — sfiato e giunto addosso alla macchina, e le colonne una addosso
+  all'altra — porta le colonne a **10 mm**, accanto alle macchine. Il prezzo: per tenere il giunto dalla parte della
+  macchina il motore vuole la colonna di ritorno vicino alle pompe, e i sormonti salgono da 12 a 14. Il PO ha già
+  tollerato l'ordine delle colonne (I-220).
+- Sul gruppo ACS, il revisore esterno avvicina il gruppo di sicurezza sanitario e il vaso al bollitore; quello ordinario
+  accorcia gli stacchi.
+
+**La rilettura a freddo.** I due revisori esterni, e il terzo di controllo, raccontano l'impianto giusto: i due impianti
+separati, le cascate, i volani, i due pettini, il circuito della serpentina, l'acqua fredda, il ricircolo. Il compositore
+ha trovato una lettura imprecisa — l'intercettazione a valle di CIR-01 c'è, ma il motore la mette addosso al bollitore —
+e un vuoto vero: **le zone non hanno sigla**, e nessuno sa dire quale collettore sia quale.
+
+**Quello che l'occhio esterno vede e i numeri no**, oltre alle cascate: il gruppo di sicurezza sanitario a metà della
+linea fredda; VE-01 e il manometro a metà del ritorno fra i due accumuli, staccati dal volano; andata ACS e ricircolo che
+lasciano il foglio in due direzioni (B11 non guarda le coppie che finiscono su un confine di rete); CIR-02 e CIR-03 non
+incolonnati; e quattro difetti del disegno — i tre simboli in testa alla legenda che si toccano, la miscelatrice
+termostatica e il rubinetto portamanometro quasi uguali, la barra di ritorno del collettore di zona spezzata dove passano
+le discese, la freccia sullo scarico dell'acqua fredda.
+
+**Quello che la prova ha corretto in `SKILL.md`.** Il compositore l'ha detto da sé: il primo revisore ha dato «si
+consegna» **e** tre vincoli, e il passo 7 non diceva se fermarsi o applicarli. Li ha applicati, ed è da lì che vengono le
+colonne a 10 mm. La regola adesso è scritta (D-212 punto 6): i vincoli si applicano anche quando il verdetto è «si
+consegna»; al più due revisori; i vincoli del secondo, se consegna, si dicono al progettista come miglioramenti.
+
+**Se una tavola mi sembra sbagliata e i numeri dicono che va bene — e qui è il verdetto.** La tavola di partenza è la
+stessa su cui, al primo giro di taratura, il revisore aveva detto «va ricomposta» e il PO aveva dato **giusto** (I-220).
+Adesso, con la soglia del PO in `rivedere.md`, il primo revisore esterno dice «**si consegna**». Per sapere se era un caso
+la sessione ha lanciato un terzo revisore cieco sulla stessa tavola (`rapporti/controllo-partenza.md`): dice **anche lui
+«si consegna»**, con gli stessi difetti — le colonne lontane, gli organi del ritorno staccati, il gruppo di sicurezza
+lontano — tutti come vincoli che non fermano. **La soglia ha spostato il verdetto su questa tavola**, e in modo stabile.
+Le due letture si reggono tutte e due sulle parole del PO: «ferma la consegna quello che fa leggere la tavola male» (e la
+tavola si legge giusta), contro «i due collettori di una cascata lontani» nell'elenco dei difetti (e il «giusto» del primo
+giro). **Quale delle due vale lo decide il PO**; la sessione non tocca la soglia.
+
+**Per `REL-010`.** Il revisore esterno funziona come lo descrive `SKILL.md`: la cartella, l'incarico fisso, il racconto,
+la traduzione dei vincoli, il tetto. Sulla stessa tavola **il giro col revisore esterno migliora la tavola dove il
+compositore da solo si era fermato**, e costa tre volte il tempo. Resta al PO: le tavole, D-212, e la domanda sulla
+soglia.

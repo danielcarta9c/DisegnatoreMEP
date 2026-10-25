@@ -4,6 +4,9 @@
 
 Un **rapporto in italiano** nella forma di `ISTRUZIONI.md` §6, e — quando il pezzo 3 è
 pronto a riceverli — gli stessi vincoli in forma di dati, nella sezione `vincoli` del piano.
+Il **revisore esterno** (D-212) comincia il rapporto con l'impianto come lo legge dalla sola
+tavola, che chi compone confronta con il grafo, e lo chiude con una riga di verdetto: «la
+tavola si può consegnare così» o «va ricomposta prima di consegnarla».
 
 ## Come si giudica, e non è «quanti difetti ha trovato»
 

@@ -7,7 +7,7 @@ compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Clau
 
 # Disegnatore MEP
 
-**Versione 1.4.1** — 5 ottobre 2026.
+**Versione 1.5.0** — 24 ottobre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
@@ -119,7 +119,20 @@ Il messaggio porta:
 - le assunzioni che hai fatto per chiudere il grafo, da confermare tutte insieme;
 - i dati che la tavola scrive e che il testo non dà, in una riga ciascuno: committente e
   commessa, indirizzo, titolo e numero della tavola; marca e modello delle apparecchiature;
-  i salti termici e le portate, se ha chiesto i diametri.
+  i salti termici e le portate, se ha chiesto i diametri;
+- **come si rivede la tavola**, se l'ambiente lancia sub-agenti, come Claude Code o Cowork; su
+  claude.ai la scelta non c'è, e non la fai. Con la prima come proposta, in queste parole — con
+  lo strumento delle domande a scelta, se l'ambiente ne ha uno:
+
+  > Come vuoi che sia rivista la tavola, prima della consegna?
+  > 1. **In questa conversazione**: la guarda Claude, lo stesso agente che l'ha composta. Più
+  >    veloce, meno token.
+  > 2. **Da un revisore esterno**: un altro agente Claude, che non conosce l'impianto, la
+  >    guarda a occhio fresco. Più lento e più token: circa 10 minuti e 200 mila token a giro,
+  >    al più due giri.
+
+  Questa domanda da sola non ti ferma: se al passo 2 non c'è altro da chiedere, la porti al
+  passo 4 con il grafo.
 
 Poi **aspetta la risposta**. Riporta le risposte nel grafo — un dato dato si trascrive, una
 lettura corretta si ridisegna, un'assunzione confermata passa a `"status": "approved"` — e
@@ -194,6 +207,11 @@ sono i numeri con cui confronti due pose (per esempio i due ordini dei collettor
 
 ### 7. Rivedere — si guarda la tavola, e si torna al piano
 
+La tavola la guardi tu. **Un revisore esterno** — un altro agente, che non l'ha composta e non
+sa niente dell'impianto — la guarda **se il progettista l'ha scelto** alla domanda del passo 2 o
+del passo 4, o se lo chiede dopo; non lo attivi da te. Come si fa è sotto, in «Il revisore
+esterno».
+
 ```bash
 python3 scripts/mep.py anteprima $L/tavola/<progetto>-t1.pdf
 ```
@@ -215,6 +233,64 @@ rilievi e dillo al progettista: la tavola non l'ha guardata nessuno prima di lui
 l'elenco delle regole del disegno con la fonte di ciascuna: si apre quando un rilievo cita una
 regola e serve sapere da dove viene.
 
+#### Il revisore esterno
+
+Vuole un ambiente che lanci sub-agenti, come Claude Code o Cowork. Se non c'è, la tavola la
+guardi tu e lo dici nella consegna.
+
+1. **Una cartella con la sola tavola**, i rilievi e le istruzioni; niente grafo, niente piano:
+
+   ```bash
+   R=$L/revisione-1 && mkdir -p $R
+   cp $L/tavola/<progetto>-t1.pdf $R/tavola.pdf
+   cp $L/tavola/<progetto>-t1-rilievi.md $R/rilievi.md
+   cp riferimenti/rivedere.md riferimenti/regole-del-piano.md $R/
+   python3 scripts/mep.py anteprima $R/tavola.pdf --out $R/tavola.png
+   ```
+
+2. **Lancia un sub-agente** con il tuo stesso modello e dagli **questo testo e nient'altro**,
+   con `{CARTELLA}` e `{SKILL}` al posto dei percorsi completi della cartella e della skill.
+   Non aggiungere niente sull'impianto: il revisore serve perché non lo conosce.
+
+   > Sei il revisore di una tavola di schema funzionale idronico (centrale termica). Non l'hai
+   > composta tu, e non sai niente dell'impianto oltre a quello che la tavola mostra.
+   > Lavori solo con i file della cartella {CARTELLA}: non aprire, non cercare e non elencare
+   > altri file. Tutto quello che ti serve è lì, più il comando per ingrandire.
+   > 1. Leggi per intero {CARTELLA}/rivedere.md: sono le tue istruzioni, e bastano da sole.
+   > 2. La tavola è {CARTELLA}/tavola.png (il foglio intero) e {CARTELLA}/tavola.pdf.
+   > Guardala. Per ingrandire una zona: python3 {SKILL}/scripts/mep.py anteprima
+   > {CARTELLA}/tavola.pdf --zona x0,y0,x1,y1 --dpi 300 --out {CARTELLA}/zoom-N.png, con
+   > x0,y0,x1,y1 in millimetri dall'alto a sinistra del foglio; poi guarda zoom-N.png.
+   > Scegli tu le zone.
+   > 3. I rilievi già misurati sono in {CARTELLA}/rilievi.md: sono dati, non il tuo lavoro.
+   > 4. {CARTELLA}/regole-del-piano.md si apre quando un rilievo o un tuo vincolo cita una
+   > regola.
+   > Restituisci il rapporto nella forma di rivedere.md §6, in italiano. In fondo aggiungi
+   > una riga sola, che comincia con «VERDETTO:», con una di queste due frasi: «la tavola si
+   > può consegnare così» oppure «la tavola va ricomposta prima di consegnarla», e il perché
+   > in una frase.
+
+3. **Il rapporto comincia con l'impianto come il revisore lo legge.** Confrontalo con il
+   grafo: dove il racconto sbaglia — un circuito dato all'utenza sbagliata, un ritorno che
+   non si capisce dove va —, la tavola si legge male anche se nessun rilievo lo dice. È un
+   vincolo da scrivere.
+4. **I vincoli nominano i pezzi con le sigle**, o li descrivono: li traduci negli
+   identificativi del piano, li scrivi in `$L/vincoli.md` e ricomponi (passo 5). Un vincolo
+   che il piano non sa esprimere cede, e lo dici. Le domande sul contenuto non sono vincoli:
+   vanno al progettista.
+5. **I vincoli si applicano anche quando il verdetto è «si consegna»**: il verdetto dice se
+   la tavola si legge giusta, i vincoli la migliorano. Sulla tavola nuova, **un revisore
+   nuovo**, con una cartella nuova (`revisione-2`). **Al più due revisori**:
+   - ti fermi quando un revisore dice «si consegna» e non ha vincoli, e la tavola non ha
+     rilievi bloccanti né tratte cedute;
+   - se il secondo dice «si consegna» con dei vincoli, **non li applichi**: consegni la
+     tavola che ha visto, e i suoi vincoli li dici al progettista come miglioramenti;
+   - se il secondo dice «va ricomposta», applichi i suoi vincoli, guardi tu la tavola nuova
+     e dici al progettista che l'ultima l'ha guardata chi l'ha composta.
+
+   Se una tavola ricomposta ha più rilievi bloccanti o tratte cedute di quella prima, tieni
+   quella prima, e dici perché.
+
 ### 8. Consegnare
 
 La tavola da consegnare è l'ultima eseguita, senza `--verifica`. Copiala dove il progettista la
@@ -232,7 +308,9 @@ Poi, in poche righe:
   — detti con parole sue, non con i codici —, i campi del cartiglio «DA DEFINIRE» (la tavola
   allora è una **bozza**), un carattere che il PDF ha dovuto sostituire;
 - le domande sul contenuto che ti sono venute componendo o rivedendo: come domande, non come
-  decisioni prese.
+  decisioni prese;
+- **chi ha guardato la tavola**: tu, oppure il revisore esterno, con il suo verdetto e i giri
+  fatti; o nessuno, se l'ambiente non ti lascia vedere le immagini.
 
 Se chiede come sono calcolati i diametri: il diametro interno netto minimo, dalla portata — che
 viene dalla potenza e dal salto termico che ha dato lui, o dalla portata di progetto — e da una

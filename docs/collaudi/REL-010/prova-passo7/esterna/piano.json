@@ -1,0 +1,502 @@
+{
+  "formato": "A1",
+  "note": [
+    "Il caso reale ricostruito (caso-reale-2), composto dopo I-201 … I-205: autostrade prima, pompe di zona parallele, dorsali della distribuzione come autostrade, collettori con i terminali sotto la loro coppia.",
+    "Giro 1 col revisore esterno: V1 sfiati e giunti del ritorno fra pompa e colonna di mandata; V2 colonne della cascata a 10 mm; V3 gruppo di sicurezza e T del vaso sanitario addosso al bollitore. Vincoli in vincoli.md.",
+    "B3, ordine delle colonne, misurato con V1 e V2 applicati: mandata vicina alle pompe (l'ordine del giro 0) e colonne a 10 mm = pieghe 17, sormonti 12, la mandata dell'ultima pompa gira intorno al giunto del ritorno, e il giunto del ritorno resta comunque fra le colonne o addosso all'incrocio, perche' il motore lo posa dal lato del raccordo; ritorno vicino alle pompe = pieghe 13, sormonti 14, giunti e sfiati fra pompa e colonne. A4 sta sopra B3: tengo il ritorno vicino, e i due sormonti in piu' sono il prezzo di V1."
+  ],
+  "pezzi": {
+    "pdc-r1": {
+      "x": 0,
+      "y": 0.0
+    },
+    "tee-valve-safety-pdc-r1-water-supply": {
+      "x": 47.5,
+      "y": 2.5
+    },
+    "valve-safety-pdc-r1-water-supply": {
+      "x": 47.5,
+      "y": -17.5
+    },
+    "tee-sfiato-r1": {
+      "x": 62.5,
+      "y": 17.5,
+      "regola": "V1 giro 1 (A4) — sfiato addosso alla pompa, prima della colonna di mandata"
+    },
+    "sfiato-r1": {
+      "x": 62.5,
+      "y": 10.0
+    },
+    "pdc-r2": {
+      "x": 0,
+      "y": 60.0
+    },
+    "tee-valve-safety-pdc-r2-water-supply": {
+      "x": 47.5,
+      "y": 62.5
+    },
+    "valve-safety-pdc-r2-water-supply": {
+      "x": 47.5,
+      "y": 42.5
+    },
+    "tee-sfiato-r2": {
+      "x": 62.5,
+      "y": 77.5,
+      "regola": "V1 giro 1 (A4) — sfiato addosso alla pompa, prima della colonna di mandata"
+    },
+    "sfiato-r2": {
+      "x": 62.5,
+      "y": 70.0
+    },
+    "pdc-r3": {
+      "x": 0,
+      "y": 120.0
+    },
+    "tee-valve-safety-pdc-r3-water-supply": {
+      "x": 47.5,
+      "y": 122.5
+    },
+    "valve-safety-pdc-r3-water-supply": {
+      "x": 47.5,
+      "y": 102.5
+    },
+    "tee-sfiato-r3": {
+      "x": 62.5,
+      "y": 137.5,
+      "regola": "V1 giro 1 (A4) — sfiato addosso alla pompa, prima della colonna di mandata"
+    },
+    "sfiato-r3": {
+      "x": 62.5,
+      "y": 130.0
+    },
+    "pdc-r4": {
+      "x": 0,
+      "y": 180.0
+    },
+    "tee-valve-safety-pdc-r4-water-supply": {
+      "x": 47.5,
+      "y": 182.5
+    },
+    "valve-safety-pdc-r4-water-supply": {
+      "x": 47.5,
+      "y": 162.5
+    },
+    "tee-sfiato-r4": {
+      "x": 62.5,
+      "y": 197.5,
+      "regola": "V1 giro 1 (A4) — sfiato addosso alla pompa, prima della colonna di mandata"
+    },
+    "sfiato-r4": {
+      "x": 62.5,
+      "y": 190.0
+    },
+    "tj-pr-3": {
+      "x": 102.5,
+      "y": 2.5,
+      "regola": "V2 giro 1 (B12, B9) — colonna di mandata fuori, a 10 mm dalla colonna di ritorno"
+    },
+    "tj-pr-2": {
+      "x": 102.5,
+      "y": 62.5,
+      "regola": "V2 giro 1 (B12, B9) — colonna di mandata fuori, a 10 mm dalla colonna di ritorno"
+    },
+    "tj-pr-1": {
+      "x": 102.5,
+      "y": 122.5,
+      "regola": "V2 giro 1 (B12, B9) — colonna di mandata fuori, a 10 mm dalla colonna di ritorno"
+    },
+    "ts-pr-3": {
+      "x": 92.5,
+      "y": 17.5,
+      "regola": "V1+V2 giro 1 (A4 sopra B3) — colonna di ritorno vicina alle pompe, a 10 mm dalla mandata (B9)"
+    },
+    "ts-pr-2": {
+      "x": 92.5,
+      "y": 77.5,
+      "regola": "V1+V2 giro 1 (A4 sopra B3) — colonna di ritorno vicina alle pompe, a 10 mm dalla mandata (B9)"
+    },
+    "ts-pr-1": {
+      "x": 92.5,
+      "y": 137.5,
+      "regola": "V1+V2 giro 1 (A4 sopra B3) — colonna di ritorno vicina alle pompe, a 10 mm dalla mandata (B9)"
+    },
+    "volano-risc": {
+      "x": 210.0,
+      "y": 0,
+      "regola": "D-159 — sulle quote della prima pompa di calore"
+    },
+    "sfiato-volano-risc": {
+      "x": 220.0,
+      "y": -7.5
+    },
+    "tee-filling-unit-ts-pr-3-a-b": {
+      "x": 150.0,
+      "y": 17.5
+    },
+    "filling-unit-ts-pr-3-a": {
+      "x": 150,
+      "y": 32.5,
+      "rotazione": 180
+    },
+    "inlet-filling-unit-ts-pr-3-a": {
+      "x": 150,
+      "y": 52.5
+    },
+    "drain-connection-volano-risc-primary-in": {
+      "x": 220.0,
+      "y": 55
+    },
+    "tee-pressure-gauge-tj-mz-b": {
+      "x": 252.5,
+      "y": 17.5
+    },
+    "pressure-gauge-tj-mz-b": {
+      "x": 252.5,
+      "y": 40,
+      "rotazione": 180
+    },
+    "tee-expansion-connection-tj-mz-b": {
+      "x": 265.0,
+      "y": 17.5
+    },
+    "expansion-connection-tj-mz-b": {
+      "x": 265,
+      "y": 40
+    },
+    "ts-mz": {
+      "x": 287.5,
+      "y": 2.5
+    },
+    "coll-mz1-1": {
+      "x": 385.0,
+      "y": 50.0
+    },
+    "fc-mz1-1": {
+      "x": 390.0,
+      "y": 85.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz1-1": {
+      "x": 410.0,
+      "y": 85.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "ts-mz1-1": {
+      "x": 342.5,
+      "y": 50.0
+    },
+    "tj-mz1-1": {
+      "x": 352.5,
+      "y": 60.0
+    },
+    "coll-mz1-2": {
+      "x": 385.0,
+      "y": 110.0
+    },
+    "fc-mz1-2": {
+      "x": 390.0,
+      "y": 145.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz1-2": {
+      "x": 410.0,
+      "y": 145.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "ts-mz1-2": {
+      "x": 342.5,
+      "y": 110.0
+    },
+    "tj-mz1-2": {
+      "x": 352.5,
+      "y": 120.0
+    },
+    "coll-mz1-3": {
+      "x": 385.0,
+      "y": 170.0
+    },
+    "fc-mz1-3": {
+      "x": 390.0,
+      "y": 205.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz1-3": {
+      "x": 410.0,
+      "y": 205.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "coll-mz2-1": {
+      "x": 485.0,
+      "y": 50.0
+    },
+    "fc-mz2-1": {
+      "x": 490.0,
+      "y": 85.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz2-1": {
+      "x": 510.0,
+      "y": 85.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "ts-mz2-1": {
+      "x": 452.5,
+      "y": 50.0,
+      "rotazione": 90
+    },
+    "tj-mz2-1": {
+      "x": 442.5,
+      "y": 60.0,
+      "rotazione": 90,
+      "specchio": true
+    },
+    "coll-mz2-2": {
+      "x": 485.0,
+      "y": 110.0
+    },
+    "fc-mz2-2": {
+      "x": 490.0,
+      "y": 145.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz2-2": {
+      "x": 510.0,
+      "y": 145.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "ts-mz2-2": {
+      "x": 452.5,
+      "y": 110.0
+    },
+    "tj-mz2-2": {
+      "x": 442.5,
+      "y": 120.0
+    },
+    "coll-mz2-3": {
+      "x": 485.0,
+      "y": 170.0
+    },
+    "fc-mz2-3": {
+      "x": 490.0,
+      "y": 205.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz2-3": {
+      "x": 510.0,
+      "y": 205.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "ts-mz2-3": {
+      "x": 452.5,
+      "y": 170.0
+    },
+    "tj-mz2-3": {
+      "x": 442.5,
+      "y": 180.0
+    },
+    "coll-mz2-4": {
+      "x": 485.0,
+      "y": 230.0
+    },
+    "fc-mz2-4": {
+      "x": 490.0,
+      "y": 265.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz2-4": {
+      "x": 510.0,
+      "y": 265.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "ts-mz2-4": {
+      "x": 452.5,
+      "y": 230.0
+    },
+    "tj-mz2-4": {
+      "x": 442.5,
+      "y": 240.0
+    },
+    "coll-mz2-5": {
+      "x": 485.0,
+      "y": 290.0
+    },
+    "fc-mz2-5": {
+      "x": 490.0,
+      "y": 325.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "rad-mz2-5": {
+      "x": 510.0,
+      "y": 325.0,
+      "rotazione": 270,
+      "specchio": true
+    },
+    "tj-mz": {
+      "x": 352.5,
+      "y": 17.5
+    },
+    "pdc-a1": {
+      "x": 0,
+      "y": 400.0
+    },
+    "tee-valve-safety-pdc-a1-water-supply": {
+      "x": 47.5,
+      "y": 402.5
+    },
+    "valve-safety-pdc-a1-water-supply": {
+      "x": 47.5,
+      "y": 382.5
+    },
+    "tee-sfiato-a1": {
+      "x": 62.5,
+      "y": 417.5,
+      "regola": "V1 giro 1 (A4) — sfiato addosso alla pompa, prima della colonna di mandata"
+    },
+    "sfiato-a1": {
+      "x": 62.5,
+      "y": 410.0
+    },
+    "pdc-a2": {
+      "x": 0,
+      "y": 460.0
+    },
+    "tee-valve-safety-pdc-a2-water-supply": {
+      "x": 47.5,
+      "y": 462.5
+    },
+    "valve-safety-pdc-a2-water-supply": {
+      "x": 47.5,
+      "y": 442.5
+    },
+    "tee-sfiato-a2": {
+      "x": 62.5,
+      "y": 477.5,
+      "regola": "V1 giro 1 (A4) — sfiato addosso alla pompa, prima della colonna di mandata"
+    },
+    "sfiato-a2": {
+      "x": 62.5,
+      "y": 470.0
+    },
+    "tj-pa": {
+      "x": 102.5,
+      "y": 402.5,
+      "regola": "V2 giro 1 (B12, B9) — colonna di mandata fuori, a 10 mm dalla colonna di ritorno"
+    },
+    "ts-pa": {
+      "x": 92.5,
+      "y": 417.5,
+      "regola": "V1+V2 giro 1 (A4 sopra B3) — colonna di ritorno vicina alle pompe, a 10 mm dalla mandata (B9)"
+    },
+    "volano-acs": {
+      "x": 210.0,
+      "y": 400.0,
+      "regola": "D-159 — sulle quote della prima pompa di calore"
+    },
+    "sfiato-volano-acs": {
+      "x": 220.0,
+      "y": 392.5
+    },
+    "tee-filling-unit-ts-pa-a-b": {
+      "x": 150.0,
+      "y": 417.5
+    },
+    "filling-unit-ts-pa-a": {
+      "x": 150,
+      "y": 432.5,
+      "rotazione": 180
+    },
+    "inlet-filling-unit-ts-pa-a": {
+      "x": 150,
+      "y": 452.5
+    },
+    "drain-connection-volano-acs-aux-in": {
+      "x": 220.0,
+      "y": 455.0
+    },
+    "solare-mandata": {
+      "x": 245,
+      "y": 425.0
+    },
+    "solare-ritorno": {
+      "x": 245,
+      "y": 435.0
+    },
+    "tee-expansion-connection-volano-acs-secondary-in": {
+      "x": 290.0,
+      "y": 417.5
+    },
+    "expansion-connection-volano-acs-secondary-in": {
+      "x": 290,
+      "y": 440.0
+    },
+    "tee-pressure-gauge-volano-acs-secondary-in": {
+      "x": 302.5,
+      "y": 417.5
+    },
+    "pressure-gauge-volano-acs-secondary-in": {
+      "x": 302.5,
+      "y": 440.0,
+      "rotazione": 180
+    },
+    "bollitore": {
+      "x": 420,
+      "y": 397.5,
+      "regola": "la serpentina sulla quota del secondario"
+    },
+    "acquedotto": {
+      "x": 340,
+      "y": 432.5,
+      "regola": "A4 — stacco dell'acquedotto al minimo che chiedono intercettazione e riduttore (30 mm)"
+    },
+    "tee-drain-connection-cold-bollitore-cold-in": {
+      "x": 375,
+      "y": 432.5,
+      "regola": "V3 giro 1 (A4) — tratta del gruppo di sicurezza al suo minimo: il gruppo addosso al T del vaso"
+    },
+    "drain-connection-cold-bollitore-cold-in": {
+      "x": 375,
+      "y": 447.5
+    },
+    "tee-expansion-connection-dhw-bollitore-cold-in": {
+      "x": 405,
+      "y": 432.5,
+      "regola": "V3 giro 1 (A4) — T del vaso sanitario addosso all'attacco freddo del bollitore, 10 mm (D-062)"
+    },
+    "expansion-connection-dhw-bollitore-cold-in": {
+      "x": 405,
+      "y": 457.5
+    },
+    "mixing-valve-thermostatic-bollitore-dhw-out": {
+      "x": 422.5,
+      "y": 360.0,
+      "rotazione": 270
+    },
+    "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
+      "x": 450,
+      "y": 360.0
+    },
+    "utenze-acs": {
+      "x": 425,
+      "y": 330.0
+    },
+    "ricircolo-utenze": {
+      "x": 500,
+      "y": 407.5
+    }
+  }
+}

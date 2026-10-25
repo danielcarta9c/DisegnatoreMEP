@@ -1,17 +1,21 @@
-# L'ultima release: 1.4.1
+# L'ultima release: 1.5.0
 
-`DisegnatoreMEP-v1.4.1.zip` — sha256 `9179799118e2fbba…`, 104 file — è **lo sfiato col suo rubinetto** (I-210, I-211,
-D-210). Si carica come ogni skill personale, dallo ZIP così com'è.
+`DisegnatoreMEP-v1.5.0.zip` — sha256 `36d03a1f17ca154a…`, 104 file — è **il revisore esterno** (`REL-010`, I-216,
+I-219, I-222, D-212 proposta) e **la tavola d'esempio senza i due difetti dell'occhio** (D-211). Si carica come ogni
+skill personale, dallo ZIP così com'è.
 
-Rispetto alla 1.4.0:
-- **lo sfiato e il suo rubinetto sono un simbolo solo**, 5 × 7,5 — lo sfiato sopra, il rubinetto in verticale sotto —,
-  ovunque: anche quello che le regole mettono sul volano, e quello del circuito solare;
-- lo sfiato **senza** rubinetto si scrive solo se il progettista lo dice (la variante `air-vent-plain`);
-- un grafo che dichiara la valvola sullo stacco dello sfiato si ferma alla validazione e dice come si corregge: disegnerebbe
-  due rubinetti;
-- lo sfiato pende **addosso al raccordo**, senza tubo in mezzo (I-212), e sul ritorno di una pompa di calore resta sotto la
-  mandata: sul caso reale il tubo degli stacchi degli sfiati va a zero, i sormonti da 14 a 12, con otto pezzi in meno.
+Rispetto alla 1.4.1:
+- **la tavola si può far rivedere a un revisore esterno**: un altro agente Claude, che non ha composto la tavola e non
+  conosce l'impianto, la guarda a occhio fresco. La skill lo chiede al progettista con una domanda a scelta, insieme
+  alle altre domande, **solo dove i sub-agenti ci sono** (Claude Code, Cowork); la proposta è la revisione in
+  conversazione. Il revisore riceve la sola tavola, i rilievi e le istruzioni — niente grafo, niente piano —, con un
+  incarico fisso; al più due revisori, uno nuovo per giro; la consegna dice chi ha guardato la tavola;
+- **il revisore prima racconta l'impianto** che legge dalla tavola, e chi compone confronta il racconto con il grafo;
+- **la soglia del PO** nelle istruzioni di Rivedere: che cosa ferma la consegna e che cosa no, tarata su tredici tavole
+  che il PO ha giudicato (I-220, I-221), e lo sguardo dentro i simboli;
+- **la serpentina del pannello radiante dentro il suo riquadro**, e **il giunto dell'ultima pompa di una cascata fuori
+  dal prolungamento del collettore** (D-211).
 
-Le tavole agli atti hanno gli stessi numeri della 1.4.0, con lo sfiato nuovo (`docs/collaudi/REL-009/RAPPORTO.md`, §8).
+La prova del passo 7 nelle due modalità, sulla tavola del caso rifatta, è in `docs/collaudi/REL-010/RAPPORTO.md` §5.
 
 Alla prossima versione questo file e lo ZIP si sostituiscono; la copia numerata resta in `../archive/`.
