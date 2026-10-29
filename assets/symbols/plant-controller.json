@@ -1,0 +1,74 @@
+{
+  "id": "plant-controller",
+  "version": "1.0.0",
+  "name": "Regolatore d'impianto",
+  "width_mm": 30.0,
+  "height_mm": 45.0,
+  "allowed_rotations_deg": [
+    0
+  ],
+  "ports": [
+    {
+      "id": "power",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 10.0
+    },
+    {
+      "id": "bus",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 20.0
+    },
+    {
+      "id": "out_1",
+      "face": "right",
+      "x_mm": 30.0,
+      "y_mm": 7.5
+    },
+    {
+      "id": "out_2",
+      "face": "right",
+      "x_mm": 30.0,
+      "y_mm": 17.5
+    },
+    {
+      "id": "out_3",
+      "face": "right",
+      "x_mm": 30.0,
+      "y_mm": 27.5
+    },
+    {
+      "id": "out_4",
+      "face": "right",
+      "x_mm": 30.0,
+      "y_mm": 37.5
+    },
+    {
+      "id": "probe_1",
+      "face": "bottom",
+      "x_mm": 7.5,
+      "y_mm": 45.0
+    },
+    {
+      "id": "probe_2",
+      "face": "bottom",
+      "x_mm": 15.0,
+      "y_mm": 45.0
+    },
+    {
+      "id": "probe_3",
+      "face": "bottom",
+      "x_mm": 22.5,
+      "y_mm": 45.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 2.0,
+    "top_mm": 0.0,
+    "bottom_mm": 2.0
+  },
+  "stroke_weight": "medium",
+  "source": "proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226): forma da approvare dal PO sulla tavola; stile dei simboli del kit aria-aria"
+}

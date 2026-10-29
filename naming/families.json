@@ -79,6 +79,11 @@
       "name": "Centrale di zona"
     },
     {
+      "function": "plant_control",
+      "prefix": "RG",
+      "name": "Regolatore d'impianto"
+    },
+    {
       "function": "heat_exchange",
       "prefix": "SCA",
       "name": "Scambiatore di calore"
@@ -233,6 +238,16 @@
       "function": "unit_control",
       "prefix": "CF",
       "name": "Comando a filo"
+    },
+    {
+      "function": "temperature_sensing",
+      "prefix": "SO",
+      "name": "Sonda di temperatura"
+    },
+    {
+      "function": "outdoor_temperature_sensing",
+      "prefix": "SE",
+      "name": "Sonda esterna"
     }
   ]
 }

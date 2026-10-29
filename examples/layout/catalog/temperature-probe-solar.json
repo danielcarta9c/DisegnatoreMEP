@@ -1,0 +1,34 @@
+{
+  "id": "temperature-probe-solar",
+  "version": "1.0.0",
+  "name": "Sonda di temperatura solare",
+  "functions": [
+    "temperature_sensing"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_branch"
+  ],
+  "symbol_id": "temperature-probe",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "hydronic",
+      "medium": "solar_fluid",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "signal",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "out",
+      "required": false
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226): da approvare dal PO sulla tavola"
+  ]
+}

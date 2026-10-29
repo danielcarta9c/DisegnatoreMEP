@@ -1981,6 +1981,106 @@ def wired_remote_body(w: float, h: float) -> str:
     )
 
 
+# --- REL-012 fase 3, il comando nell'idronico: proposte della sessione ---------
+# Il PO, I-226: «REL 12 [...] ha anche la parte elettrica e comando che cmq va
+# integrata anche nell'idronico esistente». Tre segni nuovi, nello stile di quelli
+# del kit — sobri, a tratto, senza scritte che dipendano da un font. Sono
+# **proposte della sessione** (D-083): la forma la approva il PO sulla tavola.
+
+SOURCE_REL012_CONTROL = (
+    "proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226): forma da approvare dal "
+    "PO sulla tavola; stile dei simboli del kit aria-aria"
+)
+"""La fonte dei segni del comando nell'idronico: nessuna fonte esterna acquisita."""
+
+PLANT_CONTROLLER = (30.0, 45.0)
+PLANT_CONTROLLER_OUTPUTS = (7.5, 17.5, 27.5, 37.5)
+"""I comandi a pompe e valvole, sul fianco destro a 10 mm l'uno dall'altro."""
+PLANT_CONTROLLER_PROBES = (7.5, 15.0, 22.5)
+"""Gli ingressi delle sonde, sul fondo."""
+
+TEMPERATURE_PROBE_PORTS = [
+    port("a", "bottom", *BRANCHED_ACCESSORY),
+    port("signal", "top", *BRANCHED_ACCESSORY),
+]
+PLANT_CONTROLLER_PORTS = [
+    port_at("power", "left", 10.0, *PLANT_CONTROLLER),
+    port_at("bus", "left", 20.0, *PLANT_CONTROLLER),
+    *(
+        port_at(f"out_{indice + 1}", "right", y, *PLANT_CONTROLLER)
+        for indice, y in enumerate(PLANT_CONTROLLER_OUTPUTS)
+    ),
+    *(
+        port_at(f"probe_{indice + 1}", "bottom", x, *PLANT_CONTROLLER)
+        for indice, x in enumerate(PLANT_CONTROLLER_PROBES)
+    ),
+]
+
+
+def _probe_pin(cx: float, top: float, bottom: float, half: float) -> str:
+    """Il bulbo di una sonda: uno stelo pieno che finisce a punta verso il fluido."""
+    spalla = bottom - half * 2
+    return (
+        f'<path d="M{n(cx - half)} {n(top)} L{n(cx + half)} {n(top)} L{n(cx + half)} {n(spalla)} '
+        f'L{n(cx)} {n(bottom)} L{n(cx - half)} {n(spalla)} Z" fill="black"/>'
+    )
+
+
+def temperature_probe_body(w: float, h: float) -> str:
+    """Sonda di temperatura a immersione o a contatto: la testa con il cavo che
+    esce in alto, e il bulbo pieno a punta che scende verso il tubo — o nel
+    pozzetto dell'accumulo — da cui pende.
+
+    E' diversa dal termometro apposta: il termometro si legge sul posto ed e' un
+    quadrante con la lettera, la sonda non si legge e manda un segnale."""
+    cx = w / 2
+    testa_alto, testa_basso = h * 0.15, h * 0.45
+    bulbo_basso = h * 0.85
+    return (
+        _segment(cx, 0, cx, testa_alto)
+        + f'<rect x="{n(w * 0.2)}" y="{n(testa_alto)}" width="{n(w * 0.6)}" '
+        f'height="{n(testa_basso - testa_alto)}"/>'
+        + _probe_pin(cx, testa_basso, bulbo_basso, w * 0.15)
+        + _segment(cx, bulbo_basso, cx, h)
+    )
+
+
+def outdoor_probe_body(w: float, h: float) -> str:
+    """Sonda esterna: la custodia con il bulbo, e a fianco il muro esterno
+    tratteggiato su cui sta. Il cavo entra dal lato opposto al muro."""
+    cy = h / 2
+    x0, x1 = w * 0.2, w * 0.7
+    muro = w * 0.85
+    custodia = _segment(0, cy, x0, cy) + (
+        f'<rect x="{n(x0)}" y="{n(h * 0.1)}" width="{n(x1 - x0)}" height="{n(h * 0.8)}"/>'
+    )
+    bulbo = _probe_pin((x0 + x1) / 2, h * 0.3, h * 0.75, w * 0.075)
+    tratteggio = _segment(muro, h * 0.05, muro, h * 0.95) + "".join(
+        _segment(muro, y, w, y - h * 0.15) for y in (h * 0.25, h * 0.45, h * 0.65, h * 0.85)
+    )
+    return custodia + bulbo + tratteggio
+
+
+def plant_controller_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Regolatore d'impianto: l'involucro, il visore e la curva climatica — la
+    temperatura di mandata che scende quando quella esterna sale, il segno di
+    cio' che il regolatore fa. Un morsetto per ogni comando e per ogni sonda."""
+    alimentazione = [item for item in ports if item["face"] == "left"]
+    morsetti = [item for item in ports if item["face"] != "left"]
+    ax, ay_alto, ay_basso, ax_fine = 7.0, 18.0, 34.0, 21.0
+    curva = (
+        f'<path d="M{n(ax)} {n(ay_alto)} L{n(ax)} {n(ay_basso)} L{n(ax_fine)} {n(ay_basso)}"/>'
+        + _segment(ax + 1.5, ay_alto + 3, ax_fine - 1, ay_basso - 3)
+    )
+    return (
+        _shell(w, h)
+        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) for item in alimentazione)
+        + _display(6.0, 6.0)
+        + curva
+        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) + _terminal(item, w, h) for item in morsetti)
+    )
+
+
 @dataclass(frozen=True)
 class SymbolSpec:
     id: str
@@ -2901,6 +3001,35 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     single_port_symbol(
         "wired-remote", "Comando a filo", DEVICE, "left", wired_remote_body, SOURCE_REL012_KIT,
+    ),
+    # --- REL-012 fase 3, il comando nell'idronico (I-226): proposte della sessione ---
+    # La sonda pende dal tubo come il termometro, e gira come lui; la sonda
+    # esterna gira come il termostato; il regolatore ha porte su tre facce e sta
+    # nel proprio verso, come la centrale di zona.
+    SymbolSpec(
+        id="temperature-probe",
+        name="Sonda di temperatura",
+        width_mm=BRANCHED_ACCESSORY[0],
+        height_mm=BRANCHED_ACCESSORY[1],
+        inline=False,
+        ports=TEMPERATURE_PROBE_PORTS,
+        body=temperature_probe_body(*BRANCHED_ACCESSORY),
+        source=SOURCE_REL012_CONTROL,
+    ),
+    single_port_symbol(
+        "outdoor-temperature-probe", "Sonda esterna", DEVICE, "left",
+        outdoor_probe_body, SOURCE_REL012_CONTROL,
+    ),
+    SymbolSpec(
+        id="plant-controller",
+        name="Regolatore d'impianto",
+        width_mm=PLANT_CONTROLLER[0],
+        height_mm=PLANT_CONTROLLER[1],
+        inline=False,
+        ports=PLANT_CONTROLLER_PORTS,
+        body=plant_controller_body(*PLANT_CONTROLLER, PLANT_CONTROLLER_PORTS),
+        source=SOURCE_REL012_CONTROL,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
     ),
 ]
 

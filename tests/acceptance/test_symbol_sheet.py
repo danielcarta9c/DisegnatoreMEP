@@ -92,8 +92,8 @@ def test_upright_symbols_declare_only_their_own_orientation() -> None:
         "dhw-cylinder-twin-coil",
     ):
         assert registry.get(symbol_id).manifest.allowed_rotations_deg == [0]
-    # `REL-012` (I-224): le macchine dell'aria-aria, il quadro e la centrale di
-    # zona, nel proprio verso come la pompa di calore e la caldaia.
+    # `REL-012` (I-224, I-226): le macchine dell'aria-aria, il quadro e le due
+    # centrali di comando, nel proprio verso come la pompa di calore e la caldaia.
     for symbol_id in AIR_AND_CONTROL_MACHINES:
         assert registry.get(symbol_id).manifest.allowed_rotations_deg == [0]
 
@@ -104,14 +104,15 @@ AIR_AND_CONTROL_MACHINES = (
     "zoning-plenum-5",
     "zone-controller",
     "electrical-panel",
+    "plant-controller",
 )
-"""Le macchine di `REL-012` che non si ruotano (I-224).
+"""Le macchine di `REL-012` che non si ruotano (I-224, I-226).
 
 Unita' esterna, unita' interna, plenum e centrale di zona hanno porte su tre o
 quattro facce, e a ognuna corrisponde un fatto della macchina — la mandata
 dell'aria esce di fianco, la ripresa entra da sopra, la condensa scende: girarle
 non avvicina nessun attacco, e fa leggere una macchina coricata. Il quadro e' un
-armadio a muro.
+armadio a muro, e il regolatore d'impianto e' una centrale come quella di zona.
 Gli accessori del kit — sifone, sezionatore, allaccio, griglia — e gli apparecchi
 d'ambiente girano come i loro fratelli idronici."""
 
@@ -143,8 +144,8 @@ def test_every_other_shipped_symbol_admits_all_four_rotations() -> None:
         # collettore con ritorno, nel proprio verso come i loro fratelli.
         "buffer-six-port",
         "zone-manifold-pair",
-        # `REL-012` (I-224): le macchine dell'aria-aria, il quadro e la
-        # centrale di zona, nel proprio verso.
+        # `REL-012` (I-224, I-226): le macchine dell'aria-aria, il quadro e le
+        # centrali di comando, nel proprio verso.
         *AIR_AND_CONTROL_MACHINES,
         # Il filtro a Y (DRAW-005, I-031): il gambo non punta mai in su, quindi
         # su una verticale gira di 270 gradi e non di 90. La prova del contratto

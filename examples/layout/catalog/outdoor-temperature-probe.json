@@ -1,0 +1,27 @@
+{
+  "id": "outdoor-temperature-probe",
+  "version": "1.0.0",
+  "name": "Sonda esterna",
+  "functions": [
+    "outdoor_temperature_sensing"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "outdoor-temperature-probe",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226): da approvare dal PO sulla tavola"
+  ]
+}

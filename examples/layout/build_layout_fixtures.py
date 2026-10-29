@@ -414,10 +414,11 @@ REL_003: list[dict[str, Any]] = [
 ]
 
 
-# --- REL-012, l'aria-aria del kit del PO (I-224) -----------------------------
+# --- REL-012, l'aria-aria e il comando (I-224, I-226) -------------------------
 # Le voci del kit del PO (`docs/input-pm/2026-10-29-kit-aria-aria/`, `RAPPORTO.md`
-# §5.2), rifatte qui perche' il catalogo e' generato. Sono tutte **proposte**:
-# il PO le approva sulla tavola.
+# §5.2), rifatte qui perche' il catalogo e' generato, e i segni del comando
+# nell'idronico proposti dalla sessione. Sono tutte **proposte**: il PO le
+# approva sulla tavola.
 #
 # **Nessuna dichiara `maintainable`, apposta** (`RAPPORTO.md` §5.2): farebbe
 # scattare la regola dell'intercettazione, che cercherebbe una valvola sul fluido
@@ -435,11 +436,16 @@ POWER = "power_supply"
 INTERCONNECTION = "interconnection"
 """Il collegamento elettrico fra unita' esterna e unita' interna."""
 CONTROL_BUS = "control_bus"
-"""Il bus di comando: termostati e centrali."""
+"""Il bus di comando: termostati, centrali, e — proposta di questa sessione — il
+segnale delle sonde, finche' il PO non decide se vuole un fluido a parte."""
 
 KIT_AA01 = (
     "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): "
     "forma da approvare dal PO sulla tavola"
+)
+CONTROL_PROPOSAL = (
+    "proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226): da approvare dal PO "
+    "sulla tavola"
 )
 QUIET = [SHUTOFF_ORDINARY, INLINE]
 """I caratteri delle voci dell'aria, del refrigerante e dell'elettrico: si
@@ -458,6 +464,26 @@ def control_port(
 ) -> dict[str, Any]:
     """Un attacco di comando: un cavo o un bus, nel dominio `control`."""
     return port_of(port_id, "control", medium, flow, required)
+
+
+def temperature_probe(definition_id: str, name: str, medium: str) -> dict[str, Any]:
+    """La sonda di temperatura sul fluido che misura: pende dal tubo come il
+    termometro, e dal lato opposto esce il suo segnale.
+
+    Il segnale **non e' obbligatorio**: una sonda si disegna anche su una tavola
+    che il comando non lo descrive, e li' resta appesa al suo tubo."""
+    return definition(
+        definition_id,
+        name,
+        ["temperature_sensing"],
+        [SHUTOFF_ORDINARY, BRANCH],
+        [
+            hydronic_port("a", "bidirectional", medium),
+            control_port("signal", CONTROL_BUS, "out", required=False),
+        ],
+        symbol_id="temperature-probe",
+        sources=[CONTROL_PROPOSAL],
+    )
 
 
 REL_012: list[dict[str, Any]] = [
@@ -587,6 +613,38 @@ REL_012: list[dict[str, Any]] = [
         QUIET,
         [control_port("a", CONTROL_BUS)],
         sources=[KIT_AA01],
+    ),
+    # --- fase 3: il comando nell'idronico (I-226), proposte della sessione ---
+    # Una sonda per fluido, come il termometro: la voce dice su quale acqua pende.
+    temperature_probe("temperature-probe", "Sonda di temperatura", HEATING),
+    temperature_probe("temperature-probe-dhw", "Sonda di temperatura sanitaria", DHW),
+    temperature_probe("temperature-probe-solar", "Sonda di temperatura solare", SOLAR),
+    definition(
+        "outdoor-temperature-probe",
+        "Sonda esterna",
+        ["outdoor_temperature_sensing"],
+        QUIET,
+        [control_port("a", CONTROL_BUS, "out")],
+        sources=[CONTROL_PROPOSAL],
+    ),
+    definition(
+        "plant-controller",
+        "Regolatore d'impianto",
+        ["plant_control"],
+        QUIET,
+        [
+            control_port("power", POWER, "in"),
+            # Il bus verso le macchine che lo parlano (la pompa di calore, la
+            # caldaia): facoltativo, un regolatore puo' comandare solo a contatti.
+            control_port("bus", CONTROL_BUS, required=False),
+            # I comandi a pompe e valvole: uscite a 230 V, quindi alimentazione.
+            *(control_port(f"out_{indice}", POWER, "out", required=False) for indice in range(1, 5)),
+            *(
+                control_port(f"probe_{indice}", CONTROL_BUS, "in", required=False)
+                for indice in range(1, 4)
+            ),
+        ],
+        sources=[CONTROL_PROPOSAL],
     ),
 ]
 

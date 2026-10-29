@@ -42,7 +42,7 @@ NUOVI_DEL_KIT = [
     "room-thermostat",
     "wired-remote",
 ]
-NUOVI_DELLA_SESSIONE: list[str] = []
+NUOVI_DELLA_SESSIONE = ["plant-controller", "temperature-probe", "outdoor-temperature-probe"]
 CONFRONTO = ["heat-pump-air-water", "pump-circulator", "thermometer"]
 
 SCALA = 2.0
