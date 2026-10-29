@@ -21,7 +21,7 @@
    "attivita": "1.1.0",
    "verifica": "1.1.0"
   },
-  "impronta": "198e12d3f9a4df09"
+  "impronta": "f8b849f909489495"
  },
  "intestazione": [
   "Offerta richiesta: PREZZO A CORPO, FISSO E INVARIABILE, per l'impianto finito e funzionante. Le quantità sono indicative e già maggiorate: l'installatore le verifica nel SOPRALLUOGO OBBLIGATORIO prima dell'offerta e ne risponde; quanto manca va aggiunto nella sezione H.",
@@ -562,35 +562,35 @@
    "voci": [
     {
      "rif": "E.1",
-     "testo": "Cavo FG16OR16 3G2,5, Alimentazione unita' esterna",
+     "testo": "Cavo FG16OR16 3G1,5, Alimentazione centrale Airzone",
      "um": "m",
-     "quantita": 20,
+     "quantita": 15,
      "fornitura": "installatore",
-     "note": "T10 stimati 15 m",
+     "note": "T10 stimati 12 m",
      "da_definire": false,
      "domande": [],
      "regola": "fluidi/power_supply/cavo-di-alimentazione",
-     "calcolo": "T10 20 m",
+     "calcolo": "T10 15 m",
      "fonte": "regola Nove C per le linee elettriche dedicate",
      "perche": "Una riga per sezione di cavo, a metro, con la lunghezza da quotare."
     },
     {
      "rif": "E.2",
-     "testo": "Cavo FG16OR16 3G1,5, Alimentazione centrale Airzone",
+     "testo": "Cavo FG16OR16 3G2,5, Alimentazione unita' esterna",
      "um": "m",
-     "quantita": 15,
+     "quantita": 20,
      "fornitura": "installatore",
-     "note": "T11 stimati 12 m",
+     "note": "T11 stimati 15 m",
      "da_definire": false,
      "domande": [],
      "regola": "fluidi/power_supply/cavo-di-alimentazione",
-     "calcolo": "T11 15 m",
+     "calcolo": "T11 20 m",
      "fonte": "regola Nove C per le linee elettriche dedicate",
      "perche": "Una riga per sezione di cavo, a metro, con la lunghezza da quotare."
     },
     {
      "rif": "E.3",
-     "testo": "Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA, linea dedicata: Alimentazione unita' esterna",
+     "testo": "Magnetotermico 1P+N C6, linea dedicata: Alimentazione centrale Airzone",
      "um": "n",
      "quantita": 1,
      "fornitura": "installatore",
@@ -604,7 +604,7 @@
     },
     {
      "rif": "E.4",
-     "testo": "Magnetotermico 1P+N C6, linea dedicata: Alimentazione centrale Airzone",
+     "testo": "Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA, linea dedicata: Alimentazione unita' esterna",
      "um": "n",
      "quantita": 1,
      "fornitura": "installatore",
@@ -640,7 +640,7 @@
      "da_definire": false,
      "domande": [],
      "regola": "fluidi/power_supply/corrugato-di-potenza",
-     "calcolo": "T10 20 + T11 15 = 35 m × 1, per eccesso a 10 m = 40 m",
+     "calcolo": "T10 15 + T11 20 = 35 m × 1, per eccesso a 10 m = 40 m",
      "fonte": "stima Nove C (corrugato a decine di metri)",
      "perche": "Ogni metro di cavo di potenza corre in corrugato; si compra a decine di metri."
     },
@@ -660,29 +660,29 @@
     },
     {
      "rif": "E.8",
-     "testo": "Cavo 2×0,75 (P1-P2), Linea P1-P2 dell'unita' interna",
+     "testo": "Cavo bus Airzone, schermato, Bus Airzone ai termostati",
      "um": "m",
-     "quantita": 10.5,
+     "quantita": 29,
      "fornitura": "installatore",
-     "note": "T13 stimati 1,5 m; T14 stimati 3,7 m",
+     "note": "T13 stimati 6,5 m; T14 stimati 4,9 m; T15 stimati 5,2 m; T16 stimati 3,7 m",
      "da_definire": false,
      "domande": [],
      "regola": "fluidi/control_bus/cavo-di-bus",
-     "calcolo": "T13 5 + T14 5,5 = 10,5 m",
+     "calcolo": "T13 9 + T14 7 + T15 7,5 + T16 5,5 = 29 m",
      "fonte": "regola Nove C per i bus e le linee di comando",
      "perche": "Una riga per tipo di cavo (la `sezione` del tratto: «2×0,75 (P1-P2)», «bus Airzone, schermato»), a metro."
     },
     {
      "rif": "E.9",
-     "testo": "Cavo bus Airzone, schermato, Bus Airzone ai termostati",
+     "testo": "Cavo 2×0,75 (P1-P2), Linea P1-P2 dell'unita' interna",
      "um": "m",
-     "quantita": 29,
+     "quantita": 10.5,
      "fornitura": "installatore",
-     "note": "T15 stimati 6,5 m; T16 stimati 4,9 m; T17 stimati 5,2 m; T18 stimati 3,7 m",
+     "note": "T17 stimati 3,7 m; T18 stimati 1,5 m",
      "da_definire": false,
      "domande": [],
      "regola": "fluidi/control_bus/cavo-di-bus",
-     "calcolo": "T15 9 + T16 7 + T17 7,5 + T18 5,5 = 29 m",
+     "calcolo": "T17 5,5 + T18 5 = 10,5 m",
      "fonte": "regola Nove C per i bus e le linee di comando",
      "perche": "Una riga per tipo di cavo (la `sezione` del tratto: «2×0,75 (P1-P2)», «bus Airzone, schermato»), a metro."
     },
@@ -696,7 +696,7 @@
      "da_definire": false,
      "domande": [],
      "regola": "fluidi/control_bus/corrugato-di-bus",
-     "calcolo": "T13 5 + T14 5,5 + T15 9 + T16 7 + T17 7,5 + T18 5,5 = 39,5 m × 1, per eccesso a 10 m = 40 m",
+     "calcolo": "T13 9 + T14 7 + T15 7,5 + T16 5,5 + T17 5,5 + T18 5 = 39,5 m × 1, per eccesso a 10 m = 40 m",
      "fonte": "stima Nove C (corrugato a decine di metri)",
      "perche": "Il bus corre separato dalle linee di potenza, nel suo corrugato."
     },
@@ -1299,7 +1299,7 @@
     "a-rip"
    ],
    "sezione": "1000×250",
-   "materiale": "canale di ripresa coibentato",
+   "materiale": "plenum di ripresa coibentato",
    "portata_m3h": 1080,
    "lunghezza_stimata_m": 0,
    "lunghezza_da_quotare_m": null,
@@ -1357,6 +1357,22 @@
   },
   {
    "num": "T10",
+   "rete": "Alimentazione centrale Airzone",
+   "fluido": "power_supply",
+   "da_a": "QE-01 - CZ-01",
+   "tubazioni": [
+    "e-3"
+   ],
+   "sezione": "3G1,5",
+   "materiale": "FG16OR16",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 12,
+   "lunghezza_da_quotare_m": 15,
+   "calcolo": "(12 + 1) × 1,15 = 14,95 → 15 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T11",
    "rete": "Alimentazione unita' esterna",
    "fluido": "power_supply",
    "da_a": "QE-01 - SZ-01 - UE-01",
@@ -1370,22 +1386,6 @@
    "lunghezza_stimata_m": 15,
    "lunghezza_da_quotare_m": 20,
    "calcolo": "(15 + 1) × 1,15 = 18,4 → 18,5 m; minimo scritto sul tratto 20 m → 20 m",
-   "raccordo_diretto": false
-  },
-  {
-   "num": "T11",
-   "rete": "Alimentazione centrale Airzone",
-   "fluido": "power_supply",
-   "da_a": "QE-01 - CZ-01",
-   "tubazioni": [
-    "e-3"
-   ],
-   "sezione": "3G1,5",
-   "materiale": "FG16OR16",
-   "portata_m3h": null,
-   "lunghezza_stimata_m": 12,
-   "lunghezza_da_quotare_m": 15,
-   "calcolo": "(12 + 1) × 1,15 = 14,95 → 15 m",
    "raccordo_diretto": false
   },
   {
@@ -1406,38 +1406,6 @@
   },
   {
    "num": "T13",
-   "rete": "Linea P1-P2 dell'unita' interna",
-   "fluido": "control_bus",
-   "da_a": "UI-01 - CZ-01",
-   "tubazioni": [
-    "e-4"
-   ],
-   "sezione": "2×0,75 (P1-P2)",
-   "materiale": "cavo di bus",
-   "portata_m3h": null,
-   "lunghezza_stimata_m": 1.5,
-   "lunghezza_da_quotare_m": 5,
-   "calcolo": "(1,5 + 1) × 1,15 = 2,88 → 3 m; minimo bus 5 m → 5 m",
-   "raccordo_diretto": false
-  },
-  {
-   "num": "T14",
-   "rete": "Linea P1-P2 dell'unita' interna",
-   "fluido": "control_bus",
-   "da_a": "UI-01 - CF-01",
-   "tubazioni": [
-    "e-5"
-   ],
-   "sezione": "2×0,75 (P1-P2)",
-   "materiale": "cavo di bus",
-   "portata_m3h": null,
-   "lunghezza_stimata_m": 3.7,
-   "lunghezza_da_quotare_m": 5.5,
-   "calcolo": "(3,7 + 1) × 1,15 = 5,4 → 5,5 m",
-   "raccordo_diretto": false
-  },
-  {
-   "num": "T15",
    "rete": "Bus Airzone ai termostati",
    "fluido": "control_bus",
    "da_a": "CZ-01 - TZ-01",
@@ -1453,7 +1421,7 @@
    "raccordo_diretto": false
   },
   {
-   "num": "T16",
+   "num": "T14",
    "rete": "Bus Airzone ai termostati",
    "fluido": "control_bus",
    "da_a": "CZ-01 - TZ-02",
@@ -1469,7 +1437,7 @@
    "raccordo_diretto": false
   },
   {
-   "num": "T17",
+   "num": "T15",
    "rete": "Bus Airzone ai termostati",
    "fluido": "control_bus",
    "da_a": "CZ-01 - TZ-03",
@@ -1485,7 +1453,7 @@
    "raccordo_diretto": false
   },
   {
-   "num": "T18",
+   "num": "T16",
    "rete": "Bus Airzone ai termostati",
    "fluido": "control_bus",
    "da_a": "CZ-01 - TZ-04",
@@ -1498,6 +1466,38 @@
    "lunghezza_stimata_m": 3.7,
    "lunghezza_da_quotare_m": 5.5,
    "calcolo": "(3,7 + 1) × 1,15 = 5,4 → 5,5 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T17",
+   "rete": "Linea P1-P2 dell'unita' interna",
+   "fluido": "control_bus",
+   "da_a": "UI-01 - CF-01",
+   "tubazioni": [
+    "e-5"
+   ],
+   "sezione": "2×0,75 (P1-P2)",
+   "materiale": "cavo di bus",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 3.7,
+   "lunghezza_da_quotare_m": 5.5,
+   "calcolo": "(3,7 + 1) × 1,15 = 5,4 → 5,5 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T18",
+   "rete": "Linea P1-P2 dell'unita' interna",
+   "fluido": "control_bus",
+   "da_a": "UI-01 - CZ-01",
+   "tubazioni": [
+    "e-4"
+   ],
+   "sezione": "2×0,75 (P1-P2)",
+   "materiale": "cavo di bus",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 1.5,
+   "lunghezza_da_quotare_m": 5,
+   "calcolo": "(1,5 + 1) × 1,15 = 2,88 → 3 m; minimo bus 5 m → 5 m",
    "raccordo_diretto": false
   }
  ],
@@ -1665,16 +1665,16 @@
   {
    "dove": "T10",
    "controllo": "scritta sulla tavola",
-   "valore": "«3G2,5 · L 20 m»",
-   "soglia": "L 20 m da quotare",
+   "valore": "«3G1,5 · L 15 m»",
+   "soglia": "L 15 m da quotare",
    "esito": "entro",
    "fonte": "confronto con la scritta della tratta sulla tavola"
   },
   {
    "dove": "T11",
    "controllo": "scritta sulla tavola",
-   "valore": "«3G1,5 · L 15 m»",
-   "soglia": "L 15 m da quotare",
+   "valore": "«3G2,5 · L 20 m»",
+   "soglia": "L 20 m da quotare",
    "esito": "entro",
    "fonte": "confronto con la scritta della tratta sulla tavola"
   },
@@ -1689,29 +1689,13 @@
   {
    "dove": "T13",
    "controllo": "scritta sulla tavola",
-   "valore": "«P1-P2 · L 3 m»",
-   "soglia": "L 5 m da quotare",
-   "esito": "oltre",
-   "fonte": "confronto con la scritta della tratta sulla tavola"
-  },
-  {
-   "dove": "T14",
-   "controllo": "scritta sulla tavola",
-   "valore": "«P1-P2 · L 5,5 m»",
-   "soglia": "L 5,5 m da quotare",
-   "esito": "entro",
-   "fonte": "confronto con la scritta della tratta sulla tavola"
-  },
-  {
-   "dove": "T15",
-   "controllo": "scritta sulla tavola",
    "valore": "«bus · L 9 m»",
    "soglia": "L 9 m da quotare",
    "esito": "entro",
    "fonte": "confronto con la scritta della tratta sulla tavola"
   },
   {
-   "dove": "T16",
+   "dove": "T14",
    "controllo": "scritta sulla tavola",
    "valore": "«bus · L 7 m»",
    "soglia": "L 7 m da quotare",
@@ -1719,7 +1703,7 @@
    "fonte": "confronto con la scritta della tratta sulla tavola"
   },
   {
-   "dove": "T17",
+   "dove": "T15",
    "controllo": "scritta sulla tavola",
    "valore": "«bus · L 7,5 m»",
    "soglia": "L 7,5 m da quotare",
@@ -1727,11 +1711,27 @@
    "fonte": "confronto con la scritta della tratta sulla tavola"
   },
   {
-   "dove": "T18",
+   "dove": "T16",
    "controllo": "scritta sulla tavola",
    "valore": "«bus · L 5,5 m»",
    "soglia": "L 5,5 m da quotare",
    "esito": "entro",
+   "fonte": "confronto con la scritta della tratta sulla tavola"
+  },
+  {
+   "dove": "T17",
+   "controllo": "scritta sulla tavola",
+   "valore": "«P1-P2 · L 5,5 m»",
+   "soglia": "L 5,5 m da quotare",
+   "esito": "entro",
+   "fonte": "confronto con la scritta della tratta sulla tavola"
+  },
+  {
+   "dove": "T18",
+   "controllo": "scritta sulla tavola",
+   "valore": "«P1-P2 · L 3 m»",
+   "soglia": "L 5 m da quotare",
+   "esito": "oltre",
    "fonte": "confronto con la scritta della tratta sulla tavola"
   }
  ],
@@ -1741,14 +1741,14 @@
   "Velocità nei tratti di aria di mandata da 1,9 a 2,5 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).",
   "Velocità nei tratti di aria di ripresa 1,2 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).",
   "Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C.",
-  "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole 198e12d3f9a4df09)."
+  "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole f8b849f909489495)."
  ],
  "avvisi": [
   "T09 (Scarico condensa: UI-01 - SIF-01 - AL-01): la tubazione SIF-01 - AL-01 senza lunghezza; si considera compresa nei 7,6 m dati sul tratto.",
-  "T10 (Alimentazione unita' esterna: QE-01 - SZ-01 - UE-01): la tubazione SZ-01 - UE-01 senza lunghezza; si considera compresa nei 15 m dati sul tratto.",
+  "T11 (Alimentazione unita' esterna: QE-01 - SZ-01 - UE-01): la tubazione SZ-01 - UE-01 senza lunghezza; si considera compresa nei 15 m dati sul tratto.",
   "T02, T04, T05 (aria di mandata): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete per ramo, se il progettista non dice quante).",
   "T09 (condensa): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete, se il progettista non dice quante).",
-  "T13, scritta sulla tavola: «P1-P2 · L 3 m», contro L 5 m da quotare."
+  "T18, scritta sulla tavola: «P1-P2 · L 3 m», contro L 5 m da quotare."
  ],
  "domande": [],
  "da_confermare": [

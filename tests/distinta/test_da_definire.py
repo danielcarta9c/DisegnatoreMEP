@@ -48,9 +48,11 @@ def test_una_linea_senza_protezione_chiede_la_protezione(
     del tubazione(grafo_aa01, "e-3")["properties"]["protezione"]
     distinta = _distinta(grafo_aa01, regole, nomi)
     protezioni = [v for v in distinta.voci if v.regola.endswith("protezione-della-linea")]
-    assert [v.da_definire for v in protezioni] == [False, True]
-    assert protezioni[1].testo.startswith(f"{DA_DEFINIRE} (protezione)")
-    assert "T11 (Alimentazione centrale Airzone): manca `protezione` sul tratto." in distinta.domande
+    # Nell'ordine delle tratte: la linea della centrale (QE-01 - CZ-01, T10) viene prima
+    # di quella dell'unita' esterna (QE-01 - SZ-01 - UE-01, T11): l'ordine delle sigle.
+    assert [v.da_definire for v in protezioni] == [True, False]
+    assert protezioni[0].testo.startswith(f"{DA_DEFINIRE} (protezione)")
+    assert "T10 (Alimentazione centrale Airzone): manca `protezione` sul tratto." in distinta.domande
 
 
 def test_senza_i_dati_di_macchina_il_refrigerante_e_da_definire(
@@ -134,7 +136,7 @@ def test_il_comando_esce_con_2_se_resta_qualcosa_da_definire(
     uscita = capsys.readouterr().out
     assert "DA DEFINIRE — 1 voci; le domande al progettista:" in uscita
     scritta = json.loads((tmp_path / "d" / "distinta.json").read_text(encoding="utf-8"))
-    assert scritta["domande"] == ["T11 (Alimentazione centrale Airzone): manca `protezione` sul tratto."]
+    assert scritta["domande"] == ["T10 (Alimentazione centrale Airzone): manca `protezione` sul tratto."]
 
 
 def test_i_campi_del_tratto_in_testa_alla_tubazione_valgono_come_nelle_properties(

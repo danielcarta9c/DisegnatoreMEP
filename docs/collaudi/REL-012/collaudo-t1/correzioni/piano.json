@@ -7,7 +7,8 @@
   "Sotto la UI condensa con scarico addosso, comando a filo; quadro sotto la UE con l'alimentazione in verticale (E3).",
   "Giro 2: scarico a 25 mm sotto la UI (minimo del sifone, A4); quadro abbassato a y=115 perche' l'alimentazione della centrale corra a y=105, 10 mm sotto il collegamento centrale-UI (B9).",
   "Correzioni del collaudo T1: plenum a quattro serrande, niente piu' uscita tappata.",
-  "Senza le tabelle sul foglio (distinta, REL-013): A3, senza zone per le tabelle."
+  "Senza le tabelle sul foglio (distinta, REL-013): A3, senza zone per le tabelle.",
+  "Collaudo T3: i termostati con marca e modello entrano nella tabella delle apparecchiature, che cresce di tre righe e spinge il disegno; a x=235 la scritta «Z3 Soggiorno (sopra il varco)» non entrava più prima della legenda (bloccante). Bocchette e termostati a x=225: a x=230 la scritta usciva senza bloccanti ma toccava la cornice della legenda; a x=220 le scritte dei tratti non entrano più."
  ],
  "pezzi": {
   "ue": {
@@ -26,22 +27,22 @@
    "regola": "E1 - ingresso alla quota della mandata UI"
   },
   "bocchetta-matrimoniale": {
-   "x": 235,
+   "x": 225,
    "y": 0,
    "regola": "E1 - quota di out_1"
   },
   "bocchetta-singola": {
-   "x": 235,
+   "x": 225,
    "y": 12.5,
    "regola": "E1 - quota di out_2"
   },
   "bocchetta-soggiorno-1": {
-   "x": 235,
+   "x": 225,
    "y": 25,
    "regola": "E1 - quota di out_3"
   },
   "bocchetta-soggiorno-2": {
-   "x": 235,
+   "x": 225,
    "y": 37.5,
    "regola": "E1 - quota di out_4"
   },
@@ -57,17 +58,17 @@
    "regola": "E2 - sotto il plenum sull'asse dei motori"
   },
   "termostato-matrimoniale": {
-   "x": 235,
+   "x": 225,
    "y": 87.5,
    "regola": "E2 - quota di bus_1"
   },
   "termostato-singola": {
-   "x": 235,
+   "x": 225,
    "y": 102.5,
    "regola": "E2 - quota di bus_2"
   },
   "termostato-soggiorno": {
-   "x": 235,
+   "x": 225,
    "y": 117.5,
    "regola": "E2 - quota di bus_3"
   },

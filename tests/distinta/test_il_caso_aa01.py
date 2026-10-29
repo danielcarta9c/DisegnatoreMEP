@@ -166,7 +166,14 @@ def test_le_sezioni_e_il_numero_delle_voci(distinta: Distinta) -> None:
 def test_le_tratte_sono_quelle_del_kit(distinta: Distinta) -> None:
     """Le 18 tratte della tabella della M.02, con le stesse lunghezze da quotare;
     l'unica diversa e' la P1-P2 corta (3 m nel kit, 5 col minimo del bus), e la
-    verifica della scritta lo dice."""
+    verifica della scritta lo dice.
+
+    **La numerazione non e' piu' quella del kit** (collaudo T3 di REL-012): dentro ogni
+    fluido le tratte vanno nell'ordine delle sigle che collegano, come la colonna
+    «Da - a», cosi' che T0n vada a TA-0n. Sul kit cambiano due gruppi: le alimentazioni
+    (QE-01 - CZ-01 prima di QE-01 - SZ-01 - UE-01: kit T11 e T10, ora T10 e T11) e i bus
+    (CZ-01 - TZ-01…04 prima delle due P1-P2 dell'unita' interna: kit T15-T18 ora T13-T16,
+    kit T14 UI-01 - CF-01 ora T17, kit T13 UI-01 - CZ-01 ora T18)."""
     lunghezze = [(t.num, distinta.da_a(t), t.da_quotare_m) for t in distinta.tratte_in_tabella]
     assert lunghezze == [
         ("T01", "PLZ-01 - B1", 6.0),
@@ -178,18 +185,18 @@ def test_le_tratte_sono_quelle_del_kit(distinta: Distinta) -> None:
         ("T07", "UE-01 - UI-01", 12.0),
         ("T08", "UE-01 - UI-01", 12.0),
         ("T09", "UI-01 - SIF-01 - AL-01", 10.0),
-        ("T10", "QE-01 - SZ-01 - UE-01", 20.0),
-        ("T11", "QE-01 - CZ-01", 15.0),
+        ("T10", "QE-01 - CZ-01", 15.0),
+        ("T11", "QE-01 - SZ-01 - UE-01", 20.0),
         ("T12", "UE-01 - UI-01", 13.0),
-        ("T13", "UI-01 - CZ-01", 5.0),
-        ("T14", "UI-01 - CF-01", 5.5),
-        ("T15", "CZ-01 - TZ-01", 9.0),
-        ("T16", "CZ-01 - TZ-02", 7.0),
-        ("T17", "CZ-01 - TZ-03", 7.5),
-        ("T18", "CZ-01 - TZ-04", 5.5),
+        ("T13", "CZ-01 - TZ-01", 9.0),
+        ("T14", "CZ-01 - TZ-02", 7.0),
+        ("T15", "CZ-01 - TZ-03", 7.5),
+        ("T16", "CZ-01 - TZ-04", 5.5),
+        ("T17", "UI-01 - CF-01", 5.5),
+        ("T18", "UI-01 - CZ-01", 5.0),
     ]
     scritte = [e for e in distinta.verifica if e.controllo == "scritta sulla tavola" and e.esito == "oltre"]
-    assert [(e.dove, e.valore) for e in scritte] == [("T13", "«P1-P2 · L 3 m»")]
+    assert [(e.dove, e.valore) for e in scritte] == [("T18", "«P1-P2 · L 3 m»")]
 
 
 def test_la_verifica_dell_aria_segnala_e_non_corregge(distinta: Distinta) -> None:

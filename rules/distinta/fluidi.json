@@ -127,6 +127,8 @@
     {
       "fluido": "return_air",
       "materiale": "canale di ripresa coibentato",
+      "materiale_del_raccordo_diretto": "plenum di ripresa coibentato",
+      "fonte_del_raccordo_diretto": "collaudo T3 di REL-012, §3: la ripresa montata sulla macchina era «canale» nella tabella delle tratte e «plenum di ripresa» nell'Excel; il nome è quello del corredo (corredo.json, return-air-terminal, plenum-di-ripresa)",
       "attraversamenti_se_mancano": 0,
       "fonte_attraversamenti": "kit AA-01: la ripresa sta nello stesso locale dell'unità interna (RAPPORTO.md §2, proposta 2)",
       "fonte_attraversamenti_in_parole": "regola Nove C: la ripresa sta nel locale della macchina",

@@ -94,11 +94,12 @@ GRAVITA: dict[IssueSeverity, str] = {
     IssueSeverity.WARNING: "Avvisi — la tavola si consegna, e si sa",
 }
 
-ESTENSIONI_DA_CONSEGNARE = (".pdf", ".dxf", ".md", ".jpg")
-"""Quello che il progettista riceve: il PDF, il DXF, i rilievi e il logo del cartiglio.
-L'SVG resta nella cartella di lavoro (collaudo T2 di REL-012, §1). Il logo no: il DXF
-lo nomina (`graphics.dxf`), e aperto senza il logo accanto AutoCAD mostra il riquadro
-del logo vuoto."""
+ESTENSIONI_DA_CONSEGNARE = (".pdf", ".dxf", ".md", ".jpg", ".xlsx")
+"""Quello che il progettista riceve: il PDF, il DXF, i rilievi, il logo del cartiglio e
+l'Excel della distinta. L'SVG resta nella cartella di lavoro (collaudo T2 di REL-012,
+§1). Il logo no: il DXF lo nomina (`graphics.dxf`), e aperto senza il logo accanto
+AutoCAD mostra il riquadro del logo vuoto. L'Excel e la pianta: collaudo T3 di
+REL-012, §2 punto 8 — prima si copiavano a mano."""
 
 
 @dataclass(frozen=True)
@@ -721,8 +722,10 @@ def _rilievi_in_parole(
         f"Formato **{formato}** · tratte **{tratte}** · tratte cedute **{cedute}** · "
         f"rilievi bloccanti **{len(bloccanti)}**.",
         "",
-        "Li misurano i controlli della skill sulla tavola finita: il preflight di qualita' "
-        "e le regole del piano. Non sono un giudizio sull'impianto: dicono come e' "
+        # Il file va al progettista (collaudo T3 di REL-012): le frasi fisse con le
+        # lettere accentate, non con l'apostrofo; i codici restano in fondo alla riga.
+        "Li misurano i controlli della skill sulla tavola finita: il controllo di qualità "
+        "e le regole del piano. Non sono un giudizio sull'impianto: dicono com'è "
         "disegnato.",
         "",
     ]
@@ -1137,19 +1140,36 @@ def _ambiente(args: argparse.Namespace, cartelle: Cartelle) -> int:
     return 0
 
 
-def consegna(cartella: Path, destinazione: Path) -> list[Path]:
-    """Copia nella cartella di consegna i file per il progettista: PDF, DXF e
-    rilievi, e il logo che il DXF nomina (`ESTENSIONI_DA_CONSEGNARE`); non l'SVG."""
+def consegna(cartelle: Path | Sequence[Path], destinazione: Path) -> list[Path]:
+    """Copia nella cartella di consegna i file per il progettista da una o piu'
+    cartelle — la tavola dello schema, la distinta, la pianta —: PDF, DXF, rilievi,
+    l'Excel della distinta e il logo che il DXF nomina (`ESTENSIONI_DA_CONSEGNARE`);
+    non l'SVG.
+
+    Lo stesso nome in due cartelle va bene se il file e' lo stesso (il logo, accanto
+    a ogni DXF); due file diversi con lo stesso nome fermano la consegna prima di
+    copiare, perche' uno coprirebbe l'altro."""
+    elenco = [cartelle] if isinstance(cartelle, Path) else list(cartelle)
+    scelti: dict[str, Path] = {}
+    for cartella in elenco:
+        if not cartella.is_dir():
+            raise OSError(f"{cartella}: la cartella da consegnare non c'e'")
+        for percorso in sorted(cartella.iterdir()):
+            if not (percorso.is_file() and percorso.suffix in ESTENSIONI_DA_CONSEGNARE):
+                continue
+            gia = scelti.get(percorso.name)
+            if gia is not None and gia.read_bytes() != percorso.read_bytes():
+                raise ValueError(
+                    f"{percorso.name} c'e' in {gia.parent} e in {percorso.parent}, ed e' diverso: "
+                    "uno coprirebbe l'altro. Rinomina una delle due tavole."
+                )
+            scelti.setdefault(percorso.name, percorso)
     destinazione.mkdir(parents=True, exist_ok=True)
-    copiati = []
-    for percorso in sorted(cartella.iterdir()):
-        if percorso.is_file() and percorso.suffix in ESTENSIONI_DA_CONSEGNARE:
-            copiati.append(Path(shutil.copy2(percorso, destinazione / percorso.name)))
-    return copiati
+    return [Path(shutil.copy2(percorso, destinazione / nome)) for nome, percorso in scelti.items()]
 
 
 def _consegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
-    for percorso in consegna(args.cartella, args.destinazione):
+    for percorso in consegna(args.cartelle, args.destinazione):
         print(f"Consegnato: {percorso}")
     return 0
 
@@ -1227,8 +1247,13 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
     pianta.add_argument("--out", type=Path, required=True, help="la cartella della tavola")
     pianta.add_argument("--senza-dxf", action="store_true", help="non scrive il DXF")
 
-    finale = comandi.add_parser("consegna", help="copia PDF, DXF e rilievi nella cartella data")
-    finale.add_argument("cartella", type=Path)
+    finale = comandi.add_parser(
+        "consegna",
+        help="copia PDF, DXF, rilievi e l'Excel della distinta, da una o piu' cartelle, nella cartella data",
+    )
+    finale.add_argument(
+        "cartelle", type=Path, nargs="+", help="la tavola, e se ci sono la distinta e la pianta"
+    )
     finale.add_argument("destinazione", type=Path)
 
     distinta = comandi.add_parser(
