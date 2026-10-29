@@ -58,24 +58,6 @@ from .scritte import (
 
 Punto = tuple[float, float]
 
-STILI_DI_RIPIEGO: dict[str, tuple[str, str]] = {
-    "power_supply": ("#b03a2e", "4 1 1 1"),
-    "interconnection": ("#a04000", "4 1 1 1 1 1"),
-    "control_bus": ("#1f618d", "1.5 1.5"),
-}
-"""Colore e tratto dei circuiti elettrici e del bus finche' `layout/legend.py`
-non li ha (`REL-012`, fase 1): sono quelli del kit aria-aria
-(`per-il-repo/src-estensione.patch`). Quando la legenda dello schema li avra',
-vale la sua: si legge prima quella."""
-
-NOMI_DI_RIPIEGO: dict[str, str] = {
-    "power_supply": "Alimentazione elettrica",
-    "interconnection": "Collegamento elettrico fra le unità",
-    "control_bus": "Bus di comando",
-}
-"""I nomi di `naming/media.json`, con la maiuscola, per i fluidi che la legenda
-dello schema non nomina ancora."""
-
 SPESSORE_MM: dict[str, float] = {"supply_air": 0.70, "return_air": 0.70}
 """Il canale si legge piu' spesso del tubo, e il tubo piu' del cavo."""
 SPESSORE_DEL_TUBO_MM = 0.45
@@ -144,11 +126,11 @@ LAYER_ELETTRICI = {
 
 
 def stile(fluido: str) -> tuple[str, str]:
-    return MEDIUM_STYLES.get(fluido) or STILI_DI_RIPIEGO.get(fluido, ("#111111", "none"))
+    return MEDIUM_STYLES.get(fluido, ("#111111", "none"))
 
 
 def nome_del_fluido(fluido: str) -> str:
-    return MEDIUM_NAMES.get(fluido) or NOMI_DI_RIPIEGO.get(fluido, fluido)
+    return MEDIUM_NAMES.get(fluido, fluido)
 
 
 def spessore(fluido: str) -> float:
