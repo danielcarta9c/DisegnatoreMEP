@@ -176,6 +176,17 @@ class RuleCondition(StrictModel):
     leggerebbe come «tagliato fuori» un generatore la cui protezione comune
     non e' ancora stata posata."""
 
+    anchor_runs_in_parallel: bool = False
+    """L'ancoraggio **lavora in parallelo** con un altro che la regola descrive
+    sulla stessa rete (REL-011): la sua mandata e quella di un altro confluiscono
+    in un tratto comune prima di arrivare a una macchina o a un serbatoio.
+
+    E' la condizione della cascata. Una macchina ferma accanto a una che lavora
+    e' una via aperta all'indietro: l'acqua che l'altra manda torna nel
+    collettore passando per lei. Non nomina ne' le macchine ne' il collettore: si
+    legge dalle camminate delle mandate, come il tratto comune, e vale per due
+    pompe di calore come per una pompa di calore e una caldaia."""
+
     plant_regime: PlantRegime | None = None
     """Il regime della centrale in cui questa regola vale (D-106).
 
@@ -505,6 +516,12 @@ class RuleDefinition(StrictModel):
                 f"{self.id} si posa su un tratto comune e dichiara cardinalita' "
                 f"{self.cardinality}: il tratto comune non si conta per componente "
                 f"ne' per attacco, ma fra {', '.join(sorted(on_a_run))}"
+            )
+        if self.when.anchor_runs_in_parallel and self.then.placement.on_a_common_run:
+            raise ValueError(
+                f"{self.id} chiede che l'ancoraggio lavori in parallelo e si posa "
+                f"sul tratto comune: il tratto comune e' di tutti, e la condizione "
+                f"parla dell'attacco di ciascuno"
             )
         if (
             self.cardinality is RuleCardinality.PER_PROTECTION_DOMAIN
