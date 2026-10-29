@@ -1,85 +1,100 @@
-# REL-011 — Le regole del corredo contro il manuale Shenling
+# REL-012 — Aria-aria, elettrico e comando
 
-> **▶ Il pacchetto attivo, per l'ordine del PO** — «il manuale shenling pensavo piu' di usarlo non per il revisore ma
-> proprio per verificare nella skill le regole dell'agente "capire" o composizione. non ricordo dove avevamo messo le
-> regole che dicono vaso d'espansione se ci va quanto grande ecc. quel pezzo li dico. pero' facciamo una cosa alla
-> volta. prima l'agente revisore esterno.» (I-218). Il revisore esterno è nella 1.5.0 (I-223). Scritto il 25 ottobre
-> 2026, sulla 1.5.0.
+> **▶ Il pacchetto attivo, dal kit del PO** (I-224): una sessione di lavoro su un canalizzato aria-aria reale (caso
+> **AA-01**) ha esteso la skill 1.4.1 con simboli, catalogo e motore, e il PO vuole che entri nella skill: «Vorrei non
+> buttare quello che hai fatto». E poi: «REL 12 se posso non ha solo aria aria ha anche la parte elettrica e comando
+> che cmq va inteegata anche nell'idronico esistente no ?» (I-226). Scritto il 29 ottobre 2026, sulla 1.5.0.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
 **Stato:** **DA COMINCIARE**.
-**Base:** `main` dopo la PR #79 (la 1.5.0).
+**Base:** `main` dopo la PR #79 (la 1.5.0, `dfc68c1`).
 **Ramo:** quello che l'ambiente della sessione assegna.
-**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).
+**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). **Una PR per fase.**
+**L'ordine** (D-213 proposta, I-228): `REL-012` → `REL-011` (`docs/plans/pacchetti/REL-011.md`, intatto) → `REL-013`
+(distinta materiali e dimensionamento) → `REL-014` (pianta dei posizionamenti e dei tracciati).
 
 ---
 
 ## Perché
 
-Le regole che dicono **se un accessorio ci va** — il vaso d'espansione, la valvola di sicurezza, lo sfiato, il ritegno —
-sono di **Completare**, in `rules/hydronic/` (un file per regola, 16 in tutto), non di Capire né di Comporre. Il PO
-vuole verificarle sul manuale della marca che usa di più. Il manuale Shenling ThermaX R290 6–15 kW è già stato letto e
-ricontrollato sulle pagine 40–43 e 51–53 (`docs/collaudi/REL-010/RAPPORTO.md` §2): il vaso non è a bordo, la valvola di
-sicurezza sì (3 bar), il volume minimo dell'impianto è 40 l, in cascata vuole un ritegno sull'uscita di ogni unità e un
-tampone che cresce con il numero delle unità.
+La skill disegna l'idronico. Il modello ha già i domini aeraulico, refrigerante, condensa e controllo, ma nessuna delle
+82 voci del catalogo ha porte elettriche o di comando, e mancano simboli, fluidi, stili e layer per l'aria e per
+l'elettrico. Il kit (`docs/input-pm/2026-10-29-kit-aria-aria/`, da leggere `LEGGIMI.md`, `RAPPORTO.md` §4-§6 e
+`per-il-repo/ESITO-DEI-TEST.md`) porta tutto questo per un caso aria-aria, fatto con una patch e con copie a mano: **va
+rifatto bene, non incollato** (`RAPPORTO.md` §5.4).
 
-**Una cosa da dire al PO per prima:** la skill decide **se** un accessorio si disegna, non **quanto è grande**. La
-taglia del vaso è del progettista («Non progetti», `SKILL.md`); se il PO vuole che la tavola la scriva, è un dato da
-chiedere, non un calcolo.
+**Una cosa da tenere ferma:** in questo pacchetto la skill **non dimensiona**. La scritta di un tratto — «Ø200 · L 6 m»,
+«3G2,5 · L 20 m» — è un dato del progettista. Il dimensionamento di aria, elettrico e bus e la distinta materiali sono
+`REL-013`, dopo la decisione del PO sul «Non progetti» (I-225, D-002, D-191).
 
-## Le cose da fare, in quest'ordine
+## Le fasi, in quest'ordine — una PR ciascuna
 
-### 1. Dove stanno le regole
+### Fase 1 — La parte comune del motore
 
-Una tabella per il PO: le regole di `rules/hydronic/` che il manuale tocca — `expansion-on-closed-circuit`,
-`expansion-on-the-stored-volume-feed`, `safety-relief-where-heat-enters-the-water`, `air-release-where-the-water-is-hottest`,
-`air-vent-on-the-stored-volume`, `dhw-check-on-cold-inlet`, `isolate-what-is-serviced` e le altre — con, per ciascuna,
-**quando** scatta e **che cosa** mette, in parole sue.
+1. I fluidi `return_air`, `condensate`, `power_supply`, `interconnection`, `control_bus` in `naming/media.json`, con
+   le famiglie del kit in `naming/families.json`.
+2. Stili di legenda e layer DXF per i circuiti elettrici e il bus.
+3. **I fluidi senza verso**: una riga sola in legenda, lo stesso tratto in qualunque verso, e **niente frecce di flusso**
+   sulle linee (sulla M.02 del kit ci sono ancora: refrigerante, cavi, bus). Le frecce sono una convenzione grafica del
+   PO (D-213 punto 6): si propone, e il PO decide sulla tavola.
+4. **La scritta per tratto come dato del grafo**, non come proprietà libera, con **la sua** riga di legenda; quella del
+   DN calcolato resta «Øi» (I-155).
+5. **Le zone per le tabelle come opzione del piano**, non un formato «A2T» in più; le tabelle le disegna il motore.
+6. **I tre comportamenti del motore** del §6 del rapporto, ciascuno con la sua prova rossa sul commit di partenza, se il
+   PO li riconosce come difetti: le sigle tutte o niente; il pezzo in tabella che perde l'etichetta che il preflight
+   pretende; il lato dell'organo in linea che dipende dall'id delle tubazioni.
+7. Il difetto di `main` trovato il 29 ottobre: `test_un_json_non_valido_dice_dove_si_e_rotto` fallisce dove la
+   versione di Python conta la colonna dell'errore in un altro modo.
 
-### 2. Il confronto
+**Tavole al PO:** le tavole del banco di `REL-009`, che **non devono cambiare**; quelle che cambiano, spiegate.
 
-Regola per regola: che cosa dice la skill, che cosa dice il manuale Shenling (con la pagina), che cosa dice la §2.4 della
-*Specifica tecnica di installazione* Nove C. Dove sono d'accordo, dove no, che cosa manca — il ritegno su ogni unità in
-cascata, il volume minimo, il tampone. **Il contenuto MEP è del PO**: la sessione mostra il confronto e propone; il PO
-decide che cosa cambia.
+### Fase 2 — L'aria-aria
 
-### 3. Il dubbio del PO sul vaso
+1. Gli undici simboli del kit **nel generatore** `examples/graphics/build_symbols.py`, non copiati in `assets/symbols/`.
+   UE, UI, plenum, centrale di zona e quadro fra le macchine che non si ruotano, come pompa di calore e caldaia
+   (`tests/acceptance/test_symbol_sheet.py`).
+2. Le dodici voci di catalogo, con i loro test.
+3. **Accettazione:** la M.02 del kit, la parte disegnata, rigenerata dalla skill — zero rilievi bloccanti, zero tratte
+   cedute. Le tabelle sul foglio (tratte, note, computo) sono di `REL-013`.
 
-«Ho anche un dubbio sul vaso di espansione» (I-220, sul caso rifatto). Si chiede al PO qual è, con la tavola in mano.
+**Tavole al PO:** la M.02 rigenerata accanto a quella del kit; i simboli, che il PO approva sulla tavola (D-081, D-083).
 
-### 4. Le correzioni
+### Fase 3 — Elettrico e comando nell'idronico
 
-Quelle che il PO decide: le regole, le prove, il banco di regressione, e **le tavole che cambiano, al PO, prima dei
-numeri**.
+1. **Porte elettriche e di comando facoltative** su pompa di calore, caldaia, circolatori, valvole motorizzate. Senza
+   elettrico dichiarato nel grafo, **nessuna tavola esistente cambia**: misurato col banco.
+2. Simboli nuovi per sonde e centralina di regolazione (proposte della sessione, D-083).
+3. **Dove si disegna** (I-227, del PO): «sulle tavole di centrale o dove è già molto denso meglio disegnare l'elettrico e
+   comando su tavola separata. Su tavole piccole come quella di sola distribuzione oppure come il caso dell'esempio [...]
+   si puo' fare su tavola unica». La tavola separata esce dallo stesso grafo. Il criterio con cui la skill sceglie, e
+   come il progettista la forza, si propone qui, sulle tavole.
+4. Una tavola di prova su un caso idronico esistente, nelle due forme.
 
-### 5. La release
+**Tavole al PO:** il caso di prova con l'elettrico, sulla tavola unica e su quella separata.
 
-Con `scripts/costruisci-skill.py`, e `tests/test_le_release.py` verde (D-200).
+### Alla fine — La release
 
-## Da decidere col PO — rimasti da `REL-010` e `REL-009`
+**1.6.0**, con `scripts/costruisci-skill.py`, e `tests/test_le_release.py` verde (D-200). `SKILL.md` e i riferimenti
+dicono che cosa la skill disegna dell'aria e dell'elettrico, e che non lo dimensiona.
 
-- **la soglia** (I-223): la tavola del caso rifatto, con le colonne della cascata lontane, si consegna o va ricomposta?
-  Con la soglia tre revisori su tre dicono «si consegna»; al primo giro il PO aveva dato giusto «va ricomposta»
-  (`docs/collaudi/REL-010/RAPPORTO.md` §5). La domanda è anche sulla pagina della prova;
-- **quattro difetti del disegno** visti dai revisori esterni: i tre simboli in testa alla legenda che si toccano, la
-  miscelatrice termostatica e il rubinetto portamanometro quasi uguali, la barra di ritorno del collettore di zona
-  spezzata, la freccia sullo scarico dell'acqua fredda;
-- **il segno della commutatrice** (I-221): una «c» sopra, o un simbolo leggermente diverso;
-- **i difetti del prodotto** della taratura e della prova (`docs/plans/pacchetti/REL-010.md`, «Quello che la taratura ha
-  riportato sul prodotto»): in quale pacchetto;
-- gli esempi del revisore: gli schemi tipologici A, B, C della specifica tecnica;
-- da `REL-009`, punto 9: la distanza della valvola di sicurezza sopra il suo raccordo; B3 contro B1 nell'ordine dei
-  collettori primari; la quota del primo raccordo della zona vicina; da dove arriva la fredda del bollitore. E il
-  **limite d'intervento** facoltativo (I-195, D-202).
+## Da decidere col PO
+
+- **le frecce** sui fluidi senza verso (D-213 punto 6);
+- **i simboli** del kit e quelli nuovi della fase 3, sulla tavola;
+- **i tre comportamenti del motore** del §6 del rapporto: difetti o voluti;
+- **il criterio** della tavola separata (fase 3);
+- restano aperte, per `REL-011`, le domande di `REL-010` e `REL-009` elencate in `docs/plans/pacchetti/REL-011.md`.
 
 ## Perimetro
 
-**Dentro:** `rules/hydronic/**`, `skill/**`, `src/**`, `tests/**`, `docs/collaudi/REL-011/`, `releases/`, il registro,
-il registro delle decisioni (come proposte), `HANDOFF.md`, questo file.
+**Dentro:** `src/**`, `assets/symbols/**`, `examples/**`, `naming/**`, `rules/**`, `skill/**`, `tests/**`,
+`docs/collaudi/REL-012/`, `releases/`, il registro, il registro delle decisioni (come proposte), `HANDOFF.md`, questo
+file.
 
-**Fuori:** i manuali dei costruttori e la specifica tecnica Nove C nel repository — si citano con la pagina, non si
-copiano (il repository è pubblico); i dati del cliente, in qualunque file; un contenuto MEP o una convenzione grafica
-decisi dalla sessione.
+**Fuori:** il dimensionamento e la distinta (`REL-013`); la pianta dei tracciati (`REL-014`, I-229); i dati del
+cliente, in qualunque file — il catastale e la M.03 del kit restano fuori dal repository (`NEL-REPOSITORY.md`); i
+manuali dei costruttori, che si citano e non si copiano; un contenuto MEP o una convenzione grafica decisi dalla
+sessione.
 
 ## Criteri di accettazione — per ogni PR
 

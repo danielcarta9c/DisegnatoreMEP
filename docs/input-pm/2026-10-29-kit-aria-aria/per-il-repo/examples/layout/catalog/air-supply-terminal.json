@@ -1,0 +1,26 @@
+{
+  "id": "air-supply-terminal",
+  "version": "1.0.0",
+  "name": "Bocchetta di mandata con plenum di raccordo",
+  "functions": [
+    "air_terminal"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "air-diffuser",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "in",
+      "required": true
+    }
+  ],
+  "sources": [
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+  ]
+}

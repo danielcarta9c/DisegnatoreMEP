@@ -1,0 +1,26 @@
+{
+  "id": "room-thermostat",
+  "version": "1.0.0",
+  "name": "Termostato di zona",
+  "functions": [
+    "room_control"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "room-thermostat",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+  ]
+}

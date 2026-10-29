@@ -1,0 +1,33 @@
+{
+  "id": "condensate-trap",
+  "version": "1.0.0",
+  "name": "Sifone ispezionabile sulla condensa",
+  "functions": [
+    "condensate_trap"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "condensate-trap",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "condensate",
+      "medium": "condensate",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "b",
+      "domain": "condensate",
+      "medium": "condensate",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+  ]
+}
