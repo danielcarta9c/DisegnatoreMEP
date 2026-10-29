@@ -106,6 +106,25 @@ class Distinta:
     def da_a(self, tratta: Tratta) -> str:
         return " - ".join(self.sigle.get(p, p) for p in tratta.pezzi)
 
+    def materiale(self, tratta: Tratta) -> str:
+        return materiale_della_tratta(tratta, self.regole.fluidi.get(tratta.fluido, {}))
+
+
+def materiale_della_tratta(tratta: Tratta, regola_del_fluido: Mapping[str, Any]) -> str:
+    """Il materiale che la tabella delle tratte scrive: quello dato sul tratto; per un
+    **raccordo diretto** quello che il fluido dice per il raccordo diretto
+    (`materiale_del_raccordo_diretto`), se lo dice; se no quello del fluido.
+
+    La ripresa montata sulla bocca della macchina (lunghezza 0) e' il plenum di ripresa
+    del corredo: la tabella la chiamava «canale di ripresa», l'Excel «plenum di ripresa»
+    (collaudo T3 di REL-012). Un nome solo, quello del corredo."""
+    dato = tratta.dato("materiale")
+    if dato:
+        return str(dato)
+    if tratta.diretta and regola_del_fluido.get("materiale_del_raccordo_diretto"):
+        return str(regola_del_fluido["materiale_del_raccordo_diretto"])
+    return str(regola_del_fluido.get("materiale") or "")
+
 
 def riempi(testo: str, valori: Mapping[str, Any]) -> tuple[str, list[str]]:
     """Il testo con i dati al posto dei segnaposto; quelli che mancano diventano
@@ -188,10 +207,31 @@ class _Lavoro:
 # --- le lunghezze --------------------------------------------------------------
 
 
+def _in_ordine_di_sigla(sigla: str) -> tuple[tuple[int, int | str], ...]:
+    """La sigla come si legge: «TA-2» prima di «TA-10», «TA-03» prima di «TA-04»."""
+    return tuple(
+        (0, int(pezzo)) if pezzo.isdigit() else (1, pezzo.casefold())
+        for pezzo in re.split(r"(\d+)", sigla)
+        if pezzo
+    )
+
+
 def _ordina_e_numera(lavoro: _Lavoro) -> None:
+    """Per fluido, nell'ordine di `fluidi.json`; dentro il fluido, **nell'ordine delle
+    sigle dei pezzi che la tratta collega**, come si leggono nella colonna «Da - a»:
+    PLZ-01 - TA-01 prima di PLZ-01 - TA-02. Cosi' T0n va a TA-0n quando c'e' una tratta
+    per bocchetta (collaudo T3 di REL-012: T03 andava a TA-04). A parita' di sigle — le
+    due linee frigorifere fra le stesse macchine — vale l'ordine del grafo."""
     ordine = {fluido: indice for indice, fluido in enumerate(lavoro.regole.fluidi)}
     posizione = {id(tratta): indice for indice, tratta in enumerate(lavoro.tratte)}
-    lavoro.tratte.sort(key=lambda t: (ordine.get(t.fluido, len(ordine)), posizione[id(t)]))
+    sigle = lavoro.sigle
+    lavoro.tratte.sort(
+        key=lambda t: (
+            ordine.get(t.fluido, len(ordine)),
+            tuple(_in_ordine_di_sigla(sigle.get(p, p)) for p in t.pezzi),
+            posizione[id(t)],
+        )
+    )
     numero_del_tratto = 0
     for tratta in lavoro.tratte:
         if not tratta.diretta or tratta.sezioni:
@@ -309,9 +349,7 @@ def _voce_del_fluido(
     sezioni = [t.sezione for t in gruppo]
     valori: dict[str, Any] = {
         "sezione": ", ".join(_unici(sezioni)) if all(sezioni) else None,
-        "materiale": ", ".join(
-            _unici(str(t.dato("materiale") or regola_del_fluido.get("materiale") or "") for t in gruppo)
-        )
+        "materiale": ", ".join(_unici(materiale_della_tratta(t, regola_del_fluido) for t in gruppo))
         or None,
         "rete": ", ".join(_unici(t.rete.nome for t in gruppo)),
     }

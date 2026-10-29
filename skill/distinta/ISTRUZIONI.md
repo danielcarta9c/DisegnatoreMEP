@@ -99,6 +99,9 @@ Le scelte predefinite stanno in `distinta.json`, `fornitura`: si cambiano lì so
   delle regole restano nel foglio dei calcoli e nel JSON, che sono la traccia del conto.
 - **Il cartiglio**: dove committente, commessa o numero della tavola mancano (o sono «ND»), l'Excel e il foglio dei
   calcoli scrivono «DA DEFINIRE», come la tavola.
+- **I numeri di tratta seguono le sigle**: per fluido, e dentro il fluido nell'ordine delle sigle che la tratta
+  collega, come la colonna «Da - a» (PLZ-01 - TA-01 prima di PLZ-01 - TA-02). Con una tratta per bocchetta, T0n
+  va a TA-0n. La ripresa montata sulla macchina (lunghezza 0) è il **plenum di ripresa** in tutte le uscite.
 - **Le lunghezze** si quotano con `(L + 1 m) × 1,15`, per eccesso al mezzo metro, con i minimi del fluido (12 m frigo,
   10 m condensa, 5 m bus, 2 m ramo d'aria): in dubbio per eccesso, come vuole il PO.
 - **Dove manca un dato, DA DEFINIRE e una domanda.** Mai un numero inventato.
