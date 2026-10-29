@@ -58,7 +58,8 @@ def _tubo(**campi: Any) -> ConnectionModel:
         ({"sezione": "Ø200", "lunghezza_m": 6, "scritta": "di fabbrica"}, "di fabbrica"),
         ({}, None),
         ({"lunghezza_m": 0}, None),
-        ({"sezione": "1000×250", "lunghezza_m": 0}, "1000×250"),
+        ({"sezione": "1000×250", "lunghezza_m": 0}, None),
+        ({"sezione": "1000×250", "lunghezza_m": 0, "scritta": "di fabbrica"}, "di fabbrica"),
     ],
 )
 def test_che_cosa_scrive_un_tratto(campi: dict[str, Any], atteso: str | None) -> None:

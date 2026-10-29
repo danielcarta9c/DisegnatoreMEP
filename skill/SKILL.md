@@ -206,6 +206,13 @@ quelli in linea, che posa il motore; il manifesto intero di un simbolo lo stampa
 python3 scripts/mep.py disegna $L/grafo-completo.json --piano $L/piano.json --out $L/tavola
 ```
 
+Se la tavola porta tabelle — la distinta materiali, le note del progettista — il piano lascia loro
+le zone (`zone_tabelle`, [riferimenti/comporre.md](riferimenti/comporre.md)) e il comando le riceve:
+`--tabelle $L/distinta/tabelle-del-foglio.json`, ripetibile per un secondo file nello stesso
+formato. La distinta quindi si lancia **prima** di questo passo (sotto, «Su richiesta — la
+distinta materiali»). Il comando dice dove ha messo ciascuna tabella; se non entrano si ferma
+prima di scrivere, e si allargano le zone o si prende il formato successivo.
+
 Il comando dice per prima cosa l'area del disegno del formato e quanto ne occupa la posa; poi
 esegue il piano, disegna, misura e scrive in `$L/tavola/` l'SVG, **il PDF**, il DXF e
 **i rilievi della tavola** (`*-rilievi.md`): il preflight di qualità, le regole del piano, il
@@ -280,7 +287,8 @@ guardi tu e lo dici nella consegna.
    con `{CARTELLA}` e `{SKILL}` al posto dei percorsi completi della cartella e della skill.
    Non aggiungere niente sull'impianto: il revisore serve perché non lo conosce.
 
-   > Sei il revisore di una tavola di schema funzionale idronico (centrale termica). Non l'hai
+   > Sei il revisore di una tavola di schema funzionale di impianto (centrale termica, aria-aria,
+   > linee elettriche e di comando). Non l'hai
    > composta tu, e non sai niente dell'impianto oltre a quello che la tavola mostra.
    > Lavori solo con i file della cartella {CARTELLA}: non aprire, non cercare e non elencare
    > altri file. Tutto quello che ti serve è lì, più il comando per ingrandire.
@@ -321,8 +329,8 @@ guardi tu e lo dici nella consegna.
 
 ### Su richiesta — la distinta materiali
 
-Solo se il progettista l'ha chiesta. Leggi **per intero**
-[riferimenti/distinta.md](riferimenti/distinta.md), poi:
+Solo se il progettista l'ha chiesta, **dopo il passo 4 e prima del passo 6**: le sue tabelle vanno
+sul foglio. Leggi **per intero** [riferimenti/distinta.md](riferimenti/distinta.md), poi:
 
 ```bash
 python3 scripts/mep.py distinta $L/grafo-completo.json --out $L/distinta

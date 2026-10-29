@@ -575,10 +575,10 @@ la cui voce non ha l'attacco, non inventarlo: è una voce di tipo B (§6).
 **I tre campi del tratto — dati del progettista, mai calcolati.** Su ogni tubazione, **in
 testa** e non fra le `properties`, perché la tavola li scrive lungo la linea:
 
-- `sezione` — il diametro o la sezione **come il testo li scrive**: «Ø200», «Ø6,35 (1/4")»,
-  «3G2,5», «1000×250». Un testo, che non si converte;
+- `sezione` — il diametro o la sezione **come il testo li scrive**: «Ø200», «1/4"» (se il testo
+  dice 1/4"), «3G2,5», «1000×250». Un testo, che non si converte;
 - `lunghezza_m` — la lunghezza del tratto che il progettista dà, in metri; zero è un raccordo
-  diretto, e la tavola non lo scrive;
+  diretto, e il tratto non porta scritta (salvo una `scritta` tua);
 - `scritta` — il testo che la tavola porta sul tratto, se il progettista ne vuole uno suo:
   «Ø200 · 270 m³/h · L 6 m», «bus · L 9 m», «di fabbrica». Se c'è, vince sugli altri due;
   se non c'è, la tavola scrive «sezione · L lunghezza m».

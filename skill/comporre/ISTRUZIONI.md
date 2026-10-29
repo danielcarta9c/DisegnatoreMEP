@@ -533,6 +533,76 @@ frigorifere, la mandata al plenum, i rami alle bocchette e il bus ai termostati.
 
 ---
 
+### L'elettrico e il comando — una tavola o due (I-227, proposta D-213)
+
+Se il grafo porta cavi o bus — reti del dominio `control`: l'alimentazione dal quadro, i comandi del
+regolatore, il bus, le sonde — decidi **prima di comporre** se l'elettrico sta sulla tavola
+dell'impianto o su una tavola sua. Il grafo è uno solo: le due tavole escono dallo stesso grafo, con
+due piani.
+
+**Due tavole** se vale almeno una di queste:
+
+1. **è una centrale**: il grafo ha un generatore sull'acqua (pompa di calore aria-acqua, caldaia,
+   boiler in pompa di calore) oppure un accumulo (volano, accumulo combinato, bollitore);
+2. **è densa**: `python3 scripts/mep.py pezzi <grafo> --vista idraulica` elenca **più di 15 pezzi da
+   posare**;
+3. **la tavola unica non esce**: composta in una vista sola ha un rilievo bloccante o una tratta
+   ceduta, e un giro di ricomposizione non li toglie.
+
+**Tavola unica** altrimenti: la sola distribuzione (un collettore con circolatore e miscelatrice, il
+suo regolatore e le sue sonde), l'aria-aria con un'unità esterna e un'unità interna.
+
+**Il progettista decide sempre.** Se ha detto «tavola unica» o «tavola a parte per l'elettrico», fai
+quello che ha detto, anche contro la regola qui sopra; se la regola ti porta dove lui non ha detto,
+dillo nella consegna in una riga («l'elettrico è su una tavola a parte: è una centrale»).
+
+#### Come si scrivono
+
+Il campo **`vista`** del piano dice quale parte del grafo la tavola disegna:
+
+| `vista` | che cosa disegna |
+|---|---|
+| `"tutto"` (se il campo manca) | il grafo intero: la tavola unica |
+| `"idraulica"` | tutto **tranne** i cavi e i bus, e tranne i pezzi che stanno solo sul comando (quadro, sezionatore, regolatore, sonda esterna). La sonda a immersione resta sul suo tubo, senza il cavo |
+| `"elettrico"` | i **soli** cavi e bus, e i pezzi che toccano: quadro, sezionatore, regolatore, sonde, e le macchine, i circolatori e le valvole che hanno un cavo. Niente acqua |
+
+Per due tavole scrivi **due piani** sullo stesso grafo completo, `piano-idraulica.json` con
+`"vista": "idraulica"` e `piano-elettrico.json` con `"vista": "elettrico"`, e disegna due volte. Il
+motore fa il resto:
+
+- il titolo della tavola porta «— idraulica» e «— elettrico e comando», e il numero della tavola
+  dell'elettrico è quello del grafo con «-E» (P.04 e P.04-E);
+- la legenda di ciascuna rimanda all'altra («Vedi tavola P.04-E «elettrico e comando»»);
+- **le sigle sono le stesse** sulle due tavole: sono quelle del grafo intero;
+- i file escono con nomi diversi (`…-idraulica-t1.pdf`, `…-elettrico-t1.pdf`).
+
+I pezzi da posare non sono gli stessi nelle due viste: chiedili per ciascuna, con
+`mep.py pezzi <grafo> --vista idraulica` e `--vista elettrico`. Sulla tavola dell'elettrico **il
+circolatore va nel piano**: non ha il suo tubo, e non sta più in linea. Il sezionatore resta in
+linea sul suo cavo, e lo posa il motore.
+
+#### Come si compone la tavola dell'elettrico
+
+È uno schema di collegamento, non la centrale ridisegnata: i pezzi non devono stare dove stanno
+sull'idraulica. Quello che conta è che i cavi siano corti e non si incrocino.
+
+- **Il regolatore al centro.** Le sue porte: alimentazione e bus su un fianco, i comandi sull'altro,
+  le sonde sotto. Specchialo (`"specchio": true`) se i pezzi che comanda stanno dall'altra parte.
+- **Le macchine dal lato dell'alimentazione e del bus del regolatore**, le **valvole e i
+  circolatori dal lato dei comandi**: girali (`rotazione`) perché l'attacco del comando guardi il
+  regolatore — il cavo è una retta.
+- **Il quadro vicino alle macchine che alimenta**, con un'uscita sull'asse dell'alimentazione della
+  macchina: il cavo è una verticale, e il sezionatore di prossimità ci sta in mezzo da solo.
+- **Le sonde sotto il regolatore**, nell'ordine dei loro ingressi: la più lontana sull'ingresso più
+  lontano, così i cavi non si incrociano.
+- **Guarda l'ordine delle porte prima di posare.** La pompa di calore ha l'alimentazione a sinistra
+  del bus, sotto; il regolatore ha l'alimentazione sopra il bus. Con il quadro sotto la macchina e il
+  regolatore accanto, il bus passa sotto il quadro: altrimenti incrocia l'alimentazione.
+
+Sulla **tavola unica** l'acqua si compone come sempre, e i cavi vengono dopo: il motore instrada
+prima tutta l'acqua e poi i cavi, nello spazio che resta. Metti il regolatore e il quadro **fuori**
+dal disegno dell'acqua, dalla parte dei pezzi che comandano.
+
 ## 6. Quello che il piano **non può** dire, e come si aggira
 
 **Il piano non può chiedere la forma di una spezzata.** Dice dove stanno i pezzi, e la forma
