@@ -141,7 +141,7 @@
       ],
       [
        "T09",
-       "UI-01 - SIF-01 - scarico",
+       "UI-01 - SIF-01 - AL-01",
        "Ø32",
        "PVC rigido, pendenza min. 1%",
        "",
@@ -151,7 +151,7 @@
       ],
       [
        "T10",
-       "UE-01 - SZ-01 - QE-01",
+       "QE-01 - SZ-01 - UE-01",
        "3G2,5",
        "FG16OR16",
        "",
@@ -286,7 +286,7 @@
    ],
    "sezioni": [
     {
-     "titolo": "A. Apparecchiature (fornite da Nove C, posa dell'installatore)",
+     "titolo": "A. Apparecchiature (posa dell'installatore; chi le fornisce: colonna Fornitura)",
      "righe": [
       [
        "A.1",
@@ -337,12 +337,20 @@
        "B.1",
        "Condotto flessibile coibentato Ø200 (isolamento 25 mm, barriera vapore), confezione da 10 m",
        "conf.",
-       "DA DEFINIRE",
+       "3",
        "installatore",
-       ""
+       "20 m in 4 tratti interi: 6 + 3,5 + 3,5 + 7 m"
       ],
       [
        "B.2",
+       "Condotto flessibile coibentato Ø200 (isolamento 25 mm, barriera vapore), confezione da 10 m",
+       "conf.",
+       "DA DEFINIRE",
+       "installatore",
+       "lunghezza di T03 DA DEFINIRE"
+      ],
+      [
+       "B.3",
        "Curva 90° Ø200 in lamiera zincata, all'uscita del plenum",
        "n",
        "5",
@@ -350,7 +358,7 @@
        ""
       ],
       [
-       "B.3",
+       "B.4",
        "Manicotto di giunzione Ø200",
        "n",
        "2",
@@ -358,7 +366,7 @@
        ""
       ],
       [
-       "B.4",
+       "B.5",
        "Fascetta di serraggio Ø200 (anima e mantello)",
        "n",
        "40",
@@ -366,23 +374,39 @@
        ""
       ],
       [
-       "B.5",
+       "B.6",
        "Nastro alluminio rinforzato 50 mm",
        "rotolo",
-       "DA DEFINIRE",
-       "installatore",
-       ""
-      ],
-      [
-       "B.6",
-       "Sostegno per flessibile (fascia o collare con pendino), passo max. 1,2 m",
-       "n",
-       "DA DEFINIRE",
+       "1",
        "installatore",
        ""
       ],
       [
        "B.7",
+       "Nastro alluminio rinforzato 50 mm",
+       "rotolo",
+       "DA DEFINIRE",
+       "installatore",
+       "lunghezza di T03 DA DEFINIRE"
+      ],
+      [
+       "B.8",
+       "Sostegno per flessibile (fascia o collare con pendino), passo max. 1,2 m",
+       "n",
+       "21",
+       "installatore",
+       ""
+      ],
+      [
+       "B.9",
+       "Sostegno per flessibile (fascia o collare con pendino), passo max. 1,2 m",
+       "n",
+       "DA DEFINIRE",
+       "installatore",
+       "lunghezza di T03 DA DEFINIRE"
+      ],
+      [
+       "B.10",
        "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
        "n",
        "10",
@@ -390,7 +414,7 @@
        "UI-01 4, PLZ-01 4, RA-01 2"
       ],
       [
-       "B.8",
+       "B.11",
        "Giunto antivibrante in tela fra unità interna e plenum di ripresa",
        "n",
        "1",
@@ -398,7 +422,7 @@
        "UI-01"
       ],
       [
-       "B.9",
+       "B.12",
        "Isolamento elastomerico adesivo per raccordi e plenum",
        "rotolo",
        "1",
@@ -406,7 +430,7 @@
        "PLZ-01"
       ],
       [
-       "B.10",
+       "B.13",
        "Plenum di ripresa coibentato con filtro ispezionabile, bocca 1000×250, sulla bocca di aspirazione dell'unità interna",
        "n",
        "1",
@@ -414,7 +438,7 @@
        "RA-01"
       ],
       [
-       "B.11",
+       "B.14",
        "Plenum porta-bocchetta coibentato per bocchetta 400×200, attacco Ø200 laterale o dall'alto",
        "n",
        "5",
@@ -589,7 +613,7 @@
        "n",
        "1",
        "installatore",
-       "scarico"
+       "AL-01"
       ]
      ]
     },
@@ -703,7 +727,7 @@
      ]
     },
     {
-     "titolo": "F. Assistenze murarie (aperture comprese; chiusure e ripristini del Committente)",
+     "titolo": "F. Assistenze murarie (aperture comprese)",
      "righe": [
       [
        "F.1",
@@ -743,7 +767,7 @@
        "m",
        "3",
        "installatore",
-       "scarico"
+       "AL-01"
       ],
       [
        "F.6",
@@ -810,9 +834,9 @@
        "Z.6",
        "Griglia di transito o luce sotto porta per il ritorno dell'aria dal locale servito",
        "n",
-       "5",
+       "4",
        "committente",
-       "Aeff min.: B1 0,05 m², B2 0,052 m², B3 0,039 m², B4 0,051 m², B5 0,051 m²"
+       "Aeff min.: Camera 13 m² 0,05 m², Camera 15 m² 0,052 m², Camera 16 m² 0,039 m², Soggiorno-cucina 0,102 m²"
       ],
       [
        "Z.7",
@@ -938,7 +962,11 @@
       ],
       [
        "5.",
-       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole cfc42a99c0fd0a1a)."
+       "Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C."
+      ],
+      [
+       "6.",
+       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole 198e12d3f9a4df09)."
       ]
      ]
     }

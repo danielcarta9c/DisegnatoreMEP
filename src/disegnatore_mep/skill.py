@@ -1233,6 +1233,15 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
     distinta.add_argument("grafo", type=Path, help="il grafo completo, con lunghezze e sezioni sui tratti")
     distinta.add_argument("--out", type=Path, required=True, help="la cartella della distinta")
     distinta.add_argument("--regole", type=Path, help="le regole della distinta: una cartella o un fascio")
+    distinta.add_argument(
+        "--sul-foglio",
+        help="le tabelle di tabelle-del-foglio.json, fra tratte,computo,attivita,note (di default tutte)",
+    )
+    distinta.add_argument(
+        "--fornitura",
+        help="chi fornisce che cosa in questa offerta, es. apparecchiature=installatore; «confermata» per le "
+        "predefinite; senza, le predefinite da confermare",
+    )
     return parser
 
 
@@ -1240,7 +1249,16 @@ def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
     # REL-013, proposta D-213: un modulo a parte, che nessun altro comando chiama.
     from disegnatore_mep.distinta.comando import esegui
 
-    return esegui(args.grafo, args.out, args.regole, cartelle.regole, cartelle.catalogo, cartelle.naming)
+    return esegui(
+        args.grafo,
+        args.out,
+        args.regole,
+        cartelle.regole,
+        cartelle.catalogo,
+        cartelle.naming,
+        sul_foglio=args.sul_foglio,
+        fornitura=args.fornitura,
+    )
 
 
 def main(argv: Sequence[str] | None, cartelle: Cartelle) -> int:

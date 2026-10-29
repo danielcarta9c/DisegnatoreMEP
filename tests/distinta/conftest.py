@@ -9,6 +9,7 @@ import pytest
 
 from disegnatore_mep.distinta import RegoleDellaDistinta, carica_regole
 from disegnatore_mep.distinta.comando import nomi_dei_fluidi, nomi_del_catalogo
+from disegnatore_mep.distinta.grafo import sigle_dello_schema
 
 ROOT = Path(__file__).resolve().parents[2]
 REGOLE = ROOT / "rules" / "distinta"
@@ -23,6 +24,18 @@ def regole() -> RegoleDellaDistinta:
 @pytest.fixture(scope="session")
 def nomi() -> tuple[dict[str, str], dict[str, str]]:
     return nomi_del_catalogo(ROOT / "examples" / "layout" / "catalog"), nomi_dei_fluidi(ROOT / "naming")
+
+
+CATALOGO = ROOT / "examples" / "layout" / "catalog"
+NOMI = ROOT / "naming"
+COLLAUDO_T1 = Path(__file__).resolve().parent / "collaudo-t1" / "grafo-completo.json"
+"""Il grafo del primo collaudo indipendente (REL-012, `docs/collaudi/REL-012/collaudo-t1/`):
+un canalizzato Mitsubishi con zonizzazione Airzone, com'e' uscito dalla skill."""
+
+
+def sigle(grafo: dict[str, Any]) -> dict[str, str]:
+    """Le sigle dello schema, come le calcola il comando."""
+    return sigle_dello_schema(grafo, CATALOGO, NOMI)
 
 
 @pytest.fixture
