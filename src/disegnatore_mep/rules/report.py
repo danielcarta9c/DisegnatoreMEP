@@ -113,7 +113,9 @@ def build_report(
                 where=f"su {item.anchor.component_id}.{item.anchor.port_id}, "
                 f"rete {item.network_id}",
                 what_is_missing=(
-                    (
+                    f"una domanda al progettista: {item.question}"
+                    if item.reason is GapReason.DESIGNER_QUESTION and item.question
+                    else (
                         f"la rete non ha un tratto comune su cui posare "
                         f"{naming.family_of((item.missing_function,), item.rule_id).name.lower()}: "
                         f"i percorsi degli ancoraggi non condividono nessuna "

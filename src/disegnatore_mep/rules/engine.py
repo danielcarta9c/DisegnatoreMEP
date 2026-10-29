@@ -473,6 +473,11 @@ def _gap(
     reason: GapReason = GapReason.MISSING_PIECE,
 ) -> RuleGap:
     return RuleGap(
+        question=(
+            rule.then.question.text
+            if reason is GapReason.DESIGNER_QUESTION and rule.then.question is not None
+            else None
+        ),
         rule_id=rule.id,
         rule_version=rule.version,
         category=rule.category,
@@ -547,6 +552,31 @@ def evaluate(
                     }
             else:
                 candidates = _anchors(context, rule, network)
+
+            # Una regola che chiede non posa (REL-011): dove scatta e la cosa di
+            # cui parla non c'e' ancora, esce la sua domanda — salvo che il
+            # progettista abbia gia' risposto su uno degli ancoraggi della rete.
+            if rule.then.question is not None:
+                answered = any(
+                    _declares(declared.get(item, {}), rule.then.question.answered_by)
+                    for item in context.anchors_of(
+                        network.id, rule.when.anchor_has_function, rule.when.anchor_has_trait
+                    )
+                )
+                open_anchors = [
+                    anchor
+                    for anchor in candidates
+                    if not _already_there(
+                        context, rule, network.id, anchor, _domain_at(domain_of, anchor)
+                    )
+                ]
+                if not answered:
+                    for anchor in _limited(open_anchors, rule.cardinality, served):
+                        missing = _gap(
+                            context, rule, network, anchor, GapReason.DESIGNER_QUESTION
+                        )
+                        gaps.setdefault(missing.key, missing)
+                continue
 
             # Un ancoraggio su un fluido per cui il catalogo non ha nessun pezzo
             # con quella funzione non si puo' servire — ma non si tace: diventa
