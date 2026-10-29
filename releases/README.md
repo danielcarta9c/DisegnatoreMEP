@@ -48,4 +48,4 @@ Il comando della skill li riapre da sé.
   pannello e il giunto di D-211. 104 file.
 - **1.6.0** — 29 ottobre 2026: **l'aria-aria, l'elettrico e il comando** (`REL-012`), con **la distinta materiali**
   (`REL-013`) e **la pianta dei tracciati** (`REL-014`) su richiesta, dal kit del PO (I-224 … I-229, D-213 proposta).
-  Le tavole idroniche della 1.5.0 non cambiano. 130 file.
+  Le tavole idroniche della 1.5.0 non cambiano. 131 file.
