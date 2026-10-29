@@ -29,12 +29,16 @@ D-213 col suo testo, chiudere I-224 … I-229 nel registro.
   - `REL-014` in anticipo: la pianta (`mep.py pianta`), `docs/collaudi/REL-014/`;
   - `REL-011`: `docs/collaudi/REL-011/CONFRONTO.md` e tre proposte sul ramo come codice inerte (le regole in
     `docs/collaudi/REL-011/proposta-N/regola/`): si attivano solo col sì del PO.
-- **Le misure**: suite `2497 passed, 15 skipped, 10 xfailed`, 0 failed; `ruff check src tests` verde; banco di
-  `REL-011` fra `main` e il ramo **24 tavole su 24 identiche**; la skill 130 file, `tests/test_le_release.py` verde.
+- **Le misure**: suite `2546 passed, 15 skipped, 10 xfailed`, 0 failed; `ruff check src tests` verde; banco di
+  `REL-011` fra `main` e il ramo **24 tavole su 24 identiche**; la skill 131 file, `tests/test_le_release.py` verde; lo
+  ZIP in `releases/` ricostruito dalle fonti finali, dopo il terzo collaudo.
 - **I collaudi indipendenti** (agenti che conoscono solo lo ZIP): `docs/collaudi/REL-012/collaudo-t1/` (canalizzato a 4
   uscite: plenum mancante, sigle, lunghezze di pianta e distinta diverse — corretti), `collaudo-t2/` (centrale con
-  elettrico: sigle dei pezzi comandati, cavi staccati, circolatore con un solo attacco — corretti; `dopo/`), e il
-  terzo sulla 1.6.0 se è arrivato (`collaudo-t3/`).
+  elettrico: sigle dei pezzi comandati, cavi staccati, circolatore con un solo attacco — corretti; `dopo/`), e
+  `collaudo-t3/` sulla 1.6.0 (schema e distinta consegnabili; la pianta no: cavi fuori dall'edificio, pezzi sovrapposti,
+  sigle ricopiate a mano — corretti: zone esterne, `sovrapposto_a`, `pianta --distinta --grafo`; schema rifatto in
+  `collaudo-t3/rifatto/`, pianta in `docs/collaudi/REL-014/collaudo-t3/`).
+- **La pagina delle tavole per il PO**: https://claude.ai/artifact/EgoBhNFfDQtHupmZ1tH6hv (linkata nella PR #80).
 - **Le decisioni che restano al PO** stanno nella PR e in D-213: «Non progetti» per la distinta; le frecce; i simboli
   (foglio in `docs/collaudi/REL-012/simboli/`); la M.02 in A1 a 9 pt o altro; il criterio della tavola separata; le
   scelte di fornitura di default; le convenzioni della pianta (fascia arancio, numeri cerchiati, dettaglio 1:20,
