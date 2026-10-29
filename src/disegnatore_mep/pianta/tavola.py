@@ -74,6 +74,15 @@ COLORE_FUORI = "#f4c27a"
 non c'e': si vede a colpo d'occhio, sotto qualunque tratteggio del fluido."""
 LARGHEZZA_FUORI_MM = 2.4
 
+COLORE_ESTERNO_VIETATO = "#e74c3c"
+"""La fascia sotto un tratto che esce dall'edificio fuori dalle zone esterne
+dichiarate: e' un rilievo bloccante, e si vede."""
+
+COLORE_ZONE_ESTERNE = "#6b8e23"
+TRATTO_ZONE_ESTERNE = "3 1.5"
+TRATTO_DEL_PEZZO_SOTTO = "1.2 0.8"
+"""Il contorno del pezzo che sta sotto un altro (`sovrapposto_a`, `sta: sotto`)."""
+
 COLONNA_MM = 130.0
 
 STACCO_MM = 2.2
@@ -319,6 +328,9 @@ def estensione(pianta: Pianta, percorsi: Sequence[Percorso]) -> tuple[float, flo
     for stanza in pianta.stanze:
         xs += [p[0] for p in stanza.poligono]
         ys += [p[1] for p in stanza.poligono]
+    for zona in pianta.zone_esterne:
+        xs += [zona.rettangolo[0], zona.rettangolo[2]]
+        ys += [zona.rettangolo[1], zona.rettangolo[3]]
     for percorso in percorsi:
         xs += [p[0] for linea in percorso.linee for p in linea]
         ys += [p[1] for linea in percorso.linee for p in linea]
@@ -349,7 +361,7 @@ def colonna(
     pianta: Pianta, percorsi: Sequence[Percorso], lunghe: Sequence[Lunghezza],
     forature: Sequence[Foratura], fori_dei_pezzi: Sequence[tuple[str, str]], scala: int, formato: str,
     regola: Regola | None = None, legenda: Sequence[str] = (), avvisi: Sequence[str] = (),
-    ridotta: str | None = None,
+    ridotta: str | None = None, controllo_delle_sigle: str = "",
 ) -> _Colonna:
     """La colonna della tavola. `ridotta` e' il nome della tavola intera: la
     colonna di un dettaglio porta legenda, scritte in legenda e note, e rimanda
@@ -377,11 +389,21 @@ def colonna(
         voci.append((linea(colore, spessore(fluido), tratto), nome_del_fluido(fluido)))
     voci.append((lambda x, y: _rettangolo_con_bordo((x + 1.0, y - corpo_mm * 0.75, x + 9.0, y + corpo_mm * 0.05),
                                                    LAYER_COLONNA), "Pezzo posato: ingombro e sigla"))
+    if any(q.sovrapposto_a for q in pianta.pezzi):
+        voci.append((lambda x, y: [Linea(((x + 1.0, y - corpo_mm * 0.75), (x + 9.0, y - corpo_mm * 0.75),
+                                          (x + 9.0, y + corpo_mm * 0.05), (x + 1.0, y + corpo_mm * 0.05),
+                                          (x + 1.0, y - corpo_mm * 0.75)), "#1b2631", 0.25, LAYER_COLONNA,
+                                         TRATTO_DEL_PEZZO_SOTTO)],
+                     "Pezzo sotto un altro (altra quota)"))
+    if pianta.zone_esterne:
+        voci.append((linea(COLORE_ZONE_ESTERNE, 0.25, TRATTO_ZONE_ESTERNE), "Zona esterna praticabile"))
     if forature:
         voci.append((lambda x, y: [Cerchio((x + 5.0, y - corpo_mm * 0.35), 0.9, "#000000", 0.25, "#ffffff",
                                            LAYER_COLONNA)], "Foratura (F1, F2…: elenco sotto)"))
     if any(p.fuori for p in percorsi):
         voci.append((linea(COLORE_FUORI, LARGHEZZA_FUORI_MM), "Fuori dal controsoffitto: da verificare"))
+    if any(p.fuori_dalle_zone for p in percorsi):
+        voci.append((linea(COLORE_ESTERNO_VIETATO, LARGHEZZA_FUORI_MM), "Fuori dall'edificio: non praticabile"))
     if legenda:
         voci.append((lambda x, y: _numero_cerchiato("1", x + 5.0, y - corpo_mm * 0.35, LAYER_COLONNA),
                      "Scritta in legenda (testo sotto)"))
@@ -416,10 +438,18 @@ def colonna(
         c.stacco(STACCO_MM)
 
     c.riga("NOTE", CORPO_TITOLETTI_PT, True)
+    da_confermare = [q.sigla for q in pianta.pezzi if q.ingombro_da_confermare]
+    sovrapposti = [
+        f"{q.sigla} {q.sta} {q.sovrapposto_a}" for q in pianta.pezzi if q.sovrapposto_a is not None
+    ]
     note = [
         "Quote: canali, linee frigo e condensa in controsoffitto; cavi e bus in traccia, salvo dove la "
         "tabella dice altro. Salite e discese stanno nell'aggiunta della regola.",
-        "Sigle e numeri di tratta come lo schema funzionale e la distinta.",
+        "Sigle e numeri di tratta come lo schema funzionale e la distinta."
+        + (f" {controllo_delle_sigle}" if controllo_delle_sigle else ""),
+        *([f"Ingombri da confermare (valori dichiarati, non del progettista ne' della scheda): "
+           f"{', '.join(da_confermare)}."] if da_confermare else []),
+        *([f"Sovrapposti, a quote diverse: {'; '.join(sovrapposti)}."] if sovrapposti else []),
         *pianta.note,
     ]
     for numero, nota in enumerate(note, start=1):
@@ -502,6 +532,29 @@ def _tratte_e_avvisi(
         c.stacco(STACCO_MM)
 
 
+def _lunghezza_scritta(lu: Lunghezza) -> str:
+    """La lunghezza del progettista; senza, la misura col «°», come nella tabella."""
+    return f"{metri(lu.data_m)} m" if lu.data_m is not None else f"{metri(lu.misurata_m)} m°"
+
+
+def scritta_della_lunghezza(lu: Lunghezza) -> str:
+    """«L 5 m»: sulla linea la lunghezza **del progettista**, la stessa che lo
+    schema scrive sullo stesso tratto (collaudo T3 della 1.6.0: la pianta
+    scriveva la L da quotare, e l'installatore leggeva due numeri per la
+    stessa tratta). La L da quotare sta nella colonna «L quot.», come nella
+    distinta. Senza la lunghezza del progettista, la misura col «°»: «L 3,4 m°»."""
+    return f"L {_lunghezza_scritta(lu)}"
+
+
+def scritta_del_fascio(lunghe: Sequence[Lunghezza]) -> str:
+    """Un numero solo se le lunghezze sono uguali; se no tutte, nell'ordine
+    delle tratte: «L 9 m / 9 m / 10 m». Mai un numero che vale per una sola."""
+    valori = [_lunghezza_scritta(lu) for lu in lunghe]
+    if len(set(valori)) == 1:
+        return f"L {valori[0]}"
+    return f"L {' / '.join(valori)}"
+
+
 def _numero_cerchiato(testo: str, cx: float, cy: float, layer: str) -> list[Primitiva]:
     """Il numero di una scritta in legenda: un cerchio e la cifra al centro."""
     corpo = CORPO_TRATTE_PT if len(testo) < 2 else CORPO_TRATTE_PT - 1.5
@@ -563,6 +616,7 @@ def componi(
     riquadri: Sequence[tuple[str, tuple[float, float, float, float], int]] = (),
     ridotta: str | None = None,
     nel_dettaglio: frozenset[str] = frozenset(),
+    controllo_delle_sigle: str = "",
 ) -> Tavola:
     """La tavola intera; con `zona` (in metri) solo quella zona, alla scala del
     foglio della pianta: e' il riquadro di dettaglio. `rimandate` sono le
@@ -573,7 +627,7 @@ def componi(
     attraversa soltanto ha gia' la sua scritta sulla tavola intera."""
     xmin, ymin, xmax, ymax = zona or estensione(pianta, percorsi)
     prova = colonna(pianta, percorsi, lunghe, forature, fori_dei_pezzi, 50, "A3", regola, (),
-                    avvisi_della_colonna, ridotta)
+                    avvisi_della_colonna, ridotta, controllo_delle_sigle)
     formato, scala, frame, entra = scegli_il_foglio(pianta, xmax - xmin, ymax - ymin, prova.y)
     avvisi = [] if entra else [
         f"la pianta o la colonna non entrano in {formato} a 1:{scala}: la tavola esce lo stesso, "
@@ -599,6 +653,7 @@ def componi(
                          min(b[1], area.y_mm + libera_h))
     linee: list[tuple[str, Segmento]] = []
     rettangoli: list[tuple[str, Rettangolo]] = []
+    ammessi: dict[str, set[str]] = {}
 
     # Lo sfondo (non nel dettaglio: un'immagine non si ritaglia).
     if pianta.sfondo is not None and pixel_dello_sfondo is not None and zona is None:
@@ -609,6 +664,13 @@ def componi(
                      pixel_dello_sfondo[1] / sf.px_per_m * k, sf.opacita, pixel_dello_sfondo)
         )
     velo = 0.55 if pianta.sfondo is not None else 1.0
+
+    # Le zone esterne praticabili: un contorno tratteggiato, sotto i muri.
+    for zona_esterna in pianta.zone_esterne:
+        zx0, zy0, zx1, zy1 = zona_esterna.rettangolo
+        a, b = P(zx0, zy0), P(zx1, zy1)
+        angoli_z = ((a[0], a[1]), (b[0], a[1]), (b[0], b[1]), (a[0], b[1]), (a[0], a[1]))
+        primitive.append(Linea(angoli_z, COLORE_ZONE_ESTERNE, 0.25, LAYER_STANZE, TRATTO_ZONE_ESTERNE))
 
     # I muri.
     for muro, s0, s1 in pezzi_dei_muri(pianta):
@@ -682,6 +744,10 @@ def componi(
             punti_fuori = tuple(P(*q) for q in tratto_fuori)
             if len(punti_fuori) >= 2:
                 primitive.append(Linea(punti_fuori, COLORE_FUORI, LARGHEZZA_FUORI_MM, LAYER_FUORI))
+        for tratto_esterno in percorso.fuori_dalle_zone:
+            punti_esterni = tuple(P(*q) for q in tratto_esterno)
+            if len(punti_esterni) >= 2:
+                primitive.append(Linea(punti_esterni, COLORE_ESTERNO_VIETATO, LARGHEZZA_FUORI_MM, LAYER_FUORI))
     for percorso in sorted(percorsi, key=lambda p: -priorita[p.tratta]):
         tracciato = tracciati[percorso.tratta]
         colore, tratto = stile(tracciato.fluido)
@@ -706,14 +772,41 @@ def componi(
                 primitive.append(Linea(tuple(pezzo), colore, spessore(tracciato.fluido),
                                        layer_del_fluido(tracciato.fluido), tratto))
 
-    # I pezzi.
-    for pezzo in pianta.pezzi:
+    # I pezzi. Quelli sovrapposti a un altro dopo di lui: sopra, pieni e col
+    # contorno; sotto, solo il contorno tratteggiato. Si vedono i due contorni.
+    for pezzo in sorted(pianta.pezzi, key=lambda q: q.sovrapposto_a is not None):
         x0, y0, x1, y1 = pezzo.rettangolo
         a, b = P(x0, y0), P(x1, y1)
         r = (a[0], a[1], b[0], b[1])
-        primitive += _rettangolo_con_bordo(r, LAYER_PEZZI)
+        if pezzo.sovrapposto_a is not None and pezzo.sta == "sotto":
+            angoli_p = ((r[0], r[1]), (r[2], r[1]), (r[2], r[3]), (r[0], r[3]), (r[0], r[1]))
+            primitive.append(Linea(angoli_p, "#1b2631", 0.25, LAYER_PEZZI, TRATTO_DEL_PEZZO_SOTTO))
+        else:
+            primitive += _rettangolo_con_bordo(r, LAYER_PEZZI)
         ingombri.metti_rettangolo(r)
         rettangoli.append((f"pezzo {pezzo.sigla}", r))
+    carta_dei_pezzi = {di[len("pezzo "):]: r for di, r in rettangoli if di.startswith("pezzo ")}
+    # Una linea che parte da un pezzo sovrapposto a un altro corre alla quota del
+    # suo capo: sopra l'ingombro del compagno si vede, e si ridisegna sopra di lui.
+    sovrapposti = pianta.sovrapposti()
+    for percorso in percorsi:
+        if percorso.ceduto:
+            continue
+        tracciato = tracciati[percorso.tratta]
+        capi = {tracciato.estremo_da.pezzo, tracciato.estremo_a.pezzo, *tracciato.passa_per}
+        compagni = {c for capo in capi for c in sovrapposti.get(capo, set())} - capi
+        colore, tratto = stile(tracciato.fluido)
+        for compagno in sorted(compagni):
+            for pezzo_di_linea in ritaglia_le_linee(carta[percorso.tratta], carta_dei_pezzi[compagno]):
+                if len(pezzo_di_linea) >= 2:
+                    primitive.append(Linea(tuple(pezzo_di_linea), colore, spessore(tracciato.fluido),
+                                           layer_del_fluido(tracciato.fluido), tratto))
+    # La sigla del pezzo che si dichiara sovrapposto puo' stare sull'altro, che
+    # e' disegnato sotto di lui; non il contrario: la sigla dell'altro
+    # finirebbe sotto il pezzo pieno, o tagliata dal contorno tratteggiato.
+    sotto_la_sigla = {q.sigla: [q.sovrapposto_a] for q in pianta.pezzi if q.sovrapposto_a is not None}
+    for sigla, compagni in sotto_la_sigla.items():
+        ammessi[f"pezzo {sigla}"] = {f"pezzo {c}" for c in compagni}
 
     # Le forature.
     for foratura in forature:
@@ -754,7 +847,6 @@ def componi(
     # sigla ne trova sempre uno intorno al suo pezzo; ma una sigla che sta
     # dentro il pezzo non toglie posto a nessuno.
     scritte: list[tuple[str, ScrittaPosata]] = []
-    ammessi: dict[str, set[str]] = {}
     dentro_ai_pezzi: set[str] = set()
     def da_scrivere(chi: str, r: Rettangolo) -> bool:
         """Sulla tavola intera, tutte salvo le rimandate; nel dettaglio, le
@@ -773,7 +865,8 @@ def componi(
         a, b = P(x0, y0), P(x1, y1)
         if not da_scrivere(f"pezzo {pezzo.sigla}", (a[0], a[1], b[0], b[1])):
             continue
-        posata_dentro = posa_nel_pezzo(pezzo.sigla, CORPO_SIGLE_PT, True, (a[0], a[1], b[0], b[1]), ingombri)
+        posata_dentro = posa_nel_pezzo(pezzo.sigla, CORPO_SIGLE_PT, True, (a[0], a[1], b[0], b[1]), ingombri,
+                                       sopra=[carta_dei_pezzi[c] for c in sotto_la_sigla.get(pezzo.sigla, [])])
         if posata_dentro is not None:
             scritte.append((f"pezzo {pezzo.sigla}", posata_dentro))
             dentro_ai_pezzi.add(pezzo.sigla)
@@ -782,10 +875,8 @@ def componi(
         primo = tracciati[gruppo[0]]
         if len(gruppo) == 1:
             testo = primo.etichetta or " · ".join(
-                v for v in (
-                    primo.tratta, primo.dimensione,
-                    f"L {metri(lunghe_per_tratta[primo.tratta].da_quotare_m)} m",
-                ) if v
+                v for v in (primo.tratta, primo.dimensione, scritta_della_lunghezza(lunghe_per_tratta[primo.tratta]))
+                if v
             )
             guida = primo.tratta
             mezzo = spessore(primo.fluido) / 2
@@ -794,15 +885,17 @@ def componi(
             # tracciato di mezzo e lontana quanto il fascio e' largo: tre
             # scritte per tre linee a due millimetri l'una dall'altra non si
             # leggono. Le dimensioni di ciascuno stanno nella tabella; la
-            # lunghezza e' la piu' lunga del fascio.
+            # lunghezza e' quella del progettista, come sullo schema: una se e'
+            # la stessa per tutti, se no tutte, nell'ordine dei numeri.
             membri = [tracciati[t] for t in gruppo]
-            lunghezza = max(lunghe_per_tratta[t].da_quotare_m for t in gruppo)
             nomi = sorted((m.tratta for m in membri), key=chiave_della_tratta)
             numeri = [chiave_della_tratta(n) for n in nomi]
             di_fila = all(
                 b[0] == a[0] and b[1] == a[1] + 1 for a, b in zip(numeri, numeri[1:], strict=False)
             )
-            testo = (f"{nomi[0]}–{nomi[-1]}" if di_fila else "+".join(nomi)) + f" · L {metri(lunghezza)} m"
+            testo = (f"{nomi[0]}–{nomi[-1]}" if di_fila else "+".join(nomi)) + " · " + scritta_del_fascio(
+                [lunghe_per_tratta[n] for n in nomi]
+            )
             guida = gruppo[len(gruppo) // 2]
             mezzo = (len(gruppo) - 1) / 2 * pianta.parametri.passo_fascio_m * k + max(
                 spessore(m.fluido) for m in membri
@@ -811,7 +904,14 @@ def componi(
         if not carta[guida] or not da_scrivere(chi, ingombro_della_tratta(gruppo)):
             continue
         proprie = [s for di, s in linee if di.startswith("tratta ") and di[7:] in gruppo]
-        posata = posa_accanto(testo, CORPO_TRATTE_PT, False, carta[guida], proprie, ingombri, mezzo)
+        sotto_la_linea = sorted({
+            c for t in gruppo for capo in (tracciati[t].estremo_da.pezzo, tracciati[t].estremo_a.pezzo)
+            for c in sovrapposti.get(capo, set())
+        } - {c for t in gruppo for c in (tracciati[t].estremo_da.pezzo, tracciati[t].estremo_a.pezzo)})
+        if sotto_la_linea:
+            ammessi[chi] = {f"pezzo {c}" for c in sotto_la_linea}
+        posata = posa_accanto(testo, CORPO_TRATTE_PT, False, carta[guida], proprie, ingombri, mezzo,
+                              sotto=[carta_dei_pezzi[c] for c in sotto_la_linea])
         scritte.append((chi, posata))
     for pezzo in pianta.pezzi:
         if pezzo.sigla in dentro_ai_pezzi:
@@ -821,7 +921,7 @@ def componi(
         if not da_scrivere(f"pezzo {pezzo.sigla}", (a[0], a[1], b[0], b[1])):
             continue
         posata = posa_intorno(pezzo.sigla, CORPO_SIGLE_PT, True, (a[0], a[1], b[0], b[1]), ingombri,
-                              dentro=True)
+                              dentro=True, sopra=[carta_dei_pezzi[c] for c in sotto_la_sigla.get(pezzo.sigla, [])])
         scritte.append((f"pezzo {pezzo.sigla}", posata))
     for foratura in forature:
         c = P(*foratura.punto)
@@ -875,7 +975,7 @@ def componi(
 
     # La colonna.
     c = colonna(pianta, percorsi, lunghe, forature, fori_dei_pezzi, scala, formato, regola,
-                ingombri.legenda, avvisi_della_colonna, ridotta)
+                ingombri.legenda, avvisi_della_colonna, ridotta, controllo_delle_sigle)
     if c.y + 6.0 > frame.legend_rect_mm.height_mm:
         # Le scritte in legenda e gli avvisi si sanno solo dopo la posa: se la
         # colonna non entra, si rifa' la tavola sul formato successivo.
@@ -886,7 +986,7 @@ def componi(
             )
             tavola = componi(piu_grande, percorsi, lunghe, forature, fori_dei_pezzi, cartiglio,
                              pixel_dello_sfondo, regola, avvisi_della_colonna, zona, rimandate, riquadri,
-                             ridotta, nel_dettaglio)
+                             ridotta, nel_dettaglio, controllo_delle_sigle)
             return tavola
         avvisi.append("la colonna non entra nel foglio: la tavola esce lo stesso, e va vista")
     bx, by = frame.legend_rect_mm.x_mm + 3.0, frame.legend_rect_mm.y_mm + 2.0

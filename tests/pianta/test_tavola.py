@@ -50,18 +50,23 @@ def test_ogni_tratta_ha_la_sua_scritta(esiti: dict[str, Esito]) -> None:
         s.in_legenda or s.testo
         for tavola in tavole for chi, s in tavola.scritte if chi.startswith(("tratta", "fascio"))
     ]
-    # Il cavo segue le linee frigo + 1 m (regola della distinta): 12 + 1.
-    assert "T07–T09 · L 13 m" in testi
+    # Senza la lunghezza del progettista, la scritta dice la misura col «°»;
+    # la L da quotare (il cavo segue le linee frigo + 1 m) sta nella tabella.
     lunghe = {lu.tratta: lu for lu in esito.lunghezze}
-    assert f"T03 · Ø200 · L {metri(lunghe['T03'].da_quotare_m)} m" in testi
+    assert lunghe["T07"].misurata_m == lunghe["T09"].misurata_m
+    assert f"T07–T09 · L {metri(lunghe['T07'].misurata_m)} m°" in testi
+    assert lunghe["T09"].da_quotare_m == lunghe["T07"].da_quotare_m + 1
+    assert f"T03 · Ø200 · L {metri(lunghe['T03'].misurata_m)} m°" in testi
     prime = [testo.split(" ")[0] for testo in testi]
     attese = {t.tratta for t in esito.pianta.tracciati if t.fascio is None} | {"T07–T09"}
     assert set(prime) == attese
 
 
-def test_la_tavola_esce_su_a3_a_1_50_con_tutti_i_file(esiti: dict[str, Esito]) -> None:
+def test_la_tavola_esce_a_1_50_con_tutti_i_file(esiti: dict[str, Esito]) -> None:
+    """A2: l'esempio della skill mostra anche la zona esterna e il pezzo
+    sovrapposto, e la colonna (legenda, note) non entra piu' nell'A3."""
     esito = esiti["appartamento"]
-    assert (esito.tavola.formato, esito.tavola.scala) == ("A3", 50)
+    assert (esito.tavola.formato, esito.tavola.scala) == ("A2", 50)
     assert esito.tavola.avvisi == []
     suffissi = {p.suffix for p in esito.file}
     assert {".svg", ".pdf", ".dxf", ".png", ".json", ".jpg"} <= suffissi
@@ -105,8 +110,9 @@ def test_le_lunghezze_sono_quelle_del_percorso_disegnato(esiti: dict[str, Esito]
     dati = json.loads(next(p for p in esito.file if p.name.endswith(".tracciati.json")).read_text())
     regole = carica_regole(RADICE / "rules" / "distinta")
     for tratta, percorso in zip(dati["tratte"], esito.percorsi, strict=True):
-        punti = percorso.punti
-        misurata = sum(abs(b[0] - a[0]) + abs(b[1] - a[1]) for a, b in zip(punti, punti[1:], strict=False))
+        misurata = sum(
+            abs(b[0] - a[0]) + abs(b[1] - a[1]) for punti in percorso.linee for a, b in zip(punti, punti[1:], strict=False)
+        )
         assert tratta["lunghezza_misurata_m"] == pytest.approx(misurata, abs=1e-3)
         assert tratta["lunghezza_usata_da"] == "misura"
         assert tratta["lunghezza_usata_m"] == tratta["lunghezza_misurata_m"]

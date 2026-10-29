@@ -120,8 +120,8 @@ def test_l_ordine_e_dichiarato_e_stabile() -> None:
     """Prima i canali, poi i tubi, la condensa, i cavi, il bus; a parita', per tratta."""
     pianta = carica_pianta(CASI["appartamento"])
     ordine = [t.tratta for t in instrada.ordine_di_instradamento(pianta.tracciati)]
-    assert ordine[:6] == ["T01", "T02", "T03", "T04", "T05", "T06"]
-    assert ordine.index("T07") < ordine.index("T10") < ordine.index("T11") < ordine.index("T14")
+    assert ordine[:5] == ["T01", "T02", "T03", "T04", "T05"]
+    assert ordine.index("T07") < ordine.index("T10") < ordine.index("T11") < ordine.index("T13")
     assert ordine == [t.tratta for t in instrada.ordine_di_instradamento(list(reversed(pianta.tracciati)))]
 
 

@@ -17,7 +17,12 @@ una scritta o piu' di una linea, ferma la consegna; quello che attraversa una
 linea sola si conta e si dice.
 
 **Una linea non passa sopra un pezzo che non e' un suo capo** (ne' un organo in
-linea suo): ferma la consegna.
+linea suo, ne' un pezzo dichiarato sovrapposto a un suo capo): ferma la consegna.
+
+**Fermano la consegna anche** (collaudo T3 della 1.6.0, dove la pianta usciva
+con 0 e non si consegnava): una tratta che corre fuori dall'edificio fuori
+dalle zone esterne dichiarate; due pezzi sovrapposti senza che uno lo dichiari;
+un numero di tratta che nella distinta collega pezzi diversi.
 """
 
 from __future__ import annotations
@@ -71,6 +76,14 @@ class Rilievi:
     misure_oltre_la_lunghezza: list[str] = field(default_factory=list)
     """La misura in pianta supera la lunghezza del progettista di oltre lo
     scarto ammesso: non ferma, ma si dice sulla tavola e in console."""
+    fuori_dalle_zone_esterne: list[str] = field(default_factory=list)
+    """Le tratte che escono dall'edificio fuori dalle zone esterne dichiarate."""
+    pezzi_sovrapposti: list[str] = field(default_factory=list)
+    """Due pezzi che si sovrappongono in pianta senza che uno lo dichiari."""
+    confronto: list[str] = field(default_factory=list)
+    """Le discordanze con la distinta e il grafo (`--distinta`, `--grafo`)."""
+    confronto_bloccante: list[str] = field(default_factory=list)
+    """Le discordanze che fermano: un numero di tratta che collega pezzi diversi."""
 
     def unisci_le_scritte(self, altri: Rilievi, dove: str) -> None:
         """Le scritte e i richiami di un'altra tavola (il dettaglio), col posto davanti."""
@@ -99,6 +112,12 @@ class Rilievi:
             out.append(f"{len(self.scritte_su_scritte)} scritte sopra altre scritte")
         if self.tratte_cedute:
             out.append(f"{len(self.tratte_cedute)} tratte non instradate")
+        out += [
+            f"la tratta esce dall'edificio fuori dalle zone esterne dichiarate: {voce}"
+            for voce in self.fuori_dalle_zone_esterne
+        ]
+        out += [f"pezzi sovrapposti senza «sovrapposto_a»: {voce}" for voce in self.pezzi_sovrapposti]
+        out += self.confronto_bloccante
         return out
 
     def come_dati(self) -> dict[str, object]:
@@ -122,6 +141,9 @@ class Rilievi:
             "linee_sui_pezzi": len(self.linee_sui_pezzi),
             "misure_oltre_la_lunghezza": len(self.misure_oltre_la_lunghezza),
             "scritte_nel_dettaglio": len(self.scritte_nel_dettaglio),
+            "fuori_dalle_zone_esterne": len(self.fuori_dalle_zone_esterne),
+            "pezzi_sovrapposti": len(self.pezzi_sovrapposti),
+            "discordanze_con_distinta_e_grafo": len(self.confronto) + len(self.confronto_bloccante),
             "bloccanti": self.bloccanti,
             "elenco": {
                 "diagonali": self.diagonali,
@@ -139,6 +161,9 @@ class Rilievi:
                 "linee_sui_pezzi": self.linee_sui_pezzi,
                 "misure_oltre_la_lunghezza": self.misure_oltre_la_lunghezza,
                 "scritte_nel_dettaglio": self.scritte_nel_dettaglio,
+                "fuori_dalle_zone_esterne": self.fuori_dalle_zone_esterne,
+                "pezzi_sovrapposti": self.pezzi_sovrapposti,
+                "discordanze_con_distinta_e_grafo": [*self.confronto_bloccante, *self.confronto],
             },
         }
 
@@ -234,6 +259,11 @@ def controlla(
                 rilievi.diagonali.append(f"{percorso.tratta}: da {a} a {b}")
         if percorso.fuori_dal_controsoffitto_m > 0:
             rilievi.fuori_dal_controsoffitto_m[percorso.tratta] = percorso.fuori_dal_controsoffitto_m
+        if percorso.fuori_dalle_zone_m > 0:
+            rilievi.fuori_dalle_zone_esterne.append(
+                f"{percorso.tratta} per {percorso.fuori_dalle_zone_m:.2f} m".replace(".", ",")
+            )
+    rilievi.pezzi_sovrapposti = pezzi_sovrapposti(pianta)
     for chi, (x0, y0, x1, y1, _) in linee_sulla_carta:
         if diagonale((x0, y0), (x1, y1)) and chi.startswith("richiamo"):
             rilievi.diagonali.append(f"{chi}: richiamo obliquo")
@@ -284,6 +314,19 @@ def controlla(
             if _sovrapposti(altra.riquadro, r):
                 rilievi.scritte_su_scritte.append(f"«{scritta.testo}» ({chi}) e «{altra.testo}» ({altro_chi})")
     return rilievi
+
+
+def pezzi_sovrapposti(pianta: Pianta) -> list[str]:
+    """Le coppie di pezzi che si sovrappongono in pianta senza dichiararlo."""
+    dichiarati = pianta.sovrapposti()
+    out: list[str] = []
+    for i, p in enumerate(pianta.pezzi):
+        for q in pianta.pezzi[i + 1:]:
+            a, b = p.rettangolo, q.rettangolo
+            si_toccano = min(a[2], b[2]) - max(a[0], b[0]) > EPS and min(a[3], b[3]) - max(a[1], b[1]) > EPS
+            if si_toccano and q.sigla not in dichiarati.get(p.sigla, set()):
+                out.append(f"{p.sigla} e {q.sigla}")
+    return out
 
 
 def _proprie(chi: str) -> set[str]:
@@ -343,9 +386,11 @@ def _le_linee_sui_pezzi(
 ) -> None:
     """Un tratto di tracciato che entra nel rettangolo di un pezzo che non e' un
     suo capo ne' un suo organo in linea."""
-    capi = {
-        t.tratta: {t.estremo_da.pezzo, t.estremo_a.pezzo, *t.passa_per} for t in pianta.tracciati
-    }
+    sovrapposti = pianta.sovrapposti()
+    capi: dict[str, set[str]] = {}
+    for t in pianta.tracciati:
+        suoi = {t.estremo_da.pezzo, t.estremo_a.pezzo, *t.passa_per}
+        capi[t.tratta] = suoi | {c for s in suoi for c in sovrapposti.get(s, set())}
     pezzi = [(di[len("pezzo "):], r) for di, r in rettangoli if di.startswith("pezzo ")]
     visti: set[str] = set()
     for di, (x0, y0, x1, y1, _) in linee:

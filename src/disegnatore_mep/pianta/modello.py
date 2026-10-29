@@ -11,7 +11,12 @@ Che cosa c'e' dentro, e chi lo decide:
   catastale), i muri principali si dichiarano lo stesso;
 - **sfondo** — facoltativo, un JPEG con la sua scala (px/m) e l'origine, che si
   stampa schiarito sotto il disegno;
-- **pezzi** — le macchine e i terminali, dove li ha messi il progettista;
+- **zone esterne** — dove fuori dall'edificio si puo' passare: il terrazzo,
+  il balcone, la facciata attrezzata. Il resto dell'esterno non e' una strada
+  (collaudo T3 della 1.6.0: il cavo UI-UE faceva il giro dell'edificio, e
+  l'alimentazione dell'UE usciva dalla porta di casa);
+- **pezzi** — le macchine e i terminali, dove li ha messi il progettista; uno
+  puo' stare sopra o sotto un altro (`sovrapposto_a`);
 - **tracciati** — da pezzo a pezzo, col fluido (i nomi di `naming/media.json`),
   la tratta come nella tabella dello schema funzionale, la quota e il fascio.
   **La forma della spezzata non si dichiara**: la sceglie l'instradatore sul
@@ -91,6 +96,12 @@ class Muro(StrictModel):
         return self
 
 
+PORTA_DI_CASA: tuple[Quota, ...] = ()
+"""Una porta nel muro **perimetrale** — la porta di casa, una portafinestra —
+non lascia passare niente, se non lo dice lei (`passa`): non e' un passaggio
+per i cavi, e di la' c'e' il pianerottolo o la facciata."""
+
+
 class Apertura(StrictModel):
     """Una porta, un varco, una finestra o un foro, su un muro dichiarato."""
 
@@ -108,6 +119,8 @@ class Apertura(StrictModel):
 
     @property
     def quote_ammesse(self) -> tuple[Quota, ...]:
+        """Le quote che passano senza forare, se il muro e' interno. Per il muro
+        perimetrale vale `Pianta.quote_ammesse`."""
         return tuple(self.passa) if self.passa is not None else PASSA_PER_TIPO[self.tipo]
 
 
@@ -133,6 +146,29 @@ class Rettangolo(StrictModel):
         x0, y0, x1, y1 = self.rettangolo
         if not (x0 < x1 and y0 < y1):
             raise ValueError(f"{self.id}: il rettangolo vuole x0 < x1 e y0 < y1")
+        return self
+
+
+class ZonaEsterna(StrictModel):
+    """Una zona fuori dall'edificio dove le linee possono correre: il terrazzo,
+    il balcone, la facciata attrezzata. **Fuori da queste zone l'esterno non e'
+    una strada**: l'instradatore ci passa solo se non ha altro, a un costo
+    altissimo, e la tavola lo dice come rilievo bloccante."""
+
+    id: str = Field(pattern=r"^[a-z0-9][a-z0-9_-]*$")
+    nome: str | None = None
+    """Si scrive sulla tavola: «Terrazzo»."""
+    rettangolo: tuple[FiniteFloat, FiniteFloat, FiniteFloat, FiniteFloat]
+    """[x0, y0, x1, y1] in metri: la zona praticabile, fuori dal muro."""
+    costo: FiniteFloat = Field(default=1.0, ge=1.0, le=20.0)
+    """Quanto costa un passo qui, in multipli del passo lungo il muro: 1 come in
+    casa; 2 o 3 se il progettista vuole che le linee fuori siano corte."""
+
+    @model_validator(mode="after")
+    def ordinato(self) -> ZonaEsterna:
+        x0, y0, x1, y1 = self.rettangolo
+        if not (x0 < x1 and y0 < y1):
+            raise ValueError(f"la zona esterna {self.id}: il rettangolo vuole x0 < x1 e y0 < y1")
         return self
 
 
@@ -166,6 +202,18 @@ class Pezzo(StrictModel):
     profondita: FiniteFloat = Field(gt=0, le=10)
     """Lungo y."""
     quota: Quota | None = None
+    sovrapposto_a: str | None = None
+    """La sigla (o l'id) del pezzo con cui questo si sovrappone **in pianta**,
+    a un'altra altezza: la centrale di zona sopra il plenum, la ripresa sotto
+    l'unita' interna. Allora la sovrapposizione e' ammessa e si disegna — il
+    pezzo che sta sotto tratteggiato —, e le linee di ciascuno partono dal suo
+    ingombro, anche attraverso quello dell'altro. Senza, due pezzi sovrapposti
+    sono un rilievo bloccante."""
+    sta: Literal["sopra", "sotto"] = "sopra"
+    """Con `sovrapposto_a`: questo pezzo sta sopra o sotto l'altro."""
+    ingombro_da_confermare: bool = False
+    """Larghezza e profondita' non vengono ne' dal progettista ne' dalla scheda
+    che ha indicato: sono valori dichiarati, e la tavola lo scrive in nota."""
 
     @property
     def rettangolo(self) -> tuple[float, float, float, float]:
@@ -305,6 +353,8 @@ class Pianta(StrictModel):
     stanze: list[Stanza] = Field(default_factory=list)
     velette: list[Rettangolo] = Field(default_factory=list)
     """Tratti di controsoffitto fuori dalle stanze che ce l'hanno."""
+    zone_esterne: list[ZonaEsterna] = Field(default_factory=list)
+    """Dove fuori dall'edificio le linee possono correre (vedi `ZonaEsterna`)."""
     sfondo: Sfondo | None = None
     pezzi: list[Pezzo] = Field(default_factory=list)
     tracciati: list[Tracciato] = Field(default_factory=list)
@@ -340,6 +390,11 @@ class Pianta(StrictModel):
                 return per_id[nome]
             return nome
 
+        pezzi_nuovi: list[object] = []
+        for pezzo in pezzi:
+            if isinstance(pezzo, dict) and isinstance(pezzo.get("sovrapposto_a"), str):
+                pezzo = {**pezzo, "sovrapposto_a": sigla(pezzo["sovrapposto_a"])}
+            pezzi_nuovi.append(pezzo)
         nuovi: list[object] = []
         for tracciato in tracciati:
             if isinstance(tracciato, dict):
@@ -353,7 +408,7 @@ class Pianta(StrictModel):
                 if isinstance(tracciato.get("passa_per"), list):
                     tracciato["passa_per"] = [sigla(n) for n in tracciato["passa_per"]]
             nuovi.append(tracciato)
-        return {**dati, "tracciati": nuovi}
+        return {**dati, "pezzi": pezzi_nuovi, "tracciati": nuovi}
 
     @model_validator(mode="after")
     def coerente(self) -> Pianta:
@@ -381,7 +436,18 @@ class Pianta(StrictModel):
                     f"e' a {distanza:.3f} m dall'asse"
                 )
         unici([p.id for p in self.pezzi if p.id is not None], "l'id di pezzo")
+        unici([z.id for z in self.zone_esterne], "la zona esterna")
         sigle = {p.sigla for p in self.pezzi}
+        for pezzo in self.pezzi:
+            if pezzo.sovrapposto_a is None:
+                continue
+            if pezzo.sovrapposto_a not in sigle:
+                raise ValueError(
+                    f"il pezzo {pezzo.sigla} e' sovrapposto_a {pezzo.sovrapposto_a!r}, che non c'e' "
+                    "(la sigla, o l'id, di un pezzo dichiarato)"
+                )
+            if pezzo.sovrapposto_a == pezzo.sigla:
+                raise ValueError(f"il pezzo {pezzo.sigla} e' sovrapposto a se stesso")
         for tracciato in self.tracciati:
             for capo in (tracciato.estremo_da, tracciato.estremo_a):
                 if capo.pezzo not in sigle:
@@ -408,6 +474,25 @@ class Pianta(StrictModel):
                     "gli stessi due pezzi, senza organi in linea"
                 )
         return self
+
+    def quote_ammesse(self, apertura: Apertura) -> tuple[Quota, ...]:
+        """Le quote che un'apertura lascia passare senza forare: quelle dichiarate,
+        o quelle del tipo; una porta nel muro perimetrale, nessuna."""
+        if apertura.passa is not None:
+            return tuple(apertura.passa)
+        muro = next((m for m in self.muri if m.id == apertura.muro), None)
+        if apertura.tipo == "porta" and muro is not None and muro.tipo == "perimetrale":
+            return PORTA_DI_CASA
+        return PASSA_PER_TIPO[apertura.tipo]
+
+    def sovrapposti(self) -> dict[str, set[str]]:
+        """Per sigla, i pezzi con cui la sovrapposizione e' dichiarata (nei due versi)."""
+        out: dict[str, set[str]] = {}
+        for pezzo in self.pezzi:
+            if pezzo.sovrapposto_a is not None:
+                out.setdefault(pezzo.sigla, set()).add(pezzo.sovrapposto_a)
+                out.setdefault(pezzo.sovrapposto_a, set()).add(pezzo.sigla)
+        return out
 
     def tronchi(self, tracciato: Tracciato) -> list[tuple[Estremo, Estremo]]:
         """I tronchi di una tratta: da un capo al primo organo in linea, da li' al
@@ -454,9 +539,12 @@ ESEMPI: dict[str, str] = {
     "Stanza": '{"id": "corridoio", "nome": "Disimpegno", "poligono": [[0.3, 3.75], [11.3, 3.75], '
               '[11.3, 4.85], [0.3, 4.85]], "controsoffitto": true, "disimpegno": true}',
     "Rettangolo": '{"id": "veletta-soggiorno", "rettangolo": [0.30, 4.95, 2.30, 5.45]}',
+    "ZonaEsterna": '{"id": "terrazzo", "nome": "Terrazzo", "rettangolo": [0.0, 8.6, 7.4, 10.1], "costo": 1}',
     "Sfondo": '{"file": "catastale.jpg", "px_per_m": 40, "origine_px": [120, 80]}',
     "Pezzo": '{"sigla": "UI-01", "tipo": "ducted-indoor-unit", "x": 6.3, "y": 4.3, '
-             '"larghezza": 1.1, "profondita": 0.73}',
+             '"larghezza": 1.1, "profondita": 0.73}; sopra un altro: {"sigla": "CZ-01", '
+             '"tipo": "zone-controller", "x": 5.5, "y": 4.3, "larghezza": 0.25, "profondita": 0.15, '
+             '"sovrapposto_a": "PLZ-01", "sta": "sopra"}',
     "Estremo": '{"pezzo": "PLZ-01", "lato": "sinistra"}',
     "Dettaglio": '{"id": "A", "rettangolo": [4.5, 3.6, 8.0, 5.2], "scala": 20}',
     "Tracciato": '{"tratta": "T10", "da": "QE-01", "a": "UE-01", "passa_per": ["SZ-01"], '

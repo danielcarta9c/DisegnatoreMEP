@@ -34,6 +34,27 @@ def _si_toccano(a: Rettangolo, b: Rettangolo) -> bool:
     return a[0] < b[2] and b[0] < a[2] and a[1] < b[3] and b[1] < a[3]
 
 
+def _segmento_nel_rettangolo(q: tuple[float, float, float, float, float], r: Rettangolo) -> bool:
+    """Il segmento (col suo mezzo spessore) entra nel rettangolo: Liang-Barsky
+    sul rettangolo allargato. Non il riquadro del segmento, che per la corda
+    obliqua dell'arco di una porta e' molto piu' grande della corda."""
+    x0, y0, x1, y1, m = q
+    xa, ya, xb, yb = r[0] - m, r[1] - m, r[2] + m, r[3] + m
+    dx, dy = x1 - x0, y1 - y0
+    t0, t1 = 0.0, 1.0
+    for p_, q_ in ((-dx, x0 - xa), (dx, xb - x0), (-dy, y0 - ya), (dy, yb - y0)):
+        if abs(p_) < 1e-12:
+            if q_ <= 0:
+                return False
+            continue
+        t = q_ / p_
+        if p_ < 0:
+            t0 = max(t0, t)
+        else:
+            t1 = min(t1, t)
+    return t0 < t1
+
+
 def _richiami(esito: Esito) -> list[tuple[str, float, list[str], list[str]]]:
     """Per richiamo: di chi, quanto e' lungo, che rettangoli attraversa (muri e
     pezzi, salvo il suo e salvo il muro da cui esce di traverso), che linee."""
@@ -60,7 +81,7 @@ def _richiami(esito: Esito) -> list[tuple[str, float, list[str], list[str]]]:
             proprie = {f"tratta {t}" for t in chi.split()[1:]} if chi.startswith(("tratta", "fascio")) else set()
             linee = sorted({
                 di for di, q in tavola.linee
-                if di != f"richiamo:{chi}" and di not in proprie and _si_toccano(_riquadro(s), _riquadro(q))
+                if di != f"richiamo:{chi}" and di not in proprie and _segmento_nel_rettangolo(q, _riquadro(s))
             })
             out.append((chi, lungo, rettangoli, linee))
     return out
@@ -132,12 +153,14 @@ dare gli stessi numeri."""
 def test_pianta_e_distinta_danno_lo_stesso_numero(esiti: dict[str, Esito]) -> None:
     """Collaudo t1, §3: T01 era «L 4,5 m» in pianta (dalla misura, 2,9 m) e 7 m
     in distinta (dai 5 m del progettista). Ora la pianta quota i 5 m, con la
-    regola della distinta."""
+    regola della distinta: 7 m nella colonna «L quot.». Sulla linea, come sullo
+    schema, la lunghezza del progettista (collaudo T3: «L 5 m», non «L 7 m»)."""
     lunghe = {lu.tratta: lu for lu in esiti["collaudo"].lunghezze}
     assert {t: lunghe[t].da_quotare_m for t in DELLA_DISTINTA} == DELLA_DISTINTA
     testi = [s.in_legenda or s.testo for _, s in esiti["collaudo"].tavola.scritte]
     testi += [s.in_legenda or s.testo for t in esiti["collaudo"].dettagli or [] for _, s in t.scritte]
-    assert "T01 · Ø200 · L 7 m" in testi
+    assert "T01 · Ø200 · L 5 m" in testi
+    assert "T01 · Ø200 · L 7 m" not in testi
 
 
 def test_la_misura_e_un_controllo_e_lo_scarto_si_dice(esiti: dict[str, Esito]) -> None:
@@ -246,11 +269,14 @@ def test_passa_per_accetta_anche_l_id_del_pezzo(tmp_path: Path) -> None:
 def test_le_linee_frigo_passano_dal_controsoffitto_non_dal_soggiorno(esiti: dict[str, Esito]) -> None:
     """Collaudo t1, §3: le linee frigo facevano il giro del soggiorno (7,95 m
     senza controsoffitto, foratura nel muro perimetrale ovest). Ora passano
-    dall'ingresso, che il controsoffitto ce l'ha, ed escono sulla facciata
-    dell'UE. L'esterno non e' «controsoffitto che manca»: e' la facciata."""
+    dall'ingresso, che il controsoffitto ce l'ha, ed escono sul terrazzo. Il
+    terrazzo e' la zona esterna dichiarata, e sta solo davanti al soggiorno
+    (collaudo T3): fuori di li' le linee non corrono, e per arrivarci tagliano
+    l'angolo del soggiorno — poco, non il giro."""
     esito = esiti["collaudo"]
     frigo = [p for p in esito.percorsi if p.tratta in ("T06", "T07", "T11")]
-    assert all(p.fuori_dal_controsoffitto_m <= 1.0 for p in frigo), [p.fuori_dal_controsoffitto_m for p in frigo]
+    assert all(p.fuori_dal_controsoffitto_m <= 1.5 for p in frigo), [p.fuori_dal_controsoffitto_m for p in frigo]
+    assert all(p.fuori_dalle_zone_m == 0 for p in frigo)
     muri_forati = {f.muro for f in esito.forature if "T06" in f.tratte}
     assert "m-ovest" not in muri_forati and "m-sud" in muri_forati
 
@@ -345,7 +371,14 @@ def test_la_nota_della_tavola_non_promette_quello_che_non_e_vero(esiti: dict[str
 def test_nessuna_linea_passa_sopra_un_pezzo_che_non_e_suo(esiti: dict[str, Esito], nome: str) -> None:
     esito = esiti[nome]
     assert esito.rilievi.linee_sui_pezzi == []
-    capi = {t.tratta: {t.estremo_da.pezzo, t.estremo_a.pezzo, *t.passa_per} for t in esito.pianta.tracciati}
+    # Un pezzo dichiarato sovrapposto a un capo sta a un'altra quota: la linea
+    # che parte dal capo gli passa sopra (collaudo T3, la centrale sul plenum).
+    compagni = esito.pianta.sovrapposti()
+    capi = {
+        t.tratta: {c for capo in (t.estremo_da.pezzo, t.estremo_a.pezzo, *t.passa_per)
+                   for c in (capo, *compagni.get(capo, ()))}
+        for t in esito.pianta.tracciati
+    }
     pezzi = {p.sigla: p.rettangolo for p in esito.pianta.pezzi}
     for percorso in esito.percorsi:
         for linea in percorso.linee:
@@ -382,10 +415,14 @@ def test_dove_1_50_e_troppo_fitto_c_e_il_dettaglio_a_1_20(esiti: dict[str, Esito
     assert {"collaudo-t1-dettaglio-A.pdf", "collaudo-t1-dettaglio-A.svg", "collaudo-t1-dettaglio-A.png"} <= nomi
     svg = next(p for p in esito.file if p.name == "collaudo-t1.svg").read_text(encoding="utf-8")
     assert "Dettaglio A 1:20" in svg
-    # Le scritte rimandate stanno nel dettaglio, libere.
-    nel_dettaglio = {chi for chi, s in esito.dettagli[0].scritte if s.libera}
+    # Le scritte rimandate stanno nel loro dettaglio, libere.
+    lettere = [d["id"] for d in json.loads(
+        next(p for p in esito.file if p.name == "collaudo-t1.tracciati.json").read_text()
+    )["dettagli"]]
     for voce in esito.rilievi.scritte_nel_dettaglio:
-        assert voce.split(" (dettaglio")[0] in nel_dettaglio
+        chi, lettera = voce.removesuffix(")").split(" (dettaglio ")
+        dettaglio = esito.dettagli[lettere.index(lettera)]
+        assert chi in {c for c, s in dettaglio.scritte if s.libera}, voce
 
 
 def test_i_dettagli_si_possono_spegnere(tmp_path: Path) -> None:
