@@ -1,0 +1,34 @@
+{
+  "id": "electrical-panel",
+  "version": "1.0.0",
+  "name": "Quadro elettrico",
+  "functions": [
+    "power_source"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "electrical-panel",
+  "composite": false,
+  "ports": [
+    {
+      "id": "out_1",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_2",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": false
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+  ]
+}

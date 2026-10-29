@@ -1,0 +1,76 @@
+{
+  "id": "ducted-indoor-unit",
+  "version": "1.0.0",
+  "name": "Unità interna canalizzata ad espansione diretta",
+  "functions": [
+    "direct_expansion_terminal"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "ducted-indoor-unit",
+  "composite": false,
+  "ports": [
+    {
+      "id": "liquid",
+      "domain": "refrigerant",
+      "medium": "refrigerant_liquid",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "gas",
+      "domain": "refrigerant",
+      "medium": "refrigerant_gas",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "supply",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "return",
+      "domain": "aeraulic",
+      "medium": "return_air",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "drain",
+      "domain": "condensate",
+      "medium": "condensate",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "link",
+      "domain": "control",
+      "medium": "interconnection",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "p1p2_a",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "p1p2_b",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": false
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+  ]
+}

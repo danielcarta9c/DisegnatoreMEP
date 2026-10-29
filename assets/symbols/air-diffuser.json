@@ -1,7 +1,7 @@
 {
   "id": "air-diffuser",
   "version": "1.0.0",
-  "name": "Diffusore d'aria",
+  "name": "Bocchetta di mandata con plenum di raccordo",
   "width_mm": 10.0,
   "height_mm": 10.0,
   "allowed_rotations_deg": [

@@ -1,0 +1,62 @@
+{
+  "id": "zone-controller",
+  "version": "1.0.0",
+  "name": "Centrale di zona",
+  "width_mm": 30.0,
+  "height_mm": 60.0,
+  "allowed_rotations_deg": [
+    0
+  ],
+  "ports": [
+    {
+      "id": "serrande",
+      "face": "top",
+      "x_mm": 15.0,
+      "y_mm": 0.0
+    },
+    {
+      "id": "p1p2",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 10.0
+    },
+    {
+      "id": "power",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 20.0
+    },
+    {
+      "id": "bus_1",
+      "face": "right",
+      "x_mm": 30.0,
+      "y_mm": 7.5
+    },
+    {
+      "id": "bus_2",
+      "face": "right",
+      "x_mm": 30.0,
+      "y_mm": 22.5
+    },
+    {
+      "id": "bus_3",
+      "face": "right",
+      "x_mm": 30.0,
+      "y_mm": 37.5
+    },
+    {
+      "id": "bus_4",
+      "face": "right",
+      "x_mm": 30.0,
+      "y_mm": 52.5
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 2.0,
+    "top_mm": 2.0,
+    "bottom_mm": 0.0
+  },
+  "stroke_weight": "medium",
+  "source": "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+}

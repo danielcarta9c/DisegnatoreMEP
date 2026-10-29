@@ -75,6 +75,7 @@ Rieseguire questo script deve produrre file bit per bit identici.
 """
 
 import json
+import math
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -1630,6 +1631,356 @@ def polyphosphate_doser_body(w: float, h: float) -> str:
     )
 
 
+# --- REL-012, l'aria-aria del kit del PO (I-224) ------------------------------
+# Undici simboli disegnati dalla sessione del 29 ottobre 2026 su un canalizzato
+# aria-aria reale (caso AA-01) e consegnati dal PO nel kit
+# `docs/input-pm/2026-10-29-kit-aria-aria/`. Il PO, guardandoli sulla tavola M.02:
+# sono «fatti molto bene». Qui sono **rifatti nel generatore**, non copiati: la
+# forma e' quella del kit al decimo di millimetro, e i monconi, i collari e i
+# morsetti si ricavano dalle porte. La forma resta una proposta, che il PO
+# approva sulla tavola (D-081, D-083): nessuna fonte esterna e' citata, perche'
+# nessuna e' stata acquisita.
+
+SOURCE_REL012_KIT = (
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): "
+    "forma da approvare dal PO sulla tavola"
+)
+"""La fonte dei simboli del kit, con le parole del kit (`RAPPORTO.md` §5.1)."""
+
+SPLIT_UNIT = MACHINE
+"""Unita' esterna e unita' interna hanno la taglia di una macchina (D-055)."""
+ZONING_PLENUM = (40.0, 57.5)
+"""Cinque uscite a passo 12,5, la prima e l'ultima a 2,5 dai bordi del plenum."""
+ZONING_PLENUM_OUTLETS = (5.0, 17.5, 30.0, 42.5, 55.0)
+ZONE_CONTROLLER = (30.0, 60.0)
+"""La centrale di zona: alta perche' le porte di bus stanno a 15 mm l'una
+dall'altra, e un termostato (10 x 10) per porta si impila in colonna."""
+ZONE_CONTROLLER_BUSES = (7.5, 22.5, 37.5, 52.5)
+ELECTRICAL_PANEL = (25.0, 15.0)
+MACHINE_SHELL_INSET = 2.5
+"""L'involucro delle macchine del kit sta a un passo dal riquadro: i monconi
+vanno dal bordo dell'involucro alla porta."""
+CONTROL_TERMINAL_RADIUS = 0.9
+"""Il morsetto di una porta di bus o di comando: un cerchietto vuoto dentro
+l'involucro, davanti al moncone."""
+
+SPLIT_OUTDOOR_PORTS = [
+    # Le porte frigorifere a 10 mm l'una dall'altra, alle stesse quote di
+    # quelle dell'unita' interna: le linee restano diritte se le due unita'
+    # stanno alla stessa altezza (kit, `RAPPORTO.md` §5.1).
+    port_at("liquid", "right", 7.5, *SPLIT_UNIT),
+    port_at("gas", "right", 17.5, *SPLIT_UNIT),
+    port_at("power", "bottom", 10.0, *SPLIT_UNIT),
+    port_at("link", "bottom", 27.5, *SPLIT_UNIT),
+]
+DUCTED_INDOOR_PORTS = [
+    port_at("liquid", "left", 7.5, *SPLIT_UNIT),
+    port_at("gas", "left", 17.5, *SPLIT_UNIT),
+    port_at("supply", "right", 12.5, *SPLIT_UNIT),
+    port_at("p1p2_a", "right", 25.0, *SPLIT_UNIT),
+    port_at("return", "top", 20.0, *SPLIT_UNIT),
+    port_at("link", "bottom", 7.5, *SPLIT_UNIT),
+    port_at("drain", "bottom", 22.5, *SPLIT_UNIT),
+    port_at("p1p2_b", "bottom", 32.5, *SPLIT_UNIT),
+]
+ZONING_PLENUM_PORTS = [
+    port_at("in", "left", 12.5, *ZONING_PLENUM),
+    port_at("motori", "bottom", ZONING_PLENUM[0] / 2, *ZONING_PLENUM),
+    *(
+        port_at(f"out_{indice + 1}", "right", y, *ZONING_PLENUM)
+        for indice, y in enumerate(ZONING_PLENUM_OUTLETS)
+    ),
+]
+ZONE_CONTROLLER_PORTS = [
+    port_at("serrande", "top", ZONE_CONTROLLER[0] / 2, *ZONE_CONTROLLER),
+    port_at("p1p2", "left", 10.0, *ZONE_CONTROLLER),
+    port_at("power", "left", 20.0, *ZONE_CONTROLLER),
+    *(
+        port_at(f"bus_{indice + 1}", "right", y, *ZONE_CONTROLLER)
+        for indice, y in enumerate(ZONE_CONTROLLER_BUSES)
+    ),
+]
+ELECTRICAL_PANEL_PORTS = [
+    port_at("out_1", "top", 7.5, *ELECTRICAL_PANEL),
+    port_at("out_2", "top", 17.5, *ELECTRICAL_PANEL),
+]
+
+
+def _segment(x1: float, y1: float, x2: float, y2: float) -> str:
+    return f'<line x1="{n(x1)}" y1="{n(y1)}" x2="{n(x2)}" y2="{n(y2)}"/>'
+
+
+def _stub(item: dict[str, Any], w: float, h: float, inset: float) -> str:
+    """Il moncone di una porta fino a un involucro che sta a `inset` dal riquadro.
+
+    Tracciato dalla coordinata minore alla maggiore, com'e' nel kit: sulla
+    faccia sinistra e su quella in alto parte dalla porta, sulle altre due
+    dall'involucro."""
+    x, y = item["x_mm"], item["y_mm"]
+    return {
+        "left": _segment(x, y, inset, y),
+        "right": _segment(w - inset, y, x, y),
+        "top": _segment(x, y, x, inset),
+        "bottom": _segment(x, h - inset, x, y),
+    }[item["face"]]
+
+
+def _by_id(ports: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    return {item["id"]: item for item in ports}
+
+
+def _fan(cx: float, cy: float, r: float) -> str:
+    """Il ventilatore delle unita' del kit: il disco e tre pale a 120 gradi.
+
+    Le pale sono lunghe tre quarti del raggio, al decimo, e i capi sono scritti
+    al centesimo, come nel kit: e' la stessa elica di `fan_body`, piu' grande."""
+    pala = round(r * 0.747, 1)
+    capi = "".join(
+        _segment(
+            cx,
+            cy,
+            round(cx + pala * math.cos(math.radians(angolo)), 2),
+            round(cy + pala * math.sin(math.radians(angolo)), 2),
+        )
+        for angolo in (270, 150, 30)
+    )
+    return f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>' + capi
+
+
+def _shell(w: float, h: float) -> str:
+    inset = MACHINE_SHELL_INSET
+    return f'<rect x="{n(inset)}" y="{n(inset)}" width="{n(w - 2 * inset)}" height="{n(h - 2 * inset)}"/>'
+
+
+def split_outdoor_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Unita' esterna ad espansione diretta: l'involucro, il ventilatore e il
+    compressore — un cerchio con il triangolo vuoto, il segno del compressore
+    della pratica frigorifera."""
+    cy, r = h / 2, h / 6
+    cx = w * 0.725
+    compressore = (
+        f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(r)}"/>'
+        f'<path d="M{n(cx - r * 0.56)} {n(cy + r * 0.66)} L{n(cx)} {n(cy - r * 0.84)} '
+        f'L{n(cx + r * 0.56)} {n(cy + r * 0.66)} Z"/>'
+    )
+    return (
+        _shell(w, h)
+        + _fan(w * 0.325, cy, h / 4)
+        + compressore
+        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) for item in ports)
+    )
+
+
+def _air_collar(item: dict[str, Any], half: float) -> str:
+    """Il collare di un canale su una faccia laterale: due tratti paralleli al
+    moncone, larghi `half` per parte, fuori dall'involucro."""
+    x, y = item["x_mm"], item["y_mm"]
+    dentro = MACHINE_SHELL_INSET if item["face"] == "left" else x - MACHINE_SHELL_INSET
+    fuori = 0.0 if item["face"] == "left" else x
+    a, b = sorted((dentro, fuori))
+    return f'<path d="M{n(a)} {n(y - half)} L{n(b)} {n(y - half)} M{n(a)} {n(y + half)} L{n(b)} {n(y + half)}"/>'
+
+
+def ducted_indoor_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Unita' interna canalizzata: la batteria a due ranghi, il ventilatore
+    sull'asse della mandata, la vaschetta della condensa con la pompa, e i
+    collari dei canali di mandata e di ripresa."""
+    porte = _by_id(ports)
+    inset = MACHINE_SHELL_INSET
+
+    def rango(x: float) -> str:
+        punti = " L".join(
+            f"{n(x + (3.0 if indice % 2 else 0.0))} {n(5.0 + 2.0 * indice)}" for indice in range(9)
+        )
+        return f'<path d="M{punti}"/>'
+
+    mandata, ripresa, scarico = porte["supply"], porte["return"], porte["drain"]
+    vasca_alto, vasca_basso = h - 6.5, h - 4.5
+    pompa_r = 1.5
+    pompa_cy = vasca_alto - pompa_r
+    ripresa_mezzo = 5.0
+    parts = [
+        _shell(w, h),
+        rango(7.0),
+        rango(12.0),
+        _fan(w * 0.675, mandata["y_mm"], 5.5),
+        f'<path d="M{n(inset + 2)} {n(vasca_alto)} L{n(inset + 2)} {n(vasca_basso)} '
+        f'L{n(w - inset - 2)} {n(vasca_basso)} L{n(w - inset - 2)} {n(vasca_alto)}"/>',
+        f'<circle cx="{n(scarico["x_mm"])}" cy="{n(pompa_cy)}" r="{n(pompa_r)}"/>',
+    ]
+    for item in ports:
+        if item is mandata:
+            parts.append(_air_collar(item, 3.0))
+        if item is ripresa:
+            x = item["x_mm"]
+            parts.append(
+                f'<path d="M{n(x - ripresa_mezzo)} {n(inset)} L{n(x - ripresa_mezzo)} 0.5 '
+                f'L{n(x + ripresa_mezzo)} 0.5 L{n(x + ripresa_mezzo)} {n(inset)}"/>'
+            )
+        if item is scarico:
+            # Lo scarico parte dalla pompa della condensa, non dall'involucro.
+            parts.append(_segment(item["x_mm"], vasca_alto, item["x_mm"], item["y_mm"]))
+        else:
+            parts.append(_stub(item, w, h, inset))
+    return "".join(parts)
+
+
+def zoning_plenum_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Plenum motorizzato di zona: l'ingresso con il suo collare, il collettore
+    interno e, su ogni uscita, la serranda motorizzata — un riquadro con la lama
+    di traverso, come la serranda della libreria."""
+    porte = _by_id(ports)
+    ingresso = porte["in"]
+    collettore_x = w / 2
+    uscite = [item for item in ports if item["id"].startswith("out_")]
+    y_in = ingresso["y_mm"]
+    parts = [
+        f'<rect x="{n(MACHINE_SHELL_INSET)}" y="0" width="{n(w - 2 * MACHINE_SHELL_INSET)}" height="{n(h)}"/>',
+        _segment(0, y_in, MACHINE_SHELL_INSET, y_in),
+        _air_collar(ingresso, 3.0),
+        _segment(MACHINE_SHELL_INSET, y_in, collettore_x, y_in),
+        _segment(collettore_x, uscite[0]["y_mm"], collettore_x, uscite[-1]["y_mm"]),
+    ]
+    serranda_x, serranda_w, serranda_h = w * 0.6875, 5.0, 4.0
+    for item in uscite:
+        y = item["y_mm"]
+        parts.append(
+            f'<rect x="{n(serranda_x)}" y="{n(y - serranda_h / 2)}" width="{n(serranda_w)}" '
+            f'height="{n(serranda_h)}"/>'
+            + _segment(serranda_x + 0.5, y + 1.5, serranda_x + serranda_w - 0.5, y - 1.5)
+            + _segment(serranda_x + serranda_w, y, w, y)
+            + _segment(collettore_x, y, serranda_x, y)
+        )
+    # La porta dei motori sta sul bordo inferiore del plenum: il bordo la tocca.
+    return "".join(parts)
+
+
+def _display(x: float, y: float) -> str:
+    """Il visore di una centrale: un riquadro 12 x 7 con una riga."""
+    return f'<rect x="{n(x)}" y="{n(y)}" width="12" height="7"/>' + _segment(x + 2, y + 3.5, x + 10, y + 3.5)
+
+
+def _terminal(item: dict[str, Any], w: float, h: float) -> str:
+    """Il morsetto davanti a una porta di comando, dentro l'involucro."""
+    x, y = item["x_mm"], item["y_mm"]
+    cx, cy = {
+        "right": (w - 2 * MACHINE_SHELL_INSET, y),
+        "left": (2 * MACHINE_SHELL_INSET, y),
+        "bottom": (x, h - 2 * MACHINE_SHELL_INSET),
+        "top": (x, 2 * MACHINE_SHELL_INSET),
+    }[item["face"]]
+    return f'<circle cx="{n(cx)}" cy="{n(cy)}" r="{n(CONTROL_TERMINAL_RADIUS)}"/>'
+
+
+def zone_controller_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Centrale di zona: l'involucro, il visore, e un morsetto per ogni porta di
+    bus dei termostati."""
+    fissi = [item for item in ports if not item["id"].startswith("bus_")]
+    bus = [item for item in ports if item["id"].startswith("bus_")]
+    return (
+        _shell(w, h)
+        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) for item in fissi)
+        + _display(6.0, 6.0)
+        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) + _terminal(item, w, h) for item in bus)
+    )
+
+
+def return_grille_body(w: float, h: float) -> str:
+    """Griglia di ripresa con plenum e filtro: il riquadro con le alette, la
+    bocchetta di mandata della libreria vista allo specchio."""
+    x, y = w * 0.08, h * 0.12
+    bw, bh = w * 0.72, h * 0.76
+    alette = "".join(_segment(x, y + bh * i / 4, x + bw, y + bh * i / 4) for i in (1, 2, 3))
+    return (
+        f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>'
+        + alette
+        + _segment(x + bw, h / 2, w, h / 2)
+    )
+
+
+def condensate_trap_body(w: float, h: float) -> str:
+    """Sifone ispezionabile: la U sotto la linea e, sopra il primo ramo, il tappo
+    d'ispezione."""
+    cy = h / 2
+    a, b, fondo = w * 0.3, w * 0.7, h * 0.92
+    return (
+        f'<path d="M0 {n(cy)} L{n(a)} {n(cy)} L{n(a)} {n(fondo)} L{n(b)} {n(fondo)} '
+        f'L{n(b)} {n(cy)} L{n(w)} {n(cy)}"/>'
+        + _segment(a, h * 0.12, a, cy)
+    )
+
+
+def condensate_outlet_body(w: float, h: float) -> str:
+    """Allaccio allo scarico: l'imbuto con il tubo che scende fino alla linea di
+    scarico."""
+    cx = w / 2
+    bocca, punta, fondo = h * 0.3, h * 0.62, h * 0.9
+    return (
+        _segment(cx, 0, cx, bocca)
+        + f'<path d="M0.5 {n(bocca)} L{n(w - 0.5)} {n(bocca)} L{n(cx)} {n(punta)} Z"/>'
+        + _segment(cx, punta, cx, fondo)
+        + _segment(0.5, fondo, w - 0.5, fondo)
+    )
+
+
+def electrical_panel_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
+    """Quadro elettrico: il rettangolo diviso in diagonale con la meta' piena, il
+    segno del quadro della pratica elettrica."""
+    x0, y0, x1, y1 = 0.5, MACHINE_SHELL_INSET, w - 0.5, h - 0.5
+    return (
+        f'<rect x="{n(x0)}" y="{n(y0)}" width="{n(x1 - x0)}" height="{n(y1 - y0)}"/>'
+        f'<path d="M{n(x0)} {n(y1)} L{n(x1)} {n(y0)} L{n(x1)} {n(y1)} Z" fill="currentColor"/>'
+        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) for item in ports)
+    )
+
+
+def isolator_switch_body(w: float, h: float) -> str:
+    """Sezionatore: il contatto aperto, una lama che si alza dalla linea, e la
+    battuta di fronte."""
+    cy = h / 2
+    return (
+        _segment(0, cy, w * 0.2, cy)
+        + _segment(w * 0.2, cy, w * 0.78, h * 0.14)
+        + _segment(w * 0.8, cy, w, cy)
+        + _segment(w * 0.8, h * 0.32, w * 0.8, h * 0.68)
+    )
+
+
+ROOM_DEVICE_GLYPH_ID = "sigla"
+"""Il glifo leggibile di un apparecchio d'ambiente: resta dritto se il simbolo gira."""
+
+
+def _room_device(w: float, h: float) -> tuple[str, float, float, float, float]:
+    """L'apparecchio d'ambiente del kit: un riquadro 7 x 8 attaccato al moncone."""
+    x, y, bw, bh = w * 0.2, h * 0.1, w * 0.7, h * 0.8
+    return (
+        _segment(0, h / 2, x, h / 2) + f'<rect x="{n(x)}" y="{n(y)}" width="{n(bw)}" height="{n(bh)}"/>',
+        x,
+        y,
+        bw,
+        bh,
+    )
+
+
+def room_thermostat_body(w: float, h: float) -> str:
+    """Termostato di zona: il riquadro con la «T» a tratti, senza font."""
+    corpo, x, y, bw, bh = _room_device(w, h)
+    cx = x + bw / 2
+    t = f'<path d="M{n(cx - 1.8)} {n(y + 2)} L{n(cx + 1.8)} {n(y + 2)} M{n(cx)} {n(y + 2)} L{n(cx)} {n(y + 6.2)}"/>'
+    return corpo + f'<g data-glyph="{ROOM_DEVICE_GLYPH_ID}">{t}</g>'
+
+
+def wired_remote_body(w: float, h: float) -> str:
+    """Comando a filo: il riquadro con lo schermo e un tasto."""
+    corpo, x, y, bw, _ = _room_device(w, h)
+    cx = x + bw / 2
+    return (
+        corpo
+        + f'<rect x="{n(cx - 2)}" y="{n(y + 1.4)}" width="4" height="3"/>'
+        + f'<circle cx="{n(cx)}" cy="{n(y + 6.1)}" r="0.7"/>'
+    )
+
+
 @dataclass(frozen=True)
 class SymbolSpec:
     id: str
@@ -2378,7 +2729,13 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     # --- aeraulico ----------------------------------------------------------
     inline_symbol("duct-damper", "Serranda", INLINE_ACCESSORY, duct_damper_body, SOURCE_PRACTICE_PENDING),
-    single_port_symbol("air-diffuser", "Diffusore d'aria", DEVICE, "left", air_diffuser_body, SOURCE_PRACTICE_PENDING),
+    # Il nome in legenda e' quello del kit (REL-012, I-224): la bocchetta del
+    # canalizzato e' una bocchetta con il suo plenum, non un diffusore generico.
+    # Il segno non cambia, e il manifesto resta alla sua versione.
+    single_port_symbol(
+        "air-diffuser", "Bocchetta di mandata con plenum di raccordo", DEVICE, "left",
+        air_diffuser_body, SOURCE_PRACTICE_PENDING,
+    ),
     inline_symbol("fan-inline", "Ventilatore in linea", DEVICE, fan_body, SOURCE_PRACTICE_PENDING),
     # --- refrigerante -------------------------------------------------------
     SymbolSpec(
@@ -2459,6 +2816,91 @@ SYMBOLS: list[SymbolSpec] = [
         body=manifold_pair_body(*MANIFOLD_PAIR),
         source=SOURCE_REL009_PROPOSAL,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    # --- REL-012, l'aria-aria del kit del PO (I-224): proposte, le approva il PO ---
+    # Unita' esterna, unita' interna, plenum, centrale di zona e quadro si
+    # disegnano nel proprio verso, come la pompa di calore e la caldaia: hanno
+    # porte su tre o quattro facce, e un involucro coricato non aiuta a leggere.
+    # Gli accessori e gli apparecchi d'ambiente girano come i loro fratelli
+    # idronici.
+    SymbolSpec(
+        id="split-outdoor-unit",
+        name="Unità esterna ad espansione diretta",
+        width_mm=SPLIT_UNIT[0],
+        height_mm=SPLIT_UNIT[1],
+        inline=False,
+        ports=SPLIT_OUTDOOR_PORTS,
+        body=split_outdoor_body(*SPLIT_UNIT, SPLIT_OUTDOOR_PORTS),
+        source=SOURCE_REL012_KIT,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="ducted-indoor-unit",
+        name="Unità interna canalizzata",
+        width_mm=SPLIT_UNIT[0],
+        height_mm=SPLIT_UNIT[1],
+        inline=False,
+        ports=DUCTED_INDOOR_PORTS,
+        body=ducted_indoor_body(*SPLIT_UNIT, DUCTED_INDOOR_PORTS),
+        source=SOURCE_REL012_KIT,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="zoning-plenum-5",
+        name="Plenum motorizzato di zona a cinque serrande",
+        width_mm=ZONING_PLENUM[0],
+        height_mm=ZONING_PLENUM[1],
+        inline=False,
+        ports=ZONING_PLENUM_PORTS,
+        body=zoning_plenum_body(*ZONING_PLENUM, ZONING_PLENUM_PORTS),
+        source=SOURCE_REL012_KIT,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    SymbolSpec(
+        id="zone-controller",
+        name="Centrale di zona",
+        width_mm=ZONE_CONTROLLER[0],
+        height_mm=ZONE_CONTROLLER[1],
+        inline=False,
+        ports=ZONE_CONTROLLER_PORTS,
+        body=zone_controller_body(*ZONE_CONTROLLER, ZONE_CONTROLLER_PORTS),
+        source=SOURCE_REL012_KIT,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    single_port_symbol(
+        "return-grille", "Griglia di ripresa con plenum e filtro", DEVICE, "right",
+        return_grille_body, SOURCE_REL012_KIT,
+    ),
+    inline_symbol(
+        "condensate-trap", "Sifone ispezionabile", WIDE_INLINE_ACCESSORY,
+        condensate_trap_body, SOURCE_REL012_KIT,
+    ),
+    single_port_symbol(
+        "condensate-outlet", "Allaccio allo scarico", TERMINAL_ACCESSORY, "top",
+        condensate_outlet_body, SOURCE_REL012_KIT,
+    ),
+    SymbolSpec(
+        id="electrical-panel",
+        name="Quadro elettrico",
+        width_mm=ELECTRICAL_PANEL[0],
+        height_mm=ELECTRICAL_PANEL[1],
+        inline=False,
+        ports=ELECTRICAL_PANEL_PORTS,
+        body=electrical_panel_body(*ELECTRICAL_PANEL, ELECTRICAL_PANEL_PORTS),
+        source=SOURCE_REL012_KIT,
+        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    ),
+    inline_symbol(
+        "isolator-switch", "Sezionatore onnipolare", INLINE_ACCESSORY,
+        isolator_switch_body, SOURCE_REL012_KIT,
+    ),
+    single_port_symbol(
+        "room-thermostat", "Termostato di zona", DEVICE, "left",
+        room_thermostat_body, SOURCE_REL012_KIT,
+        upright_glyphs=[{"id": ROOM_DEVICE_GLYPH_ID, "x_mm": 5.5, "y_mm": DEVICE[1] / 2}],
+    ),
+    single_port_symbol(
+        "wired-remote", "Comando a filo", DEVICE, "left", wired_remote_body, SOURCE_REL012_KIT,
     ),
 ]
 

@@ -413,6 +413,183 @@ REL_003: list[dict[str, Any]] = [
     ),
 ]
 
+
+# --- REL-012, l'aria-aria del kit del PO (I-224) -----------------------------
+# Le voci del kit del PO (`docs/input-pm/2026-10-29-kit-aria-aria/`, `RAPPORTO.md`
+# §5.2), rifatte qui perche' il catalogo e' generato. Sono tutte **proposte**:
+# il PO le approva sulla tavola.
+#
+# **Nessuna dichiara `maintainable`, apposta** (`RAPPORTO.md` §5.2): farebbe
+# scattare la regola dell'intercettazione, che cercherebbe una valvola sul fluido
+# frigorigeno, sull'aria o su un cavo, e il catalogo non ne ha — un'unita' su
+# una linea frigorifera o un ventilatore su un canale non si chiudono con una
+# valvola (`test_nothing_outside_the_water_declares_itself_serviceable`).
+
+SUPPLY_AIR = "supply_air"
+RETURN_AIR = "return_air"
+REFRIGERANT_LIQUID = "refrigerant_liquid"
+REFRIGERANT_GAS = "refrigerant_gas"
+CONDENSATE = "condensate"
+POWER = "power_supply"
+"""L'alimentazione elettrica: i cavi di potenza, dal quadro alle macchine."""
+INTERCONNECTION = "interconnection"
+"""Il collegamento elettrico fra unita' esterna e unita' interna."""
+CONTROL_BUS = "control_bus"
+"""Il bus di comando: termostati e centrali."""
+
+KIT_AA01 = (
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): "
+    "forma da approvare dal PO sulla tavola"
+)
+QUIET = [SHUTOFF_ORDINARY, INLINE]
+"""I caratteri delle voci dell'aria, del refrigerante e dell'elettrico: si
+chiudono come tutto il resto, e nient'altro (vedi sopra, `maintainable`)."""
+
+
+def port_of(
+    port_id: str, domain: str, medium: str, flow: str, required: bool = True
+) -> dict[str, Any]:
+    """Un attacco fuori dall'acqua: aria, refrigerante, condensa o comando."""
+    return {"id": port_id, "domain": domain, "medium": medium, "flow": flow, "required": required}
+
+
+def control_port(
+    port_id: str, medium: str, flow: str = "bidirectional", required: bool = True
+) -> dict[str, Any]:
+    """Un attacco di comando: un cavo o un bus, nel dominio `control`."""
+    return port_of(port_id, "control", medium, flow, required)
+
+
+REL_012: list[dict[str, Any]] = [
+    definition(
+        "split-outdoor-unit",
+        "Unità esterna split a pompa di calore",
+        ["refrigerant_generation"],
+        QUIET,
+        [
+            port_of("liquid", "refrigerant", REFRIGERANT_LIQUID, "bidirectional"),
+            port_of("gas", "refrigerant", REFRIGERANT_GAS, "bidirectional"),
+            control_port("power", POWER, "in"),
+            control_port("link", INTERCONNECTION),
+        ],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "ducted-indoor-unit",
+        "Unità interna canalizzata ad espansione diretta",
+        ["direct_expansion_terminal"],
+        QUIET,
+        [
+            port_of("liquid", "refrigerant", REFRIGERANT_LIQUID, "bidirectional"),
+            port_of("gas", "refrigerant", REFRIGERANT_GAS, "bidirectional"),
+            port_of("supply", "aeraulic", SUPPLY_AIR, "out"),
+            port_of("return", "aeraulic", RETURN_AIR, "in"),
+            port_of("drain", "condensate", CONDENSATE, "out"),
+            control_port("link", INTERCONNECTION),
+            control_port("p1p2_a", CONTROL_BUS),
+            control_port("p1p2_b", CONTROL_BUS, required=False),
+        ],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "zoning-plenum-5",
+        "Plenum motorizzato di zona a cinque serrande",
+        ["air_zoning"],
+        QUIET,
+        [
+            port_of("in", "aeraulic", SUPPLY_AIR, "in"),
+            control_port("motori", CONTROL_BUS),
+            *(port_of(f"out_{indice}", "aeraulic", SUPPLY_AIR, "out") for indice in range(1, 6)),
+        ],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "zone-controller",
+        "Centrale di zona",
+        ["zone_control"],
+        QUIET,
+        [
+            control_port("serrande", CONTROL_BUS),
+            control_port("p1p2", CONTROL_BUS),
+            control_port("power", POWER, "in"),
+            *(control_port(f"bus_{indice}", CONTROL_BUS, required=False) for indice in range(1, 5)),
+        ],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "air-supply-terminal",
+        "Bocchetta di mandata con plenum di raccordo",
+        ["air_terminal"],
+        QUIET,
+        [port_of("a", "aeraulic", SUPPLY_AIR, "in")],
+        symbol_id="air-diffuser",
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "return-air-terminal",
+        "Griglia di ripresa con plenum e filtro",
+        ["air_return"],
+        QUIET,
+        [port_of("a", "aeraulic", RETURN_AIR, "out")],
+        symbol_id="return-grille",
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "condensate-trap",
+        "Sifone ispezionabile sulla condensa",
+        ["condensate_trap"],
+        QUIET,
+        [
+            port_of("a", "condensate", CONDENSATE, "in"),
+            port_of("b", "condensate", CONDENSATE, "out"),
+        ],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "condensate-outlet",
+        "Allaccio della condensa allo scarico",
+        ["boundary"],
+        QUIET,
+        [port_of("a", "condensate", CONDENSATE, "in")],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "electrical-panel",
+        "Quadro elettrico",
+        ["power_source"],
+        QUIET,
+        [
+            control_port("out_1", POWER, "out"),
+            control_port("out_2", POWER, "out", required=False),
+        ],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "isolator-switch",
+        "Sezionatore onnipolare",
+        ["power_isolation"],
+        QUIET,
+        [control_port("a", POWER, "in"), control_port("b", POWER, "out")],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "room-thermostat",
+        "Termostato di zona",
+        ["room_control"],
+        QUIET,
+        [control_port("a", CONTROL_BUS)],
+        sources=[KIT_AA01],
+    ),
+    definition(
+        "wired-remote",
+        "Comando a filo dell'unità",
+        ["unit_control"],
+        QUIET,
+        [control_port("a", CONTROL_BUS)],
+        sources=[KIT_AA01],
+    ),
+]
+
 DEFINITIONS: list[dict[str, Any]] = [
     definition(
         "heat-pump-air-water",
@@ -850,6 +1027,7 @@ DEFINITIONS: list[dict[str, Any]] = [
         ],
     ),
     *REL_003,
+    *REL_012,
 ]
 
 NETWORKS = [

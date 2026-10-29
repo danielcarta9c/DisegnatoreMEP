@@ -1,0 +1,27 @@
+{
+  "id": "wired-remote",
+  "version": "1.0.0",
+  "name": "Comando a filo dell'unità",
+  "functions": [
+    "unit_control"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "wired-remote",
+  "composite": false,
+  "ports": [
+    {
+      "id": "a",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+  ]
+}
