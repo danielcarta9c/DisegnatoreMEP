@@ -2,7 +2,7 @@
 
 Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata Daikin con zonizzazione Airzone · Data: 29.10.2026
 
-> proposta (D-213, REL-013): il PO non ha ancora deciso se la skill fa la distinta; finché non decide, la distinta si fa solo col comando esplicito `mep.py distinta`. Regole `dea73506dac30790` (distinta 1.1.0, lunghezze 1.1.0, fluidi 1.1.0, corredo 1.1.0, attivita 1.1.0, verifica 1.1.0).
+> proposta (D-213, REL-013): il PO non ha ancora deciso se la skill fa la distinta; finché non decide, la distinta si fa solo col comando esplicito `mep.py distinta`. Regole `f8b849f909489495` (distinta 1.1.0, lunghezze 1.1.0, fluidi 1.1.0, corredo 1.1.0, attivita 1.1.0, verifica 1.1.0).
 
 ## Da confermare per questa offerta
 
@@ -21,15 +21,15 @@ Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata 
 | T07 | Linea del liquido | UE-01 - UI-01 | Ø6,35 (1/4") | 8 | 12 | (8 + 1) × 1,15 = 10,35 → 10,5 m; minimo frigo 12 m → 12 m |
 | T08 | Linea del gas | UE-01 - UI-01 | Ø12,7 (1/2") | 8 | 12 | (8 + 1) × 1,15 = 10,35 → 10,5 m; minimo frigo 12 m → 12 m |
 | T09 | Scarico condensa | UI-01 - SIF-01 - AL-01 | Ø32 | 7,6 | 10 | (7,6 + 1) × 1,15 = 9,89 → 10 m |
-| T10 | Alimentazione unita' esterna | QE-01 - SZ-01 - UE-01 | 3G2,5 | 15 | 20 | (15 + 1) × 1,15 = 18,4 → 18,5 m; minimo scritto sul tratto 20 m → 20 m |
-| T11 | Alimentazione centrale Airzone | QE-01 - CZ-01 | 3G1,5 | 12 | 15 | (12 + 1) × 1,15 = 14,95 → 15 m |
+| T10 | Alimentazione centrale Airzone | QE-01 - CZ-01 | 3G1,5 | 12 | 15 | (12 + 1) × 1,15 = 14,95 → 15 m |
+| T11 | Alimentazione unita' esterna | QE-01 - SZ-01 - UE-01 | 3G2,5 | 15 | 20 | (15 + 1) × 1,15 = 18,4 → 18,5 m; minimo scritto sul tratto 20 m → 20 m |
 | T12 | Collegamento UI-UE | UE-01 - UI-01 | 4G1,5 | 9 | 13 | (9 + 1) × 1,15 = 11,5 → 11,5 m; segue T07 + 1 m: 13 m → 13 m |
-| T13 | Linea P1-P2 dell'unita' interna | UI-01 - CZ-01 | 2×0,75 (P1-P2) | 1,5 | 5 | (1,5 + 1) × 1,15 = 2,88 → 3 m; minimo bus 5 m → 5 m |
-| T14 | Linea P1-P2 dell'unita' interna | UI-01 - CF-01 | 2×0,75 (P1-P2) | 3,7 | 5,5 | (3,7 + 1) × 1,15 = 5,4 → 5,5 m |
-| T15 | Bus Airzone ai termostati | CZ-01 - TZ-01 | bus Airzone, schermato | 6,5 | 9 | (6,5 + 1) × 1,15 = 8,62 → 9 m |
-| T16 | Bus Airzone ai termostati | CZ-01 - TZ-02 | bus Airzone, schermato | 4,9 | 7 | (4,9 + 1) × 1,15 = 6,79 → 7 m |
-| T17 | Bus Airzone ai termostati | CZ-01 - TZ-03 | bus Airzone, schermato | 5,2 | 7,5 | (5,2 + 1) × 1,15 = 7,13 → 7,5 m |
-| T18 | Bus Airzone ai termostati | CZ-01 - TZ-04 | bus Airzone, schermato | 3,7 | 5,5 | (3,7 + 1) × 1,15 = 5,4 → 5,5 m |
+| T13 | Bus Airzone ai termostati | CZ-01 - TZ-01 | bus Airzone, schermato | 6,5 | 9 | (6,5 + 1) × 1,15 = 8,62 → 9 m |
+| T14 | Bus Airzone ai termostati | CZ-01 - TZ-02 | bus Airzone, schermato | 4,9 | 7 | (4,9 + 1) × 1,15 = 6,79 → 7 m |
+| T15 | Bus Airzone ai termostati | CZ-01 - TZ-03 | bus Airzone, schermato | 5,2 | 7,5 | (5,2 + 1) × 1,15 = 7,13 → 7,5 m |
+| T16 | Bus Airzone ai termostati | CZ-01 - TZ-04 | bus Airzone, schermato | 3,7 | 5,5 | (3,7 + 1) × 1,15 = 5,4 → 5,5 m |
+| T17 | Linea P1-P2 dell'unita' interna | UI-01 - CF-01 | 2×0,75 (P1-P2) | 3,7 | 5,5 | (3,7 + 1) × 1,15 = 5,4 → 5,5 m |
+| T18 | Linea P1-P2 dell'unita' interna | UI-01 - CZ-01 | 2×0,75 (P1-P2) | 1,5 | 5 | (1,5 + 1) × 1,15 = 2,88 → 3 m; minimo bus 5 m → 5 m |
 
 ## La verifica (segnala, non corregge)
 
@@ -55,15 +55,15 @@ Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata 
 | T07 | scritta sulla tavola | «Ø6,35 (1/4") · L 12 m» | L 12 m da quotare | entro |
 | T08 | scritta sulla tavola | «Ø12,7 (1/2") · L 12 m» | L 12 m da quotare | entro |
 | T09 | scritta sulla tavola | «PVC Ø32 · L 10 m» | L 10 m da quotare | entro |
-| T10 | scritta sulla tavola | «3G2,5 · L 20 m» | L 20 m da quotare | entro |
-| T11 | scritta sulla tavola | «3G1,5 · L 15 m» | L 15 m da quotare | entro |
+| T10 | scritta sulla tavola | «3G1,5 · L 15 m» | L 15 m da quotare | entro |
+| T11 | scritta sulla tavola | «3G2,5 · L 20 m» | L 20 m da quotare | entro |
 | T12 | scritta sulla tavola | «4G1,5 · L 13 m» | L 13 m da quotare | entro |
-| T13 | scritta sulla tavola | «P1-P2 · L 3 m» | L 5 m da quotare | oltre |
-| T14 | scritta sulla tavola | «P1-P2 · L 5,5 m» | L 5,5 m da quotare | entro |
-| T15 | scritta sulla tavola | «bus · L 9 m» | L 9 m da quotare | entro |
-| T16 | scritta sulla tavola | «bus · L 7 m» | L 7 m da quotare | entro |
-| T17 | scritta sulla tavola | «bus · L 7,5 m» | L 7,5 m da quotare | entro |
-| T18 | scritta sulla tavola | «bus · L 5,5 m» | L 5,5 m da quotare | entro |
+| T13 | scritta sulla tavola | «bus · L 9 m» | L 9 m da quotare | entro |
+| T14 | scritta sulla tavola | «bus · L 7 m» | L 7 m da quotare | entro |
+| T15 | scritta sulla tavola | «bus · L 7,5 m» | L 7,5 m da quotare | entro |
+| T16 | scritta sulla tavola | «bus · L 5,5 m» | L 5,5 m da quotare | entro |
+| T17 | scritta sulla tavola | «P1-P2 · L 5,5 m» | L 5,5 m da quotare | entro |
+| T18 | scritta sulla tavola | «P1-P2 · L 3 m» | L 5 m da quotare | oltre |
 
 ## Le voci, con la regola e il conto
 
@@ -105,16 +105,16 @@ Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata 
 | D.7 | Innesto sullo scarico esistente (braga 45° o presa sul sifone di un apparecchio) | 1 | n | AL-01: 1 | `corredo/condensate-outlet/innesto-sullo-scarico` |
 | D.8 | Sifone ispezionabile per condensa | 1 | n | SIF-01: 1 | `corredo/condensate-trap/sifone` |
 | D.9 | Raccordo di adattamento dall'attacco condensa dell'unità interna (VP20 (Øe 26)) al tubo di scarico, con fascetta | 1 | n | UI-01: 1 | `corredo/ducted-indoor-unit/raccordo-condensa-unita-interna` |
-| E.1 | Cavo FG16OR16 3G2,5, Alimentazione unita' esterna | 20 | m | T10 20 m | `fluidi/power_supply/cavo-di-alimentazione` |
-| E.2 | Cavo FG16OR16 3G1,5, Alimentazione centrale Airzone | 15 | m | T11 15 m | `fluidi/power_supply/cavo-di-alimentazione` |
-| E.3 | Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA, linea dedicata: Alimentazione unita' esterna | 1 | n | una per tratto: T10 | `fluidi/power_supply/protezione-della-linea` |
-| E.4 | Magnetotermico 1P+N C6, linea dedicata: Alimentazione centrale Airzone | 1 | n | una per tratto: T11 | `fluidi/power_supply/protezione-della-linea` |
+| E.1 | Cavo FG16OR16 3G1,5, Alimentazione centrale Airzone | 15 | m | T10 15 m | `fluidi/power_supply/cavo-di-alimentazione` |
+| E.2 | Cavo FG16OR16 3G2,5, Alimentazione unita' esterna | 20 | m | T11 20 m | `fluidi/power_supply/cavo-di-alimentazione` |
+| E.3 | Magnetotermico 1P+N C6, linea dedicata: Alimentazione centrale Airzone | 1 | n | una per tratto: T10 | `fluidi/power_supply/protezione-della-linea` |
+| E.4 | Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA, linea dedicata: Alimentazione unita' esterna | 1 | n | una per tratto: T11 | `fluidi/power_supply/protezione-della-linea` |
 | E.5 | Scatola di derivazione IP55 | 2 | n | 2 tratti × 1 = 2 | `fluidi/power_supply/scatola-di-derivazione` |
-| E.6 | Tubo corrugato Ø25 per le linee di alimentazione | 40 | m | T10 20 + T11 15 = 35 m × 1, per eccesso a 10 m = 40 m | `fluidi/power_supply/corrugato-di-potenza` |
+| E.6 | Tubo corrugato Ø25 per le linee di alimentazione | 40 | m | T10 15 + T11 20 = 35 m × 1, per eccesso a 10 m = 40 m | `fluidi/power_supply/corrugato-di-potenza` |
 | E.7 | Cavo di collegamento 4G1,5 a doppio isolamento, Collegamento UI-UE | 13 | m | T12 13 m | `fluidi/interconnection/cavo-di-collegamento` |
-| E.8 | Cavo 2×0,75 (P1-P2), Linea P1-P2 dell'unita' interna | 10,5 | m | T13 5 + T14 5,5 = 10,5 m | `fluidi/control_bus/cavo-di-bus` |
-| E.9 | Cavo bus Airzone, schermato, Bus Airzone ai termostati | 29 | m | T15 9 + T16 7 + T17 7,5 + T18 5,5 = 29 m | `fluidi/control_bus/cavo-di-bus` |
-| E.10 | Tubo corrugato Ø20 per bus e linee di comando | 40 | m | T13 5 + T14 5,5 + T15 9 + T16 7 + T17 7,5 + T18 5,5 = 39,5 m × 1, per eccesso a 10 m = 40 m | `fluidi/control_bus/corrugato-di-bus` |
+| E.8 | Cavo bus Airzone, schermato, Bus Airzone ai termostati | 29 | m | T13 9 + T14 7 + T15 7,5 + T16 5,5 = 29 m | `fluidi/control_bus/cavo-di-bus` |
+| E.9 | Cavo 2×0,75 (P1-P2), Linea P1-P2 dell'unita' interna | 10,5 | m | T17 5,5 + T18 5 = 10,5 m | `fluidi/control_bus/cavo-di-bus` |
+| E.10 | Tubo corrugato Ø20 per bus e linee di comando | 40 | m | T13 9 + T14 7 + T15 7,5 + T16 5,5 + T17 5,5 + T18 5 = 39,5 m × 1, per eccesso a 10 m = 40 m | `fluidi/control_bus/corrugato-di-bus` |
 | E.11 | Scatola 503 per termostati e comandi a parete | 5 | n | 5 pezzi × 1 = 5 (CF-01, TZ-01, TZ-02, TZ-03, TZ-04) | `corredo/wired-remote/scatola-503 + corredo/room-thermostat/scatola-503` |
 | E.12 | Aggiornamento dello schema del quadro elettrico | 1 | a corpo | QE-01: 1 | `corredo/electrical-panel/aggiornamento-schema-quadro` |
 | E.13 | Sezionatore onnipolare di prossimità IP55, apertura contatti ≥ 3 mm | 1 | n | SZ-01: 1 | `corredo/isolator-switch/sezionatore` |
@@ -153,10 +153,10 @@ Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata 
 ## Avvisi
 
 - T09 (Scarico condensa: UI-01 - SIF-01 - AL-01): la tubazione SIF-01 - AL-01 senza lunghezza; si considera compresa nei 7,6 m dati sul tratto.
-- T10 (Alimentazione unita' esterna: QE-01 - SZ-01 - UE-01): la tubazione SZ-01 - UE-01 senza lunghezza; si considera compresa nei 15 m dati sul tratto.
+- T11 (Alimentazione unita' esterna: QE-01 - SZ-01 - UE-01): la tubazione SZ-01 - UE-01 senza lunghezza; si considera compresa nei 15 m dati sul tratto.
 - T02, T04, T05 (aria di mandata): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete per ramo, se il progettista non dice quante).
 - T09 (condensa): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete, se il progettista non dice quante).
-- T13, scritta sulla tavola: «P1-P2 · L 3 m», contro L 5 m da quotare.
+- T18, scritta sulla tavola: «P1-P2 · L 3 m», contro L 5 m da quotare.
 
 ## Note
 
@@ -165,4 +165,4 @@ Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata 
 3. Velocità nei tratti di aria di mandata da 1,9 a 2,5 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).
 4. Velocità nei tratti di aria di ripresa 1,2 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).
 5. Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C.
-6. La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole dea73506dac30790).
+6. La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole f8b849f909489495).

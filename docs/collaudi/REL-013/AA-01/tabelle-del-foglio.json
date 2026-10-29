@@ -113,7 +113,7 @@
        "T06",
        "RA-01 - UI-01",
        "1000×250",
-       "canale di ripresa coibentato",
+       "plenum di ripresa coibentato",
        "1080",
        "1,2",
        "",
@@ -151,16 +151,6 @@
       ],
       [
        "T10",
-       "QE-01 - SZ-01 - UE-01",
-       "3G2,5",
-       "FG16OR16",
-       "",
-       "",
-       "15",
-       "20"
-      ],
-      [
-       "T11",
        "QE-01 - CZ-01",
        "3G1,5",
        "FG16OR16",
@@ -168,6 +158,16 @@
        "",
        "12",
        "15"
+      ],
+      [
+       "T11",
+       "QE-01 - SZ-01 - UE-01",
+       "3G2,5",
+       "FG16OR16",
+       "",
+       "",
+       "15",
+       "20"
       ],
       [
        "T12",
@@ -181,26 +181,6 @@
       ],
       [
        "T13",
-       "UI-01 - CZ-01",
-       "2×0,75 (P1-P2)",
-       "cavo di bus",
-       "",
-       "",
-       "1,5",
-       "5"
-      ],
-      [
-       "T14",
-       "UI-01 - CF-01",
-       "2×0,75 (P1-P2)",
-       "cavo di bus",
-       "",
-       "",
-       "3,7",
-       "5,5"
-      ],
-      [
-       "T15",
        "CZ-01 - TZ-01",
        "bus Airzone, schermato",
        "cavo di bus",
@@ -210,7 +190,7 @@
        "9"
       ],
       [
-       "T16",
+       "T14",
        "CZ-01 - TZ-02",
        "bus Airzone, schermato",
        "cavo di bus",
@@ -220,7 +200,7 @@
        "7"
       ],
       [
-       "T17",
+       "T15",
        "CZ-01 - TZ-03",
        "bus Airzone, schermato",
        "cavo di bus",
@@ -230,7 +210,7 @@
        "7,5"
       ],
       [
-       "T18",
+       "T16",
        "CZ-01 - TZ-04",
        "bus Airzone, schermato",
        "cavo di bus",
@@ -238,6 +218,26 @@
        "",
        "3,7",
        "5,5"
+      ],
+      [
+       "T17",
+       "UI-01 - CF-01",
+       "2×0,75 (P1-P2)",
+       "cavo di bus",
+       "",
+       "",
+       "3,7",
+       "5,5"
+      ],
+      [
+       "T18",
+       "UI-01 - CZ-01",
+       "2×0,75 (P1-P2)",
+       "cavo di bus",
+       "",
+       "",
+       "1,5",
+       "5"
       ]
      ]
     }
@@ -598,23 +598,23 @@
      "righe": [
       [
        "E.1",
-       "Cavo FG16OR16 3G2,5, Alimentazione unita' esterna",
-       "m",
-       "20",
-       "installatore",
-       "T10 stimati 15 m"
-      ],
-      [
-       "E.2",
        "Cavo FG16OR16 3G1,5, Alimentazione centrale Airzone",
        "m",
        "15",
        "installatore",
-       "T11 stimati 12 m"
+       "T10 stimati 12 m"
+      ],
+      [
+       "E.2",
+       "Cavo FG16OR16 3G2,5, Alimentazione unita' esterna",
+       "m",
+       "20",
+       "installatore",
+       "T11 stimati 15 m"
       ],
       [
        "E.3",
-       "Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA, linea dedicata: Alimentazione unita' esterna",
+       "Magnetotermico 1P+N C6, linea dedicata: Alimentazione centrale Airzone",
        "n",
        "1",
        "installatore",
@@ -622,7 +622,7 @@
       ],
       [
        "E.4",
-       "Magnetotermico 1P+N C6, linea dedicata: Alimentazione centrale Airzone",
+       "Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA, linea dedicata: Alimentazione unita' esterna",
        "n",
        "1",
        "installatore",
@@ -654,19 +654,19 @@
       ],
       [
        "E.8",
-       "Cavo 2×0,75 (P1-P2), Linea P1-P2 dell'unita' interna",
-       "m",
-       "10,5",
-       "installatore",
-       "T13 stimati 1,5 m; T14 stimati 3,7 m"
-      ],
-      [
-       "E.9",
        "Cavo bus Airzone, schermato, Bus Airzone ai termostati",
        "m",
        "29",
        "installatore",
-       "T15 stimati 6,5 m; T16 stimati 4,9 m; T17 stimati 5,2 m; T18 stimati 3,7 m"
+       "T13 stimati 6,5 m; T14 stimati 4,9 m; T15 stimati 5,2 m; T16 stimati 3,7 m"
+      ],
+      [
+       "E.9",
+       "Cavo 2×0,75 (P1-P2), Linea P1-P2 dell'unita' interna",
+       "m",
+       "10,5",
+       "installatore",
+       "T17 stimati 3,7 m; T18 stimati 1,5 m"
       ],
       [
        "E.10",
@@ -942,7 +942,7 @@
       ],
       [
        "6.",
-       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole 198e12d3f9a4df09)."
+       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole f8b849f909489495)."
       ]
      ]
     }

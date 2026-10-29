@@ -1,0 +1,272 @@
+{
+ "formato": "disegnatore-mep/tabelle-del-foglio",
+ "versione": 1,
+ "tabelle": [
+  {
+   "id": "tratte",
+   "titolo": "TABELLA DELLE TRATTE — diametri e lunghezze per la quotazione",
+   "colonne": [
+    {
+     "id": "tratto",
+     "titolo": "Tratto",
+     "allinea": "sinistra",
+     "peso": 0.6
+    },
+    {
+     "id": "da_a",
+     "titolo": "Da - a",
+     "allinea": "sinistra",
+     "peso": 2.4
+    },
+    {
+     "id": "sezione",
+     "titolo": "Ø / sezione",
+     "allinea": "sinistra",
+     "peso": 1.4
+    },
+    {
+     "id": "materiale",
+     "titolo": "Materiale",
+     "allinea": "sinistra",
+     "peso": 1.9
+    },
+    {
+     "id": "portata",
+     "titolo": "Q m³/h",
+     "allinea": "destra",
+     "peso": 0.6
+    },
+    {
+     "id": "velocita",
+     "titolo": "v m/s",
+     "allinea": "destra",
+     "peso": 0.5
+    },
+    {
+     "id": "l_stimata",
+     "titolo": "L stim. m",
+     "allinea": "destra",
+     "peso": 0.6
+    },
+    {
+     "id": "l_quotare",
+     "titolo": "L quot. m",
+     "allinea": "destra",
+     "peso": 0.6
+    }
+   ],
+   "sezioni": [
+    {
+     "titolo": null,
+     "righe": [
+      [
+       "T01",
+       "PLZ-01 - TA-01",
+       "Ø200",
+       "flessibile coibentato",
+       "300",
+       "2,7",
+       "5",
+       "7"
+      ],
+      [
+       "T02",
+       "PLZ-01 - TA-02",
+       "Ø200",
+       "flessibile coibentato",
+       "220",
+       "1,9",
+       "3",
+       "5"
+      ],
+      [
+       "T03",
+       "PLZ-01 - TA-03",
+       "Ø200",
+       "flessibile coibentato",
+       "300",
+       "2,7",
+       "4",
+       "6"
+      ],
+      [
+       "T04",
+       "PLZ-01 - TA-04",
+       "Ø200",
+       "flessibile coibentato",
+       "300",
+       "2,7",
+       "6",
+       "8,5"
+      ],
+      [
+       "T05",
+       "RA-01 - UI-01",
+       "800×300",
+       "plenum di ripresa coibentato",
+       "",
+       "",
+       "",
+       ""
+      ],
+      [
+       "T06",
+       "UE-01 - UI-01",
+       "1/4\"",
+       "Cu ricotto pre-isolato, isolamento min. 10 mm",
+       "",
+       "",
+       "9",
+       "12"
+      ],
+      [
+       "T07",
+       "UE-01 - UI-01",
+       "5/8\"",
+       "Cu ricotto pre-isolato, isolamento min. 13 mm",
+       "",
+       "",
+       "9",
+       "12"
+      ],
+      [
+       "T08",
+       "UI-01 - SIF-01 - AL-01",
+       "PVC Ø32",
+       "PVC rigido, pendenza min. 1%",
+       "",
+       "",
+       "8",
+       "10,5"
+      ],
+      [
+       "T09",
+       "QE-01 - CZ-01",
+       "3G1,5",
+       "FG16OR16",
+       "",
+       "",
+       "8",
+       "10,5"
+      ],
+      [
+       "T10",
+       "QE-01 - SZ-01 - UE-01",
+       "3G4",
+       "FG16OR16",
+       "",
+       "",
+       "18",
+       "22"
+      ],
+      [
+       "T11",
+       "UE-01 - UI-01",
+       "4G1,5",
+       "a doppio isolamento",
+       "",
+       "",
+       "10",
+       "13"
+      ],
+      [
+       "T12",
+       "CZ-01 - TZ-01",
+       "-",
+       "cavo di bus",
+       "",
+       "",
+       "7",
+       "9,5"
+      ],
+      [
+       "T13",
+       "CZ-01 - TZ-02",
+       "-",
+       "cavo di bus",
+       "",
+       "",
+       "5",
+       "7"
+      ],
+      [
+       "T14",
+       "CZ-01 - TZ-03",
+       "-",
+       "cavo di bus",
+       "",
+       "",
+       "9",
+       "11,5"
+      ],
+      [
+       "T15",
+       "CZ-01 - UI-01",
+       "2×0,75",
+       "cavo di bus",
+       "",
+       "",
+       "2",
+       "5"
+      ],
+      [
+       "T16",
+       "UI-01 - CF-01",
+       "2×0,75",
+       "cavo di bus",
+       "",
+       "",
+       "6",
+       "8,5"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "note",
+   "titolo": "NOTE DELLA DISTINTA",
+   "colonne": [
+    {
+     "id": "n",
+     "titolo": "",
+     "allinea": "destra",
+     "peso": 0.3
+    },
+    {
+     "id": "nota",
+     "titolo": "",
+     "allinea": "sinistra",
+     "peso": 9.7
+    }
+   ],
+   "sezioni": [
+    {
+     "titolo": null,
+     "righe": [
+      [
+       "1.",
+       "«L da quotare» = (L stimata + 1 m) × 1,15, per eccesso a 0,5 m; minimi: fluido frigorigeno in fase liquida, fluido frigorigeno in fase gassosa 12 m; condensa 10 m; bus di comando 5 m; aria di mandata, aria di ripresa 2 m. La L stimata è un dato del progettista, scritta su ogni tratto."
+      ],
+      [
+       "2.",
+       "Quantità indicative per un prezzo a corpo, fisso e invariabile: l'installatore le verifica nel sopralluogo obbligatorio prima dell'offerta; le varianti hanno solo il prezzo unitario."
+      ],
+      [
+       "3.",
+       "Velocità nei tratti di aria di mandata da 1,9 a 2,7 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge)."
+      ],
+      [
+       "4.",
+       "Fornitura: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C."
+      ],
+      [
+       "5.",
+       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole f8b849f909489495)."
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}

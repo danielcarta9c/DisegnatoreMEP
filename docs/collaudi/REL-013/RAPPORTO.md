@@ -189,3 +189,20 @@ distinta si lancia **prima** di `disegna`.
 Le uscite di `AA-01/` e `AA-01-con-dati-mancanti/` sono rifatte con le regole nuove (`regole 198e12d3f9a4df09`). Il
 grafo con i dati mancanti è rifatto dal grafo d'esempio, togliendo le stesse tre cose: quello di prima aveva le due
 tubazioni della linea dell'unità esterna scritte al contrario, e la lettura dell'impianto non lo leggeva.
+
+## 8. Dopo il terzo collaudo indipendente (REL-012, caso t3)
+
+Il collaudo `docs/collaudi/REL-012/collaudo-t3/RAPPORTO.md` (§3) ha trovato T03 su TA-04 e T04 su TA-03, e la
+ripresa montata sulla macchina chiamata «canale» nella tabella e «plenum» nell'Excel. Le prove sono in
+`tests/distinta/test_il_collaudo_t3.py`, sul grafo del collaudo.
+
+- **I numeri di tratta seguono le sigle**: per fluido, e dentro il fluido nell'ordine delle sigle che la tratta
+  collega (la colonna «Da - a», le cifre lette come numeri). Su AA-01 **la numerazione non è più quella del kit**
+  in due gruppi: le alimentazioni (kit T10 QE-01 - SZ-01 - UE-01 e T11 QE-01 - CZ-01, ora T11 e T10) e i bus (kit
+  T13 UI-01 - CZ-01 e T14 UI-01 - CF-01 ora T18 e T17; kit T15-T18 CZ-01 - TZ-01…04 ora T13-T16). La scritta
+  «P1-P2 · L 3 m» che la verifica segnala è ora su T18.
+- **La ripresa sulla macchina** (raccordo diretto) è il «plenum di ripresa coibentato» del corredo, in tutte le
+  uscite (`fluidi.json`, `materiale_del_raccordo_diretto`). Un canale di ripresa con una lunghezza resta un canale.
+
+Le uscite di `AA-01/` e `AA-01-con-dati-mancanti/` sono rifatte (`regole f8b849f909489495`), con la skill costruita e
+`--regole rules/distinta`, come al §3.
