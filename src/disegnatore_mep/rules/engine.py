@@ -29,7 +29,7 @@ from dataclasses import dataclass, field
 from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import ComponentDefinition, OnBoard
 from disegnatore_mep.model.project import NetworkModel, PortRef, ProjectModel
-from disegnatore_mep.model.types import PlantRegime
+from disegnatore_mep.model.types import PlantRegime, PortFlow
 
 from .context import RuleContext
 from .errors import RuleError
@@ -65,10 +65,52 @@ class Evaluation:
         return not self.proposals
 
 
+def _in_parallel(
+    context: RuleContext, rule: RuleDefinition, network: NetworkModel
+) -> dict[str, frozenset[str]]:
+    """Gli ancoraggi la cui mandata confluisce con quella di un altro (REL-011),
+    ciascuno con il **proprio tratto**: le tubazioni della sua camminata che
+    nessun altro percorre.
+
+    Dalla mandata di ciascuno si cammina seguendo il fluido, come per la mandata
+    generale: chi condivide almeno una tubazione con la camminata di un altro
+    lavora in parallelo con lui. Una macchina sola non e' mai in parallelo, e due
+    macchine su circuiti che non si toccano nemmeno.
+
+    Il proprio tratto e' dove la regola guarda se il pezzo c'e' gia': il ritegno
+    della caldaia dell'ibrido sta dopo la sua deviatrice, sul ramo verso il
+    collettore (D-137), e non sul suo attacco — e' suo lo stesso, e un secondo
+    sull'attacco sarebbe un doppione."""
+    walks: list[tuple[str, frozenset[str]]] = []
+    for component_id in context.anchors_of(
+        network.id, rule.when.anchor_has_function, rule.when.anchor_has_trait
+    ):
+        for port in context.connected_ports(component_id):
+            if port.flow is not PortFlow.OUT:
+                continue
+            connection_id = context.connection_of_port[(component_id, port.id)]
+            if context.network_of_connection.get(connection_id) != network.id:
+                continue
+            walk = context.run_from(connection_id, upstream=False, network_id=network.id)
+            if walk:
+                walks.append((component_id, frozenset(walk)))
+    found: dict[str, frozenset[str]] = {}
+    for first, pipes in walks:
+        others = frozenset().union(
+            *(other for second, other in walks if second != first)
+        )
+        if pipes & others:
+            found[first] = found.get(first, frozenset()) | (pipes - others)
+    return found
+
+
 def _anchors(context: RuleContext, rule: RuleDefinition, network: NetworkModel) -> list[PortRef]:
     """Gli attacchi su cui questa regola potrebbe posare qualcosa, in ordine."""
     network_id = network.id
     found: list[PortRef] = []
+    parallel = (
+        _in_parallel(context, rule, network) if rule.when.anchor_runs_in_parallel else None
+    )
     for component_id in context.anchors_of(
         network_id, rule.when.anchor_has_function, rule.when.anchor_has_trait
     ):
@@ -92,6 +134,14 @@ def _anchors(context: RuleContext, rule: RuleDefinition, network: NetworkModel) 
         # senza attraversare un organo altrui.
         if rule.when.anchor_cut_off_from is not None and not context.cut_off_from(
             component_id, rule.when.anchor_cut_off_from, network_id
+        ):
+            continue
+        # La cascata (REL-011): la regola parla solo di chi manda in un tratto
+        # in cui manda anche un altro, e tace se sul proprio tratto il pezzo
+        # c'e' gia', anche lontano dall'attacco.
+        if parallel is not None and (
+            component_id not in parallel
+            or context.run_holds(parallel[component_id], rule.then.provides_function)
         ):
             continue
         for port in context.connected_ports(component_id):
@@ -423,6 +473,11 @@ def _gap(
     reason: GapReason = GapReason.MISSING_PIECE,
 ) -> RuleGap:
     return RuleGap(
+        question=(
+            rule.then.question.text
+            if reason is GapReason.DESIGNER_QUESTION and rule.then.question is not None
+            else None
+        ),
         rule_id=rule.id,
         rule_version=rule.version,
         category=rule.category,
@@ -497,6 +552,31 @@ def evaluate(
                     }
             else:
                 candidates = _anchors(context, rule, network)
+
+            # Una regola che chiede non posa (REL-011): dove scatta e la cosa di
+            # cui parla non c'e' ancora, esce la sua domanda — salvo che il
+            # progettista abbia gia' risposto su uno degli ancoraggi della rete.
+            if rule.then.question is not None:
+                answered = any(
+                    _declares(declared.get(item, {}), rule.then.question.answered_by)
+                    for item in context.anchors_of(
+                        network.id, rule.when.anchor_has_function, rule.when.anchor_has_trait
+                    )
+                )
+                open_anchors = [
+                    anchor
+                    for anchor in candidates
+                    if not _already_there(
+                        context, rule, network.id, anchor, _domain_at(domain_of, anchor)
+                    )
+                ]
+                if not answered:
+                    for anchor in _limited(open_anchors, rule.cardinality, served):
+                        missing = _gap(
+                            context, rule, network, anchor, GapReason.DESIGNER_QUESTION
+                        )
+                        gaps.setdefault(missing.key, missing)
+                continue
 
             # Un ancoraggio su un fluido per cui il catalogo non ha nessun pezzo
             # con quella funzione non si puo' servire — ma non si tace: diventa

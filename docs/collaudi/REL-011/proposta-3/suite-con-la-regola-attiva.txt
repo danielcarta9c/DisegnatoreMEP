@@ -1,0 +1,6 @@
+FAILED tests/collaudo/test_p5_regime_e_tratto_comune.py::test_dove_il_tratto_comune_non_esiste_davvero_esce_un_punto_aperto
+FAILED tests/collaudo/test_p5_regime_e_tratto_comune.py::test_le_sedici_regole_si_caricano_e_nessuna_nomina_un_componente
+FAILED tests/rules/test_acceptance_properties.py::test_the_document_for_the_pm_carries_one_card_per_rule
+FAILED tests/rules/test_acceptance_properties.py::test_every_rule_has_its_card_under_the_name_the_engineer_reads
+FAILED tests/rules/test_accessori_tolti.py::test_un_accessorio_tolto_non_si_posa_e_non_torna_come_punto_aperto
+5 failed, 2070 passed, 15 skipped, 1 deselected, 10 xfailed in 66.09s (0:01:06)
