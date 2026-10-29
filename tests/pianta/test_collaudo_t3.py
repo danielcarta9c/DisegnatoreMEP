@@ -196,7 +196,7 @@ def test_un_numero_di_tratta_che_collega_pezzi_diversi_ferma(tmp_path: Path) -> 
 
 def test_le_altre_discordanze_sono_avvisi(tmp_path: Path) -> None:
     def cambia(dati: dict) -> None:
-        dati["tracciati"] = [t for t in dati["tracciati"] if t["tratta"] != "T15"]
+        dati["tracciati"] = [t for t in dati["tracciati"] if t["tratta"] != "T16"]
         next(t for t in dati["tracciati"] if t["tratta"] == "T01")["lunghezza_m"] = 6
         next(t for t in dati["tracciati"] if t["tratta"] == "T02")["tratta"] = "T22"
 
@@ -204,7 +204,7 @@ def test_le_altre_discordanze_sono_avvisi(tmp_path: Path) -> None:
                               distinta=DISTINTA)
     avvisi = " ".join(esito.rilievi.confronto)
     assert "T01: L 6 m in pianta, 5 m nella distinta" in avvisi
-    assert "T15 della distinta (UI-01 – CF-01) non e' in pianta" in avvisi
+    assert "T16 della distinta (UI-01 – CF-01) non e' in pianta" in avvisi
     assert "T22 (PLZ-01 – TA-02) non c'e' nella distinta; con questi capi nella distinta c'e' T02" in avvisi
     assert "T05" not in avvisi  # la ripresa e' un raccordo diretto: non va in pianta
     assert esito.rilievi.confronto_bloccante == []
@@ -262,7 +262,7 @@ def test_la_scritta_dice_la_lunghezza_del_progettista_come_lo_schema(esiti: dict
     """Lo schema scrive «Ø200 · L 5 m», la pianta scriveva «T01 · Ø200 · L 7 m»."""
     esito = esiti["collaudo-t3"]
     testi = _testi(esito)
-    assert "T01 · Ø200 · L 5 m" in testi and "T16 · 2×0,75 · L 2 m" in testi
+    assert "T01 · Ø200 · L 5 m" in testi and "T15 · 2×0,75 · L 2 m" in testi
     assert not [t for t in testi if t.startswith("T01 ") and "L 7 m" in t]
     t01 = next(t for t in _dati(esito)["tratte"] if t["tratta"] == "T01")
     assert t01["lunghezza_da_quotare_m"] == 7  # la L da quotare resta nella tabella

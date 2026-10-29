@@ -16,7 +16,7 @@
    "attivita": "1.1.0",
    "verifica": "1.1.0"
   },
-  "impronta": "dea73506dac30790"
+  "impronta": "f8b849f909489495"
  },
  "intestazione": [
   "Offerta richiesta: PREZZO A CORPO, FISSO E INVARIABILE, per l'impianto finito e funzionante. Le quantità sono indicative e già maggiorate: l'installatore le verifica nel SOPRALLUOGO OBBLIGATORIO prima dell'offerta e ne risponde; quanto manca va aggiunto nella sezione H.",
@@ -109,7 +109,7 @@
      "um": "conf.",
      "quantita": 4,
      "fornitura": "installatore",
-     "note": "26,5 m in 4 tratti interi: 7 + 5 + 8,5 + 6 m",
+     "note": "26,5 m in 4 tratti interi: 7 + 5 + 6 + 8,5 m",
      "da_definire": false,
      "domande": [],
      "regola": "fluidi/supply_air/flessibile-in-confezioni",
@@ -183,7 +183,7 @@
      "da_definire": false,
      "domande": [],
      "regola": "fluidi/supply_air/sostegni",
-     "calcolo": "T01 7 + T02 6 + T03 9 + T04 6 = 28 (L / 1,2 m per eccesso +1 per tratto)",
+     "calcolo": "T01 7 + T02 6 + T03 6 + T04 9 = 28 (L / 1,2 m per eccesso +1 per tratto)",
      "fonte": "regola Nove C per i canali flessibili",
      "perche": "Un flessibile che si imbarca fra due sostegni perde portata e fa condensa nelle anse: un sostegno ogni 1,2 m per tratto, più uno vicino all'attacco."
     },
@@ -684,15 +684,15 @@
     },
     {
      "rif": "E.9",
-     "testo": "Cavo 2×0,75, Linea del comando a filo, Interfaccia centrale di zona - unità interna",
+     "testo": "Cavo 2×0,75, Interfaccia centrale di zona - unità interna, Linea del comando a filo",
      "um": "m",
      "quantita": 13.5,
      "fornitura": "installatore",
-     "note": "T15 stimati 6 m; T16 stimati 2 m",
+     "note": "T15 stimati 2 m; T16 stimati 6 m",
      "da_definire": false,
      "domande": [],
      "regola": "fluidi/control_bus/cavo-di-bus",
-     "calcolo": "T15 8,5 + T16 5 = 13,5 m",
+     "calcolo": "T15 5 + T16 8,5 = 13,5 m",
      "fonte": "regola Nove C per i bus e le linee di comando",
      "perche": "Una riga per tipo di cavo (la `sezione` del tratto: «2×0,75 (P1-P2)», «bus Airzone, schermato»), a metro."
     },
@@ -706,7 +706,7 @@
      "da_definire": false,
      "domande": [],
      "regola": "fluidi/control_bus/corrugato-di-bus",
-     "calcolo": "T12 9,5 + T13 7 + T14 11,5 + T15 8,5 + T16 5 = 41,5 m × 1, per eccesso a 10 m = 50 m",
+     "calcolo": "T12 9,5 + T13 7 + T14 11,5 + T15 5 + T16 8,5 = 41,5 m × 1, per eccesso a 10 m = 50 m",
      "fonte": "stima Nove C (corrugato a decine di metri)",
      "perche": "Il bus corre separato dalle linee di potenza, nel suo corrugato."
     },
@@ -1261,22 +1261,6 @@
    "num": "T03",
    "rete": "Mandata dell'aria",
    "fluido": "supply_air",
-   "da_a": "PLZ-01 - TA-04",
-   "tubazioni": [
-    "ramo-soggiorno-parete"
-   ],
-   "sezione": "Ø200",
-   "materiale": "flessibile coibentato",
-   "portata_m3h": 300,
-   "lunghezza_stimata_m": 6,
-   "lunghezza_da_quotare_m": 8.5,
-   "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
-   "raccordo_diretto": false
-  },
-  {
-   "num": "T04",
-   "rete": "Mandata dell'aria",
-   "fluido": "supply_air",
    "da_a": "PLZ-01 - TA-03",
    "tubazioni": [
     "ramo-soggiorno-varco"
@@ -1290,6 +1274,22 @@
    "raccordo_diretto": false
   },
   {
+   "num": "T04",
+   "rete": "Mandata dell'aria",
+   "fluido": "supply_air",
+   "da_a": "PLZ-01 - TA-04",
+   "tubazioni": [
+    "ramo-soggiorno-parete"
+   ],
+   "sezione": "Ø200",
+   "materiale": "flessibile coibentato",
+   "portata_m3h": 300,
+   "lunghezza_stimata_m": 6,
+   "lunghezza_da_quotare_m": 8.5,
+   "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
+   "raccordo_diretto": false
+  },
+  {
    "num": "T05",
    "rete": "Ripresa dell'aria",
    "fluido": "return_air",
@@ -1298,7 +1298,7 @@
     "ripresa-ui"
    ],
    "sezione": "800×300",
-   "materiale": "canale di ripresa coibentato",
+   "materiale": "plenum di ripresa coibentato",
    "portata_m3h": null,
    "lunghezza_stimata_m": 0,
    "lunghezza_da_quotare_m": null,
@@ -1453,22 +1453,6 @@
   },
   {
    "num": "T15",
-   "rete": "Linea del comando a filo",
-   "fluido": "control_bus",
-   "da_a": "UI-01 - CF-01",
-   "tubazioni": [
-    "cavo-comando-filo"
-   ],
-   "sezione": "2×0,75",
-   "materiale": "cavo di bus",
-   "portata_m3h": null,
-   "lunghezza_stimata_m": 6,
-   "lunghezza_da_quotare_m": 8.5,
-   "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
-   "raccordo_diretto": false
-  },
-  {
-   "num": "T16",
    "rete": "Interfaccia centrale di zona - unità interna",
    "fluido": "control_bus",
    "da_a": "CZ-01 - UI-01",
@@ -1481,6 +1465,22 @@
    "lunghezza_stimata_m": 2,
    "lunghezza_da_quotare_m": 5,
    "calcolo": "(2 + 1) × 1,15 = 3,45 → 3,5 m; minimo bus 5 m → 5 m",
+   "raccordo_diretto": false
+  },
+  {
+   "num": "T16",
+   "rete": "Linea del comando a filo",
+   "fluido": "control_bus",
+   "da_a": "UI-01 - CF-01",
+   "tubazioni": [
+    "cavo-comando-filo"
+   ],
+   "sezione": "2×0,75",
+   "materiale": "cavo di bus",
+   "portata_m3h": null,
+   "lunghezza_stimata_m": 6,
+   "lunghezza_da_quotare_m": 8.5,
+   "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
    "raccordo_diretto": false
   }
  ],
@@ -1554,8 +1554,8 @@
   "«L da quotare» = (L stimata + 1 m) × 1,15, per eccesso a 0,5 m; minimi: fluido frigorigeno in fase liquida, fluido frigorigeno in fase gassosa 12 m; condensa 10 m; bus di comando 5 m; aria di mandata, aria di ripresa 2 m. La L stimata è un dato del progettista, scritta su ogni tratto.",
   "Quantità indicative per un prezzo a corpo, fisso e invariabile: l'installatore le verifica nel sopralluogo obbligatorio prima dell'offerta; le varianti hanno solo il prezzo unitario.",
   "Velocità nei tratti di aria di mandata da 1,9 a 2,7 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).",
-  "Fornitura: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C.",
-  "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole dea73506dac30790)."
+  "Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C.",
+  "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole f8b849f909489495)."
  ],
  "avvisi": [
   "T08 (Scarico della condensa: UI-01 - SIF-01 - AL-01): la tubazione SIF-01 - AL-01 senza lunghezza; si considera compresa nei 8 m dati sul tratto.",
@@ -1579,5 +1579,7 @@
   "TA-04 (Bocchetta di mandata con plenum di raccordo): manca il dato «dimensione» per «Bocchetta di mandata DA DEFINIRE (dimensione) a doppio filare con serranda».",
   "TA-03 (Bocchetta di mandata con plenum di raccordo): manca il dato «dimensione» per «Bocchetta di mandata DA DEFINIRE (dimensione) a doppio filare con serranda»."
  ],
- "da_confermare": []
+ "da_confermare": [
+  "Fornitura: apparecchiature fornite da Nove C; bocchette e griglie del Committente; opere edili del Committente; messa in servizio con Nove C — come da regole predefinite di Nove C; confermare per questa offerta."
+ ]
 }

@@ -566,7 +566,7 @@
    "lunghezza_m": 3
   },
   {
-   "tratta": "T03",
+   "tratta": "T04",
    "da": "PLZ-01",
    "a": "TA-04",
    "fluido": "supply_air",
@@ -574,7 +574,7 @@
    "lunghezza_m": 6
   },
   {
-   "tratta": "T04",
+   "tratta": "T03",
    "da": "PLZ-01",
    "a": "TA-03",
    "fluido": "supply_air",
@@ -677,7 +677,7 @@
    "quota": "traccia"
   },
   {
-   "tratta": "T15",
+   "tratta": "T16",
    "da": "UI-01",
    "a": "CF-01",
    "fluido": "control_bus",
@@ -686,7 +686,7 @@
    "quota": "traccia"
   },
   {
-   "tratta": "T16",
+   "tratta": "T15",
    "da": "CZ-01",
    "a": "UI-01",
    "fluido": "control_bus",
