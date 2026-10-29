@@ -169,7 +169,11 @@
         "voci": [
           "split-outdoor-unit",
           "ducted-indoor-unit",
-          "zoning-plenum-5"
+          "zoning-plenum-5",
+          "zoning-plenum-2",
+          "zoning-plenum-3",
+          "zoning-plenum-4",
+          "zoning-plenum-6"
         ]
       },
       "fonte": "kit AA-01: lavoro/dimensionamento.py, ATTIVITA[9]; REVISIONE-INDIPENDENTE.md rilievo 13",

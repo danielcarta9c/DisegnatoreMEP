@@ -202,6 +202,202 @@
         }
       ]
     },
+    "zoning-plenum-2": {
+      "nome": "Plenum motorizzato di zona a due serrande",
+      "apparecchiatura": true,
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.3, B.10, B.11, Z.2",
+      "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+      "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
+      "voci": [
+        {
+          "id": "kit-sospensione",
+          "sezione": "B",
+          "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 4
+          },
+          "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
+        },
+        {
+          "id": "isolamento-raccordi-plenum",
+          "sezione": "B",
+          "testo": "Isolamento elastomerico adesivo per raccordi e plenum",
+          "um": "rotolo",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.11",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "I raccordi rigidi fra macchina, plenum e curve fanno condensa se non si isolano."
+        },
+        {
+          "id": "botola-di-ispezione",
+          "sezione": "Z",
+          "fornitura": "opere_edili",
+          "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+        }
+      ]
+    },
+    "zoning-plenum-3": {
+      "nome": "Plenum motorizzato di zona a tre serrande",
+      "apparecchiatura": true,
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.3, B.10, B.11, Z.2",
+      "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+      "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
+      "voci": [
+        {
+          "id": "kit-sospensione",
+          "sezione": "B",
+          "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 4
+          },
+          "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
+        },
+        {
+          "id": "isolamento-raccordi-plenum",
+          "sezione": "B",
+          "testo": "Isolamento elastomerico adesivo per raccordi e plenum",
+          "um": "rotolo",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.11",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "I raccordi rigidi fra macchina, plenum e curve fanno condensa se non si isolano."
+        },
+        {
+          "id": "botola-di-ispezione",
+          "sezione": "Z",
+          "fornitura": "opere_edili",
+          "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+        }
+      ]
+    },
+    "zoning-plenum-4": {
+      "nome": "Plenum motorizzato di zona a quattro serrande",
+      "apparecchiatura": true,
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.3, B.10, B.11, Z.2",
+      "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+      "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
+      "voci": [
+        {
+          "id": "kit-sospensione",
+          "sezione": "B",
+          "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 4
+          },
+          "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
+        },
+        {
+          "id": "isolamento-raccordi-plenum",
+          "sezione": "B",
+          "testo": "Isolamento elastomerico adesivo per raccordi e plenum",
+          "um": "rotolo",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.11",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "I raccordi rigidi fra macchina, plenum e curve fanno condensa se non si isolano."
+        },
+        {
+          "id": "botola-di-ispezione",
+          "sezione": "Z",
+          "fornitura": "opere_edili",
+          "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+        }
+      ]
+    },
+    "zoning-plenum-6": {
+      "nome": "Plenum motorizzato di zona a sei serrande",
+      "apparecchiatura": true,
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.3, B.10, B.11, Z.2",
+      "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+      "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
+      "voci": [
+        {
+          "id": "kit-sospensione",
+          "sezione": "B",
+          "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 4
+          },
+          "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
+        },
+        {
+          "id": "isolamento-raccordi-plenum",
+          "sezione": "B",
+          "testo": "Isolamento elastomerico adesivo per raccordi e plenum",
+          "um": "rotolo",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.11",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "I raccordi rigidi fra macchina, plenum e curve fanno condensa se non si isolano."
+        },
+        {
+          "id": "botola-di-ispezione",
+          "sezione": "Z",
+          "fornitura": "opere_edili",
+          "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+          "um": "n",
+          "calcolo": {
+            "tipo": "per_pezzo",
+            "n": 1
+          },
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
+          "fonte_in_parole": "regola Nove C per la posa del plenum di zona",
+          "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+        }
+      ]
+    },
     "zone-controller": {
       "nome": "Centrale di zona",
       "apparecchiatura": true,

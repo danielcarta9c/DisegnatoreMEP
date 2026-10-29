@@ -540,7 +540,8 @@ come un impianto ad acqua: macchine dal catalogo per mestiere, una rete per circ
 tubazione per tratto. Cambiano le voci, i fluidi e il dominio.
 
 **Le voci.** Unità esterna `split-outdoor-unit`; unità interna canalizzata
-`ducted-indoor-unit`; plenum motorizzato `zoning-plenum-5` e la sua centrale
+`ducted-indoor-unit`; plenum motorizzato da `zoning-plenum-2` a `zoning-plenum-6`, col numero delle uscite
+(tutte collegate: cinque bocchette, `zoning-plenum-5`), e la sua centrale
 `zone-controller`; bocchetta di mandata `air-supply-terminal`; ripresa
 `return-air-terminal`; sifone `condensate-trap` e allaccio allo scarico
 `condensate-outlet` (un confine, come l'acquedotto); quadro `electrical-panel`; sezionatore
