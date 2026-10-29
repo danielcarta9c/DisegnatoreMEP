@@ -350,6 +350,29 @@ def test_la_tabella_delle_apparecchiature_porta_le_macchine_dell_aria(
     assert per_pezzo["ui"].caratteristiche == "5,7 kW · 1080 m³/h"
 
 
+def test_un_termostato_con_marca_o_modello_sta_in_tabella(catalogo_aria: ComponentRegistry, progetto: Any) -> None:
+    """Collaudo T3 di REL-012, §2: il progettista aveva dato «Airzone Think a filo» per i
+    termostati, e sulla tavola non comparivano. Con marca o modello dichiarati entrano;
+    senza, restano fuori come prima."""
+    modello = progetto(
+        {"liquido": ("refrigerant", "refrigerant_liquid")},
+        {
+            "centrale": "zone-controller",
+            "con-marca": ("room-thermostat", {"marca": "Airzone", "modello": "Think a filo"}, None),
+            "solo-modello": ("room-thermostat", {"modello": "Think a filo"}, None),
+            "senza": ("room-thermostat", {"etichetta": "Soggiorno"}, None),
+            "nd": ("room-thermostat", {"marca": "ND"}, None),
+        },
+        [],
+    )
+    righe = righe_della_tabella(
+        modello, catalogo_aria, Naming.from_directory(NAMING), {}, [item.id for item in modello.components]
+    )
+    per_pezzo = {riga.component_id: riga for riga in righe}
+    assert set(per_pezzo) == {"centrale", "con-marca", "solo-modello"}
+    assert (per_pezzo["con-marca"].marca, per_pezzo["con-marca"].modello) == ("Airzone", "Think a filo")
+
+
 def test_la_tavola_di_prova_ha_le_sigle_e_la_scritta_del_comando(tavola: tuple[ProjectModel, Any]) -> None:
     """Il comando a filo sta in tabella e porta la sua scritta accanto (§6.2); nessuna
     sigla e' scritta dall'ingegnere, e la tabella le ha tutte (§6.1)."""

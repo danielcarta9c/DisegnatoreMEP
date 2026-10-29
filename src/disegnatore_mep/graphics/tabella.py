@@ -73,8 +73,9 @@ FUNZIONI_DELLA_TABELLA: tuple[str, ...] = (
 diretta, il plenum motorizzato di zona, la centrale di zona e il comando a filo.
 Sono le macchine che il progettista sceglie con marca e modello, come la pompa di
 calore. Fuori le bocchette e le riprese, che sono terminali, e i termostati, che
-sono tanti uguali e portano la loro scritta di zona accanto. *Proposta della
-sessione*, da giudicare sulla tavola.
+sono tanti uguali e portano la loro scritta di zona accanto — se non hanno marca o
+modello dichiarati (`FUNZIONI_CON_MARCA_O_MODELLO`). *Proposta della sessione*, da
+giudicare sulla tavola.
 
 Generatori, accumuli e bollitori, separatori idraulici, scambiatori,
 circolatori — e i vasi. **Fuori** le valvole, come il PO ha detto, e con loro
@@ -82,6 +83,15 @@ filtri, strumenti, raccordi e attacchi. Fuori anche i **terminali** (radiatori,
 ventilconvettori, pannelli): nello schema di centrale sono le utenze, non
 macchine della centrale. *Proposta della sessione*, da giudicare sulla tavola.
 Un pezzo entra se **uno qualunque** dei suoi mestieri e' in elenco."""
+
+FUNZIONI_CON_MARCA_O_MODELLO: tuple[str, ...] = ("room_control",)
+"""I mestieri che entrano nella tabella **solo se il pezzo ha marca o modello
+dichiarati** (collaudo T3 di REL-012, §2: il progettista aveva dato «Airzone Think a
+filo» per i termostati, e sulla tavola non comparivano). Un termostato senza marca ne'
+modello resta fuori, come prima: una riga col solo nome non dice niente che il simbolo
+non dica. Il preflight vuole sul disegno la sigla di ogni pezzo in tabella (I-160), e
+il motore la scrive per i pezzi fuori dall'acqua (`sigle_sul_disegno`). *Proposta
+della sessione*, da giudicare sulla tavola."""
 
 CARATTERISTICHE_PER_MESTIERE: dict[str, tuple[str, ...]] = {
     "heat_generation": ("power_kw",),
@@ -200,7 +210,10 @@ def righe_della_tabella(
             continue
         voce = catalogo.get(pezzo.definition_id)
         mestieri = tuple(voce.functions)
-        if not set(mestieri) & set(FUNZIONI_DELLA_TABELLA):
+        if not set(mestieri) & set(FUNZIONI_DELLA_TABELLA) and not (
+            set(mestieri) & set(FUNZIONI_CON_MARCA_O_MODELLO)
+            and (_testo(pezzo.properties.get(MARCA)) or _testo(pezzo.properties.get(MODELLO)))
+        ):
             continue
         try:
             famiglia = naming.families.index(naming.family_of(mestieri, pezzo.id))
@@ -465,6 +478,7 @@ def svg_della_tabella(
 __all__ = [
     "CARATTERISTICHE_PER_MESTIERE",
     "CELLA_VUOTA",
+    "FUNZIONI_CON_MARCA_O_MODELLO",
     "FUNZIONI_DELLA_TABELLA",
     "INTESTAZIONE",
     "TestoDellaTabella",
