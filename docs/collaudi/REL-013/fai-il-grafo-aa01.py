@@ -51,6 +51,12 @@ for i in range(1, 6):
 for i in range(1, 5):
     sez[f"e-tz{i}"] = "bus Airzone, schermato"
 for c in g["connections"]:
+    # Il kit scriveva la linea dell'unita' esterna dall'ingresso verso l'uscita, per
+    # aggirare il lato del sezionatore (RAPPORTO del kit, §6.3): la validazione della
+    # fase 1 di REL-012 la ferma, e il lato lo decide ora il mestiere del sezionatore.
+    if c["id"] in ("e-1a", "e-1b"):
+        c["endpoint_a"], c["endpoint_b"] = c["endpoint_b"], c["endpoint_a"]
+for c in g["connections"]:
     p = c["properties"]
     cid = c["id"]
     if cid in sez:

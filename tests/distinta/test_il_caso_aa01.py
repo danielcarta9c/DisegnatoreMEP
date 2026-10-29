@@ -158,7 +158,7 @@ def test_le_tratte_sono_quelle_del_kit(distinta: Distinta) -> None:
         ("T07", "UE-01 - UI-01", 12.0),
         ("T08", "UE-01 - UI-01", 12.0),
         ("T09", "UI-01 - SIF-01 - scarico", 10.0),
-        ("T10", "UE-01 - SZ-01 - QE-01", 20.0),
+        ("T10", "QE-01 - SZ-01 - UE-01", 20.0),
         ("T11", "QE-01 - CZ-01", 15.0),
         ("T12", "UE-01 - UI-01", 13.0),
         ("T13", "UI-01 - CZ-01", 5.0),
