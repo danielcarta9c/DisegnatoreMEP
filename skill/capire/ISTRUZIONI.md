@@ -577,7 +577,8 @@ testa** e non fra le `properties`, perché la tavola li scrive lungo la linea:
 
 - `sezione` — il diametro o la sezione **come il testo li scrive**: «Ø200», «Ø6,35 (1/4")»,
   «3G2,5», «1000×250». Un testo, che non si converte;
-- `lunghezza_m` — la lunghezza del tratto che il progettista dà, in metri, maggiore di zero;
+- `lunghezza_m` — la lunghezza del tratto che il progettista dà, in metri; zero è un raccordo
+  diretto, e la tavola non lo scrive;
 - `scritta` — il testo che la tavola porta sul tratto, se il progettista ne vuole uno suo:
   «Ø200 · 270 m³/h · L 6 m», «bus · L 9 m», «di fabbrica». Se c'è, vince sugli altri due;
   se non c'è, la tavola scrive «sezione · L lunghezza m».
@@ -585,9 +586,8 @@ testa** e non fra le `properties`, perché la tavola li scrive lungo la linea:
 La skill non dimensiona l'aria, l'elettrico e il bus: se il testo non dà sezioni e
 lunghezze **non ci sono**, e li chiedi in una voce sola di `assumptions`, tratto per
 tratto. Un **raccordo diretto** — il plenum sulla bocca dell'unità, la ripresa sulla
-macchina, il cablaggio di fabbrica fra plenum e centrale — ha lunghezza zero, che il
-campo in testa non ammette: se serve alla distinta materiali, va fra le `properties`
-(`"lunghezza_m": 0`). Fra le `properties` vanno anche gli altri dati dei tratti che la
+macchina, il cablaggio di fabbrica fra plenum e centrale — ha `"lunghezza_m": 0`: la
+distinta materiali lo legge come raccordo, e la tavola non scrive la lunghezza. Fra le `properties` vanno anche gli altri dati dei tratti che la
 distinta legge, se il progettista li dà: `portata_m3h` di un ramo d'aria, gli
 `attraversamenti` di parete, la `protezione` di una linea.
 

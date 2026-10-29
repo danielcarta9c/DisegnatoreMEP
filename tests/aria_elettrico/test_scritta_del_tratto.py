@@ -57,6 +57,8 @@ def _tubo(**campi: Any) -> ConnectionModel:
         ({"lunghezza_m": 2}, "L 2 m"),
         ({"sezione": "Ø200", "lunghezza_m": 6, "scritta": "di fabbrica"}, "di fabbrica"),
         ({}, None),
+        ({"lunghezza_m": 0}, None),
+        ({"sezione": "1000×250", "lunghezza_m": 0}, "1000×250"),
     ],
 )
 def test_che_cosa_scrive_un_tratto(campi: dict[str, Any], atteso: str | None) -> None:
@@ -69,7 +71,7 @@ def test_il_numero_all_italiana() -> None:
 
 @pytest.mark.parametrize(
     "campi",
-    [{"lunghezza_m": 0}, {"lunghezza_m": -1}, {"lunghezza_m": float("inf")}, {"sezione": ""}, {"scritta": "   "},
+    [{"lunghezza_m": -1}, {"lunghezza_m": float("inf")}, {"sezione": ""}, {"scritta": "   "},
      {"lunghezza_m": "6"}],
 )
 def test_il_modello_rifiuta_un_dato_che_non_si_legge(campi: dict[str, Any]) -> None:
@@ -93,7 +95,7 @@ def test_lo_schema_del_progetto_porta_i_tre_campi() -> None:
     assert pubblicato == json.loads(json.dumps(ProjectModel.model_json_schema()))
     campi = pubblicato["$defs"]["ConnectionModel"]["properties"]
     assert {"type": "string", "minLength": 1} in campi["sezione"]["anyOf"]
-    assert {"type": "number", "exclusiveMinimum": 0} in campi["lunghezza_m"]["anyOf"]
+    assert {"type": "number", "minimum": 0} in campi["lunghezza_m"]["anyOf"]
     assert {"type": "string", "minLength": 1} in campi["scritta"]["anyOf"]
 
 

@@ -250,9 +250,11 @@ class ConnectionModel(IdentifiedModel):
     """Il diametro o la sezione, come il progettista lo scrive: «Ø200», «Ø6,35
     (1/4")», «3G2,5», «1000×250». Un testo, non un numero: la skill non lo calcola e
     non lo converte."""
-    lunghezza_m: Annotated[float, Field(gt=0, allow_inf_nan=False, strict=True)] | None = None
+    lunghezza_m: Annotated[float, Field(ge=0, allow_inf_nan=False, strict=True)] | None = None
     """La lunghezza del tratto in metri, dato del progettista (riserva compresa, se
-    lui la comprende). Non e' una misura sulla tavola, che e' uno schema."""
+    lui la comprende). Non e' una misura sulla tavola, che e' uno schema. Zero e'
+    il raccordo diretto — il plenum sulla bocca dell'unita' —: la distinta lo legge
+    cosi', e la tavola non scrive nessuna lunghezza."""
     scritta: Annotated[str, Field(min_length=1)] | None = None
     """Il testo libero del tratto: se c'e', **vince** su sezione e lunghezza — «di
     fabbrica», «bus · L 9 m». Sezione e lunghezza restano dati della distinta."""

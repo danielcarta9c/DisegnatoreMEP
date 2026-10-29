@@ -7,7 +7,8 @@ date. Sono tre campi della tubazione (`ConnectionModel`), facoltativi:
 - `scritta` — un testo libero, e se c'e' **vince**: «di fabbrica», «bus · L 9 m»;
 - altrimenti `sezione` e `lunghezza_m`: «{sezione} · L {lunghezza} m», con la virgola
   decimale e senza decimali inutili — 6 fa «6», 3,5 fa «3,5». Con uno solo dei due si
-  scrive quello: «Ø200», «L 6 m»;
+  scrive quello: «Ø200», «L 6 m». Una lunghezza zero e' un raccordo diretto, e non si
+  scrive;
 - altrimenti niente.
 
 **Chi la posa e' il posatore dei diametri** (`layout.diametri`), con le sue regole: in
@@ -58,7 +59,7 @@ def testo_della_tubazione(tubazione: ConnectionModel) -> str | None:
     parti: list[str] = []
     if tubazione.sezione is not None and tubazione.sezione.strip():
         parti.append(tubazione.sezione.strip())
-    if tubazione.lunghezza_m is not None:
+    if tubazione.lunghezza_m:
         parti.append(f"L {numero_italiano(tubazione.lunghezza_m)} m")
     return SEPARATORE.join(parti) if parti else None
 
