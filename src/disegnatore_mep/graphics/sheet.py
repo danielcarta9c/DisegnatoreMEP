@@ -501,7 +501,13 @@ def render_sheet(
                 parts.append(_flow_arrow(segment, colour, route.flow_from_start))
 
     for placed in sheet.symbols:
-        symbol = symbols.get(placed.symbol_id).rotated(placed.rotation_deg, placed.specchiato)
+        # Il moncone di una porta che la tavola non collega non si disegna (collaudo
+        # T1 di REL-012): si toglie dal corpo prima di girarlo.
+        symbol = (
+            symbols.get(placed.symbol_id)
+            .senza_le_porte(placed.porte_scollegate)
+            .rotated(placed.rotation_deg, placed.specchiato)
+        )
         # La freccia di verso si traccia qui, non nel corpo: punta nel verso
         # locale dell'acqua che la posa ha letto dal catalogo (I-032), e ruota
         # con la porta a cui e' legata.

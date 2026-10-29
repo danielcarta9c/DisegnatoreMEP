@@ -115,6 +115,22 @@ class PlacedSymbol(StrictModel):
     senza frecce; una geometria agli atti senza questo campo si legge ancora e
     disegna le frecce verso la porta, come la libreria le pubblica.
     """
+    porte_scollegate: list[str] = Field(default_factory=list)
+    """Le porte del simbolo che **nessuna linea della tavola collega**, fra quelle
+    che il corpo disegna col loro moncone (`data-port`; collaudo T1 di REL-012, §3).
+
+    Il renderer toglie il loro moncone: una porta facoltativa libera non disegna
+    niente. Vuoto per tutti i simboli idronici, che di monconi a parte non ne hanno;
+    e vuoto non si scrive, cosi' le geometrie di prima restano identiche."""
+
+    @model_serializer(mode="wrap")
+    def _senza_le_porte_scollegate_vuote(
+        self, handler: SerializerFunctionWrapHandler
+    ) -> dict[str, Any]:
+        dati: dict[str, Any] = handler(self)
+        if not dati.get("porte_scollegate"):
+            dati.pop("porte_scollegate", None)
+        return dati
 
     def physical_port(self, port_id: str) -> str:
         """L'attacco del simbolo su cui sta questa porta del modello."""
@@ -233,6 +249,11 @@ class DiametroSullaTavola(StrictModel):
     per il DN di una strada principale che accanto alla linea non entra (I-162). La
     freccia tocca la linea del tratto, e l'etichetta e' orizzontale. `None` — il
     caso di sempre — non si scrive."""
+    del_progettista: bool = False
+    """Se e' la **scritta del tratto** che il progettista ha dato (REL-012), e non un
+    DN calcolato. Il preflight ci legge quali linee portano la loro scritta, e quindi
+    lungo quali un testo di pezzo non deve stare (collaudo T1). `False` — il DN, e
+    ogni geometria di prima — non si scrive."""
 
     @model_serializer(mode="wrap")
     def _senza_il_corpo_di_sempre(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
@@ -240,6 +261,8 @@ class DiametroSullaTavola(StrictModel):
         for campo in ("corpo_mm", "richiamo"):
             if dati.get(campo) is None:
                 dati.pop(campo, None)
+        if not dati.get("del_progettista"):
+            dati.pop("del_progettista", None)
         return dati
 
 

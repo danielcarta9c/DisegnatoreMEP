@@ -148,8 +148,9 @@ def test_ogni_simbolo_della_libreria_si_traduce(simboli: SymbolRegistry) -> None
     assert contenuto.count(" c\n") > 0, "archi e cerchi diventano curve di Bezier"
     assert esito.sostituzioni == []
     # 54 con lo sfiato con rubinetto (I-211); 68 con gli undici simboli del kit
-    # aria-aria (I-224) e i tre del comando nell'idronico (I-226), `REL-012`.
-    assert len(simboli.all()) == 68
+    # aria-aria (I-224) e i tre del comando nell'idronico (I-226), `REL-012`; 72
+    # con i plenum di zona da due a sei serrande (collaudo T1 di REL-012).
+    assert len(simboli.all()) == 72
 
 
 def test_il_foglio_di_riscontro_si_traduce(simboli: SymbolRegistry) -> None:

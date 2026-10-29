@@ -494,6 +494,18 @@ CONTROL_PROPOSAL = (
     "proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226): da approvare dal PO "
     "sulla tavola"
 )
+PLENUM_T1 = (
+    "proposta della sessione del 29/10/2026 (collaudo T1 di REL-012, plenum a quattro uscite): "
+    "la voce del plenum a cinque serrande del kit AA-01, con le serrande che il plenum ha; "
+    "da approvare dal PO sulla tavola"
+)
+PANEL_T1 = (
+    "uscite dalla terza alla sesta: proposta della sessione del 29/10/2026 (collaudo T1 e fase 3 "
+    "di REL-012), da approvare dal PO sulla tavola"
+)
+PLENUM_OUTLET_COUNTS = (2, 3, 4, 5, 6)
+"""Da due a sei serrande: Airzone e gli altri costruttori fanno plenum da 2 a 6-8 bocche."""
+NUMERI_IN_LETTERE = {2: "due", 3: "tre", 4: "quattro", 5: "cinque", 6: "sei"}
 QUIET = [SHUTOFF_ORDINARY, INLINE]
 """I caratteri delle voci dell'aria, del refrigerante e dell'elettrico: si
 chiudono come tutto il resto, e nient'altro (vedi sopra, `maintainable`)."""
@@ -564,17 +576,26 @@ REL_012: list[dict[str, Any]] = [
         ],
         sources=[KIT_AA01],
     ),
-    definition(
-        "zoning-plenum-5",
-        "Plenum motorizzato di zona a cinque serrande",
-        ["air_zoning"],
-        QUIET,
-        [
-            port_of("in", "aeraulic", SUPPLY_AIR, "in"),
-            control_port("motori", CONTROL_BUS),
-            *(port_of(f"out_{indice}", "aeraulic", SUPPLY_AIR, "out") for indice in range(1, 6)),
-        ],
-        sources=[KIT_AA01],
+    # Il plenum di zona da due a sei serrande (collaudo T1 di REL-012, §2.1): una
+    # voce per numero, con le uscite tutte obbligatorie, perche' una serranda che
+    # non porta a una bocchetta non c'e'. Il cinque e' quello del kit e della M.02.
+    *(
+        definition(
+            f"zoning-plenum-{uscite}",
+            f"Plenum motorizzato di zona a {NUMERI_IN_LETTERE[uscite]} serrande",
+            ["air_zoning"],
+            QUIET,
+            [
+                port_of("in", "aeraulic", SUPPLY_AIR, "in"),
+                control_port("motori", CONTROL_BUS),
+                *(
+                    port_of(f"out_{indice}", "aeraulic", SUPPLY_AIR, "out")
+                    for indice in range(1, uscite + 1)
+                ),
+            ],
+            sources=[KIT_AA01 if uscite == 5 else PLENUM_T1],
+        )
+        for uscite in PLENUM_OUTLET_COUNTS
     ),
     definition(
         "zone-controller",
@@ -633,9 +654,11 @@ REL_012: list[dict[str, Any]] = [
         QUIET,
         [
             control_port("out_1", POWER, "out"),
-            control_port("out_2", POWER, "out", required=False),
+            # Fino a sei uscite (collaudo T1 e fase 3 di REL-012): facoltative, e
+            # una libera non si disegna.
+            *(control_port(f"out_{indice}", POWER, "out", required=False) for indice in range(2, 7)),
         ],
-        sources=[KIT_AA01],
+        sources=[KIT_AA01, PANEL_T1],
     ),
     definition(
         "isolator-switch",

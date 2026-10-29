@@ -1,3 +1,5 @@
+import re
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 from xml.etree import ElementTree
@@ -82,6 +84,25 @@ class Symbol:
             body_transform=transform,
         )
 
+    @property
+    def porte_col_moncone(self) -> frozenset[str]:
+        """Le porte che il corpo disegna in un gruppo `data-port` suo."""
+        return frozenset(re.findall(r'<g data-port="([^"]+)">', self.body))
+
+    def senza_le_porte(self, porte: Iterable[str]) -> "Symbol":
+        """Il simbolo senza il moncone delle `porte` (collaudo T1 di REL-012, §3).
+
+        Una porta che la tavola non collega non disegna niente: il suo gruppo
+        `data-port` si toglie dal corpo. I simboli che non hanno gruppi — tutti gli
+        idronici — restano quelli che sono, byte per byte. Si chiama **prima** di
+        `rotated`: il manifesto non cambia, cambia solo il disegno."""
+        body = self.body
+        for porta in sorted(set(porte)):
+            body = re.sub(rf'<g data-port="{re.escape(porta)}">.*?</g>', "", body, count=1)
+        if body == self.body:
+            return self
+        return Symbol(manifest=self.manifest, body=body, body_transform=self.body_transform)
+
 
 class SymbolRegistry:
     def __init__(self, symbols: list[Symbol]) -> None:
@@ -148,6 +169,29 @@ class SymbolRegistry:
                         f"the glyph group {glyph_id} of {manifest.id} must open with "
                         f'<g data-glyph="{glyph_id}" and carry no transform of its '
                         f"own: the registry writes the counter-rotation there"
+                    )
+            # Un moncone in un gruppo `data-port` (collaudo T1 di REL-012): il gruppo
+            # nomina una porta del manifesto, una volta sola, senza trasformazione e
+            # senza gruppi dentro — il motore lo toglie per testo, quando la porta
+            # non e' collegata, e un gruppo annidato si chiuderebbe al posto sbagliato.
+            monconi = [
+                element
+                for element in root.iter()
+                if _local_name(element.tag) == "g" and element.get("data-port") is not None
+            ]
+            nominate = [element.get("data-port", "") for element in monconi]
+            for element, porta in zip(monconi, nominate, strict=True):
+                if (
+                    porta not in manifest.port_ids
+                    or nominate.count(porta) > 1
+                    or element.get("transform") is not None
+                    or any(_local_name(figlio.tag) == "g" for figlio in element.iter() if figlio is not element)
+                    or f'<g data-port="{porta}">' not in body
+                ):
+                    raise SymbolError(
+                        f"the port group {porta!r} of {manifest.id} must name one port of "
+                        f'the manifest, once, open with <g data-port="{porta}">, and carry '
+                        f"no transform and no nested group"
                     )
             symbols.append(Symbol(manifest=manifest, body=body))
         if not symbols:

@@ -98,7 +98,7 @@ def rimando(modello: ProjectModel, vista: str) -> str | None:
     return f"{dove} «{TITOLO_DELLA_VISTA[altra]}», dallo stesso schema"
 
 
-def _sigle_del_grafo_intero(
+def sigle_del_grafo_intero(
     modello: ProjectModel, catalogo: ComponentRegistry, naming: object
 ) -> dict[str, str]:
     """Le sigle che la lettura dell'impianto da' sul grafo intero, o nessuna se il
@@ -156,10 +156,12 @@ def vista_del_grafo(
 
     # Le sigle del grafo intero, scritte sui pezzi che la tavola nomina: le
     # apparecchiature della tabella. Gli altri pezzi una sigla sul disegno non la
-    # portano, e scrivergliela la aggiungerebbe.
+    # portano, e scrivergliela la aggiungerebbe. Quelle dei pezzi fuori dall'acqua le
+    # scrive l'esecutore, dal grafo intero anche loro, e cedono il posto alle scritte
+    # dei tratti (collaudo T1 di REL-012): scritte qui sul modello, non cederebbero.
     from disegnatore_mep.graphics.tabella import FUNZIONI_DELLA_TABELLA
 
-    sigle = _sigle_del_grafo_intero(modello, catalogo.per_il_progetto(modello), naming)
+    sigle = sigle_del_grafo_intero(modello, catalogo.per_il_progetto(modello), naming)
 
     def con_la_sigla(pezzo: ComponentInstance) -> ComponentInstance:
         if pezzo.tag is not None or pezzo.id not in sigle:
@@ -206,6 +208,7 @@ __all__ = [
     "ha_il_comando",
     "numero_della_tavola",
     "rimando",
+    "sigle_del_grafo_intero",
     "solo_comando",
     "vista_del_grafo",
 ]

@@ -101,7 +101,8 @@ def test_upright_symbols_declare_only_their_own_orientation() -> None:
 AIR_AND_CONTROL_MACHINES = (
     "split-outdoor-unit",
     "ducted-indoor-unit",
-    "zoning-plenum-5",
+    # Il plenum di zona da due a sei serrande (collaudo T1 di REL-012).
+    *(f"zoning-plenum-{uscite}" for uscite in range(2, 7)),
     "zone-controller",
     "electrical-panel",
     "plant-controller",

@@ -1,0 +1,55 @@
+{
+  "id": "zoning-plenum-3",
+  "version": "1.0.0",
+  "name": "Plenum motorizzato di zona a tre serrande",
+  "functions": [
+    "air_zoning"
+  ],
+  "traits": [
+    "shutoff_ordinary",
+    "attachment_inline"
+  ],
+  "symbol_id": "zoning-plenum-3",
+  "composite": false,
+  "ports": [
+    {
+      "id": "in",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "in",
+      "required": true
+    },
+    {
+      "id": "motori",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": true
+    },
+    {
+      "id": "out_1",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_2",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    },
+    {
+      "id": "out_3",
+      "domain": "aeraulic",
+      "medium": "supply_air",
+      "flow": "out",
+      "required": true
+    }
+  ],
+  "sources": [
+    "CONV-FOUNDATION",
+    "proposta della sessione del 29/10/2026 (collaudo T1 di REL-012, plenum a quattro uscite): la voce del plenum a cinque serrande del kit AA-01, con le serrande che il plenum ha; da approvare dal PO sulla tavola"
+  ]
+}

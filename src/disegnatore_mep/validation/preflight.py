@@ -63,6 +63,7 @@ from disegnatore_mep.layout.geometry import (
 from disegnatore_mep.layout.labels import (
     ETICHETTA,
     LINE_CLEARANCE_MM,
+    fasce_delle_scritte,
     riquadro_della_scritta,
     riquadro_di_rispetto,
     segmenti_del_richiamo,
@@ -166,6 +167,7 @@ MEASURE_ORDER: tuple[str, ...] = (
     "u_turns",
     "orthogonality_of_leaders",
     "labels_on_runs",
+    "labels_along_written_runs",
     "leader_crossings",
     "omitted_tags",
     "omitted_free_labels",
@@ -621,6 +623,52 @@ def labels_on_runs(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validati
                     IssueSeverity.WARNING,
                     f"l'etichetta {label.id} copre la tratta {_run_name(hit)}: un testo "
                     f"si scrive su un posto libero o si omette (D5, D-075, DRAW-003-R1)",
+                    sorted({sheet.sheet_id, label.id, *hit.connection_ids}),
+                )
+            )
+    return findings
+
+
+def labels_along_written_runs(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
+    """Collaudo T1 di REL-012, §3 — una scritta di pezzo lungo una linea che porta la
+    sua scritta del tratto, e che si legge come la scritta della linea.
+
+    «Terrazzo», l'etichetta dell'unita' esterna, stava mezzo millimetro sopra il
+    franco della linea del gas, accanto a «5/8" · L 9 m»: `LABEL_ON_A_RUN` non la
+    vedeva, perche' non toccava la linea. Qui si misura la **fascia** di un corpo
+    sopra e sotto ogni tratto orizzontale che porta la scritta del progettista
+    (`labels.fasce_delle_scritte`, la stessa che la posa rispetta). E' un **avviso**
+    come gli altri sui testi: la posa la evita, e se succede lo stesso la tavola esce
+    e si sa. Le linee scritte sono quelle che portano una scritta del progettista
+    (`DiametroSullaTavola.del_progettista`): senza — tutte le tavole idroniche di
+    prima, anche quelle col DN calcolato — non misura niente."""
+    findings: list[ValidationIssue] = []
+    height = frame.standard.text_small_mm
+    for sheet in drawing.sheets:
+        linee = frozenset(
+            item for scritta in sheet.diametri if scritta.del_progettista for item in scritta.connection_ids
+        )
+        if not linee:
+            continue
+        fasce = [
+            (route, fascia)
+            for route in sheet.routes
+            for fascia in fasce_delle_scritte([route], linee, height)
+        ]
+        for label in sheet.labels:
+            if label.role not in ("tag", "data"):
+                continue
+            box = _label_box(label, height)
+            hit = next((route for route, fascia in fasce if _boxes_overlap(box, fascia)), None)
+            if hit is None:
+                continue
+            findings.append(
+                _finding(
+                    "PIECE_LABEL_ALONG_A_WRITTEN_RUN",
+                    IssueSeverity.WARNING,
+                    f"la scritta «{label.text}» ({label.id}) sta lungo la tratta "
+                    f"{_run_name(hit)}, che porta la sua scritta: si legge come la scritta "
+                    f"della linea (collaudo T1 di REL-012)",
                     sorted({sheet.sheet_id, label.id, *hit.connection_ids}),
                 )
             )
@@ -1609,6 +1657,7 @@ def preflight_drawing(
         *u_turns(drawing, frame),
         *orthogonality_of_leaders(drawing),
         *labels_on_runs(drawing, frame),
+        *labels_along_written_runs(drawing, frame),
         *leader_crossings(drawing),
         *omitted_tags(drawing),
         *omitted_free_labels(drawing, project),
