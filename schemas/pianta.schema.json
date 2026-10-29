@@ -93,6 +93,50 @@
       "title": "Apertura",
       "type": "object"
     },
+    "Dettaglio": {
+      "additionalProperties": false,
+      "description": "Un riquadro di dettaglio: una zona della pianta disegnata a scala\nmaggiore su una tavola a parte, quando a 1:50 e' troppo fitta per le sue\nscritte.",
+      "properties": {
+        "id": {
+          "pattern": "^[A-Z0-9]{1,3}$",
+          "title": "Id",
+          "type": "string"
+        },
+        "rettangolo": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Rettangolo",
+          "type": "array"
+        },
+        "scala": {
+          "default": 20,
+          "maximum": 50,
+          "minimum": 5,
+          "title": "Scala",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "rettangolo"
+      ],
+      "title": "Dettaglio",
+      "type": "object"
+    },
     "Estremo": {
       "additionalProperties": false,
       "description": "Un capo di un tracciato: il pezzo e, se conta, il lato da cui si prende.",
@@ -335,6 +379,13 @@
           "minimum": 0,
           "title": "Foratura M",
           "type": "number"
+        },
+        "scarto_della_misura": {
+          "default": 0.15,
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Scarto Della Misura",
+          "type": "number"
         }
       },
       "title": "Parametri",
@@ -348,6 +399,19 @@
           "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
           "title": "Sigla",
           "type": "string"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
         },
         "tipo": {
           "title": "Tipo",
@@ -558,7 +622,7 @@
     },
     "Tracciato": {
       "additionalProperties": false,
-      "description": "Un tracciato da instradare: da un pezzo a un altro.",
+      "description": "Un tracciato da instradare: da un pezzo a un altro, attraverso gli organi\nin linea che lo schema numera nella stessa tratta.",
       "properties": {
         "tratta": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
@@ -587,6 +651,13 @@
           ],
           "title": "A"
         },
+        "passa_per": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Passa Per",
+          "type": "array"
+        },
         "fluido": {
           "enum": [
             "supply_air",
@@ -605,6 +676,32 @@
           ],
           "title": "Fluido",
           "type": "string"
+        },
+        "lunghezza_m": {
+          "anyOf": [
+            {
+              "ge": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lunghezza M"
+        },
+        "lunghezza_minima_m": {
+          "anyOf": [
+            {
+              "ge": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lunghezza Minima M"
         },
         "dimensione": {
           "anyOf": [
@@ -741,10 +838,33 @@
       "type": "array"
     },
     "maggiorazione": {
-      "$ref": "#/$defs/Maggiorazione"
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Maggiorazione"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     },
     "parametri": {
       "$ref": "#/$defs/Parametri"
+    },
+    "dettagli": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/Dettaglio"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Dettagli"
     },
     "note": {
       "items": {

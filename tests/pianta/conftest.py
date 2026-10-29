@@ -16,7 +16,10 @@ CASI = {
     "corridoio": ESEMPI / "casi" / "corridoio.json",
     "incrocio": ESEMPI / "casi" / "incrocio.json",
     "muro": ESEMPI / "casi" / "muro-senza-aperture.json",
+    "collaudo": ESEMPI / "casi" / "collaudo-t1.json",
 }
+"""`collaudo` e' la pianta del collaudo indipendente REL-012 (t1): una planimetria
+inventata, data a parole, con le lunghezze del progettista sui tracciati."""
 CARTIGLIO = RADICE / "assets" / "cartigli" / "Cartiglio_NoveC_A3.json"
 
 
@@ -26,5 +29,5 @@ def esiti(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Esito]:
     out: dict[str, Esito] = {}
     for nome, percorso in CASI.items():
         cartella = tmp_path_factory.mktemp(f"pianta-{nome}")
-        out[nome] = disegna_la_pianta(percorso, cartella, cartiglio, png=(nome == "appartamento"))
+        out[nome] = disegna_la_pianta(percorso, cartella, cartiglio, png=(nome in ("appartamento", "collaudo")))
     return out

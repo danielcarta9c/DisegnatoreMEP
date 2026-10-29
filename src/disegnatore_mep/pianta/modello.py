@@ -22,10 +22,11 @@ from __future__ import annotations
 
 import json
 import math
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Literal
+from typing import Literal, cast, get_args
 
-from pydantic import Field, ValidationError, model_validator
+from pydantic import BaseModel, Field, ValidationError, model_validator
 
 from disegnatore_mep.model.base import FiniteFloat, StrictModel
 
@@ -151,6 +152,10 @@ class Pezzo(StrictModel):
     """Un pezzo posato: la sigla, che cosa e', dove sta (il centro) e quanto ingombra."""
 
     sigla: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+    """La sigla della tavola dello schema funzionale: UI-01, SZ-01…"""
+    id: str | None = Field(default=None, pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+    """Facoltativo: l'id del pezzo nel grafo dello schema (`sezionatore`). Un
+    tracciato puo' nominare il pezzo con la sigla o con l'id."""
     tipo: str
     """Che cosa e': una voce del catalogo, o una parola."""
     nome: str | None = None
@@ -180,13 +185,25 @@ class Estremo(StrictModel):
 
 
 class Tracciato(StrictModel):
-    """Un tracciato da instradare: da un pezzo a un altro."""
+    """Un tracciato da instradare: da un pezzo a un altro, attraverso gli organi
+    in linea che lo schema numera nella stessa tratta."""
 
     tratta: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
-    """Il numero di tratta, come nella tabella dello schema funzionale: T01…"""
+    """Il numero di tratta, come nella tabella delle tratte della distinta: T01…"""
     da: str | Estremo
     a: str | Estremo
+    passa_per: list[str] = Field(default_factory=list)
+    """Gli organi in linea, in ordine da `da` ad `a` (sigla o id del pezzo): il
+    sezionatore fra il quadro e l'unita' esterna. Lo schema numera quadro –
+    sezionatore – UE come **una** tratta: la pianta la instrada a pezzi, con un
+    numero solo e una scritta sola."""
     fluido: Fluido
+    lunghezza_m: FiniteFloat | None = Field(default=None, ge=0)
+    """La lunghezza del progettista, la stessa del grafo dello schema
+    (`lunghezza_m` della tubazione). Se c'e', la tavola quota **questa**, con la
+    regola della distinta, e la misura in pianta e' un controllo."""
+    lunghezza_minima_m: FiniteFloat | None = Field(default=None, ge=0)
+    """Il minimo che il progettista scrive sulla tratta, come nel grafo."""
     dimensione: str | None = None
     """Ø200, 1/4", 3G2,5…: un dato del progettista, si scrive com'e'."""
     quota: Quota = "controsoffitto"
@@ -237,11 +254,34 @@ class Parametri(StrictModel):
     curva_m: FiniteFloat = Field(default=0.5, ge=0)
     sormonto_m: FiniteFloat = Field(default=1.5, ge=0)
     foratura_m: FiniteFloat = Field(default=4.0, ge=0)
+    scarto_della_misura: FiniteFloat = Field(default=0.15, gt=0, le=1)
+    """Quanto la lunghezza misurata in pianta puo' superare quella data dal
+    progettista prima che la tavola lo segnali: 0,15 e' il 15 %, l'incertezza
+    che la regola delle lunghezze gia' copre col suo fattore 1,15."""
 
     @model_validator(mode="after")
     def corsia_ordinata(self) -> Parametri:
         if not self.corsia_da_m < self.corsia_a_m < self.centro_da_m:
             raise ValueError("vuole corsia_da_m < corsia_a_m < centro_da_m")
+        return self
+
+
+class Dettaglio(StrictModel):
+    """Un riquadro di dettaglio: una zona della pianta disegnata a scala
+    maggiore su una tavola a parte, quando a 1:50 e' troppo fitta per le sue
+    scritte."""
+
+    id: str = Field(pattern=r"^[A-Z0-9]{1,3}$")
+    """La lettera del dettaglio: A, B…"""
+    rettangolo: tuple[FiniteFloat, FiniteFloat, FiniteFloat, FiniteFloat]
+    """La zona, in metri: [x0, y0, x1, y1]."""
+    scala: int = Field(default=20, ge=5, le=50)
+
+    @model_validator(mode="after")
+    def ordinato(self) -> Dettaglio:
+        x0, y0, x1, y1 = self.rettangolo
+        if not (x0 < x1 and y0 < y1):
+            raise ValueError(f"il dettaglio {self.id}: il rettangolo vuole x0 < x1 e y0 < y1")
         return self
 
 
@@ -268,9 +308,52 @@ class Pianta(StrictModel):
     sfondo: Sfondo | None = None
     pezzi: list[Pezzo] = Field(default_factory=list)
     tracciati: list[Tracciato] = Field(default_factory=list)
-    maggiorazione: Maggiorazione = Field(default_factory=Maggiorazione)
+    maggiorazione: Maggiorazione | None = None
+    """Facoltativo, e di regola **assente**: allora la regola delle lunghezze e'
+    quella della distinta (`rules/distinta/lunghezze.json`), e pianta e
+    distinta danno lo stesso numero per la stessa tratta. Si dichiara solo se il
+    progettista da' un'altra regola, e la tavola lo dice."""
     parametri: Parametri = Field(default_factory=Parametri)
+    dettagli: list[Dettaglio] | None = None
+    """I riquadri di dettaglio. Se manca, la tavola ne fa uno da se' dove le
+    scritte non trovano posto a 1:50, e lo dice; `[]` li spegne."""
     note: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="before")
+    @classmethod
+    def sigle_al_posto_degli_id(cls, dati: object) -> object:
+        """Un tracciato puo' nominare un pezzo con l'id del grafo: qui diventa la
+        sigla, cosi' il resto conosce una parola sola per pezzo."""
+        if not isinstance(dati, dict):
+            return dati
+        pezzi, tracciati = dati.get("pezzi"), dati.get("tracciati")
+        if not isinstance(pezzi, list) or not isinstance(tracciati, list):
+            return dati
+        sigle = {p.get("sigla") for p in pezzi if isinstance(p, dict)}
+        per_id = {
+            p["id"]: p["sigla"] for p in pezzi
+            if isinstance(p, dict) and isinstance(p.get("id"), str) and isinstance(p.get("sigla"), str)
+        }
+
+        def sigla(nome: object) -> object:
+            if isinstance(nome, str) and nome not in sigle and nome in per_id:
+                return per_id[nome]
+            return nome
+
+        nuovi: list[object] = []
+        for tracciato in tracciati:
+            if isinstance(tracciato, dict):
+                tracciato = dict(tracciato)
+                for capo in ("da", "a"):
+                    valore = tracciato.get(capo)
+                    if isinstance(valore, dict) and "pezzo" in valore:
+                        tracciato[capo] = {**valore, "pezzo": sigla(valore["pezzo"])}
+                    elif isinstance(valore, str):
+                        tracciato[capo] = sigla(valore)
+                if isinstance(tracciato.get("passa_per"), list):
+                    tracciato["passa_per"] = [sigla(n) for n in tracciato["passa_per"]]
+            nuovi.append(tracciato)
+        return {**dati, "tracciati": nuovi}
 
     @model_validator(mode="after")
     def coerente(self) -> Pianta:
@@ -297,16 +380,42 @@ class Pianta(StrictModel):
                     f"il centro dell'apertura {apertura.id} non sta sul muro {muro.id}: "
                     f"e' a {distanza:.3f} m dall'asse"
                 )
+        unici([p.id for p in self.pezzi if p.id is not None], "l'id di pezzo")
         sigle = {p.sigla for p in self.pezzi}
         for tracciato in self.tracciati:
             for capo in (tracciato.estremo_da, tracciato.estremo_a):
                 if capo.pezzo not in sigle:
                     raise ValueError(
-                        f"la tratta {tracciato.tratta} va al pezzo {capo.pezzo!r}, che non c'e'"
+                        f"la tratta {tracciato.tratta} va al pezzo {capo.pezzo!r}, che non c'e' "
+                        "(un pezzo si nomina con la sigla, o con l'id dichiarato sul pezzo)"
                     )
             if tracciato.estremo_da.pezzo == tracciato.estremo_a.pezzo:
                 raise ValueError(f"la tratta {tracciato.tratta} comincia e finisce sullo stesso pezzo")
+            for nome in tracciato.passa_per:
+                if nome not in sigle:
+                    raise ValueError(
+                        f"la tratta {tracciato.tratta} passa per il pezzo {nome!r}, che non c'e' "
+                        "(passa_per vuole la sigla, o l'id, di pezzi dichiarati)"
+                    )
+            capi = [tracciato.estremo_da.pezzo, *tracciato.passa_per, tracciato.estremo_a.pezzo]
+            if len(set(capi)) != len(capi):
+                raise ValueError(
+                    f"la tratta {tracciato.tratta} passa due volte per lo stesso pezzo: {' – '.join(capi)}"
+                )
+            if tracciato.passa_per and tracciato.fascio:
+                raise ValueError(
+                    f"la tratta {tracciato.tratta} ha sia passa_per sia fascio: un fascio corre fra "
+                    "gli stessi due pezzi, senza organi in linea"
+                )
         return self
+
+    def tronchi(self, tracciato: Tracciato) -> list[tuple[Estremo, Estremo]]:
+        """I tronchi di una tratta: da un capo al primo organo in linea, da li' al
+        successivo, fino all'altro capo. Senza `passa_per`, un tronco solo."""
+        if not tracciato.passa_per:
+            return [(tracciato.estremo_da, tracciato.estremo_a)]
+        tappe = [tracciato.estremo_da, *(Estremo(pezzo=n) for n in tracciato.passa_per), tracciato.estremo_a]
+        return list(zip(tappe, tappe[1:], strict=False))
 
 
 def _lunghezza(muro: Muro) -> float:
@@ -336,11 +445,107 @@ def carica_pianta(percorso: Path) -> Pianta:
     try:
         return Pianta.model_validate(dati)
     except ValidationError as errore:
-        righe = []
-        for dettaglio in errore.errors():
-            dove = ".".join(str(parte) for parte in dettaglio["loc"]) or "(la pianta)"
-            righe.append(f"  {dove}: {dettaglio['msg']}")
-        raise ErroreDellaPianta(f"{percorso}: la pianta non regge\n" + "\n".join(righe)) from None
+        raise ErroreDellaPianta(f"{percorso}: la pianta non regge\n" + "\n".join(spiega(errore))) from None
+
+
+ESEMPI: dict[str, str] = {
+    "Muro": '{"id": "m-nord", "da": [0.15, 0.15], "a": [11.45, 0.15], "spessore": 0.30, "tipo": "perimetrale"}',
+    "Apertura": '{"id": "porta-1", "muro": "t-corr", "centro": [2.55, 3.70], "larghezza": 0.90, "tipo": "porta"}',
+    "Stanza": '{"id": "corridoio", "nome": "Disimpegno", "poligono": [[0.3, 3.75], [11.3, 3.75], '
+              '[11.3, 4.85], [0.3, 4.85]], "controsoffitto": true, "disimpegno": true}',
+    "Rettangolo": '{"id": "veletta-soggiorno", "rettangolo": [0.30, 4.95, 2.30, 5.45]}',
+    "Sfondo": '{"file": "catastale.jpg", "px_per_m": 40, "origine_px": [120, 80]}',
+    "Pezzo": '{"sigla": "UI-01", "tipo": "ducted-indoor-unit", "x": 6.3, "y": 4.3, '
+             '"larghezza": 1.1, "profondita": 0.73}',
+    "Estremo": '{"pezzo": "PLZ-01", "lato": "sinistra"}',
+    "Dettaglio": '{"id": "A", "rettangolo": [4.5, 3.6, 8.0, 5.2], "scala": 20}',
+    "Tracciato": '{"tratta": "T10", "da": "QE-01", "a": "UE-01", "passa_per": ["SZ-01"], '
+                 '"fluido": "power_supply", "dimensione": "3G4", "quota": "traccia", "lunghezza_m": 18}',
+}
+"""Un esempio per oggetto: l'errore lo mostra, perche' un campo sbagliato si
+corregge prima guardando un oggetto giusto che leggendo lo schema."""
+
+ATTESI: dict[str, str] = {
+    "rettangolo": "[x0, y0, x1, y1] in metri, con x0 < x1 e y0 < y1",
+    "poligono": "[[x, y], [x, y], …] in metri, almeno tre punti",
+    "da": "la sigla di un pezzo («UI-01»), o {\"pezzo\": \"UI-01\", \"lato\": \"sotto\"}",
+    "a": "la sigla di un pezzo («UE-01»), o {\"pezzo\": \"UE-01\", \"lato\": \"sopra\"}",
+    "centro": "[x, y] in metri, sull'asse del muro",
+    "lunghezza_m": "un numero di metri, quello del grafo dello schema",
+    "passa_per": "un elenco di sigle (o id) di pezzi, in ordine: [\"SZ-01\"]",
+}
+
+
+def _annotazione_del_modello(annotazione: object) -> type[BaseModel] | None:
+    if isinstance(annotazione, type) and issubclass(annotazione, BaseModel):
+        return annotazione
+    for argomento in get_args(annotazione):
+        trovato = _annotazione_del_modello(argomento)
+        if trovato is not None:
+            return trovato
+    return None
+
+
+def _modello_a(percorso: Sequence[int | str]) -> type[BaseModel] | None:
+    """Il modello dell'oggetto che sta in quel punto del JSON."""
+    modello: type[BaseModel] | None = Pianta
+    for parte in percorso:
+        if modello is None:
+            return None
+        if isinstance(parte, int):
+            continue
+        if parte in modello.model_fields:
+            modello = _annotazione_del_modello(modello.model_fields[parte].annotation)
+        elif parte in ESEMPI:  # il ramo di un'unione: «Estremo»
+            modello = cast(type[BaseModel], globals()[parte])
+        elif parte == "str":
+            return None
+    return modello
+
+
+def spiega(errore: ValidationError) -> list[str]:
+    """Gli errori di pydantic detti come si correggono: il posto, il campo
+    atteso, e un esempio dell'oggetto giusto."""
+    righe: list[str] = []
+    visti: set[str] = set()
+    dettagli = errore.errors()
+    # Di un'unione «sigla o oggetto» si dice il ramo che l'utente ha scritto:
+    # se ha scritto un oggetto, l'errore del ramo «testo» e' rumore.
+    rami_oggetto = {tuple(d["loc"][: d["loc"].index(m)]) for d in dettagli for m in ESEMPI if m in d["loc"]}
+    for dettaglio in dettagli:
+        if dettaglio["loc"] and dettaglio["loc"][-1] == "str" and tuple(dettaglio["loc"][:-1]) in rami_oggetto:
+            continue
+        loc = [p for p in dettaglio["loc"] if p not in ("str",) and p not in ESEMPI]
+        dove = ".".join(str(p) for p in loc) or "(la pianta)"
+        tipo = dettaglio["type"]
+        campo = str(loc[-1]) if loc else ""
+        genitore = loc[:-1]
+        if tipo == "extra_forbidden":
+            modello = _modello_a(genitore)
+            campi = ", ".join(modello.model_fields) if modello else ""
+            riga = f"  {dove}: il campo «{campo}» non c'e' in questo oggetto"
+            if campi:
+                riga += f"; i campi sono: {campi}"
+            if modello is not None and modello.__name__ in ESEMPI:
+                riga += f". Esempio: {ESEMPI[modello.__name__]}"
+        elif tipo == "missing":
+            riga = f"  {dove}: manca il campo «{campo}»"
+            if campo in ATTESI:
+                riga += f" (atteso: {ATTESI[campo]})"
+            modello = _modello_a(genitore)
+            if modello is not None and modello.__name__ in ESEMPI:
+                riga += f". Esempio: {ESEMPI[modello.__name__]}"
+        elif tipo == "literal_error":
+            ammessi = dettaglio.get("ctx", {}).get("expected", "")
+            riga = f"  {dove}: {dettaglio.get('input')!r} non e' ammesso; i valori sono {ammessi}"
+        else:
+            riga = f"  {dove}: {dettaglio['msg']}"
+            if campo in ATTESI:
+                riga += f" (atteso: {ATTESI[campo]})"
+        if riga not in visti:
+            visti.add(riga)
+            righe.append(riga)
+    return righe
 
 
 def schema_della_pianta() -> dict[str, object]:
