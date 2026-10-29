@@ -1999,10 +1999,11 @@ PLANT_CONTROLLER_OUTPUTS = (7.5, 17.5, 27.5, 37.5)
 PLANT_CONTROLLER_PROBES = (7.5, 15.0, 22.5)
 """Gli ingressi delle sonde, sul fondo."""
 
-TEMPERATURE_PROBE_PORTS = [
-    port("a", "bottom", *BRANCHED_ACCESSORY),
-    port("signal", "top", *BRANCHED_ACCESSORY),
-]
+TEMPERATURE_PROBE_PORTS = [port("a", "bottom", *BRANCHED_ACCESSORY)]
+TEMPERATURE_PROBE_CONTROL_PORTS = [port("signal", "top", *BRANCHED_ACCESSORY)]
+"""Il segnale della sonda e' una porta di comando come le altre (REL-012, fase 3):
+facoltativa, e da parte finche' il grafo non la collega. La sonda resta cosi' un
+pezzo con un attacco solo, che si gira verso il tubo da cui pende."""
 PLANT_CONTROLLER_PORTS = [
     port_at("power", "left", 10.0, *PLANT_CONTROLLER),
     port_at("bus", "left", 20.0, *PLANT_CONTROLLER),
@@ -2110,6 +2111,8 @@ class SymbolSpec:
     clearance_mm: float = CLEARANCE_MM
     """L'area di rispetto sulle facce con porta. Un raccordo e' un punto della
     tubazione, non un apparecchio, e ne tiene una minima (D-119)."""
+    control_ports: list[dict[str, Any]] = field(default_factory=list)
+    """Le porte elettriche e di comando (REL-012, fase 3): `CONTROL_PORTS`."""
 
 
 def inline_symbol(
@@ -2121,6 +2124,7 @@ def inline_symbol(
     allowed_rotations_deg: list[int] | None = None,
     version: str = VERSION,
     stroke_weight: str = "medium",
+    control_ports: list[dict[str, Any]] | None = None,
 ) -> SymbolSpec:
     """Componente in linea: due porte opposte, a sinistra e a destra."""
     w, h = size
@@ -2136,6 +2140,7 @@ def inline_symbol(
         allowed_rotations_deg=list(allowed_rotations_deg or ALLOWED_ROTATIONS_DEG),
         version=version,
         stroke_weight=stroke_weight,
+        control_ports=list(control_ports or []),
     )
 
 
@@ -2230,7 +2235,12 @@ non si sposta comunque**.
 
 
 def two_port_terminal(
-    symbol_id: str, name: str, body_of: Any, source: str, version: str = "1.1.0"
+    symbol_id: str,
+    name: str,
+    body_of: Any,
+    source: str,
+    version: str = "1.1.0",
+    control_ports: list[dict[str, Any]] | None = None,
 ) -> SymbolSpec:
     """Terminale d'impianto: ingresso e uscita **tutt'e due sulla faccia sinistra**.
 
@@ -2263,11 +2273,59 @@ def two_port_terminal(
         # Una porta ha cambiato faccia: il manifesto dei quattro terminali di
         # allora e' salito di minore. Un terminale nato dopo parte da 1.0.0.
         version=version,
+        control_ports=list(control_ports or []),
     )
 
 
 HEAT_PUMP_W, HEAT_PUMP_H = MACHINE
 STORAGE_W, STORAGE_H = STORAGE
+
+# --- le porte elettriche e di comando (REL-012, fase 3, I-226) ----------------
+# **Proposte della sessione del 29 ottobre 2026, da approvare dal PO sulla
+# tavola.** Stanno fra le `control_ports` del manifesto: non sono sul percorso
+# dell'acqua, sono facoltative, e il registro le tiene da parte finche' il grafo
+# non le collega — senza elettrico nel grafo nessuna tavola cambia. Il corpo dei
+# simboli **non cambia**: il cavo arriva sulla faccia del riquadro.
+#
+# Le facce sono quelle libere dall'acqua:
+#
+# - le **macchine** (pompe di calore, caldaie, boiler in pompa di calore) le
+#   portano **sotto**, alimentazione a sinistra e bus a destra, lontane dal
+#   fianco degli attacchi idraulici;
+# - il **circolatore** porta l'alimentazione **sopra**, al centro: e' la faccia
+#   libera di un pezzo in linea, e gira con lui;
+# - la **valvola motorizzata a tre vie** porta il comando dell'attuatore
+#   **sopra**, al centro: la terza via e' sotto, e sopra c'e' lo stelo;
+# - il **ventilconvettore** le porta **a destra**: l'acqua entra a sinistra
+#   (D-167), e sopra e sotto il canalizzato ha i collari dell'aria.
+MACHINE_CONTROL_ALONG = (10.0, 20.0)
+"""Alimentazione e bus sotto una macchina, da sinistra: dieci millimetri fra
+l'uno e l'altro, come le uscite del regolatore."""
+
+
+def machine_control_ports(width_mm: float, height_mm: float) -> list[dict[str, Any]]:
+    """L'alimentazione e il bus di una macchina, sulla faccia di sotto."""
+    alimentazione, bus = MACHINE_CONTROL_ALONG
+    return [
+        port_at("power", "bottom", alimentazione, width_mm, height_mm),
+        port_at("bus", "bottom", bus, width_mm, height_mm),
+    ]
+
+
+DHW_HEAT_PUMP_CONTROL_PORTS = [
+    port_at("power", "bottom", 7.5, STORAGE_W, STORAGE_H),
+    port_at("bus", "bottom", 17.5, STORAGE_W, STORAGE_H),
+]
+"""Il boiler in pompa di calore e' largo 25: le due porte a 7,5 e 17,5."""
+PUMP_CONTROL_PORTS = [port("power", "top", *DEVICE)]
+"""L'alimentazione del circolatore, sopra al centro."""
+VALVE_CONTROL_PORTS = [port("comando", "top", *DEVICE)]
+"""Il comando dell'attuatore di una valvola motorizzata, sopra al centro."""
+FAN_COIL_CONTROL_PORTS = [
+    port_at("power", "right", 5.0, *TERMINAL),
+    port_at("bus", "right", 10.0, *TERMINAL),
+]
+"""L'alimentazione e il bus del ventilconvettore, sul fianco destro."""
 MANIFOLD_W, MANIFOLD_H = MANIFOLD
 MANIFOLD_OUTLETS = (12.5, 27.5)
 
@@ -2520,8 +2578,10 @@ SYMBOLS: list[SymbolSpec] = [
         body=gas_boiler_body(MACHINE[0], MACHINE[1], GAS_BOILER_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        # Una porta si e' mossa: il manifesto sale di minore (D-163).
-        version="1.1.0",
+        # Una porta si e' mossa: il manifesto sale di minore (D-163). E poi le
+        # porte di comando (REL-012): di nuovo.
+        version="1.2.0",
+        control_ports=machine_control_ports(*MACHINE),
     ),
     SymbolSpec(
         id="plate-heat-exchanger",
@@ -2593,8 +2653,10 @@ SYMBOLS: list[SymbolSpec] = [
         body=reserve_body(STORAGE_W, STORAGE_H, DHW_HEAT_PUMP_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        # Una porta in piu', l'attacco del ricircolo (D-176): sale di minore.
-        version="1.2.0",
+        # Una porta in piu', l'attacco del ricircolo (D-176): sale di minore. E
+        # poi le porte di comando (REL-012): di nuovo.
+        version="1.3.0",
+        control_ports=DHW_HEAT_PUMP_CONTROL_PORTS,
     ),
     SymbolSpec(
         id="mixing-valve-3way",
@@ -2609,6 +2671,8 @@ SYMBOLS: list[SymbolSpec] = [
         ],
         body=diverting_valve_body(*DEVICE),
         source=SOURCE_UNI_TAB3,
+        version="1.1.0",
+        control_ports=VALVE_CONTROL_PORTS,
     ),
     # --- idronico -----------------------------------------------------------
     # Il T di UNI 9511 serve a due cose che sul disegno hanno lo stesso segno e
@@ -2662,7 +2726,10 @@ SYMBOLS: list[SymbolSpec] = [
         "strainer", "Filtro a Y", INLINE_ACCESSORY, strainer_body, SOURCE_PRACTICE_HYDRONIC,
         STRAINER_ROTATIONS_DEG, version="3.0.0", stroke_weight="thick",
     ),
-    inline_symbol("pump-circulator", "Pompa di circolazione", DEVICE, pump_body, SOURCE_PRACTICE_HYDRONIC),
+    inline_symbol(
+        "pump-circulator", "Pompa di circolazione", DEVICE, pump_body, SOURCE_PRACTICE_HYDRONIC,
+        version="1.1.0", control_ports=PUMP_CONTROL_PORTS,
+    ),
     single_port_symbol(
         "air-vent", "Valvola di sfiato aria", SMALL_AIR_VENT, "bottom",
         air_vent_body, SOURCE_PRACTICE_HYDRONIC, AIR_VENT_ROTATIONS_DEG,
@@ -2682,7 +2749,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=heat_pump_body(HEAT_PUMP_W, HEAT_PUMP_H, HEAT_PUMP_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="2.0.0",
+        version="2.1.0",
+        control_ports=machine_control_ports(HEAT_PUMP_W, HEAT_PUMP_H),
     ),
     SymbolSpec(
         id="dhw-cylinder",
@@ -2726,6 +2794,8 @@ SYMBOLS: list[SymbolSpec] = [
         ],
         body=diverting_valve_body(*DEVICE),
         source=SOURCE_UNI_TAB3,
+        version="1.1.0",
+        control_ports=VALVE_CONTROL_PORTS,
     ),
     SymbolSpec(
         id="switching-valve-3way",
@@ -2747,6 +2817,8 @@ SYMBOLS: list[SymbolSpec] = [
         ],
         body=diverting_valve_body(*DEVICE),
         source=SOURCE_UNI_TAB3,
+        version="1.1.0",
+        control_ports=VALVE_CONTROL_PORTS,
     ),
     SymbolSpec(
         id="zone-manifold",
@@ -2769,7 +2841,10 @@ SYMBOLS: list[SymbolSpec] = [
     two_port_terminal(
         "underfloor-panel", "Pannello radiante", underfloor_body, SOURCE_PRACTICE_HYDRONIC, "1.2.0"
     ),
-    two_port_terminal("fan-coil", "Ventilconvettore", fan_coil_body, SOURCE_PRACTICE_HYDRONIC),
+    two_port_terminal(
+        "fan-coil", "Ventilconvettore", fan_coil_body, SOURCE_PRACTICE_HYDRONIC, "1.2.0",
+        control_ports=FAN_COIL_CONTROL_PORTS,
+    ),
     # --- i simboli nuovi della prima release (`REL-003`, I-124, D-184) -------
     SymbolSpec(
         id="heat-pump-air-water-large",
@@ -2781,6 +2856,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=large_heat_pump_body(*LARGE_MACHINE, LARGE_HEAT_PUMP_PORTS),
         source=SOURCE_REL003_LARGE_HEAT_PUMP,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        version="1.1.0",
+        control_ports=machine_control_ports(*LARGE_MACHINE),
     ),
     SymbolSpec(
         id="gas-boiler-modular",
@@ -2792,6 +2869,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=modular_boiler_body(*MODULAR_BOILER, MODULAR_BOILER_PORTS),
         source=SOURCE_REL003_MODULAR_BOILER,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        version="1.1.0",
+        control_ports=machine_control_ports(*MODULAR_BOILER),
     ),
     SymbolSpec(
         id="solar-collector",
@@ -2825,7 +2904,8 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     two_port_terminal(
         "fan-coil-ducted", "Ventilconvettore canalizzato", ducted_fan_coil_body,
-        SOURCE_REL003_DUCTED_FAN_COIL, version=VERSION,
+        SOURCE_REL003_DUCTED_FAN_COIL, version="1.1.0",
+        control_ports=FAN_COIL_CONTROL_PORTS,
     ),
     # --- aeraulico ----------------------------------------------------------
     inline_symbol("duct-damper", "Serranda", INLINE_ACCESSORY, duct_damper_body, SOURCE_PRACTICE_PENDING),
@@ -3015,6 +3095,7 @@ SYMBOLS: list[SymbolSpec] = [
         ports=TEMPERATURE_PROBE_PORTS,
         body=temperature_probe_body(*BRANCHED_ACCESSORY),
         source=SOURCE_REL012_CONTROL,
+        control_ports=TEMPERATURE_PROBE_CONTROL_PORTS,
     ),
     single_port_symbol(
         "outdoor-temperature-probe", "Sonda esterna", DEVICE, "left",
@@ -3048,7 +3129,12 @@ def manifest_payload(spec: SymbolSpec) -> dict[str, Any]:
         # destra, quindi l'asse che le unisce e' orizzontale.
         payload["inline_gap_mm"] = spec.width_mm
     payload["ports"] = spec.ports
-    payload["keep_out"] = keep_out(spec.ports, spec.clearance_mm)
+    # Le porte di comando si scrivono solo dove ci sono: gli altri manifesti
+    # restano quelli di prima, byte per byte. L'area di rispetto le conta come
+    # le altre: una faccia con una porta ha il suo rispetto.
+    if spec.control_ports:
+        payload["control_ports"] = spec.control_ports
+    payload["keep_out"] = keep_out(spec.ports + spec.control_ports, spec.clearance_mm)
     if spec.flow_glyphs:
         payload["flow_glyphs"] = spec.flow_glyphs
     if spec.upright_glyphs:

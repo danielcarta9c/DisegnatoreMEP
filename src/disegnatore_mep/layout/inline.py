@@ -22,7 +22,7 @@ from disegnatore_mep.catalog.registry import ComponentRegistry
 from disegnatore_mep.catalog.schema import SERVICE_ORGAN_FUNCTIONS, ComponentTrait
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.model.project import PortRef, ProjectModel
-from disegnatore_mep.model.types import PortFlow
+from disegnatore_mep.model.types import Domain, PortFlow
 
 from .chains import CHAIN_PORT_GAP_MM as CHAIN_PORT_GAP_MM
 from .chains import MIN_SPACING_MM as MIN_SPACING_MM
@@ -1009,6 +1009,19 @@ def settle_sheet(
     in_order = sorted(
         trunks, key=lambda trunk: -int(levels.get(trunk.connection_ids, Level.SERVIZIO))
     )
+    # **Su una tavola con l'acqua, i cavi vengono dopo** (REL-012, fase 3). Il
+    # disegno dell'acqua resta quello che il piano ha composto, e i cavi e i bus
+    # passano dove resta posto: un cavo che si instrada prima di una tubazione le
+    # prende la corsia, e la catena di una valvola non trova piu' il suo posto. E il
+    # cavo di un circolatore, che lo posa la sua tratta d'acqua, fino ad allora non
+    # ha dove arrivare. Senza cavi, o senza acqua — l'aria-aria del kit —, l'ordine
+    # e' quello di sempre.
+    domini = {item.id: item.domain for item in project.networks}
+    del_comando = [trunk for trunk in in_order if domini.get(trunk.network_id) is Domain.CONTROL]
+    if del_comando and any(
+        domini.get(trunk.network_id) is Domain.HYDRONIC for trunk in in_order
+    ):
+        in_order = [item for item in in_order if item not in del_comando] + del_comando
     place_of = {trunk.connection_ids: index for index, trunk in enumerate(trunks)}
     settled: dict[int, RoutedTrunk] = {}
     found_by: dict[int, list[PlacedSymbol]] = {}

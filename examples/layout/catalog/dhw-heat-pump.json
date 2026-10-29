@@ -48,9 +48,24 @@
       "flow": "in",
       "required": false,
       "plugged_when_unused": true
+    },
+    {
+      "id": "power",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "in",
+      "required": false
+    },
+    {
+      "id": "bus",
+      "domain": "control",
+      "medium": "control_bus",
+      "flow": "bidirectional",
+      "required": false
     }
   ],
   "sources": [
-    "CONV-FOUNDATION"
+    "CONV-FOUNDATION",
+    "porte elettriche e di comando: proposta della sessione del 29/10/2026 (REL-012 fase 3, I-226), da approvare dal PO sulla tavola"
   ]
 }

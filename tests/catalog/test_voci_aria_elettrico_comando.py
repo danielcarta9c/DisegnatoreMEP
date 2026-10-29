@@ -97,13 +97,19 @@ def test_ogni_porta_fuori_dall_acqua_sta_nel_dominio_del_suo_fluido() -> None:
 def test_la_sonda_pende_dall_acqua_e_manda_il_segnale_sul_bus() -> None:
     """La sonda e' l'unico pezzo con un piede nell'acqua e uno nel comando: pende
     dal tubo — o dal pozzetto dell'accumulo — e il segnale, facoltativo, esce sul
-    bus. Una voce per fluido, come il termometro."""
+    bus. Una voce per fluido, come il termometro.
+
+    Il segnale e' una porta di comando (REL-012, fase 3): il registro coi simboli la
+    tiene da parte finche' il grafo non la collega, e la voce intera la porta."""
+    intere = ComponentRegistry.from_directory(CATALOG)
     for voce, fluido in (
         ("temperature-probe", "heating_water"),
         ("temperature-probe-dhw", "domestic_hot_water"),
         ("temperature-probe-solar", "solar_fluid"),
     ):
-        definizione = catalogo().get(voce)
+        assert catalogo().porte_di_comando(voce) == {"signal"}
+        assert [porta.id for porta in catalogo().get(voce).ports] == ["a"]
+        definizione = intere.get(voce)
         porte = {porta.id: porta for porta in definizione.ports}
         assert definizione.attachment is ComponentTrait.ATTACHMENT_BRANCH
         assert (porte["a"].domain, porte["a"].medium) == (Domain.HYDRONIC, fluido)

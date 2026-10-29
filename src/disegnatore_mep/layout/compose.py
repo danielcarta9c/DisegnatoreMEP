@@ -42,7 +42,7 @@ from .labels import place_labels
 from .legend import build_legend
 from .partition import SheetLink, SheetPartition, partition_project
 from .place import place_sheet
-from .trunks import Trunk, build_trunks
+from .trunks import Trunk, build_trunks, porte_di_comando_in_linea
 
 CROSS_REFERENCE_GAP_MM = 2.5
 """Stacco fra la porta e il marcatore di rimando."""
@@ -573,7 +573,7 @@ def compose_drawing(
     # (DRAW-006-R1, blocco A.2).
     rank = structural_order(project)
 
-    all_trunks = build_trunks(project, inline_ids)
+    all_trunks = build_trunks(project, inline_ids, porte_di_comando_in_linea(project, catalog))
     levels = hierarchy_of(project, catalog, all_trunks)
 
     def place_in_line(

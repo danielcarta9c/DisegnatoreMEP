@@ -16,7 +16,9 @@
       "face": "bottom",
       "x_mm": 2.5,
       "y_mm": 10.0
-    },
+    }
+  ],
+  "control_ports": [
     {
       "id": "signal",
       "face": "top",
