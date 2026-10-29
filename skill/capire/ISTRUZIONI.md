@@ -481,6 +481,10 @@ dell'ingegnere, la soglia è fissa: il conto è aritmetica, non dimensionamento.
   *«Il testo non dà le potenze: il regime della centrale non è stato ricavato. Sotto o
   sopra i 35 kW?»*
 
+**Il regime è delle centrali ad acqua.** Un impianto senza generatori sull'acqua — un
+aria-aria, la sola distribuzione — non ha regime: ometti il campo e **non** chiedere
+niente sui 35 kW (le regole del corredo idronico lì non si applicano).
+
 Contano solo i generatori: accumuli, circolatori e terminali non hanno potenza di
 generazione. `power_kw` è la **potenza termica** della macchina. Se il testo le distingue
 — potenza resa e potenza assorbita — in `power_kw` va la resa, e l'altra si trascrive a
@@ -592,8 +596,9 @@ testa** e non fra le `properties`, perché la tavola li scrive lungo la linea:
 - `lunghezza_m` — la lunghezza del tratto che il progettista dà, in metri; zero è un raccordo
   diretto, e il tratto non porta scritta (salvo una `scritta` tua);
   un tratto spezzato da un sezionatore o da un sifone si scrive in due tubazioni, ma è una
-  linea sola: la lunghezza si scrive su **una** delle due, per il tratto intero, e l'altra resta
-  senza (non `0`, che vuol dire raccordo diretto);
+  linea sola: la lunghezza si scrive su **una** delle due, per il tratto intero — la più lunga:
+  dal quadro al sezionatore, dall'unità al sifone, mai il moncone fra sifone e scarico —, e
+  l'altra resta senza (non `0`, che vuol dire raccordo diretto);
 - `scritta` — il testo che la tavola porta sul tratto, se il progettista ne vuole uno suo:
   «Ø200 · 270 m³/h · L 6 m», «bus · L 9 m», «di fabbrica». Se c'è, vince sugli altri due;
   se non c'è, la tavola scrive «sezione · L lunghezza m».
