@@ -1,0 +1,69 @@
+{
+ "formato": "A3",
+ "vista": "elettrico",
+ "note": [
+  "Quadro specchiato sotto la PdC: l'uscita 1 sta sull'asse dell'alimentazione della macchina, cavo verticale con il sezionatore in mezzo (comporre, elettrico).",
+  "Regolatore al centro: alimentazione e bus a sinistra verso quadro e PdC, comandi a destra verso miscelatrice e deviatrice girate col comando verso di lui, sonde sotto nell'ordine degli ingressi.",
+  "Circolatori in colonna a sinistra del quadro, girati con l'alimentazione verso il quadro.",
+  "Il bus PdC-regolatore e l'alimentazione del regolatore si incrociano una volta: il regolatore ha l'alimentazione sopra il bus e il quadro sta sotto.",
+  "Giro 2: cavo quadro-PdC allungato a 45 mm per le scritte della linea e la sigla del sezionatore; regolatore 20 mm piu' a destra per la corsia libera fra bus e alimentazione (B9)."
+ ],
+ "pezzi": {
+  "pdc": {
+   "x": 0,
+   "y": 0
+  },
+  "quadro": {
+   "x": -7.5,
+   "y": 75,
+   "specchio": true,
+   "regola": "uscita 1 sull'asse dell'alimentazione PdC"
+  },
+  "regolatore": {
+   "x": 80,
+   "y": 50
+  },
+  "circ-pannelli": {
+   "x": -40,
+   "y": 55,
+   "rotazione": 90,
+   "regola": "alimentazione verso il quadro"
+  },
+  "circ-radiatori": {
+   "x": -40,
+   "y": 77.5,
+   "rotazione": 90,
+   "regola": "alimentazione sull'asse dell'uscita 3"
+  },
+  "circ-ricircolo": {
+   "x": -40,
+   "y": 100,
+   "rotazione": 90,
+   "regola": "alimentazione verso il quadro"
+  },
+  "miscelatrice": {
+   "x": 130,
+   "y": 52.5,
+   "rotazione": 270,
+   "regola": "comando sull'asse dell'uscita 1"
+  },
+  "deviatrice": {
+   "x": 150,
+   "y": 62.5,
+   "rotazione": 270,
+   "regola": "comando sull'asse dell'uscita 2"
+  },
+  "sonda-esterna": {
+   "x": 65,
+   "y": 110
+  },
+  "sonda-pannelli": {
+   "x": 92.5,
+   "y": 110
+  },
+  "sonda-bollitore": {
+   "x": 115,
+   "y": 112.5
+  }
+ }
+}
