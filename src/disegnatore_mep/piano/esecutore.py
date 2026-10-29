@@ -43,7 +43,11 @@ from disegnatore_mep.diametri.scritte import tratti_da_scrivere
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, SheetFrame
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
-from disegnatore_mep.graphics.tabella import sigle_sul_disegno, tabella_della_tavola
+from disegnatore_mep.graphics.tabella import (
+    pezzi_comandati,
+    sigle_sul_disegno,
+    tabella_della_tavola,
+)
 from disegnatore_mep.graphics.tabelle import posa_le_tabelle
 from disegnatore_mep.layout.addresses import with_addresses
 from disegnatore_mep.layout.compose import (
@@ -399,10 +403,18 @@ def con_le_porte_scollegate(
     modello: ProjectModel,
     catalogo: ComponentRegistry,
     reti: Sequence[str],
+    vista: str = "tutto",
 ) -> SheetGeometry:
     """Il foglio con, su ogni pezzo, le porte che **nessuna linea della tavola**
     collega fra quelle che il corpo del simbolo disegna col loro moncone
-    (collaudo T1 di REL-012, §3).
+    (collaudo T1 di REL-012, §3), e le porte di comando a cui un cavo arriva
+    (collaudo T2).
+
+    **Sulla tavola dell'elettrico** si tolgono anche i monconi degli attacchi
+    d'acqua (`data-moncone`): la pompa di calore del collaudo T2 mostrava i suoi due
+    attacchi come tubi aperti. Sulle altre viste restano: e' l'idronico di sempre.
+    E **il cavo tocca il corpo**: il moncone di una porta di comando collegata
+    (`data-comando`) va dalla faccia del riquadro, dove il cavo finisce, al corpo.
 
     Sul canalizzato del collaudo la centrale di zona disegnava il moncone del
     quarto bus, che nessun termostato usava: si leggeva come un attacco libero. Il
@@ -427,8 +439,11 @@ def con_le_porte_scollegate(
         if definizione is None:
             posati.append(placed)
             continue
-        col_moncone = catalogo.resolve(definizione).symbol.porte_col_moncone
-        if not col_moncone:
+        simbolo = catalogo.resolve(definizione).symbol
+        col_moncone = simbolo.porte_col_moncone
+        if vista == "elettrico":
+            col_moncone = col_moncone | simbolo.monconi_d_acqua
+        if not col_moncone and not simbolo.monconi_di_comando:
             posati.append(placed)
             continue
         attaccate = {
@@ -436,8 +451,14 @@ def con_le_porte_scollegate(
             for componente, porta in collegate
             if componente == placed.component_id
         }
+        cambi: dict[str, list[str]] = {}
         libere = sorted(col_moncone - attaccate)
-        posati.append(placed.model_copy(update={"porte_scollegate": libere}) if libere else placed)
+        if libere:
+            cambi["porte_scollegate"] = libere
+        col_cavo = sorted(simbolo.monconi_di_comando & attaccate)
+        if col_cavo:
+            cambi["porte_col_cavo"] = col_cavo
+        posati.append(placed.model_copy(update=cambi) if cambi else placed)
     return foglio.model_copy(update={"symbols": posati})
 
 
@@ -454,7 +475,7 @@ def _detto_nel_piano(
     Qui si aggiunge quello che il piano sa leggere: quali pezzi la tratta
     unisce, e dove il piano li ha messi.
     """
-    trovata = re.search(r"\brun (\S+) on network", messaggio)
+    trovata = re.search(r"\bla tratta (\S+) della rete", messaggio)
     if trovata is None:
         return messaggio
     tratta = next(
@@ -524,6 +545,9 @@ def esegui_piano(
     altra_tavola = rimando(modello, piano.vista)
     # Le sigle del grafo intero, per i pezzi fuori dall'acqua (collaudo T1).
     sigle_intere = sigle_del_grafo_intero(modello, catalogo.per_il_progetto(modello), naming)
+    # I pezzi con un cavo, letti sul grafo intero: portano la sigla anche sulla
+    # tavola idraulica, dove il cavo non c'e' (collaudo T2).
+    comandati = pezzi_comandati(modello)
     modello, catalogo = vista_del_grafo(modello, piano.vista, catalogo, naming)
     frame = _frame(piano.formato)
     # **Le zone delle tabelle** (REL-012): lo stesso foglio, con l'area del disegno
@@ -705,7 +729,7 @@ def esegui_piano(
         legend=voci,
         network_keys=chiavi,
     )
-    foglio = con_le_porte_scollegate(foglio, modello, catalogo, partizione.network_ids)
+    foglio = con_le_porte_scollegate(foglio, modello, catalogo, partizione.network_ids, piano.vista)
     foglio = centre_vertically(foglio, area, frame.standard.grid_mm)
 
     # **La tabella delle apparecchiature, in alto a sinistra** (REL-006, I-141).
@@ -749,6 +773,7 @@ def esegui_piano(
         catalogo,
         sigle_intere,
         (item.component_id for item in foglio.symbols if item.tag is None),
+        comandati,
     )
 
     # Le tubazioni con la scritta del progettista: un testo di pezzo non sta lungo
@@ -828,10 +853,11 @@ def esegui_piano(
                 ],
             }
         )
-    if altra_tavola is not None:
-        spiegate.append((CAMPIONE_DEL_RIMANDO, altra_tavola))
+    # Il rimando e' una frase sola, «Vedi la tavola …», su tutta la fascia: con
+    # «Vedi» nella colonna dei simboli si leggeva come una voce (collaudo T2).
+    frasi = [(CAMPIONE_DEL_RIMANDO, altra_tavola)] if altra_tavola is not None else []
     if scritte or calcolati or altra_tavola is not None:
-        note = note_della_legenda(foglio, frame, spiegate)
+        note = note_della_legenda(foglio, frame, spiegate, frasi)
         if note:
             foglio = foglio.model_copy(update={"note_della_legenda": note})
     # **Le tabelle nelle zone** (REL-012): fuori dall'area del disegno, quindi non

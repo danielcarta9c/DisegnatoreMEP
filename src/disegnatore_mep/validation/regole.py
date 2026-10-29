@@ -92,6 +92,7 @@ from disegnatore_mep.model.project import ProjectModel
 from disegnatore_mep.model.types import IssueSeverity, PortFlow
 
 from .issues import ValidationIssue
+from .nomi import nome_della_tratta, nome_delle_tubazioni
 
 TOLLERANZA_MM = 1e-6
 """Quanto due coordinate possono differire ed essere ancora la stessa.
@@ -707,7 +708,7 @@ def autostrade_storte(
             trovati.append(
                 _rilievo(
                     "HIGHWAY_IS_NOT_STRAIGHT",
-                    f"la tavola {sheet.sheet_id}: {_tratte_nominate(autostrada)} "
+                    f"la tavola {sheet.sheet_id}: {_tratte_nominate(sheet, autostrada)} "
                     f"{'piega' if autostrada.e_una_tratta_sola else 'piegano'} "
                     f"{pieghe} {'volta' if pieghe == 1 else 'volte'}, e i simboli "
                     f"che {'tocca' if autostrada.e_una_tratta_sola else 'toccano'} "
@@ -720,9 +721,10 @@ def autostrade_storte(
     return trovati
 
 
-def _tratte_nominate(autostrada: AutostradaInTavola) -> str:
-    """Come si nominano le tratte di una catena in un rilievo."""
-    nomi = [", ".join(chiave) for chiave in autostrada.catene]
+def _tratte_nominate(sheet: SheetGeometry, autostrada: AutostradaInTavola) -> str:
+    """Come si nominano le tratte di una catena in un rilievo: coi pezzi ai loro capi
+    (collaudo T2 di REL-012), non con gli id, che sul foglio non ci sono."""
+    nomi = [nome_delle_tubazioni(sheet, chiave) for chiave in autostrada.catene]
     if len(nomi) == 1:
         return f"la tratta {nomi[0]}"
     return "le tratte " + " + ".join(nomi)
@@ -955,7 +957,7 @@ def macchine_in_parallelo_senza_collettore(
                     else "sono allineati, ma le tratte fra loro non sono verticali"
                 )
                 coda = (
-                    f"; e le tratte {', '.join(', '.join(item) for item in storte)} "
+                    f"; e le tratte {', '.join(nome_delle_tubazioni(sheet, item) for item in storte)} "
                     f"non corrono in verticale"
                     if storte and scarto > tolleranza_mm
                     else ""
@@ -1095,7 +1097,7 @@ def organi_che_spezzano_il_tratto(
             )
             sopra = sorted(
                 {
-                    ", ".join(route.connection_ids) or route.network_id
+                    nome_della_tratta(sheet, route)
                     for _, _, route, _ in misure
                 }
             )
@@ -1232,8 +1234,8 @@ def linee_parallele_senza_corsie(
             trovati.append(
                 _rilievo(
                     "PARALLEL_RUNS_WITHOUT_A_FREE_LANE",
-                    f"la tavola {sheet.sheet_id}: le tratte {nomi[0]} e {nomi[1]} "
-                    f"corrono affiancate in {asse} per {fianco:.1f} mm a "
+                    f"la tavola {sheet.sheet_id}: la tratta {nome_della_tratta(sheet, uno)} e "
+                    f"quella {nome_della_tratta(sheet, altro)} corrono affiancate in {asse} per {fianco:.1f} mm a "
                     f"{distanza:.1f} mm l'una dall'altra, e ne vogliono "
                     f"{CORSIE_LIBERE_FRA_DUE_LINEE_MM:.0f}: sotto le tre corsie "
                     f"libere due tubi si leggono come uno (B9, D-062)",
@@ -1337,8 +1339,8 @@ def ritorni_sopra_la_mandata(
             trovati.append(
                 _rilievo(
                     "RETURN_RUNS_ABOVE_ITS_SUPPLY",
-                    f"la tavola {sheet.sheet_id}: il ritorno {nomi[1]} corre "
-                    f"**sopra** la mandata {nomi[0]} per {fianco:.1f} mm sulla rete "
+                    f"la tavola {sheet.sheet_id}: il ritorno {nome_della_tratta(sheet, ritorno)} "
+                    f"corre **sopra** la mandata {nome_della_tratta(sheet, mandata)} per {fianco:.1f} mm sulla rete "
                     f"{uno.network_id}: mandata sopra, ritorno sotto (B10, "
                     f"composition.py)",
                     [sheet.sheet_id, *mandata.connection_ids, *ritorno.connection_ids],
@@ -1665,7 +1667,7 @@ def scostamenti_che_tornano_indietro(
                     continue
                 if quota != quota_dopo or quota == quota_mezzo:
                     continue
-                nome = ", ".join(route.connection_ids) or route.network_id
+                nome = nome_della_tratta(sheet, route)
                 trovati.append(
                     _rilievo(
                         "RUN_LEAVES_ITS_QUOTA_AND_COMES_BACK",

@@ -75,6 +75,7 @@ from disegnatore_mep.model.types import IssueSeverity
 
 from .geometry import TOLERANCE_MM
 from .issues import ValidationIssue
+from .nomi import nome_della_tratta
 
 BENDS_PER_RUN_MAX = 3
 """Cambi di direzione ammessi su una tratta prima dell'avviso (B4, D-060).
@@ -246,8 +247,10 @@ def _run_polylines(sheet: SheetGeometry) -> list[tuple[int, RoutedTrunk, list[Po
     ]
 
 
-def _run_name(route: RoutedTrunk) -> str:
-    return ", ".join(route.connection_ids) if route.connection_ids else route.network_id
+def _run_name(sheet: SheetGeometry, route: RoutedTrunk) -> str:
+    """La tratta coi pezzi ai suoi capi, «fra COL-01 e VOL-01» (collaudo T2 di
+    REL-012): l'id di una tratta sul foglio non c'e'. Gli id restano fra i codici."""
+    return nome_della_tratta(sheet, route)
 
 
 def _run_ids(sheet: SheetGeometry, route: RoutedTrunk) -> list[str]:
@@ -389,7 +392,7 @@ def bends_per_run(
                 _finding(
                     "RUN_WITH_TOO_MANY_BENDS",
                     IssueSeverity.WARNING,
-                    f"la tratta {_run_name(route)} cambia direzione {total} "
+                    f"la tratta {_run_name(sheet, route)} cambia direzione {total} "
                     f"{'volta' if total == 1 else 'volte'}, oltre le "
                     f"{BENDS_PER_RUN_MAX} pieghe che bastano a unire due porte: "
                     f"la piega in piu' la chiede un ostacolo, e l'ostacolo si "
@@ -434,8 +437,8 @@ def longitudinal_overlap(
                     _finding(
                         "RUNS_OVERLAP_LENGTHWISE",
                         IssueSeverity.BLOCKING,
-                        f"le tratte {_run_name(one[1])} e {_run_name(other[1])} corrono "
-                        f"sovrapposte per {len(shared) * grid_mm:g} mm: due linee sullo "
+                        f"la tratta {_run_name(sheet, one[1])} e quella {_run_name(sheet, other[1])} "
+                        f"corrono sovrapposte per {len(shared) * grid_mm:g} mm: due linee sullo "
                         f"stesso tratto sono una linea sola (B2, D-062)",
                         sorted({*_run_ids(sheet, one[1]), *_run_ids(sheet, other[1])}),
                     )
@@ -494,7 +497,7 @@ def _symbol_clearances(sheet: SheetGeometry, minimum: float) -> list[ValidationI
                 _finding(
                     "RUN_TOO_CLOSE_TO_A_SYMBOL",
                     severity,
-                    f"la tratta {_run_name(route)} passa a {gap:g} mm dal simbolo "
+                    f"la tratta {_run_name(sheet, route)} passa a {gap:g} mm dal simbolo "
                     f"{symbol.component_id}, cui non si attacca: la distanza di "
                     f"rispetto e' {minimum:g} mm (B5)",
                     sorted({*_run_ids(sheet, route), symbol.component_id}),
@@ -526,8 +529,8 @@ def _parallel_clearances(sheet: SheetGeometry, minimum: float) -> list[Validatio
                 _finding(
                     "PARALLEL_RUNS_TOO_CLOSE",
                     severity,
-                    f"le tratte {_run_name(one[1])} e {_run_name(other[1])} corrono "
-                    f"affiancate a {gap:g} mm: la distanza di rispetto e' "
+                    f"la tratta {_run_name(sheet, one[1])} e quella {_run_name(sheet, other[1])} "
+                    f"corrono affiancate a {gap:g} mm: la distanza di rispetto e' "
                     f"{minimum:g} mm (B6)",
                     sorted({*_run_ids(sheet, one[1]), *_run_ids(sheet, other[1])}),
                 )
@@ -559,7 +562,7 @@ def u_turns(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue
                 _finding(
                     "RUN_OVERSHOOTS_ITS_PORT",
                     IssueSeverity.BLOCKING,
-                    f"la tratta {_run_name(route)} supera di {overshoot:g} mm la "
+                    f"la tratta {_run_name(sheet, route)} supera di {overshoot:g} mm la "
                     f"propria porta di arrivo e ci torna indietro: si sposta "
                     f"l'oggetto, non si allunga la linea (B12, D-078)",
                     _run_ids(sheet, route),
@@ -621,7 +624,7 @@ def labels_on_runs(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validati
                 _finding(
                     "LABEL_ON_A_RUN",
                     IssueSeverity.WARNING,
-                    f"l'etichetta {label.id} copre la tratta {_run_name(hit)}: un testo "
+                    f"l'etichetta {label.id} copre la tratta {_run_name(sheet, hit)}: un testo "
                     f"si scrive su un posto libero o si omette (D5, D-075, DRAW-003-R1)",
                     sorted({sheet.sheet_id, label.id, *hit.connection_ids}),
                 )
@@ -667,7 +670,7 @@ def labels_along_written_runs(drawing: DrawingGeometry, frame: SheetFrame) -> li
                     "PIECE_LABEL_ALONG_A_WRITTEN_RUN",
                     IssueSeverity.WARNING,
                     f"la scritta «{label.text}» ({label.id}) sta lungo la tratta "
-                    f"{_run_name(hit)}, che porta la sua scritta: si legge come la scritta "
+                    f"{_run_name(sheet, hit)}, che porta la sua scritta: si legge come la scritta "
                     f"della linea (collaudo T1 di REL-012)",
                     sorted({sheet.sheet_id, label.id, *hit.connection_ids}),
                 )
@@ -730,7 +733,7 @@ def equipment_table(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validat
                 or _segment_crosses_box(before, after, zona)
                 for before, after in moves_of(segment)
             ):
-                dentro.append(_run_name(route))
+                dentro.append(f"la tratta {_run_name(sheet, route)}")
         for label in sheet.labels:
             if _boxes_overlap(_label_box(label, height), zona) or any(
                 _segment_crosses_box(*segmento, zona) for segmento in segmenti_del_richiamo(label)
@@ -1215,7 +1218,7 @@ def leader_crossings(drawing: DrawingGeometry) -> list[ValidationIssue]:
                         "LEADER_CROSSES_A_RUN",
                         IssueSeverity.WARNING,
                         f"il richiamo dell'etichetta {label_id} attraversa la tratta "
-                        f"{_run_name(crossed)}: un richiamo che confonde non si "
+                        f"{_run_name(sheet, crossed)}: un richiamo che confonde non si "
                         f"disegna, il testo si omette (D2, DRAW-003-R1)",
                         sorted({sheet.sheet_id, label_id, *crossed.connection_ids}),
                     )
@@ -1608,7 +1611,7 @@ def unresolved_runs(drawing: DrawingGeometry) -> list[ValidationIssue]:
         for route in sheet.routes:
             if not route.unresolved:
                 continue
-            nome = route.connection_ids[0] if route.connection_ids else "senza nome"
+            nome = _run_name(sheet, route)
             findings.append(
                 _finding(
                     "RUN_UNRESOLVED",

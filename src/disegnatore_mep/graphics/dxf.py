@@ -791,20 +791,29 @@ class _Tavola:
             [(cx - r, cy, 1.0), (cx + r, cy, 1.0)], is_closed=True
         )
 
-    def blocco_del_simbolo(self, symbol_id: str, senza: Sequence[str] = ()) -> str:
+    def blocco_del_simbolo(
+        self, symbol_id: str, senza: Sequence[str] = (), con: Sequence[str] = ()
+    ) -> str:
         """Il blocco di un simbolo; con `senza`, quello senza il moncone di quelle
-        porte — un blocco a parte, perche' il blocco del simbolo e' uno per tutti i
-        pezzi che lo usano. Le lettere diritte restano quelle del blocco intero."""
+        porte, e con `con` quello col moncone di quelle porte di comando (collaudo T2
+        di REL-012) — un blocco a parte, perche' il blocco del simbolo e' uno per
+        tutti i pezzi che lo usano. Le lettere diritte restano quelle del blocco
+        intero."""
         simbolo = self.symbols.get(symbol_id)
-        ridotto = simbolo.senza_le_porte(senza)
+        ridotto = simbolo.senza_le_porte(senza, con)
         if ridotto is not simbolo:
-            chiave = (symbol_id, tuple(sorted(set(senza) & simbolo.porte_col_moncone)))
+            tolte = tuple(sorted(set(senza) & (simbolo.porte_col_moncone | simbolo.monconi_d_acqua)))
+            aggiunte = tuple(sorted(set(con) & simbolo.monconi_di_comando))
+            chiave = (symbol_id, tolte, aggiunte)
             if chiave not in self.varianti:
                 base = self.blocco_del_simbolo(symbol_id)
                 nome = f"{base}_V{sum(1 for item in self.varianti if item[0] == symbol_id) + 1}"
-                blocco = self.doc.blocks.new(
-                    nome, dxfattribs={"description": f"{simbolo.manifest.name}: senza i monconi liberi"}
+                descrizione = f"{simbolo.manifest.name}: " + ", ".join(
+                    parte
+                    for parte, c_e in (("senza i monconi liberi", tolte), ("coi monconi dei cavi", aggiunte))
+                    if c_e
                 )
+                blocco = self.doc.blocks.new(nome, dxfattribs={"description": descrizione})
                 self._primitive_nel_blocco(blocco, corpo_del_simbolo(ridotto.body).primitive)
                 self.blocchi.add(nome)
                 self.varianti[chiave] = nome
@@ -976,7 +985,9 @@ class _Tavola:
         for placed in self.sheet.symbols:
             diritto = self.symbols.get(placed.symbol_id)
             girato: Symbol = diritto.rotated(placed.rotation_deg, placed.specchiato)
-            nome = self.blocco_del_simbolo(placed.symbol_id, placed.porte_scollegate)
+            nome = self.blocco_del_simbolo(
+                placed.symbol_id, placed.porte_scollegate, placed.porte_col_cavo
+            )
             # Le lettere diritte sono del blocco del simbolo intero.
             base = nome_del_blocco(placed.symbol_id)
             dove = inserimento_del_simbolo(
@@ -1094,13 +1105,17 @@ class _Tavola:
                     self.standard.text_small_mm, LAYER_LEGENDA,
                 )
         for nota in self.sheet.note_della_legenda:
-            self.testo(
-                nota.campione, nota.anchor.x_mm, nota.anchor.y_mm,
-                self.standard.text_small_mm, LAYER_LEGENDA,
-            )
+            # Una frase (il rimando all'altra tavola) porta il campione nelle sue righe,
+            # e comincia dove comincia il campione (collaudo T2 di REL-012).
+            if not nota.frase:
+                self.testo(
+                    nota.campione, nota.anchor.x_mm, nota.anchor.y_mm,
+                    self.standard.text_small_mm, LAYER_LEGENDA,
+                )
+            rientro = 0.0 if nota.frase else LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM
             for indice, riga in enumerate(nota.righe):
                 self.testo(
-                    riga, nota.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM,
+                    riga, nota.anchor.x_mm + rientro,
                     nota.anchor.y_mm + indice * INTERLINEA_EM * self.standard.text_small_mm,
                     self.standard.text_small_mm, LAYER_LEGENDA,
                 )

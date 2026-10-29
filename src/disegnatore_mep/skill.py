@@ -94,7 +94,12 @@ GRAVITA: dict[IssueSeverity, str] = {
     IssueSeverity.WARNING: "Avvisi — la tavola si consegna, e si sa",
 }
 
-ESTENSIONI_DA_CONSEGNARE = (".pdf", ".dxf", ".svg", ".jpg", ".md")
+ESTENSIONI_DA_CONSEGNARE = (".pdf", ".dxf", ".md")
+"""Quello che il progettista riceve: il PDF, il DXF e i rilievi (collaudo T2 di
+REL-012, §1). Il logo del cartiglio e l'SVG restano nella cartella di lavoro: il logo
+finiva fra i file consegnati come un file qualunque, e l'SVG lo chiama per nome. ⚠ Il
+DXF lo nomina anche lui (`graphics.dxf`): aperto senza il logo accanto, AutoCAD mostra
+il riquadro del logo vuoto."""
 
 
 @dataclass(frozen=True)
@@ -1134,8 +1139,8 @@ def _ambiente(args: argparse.Namespace, cartelle: Cartelle) -> int:
 
 
 def consegna(cartella: Path, destinazione: Path) -> list[Path]:
-    """Copia nella cartella di consegna i file per il progettista: PDF, DXF col suo
-    logo, SVG e rilievi."""
+    """Copia nella cartella di consegna i file per il progettista: PDF, DXF e
+    rilievi (`ESTENSIONI_DA_CONSEGNARE`), non il logo e non l'SVG."""
     destinazione.mkdir(parents=True, exist_ok=True)
     copiati = []
     for percorso in sorted(cartella.iterdir()):
@@ -1223,7 +1228,7 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
     pianta.add_argument("--out", type=Path, required=True, help="la cartella della tavola")
     pianta.add_argument("--senza-dxf", action="store_true", help="non scrive il DXF")
 
-    finale = comandi.add_parser("consegna", help="copia PDF, DXF, SVG e rilievi nella cartella data")
+    finale = comandi.add_parser("consegna", help="copia PDF, DXF e rilievi nella cartella data")
     finale.add_argument("cartella", type=Path)
     finale.add_argument("destinazione", type=Path)
 

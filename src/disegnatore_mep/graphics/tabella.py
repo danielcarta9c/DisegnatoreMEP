@@ -329,22 +329,43 @@ def sigle_sul_disegno(
     catalogo: ComponentRegistry,
     sigle: dict[str, str],
     sul_foglio: Iterable[str],
+    comandati: Iterable[str] = (),
 ) -> dict[str, str]:
     """La sigla dei pezzi **fuori dall'acqua** disegnati su questa tavola, che il
     progettista non ha scritto. `sigle` sono quelle della lettura del **grafo intero**
     (D-097, `piano.vista.sigle_del_grafo_intero`): le stesse che la tabella, la
     distinta e la pianta usano, e le stesse sulla tavola idraulica e su quella
     dell'elettrico. Se l'impianto non si legge sono vuote, e valgono quelle scritte,
-    come per la tabella."""
+    come per la tabella.
+
+    **E dei pezzi `comandati`** (collaudo T2 di REL-012, §3.1): quelli che hanno un
+    cavo — una valvola motorizzata, una sonda a immersione, un circolatore — portano
+    la sigla della famiglia (VMR, VD, SO, CIR) **sulle due tavole**, anche
+    sull'idraulica dove il cavo non c'e'. Sulla tavola dell'elettrico due valvole a
+    tre vie e due sonde senza nome non dicevano quale cavo va dove. Un grafo senza
+    elettrico non ha pezzi comandati, e nessuna tavola idronica cambia."""
     disegnati = set(sul_foglio)
+    con_un_cavo = set(comandati)
     return {
         pezzo.id: sigle[pezzo.id]
         for pezzo in modello.components
         if pezzo.id in disegnati
         and pezzo.tag is None
         and pezzo.id in sigle
-        and fuori_dall_acqua(catalogo.get(pezzo.definition_id))
+        and (pezzo.id in con_un_cavo or fuori_dall_acqua(catalogo.get(pezzo.definition_id)))
     }
+
+
+def pezzi_comandati(modello: ProjectModel) -> frozenset[str]:
+    """I pezzi a cui arriva almeno un cavo o un bus nel grafo intero (collaudo T2 di
+    REL-012): una tubazione di una rete del dominio del comando li tocca."""
+    del_comando = {rete.id for rete in modello.networks if rete.domain is Domain.CONTROL}
+    return frozenset(
+        ref.component_id
+        for item in modello.connections
+        if item.network_id in del_comando
+        for ref in (item.endpoint_a, item.endpoint_b)
+    )
 
 
 @dataclass(frozen=True)

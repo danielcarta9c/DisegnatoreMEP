@@ -263,9 +263,9 @@ def place_inline_accessories(
     )
     if needed > total:
         raise LayoutError(
-            f"run {trunk.connection_ids[0]} is {total:g}mm long but its "
-            f"{len(resolved)} inline accessories need {needed:g}mm: symbols are "
-            f"never shrunk to fit, give the run more room"
+            f"la tratta {trunk.connection_ids[0]} e' lunga {total:g} mm e i suoi "
+            f"{len(resolved)} organi in linea ne vogliono {needed:g}: i simboli non si "
+            f"rimpiccioliscono, da' piu' spazio alla tratta"
         )
 
     # **Chi isola una macchina si disegna sul suo attacco** (D-120), e da
@@ -389,8 +389,8 @@ def place_inline_accessories(
     moves = moves_of(points)
     if not moves:
         raise LayoutError(
-            f"run {trunk.connection_ids[0]} has no straight stretch to sit an "
-            f"accessory on"
+            f"la tratta {trunk.connection_ids[0]} non ha un tratto dritto su cui "
+            f"posare un organo in linea"
         )
 
     def stretches(head_mm: float, tail_mm: float) -> list[tuple[float, float]]:
@@ -481,9 +481,9 @@ def place_inline_accessories(
         allowed = [item for item in wanted if item in manifest.allowed_rotations_deg]
         if not allowed:
             raise LayoutError(
-                f"inline accessory {manifest.id} cannot be drawn rotated by "
-                f"{wanted[0]} or {wanted[1]} degrees, which the run it sits on "
-                f"requires: allowed {sorted(manifest.allowed_rotations_deg)}"
+                f"l'organo in linea {manifest.id} non si disegna girato di "
+                f"{wanted[0]} o {wanted[1]} gradi, che la sua tratta vuole: le "
+                f"rotazioni ammesse sono {sorted(manifest.allowed_rotations_deg)}"
             )
         rotation = allowed[0]
         return rotation, manifest.rotated(rotation)
@@ -572,9 +572,9 @@ def place_inline_accessories(
                     edge = snapped + max(gap, extent) / 2
                     return (total - (snapped - max(gap, extent) / 2)) if from_end else edge
         raise LayoutError(
-            f"run {trunk.connection_ids[0]} has no straight stretch for "
-            f"{manifest.id} against the fitting it isolates through: symbols are "
-            f"never shrunk to fit, give the run a longer straight length"
+            f"la tratta {trunk.connection_ids[0]} non ha un tratto dritto per "
+            f"{manifest.id} contro il raccordo che intercetta: i simboli non si "
+            f"rimpiccioliscono, da' alla tratta un tratto dritto piu' lungo"
         )
 
     def place_chain(indices: list[int], from_end: bool, strict: bool) -> float | None:
@@ -607,14 +607,14 @@ def place_inline_accessories(
             distance = total - centre if from_end else centre
             if distance - extent / 2 < low - 1e-9 or distance + extent / 2 > high + 1e-9:
                 raise LayoutError(
-                    f"run {trunk.connection_ids[0]} bends before the chain of {owner} "
-                    f"fits on the first straight from its port: {manifest.id} needs the "
-                    f"straight to reach {reach + extent:g}mm, it is {high - low:g}mm long"
+                    f"la tratta {trunk.connection_ids[0]} piega prima che la catena di {owner} "
+                    f"stia sul primo tratto dritto dalla sua porta: {manifest.id} vuole il "
+                    f"tratto dritto fino a {reach + extent:g} mm, ed e' lungo {high - low:g} mm"
                 )
             if abs(distance / step - round(distance / step)) > 1e-9:
                 raise LayoutError(
-                    f"run {trunk.connection_ids[0]}: the chain of {owner} would sit "
-                    f"off the grid at {distance:g}mm along the run"
+                    f"la tratta {trunk.connection_ids[0]}: la catena di {owner} starebbe "
+                    f"fuori griglia a {distance:g} mm lungo la tratta"
                 )
             station = _station_at(points, distance)
             origin = Point(
@@ -635,10 +635,10 @@ def place_inline_accessories(
             ]
             if blocked:
                 raise LayoutError(
-                    f"run {trunk.connection_ids[0]}: the fixed place of {manifest.id} in "
-                    f"the chain of {owner}, at ({origin.x_mm:g}, {origin.y_mm:g}), is "
-                    f"taken by {' e '.join(blocked)}, and a chain does not slide: "
-                    f"give the machine room on its port"
+                    f"la tratta {trunk.connection_ids[0]}: il posto fisso di {manifest.id} "
+                    f"nella catena di {owner}, in ({origin.x_mm:g}, {origin.y_mm:g}), e' "
+                    f"occupato da {' e '.join(blocked)}, e una catena non scorre: "
+                    f"da' spazio alla macchina sulla sua porta"
                 )
             seat(index, station, distance, rotation, turned)
             reach += extent + MIN_SPACING_MM
@@ -674,8 +674,8 @@ def place_inline_accessories(
         """Gli accessori fuori dalle catene, fra `head_mm` dal capo e `tail_mm` dalla coda."""
         if remaining and not stretches(head_mm, tail_mm):
             raise LayoutError(
-                f"run {trunk.connection_ids[0]} has no straight stretch to sit an "
-                f"accessory on"
+                f"la tratta {trunk.connection_ids[0]} non ha un tratto dritto su cui "
+                f"posare un organo in linea"
             )
 
         # Gli accessori si posano **nell'ordine della catena**, avanzando lungo la
@@ -778,10 +778,10 @@ def place_inline_accessories(
                     break
             if found is None:
                 raise LayoutError(
-                    f"run {trunk.connection_ids[0]} has no straight stretch of "
-                    f"{needed:g}mm for {component.symbol.manifest.id} that keeps "
-                    f"{clearance:g}mm clear of the other symbols and runs: symbols are "
-                    f"never shrunk to fit, give the run a longer straight length"
+                    f"la tratta {trunk.connection_ids[0]} non ha un tratto dritto di "
+                    f"{needed:g} mm per {component.symbol.manifest.id} che stia a "
+                    f"{clearance:g} mm dagli altri simboli e dalle altre linee: i simboli "
+                    f"non si rimpiccioliscono, da' alla tratta un tratto dritto piu' lungo"
                 )
             # Il cursore riparte dal **riquadro**, non dall'interruzione: un
             # simbolo piu' largo del proprio taglio sporge oltre di esso, e chi
@@ -892,10 +892,10 @@ def place_inline_accessories(
                 intrudes_into(box, before, after) for before, after in moves_of(part)
             ):
                 raise LayoutError(
-                    f"run {trunk.connection_ids[0]} still passes under "
-                    f"{item.symbol_id} after breaking for it: the accessory sits "
-                    f"where its own run bends back into it, give the run a longer "
-                    f"straight length"
+                    f"la tratta {trunk.connection_ids[0]} passa ancora sotto "
+                    f"{item.symbol_id} dopo essersi interrotta per lui: l'organo sta "
+                    f"dove la sua tratta ci ripiega dentro; da' alla tratta un tratto "
+                    f"dritto piu' lungo"
                 )
     return placed, trimmed
 

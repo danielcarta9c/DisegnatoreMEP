@@ -178,7 +178,7 @@ def test_a_run_too_short_for_its_accessories_fails_with_a_diagnostic() -> None:
         connection_ids=list(trunk.connection_ids),
         segments=[[Point(x_mm=10.0, y_mm=20.0), Point(x_mm=12.0, y_mm=20.0)]],
     )
-    with pytest.raises(LayoutError, match="never shrunk|need"):
+    with pytest.raises(LayoutError, match="non si rimpiccioliscono|vogliono"):
         place_inline_accessories(project, trunk, routed, catalog(), grid())
 
 
@@ -253,7 +253,7 @@ def test_a_run_with_nowhere_clear_to_sit_its_accessory_says_so(
         connection_ids=["altrui"],
         segments=[list(routed.segments[0])],
     )
-    with pytest.raises(LayoutError, match="clear of the other symbols and runs"):
+    with pytest.raises(LayoutError, match="dagli altri simboli e dalle altre linee"):
         place_inline_accessories(
             project, trunk, routed, registry, space, None, [along]
         )

@@ -55,6 +55,7 @@ from .labels import (
 from .legend import (
     INSET_MM,
     INTERLINEA_EM,
+    MARGINE_A_DESTRA_MM,
     ROW_HEIGHT_MM,
     SECTION_GAP_MM,
     a_capo,
@@ -566,13 +567,20 @@ def nota_della_legenda(foglio: SheetGeometry, frame: SheetFrame) -> NotaDellaLeg
 
 
 def note_della_legenda(
-    foglio: SheetGeometry, frame: SheetFrame, voci: Sequence[tuple[str, str]]
+    foglio: SheetGeometry,
+    frame: SheetFrame,
+    voci: Sequence[tuple[str, str]],
+    frasi: Sequence[tuple[str, str]] = (),
 ) -> list[NotaDellaLegenda]:
     """Le righe della legenda che spiegano le scritte dei tratti, sotto i fluidi e
     una sotto l'altra: «Øi» del DN calcolato (I-155) e «Ø · L» del dato del
     progettista (REL-012), nell'ordine di `voci`. La prima sta dove «Øi» e' sempre
     stata; la seconda un passo sotto l'ultima riga della prima. Una riga che non
-    entra nella fascia manca, e con lei quelle che seguono."""
+    entra nella fascia manca, e con lei quelle che seguono.
+
+    Dopo, le `frasi`: il rimando all'altra tavola (collaudo T2 di REL-012, §3.9), che
+    non spiega un campione ma e' una frase, «Vedi la tavola …». Comincia dove
+    comincia il campione e corre su tutta la fascia (`NotaDellaLegenda.frase`)."""
     fascia = frame.legend_rect_mm
     corpo = frame.standard.text_small_mm
     righe_occupate = [item.anchor.y_mm for item in foglio.legend] + [
@@ -582,8 +590,16 @@ def note_della_legenda(
     if not foglio.network_keys:
         y += SECTION_GAP_MM
     note: list[NotaDellaLegenda] = []
-    for campione, testo in voci:
-        righe = list(a_capo(testo, larghezza_del_nome_mm(frame), corpo))
+    tutta = fascia.width_mm - INSET_MM - MARGINE_A_DESTRA_MM
+    for (campione, testo), frase in (
+        *((voce, False) for voce in voci),
+        *((voce, True) for voce in frasi),
+    ):
+        righe = (
+            list(a_capo(f"{campione} {testo}", tutta, corpo))
+            if frase
+            else list(a_capo(testo, larghezza_del_nome_mm(frame), corpo))
+        )
         ultima = y + (len(righe) - 1) * INTERLINEA_EM * corpo
         if ultima > fascia.bottom_mm - INSET_MM:
             break
@@ -592,6 +608,7 @@ def note_della_legenda(
                 campione=campione,
                 righe=righe,
                 anchor=Point(x_mm=fascia.x_mm + INSET_MM, y_mm=y),
+                frase=frase,
             )
         )
         y = ultima + ROW_HEIGHT_MM

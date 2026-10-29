@@ -330,10 +330,13 @@ def build_legend(
         + (SECTION_GAP_MM if keys else 0.0)
     )
     if needed > band.height_mm:
+        # In italiano, e col consiglio di Comporre (collaudo T2 di REL-012, §2.1.8):
+        # una legenda che sfora si cura col formato successivo, non dividendo
+        # l'impianto su piu' fogli.
         raise LayoutError(
-            f"the legend needs {needed:g}mm but its band is {band.height_mm:g}mm tall: "
-            f"{len(names)} symbols and {len(keys)} networks (text is never shrunk to "
-            f"fit; split the plant across more sheets)"
+            f"la legenda sfora: vuole {needed:g} mm e la sua fascia e' alta "
+            f"{band.height_mm:g} mm ({len(names)} simboli e {len(keys)} fluidi). Le "
+            f"scritte non si rimpiccioliscono: prendi il formato successivo"
         )
 
     # Ogni voce ha il suo passo: quello di sempre, e piu' lungo per un nome che

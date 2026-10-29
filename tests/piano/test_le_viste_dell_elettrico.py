@@ -47,9 +47,9 @@ CON_LE_PORTE_DI_COMANDO = {
     "dhw-heat-pump": {"power", "bus"},
     "gas-boiler": {"power", "bus"},
     "gas-boiler-modular": {"power", "bus"},
-    "pump-circulator": {"power"},
-    "pump-circulator-dhw": {"power"},
-    "pump-circulator-solar": {"power"},
+    "pump-circulator": {"power", "comando"},
+    "pump-circulator-dhw": {"power", "comando"},
+    "pump-circulator-solar": {"power", "comando"},
     "diverting-valve-3way": {"comando"},
     "mixing-valve-3way": {"comando"},
     "switching-valve-3way": {"comando"},
@@ -120,7 +120,8 @@ def test_un_circolatore_alimentato_resta_un_pezzo_in_linea() -> None:
     trova anche col cavo collegato."""
     manifesto = simboli().get("pump-circulator").manifest
     assert manifesto.is_inline and len(manifesto.ports) == 2
-    assert manifesto.control_port_ids == {"power"}
+    # L'alimentazione e, dal collaudo T2 di REL-012, il comando dal regolatore.
+    assert manifesto.control_port_ids == {"power", "comando"}
     grafo = load_project(PICCOLO / "grafo-completo.json")
     del_grafo = catalogo().per_il_progetto(grafo)
     assert "power" in del_grafo.get("pump-circulator").port_ids

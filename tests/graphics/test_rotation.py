@@ -99,7 +99,7 @@ def test_four_quarter_turns_return_the_original() -> None:
 def test_a_disallowed_rotation_is_refused() -> None:
     """D-049 e' un vincolo impiantistico: uno sfiato coricato e' sbagliato."""
     manifest = library().get("air-vent").manifest
-    with pytest.raises(SymbolError, match="may not be drawn rotated"):
+    with pytest.raises(SymbolError, match="non si disegna girato"):
         manifest.rotated(90)
 
 

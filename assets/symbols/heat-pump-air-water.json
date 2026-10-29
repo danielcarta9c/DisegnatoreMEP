@@ -1,6 +1,6 @@
 {
   "id": "heat-pump-air-water",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "name": "Pompa di calore aria-acqua",
   "width_mm": 40.0,
   "height_mm": 30.0,

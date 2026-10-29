@@ -121,15 +121,28 @@ class PlacedSymbol(StrictModel):
 
     Il renderer toglie il loro moncone: una porta facoltativa libera non disegna
     niente. Vuoto per tutti i simboli idronici, che di monconi a parte non ne hanno;
-    e vuoto non si scrive, cosi' le geometrie di prima restano identiche."""
+    e vuoto non si scrive, cosi' le geometrie di prima restano identiche.
+
+    Sulla tavola dell'elettrico ci sono anche gli **attacchi d'acqua** delle
+    macchine, dei circolatori, delle valvole e delle sonde (`data-moncone`;
+    collaudo T2 di REL-012): l'acqua li' non c'e', e un moncone sembrerebbe un tubo
+    aperto."""
+    porte_col_cavo: list[str] = Field(default_factory=list)
+    """Le **porte di comando** a cui arriva un cavo della tavola, fra quelle che il
+    simbolo disegna col loro moncone (`data-comando`; collaudo T2 di REL-012, §3.2).
+
+    La porta sta sulla faccia del riquadro e il corpo piu' in dentro: il renderer
+    disegna il moncone dalla porta al corpo, e il cavo lo tocca. Vuoto — ogni tavola
+    senza elettrico — non si scrive."""
 
     @model_serializer(mode="wrap")
     def _senza_le_porte_scollegate_vuote(
         self, handler: SerializerFunctionWrapHandler
     ) -> dict[str, Any]:
         dati: dict[str, Any] = handler(self)
-        if not dati.get("porte_scollegate"):
-            dati.pop("porte_scollegate", None)
+        for campo in ("porte_scollegate", "porte_col_cavo"):
+            if not dati.get(campo):
+                dati.pop(campo, None)
         return dati
 
     def physical_port(self, port_id: str) -> str:
@@ -274,6 +287,20 @@ class NotaDellaLegenda(StrictModel):
     """La spiegazione, gia' andata a capo sulla larghezza della fascia: la prima
     riga sta in quota con il campione, le altre sotto, a un passo di griglia."""
     anchor: Point
+    frase: bool = False
+    """Se la riga e' **una frase sola**, che comincia col campione e corre su tutta la
+    larghezza della fascia: il rimando all'altra tavola, «Vedi la tavola …»
+    (collaudo T2 di REL-012, §3.9). Con «Vedi» nella colonna dei simboli e il resto in
+    quella dei nomi si leggeva come un simbolo che si chiama «la tavola …». Allora
+    `righe` porta gia' il campione in testa, e il campione non si scrive a parte.
+    `False` — le righe «Øi» e «Ø · L», che spiegano un campione — non si scrive."""
+
+    @model_serializer(mode="wrap")
+    def _senza_la_frase_di_sempre(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        dati: dict[str, Any] = handler(self)
+        if not dati.get("frase"):
+            dati.pop("frase", None)
+        return dati
 
 
 class LegendEntry(StrictModel):

@@ -1692,9 +1692,9 @@ def place_sheet(
         # diventato l'A3 — che smetteva di impilare. Misurato: la posa della
         # centrale a quattro fasce su A3 falliva, e su `main` impilava.
         overflow = LayoutError(
-            f"the {len(used_roles)} functional bands need {total:g}mm but the drawing "
-            f"area is {area.width_mm:g}mm wide: symbols are never shrunk to fit, "
-            f"split the plant across more sheets"
+            f"le {len(used_roles)} fasce funzionali vogliono {total:g} mm e l'area del "
+            f"disegno e' larga {area.width_mm:g} mm: i simboli non si rimpiccioliscono, "
+            f"prendi il formato successivo"
         )
         if frame.standard.usable_width_mm <= NOVE_C_A4.standard.usable_width_mm + 1e-9:
             raise overflow
@@ -2088,8 +2088,8 @@ def place_sheet(
                     or top + manifest.height_mm > area.bottom_mm + 1e-9
                 ):
                     raise LayoutError(
-                        f"component {component_id} does not fit between the drawing "
-                        f"area and the ground line: symbols are never shrunk to fit"
+                        f"il pezzo {component_id} non entra fra l'area del disegno e "
+                        f"la linea di terra: i simboli non si rimpiccioliscono"
                     )
                 placed.append(
                     PlacedSymbol(
@@ -2278,8 +2278,8 @@ def place_sheet(
                     break
         if not seated:
             raise LayoutError(
-                f"component {component_id} sits on a run and finds no free spot "
-                f"along it: symbols are never shrunk to fit, give the run room"
+                f"il pezzo {component_id} sta su una tratta e non ci trova un posto "
+                f"libero: i simboli non si rimpiccioliscono, da' spazio alla tratta"
             )
         placed.append(
             PlacedSymbol(
@@ -2308,8 +2308,8 @@ def place_sheet(
         ]
         if len(ends) < 2:
             raise LayoutError(
-                f"the run pieces {chain.members} sit between {chain.anchors}, "
-                f"which were never placed: a junction needs the pieces it joins"
+                f"i pezzi di tratta {chain.members} stanno fra {chain.anchors}, "
+                f"che non sono mai stati posati: un raccordo vuole i pezzi che unisce"
             )
         # I capi della campata sono i due estremi **piu' lontani**: se una
         # confluenza unisce due macchine affiancate a un accumulo, la campata e'
