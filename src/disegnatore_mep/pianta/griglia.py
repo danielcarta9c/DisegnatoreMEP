@@ -56,6 +56,10 @@ class Griglia:
     """Passi fino al nodo di muro piu' vicino (4-vicinato), con un tetto."""
     ingombri: list[tuple[int, int, int, int]] = field(default_factory=list)
     """I nodi di ogni pezzo: i_min, j_min, i_max, j_max."""
+    esterno: bytearray = field(default_factory=bytearray)
+    """1 dove si e' fuori dall'edificio: fuori da ogni stanza dichiarata, e
+    raggiungibile dal bordo della griglia senza passare un muro. Li' il
+    controsoffitto non si cerca: le linee corrono sulla facciata, in canalina."""
 
     def x(self, k: int) -> float:
         return round((self.i0 + k % self.colonne) * self.passo, 9)
@@ -156,7 +160,33 @@ def costruisci_la_griglia(pianta: Pianta) -> Griglia:
     _le_stanze(griglia, pianta)
     _i_pezzi(griglia, pianta)
     _la_distanza_dai_muri(griglia, pianta)
+    _l_esterno(griglia)
     return griglia
+
+
+def _l_esterno(griglia: Griglia) -> None:
+    """Dal bordo della griglia, senza passare i muri (le aperture sono muro):
+    i nodi che si raggiungono, fuori dalle stanze, sono l'esterno."""
+    n = griglia.colonne * griglia.righe
+    esterno = bytearray(n)
+    coda: deque[int] = deque()
+    for i in range(griglia.colonne):
+        for j in (0, griglia.righe - 1):
+            coda.append(griglia.nodo(i, j))
+    for j in range(griglia.righe):
+        for i in (0, griglia.colonne - 1):
+            coda.append(griglia.nodo(i, j))
+    colonne = griglia.colonne
+    while coda:
+        k = coda.popleft()
+        if esterno[k] or griglia.muro[k] or griglia.stanza[k]:
+            continue
+        esterno[k] = 1
+        i = k % colonne
+        for vicino in (k + 1 if i + 1 < colonne else -1, k - 1 if i > 0 else -1, k + colonne, k - colonne):
+            if 0 <= vicino < n and not esterno[vicino]:
+                coda.append(vicino)
+    griglia.esterno = esterno
 
 
 def _asse(da: tuple[float, float], a: tuple[float, float]) -> tuple[float, float, float]:

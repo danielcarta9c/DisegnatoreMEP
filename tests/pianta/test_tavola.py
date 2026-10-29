@@ -6,6 +6,9 @@ from pathlib import Path
 import pytest
 
 from disegnatore_mep.cli import main as cli
+from disegnatore_mep.distinta.lunghezze import Minimo
+from disegnatore_mep.distinta.lunghezze import da_quotare as da_quotare_della_distinta
+from disegnatore_mep.distinta.regole import carica_regole
 from disegnatore_mep.graphics.cartiglio import Cartiglio
 from disegnatore_mep.layout.legend import MEDIUM_STYLES
 from disegnatore_mep.pianta.comando import Esito, disegna_la_pianta
@@ -38,15 +41,22 @@ def test_nessun_rilievo_bloccante(esiti: dict[str, Esito], nome: str) -> None:
 
 
 def test_ogni_tratta_ha_la_sua_scritta(esiti: dict[str, Esito]) -> None:
-    """«T03 · Ø200 · L 7,5 m»; un fascio fra le stesse macchine ne ha una sola."""
+    """«T03 · Ø200 · L 7,5 m»; un fascio fra le stesse macchine ne ha una sola.
+    La scritta sta accanto alla linea, o in legenda col suo numero, o nel
+    riquadro di dettaglio: da qualche parte c'e', una volta sola."""
     esito = esiti["appartamento"]
-    testi = [s.testo for chi, s in esito.tavola.scritte if chi.startswith(("tratta", "fascio"))]
-    assert "T07–T09 · L 12 m" in testi
+    tavole = [esito.tavola, *(esito.dettagli or [])]
+    testi = [
+        s.in_legenda or s.testo
+        for tavola in tavole for chi, s in tavola.scritte if chi.startswith(("tratta", "fascio"))
+    ]
+    # Il cavo segue le linee frigo + 1 m (regola della distinta): 12 + 1.
+    assert "T07–T09 · L 13 m" in testi
     lunghe = {lu.tratta: lu for lu in esito.lunghezze}
     assert f"T03 · Ø200 · L {metri(lunghe['T03'].da_quotare_m)} m" in testi
-    prime = {testo.split(" ")[0] for testo in testi}
+    prime = [testo.split(" ")[0] for testo in testi]
     attese = {t.tratta for t in esito.pianta.tracciati if t.fascio is None} | {"T07–T09"}
-    assert prime == attese
+    assert set(prime) == attese
 
 
 def test_la_tavola_esce_su_a3_a_1_50_con_tutti_i_file(esiti: dict[str, Esito]) -> None:
@@ -78,7 +88,7 @@ def test_stesso_ingresso_stessa_tavola(tmp_path: Path, esiti: dict[str, Esito]) 
     assert prima.read_text(encoding="utf-8") == dopo.read_text(encoding="utf-8")
 
 
-def test_la_regola_delle_lunghezze_e_un_parametro() -> None:
+def test_la_regola_dichiarata_nella_pianta_e_un_parametro() -> None:
     kit = Maggiorazione()
     assert da_quotare(2.0, kit, "supply_air") == (3.5, None)  # (2 + 1) × 1,15 = 3,45
     assert da_quotare(4.0, kit, "supply_air") == (6.0, None)  # 5,75 per eccesso
@@ -89,14 +99,23 @@ def test_la_regola_delle_lunghezze_e_un_parametro() -> None:
 
 
 def test_le_lunghezze_sono_quelle_del_percorso_disegnato(esiti: dict[str, Esito]) -> None:
+    """Senza la lunghezza del progettista, si quota la misura, con la regola
+    della distinta (maggiorazione, minimo della classe, il cavo che segue)."""
     esito = esiti["appartamento"]
     dati = json.loads(next(p for p in esito.file if p.name.endswith(".tracciati.json")).read_text())
+    regole = carica_regole(RADICE / "rules" / "distinta")
     for tratta, percorso in zip(dati["tratte"], esito.percorsi, strict=True):
         punti = percorso.punti
         misurata = sum(abs(b[0] - a[0]) + abs(b[1] - a[1]) for a, b in zip(punti, punti[1:], strict=False))
         assert tratta["lunghezza_misurata_m"] == pytest.approx(misurata, abs=1e-3)
-        attesa, _ = da_quotare(tratta["lunghezza_misurata_m"], esito.pianta.maggiorazione, tratta["fluido"])
-        assert tratta["lunghezza_da_quotare_m"] == attesa
+        assert tratta["lunghezza_usata_da"] == "misura"
+        assert tratta["lunghezza_usata_m"] == tratta["lunghezza_misurata_m"]
+        if tratta["fluido"] in ("supply_air", "return_air", "power_supply"):
+            attesa = da_quotare_della_distinta(
+                tratta["lunghezza_misurata_m"], regole.lunghezze["regola"],
+                [Minimo(2.0, "ramo")] if tratta["fluido"] != "power_supply" else [],
+            ).da_quotare
+            assert tratta["lunghezza_da_quotare_m"] == attesa, tratta["tratta"]
     assert dati["rilievi"]["diagonali"] == 0
     assert dati["forature"] and dati["fori_dei_pezzi"]
 

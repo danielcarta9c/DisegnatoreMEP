@@ -34,7 +34,7 @@ from __future__ import annotations
 import heapq
 import math
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from .griglia import (
     ATTRAVERSO_IN_ORIZZONTALE,
@@ -71,7 +71,7 @@ fascio. Non e' un accosto qualsiasi: un fascio che si stringe a un nodo sulla
 carta e' una linea sola, e sul caso di prova il terzo tracciato frigo si
 infilava in mezzo agli altri due, a 5 cm, e li incrociava alla prima curva."""
 
-FUORI_DAL_CONTROSOFFITTO = 3
+FUORI_DAL_CONTROSOFFITTO = 5
 """Un tracciato in controsoffitto, dove il controsoffitto non c'e', costa il
 triplo: si puo' fare, ma l'instradatore lo evita se puo'."""
 
@@ -118,12 +118,25 @@ class Percorso:
     nodi: tuple[int, ...] = ()
     attraversamenti: tuple[Attraversamento, ...] = ()
     fuori_dal_controsoffitto_m: float = 0.0
+    tronchi: tuple[tuple[tuple[float, float], ...], ...] = ()
+    """Una tratta che passa per organi in linea (`passa_per`) e' fatta di
+    tronchi, uno per coppia di pezzi: si disegnano e si misurano loro. Allora
+    `punti` li unisce passando **dentro** l'organo in linea, in ortogonale."""
+    fuori: tuple[tuple[tuple[float, float], ...], ...] = ()
+    """Le spezzate, in metri, dei tratti in controsoffitto dove il
+    controsoffitto non c'e' (dentro l'edificio): la tavola le disegna."""
+
+    @property
+    def linee(self) -> tuple[tuple[tuple[float, float], ...], ...]:
+        """Le spezzate da disegnare: i tronchi, o il percorso intero."""
+        return self.tronchi or (self.punti,)
 
     @property
     def lunghezza_m(self) -> float:
         return sum(
             abs(b[0] - a[0]) + abs(b[1] - a[1])
-            for a, b in zip(self.punti, self.punti[1:], strict=False)
+            for linea in self.linee
+            for a, b in zip(linea, linea[1:], strict=False)
         )
 
 
@@ -208,7 +221,7 @@ class Instradatore:
                 costo = PASSO_AL_CENTRO
             else:
                 costo = PASSO_IN_STANZA
-            if quota == "controsoffitto" and not g.controsoffitto[k]:
+            if quota == "controsoffitto" and not g.controsoffitto[k] and not g.esterno[k]:
                 costo *= FUORI_DAL_CONTROSOFFITTO
             costi[k] = costo
         self._basi[quota] = costi
@@ -662,15 +675,29 @@ class Instradatore:
                                 g.punto(nodi[-2]) if len(nodi) > 1 else None))
         punti = _senza_ripetizioni(punti)
         fuori = 0.0
+        tratti_fuori: list[tuple[tuple[float, float], ...]] = []
         if tracciato.quota == "controsoffitto":
-            fuori = sum(
-                g.passo for a, b in zip(nodi, nodi[1:], strict=False)
-                if not (g.controsoffitto[a] or g.muro[a]) and not (g.controsoffitto[b] or g.muro[b])
-            )
+
+            def scoperto(k: int) -> bool:
+                return not (g.controsoffitto[k] or g.muro[k] or g.esterno[k])
+
+            corsa: list[int] = []
+            for a, b in zip(nodi, nodi[1:], strict=False):
+                if scoperto(a) and scoperto(b):
+                    fuori += g.passo
+                    if not corsa:
+                        corsa = [a]
+                    corsa.append(b)
+                    continue
+                if corsa:
+                    tratti_fuori.append(tuple(g.punto(k) for k in _vertici(corsa)))
+                    corsa = []
+            if corsa:
+                tratti_fuori.append(tuple(g.punto(k) for k in _vertici(corsa)))
         return Percorso(
             tratta=tracciato.tratta, punti=tuple(punti), ceduto=False, nodi=tuple(nodi),
             attraversamenti=self._attraversamenti(tracciato, nodi),
-            fuori_dal_controsoffitto_m=round(fuori, 3),
+            fuori_dal_controsoffitto_m=round(fuori, 3), fuori=tuple(tratti_fuori),
         )
 
     def _attraversamenti(self, tracciato: Tracciato, nodi: list[int]) -> tuple[Attraversamento, ...]:
@@ -807,10 +834,14 @@ def instrada_tutto(pianta: Pianta, griglia: Griglia) -> list[Percorso]:
     loro posto; il nuovo percorso resta se sormonta meno, a parita' se costa
     meno. Deterministico come il primo giro, e con un tetto di giri dichiarato.
 
+    Una tratta con organi in linea (`passa_per`) si instrada a tronchi, uno per
+    coppia di pezzi, e torna **una**: un numero, una scritta, una lunghezza.
+
     Torna i percorsi nell'ordine in cui la pianta li elenca."""
     instradatore = Instradatore(pianta, griglia)
-    ordine = ordine_di_instradamento(pianta.tracciati)
-    blocchi = fasci_in_blocco(pianta.tracciati)
+    da_fare, tronchi = tronchi_da_instradare(pianta)
+    ordine = ordine_di_instradamento(da_fare)
+    blocchi = fasci_in_blocco(da_fare)
     fatti: set[str] = set()
     for tracciato in ordine:
         if tracciato.tratta in fatti:
@@ -829,4 +860,54 @@ def instrada_tutto(pianta: Pianta, griglia: Griglia) -> list[Percorso]:
             cambiato |= instradatore.ripassa(tracciato)
         if not cambiato:
             break
-    return [instradatore.fatti[t.tratta] for t in pianta.tracciati]
+    out: list[Percorso] = []
+    for tracciato in pianta.tracciati:
+        if tracciato.tratta in tronchi:
+            out.append(unisci_i_tronchi(tracciato.tratta, [instradatore.fatti[n] for n in tronchi[tracciato.tratta]]))
+        else:
+            out.append(instradatore.fatti[tracciato.tratta])
+    return out
+
+
+SEPARATORE_DEI_TRONCHI = "/"
+"""Il nome interno di un tronco: «T10/1», «T10/2». Non esce dall'instradatore."""
+
+
+def tronchi_da_instradare(pianta: Pianta) -> tuple[list[Tracciato], dict[str, list[str]]]:
+    """I tracciati da cercare: quelli con organi in linea, spezzati in tronchi."""
+    out: list[Tracciato] = []
+    tronchi: dict[str, list[str]] = {}
+    for tracciato in pianta.tracciati:
+        if not tracciato.passa_per:
+            out.append(tracciato)
+            continue
+        nomi: list[str] = []
+        for indice, (da, a) in enumerate(pianta.tronchi(tracciato), start=1):
+            nome = f"{tracciato.tratta}{SEPARATORE_DEI_TRONCHI}{indice}"
+            out.append(tracciato.model_copy(update={"tratta": nome, "da": da, "a": a, "passa_per": []}))
+            nomi.append(nome)
+        tronchi[tracciato.tratta] = nomi
+    return out, tronchi
+
+
+def unisci_i_tronchi(tratta: str, parti: list[Percorso]) -> Percorso:
+    """I tronchi in un percorso solo. Fra un tronco e il successivo la spezzata
+    passa dentro l'organo in linea con un gomito ortogonale: sta sotto il pezzo,
+    non si vede e non si misura, ma tiene la regola dei diagonali."""
+    punti: list[tuple[float, float]] = []
+    for parte in parti:
+        if punti:
+            fine, inizio = punti[-1], parte.punti[0]
+            if abs(fine[0] - inizio[0]) > 1e-9 and abs(fine[1] - inizio[1]) > 1e-9:
+                punti.append((inizio[0], fine[1]))
+        punti.extend(parte.punti)
+    return Percorso(
+        tratta=tratta,
+        punti=tuple(_senza_ripetizioni(punti)),
+        ceduto=any(p.ceduto for p in parti),
+        nodi=tuple(k for p in parti for k in p.nodi),
+        attraversamenti=tuple(replace(a, tratta=tratta) for p in parti for a in p.attraversamenti),
+        fuori_dal_controsoffitto_m=round(sum(p.fuori_dal_controsoffitto_m for p in parti), 3),
+        tronchi=tuple(p.punti for p in parti),
+        fuori=tuple(f for p in parti for f in p.fuori),
+    )

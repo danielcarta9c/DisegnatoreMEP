@@ -96,11 +96,5 @@
     {"tratta": "T16", "da": "CZ-01", "a": "TZ-03", "fluido": "control_bus", "dimensione": "bus", "quota": "traccia"},
     {"tratta": "T17", "da": "CZ-01", "a": "TZ-04", "fluido": "control_bus", "dimensione": "bus", "quota": "traccia"},
     {"tratta": "T18", "da": "UI-01", "a": "CF-01", "fluido": "control_bus", "dimensione": "P1-P2", "quota": "traccia"}
-  ],
-  "maggiorazione": {
-    "aggiunta_m": 1.0,
-    "fattore": 1.15,
-    "arrotondamento_m": 0.5,
-    "minimi_m": {"refrigerant_liquid": 12, "refrigerant_gas": 12, "interconnection": 12, "condensate": 10, "control_bus": 5, "supply_air": 2}
-  }
+  ]
 }
