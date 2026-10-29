@@ -6,7 +6,10 @@
 > che cmq va inteegata anche nell'idronico esistente no ?» (I-226). Scritto il 29 ottobre 2026, sulla 1.5.0.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **DA COMINCIARE**.
+**Stato:** **FATTO SUL RAMO, IN ATTESA DEL PO** (notte del 29 ottobre 2026): le tre fasi, più `REL-013` e `REL-014` in
+anticipo e il confronto di `REL-011`, nella release **1.6.0**, in una PR sola verso `main` — gli agenti in parallelo
+hanno reso le fasi una notte, e una PR per fase avrebbe chiesto tre approvazioni sulle stesse tavole. Si fonde col sì
+del PO sulle tavole.
 **Base:** `main` dopo la PR #79 (la 1.5.0, `dfc68c1`).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). **Una PR per fase.**
