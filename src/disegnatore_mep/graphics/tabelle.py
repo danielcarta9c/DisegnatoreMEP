@@ -11,6 +11,11 @@ loro larghezza, righe e righe di sezione), e il motore decide **dove**:
 - una tabella che non entra in quel che resta della colonna **continua nella colonna
   accanto**, con l'intestazione ripetuta; una riga di sezione non resta mai ultima
   in fondo a una colonna, staccata dalle sue righe;
+- **niente colonne vedove**: se la continuazione porterebbe nella colonna accanto meno
+  di `RIGHE_MINIME_IN_CONTINUAZIONE` righe, la tabella passa intera nella colonna
+  accanto, se li' entra tutta; se no le righe si dividono a meta' fra le due colonne
+  (collaudo T3 di REL-012: la seconda colonna portava la sola T16, con l'intestazione
+  ripetuta);
 - il testo di una cella **va a capo** fra le parole sulla larghezza della colonna,
   misurato con le larghezze di Arial, come la legenda (REL-008);
 - se una tabella non entra nella zona, o una parola sola non entra nella sua
@@ -66,6 +71,10 @@ ALTEZZA_MAIUSCOLE_EM = 0.7
 
 STACCO_DEL_TITOLO_MM = 1.5
 """Fra la base del titolo e la linea alta della tabella."""
+
+RIGHE_MINIME_IN_CONTINUAZIONE = 3
+"""Meno righe di cosi' nella colonna accanto, sotto l'intestazione ripetuta, si leggono
+come un'altra tabella (collaudo T3 di REL-012). Proposta della sessione."""
 
 
 def _a_capo(testo: str, larghezza: float, corpo_pt: float, grassetto: bool) -> list[str]:
@@ -204,21 +213,15 @@ def _posa_nella_zona(
     for tabella in tabelle:
         larghezza = sum(item.larghezza_mm for item in tabella.colonne)
         intestazione = _altezza_dell_intestazione(tabella.colonne, misure)
+        altezze = [_altezza_della_riga(riga, tabella.colonne, misure) for riga in tabella.righe]
         righe = list(tabella.righe)
         titolo = tabella.titolo
         while True:
             testa = (misure.titolo_mm if titolo is not None else 0.0) + intestazione
+            mie_altezze = altezze[len(tabella.righe) - len(righe):]
             # Quante righe entrano qui: una riga di sezione non resta ultima.
             disponibile = fondo - y - testa
-            quante, usato = 0, 0.0
-            for riga in righe:
-                altezza = _altezza_della_riga(riga, tabella.colonne, misure)
-                if usato + altezza > disponibile + 1e-9:
-                    break
-                usato += altezza
-                quante += 1
-            while 0 < quante < len(righe) and righe[quante - 1].sezione is not None:
-                quante -= 1
+            quante = _quante_entrano(righe, mie_altezze, disponibile)
             entra_tutta = quante == len(righe)
             if (quante == 0 and righe) or (disponibile < -1e-9):
                 if y > alto + 1e-9:
@@ -228,6 +231,19 @@ def _posa_nella_zona(
                     f"la tabella «{tabella.titolo or ''}» non entra nella zona {nome}: "
                     f"nemmeno una riga sta sotto l'intestazione in {zona.height_mm:g} mm"
                 )
+            if not entra_tutta and len(righe) - quante < RIGHE_MINIME_IN_CONTINUAZIONE:
+                # Una colonna vedova: la tabella intera nella colonna accanto, se li'
+                # entra tutta; se no le righe a meta' fra le due colonne.
+                da_capo = fondo - alto - testa
+                if y > alto + 1e-9 and _quante_entrano(righe, mie_altezze, da_capo) == len(righe):
+                    nuova_colonna()
+                    continue
+                meta = min(quante, (len(righe) + 1) // 2)
+                while meta > 0 and righe[meta - 1].sezione is not None:
+                    meta -= 1
+                if meta > 0:
+                    quante = meta
+            usato = sum(mie_altezze[:quante])
             if titolo is not None and x + _larghezza_del_titolo(titolo, misure) > destra + 1e-9:
                 raise LayoutError(
                     f"il titolo «{titolo}» non entra in una riga nella zona {nome}: restano "
@@ -256,6 +272,20 @@ def _posa_nella_zona(
             titolo = None
             nuova_colonna()
     return posate
+
+
+def _quante_entrano(righe: Sequence[RigaDellaTabellaLibera], altezze: Sequence[float], disponibile: float) -> int:
+    """Quante righe, dalla prima, entrano in `disponibile` mm; una riga di sezione non
+    resta ultima, staccata dalle sue righe."""
+    quante, usato = 0, 0.0
+    for altezza in altezze[: len(righe)]:
+        if usato + altezza > disponibile + 1e-9:
+            break
+        usato += altezza
+        quante += 1
+    while 0 < quante < len(righe) and righe[quante - 1].sezione is not None:
+        quante -= 1
+    return quante
 
 
 @dataclass(frozen=True)
@@ -415,6 +445,7 @@ def svg_delle_tabelle(foglio: SheetGeometry, standard: GraphicStandard) -> str:
 
 __all__ = [
     "MARGINE_DALLA_ZONA_MM",
+    "RIGHE_MINIME_IN_CONTINUAZIONE",
     "STACCO_FRA_LE_TABELLE_MM",
     "TestoDiTabella",
     "TrattiDellaTabellaPosata",

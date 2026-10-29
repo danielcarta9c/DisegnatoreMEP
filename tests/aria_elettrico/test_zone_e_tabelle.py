@@ -26,6 +26,7 @@ from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.sheet import render_sheet
 from disegnatore_mep.graphics.tabella import righe_della_tabella
 from disegnatore_mep.graphics.tabelle import (
+    RIGHE_MINIME_IN_CONTINUAZIONE,
     posa_le_tabelle,
     riquadro_della_tabella_posata,
     tratti_della_tabella_posata,
@@ -172,6 +173,45 @@ def test_una_tabella_lunga_continua_nella_colonna_accanto_con_l_intestazione() -
         assert zona is not None and basso <= zona.bottom_mm and destra <= zona.right_mm
         intestazione = [t.testo for t in tratti_della_tabella_posata(pezzo, frame.standard).testi if t.grassetto]
         assert {"N.", "Voce", "Q.tà"} <= set(intestazione), "l'intestazione si ripete"
+
+
+def _quante_in_una_colonna(frame: Any) -> int:
+    """Quante righe di `_tabella` stanno in una colonna della zona in basso, col titolo."""
+    return len(posa_le_tabelle(VUOTO, frame, [_tabella(40)]).tabelle[0].righe)
+
+
+def test_una_continuazione_di_una_riga_sola_non_fa_una_colonna_vedova() -> None:
+    """Collaudo T3 di REL-012: la tabella delle tratte andava su due colonne e la seconda
+    portava la sola T16, con l'intestazione ripetuta. Una riga in piu' di quante ne
+    entrano: le righe si dividono a meta' fra le due colonne."""
+    frame = NOVE_C_A2.con_le_zone(175, 135)
+    capienza = _quante_in_una_colonna(frame)
+    for in_piu in (1, 2):
+        tabella = _tabella(capienza + in_piu)
+        prima, seconda = posa_le_tabelle(VUOTO, frame, [tabella]).tabelle
+        assert prima.righe + seconda.righe == tabella.righe, "nessuna riga persa, nessuna doppia"
+        assert len(seconda.righe) >= RIGHE_MINIME_IN_CONTINUAZIONE
+        assert abs(len(prima.righe) - len(seconda.righe)) <= 1, "le due colonne si bilanciano"
+    # Con tre righe nella colonna accanto, la continuazione resta com'era.
+    prima, seconda = posa_le_tabelle(VUOTO, frame, [_tabella(capienza + 3)]).tabelle
+    assert (len(prima.righe), len(seconda.righe)) == (capienza, 3)
+
+
+def test_una_tabella_che_lascerebbe_una_colonna_vedova_passa_intera_nella_colonna_accanto() -> None:
+    """Sotto un'altra tabella, una tabella che lascerebbe meno di tre righe nella colonna
+    accanto ci va intera, se li' entra tutta."""
+    frame = NOVE_C_A2.con_le_zone(175, 135)
+    capienza = _quante_in_una_colonna(frame)
+    sopra = _tabella(4, titolo="SOPRA")
+    (posata_sopra,) = posa_le_tabelle(VUOTO, frame, [sopra]).tabelle
+    # Quante righe di una seconda tabella entrano sotto la prima.
+    sotto_entrano = len(posa_le_tabelle(VUOTO, frame, [sopra, _tabella(40)]).tabelle[1].righe)
+    assert sotto_entrano + 1 <= capienza
+    seconda = _tabella(sotto_entrano + 1, titolo="SOTTO")
+    prima, intera = posa_le_tabelle(VUOTO, frame, [sopra, seconda]).tabelle
+    assert prima.titolo == "SOPRA" and intera.titolo == "SOTTO"
+    assert intera.righe == seconda.righe and intera.y_mm == posata_sopra.y_mm
+    assert intera.x_mm == posata_sopra.x_mm + 88 + 5
 
 
 def test_il_testo_va_a_capo_e_la_riga_si_alza() -> None:
