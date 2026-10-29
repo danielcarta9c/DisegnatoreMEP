@@ -29,6 +29,7 @@
       "fascio": null,
       "instradata": true,
       "lunghezza_data_m": null,
+      "lunghezza_data_da": null,
       "lunghezza_misurata_m": 7.7,
       "lunghezza_usata_m": 7.7,
       "lunghezza_usata_da": "misura",
@@ -39,6 +40,9 @@
       "deciso_dal_minimo": true,
       "curve": 2,
       "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 1,
+      "fori_nel_perimetrale": 0,
       "punti_m": [
         [
           1.15,
@@ -87,6 +91,18 @@
     }
   ],
   "fori_dei_pezzi": [],
+  "per_il_grafo": {
+    "nota": "Le pareti interne forate da ogni tratta: da riportare nel grafo, fra le properties di una tubazione della tratta (attraversamenti), perche' la distinta conti le forature della pianta.",
+    "attraversamenti": {
+      "T01": 1
+    }
+  },
+  "confronto": {
+    "con": [],
+    "bloccanti": [],
+    "avvisi": [],
+    "lunghezze_prese": {}
+  },
   "rilievi": {
     "diagonali": 0,
     "sormonti": 0,
@@ -107,6 +123,9 @@
     "linee_sui_pezzi": 0,
     "misure_oltre_la_lunghezza": 0,
     "scritte_nel_dettaglio": 0,
+    "fuori_dalle_zone_esterne": 0,
+    "pezzi_sovrapposti": 0,
+    "discordanze_con_distinta_e_grafo": 0,
     "bloccanti": [],
     "elenco": {
       "diagonali": [],
@@ -125,7 +144,10 @@
       "scritte_in_legenda": [],
       "linee_sui_pezzi": [],
       "misure_oltre_la_lunghezza": [],
-      "scritte_nel_dettaglio": []
+      "scritte_nel_dettaglio": [],
+      "fuori_dalle_zone_esterne": [],
+      "pezzi_sovrapposti": [],
+      "discordanze_con_distinta_e_grafo": []
     }
   },
   "dettagli": []

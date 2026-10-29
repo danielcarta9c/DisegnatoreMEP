@@ -5,7 +5,7 @@
     "avvisi": []
   },
   "avvisi": [
-    "Senza L prog., quotate sulla misura (°): T01, T02, T03, T04. Da riportare nel grafo, o da chiedere."
+    "Senza L prog., quotate sulla misura (°): tutte le tratte. Da riportare nel grafo, o da chiedere."
   ],
   "regola_delle_lunghezze": {
     "origine": "della distinta",
@@ -29,6 +29,7 @@
       "fascio": null,
       "instradata": true,
       "lunghezza_data_m": null,
+      "lunghezza_data_da": null,
       "lunghezza_misurata_m": 6.8,
       "lunghezza_usata_m": 6.8,
       "lunghezza_usata_da": "misura",
@@ -39,6 +40,9 @@
       "deciso_dal_minimo": true,
       "curve": 3,
       "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
       "punti_m": [
         [
           0.3,
@@ -75,6 +79,7 @@
       "fascio": null,
       "instradata": true,
       "lunghezza_data_m": null,
+      "lunghezza_data_da": null,
       "lunghezza_misurata_m": 7.1,
       "lunghezza_usata_m": 7.1,
       "lunghezza_usata_da": "misura",
@@ -85,6 +90,9 @@
       "deciso_dal_minimo": true,
       "curve": 3,
       "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
       "punti_m": [
         [
           0.25,
@@ -121,6 +129,7 @@
       "fascio": null,
       "instradata": true,
       "lunghezza_data_m": null,
+      "lunghezza_data_da": null,
       "lunghezza_misurata_m": 5.1,
       "lunghezza_usata_m": 5.1,
       "lunghezza_usata_da": "misura",
@@ -131,6 +140,9 @@
       "deciso_dal_minimo": false,
       "curve": 2,
       "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
       "punti_m": [
         [
           0.5,
@@ -163,6 +175,7 @@
       "fascio": null,
       "instradata": true,
       "lunghezza_data_m": null,
+      "lunghezza_data_da": null,
       "lunghezza_misurata_m": 1.35,
       "lunghezza_usata_m": 1.35,
       "lunghezza_usata_da": "misura",
@@ -173,6 +186,9 @@
       "deciso_dal_minimo": false,
       "curve": 1,
       "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
       "punti_m": [
         [
           0.5,
@@ -193,6 +209,21 @@
   ],
   "forature": [],
   "fori_dei_pezzi": [],
+  "per_il_grafo": {
+    "nota": "Le pareti interne forate da ogni tratta: da riportare nel grafo, fra le properties di una tubazione della tratta (attraversamenti), perche' la distinta conti le forature della pianta.",
+    "attraversamenti": {
+      "T01": 0,
+      "T02": 0,
+      "T03": 0,
+      "T04": 0
+    }
+  },
+  "confronto": {
+    "con": [],
+    "bloccanti": [],
+    "avvisi": [],
+    "lunghezze_prese": {}
+  },
   "rilievi": {
     "diagonali": 0,
     "sormonti": 1,
@@ -213,6 +244,9 @@
     "linee_sui_pezzi": 0,
     "misure_oltre_la_lunghezza": 0,
     "scritte_nel_dettaglio": 0,
+    "fuori_dalle_zone_esterne": 0,
+    "pezzi_sovrapposti": 0,
+    "discordanze_con_distinta_e_grafo": 0,
     "bloccanti": [],
     "elenco": {
       "diagonali": [],
@@ -225,17 +259,20 @@
       "fori_fuori_dalle_aperture": [],
       "tratte_cedute": [],
       "richiami": [
-        "«T04 · Ø200 · L 3 m» (tratta T04): 4.0 mm"
+        "«T04 · Ø200 · L 1,4 m°» (tratta T04): 4.0 mm"
       ],
       "richiami_lunghi": [],
       "richiami_che_attraversano": [],
       "richiami_su_una_linea": [
-        "«T04 · Ø200 · L 3 m» (tratta T04) attraversa: tratta T03"
+        "«T04 · Ø200 · L 1,4 m°» (tratta T04) attraversa: tratta T03"
       ],
       "scritte_in_legenda": [],
       "linee_sui_pezzi": [],
       "misure_oltre_la_lunghezza": [],
-      "scritte_nel_dettaglio": []
+      "scritte_nel_dettaglio": [],
+      "fuori_dalle_zone_esterne": [],
+      "pezzi_sovrapposti": [],
+      "discordanze_con_distinta_e_grafo": []
     }
   },
   "dettagli": []

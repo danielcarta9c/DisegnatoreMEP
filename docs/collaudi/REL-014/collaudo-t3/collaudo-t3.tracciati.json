@@ -1,0 +1,1233 @@
+{
+  "tavola": {
+    "formato": "A2",
+    "scala": "1:50",
+    "avvisi": []
+  },
+  "avvisi": [
+    "Fuori dal controsoffitto (fascia arancio): T03 0,2 m; T06-T07-T11 3,2 m; T08 1 m. Canalina o traccia, da verificare."
+  ],
+  "regola_delle_lunghezze": {
+    "origine": "della distinta",
+    "della_distinta": true,
+    "regola": {
+      "aggiunta_m": 1.0,
+      "fattore": 1.15,
+      "passo_m": 0.5
+    },
+    "scarto_della_misura": 0.15
+  },
+  "tratte": [
+    {
+      "tratta": "T01",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "TA-01",
+      "passa_per": [],
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 5.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 2.8,
+      "lunghezza_usata_m": 5.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.44,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 7.0,
+      "calcolo": "(5 + 1) × 1,15 = 6,9 → 7 m",
+      "deciso_dal_minimo": false,
+      "curve": 1,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 1,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          5.25,
+          4.0
+        ],
+        [
+          2.7,
+          4.0
+        ],
+        [
+          2.7,
+          3.75
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T02",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "TA-02",
+      "passa_per": [],
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 3.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 3.4,
+      "lunghezza_usata_m": 3.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": 0.133,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 5.0,
+      "calcolo": "(3 + 1) × 1,15 = 4,6 → 5 m",
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 1,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          5.7,
+          3.95
+        ],
+        [
+          5.7,
+          3.85
+        ],
+        [
+          8.9,
+          3.85
+        ],
+        [
+          8.9,
+          3.75
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T03",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "TA-04",
+      "passa_per": [],
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 6.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 4.4,
+      "lunghezza_usata_m": 6.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.267,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 8.5,
+      "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.2,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          5.25,
+          4.6
+        ],
+        [
+          3.1,
+          4.6
+        ],
+        [
+          3.1,
+          5.25
+        ],
+        [
+          1.5,
+          5.25
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": "varco-soggiorno",
+          "forato": false,
+          "punto_m": [
+            3.1,
+            4.95
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T04",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "TA-03",
+      "passa_per": [],
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 4.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 1.55,
+      "lunghezza_usata_m": 4.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.613,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 6.0,
+      "calcolo": "(4 + 1) × 1,15 = 5,75 → 6 m",
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 1,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          5.3,
+          4.65
+        ],
+        [
+          5.3,
+          4.75
+        ],
+        [
+          3.95,
+          4.75
+        ],
+        [
+          3.95,
+          4.85
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T06",
+      "fluido": "refrigerant_liquid",
+      "da": "UI-01",
+      "a": "UE-01",
+      "passa_per": [],
+      "dimensione": "1/4\"",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_data_m": 9.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 8.635,
+      "lunghezza_usata_m": 9.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.041,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 12.0,
+      "calcolo": "(9 + 1) × 1,15 = 11,5 → 11,5 m; minimo frigo 12 m → 12 m",
+      "deciso_dal_minimo": true,
+      "curve": 4,
+      "fuori_dal_controsoffitto_m": 3.2,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 1,
+      "fori_nel_perimetrale": 1,
+      "punti_m": [
+        [
+          6.45,
+          4.665
+        ],
+        [
+          6.45,
+          8.9
+        ],
+        [
+          3.45,
+          8.9
+        ],
+        [
+          3.45,
+          9.2
+        ],
+        [
+          2.55,
+          9.2
+        ],
+        [
+          2.55,
+          9.0
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.45,
+            4.95
+          ]
+        },
+        {
+          "muro": "m-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.45,
+            8.45
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T07",
+      "fluido": "refrigerant_gas",
+      "da": "UI-01",
+      "a": "UE-01",
+      "passa_per": [],
+      "dimensione": "5/8\"",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_data_m": 9.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 9.035,
+      "lunghezza_usata_m": 9.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": 0.004,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 12.0,
+      "calcolo": "(9 + 1) × 1,15 = 11,5 → 11,5 m; minimo frigo 12 m → 12 m",
+      "deciso_dal_minimo": true,
+      "curve": 4,
+      "fuori_dal_controsoffitto_m": 3.2,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 1,
+      "fori_nel_perimetrale": 1,
+      "punti_m": [
+        [
+          6.55,
+          4.665
+        ],
+        [
+          6.55,
+          9.0
+        ],
+        [
+          3.55,
+          9.0
+        ],
+        [
+          3.55,
+          9.3
+        ],
+        [
+          2.45,
+          9.3
+        ],
+        [
+          2.45,
+          9.0
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.55,
+            4.95
+          ]
+        },
+        {
+          "muro": "m-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.55,
+            8.45
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T11",
+      "fluido": "interconnection",
+      "da": "UI-01",
+      "a": "UE-01",
+      "passa_per": [],
+      "dimensione": "4G1,5",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_data_m": 10.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 8.235,
+      "lunghezza_usata_m": 10.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.177,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 13.0,
+      "calcolo": "(10 + 1) × 1,15 = 12,65 → 13 m",
+      "deciso_dal_minimo": false,
+      "curve": 4,
+      "fuori_dal_controsoffitto_m": 3.2,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 1,
+      "fori_nel_perimetrale": 1,
+      "punti_m": [
+        [
+          6.35,
+          4.665
+        ],
+        [
+          6.35,
+          8.8
+        ],
+        [
+          3.35,
+          8.8
+        ],
+        [
+          3.35,
+          9.1
+        ],
+        [
+          2.65,
+          9.1
+        ],
+        [
+          2.65,
+          9.0
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.35,
+            4.95
+          ]
+        },
+        {
+          "muro": "m-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.35,
+            8.45
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T08",
+      "fluido": "condensate",
+      "da": "UI-01",
+      "a": "AL-01",
+      "passa_per": [
+        "SIF-01"
+      ],
+      "dimensione": "PVC Ø32",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 8.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 1.775,
+      "lunghezza_usata_m": 8.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.778,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 10.5,
+      "calcolo": "(8 + 1) × 1,15 = 10,35 → 10,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 1.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 1,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          6.85,
+          4.6
+        ],
+        [
+          7.1,
+          4.6
+        ],
+        [
+          7.1,
+          6.2
+        ],
+        [
+          7.15,
+          6.2
+        ],
+        [
+          7.15,
+          6.225
+        ]
+      ],
+      "tronchi_m": [
+        [
+          [
+            6.85,
+            4.6
+          ],
+          [
+            7.1,
+            4.6
+          ],
+          [
+            7.1,
+            5.225
+          ]
+        ],
+        [
+          [
+            7.1,
+            5.375
+          ],
+          [
+            7.1,
+            6.2
+          ],
+          [
+            7.15,
+            6.2
+          ],
+          [
+            7.15,
+            6.225
+          ]
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            7.1,
+            4.95
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T09",
+      "fluido": "power_supply",
+      "da": "QE-01",
+      "a": "CZ-01",
+      "passa_per": [],
+      "dimensione": "3G1,5",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 8.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 8.325,
+      "lunghezza_usata_m": 8.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": 0.041,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 10.5,
+      "calcolo": "(8 + 1) × 1,15 = 10,35 → 10,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 6,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          11.15,
+          6.1
+        ],
+        [
+          11.15,
+          5.2
+        ],
+        [
+          8.9,
+          5.2
+        ],
+        [
+          8.9,
+          4.0
+        ],
+        [
+          6.95,
+          4.0
+        ],
+        [
+          6.95,
+          3.8
+        ],
+        [
+          5.55,
+          3.8
+        ],
+        [
+          5.55,
+          4.225
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": "porta-ingresso",
+          "forato": false,
+          "punto_m": [
+            8.9,
+            4.95
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T10",
+      "fluido": "power_supply",
+      "da": "QE-01",
+      "a": "UE-01",
+      "passa_per": [
+        "SZ-01"
+      ],
+      "dimensione": "3G4",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 18.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 10.63,
+      "lunghezza_usata_m": 18.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.409,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 22.0,
+      "calcolo": "(18 + 1) × 1,15 = 21,85 → 22 m",
+      "deciso_dal_minimo": false,
+      "curve": 4,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 1,
+      "fori_nel_perimetrale": 1,
+      "punti_m": [
+        [
+          11.15,
+          6.5
+        ],
+        [
+          11.15,
+          8.15
+        ],
+        [
+          3.2,
+          8.15
+        ],
+        [
+          3.2,
+          8.7
+        ],
+        [
+          3.1,
+          8.7
+        ],
+        [
+          3.1,
+          8.8
+        ],
+        [
+          2.7,
+          8.8
+        ]
+      ],
+      "tronchi_m": [
+        [
+          [
+            11.15,
+            6.5
+          ],
+          [
+            11.15,
+            8.15
+          ],
+          [
+            3.2,
+            8.15
+          ],
+          [
+            3.2,
+            8.7
+          ],
+          [
+            3.16,
+            8.7
+          ]
+        ],
+        [
+          [
+            3.1,
+            8.76
+          ],
+          [
+            3.1,
+            8.8
+          ],
+          [
+            2.7,
+            8.8
+          ]
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-soggiorno-ingresso",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            7.3,
+            8.15
+          ]
+        },
+        {
+          "muro": "m-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            3.2,
+            8.45
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T12",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "TZ-01",
+      "passa_per": [],
+      "dimensione": "bus",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 7.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 3.465,
+      "lunghezza_usata_m": 7.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.505,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 9.5,
+      "calcolo": "(7 + 1) × 1,15 = 9,2 → 9,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          5.45,
+          4.225
+        ],
+        [
+          5.45,
+          3.85
+        ],
+        [
+          2.95,
+          3.85
+        ],
+        [
+          2.95,
+          3.55
+        ],
+        [
+          3.24,
+          3.55
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-nord",
+          "apertura": "porta-matrimoniale",
+          "forato": false,
+          "punto_m": [
+            2.95,
+            3.65
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T13",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "TZ-02",
+      "passa_per": [],
+      "dimensione": "bus",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 5.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 5.105,
+      "lunghezza_usata_m": 5.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": 0.021,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 7.0,
+      "calcolo": "(5 + 1) × 1,15 = 6,9 → 7 m",
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 1,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          5.5,
+          4.225
+        ],
+        [
+          5.5,
+          3.45
+        ],
+        [
+          9.8,
+          3.45
+        ],
+        [
+          9.8,
+          3.48
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-nord",
+          "apertura": "porta-bagno",
+          "forato": false,
+          "punto_m": [
+            5.5,
+            3.65
+          ]
+        },
+        {
+          "muro": "t-bagno-singola",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            6.8,
+            3.45
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T14",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "TZ-03",
+      "passa_per": [],
+      "dimensione": "bus",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 9.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 0.765,
+      "lunghezza_usata_m": 9.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.915,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 11.5,
+      "calcolo": "(9 + 1) × 1,15 = 11,5 → 11,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 1,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 1,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          5.45,
+          4.375
+        ],
+        [
+          5.45,
+          5.05
+        ],
+        [
+          5.36,
+          5.05
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            5.45,
+            4.95
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T15",
+      "fluido": "control_bus",
+      "da": "UI-01",
+      "a": "CF-01",
+      "passa_per": [],
+      "dimensione": "2×0,75",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 6.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 3.79,
+      "lunghezza_usata_m": 6.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.368,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 8.5,
+      "calcolo": "(6 + 1) × 1,15 = 8,05 → 8,5 m",
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          6.85,
+          4.45
+        ],
+        [
+          9.7,
+          4.45
+        ],
+        [
+          9.7,
+          5.05
+        ],
+        [
+          10.04,
+          5.05
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": [
+        {
+          "muro": "t-corridoio-sud",
+          "apertura": "porta-ingresso",
+          "forato": false,
+          "punto_m": [
+            9.7,
+            4.95
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T16",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "UI-01",
+      "passa_per": [],
+      "dimensione": "2×0,75",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_data_m": 2.0,
+      "lunghezza_data_da": "pianta",
+      "lunghezza_misurata_m": 0.125,
+      "lunghezza_usata_m": 2.0,
+      "lunghezza_usata_da": "progettista",
+      "scarto_della_misura": -0.938,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 5.0,
+      "calcolo": "(2 + 1) × 1,15 = 3,45 → 3,5 m; minimo bus 5 m → 5 m",
+      "deciso_dal_minimo": true,
+      "curve": 0,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "fuori_dalle_zone_esterne_m": 0.0,
+      "attraversamenti_di_parete": 0,
+      "fori_nel_perimetrale": 0,
+      "punti_m": [
+        [
+          5.625,
+          4.3
+        ],
+        [
+          5.75,
+          4.3
+        ]
+      ],
+      "tronchi_m": null,
+      "attraversamenti": []
+    }
+  ],
+  "forature": [
+    {
+      "numero": "F1",
+      "muro": "t-corridoio-sud",
+      "tipo_del_muro": "tramezza",
+      "tratte": [
+        "T06",
+        "T07",
+        "T11"
+      ],
+      "quota": "controsoffitto",
+      "punto_m": [
+        6.45,
+        4.95
+      ]
+    },
+    {
+      "numero": "F2",
+      "muro": "m-sud",
+      "tipo_del_muro": "perimetrale",
+      "tratte": [
+        "T06",
+        "T07",
+        "T11"
+      ],
+      "quota": "controsoffitto",
+      "punto_m": [
+        6.45,
+        8.45
+      ]
+    },
+    {
+      "numero": "F3",
+      "muro": "t-corridoio-sud",
+      "tipo_del_muro": "tramezza",
+      "tratte": [
+        "T08"
+      ],
+      "quota": "controsoffitto",
+      "punto_m": [
+        7.1,
+        4.95
+      ]
+    },
+    {
+      "numero": "F4",
+      "muro": "t-soggiorno-ingresso",
+      "tipo_del_muro": "tramezza",
+      "tratte": [
+        "T10"
+      ],
+      "quota": "traccia",
+      "punto_m": [
+        7.3,
+        8.15
+      ]
+    },
+    {
+      "numero": "F5",
+      "muro": "m-sud",
+      "tipo_del_muro": "perimetrale",
+      "tratte": [
+        "T10"
+      ],
+      "quota": "traccia",
+      "punto_m": [
+        3.2,
+        8.45
+      ]
+    },
+    {
+      "numero": "F6",
+      "muro": "t-bagno-singola",
+      "tipo_del_muro": "tramezza",
+      "tratte": [
+        "T13"
+      ],
+      "quota": "traccia",
+      "punto_m": [
+        6.8,
+        3.45
+      ]
+    },
+    {
+      "numero": "F7",
+      "muro": "t-corridoio-sud",
+      "tipo_del_muro": "tramezza",
+      "tratte": [
+        "T14"
+      ],
+      "quota": "traccia",
+      "punto_m": [
+        5.45,
+        4.95
+      ]
+    }
+  ],
+  "fori_dei_pezzi": [
+    {
+      "pezzo": "TA-01",
+      "muro": "t-corridoio-nord"
+    },
+    {
+      "pezzo": "TA-02",
+      "muro": "t-corridoio-nord"
+    },
+    {
+      "pezzo": "TA-03",
+      "muro": "t-corridoio-sud"
+    }
+  ],
+  "per_il_grafo": {
+    "nota": "Le pareti interne forate da ogni tratta: da riportare nel grafo, fra le properties di una tubazione della tratta (attraversamenti), perche' la distinta conti le forature della pianta.",
+    "attraversamenti": {
+      "T01": 1,
+      "T02": 1,
+      "T03": 0,
+      "T04": 1,
+      "T06": 1,
+      "T07": 1,
+      "T11": 1,
+      "T08": 1,
+      "T09": 0,
+      "T10": 1,
+      "T12": 0,
+      "T13": 1,
+      "T14": 1,
+      "T15": 0,
+      "T16": 0
+    }
+  },
+  "confronto": {
+    "con": [
+      "la distinta",
+      "il grafo"
+    ],
+    "bloccanti": [],
+    "avvisi": [],
+    "lunghezze_prese": {}
+  },
+  "rilievi": {
+    "diagonali": 0,
+    "sormonti": 5,
+    "sovrapposizioni": 0,
+    "scritte_su_linee": 0,
+    "scritte_su_scritte": 0,
+    "fori_fuori_dalle_aperture": 7,
+    "tratte_cedute": 0,
+    "fasci_in_parallelo": {
+      "frigo": 0.969
+    },
+    "fuori_dal_controsoffitto_m": {
+      "T03": 0.2,
+      "T06": 3.2,
+      "T07": 3.2,
+      "T08": 1.0,
+      "T11": 3.2
+    },
+    "richiami": 13,
+    "richiamo_piu_lungo_mm": 6.0,
+    "richiamo_massimo_mm": 12.0,
+    "richiami_lunghi": 0,
+    "richiami_che_attraversano": 0,
+    "richiami_su_una_linea": 3,
+    "scritte_in_legenda": 3,
+    "linee_sui_pezzi": 0,
+    "misure_oltre_la_lunghezza": 0,
+    "scritte_nel_dettaglio": 4,
+    "fuori_dalle_zone_esterne": 0,
+    "pezzi_sovrapposti": 0,
+    "discordanze_con_distinta_e_grafo": 0,
+    "bloccanti": [],
+    "elenco": {
+      "diagonali": [],
+      "sormonti": [
+        "T02 × T09 a (6.95; 3.85)",
+        "T06 × T10 a (6.45; 8.15)",
+        "T07 × T10 a (6.55; 8.15)",
+        "T11 × T10 a (6.35; 8.15)",
+        "T09 × T15 a (8.90; 4.45)"
+      ],
+      "sovrapposizioni": [],
+      "scritte_su_linee": [],
+      "scritte_su_scritte": [],
+      "fori_fuori_dalle_aperture": [
+        "F1: T06 T07 T11 nel muro t-corridoio-sud",
+        "F2: T06 T07 T11 nel muro m-sud",
+        "F3: T08 nel muro t-corridoio-sud",
+        "F4: T10 nel muro t-soggiorno-ingresso",
+        "F5: T10 nel muro m-sud",
+        "F6: T13 nel muro t-bagno-singola",
+        "F7: T14 nel muro t-corridoio-sud"
+      ],
+      "tratte_cedute": [],
+      "richiami": [
+        "«T04 · Ø200 · L 4 m» (tratta T04): 6.0 mm",
+        "«T12 · bus · L 7 m» (tratta T12): 3.0 mm",
+        "«T13 · bus · L 5 m» (tratta T13): 3.0 mm",
+        "«T14 · bus · L 9 m» (tratta T14): 4.0 mm",
+        "«PLZ-01» (pezzo PLZ-01): 3.5 mm",
+        "«TA-01» (pezzo TA-01): 2.5 mm",
+        "«TA-02» (pezzo TA-02): 2.5 mm",
+        "«TA-03» (pezzo TA-03): 2.5 mm",
+        "«AL-01» (pezzo AL-01): 2.5 mm",
+        "«CF-01» (pezzo CF-01): 2.5 mm",
+        "«F4» (foratura F4): 2.5 mm",
+        "«F6» (foratura F6): 2.5 mm",
+        "dettaglio A: «F1» (foratura F1): 4.5 mm"
+      ],
+      "richiami_lunghi": [],
+      "richiami_che_attraversano": [],
+      "richiami_su_una_linea": [
+        "«PLZ-01» (pezzo PLZ-01) attraversa: tratta T09",
+        "«TA-02» (pezzo TA-02) attraversa: tratta T13",
+        "dettaglio A: «F1» (foratura F1) attraversa: tratta T07"
+      ],
+      "scritte_in_legenda": [
+        "1: «T08 · PVC Ø32 · L 8 m» (tratta T08)",
+        "2: «SIF-01» (pezzo SIF-01)",
+        "dettaglio A: 1: «T16 · 2×0,75 · L 2 m» (tratta T16)"
+      ],
+      "linee_sui_pezzi": [],
+      "misure_oltre_la_lunghezza": [],
+      "scritte_nel_dettaglio": [
+        "foratura F3 (dettaglio A)",
+        "pezzo TZ-01 (dettaglio A)",
+        "pezzo TZ-03 (dettaglio A)",
+        "tratta T16 (dettaglio A)"
+      ],
+      "fuori_dalle_zone_esterne": [],
+      "pezzi_sovrapposti": [],
+      "discordanze_con_distinta_e_grafo": []
+    }
+  },
+  "dettagli": [
+    {
+      "id": "A",
+      "rettangolo_m": [
+        2.75,
+        2.8,
+        8.0,
+        5.8
+      ],
+      "scala": "1:20",
+      "tavola": "collaudo-t3-dettaglio-A",
+      "automatico": true
+    }
+  ]
+}
