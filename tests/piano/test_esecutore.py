@@ -373,7 +373,7 @@ def test_un_piano_che_non_si_instrada_porta_comunque_la_posa() -> None:
     assert misura.disegno is None
     assert misura.rilievi == []
     assert misura.cedute == ()
-    assert misura.errore is not None and "cannot be routed" in misura.errore
+    assert misura.errore is not None and "non si instrada" in misura.errore
     assert len(misura.posa) == len(scritto.pezzi)
     assert {item.component_id for item in misura.posa} == set(scritto.pezzi)
 

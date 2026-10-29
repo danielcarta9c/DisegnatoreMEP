@@ -79,7 +79,7 @@ def test_entering_means_respecting_the_minimum_distances() -> None:
     # misura e senza quella frase. La prova era rossa da allora (I-180).
     assert any(
         measured in str(raised.value)
-        for measured in ("functional bands need", "cannot be routed", "no straight")
+        for measured in ("fasce funzionali vogliono", "non si instrada", "non ha un tratto dritto")
     )
 
 

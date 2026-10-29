@@ -1,6 +1,6 @@
 {
   "id": "pump-circulator",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "name": "Pompa di circolazione",
   "width_mm": 10.0,
   "height_mm": 10.0,
@@ -31,13 +31,19 @@
       "face": "top",
       "x_mm": 5.0,
       "y_mm": 0.0
+    },
+    {
+      "id": "comando",
+      "face": "bottom",
+      "x_mm": 5.0,
+      "y_mm": 10.0
     }
   ],
   "keep_out": {
     "left_mm": 2.0,
     "right_mm": 2.0,
     "top_mm": 2.0,
-    "bottom_mm": 0.0
+    "bottom_mm": 2.0
   },
   "stroke_weight": "medium",
   "source": "pratica di settore, cfr. SRC-008"

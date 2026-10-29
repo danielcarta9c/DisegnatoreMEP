@@ -2405,8 +2405,11 @@ DHW_HEAT_PUMP_CONTROL_PORTS = [
     port_at("bus", "bottom", 17.5, STORAGE_W, STORAGE_H),
 ]
 """Il boiler in pompa di calore e' largo 25: le due porte a 7,5 e 17,5."""
-PUMP_CONTROL_PORTS = [port("power", "top", *DEVICE)]
-"""L'alimentazione del circolatore, sopra al centro."""
+PUMP_CONTROL_PORTS = [port("power", "top", *DEVICE), port("comando", "bottom", *DEVICE)]
+"""L'alimentazione del circolatore, sopra al centro, e il **comando** sotto, sulla
+faccia libera (collaudo T2 di REL-012, §2.2.10): il caso di una villetta e' il
+circolatore alimentato dal quadro e acceso da un'uscita del regolatore, due cavi
+sullo stesso pezzo. Facoltativo, come l'alimentazione: senza un cavo non c'e'."""
 VALVE_CONTROL_PORTS = [port("comando", "top", *DEVICE)]
 """Il comando dell'attuatore di una valvola motorizzata, sopra al centro."""
 FAN_COIL_CONTROL_PORTS = [
@@ -2668,7 +2671,7 @@ SYMBOLS: list[SymbolSpec] = [
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
         # Una porta si e' mossa: il manifesto sale di minore (D-163). E poi le
         # porte di comando (REL-012): di nuovo.
-        version="1.2.0",
+        version="1.3.0",
         control_ports=machine_control_ports(*MACHINE),
     ),
     SymbolSpec(
@@ -2743,7 +2746,7 @@ SYMBOLS: list[SymbolSpec] = [
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
         # Una porta in piu', l'attacco del ricircolo (D-176): sale di minore. E
         # poi le porte di comando (REL-012): di nuovo.
-        version="1.3.0",
+        version="1.4.0",
         control_ports=DHW_HEAT_PUMP_CONTROL_PORTS,
     ),
     SymbolSpec(
@@ -2759,7 +2762,7 @@ SYMBOLS: list[SymbolSpec] = [
         ],
         body=diverting_valve_body(*DEVICE),
         source=SOURCE_UNI_TAB3,
-        version="1.1.0",
+        version="1.2.0",
         control_ports=VALVE_CONTROL_PORTS,
     ),
     # --- idronico -----------------------------------------------------------
@@ -2816,7 +2819,7 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     inline_symbol(
         "pump-circulator", "Pompa di circolazione", DEVICE, pump_body, SOURCE_PRACTICE_HYDRONIC,
-        version="1.1.0", control_ports=PUMP_CONTROL_PORTS,
+        version="1.2.0", control_ports=PUMP_CONTROL_PORTS,
     ),
     single_port_symbol(
         "air-vent", "Valvola di sfiato aria", SMALL_AIR_VENT, "bottom",
@@ -2837,7 +2840,7 @@ SYMBOLS: list[SymbolSpec] = [
         body=heat_pump_body(HEAT_PUMP_W, HEAT_PUMP_H, HEAT_PUMP_PORTS),
         source=SOURCE_PRACTICE_HYDRONIC,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="2.1.0",
+        version="2.2.0",
         control_ports=machine_control_ports(HEAT_PUMP_W, HEAT_PUMP_H),
     ),
     SymbolSpec(
@@ -2882,7 +2885,7 @@ SYMBOLS: list[SymbolSpec] = [
         ],
         body=diverting_valve_body(*DEVICE),
         source=SOURCE_UNI_TAB3,
-        version="1.1.0",
+        version="1.2.0",
         control_ports=VALVE_CONTROL_PORTS,
     ),
     SymbolSpec(
@@ -2905,7 +2908,7 @@ SYMBOLS: list[SymbolSpec] = [
         ],
         body=diverting_valve_body(*DEVICE),
         source=SOURCE_UNI_TAB3,
-        version="1.1.0",
+        version="1.2.0",
         control_ports=VALVE_CONTROL_PORTS,
     ),
     SymbolSpec(
@@ -2930,7 +2933,7 @@ SYMBOLS: list[SymbolSpec] = [
         "underfloor-panel", "Pannello radiante", underfloor_body, SOURCE_PRACTICE_HYDRONIC, "1.2.0"
     ),
     two_port_terminal(
-        "fan-coil", "Ventilconvettore", fan_coil_body, SOURCE_PRACTICE_HYDRONIC, "1.2.0",
+        "fan-coil", "Ventilconvettore", fan_coil_body, SOURCE_PRACTICE_HYDRONIC, "1.3.0",
         control_ports=FAN_COIL_CONTROL_PORTS,
     ),
     # --- i simboli nuovi della prima release (`REL-003`, I-124, D-184) -------
@@ -2944,7 +2947,7 @@ SYMBOLS: list[SymbolSpec] = [
         body=large_heat_pump_body(*LARGE_MACHINE, LARGE_HEAT_PUMP_PORTS),
         source=SOURCE_REL003_LARGE_HEAT_PUMP,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="1.1.0",
+        version="1.2.0",
         control_ports=machine_control_ports(*LARGE_MACHINE),
     ),
     SymbolSpec(
@@ -2957,7 +2960,7 @@ SYMBOLS: list[SymbolSpec] = [
         body=modular_boiler_body(*MODULAR_BOILER, MODULAR_BOILER_PORTS),
         source=SOURCE_REL003_MODULAR_BOILER,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
-        version="1.1.0",
+        version="1.2.0",
         control_ports=machine_control_ports(*MODULAR_BOILER),
     ),
     SymbolSpec(
@@ -2992,7 +2995,7 @@ SYMBOLS: list[SymbolSpec] = [
     ),
     two_port_terminal(
         "fan-coil-ducted", "Ventilconvettore canalizzato", ducted_fan_coil_body,
-        SOURCE_REL003_DUCTED_FAN_COIL, version="1.1.0",
+        SOURCE_REL003_DUCTED_FAN_COIL, version="1.2.0",
         control_ports=FAN_COIL_CONTROL_PORTS,
     ),
     # --- aeraulico ----------------------------------------------------------
@@ -3201,6 +3204,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=temperature_probe_body(*BRANCHED_ACCESSORY),
         source=SOURCE_REL012_CONTROL,
         control_ports=TEMPERATURE_PROBE_CONTROL_PORTS,
+        # Il moncone dell'attacco al pozzetto marcato (collaudo T2): sale di minore.
+        version="1.1.0",
     ),
     single_port_symbol(
         "outdoor-temperature-probe", "Sonda esterna", DEVICE, "left",
@@ -3220,6 +3225,132 @@ SYMBOLS: list[SymbolSpec] = [
         version="1.1.0",
     ),
 ]
+
+
+# --- i monconi marcati (collaudo T2 di REL-012) ------------------------------
+# Il collaudo T2 ha trovato due difetti sulla tavola dell'elettrico, e hanno la stessa
+# radice: il corpo di un pezzo che sta sull'acqua non sa niente dei suoi cavi.
+#
+# - **Il cavo non tocca il corpo.** Le porte di comando stanno sulla faccia del
+#   riquadro, e il corpo della pompa di calore comincia tre millimetri piu' in la':
+#   il cavo si fermava nel vuoto. Il moncone di una porta di comando va dalla porta
+#   al corpo, e si disegna **solo quando un cavo ci arriva** (`data-comando`).
+# - **I monconi d'acqua sulla tavola dell'elettrico.** La pompa di calore mostrava i
+#   due attacchi d'acqua come due tubi aperti. Il moncone di un attacco d'acqua si
+#   marca (`data-moncone`), e la tavola dell'elettrico lo toglie.
+#
+# Il corpo di sempre — senza i monconi di comando, con quelli d'acqua senza la marca
+# — e' **byte per byte quello di prima** (`registry.corpo_di_sempre`): senza
+# elettrico nel grafo nessuna tavola cambia. Le marche si scrivono solo sui simboli
+# che hanno porte di comando, cioe' su quelli che possono stare sulla tavola
+# dell'elettrico.
+
+MONCONE_D_ACQUA_MASSIMO_MM = 5.0
+"""Un moncone d'acqua e' un tratto corto dalla porta al corpo: una linea piu' lunga
+che parte da una porta — il collettore interno della caldaia modulare — e' corpo, e
+resta."""
+
+_VERSO_DENTRO = {"left": (1.0, 0.0), "right": (-1.0, 0.0), "top": (0.0, 1.0), "bottom": (0.0, -1.0)}
+"""Dalla faccia di una porta verso l'interno del riquadro."""
+
+
+def _segmenti_e_cerchi(
+    body: str,
+) -> tuple[list[tuple[float, float, float, float]], list[tuple[float, float, float]]]:
+    """Le primitive del corpo come segmenti e cerchi: linee, lati dei rettangoli,
+    spezzate dei percorsi (le curve con i loro punti di controllo)."""
+    import re
+    from xml.etree import ElementTree
+
+    segmenti: list[tuple[float, float, float, float]] = []
+    cerchi: list[tuple[float, float, float]] = []
+    for element in ElementTree.fromstring(f"<g>{body}</g>").iter():
+        tag, get = element.tag.rpartition("}")[2], element.get
+        if tag == "line":
+            segmenti.append(tuple(float(get(k, "0")) for k in ("x1", "y1", "x2", "y2")))  # type: ignore[arg-type]
+        elif tag == "rect":
+            x, y, w, h = (float(get(k, "0")) for k in ("x", "y", "width", "height"))
+            segmenti += [(x, y, x + w, y), (x + w, y, x + w, y + h), (x + w, y + h, x, y + h), (x, y + h, x, y)]
+        elif tag == "circle":
+            cerchi.append(tuple(float(get(k, "0")) for k in ("cx", "cy", "r")))  # type: ignore[arg-type]
+        elif tag == "path":
+            punti: list[tuple[float, float]] = []
+            for comando, argomenti in re.findall(r"([MLQCZ])([^MLQCZ]*)", get("d", "")):
+                numeri = [float(v) for v in re.findall(r"-?\d+(?:\.\d+)?", argomenti)]
+                if comando == "M":
+                    punti = [(numeri[0], numeri[1])]
+                elif comando in ("L", "Q", "C"):
+                    for x, y in zip(numeri[0::2], numeri[1::2], strict=False):
+                        segmenti.append((*punti[-1], x, y))
+                        punti.append((x, y))
+                elif comando == "Z" and punti:
+                    segmenti.append((*punti[-1], *punti[0]))
+    return segmenti, cerchi
+
+
+def fin_dove_arriva(body: str, porta: dict[str, Any]) -> float:
+    """Quanto e' lungo il moncone di una porta: dalla porta, verso l'interno del
+    riquadro, fino alla prima primitiva del corpo. Zero se il corpo arriva gia' alla
+    porta; infinito se non incontra niente."""
+    px, py = porta["x_mm"], porta["y_mm"]
+    dx, dy = _VERSO_DENTRO[porta["face"]]
+    segmenti, cerchi = _segmenti_e_cerchi(body)
+    migliore = math.inf
+    for x1, y1, x2, y2 in segmenti:
+        ex, ey = x2 - x1, y2 - y1
+        denominatore = dx * ey - dy * ex
+        if abs(denominatore) < 1e-12:
+            # Parallelo: conta solo se e' sulla stessa retta, e allora il capo piu' vicino.
+            if abs((x1 - px) * dy - (y1 - py) * dx) < 1e-9:
+                for x, y in ((x1, y1), (x2, y2)):
+                    t = (x - px) * dx + (y - py) * dy
+                    if t >= -1e-9:
+                        migliore = min(migliore, max(t, 0.0))
+            continue
+        t = ((x1 - px) * ey - (y1 - py) * ex) / denominatore
+        s = ((x1 - px) * dy - (y1 - py) * dx) / denominatore
+        if t >= -1e-9 and -1e-9 <= s <= 1 + 1e-9:
+            migliore = min(migliore, max(t, 0.0))
+    for cx, cy, r in cerchi:
+        fx, fy = px - cx, py - cy
+        b = fx * dx + fy * dy
+        c = fx * fx + fy * fy - r * r
+        delta = b * b - c
+        if delta < 0:
+            continue
+        for t in (-b - math.sqrt(delta), -b + math.sqrt(delta)):
+            if t >= -1e-9:
+                migliore = min(migliore, max(t, 0.0))
+                break
+    return migliore
+
+
+def corpo_coi_monconi_marcati(spec: SymbolSpec) -> str:
+    """Il corpo come si scrive nel file: con i monconi d'acqua marcati e, in fondo,
+    quelli delle porte di comando. Solo per i simboli con porte di comando; gli
+    altri restano il loro corpo."""
+    import re
+
+    if not spec.control_ports:
+        return spec.body
+    body = spec.body
+    for porta in spec.ports:
+        px, py = porta["x_mm"], porta["y_mm"]
+        for linea in re.findall(r"<line [^>]*/>", body):
+            numeri = dict(re.findall(r'(x1|y1|x2|y2)="(-?[\d.]+)"', linea))
+            x1, y1, x2, y2 = (float(numeri[k]) for k in ("x1", "y1", "x2", "y2"))
+            dalla_porta = any(abs(x - px) < 1e-9 and abs(y - py) < 1e-9 for x, y in ((x1, y1), (x2, y2)))
+            if dalla_porta and math.hypot(x2 - x1, y2 - y1) <= MONCONE_D_ACQUA_MASSIMO_MM and body.count(linea) == 1:
+                body = body.replace(linea, f'<g data-moncone="{porta["id"]}">{linea}</g>', 1)
+                break
+    for porta in spec.control_ports:
+        lungo = fin_dove_arriva(spec.body, porta)
+        if lungo == 0.0 or math.isinf(lungo):
+            continue
+        dx, dy = _VERSO_DENTRO[porta["face"]]
+        x, y = porta["x_mm"], porta["y_mm"]
+        body += f'<g data-comando="{porta["id"]}">{_segment(x, y, x + dx * lungo, y + dy * lungo)}</g>'
+    return body
 
 
 def manifest_payload(spec: SymbolSpec) -> dict[str, Any]:
@@ -3257,7 +3388,7 @@ def write_symbol(directory: Path, spec: SymbolSpec) -> None:
     (directory / f"{spec.id}.json").write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
-    (directory / f"{spec.id}.svg").write_text(spec.body + "\n", encoding="utf-8")
+    (directory / f"{spec.id}.svg").write_text(corpo_coi_monconi_marcati(spec) + "\n", encoding="utf-8")
 
 
 def main() -> None:

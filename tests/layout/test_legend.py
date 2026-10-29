@@ -208,7 +208,7 @@ def test_a_legend_taller_than_its_band_fails_with_a_diagnostic() -> None:
     """Il testo non si rimpicciolisce per farlo stare (ADR 0003)."""
     project, placed, networks = drawn()
     narrow = NOVE_C_A3.model_copy(update={"title_block_height_mm": 200.0})
-    with pytest.raises(LayoutError, match="never shrunk|legend needs"):
+    with pytest.raises(LayoutError, match="non si rimpiccioliscono|la legenda sfora"):
         build_legend(project, placed, networks, catalog(), narrow)
 
 

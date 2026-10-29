@@ -502,10 +502,11 @@ def render_sheet(
 
     for placed in sheet.symbols:
         # Il moncone di una porta che la tavola non collega non si disegna (collaudo
-        # T1 di REL-012): si toglie dal corpo prima di girarlo.
+        # T1 di REL-012): si toglie dal corpo prima di girarlo. Quello di una porta di
+        # comando a cui arriva un cavo si disegna fino al corpo (collaudo T2).
         symbol = (
             symbols.get(placed.symbol_id)
-            .senza_le_porte(placed.porte_scollegate)
+            .senza_le_porte(placed.porte_scollegate, placed.porte_col_cavo)
             .rotated(placed.rotation_deg, placed.specchiato)
         )
         # La freccia di verso si traccia qui, non nel corpo: punta nel verso
@@ -645,16 +646,20 @@ def render_sheet(
     # Le righe che spiegano una scritta (I-155): il campione dove le altre righe
     # hanno il simbolo o il tratto, la spiegazione dove hanno il nome.
     for nota in sheet.note_della_legenda:
-        parts.append(
-            f'<text class="legend-note-sample" x="{nota.anchor.x_mm:g}" '
-            f'y="{nota.anchor.y_mm:g}" font-size="{standard.text_small_mm:g}" '
-            f'font-family="{FAMIGLIA_DELLE_SCRITTE}" fill="black">'
-            f"{_escape(nota.campione)}</text>"
-        )
+        # Una frase — il rimando all'altra tavola — porta il campione nelle sue righe
+        # e comincia dove comincia il campione (collaudo T2 di REL-012).
+        if not nota.frase:
+            parts.append(
+                f'<text class="legend-note-sample" x="{nota.anchor.x_mm:g}" '
+                f'y="{nota.anchor.y_mm:g}" font-size="{standard.text_small_mm:g}" '
+                f'font-family="{FAMIGLIA_DELLE_SCRITTE}" fill="black">'
+                f"{_escape(nota.campione)}</text>"
+            )
+        rientro = 0.0 if nota.frase else LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM
         for indice, riga in enumerate(nota.righe):
             parts.append(
                 f'<text class="legend-note" '
-                f'x="{nota.anchor.x_mm + LEGEND_SWATCH_MM + LEGEND_TEXT_GAP_MM:g}" '
+                f'x="{nota.anchor.x_mm + rientro:g}" '
                 f'y="{nota.anchor.y_mm + indice * INTERLINEA_EM * standard.text_small_mm:g}" '
                 f'font-size="{standard.text_small_mm:g}" fill="black">{_escape(riga)}</text>'
             )

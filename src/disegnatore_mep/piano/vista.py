@@ -176,7 +176,13 @@ def vista_del_grafo(
     aggiunta = TITOLO_DELLA_VISTA[vista]
     metadati = meta.model_copy(
         update={
-            "sheet_title": f"{titolo} — {aggiunta}" if titolo else aggiunta.capitalize(),
+            # **Il titolo della vista si aggiunge a un titolo dato** (collaudo T2 di
+            # REL-012, §3.8, *proposta*). Senza il titolo del grafo il cartiglio
+            # scriveva «Idraulica» come titolo della tavola, e la casella non
+            # risultava da definire: resta vuoto, e il cartiglio dice «DA DEFINIRE».
+            # Quale vista sia lo dicono la legenda, che rimanda all'altra, e il nome
+            # del file.
+            "sheet_title": f"{titolo} — {aggiunta}" if titolo else None,
             "sheet_number": numero_della_tavola(modello, vista),
             # Il nome dei file: le due tavole escono accanto, e non si sovrascrivono.
             "project_id": f"{meta.project_id}-{vista}",

@@ -1,0 +1,170 @@
+{
+ "formato": "A2",
+ "vista": "idraulica",
+ "note": [
+  "PdC e volano allo stesso y: mandata a +5 e ritorno a +20 rette dalla macchina al volano (D-159, B1).",
+  "Deviatrice sulla mandata, alla quota della mandata; terza via in basso verso il serpentino del bollitore, impilato sotto il volano (A1, D-196).",
+  "Corredo del ritorno PdC (vaso, riempimento, manometro) appeso in giu' dal ritorno, a sinistra della deviatrice, fuori dalla colonna del serpentino (A4, par. 6).",
+  "Secondario del volano dritto fino al collettore (I-204); zona pannelli a sinistra sotto il collettore con il ritorno che scavalca la mandata una volta per arrivare a ret_1; zona radiatori dritta sotto out_2/ret_2.",
+  "Giro 2: posa stretta per stare nell'A3 (D3): 20 mm tolti al ritorno della PdC, 20 mm fra ACS e distribuzione; stacchi riportati al minimo (A4)."
+ ],
+ "pezzi": {
+  "pdc": {
+   "x": 0,
+   "y": 0,
+   "regola": "D-159 quota della porta"
+  },
+  "tee-valve-safety-pdc-water-supply": {
+   "x": 40,
+   "y": 2.5,
+   "regola": "B8 sulla quota della mandata"
+  },
+  "valve-safety-pdc-water-supply": {
+   "x": 40,
+   "y": -17.5,
+   "regola": "A4 stacco 10 mm"
+  },
+  "deviatrice": {
+   "x": 145,
+   "y": 0,
+   "rotazione": 0,
+   "regola": "terza via in basso verso il bollitore"
+  },
+  "conf-ritorno-pdc": {
+   "x": 135,
+   "y": 17.5,
+   "regola": "B8 sulla quota del ritorno"
+  },
+  "tee-expansion-connection-pdc-water-return": {
+   "x": 90,
+   "y": 17.5
+  },
+  "expansion-connection-pdc-water-return": {
+   "x": 90,
+   "y": 42.5,
+   "regola": "A4, stacco con la valvola bloccabile"
+  },
+  "tee-filling-unit-pdc-water-return-b": {
+   "x": 105,
+   "y": 17.5
+  },
+  "filling-unit-pdc-water-return": {
+   "x": 105,
+   "y": 32.5,
+   "rotazione": 180,
+   "regola": "uscita in alto verso il ritorno"
+  },
+  "inlet-filling-unit-pdc-water-return": {
+   "x": 105,
+   "y": 52.5,
+   "regola": "A4"
+  },
+  "tee-pressure-gauge-pdc-water-return": {
+   "x": 120,
+   "y": 17.5
+  },
+  "pressure-gauge-pdc-water-return": {
+   "x": 120,
+   "y": 42.5,
+   "regola": "A4, stacco con il rubinetto portamanometro"
+  },
+  "volano": {
+   "x": 185,
+   "y": 0,
+   "regola": "D-159 stesso y della PdC"
+  },
+  "air-vent-volano-primary-out": {
+   "x": 195,
+   "y": -7.5,
+   "regola": "sfiato addosso al vent"
+  },
+  "drain-connection-volano-primary-in": {
+   "x": 195,
+   "y": 55,
+   "regola": "A4"
+  },
+  "bollitore": {
+   "x": 185,
+   "y": 90,
+   "regola": "A1 fascia accumuli, sotto il volano"
+  },
+  "acquedotto": {
+   "x": 125,
+   "y": 125,
+   "regola": "A4 addosso al bollitore"
+  },
+  "tee-drain-connection-cold-bollitore-cold-in": {
+   "x": 150,
+   "y": 125
+  },
+  "drain-connection-cold-bollitore-cold-in": {
+   "x": 150,
+   "y": 140,
+   "regola": "A4"
+  },
+  "mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 225,
+   "y": 72.5,
+   "rotazione": 180,
+   "specchio": true,
+   "regola": "acqua fredda dall'alto"
+  },
+  "inlet-mixing-valve-thermostatic-bollitore-dhw-out": {
+   "x": 225,
+   "y": 50,
+   "regola": "A4"
+  },
+  "utenze-acs": {
+   "x": 250,
+   "y": 75,
+   "regola": "A4"
+  },
+  "ricircolo-acs": {
+   "x": 255,
+   "y": 100,
+   "regola": "A4, ricircolo da destra"
+  },
+  "sonda-bollitore": {
+   "x": 220,
+   "y": 107.5,
+   "regola": "sulla sede sonda del bollitore"
+  },
+  "collettore": {
+   "x": 300,
+   "y": 2.5,
+   "regola": "I-204 secondario dritto"
+  },
+  "miscelatrice": {
+   "x": 302.5,
+   "y": 50,
+   "rotazione": 90,
+   "regola": "D-168 in alto, uscita in basso, terza via a sinistra verso il ritorno"
+  },
+  "rip-ritorno-pannelli": {
+   "x": 270,
+   "y": 52.5
+  },
+  "der-sonda-pannelli": {
+   "x": 305,
+   "y": 105
+  },
+  "sonda-pannelli": {
+   "x": 285,
+   "y": 105,
+   "regola": "A4"
+  },
+  "pannelli": {
+   "x": 270,
+   "y": 125,
+   "rotazione": 90,
+   "regola": "attacchi in alto: ritorno a sinistra, mandata a destra"
+  },
+  "radiatori": {
+   "x": 325,
+   "y": 75,
+   "rotazione": 270,
+   "specchio": true,
+   "regola": "par. centrale grande punto 5"
+  }
+ }
+}

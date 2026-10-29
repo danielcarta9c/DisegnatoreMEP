@@ -466,8 +466,8 @@ class SymbolManifest(StrictModel):
             raise SymbolError(f"rotation must be 0, 90, 180 or 270 degrees: {degrees}")
         if degrees not in self.allowed_rotations_deg:
             raise SymbolError(
-                f"symbol {self.id} may not be drawn rotated by {degrees} degrees: "
-                f"allowed {sorted(self.allowed_rotations_deg)} (D-049)"
+                f"il simbolo {self.id} non si disegna girato di {degrees} gradi: "
+                f"le rotazioni ammesse sono {sorted(self.allowed_rotations_deg)} (D-049)"
             )
         if mirrored:
             return self.mirrored_manifest().rotated(degrees)

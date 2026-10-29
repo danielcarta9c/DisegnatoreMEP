@@ -228,5 +228,5 @@ def test_sull_a3_si_impila_ancora_prima_di_salire_di_formato() -> None:
     partizione = partition_project(progetto, build_trunks(progetto, in_linea))[0]
 
     assert place_sheet(progetto, partizione, catalogo, NOVE_C_A3, in_linea)
-    with pytest.raises(LayoutError, match="functional bands need"):
+    with pytest.raises(LayoutError, match="fasce funzionali vogliono"):
         place_sheet(progetto, partizione, catalogo, NOVE_C_A4, in_linea)

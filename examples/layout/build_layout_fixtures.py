@@ -162,8 +162,13 @@ def machine_control_ports() -> list[dict[str, Any]]:
 
 
 def pump_control_ports() -> list[dict[str, Any]]:
-    """L'alimentazione del circolatore."""
-    return [_porta_di_comando("power", "power_supply", "in")]
+    """L'alimentazione del circolatore e il suo **comando** (collaudo T2 di REL-012,
+    §2.2.10): alimentato dal quadro e acceso da un'uscita del regolatore, che e' a
+    230 V come quella che muove una valvola. Facoltativi tutti e due."""
+    return [
+        _porta_di_comando("power", "power_supply", "in"),
+        _porta_di_comando("comando", "power_supply", "in"),
+    ]
 
 
 def valve_control_ports() -> list[dict[str, Any]]:
