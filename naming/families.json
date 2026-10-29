@@ -59,9 +59,24 @@
       "name": "Terminale aeraulico"
     },
     {
+      "function": "air_return",
+      "prefix": "RA",
+      "name": "Ripresa aria"
+    },
+    {
       "function": "direct_expansion_terminal",
       "prefix": "UI",
       "name": "Unita' interna ad espansione diretta"
+    },
+    {
+      "function": "air_zoning",
+      "prefix": "PLZ",
+      "name": "Plenum motorizzato di zona"
+    },
+    {
+      "function": "zone_control",
+      "prefix": "CZ",
+      "name": "Centrale di zona"
     },
     {
       "function": "heat_exchange",
@@ -149,6 +164,11 @@
       "name": "Attacco di scarico"
     },
     {
+      "function": "condensate_trap",
+      "prefix": "SIF",
+      "name": "Sifone"
+    },
+    {
       "function": "pressure_control",
       "prefix": "RP",
       "name": "Riduttore di pressione"
@@ -193,6 +213,26 @@
       "prefix": "AL",
       "name": "Allacciamento",
       "starts_the_reading": true
+    },
+    {
+      "function": "power_source",
+      "prefix": "QE",
+      "name": "Quadro elettrico"
+    },
+    {
+      "function": "power_isolation",
+      "prefix": "SZ",
+      "name": "Sezionatore"
+    },
+    {
+      "function": "room_control",
+      "prefix": "TZ",
+      "name": "Termostato di zona"
+    },
+    {
+      "function": "unit_control",
+      "prefix": "CF",
+      "name": "Comando a filo"
     }
   ]
 }

@@ -32,6 +32,26 @@
     {
       "medium": "solar_fluid",
       "name": "fluido solare"
+    },
+    {
+      "medium": "return_air",
+      "name": "aria di ripresa"
+    },
+    {
+      "medium": "condensate",
+      "name": "condensa"
+    },
+    {
+      "medium": "power_supply",
+      "name": "alimentazione elettrica"
+    },
+    {
+      "medium": "interconnection",
+      "name": "collegamento elettrico fra le unita'"
+    },
+    {
+      "medium": "control_bus",
+      "name": "bus di comando"
     }
   ]
 }
