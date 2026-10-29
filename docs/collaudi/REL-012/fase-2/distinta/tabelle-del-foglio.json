@@ -141,7 +141,7 @@
       ],
       [
        "T09",
-       "UI-01 - sifone - scarico",
+       "UI-01 - SIF-01 - AL-01",
        "Ø32",
        "PVC rigido, pendenza min. 1%",
        "",
@@ -286,7 +286,7 @@
    ],
    "sezioni": [
     {
-     "titolo": "A. Apparecchiature (fornite da Nove C, posa dell'installatore)",
+     "titolo": "A. Apparecchiature (posa dell'installatore; chi le fornisce: colonna Fornitura)",
      "righe": [
       [
        "A.1",
@@ -573,7 +573,7 @@
        "n",
        "1",
        "installatore",
-       "scarico"
+       "AL-01"
       ],
       [
        "D.8",
@@ -581,7 +581,7 @@
        "n",
        "1",
        "installatore",
-       "sifone"
+       "SIF-01"
       ],
       [
        "D.9",
@@ -703,7 +703,7 @@
      ]
     },
     {
-     "titolo": "F. Assistenze murarie (aperture comprese; chiusure e ripristini del Committente)",
+     "titolo": "F. Assistenze murarie (aperture comprese)",
      "righe": [
       [
        "F.1",
@@ -751,7 +751,7 @@
        "m",
        "3",
        "installatore",
-       "scarico"
+       "AL-01"
       ],
       [
        "F.7",
@@ -786,9 +786,9 @@
        "Z.3",
        "Griglia di transito o luce sotto porta per il ritorno dell'aria dal locale servito",
        "n",
-       "5",
+       "4",
        "committente",
-       "Aeff min.: B1 0,05 m², B2 0,052 m², B3 0,039 m², B4 0,051 m², B5 0,051 m²"
+       "Aeff min.: Camera 13 m² 0,05 m², Camera 15 m² 0,052 m², Camera 16 m² 0,039 m², Soggiorno-cucina 0,102 m²"
       ],
       [
        "Z.4",
@@ -938,7 +938,11 @@
       ],
       [
        "5.",
-       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole cfc42a99c0fd0a1a)."
+       "Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C."
+      ],
+      [
+       "6.",
+       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole dea73506dac30790)."
       ]
      ]
     }
