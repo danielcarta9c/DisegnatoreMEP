@@ -179,8 +179,8 @@ MEDIUM_NAMES: dict[str, str] = {
     "condensate": "Condensa",
     "solar_fluid": "Fluido solare",
     "power_supply": "Alimentazione elettrica",
-    "interconnection": "Collegamento elettrico fra le unità",
-    "control_bus": "Bus di comando e regolazione",
+    "interconnection": "Collegamento fra le unità",
+    "control_bus": "Bus di comando",
 }
 """Denominazione italiana del fluido, per la legenda (D-051)."""
 
