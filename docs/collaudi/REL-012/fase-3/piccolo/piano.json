@@ -1,0 +1,25 @@
+{
+  "formato": "A3",
+  "vista": "tutto",
+  "note": [
+    "Tavola di prova di REL-012 fase 3: una zona a pavimento con miscelatrice, sola distribuzione, idraulica ed elettrico e comando sulla tavola unica (I-227: «su tavole piccole come quella di sola distribuzione [...] si puo' fare su tavola unica»).",
+    "Mandata retta a y=2,5 dal confine della centrale al collettore: miscelatrice, circolatore e derivazione della sonda sulla stessa quota (B1).",
+    "Ritorno a y=27,5: la derivazione verso la terza via della miscelatrice le sta sotto, a 17,5 mm, quanto basta alla valvola sulla terza via.",
+    "Il regolatore sta sopra e a destra, specchiato: i comandi escono dal fianco sinistro e scendono sull'attuatore della miscelatrice e sull'alimentazione del circolatore, che hanno l'attacco sopra. Il comando che va piu' lontano esce piu' in alto, cosi' i due cavi non si incrociano.",
+    "Le sonde entrano dal fondo del regolatore: la sonda di mandata, appesa sopra la sua derivazione, arriva da sinistra; la sonda esterna sta sotto il regolatore, a destra. Il quadro sta a destra del regolatore, sull'asse della sua alimentazione."
+  ],
+  "pezzi": {
+    "da-centrale": {"x": 15, "y": 0},
+    "miscelatrice": {"x": 40, "y": -2.5, "rotazione": 0, "regola": "B1 — hot_in e out sulla quota della mandata"},
+    "tee-sonda": {"x": 105, "y": 0},
+    "sonda-mandata": {"x": 105, "y": -17.5, "regola": "A4 — addosso alla sua derivazione, sopra la mandata"},
+    "collettore": {"x": 140, "y": 0, "regola": "B1 — in sulla quota della mandata"},
+    "pannello-1": {"x": 145, "y": 32.5, "rotazione": 270, "specchio": true},
+    "pannello-2": {"x": 165, "y": 32.5, "rotazione": 270, "specchio": true},
+    "ritorno": {"x": 42.5, "y": 25},
+    "verso-centrale": {"x": 17.5, "y": 25},
+    "regolatore": {"x": 180, "y": -90, "rotazione": 0, "specchio": true},
+    "quadro": {"x": 220, "y": -60, "rotazione": 0},
+    "sonda-esterna": {"x": 197.5, "y": -27.5}
+  }
+}

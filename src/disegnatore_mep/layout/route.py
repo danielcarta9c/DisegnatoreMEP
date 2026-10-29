@@ -739,7 +739,13 @@ def route_sheet(
         )
         routed.append(current)
         if on_routed is not None:
-            settled = _obstacle_cells(on_routed(trunk, current), grid)
+            posati = on_routed(trunk, current)
+            # Un pezzo in linea appena posato e' il capo di un cavo che viene dopo
+            # (REL-012, fase 3): l'alimentazione di un circolatore. Senza cavi verso
+            # i pezzi in linea nessuna tratta lo cerca qui.
+            for item in posati:
+                by_component.setdefault(item.component_id, item)
+            settled = _obstacle_cells(posati, grid)
             blocked = blocked | settled
             absorb(settled)
     return routed

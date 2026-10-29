@@ -94,7 +94,7 @@ def assert_symbol_is_aligned(
                 f"symbol {manifest.id}: {label} {value:g}mm is not a multiple of the "
                 f"{step:g}mm grid step ({value / step:.2f} steps)"
             )
-    for port in manifest.ports:
+    for port in (*manifest.ports, *manifest.control_ports):
         for axis, value in (("x", port.x_mm), ("y", port.y_mm)):
             if not is_on_grid(value, step):
                 raise LayoutError(

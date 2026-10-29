@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "prova-rel012-fase-3-distribuzione",
+    "client": "Prova del motore (nessun cliente)",
+    "project_name": "Prova REL-012 fase 3: una zona a pavimento con miscelatrice, elettrico e comando",
+    "commission_code": "REL-012",
+    "revision": "00",
+    "issue_date": "2026-10-29",
+    "sheet_title": "Distribuzione di zona, idraulica ed elettrico e comando",
+    "sheet_number": "P.03",
+    "drawn_by": "Claude",
+    "header_note": "Tavola di prova del motore, non un progetto"
+  },
+  "plant_regime": "up_to_35_kw",
+  "networks": [
+    {"id": "zona", "name": "Circuito della zona a pavimento", "domain": "hydronic", "medium": "heating_water"},
+    {"id": "alimentazione", "name": "Alimentazione del regolatore", "domain": "control", "medium": "power_supply"},
+    {"id": "comandi", "name": "Comandi del regolatore", "domain": "control", "medium": "power_supply"},
+    {"id": "sonde", "name": "Sonde", "domain": "control", "medium": "control_bus"}
+  ],
+  "components": [
+    {"id": "da-centrale", "definition_id": "existing-plant-inlet", "properties": {"etichetta": "dalla centrale"}},
+    {"id": "verso-centrale", "definition_id": "existing-plant-outlet", "properties": {"etichetta": "alla centrale"}},
+    {"id": "miscelatrice", "definition_id": "mixing-valve-3way", "tag": "VMR-01", "properties": {}},
+    {"id": "circolatore", "definition_id": "pump-circulator", "tag": "CIR-01", "properties": {}},
+    {"id": "tee-sonda", "definition_id": "tee-branch", "properties": {}},
+    {"id": "sonda-mandata", "definition_id": "temperature-probe", "tag": "SO-01", "properties": {"etichetta": "mandata"}},
+    {"id": "collettore", "definition_id": "zone-manifold-pair", "tag": "COL-01", "properties": {}},
+    {"id": "pannello-1", "definition_id": "underfloor-panel", "properties": {"etichetta": "zona giorno"}},
+    {"id": "pannello-2", "definition_id": "underfloor-panel", "properties": {"etichetta": "zona notte"}},
+    {"id": "ritorno", "definition_id": "tee-split", "properties": {}},
+    {"id": "quadro", "definition_id": "electrical-panel", "tag": "QE-01", "properties": {}},
+    {"id": "regolatore", "definition_id": "plant-controller", "tag": "RG-01", "properties": {"marca": "Marca di prova", "modello": "PRV-RG"}},
+    {"id": "sonda-esterna", "definition_id": "outdoor-temperature-probe", "tag": "SE-01", "properties": {}}
+  ],
+  "connections": [
+    {"id": "z1", "network_id": "zona", "endpoint_a": {"component_id": "da-centrale", "port_id": "a"}, "endpoint_b": {"component_id": "miscelatrice", "port_id": "hot_in"}},
+    {"id": "z2", "network_id": "zona", "endpoint_a": {"component_id": "miscelatrice", "port_id": "out"}, "endpoint_b": {"component_id": "circolatore", "port_id": "a"}},
+    {"id": "z3", "network_id": "zona", "endpoint_a": {"component_id": "circolatore", "port_id": "b"}, "endpoint_b": {"component_id": "tee-sonda", "port_id": "a"}},
+    {"id": "z4", "network_id": "zona", "endpoint_a": {"component_id": "tee-sonda", "port_id": "b"}, "endpoint_b": {"component_id": "collettore", "port_id": "in"}},
+    {"id": "z5", "network_id": "zona", "endpoint_a": {"component_id": "tee-sonda", "port_id": "branch"}, "endpoint_b": {"component_id": "sonda-mandata", "port_id": "a"}},
+    {"id": "z6", "network_id": "zona", "endpoint_a": {"component_id": "collettore", "port_id": "out_1"}, "endpoint_b": {"component_id": "pannello-1", "port_id": "in"}},
+    {"id": "z7", "network_id": "zona", "endpoint_a": {"component_id": "pannello-1", "port_id": "out"}, "endpoint_b": {"component_id": "collettore", "port_id": "ret_1"}},
+    {"id": "z8", "network_id": "zona", "endpoint_a": {"component_id": "collettore", "port_id": "out_2"}, "endpoint_b": {"component_id": "pannello-2", "port_id": "in"}},
+    {"id": "z9", "network_id": "zona", "endpoint_a": {"component_id": "pannello-2", "port_id": "out"}, "endpoint_b": {"component_id": "collettore", "port_id": "ret_2"}},
+    {"id": "z10", "network_id": "zona", "endpoint_a": {"component_id": "collettore", "port_id": "out"}, "endpoint_b": {"component_id": "ritorno", "port_id": "a"}},
+    {"id": "z11", "network_id": "zona", "endpoint_a": {"component_id": "ritorno", "port_id": "b"}, "endpoint_b": {"component_id": "verso-centrale", "port_id": "a"}},
+    {"id": "z12", "network_id": "zona", "endpoint_a": {"component_id": "ritorno", "port_id": "c"}, "endpoint_b": {"component_id": "miscelatrice", "port_id": "cold_in"}},
+    {"id": "e1", "network_id": "alimentazione", "endpoint_a": {"component_id": "quadro", "port_id": "out_1"}, "endpoint_b": {"component_id": "regolatore", "port_id": "power"}, "sezione": "3G1,5", "lunghezza_m": 3},
+    {"id": "e2", "network_id": "comandi", "endpoint_a": {"component_id": "regolatore", "port_id": "out_2"}, "endpoint_b": {"component_id": "circolatore", "port_id": "power"}, "sezione": "3G1,5", "lunghezza_m": 2},
+    {"id": "e3", "network_id": "comandi", "endpoint_a": {"component_id": "regolatore", "port_id": "out_1"}, "endpoint_b": {"component_id": "miscelatrice", "port_id": "comando"}, "sezione": "4G1", "lunghezza_m": 2},
+    {"id": "b1", "network_id": "sonde", "endpoint_a": {"component_id": "sonda-mandata", "port_id": "signal"}, "endpoint_b": {"component_id": "regolatore", "port_id": "probe_3"}, "sezione": "2x0,75", "lunghezza_m": 2},
+    {"id": "b2", "network_id": "sonde", "endpoint_a": {"component_id": "sonda-esterna", "port_id": "a"}, "endpoint_b": {"component_id": "regolatore", "port_id": "probe_1"}, "sezione": "2x0,75", "lunghezza_m": 15}
+  ],
+  "assumptions": [],
+  "rule_applications": [],
+  "subsystems": [],
+  "sheets": []
+}

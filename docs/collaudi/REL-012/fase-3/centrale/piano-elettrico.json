@@ -1,0 +1,51 @@
+{
+  "formato": "A3",
+  "vista": "elettrico",
+  "note": [
+    "La tavola dell'elettrico e del comando della centrale di prova di REL-012 fase 3, dallo stesso grafo della tavola idraulica P.04: le macchine che hanno un cavo, il quadro, il sezionatore, il regolatore e le sonde. Le linee dell'acqua non ci sono.",
+    "La pompa di calore in alto a destra: alimentazione e bus escono da sotto. Il quadro le sta sotto, con l'uscita di destra sull'asse dell'alimentazione: il cavo e' una verticale con il sezionatore di prossimita'.",
+    "Il regolatore a sinistra, specchiato: alimentazione e bus sul fianco destro, verso la pompa di calore. L'alimentazione arriva dall'uscita di sinistra del quadro, sopra; il bus scende dalla pompa di calore, passa sotto il quadro e sale al regolatore. Cosi' nessun cavo ne incrocia un altro.",
+    "Deviatrice e circolatore a sinistra del regolatore, girati di 90 gradi: l'attacco del comando guarda il regolatore e i cavi sono rette.",
+    "Le sonde sotto il regolatore: la sonda di mandata sull asse del suo ingresso; quella di ritorno e quella esterna a sinistra, una sotto l altra, nell ordine dei loro ingressi, cosi i due cavi non si incrociano."
+  ],
+  "pezzi": {
+    "pdc": {
+      "x": 5,
+      "y": 0,
+      "rotazione": 0
+    },
+    "quadro": {
+      "x": -2.5,
+      "y": 60,
+      "rotazione": 0
+    },
+    "regolatore": {
+      "x": -90,
+      "y": 70,
+      "rotazione": 0,
+      "specchio": true
+    },
+    "deviatrice": {
+      "x": -130,
+      "y": 72.5,
+      "rotazione": 90
+    },
+    "circolatore": {
+      "x": -130,
+      "y": 92.5,
+      "rotazione": 90
+    },
+    "sonda-mandata": {
+      "x": -70,
+      "y": 140
+    },
+    "sonda-ritorno": {
+      "x": -115,
+      "y": 117.5
+    },
+    "sonda-esterna": {
+      "x": -115,
+      "y": 135
+    }
+  }
+}

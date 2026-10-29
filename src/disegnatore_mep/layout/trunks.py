@@ -11,10 +11,14 @@ Il risultato e' cio' che l'instradamento tratta come un unico percorso.
 """
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from disegnatore_mep.model.project import ConnectionModel, PortRef, ProjectModel
 
 from .errors import LayoutError
+
+if TYPE_CHECKING:
+    from disegnatore_mep.catalog.registry import ComponentRegistry
 
 
 @dataclass(frozen=True)
@@ -32,24 +36,58 @@ def _other_end(connection: ConnectionModel, ref: PortRef) -> PortRef:
     return connection.endpoint_b if connection.endpoint_a == ref else connection.endpoint_a
 
 
-def _incidence(project: ProjectModel) -> dict[str, list[ConnectionModel]]:
+def _incidence(
+    project: ProjectModel, fermate: frozenset[tuple[str, str]] = frozenset()
+) -> dict[str, list[ConnectionModel]]:
     incidence: dict[str, list[ConnectionModel]] = {}
     for connection in project.connections:
         for ref in (connection.endpoint_a, connection.endpoint_b):
+            if (ref.component_id, ref.port_id) in fermate:
+                continue
             incidence.setdefault(ref.component_id, []).append(connection)
     return incidence
 
 
+def porte_di_comando_in_linea(
+    project: ProjectModel, catalog: "ComponentRegistry"
+) -> frozenset[tuple[str, str]]:
+    """Le porte di comando collegate dei pezzi in linea (REL-012, fase 3).
+
+    Un circolatore sta in linea sul suo tubo, e il suo cavo **finisce** su di lui:
+    la tratta del cavo non lo attraversa, e la sua tubazione non passa dal cavo.
+    Sono i capi che `build_trunks` deve trattare come quelli di un pezzo che non sta
+    in linea. Senza elettrico nel grafo l'insieme e' vuoto."""
+    in_linea = {
+        item.id: item.definition_id
+        for item in project.components
+        if catalog.resolve(item.definition_id).is_inline
+    }
+    return frozenset(
+        (ref.component_id, ref.port_id)
+        for connection in project.connections
+        for ref in (connection.endpoint_a, connection.endpoint_b)
+        if ref.component_id in in_linea
+        and ref.port_id in catalog.porte_di_comando(in_linea[ref.component_id])
+    )
+
+
 def build_trunks(
-    project: ProjectModel, inline_component_ids: frozenset[str]
+    project: ProjectModel,
+    inline_component_ids: frozenset[str],
+    fermate: frozenset[tuple[str, str]] = frozenset(),
 ) -> list[Trunk]:
     """Ricompone le tratte. L'ordine segue quello delle connessioni nel modello.
 
     `inline_component_ids` arriva da `ResolvedComponent.is_inline`: e' la
     libreria a dire quali componenti spezzano una linea, non un elenco scritto
     qui dentro.
+
+    `fermate` sono le porte di comando dei pezzi in linea che il grafo collega
+    (`porte_di_comando_in_linea`): li' una tratta **finisce**, come sul capo di un
+    pezzo che non sta in linea, e il pezzo resta in linea sulla sua tubazione con
+    le sue due porte. Senza, le tratte sono quelle di sempre.
     """
-    incidence = _incidence(project)
+    incidence = _incidence(project, fermate)
 
     for component_id in sorted(inline_component_ids):
         incident = incidence.get(component_id, [])
@@ -75,6 +113,7 @@ def build_trunks(
             ref
             for ref in (connection.endpoint_a, connection.endpoint_b)
             if ref.component_id not in inline_component_ids
+            or (ref.component_id, ref.port_id) in fermate
         ]
         if not anchors:
             # Tratta di soli accessori: la chiude il controllo finale, che sa
@@ -85,7 +124,10 @@ def build_trunks(
         chain: list[ConnectionModel] = [connection]
         inline_seen: list[str] = []
         cursor = _other_end(connection, start)
-        while cursor.component_id in inline_component_ids:
+        while (
+            cursor.component_id in inline_component_ids
+            and (cursor.component_id, cursor.port_id) not in fermate
+        ):
             inline_seen.append(cursor.component_id)
             incident = incidence[cursor.component_id]
             following = incident[0] if incident[1].id == chain[-1].id else incident[1]

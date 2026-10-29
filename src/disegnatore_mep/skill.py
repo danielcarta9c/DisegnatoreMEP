@@ -78,6 +78,7 @@ from disegnatore_mep.model.types import ApprovalStatus, IssueSeverity
 from disegnatore_mep.piano.esecutore import EsitoDelPiano, esegui_piano
 from disegnatore_mep.piano.formato import FORMATI_ORDINARI, PianoDiComposizione, carica_piano
 from disegnatore_mep.piano.revisore import misura
+from disegnatore_mep.piano.vista import VISTE, vista_del_grafo
 from disegnatore_mep.rules.apply import saturation
 from disegnatore_mep.rules.errors import RuleError
 from disegnatore_mep.rules.proposal import RuleProposal
@@ -220,6 +221,8 @@ def _valida(args: argparse.Namespace, cartelle: Cartelle) -> int:
     """Il grafo di Capire carica, e regge contro il catalogo? E che cosa chiede?"""
     dati = _Dati(cartelle)
     modello = load_project(args.grafo)
+    # Le porte di comando che il grafo collega (REL-012): senza elettrico, nessuna.
+    dati.catalogo = dati.catalogo.per_il_progetto(modello)
     esito = validate_project(modello, dati.catalogo)
     print(
         f"Il grafo si legge: {len(modello.components)} pezzi, {len(modello.connections)} "
@@ -248,6 +251,8 @@ def _completa(args: argparse.Namespace, cartelle: Cartelle) -> int:
     """Le regole degli accessori sul grafo: che cosa aggiungono, e perche'."""
     dati = _Dati(cartelle)
     modello = load_project(args.grafo)
+    # Le porte di comando che il grafo collega (REL-012): senza elettrico, nessuna.
+    dati.catalogo = dati.catalogo.per_il_progetto(modello)
     esito = validate_project(modello, dati.catalogo)
     if not esito.ok:
         print("Il grafo non regge contro il catalogo: si corregge prima di completarlo.")
@@ -787,6 +792,8 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
     esito = esegui_piano(
         modello, piano, dati.catalogo, dati.simboli, cartelle.naming, verifica=args.verifica, tabelle=tabelle
     )
+    # La tavola disegna la vista del piano (REL-012, I-227): da qui si legge il suo grafo.
+    modello, dati.catalogo = esito.modello, esito.catalogo
     if dove_vanno:
         print("Tabelle del foglio:")
         for riga in dove_vanno:
@@ -913,12 +920,17 @@ def _pezzi(args: argparse.Namespace, cartelle: Cartelle) -> int:
     con ingombro, rotazioni ammesse e porte; e quelli in linea, che posa il motore."""
     dati = _Dati(cartelle)
     modello = load_project(args.grafo)
+    # La vista del piano (REL-012, I-227): sulla tavola dell'elettrico un circolatore non
+    # ha il suo tubo, e il piano lo posa.
+    modello, catalogo = vista_del_grafo(modello, args.vista, dati.catalogo, cartelle.naming)
     da_posare: list[str] = []
     in_linea: list[str] = []
     for pezzo in modello.components:
-        voce = dati.catalogo.get(pezzo.definition_id)
-        simbolo = dati.simboli.get(voce.symbol_id).manifest
-        porte = ", ".join(f"{p.id} {p.face} ({p.x_mm:g}, {p.y_mm:g})" for p in simbolo.ports)
+        voce = catalogo.get(pezzo.definition_id)
+        simbolo = catalogo.resolve(pezzo.definition_id).symbol.manifest
+        porte = ", ".join(
+            f"{p.id} {p.face} ({p.x_mm:g}, {p.y_mm:g})" for p in (*simbolo.ports, *simbolo.control_ports)
+        )
         riga = (
             f"{pezzo.id} — {voce.name} · simbolo {simbolo.id} {simbolo.width_mm:g} x "
             f"{simbolo.height_mm:g} · rotazioni {', '.join(str(r) for r in simbolo.allowed_rotations_deg)}"
@@ -1165,6 +1177,12 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
 
     pezzi = comandi.add_parser("pezzi", help="i pezzi da posare nel piano, e quelli che posa il motore")
     pezzi.add_argument("grafo", type=Path, help="il grafo completo")
+    pezzi.add_argument(
+        "--vista",
+        choices=VISTE,
+        default="tutto",
+        help="la vista del piano: tutto (la tavola unica), idraulica, elettrico (REL-012)",
+    )
 
     valida = comandi.add_parser("valida", help="il grafo di Capire carica e regge?")
     valida.add_argument("grafo", type=Path)

@@ -726,7 +726,14 @@ class ComponentDefinition(StrictModel):
         """
         if not self.hydraulic_states:
             return self
-        run = {port.id for port in self.ports if not port.off_the_run}
+        # Il comando dell'attuatore (REL-012) non e' una via del fluido: una
+        # valvola motorizzata ha gli stati fra le porte dell'acqua, e il cavo
+        # non comunica con nessuna di loro.
+        run = {
+            port.id
+            for port in self.ports
+            if not port.off_the_run and port.domain is not Domain.CONTROL
+        }
         for state in self.hydraulic_states:
             named = {item for group in state.connects for item in group}
             unknown = sorted(named - self.port_ids)

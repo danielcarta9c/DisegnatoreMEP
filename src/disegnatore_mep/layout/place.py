@@ -769,7 +769,7 @@ class _Process:
 
 
 def _port_of(manifest: SymbolManifest, port_id: str) -> tuple[float, float, PortFace]:
-    for port in manifest.ports:
+    for port in (*manifest.ports, *manifest.control_ports):
         if port.id == port_id:
             return port.x_mm, port.y_mm, port.face
     raise LayoutError(
