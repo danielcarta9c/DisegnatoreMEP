@@ -93,7 +93,7 @@ def test_la_ripresa_sulla_macchina_ha_un_nome_solo(
     distinta = _distinta(grafo_t3, regole, nomi)
     ripresa = next(t for t in distinta.tratte_in_tabella if t.fluido == "return_air")
     assert ripresa.diretta
-    assert distinta.materiale(ripresa) == "plenum di ripresa coibentato, raccordo diretto sulla macchina"
+    assert distinta.materiale(ripresa) == "plenum di ripresa coibentato"
     righe = tabelle_del_foglio(distinta)["tabelle"][0]["sezioni"][0]["righe"]
     riga = next(r for r in righe if r[0] == ripresa.num)
     assert "plenum di ripresa" in riga[3] and "canale" not in riga[3]
