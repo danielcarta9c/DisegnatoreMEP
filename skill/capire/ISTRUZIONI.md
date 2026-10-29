@@ -579,6 +579,9 @@ testa** e non fra le `properties`, perché la tavola li scrive lungo la linea:
   dice 1/4"), «3G2,5», «1000×250». Un testo, che non si converte;
 - `lunghezza_m` — la lunghezza del tratto che il progettista dà, in metri; zero è un raccordo
   diretto, e il tratto non porta scritta (salvo una `scritta` tua);
+  un tratto spezzato da un sezionatore o da un sifone si scrive in due tubazioni, ma è una
+  linea sola: la lunghezza si scrive su **una** delle due, per il tratto intero, e l'altra resta
+  senza (non `0`, che vuol dire raccordo diretto);
 - `scritta` — il testo che la tavola porta sul tratto, se il progettista ne vuole uno suo:
   «Ø200 · 270 m³/h · L 6 m», «bus · L 9 m», «di fabbrica». Se c'è, vince sugli altri due;
   se non c'è, la tavola scrive «sezione · L lunghezza m».
