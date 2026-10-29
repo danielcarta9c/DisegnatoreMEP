@@ -251,6 +251,14 @@ def build_parser() -> argparse.ArgumentParser:
         default=TETTO_DEI_GIRI,
         help="quanti giri al piu' prima di fermarsi e dirlo",
     )
+
+    # **La pianta dei posizionamenti e dei tracciati** (REL-014, I-229): dal JSON
+    # della pianta alla tavola M.03, con lo stesso cartiglio e gli stessi colori.
+    pianta = commands.add_parser("pianta")
+    pianta.add_argument("pianta", type=Path, help="il JSON della pianta (schemas/pianta.schema.json)")
+    pianta.add_argument("--out", type=Path, required=True)
+    pianta.add_argument("--cartiglio", type=Path, help=CARTIGLIO_HELP)
+    pianta.add_argument("--senza-dxf", action="store_true", help="non scrive il DXF")
     return parser
 
 
@@ -633,6 +641,10 @@ def main(argv: Sequence[str] | None = None) -> int:
             return _piano(args)
         if args.command == "revisiona":
             return _revisiona(args)
+        if args.command == "pianta":
+            from disegnatore_mep.pianta.comando import esegui
+
+            return esegui(args.pianta, args.out, args.cartiglio, not args.senza_dxf)
         project = load_project(args.project)
         if args.command == "fingerprint":
             print(project_fingerprint(project))

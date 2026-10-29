@@ -1,0 +1,98 @@
+{
+  "tavola": {
+    "formato": "A3",
+    "scala": "1:50",
+    "avvisi": []
+  },
+  "maggiorazione": {
+    "aggiunta_m": 1.0,
+    "fattore": 1.15,
+    "arrotondamento_m": 0.5,
+    "minimi_m": {}
+  },
+  "tratte": [
+    {
+      "tratta": "T01",
+      "fluido": "refrigerant_gas",
+      "da": "A",
+      "a": "B",
+      "dimensione": "12,7",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 7.7,
+      "lunghezza_da_quotare_m": 10.5,
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          1.15,
+          1.7
+        ],
+        [
+          1.15,
+          2.7
+        ],
+        [
+          6.85,
+          2.7
+        ],
+        [
+          6.85,
+          1.7
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "tramezza",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            4.0,
+            2.7
+          ]
+        }
+      ]
+    }
+  ],
+  "forature": [
+    {
+      "numero": "F1",
+      "muro": "tramezza",
+      "tipo_del_muro": "tramezza",
+      "tratte": [
+        "T01"
+      ],
+      "quota": "controsoffitto",
+      "punto_m": [
+        4.0,
+        2.7
+      ]
+    }
+  ],
+  "fori_dei_pezzi": [],
+  "rilievi": {
+    "diagonali": 0,
+    "sormonti": 0,
+    "sovrapposizioni": 0,
+    "scritte_su_linee": 0,
+    "scritte_su_scritte": 0,
+    "fori_fuori_dalle_aperture": 1,
+    "tratte_cedute": 0,
+    "fasci_in_parallelo": {},
+    "fuori_dal_controsoffitto_m": {},
+    "bloccanti": [],
+    "elenco": {
+      "diagonali": [],
+      "sormonti": [],
+      "sovrapposizioni": [],
+      "scritte_su_linee": [],
+      "scritte_su_scritte": [],
+      "fori_fuori_dalle_aperture": [
+        "F1: T01 nel muro tramezza"
+      ],
+      "tratte_cedute": []
+    }
+  }
+}

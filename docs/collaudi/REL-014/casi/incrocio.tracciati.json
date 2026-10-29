@@ -1,0 +1,180 @@
+{
+  "tavola": {
+    "formato": "A3",
+    "scala": "1:50",
+    "avvisi": []
+  },
+  "maggiorazione": {
+    "aggiunta_m": 1.0,
+    "fattore": 1.15,
+    "arrotondamento_m": 0.5,
+    "minimi_m": {}
+  },
+  "tratte": [
+    {
+      "tratta": "T01",
+      "fluido": "condensate",
+      "da": "A1",
+      "a": "B1",
+      "dimensione": null,
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 6.8,
+      "lunghezza_da_quotare_m": 9.0,
+      "deciso_dal_minimo": false,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          0.3,
+          2.5
+        ],
+        [
+          0.4,
+          2.5
+        ],
+        [
+          0.4,
+          3.7
+        ],
+        [
+          5.75,
+          3.7
+        ],
+        [
+          5.75,
+          3.55
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T02",
+      "fluido": "condensate",
+      "da": "A2",
+      "a": "B2",
+      "dimensione": null,
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 7.1,
+      "lunghezza_da_quotare_m": 9.5,
+      "deciso_dal_minimo": false,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          0.25,
+          3.55
+        ],
+        [
+          0.25,
+          3.85
+        ],
+        [
+          5.6,
+          3.85
+        ],
+        [
+          5.6,
+          2.5
+        ],
+        [
+          5.7,
+          2.5
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T03",
+      "fluido": "supply_air",
+      "da": "P",
+      "a": "L",
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 5.1,
+      "lunghezza_da_quotare_m": 7.5,
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          0.5,
+          0.95
+        ],
+        [
+          1.7,
+          0.95
+        ],
+        [
+          1.7,
+          0.15
+        ],
+        [
+          4.8,
+          0.15
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T04",
+      "fluido": "supply_air",
+      "da": "P",
+      "a": "V",
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 1.35,
+      "lunghezza_da_quotare_m": 3.0,
+      "deciso_dal_minimo": false,
+      "curve": 1,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          0.5,
+          0.8
+        ],
+        [
+          1.25,
+          0.8
+        ],
+        [
+          1.25,
+          0.2
+        ]
+      ],
+      "attraversamenti": []
+    }
+  ],
+  "forature": [],
+  "fori_dei_pezzi": [],
+  "rilievi": {
+    "diagonali": 0,
+    "sormonti": 1,
+    "sovrapposizioni": 0,
+    "scritte_su_linee": 0,
+    "scritte_su_scritte": 0,
+    "fori_fuori_dalle_aperture": 0,
+    "tratte_cedute": 0,
+    "fasci_in_parallelo": {},
+    "fuori_dal_controsoffitto_m": {},
+    "bloccanti": [],
+    "elenco": {
+      "diagonali": [],
+      "sormonti": [
+        "T01 × T02 a (5.60; 3.70)"
+      ],
+      "sovrapposizioni": [],
+      "scritte_su_linee": [],
+      "scritte_su_scritte": [],
+      "fori_fuori_dalle_aperture": [],
+      "tratte_cedute": []
+    }
+  }
+}

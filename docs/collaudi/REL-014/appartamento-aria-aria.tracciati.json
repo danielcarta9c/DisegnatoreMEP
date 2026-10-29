@@ -1,0 +1,968 @@
+{
+  "tavola": {
+    "formato": "A3",
+    "scala": "1:50",
+    "avvisi": []
+  },
+  "maggiorazione": {
+    "aggiunta_m": 1.0,
+    "fattore": 1.15,
+    "arrotondamento_m": 0.5,
+    "minimi_m": {
+      "refrigerant_liquid": 12.0,
+      "refrigerant_gas": 12.0,
+      "interconnection": 12.0,
+      "condensate": 10.0,
+      "control_bus": 5.0,
+      "supply_air": 2.0
+    }
+  },
+  "tratte": [
+    {
+      "tratta": "T01",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "B1",
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 2.7,
+      "lunghezza_da_quotare_m": 4.5,
+      "deciso_dal_minimo": false,
+      "curve": 1,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          5.0,
+          4.1
+        ],
+        [
+          2.75,
+          4.1
+        ],
+        [
+          2.75,
+          3.65
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T02",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "B2",
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 0.65,
+      "lunghezza_da_quotare_m": 2.0,
+      "deciso_dal_minimo": false,
+      "curve": 1,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          5.0,
+          3.95
+        ],
+        [
+          4.65,
+          3.95
+        ],
+        [
+          4.65,
+          3.65
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T03",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "B3",
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 5.1,
+      "lunghezza_da_quotare_m": 7.5,
+      "deciso_dal_minimo": false,
+      "curve": 6,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          5.0,
+          3.8
+        ],
+        [
+          4.95,
+          3.8
+        ],
+        [
+          4.95,
+          3.7
+        ],
+        [
+          5.5,
+          3.7
+        ],
+        [
+          5.5,
+          3.85
+        ],
+        [
+          7.1,
+          3.85
+        ],
+        [
+          7.1,
+          4.05
+        ],
+        [
+          9.55,
+          4.05
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T04",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "B4",
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 3.0,
+      "lunghezza_da_quotare_m": 5.0,
+      "deciso_dal_minimo": false,
+      "curve": 1,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          5.0,
+          4.6
+        ],
+        [
+          2.45,
+          4.6
+        ],
+        [
+          2.45,
+          5.05
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T05",
+      "fluido": "supply_air",
+      "da": "PLZ-01",
+      "a": "B5",
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 1.65,
+      "lunghezza_da_quotare_m": 3.5,
+      "deciso_dal_minimo": false,
+      "curve": 1,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          5.0,
+          4.75
+        ],
+        [
+          3.65,
+          4.75
+        ],
+        [
+          3.65,
+          5.05
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T06",
+      "fluido": "return_air",
+      "da": "RA-01",
+      "a": "UI-01",
+      "dimensione": "1000×250",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 0.1,
+      "lunghezza_da_quotare_m": 1.5,
+      "deciso_dal_minimo": false,
+      "curve": 0,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          6.55,
+          4.7
+        ],
+        [
+          6.45,
+          4.7
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T07",
+      "fluido": "refrigerant_liquid",
+      "da": "UI-01",
+      "a": "UE-01",
+      "dimensione": "6,35",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_misurata_m": 9.325,
+      "lunghezza_da_quotare_m": 12.0,
+      "deciso_dal_minimo": false,
+      "curve": 4,
+      "fuori_dal_controsoffitto_m": 0.1,
+      "punti_m": [
+        [
+          6.3,
+          4.775
+        ],
+        [
+          6.3,
+          4.95
+        ],
+        [
+          9.35,
+          4.95
+        ],
+        [
+          9.35,
+          5.5
+        ],
+        [
+          11.8,
+          5.5
+        ],
+        [
+          11.8,
+          8.6
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-ingresso-nord",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            9.35,
+            5.15
+          ]
+        },
+        {
+          "muro": "m-sud",
+          "apertura": "foro-linee-frigo",
+          "forato": false,
+          "punto_m": [
+            11.8,
+            8.25
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T08",
+      "fluido": "refrigerant_gas",
+      "da": "UI-01",
+      "a": "UE-01",
+      "dimensione": "12,7",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_misurata_m": 9.325,
+      "lunghezza_da_quotare_m": 12.0,
+      "deciso_dal_minimo": false,
+      "curve": 4,
+      "fuori_dal_controsoffitto_m": 0.1,
+      "punti_m": [
+        [
+          6.4,
+          4.775
+        ],
+        [
+          6.4,
+          4.85
+        ],
+        [
+          9.45,
+          4.85
+        ],
+        [
+          9.45,
+          5.4
+        ],
+        [
+          11.9,
+          5.4
+        ],
+        [
+          11.9,
+          8.6
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-ingresso-nord",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            9.45,
+            5.15
+          ]
+        },
+        {
+          "muro": "m-sud",
+          "apertura": "foro-linee-frigo",
+          "forato": false,
+          "punto_m": [
+            11.9,
+            8.25
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T09",
+      "fluido": "interconnection",
+      "da": "UI-01",
+      "a": "UE-01",
+      "dimensione": "4G1,5",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_misurata_m": 9.325,
+      "lunghezza_da_quotare_m": 12.0,
+      "deciso_dal_minimo": false,
+      "curve": 4,
+      "fuori_dal_controsoffitto_m": 0.1,
+      "punti_m": [
+        [
+          6.2,
+          4.775
+        ],
+        [
+          6.2,
+          5.05
+        ],
+        [
+          9.25,
+          5.05
+        ],
+        [
+          9.25,
+          5.6
+        ],
+        [
+          11.7,
+          5.6
+        ],
+        [
+          11.7,
+          8.6
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-ingresso-nord",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            9.25,
+            5.15
+          ]
+        },
+        {
+          "muro": "m-sud",
+          "apertura": "foro-linee-frigo",
+          "forato": false,
+          "punto_m": [
+            11.7,
+            8.25
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T10",
+      "fluido": "condensate",
+      "da": "UI-01",
+      "a": "SC-01",
+      "dimensione": "PVC Ø32",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 2.45,
+      "lunghezza_da_quotare_m": 10.0,
+      "deciso_dal_minimo": true,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          6.4,
+          3.975
+        ],
+        [
+          6.4,
+          3.65
+        ],
+        [
+          8.3,
+          3.65
+        ],
+        [
+          8.3,
+          3.425
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-camere",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            8.3,
+            3.55
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T11",
+      "fluido": "power_supply",
+      "da": "QE-01",
+      "a": "SZ-01",
+      "dimensione": "3G2,5",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 2.79,
+      "lunghezza_da_quotare_m": 4.5,
+      "deciso_dal_minimo": false,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "punti_m": [
+        [
+          9.15,
+          7.7
+        ],
+        [
+          9.15,
+          8.05
+        ],
+        [
+          9.95,
+          8.05
+        ],
+        [
+          9.95,
+          8.6
+        ],
+        [
+          11.04,
+          8.6
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "m-sud",
+          "apertura": "portoncino",
+          "forato": false,
+          "punto_m": [
+            9.95,
+            8.25
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T12",
+      "fluido": "power_supply",
+      "da": "SZ-01",
+      "a": "UE-01",
+      "dimensione": "3G2,5",
+      "quota": "a_vista",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 0.19,
+      "lunghezza_da_quotare_m": 1.5,
+      "deciso_dal_minimo": false,
+      "curve": 0,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "punti_m": [
+        [
+          11.16,
+          8.65
+        ],
+        [
+          11.35,
+          8.65
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T13",
+      "fluido": "power_supply",
+      "da": "QE-01",
+      "a": "CZ-01",
+      "dimensione": "3G1,5",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 5.1,
+      "lunghezza_da_quotare_m": 7.5,
+      "deciso_dal_minimo": false,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "punti_m": [
+        [
+          9.15,
+          7.3
+        ],
+        [
+          9.15,
+          5.55
+        ],
+        [
+          7.85,
+          5.55
+        ],
+        [
+          7.85,
+          3.9
+        ],
+        [
+          7.45,
+          3.9
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-ingresso-ovest",
+          "apertura": "porta-ingresso",
+          "forato": false,
+          "punto_m": [
+            8.95,
+            5.55
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T14",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "TZ-01",
+      "dimensione": "bus",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 4.04,
+      "lunghezza_da_quotare_m": 6.0,
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "punti_m": [
+        [
+          7.2,
+          3.75
+        ],
+        [
+          7.2,
+          3.2
+        ],
+        [
+          3.85,
+          3.2
+        ],
+        [
+          3.85,
+          3.06
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-camere",
+          "apertura": "porta-camera-2",
+          "forato": false,
+          "punto_m": [
+            7.2,
+            3.55
+          ]
+        },
+        {
+          "muro": "t-c1-c2",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            3.95,
+            3.2
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T15",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "TZ-02",
+      "dimensione": "bus",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 0.88,
+      "lunghezza_da_quotare_m": 5.0,
+      "deciso_dal_minimo": true,
+      "curve": 1,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "punti_m": [
+        [
+          7.35,
+          3.75
+        ],
+        [
+          7.35,
+          3.0
+        ],
+        [
+          7.48,
+          3.0
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-camere",
+          "apertura": "porta-camera-2",
+          "forato": false,
+          "punto_m": [
+            7.35,
+            3.55
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T16",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "TZ-03",
+      "dimensione": "bus",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 4.08,
+      "lunghezza_da_quotare_m": 6.0,
+      "deciso_dal_minimo": false,
+      "curve": 3,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "punti_m": [
+        [
+          7.45,
+          3.85
+        ],
+        [
+          9.45,
+          3.85
+        ],
+        [
+          9.45,
+          4.65
+        ],
+        [
+          10.4,
+          4.65
+        ],
+        [
+          10.4,
+          4.98
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-camera-3",
+          "apertura": "porta-camera-3",
+          "forato": false,
+          "punto_m": [
+            9.65,
+            4.65
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T17",
+      "fluido": "control_bus",
+      "da": "CZ-01",
+      "a": "TZ-04",
+      "dimensione": "bus",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 3.43,
+      "lunghezza_da_quotare_m": 5.5,
+      "deciso_dal_minimo": false,
+      "curve": 2,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "punti_m": [
+        [
+          7.2,
+          3.95
+        ],
+        [
+          7.2,
+          5.35
+        ],
+        [
+          5.2,
+          5.35
+        ],
+        [
+          5.2,
+          5.32
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-soggiorno-nord",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            7.2,
+            5.15
+          ]
+        }
+      ]
+    },
+    {
+      "tratta": "T18",
+      "fluido": "control_bus",
+      "da": "UI-01",
+      "a": "CF-01",
+      "dimensione": "P1-P2",
+      "quota": "traccia",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 4.89,
+      "lunghezza_da_quotare_m": 7.0,
+      "deciso_dal_minimo": false,
+      "curve": 8,
+      "fuori_dal_controsoffitto_m": 0.0,
+      "punti_m": [
+        [
+          6.45,
+          4.05
+        ],
+        [
+          6.5,
+          4.05
+        ],
+        [
+          6.5,
+          3.9
+        ],
+        [
+          7.05,
+          3.9
+        ],
+        [
+          7.05,
+          4.65
+        ],
+        [
+          9.4,
+          4.65
+        ],
+        [
+          9.4,
+          4.75
+        ],
+        [
+          9.75,
+          4.75
+        ],
+        [
+          9.75,
+          5.25
+        ],
+        [
+          9.66,
+          5.25
+        ]
+      ],
+      "attraversamenti": [
+        {
+          "muro": "t-camera-3",
+          "apertura": "porta-camera-3",
+          "forato": false,
+          "punto_m": [
+            9.65,
+            4.75
+          ]
+        },
+        {
+          "muro": "t-ingresso-nord",
+          "apertura": null,
+          "forato": true,
+          "punto_m": [
+            9.75,
+            5.15
+          ]
+        }
+      ]
+    }
+  ],
+  "forature": [
+    {
+      "numero": "F1",
+      "muro": "t-ingresso-nord",
+      "tipo_del_muro": "tramezza",
+      "tratte": [
+        "T07",
+        "T08",
+        "T09"
+      ],
+      "quota": "controsoffitto",
+      "punto_m": [
+        9.35,
+        5.15
+      ]
+    },
+    {
+      "numero": "F2",
+      "muro": "t-camere",
+      "tipo_del_muro": "tramezza",
+      "tratte": [
+        "T10"
+      ],
+      "quota": "controsoffitto",
+      "punto_m": [
+        8.3,
+        3.55
+      ]
+    },
+    {
+      "numero": "F3",
+      "muro": "t-c1-c2",
+      "tipo_del_muro": "tramezza",
+      "tratte": [
+        "T14"
+      ],
+      "quota": "traccia",
+      "punto_m": [
+        3.95,
+        3.2
+      ]
+    },
+    {
+      "numero": "F4",
+      "muro": "t-soggiorno-nord",
+      "tipo_del_muro": "tramezza",
+      "tratte": [
+        "T17"
+      ],
+      "quota": "traccia",
+      "punto_m": [
+        7.2,
+        5.15
+      ]
+    },
+    {
+      "numero": "F5",
+      "muro": "t-ingresso-nord",
+      "tipo_del_muro": "tramezza",
+      "tratte": [
+        "T18"
+      ],
+      "quota": "traccia",
+      "punto_m": [
+        9.75,
+        5.15
+      ]
+    }
+  ],
+  "fori_dei_pezzi": [
+    {
+      "pezzo": "B1",
+      "muro": "t-camere"
+    },
+    {
+      "pezzo": "B2",
+      "muro": "t-camere"
+    },
+    {
+      "pezzo": "B3",
+      "muro": "t-camera-3"
+    },
+    {
+      "pezzo": "B4",
+      "muro": "t-soggiorno-nord"
+    },
+    {
+      "pezzo": "B5",
+      "muro": "t-soggiorno-nord"
+    }
+  ],
+  "rilievi": {
+    "diagonali": 0,
+    "sormonti": 14,
+    "sovrapposizioni": 0,
+    "scritte_su_linee": 0,
+    "scritte_su_scritte": 0,
+    "fori_fuori_dalle_aperture": 5,
+    "tratte_cedute": 0,
+    "fasci_in_parallelo": {
+      "frigo": 0.971
+    },
+    "fuori_dal_controsoffitto_m": {
+      "T07": 0.1,
+      "T08": 0.1,
+      "T09": 0.1
+    },
+    "bloccanti": [],
+    "elenco": {
+      "diagonali": [],
+      "sormonti": [
+        "T03 × T10 a (6.40; 3.85)",
+        "T03 × T13 a (7.85; 4.05)",
+        "T03 × T16 a (9.45; 4.05)",
+        "T03 × T17 a (7.20; 4.05)",
+        "T07 × T13 a (7.85; 4.95)",
+        "T07 × T17 a (7.20; 4.95)",
+        "T08 × T13 a (7.85; 4.85)",
+        "T08 × T17 a (7.20; 4.85)",
+        "T09 × T13 a (7.85; 5.05)",
+        "T09 × T17 a (7.20; 5.05)",
+        "T10 × T14 a (7.20; 3.65)",
+        "T10 × T15 a (7.35; 3.65)",
+        "T13 × T18 a (7.85; 4.65)",
+        "T17 × T18 a (7.20; 4.65)"
+      ],
+      "sovrapposizioni": [],
+      "scritte_su_linee": [],
+      "scritte_su_scritte": [],
+      "fori_fuori_dalle_aperture": [
+        "F1: T07 T08 T09 nel muro t-ingresso-nord",
+        "F2: T10 nel muro t-camere",
+        "F3: T14 nel muro t-c1-c2",
+        "F4: T17 nel muro t-soggiorno-nord",
+        "F5: T18 nel muro t-ingresso-nord"
+      ],
+      "tratte_cedute": []
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "versione": "1.0.0",
+  "titolo": "Caso di prova: un incrocio obbligato e uno evitabile",
+  "note": ["Una stanza 6 × 4 m. T01 e T02 hanno i capi alternati sui due muri, quindi si incrociano per forza: un sormonto e uno solo. T03 e T04 partono dallo stesso plenum: chi va lontano non deve sbarrare la strada a chi va vicino."],
+  "cartiglio": {"committente": "Caso di prova", "indirizzo": "Nessuno", "progetto": "REL-014 - incrocio", "numero_tavola": "P.02", "revisione": "00", "data": "29.10.2026", "commessa": "PROVA-REL-014"},
+  "muri": [
+    {"id": "nord", "da": [-0.15, -0.15], "a": [6.15, -0.15], "spessore": 0.3, "tipo": "perimetrale"},
+    {"id": "sud", "da": [-0.15, 4.15], "a": [6.15, 4.15], "spessore": 0.3, "tipo": "perimetrale"},
+    {"id": "ovest", "da": [-0.15, -0.15], "a": [-0.15, 4.15], "spessore": 0.3, "tipo": "perimetrale"},
+    {"id": "est", "da": [6.15, -0.15], "a": [6.15, 4.15], "spessore": 0.3, "tipo": "perimetrale"}
+  ],
+  "stanze": [{"id": "stanza", "nome": "Stanza", "poligono": [[0, 0], [6, 0], [6, 4], [0, 4]], "controsoffitto": true}],
+  "pezzi": [
+    {"sigla": "A1", "tipo": "x", "x": 0.15, "y": 2.4, "larghezza": 0.3, "profondita": 0.3},
+    {"sigla": "A2", "tipo": "x", "x": 0.15, "y": 3.4, "larghezza": 0.3, "profondita": 0.3},
+    {"sigla": "B1", "tipo": "x", "x": 5.85, "y": 3.4, "larghezza": 0.3, "profondita": 0.3},
+    {"sigla": "B2", "tipo": "x", "x": 5.85, "y": 2.4, "larghezza": 0.3, "profondita": 0.3},
+    {"sigla": "P", "tipo": "plenum", "x": 0.3, "y": 1.0, "larghezza": 0.4, "profondita": 0.8},
+    {"sigla": "V", "tipo": "bocchetta", "x": 1.4, "y": 0.1, "larghezza": 0.4, "profondita": 0.2},
+    {"sigla": "L", "tipo": "bocchetta", "x": 5.0, "y": 0.1, "larghezza": 0.4, "profondita": 0.2}
+  ],
+  "tracciati": [
+    {"tratta": "T01", "da": "A1", "a": "B1", "fluido": "condensate"},
+    {"tratta": "T02", "da": "A2", "a": "B2", "fluido": "condensate"},
+    {"tratta": "T03", "da": {"pezzo": "P", "lato": "destra"}, "a": "L", "fluido": "supply_air", "dimensione": "Ø200"},
+    {"tratta": "T04", "da": {"pezzo": "P", "lato": "destra"}, "a": "V", "fluido": "supply_air", "dimensione": "Ø200"}
+  ]
+}

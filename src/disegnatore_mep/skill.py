@@ -849,6 +849,12 @@ def _consegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
     return 0
 
 
+def _pianta(args: argparse.Namespace, cartelle: Cartelle) -> int:
+    from disegnatore_mep.pianta.comando import esegui
+
+    return esegui(args.pianta, args.out, cartelle.cartiglio, not args.senza_dxf)
+
+
 # --- il comando ---------------------------------------------------------------
 
 
@@ -898,6 +904,11 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         "--zona", help="solo un riquadro del foglio, x0,y0,x1,y1 in millimetri dall'alto a sinistra"
     )
 
+    pianta = comandi.add_parser("pianta", help="la pianta dei posizionamenti e dei tracciati (M.03)")
+    pianta.add_argument("pianta", type=Path, help="il JSON della pianta")
+    pianta.add_argument("--out", type=Path, required=True, help="la cartella della tavola")
+    pianta.add_argument("--senza-dxf", action="store_true", help="non scrive il DXF")
+
     finale = comandi.add_parser("consegna", help="copia PDF, DXF, SVG e rilievi nella cartella data")
     finale.add_argument("cartella", type=Path)
     finale.add_argument("destinazione", type=Path)
@@ -919,6 +930,7 @@ def main(argv: Sequence[str] | None, cartelle: Cartelle) -> int:
             "disegna": _disegna,
             "anteprima": _anteprima,
             "consegna": _consegna,
+            "pianta": _pianta,
         }
         return comando[args.comando](args, cartelle)
     except (OSError, ValidationError, ValueError, RuleError) as errore:

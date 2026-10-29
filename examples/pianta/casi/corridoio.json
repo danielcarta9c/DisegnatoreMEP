@@ -1,0 +1,26 @@
+{
+  "versione": "1.0.0",
+  "titolo": "Caso di prova: un corridoio",
+  "note": ["Un corridoio largo 1,2 m e lungo 6 m. Due pezzi contro il muro nord: il tracciato deve stare nella corsia lungo il muro, non in mezzo. Tre linee frigo in fascio fra due macchine."],
+  "cartiglio": {"committente": "Caso di prova", "indirizzo": "Nessuno", "progetto": "REL-014 - corridoio", "numero_tavola": "P.01", "revisione": "00", "data": "29.10.2026", "commessa": "PROVA-REL-014"},
+  "sfondo": {"file": "sfondo-corridoio.jpg", "px_per_m": 50, "origine_px": [25, 25], "opacita": 0.35},
+  "muri": [
+    {"id": "nord", "da": [-0.15, -0.15], "a": [6.15, -0.15], "spessore": 0.3, "tipo": "perimetrale"},
+    {"id": "sud", "da": [-0.15, 1.35], "a": [6.15, 1.35], "spessore": 0.3, "tipo": "perimetrale"},
+    {"id": "ovest", "da": [-0.15, -0.15], "a": [-0.15, 1.35], "spessore": 0.3, "tipo": "perimetrale"},
+    {"id": "est", "da": [6.15, -0.15], "a": [6.15, 1.35], "spessore": 0.3, "tipo": "perimetrale"}
+  ],
+  "stanze": [{"id": "corridoio", "nome": "Corridoio", "poligono": [[0, 0], [6, 0], [6, 1.2], [0, 1.2]], "controsoffitto": true}],
+  "pezzi": [
+    {"sigla": "A", "tipo": "macchina", "x": 0.6, "y": 0.35, "larghezza": 0.4, "profondita": 0.3},
+    {"sigla": "B", "tipo": "terminale", "x": 5.4, "y": 0.35, "larghezza": 0.4, "profondita": 0.3},
+    {"sigla": "UI", "tipo": "macchina", "x": 0.6, "y": 0.95, "larghezza": 0.6, "profondita": 0.3},
+    {"sigla": "UE", "tipo": "macchina", "x": 5.4, "y": 0.95, "larghezza": 0.6, "profondita": 0.3}
+  ],
+  "tracciati": [
+    {"tratta": "T01", "da": {"pezzo": "A", "lato": "destra"}, "a": {"pezzo": "B", "lato": "sinistra"}, "fluido": "supply_air", "dimensione": "Ø200"},
+    {"tratta": "T02", "da": {"pezzo": "UI", "lato": "destra"}, "a": {"pezzo": "UE", "lato": "sinistra"}, "fluido": "refrigerant_liquid", "dimensione": "6,35", "fascio": "frigo"},
+    {"tratta": "T03", "da": {"pezzo": "UI", "lato": "destra"}, "a": {"pezzo": "UE", "lato": "sinistra"}, "fluido": "refrigerant_gas", "dimensione": "12,7", "fascio": "frigo"},
+    {"tratta": "T04", "da": {"pezzo": "UI", "lato": "destra"}, "a": {"pezzo": "UE", "lato": "sinistra"}, "fluido": "interconnection", "dimensione": "4G1,5", "fascio": "frigo"}
+  ]
+}

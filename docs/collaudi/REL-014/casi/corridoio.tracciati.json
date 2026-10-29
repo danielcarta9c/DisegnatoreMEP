@@ -1,0 +1,144 @@
+{
+  "tavola": {
+    "formato": "A3",
+    "scala": "1:50",
+    "avvisi": []
+  },
+  "maggiorazione": {
+    "aggiunta_m": 1.0,
+    "fattore": 1.15,
+    "arrotondamento_m": 0.5,
+    "minimi_m": {}
+  },
+  "tratte": [
+    {
+      "tratta": "T01",
+      "fluido": "supply_air",
+      "da": "A",
+      "a": "B",
+      "dimensione": "Ø200",
+      "quota": "controsoffitto",
+      "fascio": null,
+      "instradata": true,
+      "lunghezza_misurata_m": 4.4,
+      "lunghezza_da_quotare_m": 6.5,
+      "deciso_dal_minimo": false,
+      "curve": 0,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          0.8,
+          0.3
+        ],
+        [
+          5.2,
+          0.3
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T02",
+      "fluido": "refrigerant_liquid",
+      "da": "UI",
+      "a": "UE",
+      "dimensione": "6,35",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_misurata_m": 4.2,
+      "lunghezza_da_quotare_m": 6.0,
+      "deciso_dal_minimo": false,
+      "curve": 0,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          0.9,
+          0.95
+        ],
+        [
+          5.1,
+          0.95
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T03",
+      "fluido": "refrigerant_gas",
+      "da": "UI",
+      "a": "UE",
+      "dimensione": "12,7",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_misurata_m": 4.2,
+      "lunghezza_da_quotare_m": 6.0,
+      "deciso_dal_minimo": false,
+      "curve": 0,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          0.9,
+          0.85
+        ],
+        [
+          5.1,
+          0.85
+        ]
+      ],
+      "attraversamenti": []
+    },
+    {
+      "tratta": "T04",
+      "fluido": "interconnection",
+      "da": "UI",
+      "a": "UE",
+      "dimensione": "4G1,5",
+      "quota": "controsoffitto",
+      "fascio": "frigo",
+      "instradata": true,
+      "lunghezza_misurata_m": 4.2,
+      "lunghezza_da_quotare_m": 6.0,
+      "deciso_dal_minimo": false,
+      "curve": 0,
+      "fuori_dal_controsoffitto_m": 0,
+      "punti_m": [
+        [
+          0.9,
+          1.05
+        ],
+        [
+          5.1,
+          1.05
+        ]
+      ],
+      "attraversamenti": []
+    }
+  ],
+  "forature": [],
+  "fori_dei_pezzi": [],
+  "rilievi": {
+    "diagonali": 0,
+    "sormonti": 0,
+    "sovrapposizioni": 0,
+    "scritte_su_linee": 0,
+    "scritte_su_scritte": 0,
+    "fori_fuori_dalle_aperture": 0,
+    "tratte_cedute": 0,
+    "fasci_in_parallelo": {
+      "frigo": 1.0
+    },
+    "fuori_dal_controsoffitto_m": {},
+    "bloccanti": [],
+    "elenco": {
+      "diagonali": [],
+      "sormonti": [],
+      "sovrapposizioni": [],
+      "scritte_su_linee": [],
+      "scritte_su_scritte": [],
+      "fori_fuori_dalle_aperture": [],
+      "tratte_cedute": []
+    }
+  }
+}
