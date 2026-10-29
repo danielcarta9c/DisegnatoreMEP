@@ -139,7 +139,15 @@ def _altezza_della_riga(riga: RigaDellaTabellaLibera, colonne: Sequence[ColonnaD
     return _altezza(linee, misure)
 
 
+def _ha_l_intestazione(colonne: Sequence[ColonnaDellaTabella]) -> bool:
+    """Una tabella con le intestazioni tutte vuote — le note della distinta — non ha la
+    riga dell'intestazione: sulla M.02 restava vuota fra il titolo e la prima nota."""
+    return any(item.intestazione.strip() for item in colonne)
+
+
 def _altezza_dell_intestazione(colonne: Sequence[ColonnaDellaTabella], misure: _Misure) -> float:
+    if not _ha_l_intestazione(colonne):
+        return 0.0
     return _altezza(
         max(len(_righe_della_cella(item.intestazione, item, misure, True)) for item in colonne),
         misure,
@@ -310,13 +318,15 @@ def tratti_della_tabella_posata(
                 x = bordi[indice + 1] - RIENTRO_MM if colonna.a_destra else bordi[indice] + RIENTRO_MM
                 testi.append(TestoDiTabella(testo, round(x, 6), base, grassetto, colonna.a_destra))
 
-    intestazione = [_righe_della_cella(item.intestazione, item, misure, True) for item in tabella.colonne]
-    altezza = _altezza(max(len(item) for item in intestazione), misure)
     linee.append((sinistra, y, destra, y))
-    scrivi(y, intestazione, True)
-    divisioni: list[tuple[float, float]] = [(y, y + altezza)]
-    y = round(y + altezza, 6)
-    linee.append((sinistra, y, destra, y))
+    divisioni: list[tuple[float, float]] = []
+    if _ha_l_intestazione(tabella.colonne):
+        intestazione = [_righe_della_cella(item.intestazione, item, misure, True) for item in tabella.colonne]
+        altezza = _altezza(max(len(item) for item in intestazione), misure)
+        scrivi(y, intestazione, True)
+        divisioni.append((y, y + altezza))
+        y = round(y + altezza, 6)
+        linee.append((sinistra, y, destra, y))
     for riga in tabella.righe:
         if riga.sezione is not None:
             testi.append(

@@ -220,6 +220,16 @@ JSON, e solo queste chiavi:
   il comando**. Guarda il manifesto prima di scriverla. **Lo specchio invece vale per tutti**,
   anche per chi non si ruota (D-169): un volano a due attacchi specchiato ha `a` a destra e `b`
   a sinistra, ed è il modo di farlo guardare dall'altra parte senza girarlo.
+- **`zone_tabelle`** — **solo se la tavola porta tabelle** oltre a quella delle apparecchiature:
+  la tabella delle tratte, il computo, le note e le attività della distinta materiali, le note
+  del progettista. `"zone_tabelle": {"destra_mm": 230, "basso_mm": 230}` lascia una zona a
+  destra del disegno, accanto alla legenda, e una in basso, sopra il cartiglio; l'area del
+  disegno si restringe di tanto, e il foglio resta quello di `formato` (regole del piano, D4).
+  Le tabelle le passa il comando, `disegna --tabelle <file>` — il `tabelle-del-foglio.json` che
+  scrive `distinta`, e se il progettista ha note sue un secondo file nello stesso formato —, e
+  il comando dice dove le ha messe. **Le scritte non si rimpiccioliscono**: se non entrano il
+  comando si ferma, e allarghi le zone o prendi il formato successivo. Un computo intero non sta
+  in un A2: la M.02 del canalizzato è un A1 con zone di 230 mm.
 - **`note`** e **`regola`** — **non sono decorazione.** Il piano senza di loro dice dove
   stanno i pezzi e non dice **perché**, e chi lo rivede non può correggerlo: può solo
   spostare. `note` porta la motivazione del piano intero, `regola` la stessa cosa pezzo per
@@ -503,6 +513,23 @@ più piccolo che lo contiene; il bianco che resta non si corregge. **Non allarga
 disegno per riempire il foglio**, e soprattutto **non allontanare un pezzo dalla macchina che
 serve**: A4 vince su questa regola, sempre. Se hai sbagliato formato te lo dice
 `SHEET_LARGER_THAN_NEEDED`, e si cambia una riga e si rilancia.
+
+### L'aria-aria — un canalizzato (E1, E2, E3)
+
+Il metodo è lo stesso: prima le autostrade, poi il resto. Le autostrade sono le linee
+frigorifere, la mandata al plenum, i rami alle bocchette e il bus ai termostati.
+
+- **Unità esterna e unità interna alla stessa `y`**: le porte frigorifere si allineano e le
+  due linee vengono rette. Il **plenum alla `y` dell'unità interna**; le **bocchette in
+  colonna**, ognuna alla quota della sua uscita (passo 12,5); la **ripresa sopra l'unità**,
+  sull'asse della bocca.
+- **La centrale di zona separata dal plenum**, sotto, sull'asse dei motori; i **termostati in
+  colonna** accanto, ognuno alla quota della sua porta di bus. Con la centrale attaccata al
+  plenum il kit aveva bus a L con sormonti e quattro rilievi bloccanti sulle scritte dei
+  termostati.
+- **Sotto l'unità interna** il collegamento all'unità esterna, la condensa con sifone e
+  scarico **addosso** (A4), il comando a filo; **il quadro sotto l'unità esterna**, con
+  l'alimentazione dritta in verticale.
 
 ---
 
