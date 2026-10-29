@@ -335,6 +335,25 @@ def test_consegna_copia_i_file_per_il_progettista(cartelle: Cartelle, tmp_path: 
     assert sorted(p.name for p in (tmp_path / "solo").iterdir()) == ["logo.jpg", "t1-rilievi.md", "t1.dxf", "t1.pdf"]
 
 
+def test_il_file_dei_rilievi_ha_le_lettere_accentate_e_i_codici_in_fondo() -> None:
+    """Collaudo T3 di REL-012, §3: il file dei rilievi va al progettista, e le sue frasi
+    fisse scrivevano «qualita'» e «e'». I codici dei rilievi restano, in fondo alla riga
+    fra parentesi, dopo la frase in italiano."""
+    from disegnatore_mep.model.types import IssueSeverity
+    from disegnatore_mep.skill import _rilievi_in_parole
+    from disegnatore_mep.validation.issues import ValidationIssue
+
+    avviso = ValidationIssue(
+        code="TAG_OMITTED", severity=IssueSeverity.WARNING, message="la sigla SIF-01 non è scritta",
+        entity_ids=["t1", "sifone"],
+    )
+    testo = _rilievi_in_parole("Prova", "A3", 4, 0, [avviso], [], [], [])
+    fisso = testo.replace(avviso.message, "")
+    assert not re.search(r"[a-z]' ", fisso) and not re.search(r"[a-z]'[.,]", fisso), fisso
+    assert "qualità" in testo and "com'è disegnato" in testo
+    assert "- la sigla SIF-01 non è scritta (`TAG_OMITTED` · t1, sifone)" in testo
+
+
 def test_consegna_non_copre_un_file_con_un_altro_dello_stesso_nome(
     cartelle: Cartelle, tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

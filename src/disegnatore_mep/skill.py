@@ -722,8 +722,10 @@ def _rilievi_in_parole(
         f"Formato **{formato}** · tratte **{tratte}** · tratte cedute **{cedute}** · "
         f"rilievi bloccanti **{len(bloccanti)}**.",
         "",
-        "Li misurano i controlli della skill sulla tavola finita: il preflight di qualita' "
-        "e le regole del piano. Non sono un giudizio sull'impianto: dicono come e' "
+        # Il file va al progettista (collaudo T3 di REL-012): le frasi fisse con le
+        # lettere accentate, non con l'apostrofo; i codici restano in fondo alla riga.
+        "Li misurano i controlli della skill sulla tavola finita: il controllo di qualità "
+        "e le regole del piano. Non sono un giudizio sull'impianto: dicono com'è "
         "disegnato.",
         "",
     ]
