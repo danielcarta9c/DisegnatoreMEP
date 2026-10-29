@@ -80,6 +80,20 @@ percio' gli stia stretto. L'elenco vive nel catalogo, con chi lo legge per
 proporre e per saturare: qui se ne tiene il nome che la posa usa da D-120.
 """
 
+FUNZIONI_DI_PROSSIMITA = frozenset({"power_isolation"})
+"""Chi sta **accanto alla macchina che alimenta**, per mestiere (REL-012, §6.3 del
+kit): il sezionatore onnipolare di prossimita' si apre sul posto, davanti alla
+macchina, prima di metterci le mani.
+
+La macchina e' il capo della tratta **in cui il fluido entra** — l'attacco di
+alimentazione, `in` per il catalogo —, e l'organo le si stringe come la valvola di
+una catena (D-120), senza che la macchina debba dichiararsi `maintainable`: quella
+proprieta' fa chiedere alla regola dell'intercettazione una valvola sul fluido, che
+sull'elettrico non c'e'. Fino al 29 ottobre 2026 l'organo si posava dal capo da cui
+la tratta comincia, cioe' dalla prima tubazione del modello: sul caso del kit il
+sezionatore finiva accanto al quadro finche' la tubazione lato macchina non si e'
+chiamata `e-1a`."""
+
 
 @dataclass(frozen=True)
 class _Station:
@@ -327,6 +341,27 @@ def place_inline_accessories(
     if not strict_head and isolates[0] and services(trunk.start):
         head_chain = [0]
     if not strict_tail and isolates[last] and services(trunk.end):
+        tail_chain = [last]
+
+    def alimentato(ref: PortRef) -> bool:
+        """Il capo della tratta e' l'attacco in cui il fluido **entra** in una macchina."""
+        definition_id = definitions.get(ref.component_id)
+        if definition_id is None:
+            return False
+        porta = next(
+            (item for item in catalog.resolve(definition_id).definition.ports if item.id == ref.port_id),
+            None,
+        )
+        return porta is not None and porta.flow is PortFlow.IN
+
+    def di_prossimita(index: int) -> bool:
+        return bool(FUNZIONI_DI_PROSSIMITA & set(resolved[index].definition.functions))
+
+    # L'organo di prossimita' (`FUNZIONI_DI_PROSSIMITA`) si stringe alla macchina
+    # che alimenta, da qualunque capo la tratta cominci.
+    if not head_chain and not strict_head and di_prossimita(0) and alimentato(trunk.start):
+        head_chain = [0]
+    if not tail_chain and not strict_tail and di_prossimita(last) and alimentato(trunk.end):
         tail_chain = [last]
     if set(head_chain) & set(tail_chain):
         head_chain = []
