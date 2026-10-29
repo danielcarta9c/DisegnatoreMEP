@@ -7,7 +7,15 @@ della famiglia (dal catalogo e da `naming/families.json`), le rotazioni ammesse.
 L'ultima riga porta tre simboli idronici gia' approvati, per il confronto di stile.
 
 Il colore della porta e' il suo dominio, dal catalogo: blu l'acqua, verde l'aria,
-viola il refrigerante, grigio la condensa, rosso il comando.
+viola il refrigerante, grigio la condensa, rosso il comando. Il pallino pieno e' una
+porta obbligatoria, quello vuoto una **facoltativa**: le porte di comando dei pezzi
+che stanno sull'acqua (`control_ports`, fase 3 — il segnale della sonda) e le uscite in
+piu' del quadro e della centrale. Sulla tavola **il moncone di una porta che nessuna
+linea collega non si disegna** (collaudo T1 di REL-012, i gruppi `data-port` del
+corpo); qui il corpo e' intero, con tutti i monconi.
+
+Dopo il collaudo T1 il foglio porta anche i plenum di zona da due a sei serrande e il
+quadro a sei uscite.
 
 Uso, dalla radice del repository:
 
@@ -43,6 +51,9 @@ NUOVI_DEL_KIT = [
     "wired-remote",
 ]
 NUOVI_DELLA_SESSIONE = ["plant-controller", "temperature-probe", "outdoor-temperature-probe"]
+DAL_COLLAUDO_T1 = ["zoning-plenum-2", "zoning-plenum-3", "zoning-plenum-4", "zoning-plenum-6"]
+"""I plenum che il kit non aveva (collaudo T1 di REL-012, §2.1); il quadro a sei uscite e'
+quello del kit, nella prima riga."""
 CONFRONTO = ["heat-pump-air-water", "pump-circulator", "thermometer"]
 
 SCALA = 2.0
@@ -78,16 +89,21 @@ def sigle(catalogo: ComponentRegistry, naming: Naming) -> dict[str, list[str]]:
     return trovate
 
 
-def domini(catalogo: ComponentRegistry) -> dict[tuple[str, str], str]:
-    """Il dominio di ogni porta, dalla prima voce che usa il simbolo."""
-    trovati: dict[tuple[str, str], str] = {}
+def domini(catalogo: ComponentRegistry) -> dict[tuple[str, str], tuple[str, bool]]:
+    """Il dominio di ogni porta, e se e' obbligatoria, dalla prima voce che usa il
+    simbolo. Le porte di comando dei pezzi sull'acqua il registro le tiene da parte
+    (`ComponentRegistry.per_il_progetto`): qui non ci sono, e il foglio le sa dal
+    manifesto — comando, facoltative."""
+    trovati: dict[tuple[str, str], tuple[str, bool]] = {}
     for voce in catalogo.all():
         for porta in voce.ports:
-            trovati.setdefault((voce.symbol_id, porta.id), porta.domain.value)
+            trovati.setdefault((voce.symbol_id, porta.id), (porta.domain.value, porta.required))
     return trovati
 
 
-def cella(simbolo: Symbol, sigla: str, dominio: dict[tuple[str, str], str], titolo: str) -> tuple[str, float, float]:
+def cella(
+    simbolo: Symbol, sigla: str, dominio: dict[tuple[str, str], tuple[str, bool]], titolo: str
+) -> tuple[str, float, float]:
     """Una cella: il simbolo al doppio con le porte, a misura vera, e le scritte.
 
     Restituisce l'SVG con l'origine nell'angolo in alto a sinistra, e la misura."""
@@ -101,10 +117,16 @@ def cella(simbolo: Symbol, sigla: str, dominio: dict[tuple[str, str], str], tito
         f'stroke-width="{tratto / SCALA * 1.4:g}" fill="none">{simbolo.body}</g>'
     ]
     destra = 0.0
-    for porta in m.ports:
-        colore = COLORE_DEL_DOMINIO.get(dominio.get((m.id, porta.id), ""), "#000000")
+    for porta in (*m.ports, *m.control_ports):
+        nome_del_dominio, obbligatoria = dominio.get((m.id, porta.id), ("control", False))
+        colore = COLORE_DEL_DOMINIO.get(nome_del_dominio, "#000000")
         px, py = sx + porta.x_mm * SCALA, sy + porta.y_mm * SCALA
-        parti.append(f'<circle cx="{px:g}" cy="{py:g}" r="0.9" fill="{colore}" stroke="none"/>')
+        if obbligatoria:
+            parti.append(f'<circle cx="{px:g}" cy="{py:g}" r="0.9" fill="{colore}" stroke="none"/>')
+        else:
+            parti.append(
+                f'<circle cx="{px:g}" cy="{py:g}" r="0.75" fill="white" stroke="{colore}" stroke-width="0.35"/>'
+            )
         faccia = porta.face.value if hasattr(porta.face, "value") else str(porta.face)
         largo = larghezza_della_scritta(porta.id, CORPO_PORTA)
         tx, ty, ancora = {
@@ -157,6 +179,8 @@ def foglio() -> str:
          "kit AA-01, da approvare"),
         ("Comando nell'idronico (I-226) — proposte della sessione, forma e sigla da approvare", NUOVI_DELLA_SESSIONE,
          "proposta REL-012 fase 3, da approvare"),
+        ("Dal collaudo T1 (REL-012) — i plenum di zona da due a sei serrande, lo stesso disegno del cinque",
+         DAL_COLLAUDO_T1, "proposta dopo il collaudo T1, da approvare"),
         ("Per confronto: simboli idronici gia' approvati", CONFRONTO, "gia' in libreria"),
     ]
     parti: list[str] = [
@@ -166,8 +190,11 @@ def foglio() -> str:
         f"Ogni simbolo al doppio, con le porte marcate e nominate, e accanto a misura vera (1:1). "
         f"Colore della porta = dominio: blu acqua, verde aria, viola refrigerante, grigio condensa, rosso comando "
         f"(alimentazione, collegamento, bus).</text>",
+        f'<text x="{MARGINE:g}" y="{MARGINE + 11.5:g}" font-size="2.6" fill="#333333" stroke="none">'
+        f"Pallino pieno = porta obbligatoria, vuoto = facoltativa. Sulla tavola il moncone di una porta che nessuna "
+        f"linea collega non si disegna; qui il corpo e' intero.</text>",
     ]
-    y = MARGINE + 16.0
+    y = MARGINE + 19.0
     for titolo, ids, nota in gruppi:
         if not ids:
             continue
