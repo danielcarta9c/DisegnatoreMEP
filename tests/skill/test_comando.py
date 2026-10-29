@@ -316,10 +316,10 @@ def test_consegna_copia_i_file_per_il_progettista(cartelle: Cartelle, tmp_path: 
     for nome in ("t1.pdf", "t1.dxf", "t1.svg", "t1-rilievi.md", "logo.jpg", "geometria.json"):
         (tavola / nome).write_text("x", encoding="utf-8")
     assert main(["consegna", str(tavola), str(tmp_path / "fuori")], cartelle) == 0
-    # Il logo del cartiglio e l'SVG restano nella cartella di lavoro (collaudo T2 di
-    # REL-012): il progettista riceve PDF, DXF e rilievi.
+    # L'SVG resta nella cartella di lavoro (collaudo T2 di REL-012); il logo va col
+    # DXF, che lo nomina.
     assert sorted(p.name for p in (tmp_path / "fuori").iterdir()) == [
-        "t1-rilievi.md", "t1.dxf", "t1.pdf",
+        "logo.jpg", "t1-rilievi.md", "t1.dxf", "t1.pdf",
     ]
 
 
