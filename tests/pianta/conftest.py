@@ -1,0 +1,30 @@
+"""I casi di prova della pianta, disegnati una volta per modulo: ogni giro scrive
+PDF, DXF e PNG, e tre secondi a prova sarebbero troppi."""
+
+from pathlib import Path
+
+import pytest
+
+from disegnatore_mep.graphics.cartiglio import Cartiglio
+from disegnatore_mep.pianta.comando import Esito, disegna_la_pianta
+
+RADICE = Path(__file__).resolve().parents[2]
+ESEMPI = RADICE / "examples" / "pianta"
+APPARTAMENTO = ESEMPI / "appartamento-aria-aria.json"
+CASI = {
+    "appartamento": APPARTAMENTO,
+    "corridoio": ESEMPI / "casi" / "corridoio.json",
+    "incrocio": ESEMPI / "casi" / "incrocio.json",
+    "muro": ESEMPI / "casi" / "muro-senza-aperture.json",
+}
+CARTIGLIO = RADICE / "assets" / "cartigli" / "Cartiglio_NoveC_A3.json"
+
+
+@pytest.fixture(scope="session")
+def esiti(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Esito]:
+    cartiglio = Cartiglio.da_file(CARTIGLIO)
+    out: dict[str, Esito] = {}
+    for nome, percorso in CASI.items():
+        cartella = tmp_path_factory.mktemp(f"pianta-{nome}")
+        out[nome] = disegna_la_pianta(percorso, cartella, cartiglio, png=(nome == "appartamento"))
+    return out

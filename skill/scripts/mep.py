@@ -4,8 +4,9 @@
     python3 scripts/mep.py <comando> [...]
 
 Comandi: ambiente, catalogo, simbolo, valida, completa, pezzi, disegna, anteprima,
-consegna; e distinta, la distinta materiali per l'installatore, solo se il
-progettista la chiede (proposta D-213).
+consegna; pianta, la pianta dei posizionamenti e dei tracciati; e distinta, la
+distinta materiali per l'installatore, solo se il progettista la chiede (proposta
+D-213).
 `python3 scripts/mep.py <comando> --help` dice che cosa vuole ciascuno.
 
 Il motore sta qui accanto, in `disegnatore_mep/`, ed e' la copia di quello del
@@ -32,6 +33,7 @@ FACOLTATIVE: dict[str, dict[str, str]] = {
     "disegna": {"ezdxf": "ezdxf==1.4.4"},
     "anteprima": {"pypdfium2": "pypdfium2==5.13.0"},
     "distinta": {"openpyxl": "openpyxl==3.1.5"},
+    "pianta": {"ezdxf": "ezdxf==1.4.4", "pypdfium2": "pypdfium2==5.13.0"},
 }
 """Le librerie senza le quali un comando fa meno, non niente: il DXF vuole ezdxf, la
 versione del `pyproject.toml`; l'anteprima un lettore di PDF, e pypdfium2 5.13.0 e'
