@@ -1177,7 +1177,8 @@ def _consegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
 def _pianta(args: argparse.Namespace, cartelle: Cartelle) -> int:
     from disegnatore_mep.pianta.comando import esegui
 
-    return esegui(args.pianta, args.out, cartelle.cartiglio, not args.senza_dxf)
+    return esegui(args.pianta, args.out, cartelle.cartiglio, not args.senza_dxf, distinta=args.distinta,
+                  grafo=args.grafo, catalogo=cartelle.catalogo, nomi=cartelle.naming)
 
 
 # --- il comando ---------------------------------------------------------------
@@ -1246,6 +1247,14 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
     pianta.add_argument("pianta", type=Path, help="il JSON della pianta")
     pianta.add_argument("--out", type=Path, required=True, help="la cartella della tavola")
     pianta.add_argument("--senza-dxf", action="store_true", help="non scrive il DXF")
+    pianta.add_argument(
+        "--distinta", type=Path,
+        help="il distinta.json del comando distinta: controlla numeri di tratta, capi e lunghezze, e da' la "
+        "lunghezza ai tracciati che non l'hanno",
+    )
+    pianta.add_argument(
+        "--grafo", type=Path, help="il grafo completo: controlla sigle, tubazioni e lunghezze dei tracciati"
+    )
 
     finale = comandi.add_parser(
         "consegna",

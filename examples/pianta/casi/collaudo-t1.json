@@ -4,7 +4,8 @@
   "note": [
     "Caso del collaudo indipendente REL-012 (t1): planimetria inventata, data a parole dal progettista del collaudo; non e' quella di nessun committente.",
     "Misure interne 11 x 8 m, origine spostata di 0,30 m per il muro perimetrale.",
-    "Posizioni di centrale di zona, termostati, comando a filo, sezionatore e scarico della cucina assunte: da confermare."
+    "Posizioni di centrale di zona, termostati, comando a filo, sezionatore e scarico della cucina assunte: da confermare.",
+    "Il terrazzo sta a sud del soggiorno: la profondita' di 1,5 m e' assunta, da confermare."
   ],
   "cartiglio": {
     "progetto": "Canalizzato aria-aria in pompa di calore - appartamento al secondo piano",
@@ -41,6 +42,9 @@
   ],
   "velette": [
     {"id": "veletta-soggiorno", "rettangolo": [0.3, 4.95, 2.3, 5.45]}
+  ],
+  "zone_esterne": [
+    {"id": "terrazzo", "nome": "Terrazzo", "rettangolo": [0.0, 8.6, 7.35, 10.1]}
   ],
   "pezzi": [
     {"sigla": "UI-01", "tipo": "ducted-indoor-unit", "nome": "Unita' interna canalizzata PEAD-M71JA", "x": 6.3, "y": 4.3, "larghezza": 1.1, "profondita": 0.73, "quota": "controsoffitto"},

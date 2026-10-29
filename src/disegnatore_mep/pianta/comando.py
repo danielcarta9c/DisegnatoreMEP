@@ -1,6 +1,6 @@
 """Il comando della pianta: dal JSON alla tavola, ai tracciati e ai rilievi.
 
-    mep.py pianta <pianta.json> --out <cartella>
+    mep.py pianta <pianta.json> --out <cartella> [--distinta distinta.json] [--grafo grafo-completo.json]
 
 Scrive nella cartella, col nome del JSON:
 
@@ -10,7 +10,16 @@ Scrive nella cartella, col nome del JSON:
   progettista, quella misurata, quella usata e quella da quotare (col conto),
   le forature, i rilievi. Dove il progettista non ha dato la lunghezza, la
   misura e' li': l'agente la riporta nel grafo dello schema, e la distinta
-  quota lo stesso numero della pianta.
+  quota lo stesso numero della pianta. Per tratta anche gli
+  `attraversamenti_di_parete`: le pareti interne che la tratta fora (fuori da
+  un'apertura che lascia passare la sua quota) piu' il foro del pezzo a
+  parete a un suo capo (la bocchetta nella tramezza); a parte i fori nel
+  muro perimetrale. L'agente li riporta sulla
+  tubazione del grafo (`attraversamenti`), e la distinta conta le forature della
+  pianta invece di assumerle.
+
+Con `--distinta` e `--grafo` la pianta si confronta con le uscite degli altri
+comandi (`confronto.py`): sigle, numeri di tratta, capi e lunghezze.
 
 Codici di uscita come il resto della skill: `0` fatto, `2` fatto ma c'e' un
 rilievo che ferma la consegna, `1` non si e' potuto fare.
@@ -26,11 +35,12 @@ from pathlib import Path
 
 from disegnatore_mep.graphics.cartiglio import Cartiglio
 
+from .confronto import Confronto, con_le_lunghezze, confronta
 from .controlli import Rilievi, controlla
 from .griglia import Griglia, costruisci_la_griglia
 from .instrada import Percorso, instrada_tutto
 from .lunghezze import Lunghezza, Regola, la_regola, lunghezze, metri
-from .modello import Dettaglio, Foglio, Pianta, carica_pianta
+from .modello import Dettaglio, Foglio, Pianta, Tracciato, carica_pianta
 from .scritte import RICHIAMO_MASSIMO_MM
 from .tavola import Foratura, Tavola, componi, estensione, scrivi_dxf, scrivi_svg
 
@@ -51,10 +61,12 @@ class Esito:
     file: list[Path]
     regola: Regola | None = None
     avvisi: list[str] | None = None
-    dettagli: list[Tavola] | None = None
-    """Le tavole dei riquadri di dettaglio, se ci sono."""
     """Gli avvisi della colonna: misure oltre lo scarto, controsoffitto che
     manca, la regola delle lunghezze se non e' quella della distinta."""
+    dettagli: list[Tavola] | None = None
+    """Le tavole dei riquadri di dettaglio, se ci sono."""
+    confronto: Confronto | None = None
+    """Il confronto con la distinta e il grafo, se il comando li ha avuti."""
 
 
 def forature(pianta: Pianta, percorsi: list[Percorso]) -> list[Foratura]:
@@ -124,6 +136,32 @@ def fori_dei_pezzi(pianta: Pianta, griglia: Griglia) -> list[tuple[str, str]]:
     return out
 
 
+def attraversamenti_per_tratta(
+    pianta: Pianta, percorsi: list[Percorso], dei_pezzi: list[tuple[str, str]],
+) -> tuple[dict[str, int], dict[str, int]]:
+    """Le pareti **interne** che ogni tratta passa con un foro: i muri forati
+    dal suo percorso, e il foro del pezzo a parete (una bocchetta nella
+    tramezza) che e' un suo capo — quello va alla prima tratta che ci arriva.
+    E' il dato `attraversamenti` della tubazione, quello che la distinta conta
+    («pareti interne»: il foro nel muro esterno dell'unita' esterna sta gia'
+    nella sua posa). A parte, i fori nel muro perimetrale."""
+    perimetrali = {m.id for m in pianta.muri if m.tipo == "perimetrale"}
+    interni = {t.tratta: 0 for t in pianta.tracciati}
+    esterni = {t.tratta: 0 for t in pianta.tracciati}
+    for tracciato, percorso in zip(pianta.tracciati, percorsi, strict=True):
+        for passaggio in percorso.attraversamenti:
+            if passaggio.forato:
+                (esterni if passaggio.muro in perimetrali else interni)[tracciato.tratta] += 1
+    contati: set[tuple[str, str]] = set()
+    for tracciato in pianta.tracciati:
+        for sigla, muro in dei_pezzi:
+            if (sigla, muro) in contati or sigla not in (tracciato.estremo_da.pezzo, tracciato.estremo_a.pezzo):
+                continue
+            contati.add((sigla, muro))
+            (esterni if muro in perimetrali else interni)[tracciato.tratta] += 1
+    return interni, esterni
+
+
 def _pixel_del_jpeg(percorso: Path) -> tuple[int, int]:
     from disegnatore_mep.graphics.pdf import _jpeg
 
@@ -147,8 +185,17 @@ def avvisi_della_tavola(
         )
     senza = [lu.tratta for lu in lunghe if lu.dalla_misura]
     if senza:
+        quali = "tutte le tratte" if len(senza) == len(lunghe) > 1 else ", ".join(senza)
         avvisi.append(
-            f"Senza L prog., quotate sulla misura (°): {', '.join(senza)}. Da riportare nel grafo, o da chiedere."
+            f"Senza L prog., quotate sulla misura (°): {quali}. Da riportare nel grafo, o da chiedere."
+        )
+    fuori_dalle_zone = [
+        f"{p.tratta} {metri(p.fuori_dalle_zone_m, 2)} m" for p in percorsi if p.fuori_dalle_zone_m > 0
+    ]
+    if fuori_dalle_zone:
+        avvisi.append(
+            f"Fuori dall'edificio, fuori dalle zone esterne dichiarate (fascia rossa): {'; '.join(fuori_dalle_zone)}. "
+            "Ferma la consegna: va dichiarata la zona (terrazzo, balcone) o rivisto il percorso."
         )
     fasci = {t.tratta: t.fascio for t in pianta.tracciati}
     gruppi: dict[str, list[Percorso]] = {}
@@ -172,15 +219,29 @@ def avvisi_della_tavola(
 def disegna_la_pianta(
     sorgente: Path, cartella: Path, cartiglio: Cartiglio | None,
     dxf: bool = True, png: bool = True, regole: Path | None = None,
+    distinta: Path | None = None, grafo: Path | None = None,
+    catalogo: Path | None = None, nomi: Path | None = None,
 ) -> Esito:
     """`regole` sono le regole della distinta (una cartella o il fascio della
-    skill); se mancano si cercano accanto al motore."""
+    skill); se mancano si cercano accanto al motore. `distinta` e `grafo` sono
+    i file con cui confrontare sigle, numeri di tratta e lunghezze;
+    `catalogo` e `nomi` servono a leggere dal grafo le sigle dello schema."""
     pianta = carica_pianta(sorgente)
+    confronto = confronta(pianta, distinta, grafo, catalogo, nomi)
+    pianta = con_le_lunghezze(pianta, confronto)
     griglia = costruisci_la_griglia(pianta)
     percorsi = instrada_tutto(pianta, griglia)
     regola = la_regola(pianta.maggiorazione, regole)
     lunghe = lunghezze(list(pianta.tracciati), percorsi, regola, pianta.parametri.scarto_della_misura)
     avvisi = avvisi_della_tavola(pianta, percorsi, lunghe, regola)
+    if confronto.lunghezze:
+        avvisi.append(
+            "L prog. presa dalla distinta o dal grafo (non scritta nella pianta): "
+            + ", ".join(f"{t} dal{'la' if da == 'distinta' else ''} {da}" for t, (_, da) in sorted(confronto.lunghezze.items()))
+            + "."
+        )
+    avvisi += [f"Discordanza con la distinta: {voce}" for voce in confronto.bloccanti]
+    avvisi += [f"Discordanza: {voce}" for voce in confronto.avvisi]
     fori = forature(pianta, percorsi)
     dei_pezzi = fori_dei_pezzi(pianta, griglia)
     pixel = None
@@ -197,7 +258,7 @@ def disegna_la_pianta(
         scritti.append(copia)
     nome = sorgente.stem
     tavola, dettagli, rimandate = _la_tavola_e_i_dettagli(
-        pianta, percorsi, lunghe, fori, dei_pezzi, cartiglio, pixel, regola, avvisi, nome
+        pianta, percorsi, lunghe, fori, dei_pezzi, cartiglio, pixel, regola, avvisi, nome, confronto.nota
     )
     rilievi = controlla(
         pianta, percorsi,
@@ -209,12 +270,15 @@ def disegna_la_pianta(
         for lu in lunghe if lu.oltre_lo_scarto
     ]
     rilievi.scritte_nel_dettaglio = sorted(f"{chi} (dettaglio {lettera})" for chi, lettera in rimandate.items())
+    rilievi.confronto = list(confronto.avvisi)
+    rilievi.confronto_bloccante = list(confronto.bloccanti)
     tavole_dei_dettagli: list[tuple[Dettaglio, Tavola]] = []
     for dettaglio in dettagli:
         tavola_del_dettaglio = componi(
             _pianta_del_dettaglio(pianta, dettaglio), percorsi, lunghe, fori, dei_pezzi, cartiglio, pixel,
             regola, avvisi, zona=dettaglio.rettangolo, ridotta=nome,
             nel_dettaglio=frozenset(c for c, i in rimandate.items() if i == dettaglio.id),
+            controllo_delle_sigle=confronto.nota,
         )
         del_dettaglio = controlla(pianta, percorsi, [], tavola_del_dettaglio.scritte, tavola_del_dettaglio.linee,
                                   tavola_del_dettaglio.rettangoli, tavola_del_dettaglio.ammessi)
@@ -226,7 +290,7 @@ def disegna_la_pianta(
         scritti += _scrivi_la_tavola(tavola_del_dettaglio, cartella / f"{nome}-dettaglio-{dettaglio.id}.svg",
                                      _pianta_del_dettaglio(pianta, dettaglio), dxf, png)
     dati = cartella / f"{nome}.tracciati.json"
-    contenuto = _dati(pianta, percorsi, lunghe, fori, dei_pezzi, tavola, rilievi, regola, avvisi)
+    contenuto = _dati(pianta, percorsi, lunghe, fori, dei_pezzi, tavola, rilievi, regola, avvisi, confronto)
     contenuto["dettagli"] = [
         {"id": d.id, "rettangolo_m": list(d.rettangolo), "scala": f"1:{d.scala}",
          "tavola": f"{nome}-dettaglio-{d.id}", "automatico": pianta.dettagli is None}
@@ -235,7 +299,7 @@ def disegna_la_pianta(
     dati.write_text(json.dumps(contenuto, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     scritti.append(dati)
     return Esito(pianta, percorsi, lunghe, fori, dei_pezzi, tavola, rilievi, scritti, regola, avvisi,
-                 [t for _, t in tavole_dei_dettagli])
+                 [t for _, t in tavole_dei_dettagli], confronto)
 
 
 MARGINE_DEL_DETTAGLIO_M = 0.6
@@ -260,7 +324,7 @@ def _pianta_del_dettaglio(pianta: Pianta, dettaglio: Dettaglio) -> Pianta:
 def _la_tavola_e_i_dettagli(
     pianta: Pianta, percorsi: list[Percorso], lunghe: list[Lunghezza], fori: list[Foratura],
     dei_pezzi: list[tuple[str, str]], cartiglio: Cartiglio | None, pixel: tuple[int, int] | None,
-    regola: Regola, avvisi: list[str], nome: str,
+    regola: Regola, avvisi: list[str], nome: str, controllo_delle_sigle: str = "",
 ) -> tuple[Tavola, list[Dettaglio], dict[str, str]]:
     """La tavola intera e i riquadri di dettaglio.
 
@@ -286,7 +350,8 @@ def _la_tavola_e_i_dettagli(
     def componi_la_tavola() -> Tavola:
         return componi(pianta, percorsi, lunghe, fori, dei_pezzi, cartiglio, pixel, regola, [*avvisi, *nota()],
                        rimandate=frozenset(rimandate),
-                       riquadri=[(d.id, d.rettangolo, d.scala) for d in dettagli])
+                       riquadri=[(d.id, d.rettangolo, d.scala) for d in dettagli],
+                       controllo_delle_sigle=controllo_delle_sigle)
 
     tavola = componi_la_tavola()
     for _ in range(GIRI_DEI_DETTAGLI):
@@ -356,8 +421,17 @@ def _scrivi_la_tavola(tavola: Tavola, svg: Path, pianta: Pianta, dxf: bool, png:
 def _dati(
     pianta: Pianta, percorsi: list[Percorso], lunghe: list[Lunghezza], fori: list[Foratura],
     dei_pezzi: list[tuple[str, str]], tavola: Tavola, rilievi: Rilievi, regola: Regola, avvisi: list[str],
+    confronto: Confronto | None = None,
 ) -> dict[str, object]:
     per_tratta = {lu.tratta: lu for lu in lunghe}
+    pareti, perimetro = attraversamenti_per_tratta(pianta, percorsi, dei_pezzi)
+    prese = confronto.lunghezze if confronto is not None else {}
+
+    def data_da(t: Tracciato) -> str | None:
+        if t.tratta in prese:
+            return prese[t.tratta][1]
+        return "pianta" if t.lunghezza_m is not None else None
+
     return {
         "tavola": {"formato": tavola.formato, "scala": f"1:{tavola.scala}", "avvisi": tavola.avvisi},
         "avvisi": avvisi,
@@ -379,6 +453,7 @@ def _dati(
                 "fascio": t.fascio,
                 "instradata": not p.ceduto,
                 "lunghezza_data_m": per_tratta[t.tratta].data_m,
+                "lunghezza_data_da": data_da(t),
                 "lunghezza_misurata_m": per_tratta[t.tratta].misurata_m,
                 "lunghezza_usata_m": per_tratta[t.tratta].usata_m,
                 "lunghezza_usata_da": "misura" if per_tratta[t.tratta].dalla_misura else "progettista",
@@ -389,6 +464,9 @@ def _dati(
                 "deciso_dal_minimo": per_tratta[t.tratta].minimo_m is not None,
                 "curve": sum(max(0, len(linea) - 2) for linea in p.linee),
                 "fuori_dal_controsoffitto_m": p.fuori_dal_controsoffitto_m,
+                "fuori_dalle_zone_esterne_m": p.fuori_dalle_zone_m,
+                "attraversamenti_di_parete": pareti[t.tratta],
+                "fori_nel_perimetrale": perimetro[t.tratta],
                 "punti_m": [list(q) for q in p.punti],
                 "tronchi_m": [[list(q) for q in linea] for linea in p.linee] if p.tronchi else None,
                 "attraversamenti": [
@@ -404,6 +482,15 @@ def _dati(
             for f in fori
         ],
         "fori_dei_pezzi": [{"pezzo": s, "muro": m} for s, m in dei_pezzi],
+        "per_il_grafo": {
+            "nota": "Le pareti interne forate da ogni tratta: da riportare nel grafo, fra le properties di una "
+                    "tubazione della tratta (attraversamenti), perche' la distinta conti le forature della pianta.",
+            "attraversamenti": {t.tratta: pareti[t.tratta] for t in pianta.tracciati},
+        },
+        "confronto": None if confronto is None else {
+            "con": confronto.fonti, "bloccanti": confronto.bloccanti, "avvisi": confronto.avvisi,
+            "lunghezze_prese": {t: {"m": m, "da": da} for t, (m, da) in sorted(confronto.lunghezze.items())},
+        },
         "rilievi": rilievi.come_dati(),
     }
 
@@ -423,6 +510,8 @@ def riassunto(esito: Esito) -> list[str]:
         f"scritte o piu' linee: {len(r.richiami_che_attraversano)}; su una linea: {len(r.richiami_su_una_linea)}",
         f"Scritte in legenda (numerate): {len(r.scritte_in_legenda)}",
         f"Linee sopra un pezzo non loro: {len(r.linee_sui_pezzi)}",
+        f"Tratte fuori dall'edificio, fuori dalle zone esterne dichiarate: {len(r.fuori_dalle_zone_esterne)}",
+        f"Pezzi sovrapposti senza dichiararlo: {len(r.pezzi_sovrapposti)}",
         f"Riquadri di dettaglio: {len(esito.dettagli or [])}"
         + (f" (scritte rimandate al dettaglio: {', '.join(r.scritte_nel_dettaglio)})" if r.scritte_nel_dettaglio else ""),
         f"Regola delle lunghezze: {esito.regola.origine if esito.regola else '?'}",
@@ -431,6 +520,11 @@ def riassunto(esito: Esito) -> list[str]:
     ]
     for fascio, quota in sorted(r.fasci.items()):
         righe.append(f"Fascio «{fascio}»: {round(quota * 100)}% del percorso accanto a un compagno")
+    if esito.confronto is not None and esito.confronto.fonti:
+        righe.append(
+            f"Confronto con {' e '.join(esito.confronto.fonti)}: {len(r.confronto_bloccante)} bloccanti, "
+            f"{len(r.confronto)} avvisi"
+        )
     righe += [f"Avviso: {a}" for a in [*esito.tavola.avvisi, *(esito.avvisi or [])]]
     for elenco in (r.diagonali, r.sovrapposizioni, r.scritte_su_linee, r.scritte_su_scritte, r.tratte_cedute,
                    r.richiami_lunghi, r.richiami_che_attraversano, r.richiami_su_una_linea,
@@ -441,7 +535,8 @@ def riassunto(esito: Esito) -> list[str]:
 
 
 def esegui(sorgente: Path, cartella: Path, cartiglio: Path | None, dxf: bool = True,
-           regole: Path | None = None) -> int:
+           regole: Path | None = None, distinta: Path | None = None, grafo: Path | None = None,
+           catalogo: Path | None = None, nomi: Path | None = None) -> int:
     """Il sottocomando `pianta`, uguale nella CLI del repository e in quella della
     skill: scrive, dice che cosa ha scritto e che cosa ha misurato."""
     modello = Cartiglio.da_file(cartiglio) if cartiglio is not None and cartiglio.exists() else None
@@ -451,7 +546,8 @@ def esegui(sorgente: Path, cartella: Path, cartiglio: Path | None, dxf: bool = T
         except ImportError:
             print("Manca ezdxf: la pianta esce in PDF, SVG e PNG, senza DXF.")
             dxf = False
-    esito = disegna_la_pianta(sorgente, cartella, modello, dxf=dxf, regole=regole)
+    esito = disegna_la_pianta(sorgente, cartella, modello, dxf=dxf, regole=regole, distinta=distinta, grafo=grafo,
+                              catalogo=catalogo, nomi=nomi)
     for percorso in esito.file:
         print(f"Scritto: {percorso}")
     if modello is None:

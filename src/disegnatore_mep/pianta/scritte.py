@@ -134,6 +134,10 @@ class Ingombri:
     ammessi: tuple[Rettangolo, ...] = ()
     """Durante la posa di una scritta, i rettangoli su cui puo' stare: il muro
     di una foratura, su cui il suo numero si scrive."""
+    ammessi_al_richiamo: tuple[Rettangolo, ...] = ()
+    """Durante la posa della scritta di un tracciato, i pezzi che il suo
+    richiamo puo' attraversare: quelli sovrapposti a un suo capo, sotto cui la
+    linea passa (il plenum, per il cavo dalla centrale che gli sta sopra)."""
     _indice: dict[tuple[int, int], list[tuple[str, int]]] = field(default_factory=dict)
 
     def _indicizza(self, tipo: str, numero: int, r: Rettangolo) -> None:
@@ -197,7 +201,10 @@ class Ingombri:
                 return None
             if tipo == "r":
                 rettangolo = self.rettangoli[numero]
-                if rettangolo == proprio or rettangolo in self.ammessi or not _sovrapposti(riquadro, rettangolo):
+                if (
+                    rettangolo == proprio or rettangolo in self.ammessi or rettangolo in self.ammessi_al_richiamo
+                    or not _sovrapposti(riquadro, rettangolo)
+                ):
                     continue
                 if numero in self.muri and esce_di_traverso(s, rettangolo):
                     continue
@@ -320,9 +327,26 @@ def _in_legenda(
 def posa_accanto(
     testo: str, corpo_pt: float, grassetto: bool, linee: Sequence[Sequence[tuple[float, float]]],
     proprie: list[Segmento], ingombri: Ingombri, mezzo_spessore: float,
+    sotto: Sequence[Rettangolo] = (),
 ) -> ScrittaPosata:
     """La scritta di un tracciato, accanto alle sue spezzate (una, o i tronchi
-    di una tratta con organi in linea)."""
+    di una tratta con organi in linea). `sotto` sono i pezzi sotto cui la linea
+    passa (sovrapposti a un suo capo): la linea corre sopra di loro, e la sua
+    scritta e il suo richiamo ci possono stare (il cavo dalla centrale di zona,
+    che sta sopra il plenum, all'unita' interna accanto)."""
+    ingombri.ammessi_al_richiamo = tuple(sotto)
+    ingombri.ammessi = tuple(sotto)
+    try:
+        return _posa_accanto(testo, corpo_pt, grassetto, linee, proprie, ingombri, mezzo_spessore)
+    finally:
+        ingombri.ammessi_al_richiamo = ()
+        ingombri.ammessi = ()
+
+
+def _posa_accanto(
+    testo: str, corpo_pt: float, grassetto: bool, linee: Sequence[Sequence[tuple[float, float]]],
+    proprie: list[Segmento], ingombri: Ingombri, mezzo_spessore: float,
+) -> ScrittaPosata:
     larghezza, salita, discesa = misura(testo, corpo_pt, grassetto)
     tratti = [(a, b) for punti in linee for a, b in zip(punti, punti[1:], strict=False)]
     primo: tuple[float, float] | None = None
@@ -380,16 +404,24 @@ def _dentro_al_pezzo(
 
 def posa_nel_pezzo(
     testo: str, corpo_pt: float, grassetto: bool, rettangolo: Rettangolo, ingombri: Ingombri,
+    sopra: Sequence[Rettangolo] = (),
 ) -> ScrittaPosata | None:
     """La sigla dentro il suo pezzo, al corpo delle sigle o al minimo, se ci
     sta: un'unita' grande porta il nome dentro, e il posto fuori resta alle
-    scritte delle linee."""
-    for corpo in sorted({corpo_pt, min(corpo_pt, CORPO_MINIMO_PT)}, reverse=True):
-        trovato = _dentro_al_pezzo(testo, corpo, grassetto, misura(testo, corpo, grassetto), rettangolo, ingombri)
-        if trovato is not None:
-            x, y, r = trovato
-            return _posata(testo, x, y, corpo, grassetto, r, ingombri)
-    return None
+    scritte delle linee. `sopra` sono i pezzi sovrapposti al suo, su cui la
+    sigla puo' stare."""
+    ingombri.ammessi = tuple(sopra)
+    try:
+        for corpo in sorted({corpo_pt, min(corpo_pt, CORPO_MINIMO_PT)}, reverse=True):
+            trovato = _dentro_al_pezzo(
+                testo, corpo, grassetto, misura(testo, corpo, grassetto), rettangolo, ingombri
+            )
+            if trovato is not None:
+                x, y, r = trovato
+                return _posata(testo, x, y, corpo, grassetto, r, ingombri)
+        return None
+    finally:
+        ingombri.ammessi = ()
 
 
 def posa_intorno(

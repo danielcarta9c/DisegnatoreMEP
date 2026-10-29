@@ -2,7 +2,9 @@
   "versione": "1.0.0",
   "titolo": "Pianta dei posizionamenti e dei tracciati",
   "note": [
-    "Planimetria inventata per il caso di prova di REL-014: non è quella di nessun committente."
+    "Planimetria inventata per il caso di prova di REL-014: non è quella di nessun committente.",
+    "T06 (ripresa) è un raccordo diretto sotto la UI: non ha tracciato.",
+    "Il balcone è la sola zona esterna praticabile: il portoncino dà sul pianerottolo, e di lì le linee non passano."
   ],
   "cartiglio": {
     "committente": "Caso di prova (planimetria inventata)",
@@ -57,11 +59,14 @@
     {"id": "soggiorno", "nome": "Soggiorno-cucina", "zona": "Z4", "poligono": [[0.30, 3.60], [1.90, 3.60], [1.90, 5.20], [7.60, 5.20], [7.60, 6.70], [8.90, 6.70], [8.90, 8.10], [0.30, 8.10]]},
     {"id": "ingresso", "nome": "Ingresso", "poligono": [[9.00, 5.20], [12.10, 5.20], [12.10, 8.10], [9.00, 8.10]], "controsoffitto": true}
   ],
+  "zone_esterne": [
+    {"id": "balcone", "nome": "Balcone", "rettangolo": [11.00, 8.40, 12.40, 9.00]}
+  ],
   "pezzi": [
     {"sigla": "PLZ-01", "tipo": "zoning-plenum-5", "nome": "Plenum motorizzato a 5 uscite", "x": 5.225, "y": 4.375, "larghezza": 0.45, "profondita": 1.25, "quota": "controsoffitto"},
     {"sigla": "UI-01", "tipo": "ducted-indoor-unit", "nome": "Unità interna canalizzata", "x": 5.95, "y": 4.375, "larghezza": 1.00, "profondita": 0.80, "quota": "controsoffitto"},
-    {"sigla": "RA-01", "tipo": "return-grille", "nome": "Griglia di ripresa 1000×250", "x": 6.675, "y": 4.375, "larghezza": 0.25, "profondita": 0.80, "quota": "controsoffitto"},
-    {"sigla": "CZ-01", "tipo": "zone-controller", "nome": "Centrale di zona", "x": 7.30, "y": 3.85, "larghezza": 0.30, "profondita": 0.20, "quota": "controsoffitto"},
+    {"sigla": "RA-01", "tipo": "return-air-terminal", "nome": "Griglia di ripresa 1000×250", "x": 6.30, "y": 4.375, "larghezza": 0.25, "profondita": 0.80, "quota": "controsoffitto", "sovrapposto_a": "UI-01", "sta": "sotto"},
+    {"sigla": "CZ-01", "tipo": "zone-controller", "nome": "Centrale di zona", "x": 7.30, "y": 3.85, "larghezza": 0.30, "profondita": 0.20, "quota": "controsoffitto", "ingombro_da_confermare": true},
     {"sigla": "B1", "tipo": "air-supply-terminal", "nome": "Bocchetta camera 1", "x": 2.60, "y": 3.55, "larghezza": 0.40, "profondita": 0.20},
     {"sigla": "B2", "tipo": "air-supply-terminal", "nome": "Bocchetta camera 2", "x": 4.50, "y": 3.55, "larghezza": 0.40, "profondita": 0.20},
     {"sigla": "B3", "tipo": "air-supply-terminal", "nome": "Bocchetta camera 3", "x": 9.65, "y": 3.95, "larghezza": 0.20, "profondita": 0.40},
@@ -83,18 +88,16 @@
     {"tratta": "T03", "da": {"pezzo": "PLZ-01", "lato": "sinistra"}, "a": "B3", "fluido": "supply_air", "dimensione": "Ø200"},
     {"tratta": "T04", "da": {"pezzo": "PLZ-01", "lato": "sinistra"}, "a": "B4", "fluido": "supply_air", "dimensione": "Ø200"},
     {"tratta": "T05", "da": {"pezzo": "PLZ-01", "lato": "sinistra"}, "a": "B5", "fluido": "supply_air", "dimensione": "Ø200"},
-    {"tratta": "T06", "da": {"pezzo": "RA-01", "lato": "sinistra"}, "a": {"pezzo": "UI-01", "lato": "destra"}, "fluido": "return_air", "dimensione": "1000×250"},
     {"tratta": "T07", "da": {"pezzo": "UI-01", "lato": "sotto"}, "a": "UE-01", "fluido": "refrigerant_liquid", "dimensione": "6,35", "fascio": "frigo"},
     {"tratta": "T08", "da": {"pezzo": "UI-01", "lato": "sotto"}, "a": "UE-01", "fluido": "refrigerant_gas", "dimensione": "12,7", "fascio": "frigo"},
     {"tratta": "T09", "da": {"pezzo": "UI-01", "lato": "sotto"}, "a": "UE-01", "fluido": "interconnection", "dimensione": "4G1,5", "fascio": "frigo"},
     {"tratta": "T10", "da": "UI-01", "a": "SC-01", "fluido": "condensate", "dimensione": "PVC Ø32"},
-    {"tratta": "T11", "da": "QE-01", "a": "SZ-01", "fluido": "power_supply", "dimensione": "3G2,5", "quota": "traccia"},
-    {"tratta": "T12", "da": "SZ-01", "a": "UE-01", "fluido": "power_supply", "dimensione": "3G2,5", "quota": "a_vista"},
-    {"tratta": "T13", "da": "QE-01", "a": "CZ-01", "fluido": "power_supply", "dimensione": "3G1,5", "quota": "traccia"},
-    {"tratta": "T14", "da": "CZ-01", "a": "TZ-01", "fluido": "control_bus", "dimensione": "bus", "quota": "traccia"},
-    {"tratta": "T15", "da": "CZ-01", "a": "TZ-02", "fluido": "control_bus", "dimensione": "bus", "quota": "traccia"},
-    {"tratta": "T16", "da": "CZ-01", "a": "TZ-03", "fluido": "control_bus", "dimensione": "bus", "quota": "traccia"},
-    {"tratta": "T17", "da": "CZ-01", "a": "TZ-04", "fluido": "control_bus", "dimensione": "bus", "quota": "traccia"},
-    {"tratta": "T18", "da": "UI-01", "a": "CF-01", "fluido": "control_bus", "dimensione": "P1-P2", "quota": "traccia"}
+    {"tratta": "T11", "da": "QE-01", "a": "UE-01", "passa_per": ["SZ-01"], "fluido": "power_supply", "dimensione": "3G2,5", "quota": "traccia"},
+    {"tratta": "T12", "da": "QE-01", "a": "CZ-01", "fluido": "power_supply", "dimensione": "3G1,5", "quota": "traccia"},
+    {"tratta": "T13", "da": "CZ-01", "a": "TZ-01", "fluido": "control_bus", "dimensione": "bus", "quota": "traccia"},
+    {"tratta": "T14", "da": "CZ-01", "a": "TZ-02", "fluido": "control_bus", "dimensione": "bus", "quota": "traccia"},
+    {"tratta": "T15", "da": "CZ-01", "a": "TZ-03", "fluido": "control_bus", "dimensione": "bus", "quota": "traccia"},
+    {"tratta": "T16", "da": "CZ-01", "a": "TZ-04", "fluido": "control_bus", "dimensione": "bus", "quota": "traccia"},
+    {"tratta": "T17", "da": "UI-01", "a": "CF-01", "fluido": "control_bus", "dimensione": "P1-P2", "quota": "traccia"}
   ]
 }

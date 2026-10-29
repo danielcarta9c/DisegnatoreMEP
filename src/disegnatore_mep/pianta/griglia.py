@@ -33,6 +33,15 @@ INCROCIO_DI_MURI = 4
 MARGINE_M = 1.0
 """Quanto la griglia esce oltre la pianta: le macchine esterne stanno li'."""
 
+ACCOSTO_ESTERNO_M = 0.3
+"""Attorno a un pezzo che sta fuori dall'edificio (l'unita' esterna sulla
+facciata, il sezionatore accanto), quanto esterno e' praticabile anche senza
+una zona dichiarata: quello che serve per arrivare dal muro al pezzo."""
+
+ZONA_DEL_PEZZO = -1
+"""Il nodo e' esterno, fuori dalle zone dichiarate, ma accosto a un pezzo
+esterno: si passa."""
+
 DIREZIONI: tuple[tuple[int, int], ...] = ((1, 0), (0, 1), (-1, 0), (0, -1))
 """Destra, giu', sinistra, su: l'ordine fisso da cui dipende il determinismo."""
 
@@ -60,6 +69,22 @@ class Griglia:
     """1 dove si e' fuori dall'edificio: fuori da ogni stanza dichiarata, e
     raggiungibile dal bordo della griglia senza passare un muro. Li' il
     controsoffitto non si cerca: le linee corrono sulla facciata, in canalina."""
+    zona: list[int] = field(default_factory=list)
+    """Sull'esterno: l'indice (da 1) della zona esterna dichiarata che contiene
+    il nodo, `ZONA_DEL_PEZZO` accosto a un pezzo esterno, 0 altrove — e allora
+    l'esterno non e' una strada."""
+    sovrapposti: dict[int, tuple[int, ...]] = field(default_factory=dict)
+    """I nodi sotto piu' di un pezzo (dichiarati sovrapposti): gli indici, da 1.
+    `pezzo` tiene l'ultimo."""
+
+    def fuori_dalle_zone(self, k: int) -> bool:
+        """Il nodo e' esterno e non e' in una zona praticabile."""
+        return bool(self.esterno[k]) and not self.zona[k]
+
+    def pezzi_del_nodo(self, k: int) -> tuple[int, ...]:
+        if not self.pezzo[k]:
+            return ()
+        return self.sovrapposti.get(k, (self.pezzo[k],))
 
     def x(self, k: int) -> float:
         return round((self.i0 + k % self.colonne) * self.passo, 9)
@@ -97,9 +122,13 @@ class Griglia:
             j_min = j_max = round(self.riga_di((y0 + y1) / 2))
         return i_min, j_min, i_max, j_max
 
-    def bordo_del_pezzo(self, indice: int, lato: Lato | None) -> list[tuple[int, int]]:
+    def bordo_del_pezzo(
+        self, indice: int, lato: Lato | None, attraversabili: frozenset[int] = frozenset()
+    ) -> list[tuple[int, int]]:
         """I nodi appena fuori da un pezzo, con la direzione che esce dal pezzo:
-        da li' parte o li' arriva un tracciato. Senza lato, tutti e quattro."""
+        da li' parte o li' arriva un tracciato. Senza lato, tutti e quattro.
+        `attraversabili` sono i nodi di un pezzo sovrapposto a questo (a
+        un'altra altezza): li' una linea puo' partire."""
         i_min, j_min, i_max, j_max = self.ingombri[indice]
         # Gli spigoli no, se il lato ha posto: una linea che arriva sullo
         # spigolo del pezzo si legge come la prosecuzione del suo bordo.
@@ -119,7 +148,7 @@ class Griglia:
                 if not self.dentro(i, j):
                     continue
                 k = self.nodo(i, j)
-                if self.muro[k] or self.pezzo[k]:
+                if self.muro[k] or (self.pezzo[k] and k not in attraversabili):
                     continue
                 out.append((k, USCITA_DAL_LATO[nome]))
         return out
@@ -140,9 +169,9 @@ def costruisci_la_griglia(pianta: Pianta) -> Griglia:
     for stanza in pianta.stanze:
         xs += [p[0] for p in stanza.poligono]
         ys += [p[1] for p in stanza.poligono]
-    for veletta in pianta.velette:
-        xs += [veletta.rettangolo[0], veletta.rettangolo[2]]
-        ys += [veletta.rettangolo[1], veletta.rettangolo[3]]
+    for rettangolo in [v.rettangolo for v in pianta.velette] + [z.rettangolo for z in pianta.zone_esterne]:
+        xs += [rettangolo[0], rettangolo[2]]
+        ys += [rettangolo[1], rettangolo[3]]
     if not xs:
         raise ValueError("la pianta e' vuota: niente muri, pezzi o stanze")
     i0 = math.floor((min(xs) - MARGINE_M) / passo)
@@ -161,7 +190,35 @@ def costruisci_la_griglia(pianta: Pianta) -> Griglia:
     _i_pezzi(griglia, pianta)
     _la_distanza_dai_muri(griglia, pianta)
     _l_esterno(griglia)
+    _le_zone_esterne(griglia, pianta)
     return griglia
+
+
+def _le_zone_esterne(griglia: Griglia, pianta: Pianta) -> None:
+    """Le zone esterne dichiarate, e l'accosto dei pezzi che stanno fuori."""
+    zona = [0] * (griglia.colonne * griglia.righe)
+
+    def segna(rettangolo: tuple[float, float, float, float], valore: int) -> None:
+        i_min, j_min, i_max, j_max = griglia.nodi_del_rettangolo(*rettangolo)
+        for j in range(max(0, j_min), min(griglia.righe - 1, j_max) + 1):
+            for i in range(max(0, i_min), min(griglia.colonne - 1, i_max) + 1):
+                k = griglia.nodo(i, j)
+                if griglia.esterno[k] and not zona[k]:
+                    zona[k] = valore
+
+    for indice, zona_esterna in enumerate(pianta.zone_esterne, start=1):
+        segna(zona_esterna.rettangolo, indice)
+    m = ACCOSTO_ESTERNO_M
+    for indice, pezzo in enumerate(pianta.pezzi):
+        i_min, j_min, i_max, j_max = griglia.ingombri[indice]
+        if any(
+            griglia.esterno[griglia.nodo(i, j)]
+            for j in range(max(0, j_min), min(griglia.righe - 1, j_max) + 1)
+            for i in range(max(0, i_min), min(griglia.colonne - 1, i_max) + 1)
+        ):
+            x0, y0, x1, y1 = pezzo.rettangolo
+            segna((x0 - m, y0 - m, x1 + m, y1 + m), ZONA_DEL_PEZZO)
+    griglia.zona = zona
 
 
 def _l_esterno(griglia: Griglia) -> None:
@@ -289,7 +346,10 @@ def _i_pezzi(griglia: Griglia, pianta: Pianta) -> None:
         i_min, j_min, i_max, j_max = ingombro
         for j in range(max(0, j_min), min(griglia.righe - 1, j_max) + 1):
             for i in range(max(0, i_min), min(griglia.colonne - 1, i_max) + 1):
-                griglia.pezzo[griglia.nodo(i, j)] = indice
+                k = griglia.nodo(i, j)
+                if griglia.pezzo[k]:
+                    griglia.sovrapposti[k] = (*griglia.sovrapposti.get(k, (griglia.pezzo[k],)), indice)
+                griglia.pezzo[k] = indice
 
 
 def _la_distanza_dai_muri(griglia: Griglia, pianta: Pianta) -> None:

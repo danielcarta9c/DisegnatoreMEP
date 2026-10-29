@@ -22,6 +22,17 @@ architettoniche». Quattro cose, e qui sono quattro meccanismi:
   un'apertura che lascia passare quella quota oppure pagando `foratura_m`, e
   allora il foro va in uscita.
 
+**Fuori dall'edificio si passa solo nelle zone esterne dichiarate** (il
+terrazzo, il balcone) e accosto ai pezzi che stanno fuori. Altrove un passo
+costa `ESTERNO_NON_DICHIARATO`: l'instradatore ci va solo se non c'e' altra
+strada, e il controllo lo ferma come bloccante. Collaudo T3 della 1.6.0: il
+cavo UI-UE usciva dal muro ovest e faceva il giro dell'edificio, e
+l'alimentazione dell'UE usciva dalla porta di casa — con uscita 0.
+
+**Due pezzi sovrapposti** (`sovrapposto_a`: la centrale sopra il plenum) stanno
+a quote diverse: le linee di uno partono dal suo ingombro e possono passare
+sotto l'ingombro dell'altro, mai sotto quello di un terzo.
+
 **L'ordine e' dichiarato e stabile**: prima i piu' ingombranti — canali, poi
 tubi del refrigerante e dell'acqua, condensa, cavi, bus —, e i tracciati di un
 fascio uno dopo l'altro. Chi viene dopo trova occupato quello che ha preso chi
@@ -75,6 +86,12 @@ FUORI_DAL_CONTROSOFFITTO = 5
 """Un tracciato in controsoffitto, dove il controsoffitto non c'e', costa il
 triplo: si puo' fare, ma l'instradatore lo evita se puo'."""
 
+ESTERNO_NON_DICHIARATO = 2000
+"""Un passo fuori dall'edificio e fuori dalle zone esterne dichiarate: un metro
+costa quanto duecento lungo il muro, cinquanta forature. Non e' un divieto solo
+perche' una tratta che non trova altra strada si vede meglio disegnata e
+fermata dal controllo che ceduta."""
+
 TETTO_DI_ESPANSIONI = 3_000_000
 
 ORDINE_DEI_FLUIDI: dict[str, int] = {
@@ -125,6 +142,11 @@ class Percorso:
     fuori: tuple[tuple[tuple[float, float], ...], ...] = ()
     """Le spezzate, in metri, dei tratti in controsoffitto dove il
     controsoffitto non c'e' (dentro l'edificio): la tavola le disegna."""
+    fuori_dalle_zone_m: float = 0.0
+    """Quanto corre fuori dall'edificio e fuori dalle zone esterne dichiarate:
+    piu' di zero ferma la consegna."""
+    fuori_dalle_zone: tuple[tuple[tuple[float, float], ...], ...] = ()
+    """Le spezzate di quei tratti, per la tavola."""
 
     @property
     def linee(self) -> tuple[tuple[tuple[float, float], ...], ...]:
@@ -192,11 +214,23 @@ class Instradatore:
         self.percorsi: list[tuple[Tracciato, list[int]]] = []
         self._basi: dict[Quota, list[int]] = {}
         self._alone = self._alone_dei_pezzi()
-        self.ammesse = [()] + [a.quote_ammesse for a in pianta.aperture]
+        self.ammesse = [()] + [pianta.quote_ammesse(a) for a in pianta.aperture]
         self.indice_dei_pezzi = {p.sigla: i for i, p in enumerate(pianta.pezzi)}
         self.fatti: dict[str, Percorso] = {}
         self.in_blocco: set[str] = set()
         """Le tratte instradate come un fascio solo: il ripasso non le tocca."""
+        sigle = self.indice_dei_pezzi
+        self.compagni: dict[int, frozenset[int]] = {
+            sigle[sigla] + 1: frozenset(sigle[c] + 1 for c in altri)
+            for sigla, altri in pianta.sovrapposti().items()
+        }
+        """Per pezzo (indice da 1), i pezzi sovrapposti dichiarati."""
+        self._attraversabili: dict[tuple[int, int], frozenset[int]] = {}
+        self.zone_costo = [1.0] + [z.costo for z in pianta.zone_esterne]
+        self._accosti: dict[int, frozenset[int]] = {}
+        self._lontano_dal_fascio: set[int] = set()
+        """Durante la prova di un fascio: dove la guida non deve passare, perche'
+        li' una parallela si e' gia' rotta."""
 
     # -- i costi fissi --
 
@@ -223,6 +257,12 @@ class Instradatore:
                 costo = PASSO_IN_STANZA
             if quota == "controsoffitto" and not g.controsoffitto[k] and not g.esterno[k]:
                 costo *= FUORI_DAL_CONTROSOFFITTO
+            if g.esterno[k]:
+                zona = g.zona[k]
+                if zona > 0:
+                    costo = round(costo * self.zone_costo[zona])
+                elif not zona:
+                    costo = ESTERNO_NON_DICHIARATO
             costi[k] = costo
         self._basi[quota] = costi
         return costi
@@ -236,6 +276,49 @@ class Instradatore:
                     if g.dentro(i, j) and not g.pezzo[g.nodo(i, j)]:
                         alone[g.nodo(i, j)] = indice
         return alone
+
+    def attraversabili(self, i_da: int, i_a: int) -> frozenset[int]:
+        """I nodi dei pezzi sovrapposti ai due capi (indici da 0), dove la linea
+        puo' passare: sotto l'ingombro del compagno, mai sotto un capo o un terzo."""
+        chiave = (i_da, i_a)
+        if chiave in self._attraversabili:
+            return self._attraversabili[chiave]
+        g = self.g
+        compagni = self.compagni.get(i_da + 1, frozenset()) | self.compagni.get(i_a + 1, frozenset())
+        compagni -= {i_da + 1, i_a + 1}
+        nodi: set[int] = set()
+        for indice in compagni:
+            i_min, j_min, i_max, j_max = g.ingombri[indice - 1]
+            for j in range(max(0, j_min), min(g.righe - 1, j_max) + 1):
+                for i in range(max(0, i_min), min(g.colonne - 1, i_max) + 1):
+                    k = g.nodo(i, j)
+                    if set(g.pezzi_del_nodo(k)) <= compagni:
+                        nodi.add(k)
+        self._attraversabili[chiave] = frozenset(nodi)
+        return self._attraversabili[chiave]
+
+    def _accosto_all_esterno(self, raggio: int) -> frozenset[int]:
+        """I nodi a non piu' di `raggio` passi da un nodo esterno fuori dalle zone,
+        o dall'incrocio di due muri, che non lo sono loro stessi: li' la guida
+        di un fascio porterebbe una parallela fuori, o dentro l'incrocio — e il
+        fascio si farebbe a tracciati singoli (collaudo T3: il fascio frigo
+        passava la tramezza accanto all'incrocio, e stava insieme per il 58 %)."""
+        if raggio in self._accosti:
+            return self._accosti[raggio]
+        g, cols = self.g, self.g.colonne
+        out: set[int] = set()
+        for k in range(self.n):
+            if not g.fuori_dalle_zone(k) and g.giacitura[k] != INCROCIO_DI_MURI:
+                continue
+            i, j = k % cols, k // cols
+            for dj in range(-raggio, raggio + 1):
+                for di in range(-raggio, raggio + 1):
+                    if g.dentro(i + di, j + dj):
+                        vicino = k + dj * cols + di
+                        if not g.fuori_dalle_zone(vicino) and g.giacitura[vicino] != INCROCIO_DI_MURI:
+                            out.add(vicino)
+        self._accosti[raggio] = frozenset(out)
+        return self._accosti[raggio]
 
     # -- i costi di chi e' gia' passato --
 
@@ -287,18 +370,19 @@ class Instradatore:
         i_da = self.indice_dei_pezzi[da.pezzo]
         i_a = self.indice_dei_pezzi[a.pezzo]
         occ = self.occupato
+        sotto = self.attraversabili(i_da, i_a)
         sorgenti = [
-            (k, d) for k, d in g.bordo_del_pezzo(i_da, da.lato)
+            (k, d) for k, d in g.bordo_del_pezzo(i_da, da.lato, sotto)
             if not occ.proprietario[k] and not occ.fermi[k]
         ]
         mete = {
-            k: (d + 2) % 4 for k, d in g.bordo_del_pezzo(i_a, a.lato)
+            k: (d + 2) % 4 for k, d in g.bordo_del_pezzo(i_a, a.lato, sotto)
             if not occ.proprietario[k] and not occ.fermi[k]
         }
         if not (sorgenti and mete):
             return None
         if not mezza_larghezza:
-            return self._cerca(tracciato, sorgenti, mete, {i_da + 1, i_a + 1})
+            return self._cerca(tracciato, sorgenti, mete, {i_da + 1, i_a + 1}, attraversabili=sotto)
         # Un fascio vuole spazio ai capi: il capo della guida sta ad almeno
         # mezza larghezza dagli spigoli del lato, e i primi e gli ultimi passi
         # sono dritti, perche' le parallele interne non si annullino.
@@ -314,7 +398,7 @@ class Instradatore:
                 if not g.dentro(i, j):
                     return None
                 nodo = g.nodo(i, j)
-                if g.pezzo[nodo] or self.occupato.fermi[nodo]:
+                if (g.pezzo[nodo] and nodo not in sotto) or self.occupato.fermi[nodo]:
                     return None
                 gv = g.giacitura[nodo]
                 if gv == INCROCIO_DI_MURI or (gv == ATTRAVERSO_IN_VERTICALE and d in (0, 2)) or (
@@ -345,7 +429,7 @@ class Instradatore:
                 arrivi[passi[-1]] = dentro
         if not (partenze and arrivi):
             return None
-        nodi = self._cerca(tracciato, partenze, arrivi, {i_da + 1, i_a + 1}, m)
+        nodi = self._cerca(tracciato, partenze, arrivi, {i_da + 1, i_a + 1}, m, sotto)
         if nodi is None:
             return None
         return [*prefissi[nodi[0]], *nodi, *suffissi[nodi[-1]]]
@@ -367,40 +451,132 @@ class Instradatore:
         parallela interna gira prima, l'esterna dopo — e il fascio non si
         incrocia mai su se stesso. Se una parallela non passa (un pezzo, un
         incrocio di muri, un tratto gia' preso), i tracciati del fascio si
-        instradano uno per uno, con la corsia del fascio che li tiene vicini."""
-        if not self._prova_il_fascio(membri):
-            for t in membri:
-                self.instrada(t)
+        instradano uno per uno, con la corsia del fascio che li tiene vicini.
 
-    def _prova_il_fascio(self, membri: list[Tracciato], tetto: int | None = None) -> bool:
-        """Il fascio intero, se passa; con `tetto`, solo se sormonta meno."""
-        kf = self.passi_fascio
-        scarti = [0]
-        for indice in range(1, len(membri)):
-            scarti.append(kf * ((indice + 1) // 2) * (1 if indice % 2 else -1))
-        guida = self._trova(membri[0], max(abs(s) for s in scarti))
-        if guida is None:
-            return False
-        paralleli = [self._parallela(guida, s) for s in scarti]
-        validi: list[list[int]] = []
-        usati: set[int] = set()
-        for t, parallela in zip(membri, paralleli, strict=True):
-            if parallela is None or not self._percorribile(t, parallela) or usati & set(parallela):
+        Se la prima guida non basta, il fascio si instrada uno per uno **e** si
+        riprova intero allontanando la guida dai punti dove una parallela si
+        rompe (`_prova_il_fascio`): vince il fascio intero, se non costa piu' di
+        `PREMIO_DEL_FASCIO` oltre i tracciati singoli, con i pesi della ricerca
+        (`_punteggio`)."""
+        if self._prova_il_fascio(membri, giri=1):
+            return
+        nomi = {t.tratta for t in membri}
+        for t in membri:
+            self.instrada(t)
+        singoli = [(t, nodi) for t, nodi in self.percorsi if t.tratta in nomi]
+        self.percorsi = [(t, nodi) for t, nodi in self.percorsi if t.tratta not in nomi]
+        self._ricostruisci()
+        if len(singoli) == len(membri):
+            per_tratta = {t.tratta: nodi for t, nodi in singoli}
+            punteggio = self._punteggio([per_tratta[t.tratta] for t in membri], membri)
+        else:
+            punteggio = None  # un tracciato non si e' instradato: il fascio intero e' meglio di niente
+        if self._prova_il_fascio(membri, tetto=punteggio, alla_pari=True):
+            return
+        for t, nodi in singoli:
+            self._occupa(t, nodi)
+
+    def _punteggio(self, percorsi: list[list[int]], membri: list[Tracciato]) -> int:
+        """Quanto costa un fascio, con i pesi della ricerca: i passi (lungo il
+        muro, in mezzo alla stanza, fuori dal controsoffitto, fuori dalle zone
+        esterne), le curve, i sormonti con gli altri e fra loro, e le forature —
+        una per muro, perche' lo stesso muro a meno di mezzo metro e' un foro
+        solo, come in uscita."""
+        g = self.g
+        fori: set[tuple[str, int, int]] = set()
+        costo = 0
+        for t, nodi in zip(membri, percorsi, strict=True):
+            base = self.base(t.quota)
+            costo += sum(PASSO_IN_CORSIA if g.giacitura[k] else base[k] for k in nodi[1:])
+            costo += self.curva * max(0, len(_vertici(nodi)) - 2)
+            for passaggio in self._attraversamenti(t, nodi):
+                if passaggio.forato:
+                    fori.add((passaggio.muro, round(passaggio.punto[0] / 0.5), round(passaggio.punto[1] / 0.5)))
+        sormonti = sum(self._sormonti(nodi) for nodi in percorsi) + _incroci_fra(percorsi)
+        return costo + self.foratura * len(fori) + self.sormonto * sormonti
+
+    def _prova_il_fascio(
+        self, membri: list[Tracciato], tetto: int | None = None, giri: int | None = None,
+        alla_pari: bool = False,
+    ) -> bool:
+        """Il fascio intero, se passa; con `tetto`, solo se non costa piu' di
+        `tetto` maggiorato di `PREMIO_DEL_FASCIO` (a pari, solo `alla_pari`): il
+        costo e' `_punteggio`.
+
+        La guida si cerca larga quanto il fascio, ma la ricerca non sa dove una
+        parallela si annulla in una curva stretta o finisce in un incrocio di
+        muri. Se una parallela non passa, si riprova la guida tenendola lontana
+        da quel punto, fino a `GIRI_DEL_FASCIO` volte (collaudo T3: l'unita'
+        interna a 23 cm dalla tramezza, il fascio girava nel corridoio, la
+        parallela esterna finiva nel muro e il fascio si faceva a pezzi)."""
+        self._lontano_dal_fascio = set()
+        try:
+            for _ in range(giri or GIRI_DEL_FASCIO):
+                guasto: list[int] = []
+                validi = self._il_fascio(membri, guasto)
+                if validi is not None:
+                    break
+                if not guasto or not self._allontana_la_guida(membri[0], guasto[0]):
+                    return False
+            else:
                 return False
-            usati |= set(parallela)
-            validi.append(parallela)
-        if tetto is not None and sum(self._sormonti(v) for v in validi) >= tetto:
-            return False
+        finally:
+            self._lontano_dal_fascio = set()
+        if tetto is not None:
+            punteggio = self._punteggio(validi, membri)
+            soglia = tetto * (1 + PREMIO_DEL_FASCIO)
+            if punteggio > soglia or (punteggio == soglia and not alla_pari):
+                return False
         for t, parallela in zip(membri, validi, strict=True):
             self._occupa(t, parallela)
             self._registra(t, parallela)
             self.in_blocco.add(t.tratta)
         return True
 
+    def _il_fascio(self, membri: list[Tracciato], guasto: list[int]) -> list[list[int]] | None:
+        """La guida e le sue parallele; se una non passa, `guasto` dice dove."""
+        kf = self.passi_fascio
+        scarti = [0]
+        for indice in range(1, len(membri)):
+            scarti.append(kf * ((indice + 1) // 2) * (1 if indice % 2 else -1))
+        guida = self._trova(membri[0], max(abs(s) for s in scarti))
+        if guida is None:
+            return None
+        validi: list[list[int]] = []
+        usati: set[int] = set()
+        for t, scarto in zip(membri, scarti, strict=True):
+            parallela = self._parallela(guida, scarto, guasto)
+            if parallela is None or not self._percorribile(t, parallela, guasto):
+                return None
+            if usati & set(parallela):
+                guasto.append(min(usati & set(parallela)))
+                return None
+            usati |= set(parallela)
+            validi.append(parallela)
+        return validi
+
+    def _allontana_la_guida(self, tracciato: Tracciato, nodo: int) -> bool:
+        """Fa pagare alla guida i nodi attorno a quello dove una parallela si e'
+        rotta: e' un costo, non un divieto, e vicino a un capo la guida ci passa
+        lo stesso se non ha altra strada. Falso se non cambia niente."""
+        del tracciato
+        g, cols = self.g, self.g.colonne
+        raggio = max(1, round(RAGGIO_DEL_GUASTO_M / g.passo))
+        i, j = nodo % cols, nodo // cols
+        nuovi = {
+            g.nodo(i + di, j + dj)
+            for dj in range(-raggio, raggio + 1) for di in range(-raggio, raggio + 1)
+            if g.dentro(i + di, j + dj)
+        }
+        if nuovi <= self._lontano_dal_fascio:
+            return False
+        self._lontano_dal_fascio |= nuovi
+        return True
+
     def ripassa_il_fascio(self, membri: list[Tracciato]) -> bool:
         """Il fascio che al primo giro si e' dovuto instradare a pezzi si
-        riprova intero, con gli altri al posto del ripasso: resta se sormonta
-        meno dei suoi tracciati presi uno per uno."""
+        riprova intero, con gli altri al posto del ripasso: resta se non costa
+        piu' dei suoi tracciati presi uno per uno, col premio del fascio."""
         if any(t.tratta in self.in_blocco for t in membri):
             return False
         nomi = {t.tratta for t in membri}
@@ -409,18 +585,18 @@ class Instradatore:
             return False
         self.percorsi = [(t, nodi) for t, nodi in self.percorsi if t.tratta not in nomi]
         self._ricostruisci()
-        prima = sum(self._sormonti(nodi) for _, nodi in vecchi) + _incroci_fra(
-            [nodi for _, nodi in vecchi]
-        )
+        per_tratta = {t.tratta: nodi for t, nodi in vecchi}
+        prima = self._punteggio([per_tratta[t.tratta] for t in membri], membri)
         if self._prova_il_fascio(membri, tetto=prima):
             return True
         for t, nodi in vecchi:
             self._occupa(t, nodi)
         return False
 
-    def _parallela(self, nodi: list[int], scarto: int) -> list[int] | None:
+    def _parallela(self, nodi: list[int], scarto: int, guasto: list[int] | None = None) -> list[int] | None:
         """La spezzata spostata di `scarto` nodi alla sinistra del verso di
-        percorrenza (a destra se negativo), con gli spigoli annidati."""
+        percorrenza (a destra se negativo), con gli spigoli annidati. Se si
+        annulla, `guasto` riceve il vertice della guida dove succede."""
         if scarto == 0:
             return list(nodi)
         cols = self.g.colonne
@@ -440,23 +616,29 @@ class Instradatore:
         if not self.g.dentro(*nuovi[0]):
             return None
         out: list[int] = [self.g.nodo(*nuovi[0])]
-        for (i0, j0), (i1, j1), verso in zip(nuovi, nuovi[1:], versi, strict=False):
+        for indice, ((i0, j0), (i1, j1), verso) in enumerate(zip(nuovi, nuovi[1:], versi, strict=False)):
             di, dj = (i1 > i0) - (i1 < i0), (j1 > j0) - (j1 < j0)
             if (di, dj) != (-verso[1], verso[0]):
-                return None  # il tratto interno si e' annullato o rovesciato
+                # il tratto interno si e' annullato o rovesciato
+                if guasto is not None:
+                    guasto.append(self.g.nodo(*vertici[indice + 1]))
+                return None
             for p in range(1, abs(i1 - i0) + abs(j1 - j0) + 1):
                 if not self.g.dentro(i0 + di * p, j0 + dj * p):
                     return None
                 out.append(self.g.nodo(i0 + di * p, j0 + dj * p))
         return out
 
-    def _percorribile(self, tracciato: Tracciato, nodi: list[int]) -> bool:
-        """Le stesse regole della ricerca, controllate su un percorso dato."""
+    def _percorribile(self, tracciato: Tracciato, nodi: list[int], guasto: list[int] | None = None) -> bool:
+        """Le stesse regole della ricerca, controllate su un percorso dato. Se non
+        passa, `guasto` riceve il nodo dove si ferma."""
         g, n = self.g, self.n
         occ = self.occupato
         da, a = tracciato.estremo_da, tracciato.estremo_a
-        partenze = dict(g.bordo_del_pezzo(self.indice_dei_pezzi[da.pezzo], da.lato))
-        arrivi = dict(g.bordo_del_pezzo(self.indice_dei_pezzi[a.pezzo], a.lato))
+        i_da, i_a = self.indice_dei_pezzi[da.pezzo], self.indice_dei_pezzi[a.pezzo]
+        sotto = self.attraversabili(i_da, i_a)
+        partenze = dict(g.bordo_del_pezzo(i_da, da.lato, sotto))
+        arrivi = dict(g.bordo_del_pezzo(i_a, a.lato, sotto))
         if len(nodi) < 2 or nodi[0] not in partenze or nodi[-1] not in arrivi:
             return False
         delta = {1: 0, g.colonne: 1, -1: 2, -g.colonne: 3}
@@ -466,20 +648,22 @@ class Instradatore:
                 return False
         for prima, dopo in zip(nodi, nodi[1:], strict=False):
             nuovo = delta.get(dopo - prima)
-            if nuovo is None or nuovo == (verso + 2) % 4:
-                return False
-            if (g.giacitura[prima] or occ.proprietario[prima]) and nuovo != verso:
-                return False
-            if g.pezzo[dopo] or occ.fermi[dopo]:
-                return False
-            if (prima * n + dopo if prima < dopo else dopo * n + prima) in occ.presi:
-                return False
             gv = g.giacitura[dopo]
-            if gv == INCROCIO_DI_MURI:
-                return False
-            if gv == ATTRAVERSO_IN_VERTICALE and nuovo in (0, 2):
-                return False
-            if gv == ATTRAVERSO_IN_ORIZZONTALE and nuovo in (1, 3):
+            rotto = (
+                nuovo is None or nuovo == (verso + 2) % 4
+                or ((g.giacitura[prima] or occ.proprietario[prima]) and nuovo != verso)
+                or (g.pezzo[dopo] and dopo not in sotto) or occ.fermi[dopo]
+                # La parallela di un fascio esce dalle zone esterne dove la
+                # guida ci sta dentro.
+                or g.fuori_dalle_zone(dopo)
+                or (prima * n + dopo if prima < dopo else dopo * n + prima) in occ.presi
+                or gv == INCROCIO_DI_MURI
+                or (gv == ATTRAVERSO_IN_VERTICALE and nuovo in (0, 2))
+                or (gv == ATTRAVERSO_IN_ORIZZONTALE and nuovo in (1, 3))
+            )
+            if rotto:
+                if guasto is not None:
+                    guasto.append(dopo)
                 return False
             verso = nuovo
         return (verso + 2) % 4 == arrivi[nodi[-1]]
@@ -529,7 +713,7 @@ class Instradatore:
 
     def _cerca(
         self, tracciato: Tracciato, sorgenti: list[tuple[int, int]], mete: dict[int, int],
-        pezzi_suoi: set[int], mezza_larghezza: int = 0,
+        pezzi_suoi: set[int], mezza_larghezza: int = 0, attraversabili: frozenset[int] = frozenset(),
     ) -> list[int] | None:
         """L'A* su (nodo, direzione). Con `mezza_larghezza` cerca la strada di
         un fascio intero: chi gli passa accanto, i pezzi e i muri lungo cui corre
@@ -552,6 +736,12 @@ class Instradatore:
             for k in range(n):
                 if not g.muro[k] and distanza[k] <= mezza_larghezza:
                     penalita[k] = penalita.get(k, 0) + 3 * ACCOSTO
+            # Le parallele non escono dalle zone esterne: la guida ne sta
+            # lontana quanto il fascio e' largo.
+            for k in self._accosto_all_esterno(mezza_larghezza):
+                penalita[k] = penalita.get(k, 0) + ESTERNO_NON_DICHIARATO
+            for k in self._lontano_dal_fascio:
+                penalita[k] = penalita.get(k, 0) + ESTERNO_NON_DICHIARATO
         alone = self._alone
         pezzo, giacitura, apertura = g.pezzo, g.giacitura, g.apertura
         proprietario, fermi, presi = self.occupato.proprietario, self.occupato.fermi, self.occupato.presi
@@ -611,7 +801,7 @@ class Instradatore:
                 if (nd == 0 and i + 1 >= cols) or (nd == 2 and i == 0):
                     continue
                 vicino = k + delta[nd]
-                if vicino < 0 or vicino >= n or pezzo[vicino] or fermi[vicino]:
+                if vicino < 0 or vicino >= n or fermi[vicino] or (pezzo[vicino] and vicino not in attraversabili):
                     continue
                 lato = k * n + vicino if k < vicino else vicino * n + k
                 if lato in presi:
@@ -694,10 +884,26 @@ class Instradatore:
                     corsa = []
             if corsa:
                 tratti_fuori.append(tuple(g.punto(k) for k in _vertici(corsa)))
+        esterno = 0.0
+        tratti_esterni: list[tuple[tuple[float, float], ...]] = []
+        corsa = []
+        for a, b in zip(nodi, nodi[1:], strict=False):
+            if g.fuori_dalle_zone(a) and g.fuori_dalle_zone(b):
+                esterno += g.passo
+                if not corsa:
+                    corsa = [a]
+                corsa.append(b)
+                continue
+            if corsa:
+                tratti_esterni.append(tuple(g.punto(k) for k in _vertici(corsa)))
+                corsa = []
+        if corsa:
+            tratti_esterni.append(tuple(g.punto(k) for k in _vertici(corsa)))
         return Percorso(
             tratta=tracciato.tratta, punti=tuple(punti), ceduto=False, nodi=tuple(nodi),
             attraversamenti=self._attraversamenti(tracciato, nodi),
             fuori_dal_controsoffitto_m=round(fuori, 3), fuori=tuple(tratti_fuori),
+            fuori_dalle_zone_m=round(esterno, 3), fuori_dalle_zone=tuple(tratti_esterni),
         )
 
     def _attraversamenti(self, tracciato: Tracciato, nodi: list[int]) -> tuple[Attraversamento, ...]:
@@ -819,6 +1025,22 @@ def fasci_in_blocco(tracciati: list[Tracciato]) -> dict[str, list[Tracciato]]:
     }
 
 
+PREMIO_DEL_FASCIO = 0.5
+"""Un fascio intero resta anche se costa fino al 50 % in piu' dei suoi tracciati
+presi uno per uno: tre linee frigo che si separano sono tre tracce e una tavola
+che non si legge (collaudo T3: il fascio stava insieme per il 58 %, e il gas
+passava dall'ingresso mentre il liquido e il cavo attraversavano il
+soggiorno). Misurato (`_punteggio`): T3 +45 % e T1 +6 %, il fascio resta
+intero; l'esempio +65 % al primo giro (si fa a tracciati singoli), poi al
+ripasso il fascio intero costa l'1 % in meno e resta lui. Un parametro da
+tarare sulle tavole, non una costante di natura."""
+
+RAGGIO_DEL_GUASTO_M = 0.25
+"""Quanto attorno al punto dove una parallela si e' rotta la guida paga per passare."""
+
+GIRI_DEL_FASCIO = 6
+"""Quante guide si provano per un fascio prima di farlo a tracciati singoli."""
+
 GIRI_DI_RIPASSO = 2
 """Quante volte si ripassano i tracciati che sormontano (vedi `instrada_tutto`)."""
 
@@ -910,4 +1132,6 @@ def unisci_i_tronchi(tratta: str, parti: list[Percorso]) -> Percorso:
         fuori_dal_controsoffitto_m=round(sum(p.fuori_dal_controsoffitto_m for p in parti), 3),
         tronchi=tuple(p.punti for p in parti),
         fuori=tuple(f for p in parti for f in p.fuori),
+        fuori_dalle_zone_m=round(sum(p.fuori_dalle_zone_m for p in parti), 3),
+        fuori_dalle_zone=tuple(f for p in parti for f in p.fuori_dalle_zone),
     )

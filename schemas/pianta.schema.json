@@ -466,6 +466,32 @@
           ],
           "default": null,
           "title": "Quota"
+        },
+        "sovrapposto_a": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sovrapposto A"
+        },
+        "sta": {
+          "default": "sopra",
+          "enum": [
+            "sopra",
+            "sotto"
+          ],
+          "title": "Sta",
+          "type": "string"
+        },
+        "ingombro_da_confermare": {
+          "default": false,
+          "title": "Ingombro Da Confermare",
+          "type": "boolean"
         }
       },
       "required": [
@@ -759,6 +785,62 @@
       ],
       "title": "Tracciato",
       "type": "object"
+    },
+    "ZonaEsterna": {
+      "additionalProperties": false,
+      "description": "Una zona fuori dall'edificio dove le linee possono correre: il terrazzo,\nil balcone, la facciata attrezzata. **Fuori da queste zone l'esterno non e'\nuna strada**: l'instradatore ci passa solo se non ha altro, a un costo\naltissimo, e la tavola lo dice come rilievo bloccante.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9_-]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "nome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nome"
+        },
+        "rettangolo": {
+          "maxItems": 4,
+          "minItems": 4,
+          "prefixItems": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Rettangolo",
+          "type": "array"
+        },
+        "costo": {
+          "default": 1.0,
+          "maximum": 20.0,
+          "minimum": 1.0,
+          "title": "Costo",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "rettangolo"
+      ],
+      "title": "ZonaEsterna",
+      "type": "object"
     }
   },
   "additionalProperties": false,
@@ -810,6 +892,13 @@
         "$ref": "#/$defs/Rettangolo"
       },
       "title": "Velette",
+      "type": "array"
+    },
+    "zone_esterne": {
+      "items": {
+        "$ref": "#/$defs/ZonaEsterna"
+      },
+      "title": "Zone Esterne",
       "type": "array"
     },
     "sfondo": {
