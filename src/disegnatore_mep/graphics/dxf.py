@@ -45,7 +45,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from xml.etree import ElementTree
 
-from disegnatore_mep.layout.geometry import FlowKind, Point, Richiamo, RoutedTrunk, SheetGeometry
+from disegnatore_mep.diametri.scritte import CAMPIONE_DELLA_LEGENDA as CAMPIONE_DELLA_SCRITTA
+from disegnatore_mep.layout.fluidi import ha_un_verso
+from disegnatore_mep.layout.geometry import Point, Richiamo, RoutedTrunk, SheetGeometry
 from disegnatore_mep.layout.legend import (
     INTERLINEA_EM,
     MEDIUM_NAMES,
@@ -79,6 +81,7 @@ from .sheet import (
 )
 from .symbol import FlowGlyph, PortFace, StrokeWeight
 from .tabella import tratti_della_tabella
+from .tabelle import tratti_della_tabella_posata
 
 if TYPE_CHECKING:
     from ezdxf.document import Drawing
@@ -156,6 +159,16 @@ _RETI: dict[tuple[str, bool], str] = {
     ("return_air", False): "M-HVAC-RETN",
     ("condensate", True): "M-CNDS-PIPE",
     ("condensate", False): "M-CNDS-PIPE",
+    # L'elettrico e il comando (REL-012): disciplina `E`, gruppo `POWR` per i
+    # circuiti di potenza e `CTRL` per il comando, come le linee guida AIA li
+    # nominano; `CIRC`, `LINK` e `BUS` sono sottogruppi del progetto. Un verso solo:
+    # sono fluidi senza verso (`layout.fluidi`).
+    ("power_supply", True): "E-POWR-CIRC",
+    ("power_supply", False): "E-POWR-CIRC",
+    ("interconnection", True): "E-POWR-LINK",
+    ("interconnection", False): "E-POWR-LINK",
+    ("control_bus", True): "E-CTRL-BUS",
+    ("control_bus", False): "E-CTRL-BUS",
 }
 """Il layer di ogni rete: il fluido e il verso.
 
@@ -694,9 +707,9 @@ class _Tavola:
         nome = layer_della_rete(route.medium, route.supply)
         fluido = MEDIUM_NAMES.get(route.medium, route.medium)
         verso = "andata" if route.supply else RETURN_NAMES.get(route.medium, "ritorno")
-        return self.layer(
-            nome, f"{fluido} — {verso}", colore, tratto, self.standard.line_medium_mm
-        )
+        # Un fluido senza verso ha un layer solo, e il layer si chiama col fluido.
+        descrizione = f"{fluido} — {verso}" if ha_un_verso(route.medium) else fluido
+        return self.layer(nome, descrizione, colore, tratto, self.standard.line_medium_mm)
 
     def layer_di_servizio(self) -> None:
         thin, medium = self.standard.line_thin_mm, self.standard.line_medium_mm
@@ -704,12 +717,23 @@ class _Tavola:
         self.layer(LAYER_SIGLE, "Sigle e richiami", None, "none", thin)
         self.layer(LAYER_TESTI, "Testi e rimandi", None, "none", thin)
         self.layer(LAYER_LEGENDA, "Legenda", None, "none", thin)
-        if self.sheet.tabella is not None:
-            self.layer(LAYER_TABELLA, "Tabella delle apparecchiature", None, "none", thin)
+        if self.sheet.tabella is not None or self.sheet.tabelle:
+            # Le tabelle nelle zone (REL-012) stanno sullo stesso layer: sono anche
+            # loro «Schedules». Senza, la descrizione e' quella di sempre.
+            descrizione = (
+                "Tabella delle apparecchiature"
+                if not self.sheet.tabelle
+                else "Tabelle della tavola: apparecchiature e tabelle nelle zone del foglio"
+            )
+            self.layer(LAYER_TABELLA, descrizione, None, "none", thin)
         if self.sheet.diametri:
+            scritte = any(
+                nota.campione == CAMPIONE_DELLA_SCRITTA for nota in self.sheet.note_della_legenda
+            )
             self.layer(
                 LAYER_DIAMETRI,
-                "Diametri delle tubazioni: Øi, diametro interno netto minimo in mm",
+                "Diametri delle tubazioni: Øi, diametro interno netto minimo in mm"
+                + ("; e le scritte dei tratti, Ø · L, dato del progettista" if scritte else ""),
                 None, "none", thin,
             )
         self.layer(LAYER_CARTIGLIO, "Squadratura e cartiglio", None, "none", thin)
@@ -894,7 +918,7 @@ class _Tavola:
                             centro, CROSSING_ARC_RADIUS_MM, 270, 90,
                             dxfattribs={"layer": layer, "linetype": "Continuous"},
                         )
-                if route.flow_kind is not FlowKind.STATIC:
+                if route.flow_kind.porta_la_freccia:
                     freccia = flow_arrow_at(segment, route.flow_from_start)
                     if freccia is not None:
                         tip_x, tip_y, dx, dy = freccia
@@ -1103,6 +1127,20 @@ class _Tavola:
                 grassetto=item.grassetto,
             )
 
+    def tabelle(self) -> None:
+        """Le tabelle nelle zone del foglio (REL-012), dalle stesse linee e dagli stessi
+        testi dell'SVG (`tabelle.tratti_della_tabella_posata`), sul layer delle
+        tabelle."""
+        for tabella in self.sheet.tabelle:
+            tratti = tratti_della_tabella_posata(tabella, self.standard)
+            for x1, y1, x2, y2 in tratti.linee:
+                self.msp.add_line(self.p(x1, y1), self.p(x2, y2), dxfattribs={"layer": LAYER_TABELLA})
+            for item in tratti.testi:
+                self.testo(
+                    item.testo, item.x_mm, item.y_mm, tratti.corpo_mm, LAYER_TABELLA,
+                    allineamento="end" if item.a_destra else "start", grassetto=item.grassetto,
+                )
+
     def rimandi(self) -> None:
         for reference in self.sheet.cross_references:
             self.msp.add_circle(
@@ -1301,6 +1339,7 @@ def write_dxf(
         tavola.diametri()
         tavola.legenda()
         tavola.tabella()
+        tavola.tabelle()
         tavola.rimandi()
         _classi_in_ordine(tavola.doc)
         tavola.doc.saveas(target)

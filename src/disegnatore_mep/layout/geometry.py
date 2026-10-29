@@ -11,9 +11,9 @@ import hashlib
 import json
 import math
 from enum import StrEnum
-from typing import Any
+from typing import Any, Literal
 
-from pydantic import Field, SerializerFunctionWrapHandler, model_serializer
+from pydantic import Field, SerializerFunctionWrapHandler, model_serializer, model_validator
 
 from disegnatore_mep.model.base import FiniteFloat, StrictModel
 
@@ -41,6 +41,17 @@ class FlowKind(StrEnum):
 
     OUTBOUND = "outbound"
     """Uno stacco da cui l'acqua esce dal circuito: la freccia se ne allontana."""
+
+    NO_ARROW = "no_arrow"
+    """Una linea di un fluido che la tavola disegna senza freccia: il refrigerante
+    di una macchina reversibile, l'elettrico, il bus (`layout.fluidi`, REL-012). Il
+    verso, dove c'e', resta in `flow_from_start`; la freccia no."""
+
+    @property
+    def porta_la_freccia(self) -> bool:
+        """Se la linea si disegna con la freccia di flusso: SVG, DXF e il preflight
+        chiedono qui, e non elencano le specie per conto loro."""
+        return self not in (FlowKind.STATIC, FlowKind.NO_ARROW)
 
 
 class Point(StrictModel):
@@ -317,6 +328,69 @@ class TabellaDelleApparecchiature(StrictModel):
         )
 
 
+class ColonnaDellaTabella(StrictModel):
+    """Una colonna di una tabella nelle zone del foglio (REL-012)."""
+
+    intestazione: str
+    larghezza_mm: FiniteFloat = Field(gt=0)
+    a_destra: bool = False
+    """Il testo allineato a destra: i numeri — quantita', lunghezze — si leggono in
+    colonna per le unita'."""
+
+
+class RigaDellaTabellaLibera(StrictModel):
+    """Una riga di una tabella nelle zone: le celle, oppure una **riga di sezione** —
+    un titolo che attraversa tutte le colonne, «B. Distribuzione aria»."""
+
+    celle: list[str] = Field(default_factory=list)
+    sezione: str | None = None
+
+    @model_validator(mode="after")
+    def o_celle_o_sezione(self) -> "RigaDellaTabellaLibera":
+        if bool(self.celle) != (self.sezione is not None):
+            return self
+        raise ValueError("una riga ha le celle oppure e' una riga di sezione, non tutt'e due")
+
+
+class TabellaNelleZone(StrictModel):
+    """Una tabella che un altro modulo — la distinta dei materiali, la tabella delle
+    tratte — passa al motore, e il motore disegna nelle zone che il piano ha lasciato
+    alle tabelle (`PianoDiComposizione.zone_tabelle`, `graphics.tabelle`).
+
+    Il chiamante dice **che cosa**: il titolo, le colonne con la loro larghezza, le
+    righe. Il motore dice **dove**: la zona, la colonna di zona, la riga a cui va a
+    capo il testo, e — se la tabella e' piu' lunga della zona — dove la spezza,
+    ripetendo l'intestazione."""
+
+    titolo: str | None = None
+    colonne: list[ColonnaDellaTabella] = Field(min_length=1)
+    righe: list[RigaDellaTabellaLibera] = Field(default_factory=list)
+    zona: Literal["destra", "basso"] = "destra"
+
+    @model_validator(mode="after")
+    def ogni_riga_ha_tutte_le_celle(self) -> "TabellaNelleZone":
+        for indice, riga in enumerate(self.righe):
+            if riga.sezione is None and len(riga.celle) != len(self.colonne):
+                raise ValueError(
+                    f"la riga {indice + 1} della tabella «{self.titolo or ''}» ha "
+                    f"{len(riga.celle)} celle per {len(self.colonne)} colonne"
+                )
+        return self
+
+
+class TabellaPosata(StrictModel):
+    """Un pezzo di tabella posato in una zona: dove sta, e le righe che porta. Una
+    tabella che non entra nella sua colonna di zona continua nella successiva, con
+    l'intestazione ripetuta e senza titolo."""
+
+    x_mm: FiniteFloat
+    y_mm: FiniteFloat
+    titolo: str | None = None
+    colonne: list[ColonnaDellaTabella] = Field(min_length=1)
+    righe: list[RigaDellaTabellaLibera] = Field(default_factory=list)
+    corpo_mm: FiniteFloat = Field(gt=0)
+
+
 class SheetGeometry(StrictModel):
     sheet_id: str
     title: str
@@ -340,6 +414,9 @@ class SheetGeometry(StrictModel):
     la tabella."""
     note_della_legenda: list[NotaDellaLegenda] = Field(default_factory=list)
     """Le righe della legenda che spiegano una scritta: «Øi» (REL-007, I-155)."""
+    tabelle: list[TabellaPosata] = Field(default_factory=list)
+    """Le tabelle nelle zone del foglio (REL-012): le passa chi esegue il piano, le
+    posa `graphics.tabelle`. Facoltative e additive come le altre."""
 
     @model_serializer(mode="wrap")
     def _senza_la_tabella_che_non_c_e(
@@ -352,7 +429,7 @@ class SheetGeometry(StrictModel):
         dati: dict[str, Any] = handler(self)
         if dati.get("tabella") is None:
             dati.pop("tabella", None)
-        for campo in ("diametri", "note_della_legenda"):
+        for campo in ("diametri", "note_della_legenda", "tabelle"):
             if not dati.get(campo):
                 dati.pop(campo, None)
         return dati

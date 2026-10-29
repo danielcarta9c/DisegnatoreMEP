@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.1.0",
+  "metadata": {
+    "project_id": "prova-rel012-fase-1",
+    "client": "Prova del motore (nessun cliente)",
+    "project_name": "Prova REL-012 fase 1: aria, refrigerante, elettrico e comando",
+    "commission_code": "REL-012",
+    "revision": "00",
+    "issue_date": "2026-10-29",
+    "sheet_title": "Tavola di prova — fluidi senza verso, scritte dei tratti, zone delle tabelle",
+    "sheet_number": "P.01",
+    "drawn_by": "Claude",
+    "header_note": "Tavola di prova del motore, non un progetto"
+  },
+  "plant_regime": "up_to_35_kw",
+  "networks": [
+    {"id": "liquido", "name": "Linea del liquido", "domain": "refrigerant", "medium": "refrigerant_liquid"},
+    {"id": "gas", "name": "Linea del gas", "domain": "refrigerant", "medium": "refrigerant_gas"},
+    {"id": "mandata", "name": "Mandata aria", "domain": "aeraulic", "medium": "supply_air"},
+    {"id": "ripresa", "name": "Ripresa aria", "domain": "aeraulic", "medium": "return_air"},
+    {"id": "condensa", "name": "Scarico condensa", "domain": "condensate", "medium": "condensate"},
+    {"id": "alimentazione", "name": "Alimentazione unita' esterna", "domain": "control", "medium": "power_supply"},
+    {"id": "collegamento", "name": "Collegamento UI-UE", "domain": "control", "medium": "interconnection"},
+    {"id": "bus", "name": "Linea P1-P2", "domain": "control", "medium": "control_bus"}
+  ],
+  "components": [
+    {"id": "ue", "definition_id": "split-outdoor-unit", "properties": {"power_kw": 5.7, "marca": "Marca di prova", "modello": "PRV-UE-57"}},
+    {"id": "ui", "definition_id": "ducted-indoor-unit", "properties": {"power_kw": 5.7, "flow_rate_m3h": 1080, "marca": "Marca di prova", "modello": "PRV-UI-57"}},
+    {"id": "bocchetta", "definition_id": "air-supply-terminal", "properties": {"etichetta": "bocchetta soggiorno"}},
+    {"id": "ripresa", "definition_id": "return-air-terminal", "properties": {}},
+    {"id": "sifone", "definition_id": "condensate-trap", "properties": {}},
+    {"id": "scarico", "definition_id": "condensate-outlet", "properties": {"etichetta": "scarico bagno"}},
+    {"id": "quadro", "definition_id": "electrical-panel", "properties": {"etichetta": "quadro elettrico"}},
+    {"id": "sezionatore", "definition_id": "isolator-switch", "properties": {}},
+    {"id": "comando", "definition_id": "wired-remote", "properties": {"marca": "Marca di prova", "modello": "PRV-CF", "etichetta": "in soggiorno"}}
+  ],
+  "connections": [
+    {"id": "r-liq", "network_id": "liquido", "endpoint_a": {"component_id": "ue", "port_id": "liquid"}, "endpoint_b": {"component_id": "ui", "port_id": "liquid"}, "sezione": "Ø6,35 (1/4\")", "lunghezza_m": 12},
+    {"id": "r-gas", "network_id": "gas", "endpoint_a": {"component_id": "ue", "port_id": "gas"}, "endpoint_b": {"component_id": "ui", "port_id": "gas"}, "sezione": "Ø12,7 (1/2\")", "lunghezza_m": 12},
+    {"id": "a-mandata", "network_id": "mandata", "endpoint_a": {"component_id": "ui", "port_id": "supply"}, "endpoint_b": {"component_id": "bocchetta", "port_id": "a"}, "sezione": "Ø200", "lunghezza_m": 6},
+    {"id": "a-ripresa", "network_id": "ripresa", "endpoint_a": {"component_id": "ripresa", "port_id": "a"}, "endpoint_b": {"component_id": "ui", "port_id": "return"}, "scritta": "1000×250 · L 2 m", "sezione": "1000×250", "lunghezza_m": 2},
+    {"id": "c-1", "network_id": "condensa", "endpoint_a": {"component_id": "ui", "port_id": "drain"}, "endpoint_b": {"component_id": "sifone", "port_id": "a"}, "sezione": "PVC Ø32", "lunghezza_m": 10},
+    {"id": "c-2", "network_id": "condensa", "endpoint_a": {"component_id": "sifone", "port_id": "b"}, "endpoint_b": {"component_id": "scarico", "port_id": "a"}},
+    {"id": "e-1a", "network_id": "alimentazione", "endpoint_a": {"component_id": "quadro", "port_id": "out_1"}, "endpoint_b": {"component_id": "sezionatore", "port_id": "a"}, "sezione": "3G2,5", "lunghezza_m": 20},
+    {"id": "e-1b", "network_id": "alimentazione", "endpoint_a": {"component_id": "sezionatore", "port_id": "b"}, "endpoint_b": {"component_id": "ue", "port_id": "power"}, "sezione": "3G2,5", "lunghezza_m": 1.5},
+    {"id": "e-link", "network_id": "collegamento", "endpoint_a": {"component_id": "ue", "port_id": "link"}, "endpoint_b": {"component_id": "ui", "port_id": "link"}, "sezione": "4G1,5", "lunghezza_m": 13},
+    {"id": "e-bus", "network_id": "bus", "endpoint_a": {"component_id": "ui", "port_id": "p1p2_a"}, "endpoint_b": {"component_id": "comando", "port_id": "a"}, "sezione": "P1-P2", "lunghezza_m": 5.5}
+  ],
+  "assumptions": [],
+  "rule_applications": [],
+  "subsystems": [],
+  "sheets": []
+}

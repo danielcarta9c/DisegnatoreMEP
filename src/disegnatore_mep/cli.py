@@ -81,7 +81,7 @@ def _scrivi_pdf(svg: Path, titolo: str) -> None:
         # quale, e in quale scritta, perche' il progettista lo corregga o lo accetti.
         print(
             f"Nel PDF il carattere {sostituzione.carattere!r} non c'e': in "
-            f"{sostituzione.scritta!r} e' scritto «?»"
+            f"{sostituzione.scritta!r} e' scritto «{sostituzione.con}»"
         )
 
 

@@ -22,6 +22,7 @@ from disegnatore_mep.graphics.standard import PT_MM
 from disegnatore_mep.model.project import ProjectModel
 
 from .errors import LayoutError
+from .fluidi import ha_un_verso
 from .geometry import LegendEntry, NetworkKey, PlacedSymbol, Point, RoutedTrunk
 
 ROW_HEIGHT_MM = 7.5
@@ -132,12 +133,30 @@ MEDIUM_STYLES: dict[str, tuple[str, str]] = {
     "supply_air": ("#148f77", "none"),
     "return_air": ("#148f77", "4 2"),
     "refrigerant_liquid": ("#6c3483", "none"),
-    "refrigerant_gas": ("#6c3483", "6 2"),
+    # Il gas a tratteggio corto (REL-012): col «6 2» di prima il campione della
+    # legenda, lungo 8 mm, portava un'interruzione sola e si leggeva pieno — come il
+    # liquido, dello stesso viola. Con «3 1,5» le interruzioni sono due.
+    "refrigerant_gas": ("#6c3483", "3 1.5"),
     "condensate": ("#616a6b", "2 2"),
     # Il circuito solare (D-187): magenta, a tratto pieno come l'acqua di
     # riscaldamento. La tonalita' e' una scelta di questa sessione: lontana dal
     # viola del refrigerante e dal rosso del riscaldamento.
     "solar_fluid": ("#c71585", "none"),
+    # **L'elettrico e il comando** (REL-012, proposta della sessione, da giudicare
+    # sulla tavola). Sulla M.02 del kit alimentazione e collegamento UI-UE erano due
+    # rossi quasi uguali (#b03a2e e #a04000), e il primo era quasi il rosso del
+    # riscaldamento; il bus era quasi il blu del ritorno. Qui ogni colore sta ad
+    # almeno 25 unita' (CIE76) da ogni altro colore della tavola, ritorni compresi
+    # (`tests/aria_elettrico/test_fluidi_senza_verso.py`), e il tratto lo ripete per
+    # la fotocopia in bianco e nero:
+    # - l'alimentazione in **marrone**, il colore del conduttore di fase (IEC 60445),
+    #   a tratto e punto;
+    # - il collegamento fra le unita' — alimentazione e segnale nello stesso cavo — in
+    #   **rosa**, a tratto e due punti;
+    # - il bus in **blu oltremare**, a puntini.
+    "power_supply": ("#784212", "4 1 1 1"),
+    "interconnection": ("#e91e63", "4 1 1 1 1 1"),
+    "control_bus": ("#2020e0", "1.5 1.5"),
 }
 """Colore e tratto per fluido (D-057).
 
@@ -159,6 +178,9 @@ MEDIUM_NAMES: dict[str, str] = {
     "refrigerant_gas": "Refrigerante gas",
     "condensate": "Condensa",
     "solar_fluid": "Fluido solare",
+    "power_supply": "Alimentazione elettrica",
+    "interconnection": "Collegamento elettrico fra le unità",
+    "control_bus": "Bus di comando e regolazione",
 }
 """Denominazione italiana del fluido, per la legenda (D-051)."""
 
@@ -203,8 +225,12 @@ cosi' (D-176): una rete aperta non ha altro ritorno che quello."""
 
 
 def style_for(medium: str, supply: bool = True) -> tuple[str, str]:
+    """Colore e tratto della linea di un fluido, in andata o in ritorno.
+
+    Un fluido senza verso (`layout.fluidi`) ha un tratto solo, comunque la linea si
+    percorra: la condensa che il modello legge «di ritorno» non cambia colore."""
     colour, dash = MEDIUM_STYLES.get(medium, DEFAULT_STYLE)
-    if supply:
+    if supply or not ha_un_verso(medium):
         return colour, dash
     return SUPPLY_SHIFT.get(colour, "#5d6d7e"), dash
 
@@ -245,15 +271,20 @@ def build_legend(
         by_medium.setdefault(
             network.medium, MEDIUM_NAMES.get(network.medium, network.name)
         )
-    # Una riga per fluido e per servizio: andata e ritorno sono due linee.
+    # Una riga per fluido e per servizio: andata e ritorno sono due linee. **Un
+    # fluido senza verso ha una riga sola**, col suo nome e basta (`layout.fluidi`,
+    # REL-012): sulla M.02 del kit comparivano «Aria di mandata — andata» e, accanto,
+    # i colori del ritorno spostati.
     keys = [
         (
             medium,
-            f"{name} — {'andata' if supply else RETURN_NAMES.get(medium, 'ritorno')}",
+            f"{name} — {'andata' if supply else RETURN_NAMES.get(medium, 'ritorno')}"
+            if ha_un_verso(medium)
+            else name,
             supply,
         )
         for medium, name in sorted(by_medium.items())
-        for supply in (True, False)
+        for supply in ((True, False) if ha_un_verso(medium) else (True,))
     ]
     # **Una riga per ogni linea che la tavola disegna, e nessuna per quelle che
     # non ci sono.** Fino al 23 settembre 2026 la legenda elencava andata e
@@ -262,7 +293,10 @@ def build_legend(
     # sanitaria — ritorno»: l'acqua fredda un ritorno non ce l'ha, e quel
     # ricircolo l'impianto non lo aveva. L'ha visto un agente in camera pulita.
     if routes is not None:
-        disegnate = {(route.medium, route.supply) for route in routes}
+        disegnate = {
+            (route.medium, route.supply if ha_un_verso(route.medium) else True)
+            for route in routes
+        }
         keys = [key for key in keys if (key[0], key[2]) in disegnate]
     # Il solare va e torna dello stesso magenta (D-187): due righe uguali non
     # distinguono niente, per la stessa ragione per cui primario e secondario ne

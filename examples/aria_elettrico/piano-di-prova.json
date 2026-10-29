@@ -1,0 +1,21 @@
+{
+  "formato": "A2",
+  "note": [
+    "Tavola di prova del motore (REL-012, fase 1): non e' un progetto.",
+    "UE e UI alla stessa quota: le due linee frigorifere sono rette.",
+    "Bocchetta e comando a destra della UI, alla quota dei loro attacchi; ripresa sopra la UI.",
+    "Quadro sotto la UE, sull'asse dell'attacco di alimentazione: il cavo e' una verticale con il sezionatore.",
+    "Scarico della condensa sotto la UI, sull'asse dello scarico.",
+    "Le zone delle tabelle: 175 mm a destra e 135 in basso, come la M.02 del kit."
+  ],
+  "zone_tabelle": {"destra_mm": 175, "basso_mm": 135},
+  "pezzi": {
+    "ue": {"x": 40, "y": 70, "rotazione": 0},
+    "ui": {"x": 160, "y": 70, "rotazione": 0},
+    "bocchetta": {"x": 260, "y": 77.5},
+    "comando": {"x": 260, "y": 90},
+    "ripresa": {"x": 175, "y": 30},
+    "quadro": {"x": 42.5, "y": 170, "rotazione": 0},
+    "scarico": {"x": 180, "y": 150}
+  }
+}

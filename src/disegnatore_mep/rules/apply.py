@@ -112,6 +112,14 @@ def _connection_to_split(
         anchor = connection.endpoint_a if connection.endpoint_a.component_id == giunto.id else connection.endpoint_b
 
 
+_SENZA_LA_SCRITTA: dict[str, None] = {"sezione": None, "lunghezza_m": None, "scritta": None}
+"""La scritta del tratto resta su **una** delle due meta' di una tubazione spezzata
+(REL-012): sezione e lunghezza sono quelle del tratto intero, che il progettista ha
+dato. Copiate sulle due meta', la tavola scriverebbe due volte la stessa cosa e la
+distinta conterebbe due volte la lunghezza. Resta sulla prima, quella che parte
+dall'attacco da cui il fluido esce."""
+
+
 def _split(connection: ConnectionModel, proposal: RuleProposal) -> list[ConnectionModel]:
     """Spezza la connessione e mette l'accessorio in mezzo.
 
@@ -136,6 +144,7 @@ def _split(connection: ConnectionModel, proposal: RuleProposal) -> list[Connecti
                 "endpoint_a": PortRef(
                     component_id=proposal.component_id, port_id=proposal.outlet_port
                 ),
+                **_SENZA_LA_SCRITTA,
             }
         ),
     ]
@@ -219,6 +228,7 @@ def _derivation(
             update={
                 "id": f"{connection.id}-b",
                 "endpoint_a": PortRef(component_id=junction_id, port_id="b"),
+                **_SENZA_LA_SCRITTA,
             }
         ),
     ]

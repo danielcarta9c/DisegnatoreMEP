@@ -5,14 +5,15 @@ refrigerante, l'elettrico e il comando.
 porta la fase 2, nel generatore (`examples/graphics/build_symbols.py`), e li fa un
 altro lavoro. Qui si leggono **dal kit del PO** com'e' agli atti
 (`docs/input-pm/2026-10-29-kit-aria-aria/per-il-repo/`), accanto alla libreria di
-oggi, in una cartella temporanea: le prove del motore non aspettano la libreria, e la
-libreria non si tocca da qui.
+oggi, in una cartella temporanea — lo fa la tavola di prova,
+`examples/aria_elettrico/tavola_di_prova.py` —: le prove del motore non aspettano la
+libreria, e la libreria non si tocca da qui.
 """
 
-import json
-import shutil
+import importlib.util
 from collections.abc import Callable
 from pathlib import Path
+from types import ModuleType
 from typing import Any
 
 import pytest
@@ -23,25 +24,28 @@ from disegnatore_mep.model.project import ProjectModel
 
 ROOT = Path(__file__).resolve().parents[2]
 KIT = ROOT / "docs" / "input-pm" / "2026-10-29-kit-aria-aria" / "per-il-repo"
-DATI = Path(__file__).resolve().parent / "dati"
+TAVOLA_DI_PROVA = ROOT / "examples" / "aria_elettrico" / "tavola_di_prova.py"
 NAMING = ROOT / "naming"
 
 
+def _tavola_di_prova() -> ModuleType:
+    spec = importlib.util.spec_from_file_location("tavola_di_prova", TAVOLA_DI_PROVA)
+    assert spec is not None and spec.loader is not None
+    modulo = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(modulo)
+    return modulo
+
+
 @pytest.fixture(scope="session")
-def cartelle_aria(tmp_path_factory: pytest.TempPathFactory) -> tuple[Path, Path]:
+def tavola_di_prova() -> ModuleType:
+    """Il modulo della tavola di prova (`examples/aria_elettrico/tavola_di_prova.py`)."""
+    return _tavola_di_prova()
+
+
+@pytest.fixture(scope="session")
+def cartelle_aria(tmp_path_factory: pytest.TempPathFactory, tavola_di_prova: ModuleType) -> tuple[Path, Path]:
     """Simboli e catalogo di oggi, con quelli del kit accanto."""
-    base = tmp_path_factory.mktemp("aria-elettrico")
-    simboli, catalogo = base / "simboli", base / "catalogo"
-    shutil.copytree(ROOT / "assets" / "symbols", simboli)
-    shutil.copytree(ROOT / "examples" / "layout" / "catalog", catalogo)
-    for sorgente, destinazione in (
-        (KIT / "assets" / "symbols", simboli),
-        (KIT / "examples" / "layout" / "catalog", catalogo),
-    ):
-        for file in sorted(sorgente.iterdir()):
-            if not (destinazione / file.name).exists():
-                shutil.copy(file, destinazione / file.name)
-    return simboli, catalogo
+    return tavola_di_prova.cartelle_di_prova(tmp_path_factory.mktemp("aria-elettrico"))
 
 
 @pytest.fixture(scope="session")
@@ -113,5 +117,11 @@ def progetto() -> Callable[..., ProjectModel]:
     return costruisci
 
 
-def grafo_di_prova() -> dict[str, Any]:
-    return json.loads((DATI / "grafo-di-prova.json").read_text(encoding="utf-8"))
+@pytest.fixture(scope="session")
+def tavola(
+    tavola_di_prova: ModuleType, simboli_aria: SymbolRegistry, catalogo_aria: ComponentRegistry
+) -> tuple[ProjectModel, Any]:
+    """Il modello e l'esito della tavola di prova, eseguita una volta per sessione."""
+    modello, esito = tavola_di_prova.esegui(simboli_aria, catalogo_aria)
+    assert esito.disegno is not None, esito.errore
+    return modello, esito
