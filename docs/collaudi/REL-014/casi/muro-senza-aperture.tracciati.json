@@ -4,11 +4,18 @@
     "scala": "1:50",
     "avvisi": []
   },
-  "maggiorazione": {
-    "aggiunta_m": 1.0,
-    "fattore": 1.15,
-    "arrotondamento_m": 0.5,
-    "minimi_m": {}
+  "avvisi": [
+    "Senza L prog., quotate sulla misura (°): T01. Da riportare nel grafo, o da chiedere."
+  ],
+  "regola_delle_lunghezze": {
+    "origine": "della distinta",
+    "della_distinta": true,
+    "regola": {
+      "aggiunta_m": 1.0,
+      "fattore": 1.15,
+      "passo_m": 0.5
+    },
+    "scarto_della_misura": 0.15
   },
   "tratte": [
     {
@@ -16,15 +23,22 @@
       "fluido": "refrigerant_gas",
       "da": "A",
       "a": "B",
+      "passa_per": [],
       "dimensione": "12,7",
       "quota": "controsoffitto",
       "fascio": null,
       "instradata": true,
+      "lunghezza_data_m": null,
       "lunghezza_misurata_m": 7.7,
-      "lunghezza_da_quotare_m": 10.5,
-      "deciso_dal_minimo": false,
+      "lunghezza_usata_m": 7.7,
+      "lunghezza_usata_da": "misura",
+      "scarto_della_misura": null,
+      "misura_oltre_lo_scarto": false,
+      "lunghezza_da_quotare_m": 12.0,
+      "calcolo": "(7,7 + 1) × 1,15 = 10 → 10,5 m; minimo frigo 12 m → 12 m",
+      "deciso_dal_minimo": true,
       "curve": 2,
-      "fuori_dal_controsoffitto_m": 0,
+      "fuori_dal_controsoffitto_m": 0.0,
       "punti_m": [
         [
           1.15,
@@ -43,6 +57,7 @@
           1.7
         ]
       ],
+      "tronchi_m": null,
       "attraversamenti": [
         {
           "muro": "tramezza",
@@ -82,6 +97,16 @@
     "tratte_cedute": 0,
     "fasci_in_parallelo": {},
     "fuori_dal_controsoffitto_m": {},
+    "richiami": 0,
+    "richiamo_piu_lungo_mm": 0.0,
+    "richiamo_massimo_mm": 12.0,
+    "richiami_lunghi": 0,
+    "richiami_che_attraversano": 0,
+    "richiami_su_una_linea": 0,
+    "scritte_in_legenda": 0,
+    "linee_sui_pezzi": 0,
+    "misure_oltre_la_lunghezza": 0,
+    "scritte_nel_dettaglio": 0,
     "bloccanti": [],
     "elenco": {
       "diagonali": [],
@@ -92,7 +117,16 @@
       "fori_fuori_dalle_aperture": [
         "F1: T01 nel muro tramezza"
       ],
-      "tratte_cedute": []
+      "tratte_cedute": [],
+      "richiami": [],
+      "richiami_lunghi": [],
+      "richiami_che_attraversano": [],
+      "richiami_su_una_linea": [],
+      "scritte_in_legenda": [],
+      "linee_sui_pezzi": [],
+      "misure_oltre_la_lunghezza": [],
+      "scritte_nel_dettaglio": []
     }
-  }
+  },
+  "dettagli": []
 }
