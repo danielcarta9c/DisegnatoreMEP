@@ -1,17 +1,24 @@
 ---
 name: disegnatore-mep
-description: Disegna in PDF e DXF lo schema funzionale di una centrale termica (pompe di calore, caldaie, accumuli, ACS) descritta dal progettista. Da usare quando chiede lo schema o la tavola dell'impianto.
+description: Disegna in PDF e DXF lo schema funzionale di centrali termiche e impianti aria-aria, con elettrico e comando; su richiesta pianta dei tracciati e distinta materiali. Da usare quando chiede la tavola.
 license: MIT, il testo completo in LICENSE.txt
-compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Claude Code) con Python 3.11 o più recente. Al primo uso il comando installa pydantic 2 da PyPI se manca, e per questo serve la rete verso PyPI; ezdxf per il DXF e pypdfium2 per l'anteprima sono facoltative. Da usare con Opus o Sonnet.
+compatibility: Richiede l'esecuzione del codice (claude.ai, Claude Cowork o Claude Code) con Python 3.11 o più recente. Al primo uso il comando installa pydantic 2 da PyPI se manca, e per questo serve la rete verso PyPI; ezdxf per il DXF, pypdfium2 per l'anteprima e openpyxl per l'Excel della distinta sono facoltative. Da usare con Opus o Sonnet.
 ---
 
 # Disegnatore MEP
 
-**Versione 1.5.0** — 24 ottobre 2026.
+**Versione 1.6.0** — 29 ottobre 2026.
 
 Il progettista ha già deciso e dimensionato l'impianto, e te lo descrive a parole. Tu ne fai la
 **tavola dello schema funzionale**: la leggi, chiedi quello che manca, la fai approvare, la componi e
-la consegni in PDF e DXF, con i rilievi dei controlli accanto.
+la consegni in PDF e DXF, con i rilievi dei controlli accanto. L'impianto può essere una centrale
+idronica, un impianto aria-aria (unità esterna, unità interna canalizzata, plenum di zona,
+bocchette), e le loro **linee elettriche e di comando** (quadro, sezionatori, regolatore, sonde,
+termostati, bus).
+
+**Solo se il progettista li chiede**, due elaborati in più dallo stesso impianto: la **pianta dei
+posizionamenti e dei tracciati** sulla sua planimetria, e la **distinta materiali** per
+l'installatore che fa il prezzo a corpo (Excel e tabella sulla tavola).
 
 Il lavoro è fatto di cinque pezzi. Tre li fai tu, con istruzioni scritte apposta — **Capire**,
 **Comporre**, **Rivedere** —; due li fa il comando della skill, che è deterministico e misura —
@@ -26,6 +33,9 @@ python3 scripts/mep.py <comando> ...     # dalla cartella di questa skill
 - **Non progetti.** Non scegli macchine, taglie, potenze, portate, temperature, tarature,
   diametri; non decidi quanti pezzi ci vanno; non cambi l'ordine delle utenze e delle macchine,
   che è del progettista. Un ritorno inverso o due dorsali si disegnano solo se li chiede lui.
+  La **sezione** e la **lunghezza** di un tratto («Ø200 · L 6 m», «3G2,5 · L 20 m») le dà lui: le
+  trascrivi, non le ricavi (`capire.md`). La distinta materiali e la maggiorazione delle
+  lunghezze si fanno solo se la chiede, con le regole della skill, ognuna con la sua fonte.
 - **Non inventi dati.** Quello che il testo non dice o lo chiedi, o lo dichiari come assunzione
   che il progettista vede. Un dato che manca non compare sulla tavola: al suo posto c'è «DA
   DEFINIRE», o niente.
@@ -109,7 +119,11 @@ lancia anche `completa` (passo 3): i punti aperti che trova sono domande dello s
 - **i diametri delle tubazioni, se il testo non dice se li vuole**: chiedigli se vuole anche il
   dimensionamento. La tua prima interpretazione è no, e la tavola esce senza; per il sì gli dici
   su quali reti li calcoli e quali dati ti servono — i salti termici, le portate di progetto
-  che il testo non dà —, così che risponda una volta sola (`capire.md` §4.7).
+  che il testo non dà —, così che risponda una volta sola (`capire.md` §4.7);
+- **sezioni e lunghezze dei tratti**, su un impianto aria-aria o sulle linee elettriche, se vuole
+  la tavola quotabile e il testo non le dà: le chiedi; un tratto senza dato resta senza scritta;
+- **la distinta materiali e la pianta dei tracciati**, se il testo non dice se le vuole: la tua
+  prima interpretazione è no. Per la pianta serve la planimetria (PDF o immagine, con la scala).
 
 Il messaggio porta:
 
@@ -205,6 +219,20 @@ sono i numeri con cui confronti due pose (per esempio i due ordini dei collettor
   ([riferimenti/comporre.md](riferimenti/comporre.md) §6).
 - **Rilievi bloccanti o tratte cedute**: si corregge il piano, e si rilancia.
 
+#### Elettrico e comando: una tavola o due
+
+Le linee elettriche e di comando escono dallo stesso grafo. **Sulle centrali e dove la tavola è
+già densa vanno su una tavola a parte**; sulle tavole piccole — la sola distribuzione, una
+macchina sola con i suoi terminali — stanno sulla tavola unica (disposizione del PO). Il piano lo
+dice con la vista; il criterio è in [riferimenti/comporre.md](riferimenti/comporre.md), e il
+progettista può sempre forzare.
+
+#### Le tabelle sul foglio
+
+La tabella delle tratte, le note e la distinta stanno nelle **zone delle tabelle** che il piano
+riserva a destra e in basso (`zone_tabelle`, [riferimenti/comporre.md](riferimenti/comporre.md));
+il comando `disegna` le posa e dice se non ci stanno.
+
 ### 7. Rivedere — si guarda la tavola, e si torna al piano
 
 La tavola la guardi tu. **Un revisore esterno** — un altro agente, che non l'ha composta e non
@@ -291,6 +319,35 @@ guardi tu e lo dici nella consegna.
    Se una tavola ricomposta ha più rilievi bloccanti o tratte cedute di quella prima, tieni
    quella prima, e dici perché.
 
+### Su richiesta — la distinta materiali
+
+Solo se il progettista l'ha chiesta. Leggi **per intero**
+[riferimenti/distinta.md](riferimenti/distinta.md), poi:
+
+```bash
+python3 scripts/mep.py distinta $L/grafo-completo.json --out $L/distinta
+```
+
+Scrive l'Excel per l'installatore — **solo valori, a corpo, quantità indicative, sopralluogo
+obbligatorio** —, la distinta in JSON, il foglio dei calcoli con la regola di ogni quantità, e le
+tabelle per la tavola. Dove manca un dato la voce dice «DA DEFINIRE» e diventa una domanda: non
+inventi la quantità. Esce con **2** se ci sono voci da definire.
+
+### Su richiesta — la pianta dei posizionamenti e dei tracciati
+
+Solo se il progettista l'ha chiesta e ti ha dato la planimetria. Leggi **per intero**
+[riferimenti/pianta.md](riferimenti/pianta.md): dici tu muri, aperture e pezzi in un JSON, in
+metri; il comando instrada i tracciati **ortogonali**, lungo i muri, pagando curve e sormonti, e
+misura le lunghezze.
+
+```bash
+python3 scripts/mep.py pianta $L/pianta.json --out $L/pianta
+```
+
+Le sigle e i numeri di tratta sono quelli dello schema funzionale. Guarda la tavola come al
+passo 7: una scritta che indica la stanza sbagliata, un tracciato che fa il giro, un nodo troppo
+fitto per la scala sono rilievi tuoi.
+
 ### 8. Consegnare
 
 La tavola da consegnare è l'ultima eseguita, senza `--verifica`. Copiala dove il progettista la
@@ -303,7 +360,8 @@ python3 scripts/mep.py consegna $L/tavola /mnt/user-data/outputs
 
 Poi, in poche righe:
 
-- **il PDF**, il DXF (si apre in AutoCAD) e i rilievi della tavola;
+- **il PDF**, il DXF (si apre in AutoCAD) e i rilievi della tavola; la pianta e la distinta
+  (l'Excel), se le ha chieste;
 - **che cosa resta aperto**: le assunzioni non confermate, i punti aperti, i rilievi che restano
   — detti con parole sue, non con i codici —, i campi del cartiglio «DA DEFINIRE» (la tavola
   allora è una **bozza**), un carattere che il PDF ha dovuto sostituire;
@@ -331,7 +389,9 @@ così basta un sì. Un messaggio per passo, non uno per domanda.
 | [riferimenti/comporre.md](riferimenti/comporre.md) | le istruzioni di Comporre: dal grafo al piano | al passo 5, per intero |
 | [riferimenti/rivedere.md](riferimenti/rivedere.md) | le istruzioni di Rivedere: dalla tavola ai vincoli | al passo 7 |
 | [riferimenti/regole-del-piano.md](riferimenti/regole-del-piano.md) | le regole del disegno, con le fonti | quando un rilievo cita una regola |
-| `dati/` | simboli, catalogo e regole degli accessori — un file ciascuno —, nomi, cartiglio | li legge il comando; una voce e un manifesto si leggono con `catalogo <id>` e `simbolo <id>` |
+| [riferimenti/distinta.md](riferimenti/distinta.md) | la distinta materiali per l'installatore | solo se il progettista la chiede |
+| [riferimenti/pianta.md](riferimenti/pianta.md) | la pianta dei posizionamenti e dei tracciati | solo se il progettista la chiede |
+| `dati/` | simboli, catalogo, regole degli accessori e della distinta — un file ciascuno —, nomi, cartiglio, lo schema e un esempio della pianta | li legge il comando; una voce e un manifesto si leggono con `catalogo <id>` e `simbolo <id>` |
 | `scripts/mep.py` | il comando | si esegue, non si legge |
 
 ## Quando il comando si ferma
