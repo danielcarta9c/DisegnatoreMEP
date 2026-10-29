@@ -176,7 +176,7 @@
           "um": "n",
           "calcolo": {"tipo": "per_pezzo", "n": 1},
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.4 (bocchette del committente nell'offerta del caso)",
-          "perche": "Chi fornisce le bocchette lo dice l'offerta: nel kit sono del committente. Se le fornisce l'installatore, il progettista scrive `fornitura: installatore` sul pezzo."
+          "perche": "Chi fornisce le bocchette lo dice l'offerta: nel kit sono del committente. Se le fornisce l'installatore, si cambia la fornitura di questa voce, qui: la distinta non legge la fornitura dal grafo."
         },
         {
           "id": "griglia-di-transito",
