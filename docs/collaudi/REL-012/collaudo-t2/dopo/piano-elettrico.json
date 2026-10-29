@@ -1,0 +1,25 @@
+{
+ "formato": "A3",
+ "vista": "elettrico",
+ "note": [
+  "Ricomposto dopo le correzioni del collaudo T2: i circolatori di zona hanno due cavi, l'alimentazione dal quadro sopra e il comando dal regolatore sotto. Nessun cavo ne incrocia un altro.",
+  "Regolatore in basso al centro: alimentazione e bus a sinistra, verso quadro e pompa di calore; comandi a destra; sonde sotto, dove non passa nessun altro cavo.",
+  "Quadro in alto a sinistra, piu' in alto del regolatore: i cavi dei circolatori di zona passano sopra il regolatore e scendono sul loro circolatore; l'alimentazione del regolatore scende e ci entra da sinistra.",
+  "Pompa di calore specchiata a sinistra del quadro: l'alimentazione (a destra del bus) va al fianco sinistro del quadro col sezionatore in mezzo, il bus scende dritto fuori da tutto e sotto il quadro arriva al regolatore. Bus fuori, alimentazione del regolatore dentro: non si incrociano.",
+  "Valvole in scala a destra del regolatore, girate col comando verso di lui; i circolatori di zona piu' a destra, sopra la quota del loro comando.",
+  "Il circolatore del ricircolo sopra il quadro, sull'asse della sua uscita."
+ ],
+ "pezzi": {
+  "pdc": {"x": -25, "y": -25, "specchio": true, "regola": "alimentazione a destra del bus, verso il quadro"},
+  "quadro": {"x": 30, "y": 20},
+  "regolatore": {"x": 80, "y": 50},
+  "circ-ricircolo": {"x": 32.5, "y": 0, "rotazione": 180, "regola": "alimentazione sull'asse dell'uscita 1"},
+  "miscelatrice": {"x": 120, "y": 52.5, "rotazione": 270, "regola": "comando sull'asse dell'uscita 1"},
+  "deviatrice": {"x": 135, "y": 62.5, "rotazione": 270, "regola": "comando sull'asse dell'uscita 2"},
+  "circ-pannelli": {"x": 155, "y": 35, "regola": "alimentazione da sopra, comando da sotto"},
+  "circ-radiatori": {"x": 170, "y": 35, "regola": "alimentazione da sopra, comando da sotto"},
+  "sonda-esterna": {"x": 70, "y": 102.5},
+  "sonda-pannelli": {"x": 92.5, "y": 102.5},
+  "sonda-bollitore": {"x": 107.5, "y": 102.5}
+ }
+}
