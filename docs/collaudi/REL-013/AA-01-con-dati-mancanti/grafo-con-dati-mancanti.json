@@ -470,12 +470,12 @@
    "id": "e-1a",
    "network_id": "alimentazione-ue",
    "endpoint_a": {
-    "component_id": "ue",
-    "port_id": "power"
-   },
-   "endpoint_b": {
     "component_id": "sezionatore",
     "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "ue",
+    "port_id": "power"
    },
    "properties": {}
   },
@@ -483,12 +483,12 @@
    "id": "e-1b",
    "network_id": "alimentazione-ue",
    "endpoint_a": {
-    "component_id": "sezionatore",
-    "port_id": "a"
-   },
-   "endpoint_b": {
     "component_id": "quadro",
     "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "sezionatore",
+    "port_id": "a"
    },
    "properties": {
     "sezione": "3G2,5",

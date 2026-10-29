@@ -21,7 +21,7 @@ from typing import Any
 from .confezioni import in_confezioni
 from .grafo import Impianto, Pezzo, Tratta, leggi_impianto, numero, tratte_dell_impianto
 from .lunghezze import Minimo, da_quotare, in_parole, per_eccesso, quante_volte
-from .regole import RegoleDellaDistinta
+from .regole import Fornitura, RegoleDellaDistinta, la_fornitura
 
 DA_DEFINIRE = "DA DEFINIRE"
 
@@ -79,6 +79,10 @@ class Distinta:
     avvisi: list[str]
     note: list[str]
     domande_dei_tratti: list[str]
+    da_confermare: list[str] = field(default_factory=list)
+    """Le scelte che la distinta prende dalle regole predefinite e che il progettista
+    conferma per questa offerta (la fornitura): non sono DA DEFINIRE — le quantita'
+    ci sono —, ma non sono fatti."""
 
     def voci_della_sezione(self, lettera: str) -> list[Voce]:
         return [voce for voce in self.voci if voce.sezione == lettera]
@@ -130,8 +134,13 @@ def _unici(valori: Iterable[str | None]) -> list[str]:
 
 
 def _nome_del_tratto(distinta_parziale: "_Lavoro", tratta: Tratta) -> str:
-    chi = tratta.num or "+".join(t.id for t in tratta.tubazioni)
-    return f"{chi} ({tratta.rete.nome}: {distinta_parziale.da_a(tratta)})"
+    chi = f"{tratta.num} " if tratta.num else ""
+    return f"{chi}({tratta.rete.nome}: {distinta_parziale.da_a(tratta)})"
+
+
+def _in_parole_le_tubazioni(impianto: Impianto, tratta: Tratta, idents: Sequence[str]) -> str:
+    """Le tubazioni di un tratto dette coi loro capi, non coi loro id."""
+    return ", ".join(impianto.tubazione_in_parole(t) for t in tratta.tubazioni if t.id in idents)
 
 
 @dataclass
@@ -143,6 +152,7 @@ class _Lavoro:
     tratte: list[Tratta]
     nomi_del_catalogo: Mapping[str, str]
     nomi_dei_fluidi: Mapping[str, str]
+    fornitura: Fornitura
     voci: list[Voce] = field(default_factory=list)
     avvisi: list[str] = field(default_factory=list)
     domande_dei_tratti: list[str] = field(default_factory=list)
@@ -164,13 +174,15 @@ class _Lavoro:
 
     @property
     def fornitura_installatore(self) -> str:
-        return str(self.regole.distinta.get("fornitura_installatore", "installatore"))
+        return self.fornitura.installatore
 
-    def fornitura(self, voce: Mapping[str, Any]) -> str:
-        chi = voce.get("fornitura")
-        if chi == "committente":
-            return str(self.regole.distinta.get("fornitura_committente", "committente"))
-        return self.fornitura_installatore
+    def sezione_e_fornitura(self, voce: Mapping[str, Any]) -> tuple[str, str]:
+        """La sezione della voce e chi la fornisce: la `fornitura` della regola e' una
+        scelta dell'offerta (`apparecchiature`, `bocchette_e_griglie`, …, in
+        `distinta.json`), «committente», o niente (l'installatore). Una voce del
+        Committente che l'offerta da' all'installatore passa nella sezione che la
+        scelta dice, e si quota."""
+        return self.fornitura.sezione_e_chi(str(voce["sezione"]), voce.get("fornitura"))
 
 
 # --- le lunghezze --------------------------------------------------------------
@@ -217,7 +229,8 @@ def _lunghezze(lavoro: _Lavoro) -> None:
         nome = _nome_del_tratto(lavoro, tratta)
         if tratta.illeggibili:
             lavoro.domande_dei_tratti.append(
-                f"{nome}: la lunghezza di {', '.join(tratta.illeggibili)} non e' un numero."
+                f"{nome}: la lunghezza di {_in_parole_le_tubazioni(lavoro.impianto, tratta, tratta.illeggibili)} "
+                "non e' un numero."
             )
         if tratta.diretta:
             continue
@@ -229,7 +242,8 @@ def _lunghezze(lavoro: _Lavoro) -> None:
             continue
         if tratta.senza_lunghezza:
             lavoro.avvisi.append(
-                f"{nome}: {', '.join(tratta.senza_lunghezza)} senza lunghezza; si considera compresa nei "
+                f"{nome}: {_in_parole_le_tubazioni(lavoro.impianto, tratta, tratta.senza_lunghezza)} senza "
+                "lunghezza; si considera compresa nei "
                 f"{in_parole(tratta.lunghezza_m)} m dati sul tratto."
             )
         if tratta.fluido not in segue:
@@ -314,14 +328,15 @@ def _voce_del_fluido(
                 )
             else:
                 domande.append(f"{', '.join(nomi)}: manca il dato «{mancante}» per «{testo}».")
+        sezione, fornitura = lavoro.sezione_e_fornitura(voce)
         return Voce(
-            sezione=str(voce["sezione"]),
+            sezione=sezione,
             testo=testo,
             um=str(voce["um"]),
             quantita=quantita,
-            fornitura=lavoro.fornitura(voce),
+            fornitura=fornitura,
             regola=ident,
-            fonte=str(voce["fonte"]),
+            fonte=str(voce["fonte_in_parole"]),
             perche=str(voce["perche"]),
             calcolo=conto,
             note=note,
@@ -329,14 +344,18 @@ def _voce_del_fluido(
             domande=domande,
         )
 
-    senza_lunghezza = [t.num for t in gruppo if t.da_quotare_m is None]
+    senza_lunghezza = [t for t in gruppo if t.da_quotare_m is None]
     if tipo in CALCOLI_CON_LA_LUNGHEZZA and senza_lunghezza:
-        return [
-            una_voce(
-                None,
-                f"manca la lunghezza di {', '.join(senza_lunghezza)}",
-            )
-        ]
+        quali = ", ".join(t.num for t in senza_lunghezza)
+        if len(senza_lunghezza) == len(gruppo):
+            return [una_voce(None, f"manca la lunghezza di {quali}", f"lunghezza di {quali} {DA_DEFINIRE}")]
+        # Collaudo REL-012 t1, §2.4.1: una lunghezza che manca non cancella quelle date.
+        # La parte nota si conta, e quella che manca e' una riga sua, DA DEFINIRE.
+        noti = [t for t in gruppo if t.da_quotare_m is not None]
+        mancante = _voce_del_fluido(lavoro, fluido, regola_del_fluido, voce, senza_lunghezza)
+        for riga in mancante:
+            riga.calcolo += f"; la parte nota ({', '.join(t.num for t in noti)}) e' nella riga sopra"
+        return [*_voce_del_fluido(lavoro, fluido, regola_del_fluido, voce, noti), *mancante]
     lunghe = [(t.num, t.da_quotare_m or 0.0) for t in gruppo]
     totale = sum(q for _, q in lunghe)
 
@@ -356,15 +375,16 @@ def _voce_del_fluido(
         )
         voci = [una_voce(float(esito.numero), esito.calcolo, note)]
         if esito.giunte:
+            sezione, fornitura = lavoro.sezione_e_fornitura(voce)
             voci.append(
                 Voce(
-                    sezione=str(voce["sezione"]),
+                    sezione=sezione,
                     testo=riempi("Manicotto di giunzione {sezione} per i tratti piu' lunghi di una confezione", valori)[0],
                     um="n",
                     quantita=float(esito.giunte),
-                    fornitura=lavoro.fornitura(voce),
+                    fornitura=fornitura,
                     regola=ident,
-                    fonte=str(voce["fonte"]),
+                    fonte=str(voce["fonte_in_parole"]),
                     perche="Un tratto piu' lungo della parte utile di una confezione si giunta: una giunta, un manicotto.",
                     calcolo=f"{esito.giunte} giunte",
                 )
@@ -423,7 +443,7 @@ def _voce_del_fluido(
             lavoro.avvisi.append(
                 f"{', '.join(assunti)} ({lavoro.nome_del_fluido(fluido)}): attraversamenti di parete non dati, "
                 f"assunti {in_parole(float(regola_del_fluido.get('attraversamenti_se_mancano', 0)))} per tratto "
-                f"({regola_del_fluido.get('fonte_attraversamenti')})."
+                f"({regola_del_fluido.get('fonte_attraversamenti_in_parole')})."
             )
         return [una_voce(sum(q for _, q in parti), _elenco(parti), note)]
     if tipo == "proprieta":
@@ -461,9 +481,16 @@ def _voce_del_fluido(
                 voce_mancante = una_voce(
                     None, "mancano i dati di macchina", extra={"refrigerante": refrigerante}
                 )
+                # Collaudo REL-012 t1, §2.4.3: si chiede solo quello che manca. Il
+                # refrigerante dato (la voce lo scrive gia', «R32») non si richiede.
+                mancano = [
+                    f"`{d}`" for d in dati if proprieta.get(d) in (None, "") or (d != "refrigerante" and numero(proprieta.get(d)) is None)
+                ]
+                elenco = mancano[0] if len(mancano) == 1 else f"{', '.join(mancano[:-1])} e {mancano[-1]}"
+                verbo = "serve" if len(mancano) == 1 else "servono"
                 voce_mancante.domande.append(
-                    f"{tratta.num}: su {chi} servono `precarica_fino_a_m`, `carica_aggiuntiva_g_m` e "
-                    "`refrigerante` (dati di macchina del progettista) per la riserva di refrigerante."
+                    f"{tratta.num}: su {chi} {verbo} {elenco} (dati di macchina del progettista) per la riserva "
+                    "di refrigerante."
                 )
                 voci.append(voce_mancante)
                 continue
@@ -500,27 +527,32 @@ def _voci_dei_fluidi(lavoro: _Lavoro) -> None:
     for fluido, tratte in senza_regola.items():
         for gruppo in _gruppi(tratte, "sezione"):
             sezione = gruppo[0].sezione or f"{DA_DEFINIRE} (sezione)"
-            lunghezze = [t.da_quotare_m for t in gruppo]
-            quantita = sum(q for q in lunghezze if q is not None) if all(q is not None for q in lunghezze) else None
-            lavoro.voci.append(
-                Voce(
-                    sezione="X",
-                    testo=f"Linea di {lavoro.nome_del_fluido(fluido)} {sezione}: materiale, corredo e accessori {DA_DEFINIRE}",
-                    um="m",
-                    quantita=quantita,
-                    fornitura=DA_DEFINIRE,
-                    regola=f"fluidi/{fluido} (manca)",
-                    fonte="nessuna: il fluido non ha regole in rules/distinta/fluidi.json",
-                    perche="Senza regola la distinta non inventa materiale e accessori: quota la lunghezza, se c'e', e chiede.",
-                    calcolo=_elenco([(t.num, t.da_quotare_m or 0) for t in gruppo], " m") if quantita is not None else "manca la lunghezza",
-                    note=", ".join(t.num for t in gruppo),
-                    da_definire=True,
-                    domande=[
-                        f"Il fluido «{lavoro.nome_del_fluido(fluido)}» ({fluido}) non ha regole di distinta: materiale, "
-                        "corredo e accessori a metro sono da scrivere in rules/distinta/fluidi.json."
-                    ],
+            noti = [t for t in gruppo if t.da_quotare_m is not None]
+            ignoti = [t for t in gruppo if t.da_quotare_m is None]
+            for parte, quantita in ((noti, sum(t.da_quotare_m or 0 for t in noti)), (ignoti, None)):
+                if not parte:
+                    continue
+                lavoro.voci.append(
+                    Voce(
+                        sezione="X",
+                        testo=f"Linea di {lavoro.nome_del_fluido(fluido)} {sezione}: materiale, corredo e accessori {DA_DEFINIRE}",
+                        um="m",
+                        quantita=quantita,
+                        fornitura=DA_DEFINIRE,
+                        regola=f"fluidi/{fluido} (manca)",
+                        fonte="nessuna: la distinta non ha regole per questo fluido",
+                        perche="Senza regola la distinta non inventa materiale e accessori: quota la lunghezza, se c'e', e chiede.",
+                        calcolo=_elenco([(t.num, t.da_quotare_m or 0) for t in parte], " m")
+                        if quantita is not None
+                        else f"manca la lunghezza di {', '.join(t.num for t in parte)}",
+                        note=", ".join(t.num for t in parte),
+                        da_definire=True,
+                        domande=[
+                            f"Il fluido «{lavoro.nome_del_fluido(fluido)}» non ha regole di distinta: materiale, "
+                            "corredo e accessori a metro sono da scrivere nelle regole della distinta (fluidi)."
+                        ],
+                    )
                 )
-            )
 
 
 # --- il corredo dei pezzi --------------------------------------------------------
@@ -531,6 +563,66 @@ def _sezione_al_pezzo(lavoro: _Lavoro, pezzo: str) -> str | None:
         if pezzo in tratta.pezzi and tratta.sezione:
             return tratta.sezione
     return None
+
+
+@dataclass
+class _Locale:
+    """Un locale servito dalle bocchette: quello che conta per le griglie di transito."""
+
+    nome: str
+    pezzi: list[Pezzo]
+    varco: bool
+    """Il progettista ha dichiarato un varco aperto verso la ripresa: niente griglia."""
+    dall_etichetta: bool
+    """Il nome viene dall'etichetta della bocchetta, non dal dato `locale`."""
+
+
+NON_E_UN_VARCO = frozenset({"", "no", "false", "0", "falso"})
+
+
+def _ha_un_varco(pezzo: Pezzo) -> bool:
+    valore = pezzo.proprieta.get("varco")
+    if valore is None or valore is False:
+        return False
+    return str(valore).strip().casefold() not in NON_E_UN_VARCO
+
+
+def _locale_della_bocchetta(pezzo: Pezzo) -> tuple[str, bool] | None:
+    """Il locale che la bocchetta serve: il dato `locale`, o la sua etichetta senza le
+    parentesi e senza la sua sigla in testa («B4 · Soggiorno-cucina» → «Soggiorno-cucina»,
+    «Z3 Soggiorno (veletta)» → «Z3 Soggiorno»). `None` se non c'e' ne' l'uno ne' l'altra."""
+    locale = pezzo.proprieta.get("locale")
+    if isinstance(locale, str) and locale.strip():
+        return " ".join(locale.split()), False
+    etichetta = pezzo.proprieta.get("etichetta")
+    if not isinstance(etichetta, str) or not etichetta.strip():
+        return None
+    testo = re.sub(r"\([^)]*\)", " ", etichetta)
+    senza_sigla = re.sub(rf"^\s*{re.escape(pezzo.sigla)}\s*[·:\-–]\s*", "", testo)
+    if senza_sigla.strip() and senza_sigla != testo:
+        testo = senza_sigla
+    testo = " ".join(testo.split()).strip(" ,;·-–")
+    return (testo, True) if testo else None
+
+
+def _locali_serviti(lavoro: _Lavoro, voce: str) -> tuple[list[_Locale], list[Pezzo]]:
+    """I locali serviti dai pezzi di una voce di catalogo (le bocchette), nell'ordine del
+    grafo: due bocchette dello stesso locale sono un locale (collaudo REL-012 t1, §2.4.2).
+    Restituisce anche le bocchette di cui non si sa il locale."""
+    locali: dict[str, _Locale] = {}
+    senza: list[Pezzo] = []
+    for pezzo in lavoro.impianto.pezzi.values():
+        if pezzo.voce != voce:
+            continue
+        trovato = _locale_della_bocchetta(pezzo)
+        if trovato is None:
+            senza.append(pezzo)
+            continue
+        nome, dall_etichetta = trovato
+        locale = locali.setdefault(nome.casefold(), _Locale(nome, [], False, dall_etichetta))
+        locale.pezzi.append(pezzo)
+        locale.varco = locale.varco or _ha_un_varco(pezzo)
+    return list(locali.values()), senza
 
 
 def _apparecchiature(lavoro: _Lavoro) -> None:
@@ -573,11 +665,11 @@ def _apparecchiature(lavoro: _Lavoro) -> None:
                 testo=f"{nome}: {f'{marca} {modello}'.strip()}" if not senza else f"{nome}: marca e modello {DA_DEFINIRE}",
                 um="n",
                 quantita=float(len(pezzi)),
-                fornitura=str(lavoro.regole.distinta.get("fornitura_apparecchiature", "Nove C")),
+                fornitura=lavoro.fornitura.valori["apparecchiature"],
                 regola=f"corredo/{voce}/apparecchiatura",
-                fonte=str(corredo["fonte"]),
+                fonte=str(corredo["fonte_in_parole"]),
                 perche=str(corredo["perche"]),
-                calcolo=f"{len(pezzi)} nel grafo ({sigle})",
+                calcolo=f"{len(pezzi)} nello schema ({sigle})",
                 note="; ".join([sigle, *note]),
                 da_definire=senza,
                 domande=[f"{sigle} ({nome}): marca e modello li da' il progettista (D-190)."] if senza else [],
@@ -587,6 +679,8 @@ def _apparecchiature(lavoro: _Lavoro) -> None:
 
 def _corredo(lavoro: _Lavoro) -> None:
     righe: dict[tuple[str, str, str, str], Voce] = {}
+    per_locale: dict[int, tuple[list[_Locale], list[Pezzo]]] = {}
+    """Le righe contate per locale, con i locali e le bocchette senza locale."""
     senza_corredo: dict[str, list[Pezzo]] = {}
     for pezzo in lavoro.impianto.pezzi.values():
         corredo = lavoro.regole.corredo.get(pezzo.voce)
@@ -599,17 +693,29 @@ def _corredo(lavoro: _Lavoro) -> None:
         for voce in corredo.get("voci", []):
             calcolo = voce["calcolo"]
             n = float(calcolo["n"])
+            chi = pezzo.sigla
+            senza_locale = False
             if calcolo["tipo"] == "per_linea":
                 linee = [
                     t for t in lavoro.tratte if t.fluido == calcolo["fluido"] and not t.diretta and pezzo.id in t.capi
                 ]
                 quantita = n * len(linee)
+            elif calcolo["tipo"] == "per_locale":
+                locali, _ = _locali_serviti(lavoro, pezzo.voce)
+                suo = next((locale for locale in locali if pezzo in locale.pezzi), None)
+                if suo is None:
+                    quantita, senza_locale = n, True
+                elif suo.pezzi[0] is pezzo and not suo.varco:
+                    quantita, chi = n, suo.nome
+                else:
+                    quantita = 0.0
             else:
                 quantita = n
             if not quantita:
                 continue
             testo, mancanti = riempi(str(voce["testo"]), valori)
-            chiave = (str(voce["sezione"]), testo, str(voce["um"]), lavoro.fornitura(voce))
+            sezione, fornitura = lavoro.sezione_e_fornitura(voce)
+            chiave = (sezione, testo, str(voce["um"]), fornitura)
             riga = righe.get(chiave)
             if riga is None:
                 riga = Voce(
@@ -619,7 +725,7 @@ def _corredo(lavoro: _Lavoro) -> None:
                     quantita=0.0,
                     fornitura=chiave[3],
                     regola=f"corredo/{pezzo.voce}/{voce['id']}",
-                    fonte=str(voce["fonte"]),
+                    fonte=str(voce["fonte_in_parole"]),
                     perche=str(voce["perche"]),
                     calcolo="",
                     da_definire=bool(mancanti),
@@ -628,14 +734,39 @@ def _corredo(lavoro: _Lavoro) -> None:
                 lavoro.voci.append(riga)
             elif f"corredo/{pezzo.voce}/{voce['id']}" not in riga.regola.split(" + "):
                 riga.regola += f" + corredo/{pezzo.voce}/{voce['id']}"
-                if str(voce["fonte"]) not in riga.fonte:
-                    riga.fonte += f" | {voce['fonte']}"
+                if str(voce["fonte_in_parole"]) not in riga.fonte:
+                    riga.fonte += f"; {voce['fonte_in_parole']}"
+            if calcolo["tipo"] == "per_locale":
+                per_locale[id(riga)] = _locali_serviti(lavoro, pezzo.voce)
             riga.quantita = (riga.quantita or 0) + quantita
-            riga.contributi.append((pezzo.sigla, quantita))
+            riga.contributi.append((chi, quantita))
             for mancante in mancanti:
                 domanda = f"{pezzo.sigla} ({lavoro.nome_della_voce(pezzo.voce)}): manca il dato «{mancante}» per «{testo}»."
                 riga.domande.append(domanda)
+            if senza_locale:
+                riga.da_definire = True
+                riga.domande.append(
+                    f"{pezzo.sigla} ({lavoro.nome_della_voce(pezzo.voce)}): che locale serve? Serve `locale` sulla "
+                    "bocchetta (o un'etichetta col nome del locale): le griglie di transito si contano per locale, "
+                    "e intanto questa bocchetta ne conta una sua."
+                )
     for riga in righe.values():
+        if id(riga) in per_locale:
+            locali, senza = per_locale[id(riga)]
+            contati = [locale for locale in locali if not locale.varco]
+            parti_del_conto = [f"{len(contati)} locali serviti ({', '.join(locale.nome for locale in contati)})"]
+            if senza:
+                parti_del_conto.append(
+                    f"{len(senza)} bocchette senza locale, una ciascuna ({', '.join(p.sigla for p in senza)})"
+                )
+            con_varco = [locale.nome for locale in locali if locale.varco]
+            if con_varco:
+                parti_del_conto.append(f"nessuna dove il locale ha un varco: {', '.join(con_varco)}")
+            if any(locale.dall_etichetta for locale in locali):
+                parti_del_conto.append("il locale e' letto dall'etichetta della bocchetta")
+            riga.calcolo = f"{in_parole(riga.quantita or 0)}: " + "; ".join(parti_del_conto)
+            riga.note = ", ".join(s for s, _ in riga.contributi)
+            continue
         parti = riga.contributi
         distinte = {q for _, q in parti}
         sigle = ", ".join(s for s, _ in parti)
@@ -655,19 +786,19 @@ def _corredo(lavoro: _Lavoro) -> None:
         lavoro.voci.append(
             Voce(
                 sezione="X",
-                testo=f"{nome} ({voce}): fornitura e corredo di posa {DA_DEFINIRE}",
+                testo=f"{nome}: fornitura e corredo di posa {DA_DEFINIRE}",
                 um="n",
                 quantita=float(len(pezzi)),
                 fornitura=DA_DEFINIRE,
                 regola=f"corredo/{voce} (manca)",
-                fonte="nessuna: la voce di catalogo non ha corredo in rules/distinta/corredo.json",
+                fonte="nessuna: la distinta non ha il corredo di questo pezzo",
                 perche="Senza regola la distinta non inventa il corredo: conta i pezzi del grafo e chiede.",
-                calcolo=f"{len(pezzi)} nel grafo ({sigle})",
+                calcolo=f"{len(pezzi)} nello schema ({sigle})",
                 note=sigle,
                 da_definire=True,
                 domande=[
-                    f"La voce di catalogo «{voce}» ({nome}) non ha corredo di posa: chi la fornisce e che cosa porta "
-                    "con se'? Si scrive in rules/distinta/corredo.json."
+                    f"«{nome}» ({sigle}) non ha corredo di posa nelle regole della distinta: chi lo fornisce e che "
+                    "cosa porta con se'? Si scrive nelle regole della distinta (corredo)."
                 ],
             )
         )
@@ -678,7 +809,7 @@ def _corredo(lavoro: _Lavoro) -> None:
 
 def _attivita(lavoro: _Lavoro) -> None:
     fluidi_presenti = {t.fluido for t in lavoro.tratte}
-    valori: dict[str, Any] = {}
+    valori: dict[str, Any] = {f"fornitura.{s}": lavoro.fornitura.testo(s) for s in lavoro.fornitura.scelte}
     for pezzo in lavoro.impianto.pezzi.values():
         valori[f"conta.{pezzo.voce}"] = str(lavoro.impianto.conta(pezzo.voce))
     for fluido in fluidi_presenti:
@@ -687,25 +818,28 @@ def _attivita(lavoro: _Lavoro) -> None:
         se = voce["se"]
         if "voci" in se:
             presenti = [v for v in se["voci"] if lavoro.impianto.conta(v)]
-            vera, perche_vera = bool(presenti), f"nel grafo: {', '.join(presenti)}"
+            vera = bool(presenti)
+            perche_vera = f"nell'impianto: {', '.join(lavoro.nome_della_voce(v) for v in presenti)}"
         elif "fluidi" in se:
             presenti = [f for f in se["fluidi"] if f in fluidi_presenti]
-            vera, perche_vera = bool(presenti), f"nel grafo: {', '.join(presenti)}"
+            vera = bool(presenti)
+            perche_vera = f"nell'impianto: {', '.join(lavoro.nome_del_fluido(f) for f in presenti)}"
         else:
             vera, perche_vera = bool(se["sempre"]), "sempre"
         if not vera:
             continue
         testo, mancanti = riempi(str(voce["testo"]), valori)
         variante = voce["sezione"] == "V"
+        sezione, fornitura = lavoro.sezione_e_fornitura(voce)
         lavoro.voci.append(
             Voce(
-                sezione=str(voce["sezione"]),
+                sezione=sezione,
                 testo=testo,
                 um=str(voce["um"]),
                 quantita=None if variante else 1.0,
-                fornitura=lavoro.fornitura(voce),
+                fornitura=fornitura,
                 regola=f"attivita/{voce['id']}",
-                fonte=str(voce["fonte"]),
+                fonte=str(voce["fonte_in_parole"]),
                 perche=str(voce["perche"]),
                 calcolo=perche_vera + ("; solo prezzo unitario" if variante else ""),
                 da_definire=bool(mancanti),
@@ -746,7 +880,7 @@ def _verifica(lavoro: _Lavoro) -> tuple[list[EsitoDellaVerifica], dict[str, str]
         if portata is None or area is None:
             manca = "la portata (`portata_m3h`)" if portata is None else "una sezione che si legge (Ø o lati)"
             esiti.append(
-                EsitoDellaVerifica(tratta.num, "velocità", f"manca {manca}", f"≤ {in_parole(massima)} m/s", "non verificabile", str(soglia["fonte"]))
+                EsitoDellaVerifica(tratta.num, "velocità", f"manca {manca}", f"≤ {in_parole(massima)} m/s", "non verificabile", str(soglia["fonte_in_parole"]))
             )
             continue
         velocita = portata / 3600 / area
@@ -757,7 +891,7 @@ def _verifica(lavoro: _Lavoro) -> tuple[list[EsitoDellaVerifica], dict[str, str]
                 f"{in_parole(portata)} m³/h su {tratta.sezione}: {in_parole(velocita)} m/s",
                 f"≤ {in_parole(massima)} m/s",
                 "entro" if velocita <= massima + 1e-9 else "oltre",
-                str(soglia["fonte"]),
+                str(soglia["fonte_in_parole"]),
                 misura=velocita,
             )
         )
@@ -765,23 +899,31 @@ def _verifica(lavoro: _Lavoro) -> tuple[list[EsitoDellaVerifica], dict[str, str]
     transito = regole.get("transito", {})
     if transito.get("velocita_m_s"):
         v_transito = float(transito["velocita_m_s"])
-        for pezzo in lavoro.impianto.pezzi.values():
-            if pezzo.voce != "air-supply-terminal":
-                continue
+
+        def portata_della_bocchetta(pezzo: Pezzo) -> float | None:
             tratte = [t for t in lavoro.tratte if pezzo.id in t.capi and numero(t.dato("portata_m3h")) is not None]
-            if not tratte:
+            return numero(tratte[0].dato("portata_m3h")) if tratte else None
+
+        # Per locale servito, con la portata di tutte le sue bocchette (§2.4.2); una
+        # bocchetta di cui non si sa il locale fa locale da se'.
+        locali, senza = _locali_serviti(lavoro, "air-supply-terminal")
+        gruppi = [(locale.nome, locale.pezzi, locale.varco) for locale in locali]
+        gruppi += [(pezzo.sigla, [pezzo], False) for pezzo in senza]
+        for nome, pezzi, varco in gruppi:
+            portate = [q for q in (portata_della_bocchetta(p) for p in pezzi) if q is not None]
+            if not portate:
                 continue
-            portata = numero(tratte[0].dato("portata_m3h")) or 0
+            portata = sum(portate)
             area = math.ceil(portata / 3600 / v_transito * 1000 - 1e-9) / 1000
-            aree_di_transito[pezzo.sigla] = f"{in_parole(area, 3)} m²"
+            aree_di_transito[nome] = f"{in_parole(area, 3)} m²"
             esiti.append(
                 EsitoDellaVerifica(
-                    pezzo.sigla,
-                    "griglia di transito",
+                    nome,
+                    "varco verso la ripresa" if varco else "griglia di transito",
                     f"{in_parole(portata)} m³/h a {in_parole(v_transito)} m/s",
                     f"Aeff ≥ {in_parole(area, 3)} m²",
                     "da rispettare",
-                    str(transito["fonte"]),
+                    str(transito["fonte_in_parole"]),
                 )
             )
     for tratta in lavoro.tratte:
@@ -798,7 +940,7 @@ def _verifica(lavoro: _Lavoro) -> tuple[list[EsitoDellaVerifica], dict[str, str]
                 f"{in_parole(tratta.da_quotare_m)} m da quotare",
                 f"≤ {in_parole(massima_m)} m ({macchina.sigla})",
                 "entro" if tratta.da_quotare_m <= massima_m else "oltre",
-                str(regole["linea_frigorifera"]["fonte"]),
+                str(regole["linea_frigorifera"]["fonte_in_parole"]),
             )
         )
     for tratta in lavoro.tratte:
@@ -815,7 +957,7 @@ def _verifica(lavoro: _Lavoro) -> tuple[list[EsitoDellaVerifica], dict[str, str]
                 f"«{scritta}»",
                 f"L {in_parole(tratta.da_quotare_m)} m da quotare",
                 "entro" if uguale else "oltre",
-                str(regole["scritta"]["fonte"]),
+                str(regole["scritta"]["fonte_in_parole"]),
             )
         )
     for esito in esiti:
@@ -857,6 +999,7 @@ def _note(lavoro: _Lavoro, esiti: Sequence[EsitoDellaVerifica]) -> list[str]:
                 f"Velocità nei tratti di {lavoro.nome_del_fluido(fluido)} {campo} m/s, sulla sezione lorda, dalle "
                 "portate e dalle sezioni del progettista (verifica: segnala, non corregge)."
             )
+    note.append(lavoro.fornitura.nota())
     note.append(
         "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del "
         "progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte "
@@ -868,15 +1011,57 @@ def _note(lavoro: _Lavoro, esiti: Sequence[EsitoDellaVerifica]) -> list[str]:
 # --- tutto insieme ---------------------------------------------------------------
 
 
+NON_DATO = "ND"
+"""Come «Capire» scrive un dato del cartiglio che il progettista non ha dato: per la
+distinta, come per il cartiglio della tavola, e' un dato che manca."""
+
+CAMPI_DEL_PROGETTO = (
+    "client",
+    "address",
+    "project_name",
+    "commission_code",
+    "revision",
+    "issue_date",
+    "sheet_number",
+    "sheet_title",
+)
+
+
+def _dato_del_cartiglio(valore: object) -> str | None:
+    """Il valore come lo legge il cartiglio della tavola: vuoto o «ND» non e' un dato."""
+    if valore is None or isinstance(valore, bool):
+        return None
+    testo = str(valore).strip()
+    return None if not testo or testo.upper() == NON_DATO else testo
+
+
+def _progetto(grafo: Mapping[str, Any], metadati: Mapping[str, Any]) -> dict[str, str]:
+    progetto = {c: v for c in CAMPI_DEL_PROGETTO if (v := _dato_del_cartiglio(metadati.get(c))) is not None}
+    if "sheet_number" not in progetto:
+        numeri = [
+            n
+            for tavola in grafo.get("sheets") or []
+            if isinstance(tavola, Mapping) and (n := _dato_del_cartiglio(tavola.get("number"))) is not None
+        ]
+        if numeri:
+            progetto["sheet_number"] = ", ".join(numeri)
+    return progetto
+
+
 def componi_la_distinta(
     grafo: Mapping[str, Any],
     regole: RegoleDellaDistinta,
     nomi_del_catalogo: Mapping[str, str] | None = None,
     nomi_dei_fluidi: Mapping[str, str] | None = None,
+    sigle: Mapping[str, str] | None = None,
+    fornitura: Fornitura | None = None,
 ) -> Distinta:
     """La distinta del grafo completo. `nomi_del_catalogo` e `nomi_dei_fluidi` danno i
-    nomi in parole; senza, valgono quelli del corredo e gli id."""
-    impianto = leggi_impianto(grafo)
+    nomi in parole; senza, valgono quelli del corredo e gli id dei fluidi. `sigle` sono
+    quelle dello schema (`grafo.sigle_dello_schema`): senza, valgono quelle scritte
+    dall'ingegnere e poi le etichette. `fornitura` e' la scelta dell'offerta: senza,
+    le predefinite delle regole, dichiarate da confermare."""
+    impianto = leggi_impianto(grafo, sigle, nomi_del_catalogo, nomi_dei_fluidi)
     passanti = [voce for voce, corredo in regole.corredo.items() if corredo.get("passante")]
     lavoro = _Lavoro(
         impianto=impianto,
@@ -884,6 +1069,7 @@ def componi_la_distinta(
         tratte=tratte_dell_impianto(impianto, passanti),
         nomi_del_catalogo=nomi_del_catalogo or {},
         nomi_dei_fluidi=nomi_dei_fluidi or {},
+        fornitura=fornitura or la_fornitura(regole),
     )
     if impianto.esclusi:
         lavoro.avvisi.append(f"Esistenti, fuori dalla distinta: {', '.join(impianto.esclusi)}.")
@@ -896,9 +1082,9 @@ def componi_la_distinta(
     esiti, aree_di_transito = _verifica(lavoro)
     for voce in lavoro.voci:
         if voce.regola.endswith("/griglia-di-transito") and aree_di_transito:
-            sigle = voce.note.split(", ") if voce.note else []
+            locali = [chi for chi, _ in voce.contributi]
             voce.note = "Aeff min.: " + ", ".join(
-                f"{s} {aree_di_transito[s]}" for s in sigle if s in aree_di_transito
+                f"{s} {aree_di_transito[s]}" for s in locali if s in aree_di_transito
             )
     ordine = {lettera: indice for indice, lettera in enumerate(regole.lettere)}
     posizione = {id(voce): indice for indice, voce in enumerate(lavoro.voci)}
@@ -907,19 +1093,7 @@ def componi_la_distinta(
     for voce in lavoro.voci:
         contatori[voce.sezione] = contatori.get(voce.sezione, 0) + 1
         voce.rif = f"{voce.sezione}.{contatori[voce.sezione]}"
-    metadati = impianto.metadati
-    progetto = {
-        chiave: metadati[chiave]
-        for chiave in (
-            "project_name",
-            "commission_code",
-            "revision",
-            "issue_date",
-            "sheet_number",
-            "sheet_title",
-        )
-        if metadati.get(chiave)
-    }
+    progetto = _progetto(grafo, impianto.metadati)
     return Distinta(
         progetto=progetto,
         regole=regole,
@@ -931,5 +1105,6 @@ def componi_la_distinta(
         avvisi=lavoro.avvisi,
         note=_note(lavoro, esiti),
         domande_dei_tratti=lavoro.domande_dei_tratti,
+        da_confermare=[] if lavoro.fornitura.confermata else [lavoro.fornitura.in_parole()],
     )
 

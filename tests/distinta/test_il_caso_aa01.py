@@ -23,7 +23,7 @@ from disegnatore_mep.distinta.uscite import (
 )
 from disegnatore_mep.skill import cartelle_del_repository, main
 
-from .conftest import AA01, ROOT
+from .conftest import AA01, ROOT, sigle
 
 KIT: list[tuple[str, str, float]] = [
     # (rif del kit, la regola della distinta che la fa, quantita' del kit)
@@ -101,11 +101,22 @@ DIFFERENZE: dict[str, tuple[float, str]] = {
 }
 """Dove la distinta conta diversamente dal kit, e perche'. Tutte in su."""
 
+IN_GIU_DEL_COMMITTENTE: dict[str, tuple[float, str]] = {
+    "Z.6": (
+        4,
+        "griglie di transito per locale servito (collaudo REL-012 t1, §2.4.2): B4 e B5 sono nel soggiorno, che ne "
+        "vuole una; il kit ne contava una anche per la porta fra i due disimpegni, che non e' un locale servito e "
+        "che il grafo non conosce",
+    ),
+}
+"""Dove la distinta conta meno del kit: solo opere del Committente (sezione Z), escluse
+dall'offerta dell'installatore, quindi fuori dal criterio «meglio in su»."""
+
 
 @pytest.fixture(scope="module")
 def distinta(regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]) -> Distinta:
     grafo = json.loads(AA01.read_text(encoding="utf-8"))
-    return componi_la_distinta(grafo, regole, *nomi)
+    return componi_la_distinta(grafo, regole, *nomi, sigle(grafo))
 
 
 def _quantita(distinta: Distinta, chiave: str) -> float:
@@ -123,7 +134,7 @@ def _quantita(distinta: Distinta, chiave: str) -> float:
 
 @pytest.mark.parametrize(("rif", "regola", "nel_kit"), KIT, ids=[k[0] for k in KIT])
 def test_ogni_voce_del_kit_e_nella_distinta(distinta: Distinta, rif: str, regola: str, nel_kit: float) -> None:
-    attesa, _ = DIFFERENZE.get(rif, (nel_kit, ""))
+    attesa, _ = {**DIFFERENZE, **IN_GIU_DEL_COMMITTENTE}.get(rif, (nel_kit, ""))
     assert _quantita(distinta, regola) == pytest.approx(attesa), rif
 
 
@@ -131,6 +142,15 @@ def test_le_differenze_col_kit_sono_tutte_in_su() -> None:
     nel_kit = {rif: q for rif, _, q in KIT}
     for rif, (nostra, perche) in DIFFERENZE.items():
         assert nostra > nel_kit[rif], f"{rif}: {perche}"
+
+
+def test_quello_che_conta_meno_del_kit_e_solo_del_committente(distinta: Distinta) -> None:
+    nel_kit = {rif: (regola, q) for rif, regola, q in KIT}
+    for rif, (nostra, perche) in IN_GIU_DEL_COMMITTENTE.items():
+        regola, quanti = nel_kit[rif]
+        assert nostra < quanti, f"{rif}: {perche}"
+        voci = [v for v in distinta.voci if regola in v.regola.split(" + ")]
+        assert voci and all(v.sezione == "Z" and v.fornitura == "committente" for v in voci), rif
 
 
 def test_le_sezioni_e_il_numero_delle_voci(distinta: Distinta) -> None:
@@ -157,7 +177,7 @@ def test_le_tratte_sono_quelle_del_kit(distinta: Distinta) -> None:
         ("T06", "RA-01 - UI-01", None),
         ("T07", "UE-01 - UI-01", 12.0),
         ("T08", "UE-01 - UI-01", 12.0),
-        ("T09", "UI-01 - SIF-01 - scarico", 10.0),
+        ("T09", "UI-01 - SIF-01 - AL-01", 10.0),
         ("T10", "QE-01 - SZ-01 - UE-01", 20.0),
         ("T11", "QE-01 - CZ-01", 15.0),
         ("T12", "UE-01 - UI-01", 13.0),
@@ -177,7 +197,9 @@ def test_la_verifica_dell_aria_segnala_e_non_corregge(distinta: Distinta) -> Non
     assert velocita == {"T01": 2.39, "T02": 2.48, "T03": 1.86, "T04": 2.43, "T05": 2.43, "T06": 1.2}
     assert all(e.esito == "entro" for e in distinta.verifica if e.controllo == "velocità")
     transito = next(v for v in distinta.voci if v.regola.endswith("griglia-di-transito"))
-    assert transito.note == "Aeff min.: B1 0,05 m², B2 0,052 m², B3 0,039 m², B4 0,051 m², B5 0,051 m²"
+    assert transito.note == (
+        "Aeff min.: Camera 13 m² 0,05 m², Camera 15 m² 0,052 m², Camera 16 m² 0,039 m², Soggiorno-cucina 0,102 m²"
+    )
 
 
 def test_le_tabelle_del_foglio(distinta: Distinta) -> None:

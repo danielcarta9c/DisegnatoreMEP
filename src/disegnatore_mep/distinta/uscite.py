@@ -10,6 +10,12 @@
   nell'ambiente, `distinta.csv` al suo posto, e il comando lo dice;
 - `distinta-calcoli.md` — il foglio dei calcoli, accanto alla tavola (come per i
   diametri, D-191): ogni numero con il suo conto e la sua regola.
+
+**Niente codici interni nell'Excel e nelle tabelle del foglio** (collaudo REL-012 t1,
+§2.4.5-6): i pezzi si dicono con le sigle dello schema, le fonti con le parole di
+`fonte_in_parole`. Gli id delle regole restano nel JSON e nel foglio dei calcoli, che
+sono la traccia del conto. Dove il cartiglio non ha un dato, l'intestazione dice
+«DA DEFINIRE», come il cartiglio della tavola (§2.2.9).
 """
 
 import csv
@@ -29,6 +35,40 @@ FORMATO_DELLE_TABELLE = "disegnatore-mep/tabelle-del-foglio"
 VERSIONE_DEL_FORMATO = 1
 
 LETTERE_DI_ATTIVITA = ("G", "H", "V")
+
+TABELLE_DEL_FOGLIO = ("tratte", "computo", "attivita", "note")
+"""Le tabelle che la distinta scrive per il foglio, nell'ordine in cui le scrive. Il
+computo intero porta di solito la tavola in A1: con `--sul-foglio tratte,note` il
+foglio porta solo tratte e note, e il computo resta nell'Excel."""
+
+
+def tabelle_scelte(testo: str | None) -> tuple[str, ...]:
+    """Le tabelle dell'opzione `--sul-foglio` («tratte,note»), nell'ordine di sempre.
+    Un nome che non c'e' e' un errore che dice quali ci sono."""
+    if testo is None:
+        return TABELLE_DEL_FOGLIO
+    scelte = [parte.strip().replace("à", "a") for parte in testo.split(",") if parte.strip()]
+    ignote = [s for s in scelte if s not in TABELLE_DEL_FOGLIO]
+    if ignote or not scelte:
+        raise ValueError(
+            f"--sul-foglio: {', '.join(ignote) or 'nessuna tabella'}; le tabelle sono {', '.join(TABELLE_DEL_FOGLIO)}"
+        )
+    return tuple(nome for nome in TABELLE_DEL_FOGLIO if nome in scelte)
+
+
+def dato_o_da_definire(progetto: Mapping[str, Any], chiave: str) -> str:
+    """Un campo del cartiglio, o «DA DEFINIRE» come lo scrive la tavola (§2.2.9)."""
+    valore = progetto.get(chiave)
+    return str(valore) if valore else DA_DEFINIRE
+
+
+def data_del_cartiglio(progetto: Mapping[str, Any]) -> str:
+    """La data come la scrive il cartiglio: 29.10.2026."""
+    valore = str(progetto.get("issue_date") or "")
+    parti = valore.split("-")
+    if len(parti) == 3 and all(p.isdigit() for p in parti):
+        return f"{parti[2]}.{parti[1]}.{parti[0]}"
+    return valore or DA_DEFINIRE
 
 PER_IL_FOGLIO = (("≥ ", "min. "), ("≤ ", "max. "), ("≥", "min."), ("≤", "max."), ("→", "-"))
 """Il writer PDF del motore e' WinAnsi: «≥», «≤», «→» diventerebbero «?» (kit AA-01,
@@ -114,6 +154,7 @@ def distinta_in_json(distinta: Distinta) -> dict[str, Any]:
         "note": list(distinta.note),
         "avvisi": list(distinta.avvisi),
         "domande": distinta.domande,
+        "da_confermare": list(distinta.da_confermare),
     }
 
 
@@ -135,16 +176,16 @@ def _velocita(distinta: Distinta, num: str) -> str:
     return ""
 
 
-def tabelle_del_foglio(distinta: Distinta) -> dict[str, Any]:
+def tabelle_del_foglio(distinta: Distinta, sul_foglio: Sequence[str] = TABELLE_DEL_FOGLIO) -> dict[str, Any]:
     """I dati delle tabelle per la tavola, come le disegnava il kit AA-01 sulla M.02.
 
     Forma: `{"formato", "versione", "tabelle": [tabella, ...]}`; ogni tabella e'
     `{"id", "titolo", "colonne": [{"id", "titolo", "allinea": "sinistra"|"destra",
     "peso"}], "sezioni": [{"titolo": testo o null, "righe": [[cella, ...], ...]}]}`.
     Le celle sono testo gia' scritto (virgola decimale, niente «≥»: il writer PDF e'
-    WinAnsi); `peso` e' la larghezza relativa della colonna. Le tabelle sono quattro:
-    `tratte`, `computo` (le sezioni del foglio, da `sezioni_sul_foglio`), `attivita`
-    (G), `note`."""
+    WinAnsi); `peso` e' la larghezza relativa della colonna. Le tabelle sono al piu'
+    quattro: `tratte`, `computo` (le sezioni del foglio, da `sezioni_sul_foglio`),
+    `attivita` (G), `note`; `sul_foglio` dice quali (`--sul-foglio`)."""
     regole = distinta.regole
     tratte = {
         "id": "tratte",
@@ -178,7 +219,7 @@ def tabelle_del_foglio(distinta: Distinta) -> dict[str, Any]:
             }
         ],
     }
-    sul_foglio = [str(lettera) for lettera in regole.distinta.get("sezioni_sul_foglio", [])]
+    sezioni_del_foglio = [str(lettera) for lettera in regole.distinta.get("sezioni_sul_foglio", [])]
     computo = {
         "id": "computo",
         "titolo": "COMPUTO DELLE QUANTITÀ E DEI PEZZI SPECIALI — quantità indicative per il prezzo a corpo, da "
@@ -206,7 +247,7 @@ def tabelle_del_foglio(distinta: Distinta) -> dict[str, Any]:
                     for v in distinta.voci_della_sezione(lettera)
                 ],
             }
-            for lettera in sul_foglio
+            for lettera in sezioni_del_foglio
             if distinta.voci_della_sezione(lettera)
         ],
     }
@@ -225,7 +266,7 @@ def tabelle_del_foglio(distinta: Distinta) -> dict[str, Any]:
     return {
         "formato": FORMATO_DELLE_TABELLE,
         "versione": VERSIONE_DEL_FORMATO,
-        "tabelle": [tratte, computo, attivita, note],
+        "tabelle": [t for t in (tratte, computo, attivita, note) if t["id"] in sul_foglio],
     }
 
 
@@ -278,7 +319,6 @@ def scrivi_excel(distinta: Distinta, percorso: Path) -> None:
     regole = distinta.regole
     progetto = distinta.progetto
     installatore = str(regole.distinta.get("fornitura_installatore", "installatore"))
-    apparecchiature = str(regole.distinta.get("fornitura_apparecchiature", "Nove C"))
 
     libro = openpyxl.Workbook()
     foglio = libro.active
@@ -286,13 +326,15 @@ def scrivi_excel(distinta: Distinta, percorso: Path) -> None:
     foglio.sheet_view.showGridLines = False
     intestazione = [
         (
-            f"{progetto.get('commission_code', '')} — {progetto.get('project_name', '')} — Distinta materiali per "
-            "l'installatore".strip(" —"),
+            f"{dato_o_da_definire(progetto, 'commission_code')} — {dato_o_da_definire(progetto, 'project_name')} — "
+            "Distinta materiali per l'installatore",
             titolo,
         ),
         (
-            f"Allegata alla tavola {progetto.get('sheet_number', '-')}, rev. {progetto.get('revision', '-')} del "
-            f"{progetto.get('issue_date', '-')}. Regole della distinta {regole.impronta}. Quantità indicative.",
+            f"Committente: {dato_o_da_definire(progetto, 'client')}. Indirizzo: "
+            f"{dato_o_da_definire(progetto, 'address')}. Allegata alla tavola "
+            f"{dato_o_da_definire(progetto, 'sheet_number')}, rev. {dato_o_da_definire(progetto, 'revision')} del "
+            f"{data_del_cartiglio(progetto)}. Regole della distinta {regole.impronta}. Quantità indicative.",
             sottotitolo,
         ),
         *((riga, avviso) for riga in regole.distinta.get("intestazione", [])),
@@ -376,8 +418,10 @@ def scrivi_excel(distinta: Distinta, percorso: Path) -> None:
                 scrivi(valori, "quota")
             elif voce.fornitura == DA_DEFINIRE:
                 scrivi(valori, "no", "da definire")
+            elif voce.fornitura == "committente":
+                scrivi(valori, "no", "escluso")
             else:
-                scrivi(valori, "no", f"fornitura {apparecchiature}" if voce.fornitura == apparecchiature else "escluso")
+                scrivi(valori, "no", f"fornitura {voce.fornitura}")
     gruppo(f"G. {regole.titolo('G')}")
     for voce in distinta.voci_della_sezione("G"):
         scrivi([voce.rif, voce.testo, voce.um, quantita(voce), voce.fornitura, voce.note], "corpo")
@@ -454,16 +498,17 @@ def scrivi_excel(distinta: Distinta, percorso: Path) -> None:
     )
     tabella(
         "Regole",
-        "Da dove viene ogni quantità — la regola, il conto, la fonte, il perché",
-        [("Rif.", 7), ("Regola", 40), ("Conto", 60), ("Fonte", 60), ("Perché", 60)],
-        [[v.rif, v.regola, v.calcolo, v.fonte, v.perche] for v in distinta.voci],
+        "Da dove viene ogni quantità — la voce, il conto, la fonte, il perché",
+        [("Rif.", 7), ("Voce", 40), ("Conto", 60), ("Fonte", 40), ("Perché", 70)],
+        [[v.rif, v.testo, v.calcolo, v.fonte, v.perche] for v in distinta.voci],
     )
     tabella(
         "Note e domande",
-        "Note, domande al progettista e avvisi",
+        "Note, cose da confermare, domande al progettista e avvisi",
         [("", 14), ("", 130)],
         [
-            *(["Nota", n] for n in distinta.note),
+            *(["Nota", n] for n in distinta.note if n not in distinta.da_confermare),
+            *(["Da confermare", c] for c in distinta.da_confermare),
             *(["DA DEFINIRE", d] for d in distinta.domande),
             *(["Avviso", a] for a in distinta.avvisi),
         ],
@@ -476,7 +521,7 @@ def scrivi_csv(distinta: Distinta, percorso: Path) -> None:
     l'ambiente non ha openpyxl."""
     uscita = io.StringIO()
     scrittore = csv.writer(uscita, delimiter=";", lineterminator="\n")
-    scrittore.writerow(["Rif.", "Voce", "UM", "Q.tà", "Fornitura", "Note", "Regola", "Conto"])
+    scrittore.writerow(["Rif.", "Voce", "UM", "Q.tà", "Fornitura", "Note", "Conto", "Fonte"])
     for intestazione in distinta.regole.distinta.get("intestazione", []):
         scrittore.writerow(["", intestazione])
     for voce in distinta.voci:
@@ -489,8 +534,8 @@ def scrivi_csv(distinta: Distinta, percorso: Path) -> None:
                 "" if quantita is None and voce.sezione == "V" else (DA_DEFINIRE if quantita is None else str(quantita).replace(".", ",")),
                 voce.fornitura,
                 voce.note,
-                voce.regola,
                 voce.calcolo,
+                voce.fonte,
             ]
         )
     for indice in range(1, int(distinta.regole.distinta.get("righe_h", 6)) + 1):
@@ -504,8 +549,11 @@ def scrivi_csv(distinta: Distinta, percorso: Path) -> None:
 def foglio_dei_calcoli(distinta: Distinta) -> str:
     progetto = distinta.progetto
     righe = [
-        f"# Distinta materiali — foglio dei calcoli ({progetto.get('commission_code', '')} "
-        f"{progetto.get('sheet_number', '')} rev. {progetto.get('revision', '')})".replace("  ", " "),
+        f"# Distinta materiali — foglio dei calcoli ({dato_o_da_definire(progetto, 'commission_code')}, tavola "
+        f"{dato_o_da_definire(progetto, 'sheet_number')} rev. {dato_o_da_definire(progetto, 'revision')})",
+        "",
+        f"Committente: {dato_o_da_definire(progetto, 'client')} · Progetto: "
+        f"{dato_o_da_definire(progetto, 'project_name')} · Data: {data_del_cartiglio(progetto)}",
         "",
         f"> {distinta.regole.distinta.get('stato', '')}. Regole `{distinta.regole.impronta}` "
         f"({', '.join(f'{n} {v}' for n, v in distinta.regole.versioni.items())}).",
@@ -514,6 +562,10 @@ def foglio_dei_calcoli(distinta: Distinta) -> str:
     if distinta.domande:
         righe += ["## DA DEFINIRE — le domande al progettista", ""]
         righe += [f"- {d}" for d in distinta.domande]
+        righe.append("")
+    if distinta.da_confermare:
+        righe += ["## Da confermare per questa offerta", ""]
+        righe += [f"- {c}" for c in distinta.da_confermare]
         righe.append("")
     righe += [
         "## Le tratte",
@@ -550,13 +602,16 @@ def _json(dati: Mapping[str, Any]) -> str:
     return json.dumps(dati, ensure_ascii=False, indent=1) + "\n"
 
 
-def scrivi_le_uscite(distinta: Distinta, cartella: Path) -> list[Path]:
-    """Scrive le uscite nella cartella, e le restituisce nell'ordine in cui le scrive."""
+def scrivi_le_uscite(
+    distinta: Distinta, cartella: Path, sul_foglio: Sequence[str] = TABELLE_DEL_FOGLIO
+) -> list[Path]:
+    """Scrive le uscite nella cartella, e le restituisce nell'ordine in cui le scrive.
+    `sul_foglio` sono le tabelle di `tabelle-del-foglio.json` (`--sul-foglio`)."""
     cartella.mkdir(parents=True, exist_ok=True)
     scritti = []
     for nome, testo in (
         ("distinta.json", _json(distinta_in_json(distinta))),
-        ("tabelle-del-foglio.json", _json(tabelle_del_foglio(distinta))),
+        ("tabelle-del-foglio.json", _json(tabelle_del_foglio(distinta, sul_foglio))),
         ("distinta-calcoli.md", foglio_dei_calcoli(distinta)),
     ):
         (cartella / nome).write_text(testo, encoding="utf-8")

@@ -1,21 +1,28 @@
 {
   "id": "fluidi",
-  "versione": "1.0.0",
-  "nota": "Che cosa costa a metro e a giunzione, fluido per fluido (il `medium` della rete). Un tratto è la catena di tubazioni di una rete che passa per i pezzi `passante` del corredo (sezionatore, sifone): la sua lunghezza è la somma delle `lunghezza_m` date, maggiorata con `lunghezze.json`. Le voci si contano sui tratti con una lunghezza da quotare; `raggruppa` dice se la voce si somma per sezione (default) o per fluido. Calcoli: `lunghezza` (somma delle L da quotare), `confezioni` (pezzi interi senza giunte in confezioni, con la riserva), `per_tratta` (n per tratto), `passo` (per tratto, L / passo per eccesso + in_piu), `per_metro` (L totale / ogni_m per eccesso, con un minimo), `metri_arrotondati` (L totale × fattore, per eccesso al passo), `fisso` (n per gruppo), `attraversamenti` (fori di parete del tratto: il dato `attraversamenti` del progettista, o quelli assunti dal fluido), `proprieta` (una voce per valore del dato del progettista sul tratto), `carica_refrigerante`. Fluidi assenti da questo file: le loro linee escono nella sezione X, DA DEFINIRE.",
+  "versione": "1.1.0",
+  "nota": "Che cosa costa a metro e a giunzione, fluido per fluido (il `medium` della rete). Un tratto è la catena di tubazioni di una rete che passa per i pezzi `passante` del corredo (sezionatore, sifone): la sua lunghezza è la somma delle `lunghezza_m` date, maggiorata con `lunghezze.json`. Le voci si contano sui tratti con una lunghezza da quotare; `raggruppa` dice se la voce si somma per sezione (default) o per fluido. Calcoli: `lunghezza` (somma delle L da quotare), `confezioni` (pezzi interi senza giunte in confezioni, con la riserva), `per_tratta` (n per tratto), `passo` (per tratto, L / passo per eccesso + in_piu), `per_metro` (L totale / ogni_m per eccesso, con un minimo), `metri_arrotondati` (L totale × fattore, per eccesso al passo), `fisso` (n per gruppo), `attraversamenti` (fori di parete del tratto: il dato `attraversamenti` del progettista, o quelli assunti dal fluido), `proprieta` (una voce per valore del dato del progettista sul tratto), `carica_refrigerante`. `fornitura` è una scelta dell'offerta (`distinta.json`, `fornitura`). Fluidi assenti da questo file: le loro linee escono nella sezione X, DA DEFINIRE.",
   "fluidi": [
     {
       "fluido": "supply_air",
       "materiale": "flessibile coibentato",
       "attraversamenti_se_mancano": 1,
       "fonte_attraversamenti": "kit AA-01: lavoro/dimensionamento.py, voce F «Foratura di tramezza … n 7: 5 bocchette e 2 nella tramezza fra i disimpegni»",
+      "fonte_attraversamenti_in_parole": "regola Nove C: una parete per ramo, se il progettista non dice quante",
       "voci": [
         {
           "id": "flessibile-in-confezioni",
           "sezione": "B",
           "testo": "Condotto flessibile coibentato {sezione} (isolamento 25 mm, barriera vapore), confezione da 10 m",
           "um": "conf.",
-          "calcolo": {"tipo": "confezioni", "confezione_m": 10.0, "sfrido_m": 0.5, "riserva": 0.25},
+          "calcolo": {
+            "tipo": "confezioni",
+            "confezione_m": 10.0,
+            "sfrido_m": 0.5,
+            "riserva": 0.25
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py (confezioni da 10 m, 0,5 m di sfrido, almeno 1,25 × la lunghezza); REVISIONE-INDIPENDENTE.md rilievo 17",
+          "fonte_in_parole": "regola Nove C per i canali flessibili",
           "perche": "Ogni ramo è un pezzo intero, senza giunte: le giunte del flessibile perdono aria e rumore. I pezzi si mettono nelle confezioni dal più lungo (first-fit decreasing); la riserva del 25% copre i tagli sbagliati e la ricollocazione di una bocchetta."
         },
         {
@@ -23,8 +30,12 @@
           "sezione": "B",
           "testo": "Curva 90° {sezione} in lamiera zincata, all'uscita del plenum",
           "um": "n",
-          "calcolo": {"tipo": "per_tratta", "n": 1},
+          "calcolo": {
+            "tipo": "per_tratta",
+            "n": 1
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py (4 curve alle uscite con cambio di direzione stretto, scritte a mano sul caso)",
+          "fonte_in_parole": "regola Nove C per i canali flessibili",
           "perche": "Il flessibile non si piega stretto all'uscita del plenum senza schiacciarsi: una curva rigida per ramo, in dubbio per eccesso (il kit ne contava una per le sole uscite strette)."
         },
         {
@@ -32,8 +43,12 @@
           "sezione": "B",
           "testo": "Manicotto di giunzione {sezione}",
           "um": "n",
-          "calcolo": {"tipo": "fisso", "n": 2},
+          "calcolo": {
+            "tipo": "fisso",
+            "n": 2
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py («Manicotto di giunzione Ø200», n 2, riserva)",
+          "fonte_in_parole": "regola Nove C per i canali flessibili",
           "perche": "Riserva per una riparazione o un ramo da allungare in cantiere."
         },
         {
@@ -41,8 +56,12 @@
           "sezione": "B",
           "testo": "Fascetta di serraggio {sezione} (anima e mantello)",
           "um": "n",
-          "calcolo": {"tipo": "per_tratta", "n": 8},
+          "calcolo": {
+            "tipo": "per_tratta",
+            "n": 8
+          },
           "fonte": "kit AA-01: REVISIONE-INDIPENDENTE.md rilievo 17 («fascette ≥ 32 con le curve»); lavoro/dimensionamento.py, 36 fascette",
+          "fonte_in_parole": "regola Nove C per i canali flessibili",
           "perche": "Per ramo: le due estremità del flessibile e le due giunzioni della curva, ciascuna con una fascetta sull'anima e una sul mantello isolante: 4 × 2 = 8."
         },
         {
@@ -50,8 +69,14 @@
           "sezione": "B",
           "testo": "Nastro alluminio rinforzato 50 mm",
           "um": "rotolo",
-          "calcolo": {"tipo": "per_metro", "ogni_m": 20.0, "minimo": 1, "raggruppa": "fluido"},
+          "calcolo": {
+            "tipo": "per_metro",
+            "ogni_m": 20.0,
+            "minimo": 1,
+            "raggruppa": "fluido"
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py (2 rotoli per 26 m di flessibile); il passo di 20 m è della sessione di sviluppo, che riproduce il kit: da confermare",
+          "fonte_in_parole": "stima Nove C (un rotolo ogni 20 m di flessibile)",
           "perche": "La sigillatura di giunzioni, curve e plenum."
         },
         {
@@ -59,8 +84,14 @@
           "sezione": "B",
           "testo": "Sostegno per flessibile (fascia o collare con pendino), passo ≤ 1,2 m",
           "um": "n",
-          "calcolo": {"tipo": "passo", "passo_m": 1.2, "in_piu": 1, "raggruppa": "fluido"},
+          "calcolo": {
+            "tipo": "passo",
+            "passo_m": 1.2,
+            "in_piu": 1,
+            "raggruppa": "fluido"
+          },
           "fonte": "kit AA-01: RAPPORTO.md §7 («sostegni ogni ≤ 1,2 m»); lavoro/dimensionamento.py, 25 sostegni",
+          "fonte_in_parole": "regola Nove C per i canali flessibili",
           "perche": "Un flessibile che si imbarca fra due sostegni perde portata e fa condensa nelle anse: un sostegno ogni 1,2 m per tratto, più uno vicino all'attacco."
         },
         {
@@ -68,18 +99,27 @@
           "sezione": "F",
           "testo": "Foratura di tramezza Ø250 (o vano 450×250) per flessibili e plenum di bocchetta",
           "um": "n",
-          "calcolo": {"tipo": "attraversamenti", "raggruppa": "fluido"},
+          "calcolo": {
+            "tipo": "attraversamenti",
+            "raggruppa": "fluido"
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.3; REVISIONE-INDIPENDENTE.md rilievi 1 e 11 (le aperture sono dell'installatore)",
+          "fonte_in_parole": "regola Nove C per le assistenze murarie",
           "perche": "La macchina sta in un disimpegno e le bocchette nelle stanze: ogni ramo passa almeno una parete. Il progettista scrive sul tratto quante ne passa (`attraversamenti`); se non lo scrive, se ne conta una."
         },
         {
           "id": "velette-per-le-bocchette",
           "sezione": "Z",
-          "fornitura": "committente",
+          "fornitura": "opere_edili",
           "testo": "Velette o controsoffitti per le bocchette, altezza utile ≥ 30 cm",
           "um": "a corpo",
-          "calcolo": {"tipo": "fisso", "n": 1, "raggruppa": "fluido"},
+          "calcolo": {
+            "tipo": "fisso",
+            "n": 1,
+            "raggruppa": "fluido"
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.3; REVISIONE-INDIPENDENTE.md rilievo 5",
+          "fonte_in_parole": "regola Nove C per le bocchette in controsoffitto",
           "perche": "Il plenum porta-bocchetta con l'attacco del flessibile ha bisogno di 30 cm: se manca la veletta, la bocchetta non si monta."
         }
       ]
@@ -89,14 +129,18 @@
       "materiale": "canale di ripresa coibentato",
       "attraversamenti_se_mancano": 0,
       "fonte_attraversamenti": "kit AA-01: la ripresa sta nello stesso locale dell'unità interna (RAPPORTO.md §2, proposta 2)",
+      "fonte_attraversamenti_in_parole": "regola Nove C: la ripresa sta nel locale della macchina",
       "voci": [
         {
           "id": "canale-di-ripresa",
           "sezione": "B",
           "testo": "Canale di ripresa coibentato {sezione}",
           "um": "m",
-          "calcolo": {"tipo": "lunghezza"},
+          "calcolo": {
+            "tipo": "lunghezza"
+          },
           "fonte": "regola della sessione di sviluppo: nel kit la ripresa è un plenum montato sulla macchina (lunghezza 0), e questa voce non esce",
+          "fonte_in_parole": "regola Nove C per i canali d'aria",
           "perche": "Se il progettista porta la ripresa lontano dalla macchina, il canale si quota a metro come gli altri, con la stessa maggiorazione."
         }
       ]
@@ -106,14 +150,18 @@
       "materiale": "Cu ricotto pre-isolato, isolamento ≥ 10 mm",
       "attraversamenti_se_mancano": 0,
       "fonte_attraversamenti": "le forature delle linee frigorifere si contano una volta sola, sulla linea del gas (le due linee passano negli stessi fori)",
+      "fonte_attraversamenti_in_parole": "regola Nove C: i fori si contano una volta, sulla linea del gas",
       "voci": [
         {
           "id": "tubo-rame-liquido",
           "sezione": "C",
           "testo": "Tubo rame ricotto pre-isolato {sezione}, isolamento ≥ 10 mm, resistente a 120 °C",
           "um": "m",
-          "calcolo": {"tipo": "lunghezza"},
+          "calcolo": {
+            "tipo": "lunghezza"
+          },
           "fonte": "kit AA-01: RAPPORTO.md §7 «Refrigerante» (isolamento dal manuale di installazione Daikin FTXM60-71A, citato in RAPPORTO.md §10)",
+          "fonte_in_parole": "manuale di installazione del costruttore della macchina (isolamento delle linee)",
           "perche": "La linea del liquido, a metro, con la lunghezza da quotare."
         },
         {
@@ -121,8 +169,12 @@
           "sezione": "C",
           "testo": "Manicotto a brasare {sezione} (riserva, posa in tratta unica)",
           "um": "n",
-          "calcolo": {"tipo": "fisso", "n": 2},
+          "calcolo": {
+            "tipo": "fisso",
+            "n": 2
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py («Manicotto a brasare 1/4\" e 1/2\"», n 4 per le due linee)",
+          "fonte_in_parole": "regola Nove C per le linee frigorifere",
           "perche": "La linea si posa in un pezzo solo; due manicotti di riserva per linea coprono una giunta imprevista."
         }
       ]
@@ -132,14 +184,18 @@
       "materiale": "Cu ricotto pre-isolato, isolamento ≥ 13 mm",
       "attraversamenti_se_mancano": 1,
       "fonte_attraversamenti": "kit AA-01: lavoro/dimensionamento.py, voce F.2 «Foratura di parete interna Ø80 per linee frigorifere e cavi», n 2 sul caso",
+      "fonte_attraversamenti_in_parole": "regola Nove C: una parete per linea, se il progettista non dice quante",
       "voci": [
         {
           "id": "tubo-rame-gas",
           "sezione": "C",
           "testo": "Tubo rame ricotto pre-isolato {sezione}, isolamento ≥ 13 mm, resistente a 120 °C",
           "um": "m",
-          "calcolo": {"tipo": "lunghezza"},
+          "calcolo": {
+            "tipo": "lunghezza"
+          },
           "fonte": "kit AA-01: RAPPORTO.md §7 «Refrigerante» (manuale di installazione Daikin FTXM60-71A, citato in RAPPORTO.md §10)",
+          "fonte_in_parole": "manuale di installazione del costruttore della macchina (isolamento delle linee)",
           "perche": "La linea del gas, a metro, con la lunghezza da quotare."
         },
         {
@@ -147,8 +203,12 @@
           "sezione": "C",
           "testo": "Manicotto a brasare {sezione} (riserva, posa in tratta unica)",
           "um": "n",
-          "calcolo": {"tipo": "fisso", "n": 2},
+          "calcolo": {
+            "tipo": "fisso",
+            "n": 2
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py («Manicotto a brasare 1/4\" e 1/2\"», n 4 per le due linee)",
+          "fonte_in_parole": "regola Nove C per le linee frigorifere",
           "perche": "Come per il liquido: due di riserva per linea."
         },
         {
@@ -156,8 +216,12 @@
           "sezione": "C",
           "testo": "Nastro di finitura e manicotti isolanti per le giunzioni a cartella",
           "um": "kit",
-          "calcolo": {"tipo": "per_tratta", "n": 1},
+          "calcolo": {
+            "tipo": "per_tratta",
+            "n": 1
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.4",
+          "fonte_in_parole": "regola Nove C per le linee frigorifere",
           "perche": "Una coppia di linee (liquido e gas) per kit: si conta sulla linea del gas, che ogni coppia ha una volta sola."
         },
         {
@@ -165,8 +229,13 @@
           "sezione": "C",
           "testo": "Collare di sostegno linee frigorifere in controsoffitto",
           "um": "n",
-          "calcolo": {"tipo": "passo", "passo_m": 1.2, "in_piu": 0},
+          "calcolo": {
+            "tipo": "passo",
+            "passo_m": 1.2,
+            "in_piu": 0
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.7 (10 collari per 12 m)",
+          "fonte_in_parole": "regola Nove C per le linee frigorifere",
           "perche": "La coppia pre-isolata si sostiene ogni 1,2 m, come il flessibile: un collare per passo, sulla linea del gas che porta la coppia."
         },
         {
@@ -174,8 +243,12 @@
           "sezione": "F",
           "testo": "Foratura di parete interna Ø80 per linee frigorifere e cavi",
           "um": "n",
-          "calcolo": {"tipo": "attraversamenti", "raggruppa": "fluido"},
+          "calcolo": {
+            "tipo": "attraversamenti",
+            "raggruppa": "fluido"
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.2; REVISIONE-INDIPENDENTE.md rilievo 11",
+          "fonte_in_parole": "regola Nove C per le assistenze murarie",
           "perche": "Le aperture sono dell'installatore (le chiusure del committente). Il progettista scrive sul tratto quante pareti interne passa; se non lo scrive, se ne conta una. Il foro nella parete esterna è nel corredo dell'unità esterna."
         },
         {
@@ -183,8 +256,12 @@
           "sezione": "C",
           "testo": "Refrigerante {refrigerante}, riserva per carica aggiuntiva",
           "um": "kg",
-          "calcolo": {"tipo": "carica_refrigerante", "minimo_kg": 0.2},
+          "calcolo": {
+            "tipo": "carica_refrigerante",
+            "minimo_kg": 0.2
+          },
           "fonte": "kit AA-01: RAPPORTO.md §7 (precarica fino a 10 m, oltre 20 g/m: scheda Daikin RXM-A, citata in RAPPORTO.md §10); REVISIONE-INDIPENDENTE.md rilievo 18 (riserva di 0,2 kg)",
+          "fonte_in_parole": "scheda tecnica dell'unità esterna (precarica e carica aggiuntiva)",
           "perche": "Oltre la lunghezza precaricata dall'unità esterna serve refrigerante a grammi per metro; anche dentro, una riserva minima per il rabbocco dopo la prova. I dati (`precarica_fino_a_m`, `carica_aggiuntiva_g_m`, `refrigerante`) li dà il progettista sull'unità esterna: se mancano, la voce è DA DEFINIRE."
         }
       ]
@@ -194,14 +271,18 @@
       "materiale": "PVC rigido, pendenza ≥ 1%",
       "attraversamenti_se_mancano": 1,
       "fonte_attraversamenti": "kit AA-01: lavoro/dimensionamento.py, voce F.4 «Foratura per la condensa verso il bagno»",
+      "fonte_attraversamenti_in_parole": "regola Nove C: una parete, se il progettista non dice quante",
       "voci": [
         {
           "id": "tubo-pvc",
           "sezione": "D",
           "testo": "Tubo PVC rigido {sezione}",
           "um": "m",
-          "calcolo": {"tipo": "lunghezza"},
+          "calcolo": {
+            "tipo": "lunghezza"
+          },
           "fonte": "kit AA-01: RAPPORTO.md §7 «Condensa»",
+          "fonte_in_parole": "regola Nove C per lo scarico della condensa",
           "perche": "Lo scarico della condensa, a metro, con la lunghezza da quotare."
         },
         {
@@ -209,8 +290,13 @@
           "sezione": "D",
           "testo": "Curva 87°-90° {sezione}",
           "um": "n",
-          "calcolo": {"tipo": "passo", "passo_m": 2.0, "in_piu": 1},
+          "calcolo": {
+            "tipo": "passo",
+            "passo_m": 2.0,
+            "in_piu": 1
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.3 (6 curve su 10 m); il passo è della sessione di sviluppo, che riproduce il kit: da confermare",
+          "fonte_in_parole": "stima Nove C (una curva ogni 2 m)",
           "perche": "Il percorso in controsoffitto con la pendenza cambia spesso direzione: una curva ogni 2 m più quella della discesa."
         },
         {
@@ -218,8 +304,13 @@
           "sezione": "D",
           "testo": "Manicotto {sezione}",
           "um": "n",
-          "calcolo": {"tipo": "passo", "passo_m": 3.0, "in_piu": -1},
+          "calcolo": {
+            "tipo": "passo",
+            "passo_m": 3.0,
+            "in_piu": -1
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.4 (3 manicotti su 10 m); barre da 3 m, assunzione della sessione di sviluppo: da confermare",
+          "fonte_in_parole": "stima Nove C (barre da 3 m)",
           "perche": "Una giunzione fra due barre."
         },
         {
@@ -227,8 +318,13 @@
           "sezione": "D",
           "testo": "Collare per tubo condensa",
           "um": "n",
-          "calcolo": {"tipo": "passo", "passo_m": 1.0, "in_piu": 0},
+          "calcolo": {
+            "tipo": "passo",
+            "passo_m": 1.0,
+            "in_piu": 0
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.7 (10 collari su 10 m)",
+          "fonte_in_parole": "regola Nove C per lo scarico della condensa",
           "perche": "Il tubo piccolo in pendenza si sostiene fitto, o la pendenza si perde fra due collari."
         },
         {
@@ -236,8 +332,11 @@
           "sezione": "D",
           "testo": "Isolamento anticondensa 9 mm per il tubo della condensa",
           "um": "m",
-          "calcolo": {"tipo": "lunghezza"},
+          "calcolo": {
+            "tipo": "lunghezza"
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.8 (5 m, il solo tratto in controsoffitto, scritto a mano sul caso)",
+          "fonte_in_parole": "regola Nove C per lo scarico della condensa",
           "perche": "La condensa fredda in controsoffitto gocciola fuori dal tubo. Su tutta la lunghezza, in dubbio per eccesso: la parte in controsoffitto la sa solo la pianta."
         },
         {
@@ -245,8 +344,13 @@
           "sezione": "D",
           "testo": "Collante e pulitore PVC",
           "um": "n",
-          "calcolo": {"tipo": "fisso", "n": 1, "raggruppa": "fluido"},
+          "calcolo": {
+            "tipo": "fisso",
+            "n": 1,
+            "raggruppa": "fluido"
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.9",
+          "fonte_in_parole": "regola Nove C per lo scarico della condensa",
           "perche": "Una confezione per lo scarico."
         },
         {
@@ -254,8 +358,12 @@
           "sezione": "F",
           "testo": "Foratura per lo scarico della condensa",
           "um": "n",
-          "calcolo": {"tipo": "attraversamenti", "raggruppa": "fluido"},
+          "calcolo": {
+            "tipo": "attraversamenti",
+            "raggruppa": "fluido"
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.4",
+          "fonte_in_parole": "regola Nove C per le assistenze murarie",
           "perche": "Lo scarico sta in un altro locale (il bagno più vicino): il progettista scrive le pareti passate; se non lo scrive, se ne conta una."
         }
       ]
@@ -265,14 +373,18 @@
       "materiale": "FG16OR16",
       "attraversamenti_se_mancano": 0,
       "fonte_attraversamenti": "le linee elettriche passano nelle tracce e nei fori delle altre linee (kit AA-01, voci F)",
+      "fonte_attraversamenti_in_parole": "regola Nove C: le linee elettriche passano nelle tracce e nei fori delle altre linee",
       "voci": [
         {
           "id": "cavo-di-alimentazione",
           "sezione": "E",
           "testo": "Cavo {materiale} {sezione}, {rete}",
           "um": "m",
-          "calcolo": {"tipo": "lunghezza"},
+          "calcolo": {
+            "tipo": "lunghezza"
+          },
           "fonte": "kit AA-01: RAPPORTO.md §7 «Elettrico e bus» (linea dedicata in FG16OR16); la sezione del cavo è un dato del progettista (`sezione` del tratto)",
+          "fonte_in_parole": "regola Nove C per le linee elettriche dedicate",
           "perche": "Una riga per sezione di cavo, a metro, con la lunghezza da quotare."
         },
         {
@@ -280,8 +392,12 @@
           "sezione": "E",
           "testo": "{protezione}, linea dedicata: {rete}",
           "um": "n",
-          "calcolo": {"tipo": "proprieta", "proprieta": "protezione"},
+          "calcolo": {
+            "tipo": "proprieta",
+            "proprieta": "protezione"
+          },
           "fonte": "kit AA-01: RAPPORTO.md §7; REVISIONE-INDIPENDENTE.md rilievi 7 e 12 (la protezione della centrale a sé, verificare la targa della macchina)",
+          "fonte_in_parole": "targa della macchina (dato del progettista)",
           "perche": "Ogni linea dedicata ha la sua protezione nel quadro. La taglia dipende dalla targa della macchina: è un dato del progettista (`protezione` del tratto); se manca, la voce è DA DEFINIRE."
         },
         {
@@ -289,8 +405,13 @@
           "sezione": "E",
           "testo": "Scatola di derivazione IP55",
           "um": "n",
-          "calcolo": {"tipo": "per_tratta", "n": 1, "raggruppa": "fluido"},
+          "calcolo": {
+            "tipo": "per_tratta",
+            "n": 1,
+            "raggruppa": "fluido"
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.12 (2 scatole per 2 linee)",
+          "fonte_in_parole": "regola Nove C per le linee elettriche dedicate",
           "perche": "Una scatola per linea, all'uscita dal controsoffitto o all'ingresso nella macchina."
         },
         {
@@ -298,8 +419,14 @@
           "sezione": "E",
           "testo": "Tubo corrugato Ø25 per le linee di alimentazione",
           "um": "m",
-          "calcolo": {"tipo": "metri_arrotondati", "fattore": 1.0, "passo_m": 10.0, "raggruppa": "fluido"},
+          "calcolo": {
+            "tipo": "metri_arrotondati",
+            "fattore": 1.0,
+            "passo_m": 10.0,
+            "raggruppa": "fluido"
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.10 (40 m per 35 m di linee); l'arrotondamento a 10 m è della sessione di sviluppo, che riproduce il kit: da confermare",
+          "fonte_in_parole": "stima Nove C (corrugato a decine di metri)",
           "perche": "Ogni metro di cavo di potenza corre in corrugato; si compra a decine di metri."
         }
       ]
@@ -309,14 +436,18 @@
       "materiale": "a doppio isolamento",
       "attraversamenti_se_mancano": 0,
       "fonte_attraversamenti": "il collegamento passa nei fori delle linee frigorifere (kit AA-01, voce F.2)",
+      "fonte_attraversamenti_in_parole": "regola Nove C: il collegamento passa nei fori delle linee frigorifere",
       "voci": [
         {
           "id": "cavo-di-collegamento",
           "sezione": "E",
           "testo": "Cavo di collegamento {sezione} {materiale}, {rete}",
           "um": "m",
-          "calcolo": {"tipo": "lunghezza"},
+          "calcolo": {
+            "tipo": "lunghezza"
+          },
           "fonte": "kit AA-01: RAPPORTO.md §7 (cavo a 4 conduttori ≥ 1,5 mm² a doppio isolamento, dal manuale di installazione Daikin FTXM60-71A citato in RAPPORTO.md §10)",
+          "fonte_in_parole": "manuale di installazione del costruttore della macchina",
           "perche": "Corre con le linee frigorifere, nella loro canalina: niente corrugato (kit, voci E.10 ed E.11)."
         }
       ]
@@ -326,14 +457,18 @@
       "materiale": "cavo di bus",
       "attraversamenti_se_mancano": 0,
       "fonte_attraversamenti": "il bus passa nelle tracce dei termostati e nei fori delle altre linee (kit AA-01, voci F)",
+      "fonte_attraversamenti_in_parole": "regola Nove C: il bus passa nelle tracce dei termostati e nei fori delle altre linee",
       "voci": [
         {
           "id": "cavo-di-bus",
           "sezione": "E",
           "testo": "Cavo {sezione}, {rete}",
           "um": "m",
-          "calcolo": {"tipo": "lunghezza"},
+          "calcolo": {
+            "tipo": "lunghezza"
+          },
           "fonte": "kit AA-01: RAPPORTO.md §7 (bus a stella dalla centrale; P1-P2 per gateway e comando a filo)",
+          "fonte_in_parole": "regola Nove C per i bus e le linee di comando",
           "perche": "Una riga per tipo di cavo (la `sezione` del tratto: «2×0,75 (P1-P2)», «bus Airzone, schermato»), a metro."
         },
         {
@@ -341,8 +476,14 @@
           "sezione": "E",
           "testo": "Tubo corrugato Ø20 per bus e linee di comando",
           "um": "m",
-          "calcolo": {"tipo": "metri_arrotondati", "fattore": 1.0, "passo_m": 10.0, "raggruppa": "fluido"},
+          "calcolo": {
+            "tipo": "metri_arrotondati",
+            "fattore": 1.0,
+            "passo_m": 10.0,
+            "raggruppa": "fluido"
+          },
           "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.11 (40 m per 37,5 m di bus); l'arrotondamento a 10 m è della sessione di sviluppo: da confermare",
+          "fonte_in_parole": "stima Nove C (corrugato a decine di metri)",
           "perche": "Il bus corre separato dalle linee di potenza, nel suo corrugato."
         }
       ]

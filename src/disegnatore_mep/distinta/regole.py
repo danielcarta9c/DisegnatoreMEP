@@ -8,8 +8,16 @@ da una cartella, o da un file solo nella forma dei fasci della skill
 (`{"fascio": "distinta", "file": {"distinta.json": {...}, ...}}`): la skill su claude.ai
 porta i suoi dati in un file per cartella (I-188).
 
-**Ogni voce porta `fonte` e `perche`**: una regola senza l'una o l'altro non si carica,
-e il caricamento dice quale.
+**Ogni voce porta `fonte`, `fonte_in_parole` e `perche`**: una regola senza uno dei tre
+non si carica, e il caricamento dice quale. `fonte` e' la fonte di sviluppo (il kit, il
+rapporto, il rilievo) e resta qui; `fonte_in_parole` e' quella che esce nelle uscite,
+scritta per l'installatore o il tecnico che le legge (collaudo REL-012 t1, §2.4.5).
+
+**La fornitura e' una scelta dell'offerta, non un fatto** (§2.4.4): chi fornisce le
+apparecchiature, le bocchette e le griglie, le opere edili, e con chi si fa la messa in
+servizio stanno in `distinta.json`, `fornitura.scelte`, con il valore predefinito di
+Nove C. La distinta li dichiara come assunzione da confermare, finche' il progettista
+non li conferma (o li cambia) con `--fornitura`.
 """
 
 import hashlib
@@ -35,12 +43,101 @@ CALCOLI_DEI_FLUIDI = frozenset(
         "carica_refrigerante",
     }
 )
-CALCOLI_DEL_CORREDO = frozenset({"per_pezzo", "per_linea"})
+CALCOLI_DEL_CORREDO = frozenset({"per_pezzo", "per_linea", "per_locale"})
 CONDIZIONI = frozenset({"sempre", "voci", "fluidi"})
+
+
+FORNITURA_INSTALLATORE = "installatore"
+FORNITURA_COMMITTENTE = "committente"
 
 
 class ErroreDelleRegole(ValueError):
     """Le regole della distinta non si caricano: il messaggio dice dove e perche'."""
+
+
+def _chiave(valore: str) -> str:
+    """«Nove C», «nove-c», «novec» sono la stessa scelta."""
+    return "".join(c for c in valore.casefold() if c.isalnum())
+
+
+@dataclass(frozen=True)
+class Fornitura:
+    """Chi fornisce che cosa in questa offerta: le scelte di `distinta.json`, con i
+    valori predefiniti o quelli dati con `--fornitura`."""
+
+    scelte: Mapping[str, Mapping[str, Any]]
+    """Per id della scelta, come la scrive `distinta.json`."""
+    valori: Mapping[str, str]
+    """Per id della scelta, il valore di questa offerta."""
+    confermata: bool
+    """`False`: valgono le regole predefinite, e la distinta lo dichiara da confermare."""
+    installatore: str = FORNITURA_INSTALLATORE
+
+    def testo(self, scelta: str) -> str:
+        """Come la scelta si scrive in una frase: «fornite da Nove C», «con Nove C»."""
+        return str(self.scelte[scelta]["testi"][self.valori[scelta]])
+
+    def sezione_e_chi(self, sezione: str, fornitura: object) -> tuple[str, str]:
+        if isinstance(fornitura, str) and fornitura in self.scelte:
+            chi = self.valori[fornitura]
+            dove = self.scelte[fornitura].get("sezione_se_installatore")
+            if chi == self.installatore and isinstance(dove, str):
+                return dove, chi
+            return sezione, chi
+        if fornitura == FORNITURA_COMMITTENTE:
+            return sezione, FORNITURA_COMMITTENTE
+        return sezione, self.installatore
+
+    def _parti(self) -> str:
+        return "; ".join(f"{s['nome']} {self.testo(i)}" for i, s in self.scelte.items())
+
+    def in_parole(self) -> str:
+        """La riga delle cose da confermare (il comando, l'Excel, il foglio dei calcoli)."""
+        if self.confermata:
+            return f"Fornitura per questa offerta: {self._parti()}."
+        return f"Fornitura: {self._parti()} — come da regole predefinite di Nove C; confermare per questa offerta."
+
+    def nota(self) -> str:
+        """La stessa cosa fra le note, e quindi sul foglio: corta, perche' sta in una riga
+        della tabella delle note."""
+        gruppi: list[tuple[list[str], str]] = []
+        for ident, scelta in self.scelte.items():
+            testo = self.testo(ident)
+            if gruppi and gruppi[-1][1] == testo:
+                gruppi[-1][0].append(str(scelta["nome"]))
+            else:
+                gruppi.append(([str(scelta["nome"])], testo))
+        parti = "; ".join(f"{', '.join(nomi)} {testo}" for nomi, testo in gruppi)
+        return f"Fornitura{'' if self.confermata else ' da confermare'}: {parti}."
+
+
+def la_fornitura(regole: "RegoleDellaDistinta", data: str | None = None) -> Fornitura:
+    """La fornitura dell'offerta. `data` e' quella dell'opzione `--fornitura`:
+    «apparecchiature=installatore,bocchette_e_griglie=installatore», o «confermata» per
+    confermare le predefinite. Senza, valgono le predefinite, da confermare. Una scelta
+    o un valore che le regole non hanno e' un errore che dice quali ci sono."""
+    scelte = {str(s["id"]): s for s in regole.distinta["fornitura"]["scelte"]}
+    valori = {i: str(s["predefinita"]) for i, s in scelte.items()}
+    if data is None:
+        return Fornitura(scelte=scelte, valori=valori, confermata=False)
+    for parte in (p.strip() for p in data.split(",")):
+        if not parte or _chiave(parte) in ("confermata", "predefinita"):
+            continue
+        nome, uguale, valore = parte.partition("=")
+        nome = nome.strip().replace("-", "_")
+        if not uguale or nome not in scelte:
+            raise ErroreDelleRegole(
+                f"--fornitura: «{parte}» non e' una scelta; le scelte sono "
+                + ", ".join(f"{i}=<{'|'.join(s['ammesse'])}>" for i, s in scelte.items())
+                + ", oppure «confermata»"
+            )
+        ammessi = {_chiave(str(a)): str(a) for a in scelte[nome]["ammesse"]}
+        if _chiave(valore) not in ammessi:
+            raise ErroreDelleRegole(
+                f"--fornitura: {nome} vale {', '.join(ammessi.values())}, non «{valore.strip()}»"
+            )
+        valori[nome] = ammessi[_chiave(valore)]
+    return Fornitura(scelte=scelte, valori=valori, confermata=True)
 
 
 @dataclass(frozen=True)
@@ -101,16 +198,24 @@ def _leggi_i_file(percorso: Path) -> dict[str, Any]:
 
 
 def _ha_fonte_e_perche(voce: Mapping[str, Any], dove: str, difetti: list[str]) -> None:
-    for chiave in ("fonte", "perche"):
+    for chiave in ("fonte", "fonte_in_parole", "perche"):
         valore = voce.get(chiave)
         if not isinstance(valore, str) or not valore.strip():
             difetti.append(f"{dove}: manca «{chiave}»")
 
 
 def _controlla_la_voce(
-    voce: Mapping[str, Any], dove: str, lettere: set[str], calcoli: frozenset[str], difetti: list[str]
+    voce: Mapping[str, Any],
+    dove: str,
+    lettere: set[str],
+    calcoli: frozenset[str],
+    difetti: list[str],
+    scelte: frozenset[str] = frozenset(),
 ) -> None:
     _ha_fonte_e_perche(voce, dove, difetti)
+    fornitura = voce.get("fornitura")
+    if fornitura is not None and fornitura not in {FORNITURA_COMMITTENTE, FORNITURA_INSTALLATORE, *scelte}:
+        difetti.append(f"{dove}: la fornitura {fornitura!r} non e' «committente» ne' una scelta di distinta.json")
     for chiave in ("id", "testo", "um", "sezione"):
         if not isinstance(voce.get(chiave), str) or not voce[chiave]:
             difetti.append(f"{dove}: manca «{chiave}»")
@@ -131,6 +236,29 @@ def controlla(letti: Mapping[str, Any]) -> list[str]:
     for lettera in ("A", "G", "H", "V", "X"):
         if lettera not in lettere:
             difetti.append(f"distinta.json: manca la sezione {lettera}")
+    fornitura = distinta.get("fornitura")
+    scelte: set[str] = set()
+    if not isinstance(fornitura, dict) or not isinstance(fornitura.get("scelte"), list):
+        difetti.append("distinta.json: manca «fornitura» con le sue «scelte»")
+    else:
+        _ha_fonte_e_perche(fornitura, "distinta.json, fornitura", difetti)
+        for scelta in fornitura["scelte"]:
+            ident = scelta.get("id")
+            dove = f"distinta.json, fornitura {ident}"
+            ammesse = scelta.get("ammesse")
+            testi = scelta.get("testi")
+            if not isinstance(ident, str) or not isinstance(scelta.get("nome"), str):
+                difetti.append(f"{dove}: manca «id» o «nome»")
+                continue
+            scelte.add(ident)
+            if not isinstance(ammesse, list) or scelta.get("predefinita") not in ammesse:
+                difetti.append(f"{dove}: la «predefinita» non e' fra le «ammesse»")
+            elif not isinstance(testi, dict) or set(testi) != set(ammesse):
+                difetti.append(f"{dove}: ogni valore ammesso vuole il suo testo in «testi»")
+            dove_va = scelta.get("sezione_se_installatore")
+            if dove_va is not None and dove_va not in lettere:
+                difetti.append(f"{dove}: la sezione {dove_va!r} non e' fra quelle di distinta.json")
+    fisse = frozenset(scelte)
 
     lunghezze = letti["lunghezze"]
     _ha_fonte_e_perche(lunghezze.get("regola", {}), "lunghezze.json, regola", difetti)
@@ -144,21 +272,26 @@ def controlla(letti: Mapping[str, Any]) -> list[str]:
 
     for fluido in letti["fluidi"].get("fluidi", []):
         nome = fluido.get("fluido")
-        if not isinstance(fluido.get("fonte_attraversamenti"), str):
-            difetti.append(f"fluidi.json, {nome}: manca «fonte_attraversamenti»")
+        for chiave in ("fonte_attraversamenti", "fonte_attraversamenti_in_parole"):
+            if not isinstance(fluido.get(chiave), str):
+                difetti.append(f"fluidi.json, {nome}: manca «{chiave}»")
         for voce in fluido.get("voci", []):
-            _controlla_la_voce(voce, f"fluidi.json, {nome}/{voce.get('id')}", lettere, CALCOLI_DEI_FLUIDI, difetti)
+            _controlla_la_voce(
+                voce, f"fluidi.json, {nome}/{voce.get('id')}", lettere, CALCOLI_DEI_FLUIDI, difetti, fisse
+            )
 
     for ident, voce_di_catalogo in letti["corredo"].get("voci", {}).items():
         _ha_fonte_e_perche(voce_di_catalogo, f"corredo.json, {ident}", difetti)
         if not isinstance(voce_di_catalogo.get("nome"), str):
             difetti.append(f"corredo.json, {ident}: manca «nome»")
         for voce in voce_di_catalogo.get("voci", []):
-            _controlla_la_voce(voce, f"corredo.json, {ident}/{voce.get('id')}", lettere, CALCOLI_DEL_CORREDO, difetti)
+            _controlla_la_voce(
+                voce, f"corredo.json, {ident}/{voce.get('id')}", lettere, CALCOLI_DEL_CORREDO, difetti, fisse
+            )
 
     for voce in letti["attivita"].get("voci", []):
         dove = f"attivita.json, {voce.get('id')}"
-        _controlla_la_voce(voce, dove, lettere, frozenset(), difetti)
+        _controlla_la_voce(voce, dove, lettere, frozenset(), difetti, fisse)
         se = voce.get("se")
         if not isinstance(se, dict) or len(se) != 1 or not set(se) <= CONDIZIONI:
             difetti.append(f"{dove}: la condizione «se» vuole una chiave fra {', '.join(sorted(CONDIZIONI))}")

@@ -23,16 +23,18 @@ def _distinta(grafo: dict[str, Any], regole: RegoleDellaDistinta, nomi: tuple[di
     return componi_la_distinta(grafo, regole, *nomi)
 
 
-def test_un_ramo_senza_lunghezza_lascia_da_definire_le_voci_a_metro(
+def test_un_ramo_senza_lunghezza_lascia_da_definire_la_sua_parte_delle_voci_a_metro(
     grafo_aa01: dict[str, Any], regole: RegoleDellaDistinta, nomi: tuple[dict[str, str], dict[str, str]]
 ) -> None:
+    """Collaudo REL-012 t1, §2.4.1: la lunghezza che manca non cancella quelle date. La
+    voce a metro esce con la parte nota, e una riga sua, DA DEFINIRE, per il ramo che manca."""
     del tubazione(grafo_aa01, "a-b3")["properties"]["lunghezza_m"]
     distinta = _distinta(grafo_aa01, regole, nomi)
-    flessibile = next(v for v in distinta.voci if v.regola.endswith("flessibile-in-confezioni"))
-    assert flessibile.quantita is None and flessibile.da_definire
-    assert "manca la lunghezza di T03" in flessibile.calcolo
-    sostegni = next(v for v in distinta.voci if v.regola.endswith("/sostegni"))
-    assert sostegni.quantita is None
+    flessibile = [v for v in distinta.voci if v.regola.endswith("flessibile-in-confezioni")]
+    assert [(v.quantita, v.da_definire) for v in flessibile] == [(3, False), (None, True)]
+    assert "T03" not in flessibile[0].note and "manca la lunghezza di T03" in flessibile[1].calcolo
+    sostegni = [v for v in distinta.voci if v.regola.endswith("/sostegni")]
+    assert [v.quantita for v in sostegni] == [21, None]
     fascette = next(v for v in distinta.voci if v.regola.endswith("/fascette"))
     assert fascette.quantita == 40, "le fascette si contano per ramo: il numero dei rami si sa"
     assert any("T03" in d and "quanto e' lungo" in d for d in distinta.domande)
@@ -95,8 +97,8 @@ def test_una_voce_senza_corredo_e_un_fluido_senza_regole_vanno_in_x(
     )
     distinta = _distinta(grafo_aa01, regole, nomi)
     x = distinta.voci_della_sezione("X")
-    assert [(v.testo.split(" (")[0], v.quantita, v.fornitura) for v in x] == [
-        ("Linea di acqua di riscaldamento DA DEFINIRE", 5.0, DA_DEFINIRE),
+    assert [(v.testo.split(":")[0], v.quantita, v.fornitura) for v in x] == [
+        ("Linea di acqua di riscaldamento DA DEFINIRE (sezione)", 5.0, DA_DEFINIRE),
         ("Pompa di calore aria-acqua", 1.0, DA_DEFINIRE),
         ("Pompa di circolazione", 1.0, DA_DEFINIRE),
     ]
@@ -153,7 +155,7 @@ def test_gli_esistenti_non_si_forniscono(
     pezzo(grafo_aa01, "madoka")["esistente"] = True
     distinta = _distinta(grafo_aa01, regole, nomi)
     assert not [v for v in distinta.voci if "Madoka" in v.testo]
-    assert any("madoka" in a and "e-5" in a for a in distinta.avvisi)
+    assert "Esistenti, fuori dalla distinta: CF-01, la tubazione UI-01 - CF-01." in distinta.avvisi
 
 
 # --- spenta di default -------------------------------------------------------------

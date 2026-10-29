@@ -1,57 +1,80 @@
 {
   "id": "lunghezze",
-  "versione": "1.0.0",
+  "versione": "1.1.0",
   "nota": "La regola delle lunghezze da quotare. La lunghezza di un tratto è un dato del progettista (`lunghezza_m` della tubazione: la lunghezza stimata, dalla pianta o dal sopralluogo); la distinta la maggiora così: L da quotare = (L + aggiunta) × fattore, arrotondata per eccesso al passo, mai sotto il minimo del fluido né sotto il minimo che il progettista scrive sul tratto (`lunghezza_minima_m`). Un tratto con `lunghezza_m` 0 è un raccordo diretto (il plenum montato sulla macchina, un cablaggio di fabbrica): niente materiale e niente maggiorazione.",
   "regola": {
     "aggiunta_m": 1.0,
     "fattore": 1.15,
     "passo_m": 0.5,
     "fonte": "kit AA-01: RAPPORTO.md §7 «Lunghezze»; lavoro/dimensionamento.py, `da_quotare`; REVISIONE-INDIPENDENTE.md rilievo 23 (una regola sola, applicata ovunque)",
+    "fonte_in_parole": "regola Nove C per le quotazioni a corpo (lunghezze maggiorate)",
     "perche": "Le lunghezze vengono da una pianta (nel kit il catastale 1:200, ±10-15%): il metro in più copre discese e raccordi, il 15% l'incertezza del rilievo, il mezzo metro per eccesso il taglio. In dubbio per eccesso: un metro che manca è un extra di Nove C."
   },
   "classi": [
     {
       "classe": "frigo",
-      "fluidi": ["refrigerant_liquid", "refrigerant_gas"],
+      "fluidi": [
+        "refrigerant_liquid",
+        "refrigerant_gas"
+      ],
       "minimo_m": 12.0,
       "fonte": "kit AA-01: RAPPORTO.md §7; REVISIONE-INDIPENDENTE.md rilievo 20 (8 m solo verso NE o NO, sul fronte SE 10-12 m)",
+      "fonte_in_parole": "regola Nove C per le linee frigorifere",
       "perche": "La posizione dell'unità esterna si conferma in sopralluogo: la linea frigorifera è la voce che costa di più al metro, e il minimo copre lo spostamento della macchina su un'altra facciata."
     },
     {
       "classe": "condensa",
-      "fluidi": ["condensate"],
+      "fluidi": [
+        "condensate"
+      ],
       "minimo_m": 10.0,
       "fonte": "kit AA-01: RAPPORTO.md §7; REVISIONE-INDIPENDENTE.md rilievo 21",
+      "fonte_in_parole": "regola Nove C per lo scarico della condensa",
       "perche": "Il punto di scarico (il bagno più vicino) si conferma in sopralluogo, e il percorso in controsoffitto con la pendenza dell'1% è più lungo di quello in pianta."
     },
     {
       "classe": "bus",
-      "fluidi": ["control_bus"],
+      "fluidi": [
+        "control_bus"
+      ],
       "minimo_m": 5.0,
       "fonte": "kit AA-01: RAPPORTO.md §7 («bus 5 m»); nel codice del kit il minimo è applicato ai soli bus dei termostati",
+      "fonte_in_parole": "regola Nove C per i bus e le linee di comando",
       "perche": "La posizione di termostati e comandi a parete si decide col committente: il minimo copre lo spostamento su un'altra parete. Applicato a tutto il bus, come dice il rapporto (in su rispetto al codice del kit)."
     },
     {
       "classe": "ramo_aria",
-      "fluidi": ["supply_air", "return_air"],
+      "fluidi": [
+        "supply_air",
+        "return_air"
+      ],
       "minimo_m": 2.0,
       "fonte": "kit AA-01: RAPPORTO.md §7; lavoro/dimensionamento.py, MIN_FLEX",
+      "fonte_in_parole": "regola Nove C per i canali flessibili (acustica)",
       "perche": "Acustica: un ramo di flessibile più corto di 2 m porta il rumore del plenum alla bocchetta; l'eccesso resta in ansa."
     },
     {
       "classe": "potenza",
-      "fluidi": ["power_supply", "interconnection"],
+      "fluidi": [
+        "power_supply",
+        "interconnection"
+      ],
       "minimo_m": 0.0,
       "fonte": "kit AA-01: lavoro/dimensionamento.py (i minimi delle linee E-1 ed E-3 sono scritti a mano per quel caso: qui diventano `lunghezza_minima_m` sul tratto)",
+      "fonte_in_parole": "regola Nove C per le linee elettriche",
       "perche": "Nessun minimo generale: la posizione del quadro la dà il progettista, e se è incerta lo dice col minimo sul tratto."
     }
   ],
   "segue": [
     {
       "fluido": "interconnection",
-      "fluidi_seguiti": ["refrigerant_liquid", "refrigerant_gas"],
+      "fluidi_seguiti": [
+        "refrigerant_liquid",
+        "refrigerant_gas"
+      ],
       "in_piu_m": 1.0,
       "fonte": "kit AA-01: lavoro/dimensionamento.py, tratta E-2 (minimo = linea frigorifera da quotare + 1 m)",
+      "fonte_in_parole": "regola Nove C: il cavo di collegamento corre con le linee frigorifere",
       "perche": "Il cavo di collegamento fra unità interna ed esterna corre con le linee frigorifere fra le stesse due macchine: non può essere più corto di loro, e il metro in più serve ai morsetti."
     }
   ]

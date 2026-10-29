@@ -166,3 +166,26 @@ dal quadro (2,5 m per linea). Danno i numeri del kit sul caso AA-01; su un altro
 5. **Le bocchette e le griglie del committente**: nel kit erano escluse dall'offerta; la regola le mette nella sezione
    Z per tutti i casi. Se cambia da commessa a commessa, serve un dato nel grafo.
 6. **Il corredo idronico**, dopo `REL-011`.
+
+## 7. Dopo il primo collaudo indipendente (REL-012, caso t1)
+
+Il collaudo `docs/collaudi/REL-012/collaudo-t1/RAPPORTO.md` (§2.2 punti 2, 3, 9, 11; §2.4) ha trovato sei difetti
+di contenuto nella distinta. Il grafo del collaudo è fra le prove (`tests/distinta/collaudo-t1/`), e ogni correzione
+ha la sua prova in `tests/distinta/test_il_collaudo_t1.py`, rossa sul commit di partenza.
+
+| § | difetto | adesso |
+|---|---|---|
+| 2.4.1 | una lunghezza che manca cancellava la voce intera (i 28 m di bus noti sparivano) | la voce esce con la somma nota, e una riga DA DEFINIRE per il tratto che manca |
+| 2.4.2 | griglie di transito una per bocchetta | una per **locale** servito (`locale` della bocchetta, o la sua etichetta senza parentesi); nessuna per un locale con `varco`; l'area minima per locale. AA-01: **4**, non 5 (B4 e B5 sono nel soggiorno; la quinta del kit era la porta fra i disimpegni, che il grafo non conosce) |
+| 2.4.3 | il refrigerante chiesto anche quando c'è | si chiede solo il dato che manca |
+| 2.4.4 | fornitura Nove C e opere del Committente scritte come fatti | scelte dell'offerta in `distinta.json`, `fornitura`; la distinta le dichiara «da confermare» (nota sul foglio, «Da confermare» nell'Excel e nel comando); `--fornitura` le conferma o le cambia |
+| 2.4.5-6 | id del grafo e fonti di sviluppo nell'Excel e sul foglio | sigle dello schema (`graph.plant.read_plant`, la stessa lettura della tavola), o l'etichetta; ogni regola ha `fonte_in_parole`, che è la sola fonte che esce |
+| 2.2.9 | «ND» e «Allegata alla tavola -» | «DA DEFINIRE», come il cartiglio; committente, indirizzo e data nell'intestazione |
+
+E l'opzione `--sul-foglio` (quali tabelle vanno in `tabelle-del-foglio.json`: con `tratte,note` il computo resta
+nell'Excel e il foglio non è più costretto all'A1). Le istruzioni (`skill/distinta/ISTRUZIONI.md`) dicono che la
+distinta si lancia **prima** di `disegna`.
+
+Le uscite di `AA-01/` e `AA-01-con-dati-mancanti/` sono rifatte con le regole nuove (`regole 198e12d3f9a4df09`). Il
+grafo con i dati mancanti è rifatto dal grafo d'esempio, togliendo le stesse tre cose: quello di prima aveva le due
+tubazioni della linea dell'unità esterna scritte al contrario, e la lettura dell'impianto non lo leggeva.

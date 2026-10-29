@@ -13,11 +13,20 @@ sulle sue tubazioni; **0 su tutte** vuol dire raccordo diretto (il plenum montat
 sulla macchina, un cablaggio di fabbrica), e non porta materiale.
 
 I pezzi e le tubazioni `esistente` non entrano: non si forniscono.
+
+**Come si chiama un pezzo** (collaudo REL-012 t1, §2.4.5): con la **sigla dello schema**,
+la stessa che la tavola scrive — quella che l'ingegnere ha dato (`tag`), o quella che la
+lettura dell'impianto assegna (`graph.plant.read_plant`, D-097: una sigla sola per tutto
+il prodotto) —; dove un pezzo non ne ha, con la sua `etichetta`; e in ultimo col nome
+della sua voce di catalogo. **Mai con l'id del grafo**: e' un codice interno, e
+l'installatore non lo legge. Lo stesso per le reti (il nome, o il nome del fluido) e per
+le tubazioni, che si dicono coi pezzi che collegano.
 """
 
 import re
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 CAMPI_DEL_TRATTO = ("sezione", "lunghezza_m", "scritta")
@@ -43,7 +52,8 @@ class Pezzo:
     voce: str
     """L'id della voce di catalogo (`definition_id`)."""
     sigla: str
-    """Il `tag` del pezzo, o il suo id se non ne ha."""
+    """Come lo si nomina: la sigla dello schema, o l'etichetta, o il nome della voce.
+    Mai l'id del grafo."""
     proprieta: Mapping[str, Any]
 
 
@@ -62,6 +72,7 @@ class Tubazione:
 class Rete:
     id: str
     nome: str
+    """Il `name` della rete, o il nome del fluido: mai l'id."""
     fluido: str
     dominio: str
 
@@ -122,10 +133,19 @@ class Impianto:
     tubazioni: tuple[Tubazione, ...]
     reti: Mapping[str, Rete]
     esclusi: tuple[str, ...]
-    """Gli id dei pezzi e delle tubazioni esistenti, lasciati fuori."""
+    """I pezzi e le tubazioni esistenti, lasciati fuori, detti per nome."""
 
     def conta(self, voce: str) -> int:
         return sum(1 for pezzo in self.pezzi.values() if pezzo.voce == voce)
+
+    def nome(self, pezzo: str) -> str:
+        """La sigla del pezzo, per chi legge; un pezzo che non c'e' resta col suo id."""
+        trovato = self.pezzi.get(pezzo)
+        return trovato.sigla if trovato else pezzo
+
+    def tubazione_in_parole(self, tubazione: Tubazione) -> str:
+        """Una tubazione detta coi pezzi che collega: «la tubazione SZ-01 - UE-01»."""
+        return f"la tubazione {self.nome(tubazione.capo_a)} - {self.nome(tubazione.capo_b)}"
 
 
 def _testo(valore: object, dove: str) -> str:
@@ -134,28 +154,56 @@ def _testo(valore: object, dove: str) -> str:
     return valore
 
 
-def leggi_impianto(grafo: Mapping[str, Any]) -> Impianto:
-    """Il grafo completo, dal JSON. Si ferma solo se manca la struttura (id, reti, capi)."""
+def _nome_del_pezzo(
+    pezzo: Mapping[str, Any], ident: str, voce: str, sigle: Mapping[str, str], nomi_del_catalogo: Mapping[str, str]
+) -> str:
+    """La sigla dello schema; senza, l'etichetta; senza, il nome della voce di catalogo."""
+    proprieta = pezzo.get("properties") or {}
+    for candidato in (pezzo.get("tag"), sigle.get(ident), proprieta.get("etichetta"), pezzo.get("label")):
+        if isinstance(candidato, str) and candidato.strip():
+            return candidato.strip()
+    return str(nomi_del_catalogo.get(voce) or voce)
+
+
+def leggi_impianto(
+    grafo: Mapping[str, Any],
+    sigle: Mapping[str, str] | None = None,
+    nomi_del_catalogo: Mapping[str, str] | None = None,
+    nomi_dei_fluidi: Mapping[str, str] | None = None,
+) -> Impianto:
+    """Il grafo completo, dal JSON. Si ferma solo se manca la struttura (id, reti, capi).
+
+    `sigle` sono quelle che la lettura dell'impianto assegna (`sigle_dello_schema`);
+    i nomi servono a dire un pezzo senza sigla ne' etichetta, e una rete senza nome."""
+    sigle = sigle or {}
+    nomi_del_catalogo = nomi_del_catalogo or {}
+    nomi_dei_fluidi = nomi_dei_fluidi or {}
     esclusi: list[str] = []
     reti: dict[str, Rete] = {}
     for rete in grafo.get("networks", []):
         ident = _testo(rete.get("id"), "una rete senza id")
+        fluido = _testo(rete.get("medium"), f"la rete {ident} senza medium")
         reti[ident] = Rete(
             id=ident,
-            nome=str(rete.get("name") or ident),
-            fluido=_testo(rete.get("medium"), f"la rete {ident} senza medium"),
+            nome=str(rete.get("name") or nomi_dei_fluidi.get(fluido) or fluido),
+            fluido=fluido,
             dominio=str(rete.get("domain") or ""),
         )
     pezzi: dict[str, Pezzo] = {}
+    tutti: dict[str, str] = {}
+    pezzi_esistenti: set[str] = set()
     for pezzo in grafo.get("components", []):
         ident = _testo(pezzo.get("id"), "un pezzo senza id")
+        voce = _testo(pezzo.get("definition_id"), f"il pezzo {ident} senza definition_id")
+        tutti[ident] = _nome_del_pezzo(pezzo, ident, voce, sigle, nomi_del_catalogo)
         if pezzo.get("esistente"):
-            esclusi.append(ident)
+            esclusi.append(tutti[ident])
+            pezzi_esistenti.add(ident)
             continue
         pezzi[ident] = Pezzo(
             id=ident,
-            voce=_testo(pezzo.get("definition_id"), f"il pezzo {ident} senza definition_id"),
-            sigla=str(pezzo.get("tag") or ident),
+            voce=voce,
+            sigla=tutti[ident],
             proprieta=dict(pezzo.get("properties") or {}),
         )
     tubazioni: list[Tubazione] = []
@@ -166,8 +214,8 @@ def leggi_impianto(grafo: Mapping[str, Any]) -> Impianto:
             raise ValueError(f"il grafo non si legge: la tubazione {ident} nomina la rete {rete}, che non c'e'")
         capo_a = _testo((tubazione.get("endpoint_a") or {}).get("component_id"), f"{ident}: capo a")
         capo_b = _testo((tubazione.get("endpoint_b") or {}).get("component_id"), f"{ident}: capo b")
-        if tubazione.get("esistente") or capo_a in esclusi or capo_b in esclusi:
-            esclusi.append(ident)
+        if tubazione.get("esistente") or capo_a in pezzi_esistenti or capo_b in pezzi_esistenti:
+            esclusi.append(f"la tubazione {tutti.get(capo_a, capo_a)} - {tutti.get(capo_b, capo_b)}")
             continue
         dati = dict(tubazione.get("properties") or {})
         for campo in CAMPI_DEL_TRATTO:
@@ -238,3 +286,26 @@ def tratte_dell_impianto(impianto: Impianto, voci_passanti: Iterable[str]) -> li
         tratta.sezioni = tuple(sezioni)
         tratte.append(tratta)
     return tratte
+
+
+def sigle_dello_schema(grafo: Mapping[str, Any], cartella_del_catalogo: Path, cartella_dei_nomi: Path) -> dict[str, str]:
+    """Le sigle che lo schema scrive, dalla **stessa** lettura dell'impianto che le da'
+    alla tavola (`graph.plant.read_plant`): la distinta non ne inventa di sue.
+
+    Se il grafo non si lascia leggere — un pezzo che il catalogo non ha, una tubazione
+    al contrario — nessuna sigla calcolata: valgono quelle scritte dall'ingegnere, e
+    dove non ce ne sono l'etichetta (`leggi_impianto`). La distinta esce lo stesso."""
+    from pydantic import ValidationError
+
+    from disegnatore_mep.catalog.errors import CatalogError
+    from disegnatore_mep.catalog.registry import ComponentRegistry
+    from disegnatore_mep.graph.naming import Naming, NamingError
+    from disegnatore_mep.graph.plant import GraphError, read_plant
+    from disegnatore_mep.model.project import ProjectModel
+
+    try:
+        modello = ProjectModel.model_validate(dict(grafo))
+        catalogo = ComponentRegistry.from_directory(cartella_del_catalogo).per_il_progetto(modello)
+        return dict(read_plant(modello, catalogo, Naming.from_directory(cartella_dei_nomi)).sigle)
+    except (ValidationError, CatalogError, GraphError, NamingError, ValueError, OSError):
+        return {}
