@@ -230,9 +230,9 @@ sono i numeri con cui confronti due pose (per esempio i due ordini dei collettor
 
 Le linee elettriche e di comando escono dallo stesso grafo. **Sulle centrali e dove la tavola è
 già densa vanno su una tavola a parte**; sulle tavole piccole — la sola distribuzione, una
-macchina sola con i suoi terminali — stanno sulla tavola unica (disposizione del PO). Il piano lo
-dice con la vista; il criterio è in [riferimenti/comporre.md](riferimenti/comporre.md), e il
-progettista può sempre forzare.
+macchina sola con i suoi terminali — stanno sulla tavola unica: è la disposizione del PO. Il
+piano lo dice con la vista; il criterio misurabile, che ne è l'applicazione, è in
+[riferimenti/comporre.md](riferimenti/comporre.md), e il progettista può sempre forzare.
 
 #### Le tabelle sul foglio
 

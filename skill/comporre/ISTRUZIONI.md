@@ -583,6 +583,12 @@ linea sul suo cavo, e lo posa il motore.
 
 #### Come si compone la tavola dell'elettrico
 
+**Le uscite del quadro e gli ingressi del regolatore si possono scambiare.** Quale `out_n` del
+quadro o quale `out_n`/`probe_n` del regolatore usa un cavo non è topologia: il pezzo collegato
+resta lo stesso. Se l'uscita scelta in Capire fa incrociare due cavi, cambia l'attacco nel
+grafo (solo quello: stessi pezzi, stessa rete), rilancia `completa` e dillo nella consegna in
+una riga. `python3 scripts/mep.py pezzi <grafo> --vista elettrico` dice dove sta ogni porta.
+
 È uno schema di collegamento, non la centrale ridisegnata: i pezzi non devono stare dove stanno
 sull'idraulica. Quello che conta è che i cavi siano corti e non si incrocino.
 

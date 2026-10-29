@@ -570,8 +570,19 @@ parti. Una tubazione scritta al contrario la validazione la ferma
 dell'impianto si ferma e le sigle che non hai scritto non si assegnano.
 
 **L'elettrico e il comando si trascrivono solo dove il catalogo ha gli attacchi**: le
-voci dell'aria-aria, le sonde, il regolatore. Se il testo descrive un cavo verso un pezzo
-la cui voce non ha l'attacco, non inventarlo: è una voce di tipo B (§6).
+voci dell'aria-aria, il quadro (`out_1`…`out_6`), il sezionatore, il regolatore
+(`power`, `bus`, `out_1`…`out_4` per i comandi, `probe_1`…`probe_3` per le sonde), le sonde
+(`signal`), e sulle macchine idroniche gli attacchi di comando facoltativi: pompe di calore e
+caldaie `power` e `bus`, circolatori `power` (e il comando, se la voce lo ha), valvole a tre
+vie motorizzate `comando`, ventilconvettori `power` e `bus`. `python3 scripts/mep.py
+catalogo <id>` li elenca. Se il testo descrive un cavo verso un pezzo la cui voce non ha
+l'attacco, non inventarlo: è una voce di tipo B (§6).
+
+**Le uscite di un quadro e gli ingressi di un regolatore sono equivalenti**: scegli la prima
+libera, nell'ordine. Quale uscita usa un cavo **non è topologia** — il collegamento resta lo
+stesso —, e chi compone può cambiarla per non incrociare i cavi (`comporre.md`). Il protocollo
+di un bus («Modbus», «P1-P2») va nella `scritta` del tratto, se il progettista lo dice:
+«Modbus · 2×0,75 schermato · L 15 m».
 
 **I tre campi del tratto — dati del progettista, mai calcolati.** Su ogni tubazione, **in
 testa** e non fra le `properties`, perché la tavola li scrive lungo la linea:
@@ -622,7 +633,8 @@ Le voci per **il costruito** (I-194), quando il testo le dice:
 
 - il **contatore di calore** (`heat-meter`), in linea dove il progettista lo mette — di
   solito sul ritorno: le regole gli mettono le intercettazioni prima e dopo;
-- il **collettore d'appartamento con mandata e ritorno** (`zone-manifold-pair`): ogni
+- il **collettore con mandata e ritorno** (`zone-manifold-pair`), d'appartamento o di
+  centrale: ogni
   circuito esce da `out_n` e rientra in `ret_n`, e il ritorno esce da `out` — senza
   raccordi a T per richiudere i ritorni;
 - il **volano a sei attacchi** (`buffer-six-port`), quando ne ha due predisposti in più
@@ -690,8 +702,18 @@ trova. Se ne mettono uno dove sul costruito non c'è, si toglie; se lo mettono i
 diverso, si sposta (`accessori_tolti`, §3). Quello che il testo nomina senza un posto
 resta alle regole.
 
-Se il testo nomina un mestiere che non sta in nessuna delle due liste (un ventilatore,
-una linea frigorifera…), trattalo come voce di catalogo mancante: §6, tipo B.
+**Entrano anche, quando il testo li dice, l'aria-aria e l'elettrico e il comando** (§4.8),
+che non sono ferramenta di servizio: i mestieri `refrigerant_generation`,
+`direct_expansion_terminal`, `air_zoning`, `zone_control`, `air_terminal`, `air_return`,
+`condensate_trap`, `power_source`, `power_isolation`, `room_control`, `unit_control`,
+`plant_control`, `temperature_sensing`, `outdoor_temperature_sensing`. La **sonda a
+immersione** su una tubazione si appende come un termometro: un `tee-branch` in linea e dal
+braccio una tubazione corta alla porta `a` della sonda; nel bollitore o nel volano va
+sull'attacco `probe`, se la voce lo ha. Il suo cavo esce dalla porta `signal` verso un
+ingresso `probe_n` del regolatore.
+
+Se il testo nomina un mestiere che non sta in nessuna delle liste (un ventilatore, un'unità
+di trattamento aria…), trattalo come voce di catalogo mancante: §6, tipo B.
 
 ---
 
