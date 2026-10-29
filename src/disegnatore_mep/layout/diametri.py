@@ -479,6 +479,7 @@ def posa_i_diametri(
                             ancora=ancora,
                             connection_ids=sorted(tratto.connection_ids),
                             richiamo=richiamo,
+                            del_progettista=isinstance(tratto, ScrittaDelTratto),
                         )
         return None
 
@@ -512,6 +513,7 @@ def posa_i_diametri(
                             verticale=not rettilineo.orizzontale,
                             connection_ids=sorted(tratto.connection_ids),
                             corpo_mm=None if corpo_della_scritta == corpo else corpo_della_scritta,
+                            del_progettista=isinstance(tratto, ScrittaDelTratto),
                         )
                         testi.append(box)
                         break

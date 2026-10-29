@@ -642,6 +642,9 @@ class _Tavola:
         self.doc = new(DXF_VERSION, setup=False, units=units.MM)
         self.msp = self.doc.modelspace()
         self.blocchi: set[str] = set()
+        self.varianti: dict[tuple[str, tuple[str, ...]], str] = {}
+        """I blocchi di un simbolo senza qualche moncone (collaudo T1 di REL-012):
+        uno per combinazione di porte scollegate, `NoveC_<simbolo>_V<n>`."""
         self._intestazione()
         self._stili()
         self.carta = self._presentazione()
@@ -788,11 +791,27 @@ class _Tavola:
             [(cx - r, cy, 1.0), (cx + r, cy, 1.0)], is_closed=True
         )
 
-    def blocco_del_simbolo(self, symbol_id: str) -> str:
+    def blocco_del_simbolo(self, symbol_id: str, senza: Sequence[str] = ()) -> str:
+        """Il blocco di un simbolo; con `senza`, quello senza il moncone di quelle
+        porte — un blocco a parte, perche' il blocco del simbolo e' uno per tutti i
+        pezzi che lo usano. Le lettere diritte restano quelle del blocco intero."""
+        simbolo = self.symbols.get(symbol_id)
+        ridotto = simbolo.senza_le_porte(senza)
+        if ridotto is not simbolo:
+            chiave = (symbol_id, tuple(sorted(set(senza) & simbolo.porte_col_moncone)))
+            if chiave not in self.varianti:
+                base = self.blocco_del_simbolo(symbol_id)
+                nome = f"{base}_V{sum(1 for item in self.varianti if item[0] == symbol_id) + 1}"
+                blocco = self.doc.blocks.new(
+                    nome, dxfattribs={"description": f"{simbolo.manifest.name}: senza i monconi liberi"}
+                )
+                self._primitive_nel_blocco(blocco, corpo_del_simbolo(ridotto.body).primitive)
+                self.blocchi.add(nome)
+                self.varianti[chiave] = nome
+            return self.varianti[chiave]
         nome = nome_del_blocco(symbol_id)
         if nome in self.blocchi:
             return nome
-        simbolo = self.symbols.get(symbol_id)
         corpo = corpo_del_simbolo(simbolo.body)
         blocco = self.doc.blocks.new(nome, dxfattribs={"description": simbolo.manifest.name})
         self._primitive_nel_blocco(blocco, corpo.primitive)
@@ -957,7 +976,9 @@ class _Tavola:
         for placed in self.sheet.symbols:
             diritto = self.symbols.get(placed.symbol_id)
             girato: Symbol = diritto.rotated(placed.rotation_deg, placed.specchiato)
-            nome = self.blocco_del_simbolo(placed.symbol_id)
+            nome = self.blocco_del_simbolo(placed.symbol_id, placed.porte_scollegate)
+            # Le lettere diritte sono del blocco del simbolo intero.
+            base = nome_del_blocco(placed.symbol_id)
             dove = inserimento_del_simbolo(
                 placed.origin, placed.rotation_deg, placed.specchiato,
                 diritto.manifest.width_mm, diritto.manifest.height_mm, self.altezza,
@@ -974,7 +995,7 @@ class _Tavola:
             self.msp.add_blockref(nome, (dove.x, dove.y), dxfattribs=attributi)
             for glifo in girato.manifest.upright_glyphs:
                 self.msp.add_blockref(
-                    f"{nome}_{glifo.id.capitalize()}",
+                    f"{base}_{glifo.id.capitalize()}",
                     self.p(placed.origin.x_mm + glifo.x_mm, placed.origin.y_mm + glifo.y_mm),
                     dxfattribs={"layer": LAYER_SIMBOLI},
                 )

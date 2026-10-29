@@ -1647,11 +1647,40 @@ SOURCE_REL012_KIT = (
 )
 """La fonte dei simboli del kit, con le parole del kit (`RAPPORTO.md` §5.1)."""
 
+SOURCE_REL012_PLENUM = (
+    "proposta della sessione del 29/10/2026 (collaudo T1 di REL-012, plenum a quattro uscite): "
+    "lo stesso disegno del plenum a cinque serrande del kit AA-01, con le serrande che il "
+    "plenum ha; forma da approvare dal PO sulla tavola"
+)
+"""La fonte dei plenum di zona che il kit non aveva: da due a sei serrande."""
+
 SPLIT_UNIT = MACHINE
 """Unita' esterna e unita' interna hanno la taglia di una macchina (D-055)."""
-ZONING_PLENUM = (40.0, 57.5)
+ZONING_PLENUM_PITCH = 12.5
+"""Il passo delle uscite del plenum di zona: quello del kit."""
+ZONING_PLENUM_FIRST_OUTLET = 5.0
+"""La prima uscita a 5 mm dal bordo di sopra, l'ultima a 2,5 da quello di sotto."""
+ZONING_PLENUM_OUTLET_COUNTS = (2, 3, 4, 5, 6)
+"""Quante serrande ha un plenum di zona: da due a sei (collaudo T1 di REL-012, §2.1).
+Airzone e gli altri costruttori li fanno da 2 a 6-8 bocche; il catalogo ne porta
+una voce per numero, ognuna con le uscite tutte obbligatorie."""
+NUMERI_IN_LETTERE = {2: "due", 3: "tre", 4: "quattro", 5: "cinque", 6: "sei"}
+"""Il numero delle serrande come lo dice il nome: «a quattro serrande»."""
+
+
+def zoning_plenum_size(outlets: int) -> tuple[float, float]:
+    """Il riquadro del plenum a `outlets` uscite: largo 40, alto quanto le uscite
+    a passo 12,5 — 57,5 per le cinque del kit."""
+    return (40.0, ZONING_PLENUM_FIRST_OUTLET + ZONING_PLENUM_PITCH * (outlets - 1) + 2.5)
+
+
+def zoning_plenum_outlets(outlets: int) -> tuple[float, ...]:
+    return tuple(ZONING_PLENUM_FIRST_OUTLET + ZONING_PLENUM_PITCH * indice for indice in range(outlets))
+
+
+ZONING_PLENUM = zoning_plenum_size(5)
 """Cinque uscite a passo 12,5, la prima e l'ultima a 2,5 dai bordi del plenum."""
-ZONING_PLENUM_OUTLETS = (5.0, 17.5, 30.0, 42.5, 55.0)
+ZONING_PLENUM_OUTLETS = zoning_plenum_outlets(5)
 ZONE_CONTROLLER = (30.0, 60.0)
 """La centrale di zona: alta perche' le porte di bus stanno a 15 mm l'una
 dall'altra, e un termostato (10 x 10) per porta si impila in colonna."""
@@ -1683,14 +1712,21 @@ DUCTED_INDOOR_PORTS = [
     port_at("drain", "bottom", 22.5, *SPLIT_UNIT),
     port_at("p1p2_b", "bottom", 32.5, *SPLIT_UNIT),
 ]
-ZONING_PLENUM_PORTS = [
-    port_at("in", "left", 12.5, *ZONING_PLENUM),
-    port_at("motori", "bottom", ZONING_PLENUM[0] / 2, *ZONING_PLENUM),
-    *(
-        port_at(f"out_{indice + 1}", "right", y, *ZONING_PLENUM)
-        for indice, y in enumerate(ZONING_PLENUM_OUTLETS)
-    ),
-]
+def zoning_plenum_ports(outlets: int) -> list[dict[str, Any]]:
+    """L'ingresso a sinistra alla quota della mandata dell'unita' interna, i motori
+    sotto al centro, e le uscite a destra."""
+    size = zoning_plenum_size(outlets)
+    return [
+        port_at("in", "left", 12.5, *size),
+        port_at("motori", "bottom", size[0] / 2, *size),
+        *(
+            port_at(f"out_{indice + 1}", "right", y, *size)
+            for indice, y in enumerate(zoning_plenum_outlets(outlets))
+        ),
+    ]
+
+
+ZONING_PLENUM_PORTS = zoning_plenum_ports(5)
 ZONE_CONTROLLER_PORTS = [
     port_at("serrande", "top", ZONE_CONTROLLER[0] / 2, *ZONE_CONTROLLER),
     port_at("p1p2", "left", 10.0, *ZONE_CONTROLLER),
@@ -1701,8 +1737,16 @@ ZONE_CONTROLLER_PORTS = [
     ),
 ]
 ELECTRICAL_PANEL_PORTS = [
+    # Le due uscite del kit, sopra, dove sono sempre state.
     port_at("out_1", "top", 7.5, *ELECTRICAL_PANEL),
     port_at("out_2", "top", 17.5, *ELECTRICAL_PANEL),
+    # Fino a sei (collaudo T1 e fase 3 di REL-012): le altre in senso orario, sulle
+    # facce che erano libere — destra, sotto da destra a sinistra, sinistra. Sono
+    # facoltative, e una non collegata non si disegna (`data-port`).
+    port_at("out_3", "right", ELECTRICAL_PANEL[1] / 2, *ELECTRICAL_PANEL),
+    port_at("out_4", "bottom", 17.5, *ELECTRICAL_PANEL),
+    port_at("out_5", "bottom", 7.5, *ELECTRICAL_PANEL),
+    port_at("out_6", "left", ELECTRICAL_PANEL[1] / 2, *ELECTRICAL_PANEL),
 ]
 
 
@@ -1727,6 +1771,16 @@ def _stub(item: dict[str, Any], w: float, h: float, inset: float) -> str:
 
 def _by_id(ports: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     return {item["id"]: item for item in ports}
+
+
+def _of_port(item: dict[str, Any], contenuto: str) -> str:
+    """Il moncone di una porta nel suo gruppo `data-port` (collaudo T1 di REL-012, §3).
+
+    Il motore toglie il gruppo di una porta **che la tavola non collega**: una porta
+    facoltativa libera non disegna niente, e un moncone che non porta a nessuna
+    linea non si legge piu' come un attacco libero. Solo le macchine dell'aria-aria
+    e del comando lo hanno; i simboli idronici restano com'erano, byte per byte."""
+    return f'<g data-port="{item["id"]}">{contenuto}</g>'
 
 
 def _fan(cx: float, cy: float, r: float) -> str:
@@ -1767,18 +1821,30 @@ def split_outdoor_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
         _shell(w, h)
         + _fan(w * 0.325, cy, h / 4)
         + compressore
-        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) for item in ports)
+        + "".join(_of_port(item, _stub(item, w, h, MACHINE_SHELL_INSET)) for item in ports)
     )
 
 
+COLLAR_OUTSET = 0.5
+"""Il collare di un canale si chiude a mezzo millimetro dalla faccia, come quello
+della ripresa dell'unita' interna."""
+
+
 def _air_collar(item: dict[str, Any], half: float) -> str:
-    """Il collare di un canale su una faccia laterale: due tratti paralleli al
-    moncone, larghi `half` per parte, fuori dall'involucro."""
+    """Il collare di un canale su una faccia laterale: un riquadro largo `half` per
+    parte, fra l'involucro e la faccia, **chiuso** dalla parte del canale.
+
+    Nel kit erano due tratti paralleli aperti, e sulla tavola del collaudo T1 di
+    REL-012 (§3) si leggevano come due monconi liberi sopra e sotto la mandata.
+    Chiuso, e' lo stesso collare della ripresa, girato sul fianco. *Proposta della
+    sessione*, da giudicare sulla tavola."""
     x, y = item["x_mm"], item["y_mm"]
     dentro = MACHINE_SHELL_INSET if item["face"] == "left" else x - MACHINE_SHELL_INSET
-    fuori = 0.0 if item["face"] == "left" else x
-    a, b = sorted((dentro, fuori))
-    return f'<path d="M{n(a)} {n(y - half)} L{n(b)} {n(y - half)} M{n(a)} {n(y + half)} L{n(b)} {n(y + half)}"/>'
+    fuori = COLLAR_OUTSET if item["face"] == "left" else x - COLLAR_OUTSET
+    return (
+        f'<path d="M{n(dentro)} {n(y - half)} L{n(fuori)} {n(y - half)} '
+        f'L{n(fuori)} {n(y + half)} L{n(dentro)} {n(y + half)}"/>'
+    )
 
 
 def ducted_indoor_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
@@ -1809,19 +1875,21 @@ def ducted_indoor_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
         f'<circle cx="{n(scarico["x_mm"])}" cy="{n(pompa_cy)}" r="{n(pompa_r)}"/>',
     ]
     for item in ports:
+        moncone = ""
         if item is mandata:
-            parts.append(_air_collar(item, 3.0))
+            moncone += _air_collar(item, 3.0)
         if item is ripresa:
             x = item["x_mm"]
-            parts.append(
+            moncone += (
                 f'<path d="M{n(x - ripresa_mezzo)} {n(inset)} L{n(x - ripresa_mezzo)} 0.5 '
                 f'L{n(x + ripresa_mezzo)} 0.5 L{n(x + ripresa_mezzo)} {n(inset)}"/>'
             )
         if item is scarico:
             # Lo scarico parte dalla pompa della condensa, non dall'involucro.
-            parts.append(_segment(item["x_mm"], vasca_alto, item["x_mm"], item["y_mm"]))
+            moncone += _segment(item["x_mm"], vasca_alto, item["x_mm"], item["y_mm"])
         else:
-            parts.append(_stub(item, w, h, inset))
+            moncone += _stub(item, w, h, inset)
+        parts.append(_of_port(item, moncone))
     return "".join(parts)
 
 
@@ -1834,12 +1902,14 @@ def zoning_plenum_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
     collettore_x = w / 2
     uscite = [item for item in ports if item["id"].startswith("out_")]
     y_in = ingresso["y_mm"]
+    # Il collettore va dalla prima all'ultima uscita, e comunque fino all'ingresso:
+    # nel plenum a due uscite l'ingresso sta fra le due.
+    collettore = sorted((uscite[0]["y_mm"], uscite[-1]["y_mm"], y_in))
     parts = [
         f'<rect x="{n(MACHINE_SHELL_INSET)}" y="0" width="{n(w - 2 * MACHINE_SHELL_INSET)}" height="{n(h)}"/>',
-        _segment(0, y_in, MACHINE_SHELL_INSET, y_in),
-        _air_collar(ingresso, 3.0),
+        _of_port(ingresso, _segment(0, y_in, MACHINE_SHELL_INSET, y_in) + _air_collar(ingresso, 3.0)),
         _segment(MACHINE_SHELL_INSET, y_in, collettore_x, y_in),
-        _segment(collettore_x, uscite[0]["y_mm"], collettore_x, uscite[-1]["y_mm"]),
+        _segment(collettore_x, collettore[0], collettore_x, collettore[-1]),
     ]
     serranda_x, serranda_w, serranda_h = w * 0.6875, 5.0, 4.0
     for item in uscite:
@@ -1848,7 +1918,7 @@ def zoning_plenum_body(w: float, h: float, ports: list[dict[str, Any]]) -> str:
             f'<rect x="{n(serranda_x)}" y="{n(y - serranda_h / 2)}" width="{n(serranda_w)}" '
             f'height="{n(serranda_h)}"/>'
             + _segment(serranda_x + 0.5, y + 1.5, serranda_x + serranda_w - 0.5, y - 1.5)
-            + _segment(serranda_x + serranda_w, y, w, y)
+            + _of_port(item, _segment(serranda_x + serranda_w, y, w, y))
             + _segment(collettore_x, y, serranda_x, y)
         )
     # La porta dei motori sta sul bordo inferiore del plenum: il bordo la tocca.
@@ -1879,9 +1949,12 @@ def zone_controller_body(w: float, h: float, ports: list[dict[str, Any]]) -> str
     bus = [item for item in ports if item["id"].startswith("bus_")]
     return (
         _shell(w, h)
-        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) for item in fissi)
+        + "".join(_of_port(item, _stub(item, w, h, MACHINE_SHELL_INSET)) for item in fissi)
         + _display(6.0, 6.0)
-        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) + _terminal(item, w, h) for item in bus)
+        + "".join(
+            _of_port(item, _stub(item, w, h, MACHINE_SHELL_INSET) + _terminal(item, w, h))
+            for item in bus
+        )
     )
 
 
@@ -1927,10 +2000,22 @@ def electrical_panel_body(w: float, h: float, ports: list[dict[str, Any]]) -> st
     """Quadro elettrico: il rettangolo diviso in diagonale con la meta' piena, il
     segno del quadro della pratica elettrica."""
     x0, y0, x1, y1 = 0.5, MACHINE_SHELL_INSET, w - 0.5, h - 0.5
+
+    def moncone(item: dict[str, Any]) -> str:
+        # Dalla faccia al rettangolo del quadro: sopra un passo, sugli altri
+        # lati il mezzo millimetro che il rettangolo lascia.
+        x, y = item["x_mm"], item["y_mm"]
+        return {
+            "top": _segment(x, 0, x, y0),
+            "right": _segment(x1, y, w, y),
+            "bottom": _segment(x, y1, x, h),
+            "left": _segment(0, y, x0, y),
+        }[item["face"]]
+
     return (
         f'<rect x="{n(x0)}" y="{n(y0)}" width="{n(x1 - x0)}" height="{n(y1 - y0)}"/>'
         f'<path d="M{n(x0)} {n(y1)} L{n(x1)} {n(y0)} L{n(x1)} {n(y1)} Z" fill="currentColor"/>'
-        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) for item in ports)
+        + "".join(_of_port(item, moncone(item)) for item in ports)
     )
 
 
@@ -2075,10 +2160,13 @@ def plant_controller_body(w: float, h: float, ports: list[dict[str, Any]]) -> st
     )
     return (
         _shell(w, h)
-        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) for item in alimentazione)
+        + "".join(_of_port(item, _stub(item, w, h, MACHINE_SHELL_INSET)) for item in alimentazione)
         + _display(6.0, 6.0)
         + curva
-        + "".join(_stub(item, w, h, MACHINE_SHELL_INSET) + _terminal(item, w, h) for item in morsetti)
+        + "".join(
+            _of_port(item, _stub(item, w, h, MACHINE_SHELL_INSET) + _terminal(item, w, h))
+            for item in morsetti
+        )
     )
 
 
@@ -3013,6 +3101,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=split_outdoor_body(*SPLIT_UNIT, SPLIT_OUTDOOR_PORTS),
         source=SOURCE_REL012_KIT,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # I monconi nei loro gruppi `data-port`: il corpo cambia, sale di minore.
+        version="1.1.0",
     ),
     SymbolSpec(
         id="ducted-indoor-unit",
@@ -3024,17 +3114,28 @@ SYMBOLS: list[SymbolSpec] = [
         body=ducted_indoor_body(*SPLIT_UNIT, DUCTED_INDOOR_PORTS),
         source=SOURCE_REL012_KIT,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # I monconi nei loro gruppi `data-port` e il collare chiuso: sale di minore.
+        version="1.1.0",
     ),
-    SymbolSpec(
-        id="zoning-plenum-5",
-        name="Plenum motorizzato di zona a cinque serrande",
-        width_mm=ZONING_PLENUM[0],
-        height_mm=ZONING_PLENUM[1],
-        inline=False,
-        ports=ZONING_PLENUM_PORTS,
-        body=zoning_plenum_body(*ZONING_PLENUM, ZONING_PLENUM_PORTS),
-        source=SOURCE_REL012_KIT,
-        allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+    # Il plenum di zona da due a sei serrande (collaudo T1 di REL-012, §2.1): lo
+    # stesso disegno del cinque del kit, una serranda per uscita a passo 12,5, e
+    # l'altezza che segue il numero. Il cinque e' quello della M.02.
+    *(
+        SymbolSpec(
+            id=f"zoning-plenum-{uscite}",
+            name=f"Plenum motorizzato di zona a {NUMERI_IN_LETTERE[uscite]} serrande",
+            width_mm=zoning_plenum_size(uscite)[0],
+            height_mm=zoning_plenum_size(uscite)[1],
+            inline=False,
+            ports=zoning_plenum_ports(uscite),
+            body=zoning_plenum_body(*zoning_plenum_size(uscite), zoning_plenum_ports(uscite)),
+            source=SOURCE_REL012_KIT if uscite == 5 else SOURCE_REL012_PLENUM,
+            allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+            # I monconi nei loro gruppi e il collare chiuso: il corpo cambia, il
+            # manifesto sale di minore. Gli altri nascono adesso.
+            version="1.1.0" if uscite == 5 else VERSION,
+        )
+        for uscite in ZONING_PLENUM_OUTLET_COUNTS
     ),
     SymbolSpec(
         id="zone-controller",
@@ -3046,6 +3147,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=zone_controller_body(*ZONE_CONTROLLER, ZONE_CONTROLLER_PORTS),
         source=SOURCE_REL012_KIT,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # I monconi nei loro gruppi `data-port`: il corpo cambia, sale di minore.
+        version="1.1.0",
     ),
     single_port_symbol(
         "return-grille", "Griglia di ripresa con plenum e filtro", DEVICE, "right",
@@ -3069,6 +3172,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=electrical_panel_body(*ELECTRICAL_PANEL, ELECTRICAL_PANEL_PORTS),
         source=SOURCE_REL012_KIT,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # Quattro uscite facoltative in piu' e i monconi nei loro gruppi: sale di minore.
+        version="1.1.0",
     ),
     inline_symbol(
         "isolator-switch", "Sezionatore onnipolare", INLINE_ACCESSORY,
@@ -3111,6 +3216,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=plant_controller_body(*PLANT_CONTROLLER, PLANT_CONTROLLER_PORTS),
         source=SOURCE_REL012_CONTROL,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # I monconi nei loro gruppi `data-port`: il corpo cambia, sale di minore.
+        version="1.1.0",
     ),
 ]
 

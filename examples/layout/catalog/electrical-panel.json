@@ -25,10 +25,39 @@
       "medium": "power_supply",
       "flow": "out",
       "required": false
+    },
+    {
+      "id": "out_3",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": false
+    },
+    {
+      "id": "out_4",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": false
+    },
+    {
+      "id": "out_5",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": false
+    },
+    {
+      "id": "out_6",
+      "domain": "control",
+      "medium": "power_supply",
+      "flow": "out",
+      "required": false
     }
   ],
   "sources": [
     "CONV-FOUNDATION",
-    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola"
+    "proposta della sessione del 29/10/2026 (caso di prova AA-01, canalizzato aria-aria): forma da approvare dal PO sulla tavola",
+    "uscite dalla terza alla sesta: proposta della sessione del 29/10/2026 (collaudo T1 e fase 3 di REL-012), da approvare dal PO sulla tavola"
   ]
 }

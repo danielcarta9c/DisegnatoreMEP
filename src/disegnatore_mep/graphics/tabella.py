@@ -33,6 +33,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
+from disegnatore_mep.catalog.schema import ComponentDefinition
 from disegnatore_mep.graph.naming import Naming, NamingError
 from disegnatore_mep.graph.plant import GraphError, read_plant
 from disegnatore_mep.layout.geometry import (
@@ -46,7 +47,7 @@ from disegnatore_mep.model.project import (
     MODELLO,
     ProjectModel,
 )
-from disegnatore_mep.model.types import JsonPrimitive
+from disegnatore_mep.model.types import Domain, JsonPrimitive
 
 from .cartiglio import FAMIGLIA, PT_MM, SEPARATORE, larghezza_mm
 from .frame import SheetFrame
@@ -307,6 +308,43 @@ def tabella_della_tavola(
         modello, catalogo, naming, sigle, (item.component_id for item in sheet.symbols)
     )
     return impagina_la_tabella(righe, frame)
+
+
+def fuori_dall_acqua(voce: ComponentDefinition) -> bool:
+    """Se una voce non ha **nessun attacco d'acqua**: sta tutta sull'aria, sul
+    refrigerante, sulla condensa, sull'elettrico o sul comando (REL-012).
+
+    E' la regola con cui questi pezzi portano la loro sigla sul disegno anche fuori
+    dalla tabella: sul canalizzato del collaudo T1 bocchette, termostati, quadro,
+    sezionatore, ripresa, sifone e scarico restavano senza, e la pianta e la
+    distinta non avevano un nome con cui citarli. **I pezzi dell'idronico restano
+    come sono**: una valvola o un filtro la sigla sul disegno non la portano (la
+    tavola di consegna porta le sigle delle macchine principali, `layout.addresses`),
+    e una regola sui soli pezzi senz'acqua non tocca nessuna tavola idronica."""
+    return bool(voce.ports) and all(porta.domain is not Domain.HYDRONIC for porta in voce.ports)
+
+
+def sigle_sul_disegno(
+    modello: ProjectModel,
+    catalogo: ComponentRegistry,
+    sigle: dict[str, str],
+    sul_foglio: Iterable[str],
+) -> dict[str, str]:
+    """La sigla dei pezzi **fuori dall'acqua** disegnati su questa tavola, che il
+    progettista non ha scritto. `sigle` sono quelle della lettura del **grafo intero**
+    (D-097, `piano.vista.sigle_del_grafo_intero`): le stesse che la tabella, la
+    distinta e la pianta usano, e le stesse sulla tavola idraulica e su quella
+    dell'elettrico. Se l'impianto non si legge sono vuote, e valgono quelle scritte,
+    come per la tabella."""
+    disegnati = set(sul_foglio)
+    return {
+        pezzo.id: sigle[pezzo.id]
+        for pezzo in modello.components
+        if pezzo.id in disegnati
+        and pezzo.tag is None
+        and pezzo.id in sigle
+        and fuori_dall_acqua(catalogo.get(pezzo.definition_id))
+    }
 
 
 @dataclass(frozen=True)
