@@ -359,11 +359,12 @@ fitto per la scala sono rilievi tuoi.
 ### 8. Consegnare
 
 La tavola da consegnare è l'ultima eseguita, senza `--verifica`. Copiala dove il progettista la
-riceve — su claude.ai è `/mnt/user-data/outputs`; se quella cartella non c'è, lascia i file in
+riceve, con la distinta e la pianta se le hai fatte (un comando solo: aggiungi le loro cartelle)
+— su claude.ai è `/mnt/user-data/outputs`; se quella cartella non c'è, lascia i file in
 `$L/tavola` e dai i percorsi:
 
 ```bash
-python3 scripts/mep.py consegna $L/tavola /mnt/user-data/outputs
+python3 scripts/mep.py consegna $L/tavola $L/distinta $L/pianta /mnt/user-data/outputs
 ```
 
 Poi, in poche righe:

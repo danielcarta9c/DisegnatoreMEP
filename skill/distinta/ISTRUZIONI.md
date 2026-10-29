@@ -124,5 +124,6 @@ Le scelte predefinite stanno in `distinta.json`, `fornitura`: si cambiano lì so
 ## Come la consegni
 
 Riporta al progettista, in quest'ordine: le **domande** (le voci DA DEFINIRE), quello che è **da confermare** (la
-fornitura), le **segnalazioni** della verifica, poi i file. Non riempire tu una voce DA DEFINIRE e non ritoccare
+fornitura), le **segnalazioni** della verifica, poi i file: `mep.py consegna` copia l'Excel se gli dai anche la
+cartella della distinta (`consegna $L/tavola $L/distinta … <destinazione>`). Non riempire tu una voce DA DEFINIRE e non ritoccare
 l'Excel: si corregge il grafo, e si rilancia il comando.

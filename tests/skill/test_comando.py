@@ -311,16 +311,39 @@ def test_l_anteprima_di_una_zona_e_il_riquadro_chiesto(
 
 
 def test_consegna_copia_i_file_per_il_progettista(cartelle: Cartelle, tmp_path: Path) -> None:
-    tavola = tmp_path / "tavola"
-    tavola.mkdir()
-    for nome in ("t1.pdf", "t1.dxf", "t1.svg", "t1-rilievi.md", "logo.jpg", "geometria.json"):
-        (tavola / nome).write_text("x", encoding="utf-8")
-    assert main(["consegna", str(tavola), str(tmp_path / "fuori")], cartelle) == 0
-    # L'SVG resta nella cartella di lavoro (collaudo T2 di REL-012); il logo va col
-    # DXF, che lo nomina.
+    """La tavola, la distinta e la pianta in un comando solo (collaudo T3 di REL-012, §2
+    punto 8: prima l'Excel e la pianta si copiavano a mano)."""
+    file = {
+        "tavola": ("t1.pdf", "t1.dxf", "t1.svg", "t1-rilievi.md", "logo.jpg", "geometria.json"),
+        "distinta": ("distinta.xlsx", "distinta.json", "tabelle-del-foglio.json", "distinta-calcoli.md"),
+        "pianta": ("pianta.pdf", "pianta.dxf", "pianta.svg", "pianta.png", "pianta.tracciati.json", "logo.jpg"),
+    }
+    for cartella, nomi in file.items():
+        (tmp_path / cartella).mkdir()
+        for nome in nomi:
+            (tmp_path / cartella / nome).write_text("x", encoding="utf-8")
+    dentro = [str(tmp_path / cartella) for cartella in file]
+    assert main(["consegna", *dentro, str(tmp_path / "fuori")], cartelle) == 0
+    # L'SVG, il PNG e i JSON restano nella cartella di lavoro (collaudo T2 di REL-012); il
+    # logo va col DXF, che lo nomina; l'Excel della distinta si consegna.
     assert sorted(p.name for p in (tmp_path / "fuori").iterdir()) == [
-        "logo.jpg", "t1-rilievi.md", "t1.dxf", "t1.pdf",
+        "distinta-calcoli.md", "distinta.xlsx", "logo.jpg", "pianta.dxf", "pianta.pdf",
+        "t1-rilievi.md", "t1.dxf", "t1.pdf",
     ]
+    # Una cartella sola, come prima.
+    assert main(["consegna", str(tmp_path / "tavola"), str(tmp_path / "solo")], cartelle) == 0
+    assert sorted(p.name for p in (tmp_path / "solo").iterdir()) == ["logo.jpg", "t1-rilievi.md", "t1.dxf", "t1.pdf"]
+
+
+def test_consegna_non_copre_un_file_con_un_altro_dello_stesso_nome(
+    cartelle: Cartelle, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    for cartella, contenuto in (("a", "uno"), ("b", "due")):
+        (tmp_path / cartella).mkdir()
+        (tmp_path / cartella / "tavola.pdf").write_text(contenuto, encoding="utf-8")
+    assert main(["consegna", str(tmp_path / "a"), str(tmp_path / "b"), str(tmp_path / "fuori")], cartelle) == 1
+    assert "tavola.pdf" in capsys.readouterr().err
+    assert not (tmp_path / "fuori").exists()
 
 
 def test_completa_dice_che_cosa_il_progettista_ha_tolto_e_che_cosa_resta(
