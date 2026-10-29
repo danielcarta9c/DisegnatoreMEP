@@ -1,0 +1,365 @@
+{
+  "id": "corredo",
+  "versione": "1.0.0",
+  "nota": "Il corredo di posa di ogni voce del catalogo, per id di voce (`definition_id` del pezzo). Il catalogo non si tocca: il corredo sta qui. `apparecchiatura`: il pezzo è una macchina fornita da Nove C e va nella sezione A, una riga per marca e modello (un pezzo con la proprietà `compreso_in` è nella fornitura di un altro e non ha riga sua). `passante`: il pezzo sta in mezzo a una linea (sezionatore, sifone), e il tratto lo attraversa. `voci`: il materiale e le opere che il pezzo porta con sé; `calcolo` è `per_pezzo` (n per pezzo) o `per_linea` (n per ogni tratto di quel fluido che arriva al pezzo). Nei testi, `{proprieta}` è un dato del progettista sul pezzo (o la `sezione` del tratto che gli arriva): se manca, il testo dice DA DEFINIRE e la distinta fa la domanda. **Copre l'aria-aria e l'elettrico del kit AA-01; le voci idroniche non hanno corredo**: escono nella sezione X, DA DEFINIRE, finché il PO non decide il corredo (le regole contro il manuale Shenling sono REL-011).",
+  "voci": {
+    "split-outdoor-unit": {
+      "nome": "Unità esterna split a pompa di calore",
+      "apparecchiatura": true,
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.1, C.5, C.6, C.8, C.9, F.1; REVISIONE-INDIPENDENTE.md rilievo 18",
+      "perche": "L'unità esterna sta fuori: porta con sé il foro nella parete esterna, la canalina delle linee, le staffe e lo scarico della sua condensa.",
+      "voci": [
+        {
+          "id": "carotaggio-parete-esterna",
+          "sezione": "F",
+          "testo": "Carotaggio parete esterna Ø80 con guaina passante e sigillatura",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.1",
+          "perche": "Le linee frigorifere e il cavo di collegamento escono dall'involucro una volta."
+        },
+        {
+          "id": "canalina-esterna",
+          "sezione": "C",
+          "testo": "Canalina coprilinee esterna 80×60",
+          "um": "m",
+          "calcolo": {"tipo": "per_pezzo", "n": 4},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.5; REVISIONE-INDIPENDENTE.md rilievo 18",
+          "perche": "Il tratto a vista sulla facciata, dal foro all'unità esterna."
+        },
+        {
+          "id": "accessori-canalina",
+          "sezione": "C",
+          "testo": "Accessori canalina: curva 2, terminale a muro 1, giunto 2",
+          "um": "kit",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.6; REVISIONE-INDIPENDENTE.md rilievo 18 («canalina con accessori a numero»)",
+          "perche": "Una canalina senza curve e terminali non si chiude."
+        },
+        {
+          "id": "staffe-unita-esterna",
+          "sezione": "C",
+          "testo": "Staffe a parete per unità esterna, portata almeno doppia del peso della macchina, con antivibranti",
+          "um": "kit",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.8 (portata ≥ 100 kg per 49 kg)",
+          "perche": "Nota: o piedini a terra, secondo la posizione."
+        },
+        {
+          "id": "scarico-condensa-unita-esterna",
+          "sezione": "C",
+          "testo": "Scarico condensa dell'unità esterna (funziona anche in caldo): raccordo e tubo Ø16 fino a pluviale o pozzetto",
+          "um": "m",
+          "calcolo": {"tipo": "per_pezzo", "n": 4},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce C.9; REVISIONE-INDIPENDENTE.md rilievo 18",
+          "perche": "In riscaldamento l'unità esterna sbrina e scarica acqua: senza scarico gela sul marciapiede."
+        }
+      ]
+    },
+    "ducted-indoor-unit": {
+      "nome": "Unità interna canalizzata ad espansione diretta",
+      "apparecchiatura": true,
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.2, B.4, B.10, D.2, Z.1, Z.2; REVISIONE-INDIPENDENTE.md rilievi 4, 6",
+      "perche": "L'unità interna sta appesa in controsoffitto: sospensioni, giunto sulla ripresa, raccordo della condensa, e il controsoffitto con la botola che sono del committente.",
+      "voci": [
+        {
+          "id": "kit-sospensione",
+          "sezione": "B",
+          "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 4},
+          "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
+          "perche": "Quattro punti di sospensione per la macchina, con antivibrante."
+        },
+        {
+          "id": "giunto-antivibrante-ripresa",
+          "sezione": "B",
+          "testo": "Giunto antivibrante in tela fra unità interna e plenum di ripresa",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.4",
+          "perche": "La vibrazione del ventilatore non deve passare al plenum di ripresa e alla griglia."
+        },
+        {
+          "id": "raccordo-condensa-unita-interna",
+          "sezione": "D",
+          "testo": "Raccordo di adattamento dall'attacco condensa dell'unità interna ({attacco_condensa}) al tubo di scarico, con fascetta",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.2; REVISIONE-INDIPENDENTE.md rilievo 6",
+          "perche": "L'attacco della macchina (VP20 nel caso) non è il diametro del PVC: senza il raccordo lo scarico non si collega. L'attacco è un dato di macchina del progettista (`attacco_condensa`)."
+        },
+        {
+          "id": "controsoffitto-zona-macchina",
+          "sezione": "Z",
+          "fornitura": "committente",
+          "testo": "Controsoffitto in zona unità interna e plenum: altezza libera ≥ 35 cm sotto il solaio",
+          "um": "a corpo",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.1 (altezza della FBA60A9 245 mm più sospensioni e pendenza della condensa)",
+          "perche": "Senza l'altezza libera la macchina non entra: è un'opera del committente da coordinare prima della gara."
+        },
+        {
+          "id": "botola-di-ispezione",
+          "sezione": "Z",
+          "fornitura": "committente",
+          "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2",
+          "perche": "Filtro, pompa della condensa e scheda si raggiungono da sotto."
+        }
+      ]
+    },
+    "zoning-plenum-5": {
+      "nome": "Plenum motorizzato di zona a cinque serrande",
+      "apparecchiatura": true,
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.3, B.10, B.11, Z.2",
+      "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande.",
+      "voci": [
+        {
+          "id": "kit-sospensione",
+          "sezione": "B",
+          "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 4},
+          "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
+          "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
+        },
+        {
+          "id": "isolamento-raccordi-plenum",
+          "sezione": "B",
+          "testo": "Isolamento elastomerico adesivo per raccordi e plenum",
+          "um": "rotolo",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.11",
+          "perche": "I raccordi rigidi fra macchina, plenum e curve fanno condensa se non si isolano."
+        },
+        {
+          "id": "botola-di-ispezione",
+          "sezione": "Z",
+          "fornitura": "committente",
+          "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.2 («sotto UI … e sotto plenum e centrale», n 2)",
+          "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+        }
+      ]
+    },
+    "zone-controller": {
+      "nome": "Centrale di zona",
+      "apparecchiatura": true,
+      "fonte": "kit AA-01: lavoro/grafo.py (la centrale Easyzone e il gateway sono nel kit del plenum)",
+      "perche": "Fornita da Nove C; quando è nel kit del plenum, il progettista lo dice con `compreso_in` e non ha riga sua.",
+      "voci": []
+    },
+    "air-supply-terminal": {
+      "nome": "Bocchetta di mandata con plenum di raccordo",
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci B.2, Z.4, Z.6; REVISIONE-INDIPENDENTE.md rilievi 5 e 28",
+      "perche": "La bocchetta è del committente (nell'offerta del kit), il plenum che la raccorda al flessibile è dell'installatore; ogni stanza servita ha bisogno di un passaggio per il ritorno dell'aria.",
+      "voci": [
+        {
+          "id": "plenum-porta-bocchetta",
+          "sezione": "B",
+          "testo": "Plenum porta-bocchetta coibentato per bocchetta {dimensione}, attacco {sezione} laterale o dall'alto",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.2; REVISIONE-INDIPENDENTE.md rilievo 5 («il plenum da ordinare sulle bocchette scelte non si può prezzare»)",
+          "perche": "Il plenum si ordina sulla misura della bocchetta: è un dato del progettista sul pezzo (`dimensione`)."
+        },
+        {
+          "id": "bocchetta-di-mandata",
+          "sezione": "Z",
+          "fornitura": "committente",
+          "testo": "Bocchetta di mandata {dimensione} a doppio filare con serranda",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.4 (bocchette del committente nell'offerta del caso)",
+          "perche": "Chi fornisce le bocchette lo dice l'offerta: nel kit sono del committente. Se le fornisce l'installatore, si cambia la fornitura di questa voce, qui: la distinta non legge la fornitura dal grafo."
+        },
+        {
+          "id": "griglia-di-transito",
+          "sezione": "Z",
+          "fornitura": "committente",
+          "testo": "Griglia di transito o luce sotto porta per il ritorno dell'aria dal locale servito",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.6; REVISIONE-INDIPENDENTE.md rilievo 28",
+          "perche": "Senza un passaggio, l'aria immessa non torna alla ripresa: la portata cala e cresce il rumore. L'area efficace minima per bocchetta è nella verifica dell'aria."
+        }
+      ]
+    },
+    "return-air-terminal": {
+      "nome": "Griglia di ripresa con plenum e filtro",
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci B.3, B.10, Z.5; REVISIONE-INDIPENDENTE.md rilievo 4",
+      "perche": "La griglia è del committente, il plenum con il filtro sulla bocca della macchina dell'installatore.",
+      "voci": [
+        {
+          "id": "plenum-di-ripresa",
+          "sezione": "B",
+          "testo": "Plenum di ripresa coibentato con filtro ispezionabile, bocca {sezione}, sulla bocca di aspirazione dell'unità interna",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce B.3; REVISIONE-INDIPENDENTE.md rilievo 4 (un solo filtro, nel plenum)",
+          "perche": "Un filtro solo, ispezionabile: due filtri in serie (plenum e griglia) raddoppiano la perdita."
+        },
+        {
+          "id": "kit-sospensione",
+          "sezione": "B",
+          "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 2},
+          "fonte": "kit AA-01: RAPPORTO.md §7 («kit sospensione: UI 4, plenum 4, ripresa 2»)",
+          "perche": "Il plenum di ripresa si appende per conto suo, sul lato libero."
+        },
+        {
+          "id": "griglia-di-ripresa",
+          "sezione": "Z",
+          "fornitura": "committente",
+          "testo": "Griglia di ripresa {sezione} senza filtro, apribile per accedere al filtro",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce Z.5",
+          "perche": "Apribile: il filtro sta dietro."
+        }
+      ]
+    },
+    "condensate-trap": {
+      "nome": "Sifone ispezionabile per condensa",
+      "passante": true,
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.5",
+      "perche": "Il sifone è materiale dell'installatore, e sta in mezzo allo scarico.",
+      "voci": [
+        {
+          "id": "sifone",
+          "sezione": "D",
+          "testo": "Sifone ispezionabile per condensa",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.5",
+          "perche": "Senza sifone l'odore dello scarico risale nella macchina."
+        }
+      ]
+    },
+    "condensate-outlet": {
+      "nome": "Allaccio allo scarico",
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci D.6, F.5",
+      "perche": "Lo scarico esistente si apre e si raggiunge in traccia.",
+      "voci": [
+        {
+          "id": "innesto-sullo-scarico",
+          "sezione": "D",
+          "testo": "Innesto sullo scarico esistente (braga 45° o presa sul sifone di un apparecchio)",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce D.6",
+          "perche": "L'allaccio della condensa a uno scarico esistente."
+        },
+        {
+          "id": "traccia-condensa",
+          "sezione": "F",
+          "testo": "Traccia per la condensa fino allo scarico",
+          "um": "m",
+          "calcolo": {"tipo": "per_pezzo", "n": 3},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.5 (3 m nel bagno)",
+          "perche": "La discesa dal controsoffitto allo scarico è in traccia."
+        }
+      ]
+    },
+    "electrical-panel": {
+      "nome": "Quadro elettrico",
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci E.6, F.6; REVISIONE-INDIPENDENTE.md rilievo 12",
+      "perche": "Il quadro esiste: si aggiorna lo schema, e da lui partono le tracce delle linee dedicate.",
+      "voci": [
+        {
+          "id": "aggiornamento-schema-quadro",
+          "sezione": "E",
+          "testo": "Aggiornamento dello schema del quadro elettrico",
+          "um": "a corpo",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.6; REVISIONE-INDIPENDENTE.md rilievo 12",
+          "perche": "Una protezione nuova nel quadro cambia lo schema, che va aggiornato e allegato alla dichiarazione di conformità."
+        },
+        {
+          "id": "tracce-dal-quadro",
+          "sezione": "F",
+          "testo": "Tracce per le linee dal quadro al controsoffitto",
+          "um": "m",
+          "calcolo": {"tipo": "per_linea", "fluido": "power_supply", "n": 2.5},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.6 (5 m per due linee); 2,5 m di discesa per linea è della sessione di sviluppo, che riproduce il kit: da confermare",
+          "perche": "Ogni linea dedicata scende dal controsoffitto al quadro in traccia."
+        }
+      ]
+    },
+    "isolator-switch": {
+      "nome": "Sezionatore onnipolare di prossimità",
+      "passante": true,
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.3",
+      "perche": "Il sezionatore è materiale dell'installatore, e sta in mezzo alla linea di alimentazione.",
+      "voci": [
+        {
+          "id": "sezionatore",
+          "sezione": "E",
+          "testo": "Sezionatore onnipolare di prossimità IP55, apertura contatti ≥ 3 mm",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: RAPPORTO.md §7 (apertura dei contatti ≥ 3 mm dal manuale di installazione Daikin FTXM60-71A, citato in RAPPORTO.md §10)",
+          "perche": "Chi fa manutenzione all'unità esterna la stacca lì accanto."
+        }
+      ]
+    },
+    "room-thermostat": {
+      "nome": "Termostato di zona",
+      "apparecchiatura": true,
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.4, E.13, F.7",
+      "perche": "Un apparecchio a parete: scatola e traccia per il cavo.",
+      "voci": [
+        {
+          "id": "scatola-503",
+          "sezione": "E",
+          "testo": "Scatola 503 per termostati e comandi a parete",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.13",
+          "perche": "Il termostato si monta su una scatola da incasso."
+        },
+        {
+          "id": "traccia-per-apparecchio-a-parete",
+          "sezione": "F",
+          "testo": "Traccia per termostati e comandi a parete",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.7",
+          "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
+        }
+      ]
+    },
+    "wired-remote": {
+      "nome": "Comando a filo dell'unità",
+      "apparecchiatura": true,
+      "fonte": "kit AA-01: lavoro/dimensionamento.py, voci A.5, E.13, F.7",
+      "perche": "Come il termostato: scatola e traccia.",
+      "voci": [
+        {
+          "id": "scatola-503",
+          "sezione": "E",
+          "testo": "Scatola 503 per termostati e comandi a parete",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce E.13",
+          "perche": "Il comando si monta su una scatola da incasso."
+        },
+        {
+          "id": "traccia-per-apparecchio-a-parete",
+          "sezione": "F",
+          "testo": "Traccia per termostati e comandi a parete",
+          "um": "n",
+          "calcolo": {"tipo": "per_pezzo", "n": 1},
+          "fonte": "kit AA-01: lavoro/dimensionamento.py, voce F.7",
+          "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
+        }
+      ]
+    }
+  }
+}

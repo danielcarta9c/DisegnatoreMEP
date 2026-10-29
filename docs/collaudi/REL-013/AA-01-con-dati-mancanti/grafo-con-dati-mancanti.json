@@ -1,0 +1,642 @@
+{
+ "schema_version": "1.1.0",
+ "metadata": {
+  "project_id": "caso-prova-aria-aria",
+  "client": "Committente (dati omessi)",
+  "project_name": "Climatizzazione canalizzata Daikin con zonizzazione Airzone",
+  "commission_code": "AA-01",
+  "revision": "00",
+  "issue_date": "2026-10-29",
+  "address": "Indirizzo omesso",
+  "sheet_title": "Schema funzionale — impianto di climatizzazione canalizzato",
+  "sheet_number": "M.02",
+  "drawn_by": "Nove C",
+  "checked_by": "Ing. Daniel Carta",
+  "header_note": "Caso di prova aria-aria"
+ },
+ "plant_regime": "up_to_35_kw",
+ "networks": [
+  {
+   "id": "frigo-liquido",
+   "name": "Linea del liquido",
+   "domain": "refrigerant",
+   "medium": "refrigerant_liquid"
+  },
+  {
+   "id": "frigo-gas",
+   "name": "Linea del gas",
+   "domain": "refrigerant",
+   "medium": "refrigerant_gas"
+  },
+  {
+   "id": "aria-mandata",
+   "name": "Mandata aria alle zone",
+   "domain": "aeraulic",
+   "medium": "supply_air"
+  },
+  {
+   "id": "aria-ripresa",
+   "name": "Ripresa aria",
+   "domain": "aeraulic",
+   "medium": "return_air"
+  },
+  {
+   "id": "condensa",
+   "name": "Scarico condensa",
+   "domain": "condensate",
+   "medium": "condensate"
+  },
+  {
+   "id": "alimentazione-ue",
+   "name": "Alimentazione unita' esterna",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "alimentazione-airzone",
+   "name": "Alimentazione centrale Airzone",
+   "domain": "control",
+   "medium": "power_supply"
+  },
+  {
+   "id": "collegamento",
+   "name": "Collegamento UI-UE",
+   "domain": "control",
+   "medium": "interconnection"
+  },
+  {
+   "id": "p1p2",
+   "name": "Linea P1-P2 dell'unita' interna",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "serrande",
+   "name": "Comando motori serrande",
+   "domain": "control",
+   "medium": "control_bus"
+  },
+  {
+   "id": "bus-airzone",
+   "name": "Bus Airzone ai termostati",
+   "domain": "control",
+   "medium": "control_bus"
+  }
+ ],
+ "components": [
+  {
+   "id": "ue",
+   "definition_id": "split-outdoor-unit",
+   "tag": "UE-01",
+   "properties": {
+    "marca": "Daikin",
+    "modello": "RXM60A · 49 kg",
+    "power_kw": 5.7,
+    "refrigerante": "R32",
+    "lunghezza_max_m": 30,
+    "dislivello_max_m": 20
+   }
+  },
+  {
+   "id": "ui",
+   "definition_id": "ducted-indoor-unit",
+   "tag": "UI-01",
+   "properties": {
+    "marca": "Daikin",
+    "modello": "FBA60A9 · 1000×800×245 mm · 35 kg",
+    "power_kw": 5.7,
+    "flow_rate_m3h": 1080,
+    "attacco_condensa": "VP20 (Øe 26)",
+    "nota": "pompa condensa a bordo"
+   }
+  },
+  {
+   "id": "plenum",
+   "definition_id": "zoning-plenum-5",
+   "tag": "PLZ-01",
+   "properties": {
+    "marca": "Airzone",
+    "modello": "Easyzone 5 × Ø200, es. AZEZ8DAIBS07M5 · 1425×250×454 mm",
+    "nota": "codice da confermare col distributore"
+   }
+  },
+  {
+   "id": "centrale",
+   "definition_id": "zone-controller",
+   "tag": "CZ-01",
+   "properties": {
+    "marca": "Airzone",
+    "modello": "centrale Easyzone e gateway Daikin AZX6GTCDA1 (nel kit)",
+    "compreso_in": "plenum"
+   }
+  },
+  {
+   "id": "ripresa",
+   "definition_id": "return-air-terminal",
+   "tag": "RA-01",
+   "properties": {
+    "etichetta": "ripresa 1000×250 · 1080 m³/h (griglia esclusa)"
+   }
+  },
+  {
+   "id": "bocchetta-b1",
+   "definition_id": "air-supply-terminal",
+   "tag": "B1",
+   "properties": {
+    "etichetta": "B1 · Camera 13 m²",
+    "dimensione": "400×200"
+   }
+  },
+  {
+   "id": "bocchetta-b2",
+   "definition_id": "air-supply-terminal",
+   "tag": "B2",
+   "properties": {
+    "etichetta": "B2 · Camera 15 m²",
+    "dimensione": "400×200"
+   }
+  },
+  {
+   "id": "bocchetta-b3",
+   "definition_id": "air-supply-terminal",
+   "tag": "B3",
+   "properties": {
+    "etichetta": "B3 · Camera 16 m²",
+    "dimensione": "400×200"
+   }
+  },
+  {
+   "id": "bocchetta-b4",
+   "definition_id": "air-supply-terminal",
+   "tag": "B4",
+   "properties": {
+    "etichetta": "B4 · Soggiorno-cucina",
+    "dimensione": "400×200"
+   }
+  },
+  {
+   "id": "bocchetta-b5",
+   "definition_id": "air-supply-terminal",
+   "tag": "B5",
+   "properties": {
+    "etichetta": "B5 · Soggiorno-cucina",
+    "dimensione": "400×200"
+   }
+  },
+  {
+   "id": "sifone",
+   "definition_id": "condensate-trap",
+   "tag": "SIF-01",
+   "properties": {}
+  },
+  {
+   "id": "scarico",
+   "definition_id": "condensate-outlet",
+   "tag": null,
+   "properties": {
+    "etichetta": "scarico bagno Ø40"
+   }
+  },
+  {
+   "id": "quadro",
+   "definition_id": "electrical-panel",
+   "tag": "QE-01",
+   "properties": {
+    "etichetta": "quadro elettrico (posizione da sopralluogo)"
+   }
+  },
+  {
+   "id": "sezionatore",
+   "definition_id": "isolator-switch",
+   "tag": "SZ-01",
+   "properties": {}
+  },
+  {
+   "id": "termostato-1",
+   "definition_id": "room-thermostat",
+   "tag": "TZ-01",
+   "properties": {
+    "marca": "Airzone",
+    "modello": "Blueface",
+    "etichetta": "Z1 Camera 13 m²"
+   }
+  },
+  {
+   "id": "termostato-2",
+   "definition_id": "room-thermostat",
+   "tag": "TZ-02",
+   "properties": {
+    "marca": "Airzone",
+    "modello": "Blueface",
+    "etichetta": "Z2 Camera 15 m²"
+   }
+  },
+  {
+   "id": "termostato-3",
+   "definition_id": "room-thermostat",
+   "tag": "TZ-03",
+   "properties": {
+    "marca": "Airzone",
+    "modello": "Blueface",
+    "etichetta": "Z3 Camera 16 m²"
+   }
+  },
+  {
+   "id": "termostato-4",
+   "definition_id": "room-thermostat",
+   "tag": "TZ-04",
+   "properties": {
+    "marca": "Airzone",
+    "modello": "Blueface",
+    "etichetta": "Z4 Soggiorno-cucina"
+   }
+  },
+  {
+   "id": "madoka",
+   "definition_id": "wired-remote",
+   "tag": "CF-01",
+   "properties": {
+    "marca": "Daikin",
+    "modello": "Madoka BRC1H52W"
+   }
+  }
+ ],
+ "connections": [
+  {
+   "id": "r-liq",
+   "network_id": "frigo-liquido",
+   "endpoint_a": {
+    "component_id": "ue",
+    "port_id": "liquid"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "liquid"
+   },
+   "properties": {
+    "sezione": "Ø6,35 (1/4\")",
+    "lunghezza_m": 8.0,
+    "scritta": "Ø6,35 (1/4\") · L 12 m"
+   }
+  },
+  {
+   "id": "r-gas",
+   "network_id": "frigo-gas",
+   "endpoint_a": {
+    "component_id": "ue",
+    "port_id": "gas"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "gas"
+   },
+   "properties": {
+    "sezione": "Ø12,7 (1/2\")",
+    "lunghezza_m": 8.0,
+    "scritta": "Ø12,7 (1/2\") · L 12 m",
+    "attraversamenti": 2
+   }
+  },
+  {
+   "id": "a-ui",
+   "network_id": "aria-mandata",
+   "endpoint_a": {
+    "component_id": "ui",
+    "port_id": "supply"
+   },
+   "endpoint_b": {
+    "component_id": "plenum",
+    "port_id": "in"
+   },
+   "properties": {
+    "lunghezza_m": 0
+   }
+  },
+  {
+   "id": "a-b1",
+   "network_id": "aria-mandata",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_1"
+   },
+   "endpoint_b": {
+    "component_id": "bocchetta-b1",
+    "port_id": "a"
+   },
+   "properties": {
+    "sezione": "Ø200",
+    "lunghezza_m": 4.1,
+    "scritta": "Ø200 · 270 m³/h · L 6 m",
+    "portata_m3h": 270,
+    "attraversamenti": 2
+   }
+  },
+  {
+   "id": "a-b2",
+   "network_id": "aria-mandata",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "bocchetta-b2",
+    "port_id": "a"
+   },
+   "properties": {
+    "sezione": "Ø200",
+    "lunghezza_m": 2.0,
+    "scritta": "Ø200 · 280 m³/h · L 3,5 m",
+    "portata_m3h": 280
+   }
+  },
+  {
+   "id": "a-b3",
+   "network_id": "aria-mandata",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_3"
+   },
+   "endpoint_b": {
+    "component_id": "bocchetta-b3",
+    "port_id": "a"
+   },
+   "properties": {
+    "sezione": "Ø200",
+    "scritta": "Ø200 · 210 m³/h · L 6 m",
+    "portata_m3h": 210,
+    "attraversamenti": 2
+   }
+  },
+  {
+   "id": "a-b4",
+   "network_id": "aria-mandata",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_4"
+   },
+   "endpoint_b": {
+    "component_id": "bocchetta-b4",
+    "port_id": "a"
+   },
+   "properties": {
+    "sezione": "Ø200",
+    "lunghezza_m": 2.0,
+    "scritta": "Ø200 · 275 m³/h · L 3,5 m",
+    "portata_m3h": 275
+   }
+  },
+  {
+   "id": "a-b5",
+   "network_id": "aria-mandata",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "out_5"
+   },
+   "endpoint_b": {
+    "component_id": "bocchetta-b5",
+    "port_id": "a"
+   },
+   "properties": {
+    "sezione": "Ø200",
+    "lunghezza_m": 4.8,
+    "scritta": "Ø200 · 275 m³/h · L 7 m",
+    "portata_m3h": 275
+   }
+  },
+  {
+   "id": "e-6",
+   "network_id": "serrande",
+   "endpoint_a": {
+    "component_id": "plenum",
+    "port_id": "motori"
+   },
+   "endpoint_b": {
+    "component_id": "centrale",
+    "port_id": "serrande"
+   },
+   "properties": {
+    "lunghezza_m": 0,
+    "scritta": "di fabbrica"
+   }
+  },
+  {
+   "id": "a-rip",
+   "network_id": "aria-ripresa",
+   "endpoint_a": {
+    "component_id": "ripresa",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "return"
+   },
+   "properties": {
+    "sezione": "1000×250",
+    "lunghezza_m": 0,
+    "portata_m3h": 1080
+   }
+  },
+  {
+   "id": "c-1",
+   "network_id": "condensa",
+   "endpoint_a": {
+    "component_id": "ui",
+    "port_id": "drain"
+   },
+   "endpoint_b": {
+    "component_id": "sifone",
+    "port_id": "a"
+   },
+   "properties": {
+    "sezione": "Ø32",
+    "lunghezza_m": 7.6,
+    "scritta": "PVC Ø32 · L 10 m"
+   }
+  },
+  {
+   "id": "c-2",
+   "network_id": "condensa",
+   "endpoint_a": {
+    "component_id": "sifone",
+    "port_id": "b"
+   },
+   "endpoint_b": {
+    "component_id": "scarico",
+    "port_id": "a"
+   },
+   "properties": {}
+  },
+  {
+   "id": "e-1a",
+   "network_id": "alimentazione-ue",
+   "endpoint_a": {
+    "component_id": "ue",
+    "port_id": "power"
+   },
+   "endpoint_b": {
+    "component_id": "sezionatore",
+    "port_id": "b"
+   },
+   "properties": {}
+  },
+  {
+   "id": "e-1b",
+   "network_id": "alimentazione-ue",
+   "endpoint_a": {
+    "component_id": "sezionatore",
+    "port_id": "a"
+   },
+   "endpoint_b": {
+    "component_id": "quadro",
+    "port_id": "out_1"
+   },
+   "properties": {
+    "sezione": "3G2,5",
+    "lunghezza_m": 15.0,
+    "scritta": "3G2,5 · L 20 m",
+    "lunghezza_minima_m": 20,
+    "protezione": "Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA"
+   }
+  },
+  {
+   "id": "e-2",
+   "network_id": "collegamento",
+   "endpoint_a": {
+    "component_id": "ue",
+    "port_id": "link"
+   },
+   "endpoint_b": {
+    "component_id": "ui",
+    "port_id": "link"
+   },
+   "properties": {
+    "sezione": "4G1,5",
+    "lunghezza_m": 9.0,
+    "scritta": "4G1,5 · L 13 m"
+   }
+  },
+  {
+   "id": "e-3",
+   "network_id": "alimentazione-airzone",
+   "endpoint_a": {
+    "component_id": "quadro",
+    "port_id": "out_2"
+   },
+   "endpoint_b": {
+    "component_id": "centrale",
+    "port_id": "power"
+   },
+   "properties": {
+    "sezione": "3G1,5",
+    "lunghezza_m": 12.0,
+    "scritta": "3G1,5 · L 15 m"
+   }
+  },
+  {
+   "id": "e-4",
+   "network_id": "p1p2",
+   "endpoint_a": {
+    "component_id": "ui",
+    "port_id": "p1p2_a"
+   },
+   "endpoint_b": {
+    "component_id": "centrale",
+    "port_id": "p1p2"
+   },
+   "properties": {
+    "sezione": "2×0,75 (P1-P2)",
+    "lunghezza_m": 1.5,
+    "scritta": "P1-P2 · L 3 m"
+   }
+  },
+  {
+   "id": "e-5",
+   "network_id": "p1p2",
+   "endpoint_a": {
+    "component_id": "ui",
+    "port_id": "p1p2_b"
+   },
+   "endpoint_b": {
+    "component_id": "madoka",
+    "port_id": "a"
+   },
+   "properties": {
+    "sezione": "2×0,75 (P1-P2)",
+    "lunghezza_m": 3.7,
+    "scritta": "P1-P2 · L 5,5 m"
+   }
+  },
+  {
+   "id": "e-tz1",
+   "network_id": "bus-airzone",
+   "endpoint_a": {
+    "component_id": "centrale",
+    "port_id": "bus_1"
+   },
+   "endpoint_b": {
+    "component_id": "termostato-1",
+    "port_id": "a"
+   },
+   "properties": {
+    "sezione": "bus Airzone, schermato",
+    "lunghezza_m": 6.5,
+    "scritta": "bus · L 9 m"
+   }
+  },
+  {
+   "id": "e-tz2",
+   "network_id": "bus-airzone",
+   "endpoint_a": {
+    "component_id": "centrale",
+    "port_id": "bus_2"
+   },
+   "endpoint_b": {
+    "component_id": "termostato-2",
+    "port_id": "a"
+   },
+   "properties": {
+    "sezione": "bus Airzone, schermato",
+    "lunghezza_m": 4.9,
+    "scritta": "bus · L 7 m"
+   }
+  },
+  {
+   "id": "e-tz3",
+   "network_id": "bus-airzone",
+   "endpoint_a": {
+    "component_id": "centrale",
+    "port_id": "bus_3"
+   },
+   "endpoint_b": {
+    "component_id": "termostato-3",
+    "port_id": "a"
+   },
+   "properties": {
+    "sezione": "bus Airzone, schermato",
+    "lunghezza_m": 5.2,
+    "scritta": "bus · L 7,5 m"
+   }
+  },
+  {
+   "id": "e-tz4",
+   "network_id": "bus-airzone",
+   "endpoint_a": {
+    "component_id": "centrale",
+    "port_id": "bus_4"
+   },
+   "endpoint_b": {
+    "component_id": "termostato-4",
+    "port_id": "a"
+   },
+   "properties": {
+    "sezione": "bus Airzone, schermato",
+    "lunghezza_m": 3.7,
+    "scritta": "bus · L 5,5 m"
+   }
+  }
+ ],
+ "assumptions": [],
+ "rule_applications": [],
+ "subsystems": [],
+ "sheets": []
+}

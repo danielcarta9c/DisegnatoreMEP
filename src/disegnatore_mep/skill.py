@@ -901,7 +901,21 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
     finale = comandi.add_parser("consegna", help="copia PDF, DXF, SVG e rilievi nella cartella data")
     finale.add_argument("cartella", type=Path)
     finale.add_argument("destinazione", type=Path)
+
+    distinta = comandi.add_parser(
+        "distinta", help="la distinta materiali per l'installatore (proposta D-213): solo se il progettista la chiede"
+    )
+    distinta.add_argument("grafo", type=Path, help="il grafo completo, con lunghezze e sezioni sui tratti")
+    distinta.add_argument("--out", type=Path, required=True, help="la cartella della distinta")
+    distinta.add_argument("--regole", type=Path, help="le regole della distinta: una cartella o un fascio")
     return parser
+
+
+def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
+    # REL-013, proposta D-213: un modulo a parte, che nessun altro comando chiama.
+    from disegnatore_mep.distinta.comando import esegui
+
+    return esegui(args.grafo, args.out, args.regole, cartelle.regole, cartelle.catalogo, cartelle.naming)
 
 
 def main(argv: Sequence[str] | None, cartelle: Cartelle) -> int:
@@ -919,6 +933,7 @@ def main(argv: Sequence[str] | None, cartelle: Cartelle) -> int:
             "disegna": _disegna,
             "anteprima": _anteprima,
             "consegna": _consegna,
+            "distinta": _distinta,
         }
         return comando[args.comando](args, cartelle)
     except (OSError, ValidationError, ValueError, RuleError) as errore:

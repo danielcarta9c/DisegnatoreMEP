@@ -1,0 +1,32 @@
+{
+  "id": "verifica",
+  "versione": "1.0.0",
+  "nota": "Le soglie della verifica dell'aria e delle linee: la verifica **segnala, non corregge**. Si fa sui tratti dove il progettista dà la portata (`portata_m3h`) e la sezione (`Ø200`, `1000×250`); un tratto senza uno dei due non si verifica, e lo si dice. Le soglie sono dati, con la loro fonte: il PO le giudica.",
+  "velocita": [
+    {
+      "fluido": "supply_air",
+      "massima_m_s": 3.0,
+      "fonte": "kit AA-01: RAPPORTO.md §2, proposta 5 approvata dal PO («flessibili ≤ 3 m/s»); proposta 3 (flessibili Ø200 a 2,4-2,6 m/s)",
+      "perche": "Oltre i 3 m/s un flessibile residenziale si sente nelle camere."
+    },
+    {
+      "fluido": "return_air",
+      "massima_m_s": 2.0,
+      "fonte": "kit AA-01: RAPPORTO.md §2, proposta 5 («ripresa < 2 m/s»), sulla sezione lorda; REVISIONE-INDIPENDENTE.md rilievo 4 (1,9 m/s lordi diventano ~3 m/s reali con griglia e filtro)",
+      "perche": "La griglia di ripresa sta nel disimpegno, vicino alle porte delle camere: è la sorgente di rumore più vicina a chi dorme."
+    }
+  ],
+  "transito": {
+    "velocita_m_s": 1.5,
+    "fonte": "kit AA-01: RAPPORTO.md §7 («griglie di transito a 1,5 m/s»)",
+    "perche": "L'area efficace minima della griglia di transito (o della luce sotto la porta) di ogni locale servito è la portata della sua bocchetta divisa per 1,5 m/s: la distinta la scrive accanto alla voce del committente."
+  },
+  "linea_frigorifera": {
+    "fonte": "kit AA-01: RAPPORTO.md §7 (massimo 30 m dalla scheda Daikin RXM-A, citata in RAPPORTO.md §10)",
+    "perche": "Se la lunghezza da quotare supera la lunghezza massima che il progettista scrive sull'unità esterna (`lunghezza_max_m`), la macchina non funziona come dichiarato: si segnala."
+  },
+  "scritta": {
+    "fonte": "contratto con REL-012: la scritta di un tratto («Ø200 · L 6 m») è un dato del progettista",
+    "perche": "Se la scritta sulla tavola dice una lunghezza diversa da quella che la distinta quota, l'installatore legge due numeri: si segnala."
+  }
+}
