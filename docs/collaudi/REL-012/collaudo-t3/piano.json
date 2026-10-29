@@ -1,0 +1,92 @@
+{
+ "formato": "A2",
+ "note": [
+  "Tavola unica: aria-aria con una UE e una UI, 15 pezzi da posare (comporre, elettrico e comando).",
+  "UE e UI alla stessa y: le due linee frigorifere sono rette (E1, B1).",
+  "Plenum alla y della UI, bocchette in colonna alla quota delle uscite (E1).",
+  "Centrale di zona sotto il plenum sull'asse dei motori, termostati in colonna alla quota dei bus (E2).",
+  "Sotto la UI condensa con scarico addosso e comando a filo; quadro sotto la UE con l'alimentazione verticale (E3).",
+  "Centrale alimentata da out_3 del quadro (attacco cambiato nel grafo, stessa rete): la linea corre orizzontale sotto tutto, senza incroci."
+ ],
+ "zone_tabelle": {
+  "destra_mm": 0,
+  "basso_mm": 120
+ },
+ "pezzi": {
+  "ue": {
+   "x": 0,
+   "y": 0,
+   "regola": "E1 - stessa y della UI"
+  },
+  "ui": {
+   "x": 100,
+   "y": 0,
+   "regola": "E1 - stessa y della UE"
+  },
+  "plenum": {
+   "x": 160,
+   "y": 0,
+   "regola": "E1 - plenum alla y della UI: in a +12,5 come supply"
+  },
+  "bocchetta-matrimoniale": {
+   "x": 240,
+   "y": 0,
+   "regola": "E1 - quota di out_1"
+  },
+  "bocchetta-singola": {
+   "x": 240,
+   "y": 12.5,
+   "regola": "E1 - quota di out_2"
+  },
+  "bocchetta-soggiorno-varco": {
+   "x": 240,
+   "y": 25,
+   "regola": "E1 - quota di out_3"
+  },
+  "bocchetta-soggiorno-parete": {
+   "x": 240,
+   "y": 37.5,
+   "regola": "E1 - quota di out_4"
+  },
+  "ripresa": {
+   "x": 115,
+   "y": -25,
+   "regola": "E1 - sopra la UI sull'asse della bocca di ripresa"
+  },
+  "centrale-zona": {
+   "x": 165,
+   "y": 100,
+   "regola": "E2 - sotto il plenum, serrande sull'asse dei motori"
+  },
+  "termostato-matrimoniale": {
+   "x": 215,
+   "y": 102.5,
+   "regola": "E2 - quota di bus_1"
+  },
+  "termostato-singola": {
+   "x": 215,
+   "y": 117.5,
+   "regola": "E2 - quota di bus_2"
+  },
+  "termostato-soggiorno": {
+   "x": 215,
+   "y": 132.5,
+   "regola": "E2 - quota di bus_3"
+  },
+  "scarico-condensa": {
+   "x": 120,
+   "y": 65,
+   "regola": "E3/A4 - addosso alla UI sotto drain"
+  },
+  "comando-filo": {
+   "x": 127.5,
+   "y": 85,
+   "regola": "E3 - sotto la UI, sull'asse di p1p2_b"
+  },
+  "quadro": {
+   "x": 2.5,
+   "y": 112.5,
+   "regola": "E3 - sotto la UE, out_1 sull'asse di power; out_3 alla quota dell'alimentazione della centrale"
+  }
+ }
+}
