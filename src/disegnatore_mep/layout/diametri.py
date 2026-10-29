@@ -28,6 +28,7 @@ dice (`DIAMETER_TAG_MISSING`).
 from collections.abc import Sequence
 from dataclasses import dataclass
 
+from disegnatore_mep.diametri.scritte import ScrittaDelTratto
 from disegnatore_mep.diametri.tratti import TrattoDelDiametro
 from disegnatore_mep.graphics.cartiglio import PT_MM, larghezza_mm
 from disegnatore_mep.graphics.frame import Rect, SheetFrame
@@ -35,7 +36,6 @@ from disegnatore_mep.graphics.standard import CORPO_MINIMO_PT, GraphicStandard
 
 from .geometry import (
     DiametroSullaTavola,
-    FlowKind,
     NotaDellaLegenda,
     Point,
     RoutedTrunk,
@@ -62,6 +62,11 @@ from .legend import (
 )
 
 Box = tuple[float, float, float, float]
+
+TrattoDaScrivere = TrattoDelDiametro | ScrittaDelTratto
+"""Quello che il posatore scrive lungo una linea: il DN calcolato (REL-007) o la
+scritta che il progettista ha dato al tratto (REL-012). Per il posatore sono la
+stessa cosa: un testo, le tubazioni che nomina, e se e' di una strada principale."""
 
 STACCO_DALLA_LINEA_MM = 1.25
 """Dall'asse della linea al bordo della scritta: «subito sopra o sotto» (I-152).
@@ -124,6 +129,9 @@ class _Rettilineo:
     """La y di un rettilineo orizzontale, la x di uno verticale."""
     da: float
     a: float
+    polilinea: int = 0
+    """Su quale delle polilinee della tratta sta: una tratta interrotta dagli organi
+    in linea ne ha una per tubazione, nell'ordine delle tubazioni."""
 
     @property
     def lunghezza(self) -> float:
@@ -147,7 +155,7 @@ def _rettilinei(route: RoutedTrunk) -> list[_Rettilineo]:
     """I tratti dritti di una spezzata, uniti quando due passi di fila stanno
     sulla stessa retta."""
     trovati: list[_Rettilineo] = []
-    for polilinea in route.segments:
+    for indice, polilinea in enumerate(route.segments):
         corrente: _Rettilineo | None = None
         for prima, dopo in zip(polilinea, polilinea[1:], strict=False):
             orizzontale = abs(prima.y_mm - dopo.y_mm) <= 1e-6
@@ -167,15 +175,39 @@ def _rettilinei(route: RoutedTrunk) -> list[_Rettilineo]:
                 and (abs(corrente.a - da) <= 1e-6 or abs(corrente.da - a) <= 1e-6)
             ):
                 corrente = _Rettilineo(
-                    route, orizzontale, fisso, min(corrente.da, da), max(corrente.a, a)
+                    route, orizzontale, fisso, min(corrente.da, da), max(corrente.a, a), indice
                 )
                 continue
             if corrente is not None:
                 trovati.append(corrente)
-            corrente = _Rettilineo(route, orizzontale, fisso, da, a)
+            corrente = _Rettilineo(route, orizzontale, fisso, da, a, indice)
         if corrente is not None:
             trovati.append(corrente)
     return trovati
+
+
+def _propri(connessioni: frozenset[str], tutti: Sequence[_Rettilineo]) -> list[_Rettilineo]:
+    """I rettilinei su cui la scritta di queste tubazioni si puo' posare.
+
+    Quelli delle tratte che il tratto attraversa per intero — il caso del DN, e della
+    scritta che e' di una tratta intera. Se le tubazioni sono una parte sola di una
+    tratta interrotta da organi in linea — la scritta di un cavo fra il quadro e il
+    sezionatore (`diametri.scritte`) —, i rettilinei della **sua** polilinea: la
+    tratta ne ha una per tubazione, nell'ordine delle tubazioni, quando il numero
+    torna; se non torna, non si indovina."""
+    interi = [
+        item
+        for item in tutti
+        if item.route.connection_ids and set(item.route.connection_ids) <= connessioni
+    ]
+    if interi:
+        return interi
+    return [
+        item
+        for item in tutti
+        if len(item.route.segments) == len(item.route.connection_ids)
+        and item.route.connection_ids[item.polilinea] in connessioni
+    ]
 
 
 def _riquadro(rettilineo: _Rettilineo, lato: str, inizio: float, larghezza: float, corpo: float) -> Box:
@@ -301,7 +333,7 @@ def riquadri_delle_frecce(foglio: SheetGeometry) -> list[Box]:
 
     riquadri: list[Box] = []
     for route in foglio.routes:
-        if route.flow_kind is FlowKind.STATIC:
+        if not route.flow_kind.porta_la_freccia:
             continue
         for segmento in route.segments:
             freccia = flow_arrow_at(segmento, route.flow_from_start)
@@ -316,12 +348,12 @@ def riquadri_delle_frecce(foglio: SheetGeometry) -> list[Box]:
 
 
 def posa_i_diametri(
-    tratti: Sequence[TrattoDelDiametro],
+    tratti: Sequence[TrattoDaScrivere],
     foglio: SheetGeometry,
     standard: GraphicStandard,
     area: Rect,
     ostacoli: Sequence[Box] = (),
-) -> tuple[list[DiametroSullaTavola], list[TrattoDelDiametro]]:
+) -> tuple[list[DiametroSullaTavola], list[TrattoDaScrivere]]:
     """Le etichette del DN, una per tratto, e i tratti che non hanno trovato posto.
 
     Si posano **dopo** simboli, linee, sigle e tabella, e non spostano niente.
@@ -387,7 +419,7 @@ def posa_i_diametri(
         return True
 
     def staccata(
-        tratto: TrattoDelDiametro, testo: str, propri: list[_Rettilineo]
+        tratto: TrattoDaScrivere, testo: str, propri: list[_Rettilineo]
     ) -> DiametroSullaTavola | None:
         """L'etichetta staccata con freccia (I-162): il richiamo piu' corto — anello
         per anello, dal centro del rettilineo piu' lungo verso i capi — il cui testo
@@ -451,16 +483,12 @@ def posa_i_diametri(
         return None
 
     posati: list[DiametroSullaTavola] = []
-    mancanti: list[TrattoDelDiametro] = []
+    mancanti: list[TrattoDaScrivere] = []
     for tratto in tratti:
         testo = tratto.scritta
         if testo is None:
             continue
-        propri = [
-            item
-            for item in tutti
-            if item.route.connection_ids and set(item.route.connection_ids) <= tratto.connection_ids
-        ]
+        propri = _propri(tratto.connection_ids, tutti)
         if not propri:
             continue
         propri.sort(key=lambda item: (not item.orizzontale, -item.lunghezza, item.fisso, item.da))
@@ -531,6 +559,18 @@ def nota_della_legenda(foglio: SheetGeometry, frame: SheetFrame) -> NotaDellaLeg
     larghezze di Arial: le altre righe della legenda sono piu' corte, questa no.
     `None` se la fascia non ha piu' posto in altezza: il testo non si
     rimpicciolisce mai, e la riga manca — il collaudo lo misura."""
+    note = note_della_legenda(foglio, frame, ((CAMPIONE_DELLA_LEGENDA, TESTO_DELLA_LEGENDA),))
+    return note[0] if note else None
+
+
+def note_della_legenda(
+    foglio: SheetGeometry, frame: SheetFrame, voci: Sequence[tuple[str, str]]
+) -> list[NotaDellaLegenda]:
+    """Le righe della legenda che spiegano le scritte dei tratti, sotto i fluidi e
+    una sotto l'altra: «Øi» del DN calcolato (I-155) e «Ø · L» del dato del
+    progettista (REL-012), nell'ordine di `voci`. La prima sta dove «Øi» e' sempre
+    stata; la seconda un passo sotto l'ultima riga della prima. Una riga che non
+    entra nella fascia manca, e con lei quelle che seguono."""
     fascia = frame.legend_rect_mm
     corpo = frame.standard.text_small_mm
     righe_occupate = [item.anchor.y_mm for item in foglio.legend] + [
@@ -539,15 +579,21 @@ def nota_della_legenda(foglio: SheetGeometry, frame: SheetFrame) -> NotaDellaLeg
     y = (max(righe_occupate) if righe_occupate else fascia.y_mm) + ROW_HEIGHT_MM
     if not foglio.network_keys:
         y += SECTION_GAP_MM
-    righe = list(a_capo(TESTO_DELLA_LEGENDA, larghezza_del_nome_mm(frame), corpo))
-    ultima = y + (len(righe) - 1) * INTERLINEA_EM * corpo
-    if ultima > fascia.bottom_mm - INSET_MM:
-        return None
-    return NotaDellaLegenda(
-        campione=CAMPIONE_DELLA_LEGENDA,
-        righe=righe,
-        anchor=Point(x_mm=fascia.x_mm + INSET_MM, y_mm=y),
-    )
+    note: list[NotaDellaLegenda] = []
+    for campione, testo in voci:
+        righe = list(a_capo(testo, larghezza_del_nome_mm(frame), corpo))
+        ultima = y + (len(righe) - 1) * INTERLINEA_EM * corpo
+        if ultima > fascia.bottom_mm - INSET_MM:
+            break
+        note.append(
+            NotaDellaLegenda(
+                campione=campione,
+                righe=righe,
+                anchor=Point(x_mm=fascia.x_mm + INSET_MM, y_mm=y),
+            )
+        )
+        y = ultima + ROW_HEIGHT_MM
+    return note
 
 
 __all__ = [
@@ -557,6 +603,7 @@ __all__ = [
     "STACCO_DALLA_LINEA_MM",
     "TESTO_DELLA_LEGENDA",
     "nota_della_legenda",
+    "note_della_legenda",
     "posa_i_diametri",
     "riquadri_delle_frecce",
     "riquadro_del_diametro",

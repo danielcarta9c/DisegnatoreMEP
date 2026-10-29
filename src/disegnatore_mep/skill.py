@@ -568,7 +568,7 @@ def _disegna(args: argparse.Namespace, cartelle: Cartelle) -> int:
             scritti += list(write_dxf(foglio, esito.frame, dati.simboli, svg.with_suffix(".dxf"), tavola))
         sul_cartiglio = rilievi_del_cartiglio(tavola, esito.frame, stati_della_tavola(foglio))
         sostituzioni = [
-            f"{s.carattere!r} in «{s.scritta}»: nel PDF e' scritto «?»" for s in pdf.sostituzioni
+            f"{s.carattere!r} in «{s.scritta}»: nel PDF e' scritto «{s.con}»" for s in pdf.sostituzioni
         ]
         rilievi = args.out / f"{nome}-rilievi.md"
         rilievi.write_text(

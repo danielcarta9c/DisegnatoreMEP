@@ -24,8 +24,10 @@ from collections.abc import Iterable
 
 from disegnatore_mep.catalog.errors import CatalogError
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.diametri.tratti import tratti_da_etichettare
+from disegnatore_mep.diametri.scritte import ScrittaDelTratto, tratti_da_scrivere
+from disegnatore_mep.diametri.tratti import TrattoDelDiametro
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, Rect, SheetFrame
+from disegnatore_mep.graphics.tabelle import riquadro_della_tabella_posata
 from disegnatore_mep.layout.autostrade import (
     AutostradaInTavola,
     autostrade_del_progetto,
@@ -656,6 +658,7 @@ def equipment_table(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validat
     legge, e il disegno ha bisogno di un foglio piu' grande, che il piano sceglie."""
     findings: list[ValidationIssue] = []
     height = frame.standard.text_small_mm
+    findings.extend(_tabelle_fuori_zona(drawing, frame))
     for sheet in drawing.sheets:
         if sheet.tabella is None:
             continue
@@ -710,6 +713,38 @@ def equipment_table(drawing: DrawingGeometry, frame: SheetFrame) -> list[Validat
                 [sheet.sheet_id, *unici],
             )
         )
+    return findings
+
+
+def _tabelle_fuori_zona(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIssue]:
+    """REL-012 — **ogni tabella nelle zone sta dentro una zona** che il piano ha
+    lasciato (`zone_tabelle`). La posa le mette li' (`graphics.tabelle`), e un
+    vincolo della posa ha il suo rilievo sulla tavola finita (D-158): fuori dalla
+    zona la tabella passerebbe sul disegno, sulla legenda o sul cartiglio."""
+    zone = [item for item in (frame.zona_destra_mm, frame.zona_basso_mm) if item is not None]
+    findings: list[ValidationIssue] = []
+    for sheet in drawing.sheets:
+        for indice, tabella in enumerate(sheet.tabelle):
+            sinistra, alto, destra, basso = riquadro_della_tabella_posata(tabella, frame.standard)
+            if any(
+                zona.x_mm - TOLERANCE_MM <= sinistra
+                and zona.y_mm - TOLERANCE_MM <= alto
+                and destra <= zona.right_mm + TOLERANCE_MM
+                and basso <= zona.bottom_mm + TOLERANCE_MM
+                for zona in zone
+            ):
+                continue
+            nome = tabella.titolo or f"tabella {indice + 1}"
+            findings.append(
+                _finding(
+                    "ZONE_TABLE_OUT_OF_ITS_ZONE",
+                    IssueSeverity.BLOCKING,
+                    f"la tavola {sheet.sheet_id}: «{nome}» esce dalle zone che il piano lascia "
+                    f"alle tabelle (zone_tabelle): passerebbe sul disegno, sulla legenda o sul "
+                    f"cartiglio",
+                    [sheet.sheet_id],
+                )
+            )
     return findings
 
 
@@ -804,12 +839,15 @@ def diameter_tags(
     (`DIAMETER_TAG_REPEATED`). **Col modello** si vede anche il terzo: un tratto
     che porta il DN — chiesto dal progettista, con la portata dai suoi dati — e
     l'etichetta non l'ha trovata (`DIAMETER_TAG_MISSING`): e' un avviso, come
-    una sigla omessa (DRAW-003-R1), e la tavola esce lo stesso."""
-    tratti = (
-        tratti_da_etichettare(project, catalog)
-        if project is not None and project.diametri is not None
-        else ()
-    )
+    una sigla omessa (DRAW-003-R1), e la tavola esce lo stesso.
+
+    **La scritta che il progettista ha dato al tratto** (REL-012, `diametri.scritte`)
+    si conta con le stesse regole — una per tratto, sul tratto che nomina —, e se
+    manca **blocca** (`RUN_LABEL_OMITTED`): e' un suo dato, come la scritta libera di
+    un pezzo (`FREE_LABEL_OMITTED`, I-194), non un conto della skill che si
+    sacrifica."""
+    scritte, calcolati = tratti_da_scrivere(project, catalog) if project is not None else ((), ())
+    tratti: tuple[ScrittaDelTratto | TrattoDelDiametro, ...] = (*scritte, *calcolati)
     findings: list[ValidationIssue] = []
     for sheet in drawing.sheets:
         disegnate = {
@@ -843,7 +881,21 @@ def diameter_tags(
                         [sheet.sheet_id, *sorted(nominate)[:1]],
                     )
                 )
-        for tratto in tratti:
+        for scritta in scritte:
+            if not scritta.connection_ids <= disegnate or scritta.connection_ids in per_tratto:
+                continue
+            findings.append(
+                _finding(
+                    "RUN_LABEL_OMITTED",
+                    IssueSeverity.BLOCKING,
+                    f"la scritta «{scritta.scritta}» della tubazione {scritta.tubazione} non e' "
+                    f"scritta: nessun rettilineo con un lato libero e nessun richiamo pulito. "
+                    f"E' un dato del progettista, e la tavola non esce senza: si lascia posto "
+                    f"accanto alla linea (REL-012)",
+                    [sheet.sheet_id, scritta.tubazione],
+                )
+            )
+        for tratto in calcolati:
             if not tratto.connection_ids <= disegnate or tratto.connection_ids in per_tratto:
                 continue
             if not tratto.strada_principale:
@@ -1358,14 +1410,21 @@ def sheet_fill(drawing: DrawingGeometry, frame: SheetFrame) -> list[ValidationIs
         # direbbe «usa l'A3» per un disegno che sull'A3 tocca la cornice — e un
         # rilievo che non si puo' chiudere e' peggio di nessun rilievo.
         respiro = 2 * SHEET_MARGIN_MIN_MM
-        piu_piccoli = [
-            indice
-            for indice, altro in enumerate(ORDINARY_FRAMES)
-            if altro.drawing_rect_mm.width_mm < area.width_mm
-            and _ci_sta(
+        # **Con le zone delle tabelle** (REL-012) il foglio piu' piccolo si misura con
+        # le stesse zone: le tabelle ci vanno anche li', e un A3 che le contiene
+        # lascia al disegno molto meno di un A3 intero. Un foglio su cui le zone non
+        # entrano non e' un candidato.
+        piu_piccoli: list[int] = []
+        for indice, altro in enumerate(ORDINARY_FRAMES):
+            if frame.riserva_destra_mm or frame.riserva_basso_mm:
+                try:
+                    altro = altro.con_le_zone(frame.riserva_destra_mm, frame.riserva_basso_mm)
+                except ValueError:
+                    continue
+            if altro.drawing_rect_mm.width_mm < area.width_mm and _ci_sta(
                 larghezza, altezza, altro.drawing_rect_mm, respiro, sheet
-            )
-        ]
+            ):
+                piu_piccoli.append(indice)
         if piu_piccoli:
             nome = NOMI_DEI_FORMATI[min(piu_piccoli)]
             findings.append(

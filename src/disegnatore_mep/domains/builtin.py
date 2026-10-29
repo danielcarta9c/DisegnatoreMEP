@@ -45,4 +45,27 @@ class BasicDomainPack:
                     entity_ids=entities,
                 )
             ]
+        # **Una tubazione si scrive nel verso del fluido**: dall'attacco da cui esce a
+        # quello in cui entra. La lettura dell'impianto lo pretende (`graph.plant`), e
+        # se non lo trova si ferma; la tabella delle apparecchiature allora ripiega
+        # sulle sole sigle dell'ingegnere, e tutte le altre spariscono in silenzio. E'
+        # il «sigle tutte o niente» del kit aria-aria (REL-012, §6.1): due tubazioni
+        # dell'alimentazione erano scritte dall'ingresso della macchina verso il
+        # quadro, e nessuno lo diceva. Un attacco senza verso (`bidirectional`) va
+        # bene da tutt'e due le parti.
+        if port_a.flow == PortFlow.IN or port_b.flow == PortFlow.OUT:
+            return [
+                ValidationIssue(
+                    code="CONNECTION_WRITTEN_BACKWARDS",
+                    severity=IssueSeverity.BLOCKING,
+                    message=(
+                        f"la tubazione e' scritta al contrario: va da {port_a.id} "
+                        f"({port_a.flow.value}) a {port_b.id} ({port_b.flow.value}); si scrive "
+                        f"dall'attacco da cui il fluido esce (endpoint_a) a quello in cui entra "
+                        f"(endpoint_b), o la lettura dell'impianto si ferma e le sigle della "
+                        f"famiglia non si assegnano"
+                    ),
+                    entity_ids=entities,
+                )
+            ]
         return []

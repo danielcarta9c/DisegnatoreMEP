@@ -93,12 +93,28 @@ def test_la_regola_si_scrive_sul_pezzo(tmp_path: Path) -> None:
 
 
 def test_un_json_non_valido_dice_dove_si_e_rotto(tmp_path: Path) -> None:
-    percorso = _scrivi(tmp_path, '{"pezzi": {"volano": {"x": 1, "y": 2},}}')
+    """Il messaggio dice riga e colonna del punto in cui il JSON si rompe.
+
+    **La colonna la conta Python, e non tutte le versioni allo stesso modo**: sulla
+    virgola che chiude male l'oggetto la 3.12 punta alla graffa che segue (colonna
+    39, «Expecting property name»), la 3.13 alla virgola stessa (colonna 38,
+    «Illegal trailing comma»). La prova fissava il 39, e sulla 3.13 falliva (REL-012,
+    fase 1, punto 7). L'atteso si ricava dal `JSONDecodeError` della versione che gira,
+    e la prova tiene le due cose che garantisce: che il messaggio riporti **quella**
+    riga e **quella** colonna, e che la colonna cada **sul guasto** — la virgola o la
+    graffa che la segue —, non altrove."""
+    testo = '{"pezzi": {"volano": {"x": 1, "y": 2},}}'
+    percorso = _scrivi(tmp_path, testo)
+    with pytest.raises(json.JSONDecodeError) as atteso:
+        json.loads(testo)
+    riga, colonna = atteso.value.lineno, atteso.value.colno
+    assert riga == 1 and testo[colonna - 1] in ",}", (riga, colonna)
+    assert testo[colonna - 2 : colonna + 1] in (",}}", "},}")
     with pytest.raises(ErroreDelPiano) as errore:
         carica_piano(percorso)
     detto = str(errore.value)
     assert "non e' un JSON valido" in detto
-    assert "riga 1 colonna 39" in detto
+    assert f"riga {riga} colonna {colonna}" in detto
 
 
 def test_senza_pezzi_dice_che_manca_il_campo_e_che_forma_ha(tmp_path: Path) -> None:

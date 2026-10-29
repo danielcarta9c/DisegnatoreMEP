@@ -17,7 +17,7 @@ bozza (D-025).
 from dataclasses import dataclass
 
 from disegnatore_mep.layout.addresses import VERIFY_MARK
-from disegnatore_mep.layout.geometry import FlowKind, Point, Richiamo, RoutedTrunk, SheetGeometry
+from disegnatore_mep.layout.geometry import Point, Richiamo, RoutedTrunk, SheetGeometry
 from disegnatore_mep.layout.legend import (
     INTERLINEA_EM,
     basi_delle_righe,
@@ -31,6 +31,7 @@ from .glyphs import flow_glyph_path
 from .registry import SymbolRegistry
 from .standard import FAMIGLIA_DELLE_SCRITTE, GraphicStandard
 from .tabella import svg_della_tabella
+from .tabelle import svg_delle_tabelle
 
 DRAFT_MARK = "BOZZA — cartiglio non compilato"
 """Marcatura della bozza senza cartiglio: una tavola finale lo richiede completo."""
@@ -450,6 +451,10 @@ def render_sheet(
     # compone e la impagina l'esecutore del piano, qui si disegna e basta.
     if sheet.tabella is not None:
         parts.append(svg_della_tabella(sheet.tabella, standard))
+    # **Le tabelle nelle zone** che il piano ha lasciato (REL-012): le ha posate
+    # `graphics.tabelle`, qui si disegnano e basta.
+    if sheet.tabelle:
+        parts.append(svg_delle_tabelle(sheet, standard))
 
     # **Nessuna linea di terra** (D-121, I-024). Nella centrale non esiste una
     # linea che attraversa il foglio: la quota su cui le macchine si allineano
@@ -490,8 +495,9 @@ def render_sheet(
                 )
             )
             # La freccia compare solo dove esiste un flusso: un ramo statico
-            # — misura, espansione, sfiato, sicurezza su stacco — non ne porta.
-            if route.flow_kind is not FlowKind.STATIC:
+            # — misura, espansione, sfiato, sicurezza su stacco — non ne porta, e
+            # nemmeno un fluido senza freccia (`layout.fluidi`, REL-012).
+            if route.flow_kind.porta_la_freccia:
                 parts.append(_flow_arrow(segment, colour, route.flow_from_start))
 
     for placed in sheet.symbols:

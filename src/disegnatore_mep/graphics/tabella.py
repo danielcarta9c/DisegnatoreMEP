@@ -61,8 +61,19 @@ FUNZIONI_DELLA_TABELLA: tuple[str, ...] = (
     "heat_exchange",
     "circulation",
     "expansion",
+    "direct_expansion_terminal",
+    "air_zoning",
+    "zone_control",
+    "unit_control",
 )
 """I mestieri delle apparecchiature principali, e il vaso di espansione (I-141).
+
+**Con l'aria-aria** (REL-012, dal kit del PO): l'unita' interna ad espansione
+diretta, il plenum motorizzato di zona, la centrale di zona e il comando a filo.
+Sono le macchine che il progettista sceglie con marca e modello, come la pompa di
+calore. Fuori le bocchette e le riprese, che sono terminali, e i termostati, che
+sono tanti uguali e portano la loro scritta di zona accanto. *Proposta della
+sessione*, da giudicare sulla tavola.
 
 Generatori, accumuli e bollitori, separatori idraulici, scambiatori,
 circolatori — e i vasi. **Fuori** le valvole, come il PO ha detto, e con loro
@@ -79,11 +90,13 @@ CARATTERISTICHE_PER_MESTIERE: dict[str, tuple[str, ...]] = {
     "dhw_storage": ("volume_l",),
     "expansion": ("volume_l",),
     "circulation": ("flow_rate_m3h", "head_kpa", "head_m"),
+    "direct_expansion_terminal": ("power_kw", "flow_rate_m3h"),
 }
 """Che cosa si scrive fra le caratteristiche, secondo il mestiere del pezzo.
 
 La **potenza** dei generatori e degli scambiatori, il **volume** di accumuli,
-bollitori e vasi, **portata e prevalenza** dei circolatori. Un pezzo che fa
+bollitori e vasi, **portata e prevalenza** dei circolatori, **potenza e portata
+d'aria** dell'unita' interna (REL-012). Un pezzo che fa
 piu' mestieri — il boiler in pompa di calore genera e accumula — le porta
 tutte, nell'ordine delle chiavi di `CHIAVI_DEI_DATI_NUMERICI`. Il separatore
 idraulico non ha una sua caratteristica: quando e' anche un accumulo, porta il

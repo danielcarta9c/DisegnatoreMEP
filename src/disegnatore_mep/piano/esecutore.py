@@ -32,22 +32,31 @@ Il giro, in ordine:
 from __future__ import annotations
 
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
 from disegnatore_mep.catalog.registry import ComponentRegistry
-from disegnatore_mep.diametri.tratti import tratti_da_etichettare
+from disegnatore_mep.diametri.scritte import CAMPIONE_DELLA_LEGENDA as CAMPIONE_DELLA_SCRITTA
+from disegnatore_mep.diametri.scritte import TESTO_DELLA_LEGENDA as TESTO_DELLA_SCRITTA
+from disegnatore_mep.diametri.scritte import tratti_da_scrivere
 from disegnatore_mep.graphics.frame import ORDINARY_FRAMES, SheetFrame
 from disegnatore_mep.graphics.registry import SymbolRegistry
 from disegnatore_mep.graphics.symbol import PortFace, SymbolManifest
 from disegnatore_mep.graphics.tabella import tabella_della_tavola
+from disegnatore_mep.graphics.tabelle import posa_le_tabelle
 from disegnatore_mep.layout.addresses import with_addresses
 from disegnatore_mep.layout.compose import (
     centre_vertically,
     inline_component_ids,
     sgombra_la_tabella,
 )
-from disegnatore_mep.layout.diametri import nota_della_legenda, posa_i_diametri
+from disegnatore_mep.layout.diametri import (
+    CAMPIONE_DELLA_LEGENDA,
+    TESTO_DELLA_LEGENDA,
+    note_della_legenda,
+    posa_i_diametri,
+)
 from disegnatore_mep.layout.errors import LayoutError
 from disegnatore_mep.layout.geometry import (
     SHEET_MARGIN_MIN_MM,
@@ -56,6 +65,7 @@ from disegnatore_mep.layout.geometry import (
     Point,
     RoutedTrunk,
     SheetGeometry,
+    TabellaNelleZone,
     zona_della_tabella,
 )
 from disegnatore_mep.layout.grid import GridSpace
@@ -400,6 +410,7 @@ def esegui_piano(
     simboli: SymbolRegistry,
     naming: Path,
     verifica: bool = False,
+    tabelle: Sequence[TabellaNelleZone] = (),
 ) -> EsitoDelPiano:
     """Esegue un piano di composizione, e misura quello che ne esce.
 
@@ -416,8 +427,21 @@ def esegui_piano(
     Solleva `ErroreDelPiano` se il piano nomina pezzi che non esistono nel
     modello, elencandoli: e' un difetto del piano, non della tavola, e va detto
     prima di posare qualunque cosa.
+
+    `tabelle` sono le tabelle che un altro modulo — la distinta, la tabella delle
+    tratte (REL-013) — vuole sulla tavola, nelle zone che il piano lascia
+    (`zone_tabelle`): il motore le posa e le disegna (`graphics.tabelle`). Una
+    tabella che non entra nella sua zona e' un `LayoutError` che lo dice.
     """
     frame = _frame(piano.formato)
+    # **Le zone delle tabelle** (REL-012): lo stesso foglio, con l'area del disegno
+    # piu' stretta. Da qui in avanti tutto — posa, instradamento, centratura, preflight
+    # — vede l'area che resta.
+    if piano.zone_tabelle is not None:
+        try:
+            frame = frame.con_le_zone(piano.zone_tabelle.destra_mm, piano.zone_tabelle.basso_mm)
+        except ValueError as errore:
+            raise ErroreDelPiano(f"le zone delle tabelle non entrano nell'{piano.formato}: {errore}") from errore
     area = frame.drawing_rect_mm
     grid = GridSpace(origin=area, standard=frame.standard)
 
@@ -633,13 +657,32 @@ def esegui_piano(
     # il progettista l'ha chiesto, e sulle reti che ha detto; dopo le sigle,
     # perche' e' l'ultimo testo che si scrive e non sposta niente. La legenda
     # spiega la scritta con una riga sua (I-155), se almeno un tratto la porta.
-    tratti = tratti_da_etichettare(modello, catalogo)
-    if tratti:
-        diametri, _ = posa_i_diametri(tratti, foglio, frame.standard, area, ostacoli)
+    #
+    # **E la scritta che il progettista ha dato al tratto** (REL-012): «Ø200 · L 6
+    # m», «3G2,5 · L 20 m». La posa e' la stessa; un DN calcolato sullo stesso
+    # tratto le cede il posto, e la legenda la spiega con una riga sua, «Ø · L»,
+    # sotto quella del DN, che resta «Øi».
+    scritte, calcolati = tratti_da_scrivere(modello, catalogo)
+    if scritte or calcolati:
+        diametri, _ = posa_i_diametri(
+            (*scritte, *calcolati), foglio, frame.standard, area, ostacoli
+        )
         foglio = foglio.model_copy(update={"diametri": diametri})
-        nota = nota_della_legenda(foglio, frame) if diametri else None
-        if nota is not None:
-            foglio = foglio.model_copy(update={"note_della_legenda": [nota]})
+        nominate = {frozenset(item.connection_ids) for item in diametri}
+        spiegate: list[tuple[str, str]] = [
+            voce
+            for voce, quali in (
+                ((CAMPIONE_DELLA_LEGENDA, TESTO_DELLA_LEGENDA), calcolati),
+                ((CAMPIONE_DELLA_SCRITTA, TESTO_DELLA_SCRITTA), scritte),
+            )
+            if any(frozenset(item.connection_ids) in nominate for item in quali)
+        ]
+        note = note_della_legenda(foglio, frame, spiegate)
+        if note:
+            foglio = foglio.model_copy(update={"note_della_legenda": note})
+    # **Le tabelle nelle zone** (REL-012): fuori dall'area del disegno, quindi non
+    # spostano niente; si posano per ultime.
+    foglio = posa_le_tabelle(foglio, frame, tabelle)
     disegno = DrawingGeometry(project_id=modello.metadata.project_id, sheets=[foglio])
     # **Gli indirizzi dei nodi si chiedono, non si subiscono** (D-110). Fino al
     # 20 settembre il piano li metteva sempre, e la conseguenza si vedeva a

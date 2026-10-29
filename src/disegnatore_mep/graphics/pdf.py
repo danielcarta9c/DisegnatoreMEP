@@ -55,6 +55,35 @@ micron, cento volte sotto il punto di una stampante a 2400 dpi."""
 
 CARATTERE_SOSTITUTO = "?"
 
+SOSTITUZIONI_DICHIARATE: dict[str, str] = {
+    "≥": ">=",
+    "≤": "<=",
+    "→": "->",
+    "←": "<-",
+    "−": "-",
+    "≈": "~",
+    "≠": "!=",
+    "∅": "Ø",
+    "⌀": "Ø",
+    "\u2009": " ",
+    "\u202f": " ",
+}
+"""**I caratteri che WinAnsi non ha, e come si scrivono nel PDF** (REL-012).
+
+Le scritte del PDF sono in Helvetica con la codifica WinAnsi, che non ha «≥», «≤»
+e «→»: sulle tabelle del kit aria-aria uscivano «?», e la sessione aveva riscritto
+a mano «min.», «max.», «-». Qui la sostituzione e' **dichiarata**, una volta per
+tutte: il PDF scrive «>=» dove l'SVG ha «≥», e lo dice (`PdfDellaTavola.sostituzioni`,
+con quello che ha scritto al posto). Le tabelle nelle zone (`graphics.tabelle`) la
+fanno **prima** di misurare e di scrivere, cosi' SVG, PDF e DXF portano lo stesso
+testo e le colonne sono larghe quanto il testo vero. Un carattere che non e' qui e
+WinAnsi non ha resta un «?», e si dice lo stesso."""
+
+
+def per_winansi(testo: str) -> str:
+    """Il testo con le sostituzioni dichiarate: quello che il PDF scrive davvero."""
+    return "".join(SOSTITUZIONI_DICHIARATE.get(carattere, carattere) for carattere in testo)
+
 FAMIGLIE_SENZA_GRAZIE = ("arial", "helvetica", "liberation sans", "sans-serif")
 """Le famiglie che la tavola dichiara (REL-008): tutte si scrivono in Helvetica."""
 
@@ -155,10 +184,12 @@ class Stile:
 
 @dataclass
 class Sostituzione:
-    """Un carattere che WinAnsi non ha, e la scritta in cui stava."""
+    """Un carattere che WinAnsi non ha, la scritta in cui stava, e che cosa il PDF ha
+    scritto al suo posto: la sostituzione dichiarata, o «?»."""
 
     carattere: str
     scritta: str
+    con: str = CARATTERE_SOSTITUTO
 
 
 @dataclass
@@ -507,8 +538,9 @@ def _winansi(testo: str, sostituzioni: list[Sostituzione]) -> bytes:
         try:
             uscita += carattere.encode("cp1252")
         except UnicodeEncodeError:
-            sostituzioni.append(Sostituzione(carattere=carattere, scritta=testo))
-            uscita += CARATTERE_SOSTITUTO.encode("cp1252")
+            con = SOSTITUZIONI_DICHIARATE.get(carattere, CARATTERE_SOSTITUTO)
+            sostituzioni.append(Sostituzione(carattere=carattere, scritta=testo, con=con))
+            uscita += con.encode("cp1252")
     return bytes(uscita)
 
 
@@ -728,7 +760,7 @@ class _Pagina:
         grassetto = stile.font_weight.strip().lower() in GRASSETTI
         corpo = stile.font_size
         x, y = _lunghezza(e.get("x")), _lunghezza(e.get("y"))
-        larghezza = larghezza_della_scritta(testo, corpo, grassetto)
+        larghezza = larghezza_della_scritta(per_winansi(testo), corpo, grassetto)
         if stile.text_anchor == "middle":
             x -= larghezza / 2
         elif stile.text_anchor == "end":

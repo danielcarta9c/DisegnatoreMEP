@@ -87,6 +87,14 @@ class SheetFrame(StrictModel):
     header_height_mm: FiniteFloat = Field(default=HEADER_HEIGHT_MM, gt=0)
     title_block_height_mm: FiniteFloat = Field(default=TITLE_BLOCK_HEIGHT_MM, gt=0)
     legend_width_mm: FiniteFloat = Field(default=LEGEND_WIDTH_MM, gt=0)
+    riserva_destra_mm: FiniteFloat = Field(default=0.0, ge=0)
+    """**Le zone per le tabelle** (REL-012): quanto del corpo, a destra del disegno e
+    accanto alla legenda, resta alle tabelle. Zero — il telaio di sempre — non
+    toglie niente. Lo chiede il piano (`PianoDiComposizione.zone_tabelle`), non un
+    formato in piu': il foglio e' lo stesso, il disegno ha meno posto, e i controlli
+    del motore misurano sull'area che resta."""
+    riserva_basso_mm: FiniteFloat = Field(default=0.0, ge=0)
+    """Quanto del corpo, sotto il disegno e sopra il cartiglio, resta alle tabelle."""
 
     @property
     def border_rect_mm(self) -> Rect:
@@ -142,13 +150,50 @@ class SheetFrame(StrictModel):
 
     @property
     def drawing_rect_mm(self) -> Rect:
-        """La superficie su cui il layout dispone e instrada."""
+        """La superficie su cui il layout dispone e instrada: il corpo meno la
+        legenda, e meno le zone delle tabelle se il piano le chiede."""
         body = self.body_rect_mm
         return Rect(
             x_mm=body.x_mm,
             y_mm=body.y_mm,
+            width_mm=body.width_mm - self.legend_width_mm - self.riserva_destra_mm,
+            height_mm=body.height_mm - self.riserva_basso_mm,
+        )
+
+    @property
+    def zona_destra_mm(self) -> Rect | None:
+        """La zona delle tabelle a destra del disegno, fra il disegno e la legenda,
+        alta quanto il disegno. `None` senza riserva a destra."""
+        if self.riserva_destra_mm <= 0:
+            return None
+        disegno = self.drawing_rect_mm
+        return Rect(
+            x_mm=disegno.right_mm,
+            y_mm=disegno.y_mm,
+            width_mm=self.riserva_destra_mm,
+            height_mm=disegno.height_mm,
+        )
+
+    @property
+    def zona_basso_mm(self) -> Rect | None:
+        """La zona delle tabelle sotto il disegno: da sinistra fino alla legenda, sopra
+        il cartiglio, e corre anche sotto la zona di destra. `None` senza riserva in
+        basso."""
+        if self.riserva_basso_mm <= 0:
+            return None
+        body = self.body_rect_mm
+        return Rect(
+            x_mm=body.x_mm,
+            y_mm=body.bottom_mm - self.riserva_basso_mm,
             width_mm=body.width_mm - self.legend_width_mm,
-            height_mm=body.height_mm,
+            height_mm=self.riserva_basso_mm,
+        )
+
+    def con_le_zone(self, destra_mm: float, basso_mm: float) -> "SheetFrame":
+        """Lo stesso telaio con le zone delle tabelle: validato, quindi un disegno
+        che resterebbe senza area e' un errore che lo dice."""
+        return type(self).model_validate(
+            {**self.model_dump(), "riserva_destra_mm": destra_mm, "riserva_basso_mm": basso_mm}
         )
 
     @model_validator(mode="after")
@@ -164,6 +209,18 @@ class SheetFrame(StrictModel):
             raise ValueError(
                 f"the {self.legend_width_mm:g}mm legend band leaves no drawing area "
                 f"in the {self.standard.usable_width_mm:g}mm usable width"
+            )
+        if self.legend_width_mm + self.riserva_destra_mm >= self.standard.usable_width_mm:
+            raise ValueError(
+                f"le zone delle tabelle lasciano il disegno senza larghezza: legenda "
+                f"{self.legend_width_mm:g} mm e zona a destra {self.riserva_destra_mm:g} mm "
+                f"su {self.standard.usable_width_mm:g} mm utili"
+            )
+        if bands + self.riserva_basso_mm >= self.standard.usable_height_mm:
+            raise ValueError(
+                f"le zone delle tabelle lasciano il disegno senza altezza: testata e "
+                f"cartiglio {bands:g} mm e zona in basso {self.riserva_basso_mm:g} mm su "
+                f"{self.standard.usable_height_mm:g} mm utili"
             )
         return self
 

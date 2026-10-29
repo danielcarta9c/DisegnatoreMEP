@@ -351,6 +351,13 @@ def _texts_of(
     if item.tag:
         texts.append((f"{item.component_id}-tag", item.tag, "tag"))
     if item.component_id in senza_valori:
+        # **La scritta libera resta** (REL-012, §6.2 del kit): non e' un dato che la
+        # tabella ripete, e' quello che il progettista vuole leggere accanto al pezzo
+        # (I-194). Senza, il preflight fermava la tavola (`FREE_LABEL_OMITTED`) per
+        # una scritta che la posa stessa aveva tolto.
+        scritta = format_value(ETICHETTA, properties.get(item.component_id, {}).get(ETICHETTA))
+        if scritta is not None:
+            texts.append((f"{item.component_id}-{ETICHETTA}", scritta, "data"))
         return texts
     for key in sorted(properties.get(item.component_id, {})):
         value = format_value(key, properties[item.component_id][key])
