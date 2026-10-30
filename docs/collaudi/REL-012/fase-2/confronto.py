@@ -3,11 +3,11 @@
     python3 docs/collaudi/REL-012/fase-2/confronto.py
 
 Scrive accanto a se':
-- `confronto.png` — le due tavole intere, alla stessa altezza: il kit e' un A2, la skill
-  un A1 (piano.json, nota sul formato), quindi a destra tutto e' piu' piccolo;
+- `confronto.png` — le due tavole intere, alla stessa altezza: il kit e' un A2 con le tabelle
+  della distinta, la skill un A3 con la sola tabella delle apparecchiature e la legenda
+  (REL-015, I-233: tratte, note e computo stanno nel PDF della distinta);
 - `confronto-schema.png` — lo schema, alla **stessa scala** (150 dpi), lo stesso
-  riquadro di 340 x 182 mm attorno al disegno;
-- `confronto-tratte.png` — la tabella delle tratte, alla stessa scala.
+  riquadro di 340 x 182 mm attorno al disegno.
 Vuole pypdfium2 e Pillow.
 """
 
@@ -61,19 +61,15 @@ def main() -> None:
     affianca(
         intera(KIT, 1400),
         intera(SKILL, 1400),
-        ("Kit, M.02 (A2, tabelle a 7 pt)", "Skill, M.02 (A1, tabelle a 9 pt)"),
+        ("Kit, M.02 (A2, tabelle a 7 pt)", "Skill, M.02 (A3, apparecchiature e legenda)"),
         QUI / "confronto.png",
     )
     affianca(
         riquadro(KIT, 35, 50, 375, 232),
-        riquadro(SKILL, 133, 78, 473, 260),
+        riquadro(SKILL, 33, 74, 373, 256),
         ("Kit — lo schema", "Skill — lo schema, stessa scala"),
         QUI / "confronto-schema.png",
     )
-    kit_tratte = riquadro(KIT, 360, 15, 535, 105)
-    skill_tratte = riquadro(SKILL, 548, 14, 784, 152)
-    affianca(kit_tratte, skill_tratte, ("Kit — tabella delle tratte", "Skill — tabella delle tratte"),
-             QUI / "confronto-tratte.png")
 
 
 if __name__ == "__main__":

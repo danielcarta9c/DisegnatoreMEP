@@ -220,16 +220,11 @@ JSON, e solo queste chiavi:
   il comando**. Guarda il manifesto prima di scriverla. **Lo specchio invece vale per tutti**,
   anche per chi non si ruota (D-169): un volano a due attacchi specchiato ha `a` a destra e `b`
   a sinistra, ed è il modo di farlo guardare dall'altra parte senza girarlo.
-- **`zone_tabelle`** — **solo se la tavola porta tabelle** oltre a quella delle apparecchiature:
-  la tabella delle tratte, il computo, le note e le attività della distinta materiali, le note
-  del progettista. `"zone_tabelle": {"destra_mm": 230, "basso_mm": 230}` lascia una zona a
-  destra del disegno, accanto alla legenda, e una in basso, sopra il cartiglio; l'area del
-  disegno si restringe di tanto, e il foglio resta quello di `formato` (regole del piano, D4).
-  Le tabelle le passa il comando, `disegna --tabelle <file>` — il `tabelle-del-foglio.json` che
-  scrive `distinta`, e se il progettista ha note sue un secondo file nello stesso formato —, e
-  il comando dice dove le ha messe. **Le scritte non si rimpiccioliscono**: se non entrano il
-  comando si ferma, e allarghi le zone o prendi il formato successivo. Un computo intero non sta
-  in un A2: la M.02 del canalizzato è un A1 con zone di 230 mm.
+- **`zone_tabelle`** — **non scriverla.** Sulla tavola vanno solo la tabella delle apparecchiature
+  e la legenda, che il motore posa da sé (I-233): la tabella delle tratte, il computo e le note
+  della distinta materiali stanno nel suo PDF, a parte, e `disegna` non riceve `--tabelle`. Il
+  formato è il più piccolo che contiene il disegno — di solito un A3. (La chiave c'è ancora, per il
+  motore che sa posare tabelle; il flusso della skill non la usa.)
 - **`note`** e **`regola`** — **non sono decorazione.** Il piano senza di loro dice dove
   stanno i pezzi e non dice **perché**, e chi lo rivede non può correggerlo: può solo
   spostare. `note` porta la motivazione del piano intero, `regola` la stessa cosa pezzo per

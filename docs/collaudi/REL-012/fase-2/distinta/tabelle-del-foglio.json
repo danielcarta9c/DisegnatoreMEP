@@ -245,7 +245,7 @@
   },
   {
    "id": "computo",
-   "titolo": "COMPUTO DELLE QUANTITÀ E DEI PEZZI SPECIALI — quantità indicative per il prezzo a corpo, da verificare in sopralluogo (varianti e voci aggiunte: file Excel)",
+   "titolo": "COMPUTO DELLE QUANTITÀ E DEI PEZZI SPECIALI — quantità indicative per il prezzo a corpo, da verificare in sopralluogo (varianti e voci aggiunte: documento della distinta)",
    "colonne": [
     {
      "id": "rif",
@@ -942,7 +942,7 @@
       ],
       [
        "6.",
-       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole f8b849f909489495)."
+       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole 05a61bb20ef686d8)."
       ]
      ]
     }

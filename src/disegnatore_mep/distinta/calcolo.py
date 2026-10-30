@@ -83,6 +83,10 @@ class Distinta:
     """Le scelte che la distinta prende dalle regole predefinite e che il progettista
     conferma per questa offerta (la fornitura): non sono DA DEFINIRE — le quantita'
     ci sono —, ma non sono fatti."""
+    fornitura: str = ""
+    """Chi fornisce che cosa in questa offerta, in una frase: confermata dal progettista,
+    o le predefinite «da confermare» (`Fornitura.in_parole`). La dice il PDF fra le
+    avvertenze, confermata o no."""
 
     def voci_della_sezione(self, lettera: str) -> list[Voce]:
         return [voce for voce in self.voci if voce.sezione == lettera]
@@ -1144,5 +1148,6 @@ def componi_la_distinta(
         note=_note(lavoro, esiti),
         domande_dei_tratti=lavoro.domande_dei_tratti,
         da_confermare=[] if lavoro.fornitura.confermata else [lavoro.fornitura.in_parole()],
+        fornitura=lavoro.fornitura.in_parole(),
     )
 

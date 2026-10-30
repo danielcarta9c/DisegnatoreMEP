@@ -1258,7 +1258,7 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
 
     finale = comandi.add_parser(
         "consegna",
-        help="copia PDF, DXF, rilievi e l'Excel della distinta, da una o piu' cartelle, nella cartella data",
+        help="copia PDF, DXF, rilievi e il documento della distinta, da una o piu' cartelle, nella cartella data",
     )
     finale.add_argument(
         "cartelle", type=Path, nargs="+", help="la tavola, e se ci sono la distinta e la pianta"
@@ -1270,10 +1270,17 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
     )
     distinta.add_argument("grafo", type=Path, help="il grafo completo, con lunghezze e sezioni sui tratti")
     distinta.add_argument("--out", type=Path, required=True, help="la cartella della distinta")
+    distinta.add_argument(
+        "--report",
+        type=Path,
+        help="la cartella della skill dei report Nove C (nove-c-report), installata accanto: con lei la distinta "
+        "e' un PDF; senza, lo stesso contenuto in Markdown",
+    )
     distinta.add_argument("--regole", type=Path, help="le regole della distinta: una cartella o un fascio")
     distinta.add_argument(
         "--sul-foglio",
-        help="le tabelle di tabelle-del-foglio.json, fra tratte,computo,attivita,note (di default tutte)",
+        help="le tabelle di tabelle-del-foglio.json, fra tratte,computo,attivita,note (di default tutte); il flusso "
+        "della skill non le posa sulla tavola",
     )
     distinta.add_argument(
         "--fornitura",
@@ -1296,6 +1303,7 @@ def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
         cartelle.naming,
         sul_foglio=args.sul_foglio,
         fornitura=args.fornitura,
+        report=args.report,
     )
 
 

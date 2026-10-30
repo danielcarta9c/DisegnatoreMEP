@@ -8,13 +8,12 @@ tutte **in su**: il criterio del PO e' «meglio sbagliare un po' in su che in gi
 """
 
 import json
-import re
 from pathlib import Path
-from typing import Any
 
 import pytest
 
 from disegnatore_mep.distinta import Distinta, RegoleDellaDistinta, componi_la_distinta
+from disegnatore_mep.distinta.documento import documento_della_distinta
 from disegnatore_mep.distinta.uscite import (
     distinta_in_json,
     foglio_dei_calcoli,
@@ -231,55 +230,22 @@ def test_due_volte_lo_stesso_grafo_danno_la_stessa_distinta(
     assert distinta_in_json(prima) == distinta_in_json(seconda)
     assert tabelle_del_foglio(prima) == tabelle_del_foglio(seconda)
     assert foglio_dei_calcoli(prima) == foglio_dei_calcoli(seconda)
-    openpyxl = pytest.importorskip("openpyxl")
+    assert documento_della_distinta(prima) == documento_della_distinta(seconda)
     scrivi_le_uscite(prima, tmp_path / "a")
     scrivi_le_uscite(seconda, tmp_path / "b")
     for nome in ("distinta.json", "tabelle-del-foglio.json", "distinta-calcoli.md"):
         assert (tmp_path / "a" / nome).read_bytes() == (tmp_path / "b" / nome).read_bytes()
 
-    def valori(percorso: Path) -> list[Any]:
-        libro = openpyxl.load_workbook(percorso)
-        return [[list(r) for r in foglio.iter_rows(values_only=True)] for foglio in libro]
-
-    assert valori(tmp_path / "a" / "distinta.xlsx") == valori(tmp_path / "b" / "distinta.xlsx")
-
-
-def test_l_excel_ha_solo_valori_e_dice_a_corpo(distinta: Distinta, tmp_path: Path) -> None:
-    openpyxl = pytest.importorskip("openpyxl")
-    scrivi_le_uscite(distinta, tmp_path)
-    libro = openpyxl.load_workbook(tmp_path / "distinta.xlsx")
-    assert libro.sheetnames == ["Computo", "Tratte", "Verifica", "Regole", "Note e domande"]
-    formule = [f"{f.title}!{c.coordinate}" for f in libro for r in f.iter_rows() for c in r if c.data_type == "f"]
-    assert formule == []
-    testi = [str(c) for r in libro["Computo"].iter_rows(values_only=True) for c in r if c is not None]
-    tutto = "\n".join(testi)
-    assert "PREZZO A CORPO, FISSO E INVARIABILE" in tutto
-    assert "SOPRALLUOGO OBBLIGATORIO" in tutto
-    assert "quantità sono indicative" in tutto
-    assert "€" not in "".join(t for t in testi if t[:1].isdigit()), "nessun prezzo"
-    righe = list(libro["Computo"].iter_rows(values_only=True))
-    acca = [r for r in righe if isinstance(r[0], str) and re.fullmatch(r"H\.\d+", r[0])]
-    assert len(acca) == 6 and all(r[1] is None and r[6] is None and r[7] is None for r in acca)
-    varianti = [r for r in righe if isinstance(r[0], str) and re.fullmatch(r"V\.\d+", r[0])]
-    assert len(varianti) == 5 and all(r[3] is None for r in varianti)
-    assert all(r[6] is None for r in righe if isinstance(r[0], str) and r[0][:1] in "ABCDEFGZ")
-
-
-def test_un_testo_che_comincia_con_uguale_resta_testo(distinta: Distinta, tmp_path: Path) -> None:
-    openpyxl = pytest.importorskip("openpyxl")
-    distinta.voci[0].note = "=SOMMA(A1:A3)"
-    try:
-        scrivi_le_uscite(distinta, tmp_path)
-    finally:
-        distinta.voci[0].note = ""
-    libro = openpyxl.load_workbook(tmp_path / "distinta.xlsx")
-    assert not [c for f in libro for r in f.iter_rows() for c in r if c.data_type == "f"]
-
 
 def test_il_comando_della_skill(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    """Senza la skill dei report il documento esce in Markdown, col nome parlante del
+    cartiglio; niente Excel e niente CSV (I-232)."""
     assert main(["distinta", str(AA01), "--out", str(tmp_path)], cartelle_del_repository(ROOT)) == 0
     uscita = capsys.readouterr().out
     assert "Distinta: 80 voci" in uscita and "Nessuna voce DA DEFINIRE." in uscita
-    scritti = sorted(p.name for p in tmp_path.iterdir())
-    atteso = ["distinta-calcoli.md", "distinta.json", "tabelle-del-foglio.json"]
-    assert scritti == sorted([*atteso, "distinta.xlsx"]) or scritti == sorted([*atteso, "distinta.csv"])
+    assert sorted(p.name for p in tmp_path.iterdir()) == [
+        "AA-01_Distinta_materiali_Climatizzazione_canalizzata_Daikin.md",
+        "distinta-calcoli.md",
+        "distinta.json",
+        "tabelle-del-foglio.json",
+    ]
