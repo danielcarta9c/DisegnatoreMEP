@@ -1,6 +1,6 @@
 {
   "id": "zone-manifold-pair",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "name": "Collettore di zona con ritorno",
   "width_mm": 40.0,
   "height_mm": 15.0,

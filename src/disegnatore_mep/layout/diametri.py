@@ -354,6 +354,7 @@ def posa_i_diametri(
     standard: GraphicStandard,
     area: Rect,
     ostacoli: Sequence[Box] = (),
+    gia_posati: Sequence[DiametroSullaTavola] = (),
 ) -> tuple[list[DiametroSullaTavola], list[TrattoDaScrivere]]:
     """Le etichette del DN, una per tratto, e i tratti che non hanno trovato posto.
 
@@ -369,7 +370,11 @@ def posa_i_diametri(
     strada secondaria si sacrifica; quello di una strada principale va, per
     ultima spiaggia, su un'etichetta staccata con freccia — la freccia sulla
     linea, un tratto a 45 gradi e la spalla orizzontale fino alla scritta
-    (I-163), il richiamo piu' corto che non attraversa niente."""
+    (I-163), il richiamo piu' corto che non attraversa niente.
+
+    `gia_posati` sono le scritte dei tratti che stanno gia' sulla tavola (REL-015,
+    I-231): quelle dell'acqua, quando si posano quelle dei cavi. Non si toccano, e
+    le nuove le rispettano come le altre scritte."""
     corpo = standard.text_small_mm
     minimo = CORPO_MINIMO_PT * PT_MM
     tentativi = [(corpo, False)]
@@ -395,6 +400,10 @@ def posa_i_diametri(
     richiami: list[tuple[Point, Point]] = [
         segmento for label in foglio.labels for segmento in segmenti_del_richiamo(label)
     ]
+    for posato in gia_posati:
+        testi.append(riquadro_del_diametro(posato, corpo))
+        if posato.richiamo is not None:
+            richiami.extend(posato.richiamo.segmenti)
     frecce = [_allargato(freccia, FRANCO_MM) for freccia in riquadri_delle_frecce(foglio)]
 
     def libero(box: Box, proprio: _Rettilineo | None) -> bool:

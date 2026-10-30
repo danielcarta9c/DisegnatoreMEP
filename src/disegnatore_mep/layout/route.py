@@ -20,7 +20,7 @@ tralasciava.
 """
 
 import heapq
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from math import ceil
 
@@ -481,6 +481,36 @@ def port_aprons(
     return aprons
 
 
+def _celle_della_tratta(tratta: RoutedTrunk, grid: GridSpace) -> list[list[Cell]]:
+    """I nodi per cui passa una tratta gia' instradata, pezzo per pezzo: i vertici
+    della spezzata riportati sulla griglia, e i nodi in mezzo a ogni tratto."""
+    passo = grid.step_mm
+
+    def nodo(punto: Point) -> Cell:
+        return (
+            round((punto.x_mm - grid.origin.x_mm) / passo),
+            round((punto.y_mm - grid.origin.y_mm) / passo),
+        )
+
+    pezzi: list[list[Cell]] = []
+    for segmento in tratta.segments:
+        celle: list[Cell] = []
+        for before, after in zip(segmento, segmento[1:], strict=False):
+            da, a = nodo(before), nodo(after)
+            passi = max(abs(a[0] - da[0]), abs(a[1] - da[1]))
+            verso = (
+                (a[0] > da[0]) - (a[0] < da[0]),
+                (a[1] > da[1]) - (a[1] < da[1]),
+            )
+            for indice in range(passi + 1):
+                cella = (da[0] + verso[0] * indice, da[1] + verso[1] * indice)
+                if not celle or celle[-1] != cella:
+                    celle.append(cella)
+        if celle:
+            pezzi.append(celle)
+    return pezzi
+
+
 def route_sheet(
     project: ProjectModel,
     trunks: list[Trunk],
@@ -490,6 +520,8 @@ def route_sheet(
     on_routed: Callable[[Trunk, RoutedTrunk], list[PlacedSymbol]] | None = None,
     reserve_chains: bool = True,
     tolerant: bool = False,
+    gia_disegnate: Sequence[RoutedTrunk] = (),
+    da_evitare: frozenset[Cell] = frozenset(),
 ) -> list[RoutedTrunk]:
     """Instrada le tratte una dopo l'altra, accumulando le celle occupate.
 
@@ -510,6 +542,13 @@ def route_sheet(
     simboli che vi sono stati posati sopra. Quei simboli diventano **ostacoli
     per le tratte successive**: posarli tutti alla fine li rendeva invisibili
     all'instradamento, che ci passava attraverso.
+
+    **I cavi dopo l'acqua** (REL-015, I-231): `gia_disegnate` sono tratte gia' sulla
+    tavola — le tubazioni, quando si instradano i cavi — e contano come se fossero
+    state instradate qui prima delle altre: i loro nodi si attraversano pagando, i
+    loro tratti non si ripercorrono. `da_evitare` sono nodi che una tratta evita
+    **se puo'** — le scritte dell'acqua gia' posate —: se senza di loro non trova
+    strada, la cerca come sempre, e la scritta resta coperta (il preflight lo dice).
     """
     by_component = {item.component_id: item for item in placed}
     definitions = {item.id: item.definition_id for item in project.components}
@@ -562,6 +601,16 @@ def route_sheet(
                     crowded.add(neighbour)
 
     absorb(blocked)
+    for gia in gia_disegnate:
+        celle = _celle_della_tratta(gia, grid)
+        if not celle:
+            continue
+        capi = {celle[0][0], celle[-1][-1]}
+        for pezzo in celle:
+            occupied.update(pezzo)
+            absorb(tuple(pezzo))
+            for before, after in zip(pezzo, pezzo[1:], strict=False):
+                taken.setdefault((before, after), set()).update(capi)
     # Mandata o ritorno lo dice il modello, che e' orientato, e non la geometria:
     # un componente che finisce a sinistra del proprio alimentatore non per
     # questo lo alimenta di ritorno (D-059). E la specie della tratta — flusso
@@ -667,31 +716,49 @@ def route_sheet(
             if reserve_chains
             else frozenset()
         )
+        richiesta = {
+            "cols": grid.cols,
+            "rows": grid.rows,
+            "occupied": frozenset(occupied),
+            # Vietati tutti i tratti gia' percorsi, tranne quelli che
+            # toccano un attacco condiviso con questa tratta: li' due linee
+            # sono una derivazione, e sono lunghi un passo.
+            "taken": frozenset(
+                edge
+                for edge, anchors in taken.items()
+                if not (anchors & ends & set(edge))
+            ),
+            "crowded": frozenset(crowded - ends),
+            # Mandata sopra, ritorno sotto: a parita' di costo, e senza
+            # comprare nemmeno una piega per ottenerlo.
+            "prefer_high": supply,
+            "start_straight": start_straight,
+            "goal_straight": goal_straight,
+        }
+        murate = blocked | reserved | elsewhere
         try:
-            found = route(
-                start,
-                start_direction,
-                goal,
-                goal_direction,
-                cols=grid.cols,
-                rows=grid.rows,
-                blocked=(blocked | reserved | elsewhere) - ends - own,
-                occupied=frozenset(occupied),
-                # Vietati tutti i tratti gia' percorsi, tranne quelli che
-                # toccano un attacco condiviso con questa tratta: li' due linee
-                # sono una derivazione, e sono lunghi un passo.
-                taken=frozenset(
-                    edge
-                    for edge, anchors in taken.items()
-                    if not (anchors & ends & set(edge))
-                ),
-                crowded=frozenset(crowded - ends),
-                # Mandata sopra, ritorno sotto: a parita' di costo, e senza
-                # comprare nemmeno una piega per ottenerlo.
-                prefer_high=supply,
-                start_straight=start_straight,
-                goal_straight=goal_straight,
-            )
+            try:
+                found = route(
+                    start,
+                    start_direction,
+                    goal,
+                    goal_direction,
+                    blocked=(murate | da_evitare) - ends - own,
+                    **richiesta,  # type: ignore[arg-type]
+                )
+            except LayoutError:
+                # Le scritte dell'acqua si evitano se si puo' (REL-015): se no, la
+                # strada di sempre.
+                if not da_evitare:
+                    raise
+                found = route(
+                    start,
+                    start_direction,
+                    goal,
+                    goal_direction,
+                    blocked=murate - ends - own,
+                    **richiesta,  # type: ignore[arg-type]
+                )
         except LayoutError as exc:
             if not tolerant:
                 raise LayoutError(

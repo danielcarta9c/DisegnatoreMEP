@@ -14,6 +14,7 @@ instradamento **senza** accessori sceglieva su una tavola che non esisteva:
 approvava una posa e ne consegnava un'altra.
 """
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from math import ceil
 from typing import NamedTuple
@@ -972,6 +973,8 @@ def settle_sheet(
     grid: GridSpace,
     tolerant: bool = False,
     last_resort: bool = False,
+    gia_disegnate: Sequence[RoutedTrunk] = (),
+    da_evitare: frozenset[Cell] = frozenset(),
 ) -> SettledSheet:
     """Instrada il foglio posando gli accessori appena instradata la loro tratta.
 
@@ -993,9 +996,13 @@ def settle_sheet(
     posa che non si instrada — cioe' sceglierebbe proprio quelle da scartare.
     `last_resort` lo accende soltanto chi compone, e soltanto dopo che tutte le
     vie hanno fallito.
+
+    `gia_disegnate` e `da_evitare` servono a instradare **i cavi dopo l'acqua**
+    (REL-015, `route_sheet`): le tubazioni gia' sulla tavola, e i nodi delle loro
+    scritte. Le tratte che tornano sono soltanto quelle di `trunks`.
     """
     symbols = list(placed)
-    drawn: list[RoutedTrunk] = []
+    drawn: list[RoutedTrunk] = list(gia_disegnate)
     # **Prima le autostrade** (I-201, I-203). L'ordine in cui le tratte si
     # instradano decide chi scansa chi: quello che e' gia' disegnato e' un
     # ostacolo per quello che viene dopo, e gli accessori di una tratta si
@@ -1051,7 +1058,15 @@ def settle_sheet(
         return found
 
     route_sheet(
-        project, in_order, symbols, catalog, grid, settle, tolerant=last_resort
+        project,
+        in_order,
+        symbols,
+        catalog,
+        grid,
+        settle,
+        tolerant=last_resort,
+        gia_disegnate=gia_disegnate,
+        da_evitare=da_evitare,
     )
     # Le tratte e gli accessori tornano nell'ordine delle tratte: chi legge la
     # tavola li trova dove li trovava, e una tavola in cui l'ordine non cambia

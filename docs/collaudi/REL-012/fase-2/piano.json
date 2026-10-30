@@ -25,7 +25,7 @@
   "termostato-2": {"x": 245, "y": 127.5},
   "termostato-3": {"x": 245, "y": 142.5},
   "termostato-4": {"x": 245, "y": 157.5},
-  "madoka": {"x": 132.5, "y": 105},
+  "madoka": {"x": 107.5, "y": 112.5, "regola": "REL-015: a sinistra dello scarico e sotto la UI; le scritte della condensa si posano prima dei cavi (I-231), e il comando sotto lo scarico stava sulla sua scritta"},
   "scarico": {"x": 125, "y": 95, "regola": "A4: sifone e scarico addosso alla UI"},
   "quadro": {"x": 2.5, "y": 150},
   "centrale": {"x": 175, "y": 110, "regola": "sotto il plenum, sull'asse dei motori"}

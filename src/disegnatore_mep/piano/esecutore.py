@@ -32,7 +32,7 @@ Il giro, in ordine:
 from __future__ import annotations
 
 import re
-from collections.abc import Sequence
+from collections.abc import Collection, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -57,6 +57,7 @@ from disegnatore_mep.layout.compose import (
 )
 from disegnatore_mep.layout.diametri import (
     CAMPIONE_DELLA_LEGENDA,
+    FRANCO_DELLA_STACCATA_EM,
     TESTO_DELLA_LEGENDA,
     note_della_legenda,
     posa_i_diametri,
@@ -65,7 +66,9 @@ from disegnatore_mep.layout.diametri import (
 from disegnatore_mep.layout.errors import LayoutError
 from disegnatore_mep.layout.geometry import (
     SHEET_MARGIN_MIN_MM,
+    DiametroSullaTavola,
     DrawingGeometry,
+    PlacedLabel,
     PlacedSymbol,
     Point,
     RoutedTrunk,
@@ -75,19 +78,20 @@ from disegnatore_mep.layout.geometry import (
 )
 from disegnatore_mep.layout.grid import GridSpace
 from disegnatore_mep.layout.inline import settle_sheet
-from disegnatore_mep.layout.labels import place_labels, place_tags_that_yield
+from disegnatore_mep.layout.labels import Box, Segment, place_labels, place_tags_that_yield
 from disegnatore_mep.layout.legend import build_legend
 from disegnatore_mep.layout.partition import SheetPartition, partition_project
 from disegnatore_mep.layout.place import place_sheet
 from disegnatore_mep.layout.spine import SpineLayout, carry_the_rest
 from disegnatore_mep.layout.trunks import build_trunks, porte_di_comando_in_linea
 from disegnatore_mep.model.project import ProjectModel
-from disegnatore_mep.model.types import IssueSeverity
+from disegnatore_mep.model.types import Domain, IssueSeverity
 from disegnatore_mep.piano.formato import ErroreDelPiano, PianoDiComposizione
 from disegnatore_mep.piano.vista import (
     CAMPIONE_DEL_RIMANDO,
     rimando,
     sigle_del_grafo_intero,
+    solo_comando,
     vista_del_grafo,
 )
 from disegnatore_mep.validation.issues import ValidationIssue
@@ -398,6 +402,203 @@ class EsitoDelPiano:
         )
 
 
+PROFONDITA_DELL_IMBOCCO_MM = 20.0
+"""Quanto spazio una porta con il suo cavo tiene libero davanti a se', dalle scritte
+dell'acqua (REL-015, I-231): il cavo arriva alla porta di faccia, e una sigla posata li'
+davanti la attraverserebbe. Sulla tavola piccola di REL-012 la sigla della miscelatrice,
+scritta sopra il pezzo, stava esattamente dove il cavo dell'attuatore scende; sulla M.02
+la sigla del sifone e la scritta dello scarico stavano dove il bus del comando a filo
+scende dall'unita' interna, e a 10 mm il bus doveva girare loro intorno. **Taratura**
+della sessione: otto passi, da giudicare sulla tavola."""
+
+
+def imbocchi_dei_cavi(
+    modello: ProjectModel, catalogo: ComponentRegistry
+) -> dict[str, tuple[SymbolManifest, tuple[str, ...]]]:
+    """Per ogni pezzo a cui arriva un cavo o un bus nel **grafo intero**: il suo
+    simbolo con le porte di comando, e le porte a cui il cavo arriva.
+
+    Si leggono sul grafo intero perche' valgano uguali sulla tavola unica e sulla
+    vista idraulica, dove il cavo non c'e' ma l'attacco si': le scritte dell'acqua
+    lasciano libero l'imbocco su tutte e due, e le due tavole hanno l'acqua scritta
+    allo stesso modo. Vuoto su un grafo senza elettrico."""
+    del_comando = {rete.id for rete in modello.networks if rete.domain is Domain.CONTROL}
+    voce = {item.id: item.definition_id for item in modello.components}
+    porte: dict[str, set[str]] = {}
+    for item in modello.connections:
+        if item.network_id not in del_comando:
+            continue
+        for ref in (item.endpoint_a, item.endpoint_b):
+            if ref.component_id in voce:
+                porte.setdefault(ref.component_id, set()).add(ref.port_id)
+    return {
+        pezzo: (catalogo.resolve(voce[pezzo]).symbol.manifest, tuple(sorted(quali)))
+        for pezzo, quali in sorted(porte.items())
+    }
+
+
+def riserve_degli_imbocchi(
+    simboli: Sequence[PlacedSymbol],
+    imbocchi: dict[str, tuple[SymbolManifest, tuple[str, ...]]],
+) -> list[tuple[float, float, float, float]]:
+    """Davanti a ogni porta dove arriva un cavo, una striscia che le scritte
+    dell'acqua non occupano: lunga `PROFONDITA_DELL_IMBOCCO_MM`, larga il franco di una
+    linea per parte. Il cavo arriva alla porta di faccia, e una sigla posata li' davanti
+    la attraverserebbe."""
+    from disegnatore_mep.layout.labels import LINE_CLEARANCE_MM
+
+    riserve: list[tuple[float, float, float, float]] = []
+    for item in simboli:
+        if item.component_id not in imbocchi:
+            continue
+        manifesto, porte = imbocchi[item.component_id]
+        girato = manifesto.rotated(item.rotation_deg, item.specchiato)
+        for porta_id in porte:
+            try:
+                porta = girato.port(item.physical_port(porta_id))
+            except ValueError:
+                continue
+            x = item.origin.x_mm + porta.x_mm
+            y = item.origin.y_mm + porta.y_mm
+            verso_x, verso_y = _VERSO[porta.face]
+            fine_x = x + verso_x * PROFONDITA_DELL_IMBOCCO_MM
+            fine_y = y + verso_y * PROFONDITA_DELL_IMBOCCO_MM
+            riserve.append(
+                (
+                    min(x, fine_x) - LINE_CLEARANCE_MM,
+                    min(y, fine_y) - LINE_CLEARANCE_MM,
+                    max(x, fine_x) + LINE_CLEARANCE_MM,
+                    max(y, fine_y) + LINE_CLEARANCE_MM,
+                )
+            )
+    return riserve
+
+
+def celle_delle_scritte(
+    etichette: Sequence[PlacedLabel],
+    diametri: Sequence[DiametroSullaTavola],
+    grid: GridSpace,
+    corpo_mm: float,
+) -> frozenset[tuple[int, int]]:
+    """I nodi della griglia che un cavo evita, se puo', perche' ci sono le scritte
+    dell'acqua (REL-015, I-231): i nodi dentro il riquadro di ogni scritta, allargato
+    del franco di una linea di lato e di un corpo sopra e sotto — un cavo con la sua
+    scritta, a meno di un corpo da una sigla, si leggerebbe come la sua
+    (`PIECE_LABEL_ALONG_A_WRITTEN_RUN`) —, e i nodi a meno di mezzo passo da un
+    richiamo, che un cavo non attraversa."""
+    from disegnatore_mep.layout.labels import (
+        LINE_CLEARANCE_MM,
+        riquadro_della_scritta,
+        segmenti_del_richiamo,
+    )
+
+    passo = grid.step_mm
+    origine_x, origine_y = grid.origin.x_mm, grid.origin.y_mm
+    # Il franco di ogni scritta: di lato quello di una linea, sopra e sotto un corpo;
+    # tutt'intorno un corpo per una scritta staccata, che vuole un corpo di vuoto da
+    # cio' che non e' il suo tratto (`DETACHED_DIAMETER_CROWDED`).
+    franco_della_staccata = FRANCO_DELLA_STACCATA_EM * corpo_mm
+    riquadri = [
+        (riquadro_della_scritta(item, corpo_mm), LINE_CLEARANCE_MM) for item in etichette
+    ]
+    riquadri += [
+        (
+            riquadro_del_diametro(item, corpo_mm),
+            LINE_CLEARANCE_MM if item.richiamo is None else franco_della_staccata,
+        )
+        for item in diametri
+    ]
+    celle: set[tuple[int, int]] = set()
+    for (sinistra, alto, destra, basso), di_lato in riquadri:
+        sinistra, destra = sinistra - di_lato, destra + di_lato
+        alto, basso = alto - corpo_mm, basso + corpo_mm
+        for colonna in range(int((sinistra - origine_x) // passo), int((destra - origine_x) // passo) + 2):
+            x = origine_x + colonna * passo
+            if not sinistra < x < destra:
+                continue
+            for riga in range(int((alto - origine_y) // passo), int((basso - origine_y) // passo) + 2):
+                y = origine_y + riga * passo
+                if alto < y < basso:
+                    celle.add((colonna, riga))
+    segmenti = [segmento for item in etichette for segmento in segmenti_del_richiamo(item)]
+    segmenti += [segmento for item in diametri if item.richiamo is not None for segmento in item.richiamo.segmenti]
+    for da, a in segmenti:
+        lunghezza = max(abs(a.x_mm - da.x_mm), abs(a.y_mm - da.y_mm))
+        campioni = max(1, int(lunghezza / 0.5))
+        for indice in range(campioni + 1):
+            x = da.x_mm + (a.x_mm - da.x_mm) * indice / campioni
+            y = da.y_mm + (a.y_mm - da.y_mm) * indice / campioni
+            colonna, riga = round((x - origine_x) / passo), round((y - origine_y) / passo)
+            for dc in (-1, 0, 1):
+                for dr in (-1, 0, 1):
+                    nx, ny = origine_x + (colonna + dc) * passo, origine_y + (riga + dr) * passo
+                    if ((nx - x) ** 2 + (ny - y) ** 2) ** 0.5 < passo / 2 + 1e-6:
+                        celle.add((colonna + dc, riga + dr))
+    return frozenset(celle)
+
+
+def cavi_dopo_l_acqua(
+    foglio: SheetGeometry,
+    modello: ProjectModel,
+    catalogo: ComponentRegistry,
+    partizione: SheetPartition,
+    grid: GridSpace,
+    reti_del_comando: frozenset[str],
+    da_evitare: frozenset[tuple[int, int]],
+) -> SheetGeometry:
+    """**I cavi si disegnano dopo l'acqua** (REL-015, I-231): sulla tavola unica,
+    scritta l'acqua, i cavi e i bus che passano sulle sue scritte si instradano di
+    nuovo, con tutto il resto fermo e intorno alle scritte (`da_evitare`), e i pezzi
+    in linea su quei cavi — il sezionatore — si riposano sul cavo nuovo.
+
+    La prima volta i cavi si instradano con il resto (`settle_sheet`): servono a
+    centrare il disegno nel foglio come prima, e restano se il nuovo giro non trova
+    strada — la tavola esce come prima, e una scritta coperta il preflight la dice.
+    Un cavo che senza le scritte non si instrada si instrada come sempre
+    (`route_sheet`, `da_evitare`)."""
+    from disegnatore_mep.layout.route import _celle_della_tratta
+
+    # Si rifanno **solo i cavi che passano sulle scritte dell'acqua**: gli altri
+    # restano dove sono, e la tavola cambia il meno possibile.
+    def passa_sulle_scritte(tratta: RoutedTrunk) -> bool:
+        pezzi = _celle_della_tratta(tratta, grid)
+        if not pezzi:
+            return False
+        capi = {pezzi[0][0], pezzi[-1][-1]}
+        return any(cella in da_evitare and cella not in capi for pezzo in pezzi for cella in pezzo)
+
+    da_rifare = {
+        tuple(item.connection_ids)
+        for item in foglio.routes
+        if item.network_id in reti_del_comando and passa_sulle_scritte(item)
+    }
+    cavi = [item for item in partizione.trunks if tuple(item.connection_ids) in da_rifare]
+    if not cavi:
+        return foglio
+    sui_cavi = {pezzo for item in cavi for pezzo in item.inline_component_ids}
+    fermi = [item for item in foglio.symbols if item.component_id not in sui_cavi]
+    restano = [item for item in foglio.routes if tuple(item.connection_ids) not in da_rifare]
+    try:
+        nuovi = settle_sheet(
+            modello, cavi, fermi, catalogo, grid, gia_disegnate=restano, da_evitare=da_evitare
+        )
+    except LayoutError:
+        return foglio
+    per_tratta = {tuple(item.connection_ids): item for item in nuovi.routes}
+    posati = {item.component_id: item for item in nuovi.accessories}
+    return foglio.model_copy(
+        update={
+            "routes": [per_tratta.get(tuple(item.connection_ids), item) for item in foglio.routes],
+            "symbols": [
+                posati[item.component_id].model_copy(update={"tag": item.tag})
+                if item.component_id in posati
+                else item
+                for item in foglio.symbols
+            ],
+        }
+    )
+
+
 def con_le_porte_scollegate(
     foglio: SheetGeometry,
     modello: ProjectModel,
@@ -548,6 +749,9 @@ def esegui_piano(
     # I pezzi con un cavo, letti sul grafo intero: portano la sigla anche sulla
     # tavola idraulica, dove il cavo non c'e' (collaudo T2).
     comandati = pezzi_comandati(modello)
+    # Gli attacchi a cui arriva un cavo, letti sul grafo intero: le scritte
+    # dell'acqua lasciano libero il loro imbocco su tutte e due le tavole (REL-015).
+    imbocchi = imbocchi_dei_cavi(modello, catalogo.per_il_progetto(modello))
     modello, catalogo = vista_del_grafo(modello, piano.vista, catalogo, naming)
     frame = _frame(piano.formato)
     # **Le zone delle tabelle** (REL-012): lo stesso foglio, con l'area del disegno
@@ -776,23 +980,69 @@ def esegui_piano(
         comandati,
     )
 
+    # **Prima l'acqua e l'aria, poi il comando** (REL-015, I-231). Il PO: «Non
+    # vorrei che le linee elettriche facciano spostare le linee idrauliche. [...]
+    # prima si disegna idronico - areaulico e poi si aggiunge elettrico e comando.»
+    # Le scritte si posano in due tempi, come le disegnerebbe un disegnatore:
+    #
+    # 1. **l'acqua e l'aria**: sigle e dati dei loro pezzi, scritte dei loro tratti e
+    #    sigle che cedono, guardando **soltanto** i loro simboli e le loro linee. I
+    #    cavi, i bus e i pezzi del solo comando non ci sono ancora, e la parte
+    #    dell'acqua esce come sulla tavola idraulica dello stesso grafo — e' la
+    #    prova (`validation.parte_idraulica`);
+    # 2. **il comando**: sigle e dati del quadro, del regolatore, delle sonde
+    #    esterne, scritte dei cavi, nello spazio che resta. Cedono: se non trovano
+    #    posto si omettono, e il preflight lo dice.
+    #
+    # Su una tavola senza cavi il primo tempo e' tutto, e il secondo e' vuoto: le
+    # tavole idroniche non cambiano di un byte.
+    reti_del_comando = frozenset(rete.id for rete in modello.networks if rete.domain is Domain.CONTROL)
+    del_comando = solo_comando(modello, catalogo)
+    rete_della_tubazione = {item.id: item.network_id for item in modello.connections}
+
+    def dei_cavi(tubazioni: Collection[str]) -> bool:
+        return bool(tubazioni) and all(
+            rete_della_tubazione.get(item) in reti_del_comando for item in tubazioni
+        )
+
+    simboli_d_acqua = [item for item in foglio.symbols if item.component_id not in del_comando]
+    if imbocchi:
+        # **Nello stesso ordine sulle due tavole**: quello dei pezzi del grafo. La posa
+        # d'inventario li mette in un ordine che dipende anche dai pezzi del comando, e
+        # due sigle che si contendono un posto lo darebbero all'una o all'altra.
+        ordine = {item.id: indice for indice, item in enumerate(modello.components)}
+        simboli_d_acqua.sort(key=lambda item: ordine.get(item.component_id, len(ordine)))
+    linee_d_acqua = [item for item in foglio.routes if item.network_id not in reti_del_comando]
+    riserve = riserve_degli_imbocchi(simboli_d_acqua, imbocchi)
+    ingombri_d_acqua = (*ostacoli, *riserve)
+
     # Le tubazioni con la scritta del progettista: un testo di pezzo non sta lungo
     # di loro, o si leggerebbe come la loro scritta (collaudo T1 di REL-012).
     scritte, calcolati = tratti_da_scrivere(modello, catalogo)
     linee_scritte = frozenset(item for scritta in scritte for item in scritta.connection_ids)
-    foglio = foglio.model_copy(
-        update={
-            "labels": place_labels(
-                modello,
-                foglio.symbols,
-                frame.standard,
-                routes=foglio.routes,
-                area=area,
-                ostacoli=ostacoli,
-                senza_valori=in_tabella,
-                linee_scritte=linee_scritte,
-            )
-        }
+    scritte_d_acqua = [item for item in scritte if not dei_cavi(item.connection_ids)]
+    scritte_dei_cavi = [item for item in scritte if dei_cavi(item.connection_ids)]
+    calcolati_d_acqua = [item for item in calcolati if not dei_cavi(item.connection_ids)]
+    calcolati_dei_cavi = [item for item in calcolati if dei_cavi(item.connection_ids)]
+    linee_scritte_d_acqua = frozenset(
+        item for scritta in scritte_d_acqua for item in scritta.connection_ids
+    )
+    fuori_d_acqua = {chi: sigla for chi, sigla in fuori.items() if chi not in del_comando}
+    fuori_del_comando = {chi: sigla for chi, sigla in fuori.items() if chi in del_comando}
+
+    # 1. L'acqua e l'aria.
+    etichette = place_labels(
+        modello,
+        simboli_d_acqua,
+        frame.standard,
+        routes=linee_d_acqua,
+        area=area,
+        ostacoli=ingombri_d_acqua,
+        senza_valori=in_tabella,
+        linee_scritte=linee_scritte_d_acqua,
+    )
+    acqua = foglio.model_copy(
+        update={"symbols": simboli_d_acqua, "routes": linee_d_acqua, "labels": etichette}
     )
 
     # **Il DN dei tratti, in linea con la tubazione** (REL-007, D-193). Solo se
@@ -804,14 +1054,118 @@ def esegui_piano(
     # m», «3G2,5 · L 20 m». La posa e' la stessa; un DN calcolato sullo stesso
     # tratto le cede il posto, e la legenda la spiega con una riga sua, «Ø · L»,
     # sotto quella del DN, che resta «Øi».
+    diametri_d_acqua: list[DiametroSullaTavola] = []
+    if scritte_d_acqua or calcolati_d_acqua:
+        diametri_d_acqua, _ = posa_i_diametri(
+            (*scritte_d_acqua, *calcolati_d_acqua), acqua, frame.standard, area, ingombri_d_acqua
+        )
+
+    def gia_scritti(diametri: Sequence[DiametroSullaTavola]) -> list[tuple[Box, Sequence[Segment]]]:
+        return [
+            (
+                riquadro_del_diametro(item, frame.standard.text_small_mm),
+                () if item.richiamo is None else item.richiamo.segmenti,
+            )
+            for item in diametri
+        ]
+
+    # I pezzi fuori dall'acqua portano la loro sigla, e la posano per ultima: cede.
+    if fuori_d_acqua:
+        etichette = [
+            *etichette,
+            *place_tags_that_yield(
+                simboli_d_acqua,
+                fuori_d_acqua,
+                frame.standard,
+                routes=linee_d_acqua,
+                already=etichette,
+                occupied=gia_scritti(diametri_d_acqua),
+                area=area,
+                ostacoli=ingombri_d_acqua,
+                linee_scritte=linee_scritte_d_acqua,
+            ),
+        ]
+
+    # 2. Il comando, nello spazio che resta: tutto il disegno e' ingombro, e le
+    #    scritte dell'acqua sono gia' al loro posto. **Prima i cavi**: si
+    #    reinstradano adesso, che l'acqua e' scritta, e girano intorno alle sue
+    #    scritte dove possono (`cavi_dopo_l_acqua`).
+    if linee_d_acqua and reti_del_comando:
+        foglio = cavi_dopo_l_acqua(
+            foglio,
+            modello,
+            catalogo,
+            partizione,
+            grid,
+            reti_del_comando,
+            celle_delle_scritte(etichette, diametri_d_acqua, grid, frame.standard.text_small_mm),
+        )
+        foglio = con_le_porte_scollegate(
+            foglio, modello, catalogo, partizione.network_ids, piano.vista
+        )
+    diametri_dei_cavi: list[DiametroSullaTavola] = []
+    if del_comando:
+        etichette = [
+            *etichette,
+            *place_labels(
+                modello,
+                foglio.symbols,
+                frame.standard,
+                routes=foglio.routes,
+                area=area,
+                ostacoli=ostacoli,
+                senza_valori=in_tabella,
+                linee_scritte=linee_scritte,
+                solo=del_comando,
+                already=etichette,
+                occupied=gia_scritti(diametri_d_acqua),
+            ),
+        ]
+    if scritte_dei_cavi or calcolati_dei_cavi:
+        diametri_dei_cavi, _ = posa_i_diametri(
+            (*scritte_dei_cavi, *calcolati_dei_cavi),
+            foglio.model_copy(update={"labels": etichette}),
+            frame.standard,
+            area,
+            ostacoli,
+            gia_posati=diametri_d_acqua,
+        )
+    if fuori_del_comando:
+        etichette = [
+            *etichette,
+            *place_tags_that_yield(
+                foglio.symbols,
+                fuori_del_comando,
+                frame.standard,
+                routes=foglio.routes,
+                already=etichette,
+                occupied=gia_scritti([*diametri_d_acqua, *diametri_dei_cavi]),
+                area=area,
+                ostacoli=ostacoli,
+                linee_scritte=linee_scritte,
+            ),
+        ]
+    # La sigla dei pezzi fuori dall'acqua sta anche sul pezzo: la leggono la tabella,
+    # il DXF e il preflight. Si scrive qui, dopo la posa: scritta prima, `place_labels`
+    # la poserebbe come una sigla che non cede.
+    foglio = foglio.model_copy(
+        update={
+            "labels": etichette,
+            "symbols": [
+                item.model_copy(update={"tag": fuori[item.component_id]})
+                if item.tag is None and item.component_id in fuori
+                else item
+                for item in foglio.symbols
+            ],
+        }
+    )
+
     # **Le due tavole si rimandano** (REL-012, fase 3): sull'idraulica una riga della
     # legenda dice dove sta l'elettrico e il comando, e viceversa. Sotto le righe delle
     # scritte, se ci sono.
     spiegate: list[tuple[str, str]] = []
     if scritte or calcolati:
-        diametri, _ = posa_i_diametri(
-            (*scritte, *calcolati), foglio, frame.standard, area, ostacoli
-        )
+        diametri = [*diametri_d_acqua, *diametri_dei_cavi]
         foglio = foglio.model_copy(update={"diametri": diametri})
         nominate = {frozenset(item.connection_ids) for item in diametri}
         spiegate = [
@@ -822,37 +1176,6 @@ def esegui_piano(
             )
             if any(frozenset(item.connection_ids) in nominate for item in quali)
         ]
-    if fuori:
-        foglio = foglio.model_copy(
-            update={
-                "symbols": [
-                    item.model_copy(update={"tag": fuori[item.component_id]})
-                    if item.tag is None and item.component_id in fuori
-                    else item
-                    for item in foglio.symbols
-                ],
-                "labels": [
-                    *foglio.labels,
-                    *place_tags_that_yield(
-                        foglio.symbols,
-                        fuori,
-                        frame.standard,
-                        routes=foglio.routes,
-                        already=foglio.labels,
-                        occupied=[
-                            (
-                                riquadro_del_diametro(item, frame.standard.text_small_mm),
-                                () if item.richiamo is None else item.richiamo.segmenti,
-                            )
-                            for item in foglio.diametri
-                        ],
-                        area=area,
-                        ostacoli=ostacoli,
-                        linee_scritte=linee_scritte,
-                    ),
-                ],
-            }
-        )
     # Il rimando e' una frase sola, «Vedi la tavola …», su tutta la fascia: con
     # «Vedi» nella colonna dei simboli si leggeva come una voce (collaudo T2).
     frasi = [(CAMPIONE_DEL_RIMANDO, altra_tavola)] if altra_tavola is not None else []

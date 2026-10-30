@@ -74,9 +74,9 @@
   },
   "comando-filo": {
    "x": 145,
-   "y": 55,
+   "y": 67.5,
    "rotazione": 90,
-   "regola": "E3 - sotto la UI"
+   "regola": "E3 - sotto la UI; REL-015: 12,5 mm piu' in basso, fuori dalla scritta dello scarico, che si posa prima dei cavi (I-231)"
   },
   "scarico-cucina": {
    "x": 120,
