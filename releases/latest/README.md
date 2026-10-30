@@ -1,6 +1,6 @@
 # L'ultima release: 1.7.0
 
-`DisegnatoreMEP-v1.7.0.zip` — sha256 `7d0f940621875963…`, 134 file — è **la distinta in un documento a parte, la
+`DisegnatoreMEP-v1.7.0.zip` — sha256 `39031f6bb96524bb…`, 134 file — è **la distinta in un documento a parte, la
 tavola in A3, l'elettrico dopo l'idraulica** (`REL-015`), sulle osservazioni del PO alla 1.6.0 (I-230 … I-234). Si
 carica come ogni skill personale, dallo ZIP così com'è.
 

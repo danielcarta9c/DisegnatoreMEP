@@ -290,22 +290,14 @@
      "righe": [
       [
        "A.1",
-       "Unità esterna split a pompa di calore: Daikin RXM60A · 49 kg",
+       "Comando a filo dell'unità: Daikin Madoka BRC1H52W",
        "n",
        "1",
        "Nove C",
-       "UE-01; 5,7 kW"
+       "CF-01"
       ],
       [
        "A.2",
-       "Unità interna canalizzata ad espansione diretta: Daikin FBA60A9 · 1000×800×245 mm · 35 kg",
-       "n",
-       "1",
-       "Nove C",
-       "UI-01; 5,7 kW; 1080 m³/h; pompa condensa a bordo"
-      ],
-      [
-       "A.3",
        "Plenum motorizzato di zona a cinque serrande: Airzone Easyzone 5 × Ø200, es. AZEZ8DAIBS07M5 · 1425×250×454 mm",
        "n",
        "1",
@@ -313,7 +305,7 @@
        "PLZ-01; codice da confermare col distributore; comprende CZ-01 (Centrale di zona)"
       ],
       [
-       "A.4",
+       "A.3",
        "Termostato di zona: Airzone Blueface",
        "n",
        "4",
@@ -321,12 +313,20 @@
        "TZ-01, TZ-02, TZ-03, TZ-04"
       ],
       [
-       "A.5",
-       "Comando a filo dell'unità: Daikin Madoka BRC1H52W",
+       "A.4",
+       "Unità esterna split a pompa di calore: Daikin RXM60A · 49 kg",
        "n",
        "1",
        "Nove C",
-       "CF-01"
+       "UE-01; 5,7 kW"
+      ],
+      [
+       "A.5",
+       "Unità interna canalizzata ad espansione diretta: Daikin FBA60A9 · 1000×800×245 mm · 35 kg",
+       "n",
+       "1",
+       "Nove C",
+       "UI-01; 5,7 kW; 1080 m³/h; pompa condensa a bordo"
       ]
      ]
     },
@@ -383,19 +383,19 @@
       ],
       [
        "B.7",
+       "Plenum porta-bocchetta coibentato per bocchetta 400×200, attacco Ø200 laterale o dall'alto",
+       "n",
+       "5",
+       "installatore",
+       "B1, B2, B3, B4, B5"
+      ],
+      [
+       "B.8",
        "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
        "n",
        "10",
        "installatore",
-       "UI-01 4, PLZ-01 4, RA-01 2"
-      ],
-      [
-       "B.8",
-       "Giunto antivibrante in tela fra unità interna e plenum di ripresa",
-       "n",
-       "1",
-       "installatore",
-       "UI-01"
+       "PLZ-01 4, RA-01 2, UI-01 4"
       ],
       [
        "B.9",
@@ -415,11 +415,11 @@
       ],
       [
        "B.11",
-       "Plenum porta-bocchetta coibentato per bocchetta 400×200, attacco Ø200 laterale o dall'alto",
+       "Giunto antivibrante in tela fra unità interna e plenum di ripresa",
        "n",
-       "5",
+       "1",
        "installatore",
-       "B1, B2, B3, B4, B5"
+       "UI-01"
       ]
      ]
     },
@@ -569,11 +569,11 @@
       ],
       [
        "D.7",
-       "Raccordo di adattamento dall'attacco condensa dell'unità interna (VP20 (Øe 26)) al tubo di scarico, con fascetta",
+       "Innesto sullo scarico esistente (braga 45° o presa sul sifone di un apparecchio)",
        "n",
        "1",
        "installatore",
-       "UI-01"
+       "AL-01"
       ],
       [
        "D.8",
@@ -585,11 +585,11 @@
       ],
       [
        "D.9",
-       "Innesto sullo scarico esistente (braga 45° o presa sul sifone di un apparecchio)",
+       "Raccordo di adattamento dall'attacco condensa dell'unità interna (VP20 (Øe 26)) al tubo di scarico, con fascetta",
        "n",
        "1",
        "installatore",
-       "AL-01"
+       "UI-01"
       ]
      ]
     },
@@ -678,6 +678,14 @@
       ],
       [
        "E.11",
+       "Scatola 503 per termostati e comandi a parete",
+       "n",
+       "5",
+       "installatore",
+       "CF-01, TZ-01, TZ-02, TZ-03, TZ-04"
+      ],
+      [
+       "E.12",
        "Aggiornamento dello schema del quadro elettrico",
        "a corpo",
        "1",
@@ -685,20 +693,12 @@
        "QE-01"
       ],
       [
-       "E.12",
+       "E.13",
        "Sezionatore onnipolare di prossimità IP55, apertura contatti min. 3 mm",
        "n",
        "1",
        "installatore",
        "SZ-01"
-      ],
-      [
-       "E.13",
-       "Scatola 503 per termostati e comandi a parete",
-       "n",
-       "5",
-       "installatore",
-       "TZ-01, TZ-02, TZ-03, TZ-04, CF-01"
       ]
      ]
     },
@@ -731,22 +731,14 @@
       ],
       [
        "F.4",
-       "Carotaggio parete esterna Ø80 con guaina passante e sigillatura",
+       "Traccia per termostati e comandi a parete",
        "n",
-       "1",
+       "5",
        "installatore",
-       "UE-01"
+       "CF-01, TZ-01, TZ-02, TZ-03, TZ-04"
       ],
       [
        "F.5",
-       "Traccia per la condensa fino allo scarico",
-       "m",
-       "3",
-       "installatore",
-       "AL-01"
-      ],
-      [
-       "F.6",
        "Tracce per le linee dal quadro al controsoffitto",
        "m",
        "5",
@@ -754,12 +746,20 @@
        "QE-01"
       ],
       [
-       "F.7",
-       "Traccia per termostati e comandi a parete",
-       "n",
-       "5",
+       "F.6",
+       "Traccia per la condensa fino allo scarico",
+       "m",
+       "3",
        "installatore",
-       "TZ-01, TZ-02, TZ-03, TZ-04, CF-01"
+       "AL-01"
+      ],
+      [
+       "F.7",
+       "Carotaggio parete esterna Ø80 con guaina passante e sigillatura",
+       "n",
+       "1",
+       "installatore",
+       "UE-01"
       ]
      ]
     },
@@ -776,30 +776,6 @@
       ],
       [
        "Z.2",
-       "Controsoffitto in zona unità interna e plenum: altezza libera min. 35 cm sotto il solaio",
-       "a corpo",
-       "1",
-       "committente",
-       "UI-01"
-      ],
-      [
-       "Z.3",
-       "Botola di ispezione min. 600×600 sotto la macchina (filtro, pompa, scheda)",
-       "n",
-       "2",
-       "committente",
-       "UI-01, PLZ-01"
-      ],
-      [
-       "Z.4",
-       "Griglia di ripresa 1000×250 senza filtro, apribile per accedere al filtro",
-       "n",
-       "1",
-       "committente",
-       "RA-01"
-      ],
-      [
-       "Z.5",
        "Bocchetta di mandata 400×200 a doppio filare con serranda",
        "n",
        "5",
@@ -807,12 +783,36 @@
        "B1, B2, B3, B4, B5"
       ],
       [
-       "Z.6",
+       "Z.3",
        "Griglia di transito o luce sotto porta per il ritorno dell'aria dal locale servito",
        "n",
        "4",
        "committente",
        "Aeff min.: Camera 13 m² 0,05 m², Camera 15 m² 0,052 m², Camera 16 m² 0,039 m², Soggiorno-cucina 0,102 m²"
+      ],
+      [
+       "Z.4",
+       "Botola di ispezione min. 600×600 sotto la macchina (filtro, pompa, scheda)",
+       "n",
+       "2",
+       "committente",
+       "PLZ-01, UI-01"
+      ],
+      [
+       "Z.5",
+       "Griglia di ripresa 1000×250 senza filtro, apribile per accedere al filtro",
+       "n",
+       "1",
+       "committente",
+       "RA-01"
+      ],
+      [
+       "Z.6",
+       "Controsoffitto in zona unità interna e plenum: altezza libera min. 35 cm sotto il solaio",
+       "a corpo",
+       "1",
+       "committente",
+       "UI-01"
       ],
       [
        "Z.7",
@@ -938,11 +938,11 @@
       ],
       [
        "5.",
-       "Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C."
+       "Fornitura: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C."
       ],
       [
        "6.",
-       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole 05a61bb20ef686d8)."
+       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte."
       ]
      ]
     }

@@ -4,10 +4,6 @@ Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata 
 
 > proposta (D-213, REL-013): il PO non ha ancora deciso se la skill fa la distinta; finché non decide, la distinta si fa solo col comando esplicito `mep.py distinta`. Regole `05a61bb20ef686d8` (distinta 1.2.0, lunghezze 1.1.0, fluidi 1.1.0, corredo 1.1.0, attivita 1.1.0, verifica 1.1.0).
 
-## Da confermare per questa offerta
-
-- Fornitura: apparecchiature fornite da Nove C; bocchette e griglie del Committente; opere edili del Committente; messa in servizio con Nove C — come da regole predefinite di Nove C; confermare per questa offerta.
-
 ## Le tratte
 
 | tratto | rete | da - a | sezione | L stimata | L da quotare | conto |
@@ -69,22 +65,22 @@ Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata 
 
 | rif | voce | q.tà | um | conto | regola |
 |---|---|---|---|---|---|
-| A.1 | Unità esterna split a pompa di calore: Daikin RXM60A · 49 kg | 1 | n | 1 nello schema (UE-01) | `corredo/split-outdoor-unit/apparecchiatura` |
-| A.2 | Unità interna canalizzata ad espansione diretta: Daikin FBA60A9 · 1000×800×245 mm · 35 kg | 1 | n | 1 nello schema (UI-01) | `corredo/ducted-indoor-unit/apparecchiatura` |
-| A.3 | Plenum motorizzato di zona a cinque serrande: Airzone Easyzone 5 × Ø200, es. AZEZ8DAIBS07M5 · 1425×250×454 mm | 1 | n | 1 nello schema (PLZ-01) | `corredo/zoning-plenum-5/apparecchiatura` |
-| A.4 | Termostato di zona: Airzone Blueface | 4 | n | 4 nello schema (TZ-01, TZ-02, TZ-03, TZ-04) | `corredo/room-thermostat/apparecchiatura` |
-| A.5 | Comando a filo dell'unità: Daikin Madoka BRC1H52W | 1 | n | 1 nello schema (CF-01) | `corredo/wired-remote/apparecchiatura` |
+| A.1 | Comando a filo dell'unità: Daikin Madoka BRC1H52W | 1 | n | 1 nello schema (CF-01) | `corredo/wired-remote/apparecchiatura` |
+| A.2 | Plenum motorizzato di zona a cinque serrande: Airzone Easyzone 5 × Ø200, es. AZEZ8DAIBS07M5 · 1425×250×454 mm | 1 | n | 1 nello schema (PLZ-01) | `corredo/zoning-plenum-5/apparecchiatura` |
+| A.3 | Termostato di zona: Airzone Blueface | 4 | n | 4 nello schema (TZ-01, TZ-02, TZ-03, TZ-04) | `corredo/room-thermostat/apparecchiatura` |
+| A.4 | Unità esterna split a pompa di calore: Daikin RXM60A · 49 kg | 1 | n | 1 nello schema (UE-01) | `corredo/split-outdoor-unit/apparecchiatura` |
+| A.5 | Unità interna canalizzata ad espansione diretta: Daikin FBA60A9 · 1000×800×245 mm · 35 kg | 1 | n | 1 nello schema (UI-01) | `corredo/ducted-indoor-unit/apparecchiatura` |
 | B.1 | Condotto flessibile coibentato Ø200 (isolamento 25 mm, barriera vapore), confezione da 10 m | 4 | conf. | 5 pezzi interi, 26 m: in confezioni da 10 m (utili 9,5) ne servono 3 [7] [6 + 3,5] [6 + 3,5]; riserva 25%: 26 × 1,25 = 32,5 m → 4; si prende il maggiore: 4 | `fluidi/supply_air/flessibile-in-confezioni` |
 | B.2 | Curva 90° Ø200 in lamiera zincata, all'uscita del plenum | 5 | n | 5 tratti × 1 = 5 | `fluidi/supply_air/curva-in-lamiera` |
 | B.3 | Manicotto di giunzione Ø200 | 2 | n | 2 per sezione | `fluidi/supply_air/manicotto-di-riserva` |
 | B.4 | Fascetta di serraggio Ø200 (anima e mantello) | 40 | n | 5 tratti × 8 = 40 | `fluidi/supply_air/fascette` |
 | B.5 | Nastro alluminio rinforzato 50 mm | 2 | rotolo | 26 m / 20 m per eccesso, almeno 1 = 2 | `fluidi/supply_air/nastro-alluminio` |
 | B.6 | Sostegno per flessibile (fascia o collare con pendino), passo ≤ 1,2 m | 27 | n | T01 6 + T02 4 + T03 6 + T04 4 + T05 7 = 27 (L / 1,2 m per eccesso +1 per tratto) | `fluidi/supply_air/sostegni` |
-| B.7 | Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante | 10 | n | UI-01 4 + PLZ-01 4 + RA-01 2 = 10 | `corredo/ducted-indoor-unit/kit-sospensione + corredo/zoning-plenum-5/kit-sospensione + corredo/return-air-terminal/kit-sospensione` |
-| B.8 | Giunto antivibrante in tela fra unità interna e plenum di ripresa | 1 | n | UI-01: 1 | `corredo/ducted-indoor-unit/giunto-antivibrante-ripresa` |
+| B.7 | Plenum porta-bocchetta coibentato per bocchetta 400×200, attacco Ø200 laterale o dall'alto | 5 | n | 5 pezzi × 1 = 5 (B1, B2, B3, B4, B5) | `corredo/air-supply-terminal/plenum-porta-bocchetta` |
+| B.8 | Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante | 10 | n | PLZ-01 4 + RA-01 2 + UI-01 4 = 10 | `corredo/zoning-plenum-5/kit-sospensione + corredo/return-air-terminal/kit-sospensione + corredo/ducted-indoor-unit/kit-sospensione` |
 | B.9 | Isolamento elastomerico adesivo per raccordi e plenum | 1 | rotolo | PLZ-01: 1 | `corredo/zoning-plenum-5/isolamento-raccordi-plenum` |
 | B.10 | Plenum di ripresa coibentato con filtro ispezionabile, bocca 1000×250, sulla bocca di aspirazione dell'unità interna | 1 | n | RA-01: 1 | `corredo/return-air-terminal/plenum-di-ripresa` |
-| B.11 | Plenum porta-bocchetta coibentato per bocchetta 400×200, attacco Ø200 laterale o dall'alto | 5 | n | 5 pezzi × 1 = 5 (B1, B2, B3, B4, B5) | `corredo/air-supply-terminal/plenum-porta-bocchetta` |
+| B.11 | Giunto antivibrante in tela fra unità interna e plenum di ripresa | 1 | n | UI-01: 1 | `corredo/ducted-indoor-unit/giunto-antivibrante-ripresa` |
 | C.1 | Tubo rame ricotto pre-isolato Ø6,35 (1/4"), isolamento ≥ 10 mm, resistente a 120 °C | 12 | m | T07 12 m | `fluidi/refrigerant_liquid/tubo-rame-liquido` |
 | C.2 | Manicotto a brasare Ø6,35 (1/4") (riserva, posa in tratta unica) | 2 | n | 2 per sezione | `fluidi/refrigerant_liquid/manicotti-a-brasare-liquido` |
 | C.3 | Tubo rame ricotto pre-isolato Ø12,7 (1/2"), isolamento ≥ 13 mm, resistente a 120 °C | 12 | m | T08 12 m | `fluidi/refrigerant_gas/tubo-rame-gas` |
@@ -102,9 +98,9 @@ Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata 
 | D.4 | Collare per tubo condensa | 10 | n | T09 10 (L / 1 m per eccesso per tratto) | `fluidi/condensate/collari-condensa` |
 | D.5 | Isolamento anticondensa 9 mm per il tubo della condensa | 10 | m | T09 10 m | `fluidi/condensate/isolamento-anticondensa` |
 | D.6 | Collante e pulitore PVC | 1 | n | 1 per fluido | `fluidi/condensate/collante-pvc` |
-| D.7 | Raccordo di adattamento dall'attacco condensa dell'unità interna (VP20 (Øe 26)) al tubo di scarico, con fascetta | 1 | n | UI-01: 1 | `corredo/ducted-indoor-unit/raccordo-condensa-unita-interna` |
+| D.7 | Innesto sullo scarico esistente (braga 45° o presa sul sifone di un apparecchio) | 1 | n | AL-01: 1 | `corredo/condensate-outlet/innesto-sullo-scarico` |
 | D.8 | Sifone ispezionabile per condensa | 1 | n | SIF-01: 1 | `corredo/condensate-trap/sifone` |
-| D.9 | Innesto sullo scarico esistente (braga 45° o presa sul sifone di un apparecchio) | 1 | n | AL-01: 1 | `corredo/condensate-outlet/innesto-sullo-scarico` |
+| D.9 | Raccordo di adattamento dall'attacco condensa dell'unità interna (VP20 (Øe 26)) al tubo di scarico, con fascetta | 1 | n | UI-01: 1 | `corredo/ducted-indoor-unit/raccordo-condensa-unita-interna` |
 | E.1 | Cavo FG16OR16 3G1,5, Alimentazione centrale Airzone | 15 | m | T10 15 m | `fluidi/power_supply/cavo-di-alimentazione` |
 | E.2 | Cavo FG16OR16 3G2,5, Alimentazione unita' esterna | 20 | m | T11 20 m | `fluidi/power_supply/cavo-di-alimentazione` |
 | E.3 | Magnetotermico 1P+N C6, linea dedicata: Alimentazione centrale Airzone | 1 | n | una per tratto: T10 | `fluidi/power_supply/protezione-della-linea` |
@@ -115,22 +111,22 @@ Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata 
 | E.8 | Cavo bus Airzone, schermato, Bus Airzone ai termostati | 29 | m | T13 9 + T14 7 + T15 7,5 + T16 5,5 = 29 m | `fluidi/control_bus/cavo-di-bus` |
 | E.9 | Cavo 2×0,75 (P1-P2), Linea P1-P2 dell'unita' interna | 10,5 | m | T17 5,5 + T18 5 = 10,5 m | `fluidi/control_bus/cavo-di-bus` |
 | E.10 | Tubo corrugato Ø20 per bus e linee di comando | 40 | m | T13 9 + T14 7 + T15 7,5 + T16 5,5 + T17 5,5 + T18 5 = 39,5 m × 1, per eccesso a 10 m = 40 m | `fluidi/control_bus/corrugato-di-bus` |
-| E.11 | Aggiornamento dello schema del quadro elettrico | 1 | a corpo | QE-01: 1 | `corredo/electrical-panel/aggiornamento-schema-quadro` |
-| E.12 | Sezionatore onnipolare di prossimità IP55, apertura contatti ≥ 3 mm | 1 | n | SZ-01: 1 | `corredo/isolator-switch/sezionatore` |
-| E.13 | Scatola 503 per termostati e comandi a parete | 5 | n | 5 pezzi × 1 = 5 (TZ-01, TZ-02, TZ-03, TZ-04, CF-01) | `corredo/room-thermostat/scatola-503 + corredo/wired-remote/scatola-503` |
+| E.11 | Scatola 503 per termostati e comandi a parete | 5 | n | 5 pezzi × 1 = 5 (CF-01, TZ-01, TZ-02, TZ-03, TZ-04) | `corredo/wired-remote/scatola-503 + corredo/room-thermostat/scatola-503` |
+| E.12 | Aggiornamento dello schema del quadro elettrico | 1 | a corpo | QE-01: 1 | `corredo/electrical-panel/aggiornamento-schema-quadro` |
+| E.13 | Sezionatore onnipolare di prossimità IP55, apertura contatti ≥ 3 mm | 1 | n | SZ-01: 1 | `corredo/isolator-switch/sezionatore` |
 | F.1 | Foratura di tramezza Ø250 (o vano 450×250) per flessibili e plenum di bocchetta | 7 | n | T01 2 + T02 1 + T03 2 + T04 1 + T05 1 = 7 | `fluidi/supply_air/foratura-per-flessibile` |
 | F.2 | Foratura di parete interna Ø80 per linee frigorifere e cavi | 2 | n | T08 2 | `fluidi/refrigerant_gas/foratura-linee-frigo` |
 | F.3 | Foratura per lo scarico della condensa | 1 | n | T09 1 | `fluidi/condensate/foratura-condensa` |
-| F.4 | Carotaggio parete esterna Ø80 con guaina passante e sigillatura | 1 | n | UE-01: 1 | `corredo/split-outdoor-unit/carotaggio-parete-esterna` |
-| F.5 | Traccia per la condensa fino allo scarico | 3 | m | AL-01: 3 | `corredo/condensate-outlet/traccia-condensa` |
-| F.6 | Tracce per le linee dal quadro al controsoffitto | 5 | m | QE-01: 5 | `corredo/electrical-panel/tracce-dal-quadro` |
-| F.7 | Traccia per termostati e comandi a parete | 5 | n | 5 pezzi × 1 = 5 (TZ-01, TZ-02, TZ-03, TZ-04, CF-01) | `corredo/room-thermostat/traccia-per-apparecchio-a-parete + corredo/wired-remote/traccia-per-apparecchio-a-parete` |
+| F.4 | Traccia per termostati e comandi a parete | 5 | n | 5 pezzi × 1 = 5 (CF-01, TZ-01, TZ-02, TZ-03, TZ-04) | `corredo/wired-remote/traccia-per-apparecchio-a-parete + corredo/room-thermostat/traccia-per-apparecchio-a-parete` |
+| F.5 | Tracce per le linee dal quadro al controsoffitto | 5 | m | QE-01: 5 | `corredo/electrical-panel/tracce-dal-quadro` |
+| F.6 | Traccia per la condensa fino allo scarico | 3 | m | AL-01: 3 | `corredo/condensate-outlet/traccia-condensa` |
+| F.7 | Carotaggio parete esterna Ø80 con guaina passante e sigillatura | 1 | n | UE-01: 1 | `corredo/split-outdoor-unit/carotaggio-parete-esterna` |
 | Z.1 | Velette o controsoffitti per le bocchette, altezza utile ≥ 30 cm | 1 | a corpo | 1 per fluido | `fluidi/supply_air/velette-per-le-bocchette` |
-| Z.2 | Controsoffitto in zona unità interna e plenum: altezza libera ≥ 35 cm sotto il solaio | 1 | a corpo | UI-01: 1 | `corredo/ducted-indoor-unit/controsoffitto-zona-macchina` |
-| Z.3 | Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda) | 2 | n | 2 pezzi × 1 = 2 (UI-01, PLZ-01) | `corredo/ducted-indoor-unit/botola-di-ispezione + corredo/zoning-plenum-5/botola-di-ispezione` |
-| Z.4 | Griglia di ripresa 1000×250 senza filtro, apribile per accedere al filtro | 1 | n | RA-01: 1 | `corredo/return-air-terminal/griglia-di-ripresa` |
-| Z.5 | Bocchetta di mandata 400×200 a doppio filare con serranda | 5 | n | 5 pezzi × 1 = 5 (B1, B2, B3, B4, B5) | `corredo/air-supply-terminal/bocchetta-di-mandata` |
-| Z.6 | Griglia di transito o luce sotto porta per il ritorno dell'aria dal locale servito | 4 | n | 4: 4 locali serviti (Camera 13 m², Camera 15 m², Camera 16 m², Soggiorno-cucina); il locale e' letto dall'etichetta della bocchetta | `corredo/air-supply-terminal/griglia-di-transito` |
+| Z.2 | Bocchetta di mandata 400×200 a doppio filare con serranda | 5 | n | 5 pezzi × 1 = 5 (B1, B2, B3, B4, B5) | `corredo/air-supply-terminal/bocchetta-di-mandata` |
+| Z.3 | Griglia di transito o luce sotto porta per il ritorno dell'aria dal locale servito | 4 | n | 4: 4 locali serviti (Camera 13 m², Camera 15 m², Camera 16 m², Soggiorno-cucina); il locale e' letto dall'etichetta della bocchetta | `corredo/air-supply-terminal/griglia-di-transito` |
+| Z.4 | Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda) | 2 | n | 2 pezzi × 1 = 2 (PLZ-01, UI-01) | `corredo/zoning-plenum-5/botola-di-ispezione + corredo/ducted-indoor-unit/botola-di-ispezione` |
+| Z.5 | Griglia di ripresa 1000×250 senza filtro, apribile per accedere al filtro | 1 | n | RA-01: 1 | `corredo/return-air-terminal/griglia-di-ripresa` |
+| Z.6 | Controsoffitto in zona unità interna e plenum: altezza libera ≥ 35 cm sotto il solaio | 1 | a corpo | UI-01: 1 | `corredo/ducted-indoor-unit/controsoffitto-zona-macchina` |
 | Z.7 | Chiusura e ripristino di fori, tracce e passaggi | 1 | a corpo | sempre | `attivita/chiusure-e-ripristini` |
 | G.1 | Posa dell'unità interna in controsoffitto su sospensioni antivibranti, con plenum di zona e plenum di ripresa. | 1 | a corpo | nell'impianto: Unità interna canalizzata ad espansione diretta | `attivita/posa-unita-interna` |
 | G.2 | Posa dell'unità esterna su staffe con antivibranti; canalina esterna e scarico condensa dell'unità esterna. | 1 | a corpo | nell'impianto: Unità esterna split a pompa di calore | `attivita/posa-unita-esterna` |
@@ -164,5 +160,5 @@ Committente: Committente (dati omessi) · Progetto: Climatizzazione canalizzata 
 2. Quantità indicative per un prezzo a corpo, fisso e invariabile: l'installatore le verifica nel sopralluogo obbligatorio prima dell'offerta; le varianti hanno solo il prezzo unitario.
 3. Velocità nei tratti di aria di mandata da 1,9 a 2,5 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).
 4. Velocità nei tratti di aria di ripresa 1,2 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).
-5. Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C.
-6. La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole 05a61bb20ef686d8).
+5. Fornitura: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C.
+6. La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte.

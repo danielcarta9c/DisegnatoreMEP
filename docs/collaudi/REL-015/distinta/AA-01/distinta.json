@@ -37,34 +37,20 @@
    "voci": [
     {
      "rif": "A.1",
-     "testo": "Unità esterna split a pompa di calore: Daikin RXM60A · 49 kg",
+     "testo": "Comando a filo dell'unità: Daikin Madoka BRC1H52W",
      "um": "n",
      "quantita": 1,
      "fornitura": "Nove C",
-     "note": "UE-01; 5,7 kW",
+     "note": "CF-01",
      "da_definire": false,
      "domande": [],
-     "regola": "corredo/split-outdoor-unit/apparecchiatura",
-     "calcolo": "1 nello schema (UE-01)",
-     "fonte": "regola Nove C per la posa dell'unità esterna",
-     "perche": "L'unità esterna sta fuori: porta con sé il foro nella parete esterna, la canalina delle linee, le staffe e lo scarico della sua condensa."
+     "regola": "corredo/wired-remote/apparecchiatura",
+     "calcolo": "1 nello schema (CF-01)",
+     "fonte": "regola Nove C per gli apparecchi a parete",
+     "perche": "Come il termostato: scatola e traccia."
     },
     {
      "rif": "A.2",
-     "testo": "Unità interna canalizzata ad espansione diretta: Daikin FBA60A9 · 1000×800×245 mm · 35 kg",
-     "um": "n",
-     "quantita": 1,
-     "fornitura": "Nove C",
-     "note": "UI-01; 5,7 kW; 1080 m³/h; pompa condensa a bordo",
-     "da_definire": false,
-     "domande": [],
-     "regola": "corredo/ducted-indoor-unit/apparecchiatura",
-     "calcolo": "1 nello schema (UI-01)",
-     "fonte": "regola Nove C per la posa dell'unità interna canalizzata",
-     "perche": "L'unità interna sta appesa in controsoffitto: sospensioni, giunto sulla ripresa, raccordo della condensa, e il controsoffitto con la botola che sono del committente."
-    },
-    {
-     "rif": "A.3",
      "testo": "Plenum motorizzato di zona a cinque serrande: Airzone Easyzone 5 × Ø200, es. AZEZ8DAIBS07M5 · 1425×250×454 mm",
      "um": "n",
      "quantita": 1,
@@ -78,7 +64,7 @@
      "perche": "Il plenum di zona è appeso accanto alla macchina e si ispeziona per i motori delle serrande."
     },
     {
-     "rif": "A.4",
+     "rif": "A.3",
      "testo": "Termostato di zona: Airzone Blueface",
      "um": "n",
      "quantita": 4,
@@ -92,18 +78,32 @@
      "perche": "Un apparecchio a parete: scatola e traccia per il cavo."
     },
     {
-     "rif": "A.5",
-     "testo": "Comando a filo dell'unità: Daikin Madoka BRC1H52W",
+     "rif": "A.4",
+     "testo": "Unità esterna split a pompa di calore: Daikin RXM60A · 49 kg",
      "um": "n",
      "quantita": 1,
      "fornitura": "Nove C",
-     "note": "CF-01",
+     "note": "UE-01; 5,7 kW",
      "da_definire": false,
      "domande": [],
-     "regola": "corredo/wired-remote/apparecchiatura",
-     "calcolo": "1 nello schema (CF-01)",
-     "fonte": "regola Nove C per gli apparecchi a parete",
-     "perche": "Come il termostato: scatola e traccia."
+     "regola": "corredo/split-outdoor-unit/apparecchiatura",
+     "calcolo": "1 nello schema (UE-01)",
+     "fonte": "regola Nove C per la posa dell'unità esterna",
+     "perche": "L'unità esterna sta fuori: porta con sé il foro nella parete esterna, la canalina delle linee, le staffe e lo scarico della sua condensa."
+    },
+    {
+     "rif": "A.5",
+     "testo": "Unità interna canalizzata ad espansione diretta: Daikin FBA60A9 · 1000×800×245 mm · 35 kg",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "Nove C",
+     "note": "UI-01; 5,7 kW; 1080 m³/h; pompa condensa a bordo",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/ducted-indoor-unit/apparecchiatura",
+     "calcolo": "1 nello schema (UI-01)",
+     "fonte": "regola Nove C per la posa dell'unità interna canalizzata",
+     "perche": "L'unità interna sta appesa in controsoffitto: sospensioni, giunto sulla ripresa, raccordo della condensa, e il controsoffitto con la botola che sono del committente."
     }
    ]
   },
@@ -197,31 +197,31 @@
     },
     {
      "rif": "B.7",
+     "testo": "Plenum porta-bocchetta coibentato per bocchetta 400×200, attacco Ø200 laterale o dall'alto",
+     "um": "n",
+     "quantita": 5,
+     "fornitura": "installatore",
+     "note": "B1, B2, B3, B4, B5",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/air-supply-terminal/plenum-porta-bocchetta",
+     "calcolo": "5 pezzi × 1 = 5 (B1, B2, B3, B4, B5)",
+     "fonte": "regola Nove C per le bocchette di mandata",
+     "perche": "Il plenum si ordina sulla misura della bocchetta: è un dato del progettista sul pezzo (`dimensione`)."
+    },
+    {
+     "rif": "B.8",
      "testo": "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
      "um": "n",
      "quantita": 10,
      "fornitura": "installatore",
-     "note": "UI-01 4, PLZ-01 4, RA-01 2",
+     "note": "PLZ-01 4, RA-01 2, UI-01 4",
      "da_definire": false,
      "domande": [],
-     "regola": "corredo/ducted-indoor-unit/kit-sospensione + corredo/zoning-plenum-5/kit-sospensione + corredo/return-air-terminal/kit-sospensione",
-     "calcolo": "UI-01 4 + PLZ-01 4 + RA-01 2 = 10",
-     "fonte": "regola Nove C per la posa dell'unità interna canalizzata; regola Nove C per la posa del plenum di zona; regola Nove C per la ripresa dell'aria",
-     "perche": "Quattro punti di sospensione per la macchina, con antivibrante."
-    },
-    {
-     "rif": "B.8",
-     "testo": "Giunto antivibrante in tela fra unità interna e plenum di ripresa",
-     "um": "n",
-     "quantita": 1,
-     "fornitura": "installatore",
-     "note": "UI-01",
-     "da_definire": false,
-     "domande": [],
-     "regola": "corredo/ducted-indoor-unit/giunto-antivibrante-ripresa",
-     "calcolo": "UI-01: 1",
-     "fonte": "regola Nove C per la posa dell'unità interna canalizzata",
-     "perche": "La vibrazione del ventilatore non deve passare al plenum di ripresa e alla griglia."
+     "regola": "corredo/zoning-plenum-5/kit-sospensione + corredo/return-air-terminal/kit-sospensione + corredo/ducted-indoor-unit/kit-sospensione",
+     "calcolo": "PLZ-01 4 + RA-01 2 + UI-01 4 = 10",
+     "fonte": "regola Nove C per la posa del plenum di zona; regola Nove C per la ripresa dell'aria; regola Nove C per la posa dell'unità interna canalizzata",
+     "perche": "Il plenum (1425 mm nel caso) non si regge sulla bocca della macchina."
     },
     {
      "rif": "B.9",
@@ -253,17 +253,17 @@
     },
     {
      "rif": "B.11",
-     "testo": "Plenum porta-bocchetta coibentato per bocchetta 400×200, attacco Ø200 laterale o dall'alto",
+     "testo": "Giunto antivibrante in tela fra unità interna e plenum di ripresa",
      "um": "n",
-     "quantita": 5,
+     "quantita": 1,
      "fornitura": "installatore",
-     "note": "B1, B2, B3, B4, B5",
+     "note": "UI-01",
      "da_definire": false,
      "domande": [],
-     "regola": "corredo/air-supply-terminal/plenum-porta-bocchetta",
-     "calcolo": "5 pezzi × 1 = 5 (B1, B2, B3, B4, B5)",
-     "fonte": "regola Nove C per le bocchette di mandata",
-     "perche": "Il plenum si ordina sulla misura della bocchetta: è un dato del progettista sul pezzo (`dimensione`)."
+     "regola": "corredo/ducted-indoor-unit/giunto-antivibrante-ripresa",
+     "calcolo": "UI-01: 1",
+     "fonte": "regola Nove C per la posa dell'unità interna canalizzata",
+     "perche": "La vibrazione del ventilatore non deve passare al plenum di ripresa e alla griglia."
     }
    ]
   },
@@ -517,17 +517,17 @@
     },
     {
      "rif": "D.7",
-     "testo": "Raccordo di adattamento dall'attacco condensa dell'unità interna (VP20 (Øe 26)) al tubo di scarico, con fascetta",
+     "testo": "Innesto sullo scarico esistente (braga 45° o presa sul sifone di un apparecchio)",
      "um": "n",
      "quantita": 1,
      "fornitura": "installatore",
-     "note": "UI-01",
+     "note": "AL-01",
      "da_definire": false,
      "domande": [],
-     "regola": "corredo/ducted-indoor-unit/raccordo-condensa-unita-interna",
-     "calcolo": "UI-01: 1",
-     "fonte": "scheda tecnica dell'unità interna (attacco della condensa)",
-     "perche": "L'attacco della macchina (VP20 nel caso) non è il diametro del PVC: senza il raccordo lo scarico non si collega. L'attacco è un dato di macchina del progettista (`attacco_condensa`)."
+     "regola": "corredo/condensate-outlet/innesto-sullo-scarico",
+     "calcolo": "AL-01: 1",
+     "fonte": "regola Nove C per lo scarico della condensa",
+     "perche": "L'allaccio della condensa a uno scarico esistente."
     },
     {
      "rif": "D.8",
@@ -545,17 +545,17 @@
     },
     {
      "rif": "D.9",
-     "testo": "Innesto sullo scarico esistente (braga 45° o presa sul sifone di un apparecchio)",
+     "testo": "Raccordo di adattamento dall'attacco condensa dell'unità interna (VP20 (Øe 26)) al tubo di scarico, con fascetta",
      "um": "n",
      "quantita": 1,
      "fornitura": "installatore",
-     "note": "AL-01",
+     "note": "UI-01",
      "da_definire": false,
      "domande": [],
-     "regola": "corredo/condensate-outlet/innesto-sullo-scarico",
-     "calcolo": "AL-01: 1",
-     "fonte": "regola Nove C per lo scarico della condensa",
-     "perche": "L'allaccio della condensa a uno scarico esistente."
+     "regola": "corredo/ducted-indoor-unit/raccordo-condensa-unita-interna",
+     "calcolo": "UI-01: 1",
+     "fonte": "scheda tecnica dell'unità interna (attacco della condensa)",
+     "perche": "L'attacco della macchina (VP20 nel caso) non è il diametro del PVC: senza il raccordo lo scarico non si collega. L'attacco è un dato di macchina del progettista (`attacco_condensa`)."
     }
    ]
   },
@@ -705,6 +705,20 @@
     },
     {
      "rif": "E.11",
+     "testo": "Scatola 503 per termostati e comandi a parete",
+     "um": "n",
+     "quantita": 5,
+     "fornitura": "installatore",
+     "note": "CF-01, TZ-01, TZ-02, TZ-03, TZ-04",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/wired-remote/scatola-503 + corredo/room-thermostat/scatola-503",
+     "calcolo": "5 pezzi × 1 = 5 (CF-01, TZ-01, TZ-02, TZ-03, TZ-04)",
+     "fonte": "regola Nove C per gli apparecchi a parete",
+     "perche": "Il comando si monta su una scatola da incasso."
+    },
+    {
+     "rif": "E.12",
      "testo": "Aggiornamento dello schema del quadro elettrico",
      "um": "a corpo",
      "quantita": 1,
@@ -718,7 +732,7 @@
      "perche": "Una protezione nuova nel quadro cambia lo schema, che va aggiornato e allegato alla dichiarazione di conformità."
     },
     {
-     "rif": "E.12",
+     "rif": "E.13",
      "testo": "Sezionatore onnipolare di prossimità IP55, apertura contatti ≥ 3 mm",
      "um": "n",
      "quantita": 1,
@@ -730,20 +744,6 @@
      "calcolo": "SZ-01: 1",
      "fonte": "manuale di installazione del costruttore della macchina (apertura dei contatti)",
      "perche": "Chi fa manutenzione all'unità esterna la stacca lì accanto."
-    },
-    {
-     "rif": "E.13",
-     "testo": "Scatola 503 per termostati e comandi a parete",
-     "um": "n",
-     "quantita": 5,
-     "fornitura": "installatore",
-     "note": "TZ-01, TZ-02, TZ-03, TZ-04, CF-01",
-     "da_definire": false,
-     "domande": [],
-     "regola": "corredo/room-thermostat/scatola-503 + corredo/wired-remote/scatola-503",
-     "calcolo": "5 pezzi × 1 = 5 (TZ-01, TZ-02, TZ-03, TZ-04, CF-01)",
-     "fonte": "regola Nove C per gli apparecchi a parete",
-     "perche": "Il termostato si monta su una scatola da incasso."
     }
    ]
   },
@@ -795,34 +795,20 @@
     },
     {
      "rif": "F.4",
-     "testo": "Carotaggio parete esterna Ø80 con guaina passante e sigillatura",
+     "testo": "Traccia per termostati e comandi a parete",
      "um": "n",
-     "quantita": 1,
+     "quantita": 5,
      "fornitura": "installatore",
-     "note": "UE-01",
+     "note": "CF-01, TZ-01, TZ-02, TZ-03, TZ-04",
      "da_definire": false,
      "domande": [],
-     "regola": "corredo/split-outdoor-unit/carotaggio-parete-esterna",
-     "calcolo": "UE-01: 1",
-     "fonte": "regola Nove C per le assistenze murarie",
-     "perche": "Le linee frigorifere e il cavo di collegamento escono dall'involucro una volta."
+     "regola": "corredo/wired-remote/traccia-per-apparecchio-a-parete + corredo/room-thermostat/traccia-per-apparecchio-a-parete",
+     "calcolo": "5 pezzi × 1 = 5 (CF-01, TZ-01, TZ-02, TZ-03, TZ-04)",
+     "fonte": "regola Nove C per gli apparecchi a parete",
+     "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
     },
     {
      "rif": "F.5",
-     "testo": "Traccia per la condensa fino allo scarico",
-     "um": "m",
-     "quantita": 3,
-     "fornitura": "installatore",
-     "note": "AL-01",
-     "da_definire": false,
-     "domande": [],
-     "regola": "corredo/condensate-outlet/traccia-condensa",
-     "calcolo": "AL-01: 3",
-     "fonte": "stima Nove C (3 m di traccia fino allo scarico)",
-     "perche": "La discesa dal controsoffitto allo scarico è in traccia."
-    },
-    {
-     "rif": "F.6",
      "testo": "Tracce per le linee dal quadro al controsoffitto",
      "um": "m",
      "quantita": 5,
@@ -836,18 +822,32 @@
      "perche": "Ogni linea dedicata scende dal controsoffitto al quadro in traccia."
     },
     {
-     "rif": "F.7",
-     "testo": "Traccia per termostati e comandi a parete",
-     "um": "n",
-     "quantita": 5,
+     "rif": "F.6",
+     "testo": "Traccia per la condensa fino allo scarico",
+     "um": "m",
+     "quantita": 3,
      "fornitura": "installatore",
-     "note": "TZ-01, TZ-02, TZ-03, TZ-04, CF-01",
+     "note": "AL-01",
      "da_definire": false,
      "domande": [],
-     "regola": "corredo/room-thermostat/traccia-per-apparecchio-a-parete + corredo/wired-remote/traccia-per-apparecchio-a-parete",
-     "calcolo": "5 pezzi × 1 = 5 (TZ-01, TZ-02, TZ-03, TZ-04, CF-01)",
-     "fonte": "regola Nove C per gli apparecchi a parete",
-     "perche": "Il cavo scende dal controsoffitto alla scatola in traccia."
+     "regola": "corredo/condensate-outlet/traccia-condensa",
+     "calcolo": "AL-01: 3",
+     "fonte": "stima Nove C (3 m di traccia fino allo scarico)",
+     "perche": "La discesa dal controsoffitto allo scarico è in traccia."
+    },
+    {
+     "rif": "F.7",
+     "testo": "Carotaggio parete esterna Ø80 con guaina passante e sigillatura",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "installatore",
+     "note": "UE-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/split-outdoor-unit/carotaggio-parete-esterna",
+     "calcolo": "UE-01: 1",
+     "fonte": "regola Nove C per le assistenze murarie",
+     "perche": "Le linee frigorifere e il cavo di collegamento escono dall'involucro una volta."
     }
    ]
   },
@@ -871,48 +871,6 @@
     },
     {
      "rif": "Z.2",
-     "testo": "Controsoffitto in zona unità interna e plenum: altezza libera ≥ 35 cm sotto il solaio",
-     "um": "a corpo",
-     "quantita": 1,
-     "fornitura": "committente",
-     "note": "UI-01",
-     "da_definire": false,
-     "domande": [],
-     "regola": "corredo/ducted-indoor-unit/controsoffitto-zona-macchina",
-     "calcolo": "UI-01: 1",
-     "fonte": "regola Nove C per la posa dell'unità interna canalizzata (ingombro della macchina)",
-     "perche": "Senza l'altezza libera la macchina non entra: è un'opera del committente da coordinare prima della gara."
-    },
-    {
-     "rif": "Z.3",
-     "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
-     "um": "n",
-     "quantita": 2,
-     "fornitura": "committente",
-     "note": "UI-01, PLZ-01",
-     "da_definire": false,
-     "domande": [],
-     "regola": "corredo/ducted-indoor-unit/botola-di-ispezione + corredo/zoning-plenum-5/botola-di-ispezione",
-     "calcolo": "2 pezzi × 1 = 2 (UI-01, PLZ-01)",
-     "fonte": "regola Nove C per la posa dell'unità interna canalizzata; regola Nove C per la posa del plenum di zona",
-     "perche": "Filtro, pompa della condensa e scheda si raggiungono da sotto."
-    },
-    {
-     "rif": "Z.4",
-     "testo": "Griglia di ripresa 1000×250 senza filtro, apribile per accedere al filtro",
-     "um": "n",
-     "quantita": 1,
-     "fornitura": "committente",
-     "note": "RA-01",
-     "da_definire": false,
-     "domande": [],
-     "regola": "corredo/return-air-terminal/griglia-di-ripresa",
-     "calcolo": "RA-01: 1",
-     "fonte": "regola Nove C per la ripresa dell'aria",
-     "perche": "Apribile: il filtro sta dietro."
-    },
-    {
-     "rif": "Z.5",
      "testo": "Bocchetta di mandata 400×200 a doppio filare con serranda",
      "um": "n",
      "quantita": 5,
@@ -926,7 +884,7 @@
      "perche": "Chi fornisce le bocchette è una scelta dell'offerta (`distinta.json`, fornitura «bocchette_e_griglie»): nelle offerte Nove C sono del Committente."
     },
     {
-     "rif": "Z.6",
+     "rif": "Z.3",
      "testo": "Griglia di transito o luce sotto porta per il ritorno dell'aria dal locale servito",
      "um": "n",
      "quantita": 4,
@@ -938,6 +896,48 @@
      "calcolo": "4: 4 locali serviti (Camera 13 m², Camera 15 m², Camera 16 m², Soggiorno-cucina); il locale e' letto dall'etichetta della bocchetta",
      "fonte": "regola Nove C per il ritorno dell'aria",
      "perche": "Senza un passaggio, l'aria immessa non torna alla ripresa: la portata cala e cresce il rumore. Una per locale servito, non per bocchetta: due bocchette nello stesso locale ne vogliono una sola, e un locale con un varco aperto verso la ripresa nessuna. Il locale è il dato `locale` della bocchetta (o, se manca, la sua etichetta senza le parentesi); il varco è `varco` sulla bocchetta. L'area efficace minima per locale è nella verifica dell'aria."
+    },
+    {
+     "rif": "Z.4",
+     "testo": "Botola di ispezione ≥ 600×600 sotto la macchina (filtro, pompa, scheda)",
+     "um": "n",
+     "quantita": 2,
+     "fornitura": "committente",
+     "note": "PLZ-01, UI-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/zoning-plenum-5/botola-di-ispezione + corredo/ducted-indoor-unit/botola-di-ispezione",
+     "calcolo": "2 pezzi × 1 = 2 (PLZ-01, UI-01)",
+     "fonte": "regola Nove C per la posa del plenum di zona; regola Nove C per la posa dell'unità interna canalizzata",
+     "perche": "I motori delle serrande e la centrale si raggiungono da sotto."
+    },
+    {
+     "rif": "Z.5",
+     "testo": "Griglia di ripresa 1000×250 senza filtro, apribile per accedere al filtro",
+     "um": "n",
+     "quantita": 1,
+     "fornitura": "committente",
+     "note": "RA-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/return-air-terminal/griglia-di-ripresa",
+     "calcolo": "RA-01: 1",
+     "fonte": "regola Nove C per la ripresa dell'aria",
+     "perche": "Apribile: il filtro sta dietro."
+    },
+    {
+     "rif": "Z.6",
+     "testo": "Controsoffitto in zona unità interna e plenum: altezza libera ≥ 35 cm sotto il solaio",
+     "um": "a corpo",
+     "quantita": 1,
+     "fornitura": "committente",
+     "note": "UI-01",
+     "da_definire": false,
+     "domande": [],
+     "regola": "corredo/ducted-indoor-unit/controsoffitto-zona-macchina",
+     "calcolo": "UI-01: 1",
+     "fonte": "regola Nove C per la posa dell'unità interna canalizzata (ingombro della macchina)",
+     "perche": "Senza l'altezza libera la macchina non entra: è un'opera del committente da coordinare prima della gara."
     },
     {
      "rif": "Z.7",
@@ -1743,8 +1743,8 @@
   "Quantità indicative per un prezzo a corpo, fisso e invariabile: l'installatore le verifica nel sopralluogo obbligatorio prima dell'offerta; le varianti hanno solo il prezzo unitario.",
   "Velocità nei tratti di aria di mandata da 1,9 a 2,5 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).",
   "Velocità nei tratti di aria di ripresa 1,2 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge).",
-  "Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C.",
-  "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole 05a61bb20ef686d8)."
+  "Fornitura: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C.",
+  "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte."
  ],
  "avvisi": [
   "T09 (Scarico condensa: UI-01 - SIF-01 - AL-01): la tubazione SIF-01 - AL-01 senza lunghezza; si considera compresa nei 7,6 m dati sul tratto.",
@@ -1754,7 +1754,5 @@
   "T18, scritta sulla tavola: «P1-P2 · L 3 m», contro L 5 m da quotare."
  ],
  "domande": [],
- "da_confermare": [
-  "Fornitura: apparecchiature fornite da Nove C; bocchette e griglie del Committente; opere edili del Committente; messa in servizio con Nove C — come da regole predefinite di Nove C; confermare per questa offerta."
- ]
+ "da_confermare": []
 }

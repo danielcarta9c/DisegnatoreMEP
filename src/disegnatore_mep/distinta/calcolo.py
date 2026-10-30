@@ -714,7 +714,7 @@ def _apparecchiature(lavoro: _Lavoro) -> None:
                 calcolo=f"{len(pezzi)} nello schema ({sigle})",
                 note="; ".join([sigle, *note]),
                 da_definire=senza,
-                domande=[f"{sigle} ({nome}): marca e modello li da' il progettista (D-190)."] if senza else [],
+                domande=[f"{sigle} ({nome}): marca e modello li dà il progettista."] if senza else [],
             )
         )
 
@@ -1044,8 +1044,7 @@ def _note(lavoro: _Lavoro, esiti: Sequence[EsitoDellaVerifica]) -> list[str]:
     note.append(lavoro.fornitura.nota())
     note.append(
         "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del "
-        "progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte "
-        f"(regole {lavoro.regole.impronta})."
+        "progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte."
     )
     return note
 
