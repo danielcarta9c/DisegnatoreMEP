@@ -998,6 +998,11 @@ def esegui_piano(
     # tavole idroniche non cambiano di un byte.
     reti_del_comando = frozenset(rete.id for rete in modello.networks if rete.domain is Domain.CONTROL)
     del_comando = solo_comando(modello, catalogo)
+    # **Sulla tavola dell'elettrico** non c'e' acqua da scrivere prima: un tempo solo,
+    # tutto insieme, come prima di REL-015.
+    con_l_acqua = any(item.network_id not in reti_del_comando for item in foglio.routes)
+    if not con_l_acqua:
+        reti_del_comando, del_comando = frozenset(), frozenset()
     rete_della_tubazione = {item.id: item.network_id for item in modello.connections}
 
     def dei_cavi(tubazioni: Collection[str]) -> bool:
@@ -1006,6 +1011,8 @@ def esegui_piano(
         )
 
     simboli_d_acqua = [item for item in foglio.symbols if item.component_id not in del_comando]
+    if not con_l_acqua:
+        imbocchi = {}
     if imbocchi:
         # **Nello stesso ordine sulle due tavole**: quello dei pezzi del grafo. La posa
         # d'inventario li mette in un ordine che dipende anche dai pezzi del comando, e

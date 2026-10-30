@@ -14,7 +14,7 @@ Li misurano i controlli della skill sulla tavola finita: il controllo di qualit�
 
 ## Avvisi — la tavola si consegna, e si sa
 
-- la sigla SIF-01 di sifone non e' scritta: nessun lato libero e nessun richiamo pulito (DRAW-003-R1) (`TAG_OMITTED` · t1, sifone)
+- nessuno
 
 ## Le regole del piano
 

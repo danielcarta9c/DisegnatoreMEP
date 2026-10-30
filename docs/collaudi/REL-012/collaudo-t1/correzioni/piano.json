@@ -73,10 +73,10 @@
    "regola": "E2 - quota di bus_3"
   },
   "comando-filo": {
-   "x": 145,
+   "x": 157.5,
    "y": 67.5,
    "rotazione": 90,
-   "regola": "E3 - sotto la UI; REL-015: 12,5 mm piu' in basso, fuori dalla scritta dello scarico, che si posa prima dei cavi (I-231)"
+   "regola": "E3 - sotto la UI; REL-015: 12,5 mm piu' in basso e a destra, fuori dalla scritta dello scarico, che si posa prima dei cavi (I-231)"
   },
   "scarico-cucina": {
    "x": 120,
