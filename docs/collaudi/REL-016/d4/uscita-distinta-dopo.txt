@@ -1,0 +1,25 @@
+Distinta: 81 voci in 9 sezioni, 14 tratte; regole 05a61bb20ef686d8.
+  distinta-dopo/PROVA-01_Distinta_materiali_Climatizzazione_canalizzata_aria_aria.md
+  distinta-dopo/distinta.json
+  distinta-dopo/tabelle-del-foglio.json
+  distinta-dopo/distinta-calcoli.md
+Il PDF della distinta non c'e': non e' stata data la skill dei report Nove C (--report <cartella della skill nove-c-report>). Il documento e' in Markdown, PROVA-01_Distinta_materiali_Climatizzazione_canalizzata_aria_aria.md, con lo stesso contenuto.
+Verifica — 3 segnalazioni (la distinta non corregge):
+  - T01, velocità: 250 m³/h su Ø160: 3,45 m/s, contro ≤ 3 m/s
+  - T03, velocità: 350 m³/h su Ø160: 4,84 m/s, contro ≤ 3 m/s
+  - T04, velocità: 800 m³/h su Ø200: 7,07 m/s, contro ≤ 2 m/s
+Avvisi:
+  - T07 (Scarico della condensa: UI-01 - SIF-01 - AL-01): la tubazione SIF-01 - AL-01 senza lunghezza; si considera compresa nei 3 m dati sul tratto.
+  - T09 (Alimentazione unità esterna: QE-01 - SZ-01 - UE-01): la tubazione SZ-01 - UE-01 senza lunghezza; si considera compresa nei 12 m dati sul tratto.
+  - T01, T02, T03 (aria di mandata): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete per ramo, se il progettista non dice quante).
+  - T06 (fluido frigorigeno in fase gassosa): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete per linea, se il progettista non dice quante).
+  - T07 (condensa): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete, se il progettista non dice quante).
+Da confermare col progettista (poi --fornitura confermata, o le scelte sue):
+  - Fornitura: apparecchiature fornite da Nove C; bocchette e griglie del Committente; opere edili del Committente; messa in servizio con Nove C — come da regole predefinite di Nove C; confermare per questa offerta.
+DA DEFINIRE — 6 voci; le domande al progettista:
+  - CZ-01 (Centrale di zona): marca e modello li dà il progettista.
+  - CF-01 (Comando a filo dell'unità): marca e modello li dà il progettista.
+  - PLZ-01 (Plenum motorizzato di zona a tre serrande): marca e modello li dà il progettista.
+  - TZ-01, TZ-02, TZ-03 (Termostato di zona): marca e modello li dà il progettista.
+  - UE-01 (Unità esterna split a pompa di calore): marca e modello li dà il progettista.
+  - UI-01 (Unità interna canalizzata ad espansione diretta): marca e modello li dà il progettista.

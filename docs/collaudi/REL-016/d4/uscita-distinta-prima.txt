@@ -1,0 +1,32 @@
+Distinta: 81 voci in 9 sezioni, 14 tratte; regole 05a61bb20ef686d8.
+  distinta-prima/PROVA-01_Distinta_materiali_Climatizzazione_canalizzata_aria_aria.md
+  distinta-prima/distinta.json
+  distinta-prima/tabelle-del-foglio.json
+  distinta-prima/distinta-calcoli.md
+Il PDF della distinta non c'e': non e' stata data la skill dei report Nove C (--report <cartella della skill nove-c-report>). Il documento e' in Markdown, PROVA-01_Distinta_materiali_Climatizzazione_canalizzata_aria_aria.md, con lo stesso contenuto.
+Avvisi:
+  - T07 (Scarico della condensa: UI-01 - SIF-01 - AL-01): la tubazione SIF-01 - AL-01 senza lunghezza; si considera compresa nei 3 m dati sul tratto.
+  - T09 (Alimentazione unità esterna: QE-01 - SZ-01 - UE-01): la tubazione SZ-01 - UE-01 senza lunghezza; si considera compresa nei 12 m dati sul tratto.
+  - T01, T02, T03 (aria di mandata): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete per ramo, se il progettista non dice quante).
+  - T06 (fluido frigorigeno in fase gassosa): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete per linea, se il progettista non dice quante).
+  - T07 (condensa): attraversamenti di parete non dati, assunti 1 per tratto (regola Nove C: una parete, se il progettista non dice quante).
+Da confermare col progettista (poi --fornitura confermata, o le scelte sue):
+  - Fornitura: apparecchiature fornite da Nove C; bocchette e griglie del Committente; opere edili del Committente; messa in servizio con Nove C — come da regole predefinite di Nove C; confermare per questa offerta.
+DA DEFINIRE — 12 voci; le domande al progettista:
+  - CZ-01 (Centrale di zona): marca e modello li dà il progettista.
+  - CF-01 (Comando a filo dell'unità): marca e modello li dà il progettista.
+  - PLZ-01 (Plenum motorizzato di zona a tre serrande): marca e modello li dà il progettista.
+  - TZ-01, TZ-02, TZ-03 (Termostato di zona): marca e modello li dà il progettista.
+  - UE-01 (Unità esterna split a pompa di calore): marca e modello li dà il progettista.
+  - UI-01 (Unità interna canalizzata ad espansione diretta): marca e modello li dà il progettista.
+  - TA-01 (Bocchetta di mandata con plenum di raccordo): manca il dato «dimensione» per «Plenum porta-bocchetta coibentato per bocchetta DA DEFINIRE (dimensione), attacco Ø160 laterale o dall'alto».
+  - TA-02 (Bocchetta di mandata con plenum di raccordo): manca il dato «dimensione» per «Plenum porta-bocchetta coibentato per bocchetta DA DEFINIRE (dimensione), attacco Ø160 laterale o dall'alto».
+  - TA-03 (Bocchetta di mandata con plenum di raccordo): manca il dato «dimensione» per «Plenum porta-bocchetta coibentato per bocchetta DA DEFINIRE (dimensione), attacco Ø160 laterale o dall'alto».
+  - T06: manca il dato «refrigerante» per «Refrigerante DA DEFINIRE (refrigerante), riserva per carica aggiuntiva».
+  - T06: su UE-01 o UI-01 servono `precarica_fino_a_m`, `carica_aggiuntiva_g_m` e `refrigerante` (dati di macchina del progettista) per la riserva di refrigerante.
+  - UI-01 (Unità interna canalizzata ad espansione diretta): manca il dato «attacco_condensa» per «Raccordo di adattamento dall'attacco condensa dell'unità interna (DA DEFINIRE (attacco_condensa)) al tubo di scarico, con fascetta».
+  - T08 (Alimentazione centrale di zona): manca `protezione` sul tratto.
+  - T09 (Alimentazione unità esterna): manca `protezione` sul tratto.
+  - TA-01 (Bocchetta di mandata con plenum di raccordo): manca il dato «dimensione» per «Bocchetta di mandata DA DEFINIRE (dimensione) a doppio filare con serranda».
+  - TA-02 (Bocchetta di mandata con plenum di raccordo): manca il dato «dimensione» per «Bocchetta di mandata DA DEFINIRE (dimensione) a doppio filare con serranda».
+  - TA-03 (Bocchetta di mandata con plenum di raccordo): manca il dato «dimensione» per «Bocchetta di mandata DA DEFINIRE (dimensione) a doppio filare con serranda».

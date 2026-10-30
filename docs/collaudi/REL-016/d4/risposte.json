@@ -1,0 +1,18 @@
+{
+ "nota": "Le risposte del progettista alle domande di `mep.py distinta --domande` sul trilocale del collaudo (quelle che il collaudo della 1.7.0 ha dato al secondo giro), per id del pezzo o della tubazione, nel campo che le domande dicono. Marca e modello restano aperti di proposito.",
+ "components": {
+  "ue": {"refrigerante": "R32", "precarica_fino_a_m": 15, "carica_aggiuntiva_g_m": 20, "lunghezza_max_m": 30},
+  "ui": {"attacco_condensa": "Øe 20"},
+  "b-camera": {"dimensione": "300×100"},
+  "b-cameretta": {"dimensione": "300×100"},
+  "b-soggiorno": {"dimensione": "300×100"}
+ },
+ "connections": {
+  "c4": {"portata_m3h": 250},
+  "c5": {"portata_m3h": 200},
+  "c6": {"portata_m3h": 350},
+  "c7": {"portata_m3h": 800},
+  "c10": {"protezione": "Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A, 6 kA"},
+  "c12": {"protezione": "Magnetotermico-differenziale 1P+N C10, Idn 30 mA, tipo A, 6 kA"}
+ }
+}

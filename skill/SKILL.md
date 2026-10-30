@@ -123,7 +123,13 @@ lancia anche `completa` (passo 3): i punti aperti che trova sono domande dello s
 - **sezioni e lunghezze dei tratti**, su un impianto aria-aria o sulle linee elettriche, se vuole
   la tavola quotabile e il testo non le dà: le chiedi; un tratto senza dato resta senza scritta;
 - **la distinta materiali e la pianta dei tracciati**, se il testo non dice se le vuole: la tua
-  prima interpretazione è no. Per la pianta serve la planimetria (PDF o immagine, con la scala).
+  prima interpretazione è no. Per la pianta serve la planimetria (PDF o immagine, con la scala);
+- **i dati della distinta**, se la vuole o se glielo chiedi adesso. Dopo `completa` lancia
+  `python3 scripts/mep.py distinta $L/grafo-completo.json --domande`: non scrive niente, e dice in
+  parole i dati senza i quali le voci escono «DA DEFINIRE» — marca e modello, refrigerante e
+  precarica, bocchette, attacco della condensa, protezioni, portate… —, a quali pezzi mancano e in
+  che campo del grafo va la risposta. Le porti **in questo stesso messaggio** (se non sai ancora se
+  la vuole, sotto «se vuoi la distinta, mi servono anche:»), non dopo il primo lancio.
 
 Il messaggio porta:
 
@@ -148,9 +154,9 @@ Il messaggio porta:
   Questa domanda da sola non ti ferma: se al passo 2 non c'è altro da chiedere, la porti al
   passo 4 con il grafo.
 
-Poi **aspetta la risposta**. Riporta le risposte nel grafo — un dato dato si trascrive, una
-lettura corretta si ridisegna, un'assunzione confermata passa a `"status": "approved"` — e
-rivalida.
+Poi **aspetta la risposta**. Riporta le risposte nel grafo — un dato dato si trascrive (quelli
+della distinta nel campo che `--domande` dice), una lettura corretta si ridisegna, un'assunzione
+confermata passa a `"status": "approved"` — e rivalida.
 
 Se non ce n'è nessuna, non fermarti qui: le assunzioni e i dati che mancano li porti al
 passo 4, insieme al grafo completo.
@@ -338,7 +344,8 @@ indicative, sopralluogo obbligatorio**, le tratte, il computo per sezioni, nessu
 distinta in JSON e il foglio dei calcoli. Senza la skill dei report scrive lo stesso contenuto in
 Markdown, e lo dice. Le pagine del PDF le guardi una per una. Dove manca un dato la voce dice «DA
 DEFINIRE» e diventa una domanda: non inventi la quantità. Esce con **2** se ci sono voci da
-definire.
+definire. Le domande le hai fatte al passo 2 con `--domande`: al lancio restano «DA DEFINIRE» solo
+i dati che il progettista ha lasciato aperti.
 
 ### Su richiesta — la pianta dei posizionamenti e dei tracciati
 

@@ -1269,7 +1269,13 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
         "distinta", help="la distinta materiali per l'installatore (proposta D-213): solo se il progettista la chiede"
     )
     distinta.add_argument("grafo", type=Path, help="il grafo completo, con lunghezze e sezioni sui tratti")
-    distinta.add_argument("--out", type=Path, required=True, help="la cartella della distinta")
+    distinta.add_argument("--out", type=Path, help="la cartella della distinta (non serve con --domande)")
+    distinta.add_argument(
+        "--domande",
+        action="store_true",
+        help="non scrive niente: dice in parole i dati da chiedere al progettista perche' nessuna voce esca DA "
+        "DEFINIRE, da chiedere insieme alle domande del disegno",
+    )
     distinta.add_argument(
         "--report",
         type=Path,
@@ -1292,8 +1298,14 @@ def costruisci_il_parser() -> argparse.ArgumentParser:
 
 def _distinta(args: argparse.Namespace, cartelle: Cartelle) -> int:
     # REL-013, proposta D-213: un modulo a parte, che nessun altro comando chiama.
-    from disegnatore_mep.distinta.comando import esegui
+    from disegnatore_mep.distinta.comando import domande, esegui
 
+    if args.domande:
+        return domande(
+            args.grafo, args.regole, cartelle.regole, cartelle.catalogo, cartelle.naming, fornitura=args.fornitura
+        )
+    if args.out is None:
+        raise ValueError("distinta: serve --out <cartella> (o --domande, che non scrive niente)")
     return esegui(
         args.grafo,
         args.out,
