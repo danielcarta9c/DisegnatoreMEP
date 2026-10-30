@@ -1,114 +1,93 @@
-# REL-012 — Aria-aria, elettrico e comando
+# REL-015 — La distinta in un documento a parte, la tavola in A3, l'elettrico dopo l'idraulica
 
-> **▶ Il pacchetto attivo, dal kit del PO** (I-224): una sessione di lavoro su un canalizzato aria-aria reale (caso
-> **AA-01**) ha esteso la skill 1.4.1 con simboli, catalogo e motore, e il PO vuole che entri nella skill: «Vorrei non
-> buttare quello che hai fatto». E poi: «REL 12 se posso non ha solo aria aria ha anche la parte elettrica e comando
-> che cmq va inteegata anche nell'idronico esistente no ?» (I-226). Scritto il 29 ottobre 2026, sulla 1.5.0.
+> **▶ Il pacchetto attivo, per l'ordine del PO** — «si fondi la 1.6.0 e procedi con la 1.7.0» (I-234), sulle sue
+> osservazioni alla 1.6.0 (I-230 … I-233). Scritto il 30 ottobre 2026, sulla 1.6.0.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **FATTO SUL RAMO, IN ATTESA DEL PO** (notte del 29 ottobre 2026): le tre fasi, più `REL-013` e `REL-014` in
-anticipo e il confronto di `REL-011`, nella release **1.6.0**, in una PR sola verso `main` — gli agenti in parallelo
-hanno reso le fasi una notte, e una PR per fase avrebbe chiesto tre approvazioni sulle stesse tavole. Si fonde col sì
-del PO sulle tavole.
-**Base:** `main` dopo la PR #79 (la 1.5.0, `dfc68c1`).
+**Stato:** **IN CORSO**.
+**Base:** `main` dopo la PR #80 (la 1.6.0).
 **Ramo:** quello che l'ambiente della sessione assegna.
-**Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147). **Una PR per fase.**
-**L'ordine** (D-213 proposta, I-228): `REL-012` → `REL-011` (`docs/plans/pacchetti/REL-011.md`, intatto) → `REL-013`
-(distinta materiali e dimensionamento) → `REL-014` (pianta dei posizionamenti e dei tracciati).
+**Approvazione della fusione:** **del PO**, guardando le tavole e il PDF della distinta (D-146, D-147).
+**Dopo:** `REL-011` (le tre proposte sul manuale Shenling e il dubbio sul vaso, `docs/plans/pacchetti/REL-011.md`).
 
 ---
 
 ## Perché
 
-La skill disegna l'idronico. Il modello ha già i domini aeraulico, refrigerante, condensa e controllo, ma nessuna delle
-82 voci del catalogo ha porte elettriche o di comando, e mancano simboli, fluidi, stili e layer per l'aria e per
-l'elettrico. Il kit (`docs/input-pm/2026-10-29-kit-aria-aria/`, da leggere `LEGGIMI.md`, `RAPPORTO.md` §4-§6 e
-`per-il-repo/ESITO-DEI-TEST.md`) porta tutto questo per un caso aria-aria, fatto con una patch e con copie a mano: **va
-rifatto bene, non incollato** (`RAPPORTO.md` §5.4).
+Il PO ha guardato le tavole della 1.6.0: «In generale va tutto bene» (I-230), con quattro osservazioni.
 
-**Una cosa da tenere ferma:** in questo pacchetto la skill **non dimensiona**. La scritta di un tratto — «Ø200 · L 6 m»,
-«3G2,5 · L 20 m» — è un dato del progettista. Il dimensionamento di aria, elettrico e bus e la distinta materiali sono
-`REL-013`, dopo la decisione del PO sul «Non progetti» (I-225, D-002, D-191).
+1. **La centrale va alimentata tutta, con le sonde della pompa di calore** (I-230): «anche la pdc va alimentata
+   ovviamente poi ci sono le sonde della psc che vanno nei bollitori e volano ecc. comunque nel manuale Shenling c'è
+   tutto».
+2. **Prima l'idronico e l'aeraulico, poi l'elettrico e il comando** (I-231): «Non vorrei che le linee elettriche
+   facciano spostare le linee idrauliche. Un collettore aveva una forma strana le tubazioni.»
+3. **La distinta in un PDF a parte** (I-232): «Non foglio Excel meglio documento pdf con copertina e impaginazione
+   generata con la skill report di nove c (senza kpi di copertina e senza la sezione chi siamo).»
+4. **Sulla tavola solo la tabella delle apparecchiature e la legenda** (I-233), così i disegni «stanno in a3 più
+   facilmente».
 
-## Le fasi, in quest'ordine — una PR ciascuna
+## Le cose da fare
 
-### Fase 1 — La parte comune del motore
+### 1. La tavola: apparecchiature e legenda, nient'altro (I-233)
 
-1. I fluidi `return_air`, `condensate`, `power_supply`, `interconnection`, `control_bus` in `naming/media.json`, con
-   le famiglie del kit in `naming/families.json`.
-2. Stili di legenda e layer DXF per i circuiti elettrici e il bus.
-3. **I fluidi senza verso**: una riga sola in legenda, lo stesso tratto in qualunque verso, e **niente frecce di flusso**
-   sulle linee (sulla M.02 del kit ci sono ancora: refrigerante, cavi, bus). Le frecce sono una convenzione grafica del
-   PO (D-213 punto 6): si propone, e il PO decide sulla tavola.
-4. **La scritta per tratto come dato del grafo**, non come proprietà libera, con **la sua** riga di legenda; quella del
-   DN calcolato resta «Øi» (I-155).
-5. **Le zone per le tabelle come opzione del piano**, non un formato «A2T» in più; le tabelle le disegna il motore.
-6. **I tre comportamenti del motore** del §6 del rapporto, ciascuno con la sua prova rossa sul commit di partenza, se il
-   PO li riconosce come difetti: le sigle tutte o niente; il pezzo in tabella che perde l'etichetta che il preflight
-   pretende; il lato dell'organo in linea che dipende dall'id delle tubazioni.
-7. Il difetto di `main` trovato il 29 ottobre: `test_un_json_non_valido_dice_dove_si_e_rotto` fallisce dove la
-   versione di Python conta la colonna dell'errore in un altro modo.
+- Tabella delle tratte, note e computo escono dal foglio: vanno nel PDF della distinta. Il flusso della skill non
+  riserva più le zone (`zone_tabelle`) e non passa `--tabelle`; il motore le tiene come capacità, non usata dal flusso.
+- La M.02 di riferimento e il canalizzato del collaudo T3 rifatti: devono uscire in **A3** (o dire perché no).
+- `SKILL.md`, `comporre.md`, `distinta.md` allineati.
 
-**Tavole al PO:** le tavole del banco di `REL-009`, che **non devono cambiare**; quelle che cambiano, spiegate.
+### 2. La distinta in PDF con la skill dei report Nove C (I-232)
 
-### Fase 2 — L'aria-aria
+- Il documento: copertina senza KPI (`KPI_DATA` vuoto, verificato sul codice della skill `nove-c-report` rev9), senza
+  «Chi siamo»; capitoli: l'impianto e le avvertenze (a corpo, quantità indicative, sopralluogo obbligatorio, fornitura
+  da confermare), le tratte con diametri e lunghezze, il computo per sezioni, le attività a corpo, le varianti, le
+  opere del committente, le voci da definire e le domande; niente dati interni, niente prezzi.
+- **Niente Excel.**
+- **Come**: la Disegnatore MEP prepara il contenuto; il PDF lo costruisce il motore della skill `nove-c-report`,
+  installata accanto, importato dal suo percorso — **non si copia nel repository**, che è pubblico (assunzione detta al
+  PO il 30 ottobre, non contraddetta). Se la skill dei report non c'è, la distinta lo dice e scrive il contenuto in
+  Markdown.
+- Il controllo finale della skill dei report (`fill_report`, `qa_pdf`, la verifica a vista delle pagine) si fa sempre.
 
-1. Gli undici simboli del kit **nel generatore** `examples/graphics/build_symbols.py`, non copiati in `assets/symbols/`.
-   UE, UI, plenum, centrale di zona e quadro fra le macchine che non si ruotano, come pompa di calore e caldaia
-   (`tests/acceptance/test_symbol_sheet.py`).
-2. Le dodici voci di catalogo, con i loro test.
-3. **Accettazione:** la M.02 del kit, la parte disegnata, rigenerata dalla skill — zero rilievi bloccanti, zero tratte
-   cedute. Le tabelle sul foglio (tratte, note, computo) sono di `REL-013`.
+### 3. Prima l'idraulica, poi l'elettrico (I-231)
 
-**Tavole al PO:** la M.02 rigenerata accanto a quella del kit; i simboli, che il PO approva sulla tavola (D-081, D-083).
+- **La prova**: su una tavola unica, la parte idronica e aeraulica — tubazioni, pezzi **e sigle** — è identica alla
+  stessa tavola nella vista `idraulica`. Oggi le tubazioni lo sono già; le sigle no (VMR-01, CIR-01, la sonda si
+  spostano). Le sigle si posano con l'acqua, i cavi e le loro scritte dopo, nello spazio che resta.
+- **Il collettore con il ritorno a barrette** (`zone-manifold-pair`), visto dal PO e dal collaudo T2: si disegna come un
+  collettore, con il ritorno continuo. Cambia le tavole idroniche che lo usano: al PO, prima e dopo.
 
-### Fase 3 — Elettrico e comando nell'idronico
+### 4. La pompa di calore alimentata, con le sue sonde (I-230)
 
-1. **Porte elettriche e di comando facoltative** su pompa di calore, caldaia, circolatori, valvole motorizzate. Senza
-   elettrico dichiarato nel grafo, **nessuna tavola esistente cambia**: misurato col banco.
-2. Simboli nuovi per sonde e centralina di regolazione (proposte della sessione, D-083).
-3. **Dove si disegna** (I-227, del PO): «sulle tavole di centrale o dove è già molto denso meglio disegnare l'elettrico e
-   comando su tavola separata. Su tavole piccole come quella di sola distribuzione oppure come il caso dell'esempio [...]
-   si puo' fare su tavola unica». La tavola separata esce dallo stesso grafo. Il criterio con cui la skill sceglie, e
-   come il progettista la forza, si propone qui, sulle tavole.
-4. Una tavola di prova su un caso idronico esistente, nelle due forme.
+- Dal **manuale Shenling ThermaX R290 6–15 kW** (OneDrive del PO, connettore Microsoft 365; non entra nel repository):
+  che cosa alimenta e che cosa comanda la scheda della macchina — le sonde del bollitore e del volano, la valvola a tre
+  vie, i circolatori, il bus — con la pagina. Il contenuto MEP è del PO: si mostra, si propone.
+- Le porte di comando della pompa di calore che servono (sonde, uscite), facoltative come le altre; la tavola
+  dell'elettrico di una centrale con le sonde della macchina.
 
-**Tavole al PO:** il caso di prova con l'elettrico, sulla tavola unica e su quella separata.
+### 5. La release
 
-### Alla fine — La release
-
-**1.6.0**, con `scripts/costruisci-skill.py`, e `tests/test_le_release.py` verde (D-200). `SKILL.md` e i riferimenti
-dicono che cosa la skill disegna dell'aria e dell'elettrico, e che non lo dimensiona.
-
-## Da decidere col PO
-
-- **le frecce** sui fluidi senza verso (D-213 punto 6);
-- **i simboli** del kit e quelli nuovi della fase 3, sulla tavola;
-- **i tre comportamenti del motore** del §6 del rapporto: difetti o voluti;
-- **il criterio** della tavola separata (fase 3);
-- restano aperte, per `REL-011`, le domande di `REL-010` e `REL-009` elencate in `docs/plans/pacchetti/REL-011.md`.
+**1.7.0**, con `scripts/costruisci-skill.py` e `tests/test_le_release.py` verde (D-200); un collaudo indipendente sullo
+ZIP prima della PR.
 
 ## Perimetro
 
-**Dentro:** `src/**`, `assets/symbols/**`, `examples/**`, `naming/**`, `rules/**`, `skill/**`, `tests/**`,
-`docs/collaudi/REL-012/`, `releases/`, il registro, il registro delle decisioni (come proposte), `HANDOFF.md`, questo
-file.
+**Dentro:** `src/**`, `assets/symbols/**`, `examples/**`, `naming/**`, `rules/**`, `skill/**`, `tests/**`, `schemas/**`,
+`scripts/costruisci-skill.py`, `docs/collaudi/REL-015/`, `releases/`, il registro, il registro delle decisioni (come
+proposte), `HANDOFF.md`, questo file.
 
-**Fuori:** il dimensionamento e la distinta (`REL-013`); la pianta dei tracciati (`REL-014`, I-229); i dati del
-cliente, in qualunque file — il catastale e la M.03 del kit restano fuori dal repository (`NEL-REPOSITORY.md`); i
-manuali dei costruttori, che si citano e non si copiano; un contenuto MEP o una convenzione grafica decisi dalla
-sessione.
+**Fuori:** il motore della skill `nove-c-report` (si usa, non si copia); i manuali dei costruttori e la specifica
+tecnica Nove C (si citano con la pagina); i dati del cliente, in qualunque file; un contenuto MEP o una convenzione
+grafica decisi dalla sessione.
 
-## Criteri di accettazione — per ogni PR
+## Criteri di accettazione
 
 Ogni criterio si chiude con **il comando eseguito e il suo output**.
 
-0. **Le tavole, per prime**: quelle che la PR cambia, prima e dopo, al PO.
-1. **La suite**: `0 failed`; nessuno `skip` e nessuno `xfail` nuovi; `ruff check src tests` verde; `mypy` verde dove
-   l'ambiente lo lascia girare.
-2. **La regressione**: il banco di `REL-009` (`docs/collaudi/REL-009/la-1.4-sulle-tavole-agli-atti/banco.py`, più le
-   tre prove pulite) fra `main` e il ramo, ogni tavola cambiata spiegata.
+0. **Le tavole e il PDF della distinta, per primi**, al PO.
+1. **La suite**: `0 failed`; nessuno `skip` e nessuno `xfail` nuovi; `ruff check src tests` verde.
+2. **La regressione**: il banco `docs/collaudi/REL-011/banco.py` fra `main` e il ramo; ogni tavola cambiata spiegata
+   (il collettore cambia apposta).
 3. **Ogni correzione ha la sua prova**, rossa sul commit di partenza.
 4. **Gli input del PO nel registro** il giorno in cui arrivano.
-5. **Nessun dato di cliente nel diff**, e nessuna pagina dei manuali: il comando di ricerca e il suo output vuoto.
+5. **Nessun dato di cliente nel diff**, e nessuna pagina dei manuali.
 6. **La release**: `tests/test_le_release.py` verde — la skill si carica (D-200).
