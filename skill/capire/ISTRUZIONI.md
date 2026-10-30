@@ -576,11 +576,43 @@ dell'impianto si ferma e le sigle che non hai scritto non si assegnano.
 **L'elettrico e il comando si trascrivono solo dove il catalogo ha gli attacchi**: le
 voci dell'aria-aria, il quadro (`out_1`…`out_6`), il sezionatore, il regolatore
 (`power`, `bus`, `out_1`…`out_4` per i comandi, `probe_1`…`probe_3` per le sonde), le sonde
-(`signal`), e sulle macchine idroniche gli attacchi di comando facoltativi: pompe di calore e
-caldaie `power` e `bus`, circolatori `power` (e il comando, se la voce lo ha), valvole a tre
-vie motorizzate `comando`, ventilconvettori `power` e `bus`. `python3 scripts/mep.py
-catalogo <id>` li elenca. Se il testo descrive un cavo verso un pezzo la cui voce non ha
-l'attacco, non inventarlo: è una voce di tipo B (§6).
+(`signal`), e sulle macchine idroniche gli attacchi di comando facoltativi: caldaie `power` e
+`bus`; pompe di calore aria-acqua `power`, `bus` e quelli della regolazione a bordo (sotto);
+circolatori `power` e `comando`, valvole a tre vie motorizzate `comando`, ventilconvettori
+`power` e `bus`. `python3 scripts/mep.py catalogo <id>` li elenca. Se il testo descrive un
+cavo verso un pezzo la cui voce non ha l'attacco, non inventarlo: è una voce di tipo B (§6).
+
+**Chi regola: la pompa di calore o un regolatore** (I-230, proposta). Molte pompe di calore
+aria-acqua hanno la regolazione **a bordo**: sulla scheda del loro modulo idraulico arrivano le
+sonde del bollitore e del volano e la sonda di mandata della zona miscelata, e da lì partono i
+comandi della deviatrice dell'acqua calda, della miscelatrice, dei circolatori di zona e del
+ricircolo (la Shenling ThermaX R290, per esempio: manuale d'installazione, §5.3, pp. 39-41).
+Allora:
+
+- **se la pompa di calore regola da sé** — il testo lo dice, o nomina una macchina che lo fa e
+  non nomina un regolatore —, **sonde e comandi vanno alla macchina**, e **non metti un
+  regolatore esterno**. Le porte della pompa di calore hanno nomi generici: gli ingressi
+  `sonda_acs` (la sonda nel bollitore), `sonda_accumulo` (nel volano), `sonda_zona_2` (la
+  mandata della zona miscelata), `termostato` (il termostato ambiente); le uscite `out_acs`
+  (la deviatrice dell'acqua calda sanitaria), `out_miscelatrice`, `out_pompa_zona_1`,
+  `out_pompa_zona_2`, `out_pompa_ricircolo`, `out_ausiliario` (il consenso a una caldaia
+  d'integrazione); `comando_a_filo` (la voce `wired-remote`); `bus` verso un sistema di
+  supervisione, solo se il testo lo nomina. La sonda esterna di una macchina così sta a bordo:
+  non si disegna;
+- **il regolatore esterno** (`plant-controller`) **solo se il progettista lo nomina**: allora
+  sonde e comandi vanno a lui, e la pompa di calore ha al più `power` e `bus`;
+- **se il testo non dice chi regola**, è una domanda al progettista, in `assumptions`, con la
+  prima interpretazione **«regola la pompa di calore»**: *«Chi regola: la pompa di calore,
+  con la regolazione a bordo. Le sonde del bollitore e del volano sono cablate alla macchina,
+  e la macchina comanda la deviatrice e i circolatori. Se la centrale ha un regolatore suo,
+  dimmelo e ridisegno sonde e comandi verso di lui.»*
+
+La sonda nel bollitore e quella nel volano stanno sull'attacco `probe` del serbatoio, se la voce
+lo ha (§5); il loro cavo va dalla porta `signal` della sonda alla porta sonda della pompa di
+calore — `sonda_acs` il bollitore, `sonda_accumulo` il volano. Un circolatore comandato dalla
+macchina prende l'uscita sul suo `comando`; la sua alimentazione dal quadro (`power`) la
+disegni se il testo la dice, e altrimenti la chiedi. **Non scrivere i morsetti della scheda**
+(CN27, SV1…) se il progettista non li dà: il nome della porta dice già dove va il cavo.
 
 **Le uscite di un quadro e gli ingressi di un regolatore sono equivalenti**: scegli la prima
 libera, nell'ordine. Quale uscita usa un cavo **non è topologia** — il collegamento resta lo
@@ -715,7 +747,8 @@ che non sono ferramenta di servizio: i mestieri `refrigerant_generation`,
 immersione** su una tubazione si appende come un termometro: un `tee-branch` in linea e dal
 braccio una tubazione corta alla porta `a` della sonda; nel bollitore o nel volano va
 sull'attacco `probe`, se la voce lo ha. Il suo cavo esce dalla porta `signal` verso un
-ingresso `probe_n` del regolatore.
+ingresso `probe_n` del regolatore, o verso la porta sonda della pompa di calore quando è lei a
+regolare (§4.8).
 
 Se il testo nomina un mestiere che non sta in nessuna delle liste (un ventilatore, un'unità
 di trattamento aria…), trattalo come voce di catalogo mancante: §6, tipo B.

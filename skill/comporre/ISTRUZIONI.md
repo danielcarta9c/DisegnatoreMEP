@@ -605,6 +605,34 @@ sull'idraulica. Quello che conta è che i cavi siano corti e non si incrocino.
   del bus, sotto; il regolatore ha l'alimentazione sopra il bus. Con il quadro sotto la macchina e il
   regolatore accanto, il bus passa sotto il quadro: altrimenti incrocia l'alimentazione.
 
+**Quando regola la pompa di calore** (I-230, proposta) non c'è un regolatore: sonde e comandi
+vanno alla macchina, e il centro della tavola è lei. Le sue porte: le **uscite sopra**, da
+sinistra `out_acs`, `out_miscelatrice`, `out_pompa_zona_1`, `out_pompa_zona_2`,
+`out_pompa_ricircolo`, `out_ausiliario`, a 5 mm; gli **ingressi a sinistra**, dall'alto
+`sonda_acs`, `sonda_accumulo`, `sonda_zona_2`, `termostato`; **sotto** alimentazione, bus e
+comando a filo. Così (la villetta di `docs/collaudi/REL-015/pdc-regola/`):
+
+- **la pompa di calore al centro**, non specchiata;
+- **le uscite a ventaglio**: quelle di sinistra (le valvole) girano a sinistra, quelle di destra
+  (i circolatori) a destra; l'uscita più esterna gira più in basso, la successiva più in alto, e
+  i cavi non si incrociano. Valvole e circolatori in colonna, girati col comando verso la
+  macchina (`"rotazione": 90`): il circolatore ha così l'alimentazione dall'altra parte, verso
+  il quadro;
+- **le sonde in fila sotto, a sinistra della macchina**, diritte (`"rotazione": 0`): la sonda
+  dell'ingresso più basso è la più vicina. Lascia fra l'una e l'altra il posto della sigla e
+  della scritta (`etichetta`: «bollitore», «volano», «mandata pannelli»): tre sonde uguali senza
+  scritta non dicono quale cavo va dove;
+- **il quadro in basso a destra, più in basso della macchina.** L'alimentazione della macchina
+  entra da sotto: con il quadro più in alto il cavo scende oltre la porta e risale, ed è un
+  bloccante (B12). Dal quadro, i circolatori scendono a ventaglio sulle uscite di sopra e di
+  destra, e la macchina arriva sull'uscita di sinistra (`out_6`);
+- **il comando a filo sotto la macchina**, a destra dell'alimentazione, più in alto del cavo che
+  va al quadro.
+
+Le uscite e gli ingressi stanno a 5 mm: i cavi che ne escono corrono affiancati a 5 mm per un
+tratto, e la regola delle corsie libere (B9) lo segnala. Non è un errore del piano: dillo nella
+consegna.
+
 Sulla **tavola unica** l'acqua si compone come sempre, e i cavi vengono dopo: il motore instrada
 prima tutta l'acqua e poi i cavi, nello spazio che resta. Metti il regolatore e il quadro **fuori**
 dal disegno dell'acqua, dalla parte dei pezzi che comandano.
