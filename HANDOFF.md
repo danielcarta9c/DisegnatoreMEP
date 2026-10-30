@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-30 — **la 1.7.1 è su `main`** (PR #82, I-237, D-215): i circolatori comandati dalla pompa di calore prendono alimentazione e comando dalla sua morsettiera. **Il pacchetto è `REL-016`** (i rilievi D1, D3, D4 del collaudo della 1.7.0), **poi `REL-011`** (I-238).
+**Aggiornato:** 2026-10-30 — **la 1.8.0 è costruita sul ramo** (`REL-016`, D-216 proposta): la tavola aggrovigliata non si consegna, il collettore di zona da 3 a 12 vie, le domande della distinta al passo 2. **Aspetta il PO** sulle tavole. Poi `REL-011` (I-238). La 1.7.1 è su `main` (PR #82).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -13,7 +13,7 @@
 
 ## ▶ Da dove riparte la prossima sessione — scritto il 30 ottobre 2026, dopo la fusione della 1.7.1
 
-**Il pacchetto è `REL-016`** (`ACTIVE_WORK_PACKAGE.md`): la tavola aggrovigliata che passava con 0 bloccanti (D1), il
+**Il pacchetto è `REL-016`** (`ACTIVE_WORK_PACKAGE.md`), **costruito sul ramo, al PO** — la tavola aggrovigliata che passava con 0 bloccanti (D1), il
 collettore di zona a più vie (D3), le domande della distinta al passo 2 (D4). I casi del collaudo sono in
 `docs/collaudi/REL-016/casi-del-collaudo/`. **Dopo, `REL-011`** (I-238). La 1.7.0 (`REL-015`) è archiviata in
 `docs/plans/pacchetti/REL-015.md`; quello che segue è com'era il ramo prima della fusione della 1.7.0.

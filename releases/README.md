@@ -56,3 +56,5 @@ Il comando della skill li riapre da sé.
 - **1.7.1** — 30 ottobre 2026: **i circolatori comandati dalla pompa di calore** prendono alimentazione e comando
   dalla sua morsettiera, con un cavo solo; il quadro alimenta la macchina (I-236, D-215, lo standard dell'elettricista
   del PO). 134 file.
+- **1.8.0** — 30 ottobre 2026: **i tre rilievi del collaudo della 1.7.0** (`REL-016`, I-237, D-216 proposta): la tavola
+  aggrovigliata non si consegna, il collettore di zona da 3 a 12 vie, le domande della distinta al passo 2. 135 file.

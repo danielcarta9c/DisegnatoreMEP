@@ -1,9 +1,18 @@
-# L'ultima release: 1.7.1
+# L'ultima release: 1.8.0
 
-`DisegnatoreMEP-v1.7.1.zip` — sha256 `6e916e289652ab1d…`, 134 file — è la 1.7.0 con **i circolatori comandati dalla
-pompa di calore alimentati e comandati dalla sua morsettiera, con un cavo solo** (I-236, D-215). La 1.7.0 è **la
-distinta in un documento a parte, la tavola in A3, l'elettrico dopo l'idraulica** (`REL-015`), sulle osservazioni del PO alla 1.6.0 (I-230 … I-234). Si
-carica come ogni skill personale, dallo ZIP così com'è.
+`DisegnatoreMEP-v1.8.0.zip` — sha256 `91f55afb7f7427a6…`, 135 file — sono **i tre rilievi del collaudo della 1.7.0**
+(`REL-016`, I-237, D-216 proposta). Si carica come ogni skill personale, dallo ZIP così com'è.
+
+Rispetto alla 1.7.1:
+- **una tavola aggrovigliata non si consegna**: una linea che scavalca sé stessa e un organo in linea su una piega sono
+  rilievi bloccanti; `pezzi` dice in che ordine i pezzi stanno lungo le tratte, e Comporre li posa così;
+- **il collettore di zona da 3 a 12 vie**, una mandata e un ritorno per via (proposta di simbolo);
+- **le domande della distinta al passo 2**: `distinta --domande`, nello stesso giro delle domande del disegno.
+
+Il banco di regressione di `REL-011` (24 tavole idroniche): 24 identiche. Le prove sono in `docs/collaudi/REL-016/`.
+
+Prima, la **1.7.1** (I-236, D-215): i circolatori comandati dalla pompa di calore prendono alimentazione e comando
+dalla sua morsettiera, con un cavo solo. E la **1.7.0** (`REL-015`):
 
 Rispetto alla 1.6.0:
 - **sulla tavola solo la tabella delle apparecchiature e la legenda** (I-233): tratte, computo e note vanno nel

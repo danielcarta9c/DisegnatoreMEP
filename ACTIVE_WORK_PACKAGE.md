@@ -5,7 +5,7 @@
 > ottobre 2026, sulla 1.7.1.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO**.
+**Stato:** **COSTRUITA SUL RAMO, AL PO** — la 1.8.0 aspetta il suo sì sulle tavole.
 **Base:** `main` dopo la PR #82 (la 1.7.1).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole (D-146, D-147).
