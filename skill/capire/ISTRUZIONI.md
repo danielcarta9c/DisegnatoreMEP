@@ -676,7 +676,12 @@ Le voci per **il costruito** (I-194), quando il testo le dice:
 - il **collettore con mandata e ritorno** (`zone-manifold-pair`), d'appartamento o di
   centrale: ogni
   circuito esce da `out_n` e rientra in `ret_n`, e il ritorno esce da `out` — senza
-  raccordi a T per richiudere i ritorni;
+  raccordi a T per richiudere i ritorni. **La voce dice le vie**: `zone-manifold-pair` ne
+  ha due; da tre a dodici sono `zone-manifold-pair-3` … `zone-manifold-pair-12`, col numero
+  delle vie del testo («collettore a pavimento a 6 vie», `zone-manifold-pair-6`). Ogni via
+  ha il suo circuito, e tutte sono collegate: un terminale per via (sei vie, sei pannelli),
+  **non** un pannello rappresentativo. Oltre le dodici, o se il testo non dice quante sono,
+  lo chiedi;
 - il **volano a sei attacchi** (`buffer-six-port`), quando ne ha due predisposti in più
   (`aux_in`, `aux_out`);
 - l'**attacco predisposto** (`capped-connection`): un tubo corto tappato su un attacco che
