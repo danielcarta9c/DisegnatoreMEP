@@ -41,24 +41,6 @@
    "medium": "power_supply"
   },
   {
-   "id": "el-circ-pannelli",
-   "name": "Alimentazione circolatore pannelli",
-   "domain": "control",
-   "medium": "power_supply"
-  },
-  {
-   "id": "el-circ-radiatori",
-   "name": "Alimentazione circolatore radiatori",
-   "domain": "control",
-   "medium": "power_supply"
-  },
-  {
-   "id": "el-circ-ricircolo",
-   "name": "Alimentazione circolatore ricircolo",
-   "domain": "control",
-   "medium": "power_supply"
-  },
-  {
    "id": "cmd-miscelatrice",
    "name": "Comando miscelatrice pannelli dalla pompa di calore",
    "domain": "control",
@@ -90,19 +72,19 @@
   },
   {
    "id": "cmd-circ-radiatori",
-   "name": "Comando circolatore radiatori dalla pompa di calore",
+   "name": "Alimentazione e comando circolatore radiatori dalla pompa di calore",
    "domain": "control",
    "medium": "power_supply"
   },
   {
    "id": "cmd-circ-pannelli",
-   "name": "Comando circolatore pannelli dalla pompa di calore",
+   "name": "Alimentazione e comando circolatore pannelli dalla pompa di calore",
    "domain": "control",
    "medium": "power_supply"
   },
   {
    "id": "cmd-circ-ricircolo",
-   "name": "Comando circolatore ricircolo dalla pompa di calore",
+   "name": "Alimentazione e comando circolatore ricircolo dalla pompa di calore",
    "domain": "control",
    "medium": "power_supply"
   },
@@ -608,7 +590,7 @@
    "network_id": "el-pdc",
    "endpoint_a": {
     "component_id": "quadro",
-    "port_id": "out_6"
+    "port_id": "out_1"
    },
    "endpoint_b": {
     "component_id": "sez-pdc",
@@ -631,45 +613,6 @@
    },
    "properties": {},
    "sezione": "3G6"
-  },
-  {
-   "id": "t27",
-   "network_id": "el-circ-pannelli",
-   "endpoint_a": {
-    "component_id": "quadro",
-    "port_id": "out_2"
-   },
-   "endpoint_b": {
-    "component_id": "circ-pannelli",
-    "port_id": "power"
-   },
-   "properties": {}
-  },
-  {
-   "id": "t28",
-   "network_id": "el-circ-radiatori",
-   "endpoint_a": {
-    "component_id": "quadro",
-    "port_id": "out_3"
-   },
-   "endpoint_b": {
-    "component_id": "circ-radiatori",
-    "port_id": "power"
-   },
-   "properties": {}
-  },
-  {
-   "id": "t29",
-   "network_id": "el-circ-ricircolo",
-   "endpoint_a": {
-    "component_id": "quadro",
-    "port_id": "out_1"
-   },
-   "endpoint_b": {
-    "component_id": "circ-ricircolo",
-    "port_id": "power"
-   },
-   "properties": {}
   },
   {
    "id": "t40",
@@ -758,7 +701,7 @@
    },
    "endpoint_b": {
     "component_id": "circ-radiatori",
-    "port_id": "comando"
+    "port_id": "power"
    },
    "properties": {}
   },
@@ -771,7 +714,7 @@
    },
    "endpoint_b": {
     "component_id": "circ-pannelli",
-    "port_id": "comando"
+    "port_id": "power"
    },
    "properties": {}
   },
@@ -784,7 +727,7 @@
    },
    "endpoint_b": {
     "component_id": "circ-ricircolo",
-    "port_id": "comando"
+    "port_id": "power"
    },
    "properties": {}
   },
@@ -865,7 +808,7 @@
   },
   {
    "id": "a14",
-   "text": "Sezioni e lunghezze delle linee: il testo da' solo la linea della pompa di calore (3G6, 15 m, scritta sul tratto quadro-sezionatore per la linea intera). Mancano sezione e lunghezza di: tre alimentazioni dei circolatori, cinque comandi dalla pompa di calore (deviatrice, miscelatrice, tre circolatori), cavi delle tre sonde, comando a filo. Senza, quei tratti restano senza scritta.",
+   "text": "Sezioni e lunghezze delle linee: il testo da' solo la linea della pompa di calore (3G6, 15 m, scritta sul tratto quadro-sezionatore per la linea intera). Mancano sezione e lunghezza di: due comandi dalla pompa di calore (deviatrice, miscelatrice), tre linee di alimentazione e comando dei circolatori, cavi delle tre sonde, comando a filo. Senza, quei tratti restano senza scritta.",
    "status": "proposed"
   },
   {
@@ -895,7 +838,7 @@
   },
   {
    "id": "a20",
-   "text": "Circolatori: ciascuno e' alimentato dal quadro di centrale e acceso da un'uscita della pompa di calore, due cavi sullo stesso circolatore. Se un'uscita della macchina alimenta il circolatore direttamente, il cavo dal quadro non serve: dimmelo e lo tolgo.",
+   "text": "Circolatori: alimentazione e comando dalla morsettiera della pompa di calore, un cavo solo per circolatore (lo standard). Se invece un circolatore e' alimentato dal quadro e acceso da un cronotermostato, dimmelo e lo ridisegno cosi'.",
    "status": "proposed"
   },
   {

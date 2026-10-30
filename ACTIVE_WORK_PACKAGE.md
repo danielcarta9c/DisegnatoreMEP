@@ -2,9 +2,8 @@
 
 > **Attivo dal 30 ottobre 2026**, dopo la 1.7.0 (`REL-015`, PR #81, I-235). Era in coda dal 29 ottobre (I-228): il PO
 > aveva portato il kit aria-aria, e prima sono venuti `REL-012` e `REL-015`. Il pacchetto resta com'era scritto.
-> **Prima di cominciare**, le domande lasciate aperte dalla 1.7.0 (`docs/plans/pacchetti/REL-015.md`): i circolatori
-> sulla tavola dell'elettrico (alimentati dal quadro, o dalle uscite P_C della pompa di calore), e i rilievi D1, D3, D4
-> del collaudo — se entrano qui o in un pacchetto a parte lo dice il PO.
+> **Prima di cominciare**, le domande lasciate aperte dalla 1.7.0 (`docs/plans/pacchetti/REL-015.md`): i rilievi D1, D3,
+> D4 del collaudo (i circolatori li ha decisi il PO: I-236, D-215, nella 1.7.1) — se entrano qui o in un pacchetto a parte lo dice il PO.
 
 > **▶ Il pacchetto attivo, per l'ordine del PO** — «il manuale shenling pensavo piu' di usarlo non per il revisore ma
 > proprio per verificare nella skill le regole dell'agente "capire" o composizione. non ricordo dove avevamo messo le

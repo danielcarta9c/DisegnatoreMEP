@@ -199,9 +199,9 @@ def test_sonde_e_comandi_vanno_alla_pompa_di_calore() -> None:
         (("sonda-pannelli", "signal"), ("pdc", "sonda_zona_2")),
         (("pdc", "out_acs"), ("deviatrice", "comando")),
         (("pdc", "out_miscelatrice"), ("miscelatrice", "comando")),
-        (("pdc", "out_pompa_zona_1"), ("circ-radiatori", "comando")),
-        (("pdc", "out_pompa_zona_2"), ("circ-pannelli", "comando")),
-        (("pdc", "out_pompa_ricircolo"), ("circ-ricircolo", "comando")),
+        (("pdc", "out_pompa_zona_1"), ("circ-radiatori", "power")),
+        (("pdc", "out_pompa_zona_2"), ("circ-pannelli", "power")),
+        (("pdc", "out_pompa_ricircolo"), ("circ-ricircolo", "power")),
         (("comando-a-filo", "a"), ("pdc", "comando_a_filo")),
         (("sez-pdc", "b"), ("pdc", "power")),
     }
@@ -210,13 +210,13 @@ def test_sonde_e_comandi_vanno_alla_pompa_di_calore() -> None:
     # Le sonde del volano e del bollitore sono sui loro attacchi.
     assert frozenset({("volano", "probe"), ("sonda-volano", "a")}) in cavi
     assert frozenset({("bollitore", "probe"), ("sonda-bollitore", "a")}) in cavi
-    # I tre circolatori sono alimentati dal quadro.
+    # **Lo standard** (I-236, D-215, l'elettricista del PO): il circolatore prende alimentazione
+    # e comando dalla morsettiera della pompa di calore, un cavo solo sul suo `power`. Il suo
+    # `comando` resta libero, e il quadro alimenta la sola macchina.
     for circolatore in ("circ-radiatori", "circ-pannelli", "circ-ricircolo"):
-        assert any(
-            ("quadro", porta) in cavo and (circolatore, "power") in cavo
-            for cavo in cavi
-            for porta in ("out_1", "out_2", "out_3")
-        ), circolatore
+        assert not any((circolatore, "comando") in cavo for cavo in cavi), circolatore
+    dal_quadro = [cavo for cavo in cavi if any(capo[0] == "quadro" for capo in cavo)]
+    assert dal_quadro == [frozenset({("quadro", "out_1"), ("sez-pdc", "a")})]
 
 
 @pytest.mark.parametrize("vista", ["idraulica", "elettrico"])

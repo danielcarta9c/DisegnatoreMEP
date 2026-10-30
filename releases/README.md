@@ -53,3 +53,6 @@ Il comando della skill li riapre da sé.
   (`REL-015`, I-230 … I-234): sulla tavola solo apparecchiature e legenda, la distinta in PDF coi report Nove C, le
   scritte dell'acqua prima dei cavi, il collettore a coppia col ritorno continuo, la pompa di calore che regola da sé
   (proposta). 134 file.
+- **1.7.1** — 30 ottobre 2026: **i circolatori comandati dalla pompa di calore** prendono alimentazione e comando
+  dalla sua morsettiera, con un cavo solo; il quadro alimenta la macchina (I-236, D-215, lo standard dell'elettricista
+  del PO). 134 file.

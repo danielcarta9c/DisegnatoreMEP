@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-30 — **la 1.7.0 è su `main`** (PR #81, I-235, D-214 approvata): sulla tavola solo apparecchiature e legenda (A3), la distinta in PDF coi report Nove C, prima l'acqua poi i cavi, il collettore a coppia col ritorno continuo, la pompa di calore che regola da sé. **Il pacchetto è `REL-011`.**
+**Aggiornato:** 2026-10-30 — **la 1.7.0 è su `main`** (PR #81, I-235, D-214); sul ramo la **1.7.1** (I-236, D-215): i circolatori comandati dalla pompa di calore prendono alimentazione e comando dalla sua morsettiera, un cavo solo. **Il pacchetto è `REL-011`.**
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -21,11 +21,10 @@ cominciare, al PO le domande lasciate aperte dalla 1.7.0 (in testa al pacchetto)
   `pdc-regola/`, `collettore/`, `idraulica-prima/` con il suo `rifai.sh`).
 - **La regola dell'idraulica prima** è misurata da `tests/piano/test_prima_l_idraulica.py` (piena su tre casi, linee e
   pezzi sulla M.02: la riserva è in D-214) e da `tests/piano/test_le_scritte_dell_acqua_lasciano_la_strada_ai_cavi.py`.
-- **Da proporre al PO** (non fatto): i circolatori sulla tavola dell'elettrico prendono alimentazione e comando da due
-  facce opposte e sembrano attraversati da un cavo; dal manuale Shenling le uscite P_C della scheda possono alimentare
-  direttamente le pompe — una linea sola.
+- **I circolatori** (I-236, D-215, fatto nella 1.7.1): alimentazione e comando dalla morsettiera della pompa di
+  calore, un cavo solo; il quadro più cronotermostato è una scelta del progettista, non lo standard.
 - **Il banco**: 19/24 identiche, 5 cambiate solo nel simbolo del collettore.
-- **I numeri**: il prossimo input è **I-236**, la prossima decisione **D-215**.
+- **I numeri**: il prossimo input è **I-237**, la prossima decisione **D-216**.
 
 ## Com'era la mattina del 30 ottobre 2026
 

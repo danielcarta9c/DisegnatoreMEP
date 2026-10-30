@@ -609,9 +609,12 @@ Allora:
 
 La sonda nel bollitore e quella nel volano stanno sull'attacco `probe` del serbatoio, se la voce
 lo ha (§5); il loro cavo va dalla porta `signal` della sonda alla porta sonda della pompa di
-calore — `sonda_acs` il bollitore, `sonda_accumulo` il volano. Un circolatore comandato dalla
-macchina prende l'uscita sul suo `comando`; la sua alimentazione dal quadro (`power`) la
-disegni se il testo la dice, e altrimenti la chiedi. **Non scrivere i morsetti della scheda**
+calore — `sonda_acs` il bollitore, `sonda_accumulo` il volano. **Un circolatore comandato dalla
+macchina prende alimentazione e comando dalla sua morsettiera, con un cavo solo**: dall'uscita
+della pompa di calore al `power` del circolatore, e il suo `comando` resta libero; dal quadro
+al circolatore non arriva niente (I-236, D-215: è lo standard). Il circolatore alimentato dal
+quadro e acceso da un cronotermostato è una scelta del progettista: la disegni solo se il
+testo la dice. **Non scrivere i morsetti della scheda**
 (CN27, SV1…) se il progettista non li dà: il nome della porta dice già dove va il cavo.
 
 **Le uscite di un quadro e gli ingressi di un regolatore sono equivalenti**: scegli la prima
