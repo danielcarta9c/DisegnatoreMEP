@@ -9,31 +9,63 @@
 «computo per la quotazione». Mai di tua iniziativa, e mai per completare una tavola: la tavola si consegna senza.
 Lo schema è lo stesso dei diametri (D-191): spenta di default, accesa su richiesta, ogni numero con la sua regola.
 
+La distinta è **un documento a parte**, in PDF, con la copertina e l'impaginazione dei report Nove C — niente Excel,
+e **niente tabelle della distinta sulla tavola**: sulla tavola restano la tabella delle apparecchiature e la legenda
+(I-232, I-233). Si lancia dopo `completa`, prima o dopo `disegna`: la tavola non cambia.
+
+## La skill dei report Nove C, accanto
+
+Il PDF lo fa il motore della skill **`nove-c-report`**, che deve essere installata accanto a questa. Non è dentro
+questa skill: la si trova e se ne passa la cartella con `--report`. Su claude.ai le skill stanno sotto `/mnt/skills/`;
+cercala così, e usa la cartella che contiene `references/nove_c_report_engine.py`:
+
 ```
-python3 scripts/mep.py distinta <grafo-completo.json> --out <cartella> [--regole <cartella o fascio>]
-                                [--sul-foglio tratte,computo,attivita,note] [--fornitura <scelte>|confermata]
+find /mnt/skills ~/.claude/skills -type d -name nove-c-report 2>/dev/null
+```
+
+Se non esce niente, cercala in tutto il disco (`find / -type d -name nove-c-report 2>/dev/null`).
+
+```
+python3 scripts/mep.py distinta <grafo-completo.json> --out <cartella> --report <cartella di nove-c-report>
+                                [--fornitura <scelte>|confermata] [--regole <cartella o fascio>]
 ```
 
 Esce con `0` se è completa, con `2` se ci sono voci **DA DEFINIRE** (con le domande stampate), con `1` se non si è
-potuta fare. Scrive `distinta.xlsx` (o `distinta.csv` se manca openpyxl), `distinta.json`, `tabelle-del-foglio.json`
-e `distinta-calcoli.md`, il foglio dei calcoli.
+potuta fare. Scrive nella cartella:
 
-## Quando la lanci: **prima** di `disegna`
+- **il documento per l'installatore**, `<commessa>_Distinta_materiali_<impianto>.pdf` (il nome viene dal
+  cartiglio; senza commessa e senza titolo, `distinta.pdf`), e accanto le sue pagine in PNG
+  (`<nome>-pagine/`);
+- `distinta.json` (lo legge la pianta, `pianta --distinta`) e `distinta-calcoli.md`, il foglio dei calcoli con il
+  conto e la regola di ogni numero, per chi controlla;
+- `tabelle-del-foglio.json`: le tabelle che il motore saprebbe posare sulla tavola. **Non passarle a `disegna`**:
+  il flusso della skill non le usa più.
 
-Le tabelle del foglio — tratte, computo, attività, note — le scrive la distinta, in `tabelle-del-foglio.json`, e la
-tavola le posa con `disegna --tabelle <cartella>/tabelle-del-foglio.json`. Se il progettista vuole le tabelle sulla
-tavola, la distinta si lancia **prima** di `disegna` (dopo `completa`): lanciata dopo, la tavola esce senza.
+**Se la skill dei report non c'è** — non la trovi, oppure il comando dice che il motore non si carica (una libreria
+che manca) — la distinta lo dice e scrive lo stesso contenuto in **Markdown**, `<nome>.md`. Dillo al progettista:
+il PDF si fa dove la skill `nove-c-report` è installata.
 
-**Il computo intero sul foglio porta di solito al formato A1**: ottanta righe di computo non stanno accanto a uno
-schema che da solo starebbe in un A3. Se il progettista vuole un foglio più piccolo, sul foglio vanno solo tratte e
-note, e il computo resta nell'Excel:
+## Il controllo del PDF: lo fai tu, sempre
 
-```
-python3 scripts/mep.py distinta <grafo-completo.json> --out <cartella> --sul-foglio tratte,note
-```
+Il comando chiama il controllo finale dei report — il riempimento delle pagine, la griglia, le stringhe vietate
+(nessun prezzo, nessun dato interno), la numerazione — e stampa i suoi avvisi e i percorsi delle pagine in PNG.
+**Guarda le pagine una per una** (si aprono come immagini): un capitolo spezzato male, un titolo solo in fondo alla
+pagina, un testo tagliato in una cella, una pagina mezza vuota. Un avviso che a vista è un falso positivo lo dici al
+progettista; uno vero lo riferisci, non lo correggi ritoccando il PDF: si corregge il grafo, e si rilancia.
 
-Senza `--sul-foglio` il file porta tutte e quattro le tabelle. Chiedilo al progettista quando chiede le tabelle
-sulla tavola, con la tua proposta: «solo tratte e note sul foglio, il computo nell'Excel?».
+## Che cosa c'è nel documento
+
+La copertina dei report Nove C **senza le card dei KPI**, **senza la pagina «Chi siamo»**, e sette capitoli:
+
+1. l'impianto e le avvertenze — **a corpo, fisso e invariabile**; **quantità indicative**; **sopralluogo
+   obbligatorio**; la fornitura, da confermare o confermata; la distinta non progetta;
+2. le tratte — sezione, materiale, portata, L stimata e L da quotare —, e la verifica dell'aria e delle linee;
+3. il computo per sezioni (A apparecchiature, B aria, C frigorifero, D condensa, E elettrico, F assistenze murarie,
+   X senza regola, Z opere del Committente), una tabella per sezione;
+4. le attività a corpo (G);
+5. le varianti a prezzo unitario (V) e le righe vuote delle voci che aggiunge l'installatore (H);
+6. le voci da definire e le domande, quello che è da confermare, le segnalazioni e le assunzioni;
+7. le note e le regole usate, dette in parole.
 
 ## Che dati chiedi al progettista
 
@@ -73,9 +105,9 @@ somma dei tratti noti, e una riga DA DEFINIRE per il tratto che manca: la domand
 
 Chi fornisce che cosa non lo dice il grafo. La distinta usa le scelte predefinite di Nove C — **apparecchiature
 fornite da Nove C; bocchette, griglie e opere edili (velette, controsoffitti, botole, chiusure e ripristini) del
-Committente; messa in servizio con Nove C** — e le **dichiara** fra le note e nell'uscita del comando come «da
-confermare per questa offerta». Non sono DA DEFINIRE (le quantità ci sono) e il comando non esce con `2` per loro,
-ma vanno chieste al progettista, con la proposta: «fornitura come al solito, macchine Nove C e bocchette del
+Committente; messa in servizio con Nove C** — e le **dichiara** fra le avvertenze e nell'uscita del comando come
+«da confermare per questa offerta». Non sono DA DEFINIRE (le quantità ci sono) e il comando non esce con `2` per
+loro, ma vanno chieste al progettista, con la proposta: «fornitura come al solito, macchine Nove C e bocchette del
 Committente?».
 
 Quando risponde, rilanci con `--fornitura`:
@@ -91,23 +123,24 @@ Le scelte predefinite stanno in `distinta.json`, `fornitura`: si cambiano lì so
 
 ## Che cosa garantisce
 
-- **Ogni quantità ha la sua regola**, con la fonte e il perché, e il conto fatto: nell'Excel (foglio «Regole») e in
-  `distinta-calcoli.md`. Le regole sono dati, in `rules/distinta/`.
-- **Niente codici interni nell'Excel e nelle tabelle del foglio**: i pezzi si chiamano con le **sigle dello schema**
-  — le stesse che la tavola scrive —, o con la loro etichetta dove non hanno sigla; le fonti sono scritte per chi le
-  legge («regola Nove C per i canali flessibili», «manuale di installazione del costruttore della macchina»). Gli id
-  delle regole restano nel foglio dei calcoli e nel JSON, che sono la traccia del conto.
-- **Il cartiglio**: dove committente, commessa o numero della tavola mancano (o sono «ND»), l'Excel e il foglio dei
-  calcoli scrivono «DA DEFINIRE», come la tavola.
+- **Ogni quantità ha la sua regola**, con la fonte e il perché, e il conto fatto: in `distinta-calcoli.md`; nel PDF
+  le regole sono dette in parole (capitolo 7). Le regole sono dati, in `rules/distinta/`.
+- **Niente prezzi e niente codici interni nel documento**: i pezzi si chiamano con le **sigle dello schema** — le
+  stesse che la tavola scrive —, o con la loro etichetta dove non hanno sigla; le fonti sono scritte per chi le legge
+  («regola Nove C per i canali flessibili», «manuale di installazione del costruttore della macchina»). Gli id delle
+  regole restano nel foglio dei calcoli e nel JSON, che sono la traccia del conto. Il controllo dei report cerca nel
+  PDF le stringhe vietate.
+- **Il cartiglio**: dove committente, commessa o numero della tavola mancano (o sono «ND»), il documento e il foglio
+  dei calcoli scrivono «DA DEFINIRE», come la tavola.
 - **I numeri di tratta seguono le sigle**: per fluido, e dentro il fluido nell'ordine delle sigle che la tratta
   collega, come la colonna «Da - a» (PLZ-01 - TA-01 prima di PLZ-01 - TA-02). Con una tratta per bocchetta, T0n
   va a TA-0n. La ripresa montata sulla macchina (lunghezza 0) è il **plenum di ripresa** in tutte le uscite.
 - **Le lunghezze** si quotano con `(L + 1 m) × 1,15`, per eccesso al mezzo metro, con i minimi del fluido (12 m frigo,
   10 m condensa, 5 m bus, 2 m ramo d'aria): in dubbio per eccesso, come vuole il PO.
 - **Dove manca un dato, DA DEFINIRE e una domanda.** Mai un numero inventato.
-- **L'Excel ha solo valori**, nessuna formula; chiede un prezzo **a corpo, fisso e invariabile**, con il **sopralluogo
-  obbligatorio**; ha la sezione **H** vuota per le voci che aggiunge l'installatore e le varianti **V** a prezzo
-  unitario. **Nessun prezzo**: li mette l'installatore.
+- Il documento chiede un prezzo **a corpo, fisso e invariabile**, con il **sopralluogo obbligatorio**; ha le righe
+  vuote **H** per le voci che aggiunge l'installatore e le varianti **V** a prezzo unitario. **Nessun prezzo**: li
+  mette l'installatore nella sua offerta.
 - Lo stesso grafo dà sempre la stessa distinta.
 
 ## Che cosa non garantisce
@@ -124,6 +157,7 @@ Le scelte predefinite stanno in `distinta.json`, `fornitura`: si cambiano lì so
 ## Come la consegni
 
 Riporta al progettista, in quest'ordine: le **domande** (le voci DA DEFINIRE), quello che è **da confermare** (la
-fornitura), le **segnalazioni** della verifica, poi i file: `mep.py consegna` copia l'Excel se gli dai anche la
-cartella della distinta (`consegna $L/tavola $L/distinta … <destinazione>`). Non riempire tu una voce DA DEFINIRE e non ritoccare
-l'Excel: si corregge il grafo, e si rilancia il comando.
+fornitura), le **segnalazioni** della verifica, che cosa hai visto guardando le pagine del PDF, poi i file:
+`mep.py consegna` copia il PDF della distinta accanto alle tavole se gli dai anche la sua cartella
+(`consegna $L/tavola $L/distinta … <destinazione>`). Non riempire tu una voce DA DEFINIRE e non ritoccare il PDF:
+si corregge il grafo, e si rilancia il comando.

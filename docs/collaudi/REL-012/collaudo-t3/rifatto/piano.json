@@ -1,0 +1,90 @@
+{
+ "formato": "A3",
+ "note": [
+  "Tavola unica: aria-aria con una UE e una UI, 15 pezzi da posare (comporre, elettrico e comando).",
+  "UE e UI alla stessa y: le due linee frigorifere sono rette (E1, B1).",
+  "Plenum alla y della UI, bocchette in colonna alla quota delle uscite (E1).",
+  "Centrale di zona sotto il plenum sull'asse dei motori, termostati in colonna alla quota dei bus (E2).",
+  "Sotto la UI condensa con scarico addosso e comando a filo; quadro sotto la UE con l'alimentazione verticale (E3).",
+  "Centrale alimentata da out_3 del quadro (attacco cambiato nel grafo, stessa rete): la linea corre orizzontale sotto tutto, senza incroci.",
+  "REL-015 (I-233): il piano del collaudo in A3, senza zone per le tabelle: sulla tavola solo la tabella delle apparecchiature e la legenda, le tratte e le note della distinta nel suo PDF.",
+  "In A3 la posa del collaudo (250 x 185) non lasciava posto alla scritta di TA-03, «Soggiorno (sopra il varco)»: il disegno si spostava a destra per non toccare la tabella delle apparecchiature e la scritta finiva contro la legenda (rilievo bloccante FREE_LABEL_OMITTED). Misurato e corretto qui: plenum e bocchette 5 e 15 mm a sinistra (rami di 70 mm, come prima meno 10), centrale e termostati 5 mm a sinistra (bus ancora dritto), il gruppo sotto 10-20 mm piu' su, la ripresa 5 mm piu' giu'. La posa e' 235 x 160; le pieghe restano 4."
+ ],
+ "pezzi": {
+  "ue": {
+   "x": 0,
+   "y": 0,
+   "regola": "E1 - stessa y della UI"
+  },
+  "ui": {
+   "x": 100,
+   "y": 0,
+   "regola": "E1 - stessa y della UE"
+  },
+  "plenum": {
+   "x": 155,
+   "y": 0,
+   "regola": "E1 - plenum alla y della UI: in a +12,5 come supply"
+  },
+  "bocchetta-matrimoniale": {
+   "x": 225,
+   "y": 0,
+   "regola": "E1 - quota di out_1"
+  },
+  "bocchetta-singola": {
+   "x": 225,
+   "y": 12.5,
+   "regola": "E1 - quota di out_2"
+  },
+  "bocchetta-soggiorno-varco": {
+   "x": 225,
+   "y": 25,
+   "regola": "E1 - quota di out_3"
+  },
+  "bocchetta-soggiorno-parete": {
+   "x": 225,
+   "y": 37.5,
+   "regola": "E1 - quota di out_4"
+  },
+  "ripresa": {
+   "x": 115,
+   "y": -20,
+   "regola": "E1 - sopra la UI sull'asse della bocca di ripresa"
+  },
+  "centrale-zona": {
+   "x": 160,
+   "y": 80,
+   "regola": "E2 - sotto il plenum, serrande sull'asse dei motori"
+  },
+  "termostato-matrimoniale": {
+   "x": 210,
+   "y": 82.5,
+   "regola": "E2 - quota di bus_1"
+  },
+  "termostato-singola": {
+   "x": 210,
+   "y": 97.5,
+   "regola": "E2 - quota di bus_2"
+  },
+  "termostato-soggiorno": {
+   "x": 210,
+   "y": 112.5,
+   "regola": "E2 - quota di bus_3"
+  },
+  "scarico-condensa": {
+   "x": 120,
+   "y": 65,
+   "regola": "E3/A4 - addosso alla UI sotto drain"
+  },
+  "comando-filo": {
+   "x": 127.5,
+   "y": 85,
+   "regola": "E3 - sotto la UI, sull'asse di p1p2_b"
+  },
+  "quadro": {
+   "x": 2.5,
+   "y": 92.5,
+   "regola": "E3 - sotto la UE, out_1 sull'asse di power; out_3 alla quota dell'alimentazione della centrale"
+  }
+ }
+}

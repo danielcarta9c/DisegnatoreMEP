@@ -32,14 +32,13 @@ FACOLTATIVE: dict[str, dict[str, str]] = {
     "ambiente": {"ezdxf": "ezdxf==1.4.4", "pypdfium2": "pypdfium2==5.13.0"},
     "disegna": {"ezdxf": "ezdxf==1.4.4"},
     "anteprima": {"pypdfium2": "pypdfium2==5.13.0"},
-    "distinta": {"openpyxl": "openpyxl==3.1.5"},
     "pianta": {"ezdxf": "ezdxf==1.4.4", "pypdfium2": "pypdfium2==5.13.0"},
 }
 """Le librerie senza le quali un comando fa meno, non niente: il DXF vuole ezdxf, la
 versione del `pyproject.toml`; l'anteprima un lettore di PDF, e pypdfium2 5.13.0 e'
-quello provato con la skill il 29 settembre 2026; la distinta l'Excel, con openpyxl
-3.1.5, provata il 29 ottobre 2026 (senza, scrive un CSV). Se mancano si prova a
-installarle; se non si riesce, il comando lavora senza e lo dice."""
+quello provato con la skill il 29 settembre 2026. Se mancano si prova a installarle; se
+non si riesce, il comando lavora senza e lo dice. La distinta non ne vuole: il suo PDF lo
+fa il motore della skill dei report Nove C, con le librerie di quella skill (I-232)."""
 
 ATTESA_PIP_S = 180
 """Quanto si aspetta l'installazione: pydantic e le sue tre dipendenze sono pochi

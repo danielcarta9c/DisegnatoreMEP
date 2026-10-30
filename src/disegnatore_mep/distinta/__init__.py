@@ -16,7 +16,9 @@ inventato.
 - `grafo` — legge il grafo dal JSON, tollerante, e ne fa i tratti;
 - `lunghezze`, `confezioni` — la maggiorazione, i pezzi interi nelle confezioni;
 - `calcolo` — compone la distinta;
-- `uscite` — JSON, tabelle per il foglio, Excel (o CSV), foglio dei calcoli;
+- `uscite` — JSON, tabelle per il foglio, foglio dei calcoli;
+- `documento` — il documento per l'installatore: copertina e capitoli, come dati (I-232);
+- `impaginazione` — il documento in PDF col motore dei report Nove C, o in Markdown;
 - `comando` — il comando della skill.
 """
 

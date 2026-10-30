@@ -1,0 +1,952 @@
+{
+ "formato": "disegnatore-mep/tabelle-del-foglio",
+ "versione": 1,
+ "tabelle": [
+  {
+   "id": "tratte",
+   "titolo": "TABELLA DELLE TRATTE — diametri e lunghezze per la quotazione",
+   "colonne": [
+    {
+     "id": "tratto",
+     "titolo": "Tratto",
+     "allinea": "sinistra",
+     "peso": 0.6
+    },
+    {
+     "id": "da_a",
+     "titolo": "Da - a",
+     "allinea": "sinistra",
+     "peso": 2.4
+    },
+    {
+     "id": "sezione",
+     "titolo": "Ø / sezione",
+     "allinea": "sinistra",
+     "peso": 1.4
+    },
+    {
+     "id": "materiale",
+     "titolo": "Materiale",
+     "allinea": "sinistra",
+     "peso": 1.9
+    },
+    {
+     "id": "portata",
+     "titolo": "Q m³/h",
+     "allinea": "destra",
+     "peso": 0.6
+    },
+    {
+     "id": "velocita",
+     "titolo": "v m/s",
+     "allinea": "destra",
+     "peso": 0.5
+    },
+    {
+     "id": "l_stimata",
+     "titolo": "L stim. m",
+     "allinea": "destra",
+     "peso": 0.6
+    },
+    {
+     "id": "l_quotare",
+     "titolo": "L quot. m",
+     "allinea": "destra",
+     "peso": 0.6
+    }
+   ],
+   "sezioni": [
+    {
+     "titolo": null,
+     "righe": [
+      [
+       "T01",
+       "PLZ-01 - B1",
+       "Ø200",
+       "flessibile coibentato",
+       "270",
+       "2,4",
+       "4,1",
+       "6"
+      ],
+      [
+       "T02",
+       "PLZ-01 - B2",
+       "Ø200",
+       "flessibile coibentato",
+       "280",
+       "2,5",
+       "2",
+       "3,5"
+      ],
+      [
+       "T03",
+       "PLZ-01 - B3",
+       "Ø200",
+       "flessibile coibentato",
+       "210",
+       "1,9",
+       "4,2",
+       "6"
+      ],
+      [
+       "T04",
+       "PLZ-01 - B4",
+       "Ø200",
+       "flessibile coibentato",
+       "275",
+       "2,4",
+       "2",
+       "3,5"
+      ],
+      [
+       "T05",
+       "PLZ-01 - B5",
+       "Ø200",
+       "flessibile coibentato",
+       "275",
+       "2,4",
+       "4,8",
+       "7"
+      ],
+      [
+       "T06",
+       "RA-01 - UI-01",
+       "1000×250",
+       "plenum di ripresa coibentato",
+       "1080",
+       "1,2",
+       "",
+       ""
+      ],
+      [
+       "T07",
+       "UE-01 - UI-01",
+       "Ø6,35 (1/4\")",
+       "Cu ricotto pre-isolato, isolamento min. 10 mm",
+       "",
+       "",
+       "8",
+       "12"
+      ],
+      [
+       "T08",
+       "UE-01 - UI-01",
+       "Ø12,7 (1/2\")",
+       "Cu ricotto pre-isolato, isolamento min. 13 mm",
+       "",
+       "",
+       "8",
+       "12"
+      ],
+      [
+       "T09",
+       "UI-01 - SIF-01 - AL-01",
+       "Ø32",
+       "PVC rigido, pendenza min. 1%",
+       "",
+       "",
+       "7,6",
+       "10"
+      ],
+      [
+       "T10",
+       "QE-01 - CZ-01",
+       "3G1,5",
+       "FG16OR16",
+       "",
+       "",
+       "12",
+       "15"
+      ],
+      [
+       "T11",
+       "QE-01 - SZ-01 - UE-01",
+       "3G2,5",
+       "FG16OR16",
+       "",
+       "",
+       "15",
+       "20"
+      ],
+      [
+       "T12",
+       "UE-01 - UI-01",
+       "4G1,5",
+       "a doppio isolamento",
+       "",
+       "",
+       "9",
+       "13"
+      ],
+      [
+       "T13",
+       "CZ-01 - TZ-01",
+       "bus Airzone, schermato",
+       "cavo di bus",
+       "",
+       "",
+       "6,5",
+       "9"
+      ],
+      [
+       "T14",
+       "CZ-01 - TZ-02",
+       "bus Airzone, schermato",
+       "cavo di bus",
+       "",
+       "",
+       "4,9",
+       "7"
+      ],
+      [
+       "T15",
+       "CZ-01 - TZ-03",
+       "bus Airzone, schermato",
+       "cavo di bus",
+       "",
+       "",
+       "5,2",
+       "7,5"
+      ],
+      [
+       "T16",
+       "CZ-01 - TZ-04",
+       "bus Airzone, schermato",
+       "cavo di bus",
+       "",
+       "",
+       "3,7",
+       "5,5"
+      ],
+      [
+       "T17",
+       "UI-01 - CF-01",
+       "2×0,75 (P1-P2)",
+       "cavo di bus",
+       "",
+       "",
+       "3,7",
+       "5,5"
+      ],
+      [
+       "T18",
+       "UI-01 - CZ-01",
+       "2×0,75 (P1-P2)",
+       "cavo di bus",
+       "",
+       "",
+       "1,5",
+       "5"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "computo",
+   "titolo": "COMPUTO DELLE QUANTITÀ E DEI PEZZI SPECIALI — quantità indicative per il prezzo a corpo, da verificare in sopralluogo (varianti e voci aggiunte: documento della distinta)",
+   "colonne": [
+    {
+     "id": "rif",
+     "titolo": "Rif.",
+     "allinea": "sinistra",
+     "peso": 0.5
+    },
+    {
+     "id": "voce",
+     "titolo": "Voce",
+     "allinea": "sinistra",
+     "peso": 6.0
+    },
+    {
+     "id": "um",
+     "titolo": "UM",
+     "allinea": "sinistra",
+     "peso": 0.7
+    },
+    {
+     "id": "quantita",
+     "titolo": "Q.tà",
+     "allinea": "destra",
+     "peso": 0.6
+    },
+    {
+     "id": "fornitura",
+     "titolo": "Fornitura",
+     "allinea": "sinistra",
+     "peso": 1.0
+    },
+    {
+     "id": "note",
+     "titolo": "Note",
+     "allinea": "sinistra",
+     "peso": 2.6
+    }
+   ],
+   "sezioni": [
+    {
+     "titolo": "A. Apparecchiature (posa dell'installatore; chi le fornisce: colonna Fornitura)",
+     "righe": [
+      [
+       "A.1",
+       "Unità esterna split a pompa di calore: Daikin RXM60A · 49 kg",
+       "n",
+       "1",
+       "Nove C",
+       "UE-01; 5,7 kW"
+      ],
+      [
+       "A.2",
+       "Unità interna canalizzata ad espansione diretta: Daikin FBA60A9 · 1000×800×245 mm · 35 kg",
+       "n",
+       "1",
+       "Nove C",
+       "UI-01; 5,7 kW; 1080 m³/h; pompa condensa a bordo"
+      ],
+      [
+       "A.3",
+       "Plenum motorizzato di zona a cinque serrande: Airzone Easyzone 5 × Ø200, es. AZEZ8DAIBS07M5 · 1425×250×454 mm",
+       "n",
+       "1",
+       "Nove C",
+       "PLZ-01; codice da confermare col distributore; comprende CZ-01 (Centrale di zona)"
+      ],
+      [
+       "A.4",
+       "Termostato di zona: Airzone Blueface",
+       "n",
+       "4",
+       "Nove C",
+       "TZ-01, TZ-02, TZ-03, TZ-04"
+      ],
+      [
+       "A.5",
+       "Comando a filo dell'unità: Daikin Madoka BRC1H52W",
+       "n",
+       "1",
+       "Nove C",
+       "CF-01"
+      ]
+     ]
+    },
+    {
+     "titolo": "B. Distribuzione aria",
+     "righe": [
+      [
+       "B.1",
+       "Condotto flessibile coibentato Ø200 (isolamento 25 mm, barriera vapore), confezione da 10 m",
+       "conf.",
+       "4",
+       "installatore",
+       "26 m in 5 tratti interi: 6 + 3,5 + 6 + 3,5 + 7 m"
+      ],
+      [
+       "B.2",
+       "Curva 90° Ø200 in lamiera zincata, all'uscita del plenum",
+       "n",
+       "5",
+       "installatore",
+       ""
+      ],
+      [
+       "B.3",
+       "Manicotto di giunzione Ø200",
+       "n",
+       "2",
+       "installatore",
+       ""
+      ],
+      [
+       "B.4",
+       "Fascetta di serraggio Ø200 (anima e mantello)",
+       "n",
+       "40",
+       "installatore",
+       ""
+      ],
+      [
+       "B.5",
+       "Nastro alluminio rinforzato 50 mm",
+       "rotolo",
+       "2",
+       "installatore",
+       ""
+      ],
+      [
+       "B.6",
+       "Sostegno per flessibile (fascia o collare con pendino), passo max. 1,2 m",
+       "n",
+       "27",
+       "installatore",
+       ""
+      ],
+      [
+       "B.7",
+       "Kit sospensione: barra filettata M10, tassello per solaio in laterocemento, antivibrante",
+       "n",
+       "10",
+       "installatore",
+       "UI-01 4, PLZ-01 4, RA-01 2"
+      ],
+      [
+       "B.8",
+       "Giunto antivibrante in tela fra unità interna e plenum di ripresa",
+       "n",
+       "1",
+       "installatore",
+       "UI-01"
+      ],
+      [
+       "B.9",
+       "Isolamento elastomerico adesivo per raccordi e plenum",
+       "rotolo",
+       "1",
+       "installatore",
+       "PLZ-01"
+      ],
+      [
+       "B.10",
+       "Plenum di ripresa coibentato con filtro ispezionabile, bocca 1000×250, sulla bocca di aspirazione dell'unità interna",
+       "n",
+       "1",
+       "installatore",
+       "RA-01"
+      ],
+      [
+       "B.11",
+       "Plenum porta-bocchetta coibentato per bocchetta 400×200, attacco Ø200 laterale o dall'alto",
+       "n",
+       "5",
+       "installatore",
+       "B1, B2, B3, B4, B5"
+      ]
+     ]
+    },
+    {
+     "titolo": "C. Circuito frigorifero e unità esterna",
+     "righe": [
+      [
+       "C.1",
+       "Tubo rame ricotto pre-isolato Ø6,35 (1/4\"), isolamento min. 10 mm, resistente a 120 °C",
+       "m",
+       "12",
+       "installatore",
+       "T07 stimati 8 m"
+      ],
+      [
+       "C.2",
+       "Manicotto a brasare Ø6,35 (1/4\") (riserva, posa in tratta unica)",
+       "n",
+       "2",
+       "installatore",
+       ""
+      ],
+      [
+       "C.3",
+       "Tubo rame ricotto pre-isolato Ø12,7 (1/2\"), isolamento min. 13 mm, resistente a 120 °C",
+       "m",
+       "12",
+       "installatore",
+       "T08 stimati 8 m"
+      ],
+      [
+       "C.4",
+       "Manicotto a brasare Ø12,7 (1/2\") (riserva, posa in tratta unica)",
+       "n",
+       "2",
+       "installatore",
+       ""
+      ],
+      [
+       "C.5",
+       "Nastro di finitura e manicotti isolanti per le giunzioni a cartella",
+       "kit",
+       "1",
+       "installatore",
+       ""
+      ],
+      [
+       "C.6",
+       "Collare di sostegno linee frigorifere in controsoffitto",
+       "n",
+       "10",
+       "installatore",
+       ""
+      ],
+      [
+       "C.7",
+       "Refrigerante R32, riserva per carica aggiuntiva",
+       "kg",
+       "0,2",
+       "installatore",
+       "precarica fino a 10 m; oltre, 20 g/m"
+      ],
+      [
+       "C.8",
+       "Canalina coprilinee esterna 80×60",
+       "m",
+       "4",
+       "installatore",
+       "UE-01"
+      ],
+      [
+       "C.9",
+       "Accessori canalina: curva 2, terminale a muro 1, giunto 2",
+       "kit",
+       "1",
+       "installatore",
+       "UE-01"
+      ],
+      [
+       "C.10",
+       "Staffe a parete per unità esterna, portata almeno doppia del peso della macchina, con antivibranti",
+       "kit",
+       "1",
+       "installatore",
+       "UE-01"
+      ],
+      [
+       "C.11",
+       "Scarico condensa dell'unità esterna (funziona anche in caldo): raccordo e tubo Ø16 fino a pluviale o pozzetto",
+       "m",
+       "4",
+       "installatore",
+       "UE-01"
+      ]
+     ]
+    },
+    {
+     "titolo": "D. Scarico condensa",
+     "righe": [
+      [
+       "D.1",
+       "Tubo PVC rigido Ø32",
+       "m",
+       "10",
+       "installatore",
+       "T09 stimati 7,6 m"
+      ],
+      [
+       "D.2",
+       "Curva 87°-90° Ø32",
+       "n",
+       "6",
+       "installatore",
+       ""
+      ],
+      [
+       "D.3",
+       "Manicotto Ø32",
+       "n",
+       "3",
+       "installatore",
+       ""
+      ],
+      [
+       "D.4",
+       "Collare per tubo condensa",
+       "n",
+       "10",
+       "installatore",
+       ""
+      ],
+      [
+       "D.5",
+       "Isolamento anticondensa 9 mm per il tubo della condensa",
+       "m",
+       "10",
+       "installatore",
+       "T09 stimati 7,6 m"
+      ],
+      [
+       "D.6",
+       "Collante e pulitore PVC",
+       "n",
+       "1",
+       "installatore",
+       ""
+      ],
+      [
+       "D.7",
+       "Raccordo di adattamento dall'attacco condensa dell'unità interna (VP20 (Øe 26)) al tubo di scarico, con fascetta",
+       "n",
+       "1",
+       "installatore",
+       "UI-01"
+      ],
+      [
+       "D.8",
+       "Sifone ispezionabile per condensa",
+       "n",
+       "1",
+       "installatore",
+       "SIF-01"
+      ],
+      [
+       "D.9",
+       "Innesto sullo scarico esistente (braga 45° o presa sul sifone di un apparecchio)",
+       "n",
+       "1",
+       "installatore",
+       "AL-01"
+      ]
+     ]
+    },
+    {
+     "titolo": "E. Elettrico, comando e regolazione",
+     "righe": [
+      [
+       "E.1",
+       "Cavo FG16OR16 3G1,5, Alimentazione centrale Airzone",
+       "m",
+       "15",
+       "installatore",
+       "T10 stimati 12 m"
+      ],
+      [
+       "E.2",
+       "Cavo FG16OR16 3G2,5, Alimentazione unita' esterna",
+       "m",
+       "20",
+       "installatore",
+       "T11 stimati 15 m"
+      ],
+      [
+       "E.3",
+       "Magnetotermico 1P+N C6, linea dedicata: Alimentazione centrale Airzone",
+       "n",
+       "1",
+       "installatore",
+       ""
+      ],
+      [
+       "E.4",
+       "Magnetotermico-differenziale 1P+N C16, Idn 30 mA, tipo A o F, 6 kA, linea dedicata: Alimentazione unita' esterna",
+       "n",
+       "1",
+       "installatore",
+       ""
+      ],
+      [
+       "E.5",
+       "Scatola di derivazione IP55",
+       "n",
+       "2",
+       "installatore",
+       ""
+      ],
+      [
+       "E.6",
+       "Tubo corrugato Ø25 per le linee di alimentazione",
+       "m",
+       "40",
+       "installatore",
+       ""
+      ],
+      [
+       "E.7",
+       "Cavo di collegamento 4G1,5 a doppio isolamento, Collegamento UI-UE",
+       "m",
+       "13",
+       "installatore",
+       "T12 stimati 9 m"
+      ],
+      [
+       "E.8",
+       "Cavo bus Airzone, schermato, Bus Airzone ai termostati",
+       "m",
+       "29",
+       "installatore",
+       "T13 stimati 6,5 m; T14 stimati 4,9 m; T15 stimati 5,2 m; T16 stimati 3,7 m"
+      ],
+      [
+       "E.9",
+       "Cavo 2×0,75 (P1-P2), Linea P1-P2 dell'unita' interna",
+       "m",
+       "10,5",
+       "installatore",
+       "T17 stimati 3,7 m; T18 stimati 1,5 m"
+      ],
+      [
+       "E.10",
+       "Tubo corrugato Ø20 per bus e linee di comando",
+       "m",
+       "40",
+       "installatore",
+       ""
+      ],
+      [
+       "E.11",
+       "Aggiornamento dello schema del quadro elettrico",
+       "a corpo",
+       "1",
+       "installatore",
+       "QE-01"
+      ],
+      [
+       "E.12",
+       "Sezionatore onnipolare di prossimità IP55, apertura contatti min. 3 mm",
+       "n",
+       "1",
+       "installatore",
+       "SZ-01"
+      ],
+      [
+       "E.13",
+       "Scatola 503 per termostati e comandi a parete",
+       "n",
+       "5",
+       "installatore",
+       "TZ-01, TZ-02, TZ-03, TZ-04, CF-01"
+      ]
+     ]
+    },
+    {
+     "titolo": "F. Assistenze murarie (aperture comprese)",
+     "righe": [
+      [
+       "F.1",
+       "Foratura di tramezza Ø250 (o vano 450×250) per flessibili e plenum di bocchetta",
+       "n",
+       "7",
+       "installatore",
+       "assunti 1 per T02, T04, T05 (attraversamenti non dati)"
+      ],
+      [
+       "F.2",
+       "Foratura di parete interna Ø80 per linee frigorifere e cavi",
+       "n",
+       "2",
+       "installatore",
+       ""
+      ],
+      [
+       "F.3",
+       "Foratura per lo scarico della condensa",
+       "n",
+       "1",
+       "installatore",
+       "assunto 1 per T09 (attraversamenti non dati)"
+      ],
+      [
+       "F.4",
+       "Carotaggio parete esterna Ø80 con guaina passante e sigillatura",
+       "n",
+       "1",
+       "installatore",
+       "UE-01"
+      ],
+      [
+       "F.5",
+       "Traccia per la condensa fino allo scarico",
+       "m",
+       "3",
+       "installatore",
+       "AL-01"
+      ],
+      [
+       "F.6",
+       "Tracce per le linee dal quadro al controsoffitto",
+       "m",
+       "5",
+       "installatore",
+       "QE-01"
+      ],
+      [
+       "F.7",
+       "Traccia per termostati e comandi a parete",
+       "n",
+       "5",
+       "installatore",
+       "TZ-01, TZ-02, TZ-03, TZ-04, CF-01"
+      ]
+     ]
+    },
+    {
+     "titolo": "Z. Opere del Committente (escluse dall'offerta, da coordinare)",
+     "righe": [
+      [
+       "Z.1",
+       "Velette o controsoffitti per le bocchette, altezza utile min. 30 cm",
+       "a corpo",
+       "1",
+       "committente",
+       ""
+      ],
+      [
+       "Z.2",
+       "Controsoffitto in zona unità interna e plenum: altezza libera min. 35 cm sotto il solaio",
+       "a corpo",
+       "1",
+       "committente",
+       "UI-01"
+      ],
+      [
+       "Z.3",
+       "Botola di ispezione min. 600×600 sotto la macchina (filtro, pompa, scheda)",
+       "n",
+       "2",
+       "committente",
+       "UI-01, PLZ-01"
+      ],
+      [
+       "Z.4",
+       "Griglia di ripresa 1000×250 senza filtro, apribile per accedere al filtro",
+       "n",
+       "1",
+       "committente",
+       "RA-01"
+      ],
+      [
+       "Z.5",
+       "Bocchetta di mandata 400×200 a doppio filare con serranda",
+       "n",
+       "5",
+       "committente",
+       "B1, B2, B3, B4, B5"
+      ],
+      [
+       "Z.6",
+       "Griglia di transito o luce sotto porta per il ritorno dell'aria dal locale servito",
+       "n",
+       "4",
+       "committente",
+       "Aeff min.: Camera 13 m² 0,05 m², Camera 15 m² 0,052 m², Camera 16 m² 0,039 m², Soggiorno-cucina 0,102 m²"
+      ],
+      [
+       "Z.7",
+       "Chiusura e ripristino di fori, tracce e passaggi",
+       "a corpo",
+       "1",
+       "committente",
+       ""
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "attivita",
+   "titolo": "G. ATTIVITÀ DA QUOTARE A CORPO (MANODOPERA, MEZZI, PROVE, DOCUMENTI)",
+   "colonne": [
+    {
+     "id": "rif",
+     "titolo": "Rif.",
+     "allinea": "sinistra",
+     "peso": 0.5
+    },
+    {
+     "id": "voce",
+     "titolo": "Attività",
+     "allinea": "sinistra",
+     "peso": 9.5
+    }
+   ],
+   "sezioni": [
+    {
+     "titolo": null,
+     "righe": [
+      [
+       "G.1",
+       "Posa dell'unità interna in controsoffitto su sospensioni antivibranti, con plenum di zona e plenum di ripresa."
+      ],
+      [
+       "G.2",
+       "Posa dell'unità esterna su staffe con antivibranti; canalina esterna e scarico condensa dell'unità esterna."
+      ],
+      [
+       "G.3",
+       "Linee frigorifere: posa e cartelle; prova di tenuta in azoto prima della chiusura del controsoffitto, circuito lasciato in pressione con manometro fino al secondo accesso, con verbale; vuoto, apertura rubinetti, eventuale carica, registrazione F-Gas."
+      ],
+      [
+       "G.4",
+       "Distribuzione aria: 5 rami flessibili con plenum porta-bocchetta, sostegni e sigillature; bocche protette fino alla posa delle bocchette."
+      ],
+      [
+       "G.5",
+       "Scarico condensa con sifone e allaccio allo scarico; prova di scarico e della pompa prima della chiusura del controsoffitto."
+      ],
+      [
+       "G.6",
+       "Linee elettriche dedicate dal quadro, collegamento fra le unità, linee di comando e bus; posa di termostati e comandi a parete."
+      ],
+      [
+       "G.7",
+       "Messa in servizio con Nove C, al secondo accesso: regolazione della prevalenza dell'unità interna e misura delle portate per zona, configurazione della zonizzazione e dei comandi, app; collaudo con verbale."
+      ],
+      [
+       "G.8",
+       "Dichiarazione di conformità D.M. 37/2008, art. 1 lettera a) (impianti elettrici), con lo schema del quadro aggiornato e gli allegati."
+      ],
+      [
+       "G.9",
+       "Dichiarazione di conformità D.M. 37/2008, art. 1 lettera c) (impianti di climatizzazione), con allegati; documenti per libretto di impianto, catasto regionale e F-Gas."
+      ],
+      [
+       "G.10",
+       "Cantiere: POS e oneri della sicurezza (presenza dell'impresa del Committente), trabattello e mezzi di sollevamento."
+      ],
+      [
+       "G.11",
+       "Trasporto, ricevimento e custodia delle apparecchiature fornite da Nove C fino al collaudo; protezioni delle macchine e delle bocche durante le opere edili."
+      ],
+      [
+       "G.12",
+       "Pulizia finale e smaltimento di imballi e residui di lavorazione."
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "note",
+   "titolo": "NOTE DELLA DISTINTA",
+   "colonne": [
+    {
+     "id": "n",
+     "titolo": "",
+     "allinea": "destra",
+     "peso": 0.3
+    },
+    {
+     "id": "nota",
+     "titolo": "",
+     "allinea": "sinistra",
+     "peso": 9.7
+    }
+   ],
+   "sezioni": [
+    {
+     "titolo": null,
+     "righe": [
+      [
+       "1.",
+       "«L da quotare» = (L stimata + 1 m) × 1,15, per eccesso a 0,5 m; minimi: fluido frigorigeno in fase liquida, fluido frigorigeno in fase gassosa 12 m; condensa 10 m; bus di comando 5 m; aria di mandata, aria di ripresa 2 m. La L stimata è un dato del progettista, scritta su ogni tratto."
+      ],
+      [
+       "2.",
+       "Quantità indicative per un prezzo a corpo, fisso e invariabile: l'installatore le verifica nel sopralluogo obbligatorio prima dell'offerta; le varianti hanno solo il prezzo unitario."
+      ],
+      [
+       "3.",
+       "Velocità nei tratti di aria di mandata da 1,9 a 2,5 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge)."
+      ],
+      [
+       "4.",
+       "Velocità nei tratti di aria di ripresa 1,2 m/s, sulla sezione lorda, dalle portate e dalle sezioni del progettista (verifica: segnala, non corregge)."
+      ],
+      [
+       "5.",
+       "Fornitura da confermare: apparecchiature fornite da Nove C; bocchette e griglie, opere edili del Committente; messa in servizio con Nove C."
+      ],
+      [
+       "6.",
+       "La distinta non progetta: lunghezze, sezioni, portate, protezioni, marca e modello sono dati del progettista; la distinta li maggiora e ne conta il corredo con regole scritte, ciascuna con la sua fonte (regole 05a61bb20ef686d8)."
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}
