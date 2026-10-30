@@ -553,7 +553,7 @@ $SPLINESEGS
   9
 $HANDSEED
   5
-2BD
+2C0
   9
 $SURFTAB1
  70
@@ -2225,7 +2225,7 @@ AcAecLayerStandard
   0
 APPID
   5
-2BA
+2BD
 330
 3
 100
@@ -2239,7 +2239,7 @@ HATCHBACKGROUNDCOLOR
   0
 APPID
   5
-2BB
+2BE
 330
 3
 100
@@ -11453,38 +11453,6 @@ M-ANNO-IDEN
 100
 AcDbText
  10
-62.5
- 20
-222.5
- 30
-0.0
- 40
-2.1844
-  1
-PDC-01
-  7
-NOVEC_ARIAL
- 11
-62.5
- 21
-222.5
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-225
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-IDEN
-100
-AcDbText
- 10
 137.5
  20
 102.5
@@ -11507,7 +11475,7 @@ AcDbText
   0
 TEXT
   5
-226
+225
 330
 17
 100
@@ -11539,7 +11507,7 @@ AcDbText
   0
 TEXT
   5
-227
+226
 330
 17
 100
@@ -11551,25 +11519,49 @@ AcDbText
  10
 250.0
  20
-113.82499999999999
+206.325
  30
 0.0
  40
 2.1844
   1
-AF-03
+CIR-01
   7
 NOVEC_ARIAL
  11
 250.0
  21
-113.82499999999999
+206.325
  31
 0.0
 100
 AcDbText
   0
-TEXT
+LINE
+  5
+227
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-IDEN
+100
+AcDbLine
+ 10
+192.5
+ 20
+221.0
+ 30
+0.0
+ 11
+197.5
+ 21
+226.0
+ 31
+0.0
+  0
+LINE
   5
 228
 330
@@ -11579,29 +11571,21 @@ AcDbEntity
   8
 M-ANNO-IDEN
 100
-AcDbText
+AcDbLine
  10
-275.0
+197.5
  20
-150.0
+226.0
  30
 0.0
- 40
-2.1844
-  1
-ACS-01
-  7
-NOVEC_ARIAL
  11
-275.0
+202.5
  21
-150.0
+226.0
  31
 0.0
-100
-AcDbText
   0
-TEXT
+SOLID
   5
 229
 330
@@ -11611,27 +11595,31 @@ AcDbEntity
   8
 M-ANNO-IDEN
 100
-AcDbText
+AcDbTrace
  10
-239.0
+192.5
  20
-193.2375
+221.0
  30
 0.0
- 40
-2.1844
-  1
-VOL-01
-  7
-NOVEC_ARIAL
  11
-239.0
+193.5607
  21
-193.2375
+222.7678
  31
 0.0
-100
-AcDbText
+ 12
+194.2678
+ 22
+222.0607
+ 32
+0.0
+ 13
+194.2678
+ 23
+222.0607
+ 33
+0.0
   0
 TEXT
   5
@@ -11645,41 +11633,9 @@ M-ANNO-IDEN
 100
 AcDbText
  10
-307.5
+203.25
  20
-215.0
- 30
-0.0
- 40
-2.1844
-  1
-VC-01
-  7
-NOVEC_ARIAL
- 11
-307.5
- 21
-215.0
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-22B
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-IDEN
-100
-AcDbText
- 10
-182.5
- 20
-222.5
+224.88875000000002
  30
 0.0
  40
@@ -11689,9 +11645,9 @@ VD-01
   7
 NOVEC_ARIAL
  11
-182.5
+203.25
  21
-222.5
+224.88875000000002
  31
 0.0
 100
@@ -11699,135 +11655,7 @@ AcDbText
   0
 TEXT
   5
-22C
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-IDEN
-100
-AcDbText
- 10
-275.0
- 20
-176.325
- 30
-0.0
- 40
-2.1844
-  1
-SO-02
-  7
-NOVEC_ARIAL
- 11
-275.0
- 21
-176.325
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-22D
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-IDEN
-100
-AcDbText
- 10
-284.0
- 20
-184.4125
- 30
-0.0
- 40
-2.1844
-  1
-ritorno
-  7
-NOVEC_ARIAL
- 11
-284.0
- 21
-184.4125
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-22E
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-IDEN
-100
-AcDbText
- 10
-275.0
- 20
-237.5
- 30
-0.0
- 40
-2.1844
-  1
-SO-01
-  7
-NOVEC_ARIAL
- 11
-275.0
- 21
-237.5
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-22F
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-IDEN
-100
-AcDbText
- 10
-284.0
- 20
-229.4125
- 30
-0.0
- 40
-2.1844
-  1
-mandata
-  7
-NOVEC_ARIAL
- 11
-284.0
- 21
-229.4125
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-230
+22B
 330
 17
 100
@@ -11859,7 +11687,7 @@ AcDbText
   0
 TEXT
   5
-231
+22C
 330
 17
 100
@@ -11891,7 +11719,7 @@ AcDbText
   0
 TEXT
   5
-232
+22D
 330
 17
 100
@@ -11903,17 +11731,49 @@ AcDbText
  10
 250.0
  20
+113.82499999999999
+ 30
+0.0
+ 40
+2.1844
+  1
+AF-03
+  7
+NOVEC_ARIAL
+ 11
+250.0
+ 21
+113.82499999999999
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+22E
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-IDEN
+100
+AcDbText
+ 10
+62.5
+ 20
 222.5
  30
 0.0
  40
 2.1844
   1
-CIR-01
+PDC-01
   7
 NOVEC_ARIAL
  11
-250.0
+62.5
  21
 222.5
  31
@@ -11921,9 +11781,233 @@ NOVEC_ARIAL
 100
 AcDbText
   0
-LWPOLYLINE
+TEXT
+  5
+22F
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-IDEN
+100
+AcDbText
+ 10
+284.0
+ 20
+229.4125
+ 30
+0.0
+ 40
+2.1844
+  1
+SO-01
+  7
+NOVEC_ARIAL
+ 11
+284.0
+ 21
+229.4125
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+230
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-IDEN
+100
+AcDbText
+ 10
+263.646075
+ 20
+229.4125
+ 30
+0.0
+ 40
+2.1844
+  1
+mandata
+  7
+NOVEC_ARIAL
+ 11
+263.646075
+ 21
+229.4125
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+231
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-IDEN
+100
+AcDbText
+ 10
+284.0
+ 20
+184.4125
+ 30
+0.0
+ 40
+2.1844
+  1
+SO-02
+  7
+NOVEC_ARIAL
+ 11
+284.0
+ 21
+184.4125
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+232
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-IDEN
+100
+AcDbText
+ 10
+267.00205
+ 20
+184.4125
+ 30
+0.0
+ 40
+2.1844
+  1
+ritorno
+  7
+NOVEC_ARIAL
+ 11
+267.00205
+ 21
+184.4125
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
   5
 233
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-IDEN
+100
+AcDbText
+ 10
+275.0
+ 20
+150.0
+ 30
+0.0
+ 40
+2.1844
+  1
+ACS-01
+  7
+NOVEC_ARIAL
+ 11
+275.0
+ 21
+150.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+234
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-IDEN
+100
+AcDbText
+ 10
+307.5
+ 20
+215.0
+ 30
+0.0
+ 40
+2.1844
+  1
+VC-01
+  7
+NOVEC_ARIAL
+ 11
+307.5
+ 21
+215.0
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+235
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-IDEN
+100
+AcDbText
+ 10
+239.0
+ 20
+193.2375
+ 30
+0.0
+ 40
+2.1844
+  1
+VOL-01
+  7
+NOVEC_ARIAL
+ 11
+239.0
+ 21
+193.2375
+ 31
+0.0
+100
+AcDbText
+  0
+LWPOLYLINE
+  5
+236
 330
 17
 100
@@ -11955,7 +12039,7 @@ AcDbPolyline
   0
 INSERT
   5
-234
+237
 330
 17
 100
@@ -11977,7 +12061,7 @@ NoveC_AirVentWithValve
   0
 TEXT
   5
-236
+239
 330
 17
 100
@@ -12009,7 +12093,7 @@ AcDbText
   0
 TEXT
   5
-237
+23A
 330
 17
 100
@@ -12041,7 +12125,7 @@ AcDbText
   0
 INSERT
   5
-238
+23B
 330
 17
 100
@@ -12067,7 +12151,7 @@ NoveC_BufferFourPort
   0
 TEXT
   5
-23A
+23D
 330
 17
 100
@@ -12099,7 +12183,7 @@ AcDbText
   0
 TEXT
   5
-23B
+23E
 330
 17
 100
@@ -12131,7 +12215,7 @@ AcDbText
   0
 INSERT
   5
-23C
+23F
 330
 17
 100
@@ -12157,7 +12241,7 @@ NoveC_DhwCylinder
   0
 TEXT
   5
-23E
+241
 330
 17
 100
@@ -12189,7 +12273,7 @@ AcDbText
   0
 INSERT
   5
-23F
+242
 330
 17
 100
@@ -12215,7 +12299,7 @@ NoveC_DhwSafetyGroup
   0
 TEXT
   5
-241
+244
 330
 17
 100
@@ -12247,7 +12331,7 @@ AcDbText
   0
 TEXT
   5
-242
+245
 330
 17
 100
@@ -12279,7 +12363,7 @@ AcDbText
   0
 INSERT
   5
-243
+246
 330
 17
 100
@@ -12305,7 +12389,7 @@ NoveC_DirtSeparator
   0
 TEXT
   5
-245
+248
 330
 17
 100
@@ -12337,7 +12421,7 @@ AcDbText
   0
 INSERT
   5
-246
+249
 330
 17
 100
@@ -12363,7 +12447,7 @@ NoveC_DivertingValve3way
   0
 TEXT
   5
-248
+24B
 330
 17
 100
@@ -12395,7 +12479,7 @@ AcDbText
   0
 TEXT
   5
-249
+24C
 330
 17
 100
@@ -12427,7 +12511,7 @@ AcDbText
   0
 INSERT
   5
-24A
+24D
 330
 17
 100
@@ -12453,7 +12537,7 @@ NoveC_DrainConnection
   0
 TEXT
   5
-24C
+24F
 330
 17
 100
@@ -12485,7 +12569,7 @@ AcDbText
   0
 INSERT
   5
-24D
+250
 330
 17
 100
@@ -12511,7 +12595,7 @@ NoveC_ExpansionConnection
   0
 TEXT
   5
-24F
+252
 330
 17
 100
@@ -12543,7 +12627,7 @@ AcDbText
   0
 INSERT
   5
-250
+253
 330
 17
 100
@@ -12569,7 +12653,7 @@ NoveC_FanCoil
   0
 TEXT
   5
-252
+255
 330
 17
 100
@@ -12601,7 +12685,7 @@ AcDbText
   0
 INSERT
   5
-253
+256
 330
 17
 100
@@ -12627,7 +12711,7 @@ NoveC_FillingUnit
   0
 TEXT
   5
-255
+258
 330
 17
 100
@@ -12659,7 +12743,7 @@ AcDbText
   0
 INSERT
   5
-256
+259
 330
 17
 100
@@ -12685,7 +12769,7 @@ NoveC_HeatPumpAirWater
   0
 TEXT
   5
-258
+25B
 330
 17
 100
@@ -12717,7 +12801,7 @@ AcDbText
   0
 TEXT
   5
-259
+25C
 330
 17
 100
@@ -12749,7 +12833,7 @@ AcDbText
   0
 INSERT
   5
-25A
+25D
 330
 17
 100
@@ -12775,7 +12859,7 @@ NoveC_MixingValveThermostatic
   0
 TEXT
   5
-25C
+25F
 330
 17
 100
@@ -12807,7 +12891,7 @@ AcDbText
   0
 TEXT
   5
-25D
+260
 330
 17
 100
@@ -12839,7 +12923,7 @@ AcDbText
   0
 INSERT
   5
-25E
+261
 330
 17
 100
@@ -12861,7 +12945,7 @@ NoveC_NetworkBoundary
   0
 INSERT
   5
-260
+263
 330
 17
 100
@@ -12883,7 +12967,7 @@ NoveC_FlowArrow
   0
 TEXT
   5
-262
+265
 330
 17
 100
@@ -12915,7 +12999,7 @@ AcDbText
   0
 INSERT
   5
-263
+266
 330
 17
 100
@@ -12941,7 +13025,7 @@ NoveC_PressureGauge
   0
 INSERT
   5
-265
+268
 330
 17
 100
@@ -12967,7 +13051,7 @@ NoveC_PressureGauge_Lettera
   0
 TEXT
   5
-267
+26A
 330
 17
 100
@@ -12999,7 +13083,7 @@ AcDbText
   0
 INSERT
   5
-268
+26B
 330
 17
 100
@@ -13025,7 +13109,7 @@ NoveC_PumpCirculator
   0
 TEXT
   5
-26A
+26D
 330
 17
 100
@@ -13057,7 +13141,7 @@ AcDbText
   0
 INSERT
   5
-26B
+26E
 330
 17
 100
@@ -13079,7 +13163,7 @@ NoveC_Strainer
   0
 TEXT
   5
-26D
+270
 330
 17
 100
@@ -13111,7 +13195,7 @@ AcDbText
   0
 INSERT
   5
-26E
+271
 330
 17
 100
@@ -13133,7 +13217,7 @@ NoveC_TeeBranch
   0
 TEXT
   5
-270
+273
 330
 17
 100
@@ -13165,7 +13249,7 @@ AcDbText
   0
 INSERT
   5
-271
+274
 330
 17
 100
@@ -13187,7 +13271,7 @@ NoveC_TeeJunction
   0
 TEXT
   5
-273
+276
 330
 17
 100
@@ -13219,7 +13303,7 @@ AcDbText
   0
 INSERT
   5
-274
+277
 330
 17
 100
@@ -13245,7 +13329,7 @@ NoveC_TemperatureProbe
   0
 TEXT
   5
-276
+279
 330
 17
 100
@@ -13277,7 +13361,7 @@ AcDbText
   0
 INSERT
   5
-277
+27A
 330
 17
 100
@@ -13299,7 +13383,7 @@ NoveC_ValveGaugeCock3way
   0
 TEXT
   5
-279
+27C
 330
 17
 100
@@ -13331,7 +13415,7 @@ AcDbText
   0
 TEXT
   5
-27A
+27D
 330
 17
 100
@@ -13363,7 +13447,7 @@ AcDbText
   0
 INSERT
   5
-27B
+27E
 330
 17
 100
@@ -13385,7 +13469,7 @@ NoveC_ValveIsolation
   0
 TEXT
   5
-27D
+280
 330
 17
 100
@@ -13417,7 +13501,7 @@ AcDbText
   0
 INSERT
   5
-27E
+281
 330
 17
 100
@@ -13443,7 +13527,7 @@ NoveC_ValveSafety
   0
 TEXT
   5
-280
+283
 330
 17
 100
@@ -13475,7 +13559,7 @@ AcDbText
   0
 LINE
   5
-281
+284
 330
 17
 100
@@ -13507,7 +13591,7 @@ AcDbLine
   0
 TEXT
   5
-282
+285
 330
 17
 100
@@ -13539,7 +13623,7 @@ AcDbText
   0
 TEXT
   5
-283
+286
 330
 17
 100
@@ -13571,7 +13655,7 @@ AcDbText
   0
 LINE
   5
-284
+287
 330
 17
 100
@@ -13603,7 +13687,7 @@ AcDbLine
   0
 TEXT
   5
-285
+288
 330
 17
 100
@@ -13635,7 +13719,7 @@ AcDbText
   0
 TEXT
   5
-286
+289
 330
 17
 100
@@ -13667,7 +13751,7 @@ AcDbText
   0
 LINE
   5
-287
+28A
 330
 17
 100
@@ -13699,7 +13783,7 @@ AcDbLine
   0
 TEXT
   5
-288
+28B
 330
 17
 100
@@ -13731,7 +13815,7 @@ AcDbText
   0
 TEXT
   5
-289
+28C
 330
 17
 100
@@ -13763,7 +13847,7 @@ AcDbText
   0
 LINE
   5
-28A
+28D
 330
 17
 100
@@ -13795,7 +13879,7 @@ AcDbLine
   0
 TEXT
   5
-28B
+28E
 330
 17
 100
@@ -13827,7 +13911,7 @@ AcDbText
   0
 TEXT
   5
-28C
+28F
 330
 17
 100
@@ -13859,7 +13943,7 @@ AcDbText
   0
 TEXT
   5
-28D
+290
 330
 17
 100
@@ -13891,7 +13975,7 @@ AcDbText
   0
 TEXT
   5
-28E
+291
 330
 17
 100
@@ -13923,78 +14007,6 @@ AcDbText
   0
 LINE
   5
-28F
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbLine
- 10
-10.0
- 20
-281.0
- 30
-0.0
- 11
-147.5
- 21
-281.0
- 31
-0.0
-  0
-LINE
-  5
-290
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbLine
- 10
-10.0
- 20
-274.75
- 30
-0.0
- 11
-147.5
- 21
-274.75
- 31
-0.0
-  0
-LINE
-  5
-291
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbLine
- 10
-10.0
- 20
-268.5
- 30
-0.0
- 11
-147.5
- 21
-268.5
- 31
-0.0
-  0
-LINE
-  5
 292
 330
 17
@@ -14007,13 +14019,13 @@ AcDbLine
  10
 10.0
  20
-262.25
+281.0
  30
 0.0
  11
 147.5
  21
-262.25
+281.0
  31
 0.0
   0
@@ -14031,13 +14043,13 @@ AcDbLine
  10
 10.0
  20
-256.0
+274.75
  30
 0.0
  11
 147.5
  21
-256.0
+274.75
  31
 0.0
   0
@@ -14055,13 +14067,13 @@ AcDbLine
  10
 10.0
  20
-249.75
+268.5
  30
 0.0
  11
 147.5
  21
-249.75
+268.5
  31
 0.0
   0
@@ -14079,13 +14091,13 @@ AcDbLine
  10
 10.0
  20
-243.5
+262.25
  30
 0.0
  11
 147.5
  21
-243.5
+262.25
  31
 0.0
   0
@@ -14103,13 +14115,13 @@ AcDbLine
  10
 10.0
  20
-281.0
+256.0
  30
 0.0
  11
-10.0
+147.5
  21
-243.5
+256.0
  31
 0.0
   0
@@ -14125,15 +14137,15 @@ M-ANNO-SCHD
 100
 AcDbLine
  10
-27.5
+10.0
  20
-281.0
+249.75
  30
 0.0
  11
-27.5
+147.5
  21
-243.5
+249.75
  31
 0.0
   0
@@ -14149,13 +14161,13 @@ M-ANNO-SCHD
 100
 AcDbLine
  10
-77.5
+10.0
  20
-281.0
+243.5
  30
 0.0
  11
-77.5
+147.5
  21
 243.5
  31
@@ -14173,6 +14185,78 @@ M-ANNO-SCHD
 100
 AcDbLine
  10
+10.0
+ 20
+281.0
+ 30
+0.0
+ 11
+10.0
+ 21
+243.5
+ 31
+0.0
+  0
+LINE
+  5
+29A
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbLine
+ 10
+27.5
+ 20
+281.0
+ 30
+0.0
+ 11
+27.5
+ 21
+243.5
+ 31
+0.0
+  0
+LINE
+  5
+29B
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbLine
+ 10
+77.5
+ 20
+281.0
+ 30
+0.0
+ 11
+77.5
+ 21
+243.5
+ 31
+0.0
+  0
+LINE
+  5
+29C
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbLine
+ 10
 112.5
  20
 281.0
@@ -14187,7 +14271,7 @@ AcDbLine
   0
 LINE
   5
-29A
+29D
 330
 17
 100
@@ -14211,7 +14295,7 @@ AcDbLine
   0
 LINE
   5
-29B
+29E
 330
 17
 100
@@ -14235,7 +14319,7 @@ AcDbLine
   0
 TEXT
   5
-29C
+29F
 330
 17
 100
@@ -14267,7 +14351,7 @@ AcDbText
   0
 TEXT
   5
-29D
+2A0
 330
 17
 100
@@ -14299,7 +14383,7 @@ AcDbText
   0
 TEXT
   5
-29E
+2A1
 330
 17
 100
@@ -14331,7 +14415,7 @@ AcDbText
   0
 TEXT
   5
-29F
+2A2
 330
 17
 100
@@ -14363,7 +14447,7 @@ AcDbText
   0
 TEXT
   5
-2A0
+2A3
 330
 17
 100
@@ -14395,7 +14479,7 @@ AcDbText
   0
 TEXT
   5
-2A1
+2A4
 330
 17
 100
@@ -14427,7 +14511,7 @@ AcDbText
   0
 TEXT
   5
-2A2
+2A5
 330
 17
 100
@@ -14459,103 +14543,103 @@ AcDbText
   0
 TEXT
   5
-2A3
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-79.0
- 20
-270.51375
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-79.0
- 21
-270.51375
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-2A4
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-114.0
- 20
-270.51375
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-114.0
- 21
-270.51375
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-2A5
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-129.0
- 20
-270.51375
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-129.0
- 21
-270.51375
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
 2A6
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+79.0
+ 20
+270.51375
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+79.0
+ 21
+270.51375
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2A7
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+114.0
+ 20
+270.51375
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+114.0
+ 21
+270.51375
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2A8
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+129.0
+ 20
+270.51375
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+129.0
+ 21
+270.51375
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2A9
 330
 17
 100
@@ -14587,7 +14671,7 @@ AcDbText
   0
 TEXT
   5
-2A7
+2AA
 330
 17
 100
@@ -14619,103 +14703,103 @@ AcDbText
   0
 TEXT
   5
-2A8
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-79.0
- 20
-264.26375
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-79.0
- 21
-264.26375
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-2A9
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-114.0
- 20
-264.26375
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-114.0
- 21
-264.26375
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-2AA
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-129.0
- 20
-264.26375
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-129.0
- 21
-264.26375
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
 2AB
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+79.0
+ 20
+264.26375
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+79.0
+ 21
+264.26375
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2AC
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+114.0
+ 20
+264.26375
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+114.0
+ 21
+264.26375
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2AD
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+129.0
+ 20
+264.26375
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+129.0
+ 21
+264.26375
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2AE
 330
 17
 100
@@ -14747,7 +14831,7 @@ AcDbText
   0
 TEXT
   5
-2AC
+2AF
 330
 17
 100
@@ -14779,103 +14863,103 @@ AcDbText
   0
 TEXT
   5
-2AD
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-79.0
- 20
-258.01375
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-79.0
- 21
-258.01375
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-2AE
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-114.0
- 20
-258.01375
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-114.0
- 21
-258.01375
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-2AF
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-129.0
- 20
-258.01375
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-129.0
- 21
-258.01375
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
 2B0
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+79.0
+ 20
+258.01375
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+79.0
+ 21
+258.01375
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2B1
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+114.0
+ 20
+258.01375
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+114.0
+ 21
+258.01375
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2B2
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+129.0
+ 20
+258.01375
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+129.0
+ 21
+258.01375
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2B3
 330
 17
 100
@@ -14907,7 +14991,7 @@ AcDbText
   0
 TEXT
   5
-2B1
+2B4
 330
 17
 100
@@ -14939,103 +15023,103 @@ AcDbText
   0
 TEXT
   5
-2B2
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-79.0
- 20
-251.76375000000002
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-79.0
- 21
-251.76375000000002
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-2B3
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-114.0
- 20
-251.76375000000002
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-114.0
- 21
-251.76375000000002
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
-2B4
-330
-17
-100
-AcDbEntity
-  8
-M-ANNO-SCHD
-100
-AcDbText
- 10
-129.0
- 20
-251.76375000000002
- 30
-0.0
- 40
-2.1844
-  1
-–
-  7
-NOVEC_ARIAL
- 11
-129.0
- 21
-251.76375000000002
- 31
-0.0
-100
-AcDbText
-  0
-TEXT
-  5
 2B5
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+79.0
+ 20
+251.76375000000002
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+79.0
+ 21
+251.76375000000002
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2B6
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+114.0
+ 20
+251.76375000000002
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+114.0
+ 21
+251.76375000000002
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2B7
+330
+17
+100
+AcDbEntity
+  8
+M-ANNO-SCHD
+100
+AcDbText
+ 10
+129.0
+ 20
+251.76375000000002
+ 30
+0.0
+ 40
+2.1844
+  1
+–
+  7
+NOVEC_ARIAL
+ 11
+129.0
+ 21
+251.76375000000002
+ 31
+0.0
+100
+AcDbText
+  0
+TEXT
+  5
+2B8
 330
 17
 100
@@ -15067,7 +15151,7 @@ AcDbText
   0
 TEXT
   5
-2B6
+2B9
 330
 17
 100
@@ -15099,7 +15183,7 @@ AcDbText
   0
 TEXT
   5
-2B7
+2BA
 330
 17
 100
@@ -15131,7 +15215,7 @@ AcDbText
   0
 TEXT
   5
-2B8
+2BB
 330
 17
 100
@@ -15163,7 +15247,7 @@ AcDbText
   0
 TEXT
   5
-2B9
+2BC
 330
 17
 100
@@ -18141,7 +18225,7 @@ CREATED_BY_EZDXF
   3
 WRITTEN_BY_EZDXF
 350
-2BC
+2BF
   0
 DICTIONARYVAR
   5
@@ -18365,7 +18449,7 @@ AcDbRasterImageDefReactor
   0
 DICTIONARYVAR
   5
-2BC
+2BF
 330
 2D
 100

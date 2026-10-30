@@ -200,20 +200,38 @@ def _on_stretch(before: Point, after: Point, point: Point) -> bool:
 
 
 def _hoppable(before: Point, after: Point, point: Point) -> bool:
-    """Vero se su questo tratto **verticale** l'archetto ci sta per intero.
+    """Vero se su questo tratto l'archetto ci sta per intero.
 
     «Un incrocio che cade su una piega non si scavalca — un archetto su un
     angolo non si legge» (D-079). Vale anche per un capo di spezzata: da un
     lato l'archetto non avrebbe linea da scavalcare.
+
+    Il tratto e' quasi sempre **verticale**: a scavallare e' la verticale. Fa
+    eccezione il cavo orizzontale che incrocia un tubo verticale (REL-015, I-231):
+    il tubo resta intero, e scavalca il cavo (`sheet_marks`).
     """
-    if abs(before.x_mm - after.x_mm) > TOLERANCE_MM:
-        return False
     if not _on_stretch(before, after, point):
         return False
-    low, high = min(before.y_mm, after.y_mm), max(before.y_mm, after.y_mm)
+    if abs(before.x_mm - after.x_mm) <= TOLERANCE_MM:
+        low, high, here = min(before.y_mm, after.y_mm), max(before.y_mm, after.y_mm), point.y_mm
+    elif abs(before.y_mm - after.y_mm) <= TOLERANCE_MM:
+        low, high, here = min(before.x_mm, after.x_mm), max(before.x_mm, after.x_mm), point.x_mm
+    else:
+        return False
     return (
-        point.y_mm - low >= CROSSING_ARC_RADIUS_MM - TOLERANCE_MM
-        and high - point.y_mm >= CROSSING_ARC_RADIUS_MM - TOLERANCE_MM
+        here - low >= CROSSING_ARC_RADIUS_MM - TOLERANCE_MM
+        and high - here >= CROSSING_ARC_RADIUS_MM - TOLERANCE_MM
+    )
+
+
+def _scavallo_orizzontale(segment: list[Point], point: Point) -> bool:
+    """Vero se l'archetto della spezzata in quel punto sta su un suo tratto
+    orizzontale: e' il cavo che scavalca un tubo (REL-015)."""
+    return any(
+        abs(before.y_mm - after.y_mm) <= TOLERANCE_MM
+        and abs(before.x_mm - after.x_mm) > TOLERANCE_MM
+        and _hoppable(before, after, point)
+        for before, after in zip(segment, segment[1:], strict=False)
     )
 
 
@@ -321,7 +339,11 @@ def sheet_marks(sheet: SheetGeometry) -> SheetMarks:
             vertical = [index for index, kind in enumerate(kinds) if kind == "vertical"]
             horizontal = any(kind == "horizontal" for kind in kinds)
             if vertical and horizontal:
-                hops.append(Mark(route_index=vertical[0], at=point))
+                chi = _chi_scavalca(sheet.routes, kinds, vertical, point)
+                if chi is None:
+                    on_bends += 1
+                else:
+                    hops.append(Mark(route_index=chi, at=point))
             elif any(kind == "corner" for kind in kinds):
                 on_bends += 1
             else:
@@ -336,6 +358,44 @@ def sheet_marks(sheet: SheetGeometry) -> SheetMarks:
     )
 
 
+def _chi_scavalca(
+    routes: list[RoutedTrunk], kinds: list[str | None], vertical: list[int], point: Point
+) -> int | None:
+    """Quale tratta scavalca a un incrocio: **la verticale** (D-079), e un cavo mai
+    a spese di un tubo (REL-015, I-231).
+
+    Il PO: «Non vorrei che le linee elettriche facciano spostare le linee
+    idrauliche». Un tubo verticale che scavallasse un cavo si spezzerebbe per un cavo:
+    sulla tavola unica avrebbe un archetto che sulla tavola idraulica non c'e'. Allora:
+
+    - se c'e' un cavo verticale, scavalca il cavo;
+    - se le verticali sono tutte d'acqua e l'orizzontale e' un cavo, scavalca il cavo
+      **in orizzontale** — l'archetto che scavalca, girato. *Proposta della sessione*:
+      il segno lo giudica il PO. Se il cavo li' non ha posto per l'archetto, non
+      scavalca nessuno (`None`);
+    - fra tubi, o fra cavi, la regola di sempre.
+
+    Su una tavola senza cavi la risposta e' sempre la prima verticale: le tavole
+    idroniche non cambiano."""
+    from disegnatore_mep.layout.fluidi import FLUIDI_DEL_COMANDO
+
+    def del_comando(indice: int) -> bool:
+        return routes[indice].medium in FLUIDI_DEL_COMANDO
+
+    cavi_verticali = [indice for indice in vertical if del_comando(indice)]
+    if cavi_verticali:
+        return cavi_verticali[0]
+    orizzontali = [indice for indice, kind in enumerate(kinds) if kind == "horizontal"]
+    if not any(del_comando(indice) for indice in orizzontali):
+        return vertical[0]
+    if any(not del_comando(indice) for indice in orizzontali):
+        return vertical[0]
+    for indice in orizzontali:
+        if any(_scavallo_orizzontale(segment, point) for segment in routes[indice].segments):
+            return indice
+    return None
+
+
 def _interrupted(polyline: list[Point], hops: list[Point]) -> list[list[Point]]:
     """La spezzata interrotta a ogni scavallo: l'archetto prende il posto del tratto.
 
@@ -347,29 +407,54 @@ def _interrupted(polyline: list[Point], hops: list[Point]) -> list[list[Point]]:
     current: list[Point] = [polyline[0]]
     for before, after in zip(polyline, polyline[1:], strict=False):
         here = [point for point in hops if _hoppable(before, after, point)]
-        way = 1.0 if after.y_mm >= before.y_mm else -1.0
-        here.sort(key=lambda point: point.y_mm * way)
-        for point in here:
-            current.append(
-                Point(x_mm=point.x_mm, y_mm=point.y_mm - CROSSING_ARC_RADIUS_MM * way)
-            )
-            pieces.append(current)
-            current = [
-                Point(x_mm=point.x_mm, y_mm=point.y_mm + CROSSING_ARC_RADIUS_MM * way)
-            ]
+        if abs(before.x_mm - after.x_mm) <= TOLERANCE_MM:
+            way = 1.0 if after.y_mm >= before.y_mm else -1.0
+            here.sort(key=lambda point: point.y_mm * way)
+            for point in here:
+                current.append(
+                    Point(x_mm=point.x_mm, y_mm=point.y_mm - CROSSING_ARC_RADIUS_MM * way)
+                )
+                pieces.append(current)
+                current = [
+                    Point(x_mm=point.x_mm, y_mm=point.y_mm + CROSSING_ARC_RADIUS_MM * way)
+                ]
+        else:
+            # Il cavo orizzontale che scavalca un tubo (REL-015).
+            way = 1.0 if after.x_mm >= before.x_mm else -1.0
+            here.sort(key=lambda point: point.x_mm * way)
+            for point in here:
+                current.append(
+                    Point(x_mm=point.x_mm - CROSSING_ARC_RADIUS_MM * way, y_mm=point.y_mm)
+                )
+                pieces.append(current)
+                current = [
+                    Point(x_mm=point.x_mm + CROSSING_ARC_RADIUS_MM * way, y_mm=point.y_mm)
+                ]
         current.append(after)
     pieces.append(current)
     return [piece for piece in pieces if len(piece) >= 2]
 
 
-def _hop_arc(point: Point, colour: str, width_mm: float) -> str:
-    """L'archetto che scavalca, sempre sulla verticale e sempre verso destra.
+def _hop_arc(point: Point, colour: str, width_mm: float, orizzontale: bool = False) -> str:
+    """L'archetto che scavalca, sulla verticale e verso destra.
 
     Il verso della gobba e' una convenzione, e come tale e' fissa: due scavalli
     che si gonfiano da parti diverse sulla stessa tavola si leggono come due
     segni diversi. Il tratteggio del fluido non si applica — un archetto lungo
     due millimetri e mezzo, tratteggiato, sparisce.
+
+    `orizzontale`: il cavo che scavalca un tubo verticale (REL-015, I-231), con la
+    gobba verso l'alto. *Proposta della sessione*, da giudicare sulla tavola.
     """
+    if orizzontale:
+        # Il cavo che scavalca un tubo (REL-015): la gobba verso l'alto.
+        return (
+            f'<path class="crossing-hop" '
+            f'd="M{point.x_mm - CROSSING_ARC_RADIUS_MM:g} {point.y_mm:g} '
+            f"A{CROSSING_ARC_RADIUS_MM:g} {CROSSING_ARC_RADIUS_MM:g} 0 0 1 "
+            f'{point.x_mm + CROSSING_ARC_RADIUS_MM:g} {point.y_mm:g}" '
+            f'fill="none" stroke="{colour}" stroke-width="{width_mm:g}"/>'
+        )
     return (
         f'<path class="crossing-hop" '
         f'd="M{point.x_mm:g} {point.y_mm - CROSSING_ARC_RADIUS_MM:g} '
@@ -487,7 +572,9 @@ def render_sheet(
                     f"{dash_attribute}/>"
                 )
             parts.extend(
-                _hop_arc(point, colour, standard.line_medium_mm)
+                _hop_arc(
+                    point, colour, standard.line_medium_mm, _scavallo_orizzontale(segment, point)
+                )
                 for point in hops
                 if any(
                     _hoppable(before, after, point)

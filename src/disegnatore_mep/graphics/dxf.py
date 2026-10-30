@@ -74,6 +74,7 @@ from .sheet import (
     UNRESOLVED_RUN_DASH,
     _hoppable,
     _interrupted,
+    _scavallo_orizzontale,
     flow_arrow_at,
     freccia_del_richiamo,
     sheet_marks,
@@ -942,8 +943,11 @@ class _Tavola:
                         # L'archetto e' sempre pieno: tratteggiato, due
                         # millimetri e mezzo spariscono (come nell'SVG).
                         centro = self.p(point.x_mm, point.y_mm)
+                        # Il cavo orizzontale che scavalca un tubo (REL-015): la
+                        # gobba verso l'alto, come nell'SVG.
+                        da, a = (0, 180) if _scavallo_orizzontale(segment, point) else (270, 90)
                         self.msp.add_arc(
-                            centro, CROSSING_ARC_RADIUS_MM, 270, 90,
+                            centro, CROSSING_ARC_RADIUS_MM, da, a,
                             dxfattribs={"layer": layer, "linetype": "Continuous"},
                         )
                 if route.flow_kind.porta_la_freccia:

@@ -235,10 +235,65 @@ def _ancora(rettilineo: _Rettilineo, lato: str, riquadro: Box) -> Point:
     return Point(x_mm=riquadro[2], y_mm=riquadro[3])
 
 
-def _lati(rettilineo: _Rettilineo) -> tuple[str, str]:
+VICINANZA_DEGLI_IMBOCCHI_MM = 20.0
+"""Quanto lontano di fianco al rettilineo un imbocco di cavo decide il lato della
+scritta: la profondita' dell'imbocco (`PROFONDITA_DELL_IMBOCCO_MM` dell'esecutore)."""
+
+PORTATA_DEGLI_IMBOCCHI_MM = 40.0
+"""Quanto oltre i capi del rettilineo, lungo la linea: un cavo che esce da una porta
+parallelo al tubo gli corre accanto anche sul rettilineo dopo (sul canalizzato del
+collaudo T3, il comando a filo accanto ai due tratti della condensa)."""
+
+
+def _lato_dei_cavi(rettilineo: _Rettilineo, imbocchi: Sequence[Point]) -> str | None:
+    """Il lato del rettilineo dove arriva un cavo (REL-015, I-231): quello
+    dell'imbocco piu' vicino che gli sta di fianco, entro `VICINANZA_DEGLI_IMBOCCHI_MM`
+    di fianco e `PORTATA_DEGLI_IMBOCCHI_MM` oltre i capi. `None` se nessuno."""
+    margine, portata = VICINANZA_DEGLI_IMBOCCHI_MM, PORTATA_DEGLI_IMBOCCHI_MM
+    da, a = min(rettilineo.da, rettilineo.a), max(rettilineo.da, rettilineo.a)
+    migliore: tuple[float, str] | None = None
+    for punto in imbocchi:
+        lungo, di_fianco = (
+            (punto.x_mm, punto.y_mm) if rettilineo.orizzontale else (punto.y_mm, punto.x_mm)
+        )
+        scarto = di_fianco - rettilineo.fisso
+        if not da - portata <= lungo <= a + portata or not 1e-6 < abs(scarto) <= margine:
+            continue
+        if rettilineo.orizzontale:
+            lato = "sotto" if scarto > 0 else "sopra"
+        else:
+            lato = "destra" if scarto > 0 else "sinistra"
+        if migliore is None or abs(scarto) < migliore[0]:
+            migliore = (abs(scarto), lato)
+    return None if migliore is None else migliore[1]
+
+
+def _lati(rettilineo: _Rettilineo, imbocchi: Sequence[Point] = (), giro: int = 0) -> tuple[str, ...]:
+    """I lati da provare nel `giro`: nel primo, tutti e due nell'ordine della
+    convenzione (mandata sopra e a destra), e nel secondo nessuno. Ma se di fianco al
+    rettilineo arriva un cavo, nel primo giro solo il lato opposto e nel secondo quello
+    del cavo: le scritte dell'acqua si posano prima dei cavi, e sul lato del cavo gli
+    chiuderebbero la strada (REL-015, I-231). Senza cavi l'ordine e' quello di prima."""
     if rettilineo.orizzontale:
-        return ("sopra", "sotto") if rettilineo.route.supply else ("sotto", "sopra")
-    return ("destra", "sinistra") if rettilineo.route.supply else ("sinistra", "destra")
+        lati = ("sopra", "sotto") if rettilineo.route.supply else ("sotto", "sopra")
+    else:
+        lati = ("destra", "sinistra") if rettilineo.route.supply else ("sinistra", "destra")
+    cavo = _lato_dei_cavi(rettilineo, imbocchi)
+    if cavo is None:
+        return lati if giro == 0 else ()
+    return tuple(lato for lato in lati if (lato == cavo) == (giro == 1))
+
+
+def _diagonali(
+    rettilineo: _Rettilineo, imbocchi: Sequence[Point], giro: int
+) -> tuple[tuple[int, int], ...]:
+    """Le diagonali del richiamo da provare nel `giro`, come `_lati`: senza cavi tutte
+    nel primo; con un cavo di fianco, nel primo quelle che se ne allontanano."""
+    cavo = _lato_dei_cavi(rettilineo, imbocchi)
+    if cavo is None:
+        return DIAGONALS if giro == 0 else ()
+    indice, verso = {"destra": (0, 1), "sinistra": (0, -1), "sotto": (1, 1), "sopra": (1, -1)}[cavo]
+    return tuple(item for item in DIAGONALS if (item[indice] == verso) == (giro == 1))
 
 
 def _verso_il_lato(rettilineo: _Rettilineo, lato: str) -> int:
@@ -354,6 +409,8 @@ def posa_i_diametri(
     standard: GraphicStandard,
     area: Rect,
     ostacoli: Sequence[Box] = (),
+    gia_posati: Sequence[DiametroSullaTavola] = (),
+    imbocchi: Sequence[Point] = (),
 ) -> tuple[list[DiametroSullaTavola], list[TrattoDaScrivere]]:
     """Le etichette del DN, una per tratto, e i tratti che non hanno trovato posto.
 
@@ -369,7 +426,14 @@ def posa_i_diametri(
     strada secondaria si sacrifica; quello di una strada principale va, per
     ultima spiaggia, su un'etichetta staccata con freccia — la freccia sulla
     linea, un tratto a 45 gradi e la spalla orizzontale fino alla scritta
-    (I-163), il richiamo piu' corto che non attraversa niente."""
+    (I-163), il richiamo piu' corto che non attraversa niente.
+
+    `gia_posati` sono le scritte dei tratti che stanno gia' sulla tavola (REL-015,
+    I-231): quelle dell'acqua, quando si posano quelle dei cavi. Non si toccano, e
+    le nuove le rispettano come le altre scritte.
+
+    `imbocchi` sono le porte dove arriva un cavo, lette sul grafo intero: di fianco a
+    un rettilineo decidono il lato da provare per secondo (`_lati`)."""
     corpo = standard.text_small_mm
     minimo = CORPO_MINIMO_PT * PT_MM
     tentativi = [(corpo, False)]
@@ -395,6 +459,10 @@ def posa_i_diametri(
     richiami: list[tuple[Point, Point]] = [
         segmento for label in foglio.labels for segmento in segmenti_del_richiamo(label)
     ]
+    for posato in gia_posati:
+        testi.append(riquadro_del_diametro(posato, corpo))
+        if posato.richiamo is not None:
+            richiami.extend(posato.richiamo.segmenti)
     frecce = [_allargato(freccia, FRANCO_MM) for freccia in riquadri_delle_frecce(foglio)]
 
     def libero(box: Box, proprio: _Rettilineo | None) -> bool:
@@ -436,52 +504,53 @@ def posa_i_diametri(
         ]
         passo = standard.grid_mm
         primo = -(-LEADER_MIN_LENGTH_MM / 2**0.5 // passo) * passo
-        for anello in range(LEADER_MAX_STEPS):
-            campata = primo + anello * passo
-            for rettilineo in propri:
-                for lungo in _punte(rettilineo):
-                    punta = (
-                        Point(x_mm=lungo, y_mm=rettilineo.fisso)
-                        if rettilineo.orizzontale
-                        else Point(x_mm=rettilineo.fisso, y_mm=lungo)
-                    )
-                    for verso in DIAGONALS:
-                        richiamo, ancora, box = richiamo_verso(punta, verso, campata, larghezza, corpo)
-                        if not libero(box, None):
-                            continue
-                        largo = _allargato(box, franco)
-                        if any(_overlap(largo, altro) for altro in (*simboli, *testi, *vicini)):
-                            continue
-                        segmenti = richiamo.segmenti
-                        if any(
-                            _crosses(*segmento, altro)
-                            for segmento in segmenti
-                            for altro in (box, *simboli, *testi, *frecce)
-                        ):
-                            continue
-                        if any(
-                            segments_cross(segmento, altra)
-                            for segmento in segmenti
-                            for altra in (*linee, *richiami)
-                        ):
-                            continue
-                        # La spalla e' orizzontale: non corre lungo un tubo, dentro il
-                        # suo franco (I-163).
-                        spalla = segmenti[1]
-                        if any(
-                            _crosses(*spalla, _allargato(_riquadro_della_linea(altro), FRANCO_MM))
-                            for altro in tutti
-                        ):
-                            continue
-                        testi.append(box)
-                        richiami.extend(segmenti)
-                        return DiametroSullaTavola(
-                            testo=testo,
-                            ancora=ancora,
-                            connection_ids=sorted(tratto.connection_ids),
-                            richiamo=richiamo,
-                            del_progettista=isinstance(tratto, ScrittaDelTratto),
+        for giro in (0, 1):
+            for anello in range(LEADER_MAX_STEPS):
+                campata = primo + anello * passo
+                for rettilineo in propri:
+                    for lungo in _punte(rettilineo):
+                        punta = (
+                            Point(x_mm=lungo, y_mm=rettilineo.fisso)
+                            if rettilineo.orizzontale
+                            else Point(x_mm=rettilineo.fisso, y_mm=lungo)
                         )
+                        for verso in _diagonali(rettilineo, imbocchi, giro):
+                            richiamo, ancora, box = richiamo_verso(punta, verso, campata, larghezza, corpo)
+                            if not libero(box, None):
+                                continue
+                            largo = _allargato(box, franco)
+                            if any(_overlap(largo, altro) for altro in (*simboli, *testi, *vicini)):
+                                continue
+                            segmenti = richiamo.segmenti
+                            if any(
+                                _crosses(*segmento, altro)
+                                for segmento in segmenti
+                                for altro in (box, *simboli, *testi, *frecce)
+                            ):
+                                continue
+                            if any(
+                                segments_cross(segmento, altra)
+                                for segmento in segmenti
+                                for altra in (*linee, *richiami)
+                            ):
+                                continue
+                            # La spalla e' orizzontale: non corre lungo un tubo, dentro il
+                            # suo franco (I-163).
+                            spalla = segmenti[1]
+                            if any(
+                                _crosses(*spalla, _allargato(_riquadro_della_linea(altro), FRANCO_MM))
+                                for altro in tutti
+                            ):
+                                continue
+                            testi.append(box)
+                            richiami.extend(segmenti)
+                            return DiametroSullaTavola(
+                                testo=testo,
+                                ancora=ancora,
+                                connection_ids=sorted(tratto.connection_ids),
+                                richiamo=richiamo,
+                                del_progettista=isinstance(tratto, ScrittaDelTratto),
+                            )
         return None
 
     posati: list[DiametroSullaTavola] = []
@@ -497,27 +566,30 @@ def posa_i_diametri(
         trovato: DiametroSullaTavola | None = None
         for corpo_della_scritta, anche_fra_le_corsie in tentativi:
             larghezza = larghezza_del_testo_mm(testo, corpo_della_scritta)
-            for rettilineo in propri:
-                for inizio in _posizioni(rettilineo, larghezza):
-                    for lato in _lati(rettilineo):
-                        box = _riquadro(rettilineo, lato, inizio, larghezza, corpo_della_scritta)
-                        da, a = (box[0], box[2]) if rettilineo.orizzontale else (box[1], box[3])
-                        if not anche_fra_le_corsie and _fra_le_corsie(rettilineo, lato, da, a, tutti):
-                            continue
-                        if not libero(box, rettilineo):
-                            continue
-                        if not _rispetta_le_scritte(box, rettilineo.orizzontale, testi, corpo_della_scritta):
-                            continue
-                        trovato = DiametroSullaTavola(
-                            testo=testo,
-                            ancora=_ancora(rettilineo, lato, box),
-                            verticale=not rettilineo.orizzontale,
-                            connection_ids=sorted(tratto.connection_ids),
-                            corpo_mm=None if corpo_della_scritta == corpo else corpo_della_scritta,
-                            del_progettista=isinstance(tratto, ScrittaDelTratto),
-                        )
-                        testi.append(box)
-                        break
+            for giro in (0, 1):
+                for rettilineo in propri:
+                    for inizio in _posizioni(rettilineo, larghezza):
+                        for lato in _lati(rettilineo, imbocchi, giro):
+                            box = _riquadro(rettilineo, lato, inizio, larghezza, corpo_della_scritta)
+                            da, a = (box[0], box[2]) if rettilineo.orizzontale else (box[1], box[3])
+                            if not anche_fra_le_corsie and _fra_le_corsie(rettilineo, lato, da, a, tutti):
+                                continue
+                            if not libero(box, rettilineo):
+                                continue
+                            if not _rispetta_le_scritte(box, rettilineo.orizzontale, testi, corpo_della_scritta):
+                                continue
+                            trovato = DiametroSullaTavola(
+                                testo=testo,
+                                ancora=_ancora(rettilineo, lato, box),
+                                verticale=not rettilineo.orizzontale,
+                                connection_ids=sorted(tratto.connection_ids),
+                                corpo_mm=None if corpo_della_scritta == corpo else corpo_della_scritta,
+                                del_progettista=isinstance(tratto, ScrittaDelTratto),
+                            )
+                            testi.append(box)
+                            break
+                        if trovato is not None:
+                            break
                     if trovato is not None:
                         break
                 if trovato is not None:

@@ -38,7 +38,7 @@ Tutto cio' che si legge e' in italiano (D-051): le sigle vengono dal modello,
 le unita' da questa tabella.
 """
 
-from collections.abc import Sequence
+from collections.abc import Collection, Sequence
 from dataclasses import dataclass, field
 from math import ceil, sqrt
 
@@ -511,12 +511,14 @@ class _Canvas:
         )
 
     def free(self, box: Box) -> bool:
-        """Il posto e' dentro l'area e libero da simboli, tubi e altre scritte."""
+        """Il posto e' dentro l'area e libero da simboli, tubi, altre scritte e
+        richiami: sulla M.02 di REL-015 la sigla del sifone, che cede e si posa dopo
+        la scritta della condensa, finiva sul richiamo di quella."""
         if not self.inside(box):
             return False
-        return not any(
-            _overlap(box, other) for other in (*self.symbols, *self.texts, *self.lines)
-        )
+        if any(_overlap(box, other) for other in (*self.symbols, *self.texts, *self.lines)):
+            return False
+        return not any(_crosses(*leader, box) for leader in self.leaders)
 
     def vicina_al_suo(self, box: Box, component_id: str) -> bool:
         """La scritta non sta piu' vicina a un altro pezzo che al suo: accanto a un
@@ -690,6 +692,30 @@ def _settle(
     return PlacedLabel(id=label_id, text=text, role=role, anchor=spot, richiamo=richiamo)
 
 
+def _gia_sulla_tavola(
+    canvas: _Canvas,
+    placed: Sequence[PlacedSymbol],
+    already: Sequence[PlacedLabel],
+    occupied: Sequence[tuple[Box, Sequence[Segment]]],
+    height: float,
+) -> None:
+    """Le scritte che stanno gia' sulla tavola entrano nella tela di chi viene dopo:
+    le sigle e i dati col loro pezzo, le scritte dei tratti (`occupied`) con un corpo
+    di vuoto tutt'intorno."""
+    pezzi = sorted((item.component_id for item in placed), key=len, reverse=True)
+    for written in already:
+        # Di chi e' una scritta: il suo id comincia con quello del pezzo.
+        padrone = next((pezzo for pezzo in pezzi if written.id.startswith(f"{pezzo}-")), None)
+        canvas.take(riquadro_della_scritta(written, height), segmenti_del_richiamo(written), padrone)
+    for box, segmenti in occupied:
+        # Un corpo tutt'intorno: una scritta di tratto staccata vuole un corpo di
+        # vuoto da cio' che non e' il suo tratto (`DETACHED_DIAMETER_CROWDED`), e una
+        # sigla che arriva dopo non glielo toglie.
+        canvas.take(
+            (box[0] - height, box[1] - height, box[2] + height, box[3] + height), list(segmenti)
+        )
+
+
 def place_addresses(
     placed: list[PlacedSymbol],
     addresses: dict[str, str],
@@ -774,18 +800,7 @@ def place_tags_that_yield(
     canvas = _canvas(
         placed, routes, standard, area, ostacoli, fasce_delle_scritte(routes, linee_scritte, height)
     )
-    pezzi = sorted((item.component_id for item in placed), key=len, reverse=True)
-    for written in already or ():
-        # Di chi e' una scritta: il suo id comincia con quello del pezzo.
-        padrone = next((pezzo for pezzo in pezzi if written.id.startswith(f"{pezzo}-")), None)
-        canvas.take(riquadro_della_scritta(written, height), segmenti_del_richiamo(written), padrone)
-    for box, segmenti in occupied:
-        # Un corpo tutt'intorno: una scritta di tratto staccata vuole un corpo di
-        # vuoto da cio' che non e' il suo tratto (`DETACHED_DIAMETER_CROWDED`), e una
-        # sigla che arriva dopo non glielo toglie.
-        canvas.take(
-            (box[0] - height, box[1] - height, box[2] + height, box[3] + height), list(segmenti)
-        )
+    _gia_sulla_tavola(canvas, placed, already or (), occupied, height)
     labels: list[PlacedLabel] = []
     for item in placed:
         text = tags.get(item.component_id)
@@ -817,6 +832,9 @@ def place_labels(
     ostacoli: Sequence[Box] = (),
     senza_valori: frozenset[str] = frozenset(),
     linee_scritte: frozenset[str] = frozenset(),
+    solo: Collection[str] | None = None,
+    already: Sequence[PlacedLabel] = (),
+    occupied: Sequence[tuple[Box, Sequence[Segment]]] = (),
 ) -> list[PlacedLabel]:
     """Sigle e valori, scritti piccoli accanto al proprio componente (D-075).
 
@@ -836,6 +854,12 @@ def place_labels(
 
     Deterministico: l'ordine segue quello dei simboli posati, e a parita' di
     ingombro la ricerca percorre sempre gli stessi lati nello stesso ordine.
+
+    **Prima l'acqua, poi il comando** (REL-015, I-231). `solo` sono i pezzi di cui
+    si scrivono sigle e valori; gli altri di `placed` sono soltanto ingombro. Le
+    scritte che stanno gia' sulla tavola — `already`, sigle e dati posati prima, e
+    `occupied`, le scritte dei tratti — non si toccano: chi viene dopo prende il
+    posto che resta.
     """
     del floor_y_mm
     properties = {item.id: item.properties for item in project.components}
@@ -844,8 +868,12 @@ def place_labels(
     canvas = _canvas(
         placed, routes, standard, area, ostacoli, fasce_delle_scritte(routes, linee_scritte, height)
     )
+    _gia_sulla_tavola(canvas, placed, already, occupied, height)
+    da_scrivere = None if solo is None else set(solo)
     labels: list[PlacedLabel] = []
     for item in placed:
+        if da_scrivere is not None and item.component_id not in da_scrivere:
+            continue
         slots = {"tag": 0, "data": 0}
         for label_id, text, role in _texts_of(item, properties, senza_valori):
             settled = _settle(

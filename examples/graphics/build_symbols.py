@@ -1561,32 +1561,33 @@ l'altro, larghi 15 mm, restano 5 mm."""
 
 
 def manifold_pair_body(w: float, h: float) -> str:
-    """Collettore d'appartamento con mandata e ritorno: due barre, la mandata sopra e il
-    ritorno sotto, e per ogni circuito la sua coppia di attacchi in basso.
+    """Collettore d'appartamento con mandata e ritorno: due barre **continue**, la
+    mandata sopra e il ritorno sotto, e per ogni circuito la sua coppia di attacchi in
+    basso.
 
-    Le discese della mandata passano davanti alla barra del ritorno senza toccarla:
-    la barra del ritorno si interrompe dove una discesa la attraversa, come un tubo
-    che ne scavalca un altro."""
+    **Il ritorno e' una barra sola** (REL-015, I-231). Fino alla 1.6.0 la barra del
+    ritorno si interrompeva dove una discesa di mandata la attraversava, e sulla tavola
+    si leggevano tre barrette staccate, una per circuito: il PO, «un collettore aveva
+    una forma strana», e il collaudo T2 di REL-012, «sembrano tre pezzi distinti, non
+    un collettore». Adesso si interrompe la **discesa della mandata**, che passa dietro
+    la barra del ritorno: la linea si ferma un varco prima della barra e riprende un
+    varco dopo, fino all'attacco — il segno di un tubo che ne scavalca un altro senza
+    toccarlo. Le porte non cambiano."""
     mandata_y, ritorno_y, mezza = 2.5, h - 2.5, 1.0
-    varco = 1.0
+    varco = 0.75
     inizio = 2.0
     corpo = (
         f'<line x1="0" y1="{n(mandata_y)}" x2="{n(inizio)}" y2="{n(mandata_y)}"/>'
         f'<line x1="0" y1="{n(ritorno_y)}" x2="{n(inizio)}" y2="{n(ritorno_y)}"/>'
         f'<rect x="{n(inizio)}" y="{n(mandata_y - mezza)}" width="{n(w - inizio)}" height="{n(2 * mezza)}"/>'
+        f'<rect x="{n(inizio)}" y="{n(ritorno_y - mezza)}" width="{n(w - inizio)}" height="{n(2 * mezza)}"/>'
     )
-    # La barra del ritorno, a tratti fra una discesa di mandata e l'altra.
-    bordi = [inizio]
+    # Le discese della mandata, interrotte davanti alla barra del ritorno.
     for x in MANIFOLD_PAIR_SUPPLY:
-        bordi += [x - varco, x + varco]
-    bordi.append(w)
-    for da, a in zip(bordi[::2], bordi[1::2], strict=True):
-        if a > da:
-            corpo += (
-                f'<rect x="{n(da)}" y="{n(ritorno_y - mezza)}" width="{n(a - da)}" height="{n(2 * mezza)}"/>'
-            )
-    for x in MANIFOLD_PAIR_SUPPLY:
-        corpo += f'<line x1="{n(x)}" y1="{n(mandata_y + mezza)}" x2="{n(x)}" y2="{n(h)}"/>'
+        corpo += (
+            f'<line x1="{n(x)}" y1="{n(mandata_y + mezza)}" x2="{n(x)}" y2="{n(ritorno_y - mezza - varco)}"/>'
+            f'<line x1="{n(x)}" y1="{n(ritorno_y + mezza + varco)}" x2="{n(x)}" y2="{n(h)}"/>'
+        )
     for x in MANIFOLD_PAIR_RETURN:
         corpo += f'<line x1="{n(x)}" y1="{n(ritorno_y + mezza)}" x2="{n(x)}" y2="{n(h)}"/>'
     return corpo
@@ -3151,6 +3152,8 @@ SYMBOLS: list[SymbolSpec] = [
         body=manifold_pair_body(*MANIFOLD_PAIR),
         source=SOURCE_REL009_PROPOSAL,
         allowed_rotations_deg=list(UPRIGHT_ROTATIONS_DEG),
+        # Il ritorno continuo (REL-015): il segno cambia forma, sale di minore.
+        version="1.1.0",
     ),
     # --- REL-012, l'aria-aria del kit del PO (I-224): proposte, le approva il PO ---
     # Unita' esterna, unita' interna, plenum, centrale di zona e quadro si

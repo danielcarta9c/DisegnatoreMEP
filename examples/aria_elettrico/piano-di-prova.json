@@ -13,7 +13,7 @@
     "ue": {"x": 40, "y": 70, "rotazione": 0},
     "ui": {"x": 160, "y": 70, "rotazione": 0},
     "bocchetta": {"x": 260, "y": 77.5},
-    "comando": {"x": 260, "y": 90},
+    "comando": {"x": 230, "y": 90, "regola": "REL-015: la scritta della bocchetta si posa prima dei cavi (I-231), e sotto la bocchetta il comando le stava sopra"},
     "ripresa": {"x": 175, "y": 30},
     "quadro": {"x": 42.5, "y": 170, "rotazione": 0},
     "scarico": {"x": 180, "y": 150}
