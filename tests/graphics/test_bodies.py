@@ -110,7 +110,9 @@ def test_the_libraries_are_not_empty() -> None:
     # regolatore (I-226).
     # 80 dal collaudo T1 di REL-012: i plenum di zona a due, tre, quattro e sei
     # serrande, accanto a quello a cinque del kit.
-    assert len(published()) == 80
+    # 90 da REL-016 (D3 del collaudo della 1.7.0): il collettore con ritorno da tre a
+    # dodici vie, accanto a quello a due.
+    assert len(published()) == 90
 
 
 @pytest.mark.parametrize("symbol", published(), ids=lambda item: item.manifest.id)

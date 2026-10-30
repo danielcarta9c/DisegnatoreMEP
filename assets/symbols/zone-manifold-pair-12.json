@@ -1,0 +1,176 @@
+{
+  "id": "zone-manifold-pair-12",
+  "version": "1.0.0",
+  "name": "Collettore di zona con ritorno a dodici vie",
+  "width_mm": 240.0,
+  "height_mm": 15.0,
+  "allowed_rotations_deg": [
+    0
+  ],
+  "ports": [
+    {
+      "id": "in",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 2.5
+    },
+    {
+      "id": "out",
+      "face": "left",
+      "x_mm": 0.0,
+      "y_mm": 12.5
+    },
+    {
+      "id": "out_1",
+      "face": "bottom",
+      "x_mm": 7.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "out_2",
+      "face": "bottom",
+      "x_mm": 27.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "out_3",
+      "face": "bottom",
+      "x_mm": 47.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "out_4",
+      "face": "bottom",
+      "x_mm": 67.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "out_5",
+      "face": "bottom",
+      "x_mm": 87.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "out_6",
+      "face": "bottom",
+      "x_mm": 107.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "out_7",
+      "face": "bottom",
+      "x_mm": 127.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "out_8",
+      "face": "bottom",
+      "x_mm": 147.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "out_9",
+      "face": "bottom",
+      "x_mm": 167.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "out_10",
+      "face": "bottom",
+      "x_mm": 187.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "out_11",
+      "face": "bottom",
+      "x_mm": 207.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "out_12",
+      "face": "bottom",
+      "x_mm": 227.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_1",
+      "face": "bottom",
+      "x_mm": 17.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_2",
+      "face": "bottom",
+      "x_mm": 37.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_3",
+      "face": "bottom",
+      "x_mm": 57.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_4",
+      "face": "bottom",
+      "x_mm": 77.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_5",
+      "face": "bottom",
+      "x_mm": 97.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_6",
+      "face": "bottom",
+      "x_mm": 117.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_7",
+      "face": "bottom",
+      "x_mm": 137.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_8",
+      "face": "bottom",
+      "x_mm": 157.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_9",
+      "face": "bottom",
+      "x_mm": 177.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_10",
+      "face": "bottom",
+      "x_mm": 197.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_11",
+      "face": "bottom",
+      "x_mm": 217.5,
+      "y_mm": 15.0
+    },
+    {
+      "id": "ret_12",
+      "face": "bottom",
+      "x_mm": 237.5,
+      "y_mm": 15.0
+    }
+  ],
+  "keep_out": {
+    "left_mm": 2.0,
+    "right_mm": 0.0,
+    "top_mm": 0.0,
+    "bottom_mm": 2.0
+  },
+  "stroke_weight": "medium",
+  "source": "proposta della sessione del 30/10/2026 (REL-016, D3 del collaudo della 1.7.0, collettore a pavimento a sei vie): lo stesso disegno del collettore con ritorno a due vie, con le coppie che il collettore ha a passo 20; forma da approvare dal PO sulla tavola"
+}
