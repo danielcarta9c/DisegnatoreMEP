@@ -4,7 +4,7 @@
 > osservazioni alla 1.6.0 (I-230 … I-233). Scritto il 30 ottobre 2026, sulla 1.6.0.
 
 **Da svolgere:** l'agente unico (**D-147**), con agenti paralleli in sessione (**D-152**)
-**Stato:** **IN CORSO**.
+**Stato:** **COSTRUITA SUL RAMO, AL PO** — la 1.7.0 aspetta il suo sì sulle tavole e sul PDF della distinta.
 **Base:** `main` dopo la PR #80 (la 1.6.0).
 **Ramo:** quello che l'ambiente della sessione assegna.
 **Approvazione della fusione:** **del PO**, guardando le tavole e il PDF della distinta (D-146, D-147).

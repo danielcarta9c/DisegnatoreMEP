@@ -49,3 +49,7 @@ Il comando della skill li riapre da sé.
 - **1.6.0** — 29 ottobre 2026: **l'aria-aria, l'elettrico e il comando** (`REL-012`), con **la distinta materiali**
   (`REL-013`) e **la pianta dei tracciati** (`REL-014`) su richiesta, dal kit del PO (I-224 … I-229, D-213 proposta).
   Le tavole idroniche della 1.5.0 non cambiano. 131 file.
+- **1.7.0** — 30 ottobre 2026: **la distinta in un documento a parte, la tavola in A3, l'elettrico dopo l'idraulica**
+  (`REL-015`, I-230 … I-234): sulla tavola solo apparecchiature e legenda, la distinta in PDF coi report Nove C, le
+  scritte dell'acqua prima dei cavi, il collettore a coppia col ritorno continuo, la pompa di calore che regola da sé
+  (proposta). 134 file.
