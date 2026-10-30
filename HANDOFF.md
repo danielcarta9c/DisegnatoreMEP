@@ -1,6 +1,6 @@
 # HANDOFF — Disegnatore MEP
 
-**Aggiornato:** 2026-10-30 — **la 1.7.0 è su `main`** (PR #81, I-235, D-214); sul ramo la **1.7.1** (I-236, D-215): i circolatori comandati dalla pompa di calore prendono alimentazione e comando dalla sua morsettiera, un cavo solo. **Il pacchetto è `REL-011`.**
+**Aggiornato:** 2026-10-30 — **la 1.7.1 è su `main`** (PR #82, I-237, D-215): i circolatori comandati dalla pompa di calore prendono alimentazione e comando dalla sua morsettiera. **Il pacchetto è `REL-016`** (i rilievi D1, D3, D4 del collaudo della 1.7.0), **poi `REL-011`** (I-238).
 **Scopo:** ingresso operativo breve per una nuova sessione.
 
 > **Se leggi una cosa sola oltre a questa pagina, leggi `docs/ARCHITETTURA-DEL-PIANO.md`.**
@@ -11,11 +11,12 @@
 > tutte le decisioni sotto gli occhi: ha trattato il **piano** come un artefatto da
 > consegnare invece che come qualcosa che la skill deve **imparare a scrivere**.
 
-## ▶ Da dove riparte la prossima sessione — scritto il 30 ottobre 2026, dopo la fusione della 1.7.0
+## ▶ Da dove riparte la prossima sessione — scritto il 30 ottobre 2026, dopo la fusione della 1.7.1
 
-**Il pacchetto è `REL-011`** (`ACTIVE_WORK_PACKAGE.md`): le regole del corredo contro il manuale Shenling. Prima di
-cominciare, al PO le domande lasciate aperte dalla 1.7.0 (in testa al pacchetto). La 1.7.0 (`REL-015`) è archiviata in
-`docs/plans/pacchetti/REL-015.md`; quello che segue è com'era il ramo prima della fusione.
+**Il pacchetto è `REL-016`** (`ACTIVE_WORK_PACKAGE.md`): la tavola aggrovigliata che passava con 0 bloccanti (D1), il
+collettore di zona a più vie (D3), le domande della distinta al passo 2 (D4). I casi del collaudo sono in
+`docs/collaudi/REL-016/casi-del-collaudo/`. **Dopo, `REL-011`** (I-238). La 1.7.0 (`REL-015`) è archiviata in
+`docs/plans/pacchetti/REL-015.md`; quello che segue è com'era il ramo prima della fusione della 1.7.0.
 
 - **Che cosa c'è**: `ACTIVE_WORK_PACKAGE.md` punto per punto; le prove in `docs/collaudi/REL-015/` (`distinta/`,
   `pdc-regola/`, `collettore/`, `idraulica-prima/` con il suo `rifai.sh`).
@@ -24,7 +25,7 @@ cominciare, al PO le domande lasciate aperte dalla 1.7.0 (in testa al pacchetto)
 - **I circolatori** (I-236, D-215, fatto nella 1.7.1): alimentazione e comando dalla morsettiera della pompa di
   calore, un cavo solo; il quadro più cronotermostato è una scelta del progettista, non lo standard.
 - **Il banco**: 19/24 identiche, 5 cambiate solo nel simbolo del collettore.
-- **I numeri**: il prossimo input è **I-237**, la prossima decisione **D-216**.
+- **I numeri**: il prossimo input è **I-239**, la prossima decisione **D-216**.
 
 ## Com'era la mattina del 30 ottobre 2026
 
